@@ -822,11 +822,10 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                           uint32_t dwObjNum =
                               pElement ? pElement->GetObjNum() : 0;
                           if (dwObjNum) {
-                            m_pTrailer->SetAtReference(key.AsStringC(),
-                                                       m_pDocument, dwObjNum);
+                            m_pTrailer->SetAtReference(key, m_pDocument,
+                                                       dwObjNum);
                           } else {
-                            m_pTrailer->SetAt(key.AsStringC(),
-                                              pElement->Clone());
+                            m_pTrailer->SetAt(key, pElement->Clone());
                           }
                         }
                       }

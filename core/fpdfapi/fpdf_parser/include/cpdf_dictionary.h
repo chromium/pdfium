@@ -31,56 +31,56 @@ class CPDF_Dictionary : public CPDF_Object {
   const CPDF_Dictionary* AsDictionary() const override;
 
   size_t GetCount() const { return m_Map.size(); }
-  CPDF_Object* GetObjectBy(const CFX_ByteStringC& key) const;
-  CPDF_Object* GetDirectObjectBy(const CFX_ByteStringC& key) const;
-  CFX_ByteString GetStringBy(const CFX_ByteStringC& key) const;
-  CFX_ByteString GetStringBy(const CFX_ByteStringC& key,
-                             const CFX_ByteStringC& default_str) const;
-  CFX_WideString GetUnicodeTextBy(const CFX_ByteStringC& key) const;
-  int GetIntegerBy(const CFX_ByteStringC& key) const;
-  int GetIntegerBy(const CFX_ByteStringC& key, int default_int) const;
-  FX_BOOL GetBooleanBy(const CFX_ByteStringC& key,
+  CPDF_Object* GetObjectBy(const CFX_ByteString& key) const;
+  CPDF_Object* GetDirectObjectBy(const CFX_ByteString& key) const;
+  CFX_ByteString GetStringBy(const CFX_ByteString& key) const;
+  CFX_ByteString GetStringBy(const CFX_ByteString& key,
+                             const CFX_ByteString& default_str) const;
+  CFX_WideString GetUnicodeTextBy(const CFX_ByteString& key) const;
+  int GetIntegerBy(const CFX_ByteString& key) const;
+  int GetIntegerBy(const CFX_ByteString& key, int default_int) const;
+  FX_BOOL GetBooleanBy(const CFX_ByteString& key,
                        FX_BOOL bDefault = FALSE) const;
-  FX_FLOAT GetNumberBy(const CFX_ByteStringC& key) const;
-  CPDF_Dictionary* GetDictBy(const CFX_ByteStringC& key) const;
-  CPDF_Stream* GetStreamBy(const CFX_ByteStringC& key) const;
-  CPDF_Array* GetArrayBy(const CFX_ByteStringC& key) const;
-  CFX_FloatRect GetRectBy(const CFX_ByteStringC& key) const;
-  CFX_Matrix GetMatrixBy(const CFX_ByteStringC& key) const;
-  FX_FLOAT GetFloatBy(const CFX_ByteStringC& key) const {
+  FX_FLOAT GetNumberBy(const CFX_ByteString& key) const;
+  CPDF_Dictionary* GetDictBy(const CFX_ByteString& key) const;
+  CPDF_Stream* GetStreamBy(const CFX_ByteString& key) const;
+  CPDF_Array* GetArrayBy(const CFX_ByteString& key) const;
+  CFX_FloatRect GetRectBy(const CFX_ByteString& key) const;
+  CFX_Matrix GetMatrixBy(const CFX_ByteString& key) const;
+  FX_FLOAT GetFloatBy(const CFX_ByteString& key) const {
     return GetNumberBy(key);
   }
 
-  FX_BOOL KeyExist(const CFX_ByteStringC& key) const;
+  FX_BOOL KeyExist(const CFX_ByteString& key) const;
   bool IsSignatureDict() const;
 
   // Set* functions invalidate iterators for the element with the key |key|.
-  void SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj);
-  void SetAtName(const CFX_ByteStringC& key, const CFX_ByteString& name);
-  void SetAtString(const CFX_ByteStringC& key, const CFX_ByteString& str);
-  void SetAtInteger(const CFX_ByteStringC& key, int i);
-  void SetAtNumber(const CFX_ByteStringC& key, FX_FLOAT f);
-  void SetAtReference(const CFX_ByteStringC& key,
+  void SetAt(const CFX_ByteString& key, CPDF_Object* pObj);
+  void SetAtName(const CFX_ByteString& key, const CFX_ByteString& name);
+  void SetAtString(const CFX_ByteString& key, const CFX_ByteString& str);
+  void SetAtInteger(const CFX_ByteString& key, int i);
+  void SetAtNumber(const CFX_ByteString& key, FX_FLOAT f);
+  void SetAtReference(const CFX_ByteString& key,
                       CPDF_IndirectObjectHolder* pDoc,
                       uint32_t objnum);
-  void SetAtReference(const CFX_ByteStringC& key,
+  void SetAtReference(const CFX_ByteString& key,
                       CPDF_IndirectObjectHolder* pDoc,
                       CPDF_Object* obj) {
     SetAtReference(key, pDoc, obj->GetObjNum());
   }
-  void SetAtRect(const CFX_ByteStringC& key, const CFX_FloatRect& rect);
-  void SetAtMatrix(const CFX_ByteStringC& key, const CFX_Matrix& matrix);
-  void SetAtBoolean(const CFX_ByteStringC& key, FX_BOOL bValue);
+  void SetAtRect(const CFX_ByteString& key, const CFX_FloatRect& rect);
+  void SetAtMatrix(const CFX_ByteString& key, const CFX_Matrix& matrix);
+  void SetAtBoolean(const CFX_ByteString& key, FX_BOOL bValue);
 
-  void AddReference(const CFX_ByteStringC& key,
+  void AddReference(const CFX_ByteString& key,
                     CPDF_IndirectObjectHolder* pDoc,
                     uint32_t objnum);
 
   // Invalidates iterators for the element with the key |key|.
-  void RemoveAt(const CFX_ByteStringC& key);
+  void RemoveAt(const CFX_ByteString& key);
 
   // Invalidates iterators for the element with the key |oldkey|.
-  void ReplaceKey(const CFX_ByteStringC& oldkey, const CFX_ByteStringC& newkey);
+  void ReplaceKey(const CFX_ByteString& oldkey, const CFX_ByteString& newkey);
 
   iterator begin() { return m_Map.begin(); }
   iterator end() { return m_Map.end(); }

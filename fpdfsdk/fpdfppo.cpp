@@ -110,9 +110,9 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
       const CFX_ByteString& cbSrcKeyStr = it.first;
       CPDF_Object* pObj = it.second;
       if (cbSrcKeyStr.Compare(("Type")) && cbSrcKeyStr.Compare(("Parent"))) {
-        if (pCurPageDict->KeyExist(cbSrcKeyStr.AsStringC()))
-          pCurPageDict->RemoveAt(cbSrcKeyStr.AsStringC());
-        pCurPageDict->SetAt(cbSrcKeyStr.AsStringC(), pObj->Clone());
+        if (pCurPageDict->KeyExist(cbSrcKeyStr))
+          pCurPageDict->RemoveAt(cbSrcKeyStr);
+        pCurPageDict->SetAt(cbSrcKeyStr, pObj->Clone());
       }
     }
 
@@ -231,7 +231,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
         }
         if (pNextObj) {
           if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))
-            pDict->RemoveAt(key.AsStringC());
+            pDict->RemoveAt(key);
         } else {
           return FALSE;
         }

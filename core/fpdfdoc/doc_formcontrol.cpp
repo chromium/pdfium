@@ -78,7 +78,7 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
         continue;
       }
       if (csKey2 != "Off") {
-        pSubDict->ReplaceKey(csKey2.AsStringC(), csValue.AsStringC());
+        pSubDict->ReplaceKey(csKey2, csValue);
         break;
       }
     }
@@ -286,7 +286,7 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
   if (CPDF_Dictionary* pDict = ToDictionary(pObj)) {
     CPDF_Dictionary* pFonts = pDict->GetDictBy("Font");
     if (pFonts) {
-      CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag.AsStringC());
+      CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag);
       if (pElement) {
         CPDF_Font* pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
         if (pFont) {
@@ -303,7 +303,7 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
   if (CPDF_Dictionary* pDict = ToDictionary(pObj)) {
     CPDF_Dictionary* pFonts = pDict->GetDictBy("Font");
     if (pFonts) {
-      CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag.AsStringC());
+      CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag);
       if (pElement) {
         CPDF_Font* pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
         if (pFont) {

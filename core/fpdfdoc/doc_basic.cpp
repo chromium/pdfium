@@ -482,7 +482,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
       if (pLabel->KeyExist("P")) {
         wsLabel += pLabel->GetUnicodeTextBy("P");
       }
-      CFX_ByteString bsNumberingStyle = pLabel->GetStringBy("S", NULL);
+      CFX_ByteString bsNumberingStyle = pLabel->GetStringBy("S", nullptr);
       int nLabelNum = nPage - n + pLabel->GetIntegerBy("St", 1);
       CFX_WideString wsNumPortion =
           _GetLabelNumPortion(nLabelNum, bsNumberingStyle);

@@ -54,12 +54,12 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   }
   CPDF_Dictionary* pDRFontDict = pDRDict ? pDRDict->GetDictBy("Font") : nullptr;
   if (pDRFontDict) {
-    pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1).AsStringC());
+    pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
     if (!pFontDict && !bUseFormRes) {
       pDRDict = pFormDict->GetDictBy("DR");
       pDRFontDict = pDRDict->GetDictBy("Font");
       if (pDRFontDict)
-        pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1).AsStringC());
+        pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
     }
   }
   if (!pDRFontDict)
@@ -72,7 +72,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     pFontDict->SetAtName("BaseFont", "Helvetica");
     pFontDict->SetAtName("Encoding", "WinAnsiEncoding");
     pDoc->AddIndirectObject(pFontDict);
-    pDRFontDict->SetAtReference(sFontName.Mid(1).AsStringC(), pDoc, pFontDict);
+    pDRFontDict->SetAtReference(sFontName.Mid(1), pDoc, pFontDict);
   }
   CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
   if (!pDefFont)
@@ -189,9 +189,8 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         pStreamResFontList = new CPDF_Dictionary;
         pStreamResList->SetAt("Font", pStreamResFontList);
       }
-      if (!pStreamResFontList->KeyExist(sFontName.AsStringC()))
-        pStreamResFontList->SetAtReference(sFontName.AsStringC(), pDoc,
-                                           pFontDict);
+      if (!pStreamResFontList->KeyExist(sFontName))
+        pStreamResFontList->SetAtReference(sFontName, pDoc, pFontDict);
     } else {
       pStreamDict->SetAt("Resources", pFormDict->GetDictBy("DR")->Clone());
       pStreamResList = pStreamDict->GetDictBy("Resources");
@@ -437,9 +436,8 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
           pStreamResFontList = new CPDF_Dictionary;
           pStreamResList->SetAt("Font", pStreamResFontList);
         }
-        if (!pStreamResFontList->KeyExist(sFontName.AsStringC()))
-          pStreamResFontList->SetAtReference(sFontName.AsStringC(), pDoc,
-                                             pFontDict);
+        if (!pStreamResFontList->KeyExist(sFontName))
+          pStreamResFontList->SetAtReference(sFontName, pDoc, pFontDict);
       } else {
         pStreamDict->SetAt("Resources", pFormDict->GetDictBy("DR")->Clone());
         pStreamResList = pStreamDict->GetDictBy("Resources");

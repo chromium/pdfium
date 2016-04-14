@@ -829,22 +829,22 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
 
   if (sAPState.IsEmpty()) {
     pParentDict = pAPDict;
-    pStream = pAPDict->GetStreamBy(sAPType.AsStringC());
+    pStream = pAPDict->GetStreamBy(sAPType);
   } else {
-    CPDF_Dictionary* pAPTypeDict = pAPDict->GetDictBy(sAPType.AsStringC());
+    CPDF_Dictionary* pAPTypeDict = pAPDict->GetDictBy(sAPType);
     if (!pAPTypeDict) {
       pAPTypeDict = new CPDF_Dictionary;
-      pAPDict->SetAt(sAPType.AsStringC(), pAPTypeDict);
+      pAPDict->SetAt(sAPType, pAPTypeDict);
     }
     pParentDict = pAPTypeDict;
-    pStream = pAPTypeDict->GetStreamBy(sAPState.AsStringC());
+    pStream = pAPTypeDict->GetStreamBy(sAPState);
   }
 
   if (!pStream) {
     pStream = new CPDF_Stream(nullptr, 0, nullptr);
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
     int32_t objnum = pDoc->AddIndirectObject(pStream);
-    pParentDict->SetAtReference(sAPType.AsStringC(), pDoc, objnum);
+    pParentDict->SetAtReference(sAPType, pDoc, objnum);
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();

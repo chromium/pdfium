@@ -134,7 +134,7 @@ class PDFObjectsTest : public testing::Test {
           return false;
         for (CPDF_Dictionary::const_iterator it = dict1->begin();
              it != dict1->end(); ++it) {
-          if (!Equal(it->second, dict2->GetObjectBy(it->first.AsStringC())))
+          if (!Equal(it->second, dict2->GetObjectBy(it->first)))
             return false;
         }
         return true;
@@ -556,7 +556,7 @@ TEST(PDFArrayTest, GetTypeAt) {
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        vals[i]->SetAt(CFX_ByteStringC(key.c_str()), new CPDF_Number(value));
+        vals[i]->SetAt(key.c_str(), new CPDF_Number(value));
       }
       arr->InsertAt(i, vals[i]);
     }
@@ -583,7 +583,7 @@ TEST(PDFArrayTest, GetTypeAt) {
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        vals[i]->SetAt(CFX_ByteStringC(key.c_str()), new CPDF_Number(value));
+        vals[i]->SetAt(key.c_str(), new CPDF_Number(value));
       }
       uint8_t content[] = "content: this is a stream";
       size_t data_size = FX_ArraySize(content);

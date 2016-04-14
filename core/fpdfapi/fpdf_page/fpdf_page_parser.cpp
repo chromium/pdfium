@@ -566,9 +566,9 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
-        pDict->SetAtReference(key.AsStringC(), m_pDocument, dwObjNum);
+        pDict->SetAtReference(key, m_pDocument, dwObjNum);
       else
-        pDict->SetAt(key.AsStringC(), pObj.release());
+        pDict->SetAt(key, pObj.release());
     }
   }
   PDF_ReplaceAbbr(pDict);
@@ -721,7 +721,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
       pList = m_pPageResources->GetDictBy("XObject");
     if (!pList)
       return;
-    CPDF_Reference* pRes = ToReference(pList->GetObjectBy(name.AsStringC()));
+    CPDF_Reference* pRes = ToReference(pList->GetObjectBy(name));
     if (!pRes)
       return;
 
@@ -1258,7 +1258,7 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     if (!pList) {
       return NULL;
     }
-    CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsStringC());
+    CPDF_Object* pRes = pList->GetDirectObjectBy(name);
     return pRes;
   }
   CPDF_Dictionary* pList = m_pResources->GetDictBy(type);
@@ -1270,10 +1270,10 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     if (!pList) {
       return NULL;
     }
-    CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsStringC());
+    CPDF_Object* pRes = pList->GetDirectObjectBy(name);
     return pRes;
   }
-  CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsStringC());
+  CPDF_Object* pRes = pList->GetDirectObjectBy(name);
   return pRes;
 }
 
@@ -1794,9 +1794,9 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
       }
       for (const auto& op : replacements) {
         if (op.is_replace_key)
-          pDict->ReplaceKey(op.key.AsStringC(), op.replacement);
+          pDict->ReplaceKey(op.key, op.replacement);
         else
-          pDict->SetAtName(op.key.AsStringC(), op.replacement);
+          pDict->SetAtName(op.key, op.replacement);
       }
       break;
     }

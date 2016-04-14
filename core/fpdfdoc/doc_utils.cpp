@@ -386,7 +386,7 @@ CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
   if (!pFonts) {
     return NULL;
   }
-  CPDF_Dictionary* pElement = pFonts->GetDictBy(csAlias.AsStringC());
+  CPDF_Dictionary* pElement = pFonts->GetDictBy(csAlias);
   if (!pElement) {
     return NULL;
   }
@@ -605,8 +605,7 @@ void AddInterFormFont(CPDF_Dictionary*& pFormDict,
   csNameTag.Remove(' ');
   csNameTag = CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4,
                                                       csNameTag.c_str());
-  pFonts->SetAtReference(csNameTag.AsStringC(), pDocument,
-                         pFont->GetFontDict());
+  pFonts->SetAtReference(csNameTag, pDocument, pFont->GetFontDict());
 }
 CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
                                   CPDF_Document* pDocument,
@@ -650,7 +649,7 @@ void RemoveInterFormFont(CPDF_Dictionary* pFormDict, const CPDF_Font* pFont) {
   }
   CPDF_Dictionary* pDR = pFormDict->GetDictBy("DR");
   CPDF_Dictionary* pFonts = pDR->GetDictBy("Font");
-  pFonts->RemoveAt(csTag.AsStringC());
+  pFonts->RemoveAt(csTag);
 }
 void RemoveInterFormFont(CPDF_Dictionary* pFormDict, CFX_ByteString csNameTag) {
   if (!pFormDict || csNameTag.IsEmpty()) {
@@ -664,7 +663,7 @@ void RemoveInterFormFont(CPDF_Dictionary* pFormDict, CFX_ByteString csNameTag) {
   if (!pFonts) {
     return;
   }
-  pFonts->RemoveAt(csNameTag.AsStringC());
+  pFonts->RemoveAt(csNameTag);
 }
 
 CPDF_Font* GetDefaultInterFormFont(CPDF_Dictionary* pFormDict,

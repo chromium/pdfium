@@ -138,7 +138,7 @@ FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig,
       if (!pState) {
         continue;
       }
-      bState = pState->GetStringBy(csFind.AsStringC()) != "OFF";
+      bState = pState->GetStringBy(csFind) != "OFF";
     }
   }
   return bState;
@@ -150,11 +150,11 @@ FX_BOOL CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
   CFX_ByteString csState = FPDFDOC_OCG_GetUsageTypeString(m_eUsageType);
   CPDF_Dictionary* pUsage = pOCGDict->GetDictBy("Usage");
   if (pUsage) {
-    CPDF_Dictionary* pState = pUsage->GetDictBy(csState.AsStringC());
+    CPDF_Dictionary* pState = pUsage->GetDictBy(csState);
     if (pState) {
       CFX_ByteString csFind = csState + "State";
-      if (pState->KeyExist(csFind.AsStringC())) {
-        return pState->GetStringBy(csFind.AsStringC()) != "OFF";
+      if (pState->KeyExist(csFind)) {
+        return pState->GetStringBy(csFind) != "OFF";
       }
     }
     if (csState != "View") {

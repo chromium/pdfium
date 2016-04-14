@@ -590,7 +590,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
       }
 
       if (key.GetLength() > 1) {
-        pDict->SetAt(CFX_ByteStringC(key.c_str() + 1, key.GetLength() - 1),
+        pDict->SetAt(CFX_ByteString(key.c_str() + 1, key.GetLength() - 1),
                      obj.release());
       }
     }
