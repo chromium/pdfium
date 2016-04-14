@@ -201,33 +201,35 @@ CPDF_ApSettings CPDF_FormControl::GetMK() const {
                                        : nullptr);
 }
 
-bool CPDF_FormControl::HasMKEntry(CFX_ByteString csEntry) const {
-  return GetMK().HasMKEntry(csEntry.AsStringC());
+bool CPDF_FormControl::HasMKEntry(const CFX_ByteString& csEntry) const {
+  return GetMK().HasMKEntry(csEntry);
 }
 
 int CPDF_FormControl::GetRotation() {
   return GetMK().GetRotation();
 }
 
-FX_ARGB CPDF_FormControl::GetColor(int& iColorType, CFX_ByteString csEntry) {
-  return GetMK().GetColor(iColorType, csEntry.AsStringC());
+FX_ARGB CPDF_FormControl::GetColor(int& iColorType,
+                                   const CFX_ByteString& csEntry) {
+  return GetMK().GetColor(iColorType, csEntry);
 }
 
-FX_FLOAT CPDF_FormControl::GetOriginalColor(int index, CFX_ByteString csEntry) {
-  return GetMK().GetOriginalColor(index, csEntry.AsStringC());
+FX_FLOAT CPDF_FormControl::GetOriginalColor(int index,
+                                            const CFX_ByteString& csEntry) {
+  return GetMK().GetOriginalColor(index, csEntry);
 }
 
 void CPDF_FormControl::GetOriginalColor(int& iColorType,
                                         FX_FLOAT fc[4],
-                                        CFX_ByteString csEntry) {
-  GetMK().GetOriginalColor(iColorType, fc, csEntry.AsStringC());
+                                        const CFX_ByteString& csEntry) {
+  GetMK().GetOriginalColor(iColorType, fc, csEntry);
 }
-CFX_WideString CPDF_FormControl::GetCaption(CFX_ByteString csEntry) {
-  return GetMK().GetCaption(csEntry.AsStringC());
+CFX_WideString CPDF_FormControl::GetCaption(const CFX_ByteString& csEntry) {
+  return GetMK().GetCaption(csEntry);
 }
 
-CPDF_Stream* CPDF_FormControl::GetIcon(CFX_ByteString csEntry) {
-  return GetMK().GetIcon(csEntry.AsStringC());
+CPDF_Stream* CPDF_FormControl::GetIcon(const CFX_ByteString& csEntry) {
+  return GetMK().GetIcon(csEntry);
 }
 
 CPDF_IconFit CPDF_FormControl::GetIconFit() {
@@ -330,7 +332,7 @@ int CPDF_FormControl::GetControlAlignment() {
 
 CPDF_ApSettings::CPDF_ApSettings(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
-bool CPDF_ApSettings::HasMKEntry(const CFX_ByteStringC& csEntry) const {
+bool CPDF_ApSettings::HasMKEntry(const CFX_ByteString& csEntry) const {
   return m_pDict && m_pDict->KeyExist(csEntry);
 }
 
@@ -339,7 +341,7 @@ int CPDF_ApSettings::GetRotation() const {
 }
 
 FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
-                                  const CFX_ByteStringC& csEntry) const {
+                                  const CFX_ByteString& csEntry) const {
   iColorType = COLORTYPE_TRANSPARENT;
   if (!m_pDict)
     return 0;
@@ -376,7 +378,7 @@ FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
 
 FX_FLOAT CPDF_ApSettings::GetOriginalColor(
     int index,
-    const CFX_ByteStringC& csEntry) const {
+    const CFX_ByteString& csEntry) const {
   if (!m_pDict)
     return 0;
 
@@ -386,7 +388,7 @@ FX_FLOAT CPDF_ApSettings::GetOriginalColor(
 
 void CPDF_ApSettings::GetOriginalColor(int& iColorType,
                                        FX_FLOAT fc[4],
-                                       const CFX_ByteStringC& csEntry) const {
+                                       const CFX_ByteString& csEntry) const {
   iColorType = COLORTYPE_TRANSPARENT;
   for (int i = 0; i < 4; i++) {
     fc[i] = 0;
@@ -417,11 +419,11 @@ void CPDF_ApSettings::GetOriginalColor(int& iColorType,
 }
 
 CFX_WideString CPDF_ApSettings::GetCaption(
-    const CFX_ByteStringC& csEntry) const {
+    const CFX_ByteString& csEntry) const {
   return m_pDict ? m_pDict->GetUnicodeTextBy(csEntry) : CFX_WideString();
 }
 
-CPDF_Stream* CPDF_ApSettings::GetIcon(const CFX_ByteStringC& csEntry) const {
+CPDF_Stream* CPDF_ApSettings::GetIcon(const CFX_ByteString& csEntry) const {
   return m_pDict ? m_pDict->GetStreamBy(csEntry) : nullptr;
 }
 
