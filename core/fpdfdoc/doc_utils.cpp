@@ -91,11 +91,11 @@ CFX_ByteString CPDF_DefaultAppearance::GetFontString() {
   }
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
   if (syntax.FindTagParamFromStart("Tf", 2)) {
-    csFont += (CFX_ByteString)syntax.GetWord();
+    csFont += syntax.GetWord();
     csFont += " ";
-    csFont += (CFX_ByteString)syntax.GetWord();
+    csFont += syntax.GetWord();
     csFont += " ";
-    csFont += (CFX_ByteString)syntax.GetWord();
+    csFont += syntax.GetWord();
   }
   return csFont;
 }
@@ -135,31 +135,31 @@ CFX_ByteString CPDF_DefaultAppearance::GetColorString(
   }
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
   if (syntax.FindTagParamFromStart(bStrokingOperation ? "G" : "g", 1)) {
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     return csColor;
   }
   if (syntax.FindTagParamFromStart(bStrokingOperation ? "RG" : "rg", 3)) {
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     return csColor;
   }
   if (syntax.FindTagParamFromStart(bStrokingOperation ? "K" : "k", 4)) {
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
     csColor += " ";
-    csColor += (CFX_ByteString)syntax.GetWord();
+    csColor += syntax.GetWord();
   }
   return csColor;
 }
@@ -245,10 +245,10 @@ CFX_ByteString CPDF_DefaultAppearance::GetTextMatrixString() {
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
   if (syntax.FindTagParamFromStart("Tm", 6)) {
     for (int i = 0; i < 6; i++) {
-      csTM += (CFX_ByteString)syntax.GetWord();
+      csTM += syntax.GetWord();
       csTM += " ";
     }
-    csTM += (CFX_ByteString)syntax.GetWord();
+    csTM += syntax.GetWord();
   }
   return csTM;
 }

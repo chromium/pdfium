@@ -222,7 +222,7 @@ FX_BOOL CBC_DetectionResultRowIndicatorColumn::isLeft() {
   return m_isLeft;
 }
 CFX_ByteString CBC_DetectionResultRowIndicatorColumn::toString() {
-  return (CFX_ByteString) "IsLeft: " + (CFX_ByteString)m_isLeft + '\n' +
+  return CFX_ByteString("IsLeft: ") + m_isLeft + '\n' +
          CBC_DetectionResultColumn::toString();
 }
 void CBC_DetectionResultRowIndicatorColumn::removeIncorrectCodewords(
