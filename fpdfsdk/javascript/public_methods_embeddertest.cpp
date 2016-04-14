@@ -113,56 +113,56 @@ TEST_F(PublicMethodsEmbedderTest, MakeFormatDate) {
 
   // 1968-06-25
   formatted_date = CJS_PublicMethods::MakeFormatDate(-47952000000, L"ddmmyy");
-  EXPECT_STREQ(L"250668", formatted_date);
+  EXPECT_STREQ(L"250668", formatted_date.c_str());
   formatted_date = CJS_PublicMethods::MakeFormatDate(-47952000000, L"yy/mm/dd");
-  EXPECT_STREQ(L"68/06/25", formatted_date);
+  EXPECT_STREQ(L"68/06/25", formatted_date.c_str());
 
   // 1969-12-31
   formatted_date = CJS_PublicMethods::MakeFormatDate(-0.0001, L"ddmmyy");
-  EXPECT_STREQ(L"311269", formatted_date);
+  EXPECT_STREQ(L"311269", formatted_date.c_str());
   formatted_date = CJS_PublicMethods::MakeFormatDate(-0.0001, L"yy!mmdd");
-  EXPECT_STREQ(L"69!1231", formatted_date);
+  EXPECT_STREQ(L"69!1231", formatted_date.c_str());
 
   // 1970-01-01
   formatted_date = CJS_PublicMethods::MakeFormatDate(0, L"ddmmyy");
-  EXPECT_STREQ(L"010170", formatted_date);
+  EXPECT_STREQ(L"010170", formatted_date.c_str());
   formatted_date = CJS_PublicMethods::MakeFormatDate(0, L"mm-yyyy-dd");
-  EXPECT_STREQ(L"01-1970-01", formatted_date);
+  EXPECT_STREQ(L"01-1970-01", formatted_date.c_str());
 
   // 1985-12-31
   formatted_date = CJS_PublicMethods::MakeFormatDate(504835200000.0, L"ddmmyy");
-  EXPECT_STREQ(L"311285", formatted_date);
+  EXPECT_STREQ(L"311285", formatted_date.c_str());
   formatted_date = CJS_PublicMethods::MakeFormatDate(504835200000.0, L"yymmdd");
-  EXPECT_STREQ(L"851231", formatted_date);
+  EXPECT_STREQ(L"851231", formatted_date.c_str());
 
   // 1995-02-01
   formatted_date = CJS_PublicMethods::MakeFormatDate(791596800000.0, L"ddmmyy");
-  EXPECT_STREQ(L"010295", formatted_date);
+  EXPECT_STREQ(L"010295", formatted_date.c_str());
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(791596800000.0, L"yyyymmdd");
-  EXPECT_STREQ(L"19950201", formatted_date);
+  EXPECT_STREQ(L"19950201", formatted_date.c_str());
 
   // 2005-02-01
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(1107216000000.0, L"ddmmyy");
-  EXPECT_STREQ(L"010205", formatted_date);
+  EXPECT_STREQ(L"010205", formatted_date.c_str());
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(1107216000000.0, L"yyyyddmm");
-  EXPECT_STREQ(L"20050102", formatted_date);
+  EXPECT_STREQ(L"20050102", formatted_date.c_str());
 
   // 2085-12-31
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(3660595200000.0, L"ddmmyy");
-  EXPECT_STREQ(L"311285", formatted_date);
+  EXPECT_STREQ(L"311285", formatted_date.c_str());
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(3660595200000.0, L"yyyydd");
-  EXPECT_STREQ(L"208531", formatted_date);
+  EXPECT_STREQ(L"208531", formatted_date.c_str());
 
   // 2095-02-01
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(3947356800000.0, L"ddmmyy");
-  EXPECT_STREQ(L"010295", formatted_date);
+  EXPECT_STREQ(L"010295", formatted_date.c_str());
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(3947356800000.0, L"mmddyyyy");
-  EXPECT_STREQ(L"02012095", formatted_date);
+  EXPECT_STREQ(L"02012095", formatted_date.c_str());
 }

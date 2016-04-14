@@ -284,13 +284,13 @@ void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode,
       (bIsProperty && refNode->GetClassID() != XFA_ELEMENT_PageSet)) {
     refNode->GetClassName(wsTagName);
     ws = wsTagName;
-    wsName.Format(L"#%s[%d]", (const FX_WCHAR*)ws,
+    wsName.Format(L"#%s[%d]", ws.c_str(),
                   XFA_GetIndex(refNode, eLogicType, bIsProperty, TRUE));
     return;
   }
   ws = refNode->GetCData(XFA_ATTRIBUTE_Name);
   ws.Replace(L".", L"\\.");
-  wsName.Format(L"%s[%d]", (const FX_WCHAR*)ws,
+  wsName.Format(L"%s[%d]", ws.c_str(),
                 XFA_GetIndex(refNode, eLogicType, bIsProperty, FALSE));
 }
 

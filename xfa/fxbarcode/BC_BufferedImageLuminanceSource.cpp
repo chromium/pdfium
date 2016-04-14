@@ -99,7 +99,7 @@ CBC_BufferedImageLuminanceSource::CBC_BufferedImageLuminanceSource(
 }
 
 void CBC_BufferedImageLuminanceSource::Init(int32_t& e) {
-  IFX_FileRead* fileread = FX_CreateFileRead(m_filename);
+  IFX_FileRead* fileread = FX_CreateFileRead(m_filename.c_str());
   m_pBitmap = CreateDIBSource(fileread);
   if (!m_pBitmap) {
     e = BCExceptionLoadFile;

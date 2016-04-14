@@ -563,8 +563,8 @@ static CXFA_Node* XFA_NodeMerge_CloneOrMergeInstanceManager(
     CXFA_NodeArray& subforms) {
   CFX_WideStringC wsSubformName = pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
   CFX_WideString wsInstMgrNodeName = FX_WSTRC(L"_") + wsSubformName;
-  uint32_t dwInstNameHash =
-      FX_HashCode_String_GetW(wsInstMgrNodeName, wsInstMgrNodeName.GetLength());
+  uint32_t dwInstNameHash = FX_HashCode_String_GetW(
+      wsInstMgrNodeName.c_str(), wsInstMgrNodeName.GetLength());
   CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
       pDocument, XFA_ELEMENT_InstanceManager, dwInstNameHash, pFormParent);
   if (pExistingNode) {

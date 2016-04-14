@@ -19,14 +19,14 @@ FX_FLOAT CXFA_Font::GetBaselineShift() {
 FX_FLOAT CXFA_Font::GetHorizontalScale() {
   CFX_WideString wsValue;
   m_pNode->TryCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue);
-  int32_t iScale = FXSYS_wtoi((const FX_WCHAR*)wsValue);
+  int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (FX_FLOAT)iScale : 100.0f;
 }
 
 FX_FLOAT CXFA_Font::GetVerticalScale() {
   CFX_WideString wsValue;
   m_pNode->TryCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue);
-  int32_t iScale = FXSYS_wtoi((const FX_WCHAR*)wsValue);
+  int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (FX_FLOAT)iScale : 100.0f;
 }
 

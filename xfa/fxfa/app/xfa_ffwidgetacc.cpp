@@ -200,7 +200,7 @@ FX_BOOL CXFA_WidgetAcc::GetName(CFX_WideString& wsName, int32_t iNameType) {
   m_pNode->GetSOMExpression(wsName);
   if (iNameType == 2 && wsName.GetLength() >= 15) {
     CFX_WideStringC wsPre = FX_WSTRC(L"xfa[0].form[0].");
-    if (wsPre == CFX_WideStringC(wsName, wsPre.GetLength())) {
+    if (wsPre == CFX_WideStringC(wsName.c_str(), wsPre.GetLength())) {
       wsName.Delete(0, wsPre.GetLength());
     }
   }
@@ -528,7 +528,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         GetValidateCaptionName(wsCaptionName, bVersionFlag);
         CFX_WideString wsError;
         pAppProvider->LoadString(XFA_IDS_ValidateNullError, wsError);
-        wsNullMsg.Format(wsError, (const FX_WCHAR*)wsCaptionName);
+        wsNullMsg.Format(wsError.c_str(), wsCaptionName.c_str());
       }
       pAppProvider->MsgBox(wsNullMsg.AsStringC(), wsTitle.AsStringC(),
                            XFA_MBICON_Status, XFA_MB_OK);
@@ -542,8 +542,8 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         GetValidateCaptionName(wsCaptionName, bVersionFlag);
         CFX_WideString wsWarning;
         pAppProvider->LoadString(XFA_IDS_ValidateNullWarning, wsWarning);
-        wsNullMsg.Format(wsWarning, (const FX_WCHAR*)wsCaptionName,
-                         (const FX_WCHAR*)wsCaptionName);
+        wsNullMsg.Format(wsWarning.c_str(), wsCaptionName.c_str(),
+                         wsCaptionName.c_str());
       }
       if (pAppProvider->MsgBox(wsNullMsg.AsStringC(), wsTitle.AsStringC(),
                                XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
@@ -584,18 +584,18 @@ void CXFA_WidgetAcc::GetValidateMessage(IXFA_AppProvider* pAppProvider,
   CFX_WideString wsError;
   if (bVersionFlag) {
     pAppProvider->LoadString(XFA_IDS_ValidateFailed, wsError);
-    wsMessage.Format(wsError, (const FX_WCHAR*)wsCaptionName);
+    wsMessage.Format(wsError.c_str(), wsCaptionName.c_str());
     return;
   }
   if (bError) {
     pAppProvider->LoadString(XFA_IDS_ValidateError, wsError);
-    wsMessage.Format(wsError, (const FX_WCHAR*)wsCaptionName);
+    wsMessage.Format(wsError.c_str(), wsCaptionName.c_str());
     return;
   }
   CFX_WideString wsWarning;
   pAppProvider->LoadString(XFA_IDS_ValidateWarning, wsWarning);
-  wsMessage.Format(wsWarning, (const FX_WCHAR*)wsCaptionName,
-                   (const FX_WCHAR*)wsCaptionName);
+  wsMessage.Format(wsWarning.c_str(), wsCaptionName.c_str(),
+                   wsCaptionName.c_str());
 }
 int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (GetClassID() == XFA_ELEMENT_Draw) {
@@ -916,7 +916,7 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
     pTextOut->SetStyles(dwStyles);
   }
   ((CXFA_FieldLayoutData*)m_pLayoutData)
-      ->m_pTextOut->CalcLogicSize(wsText, wsText.GetLength(), size);
+      ->m_pTextOut->CalcLogicSize(wsText.c_str(), wsText.GetLength(), size);
 }
 FX_BOOL CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
   if (size.x > 0) {

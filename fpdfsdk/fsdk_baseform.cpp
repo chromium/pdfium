@@ -718,7 +718,7 @@ void CPDFSDK_Widget::ResetAppearance(FX_BOOL bValueChanged) {
     case FIELDTYPE_COMBOBOX: {
       FX_BOOL bFormated = FALSE;
       CFX_WideString sValue = OnFormat(bFormated);
-      ResetAppearance(bFormated ? sValue : nullptr, TRUE);
+      ResetAppearance(bFormated ? sValue.c_str() : nullptr, TRUE);
     } break;
     default:
       ResetAppearance(nullptr, FALSE);
@@ -1546,7 +1546,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
     CFX_WideString sValueTmp;
     if (!sValue && GetMixXFAWidget()) {
       sValueTmp = GetValue(TRUE);
-      sValue = sValueTmp;
+      sValue = sValueTmp.c_str();
     }
 #endif  // PDF_ENABLE_XFA
 

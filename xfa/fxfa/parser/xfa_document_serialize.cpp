@@ -407,7 +407,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(
     wsOutput += wsAttr;
   }
   if (!wsOutput.IsEmpty()) {
-    pStream->WriteString((const FX_WCHAR*)wsOutput, wsOutput.GetLength());
+    pStream->WriteString(wsOutput.c_str(), wsOutput.GetLength());
   }
   CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pChildNode) {
@@ -436,7 +436,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
       static const FX_WCHAR s_pwChecksum[] = L" checksum=\"";
       CFX_WideString wsChecksum = CFX_WideString::FromUTF8(pChecksum);
       pStream->WriteString(s_pwChecksum, FXSYS_wcslen(s_pwChecksum));
-      pStream->WriteString((const FX_WCHAR*)wsChecksum, wsChecksum.GetLength());
+      pStream->WriteString(wsChecksum.c_str(), wsChecksum.GetLength());
       pStream->WriteString(L"\"", 1);
     }
     pStream->WriteString(L" xmlns=\"", FXSYS_wcslen(L" xmlns=\""));
@@ -450,8 +450,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
       wsVersionNumber = FX_WSTRC(L"2.8");
     }
     wsVersionNumber += FX_WSTRC(L"/\"\n>");
-    pStream->WriteString((const FX_WCHAR*)wsVersionNumber,
-                         wsVersionNumber.GetLength());
+    pStream->WriteString(wsVersionNumber.c_str(), wsVersionNumber.GetLength());
     CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pChildNode) {
       XFA_DataExporter_RegenerateFormFile_Container(pChildNode, pStream);

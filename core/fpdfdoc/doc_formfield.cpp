@@ -724,7 +724,8 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
       return -1;
   }
 
-  CFX_ByteString csStr = PDF_EncodeText(csOptLabel, csOptLabel.GetLength());
+  CFX_ByteString csStr =
+      PDF_EncodeText(csOptLabel.c_str(), csOptLabel.GetLength());
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "Opt");
   CPDF_Array* pOpt = ToArray(pValue);
   if (!pOpt) {

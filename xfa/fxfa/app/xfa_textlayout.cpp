@@ -303,7 +303,7 @@ void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
     pXMLElement->GetLocalTagName(wsName);
     tagProvider.SetTagNameObj(wsName);
     uint32_t dwHashCode =
-        FX_HashCode_String_GetW(wsName, wsName.GetLength(), TRUE);
+        FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength(), TRUE);
     static const int32_t s_iCount = sizeof(s_XFATagName) / sizeof(uint32_t);
     CFX_DSPATemplate<uint32_t> lookup;
     tagProvider.m_bTagAviliable =
@@ -584,7 +584,7 @@ FX_BOOL CXFA_TextParser::GetTabstops(
     return FALSE;
   }
   int32_t iLength = wsValue.GetLength();
-  const FX_WCHAR* pTabStops = wsValue;
+  const FX_WCHAR* pTabStops = wsValue.c_str();
   int32_t iCur = 0;
   int32_t iLast = 0;
   CFX_WideString wsAlign;
@@ -640,8 +640,8 @@ FX_BOOL CXFA_TextParser::GetTabstops(
         break;
       case XFA_TABSTOPSSTATUS_Location:
         if (ch == ' ') {
-          uint32_t dwHashCode =
-              FX_HashCode_String_GetW(wsAlign, wsAlign.GetLength(), TRUE);
+          uint32_t dwHashCode = FX_HashCode_String_GetW(
+              wsAlign.c_str(), wsAlign.GetLength(), TRUE);
           CXFA_Measurement ms(CFX_WideStringC(pTabStops + iLast, iCur - iLast));
           FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
           pTabstopContext->Append(dwHashCode, fPos);
@@ -656,7 +656,7 @@ FX_BOOL CXFA_TextParser::GetTabstops(
   }
   if (!wsAlign.IsEmpty()) {
     uint32_t dwHashCode =
-        FX_HashCode_String_GetW(wsAlign, wsAlign.GetLength(), TRUE);
+        FX_HashCode_String_GetW(wsAlign.c_str(), wsAlign.GetLength(), TRUE);
     CXFA_Measurement ms(CFX_WideStringC(pTabStops + iLast, iCur - iLast));
     FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
     pTabstopContext->Append(dwHashCode, fPos);

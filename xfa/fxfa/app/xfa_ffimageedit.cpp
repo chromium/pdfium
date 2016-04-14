@@ -131,7 +131,7 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
     return TRUE;
   }
   CFX_WideString wsImage;
-  IFX_FileRead* pFileRead = FX_CreateFileRead(wsFilePath);
+  IFX_FileRead* pFileRead = FX_CreateFileRead(wsFilePath.c_str());
   if (pFileRead) {
     int32_t nDataSize = pFileRead->GetSize();
     if (nDataSize > 0) {

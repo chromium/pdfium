@@ -397,10 +397,10 @@ void CFDE_XMLNode::SaveXMLNode(IFX_Stream* pXMLStream) {
           ws += L"UTF-8";
         }
         ws += L"\"?>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       } else {
-        ws.Format(L"<?%s", (const FX_WCHAR*)pInstruction->m_wsTarget);
-        pXMLStream->WriteString(ws, ws.GetLength());
+        ws.Format(L"<?%s", pInstruction->m_wsTarget.c_str());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         CFX_WideStringArray& attributes = pInstruction->m_Attributes;
         int32_t i, iCount = attributes.GetSize();
         CFX_WideString wsValue;
@@ -416,7 +416,7 @@ void CFDE_XMLNode::SaveXMLNode(IFX_Stream* pXMLStream) {
           wsValue.Replace(L"\"", L"&quot;");
           ws += wsValue;
           ws += L"\"";
-          pXMLStream->WriteString(ws, ws.GetLength());
+          pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         }
         CFX_WideStringArray& targetdata = pInstruction->m_TargetData;
         iCount = targetdata.GetSize();
@@ -424,17 +424,17 @@ void CFDE_XMLNode::SaveXMLNode(IFX_Stream* pXMLStream) {
           ws = L" \"";
           ws += targetdata[i];
           ws += L"\"";
-          pXMLStream->WriteString(ws, ws.GetLength());
+          pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         }
         ws = L"?>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
     } break;
     case FDE_XMLNODE_Element: {
       CFX_WideString ws;
       ws = L"<";
       ws += ((CFDE_XMLElement*)pNode)->m_wsTag;
-      pXMLStream->WriteString(ws, ws.GetLength());
+      pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       CFX_WideStringArray& attributes = ((CFDE_XMLElement*)pNode)->m_Attributes;
       int32_t iCount = attributes.GetSize();
       CFX_WideString wsValue;
@@ -450,14 +450,14 @@ void CFDE_XMLNode::SaveXMLNode(IFX_Stream* pXMLStream) {
         wsValue.Replace(L"\"", L"&quot;");
         ws += wsValue;
         ws += L"\"";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
       if (pNode->m_pChild == NULL) {
         ws = L"\n/>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       } else {
         ws = L"\n>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         CFDE_XMLNode* pChild = pNode->m_pChild;
         while (pChild != NULL) {
           pChild->SaveXMLNode(pXMLStream);
@@ -466,7 +466,7 @@ void CFDE_XMLNode::SaveXMLNode(IFX_Stream* pXMLStream) {
         ws = L"</";
         ws += ((CFDE_XMLElement*)pNode)->m_wsTag;
         ws += L"\n>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
     } break;
     case FDE_XMLNODE_Text: {
@@ -476,13 +476,13 @@ void CFDE_XMLNode::SaveXMLNode(IFX_Stream* pXMLStream) {
       ws.Replace(L">", L"&gt;");
       ws.Replace(L"\'", L"&apos;");
       ws.Replace(L"\"", L"&quot;");
-      pXMLStream->WriteString(ws, ws.GetLength());
+      pXMLStream->WriteString(ws.c_str(), ws.GetLength());
     } break;
     case FDE_XMLNODE_CharData: {
       CFX_WideString ws = L"<![CDATA[";
       ws += ((CFDE_XMLCharData*)pNode)->m_wsCharData;
       ws += L"]]>";
-      pXMLStream->WriteString(ws, ws.GetLength());
+      pXMLStream->WriteString(ws.c_str(), ws.GetLength());
     } break;
     case FDE_XMLNODE_Unknown:
       break;
@@ -580,7 +580,7 @@ int32_t CFDE_XMLInstruction::GetInteger(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FXSYS_wtoi((const FX_WCHAR*)m_Attributes[i + 1]);
+      return FXSYS_wtoi(m_Attributes[i + 1].c_str());
     }
   }
   return iDefValue;
@@ -596,7 +596,7 @@ FX_FLOAT CFDE_XMLInstruction::GetFloat(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FX_wcstof((const FX_WCHAR*)m_Attributes[i + 1]);
+      return FX_wcstof(m_Attributes[i + 1].c_str());
     }
   }
   return fDefValue;
@@ -700,11 +700,11 @@ void CFDE_XMLElement::GetNamespaceURI(CFX_WideString& wsNamespace) const {
       break;
     }
     CFDE_XMLElement* pElement = (CFDE_XMLElement*)pNode;
-    if (!pElement->HasAttribute(wsAttri)) {
+    if (!pElement->HasAttribute(wsAttri.c_str())) {
       pNode = pNode->GetNodeItem(CFDE_XMLNode::Parent);
       continue;
     }
-    pElement->GetString(wsAttri, wsNamespace);
+    pElement->GetString(wsAttri.c_str(), wsNamespace);
     break;
   }
 }
@@ -766,7 +766,7 @@ int32_t CFDE_XMLElement::GetInteger(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FXSYS_wtoi((const FX_WCHAR*)m_Attributes[i + 1]);
+      return FXSYS_wtoi(m_Attributes[i + 1].c_str());
     }
   }
   return iDefValue;
@@ -782,7 +782,7 @@ FX_FLOAT CFDE_XMLElement::GetFloat(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FX_wcstof((const FX_WCHAR*)m_Attributes[i + 1]);
+      return FX_wcstof(m_Attributes[i + 1].c_str());
     }
   }
   return fDefValue;
@@ -955,10 +955,10 @@ void CFDE_XMLDoc::SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pINode) {
           ws += L"UTF-8";
         }
         ws += L"\"?>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       } else {
-        ws.Format(L"<?%s", (const FX_WCHAR*)pInstruction->m_wsTarget);
-        pXMLStream->WriteString(ws, ws.GetLength());
+        ws.Format(L"<?%s", pInstruction->m_wsTarget.c_str());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         CFX_WideStringArray& attributes = pInstruction->m_Attributes;
         int32_t i, iCount = attributes.GetSize();
         CFX_WideString wsValue;
@@ -974,7 +974,7 @@ void CFDE_XMLDoc::SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pINode) {
           wsValue.Replace(L"\"", L"&quot;");
           ws += wsValue;
           ws += L"\"";
-          pXMLStream->WriteString(ws, ws.GetLength());
+          pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         }
         CFX_WideStringArray& targetdata = pInstruction->m_TargetData;
         iCount = targetdata.GetSize();
@@ -982,17 +982,17 @@ void CFDE_XMLDoc::SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pINode) {
           ws = L" \"";
           ws += targetdata[i];
           ws += L"\"";
-          pXMLStream->WriteString(ws, ws.GetLength());
+          pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         }
         ws = L"?>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
     } break;
     case FDE_XMLNODE_Element: {
       CFX_WideString ws;
       ws = L"<";
       ws += ((CFDE_XMLElement*)pNode)->m_wsTag;
-      pXMLStream->WriteString(ws, ws.GetLength());
+      pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       CFX_WideStringArray& attributes = ((CFDE_XMLElement*)pNode)->m_Attributes;
       int32_t iCount = attributes.GetSize();
       CFX_WideString wsValue;
@@ -1008,14 +1008,14 @@ void CFDE_XMLDoc::SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pINode) {
         wsValue.Replace(L"\"", L"&quot;");
         ws += wsValue;
         ws += L"\"";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
       if (pNode->m_pChild == NULL) {
         ws = L"\n/>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       } else {
         ws = L"\n>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         CFDE_XMLNode* pChild = pNode->m_pChild;
         while (pChild != NULL) {
           SaveXMLNode(pXMLStream, static_cast<CFDE_XMLNode*>(pChild));
@@ -1024,7 +1024,7 @@ void CFDE_XMLDoc::SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pINode) {
         ws = L"</";
         ws += ((CFDE_XMLElement*)pNode)->m_wsTag;
         ws += L"\n>";
-        pXMLStream->WriteString(ws, ws.GetLength());
+        pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
     } break;
     case FDE_XMLNODE_Text: {
@@ -1034,13 +1034,13 @@ void CFDE_XMLDoc::SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pINode) {
       ws.Replace(L">", L"&gt;");
       ws.Replace(L"\'", L"&apos;");
       ws.Replace(L"\"", L"&quot;");
-      pXMLStream->WriteString(ws, ws.GetLength());
+      pXMLStream->WriteString(ws.c_str(), ws.GetLength());
     } break;
     case FDE_XMLNODE_CharData: {
       CFX_WideString ws = L"<![CDATA[";
       ws += ((CFDE_XMLCharData*)pNode)->m_wsCharData;
       ws += L"]]>";
-      pXMLStream->WriteString(ws, ws.GetLength());
+      pXMLStream->WriteString(ws.c_str(), ws.GetLength());
     } break;
     case FDE_XMLNODE_Unknown:
       break;

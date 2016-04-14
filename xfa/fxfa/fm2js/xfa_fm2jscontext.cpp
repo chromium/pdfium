@@ -2123,7 +2123,7 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis,
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
-  strLocalDate = FX_UTF8Encode(wsRet, wsRet.GetLength());
+  strLocalDate = FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength());
   return TRUE;
 }
 FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
@@ -2164,7 +2164,7 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
-  strLocalTime = FX_UTF8Encode(wsRet, wsRet.GetLength());
+  strLocalTime = FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength());
   return TRUE;
 }
 FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
@@ -2205,7 +2205,7 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
-  strGMTTime = FX_UTF8Encode(wsRet, wsRet.GetLength());
+  strGMTTime = FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength());
   return TRUE;
 }
 int32_t CXFA_FM2JSContext::DateString2Num(const CFX_ByteStringC& szDateString) {
@@ -2381,7 +2381,7 @@ void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis,
     pLocale->GetDateTimeSymbols(wsSymbols);
     XFA_FM_AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Date);
   }
-  strFormat = FX_UTF8Encode(strRet, strRet.GetLength());
+  strFormat = FX_UTF8Encode(strRet.c_str(), strRet.GetLength());
 }
 void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis,
                                            int32_t iStyle,
@@ -2436,7 +2436,7 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis,
     pLocale->GetDateTimeSymbols(wsSymbols);
     XFA_FM_AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Time);
   }
-  strFormat = FX_UTF8Encode(strRet, strRet.GetLength());
+  strFormat = FX_UTF8Encode(strRet.c_str(), strRet.GetLength());
 }
 void CXFA_FM2JSContext::GetStandardDateFormat(FXJSE_HOBJECT hThis,
                                               int32_t iStyle,
@@ -3250,7 +3250,8 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,
       FXJSE_HVALUE returnValue = FXJSE_Value_Create(hruntime);
       javaScript = wsJavaScriptBuf.GetWideString();
       FXJSE_ExecuteScript(
-          hContext, FX_UTF8Encode(javaScript, javaScript.GetLength()).c_str(),
+          hContext,
+          FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).c_str(),
           returnValue);
       FXJSE_Value_Set(args.GetReturnValue(), returnValue);
       FXJSE_Value_Release(returnValue);
@@ -3367,7 +3368,7 @@ void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,
       unitspanString.MakeLower();
       CFX_WideString wsTypeString =
           CFX_WideString::FromUTF8(unitspanString.AsStringC());
-      const FX_WCHAR* pData = wsTypeString;
+      const FX_WCHAR* pData = wsTypeString.c_str();
       int32_t u = 0;
       int32_t uLen = wsTypeString.GetLength();
       while (*(pData + u) == 0x20 || *(pData + u) == 0x09 ||
@@ -3727,7 +3728,7 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,
 void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultString) {
   CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
-  const FX_WCHAR* pData = wsURLString;
+  const FX_WCHAR* pData = wsURLString.c_str();
   int32_t iLen = wsURLString.GetLength();
   int32_t i = 0;
   FX_WCHAR ch = 0;
@@ -3788,7 +3789,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
   int32_t i = 0;
   int32_t iCode = 0;
   FX_WCHAR ch = 0;
-  const FX_WCHAR* pData = wsHTMLString;
+  const FX_WCHAR* pData = wsHTMLString.c_str();
   CFX_WideTextBuf wsResultBuf;
   while (i < iLen) {
     ch = *(pData + i);
@@ -3862,7 +3863,7 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
   int32_t i = 0;
   int32_t iCode = 0;
   FX_WCHAR ch = 0;
-  const FX_WCHAR* pData = wsXMLString;
+  const FX_WCHAR* pData = wsXMLString.c_str();
   CFX_WideTextBuf wsXMLBuf;
   while (i < iLen) {
     ch = *(pData + i);
@@ -4121,7 +4122,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
   uint32_t ch = 0;
   int32_t iLen = wsHTMLString.GetLength();
   int32_t i = 0;
-  const FX_WCHAR* pData = wsHTMLString;
+  const FX_WCHAR* pData = wsHTMLString.c_str();
   int32_t iIndex = 0;
   CFX_WideString htmlReserve;
   while (i < iLen) {
@@ -4183,7 +4184,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
   int32_t iLength = wsXMLString.GetLength();
   int32_t iIndex = 0;
   int32_t u = 0;
-  const FX_WCHAR* pData = wsXMLString;
+  const FX_WCHAR* pData = wsXMLString.c_str();
   for (u = 0; u < iLength; ++u) {
     ch = *(pData + u);
     switch (ch) {
@@ -4312,7 +4313,7 @@ static FX_BOOL XFA_PATTERN_STRING_Type(const CFX_ByteStringC& szPattern,
   }
   patternType = XFA_VT_NULL;
   wsPattern.MakeLower();
-  const FX_WCHAR* pData = wsPattern;
+  const FX_WCHAR* pData = wsPattern.c_str();
   int32_t iLength = wsPattern.GetLength();
   int32_t iIndex = 0;
   FX_BOOL bSingleQuotation = FALSE;
@@ -4442,7 +4443,7 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,
                                    XFA_VALUEPICTURE_Display)) {
       FXJSE_Value_SetUTF8String(
           args.GetReturnValue(),
-          FX_UTF8Encode(wsRet, wsRet.GetLength()).AsStringC());
+          FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength()).AsStringC());
     } else {
       FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
     }
@@ -4522,7 +4523,7 @@ void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,
       CFX_WideTextBuf lowStringBuf;
       CFX_WideString wsArgString =
           CFX_WideString::FromUTF8(argString.AsStringC());
-      const FX_WCHAR* pData = wsArgString;
+      const FX_WCHAR* pData = wsArgString.c_str();
       int32_t iLen = argString.GetLength();
       int32_t i = 0;
       int32_t ch = 0;
@@ -5148,7 +5149,7 @@ void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,
       CFX_WideTextBuf upperStringBuf;
       CFX_WideString wsArgString =
           CFX_WideString::FromUTF8(argString.AsStringC());
-      const FX_WCHAR* pData = wsArgString;
+      const FX_WCHAR* pData = wsArgString.c_str();
       int32_t iLen = wsArgString.GetLength();
       int32_t i = 0;
       int32_t ch = 0;
@@ -5537,7 +5538,7 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,
     if (bFlags) {
       FXJSE_Value_SetUTF8String(
           args.GetReturnValue(),
-          FX_UTF8Encode(decodedResponse, decodedResponse.GetLength())
+          FX_UTF8Encode(decodedResponse.c_str(), decodedResponse.GetLength())
               .AsStringC());
     } else {
       pContext->ThrowScriptErrorMessage(XFA_IDS_SERVER_DENY);
@@ -6146,8 +6147,8 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         CFX_WideString wsSomExpression =
             CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                          (const FX_WCHAR*)wsPropertyName,
-                                          (const FX_WCHAR*)wsSomExpression);
+                                          wsPropertyName.c_str(),
+                                          wsSomExpression.c_str());
       }
       for (int32_t i = 0; i < iLength - 2; i++) {
         for (int32_t j = 0; j < iSizes[i]; j++) {
@@ -6209,8 +6210,8 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         CFX_WideString wsSomExpression =
             CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                          (const FX_WCHAR*)wsPropertyName,
-                                          (const FX_WCHAR*)wsSomExpression);
+                                          wsPropertyName.c_str(),
+                                          wsSomExpression.c_str());
       }
     }
     if (argc == 5) {
@@ -6294,8 +6295,8 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         CFX_WideString wsSomExpression =
             CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                          (const FX_WCHAR*)wsPropertyName,
-                                          (const FX_WCHAR*)wsSomExpression);
+                                          wsPropertyName.c_str(),
+                                          wsSomExpression.c_str());
       }
       for (int32_t i = 0; i < iLength - 2; i++) {
         for (int32_t j = 0; j < iSizes[i]; j++) {
@@ -6356,8 +6357,8 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         CFX_WideString wsSomExpression =
             CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                          (const FX_WCHAR*)wsPropertyName,
-                                          (const FX_WCHAR*)wsSomExpression);
+                                          wsPropertyName.c_str(),
+                                          wsSomExpression.c_str());
       }
     }
     if (argc == 5) {
@@ -6390,7 +6391,8 @@ void CXFA_FM2JSContext::eval_translation(FXJSE_HOBJECT hThis,
         CFX_WideString javaScript = wsJavaScriptBuf.GetWideString();
         FXJSE_Value_SetUTF8String(
             args.GetReturnValue(),
-            FX_UTF8Encode(javaScript, javaScript.GetLength()).AsStringC());
+            FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength())
+                .AsStringC());
       } else {
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
       }
@@ -7230,8 +7232,8 @@ void CXFA_FM2JSContext::ThrowScriptErrorMessage(int32_t iStringID, ...) {
   CFX_WideString wsMessage;
   va_list arg_ptr;
   va_start(arg_ptr, iStringID);
-  wsMessage.FormatV((const FX_WCHAR*)wsFormat, arg_ptr);
+  wsMessage.FormatV(wsFormat.c_str(), arg_ptr);
   va_end(arg_ptr);
   FXJSE_ThrowMessage(
-      "", FX_UTF8Encode(wsMessage, wsMessage.GetLength()).AsStringC());
+      "", FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());
 }

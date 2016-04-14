@@ -599,7 +599,7 @@ int32_t CXFA_WideTextRead::ReadString(FX_WCHAR* pStr,
   if (iMaxLength > m_wsBuffer.GetLength() - m_iPosition) {
     iMaxLength = m_wsBuffer.GetLength() - m_iPosition;
   }
-  FXSYS_wcsncpy(pStr, (const FX_WCHAR*)m_wsBuffer + m_iPosition, iMaxLength);
+  FXSYS_wcsncpy(pStr, m_wsBuffer.c_str() + m_iPosition, iMaxLength);
   m_iPosition += iMaxLength;
   bEOS = IsEOF();
   return iMaxLength;

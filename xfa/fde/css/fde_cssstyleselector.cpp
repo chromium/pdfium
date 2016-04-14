@@ -570,7 +570,8 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
         } else if (iLen > 0) {
           psz = pSyntax->GetCurrentString(iLen);
           if (iLen > 0) {
-            pDecl->AddProperty(&args, wsName, wsName.GetLength(), psz, iLen);
+            pDecl->AddProperty(&args, wsName.c_str(), wsName.GetLength(), psz,
+                               iLen);
           }
         }
       } else {

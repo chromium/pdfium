@@ -497,10 +497,6 @@ class CFX_WideString {
   // Note: Any subsequent modification of |this| will invalidate the result.
   const FX_WCHAR* c_str() const { return m_pData ? m_pData->m_String : L""; }
 
-  // Implicit conversion to C-style wide string -- deprecated.
-  // Note: Any subsequent modification of |this| will invalidate the result.
-  operator const FX_WCHAR*() const { return m_pData ? m_pData->m_String : L""; }
-
   // Explicit conversion to CFX_WideStringC.
   // Note: Any subsequent modification of |this| will invalidate the result.
   CFX_WideStringC AsStringC() const {

@@ -177,8 +177,7 @@ class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target {
   }
   virtual uint32_t AddRef() { return ++m_dwRefCount; }
 
- public:
-  const FX_WCHAR* GetLinkURL() { return m_pszURLContent; }
+  const FX_WCHAR* GetLinkURL() { return m_pszURLContent.c_str(); }
 
  protected:
   IFX_MEMAllocator* m_pAllocator;

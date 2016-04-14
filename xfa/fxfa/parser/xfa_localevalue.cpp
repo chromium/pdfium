@@ -219,7 +219,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
     int32_t nExponent = 0;
     int cc = 0;
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
-    const FX_WCHAR* str = (const FX_WCHAR*)m_wsValue;
+    const FX_WCHAR* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
     while (XFA_IsSpace(str[cc]) && cc < len) {
       cc++;
@@ -294,7 +294,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
     int32_t nExponent = 0;
     int32_t cc = 0;
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
-    const FX_WCHAR* str = (const FX_WCHAR*)m_wsValue;
+    const FX_WCHAR* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
     while (XFA_IsSpace(str[cc]) && cc < len) {
       cc++;
@@ -615,7 +615,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
   uint16_t wYear = 0;
   uint16_t wMonth = 0;
   uint16_t wDay = 0;
-  const FX_WCHAR* pDate = (const FX_WCHAR*)wsDate;
+  const FX_WCHAR* pDate = wsDate.c_str();
   int nIndex = 0, nStart = 0;
   while (pDate[nIndex] != '\0' && nIndex < wCountY) {
     if (!XFA_IsDigit(pDate[nIndex])) {
@@ -701,7 +701,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   uint16_t wMinute = 0;
   uint16_t wSecond = 0;
   uint16_t wFraction = 0;
-  const FX_WCHAR* pTime = (const FX_WCHAR*)wsTime;
+  const FX_WCHAR* pTime = wsTime.c_str();
   int nIndex = 0;
   int nStart = 0;
   while (nIndex - nStart < wCountH && pTime[nIndex]) {

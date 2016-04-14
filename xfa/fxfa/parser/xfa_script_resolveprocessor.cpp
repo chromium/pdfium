@@ -96,8 +96,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(
     bClassName = TRUE;
     wsName = wsName.Right(wsName.GetLength() - 1);
   }
-  findNode = m_pNodeHelper->XFA_ResolveNodes_GetOneChild(ToNode(rnd.m_CurNode),
-                                                         wsName, bClassName);
+  findNode = m_pNodeHelper->XFA_ResolveNodes_GetOneChild(
+      ToNode(rnd.m_CurNode), wsName.c_str(), bClassName);
   if (findNode == NULL) {
     return 0;
   }
@@ -124,7 +124,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(
     return -1;
   }
   uint32_t dwNameHash =
-      FX_HashCode_String_GetW((const FX_WCHAR*)wsName + 1, iNameLen - 1);
+      FX_HashCode_String_GetW(wsName.c_str() + 1, iNameLen - 1);
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     nodes.Add(rnd.m_pSC->GetDocument()->GetRoot());
   } else {
@@ -152,8 +152,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(
   rndFind.m_pSC = rnd.m_pSC;
   rndFind.m_CurNode = datasets;
   rndFind.m_wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
-  rndFind.m_uHashName =
-      FX_HashCode_String_GetW(rndFind.m_wsName, rndFind.m_wsName.GetLength());
+  rndFind.m_uHashName = FX_HashCode_String_GetW(rndFind.m_wsName.c_str(),
+                                                rndFind.m_wsName.GetLength());
   rndFind.m_nLevel = rnd.m_nLevel + 1;
   rndFind.m_dwStyles = XFA_RESOLVENODE_Children;
   rndFind.m_wsCondition = rnd.m_wsCondition;
@@ -179,8 +179,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(
   rndFind.m_dwStyles |= XFA_RESOLVENODE_TagName;
   rndFind.m_dwStyles &= ~XFA_RESOLVENODE_Attributes;
   rndFind.m_wsName = wsName;
-  rndFind.m_uHashName =
-      FX_HashCode_String_GetW(rndFind.m_wsName, rndFind.m_wsName.GetLength());
+  rndFind.m_uHashName = FX_HashCode_String_GetW(rndFind.m_wsName.c_str(),
+                                                rndFind.m_wsName.GetLength());
   rndFind.m_wsCondition = wsCondition;
   rndFind.m_CurNode = curNode;
   XFA_ResolveNodes_Normal(rndFind);
@@ -618,7 +618,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(
   wsCondition.ReleaseBuffer(nConditionCount);
   wsCondition.TrimLeft();
   wsCondition.TrimRight();
-  rnd.m_uHashName = FX_HashCode_String_GetW(wsName, wsName.GetLength());
+  rnd.m_uHashName = FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength());
   return nStart;
 }
 void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(

@@ -1195,7 +1195,7 @@ void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) {
     CFX_ArrayTemplate<int32_t> PosArr;
     int32_t nLength = wsText.GetLength();
     int32_t i = 0;
-    FX_WCHAR* lpPos = (FX_WCHAR*)(const FX_WCHAR*)wsText;
+    FX_WCHAR* lpPos = const_cast<FX_WCHAR*>(wsText.c_str());
     for (i = 0; i < nLength; i++, lpPos++) {
       if (*lpPos == m_wLineEnd) {
         *lpPos = wc;
@@ -1226,7 +1226,7 @@ void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) {
     wsText = wsTemp;
   } else {
     int32_t nLength = wsText.GetLength();
-    FX_WCHAR* lpBuf = (FX_WCHAR*)(const FX_WCHAR*)wsText;
+    FX_WCHAR* lpBuf = const_cast<FX_WCHAR*>(wsText.c_str());
     for (int32_t i = 0; i < nLength; i++, lpBuf++) {
       if (*lpBuf == m_wLineEnd) {
         *lpBuf = wc;
@@ -1527,7 +1527,7 @@ FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   }
   pTextOut->SetStyles(dwStyle);
   wsText += L"\n";
-  pTextOut->CalcLogicSize(wsText, wsText.GetLength(), rcText);
+  pTextOut->CalcLogicSize(wsText.c_str(), wsText.GetLength(), rcText);
   pTextOut->Release();
   wsText.Delete(wsText.GetLength() - 1);
   if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz) &&

@@ -87,10 +87,11 @@ FX_BOOL XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
   }
   CFX_WideString wsPDFContent;
   pChunkElement->GetTextData(wsPDFContent);
-  iBufferSize = FX_Base64DecodeW(wsPDFContent, wsPDFContent.GetLength(), NULL);
+  iBufferSize =
+      FX_Base64DecodeW(wsPDFContent.c_str(), wsPDFContent.GetLength(), NULL);
   pByteBuffer = FX_Alloc(uint8_t, iBufferSize + 1);
   pByteBuffer[iBufferSize] = '0';  // FIXME: I bet this is wrong.
-  FX_Base64DecodeW(wsPDFContent, wsPDFContent.GetLength(), pByteBuffer);
+  FX_Base64DecodeW(wsPDFContent.c_str(), wsPDFContent.GetLength(), pByteBuffer);
   return TRUE;
 }
 void XFA_XPDPacket_MergeRootNode(CXFA_Node* pOriginRoot, CXFA_Node* pNewRoot) {

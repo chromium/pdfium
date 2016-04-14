@@ -212,8 +212,8 @@ FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
     if (pNode->GetType() != FDE_XMLNODE_Element) {
       continue;
     }
-    if (pNode->HasAttribute(wsNSAttribute)) {
-      pNode->GetString(wsNSAttribute, wsNamespaceURI);
+    if (pNode->HasAttribute(wsNSAttribute.c_str())) {
+      pNode->GetString(wsNSAttribute.c_str(), wsNamespaceURI);
       return TRUE;
     }
   }
@@ -1149,7 +1149,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
           }
           if (!bNeedValue) {
             CFX_WideString wsNilName = FX_WSTRC(L"xsi:nil");
-            pXMLElement->RemoveAttribute(wsNilName);
+            pXMLElement->RemoveAttribute(wsNilName.c_str());
           }
         }
         pXFANode->InsertChild(pXFAChild);

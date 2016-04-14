@@ -388,7 +388,7 @@ FX_BOOL CFX_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
   FXSYS_assert(pszSrcFileName != NULL && FXSYS_wcslen(pszSrcFileName) > 0);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
-  CFX_WideString wsMode;
+  const FX_WCHAR* wsMode;
   if (dwAccess & FX_STREAMACCESS_Write) {
     if (dwAccess & FX_STREAMACCESS_Append) {
       wsMode = L"a+b";

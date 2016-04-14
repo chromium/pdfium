@@ -264,8 +264,9 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(
         } else if (iValueLen > 0) {
           pszValue = pSyntax->GetCurrentString(iValueLen);
           if (iValueLen > 0) {
-            pStyleRule->GetDeclImp().AddProperty(
-                &propertyArgs, wsName, wsName.GetLength(), pszValue, iValueLen);
+            pStyleRule->GetDeclImp().AddProperty(&propertyArgs, wsName.c_str(),
+                                                 wsName.GetLength(), pszValue,
+                                                 iValueLen);
           }
         }
         break;

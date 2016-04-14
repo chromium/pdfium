@@ -1654,7 +1654,7 @@ FX_BOOL CJS_PublicMethods::AFMakeNumber(IJS_Context* cc,
   }
   CFX_WideString ws = params[0].ToCFXWideString();
   ws.Replace(L",", L".");
-  vRet = ws;
+  vRet = ws.c_str();
   vRet.MaybeCoerceToNumber();
   if (vRet.GetType() != CJS_Value::VT_number)
     vRet = 0;

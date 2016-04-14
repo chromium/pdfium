@@ -157,7 +157,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
       pAppProvider->LoadString(XFA_IDS_ValidateLimit, wsLimit);
       if (!wsLimit.IsEmpty()) {
         CFX_WideString wsTemp;
-        wsTemp.Format((const FX_WCHAR*)wsLimit, iRemain);
+        wsTemp.Format(wsLimit.c_str(), iRemain);
         wsMsg += FX_WSTRC(L"\n") + wsTemp;
       }
     }
@@ -792,8 +792,8 @@ void CXFA_FFDocView::RunBindItems() {
     const bool bValueUseContent =
         wsValueRef.IsEmpty() || wsValueRef == FX_WSTRC(L"$");
     CFX_WideString wsValue, wsLabel;
-    uint32_t uValueHash = FX_HashCode_String_GetW(CFX_WideString(wsValueRef),
-                                                  wsValueRef.GetLength());
+    uint32_t uValueHash =
+        FX_HashCode_String_GetW(wsValueRef.c_str(), wsValueRef.GetLength());
     for (int32_t i = 0; i < iCount; i++) {
       CXFA_Object* refObj = rs.nodes[i];
       if (!refObj->IsNode()) {

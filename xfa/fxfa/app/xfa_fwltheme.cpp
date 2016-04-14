@@ -161,8 +161,8 @@ FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
       mtPart.Concat(*pMatrix);
     }
     m_pTextOut->SetMatrix(mtPart);
-    m_pTextOut->DrawLogicText(pParams->m_wsText, pParams->m_wsText.GetLength(),
-                              pParams->m_rtPart);
+    m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(),
+                              pParams->m_wsText.GetLength(), pParams->m_rtPart);
     return TRUE;
   }
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
@@ -186,8 +186,8 @@ FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     mtPart.Concat(*pMatrix);
   }
   m_pTextOut->SetMatrix(mtPart);
-  m_pTextOut->DrawLogicText(pParams->m_wsText, pParams->m_wsText.GetLength(),
-                            pParams->m_rtPart);
+  m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(),
+                            pParams->m_wsText.GetLength(), pParams->m_rtPart);
   return TRUE;
 }
 void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
@@ -306,8 +306,8 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
     m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
     m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-    m_pTextOut->CalcLogicSize(pParams->m_wsText, pParams->m_wsText.GetLength(),
-                              rect);
+    m_pTextOut->CalcLogicSize(pParams->m_wsText.c_str(),
+                              pParams->m_wsText.GetLength(), rect);
     return TRUE;
   }
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
@@ -324,8 +324,8 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
     return FALSE;
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-  m_pTextOut->CalcLogicSize(pParams->m_wsText, pParams->m_wsText.GetLength(),
-                            rect);
+  m_pTextOut->CalcLogicSize(pParams->m_wsText.c_str(),
+                            pParams->m_wsText.GetLength(), rect);
   return TRUE;
 }
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(IFWL_Widget* pWidget) {

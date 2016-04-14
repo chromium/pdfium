@@ -52,7 +52,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
   void GetPath(CFX_WideString& wsPath) override { wsPath = m_path; }
 
   IFX_FileStream* CreateFileStream(uint32_t dwModes) override {
-    return FX_CreateFileStream(m_path, dwModes);
+    return FX_CreateFileStream(m_path.c_str(), dwModes);
   }
 
   FX_BOOL Init(const CFX_WideStringC& wsPath) {

@@ -928,8 +928,8 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
     return;
 
   m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(
-      this, XFA_WIDGETEVENT_ListItemAdded, (void*)(const FX_WCHAR*)wsLabel,
-      (void*)(const FX_WCHAR*)wsValue, (void*)(uintptr_t)nIndex);
+      this, XFA_WIDGETEVENT_ListItemAdded, (void*)wsLabel.c_str(),
+      (void*)wsValue.c_str(), (void*)(uintptr_t)nIndex);
 }
 
 void CXFA_WidgetData::GetItemLabel(const CFX_WideStringC& wsValue,
@@ -1125,7 +1125,7 @@ FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_DataLength(int32_t& val) {
   CXFA_Node* pUIChild = GetUIChild();
   CFX_WideString wsDataLength;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_DataLength, wsDataLength)) {
-    val = FXSYS_wtoi(wsDataLength);
+    val = FXSYS_wtoi(wsDataLength.c_str());
     return TRUE;
   }
   return FALSE;
@@ -1159,7 +1159,7 @@ FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_ECLevel(int32_t& val) {
   CXFA_Node* pUIChild = GetUIChild();
   CFX_WideString wsECLevel;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_ErrorCorrectionLevel, wsECLevel)) {
-    val = FXSYS_wtoi(wsECLevel);
+    val = FXSYS_wtoi(wsECLevel.c_str());
     return TRUE;
   }
   return FALSE;
@@ -1239,11 +1239,11 @@ FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(FX_FLOAT& val) {
     FX_STRSIZE ptPos = wsWideNarrowRatio.Find(':');
     FX_FLOAT fRatio = 0;
     if (ptPos >= 0) {
-      fRatio = (FX_FLOAT)FXSYS_wtoi(wsWideNarrowRatio);
+      fRatio = (FX_FLOAT)FXSYS_wtoi(wsWideNarrowRatio.c_str());
     } else {
       int32_t fA, fB;
-      fA = FXSYS_wtoi(wsWideNarrowRatio.Left(ptPos));
-      fB = FXSYS_wtoi(wsWideNarrowRatio.Mid(ptPos + 1));
+      fA = FXSYS_wtoi(wsWideNarrowRatio.Left(ptPos).c_str());
+      fB = FXSYS_wtoi(wsWideNarrowRatio.Mid(ptPos + 1).c_str());
       if (fB)
         fRatio = (FX_FLOAT)fA / fB;
     }

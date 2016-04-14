@@ -1725,8 +1725,8 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
   CFX_WideString wsFontNameTemp = wsFontName;
   wsFontNameTemp.Remove(L' ');
-  uint32_t dwCurFontNameHash =
-      FX_HashCode_String_GetW(wsFontNameTemp, wsFontNameTemp.GetLength(), TRUE);
+  uint32_t dwCurFontNameHash = FX_HashCode_String_GetW(
+      wsFontNameTemp.c_str(), wsFontNameTemp.GetLength(), TRUE);
   int32_t iStart = 0;
   int32_t iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
   int32_t iMid = 0;
@@ -1763,7 +1763,8 @@ IFX_Font* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
                                    uint16_t wCodePage) {
   CFX_WideString wsFontName = wsFontFamily;
   IFX_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
-  IFX_Font* pFont = pFDEFontMgr->LoadFont(wsFontName, dwFontStyles, wCodePage);
+  IFX_Font* pFont =
+      pFDEFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
   if (!pFont) {
     const XFA_FONTINFO* pCurFont =
         XFA_GetFontINFOByFontName(wsFontName.AsStringC());
@@ -1785,7 +1786,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
         }
         CFX_WideString wsReplace =
             CFX_WideString(pReplace, pNameText - pReplace);
-        pFont = pFDEFontMgr->LoadFont(wsReplace, dwStyle, wCodePage);
+        pFont = pFDEFontMgr->LoadFont(wsReplace.c_str(), dwStyle, wCodePage);
         if (pFont) {
           break;
         }

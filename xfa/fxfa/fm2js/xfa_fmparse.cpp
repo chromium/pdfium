@@ -964,7 +964,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
   } else {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
     Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN, L"upto or downto",
-          (const FX_WCHAR*)ws_TempString);
+          ws_TempString.c_str());
   }
   NextToken();
   std::unique_ptr<CXFA_FMSimpleExpression> pAccessor(ParseSimpleExpression());

@@ -77,7 +77,7 @@ FX_BOOL CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   CFX_Matrix* pMatrix = &pParams->m_matrix;
   pMatrix->Concat(*pGraphics->GetMatrix());
   m_pTextOut->SetMatrix(*pMatrix);
-  m_pTextOut->DrawLogicText(pParams->m_wsText, iLen, pParams->m_rtPart);
+  m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(), iLen, pParams->m_rtPart);
   return TRUE;
 }
 void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
@@ -154,8 +154,8 @@ FX_BOOL CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
     return FALSE;
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles | FDE_TTOSTYLE_ArabicContext);
-  m_pTextOut->CalcLogicSize(pParams->m_wsText, pParams->m_wsText.GetLength(),
-                            rect);
+  m_pTextOut->CalcLogicSize(pParams->m_wsText.c_str(),
+                            pParams->m_wsText.GetLength(), rect);
   return TRUE;
 }
 FWL_ERR CFWL_WidgetTP::Initialize() {

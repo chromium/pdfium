@@ -1504,7 +1504,7 @@ void CFX_FontMgrImp::GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB) {
 }
 int32_t CFX_FontMgrImp::IsPartName(const CFX_WideString& Name1,
                                    const CFX_WideString& Name2) {
-  if (Name1.Find((const FX_WCHAR*)Name2) != -1) {
+  if (Name1.Find(Name2.c_str()) != -1) {
     return 1;
   }
   return 0;

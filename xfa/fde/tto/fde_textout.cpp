@@ -624,7 +624,7 @@ void CFDE_TextOut::LoadEllipsis() {
     return;
   }
   ExpandBuffer(iLength, 1);
-  const FX_WCHAR* pStr = (const FX_WCHAR*)m_wsEllipsis;
+  const FX_WCHAR* pStr = m_wsEllipsis.c_str();
   int32_t* pCharWidths = m_pEllCharWidths;
   uint32_t dwBreakStatus;
   FX_WCHAR wch;
@@ -873,7 +873,7 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
   }
 }
 void CFDE_TextOut::ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect) {
-  const FX_WCHAR* pwsStr = (const FX_WCHAR*)m_wsText;
+  const FX_WCHAR* pwsStr = m_wsText.c_str();
   FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   int32_t iPieceWidths = 0;
   FDE_LPTTOPIECE pPiece = pLine->GetPtrAt(0);
@@ -990,7 +990,7 @@ int32_t CFDE_TextOut::GetCharRects(FDE_LPTTOPIECE pPiece) {
 void CFDE_TextOut::ToTextRun(const FDE_LPTTOPIECE pPiece, FX_TXTRUN& tr) {
   tr.pAccess = NULL;
   tr.pIdentity = NULL;
-  tr.pStr = (const FX_WCHAR*)m_wsText + pPiece->iStartChar;
+  tr.pStr = (m_wsText + pPiece->iStartChar).c_str();
   tr.pWidths = m_pCharWidths + pPiece->iStartChar;
   tr.iLength = pPiece->iChars;
   tr.pFont = m_pFont;

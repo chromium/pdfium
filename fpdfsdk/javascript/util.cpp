@@ -312,7 +312,8 @@ FX_BOOL util::printx(IJS_Context* cc,
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  vRet = printx(params[0].ToCFXWideString(), params[1].ToCFXWideString());
+  vRet =
+      printx(params[0].ToCFXWideString(), params[1].ToCFXWideString()).c_str();
   return TRUE;
 }
 
