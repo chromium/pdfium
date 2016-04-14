@@ -21,7 +21,6 @@
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_content.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define FWL_SYSBTNSIZE 21
@@ -127,9 +126,6 @@ FWL_ERR CFWL_FormImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     FX_FLOAT fCXBorder = GetBorderSize(TRUE);
     FX_FLOAT fCYBorder = GetBorderSize(FALSE);
     FX_FLOAT fEdge = GetEdgeWidth();
-    if (m_pContent) {
-      m_pContent->GetWidgetRect(rect, TRUE);
-    }
     rect.height += fCapHeight + fCYBorder + fEdge + fEdge;
     rect.width += fCXBorder + fCXBorder + fEdge + fEdge;
   } else {
@@ -644,12 +640,6 @@ void CFWL_FormImp::Layout() {
 #ifndef FWL_UseMacSystemBorder
   ReSetSysBtn();
 #endif
-  if (m_pContent) {
-    CFX_RectF rtClient;
-    GetClientRect(rtClient);
-    m_pContent->SetWidgetRect(rtClient);
-    m_pContent->Update();
-  }
 }
 void CFWL_FormImp::ReSetSysBtn() {
   m_fCXBorder =

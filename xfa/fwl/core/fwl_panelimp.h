@@ -18,15 +18,10 @@ class CFWL_PanelImp : public CFWL_WidgetImp {
   CFWL_PanelImp(const CFWL_WidgetImpProperties& properties,
                 IFWL_Widget* pOuter);
   virtual ~CFWL_PanelImp();
+
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
-  virtual IFWL_Content* GetContent();
-  virtual FWL_ERR SetContent(IFWL_Content* pContent);
-
- protected:
-  IFWL_Content* m_pContent;
 };
 
 #endif  // XFA_FWL_CORE_FWL_PANELIMP_H_

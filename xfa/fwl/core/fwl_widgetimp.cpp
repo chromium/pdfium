@@ -24,10 +24,7 @@
 #include "xfa/fwl/core/ifwl_adapterthreadmgr.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_content.h"
-#include "xfa/fwl/core/ifwl_custom.h"
 #include "xfa/fwl/core/ifwl_form.h"
-#include "xfa/fwl/core/ifwl_proxy.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define FWL_CLASSHASH_Menu 3957949655
@@ -170,17 +167,9 @@ FWL_ERR CFWL_WidgetImp::Initialize() {
 }
 FWL_ERR CFWL_WidgetImp::Finalize() {
   NotifyDriver();
-  IFWL_Form* pForm = static_cast<IFWL_Form*>(
-      FWL_GetWidgetMgr()->GetWidget(m_pInterface, FWL_WGTRELATION_SystemForm));
-  if (pForm && pForm != m_pInterface) {
-    IFWL_Content* pContent = pForm->GetContent();
-    if (pContent) {
-      pContent->RemoveWidget(m_pInterface);
-    }
-  }
-  if (!IsChild()) {
+  if (!IsChild())
     m_pWidgetMgr->DestroyWidget_Native(m_pInterface);
-  }
+
   m_pWidgetMgr->RemoveWidget(m_pInterface);
   return FWL_ERR_Succeeded;
 }
@@ -1039,49 +1028,4 @@ FWL_ERR CFWL_WidgetImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
   CFWL_EvtDraw evt;
   evt.m_pGraphics = pGraphics;
   return FWL_ERR_Succeeded;
-}
-class CFWL_CustomImp : public CFWL_WidgetImp {
- public:
-  CFWL_CustomImp(const CFWL_WidgetImpProperties& properties,
-                 IFWL_Widget* pOuter);
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
-  virtual FWL_ERR SetProxy(IFWL_Proxy* pProxy);
-
- protected:
-  IFWL_Proxy* m_pProxy;
-};
-CFWL_CustomImp::CFWL_CustomImp(const CFWL_WidgetImpProperties& properties,
-                               IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(properties, pOuter), m_pProxy(NULL) {}
-FWL_ERR CFWL_CustomImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
-  if (m_pProxy &&
-      (m_pProxy->GetWidgetRect(rect, bAutoSize) == FWL_ERR_Succeeded)) {
-    return FWL_ERR_Succeeded;
-  }
-  return CFWL_WidgetImp::GetWidgetRect(rect, bAutoSize);
-}
-FWL_ERR CFWL_CustomImp::Update() {
-  if (m_pProxy) {
-    return m_pProxy->Update();
-  }
-  return CFWL_WidgetImp::Update();
-}
-FWL_ERR CFWL_CustomImp::SetProxy(IFWL_Proxy* pProxy) {
-  m_pProxy = pProxy;
-  return FWL_ERR_Succeeded;
-}
-
-// static
-IFWL_Custom* IFWL_Custom::Create(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter) {
-  IFWL_Custom* pCustom = new IFWL_Custom;
-  CFWL_CustomImp* pCustomImpl = new CFWL_CustomImp(properties, pOuter);
-  pCustom->SetImpl(pCustomImpl);
-  pCustomImpl->SetInterface(pCustom);
-  return pCustom;
-}
-IFWL_Custom::IFWL_Custom() {}
-FWL_ERR IFWL_Custom::SetProxy(IFWL_Proxy* pProxy) {
-  return static_cast<CFWL_CustomImp*>(GetImpl())->SetProxy(pProxy);
 }
