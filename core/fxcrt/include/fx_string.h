@@ -147,6 +147,7 @@ class CFX_ByteString {
   CFX_ByteString(const CFX_ByteString& other) : m_pData(other.m_pData) {}
   CFX_ByteString(CFX_ByteString&& other) { m_pData.Swap(other.m_pData); }
 
+  // Deliberately implicit to avoid calling on every string literal.
   CFX_ByteString(char ch);
   CFX_ByteString(const FX_CHAR* ptr)
       : CFX_ByteString(ptr, ptr ? FXSYS_strlen(ptr) : 0) {}
@@ -154,6 +155,7 @@ class CFX_ByteString {
   CFX_ByteString(const FX_CHAR* ptr, FX_STRSIZE len);
   CFX_ByteString(const uint8_t* ptr, FX_STRSIZE len);
 
+  // TODO(tsepez): mark constructor as explicit.
   CFX_ByteString(const CFX_ByteStringC& bstrc);
   CFX_ByteString(const CFX_ByteStringC& bstrc1, const CFX_ByteStringC& bstrc2);
 
@@ -471,12 +473,14 @@ class CFX_WideString {
   CFX_WideString(const CFX_WideString& other) : m_pData(other.m_pData) {}
   CFX_WideString(CFX_WideString&& other) { m_pData.Swap(other.m_pData); }
 
+  // Deliberately implicit to avoid calling on every string literal.
+  CFX_WideString(FX_WCHAR ch);
   CFX_WideString(const FX_WCHAR* ptr)
       : CFX_WideString(ptr, ptr ? FXSYS_wcslen(ptr) : 0) {}
 
   CFX_WideString(const FX_WCHAR* ptr, FX_STRSIZE len);
-  CFX_WideString(FX_WCHAR ch);
 
+  // TODO(tsepez): mark constructor as explicit.
   CFX_WideString(const CFX_WideStringC& str);
   CFX_WideString(const CFX_WideStringC& str1, const CFX_WideStringC& str2);
 
