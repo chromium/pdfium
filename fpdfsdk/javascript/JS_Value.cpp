@@ -787,7 +787,7 @@ int JS_GetSecFromTime(double dt) {
   return (int)_Mod(floor(dt / 1000), 60);
 }
 
-double JS_DateParse(const wchar_t* str) {
+double JS_DateParse(const CFX_WideString& str) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope scope(pIsolate);
@@ -809,7 +809,6 @@ double JS_DateParse(const wchar_t* str) {
             .ToLocalChecked();
     if (v->IsFunction()) {
       v8::Local<v8::Function> funC = v8::Local<v8::Function>::Cast(v);
-
       const int argc = 1;
       v8::Local<v8::String> timeStr = FXJS_WSToJSString(pIsolate, str);
       v8::Local<v8::Value> argv[argc] = {timeStr};

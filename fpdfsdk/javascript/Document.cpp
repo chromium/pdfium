@@ -769,16 +769,15 @@ FX_BOOL Document::info(IJS_Context* cc,
     CJS_Runtime* pRuntime = pContext->GetJSRuntime();
     v8::Local<v8::Object> pObj =
         FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pRuntime, -1);
-    FXJS_PutObjectString(isolate, pObj, L"Author", cwAuthor.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"Title", cwTitle.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"Subject", cwSubject.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"Keywords", cwKeywords.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"Creator", cwCreator.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"Producer", cwProducer.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"CreationDate",
-                         cwCreationDate.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"ModDate", cwModDate.c_str());
-    FXJS_PutObjectString(isolate, pObj, L"Trapped", cwTrapped.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"Author", cwAuthor);
+    FXJS_PutObjectString(isolate, pObj, L"Title", cwTitle);
+    FXJS_PutObjectString(isolate, pObj, L"Subject", cwSubject);
+    FXJS_PutObjectString(isolate, pObj, L"Keywords", cwKeywords);
+    FXJS_PutObjectString(isolate, pObj, L"Creator", cwCreator);
+    FXJS_PutObjectString(isolate, pObj, L"Producer", cwProducer);
+    FXJS_PutObjectString(isolate, pObj, L"CreationDate", cwCreationDate);
+    FXJS_PutObjectString(isolate, pObj, L"ModDate", cwModDate);
+    FXJS_PutObjectString(isolate, pObj, L"Trapped", cwTrapped);
 
     // It's to be compatible to non-standard info dictionary.
     for (const auto& it : *pDictionary) {
@@ -786,14 +785,12 @@ FX_BOOL Document::info(IJS_Context* cc,
       CPDF_Object* pValueObj = it.second;
       CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsStringC());
       if (pValueObj->IsString() || pValueObj->IsName()) {
-        FXJS_PutObjectString(isolate, pObj, wsKey.c_str(),
-                             pValueObj->GetUnicodeText().c_str());
+        FXJS_PutObjectString(isolate, pObj, wsKey, pValueObj->GetUnicodeText());
       } else if (pValueObj->IsNumber()) {
-        FXJS_PutObjectNumber(isolate, pObj, wsKey.c_str(),
+        FXJS_PutObjectNumber(isolate, pObj, wsKey,
                              (float)pValueObj->GetNumber());
       } else if (pValueObj->IsBoolean()) {
-        FXJS_PutObjectBoolean(isolate, pObj, wsKey.c_str(),
-                              !!pValueObj->GetInteger());
+        FXJS_PutObjectBoolean(isolate, pObj, wsKey, !!pValueObj->GetInteger());
       }
     }
     vp << pObj;

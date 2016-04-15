@@ -583,25 +583,24 @@ void FXJS_FreePrivate(v8::Local<v8::Object> pObj) {
 }
 
 v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,
-                                        const wchar_t* PropertyName,
-                                        int Len) {
-  CFX_WideString ws = CFX_WideString(PropertyName, Len);
-  CFX_ByteString bs = ws.UTF8Encode();
+                                        const CFX_WideString& wsPropertyName) {
+  CFX_ByteString bs = wsPropertyName.UTF8Encode();
   if (!pIsolate)
     pIsolate = v8::Isolate::GetCurrent();
   return v8::String::NewFromUtf8(pIsolate, bs.c_str(),
-                                 v8::NewStringType::kNormal)
+                                 v8::NewStringType::kNormal, bs.GetLength())
       .ToLocalChecked();
 }
 
-v8::Local<v8::Value> FXJS_GetObjectElement(v8::Isolate* pIsolate,
-                                           v8::Local<v8::Object> pObj,
-                                           const wchar_t* PropertyName) {
+v8::Local<v8::Value> FXJS_GetObjectElement(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj,
+    const CFX_WideString& wsPropertyName) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   v8::Local<v8::Value> val;
   if (!pObj->Get(pIsolate->GetCurrentContext(),
-                 FXJS_WSToJSString(pIsolate, PropertyName))
+                 FXJS_WSToJSString(pIsolate, wsPropertyName))
            .ToLocal(&val))
     return v8::Local<v8::Value>();
   return val;
@@ -619,82 +618,83 @@ v8::Local<v8::Array> FXJS_GetObjectElementNames(v8::Isolate* pIsolate,
 
 void FXJS_PutObjectString(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
-                          const wchar_t* sValue) {
+                          const CFX_WideString& wsPropertyName,
+                          const CFX_WideString& wsValue) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),
-            FXJS_WSToJSString(pIsolate, PropertyName),
-            FXJS_WSToJSString(pIsolate, sValue))
+            FXJS_WSToJSString(pIsolate, wsPropertyName),
+            FXJS_WSToJSString(pIsolate, wsValue))
       .FromJust();
 }
 
 void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& wsPropertyName,
                           int nValue) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),
-            FXJS_WSToJSString(pIsolate, PropertyName),
+            FXJS_WSToJSString(pIsolate, wsPropertyName),
             v8::Int32::New(pIsolate, nValue))
       .FromJust();
 }
 
 void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& wsPropertyName,
                           float fValue) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),
-            FXJS_WSToJSString(pIsolate, PropertyName),
+            FXJS_WSToJSString(pIsolate, wsPropertyName),
             v8::Number::New(pIsolate, (double)fValue))
       .FromJust();
 }
 
 void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& wsPropertyName,
                           double dValue) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),
-            FXJS_WSToJSString(pIsolate, PropertyName),
+            FXJS_WSToJSString(pIsolate, wsPropertyName),
             v8::Number::New(pIsolate, (double)dValue))
       .FromJust();
 }
 
 void FXJS_PutObjectBoolean(v8::Isolate* pIsolate,
                            v8::Local<v8::Object> pObj,
-                           const wchar_t* PropertyName,
+                           const CFX_WideString& wsPropertyName,
                            bool bValue) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),
-            FXJS_WSToJSString(pIsolate, PropertyName),
+            FXJS_WSToJSString(pIsolate, wsPropertyName),
             v8::Boolean::New(pIsolate, bValue))
       .FromJust();
 }
 
 void FXJS_PutObjectObject(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& wsPropertyName,
                           v8::Local<v8::Object> pPut) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),
-            FXJS_WSToJSString(pIsolate, PropertyName), pPut)
+            FXJS_WSToJSString(pIsolate, wsPropertyName), pPut)
       .FromJust();
 }
 
 void FXJS_PutObjectNull(v8::Isolate* pIsolate,
                         v8::Local<v8::Object> pObj,
-                        const wchar_t* PropertyName) {
+                        const CFX_WideString& wsPropertyName) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),
-            FXJS_WSToJSString(pIsolate, PropertyName), v8::Local<v8::Object>())
+            FXJS_WSToJSString(pIsolate, wsPropertyName),
+            v8::Local<v8::Object>())
       .FromJust();
 }
 

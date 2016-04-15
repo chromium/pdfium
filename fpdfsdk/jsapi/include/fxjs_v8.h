@@ -229,50 +229,47 @@ void FXJS_SetPrivate(v8::Isolate* pIsolate,
 void* FXJS_GetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj);
 void FXJS_FreePrivate(void* p);
 void FXJS_FreePrivate(v8::Local<v8::Object> pObj);
-
 void FXJS_Error(v8::Isolate* isolate, const CFX_WideString& message);
-v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,
-                                        const wchar_t* PropertyName,
-                                        int Len = -1);
 
+v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,
+                                        const CFX_WideString& wsPropertyName);
 v8::Local<v8::Value> FXJS_GetObjectElement(v8::Isolate* pIsolate,
                                            v8::Local<v8::Object> pObj,
-                                           const wchar_t* PropertyName);
+                                           const CFX_WideString& PropertyName);
 v8::Local<v8::Array> FXJS_GetObjectElementNames(v8::Isolate* pIsolate,
                                                 v8::Local<v8::Object> pObj);
-
 v8::Local<v8::Value> FXJS_GetArrayElement(v8::Isolate* pIsolate,
                                           v8::Local<v8::Array> pArray,
                                           unsigned index);
-unsigned FXJS_GetArrayLength(v8::Local<v8::Array> pArray);
 
+unsigned FXJS_GetArrayLength(v8::Local<v8::Array> pArray);
 void FXJS_PutObjectString(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
-                          const wchar_t* sValue);
+                          const CFX_WideString& wsPropertyName,
+                          const CFX_WideString& wsValue);
 void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& PropertyName,
                           int nValue);
 void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& PropertyName,
                           float fValue);
 void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& PropertyName,
                           double dValue);
 void FXJS_PutObjectBoolean(v8::Isolate* pIsolate,
                            v8::Local<v8::Object> pObj,
-                           const wchar_t* PropertyName,
+                           const CFX_WideString& PropertyName,
                            bool bValue);
 void FXJS_PutObjectObject(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
-                          const wchar_t* PropertyName,
+                          const CFX_WideString& PropertyName,
                           v8::Local<v8::Object> pPut);
 void FXJS_PutObjectNull(v8::Isolate* pIsolate,
                         v8::Local<v8::Object> pObj,
-                        const wchar_t* PropertyName);
+                        const CFX_WideString& PropertyName);
 unsigned FXJS_PutArrayElement(v8::Isolate* pIsolate,
                               v8::Local<v8::Array> pArray,
                               unsigned index,

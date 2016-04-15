@@ -306,7 +306,7 @@ double CJS_PublicMethods::ParseNormalDate(const CFX_WideString& value,
 
   CFX_WideString swTemp;
   swTemp.Format(L"%d/%d/%d %d:%d:%d", nMonth, nDay, nYear, nHour, nMin, nSec);
-  return JS_DateParse(swTemp.c_str());
+  return JS_DateParse(swTemp);
 }
 
 double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
@@ -563,24 +563,21 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
     bBadFormat = true;
 
   double dRet = 0;
-
   if (bBadFormat) {
     dRet = ParseNormalDate(value, &bBadFormat);
   } else {
     dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
                        JS_MakeTime(nHour, nMin, nSec, 0));
-
-    if (JS_PortIsNan(dRet)) {
-      dRet = JS_DateParse(value.c_str());
-    }
+    if (JS_PortIsNan(dRet))
+      dRet = JS_DateParse(value);
   }
 
-  if (JS_PortIsNan(dRet)) {
+  if (JS_PortIsNan(dRet))
     dRet = ParseNormalDate(value, &bBadFormat);
-  }
 
   if (bWrongFormat)
     *bWrongFormat = bBadFormat;
+
   return dRet;
 }
 
@@ -1204,7 +1201,7 @@ double CJS_PublicMethods::MakeInterDate(const CFX_WideString& strValue) {
   double dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
                             JS_MakeTime(nHour, nMin, nSec, 0));
   if (JS_PortIsNan(dRet))
-    dRet = JS_DateParse(strValue.c_str());
+    dRet = JS_DateParse(strValue);
 
   return dRet;
 }
