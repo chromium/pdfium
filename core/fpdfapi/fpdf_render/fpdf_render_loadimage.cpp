@@ -570,15 +570,16 @@ int CPDF_DIBSource::CreateDecoder() {
                                 bpc, bTransform)) {
         if (m_nComponents != static_cast<uint32_t>(comps)) {
           FX_Free(m_pCompData);
+          m_pCompData = nullptr;
           m_nComponents = static_cast<uint32_t>(comps);
-          if (m_Family == PDFCS_LAB && m_nComponents != 3) {
-            m_pCompData = nullptr;
+          if (m_pColorSpace &&
+              m_pColorSpace->CountComponents() != m_nComponents)
             return 0;
-          }
+          if (m_Family == PDFCS_LAB && m_nComponents != 3)
+            return 0;
           m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
-          if (!m_pCompData) {
+          if (!m_pCompData)
             return 0;
-          }
         }
         m_bpc = bpc;
         m_pDecoder.reset(CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(

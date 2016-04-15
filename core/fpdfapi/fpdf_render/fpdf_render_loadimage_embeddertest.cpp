@@ -27,3 +27,13 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_557223) {
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }
+
+TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_603518) {
+  // Should not crash
+  EXPECT_TRUE(OpenDocument("bug_603518.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDFBitmap_Destroy(bitmap);
+  UnloadPage(page);
+}
