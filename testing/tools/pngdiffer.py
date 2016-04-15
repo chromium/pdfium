@@ -49,21 +49,32 @@ class PNGDiffer():
     while True:
       actual_path = actual_path_template % i
       expected_path = expected_path_template % i
+      # PDFium tests should be platform independent. Platform based results are
+      # used to capture platform dependent implementations.
       platform_expected_path = (
           platform_expected_path_template % (self.os_name, i))
-      if os.path.exists(platform_expected_path):
-        expected_path = platform_expected_path
-      elif not os.path.exists(expected_path):
+      if (not os.path.exists(expected_path) and
+          not os.path.exists(platform_expected_path)):
         if i == 0:
           print "WARNING: no expected results files for " + input_filename
         break
       print "Checking " + actual_path
       sys.stdout.flush()
-      error = common.RunCommand(
-          [self.pdfium_diff_path, expected_path, actual_path], redirect_output)
+      if os.path.exists(expected_path):
+        error = common.RunCommand(
+            [self.pdfium_diff_path, expected_path, actual_path],
+            redirect_output)
+      else:
+        error = 1;
       if error:
-        print "FAILURE: " + input_filename + "; " + str(error)
-        return True
+        # When failed, we check against platform based results.
+        if os.path.exists(platform_expected_path):
+          error = common.RunCommand(
+              [self.pdfium_diff_path, platform_expected_path, actual_path],
+              redirect_output)
+        if error:
+          print "FAILURE: " + input_filename + "; " + str(error)
+          return True
       i += 1
     return False
 
