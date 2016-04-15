@@ -16,27 +16,31 @@ class CXFA_FFNotify {
   CXFA_FFNotify(CXFA_FFDoc* pDoc);
   ~CXFA_FFNotify();
 
-  void OnPageEvent(CXFA_ContainerLayoutItem* pSender,
-                   XFA_PAGEEVENT eEvent,
-                   void* pParam = NULL);
+  void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);
 
-  void OnNodeEvent(CXFA_Node* pSender,
-                   XFA_NODEEVENT eEvent,
-                   void* pParam = NULL,
-                   void* pParam2 = NULL,
-                   void* pParam3 = NULL,
-                   void* pParam4 = NULL);
-  void OnWidgetDataEvent(CXFA_WidgetData* pSender,
-                         uint32_t dwEvent,
-                         void* pParam = NULL,
-                         void* pAdditional = NULL,
-                         void* pAdditional2 = NULL);
+  void OnWidgetListItemAdded(CXFA_WidgetData* pSender,
+                             const FX_WCHAR* pLabel,
+                             const FX_WCHAR* pValue,
+                             int32_t iIndex);
+  void OnWidgetListItemRemoved(CXFA_WidgetData* pSender, int32_t iIndex);
+
+  // Node events
+  void OnNodeReady(CXFA_Node* pNode);
+  void OnValueChanging(CXFA_Node* pSender, XFA_ATTRIBUTE eAttr);
+  void OnValueChanged(CXFA_Node* pSender,
+                      XFA_ATTRIBUTE eAttr,
+                      CXFA_Node* pParentNode,
+                      CXFA_Node* pWidgetNode);
+  void OnChildAdded(CXFA_Node* pSender);
+  void OnChildRemoved();
+
   CXFA_LayoutItem* OnCreateLayoutItem(CXFA_Node* pNode);
-  void OnLayoutEvent(CXFA_LayoutProcessor* pLayout,
-                     CXFA_LayoutItem* pSender,
-                     XFA_LAYOUTEVENT eEvent,
-                     void* pParam = NULL,
-                     void* pParam2 = NULL);
+  void OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
+                         CXFA_LayoutItem* pSender,
+                         int32_t iPageIdx,
+                         uint32_t dwStatus);
+  void OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
+                            CXFA_LayoutItem* pSender);
 
   void StartFieldDrawLayout(CXFA_Node* pItem,
                             FX_FLOAT& fCalcWidth,
@@ -66,36 +70,7 @@ class CXFA_FFNotify {
   void SetFocusWidgetNode(CXFA_Node* pNode);
 
  protected:
-  void OnNodeReady(CXFA_Node* pNode);
-  void OnValueChanging(CXFA_Node* pSender, void* pParam, void* pParam2);
-  void OnValueChanged(CXFA_Node* pSender,
-                      void* pParam,
-                      void* pParam2,
-                      void* pParam3,
-                      void* pParam4);
-  void OnChildAdded(CXFA_Node* pSender, void* pParam, void* pParam2);
-  void OnChildRemoved(CXFA_Node* pSender, void* pParam, void* pParam2);
-  void OnLayoutItemAdd(CXFA_FFDocView* pDocView,
-                       CXFA_LayoutProcessor* pLayout,
-                       CXFA_LayoutItem* pSender,
-                       void* pParam,
-                       void* pParam2);
-  void OnLayoutItemRemoving(CXFA_FFDocView* pDocView,
-                            CXFA_LayoutProcessor* pLayout,
-                            CXFA_LayoutItem* pSender,
-                            void* pParam,
-                            void* pParam2);
-  void OnLayoutItemRectChanged(CXFA_FFDocView* pDocView,
-                               CXFA_LayoutProcessor* pLayout,
-                               CXFA_LayoutItem* pSender,
-                               void* pParam,
-                               void* pParam2);
-  void OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView,
-                                  CXFA_LayoutProcessor* pLayout,
-                                  CXFA_LayoutItem* pSender,
-                                  void* pParam,
-                                  void* pParam2);
-  CXFA_FFDoc* m_pDoc;
+  CXFA_FFDoc* const m_pDoc;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFNOTIFY_H_

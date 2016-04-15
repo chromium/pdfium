@@ -73,10 +73,6 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void SetImageImage(CFX_DIBitmap* newImage);
   void SetImageEditImage(CFX_DIBitmap* newImage);
   void UpdateUIDisplay(CXFA_FFWidget* pExcept = NULL);
-  void NotifyEvent(uint32_t dwEvent,
-                   CXFA_FFWidget* pWidget = NULL,
-                   void* pParam = NULL,
-                   void* pAdditional = NULL);
 
   CXFA_Node* GetDatasets();
   IFX_Font* GetFDEFont();

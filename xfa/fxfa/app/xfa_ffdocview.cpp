@@ -215,16 +215,11 @@ FX_BOOL CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
   if (eType != XFA_ELEMENT_Field && eType != XFA_ELEMENT_ExclGroup) {
     return FALSE;
   }
-  FX_BOOL bNotify = IsStaticNotify();
   pWidgetAcc->ResetData();
   pWidgetAcc->UpdateUIDisplay();
-  if (bNotify) {
-    pWidgetAcc->NotifyEvent(XFA_WIDGETEVENT_PostContentChanged, NULL, NULL,
-                            NULL);
-  }
   if (CXFA_Validate validate = pWidgetAcc->GetValidate()) {
     AddValidateWidget(pWidgetAcc);
-    validate.GetNode()->SetFlag(XFA_NODEFLAG_NeedsInitApp, TRUE, FALSE);
+    validate.GetNode()->SetFlag(XFA_NODEFLAG_NeedsInitApp, false);
   }
   return TRUE;
 }
@@ -532,16 +527,9 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
 }
 
 void CXFA_FFDocView::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
-                                 XFA_PAGEEVENT eEvent,
-                                 int32_t iPageIndex) {
+                                 uint32_t dwEvent) {
   CXFA_FFPageView* pFFPageView = static_cast<CXFA_FFPageView*>(pSender);
-  if (eEvent == XFA_PAGEEVENT_PageRemoved) {
-    m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
-                                            XFA_PAGEVIEWEVENT_PostRemoved);
-    return;
-  }
-  m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
-                                          XFA_PAGEVIEWEVENT_PostAdded);
+  m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView, dwEvent);
 }
 
 void CXFA_FFDocView::LockUpdate() {

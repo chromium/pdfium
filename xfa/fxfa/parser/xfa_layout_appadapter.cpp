@@ -50,15 +50,15 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
     pNode->m_pParent = nullptr;
-    pNotify->OnLayoutEvent(pDocLayout, static_cast<CXFA_LayoutItem*>(pNode),
-                           XFA_LAYOUTEVENT_ItemRemoving);
+    pNotify->OnLayoutItemRemoving(pDocLayout,
+                                  static_cast<CXFA_LayoutItem*>(pNode));
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;
   }
-  pNotify->OnLayoutEvent(pDocLayout, pLayoutItem, XFA_LAYOUTEVENT_ItemRemoving);
+  pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
   if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea) {
     pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
-                         XFA_PAGEEVENT_PageRemoved);
+                         XFA_PAGEVIEWEVENT_PostRemoved);
   }
   delete pLayoutItem;
 }

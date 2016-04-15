@@ -60,9 +60,7 @@ class CXFA_FFDocView {
   CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideString& wsName,
                                      CXFA_WidgetAcc* pRefWidgetAcc = nullptr);
   CXFA_LayoutProcessor* GetXFALayout() const;
-  void OnPageEvent(CXFA_ContainerLayoutItem* pSender,
-                   XFA_PAGEEVENT eEvent,
-                   int32_t iPageIndex);
+  void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);
   void LockUpdate();
   void UnlockUpdate();
   FX_BOOL IsUpdateLocked();

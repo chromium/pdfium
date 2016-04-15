@@ -766,7 +766,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
           if (pAppProvider->MsgBox(wsMessage.AsStringC(), wsTitle.AsStringC(),
                                    XFA_MBICON_Warning,
                                    XFA_MB_YesNo) == XFA_IDYes) {
-            pAcc->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, TRUE, FALSE);
+            pAcc->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
             return 1;
           }
         }
@@ -775,7 +775,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
       case XFA_ATTRIBUTEENUM_Ignore:
         return 0;
       case XFA_ATTRIBUTEENUM_Disabled:
-        pAcc->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, TRUE, FALSE);
+        pAcc->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
       default:
         return 1;
     }

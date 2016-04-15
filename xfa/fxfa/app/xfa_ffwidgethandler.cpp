@@ -264,8 +264,8 @@ CXFA_FFWidget* CXFA_FFWidgetHandler::CreateWidget(CXFA_FFWidget* hParent,
   if (!pNewFormItem)
     return nullptr;
 
-  pNewFormItem->GetTemplateNode()->SetFlag(XFA_NODEFLAG_Initialized);
-  pNewFormItem->SetFlag(XFA_NODEFLAG_Initialized);
+  pNewFormItem->GetTemplateNode()->SetFlag(XFA_NODEFLAG_Initialized, true);
+  pNewFormItem->SetFlag(XFA_NODEFLAG_Initialized, true);
   m_pDocView->RunLayout();
   CXFA_LayoutItem* pLayout =
       m_pDocView->GetXFALayout()->GetLayoutItem(pNewFormItem);

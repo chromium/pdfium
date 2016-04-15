@@ -312,7 +312,7 @@ static void XFA_ProtoMerge_MergeNodeRecurse(CXFA_Document* pDocument,
     if (pFormChild->GetClassID() == pProtoNode->GetClassID() &&
         pFormChild->GetNameHash() == pProtoNode->GetNameHash() &&
         pFormChild->HasFlag(XFA_NODEFLAG_UnusedNode)) {
-      pFormChild->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
+      pFormChild->ClearFlag(XFA_NODEFLAG_UnusedNode);
       pExistingNode = pFormChild;
       break;
     }
@@ -338,7 +338,7 @@ static void XFA_ProtoMerge_MergeNode(CXFA_Document* pDocument,
     CXFA_NodeIterator sIterator(pDestNode);
     for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
          pNode = sIterator.MoveToNext()) {
-      pNode->SetFlag(XFA_NODEFLAG_UnusedNode);
+      pNode->SetFlag(XFA_NODEFLAG_UnusedNode, true);
     }
   }
   pDestNode->SetTemplateNode(pProtoNode);
@@ -352,7 +352,7 @@ static void XFA_ProtoMerge_MergeNode(CXFA_Document* pDocument,
     CXFA_NodeIterator sIterator(pDestNode);
     for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
          pNode = sIterator.MoveToNext()) {
-      pNode->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
+      pNode->ClearFlag(XFA_NODEFLAG_UnusedNode);
     }
   }
 }

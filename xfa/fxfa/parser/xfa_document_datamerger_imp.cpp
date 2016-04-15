@@ -524,7 +524,7 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(CXFA_Document* pDocument,
       pFormParent->RemoveChild(pExistingNode);
       pFormParent->InsertChild(pExistingNode);
     }
-    pExistingNode->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
+    pExistingNode->ClearFlag(XFA_NODEFLAG_UnusedNode);
     pExistingNode->SetTemplateNode(pTemplateNode);
     if (bRecursive && pExistingNode->GetClassID() != XFA_ELEMENT_Items) {
       for (CXFA_Node* pTemplateChild =
@@ -537,7 +537,7 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(CXFA_Document* pDocument,
         }
       }
     }
-    pExistingNode->SetFlag(XFA_NODEFLAG_Initialized);
+    pExistingNode->SetFlag(XFA_NODEFLAG_Initialized, true);
     return pExistingNode;
   }
   CXFA_Node* pNewNode = pTemplateNode->CloneTemplateToForm(FALSE);
@@ -590,7 +590,7 @@ static CXFA_Node* XFA_NodeMerge_CloneOrMergeInstanceManager(
     }
     pFormParent->RemoveChild(pExistingNode);
     pFormParent->InsertChild(pExistingNode);
-    pExistingNode->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
+    pExistingNode->ClearFlag(XFA_NODEFLAG_UnusedNode);
     pExistingNode->SetTemplateNode(pTemplateNode);
     return pExistingNode;
   }
@@ -784,11 +784,11 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
     } else if (pInstMgrNode) {
       pOccurNode = pInstMgrNode->GetFirstChildByClass(XFA_ELEMENT_Occur);
       if (pOccurNode) {
-        pOccurNode->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
+        pOccurNode->ClearFlag(XFA_NODEFLAG_UnusedNode);
       }
     }
     if (pInstMgrNode) {
-      pInstMgrNode->SetFlag(XFA_NODEFLAG_Initialized);
+      pInstMgrNode->SetFlag(XFA_NODEFLAG_Initialized, true);
       pSearchArray = &subformArray;
       if (pFormParentNode->GetClassID() == XFA_ELEMENT_PageArea) {
         bOneInstance = TRUE;
@@ -1347,7 +1347,7 @@ void CXFA_Document::DoDataMerge() {
         sIterator(pFormRoot);
     for (CXFA_Node* pNode = sIterator.MoveToNext(); pNode;
          pNode = sIterator.MoveToNext()) {
-      pNode->SetFlag(XFA_NODEFLAG_UnusedNode);
+      pNode->SetFlag(XFA_NODEFLAG_UnusedNode, true);
     }
   }
   CXFA_Node* pSubformSetNode = XFA_NodeMerge_CloneOrMergeContainer(
@@ -1405,12 +1405,12 @@ void CXFA_Document::DoDataMerge() {
           pNode->GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pNode);
           pNode = pNext;
         } else {
-          pNode->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
-          pNode->SetFlag(XFA_NODEFLAG_Initialized);
+          pNode->ClearFlag(XFA_NODEFLAG_UnusedNode);
+          pNode->SetFlag(XFA_NODEFLAG_Initialized, true);
           pNode = sIterator.MoveToNext();
         }
       } else {
-        pNode->SetFlag(XFA_NODEFLAG_Initialized);
+        pNode->SetFlag(XFA_NODEFLAG_Initialized, true);
         pNode = sIterator.MoveToNext();
       }
     }

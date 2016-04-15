@@ -82,7 +82,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     pDataNode->SetCData(XFA_ATTRIBUTE_Name, wsName);
     pDataNode->CreateXMLMappingNode();
     pDataParent->InsertChild(pDataNode);
-    pDataNode->SetFlag(XFA_NODEFLAG_Initialized, TRUE, FALSE);
+    pDataNode->SetFlag(XFA_NODEFLAG_Initialized, false);
     return pDataNode;
   } else {
     CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_DDGroup>
@@ -118,7 +118,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
       }
       pDataParent->InsertChild(pDataNode);
       pDataNode->SetDataDescriptionNode(pDDNode);
-      pDataNode->SetFlag(XFA_NODEFLAG_Initialized, TRUE, FALSE);
+      pDataNode->SetFlag(XFA_NODEFLAG_Initialized, false);
       return pDataNode;
     }
     return NULL;

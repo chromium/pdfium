@@ -521,9 +521,7 @@ void CPDFXFA_Document::PageViewEvent(CXFA_FFPageView* pPageView,
 
 void CPDFXFA_Document::WidgetEvent(CXFA_FFWidget* hWidget,
                                    CXFA_WidgetAcc* pWidgetData,
-                                   uint32_t dwEvent,
-                                   void* pParam,
-                                   void* pAdditional) {
+                                   uint32_t dwEvent) {
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA || !hWidget)
     return;
 

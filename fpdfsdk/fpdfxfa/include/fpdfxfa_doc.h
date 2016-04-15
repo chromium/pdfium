@@ -73,9 +73,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   // dwEvent refer to XFA_WIDGETEVENT_XXX
   virtual void WidgetEvent(CXFA_FFWidget* hWidget,
                            CXFA_WidgetAcc* pWidgetData,
-                           uint32_t dwEvent,
-                           void* pParam = NULL,
-                           void* pAdditional = NULL);
+                           uint32_t dwEvent);
 
   // return true if render it.
   virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,

@@ -561,8 +561,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
     CXFA_ContentLayoutItem* pOldLayoutItem = m_pOldLayoutItem;
     while (pOldLayoutItem) {
       CXFA_ContentLayoutItem* pNextOldLayoutItem = pOldLayoutItem->m_pNext;
-      pNotify->OnLayoutEvent(pDocLayout, pOldLayoutItem,
-                             XFA_LAYOUTEVENT_ItemRemoving);
+      pNotify->OnLayoutItemRemoving(pDocLayout, pOldLayoutItem);
       delete pOldLayoutItem;
       pOldLayoutItem = pNextOldLayoutItem;
     }
@@ -630,8 +629,7 @@ static void XFA_DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
     CXFA_ContentLayoutItem* pNextLayoutItem = NULL;
     while (pCurLayoutItem) {
       pNextLayoutItem = pCurLayoutItem->m_pNext;
-      pNotify->OnLayoutEvent(pDocLayout, pCurLayoutItem,
-                             XFA_LAYOUTEVENT_ItemRemoving);
+      pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
       delete pCurLayoutItem;
       pCurLayoutItem = pNextLayoutItem;
     }
@@ -1868,7 +1866,7 @@ void CXFA_ItemLayoutProcessor::ProcessUnUseBinds(CXFA_Node* pFormNode) {
         pNode->SetObject(XFA_ATTRIBUTE_BindingNode, NULL);
       }
     }
-    pNode->SetFlag(XFA_NODEFLAG_UnusedNode);
+    pNode->SetFlag(XFA_NODEFLAG_UnusedNode, true);
   }
 }
 void CXFA_ItemLayoutProcessor::ProcessUnUseOverFlow(

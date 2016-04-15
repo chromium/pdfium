@@ -927,9 +927,8 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
   if (!bNotify)
     return;
 
-  m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(
-      this, XFA_WIDGETEVENT_ListItemAdded, (void*)wsLabel.c_str(),
-      (void*)wsValue.c_str(), (void*)(uintptr_t)nIndex);
+  m_pNode->GetDocument()->GetNotify()->OnWidgetListItemAdded(
+      this, wsLabel.c_str(), wsValue.c_str(), nIndex);
 }
 
 void CXFA_WidgetData::GetItemLabel(const CFX_WideStringC& wsValue,
@@ -1053,11 +1052,8 @@ FX_BOOL CXFA_WidgetData::DeleteItem(int32_t nIndex,
       }
     }
   }
-  if (!bNotify)
-    return TRUE;
-
-  m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(
-      this, XFA_WIDGETEVENT_ListItemRemoved, (void*)(uintptr_t)nIndex);
+  if (bNotify)
+    m_pNode->GetDocument()->GetNotify()->OnWidgetListItemRemoved(this, nIndex);
   return TRUE;
 }
 

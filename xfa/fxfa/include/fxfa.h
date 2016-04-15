@@ -279,10 +279,7 @@ class IXFA_AppProvider {
 #define XFA_PAGEVIEWEVENT_StopLayout 4
 #define XFA_WIDGETEVENT_PostAdded 2
 #define XFA_WIDGETEVENT_PreRemoved 3
-#define XFA_WIDGETEVENT_PostContentChanged 6
-#define XFA_WIDGETEVENT_ListItemRemoved 7
-#define XFA_WIDGETEVENT_ListItemAdded 8
-#define XFA_WIDGETEVENT_AccessChanged 9
+
 class IXFA_DocProvider {
  public:
   virtual ~IXFA_DocProvider() {}
@@ -305,9 +302,7 @@ class IXFA_DocProvider {
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
   virtual void WidgetEvent(CXFA_FFWidget* hWidget,
                            CXFA_WidgetAcc* pWidgetData,
-                           uint32_t dwEvent,
-                           void* pParam = NULL,
-                           void* pAdditional = NULL) = 0;
+                           uint32_t dwEvent) = 0;
   virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
                                      CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,

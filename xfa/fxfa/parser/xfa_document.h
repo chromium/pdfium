@@ -42,23 +42,7 @@ enum XFA_VERSION {
 #define XFA_LAYOUTSTATUS_Visible 0x0001
 #define XFA_LAYOUTSTATUS_Viewable 0x0010
 #define XFA_LAYOUTSTATUS_Printable 0x0020
-enum XFA_NODEEVENT {
-  XFA_NODEEVENT_Ready,
-  XFA_NODEEVENT_ValueChanging,
-  XFA_NODEEVENT_ValueChanged,
-  XFA_NODEEVENT_ChildAdded,
-  XFA_NODEEVENT_ChildRemoved,
-};
-enum XFA_PAGEEVENT {
-  XFA_PAGEEVENT_PageAdded,
-  XFA_PAGEEVENT_PageRemoved,
-};
-enum XFA_LAYOUTEVENT {
-  XFA_LAYOUTEVENT_ItemAdded,
-  XFA_LAYOUTEVENT_ItemRemoving,
-  XFA_LAYOUTEVENT_RectChanged,
-  XFA_LAYOUTEVENT_StatusChanged,
-};
+
 enum XFA_LAYOUTRESULT {
   XFA_LAYOUTRESULT_Continue,
   XFA_LAYOUTRESULT_Done,

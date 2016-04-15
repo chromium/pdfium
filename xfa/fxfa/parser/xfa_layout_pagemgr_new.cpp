@@ -94,7 +94,7 @@ FX_BOOL CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
       return FALSE;
     }
     m_pTemplatePageSetRoot->InsertChild(pPageArea, NULL);
-    pPageArea->SetFlag(XFA_NODEFLAG_Initialized);
+    pPageArea->SetFlag(XFA_NODEFLAG_Initialized, true);
   }
   CXFA_Node* pContentArea = pPageArea->GetChild(0, XFA_ELEMENT_ContentArea);
   if (!pContentArea) {
@@ -104,7 +104,7 @@ FX_BOOL CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
       return FALSE;
     }
     pPageArea->InsertChild(pContentArea, NULL);
-    pContentArea->SetFlag(XFA_NODEFLAG_Initialized);
+    pContentArea->SetFlag(XFA_NODEFLAG_Initialized, true);
     pContentArea->SetMeasure(XFA_ATTRIBUTE_X,
                              CXFA_Measurement(0.25f, XFA_UNIT_In));
     pContentArea->SetMeasure(XFA_ATTRIBUTE_Y,
@@ -122,7 +122,7 @@ FX_BOOL CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
       return FALSE;
     }
     pPageArea->InsertChild(pMedium, NULL);
-    pMedium->SetFlag(XFA_NODEFLAG_Initialized);
+    pMedium->SetFlag(XFA_NODEFLAG_Initialized, true);
     pMedium->SetMeasure(XFA_ATTRIBUTE_Short,
                         CXFA_Measurement(8.5f, XFA_UNIT_In));
     pMedium->SetMeasure(XFA_ATTRIBUTE_Long,
@@ -415,8 +415,7 @@ void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
         (CXFA_ContainerLayoutItem*)pNotify->OnCreateLayoutItem(pNewPageArea);
     m_PageArray.Add(pContainerItem);
     m_nAvailPages++;
-    pNotify->OnPageEvent(pContainerItem, XFA_PAGEEVENT_PageAdded,
-                         (void*)(uintptr_t)m_nAvailPages);
+    pNotify->OnPageEvent(pContainerItem, XFA_PAGEVIEWEVENT_PostRemoved);
     pNewPageAreaLayoutItem = pContainerItem;
   }
   pNewRecord->pCurPageSet->AddChild(pNewPageAreaLayoutItem);
@@ -745,8 +744,8 @@ FX_BOOL CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
   return FALSE;
 }
 static void XFA_SetLayoutGeneratedNodeFlag(CXFA_Node* pNode) {
-  pNode->SetFlag(XFA_NODEFLAG_LayoutGeneratedNode, TRUE, FALSE);
-  pNode->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE, FALSE);
+  pNode->SetFlag(XFA_NODEFLAG_LayoutGeneratedNode, false);
+  pNode->ClearFlag(XFA_NODEFLAG_UnusedNode);
 }
 FX_BOOL CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
     CXFA_Node* pBreakNode,
@@ -1507,8 +1506,7 @@ static void XFA_SyncRemoveLayoutItem(CXFA_LayoutItem* pParentLayoutItem,
     if (pCurLayoutItem->m_pFirstChild) {
       XFA_SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
     }
-    pNotify->OnLayoutEvent(pDocLayout, pCurLayoutItem,
-                           XFA_LAYOUTEVENT_ItemRemoving);
+    pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
     delete pCurLayoutItem;
     pCurLayoutItem = pNextLayoutItem;
   }
@@ -1528,8 +1526,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
         if (pCurLayoutItem->m_pFirstChild) {
           XFA_SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
         }
-        pNotify->OnLayoutEvent(pDocLayout, pCurLayoutItem,
-                               XFA_LAYOUTEVENT_ItemRemoving);
+        pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
         delete pCurLayoutItem;
         pCurLayoutItem = pNextLayoutItem;
         continue;
@@ -1539,7 +1536,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
             sIterator(pCurLayoutItem->m_pFormNode);
         for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
              pNode = sIterator.MoveToNext()) {
-          pNode->SetFlag(XFA_NODEFLAG_UnusedNode, TRUE, FALSE);
+          pNode->SetFlag(XFA_NODEFLAG_UnusedNode, false);
         }
       }
     }
@@ -1579,6 +1576,7 @@ CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(
   }
   return NULL;
 }
+
 void CXFA_LayoutPageMgr::MergePageSetContents() {
   CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
   CXFA_FFNotify* pNotify = pDocument->GetParser()->GetNotify();
@@ -1598,15 +1596,14 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
             pNode->SetObject(XFA_ATTRIBUTE_BindingNode, NULL);
           }
         }
-        pNode->SetFlag(XFA_NODEFLAG_UnusedNode);
+        pNode->SetFlag(XFA_NODEFLAG_UnusedNode, true);
       }
     }
   }
   int32_t iIndex = 0;
-  CXFA_Node* pPendingPageSet = NULL;
   for (; pRootLayout;
        pRootLayout = (CXFA_ContainerLayoutItem*)pRootLayout->m_pNextSibling) {
-    pPendingPageSet = NULL;
+    CXFA_Node* pPendingPageSet = nullptr;
     CXFA_NodeIteratorTemplate<
         CXFA_ContainerLayoutItem,
         CXFA_TraverseStrategy_ContentAreaContainerLayoutItem>
@@ -1633,7 +1630,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
                                                           NULL);
     }
     pRootPageSetContainerItem->m_pFormNode = pPendingPageSet;
-    pPendingPageSet->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
+    pPendingPageSet->ClearFlag(XFA_NODEFLAG_UnusedNode);
     for (CXFA_ContainerLayoutItem* pContainerItem = iterator.MoveToNext();
          pContainerItem; pContainerItem = iterator.MoveToNext()) {
       CXFA_Node* pNode = pContainerItem->m_pFormNode;
@@ -1679,8 +1676,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
                   CXFA_LayoutItem* pLayoutItem = static_cast<CXFA_LayoutItem*>(
                       pNode->GetUserData(XFA_LAYOUTITEMKEY));
                   if (pLayoutItem) {
-                    pNotify->OnLayoutEvent(pDocLayout, pLayoutItem,
-                                           XFA_LAYOUTEVENT_ItemRemoving);
+                    pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
                     delete pLayoutItem;
                   }
                 }
@@ -1720,14 +1716,14 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
       pFormToplevelSubform->InsertChild(pPendingPageSet);
     }
     pDocument->DataMerge_UpdateBindingRelations(pPendingPageSet);
-    pPendingPageSet->SetFlag(XFA_NODEFLAG_Initialized);
+    pPendingPageSet->SetFlag(XFA_NODEFLAG_Initialized, true);
   }
-  pPendingPageSet = GetRootLayoutItem()->m_pFormNode;
-  while (pPendingPageSet) {
-    CXFA_Node* pNextPendingPageSet =
-        pPendingPageSet->GetNextSameClassSibling(XFA_ELEMENT_PageSet);
+  CXFA_Node* pPageSet = GetRootLayoutItem()->m_pFormNode;
+  while (pPageSet) {
+    CXFA_Node* pNextPageSet =
+        pPageSet->GetNextSameClassSibling(XFA_ELEMENT_PageSet);
     CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>
-        sIterator(pPendingPageSet);
+        sIterator(pPageSet);
     CXFA_Node* pNode = sIterator.GetCurrent();
     while (pNode) {
       if (pNode->HasFlag(XFA_NODEFLAG_UnusedNode)) {
@@ -1740,8 +1736,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
               CXFA_LayoutItem* pLayoutItem = static_cast<CXFA_LayoutItem*>(
                   pChildNode->GetUserData(XFA_LAYOUTITEMKEY));
               if (pLayoutItem) {
-                pNotify->OnLayoutEvent(pDocLayout, pLayoutItem,
-                                       XFA_LAYOUTEVENT_ItemRemoving);
+                pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
                 delete pLayoutItem;
               }
             }
@@ -1749,8 +1744,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
             CXFA_LayoutItem* pLayoutItem = static_cast<CXFA_LayoutItem*>(
                 pNode->GetUserData(XFA_LAYOUTITEMKEY));
             if (pLayoutItem) {
-              pNotify->OnLayoutEvent(pDocLayout, pLayoutItem,
-                                     XFA_LAYOUTEVENT_ItemRemoving);
+              pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
               delete pLayoutItem;
             }
           }
@@ -1758,18 +1752,19 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           pNode->GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pNode);
           pNode = pNext;
         } else {
-          pNode->SetFlag(XFA_NODEFLAG_UnusedNode, FALSE);
-          pNode->SetFlag(XFA_NODEFLAG_Initialized);
+          pNode->ClearFlag(XFA_NODEFLAG_UnusedNode);
+          pNode->SetFlag(XFA_NODEFLAG_Initialized, true);
           pNode = sIterator.MoveToNext();
         }
       } else {
-        pNode->SetFlag(XFA_NODEFLAG_Initialized);
+        pNode->SetFlag(XFA_NODEFLAG_Initialized, true);
         pNode = sIterator.MoveToNext();
       }
     }
-    pPendingPageSet = pNextPendingPageSet;
+    pPageSet = pNextPageSet;
   }
 }
+
 void CXFA_LayoutPageMgr::LayoutPageSetContents() {
   CXFA_ContainerLayoutItem* pRootLayoutItem = GetRootLayoutItem();
   for (; pRootLayoutItem;
@@ -1814,9 +1809,7 @@ void XFA_SyncContainer(CXFA_FFNotify* pNotify,
     dwStatus =
         (bVisibleItem ? XFA_LAYOUTSTATUS_Visible : 0) | dwRelevantContainer;
   }
-  pNotify->OnLayoutEvent(pDocLayout, pContainerItem, XFA_LAYOUTEVENT_ItemAdded,
-                         (void*)(uintptr_t)nPageIndex,
-                         (void*)(uintptr_t)dwStatus);
+  pNotify->OnLayoutItemAdded(pDocLayout, pContainerItem, nPageIndex, dwStatus);
   for (CXFA_LayoutItem* pChild = pContainerItem->m_pFirstChild; pChild;
        pChild = pChild->m_pNextSibling) {
     if (pChild->IsContentLayoutItem()) {
@@ -1876,7 +1869,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
   for (int32_t i = nPage - 1; i >= m_nAvailPages; i--) {
     CXFA_ContainerLayoutItem* pPage = m_PageArray[i];
     m_PageArray.RemoveAt(i);
-    pNotify->OnPageEvent(pPage, XFA_PAGEEVENT_PageRemoved);
+    pNotify->OnPageEvent(pPage, XFA_PAGEVIEWEVENT_PostRemoved);
     delete pPage;
   }
   ClearRecordList();
