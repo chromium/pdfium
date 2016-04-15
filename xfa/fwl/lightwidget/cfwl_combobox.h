@@ -30,7 +30,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   FWL_ERR GetTextByIndex(int32_t iIndex, CFX_WideString& wsText);
   int32_t GetCurSel();
   FWL_ERR SetCurSel(int32_t iSel);
-  FWL_ERR SetEditText(const CFX_WideStringC& wsText);
+  FWL_ERR SetEditText(const CFX_WideString& wsText);
   int32_t GetEditTextLength() const;
   FWL_ERR GetEditText(CFX_WideString& wsText,
                       int32_t nStart = 0,

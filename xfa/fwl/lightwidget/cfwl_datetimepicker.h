@@ -16,7 +16,7 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   FWL_ERR Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   FWL_ERR SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
   FWL_ERR GetEditText(CFX_WideString& wsText);
-  FWL_ERR SetEditText(const CFX_WideStringC& wsText);
+  FWL_ERR SetEditText(const CFX_WideString& wsText);
   int32_t CountSelRanges();
   int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
   FWL_ERR GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);

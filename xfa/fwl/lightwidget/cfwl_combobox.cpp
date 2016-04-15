@@ -88,7 +88,7 @@ FWL_ERR CFWL_ComboBox::SetCurSel(int32_t iSel) {
   return static_cast<IFWL_ComboBox*>(m_pIface)->SetCurSel(iSel);
 }
 
-FWL_ERR CFWL_ComboBox::SetEditText(const CFX_WideStringC& wsText) {
+FWL_ERR CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
   return static_cast<IFWL_ComboBox*>(m_pIface)->SetEditText(wsText);

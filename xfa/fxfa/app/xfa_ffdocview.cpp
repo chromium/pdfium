@@ -256,7 +256,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
     return XFA_EVENTERROR_Error;
   }
   if (pParam->m_eType == XFA_EVENT_Validate) {
-    CFX_WideString wsValidateStr = FX_WSTRC(L"preSubmit");
+    CFX_WideString wsValidateStr(L"preSubmit");
     CXFA_Node* pConfigItem =
         ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Config));
     if (pConfigItem) {

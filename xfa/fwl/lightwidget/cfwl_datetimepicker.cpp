@@ -58,7 +58,7 @@ FWL_ERR CFWL_DateTimePicker::GetEditText(CFX_WideString& wsText) {
   return static_cast<IFWL_DateTimePicker*>(m_pIface)->GetEditText(wsText);
 }
 
-FWL_ERR CFWL_DateTimePicker::SetEditText(const CFX_WideStringC& wsText) {
+FWL_ERR CFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
   return static_cast<IFWL_DateTimePicker*>(m_pIface)->SetEditText(wsText);
 }
 

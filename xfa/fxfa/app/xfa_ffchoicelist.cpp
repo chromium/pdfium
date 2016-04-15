@@ -250,7 +250,7 @@ FX_BOOL CXFA_FFComboBox::LoadWidget() {
   } else {
     CFX_WideString wsText;
     m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Raw);
-    pComboBox->SetEditText(wsText.AsStringC());
+    pComboBox->SetEditText(wsText);
   }
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
@@ -382,7 +382,7 @@ FX_BOOL CXFA_FFComboBox::UpdateFWLData() {
     CFX_WideString wsText;
     ((CFWL_ComboBox*)m_pNormalWidget)->SetCurSel(-1);
     m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Raw);
-    ((CFWL_ComboBox*)m_pNormalWidget)->SetEditText(wsText.AsStringC());
+    ((CFWL_ComboBox*)m_pNormalWidget)->SetEditText(wsText);
   }
   m_pNormalWidget->Update();
   return TRUE;
