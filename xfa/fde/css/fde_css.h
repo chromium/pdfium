@@ -23,7 +23,6 @@ class IFDE_CSSRule;
 class IFDE_CSSSelector;
 class IFDE_CSSStyleSelector;
 class IFDE_CSSStyleSheet;
-class IFDE_CSSStyleSheetCache;
 class IFDE_CSSSyntaxParser;
 class IFDE_CSSTagProvider;
 class IFDE_CSSValue;
@@ -453,18 +452,6 @@ class IFDE_CSSStyleSheet : public IFX_Unknown {
 };
 typedef CFX_ArrayTemplate<IFDE_CSSStyleSheet*> CFDE_CSSStyleSheetArray;
 
-class IFDE_CSSStyleSheetCache {
- public:
-  static IFDE_CSSStyleSheetCache* Create();
-  virtual ~IFDE_CSSStyleSheetCache() {}
-  virtual void Release() = 0;
-  virtual void SetMaxItems(int32_t iMaxCount = 5) = 0;
-  virtual void AddStyleSheet(const CFX_ByteStringC& szKey,
-                             IFDE_CSSStyleSheet* pStyleSheet) = 0;
-  virtual IFDE_CSSStyleSheet* GetStyleSheet(
-      const CFX_ByteStringC& szKey) const = 0;
-  virtual void RemoveStyleSheet(const CFX_ByteStringC& szKey) = 0;
-};
 enum FDE_CSSSYNTAXSTATUS {
   FDE_CSSSYNTAXSTATUS_Error,
   FDE_CSSSYNTAXSTATUS_EOS,

@@ -21,30 +21,6 @@ class FDE_CSSCacheItem : public CFX_Target {
   uint32_t dwActivity;
 };
 
-class CFDE_CSSStyleSheetCache : public IFDE_CSSStyleSheetCache,
-                                public CFX_Target {
- public:
-  CFDE_CSSStyleSheetCache();
-  ~CFDE_CSSStyleSheetCache();
-  virtual void Release() { delete this; }
-
-  virtual void SetMaxItems(int32_t iMaxCount = 5) {
-    FXSYS_assert(iMaxCount >= 3);
-    m_iMaxItems = iMaxCount;
-  }
-
-  virtual void AddStyleSheet(const CFX_ByteStringC& szKey,
-                             IFDE_CSSStyleSheet* pStyleSheet);
-  virtual IFDE_CSSStyleSheet* GetStyleSheet(const CFX_ByteStringC& szKey) const;
-  virtual void RemoveStyleSheet(const CFX_ByteStringC& szKey);
-
- protected:
-  void RemoveLowestActivityItem();
-  std::map<CFX_ByteString, FDE_CSSCacheItem*> m_Stylesheets;
-  IFX_MEMAllocator* m_pFixedStore;
-  int32_t m_iMaxItems;
-};
-
 class FDE_CSSTagCache : public CFX_Target {
  public:
   FDE_CSSTagCache(FDE_CSSTagCache* parent, IFDE_CSSTagProvider* tag);
