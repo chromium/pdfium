@@ -10,10 +10,6 @@
 
 CPDF_Name::CPDF_Name(const CFX_ByteString& str) : m_Name(str) {}
 
-CPDF_Name::CPDF_Name(const CFX_ByteStringC& str) : m_Name(str) {}
-
-CPDF_Name::CPDF_Name(const FX_CHAR* str) : m_Name(str) {}
-
 CPDF_Name::~CPDF_Name() {}
 
 CPDF_Object::Type CPDF_Name::GetType() const {

@@ -71,12 +71,19 @@ FX_FLOAT CPDF_Dest::GetParam(int index) {
 CFX_ByteString CPDF_Dest::GetRemoteName() {
   return m_pObj ? m_pObj->GetString() : CFX_ByteString();
 }
+
 CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc,
-                             const CFX_ByteStringC& category) {
-  if (pDoc->GetRoot() && pDoc->GetRoot()->GetDictBy("Names"))
-    m_pRoot = pDoc->GetRoot()->GetDictBy("Names")->GetDictBy(category);
-  else
-    m_pRoot = NULL;
+                             const CFX_ByteString& category)
+    : m_pRoot(nullptr) {
+  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  if (!pRoot)
+    return;
+
+  CPDF_Dictionary* pNames = pRoot->GetDictBy("Names");
+  if (!pNames)
+    return;
+
+  m_pRoot = pNames->GetDictBy(category);
 }
 
 static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
@@ -233,7 +240,7 @@ CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const {
   return SearchNameNode(m_pRoot, csName, nIndex, NULL);
 }
 CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
-                                           const CFX_ByteStringC& sName) {
+                                           const CFX_ByteString& sName) {
   CPDF_Object* pValue = LookupValue(sName);
   if (!pValue) {
     CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictBy("Dests");

@@ -12,8 +12,6 @@
 class CPDF_Name : public CPDF_Object {
  public:
   explicit CPDF_Name(const CFX_ByteString& str);
-  explicit CPDF_Name(const CFX_ByteStringC& str);
-  explicit CPDF_Name(const FX_CHAR* str);
 
   // CPDF_Object.
   Type GetType() const override;

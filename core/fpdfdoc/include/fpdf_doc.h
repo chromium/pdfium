@@ -51,12 +51,11 @@ class CFX_RenderDevice;
 class CPDF_NameTree {
  public:
   explicit CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
-  CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteStringC& category);
+  CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteString& category);
 
   CPDF_Object* LookupValue(int nIndex, CFX_ByteString& csName) const;
   CPDF_Object* LookupValue(const CFX_ByteString& csName) const;
-  CPDF_Array* LookupNamedDest(CPDF_Document* pDoc,
-                              const CFX_ByteStringC& sName);
+  CPDF_Array* LookupNamedDest(CPDF_Document* pDoc, const CFX_ByteString& sName);
   int GetIndex(const CFX_ByteString& csName) const;
   size_t GetCount() const;
   CPDF_Dictionary* GetRoot() const { return m_pRoot; }

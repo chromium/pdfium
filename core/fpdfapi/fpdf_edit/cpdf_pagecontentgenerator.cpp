@@ -58,22 +58,22 @@ void CPDF_PageContentGenerator::GenerateContent() {
 }
 CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     CPDF_Object* pResourceObj,
-    const FX_CHAR* szType) {
+    const CFX_ByteString& bsType) {
   if (!m_pPage->m_pResources) {
     m_pPage->m_pResources = new CPDF_Dictionary;
     int objnum = m_pDocument->AddIndirectObject(m_pPage->m_pResources);
     m_pPage->m_pFormDict->SetAtReference("Resources", m_pDocument, objnum);
   }
-  CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictBy(szType);
+  CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictBy(bsType);
   if (!pResList) {
     pResList = new CPDF_Dictionary;
-    m_pPage->m_pResources->SetAt(szType, pResList);
+    m_pPage->m_pResources->SetAt(bsType, pResList);
   }
   m_pDocument->AddIndirectObject(pResourceObj);
   CFX_ByteString name;
   int idnum = 1;
   while (1) {
-    name.Format("FX%c%d", szType[0], idnum);
+    name.Format("FX%c%d", bsType[0], idnum);
     if (!pResList->KeyExist(name)) {
       break;
     }
