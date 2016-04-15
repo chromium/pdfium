@@ -239,10 +239,10 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
         if (highcode == (uint32_t)-1) {
           break;
         }
-        CFX_ByteString start = parser.GetWord();
+        CFX_ByteString start(parser.GetWord());
         if (start == "[") {
           for (uint32_t code = lowcode; code <= highcode; code++) {
-            CFX_ByteString dest = parser.GetWord();
+            CFX_ByteString dest(parser.GetWord());
             CFX_WideString destcode = StringToWideString(dest.AsStringC());
             int len = destcode.GetLength();
             if (len == 0) {
