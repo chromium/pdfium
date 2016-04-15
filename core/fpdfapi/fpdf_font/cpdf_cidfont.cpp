@@ -401,7 +401,8 @@ FX_BOOL CPDF_CIDFont::Load() {
   if (m_Charset == CIDSET_UNKNOWN) {
     CPDF_Dictionary* pCIDInfo = pCIDFontDict->GetDictBy("CIDSystemInfo");
     if (pCIDInfo) {
-      m_Charset = CharsetFromOrdering(pCIDInfo->GetStringBy("Ordering"));
+      m_Charset =
+          CharsetFromOrdering(pCIDInfo->GetStringBy("Ordering").AsStringC());
     }
   }
   if (m_Charset != CIDSET_UNKNOWN)

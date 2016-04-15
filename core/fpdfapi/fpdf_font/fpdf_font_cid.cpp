@@ -190,7 +190,7 @@ CIDSet CIDSetFromSizeT(size_t index) {
   return static_cast<CIDSet>(index);
 }
 
-CFX_ByteString CMap_GetString(const CFX_ByteStringC& word) {
+CFX_ByteStringC CMap_GetString(const CFX_ByteStringC& word) {
   return word.Mid(1, word.GetLength() - 2);
 }
 
@@ -407,13 +407,11 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
     }
     m_CodeSeq = 0;
   } else if (m_Status == 3) {
-    CMap_GetString(word);
     m_Status = 0;
   } else if (m_Status == 4) {
     m_pCMap->m_Charset = CharsetFromOrdering(CMap_GetString(word));
     m_Status = 0;
   } else if (m_Status == 5) {
-    CMap_GetCode(word);
     m_Status = 0;
   } else if (m_Status == 6) {
     m_pCMap->m_bVertical = CMap_GetCode(word);
@@ -788,9 +786,9 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
   FPDFAPI_LoadCID2UnicodeMap(charset, m_pEmbeddedMap, m_EmbeddedCount);
 }
 
-CIDSet CharsetFromOrdering(const CFX_ByteString& ordering) {
+CIDSet CharsetFromOrdering(const CFX_ByteStringC& ordering) {
   for (size_t charset = 1; charset < FX_ArraySize(g_CharsetNames); ++charset) {
-    if (ordering == CFX_ByteStringC(g_CharsetNames[charset]))
+    if (ordering == g_CharsetNames[charset])
       return CIDSetFromSizeT(charset);
   }
   return CIDSET_UNKNOWN;

@@ -22,7 +22,7 @@ typedef void* FXFT_Library;
 
 short TT2PDF(int m, FXFT_Face face);
 FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
-CIDSet CharsetFromOrdering(const CFX_ByteString& ordering);
+CIDSet CharsetFromOrdering(const CFX_ByteStringC& ordering);
 
 class CPDF_CMapManager {
  public:
