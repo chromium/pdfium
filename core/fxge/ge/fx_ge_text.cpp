@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits>
+
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxge/fx_freetype.h"
@@ -1566,10 +1568,14 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
       skew = pSubstFont->m_ItalicAngle;
     }
     if (skew) {
-      // skew is nonpositive so -skew is used as the index.
-      skew = -skew <= static_cast<int>(ANGLESKEW_ARRAY_SIZE)
-                 ? -58
-                 : -g_AngleSkew[-skew];
+      // |skew| is nonpositive so |-skew| is used as the index. We need to make
+      // sure |skew| != INT_MIN since -INT_MIN is undefined.
+      if (skew <= 0 && skew != std::numeric_limits<int>::min() &&
+          static_cast<size_t>(-skew) < ANGLESKEW_ARRAY_SIZE) {
+        skew = -g_AngleSkew[-skew];
+      } else {
+        skew = -58;
+      }
       if (pFont->IsVertical())
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       else
@@ -1832,10 +1838,14 @@ CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index, int dest_width) {
   if (m_pSubstFont) {
     if (m_pSubstFont->m_ItalicAngle) {
       int skew = m_pSubstFont->m_ItalicAngle;
-      // skew is nonpositive so -skew is used as the index.
-      skew = -skew <= static_cast<int>(ANGLESKEW_ARRAY_SIZE)
-                 ? -58
-                 : -g_AngleSkew[-skew];
+      // |skew| is nonpositive so |-skew| is used as the index. We need to make
+      // sure |skew| != INT_MIN since -INT_MIN is undefined.
+      if (skew <= 0 && skew != std::numeric_limits<int>::min() &&
+          static_cast<size_t>(-skew) < ANGLESKEW_ARRAY_SIZE) {
+        skew = -g_AngleSkew[-skew];
+      } else {
+        skew = -58;
+      }
       if (m_bVertical)
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       else
