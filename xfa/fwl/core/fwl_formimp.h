@@ -7,7 +7,6 @@
 #ifndef XFA_FWL_CORE_FWL_FORMIMP_H_
 #define XFA_FWL_CORE_FWL_FORMIMP_H_
 
-#include "xfa/fwl/core/fwl_panelimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_form.h"
 
@@ -32,9 +31,8 @@ class CFWL_SysBtn {
     m_dwState = 0;
   }
 
-  FX_BOOL IsHover() { return m_dwState & FWL_SYSBUTTONSTATE_Hover; }
-  FX_BOOL IsPressed() { return m_dwState & FWL_SYSBUTTONSTATE_Pressed; }
   FX_BOOL IsDisabled() { return m_dwState & FWL_SYSBUTTONSTATE_Disabled; }
+
   void SetNormal() { m_dwState &= 0xFFF0; }
   void SetPressed() {
     SetNormal();
@@ -66,7 +64,7 @@ typedef struct RestoreResizeInfo {
   CFX_SizeF m_szStart;
 } RestoreInfo;
 
-class CFWL_FormImp : public CFWL_PanelImp {
+class CFWL_FormImp : public CFWL_WidgetImp {
  public:
   CFWL_FormImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   virtual ~CFWL_FormImp();
@@ -165,6 +163,7 @@ class CFWL_FormImp : public CFWL_PanelImp {
   FX_BOOL m_bMouseIn;
   friend class CFWL_FormImpDelegate;
 };
+
 class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_FormImpDelegate(CFWL_FormImp* pOwner);

@@ -14,7 +14,6 @@
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_panelimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
@@ -60,13 +59,13 @@ FWL_ERR IFWL_Form::SetBorderRegion(CFX_Path* pPath) {
 
 CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
-    : CFWL_PanelImp(properties, pOuter),
-      m_pCloseBox(NULL),
-      m_pMinBox(NULL),
-      m_pMaxBox(NULL),
-      m_pCaptionBox(NULL),
-      m_pNoteLoop(NULL),
-      m_pSubFocus(NULL),
+    : CFWL_WidgetImp(properties, pOuter),
+      m_pCloseBox(nullptr),
+      m_pMinBox(nullptr),
+      m_pMaxBox(nullptr),
+      m_pCaptionBox(nullptr),
+      m_pNoteLoop(nullptr),
+      m_pSubFocus(nullptr),
       m_fCXBorder(0),
       m_fCYBorder(0),
       m_iCaptureBtn(-1),
@@ -78,8 +77,8 @@ CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
       m_bCustomizeLayout(FALSE),
       m_eFormSize(FWL_FORMSIZE_Manual),
       m_bDoModalFlag(FALSE),
-      m_pBigIcon(NULL),
-      m_pSmallIcon(NULL),
+      m_pBigIcon(nullptr),
+      m_pSmallIcon(nullptr),
       m_bMouseIn(FALSE) {
   m_rtRelative.Reset();
   m_rtCaption.Reset();
@@ -87,23 +86,27 @@ CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
   m_rtCaptionText.Reset();
   m_rtIcon.Reset();
 }
+
 CFWL_FormImp::~CFWL_FormImp() {
   RemoveSysButtons();
   delete m_pNoteLoop;
 }
+
 FWL_ERR CFWL_FormImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Form;
   return FWL_ERR_Succeeded;
 }
+
 uint32_t CFWL_FormImp::GetClassID() const {
   return FWL_CLASSHASH_Form;
 }
+
 FX_BOOL CFWL_FormImp::IsInstance(const CFX_WideStringC& wsClass) const {
-  if (wsClass == CFX_WideStringC(FWL_CLASS_Form)) {
+  if (wsClass == CFX_WideStringC(FWL_CLASS_Form))
     return TRUE;
-  }
-  return CFWL_PanelImp::IsInstance(wsClass);
+  return CFWL_WidgetImp::IsInstance(wsClass);
 }
+
 FWL_ERR CFWL_FormImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
     return FWL_ERR_Indefinite;

@@ -7,8 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_FORM_H_
 #define XFA_FWL_CORE_IFWL_FORM_H_
 
-#include "xfa/fwl/core/ifwl_panel.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 
@@ -66,7 +66,7 @@ class IFWL_FormDP : public IFWL_DataProvider {
   virtual CFX_DIBitmap* GetIcon(IFWL_Widget* pWidget, FX_BOOL bBig) = 0;
 };
 
-class IFWL_Form : public IFWL_Panel {
+class IFWL_Form : public IFWL_Widget {
  public:
   static IFWL_Form* CreateFormProxy(CFWL_WidgetImpProperties& properties,
                                     CFX_WideString* classname,

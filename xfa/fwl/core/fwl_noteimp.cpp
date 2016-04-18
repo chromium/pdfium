@@ -12,7 +12,6 @@
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_formimp.h"
-#include "xfa/fwl/core/fwl_panelimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
