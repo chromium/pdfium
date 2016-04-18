@@ -918,6 +918,9 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
   unsigned int max_data = (1 << m_bpc) - 1;
   if (m_bDefaultDecode) {
     if (m_Family == PDFCS_DEVICERGB || m_Family == PDFCS_CALRGB) {
+      if (m_nComponents != 3)
+        return;
+
       const uint8_t* src_pos = src_scan;
       switch (m_bpc) {
         case 16:
