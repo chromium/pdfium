@@ -54,9 +54,11 @@ enum OutputFormat {
 };
 
 struct Options {
-  Options() : show_config(false), output_format(OUTPUT_NONE) {}
+  Options()
+      : show_config(false), send_events(false), output_format(OUTPUT_NONE) {}
 
   bool show_config;
+  bool send_events;
   OutputFormat output_format;
   std::string scale_factor_as_string;
   std::string exe_path;
@@ -338,6 +340,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     const std::string& cur_arg = args[cur_idx];
     if (cur_arg == "--show-config") {
       options->show_config = true;
+    } else if (cur_arg == "--send-events") {
+      options->send_events = true;
     } else if (cur_arg == "--ppm") {
       if (options->output_format != OUTPUT_NONE) {
         fprintf(stderr, "Duplicate or conflicting --ppm argument\n");
@@ -418,11 +422,73 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
 }
 
+void SendPageEvents(const FPDF_FORMHANDLE& form,
+                    const FPDF_PAGE& page,
+                    const std::string& events) {
+  auto lines = StringSplit(events, '\n');
+  for (auto line : lines) {
+    auto command = StringSplit(line, '#');
+    if (command[0].empty())
+      continue;
+    auto tokens = StringSplit(command[0], ',');
+    if (tokens[0] == "keycode") {
+      if (tokens.size() == 2) {
+        int keycode = atoi(tokens[1].c_str());
+        FORM_OnKeyDown(form, page, keycode, 0);
+        FORM_OnKeyUp(form, page, keycode, 0);
+      } else {
+        fprintf(stderr, "keycode: bad args\n");
+      }
+    } else if (tokens[0] == "mousedown") {
+      if (tokens.size() == 4) {
+        int x = atoi(tokens[2].c_str());
+        int y = atoi(tokens[3].c_str());
+        if (tokens[1] == "left")
+          FORM_OnLButtonDown(form, page, 0, x, y);
+#ifdef PDF_ENABLE_XFA
+        else if (tokens[1] == "right")
+          FORM_OnRButtonDown(form, page, 0, x, y);
+#endif
+        else
+          fprintf(stderr, "mousedown: bad button name\n");
+      } else {
+        fprintf(stderr, "mousedown: bad args\n");
+      }
+    } else if (tokens[0] == "mouseup") {
+      if (tokens.size() == 4) {
+        int x = atoi(tokens[2].c_str());
+        int y = atoi(tokens[3].c_str());
+        if (tokens[1] == "left")
+          FORM_OnLButtonUp(form, page, 0, x, y);
+#ifdef PDF_ENABLE_XFA
+        else if (tokens[1] == "right")
+          FORM_OnRButtonUp(form, page, 0, x, y);
+#endif
+        else
+          fprintf(stderr, "mouseup: bad button name\n");
+      } else {
+        fprintf(stderr, "mouseup: bad args\n");
+      }
+    } else if (tokens[0] == "mousemove") {
+      if (tokens.size() == 3) {
+        int x = atoi(tokens[1].c_str());
+        int y = atoi(tokens[2].c_str());
+        FORM_OnMouseMove(form, page, 0, x, y);
+      } else {
+        fprintf(stderr, "mousemove: bad args\n");
+      }
+    } else {
+      fprintf(stderr, "Unrecognized event: %s\n", tokens[0].c_str());
+    }
+  }
+}
+
 bool RenderPage(const std::string& name,
                 const FPDF_DOCUMENT& doc,
                 const FPDF_FORMHANDLE& form,
                 const int page_index,
-                const Options& options) {
+                const Options& options,
+                const std::string& events) {
   FPDF_PAGE page = FPDF_LoadPage(doc, page_index);
   if (!page) {
     return false;
@@ -430,6 +496,9 @@ bool RenderPage(const std::string& name,
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
   FORM_OnAfterLoadPage(page, form);
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
+
+  if (options.send_events)
+    SendPageEvents(doc, form, events);
 
   double scale = 1.0;
   if (!options.scale_factor_as_string.empty()) {
@@ -490,8 +559,11 @@ bool RenderPage(const std::string& name,
   return true;
 }
 
-void RenderPdf(const std::string& name, const char* pBuf, size_t len,
-               const Options& options) {
+void RenderPdf(const std::string& name,
+               const char* pBuf,
+               size_t len,
+               const Options& options,
+               const std::string& events) {
   fprintf(stderr, "Rendering PDF file %s.\n", name.c_str());
 
   IPDF_JSPLATFORM platform_callbacks;
@@ -623,7 +695,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
         return;
       }
     }
-    if (RenderPage(name, doc, form, i, options)) {
+    if (RenderPage(name, doc, form, i, options, events)) {
       ++rendered_pages;
     } else {
       ++bad_pages;
@@ -744,8 +816,26 @@ int main(int argc, const char* argv[]) {
     size_t file_length = 0;
     std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
         GetFileContents(filename.c_str(), &file_length);
-    if (file_contents)
-      RenderPdf(filename, file_contents.get(), file_length, options);
+    if (!file_contents)
+      continue;
+    std::string events;
+    if (options.send_events) {
+      std::string event_filename = filename;
+      size_t event_length = 0;
+      size_t extension_pos = event_filename.find(".pdf");
+      if (extension_pos != std::string::npos) {
+        event_filename.replace(extension_pos, 4, ".evt");
+        std::unique_ptr<char, pdfium::FreeDeleter> event_contents =
+            GetFileContents(event_filename.c_str(), &event_length);
+        if (event_contents) {
+          events = std::string(event_contents.get(), event_length);
+        } else {
+          fprintf(stderr, "Warning: no event file: %s\n",
+                  event_filename.c_str());
+        }
+      }
+    }
+    RenderPdf(filename, file_contents.get(), file_length, options, events);
   }
 
   FPDF_DestroyLibrary();

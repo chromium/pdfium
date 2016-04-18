@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "public/fpdf_save.h"
 #include "public/fpdfview.h"
@@ -62,6 +63,8 @@ struct FreeDeleter {
 // Reads the entire contents of a file into a newly alloc'd buffer.
 std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
                                                            size_t* retlen);
+
+std::vector<std::string> StringSplit(const std::string& str, char delimiter);
 
 // Converts a FPDF_WIDESTRING to a std::wstring.
 // Deals with differences between UTF16LE and wchar_t.

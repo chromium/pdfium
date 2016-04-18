@@ -118,6 +118,21 @@ std::wstring GetPlatformWString(FPDF_WIDESTRING wstr) {
   return platform_string;
 }
 
+std::vector<std::string> StringSplit(const std::string& str, char delimiter) {
+  std::vector<std::string> result;
+  size_t pos = 0;
+  while (1) {
+    size_t found = str.find(delimiter, pos);
+    if (found == std::string::npos)
+      break;
+
+    result.push_back(str.substr(pos, found - pos));
+    pos = found + 1;
+  }
+  result.push_back(str.substr(pos));
+  return result;
+}
+
 std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
     const std::wstring& wstr) {
   size_t length = sizeof(uint16_t) * (wstr.length() + 1);
