@@ -5,6 +5,7 @@ vars = {
   'pdfium_git': 'https://pdfium.googlesource.com',
 
   'buildtools_revision': 'c2f259809d5ede3275df5ea0842f0431990c4f98',
+  'clang_revision': '87058e09f9c547eb5d00cb8ca666c6aec203a117',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
@@ -36,7 +37,7 @@ deps = {
     Var('chromium_git') + '/skia.git' + '@' +  Var('skia_revision'),
 
   "tools/clang":
-    Var('chromium_git') + "/chromium/src/tools/clang",
+    Var('chromium_git') + "/chromium/src/tools/clang@" +  Var('clang_revision'),
 
   "v8":
     Var('chromium_git') + "/v8/v8.git@" + Var('v8_revision'),
