@@ -25,7 +25,12 @@
 #define FWL_SYSBTNSIZE 21
 #define FWL_SYSBTNMARGIN 5
 #define FWL_SYSBTNSPAN 2
-#define FWL_CornerEnlarge 10
+
+namespace {
+
+const uint8_t kCornerEnlarge = 10;
+
+}  // namespace
 
 // static
 IFWL_Form* IFWL_Form::CreateFormProxy(CFWL_WidgetImpProperties& properties,
@@ -213,47 +218,44 @@ uint32_t CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   }
   if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) &&
       (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize)) {
-    FX_FLOAT fWidth =
-        m_rtRelative.width - 2 * (m_fCYBorder + FWL_CornerEnlarge);
-    FX_FLOAT fHeight =
-        m_rtRelative.height - 2 * (m_fCXBorder + FWL_CornerEnlarge);
+    FX_FLOAT fWidth = m_rtRelative.width - 2 * (m_fCYBorder + kCornerEnlarge);
+    FX_FLOAT fHeight = m_rtRelative.height - 2 * (m_fCXBorder + kCornerEnlarge);
     CFX_RectF rt;
-    rt.Set(0, m_fCXBorder + FWL_CornerEnlarge, m_fCYBorder, fHeight);
+    rt.Set(0, m_fCXBorder + kCornerEnlarge, m_fCYBorder, fHeight);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_Left;
     }
-    rt.Set(m_rtRelative.width - m_fCYBorder, m_fCXBorder + FWL_CornerEnlarge,
+    rt.Set(m_rtRelative.width - m_fCYBorder, m_fCXBorder + kCornerEnlarge,
            m_fCYBorder, fHeight);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_Right;
     }
-    rt.Set(m_fCYBorder + FWL_CornerEnlarge, 0, fWidth, m_fCXBorder);
+    rt.Set(m_fCYBorder + kCornerEnlarge, 0, fWidth, m_fCXBorder);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_Top;
     }
-    rt.Set(m_fCYBorder + FWL_CornerEnlarge, m_rtRelative.height - m_fCXBorder,
+    rt.Set(m_fCYBorder + kCornerEnlarge, m_rtRelative.height - m_fCXBorder,
            fWidth, m_fCXBorder);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_Bottom;
     }
-    rt.Set(0, 0, m_fCYBorder + FWL_CornerEnlarge,
-           m_fCXBorder + FWL_CornerEnlarge);
+    rt.Set(0, 0, m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_LeftTop;
     }
-    rt.Set(0, m_rtRelative.height - m_fCXBorder - FWL_CornerEnlarge,
-           m_fCYBorder + FWL_CornerEnlarge, m_fCXBorder + FWL_CornerEnlarge);
+    rt.Set(0, m_rtRelative.height - m_fCXBorder - kCornerEnlarge,
+           m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_LeftBottom;
     }
-    rt.Set(m_rtRelative.width - m_fCYBorder - FWL_CornerEnlarge, 0,
-           m_fCYBorder + FWL_CornerEnlarge, m_fCXBorder + FWL_CornerEnlarge);
+    rt.Set(m_rtRelative.width - m_fCYBorder - kCornerEnlarge, 0,
+           m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_RightTop;
     }
-    rt.Set(m_rtRelative.width - m_fCYBorder - FWL_CornerEnlarge,
-           m_rtRelative.height - m_fCXBorder - FWL_CornerEnlarge,
-           m_fCYBorder + FWL_CornerEnlarge, m_fCXBorder + FWL_CornerEnlarge);
+    rt.Set(m_rtRelative.width - m_fCYBorder - kCornerEnlarge,
+           m_rtRelative.height - m_fCXBorder - kCornerEnlarge,
+           m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
     if (rt.Contains(fx, fy)) {
       return FWL_WGTHITTEST_RightBottom;
     }
