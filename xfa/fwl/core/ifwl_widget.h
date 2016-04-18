@@ -7,16 +7,16 @@
 #ifndef XFA_FWL_CORE_IFWL_WIDGET_H_
 #define XFA_FWL_CORE_IFWL_WIDGET_H_
 
-#include "xfa/fwl/core/fwl_error.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_target.h"
 
 class CFX_Graphics;
 class IFWL_DataProvider;
 class IFWL_Form;
-class IFWL_NoteThread;
+class IFWL_Thread;
 class IFWL_ThemeProvider;
 class IFWL_WidgetDelegate;
 
@@ -54,7 +54,7 @@ class IFWL_Widget : public IFWL_Target {
   FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   FWL_ERR SetDataProvider(IFWL_DataProvider* pDataProvider);
   IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
-  IFWL_NoteThread* GetOwnerThread() const;
+  IFWL_Thread* GetOwnerThread() const;
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 };
 

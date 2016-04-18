@@ -17,7 +17,7 @@ class IFWL_WidgetMgr;
 class IFWL_ThemeProvider;
 class IFWL_App;
 
-class CFWL_AppImp : public CFWL_NoteThreadImp {
+class CFWL_AppImp : public CFWL_ThreadImp {
  public:
   CFWL_AppImp(IFWL_App* pIface, IFWL_AdapterNative* pAdapter);
   virtual ~CFWL_AppImp();

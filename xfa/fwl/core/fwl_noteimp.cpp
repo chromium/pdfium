@@ -64,7 +64,7 @@ FWL_ERR CFWL_NoteLoop::SetMainForm(CFWL_WidgetImp* pForm) {
 void CFWL_NoteLoop::GenerateCommondEvent(uint32_t dwCommand) {
   CFWL_EvtMenuCommand ev;
   ev.m_iCommand = dwCommand;
-  IFWL_NoteThread* pThread = m_pForm->GetOwnerThread();
+  IFWL_Thread* pThread = m_pForm->GetOwnerThread();
   if (!pThread)
     return;
   IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
@@ -165,7 +165,7 @@ FWL_ERR CFWL_NoteDriver::UnregisterEventTarget(IFWL_Widget* pListener) {
 void CFWL_NoteDriver::ClearEventTargets(FX_BOOL bRemoveAll) {
   ClearInvalidEventTargets(bRemoveAll);
 }
-IFWL_NoteThread* CFWL_NoteDriver::GetOwnerThread() const {
+IFWL_Thread* CFWL_NoteDriver::GetOwnerThread() const {
   return FWL_GetApp();
 }
 FWL_ERR CFWL_NoteDriver::PushNoteLoop(IFWL_NoteLoop* pNoteLoop) {

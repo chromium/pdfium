@@ -14,12 +14,8 @@
 //      (nonesuch)              IFWL_Thread ----------> CFWL_ThreadImp
 //                                   |      <----------      |
 //                                   A       m_pIface        A
-//                                   |                       |
-//      (nonesuch)              IFWL_NoteThread         CFWL_NoteThreadImp
-//                                   |                       |
-//                                   A                       A
 //                m_pIface           |                       |
-//      CFWL_App --------------> IFWL_App                CFWL_AppImp
+//      CXFA_FFApp ------------> IFWL_App                CFWL_AppImp
 //
 
 #include "xfa/fwl/core/fwl_error.h"
@@ -34,6 +30,8 @@ class IFWL_Thread {
 
   CFWL_ThreadImp* GetImpl() const { return m_pImpl; }
   void SetImpl(CFWL_ThreadImp* pImpl) { m_pImpl = pImpl; }
+
+  IFWL_NoteDriver* GetNoteDriver() const;
 
  protected:
   virtual ~IFWL_Thread() {}

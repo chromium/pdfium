@@ -384,7 +384,7 @@ FWL_ERR CFWL_FormImp::SetFormSize(FWL_FORMSIZE eFormSize) {
   return FWL_ERR_Succeeded;
 }
 IFWL_Widget* CFWL_FormImp::DoModal() {
-  IFWL_NoteThread* pThread = GetOwnerThread();
+  IFWL_Thread* pThread = GetOwnerThread();
   if (!pThread)
     return NULL;
   IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
@@ -412,7 +412,7 @@ FWL_ERR CFWL_FormImp::EndDoModal() {
   m_bDoModalFlag = FALSE;
 #if (_FX_OS_ == _FX_MACOSX_)
   m_pNoteLoop->EndModalLoop();
-  IFWL_NoteThread* pThread = GetOwnerThread();
+  IFWL_Thread* pThread = GetOwnerThread();
   if (!pThread)
     return FWL_ERR_Indefinite;
   CFWL_NoteDriver* pDriver =
@@ -739,7 +739,7 @@ void CFWL_FormImp::ReSetSysBtn() {
   }
 }
 void CFWL_FormImp::RegisterForm() {
-  IFWL_NoteThread* pThread = GetOwnerThread();
+  IFWL_Thread* pThread = GetOwnerThread();
   if (!pThread)
     return;
   CFWL_NoteDriver* pDriver =
@@ -749,7 +749,7 @@ void CFWL_FormImp::RegisterForm() {
   pDriver->RegisterForm(this);
 }
 void CFWL_FormImp::UnRegisterForm() {
-  IFWL_NoteThread* pThread = GetOwnerThread();
+  IFWL_Thread* pThread = GetOwnerThread();
   if (!pThread)
     return;
   CFWL_NoteDriver* pDriver =
@@ -878,7 +878,7 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   switch (dwMsgCode) {
     case FWL_MSGHASH_Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-      IFWL_NoteThread* pThread = m_pOwner->GetOwnerThread();
+      IFWL_Thread* pThread = m_pOwner->GetOwnerThread();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();
@@ -892,7 +892,7 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case FWL_MSGHASH_Deactivate: {
       m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
-      IFWL_NoteThread* pThread = m_pOwner->GetOwnerThread();
+      IFWL_Thread* pThread = m_pOwner->GetOwnerThread();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();

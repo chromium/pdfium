@@ -42,7 +42,7 @@ FWL_ERR IFWL_App::Exit(int32_t iExitCode) {
 }
 
 CFWL_AppImp::CFWL_AppImp(IFWL_App* pIface, IFWL_AdapterNative* pAdapter)
-    : CFWL_NoteThreadImp(pIface),
+    : CFWL_ThreadImp(pIface),
       m_pAdapterNative(pAdapter),
       m_pThemeProvider(nullptr) {}
 
@@ -102,7 +102,7 @@ void FWL_SetApp(IFWL_App* pApp) {
 FWL_ERR FWL_SetFullScreen(IFWL_Widget* pWidget, FX_BOOL bFullScreen) {
   if (!pWidget)
     return FWL_ERR_Succeeded;
-  IFWL_NoteThread* pNoteTread = pWidget->GetOwnerThread();
+  IFWL_Thread* pNoteTread = pWidget->GetOwnerThread();
   if (!pNoteTread)
     return FWL_ERR_Succeeded;
   CFWL_NoteDriver* pNoteDriver =

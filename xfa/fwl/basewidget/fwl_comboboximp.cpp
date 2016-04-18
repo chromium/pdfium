@@ -23,8 +23,8 @@
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/fwl/core/ifwl_notethread.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_thread.h"
 
 // static
 IFWL_ComboBox* IFWL_ComboBox::Create(
@@ -1773,7 +1773,7 @@ FWL_ERR CFWL_ComboProxyImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
   return FWL_ERR_Succeeded;
 }
 void CFWL_ComboProxyImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  IFWL_NoteThread* pThread = m_pForm->GetOwnerThread();
+  IFWL_Thread* pThread = m_pForm->GetOwnerThread();
   if (!pThread)
     return;
   CFWL_NoteDriver* pDriver =
@@ -1792,7 +1792,7 @@ void CFWL_ComboProxyImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
 }
 void CFWL_ComboProxyImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_bLButtonDown = FALSE;
-  IFWL_NoteThread* pThread = m_pForm->GetOwnerThread();
+  IFWL_Thread* pThread = m_pForm->GetOwnerThread();
   if (!pThread)
     return;
   CFWL_NoteDriver* pDriver =

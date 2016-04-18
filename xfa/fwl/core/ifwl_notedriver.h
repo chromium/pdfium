@@ -22,7 +22,7 @@
 class CFWL_Message;
 class CFWL_Note;
 class IFWL_NoteLoop;
-class IFWL_NoteThread;
+class IFWL_Thread;
 class IFWL_Widget;
 
 class IFWL_NoteDriver {
@@ -36,7 +36,7 @@ class IFWL_NoteDriver {
       uint32_t dwFilter = FWL_EVENT_ALL_MASK) = 0;
   virtual FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) = 0;
   virtual void ClearEventTargets(FX_BOOL bRemoveAll) = 0;
-  virtual IFWL_NoteThread* GetOwnerThread() const = 0;
+  virtual IFWL_Thread* GetOwnerThread() const = 0;
   virtual FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) = 0;
   virtual IFWL_NoteLoop* PopNoteLoop() = 0;
   virtual IFWL_Widget* GetFocus() = 0;

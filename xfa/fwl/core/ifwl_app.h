@@ -8,7 +8,7 @@
 #define XFA_FWL_CORE_IFWL_APP_H_
 
 #include "core/fxcrt/include/fx_string.h"
-#include "xfa/fwl/core/ifwl_notethread.h"
+#include "xfa/fwl/core/ifwl_thread.h"
 
 class IFWL_AdapterNative;
 class IFWL_Widget;
@@ -16,7 +16,7 @@ class IFWL_WidgetMgr;
 class IFWL_ThemeProvider;
 class IFWL_AdapterWidgetMgr;
 
-class IFWL_App : public IFWL_NoteThread {
+class IFWL_App : public IFWL_Thread {
  public:
   static IFWL_App* Create(IFWL_AdapterNative* pAdapter);
 

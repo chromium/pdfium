@@ -210,7 +210,6 @@
         "xfa/fwl/core/ifwl_form.h",
         "xfa/fwl/core/ifwl_notedriver.h",
         "xfa/fwl/core/ifwl_noteloop.h",
-        "xfa/fwl/core/ifwl_notethread.h",
         "xfa/fwl/core/ifwl_panel.h",
         "xfa/fwl/core/ifwl_target.h",
         "xfa/fwl/core/ifwl_themeprovider.h",

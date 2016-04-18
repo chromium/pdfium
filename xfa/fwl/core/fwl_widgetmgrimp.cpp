@@ -696,11 +696,11 @@ int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
   if (!pMessage->m_pDstTarget)
     return 0;
   IFWL_Widget* pDstWidget = pMessage->m_pDstTarget;
-  IFWL_NoteThread* pNoteThread = pDstWidget->GetOwnerThread();
-  if (!pNoteThread)
+  IFWL_Thread* pThread = pDstWidget->GetOwnerThread();
+  if (!pThread)
     return 0;
   CFWL_NoteDriver* pNoteDriver =
-      static_cast<CFWL_NoteDriver*>(pNoteThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   if (!pNoteDriver)
     return 0;
   if (m_pWidgetMgr->IsThreadEnabled()) {

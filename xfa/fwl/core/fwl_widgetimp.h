@@ -14,11 +14,11 @@
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
 
 class CFWL_MsgKey;
-class CFWL_NoteThreadImp;
+class CFWL_ThreadImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetMgr;
 class IFWL_DataProvider;
-class IFWL_NoteThread;
+class IFWL_Thread;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 
@@ -62,8 +62,8 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   virtual FWL_ERR SetDataProvider(IFWL_DataProvider* pDataProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
-  virtual IFWL_NoteThread* GetOwnerThread() const;
-  FWL_ERR SetOwnerThread(CFWL_NoteThreadImp* pOwnerThread);
+  virtual IFWL_Thread* GetOwnerThread() const;
+  FWL_ERR SetOwnerThread(CFWL_ThreadImp* pOwnerThread);
   IFWL_Widget* GetInterface() const;
   void SetInterface(IFWL_Widget* pInterface);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
@@ -142,7 +142,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   friend class CFWL_WidgetImpDelegate;
 
   CFWL_WidgetMgr* m_pWidgetMgr;
-  CFWL_NoteThreadImp* m_pOwnerThread;
+  CFWL_ThreadImp* m_pOwnerThread;
   CFWL_WidgetImpProperties* m_pProperties;
   CFX_PrivateData* m_pPrivateData;
   IFWL_WidgetDelegate* m_pDelegate;

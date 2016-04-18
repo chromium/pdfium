@@ -58,7 +58,7 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
                               uint32_t dwFilter = FWL_EVENT_ALL_MASK) override;
   FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) override;
   void ClearEventTargets(FX_BOOL bRemoveAll) override;
-  IFWL_NoteThread* GetOwnerThread() const override;
+  IFWL_Thread* GetOwnerThread() const override;
   FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) override;
   IFWL_NoteLoop* PopNoteLoop() override;
   IFWL_Widget* GetFocus() override;
