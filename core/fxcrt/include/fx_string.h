@@ -74,8 +74,6 @@ class CFX_ByteStringC {
     return *this;
   }
 
-  CFX_ByteStringC& operator=(const CFX_ByteString& src);
-
   bool operator==(const char* ptr) const {
     return FXSYS_strlen(ptr) == m_Length &&
            FXSYS_memcmp(ptr, m_Ptr, m_Length) == 0;
@@ -285,12 +283,6 @@ class CFX_ByteString {
   friend class fxcrt_ByteStringConcat_Test;
 };
 
-inline CFX_ByteStringC& CFX_ByteStringC::operator=(const CFX_ByteString& src) {
-  m_Ptr = src.raw_str();
-  m_Length = src.GetLength();
-  return *this;
-}
-
 inline bool operator==(const char* lhs, const CFX_ByteString& rhs) {
   return rhs == lhs;
 }
@@ -397,8 +389,6 @@ class CFX_WideStringC {
     m_Length = src.m_Length;
     return *this;
   }
-
-  CFX_WideStringC& operator=(const CFX_WideString& src);
 
   bool operator==(const wchar_t* ptr) const {
     return FXSYS_wcslen(ptr) == m_Length && wmemcmp(ptr, m_Ptr, m_Length) == 0;
@@ -610,12 +600,6 @@ class CFX_WideString {
   CFX_RetainPtr<StringData> m_pData;
   friend class fxcrt_WideStringConcatInPlace_Test;
 };
-
-inline CFX_WideStringC& CFX_WideStringC::operator=(const CFX_WideString& src) {
-  m_Ptr = src.c_str();
-  m_Length = src.GetLength();
-  return *this;
-}
 
 inline CFX_WideString operator+(const CFX_WideStringC& str1,
                                 const CFX_WideStringC& str2) {

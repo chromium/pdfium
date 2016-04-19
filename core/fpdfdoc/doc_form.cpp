@@ -48,11 +48,12 @@ CFX_WideString FPDFDOC_FDF_GetFieldValue(const CPDF_Dictionary& pFieldDict,
 
 class CFieldNameExtractor {
  public:
-  explicit CFieldNameExtractor(const CFX_WideString& full_name) {
-    m_pStart = full_name.c_str();
-    m_pEnd = m_pStart + full_name.GetLength();
-    m_pCur = m_pStart;
+  explicit CFieldNameExtractor(const CFX_WideString& full_name)
+      : m_FullName(full_name) {
+    m_pCur = m_FullName.c_str();
+    m_pEnd = m_pCur + m_FullName.GetLength();
   }
+
   void GetNext(const FX_WCHAR*& pSubName, FX_STRSIZE& size) {
     pSubName = m_pCur;
     while (m_pCur < m_pEnd && m_pCur[0] != L'.') {
@@ -65,10 +66,11 @@ class CFieldNameExtractor {
   }
 
  protected:
-  const FX_WCHAR* m_pStart;
-  const FX_WCHAR* m_pEnd;
+  CFX_WideString m_FullName;
   const FX_WCHAR* m_pCur;
+  const FX_WCHAR* m_pEnd;
 };
+
 class CFieldTree {
  public:
   struct _Node {

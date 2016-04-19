@@ -388,7 +388,7 @@ void CXFA_Document::DoProtoMerge() {
         !wsUseVal.IsEmpty()) {
       FX_STRSIZE uSharpPos = wsUseVal.Find('#');
       if (uSharpPos < 0) {
-        wsURI = wsUseVal;
+        wsURI = wsUseVal.AsStringC();
       } else {
         wsURI = CFX_WideStringC(wsUseVal.c_str(), uSharpPos);
         FX_STRSIZE uLen = wsUseVal.GetLength();

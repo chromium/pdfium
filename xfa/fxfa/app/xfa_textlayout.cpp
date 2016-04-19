@@ -37,8 +37,8 @@ void CXFA_CSSTagProvider::GetNextAttribute(FX_POSITION& pos,
   CFX_WideString* pName = NULL;
   CFX_WideString* pValue = NULL;
   m_Attributes.GetNextAssoc(pos, (void*&)pName, (void*&)pValue);
-  wsAttr = *pName;
-  wsValue = *pValue;
+  wsAttr = pName->AsStringC();
+  wsValue = pValue->AsStringC();
 }
 void CXFA_CSSTagProvider::SetAttribute(const CFX_WideString& wsAttr,
                                        const CFX_WideString& wsValue) {

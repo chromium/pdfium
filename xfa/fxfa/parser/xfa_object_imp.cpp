@@ -4084,7 +4084,7 @@ FX_BOOL CXFA_Node::TryCData(XFA_ATTRIBUTE eAttr,
   if (eAttr == XFA_ATTRIBUTE_Value) {
     CFX_WideString* pStr = (CFX_WideString*)GetUserData(pKey, bProto);
     if (pStr) {
-      wsValue = *pStr;
+      wsValue = pStr->AsStringC();
       return TRUE;
     }
   } else {

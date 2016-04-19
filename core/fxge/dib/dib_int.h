@@ -86,8 +86,8 @@ class CStretchEngine {
   int m_SrcWidth, m_SrcHeight;
   int m_SrcPitch, m_InterPitch;
   int m_ExtraMaskPitch;
-  unsigned char* m_pInterBuf;
-  unsigned char* m_pExtraAlphaBuf;
+  uint8_t* m_pInterBuf;
+  uint8_t* m_pExtraAlphaBuf;
   int m_TransMethod;
   int m_Flags;
   CWeightTable m_WeightTable;
