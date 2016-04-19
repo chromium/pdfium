@@ -18,7 +18,7 @@ vars = {
 }
 
 deps = {
-  "build/gyp":
+  "build_gyp/gyp":
     Var('chromium_git') + "/external/gyp",
 
   "buildtools":
@@ -68,7 +68,7 @@ hooks = [
     # A change to a .gyp, .gypi, or to GYP itself should run the generator.
     'name': 'gyp',
     'pattern': '.',
-    'action': ['python', 'pdfium/build/gyp_pdfium'],
+    'action': ['python', 'pdfium/build_gyp/gyp_pdfium'],
   },
   # Pull GN binaries. This needs to be before running GYP below.
   {

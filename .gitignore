@@ -1,6 +1,4 @@
-/build/Debug
-/build/Release
-/build/gyp
+/build_gyp/gyp
 /buildtools
 /out
 /testing/corpus

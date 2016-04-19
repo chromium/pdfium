@@ -38,8 +38,8 @@ Previously, the second option (platform-specific build files) was the default.
 Most PDFium developers use Ninja, as does our [continuous build system]
 (http://build.chromium.org/p/client.pdfium/).
 
- * On Windows: `build\gyp_pdfium`
- * For all other platforms: `build/gyp_pdfium`
+ * On Windows: `build_gyp\gyp_pdfium`
+ * For all other platforms: `build_gyp/gyp_pdfium`
 
 The second option is to generate platform-specific build files, i.e. Makefiles
 on Linux, sln files on Windows, and xcodeproj files on Mac. To do so, set the
@@ -56,7 +56,7 @@ To build without XFA, set `pdf_enable_xfa=0` before running `gyp_pdfium`.
 To build without JavaScript, set `pdf_enable_v8=0 pdf_enable_xfa=0` before
 running `gyp_pdfium`. For example
 ```
-GYP_DEFINES='pdf_enable_v8=0 pdf_enable_xfa=0' build/gyp_pdfium
+GYP_DEFINES='pdf_enable_v8=0 pdf_enable_xfa=0' build_gyp/gyp_pdfium
 ```
 gives the smallest possible build configuration.
 
@@ -67,7 +67,7 @@ you installed goma in a non-standard location, you will also need to set
 `gomadir`. e.g.
 
 ```
-build/gyp_pdfium -D use_goma=1 -D gomadir=path/to/goma
+build_gyp/gyp_pdfium -D use_goma=1 -D gomadir=path/to/goma
 ```
 
 ## Building the code
@@ -79,8 +79,8 @@ tests) by: `ninja -C out/Debug`.
 If you're not using Ninja, then building is platform-specific.
 
  * On Linux: `make pdfium_test`
- * On Mac: `open build/all.xcodeproj`
- * On Windows: open build\all.sln
+ * On Mac: `open build_gyp/all.xcodeproj`
+ * On Windows: open build_gyp\all.sln
 
 ## Running the sample program
 
