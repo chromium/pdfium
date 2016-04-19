@@ -4,8 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdftext/fpdf_text_int.h"
-
 #include <algorithm>
 #include <cctype>
 #include <cwctype>
@@ -14,15 +12,17 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
-#include "core/fpdftext/include/ipdf_linkextract.h"
-#include "core/fpdftext/include/ipdf_textpage.h"
-#include "core/fpdftext/include/ipdf_textpagefind.h"
-#include "core/fpdftext/unicodenormalization.h"
+#include "core/fpdftext/include/cpdf_linkextract.h"
+#include "core/fpdftext/include/cpdf_textpage.h"
+#include "core/fpdftext/include/cpdf_textpagefind.h"
+#include "core/fpdftext/unicodenormalizationdata.h"
 #include "core/fxcrt/fx_bidi.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_ucd.h"
@@ -36,9 +36,24 @@
 #define FPDFTEXT_MATCHWHOLEWORD 0x00000002
 #define FPDFTEXT_CONSECUTIVE 0x00000004
 
+#define FPDFTEXT_CHAR_ERROR -1
+#define FPDFTEXT_CHAR_NORMAL 0
+#define FPDFTEXT_CHAR_GENERATED 1
+#define FPDFTEXT_CHAR_UNUNICODE 2
+#define FPDFTEXT_CHAR_HYPHEN 3
+#define FPDFTEXT_CHAR_PIECE 4
+#define FPDFTEXT_MC_PASS 0
+#define FPDFTEXT_MC_DONE 1
+#define FPDFTEXT_MC_DELAY 2
+
 namespace {
 
-FX_BOOL _IsIgnoreSpaceCharacter(FX_WCHAR curChar) {
+const FX_FLOAT kDefaultFontSize = 1.0f;
+const uint16_t* const g_UnicodeData_Normalization_Maps[5] = {
+    nullptr, g_UnicodeData_Normalization_Map1, g_UnicodeData_Normalization_Map2,
+    g_UnicodeData_Normalization_Map3, g_UnicodeData_Normalization_Map4};
+
+FX_BOOL IsIgnoreSpaceCharacter(FX_WCHAR curChar) {
   if (curChar < 255) {
     return FALSE;
   }
@@ -55,7 +70,7 @@ FX_BOOL _IsIgnoreSpaceCharacter(FX_WCHAR curChar) {
   return TRUE;
 }
 
-FX_FLOAT _NormalizeThreshold(FX_FLOAT threshold) {
+FX_FLOAT NormalizeThreshold(FX_FLOAT threshold) {
   if (threshold < 300) {
     return threshold / 2.0f;
   }
@@ -68,8 +83,8 @@ FX_FLOAT _NormalizeThreshold(FX_FLOAT threshold) {
   return threshold / 6.0f;
 }
 
-FX_FLOAT _CalculateBaseSpace(const CPDF_TextObject* pTextObj,
-                             const CFX_Matrix& matrix) {
+FX_FLOAT CalculateBaseSpace(const CPDF_TextObject* pTextObj,
+                            const CFX_Matrix& matrix) {
   FX_FLOAT baseSpace = 0.0;
   const int nItems = pTextObj->CountItems();
   if (pTextObj->m_TextState.GetObject()->m_CharSpace && nItems >= 3) {
@@ -94,23 +109,39 @@ FX_FLOAT _CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   return baseSpace;
 }
 
-const FX_FLOAT kDefaultFontSize = 1.0f;
+FX_STRSIZE Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst) {
+  wch = wch & 0xFFFF;
+  FX_WCHAR wFind = g_UnicodeData_Normalization[wch];
+  if (!wFind) {
+    if (pDst) {
+      *pDst = wch;
+    }
+    return 1;
+  }
+  if (wFind >= 0x8000) {
+    wch = wFind - 0x8000;
+    wFind = 1;
+  } else {
+    wch = wFind & 0x0FFF;
+    wFind >>= 12;
+  }
+  const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind];
+  if (pMap == g_UnicodeData_Normalization_Map4) {
+    pMap = g_UnicodeData_Normalization_Map4 + wch;
+    wFind = (FX_WCHAR)(*pMap++);
+  } else {
+    pMap += wch;
+  }
+  if (pDst) {
+    FX_WCHAR n = wFind;
+    while (n--) {
+      *pDst++ = *pMap++;
+    }
+  }
+  return (FX_STRSIZE)wFind;
+}
 
 }  // namespace
-
-IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_Page* pPage,
-                                             int flags) {
-  return new CPDF_TextPage(pPage, flags);
-}
-
-IPDF_TextPageFind* IPDF_TextPageFind::CreatePageFind(
-    const IPDF_TextPage* pTextPage) {
-  return pTextPage ? new CPDF_TextPageFind(pTextPage) : nullptr;
-}
-
-IPDF_LinkExtract* IPDF_LinkExtract::CreateLinkExtract() {
-  return new CPDF_LinkExtract();
-}
 
 #define TEXT_BLANK_CHAR L' '
 #define TEXT_LINEFEED_CHAR L'\n'
@@ -932,10 +963,10 @@ void CPDF_TextPage::AddCharInfoByLRDirection(FX_WCHAR wChar,
     info.m_Index = m_TextBuf.GetLength();
     if (wChar >= 0xFB00 && wChar <= 0xFB06) {
       FX_WCHAR* pDst = NULL;
-      FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
+      FX_STRSIZE nCount = Unicode_GetNormalization(wChar, pDst);
       if (nCount >= 1) {
         pDst = FX_Alloc(FX_WCHAR, nCount);
-        FX_Unicode_GetNormalization(wChar, pDst);
+        Unicode_GetNormalization(wChar, pDst);
         for (int nIndex = 0; nIndex < nCount; nIndex++) {
           PAGECHAR_INFO info2 = info;
           info2.m_Unicode = pDst[nIndex];
@@ -960,10 +991,10 @@ void CPDF_TextPage::AddCharInfoByRLDirection(FX_WCHAR wChar,
     info.m_Index = m_TextBuf.GetLength();
     wChar = FX_GetMirrorChar(wChar, TRUE, FALSE);
     FX_WCHAR* pDst = NULL;
-    FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
+    FX_STRSIZE nCount = Unicode_GetNormalization(wChar, pDst);
     if (nCount >= 1) {
       pDst = FX_Alloc(FX_WCHAR, nCount);
-      FX_Unicode_GetNormalization(wChar, pDst);
+      Unicode_GetNormalization(wChar, pDst);
       for (int nIndex = 0; nIndex < nCount; nIndex++) {
         PAGECHAR_INFO info2 = info;
         info2.m_Unicode = pDst[nIndex];
@@ -1377,7 +1408,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   m_pPreTextObj = pTextObj;
   m_perMatrix.Copy(formMatrix);
   int nItems = pTextObj->CountItems();
-  FX_FLOAT baseSpace = _CalculateBaseSpace(pTextObj, matrix);
+  FX_FLOAT baseSpace = CalculateBaseSpace(pTextObj, matrix);
 
   const FX_BOOL bR2L = IsRightToLeft(pTextObj, pFont, nItems);
   const FX_BOOL bIsBidiAndMirrorInverse =
@@ -1430,7 +1461,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         int this_width = FXSYS_abs(GetCharWidth(item.m_CharCode, pFont));
         threshold = this_width > last_width ? (FX_FLOAT)this_width
                                             : (FX_FLOAT)last_width;
-        threshold = _NormalizeThreshold(threshold);
+        threshold = NormalizeThreshold(threshold);
         threshold = fontsize_h * threshold / 1000;
       }
       if (threshold && (spacing && spacing >= threshold)) {
@@ -1898,7 +1929,7 @@ FX_BOOL CPDF_TextPage::IsLetter(FX_WCHAR unicode) {
   return TRUE;
 }
 
-CPDF_TextPageFind::CPDF_TextPageFind(const IPDF_TextPage* pTextPage)
+CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage)
     : m_pTextPage(pTextPage),
       m_flags(0),
       m_findNextStart(-1),
@@ -2054,8 +2085,8 @@ FX_BOOL CPDF_TextPageFind::FindNext() {
       CFX_WideString lastWord = m_csFindWhatArray[iWord - 1];
       int lastChar = lastWord.GetAt(lastWord.GetLength() - 1);
       if (nStartPos == nResultPos &&
-          !(_IsIgnoreSpaceCharacter(lastChar) ||
-            _IsIgnoreSpaceCharacter(curChar))) {
+          !(IsIgnoreSpaceCharacter(lastChar) ||
+            IsIgnoreSpaceCharacter(curChar))) {
         bMatch = FALSE;
       }
       for (int d = PreResEndPos; d < nResultPos; d++) {
@@ -2174,7 +2205,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
     while (pos < csWord.GetLength()) {
       CFX_WideString curStr = csWord.Mid(pos, 1);
       FX_WCHAR curChar = csWord.GetAt(pos);
-      if (_IsIgnoreSpaceCharacter(curChar)) {
+      if (IsIgnoreSpaceCharacter(curChar)) {
         if (pos > 0 && curChar == 0x2019) {
           pos++;
           continue;
@@ -2306,7 +2337,7 @@ CPDF_LinkExtract::~CPDF_LinkExtract() {
   DeleteLinkList();
 }
 
-FX_BOOL CPDF_LinkExtract::ExtractLinks(const IPDF_TextPage* pTextPage) {
+FX_BOOL CPDF_LinkExtract::ExtractLinks(const CPDF_TextPage* pTextPage) {
   if (!pTextPage || !pTextPage->IsParsed())
     return FALSE;
 
