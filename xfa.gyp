@@ -653,7 +653,6 @@
         "xfa/fxfa/parser/xfa_basic_data.h",
         "xfa/fxfa/parser/xfa_basic_imp.cpp",
         "xfa/fxfa/parser/xfa_basic_imp.h",
-        "xfa/fxfa/parser/xfa_docdata.h",
         "xfa/fxfa/parser/xfa_doclayout.h",
         "xfa/fxfa/parser/xfa_document.h",
         "xfa/fxfa/parser/xfa_document_datadescription_imp.cpp",

@@ -9,7 +9,6 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
-#include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -266,37 +265,7 @@ FX_BOOL XFA_IsLayoutElement(XFA_ELEMENT eElement, FX_BOOL bLayoutContainer) {
   }
   return FALSE;
 }
-FX_BOOL XFA_IsTakingupSpace(XFA_ATTRIBUTEENUM ePresence) {
-  switch (ePresence) {
-    case XFA_ATTRIBUTEENUM_Visible:
-    case XFA_ATTRIBUTEENUM_Invisible:
-      return TRUE;
-    default:
-      return FALSE;
-  }
-  return FALSE;
-}
-FX_BOOL XFA_IsFlowingLayout(XFA_ATTRIBUTEENUM eLayout) {
-  switch (eLayout) {
-    case XFA_ATTRIBUTEENUM_Tb:
-    case XFA_ATTRIBUTEENUM_Lr_tb:
-    case XFA_ATTRIBUTEENUM_Rl_tb:
-      return TRUE;
-    default:
-      return FALSE;
-  }
-  return FALSE;
-}
-FX_BOOL XFA_IsHorizontalFlow(XFA_ATTRIBUTEENUM eLayout) {
-  switch (eLayout) {
-    case XFA_ATTRIBUTEENUM_Lr_tb:
-    case XFA_ATTRIBUTEENUM_Rl_tb:
-      return TRUE;
-    default:
-      return FALSE;
-  }
-  return FALSE;
-}
+
 static const FX_DOUBLE fraction_scales[] = {0.1,
                                             0.01,
                                             0.001,

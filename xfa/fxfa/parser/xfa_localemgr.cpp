@@ -10,7 +10,6 @@
 #include "core/fxcrt/include/fx_xml.h"
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
-#include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_locale.h"

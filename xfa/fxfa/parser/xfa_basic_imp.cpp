@@ -12,7 +12,6 @@
 #include "xfa/fgas/crt/fgas_system.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
-#include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -86,9 +85,7 @@ const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName) {
   return g_XFAEnumData + eName;
 }
-int32_t XFA_GetAttributeCount() {
-  return g_iXFAAttributeCount;
-}
+
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {
   int32_t iLength = wsName.GetLength();
   if (iLength == 0) {
@@ -167,16 +164,7 @@ FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_ELEMENT eElement,
   }
   return FALSE;
 }
-int32_t XFA_GetAttributeDefaultValue_Integer(XFA_ELEMENT eElement,
-                                             XFA_ATTRIBUTE eAttribute,
-                                             uint32_t dwPacket) {
-  void* pValue;
-  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_ATTRIBUTETYPE_Integer, dwPacket)) {
-    return (int32_t)(uintptr_t)pValue;
-  }
-  return 0;
-}
+
 CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
                                                       XFA_ATTRIBUTE eAttribute,
                                                       uint32_t dwPacket) {
@@ -187,9 +175,7 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
   }
   return CXFA_Measurement();
 }
-int32_t XFA_GetElementCount() {
-  return g_iXFAElementCount;
-}
+
 const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
   int32_t iLength = wsName.GetLength();
   if (iLength == 0) {
@@ -248,25 +234,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
     return pInfo;
   return (dwPacket & pInfo->dwPackets) ? pInfo : NULL;
 }
-const XFA_ELEMENTINFO* XFA_GetChildOfElement(XFA_ELEMENT eElement,
-                                             XFA_ELEMENT eChild,
-                                             uint32_t dwPacket) {
-  int32_t iCount = 0;
-  const uint16_t* pChild = XFA_GetElementChildren(eElement, iCount);
-  if (pChild == NULL || iCount < 1) {
-    return NULL;
-  }
-  CFX_DSPATemplate<uint16_t> search;
-  int32_t index = search.Lookup(eChild, pChild, iCount);
-  if (index < 0) {
-    return NULL;
-  }
-  const XFA_ELEMENTINFO* pInfo = XFA_GetElementByID(eChild);
-  ASSERT(pInfo);
-  if (dwPacket == XFA_XDPPACKET_UNKNOWN)
-    return pInfo;
-  return (dwPacket & pInfo->dwPackets) ? pInfo : NULL;
-}
+
 const XFA_PROPERTY* XFA_GetElementProperties(XFA_ELEMENT eElement,
                                              int32_t& iCount) {
   if (eElement >= g_iXFAElementCount) {
@@ -363,9 +331,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_ELEMENT eElement,
   } while (iStart <= iEnd);
   return NULL;
 }
-int32_t XFA_GetMethodCount() {
-  return g_iSomMethodCount;
-}
+
 const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
                                           const CFX_WideStringC& wsMethodName) {
   int32_t iLength = wsMethodName.GetLength();
@@ -374,7 +340,7 @@ const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
   }
   int32_t iElementIndex = eElement;
   while (iElementIndex != -1) {
-    XFA_LPCSCRIPTHIERARCHY scriptIndex = g_XFAScriptIndex + iElementIndex;
+    XFA_SCRIPTHIERARCHY const* scriptIndex = g_XFAScriptIndex + iElementIndex;
     int32_t icount = scriptIndex->wMethodCount;
     if (icount == 0) {
       iElementIndex = scriptIndex->wParentIndex;
@@ -406,7 +372,7 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
   }
   int32_t iElementIndex = eElement;
   while (iElementIndex != -1) {
-    XFA_LPCSCRIPTHIERARCHY scriptIndex = g_XFAScriptIndex + iElementIndex;
+    XFA_SCRIPTHIERARCHY const* scriptIndex = g_XFAScriptIndex + iElementIndex;
     int32_t icount = scriptIndex->wAttributeCount;
     if (icount == 0) {
       iElementIndex = scriptIndex->wParentIndex;

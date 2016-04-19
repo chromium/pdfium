@@ -74,11 +74,4 @@ struct XFA_RESOLVENODE_RS {
   const XFA_SCRIPTATTRIBUTEINFO* pScriptAttribute;
 };
 
-struct XFA_JSBUILTININFO {
-  uint32_t uUnicodeHash;
-  const FX_CHAR* pName;
-};
-
-const XFA_JSBUILTININFO* XFA_GetJSBuiltinByHash(uint32_t uHashCode);
-
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_H_

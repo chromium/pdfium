@@ -9,7 +9,6 @@
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"
-#include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -137,12 +136,6 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Property(
     default:
       break;
   }
-}
-void CScript_EventPseudoModel::Script_EventPseudoModel_CancelAction(
-    FXJSE_HVALUE hValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(hValue, XFA_EVENT_CANCELACTION, bSetting);
 }
 void CScript_EventPseudoModel::Script_EventPseudoModel_Change(
     FXJSE_HVALUE hValue,

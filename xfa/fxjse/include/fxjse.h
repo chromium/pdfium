@@ -79,33 +79,24 @@ FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
                                     void* lpGlobalObject = nullptr);
 void FXJSE_Context_Release(FXJSE_HCONTEXT hContext);
 FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext);
-FXJSE_HRUNTIME FXJSE_Context_GetRuntime(FXJSE_HCONTEXT hContext);
 
 void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
                                         uint32_t dwCompatibleFlags);
 
-void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
-                           const FXJSE_FUNCTION* lpFunctions,
-                           int nNum);
 FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
                                const FXJSE_CLASS* lpClass);
-FXJSE_HCLASS FXJSE_GetClass(FXJSE_HCONTEXT hContext,
-                            const CFX_ByteStringC& szName);
 
 FXJSE_HVALUE FXJSE_Value_Create(FXJSE_HRUNTIME hRuntime);
 void FXJSE_Value_Release(FXJSE_HVALUE hValue);
-FXJSE_HRUNTIME FXJSE_Value_GetRuntime(FXJSE_HVALUE hValue);
 
 FX_BOOL FXJSE_Value_IsUndefined(FXJSE_HVALUE hValue);
 FX_BOOL FXJSE_Value_IsNull(FXJSE_HVALUE hValue);
 FX_BOOL FXJSE_Value_IsBoolean(FXJSE_HVALUE hValue);
 FX_BOOL FXJSE_Value_IsUTF8String(FXJSE_HVALUE hValue);
 FX_BOOL FXJSE_Value_IsNumber(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsInteger(FXJSE_HVALUE hValue);
 FX_BOOL FXJSE_Value_IsObject(FXJSE_HVALUE hValue);
 FX_BOOL FXJSE_Value_IsArray(FXJSE_HVALUE hValue);
 FX_BOOL FXJSE_Value_IsFunction(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsDate(FXJSE_HVALUE hValue);
 
 FX_BOOL FXJSE_Value_ToBoolean(FXJSE_HVALUE hValue);
 FX_FLOAT FXJSE_Value_ToFloat(FXJSE_HVALUE hValue);
@@ -128,7 +119,6 @@ void FXJSE_Value_SetObject(FXJSE_HVALUE hValue,
 void FXJSE_Value_SetArray(FXJSE_HVALUE hValue,
                           uint32_t uValueCount,
                           FXJSE_HVALUE* rgValues);
-void FXJSE_Value_SetDate(FXJSE_HVALUE hValue, double dDouble);
 void FXJSE_Value_Set(FXJSE_HVALUE hValue, FXJSE_HVALUE hOriginalValue);
 
 FX_BOOL FXJSE_Value_GetObjectProp(FXJSE_HVALUE hValue,
@@ -140,9 +130,6 @@ FX_BOOL FXJSE_Value_SetObjectProp(FXJSE_HVALUE hValue,
 FX_BOOL FXJSE_Value_GetObjectPropByIdx(FXJSE_HVALUE hValue,
                                        uint32_t uPropIdx,
                                        FXJSE_HVALUE hPropValue);
-FX_BOOL FXJSE_Value_SetObjectPropByIdx(FXJSE_HVALUE hValue,
-                                       uint32_t uPropIdx,
-                                       FXJSE_HVALUE hPropValue);
 FX_BOOL FXJSE_Value_DeleteObjectProp(FXJSE_HVALUE hValue,
                                      const CFX_ByteStringC& szPropName);
 FX_BOOL FXJSE_Value_ObjectHasOwnProp(FXJSE_HVALUE hValue,
@@ -152,11 +139,6 @@ FX_BOOL FXJSE_Value_SetObjectOwnProp(FXJSE_HVALUE hValue,
                                      const CFX_ByteStringC& szPropName,
                                      FXJSE_HVALUE hPropValue);
 
-FX_BOOL FXJSE_Value_CallFunction(FXJSE_HVALUE hFunction,
-                                 FXJSE_HVALUE hThis,
-                                 FXJSE_HVALUE hRetValue,
-                                 uint32_t nArgCount,
-                                 FXJSE_HVALUE* lpArgs);
 FX_BOOL FXJSE_Value_SetFunctionBind(FXJSE_HVALUE hValue,
                                     FXJSE_HVALUE hOldFunction,
                                     FXJSE_HVALUE hNewThis);
@@ -168,12 +150,5 @@ FX_BOOL FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext,
 
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
                         const CFX_ByteStringC& utf8Message);
-
-FX_BOOL FXJSE_ReturnValue_GetMessage(FXJSE_HVALUE hRetValue,
-                                     CFX_ByteString& utf8Name,
-                                     CFX_ByteString& utf8Message);
-FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue,
-                                      int32_t& nLine,
-                                      int32_t& nCol);
 
 #endif  // XFA_FXJSE_INCLUDE_FXJSE_H_

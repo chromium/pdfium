@@ -7,7 +7,13 @@
 #ifndef XFA_FXFA_PARSER_XFA_DOCUMENT_SERIALIZE_H_
 #define XFA_FXFA_PARSER_XFA_DOCUMENT_SERIALIZE_H_
 
-#include "xfa/fxfa/parser/xfa_docdata.h"
+#include "core/fxcrt/include/fx_string.h"
+
+class CXFA_Document;
+class CXFA_Node;
+class IFX_FileRead;
+class IFX_FileWrite;
+class IFX_Stream;
 
 class CXFA_DataImporter {
  public:

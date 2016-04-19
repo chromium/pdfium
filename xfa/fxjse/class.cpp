@@ -24,41 +24,12 @@ static void FXJSE_V8SetterCallback_Wrapper(
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<void>& info);
 
-void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
-                           const FXJSE_FUNCTION* lpFunctions,
-                           int nNum) {
-  CFXJSE_Context* lpContext = reinterpret_cast<CFXJSE_Context*>(hContext);
-  ASSERT(lpContext);
-  CFXJSE_ScopeUtil_IsolateHandleContext scope(lpContext);
-  v8::Isolate* pIsolate = lpContext->GetRuntime();
-  v8::Local<v8::Object> hGlobalObject =
-      FXJSE_GetGlobalObjectFromContext(scope.GetLocalContext());
-  for (int32_t i = 0; i < nNum; i++) {
-    v8::Maybe<bool> maybe_success = hGlobalObject->DefineOwnProperty(
-        scope.GetLocalContext(),
-        v8::String::NewFromUtf8(pIsolate, lpFunctions[i].name),
-        v8::Function::New(
-            pIsolate, FXJSE_V8FunctionCallback_Wrapper,
-            v8::External::New(pIsolate,
-                              const_cast<FXJSE_FUNCTION*>(lpFunctions + i))),
-        static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
-    if (!maybe_success.FromMaybe(false))
-      return;
-  }
-}
-
 FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
                                const FXJSE_CLASS* lpClass) {
   CFXJSE_Context* lpContext = reinterpret_cast<CFXJSE_Context*>(hContext);
   ASSERT(lpContext);
   return reinterpret_cast<FXJSE_HCLASS>(
       CFXJSE_Class::Create(lpContext, lpClass, FALSE));
-}
-
-FXJSE_HCLASS FXJSE_GetClass(FXJSE_HCONTEXT hContext,
-                            const CFX_ByteStringC& szName) {
-  return reinterpret_cast<FXJSE_HCLASS>(CFXJSE_Class::GetClassFromContext(
-      reinterpret_cast<CFXJSE_Context*>(hContext), szName));
 }
 
 static void FXJSE_V8FunctionCallback_Wrapper(

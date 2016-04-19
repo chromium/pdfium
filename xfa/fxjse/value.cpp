@@ -36,11 +36,6 @@ FX_BOOL FXJSE_Value_IsNumber(FXJSE_HVALUE hValue) {
   return lpValue && lpValue->IsNumber();
 }
 
-FX_BOOL FXJSE_Value_IsInteger(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsInteger();
-}
-
 FX_BOOL FXJSE_Value_IsObject(FXJSE_HVALUE hValue) {
   CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
   return lpValue && lpValue->IsObject();
@@ -54,11 +49,6 @@ FX_BOOL FXJSE_Value_IsArray(FXJSE_HVALUE hValue) {
 FX_BOOL FXJSE_Value_IsFunction(FXJSE_HVALUE hValue) {
   CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
   return lpValue && lpValue->IsFunction();
-}
-
-FX_BOOL FXJSE_Value_IsDate(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsDate();
 }
 
 FX_BOOL FXJSE_Value_ToBoolean(FXJSE_HVALUE hValue) {
@@ -136,10 +126,6 @@ void FXJSE_Value_SetArray(FXJSE_HVALUE hValue,
       ->SetArray(uValueCount, reinterpret_cast<CFXJSE_Value**>(rgValues));
 }
 
-void FXJSE_Value_SetDate(FXJSE_HVALUE hValue, double dDouble) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetDate(dDouble);
-}
-
 void FXJSE_Value_Set(FXJSE_HVALUE hValue, FXJSE_HVALUE hOriginalValue) {
   CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
   CFXJSE_Value* lpOriginalValue =
@@ -175,15 +161,6 @@ FX_BOOL FXJSE_Value_GetObjectPropByIdx(FXJSE_HVALUE hValue,
   return lpValue->GetObjectProperty(uPropIdx, lpPropValue);
 }
 
-FX_BOOL FXJSE_Value_SetObjectPropByIdx(FXJSE_HVALUE hValue,
-                                       uint32_t uPropIdx,
-                                       FXJSE_HVALUE hPropValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
-  ASSERT(lpValue && lpPropValue);
-  return lpValue->SetObjectProperty(uPropIdx, lpPropValue);
-}
-
 FX_BOOL FXJSE_Value_DeleteObjectProp(FXJSE_HVALUE hValue,
                                      const CFX_ByteStringC& szPropName) {
   return reinterpret_cast<CFXJSE_Value*>(hValue)
@@ -216,17 +193,6 @@ FX_BOOL FXJSE_Value_SetFunctionBind(FXJSE_HVALUE hValue,
   return lpValue->SetFunctionBind(lpOldFunction, lpNewThis);
 }
 
-FX_BOOL FXJSE_Value_CallFunction(FXJSE_HVALUE hFunction,
-                                 FXJSE_HVALUE hThis,
-                                 FXJSE_HVALUE hRetValue,
-                                 uint32_t nArgCount,
-                                 FXJSE_HVALUE* lpArgs) {
-  CFXJSE_Value* lpThis = reinterpret_cast<CFXJSE_Value*>(hThis);
-  CFXJSE_Value* lpRetValue = reinterpret_cast<CFXJSE_Value*>(hRetValue);
-  return reinterpret_cast<CFXJSE_Value*>(hFunction)
-      ->Call(lpThis, lpRetValue, nArgCount, lpArgs);
-}
-
 FXJSE_HVALUE FXJSE_Value_Create(FXJSE_HRUNTIME hRuntime) {
   return reinterpret_cast<FXJSE_HVALUE>(
       CFXJSE_Value::Create(reinterpret_cast<v8::Isolate*>(hRuntime)));
@@ -235,11 +201,6 @@ FXJSE_HVALUE FXJSE_Value_Create(FXJSE_HRUNTIME hRuntime) {
 void FXJSE_Value_Release(FXJSE_HVALUE hValue) {
   CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
   delete lpValue;
-}
-
-FXJSE_HRUNTIME FXJSE_Value_GetRuntime(FXJSE_HVALUE hValue) {
-  return reinterpret_cast<FXJSE_HRUNTIME>(
-      reinterpret_cast<CFXJSE_Value*>(hValue)->GetIsolate());
 }
 
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,

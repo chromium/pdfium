@@ -783,21 +783,9 @@ inline const CXFA_NodeList* CXFA_Object::AsNodeList() const {
 inline CXFA_Node* ToNode(CXFA_Object* pObj) {
   return pObj ? pObj->AsNode() : nullptr;
 }
-inline CXFA_OrdinaryObject* ToOrdinaryObject(CXFA_Object* pObj) {
-  return pObj ? pObj->AsOrdinaryObject() : nullptr;
-}
-inline CXFA_NodeList* ToNodeList(CXFA_Object* pObj) {
-  return pObj ? pObj->AsNodeList() : nullptr;
-}
 
 inline const CXFA_Node* ToNode(const CXFA_Object* pObj) {
   return pObj ? pObj->AsNode() : nullptr;
-}
-inline const CXFA_OrdinaryObject* ToOrdinaryObject(const CXFA_Object* pObj) {
-  return pObj ? pObj->AsOrdinaryObject() : nullptr;
-}
-inline const CXFA_NodeList* ToNodeList(const CXFA_Object* pObj) {
-  return pObj ? pObj->AsNodeList() : nullptr;
 }
 
 #endif  // XFA_FXFA_PARSER_XFA_OBJECT_H_

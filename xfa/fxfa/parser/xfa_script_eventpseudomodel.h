@@ -33,9 +33,6 @@ class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
   explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
   virtual ~CScript_EventPseudoModel();
 
-  void Script_EventPseudoModel_CancelAction(FXJSE_HVALUE hValue,
-                                            FX_BOOL bSetting,
-                                            XFA_ATTRIBUTE eAttribute);
   void Script_EventPseudoModel_Change(FXJSE_HVALUE hValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);

@@ -926,9 +926,10 @@ struct XFA_ELEMENTINFO {
   uint32_t dwPackets;
   uint32_t eObjectType;
 };
-int32_t XFA_GetElementCount();
+
 const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName);
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_ELEMENT eName);
+
 enum XFA_ATTRIBUTETYPE {
   XFA_ATTRIBUTETYPE_NOTSURE,
   XFA_ATTRIBUTETYPE_Enum,
@@ -945,7 +946,7 @@ struct XFA_ATTRIBUTEINFO {
   uint32_t dwPackets;
   void* pDefValue;
 };
-int32_t XFA_GetAttributeCount();
+
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName);
 FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
@@ -960,9 +961,6 @@ CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_ELEMENT eElement,
                                                    XFA_ATTRIBUTE eAttribute,
                                                    uint32_t dwPacket);
 FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_ELEMENT eElement,
-                                             XFA_ATTRIBUTE eAttribute,
-                                             uint32_t dwPacket);
-int32_t XFA_GetAttributeDefaultValue_Integer(XFA_ELEMENT eElement,
                                              XFA_ATTRIBUTE eAttribute,
                                              uint32_t dwPacket);
 CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
@@ -981,12 +979,9 @@ struct XFA_SCRIPTHIERARCHY {
   int16_t wParentIndex;
 };
 
-typedef XFA_SCRIPTHIERARCHY const* XFA_LPCSCRIPTHIERARCHY;
 const uint16_t* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount);
 const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount);
-const XFA_ELEMENTINFO* XFA_GetChildOfElement(XFA_ELEMENT eElement,
-                                             XFA_ELEMENT eChild,
-                                             uint32_t dwPacket);
+
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
                                                    XFA_ATTRIBUTE eAttribute,
                                                    uint32_t dwPacket);
@@ -1047,15 +1042,17 @@ class CXFA_Measurement {
   FX_FLOAT m_fValue;
   XFA_UNIT m_eUnit;
 };
+
 class CFXJSE_Arguments;
 class CXFA_Object;
+
 typedef void (CXFA_Object::*XFA_METHOD_CALLBACK)(CFXJSE_Arguments* pArguments);
 struct XFA_METHODINFO {
   uint32_t uHash;
   const FX_WCHAR* pName;
   XFA_METHOD_CALLBACK lpfnCallback;
 };
-int32_t XFA_GetMethodCount();
+
 const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
                                           const CFX_WideStringC& wsMethodName);
 typedef void (CXFA_Object::*XFA_ATTRIBUTE_CALLBACK)(FXJSE_HVALUE hValue,

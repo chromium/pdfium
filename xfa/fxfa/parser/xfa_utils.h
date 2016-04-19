@@ -213,9 +213,7 @@ FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 IFX_Stream* XFA_CreateWideTextRead(const CFX_WideString& wsBuffer);
 FX_BOOL XFA_IsLayoutElement(XFA_ELEMENT eElement,
                             FX_BOOL bLayoutContainer = FALSE);
-FX_BOOL XFA_IsTakingupSpace(XFA_ATTRIBUTEENUM ePresence);
-FX_BOOL XFA_IsFlowingLayout(XFA_ATTRIBUTEENUM eLayout);
-FX_BOOL XFA_IsHorizontalFlow(XFA_ATTRIBUTEENUM eLayout);
+
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
                                          IFX_Stream* pStream,
