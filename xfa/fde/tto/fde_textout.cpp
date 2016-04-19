@@ -142,7 +142,7 @@ class CFDE_TextOut : public IFDE_TextOut, public CFX_Target {
   int32_t GetDisplayPos(FDE_LPTTOPIECE pPiece);
   int32_t GetCharRects(FDE_LPTTOPIECE pPiece);
 
-  void ToTextRun(const FDE_LPTTOPIECE pPiece, FX_TXTRUN& tr);
+  FX_TXTRUN ToTextRun(const FDE_LPTTOPIECE pPiece);
   void DrawLine(const FDE_LPTTOPIECE pPiece, CFDE_Pen*& pPen);
 
   CFX_TxtBreak* m_pTxtBreak;
@@ -975,32 +975,33 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
   delete pBrush;
   delete pPen;
 }
+
 int32_t CFDE_TextOut::GetDisplayPos(FDE_LPTTOPIECE pPiece) {
-  FX_TXTRUN tr;
-  ToTextRun(pPiece, tr);
+  FX_TXTRUN tr = ToTextRun(pPiece);
   ExpandBuffer(tr.iLength, 2);
   return m_pTxtBreak->GetDisplayPos(&tr, m_pCharPos);
 }
+
 int32_t CFDE_TextOut::GetCharRects(FDE_LPTTOPIECE pPiece) {
-  FX_TXTRUN tr;
-  ToTextRun(pPiece, tr);
+  FX_TXTRUN tr = ToTextRun(pPiece);
   m_rectArray.RemoveAll();
   return m_pTxtBreak->GetCharRects(&tr, m_rectArray);
 }
-void CFDE_TextOut::ToTextRun(const FDE_LPTTOPIECE pPiece, FX_TXTRUN& tr) {
-  tr.pAccess = NULL;
-  tr.pIdentity = NULL;
-  tr.pStr = (m_wsText + pPiece->iStartChar).c_str();
+
+FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_LPTTOPIECE pPiece) {
+  FX_TXTRUN tr;
+  tr.wsStr = m_wsText + pPiece->iStartChar;
   tr.pWidths = m_pCharWidths + pPiece->iStartChar;
   tr.iLength = pPiece->iChars;
   tr.pFont = m_pFont;
   tr.fFontSize = m_fFontSize;
   tr.dwStyles = m_dwTxtBkStyles;
-  tr.iCharRotation = 0;
   tr.dwCharStyles = pPiece->dwCharStyles;
   tr.wLineBreakChar = m_wParagraphBkChar;
   tr.pRect = &pPiece->rtPiece;
+  return tr;
 }
+
 void CFDE_TextOut::DrawLine(const FDE_LPTTOPIECE pPiece, CFDE_Pen*& pPen) {
   FX_BOOL bUnderLine = !!(m_dwStyles & FDE_TTOSTYLE_Underline);
   FX_BOOL bStrikeOut = !!(m_dwStyles & FDE_TTOSTYLE_Strikeout);

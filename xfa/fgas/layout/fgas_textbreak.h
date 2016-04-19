@@ -79,27 +79,25 @@ class IFX_TxtAccess {
 };
 
 struct FX_TXTRUN {
-  FX_TXTRUN() {
-    pAccess = NULL;
-    pIdentity = NULL;
-    pStr = NULL;
-    pWidths = NULL;
-    iLength = 0;
-    pFont = NULL;
-    fFontSize = 12;
-    dwStyles = 0;
-    iHorizontalScale = 100;
-    iVerticalScale = 100;
-    iCharRotation = 0;
-    dwCharStyles = 0;
-    pRect = NULL;
-    wLineBreakChar = L'\n';
-    bSkipSpace = TRUE;
-  }
+  FX_TXTRUN()
+      : pAccess(nullptr),
+        pIdentity(nullptr),
+        pWidths(nullptr),
+        iLength(0),
+        pFont(nullptr),
+        fFontSize(12),
+        dwStyles(0),
+        iHorizontalScale(100),
+        iVerticalScale(100),
+        iCharRotation(0),
+        dwCharStyles(0),
+        pRect(nullptr),
+        wLineBreakChar(L'\n'),
+        bSkipSpace(TRUE) {}
 
   IFX_TxtAccess* pAccess;
   void* pIdentity;
-  const FX_WCHAR* pStr;
+  CFX_WideString wsStr;
   int32_t* pWidths;
   int32_t iLength;
   IFX_Font* pFont;

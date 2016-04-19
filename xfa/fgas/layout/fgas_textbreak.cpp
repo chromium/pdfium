@@ -1174,7 +1174,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   }
   IFX_TxtAccess* pAccess = pTxtRun->pAccess;
   void* pIdentity = pTxtRun->pIdentity;
-  const FX_WCHAR* pStr = pTxtRun->pStr;
+  const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
   IFX_Font* pFont = pTxtRun->pFont;
@@ -1554,7 +1554,7 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   }
   IFX_TxtAccess* pAccess = pTxtRun->pAccess;
   void* pIdentity = pTxtRun->pIdentity;
-  const FX_WCHAR* pStr = pTxtRun->pStr;
+  const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength;
   CFX_RectF rect(*pTxtRun->pRect);

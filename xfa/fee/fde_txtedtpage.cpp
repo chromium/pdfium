@@ -81,8 +81,6 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText,
   FX_TXTRUN tr;
   tr.pAccess = m_pPage;
   tr.pIdentity = (void*)hText;
-  tr.pStr = NULL;
-  tr.pWidths = NULL;
   tr.iLength = nLength;
   tr.pFont = pTextParams->pFont;
   tr.fFontSize = pTextParams->fFontSize;
@@ -114,8 +112,6 @@ int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText,
   FX_TXTRUN tr;
   tr.pAccess = m_pPage;
   tr.pIdentity = (void*)hText;
-  tr.pStr = NULL;
-  tr.pWidths = NULL;
   tr.iLength = nLength;
   tr.pFont = pTextParams->pFont;
   tr.fFontSize = pTextParams->fFontSize;
