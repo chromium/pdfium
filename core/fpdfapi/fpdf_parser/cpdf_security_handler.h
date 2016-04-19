@@ -4,30 +4,34 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_STANDARD_SECURITY_HANDLER_H_
-#define CORE_FPDFAPI_FPDF_PARSER_CPDF_STANDARD_SECURITY_HANDLER_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_SECURITY_HANDLER_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_SECURITY_HANDLER_H_
 
-#include "core/fpdfapi/fpdf_parser/ipdf_security_handler.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
-class CPDF_Array;
+#define FXCIPHER_NONE 0
+#define FXCIPHER_RC4 1
+#define FXCIPHER_AES 2
+#define FXCIPHER_AES2 3
 
 #define PDF_ENCRYPT_CONTENT 0
 
-class CPDF_StandardSecurityHandler : public IPDF_SecurityHandler {
- public:
-  CPDF_StandardSecurityHandler();
-  ~CPDF_StandardSecurityHandler() override;
+class CPDF_Array;
+class CPDF_CryptoHandler;
+class CPDF_Dictionary;
+class CPDF_Parser;
 
-  // IPDF_SecurityHandler:
-  FX_BOOL OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict) override;
-  uint32_t GetPermissions() override;
-  FX_BOOL GetCryptInfo(int& cipher,
-                       const uint8_t*& buffer,
-                       int& keylen) override;
-  FX_BOOL IsMetadataEncrypted() override;
-  IPDF_CryptoHandler* CreateCryptoHandler() override;
+class CPDF_SecurityHandler {
+ public:
+  CPDF_SecurityHandler();
+  ~CPDF_SecurityHandler();
+
+  FX_BOOL OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict);
+  uint32_t GetPermissions();
+  FX_BOOL GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen);
+  FX_BOOL IsMetadataEncrypted();
+  CPDF_CryptoHandler* CreateCryptoHandler();
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,
@@ -102,4 +106,4 @@ class CPDF_StandardSecurityHandler : public IPDF_SecurityHandler {
   int m_KeyLen;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_STANDARD_SECURITY_HANDLER_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_SECURITY_HANDLER_H_

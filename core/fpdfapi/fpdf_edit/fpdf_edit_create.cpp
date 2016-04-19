@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_crypto_handler.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_security_handler.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
@@ -20,7 +20,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
-#include "core/fpdfapi/fpdf_parser/ipdf_crypto_handler.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "third_party/base/stl_util.h"
 
@@ -479,7 +478,7 @@ class CPDF_Encryptor {
  public:
   CPDF_Encryptor();
   ~CPDF_Encryptor();
-  FX_BOOL Initialize(IPDF_CryptoHandler* pHandler,
+  FX_BOOL Initialize(CPDF_CryptoHandler* pHandler,
                      int objnum,
                      uint8_t* src_data,
                      uint32_t src_size);
@@ -492,7 +491,7 @@ CPDF_Encryptor::CPDF_Encryptor() {
   m_dwSize = 0;
   m_bNewBuf = FALSE;
 }
-FX_BOOL CPDF_Encryptor::Initialize(IPDF_CryptoHandler* pHandler,
+FX_BOOL CPDF_Encryptor::Initialize(CPDF_CryptoHandler* pHandler,
                                    int objnum,
                                    uint8_t* src_data,
                                    uint32_t src_size) {
@@ -549,7 +548,7 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
     return 0;
   }
   CFX_FileBufferArchive* pFile = &pCreator->m_File;
-  IPDF_CryptoHandler* pHandler = pCreator->m_pCryptoHandler;
+  CPDF_CryptoHandler* pHandler = pCreator->m_pCryptoHandler;
   FX_FILESIZE ObjOffset = pCreator->m_Offset;
   if (!m_dwObjNum) {
     m_dwObjNum = ++pCreator->m_dwLastObjNum;
@@ -1025,7 +1024,7 @@ int32_t CPDF_Creator::AppendObjectNumberToXRef(uint32_t objnum) {
 }
 int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                                   uint32_t objnum,
-                                  IPDF_CryptoHandler* pCrypto) {
+                                  CPDF_CryptoHandler* pCrypto) {
   CPDF_FlateEncoder encoder;
   encoder.Initialize(const_cast<CPDF_Stream*>(pStream->AsStream()),
                      pStream == m_pMetadata ? FALSE : m_bCompress);
@@ -1068,7 +1067,7 @@ int32_t CPDF_Creator::WriteIndirectObj(uint32_t objnum,
 
   m_Offset += len;
   if (pObj->IsStream()) {
-    IPDF_CryptoHandler* pHandler = nullptr;
+    CPDF_CryptoHandler* pHandler = nullptr;
     pHandler =
         (pObj == m_pMetadata && !m_bEncryptMetadata) ? NULL : m_pCryptoHandler;
     if (WriteStream(pObj, objnum, pHandler) < 0)
@@ -1148,7 +1147,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       encoder.Initialize(const_cast<CPDF_Stream*>(pObj->AsStream()),
                          m_bCompress);
       CPDF_Encryptor encryptor;
-      IPDF_CryptoHandler* pHandler = m_pCryptoHandler;
+      CPDF_CryptoHandler* pHandler = m_pCryptoHandler;
       encryptor.Initialize(pHandler, objnum, encoder.m_pData, encoder.m_dwSize);
       if ((uint32_t)encoder.m_pDict->GetIntegerBy("Length") !=
           encryptor.m_dwSize) {
@@ -2008,15 +2007,16 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
   m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
   if (m_pEncryptDict && !pOldIDArray && m_pParser && bNewId) {
     if (m_pEncryptDict->GetStringBy("Filter") == "Standard") {
-      CPDF_StandardSecurityHandler handler;
       CFX_ByteString user_pass = m_pParser->GetPassword();
       uint32_t flag = PDF_ENCRYPT_CONTENT;
+
+      CPDF_SecurityHandler handler;
       handler.OnCreate(m_pEncryptDict, m_pIDArray, user_pass.raw_str(),
                        user_pass.GetLength(), flag);
       if (m_bNewCrypto) {
         delete m_pCryptoHandler;
       }
-      m_pCryptoHandler = new CPDF_StandardCryptoHandler;
+      m_pCryptoHandler = new CPDF_CryptoHandler;
       m_pCryptoHandler->Init(m_pEncryptDict, &handler);
       m_bNewCrypto = TRUE;
       m_bSecurityChanged = TRUE;

@@ -8,7 +8,8 @@
 
 #include <vector>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_crypto_handler.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_security_handler.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
@@ -18,7 +19,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
-#include "core/fpdfapi/fpdf_parser/ipdf_crypto_handler.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "third_party/base/stl_util.h"
@@ -101,7 +101,7 @@ void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict) {
   m_pEncryptDict = pDict;
 }
 
-IPDF_CryptoHandler* CPDF_Parser::GetCryptoHandler() {
+CPDF_CryptoHandler* CPDF_Parser::GetCryptoHandler() {
   return m_pSyntax->m_pCryptoHandler.get();
 }
 
@@ -275,10 +275,10 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
 
   if (m_pEncryptDict) {
     CFX_ByteString filter = m_pEncryptDict->GetStringBy("Filter");
-    std::unique_ptr<IPDF_SecurityHandler> pSecurityHandler;
+    std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler;
     Error err = HANDLER_ERROR;
     if (filter == "Standard") {
-      pSecurityHandler.reset(new CPDF_StandardSecurityHandler);
+      pSecurityHandler.reset(new CPDF_SecurityHandler);
       err = PASSWORD_ERROR;
     }
     if (!pSecurityHandler)
@@ -288,7 +288,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
       return err;
 
     m_pSecurityHandler = std::move(pSecurityHandler);
-    std::unique_ptr<IPDF_CryptoHandler> pCryptoHandler(
+    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
         m_pSecurityHandler->CreateCryptoHandler());
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get()))
       return HANDLER_ERROR;

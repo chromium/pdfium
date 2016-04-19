@@ -11,12 +11,12 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 
+class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_IndirectObjectHolder;
 class CPDF_Object;
 class CPDF_Stream;
 class IFX_FileRead;
-class IPDF_CryptoHandler;
 
 class CPDF_SyntaxParser {
  public:
@@ -49,7 +49,7 @@ class CPDF_SyntaxParser {
                       FX_FILESIZE limit);
   FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
 
-  void SetEncrypt(std::unique_ptr<IPDF_CryptoHandler> pCryptoHandler);
+  void SetEncrypt(std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler);
 
   FX_BOOL ReadBlock(uint8_t* pBuf, uint32_t size);
   FX_BOOL GetCharAt(FX_FILESIZE pos, uint8_t& ch);
@@ -88,7 +88,7 @@ class CPDF_SyntaxParser {
   uint8_t* m_pFileBuf;
   uint32_t m_BufSize;
   FX_FILESIZE m_BufOffset;
-  std::unique_ptr<IPDF_CryptoHandler> m_pCryptoHandler;
+  std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   uint32_t m_WordSize;
 };

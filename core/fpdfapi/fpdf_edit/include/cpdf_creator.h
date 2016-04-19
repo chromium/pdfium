@@ -10,12 +10,12 @@
 #include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Array;
+class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Object;
 class CPDF_Parser;
 class CPDF_XRefStream;
-class IPDF_CryptoHandler;
 
 #define FPDFCREATE_INCREMENTAL 1
 #define FPDFCREATE_NO_ORIGINAL 2
@@ -69,7 +69,7 @@ class CPDF_Creator {
 
   int32_t WriteStream(const CPDF_Object* pStream,
                       uint32_t objnum,
-                      IPDF_CryptoHandler* pCrypto);
+                      CPDF_CryptoHandler* pCrypto);
 
   CPDF_Document* m_pDocument;
   CPDF_Parser* m_pParser;
@@ -79,7 +79,7 @@ class CPDF_Creator {
   uint32_t m_dwEnryptObjNum;
   FX_BOOL m_bEncryptCloned;
   FX_BOOL m_bStandardSecurity;
-  IPDF_CryptoHandler* m_pCryptoHandler;
+  CPDF_CryptoHandler* m_pCryptoHandler;
   FX_BOOL m_bNewCrypto;
   FX_BOOL m_bEncryptMetadata;
   CPDF_Object* m_pMetadata;

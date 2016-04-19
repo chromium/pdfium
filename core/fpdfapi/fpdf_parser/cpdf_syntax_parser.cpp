@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_null.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
@@ -19,7 +20,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
-#include "core/fpdfapi/fpdf_parser/ipdf_crypto_handler.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "third_party/base/numerics/safe_math.h"
@@ -646,7 +646,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   const CFX_ByteStringC kEndStreamStr("endstream");
   const CFX_ByteStringC kEndObjStr("endobj");
 
-  IPDF_CryptoHandler* pCryptoHandler =
+  CPDF_CryptoHandler* pCryptoHandler =
       objnum == (uint32_t)m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
   if (!pCryptoHandler) {
     FX_BOOL bSearchForKeyword = TRUE;
@@ -985,6 +985,6 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(const CFX_ByteStringC& tag,
 }
 
 void CPDF_SyntaxParser::SetEncrypt(
-    std::unique_ptr<IPDF_CryptoHandler> pCryptoHandler) {
+    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler) {
   m_pCryptoHandler = std::move(pCryptoHandler);
 }

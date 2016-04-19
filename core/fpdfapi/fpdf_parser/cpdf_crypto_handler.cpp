@@ -4,34 +4,22 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_crypto_handler.h"
 
 #include <time.h>
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_security_handler.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
-#include "core/fpdfapi/fpdf_parser/ipdf_security_handler.h"
 
-IPDF_CryptoHandler::~IPDF_CryptoHandler() {}
-
-void IPDF_CryptoHandler::Decrypt(uint32_t objnum,
-                                 uint32_t gennum,
-                                 CFX_ByteString& str) {
-  CFX_BinaryBuf dest_buf;
-  void* context = DecryptStart(objnum, gennum);
-  DecryptStream(context, str.raw_str(), str.GetLength(), dest_buf);
-  DecryptFinish(context, dest_buf);
-  str = CFX_ByteString(dest_buf.GetBuffer(), dest_buf.GetSize());
-}
-
-void CPDF_StandardCryptoHandler::CryptBlock(FX_BOOL bEncrypt,
-                                            uint32_t objnum,
-                                            uint32_t gennum,
-                                            const uint8_t* src_buf,
-                                            uint32_t src_size,
-                                            uint8_t* dest_buf,
-                                            uint32_t& dest_size) {
+void CPDF_CryptoHandler::CryptBlock(FX_BOOL bEncrypt,
+                                    uint32_t objnum,
+                                    uint32_t gennum,
+                                    const uint8_t* src_buf,
+                                    uint32_t src_size,
+                                    uint8_t* dest_buf,
+                                    uint32_t& dest_size) {
   if (m_Cipher == FXCIPHER_NONE) {
     FXSYS_memcpy(dest_buf, src_buf, src_size);
     return;
@@ -99,9 +87,9 @@ struct AESCryptContext {
   uint32_t m_BlockOffset;
 };
 
-void* CPDF_StandardCryptoHandler::CryptStart(uint32_t objnum,
-                                             uint32_t gennum,
-                                             FX_BOOL bEncrypt) {
+void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
+                                     uint32_t gennum,
+                                     FX_BOOL bEncrypt) {
   if (m_Cipher == FXCIPHER_NONE) {
     return this;
   }
@@ -149,11 +137,11 @@ void* CPDF_StandardCryptoHandler::CryptStart(uint32_t objnum,
   CRYPT_ArcFourSetup(pContext, realkey, realkeylen);
   return pContext;
 }
-FX_BOOL CPDF_StandardCryptoHandler::CryptStream(void* context,
-                                                const uint8_t* src_buf,
-                                                uint32_t src_size,
-                                                CFX_BinaryBuf& dest_buf,
-                                                FX_BOOL bEncrypt) {
+FX_BOOL CPDF_CryptoHandler::CryptStream(void* context,
+                                        const uint8_t* src_buf,
+                                        uint32_t src_size,
+                                        CFX_BinaryBuf& dest_buf,
+                                        FX_BOOL bEncrypt) {
   if (!context) {
     return FALSE;
   }
@@ -208,9 +196,9 @@ FX_BOOL CPDF_StandardCryptoHandler::CryptStream(void* context,
   }
   return TRUE;
 }
-FX_BOOL CPDF_StandardCryptoHandler::CryptFinish(void* context,
-                                                CFX_BinaryBuf& dest_buf,
-                                                FX_BOOL bEncrypt) {
+FX_BOOL CPDF_CryptoHandler::CryptFinish(void* context,
+                                        CFX_BinaryBuf& dest_buf,
+                                        FX_BOOL bEncrypt) {
   if (!context) {
     return FALSE;
   }
@@ -244,17 +232,26 @@ FX_BOOL CPDF_StandardCryptoHandler::CryptFinish(void* context,
   FX_Free(pContext);
   return TRUE;
 }
-void* CPDF_StandardCryptoHandler::DecryptStart(uint32_t objnum,
-                                               uint32_t gennum) {
+
+void CPDF_CryptoHandler::Decrypt(uint32_t objnum,
+                                 uint32_t gennum,
+                                 CFX_ByteString& str) {
+  CFX_BinaryBuf dest_buf;
+  void* context = DecryptStart(objnum, gennum);
+  DecryptStream(context, str.raw_str(), str.GetLength(), dest_buf);
+  DecryptFinish(context, dest_buf);
+  str = CFX_ByteString(dest_buf.GetBuffer(), dest_buf.GetSize());
+}
+
+void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   return CryptStart(objnum, gennum, FALSE);
 }
-uint32_t CPDF_StandardCryptoHandler::DecryptGetSize(uint32_t src_size) {
+uint32_t CPDF_CryptoHandler::DecryptGetSize(uint32_t src_size) {
   return m_Cipher == FXCIPHER_AES ? src_size - 16 : src_size;
 }
 
-FX_BOOL CPDF_StandardCryptoHandler::Init(
-    CPDF_Dictionary* pEncryptDict,
-    IPDF_SecurityHandler* pSecurityHandler) {
+FX_BOOL CPDF_CryptoHandler::Init(CPDF_Dictionary* pEncryptDict,
+                                 CPDF_SecurityHandler* pSecurityHandler) {
   const uint8_t* key;
   if (!pSecurityHandler->GetCryptInfo(m_Cipher, key, m_KeyLen)) {
     return FALSE;
@@ -271,9 +268,7 @@ FX_BOOL CPDF_StandardCryptoHandler::Init(
   return TRUE;
 }
 
-FX_BOOL CPDF_StandardCryptoHandler::Init(int cipher,
-                                         const uint8_t* key,
-                                         int keylen) {
+FX_BOOL CPDF_CryptoHandler::Init(int cipher, const uint8_t* key, int keylen) {
   if (cipher == FXCIPHER_AES) {
     switch (keylen) {
       case 16:
@@ -304,39 +299,39 @@ FX_BOOL CPDF_StandardCryptoHandler::Init(int cipher,
   }
   return TRUE;
 }
-FX_BOOL CPDF_StandardCryptoHandler::DecryptStream(void* context,
-                                                  const uint8_t* src_buf,
-                                                  uint32_t src_size,
-                                                  CFX_BinaryBuf& dest_buf) {
+FX_BOOL CPDF_CryptoHandler::DecryptStream(void* context,
+                                          const uint8_t* src_buf,
+                                          uint32_t src_size,
+                                          CFX_BinaryBuf& dest_buf) {
   return CryptStream(context, src_buf, src_size, dest_buf, FALSE);
 }
-FX_BOOL CPDF_StandardCryptoHandler::DecryptFinish(void* context,
-                                                  CFX_BinaryBuf& dest_buf) {
+FX_BOOL CPDF_CryptoHandler::DecryptFinish(void* context,
+                                          CFX_BinaryBuf& dest_buf) {
   return CryptFinish(context, dest_buf, FALSE);
 }
-uint32_t CPDF_StandardCryptoHandler::EncryptGetSize(uint32_t objnum,
-                                                    uint32_t version,
-                                                    const uint8_t* src_buf,
-                                                    uint32_t src_size) {
+uint32_t CPDF_CryptoHandler::EncryptGetSize(uint32_t objnum,
+                                            uint32_t version,
+                                            const uint8_t* src_buf,
+                                            uint32_t src_size) {
   if (m_Cipher == FXCIPHER_AES) {
     return src_size + 32;
   }
   return src_size;
 }
-FX_BOOL CPDF_StandardCryptoHandler::EncryptContent(uint32_t objnum,
-                                                   uint32_t gennum,
-                                                   const uint8_t* src_buf,
-                                                   uint32_t src_size,
-                                                   uint8_t* dest_buf,
-                                                   uint32_t& dest_size) {
+FX_BOOL CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
+                                           uint32_t gennum,
+                                           const uint8_t* src_buf,
+                                           uint32_t src_size,
+                                           uint8_t* dest_buf,
+                                           uint32_t& dest_size) {
   CryptBlock(TRUE, objnum, gennum, src_buf, src_size, dest_buf, dest_size);
   return TRUE;
 }
-CPDF_StandardCryptoHandler::CPDF_StandardCryptoHandler() {
+CPDF_CryptoHandler::CPDF_CryptoHandler() {
   m_pAESContext = NULL;
   m_Cipher = FXCIPHER_NONE;
   m_KeyLen = 0;
 }
-CPDF_StandardCryptoHandler::~CPDF_StandardCryptoHandler() {
+CPDF_CryptoHandler::~CPDF_CryptoHandler() {
   FX_Free(m_pAESContext);
 }
