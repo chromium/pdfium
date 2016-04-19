@@ -74,7 +74,7 @@ def test_one_file_parallel(working_dir, pdfium_test_path, image_differ,
 
 def handle_result(test_suppressor, input_filename, input_path, result,
                   surprises, failures):
-  if test_suppressor.IsSuppressed(input_filename):
+  if test_suppressor.IsResultSuppressed(input_filename):
     if result:
       surprises.append(input_path)
   else:
@@ -127,8 +127,9 @@ def main():
       for input_filename in filename_list:
         if input_file_re.match(input_filename):
           input_path = os.path.join(source_dir, input_filename)
-          if os.path.isfile(input_path):
-            test_cases.append((input_filename, source_dir))
+          if not test_suppressor.IsExecutionSuppressed(input_path):
+            if os.path.isfile(input_path):
+              test_cases.append((input_filename, source_dir))
 
   if options.num_workers > 1 and len(test_cases) > 1:
     try:

@@ -10,8 +10,10 @@ import common
 class Suppressor:
   def __init__(self, finder, feature_string):
     feature_vector = feature_string.strip().split(",")
-    v8_option = ["nov8", "v8"]["V8" in feature_vector]
-    xfa_option = ["noxfa", "xfa"]["XFA" in feature_vector]
+    self.has_v8 = "V8" in feature_vector
+    self.has_xfa = "XFA" in feature_vector
+    v8_option = "v8" if self.has_v8 else "nov8"
+    xfa_option = "xfa" if self.has_xfa else "noxfa"
     with open(os.path.join(finder.TestingDir(), 'SUPPRESSIONS')) as f:
       self.suppression_set = set(self._FilterSuppressions(
         common.os_name(), v8_option, xfa_option, self._ExtractSuppressions(f)))
@@ -33,8 +35,14 @@ class Suppressor:
             ('*' in js_column or js in js_column) and
             ('*' in xfa_column or xfa in xfa_column))
 
-  def IsSuppressed(self, input_filename):
+  def IsResultSuppressed(self, input_filename):
     if input_filename in self.suppression_set:
-      print "%s is suppressed" % input_filename
+      print "%s result is suppressed" % input_filename
+      return True
+    return False
+
+  def IsExecutionSuppressed(self, input_filepath):
+    if "xfa_specific" in input_filepath and not self.has_xfa:
+      print "%s execution is suppressed" % input_filepath
       return True
     return False

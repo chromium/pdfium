@@ -90,7 +90,7 @@ def main():
     if input_file_re.match(input_filename):
       input_path = os.path.join(source_dir, input_filename)
       if os.path.isfile(input_path):
-        if test_suppressor.IsSuppressed(input_filename):
+        if test_suppressor.IsResultSuppressed(input_filename):
           continue
         if not generate_and_test(input_filename, source_dir, working_dir,
                                  fixup_path, pdfium_test_path, image_differ,
