@@ -416,7 +416,7 @@ CPDF_Font* CPDF_InterForm::AddStandardFont(CPDF_Document* pDocument,
 CFX_ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
   CFX_ByteString csFontName;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  LOGFONTA lf;
+  LOGFONTA lf = {};
   FX_BOOL bRet;
   if (charSet == ANSI_CHARSET) {
     csFontName = "Helvetica";
