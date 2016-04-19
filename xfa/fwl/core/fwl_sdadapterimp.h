@@ -46,7 +46,6 @@ class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr {
                                    const CFX_WideStringC& wsCaption);
   virtual FWL_ERR SetBorderRegion(IFWL_Widget* pWidget, CFX_Path* pPath);
   virtual FWL_ERR SetTransparent(IFWL_Widget* pWidget, uint32_t dwAlpha);
-  virtual FWL_ERR SetFullScreen(IFWL_Widget* pWidget, FX_BOOL bFullScreen);
   virtual FX_BOOL CheckMessage();
   virtual FX_BOOL IsIdleMessage();
   virtual FWL_ERR DispatchMessage();

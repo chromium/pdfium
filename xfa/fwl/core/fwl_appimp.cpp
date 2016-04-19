@@ -89,26 +89,10 @@ IFWL_AdapterNative* FWL_GetAdapterNative() {
     return NULL;
   return pApp->GetAdapterNative();
 }
-IFWL_ThemeProvider* FWL_GetThemeProvider() {
-  return NULL;
-}
 static IFWL_App* _theApp = NULL;
 IFWL_App* FWL_GetApp() {
   return _theApp;
 }
 void FWL_SetApp(IFWL_App* pApp) {
   _theApp = pApp;
-}
-FWL_ERR FWL_SetFullScreen(IFWL_Widget* pWidget, FX_BOOL bFullScreen) {
-  if (!pWidget)
-    return FWL_ERR_Succeeded;
-  IFWL_Thread* pNoteTread = pWidget->GetOwnerThread();
-  if (!pNoteTread)
-    return FWL_ERR_Succeeded;
-  CFWL_NoteDriver* pNoteDriver =
-      static_cast<CFWL_NoteDriver*>(pNoteTread->GetNoteDriver());
-  if (!pNoteTread)
-    return FWL_ERR_Succeeded;
-  pNoteDriver->NotifyFullScreenMode(pWidget, bFullScreen);
-  return FWL_GetAdapterWidgetMgr()->SetFullScreen(pWidget, bFullScreen);
 }

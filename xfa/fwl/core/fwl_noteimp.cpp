@@ -73,7 +73,6 @@ void CFWL_NoteLoop::GenerateCommondEvent(uint32_t dwCommand) {
 }
 CFWL_NoteDriver::CFWL_NoteDriver()
     : m_sendEventCalled(0),
-      m_bFullScreen(FALSE),
       m_pHover(nullptr),
       m_pFocus(nullptr),
       m_pGrab(nullptr) {
@@ -326,10 +325,7 @@ void CFWL_NoteDriver::NotifyTargetDestroy(IFWL_Widget* pNoteTarget) {
     }
   }
 }
-void CFWL_NoteDriver::NotifyFullScreenMode(IFWL_Widget* pNoteTarget,
-                                           FX_BOOL bFullScreen) {
-  m_bFullScreen = bFullScreen;
-}
+
 FWL_ERR CFWL_NoteDriver::RegisterForm(CFWL_WidgetImp* pForm) {
   if (!pForm)
     return FWL_ERR_Indefinite;
@@ -468,17 +464,11 @@ FX_BOOL CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
 }
 FX_BOOL CFWL_NoteDriver::DoActivate(CFWL_MsgActivate* pMsg,
                                     IFWL_Widget* pMessageForm) {
-  if (m_bFullScreen) {
-    return FALSE;
-  }
   pMsg->m_pDstTarget = pMessageForm;
   return (pMsg->m_pDstTarget)->GetStates() & FWL_WGTSTATE_Deactivated;
 }
 FX_BOOL CFWL_NoteDriver::DoDeactivate(CFWL_MsgDeactivate* pMsg,
                                       IFWL_Widget* pMessageForm) {
-  if (m_bFullScreen) {
-    return FALSE;
-  }
   int32_t iTrackLoop = m_noteLoopQueue.GetSize();
   if (iTrackLoop <= 0)
     return FALSE;

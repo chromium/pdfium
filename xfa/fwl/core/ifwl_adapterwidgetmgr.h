@@ -44,7 +44,6 @@ class IFWL_AdapterWidgetMgr {
   virtual FWL_ERR SetNormal(IFWL_Widget* pWidget) = 0;
   virtual FWL_ERR SetMaximize(IFWL_Widget* pWidget) = 0;
   virtual FWL_ERR SetMinimize(IFWL_Widget* pWidget) = 0;
-  virtual FWL_ERR SetFullScreen(IFWL_Widget* pWidget, FX_BOOL bFullScreen) = 0;
   virtual FX_BOOL CheckMessage() = 0;
   virtual FX_BOOL IsIdleMessage() = 0;
   virtual FWL_ERR DispatchMessage() = 0;

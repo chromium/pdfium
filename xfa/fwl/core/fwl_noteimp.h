@@ -70,7 +70,6 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   void SetHover(IFWL_Widget* pHover);
   void NotifyTargetHide(IFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(IFWL_Widget* pNoteTarget);
-  void NotifyFullScreenMode(IFWL_Widget* pNoteTarget, FX_BOOL bFullScreen);
   FWL_ERR RegisterForm(CFWL_WidgetImp* pForm);
   FWL_ERR UnRegisterForm(CFWL_WidgetImp* pForm);
   FX_BOOL QueueMessage(CFWL_Message* pMessage);
@@ -101,14 +100,11 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   CFX_PtrArray m_noteLoopQueue;
   CFX_MapPtrToPtr m_eventTargets;
   int32_t m_sendEventCalled;
-  FX_BOOL m_bFullScreen;
   IFWL_Widget* m_pHover;
   IFWL_Widget* m_pFocus;
   IFWL_Widget* m_pGrab;
   CFWL_NoteLoop* m_pNoteLoop;
 };
-
-typedef CFX_MapPtrTemplate<void*, uint32_t> CFWL_EventSource;
 
 class CFWL_EventTarget {
  public:
@@ -123,7 +119,7 @@ class CFWL_EventTarget {
   void FlagInvalid() { m_bInvalid = TRUE; }
 
  protected:
-  CFWL_EventSource m_eventSources;
+  CFX_MapPtrTemplate<void*, uint32_t> m_eventSources;
   IFWL_Widget* m_pListener;
   CFWL_NoteDriver* m_pNoteDriver;
   FX_BOOL m_bInvalid;

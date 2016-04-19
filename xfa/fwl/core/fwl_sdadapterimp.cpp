@@ -89,10 +89,6 @@ FWL_ERR CFWL_SDAdapterWidgetMgr::SetTransparent(IFWL_Widget* pWidget,
                                                 uint32_t dwAlpha) {
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_SDAdapterWidgetMgr::SetFullScreen(IFWL_Widget* pWidget,
-                                               FX_BOOL bFullScreen) {
-  return FWL_ERR_Succeeded;
-}
 FX_BOOL CFWL_SDAdapterWidgetMgr::CheckMessage() {
   return TRUE;
 }
