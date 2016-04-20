@@ -18,13 +18,6 @@ def os_name():
   raise Exception('Confused, can not determine OS, aborting.')
 
 
-def RunCommandToFile(cmd, file):
-  try:
-    subprocess.check_call(cmd, stdout=file)
-    return None
-  except subprocess.CalledProcessError as e:
-    return e
-
 def RunCommand(cmd, redirect_output=False):
   try:
     if redirect_output:
@@ -34,7 +27,6 @@ def RunCommand(cmd, redirect_output=False):
     return None
   except subprocess.CalledProcessError as e:
     return e
-
 
 # Adjust Dr. Memory wrapper to have separate log directory for each test
 # for better error reporting.
