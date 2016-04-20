@@ -70,6 +70,7 @@ include_rules = [
 hooks = [
   # Pull GN binaries. This needs to be before running GYP below.
   {
+    'name': 'gn_win',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=win32',
@@ -117,40 +118,6 @@ hooks = [
     'name': 'gyp',
     'pattern': '.',
     'action': ['python', 'pdfium/build_gyp/gyp_pdfium'],
-  },
-  # Pull GN binaries. This needs to be before running GYP below.
-  {
-    'name': 'gn_win',
-    'pattern': '.',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=win32',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'pdfium/buildtools/win/gn.exe.sha1',
-    ],
-  },
-  {
-    'name': 'gn_mac',
-    'pattern': '.',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=darwin',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'pdfium/buildtools/mac/gn.sha1',
-    ],
-  },
-  {
-    'name': 'gn_linux64',
-    'pattern': '.',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=linux*',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'pdfium/buildtools/linux64/gn.sha1',
-    ],
   },
   # Pull clang-format binaries using checked-in hashes.
   {
