@@ -4,9 +4,9 @@ vars = {
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
 
-  'build_revision': '4d35c0d78ccf35b1597b9dd4adad52203916a01f',
+  'build_revision': '2f91397926336dd46ea49ffef702197b9cc2215a',
   'buildtools_revision': '5378d73123b64907773cc5c1bb027b2f765ff00a',
-  'clang_revision': '9dc1904d214a77f081362c1b848b5f28d2192748',
+  'clang_revision': '2956eca572ff0e1b181df65f71a045f061a2eb34',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
