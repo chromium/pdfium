@@ -1,0 +1,232 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# ==============================================================================
+# TEST SETUP
+# ==============================================================================
+
+# Define a test as an executable (or apk on Android) with the "testonly" flag
+# set.
+# Variable:
+#   use_raw_android_executable: Use executable() rather than android_apk().
+template("test") {
+  if (is_android) {
+    import("//build/config/android/config.gni")
+    import("//build/config/android/rules.gni")
+
+    _use_raw_android_executable = defined(invoker.use_raw_android_executable) &&
+                                  invoker.use_raw_android_executable
+
+    # output_name is used to allow targets with the same name but in different
+    # packages to still produce unique runner scripts.
+    _output_name = invoker.target_name
+    if (defined(invoker.output_name)) {
+      _output_name = invoker.output_name
+    }
+
+    if (_use_raw_android_executable) {
+      _exec_target = "${target_name}__exec"
+      _dist_target = "${target_name}__dist"
+      _exec_output =
+          "$target_out_dir/${invoker.target_name}/${invoker.target_name}"
+
+      executable(_exec_target) {
+        # Configs will always be defined since we set_defaults in BUILDCONFIG.gn.
+        configs = []
+        data_deps = []
+        forward_variables_from(invoker, "*", [ "extra_dist_files" ])
+        testonly = true
+
+        # Thanks to the set_defaults() for test(), configs are initialized with
+        # the default shared_library configs rather than executable configs.
+        configs -= [
+          "//build/config:shared_library_config",
+          "//build/config/android:hide_native_jni_exports",
+        ]
+        configs += [ "//build/config:executable_config" ]
+
+        # Don't output to the root or else conflict with the group() below.
+        output_name = rebase_path(_exec_output, root_out_dir)
+        if (is_component_build || is_asan) {
+          data_deps += [ "//build/android:cpplib_stripped" ]
+        }
+      }
+
+      create_native_executable_dist(_dist_target) {
+        testonly = true
+        dist_dir = "$root_out_dir/$target_name"
+        binary = _exec_output
+        deps = [
+          ":$_exec_target",
+        ]
+        if (defined(invoker.extra_dist_files)) {
+          extra_files = invoker.extra_dist_files
+        }
+      }
+    } else {
+      _library_target = "_${target_name}__library"
+      _apk_target = "${target_name}_apk"
+      _apk_specific_vars = [
+        "android_manifest",
+        "enable_multidex",
+        "use_default_launcher",
+        "write_asset_list",
+      ]
+      shared_library(_library_target) {
+        # Configs will always be defined since we set_defaults in BUILDCONFIG.gn.
+        configs = []  # Prevent list overwriting warning.
+        configs = invoker.configs
+        testonly = true
+
+        deps = []
+        forward_variables_from(invoker,
+                               "*",
+                               _apk_specific_vars + [
+                                     "isolate_file",
+                                     "visibility",
+                                   ])
+
+        if (!defined(invoker.use_default_launcher) ||
+            invoker.use_default_launcher) {
+          deps += [ "//testing/android/native_test:native_test_native_code" ]
+        }
+      }
+      unittest_apk(_apk_target) {
+        forward_variables_from(invoker, _apk_specific_vars + [ "deps" ])
+        unittests_dep = ":$_library_target"
+        apk_name = invoker.target_name
+        if (defined(invoker.output_name)) {
+          apk_name = invoker.output_name
+          unittests_binary = "lib${apk_name}.so"
+          install_script_name = "install_${invoker.output_name}"
+        }
+        deps += [ ":$_library_target" ]
+      }
+
+      # Incremental test targets work only for .apks.
+      _incremental_test_runner_target =
+          "${_output_name}_incremental__test_runner_script"
+      test_runner_script(_incremental_test_runner_target) {
+        forward_variables_from(invoker, [ "isolate_file" ])
+        apk_target = ":$_apk_target"
+        test_name = "${_output_name}_incremental"
+        test_type = "gtest"
+        test_suite = _output_name
+        incremental_install = true
+      }
+      group("${target_name}_incremental") {
+        testonly = true
+        datadeps = [
+          ":$_incremental_test_runner_target",
+        ]
+        deps = [
+          ":${_apk_target}_incremental",
+        ]
+      }
+    }
+
+    _test_runner_target = "${_output_name}__test_runner_script"
+    test_runner_script(_test_runner_target) {
+      forward_variables_from(invoker, [ "isolate_file" ])
+      if (_use_raw_android_executable) {
+        executable_dist_dir = "$root_out_dir/$_dist_target"
+      } else {
+        apk_target = ":$_apk_target"
+      }
+      test_name = _output_name
+      test_type = "gtest"
+      test_suite = _output_name
+    }
+
+    group(target_name) {
+      testonly = true
+      deps = [
+        ":$_test_runner_target",
+      ]
+      if (_use_raw_android_executable) {
+        deps += [ ":$_dist_target" ]
+      } else {
+        deps += [ ":$_apk_target" ]
+      }
+    }
+
+    # TODO(GYP): Delete this after we've converted everything to GN.
+    # The _run targets exist only for compatibility w/ GYP.
+    group("${target_name}_apk_run") {
+      testonly = true
+      deps = [
+        ":${invoker.target_name}",
+      ]
+    }
+  } else if (is_ios) {
+    import("//build/config/ios/rules.gni")
+
+    _test_target = target_name
+    _resources_bundle_data = target_name + "_resources_bundle_data"
+
+    bundle_data(_resources_bundle_data) {
+      visibility = [
+        ":${_test_target}",
+        ":${_test_target}_generate_executable",
+      ]
+      sources = [
+        "//testing/gtest_ios/Default.png",
+      ]
+      outputs = [
+        "{{bundle_resources_dir}}/{{source_file_part}}",
+      ]
+    }
+
+    app(_test_target) {
+      # TODO(GYP): Make this configurable and only provide a default
+      # that can be overridden.
+      info_plist = "//testing/gtest_ios/unittest-Info.plist"
+      app_name = target_name
+      entitlements_path = "//testing/gtest_ios"
+      code_signing_identity = ""
+      testonly = true
+      extra_substitutions = [ "BUNDLE_ID_TEST_NAME=$app_name" ]
+
+      # See above call.
+      set_sources_assignment_filter([])
+
+      forward_variables_from(invoker, "*")
+
+      if (!defined(deps)) {
+        deps = []
+      }
+      deps += [
+        ":$_resources_bundle_data",
+
+        # All shared libraries must have the sanitizer deps to properly link in
+        # asan mode (this target will be empty in other cases).
+        "//build/config/sanitizers:deps",
+      ]
+    }
+  } else {
+    executable(target_name) {
+      deps = []
+      forward_variables_from(invoker, "*")
+
+      testonly = true
+      deps += [
+        # All shared libraries must have the sanitizer deps to properly link in
+        # asan mode (this target will be empty in other cases).
+        "//build/config/sanitizers:deps",
+
+        # Give tests the default manifest on Windows (a no-op elsewhere).
+        "//build/win:default_exe_manifest",
+      ]
+    }
+
+    # TODO(GYP): Delete this after we've converted everything to GN.
+    # The _run targets exist only for compatibility with GYP.
+    group("${target_name}_run") {
+      testonly = true
+      deps = [
+        ":${invoker.target_name}",
+      ]
+    }
+  }
+}

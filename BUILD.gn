@@ -1695,7 +1695,7 @@ test("pdfium_embeddertests") {
     "//testing/gmock",
     "//testing/gtest",
   ]
-  include_dirs = []
+  include_dirs = [ "testing/gmock/include" ]
   if (pdf_enable_v8) {
     sources += [
       "fpdfsdk/javascript/public_methods_embeddertest.cpp",
@@ -1714,4 +1714,13 @@ test("pdfium_embeddertests") {
     configs += [ "//v8:external_startup_data" ]
   }
   configs += [ ":pdfium_config" ]
+}
+
+if (pdf_is_standalone) {
+  source_set("samples") {
+    testonly = true
+    deps = [
+      "//samples",
+    ]
+  }
 }

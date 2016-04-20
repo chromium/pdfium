@@ -49,7 +49,7 @@
     'werror%': '-Werror',
     'v8_optimized_debug%': 0,
     'v8_use_external_startup_data%': 0,
-    'icu_gyp_path': '../v8/third_party/icu/icu.gyp',
+    'icu_gyp_path': '../third_party/icu/icu.gyp',
     'libjpeg_gyp_path': '../third_party/third_party.gyp',
     'conditions': [
       ['OS == "win"', {

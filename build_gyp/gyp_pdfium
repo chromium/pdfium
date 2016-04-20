@@ -14,7 +14,7 @@ import sys
 script_dir = os.path.dirname(os.path.realpath(__file__))
 pdfium_root = os.path.abspath(os.path.join(script_dir, os.pardir))
 
-sys.path.insert(0, os.path.join(pdfium_root, 'build_gyp', 'gyp', 'pylib'))
+sys.path.insert(0, os.path.join(pdfium_root, 'tools', 'gyp', 'pylib'))
 import gyp
 
 

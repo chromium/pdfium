@@ -204,9 +204,10 @@ TEST_F(PDFObjectsTest, GetUnicodeText) {
       L"\t\n", L"space", L"", L"", L"abcdefghijklmnopqrstuvwxyz",
       L""};
   // Check for direct objects.
-  for (size_t i = 0; i < m_DirectObjs.size(); ++i)
+  for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
     EXPECT_STREQ(direct_obj_results[i],
                  m_DirectObjs[i]->GetUnicodeText().c_str());
+  }
 
   // Check indirect references.
   for (const auto& it : m_RefObjs)

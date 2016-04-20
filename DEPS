@@ -4,7 +4,8 @@ vars = {
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
 
-  'buildtools_revision': 'c2f259809d5ede3275df5ea0842f0431990c4f98',
+  'build_revision': '4d35c0d78ccf35b1597b9dd4adad52203916a01f',
+  'buildtools_revision': '5378d73123b64907773cc5c1bb027b2f765ff00a',
   'clang_revision': '9dc1904d214a77f081362c1b848b5f28d2192748',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
@@ -18,8 +19,8 @@ vars = {
 }
 
 deps = {
-  "build_gyp/gyp":
-    Var('chromium_git') + "/external/gyp",
+  "build":
+    Var('chromium_git') + "/chromium/src/build.git@" + Var('build_revision'),
 
   "buildtools":
     Var('chromium_git') + "/chromium/buildtools.git@" + Var('buildtools_revision'),
@@ -33,20 +34,23 @@ deps = {
   "testing/gtest":
     Var('chromium_git') + "/external/googletest.git@" + Var('gtest_revision'),
 
+  "third_party/icu":
+    Var('chromium_git') + "/chromium/deps/icu.git@" + Var('icu_revision'),
+
   "third_party/skia":
     Var('chromium_git') + '/skia.git' + '@' +  Var('skia_revision'),
 
   "tools/clang":
     Var('chromium_git') + "/chromium/src/tools/clang@" +  Var('clang_revision'),
 
+  "tools/gyp":
+    Var('chromium_git') + "/external/gyp",
+
   "v8":
     Var('chromium_git') + "/v8/v8.git@" + Var('v8_revision'),
 
   "v8/base/trace_event/common":
     Var('chromium_git') + "/chromium/src/base/trace_event/common.git@" + Var('trace_event_revision'),
-
-  "v8/third_party/icu":
-    Var('chromium_git') + "/chromium/deps/icu.git@" + Var('icu_revision'),
 }
 
 deps_os = {
@@ -64,6 +68,50 @@ include_rules = [
 ]
 
 hooks = [
+  # Pull GN binaries. This needs to be before running GYP below.
+  {
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--platform=win32',
+                '--no_auth',
+                '--bucket', 'chromium-gn',
+                '-s', 'pdfium/buildtools/win/gn.exe.sha1',
+    ],
+  },
+  {
+    'name': 'gn_mac',
+    'pattern': '.',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--platform=darwin',
+                '--no_auth',
+                '--bucket', 'chromium-gn',
+                '-s', 'pdfium/buildtools/mac/gn.sha1',
+    ],
+  },
+  {
+    'name': 'gn_linux64',
+    'pattern': '.',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--platform=linux*',
+                '--no_auth',
+                '--bucket', 'chromium-gn',
+                '-s', 'pdfium/buildtools/linux64/gn.sha1',
+    ],
+  },
+  {
+    # Downloads the current stable linux sysroot to build/linux/ if needed.
+    # This sysroot updates at about the same rate that the chrome build deps
+    # change. This script is a no-op except for linux users who are doing
+    # official chrome builds or cross compiling.
+    'name': 'sysroot',
+    'pattern': '.',
+    'action': ['python',
+               'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+               '--running-as-hook'
+    ],
+  },
   {
     # A change to a .gyp, .gypi, or to GYP itself should run the generator.
     'name': 'gyp',
@@ -142,6 +190,9 @@ hooks = [
     # Pull clang if needed or requested via GYP_DEFINES.
     'name': 'clang',
     'pattern': '.',
-    'action': ['python', 'pdfium/tools/clang/scripts/update.py', '--if-needed'],
+    'action': ['python',
+               'pdfium/tools/clang/scripts/update.py',
+               '--if-needed'
+    ],
   },
 ]

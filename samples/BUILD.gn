@@ -39,14 +39,14 @@ executable("pdfium_test") {
     "pdfium_test.cc",
   ]
   deps = [
+    "../:pdfium",
+    "../:test_support",
     "//build/config/sanitizers:deps",
-    "//third_party/pdfium:pdfium",
-    "//third_party/pdfium:test_support",
 
     # Regardless of whether the library ships against system freetype,
     # always link this binary against the bundled one for consistency
     # of results across platforms.
-    "//third_party/pdfium/third_party:fx_freetype",
+    "../third_party:fx_freetype",
   ]
   if (!pdf_enable_xfa) {
     deps += [ "../third_party:fx_lpng" ]
@@ -73,8 +73,8 @@ executable("pdfium_diff") {
     "image_diff_png.h",
   ]
   deps = [
+    "../:pdfium",
     "//build/config/sanitizers:deps",
-    "//third_party/pdfium",
   ]
   if (!pdf_enable_xfa) {
     deps += [ "../third_party:fx_lpng" ]

@@ -1,13 +1,15 @@
-/build_gyp/gyp
+/build
 /buildtools
 /out
 /testing/corpus
 /testing/gmock
 /testing/gtest
+/third_party/icu
 /third_party/llvm
 /third_party/llvm-build
 /third_party/skia
 /tools/clang
+/tools/gyp
 /v8
 /xcodebuild
 Makefile
