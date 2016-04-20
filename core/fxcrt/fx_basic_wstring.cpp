@@ -579,10 +579,6 @@ void CFX_WideString::FormatV(const FX_WCHAR* pFormat, va_list argList) {
   va_end(argListSave);
 }
 
-const FX_WCHAR* CFX_WideString::c_str() const {
-  return m_pData ? m_pData->m_String : L"";
-}
-
 void CFX_WideString::Format(const FX_WCHAR* pFormat, ...) {
   va_list argList;
   va_start(argList, pFormat);
