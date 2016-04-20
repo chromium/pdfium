@@ -340,7 +340,7 @@ const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
   }
   int32_t iElementIndex = eElement;
   while (iElementIndex != -1) {
-    XFA_SCRIPTHIERARCHY const* scriptIndex = g_XFAScriptIndex + iElementIndex;
+    const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
     int32_t icount = scriptIndex->wMethodCount;
     if (icount == 0) {
       iElementIndex = scriptIndex->wParentIndex;
@@ -372,7 +372,7 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
   }
   int32_t iElementIndex = eElement;
   while (iElementIndex != -1) {
-    XFA_SCRIPTHIERARCHY const* scriptIndex = g_XFAScriptIndex + iElementIndex;
+    const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
     int32_t icount = scriptIndex->wAttributeCount;
     if (icount == 0) {
       iElementIndex = scriptIndex->wParentIndex;

@@ -78,9 +78,8 @@ class CPDF_Creator {
   CPDF_Dictionary* m_pEncryptDict;
   uint32_t m_dwEnryptObjNum;
   FX_BOOL m_bEncryptCloned;
-  FX_BOOL m_bStandardSecurity;
   CPDF_CryptoHandler* m_pCryptoHandler;
-  FX_BOOL m_bNewCrypto;
+  FX_BOOL m_bLocalCryptoHandler;
   FX_BOOL m_bEncryptMetadata;
   CPDF_Object* m_pMetadata;
   CPDF_XRefStream* m_pXRefStream;
