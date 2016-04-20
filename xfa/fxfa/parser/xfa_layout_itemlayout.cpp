@@ -545,27 +545,29 @@ void CXFA_LayoutItem::RemoveChild(CXFA_LayoutItem* pChildItem) {
 CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
   CXFA_ContentLayoutItem* pLayoutItem = m_pLayoutItem;
   if (pLayoutItem) {
-    m_pLayoutItem = (CXFA_ContentLayoutItem*)pLayoutItem->m_pNextSibling;
-    pLayoutItem->m_pNextSibling = NULL;
+    m_pLayoutItem =
+        static_cast<CXFA_ContentLayoutItem*>(pLayoutItem->m_pNextSibling);
+    pLayoutItem->m_pNextSibling = nullptr;
   }
-  if (m_nCurChildNodeStage == XFA_ItemLayoutProcessorStages_Done &&
-      ToContentLayoutItem(m_pOldLayoutItem)) {
-    if (m_pOldLayoutItem->m_pPrev) {
-      m_pOldLayoutItem->m_pPrev->m_pNext = NULL;
-    }
-    CXFA_FFNotify* pNotify =
-        m_pOldLayoutItem->m_pFormNode->GetDocument()->GetParser()->GetNotify();
-    CXFA_LayoutProcessor* pDocLayout =
-        m_pOldLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
-    CXFA_ContentLayoutItem* pOldLayoutItem = m_pOldLayoutItem;
-    while (pOldLayoutItem) {
-      CXFA_ContentLayoutItem* pNextOldLayoutItem = pOldLayoutItem->m_pNext;
-      pNotify->OnLayoutItemRemoving(pDocLayout, pOldLayoutItem);
-      delete pOldLayoutItem;
-      pOldLayoutItem = pNextOldLayoutItem;
-    }
-    m_pOldLayoutItem = NULL;
+  if (m_nCurChildNodeStage != XFA_ItemLayoutProcessorStages_Done ||
+      !ToContentLayoutItem(m_pOldLayoutItem))
+    return pLayoutItem;
+  if (m_pOldLayoutItem->m_pPrev)
+    m_pOldLayoutItem->m_pPrev->m_pNext = nullptr;
+  CXFA_FFNotify* pNotify =
+      m_pOldLayoutItem->m_pFormNode->GetDocument()->GetParser()->GetNotify();
+  CXFA_LayoutProcessor* pDocLayout =
+      m_pOldLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
+  CXFA_ContentLayoutItem* pOldLayoutItem = m_pOldLayoutItem;
+  while (pOldLayoutItem) {
+    CXFA_ContentLayoutItem* pNextOldLayoutItem = pOldLayoutItem->m_pNext;
+    pNotify->OnLayoutItemRemoving(pDocLayout, pOldLayoutItem);
+    if (pOldLayoutItem->m_pParent)
+      pOldLayoutItem->m_pParent->RemoveChild(pOldLayoutItem);
+    delete pOldLayoutItem;
+    pOldLayoutItem = pNextOldLayoutItem;
   }
+  m_pOldLayoutItem = nullptr;
   return pLayoutItem;
 }
 static FX_BOOL XFA_ItemLayoutProcessor_FindBreakNode(
