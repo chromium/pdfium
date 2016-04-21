@@ -1158,12 +1158,10 @@ void CPDFSDK_PageView::ClearFXAnnots() {
   SetLock(FALSE);
 }
 
-void CPDFSDK_PageView::UpdateRects(CFX_RectArray& rects) {
-  for (int i = 0; i < rects.GetSize(); i++) {
-    CFX_FloatRect rc = rects.GetAt(i);
-    CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+void CPDFSDK_PageView::UpdateRects(const std::vector<CFX_FloatRect>& rects) {
+  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  for (const auto& rc : rects)
     pEnv->FFI_Invalidate(m_page, rc.left, rc.top, rc.right, rc.bottom);
-  }
 }
 
 void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {

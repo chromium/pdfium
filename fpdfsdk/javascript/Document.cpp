@@ -494,9 +494,7 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     ++rcAnnot.right;
     ++rcAnnot.top;
 
-    CFX_RectArray aRefresh;
-    aRefresh.Add(rcAnnot);
-
+    std::vector<CFX_FloatRect> aRefresh(1, rcAnnot);
     UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
     ASSERT(pPage);
 

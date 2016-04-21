@@ -260,23 +260,21 @@ int CPDF_TextPage::TextIndexFromCharIndex(int CharIndex) const {
   return -1;
 }
 
-void CPDF_TextPage::GetRectArray(int start,
-                                 int nCount,
-                                 CFX_RectArray* rectArray) const {
-  if (start < 0 || nCount == 0) {
-    return;
-  }
-  if (!m_bIsParsed) {
-    return;
-  }
-  CPDF_TextObject* pCurObj = NULL;
-  CFX_FloatRect rect;
-  int curPos = start;
-  FX_BOOL flagNewRect = TRUE;
+std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
+                                                       int nCount) const {
+  if (start < 0 || nCount == 0 || !m_bIsParsed)
+    return std::vector<CFX_FloatRect>();
+
   if (nCount + start > pdfium::CollectionSize<int>(m_CharList) ||
       nCount == -1) {
     nCount = pdfium::CollectionSize<int>(m_CharList) - start;
   }
+
+  std::vector<CFX_FloatRect> rectArray;
+  CPDF_TextObject* pCurObj = nullptr;
+  CFX_FloatRect rect;
+  int curPos = start;
+  FX_BOOL flagNewRect = TRUE;
   while (nCount--) {
     PAGECHAR_INFO info_curchar = m_CharList[curPos++];
     if (info_curchar.m_Flag == FPDFTEXT_CHAR_GENERATED) {
@@ -290,7 +288,7 @@ void CPDF_TextPage::GetRectArray(int start,
       pCurObj = info_curchar.m_pTextObj;
     }
     if (pCurObj != info_curchar.m_pTextObj) {
-      rectArray->Add(rect);
+      rectArray.push_back(rect);
       pCurObj = info_curchar.m_pTextObj;
       flagNewRect = TRUE;
     }
@@ -343,7 +341,8 @@ void CPDF_TextPage::GetRectArray(int start,
       }
     }
   }
-  rectArray->Add(rect);
+  rectArray.push_back(rect);
+  return rectArray;
 }
 
 int CPDF_TextPage::GetIndexAtPos(CFX_FloatPoint point,
@@ -427,12 +426,13 @@ CFX_WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
   return strText;
 }
 
-void CPDF_TextPage::GetRectsArrayByRect(const CFX_FloatRect& rect,
-                                        CFX_RectArray& resRectArray) const {
+std::vector<CFX_FloatRect> CPDF_TextPage::GetRectsArrayByRect(
+    const CFX_FloatRect& rect) const {
   if (!m_bIsParsed)
-    return;
+    return std::vector<CFX_FloatRect>();
 
   CFX_FloatRect curRect;
+  std::vector<CFX_FloatRect> result;
   bool flagNewRect = true;
   CPDF_TextObject* pCurObj = nullptr;
   for (auto info_curchar : m_CharList) {
@@ -446,7 +446,7 @@ void CPDF_TextPage::GetRectsArrayByRect(const CFX_FloatRect& rect,
       pCurObj = info_curchar.m_pTextObj;
     }
     if (pCurObj != info_curchar.m_pTextObj) {
-      resRectArray.Add(curRect);
+      result.push_back(curRect);
       pCurObj = info_curchar.m_pTextObj;
       flagNewRect = true;
     }
@@ -462,7 +462,8 @@ void CPDF_TextPage::GetRectsArrayByRect(const CFX_FloatRect& rect,
       curRect.top = std::max(curRect.top, info_curchar.m_CharBox.top);
     }
   }
-  resRectArray.Add(curRect);
+  result.push_back(curRect);
+  return result;
 }
 
 int CPDF_TextPage::GetIndexAtPos(FX_FLOAT x,
@@ -591,9 +592,8 @@ int CPDF_TextPage::CountRects(int start, int nCount) {
       nCount + start > pdfium::CollectionSize<int>(m_CharList)) {
     nCount = pdfium::CollectionSize<int>(m_CharList) - start;
   }
-  m_SelRects.RemoveAll();
-  GetRectArray(start, nCount, &m_SelRects);
-  return m_SelRects.GetSize();
+  m_SelRects = GetRectArray(start, nCount);
+  return pdfium::CollectionSize<int>(m_SelRects);
 }
 
 void CPDF_TextPage::GetRect(int rectIndex,
@@ -604,13 +604,13 @@ void CPDF_TextPage::GetRect(int rectIndex,
   if (!m_bIsParsed)
     return;
 
-  if (rectIndex < 0 || rectIndex >= m_SelRects.GetSize())
+  if (rectIndex < 0 || rectIndex >= pdfium::CollectionSize<int>(m_SelRects))
     return;
 
-  left = m_SelRects.GetAt(rectIndex).left;
-  top = m_SelRects.GetAt(rectIndex).top;
-  right = m_SelRects.GetAt(rectIndex).right;
-  bottom = m_SelRects.GetAt(rectIndex).bottom;
+  left = m_SelRects[rectIndex].left;
+  top = m_SelRects[rectIndex].top;
+  right = m_SelRects[rectIndex].right;
+  bottom = m_SelRects[rectIndex].bottom;
 }
 
 FX_BOOL CPDF_TextPage::GetBaselineRotate(int start, int end, int& Rotate) {
@@ -1997,7 +1997,7 @@ FX_BOOL CPDF_TextPageFind::FindNext() {
   if (!m_pTextPage) {
     return FALSE;
   }
-  m_resArray.RemoveAll();
+  m_resArray.clear();
   if (m_findNextStart == -1) {
     return FALSE;
   }
@@ -2089,7 +2089,7 @@ FX_BOOL CPDF_TextPageFind::FindNext() {
   m_IsFind = TRUE;
   int resStart = GetCharIndex(m_resStart);
   int resEnd = GetCharIndex(m_resEnd);
-  m_pTextPage->GetRectArray(resStart, resEnd - resStart + 1, &m_resArray);
+  m_resArray = m_pTextPage->GetRectArray(resStart, resEnd - resStart + 1);
   if (m_flags & FPDFTEXT_CONSECUTIVE) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
@@ -2104,7 +2104,7 @@ FX_BOOL CPDF_TextPageFind::FindPrev() {
   if (!m_pTextPage) {
     return FALSE;
   }
-  m_resArray.RemoveAll();
+  m_resArray.clear();
   if (m_strText.IsEmpty() || m_findPreStart < 0) {
     m_IsFind = FALSE;
     return m_IsFind;
@@ -2135,7 +2135,7 @@ FX_BOOL CPDF_TextPageFind::FindPrev() {
   m_resStart = m_pTextPage->TextIndexFromCharIndex(order);
   m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + MatchedCount - 1);
   m_IsFind = TRUE;
-  m_pTextPage->GetRectArray(order, MatchedCount, &m_resArray);
+  m_resArray = m_pTextPage->GetRectArray(order, MatchedCount);
   if (m_flags & FPDFTEXT_CONSECUTIVE) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
@@ -2277,10 +2277,6 @@ CFX_WideString CPDF_TextPageFind::MakeReverse(const CFX_WideString& str) {
     str2 += str.GetAt(i);
   }
   return str2;
-}
-
-void CPDF_TextPageFind::GetRectArray(CFX_RectArray& rects) const {
-  rects.Copy(m_resArray);
 }
 
 int CPDF_TextPageFind::GetCurOrder() const {
@@ -2446,9 +2442,10 @@ CFX_WideString CPDF_LinkExtract::GetURL(size_t index) const {
   return index < m_LinkArray.size() ? m_LinkArray[index].m_strUrl : L"";
 }
 
-void CPDF_LinkExtract::GetRects(size_t index, CFX_RectArray* pRects) const {
-  if (index < m_LinkArray.size()) {
-    m_pTextPage->GetRectArray(m_LinkArray[index].m_Start,
-                              m_LinkArray[index].m_Count, pRects);
-  }
+std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {
+  if (index >= m_LinkArray.size())
+    return std::vector<CFX_FloatRect>();
+
+  return m_pTextPage->GetRectArray(m_LinkArray[index].m_Start,
+                                   m_LinkArray[index].m_Count);
 }

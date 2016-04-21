@@ -67,7 +67,7 @@ class CPDF_TextPage {
   int TextIndexFromCharIndex(int CharIndex) const;
   int CountChars() const;
   void GetCharInfo(int index, FPDF_CHAR_INFO* info) const;
-  void GetRectArray(int start, int nCount, CFX_RectArray* rectArray) const;
+  std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
   int GetIndexAtPos(CFX_FloatPoint point,
                     FX_FLOAT xTolerance,
                     FX_FLOAT yTolerance) const;
@@ -76,8 +76,8 @@ class CPDF_TextPage {
                     FX_FLOAT xTolerance,
                     FX_FLOAT yTolerance) const;
   CFX_WideString GetTextByRect(const CFX_FloatRect& rect) const;
-  void GetRectsArrayByRect(const CFX_FloatRect& rect,
-                           CFX_RectArray& resRectArray) const;
+  std::vector<CFX_FloatRect> GetRectsArrayByRect(
+      const CFX_FloatRect& rect) const;
   CFX_WideString GetPageText(int start = 0, int nCount = -1) const;
   int CountRects(int start, int nCount);
   void GetRect(int rectIndex,
@@ -146,7 +146,7 @@ class CPDF_TextPage {
   bool m_bIsParsed;
   CFX_Matrix m_DisplayMatrix;
   CFX_ArrayTemplate<FPDF_SEGMENT> m_Segments;
-  CFX_RectArray m_SelRects;
+  std::vector<CFX_FloatRect> m_SelRects;
   CFX_ArrayTemplate<PDFTEXT_Obj> m_LineObj;
   int32_t m_TextlineDir;
   CFX_FloatRect m_CurlineRect;

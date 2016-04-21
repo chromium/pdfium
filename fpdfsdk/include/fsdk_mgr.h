@@ -614,7 +614,7 @@ class CPDFSDK_PageView final {
                        int nFlag);
   bool IsValidAnnot(const CPDF_Annot* p) const;
   void GetCurrentMatrix(CFX_Matrix& matrix) { matrix = m_curMatrix; }
-  void UpdateRects(CFX_RectArray& rects);
+  void UpdateRects(const std::vector<CFX_FloatRect>& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);
   const std::vector<CPDFSDK_Annot*>& GetAnnotList() const {
     return m_fxAnnotArray;

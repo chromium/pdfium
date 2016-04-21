@@ -13,6 +13,7 @@
 #include "core/fpdftext/include/cpdf_textpagefind.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
@@ -315,10 +316,8 @@ DLLEXPORT int STDCALL FPDFLink_CountRects(FPDF_PAGELINK link_page,
   if (!link_page || link_index < 0)
     return 0;
 
-  CFX_RectArray rects;
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
-  pageLink->GetRects(link_index, &rects);
-  return rects.GetSize();
+  return pdfium::CollectionSize<int>(pageLink->GetRects(link_index));
 }
 
 DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page,
@@ -331,17 +330,15 @@ DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page,
   if (!link_page || link_index < 0 || rect_index < 0)
     return;
 
-  CFX_RectArray rectArray;
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
-  pageLink->GetRects(link_index, &rectArray);
-  if (rect_index >= rectArray.GetSize())
+  std::vector<CFX_FloatRect> rectArray = pageLink->GetRects(link_index);
+  if (rect_index >= pdfium::CollectionSize<int>(rectArray))
     return;
 
-  CFX_FloatRect rect = rectArray.GetAt(rect_index);
-  *left = rect.left;
-  *right = rect.right;
-  *top = rect.top;
-  *bottom = rect.bottom;
+  *left = rectArray[rect_index].left;
+  *right = rectArray[rect_index].right;
+  *top = rectArray[rect_index].top;
+  *bottom = rectArray[rect_index].bottom;
 }
 
 DLLEXPORT void STDCALL FPDFLink_CloseWebLinks(FPDF_PAGELINK link_page) {

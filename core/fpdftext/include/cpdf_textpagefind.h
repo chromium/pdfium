@@ -25,7 +25,6 @@ class CPDF_TextPageFind {
                     int startPos = 0);
   FX_BOOL FindNext();
   FX_BOOL FindPrev();
-  void GetRectArray(CFX_RectArray& rects) const;
   int GetCurOrder() const;
   int GetMatchedCount() const;
 
@@ -58,7 +57,7 @@ class CPDF_TextPageFind {
   FX_BOOL m_bMatchWholeWord;
   int m_resStart;
   int m_resEnd;
-  CFX_RectArray m_resArray;
+  std::vector<CFX_FloatRect> m_resArray;
   FX_BOOL m_IsFind;
 };
 

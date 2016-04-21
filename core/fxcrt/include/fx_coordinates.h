@@ -310,7 +310,6 @@ class CFX_FloatRect {
   FX_FLOAT right;
   FX_FLOAT top;
 };
-using CFX_RectArray = CFX_ArrayTemplate<CFX_FloatRect>;
 
 // LTWH rectangles (y-axis runs downwards).
 template <class baseType>
