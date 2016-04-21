@@ -15,7 +15,8 @@ class CFWL_ComboBoxTP : public CFWL_WidgetTP {
   virtual ~CFWL_ComboBoxTP();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
+                            CFWL_WidgetCapacity dwCapacity);
 
  protected:
   void DrawDropDownButton(CFWL_ThemeBackground* pParams,

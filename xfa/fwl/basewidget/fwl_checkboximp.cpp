@@ -118,17 +118,17 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
     return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_CKB_Border, m_pProperties->m_pThemeProvider,
+    DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
                pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_CKB_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   int32_t dwStates = GetPartStates();
   {
     CFWL_ThemeBackground param;
     param.m_pWidget = m_pInterface;
-    param.m_iPart = FWL_PART_CKB_Background;
+    param.m_iPart = CFWL_Part::Background;
     param.m_dwStates = dwStates;
     param.m_pGraphics = pGraphics;
     if (pMatrix) {
@@ -139,7 +139,7 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
       param.m_pData = &m_rtFocus;
     }
     pTheme->DrawBackground(&param);
-    param.m_iPart = FWL_PART_CKB_CheckBox;
+    param.m_iPart = CFWL_Part::CheckBox;
     param.m_rtPart = m_rtBox;
     pTheme->DrawBackground(&param);
   }
@@ -153,7 +153,7 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
       return FWL_ERR_Indefinite;
     CFWL_ThemeText textParam;
     textParam.m_pWidget = m_pInterface;
-    textParam.m_iPart = FWL_PART_CKB_Caption;
+    textParam.m_iPart = CFWL_Part::Caption;
     textParam.m_dwStates = dwStates;
     textParam.m_pGraphics = pGraphics;
     if (pMatrix) {
@@ -280,25 +280,25 @@ void CFWL_CheckBoxImp::Layout() {
   }
 }
 uint32_t CFWL_CheckBoxImp::GetPartStates() {
-  int32_t dwStates = FWL_PARTSTATE_CKB_UnChecked;
+  int32_t dwStates = CFWL_PartState_Normal;
   if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
       FWL_STATE_CKB_Neutral) {
-    dwStates = FWL_PARTSTATE_CKB_Neutral;
+    dwStates = CFWL_PartState_Neutral;
   } else if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
              FWL_STATE_CKB_Checked) {
-    dwStates = FWL_PARTSTATE_CKB_Checked;
+    dwStates = CFWL_PartState_Checked;
   }
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
-    dwStates |= FWL_PARTSTATE_CKB_Disabled;
+    dwStates |= CFWL_PartState_Disabled;
   } else if (m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) {
-    dwStates |= FWL_PARTSTATE_CKB_Hovered;
+    dwStates |= CFWL_PartState_Hovered;
   } else if (m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) {
-    dwStates |= FWL_PARTSTATE_CKB_Pressed;
+    dwStates |= CFWL_PartState_Pressed;
   } else {
-    dwStates |= FWL_PARTSTATE_CKB_Normal;
+    dwStates |= CFWL_PartState_Normal;
   }
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
-    dwStates |= FWL_PARTSTATE_CKB_Focused;
+    dwStates |= CFWL_PartState_Focused;
   }
   return dwStates;
 }

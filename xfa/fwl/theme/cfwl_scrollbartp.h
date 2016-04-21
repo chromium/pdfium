@@ -18,7 +18,8 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
                               uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
+                            CFWL_WidgetCapacity dwCapacity);
 
  protected:
   struct SBThemeData {

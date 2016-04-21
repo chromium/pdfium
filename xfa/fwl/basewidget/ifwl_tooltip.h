@@ -19,9 +19,6 @@ class IFWL_ToolTip;
 #define FWL_STYLEEXT_TTP_Balloon (1L << 4)
 #define FWL_STYLEEXT_TTP_Multiline (1L << 5)
 #define FWL_STYLEEXT_TTP_NoAnchor (1L << 6)
-#define FWL_PART_TTP_Border 1
-#define FWL_PART_TTP_Background 2
-#define FWL_PART_TTP_Caption 3
 
 class IFWL_ToolTipDP : public IFWL_DataProvider {
  public:

@@ -12,15 +12,17 @@
 class CFWL_PushButtonTP : public CFWL_WidgetTP {
  public:
   CFWL_PushButtonTP();
-  virtual ~CFWL_PushButtonTP();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
-                              uint32_t dwThemeID,
-                              FX_BOOL bChildren = TRUE);
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  ~CFWL_PushButtonTP() override;
+
+  FX_BOOL IsValidWidget(IFWL_Widget* pWidget) override;
+  uint32_t SetThemeID(IFWL_Widget* pWidget,
+                      uint32_t dwThemeID,
+                      FX_BOOL bChildren = TRUE) override;
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void* GetCapacity(CFWL_ThemePart* pThemePart,
+                    CFWL_WidgetCapacity dwCapacity) override;
+  FWL_ERR Initialize() override;
+  FWL_ERR Finalize() override;
 
  protected:
   struct PBThemeData {

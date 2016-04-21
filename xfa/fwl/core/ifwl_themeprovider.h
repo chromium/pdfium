@@ -10,21 +10,7 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
-
-#define FWL_WGTCAPACITY_CXBorder 1
-#define FWL_WGTCAPACITY_CYBorder 2
-#define FWL_WGTCAPACITY_ScrollBarWidth 3
-#define FWL_WGTCAPACITY_EdgeFlat 4
-#define FWL_WGTCAPACITY_EdgeRaised 5
-#define FWL_WGTCAPACITY_EdgeSunken 6
-#define FWL_WGTCAPACITY_Font 7
-#define FWL_WGTCAPACITY_FontSize 8
-#define FWL_WGTCAPACITY_TextColor 9
-#define FWL_WGTCAPACITY_TextSelColor 10
-#define FWL_WGTCAPACITY_LineHeight 11
-#define FWL_WGTCAPACITY_UIMargin 12
-#define FWL_WGTCAPACITY_SpaceAboveBelow 13
-#define FWL_WGTCAPACITY_MAX 65535
+#include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
@@ -45,7 +31,7 @@ class IFWL_ThemeProvider {
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) = 0;
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams) = 0;
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
-                            uint32_t dwCapacity) = 0;
+                            CFWL_WidgetCapacity dwCapacity) = 0;
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget) = 0;
   virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart,
                               CFX_RectF& rtPart) = 0;

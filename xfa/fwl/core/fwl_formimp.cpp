@@ -21,6 +21,7 @@
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/theme/cfwl_widgettp.h"
 
 #define FWL_SYSBTNSIZE 21
 #define FWL_SYSBTNMARGIN 5
@@ -168,11 +169,11 @@ FWL_ERR CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
     CFWL_ThemePart part;
     part.m_pWidget = m_pInterface;
     x = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CXBorder));
+        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CXBorder));
     y = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CYBorder));
+        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CYBorder));
     t = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_FRM_CYCaption));
+        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CYCaption));
   }
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
@@ -270,8 +271,7 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
     return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   FX_BOOL bInactive = !IsActive();
-  int32_t iState =
-      bInactive ? FWL_PARTSTATE_FRM_Inactive : FWL_PARTSTATE_FRM_Normal;
+  int32_t iState = bInactive ? CFWL_PartState_Inactive : CFWL_PartState_Normal;
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_NoDrawClient) == 0) {
     DrawBackground(pGraphics, pTheme);
   }
@@ -287,33 +287,33 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
     param.m_matrix.Concat(*pMatrix);
   }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
-    param.m_iPart = FWL_PART_FRM_Border;
+    param.m_iPart = CFWL_Part::Border;
     pTheme->DrawBackground(&param);
   }
   if ((m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_EdgeMask) !=
       FWL_WGTSTYLE_EdgeNone) {
     CFX_RectF rtEdge;
     GetEdgeRect(rtEdge);
-    param.m_iPart = FWL_PART_FRM_Edge;
+    param.m_iPart = CFWL_Part::Edge;
     param.m_rtPart = rtEdge;
     param.m_dwStates = iState;
     pTheme->DrawBackground(&param);
   }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption) {
-    param.m_iPart = FWL_PART_FRM_Caption;
+    param.m_iPart = CFWL_Part::Caption;
     param.m_dwStates = iState;
     param.m_rtPart = m_rtCaption;
     pTheme->DrawBackground(&param);
     DrawCaptionText(pGraphics, pTheme, pMatrix);
   } else if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_NarrowCaption) {
-    param.m_iPart = FWL_PART_FRM_NarrowCaption;
+    param.m_iPart = CFWL_Part::NarrowCaption;
     param.m_dwStates = iState;
     param.m_rtPart = m_rtCaption;
     pTheme->DrawBackground(&param);
     DrawCaptionText(pGraphics, pTheme, pMatrix);
   }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Icon) {
-    param.m_iPart = FWL_PART_FRM_Icon;
+    param.m_iPart = CFWL_Part::Icon;
     if (HasIcon()) {
       DrawIconImage(pGraphics, pTheme, pMatrix);
     }
@@ -321,35 +321,35 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
 #if (_FX_OS_ == _FX_MACOSX_)
   {
     if (m_pCloseBox) {
-      param.m_iPart = FWL_PART_FRM_CloseBox;
+      param.m_iPart = CFWL_Part::CloseBox;
       param.m_dwStates = m_pCloseBox->GetPartState();
       if (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) {
-        param.m_dwStates = FWL_PARTSTATE_FRM_Disabled;
-      } else if (FWL_PARTSTATE_FRM_Normal == param.m_dwStates && m_bMouseIn) {
-        param.m_dwStates = FWL_PARTSTATE_FRM_Hover;
+        param.m_dwStates = CFWL_PartState_Disabled;
+      } else if (CFWL_PartState_Normal == param.m_dwStates && m_bMouseIn) {
+        param.m_dwStates = CFWL_PartState_Hovered;
       }
       param.m_rtPart = m_pCloseBox->m_rtBtn;
       pTheme->DrawBackground(&param);
     }
     if (m_pMaxBox) {
-      param.m_iPart = FWL_PART_FRM_MaximizeBox;
+      param.m_iPart = CFWL_Part::MaximizeBox;
       param.m_dwStates = m_pMaxBox->GetPartState();
       if (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) {
-        param.m_dwStates = FWL_PARTSTATE_FRM_Disabled;
-      } else if (FWL_PARTSTATE_FRM_Normal == param.m_dwStates && m_bMouseIn) {
-        param.m_dwStates = FWL_PARTSTATE_FRM_Hover;
+        param.m_dwStates = CFWL_PartState_Disabled;
+      } else if (CFWL_PartState_Normal == param.m_dwStates && m_bMouseIn) {
+        param.m_dwStates = CFWL_PartState_Hovered;
       }
       param.m_rtPart = m_pMaxBox->m_rtBtn;
       param.m_dwData = m_bMaximized;
       pTheme->DrawBackground(&param);
     }
     if (m_pMinBox) {
-      param.m_iPart = FWL_PART_FRM_MinimizeBox;
+      param.m_iPart = CFWL_Part::MinimizeBox;
       param.m_dwStates = m_pMinBox->GetPartState();
       if (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) {
-        param.m_dwStates = FWL_PARTSTATE_FRM_Disabled;
-      } else if (FWL_PARTSTATE_FRM_Normal == param.m_dwStates && m_bMouseIn) {
-        param.m_dwStates = FWL_PARTSTATE_FRM_Hover;
+        param.m_dwStates = CFWL_PartState_Disabled;
+      } else if (CFWL_PartState_Normal == param.m_dwStates && m_bMouseIn) {
+        param.m_dwStates = CFWL_PartState_Hovered;
       }
       param.m_rtPart = m_pMinBox->m_rtBtn;
       pTheme->DrawBackground(&param);
@@ -359,20 +359,20 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
 #else
   {
     if (m_pCloseBox) {
-      param.m_iPart = FWL_PART_FRM_CloseBox;
+      param.m_iPart = CFWL_Part::CloseBox;
       param.m_dwStates = m_pCloseBox->GetPartState();
       param.m_rtPart = m_pCloseBox->m_rtBtn;
       pTheme->DrawBackground(&param);
     }
     if (m_pMaxBox) {
-      param.m_iPart = FWL_PART_FRM_MaximizeBox;
+      param.m_iPart = CFWL_Part::MaximizeBox;
       param.m_dwStates = m_pMaxBox->GetPartState();
       param.m_rtPart = m_pMaxBox->m_rtBtn;
       param.m_dwData = m_bMaximized;
       pTheme->DrawBackground(&param);
     }
     if (m_pMinBox) {
-      param.m_iPart = FWL_PART_FRM_MinimizeBox;
+      param.m_iPart = CFWL_Part::MinimizeBox;
       param.m_dwStates = m_pMinBox->GetPartState();
       param.m_rtPart = m_pMinBox->m_rtBtn;
       pTheme->DrawBackground(&param);
@@ -439,7 +439,7 @@ void CFWL_FormImp::DrawBackground(CFX_Graphics* pGraphics,
                                   IFWL_ThemeProvider* pTheme) {
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = FWL_PART_FRM_Background;
+  param.m_iPart = CFWL_Part::Background;
   param.m_pGraphics = pGraphics;
   param.m_rtPart = m_rtRelative;
   param.m_rtPart.Deflate(m_fCYBorder, m_rtCaption.height, m_fCYBorder,
@@ -559,13 +559,14 @@ int32_t CFWL_FormImp::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
   return arrBtn.Find(pBtn);
 }
 FX_FLOAT CFWL_FormImp::GetCaptionHeight() {
-  uint32_t dwCapacity = 0;
+  CFWL_WidgetCapacity dwCapacity = CFWL_WidgetCapacity::None;
+
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption) {
-    dwCapacity = FWL_WGTCAPACITY_FRM_CYCaption;
+    dwCapacity = CFWL_WidgetCapacity::CYCaption;
   } else if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_NarrowCaption) {
-    dwCapacity = FWL_WGTCAPACITY_FRM_CYNarrowCaption;
+    dwCapacity = CFWL_WidgetCapacity::CYNarrowCaption;
   }
-  if (dwCapacity > 0) {
+  if (dwCapacity != CFWL_WidgetCapacity::None) {
     FX_FLOAT* pfCapHeight =
         static_cast<FX_FLOAT*>(GetThemeCapacity(dwCapacity));
     return pfCapHeight ? *pfCapHeight : 0;
@@ -583,8 +584,8 @@ void CFWL_FormImp::DrawCaptionText(CFX_Graphics* pGs,
   }
   CFWL_ThemeText textParam;
   textParam.m_pWidget = m_pInterface;
-  textParam.m_iPart = FWL_PART_FRM_Caption;
-  textParam.m_dwStates = FWL_PARTSTATE_FRM_Normal;
+  textParam.m_iPart = CFWL_Part::Caption;
+  textParam.m_dwStates = CFWL_PartState_Normal;
   textParam.m_pGraphics = pGs;
   if (pMatrix) {
     textParam.m_matrix.Concat(*pMatrix);
@@ -613,7 +614,7 @@ void CFWL_FormImp::DrawIconImage(CFX_Graphics* pGs,
       static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = FWL_PART_FRM_Icon;
+  param.m_iPart = CFWL_Part::Icon;
   param.m_pGraphics = pGs;
   param.m_pImage = pData->GetIcon(m_pInterface, FALSE);
   param.m_rtPart = m_rtIcon;
@@ -648,9 +649,9 @@ void CFWL_FormImp::Layout() {
 }
 void CFWL_FormImp::ReSetSysBtn() {
   m_fCXBorder =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_CXBorder));
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CXBorder));
   m_fCYBorder =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_CYBorder));
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CYBorder));
   RemoveSysButtons();
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   m_bCustomizeLayout = pTheme->IsCustomizedLayout(m_pInterface);
@@ -665,7 +666,7 @@ void CFWL_FormImp::ReSetSysBtn() {
     if (m_bCustomizeLayout) {
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;
-      param.m_iPart = FWL_PART_FRM_CloseBox;
+      param.m_iPart = CFWL_Part::CloseBox;
       pTheme->GetPartRect(&param, m_pCloseBox->m_rtBtn);
     } else {
       m_pCloseBox->m_rtBtn.Set(
@@ -679,7 +680,7 @@ void CFWL_FormImp::ReSetSysBtn() {
     if (m_bCustomizeLayout) {
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;
-      param.m_iPart = FWL_PART_FRM_MaximizeBox;
+      param.m_iPart = CFWL_Part::MaximizeBox;
       pTheme->GetPartRect(&param, m_pMaxBox->m_rtBtn);
     } else {
       if (m_pCloseBox) {
@@ -699,7 +700,7 @@ void CFWL_FormImp::ReSetSysBtn() {
     if (m_bCustomizeLayout) {
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;
-      param.m_iPart = FWL_PART_FRM_MinimizeBox;
+      param.m_iPart = CFWL_Part::MinimizeBox;
       pTheme->GetPartRect(&param, m_pMinBox->m_rtBtn);
     } else {
       if (m_pMaxBox) {
@@ -725,7 +726,7 @@ void CFWL_FormImp::ReSetSysBtn() {
     if (m_bCustomizeLayout) {
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;
-      param.m_iPart = FWL_PART_FRM_Icon;
+      param.m_iPart = CFWL_Part::Icon;
       CFX_WideString wsText;
       m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsText);
       param.m_pData = &wsText;
@@ -738,7 +739,7 @@ void CFWL_FormImp::ReSetSysBtn() {
   if (m_bCustomizeLayout) {
     CFWL_ThemeText parma;
     parma.m_pWidget = m_pInterface;
-    parma.m_iPart = FWL_PART_FRM_HeadText;
+    parma.m_iPart = CFWL_Part::HeadText;
     m_pProperties->m_pDataProvider->GetCaption(m_pInterface, parma.m_wsText);
     pTheme->GetPartRect(&parma, m_rtCaptionText);
   }
@@ -768,9 +769,9 @@ FX_BOOL CFWL_FormImp::IsDoModal() {
 }
 void CFWL_FormImp::SetThemeData() {
   m_fSmallIconSz =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FRM_SmallIcon));
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::SmallIcon));
   m_fBigIconSz =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FRM_BigIcon));
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::BigIcon));
 }
 FX_BOOL CFWL_FormImp::HasIcon() {
   IFWL_FormDP* pData =

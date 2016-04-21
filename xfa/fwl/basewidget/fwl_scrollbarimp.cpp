@@ -75,11 +75,11 @@ CFWL_ScrollBarImp::CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
       m_fStepSize(0),
       m_fPos(0),
       m_fTrackPos(0),
-      m_iMinButtonState(FWL_PARTSTATE_SCB_Normal),
-      m_iMaxButtonState(FWL_PARTSTATE_SCB_Normal),
-      m_iThumbButtonState(FWL_PARTSTATE_SCB_Normal),
-      m_iMinTrackState(FWL_PARTSTATE_SCB_Normal),
-      m_iMaxTrackState(FWL_PARTSTATE_SCB_Normal),
+      m_iMinButtonState(CFWL_PartState_Normal),
+      m_iMaxButtonState(CFWL_PartState_Normal),
+      m_iThumbButtonState(CFWL_PartState_Normal),
+      m_iMinTrackState(CFWL_PartState_Normal),
+      m_iMaxTrackState(CFWL_PartState_Normal),
       m_fLastTrackPos(0),
       m_cpTrackPointX(0),
       m_cpTrackPointY(0),
@@ -122,7 +122,7 @@ FWL_ERR CFWL_ScrollBarImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     FX_FLOAT* pfMinWidth = static_cast<FX_FLOAT*>(
-        GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+        GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
     if (!pfMinWidth)
       return FWL_ERR_Indefinite;
     if (IsVertical()) {
@@ -154,10 +154,10 @@ FWL_ERR CFWL_ScrollBarImp::DrawWidget(CFX_Graphics* pGraphics,
     return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_SCB_Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_SCB_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   DrawTrack(pGraphics, pTheme, TRUE, pMatrix);
   DrawTrack(pGraphics, pTheme, FALSE, pMatrix);
@@ -247,9 +247,9 @@ void CFWL_ScrollBarImp::DrawTrack(CFX_Graphics* pGraphics,
                                   const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = bLower ? FWL_PART_SCB_LowerTrack : FWL_PART_SCB_UpperTrack;
+  param.m_iPart = bLower ? CFWL_Part::LowerTrack : CFWL_Part::UpperTrack;
   param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                         ? FWL_PARTSTATE_SCB_Disabled
+                         ? CFWL_PartState_Disabled
                          : (bLower ? m_iMinTrackState : m_iMaxTrackState);
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
@@ -262,9 +262,9 @@ void CFWL_ScrollBarImp::DrawArrowBtn(CFX_Graphics* pGraphics,
                                      const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = bMinBtn ? FWL_PART_SCB_ForeArrow : FWL_PART_SCB_BackArrow;
+  param.m_iPart = bMinBtn ? CFWL_Part::ForeArrow : CFWL_Part::BackArrow;
   param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                         ? FWL_PARTSTATE_SCB_Disabled
+                         ? CFWL_PartState_Disabled
                          : (bMinBtn ? m_iMinButtonState : m_iMaxButtonState);
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
@@ -280,9 +280,9 @@ void CFWL_ScrollBarImp::DrawThumb(CFX_Graphics* pGraphics,
   }
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = FWL_PART_SCB_Thumb;
+  param.m_iPart = CFWL_Part::Thumb;
   param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                         ? FWL_PARTSTATE_SCB_Disabled
+                         ? CFWL_PartState_Disabled
                          : m_iThumbButtonState;
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
@@ -294,7 +294,7 @@ void CFWL_ScrollBarImp::Layout() {
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   m_fMinThumb = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_CAPACITY_SCB_Size));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Size));
   m_bCustomLayout = pTheme->IsCustomizedLayout(m_pInterface);
   GetClientRect(m_rtClient);
   CalcButtonLen();
@@ -320,9 +320,9 @@ void CFWL_ScrollBarImp::CalcMinButtonRect(CFX_RectF& rect) {
     CFWL_ThemePart pPart;
     pPart.m_rtPart = m_rtMinBtn;
     pPart.m_pWidget = m_pInterface;
-    pPart.m_iPart = FWL_PART_SCB_ForeArrow;
+    pPart.m_iPart = CFWL_Part::ForeArrow;
     pPart.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                           ? FWL_PARTSTATE_SCB_Disabled
+                           ? CFWL_PartState_Disabled
                            : m_iMinButtonState;
     pTheme->GetPartRect(&pPart, rect);
   } else {
@@ -338,9 +338,9 @@ void CFWL_ScrollBarImp::CalcMaxButtonRect(CFX_RectF& rect) {
     CFWL_ThemePart pPart;
     pPart.m_rtPart = m_rtMaxBtn;
     pPart.m_pWidget = m_pInterface;
-    pPart.m_iPart = FWL_PART_SCB_BackArrow;
+    pPart.m_iPart = CFWL_Part::BackArrow;
     pPart.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                           ? FWL_PARTSTATE_SCB_Disabled
+                           ? CFWL_PartState_Disabled
                            : m_iMaxButtonState;
     pTheme->GetPartRect(&pPart, rect);
   } else {
@@ -592,19 +592,19 @@ void CFWL_ScrollBarImp::GetTrackRect(CFX_RectF& rect, FX_BOOL bLower) {
   }
 }
 FX_BOOL CFWL_ScrollBarImp::SendEvent() {
-  if (m_iMinButtonState == FWL_PARTSTATE_SCB_Pressed) {
+  if (m_iMinButtonState == CFWL_PartState_Pressed) {
     DoScroll(FWL_SCBCODE_StepBackward, m_fTrackPos);
     return FALSE;
   }
-  if (m_iMaxButtonState == FWL_PARTSTATE_SCB_Pressed) {
+  if (m_iMaxButtonState == CFWL_PartState_Pressed) {
     DoScroll(FWL_SCBCODE_StepForward, m_fTrackPos);
     return FALSE;
   }
-  if (m_iMinTrackState == FWL_PARTSTATE_SCB_Pressed) {
+  if (m_iMinTrackState == CFWL_PartState_Pressed) {
     DoScroll(FWL_SCBCODE_PageBackward, m_fTrackPos);
     return m_rtThumb.Contains(m_cpTrackPointX, m_cpTrackPointY);
   }
-  if (m_iMaxTrackState == FWL_PARTSTATE_SCB_Pressed) {
+  if (m_iMaxTrackState == CFWL_PartState_Pressed) {
     DoScroll(FWL_SCBCODE_PageForward, m_fTrackPos);
     return m_rtThumb.Contains(m_cpTrackPointX, m_cpTrackPointY);
   }
@@ -748,10 +748,10 @@ void CFWL_ScrollBarImpDelegate::DoMouseDown(int32_t iItem,
   if (!rtItem.Contains(fx, fy)) {
     return;
   }
-  if (iState == FWL_PARTSTATE_SCB_Pressed) {
+  if (iState == CFWL_PartState_Pressed) {
     return;
   }
-  iState = FWL_PARTSTATE_SCB_Pressed;
+  iState = CFWL_PartState_Pressed;
   m_pOwner->Repaint(&rtItem);
 }
 void CFWL_ScrollBarImpDelegate::DoMouseUp(int32_t iItem,
@@ -759,8 +759,8 @@ void CFWL_ScrollBarImpDelegate::DoMouseUp(int32_t iItem,
                                           int32_t& iState,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
-  int32_t iNewState = rtItem.Contains(fx, fy) ? FWL_PARTSTATE_SCB_Hovered
-                                              : FWL_PARTSTATE_SCB_Normal;
+  int32_t iNewState =
+      rtItem.Contains(fx, fy) ? CFWL_PartState_Hovered : CFWL_PartState_Normal;
   if (iState == iNewState) {
     return;
   }
@@ -774,15 +774,15 @@ void CFWL_ScrollBarImpDelegate::DoMouseMove(int32_t iItem,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
   if (!m_pOwner->m_bMouseDown) {
-    int32_t iNewState = rtItem.Contains(fx, fy) ? FWL_PARTSTATE_SCB_Hovered
-                                                : FWL_PARTSTATE_SCB_Normal;
+    int32_t iNewState = rtItem.Contains(fx, fy) ? CFWL_PartState_Hovered
+                                                : CFWL_PartState_Normal;
     if (iState == iNewState) {
       return;
     }
     iState = iNewState;
     m_pOwner->Repaint(&rtItem);
   } else if ((2 == iItem) &&
-             (m_pOwner->m_iThumbButtonState == FWL_PARTSTATE_SCB_Pressed)) {
+             (m_pOwner->m_iThumbButtonState == CFWL_PartState_Pressed)) {
     FX_FLOAT fPos = m_pOwner->GetTrackPointPos(fx, fy);
     m_pOwner->m_fTrackPos = fPos;
     m_pOwner->OnScroll(FWL_SCBCODE_TrackPos, fPos);
@@ -791,18 +791,18 @@ void CFWL_ScrollBarImpDelegate::DoMouseMove(int32_t iItem,
 void CFWL_ScrollBarImpDelegate::DoMouseLeave(int32_t iItem,
                                              const CFX_RectF& rtItem,
                                              int32_t& iState) {
-  if (iState == FWL_PARTSTATE_SCB_Normal) {
+  if (iState == CFWL_PartState_Normal) {
     return;
   }
-  iState = FWL_PARTSTATE_SCB_Normal;
+  iState = CFWL_PartState_Normal;
   m_pOwner->Repaint(&rtItem);
 }
 void CFWL_ScrollBarImpDelegate::DoMouseHover(int32_t iItem,
                                              const CFX_RectF& rtItem,
                                              int32_t& iState) {
-  if (iState == FWL_PARTSTATE_SCB_Hovered) {
+  if (iState == CFWL_PartState_Hovered) {
     return;
   }
-  iState = FWL_PARTSTATE_SCB_Hovered;
+  iState = CFWL_PartState_Hovered;
   m_pOwner->Repaint(&rtItem);
 }

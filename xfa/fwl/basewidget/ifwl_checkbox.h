@@ -44,21 +44,6 @@
 #define FWL_STATE_CKB_Checked (1 << (FWL_WGTSTATE_MAX + 2))
 #define FWL_STATE_CKB_Neutral (2 << (FWL_WGTSTATE_MAX + 2))
 #define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
-#define FWL_PART_CKB_Border 1
-#define FWL_PART_CKB_Edge 2
-#define FWL_PART_CKB_Background 3
-#define FWL_PART_CKB_CheckBox 4
-#define FWL_PART_CKB_Caption 5
-#define FWL_PARTSTATE_CKB_Normal (0L << 0)
-#define FWL_PARTSTATE_CKB_Pressed (1L << 0)
-#define FWL_PARTSTATE_CKB_Hovered (2L << 0)
-#define FWL_PARTSTATE_CKB_Disabled (3L << 0)
-#define FWL_PARTSTATE_CKB_UnChecked (0L << 2)
-#define FWL_PARTSTATE_CKB_Checked (1L << 2)
-#define FWL_PARTSTATE_CKB_Neutral (2L << 2)
-#define FWL_PARTSTATE_CKB_Focused (1L << 4)
-#define FWL_PARTSTATE_CKB_Mask1 (3L << 0)
-#define FWL_PARTSTATE_CKB_Mask2 (3L << 2)
 
 // TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_CKB_CheckStateChanged 2503252963

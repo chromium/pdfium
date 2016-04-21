@@ -22,16 +22,16 @@ FX_BOOL CFWL_EditTP::IsValidWidget(IFWL_Widget* pWidget) {
 }
 FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   switch (pParams->m_iPart) {
-    case FWL_PART_EDT_Border: {
+    case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_EDT_Edge: {
+    case CFWL_Part::Edge: {
       DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
                &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_EDT_Background: {
+    case CFWL_Part::Background: {
       if (pParams->m_pPath) {
         CFX_Graphics* pGraphics = pParams->m_pGraphics;
         pGraphics->SaveGraphState();
@@ -51,15 +51,12 @@ FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                           pParams->m_rtPart.width, pParams->m_rtPart.height);
         CFX_Color cr(FWLTHEME_COLOR_Background);
         if (!bStatic) {
-          if ((pParams->m_dwStates & FWL_PARTSTATE_EDT_Disable) ==
-              FWL_PARTSTATE_EDT_Disable) {
+          if (pParams->m_dwStates & CFWL_PartState_Disabled)
             cr.Set(FWLTHEME_COLOR_EDGERB1);
-          } else if ((pParams->m_dwStates & FWL_PARTSTATE_EDT_ReadOnly) ==
-                     FWL_PARTSTATE_EDT_ReadOnly) {
+          else if (pParams->m_dwStates & CFWL_PartState_ReadOnly)
             cr.Set(ArgbEncode(255, 236, 233, 216));
-          } else {
+          else
             cr.Set(0xFFFFFFFF);
-          }
         }
         pParams->m_pGraphics->SaveGraphState();
         pParams->m_pGraphics->SetFillColor(&cr);
@@ -69,7 +66,7 @@ FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       }
       break;
     }
-    case FWL_PART_EDT_CombTextLine: {
+    case CFWL_Part::CombTextLine: {
       FX_ARGB cr = 0xFF000000;
       FX_FLOAT fWidth = 1.0f;
       CFX_Color crLine(cr);

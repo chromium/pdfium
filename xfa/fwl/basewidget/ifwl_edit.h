@@ -48,15 +48,8 @@
 #define FWL_STYLEEXT_EDT_OuterScrollbar (1L << 26)
 #define FWL_STYLEEXT_EDT_LastLineHeight (1L << 27)
 #define FWL_STATE_EDT_Editing (1 << FWL_WGTSTATE_MAX)
-#define FWL_PART_EDT_Border 1
-#define FWL_PART_EDT_Edge 2
-#define FWL_PART_EDT_Background 3
-#define FWL_PART_EDT_CombTextLine 4
 #define FWL_PARTDATA_EDT_Background 0
 #define FWL_PARTDATA_EDT_StaticBackground 1
-#define FWL_PARTSTATE_EDT_Normal (0L << 0)
-#define FWL_PARTSTATE_EDT_ReadOnly (1L << 0)
-#define FWL_PARTSTATE_EDT_Disable (2L << 0)
 // TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_EDT_TextChanged 1064022132
 #define FWL_EVTHASH_EDT_PreSelfAdaption 1001979178

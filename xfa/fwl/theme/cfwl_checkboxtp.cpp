@@ -51,8 +51,7 @@ uint32_t CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget,
 FX_BOOL CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
   if (!m_pTextOut)
     return FALSE;
-  m_pTextOut->SetTextColor((pParams->m_dwStates & FWL_PARTSTATE_CKB_Mask1) ==
-                                   FWL_PARTSTATE_CKB_Disabled
+  m_pTextOut->SetTextColor(pParams->m_dwStates & CFWL_PartState_Disabled
                                ? FWLTHEME_CAPACITY_TextDisColor
                                : FWLTHEME_CAPACITY_TextColor);
   return CFWL_WidgetTP::DrawText(pParams);
@@ -61,38 +60,35 @@ FX_BOOL CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
   switch (pParams->m_iPart) {
-    case FWL_PART_CKB_Border: {
+    case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_CKB_Edge: {
+    case CFWL_Part::Edge: {
       DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
                &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_CKB_Background: {
+    case CFWL_Part::Background: {
       FillBackground(pParams->m_pGraphics, &pParams->m_rtPart,
                      &pParams->m_matrix);
-      if (pParams->m_dwStates & FWL_PARTSTATE_CKB_Focused) {
+      if (pParams->m_dwStates & CFWL_PartState_Focused) {
         pParams->m_rtPart = *(CFX_RectF*)pParams->m_pData;
         DrawFocus(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       }
       break;
     }
-    case FWL_PART_CKB_CheckBox: {
+    case CFWL_Part::CheckBox: {
       DrawBoxBk(pParams->m_pWidget, pParams->m_pGraphics, &pParams->m_rtPart,
                 pParams->m_dwStates, &pParams->m_matrix);
-      if (((pParams->m_dwStates & FWL_PARTSTATE_CKB_Mask2) ==
-           FWL_PARTSTATE_CKB_Checked) |
-          ((pParams->m_dwStates & FWL_PARTSTATE_CKB_Mask2) ==
-           FWL_PARTSTATE_CKB_Neutral)) {
+      if ((pParams->m_dwStates & CFWL_PartState_Checked) |
+          (pParams->m_dwStates & CFWL_PartState_Neutral)) {
         DrawSign(pParams->m_pWidget, pParams->m_pGraphics, &pParams->m_rtPart,
                  pParams->m_dwStates, &pParams->m_matrix);
       }
-      FX_BOOL bDisable = (pParams->m_dwStates & FWL_PARTSTATE_CKB_Mask1) ==
-                         FWL_PARTSTATE_CKB_Disabled;
-      DrawSignBorder(pParams->m_pWidget, pParams->m_pGraphics,
-                     &pParams->m_rtPart, bDisable, &pParams->m_matrix);
+      DrawSignBorder(
+          pParams->m_pWidget, pParams->m_pGraphics, &pParams->m_rtPart,
+          pParams->m_dwStates & CFWL_PartState_Disabled, &pParams->m_matrix);
       break;
     }
     default: { return FALSE; }
@@ -120,8 +116,7 @@ void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget* pWidget,
   path.Create();
   FX_FLOAT fRight = pRect->right();
   FX_FLOAT fBottom = pRect->bottom();
-  FX_BOOL bClipSign =
-      (dwStates & FWL_PARTSTATE_CKB_Mask1) == FWL_PARTSTATE_CKB_Hovered;
+  FX_BOOL bClipSign = dwStates & CFWL_PartState_Hovered;
   if ((dwStyleEx == FWL_STYLEEXT_CKB_ShapeSolidSquare) ||
       (dwStyleEx == FWL_STYLEEXT_CKB_ShapeSunkenSquare)) {
     path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
@@ -145,19 +140,16 @@ void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget* pWidget,
     }
   }
   int32_t iTheme = 1;
-  if ((dwStates & FWL_PARTSTATE_CKB_Mask1) == FWL_PARTSTATE_CKB_Hovered) {
+  if (dwStates & CFWL_PartState_Hovered) {
     iTheme = 2;
-  } else if ((dwStates & FWL_PARTSTATE_CKB_Mask1) ==
-             FWL_PARTSTATE_CKB_Pressed) {
+  } else if (dwStates & CFWL_PartState_Pressed) {
     iTheme = 3;
-  } else if ((dwStates & FWL_PARTSTATE_CKB_Mask1) ==
-             FWL_PARTSTATE_CKB_Disabled) {
+  } else if (dwStates & CFWL_PartState_Disabled) {
     iTheme = 4;
   }
-  if ((dwStates & FWL_PARTSTATE_CKB_Mask2) == FWL_PARTSTATE_CKB_Checked) {
+  if (dwStates & CFWL_PartState_Checked) {
     iTheme += 4;
-  } else if ((dwStates & FWL_PARTSTATE_CKB_Mask2) ==
-             FWL_PARTSTATE_CKB_Neutral) {
+  } else if (dwStates & CFWL_PartState_Neutral) {
     iTheme += 8;
   }
   DrawAxialShading(pGraphics, pRect->left - 1, pRect->top - 1, fRight, fBottom,
@@ -173,30 +165,20 @@ void CFWL_CheckBoxTP::DrawSign(IFWL_Widget* pWidget,
   rtSign.Deflate(CHECKBOX_SIZE_SIGNMARGIN, CHECKBOX_SIZE_SIGNMARGIN);
   uint32_t dwColor = m_pThemeData->clrSignCheck;
   FX_BOOL bCheck = TRUE;
-  if (((dwStates & FWL_PARTSTATE_CKB_Mask1) == FWL_PARTSTATE_CKB_Disabled) &&
-      ((dwStates & FWL_PARTSTATE_CKB_Mask2) == FWL_PARTSTATE_CKB_Checked)) {
+  if ((dwStates & CFWL_PartState_Disabled) &&
+      (dwStates & CFWL_PartState_Checked)) {
     dwColor = m_pThemeData->clrSignBorderDisable;
-  } else if ((dwStates & FWL_PARTSTATE_CKB_Mask2) ==
-             FWL_PARTSTATE_CKB_Neutral) {
-    switch (dwStates & FWL_PARTSTATE_CKB_Mask1) {
-      case FWL_PARTSTATE_CKB_Normal: {
-        bCheck = FALSE;
-        dwColor = m_pThemeData->clrSignNeutralNormal;
-        break;
-      }
-      case FWL_PARTSTATE_CKB_Hovered: {
-        bCheck = FALSE;
-        dwColor = m_pThemeData->clrSignNeutralHover;
-        break;
-      }
-      case FWL_PARTSTATE_CKB_Pressed: {
-        bCheck = FALSE, dwColor = m_pThemeData->clrSignNeutralPressed;
-        break;
-      }
-      case FWL_PARTSTATE_CKB_Disabled: {
-        bCheck = FALSE, dwColor = m_pThemeData->clrSignBorderDisable;
-        break;
-      }
+  } else if (dwStates & CFWL_PartState_Neutral) {
+    if (dwStates & CFWL_PartState_Normal) {
+      bCheck = FALSE;
+      dwColor = m_pThemeData->clrSignNeutralNormal;
+    } else if (dwStates & CFWL_PartState_Hovered) {
+      bCheck = FALSE;
+      dwColor = m_pThemeData->clrSignNeutralHover;
+    } else if (dwStates & CFWL_PartState_Pressed) {
+      bCheck = FALSE, dwColor = m_pThemeData->clrSignNeutralPressed;
+    } else if (dwStates & CFWL_PartState_Disabled) {
+      bCheck = FALSE, dwColor = m_pThemeData->clrSignBorderDisable;
     }
   }
   if (bCheck) {

@@ -29,11 +29,6 @@
 #define FWL_STYLEEXT_PTB_HAlignMask 3L << 0
 #define FWL_STYLEEXT_PTB_VAlignMask 3L << 2
 #define FWL_STYLEEXT_PTB_StretchAlignMask 7L << 4
-#define FWL_PART_PTB_Border 1
-#define FWL_PART_PTB_Edge 2
-#define FWL_PART_PTB_Image 3
-#define FWL_PARTSTATE_PTB_Normal (0L << 0)
-#define FWL_PARTSTATE_PTB_Disabled (1L << 0)
 
 class CFX_DIBitmap;
 

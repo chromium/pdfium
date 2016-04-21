@@ -575,28 +575,28 @@ void CFWL_WidgetImp::GetEdgeRect(CFX_RectF& rtEdge) {
 }
 FX_FLOAT CFWL_WidgetImp::GetBorderSize(FX_BOOL bCX) {
   FX_FLOAT* pfBorder = static_cast<FX_FLOAT*>(GetThemeCapacity(
-      bCX ? FWL_WGTCAPACITY_CXBorder : FWL_WGTCAPACITY_CYBorder));
+      bCX ? CFWL_WidgetCapacity::CXBorder : CFWL_WidgetCapacity::CYBorder));
   if (!pfBorder)
     return 0;
   return *pfBorder;
 }
 FX_FLOAT CFWL_WidgetImp::GetEdgeWidth() {
-  uint32_t dwCapacity = 0;
+  CFWL_WidgetCapacity dwCapacity = CFWL_WidgetCapacity::None;
   switch (m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask) {
     case FWL_WGTSTYLE_EdgeFlat: {
-      dwCapacity = FWL_WGTCAPACITY_EdgeFlat;
+      dwCapacity = CFWL_WidgetCapacity::EdgeFlat;
       break;
     }
     case FWL_WGTSTYLE_EdgeRaised: {
-      dwCapacity = FWL_WGTCAPACITY_EdgeRaised;
+      dwCapacity = CFWL_WidgetCapacity::EdgeRaised;
       break;
     }
     case FWL_WGTSTYLE_EdgeSunken: {
-      dwCapacity = FWL_WGTCAPACITY_EdgeSunken;
+      dwCapacity = CFWL_WidgetCapacity::EdgeSunken;
       break;
     }
   }
-  if (dwCapacity > 0) {
+  if (dwCapacity != CFWL_WidgetCapacity::None) {
     FX_FLOAT* fRet = static_cast<FX_FLOAT*>(GetThemeCapacity(dwCapacity));
     return fRet ? *fRet : 0;
   }
@@ -606,7 +606,7 @@ void CFWL_WidgetImp::GetRelativeRect(CFX_RectF& rect) {
   rect = m_pProperties->m_rtWidget;
   rect.left = rect.top = 0;
 }
-void* CFWL_WidgetImp::GetThemeCapacity(uint32_t dwCapacity) {
+void* CFWL_WidgetImp::GetThemeCapacity(CFWL_WidgetCapacity dwCapacity) {
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (!pTheme)
     return NULL;
@@ -866,7 +866,7 @@ void CFWL_WidgetImp::Repaint(const CFX_RectF* pRect) {
   m_pWidgetMgr->RepaintWidget(m_pInterface, &rect);
 }
 void CFWL_WidgetImp::DrawBackground(CFX_Graphics* pGraphics,
-                                    int32_t iPartBk,
+                                    CFWL_Part iPartBk,
                                     IFWL_ThemeProvider* pTheme,
                                     const CFX_Matrix* pMatrix) {
   CFX_RectF rtRelative;
@@ -882,7 +882,7 @@ void CFWL_WidgetImp::DrawBackground(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 void CFWL_WidgetImp::DrawBorder(CFX_Graphics* pGraphics,
-                                int32_t iPartBorder,
+                                CFWL_Part iPartBorder,
                                 IFWL_ThemeProvider* pTheme,
                                 const CFX_Matrix* pMatrix) {
   CFX_RectF rtRelative;
@@ -898,7 +898,7 @@ void CFWL_WidgetImp::DrawBorder(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 void CFWL_WidgetImp::DrawEdge(CFX_Graphics* pGraphics,
-                              int32_t iPartEdge,
+                              CFWL_Part iPartEdge,
                               IFWL_ThemeProvider* pTheme,
                               const CFX_Matrix* pMatrix) {
   CFX_RectF rtEdge;

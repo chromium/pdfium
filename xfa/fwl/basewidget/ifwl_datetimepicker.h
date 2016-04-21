@@ -30,14 +30,6 @@
 #define FWL_STYLEEXT_DTP_EditHAlignMask (3L << 4)
 #define FWL_STYLEEXT_DTP_EditVAlignMask (3L << 6)
 #define FWL_STYLEEXT_DTP_EditHAlignModeMask (3L << 8)
-#define FWL_PART_DTP_Border 1
-#define FWL_PART_DTP_Edge 2
-#define FWL_PART_DTP_Background 3
-#define FWL_PART_DTP_DropDownButton 4
-#define FWL_PARTSTATE_DTP_Normal (0L << 0)
-#define FWL_PARTSTATE_DTP_Hovered (1L << 0)
-#define FWL_PARTSTATE_DTP_Pressed (2L << 0)
-#define FWL_PARTSTATE_DTP_Disabled (3L << 0)
 // TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_DTP_DropDown 264728733
 #define FWL_EVTHASH_DTP_CloseUp 4280973803

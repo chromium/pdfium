@@ -38,18 +38,6 @@ class IFWL_ComboBox;
 #define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
 #define FWL_STYLEEXT_CMB_ListItemAlignMask (3L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
-#define FWL_PART_CMB_Border 1
-#define FWL_PART_CMB_Edge 2
-#define FWL_PART_CMB_Background 3
-#define FWL_PART_CMB_DropDownButton 4
-#define FWL_PART_CMB_Caption 5
-#define FWL_PART_CMB_StretcgHandler 6
-#define FWL_PARTSTATE_CMB_Normal (0L << 0)
-#define FWL_PARTSTATE_CMB_Hovered (1L << 0)
-#define FWL_PARTSTATE_CMB_Pressed (2L << 0)
-#define FWL_PARTSTATE_CMB_Disabled (3L << 0)
-#define FWL_PARTSTATE_CMB_Selected (1L << 2)
-#define FWL_WGTCAPACITY_CMB_ComboFormHandler (FWL_WGTCAPACITY_MAX + 7)
 // TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_CMB_PreDropDown 1357646798
 #define FWL_EVTHASH_CMB_PostDropDown 3677010285

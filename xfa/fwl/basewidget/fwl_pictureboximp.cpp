@@ -90,10 +90,10 @@ FWL_ERR CFWL_PictureBoxImp::DrawWidget(CFX_Graphics* pGraphics,
     return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_PTB_Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_PTB_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   DrawBkground(pGraphics, pTheme, pMatrix);
   return FWL_ERR_Succeeded;

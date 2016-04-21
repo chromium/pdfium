@@ -27,9 +27,6 @@ class CFWL_WidgetImpProperties;
 #define FWL_BCDATTRIBUTE_VERSION (1L << 10)
 #define FWL_BCDATTRIBUTE_ECLEVEL (1L << 11)
 #define FWL_BCDATTRIBUTE_TRUNCATED (1L << 12)
-#define FWL_PART_BCD_Border 1
-#define FWL_PART_BCD_Edge 2
-#define FWL_PART_BCD_Background 3
 #define FWL_BCUPDATECMD_Data FWL_WGTUPDATECMD_User
 
 class IFWL_BarcodeDP : public IFWL_EditDP {

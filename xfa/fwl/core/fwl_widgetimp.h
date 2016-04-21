@@ -10,8 +10,10 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
+#include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_MsgKey;
 class CFWL_ThreadImp;
@@ -86,7 +88,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   FX_FLOAT GetBorderSize(FX_BOOL bCX = TRUE);
   FX_FLOAT GetEdgeWidth();
   void GetRelativeRect(CFX_RectF& rect);
-  void* GetThemeCapacity(uint32_t dwCapacity);
+  void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
   CFWL_WidgetImp* GetRootOuter();
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
@@ -124,15 +126,15 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   void DispatchEvent(CFWL_Event* pEvent);
   void Repaint(const CFX_RectF* pRect = NULL);
   void DrawBackground(CFX_Graphics* pGraphics,
-                      int32_t iPartBk,
+                      CFWL_Part iPartBk,
                       IFWL_ThemeProvider* pTheme,
                       const CFX_Matrix* pMatrix = NULL);
   void DrawBorder(CFX_Graphics* pGraphics,
-                  int32_t iPartBorder,
+                  CFWL_Part iPartBorder,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix = NULL);
   void DrawEdge(CFX_Graphics* pGraphics,
-                int32_t iPartEdge,
+                CFWL_Part iPartEdge,
                 IFWL_ThemeProvider* pTheme,
                 const CFX_Matrix* pMatrix = NULL);
   void NotifyDriver();

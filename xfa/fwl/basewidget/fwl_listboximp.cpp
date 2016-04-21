@@ -172,10 +172,10 @@ FWL_ERR CFWL_ListBoxImp::DrawWidget(CFX_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   pGraphics->SaveGraphState();
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_LTB_Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_LTB_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   CFX_RectF rtClip(m_rtConent);
   if (IsShowScrollBar(FALSE)) {
@@ -555,7 +555,7 @@ void CFWL_ListBoxImp::DrawBkground(CFX_Graphics* pGraphics,
     return;
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = FWL_PART_LTB_Background;
+  param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = 0;
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
@@ -564,7 +564,7 @@ void CFWL_ListBoxImp::DrawBkground(CFX_Graphics* pGraphics,
     param.m_pData = &m_rtStatic;
   }
   if (!IsEnabled()) {
-    param.m_dwStates = FWL_PARTSTATE_LTB_Disabled;
+    param.m_dwStates = CFWL_PartState_Disabled;
   }
   pTheme->DrawBackground(&param);
 }
@@ -630,15 +630,15 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   uint32_t dwItemStyles = pData->GetItemStyles(m_pInterface, hItem);
-  uint32_t dwPartStates = FWL_PARTSTATE_LTB_Normal;
+  uint32_t dwPartStates = CFWL_PartState_Normal;
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
-    dwPartStates = FWL_PARTSTATE_LTB_Disabled;
+    dwPartStates = CFWL_PartState_Disabled;
   } else if (dwItemStyles & FWL_ITEMSTATE_LTB_Selected) {
-    dwPartStates = FWL_PARTSTATE_LTB_Selected;
+    dwPartStates = CFWL_PartState_Selected;
   }
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused &&
       dwItemStyles & FWL_ITEMSTATE_LTB_Focused) {
-    dwPartStates |= FWL_PARTSTATE_LTB_Focused;
+    dwPartStates |= CFWL_PartState_Focused;
   }
   FWL_ListBoxItemData itemData;
   itemData.pDataProvider = pData;
@@ -646,7 +646,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
   {
     CFWL_ThemeBackground param;
     param.m_pWidget = m_pInterface;
-    param.m_iPart = FWL_PART_LTB_ListItem;
+    param.m_iPart = CFWL_Part::ListItem;
     param.m_dwStates = dwPartStates;
     param.m_pGraphics = pGraphics;
     param.m_matrix.Concat(*pMatrix);
@@ -655,7 +655,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
     CFX_RectF rtFocus(rtItem);
     param.m_pData = &rtFocus;
     if (m_pVertScrollBar && !m_pHorzScrollBar &&
-        (dwPartStates & FWL_PARTSTATE_LTB_Focused)) {
+        (dwPartStates & CFWL_PartState_Focused)) {
       param.m_rtPart.left += 1;
       param.m_rtPart.width -= (m_fScorllBarWidth + 1);
       rtFocus.Deflate(0.5, 0.5, 1 + m_fScorllBarWidth, 1);
@@ -671,7 +671,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
       if (pDib) {
         CFWL_ThemeBackground param;
         param.m_pWidget = m_pInterface;
-        param.m_iPart = FWL_PART_LTB_Icon;
+        param.m_iPart = CFWL_Part::Icon;
         param.m_pGraphics = pGraphics;
         param.m_matrix.Concat(*pMatrix);
         param.m_rtPart = rtDIB;
@@ -688,12 +688,12 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
       pData->SetItemCheckRect(m_pInterface, hItem, rtCheck);
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;
-      param.m_iPart = FWL_PART_LTB_Check;
+      param.m_iPart = CFWL_Part::Check;
       param.m_pGraphics = pGraphics;
       if (GetItemChecked(hItem)) {
-        param.m_dwStates = FWL_PARTSTATE_LTB_Checked;
+        param.m_dwStates = CFWL_PartState_Checked;
       } else {
-        param.m_dwStates = FWL_PARTSTATE_LTB_UnChecked;
+        param.m_dwStates = CFWL_PartState_Normal;
       }
       param.m_matrix.Concat(*pMatrix);
       param.m_rtPart = rtCheck;
@@ -712,7 +712,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
     }
     CFWL_ThemeText textParam;
     textParam.m_pWidget = m_pInterface;
-    textParam.m_iPart = FWL_PART_LTB_ListItem;
+    textParam.m_iPart = CFWL_Part::ListItem;
     textParam.m_dwStates = dwPartStates;
     textParam.m_pGraphics = pGraphics;
     textParam.m_matrix.Concat(*pMatrix);
@@ -734,8 +734,8 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
   CFX_RectF rtUIMargin;
   rtUIMargin.Set(0, 0, 0, 0);
   if (!m_pOuter) {
-    CFX_RectF* pUIMargin =
-        static_cast<CFX_RectF*>(GetThemeCapacity(FWL_WGTCAPACITY_UIMargin));
+    CFX_RectF* pUIMargin = static_cast<CFX_RectF*>(
+        GetThemeCapacity(CFWL_WidgetCapacity::UIMargin));
     if (pUIMargin) {
       m_rtConent.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                          pUIMargin->height);
@@ -752,7 +752,7 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
       FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
       CFWL_ThemePart itemPart;
       itemPart.m_pWidget = m_pInterface;
-      itemPart.m_iPart = FWL_PART_LTB_ListItem;
+      itemPart.m_iPart = CFWL_Part::ListItem;
       itemPart.m_pData = m_pProperties->m_pDataProvider;
       itemPart.m_dwData = i;
       CFX_RectF r;
@@ -931,15 +931,15 @@ FX_FLOAT CFWL_ListBoxImp::GetMaxTextWidth() {
   return fRet;
 }
 FX_FLOAT CFWL_ListBoxImp::GetScrollWidth() {
-  FX_FLOAT* pfWidth =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+  FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
+      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
   if (!pfWidth)
     return 0;
   return *pfWidth;
 }
 FX_FLOAT CFWL_ListBoxImp::GetItemHeigt() {
   FX_FLOAT* pfFont =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FontSize));
+      static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::FontSize));
   if (!pfFont)
     return 20;
   return *pfFont + 2 * FWL_LISTBOX_ItemTextMargin;

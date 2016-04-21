@@ -472,7 +472,7 @@ CFWL_ComboBoxImp::CFWL_ComboBoxImp(const CFWL_WidgetImpProperties& properties,
       m_pForm(NULL),
       m_bLButtonDown(FALSE),
       m_iCurSel(-1),
-      m_iBtnState(FWL_PARTSTATE_CMB_Normal),
+      m_iBtnState(CFWL_PartState_Normal),
       m_fComboFormHandler(0),
       m_bNeedShowList(FALSE) {
   m_rtClient.Reset();
@@ -538,7 +538,7 @@ FWL_ERR CFWL_ComboBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
       ReSetTheme();
     }
     FX_FLOAT* pFWidth = static_cast<FX_FLOAT*>(
-        GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+        GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
     if (!pFWidth)
       return FWL_ERR_Indefinite;
     rect.Inflate(0, 0, *pFWidth, 0);
@@ -586,7 +586,7 @@ FWL_ERR CFWL_ComboBoxImp::Update() {
   part.m_pWidget = m_pInterface;
   m_fComboFormHandler =
       *static_cast<FX_FLOAT*>(m_pProperties->m_pThemeProvider->GetCapacity(
-          &part, FWL_WGTCAPACITY_CMB_ComboFormHandler));
+          &part, CFWL_WidgetCapacity::ComboFormHandler));
   return FWL_ERR_Succeeded;
 }
 uint32_t CFWL_ComboBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
@@ -607,17 +607,17 @@ FWL_ERR CFWL_ComboBoxImp::DrawWidget(CFX_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   FX_BOOL bIsDropDown = IsDropDownStyle();
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_CMB_Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_CMB_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   if (!bIsDropDown) {
     CFX_RectF rtTextBk(m_rtClient);
     rtTextBk.width -= m_rtBtn.width;
     CFWL_ThemeBackground param;
     param.m_pWidget = m_pInterface;
-    param.m_iPart = FWL_PART_CMB_Background;
+    param.m_iPart = CFWL_Part::Background;
     param.m_pGraphics = pGraphics;
     if (pMatrix) {
       param.m_matrix.Concat(*pMatrix);
@@ -634,12 +634,12 @@ FWL_ERR CFWL_ComboBoxImp::DrawWidget(CFX_Graphics* pGraphics,
       }
     }
     if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
-      param.m_dwStates = FWL_PARTSTATE_CMB_Disabled;
+      param.m_dwStates = CFWL_PartState_Disabled;
     } else if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) &&
                (m_iCurSel >= 0)) {
-      param.m_dwStates = FWL_PARTSTATE_CMB_Selected;
+      param.m_dwStates = CFWL_PartState_Selected;
     } else {
-      param.m_dwStates = FWL_PARTSTATE_CMB_Normal;
+      param.m_dwStates = CFWL_PartState_Normal;
     }
     pTheme->DrawBackground(&param);
     if (m_iCurSel >= 0) {
@@ -653,14 +653,14 @@ FWL_ERR CFWL_ComboBoxImp::DrawWidget(CFX_Graphics* pGraphics,
           ->GetItemText(hItem, wsText);
       CFWL_ThemeText param;
       param.m_pWidget = m_pInterface;
-      param.m_iPart = FWL_PART_CMB_Caption;
+      param.m_iPart = CFWL_Part::Caption;
       param.m_dwStates = m_iBtnState;
       param.m_pGraphics = pGraphics;
       param.m_matrix.Concat(*pMatrix);
       param.m_rtPart = rtTextBk;
       param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
-                             ? FWL_PARTSTATE_CMB_Selected
-                             : FWL_PARTSTATE_CMB_Normal;
+                             ? CFWL_PartState_Selected
+                             : CFWL_PartState_Normal;
       param.m_wsText = wsText;
       param.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
       param.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
@@ -670,9 +670,9 @@ FWL_ERR CFWL_ComboBoxImp::DrawWidget(CFX_Graphics* pGraphics,
   {
     CFWL_ThemeBackground param;
     param.m_pWidget = m_pInterface;
-    param.m_iPart = FWL_PART_CMB_DropDownButton;
+    param.m_iPart = CFWL_Part::DropDownButton;
     param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                           ? FWL_PARTSTATE_CMB_Disabled
+                           ? CFWL_PartState_Disabled
                            : m_iBtnState;
     param.m_pGraphics = pGraphics;
     param.m_matrix.Concat(*pMatrix);
@@ -878,8 +878,8 @@ void CFWL_ComboBoxImp::DrawStretchHandler(CFX_Graphics* pGraphics,
                                           const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pGraphics = pGraphics;
-  param.m_iPart = FWL_PART_CMB_StretcgHandler;
-  param.m_dwStates = FWL_PARTSTATE_CMB_Normal;
+  param.m_iPart = CFWL_Part::StretchHandler;
+  param.m_dwStates = CFWL_PartState_Normal;
   param.m_pWidget = m_pInterface;
   if (pMatrix) {
     param.m_matrix.Concat(*pMatrix);
@@ -1000,8 +1000,8 @@ void CFWL_ComboBoxImp::Layout() {
     return DisForm_Layout();
   }
   GetClientRect(m_rtClient);
-  FX_FLOAT* pFWidth =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+  FX_FLOAT* pFWidth = static_cast<FX_FLOAT*>(
+      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
   if (!pFWidth)
     return;
   FX_FLOAT fBtn = *pFWidth;
@@ -1282,7 +1282,7 @@ FWL_ERR CFWL_ComboBoxImp::DisForm_DrawWidget(CFX_Graphics* pGraphics,
   if (!m_rtBtn.IsEmpty(0.1f)) {
     CFWL_ThemeBackground param;
     param.m_pWidget = m_pInterface;
-    param.m_iPart = FWL_PART_CMB_DropDownButton;
+    param.m_iPart = CFWL_Part::DropDownButton;
     param.m_dwStates = m_iBtnState;
     param.m_pGraphics = pGraphics;
     param.m_rtPart = m_rtBtn;
@@ -1320,19 +1320,18 @@ FWL_ERR CFWL_ComboBoxImp::DisForm_GetBBox(CFX_RectF& rect) {
 void CFWL_ComboBoxImp::DisForm_Layout() {
   GetClientRect(m_rtClient);
   m_rtContent = m_rtClient;
-  FX_FLOAT* pFWidth =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+  FX_FLOAT* pFWidth = static_cast<FX_FLOAT*>(
+      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
   if (!pFWidth)
     return;
-  FX_FLOAT borderWidth = 0;
-  { borderWidth = FWL_PART_CMB_Border; }
+  FX_FLOAT borderWidth = 1;
   FX_FLOAT fBtn = *pFWidth;
   if (!(GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
     m_rtBtn.Set(m_rtClient.right() - fBtn, m_rtClient.top + borderWidth,
                 fBtn - borderWidth, m_rtClient.height - 2 * borderWidth);
   }
   CFX_RectF* pUIMargin =
-      static_cast<CFX_RectF*>(GetThemeCapacity(FWL_WGTCAPACITY_UIMargin));
+      static_cast<CFX_RectF*>(GetThemeCapacity(CFWL_WidgetCapacity::UIMargin));
   if (pUIMargin) {
     m_rtContent.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                         pUIMargin->height);
@@ -1481,30 +1480,29 @@ void CFWL_ComboBoxImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
       m_pOwner->MatchEditText();
     }
     m_pOwner->m_bLButtonDown = TRUE;
-    m_pOwner->m_iBtnState = FWL_PARTSTATE_CMB_Pressed;
+    m_pOwner->m_iBtnState = CFWL_PartState_Pressed;
     m_pOwner->Repaint(&m_pOwner->m_rtClient);
     m_pOwner->ShowDropList(TRUE);
-    m_pOwner->m_iBtnState = FWL_PARTSTATE_CMB_Normal;
+    m_pOwner->m_iBtnState = CFWL_PartState_Normal;
     m_pOwner->Repaint(&m_pOwner->m_rtClient);
   }
 }
 void CFWL_ComboBoxImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_pOwner->m_bLButtonDown = FALSE;
   if (m_pOwner->m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iBtnState = FWL_PARTSTATE_CMB_Hovered;
+    m_pOwner->m_iBtnState = CFWL_PartState_Hovered;
   } else {
-    m_pOwner->m_iBtnState = FWL_PARTSTATE_CMB_Normal;
+    m_pOwner->m_iBtnState = CFWL_PartState_Normal;
   }
   m_pOwner->Repaint(&m_pOwner->m_rtBtn);
 }
 void CFWL_ComboBoxImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
   int32_t iOldState = m_pOwner->m_iBtnState;
   if (m_pOwner->m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iBtnState = m_pOwner->m_bLButtonDown
-                                ? FWL_PARTSTATE_CMB_Pressed
-                                : FWL_PARTSTATE_CMB_Hovered;
+    m_pOwner->m_iBtnState = m_pOwner->m_bLButtonDown ? CFWL_PartState_Pressed
+                                                     : CFWL_PartState_Hovered;
   } else {
-    m_pOwner->m_iBtnState = FWL_PARTSTATE_CMB_Normal;
+    m_pOwner->m_iBtnState = CFWL_PartState_Normal;
   }
   if ((iOldState != m_pOwner->m_iBtnState) &&
       !((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) ==
@@ -1516,7 +1514,7 @@ void CFWL_ComboBoxImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   if (!m_pOwner->IsDropListShowed() &&
       !((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) ==
         FWL_WGTSTATE_Disabled)) {
-    m_pOwner->m_iBtnState = FWL_PARTSTATE_CMB_Normal;
+    m_pOwner->m_iBtnState = CFWL_PartState_Normal;
     m_pOwner->Repaint(&m_pOwner->m_rtBtn);
   }
 }

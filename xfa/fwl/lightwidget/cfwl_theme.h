@@ -36,7 +36,8 @@ class CFWL_Theme : public IFWL_ThemeProvider {
                          const CFX_Matrix& matrix) override;
   FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
   FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
-  void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity) override;
+  void* GetCapacity(CFWL_ThemePart* pThemePart,
+                    CFWL_WidgetCapacity dwCapacity) override;
   FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget) override;
   FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart) override;
   FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,

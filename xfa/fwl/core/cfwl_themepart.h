@@ -11,10 +11,81 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
+enum class CFWL_Part {
+  None = 0,
+
+  BackArrow,
+  Background,
+  Border,
+  Caption,
+  Check,
+  CheckBox,
+  CloseBox,
+  CombTextLine,
+  DateInBK,
+  DateInCircle,
+  DatesIn,
+  DatesOut,
+  DownButton,
+  DropDownButton,
+  Edge,
+  ForeArrow,
+  HSeparator,
+  HeadText,
+  Header,
+  Icon,
+  Image,
+  LBtn,
+  ListItem,
+  LowerTrack,
+  MinimizeBox,
+  MaximizeBox,
+  NarrowCaption,
+  RBtn,
+  StretchHandler,
+  Thumb,
+  ThumbBackArrow,
+  ThumbForeArrow,
+  ThumbLowerTrack,
+  ThumbThumb,
+  ThumbUpperTrack,
+  Today,
+  TodayCircle,
+  UpButton,
+  UpperTrack,
+  VSeparator,
+  Week,
+  WeekNum,
+  WeekNumSep
+};
+
+enum CFWL_PartState {
+  CFWL_PartState_Normal = 0,
+
+  CFWL_PartState_Checked = 1 << 1,
+  CFWL_PartState_Default = 1 << 2,
+  CFWL_PartState_Disabled = 1 << 3,
+  CFWL_PartState_Flagged = 1 << 4,
+  CFWL_PartState_Focused = 1 << 5,
+  CFWL_PartState_HightLight = 1 << 6,
+  CFWL_PartState_Hovered = 1 << 7,
+  CFWL_PartState_Inactive = 1 << 8,
+  CFWL_PartState_Neutral = 1 << 9,
+  CFWL_PartState_Pressed = 1 << 10,
+  CFWL_PartState_ReadOnly = 1 << 11,
+  CFWL_PartState_LSelected = 1 << 12,
+  CFWL_PartState_RSelected = 1 << 13,
+  CFWL_PartState_Selected = 1 << 14
+};
+
 class CFWL_ThemePart {
  public:
   CFWL_ThemePart()
-      : m_pWidget(NULL), m_iPart(0), m_dwStates(0), m_dwData(0), m_pData(NULL) {
+      : m_pWidget(nullptr),
+        m_iPart(CFWL_Part::None),
+        m_dwStates(CFWL_PartState_Normal),
+        m_dwData(0),
+        m_pData(nullptr) {
     m_rtPart.Reset();
     m_matrix.SetIdentity();
   }
@@ -22,7 +93,7 @@ class CFWL_ThemePart {
   CFX_Matrix m_matrix;
   CFX_RectF m_rtPart;
   IFWL_Widget* m_pWidget;
-  int32_t m_iPart;
+  CFWL_Part m_iPart;
   uint32_t m_dwStates;
   uint32_t m_dwData;
   void* m_pData;

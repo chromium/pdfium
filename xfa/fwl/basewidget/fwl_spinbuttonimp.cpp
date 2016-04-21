@@ -45,8 +45,8 @@ CFWL_SpinButtonImp::CFWL_SpinButtonImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
-      m_dwUpState(FWL_PARTSTATE_SPB_Normal),
-      m_dwDnState(FWL_PARTSTATE_SPB_Normal),
+      m_dwUpState(CFWL_PartState_Normal),
+      m_dwDnState(CFWL_PartState_Normal),
       m_iButtonIndex(0),
       m_bLButtonDwn(FALSE),
       m_hTimer(NULL) {
@@ -112,7 +112,7 @@ uint32_t CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
     CFX_RectF rtEdge;
     GetEdgeRect(rtEdge);
     if (rtEdge.Contains(fx, fy)) {
-      return FWL_PART_SPB_Edge;
+      return FWL_WGTHITTEST_Left;
     }
   }
   if (m_rtUpButton.Contains(fx, fy)) {
@@ -133,10 +133,10 @@ FWL_ERR CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
   }
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_SPB_Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_SPB_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   DrawUpButton(pGraphics, pTheme, pMatrix);
   DrawDownButton(pGraphics, pTheme, pMatrix);
@@ -154,31 +154,31 @@ int32_t CFWL_SpinButtonImp::Run(FWL_HTIMER hTimer) {
 FWL_ERR CFWL_SpinButtonImp::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
   if (bUp) {
     if (bEnable) {
-      m_dwUpState = FWL_PARTSTATE_SPB_Normal;
+      m_dwUpState = CFWL_PartState_Normal;
     } else {
-      m_dwUpState = FWL_PARTSTATE_SPB_Disabled;
+      m_dwUpState = CFWL_PartState_Disabled;
     }
   } else {
     if (bEnable) {
-      m_dwDnState = FWL_PARTSTATE_SPB_Normal;
+      m_dwDnState = CFWL_PartState_Normal;
     } else {
-      m_dwDnState = FWL_PARTSTATE_SPB_Disabled;
+      m_dwDnState = CFWL_PartState_Disabled;
     }
   }
   return FWL_ERR_Succeeded;
 }
 FX_BOOL CFWL_SpinButtonImp::IsButtonEnable(FX_BOOL bUp) {
   if (bUp) {
-    return (m_dwUpState != FWL_PARTSTATE_SPB_Disabled);
+    return (m_dwUpState != CFWL_PartState_Disabled);
   }
-  return (m_dwDnState != FWL_PARTSTATE_SPB_Disabled);
+  return (m_dwDnState != CFWL_PartState_Disabled);
 }
 void CFWL_SpinButtonImp::DrawUpButton(CFX_Graphics* pGraphics,
                                       IFWL_ThemeProvider* pTheme,
                                       const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_SPB_UpButton;
+  params.m_iPart = CFWL_Part::UpButton;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_dwUpState + 1;
   if (pMatrix) {
@@ -192,7 +192,7 @@ void CFWL_SpinButtonImp::DrawDownButton(CFX_Graphics* pGraphics,
                                         const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_SPB_DownButton;
+  params.m_iPart = CFWL_Part::DownButton;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_dwDnState + 1;
   if (pMatrix) {
@@ -285,11 +285,11 @@ void CFWL_SpinButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   }
   if (bUpPress) {
     m_pOwner->m_iButtonIndex = 0;
-    m_pOwner->m_dwUpState = FWL_PARTSTATE_SPB_Pressed;
+    m_pOwner->m_dwUpState = CFWL_PartState_Pressed;
   }
   if (bDnPress) {
     m_pOwner->m_iButtonIndex = 1;
-    m_pOwner->m_dwDnState = FWL_PARTSTATE_SPB_Pressed;
+    m_pOwner->m_dwDnState = CFWL_PartState_Pressed;
   }
   CFWL_EvtSpbClick wmPosChanged;
   wmPosChanged.m_pSrcTarget = m_pOwner->m_pInterface;
@@ -300,7 +300,7 @@ void CFWL_SpinButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->m_hTimer = FWL_StartTimer(m_pOwner, FWL_SPIN_Elapse);
 }
 void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_pProperties->m_dwStates & FWL_PARTSTATE_SPB_Disabled) {
+  if (m_pOwner->m_pProperties->m_dwStates & CFWL_PartState_Disabled) {
     return;
   }
   m_pOwner->m_bLButtonDwn = FALSE;
@@ -312,14 +312,14 @@ void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
   FX_BOOL bRepaint = FALSE;
   CFX_RectF rtInvalidate;
-  if (m_pOwner->m_dwUpState == FWL_PARTSTATE_SPB_Pressed &&
+  if (m_pOwner->m_dwUpState == CFWL_PartState_Pressed &&
       m_pOwner->IsButtonEnable(TRUE)) {
-    m_pOwner->m_dwUpState = FWL_PARTSTATE_SPB_Normal;
+    m_pOwner->m_dwUpState = CFWL_PartState_Normal;
     bRepaint = TRUE;
     rtInvalidate = m_pOwner->m_rtUpButton;
-  } else if (m_pOwner->m_dwDnState == FWL_PARTSTATE_SPB_Pressed &&
+  } else if (m_pOwner->m_dwDnState == CFWL_PartState_Pressed &&
              m_pOwner->IsButtonEnable(FALSE)) {
-    m_pOwner->m_dwDnState = FWL_PARTSTATE_SPB_Normal;
+    m_pOwner->m_dwDnState = CFWL_PartState_Normal;
     bRepaint = TRUE;
     rtInvalidate = m_pOwner->m_rtDnButton;
   }
@@ -338,14 +338,14 @@ void CFWL_SpinButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
   rtInvlidate.Reset();
   if (m_pOwner->m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
     if (m_pOwner->IsButtonEnable(TRUE)) {
-      if (m_pOwner->m_dwUpState == FWL_PARTSTATE_SPB_Hovered) {
-        m_pOwner->m_dwUpState = FWL_PARTSTATE_SPB_Hovered;
+      if (m_pOwner->m_dwUpState == CFWL_PartState_Hovered) {
+        m_pOwner->m_dwUpState = CFWL_PartState_Hovered;
         bRepaint = TRUE;
         rtInvlidate = m_pOwner->m_rtUpButton;
       }
-      if (m_pOwner->m_dwDnState != FWL_PARTSTATE_SPB_Normal &&
+      if (m_pOwner->m_dwDnState != CFWL_PartState_Normal &&
           m_pOwner->IsButtonEnable(FALSE)) {
-        m_pOwner->m_dwDnState = FWL_PARTSTATE_SPB_Normal;
+        m_pOwner->m_dwDnState = CFWL_PartState_Normal;
         if (bRepaint) {
           rtInvlidate.Union(m_pOwner->m_rtDnButton);
         } else {
@@ -359,14 +359,14 @@ void CFWL_SpinButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
     }
   } else if (m_pOwner->m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
     if (m_pOwner->IsButtonEnable(FALSE)) {
-      if (m_pOwner->m_dwDnState != FWL_PARTSTATE_SPB_Hovered) {
-        m_pOwner->m_dwDnState = FWL_PARTSTATE_SPB_Hovered;
+      if (m_pOwner->m_dwDnState != CFWL_PartState_Hovered) {
+        m_pOwner->m_dwDnState = CFWL_PartState_Hovered;
         bRepaint = TRUE;
         rtInvlidate = m_pOwner->m_rtDnButton;
       }
-      if (m_pOwner->m_dwUpState != FWL_PARTSTATE_SPB_Normal &&
+      if (m_pOwner->m_dwUpState != CFWL_PartState_Normal &&
           m_pOwner->IsButtonEnable(TRUE)) {
-        m_pOwner->m_dwUpState = FWL_PARTSTATE_SPB_Normal;
+        m_pOwner->m_dwUpState = CFWL_PartState_Normal;
         if (bRepaint) {
           rtInvlidate.Union(m_pOwner->m_rtUpButton);
         } else {
@@ -375,15 +375,15 @@ void CFWL_SpinButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
         bRepaint = TRUE;
       }
     }
-  } else if (m_pOwner->m_dwUpState != FWL_PARTSTATE_SPB_Normal ||
-             m_pOwner->m_dwDnState != FWL_PARTSTATE_SPB_Normal) {
-    if (m_pOwner->m_dwUpState != FWL_PARTSTATE_SPB_Normal) {
-      m_pOwner->m_dwUpState = FWL_PARTSTATE_SPB_Normal;
+  } else if (m_pOwner->m_dwUpState != CFWL_PartState_Normal ||
+             m_pOwner->m_dwDnState != CFWL_PartState_Normal) {
+    if (m_pOwner->m_dwUpState != CFWL_PartState_Normal) {
+      m_pOwner->m_dwUpState = CFWL_PartState_Normal;
       bRepaint = TRUE;
       rtInvlidate = m_pOwner->m_rtUpButton;
     }
-    if (m_pOwner->m_dwDnState != FWL_PARTSTATE_SPB_Normal) {
-      m_pOwner->m_dwDnState = FWL_PARTSTATE_SPB_Normal;
+    if (m_pOwner->m_dwDnState != CFWL_PartState_Normal) {
+      m_pOwner->m_dwDnState = CFWL_PartState_Normal;
       if (bRepaint) {
         rtInvlidate.Union(m_pOwner->m_rtDnButton);
       } else {
@@ -399,13 +399,13 @@ void CFWL_SpinButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
 void CFWL_SpinButtonImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   if (!pMsg)
     return;
-  if (m_pOwner->m_dwUpState != FWL_PARTSTATE_SPB_Normal &&
+  if (m_pOwner->m_dwUpState != CFWL_PartState_Normal &&
       m_pOwner->IsButtonEnable(TRUE)) {
-    m_pOwner->m_dwUpState = FWL_PARTSTATE_SPB_Normal;
+    m_pOwner->m_dwUpState = CFWL_PartState_Normal;
   }
-  if (m_pOwner->m_dwDnState != FWL_PARTSTATE_SPB_Normal &&
+  if (m_pOwner->m_dwDnState != CFWL_PartState_Normal &&
       m_pOwner->IsButtonEnable(FALSE)) {
-    m_pOwner->m_dwDnState = FWL_PARTSTATE_SPB_Normal;
+    m_pOwner->m_dwDnState = CFWL_PartState_Normal;
   }
   m_pOwner->Repaint(&m_pOwner->m_rtClient);
 }

@@ -16,7 +16,9 @@ class CFX_Path;
 
 class CFWL_ThemeBackground : public CFWL_ThemePart {
  public:
-  CFWL_ThemeBackground() : m_pGraphics(NULL), m_pImage(NULL), m_pPath(NULL) {}
+  CFWL_ThemeBackground()
+      : m_pGraphics(nullptr), m_pImage(nullptr), m_pPath(nullptr) {}
+
   CFX_Graphics* m_pGraphics;
   CFX_DIBitmap* m_pImage;
   CFX_Path* m_pPath;

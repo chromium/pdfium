@@ -45,7 +45,8 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
+                            CFWL_WidgetCapacity dwCapacity);
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget);
   virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart);
   virtual FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,

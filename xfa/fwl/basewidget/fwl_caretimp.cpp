@@ -123,8 +123,8 @@ FX_BOOL CFWL_CaretImp::DrawCaretBK(CFX_Graphics* pGraphics,
   if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight)) {
     return FWL_ERR_Succeeded;
   }
-  param.m_iPart = FWL_PART_CAT_Background;
-  param.m_dwStates = FWL_PARTSTATE_CAT_HightLight;
+  param.m_iPart = CFWL_Part::Background;
+  param.m_dwStates = CFWL_PartState_HightLight;
   if (pMatrix) {
     param.m_matrix.Concat(*pMatrix);
   }

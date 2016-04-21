@@ -25,16 +25,16 @@ FX_BOOL CFWL_DateTimePickerTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
   switch (pParams->m_iPart) {
-    case FWL_PART_DTP_Border: {
+    case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_DTP_Edge: {
+    case CFWL_Part::Edge: {
       DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
                &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_DTP_DropDownButton: {
+    case CFWL_Part::DropDownButton: {
       DrawDropDownButton(pParams, &pParams->m_matrix);
       break;
     }
@@ -49,19 +49,19 @@ void CFWL_DateTimePickerTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
   dwStates &= 0x03;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (eState & dwStates) {
-    case FWL_PARTSTATE_DTP_Normal: {
+    case CFWL_PartState_Normal: {
       eState = FWLTHEME_STATE_Normal;
       break;
     }
-    case FWL_PARTSTATE_DTP_Hovered: {
+    case CFWL_PartState_Hovered: {
       eState = FWLTHEME_STATE_Hover;
       break;
     }
-    case FWL_PARTSTATE_DTP_Pressed: {
+    case CFWL_PartState_Pressed: {
       eState = FWLTHEME_STATE_Pressed;
       break;
     }
-    case FWL_PARTSTATE_DTP_Disabled: {
+    case CFWL_PartState_Disabled: {
       eState = FWLTHEME_STATE_Disabale;
       break;
     }

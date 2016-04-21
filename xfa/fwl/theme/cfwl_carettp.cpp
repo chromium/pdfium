@@ -24,8 +24,8 @@ FX_BOOL CFWL_CaretTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
   switch (pParams->m_iPart) {
-    case FWL_PART_CAT_Background: {
-      if (!(pParams->m_dwStates & FWL_PARTSTATE_CAT_HightLight)) {
+    case CFWL_Part::Background: {
+      if (!(pParams->m_dwStates & CFWL_PartState_HightLight)) {
         return TRUE;
       }
       DrawCaretBK(pParams->m_pGraphics, pParams->m_dwStates,
@@ -33,6 +33,8 @@ FX_BOOL CFWL_CaretTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                   &(pParams->m_matrix));
       break;
     }
+    default:
+      break;
   }
   return TRUE;
 }

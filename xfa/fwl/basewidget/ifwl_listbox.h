@@ -30,19 +30,6 @@
 #define FWL_ITEMSTATE_LTB_Selected (1L << 0)
 #define FWL_ITEMSTATE_LTB_Focused (1L << 1)
 #define FWL_ITEMSTATE_LTB_Checked (1L << 2)
-#define FWL_PART_LTB_Border 1
-#define FWL_PART_LTB_Edge 2
-#define FWL_PART_LTB_Background 3
-#define FWL_PART_LTB_ListItem 4
-#define FWL_PART_LTB_Check 5
-#define FWL_PART_LTB_Icon 6
-#define FWL_PARTSTATE_LTB_Normal (0L << 0)
-#define FWL_PARTSTATE_LTB_Selected (1L << 0)
-#define FWL_PARTSTATE_LTB_Disabled (2L << 0)
-#define FWL_PARTSTATE_LTB_Focused (1L << 2)
-#define FWL_PARTSTATE_LTB_UnChecked (0L << 3)
-#define FWL_PARTSTATE_LTB_Checked (1L << 3)
-#define FWL_PARTSTATE_LTB_Mask (3L << 0)
 #define FWL_WGTHITTEST_LTB_Item FWL_WGTHITTEST_MAX + 1
 #define FWL_WGTHITTEST_LTB_HScrollBar FWL_WGTHITTEST_MAX + 2
 #define FWL_WGTHITTEST_LTB_VScrollBar FWL_WGTHITTEST_MAX + 3

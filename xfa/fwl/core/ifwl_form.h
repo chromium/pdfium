@@ -28,26 +28,6 @@
 #define FWL_UseMacSystemBorder
 #endif
 
-#define FWL_WGTCAPACITY_FRM_CYCaption (FWL_WGTCAPACITY_MAX + 1)
-#define FWL_WGTCAPACITY_FRM_CYNarrowCaption (FWL_WGTCAPACITY_MAX + 2)
-#define FWL_WGTCAPACITY_FRM_BigIcon (FWL_WGTCAPACITY_MAX + 3)
-#define FWL_WGTCAPACITY_FRM_SmallIcon (FWL_WGTCAPACITY_MAX + 4)
-#define FWL_PART_FRM_Border 1
-#define FWL_PART_FRM_Edge 2
-#define FWL_PART_FRM_Background 3
-#define FWL_PART_FRM_Caption 4
-#define FWL_PART_FRM_NarrowCaption 5
-#define FWL_PART_FRM_CloseBox 6
-#define FWL_PART_FRM_MinimizeBox 7
-#define FWL_PART_FRM_MaximizeBox 8
-#define FWL_PART_FRM_HeadText 9
-#define FWL_PART_FRM_Icon 10
-#define FWL_PARTSTATE_FRM_Normal 1
-#define FWL_PARTSTATE_FRM_Hover 2
-#define FWL_PARTSTATE_FRM_Pressed 3
-#define FWL_PARTSTATE_FRM_Inactive 4
-#define FWL_PARTSTATE_FRM_Disabled 5
-
 enum FWL_FORMSIZE {
   FWL_FORMSIZE_Manual = 0,
   FWL_FORMSIZE_Width,

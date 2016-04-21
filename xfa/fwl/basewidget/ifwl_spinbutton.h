@@ -12,14 +12,6 @@
 #define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
 #define FWL_CLASSHASH_SpinButton 3793043646
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
-#define FWL_PART_SPB_Border 1
-#define FWL_PART_SPB_Edge 2
-#define FWL_PART_SPB_UpButton 3
-#define FWL_PART_SPB_DownButton 4
-#define FWL_PARTSTATE_SPB_Normal (0L << 0)
-#define FWL_PARTSTATE_SPB_Hovered (1L << 0)
-#define FWL_PARTSTATE_SPB_Pressed (2L << 0)
-#define FWL_PARTSTATE_SPB_Disabled (3L << 0)
 #define FWL_WGTHITTEST_SPB_UpButton (FWL_WGTHITTEST_MAX + 1)
 #define FWL_WGTHITTEST_SPB_DownButton (FWL_WGTHITTEST_MAX + 2)
 // TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474

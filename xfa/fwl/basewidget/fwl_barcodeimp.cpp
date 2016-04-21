@@ -111,20 +111,20 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  IFX_Font* pFont =
-      static_cast<IFX_Font*>(pTheme->GetCapacity(&part, FWL_WGTCAPACITY_Font));
+  IFX_Font* pFont = static_cast<IFX_Font*>(
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Font));
   CFX_Font* pCXFont =
       pFont ? static_cast<CFX_Font*>(pFont->GetDevFont()) : nullptr;
   if (pCXFont) {
     m_pBarcodeEngine->SetFont(pCXFont);
   }
   FX_FLOAT* pFontSize = static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_FontSize));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::FontSize));
   if (pFontSize) {
     m_pBarcodeEngine->SetFontSize(*pFontSize);
   }
   FX_ARGB* pFontColor = static_cast<FX_ARGB*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_TextColor));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::TextColor));
   if (pFontColor) {
     m_pBarcodeEngine->SetFontColor(*pFontColor);
   }

@@ -259,13 +259,13 @@ FWL_ERR CFWL_EditImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
       if (IsShowScrollBar(TRUE)) {
         FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
-            GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+            GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
         rect.width += *pfWidth;
         rect.width += FWL_EDIT_Margin;
       }
       if (IsShowScrollBar(FALSE)) {
         FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
-            GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+            GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
         rect.height += *pfWidth;
         rect.height += FWL_EDIT_Margin;
       }
@@ -505,10 +505,10 @@ FWL_ERR CFWL_EditImp::DrawWidget(CFX_Graphics* pGraphics,
     DrawSpellCheck(pGraphics, pMatrix);
   }
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_EDT_Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_EDT_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   return FWL_ERR_Succeeded;
 }
@@ -940,14 +940,14 @@ void CFWL_EditImp::DrawTextBk(CFX_Graphics* pGraphics,
                               const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = FWL_PART_EDT_Background;
+  param.m_iPart = CFWL_Part::Background;
   param.m_dwData = FWL_PARTDATA_EDT_Background;
   param.m_dwStates = m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly
-                         ? FWL_PARTSTATE_EDT_ReadOnly
-                         : FWL_PARTSTATE_EDT_Normal;
+                         ? CFWL_PartState_ReadOnly
+                         : CFWL_PartState_Normal;
   uint32_t dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled);
   if (dwStates) {
-    param.m_dwStates = FWL_PARTSTATE_EDT_Disable;
+    param.m_dwStates = CFWL_PartState_Disabled;
   }
   param.m_pGraphics = pGraphics;
   param.m_matrix = *pMatrix;
@@ -1032,7 +1032,7 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
     param.m_pGraphics = pGraphics;
     param.m_matrix = *pMatrix;
     param.m_pWidget = m_pInterface;
-    param.m_iPart = FWL_PART_EDT_Background;
+    param.m_iPart = CFWL_Part::Background;
     param.m_pPath = &path;
     pTheme->DrawBackground(&param);
   }
@@ -1065,7 +1065,7 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
     param.m_pGraphics = pGraphics;
     param.m_matrix = *pMatrix;
     param.m_pWidget = m_pInterface;
-    param.m_iPart = FWL_PART_EDT_CombTextLine;
+    param.m_iPart = CFWL_Part::CombTextLine;
     param.m_pPath = &path;
     pTheme->DrawBackground(&param);
   }
@@ -1162,22 +1162,22 @@ void CFWL_EditImp::UpdateEditParams() {
     params.dwMode |= FDE_TEXTEDITMODE_ReadOnly;
   }
   FX_FLOAT* pFontSize =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FontSize));
+      static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::FontSize));
   if (!pFontSize)
     return;
   m_fFontSize = *pFontSize;
   uint32_t* pFontColor =
-      static_cast<uint32_t*>(GetThemeCapacity(FWL_WGTCAPACITY_TextColor));
+      static_cast<uint32_t*>(GetThemeCapacity(CFWL_WidgetCapacity::TextColor));
   if (!pFontColor)
     return;
   params.dwFontColor = *pFontColor;
   FX_FLOAT* pLineHeight =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_LineHeight));
+      static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::LineHeight));
   if (!pLineHeight)
     return;
   params.fLineSpace = *pLineHeight;
   IFX_Font* pFont =
-      static_cast<IFX_Font*>(GetThemeCapacity(FWL_WGTCAPACITY_Font));
+      static_cast<IFX_Font*>(GetThemeCapacity(CFWL_WidgetCapacity::Font));
   if (!pFont)
     return;
   params.pFont = pFont;
@@ -1281,7 +1281,7 @@ void CFWL_EditImp::UpdateVAlignment() {
   FX_FLOAT fSpaceAbove = 0.0f;
   FX_FLOAT fSpaceBelow = 0.0f;
   CFX_SizeF* pSpace = static_cast<CFX_SizeF*>(
-      GetThemeCapacity(FWL_WGTCAPACITY_SpaceAboveBelow));
+      GetThemeCapacity(CFWL_WidgetCapacity::SpaceAboveBelow));
   if (pSpace) {
     fSpaceAbove = pSpace->x;
     fSpaceBelow = pSpace->y;
@@ -1470,14 +1470,14 @@ int32_t CFWL_EditImp::AddDoRecord(const CFX_ByteStringC& bsDoRecord) {
 void CFWL_EditImp::Layout() {
   GetClientRect(m_rtClient);
   m_rtEngine = m_rtClient;
-  FX_FLOAT* pfWidth =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+  FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
+      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
   if (!pfWidth)
     return;
   FX_FLOAT fWidth = *pfWidth;
   if (!m_pOuter) {
-    CFX_RectF* pUIMargin =
-        static_cast<CFX_RectF*>(GetThemeCapacity(FWL_WGTCAPACITY_UIMargin));
+    CFX_RectF* pUIMargin = static_cast<CFX_RectF*>(
+        GetThemeCapacity(CFWL_WidgetCapacity::UIMargin));
     if (pUIMargin) {
       m_rtEngine.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                          pUIMargin->height);
@@ -1487,7 +1487,7 @@ void CFWL_EditImp::Layout() {
     part.m_pWidget = m_pOuter;
     CFX_RectF* pUIMargin =
         static_cast<CFX_RectF*>(m_pOuter->GetThemeProvider()->GetCapacity(
-            &part, FWL_WGTCAPACITY_UIMargin));
+            &part, CFWL_WidgetCapacity::UIMargin));
     if (pUIMargin) {
       m_rtEngine.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                          pUIMargin->height);
@@ -1547,7 +1547,7 @@ void CFWL_EditImp::LayoutScrollBar() {
   if (bShowVertScrollbar) {
     if (!m_pVertScrollBar) {
       pfWidth = static_cast<FX_FLOAT*>(
-          GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+          GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
       FX_FLOAT fWidth = pfWidth ? *pfWidth : 0;
       InitScrollBar();
       CFX_RectF rtVertScr;
@@ -1572,7 +1572,7 @@ void CFWL_EditImp::LayoutScrollBar() {
     if (!m_pHorzScrollBar) {
       if (!pfWidth) {
         pfWidth = static_cast<FX_FLOAT*>(
-            GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+            GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
       }
       FX_FLOAT fWidth = pfWidth ? *pfWidth : 0;
       InitScrollBar(FALSE);

@@ -81,53 +81,53 @@ FX_BOOL CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   return TRUE;
 }
 void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                 uint32_t dwCapacity) {
+                                 CFWL_WidgetCapacity dwCapacity) {
   switch (dwCapacity) {
-    case FWL_WGTCAPACITY_CXBorder: {
+    case CFWL_WidgetCapacity::CXBorder: {
       m_fValue = FWLTHEME_CAPACITY_CXBorder;
       break;
     }
-    case FWL_WGTCAPACITY_CYBorder: {
+    case CFWL_WidgetCapacity::CYBorder: {
       m_fValue = FWLTHEME_CAPACITY_CYBorder;
       break;
     }
-    case FWL_WGTCAPACITY_EdgeFlat: {
+    case CFWL_WidgetCapacity::EdgeFlat: {
       m_fValue = FWLTHEME_CAPACITY_EdgeFlat;
       break;
     }
-    case FWL_WGTCAPACITY_EdgeRaised: {
+    case CFWL_WidgetCapacity::EdgeRaised: {
       m_fValue = FWLTHEME_CAPACITY_EdgeRaised;
       break;
     }
-    case FWL_WGTCAPACITY_EdgeSunken: {
+    case CFWL_WidgetCapacity::EdgeSunken: {
       m_fValue = FWLTHEME_CAPACITY_EdgeSunken;
       break;
     }
-    case FWL_WGTCAPACITY_FontSize: {
+    case CFWL_WidgetCapacity::FontSize: {
       m_fValue = FWLTHEME_CAPACITY_FontSize;
       break;
     }
-    case FWL_WGTCAPACITY_TextColor: {
+    case CFWL_WidgetCapacity::TextColor: {
       m_dwValue = FWLTHEME_CAPACITY_TextColor;
       return &m_dwValue;
     }
-    case FWL_WGTCAPACITY_ScrollBarWidth: {
+    case CFWL_WidgetCapacity::ScrollBarWidth: {
       m_fValue = FWLTHEME_CAPACITY_ScrollBarWidth;
       break;
     }
-    case FWL_WGTCAPACITY_Font: {
+    case CFWL_WidgetCapacity::Font: {
       return m_pFDEFont;
     }
-    case FWL_WGTCAPACITY_TextSelColor: {
+    case CFWL_WidgetCapacity::TextSelColor: {
       m_dwValue = (m_dwThemeID == 0) ? FWLTHEME_CAPACITY_TextSelColor
                                      : FWLTHEME_COLOR_Green_BKSelected;
       return &m_dwValue;
     }
-    case FWL_WGTCAPACITY_LineHeight: {
+    case CFWL_WidgetCapacity::LineHeight: {
       m_fValue = FWLTHEME_CAPACITY_LineHeight;
       break;
     }
-    case FWL_WGTCAPACITY_UIMargin: {
+    case CFWL_WidgetCapacity::UIMargin: {
       m_rtMargin.Set(0, 0, 0, 0);
       return &m_rtMargin;
     }

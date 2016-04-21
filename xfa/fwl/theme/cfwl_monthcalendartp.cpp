@@ -83,52 +83,52 @@ FX_BOOL CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
   switch (pParams->m_iPart) {
-    case FWL_PART_MCD_Border: {
+    case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_Edge: {
+    case CFWL_Part::Edge: {
       DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
                &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_Background: {
+    case CFWL_Part::Background: {
       DrawTotalBK(pParams, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_Header: {
+    case CFWL_Part::Header: {
       DrawHeadBk(pParams, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_LBtn: {
+    case CFWL_Part::LBtn: {
       FWLTHEME_STATE eState = GetState(pParams->m_dwStates);
       DrawArrowBtn(pParams->m_pGraphics, &pParams->m_rtPart,
                    FWLTHEME_DIRECTION_Left, eState, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_RBtn: {
+    case CFWL_Part::RBtn: {
       FWLTHEME_STATE eState = GetState(pParams->m_dwStates);
       DrawArrowBtn(pParams->m_pGraphics, &pParams->m_rtPart,
                    FWLTHEME_DIRECTION_Right, eState, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_HSeparator: {
+    case CFWL_Part::HSeparator: {
       DrawHSeperator(pParams, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_DatesIn: {
+    case CFWL_Part::DatesIn: {
       DrawDatesInBK(pParams, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_TodayCircle: {
+    case CFWL_Part::TodayCircle: {
       DrawTodayCircle(pParams, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_DateInCircle: {
+    case CFWL_Part::DateInCircle: {
       DrawDatesInCircle(pParams, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_MCD_WeekNumSep: {
+    case CFWL_Part::WeekNumSep: {
       DrawWeekNumSep(pParams, &pParams->m_matrix);
       break;
     }
@@ -139,12 +139,12 @@ FX_BOOL CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
 FX_BOOL CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
   if (!m_pTextOut)
     return FALSE;
-  if ((pParams->m_iPart == FWL_PART_MCD_DatesIn) &&
+  if ((pParams->m_iPart == CFWL_Part::DatesIn) &&
       !(pParams->m_dwStates & FWL_ITEMSTATE_MCD_Flag) &&
       (pParams->m_dwStates &
-       (FWL_PARTSTATE_MCD_Hovered | FWL_PARTSTATE_MCD_Selected))) {
+       (CFWL_PartState_Hovered | CFWL_PartState_Selected))) {
     m_pTextOut->SetTextColor(0xFFFFFFFF);
-  } else if (pParams->m_iPart == FWL_PART_MCD_Caption) {
+  } else if (pParams->m_iPart == CFWL_Part::Caption) {
     m_pTextOut->SetTextColor(m_pThemeData->clrCaption);
   } else {
     m_pTextOut->SetTextColor(0xFF000000);
@@ -152,200 +152,200 @@ FX_BOOL CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
   return CFWL_WidgetTP::DrawText(pParams);
 }
 void* CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                        uint32_t dwCapacity) {
+                                        CFWL_WidgetCapacity dwCapacity) {
   FX_BOOL bDefPro = FALSE;
   FX_BOOL bDwordVal = FALSE;
   switch (dwCapacity) {
-    case FWL_WGTCAPACITY_MC_HEADER_WIDTH: {
+    case CFWL_WidgetCapacity::HeaderWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_Height: {
+    case CFWL_WidgetCapacity::HeaderHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_BTN_WIDTH: {
+    case CFWL_WidgetCapacity::HeaderBtnWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_BTN_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_BTN_HEIGHT: {
+    case CFWL_WidgetCapacity::HeaderBtnHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_BTN_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_BTN_HMARGIN: {
+    case CFWL_WidgetCapacity::HeaderBtnHMargin: {
       bDwordVal = TRUE;
       m_dwValue = FWL_THEMECAPACITY_MC_HEADER_BTN_HMARGIN;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_BTN_VMARGIN: {
+    case CFWL_WidgetCapacity::HeaderBtnVMargin: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_BTN_VMARGIN;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_TEXTWIDHT: {
+    case CFWL_WidgetCapacity::HeaderTextWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_TEXTWIDHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_TEXTHEIGHT: {
+    case CFWL_WidgetCapacity::HeaderTextHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_TEXTHEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_TEXT_HMARGIN: {
+    case CFWL_WidgetCapacity::HeaderTextHMargin: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_TEXT_HMARGIN;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEADER_TEXT_VMARGIN: {
+    case CFWL_WidgetCapacity::HeaderTextVMargin: {
       m_fValue = FWL_THEMECAPACITY_MC_HEADER_TEXT_VMARGIN;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HSEP_WIDTH: {
+    case CFWL_WidgetCapacity::HSepWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_HSEP_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HSEP_HEIGHT: {
+    case CFWL_WidgetCapacity::HSepHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_HSEP_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_VSEP_WIDTH: {
+    case CFWL_WidgetCapacity::VSepWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_VSEP_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_VSEP_HEIGHT: {
+    case CFWL_WidgetCapacity::VSepHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_VSEP_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_WEEKNUM_WIDTH: {
+    case CFWL_WidgetCapacity::WeekNumWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_WEEKNUM_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_WEEKNUM_HEIGHT: {
+    case CFWL_WidgetCapacity::WeekNumHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_WEEKNUM_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_WEEK_WIDTH: {
+    case CFWL_WidgetCapacity::WeekWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_WEEK_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_WEEK_HEIGHT: {
+    case CFWL_WidgetCapacity::WeekHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_WEEK_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_SEP_DOFFSET: {
+    case CFWL_WidgetCapacity::SepDOffset: {
       m_fValue = FWL_THEMECAPACITY_MC_SEP_DOFFSET;
       break;
     }
-    case FWL_WGTCAPACITY_MC_SEP_X: {
+    case CFWL_WidgetCapacity::SepX: {
       m_fValue = FWL_THEMECAPACITY_MC_SEP_X;
       break;
     }
-    case FWL_WGTCAPACITY_MC_SEP_Y: {
+    case CFWL_WidgetCapacity::SepY: {
       m_fValue = FWL_THEMECAPACITY_MC_SEP_Y;
       break;
     }
-    case FWL_WGTCAPACITY_MC_DATES_CELL_WIDTH: {
+    case CFWL_WidgetCapacity::DatesCellWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_DATES_CELL_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_DATES_CELL_HEIGHT: {
+    case CFWL_WidgetCapacity::DatesCellHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_DATES_CELL_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_TODAY_WIDHT: {
+    case CFWL_WidgetCapacity::TodayWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_TODAY_WIDHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_TODAY_HEIGHT: {
+    case CFWL_WidgetCapacity::TodayHeight: {
       m_fValue = FWL_THEMECAPACITY_MC_TODAY_HEIGHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_TODAY_FLAG_WIDHT: {
+    case CFWL_WidgetCapacity::TodayFlagWidth: {
       m_fValue = FWL_THEMECAPACITY_MC_TODAY_FLAG_WIDHT;
       break;
     }
-    case FWL_WGTCAPACITY_MC_WIDTH: {
+    case CFWL_WidgetCapacity::Width: {
       m_fValue = FWL_MC_WIDTH;
       break;
     }
-    case FWL_WGTCAPACITY_MC_HEIGHT: {
+    case CFWL_WidgetCapacity::Height: {
       m_fValue = FWL_MC_HEIGHT;
       break;
     }
-    case FWL_MCCAPACITY_Sun: {
+    case CFWL_WidgetCapacity::Sun: {
       wsResource = L"Sun";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_Mon: {
+    case CFWL_WidgetCapacity::Mon: {
       wsResource = L"Mon";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_Tue: {
+    case CFWL_WidgetCapacity::Tue: {
       wsResource = L"Tue";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_Wed: {
+    case CFWL_WidgetCapacity::Wed: {
       wsResource = L"Wed";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_Thu: {
+    case CFWL_WidgetCapacity::Thu: {
       wsResource = L"Thu";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_Fri: {
+    case CFWL_WidgetCapacity::Fri: {
       wsResource = L"Fri";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_Sat: {
+    case CFWL_WidgetCapacity::Sat: {
       wsResource = L"Sat";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_January: {
+    case CFWL_WidgetCapacity::January: {
       wsResource = L"January";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_February: {
+    case CFWL_WidgetCapacity::February: {
       wsResource = L"February";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_March: {
+    case CFWL_WidgetCapacity::March: {
       wsResource = L"March";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_April: {
+    case CFWL_WidgetCapacity::April: {
       wsResource = L"April";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_May: {
+    case CFWL_WidgetCapacity::May: {
       wsResource = L"May";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_June: {
+    case CFWL_WidgetCapacity::June: {
       wsResource = L"June";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_July: {
+    case CFWL_WidgetCapacity::July: {
       wsResource = L"July";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_August: {
+    case CFWL_WidgetCapacity::August: {
       wsResource = L"August";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_September: {
+    case CFWL_WidgetCapacity::September: {
       wsResource = L"September";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_October: {
+    case CFWL_WidgetCapacity::October: {
       wsResource = L"October";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_November: {
+    case CFWL_WidgetCapacity::November: {
       wsResource = L"November";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_December: {
+    case CFWL_WidgetCapacity::December: {
       wsResource = L"December";
       return &wsResource;
     }
-    case FWL_MCCAPACITY_Today: {
+    case CFWL_WidgetCapacity::Today: {
       wsResource = L"Today";
       return &wsResource;
     }
@@ -404,8 +404,7 @@ FX_BOOL CFWL_MonthCalendarTP::DrawLButton(CFWL_ThemeBackground* pParams,
   CFX_Color clrLBtnEdge(ArgbEncode(0xff, 205, 219, 243));
   pParams->m_pGraphics->SetStrokeColor(&clrLBtnEdge);
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
-  if ((pParams->m_dwStates & FWL_PARTSTATE_MCD_Pressed) ==
-      FWL_PARTSTATE_MCD_Pressed) {
+  if (pParams->m_dwStates & CFWL_PartState_Pressed) {
     CFX_Color clrLBtnFill(ArgbEncode(0xff, 174, 198, 242));
     pParams->m_pGraphics->SetFillColor(&clrLBtnFill);
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
@@ -437,8 +436,7 @@ FX_BOOL CFWL_MonthCalendarTP::DrawRButton(CFWL_ThemeBackground* pParams,
   CFX_Color clrRBtnEdge(ArgbEncode(0xff, 205, 219, 243));
   pParams->m_pGraphics->SetStrokeColor(&clrRBtnEdge);
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
-  if ((pParams->m_dwStates & FWL_PARTSTATE_MCD_Pressed) ==
-      FWL_PARTSTATE_MCD_Pressed) {
+  if (pParams->m_dwStates & CFWL_PartState_Pressed) {
     CFX_Color clrRBtnFill(ArgbEncode(0xff, 174, 198, 242));
     pParams->m_pGraphics->SetFillColor(&clrRBtnFill);
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
@@ -492,7 +490,7 @@ FX_BOOL CFWL_MonthCalendarTP::DrawWeekNumSep(CFWL_ThemeBackground* pParams,
 FX_BOOL CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
                                             CFX_Matrix* pMatrix) {
   pParams->m_pGraphics->SaveGraphState();
-  if (pParams->m_dwStates & FWL_PARTSTATE_MCD_Selected) {
+  if (pParams->m_dwStates & CFWL_PartState_Selected) {
     CFX_Path path;
     path.Create();
     CFX_RectF rtSelDay;
@@ -503,7 +501,7 @@ FX_BOOL CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
     clrSelDayBK = m_pThemeData->clrDatesSelectedBK;
     pParams->m_pGraphics->SetFillColor(&clrSelDayBK);
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
-  } else if (pParams->m_dwStates & FWL_PARTSTATE_MCD_Hovered) {
+  } else if (pParams->m_dwStates & CFWL_PartState_Hovered) {
     CFX_Path path;
     path.Create();
     CFX_RectF rtSelDay;
@@ -550,14 +548,15 @@ FX_BOOL CFWL_MonthCalendarTP::DrawTodayCircle(CFWL_ThemeBackground* pParams,
   pParams->m_pGraphics->RestoreGraphState();
   return TRUE;
 }
+
 FWLTHEME_STATE CFWL_MonthCalendarTP::GetState(uint32_t dwFWLStates) {
-  if (dwFWLStates & FWL_PARTSTATE_MCD_Hovered) {
+  if (dwFWLStates & CFWL_PartState_Hovered)
     return FWLTHEME_STATE_Hover;
-  } else if (dwFWLStates & FWL_PARTSTATE_MCD_Pressed) {
+  if (dwFWLStates & CFWL_PartState_Pressed)
     return FWLTHEME_STATE_Pressed;
-  }
   return FWLTHEME_STATE_Normal;
 }
+
 void CFWL_MonthCalendarTP::SetThemeData(uint32_t dwThemeID) {
   if (dwThemeID == 0) {
     m_pThemeData->clrCaption = ArgbEncode(0xff, 0, 153, 255);

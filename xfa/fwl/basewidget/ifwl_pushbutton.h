@@ -29,18 +29,6 @@
 #define FWL_STATE_PSB_Hovered (1 << FWL_WGTSTATE_MAX)
 #define FWL_STATE_PSB_Pressed (1 << (FWL_WGTSTATE_MAX + 1))
 #define FWL_STATE_PSB_Default (1 << (FWL_WGTSTATE_MAX + 2))
-#define FWL_WGTCAPACITY_PSB_Margin (FWL_WGTCAPACITY_MAX + 1)
-#define FWL_PART_PSB_Border 1
-#define FWL_PART_PSB_Edge 2
-#define FWL_PART_PSB_Background 3
-#define FWL_PART_PSB_Caption 4
-#define FWL_PARTSTATE_PSB_Normal (0L << 0)
-#define FWL_PARTSTATE_PSB_Pressed (1L << 0)
-#define FWL_PARTSTATE_PSB_Hovered (2L << 0)
-#define FWL_PARTSTATE_PSB_Default (3L << 0)
-#define FWL_PARTSTATE_PSB_Disabled (4L << 0)
-#define FWL_PARTSTATE_PSB_Focused (1L << 3)
-#define FWL_PARTSTATE_PSB_Mask (7L << 0)
 
 class CFX_DIBitmap;
 

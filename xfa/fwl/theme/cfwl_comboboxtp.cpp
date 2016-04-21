@@ -28,26 +28,26 @@ FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
   switch (pParams->m_iPart) {
-    case FWL_PART_CMB_Border: {
+    case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_CMB_Edge: {
+    case CFWL_Part::Edge: {
       DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
                &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_CMB_Background: {
+    case CFWL_Part::Background: {
       CFX_Path path;
       path.Create();
       CFX_RectF& rect = pParams->m_rtPart;
       path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
       CFX_Color cr;
       switch (pParams->m_dwStates) {
-        case FWL_PARTSTATE_CMB_Selected:
+        case CFWL_PartState_Selected:
           cr = FWLTHEME_COLOR_BKSelected;
           break;
-        case FWL_PARTSTATE_CMB_Disabled:
+        case CFWL_PartState_Disabled:
           cr = FWLTHEME_COLOR_EDGERB1;
           break;
         default:
@@ -59,11 +59,11 @@ FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       pParams->m_pGraphics->RestoreGraphState();
       break;
     }
-    case FWL_PART_CMB_DropDownButton: {
+    case CFWL_Part::DropDownButton: {
       DrawDropDownButton(pParams, pParams->m_dwStates, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_CMB_StretcgHandler: {
+    case CFWL_Part::StretchHandler: {
       DrawStrethHandler(pParams, 0, &pParams->m_matrix);
       break;
     }
@@ -83,8 +83,8 @@ void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
   pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams->m_matrix);
 }
 void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                   uint32_t dwCapacity) {
-  if (dwCapacity == FWL_WGTCAPACITY_CMB_ComboFormHandler) {
+                                   CFWL_WidgetCapacity dwCapacity) {
+  if (dwCapacity == CFWL_WidgetCapacity::ComboFormHandler) {
     m_fValue = FWLTHEME_CAPACITY_ComboFormHandler;
     return &m_fValue;
   }
@@ -96,19 +96,19 @@ void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
                                          CFX_Matrix* pMatrix) {
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (dwStates) {
-    case FWL_PARTSTATE_CMB_Normal: {
+    case CFWL_PartState_Normal: {
       eState = FWLTHEME_STATE_Normal;
       break;
     }
-    case FWL_PARTSTATE_CMB_Hovered: {
+    case CFWL_PartState_Hovered: {
       eState = FWLTHEME_STATE_Hover;
       break;
     }
-    case FWL_PARTSTATE_CMB_Pressed: {
+    case CFWL_PartState_Pressed: {
       eState = FWLTHEME_STATE_Pressed;
       break;
     }
-    case FWL_PARTSTATE_CMB_Disabled: {
+    case CFWL_PartState_Disabled: {
       eState = FWLTHEME_STATE_Disabale;
       break;
     }

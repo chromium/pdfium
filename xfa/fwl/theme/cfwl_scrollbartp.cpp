@@ -31,8 +31,8 @@ FX_BOOL CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget->GetClassID() == FWL_CLASSHASH_ScrollBar;
 }
 void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                    uint32_t dwCapacity) {
-  if (dwCapacity == FWL_CAPACITY_SCB_Size) {
+                                    CFWL_WidgetCapacity dwCapacity) {
+  if (dwCapacity == CFWL_WidgetCapacity::Size) {
     m_fValue = 5;
     return &m_fValue;
   }
@@ -52,15 +52,15 @@ FX_BOOL CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   IFWL_Widget* pWidget = pParams->m_pWidget;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (pParams->m_dwStates & 0x03) {
-    case FWL_PARTSTATE_SCB_Hovered: {
+    case CFWL_PartState_Hovered: {
       eState = FWLTHEME_STATE_Hover;
       break;
     }
-    case FWL_PARTSTATE_SCB_Pressed: {
+    case CFWL_PartState_Pressed: {
       eState = FWLTHEME_STATE_Pressed;
       break;
     }
-    case FWL_PARTSTATE_SCB_Disabled: {
+    case CFWL_PartState_Disabled: {
       eState = FWLTHEME_STATE_Disabale;
       break;
     }
@@ -69,27 +69,27 @@ FX_BOOL CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   CFX_RectF* pRect = &pParams->m_rtPart;
   FX_BOOL bVert = pWidget->GetStylesEx();
   switch (pParams->m_iPart) {
-    case FWL_PART_SCB_ForeArrow: {
+    case CFWL_Part::ForeArrow: {
       DrawMaxMinBtn(pGraphics, pRect,
                     bVert ? FWLTHEME_DIRECTION_Up : FWLTHEME_DIRECTION_Left,
                     eState, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_SCB_BackArrow: {
+    case CFWL_Part::BackArrow: {
       DrawMaxMinBtn(pGraphics, pRect,
                     bVert ? FWLTHEME_DIRECTION_Down : FWLTHEME_DIRECTION_Right,
                     eState, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_SCB_Thumb: {
+    case CFWL_Part::Thumb: {
       DrawThumbBtn(pGraphics, pRect, bVert, eState, TRUE, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_SCB_LowerTrack: {
+    case CFWL_Part::LowerTrack: {
       DrawTrack(pGraphics, pRect, bVert, eState, TRUE, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_SCB_UpperTrack: {
+    case CFWL_Part::UpperTrack: {
       DrawTrack(pGraphics, pRect, bVert, eState, FALSE, &pParams->m_matrix);
       break;
     }

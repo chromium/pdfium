@@ -79,67 +79,67 @@ FX_BOOL CFWL_FormTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
   int32_t iActive = 0;
-  if (pParams->m_dwStates & FWL_PARTSTATE_FRM_Inactive) {
+  if (pParams->m_dwStates & CFWL_PartState_Inactive) {
     iActive = 1;
   }
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (pParams->m_dwStates & 0x03) {
-    case FWL_PARTSTATE_FRM_Hover: {
+    case CFWL_PartState_Hovered: {
       eState = FWLTHEME_STATE_Hover;
       break;
     }
-    case FWL_PARTSTATE_FRM_Pressed: {
+    case CFWL_PartState_Pressed: {
       eState = FWLTHEME_STATE_Pressed;
       break;
     }
-    case FWL_PARTSTATE_FRM_Disabled: {
+    case CFWL_PartState_Disabled: {
       eState = FWLTHEME_STATE_Disabale;
       break;
     }
     default: {}
   }
   switch (pParams->m_iPart) {
-    case FWL_PART_FRM_Border: {
+    case CFWL_Part::Border: {
       DrawFormBorder(pParams->m_pGraphics, &pParams->m_rtPart, eState,
                      &pParams->m_matrix, iActive);
       break;
     }
-    case FWL_PART_FRM_Edge: {
+    case CFWL_Part::Edge: {
       DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
                &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case FWL_PART_FRM_Background: {
+    case CFWL_Part::Background: {
       FillBackground(pParams->m_pGraphics, &pParams->m_rtPart,
                      &pParams->m_matrix);
       break;
     }
-    case FWL_PART_FRM_Caption: {
+    case CFWL_Part::Caption: {
       DrawCaption(pParams->m_pGraphics, &pParams->m_rtPart, eState,
                   &pParams->m_matrix, iActive);
       break;
     }
-    case FWL_PART_FRM_NarrowCaption: {
+    case CFWL_Part::NarrowCaption: {
       DrawNarrowCaption(pParams->m_pGraphics, &pParams->m_rtPart, eState,
                         &pParams->m_matrix, iActive);
       break;
     }
-    case FWL_PART_FRM_CloseBox: {
+    case CFWL_Part::CloseBox: {
       DrawCloseBox(pParams->m_pGraphics, &pParams->m_rtPart, eState,
                    &pParams->m_matrix, iActive);
       break;
     }
-    case FWL_PART_FRM_MinimizeBox: {
+    case CFWL_Part::MinimizeBox: {
       DrawMinimizeBox(pParams->m_pGraphics, &pParams->m_rtPart, eState,
                       &pParams->m_matrix, iActive);
       break;
     }
-    case FWL_PART_FRM_MaximizeBox: {
+    case CFWL_Part::MaximizeBox: {
       DrawMaximizeBox(pParams->m_pGraphics, &pParams->m_rtPart, eState,
                       pParams->m_dwData, &pParams->m_matrix, iActive);
       break;
     }
-    case FWL_PART_FRM_Icon: {
+    case CFWL_Part::Icon: {
       DrawIconImage(pParams->m_pGraphics, pParams->m_pImage, &pParams->m_rtPart,
                     eState, &pParams->m_matrix, iActive);
       break;
@@ -151,7 +151,7 @@ FX_BOOL CFWL_FormTP::DrawBackground(CFWL_ThemeBackground* pParams) {
 FX_BOOL CFWL_FormTP::DrawText(CFWL_ThemeText* pParams) {
   if (!m_pTextOut)
     return FALSE;
-  if (pParams->m_iPart == FWL_PART_FRM_Caption) {
+  if (pParams->m_iPart == CFWL_Part::Caption) {
     m_pTextOut->SetTextColor(0xFFFFFFFF);
   } else {
     m_pTextOut->SetTextColor(0xFF000000);
@@ -159,36 +159,36 @@ FX_BOOL CFWL_FormTP::DrawText(CFWL_ThemeText* pParams) {
   return CFWL_WidgetTP::DrawText(pParams);
 }
 void* CFWL_FormTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                               uint32_t dwCapacity) {
+                               CFWL_WidgetCapacity dwCapacity) {
   FX_BOOL bDefPro = FALSE;
   FX_BOOL bDwordVal = FALSE;
   switch (dwCapacity) {
-    case FWL_WGTCAPACITY_CXBorder: {
+    case CFWL_WidgetCapacity::CXBorder: {
       m_fValue = FWLTHEME_CAPACITY_CXFormBorder;
       break;
     }
-    case FWL_WGTCAPACITY_CYBorder: {
+    case CFWL_WidgetCapacity::CYBorder: {
       m_fValue = FWLTHEME_CAPACITY_CYFormBorder;
       break;
     }
-    case FWL_WGTCAPACITY_FRM_CYCaption: {
+    case CFWL_WidgetCapacity::CYCaption: {
       m_fValue = FWLTHEME_CAPACITY_CYCaption;
       break;
     }
-    case FWL_WGTCAPACITY_FRM_CYNarrowCaption: {
+    case CFWL_WidgetCapacity::CYNarrowCaption: {
       m_fValue = FWLTHEME_CAPACITY_CYCaption;
       break;
     }
-    case FWL_WGTCAPACITY_TextColor: {
+    case CFWL_WidgetCapacity::TextColor: {
       bDwordVal = TRUE;
       m_dwValue = FWLTHEME_CAPACITY_FormTextColor;
       break;
     }
-    case FWL_WGTCAPACITY_FRM_BigIcon: {
+    case CFWL_WidgetCapacity::BigIcon: {
       m_fValue = FWLTHEME_CAPACITY_BigIconSize;
       break;
     }
-    case FWL_WGTCAPACITY_FRM_SmallIcon: {
+    case CFWL_WidgetCapacity::SmallIcon: {
       m_fValue = FWLTHEME_CAPACITY_SmallIconSize;
       break;
     }
@@ -205,23 +205,23 @@ void* CFWL_FormTP::GetCapacity(CFWL_ThemePart* pThemePart,
 FWL_ERR CFWL_FormTP::GetPartRect(CFWL_ThemePart* pThemePart,
                                  CFX_RectF& rtPart) {
   switch (pThemePart->m_iPart) {
-    case FWL_PART_FRM_CloseBox: {
+    case CFWL_Part::CloseBox: {
       CalCloseBox(pThemePart->m_pWidget, rtPart);
       break;
     }
-    case FWL_PART_FRM_MaximizeBox: {
+    case CFWL_Part::MaximizeBox: {
       CalMaxBox(pThemePart->m_pWidget, rtPart);
       break;
     }
-    case FWL_PART_FRM_MinimizeBox: {
+    case CFWL_Part::MinimizeBox: {
       CalMinBox(pThemePart->m_pWidget, rtPart);
       break;
     }
-    case FWL_PART_FRM_HeadText: {
+    case CFWL_Part::HeadText: {
       CalCaption(pThemePart->m_pWidget, rtPart);
       break;
     }
-    case FWL_PART_FRM_Icon: {
+    case CFWL_Part::Icon: {
       CalIcon(pThemePart->m_pWidget, rtPart);
       break;
     }

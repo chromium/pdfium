@@ -17,6 +17,7 @@
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_tooltiptarget.h"
+#include "xfa/fwl/theme/cfwl_widgettp.h"
 
 // static
 IFWL_ToolTip* IFWL_ToolTip::Create(const CFWL_WidgetImpProperties& properties,
@@ -94,8 +95,8 @@ FWL_ERR CFWL_ToolTipImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     if (iLen > 0) {
       CFX_SizeF sz = CalcTextSize(wsCaption, m_pProperties->m_pThemeProvider);
       rect.Set(0, 0, sz.x, sz.y);
-      rect.width += FWL_WGTCAPACITY_CXBorder * 25;
-      rect.height += FWL_WGTCAPACITY_CYBorder * 8;
+      rect.width += 25;
+      rect.height += 16;
     }
     CFWL_WidgetImp::GetWidgetRect(rect, TRUE);
   } else {
@@ -124,9 +125,9 @@ FWL_ERR CFWL_ToolTipImp::GetClientRect(CFX_RectF& rect) {
     CFWL_ThemePart part;
     part.m_pWidget = m_pInterface;
     x = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CXBorder));
+        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CXBorder));
     y = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CYBorder));
+        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CYBorder));
   }
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
@@ -154,7 +155,7 @@ void CFWL_ToolTipImp::DrawBkground(CFX_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = FWL_PART_TTP_Background;
+  param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = m_pProperties->m_dwStates;
   param.m_pGraphics = pGraphics;
   if (pMatrix) {
@@ -178,7 +179,7 @@ void CFWL_ToolTipImp::DrawText(CFX_Graphics* pGraphics,
   }
   CFWL_ThemeText param;
   param.m_pWidget = m_pInterface;
-  param.m_iPart = FWL_PART_TTP_Caption;
+  param.m_iPart = CFWL_Part::Caption;
   param.m_dwStates = m_pProperties->m_dwStates;
   param.m_pGraphics = pGraphics;
   if (pMatrix) {

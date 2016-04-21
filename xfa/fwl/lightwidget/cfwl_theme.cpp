@@ -81,7 +81,8 @@ FX_BOOL CFWL_Theme::DrawText(CFWL_ThemeText* pParams) {
   return GetTheme(pParams->m_pWidget)->DrawText(pParams);
 }
 
-void* CFWL_Theme::GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity) {
+void* CFWL_Theme::GetCapacity(CFWL_ThemePart* pThemePart,
+                              CFWL_WidgetCapacity dwCapacity) {
   return GetTheme(pThemePart->m_pWidget)->GetCapacity(pThemePart, dwCapacity);
 }
 

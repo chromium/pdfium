@@ -27,6 +27,98 @@
 #define MONTHCAL_HEADER_BTN_VMARGIN 7
 #define MONTHCAL_HEADER_BTN_HMARGIN 5
 
+namespace {
+
+CFX_WideString* GetCapacityForDay(IFWL_ThemeProvider* pTheme,
+                                  CFWL_ThemePart& params,
+                                  uint32_t day) {
+  ASSERT(day < 7);
+
+  if (day == 0) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Sun));
+  }
+  if (day == 1) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Mon));
+  }
+  if (day == 2) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Tue));
+  }
+  if (day == 3) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Wed));
+  }
+  if (day == 4) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Thu));
+  }
+  if (day == 5) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Fri));
+  }
+
+  return static_cast<CFX_WideString*>(
+      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Sat));
+}
+
+CFX_WideString* GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
+                                    CFWL_ThemePart& params,
+                                    uint32_t month) {
+  ASSERT(month < 12);
+
+  if (month == 0) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::January));
+  }
+  if (month == 1) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::February));
+  }
+  if (month == 2) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::March));
+  }
+  if (month == 3) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::April));
+  }
+  if (month == 4) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::May));
+  }
+  if (month == 5) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::June));
+  }
+  if (month == 6) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::July));
+  }
+  if (month == 7) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::August));
+  }
+  if (month == 8) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::September));
+  }
+  if (month == 9) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::October));
+  }
+  if (month == 10) {
+    return static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::November));
+  }
+
+  return static_cast<CFX_WideString*>(
+      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::December));
+}
+
+}  // namespace
+
 // static
 IFWL_MonthCalendar* IFWL_MonthCalendar::Create(
     const CFWL_WidgetImpProperties& properties,
@@ -66,8 +158,8 @@ CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
       m_iMonth(1),
       m_iDay(1),
       m_iHovered(-1),
-      m_iLBtnPartStates(FWL_PARTSTATE_MCD_Normal),
-      m_iRBtnPartStates(FWL_PARTSTATE_MCD_Normal) {
+      m_iLBtnPartStates(CFWL_PartState_Normal),
+      m_iRBtnPartStates(CFWL_PartState_Normal) {
   m_rtHead.Reset();
   m_rtWeek.Reset();
   m_rtLBtn.Reset();
@@ -143,10 +235,10 @@ FWL_ERR CFWL_MonthCalendarImp::DrawWidget(CFX_Graphics* pGraphics,
   }
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
-    DrawBorder(pGraphics, FWL_PART_MCD_Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
   }
   if (HasEdge()) {
-    DrawEdge(pGraphics, FWL_PART_MCD_Edge, pTheme, pMatrix);
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   DrawBkground(pGraphics, pTheme, pMatrix);
   DrawHeadBK(pGraphics, pTheme, pMatrix);
@@ -192,9 +284,9 @@ void CFWL_MonthCalendarImp::DrawBkground(CFX_Graphics* pGraphics,
                                          const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_Background;
+  params.m_iPart = CFWL_Part::Background;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_rtPart = m_rtClient;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -206,9 +298,9 @@ void CFWL_MonthCalendarImp::DrawHeadBK(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_Header;
+  params.m_iPart = CFWL_Part::Header;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_rtPart = m_rtHead;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -220,7 +312,7 @@ void CFWL_MonthCalendarImp::DrawLButton(CFX_Graphics* pGraphics,
                                         const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_LBtn;
+  params.m_iPart = CFWL_Part::LBtn;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_iLBtnPartStates;
   params.m_rtPart = m_rtLBtn;
@@ -234,7 +326,7 @@ void CFWL_MonthCalendarImp::DrawRButton(CFX_Graphics* pGraphics,
                                         const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_RBtn;
+  params.m_iPart = CFWL_Part::RBtn;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_iRBtnPartStates;
   params.m_rtPart = m_rtRBtn;
@@ -248,8 +340,8 @@ void CFWL_MonthCalendarImp::DrawCaption(CFX_Graphics* pGraphics,
                                         const CFX_Matrix* pMatrix) {
   CFWL_ThemeText textParam;
   textParam.m_pWidget = m_pInterface;
-  textParam.m_iPart = FWL_PART_MCD_Caption;
-  textParam.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  textParam.m_iPart = CFWL_Part::Caption;
+  textParam.m_dwStates = CFWL_PartState_Normal;
   textParam.m_pGraphics = pGraphics;
   int32_t iYear;
   int32_t iMonth;
@@ -273,9 +365,9 @@ void CFWL_MonthCalendarImp::DrawSeperator(CFX_Graphics* pGraphics,
                                           const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_HSeparator;
+  params.m_iPart = CFWL_Part::HSeparator;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_rtPart = m_rtHSep;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -287,7 +379,7 @@ void CFWL_MonthCalendarImp::DrawDatesInBK(CFX_Graphics* pGraphics,
                                           const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_DateInBK;
+  params.m_iPart = CFWL_Part::DateInBK;
   params.m_pGraphics = pGraphics;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -296,19 +388,19 @@ void CFWL_MonthCalendarImp::DrawDatesInBK(CFX_Graphics* pGraphics,
   for (int32_t j = 0; j < iCount; j++) {
     FWL_DATEINFO* pDataInfo = (FWL_DATEINFO*)m_arrDates.GetAt(j);
     if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Selected) {
-      params.m_dwStates |= FWL_PARTSTATE_MCD_Selected;
+      params.m_dwStates |= CFWL_PartState_Selected;
       if (((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_NoTodayCircle) ==
            0) &&
           pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Flag) {
-        params.m_dwStates |= FWL_PARTSTATE_MCD_Flagged;
+        params.m_dwStates |= CFWL_PartState_Flagged;
       }
       if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Focused) {
-        params.m_dwStates |= FWL_PARTSTATE_MCD_Focused;
+        params.m_dwStates |= CFWL_PartState_Focused;
       }
     } else if (j == m_iHovered - 1) {
-      params.m_dwStates |= FWL_PARTSTATE_MCD_Hovered;
+      params.m_dwStates |= CFWL_PartState_Hovered;
     } else if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Flag) {
-      params.m_dwStates = FWL_PARTSTATE_MCD_Flagged;
+      params.m_dwStates = CFWL_PartState_Flagged;
       pTheme->DrawBackground(&params);
     }
     params.m_rtPart = pDataInfo->rect;
@@ -321,9 +413,9 @@ void CFWL_MonthCalendarImp::DrawWeek(CFX_Graphics* pGraphics,
                                      const CFX_Matrix* pMatrix) {
   CFWL_ThemeText params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_Week;
+  params.m_iPart = CFWL_Part::Week;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_Center;
   CFX_RectF rtDayOfWeek;
   if (pMatrix) {
@@ -332,10 +424,8 @@ void CFWL_MonthCalendarImp::DrawWeek(CFX_Graphics* pGraphics,
   for (int32_t i = 0; i < 7; i++) {
     rtDayOfWeek.Set(m_rtWeek.left + i * (m_szCell.x + MONTHCAL_HMARGIN * 2),
                     m_rtWeek.top, m_szCell.x, m_szCell.y);
-    CFX_WideString* wsWeekDay = static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, i + FWL_MCCAPACITY_Sun));
     params.m_rtPart = rtDayOfWeek;
-    params.m_wsText = *wsWeekDay;
+    params.m_wsText = *GetCapacityForDay(pTheme, params, i);
     params.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
     pTheme->DrawText(&params);
   }
@@ -345,9 +435,9 @@ void CFWL_MonthCalendarImp::DrawWeekNumber(CFX_Graphics* pGraphics,
                                            const CFX_Matrix* pMatrix) {
   CFWL_ThemeText params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_WeekNum;
+  params.m_iPart = CFWL_Part::WeekNum;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
   CFX_WideString wsWeekNum;
   params.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
@@ -377,9 +467,9 @@ void CFWL_MonthCalendarImp::DrawWeekNumberSep(CFX_Graphics* pGraphics,
                                               const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_WeekNumSep;
+  params.m_iPart = CFWL_Part::WeekNumSep;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_rtPart = m_rtWeekNumSep;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -394,12 +484,12 @@ void CFWL_MonthCalendarImp::DrawToday(CFX_Graphics* pGraphics,
   }
   CFWL_ThemeText params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_Today;
+  params.m_iPart = CFWL_Part::Today;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
   CFX_WideString* wsDay = static_cast<CFX_WideString*>(
-      pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today));
+      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Today));
   CFX_WideString wsText;
   GetTodayText(m_iYear, m_iMonth, m_iDay, wsText);
   params.m_wsText = *wsDay + wsText;
@@ -417,9 +507,9 @@ void CFWL_MonthCalendarImp::DrawDatesIn(CFX_Graphics* pGraphics,
                                         const CFX_Matrix* pMatrix) {
   CFWL_ThemeText params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_DatesIn;
+  params.m_iPart = CFWL_Part::DatesIn;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_Center;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -431,7 +521,7 @@ void CFWL_MonthCalendarImp::DrawDatesIn(CFX_Graphics* pGraphics,
     params.m_rtPart = pDataInfo->rect;
     params.m_dwStates = pDataInfo->dwStates;
     if (j + 1 == m_iHovered) {
-      params.m_dwStates |= FWL_PARTSTATE_MCD_Hovered;
+      params.m_dwStates |= CFWL_PartState_Hovered;
     }
     params.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
     pTheme->DrawText(&params);
@@ -442,9 +532,9 @@ void CFWL_MonthCalendarImp::DrawDatesOut(CFX_Graphics* pGraphics,
                                          const CFX_Matrix* pMatrix) {
   CFWL_ThemeText params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_DatesOut;
+  params.m_iPart = CFWL_Part::DatesOut;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_Center;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -468,10 +558,10 @@ void CFWL_MonthCalendarImp::DrawDatesInCircle(CFX_Graphics* pGraphics,
     return;
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_DateInCircle;
+  params.m_iPart = CFWL_Part::DateInCircle;
   params.m_pGraphics = pGraphics;
   params.m_rtPart = pDate->rect;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
   }
@@ -488,9 +578,9 @@ void CFWL_MonthCalendarImp::DrawTodayCircle(CFX_Graphics* pGraphics,
   }
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
-  params.m_iPart = FWL_PART_MCD_TodayCircle;
+  params.m_iPart = CFWL_Part::TodayCircle;
   params.m_pGraphics = pGraphics;
-  params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
+  params.m_dwStates = CFWL_PartState_Normal;
   params.m_rtPart = m_rtTodayFlag;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
@@ -510,15 +600,16 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
   CFWL_ThemePart params;
   params.m_pWidget = m_pInterface;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  CFX_WideString* wsText = NULL;
   FX_FLOAT fMaxWeekW = 0.0f;
   FX_FLOAT fMaxWeekH = 0.0f;
-  for (uint32_t week = FWL_MCCAPACITY_Sun; week <= FWL_MCCAPACITY_Sat; week++) {
-    wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, week));
-    CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
+
+  for (uint32_t i = 0; i < 7; ++i) {
+    CFX_SizeF sz = CalcTextSize(*GetCapacityForDay(pTheme, params, i),
+                                m_pProperties->m_pThemeProvider);
     fMaxWeekW = (fMaxWeekW >= sz.x) ? fMaxWeekW : sz.x;
     fMaxWeekH = (fMaxWeekH >= sz.y) ? fMaxWeekH : sz.y;
   }
+
   FX_FLOAT fDayMaxW = 0.0f;
   FX_FLOAT fDayMaxH = 0.0f;
   for (int day = 10; day <= 31; day++) {
@@ -536,10 +627,10 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
          MONTHCAL_HEADER_BTN_HMARGIN * 2;
   FX_FLOAT fMonthMaxW = 0.0f;
   FX_FLOAT fMonthMaxH = 0.0f;
-  for (uint32_t month = FWL_MCCAPACITY_January;
-       month <= FWL_MCCAPACITY_December; month++) {
-    wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, month));
-    CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
+
+  for (uint32_t i = 0; i < 12; ++i) {
+    CFX_SizeF sz = CalcTextSize(*GetCapacityForMonth(pTheme, params, i),
+                                m_pProperties->m_pThemeProvider);
     fMonthMaxW = (fMonthMaxW >= sz.x) ? fMonthMaxW : sz.x;
     fMonthMaxH = (fMonthMaxH >= sz.y) ? fMonthMaxH : sz.y;
   }
@@ -552,8 +643,8 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
   fs.x = std::max(fs.x, fMonthMaxW);
   CFX_WideString wsToday;
   GetTodayText(m_iYear, m_iMonth, m_iDay, wsToday);
-  wsText = static_cast<CFX_WideString*>(
-      pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today));
+  CFX_WideString* wsText = static_cast<CFX_WideString*>(
+      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Today));
   m_wsToday = *wsText + wsToday;
   m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider);
   m_szToday.y = (m_szToday.y >= m_szCell.y) ? m_szToday.y : m_szCell.y;
@@ -645,60 +736,60 @@ void CFWL_MonthCalendarImp::GetCapValue() {
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   m_fHeadWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_WIDTH));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderWidth));
   m_fHeadHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_Height));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderHeight));
   m_fHeadBtnWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_WIDTH));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderBtnWidth));
   m_fHeadBtnHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_HEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderBtnHeight));
   m_fHeadBtnHMargin = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_HMARGIN));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderBtnHMargin));
   m_fHeadBtnVMargin = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_VMARGIN));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderBtnVMargin));
   m_fHeadTextWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXTWIDHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderTextWidth));
   m_fHeadTextHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXTHEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderTextHeight));
   m_fHeadTextHMargin = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXT_HMARGIN));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderTextHMargin));
   m_fHeadTextVMargin = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXT_VMARGIN));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HeaderTextVMargin));
   m_fHSepWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HSEP_WIDTH));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HSepWidth));
   m_fHSepHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HSEP_HEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::HSepHeight));
   m_fWeekNumWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEKNUM_WIDTH));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::WeekNumWidth));
   m_fSepDOffset = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_DOFFSET));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::SepDOffset));
   m_fSepX = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_X));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::SepX));
   m_fSepY = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_Y));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::SepY));
   m_fWeekNumHeigh = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEKNUM_HEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::WeekNumHeight));
   m_fWeekWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEK_WIDTH));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::WeekWidth));
   m_fWeekHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEK_HEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::WeekHeight));
   m_fDateCellWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_DATES_CELL_WIDTH));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::DatesCellWidth));
   m_fDateCellHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_DATES_CELL_HEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::DatesCellHeight));
   m_fTodayWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_WIDHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::TodayWidth));
   m_fTodayHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_HEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::TodayHeight));
   m_fTodayFlagWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_FLAG_WIDHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::TodayFlagWidth));
   m_fMCWid = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WIDTH));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Width));
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_WeekNumbers) {
     m_fMCWid += m_fWeekNumWid;
   }
   m_fMCHei = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEIGHT));
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Height));
 }
 int32_t CFWL_MonthCalendarImp::CalWeekNumber(int32_t iYear,
                                              int32_t iMonth,
@@ -990,11 +1081,11 @@ void CFWL_MonthCalendarImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
 }
 void CFWL_MonthCalendarImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iLBtnPartStates = FWL_PARTSTATE_MCD_Pressed;
+    m_pOwner->m_iLBtnPartStates = CFWL_PartState_Pressed;
     m_pOwner->PrevMonth();
     m_pOwner->Repaint(&m_pOwner->m_rtClient);
   } else if (m_pOwner->m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iRBtnPartStates |= FWL_PARTSTATE_MCD_Pressed;
+    m_pOwner->m_iRBtnPartStates |= CFWL_PartState_Pressed;
     m_pOwner->NextMonth();
     m_pOwner->Repaint(&m_pOwner->m_rtClient);
   } else if (m_pOwner->m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy)) {
