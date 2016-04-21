@@ -231,32 +231,24 @@ class CFX_UTF8Encoder {
 class CFX_BasicArray {
  protected:
   CFX_BasicArray(int unit_size);
-
+  CFX_BasicArray(const CFX_BasicArray&) = delete;
   ~CFX_BasicArray();
 
   FX_BOOL SetSize(int nNewSize);
-
   FX_BOOL Append(const CFX_BasicArray& src);
-
   FX_BOOL Copy(const CFX_BasicArray& src);
-
   uint8_t* InsertSpaceAt(int nIndex, int nCount);
-
   FX_BOOL RemoveAt(int nIndex, int nCount);
-
   FX_BOOL InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray);
-
   const void* GetDataPtr(int index) const;
 
  protected:
   uint8_t* m_pData;
-
   int m_nSize;
-
   int m_nMaxSize;
-
   int m_nUnitSize;
 };
+
 template <class TYPE>
 class CFX_ArrayTemplate : public CFX_BasicArray {
  public:
