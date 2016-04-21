@@ -31,10 +31,7 @@ enum FWLTHEME_DIRECTION {
 
 #define FWLTHEME_BEZIER FX_BEZIER
 #define FWLTHEME_PI FX_PI
-#define FWLTHEME_COLOR_EDGELT1 (ArgbEncode(255, 172, 168, 153))
-#define FWLTHEME_COLOR_EDGELT2 (ArgbEncode(255, 113, 111, 100))
 #define FWLTHEME_COLOR_EDGERB1 (ArgbEncode(255, 241, 239, 226))
-#define FWLTHEME_COLOR_EDGERB2 (ArgbEncode(255, 255, 255, 255))
 #define FWLTHEME_COLOR_Background (ArgbEncode(255, 236, 233, 216))
 #define FWLTHEME_COLOR_BKSelected (ArgbEncode(255, 153, 193, 218))
 #define FWLTHEME_COLOR_Green_BKSelected (ArgbEncode(255, 147, 160, 112))

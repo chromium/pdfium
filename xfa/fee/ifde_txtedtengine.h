@@ -17,11 +17,6 @@ class IFDE_TxtEdtParag;
 
 typedef struct FDE_HTXTEDTFIND_ { void* pData; } * FDE_HTXTEDTFIND;
 
-#define FDE_TXTEDT_FIND_FLAGS_Prev (0L << 0)
-#define FDE_TXTEDT_FIND_FLAGS_Next (1L << 0)
-#define FDE_TXTEDT_FIND_FLAGS_WholeWord (1L << 1)
-#define FDE_TXTEDT_FIND_FLAGS_NoCase (1L << 2)
-
 #define FDE_TEXTEDITMODE_MultiLines (1L << 0)
 #define FDE_TEXTEDITMODE_AutoLineWrap (1L << 1)
 #define FDE_TEXTEDITMODE_ReadOnly (1L << 2)

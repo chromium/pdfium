@@ -243,7 +243,5 @@
 #define FWL_VKEY_PA1 0xFD
 #define FWL_VKEY_OEM_Clear 0xFE
 #define FWL_VKEY_Unknown 0
-#define FWL_VKEYSTATE_Toggled 0x0001
-#define FWL_VKEYSTATE_Down 0x0100
 
 #endif  // XFA_FWL_CORE_FWL_WIDGETDEF_H_

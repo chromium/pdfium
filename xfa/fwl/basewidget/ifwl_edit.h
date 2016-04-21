@@ -47,7 +47,6 @@
 #define FWL_STYLEEXT_EDT_ShowScrollbarFocus (1L << 25)
 #define FWL_STYLEEXT_EDT_OuterScrollbar (1L << 26)
 #define FWL_STYLEEXT_EDT_LastLineHeight (1L << 27)
-#define FWL_STATE_EDT_Editing (1 << FWL_WGTSTATE_MAX)
 #define FWL_PARTDATA_EDT_Background 0
 #define FWL_PARTDATA_EDT_StaticBackground 1
 // TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
@@ -57,10 +56,6 @@
 #define FWL_EVTHASH_EDT_CheckWord 2897181520
 #define FWL_EVTHASH_EDT_GetSuggestWords 315782791
 #define FWL_EVTHASH_EDT_TextFull 2158580174
-#define FWL_EDT_FIND_FLAGS_Prev (0L << 0)
-#define FWL_EDT_FIND_FLAGS_Next (1L << 0)
-#define FWL_EDT_FIND_FLAGS_WholeWord (1L << 1)
-#define FWL_EDT_FIND_FLAGS_NoCase (1L << 2)
 
 typedef struct FWL_HEDTFIND_ { void* pData; } * FWL_HEDTFIND;
 
