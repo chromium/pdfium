@@ -59,6 +59,9 @@ const FX_WCHAR* FX_wcsstr(const FX_WCHAR* haystack,
 
 }  // namespace
 
+static_assert(sizeof(CFX_WideString) <= sizeof(FX_WCHAR*),
+              "Strings must not require more space than pointers");
+
 CFX_WideString::CFX_WideString(const FX_WCHAR* pStr, FX_STRSIZE nLen) {
   if (nLen < 0)
     nLen = pStr ? FXSYS_wcslen(pStr) : 0;

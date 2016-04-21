@@ -75,6 +75,9 @@ const FX_CHAR* FX_strstr(const FX_CHAR* haystack,
 
 }  // namespace
 
+static_assert(sizeof(CFX_ByteString) <= sizeof(FX_CHAR*),
+              "Strings must not require more space than pointers");
+
 CFX_ByteString::CFX_ByteString(const FX_CHAR* pStr, FX_STRSIZE nLen) {
   if (nLen < 0)
     nLen = pStr ? FXSYS_strlen(pStr) : 0;
