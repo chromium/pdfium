@@ -731,39 +731,6 @@ int CPDFSDK_BAAnnot::GetBorderStyle() const {
   return BBS_SOLID;
 }
 
-void CPDFSDK_BAAnnot::SetBorderDash(const CFX_IntArray& array) {
-  CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS");
-  if (!pBSDict) {
-    pBSDict = new CPDF_Dictionary;
-    m_pAnnot->GetAnnotDict()->SetAt("BS", pBSDict);
-  }
-
-  CPDF_Array* pArray = new CPDF_Array;
-  for (size_t i = 0, sz = array.GetSize(); i < sz; i++)
-    pArray->AddInteger(array[i]);
-
-  pBSDict->SetAt("D", pArray);
-}
-
-void CPDFSDK_BAAnnot::GetBorderDash(CFX_IntArray& array) const {
-  CPDF_Array* pDash = NULL;
-
-  CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayBy("Border");
-  if (pBorder) {
-    pDash = pBorder->GetArrayAt(3);
-  } else {
-    CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS");
-    if (pBSDict) {
-      pDash = pBSDict->GetArrayBy("D");
-    }
-  }
-
-  if (pDash) {
-    for (size_t i = 0, sz = pDash->GetCount(); i < sz; i++)
-      array.Add(pDash->GetIntegerAt(i));
-  }
-}
-
 void CPDFSDK_BAAnnot::SetColor(FX_COLORREF color) {
   CPDF_Array* pArray = new CPDF_Array;
   pArray->AddNumber((FX_FLOAT)FXSYS_GetRValue(color) / 255.0f);

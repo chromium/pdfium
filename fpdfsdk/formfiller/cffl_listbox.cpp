@@ -111,40 +111,25 @@ FX_BOOL CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
-  ASSERT(m_pWidget);
+  CPWL_ListBox* pListBox =
+      static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, FALSE));
+  if (!pListBox)
+    return;
 
-  if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE)) {
-    CFX_IntArray aOldSelect, aNewSelect;
-
-    {
-      for (int i = 0, sz = m_pWidget->CountOptions(); i < sz; i++) {
-        if (m_pWidget->IsOptionSelected(i)) {
-          aOldSelect.Add(i);
-        }
-      }
+  int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
+  m_pWidget->ClearSelection(FALSE);
+  if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
+    for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
+      if (pListBox->IsItemSelected(i))
+        m_pWidget->SetOptionSelection(i, TRUE, FALSE);
     }
-
-    int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
-
-    m_pWidget->ClearSelection(FALSE);
-
-    if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
-      for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
-        if (pListBox->IsItemSelected(i)) {
-          m_pWidget->SetOptionSelection(i, TRUE, FALSE);
-          aNewSelect.Add(i);
-        }
-      }
-    } else {
-      m_pWidget->SetOptionSelection(pListBox->GetCurSel(), TRUE, FALSE);
-      aNewSelect.Add(pListBox->GetCurSel());
-    }
-
-    m_pWidget->SetTopVisibleIndex(nNewTopIndex);
-    m_pWidget->ResetFieldAppearance(TRUE);
-    m_pWidget->UpdateField();
-    SetChangeMark();
+  } else {
+    m_pWidget->SetOptionSelection(pListBox->GetCurSel(), TRUE, FALSE);
   }
+  m_pWidget->SetTopVisibleIndex(nNewTopIndex);
+  m_pWidget->ResetFieldAppearance(TRUE);
+  m_pWidget->UpdateField();
+  SetChangeMark();
 }
 
 void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,

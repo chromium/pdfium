@@ -25,8 +25,6 @@ class CFX_Matrix;
 class CPDF_RenderOptions;
 class CFX_RenderDevice;
 
-#define CFX_IntArray CFX_ArrayTemplate<int>
-
 class CPDFSDK_DateTime {
  public:
   CPDFSDK_DateTime();
@@ -169,9 +167,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   void SetBorderStyle(int nStyle);
   int GetBorderStyle() const;
-
-  void SetBorderDash(const CFX_IntArray& array);
-  void GetBorderDash(CFX_IntArray& array) const;
 
   // The background of the annotation's icon when closed
   // The title bar of the annotation's pop-up window
