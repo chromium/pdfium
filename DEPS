@@ -11,7 +11,7 @@ vars = {
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': 'c291cde264469b20ca969ce8832088acb21e0c48',
-  'pdfium_tests_revision': '7ef8719fac859e1d23d667d4c3038ae8b38e4d36',
+  'pdfium_tests_revision': '7e5050a49256a7350df9b8d7ad86e911eb83c021',
   'skia_revision': '0a291c7b7eea1807bd58bdaa60c258fd0ebeb257',
   'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
   'v8_revision': '47bcec782b752ba411bd8bba6e390d1cc1c3226e',

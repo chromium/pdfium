@@ -889,21 +889,31 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
                         pColorSpace, alpha);
       break;
     case kFreeFormGouraudTriangleMeshShading: {
-      DrawFreeGouraudShading(pBitmap, &FinalMatrix,
-                             ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
-                             pColorSpace, alpha);
+      // The shading object can be a stream or a dictionary. We do not handle
+      // the case of dictionary at the moment.
+      if (CPDF_Stream* pStream = ToStream(pPattern->m_pShadingObj)) {
+        DrawFreeGouraudShading(pBitmap, &FinalMatrix, pStream, pFuncs, nFuncs,
+                               pColorSpace, alpha);
+      }
     } break;
     case kLatticeFormGouraudTriangleMeshShading: {
-      DrawLatticeGouraudShading(pBitmap, &FinalMatrix,
-                                ToStream(pPattern->m_pShadingObj), pFuncs,
-                                nFuncs, pColorSpace, alpha);
+      // The shading object can be a stream or a dictionary. We do not handle
+      // the case of dictionary at the moment.
+      if (CPDF_Stream* pStream = ToStream(pPattern->m_pShadingObj)) {
+        DrawLatticeGouraudShading(pBitmap, &FinalMatrix, pStream, pFuncs,
+                                  nFuncs, pColorSpace, alpha);
+      }
     } break;
     case kCoonsPatchMeshShading:
     case kTensorProductPatchMeshShading: {
-      DrawCoonPatchMeshes(
-          pPattern->m_ShadingType == kTensorProductPatchMeshShading, pBitmap,
-          &FinalMatrix, ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
-          pColorSpace, fill_mode, alpha);
+      // The shading object can be a stream or a dictionary. We do not handle
+      // the case of dictionary at the moment.
+      if (CPDF_Stream* pStream = ToStream(pPattern->m_pShadingObj)) {
+        DrawCoonPatchMeshes(
+            pPattern->m_ShadingType == kTensorProductPatchMeshShading, pBitmap,
+            &FinalMatrix, pStream, pFuncs, nFuncs, pColorSpace, fill_mode,
+            alpha);
+      }
     } break;
   }
   if (bAlphaMode) {
