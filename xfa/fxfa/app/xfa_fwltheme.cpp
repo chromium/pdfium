@@ -77,7 +77,7 @@ CXFA_FWLTheme::~CXFA_FWLTheme() {
   delete m_pBarcodeTP;
 }
 FWL_ERR CXFA_FWLTheme::Initialize() {
-  m_pTextOut = IFDE_TextOut::Create();
+  m_pTextOut = new CFDE_TextOut;
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
        ++i) {
     m_pCalendarFont = IFX_Font::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,

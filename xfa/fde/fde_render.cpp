@@ -6,96 +6,12 @@
 
 #include "xfa/fde/fde_render.h"
 
+#include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
 #define FDE_PATHRENDER_Stroke 1
 #define FDE_PATHRENDER_Fill 2
-
-namespace {
-
-class CFDE_RenderContext : public IFDE_RenderContext, public CFX_Target {
- public:
-  CFDE_RenderContext();
-  virtual ~CFDE_RenderContext();
-  virtual void Release() { delete this; }
-  virtual FX_BOOL StartRender(IFDE_RenderDevice* pRenderDevice,
-                              IFDE_CanvasSet* pCanvasSet,
-                              const CFX_Matrix& tmDoc2Device);
-  virtual FDE_RENDERSTATUS GetStatus() const { return m_eStatus; }
-  virtual FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
-  virtual void StopRender();
-  void RenderText(IFDE_TextSet* pTextSet, FDE_HVISUALOBJ hText);
-  FX_BOOL ApplyClip(IFDE_VisualSet* pVisualSet,
-                    FDE_HVISUALOBJ hObj,
-                    FDE_HDEVICESTATE& hState);
-  void RestoreClip(FDE_HDEVICESTATE hState);
-
- protected:
-  FDE_RENDERSTATUS m_eStatus;
-  IFDE_RenderDevice* m_pRenderDevice;
-  CFDE_Brush* m_pBrush;
-  CFX_Matrix m_Transform;
-  FXTEXT_CHARPOS* m_pCharPos;
-  int32_t m_iCharPosCount;
-  IFDE_VisualSetIterator* m_pIterator;
-};
-
-}  // namespace
-
-void FDE_GetPageMatrix(CFX_Matrix& pageMatrix,
-                       const CFX_RectF& docPageRect,
-                       const CFX_Rect& devicePageRect,
-                       int32_t iRotate,
-                       uint32_t dwCoordinatesType) {
-  FXSYS_assert(iRotate >= 0 && iRotate <= 3);
-  FX_BOOL bFlipX = (dwCoordinatesType & 0x01) != 0;
-  FX_BOOL bFlipY = (dwCoordinatesType & 0x02) != 0;
-  CFX_Matrix m;
-  m.Set((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
-  if (iRotate == 0 || iRotate == 2) {
-    m.a *= (FX_FLOAT)devicePageRect.width / docPageRect.width;
-    m.d *= (FX_FLOAT)devicePageRect.height / docPageRect.height;
-  } else {
-    m.a *= (FX_FLOAT)devicePageRect.height / docPageRect.width;
-    m.d *= (FX_FLOAT)devicePageRect.width / docPageRect.height;
-  }
-  m.Rotate(iRotate * 1.57079632675f);
-  switch (iRotate) {
-    case 0:
-      m.e = bFlipX ? (FX_FLOAT)devicePageRect.right()
-                   : (FX_FLOAT)devicePageRect.left;
-      m.f = bFlipY ? (FX_FLOAT)devicePageRect.bottom()
-                   : (FX_FLOAT)devicePageRect.top;
-      break;
-    case 1:
-      m.e = bFlipY ? (FX_FLOAT)devicePageRect.left
-                   : (FX_FLOAT)devicePageRect.right();
-      m.f = bFlipX ? (FX_FLOAT)devicePageRect.bottom()
-                   : (FX_FLOAT)devicePageRect.top;
-      break;
-    case 2:
-      m.e = bFlipX ? (FX_FLOAT)devicePageRect.left
-                   : (FX_FLOAT)devicePageRect.right();
-      m.f = bFlipY ? (FX_FLOAT)devicePageRect.top
-                   : (FX_FLOAT)devicePageRect.bottom();
-      break;
-    case 3:
-      m.e = bFlipY ? (FX_FLOAT)devicePageRect.right()
-                   : (FX_FLOAT)devicePageRect.left;
-      m.f = bFlipX ? (FX_FLOAT)devicePageRect.top
-                   : (FX_FLOAT)devicePageRect.bottom();
-      break;
-    default:
-      break;
-  }
-  pageMatrix = m;
-}
-
-IFDE_RenderContext* IFDE_RenderContext::Create() {
-  return new CFDE_RenderContext;
-}
 
 CFDE_RenderContext::CFDE_RenderContext()
     : m_eStatus(FDE_RENDERSTATUS_Reset),
@@ -112,7 +28,7 @@ CFDE_RenderContext::~CFDE_RenderContext() {
   StopRender();
 }
 
-FX_BOOL CFDE_RenderContext::StartRender(IFDE_RenderDevice* pRenderDevice,
+FX_BOOL CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
                                         IFDE_CanvasSet* pCanvasSet,
                                         const CFX_Matrix& tmDoc2Device) {
   if (m_pRenderDevice)
@@ -125,10 +41,9 @@ FX_BOOL CFDE_RenderContext::StartRender(IFDE_RenderDevice* pRenderDevice,
   m_eStatus = FDE_RENDERSTATUS_Paused;
   m_pRenderDevice = pRenderDevice;
   m_Transform = tmDoc2Device;
-  if (!m_pIterator) {
-    m_pIterator = IFDE_VisualSetIterator::Create();
-    FXSYS_assert(m_pIterator);
-  }
+  if (!m_pIterator)
+    m_pIterator = new CFDE_VisualSetIterator;
+
   return m_pIterator->AttachCanvas(pCanvasSet) && m_pIterator->FilterObjects();
 }
 

@@ -18,6 +18,58 @@
 #include "xfa/fxfa/include/xfa_ffdocview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 
+namespace {
+
+void GetPageMatrix(CFX_Matrix& pageMatrix,
+                   const CFX_RectF& docPageRect,
+                   const CFX_Rect& devicePageRect,
+                   int32_t iRotate,
+                   uint32_t dwCoordinatesType) {
+  FXSYS_assert(iRotate >= 0 && iRotate <= 3);
+  FX_BOOL bFlipX = (dwCoordinatesType & 0x01) != 0;
+  FX_BOOL bFlipY = (dwCoordinatesType & 0x02) != 0;
+  CFX_Matrix m;
+  m.Set((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
+  if (iRotate == 0 || iRotate == 2) {
+    m.a *= (FX_FLOAT)devicePageRect.width / docPageRect.width;
+    m.d *= (FX_FLOAT)devicePageRect.height / docPageRect.height;
+  } else {
+    m.a *= (FX_FLOAT)devicePageRect.height / docPageRect.width;
+    m.d *= (FX_FLOAT)devicePageRect.width / docPageRect.height;
+  }
+  m.Rotate(iRotate * 1.57079632675f);
+  switch (iRotate) {
+    case 0:
+      m.e = bFlipX ? (FX_FLOAT)devicePageRect.right()
+                   : (FX_FLOAT)devicePageRect.left;
+      m.f = bFlipY ? (FX_FLOAT)devicePageRect.bottom()
+                   : (FX_FLOAT)devicePageRect.top;
+      break;
+    case 1:
+      m.e = bFlipY ? (FX_FLOAT)devicePageRect.left
+                   : (FX_FLOAT)devicePageRect.right();
+      m.f = bFlipX ? (FX_FLOAT)devicePageRect.bottom()
+                   : (FX_FLOAT)devicePageRect.top;
+      break;
+    case 2:
+      m.e = bFlipX ? (FX_FLOAT)devicePageRect.left
+                   : (FX_FLOAT)devicePageRect.right();
+      m.f = bFlipY ? (FX_FLOAT)devicePageRect.top
+                   : (FX_FLOAT)devicePageRect.bottom();
+      break;
+    case 3:
+      m.e = bFlipY ? (FX_FLOAT)devicePageRect.right()
+                   : (FX_FLOAT)devicePageRect.left;
+      m.f = bFlipX ? (FX_FLOAT)devicePageRect.top
+                   : (FX_FLOAT)devicePageRect.bottom();
+      break;
+    default:
+      break;
+  }
+  pageMatrix = m;
+}
+
+}  // namespace
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
     : CXFA_ContainerLayoutItem(pPageArea), m_pDocView(pDocView) {}
 
@@ -43,7 +95,7 @@ void CXFA_FFPageView::GetDisplayMatrix(CFX_Matrix& mt,
   GetPageSize(sz);
   CFX_RectF fdePage;
   fdePage.Set(0, 0, sz.x, sz.y);
-  FDE_GetPageMatrix(mt, fdePage, rtDisp, iRotate, 0);
+  GetPageMatrix(mt, fdePage, rtDisp, iRotate, 0);
 }
 
 IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(

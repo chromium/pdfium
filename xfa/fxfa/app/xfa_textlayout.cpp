@@ -9,7 +9,9 @@
 #include <algorithm>
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fde/cfde_path.h"
 #include "xfa/fde/css/fde_csscache.h"
+#include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
@@ -1216,10 +1218,10 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
                                     const CFX_Matrix& tmDoc2Device,
                                     const CFX_RectF& rtClip,
                                     int32_t iBlock) {
-  IFDE_RenderDevice* pDevice = IFDE_RenderDevice::Create(pFxDevice);
-  if (pDevice == NULL) {
+  if (!pFxDevice)
     return FALSE;
-  }
+
+  CFDE_RenderDevice* pDevice = new CFDE_RenderDevice(pFxDevice, FALSE);
   FDE_HDEVICESTATE state = pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
   CFDE_Brush* pSolidBrush = new CFDE_Brush;
@@ -1838,7 +1840,7 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
   }
   m_iLines++;
 }
-void CXFA_TextLayout::RenderString(IFDE_RenderDevice* pDevice,
+void CXFA_TextLayout::RenderString(CFDE_RenderDevice* pDevice,
                                    CFDE_Brush* pBrush,
                                    CXFA_PieceLine* pPieceLine,
                                    int32_t iPiece,
@@ -1853,7 +1855,7 @@ void CXFA_TextLayout::RenderString(IFDE_RenderDevice* pDevice,
   }
   pPieceLine->m_charCounts.Add(iCount);
 }
-void CXFA_TextLayout::RenderPath(IFDE_RenderDevice* pDevice,
+void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
                                  CFDE_Pen* pPen,
                                  CXFA_PieceLine* pPieceLine,
                                  int32_t iPiece,
@@ -1866,7 +1868,7 @@ void CXFA_TextLayout::RenderPath(IFDE_RenderDevice* pDevice,
     return;
   }
   pPen->SetColor(pPiece->dwColor);
-  IFDE_Path* pPath = IFDE_Path::Create();
+  CFDE_Path* pPath = new CFDE_Path;
   int32_t iChars = GetDisplayPos(pPiece, pCharPos);
   if (iChars > 0) {
     CFX_PointF pt1, pt2;

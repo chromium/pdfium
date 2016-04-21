@@ -78,7 +78,7 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
   CFWL_PushButtonTP* m_pPushButtonTP;
   CFWL_CaretTP* m_pCaretTP;
   CFWL_BarcodeTP* m_pBarcodeTP;
-  IFDE_TextOut* m_pTextOut;
+  CFDE_TextOut* m_pTextOut;
   FX_FLOAT m_fCapacity;
   uint32_t m_dwCapacity;
   IFX_Font* m_pCalendarFont;

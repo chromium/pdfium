@@ -20,13 +20,13 @@ enum class CFWL_WidgetCapacity {
   None = 0,
 
   Today,
+  Sun,
   Mon,
   Tue,
   Wed,
   Thu,
   Fri,
   Sat,
-  Sun,
 
   January,
   February,
@@ -92,7 +92,7 @@ enum class CFWL_WidgetCapacity {
 };
 
 class IFWL_Widget;
-class IFDE_TextOut;
+class CFDE_TextOut;
 class IFX_Font;
 class IFX_FontMgr;
 class CFWL_ArrowData;
@@ -217,7 +217,7 @@ class CFWL_WidgetTP {
                     FWLTHEME_STATE eState,
                     CFX_Matrix* pMatrix = NULL);
   uint32_t m_dwRefCount;
-  IFDE_TextOut* m_pTextOut;
+  CFDE_TextOut* m_pTextOut;
   IFX_Font* m_pFDEFont;
   FX_FLOAT m_fValue;
   uint32_t m_dwValue;

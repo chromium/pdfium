@@ -8,25 +8,26 @@
 
 #include "xfa/fgas/crt/fgas_utils.h"
 
-IFDE_VisualSetIterator* IFDE_VisualSetIterator::Create() {
-  return new CFDE_VisualSetIterator;
-}
 CFDE_VisualSetIterator::CFDE_VisualSetIterator() : m_dwFilter(0) {}
+
 CFDE_VisualSetIterator::~CFDE_VisualSetIterator() {
   m_CanvasStack.RemoveAll();
 }
+
 FX_BOOL CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
-  FXSYS_assert(pCanvas != NULL);
+  FXSYS_assert(pCanvas);
+
   m_CanvasStack.RemoveAll();
   FDE_CANVASITEM canvas;
-  canvas.hCanvas = NULL;
+  canvas.hCanvas = nullptr;
   canvas.pCanvas = pCanvas;
-  canvas.hPos = pCanvas->GetFirstPosition(NULL);
-  if (canvas.hPos == NULL) {
+  canvas.hPos = pCanvas->GetFirstPosition(nullptr);
+  if (!canvas.hPos)
     return FALSE;
-  }
+
   return m_CanvasStack.Push(canvas) == 0;
 }
+
 FX_BOOL CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
   if (m_CanvasStack.GetSize() == 0)
     return FALSE;
@@ -37,30 +38,35 @@ FX_BOOL CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
   m_dwFilter = dwObjects;
 
   FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
-  FXSYS_assert(pCanvas != NULL && pCanvas->pCanvas != NULL);
-  pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition(NULL);
-  return pCanvas->hPos != NULL;
+  FXSYS_assert(pCanvas && pCanvas->pCanvas);
+
+  pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition(nullptr);
+  return !!pCanvas->hPos;
 }
+
 void CFDE_VisualSetIterator::Reset() {
   FilterObjects(m_dwFilter);
 }
+
 FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
                                                FDE_HVISUALOBJ* phCanvasObj,
                                                IFDE_CanvasSet** ppCanvasSet) {
   while (m_CanvasStack.GetSize() > 0) {
     FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
-    FXSYS_assert(pCanvas != NULL && pCanvas->pCanvas != NULL);
-    if (pCanvas->hPos == NULL) {
-      if (m_CanvasStack.GetSize() == 1) {
+    FXSYS_assert(pCanvas && pCanvas->pCanvas);
+
+    if (!pCanvas->hPos) {
+      if (m_CanvasStack.GetSize() == 1)
         break;
-      }
+
       m_CanvasStack.Pop();
       continue;
     }
     do {
       FDE_HVISUALOBJ hObj = pCanvas->pCanvas->GetNext(
           pCanvas->hCanvas, pCanvas->hPos, pVisualSet);
-      FXSYS_assert(hObj != NULL);
+      FXSYS_assert(hObj);
+
       FDE_VISUALOBJTYPE eType = pVisualSet->GetType();
       if (eType == FDE_VISUALOBJ_Canvas) {
         FDE_CANVASITEM canvas;
@@ -72,22 +78,19 @@ FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
       }
       uint32_t dwObj = (uint32_t)eType;
       if ((m_dwFilter & dwObj) != 0) {
-        if (ppCanvasSet) {
+        if (ppCanvasSet)
           *ppCanvasSet = pCanvas->pCanvas;
-        }
-        if (phCanvasObj) {
+        if (phCanvasObj)
           *phCanvasObj = pCanvas->hCanvas;
-        }
         return hObj;
       }
-    } while (pCanvas->hPos != NULL);
+    } while (pCanvas->hPos);
   }
-  if (ppCanvasSet) {
-    *ppCanvasSet = NULL;
-  }
-  if (phCanvasObj) {
-    *phCanvasObj = NULL;
-  }
-  pVisualSet = NULL;
-  return NULL;
+  if (ppCanvasSet)
+    *ppCanvasSet = nullptr;
+  if (phCanvasObj)
+    *phCanvasObj = nullptr;
+
+  pVisualSet = nullptr;
+  return nullptr;
 }

@@ -8,15 +8,12 @@
 #define XFA_FDE_FDE_RENDER_H_
 
 #include "core/fxcrt/include/fx_coordinates.h"
+#include "xfa/fde/fde_gedevice.h"
+#include "xfa/fde/fde_iterator.h"
 #include "xfa/fde/fde_visualset.h"
 
-class IFDE_RenderDevice;
+class CFDE_RenderDevice;
 
-void FDE_GetPageMatrix(CFX_Matrix& pageMatrix,
-                       const CFX_RectF& docPageRect,
-                       const CFX_Rect& devicePageRect,
-                       int32_t iRotate,
-                       uint32_t dwCoordinatesType = 0);
 enum FDE_RENDERSTATUS {
   FDE_RENDERSTATUS_Reset = 0,
   FDE_RENDERSTATUS_Paused,
@@ -24,17 +21,32 @@ enum FDE_RENDERSTATUS {
   FDE_RENDERSTATUS_Failed,
 };
 
-class IFDE_RenderContext {
+class CFDE_RenderContext : public CFX_Target {
  public:
-  static IFDE_RenderContext* Create();
-  virtual ~IFDE_RenderContext() {}
-  virtual void Release() = 0;
-  virtual FX_BOOL StartRender(IFDE_RenderDevice* pRenderDevice,
-                              IFDE_CanvasSet* pCanvasSet,
-                              const CFX_Matrix& tmDoc2Device) = 0;
-  virtual FDE_RENDERSTATUS GetStatus() const = 0;
-  virtual FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = NULL) = 0;
-  virtual void StopRender() = 0;
+  CFDE_RenderContext();
+  ~CFDE_RenderContext();
+
+  void Release() { delete this; }
+  FX_BOOL StartRender(CFDE_RenderDevice* pRenderDevice,
+                      IFDE_CanvasSet* pCanvasSet,
+                      const CFX_Matrix& tmDoc2Device);
+  FDE_RENDERSTATUS GetStatus() const { return m_eStatus; }
+  FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
+  void StopRender();
+  void RenderText(IFDE_TextSet* pTextSet, FDE_HVISUALOBJ hText);
+  FX_BOOL ApplyClip(IFDE_VisualSet* pVisualSet,
+                    FDE_HVISUALOBJ hObj,
+                    FDE_HDEVICESTATE& hState);
+  void RestoreClip(FDE_HDEVICESTATE hState);
+
+ protected:
+  FDE_RENDERSTATUS m_eStatus;
+  CFDE_RenderDevice* m_pRenderDevice;
+  CFDE_Brush* m_pBrush;
+  CFX_Matrix m_Transform;
+  FXTEXT_CHARPOS* m_pCharPos;
+  int32_t m_iCharPosCount;
+  CFDE_VisualSetIterator* m_pIterator;
 };
 
 #endif  // XFA_FDE_FDE_RENDER_H_

@@ -206,7 +206,7 @@ FX_ERR CFWL_WidgetTP::InitTTO() {
   }
   m_pFDEFont =
       CFWL_FontManager::GetInstance()->FindFont(FX_WSTRC(L"Helvetica"), 0, 0);
-  m_pTextOut = IFDE_TextOut::Create();
+  m_pTextOut = new CFDE_TextOut;
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);

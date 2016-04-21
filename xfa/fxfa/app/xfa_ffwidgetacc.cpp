@@ -142,7 +142,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   }
   CXFA_TextLayout* m_pCapTextLayout;
   CXFA_TextProvider* m_pCapTextProvider;
-  IFDE_TextOut* m_pTextOut;
+  CFDE_TextOut* m_pTextOut;
   CFX_FloatArray* m_pFieldSplitArray;
 };
 class CXFA_TextEditData : public CXFA_FieldLayoutData {
@@ -882,9 +882,12 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
   if (wsLast == wcEnter) {
     wsText = wsText + wcEnter;
   }
-  if (!((CXFA_FieldLayoutData*)m_pLayoutData)->m_pTextOut) {
-    ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pTextOut = IFDE_TextOut::Create();
-    IFDE_TextOut* pTextOut = ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pTextOut;
+
+  CXFA_FieldLayoutData* layoutData =
+      static_cast<CXFA_FieldLayoutData*>(m_pLayoutData);
+  if (!layoutData->m_pTextOut) {
+    layoutData->m_pTextOut = new CFDE_TextOut;
+    CFDE_TextOut* pTextOut = layoutData->m_pTextOut;
     pTextOut->SetFont(GetFDEFont());
     pTextOut->SetFontSize(fFontSize);
     pTextOut->SetLineBreakTolerance(fFontSize * 0.2f);
@@ -895,8 +898,8 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
     }
     pTextOut->SetStyles(dwStyles);
   }
-  ((CXFA_FieldLayoutData*)m_pLayoutData)
-      ->m_pTextOut->CalcLogicSize(wsText.c_str(), wsText.GetLength(), size);
+  layoutData->m_pTextOut->CalcLogicSize(wsText.c_str(), wsText.GetLength(),
+                                        size);
 }
 FX_BOOL CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
   if (size.x > 0) {

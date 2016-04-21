@@ -4,35 +4,34 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_FDE_GEOBJECT_H_
-#define XFA_FDE_FDE_GEOBJECT_H_
+#ifndef XFA_FDE_CFDE_PATH_H_
+#define XFA_FDE_CFDE_PATH_H_
 
 #include "core/fxge/include/fx_ge.h"
-#include "xfa/fde/fde_path.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
-class CFDE_Path : public IFDE_Path, public CFX_Target {
+class CFDE_Path : public CFX_Target {
  public:
-  virtual void Release() { delete this; }
+  void Release() { delete this; }
 
-  virtual FX_BOOL StartFigure();
-  virtual FX_BOOL CloseFigure();
+  FX_BOOL StartFigure();
+  FX_BOOL CloseFigure();
 
-  virtual void AddBezier(const CFX_PointsF& points);
-  virtual void AddBeziers(const CFX_PointsF& points);
-  virtual void AddCurve(const CFX_PointsF& points,
-                        FX_BOOL bClosed,
-                        FX_FLOAT fTension = 0.5f);
-  virtual void AddEllipse(const CFX_RectF& rect);
-  virtual void AddLines(const CFX_PointsF& points);
-  virtual void AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
-  virtual void AddPath(const IFDE_Path* pSrc, FX_BOOL bConnect);
-  virtual void AddPolygon(const CFX_PointsF& points);
-  virtual void AddRectangle(const CFX_RectF& rect);
-  virtual void GetBBox(CFX_RectF& bbox) const;
-  virtual void GetBBox(CFX_RectF& bbox,
-                       FX_FLOAT fLineWidth,
-                       FX_FLOAT fMiterLimit) const;
+  void AddBezier(const CFX_PointsF& points);
+  void AddBeziers(const CFX_PointsF& points);
+  void AddCurve(const CFX_PointsF& points,
+                FX_BOOL bClosed,
+                FX_FLOAT fTension = 0.5f);
+  void AddEllipse(const CFX_RectF& rect);
+  void AddLines(const CFX_PointsF& points);
+  void AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
+  void AddPath(const CFDE_Path* pSrc, FX_BOOL bConnect);
+  void AddPolygon(const CFX_PointsF& points);
+  void AddRectangle(const CFX_RectF& rect);
+  void GetBBox(CFX_RectF& bbox) const;
+  void GetBBox(CFX_RectF& bbox,
+               FX_FLOAT fLineWidth,
+               FX_FLOAT fMiterLimit) const;
   FX_PATHPOINT* AddPoints(int32_t iCount);
   FX_PATHPOINT* GetLastPoint(int32_t iCount = 1) const;
   FX_BOOL FigureClosed() const;
@@ -54,4 +53,4 @@ class CFDE_Path : public IFDE_Path, public CFX_Target {
   CFX_PathData m_Path;
 };
 
-#endif  // XFA_FDE_FDE_GEOBJECT_H_
+#endif  // XFA_FDE_CFDE_PATH_H_

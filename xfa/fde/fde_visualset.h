@@ -11,8 +11,8 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
+#include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fde/fde_path.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/font/fgas_font.h"
 
@@ -55,19 +55,6 @@ class IFDE_TextSet : public IFDE_VisualSet {
                                 CFX_WideString* pWSForms = NULL) = 0;
   virtual int32_t GetCharRects(FDE_HVISUALOBJ hText,
                                CFX_RectFArray& rtArray) = 0;
-};
-
-class IFDE_VisualSetIterator {
- public:
-  static IFDE_VisualSetIterator* Create();
-  virtual ~IFDE_VisualSetIterator() {}
-  virtual void Release() = 0;
-  virtual FX_BOOL AttachCanvas(IFDE_CanvasSet* pCanvas) = 0;
-  virtual FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF) = 0;
-  virtual void Reset() = 0;
-  virtual FDE_HVISUALOBJ GetNext(IFDE_VisualSet*& pVisualSet,
-                                 FDE_HVISUALOBJ* phCanvasObj = NULL,
-                                 IFDE_CanvasSet** ppCanvasSet = NULL) = 0;
 };
 
 #endif  // XFA_FDE_FDE_VISUALSET_H_

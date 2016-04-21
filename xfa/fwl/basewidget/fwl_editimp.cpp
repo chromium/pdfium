@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <vector>
 
+#include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_render.h"
-#include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fee/ifde_txtedtpage.h"
 #include "xfa/fwl/basewidget/fwl_caretimp.h"
 #include "xfa/fwl/basewidget/fwl_comboboximp.h"
@@ -1039,12 +1039,8 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
   CFX_RenderDevice* pRenderDev = pGraphics->GetRenderDevice();
   if (!pRenderDev)
     return;
-  IFDE_RenderDevice* pRenderDevice = IFDE_RenderDevice::Create(pRenderDev);
-  if (!pRenderDevice)
-    return;
-  IFDE_RenderContext* pRenderContext = IFDE_RenderContext::Create();
-  if (!pRenderContext)
-    return;
+  CFDE_RenderDevice* pRenderDevice = new CFDE_RenderDevice(pRenderDev, FALSE);
+  CFDE_RenderContext* pRenderContext = new CFDE_RenderContext;
   pRenderDevice->SetClipRect(rtClip);
   pRenderContext->StartRender(pRenderDevice, pPage, mt);
   pRenderContext->DoRender(NULL);

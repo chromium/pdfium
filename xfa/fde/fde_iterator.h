@@ -17,20 +17,20 @@ struct FDE_CANVASITEM {
   FX_POSITION hPos;
 };
 
-class CFDE_VisualSetIterator : public IFDE_VisualSetIterator,
-                               public CFX_Target {
+class CFDE_VisualSetIterator : public CFX_Target {
  public:
   CFDE_VisualSetIterator();
   ~CFDE_VisualSetIterator();
-  virtual void Release() { delete this; }
 
-  virtual FX_BOOL AttachCanvas(IFDE_CanvasSet* pCanvas);
-  virtual FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);
+  void Release() { delete this; }
 
-  virtual void Reset();
-  virtual FDE_HVISUALOBJ GetNext(IFDE_VisualSet*& pVisualSet,
-                                 FDE_HVISUALOBJ* phCanvasObj = NULL,
-                                 IFDE_CanvasSet** ppCanvasSet = NULL);
+  FX_BOOL AttachCanvas(IFDE_CanvasSet* pCanvas);
+  FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);
+
+  void Reset();
+  FDE_HVISUALOBJ GetNext(IFDE_VisualSet*& pVisualSet,
+                         FDE_HVISUALOBJ* phCanvasObj = NULL,
+                         IFDE_CanvasSet** ppCanvasSet = NULL);
 
  protected:
   uint32_t m_dwFilter;

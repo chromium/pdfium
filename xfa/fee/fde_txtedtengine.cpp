@@ -1509,7 +1509,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveEnd() {
 }
 
 FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
-  IFDE_TextOut* pTextOut = IFDE_TextOut::Create();
+  CFDE_TextOut* pTextOut = new CFDE_TextOut;
   pTextOut->SetLineSpace(m_Param.fLineSpace);
   pTextOut->SetFont(m_Param.pFont);
   pTextOut->SetFontSize(m_Param.fFontSize);
