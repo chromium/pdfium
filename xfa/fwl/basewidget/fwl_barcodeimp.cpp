@@ -217,11 +217,12 @@ FX_BOOL CFWL_BarcodeImp::IsProtectedType() {
   }
   return FALSE;
 }
+
 CFWL_BarcodeImpDelegate::CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner)
     : CFWL_EditImpDelegate(pOwner) {}
+
 FWL_ERR CFWL_BarcodeImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  uint32_t dwFlag = pEvent->GetClassID();
-  if (dwFlag == FWL_EVTHASH_EDT_TextChanged) {
+  if (pEvent->GetClassID() == CFWL_EventType::TextChanged) {
     CFWL_BarcodeImp* pOwner = static_cast<CFWL_BarcodeImp*>(m_pOwner);
     pOwner->ReleaseBarcodeEngine();
     pOwner->m_dwStatus = XFA_BCS_NeedUpdate;

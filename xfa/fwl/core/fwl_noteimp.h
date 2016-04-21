@@ -52,9 +52,9 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   ~CFWL_NoteDriver() override;
 
   // IFWL_NoteDriver:
-  FX_BOOL SendNote(CFWL_Note* pNote) override;
+  FX_BOOL SendEvent(CFWL_Event* pNote) override;
   FWL_ERR RegisterEventTarget(IFWL_Widget* pListener,
-                              IFWL_Widget* pEventSource = NULL,
+                              IFWL_Widget* pEventSource = nullptr,
                               uint32_t dwFilter = FWL_EVENT_ALL_MASK) override;
   FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) override;
   void ClearEventTargets(FX_BOOL bRemoveAll) override;

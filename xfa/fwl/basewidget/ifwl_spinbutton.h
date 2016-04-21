@@ -14,10 +14,8 @@
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
 #define FWL_WGTHITTEST_SPB_UpButton (FWL_WGTHITTEST_MAX + 1)
 #define FWL_WGTHITTEST_SPB_DownButton (FWL_WGTHITTEST_MAX + 2)
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_SPB_Click 2927651187
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtSpbClick, FWL_EVTHASH_SPB_Click)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click)
 FX_BOOL m_bUp;
 END_FWL_EVENT_DEF
 

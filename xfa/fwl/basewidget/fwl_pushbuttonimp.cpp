@@ -398,27 +398,31 @@ void CFWL_PushButtonImp::UpdateTextOutStyles() {
     m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
   }
 }
+
 CFWL_PushButtonImpDelegate::CFWL_PushButtonImpDelegate(
     CFWL_PushButtonImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  if (!m_pOwner->IsEnabled()) {
+  if (!m_pOwner->IsEnabled())
     return 1;
-  }
+
   int32_t iRet = 1;
-  uint32_t dwMsgCode = pMessage->GetClassID();
+  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
-    case FWL_MSGHASH_SetFocus:
-    case FWL_MSGHASH_KillFocus: {
-      OnFocusChanged(pMessage, dwMsgCode == FWL_MSGHASH_SetFocus);
+    case CFWL_MessageType::SetFocus: {
+      OnFocusChanged(pMessage, TRUE);
       break;
     }
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::KillFocus: {
+      OnFocusChanged(pMessage, FALSE);
+      break;
+    }
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      uint32_t dwCmd = pMsg->m_dwCmd;
-      switch (dwCmd) {
+      switch (pMsg->m_dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);
           break;
@@ -435,15 +439,15 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
           OnMouseLeave(pMsg);
           break;
         }
-        default: {}
+        default:
+          break;
       }
       break;
     }
-    case FWL_MSGHASH_Key: {
+    case CFWL_MessageType::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
+      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
         OnKeyDown(pKey);
-      }
       break;
     }
     default: {
@@ -454,6 +458,7 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
   return iRet;
 }
+
 FWL_ERR CFWL_PushButtonImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   return FWL_ERR_Succeeded;
 }

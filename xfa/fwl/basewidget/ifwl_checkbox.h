@@ -45,11 +45,8 @@
 #define FWL_STATE_CKB_Neutral (2 << (FWL_WGTSTATE_MAX + 2))
 #define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
 
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_CKB_CheckStateChanged 2503252963
-
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCkbCheckStateChanged,
-                    FWL_EVTHASH_CKB_CheckStateChanged)
+                    CFWL_EventType::CheckStateChanged)
 END_FWL_EVENT_DEF
 
 class IFWL_CheckBoxDP : public IFWL_DataProvider {

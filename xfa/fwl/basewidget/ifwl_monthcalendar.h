@@ -22,16 +22,13 @@
 #define FWL_ITEMSTATE_MCD_Flag (1L << 0)
 #define FWL_ITEMSTATE_MCD_Selected (1L << 1)
 #define FWL_ITEMSTATE_MCD_Focused (1L << 2)
-#define FWL_NOTEHASH_MCD_DATASELECTED 1085596932
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_MCD_DateChanged 54212227
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_McdDateSelected, FWL_NOTEHASH_MCD_DATASELECTED)
+BEGIN_FWL_EVENT_DEF(CFWL_Event_McdDateSelected, CFWL_EventType::DataSelected)
 int32_t m_iStartDay;
 int32_t m_iEndDay;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EventMcdDateChanged, FWL_EVTHASH_MCD_DateChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_EventMcdDateChanged, CFWL_EventType::DateChanged)
 int32_t m_iOldYear;
 int32_t m_iOldMonth;
 int32_t m_iStartDay;

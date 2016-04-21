@@ -10,23 +10,42 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "xfa/fwl/core/cfwl_note.h"
 #include "xfa/fwl/core/fwl_error.h"
 
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_Mouse 1765258002
-#define FWL_EVTHASH_MouseWheel 3907114407
-#define FWL_EVTHASH_Key 2408354450
-#define FWL_EVTHASH_SetFocus 3909721269
-#define FWL_EVTHASH_KillFocus 1779363253
-#define FWL_EVTHASH_Draw 2430713303
-#define FWL_EVTHASH_Click 4026328783
-#define FWL_EVTHASH_Scroll 2965158968
-#define FWL_EVTHASH_Close 4036693599
-#define FWL_EVTHASH_ContextMenu 2717307715
-#define FWL_EVTHASH_MenuCommand 497763741
-#define FWL_EVTHASH_SizeChanged 3083958510
-#define FWL_EVTHASH_Idle 839546759
+enum class CFWL_EventType {
+  None = 0,
+
+  CheckStateChanged,
+  CheckWord,
+  Click,
+  Close,
+  CloseUp,
+  ContextMenu,
+  DataSelected,
+  DateChanged,
+  Draw,
+  DrawItem,
+  DropDown,
+  EditChanged,
+  GetSuggestedWords,
+  HoverChanged,
+  Idle,
+  Key,
+  KillFocus,
+  MenuCommand,
+  Mouse,
+  MouseWheel,
+  PostDropDown,
+  PreDropDown,
+  PreSelfAdaption,
+  Scroll,
+  SelectChanged,
+  SetFocus,
+  SizeChanged,
+  TextChanged,
+  TextFull,
+  Validate
+};
 
 typedef enum {
   FWL_EVENT_MOUSE_MASK = 1 << 0,
@@ -44,13 +63,33 @@ typedef enum {
 class CFX_Graphics;
 class IFWL_Widget;
 
-class CFWL_Event : public CFWL_Note {
+class CFWL_Event {
  public:
-  CFWL_Event() : CFWL_Note(TRUE) {}
+  CFWL_Event()
+      : m_pSrcTarget(nullptr), m_pDstTarget(nullptr), m_dwRefCount(1) {}
   virtual ~CFWL_Event() {}
+
+  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {
+    return FWL_ERR_Succeeded;
+  }
+  virtual CFWL_EventType GetClassID() const { return CFWL_EventType::None; }
+
+  uint32_t Release() {
+    m_dwRefCount--;
+    uint32_t dwRefCount = m_dwRefCount;
+    if (!m_dwRefCount)
+      delete this;
+    return dwRefCount;
+  }
+
+  IFWL_Widget* m_pSrcTarget;
+  IFWL_Widget* m_pDstTarget;
+
+ private:
+  uint32_t m_dwRefCount;
 };
 
-#define BEGIN_FWL_EVENT_DEF(classname, eventhashcode)             \
+#define BEGIN_FWL_EVENT_DEF(classname, eventType)                 \
   class classname : public CFWL_Event {                           \
    public:                                                        \
     classname() : CFWL_Event() {}                                 \
@@ -58,20 +97,20 @@ class CFWL_Event : public CFWL_Note {
       wsClass = L## #classname;                                   \
       return FWL_ERR_Succeeded;                                   \
     }                                                             \
-    virtual uint32_t GetClassID() const { return eventhashcode; }
+    virtual CFWL_EventType GetClassID() const { return eventType; }
 
 #define END_FWL_EVENT_DEF \
   }                       \
   ;  // NOLINT
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtMouse, FWL_EVTHASH_Mouse)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtMouse, CFWL_EventType::Mouse)
 FX_FLOAT m_fx;
 FX_FLOAT m_fy;
 uint32_t m_dwFlags;
 uint32_t m_dwCmd;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtMouseWheel, FWL_EVTHASH_MouseWheel)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtMouseWheel, CFWL_EventType::MouseWheel)
 FX_FLOAT m_fx;
 FX_FLOAT m_fy;
 FX_FLOAT m_fDeltaX;
@@ -79,55 +118,55 @@ FX_FLOAT m_fDeltaY;
 uint32_t m_dwFlags;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtKey, FWL_EVTHASH_Key)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtKey, CFWL_EventType::Key)
 uint32_t m_dwKeyCode;
 uint32_t m_dwFlags;
 uint32_t m_dwCmd;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtSetFocus, FWL_EVTHASH_SetFocus)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtSetFocus, CFWL_EventType::SetFocus)
 IFWL_Widget* m_pSetFocus;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtKillFocus, FWL_EVTHASH_KillFocus)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtKillFocus, CFWL_EventType::KillFocus)
 IFWL_Widget* m_pKillFocus;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtDraw, FWL_EVTHASH_Draw)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtDraw, CFWL_EventType::Draw)
 CFX_Graphics* m_pGraphics;
 IFWL_Widget* m_pWidget;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtClick, FWL_EVTHASH_Click)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtClick, CFWL_EventType::Click)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtScroll, FWL_EVTHASH_Scroll)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll)
 uint32_t m_iScrollCode;
 FX_FLOAT m_fPos;
 FX_BOOL* m_pRet;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtClose, FWL_EVTHASH_Close)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtClose, CFWL_EventType::Close)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtContextMenu, FWL_EVTHASH_ContextMenu)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtContextMenu, CFWL_EventType::ContextMenu)
 FX_FLOAT m_fPosX;
 FX_FLOAT m_fPosY;
 IFWL_Widget* m_pOwner;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtMenuCommand, FWL_EVTHASH_MenuCommand)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtMenuCommand, CFWL_EventType::MenuCommand)
 int32_t m_iCommand;
 void* m_pData;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtSizeChanged, FWL_EVTHASH_SizeChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtSizeChanged, CFWL_EventType::SizeChanged)
 IFWL_Widget* m_pWidget;
 CFX_RectF m_rtOld;
 CFX_RectF m_rtNew;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtIdle, FWL_EVTHASH_Idle)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtIdle, CFWL_EventType::Idle)
 END_FWL_EVENT_DEF
 
 #endif  // XFA_FWL_CORE_CFWL_EVENT_H_

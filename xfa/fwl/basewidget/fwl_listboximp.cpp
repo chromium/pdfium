@@ -982,26 +982,30 @@ void CFWL_ListBoxImp::ProcessSelChanged() {
   }
   DispatchEvent(&selEvent);
 }
+
 CFWL_ListBoxImpDelegate::CFWL_ListBoxImpDelegate(CFWL_ListBoxImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  if (!m_pOwner->IsEnabled()) {
+  if (!m_pOwner->IsEnabled())
     return 1;
-  }
-  uint32_t dwMsgCode = pMessage->GetClassID();
+
+  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
-    case FWL_MSGHASH_SetFocus:
-    case FWL_MSGHASH_KillFocus: {
-      OnFocusChanged(pMessage, dwMsgCode == FWL_MSGHASH_SetFocus);
+    case CFWL_MessageType::SetFocus: {
+      OnFocusChanged(pMessage, TRUE);
       break;
     }
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::KillFocus: {
+      OnFocusChanged(pMessage, FALSE);
+      break;
+    }
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      uint32_t dwCmd = pMsg->m_dwCmd;
-      switch (dwCmd) {
+      switch (pMsg->m_dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);
           break;
@@ -1010,31 +1014,36 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
           OnLButtonUp(pMsg);
           break;
         }
-        default: {}
+        default:
+          break;
       }
       break;
     }
-    case FWL_MSGHASH_MouseWheel: {
+    case CFWL_MessageType::MouseWheel: {
       OnMouseWheel(static_cast<CFWL_MsgMouseWheel*>(pMessage));
       break;
     }
-    case FWL_MSGHASH_Key: {
+    case CFWL_MessageType::Key: {
       CFWL_MsgKey* pMsg = static_cast<CFWL_MsgKey*>(pMessage);
       if (pMsg->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
         OnKeyDown(pMsg);
       break;
     }
-    default: { iRet = 0; }
+    default: {
+      iRet = 0;
+      break;
+    }
   }
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
   return iRet;
 }
+
 FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return FWL_ERR_Indefinite;
-  if (pEvent->GetClassID() != FWL_EVTHASH_Scroll) {
+  if (pEvent->GetClassID() != CFWL_EventType::Scroll)
     return FWL_ERR_Succeeded;
-  }
+
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
   if ((pSrcTarget == m_pOwner->m_pVertScrollBar.get() &&
        m_pOwner->m_pVertScrollBar) ||
@@ -1046,6 +1055,7 @@ FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   }
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CFWL_ListBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                               const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);

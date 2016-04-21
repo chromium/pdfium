@@ -794,10 +794,10 @@ void CXFA_FFField::TranslateFWLMessage(CFWL_Message* pMessage) {
 int32_t CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
-  uint32_t dwEventID = pEvent->GetClassID();
-  switch (dwEventID) {
-    case FWL_EVTHASH_Mouse: {
+  switch (pEvent->GetClassID()) {
+    case CFWL_EventType::Mouse: {
       CFWL_EvtMouse* event = (CFWL_EvtMouse*)pEvent;
       if (event->m_dwCmd == FWL_MSGMOUSECMD_MouseEnter) {
         CXFA_EventParam eParam;
@@ -822,17 +822,19 @@ FWL_ERR CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
       }
       break;
     }
-    case FWL_EVTHASH_Click: {
+    case CFWL_EventType::Click: {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Click;
       eParam.m_pTarget = m_pDataAcc;
       m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Click, &eParam);
       break;
     }
-    default: {}
+    default:
+      break;
   }
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CXFA_FFField::OnDrawWidget(CFX_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   return FWL_ERR_Succeeded;

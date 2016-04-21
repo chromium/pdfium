@@ -185,14 +185,14 @@ int32_t CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
 }
 FWL_ERR CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  uint32_t dwEventID = pEvent->GetClassID();
-  switch (dwEventID) {
-    case FWL_EVTHASH_LTB_SelChanged: {
+  switch (pEvent->GetClassID()) {
+    case CFWL_EventType::SelectChanged: {
       CFX_Int32Array arrSels;
       OnSelectChanged(m_pNormalWidget->GetWidget(), arrSels);
       break;
     }
-    default: {}
+    default:
+      break;
   }
   return m_pOldDelegate->OnProcessEvent(pEvent);
 }
@@ -498,33 +498,35 @@ void CXFA_FFComboBox::OnPostOpen(IFWL_Widget* pWidget) {
 int32_t CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
   return m_pOldDelegate->OnProcessMessage(pMessage);
 }
+
 FWL_ERR CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  uint32_t dwEventID = pEvent->GetClassID();
-  switch (dwEventID) {
-    case FWL_EVTHASH_CMB_SelChanged: {
+  switch (pEvent->GetClassID()) {
+    case CFWL_EventType::SelectChanged: {
       CFWL_EvtCmbSelChanged* postEvent = (CFWL_EvtCmbSelChanged*)pEvent;
       OnSelectChanged(m_pNormalWidget->GetWidget(), postEvent->iArraySels,
                       postEvent->bLButtonUp);
       break;
     }
-    case FWL_EVTHASH_CMB_EditChanged: {
+    case CFWL_EventType::EditChanged: {
       CFX_WideString wsChanged;
       OnTextChanged(m_pNormalWidget->GetWidget(), wsChanged);
       break;
     }
-    case FWL_EVTHASH_CMB_PreDropDown: {
+    case CFWL_EventType::PreDropDown: {
       OnPreOpen(m_pNormalWidget->GetWidget());
       break;
     }
-    case FWL_EVTHASH_CMB_PostDropDown: {
+    case CFWL_EventType::PostDropDown: {
       OnPostOpen(m_pNormalWidget->GetWidget());
       break;
     }
-    default: {}
+    default:
+      break;
   }
   return m_pOldDelegate->OnProcessEvent(pEvent);
 }
+
 FWL_ERR CXFA_FFComboBox::OnDrawWidget(CFX_Graphics* pGraphics,
                                       const CFX_Matrix* pMatrix) {
   return m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);

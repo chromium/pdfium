@@ -1729,28 +1729,31 @@ void CFWL_EditImp::ProcessInsertError(int32_t iError) {
     default: {}
   }
 }
+
 CFWL_EditImpDelegate::CFWL_EditImpDelegate(CFWL_EditImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  uint32_t dwMsgCode = pMessage->GetClassID();
+
+  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
-    case FWL_MSGHASH_Activate: {
+    case CFWL_MessageType::Activate: {
       DoActivate(static_cast<CFWL_MsgActivate*>(pMessage));
       break;
     }
-    case FWL_MSGHASH_Deactivate: {
+    case CFWL_MessageType::Deactivate: {
       DoDeactivate(static_cast<CFWL_MsgDeactivate*>(pMessage));
       break;
     }
-    case FWL_MSGHASH_SetFocus:
-    case FWL_MSGHASH_KillFocus: {
-      OnFocusChanged(pMessage, dwMsgCode == FWL_MSGHASH_SetFocus);
+    case CFWL_MessageType::SetFocus:
+    case CFWL_MessageType::KillFocus: {
+      OnFocusChanged(pMessage, dwMsgCode == CFWL_MessageType::SetFocus);
       break;
     }
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
@@ -1774,32 +1777,35 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
           DoButtonDown(pMsg);
           break;
         }
-        default: {}
+        default:
+          break;
       }
       break;
     }
-    case FWL_MSGHASH_Key: {
+    case CFWL_MessageType::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       uint32_t dwCmd = pKey->m_dwCmd;
-      if (dwCmd == FWL_MSGKEYCMD_KeyDown) {
+      if (dwCmd == FWL_MSGKEYCMD_KeyDown)
         OnKeyDown(pKey);
-      } else if (dwCmd == FWL_MSGKEYCMD_Char) {
+      else if (dwCmd == FWL_MSGKEYCMD_Char)
         OnChar(pKey);
-      }
       break;
     }
-    default: { iRet = 0; }
+    default: {
+      iRet = 0;
+      break;
+    }
   }
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
   return iRet;
 }
+
 FWL_ERR CFWL_EditImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return FWL_ERR_Indefinite;
-  uint32_t dwHashCode = pEvent->GetClassID();
-  if (dwHashCode != FWL_EVTHASH_Scroll) {
+  if (pEvent->GetClassID() != CFWL_EventType::Scroll)
     return FWL_ERR_Succeeded;
-  }
+
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
   if ((pSrcTarget == m_pOwner->m_pVertScrollBar.get() &&
        m_pOwner->m_pVertScrollBar) ||
@@ -1811,6 +1817,7 @@ FWL_ERR CFWL_EditImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   }
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CFWL_EditImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                            const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);

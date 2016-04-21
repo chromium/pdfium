@@ -38,40 +38,32 @@ class IFWL_ComboBox;
 #define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
 #define FWL_STYLEEXT_CMB_ListItemAlignMask (3L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_CMB_PreDropDown 1357646798
-#define FWL_EVTHASH_CMB_PostDropDown 3677010285
-#define FWL_EVTHASH_CMB_CloseUp 2871271190
-#define FWL_EVTHASH_CMB_EditChanged 1527034762
-#define FWL_EVTHASH_CMB_SelChanged 2923227784
-#define FWL_EVTHASH_CMB_HoverChanged 944325448
-#define FWL_EVTHASH_CMB_DrawItem 917354551
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, FWL_EVTHASH_CMB_PreDropDown)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, CFWL_EventType::PreDropDown)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPostDropDown, FWL_EVTHASH_CMB_PostDropDown)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPostDropDown, CFWL_EventType::PostDropDown)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbCloseUp, FWL_EVTHASH_CMB_CloseUp)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbCloseUp, CFWL_EventType::CloseUp)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbEditChanged, FWL_EVTHASH_CMB_EditChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbEditChanged, CFWL_EventType::EditChanged)
 int32_t nChangeType;
 CFX_WideString wsInsert;
 CFX_WideString wsDelete;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbSelChanged, FWL_EVTHASH_CMB_SelChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbSelChanged, CFWL_EventType::SelectChanged)
 CFX_Int32Array iArraySels;
 FX_BOOL bLButtonUp;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbHoverChanged, FWL_EVTHASH_CMB_HoverChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbHoverChanged, CFWL_EventType::HoverChanged)
 int32_t m_iCurHover;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbDrawItem, FWL_EVTHASH_CMB_DrawItem)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbDrawItem, CFWL_EventType::DrawItem)
 CFX_Graphics* m_pGraphics;
 CFX_Matrix m_matrix;
 int32_t m_index;

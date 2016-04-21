@@ -1013,28 +1013,33 @@ FX_BOOL CFWL_MonthCalendarImp::GetDayRect(int32_t iDay, CFX_RectF& rtDay) {
   rtDay = pDateInfo->rect;
   return TRUE;
 }
+
 CFWL_MonthCalendarImpDelegate::CFWL_MonthCalendarImpDelegate(
     CFWL_MonthCalendarImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  uint32_t dwMsgCode = pMessage->GetClassID();
+
+  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
-    case FWL_MSGHASH_SetFocus:
-    case FWL_MSGHASH_KillFocus: {
-      OnFocusChanged(pMessage, dwMsgCode == FWL_MSGHASH_SetFocus);
+    case CFWL_MessageType::SetFocus: {
+      OnFocusChanged(pMessage, TRUE);
       break;
     }
-    case FWL_MSGHASH_Key: {
+    case CFWL_MessageType::KillFocus: {
+      OnFocusChanged(pMessage, FALSE);
       break;
     }
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::Key: {
+      break;
+    }
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
-      uint32_t dwCmd = pMouse->m_dwCmd;
-      switch (dwCmd) {
+      switch (pMouse->m_dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMouse);
           break;
@@ -1051,7 +1056,8 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
           OnMouseLeave(pMouse);
           break;
         }
-        default: { break; }
+        default:
+          break;
       }
       break;
     }
@@ -1063,6 +1069,7 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
   return iRet;
 }
+
 FWL_ERR CFWL_MonthCalendarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                                     const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);

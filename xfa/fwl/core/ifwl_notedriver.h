@@ -29,7 +29,8 @@ class IFWL_NoteDriver {
  public:
   virtual ~IFWL_NoteDriver() {}
 
-  virtual FX_BOOL SendNote(CFWL_Note* pNote) = 0;
+  virtual FX_BOOL SendEvent(CFWL_Event* pNote) = 0;
+
   virtual FWL_ERR RegisterEventTarget(
       IFWL_Widget* pListener,
       IFWL_Widget* pEventSource = NULL,

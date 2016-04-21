@@ -165,27 +165,30 @@ FWL_ERR CFWL_DateTimeEdit::Finalize() {
   m_pDelegate = nullptr;
   return CFWL_EditImp::Finalize();
 }
+
 CFWL_DateTimeEditImpDelegate::CFWL_DateTimeEditImpDelegate(
     CFWL_DateTimeEdit* pOwner)
     : CFWL_EditImpDelegate(pOwner), m_pOwner(pOwner) {}
+
 int32_t CFWL_DateTimeEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
+  if (m_pOwner->m_pWidgetMgr->IsFormDisabled())
     return DisForm_OnProcessMessage(pMessage);
-  }
-  uint32_t dwHashCode = pMessage->GetClassID();
-  if (dwHashCode == FWL_MSGHASH_SetFocus ||
-      dwHashCode == FWL_MSGHASH_KillFocus) {
+
+  CFWL_MessageType dwHashCode = pMessage->GetClassID();
+  if (dwHashCode == CFWL_MessageType::SetFocus ||
+      dwHashCode == CFWL_MessageType::KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
     IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(NULL);
     pDelegate->OnProcessMessage(pMessage);
   }
   return 1;
 }
+
 int32_t CFWL_DateTimeEditImpDelegate::DisForm_OnProcessMessage(
     CFWL_Message* pMessage) {
-  uint32_t dwHashCode = pMessage->GetClassID();
+  CFWL_MessageType dwHashCode = pMessage->GetClassID();
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
-    if (dwHashCode == FWL_MSGHASH_Mouse) {
+    if (dwHashCode == CFWL_MessageType::Mouse) {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       if (pMouse->m_dwCmd == FWL_MSGMOUSECMD_LButtonDown ||
           pMouse->m_dwCmd == FWL_MSGMOUSECMD_RButtonDown) {
@@ -202,12 +205,13 @@ int32_t CFWL_DateTimeEditImpDelegate::DisForm_OnProcessMessage(
           pDateTime->Repaint(&rtInvalidate);
         }
       }
-    } else if (dwHashCode == FWL_MSGHASH_Key) {
+    } else if (dwHashCode == CFWL_MessageType::Key) {
       return CFWL_EditImpDelegate::OnProcessMessage(pMessage);
     }
   }
   return CFWL_EditImpDelegate::OnProcessMessage(pMessage);
 }
+
 CFWL_DateTimeCalendar::CFWL_DateTimeCalendar(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
@@ -224,19 +228,22 @@ FWL_ERR CFWL_DateTimeCalendar::Finalize() {
   m_pDelegate = nullptr;
   return CFWL_MonthCalendarImp::Finalize();
 }
+
 CFWL_DateTimeCalendarImpDelegate::CFWL_DateTimeCalendarImpDelegate(
     CFWL_DateTimeCalendar* pOwner)
     : CFWL_MonthCalendarImpDelegate(pOwner), m_pOwner(pOwner) {
   m_bFlag = FALSE;
 }
+
 int32_t CFWL_DateTimeCalendarImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
-  uint32_t dwCode = pMessage->GetClassID();
-  if (dwCode == FWL_MSGHASH_SetFocus || dwCode == FWL_MSGHASH_KillFocus) {
+  CFWL_MessageType dwCode = pMessage->GetClassID();
+  if (dwCode == CFWL_MessageType::SetFocus ||
+      dwCode == CFWL_MessageType::KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
     IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(NULL);
     return pDelegate->OnProcessMessage(pMessage);
-  } else if (dwCode == FWL_MSGHASH_Mouse) {
+  } else if (dwCode == CFWL_MessageType::Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     if (pMsg->m_dwCmd == FWL_MSGMOUSECMD_LButtonDown) {
       OnLButtonDownEx(pMsg);
@@ -248,6 +255,7 @@ int32_t CFWL_DateTimeCalendarImpDelegate::OnProcessMessage(
   }
   return CFWL_MonthCalendarImpDelegate::OnProcessMessage(pMessage);
 }
+
 void CFWL_DateTimeCalendarImpDelegate::OnLButtonDownEx(CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_pOwner->m_iLBtnPartStates = CFWL_PartState_Pressed;
@@ -364,9 +372,10 @@ void CFWL_DateTimeCalendarImpDelegate::OnMouseMoveEx(CFWL_MsgMouse* pMsg) {
     m_pOwner->Repaint(&rtInvalidate);
   }
 }
+
 int32_t CFWL_DateTimeCalendarImpDelegate::DisForm_OnProcessMessage(
     CFWL_Message* pMessage) {
-  if (pMessage->GetClassID() == FWL_MSGHASH_Mouse) {
+  if (pMessage->GetClassID() == CFWL_MessageType::Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     if (pMsg->m_dwCmd == FWL_MSGMOUSECMD_LButtonUp) {
       DisForm_OnLButtonUpEx(pMsg);
@@ -375,6 +384,7 @@ int32_t CFWL_DateTimeCalendarImpDelegate::DisForm_OnProcessMessage(
   }
   return CFWL_MonthCalendarImpDelegate::OnProcessMessage(pMessage);
 }
+
 void CFWL_DateTimeCalendarImpDelegate::DisForm_OnLButtonUpEx(
     CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
@@ -1010,24 +1020,28 @@ FWL_ERR CFWL_DateTimePickerImp::DisForm_DrawWidget(CFX_Graphics* pGraphics,
   }
   return FWL_ERR_Succeeded;
 }
+
 CFWL_DateTimePickerImpDelegate::CFWL_DateTimePickerImpDelegate(
     CFWL_DateTimePickerImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  uint32_t dwMsgCode = pMessage->GetClassID();
-  switch (dwMsgCode) {
-    case FWL_MSGHASH_SetFocus:
-    case FWL_MSGHASH_KillFocus: {
-      OnFocusChanged(pMessage, dwMsgCode == FWL_MSGHASH_SetFocus);
+
+  switch (pMessage->GetClassID()) {
+    case CFWL_MessageType::SetFocus: {
+      OnFocusChanged(pMessage, TRUE);
       break;
     }
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::KillFocus: {
+      OnFocusChanged(pMessage, FALSE);
+      break;
+    }
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
-      uint32_t dwCmd = pMouse->m_dwCmd;
-      switch (dwCmd) {
+      switch (pMouse->m_dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMouse);
           break;
@@ -1044,20 +1058,25 @@ int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
           OnMouseLeave(pMouse);
           break;
         }
-        default: {}
+        default:
+          break;
+      }
+      break;
+    }
+    case CFWL_MessageType::Key: {
+      if (m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
+        IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+        return pDelegate->OnProcessMessage(pMessage);
       }
       break;
     }
     default:
       break;
   }
-  if (dwMsgCode == FWL_MSGHASH_Key &&
-      m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
-    return pDelegate->OnProcessMessage(pMessage);
-  }
+
   return CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
 }
+
 FWL_ERR CFWL_DateTimePickerImpDelegate::OnDrawWidget(
     CFX_Graphics* pGraphics,
     const CFX_Matrix* pMatrix) {

@@ -853,7 +853,7 @@ void CFWL_WidgetImp::DispatchEvent(CFWL_Event* pEvent) {
   IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
   if (!pNoteDriver)
     return;
-  pNoteDriver->SendNote(pEvent);
+  pNoteDriver->SendEvent(pEvent);
 }
 void CFWL_WidgetImp::Repaint(const CFX_RectF* pRect) {
   if (pRect) {
@@ -952,15 +952,18 @@ FX_BOOL CFWL_WidgetImp::IsParent(IFWL_Widget* pParent) {
   }
   return FALSE;
 }
+
 CFWL_WidgetImpDelegate::CFWL_WidgetImpDelegate() {}
+
 int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage->m_pDstTarget)
     return 0;
+
   CFWL_WidgetImp* pWidget =
       static_cast<CFWL_WidgetImp*>(pMessage->m_pDstTarget->GetImpl());
-  uint32_t dwMsgCode = pMessage->GetClassID();
+  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsgMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       CFWL_EvtMouse evt;
       evt.m_pSrcTarget = pWidget->m_pInterface;
@@ -972,7 +975,7 @@ int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       pWidget->DispatchEvent(&evt);
       break;
     }
-    case FWL_MSGHASH_MouseWheel: {
+    case CFWL_MessageType::MouseWheel: {
       CFWL_MsgMouseWheel* pMsgMouseWheel =
           static_cast<CFWL_MsgMouseWheel*>(pMessage);
       CFWL_EvtMouseWheel evt;
@@ -986,7 +989,7 @@ int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       pWidget->DispatchEvent(&evt);
       break;
     }
-    case FWL_MSGHASH_Key: {
+    case CFWL_MessageType::Key: {
       CFWL_MsgKey* pMsgKey = static_cast<CFWL_MsgKey*>(pMessage);
       CFWL_EvtKey evt;
       evt.m_pSrcTarget = pWidget->m_pInterface;
@@ -997,7 +1000,7 @@ int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       pWidget->DispatchEvent(&evt);
       break;
     }
-    case FWL_MSGHASH_SetFocus: {
+    case CFWL_MessageType::SetFocus: {
       CFWL_MsgSetFocus* pMsgSetFocus = static_cast<CFWL_MsgSetFocus*>(pMessage);
       CFWL_EvtSetFocus evt;
       evt.m_pSrcTarget = pMsgSetFocus->m_pDstTarget;
@@ -1006,7 +1009,7 @@ int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       pWidget->DispatchEvent(&evt);
       break;
     }
-    case FWL_MSGHASH_KillFocus: {
+    case CFWL_MessageType::KillFocus: {
       CFWL_MsgKillFocus* pMsgKillFocus =
           static_cast<CFWL_MsgKillFocus*>(pMessage);
       CFWL_EvtKillFocus evt;
@@ -1016,13 +1019,16 @@ int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       pWidget->DispatchEvent(&evt);
       break;
     }
-    default: {}
+    default:
+      break;
   }
   return 1;
 }
+
 FWL_ERR CFWL_WidgetImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CFWL_WidgetImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                              const CFX_Matrix* pMatrix) {
   CFWL_EvtDraw evt;

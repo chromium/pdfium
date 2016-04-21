@@ -42,9 +42,7 @@ config("pdfium_config") {
   }
 
   if (is_win) {
-    cflags += [
-      "/wd4267",
-    ]
+    cflags += [ "/wd4267" ]
   }
 
   if (is_clang || is_posix) {
@@ -1023,7 +1021,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/basewidget/ifwl_tooltip.h",
       "xfa/fwl/core/cfwl_event.h",
       "xfa/fwl/core/cfwl_message.h",
-      "xfa/fwl/core/cfwl_note.h",
       "xfa/fwl/core/cfwl_themebackground.h",
       "xfa/fwl/core/cfwl_themepart.h",
       "xfa/fwl/core/cfwl_themetext.h",

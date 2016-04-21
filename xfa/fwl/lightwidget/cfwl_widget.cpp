@@ -298,7 +298,7 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
   if (!pNoteDriver)
     return;
-  pNoteDriver->SendNote(pEvent);
+  pNoteDriver->SendEvent(pEvent);
 }
 
 #define FWL_WGT_CalcHeight 2048

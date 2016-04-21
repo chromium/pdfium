@@ -173,7 +173,6 @@
         "xfa/fwl/basewidget/ifwl_spinbutton.h",
         "xfa/fwl/basewidget/ifwl_tooltip.h",
         "xfa/fwl/core/cfwl_event.h",
-        "xfa/fwl/core/cfwl_note.h",
         "xfa/fwl/core/cfwl_message.h",
         "xfa/fwl/core/cfwl_themebackground.h",
         "xfa/fwl/core/cfwl_themepart.h",

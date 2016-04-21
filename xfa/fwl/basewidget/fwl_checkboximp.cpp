@@ -409,22 +409,26 @@ void CFWL_CheckBoxImp::NextStates() {
 }
 CFWL_CheckBoxImpDelegate::CFWL_CheckBoxImpDelegate(CFWL_CheckBoxImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  uint32_t dwMsgCode = pMessage->GetClassID();
+
   int32_t iRet = 1;
-  switch (dwMsgCode) {
-    case FWL_MSGHASH_Activate: {
+  switch (pMessage->GetClassID()) {
+    case CFWL_MessageType::Activate: {
       OnActivate(pMessage);
       break;
     }
-    case FWL_MSGHASH_SetFocus:
-    case FWL_MSGHASH_KillFocus: {
-      OnFocusChanged(pMessage, dwMsgCode == FWL_MSGHASH_SetFocus);
+    case CFWL_MessageType::SetFocus: {
+      OnFocusChanged(pMessage, TRUE);
       break;
     }
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::KillFocus: {
+      OnFocusChanged(pMessage, FALSE);
+      break;
+    }
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
@@ -444,19 +448,23 @@ int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
           OnMouseLeave(pMsg);
           break;
         }
-        default: {}
+        default:
+          break;
       }
       break;
     }
-    case FWL_MSGHASH_Key: {
+    case CFWL_MessageType::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
+      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
         OnKeyDown(pKey);
-      }
       break;
     }
-    default: { iRet = 0; }
+    default: {
+      iRet = 0;
+      break;
+    }
   }
+
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
   return iRet;
 }

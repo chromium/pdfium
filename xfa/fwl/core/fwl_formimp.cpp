@@ -856,20 +856,25 @@ void CFWL_FormImp::DoHeightLimit(FX_FLOAT& fTop,
     }
   }
 }
+
 CFWL_FormImpDelegate::CFWL_FormImpDelegate(CFWL_FormImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-#ifdef FWL_UseMacSystemBorder
   if (!pMessage)
     return 0;
-  uint32_t dwMsgCode = pMessage->GetClassID();
+
+  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
+
+#ifdef FWL_UseMacSystemBorder
+
   switch (dwMsgCode) {
-    case FWL_MSGHASH_Activate: {
+    case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
       m_pOwner->Repaint(&m_pOwner->m_rtRelative);
       break;
     }
-    case FWL_MSGHASH_Deactivate: {
+    case CFWL_MessageType::Deactivate: {
       m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
       m_pOwner->Repaint(&m_pOwner->m_rtRelative);
       break;
@@ -877,48 +882,44 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   }
   return FWL_ERR_Succeeded;
 #else
-  if (!pMessage)
-    return 0;
-  uint32_t dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
-    case FWL_MSGHASH_Activate: {
+    case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
       IFWL_Thread* pThread = m_pOwner->GetOwnerThread();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();
       IFWL_Widget* pSubFocus =
-          pSubFocusImp ? pSubFocusImp->GetInterface() : NULL;
-      if (pSubFocus && pSubFocus != pDriver->GetFocus()) {
+          pSubFocusImp ? pSubFocusImp->GetInterface() : nullptr;
+      if (pSubFocus && pSubFocus != pDriver->GetFocus())
         pDriver->SetFocus(pSubFocus);
-      }
+
       m_pOwner->Repaint(&m_pOwner->m_rtRelative);
       break;
     }
-    case FWL_MSGHASH_Deactivate: {
+    case CFWL_MessageType::Deactivate: {
       m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
       IFWL_Thread* pThread = m_pOwner->GetOwnerThread();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();
       IFWL_Widget* pSubFocus =
-          pSubFocusImp ? pSubFocusImp->GetInterface() : NULL;
+          pSubFocusImp ? pSubFocusImp->GetInterface() : nullptr;
       if (pSubFocus) {
         if (pSubFocus == pDriver->GetFocus()) {
-          pDriver->SetFocus(NULL);
+          pDriver->SetFocus(nullptr);
         } else if (pSubFocus->GetStates() & FWL_WGTSTATE_Focused) {
           CFWL_MsgKillFocus ms;
-          IFWL_WidgetDelegate* pDelegate = pSubFocus->SetDelegate(NULL);
-          if (pDelegate) {
+          IFWL_WidgetDelegate* pDelegate = pSubFocus->SetDelegate(nullptr);
+          if (pDelegate)
             pDelegate->OnProcessMessage(&ms);
-          }
         }
       }
       m_pOwner->Repaint(&m_pOwner->m_rtRelative);
       break;
     }
-    case FWL_MSGHASH_Mouse: {
+    case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -948,15 +949,16 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case FWL_MSGHASH_Size: {
+    case CFWL_MessageType::Size: {
       CFWL_WidgetMgr* pWidgetMgr =
           static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
       if (!pWidgetMgr)
         return 0;
+
       pWidgetMgr->AddRedrawCounts(m_pOwner->m_pInterface);
-      if (!m_pOwner->m_bSetMaximize) {
+      if (!m_pOwner->m_bSetMaximize)
         break;
-      }
+
       m_pOwner->m_bSetMaximize = FALSE;
       CFWL_MsgSize* pMsg = static_cast<CFWL_MsgSize*>(pMessage);
       CFX_RectF rt;
@@ -968,27 +970,29 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       m_pOwner->Update();
       break;
     }
-    case FWL_MSGHASH_WindowMove: {
+    case CFWL_MessageType::WindowMove: {
       OnWindowMove(static_cast<CFWL_MsgWindowMove*>(pMessage));
       break;
     }
-    case FWL_MSGHASH_Close: {
+    case CFWL_MessageType::Close: {
       OnClose(static_cast<CFWL_MsgClose*>(pMessage));
       break;
     }
-    default: { iRet = 0; }
+    default: {
+      iRet = 0;
+      break;
+    }
   }
   return iRet;
-#endif
+#endif  // FWL_UseMacSystemBorder
 }
+
 FWL_ERR CFWL_FormImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return FWL_ERR_Indefinite;
-  if (pEvent->GetClassID() == FWL_EVTHASH_Close &&
-      pEvent->m_pSrcTarget == m_pOwner->m_pInterface) {
-  }
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CFWL_FormImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                            const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);

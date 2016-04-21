@@ -403,36 +403,38 @@ FX_BOOL CXFA_FFTextEdit::GetSuggestWords(
 int32_t CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {
   return m_pOldDelegate->OnProcessMessage(pMessage);
 }
+
 FWL_ERR CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  uint32_t dwEventID = pEvent->GetClassID();
-  switch (dwEventID) {
-    case FWL_EVTHASH_EDT_TextChanged: {
+  switch (pEvent->GetClassID()) {
+    case CFWL_EventType::TextChanged: {
       CFWL_EvtEdtTextChanged* event = (CFWL_EvtEdtTextChanged*)pEvent;
       CFX_WideString wsChange;
       OnTextChanged(m_pNormalWidget->GetWidget(), wsChange, event->wsPrevText);
       break;
     }
-    case FWL_EVTHASH_EDT_TextFull: {
+    case CFWL_EventType::TextFull: {
       OnTextFull(m_pNormalWidget->GetWidget());
       break;
     }
-    case FWL_EVTHASH_EDT_CheckWord: {
+    case CFWL_EventType::CheckWord: {
       CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
       CFWL_EvtEdtCheckWord* event = (CFWL_EvtEdtCheckWord*)pEvent;
       event->bCheckWord = CheckWord(event->bsWord.AsStringC());
       break;
     }
-    case FWL_EVTHASH_EDT_GetSuggestWords: {
+    case CFWL_EventType::GetSuggestedWords: {
       CFWL_EvtEdtGetSuggestWords* event = (CFWL_EvtEdtGetSuggestWords*)pEvent;
       event->bSuggestWords = GetSuggestWords(event->bsWord.AsStringC(),
                                              event->bsArraySuggestWords);
       break;
     }
-    default: {}
+    default:
+      break;
   }
   return m_pOldDelegate->OnProcessEvent(pEvent);
 }
+
 FWL_ERR CXFA_FFTextEdit::OnDrawWidget(CFX_Graphics* pGraphics,
                                       const CFX_Matrix* pMatrix) {
   return m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
@@ -483,17 +485,17 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   }
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
+
 FWL_ERR CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
-  uint32_t dwEventID = pEvent->GetClassID();
-  if (dwEventID == FWL_EVTHASH_EDT_Validate) {
+  if (pEvent->GetClassID() == CFWL_EventType::Validate) {
     CFWL_EvtEdtValidate* event = (CFWL_EvtEdtValidate*)pEvent;
     CFX_WideString wsChange = event->wsInsert;
     event->bValidate = OnValidate(m_pNormalWidget->GetWidget(), wsChange);
     return event->bValidate;
-  } else {
-    return CXFA_FFTextEdit::OnProcessEvent(pEvent);
   }
+  return CXFA_FFTextEdit::OnProcessEvent(pEvent);
 }
+
 FX_BOOL CXFA_FFNumericEdit::OnValidate(IFWL_Widget* pWidget,
                                        CFX_WideString& wsText) {
   CFX_WideString wsPattern;
@@ -785,14 +787,13 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
   m_pDataAcc->GetValue(eParam.m_wsNewText, XFA_VALUEPICTURE_Raw);
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
+
 FWL_ERR CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {
-  uint32_t dwEventID = pEvent->GetClassID();
-  if (dwEventID == FWL_EVTHASH_DTP_SelectChanged) {
+  if (pEvent->GetClassID() == CFWL_EventType::SelectChanged) {
     CFWL_Event_DtpSelectChanged* event = (CFWL_Event_DtpSelectChanged*)pEvent;
     OnSelectChanged(m_pNormalWidget->GetWidget(), event->iYear, event->iMonth,
                     event->iDay);
     return TRUE;
-  } else {
-    return CXFA_FFTextEdit::OnProcessEvent(pEvent);
   }
+  return CXFA_FFTextEdit::OnProcessEvent(pEvent);
 }

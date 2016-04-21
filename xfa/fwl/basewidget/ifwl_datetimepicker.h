@@ -30,28 +30,22 @@
 #define FWL_STYLEEXT_DTP_EditHAlignMask (3L << 4)
 #define FWL_STYLEEXT_DTP_EditVAlignMask (3L << 6)
 #define FWL_STYLEEXT_DTP_EditHAlignModeMask (3L << 8)
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_DTP_DropDown 264728733
-#define FWL_EVTHASH_DTP_CloseUp 4280973803
-#define FWL_EVTHASH_DTP_EditChanged 4009610944
-#define FWL_EVTHASH_DTP_HoverChanged 686674750
-#define FWL_EVTHASH_DTP_SelectChanged 1589616858
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpDropDown, FWL_EVTHASH_DTP_DropDown)
+BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpDropDown, CFWL_EventType::DropDown)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpCloseUp, FWL_EVTHASH_DTP_CloseUp)
+BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpCloseUp, CFWL_EventType::CloseUp)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpEditChanged, FWL_EVTHASH_DTP_EditChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpEditChanged, CFWL_EventType::EditChanged)
 CFX_WideString m_wsText;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpHoverChanged, FWL_EVTHASH_DTP_HoverChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpHoverChanged, CFWL_EventType::HoverChanged)
 int32_t hoverday;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged, FWL_EVTHASH_DTP_SelectChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged, CFWL_EventType::SelectChanged)
 int32_t iYear;
 int32_t iMonth;
 int32_t iDay;

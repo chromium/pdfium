@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 
@@ -49,13 +50,6 @@
 #define FWL_STYLEEXT_EDT_LastLineHeight (1L << 27)
 #define FWL_PARTDATA_EDT_Background 0
 #define FWL_PARTDATA_EDT_StaticBackground 1
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_EDT_TextChanged 1064022132
-#define FWL_EVTHASH_EDT_PreSelfAdaption 1001979178
-#define FWL_EVTHASH_EDT_Validate 3373308608
-#define FWL_EVTHASH_EDT_CheckWord 2897181520
-#define FWL_EVTHASH_EDT_GetSuggestWords 315782791
-#define FWL_EVTHASH_EDT_TextFull 2158580174
 
 typedef struct FWL_HEDTFIND_ { void* pData; } * FWL_HEDTFIND;
 
@@ -65,34 +59,35 @@ enum FWL_EDT_TEXTCHANGED {
   FWL_EDT_TEXTCHANGED_Replace,
 };
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtTextChanged, FWL_EVTHASH_EDT_TextChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtTextChanged, CFWL_EventType::TextChanged)
 int32_t nChangeType;
 CFX_WideString wsInsert;
 CFX_WideString wsDelete;
 CFX_WideString wsPrevText;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtTextFull, FWL_EVTHASH_EDT_TextFull)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtTextFull, CFWL_EventType::TextFull)
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtPreSelfAdaption, FWL_EVTHASH_EDT_PreSelfAdaption)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtPreSelfAdaption, CFWL_EventType::PreSelfAdaption)
 FX_BOOL bHSelfAdaption;
 FX_BOOL bVSelfAdaption;
 CFX_RectF rtAfterChange;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtValidate, FWL_EVTHASH_EDT_Validate)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtValidate, CFWL_EventType::Validate)
 IFWL_Widget* pDstWidget;
 CFX_WideString wsInsert;
 FX_BOOL bValidate;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtCheckWord, FWL_EVTHASH_EDT_CheckWord)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtCheckWord, CFWL_EventType::CheckWord)
 CFX_ByteString bsWord;
 FX_BOOL bCheckWord;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtGetSuggestWords, FWL_EVTHASH_EDT_GetSuggestWords)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtGetSuggestWords,
+                    CFWL_EventType::GetSuggestedWords)
 FX_BOOL bSuggestWords;
 CFX_ByteString bsWord;
 std::vector<CFX_ByteString> bsArraySuggestWords;

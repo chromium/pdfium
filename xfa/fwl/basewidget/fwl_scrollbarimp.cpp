@@ -625,14 +625,17 @@ FX_BOOL CFWL_ScrollBarImp::OnScroll(uint32_t dwCode, FX_FLOAT fPos) {
   DispatchEvent(&ev);
   return bRet;
 }
+
 CFWL_ScrollBarImpDelegate::CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp* pOwner)
     : m_pOwner(pOwner) {}
+
 int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
+
   int32_t iRet = 1;
-  uint32_t dwMsgCode = pMessage->GetClassID();
-  if (dwMsgCode == FWL_MSGHASH_Mouse) {
+  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
+  if (dwMsgCode == CFWL_MessageType::Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     uint32_t dwCmd = pMsg->m_dwCmd;
     switch (dwCmd) {
@@ -652,9 +655,12 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         OnMouseLeave();
         break;
       }
-      default: { iRet = 0; }
+      default: {
+        iRet = 0;
+        break;
+      }
     }
-  } else if (dwMsgCode == FWL_MSGHASH_MouseWheel) {
+  } else if (dwMsgCode == CFWL_MessageType::MouseWheel) {
     CFWL_MsgMouseWheel* pMsg = static_cast<CFWL_MsgMouseWheel*>(pMessage);
     OnMouseWheel(pMsg->m_fx, pMsg->m_fy, pMsg->m_dwFlags, pMsg->m_fDeltaX,
                  pMsg->m_fDeltaY);
@@ -663,6 +669,7 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   }
   return iRet;
 }
+
 FWL_ERR CFWL_ScrollBarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                                 const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);

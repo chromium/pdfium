@@ -30,9 +30,6 @@
 #define FWL_ITEMSTATE_LTB_Selected (1L << 0)
 #define FWL_ITEMSTATE_LTB_Focused (1L << 1)
 #define FWL_ITEMSTATE_LTB_Checked (1L << 2)
-// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
-#define FWL_EVTHASH_LTB_SelChanged 1701781688
-#define FWL_EVTHASH_LTB_DrawItem 1050853991
 
 typedef struct FWL_HLISTITEM_ { void* pData; } * FWL_HLISTITEM;
 
@@ -44,11 +41,11 @@ struct FWL_ListBoxItemData {
   int32_t iIndex;
 };
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbSelChanged, FWL_EVTHASH_LTB_SelChanged)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbSelChanged, CFWL_EventType::SelectChanged)
 CFX_Int32Array iarraySels;
 END_FWL_EVENT_DEF
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbDrawItem, FWL_EVTHASH_LTB_DrawItem)
+BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbDrawItem, CFWL_EventType::DrawItem)
 CFX_Graphics* m_pGraphics;
 CFX_Matrix m_matrix;
 int32_t m_index;
