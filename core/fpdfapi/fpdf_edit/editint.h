@@ -18,26 +18,26 @@ class CPDF_Object;
 
 class CPDF_ObjectStream {
  public:
+  struct Item {
+    uint32_t objnum;
+    FX_STRSIZE offset;
+  };
+
   CPDF_ObjectStream();
 
-  FX_BOOL Start();
-
-  int32_t CompressIndirectObject(uint32_t dwObjNum, const CPDF_Object* pObj);
-  int32_t CompressIndirectObject(uint32_t dwObjNum,
-                                 const uint8_t* pBuffer,
-                                 uint32_t dwSize);
-
+  void Start();
   FX_FILESIZE End(CPDF_Creator* pCreator);
+  void CompressIndirectObject(uint32_t dwObjNum, const CPDF_Object* pObj);
+  void CompressIndirectObject(uint32_t dwObjNum,
+                              const uint8_t* pBuffer,
+                              uint32_t dwSize);
 
-  CFX_ArrayTemplate<uint32_t> m_ObjNumArray;
-
+  std::vector<Item> m_Items;
   CFX_ByteTextBuf m_Buffer;
   uint32_t m_dwObjNum;
   int32_t m_index;
-
- protected:
-  CFX_ArrayTemplate<uint32_t> m_OffsetArray;
 };
+
 class CPDF_XRefStream {
  public:
   struct Index {
