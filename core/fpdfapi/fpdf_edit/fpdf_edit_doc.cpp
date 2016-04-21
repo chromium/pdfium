@@ -6,6 +6,8 @@
 
 #include <limits.h>
 
+#include <vector>
+
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
@@ -16,6 +18,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfapi/ipdf_rendermodule.h"
+#include "third_party/base/stl_util.h"
 
 CPDF_Document::CPDF_Document() : CPDF_IndirectObjectHolder(NULL) {
   m_pRootDict = NULL;
@@ -176,10 +179,12 @@ static const uint16_t g_FX_CP1257Unicodes[128] = {
     0x00F5, 0x00F6, 0x00F7, 0x0173, 0x0142, 0x015B, 0x016B, 0x00FC, 0x017C,
     0x017E, 0x02D9,
 };
-typedef struct {
+
+struct FX_CharsetUnicodes {
   uint8_t m_Charset;
   const uint16_t* m_pUnicodes;
-} FX_CharsetUnicodes;
+};
+
 const FX_CharsetUnicodes g_FX_CharsetUnicodes[] = {
     {FXFONT_THAI_CHARSET, g_FX_CP874Unicodes},
     {FXFONT_EASTEUROPE_CHARSET, g_FX_CP1250Unicodes},
@@ -190,6 +195,7 @@ const FX_CharsetUnicodes g_FX_CharsetUnicodes[] = {
     {FXFONT_ARABIC_CHARSET, g_FX_CP1256Unicodes},
     {FXFONT_BALTIC_CHARSET, g_FX_CP1257Unicodes},
 };
+
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_)
 static void _InsertWidthArray(HDC hDC,
                               int start,
@@ -500,20 +506,16 @@ static void _CFString2CFXByteString(CFStringRef src, CFX_ByteString& dest) {
   dest = (FX_CHAR*)pBuffer;
   free(pBuffer);
 }
-FX_BOOL IsHasCharSet(CFArrayRef languages,
-                     const CFX_ArrayTemplate<uint32_t>& charSets) {
-  int iCount = charSets.GetSize();
+static bool IsHasCharSet(CFArrayRef languages,
+                         const std::vector<uint32_t>& charSets) {
   for (int i = 0; i < CFArrayGetCount(languages); ++i) {
     CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(languages, i);
     uint32_t CharSet = FX_GetCharsetFromLang(
         CFStringGetCStringPtr(language, kCFStringEncodingMacRoman), -1);
-    for (int j = 0; j < iCount; ++j) {
-      if (CharSet == charSets[j]) {
-        return TRUE;
-      }
-    }
+    if (pdfium::ContainsValue(charSets, CharSet))
+      return true;
   }
-  return FALSE;
+  return false;
 }
 void FX_GetCharWidth(CTFontRef font, UniChar start, UniChar end, int* width) {
   CGFloat size = CTFontGetSize(font);
@@ -562,7 +564,6 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
     return NULL;
   }
   CFX_ByteString basefont;
-  FX_BOOL bCJK = FALSE;
   int flags = 0, italicangle = 0, ascend = 0, descend = 0, capheight = 0,
       bbox[4];
   FXSYS_memset(bbox, 0, sizeof(int) * 4);
@@ -572,14 +573,10 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
     CFRelease(descriptor);
     return NULL;
   }
-  CFX_ArrayTemplate<uint32_t> charSets;
-  charSets.Add(FXFONT_CHINESEBIG5_CHARSET);
-  charSets.Add(FXFONT_GB2312_CHARSET);
-  charSets.Add(FXFONT_HANGEUL_CHARSET);
-  charSets.Add(FXFONT_SHIFTJIS_CHARSET);
-  if (IsHasCharSet(languages, charSets)) {
-    bCJK = TRUE;
-  }
+
+  bool bCJK = IsHasCharSet(languages,
+                           {FXFONT_CHINESEBIG5_CHARSET, FXFONT_GB2312_CHARSET,
+                            FXFONT_HANGEUL_CHARSET, FXFONT_SHIFTJIS_CHARSET});
   CFRelease(descriptor);
   CFDictionaryRef traits = (CFDictionaryRef)CTFontCopyTraits(font);
   if (!traits) {
@@ -629,14 +626,9 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
   CPDF_Dictionary* pBaseDict = new CPDF_Dictionary;
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
-    charSets.RemoveAll();
-    charSets.Add(FXFONT_ANSI_CHARSET);
-    charSets.Add(FXFONT_DEFAULT_CHARSET);
-    charSets.Add(FXFONT_SYMBOL_CHARSET);
-    if (IsHasCharSet(languages, charSets)) {
-      charSets.RemoveAll();
-      charSets.Add(FXFONT_SYMBOL_CHARSET);
-      if (IsHasCharSet(languages, charSets)) {
+    if (IsHasCharSet(languages, {FXFONT_ANSI_CHARSET, FXFONT_DEFAULT_CHARSET,
+                                 FXFONT_SYMBOL_CHARSET})) {
+      if (IsHasCharSet(languages, {FXFONT_SYMBOL_CHARSET})) {
         flags |= PDFFONT_SYMBOLIC;
       } else {
         flags |= PDFFONT_NONSYMBOLIC;
@@ -645,15 +637,11 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
     } else {
       flags |= PDFFONT_NONSYMBOLIC;
       size_t i;
-      for (i = 0; i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes);
-           i++) {
-        charSets.RemoveAll();
-        charSets.Add(g_FX_CharsetUnicodes[i].m_Charset);
-        if (IsHasCharSet(languages, charSets)) {
+      for (i = 0; i < FX_ArraySize(g_FX_CharsetUnicodes); ++i) {
+        if (IsHasCharSet(languages, {g_FX_CharsetUnicodes[i].m_Charset}))
           break;
-        }
       }
-      if (i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes)) {
+      if (i < FX_ArraySize(g_FX_CharsetUnicodes)) {
         CPDF_Dictionary* pEncoding = new CPDF_Dictionary;
         pEncoding->SetAtName("BaseEncoding", "WinAnsiEncoding");
         CPDF_Array* pArray = new CPDF_Array;
@@ -699,9 +687,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
     int supplement;
     FX_BOOL bFound = FALSE;
     CPDF_Array* pWidthArray = new CPDF_Array;
-    charSets.RemoveAll();
-    charSets.Add(FXFONT_CHINESEBIG5_CHARSET);
-    if (IsHasCharSet(languages, charSets)) {
+    if (IsHasCharSet(languages, {FXFONT_CHINESEBIG5_CHARSET})) {
       cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
       ordering = "CNS1";
       supplement = 4;
@@ -709,9 +695,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
       _InsertWidthArray(font, 0x20, 0x7e, pWidthArray);
       bFound = TRUE;
     }
-    charSets.RemoveAll();
-    charSets.Add(FXFONT_GB2312_CHARSET);
-    if (!bFound && IsHasCharSet(languages, charSets)) {
+    if (!bFound && IsHasCharSet(languages, {FXFONT_GB2312_CHARSET})) {
       cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
       ordering = "GB1", supplement = 2;
       pWidthArray->AddInteger(7716);
@@ -720,9 +704,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
       _InsertWidthArray(font, 0x21, 0x7e, pWidthArray);
       bFound = TRUE;
     }
-    charSets.RemoveAll();
-    charSets.Add(FXFONT_HANGEUL_CHARSET);
-    if (!bFound && IsHasCharSet(languages, charSets)) {
+    if (!bFound && IsHasCharSet(languages, {FXFONT_HANGEUL_CHARSET})) {
       cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
       ordering = "Korea1";
       supplement = 2;
@@ -730,9 +712,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
       _InsertWidthArray(font, 0x20, 0x7e, pWidthArray);
       bFound = TRUE;
     }
-    charSets.RemoveAll();
-    charSets.Add(FXFONT_SHIFTJIS_CHARSET);
-    if (!bFound && IsHasCharSet(languages, charSets)) {
+    if (!bFound && IsHasCharSet(languages, {FXFONT_SHIFTJIS_CHARSET})) {
       cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
       ordering = "Japan1";
       supplement = 5;
