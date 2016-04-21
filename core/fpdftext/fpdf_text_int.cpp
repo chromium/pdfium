@@ -262,7 +262,7 @@ int CPDF_TextPage::TextIndexFromCharIndex(int CharIndex) const {
 
 void CPDF_TextPage::GetRectArray(int start,
                                  int nCount,
-                                 CFX_RectArray& rectArray) const {
+                                 CFX_RectArray* rectArray) const {
   if (start < 0 || nCount == 0) {
     return;
   }
@@ -290,7 +290,7 @@ void CPDF_TextPage::GetRectArray(int start,
       pCurObj = info_curchar.m_pTextObj;
     }
     if (pCurObj != info_curchar.m_pTextObj) {
-      rectArray.Add(rect);
+      rectArray->Add(rect);
       pCurObj = info_curchar.m_pTextObj;
       flagNewRect = TRUE;
     }
@@ -343,7 +343,7 @@ void CPDF_TextPage::GetRectArray(int start,
       }
     }
   }
-  rectArray.Add(rect);
+  rectArray->Add(rect);
 }
 
 int CPDF_TextPage::GetIndexAtPos(CFX_FloatPoint point,
@@ -592,7 +592,7 @@ int CPDF_TextPage::CountRects(int start, int nCount) {
     nCount = pdfium::CollectionSize<int>(m_CharList) - start;
   }
   m_SelRects.RemoveAll();
-  GetRectArray(start, nCount, m_SelRects);
+  GetRectArray(start, nCount, &m_SelRects);
   return m_SelRects.GetSize();
 }
 
@@ -647,35 +647,6 @@ FX_BOOL CPDF_TextPage::GetBaselineRotate(int start, int end, int& Rotate) {
     Rotate = 360 - Rotate;
   }
   return TRUE;
-}
-
-FX_BOOL CPDF_TextPage::GetBaselineRotate(const CFX_FloatRect& rect,
-                                         int& Rotate) {
-  int start, end, count,
-      n = CountBoundedSegments(rect.left, rect.top, rect.right, rect.bottom,
-                               TRUE);
-  if (n < 1) {
-    return FALSE;
-  }
-  if (n > 1) {
-    GetBoundedSegment(n - 1, start, count);
-    end = start + count - 1;
-    GetBoundedSegment(0, start, count);
-  } else {
-    GetBoundedSegment(0, start, count);
-    end = start + count - 1;
-  }
-  return GetBaselineRotate(start, end, Rotate);
-}
-FX_BOOL CPDF_TextPage::GetBaselineRotate(int rectIndex, int& Rotate) {
-  if (!m_bIsParsed)
-    return FALSE;
-
-  if (rectIndex < 0 || rectIndex >= m_SelRects.GetSize())
-    return FALSE;
-
-  CFX_FloatRect rect = m_SelRects.GetAt(rectIndex);
-  return GetBaselineRotate(rect, Rotate);
 }
 
 int CPDF_TextPage::CountBoundedSegments(FX_FLOAT left,
@@ -754,14 +725,6 @@ int CPDF_TextPage::CountBoundedSegments(FX_FLOAT left,
     segment.m_nCount = 0;
   }
   return m_Segments.GetSize();
-}
-
-void CPDF_TextPage::GetBoundedSegment(int index, int& start, int& count) const {
-  if (index < 0 || index >= m_Segments.GetSize()) {
-    return;
-  }
-  start = m_Segments.GetAt(index).m_Start;
-  count = m_Segments.GetAt(index).m_nCount;
 }
 
 int CPDF_TextPage::GetWordBreak(int index, int direction) const {
@@ -2126,7 +2089,7 @@ FX_BOOL CPDF_TextPageFind::FindNext() {
   m_IsFind = TRUE;
   int resStart = GetCharIndex(m_resStart);
   int resEnd = GetCharIndex(m_resEnd);
-  m_pTextPage->GetRectArray(resStart, resEnd - resStart + 1, m_resArray);
+  m_pTextPage->GetRectArray(resStart, resEnd - resStart + 1, &m_resArray);
   if (m_flags & FPDFTEXT_CONSECUTIVE) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
@@ -2172,7 +2135,7 @@ FX_BOOL CPDF_TextPageFind::FindPrev() {
   m_resStart = m_pTextPage->TextIndexFromCharIndex(order);
   m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + MatchedCount - 1);
   m_IsFind = TRUE;
-  m_pTextPage->GetRectArray(order, MatchedCount, m_resArray);
+  m_pTextPage->GetRectArray(order, MatchedCount, &m_resArray);
   if (m_flags & FPDFTEXT_CONSECUTIVE) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
@@ -2330,43 +2293,22 @@ int CPDF_TextPageFind::GetMatchedCount() const {
   return resEnd - resStart + 1;
 }
 
-CPDF_LinkExtract::CPDF_LinkExtract()
-    : m_pTextPage(nullptr), m_bIsParsed(false) {}
+CPDF_LinkExtract::CPDF_LinkExtract(const CPDF_TextPage* pTextPage)
+    : m_pTextPage(pTextPage) {}
 
 CPDF_LinkExtract::~CPDF_LinkExtract() {
-  DeleteLinkList();
 }
 
-FX_BOOL CPDF_LinkExtract::ExtractLinks(const CPDF_TextPage* pTextPage) {
-  if (!pTextPage || !pTextPage->IsParsed())
-    return FALSE;
+void CPDF_LinkExtract::ExtractLinks() {
+  m_LinkArray.clear();
+  if (!m_pTextPage->IsParsed())
+    return;
 
-  m_pTextPage = (const CPDF_TextPage*)pTextPage;
   m_strPageText = m_pTextPage->GetPageText(0, -1);
-  DeleteLinkList();
-  if (m_strPageText.IsEmpty()) {
-    return FALSE;
-  }
+  if (m_strPageText.IsEmpty())
+    return;
+
   ParseLink();
-  m_bIsParsed = true;
-  return TRUE;
-}
-
-void CPDF_LinkExtract::DeleteLinkList() {
-  while (m_LinkList.GetSize()) {
-    CPDF_LinkExt* linkinfo = NULL;
-    linkinfo = m_LinkList.GetAt(0);
-    m_LinkList.RemoveAt(0);
-    delete linkinfo;
-  }
-  m_LinkList.RemoveAll();
-}
-
-int CPDF_LinkExtract::CountLinks() const {
-  if (!m_bIsParsed) {
-    return -1;
-  }
-  return m_LinkList.GetSize();
 }
 
 void CPDF_LinkExtract::ParseLink() {
@@ -2395,7 +2337,7 @@ void CPDF_LinkExtract::ParseLink() {
         }
         if (nCount > 5 &&
             (CheckWebLink(strBeCheck) || CheckMailLink(strBeCheck))) {
-          AppendToLinkList(start, nCount, strBeCheck);
+          m_LinkArray.push_back({start, nCount, strBeCheck});
         }
       }
       start = ++pos;
@@ -2405,47 +2347,46 @@ void CPDF_LinkExtract::ParseLink() {
   }
 }
 
-FX_BOOL CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck) {
+bool CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck) {
   CFX_WideString str = strBeCheck;
   str.MakeLower();
   if (str.Find(L"http://www.") != -1) {
     strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"http://www."));
-    return TRUE;
+    return true;
   }
   if (str.Find(L"http://") != -1) {
     strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"http://"));
-    return TRUE;
+    return true;
   }
   if (str.Find(L"https://www.") != -1) {
     strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"https://www."));
-    return TRUE;
+    return true;
   }
   if (str.Find(L"https://") != -1) {
     strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"https://"));
-    return TRUE;
+    return true;
   }
   if (str.Find(L"www.") != -1) {
     strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"www."));
     strBeCheck = L"http://" + strBeCheck;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
   int aPos = str.Find(L'@');
   // Invalid when no '@'.
-  if (aPos < 1) {
-    return FALSE;
-  }
+  if (aPos < 1)
+    return false;
 
   // Check the local part.
   int pPos = aPos;  // Used to track the position of '@' or '.'.
   for (int i = aPos - 1; i >= 0; i--) {
     FX_WCHAR ch = str.GetAt(i);
-    if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch)) {
+    if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch))
       continue;
-    }
+
     if (ch != L'.' || i == pPos - 1 || i == 0) {
       if (i == aPos - 1) {
         // There is '.' or invalid char before '@'.
@@ -2463,25 +2404,25 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
 
   // Check the domain name part.
   aPos = str.Find(L'@');
-  if (aPos < 1) {
-    return FALSE;
-  }
+  if (aPos < 1)
+    return false;
+
   str.TrimRight(L'.');
   // At least one '.' in domain name, but not at the beginning.
   // TODO(weili): RFC5322 allows domain names to be a local name without '.'.
   // Check whether we should remove this check.
   int ePos = str.Find(L'.', aPos + 1);
-  if (ePos == -1 || ePos == aPos + 1) {
-    return FALSE;
-  }
+  if (ePos == -1 || ePos == aPos + 1)
+    return false;
+
   // Validate all other chars in domain name.
   int nLen = str.GetLength();
   pPos = 0;  // Used to track the position of '.'.
   for (int i = aPos + 1; i < nLen; i++) {
     FX_WCHAR wch = str.GetAt(i);
-    if (wch == L'-' || FXSYS_iswalnum(wch)) {
+    if (wch == L'-' || FXSYS_iswalnum(wch))
       continue;
-    }
+
     if (wch != L'.' || i == pPos + 1) {
       // Domain name should end before invalid char.
       int host_end = i == pPos + 1 ? i - 2 : i - 1;
@@ -2490,61 +2431,24 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
         str = str.Left(host_end + 1);
         break;
       }
-      return FALSE;
+      return false;
     }
     pPos = i;
   }
 
-  if (str.Find(L"mailto:") == -1) {
+  if (str.Find(L"mailto:") == -1)
     str = L"mailto:" + str;
-  }
-  return TRUE;
+
+  return true;
 }
 
-void CPDF_LinkExtract::AppendToLinkList(int start,
-                                        int count,
-                                        const CFX_WideString& strUrl) {
-  CPDF_LinkExt* linkInfo = new CPDF_LinkExt;
-  linkInfo->m_strUrl = strUrl;
-  linkInfo->m_Start = start;
-  linkInfo->m_Count = count;
-  m_LinkList.Add(linkInfo);
+CFX_WideString CPDF_LinkExtract::GetURL(size_t index) const {
+  return index < m_LinkArray.size() ? m_LinkArray[index].m_strUrl : L"";
 }
 
-CFX_WideString CPDF_LinkExtract::GetURL(int index) const {
-  if (!m_bIsParsed || index < 0 || index >= m_LinkList.GetSize()) {
-    return L"";
+void CPDF_LinkExtract::GetRects(size_t index, CFX_RectArray* pRects) const {
+  if (index < m_LinkArray.size()) {
+    m_pTextPage->GetRectArray(m_LinkArray[index].m_Start,
+                              m_LinkArray[index].m_Count, pRects);
   }
-  CPDF_LinkExt* link = NULL;
-  link = m_LinkList.GetAt(index);
-  if (!link) {
-    return L"";
-  }
-  return link->m_strUrl;
-}
-void CPDF_LinkExtract::GetBoundedSegment(int index,
-                                         int& start,
-                                         int& count) const {
-  if (!m_bIsParsed || index < 0 || index >= m_LinkList.GetSize()) {
-    return;
-  }
-  CPDF_LinkExt* link = NULL;
-  link = m_LinkList.GetAt(index);
-  if (!link) {
-    return;
-  }
-  start = link->m_Start;
-  count = link->m_Count;
-}
-
-void CPDF_LinkExtract::GetRects(int index, CFX_RectArray& rects) const {
-  if (!m_bIsParsed || index < 0 || index >= m_LinkList.GetSize()) {
-    return;
-  }
-  CPDF_LinkExt* link = NULL;
-  link = m_LinkList.GetAt(index);
-  if (!link) {
-    return;
-  }
-  m_pTextPage->GetRectArray(link->m_Start, link->m_Count, rects);
 }

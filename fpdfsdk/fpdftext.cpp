@@ -12,6 +12,7 @@
 #include "core/fpdftext/include/cpdf_textpage.h"
 #include "core/fpdftext/include/cpdf_textpagefind.h"
 #include "fpdfsdk/include/fsdk_define.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
@@ -273,8 +274,9 @@ DLLEXPORT FPDF_PAGELINK STDCALL FPDFLink_LoadWebLinks(FPDF_TEXTPAGE text_page) {
   if (!text_page)
     return nullptr;
 
-  CPDF_LinkExtract* pageLink = new CPDF_LinkExtract;
-  pageLink->ExtractLinks(CPDFTextPageFromFPDFTextPage(text_page));
+  CPDF_LinkExtract* pageLink =
+      new CPDF_LinkExtract(CPDFTextPageFromFPDFTextPage(text_page));
+  pageLink->ExtractLinks();
   return pageLink;
 }
 
@@ -283,42 +285,40 @@ DLLEXPORT int STDCALL FPDFLink_CountWebLinks(FPDF_PAGELINK link_page) {
     return 0;
 
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
-  return pageLink->CountLinks();
+  return pdfium::base::checked_cast<int>(pageLink->CountLinks());
 }
 
 DLLEXPORT int STDCALL FPDFLink_GetURL(FPDF_PAGELINK link_page,
                                       int link_index,
                                       unsigned short* buffer,
                                       int buflen) {
-  if (!link_page)
-    return 0;
-
-  CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
-  CFX_WideString url = pageLink->GetURL(link_index);
-
-  CFX_ByteString cbUTF16URL = url.UTF16LE_Encode();
-  int len = cbUTF16URL.GetLength() / sizeof(unsigned short);
+  CFX_WideString wsUrl(L"");
+  if (link_page && link_index >= 0) {
+    CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
+    wsUrl = pageLink->GetURL(link_index);
+  }
+  CFX_ByteString cbUTF16URL = wsUrl.UTF16LE_Encode();
+  int required = cbUTF16URL.GetLength() / sizeof(unsigned short);
   if (!buffer || buflen <= 0)
-    return len;
+    return required;
 
-  int size = len < buflen ? len : buflen;
+  int size = std::min(required, buflen);
   if (size > 0) {
     int buf_size = size * sizeof(unsigned short);
     FXSYS_memcpy(buffer, cbUTF16URL.GetBuffer(buf_size), buf_size);
-    cbUTF16URL.ReleaseBuffer(buf_size);
   }
   return size;
 }
 
 DLLEXPORT int STDCALL FPDFLink_CountRects(FPDF_PAGELINK link_page,
                                           int link_index) {
-  if (!link_page)
+  if (!link_page || link_index < 0)
     return 0;
 
+  CFX_RectArray rects;
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
-  CFX_RectArray rectArray;
-  pageLink->GetRects(link_index, rectArray);
-  return rectArray.GetSize();
+  pageLink->GetRects(link_index, &rects);
+  return rects.GetSize();
 }
 
 DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page,
@@ -328,20 +328,22 @@ DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page,
                                         double* top,
                                         double* right,
                                         double* bottom) {
-  if (!link_page)
+  if (!link_page || link_index < 0 || rect_index < 0)
     return;
 
-  CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
   CFX_RectArray rectArray;
-  pageLink->GetRects(link_index, rectArray);
-  if (rect_index >= 0 && rect_index < rectArray.GetSize()) {
-    CFX_FloatRect rect = rectArray.GetAt(rect_index);
-    *left = rect.left;
-    *right = rect.right;
-    *top = rect.top;
-    *bottom = rect.bottom;
-  }
+  CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
+  pageLink->GetRects(link_index, &rectArray);
+  if (rect_index >= rectArray.GetSize())
+    return;
+
+  CFX_FloatRect rect = rectArray.GetAt(rect_index);
+  *left = rect.left;
+  *right = rect.right;
+  *top = rect.top;
+  *bottom = rect.bottom;
 }
+
 DLLEXPORT void STDCALL FPDFLink_CloseWebLinks(FPDF_PAGELINK link_page) {
   delete CPDFLinkExtractFromFPDFPageLink(link_page);
 }

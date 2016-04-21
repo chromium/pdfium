@@ -67,7 +67,7 @@ class CPDF_TextPage {
   int TextIndexFromCharIndex(int CharIndex) const;
   int CountChars() const;
   void GetCharInfo(int index, FPDF_CHAR_INFO* info) const;
-  void GetRectArray(int start, int nCount, CFX_RectArray& rectArray) const;
+  void GetRectArray(int start, int nCount, CFX_RectArray* rectArray) const;
   int GetIndexAtPos(CFX_FloatPoint point,
                     FX_FLOAT xTolerance,
                     FX_FLOAT yTolerance) const;
@@ -85,14 +85,12 @@ class CPDF_TextPage {
                FX_FLOAT& top,
                FX_FLOAT& right,
                FX_FLOAT& bottom) const;
-  FX_BOOL GetBaselineRotate(int rectIndex, int& Rotate);
-  FX_BOOL GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate);
   int CountBoundedSegments(FX_FLOAT left,
                            FX_FLOAT top,
                            FX_FLOAT right,
                            FX_FLOAT bottom,
                            FX_BOOL bContains = FALSE);
-  void GetBoundedSegment(int index, int& start, int& count) const;
+
   int GetWordBreak(int index, int direction) const;
 
   static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,

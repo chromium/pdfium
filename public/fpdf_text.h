@@ -351,13 +351,19 @@ DLLEXPORT int STDCALL FPDFLink_CountWebLinks(FPDF_PAGELINK link_page);
 // Parameters:
 //          link_page   -   Handle returned by FPDFLink_LoadWebLinks.
 //          link_index  -   Zero-based index for the link.
-//          buffer      -   A unicode buffer.
+//          buffer      -   A unicode buffer for the result.
 //          buflen      -   Number of characters (not bytes) for the buffer,
-//          including an additional terminator.
+//                          including an additional terminator.
 // Return Value:
-//          If buffer is NULL or buflen is zero, return number of characters
-//          (not bytes and an additional terminator is also counted) needed,
-//          otherwise, return number of characters copied into the buffer.
+//          If |buffer| is NULL or |buflen| is zero, return the number of
+//          characters (not bytes) needed to buffer the result (an additional
+//          terminator is included in this count).
+//          Otherwise, copy the result into |buffer|, truncating at |buflen| if
+//          the result is too large to fit, and return the number of characters
+//          actually copied into the buffer (the additional terminator is also
+//          included in this count).
+//          If |link_index| does not correspond to a valid link, then the result
+//          is an empty string.
 //
 DLLEXPORT int STDCALL FPDFLink_GetURL(FPDF_PAGELINK link_page,
                                       int link_index,
@@ -370,7 +376,8 @@ DLLEXPORT int STDCALL FPDFLink_GetURL(FPDF_PAGELINK link_page,
 //          link_page   -   Handle returned by FPDFLink_LoadWebLinks.
 //          link_index  -   Zero-based index for the link.
 // Return Value:
-//          Number of rectangular areas for the link.
+//          Number of rectangular areas for the link.  If |link_index| does
+//          not correspond to a valid link, then 0 is returned.
 //
 DLLEXPORT int STDCALL FPDFLink_CountRects(FPDF_PAGELINK link_page,
                                           int link_index);
@@ -382,15 +389,16 @@ DLLEXPORT int STDCALL FPDFLink_CountRects(FPDF_PAGELINK link_page,
 //          link_index  -   Zero-based index for the link.
 //          rect_index  -   Zero-based index for a rectangle.
 //          left        -   Pointer to a double value receiving the rectangle
-//          left boundary.
+//                          left boundary.
 //          top         -   Pointer to a double value receiving the rectangle
-//          top boundary.
+//                          top boundary.
 //          right       -   Pointer to a double value receiving the rectangle
-//          right boundary.
+//                          right boundary.
 //          bottom      -   Pointer to a double value receiving the rectangle
-//          bottom boundary.
+//                          bottom boundary.
 // Return Value:
-//          None.
+//          None.  If |link_index| does not correspond to a valid link, then
+//          |left|, |top|, |right|, and |bottom| remain unmodified.
 //
 DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page,
                                         int link_index,

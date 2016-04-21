@@ -8,6 +8,9 @@
 
 // Class to help test functions in CPDF_LinkExtract class.
 class CPDF_TestLinkExtract : public CPDF_LinkExtract {
+ public:
+  CPDF_TestLinkExtract() : CPDF_LinkExtract(nullptr) {}
+
  private:
   // Add test cases as friends to access protected member functions.
   // Access CheckMailLink.
