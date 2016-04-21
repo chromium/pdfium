@@ -13,6 +13,7 @@
 #include "xfa/fgas/font/fgas_font.h"
 
 class CFDE_CSSAccelerator;
+class CXFA_CSSTagProvider;
 class IFDE_CSSBoundaryStyle;
 class IFDE_CSSComputedStyle;
 class IFDE_CSSDeclaration;
@@ -24,7 +25,6 @@ class IFDE_CSSSelector;
 class IFDE_CSSStyleSelector;
 class IFDE_CSSStyleSheet;
 class IFDE_CSSSyntaxParser;
-class IFDE_CSSTagProvider;
 class IFDE_CSSValue;
 class IFDE_CSSValueList;
 
@@ -881,15 +881,6 @@ enum FDE_CSSSTYLESHEETPRIORITY {
   FDE_CSSSTYLESHEETPRIORITY_Low,
   FDE_CSSSTYLESHEETPRIORITY_MAX,
 };
-class IFDE_CSSTagProvider {
- public:
-  virtual ~IFDE_CSSTagProvider() {}
-  virtual CFX_WideStringC GetTagName() = 0;
-  virtual FX_POSITION GetFirstAttribute() = 0;
-  virtual void GetNextAttribute(FX_POSITION& pos,
-                                CFX_WideStringC& wsAttr,
-                                CFX_WideStringC& wsValue) = 0;
-};
 
 class IFDE_CSSStyleSelector {
  public:
@@ -909,10 +900,10 @@ class IFDE_CSSStyleSelector {
   virtual IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle) = 0;
   virtual int32_t MatchDeclarations(
-      IFDE_CSSTagProvider* pTag,
+      CXFA_CSSTagProvider* pTag,
       CFDE_CSSDeclarationArray& matchedDecls,
       FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE) = 0;
-  virtual void ComputeStyle(IFDE_CSSTagProvider* pTag,
+  virtual void ComputeStyle(CXFA_CSSTagProvider* pTag,
                             const IFDE_CSSDeclaration** ppDeclArray,
                             int32_t iDeclCount,
                             IFDE_CSSComputedStyle* pDestStyle) = 0;

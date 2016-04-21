@@ -18,6 +18,7 @@
 
 class CFDE_CSSAccelerator;
 class CFDE_CSSComputedStyle;
+class CXFA_CSSTagProvider;
 
 class FDE_CSSRuleData : public CFX_Target {
  public:
@@ -109,10 +110,10 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   virtual IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle);
   virtual int32_t MatchDeclarations(
-      IFDE_CSSTagProvider* pTag,
+      CXFA_CSSTagProvider* pTag,
       CFDE_CSSDeclarationArray& matchedDecls,
       FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE);
-  virtual void ComputeStyle(IFDE_CSSTagProvider* pTag,
+  virtual void ComputeStyle(CXFA_CSSTagProvider* pTag,
                             const IFDE_CSSDeclaration** ppDeclArray,
                             int32_t iDeclCount,
                             IFDE_CSSComputedStyle* pDestStyle);

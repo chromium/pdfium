@@ -10,6 +10,7 @@
 
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
+#include "xfa/fxfa/app/xfa_textlayout.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')
 
@@ -312,20 +313,22 @@ void CFDE_CSSStyleSelector::Reset() {
   }
 }
 int32_t CFDE_CSSStyleSelector::MatchDeclarations(
-    IFDE_CSSTagProvider* pTag,
+    CXFA_CSSTagProvider* pTag,
     CFDE_CSSDeclarationArray& matchedDecls,
     FDE_CSSPERSUDO ePersudoType) {
-  FXSYS_assert(m_pAccelerator != NULL && pTag != NULL);
+  FXSYS_assert(m_pAccelerator && pTag);
+
   FDE_CSSTagCache* pCache = m_pAccelerator->GetTopElement();
-  FXSYS_assert(pCache != NULL && pCache->GetTag() == pTag);
+  FXSYS_assert(pCache && pCache->GetTag() == pTag);
+
   matchedDecls.RemoveAt(0, matchedDecls.GetSize());
   for (int32_t ePriority = FDE_CSSSTYLESHEETPRIORITY_MAX - 1; ePriority >= 0;
        --ePriority) {
     FDE_CSSSTYLESHEETGROUP eGroup = m_ePriorities[ePriority];
     CFDE_CSSRuleCollection& rules = m_RuleCollection[eGroup];
-    if (rules.CountSelectors() == 0) {
+    if (rules.CountSelectors() == 0)
       continue;
-    }
+
     if (ePersudoType == FDE_CSSPERSUDO_NONE) {
       MatchRules(pCache, rules.GetUniversalRuleData(), ePersudoType);
       if (pCache->HashTag()) {
@@ -414,45 +417,47 @@ FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
 }
 
 void CFDE_CSSStyleSelector::ComputeStyle(
-    IFDE_CSSTagProvider* pTag,
+    CXFA_CSSTagProvider* pTag,
     const IFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
     IFDE_CSSComputedStyle* pDestStyle) {
   FXSYS_assert(iDeclCount >= 0);
   FXSYS_assert(pDestStyle);
-  FX_POSITION pos = pTag->GetFirstAttribute();
-  if (pos != NULL) {
-    if (m_pInlineStyleStore == NULL) {
+
+  static const uint32_t s_dwStyleHash =
+      FX_HashCode_String_GetW(L"style", 5, TRUE);
+  static const uint32_t s_dwAlignHash =
+      FX_HashCode_String_GetW(L"align", 5, TRUE);
+
+  if (!pTag->empty()) {
+    if (!m_pInlineStyleStore)
       m_pInlineStyleStore = FX_CreateAllocator(FX_ALLOCTYPE_Static, 2048, 0);
-    }
-    CFDE_CSSDeclaration* pDecl = NULL;
-    CFX_WideStringC wsAttri, wsValue;
-    uint32_t dwAttriHash;
-    do {
-      pTag->GetNextAttribute(pos, wsAttri, wsValue);
-      dwAttriHash =
+
+    CFDE_CSSDeclaration* pDecl = nullptr;
+    for (auto it : *pTag) {
+      CFX_WideString wsAttri = it.first;
+      CFX_WideString wsValue = it.second;
+
+      uint32_t dwAttriHash =
           FX_HashCode_String_GetW(wsAttri.c_str(), wsAttri.GetLength(), TRUE);
-      static const uint32_t s_dwStyleHash =
-          FX_HashCode_String_GetW(L"style", 5, TRUE);
-      static const uint32_t s_dwAlignHash =
-          FX_HashCode_String_GetW(L"align", 5, TRUE);
       if (dwAttriHash == s_dwStyleHash) {
-        if (pDecl == NULL) {
+        if (!pDecl)
           pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
-        }
+
         AppendInlineStyle(pDecl, wsValue.c_str(), wsValue.GetLength());
       } else if (dwAttriHash == s_dwAlignHash) {
-        if (pDecl == NULL) {
+        if (!pDecl)
           pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
-        }
+
         FDE_CSSPROPERTYARGS args;
-        args.pStringCache = NULL;
+        args.pStringCache = nullptr;
         args.pStaticStore = m_pInlineStyleStore;
         args.pProperty = FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY_TextAlign);
         pDecl->AddProperty(&args, wsValue.c_str(), wsValue.GetLength());
       }
-    } while (pos != NULL);
-    if (pDecl != NULL) {
+    }
+
+    if (pDecl) {
       CFDE_CSSDeclarationArray decls;
       decls.SetSize(iDeclCount + 1);
       IFDE_CSSDeclaration** ppInline = decls.GetData();
@@ -466,12 +471,15 @@ void CFDE_CSSStyleSelector::ComputeStyle(
       return;
     }
   }
+
   if (iDeclCount > 0) {
-    FXSYS_assert(ppDeclArray != NULL);
+    FXSYS_assert(ppDeclArray);
+
     ApplyDeclarations(TRUE, ppDeclArray, iDeclCount, pDestStyle);
     ApplyDeclarations(FALSE, ppDeclArray, iDeclCount, pDestStyle);
   }
 }
+
 void CFDE_CSSStyleSelector::ApplyDeclarations(
     FX_BOOL bPriority,
     const IFDE_CSSDeclaration** ppDeclArray,

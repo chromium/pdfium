@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_TEXTLAYOUT_H_
 #define XFA_FXFA_APP_XFA_TEXTLAYOUT_H_
 
+#include <map>
+
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fgas/layout/fgas_rtfbreak.h"
@@ -20,28 +22,31 @@ class CXFA_Font;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
 
-class CXFA_CSSTagProvider : public IFDE_CSSTagProvider {
+class CXFA_CSSTagProvider {
  public:
   CXFA_CSSTagProvider() : m_bTagAviliable(FALSE), m_bContent(FALSE) {}
-  virtual ~CXFA_CSSTagProvider();
+  ~CXFA_CSSTagProvider() {}
 
-  // Note: |this| must outlive the use of GetTagName()'s result.
-  virtual CFX_WideStringC GetTagName() { return m_wsTagName.AsStringC(); }
-  virtual FX_POSITION GetFirstAttribute() {
-    return m_Attributes.GetStartPosition();
-  }
-  virtual void GetNextAttribute(FX_POSITION& pos,
-                                CFX_WideStringC& wsAttr,
-                                CFX_WideStringC& wsValue);
+  CFX_WideString GetTagName() { return m_wsTagName; }
+
+  using AttributeMap = std::map<CFX_WideString, CFX_WideString>;
+  AttributeMap::iterator begin() { return m_Attributes.begin(); }
+  AttributeMap::iterator end() { return m_Attributes.end(); }
+
+  bool empty() const { return m_Attributes.empty(); }
+
   void SetTagNameObj(const CFX_WideString& wsName) { m_wsTagName = wsName; }
   void SetAttribute(const CFX_WideString& wsAttr,
-                    const CFX_WideString& wsValue);
+                    const CFX_WideString& wsValue) {
+    m_Attributes.insert({wsAttr, wsValue});
+  }
+
   FX_BOOL m_bTagAviliable;
   FX_BOOL m_bContent;
 
  protected:
   CFX_WideString m_wsTagName;
-  CFX_MapPtrToPtr m_Attributes;
+  AttributeMap m_Attributes;
 };
 
 class CXFA_TextParseContext : public CFX_Target {

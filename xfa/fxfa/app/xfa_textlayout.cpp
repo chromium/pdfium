@@ -21,40 +21,11 @@
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 
-CXFA_CSSTagProvider::~CXFA_CSSTagProvider() {
-  FX_POSITION pos = m_Attributes.GetStartPosition();
-  while (pos) {
-    CFX_WideString *pName = NULL, *pValue = NULL;
-    m_Attributes.GetNextAssoc(pos, (void*&)pName, (void*&)pValue);
-    delete pName;
-    delete pValue;
-  }
-}
-void CXFA_CSSTagProvider::GetNextAttribute(FX_POSITION& pos,
-                                           CFX_WideStringC& wsAttr,
-                                           CFX_WideStringC& wsValue) {
-  if (pos == NULL) {
-    return;
-  }
-  CFX_WideString* pName = NULL;
-  CFX_WideString* pValue = NULL;
-  m_Attributes.GetNextAssoc(pos, (void*&)pName, (void*&)pValue);
-  wsAttr = pName->AsStringC();
-  wsValue = pValue->AsStringC();
-}
-void CXFA_CSSTagProvider::SetAttribute(const CFX_WideString& wsAttr,
-                                       const CFX_WideString& wsValue) {
-  CFX_WideString* pName = new CFX_WideString();
-  CFX_WideString* pValue = new CFX_WideString();
-  *pName = wsAttr;
-  *pValue = wsValue;
-  m_Attributes.SetAt(pName, pValue);
-}
 void CXFA_TextParseContext::SetDecls(const IFDE_CSSDeclaration** ppDeclArray,
                                      int32_t iDeclCount) {
-  if (iDeclCount <= 0 || ppDeclArray == NULL) {
+  if (iDeclCount <= 0 || !ppDeclArray)
     return;
-  }
+
   m_dwMatchedDecls = iDeclCount;
   m_ppMatchedDecls = FX_Alloc(IFDE_CSSDeclaration*, iDeclCount);
   FXSYS_memcpy(m_ppMatchedDecls, ppDeclArray,

@@ -23,13 +23,16 @@ class FDE_CSSCacheItem : public CFX_Target {
 
 class FDE_CSSTagCache : public CFX_Target {
  public:
-  FDE_CSSTagCache(FDE_CSSTagCache* parent, IFDE_CSSTagProvider* tag);
+  FDE_CSSTagCache(FDE_CSSTagCache* parent, CXFA_CSSTagProvider* tag);
   FDE_CSSTagCache(const FDE_CSSTagCache& it);
+
   FDE_CSSTagCache* GetParent() const { return pParent; }
-  IFDE_CSSTagProvider* GetTag() const { return pTag; }
+  CXFA_CSSTagProvider* GetTag() const { return pTag; }
+
   uint32_t HashID() const { return dwIDHash; }
   uint32_t HashTag() const { return dwTagHash; }
   int32_t CountHashClass() const { return dwClassHashs.GetSize(); }
+
   void SetClassIndex(int32_t index) { iClassIndex = index; }
   uint32_t HashClass() const {
     return iClassIndex < dwClassHashs.GetSize()
@@ -38,7 +41,7 @@ class FDE_CSSTagCache : public CFX_Target {
   }
 
  protected:
-  IFDE_CSSTagProvider* pTag;
+  CXFA_CSSTagProvider* pTag;
   FDE_CSSTagCache* pParent;
   uint32_t dwIDHash;
   uint32_t dwTagHash;
@@ -49,8 +52,8 @@ typedef CFX_ObjectStackTemplate<FDE_CSSTagCache> CFDE_CSSTagStack;
 
 class CFDE_CSSAccelerator : public CFX_Target {
  public:
-  void OnEnterTag(IFDE_CSSTagProvider* pTag);
-  void OnLeaveTag(IFDE_CSSTagProvider* pTag);
+  void OnEnterTag(CXFA_CSSTagProvider* pTag);
+  void OnLeaveTag(CXFA_CSSTagProvider* pTag);
 
   void Clear() { m_Stack.RemoveAll(); }
 
