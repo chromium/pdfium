@@ -191,7 +191,9 @@ CIDSet CIDSetFromSizeT(size_t index) {
 }
 
 CFX_ByteStringC CMap_GetString(const CFX_ByteStringC& word) {
-  return word.Mid(1, word.GetLength() - 2);
+  if (word.GetLength() <= 2)
+    return CFX_ByteStringC();
+  return CFX_ByteStringC(&word[1], word.GetLength() - 2);
 }
 
 int CompareDWORD(const void* data1, const void* data2) {
