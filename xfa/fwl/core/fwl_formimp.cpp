@@ -860,15 +860,11 @@ void CFWL_FormImp::DoHeightLimit(FX_FLOAT& fTop,
 CFWL_FormImpDelegate::CFWL_FormImpDelegate(CFWL_FormImp* pOwner)
     : m_pOwner(pOwner) {}
 
+#ifdef FWL_UseMacSystemBorder
 int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-
-  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-
-#ifdef FWL_UseMacSystemBorder
-
-  switch (dwMsgCode) {
+  switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
       m_pOwner->Repaint(&m_pOwner->m_rtRelative);
@@ -879,11 +875,17 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       m_pOwner->Repaint(&m_pOwner->m_rtRelative);
       break;
     }
+    default:
+      break;
   }
   return FWL_ERR_Succeeded;
+}
 #else
+int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+  if (!pMessage)
+    return 0;
   int32_t iRet = 1;
-  switch (dwMsgCode) {
+  switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
       IFWL_Thread* pThread = m_pOwner->GetOwnerThread();
@@ -984,8 +986,8 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
   }
   return iRet;
-#endif  // FWL_UseMacSystemBorder
 }
+#endif  // FWL_UseMacSystemBorder
 
 FWL_ERR CFWL_FormImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
