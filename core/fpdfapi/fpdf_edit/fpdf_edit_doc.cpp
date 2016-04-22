@@ -6,6 +6,7 @@
 
 #include <limits.h>
 
+#include <set>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
@@ -1008,11 +1009,11 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
                                int nPagesToGo,
                                CPDF_Dictionary* pPage,
                                FX_BOOL bInsert,
-                               CFX_ArrayTemplate<CPDF_Dictionary*>& stackList) {
+                               std::set<CPDF_Dictionary*>* pVisited) {
   CPDF_Array* pKidList = pPages->GetArrayBy("Kids");
-  if (!pKidList) {
+  if (!pKidList)
     return -1;
-  }
+
   for (size_t i = 0; i < pKidList->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (pKid->GetStringBy("Type") == "Page") {
@@ -1031,18 +1032,13 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
     } else {
       int nPages = pKid->GetIntegerBy("Count");
       if (nPagesToGo < nPages) {
-        int stackCount = stackList.GetSize();
-        for (int j = 0; j < stackCount; ++j) {
-          if (pKid == stackList[j]) {
-            return -1;
-          }
-        }
-        stackList.Add(pKid);
+        if (pdfium::ContainsValue(*pVisited, pKid))
+          return -1;
+        pdfium::ScopedSetInsertion<CPDF_Dictionary*>(pVisited, pKid);
         if (InsertDeletePDFPage(pDoc, pKid, nPagesToGo, pPage, bInsert,
-                                stackList) < 0) {
+                                pVisited) < 0) {
           return -1;
         }
-        stackList.RemoveAt(stackCount);
         pPages->SetAtInteger(
             "Count", pPages->GetIntegerBy("Count") + (bInsert ? 1 : -1));
         return 1;
@@ -1078,11 +1074,9 @@ static int InsertNewPage(CPDF_Document* pDoc,
     pPages->SetAtInteger("Count", nPages + 1);
     pPageDict->SetAtReference("Parent", pDoc, pPages->GetObjNum());
   } else {
-    CFX_ArrayTemplate<CPDF_Dictionary*> stack;
-    stack.Add(pPages);
-    if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, TRUE, stack) < 0) {
+    std::set<CPDF_Dictionary*> stack = {pPages};
+    if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, TRUE, &stack) < 0)
       return -1;
-    }
   }
   pageList.InsertAt(iPage, pPageDict->GetObjNum());
   return iPage;
@@ -1108,22 +1102,21 @@ CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font,
 
 void CPDF_Document::DeletePage(int iPage) {
   CPDF_Dictionary* pRoot = GetRoot();
-  if (!pRoot) {
+  if (!pRoot)
     return;
-  }
+
   CPDF_Dictionary* pPages = pRoot->GetDictBy("Pages");
-  if (!pPages) {
+  if (!pPages)
     return;
-  }
+
   int nPages = pPages->GetIntegerBy("Count");
-  if (iPage < 0 || iPage >= nPages) {
+  if (iPage < 0 || iPage >= nPages)
     return;
-  }
-  CFX_ArrayTemplate<CPDF_Dictionary*> stack;
-  stack.Add(pPages);
-  if (InsertDeletePDFPage(this, pPages, iPage, NULL, FALSE, stack) < 0) {
+
+  std::set<CPDF_Dictionary*> stack = {pPages};
+  if (InsertDeletePDFPage(this, pPages, iPage, nullptr, FALSE, &stack) < 0)
     return;
-  }
+
   m_PageList.RemoveAt(iPage);
 }
 
