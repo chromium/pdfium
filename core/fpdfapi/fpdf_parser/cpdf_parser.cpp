@@ -316,6 +316,32 @@ FX_FILESIZE CPDF_Parser::GetObjectOffset(uint32_t objnum) const {
   return 0;
 }
 
+// Ideally, all the cross reference entries should be verified.
+// In reality, we rarely see well-formed cross references don't match
+// with the objects. crbug/602650 showed a case where object numbers
+// in the cross reference table are all off by one.
+bool CPDF_Parser::VerifyCrossRefV4() {
+  for (const auto& it : m_ObjectInfo) {
+    if (it.second.pos == 0)
+      continue;
+    // Find the first non-zero position.
+    FX_FILESIZE SavedPos = m_pSyntax->SavePos();
+    m_pSyntax->RestorePos(it.second.pos);
+    bool is_num = false;
+    CFX_ByteString num_str = m_pSyntax->GetNextWord(&is_num);
+    m_pSyntax->RestorePos(SavedPos);
+    if (!is_num || num_str.IsEmpty() ||
+        FXSYS_atoui(num_str.c_str()) != it.first) {
+      // If the object number read doesn't match the one stored,
+      // something is wrong with the cross reference table.
+      return false;
+    } else {
+      return true;
+    }
+  }
+  return true;
+}
+
 FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   if (!LoadCrossRefV4(xrefpos, 0, TRUE))
     return FALSE;
@@ -365,6 +391,8 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
 
   for (size_t i = 0; i < CrossRefList.size(); ++i) {
     if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], FALSE))
+      return FALSE;
+    if (i == 0 && !VerifyCrossRefV4())
       return FALSE;
   }
   return TRUE;

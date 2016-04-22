@@ -67,6 +67,13 @@ include_rules = [
   '+third_party/base',
 ]
 
+specific_include_rules = {
+  # Allow embedder tests to use public APIs.
+  "(.*embeddertest\.cpp)": [
+      "+public",
+  ]
+}
+
 hooks = [
   # Pull GN binaries. This needs to be before running GYP below.
   {

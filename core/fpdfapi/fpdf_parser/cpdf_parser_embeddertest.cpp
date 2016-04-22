@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "public/fpdf_text.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -37,4 +38,19 @@ TEST_F(CPDFParserEmbeddertest, Feature_Linearized_Loading) {
 TEST_F(CPDFParserEmbeddertest, Bug_325) {
   EXPECT_FALSE(OpenDocument("bug_325_a.pdf"));
   EXPECT_FALSE(OpenDocument("bug_325_b.pdf"));
+}
+
+TEST_F(CPDFParserEmbeddertest, Bug_602650) {
+  // Test the case that cross reference entries, which are well formed,
+  // but do not match with the objects.
+  EXPECT_TRUE(OpenDocument("bug_602650.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  EXPECT_NE(nullptr, text_page);
+  // The page should not be blank.
+  EXPECT_LT(0, FPDFText_CountChars(text_page));
+
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
 }

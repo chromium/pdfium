@@ -114,6 +114,9 @@ class CPDF_Parser {
   FX_BOOL IsLinearizedFile(IFX_FileRead* pFileAccess, uint32_t offset);
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
   void ShrinkObjectMap(uint32_t size);
+  // A simple check whether the cross reference table matches with
+  // the objects.
+  bool VerifyCrossRefV4();
 
   CPDF_Document* m_pDocument;
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
