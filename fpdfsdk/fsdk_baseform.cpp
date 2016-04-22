@@ -7,6 +7,7 @@
 #include "fpdfsdk/include/fsdk_baseform.h"
 
 #include <algorithm>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -1997,7 +1998,7 @@ CPDFSDK_InterForm::~CPDFSDK_InterForm() {
   m_pInterForm = nullptr;
   m_Map.clear();
 #ifdef PDF_ENABLE_XFA
-  m_XFAMap.RemoveAll();
+  m_XFAMap.clear();
 #endif  // PDF_ENABLE_XFA
 }
 
@@ -2114,18 +2115,19 @@ FX_BOOL CPDFSDK_InterForm::IsCalculateEnabled() const {
 #ifdef PDF_ENABLE_XFA
 void CPDFSDK_InterForm::AddXFAMap(CXFA_FFWidget* hWidget,
                                   CPDFSDK_XFAWidget* pWidget) {
-  m_XFAMap.SetAt(hWidget, pWidget);
+  FXSYS_assert(hWidget);
+  m_XFAMap[hWidget] = pWidget;
 }
 
 void CPDFSDK_InterForm::RemoveXFAMap(CXFA_FFWidget* hWidget) {
-  m_XFAMap.RemoveKey(hWidget);
+  FXSYS_assert(hWidget);
+  m_XFAMap.erase(hWidget);
 }
 
 CPDFSDK_XFAWidget* CPDFSDK_InterForm::GetXFAWidget(CXFA_FFWidget* hWidget) {
-  CPDFSDK_XFAWidget* pWidget = NULL;
-  m_XFAMap.Lookup(hWidget, pWidget);
-
-  return pWidget;
+  FXSYS_assert(hWidget);
+  auto it = m_XFAMap.find(hWidget);
+  return it != m_XFAMap.end() ? it->second : nullptr;
 }
 
 void CPDFSDK_InterForm::XfaEnableCalculate(FX_BOOL bEnabled) {
@@ -2454,14 +2456,8 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
 #ifdef PDF_ENABLE_XFA
 void CPDFSDK_InterForm::SynchronizeField(CPDF_FormField* pFormField,
                                          FX_BOOL bSynchronizeElse) {
-  int x = 0;
-  if (m_FieldSynchronizeMap.Lookup(pFormField, x))
-    return;
-
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
-    ASSERT(pFormCtrl);
-    ASSERT(m_pInterForm);
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl)) {
       pWidget->Synchronize(bSynchronizeElse);
     }
