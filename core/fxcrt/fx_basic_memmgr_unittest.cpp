@@ -29,17 +29,24 @@ TEST(fxcrt, DISABLED_FX_AllocOOM) {
 }
 
 TEST(fxcrt, FX_AllocOverflow) {
-  EXPECT_DEATH_IF_SUPPORTED((void)FX_Alloc(int, kOverflowIntAlloc), "");
+  // |ptr| needs to be defined and used to avoid Clang optimizes away the
+  // FX_Alloc() statement overzealously for optimized builds.
+  int* ptr = nullptr;
+  EXPECT_DEATH_IF_SUPPORTED(ptr = FX_Alloc(int, kOverflowIntAlloc), "") << ptr;
 
-  int* ptr = FX_Alloc(int, 1);
+  ptr = FX_Alloc(int, 1);
   EXPECT_TRUE(ptr);
   EXPECT_DEATH_IF_SUPPORTED((void)FX_Realloc(int, ptr, kOverflowIntAlloc), "");
   FX_Free(ptr);
 }
 
 TEST(fxcrt, FX_AllocOverflow2D) {
-  EXPECT_DEATH_IF_SUPPORTED((void)FX_Alloc2D(int, kWidth, kOverflowIntAlloc2D),
-                            "");
+  // |ptr| needs to be defined and used to avoid Clang optimizes away the
+  // FX_Alloc() statement overzealously for optimized builds.
+  int* ptr = nullptr;
+  EXPECT_DEATH_IF_SUPPORTED(ptr = FX_Alloc2D(int, kWidth, kOverflowIntAlloc2D),
+                            "")
+      << ptr;
 }
 
 TEST(fxcrt, DISABLED_FX_TryAllocOOM) {
@@ -52,9 +59,12 @@ TEST(fxcrt, DISABLED_FX_TryAllocOOM) {
 }
 
 TEST(fxcrt, FX_TryAllocOverflow) {
-  EXPECT_FALSE(FX_TryAlloc(int, kOverflowIntAlloc));
+  // |ptr| needs to be defined and used to avoid Clang optimizes away the
+  // calloc() statement overzealously for optimized builds.
+  int* ptr = (int*)calloc(sizeof(int), kOverflowIntAlloc);
+  EXPECT_FALSE(ptr) << ptr;
 
-  int* ptr = FX_Alloc(int, 1);
+  ptr = FX_Alloc(int, 1);
   EXPECT_TRUE(ptr);
   EXPECT_FALSE(FX_TryRealloc(int, ptr, kOverflowIntAlloc));
   FX_Free(ptr);
