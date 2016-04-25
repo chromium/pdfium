@@ -909,7 +909,7 @@ void CPDF_TextPage::OnPiece(CFX_BidiChar* pBidi, CFX_WideString& str) {
   CFX_BidiChar::Segment seg = pBidi->GetSegmentInfo();
   if (seg.direction == CFX_BidiChar::RIGHT) {
     for (int i = seg.start + seg.count; i > seg.start; i--) {
-      m_TextBuf.AppendChar(str.GetAt(i - i));
+      m_TextBuf.AppendChar(str.GetAt(i - 1));
       m_CharList.push_back(m_TempCharList[i - 1]);
     }
   } else {
