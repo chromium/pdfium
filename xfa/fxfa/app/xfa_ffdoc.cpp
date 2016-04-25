@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfdoc/include/fpdf_doc.h"
@@ -188,37 +190,27 @@ void CXFA_FFDoc::StopLoad() {
     m_dwDocType = XFA_DOCTYPE_Dynamic;
   }
 }
+
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView(uint32_t dwView) {
-  CXFA_FFDocView* pDocView =
-      (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((void*)(uintptr_t)dwView);
-  if (!pDocView) {
-    pDocView = new CXFA_FFDocView(this);
-    m_mapTypeToDocView.SetAt((void*)(uintptr_t)dwView, pDocView);
-  }
-  return pDocView;
+  if (!m_TypeToDocViewMap[dwView])
+    m_TypeToDocViewMap[dwView].reset(new CXFA_FFDocView(this));
+
+  return m_TypeToDocViewMap[dwView].get();
 }
+
 CXFA_FFDocView* CXFA_FFDoc::GetDocView(CXFA_LayoutProcessor* pLayout) {
-  FX_POSITION ps = m_mapTypeToDocView.GetStartPosition();
-  while (ps) {
-    void* pType;
-    CXFA_FFDocView* pDocView;
-    m_mapTypeToDocView.GetNextAssoc(ps, pType, (void*&)pDocView);
-    if (pDocView->GetXFALayout() == pLayout) {
-      return pDocView;
-    }
+  for (const auto& pair : m_TypeToDocViewMap) {
+    if (pair.second->GetXFALayout() == pLayout)
+      return pair.second.get();
   }
-  return NULL;
+  return nullptr;
 }
+
 CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
-  FX_POSITION ps = m_mapTypeToDocView.GetStartPosition();
-  if (ps) {
-    void* pType;
-    CXFA_FFDocView* pDocView;
-    m_mapTypeToDocView.GetNextAssoc(ps, pType, (void*&)pDocView);
-    return pDocView;
-  }
-  return NULL;
+  auto it = m_TypeToDocViewMap.begin();
+  return it != m_TypeToDocViewMap.end() ? it->second.get() : nullptr;
 }
+
 FX_BOOL CXFA_FFDoc::OpenDoc(IFX_FileRead* pStream, FX_BOOL bTakeOverFile) {
   m_bOwnStream = bTakeOverFile;
   m_pStream = pStream;
@@ -264,53 +256,35 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   return TRUE;
 }
 FX_BOOL CXFA_FFDoc::CloseDoc() {
-  FX_POSITION psClose = m_mapTypeToDocView.GetStartPosition();
-  while (psClose) {
-    void* pType;
-    CXFA_FFDocView* pDocView;
-    m_mapTypeToDocView.GetNextAssoc(psClose, pType, (void*&)pDocView);
-    pDocView->RunDocClose();
-  }
-  if (m_pDocument) {
+  for (const auto& pair : m_TypeToDocViewMap)
+    pair.second->RunDocClose();
+
+  if (m_pDocument)
     m_pDocument->ClearLayoutData();
-  }
-  FX_POSITION ps = m_mapTypeToDocView.GetStartPosition();
-  while (ps) {
-    void* pType;
-    CXFA_FFDocView* pDocView;
-    m_mapTypeToDocView.GetNextAssoc(ps, pType, (void*&)pDocView);
-    delete pDocView;
-  }
-  m_mapTypeToDocView.RemoveAll();
+
+  m_TypeToDocViewMap.clear();
+
   if (m_pDocument) {
-    IXFA_Parser* pParser = m_pDocument->GetParser();
-    pParser->Release();
-    m_pDocument = NULL;
+    m_pDocument->GetParser()->Release();
+    m_pDocument = nullptr;
   }
-  if (m_pNotify) {
-    delete m_pNotify;
-    m_pNotify = NULL;
-  }
+
+  delete m_pNotify;
+  m_pNotify = nullptr;
+
   m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
+
   if (m_dwDocType != XFA_DOCTYPE_XDP && m_pStream && m_bOwnStream) {
     m_pStream->Release();
-    m_pStream = NULL;
+    m_pStream = nullptr;
   }
-  ps = m_mapNamedImages.GetStartPosition();
-  while (ps) {
-    void* pName;
-    FX_IMAGEDIB_AND_DPI* pImage = NULL;
-    m_mapNamedImages.GetNextAssoc(ps, pName, (void*&)pImage);
-    if (pImage) {
-      delete pImage->pDibSource;
-      pImage->pDibSource = NULL;
-      FX_Free(pImage);
-      pImage = NULL;
-    }
-  }
-  m_mapNamedImages.RemoveAll();
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
-  pNoteDriver->ClearEventTargets(FALSE);
+
+  for (const auto& pair : m_HashToDibDpiMap)
+    delete pair.second.pDibSource;
+
+  m_HashToDibDpiMap.clear();
+
+  FWL_GetApp()->GetNoteDriver()->ClearEventTargets(FALSE);
   return TRUE;
 }
 void CXFA_FFDoc::SetDocType(uint32_t dwType) {
@@ -327,11 +301,11 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
     return nullptr;
 
   uint32_t dwHash = FX_HashCode_GetW(wsName, false);
-  FX_IMAGEDIB_AND_DPI* imageDIBDpi = nullptr;
-  if (m_mapNamedImages.Lookup((void*)(uintptr_t)dwHash, (void*&)imageDIBDpi)) {
-    iImageXDpi = imageDIBDpi->iImageXDpi;
-    iImageYDpi = imageDIBDpi->iImageYDpi;
-    return static_cast<CFX_DIBitmap*>(imageDIBDpi->pDibSource);
+  auto it = m_HashToDibDpiMap.find(dwHash);
+  if (it != m_HashToDibDpiMap.end()) {
+    iImageXDpi = it->second.iImageXDpi;
+    iImageYDpi = it->second.iImageYDpi;
+    return static_cast<CFX_DIBitmap*>(it->second.pDibSource);
   }
 
   CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
@@ -360,26 +334,21 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
     }
   }
 
-  if (!pObject || !pObject->IsStream())
+  CPDF_Stream* pStream = ToStream(pObject);
+  if (!pStream)
     return nullptr;
 
-  if (!imageDIBDpi) {
-    imageDIBDpi = FX_Alloc(FX_IMAGEDIB_AND_DPI, 1);
-    imageDIBDpi->pDibSource = nullptr;
-    imageDIBDpi->iImageXDpi = 0;
-    imageDIBDpi->iImageYDpi = 0;
-    CPDF_StreamAcc streamAcc;
-    streamAcc.LoadAllData((CPDF_Stream*)pObject);
-    IFX_FileRead* pImageFileRead = FX_CreateMemoryStream(
-        (uint8_t*)streamAcc.GetData(), streamAcc.GetSize());
-    imageDIBDpi->pDibSource = XFA_LoadImageFromBuffer(
-        pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
-    imageDIBDpi->iImageXDpi = iImageXDpi;
-    imageDIBDpi->iImageYDpi = iImageYDpi;
-    pImageFileRead->Release();
-  }
-  m_mapNamedImages.SetAt((void*)(uintptr_t)dwHash, imageDIBDpi);
-  return (CFX_DIBitmap*)imageDIBDpi->pDibSource;
+  CPDF_StreamAcc streamAcc;
+  streamAcc.LoadAllData(pStream);
+
+  IFX_FileRead* pImageFileRead =
+      FX_CreateMemoryStream((uint8_t*)streamAcc.GetData(), streamAcc.GetSize());
+
+  CFX_DIBitmap* pDibSource = XFA_LoadImageFromBuffer(
+      pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
+  m_HashToDibDpiMap[dwHash] = {pDibSource, iImageXDpi, iImageYDpi};
+  pImageFileRead->Release();
+  return pDibSource;
 }
 
 CFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {

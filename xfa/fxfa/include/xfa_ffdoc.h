@@ -7,6 +7,9 @@
 #ifndef XFA_FXFA_INCLUDE_XFA_FFDOC_H_
 #define XFA_FXFA_INCLUDE_XFA_FFDOC_H_
 
+#include <map>
+#include <memory>
+
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 
@@ -56,8 +59,8 @@ class CXFA_FFDoc {
   CXFA_FFApp* m_pApp;
   CXFA_FFNotify* m_pNotify;
   CPDF_Document* m_pPDFDoc;
-  CFX_MapPtrToPtr m_mapNamedImages;
-  CFX_MapPtrToPtr m_mapTypeToDocView;
+  std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
+  std::map<uint32_t, std::unique_ptr<CXFA_FFDocView>> m_TypeToDocViewMap;
   uint32_t m_dwDocType;
   FX_BOOL m_bOwnStream;
 };
