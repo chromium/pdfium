@@ -154,6 +154,7 @@ int CPDFXFA_Document::GetPageCount() {
 CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
   if (page_index < 0)
     return nullptr;
+
   CPDFXFA_Page* pPage = nullptr;
   int nCount = m_XFAPageList.GetSize();
   if (nCount > 0 && page_index < nCount) {
@@ -166,6 +167,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
   }
   if (pPage)
     return pPage;
+
   pPage = new CPDFXFA_Page(this, page_index);
   if (!pPage->LoadPage()) {
     pPage->Release();
@@ -177,13 +179,13 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
 
 CPDFXFA_Page* CPDFXFA_Document::GetPage(CXFA_FFPageView* pPage) {
   if (!pPage)
-    return NULL;
+    return nullptr;
 
   if (!m_pXFADoc)
-    return NULL;
+    return nullptr;
 
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
-    return NULL;
+    return nullptr;
 
   int nSize = m_XFAPageList.GetSize();
   for (int i = 0; i < nSize; i++) {
@@ -194,10 +196,16 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(CXFA_FFPageView* pPage) {
       return pTempPage;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void CPDFXFA_Document::DeletePage(int page_index) {
+  // Delete from the document first because, if GetPage was never called for
+  // this |page_index| then |m_XFAPageList| may have size < |page_index| even
+  // if it's a valid page in the document.
+  if (m_pPDFDoc)
+    m_pPDFDoc->DeletePage(page_index);
+
   if (page_index < 0 || page_index >= m_XFAPageList.GetSize())
     return;
 

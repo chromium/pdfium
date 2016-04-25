@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/include/fx_string.h"
 #include "public/fpdf_doc.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
@@ -137,4 +138,11 @@ TEST_F(FPDFDocEmbeddertest, FindBookmarks_bug420) {
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =
       GetFPDFWideString(L"anything");
   EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), title.get()));
+}
+
+TEST_F(FPDFDocEmbeddertest, DeletePage) {
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+  FPDFPage_Delete(document(), 0);
+  EXPECT_EQ(0, FPDF_GetPageCount(document()));
 }
