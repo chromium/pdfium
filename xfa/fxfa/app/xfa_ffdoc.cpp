@@ -326,8 +326,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   if (!m_pPDFDoc)
     return nullptr;
 
-  uint32_t dwHash =
-      FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength(), FALSE);
+  uint32_t dwHash = FX_HashCode_GetW(wsName, false);
   FX_IMAGEDIB_AND_DPI* imageDIBDpi = nullptr;
   if (m_mapNamedImages.Lookup((void*)(uintptr_t)dwHash, (void*&)imageDIBDpi)) {
     iImageXDpi = imageDIBDpi->iImageXDpi;
@@ -384,8 +383,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
 }
 
 CFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
-  uint32_t packetHash =
-      FX_HashCode_String_GetW(wsPackage.c_str(), wsPackage.GetLength());
+  uint32_t packetHash = FX_HashCode_GetW(wsPackage, false);
   CXFA_Node* pNode = ToNode(m_pDocument->GetXFAObject(packetHash));
   if (!pNode) {
     return NULL;
@@ -399,8 +397,7 @@ FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
                                 IFX_FileWrite* pFile,
                                 CXFA_ChecksumContext* pCSContext) {
   CXFA_DataExporter* pExport = new CXFA_DataExporter(m_pDocument);
-  uint32_t packetHash =
-      FX_HashCode_String_GetW(wsPackage.c_str(), wsPackage.GetLength());
+  uint32_t packetHash = FX_HashCode_GetW(wsPackage, false);
   CXFA_Node* pNode = NULL;
   if (packetHash == XFA_HASHCODE_Xfa) {
     pNode = m_pDocument->GetRoot();

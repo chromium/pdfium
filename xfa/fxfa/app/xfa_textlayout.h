@@ -87,7 +87,7 @@ class CXFA_TextParser {
                                       IFDE_CSSComputedStyle* pParentStyle);
   FX_BOOL IsParsed() const { return m_pAllocator != NULL; }
 
-  int32_t GetVAlgin(CXFA_TextProvider* pTextProvider) const;
+  int32_t GetVAlign(CXFA_TextProvider* pTextProvider) const;
   FX_FLOAT GetTabInterval(IFDE_CSSComputedStyle* pStyle) const;
   int32_t CountTabs(IFDE_CSSComputedStyle* pStyle) const;
   FX_BOOL IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const;

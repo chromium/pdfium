@@ -94,12 +94,12 @@ const int32_t g_iXFABarcodeTypeCount =
 
 XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(
     const CFX_WideStringC& wsName) {
-  int32_t iLength = wsName.GetLength();
-  if (iLength == 0) {
-    return NULL;
-  }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength, TRUE);
-  int32_t iStart = 0, iEnd = g_iXFABarcodeTypeCount - 1;
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t uHash = FX_HashCode_GetW(wsName, true);
+  int32_t iStart = 0;
+  int32_t iEnd = g_iXFABarcodeTypeCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     XFA_LPCBARCODETYPEENUMINFO pInfo = g_XFABarCodeTypeEnumData + iMid;

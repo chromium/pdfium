@@ -397,52 +397,48 @@ static CXFA_Node* XFA_DataMerge_FindGlobalDataNode(CXFA_Document* pDocument,
                                                    CFX_WideStringC wsName,
                                                    CXFA_Node* pDataScope,
                                                    XFA_ELEMENT eMatchNodeType) {
-  uint32_t dwNameHash =
-      wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.c_str(),
-                                                     wsName.GetLength());
-  if (dwNameHash != 0) {
-    CXFA_Node* pBounded = XFA_DataMerge_GetGlobalBinding(pDocument, dwNameHash);
-    if (!pBounded) {
-      pBounded = XFA_DataMerge_ScopeMatchGlobalBinding(pDataScope, dwNameHash,
-                                                       eMatchNodeType);
-      if (pBounded) {
-        XFA_DataMerge_RegisterGlobalBinding(pDocument, dwNameHash, pBounded);
-      }
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t dwNameHash = FX_HashCode_GetW(wsName, false);
+  CXFA_Node* pBounded = XFA_DataMerge_GetGlobalBinding(pDocument, dwNameHash);
+  if (!pBounded) {
+    pBounded = XFA_DataMerge_ScopeMatchGlobalBinding(pDataScope, dwNameHash,
+                                                     eMatchNodeType);
+    if (pBounded) {
+      XFA_DataMerge_RegisterGlobalBinding(pDocument, dwNameHash, pBounded);
     }
-    return pBounded;
   }
-  return NULL;
+  return pBounded;
 }
+
 static CXFA_Node* XFA_DataMerge_FindOnceDataNode(CXFA_Document* pDocument,
                                                  CFX_WideStringC wsName,
                                                  CXFA_Node* pDataScope,
                                                  XFA_ELEMENT eMatchNodeType) {
-  uint32_t dwNameHash =
-      wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.c_str(),
-                                                     wsName.GetLength());
-  if (dwNameHash != 0) {
-    for (CXFA_Node *pCurDataScope = pDataScope, *pLastDataScope = NULL;
-         pCurDataScope &&
-         pCurDataScope->GetPacketID() == XFA_XDPPACKET_Datasets;
-         pLastDataScope = pCurDataScope,
-                   pCurDataScope =
-                       pCurDataScope->GetNodeItem(XFA_NODEITEM_Parent)) {
-      for (CXFA_Node* pDataChild =
-               pCurDataScope->GetFirstChildByName(dwNameHash);
-           pDataChild;
-           pDataChild = pDataChild->GetNextSameNameSibling(dwNameHash)) {
-        if (pDataChild == pLastDataScope ||
-            (eMatchNodeType != XFA_ELEMENT_DataModel &&
-             pDataChild->GetClassID() != eMatchNodeType) ||
-            pDataChild->HasBindItem()) {
-          continue;
-        }
-        return pDataChild;
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t dwNameHash = FX_HashCode_GetW(wsName, false);
+  CXFA_Node* pLastDataScope = nullptr;
+  for (CXFA_Node* pCurDataScope = pDataScope;
+       pCurDataScope && pCurDataScope->GetPacketID() == XFA_XDPPACKET_Datasets;
+       pCurDataScope = pCurDataScope->GetNodeItem(XFA_NODEITEM_Parent)) {
+    for (CXFA_Node* pDataChild = pCurDataScope->GetFirstChildByName(dwNameHash);
+         pDataChild;
+         pDataChild = pDataChild->GetNextSameNameSibling(dwNameHash)) {
+      if (pDataChild == pLastDataScope || pDataChild->HasBindItem() ||
+          (eMatchNodeType != XFA_ELEMENT_DataModel &&
+           pDataChild->GetClassID() != eMatchNodeType)) {
+        continue;
       }
+      return pDataChild;
     }
+    pLastDataScope = pCurDataScope;
   }
-  return NULL;
+  return nullptr;
 }
+
 static CXFA_Node* XFA_DataMerge_FindDataRefDataNode(CXFA_Document* pDocument,
                                                     CFX_WideStringC wsRef,
                                                     CXFA_Node* pDataScope,
@@ -561,8 +557,8 @@ static CXFA_Node* XFA_NodeMerge_CloneOrMergeInstanceManager(
     CXFA_NodeArray& subforms) {
   CFX_WideStringC wsSubformName = pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
   CFX_WideString wsInstMgrNodeName = FX_WSTRC(L"_") + wsSubformName;
-  uint32_t dwInstNameHash = FX_HashCode_String_GetW(
-      wsInstMgrNodeName.c_str(), wsInstMgrNodeName.GetLength());
+  uint32_t dwInstNameHash =
+      FX_HashCode_GetW(wsInstMgrNodeName.AsStringC(), false);
   CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
       pDocument, XFA_ELEMENT_InstanceManager, dwInstNameHash, pFormParent);
   if (pExistingNode) {

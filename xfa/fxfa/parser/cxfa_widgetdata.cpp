@@ -466,8 +466,7 @@ CXFA_Node* CXFA_WidgetData::GetSelectedMember() {
 CXFA_Node* CXFA_WidgetData::SetSelectedMember(const CFX_WideStringC& wsName,
                                               FX_BOOL bNotify) {
   CXFA_Node* pSelectedMember = NULL;
-  uint32_t nameHash =
-      FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength());
+  uint32_t nameHash = FX_HashCode_GetW(wsName, false);
   for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
        pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetNameHash() == nameHash) {

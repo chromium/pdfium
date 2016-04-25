@@ -483,8 +483,7 @@ CXFA_FMCallExpression::~CXFA_FMCallExpression() {
 }
 
 bool CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf* funcName) {
-  uint32_t uHash = FX_HashCode_String_GetW(funcName->GetBuffer(),
-                                           funcName->GetLength(), TRUE);
+  uint32_t uHash = FX_HashCode_GetW(funcName->AsStringC(), true);
   const XFA_FMBuildInFunc* pEnd = g_BuildInFuncs + FX_ArraySize(g_BuildInFuncs);
   const XFA_FMBuildInFunc* pFunc =
       std::lower_bound(g_BuildInFuncs, pEnd, uHash,
@@ -501,8 +500,7 @@ bool CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf* funcName) {
 
 uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
     const CFX_WideStringC& methodName) {
-  int32_t iLength = methodName.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(methodName.c_str(), iLength);
+  uint32_t uHash = FX_HashCode_GetW(methodName, false);
   XFA_FMSOMMethod somMethodWithObjPara;
   uint32_t parameters = 0x00;
   int32_t iStart = 0,

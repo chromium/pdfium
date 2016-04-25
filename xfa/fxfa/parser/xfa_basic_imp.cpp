@@ -21,12 +21,12 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 const XFA_PACKETINFO* XFA_GetPacketByName(const CFX_WideStringC& wsName) {
-  int32_t iLength = wsName.GetLength();
-  if (iLength == 0) {
-    return NULL;
-  }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
-  int32_t iStart = 0, iEnd = g_iXFAPacketCount - 1;
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t uHash = FX_HashCode_GetW(wsName, false);
+  int32_t iStart = 0;
+  int32_t iEnd = g_iXFAPacketCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     const XFA_PACKETINFO* pInfo = g_XFAPacketData + iMid;
@@ -63,12 +63,12 @@ const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket) {
 
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
     const CFX_WideStringC& wsName) {
-  int32_t iLength = wsName.GetLength();
-  if (iLength == 0) {
-    return NULL;
-  }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
-  int32_t iStart = 0, iEnd = g_iXFAEnumCount - 1;
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t uHash = FX_HashCode_GetW(wsName, false);
+  int32_t iStart = 0;
+  int32_t iEnd = g_iXFAEnumCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     const XFA_ATTRIBUTEENUMINFO* pInfo = g_XFAEnumData + iMid;
@@ -87,12 +87,12 @@ const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName) {
 }
 
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {
-  int32_t iLength = wsName.GetLength();
-  if (iLength == 0) {
-    return NULL;
-  }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
-  int32_t iStart = 0, iEnd = g_iXFAAttributeCount - 1;
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t uHash = FX_HashCode_GetW(wsName, false);
+  int32_t iStart = 0;
+  int32_t iEnd = g_iXFAAttributeCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     const XFA_ATTRIBUTEINFO* pInfo = g_XFAAttributeData + iMid;
@@ -104,7 +104,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName) {
   return (eName < g_iXFAAttributeCount) ? (g_XFAAttributeData + eName) : NULL;
@@ -177,12 +177,12 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
 }
 
 const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
-  int32_t iLength = wsName.GetLength();
-  if (iLength == 0) {
-    return NULL;
-  }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
-  int32_t iStart = 0, iEnd = g_iXFAElementCount - 1;
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t uHash = FX_HashCode_GetW(wsName, false);
+  int32_t iStart = 0;
+  int32_t iEnd = g_iXFAElementCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     const XFA_ELEMENTINFO* pInfo = g_XFAElementData + iMid;
@@ -334,10 +334,9 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_ELEMENT eElement,
 
 const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
                                           const CFX_WideStringC& wsMethodName) {
-  int32_t iLength = wsMethodName.GetLength();
-  if (iLength == 0) {
-    return NULL;
-  }
+  if (wsMethodName.IsEmpty())
+    return nullptr;
+
   int32_t iElementIndex = eElement;
   while (iElementIndex != -1) {
     const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
@@ -346,8 +345,9 @@ const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
       iElementIndex = scriptIndex->wParentIndex;
       continue;
     }
-    uint32_t uHash = FX_HashCode_String_GetW(wsMethodName.c_str(), iLength);
-    int32_t iStart = scriptIndex->wMethodStart, iEnd = iStart + icount - 1;
+    uint32_t uHash = FX_HashCode_GetW(wsMethodName, false);
+    int32_t iStart = scriptIndex->wMethodStart;
+    int32_t iEnd = iStart + icount - 1;
     do {
       int32_t iMid = (iStart + iEnd) / 2;
       const XFA_METHODINFO* pInfo = g_SomMethodData + iMid;
@@ -366,10 +366,9 @@ const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_ELEMENT eElement,
     const CFX_WideStringC& wsAttributeName) {
-  int32_t iLength = wsAttributeName.GetLength();
-  if (iLength == 0) {
-    return NULL;
-  }
+  if (wsAttributeName.IsEmpty())
+    return nullptr;
+
   int32_t iElementIndex = eElement;
   while (iElementIndex != -1) {
     const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
@@ -378,7 +377,7 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
       iElementIndex = scriptIndex->wParentIndex;
       continue;
     }
-    uint32_t uHash = FX_HashCode_String_GetW(wsAttributeName.c_str(), iLength);
+    uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
     int32_t iStart = scriptIndex->wAttributeStart, iEnd = iStart + icount - 1;
     do {
       int32_t iMid = (iStart + iEnd) / 2;

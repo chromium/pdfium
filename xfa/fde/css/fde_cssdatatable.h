@@ -137,8 +137,7 @@ struct FDE_CSSPROPERTYTABLE {
 };
 typedef FDE_CSSPROPERTYTABLE const* FDE_LPCCSSPROPERTYTABLE;
 
-FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(const FX_WCHAR* pszName,
-                                                 int32_t iLength);
+FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(const CFX_WideStringC& wsName);
 FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName);
 struct FDE_CSSPROPERTYVALUETABLE {
   FDE_CSSPROPERTYVALUE eName;
@@ -148,8 +147,7 @@ struct FDE_CSSPROPERTYVALUETABLE {
 typedef FDE_CSSPROPERTYVALUETABLE const* FDE_LPCCSSPROPERTYVALUETABLE;
 
 FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(
-    const FX_WCHAR* pszName,
-    int32_t iLength);
+    const CFX_WideStringC& wsName);
 FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByEnum(
     FDE_CSSPROPERTYVALUE eName);
 struct FDE_CSSMEDIATYPETABLE {
@@ -157,22 +155,22 @@ struct FDE_CSSMEDIATYPETABLE {
   uint16_t wValue;
 };
 typedef FDE_CSSMEDIATYPETABLE const* FDE_LPCCSSMEDIATYPETABLE;
-FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(const FX_WCHAR* pszName,
-                                                   int32_t iLength);
+FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(
+    const CFX_WideStringC& wsName);
 struct FDE_CSSLENGTHUNITTABLE {
   uint16_t wHash;
   uint16_t wValue;
 };
 typedef FDE_CSSLENGTHUNITTABLE const* FDE_LPCCSSLENGTHUNITTABLE;
-FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(const FX_WCHAR* pszName,
-                                                     int32_t iLength);
+FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(
+    const CFX_WideStringC& wsName);
 struct FDE_CSSCOLORTABLE {
   uint32_t dwHash;
   FX_ARGB dwValue;
 };
 typedef FDE_CSSCOLORTABLE const* FDE_LPCCSSCOLORTABLE;
-FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const FX_WCHAR* pszName,
-                                           int32_t iLength);
+FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const CFX_WideStringC& wsName);
+
 struct FDE_CSSPERSUDOTABLE {
   FDE_CSSPERSUDO eName;
   const FX_WCHAR* pszName;

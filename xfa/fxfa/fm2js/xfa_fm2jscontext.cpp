@@ -4238,19 +4238,17 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
 }
 FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
                                         uint32_t& iCode) {
-  int32_t iLength = pData.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(pData.c_str(), iLength);
-  XFA_FMHtmlHashedReserveCode htmlhashedreservecode;
-  int32_t iStart = 0,
-          iEnd = (sizeof(reservesForDecode) / sizeof(reservesForDecode[0])) - 1;
-  int32_t iMid = (iStart + iEnd) / 2;
+  uint32_t uHash = FX_HashCode_GetW(pData, false);
+  int32_t iStart = 0;
+  int32_t iEnd = FX_ArraySize(reservesForDecode) - 1;
   do {
-    iMid = (iStart + iEnd) / 2;
-    htmlhashedreservecode = reservesForDecode[iMid];
+    int32_t iMid = (iStart + iEnd) / 2;
+    XFA_FMHtmlHashedReserveCode htmlhashedreservecode = reservesForDecode[iMid];
     if (uHash == htmlhashedreservecode.m_uHash) {
       iCode = htmlhashedreservecode.m_uCode;
       return TRUE;
-    } else if (uHash < htmlhashedreservecode.m_uHash) {
+    }
+    if (uHash < htmlhashedreservecode.m_uHash) {
       iEnd = iMid - 1;
     } else {
       iStart = iMid + 1;

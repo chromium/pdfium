@@ -77,12 +77,8 @@ inline int FXSYS_toDecimalDigit(const FX_WCHAR c) {
   return std::iswdigit(c) ? c - L'0' : 0;
 }
 
-uint32_t FX_HashCode_String_GetA(const FX_CHAR* pStr,
-                                 int32_t iLength,
-                                 FX_BOOL bIgnoreCase = FALSE);
-uint32_t FX_HashCode_String_GetW(const FX_WCHAR* pStr,
-                                 int32_t iLength,
-                                 FX_BOOL bIgnoreCase = FALSE);
+uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase);
+uint32_t FX_HashCode_GetW(const CFX_WideStringC& Str, bool bIgnoreCase);
 
 void* FX_Random_MT_Start(uint32_t dwSeed);
 

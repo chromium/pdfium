@@ -309,12 +309,12 @@ uint16_t FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
   if (iLength == 0) {
     return 0xFFFF;
   }
-  uint32_t uHash = FX_HashCode_String_GetA(pStr, iLength, TRUE);
-  int32_t iStart = 0, iMid;
+  uint32_t uHash = FX_HashCode_GetA(CFX_ByteStringC(pStr, iLength), true);
+  int32_t iStart = 0;
   int32_t iEnd = sizeof(g_FXCPHashTable) / sizeof(FX_STR2CPHASH) - 1;
   FXSYS_assert(iEnd >= 0);
   do {
-    iMid = (iStart + iEnd) / 2;
+    int32_t iMid = (iStart + iEnd) / 2;
     const FX_STR2CPHASH& cp = g_FXCPHashTable[iMid];
     if (uHash == cp.uHash) {
       return (uint16_t)cp.uCodePage;

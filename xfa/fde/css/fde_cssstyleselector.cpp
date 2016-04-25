@@ -424,10 +424,8 @@ void CFDE_CSSStyleSelector::ComputeStyle(
   FXSYS_assert(iDeclCount >= 0);
   FXSYS_assert(pDestStyle);
 
-  static const uint32_t s_dwStyleHash =
-      FX_HashCode_String_GetW(L"style", 5, TRUE);
-  static const uint32_t s_dwAlignHash =
-      FX_HashCode_String_GetW(L"align", 5, TRUE);
+  static const uint32_t s_dwStyleHash = FX_HashCode_GetW(L"style", true);
+  static const uint32_t s_dwAlignHash = FX_HashCode_GetW(L"align", true);
 
   if (!pTag->empty()) {
     if (!m_pInlineStyleStore)
@@ -437,9 +435,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     for (auto it : *pTag) {
       CFX_WideString wsAttri = it.first;
       CFX_WideString wsValue = it.second;
-
-      uint32_t dwAttriHash =
-          FX_HashCode_String_GetW(wsAttri.c_str(), wsAttri.GetLength(), TRUE);
+      uint32_t dwAttriHash = FX_HashCode_GetW(wsAttri.AsStringC(), true);
       if (dwAttriHash == s_dwStyleHash) {
         if (!pDecl)
           pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
@@ -565,7 +561,7 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
       FDE_CSSSYNTAXSTATUS eStatus = pSyntax->DoSyntaxParse();
       if (eStatus == FDE_CSSSYNTAXSTATUS_PropertyName) {
         psz = pSyntax->GetCurrentString(iLen);
-        args.pProperty = FDE_GetCSSPropertyByName(psz, iLen);
+        args.pProperty = FDE_GetCSSPropertyByName(CFX_WideStringC(psz, iLen));
         if (args.pProperty == NULL) {
           wsName = CFX_WideStringC(psz, iLen);
         }

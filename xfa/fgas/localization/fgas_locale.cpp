@@ -595,8 +595,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
         wsCategory += pStr[ccf];
         ccf++;
       }
-      uint32_t dwHash =
-          FX_HashCode_String_GetW(wsCategory.c_str(), wsCategory.GetLength());
+      uint32_t dwHash = FX_HashCode_GetW(wsCategory.AsStringC(), false);
       if (dwHash == FX_LOCALECATEGORY_DateHash) {
         if (eCategory == FX_LOCALECATEGORY_Time) {
           return FX_LOCALECATEGORY_DateTime;
@@ -755,8 +754,8 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
           while (ccf < iLenf && pStr[ccf] != '(' && pStr[ccf] != '{') {
             wsSubCategory += pStr[ccf++];
           }
-          uint32_t dwSubHash = FX_HashCode_String_GetW(
-              wsSubCategory.c_str(), wsSubCategory.GetLength());
+          uint32_t dwSubHash =
+              FX_HashCode_GetW(wsSubCategory.AsStringC(), false);
           FX_LOCALENUMSUBCATEGORY eSubCategory = FX_LOCALENUMPATTERN_Decimal;
           for (int32_t i = 0; i < g_iFXLocaleNumSubCatCount; i++) {
             if (g_FXLocaleNumSubCatData[i].uHash == dwSubHash) {
@@ -2209,8 +2208,8 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
           while (ccf < iLenf && pStr[ccf] != '(' && pStr[ccf] != '{') {
             wsSubCategory += pStr[ccf++];
           }
-          uint32_t dwSubHash = FX_HashCode_String_GetW(
-              wsSubCategory.c_str(), wsSubCategory.GetLength());
+          uint32_t dwSubHash =
+              FX_HashCode_GetW(wsSubCategory.AsStringC(), false);
           FX_LOCALEDATETIMESUBCATEGORY eSubCategory =
               FX_LOCALEDATETIMESUBCATEGORY_Medium;
           for (int32_t i = 0; i < g_iFXLocaleDateTimeSubCatCount; i++) {

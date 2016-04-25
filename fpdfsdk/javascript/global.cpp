@@ -53,7 +53,7 @@ const unsigned int JSCONST_nUndefHash =
     CHash<'u', 'n', 'd', 'e', 'f', 'i', 'n', 'e', 'd'>::value;
 
 static unsigned JS_CalcHash(const wchar_t* main) {
-  return (unsigned)FX_HashCode_String_GetW(main, FXSYS_wcslen(main));
+  return (unsigned)FX_HashCode_GetW(CFX_WideStringC(main), false);
 }
 
 #ifndef NDEBUG

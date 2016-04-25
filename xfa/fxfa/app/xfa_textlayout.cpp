@@ -112,22 +112,22 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
     FDE_CSSLENGTH indent;
     indent.Set(FDE_CSSLENGTHUNIT_Point, para.GetTextIndent());
     pParaStyle->SetTextIndent(indent);
-    FDE_CSSTEXTALIGN hAlgin = FDE_CSSTEXTALIGN_Left;
+    FDE_CSSTEXTALIGN hAlign = FDE_CSSTEXTALIGN_Left;
     switch (para.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
-        hAlgin = FDE_CSSTEXTALIGN_Center;
+        hAlign = FDE_CSSTEXTALIGN_Center;
         break;
       case XFA_ATTRIBUTEENUM_Right:
-        hAlgin = FDE_CSSTEXTALIGN_Right;
+        hAlign = FDE_CSSTEXTALIGN_Right;
         break;
       case XFA_ATTRIBUTEENUM_Justify:
-        hAlgin = FDE_CSSTEXTALIGN_Justify;
+        hAlign = FDE_CSSTEXTALIGN_Justify;
         break;
       case XFA_ATTRIBUTEENUM_JustifyAll:
-        hAlgin = FDE_CSSTEXTALIGN_JustifyAll;
+        hAlign = FDE_CSSTEXTALIGN_JustifyAll;
         break;
     }
-    pParaStyle->SetTextAlign(hAlgin);
+    pParaStyle->SetTextAlign(hAlign);
     FDE_CSSRECT rtMarginWidth;
     rtMarginWidth.left.Set(FDE_CSSLENGTHUNIT_Point, para.GetMarginLeft());
     rtMarginWidth.top.Set(FDE_CSSLENGTHUNIT_Point, para.GetSpaceAbove());
@@ -275,8 +275,7 @@ void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
     CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
     pXMLElement->GetLocalTagName(wsName);
     tagProvider.SetTagNameObj(wsName);
-    uint32_t dwHashCode =
-        FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength(), TRUE);
+    uint32_t dwHashCode = FX_HashCode_GetW(wsName.AsStringC(), true);
     static const int32_t s_iCount = sizeof(s_XFATagName) / sizeof(uint32_t);
     CFX_DSPATemplate<uint32_t> lookup;
     tagProvider.m_bTagAviliable =
@@ -292,7 +291,7 @@ void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
   }
 }
 
-int32_t CXFA_TextParser::GetVAlgin(CXFA_TextProvider* pTextProvider) const {
+int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
   CXFA_Para para = pTextProvider->GetParaNode();
   return para ? para.GetVerticalAlign() : XFA_ATTRIBUTEENUM_Top;
 }
@@ -613,8 +612,7 @@ FX_BOOL CXFA_TextParser::GetTabstops(
         break;
       case XFA_TABSTOPSSTATUS_Location:
         if (ch == ' ') {
-          uint32_t dwHashCode = FX_HashCode_String_GetW(
-              wsAlign.c_str(), wsAlign.GetLength(), TRUE);
+          uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringC(), true);
           CXFA_Measurement ms(CFX_WideStringC(pTabStops + iLast, iCur - iLast));
           FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
           pTabstopContext->Append(dwHashCode, fPos);
@@ -628,8 +626,7 @@ FX_BOOL CXFA_TextParser::GetTabstops(
     }
   }
   if (!wsAlign.IsEmpty()) {
-    uint32_t dwHashCode =
-        FX_HashCode_String_GetW(wsAlign.c_str(), wsAlign.GetLength(), TRUE);
+    uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringC(), true);
     CXFA_Measurement ms(CFX_WideStringC(pTabStops + iLast, iCur - iLast));
     FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
     pTabstopContext->Append(dwHashCode, fPos);
@@ -934,7 +931,7 @@ FX_BOOL CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
   if (iBlockCount == 0 && fHeight > 0) {
     fHeight = fTextHeight - GetLayoutHeight();
     if (fHeight > 0) {
-      int32_t iAlign = m_textParser.GetVAlgin(m_pTextProvider);
+      int32_t iAlign = m_textParser.GetVAlign(m_pTextProvider);
       if (iAlign == XFA_ATTRIBUTEENUM_Middle) {
         fHeight /= 2.0f;
       } else if (iAlign != XFA_ATTRIBUTEENUM_Bottom) {
@@ -1253,7 +1250,7 @@ void CXFA_TextLayout::UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom) {
   if (fHeight < 0.1f) {
     return;
   }
-  switch (m_textParser.GetVAlgin(m_pTextProvider)) {
+  switch (m_textParser.GetVAlign(m_pTextProvider)) {
     case XFA_ATTRIBUTEENUM_Middle:
       fHeight /= 2.0f;
       break;
@@ -1643,13 +1640,13 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
     if (m_pTabstopContext->m_bTabstops) {
       XFA_TABSTOPS* pTabstops =
           m_pTabstopContext->m_tabstops.GetDataPtr(iTabstopsIndex);
-      uint32_t dwAlgin = pTabstops->dwAlign;
-      if (dwAlgin == FX_HashCode_String_GetW(L"center", 6)) {
+      uint32_t dwAlign = pTabstops->dwAlign;
+      if (dwAlign == FX_HashCode_GetW(L"center", false)) {
         fLeft = pPiece->rtPiece.width / 2.0f;
-      } else if (dwAlgin == FX_HashCode_String_GetW(L"right", 5) ||
-                 dwAlgin == FX_HashCode_String_GetW(L"before", 6)) {
+      } else if (dwAlign == FX_HashCode_GetW(L"right", false) ||
+                 dwAlign == FX_HashCode_GetW(L"before", false)) {
         fLeft = pPiece->rtPiece.width;
-      } else if (dwAlgin == FX_HashCode_String_GetW(L"decimal", 7)) {
+      } else if (dwAlign == FX_HashCode_GetW(L"decimal", false)) {
         int32_t iChars = pPiece->iChars;
         for (int32_t i = 0; i < iChars; i++) {
           if (pPiece->pszText[i] == L'.') {

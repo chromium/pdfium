@@ -42,7 +42,7 @@ uint32_t FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily,
     wsFont += L"Italic";
   }
   wsFont += wCodePage;
-  return FX_HashCode_String_GetW(wsFont.c_str(), wsFont.GetLength());
+  return FX_HashCode_GetW(wsFont.AsStringC(), false);
 }
 static const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
     {0x0000, 0x007F, 0, 1252},     {0x0080, 0x00FF, 1, 1252},

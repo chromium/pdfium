@@ -1694,12 +1694,7 @@ static const XFA_FONTINFO g_XFAFontsMap[] = {
 void XFA_LocalFontNameToEnglishName(const CFX_WideStringC& wsLocalName,
                                     CFX_WideString& wsEnglishName) {
   wsEnglishName = wsLocalName;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ || \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ ||   \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ ||   \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
-  uint32_t dwLocalNameHash = FX_HashCode_String_GetW(
-      wsLocalName.c_str(), wsLocalName.GetLength(), TRUE);
+  uint32_t dwLocalNameHash = FX_HashCode_GetW(wsLocalName, true);
   int32_t iStart = 0;
   int32_t iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
   int32_t iMid = 0;
@@ -1715,18 +1710,13 @@ void XFA_LocalFontNameToEnglishName(const CFX_WideStringC& wsLocalName,
       iEnd = iMid - 1;
     }
   } while (iEnd >= iStart);
-#endif
 }
 const XFA_FONTINFO* XFA_GetFontINFOByFontName(
     const CFX_WideStringC& wsFontName) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ || \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ ||   \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ ||   \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
   CFX_WideString wsFontNameTemp = wsFontName;
   wsFontNameTemp.Remove(L' ');
-  uint32_t dwCurFontNameHash = FX_HashCode_String_GetW(
-      wsFontNameTemp.c_str(), wsFontNameTemp.GetLength(), TRUE);
+  uint32_t dwCurFontNameHash =
+      FX_HashCode_GetW(wsFontNameTemp.AsStringC(), true);
   int32_t iStart = 0;
   int32_t iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
   int32_t iMid = 0;
@@ -1744,9 +1734,6 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
     }
   } while (iEnd >= iStart);
   return pFontInfo;
-#else
-  return NULL;
-#endif
 }
 
 CXFA_DefFontMgr::~CXFA_DefFontMgr() {
@@ -1891,8 +1878,7 @@ IFX_Font* CXFA_PDFFontMgr::GetFont(const CFX_WideStringC& wsFontFamily,
                                    uint32_t dwFontStyles,
                                    CPDF_Font** pPDFFont,
                                    FX_BOOL bStrictMatch) {
-  uint32_t dwHashCode =
-      FX_HashCode_String_GetW(wsFontFamily.c_str(), wsFontFamily.GetLength());
+  uint32_t dwHashCode = FX_HashCode_GetW(wsFontFamily, false);
   CFX_ByteString strKey;
   strKey.Format("%u%u", dwHashCode, dwFontStyles);
   auto it = m_FontMap.find(strKey);
@@ -2018,8 +2004,7 @@ IFX_Font* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
                                 const CFX_WideStringC& wsFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage) {
-  uint32_t dwHash = FX_HashCode_String_GetW(wsFontFamily.c_str(),
-                                            wsFontFamily.GetLength(), FALSE);
+  uint32_t dwHash = FX_HashCode_GetW(wsFontFamily, false);
   CFX_ByteString bsKey;
   bsKey.Format("%u%u%u", dwHash, dwFontStyles, wCodePage);
   auto it = m_FontMap.find(bsKey);

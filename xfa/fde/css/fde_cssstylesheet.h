@@ -15,10 +15,10 @@ class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
   CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType,
                    const FX_WCHAR* psz,
                    int32_t iLen,
-                   FX_BOOL bIgnoreCase)
+                   bool bIgnoreCase)
       : m_eType(eType),
-        m_dwHash(FX_HashCode_String_GetW(psz, iLen, bIgnoreCase)),
-        m_pNext(NULL) {}
+        m_dwHash(FX_HashCode_GetW(CFX_WideStringC(psz, iLen), bIgnoreCase)),
+        m_pNext(nullptr) {}
   virtual FDE_CSSSELECTORTYPE GetType() const { return m_eType; }
 
   virtual uint32_t GetNameHash() const { return m_dwHash; }
@@ -41,6 +41,7 @@ class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
   IFDE_CSSSelector* m_pNext;
 };
 typedef CFX_ArrayTemplate<IFDE_CSSSelector*> CFDE_CSSSelectorArray;
+
 class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
  public:
   CFDE_CSSStyleRule() : m_ppSelector(NULL), m_iSelectors(0) {}

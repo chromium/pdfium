@@ -779,9 +779,9 @@ void CXFA_FFDocView::RunBindItems() {
         wsLabelRef.IsEmpty() || wsLabelRef == FX_WSTRC(L"$");
     const bool bValueUseContent =
         wsValueRef.IsEmpty() || wsValueRef == FX_WSTRC(L"$");
-    CFX_WideString wsValue, wsLabel;
-    uint32_t uValueHash =
-        FX_HashCode_String_GetW(wsValueRef.c_str(), wsValueRef.GetLength());
+    CFX_WideString wsValue;
+    CFX_WideString wsLabel;
+    uint32_t uValueHash = FX_HashCode_GetW(wsValueRef, false);
     for (int32_t i = 0; i < iCount; i++) {
       CXFA_Object* refObj = rs.nodes[i];
       if (!refObj->IsNode()) {

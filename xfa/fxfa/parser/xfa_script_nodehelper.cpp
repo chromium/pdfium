@@ -33,7 +33,7 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetOneChild(
     return NULL;
   }
   CXFA_NodeArray siblings;
-  uint32_t uNameHash = FX_HashCode_String_GetW(pwsName, FXSYS_wcslen(pwsName));
+  uint32_t uNameHash = FX_HashCode_GetW(CFX_WideStringC(pwsName), false);
   XFA_NodeAcc_TraverseAnySiblings(parent, uNameHash, &siblings, bIsClassName);
   if (siblings.GetSize() == 0) {
     return NULL;

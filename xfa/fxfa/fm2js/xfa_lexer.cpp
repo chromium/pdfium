@@ -516,21 +516,18 @@ void CXFA_FMLexer::Comment(const FX_WCHAR* p, const FX_WCHAR*& pEnd) {
 }
 
 XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
-  int32_t iLength = str.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(str.c_str(), iLength, TRUE);
-  int32_t iStart = KEYWORD_START, iEnd = KEYWORD_END;
-  int32_t iMid = (iStart + iEnd) / 2;
-  XFA_FMKeyword keyword;
+  uint32_t uHash = FX_HashCode_GetW(str, true);
+  int32_t iStart = KEYWORD_START;
+  int32_t iEnd = KEYWORD_END;
   do {
-    iMid = (iStart + iEnd) / 2;
-    keyword = keyWords[iMid];
-    if (uHash == keyword.m_uHash) {
+    int32_t iMid = (iStart + iEnd) / 2;
+    XFA_FMKeyword keyword = keyWords[iMid];
+    if (uHash == keyword.m_uHash)
       return keyword.m_type;
-    } else if (uHash < keyword.m_uHash) {
+    if (uHash < keyword.m_uHash)
       iEnd = iMid - 1;
-    } else {
+    else
       iStart = iMid + 1;
-    }
   } while (iStart <= iEnd);
   return TOKidentifier;
 }

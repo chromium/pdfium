@@ -26,3 +26,17 @@ TEST(fxcrt, FXSYS_isDecimalDigit) {
   EXPECT_FALSE(FXSYS_isDecimalDigit('a'));
   EXPECT_FALSE(FXSYS_isDecimalDigit(L'a'));
 }
+
+TEST(fxcrt, FX_HashCode_Ascii) {
+  EXPECT_EQ(0u, FX_HashCode_GetA("", false));
+  EXPECT_EQ(65u, FX_HashCode_GetA("A", false));
+  EXPECT_EQ(97u, FX_HashCode_GetA("A", true));
+  EXPECT_EQ(31 * 65u + 66u, FX_HashCode_GetA("AB", false));
+}
+
+TEST(fxcrt, FX_HashCode_Wide) {
+  EXPECT_EQ(0u, FX_HashCode_GetW(L"", false));
+  EXPECT_EQ(65u, FX_HashCode_GetW(L"A", false));
+  EXPECT_EQ(97u, FX_HashCode_GetW(L"A", true));
+  EXPECT_EQ(1313 * 65u + 66u, FX_HashCode_GetW(L"AB", false));
+}

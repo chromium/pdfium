@@ -1769,24 +1769,22 @@ static const XFA_ExecEventParaInfo gs_eventParaInfos[] = {
 };
 const XFA_ExecEventParaInfo* GetEventParaInfoByName(
     const CFX_WideStringC& wsEventName) {
-  int32_t iLength = wsEventName.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(wsEventName.c_str(), iLength);
-  const XFA_ExecEventParaInfo* eventParaInfo = NULL;
-  int32_t iStart = 0,
-          iEnd = (sizeof(gs_eventParaInfos) / sizeof(gs_eventParaInfos[0])) - 1;
-  int32_t iMid = (iStart + iEnd) / 2;
+  uint32_t uHash = FX_HashCode_GetW(wsEventName, false);
+  int32_t iStart = 0;
+  int32_t iEnd = (sizeof(gs_eventParaInfos) / sizeof(gs_eventParaInfos[0])) - 1;
   do {
-    iMid = (iStart + iEnd) / 2;
-    eventParaInfo = &gs_eventParaInfos[iMid];
+    int32_t iMid = (iStart + iEnd) / 2;
+    const XFA_ExecEventParaInfo* eventParaInfo = &gs_eventParaInfos[iMid];
     if (uHash == eventParaInfo->m_uHash) {
       return eventParaInfo;
-    } else if (uHash < eventParaInfo->m_uHash) {
+    }
+    if (uHash < eventParaInfo->m_uHash) {
       iEnd = iMid - 1;
     } else {
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 void XFA_STRING_TO_RGB(CFX_WideString& strRGB,
                        int32_t& r,
@@ -3287,9 +3285,7 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
                                         ? wsInstManagerName
                                         : wsInstManagerName.Mid(1);
     uint32_t dInstanceNameHash =
-        wsInstanceName.IsEmpty() ? 0 : FX_HashCode_String_GetW(
-                                           wsInstanceName.c_str(),
-                                           wsInstanceName.GetLength());
+        FX_HashCode_GetW(wsInstanceName.AsStringC(), false);
     CXFA_Node* pPrevSibling =
         (iDesired == 0) ? this
                         : XFA_ScriptInstanceManager_GetItem(this, iDesired - 1);
@@ -3726,7 +3722,7 @@ enum XFA_KEYTYPE {
   XFA_KEYTYPE_Element,
 };
 void* XFA_GetMapKey_Custom(const CFX_WideStringC& wsKey) {
-  uint32_t dwKey = FX_HashCode_String_GetW(wsKey.c_str(), wsKey.GetLength());
+  uint32_t dwKey = FX_HashCode_GetW(wsKey, false);
   return (void*)(uintptr_t)((dwKey << 1) | XFA_KEYTYPE_Custom);
 }
 void* XFA_GetMapKey_Element(XFA_ELEMENT eElement, XFA_ATTRIBUTE eAttribute) {
@@ -4732,9 +4728,7 @@ FX_BOOL CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   return TRUE;
 }
 CXFA_Node* CXFA_Node::GetFirstChildByName(const CFX_WideStringC& wsName) const {
-  return GetFirstChildByName(
-      wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.c_str(),
-                                                     wsName.GetLength()));
+  return GetFirstChildByName(FX_HashCode_GetW(wsName, false));
 }
 CXFA_Node* CXFA_Node::GetFirstChildByName(uint32_t dwNameHash) const {
   for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
@@ -4765,10 +4759,7 @@ CXFA_Node* CXFA_Node::GetNextSameNameSibling(uint32_t dwNameHash) const {
 }
 CXFA_Node* CXFA_Node::GetNextSameNameSibling(
     const CFX_WideStringC& wsNodeName) const {
-  return GetNextSameNameSibling(
-      wsNodeName.IsEmpty() ? 0
-                           : FX_HashCode_String_GetW(wsNodeName.c_str(),
-                                                     wsNodeName.GetLength()));
+  return GetNextSameNameSibling(FX_HashCode_GetW(wsNodeName, false));
 }
 CXFA_Node* CXFA_Node::GetNextSameClassSibling(XFA_ELEMENT eElement) const {
   for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_NextSibling); pNode;
@@ -4951,17 +4942,13 @@ int32_t CXFA_Node::execSingleEventByName(const CFX_WideStringC& wsEventName,
 void CXFA_Node::UpdateNameHash() {
   const XFA_NOTSUREATTRIBUTE* pNotsure =
       XFA_GetNotsureAttribute(GetClassID(), XFA_ATTRIBUTE_Name);
+  CFX_WideStringC wsName;
   if (!pNotsure || pNotsure->eType == XFA_ATTRIBUTETYPE_Cdata) {
-    CFX_WideStringC wsName = GetCData(XFA_ATTRIBUTE_Name);
-    m_dwNameHash =
-        wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.c_str(),
-                                                       wsName.GetLength());
+    wsName = GetCData(XFA_ATTRIBUTE_Name);
+    m_dwNameHash = FX_HashCode_GetW(wsName, false);
   } else if (pNotsure->eType == XFA_ATTRIBUTETYPE_Enum) {
-    CFX_WideStringC wsName =
-        XFA_GetAttributeEnumByID(GetEnum(XFA_ATTRIBUTE_Name))->pName;
-    m_dwNameHash =
-        wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.c_str(),
-                                                       wsName.GetLength());
+    wsName = XFA_GetAttributeEnumByID(GetEnum(XFA_ATTRIBUTE_Name))->pName;
+    m_dwNameHash = FX_HashCode_GetW(wsName, false);
   }
 }
 CFDE_XMLNode* CXFA_Node::CreateXMLMappingNode() {
@@ -5233,14 +5220,12 @@ CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
   m_pDocument->GetScriptContext()->CacheList(this);
 }
 CXFA_Node* CXFA_NodeList::NamedItem(const CFX_WideStringC& wsName) {
+  uint32_t dwHashCode = FX_HashCode_GetW(wsName, false);
   int32_t iCount = GetLength();
-  uint32_t dwHashCode =
-      FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength());
   for (int32_t i = 0; i < iCount; i++) {
     CXFA_Node* ret = Item(i);
-    if (dwHashCode == ret->GetNameHash()) {
+    if (dwHashCode == ret->GetNameHash())
       return ret;
-    }
   }
   return NULL;
 }

@@ -217,14 +217,10 @@ int32_t FXSYS_strnicmp(const FX_CHAR* s1, const FX_CHAR* s2, size_t count) {
   }
   return ch1 - ch2;
 }
-uint32_t FX_HashCode_String_GetA(const FX_CHAR* pStr,
-                                 int32_t iLength,
-                                 FX_BOOL bIgnoreCase) {
-  FXSYS_assert(pStr);
-  if (iLength < 0) {
-    iLength = (int32_t)FXSYS_strlen(pStr);
-  }
-  const FX_CHAR* pStrEnd = pStr + iLength;
+
+uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase) {
+  const FX_CHAR* pStr = str.c_str();
+  const FX_CHAR* pStrEnd = pStr + str.GetLength();
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     while (pStr < pStrEnd) {
@@ -237,14 +233,10 @@ uint32_t FX_HashCode_String_GetA(const FX_CHAR* pStr,
   }
   return dwHashCode;
 }
-uint32_t FX_HashCode_String_GetW(const FX_WCHAR* pStr,
-                                 int32_t iLength,
-                                 FX_BOOL bIgnoreCase) {
-  FXSYS_assert(pStr);
-  if (iLength < 0) {
-    iLength = (int32_t)FXSYS_wcslen(pStr);
-  }
-  const FX_WCHAR* pStrEnd = pStr + iLength;
+
+uint32_t FX_HashCode_GetW(const CFX_WideStringC& str, bool bIgnoreCase) {
+  const FX_WCHAR* pStr = str.c_str();
+  const FX_WCHAR* pStrEnd = pStr + str.GetLength();
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     while (pStr < pStrEnd) {
@@ -327,9 +319,9 @@ void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount) {
     ::GetSystemTime(&st2);
   } while (FXSYS_memcmp(&st1, &st2, sizeof(SYSTEMTIME)) == 0);
   uint32_t dwHash1 =
-      FX_HashCode_String_GetA((const FX_CHAR*)&st1, sizeof(st1), TRUE);
+      FX_HashCode_GetA(CFX_ByteStringC((uint8_t*)&st1, sizeof(st1)), true);
   uint32_t dwHash2 =
-      FX_HashCode_String_GetA((const FX_CHAR*)&st2, sizeof(st2), TRUE);
+      FX_HashCode_GetA(CFX_ByteStringC((uint8_t*)&st2, sizeof(st2)), true);
   ::srand((dwHash1 << 16) | (uint32_t)dwHash2);
 #else
   time_t tmLast = time(NULL);

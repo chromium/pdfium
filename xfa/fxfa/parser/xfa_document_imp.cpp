@@ -94,8 +94,7 @@ CXFA_FFNotify* CXFA_Document::GetNotify() const {
   return m_pParser->GetNotify();
 }
 CXFA_Object* CXFA_Document::GetXFAObject(const CFX_WideStringC& wsNodeName) {
-  return GetXFAObject(
-      FX_HashCode_String_GetW(wsNodeName.c_str(), wsNodeName.GetLength()));
+  return GetXFAObject(FX_HashCode_GetW(wsNodeName, false));
 }
 CXFA_Object* CXFA_Document::GetXFAObject(uint32_t dwNodeNameHash) {
   switch (dwNodeNameHash) {
@@ -367,8 +366,7 @@ void CXFA_Document::DoProtoMerge() {
        pNode = sIterator.MoveToNext()) {
     CFX_WideStringC wsIDVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) && !wsIDVal.IsEmpty()) {
-      mIDMap[FX_HashCode_String_GetW(wsIDVal.c_str(), wsIDVal.GetLength())] =
-          pNode;
+      mIDMap[FX_HashCode_GetW(wsIDVal, false)] = pNode;
     }
     CFX_WideStringC wsUseVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) && !wsUseVal.IsEmpty()) {
@@ -426,9 +424,7 @@ void CXFA_Document::DoProtoMerge() {
         pProtoNode = resoveNodeRS.nodes[0]->AsNode();
       }
     } else if (!wsID.IsEmpty()) {
-      if (!mIDMap.Lookup(
-              FX_HashCode_String_GetW(wsID.c_str(), wsID.GetLength()),
-              pProtoNode)) {
+      if (!mIDMap.Lookup(FX_HashCode_GetW(wsID, false), pProtoNode)) {
         continue;
       }
     }

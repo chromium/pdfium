@@ -29,26 +29,19 @@ FDE_CSSTagCache::FDE_CSSTagCache(FDE_CSSTagCache* parent,
       dwTagHash(0),
       iClassIndex(0),
       dwClassHashs(1) {
-  static const uint32_t s_dwIDHash = FX_HashCode_String_GetW(L"id", 2, TRUE);
-  static const uint32_t s_dwClassHash =
-      FX_HashCode_String_GetW(L"class", 5, TRUE);
-
-  CFX_WideString wsTag = pTag->GetTagName();
-  dwTagHash = FX_HashCode_String_GetW(wsTag.c_str(), wsTag.GetLength(), TRUE);
+  static const uint32_t s_dwIDHash = FX_HashCode_GetW(L"id", true);
+  static const uint32_t s_dwClassHash = FX_HashCode_GetW(L"class", true);
+  dwTagHash = FX_HashCode_GetW(pTag->GetTagName().AsStringC(), true);
 
   for (auto it : *pTag) {
     CFX_WideString wsValue = it.first;
     CFX_WideString wsName = it.second;
-
-    uint32_t dwNameHash =
-        FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength(), TRUE);
-
+    uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringC(), true);
     if (dwNameHash == s_dwClassHash) {
-      uint32_t dwHash =
-          FX_HashCode_String_GetW(wsValue.c_str(), wsValue.GetLength());
+      uint32_t dwHash = FX_HashCode_GetW(wsValue.AsStringC(), false);
       dwClassHashs.Add(dwHash);
     } else if (dwNameHash == s_dwIDHash) {
-      dwIDHash = FX_HashCode_String_GetW(wsValue.c_str(), wsValue.GetLength());
+      dwIDHash = FX_HashCode_GetW(wsValue.AsStringC(), false);
     }
   }
 }
