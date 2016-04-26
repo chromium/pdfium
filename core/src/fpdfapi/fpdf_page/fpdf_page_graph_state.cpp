@@ -587,9 +587,8 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
   }
   pGeneralState->m_Matrix = m_CTM;
 }
-CPDF_ContentMarkItem::CPDF_ContentMarkItem() {
-  m_ParamType = None;
-}
+CPDF_ContentMarkItem::CPDF_ContentMarkItem()
+    : m_ParamType(None), m_pParam(nullptr) {}
 CPDF_ContentMarkItem::CPDF_ContentMarkItem(const CPDF_ContentMarkItem& src) {
   m_MarkName = src.m_MarkName;
   m_ParamType = src.m_ParamType;
