@@ -18,7 +18,7 @@ class CXFA_FMParse {
   int32_t Init(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo* pErrorInfo);
   void NextToken();
   void Check(XFA_FM_TOKEN op);
-  void Error(uint32_t lineNum, XFA_FM_ERRMSG msg, ...);
+  void Error(uint32_t lineNum, const FX_WCHAR* msg, ...);
   CFX_PtrArray* ParseTopExpression();
   CXFA_FMExpression* ParseFunction();
   CXFA_FMExpression* ParseExpression();

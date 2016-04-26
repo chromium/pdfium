@@ -6,16 +6,12 @@
 
 #include "xfa/fxfa/fm2js/xfa_error.h"
 
-static const FX_WCHAR* const gs_lpStrErrorMsgInfo[] = {
-    L"unsupported char '%c'",         L"bad suffix on number",
-    L"invalidate char '%c'",          L"expected identifier instead of '%s'",
-    L"expected '%s' instead of '%s'", L"expected 'endif' instead of '%s'",
-    L"unexpected expression '%s'",    L"expected operator '%s' instead of '%s'",
-    L"expected non-empty expression",
-};
-
-const FX_WCHAR* XFA_FM_ErrorMsg(XFA_FM_ERRMSG msg) {
-  if (msg < FMERR_MAXIMUM)
-    return gs_lpStrErrorMsgInfo[msg];
-  return L"";
-}
+const FX_WCHAR kFMErrUnsupportedChar[] = L"unsupported char '%c'";
+const FX_WCHAR kFMErrBadSuffixNumber[] = L"bad suffix on number";
+const FX_WCHAR kFMErrExpectedIdentifier[] =
+    L"expected identifier instead of '%s'";
+const FX_WCHAR kFMErrExpectedToken[] = L"expected '%s' instead of '%s'";
+const FX_WCHAR kFMErrExpectedEndIf[] = L"expected 'endif' instead of '%s'";
+const FX_WCHAR kFMErrUnexpectedExpression[] = L"unexpected expression '%s'";
+const FX_WCHAR kFMErrExpectedNonEmptyExpression[] =
+    L"expected non-empty expression";

@@ -177,14 +177,14 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
   CXFA_FMToken* p = new CXFA_FMToken(m_uCurrentLine);
   if (!XFA_FMDChar::isAvalid(m_ptr)) {
     ch = XFA_FMDChar::get(m_ptr);
-    Error(FMERR_UNSUPPORTED_CHAR, ch);
+    Error(kFMErrUnsupportedChar, ch);
     return p;
   }
   int iRet = 0;
   while (1) {
     if (!XFA_FMDChar::isAvalid(m_ptr)) {
       ch = XFA_FMDChar::get(m_ptr);
-      Error(FMERR_UNSUPPORTED_CHAR, ch);
+      Error(kFMErrUnsupportedChar, ch);
       return p;
     }
     ch = XFA_FMDChar::get(m_ptr);
@@ -227,7 +227,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
         iRet = Number(p, m_ptr, pTemp);
         m_ptr = pTemp;
         if (iRet) {
-          Error(FMERR_BAD_SUFFIX_NUMBER);
+          Error(kFMErrBadSuffixNumber);
           return p;
         }
       }
@@ -246,7 +246,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
           }
         } else {
           ch = XFA_FMDChar::get(m_ptr);
-          Error(FMERR_UNSUPPORTED_CHAR, ch);
+          Error(kFMErrUnsupportedChar, ch);
           return p;
         }
         break;
@@ -268,7 +268,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
           }
         } else {
           ch = XFA_FMDChar::get(m_ptr);
-          Error(FMERR_UNSUPPORTED_CHAR, ch);
+          Error(kFMErrUnsupportedChar, ch);
           return p;
         }
         break;
@@ -286,7 +286,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
           }
         } else {
           ch = XFA_FMDChar::get(m_ptr);
-          Error(FMERR_UNSUPPORTED_CHAR, ch);
+          Error(kFMErrUnsupportedChar, ch);
           return p;
         }
         break;
@@ -345,7 +345,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
           }
         } else {
           ch = XFA_FMDChar::get(m_ptr);
-          Error(FMERR_UNSUPPORTED_CHAR, ch);
+          Error(kFMErrUnsupportedChar, ch);
           return p;
         }
         break;
@@ -372,7 +372,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
             iRet = Number(p, m_ptr, pTemp);
             m_ptr = pTemp;
             if (iRet) {
-              Error(FMERR_BAD_SUFFIX_NUMBER);
+              Error(kFMErrBadSuffixNumber);
             }
             return p;
           } else {
@@ -381,7 +381,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
           }
         } else {
           ch = XFA_FMDChar::get(m_ptr);
-          Error(FMERR_UNSUPPORTED_CHAR, ch);
+          Error(kFMErrUnsupportedChar, ch);
           return p;
         }
       case 0x09:
@@ -430,7 +430,7 @@ uint32_t CXFA_FMLexer::String(CXFA_FMToken* t,
       ch = XFA_FMDChar::get(p);
       pEnd = p;
       t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
-      Error(FMERR_UNSUPPORTED_CHAR, ch);
+      Error(kFMErrUnsupportedChar, ch);
       return 1;
     }
     if (ch == '"') {
@@ -439,7 +439,7 @@ uint32_t CXFA_FMLexer::String(CXFA_FMToken* t,
         ch = XFA_FMDChar::get(p);
         pEnd = p;
         t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
-        Error(FMERR_UNSUPPORTED_CHAR, ch);
+        Error(kFMErrUnsupportedChar, ch);
         return 1;
       }
       ch = XFA_FMDChar::get(p);
@@ -468,7 +468,7 @@ uint32_t CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
   if (!XFA_FMDChar::isAvalid(p)) {
     pEnd = p;
     t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
-    Error(FMERR_UNSUPPORTED_CHAR, ch);
+    Error(kFMErrUnsupportedChar, ch);
     return 1;
   }
   ch = XFA_FMDChar::get(p);
@@ -476,7 +476,7 @@ uint32_t CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
     if (!XFA_FMDChar::isAvalid(p)) {
       pEnd = p;
       t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
-      Error(FMERR_UNSUPPORTED_CHAR, ch);
+      Error(kFMErrUnsupportedChar, ch);
       return 1;
     }
     ch = XFA_FMDChar::get(p);
@@ -532,12 +532,11 @@ XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
   return TOKidentifier;
 }
 
-void CXFA_FMLexer::Error(XFA_FM_ERRMSG msg, ...) {
+void CXFA_FMLexer::Error(const FX_WCHAR* msg, ...) {
   m_pErrorInfo->linenum = m_uCurrentLine;
-  const FX_WCHAR* lpMessageInfo = XFA_FM_ErrorMsg(msg);
   va_list ap;
   va_start(ap, msg);
-  m_pErrorInfo->message.FormatV(lpMessageInfo, ap);
+  m_pErrorInfo->message.FormatV(msg, ap);
   va_end(ap);
 }
 

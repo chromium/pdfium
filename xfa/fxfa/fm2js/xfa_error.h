@@ -10,18 +10,13 @@
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
-enum XFA_FM_ERRMSG {
-  FMERR_UNSUPPORTED_CHAR,
-  FMERR_BAD_SUFFIX_NUMBER,
-  FMERR_INVALIDATE_CHAR,
-  FMERR_EXPECTED_IDENTIFIER,
-  FMERR_EXPECTED_TOKEN,
-  FMERR_EXPECTED_IFEND,
-  FMERR_UNEXPECTED_EXPRESSION,
-  FMERR_EXPTECTED_OPERATOR,
-  FMERR_EXPECTED_NON_EMPTY_EXPRESSION,
-  FMERR_MAXIMUM
-};
+extern const FX_WCHAR kFMErrUnsupportedChar[];
+extern const FX_WCHAR kFMErrBadSuffixNumber[];
+extern const FX_WCHAR kFMErrExpectedIdentifier[];
+extern const FX_WCHAR kFMErrExpectedToken[];
+extern const FX_WCHAR kFMErrExpectedEndIf[];
+extern const FX_WCHAR kFMErrUnexpectedExpression[];
+extern const FX_WCHAR kFMErrExpectedNonEmptyExpression[];
 
 class CXFA_FMErrorInfo {
  public:
@@ -30,6 +25,5 @@ class CXFA_FMErrorInfo {
   uint32_t linenum;
   CFX_WideString message;
 };
-const FX_WCHAR* XFA_FM_ErrorMsg(XFA_FM_ERRMSG msg);
 
 #endif  // XFA_FXFA_FM2JS_XFA_ERROR_H_

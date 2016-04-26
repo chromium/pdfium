@@ -394,7 +394,10 @@
       ],
     },
     'variables': {
-      'clang_warning_flags': [],
+      'clang_warning_flags': [
+        # TODO(thakis): https://crbug.com/604888
+        '-Wno-undefined-var-template',
+      ],
     },
     'includes': [ 'set_clang_warning_flags.gypi', ],
     'conditions': [

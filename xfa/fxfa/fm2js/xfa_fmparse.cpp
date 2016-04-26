@@ -30,18 +30,17 @@ void CXFA_FMParse::NextToken() {
 void CXFA_FMParse::Check(XFA_FM_TOKEN op) {
   if (m_pToken->m_type != op) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
-          XFA_FM_KeywordToString(op), ws_TempString.c_str());
+    Error(m_pToken->m_uLinenum, kFMErrExpectedToken, XFA_FM_KeywordToString(op),
+          ws_TempString.c_str());
   }
   NextToken();
 }
 
-void CXFA_FMParse::Error(uint32_t lineNum, XFA_FM_ERRMSG msg, ...) {
+void CXFA_FMParse::Error(uint32_t lineNum, const FX_WCHAR* msg, ...) {
   m_pErrorInfo->linenum = lineNum;
-  const FX_WCHAR* lpMessageInfo = XFA_FM_ErrorMsg(msg);
   va_list ap;
   va_start(ap, msg);
-  m_pErrorInfo->message.FormatV(lpMessageInfo, ap);
+  m_pErrorInfo->message.FormatV(msg, ap);
   va_end(ap);
 }
 
@@ -83,7 +82,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_IDENTIFIER,
+    Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
           ws_TempString.c_str());
   } else {
     ident = m_pToken->m_wstring;
@@ -112,7 +111,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
         }
       } else {
         CFX_WideString ws_TempString = m_pToken->m_wstring;
-        Error(m_pToken->m_uLinenum, FMERR_EXPECTED_IDENTIFIER,
+        Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
               ws_TempString.c_str());
         NextToken();
         break;
@@ -182,7 +181,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseExpression() {
       break;
     default:
       CFX_WideString ws_TempString = m_pToken->m_wstring;
-      Error(m_pToken->m_uLinenum, FMERR_UNEXPECTED_EXPRESSION,
+      Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
             ws_TempString.c_str());
       NextToken();
       break;
@@ -197,7 +196,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseVarExpression() {
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_IDENTIFIER,
+    Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
           ws_TempString.c_str());
   } else {
     ident = m_pToken->m_wstring;
@@ -533,7 +532,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
       break;
     default:
       CFX_WideString ws_TempString = m_pToken->m_wstring;
-      Error(m_pToken->m_uLinenum, FMERR_UNEXPECTED_EXPRESSION,
+      Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
             ws_TempString.c_str());
       NextToken();
       break;
@@ -568,7 +567,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
           }
           if (m_pToken->m_type != TOKrparen) {
             CFX_WideString ws_TempString = m_pToken->m_wstring;
-            Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
+            Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
                   XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
           }
         }
@@ -621,7 +620,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               }
               if (m_pToken->m_type != TOKrparen) {
                 CFX_WideString ws_TempString = m_pToken->m_wstring;
-                Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
+                Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
                       XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
               }
             }
@@ -669,7 +668,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
           }
         } else {
           CFX_WideString ws_TempString = m_pToken->m_wstring;
-          Error(m_pToken->m_uLinenum, FMERR_EXPECTED_IDENTIFIER,
+          Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
                 ws_TempString.c_str());
           return e;
         }
@@ -697,7 +696,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
           }
         } else {
           CFX_WideString ws_TempString = m_pToken->m_wstring;
-          Error(m_pToken->m_uLinenum, FMERR_EXPECTED_IDENTIFIER,
+          Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
                 ws_TempString.c_str());
           return e;
         }
@@ -725,7 +724,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
           }
         } else {
           CFX_WideString ws_TempString = m_pToken->m_wstring;
-          Error(m_pToken->m_uLinenum, FMERR_EXPECTED_IDENTIFIER,
+          Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
                 ws_TempString.c_str());
           return e;
         }
@@ -756,7 +755,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
     NextToken();
     if (m_pToken->m_type != TOKrbracket) {
       CFX_WideString ws_TempString = m_pToken->m_wstring;
-      Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
+      Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
             XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
       pExp.reset();
     }
@@ -772,7 +771,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
   s.reset(ParseSimpleExpression());
   if (m_pToken->m_type != TOKrbracket) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
+    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
           XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
   } else {
     pExp.reset(
@@ -785,7 +784,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseParenExpression() {
   Check(TOKlparen);
 
   if (m_pToken->m_type == TOKrparen) {
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_NON_EMPTY_EXPRESSION);
+    Error(m_pToken->m_uLinenum, kFMErrExpectedNonEmptyExpression);
     NextToken();
     return nullptr;
   }
@@ -892,7 +891,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseIfExpression() {
       break;
     default:
       CFX_WideString ws_TempString = m_pToken->m_wstring;
-      Error(m_pToken->m_uLinenum, FMERR_EXPECTED_IFEND, ws_TempString.c_str());
+      Error(m_pToken->m_uLinenum, kFMErrExpectedEndIf, ws_TempString.c_str());
       NextToken();
       break;
   }
@@ -928,7 +927,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseSubassignmentInForExpression() {
       break;
     default:
       CFX_WideString ws_TempString = m_pToken->m_wstring;
-      Error(m_pToken->m_uLinenum, FMERR_UNEXPECTED_EXPRESSION,
+      Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
             ws_TempString.c_str());
       NextToken();
       break;
@@ -942,7 +941,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
+    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
           XFA_FM_KeywordToString(m_pToken->m_type), ws_TempString.c_str());
   }
   wsVariant = m_pToken->m_wstring;
@@ -953,7 +952,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
     pAssignment.reset(ParseSimpleExpression());
   } else {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
+    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
           XFA_FM_KeywordToString(m_pToken->m_type), ws_TempString.c_str());
   }
   int32_t iDirection = 0;
@@ -963,7 +962,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
     iDirection = -1;
   } else {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN, L"upto or downto",
+    Error(m_pToken->m_uLinenum, kFMErrExpectedToken, L"upto or downto",
           ws_TempString.c_str());
   }
   NextToken();
@@ -994,7 +993,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForeachExpression() {
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN,
+    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
           XFA_FM_KeywordToString(m_pToken->m_type), ws_TempString.c_str());
   }
   wsIdentifier = m_pToken->m_wstring;
@@ -1003,7 +1002,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForeachExpression() {
   Check(TOKlparen);
   if (m_pToken->m_type == TOKrparen) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
-    Error(m_pToken->m_uLinenum, FMERR_UNEXPECTED_EXPRESSION,
+    Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
           ws_TempString.c_str());
     NextToken();
   } else {
