@@ -26,6 +26,10 @@ def run_gyp(args):
 
 
 def main():
+  if int(os.environ.get('GYP_PDFIUM_NO_ACTION', 0)):
+    print 'Skipping gyp_pdfium due to GYP_PDFIUM_NO_ACTION env var.'
+    sys.exit(0)
+
   args = sys.argv[1:]
   args.append(os.path.join(pdfium_root, 'build_gyp', 'all.gyp'))
 
