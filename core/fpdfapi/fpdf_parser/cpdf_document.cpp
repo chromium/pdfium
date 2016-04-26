@@ -8,6 +8,8 @@
 
 #include <set>
 
+#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
+#include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
@@ -15,7 +17,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/fpdfapi/ipdf_rendermodule.h"
 #include "core/fxge/include/fx_font.h"
 #include "third_party/base/stl_util.h"
 
@@ -54,30 +55,33 @@ int CountPages(CPDF_Dictionary* pPages,
 }  // namespace
 
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
-    : CPDF_IndirectObjectHolder(pParser) {
+    : CPDF_IndirectObjectHolder(pParser),
+      m_pRootDict(nullptr),
+      m_pInfoDict(nullptr),
+      m_bLinearized(false),
+      m_dwFirstPageNo(0),
+      m_dwFirstPageObjNum(0),
+      m_pDocPage(new CPDF_DocPageData(this)),
+      m_pDocRender(new CPDF_DocRenderData(this)) {
   ASSERT(pParser);
-  m_pRootDict = NULL;
-  m_pInfoDict = NULL;
-  m_bLinearized = FALSE;
-  m_dwFirstPageNo = 0;
-  m_dwFirstPageObjNum = 0;
-  m_pDocPage = CPDF_ModuleMgr::Get()->GetPageModule()->CreateDocData(this);
-  m_pDocRender = CPDF_ModuleMgr::Get()->GetRenderModule()->CreateDocData(this);
 }
+
 CPDF_DocPageData* CPDF_Document::GetValidatePageData() {
-  if (m_pDocPage) {
+  if (m_pDocPage)
     return m_pDocPage;
-  }
-  m_pDocPage = CPDF_ModuleMgr::Get()->GetPageModule()->CreateDocData(this);
+
+  m_pDocPage = new CPDF_DocPageData(this);
   return m_pDocPage;
 }
+
 CPDF_DocRenderData* CPDF_Document::GetValidateRenderData() {
-  if (m_pDocRender) {
+  if (m_pDocRender)
     return m_pDocRender;
-  }
-  m_pDocRender = CPDF_ModuleMgr::Get()->GetRenderModule()->CreateDocData(this);
+
+  m_pDocRender = new CPDF_DocRenderData(this);
   return m_pDocRender;
 }
+
 void CPDF_Document::LoadDoc() {
   m_LastObjNum = m_pParser->GetLastObjNum();
   CPDF_Object* pRootObj = GetIndirectObject(m_pParser->GetRootObjNum());
@@ -128,18 +132,20 @@ void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
   if (ToNumber(pObjNum))
     m_dwFirstPageObjNum = pObjNum->GetInteger();
 }
+
 void CPDF_Document::LoadPages() {
   m_PageList.SetSize(RetrievePageCount());
 }
+
 CPDF_Document::~CPDF_Document() {
   if (m_pDocPage) {
-    CPDF_ModuleMgr::Get()->GetPageModule()->ReleaseDoc(this);
+    delete this->GetPageData();
     CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
   }
-  if (m_pDocRender) {
-    CPDF_ModuleMgr::Get()->GetRenderModule()->DestroyDocData(m_pDocRender);
-  }
+  if (m_pDocRender)
+    delete m_pDocRender;
 }
+
 #define FX_MAX_PAGE_LEVEL 1024
 CPDF_Dictionary* CPDF_Document::_FindPDFPage(CPDF_Dictionary* pPages,
                                              int iPage,
@@ -337,12 +343,12 @@ FX_BOOL CPDF_Document::IsFormStream(uint32_t objnum, FX_BOOL& bForm) const {
 
 void CPDF_Document::ClearPageData() {
   if (m_pDocPage)
-    CPDF_ModuleMgr::Get()->GetPageModule()->ClearDoc(this);
+    this->GetPageData()->Clear(FALSE);
 }
 
 void CPDF_Document::ClearRenderData() {
   if (m_pDocRender)
-    CPDF_ModuleMgr::Get()->GetRenderModule()->ClearDocData(m_pDocRender);
+    m_pDocRender->Clear(FALSE);
 }
 
 void CPDF_Document::ClearRenderFont() {

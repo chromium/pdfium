@@ -10,6 +10,7 @@
 #include "core/fpdfapi/fpdf_font/font_int.h"
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_font/ttgsubtable.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"

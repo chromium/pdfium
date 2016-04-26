@@ -17,33 +17,38 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/fpdfapi/ipdf_rendermodule.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_Document::CPDF_Document() : CPDF_IndirectObjectHolder(NULL) {
-  m_pRootDict = NULL;
-  m_pInfoDict = NULL;
-  m_bLinearized = FALSE;
-  m_dwFirstPageNo = 0;
-  m_dwFirstPageObjNum = 0;
-  m_pDocPage = CPDF_ModuleMgr::Get()->GetPageModule()->CreateDocData(this);
-  m_pDocRender = CPDF_ModuleMgr::Get()->GetRenderModule()->CreateDocData(this);
-}
+CPDF_Document::CPDF_Document()
+    : CPDF_IndirectObjectHolder(nullptr),
+      m_pRootDict(nullptr),
+      m_pInfoDict(nullptr),
+      m_bLinearized(FALSE),
+      m_dwFirstPageNo(0),
+      m_dwFirstPageObjNum(0),
+      m_pDocPage(new CPDF_DocPageData(this)),
+      m_pDocRender(new CPDF_DocRenderData(this)) {}
+
 void CPDF_Document::CreateNewDoc() {
   ASSERT(!m_pRootDict && !m_pInfoDict);
+
   m_pRootDict = new CPDF_Dictionary;
   m_pRootDict->SetAtName("Type", "Catalog");
   int objnum = AddIndirectObject(m_pRootDict);
+
   CPDF_Dictionary* pPages = new CPDF_Dictionary;
   pPages->SetAtName("Type", "Pages");
   pPages->SetAtNumber("Count", 0);
   pPages->SetAt("Kids", new CPDF_Array);
   objnum = AddIndirectObject(pPages);
   m_pRootDict->SetAtReference("Pages", this, objnum);
+
   m_pInfoDict = new CPDF_Dictionary;
   AddIndirectObject(m_pInfoDict);
 }
+
 static const uint16_t g_FX_CP874Unicodes[128] = {
     0x20AC, 0x0000, 0x0000, 0x0000, 0x0000, 0x2026, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,

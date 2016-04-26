@@ -9,7 +9,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
-#include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
@@ -79,7 +78,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
       continue;
 
     if (pOptions) {
-      IPDF_OCContext* pOCContext = pOptions->m_pOCContext;
+      CPDF_OCContext* pOCContext = pOptions->m_pOCContext;
       CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
       if (pOCContext && pAnnotDict &&
           !pOCContext->CheckOCGVisible(pAnnotDict->GetDictBy("OC"))) {

@@ -10,7 +10,7 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 
-class IPDF_OCContext;
+class CPDF_OCContext;
 
 #define RENDER_COLOR_NORMAL 0
 #define RENDER_COLOR_GRAY 1
@@ -44,7 +44,7 @@ class CPDF_RenderOptions {
   uint32_t m_Flags;
   int m_Interpolation;
   uint32_t m_AddFlags;
-  IPDF_OCContext* m_pOCContext;
+  CPDF_OCContext* m_pOCContext;
   uint32_t m_dwLimitCacheSize;
   int m_HalftoneLimit;
 };

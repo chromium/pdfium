@@ -9,6 +9,7 @@
 #include "core/fdrm/crypto/include/fx_crypt.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/cpdf_tilingpattern.h"
@@ -18,74 +19,9 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/fpdfapi/ipdf_pagemodule.h"
-
-namespace {
-
-class CPDF_PageModule : public IPDF_PageModule {
- public:
-  CPDF_PageModule()
-      : m_StockGrayCS(nullptr, PDFCS_DEVICEGRAY),
-        m_StockRGBCS(nullptr, PDFCS_DEVICERGB),
-        m_StockCMYKCS(nullptr, PDFCS_DEVICECMYK),
-        m_StockPatternCS(nullptr) {}
-
- private:
-  ~CPDF_PageModule() override {}
-
-  CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc) override {
-    return new CPDF_DocPageData(pDoc);
-  }
-
-  void ReleaseDoc(CPDF_Document* pDoc) override;
-  void ClearDoc(CPDF_Document* pDoc) override;
-
-  CPDF_FontGlobals* GetFontGlobals() override { return &m_FontGlobals; }
-
-  void ClearStockFont(CPDF_Document* pDoc) override {
-    m_FontGlobals.Clear(pDoc);
-  }
-
-  CPDF_ColorSpace* GetStockCS(int family) override;
-  void NotifyCJKAvailable() override;
-
-  CPDF_FontGlobals m_FontGlobals;
-  CPDF_DeviceCS m_StockGrayCS;
-  CPDF_DeviceCS m_StockRGBCS;
-  CPDF_DeviceCS m_StockCMYKCS;
-  CPDF_PatternCS m_StockPatternCS;
-};
-
-}  // namespace
-
-CPDF_ColorSpace* CPDF_PageModule::GetStockCS(int family) {
-  if (family == PDFCS_DEVICEGRAY) {
-    return &m_StockGrayCS;
-  }
-  if (family == PDFCS_DEVICERGB) {
-    return &m_StockRGBCS;
-  }
-  if (family == PDFCS_DEVICECMYK) {
-    return &m_StockCMYKCS;
-  }
-  if (family == PDFCS_PATTERN) {
-    return &m_StockPatternCS;
-  }
-  return NULL;
-}
 
 void CPDF_ModuleMgr::InitPageModule() {
   m_pPageModule.reset(new CPDF_PageModule);
-}
-
-void CPDF_PageModule::ReleaseDoc(CPDF_Document* pDoc) {
-  delete pDoc->GetPageData();
-}
-void CPDF_PageModule::ClearDoc(CPDF_Document* pDoc) {
-  pDoc->GetPageData()->Clear(FALSE);
-}
-void CPDF_PageModule::NotifyCJKAvailable() {
-  m_FontGlobals.m_CMapManager.ReloadAll();
 }
 
 CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict) {

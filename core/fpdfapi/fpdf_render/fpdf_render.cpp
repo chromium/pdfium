@@ -22,13 +22,12 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/fpdfapi/ipdf_rendermodule.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxge/include/fx_ge.h"
 
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
@@ -86,37 +85,6 @@ void CPDF_DocRenderData::ReleaseCachedType3(CPDF_Type3Font* pFont) {
   auto it = m_Type3FaceMap.find(pFont);
   if (it != m_Type3FaceMap.end())
     it->second->RemoveRef();
-}
-
-class CPDF_RenderModule : public IPDF_RenderModule {
- public:
-  CPDF_RenderModule() {}
-
- private:
-  ~CPDF_RenderModule() override {}
-
-  CPDF_DocRenderData* CreateDocData(CPDF_Document* pDoc) override;
-  void DestroyDocData(CPDF_DocRenderData* p) override;
-  void ClearDocData(CPDF_DocRenderData* p) override;
-
-  CPDF_DocRenderData* GetRenderData() override { return &m_RenderData; }
-
-  CPDF_DocRenderData m_RenderData;
-};
-
-CPDF_DocRenderData* CPDF_RenderModule::CreateDocData(CPDF_Document* pDoc) {
-  return new CPDF_DocRenderData(pDoc);
-}
-void CPDF_RenderModule::DestroyDocData(CPDF_DocRenderData* pDocData) {
-  delete pDocData;
-}
-void CPDF_RenderModule::ClearDocData(CPDF_DocRenderData* p) {
-  if (p) {
-    p->Clear(FALSE);
-  }
-}
-void CPDF_ModuleMgr::InitRenderModule() {
-  m_pRenderModule.reset(new CPDF_RenderModule);
 }
 
 CPDF_RenderOptions::CPDF_RenderOptions()
@@ -242,7 +210,7 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
   } else {
     m_InitialStates.DefaultStates();
   }
-  m_pObjectRenderer.reset();
+  m_pImageRenderer.reset();
   m_Transparency = transparency;
   return TRUE;
 }
@@ -295,13 +263,13 @@ void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
 FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
                                                 const CFX_Matrix* pObj2Device,
                                                 IFX_Pause* pPause) {
-  if (m_pObjectRenderer) {
-    if (m_pObjectRenderer->Continue(pPause))
+  if (m_pImageRenderer) {
+    if (m_pImageRenderer->Continue(pPause))
       return TRUE;
 
-    if (!m_pObjectRenderer->m_Result)
+    if (!m_pImageRenderer->m_Result)
       DrawObjWithBackground(pObj, pObj2Device);
-    m_pObjectRenderer.reset();
+    m_pImageRenderer.reset();
     return FALSE;
   }
 
@@ -316,11 +284,11 @@ FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
     return FALSE;
 
   if (pObj->IsImage()) {
-    m_pObjectRenderer.reset(IPDF_ObjectRenderer::Create());
-    if (!m_pObjectRenderer->Start(this, pObj, pObj2Device, FALSE)) {
-      if (!m_pObjectRenderer->m_Result)
+    m_pImageRenderer.reset(new CPDF_ImageRenderer);
+    if (!m_pImageRenderer->Start(this, pObj, pObj2Device, FALSE)) {
+      if (!m_pImageRenderer->m_Result)
         DrawObjWithBackground(pObj, pObj2Device);
-      m_pObjectRenderer.reset();
+      m_pImageRenderer.reset();
       return FALSE;
     }
     return ContinueSingleObject(pObj, pObj2Device, pPause);
@@ -328,10 +296,6 @@ FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
 
   ProcessObjectNoClip(pObj, pObj2Device);
   return FALSE;
-}
-
-IPDF_ObjectRenderer* IPDF_ObjectRenderer::Create() {
-  return new CPDF_ImageRenderer;
 }
 
 FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,

@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 
-#include "core/fpdfapi/ipdf_rendermodule.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fxcodec/include/fx_codec.h"
 
 namespace {

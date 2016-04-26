@@ -13,7 +13,6 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
-#include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
 #include "core/fxge/include/fx_dib.h"
 
 class CFDF_Document;
@@ -40,6 +39,7 @@ class CPDF_Link;
 class CPDF_Metadata;
 class CPDF_OCContext;
 class CPDF_Page;
+class CPDF_PageObject;
 class CPDF_Font;
 class CPDF_Form;
 class CPDF_RenderOptions;
@@ -118,15 +118,15 @@ class CPDF_Dest {
   CPDF_Object* m_pObj;
 };
 
-class CPDF_OCContext : public IPDF_OCContext {
+class CPDF_OCContext {
  public:
   enum UsageType { View = 0, Design, Print, Export };
 
   explicit CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType = View);
-  ~CPDF_OCContext() override;
+  ~CPDF_OCContext();
 
-  // IPDF_OCContext:
-  FX_BOOL CheckOCGVisible(const CPDF_Dictionary* pOCGDict) override;
+  FX_BOOL CheckOCGVisible(const CPDF_Dictionary* pOCGDict);
+  FX_BOOL CheckObjectVisible(const CPDF_PageObject* pObj);
 
   CPDF_Document* GetDocument() const { return m_pDocument; }
   UsageType GetUsageType() const { return m_eUsageType; }

@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fpdfapi/ipdf_pagemodule.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CCodec_ModuleMgr;
@@ -20,8 +19,7 @@ class CCodec_Jbig2Module;
 class CCodec_JpegModule;
 class CCodec_JpxModule;
 
-class IPDF_PageModule;
-class IPDF_RenderModule;
+class CPDF_PageModule;
 
 class CPDF_ModuleMgr {
  public:
@@ -34,10 +32,8 @@ class CPDF_ModuleMgr {
   CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
 
   void InitPageModule();
-  void InitRenderModule();
 
-  IPDF_RenderModule* GetRenderModule() const { return m_pRenderModule.get(); }
-  IPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
+  CPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
 
   void LoadEmbeddedGB1CMaps();
   void LoadEmbeddedCNS1CMaps();
@@ -62,8 +58,7 @@ class CPDF_ModuleMgr {
   ~CPDF_ModuleMgr();
 
   CCodec_ModuleMgr* m_pCodecModule;
-  std::unique_ptr<IPDF_RenderModule> m_pRenderModule;
-  std::unique_ptr<IPDF_PageModule> m_pPageModule;
+  std::unique_ptr<CPDF_PageModule> m_pPageModule;
   CFX_PrivateData m_privateData;
 };
 

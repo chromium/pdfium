@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
 
+#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"

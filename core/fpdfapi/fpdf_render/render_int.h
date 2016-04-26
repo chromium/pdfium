@@ -16,32 +16,33 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 
-class CPDF_PageObjectHolder;
-class CPDF_PageRenderCache;
-class CPDF_RenderStatus;
+class CCodec_ScanlineDecoder;
+class CFX_FontCache;
 class CFX_GlyphBitmap;
 class CFX_ImageTransformer;
-class CPDF_ImageCacheEntry;
-class CPDF_ImageLoaderHandle;
-class CCodec_ScanlineDecoder;
-class CPDF_Type3Font;
-class CPDF_Type3Cache;
-class CPDF_Type3Char;
-class CPDF_TransferFunc;
-class CPDF_Document;
-class CPDF_Object;
-class CFX_FontCache;
-class CPDF_Font;
-class CPDF_PageObject;
-class CPDF_PathObject;
-class CPDF_ShadingObject;
-class CPDF_FormObject;
-class CPDF_ShadingPattern;
-class CPDF_TilingPattern;
 class CPDF_Color;
 class CPDF_Dictionary;
+class CPDF_Document;
+class CPDF_Font;
+class CPDF_FormObject;
+class CPDF_ImageCacheEntry;
+class CPDF_ImageLoaderHandle;
 class CPDF_ImageObject;
+class CPDF_ImageRenderer;
+class CPDF_Object;
+class CPDF_PageObject;
+class CPDF_PageObjectHolder;
+class CPDF_PageRenderCache;
+class CPDF_PathObject;
+class CPDF_RenderStatus;
+class CPDF_ShadingObject;
+class CPDF_ShadingPattern;
 class CPDF_Stream;
+class CPDF_TilingPattern;
+class CPDF_TransferFunc;
+class CPDF_Type3Cache;
+class CPDF_Type3Char;
+class CPDF_Type3Font;
 
 #define TYPE3_MAX_BLUES 16
 
@@ -116,19 +117,6 @@ class CPDF_DocRenderData {
   CFX_FontCache* m_pFontCache;
   CPDF_Type3CacheMap m_Type3FaceMap;
   CPDF_TransferFuncMap m_TransferFuncMap;
-};
-
-class IPDF_ObjectRenderer {
- public:
-  static IPDF_ObjectRenderer* Create();
-  virtual ~IPDF_ObjectRenderer() {}
-  virtual FX_BOOL Start(CPDF_RenderStatus* pRenderStatus,
-                        const CPDF_PageObject* pObj,
-                        const CFX_Matrix* pObj2Device,
-                        FX_BOOL bStdCS,
-                        int blendType = FXDIB_BLEND_NORMAL) = 0;
-  virtual FX_BOOL Continue(IFX_Pause* pPause) = 0;
-  FX_BOOL m_Result;
 };
 
 class CPDF_RenderStatus {
@@ -275,7 +263,7 @@ class CPDF_RenderStatus {
   const CPDF_PageObject* m_pStopObj;
   CPDF_GraphicStates m_InitialStates;
   int m_HalftoneLimit;
-  std::unique_ptr<IPDF_ObjectRenderer> m_pObjectRenderer;
+  std::unique_ptr<CPDF_ImageRenderer> m_pImageRenderer;
   FX_BOOL m_bPrint;
   int m_Transparency;
   int m_DitherBits;
@@ -342,18 +330,17 @@ class CPDF_ImageLoaderHandle {
   int32_t m_nDownsampleHeight;
 };
 
-class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
+class CPDF_ImageRenderer {
  public:
   CPDF_ImageRenderer();
-  ~CPDF_ImageRenderer() override;
+  ~CPDF_ImageRenderer();
 
-  // IPDF_ObjectRenderer
   FX_BOOL Start(CPDF_RenderStatus* pStatus,
                 const CPDF_PageObject* pObj,
                 const CFX_Matrix* pObj2Device,
                 FX_BOOL bStdCS,
-                int blendType = FXDIB_BLEND_NORMAL) override;
-  FX_BOOL Continue(IFX_Pause* pPause) override;
+                int blendType = FXDIB_BLEND_NORMAL);
+  FX_BOOL Continue(IFX_Pause* pPause);
 
   FX_BOOL Start(CPDF_RenderStatus* pStatus,
                 const CFX_DIBSource* pDIBSource,
@@ -364,7 +351,16 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
                 FX_BOOL bStdCS,
                 int blendType = FXDIB_BLEND_NORMAL);
 
+  FX_BOOL m_Result;
+
  protected:
+  FX_BOOL StartBitmapAlpha();
+  FX_BOOL StartDIBSource();
+  FX_BOOL StartRenderDIBSource();
+  FX_BOOL StartLoadDIBSource();
+  FX_BOOL DrawMaskedImage();
+  FX_BOOL DrawPatternImage(const CFX_Matrix* pObj2Device);
+
   CPDF_RenderStatus* m_pRenderStatus;
   const CPDF_ImageObject* m_pImageObject;
   int m_Status;
@@ -383,12 +379,6 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
   CPDF_ImageLoaderHandle* m_LoadHandle;
   FX_BOOL m_bStdCS;
   int m_BlendType;
-  FX_BOOL StartBitmapAlpha();
-  FX_BOOL StartDIBSource();
-  FX_BOOL StartRenderDIBSource();
-  FX_BOOL StartLoadDIBSource();
-  FX_BOOL DrawMaskedImage();
-  FX_BOOL DrawPatternImage(const CFX_Matrix* pObj2Device);
 };
 
 class CPDF_ScaledRenderBuffer {

@@ -244,7 +244,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
   pModuleMgr->SetCodecModule(g_pCodecModule);
   pModuleMgr->InitPageModule();
-  pModuleMgr->InitRenderModule();
+
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App::GetInstance()->Initialize(
       (cfg && cfg->version >= 2)
@@ -256,6 +256,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   pModuleMgr->LoadEmbeddedCNS1CMaps();
   pModuleMgr->LoadEmbeddedKorea1CMaps();
 #endif  // PDF_ENABLE_XFA
+
   if (cfg && cfg->version >= 2)
     IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
 }

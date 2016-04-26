@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfapi/fpdf_page/cpdf_contentmarkdata.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfdoc/include/fpdf_doc.h"
@@ -179,6 +181,19 @@ FX_BOOL CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) {
   FX_BOOL bState = LoadOCGState(pOCGDict);
   m_OCGStates[pOCGDict] = bState;
   return bState;
+}
+
+FX_BOOL CPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
+  const CPDF_ContentMarkData* pData = pObj->m_ContentMark;
+  for (int i = 0; i < pData->CountItems(); i++) {
+    const CPDF_ContentMarkItem& item = pData->GetItem(i);
+    if (item.GetName() == "OC" &&
+        item.GetParamType() == CPDF_ContentMarkItem::PropertiesDict &&
+        !CheckOCGVisible(item.GetParam())) {
+      return FALSE;
+    }
+  }
+  return TRUE;
 }
 
 FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,

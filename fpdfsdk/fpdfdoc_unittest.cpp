@@ -58,7 +58,6 @@ class PDFDocTest : public testing::Test {
     CPDF_ModuleMgr::Create();
     CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
     module_mgr->InitPageModule();
-    module_mgr->InitRenderModule();
 
     m_pDoc.reset(new CPDF_TestPdfDocument());
     m_pIndirectObjs = m_pDoc->GetHolder();
