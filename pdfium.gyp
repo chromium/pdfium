@@ -829,10 +829,10 @@
             '<(DEPTH)/v8/include',
           ],
           'dependencies': [
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+            '<(DEPTH)/v8/src/v8.gyp:v8',
           ],
           'export_dependent_settings': [
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+            '<(DEPTH)/v8/src/v8.gyp:v8',
           ],
           'sources!': [
             'fpdfsdk/javascript/JS_Runtime_Stub.cpp',
@@ -1017,8 +1017,8 @@
             '<(DEPTH)/v8/include',
           ],
           'dependencies': [
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
+            '<(DEPTH)/v8/src/v8.gyp:v8',
+            '<(DEPTH)/v8/src/v8.gyp:v8_libplatform',
           ],
           'sources': [
             'fpdfsdk/javascript/public_methods_embeddertest.cpp',
@@ -1050,8 +1050,8 @@
             '<(DEPTH)/v8/include',
           ],
           'dependencies': [
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
+            '<(DEPTH)/v8/src/v8.gyp:v8',
+            '<(DEPTH)/v8/src/v8.gyp:v8_libplatform',
           ],
         }],
       ],

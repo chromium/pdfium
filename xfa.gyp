@@ -720,10 +720,10 @@
         }],
         ["pdf_enable_v8==1", {
           'dependencies': [
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+            '<(DEPTH)/v8/src/v8.gyp:v8',
           ],
           'export_dependent_settings': [
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+            '<(DEPTH)/v8/src/v8.gyp:v8',
           ],
           'include_dirs': [
             '<(DEPTH)/v8',

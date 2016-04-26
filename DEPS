@@ -14,7 +14,7 @@ vars = {
   'pdfium_tests_revision': '7e5050a49256a7350df9b8d7ad86e911eb83c021',
   'skia_revision': '0a291c7b7eea1807bd58bdaa60c258fd0ebeb257',
   'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
-  'v8_revision': '47bcec782b752ba411bd8bba6e390d1cc1c3226e',
+  'v8_revision': '0ff89ea75b3807d751c8cc7bb955a4325776de71',
 
 }
 

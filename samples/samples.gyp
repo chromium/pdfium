@@ -64,7 +64,7 @@
         }],
         ['pdf_enable_v8==1', {
           'dependencies': [
-            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
+            '<(DEPTH)/v8/src/v8.gyp:v8_libplatform',
           ],
         }],
         ['pdf_use_skia==1', {
