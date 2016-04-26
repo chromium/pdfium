@@ -514,13 +514,6 @@ void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {
   }
 }
 
-FX_BOOL CPDFXFA_App::ShowFileDialog(const CFX_WideStringC& wsTitle,
-                                    const CFX_WideStringC& wsFilter,
-                                    CFX_WideStringArray& wsPathArr,
-                                    FX_BOOL bOpen) {
-  return FALSE;
-}
-
 IFWL_AdapterTimerMgr* CPDFXFA_App::GetTimerMgr() {
   CXFA_FWLAdapterTimerMgr* pAdapter = NULL;
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);

@@ -82,15 +82,16 @@ void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
                   iImageYDpi, iHorzAlign, iVertAlign);
   }
 }
+
 FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
                                         FX_FLOAT fx,
                                         FX_FLOAT fy) {
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
+  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
     return FALSE;
-  }
-  if (!PtInActiveRect(fx, fy)) {
+
+  if (!PtInActiveRect(fx, fy))
     return FALSE;
-  }
+
   SetButtonDown(TRUE);
   CFWL_MsgMouse ms;
   ms.m_dwCmd = FWL_MSGMOUSECMD_LButtonDown;
@@ -100,61 +101,9 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
-  IXFA_AppProvider* pAppProvider = GetAppProvider();
-  if (!pAppProvider) {
-    return TRUE;
-  }
-  CFX_WideString wsTitle;
-  CFX_WideString wsFilter;
-  pAppProvider->LoadString(XFA_IDS_ImageFilter, wsFilter);
-  CFX_WideStringArray wsPathArray;
-  pAppProvider->ShowFileDialog(wsTitle.AsStringC(), wsFilter.AsStringC(),
-                               wsPathArray);
-  int32_t iSize = wsPathArray.GetSize();
-  if (iSize < 1) {
-    return TRUE;
-  }
-  CFX_WideString wsFilePath = wsPathArray[0];
-  FX_STRSIZE nLen = wsFilePath.GetLength();
-  FX_STRSIZE nIndex = nLen - 1;
-  while (nIndex > 0 && wsFilePath[nIndex] != '.') {
-    nIndex--;
-  }
-  if (nIndex <= 0) {
-    return TRUE;
-  }
-  CFX_WideString wsContentType(L"image/");
-  wsContentType += wsFilePath.Right(nLen - nIndex - 1);
-  wsContentType.MakeLower();
-  FXCODEC_IMAGE_TYPE eImageType = XFA_GetImageType(wsContentType);
-  if (eImageType == FXCODEC_IMAGE_UNKNOWN) {
-    return TRUE;
-  }
-  CFX_WideString wsImage;
-  IFX_FileRead* pFileRead = FX_CreateFileRead(wsFilePath.c_str());
-  if (pFileRead) {
-    int32_t nDataSize = pFileRead->GetSize();
-    if (nDataSize > 0) {
-      CFX_ByteString bsBuf;
-      FX_CHAR* pImageBuffer = bsBuf.GetBuffer(nDataSize);
-      pFileRead->ReadBlock(pImageBuffer, 0, nDataSize);
-      bsBuf.ReleaseBuffer();
-      if (!bsBuf.IsEmpty()) {
-        FX_CHAR* pData = XFA_Base64Encode(bsBuf.raw_str(), nDataSize);
-        wsImage = CFX_WideString::FromLocal(pData);
-        FX_Free(pData);
-      }
-    }
-    m_pDataAcc->SetImageEditImage(NULL);
-    pFileRead->Release();
-  }
-  m_pDataAcc->SetImageEdit(wsContentType.AsStringC(), CFX_WideStringC(),
-                           wsImage.AsStringC());
-  m_pDataAcc->LoadImageEditImage();
-  AddInvalidateRect();
-  m_pDocView->SetChangeMark();
   return TRUE;
 }
+
 void CXFA_FFImageEdit::SetFWLRect() {
   if (!m_pNormalWidget) {
     return;

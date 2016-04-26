@@ -259,10 +259,6 @@ class IXFA_AppProvider {
                                 const CFX_WideStringC& wsEncode) = 0;
 
   virtual void LoadString(int32_t iStringID, CFX_WideString& wsString) = 0;
-  virtual FX_BOOL ShowFileDialog(const CFX_WideStringC& wsTitle,
-                                 const CFX_WideStringC& wsFilter,
-                                 CFX_WideStringArray& wsPathArr,
-                                 FX_BOOL bOpen = TRUE) = 0;
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 

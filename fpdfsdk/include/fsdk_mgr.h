@@ -368,13 +368,6 @@ class CPDFDoc_Environment final {
     return FALSE;
   }
 
-  FPDF_BOOL FFI_ShowFileDialog(const FX_WCHAR* wsTitle,
-                               const FX_WCHAR* wsFilter,
-                               std::vector<CFX_WideString>& wsPathArr,
-                               FX_BOOL bOpen) {
-    return FALSE;
-  }
-
   CFX_WideString FFI_GetLanguage() {
     if (m_pInfo && m_pInfo->FFI_GetLanguage) {
       int nRequiredLen = m_pInfo->FFI_GetLanguage(m_pInfo, NULL, 0);

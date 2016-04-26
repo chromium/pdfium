@@ -76,10 +76,6 @@ class CPDFXFA_App : public IXFA_AppProvider {
                         const CFX_WideStringC& wsEncode) override;
 
   void LoadString(int32_t iStringID, CFX_WideString& wsString) override;
-  FX_BOOL ShowFileDialog(const CFX_WideStringC& wsTitle,
-                         const CFX_WideStringC& wsFilter,
-                         CFX_WideStringArray& wsPathArr,
-                         FX_BOOL bOpen) override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
   CFX_ArrayTemplate<CPDFDoc_Environment*> m_pEnvList;
