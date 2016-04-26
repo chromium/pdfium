@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_TILINGPATTERN_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_TILINGPATTERN_H_
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -22,13 +24,23 @@ class CPDF_TilingPattern : public CPDF_Pattern {
                      const CFX_Matrix* parentMatrix);
   ~CPDF_TilingPattern() override;
 
+  CPDF_TilingPattern* AsTilingPattern() override { return this; }
+  CPDF_ShadingPattern* AsShadingPattern() override { return nullptr; }
+
   FX_BOOL Load();
 
-  FX_BOOL m_bColored;
+  bool colored() const { return m_bColored; }
+  const CFX_FloatRect& bbox() const { return m_BBox; }
+  FX_FLOAT x_step() const { return m_XStep; }
+  FX_FLOAT y_step() const { return m_YStep; }
+  CPDF_Form* form() const { return m_pForm.get(); }
+
+ private:
+  bool m_bColored;
   CFX_FloatRect m_BBox;
   FX_FLOAT m_XStep;
   FX_FLOAT m_YStep;
-  CPDF_Form* m_pForm;
+  std::unique_ptr<CPDF_Form> m_pForm;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_TILINGPATTERN_H_

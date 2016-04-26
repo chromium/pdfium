@@ -392,8 +392,6 @@
         'core/fpdfapi/fpdf_page/cpdf_pageobjectholder.cpp',
         'core/fpdfapi/fpdf_page/cpdf_pageobjectlist.cpp',
         'core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h',
-        'core/fpdfapi/fpdf_page/cpdf_parseoptions.cpp',
-        'core/fpdfapi/fpdf_page/cpdf_parseoptions.h',
         'core/fpdfapi/fpdf_page/cpdf_pathobject.cpp',
         'core/fpdfapi/fpdf_page/cpdf_pattern.cpp',
         'core/fpdfapi/fpdf_page/cpdf_pattern.h',

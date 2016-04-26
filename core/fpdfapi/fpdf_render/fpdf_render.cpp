@@ -101,12 +101,6 @@ class CPDF_RenderModule : public IPDF_RenderModule {
 
   CPDF_DocRenderData* GetRenderData() override { return &m_RenderData; }
 
-  CPDF_PageRenderCache* CreatePageCache(CPDF_Page* pPage) override {
-    return new CPDF_PageRenderCache(pPage);
-  }
-
-  void DestroyPageCache(CPDF_PageRenderCache* pCache) override;
-
   CPDF_DocRenderData m_RenderData;
 };
 
@@ -121,10 +115,6 @@ void CPDF_RenderModule::ClearDocData(CPDF_DocRenderData* p) {
     p->Clear(FALSE);
   }
 }
-void CPDF_RenderModule::DestroyPageCache(CPDF_PageRenderCache* pCache) {
-  delete pCache;
-}
-
 void CPDF_ModuleMgr::InitRenderModule() {
   m_pRenderModule.reset(new CPDF_RenderModule);
 }

@@ -204,7 +204,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
 
   CPDF_Form* pNewForm =
       new CPDF_Form(m_pList->GetDocument(), pPage->m_pResources, pStream);
-  pNewForm->ParseContent(nullptr, nullptr, nullptr, nullptr);
+  pNewForm->ParseContent(nullptr, nullptr, nullptr);
   m_APMap[pStream] = pNewForm;
   return pNewForm;
 }

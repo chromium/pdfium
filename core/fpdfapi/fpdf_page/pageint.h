@@ -14,7 +14,6 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
 #include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
-#include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 #include "core/fxge/include/fx_ge.h"
 
@@ -27,7 +26,6 @@ class CPDF_IccProfile;
 class CPDF_Image;
 class CPDF_ImageObject;
 class CPDF_Page;
-class CPDF_ParseOptions;
 class CPDF_Pattern;
 class CPDF_StreamAcc;
 class CPDF_TextObject;
@@ -44,8 +42,7 @@ class CPDF_StreamParser {
 
   CPDF_Stream* ReadInlineStream(CPDF_Document* pDoc,
                                 CPDF_Dictionary* pDict,
-                                CPDF_Object* pCSObj,
-                                FX_BOOL bDecode);
+                                CPDF_Object* pCSObj);
   SyntaxType ParseNextElement();
   uint8_t* GetWordBuf() { return m_WordBuffer; }
   uint32_t GetWordSize() const { return m_WordSize; }
@@ -58,7 +55,6 @@ class CPDF_StreamParser {
   void SetPos(uint32_t pos) { m_Pos = pos; }
   CPDF_Object* ReadNextObject(FX_BOOL bAllowNestedArray = FALSE,
                               FX_BOOL bInArray = FALSE);
-  void SkipPathObject();
 
  protected:
   friend class fpdf_page_parser_old_ReadHexString_Test;
@@ -113,7 +109,6 @@ class CPDF_StreamContentParser {
                            CPDF_PageObjectHolder* pObjectHolder,
                            CPDF_Dictionary* pResources,
                            CFX_FloatRect* pBBox,
-                           CPDF_ParseOptions* pOptions,
                            CPDF_AllStates* pAllStates,
                            int level);
   ~CPDF_StreamContentParser();
@@ -252,7 +247,6 @@ class CPDF_StreamContentParser {
   int m_Level;
   CFX_Matrix m_mtContentToUser;
   CFX_FloatRect m_BBox;
-  CPDF_ParseOptions m_Options;
   ContentParam m_ParamBuf[PARAM_BUF_SIZE];
   uint32_t m_ParamStartPos;
   uint32_t m_ParamCount;
@@ -291,12 +285,11 @@ class CPDF_ContentParser {
   ~CPDF_ContentParser();
 
   ParseStatus GetStatus() const { return m_Status; }
-  void Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions);
+  void Start(CPDF_Page* pPage);
   void Start(CPDF_Form* pForm,
              CPDF_AllStates* pGraphicStates,
              CFX_Matrix* pParentMatrix,
              CPDF_Type3Char* pType3Char,
-             CPDF_ParseOptions* pOptions,
              int level);
   void Continue(IFX_Pause* pPause);
 
@@ -311,7 +304,6 @@ class CPDF_ContentParser {
   InternalStage m_InternalStage;
   CPDF_PageObjectHolder* m_pObjectHolder;
   FX_BOOL m_bForm;
-  CPDF_ParseOptions m_Options;
   CPDF_Type3Char* m_pType3Char;
   uint32_t m_nStreams;
   std::unique_ptr<CPDF_StreamAcc> m_pSingleStream;

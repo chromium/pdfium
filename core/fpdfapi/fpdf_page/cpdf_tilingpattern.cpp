@@ -20,12 +20,9 @@ CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
   m_bColored = pDict->GetIntegerBy("PaintType") == 1;
   if (parentMatrix)
     m_Pattern2Form.Concat(*parentMatrix);
-
-  m_pForm = nullptr;
 }
 
 CPDF_TilingPattern::~CPDF_TilingPattern() {
-  delete m_pForm;
 }
 
 FX_BOOL CPDF_TilingPattern::Load() {
@@ -44,8 +41,8 @@ FX_BOOL CPDF_TilingPattern::Load() {
   if (!pStream)
     return FALSE;
 
-  m_pForm = new CPDF_Form(m_pDocument, NULL, pStream);
-  m_pForm->ParseContent(NULL, &m_ParentMatrix, NULL, NULL);
+  m_pForm.reset(new CPDF_Form(m_pDocument, nullptr, pStream));
+  m_pForm->ParseContent(nullptr, &m_ParentMatrix, nullptr);
   m_BBox = pDict->GetRectBy("BBox");
   return TRUE;
 }

@@ -10,7 +10,6 @@
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
-#include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"

@@ -36,23 +36,20 @@ CPDF_Form::~CPDF_Form() {}
 void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
                            CFX_Matrix* pParentMatrix,
                            CPDF_Type3Char* pType3Char,
-                           CPDF_ParseOptions* pOptions,
                            int level) {
   if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING) {
     return;
   }
   m_pParser.reset(new CPDF_ContentParser);
-  m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, pOptions,
-                   level);
+  m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, level);
   m_ParseState = CONTENT_PARSING;
 }
 
 void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
                              CFX_Matrix* pParentMatrix,
                              CPDF_Type3Char* pType3Char,
-                             CPDF_ParseOptions* pOptions,
                              int level) {
-  StartParse(pGraphicStates, pParentMatrix, pType3Char, pOptions, level);
+  StartParse(pGraphicStates, pParentMatrix, pType3Char, level);
   ContinueParse(NULL);
 }
 

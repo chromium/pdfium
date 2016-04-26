@@ -150,10 +150,8 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
     if (!ptData->get())
       continue;
 
-    if (bForceRelease || ptData->use_count() < 2) {
-      ptData->get()->SetForceClear(bForceRelease);
+    if (bForceRelease || ptData->use_count() < 2)
       ptData->clear();
-    }
   }
 
   for (auto& it : m_FontMap) {
@@ -436,9 +434,9 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
     CPDF_Dictionary* pDict = pPatternObj ? pPatternObj->GetDict() : nullptr;
     if (pDict) {
       int type = pDict->GetIntegerBy("PatternType");
-      if (type == 1) {
+      if (type == CPDF_Pattern::TILING) {
         pPattern = new CPDF_TilingPattern(m_pPDFDoc, pPatternObj, matrix);
-      } else if (type == 2) {
+      } else if (type == CPDF_Pattern::SHADING) {
         pPattern =
             new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, FALSE, matrix);
       }

@@ -21,9 +21,6 @@ class IPDF_RenderModule {
   virtual void ClearDocData(CPDF_DocRenderData* pDocRenderData) = 0;
 
   virtual CPDF_DocRenderData* GetRenderData() = 0;
-
-  virtual CPDF_PageRenderCache* CreatePageCache(CPDF_Page* pPage) = 0;
-  virtual void DestroyPageCache(CPDF_PageRenderCache* pCache) = 0;
 };
 
 #endif  // CORE_FPDFAPI_IPDF_RENDERMODULE_H_

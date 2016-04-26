@@ -12,6 +12,8 @@
 
 class CPDF_Document;
 class CPDF_Object;
+class CPDF_ShadingPattern;
+class CPDF_TilingPattern;
 
 class CPDF_Pattern {
  public:
@@ -19,13 +21,13 @@ class CPDF_Pattern {
 
   virtual ~CPDF_Pattern();
 
-  void SetForceClear(FX_BOOL bForceClear) { m_bForceClear = bForceClear; }
+  virtual CPDF_TilingPattern* AsTilingPattern() = 0;
+  virtual CPDF_ShadingPattern* AsShadingPattern() = 0;
 
-  const PatternType m_PatternType;
-  CPDF_Document* const m_pDocument;
-  CPDF_Object* const m_pPatternObj;
-  CFX_Matrix m_Pattern2Form;
-  CFX_Matrix m_ParentMatrix;
+  CPDF_Document* document() { return m_pDocument; }
+  CPDF_Object* pattern_obj() { return m_pPatternObj; }
+  CFX_Matrix* pattern_to_form() { return &m_Pattern2Form; }
+  CFX_Matrix* parent_matrix() { return &m_ParentMatrix; }
 
  protected:
   CPDF_Pattern(PatternType type,
@@ -33,7 +35,11 @@ class CPDF_Pattern {
                CPDF_Object* pObj,
                const CFX_Matrix* pParentMatrix);
 
-  FX_BOOL m_bForceClear;
+  const PatternType m_PatternType;
+  CPDF_Document* const m_pDocument;
+  CPDF_Object* const m_pPatternObj;
+  CFX_Matrix m_Pattern2Form;
+  CFX_Matrix m_ParentMatrix;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_PATTERN_H_

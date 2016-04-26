@@ -502,10 +502,10 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
 #else   // PDF_ENABLE_XFA
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
   if (!pDict)
-    return NULL;
-  CPDF_Page* pPage = new CPDF_Page;
-  pPage->Load(pDoc, pDict);
-  pPage->ParseContent(nullptr);
+    return nullptr;
+
+  CPDF_Page* pPage = new CPDF_Page(pDoc, pDict, true);
+  pPage->ParseContent();
   return pPage;
 #endif  // PDF_ENABLE_XFA
 }
@@ -958,8 +958,8 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
   if (!pDict)
     return FALSE;
-  CPDF_Page page;
-  page.Load(pDoc, pDict);
+
+  CPDF_Page page(pDoc, pDict, true);
   *width = page.GetPageWidth();
   *height = page.GetPageHeight();
 #endif  // PDF_ENABLE_XFA

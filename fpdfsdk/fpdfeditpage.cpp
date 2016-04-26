@@ -100,9 +100,8 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
       new CPDFXFA_Page((CPDFXFA_Document*)document, page_index);
   pPage->LoadPDFPage(pPageDict);
 #else   // PDF_ENABLE_XFA
-  CPDF_Page* pPage = new CPDF_Page;
-  pPage->Load(pDoc, pPageDict);
-  pPage->ParseContent(nullptr);
+  CPDF_Page* pPage = new CPDF_Page(pDoc, pPageDict, true);
+  pPage->ParseContent();
 #endif  // PDF_ENABLE_XFA
 
   return pPage;

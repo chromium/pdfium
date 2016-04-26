@@ -1348,9 +1348,8 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
   if (!pPageDict)
     return FALSE;
 
-  CPDF_Page page;
-  page.Load(pDocument, pPageDict);
-  page.ParseContent(nullptr);
+  CPDF_Page page(pDocument, pPageDict, true);
+  page.ParseContent();
 
   int nWords = 0;
   CFX_WideString swRet;
@@ -1404,9 +1403,8 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
   if (!pPageDict)
     return FALSE;
 
-  CPDF_Page page;
-  page.Load(pDocument, pPageDict);
-  page.ParseContent(nullptr);
+  CPDF_Page page(pDocument, pPageDict, true);
+  page.ParseContent();
 
   int nWords = 0;
   for (auto& pPageObj : *page.GetPageObjectList()) {

@@ -15,7 +15,6 @@ class CPDF_Stream;
 class CPDF_AllStates;
 class CFX_Matrix;
 class CPDF_Type3Char;
-class CPDF_ParseOptions;
 
 class CPDF_Form : public CPDF_PageObjectHolder {
  public:
@@ -29,13 +28,11 @@ class CPDF_Form : public CPDF_PageObjectHolder {
   void StartParse(CPDF_AllStates* pGraphicStates,
                   CFX_Matrix* pParentMatrix,
                   CPDF_Type3Char* pType3Char,
-                  CPDF_ParseOptions* pOptions,
                   int level = 0);
 
   void ParseContent(CPDF_AllStates* pGraphicStates,
                     CFX_Matrix* pParentMatrix,
                     CPDF_Type3Char* pType3Char,
-                    CPDF_ParseOptions* pOptions,
                     int level = 0);
 
   CPDF_Form* Clone() const;

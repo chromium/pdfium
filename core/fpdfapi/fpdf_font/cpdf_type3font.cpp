@@ -113,8 +113,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   // This can trigger recursion into this method. The content of |m_CacheMap|
   // can change as a result. Thus after it returns, check the cache again for
   // a cache hit.
-  pNewChar->m_pForm->ParseContent(nullptr, nullptr, pNewChar.get(), nullptr,
-                                  level + 1);
+  pNewChar->m_pForm->ParseContent(nullptr, nullptr, pNewChar.get(), level + 1);
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())
     return it->second;

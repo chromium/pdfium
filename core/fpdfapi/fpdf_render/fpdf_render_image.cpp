@@ -9,7 +9,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/cpdf_tilingpattern.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
@@ -534,14 +533,13 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
                              m_pRenderStatus->m_bDropObjects, NULL, TRUE);
     CFX_Matrix patternDevice = *pObj2Device;
     patternDevice.Translate((FX_FLOAT)-rect.left, (FX_FLOAT)-rect.top);
-    if (m_pPattern->m_PatternType == CPDF_Pattern::TILING) {
-      bitmap_render.DrawTilingPattern(
-          static_cast<CPDF_TilingPattern*>(m_pPattern), m_pImageObject,
-          &patternDevice, FALSE);
-    } else {
-      bitmap_render.DrawShadingPattern(
-          static_cast<CPDF_ShadingPattern*>(m_pPattern), m_pImageObject,
-          &patternDevice, FALSE);
+    if (CPDF_TilingPattern* pTilingPattern = m_pPattern->AsTilingPattern()) {
+      bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject,
+                                      &patternDevice, FALSE);
+    } else if (CPDF_ShadingPattern* pShadingPattern =
+                   m_pPattern->AsShadingPattern()) {
+      bitmap_render.DrawShadingPattern(pShadingPattern, m_pImageObject,
+                                       &patternDevice, FALSE);
     }
   }
   {
@@ -894,7 +892,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
 
   CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),
                  pGroup);
-  form.ParseContent(NULL, NULL, NULL, NULL);
+  form.ParseContent(nullptr, nullptr, nullptr);
 
   CFX_FxgeDevice bitmap_device;
   FX_BOOL bLuminosity = pSMaskDict->GetStringBy("S") != "Alpha";

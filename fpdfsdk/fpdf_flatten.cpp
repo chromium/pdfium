@@ -45,9 +45,8 @@ FX_BOOL IsValiableRect(CFX_FloatRect rect, CFX_FloatRect rcPage) {
 void GetContentsRect(CPDF_Document* pDoc,
                      CPDF_Dictionary* pDict,
                      CPDF_RectArray* pRectArray) {
-  std::unique_ptr<CPDF_Page> pPDFPage(new CPDF_Page);
-  pPDFPage->Load(pDoc, pDict, FALSE);
-  pPDFPage->ParseContent(nullptr);
+  std::unique_ptr<CPDF_Page> pPDFPage(new CPDF_Page(pDoc, pDict, false));
+  pPDFPage->ParseContent();
 
   for (auto& pPageObject : *pPDFPage->GetPageObjectList()) {
     if (!pPageObject)
