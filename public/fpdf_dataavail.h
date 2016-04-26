@@ -64,7 +64,7 @@ DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
 
 // Destroy the |avail| document availability provider.
 //
-// |avail| - handle to document availability provider to be destroyed.
+//   avail - handle to document availability provider to be destroyed.
 DLLEXPORT void STDCALL FPDFAvail_Destroy(FPDF_AVAIL avail);
 
 // Download hints interface. Used to receive hints for further downloading.

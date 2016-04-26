@@ -11,22 +11,19 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif  // __cplusplus
 
-// Function: FPDFText_GetCharIndexFromTextIndex
-//      Get the actually char index in text_page's internal char list.
-// Parameters:
-//          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
-//          nTextIndex  -   The index of the text in the string get from
-//          FPDFText_GetText.
-//  Return value:
-//          The index of the character in internal charlist. -1 for error.
+// Get the character index in |text_page| internal character list.
+//
+//   text_page  - a text page information structure.
+//   nTextIndex - index of the text returned from |FPDFText_GetText|.
+//
+// Returns the index of the character in internal character list. -1 for error.
 DLLEXPORT int STDCALL
 FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
 
 #ifdef __cplusplus
-}
-#endif
+}  // extern "C"
+#endif  // __cplusplus
 
 #endif  // PUBLIC_FPDF_SEARCHEX_H_
