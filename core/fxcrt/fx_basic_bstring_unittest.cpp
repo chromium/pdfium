@@ -624,6 +624,83 @@ TEST(fxcrt, ByteStringTrimLeftCopies) {
   }
 }
 
+TEST(fxcrt, ByteStringReserve) {
+  {
+    CFX_ByteString str;
+    str.Reserve(6);
+    const FX_CHAR* old_buffer = str.c_str();
+    str += "ABCDEF";
+    EXPECT_EQ(old_buffer, str.c_str());
+    str += "Blah Blah Blah Blah Blah Blah";
+    EXPECT_NE(old_buffer, str.c_str());
+  }
+  {
+    CFX_ByteString str("A");
+    str.Reserve(6);
+    const FX_CHAR* old_buffer = str.c_str();
+    str += "BCDEF";
+    EXPECT_EQ(old_buffer, str.c_str());
+    str += "Blah Blah Blah Blah Blah Blah";
+    EXPECT_NE(old_buffer, str.c_str());
+  }
+}
+
+TEST(fxcrt, ByteStringGetBuffer) {
+  {
+    CFX_ByteString str;
+    FX_CHAR* buffer = str.GetBuffer(12);
+    strcpy(buffer, "clams");
+    str.ReleaseBuffer();
+    EXPECT_EQ("clams", str);
+  }
+  {
+    CFX_ByteString str("cl");
+    FX_CHAR* buffer = str.GetBuffer(12);
+    strcpy(buffer + 2, "ams");
+    str.ReleaseBuffer();
+    EXPECT_EQ("clams", str);
+  }
+}
+
+TEST(fxcrt, ByteStringReleaseBuffer) {
+  {
+    CFX_ByteString str;
+    str.Reserve(12);
+    str += "clams";
+    const FX_CHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_EQ(old_buffer, str.c_str());
+    EXPECT_EQ("clam", str);
+  }
+  {
+    CFX_ByteString str("c");
+    str.Reserve(12);
+    str += "lams";
+    const FX_CHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_EQ(old_buffer, str.c_str());
+    EXPECT_EQ("clam", str);
+  }
+  {
+    CFX_ByteString str;
+    str.Reserve(200);
+    str += "clams";
+    const FX_CHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_NE(old_buffer, str.c_str());
+    EXPECT_EQ("clam", str);
+  }
+  {
+    CFX_ByteString str("c");
+    str.Reserve(200);
+    str += "lams";
+    const FX_CHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_NE(old_buffer, str.c_str());
+    EXPECT_EQ("clam", str);
+  }
+}
+
 TEST(fxcrt, ByteStringCNotNull) {
   CFX_ByteStringC string3("abc");
   CFX_ByteStringC string6("abcdef");

@@ -591,6 +591,83 @@ TEST(fxcrt, WideStringTrimLeftCopies) {
   }
 }
 
+TEST(fxcrt, WideStringReserve) {
+  {
+    CFX_WideString str;
+    str.Reserve(6);
+    const FX_WCHAR* old_buffer = str.c_str();
+    str += L"ABCDEF";
+    EXPECT_EQ(old_buffer, str.c_str());
+    str += L"Blah Blah Blah Blah Blah Blah";
+    EXPECT_NE(old_buffer, str.c_str());
+  }
+  {
+    CFX_WideString str(L"A");
+    str.Reserve(6);
+    const FX_WCHAR* old_buffer = str.c_str();
+    str += L"BCDEF";
+    EXPECT_EQ(old_buffer, str.c_str());
+    str += L"Blah Blah Blah Blah Blah Blah";
+    EXPECT_NE(old_buffer, str.c_str());
+  }
+}
+
+TEST(fxcrt, WideStringGetBuffer) {
+  {
+    CFX_WideString str;
+    FX_WCHAR* buffer = str.GetBuffer(12);
+    wcscpy(buffer, L"clams");
+    str.ReleaseBuffer();
+    EXPECT_EQ(L"clams", str);
+  }
+  {
+    CFX_WideString str(L"cl");
+    FX_WCHAR* buffer = str.GetBuffer(12);
+    wcscpy(buffer + 2, L"ams");
+    str.ReleaseBuffer();
+    EXPECT_EQ(L"clams", str);
+  }
+}
+
+TEST(fxcrt, WideStringReleaseBuffer) {
+  {
+    CFX_WideString str;
+    str.Reserve(12);
+    str += L"clams";
+    const FX_WCHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_EQ(old_buffer, str.c_str());
+    EXPECT_EQ(L"clam", str);
+  }
+  {
+    CFX_WideString str(L"c");
+    str.Reserve(12);
+    str += L"lams";
+    const FX_WCHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_EQ(old_buffer, str.c_str());
+    EXPECT_EQ(L"clam", str);
+  }
+  {
+    CFX_WideString str;
+    str.Reserve(200);
+    str += L"clams";
+    const FX_WCHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_NE(old_buffer, str.c_str());
+    EXPECT_EQ(L"clam", str);
+  }
+  {
+    CFX_WideString str(L"c");
+    str.Reserve(200);
+    str += L"lams";
+    const FX_WCHAR* old_buffer = str.c_str();
+    str.ReleaseBuffer(4);
+    EXPECT_NE(old_buffer, str.c_str());
+    EXPECT_EQ(L"clam", str);
+  }
+}
+
 TEST(fxcrt, WideStringUTF16LE_Encode) {
   struct UTF16LEEncodeCase {
     CFX_WideString ws;

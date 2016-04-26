@@ -276,20 +276,25 @@ void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
   if (nNewLength == -1)
     nNewLength = FXSYS_strlen(m_pData->m_String);
 
+  nNewLength = std::min(nNewLength, m_pData->m_nAllocLength);
   if (nNewLength == 0) {
     clear();
     return;
   }
 
-  FXSYS_assert(nNewLength <= m_pData->m_nAllocLength);
-  ReallocBeforeWrite(nNewLength);
+  FXSYS_assert(m_pData->m_nRefs == 1);
   m_pData->m_nDataLength = nNewLength;
   m_pData->m_String[nNewLength] = 0;
+  if (m_pData->m_nAllocLength - nNewLength >= 32) {
+    // Over arbitrary threshold, so pay the price to relocate.  Force copy to
+    // always occur by holding a second reference to the string.
+    CFX_ByteString preserve(*this);
+    ReallocBeforeWrite(nNewLength);
+  }
 }
 
 void CFX_ByteString::Reserve(FX_STRSIZE len) {
   GetBuffer(len);
-  ReleaseBuffer(GetLength());
 }
 
 FX_CHAR* CFX_ByteString::GetBuffer(FX_STRSIZE nMinBufLength) {
