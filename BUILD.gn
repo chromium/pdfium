@@ -3,8 +3,8 @@
 # found in the LICENSE file.
 
 import("//build_overrides/v8.gni")
+import("//build_overrides/pdfium.gni")
 import("//testing/test.gni")
-import("pdfium.gni")
 
 config("pdfium_config") {
   cflags = []
