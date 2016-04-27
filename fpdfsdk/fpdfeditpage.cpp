@@ -36,7 +36,7 @@
 #endif
 
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
-  CPDF_Document* pDoc = new CPDF_Document;
+  CPDF_Document* pDoc = new CPDF_Document(nullptr);
   pDoc->CreateNewDoc();
   time_t currentTime;
 

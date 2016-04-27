@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fxcrt/include/fx_basic.h"
@@ -35,7 +37,6 @@ class CPDF_StreamAcc;
 
 class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
  public:
-  CPDF_Document();
   explicit CPDF_Document(CPDF_Parser* pParser);
   ~CPDF_Document();
 
@@ -52,11 +53,11 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* GetPage(int iPage);
   int GetPageIndex(uint32_t objnum);
   uint32_t GetUserPermissions(FX_BOOL bCheckRevision = FALSE) const;
-  CPDF_DocPageData* GetPageData() { return GetValidatePageData(); }
+  CPDF_DocPageData* GetPageData() const { return m_pDocPage; }
   void ClearPageData();
   void RemoveColorSpaceFromPageData(CPDF_Object* pObject);
 
-  CPDF_DocRenderData* GetRenderData() { return GetValidateRenderData(); }
+  CPDF_DocRenderData* GetRenderData() const { return m_pDocRender.get(); }
   void ClearRenderData();
   void ClearRenderFont();
 
@@ -75,8 +76,17 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   CPDF_StreamAcc* LoadFontFile(CPDF_Stream* pStream);
   CPDF_IccProfile* LoadIccProfile(CPDF_Stream* pStream);
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+  void LoadDoc();
+  void LoadAsynDoc(CPDF_Dictionary* pLinearized);
+  void LoadPages();
 
+  // Editing methods.
+  void CreateNewDoc();
+  CPDF_Dictionary* CreateNewPage(int iPage);
+  void DeletePage(int iPage);
+  CPDF_Font* AddStandardFont(const FX_CHAR* font, CPDF_FontEncoding* pEncoding);
+  CPDF_Font* AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont,
                             FX_BOOL bVert,
                             FX_BOOL bTranslateName = FALSE);
@@ -90,48 +100,37 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
                         FX_BOOL bTranslateName = FALSE);
 #endif
 
-  CPDF_Font* AddStandardFont(const FX_CHAR* font, CPDF_FontEncoding* pEncoding);
-  CPDF_Font* AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert);
-  void CreateNewDoc();
-
-  CPDF_Dictionary* CreateNewPage(int iPage);
-  void DeletePage(int iPage);
-
-  void LoadDoc();
-  void LoadAsynDoc(CPDF_Dictionary* pLinearized);
-  void LoadPages();
-
  protected:
-  // Retrieve page count information by getting count value from the tree nodes
-  // or walking through the tree nodes to calculate it.
-  int RetrievePageCount() const;
-  CPDF_Dictionary* _FindPDFPage(CPDF_Dictionary* pPages,
-                                int iPage,
-                                int nPagesToGo,
-                                int level);
-  int _FindPageIndex(CPDF_Dictionary* pNode,
-                     uint32_t& skip_count,
-                     uint32_t objnum,
-                     int& index,
-                     int level = 0);
-  FX_BOOL CheckOCGVisible(CPDF_Dictionary* pOCG, FX_BOOL bPrinting);
-  CPDF_DocPageData* GetValidatePageData();
-  CPDF_DocRenderData* GetValidateRenderData();
   friend class CPDF_Creator;
   friend class CPDF_Parser;
   friend class CPDF_DataAvail;
   friend class CPDF_OCContext;
 
+  // Retrieve page count information by getting count value from the tree nodes
+  // or walking through the tree nodes to calculate it.
+  int RetrievePageCount() const;
+  CPDF_Dictionary* FindPDFPage(CPDF_Dictionary* pPages,
+                               int iPage,
+                               int nPagesToGo,
+                               int level);
+  int FindPageIndex(CPDF_Dictionary* pNode,
+                    uint32_t& skip_count,
+                    uint32_t objnum,
+                    int& index,
+                    int level = 0);
+  FX_BOOL CheckOCGVisible(CPDF_Dictionary* pOCG, FX_BOOL bPrinting);
+
   CPDF_Dictionary* m_pRootDict;
   CPDF_Dictionary* m_pInfoDict;
   CFX_ByteString m_ID1;
   CFX_ByteString m_ID2;
-  FX_BOOL m_bLinearized;
-  uint32_t m_dwFirstPageNo;
+  bool m_bLinearized;
+  int m_iFirstPageNo;
   uint32_t m_dwFirstPageObjNum;
   CFX_ArrayTemplate<uint32_t> m_PageList;
+  // TODO(thestig): Figure out why this cannot be a std::unique_ptr.
   CPDF_DocPageData* m_pDocPage;
-  CPDF_DocRenderData* m_pDocRender;
+  std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_

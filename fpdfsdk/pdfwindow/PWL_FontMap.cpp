@@ -53,7 +53,7 @@ void CPWL_FontMap::SetSystemHandler(IFX_SystemHandler* pSystemHandler) {
 CPDF_Document* CPWL_FontMap::GetDocument() {
   if (!m_pPDFDoc) {
     if (CPDF_ModuleMgr::Get()) {
-      m_pPDFDoc = new CPDF_Document;
+      m_pPDFDoc = new CPDF_Document(nullptr);
       m_pPDFDoc->CreateNewDoc();
     }
   }

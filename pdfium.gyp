@@ -334,7 +334,6 @@
         'core/fpdfapi/fpdf_edit/editint.h',
         'core/fpdfapi/fpdf_edit/cpdf_pagecontentgenerator.cpp',
         'core/fpdfapi/fpdf_edit/fpdf_edit_create.cpp',
-        'core/fpdfapi/fpdf_edit/fpdf_edit_doc.cpp',
         'core/fpdfapi/fpdf_edit/include/cpdf_creator.h',
         'core/fpdfapi/fpdf_edit/include/cpdf_pagecontentgenerator.h',
         'core/fpdfapi/fpdf_font/cpdf_cidfont.cpp',

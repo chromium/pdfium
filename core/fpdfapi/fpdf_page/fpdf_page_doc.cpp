@@ -24,40 +24,6 @@ void CPDF_ModuleMgr::InitPageModule() {
   m_pPageModule.reset(new CPDF_PageModule);
 }
 
-CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict) {
-  ASSERT(pFontDict);
-  return GetValidatePageData()->GetFont(pFontDict, FALSE);
-}
-
-CPDF_StreamAcc* CPDF_Document::LoadFontFile(CPDF_Stream* pStream) {
-  return GetValidatePageData()->GetFontFileStreamAcc(pStream);
-}
-
-CPDF_ColorSpace* CPDF_Document::LoadColorSpace(CPDF_Object* pCSObj,
-                                               CPDF_Dictionary* pResources) {
-  return GetValidatePageData()->GetColorSpace(pCSObj, pResources);
-}
-CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj,
-                                         FX_BOOL bShading,
-                                         const CFX_Matrix* matrix) {
-  return GetValidatePageData()->GetPattern(pPatternObj, bShading, matrix);
-}
-CPDF_IccProfile* CPDF_Document::LoadIccProfile(CPDF_Stream* pStream) {
-  return GetValidatePageData()->GetIccProfile(pStream);
-}
-CPDF_Image* CPDF_Document::LoadImageF(CPDF_Object* pObj) {
-  if (!pObj) {
-    return NULL;
-  }
-  FXSYS_assert(pObj->GetObjNum());
-  return GetValidatePageData()->GetImage(pObj);
-}
-void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj) {
-  if (!pCSObj) {
-    return;
-  }
-  GetPageData()->ReleaseColorSpace(pCSObj);
-}
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc), m_bForceClear(FALSE) {}
 
