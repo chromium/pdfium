@@ -42,6 +42,7 @@ executable("pdfium_test") {
     "../:pdfium",
     "../:test_support",
     "//build/config/sanitizers:deps",
+    "//build/win:default_exe_manifest",
 
     # Regardless of whether the library ships against system freetype,
     # always link this binary against the bundled one for consistency
@@ -75,6 +76,7 @@ executable("pdfium_diff") {
   deps = [
     "../:pdfium",
     "//build/config/sanitizers:deps",
+    "//build/win:default_exe_manifest",
   ]
   if (!pdf_enable_xfa) {
     deps += [ "../third_party:fx_lpng" ]
