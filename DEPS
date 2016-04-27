@@ -169,10 +169,4 @@ hooks = [
                '--if-needed'
     ],
   },
-  {
-    # Update the Windows toolchain if necessary.
-    'name': 'win_toolchain',
-    'pattern': '.',
-    'action': ['python', 'pdfium/build_gyp/vs_toolchain.py', 'update'],
-  },
 ]
