@@ -116,12 +116,11 @@ class CXFA_FFDocView {
   CXFA_FFWidget* m_pFocusWidget;
   CXFA_FFWidget* m_pOldFocusWidget;
   CFX_MapPtrToPtr m_mapPageInvalidate;
-  CFX_PtrArray m_ValidateAccs;
-  CFX_PtrArray m_bindItems;
-  CFX_PtrArray m_CalculateAccs;
-
-  CFX_PtrArray m_NewAddedNodes;
-  CFX_PtrArray m_IndexChangedSubforms;
+  CFX_ArrayTemplate<CXFA_WidgetAcc*> m_ValidateAccs;
+  CFX_ArrayTemplate<CXFA_WidgetAcc*> m_CalculateAccs;
+  CFX_ArrayTemplate<CXFA_Node*> m_BindItems;
+  CFX_ArrayTemplate<CXFA_Node*> m_NewAddedNodes;
+  CFX_ArrayTemplate<CXFA_Node*> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus;
   int32_t m_iLock;
   friend class CXFA_FFNotify;
