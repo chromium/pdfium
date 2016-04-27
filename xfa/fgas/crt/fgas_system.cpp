@@ -30,7 +30,7 @@ inline int32_t FX_tolower(int32_t ch) {
 }  // namespace
 
 int32_t FX_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count) {
-  FXSYS_assert(s1 != NULL && s2 != NULL && count > 0);
+  ASSERT(s1 != NULL && s2 != NULL && count > 0);
   FX_WCHAR wch1 = 0;
   FX_WCHAR wch2 = 0;
   while (count-- > 0) {
@@ -44,7 +44,7 @@ int32_t FX_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count) {
 }
 
 int32_t FX_filelength(FXSYS_FILE* file) {
-  FXSYS_assert(file != NULL);
+  ASSERT(file != NULL);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
   return _filelength(_fileno(file));
 #else
@@ -57,7 +57,7 @@ int32_t FX_filelength(FXSYS_FILE* file) {
 }
 
 FX_BOOL FX_fsetsize(FXSYS_FILE* file, int32_t size) {
-  FXSYS_assert(file != NULL);
+  ASSERT(file != NULL);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
   return _chsize(_fileno(file), size) == 0;
 #elif _FX_OS_ == _FX_WIN32_MOBILE_
@@ -73,7 +73,7 @@ FX_BOOL FX_fsetsize(FXSYS_FILE* file, int32_t size) {
 }
 
 FX_FLOAT FX_wcstof(const FX_WCHAR* pwsStr, int32_t iLength, int32_t* pUsedLen) {
-  FXSYS_assert(pwsStr != NULL);
+  ASSERT(pwsStr != NULL);
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pwsStr);
   }

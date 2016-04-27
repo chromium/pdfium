@@ -215,7 +215,7 @@ CFWL_Widget::CFWL_Widget()
     : m_pIface(NULL), m_pDelegate(NULL), m_pProperties(NULL) {
   m_pProperties = new CFWL_WidgetProperties;
   m_pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
-  FXSYS_assert(m_pWidgetMgr != NULL);
+  ASSERT(m_pWidgetMgr != NULL);
 }
 
 CFWL_Widget::~CFWL_Widget() {

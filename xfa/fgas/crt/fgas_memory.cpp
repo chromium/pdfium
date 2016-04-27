@@ -159,7 +159,7 @@ CFX_StaticStore::CFX_StaticStore(size_t iDefChunkSize)
       m_iDefChunkSize(iDefChunkSize),
       m_pChunk(NULL),
       m_pLastChunk(NULL) {
-  FXSYS_assert(m_iDefChunkSize != 0);
+  ASSERT(m_iDefChunkSize != 0);
 }
 CFX_StaticStore::~CFX_StaticStore() {
   FX_STATICSTORECHUNK* pChunk = m_pChunk;
@@ -170,7 +170,7 @@ CFX_StaticStore::~CFX_StaticStore() {
   }
 }
 FX_STATICSTORECHUNK* CFX_StaticStore::AllocChunk(size_t size) {
-  FXSYS_assert(size != 0);
+  ASSERT(size != 0);
   FX_STATICSTORECHUNK* pChunk = (FX_STATICSTORECHUNK*)FX_Alloc(
       uint8_t, sizeof(FX_STATICSTORECHUNK) + size);
   pChunk->iChunkSize = size;
@@ -185,7 +185,7 @@ FX_STATICSTORECHUNK* CFX_StaticStore::AllocChunk(size_t size) {
   return pChunk;
 }
 FX_STATICSTORECHUNK* CFX_StaticStore::FindChunk(size_t size) {
-  FXSYS_assert(size != 0);
+  ASSERT(size != 0);
   if (m_pLastChunk == NULL || m_pLastChunk->iFreeSize < size) {
     return AllocChunk(std::max(m_iDefChunkSize, size));
   }
@@ -193,9 +193,9 @@ FX_STATICSTORECHUNK* CFX_StaticStore::FindChunk(size_t size) {
 }
 void* CFX_StaticStore::Alloc(size_t size) {
   size = FX_4BYTEALIGN(size);
-  FXSYS_assert(size != 0);
+  ASSERT(size != 0);
   FX_STATICSTORECHUNK* pChunk = FindChunk(size);
-  FXSYS_assert(pChunk->iFreeSize >= size);
+  ASSERT(pChunk->iFreeSize >= size);
   uint8_t* p = (uint8_t*)pChunk;
   p += sizeof(FX_STATICSTORECHUNK) + pChunk->iChunkSize - pChunk->iFreeSize;
   pChunk->iFreeSize -= size;
@@ -203,7 +203,7 @@ void* CFX_StaticStore::Alloc(size_t size) {
   return p;
 }
 size_t CFX_StaticStore::SetDefChunkSize(size_t size) {
-  FXSYS_assert(size != 0);
+  ASSERT(size != 0);
   size_t v = m_iDefChunkSize;
   m_iDefChunkSize = size;
   return v;
@@ -212,7 +212,7 @@ CFX_FixedStore::CFX_FixedStore(size_t iBlockSize, size_t iBlockNumsInChunk)
     : m_iBlockSize(FX_4BYTEALIGN(iBlockSize)),
       m_iDefChunkSize(FX_4BYTEALIGN(iBlockNumsInChunk)),
       m_pChunk(NULL) {
-  FXSYS_assert(m_iBlockSize != 0 && m_iDefChunkSize != 0);
+  ASSERT(m_iBlockSize != 0 && m_iDefChunkSize != 0);
 }
 CFX_FixedStore::~CFX_FixedStore() {
   FX_FIXEDSTORECHUNK* pChunk = m_pChunk;
@@ -251,20 +251,20 @@ void* CFX_FixedStore::Alloc(size_t size) {
   if (pChunk == NULL) {
     pChunk = AllocChunk();
   }
-  FXSYS_assert(pChunk != NULL);
+  ASSERT(pChunk != NULL);
   uint8_t* pFlags = pChunk->FirstFlag();
   size_t i = 0;
   for (; i < pChunk->iChunkSize; i++)
     if (pFlags[i] == 0) {
       break;
     }
-  FXSYS_assert(i < pChunk->iChunkSize);
+  ASSERT(i < pChunk->iChunkSize);
   pFlags[i] = 1;
   pChunk->iFreeNum--;
   return pChunk->FirstBlock() + i * m_iBlockSize;
 }
 void CFX_FixedStore::Free(void* pBlock) {
-  FXSYS_assert(pBlock != NULL);
+  ASSERT(pBlock != NULL);
   FX_FIXEDSTORECHUNK* pPrior = NULL;
   FX_FIXEDSTORECHUNK* pChunk = m_pChunk;
   uint8_t* pStart = NULL;
@@ -279,9 +279,9 @@ void CFX_FixedStore::Free(void* pBlock) {
     }
     pPrior = pChunk, pChunk = pChunk->pNextChunk;
   }
-  FXSYS_assert(pChunk != NULL);
+  ASSERT(pChunk != NULL);
   size_t iPos = ((uint8_t*)pBlock - pStart) / m_iBlockSize;
-  FXSYS_assert(iPos < pChunk->iChunkSize);
+  ASSERT(iPos < pChunk->iChunkSize);
   uint8_t* pFlags = pChunk->FirstFlag();
   if (pFlags[iPos] == 0) {
     return;
@@ -298,14 +298,14 @@ void CFX_FixedStore::Free(void* pBlock) {
   }
 }
 size_t CFX_FixedStore::SetDefChunkSize(size_t iChunkSize) {
-  FXSYS_assert(iChunkSize != 0);
+  ASSERT(iChunkSize != 0);
   size_t v = m_iDefChunkSize;
   m_iDefChunkSize = FX_4BYTEALIGN(iChunkSize);
   return v;
 }
 CFX_DynamicStore::CFX_DynamicStore(size_t iDefChunkSize)
     : m_iDefChunkSize(iDefChunkSize), m_pChunk(NULL) {
-  FXSYS_assert(m_iDefChunkSize != 0);
+  ASSERT(m_iDefChunkSize != 0);
 }
 CFX_DynamicStore::~CFX_DynamicStore() {
   FX_DYNAMICSTORECHUNK* pChunk = m_pChunk;
@@ -316,7 +316,7 @@ CFX_DynamicStore::~CFX_DynamicStore() {
   }
 }
 FX_DYNAMICSTORECHUNK* CFX_DynamicStore::AllocChunk(size_t size) {
-  FXSYS_assert(size != 0);
+  ASSERT(size != 0);
   FX_DYNAMICSTORECHUNK* pChunk = (FX_DYNAMICSTORECHUNK*)FX_Alloc(
       uint8_t,
       sizeof(FX_DYNAMICSTORECHUNK) + sizeof(FX_DYNAMICSTOREBLOCK) * 2 + size);
@@ -346,7 +346,7 @@ FX_DYNAMICSTORECHUNK* CFX_DynamicStore::AllocChunk(size_t size) {
 }
 void* CFX_DynamicStore::Alloc(size_t size) {
   size = FX_4BYTEALIGN(size);
-  FXSYS_assert(size != 0);
+  ASSERT(size != 0);
   FX_DYNAMICSTORECHUNK* pChunk = m_pChunk;
   FX_DYNAMICSTOREBLOCK* pBlock = NULL;
   while (pChunk != NULL) {
@@ -370,7 +370,7 @@ void* CFX_DynamicStore::Alloc(size_t size) {
     pChunk = AllocChunk(std::max(m_iDefChunkSize, size));
     pBlock = pChunk->FirstBlock();
   }
-  FXSYS_assert(pChunk != NULL && pBlock != NULL);
+  ASSERT(pChunk != NULL && pBlock != NULL);
   size_t m = size + sizeof(FX_DYNAMICSTOREBLOCK);
   pBlock->bUsed = TRUE;
   if (pBlock->iBlockSize > m) {
@@ -386,7 +386,7 @@ void* CFX_DynamicStore::Alloc(size_t size) {
   return pBlock->Data();
 }
 void CFX_DynamicStore::Free(void* pBlock) {
-  FXSYS_assert(pBlock != NULL);
+  ASSERT(pBlock != NULL);
   FX_DYNAMICSTORECHUNK* pPriorChunk = NULL;
   FX_DYNAMICSTORECHUNK* pChunk = m_pChunk;
   while (pChunk != NULL) {
@@ -397,7 +397,7 @@ void CFX_DynamicStore::Free(void* pBlock) {
     }
     pPriorChunk = pChunk, pChunk = pChunk->pNextChunk;
   }
-  FXSYS_assert(pChunk != NULL);
+  ASSERT(pChunk != NULL);
   FX_DYNAMICSTOREBLOCK* pPriorBlock = NULL;
   FX_DYNAMICSTOREBLOCK* pFindBlock = pChunk->FirstBlock();
   while (pFindBlock->iBlockSize != 0) {
@@ -407,8 +407,8 @@ void CFX_DynamicStore::Free(void* pBlock) {
     pPriorBlock = pFindBlock;
     pFindBlock = pFindBlock->NextBlock();
   }
-  FXSYS_assert(pFindBlock->iBlockSize != 0 && pFindBlock->bUsed &&
-               pBlock == (void*)pFindBlock->Data());
+  ASSERT(pFindBlock->iBlockSize != 0 && pFindBlock->bUsed &&
+         pBlock == (void*)pFindBlock->Data());
   pFindBlock->bUsed = FALSE;
   pChunk->iFreeSize += pFindBlock->iBlockSize;
   if (pPriorBlock == NULL) {
@@ -439,7 +439,7 @@ void CFX_DynamicStore::Free(void* pBlock) {
   }
 }
 size_t CFX_DynamicStore::SetDefChunkSize(size_t size) {
-  FXSYS_assert(size != 0);
+  ASSERT(size != 0);
   size_t v = m_iDefChunkSize;
   m_iDefChunkSize = size;
   return v;

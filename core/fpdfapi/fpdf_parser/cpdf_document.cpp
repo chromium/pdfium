@@ -238,7 +238,7 @@ const FX_LANG2CS gs_FXLang2CharsetTable[] = {
 };
 
 uint32_t FX_GetLangHashCode(const FX_CHAR* pStr) {
-  FXSYS_assert(pStr);
+  ASSERT(pStr);
   int32_t iLength = FXSYS_strlen(pStr);
   const FX_CHAR* pStrEnd = pStr + iLength;
   uint32_t uHashCode = 0;
@@ -265,7 +265,7 @@ uint8_t FX_GetCsFromLangCode(uint32_t uCode) {
 }
 
 uint8_t FX_GetCharsetFromLang(const FX_CHAR* pLang, int32_t iLength) {
-  FXSYS_assert(pLang);
+  ASSERT(pLang);
   if (iLength < 0)
     iLength = FXSYS_strlen(pLang);
 
@@ -765,7 +765,7 @@ CPDF_Image* CPDF_Document::LoadImageF(CPDF_Object* pObj) {
   if (!pObj)
     return nullptr;
 
-  FXSYS_assert(pObj->GetObjNum());
+  ASSERT(pObj->GetObjNum());
   return m_pDocPage->GetImage(pObj);
 }
 

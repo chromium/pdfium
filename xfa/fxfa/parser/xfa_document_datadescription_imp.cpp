@@ -29,7 +29,7 @@ class CXFA_TraverseStrategy_DDGroup {
 };
 void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
                                             CXFA_Node* pDataDescriptionNode) {
-  FXSYS_assert(pDataDescriptionNode);
+  ASSERT(pDataDescriptionNode);
   for (CXFA_Node* pDataChild = pDataNode->GetNodeItem(XFA_NODEITEM_FirstChild);
        pDataChild;
        pDataChild = pDataChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -77,7 +77,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
   if (!pParentDDNode) {
     CXFA_Node* pDataNode =
         pDocument->CreateNode(XFA_XDPPACKET_Datasets, eNodeType);
-    FXSYS_assert(pDataNode);
+    ASSERT(pDataNode);
     pDataNode->SetCData(XFA_ATTRIBUTE_Name, wsName);
     pDataNode->CreateXMLMappingNode();
     pDataParent->InsertChild(pDataNode);
@@ -107,7 +107,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
       }
       CXFA_Node* pDataNode =
           pDocument->CreateNode(XFA_XDPPACKET_Datasets, eNodeType);
-      FXSYS_assert(pDataNode);
+      ASSERT(pDataNode);
       pDataNode->SetCData(XFA_ATTRIBUTE_Name, wsName);
       pDataNode->CreateXMLMappingNode();
       if (eNodeType == XFA_ELEMENT_DataValue &&

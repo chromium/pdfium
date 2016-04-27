@@ -130,8 +130,8 @@ CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles)
       m_SubstFonts(),
       m_FontMapper(16) {
   m_pFont = new CFX_Font;
-  FXSYS_assert(m_pFont != NULL);
-  FXSYS_assert(src.m_pFont != NULL);
+  ASSERT(m_pFont != NULL);
+  ASSERT(src.m_pFont != NULL);
   m_pFont->LoadClone(src.m_pFont);
   CFX_SubstFont* pSubst = m_pFont->GetSubstFont();
   if (!pSubst) {
@@ -357,7 +357,7 @@ void CFX_GEFont::GetPsName(CFX_WideString& wsName) const {
   wsName = m_pFont->GetPsName();
 }
 uint32_t CFX_GEFont::GetFontStyles() const {
-  FXSYS_assert(m_pFont != NULL);
+  ASSERT(m_pFont != NULL);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (m_bUseLogFontStyle) {
     return m_dwLogFontStyle;
@@ -390,7 +390,7 @@ FX_BOOL CFX_GEFont::GetCharWidth(FX_WCHAR wUnicode,
                                  int32_t& iWidth,
                                  FX_BOOL bRecursive,
                                  FX_BOOL bCharCode) {
-  FXSYS_assert(m_pCharWidthMap != NULL);
+  ASSERT(m_pCharWidthMap != NULL);
   iWidth = m_pCharWidthMap->GetAt(wUnicode, 0);
   if (iWidth < 1) {
     if (!m_pProvider ||
@@ -426,8 +426,8 @@ FX_BOOL CFX_GEFont::GetCharBBox(FX_WCHAR wUnicode,
                                 CFX_Rect& bbox,
                                 FX_BOOL bRecursive,
                                 FX_BOOL bCharCode) {
-  FXSYS_assert(m_pRectArray != NULL);
-  FXSYS_assert(m_pBBoxMap != NULL);
+  ASSERT(m_pRectArray != NULL);
+  ASSERT(m_pBBoxMap != NULL);
   void* pRect = NULL;
   if (!m_pBBoxMap->Lookup((void*)(uintptr_t)wUnicode, pRect)) {
     IFX_Font* pFont = NULL;
@@ -478,7 +478,7 @@ int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
                                   FX_BOOL bRecursive,
                                   IFX_Font** ppFont,
                                   FX_BOOL bCharCode) {
-  FXSYS_assert(m_pFontEncoding != NULL);
+  ASSERT(m_pFontEncoding != NULL);
   int32_t iGlyphIndex = m_pFontEncoding->GlyphFromCharCode(wUnicode);
   if (iGlyphIndex > 0) {
     if (ppFont != NULL) {

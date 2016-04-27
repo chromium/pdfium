@@ -238,8 +238,8 @@ void CFX_RTFBreak::SetReadingOrder(FX_BOOL bRTL) {
   m_bRTL = bRTL;
 }
 void CFX_RTFBreak::SetAlignment(int32_t iAlignment) {
-  FXSYS_assert(iAlignment >= FX_RTFLINEALIGNMENT_Left &&
-               iAlignment <= FX_RTFLINEALIGNMENT_Distributed);
+  ASSERT(iAlignment >= FX_RTFLINEALIGNMENT_Left &&
+         iAlignment <= FX_RTFLINEALIGNMENT_Distributed);
   m_iAlignment = iAlignment;
 }
 void CFX_RTFBreak::SetUserData(IFX_Unknown* pUserData) {
@@ -299,7 +299,7 @@ CFX_RTFLine* CFX_RTFBreak::GetRTFLine(FX_BOOL bReady) const {
       return NULL;
     }
   }
-  FXSYS_assert(m_pCurLine != NULL);
+  ASSERT(m_pCurLine != NULL);
   return m_pCurLine;
 }
 CFX_RTFPieceArray* CFX_RTFBreak::GetRTFPieces(FX_BOOL bReady) const {
@@ -343,7 +343,7 @@ static const FX_RTFBreak_LPFAppendChar g_FX_RTFBreak_lpfAppendChar[16] = {
     &CFX_RTFBreak::AppendChar_Others,      &CFX_RTFBreak::AppendChar_Others,
 };
 uint32_t CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
-  FXSYS_assert(m_pFont != NULL && m_pCurLine != NULL && m_pArabicChar != NULL);
+  ASSERT(m_pFont != NULL && m_pCurLine != NULL && m_pArabicChar != NULL);
   if (m_bCharCode) {
     return AppendChar_CharCode(wch);
   }
@@ -392,8 +392,8 @@ uint32_t CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   return std::max(dwRet1, dwRet2);
 }
 uint32_t CFX_RTFBreak::AppendChar_CharCode(FX_WCHAR wch) {
-  FXSYS_assert(m_pFont != NULL && m_pCurLine != NULL);
-  FXSYS_assert(m_bCharCode);
+  ASSERT(m_pFont != NULL && m_pCurLine != NULL);
+  ASSERT(m_bCharCode);
   m_pCurLine->m_iMBCSChars++;
   CFX_RTFCharArray& tca = m_pCurLine->m_LineChars;
   CFX_RTFChar* pCurChar = tca.AddSpace();
@@ -606,8 +606,8 @@ uint32_t CFX_RTFBreak::AppendChar_Others(CFX_RTFChar* pCurChar,
   return FX_RTFBREAK_None;
 }
 uint32_t CFX_RTFBreak::EndBreak(uint32_t dwStatus) {
-  FXSYS_assert(dwStatus >= FX_RTFBREAK_PieceBreak &&
-               dwStatus <= FX_RTFBREAK_PageBreak);
+  ASSERT(dwStatus >= FX_RTFBREAK_PieceBreak &&
+         dwStatus <= FX_RTFBREAK_PageBreak);
   m_dwIdentity++;
   CFX_RTFPieceArray* pCurPieces = &m_pCurLine->m_LinePieces;
   int32_t iCount = pCurPieces->GetSize();
@@ -1067,7 +1067,7 @@ int32_t CFX_RTFBreak::GetBreakPos(CFX_RTFCharArray& tca,
 void CFX_RTFBreak::SplitTextLine(CFX_RTFLine* pCurLine,
                                  CFX_RTFLine* pNextLine,
                                  FX_BOOL bAllChars) {
-  FXSYS_assert(pCurLine != NULL && pNextLine != NULL);
+  ASSERT(pCurLine != NULL && pNextLine != NULL);
   int32_t iCount = pCurLine->CountChars();
   if (iCount < 2) {
     return;
@@ -1181,8 +1181,8 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   if (pText == NULL || pText->iLength < 1) {
     return 0;
   }
-  FXSYS_assert(pText->pStr != NULL && pText->pWidths != NULL &&
-               pText->pFont != NULL && pText->pRect != NULL);
+  ASSERT(pText->pStr != NULL && pText->pWidths != NULL &&
+         pText->pFont != NULL && pText->pRect != NULL);
   const FX_WCHAR* pStr = pText->pStr;
   int32_t* pWidths = pText->pWidths;
   int32_t iLength = pText->iLength - 1;
@@ -1422,8 +1422,8 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
   if (pText == NULL || pText->iLength < 1) {
     return 0;
   }
-  FXSYS_assert(pText->pStr != NULL && pText->pWidths != NULL &&
-               pText->pFont != NULL && pText->pRect != NULL);
+  ASSERT(pText->pStr != NULL && pText->pWidths != NULL &&
+         pText->pFont != NULL && pText->pRect != NULL);
   const FX_WCHAR* pStr = pText->pStr;
   int32_t* pWidths = pText->pWidths;
   int32_t iLength = pText->iLength;

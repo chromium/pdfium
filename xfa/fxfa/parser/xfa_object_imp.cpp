@@ -64,7 +64,7 @@ void CXFA_Object::Script_ObjectClass_ClassName(FXJSE_HVALUE hValue,
 }
 void CXFA_Object::ThrowScriptErrorMessage(int32_t iStringID, ...) {
   IXFA_AppProvider* pAppProvider = m_pDocument->GetNotify()->GetAppProvider();
-  FXSYS_assert(pAppProvider);
+  ASSERT(pAppProvider);
   CFX_WideString wsFormat;
   pAppProvider->LoadString(iStringID, wsFormat);
   CFX_WideString wsMessage;
@@ -108,7 +108,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
   ASSERT(m_pDocument);
 }
 CXFA_Node::~CXFA_Node() {
-  FXSYS_assert(m_pParent == NULL);
+  ASSERT(m_pParent == NULL);
   RemoveMapModuleKey();
   CXFA_Node *pNext, *pNode = m_pChild;
   while (pNode) {
@@ -316,7 +316,7 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_ELEMENT eElement,
   return pNode;
 }
 CXFA_Node* CXFA_Node::CloneTemplateToForm(FX_BOOL bRecursive) {
-  FXSYS_assert(m_ePacket == XFA_XDPPACKET_Template);
+  ASSERT(m_ePacket == XFA_XDPPACKET_Template);
   CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
   CXFA_Node* pClone = pFactory->CreateNode(XFA_XDPPACKET_Form, m_eNodeClass);
   if (!pClone) {
@@ -500,7 +500,7 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
 FX_BOOL CXFA_Node::GetLocaleName(CFX_WideString& wsLocaleName) {
   CXFA_Node* pForm = GetDocument()->GetXFAObject(XFA_HASHCODE_Form)->AsNode();
   CXFA_Node* pTopSubform = pForm->GetFirstChildByClass(XFA_ELEMENT_Subform);
-  FXSYS_assert(pTopSubform);
+  ASSERT(pTopSubform);
   CXFA_Node* pLocaleNode = this;
   FX_BOOL bLocale = FALSE;
   do {
@@ -623,7 +623,7 @@ CXFA_Node* CXFA_Node::GetDataDescriptionNode() {
   return NULL;
 }
 void CXFA_Node::SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode) {
-  FXSYS_assert(m_ePacket == XFA_XDPPACKET_Datasets);
+  ASSERT(m_ePacket == XFA_XDPPACKET_Datasets);
   m_pAuxNode = pDataDescriptionNode;
 }
 void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
@@ -748,7 +748,7 @@ void CXFA_Node::Script_TreeClass_Nodes(FXJSE_HVALUE hValue,
   }
   if (bSetting) {
     IXFA_AppProvider* pAppProvider = m_pDocument->GetNotify()->GetAppProvider();
-    FXSYS_assert(pAppProvider);
+    ASSERT(pAppProvider);
     CFX_WideString wsMessage;
     pAppProvider->LoadString(XFA_IDS_Unable_TO_SET, wsMessage);
     FXJSE_ThrowMessage(
@@ -1928,7 +1928,7 @@ void CXFA_Node::Script_Draw_DefaultValue(FXJSE_HVALUE hValue,
   if (bSetting) {
     if (FXJSE_Value_IsUTF8String(hValue)) {
       CXFA_WidgetData* pWidgetData = GetWidgetData();
-      FXSYS_assert(pWidgetData);
+      ASSERT(pWidgetData);
       XFA_ELEMENT uiType = pWidgetData->GetUIType();
       if (uiType == XFA_ELEMENT_Text) {
         CFX_ByteString newValue;
@@ -3297,7 +3297,7 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
         continue;
       }
       if (pRemoveInstance->GetClassID() == XFA_ELEMENT_InstanceManager) {
-        FXSYS_assert(FALSE);
+        ASSERT(FALSE);
         break;
       }
       if (pRemoveInstance->GetNameHash() == dInstanceNameHash) {
@@ -3691,7 +3691,7 @@ void CXFA_Node::Script_Xfa_This(FXJSE_HVALUE hValue,
                                 XFA_ATTRIBUTE eAttribute) {
   if (!bSetting) {
     CXFA_Object* pThis = m_pDocument->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThis);
+    ASSERT(pThis);
     FXJSE_Value_Set(hValue,
                     m_pDocument->GetScriptContext()->GetJSValueFromMap(pThis));
   }
@@ -3981,14 +3981,14 @@ FX_BOOL CXFA_Node::SetCData(XFA_ATTRIBUTE eAttr,
         static_cast<CFDE_XMLText*>(m_pXMLNode)->SetText(wsValue);
         break;
       default:
-        FXSYS_assert(0);
+        ASSERT(0);
     }
     return TRUE;
   }
 
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
   if (pInfo) {
-    FXSYS_assert(m_pXMLNode->GetType() == FDE_XMLNODE_Element);
+    ASSERT(m_pXMLNode->GetType() == FDE_XMLNODE_Element);
     CFX_WideString wsAttrName = pInfo->pName;
     if (pInfo->eName == XFA_ATTRIBUTE_ContentType) {
       wsAttrName = FX_WSTRC(L"xfa:") + wsAttrName;
@@ -4038,7 +4038,7 @@ FX_BOOL CXFA_Node::SetAttributeValue(const CFX_WideString& wsValue,
         static_cast<CFDE_XMLText*>(m_pXMLNode)->SetText(wsXMLValue);
         break;
       default:
-        FXSYS_assert(0);
+        ASSERT(0);
     }
   }
   return TRUE;
@@ -4119,7 +4119,7 @@ FX_BOOL CXFA_Node::SetValue(XFA_ATTRIBUTE eAttr,
   SetMapModuleValue(pKey, pValue);
   OnChanged(eAttr, bNotify, FALSE);
   if (IsNeedSavingXMLNode()) {
-    FXSYS_assert(m_pXMLNode->GetType() == FDE_XMLNODE_Element);
+    ASSERT(m_pXMLNode->GetType() == FDE_XMLNODE_Element);
     const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
     if (pInfo) {
       switch (eType) {
@@ -4140,7 +4140,7 @@ FX_BOOL CXFA_Node::SetValue(XFA_ATTRIBUTE eAttr,
               ->SetInteger(pInfo->pName, (int32_t)(uintptr_t)pValue);
           break;
         default:
-          FXSYS_assert(0);
+          ASSERT(0);
       }
     }
   }
@@ -4189,7 +4189,7 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       if (XFA_FieldIsMultiListBox(this)) {
         CXFA_Node* pValue = GetProperty(0, XFA_ELEMENT_Value);
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
-        FXSYS_assert(pChildValue);
+        ASSERT(pChildValue);
         pChildValue->SetCData(XFA_ATTRIBUTE_ContentType, FX_WSTRC(L"text/xml"));
         pChildValue->SetScriptContent(wsContent, wsContent, bNotify,
                                       bScriptModify, FALSE);
@@ -4268,7 +4268,7 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       } else {
         CXFA_Node* pValue = GetProperty(0, XFA_ELEMENT_Value);
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
-        FXSYS_assert(pChildValue);
+        ASSERT(pChildValue);
         pChildValue->SetScriptContent(wsContent, wsContent, bNotify,
                                       bScriptModify, FALSE);
       }
@@ -4551,7 +4551,7 @@ int32_t CXFA_Node::CountChildren(XFA_ELEMENT eElement, FX_BOOL bOnlyChild) {
 CXFA_Node* CXFA_Node::GetChild(int32_t index,
                                XFA_ELEMENT eElement,
                                FX_BOOL bOnlyChild) {
-  FXSYS_assert(index > -1);
+  ASSERT(index > -1);
   CXFA_Node* pNode = m_pChild;
   int32_t iCount = 0;
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -4576,7 +4576,7 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   pNode->m_pParent = this;
   FX_BOOL bWasPurgeNode = m_pDocument->RemovePurgeNode(pNode);
   if (!bWasPurgeNode)
-    FXSYS_assert(false);
+    ASSERT(false);
 
   if (m_pChild == NULL || index == 0) {
     if (index > 0) {
@@ -4611,7 +4611,7 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
     pNotify->OnChildAdded(this);
 
   if (IsNeedSavingXMLNode() && pNode->m_pXMLNode) {
-    FXSYS_assert(pNode->m_pXMLNode->GetNodeItem(CFDE_XMLNode::Parent) == NULL);
+    ASSERT(pNode->m_pXMLNode->GetNodeItem(CFDE_XMLNode::Parent) == NULL);
     m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, index);
     pNode->ClearFlag(XFA_NODEFLAG_OwnXMLNode);
   }
@@ -4620,12 +4620,12 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
 FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   if (!pNode || pNode->m_pParent ||
       (pBeforeNode && pBeforeNode->m_pParent != this)) {
-    FXSYS_assert(false);
+    ASSERT(false);
     return FALSE;
   }
   FX_BOOL bWasPurgeNode = m_pDocument->RemovePurgeNode(pNode);
   if (!bWasPurgeNode)
-    FXSYS_assert(false);
+    ASSERT(false);
 
   int32_t nIndex = -1;
   pNode->m_pParent = this;
@@ -4657,7 +4657,7 @@ FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
     pNotify->OnChildAdded(this);
 
   if (IsNeedSavingXMLNode() && pNode->m_pXMLNode) {
-    FXSYS_assert(pNode->m_pXMLNode->GetNodeItem(CFDE_XMLNode::Parent) == NULL);
+    ASSERT(pNode->m_pXMLNode->GetNodeItem(CFDE_XMLNode::Parent) == NULL);
     m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, nIndex);
     pNode->ClearFlag(XFA_NODEFLAG_OwnXMLNode);
   }
@@ -4677,7 +4677,7 @@ CXFA_Node* CXFA_Node::Deprecated_GetPrevSibling() {
 }
 FX_BOOL CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   if (pNode == NULL || pNode->m_pParent != this) {
-    FXSYS_assert(FALSE);
+    ASSERT(FALSE);
     return FALSE;
   }
   if (m_pChild == pNode) {
@@ -4702,8 +4702,8 @@ FX_BOOL CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   m_pDocument->AddPurgeNode(pNode);
   if (IsNeedSavingXMLNode() && pNode->m_pXMLNode) {
     if (pNode->IsAttributeInXML()) {
-      FXSYS_assert(pNode->m_pXMLNode == m_pXMLNode &&
-                   m_pXMLNode->GetType() == FDE_XMLNODE_Element);
+      ASSERT(pNode->m_pXMLNode == m_pXMLNode &&
+             m_pXMLNode->GetType() == FDE_XMLNODE_Element);
       if (pNode->m_pXMLNode->GetType() == FDE_XMLNODE_Element) {
         CFDE_XMLElement* pXMLElement =
             static_cast<CFDE_XMLElement*>(pNode->m_pXMLNode);

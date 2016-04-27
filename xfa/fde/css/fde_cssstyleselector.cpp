@@ -154,7 +154,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
             AddRuleTo(m_pUniversalRules, NewRuleData(pSelector, pDeclaration));
             break;
           default:
-            FXSYS_assert(FALSE);
+            ASSERT(FALSE);
             break;
         }
       }
@@ -237,13 +237,13 @@ void CFDE_CSSStyleSelector::SetFontMgr(IFX_FontMgr* pFontMgr) {
   m_pFontMgr = pFontMgr;
 }
 void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
-  FXSYS_assert(fFontSize > 0);
+  ASSERT(fFontSize > 0);
   m_fDefFontSize = fFontSize;
 }
 CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
   if (m_pAccelerator == NULL) {
     m_pAccelerator = new CFDE_CSSAccelerator;
-    FXSYS_assert(m_pAccelerator != NULL);
+    ASSERT(m_pAccelerator != NULL);
   }
   m_pAccelerator->Clear();
   return m_pAccelerator;
@@ -253,7 +253,7 @@ IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
   if (m_pFixedStyleStore == NULL) {
     m_pFixedStyleStore = FX_CreateAllocator(FX_ALLOCTYPE_Fixed, 16,
                                             sizeof(CFDE_CSSComputedStyle));
-    FXSYS_assert(m_pFixedStyleStore != NULL);
+    ASSERT(m_pFixedStyleStore != NULL);
   }
   CFDE_CSSComputedStyle* pStyle = FXTARGET_NewWith(m_pFixedStyleStore)
       CFDE_CSSComputedStyle(m_pFixedStyleStore);
@@ -268,7 +268,7 @@ IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
 }
 FX_BOOL CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
                                              IFDE_CSSStyleSheet* pSheet) {
-  FXSYS_assert(eType < FDE_CSSSTYLESHEETGROUP_MAX);
+  ASSERT(eType < FDE_CSSSTYLESHEETGROUP_MAX);
   CFDE_CSSStyleSheetArray& dest = m_SheetGroups[eType];
   dest.RemoveAt(0, dest.GetSize());
   if (pSheet != NULL) {
@@ -279,7 +279,7 @@ FX_BOOL CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
 FX_BOOL CFDE_CSSStyleSelector::SetStyleSheets(
     FDE_CSSSTYLESHEETGROUP eType,
     const CFDE_CSSStyleSheetArray* pArray) {
-  FXSYS_assert(eType < FDE_CSSSTYLESHEETGROUP_MAX);
+  ASSERT(eType < FDE_CSSSTYLESHEETGROUP_MAX);
   CFDE_CSSStyleSheetArray& dest = m_SheetGroups[eType];
   if (pArray == NULL) {
     dest.RemoveAt(0, dest.GetSize());
@@ -296,7 +296,7 @@ void CFDE_CSSStyleSelector::SetStylePriority(
 void CFDE_CSSStyleSelector::UpdateStyleIndex(uint32_t dwMediaList) {
   Reset();
   m_pRuleDataStore = FX_CreateAllocator(FX_ALLOCTYPE_Static, 1024, 0);
-  FXSYS_assert(m_pRuleDataStore != NULL);
+  ASSERT(m_pRuleDataStore != NULL);
   for (int32_t iGroup = 0; iGroup < FDE_CSSSTYLESHEETGROUP_MAX; ++iGroup) {
     CFDE_CSSRuleCollection& rules = m_RuleCollection[iGroup];
     rules.m_pStaticStore = m_pRuleDataStore;
@@ -316,10 +316,10 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CXFA_CSSTagProvider* pTag,
     CFDE_CSSDeclarationArray& matchedDecls,
     FDE_CSSPERSUDO ePersudoType) {
-  FXSYS_assert(m_pAccelerator && pTag);
+  ASSERT(m_pAccelerator && pTag);
 
   FDE_CSSTagCache* pCache = m_pAccelerator->GetTopElement();
-  FXSYS_assert(pCache && pCache->GetTag() == pTag);
+  ASSERT(pCache && pCache->GetTag() == pTag);
 
   matchedDecls.RemoveAt(0, matchedDecls.GetSize());
   for (int32_t ePriority = FDE_CSSSTYLESHEETPRIORITY_MAX - 1; ePriority >= 0;
@@ -408,7 +408,7 @@ FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
         }
         break;
       default:
-        FXSYS_assert(FALSE);
+        ASSERT(FALSE);
         break;
     }
     pSel = pSel->GetNextSelector();
@@ -421,8 +421,8 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     const IFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
     IFDE_CSSComputedStyle* pDestStyle) {
-  FXSYS_assert(iDeclCount >= 0);
-  FXSYS_assert(pDestStyle);
+  ASSERT(iDeclCount >= 0);
+  ASSERT(pDestStyle);
 
   static const uint32_t s_dwStyleHash = FX_HashCode_GetW(L"style", true);
   static const uint32_t s_dwAlignHash = FX_HashCode_GetW(L"align", true);
@@ -469,7 +469,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
   }
 
   if (iDeclCount > 0) {
-    FXSYS_assert(ppDeclArray);
+    ASSERT(ppDeclArray);
 
     ApplyDeclarations(TRUE, ppDeclArray, iDeclCount, pDestStyle);
     ApplyDeclarations(FALSE, ppDeclArray, iDeclCount, pDestStyle);
@@ -544,7 +544,7 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
 void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                                               const FX_WCHAR* psz,
                                               int32_t iLen) {
-  FXSYS_assert(pDecl != NULL && psz != NULL && iLen > 0);
+  ASSERT(pDecl != NULL && psz != NULL && iLen > 0);
   IFDE_CSSSyntaxParser* pSyntax = IFDE_CSSSyntaxParser::Create();
   if (pSyntax == NULL) {
     return;
@@ -1128,7 +1128,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
       }
     }
   } else {
-    FXSYS_assert(FALSE);
+    ASSERT(FALSE);
   }
 }
 FX_FLOAT CFDE_CSSStyleSelector::ApplyNumber(FDE_CSSPRIMITIVETYPE eUnit,

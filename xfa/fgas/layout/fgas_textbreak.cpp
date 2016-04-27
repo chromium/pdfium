@@ -70,7 +70,7 @@ CFX_TxtBreak::~CFX_TxtBreak() {
 }
 void CFX_TxtBreak::SetLineWidth(FX_FLOAT fLineWidth) {
   m_iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
-  FXSYS_assert(m_iLineWidth >= 20000);
+  ASSERT(m_iLineWidth >= 20000);
 }
 void CFX_TxtBreak::SetLinePos(FX_FLOAT fLinePos) {
   int32_t iLinePos = FXSYS_round(fLinePos * 20000.0f);
@@ -167,8 +167,8 @@ void CFX_TxtBreak::SetCharRotation(int32_t iCharRotation) {
   m_iRotation %= 4;
 }
 void CFX_TxtBreak::SetAlignment(int32_t iAlignment) {
-  FXSYS_assert(iAlignment >= FX_TXTLINEALIGNMENT_Left &&
-               iAlignment <= FX_TXTLINEALIGNMENT_Distributed);
+  ASSERT(iAlignment >= FX_TXTLINEALIGNMENT_Left &&
+         iAlignment <= FX_TXTLINEALIGNMENT_Distributed);
   m_iAlignment = iAlignment;
   ResetArabicContext();
 }
@@ -342,7 +342,7 @@ void CFX_TxtBreak::AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps) {
 }
 uint32_t CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar,
                                               int32_t iRotation) {
-  FXSYS_assert(pCurChar != NULL);
+  ASSERT(pCurChar != NULL);
   FX_WCHAR wch = pCurChar->m_wCharCode;
   FX_WCHAR wForm;
   int32_t iCharWidth = 0;
@@ -608,7 +608,7 @@ uint32_t CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
   return std::max(dwRet1, dwRet2);
 }
 void CFX_TxtBreak::EndBreak_UpdateArabicShapes() {
-  FXSYS_assert(m_bArabicShapes);
+  ASSERT(m_bArabicShapes);
   int32_t iCount = m_pCurLine->CountChars();
   if (iCount < 2) {
     return;
@@ -907,8 +907,8 @@ void CFX_TxtBreak::EndBreak_Alignment(CFX_TPOArray& tpos,
   }
 }
 uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
-  FXSYS_assert(dwStatus >= FX_TXTBREAK_PieceBreak &&
-               dwStatus <= FX_TXTBREAK_PageBreak);
+  ASSERT(dwStatus >= FX_TXTBREAK_PieceBreak &&
+         dwStatus <= FX_TXTBREAK_PageBreak);
   CFX_TxtPieceArray* pCurPieces = m_pCurLine->m_pLinePieces;
   int32_t iCount = pCurPieces->GetSize();
   if (iCount > 0) {
@@ -1074,7 +1074,7 @@ int32_t CFX_TxtBreak::GetBreakPos(CFX_TxtCharArray& ca,
 void CFX_TxtBreak::SplitTextLine(CFX_TxtLine* pCurLine,
                                  CFX_TxtLine* pNextLine,
                                  FX_BOOL bAllChars) {
-  FXSYS_assert(pCurLine != NULL && pNextLine != NULL);
+  ASSERT(pCurLine != NULL && pNextLine != NULL);
   int32_t iCount = pCurLine->CountChars();
   if (iCount < 2) {
     return;

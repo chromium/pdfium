@@ -167,7 +167,7 @@ int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
   if (IsLocked()) {
     return 0;
   }
-  FXSYS_assert(nIndex >= 0 && nIndex <= GetTextBufLength());
+  ASSERT(nIndex >= 0 && nIndex <= GetTextBufLength());
   if (m_PagePtrArray.GetSize() <= m_nCaretPage) {
     return 0;
   }
@@ -651,7 +651,7 @@ FX_BOOL CFDE_TxtEdtEngine::Redo(const CFX_ByteStringC& bsRedo) {
     return FALSE;
   }
   IFDE_TxtEdtDoRecord* pDoRecord = IFDE_TxtEdtDoRecord::Create(bsRedo);
-  FXSYS_assert(pDoRecord);
+  ASSERT(pDoRecord);
   if (pDoRecord == NULL) {
     return FALSE;
   }
@@ -667,7 +667,7 @@ FX_BOOL CFDE_TxtEdtEngine::Undo(const CFX_ByteStringC& bsUndo) {
     return FALSE;
   }
   IFDE_TxtEdtDoRecord* pDoRecord = IFDE_TxtEdtDoRecord::Create(bsUndo);
-  FXSYS_assert(pDoRecord);
+  ASSERT(pDoRecord);
   if (pDoRecord == NULL) {
     return FALSE;
   }
@@ -812,7 +812,7 @@ void CFDE_TxtEdtEngine::GetPreReplaceText(CFX_WideString& wsText,
 void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
                                      const FX_WCHAR* lpText,
                                      int32_t nLength) {
-  FXSYS_assert(nLength > 0);
+  ASSERT(nLength > 0);
   FDE_TXTEDTPARAGPOS ParagPos;
   TextPos2ParagPos(nStart, ParagPos);
   m_Param.pEventSink->On_PageUnload(this, m_nCaretPage, 0);
@@ -878,7 +878,7 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
     nCount = m_pTxtBuf->GetTextLength() - nStart;
   }
   int32_t nEnd = nStart + nCount - 1;
-  FXSYS_assert(nStart >= 0 && nEnd < m_pTxtBuf->GetTextLength());
+  ASSERT(nStart >= 0 && nEnd < m_pTxtBuf->GetTextLength());
   m_Param.pEventSink->On_PageUnload(this, m_nCaretPage, 0);
   FDE_TXTEDTPARAGPOS ParagPosBgn, ParagPosEnd;
   TextPos2ParagPos(nStart, ParagPosBgn);
@@ -931,11 +931,11 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
 void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
                                              int32_t nCount,
                                              FX_BOOL bSel) {
-  FXSYS_assert(nStart >= 0);
+  ASSERT(nStart >= 0);
   if (nCount == -1) {
     nCount = GetTextLength() - nStart;
   }
-  FXSYS_assert((nStart + nCount) <= m_pTxtBuf->GetTextLength());
+  ASSERT((nStart + nCount) <= m_pTxtBuf->GetTextLength());
 
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
     CFX_WideString wsRange;
@@ -1235,8 +1235,8 @@ void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) {
   }
 }
 int32_t CFDE_TxtEdtEngine::MovePage2Char(int32_t nIndex) {
-  FXSYS_assert(nIndex >= 0);
-  FXSYS_assert(nIndex <= m_pTxtBuf->GetTextLength());
+  ASSERT(nIndex >= 0);
+  ASSERT(nIndex <= m_pTxtBuf->GetTextLength());
   if (m_nCaretPage >= 0) {
     IFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
     m_Param.pEventSink->On_PageLoad(this, m_nCaretPage, 0);
@@ -1269,7 +1269,7 @@ int32_t CFDE_TxtEdtEngine::MovePage2Char(int32_t nIndex) {
       break;
     }
   }
-  FXSYS_assert(i < pParag->m_nLineCount);
+  ASSERT(i < pParag->m_nLineCount);
   nLineCount += (i + 1);
   m_nCaretPage = (nLineCount - 1) / m_nPageLineCount + 1 - 1;
   m_Param.pEventSink->On_PageChange(this, m_nCaretPage);
@@ -1278,7 +1278,7 @@ int32_t CFDE_TxtEdtEngine::MovePage2Char(int32_t nIndex) {
 }
 void CFDE_TxtEdtEngine::TextPos2ParagPos(int32_t nIndex,
                                          FDE_TXTEDTPARAGPOS& ParagPos) const {
-  FXSYS_assert(nIndex >= 0 && nIndex < m_pTxtBuf->GetTextLength());
+  ASSERT(nIndex >= 0 && nIndex < m_pTxtBuf->GetTextLength());
   int32_t nCount = m_ParagPtrArray.GetSize();
   int32_t nBgn = 0;
   int32_t nMid = 0;
@@ -1297,9 +1297,9 @@ void CFDE_TxtEdtEngine::TextPos2ParagPos(int32_t nIndex,
   if (nBgn == nEnd) {
     nMid = nBgn;
   }
-  FXSYS_assert(nIndex >= m_ParagPtrArray[nMid]->m_nCharStart &&
-               (nIndex < m_ParagPtrArray[nMid]->m_nCharStart +
-                             m_ParagPtrArray[nMid]->m_nCharCount));
+  ASSERT(nIndex >= m_ParagPtrArray[nMid]->m_nCharStart &&
+         (nIndex < m_ParagPtrArray[nMid]->m_nCharStart +
+                       m_ParagPtrArray[nMid]->m_nCharCount));
   ParagPos.nParagIndex = nMid;
   ParagPos.nCharIndex = nIndex - m_ParagPtrArray[nMid]->m_nCharStart;
 }
@@ -1455,7 +1455,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveLineEnd() {
     }
   }
   nIndex = nStart + nCount - 1;
-  FXSYS_assert(nIndex <= GetTextBufLength());
+  ASSERT(nIndex <= GetTextBufLength());
   FX_WCHAR wChar = m_pTxtBuf->GetCharByIndex(nIndex);
   FX_BOOL bBefore = FALSE;
   if (nIndex <= GetTextBufLength()) {
@@ -1646,7 +1646,7 @@ CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
     const FX_WCHAR* lpText,
     int32_t nLength)
     : m_pEngine(pEngine), m_nCaret(nCaret) {
-  FXSYS_assert(pEngine);
+  ASSERT(pEngine);
   FX_WCHAR* lpBuffer = m_wsInsert.GetBuffer(nLength);
   FXSYS_memcpy(lpBuffer, lpText, nLength * sizeof(FX_WCHAR));
   m_wsInsert.ReleaseBuffer();
@@ -1695,7 +1695,7 @@ void CFDE_TxtEdtDoRecord_Insert::Deserialize(
       bsDoRecord.GetLength());
   int32_t nType = 0;
   ArchiveLoader >> nType;
-  FXSYS_assert(nType == FDE_TXTEDT_DORECORD_INS);
+  ASSERT(nType == FDE_TXTEDT_DORECORD_INS);
   int32_t nEngine = 0;
   ArchiveLoader >> nEngine;
   m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;
@@ -1717,7 +1717,7 @@ CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(
       m_nIndex(nIndex),
       m_nCaret(nCaret),
       m_wsRange(wsRange) {
-  FXSYS_assert(pEngine);
+  ASSERT(pEngine);
 }
 CFDE_TxtEdtDoRecord_DeleteRange::~CFDE_TxtEdtDoRecord_DeleteRange() {}
 void CFDE_TxtEdtDoRecord_DeleteRange::Release() {
@@ -1772,7 +1772,7 @@ void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(
       bsDoRecord.GetLength());
   int32_t nType = 0;
   ArchiveLoader >> nType;
-  FXSYS_assert(nType == FDE_TXTEDT_DORECORD_DEL);
+  ASSERT(nType == FDE_TXTEDT_DORECORD_DEL);
   int32_t nEngine = 0;
   ArchiveLoader >> nEngine;
   m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;

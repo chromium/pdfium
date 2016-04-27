@@ -60,12 +60,12 @@ CFDE_TextOut::~CFDE_TextOut() {
   m_ttoLines.RemoveAll();
 }
 void CFDE_TextOut::SetFont(IFX_Font* pFont) {
-  FXSYS_assert(pFont);
+  ASSERT(pFont);
   m_pFont = pFont;
   m_pTxtBreak->SetFont(pFont);
 }
 void CFDE_TextOut::SetFontSize(FX_FLOAT fFontSize) {
-  FXSYS_assert(fFontSize > 0);
+  ASSERT(fFontSize > 0);
   m_fFontSize = fFontSize;
   m_pTxtBreak->SetFontSize(fFontSize);
 }
@@ -97,7 +97,7 @@ void CFDE_TextOut::SetStyles(uint32_t dwStyles) {
   m_pTxtBreak->SetLayoutStyles(m_dwTxtBkStyles);
 }
 void CFDE_TextOut::SetTabWidth(FX_FLOAT fTabWidth) {
-  FXSYS_assert(fTabWidth > 1.0f);
+  ASSERT(fTabWidth > 1.0f);
   m_pTxtBreak->SetTabWidth(fTabWidth, FALSE);
 }
 void CFDE_TextOut::SetEllipsisString(const CFX_WideString& wsEllipsis) {
@@ -128,11 +128,11 @@ void CFDE_TextOut::SetAlignment(int32_t iAlignment) {
   m_pTxtBreak->SetAlignment(m_iTxtBkAlignment);
 }
 void CFDE_TextOut::SetLineSpace(FX_FLOAT fLineSpace) {
-  FXSYS_assert(fLineSpace > 1.0f);
+  ASSERT(fLineSpace > 1.0f);
   m_fLineSpace = fLineSpace;
 }
 void CFDE_TextOut::SetDIBitmap(CFX_DIBitmap* pDIB) {
-  FXSYS_assert(pDIB);
+  ASSERT(pDIB);
 
   if (m_pRenderDevice)
     m_pRenderDevice->Release();
@@ -143,7 +143,7 @@ void CFDE_TextOut::SetDIBitmap(CFX_DIBitmap* pDIB) {
 }
 
 void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
-  FXSYS_assert(pDevice);
+  ASSERT(pDevice);
 
   if (m_pRenderDevice)
     m_pRenderDevice->Release();
@@ -235,7 +235,7 @@ void CFDE_TextOut::CalcLogicSize(const FX_WCHAR* pwsStr,
 void CFDE_TextOut::CalcTextSize(const FX_WCHAR* pwsStr,
                                 int32_t iLength,
                                 CFX_RectF& rect) {
-  FXSYS_assert(m_pFont != NULL && m_fFontSize >= 1.0f);
+  ASSERT(m_pFont != NULL && m_fFontSize >= 1.0f);
   SetLineWidth(rect);
   m_iTotalLines = 0;
   const FX_WCHAR* pStr = pwsStr;
@@ -397,7 +397,7 @@ void CFDE_TextOut::DrawText(const FX_WCHAR* pwsStr,
                             int32_t iLength,
                             const CFX_RectF& rect,
                             const CFX_RectF& rtClip) {
-  FXSYS_assert(m_pFont != NULL && m_fFontSize >= 1.0f);
+  ASSERT(m_pFont != NULL && m_fFontSize >= 1.0f);
   if (pwsStr == NULL || iLength < 1) {
     return;
   }

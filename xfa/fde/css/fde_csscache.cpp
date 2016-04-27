@@ -13,7 +13,7 @@
 
 FDE_CSSCacheItem::FDE_CSSCacheItem(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {
-  FXSYS_assert(pStylesheet);
+  ASSERT(pStylesheet);
   pStylesheet->AddRef();
 }
 
@@ -64,7 +64,7 @@ void CFDE_CSSAccelerator::OnEnterTag(CXFA_CSSTagProvider* pTag) {
 }
 
 void CFDE_CSSAccelerator::OnLeaveTag(CXFA_CSSTagProvider* pTag) {
-  FXSYS_assert(m_Stack.GetTopElement());
-  FXSYS_assert(m_Stack.GetTopElement()->GetTag() == pTag);
+  ASSERT(m_Stack.GetTopElement());
+  ASSERT(m_Stack.GetTopElement()->GetTag() == pTag);
   m_Stack.Pop();
 }

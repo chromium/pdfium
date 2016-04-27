@@ -31,23 +31,23 @@ const int64_t g_FXMillisecondsPerMinute = 60000;
 const int64_t g_FXMillisecondsPerHour = 3600000;
 const int64_t g_FXMillisecondsPerDay = 86400000;
 FX_BOOL FX_IsLeapYear(int32_t iYear) {
-  FXSYS_assert(iYear != 0);
+  ASSERT(iYear != 0);
   return ((iYear % 4) == 0 && (iYear % 100) != 0) || (iYear % 400) == 0;
 }
 int32_t FX_DaysInYear(int32_t iYear) {
-  FXSYS_assert(iYear != 0);
+  ASSERT(iYear != 0);
   return FX_IsLeapYear(iYear) ? g_FXDaysPerLeapYear : g_FXDaysPerYear;
 }
 uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth) {
-  FXSYS_assert(iYear != 0);
-  FXSYS_assert(iMonth >= 1 && iMonth <= 12);
+  ASSERT(iYear != 0);
+  ASSERT(iMonth >= 1 && iMonth <= 12);
   const uint8_t* p =
       FX_IsLeapYear(iYear) ? g_FXDaysPerLeapMonth : g_FXDaysPerMonth;
   return p[iMonth - 1];
 }
 static int32_t FX_DaysBeforeMonthInYear(int32_t iYear, uint8_t iMonth) {
-  FXSYS_assert(iYear != 0);
-  FXSYS_assert(iMonth >= 1 && iMonth <= 12);
+  ASSERT(iYear != 0);
+  ASSERT(iMonth >= 1 && iMonth <= 12);
   const int32_t* p =
       FX_IsLeapYear(iYear) ? g_FXDaysBeforeLeapMonth : g_FXDaysBeforeMonth;
   return p[iMonth - 1];
@@ -56,9 +56,9 @@ static int64_t FX_DateToDays(int32_t iYear,
                              uint8_t iMonth,
                              uint8_t iDay,
                              FX_BOOL bIncludeThisDay = FALSE) {
-  FXSYS_assert(iYear != 0);
-  FXSYS_assert(iMonth >= 1 && iMonth <= 12);
-  FXSYS_assert(iDay >= 1 && iDay <= FX_DaysInMonth(iYear, iMonth));
+  ASSERT(iYear != 0);
+  ASSERT(iMonth >= 1 && iMonth <= 12);
+  ASSERT(iDay >= 1 && iDay <= FX_DaysInMonth(iYear, iMonth));
   int64_t iDays = FX_DaysBeforeMonthInYear(iYear, iMonth);
   iDays += iDay;
   if (!bIncludeThisDay) {
@@ -197,10 +197,10 @@ void CFX_Unitime::Set(int32_t year,
                       uint8_t minute,
                       uint8_t second,
                       uint16_t millisecond) {
-  FXSYS_assert(hour <= 23);
-  FXSYS_assert(minute <= 59);
-  FXSYS_assert(second <= 59);
-  FXSYS_assert(millisecond <= 999);
+  ASSERT(hour <= 23);
+  ASSERT(minute <= 59);
+  ASSERT(second <= 59);
+  ASSERT(millisecond <= 999);
   m_iUnitime = (int64_t)hour * g_FXMillisecondsPerHour +
                (int64_t)minute * g_FXMillisecondsPerMinute +
                (int64_t)second * g_FXMillisecondsPerSecond + millisecond;

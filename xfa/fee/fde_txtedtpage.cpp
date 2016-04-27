@@ -179,8 +179,8 @@ FX_BOOL CFDE_TxtEdtPage::GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) {
 int32_t CFDE_TxtEdtPage::GetCharRect(int32_t nIndex,
                                      CFX_RectF& rect,
                                      FX_BOOL bBBox) const {
-  FXSYS_assert(m_nRefCount > 0);
-  FXSYS_assert(nIndex >= 0 && nIndex < m_nCharCount);
+  ASSERT(m_nRefCount > 0);
+  ASSERT(nIndex >= 0 && nIndex < m_nCharCount);
   if (m_nRefCount < 1) {
     return 0;
   }
@@ -199,7 +199,7 @@ int32_t CFDE_TxtEdtPage::GetCharRect(int32_t nIndex,
       return pPiece->nBidiLevel;
     }
   }
-  FXSYS_assert(0);
+  ASSERT(0);
   return 0;
 }
 int32_t CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF& fPoint,
@@ -556,7 +556,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   return 0;
 }
 void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
-  FXSYS_assert(m_nRefCount > 0);
+  ASSERT(m_nRefCount > 0);
   m_nRefCount--;
   if (m_nRefCount == 0) {
     m_PieceMassArr.RemoveAll();

@@ -423,6 +423,6 @@ int32_t CFX_FileBufferArchive::AppendString(const CFX_ByteStringC& lpsz) {
 }
 
 void CFX_FileBufferArchive::AttachFile(IFX_StreamWrite* pFile) {
-  FXSYS_assert(pFile);
+  ASSERT(pFile);
   m_pFile = pFile;
 }

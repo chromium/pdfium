@@ -22,7 +22,7 @@ class CXFA_TextProvider {
                     XFA_TEXTPROVIDERTYPE eType,
                     CXFA_Node* pTextNode = NULL)
       : m_pWidgetAcc(pWidgetAcc), m_eType(eType), m_pTextNode(pTextNode) {
-    FXSYS_assert(m_pWidgetAcc);
+    ASSERT(m_pWidgetAcc);
   }
   ~CXFA_TextProvider() {}
 

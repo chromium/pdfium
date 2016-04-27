@@ -617,7 +617,7 @@ void CXFA_FFDocView::AddNewFormNode(CXFA_Node* pNode) {
   InitLayout(pNode);
 }
 void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Node* pNode) {
-  FXSYS_assert(pNode->GetClassID() == XFA_ELEMENT_Subform);
+  ASSERT(pNode->GetClassID() == XFA_ELEMENT_Subform);
   m_IndexChangedSubforms.Add(pNode);
 }
 void CXFA_FFDocView::RunDocClose() {

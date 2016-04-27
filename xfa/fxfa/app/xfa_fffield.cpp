@@ -335,7 +335,7 @@ void CXFA_FFField::SetFWLRect() {
   }
   CFX_RectF rtUi = m_rtUI;
   if (rtUi.width < 1.0) {
-    FXSYS_assert(rtUi.width < 1.0);
+    ASSERT(rtUi.width < 1.0);
     rtUi.width = 1.0;
   }
   if (!m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {

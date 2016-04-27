@@ -676,7 +676,7 @@ void CPDF_LabCS::GetDefaultValue(int iComponent,
                                  FX_FLOAT& value,
                                  FX_FLOAT& min,
                                  FX_FLOAT& max) const {
-  assert(iComponent < 3);
+  ASSERT(iComponent < 3);
   value = 0;
   if (iComponent == 0) {
     min = 0;

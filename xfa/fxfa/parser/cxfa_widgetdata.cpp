@@ -1565,7 +1565,7 @@ FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(
   if (wsPicture.IsEmpty())
     return TRUE;
 
-  FXSYS_assert(GetNode());
+  ASSERT(GetNode());
   CXFA_LocaleMgr* pLocalMgr = GetNode()->GetDocument()->GetLocalMgr();
   IFX_Locale* pLocale = GetLocal();
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
@@ -1590,7 +1590,7 @@ FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
     return TRUE;
 
   if (IFX_Locale* pLocale = GetLocal()) {
-    FXSYS_assert(GetNode());
+    ASSERT(GetNode());
     CXFA_Node* pNodeValue = GetNode()->GetChild(0, XFA_ELEMENT_Value);
     if (!pNodeValue)
       return FALSE;

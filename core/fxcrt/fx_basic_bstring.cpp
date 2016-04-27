@@ -282,7 +282,7 @@ void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
     return;
   }
 
-  FXSYS_assert(m_pData->m_nRefs == 1);
+  ASSERT(m_pData->m_nRefs == 1);
   m_pData->m_nDataLength = nNewLength;
   m_pData->m_String[nNewLength] = 0;
   if (m_pData->m_nAllocLength - nNewLength >= 32) {
@@ -808,8 +808,8 @@ void CFX_ByteString::SetAt(FX_STRSIZE nIndex, FX_CHAR ch) {
   if (!m_pData) {
     return;
   }
-  FXSYS_assert(nIndex >= 0);
-  FXSYS_assert(nIndex < m_pData->m_nDataLength);
+  ASSERT(nIndex >= 0);
+  ASSERT(nIndex < m_pData->m_nDataLength);
   ReallocBeforeWrite(m_pData->m_nDataLength);
   m_pData->m_String[nIndex] = ch;
 }

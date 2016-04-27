@@ -371,7 +371,7 @@ CFX_Unitime CXFA_LocaleValue::GetDate() const {
 CFX_Unitime CXFA_LocaleValue::GetTime() const {
   if (m_bValid && m_dwType == XFA_VT_TIME) {
     CFX_Unitime dt(0);
-    FXSYS_assert(m_pLocaleMgr);
+    ASSERT(m_pLocaleMgr);
     FX_TimeFromCanonical(m_wsValue.AsStringC(), dt,
                          m_pLocaleMgr->GetDefLocale());
     return dt;
@@ -383,7 +383,7 @@ CFX_Unitime CXFA_LocaleValue::GetDateTime() const {
     int32_t index = m_wsValue.Find('T');
     CFX_Unitime dt;
     FX_DateFromCanonical(m_wsValue.Left(index), dt);
-    FXSYS_assert(m_pLocaleMgr);
+    ASSERT(m_pLocaleMgr);
     FX_TimeFromCanonical(
         m_wsValue.Right(m_wsValue.GetLength() - index - 1).AsStringC(), dt,
         m_pLocaleMgr->GetDefLocale());
@@ -890,8 +890,8 @@ void CXFA_LocaleValue::GetNumbericFormat(CFX_WideString& wsFormat,
                                          int32_t nIntLen,
                                          int32_t nDecLen,
                                          FX_BOOL bSign) {
-  FXSYS_assert(wsFormat.IsEmpty());
-  FXSYS_assert(nIntLen >= -1 && nDecLen >= -1);
+  ASSERT(wsFormat.IsEmpty());
+  ASSERT(nIntLen >= -1 && nDecLen >= -1);
   int32_t nTotalLen = (nIntLen >= 0 ? nIntLen : 2) + (bSign ? 1 : 0) +
                       (nDecLen >= 0 ? nDecLen : 2) + (nDecLen == 0 ? 0 : 1);
   FX_WCHAR* lpBuf = wsFormat.GetBuffer(nTotalLen);
@@ -963,7 +963,7 @@ FX_BOOL CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric,
     return FALSE;
   }
   while (nf < nCountFmt && (cf = pFmt[nf]) != L'.') {
-    FXSYS_assert(cf == L'z' || cf == L'*');
+    ASSERT(cf == L'z' || cf == L'*');
     ++nf;
   }
   CFX_WideString wsDecimalSymbol;

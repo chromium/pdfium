@@ -15,7 +15,7 @@ class CFDE_CSSFunction : public CFX_Target {
  public:
   CFDE_CSSFunction(const FX_WCHAR* pszFuncName, IFDE_CSSValueList* pArgList)
       : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
-    FXSYS_assert(pArgList != NULL);
+    ASSERT(pArgList != NULL);
   }
   int32_t CountArgs() const { return m_pArgList->CountValues(); }
   IFDE_CSSValue* GetArgs(int32_t index) const {
@@ -39,7 +39,7 @@ class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue,
       : m_eType(eType), m_fNumber(fValue) {}
   CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType, const FX_WCHAR* pValue)
       : m_eType(eType), m_pString(pValue) {
-    FXSYS_assert(m_pString != NULL);
+    ASSERT(m_pString != NULL);
   }
   CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction)
       : m_eType(FDE_CSSPRIMITIVETYPE_Function), m_pFunction(pFunction) {}
@@ -47,34 +47,34 @@ class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue,
   virtual FDE_CSSPRIMITIVETYPE GetPrimitiveType() const { return m_eType; }
 
   virtual FX_ARGB GetRGBColor() const {
-    FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_RGB);
+    ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_RGB);
     return m_dwColor;
   }
   virtual FX_FLOAT GetFloat() const {
-    FXSYS_assert(m_eType >= FDE_CSSPRIMITIVETYPE_Number &&
-                 m_eType <= FDE_CSSPRIMITIVETYPE_PC);
+    ASSERT(m_eType >= FDE_CSSPRIMITIVETYPE_Number &&
+           m_eType <= FDE_CSSPRIMITIVETYPE_PC);
     return m_fNumber;
   }
   virtual const FX_WCHAR* GetString(int32_t& iLength) const {
-    FXSYS_assert(m_eType >= FDE_CSSPRIMITIVETYPE_String &&
-                 m_eType <= FDE_CSSPRIMITIVETYPE_URI);
+    ASSERT(m_eType >= FDE_CSSPRIMITIVETYPE_String &&
+           m_eType <= FDE_CSSPRIMITIVETYPE_URI);
     iLength = FXSYS_wcslen(m_pString);
     return m_pString;
   }
   virtual FDE_CSSPROPERTYVALUE GetEnum() const {
-    FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_Enum);
+    ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Enum);
     return m_eEnum;
   }
   virtual const FX_WCHAR* GetFuncName() const {
-    FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_Function);
+    ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Function);
     return m_pFunction->GetFuncName();
   }
   virtual int32_t CountArgs() const {
-    FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_Function);
+    ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Function);
     return m_pFunction->CountArgs();
   }
   virtual IFDE_CSSValue* GetArgs(int32_t index) const {
-    FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_Function);
+    ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Function);
     return m_pFunction->GetArgs(index);
   }
 
@@ -106,7 +106,7 @@ class CFDE_CSSValueListParser : public CFX_Target {
  public:
   CFDE_CSSValueListParser(const FX_WCHAR* psz, int32_t iLen, FX_WCHAR separator)
       : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {
-    FXSYS_assert(psz != NULL && iLen > 0);
+    ASSERT(psz != NULL && iLen > 0);
   }
   FX_BOOL NextValue(FDE_CSSPRIMITIVETYPE& eType,
                     const FX_WCHAR*& pStart,

@@ -19,7 +19,7 @@ CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
       m_nLineCount(0),
       m_lpData(NULL),
       m_pEngine(pEngine) {
-  FXSYS_assert(m_pEngine);
+  ASSERT(m_pEngine);
 }
 CFDE_TxtEdtParag::~CFDE_TxtEdtParag() {
   if (m_lpData != NULL) {
@@ -92,9 +92,9 @@ void CFDE_TxtEdtParag::LoadParag() {
   LineBaseArr.RemoveAll();
 }
 void CFDE_TxtEdtParag::UnloadParag() {
-  FXSYS_assert(m_lpData != NULL);
+  ASSERT(m_lpData != NULL);
   ((int32_t*)m_lpData)[0]--;
-  FXSYS_assert(((int32_t*)m_lpData)[0] >= 0);
+  ASSERT(((int32_t*)m_lpData)[0] >= 0);
   if (((int32_t*)m_lpData)[0] == 0) {
     FX_Free(m_lpData);
     m_lpData = NULL;
@@ -139,7 +139,7 @@ void CFDE_TxtEdtParag::GetLineRange(int32_t nLineIndex,
                                     int32_t& nStart,
                                     int32_t& nCount) const {
   int32_t* pLineBaseArr = (int32_t*)m_lpData;
-  FXSYS_assert(nLineIndex < m_nLineCount);
+  ASSERT(nLineIndex < m_nLineCount);
   nStart = m_nCharStart;
   pLineBaseArr++;
   for (int32_t i = 0; i < nLineIndex; i++) {

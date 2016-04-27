@@ -46,7 +46,7 @@ static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
 static CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document* pDoc,
                                               const CPDF_Dictionary* pOCGDict,
                                               const CFX_ByteStringC& bsState) {
-  FXSYS_assert(pDoc && pOCGDict);
+  ASSERT(pDoc && pOCGDict);
   CPDF_Dictionary* pOCProperties = pDoc->GetRoot()->GetDictBy("OCProperties");
   if (!pOCProperties) {
     return NULL;
@@ -89,7 +89,7 @@ static CFX_ByteString FPDFDOC_OCG_GetUsageTypeString(
   return csState;
 }
 CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType) {
-  FXSYS_assert(pDoc);
+  ASSERT(pDoc);
   m_pDocument = pDoc;
   m_eUsageType = eUsageType;
 }

@@ -950,7 +950,7 @@ FX_BOOL CFWL_MonthCalendarImp::RemoveSelDay(int32_t iDay, FX_BOOL bAll) {
   return TRUE;
 }
 FX_BOOL CFWL_MonthCalendarImp::AddSelDay(int32_t iDay) {
-  FXSYS_assert(iDay > 0);
+  ASSERT(iDay > 0);
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect) {
   } else {
     if (m_arrSelDays.Find(iDay) == -1) {
@@ -980,7 +980,7 @@ FX_BOOL CFWL_MonthCalendarImp::JumpToToday() {
 void CFWL_MonthCalendarImp::GetHeadText(int32_t iYear,
                                         int32_t iMonth,
                                         CFX_WideString& wsHead) {
-  FXSYS_assert(iMonth > 0 && iMonth < 13);
+  ASSERT(iMonth > 0 && iMonth < 13);
   static const FX_WCHAR* const pMonth[] = {
       L"January",   L"February", L"March",    L"April",
       L"May",       L"June",     L"July",     L"August",

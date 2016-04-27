@@ -1153,7 +1153,7 @@ static void XFA_BOX_GetPath(CXFA_Box box,
                             int32_t nIndex,
                             FX_BOOL bStart,
                             FX_BOOL bCorner) {
-  FXSYS_assert(nIndex >= 0 && nIndex < 8);
+  ASSERT(nIndex >= 0 && nIndex < 8);
   FX_BOOL bInverted, bRound;
   FX_FLOAT fRadius1, fRadius2, sx, sy, vx, vy, nx, ny, offsetY, offsetX,
       offsetEX, offsetEY;

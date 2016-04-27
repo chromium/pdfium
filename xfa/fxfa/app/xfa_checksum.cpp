@@ -11,7 +11,7 @@
 
 CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext)
     : m_pContext(pContext) {
-  FXSYS_assert(m_pContext);
+  ASSERT(m_pContext);
 }
 CXFA_SAXReaderHandler::~CXFA_SAXReaderHandler() {}
 void* CXFA_SAXReaderHandler::OnTagEnter(const CFX_ByteStringC& bsTagName,

@@ -2115,17 +2115,17 @@ FX_BOOL CPDFSDK_InterForm::IsCalculateEnabled() const {
 #ifdef PDF_ENABLE_XFA
 void CPDFSDK_InterForm::AddXFAMap(CXFA_FFWidget* hWidget,
                                   CPDFSDK_XFAWidget* pWidget) {
-  FXSYS_assert(hWidget);
+  ASSERT(hWidget);
   m_XFAMap[hWidget] = pWidget;
 }
 
 void CPDFSDK_InterForm::RemoveXFAMap(CXFA_FFWidget* hWidget) {
-  FXSYS_assert(hWidget);
+  ASSERT(hWidget);
   m_XFAMap.erase(hWidget);
 }
 
 CPDFSDK_XFAWidget* CPDFSDK_InterForm::GetXFAWidget(CXFA_FFWidget* hWidget) {
-  FXSYS_assert(hWidget);
+  ASSERT(hWidget);
   auto it = m_XFAMap.find(hWidget);
   return it != m_XFAMap.end() ? it->second : nullptr;
 }

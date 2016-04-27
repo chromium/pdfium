@@ -84,7 +84,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
         iCount += 5;
         break;
       case FDE_VISUALOBJ_Canvas:
-        FXSYS_assert(FALSE);
+        ASSERT(FALSE);
         break;
       default:
         break;
@@ -116,8 +116,8 @@ void CFDE_RenderContext::StopRender() {
 
 void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
                                     FDE_HVISUALOBJ hText) {
-  FXSYS_assert(m_pRenderDevice);
-  FXSYS_assert(pTextSet && hText);
+  ASSERT(m_pRenderDevice);
+  ASSERT(pTextSet && hText);
 
   IFX_Font* pFont = pTextSet->GetFont(hText);
   if (!pFont)

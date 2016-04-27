@@ -193,7 +193,7 @@ int32_t PDF_CreatorWriteTrailer(CPDF_Document* pDocument,
                                 FX_BOOL bCompress) {
   FX_FILESIZE offset = 0;
   int32_t len = 0;
-  FXSYS_assert(pDocument && pFile);
+  ASSERT(pDocument && pFile);
   CPDF_Parser* pParser = (CPDF_Parser*)pDocument->GetParser();
   if (pParser) {
     CPDF_Dictionary* p = pParser->GetTrailer();
@@ -283,7 +283,7 @@ int32_t PDF_CreatorWriteEncrypt(const CPDF_Dictionary* pEncryptDict,
   if (!pEncryptDict) {
     return 0;
   }
-  FXSYS_assert(pFile);
+  ASSERT(pFile);
   FX_FILESIZE offset = 0;
   int32_t len = 0;
   if (pFile->AppendString("/Encrypt") < 0) {
@@ -538,7 +538,7 @@ void CPDF_ObjectStream::CompressIndirectObject(uint32_t dwObjNum,
 }
 
 FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
-  FXSYS_assert(pCreator);
+  ASSERT(pCreator);
   if (m_Items.empty())
     return 0;
 
@@ -1467,7 +1467,7 @@ void CPDF_Creator::AppendNewObjNum(uint32_t objbum) {
   m_NewObjNumArray.InsertAt(iFind, objbum);
 }
 int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
-  FXSYS_assert(m_iStage > -1 || m_iStage < 20);
+  ASSERT(m_iStage > -1 || m_iStage < 20);
   if (m_iStage == 0) {
     if (!m_pParser) {
       m_dwFlags &= ~FPDFCREATE_INCREMENTAL;
@@ -1562,7 +1562,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
   return m_iStage;
 }
 int32_t CPDF_Creator::WriteDoc_Stage2(IFX_Pause* pPause) {
-  FXSYS_assert(m_iStage >= 20 || m_iStage < 30);
+  ASSERT(m_iStage >= 20 || m_iStage < 30);
   if (m_iStage == 20) {
     if ((m_dwFlags & FPDFCREATE_INCREMENTAL) == 0 && m_pParser) {
       m_Pos = (void*)(uintptr_t)0;
@@ -1609,7 +1609,7 @@ int32_t CPDF_Creator::WriteDoc_Stage2(IFX_Pause* pPause) {
   return m_iStage;
 }
 int32_t CPDF_Creator::WriteDoc_Stage3(IFX_Pause* pPause) {
-  FXSYS_assert(m_iStage >= 80 || m_iStage < 90);
+  ASSERT(m_iStage >= 80 || m_iStage < 90);
   uint32_t dwLastObjNum = m_dwLastObjNum;
   if (m_iStage == 80) {
     m_XrefStart = m_Offset;
@@ -1723,7 +1723,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3(IFX_Pause* pPause) {
 }
 
 int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
-  FXSYS_assert(m_iStage >= 90);
+  ASSERT(m_iStage >= 90);
   if ((m_dwFlags & FPDFCREATE_OBJECTSTREAM) == 0) {
     FX_BOOL bXRefStream =
         (m_dwFlags & FPDFCREATE_INCREMENTAL) != 0 && m_pParser->IsXRefStream();

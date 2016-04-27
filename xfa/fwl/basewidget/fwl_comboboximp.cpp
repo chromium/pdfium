@@ -201,7 +201,7 @@ void CFWL_ComboEditImp::SetComboBoxFocus(FX_BOOL bSet) {
 CFWL_ComboListImp::CFWL_ComboListImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_ListBoxImp(properties, pOuter), m_bNotifyOwner(TRUE) {
-  FXSYS_assert(pOuter != NULL);
+  ASSERT(pOuter != NULL);
 }
 FWL_ERR CFWL_ComboListImp::Initialize() {
   if (CFWL_ListBoxImp::Initialize() != FWL_ERR_Succeeded)

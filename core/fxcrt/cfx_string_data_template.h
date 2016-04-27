@@ -15,7 +15,7 @@ template <typename CharType>
 class CFX_StringDataTemplate {
  public:
   static CFX_StringDataTemplate* Create(FX_STRSIZE nLen) {
-    FXSYS_assert(nLen > 0);
+    ASSERT(nLen > 0);
 
     // Calculate space needed for the fixed portion of the struct plus the
     // NUL char that is not included in |m_nAllocLength|.
@@ -32,7 +32,7 @@ class CFX_StringDataTemplate {
     nSize += 7;
     int totalSize = nSize.ValueOrDie() & ~7;
     int usableLen = (totalSize - overhead) / sizeof(CharType);
-    FXSYS_assert(usableLen >= nLen);
+    ASSERT(usableLen >= nLen);
 
     void* pData = FX_Alloc(uint8_t, totalSize);
     return new (pData) CFX_StringDataTemplate(nLen, usableLen);
@@ -61,13 +61,13 @@ class CFX_StringDataTemplate {
   }
 
   void CopyContents(const CFX_StringDataTemplate& other) {
-    FXSYS_assert(other.m_nDataLength <= m_nAllocLength);
+    ASSERT(other.m_nDataLength <= m_nAllocLength);
     FXSYS_memcpy(m_String, other.m_String,
                  (other.m_nDataLength + 1) * sizeof(CharType));
   }
 
   void CopyContents(const CharType* pStr, FX_STRSIZE nLen) {
-    FXSYS_assert(nLen >= 0 && nLen <= m_nAllocLength);
+    ASSERT(nLen >= 0 && nLen <= m_nAllocLength);
     FXSYS_memcpy(m_String, pStr, nLen * sizeof(CharType));
     m_String[nLen] = 0;
   }
@@ -75,7 +75,7 @@ class CFX_StringDataTemplate {
   void CopyContentsAt(FX_STRSIZE offset,
                       const CharType* pStr,
                       FX_STRSIZE nLen) {
-    FXSYS_assert(offset >= 0 && nLen >= 0 && offset + nLen <= m_nAllocLength);
+    ASSERT(offset >= 0 && nLen >= 0 && offset + nLen <= m_nAllocLength);
     FXSYS_memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
     m_String[offset + nLen] = 0;
   }
@@ -101,8 +101,8 @@ class CFX_StringDataTemplate {
  private:
   CFX_StringDataTemplate(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
       : m_nRefs(0), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
-    FXSYS_assert(dataLen >= 0);
-    FXSYS_assert(dataLen <= allocLen);
+    ASSERT(dataLen >= 0);
+    ASSERT(dataLen <= allocLen);
     m_String[dataLen] = 0;
   }
 

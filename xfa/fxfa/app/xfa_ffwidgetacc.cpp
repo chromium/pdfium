@@ -293,7 +293,7 @@ void CXFA_WidgetAcc::SetImageEdit(const CFX_WideStringC& wsContentType,
     pHrefNode->SetCData(XFA_ATTRIBUTE_Value, wsHref);
   } else {
     CFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
-    FXSYS_assert(pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element);
+    ASSERT(pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element);
     static_cast<CFDE_XMLElement*>(pXMLNode)
         ->SetString(FX_WSTRC(L"href"), wsHref);
   }
@@ -647,7 +647,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   static const uint32_t MAX_RECURSION_DEPTH = 2;
   if (m_nRecursionDepth > MAX_RECURSION_DEPTH)
     return XFA_EVENTERROR_Success;
-  FXSYS_assert(pEventParam);
+  ASSERT(pEventParam);
   if (!script) {
     return XFA_EVENTERROR_NotExist;
   }
@@ -1596,7 +1596,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
   } else if (m_eType == XFA_TEXTPROVIDERTYPE_Datasets) {
     CXFA_Node* pBind = m_pWidgetAcc->GetDatasets();
     CFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
-    FXSYS_assert(pXMLNode);
+    ASSERT(pXMLNode);
     for (CFDE_XMLNode* pXMLChild =
              pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
          pXMLChild;

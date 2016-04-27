@@ -95,10 +95,9 @@ static_assert(FALSE == false, "false_needs_to_be_false");
 #define NULL 0
 #endif
 
-#define FXSYS_assert assert
 #ifndef ASSERT
 #ifndef NDEBUG
-#define ASSERT FXSYS_assert
+#define ASSERT assert
 #else
 #define ASSERT(a)
 #endif

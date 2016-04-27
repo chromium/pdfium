@@ -1799,7 +1799,7 @@ IFX_Font* CXFA_DefFontMgr::GetDefaultFont(CXFA_FFDoc* hDoc,
   if (!pFont)
     pFont =
         pFDEFontMgr->LoadFont((const FX_WCHAR*)NULL, dwFontStyles, wCodePage);
-  FXSYS_assert(pFont);
+  ASSERT(pFont);
   if (pFont) {
     m_CacheFonts.Add(pFont);
   }

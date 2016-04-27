@@ -31,7 +31,7 @@ template <class baseType>
 class CFX_DSPATemplate {
  public:
   int32_t Lookup(const baseType& find, const baseType* pArray, int32_t iCount) {
-    FXSYS_assert(pArray != NULL);
+    ASSERT(pArray != NULL);
     if (iCount < 1) {
       return -1;
     }

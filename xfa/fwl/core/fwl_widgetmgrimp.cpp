@@ -34,7 +34,7 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
     : m_dwCapability(0) {
   m_pDelegate = new CFWL_WidgetMgrDelegate(this);
   m_pAdapter = pAdapterNative->GetWidgetMgr(m_pDelegate);
-  FXSYS_assert(m_pAdapter);
+  ASSERT(m_pAdapter);
   CFWL_WidgetMgrItem* pRoot = new CFWL_WidgetMgrItem;
   m_mapWidgetItem.SetAt(NULL, pRoot);
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)

@@ -7,7 +7,7 @@
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
-  FXSYS_assert(pStr != NULL);
+  ASSERT(pStr != NULL);
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pStr);
   }
@@ -30,7 +30,7 @@ void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
 void FX_SwapByteOrderCopy(const FX_WCHAR* pSrc,
                           FX_WCHAR* pDst,
                           int32_t iLength) {
-  FXSYS_assert(pSrc != NULL && pDst != NULL);
+  ASSERT(pSrc != NULL && pDst != NULL);
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pSrc);
   }
@@ -51,7 +51,7 @@ void FX_SwapByteOrderCopy(const FX_WCHAR* pSrc,
   }
 }
 void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
-  FXSYS_assert(pBuffer != NULL && iLength > 0);
+  ASSERT(pBuffer != NULL && iLength > 0);
   if (sizeof(FX_WCHAR) == 2) {
     return;
   }
@@ -64,7 +64,7 @@ void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
 void FX_UTF16ToWCharCopy(const uint16_t* pUTF16,
                          FX_WCHAR* pWChar,
                          int32_t iLength) {
-  FXSYS_assert(pUTF16 != NULL && pWChar != NULL && iLength > 0);
+  ASSERT(pUTF16 != NULL && pWChar != NULL && iLength > 0);
   if (sizeof(FX_WCHAR) == 2) {
     FXSYS_memcpy(pWChar, pUTF16, iLength * sizeof(FX_WCHAR));
   } else {
@@ -74,7 +74,7 @@ void FX_UTF16ToWCharCopy(const uint16_t* pUTF16,
   }
 }
 void FX_WCharToUTF16(void* pBuffer, int32_t iLength) {
-  FXSYS_assert(pBuffer != NULL && iLength > 0);
+  ASSERT(pBuffer != NULL && iLength > 0);
   if (sizeof(FX_WCHAR) == 2) {
     return;
   }
@@ -87,7 +87,7 @@ void FX_WCharToUTF16(void* pBuffer, int32_t iLength) {
 void FX_WCharToUTF16Copy(const FX_WCHAR* pWChar,
                          uint16_t* pUTF16,
                          int32_t iLength) {
-  FXSYS_assert(pWChar != NULL && pUTF16 != NULL && iLength > 0);
+  ASSERT(pWChar != NULL && pUTF16 != NULL && iLength > 0);
   if (sizeof(FX_WCHAR) == 2) {
     FXSYS_memcpy(pUTF16, pWChar, iLength * sizeof(FX_WCHAR));
   } else {

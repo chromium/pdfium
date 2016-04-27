@@ -133,11 +133,11 @@ class CFX_TxtPiece : public CFX_Target {
   int32_t GetLength() const { return m_iChars; }
   int32_t GetEndChar() const { return m_iStartChar + m_iChars; }
   CFX_TxtChar* GetCharPtr(int32_t index) const {
-    FXSYS_assert(index > -1 && index < m_iChars && m_pChars != NULL);
+    ASSERT(index > -1 && index < m_iChars && m_pChars != NULL);
     return m_pChars->GetDataPtr(m_iStartChar + index);
   }
   void GetString(FX_WCHAR* pText) const {
-    FXSYS_assert(pText != NULL);
+    ASSERT(pText != NULL);
     int32_t iEndChar = m_iStartChar + m_iChars;
     CFX_Char* pChar;
     for (int32_t i = m_iStartChar; i < iEndChar; i++) {
@@ -152,7 +152,7 @@ class CFX_TxtPiece : public CFX_Target {
     wsText.ReleaseBuffer(m_iChars);
   }
   void GetWidths(int32_t* pWidths) const {
-    FXSYS_assert(pWidths != NULL);
+    ASSERT(pWidths != NULL);
     int32_t iEndChar = m_iStartChar + m_iChars;
     CFX_Char* pChar;
     for (int32_t i = m_iStartChar; i < iEndChar; i++) {
@@ -189,12 +189,12 @@ class CFX_TxtLine {
   }
   int32_t CountChars() const { return m_pLineChars->GetSize(); }
   CFX_TxtChar* GetCharPtr(int32_t index) const {
-    FXSYS_assert(index > -1 && index < m_pLineChars->GetSize());
+    ASSERT(index > -1 && index < m_pLineChars->GetSize());
     return m_pLineChars->GetDataPtr(index);
   }
   int32_t CountPieces() const { return m_pLinePieces->GetSize(); }
   CFX_TxtPiece* GetPiecePtr(int32_t index) const {
-    FXSYS_assert(index > -1 && index < m_pLinePieces->GetSize());
+    ASSERT(index > -1 && index < m_pLinePieces->GetSize());
     return m_pLinePieces->GetPtrAt(index);
   }
   void GetString(CFX_WideString& wsStr) const {

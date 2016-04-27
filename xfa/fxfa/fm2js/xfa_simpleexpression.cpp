@@ -332,7 +332,7 @@ void CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << gs_lpStrExpFuncName[NOTEQUALITY];
       break;
     default:
-      FXSYS_assert(FALSE);
+      ASSERT(FALSE);
       break;
   }
   javascript << FX_WSTRC(L"(");
@@ -368,7 +368,7 @@ void CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << gs_lpStrExpFuncName[GREATEREQUAL];
       break;
     default:
-      FXSYS_assert(FALSE);
+      ASSERT(FALSE);
       break;
   }
   javascript << FX_WSTRC(L"(");
@@ -394,7 +394,7 @@ void CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << gs_lpStrExpFuncName[MINUS];
       break;
     default:
-      FXSYS_assert(FALSE);
+      ASSERT(FALSE);
       break;
   }
   javascript << FX_WSTRC(L"(");
@@ -421,7 +421,7 @@ void CXFA_FMMultiplicativeExpression::ToJavaScript(
       javascript << gs_lpStrExpFuncName[DIVIDE];
       break;
     default:
-      FXSYS_assert(FALSE);
+      ASSERT(FALSE);
       break;
   }
   javascript << FX_WSTRC(L"(");

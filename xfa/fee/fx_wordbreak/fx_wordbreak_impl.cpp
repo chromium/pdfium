@@ -14,7 +14,7 @@ FX_WordBreakProp FX_GetWordBreakProperty(FX_WCHAR wcCodePoint) {
 }
 CFX_CharIter::CFX_CharIter(const CFX_WideString& wsText)
     : m_wsText(wsText), m_nIndex(0) {
-  FXSYS_assert(!wsText.IsEmpty());
+  ASSERT(!wsText.IsEmpty());
 }
 CFX_CharIter::~CFX_CharIter() {}
 void CFX_CharIter::Release() {
@@ -69,7 +69,7 @@ void CFX_WordBreak::Release() {
   delete this;
 }
 void CFX_WordBreak::Attach(IFX_CharIter* pIter) {
-  FXSYS_assert(pIter);
+  ASSERT(pIter);
   m_pCurIter = pIter;
 }
 void CFX_WordBreak::Attach(const CFX_WideString& wsText) {
@@ -183,7 +183,7 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter,
           }
         }
         if (nFlags > 0) {
-          FXSYS_assert(nFlags <= 2);
+          ASSERT(nFlags <= 2);
           if (!((nFlags == 1 && ePreType == FX_WordBreakProp_ALetter) ||
                 (nFlags == 2 && ePreType == FX_WordBreakProp_Numberic))) {
             pIter->Next(!bPrev);
@@ -215,7 +215,7 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter,
           pIter->Next(!bPrev);
           return TRUE;
         }
-        FXSYS_assert(nFlags <= 2);
+        ASSERT(nFlags <= 2);
         pIter->Next(bPrev);
         wcTemp = pIter->GetChar();
         eNextType = (FX_WordBreakProp)FX_GetWordBreakProperty(wcTemp);

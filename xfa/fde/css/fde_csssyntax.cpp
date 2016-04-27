@@ -41,7 +41,7 @@ FX_BOOL CFDE_CSSSyntaxParser::Init(IFX_Stream* pStream,
                                    int32_t iCSSPlaneSize,
                                    int32_t iTextDataSize,
                                    FX_BOOL bOnlyDeclaration) {
-  FXSYS_assert(pStream != NULL && iCSSPlaneSize > 0 && iTextDataSize > 0);
+  ASSERT(pStream != NULL && iCSSPlaneSize > 0 && iTextDataSize > 0);
   Reset(bOnlyDeclaration);
   if (!m_TextData.EstimateSize(iTextDataSize)) {
     return FALSE;
@@ -56,7 +56,7 @@ FX_BOOL CFDE_CSSSyntaxParser::Init(const FX_WCHAR* pBuffer,
                                    int32_t iBufferSize,
                                    int32_t iTextDatSize,
                                    FX_BOOL bOnlyDeclaration) {
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0 && iTextDatSize > 0);
+  ASSERT(pBuffer != NULL && iBufferSize > 0 && iTextDatSize > 0);
   Reset(bOnlyDeclaration);
   if (!m_TextData.EstimateSize(iTextDatSize)) {
     return FALSE;
@@ -358,7 +358,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
           m_TextPlane.MoveNext();
           break;
         default:
-          FXSYS_assert(FALSE);
+          ASSERT(FALSE);
           break;
       }
     }
@@ -434,7 +434,7 @@ FX_BOOL CFDE_CSSTextBuf::AttachBuffer(const FX_WCHAR* pBuffer,
   return m_bExtBuf = TRUE;
 }
 FX_BOOL CFDE_CSSTextBuf::EstimateSize(int32_t iAllocSize) {
-  FXSYS_assert(iAllocSize > 0);
+  ASSERT(iAllocSize > 0);
   Clear();
   m_bExtBuf = FALSE;
   return ExpandBuf(iAllocSize);
@@ -443,7 +443,7 @@ int32_t CFDE_CSSTextBuf::LoadFromStream(IFX_Stream* pTxtStream,
                                         int32_t iStreamOffset,
                                         int32_t iMaxChars,
                                         FX_BOOL& bEOS) {
-  FXSYS_assert(iStreamOffset >= 0 && iMaxChars > 0);
+  ASSERT(iStreamOffset >= 0 && iMaxChars > 0);
   Clear();
   m_bExtBuf = FALSE;
   if (!ExpandBuf(iMaxChars)) {
@@ -474,7 +474,7 @@ FX_BOOL CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
   return TRUE;
 }
 void CFDE_CSSTextBuf::Subtract(int32_t iStart, int32_t iLength) {
-  FXSYS_assert(iStart >= 0 && iLength > 0);
+  ASSERT(iStart >= 0 && iLength > 0);
   if (iLength > m_iDatLen - iStart) {
     iLength = m_iDatLen - iStart;
   }

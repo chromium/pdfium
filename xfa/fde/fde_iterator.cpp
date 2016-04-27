@@ -15,7 +15,7 @@ CFDE_VisualSetIterator::~CFDE_VisualSetIterator() {
 }
 
 FX_BOOL CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
-  FXSYS_assert(pCanvas);
+  ASSERT(pCanvas);
 
   m_CanvasStack.RemoveAll();
   FDE_CANVASITEM canvas;
@@ -38,7 +38,7 @@ FX_BOOL CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
   m_dwFilter = dwObjects;
 
   FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
-  FXSYS_assert(pCanvas && pCanvas->pCanvas);
+  ASSERT(pCanvas && pCanvas->pCanvas);
 
   pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition(nullptr);
   return !!pCanvas->hPos;
@@ -53,7 +53,7 @@ FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
                                                IFDE_CanvasSet** ppCanvasSet) {
   while (m_CanvasStack.GetSize() > 0) {
     FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
-    FXSYS_assert(pCanvas && pCanvas->pCanvas);
+    ASSERT(pCanvas && pCanvas->pCanvas);
 
     if (!pCanvas->hPos) {
       if (m_CanvasStack.GetSize() == 1)
@@ -65,7 +65,7 @@ FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
     do {
       FDE_HVISUALOBJ hObj = pCanvas->pCanvas->GetNext(
           pCanvas->hCanvas, pCanvas->hPos, pVisualSet);
-      FXSYS_assert(hObj);
+      ASSERT(hObj);
 
       FDE_VISUALOBJTYPE eType = pVisualSet->GetType();
       if (eType == FDE_VISUALOBJ_Canvas) {

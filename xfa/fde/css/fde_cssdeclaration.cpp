@@ -28,7 +28,7 @@ void CFDE_CSSDeclaration::GetNextProperty(FX_POSITION& pos,
                                           IFDE_CSSValue*& pValue,
                                           FX_BOOL& bImportant) const {
   const FDE_CSSPropertyHolder* pHolder = (const FDE_CSSPropertyHolder*)pos;
-  FXSYS_assert(pHolder != NULL);
+  ASSERT(pHolder != NULL);
   bImportant = pHolder->bImportant;
   eProperty = (FDE_CSSPROPERTY)pHolder->eProperty;
   pValue = pHolder->pValue;
@@ -52,7 +52,7 @@ const FX_WCHAR* CFDE_CSSDeclaration::CopyToLocal(
     const FDE_CSSPROPERTYARGS* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
-  FXSYS_assert(iValueLen > 0);
+  ASSERT(iValueLen > 0);
   CFX_MapPtrToPtr* pCache = pArgs->pStringCache;
   void* pKey = NULL;
   if (pCache) {
@@ -110,7 +110,7 @@ void CFDE_CSSDeclaration::AddPropertyHolder(IFX_MEMAllocator* pStaticStore,
 FX_BOOL CFDE_CSSDeclaration::AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                          const FX_WCHAR* pszValue,
                                          int32_t iValueLen) {
-  FXSYS_assert(iValueLen > 0);
+  ASSERT(iValueLen > 0);
   FX_BOOL bImportant = FALSE;
   if (iValueLen >= 10 && pszValue[iValueLen - 10] == '!' &&
       FX_wcsnicmp(L"important", pszValue + iValueLen - 9, 9) == 0) {
@@ -260,7 +260,7 @@ FX_BOOL CFDE_CSSDeclaration::AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
           return ParseValueListProperty(pArgs, pszValue, iValueLen, bImportant);
       }
     default:
-      FXSYS_assert(FALSE);
+      ASSERT(FALSE);
       break;
   }
   return FALSE;

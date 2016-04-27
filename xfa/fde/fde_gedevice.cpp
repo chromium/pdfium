@@ -18,7 +18,7 @@ CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,
       m_bOwnerDevice(bOwnerDevice),
       m_pCharPos(nullptr),
       m_iCharCount(0) {
-  FXSYS_assert(pDevice);
+  ASSERT(pDevice);
 
   FX_RECT rt = m_pDevice->GetClipBox();
   m_rtClip.Set((FX_FLOAT)rt.left, (FX_FLOAT)rt.top, (FX_FLOAT)rt.Width(),
@@ -73,7 +73,7 @@ FX_BOOL CFDE_RenderDevice::DrawImage(CFX_DIBSource* pDib,
                                      const CFX_RectF& dstRect,
                                      const CFX_Matrix* pImgMatrix,
                                      const CFX_Matrix* pDevMatrix) {
-  FXSYS_assert(pDib != NULL);
+  ASSERT(pDib != NULL);
   CFX_RectF srcRect;
   if (pSrcRect) {
     srcRect = *pSrcRect;
@@ -110,8 +110,7 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
                                       int32_t iCount,
                                       FX_FLOAT fFontSize,
                                       const CFX_Matrix* pMatrix) {
-  FXSYS_assert(pBrush != NULL && pFont != NULL && pCharPos != NULL &&
-               iCount > 0);
+  ASSERT(pBrush != NULL && pFont != NULL && pCharPos != NULL && iCount > 0);
   CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
   CFX_Font* pFxFont = (CFX_Font*)pFont->GetDevFont();
 

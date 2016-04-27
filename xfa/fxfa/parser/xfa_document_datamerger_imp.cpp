@@ -52,7 +52,7 @@ static CXFA_Node* XFA_DataMerge_FormValueNode_CreateChild(
 static void XFA_DataMerge_FormValueNode_MatchNoneCreateChild(
     CXFA_Node* pFormNode) {
   CXFA_WidgetData* pWidgetData = pFormNode->GetWidgetData();
-  FXSYS_assert(pWidgetData);
+  ASSERT(pWidgetData);
   pWidgetData->GetUIType();
 }
 static FX_BOOL XFA_DataMerge_FormValueNode_SetChildContent(
@@ -62,7 +62,7 @@ static FX_BOOL XFA_DataMerge_FormValueNode_SetChildContent(
   if (!pValueNode) {
     return FALSE;
   }
-  FXSYS_assert(pValueNode->GetPacketID() == XFA_XDPPACKET_Form);
+  ASSERT(pValueNode->GetPacketID() == XFA_XDPPACKET_Form);
   CXFA_Node* pChildNode =
       XFA_DataMerge_FormValueNode_CreateChild(pValueNode, iType);
   if (!pChildNode) {
@@ -96,7 +96,7 @@ static FX_BOOL XFA_DataMerge_FormValueNode_SetChildContent(
       pChildNode->SetCData(XFA_ATTRIBUTE_Value, wsContent);
     } break;
     default:
-      FXSYS_assert(FALSE);
+      ASSERT(FALSE);
       break;
   }
   return TRUE;
@@ -111,7 +111,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
     return;
   }
   CXFA_WidgetData* pWidgetData = pFormNode->GetWidgetData();
-  FXSYS_assert(pWidgetData);
+  ASSERT(pWidgetData);
   FX_BOOL bNotify = FALSE;
   XFA_ELEMENT eUIType = pWidgetData->GetUIType();
   CXFA_Value defValue(pFormNode->GetProperty(0, XFA_ELEMENT_Value));
@@ -130,7 +130,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         }
         CFDE_XMLElement* pXMLDataElement =
             static_cast<CFDE_XMLElement*>(pDataNode->GetXMLMappingNode());
-        FXSYS_assert(pXMLDataElement);
+        ASSERT(pXMLDataElement);
         pWidgetData->GetFormatDataValue(wsValue, wsFormatedValue);
         pDataNode->SetAttributeValue(wsValue, wsFormatedValue);
         pDataNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
@@ -155,7 +155,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
             }
           } else {
             CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
-            FXSYS_assert(pXMLNode->GetType() == FDE_XMLNODE_Element);
+            ASSERT(pXMLNode->GetType() == FDE_XMLNODE_Element);
             static_cast<CFDE_XMLElement*>(pXMLNode)
                 ->SetString(FX_WSTRC(L"xfa:dataNode"), FX_WSTRC(L"dataGroup"));
           }
@@ -268,7 +268,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         if (image) {
           CFDE_XMLElement* pXMLDataElement =
               static_cast<CFDE_XMLElement*>(pDataNode->GetXMLMappingNode());
-          FXSYS_assert(pXMLDataElement);
+          ASSERT(pXMLDataElement);
           CFX_WideString wsContentType;
           CFX_WideString wsHref;
           pXMLDataElement->GetString(L"xfa:contentType", wsContentType);
@@ -296,7 +296,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
               wsNormailizeValue += wsItem;
             }
             CXFA_ExData exData = defValue.GetExData();
-            FXSYS_assert(exData);
+            ASSERT(exData);
             exData.SetContentType((iCounts == 1) ? FX_WSTRC(L"text/plain")
                                                  : FX_WSTRC(L"text/xml"));
           }
@@ -591,7 +591,7 @@ static CXFA_Node* XFA_NodeMerge_CloneOrMergeInstanceManager(
   }
   CXFA_Node* pNewNode = pDocument->GetParser()->GetFactory()->CreateNode(
       XFA_XDPPACKET_Form, XFA_ELEMENT_InstanceManager);
-  FXSYS_assert(pNewNode);
+  ASSERT(pNewNode);
   wsInstMgrNodeName =
       FX_WSTRC(L"_") + pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
   pNewNode->SetCData(XFA_ATTRIBUTE_Name, wsInstMgrNodeName);
@@ -831,7 +831,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
           pFirstInstance = pSubformNode;
         }
         XFA_DataMerge_CreateDataBinding(pSubformNode, pDataNode);
-        FXSYS_assert(pSubformNode);
+        ASSERT(pSubformNode);
         subformMapArray.SetAt(pSubformNode, pDataNode);
         subformArray.Add(pSubformNode);
       }
@@ -872,7 +872,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
           eRelation == XFA_ATTRIBUTEENUM_Unordered) {
         CXFA_Node* pSubformSetNode = XFA_NodeMerge_CloneOrMergeContainer(
             pDocument, pFormParentNode, pTemplateNode, FALSE, pSearchArray);
-        FXSYS_assert(pSubformSetNode);
+        ASSERT(pSubformSetNode);
         if (!pFirstInstance) {
           pFirstInstance = pSubformSetNode;
         }
@@ -908,7 +908,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
         }
         switch (eRelation) {
           case XFA_ATTRIBUTEENUM_Choice: {
-            FXSYS_assert(rgItemMatchList.GetSize());
+            ASSERT(rgItemMatchList.GetSize());
             XFA_DataMerge_SortRecurseRecord(rgItemMatchList, pDataScope, TRUE);
             pDocument->DataMerge_CopyContainer(
                 rgItemMatchList[0].pTemplateChild, pSubformSetNode, pDataScope);
@@ -935,7 +935,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
       } else {
         CXFA_Node* pSubformSetNode = XFA_NodeMerge_CloneOrMergeContainer(
             pDocument, pFormParentNode, pTemplateNode, FALSE, pSearchArray);
-        FXSYS_assert(pSubformSetNode);
+        ASSERT(pSubformSetNode);
         if (!pFirstInstance) {
           pFirstInstance = pSubformSetNode;
         }
@@ -977,7 +977,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
         }
         CXFA_Node* pSubformNode = XFA_NodeMerge_CloneOrMergeContainer(
             pDocument, pFormParentNode, pTemplateNode, FALSE, pSearchArray);
-        FXSYS_assert(pSubformNode);
+        ASSERT(pSubformNode);
         if (!pFirstInstance) {
           pFirstInstance = pSubformNode;
         }
@@ -1001,7 +1001,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
   for (; iCurRepeatIndex < iMinimalLimit; iCurRepeatIndex++) {
     CXFA_Node* pSubformSetNode = XFA_NodeMerge_CloneOrMergeContainer(
         pDocument, pFormParentNode, pTemplateNode, FALSE, pSearchArray);
-    FXSYS_assert(pSubformSetNode);
+    ASSERT(pSubformSetNode);
     if (!pFirstInstance) {
       pFirstInstance = pSubformSetNode;
     }
@@ -1034,7 +1034,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_Field(CXFA_Document* pDocument,
                                                     FX_BOOL bUpLevel = TRUE) {
   CXFA_Node* pFieldNode = XFA_NodeMerge_CloneOrMergeContainer(
       pDocument, pFormNode, pTemplateNode, FALSE);
-  FXSYS_assert(pFieldNode);
+  ASSERT(pFieldNode);
   for (CXFA_Node* pTemplateChildNode =
            pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild);
        pTemplateChildNode; pTemplateChildNode = pTemplateChildNode->GetNodeItem(
@@ -1089,7 +1089,7 @@ CXFA_Node* CXFA_Document::DataMerge_CopyContainer(CXFA_Node* pTemplateNode,
     case XFA_ELEMENT_Variables:
       break;
     default:
-      FXSYS_assert(FALSE);
+      ASSERT(FALSE);
       break;
   }
   return NULL;
@@ -1142,7 +1142,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument,
             CXFA_Node* pDataParent =
                 pDataNode->GetNodeItem(XFA_NODEITEM_Parent);
             if (pDataParent != pDataScope) {
-              FXSYS_assert(pDataParent);
+              ASSERT(pDataParent);
               pDataParent->RemoveChild(pDataNode);
               pDataScope->InsertChild(pDataNode);
             }
@@ -1334,7 +1334,7 @@ void CXFA_Document::DoDataMerge() {
   if (!pFormRoot) {
     bEmptyForm = TRUE;
     pFormRoot = CreateNode(XFA_XDPPACKET_Form, XFA_ELEMENT_Form);
-    FXSYS_assert(pFormRoot);
+    ASSERT(pFormRoot);
     pFormRoot->SetCData(XFA_ATTRIBUTE_Name, FX_WSTRC(L"form"));
     m_pRootNode->InsertChild(pFormRoot, NULL);
   } else {
@@ -1347,7 +1347,7 @@ void CXFA_Document::DoDataMerge() {
   }
   CXFA_Node* pSubformSetNode = XFA_NodeMerge_CloneOrMergeContainer(
       this, pFormRoot, pTemplateChosen, FALSE);
-  FXSYS_assert(pSubformSetNode);
+  ASSERT(pSubformSetNode);
   if (!pDataTopLevel) {
     CFX_WideStringC wsFormName = pSubformSetNode->GetCData(XFA_ATTRIBUTE_Name);
     CFX_WideString wsDataTopLevelName =
@@ -1361,7 +1361,7 @@ void CXFA_Document::DoDataMerge() {
     CXFA_Node* pBeforeNode = pDataRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
     pDataRoot->InsertChild(pDataTopLevel, pBeforeNode);
   }
-  FXSYS_assert(pDataTopLevel);
+  ASSERT(pDataTopLevel);
   XFA_DataMerge_CreateDataBinding(pSubformSetNode, pDataTopLevel);
   for (CXFA_Node* pTemplateChild =
            pTemplateChosen->GetNodeItem(XFA_NODEITEM_FirstChild);

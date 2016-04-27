@@ -384,8 +384,8 @@ CFX_FileStreamImp::~CFX_FileStreamImp() {
 }
 FX_BOOL CFX_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
                                     uint32_t dwAccess) {
-  FXSYS_assert(m_hFile == NULL);
-  FXSYS_assert(pszSrcFileName != NULL && FXSYS_wcslen(pszSrcFileName) > 0);
+  ASSERT(m_hFile == NULL);
+  ASSERT(pszSrcFileName != NULL && FXSYS_wcslen(pszSrcFileName) > 0);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
   const FX_WCHAR* wsMode;
@@ -461,32 +461,32 @@ FX_BOOL CFX_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
   return TRUE;
 }
 int32_t CFX_FileStreamImp::GetLength() const {
-  FXSYS_assert(m_hFile != NULL);
+  ASSERT(m_hFile != NULL);
   return m_iLength;
 }
 int32_t CFX_FileStreamImp::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
-  FXSYS_assert(m_hFile != NULL);
+  ASSERT(m_hFile != NULL);
   FXSYS_fseek(m_hFile, iOffset, eSeek);
   return FXSYS_ftell(m_hFile);
 }
 int32_t CFX_FileStreamImp::GetPosition() {
-  FXSYS_assert(m_hFile != NULL);
+  ASSERT(m_hFile != NULL);
   return FXSYS_ftell(m_hFile);
 }
 FX_BOOL CFX_FileStreamImp::IsEOF() const {
-  FXSYS_assert(m_hFile != NULL);
+  ASSERT(m_hFile != NULL);
   return FXSYS_ftell(m_hFile) >= m_iLength;
 }
 int32_t CFX_FileStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
-  FXSYS_assert(m_hFile != NULL);
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(m_hFile != NULL);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   return FXSYS_fread(pBuffer, 1, iBufferSize, m_hFile);
 }
 int32_t CFX_FileStreamImp::ReadString(FX_WCHAR* pStr,
                                       int32_t iMaxLength,
                                       FX_BOOL& bEOS) {
-  FXSYS_assert(m_hFile != NULL);
-  FXSYS_assert(pStr != NULL && iMaxLength > 0);
+  ASSERT(m_hFile != NULL);
+  ASSERT(pStr != NULL && iMaxLength > 0);
   if (m_iLength <= 0) {
     return 0;
   }
@@ -509,8 +509,8 @@ int32_t CFX_FileStreamImp::ReadString(FX_WCHAR* pStr,
 }
 int32_t CFX_FileStreamImp::WriteData(const uint8_t* pBuffer,
                                      int32_t iBufferSize) {
-  FXSYS_assert(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   int32_t iRet = FXSYS_fwrite(pBuffer, 1, iBufferSize, m_hFile);
   if (iRet != 0) {
     int32_t iPos = FXSYS_ftell(m_hFile);
@@ -521,8 +521,8 @@ int32_t CFX_FileStreamImp::WriteData(const uint8_t* pBuffer,
   return iRet;
 }
 int32_t CFX_FileStreamImp::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
-  FXSYS_assert(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
-  FXSYS_assert(pStr != NULL && iLength > 0);
+  ASSERT(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
+  ASSERT(pStr != NULL && iLength > 0);
   int32_t iRet = FXSYS_fwrite(pStr, 2, iLength, m_hFile);
   if (iRet != 0) {
     int32_t iPos = FXSYS_ftell(m_hFile);
@@ -533,11 +533,11 @@ int32_t CFX_FileStreamImp::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
   return iRet;
 }
 void CFX_FileStreamImp::Flush() {
-  FXSYS_assert(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
+  ASSERT(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
   FXSYS_fflush(m_hFile);
 }
 FX_BOOL CFX_FileStreamImp::SetLength(int32_t iLength) {
-  FXSYS_assert(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
+  ASSERT(m_hFile != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
   FX_BOOL bRet = FX_fsetsize(m_hFile, iLength);
   m_iLength = FX_filelength(m_hFile);
   return bRet;
@@ -546,7 +546,7 @@ CFX_FileReadStreamImp::CFX_FileReadStreamImp()
     : m_pFileRead(NULL), m_iPosition(0), m_iLength(0) {}
 FX_BOOL CFX_FileReadStreamImp::LoadFileRead(IFX_FileRead* pFileRead,
                                             uint32_t dwAccess) {
-  FXSYS_assert(m_pFileRead == NULL && pFileRead != NULL);
+  ASSERT(m_pFileRead == NULL && pFileRead != NULL);
   if (dwAccess & FX_STREAMACCESS_Write) {
     return FALSE;
   }
@@ -580,8 +580,8 @@ FX_BOOL CFX_FileReadStreamImp::IsEOF() const {
   return m_iPosition >= m_iLength;
 }
 int32_t CFX_FileReadStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
-  FXSYS_assert(m_pFileRead != NULL);
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(m_pFileRead != NULL);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   if (iBufferSize > m_iLength - m_iPosition) {
     iBufferSize = m_iLength - m_iPosition;
   }
@@ -594,8 +594,8 @@ int32_t CFX_FileReadStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
 int32_t CFX_FileReadStreamImp::ReadString(FX_WCHAR* pStr,
                                           int32_t iMaxLength,
                                           FX_BOOL& bEOS) {
-  FXSYS_assert(m_pFileRead != NULL);
-  FXSYS_assert(pStr != NULL && iMaxLength > 0);
+  ASSERT(m_pFileRead != NULL);
+  ASSERT(pStr != NULL && iMaxLength > 0);
   iMaxLength = ReadData((uint8_t*)pStr, iMaxLength * 2) / 2;
   if (iMaxLength <= 0) {
     return 0;
@@ -621,7 +621,7 @@ FX_BOOL CFX_BufferReadStreamImp::LoadBufferRead(IFX_BufferRead* pBufferRead,
                                                 int32_t iFileSize,
                                                 uint32_t dwAccess,
                                                 FX_BOOL bReleaseBufferRead) {
-  FXSYS_assert(m_pBufferRead == NULL && pBufferRead != NULL);
+  ASSERT(m_pBufferRead == NULL && pBufferRead != NULL);
   if (dwAccess & FX_STREAMACCESS_Write) {
     return FALSE;
   }
@@ -669,8 +669,8 @@ FX_BOOL CFX_BufferReadStreamImp::IsEOF() const {
 }
 int32_t CFX_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
                                           int32_t iBufferSize) {
-  FXSYS_assert(m_pBufferRead != NULL);
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(m_pBufferRead != NULL);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   int32_t iLength = GetLength();
   if (m_iPosition >= iLength) {
     return 0;
@@ -724,8 +724,8 @@ int32_t CFX_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
 int32_t CFX_BufferReadStreamImp::ReadString(FX_WCHAR* pStr,
                                             int32_t iMaxLength,
                                             FX_BOOL& bEOS) {
-  FXSYS_assert(m_pBufferRead != NULL);
-  FXSYS_assert(pStr != NULL && iMaxLength > 0);
+  ASSERT(m_pBufferRead != NULL);
+  ASSERT(pStr != NULL && iMaxLength > 0);
   iMaxLength = ReadData((uint8_t*)pStr, iMaxLength * 2) / 2;
   if (iMaxLength <= 0) {
     return 0;
@@ -741,7 +741,7 @@ CFX_FileWriteStreamImp::CFX_FileWriteStreamImp()
     : m_pFileWrite(NULL), m_iPosition(0) {}
 FX_BOOL CFX_FileWriteStreamImp::LoadFileWrite(IFX_FileWrite* pFileWrite,
                                               uint32_t dwAccess) {
-  FXSYS_assert(m_pFileWrite == NULL && pFileWrite != NULL);
+  ASSERT(m_pFileWrite == NULL && pFileWrite != NULL);
   if (dwAccess & FX_STREAMACCESS_Read) {
     return FALSE;
   }
@@ -808,8 +808,8 @@ CFX_BufferStreamImp::CFX_BufferStreamImp()
 FX_BOOL CFX_BufferStreamImp::LoadBuffer(uint8_t* pData,
                                         int32_t iTotalSize,
                                         uint32_t dwAccess) {
-  FXSYS_assert(m_pData == NULL);
-  FXSYS_assert(pData != NULL && iTotalSize > 0);
+  ASSERT(m_pData == NULL);
+  ASSERT(pData != NULL && iTotalSize > 0);
   m_dwAccess = dwAccess;
   m_pData = pData;
   m_iTotalSize = iTotalSize;
@@ -818,11 +818,11 @@ FX_BOOL CFX_BufferStreamImp::LoadBuffer(uint8_t* pData,
   return TRUE;
 }
 int32_t CFX_BufferStreamImp::GetLength() const {
-  FXSYS_assert(m_pData != NULL);
+  ASSERT(m_pData != NULL);
   return m_iLength;
 }
 int32_t CFX_BufferStreamImp::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
-  FXSYS_assert(m_pData != NULL);
+  ASSERT(m_pData != NULL);
   if (eSeek == FX_STREAMSEEK_Begin) {
     m_iPosition = iOffset;
   } else if (eSeek == FX_STREAMSEEK_Current) {
@@ -839,16 +839,16 @@ int32_t CFX_BufferStreamImp::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
   return m_iPosition;
 }
 int32_t CFX_BufferStreamImp::GetPosition() {
-  FXSYS_assert(m_pData != NULL);
+  ASSERT(m_pData != NULL);
   return m_iPosition;
 }
 FX_BOOL CFX_BufferStreamImp::IsEOF() const {
-  FXSYS_assert(m_pData != NULL);
+  ASSERT(m_pData != NULL);
   return m_iPosition >= m_iLength;
 }
 int32_t CFX_BufferStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
-  FXSYS_assert(m_pData != NULL);
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(m_pData != NULL);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   int32_t iLen = std::min(m_iLength - m_iPosition, iBufferSize);
   if (iLen <= 0) {
     return 0;
@@ -860,8 +860,8 @@ int32_t CFX_BufferStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
 int32_t CFX_BufferStreamImp::ReadString(FX_WCHAR* pStr,
                                         int32_t iMaxLength,
                                         FX_BOOL& bEOS) {
-  FXSYS_assert(m_pData != NULL);
-  FXSYS_assert(pStr != NULL && iMaxLength > 0);
+  ASSERT(m_pData != NULL);
+  ASSERT(pStr != NULL && iMaxLength > 0);
   int32_t iLen = std::min((m_iLength - m_iPosition) / 2, iMaxLength);
   if (iLen <= 0) {
     return 0;
@@ -878,8 +878,8 @@ int32_t CFX_BufferStreamImp::ReadString(FX_WCHAR* pStr,
 }
 int32_t CFX_BufferStreamImp::WriteData(const uint8_t* pBuffer,
                                        int32_t iBufferSize) {
-  FXSYS_assert(m_pData != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(m_pData != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   int32_t iLen = std::min(m_iTotalSize - m_iPosition, iBufferSize);
   if (iLen <= 0) {
     return 0;
@@ -893,8 +893,8 @@ int32_t CFX_BufferStreamImp::WriteData(const uint8_t* pBuffer,
 }
 int32_t CFX_BufferStreamImp::WriteString(const FX_WCHAR* pStr,
                                          int32_t iLength) {
-  FXSYS_assert(m_pData != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
-  FXSYS_assert(pStr != NULL && iLength > 0);
+  ASSERT(m_pData != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
+  ASSERT(pStr != NULL && iLength > 0);
   int32_t iLen = std::min((m_iTotalSize - m_iPosition) / 2, iLength);
   if (iLen <= 0) {
     return 0;
@@ -908,7 +908,7 @@ int32_t CFX_BufferStreamImp::WriteString(const FX_WCHAR* pStr,
 }
 IFX_Stream* IFX_Stream::CreateTextStream(IFX_Stream* pBaseStream,
                                          FX_BOOL bDeleteOnRelease) {
-  FXSYS_assert(pBaseStream != NULL);
+  ASSERT(pBaseStream != NULL);
   return new CFX_TextStream(pBaseStream, bDeleteOnRelease);
 }
 CFX_TextStream::CFX_TextStream(IFX_Stream* pStream, FX_BOOL bDelStream)
@@ -920,7 +920,7 @@ CFX_TextStream::CFX_TextStream(IFX_Stream* pStream, FX_BOOL bDelStream)
       m_bDelStream(bDelStream),
       m_pStreamImp(pStream),
       m_iRefCount(1) {
-  FXSYS_assert(m_pStreamImp != NULL);
+  ASSERT(m_pStreamImp != NULL);
   m_pStreamImp->Retain();
   InitStream();
 }
@@ -1049,7 +1049,7 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
                                    int32_t iMaxLength,
                                    FX_BOOL& bEOS,
                                    int32_t const* pByteSize) {
-  FXSYS_assert(pStr != NULL && iMaxLength > 0);
+  ASSERT(pStr != NULL && iMaxLength > 0);
   if (m_pStreamImp == NULL) {
     return -1;
   }
@@ -1099,7 +1099,7 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
   return iMaxLength;
 }
 int32_t CFX_TextStream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
-  FXSYS_assert(pStr != NULL && iLength > 0);
+  ASSERT(pStr != NULL && iLength > 0);
   if ((m_pStreamImp->GetAccessModes() & FX_STREAMACCESS_Write) == 0) {
     return -1;
   }
@@ -1302,7 +1302,7 @@ FX_BOOL CFX_Stream::IsEOF() const {
   return m_iPosition >= m_iStart + m_iLength;
 }
 int32_t CFX_Stream::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   if (m_pStreamImp == NULL) {
     return -1;
   }
@@ -1321,7 +1321,7 @@ int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
                                int32_t iMaxLength,
                                FX_BOOL& bEOS,
                                int32_t const* pByteSize) {
-  FXSYS_assert(pStr != NULL && iMaxLength > 0);
+  ASSERT(pStr != NULL && iMaxLength > 0);
   if (m_pStreamImp == NULL) {
     return -1;
   }
@@ -1346,7 +1346,7 @@ int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
 }
 
 int32_t CFX_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
-  FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
+  ASSERT(pBuffer != NULL && iBufferSize > 0);
   if (m_pStreamImp == NULL) {
     return -1;
   }
@@ -1372,7 +1372,7 @@ int32_t CFX_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
   return iLen;
 }
 int32_t CFX_Stream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
-  FXSYS_assert(pStr != NULL && iLength > 0);
+  ASSERT(pStr != NULL && iLength > 0);
   if (m_pStreamImp == NULL) {
     return -1;
   }
@@ -1438,7 +1438,7 @@ uint16_t CFX_Stream::SetCodePage(uint16_t wCodePage) {
 IFX_Stream* CFX_Stream::CreateSharedStream(uint32_t dwAccess,
                                            int32_t iOffset,
                                            int32_t iLength) {
-  FXSYS_assert(iLength > 0);
+  ASSERT(iLength > 0);
   if (m_pStreamImp == NULL) {
     return NULL;
   }
@@ -1474,12 +1474,12 @@ IFX_Stream* CFX_Stream::CreateSharedStream(uint32_t dwAccess,
 }
 IFX_FileRead* FX_CreateFileRead(IFX_Stream* pBaseStream,
                                 FX_BOOL bReleaseStream) {
-  FXSYS_assert(pBaseStream != NULL);
+  ASSERT(pBaseStream != NULL);
   return new CFGAS_FileRead(pBaseStream, bReleaseStream);
 }
 CFGAS_FileRead::CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream)
     : m_bReleaseStream(bReleaseStream), m_pStream(pStream) {
-  FXSYS_assert(m_pStream != NULL);
+  ASSERT(m_pStream != NULL);
 }
 CFGAS_FileRead::~CFGAS_FileRead() {
   if (m_bReleaseStream) {
@@ -1511,7 +1511,7 @@ CFX_BufferAccImp::CFX_BufferAccImp(IFX_BufferRead* pBufferRead,
     : m_pBufferRead(pBufferRead),
       m_bReleaseStream(bReleaseStream),
       m_iBufSize(iFileSize) {
-  FXSYS_assert(m_pBufferRead);
+  ASSERT(m_pBufferRead);
 }
 CFX_BufferAccImp::~CFX_BufferAccImp() {
   if (m_bReleaseStream && m_pBufferRead) {
@@ -1593,13 +1593,13 @@ FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
 
 IFX_FileWrite* FX_CreateFileWrite(IFX_Stream* pBaseStream,
                                   FX_BOOL bReleaseStream) {
-  FXSYS_assert(pBaseStream != NULL);
+  ASSERT(pBaseStream != NULL);
   return new CFGAS_FileWrite(pBaseStream, bReleaseStream);
 }
 
 CFGAS_FileWrite::CFGAS_FileWrite(IFX_Stream* pStream, FX_BOOL bReleaseStream)
     : m_pStream(pStream), m_bReleaseStream(bReleaseStream) {
-  FXSYS_assert(m_pStream != NULL);
+  ASSERT(m_pStream != NULL);
 }
 CFGAS_FileWrite::~CFGAS_FileWrite() {
   if (m_bReleaseStream) {

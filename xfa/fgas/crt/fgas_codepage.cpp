@@ -19,7 +19,7 @@ static const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
 };
 uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
   int32_t iEnd = sizeof(g_FXCharset2CodePageTable) / sizeof(FX_CHARSET_MAP) - 1;
-  FXSYS_assert(iEnd >= 0);
+  ASSERT(iEnd >= 0);
   int32_t iStart = 0, iMid;
   do {
     iMid = (iStart + iEnd) / 2;
@@ -45,7 +45,7 @@ static const FX_CHARSET_MAP g_FXCodepage2CharsetTable[] = {
 };
 uint16_t FX_GetCharsetFromCodePage(uint16_t codepage) {
   int32_t iEnd = sizeof(g_FXCodepage2CharsetTable) / sizeof(FX_CHARSET_MAP) - 1;
-  FXSYS_assert(iEnd >= 0);
+  ASSERT(iEnd >= 0);
   int32_t iStart = 0, iMid;
   do {
     iMid = (iStart + iEnd) / 2;
@@ -199,7 +199,7 @@ const FX_LANG2CPMAP g_FXLang2CodepageTable[] = {
 };
 uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage) {
   int32_t iEnd = sizeof(g_FXLang2CodepageTable) / sizeof(FX_LANG2CPMAP) - 1;
-  FXSYS_assert(iEnd >= 0);
+  ASSERT(iEnd >= 0);
   int32_t iStart = 0, iMid;
   do {
     iMid = (iStart + iEnd) / 2;
@@ -302,7 +302,7 @@ static const FX_STR2CPHASH g_FXCPHashTable[] = {
     {0xf637e157, 0x478},  {0xfc213f3a, 0x2717}, {0xff654d14, 0x3b5},
 };
 uint16_t FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
-  FXSYS_assert(pStr != NULL);
+  ASSERT(pStr != NULL);
   if (iLength < 0) {
     iLength = FXSYS_strlen(pStr);
   }
@@ -312,7 +312,7 @@ uint16_t FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
   uint32_t uHash = FX_HashCode_GetA(CFX_ByteStringC(pStr, iLength), true);
   int32_t iStart = 0;
   int32_t iEnd = sizeof(g_FXCPHashTable) / sizeof(FX_STR2CPHASH) - 1;
-  FXSYS_assert(iEnd >= 0);
+  ASSERT(iEnd >= 0);
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     const FX_STR2CPHASH& cp = g_FXCPHashTable[iMid];

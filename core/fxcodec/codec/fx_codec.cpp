@@ -375,7 +375,7 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
     return;
   }
   if (m_Operator < 128) {
-    FXSYS_assert((uint32_t)m_Operator + 1 >= used_bytes);
+    ASSERT((uint32_t)m_Operator + 1 >= used_bytes);
     if (used_bytes == m_Operator + 1) {
       m_SrcOffset += used_bytes;
       GetNextOperator();
@@ -389,7 +389,7 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
     return;
   }
   uint8_t count = 257 - m_Operator;
-  FXSYS_assert((uint32_t)count >= used_bytes);
+  ASSERT((uint32_t)count >= used_bytes);
   if (used_bytes == count) {
     m_SrcOffset++;
     GetNextOperator();

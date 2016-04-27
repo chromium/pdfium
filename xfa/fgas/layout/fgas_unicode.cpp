@@ -7,8 +7,8 @@
 #include "xfa/fgas/layout/fgas_unicode.h"
 
 void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray& tpos, int32_t iStart, int32_t iEnd) {
-  FXSYS_assert(iStart > -1 && iStart < tpos.GetSize());
-  FXSYS_assert(iEnd > -1 && iEnd < tpos.GetSize());
+  ASSERT(iStart > -1 && iStart < tpos.GetSize());
+  ASSERT(iEnd > -1 && iEnd < tpos.GetSize());
   if (iStart >= iEnd) {
     return;
   }

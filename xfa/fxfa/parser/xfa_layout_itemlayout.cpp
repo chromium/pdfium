@@ -46,8 +46,8 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
       m_bUseInheriated(FALSE),
       m_ePreProcessRs(XFA_ItemLayoutProcessorResult_Done),
       m_bHasAvailHeight(TRUE) {
-  FXSYS_assert(m_pFormNode && (m_pFormNode->IsContainerNode() ||
-                               m_pFormNode->GetClassID() == XFA_ELEMENT_Form));
+  ASSERT(m_pFormNode && (m_pFormNode->IsContainerNode() ||
+                         m_pFormNode->GetClassID() == XFA_ELEMENT_Form));
   m_pOldLayoutItem =
       (CXFA_ContentLayoutItem*)m_pFormNode->GetUserData(XFA_LAYOUTITEMKEY);
 }

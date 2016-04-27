@@ -1271,7 +1271,7 @@ static CXFA_TimeZoneProvider* g_pProvider = NULL;
 
 // Static.
 CXFA_TimeZoneProvider* CXFA_TimeZoneProvider::Create() {
-  FXSYS_assert(!g_pProvider);
+  ASSERT(!g_pProvider);
   g_pProvider = new CXFA_TimeZoneProvider();
   return g_pProvider;
 }

@@ -110,12 +110,12 @@ class CFX_ObjectBaseArrayTemplate : public CFX_BaseArray {
   int32_t Append(const CFX_ObjectBaseArrayTemplate& src,
                  int32_t iStart = 0,
                  int32_t iCount = -1) {
-    FXSYS_assert(GetBlockSize() == src.GetBlockSize());
+    ASSERT(GetBlockSize() == src.GetBlockSize());
     if (iCount == 0) {
       return 0;
     }
     int32_t iSize = src.GetSize();
-    FXSYS_assert(iStart > -1 && iStart < iSize);
+    ASSERT(iStart > -1 && iStart < iSize);
     if (iCount < 0) {
       iCount = iSize;
     }
@@ -139,12 +139,12 @@ class CFX_ObjectBaseArrayTemplate : public CFX_BaseArray {
   int32_t Copy(const CFX_ObjectBaseArrayTemplate& src,
                int32_t iStart = 0,
                int32_t iCount = -1) {
-    FXSYS_assert(GetBlockSize() == src.GetBlockSize());
+    ASSERT(GetBlockSize() == src.GetBlockSize());
     if (iCount == 0) {
       return 0;
     }
     int32_t iSize = src.GetSize();
-    FXSYS_assert(iStart > -1 && iStart < iSize);
+    ASSERT(iStart > -1 && iStart < iSize);
     if (iCount < 0) {
       iCount = iSize;
     }
@@ -312,7 +312,7 @@ class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
       return CFX_BaseMassArray::GetSize();
     }
     int32_t iSize = src.GetSize();
-    FXSYS_assert(iStart > -1 && iStart < iSize);
+    ASSERT(iStart > -1 && iStart < iSize);
     if (iCount < 0) {
       iCount = iSize;
     }
@@ -332,7 +332,7 @@ class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
       return CFX_BaseMassArray::GetSize();
     }
     int32_t iSize = src.GetSize();
-    FXSYS_assert(iStart > -1 && iStart < iSize);
+    ASSERT(iStart > -1 && iStart < iSize);
     if (iCount < 0) {
       iCount = iSize;
     }
@@ -479,7 +479,7 @@ class CFX_ObjectStackTemplate : public CFX_BaseStack {
       return CFX_BaseStack::GetSize();
     }
     int32_t iSize = src.GetSize();
-    FXSYS_assert(iStart > -1 && iStart < iSize);
+    ASSERT(iStart > -1 && iStart < iSize);
     if (iCount < 0) {
       iCount = iSize;
     }

@@ -25,7 +25,7 @@ void GetPageMatrix(CFX_Matrix& pageMatrix,
                    const CFX_Rect& devicePageRect,
                    int32_t iRotate,
                    uint32_t dwCoordinatesType) {
-  FXSYS_assert(iRotate >= 0 && iRotate <= 3);
+  ASSERT(iRotate >= 0 && iRotate <= 3);
   FX_BOOL bFlipX = (dwCoordinatesType & 0x01) != 0;
   FX_BOOL bFlipY = (dwCoordinatesType & 0x02) != 0;
   CFX_Matrix m;

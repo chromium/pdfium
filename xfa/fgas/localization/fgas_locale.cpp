@@ -768,7 +768,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
           if (!pLocale) {
             pLocale = m_pLocaleMgr->GetDefLocale();
           }
-          FXSYS_assert(pLocale != NULL);
+          ASSERT(pLocale != NULL);
           pLocale->GetNumPattern(eSubCategory, wsSubCategory);
           iDotIndex = wsSubCategory.Find('.');
           if (iDotIndex > 0) {
@@ -2223,7 +2223,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
           if (!pLocale) {
             pLocale = m_pLocaleMgr->GetDefLocale();
           }
-          FXSYS_assert(pLocale != NULL);
+          ASSERT(pLocale != NULL);
           switch (eCategory) {
             case FX_LOCALECATEGORY_Date:
               pLocale->GetDatePattern(eSubCategory, wsDatePattern);
@@ -4487,7 +4487,7 @@ static inline void fxmath_decimal_helper_raw_mul(uint64_t a[],
                                                  uint8_t bl,
                                                  uint64_t c[],
                                                  uint8_t cl) {
-  assert(al + bl <= cl);
+  ASSERT(al + bl <= cl);
   {
     for (int i = 0; i < cl; i++) {
       c[i] = 0;

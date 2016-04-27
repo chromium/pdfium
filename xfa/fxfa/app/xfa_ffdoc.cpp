@@ -141,7 +141,7 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
     }
     CPDF_Document* pPDFDocument =
         GetDocProvider()->OpenPDF(this, pXFAReader, TRUE);
-    FXSYS_assert(!m_pPDFDoc);
+    ASSERT(!m_pPDFDoc);
     if (!OpenDoc(pPDFDocument)) {
       return XFA_PARSESTATUS_SyntaxErr;
     }

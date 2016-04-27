@@ -521,7 +521,7 @@ CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
       m_iLock(0) {
   *m_pProperties = properties;
   m_pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
-  FXSYS_assert(m_pWidgetMgr != NULL);
+  ASSERT(m_pWidgetMgr != NULL);
 }
 CFWL_WidgetImp::~CFWL_WidgetImp() {
   if (m_pPrivateData) {

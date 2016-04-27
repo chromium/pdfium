@@ -28,7 +28,7 @@ CFX_SAXFile::CFX_SAXFile()
 FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
                                uint32_t dwStart,
                                uint32_t dwLen) {
-  FXSYS_assert(m_pFile == NULL && pFile != NULL);
+  ASSERT(m_pFile == NULL && pFile != NULL);
   uint32_t dwSize = pFile->GetSize();
   if (dwStart >= dwSize) {
     return FALSE;
@@ -52,7 +52,7 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
   return TRUE;
 }
 FX_BOOL CFX_SAXFile::ReadNextBlock() {
-  FXSYS_assert(m_pFile != NULL);
+  ASSERT(m_pFile != NULL);
   uint32_t dwSize = m_dwEnd - m_dwCur;
   if (dwSize == 0) {
     return FALSE;
@@ -558,7 +558,7 @@ void CFX_SAXReader::SkipNode() {
       return;
     }
     iLen--;
-    FXSYS_assert(iLen > -1);
+    ASSERT(iLen > -1);
     m_SkipStack.RemoveAt(iLen, 1);
     m_SkipChar = iLen ? m_SkipStack[iLen - 1] : 0;
     return;
@@ -619,7 +619,7 @@ void CFX_SAXReader::SkipNode() {
   }
 }
 void CFX_SAXReader::NotifyData() {
-  FXSYS_assert(m_pHandler != NULL);
+  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag)
     m_pHandler->OnTagData(m_pCurItem->m_pNode,
                           m_bCharData ? FX_SAXNODE_CharData : FX_SAXNODE_Text,
@@ -627,7 +627,7 @@ void CFX_SAXReader::NotifyData() {
                           m_File.m_dwCur + m_dwDataOffset);
 }
 void CFX_SAXReader::NotifyEnter() {
-  FXSYS_assert(m_pHandler != NULL);
+  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
       m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pCurItem->m_pNode =
@@ -636,7 +636,7 @@ void CFX_SAXReader::NotifyEnter() {
   }
 }
 void CFX_SAXReader::NotifyAttribute() {
-  FXSYS_assert(m_pHandler != NULL);
+  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
       m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pHandler->OnTagAttribute(m_pCurItem->m_pNode,
@@ -645,20 +645,20 @@ void CFX_SAXReader::NotifyAttribute() {
   }
 }
 void CFX_SAXReader::NotifyBreak() {
-  FXSYS_assert(m_pHandler != NULL);
+  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag) {
     m_pHandler->OnTagBreak(m_pCurItem->m_pNode);
   }
 }
 void CFX_SAXReader::NotifyClose() {
-  FXSYS_assert(m_pHandler != NULL);
+  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
       m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pHandler->OnTagClose(m_pCurItem->m_pNode, m_dwNodePos);
   }
 }
 void CFX_SAXReader::NotifyEnd() {
-  FXSYS_assert(m_pHandler != NULL);
+  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag) {
     m_pHandler->OnTagEnd(m_pCurItem->m_pNode,
                          CFX_ByteStringC(m_pszData, m_iDataLength),
@@ -666,7 +666,7 @@ void CFX_SAXReader::NotifyEnd() {
   }
 }
 void CFX_SAXReader::NotifyTargetData() {
-  FXSYS_assert(m_pHandler != NULL);
+  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pHandler->OnTargetData(m_pCurItem->m_pNode, m_pCurItem->m_eNode,
                              CFX_ByteStringC(m_pszName, m_iNameLength),

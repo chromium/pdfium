@@ -33,7 +33,7 @@ bool PathService::GetExecutableDir(std::string* path) {
     return false;
   *path = std::string(path_buffer);
 #elif defined(__APPLE__)
-  FXSYS_assert(path);
+  ASSERT(path);
   unsigned int path_length = 0;
   _NSGetExecutablePath(NULL, &path_length);
   if (path_length == 0)

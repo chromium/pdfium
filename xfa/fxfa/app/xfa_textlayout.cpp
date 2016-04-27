@@ -70,7 +70,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   if (m_pSelector == NULL) {
     CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
     IFX_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
-    FXSYS_assert(pFontMgr);
+    ASSERT(pFontMgr);
     m_pSelector = IFDE_CSSStyleSelector::Create();
     m_pSelector->SetFontMgr(pFontMgr);
     FX_FLOAT fFontSize = 10;
@@ -165,7 +165,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
     IFDE_CSSComputedStyle* pParentStyle) {
   IFDE_CSSComputedStyle* pNewStyle =
       m_pSelector->CreateComputedStyle(pParentStyle);
-  FXSYS_assert(pNewStyle);
+  ASSERT(pNewStyle);
   if (pParentStyle) {
     IFDE_CSSParagraphStyle* pParaStyle = pParentStyle->GetParagraphStyles();
     uint32_t dwDecoration = pParaStyle->GetTextDecoration();
@@ -645,7 +645,7 @@ CXFA_TextLayout::CXFA_TextLayout(CXFA_TextProvider* pTextProvider)
       m_fMaxWidth(0),
       m_pTabstopContext(nullptr),
       m_bBlockContinue(TRUE) {
-  FXSYS_assert(m_pTextProvider);
+  ASSERT(m_pTextProvider);
 }
 CXFA_TextLayout::~CXFA_TextLayout() {
   m_textParser.Reset();
@@ -1194,7 +1194,7 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   pDevice->SetClipRect(rtClip);
   CFDE_Brush* pSolidBrush = new CFDE_Brush;
   CFDE_Pen* pPen = new CFDE_Pen;
-  FXSYS_assert(pDevice);
+  ASSERT(pDevice);
 
   if (m_pieceLines.GetSize() == 0) {
     int32_t iBlockCount = CountBlocks();
@@ -1390,7 +1390,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
         }
         if (wsName == FX_WSTRC(L"a")) {
           CFX_WideString wsLinkContent;
-          FXSYS_assert(pElement);
+          ASSERT(pElement);
           pElement->GetString(FX_WSTRC(L"href").c_str(), wsLinkContent);
           if (!wsLinkContent.IsEmpty()) {
             pLinkData = FXTARGET_NewWith(m_pAllocator) CXFA_LinkUserData(

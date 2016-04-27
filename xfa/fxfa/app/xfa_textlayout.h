@@ -197,7 +197,7 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
         m_pLinkData(nullptr),
         m_pAllocator(pAllocator),
         m_dwRefCount(0) {
-    FXSYS_assert(m_pAllocator);
+    ASSERT(m_pAllocator);
     if (m_pStyle)
       m_pStyle->AddRef();
   }
@@ -208,7 +208,7 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
         m_pLinkData(pLinkData),
         m_pAllocator(pAllocator),
         m_dwRefCount(0) {
-    FXSYS_assert(m_pAllocator);
+    ASSERT(m_pAllocator);
     if (m_pStyle)
       m_pStyle->AddRef();
   }

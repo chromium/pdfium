@@ -132,7 +132,7 @@ static void FXJSE_V8ConstructorCallback_Wrapper(
   if (!lpClassDefinition) {
     return;
   }
-  FXSYS_assert(info.This()->InternalFieldCount());
+  ASSERT(info.This()->InternalFieldCount());
   info.This()->SetAlignedPointerInInternalField(0, NULL);
 }
 

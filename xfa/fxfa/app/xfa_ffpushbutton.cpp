@@ -52,7 +52,7 @@ void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
                                                  pGS, &mt);
 }
 FX_BOOL CXFA_FFPushButton::LoadWidget() {
-  FXSYS_assert(m_pNormalWidget == NULL);
+  ASSERT(m_pNormalWidget == NULL);
   CFWL_PushButton* pPushButton = CFWL_PushButton::Create();
   if (pPushButton) {
     pPushButton->Initialize();

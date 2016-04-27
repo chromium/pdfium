@@ -668,7 +668,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(
     if (pParentXMLNode) {
       pParentXMLNode->RemoveChildNode(pXMLDocumentNode);
     }
-    FXSYS_assert(pXMLDocumentNode->GetType() == FDE_XMLNODE_Element);
+    ASSERT(pXMLDocumentNode->GetType() == FDE_XMLNODE_Element);
     if (pXMLDocumentNode->GetType() == FDE_XMLNODE_Element) {
       static_cast<CFDE_XMLElement*>(pXMLDocumentNode)
           ->RemoveAttribute(L"xmlns:xfa");
@@ -958,7 +958,7 @@ void XFA_ConvertXMLToPlainText(CFDE_XMLElement* pRootXMLNode,
         }
       } break;
       default:
-        FXSYS_assert(FALSE);
+        ASSERT(FALSE);
         break;
     }
   }
@@ -1014,7 +1014,7 @@ void CXFA_SimpleParser::ParseContentNode(CXFA_Node* pXFANode,
     if (pXFANode->GetObjectType() == XFA_OBJECTTYPE_ContentNode) {
       CXFA_Node* pContentRawDataNode =
           m_pFactory->CreateNode(ePacketID, element);
-      FXSYS_assert(pContentRawDataNode);
+      ASSERT(pContentRawDataNode);
       pContentRawDataNode->SetCData(XFA_ATTRIBUTE_Value, wsValue);
       pXFANode->InsertChild(pContentRawDataNode);
     } else {
@@ -1363,7 +1363,7 @@ int32_t CXFA_DocumentParser::StartParse(IFX_FileRead* pStream,
 int32_t CXFA_DocumentParser::DoParse(IFX_Pause* pPause) {
   int32_t nRetStatus = m_nodeParser.DoParse(pPause);
   if (nRetStatus >= XFA_PARSESTATUS_Done) {
-    FXSYS_assert(m_pDocument);
+    ASSERT(m_pDocument);
     m_pDocument->SetRoot(m_nodeParser.GetRootNode());
   }
   return nRetStatus;

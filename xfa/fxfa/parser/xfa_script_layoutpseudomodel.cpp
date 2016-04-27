@@ -422,7 +422,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Relayout(
     CFXJSE_Arguments* pArguments) {
   CXFA_Node* pRootNode = m_pDocument->GetRoot();
   CXFA_Node* pFormRoot = pRootNode->GetFirstChildByClass(XFA_ELEMENT_Form);
-  FXSYS_assert(pFormRoot);
+  ASSERT(pFormRoot);
   CXFA_Node* pContentRootNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
   CXFA_LayoutProcessor* pLayoutProcessor = m_pDocument->GetLayoutProcessor();
   if (pContentRootNode) {

@@ -165,7 +165,7 @@ FX_BOOL XFA_DataExporter_ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   if (!pContentNode->TryContent(wsContent, FALSE, FALSE)) {
     return FALSE;
   }
-  FXSYS_assert(pContentNode->GetObjectType() == XFA_OBJECTTYPE_ContentNode);
+  ASSERT(pContentNode->GetObjectType() == XFA_OBJECTTYPE_ContentNode);
   CXFA_Node* pParentNode = pContentNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (!pParentNode || pParentNode->GetClassID() != XFA_ELEMENT_Value) {
     return TRUE;
@@ -282,10 +282,10 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
           iEnd = wsRawValue.Find(L'\n', iStart);
         }
         CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-        FXSYS_assert(pParentNode);
+        ASSERT(pParentNode);
         CXFA_Node* pGrandparentNode =
             pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
-        FXSYS_assert(pGrandparentNode);
+        ASSERT(pGrandparentNode);
         CFX_WideString bodyTagName;
         bodyTagName = pGrandparentNode->GetCData(XFA_ATTRIBUTE_Name);
         if (bodyTagName.IsEmpty()) {
@@ -512,7 +512,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
           return FALSE;
         }
         CXFA_Node* pDataNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-        FXSYS_assert(pDataNode);
+        ASSERT(pDataNode);
         XFA_DataExporter_DealWithDataGroupNode(pDataNode);
         pXMLDoc->SaveXMLNode(pStream, pElement);
       } break;
@@ -568,14 +568,14 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
   if (pDataNode->GetClassID() == XFA_ELEMENT_DataGroup) {
     if (iChildNum > 0) {
       CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
-      FXSYS_assert(pXMLNode->GetType() == FDE_XMLNODE_Element);
+      ASSERT(pXMLNode->GetType() == FDE_XMLNODE_Element);
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       if (pXMLElement->HasAttribute(L"xfa:dataNode")) {
         pXMLElement->RemoveAttribute(L"xfa:dataNode");
       }
     } else {
       CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
-      FXSYS_assert(pXMLNode->GetType() == FDE_XMLNODE_Element);
+      ASSERT(pXMLNode->GetType() == FDE_XMLNODE_Element);
       static_cast<CFDE_XMLElement*>(pXMLNode)
           ->SetString(FX_WSTRC(L"xfa:dataNode"), FX_WSTRC(L"dataGroup"));
     }

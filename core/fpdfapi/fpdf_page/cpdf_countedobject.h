@@ -25,7 +25,7 @@ class CPDF_CountedObject {
   }
   T* get() const { return m_pObj; }
   T* AddRef() {
-    FXSYS_assert(m_pObj);
+    ASSERT(m_pObj);
     ++m_nCount;
     return m_pObj;
   }

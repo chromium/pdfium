@@ -93,7 +93,7 @@ FWL_ERR CXFA_FWLTheme::Initialize() {
 #endif
   }
 
-  FXSYS_assert(NULL != m_pCalendarFont);
+  ASSERT(NULL != m_pCalendarFont);
   FWLTHEME_Init();
   return FWL_ERR_Succeeded;
 }

@@ -522,7 +522,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(
     const CFX_WideStringC& wsExpression,
     int32_t nStart,
     CXFA_ResolveNodesData& rnd) {
-  FXSYS_assert(nStart > -1);
+  ASSERT(nStart > -1);
   int32_t iLength = wsExpression.GetLength();
   if (nStart >= iLength) {
     return 0;
@@ -691,7 +691,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(
     int32_t iFoundCount,
     CXFA_ResolveNodesData& rnd) {
   CXFA_NodeArray& findNodes = (CXFA_NodeArray&)rnd.m_Nodes;
-  FXSYS_assert(iFoundCount == findNodes.GetSize());
+  ASSERT(iFoundCount == findNodes.GetSize());
   CFX_WideString wsExpression;
   XFA_SCRIPTLANGTYPE eLangType = XFA_SCRIPTLANGTYPE_Unkown;
   if (wsCondition.Left(2) == FX_WSTRC(L".[") &&

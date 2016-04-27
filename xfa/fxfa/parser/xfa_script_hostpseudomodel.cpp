@@ -405,7 +405,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentInBatch(
 static int32_t XFA_FilterName(const CFX_WideStringC& wsExpression,
                               int32_t nStart,
                               CFX_WideString& wsFilter) {
-  FXSYS_assert(nStart > -1);
+  ASSERT(nStart > -1);
   int32_t iLength = wsExpression.GetLength();
   if (nStart >= iLength) {
     return iLength;

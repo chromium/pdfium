@@ -407,7 +407,7 @@ class CFX_ObjectArray : public CFX_BasicArray {
     if (!nSize) {
       return 0;
     }
-    FXSYS_assert(nStart > -1 && nStart < nSize);
+    ASSERT(nStart > -1 && nStart < nSize);
     if (nCount < 0) {
       nCount = nSize;
     }
@@ -437,7 +437,7 @@ class CFX_ObjectArray : public CFX_BasicArray {
     if (!nSize) {
       return 0;
     }
-    FXSYS_assert(nStart > -1 && nStart < nSize);
+    ASSERT(nStart > -1 && nStart < nSize);
     if (nCount < 0) {
       nCount = nSize;
     }
@@ -460,7 +460,7 @@ class CFX_ObjectArray : public CFX_BasicArray {
   int GetSize() const { return m_nSize; }
 
   ObjectClass& operator[](int index) const {
-    FXSYS_assert(index < m_nSize);
+    ASSERT(index < m_nSize);
     return *(ObjectClass*)CFX_BasicArray::GetDataPtr(index);
   }
 
@@ -469,7 +469,7 @@ class CFX_ObjectArray : public CFX_BasicArray {
   }
 
   void RemoveAt(int index) {
-    FXSYS_assert(index < m_nSize);
+    ASSERT(index < m_nSize);
     ((ObjectClass*)GetDataPtr(index))->~ObjectClass();
     CFX_BasicArray::RemoveAt(index, 1);
   }
@@ -806,7 +806,7 @@ class CFX_CountRef {
   }
 
   void operator=(void* p) {
-    FXSYS_assert(p == 0);
+    ASSERT(p == 0);
     if (!m_pObject) {
       return;
     }
@@ -982,7 +982,7 @@ class CFX_ListArrayTemplate {
 
   T2& operator[](int32_t nIndex) {
     uint8_t* data = m_Data.GetAt(nIndex);
-    FXSYS_assert(data);
+    ASSERT(data);
     return (T2&)(*(volatile T2*)data);
   }
 

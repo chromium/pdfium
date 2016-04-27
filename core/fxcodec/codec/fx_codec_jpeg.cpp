@@ -457,7 +457,7 @@ FX_BOOL CCodec_JpegDecoder::v_Rewind() {
     return FALSE;
   }
   if ((int)cinfo.output_width > m_OrigWidth) {
-    FXSYS_assert(FALSE);
+    ASSERT(FALSE);
     return FALSE;
   }
   m_bStarted = TRUE;
