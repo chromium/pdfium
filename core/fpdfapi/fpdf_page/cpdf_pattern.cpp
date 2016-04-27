@@ -9,10 +9,10 @@
 CPDF_Pattern::CPDF_Pattern(PatternType type,
                            CPDF_Document* pDoc,
                            CPDF_Object* pObj,
-                           const CFX_Matrix* pParentMatrix)
-    : m_PatternType(type), m_pDocument(pDoc), m_pPatternObj(pObj) {
-  if (pParentMatrix)
-    m_ParentMatrix = *pParentMatrix;
-}
+                           const CFX_Matrix& parentMatrix)
+    : m_PatternType(type),
+      m_pDocument(pDoc),
+      m_pPatternObj(pObj),
+      m_ParentMatrix(parentMatrix) {}
 
 CPDF_Pattern::~CPDF_Pattern() {}

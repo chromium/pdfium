@@ -664,7 +664,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage) {
 
 void CPDF_ContentParser::Start(CPDF_Form* pForm,
                                CPDF_AllStates* pGraphicStates,
-                               CFX_Matrix* pParentMatrix,
+                               const CFX_Matrix* pParentMatrix,
                                CPDF_Type3Char* pType3Char,
                                int level) {
   m_pType3Char = pType3Char;

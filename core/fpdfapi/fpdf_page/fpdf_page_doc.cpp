@@ -316,7 +316,7 @@ void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace) {
 
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
                                            FX_BOOL bShading,
-                                           const CFX_Matrix* matrix) {
+                                           const CFX_Matrix& matrix) {
   if (!pPatternObj)
     return nullptr;
 

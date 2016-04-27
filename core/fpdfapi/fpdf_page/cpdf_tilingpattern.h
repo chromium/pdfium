@@ -21,7 +21,7 @@ class CPDF_TilingPattern : public CPDF_Pattern {
  public:
   CPDF_TilingPattern(CPDF_Document* pDoc,
                      CPDF_Object* pPatternObj,
-                     const CFX_Matrix* parentMatrix);
+                     const CFX_Matrix& parentMatrix);
   ~CPDF_TilingPattern() override;
 
   CPDF_TilingPattern* AsTilingPattern() override { return this; }

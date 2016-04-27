@@ -105,7 +105,7 @@ class CPDF_StreamContentParser {
   CPDF_StreamContentParser(CPDF_Document* pDoc,
                            CPDF_Dictionary* pPageResources,
                            CPDF_Dictionary* pParentResources,
-                           CFX_Matrix* pmtContentToUser,
+                           const CFX_Matrix* pmtContentToUser,
                            CPDF_PageObjectHolder* pObjectHolder,
                            CPDF_Dictionary* pResources,
                            CFX_FloatRect* pBBox,
@@ -157,7 +157,7 @@ class CPDF_StreamContentParser {
   void RestoreStates(CPDF_AllStates* pState);
   CPDF_Font* FindFont(const CFX_ByteString& name);
   CPDF_ColorSpace* FindColorSpace(const CFX_ByteString& name);
-  CPDF_Pattern* FindPattern(const CFX_ByteString& name, FX_BOOL bShading);
+  CPDF_Pattern* FindPattern(const CFX_ByteString& name, bool bShading);
   CPDF_Object* FindResourceObj(const CFX_ByteStringC& type,
                                const CFX_ByteString& name);
 
@@ -288,7 +288,7 @@ class CPDF_ContentParser {
   void Start(CPDF_Page* pPage);
   void Start(CPDF_Form* pForm,
              CPDF_AllStates* pGraphicStates,
-             CFX_Matrix* pParentMatrix,
+             const CFX_Matrix* pParentMatrix,
              CPDF_Type3Char* pType3Char,
              int level);
   void Continue(IFX_Pause* pPause);
@@ -330,7 +330,7 @@ class CPDF_DocPageData {
   void ReleaseColorSpace(CPDF_Object* pColorSpace);
   CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
                            FX_BOOL bShading,
-                           const CFX_Matrix* matrix);
+                           const CFX_Matrix& matrix);
   void ReleasePattern(CPDF_Object* pPatternObj);
   CPDF_Image* GetImage(CPDF_Object* pImageStream);
   void ReleaseImage(CPDF_Object* pImageStream);

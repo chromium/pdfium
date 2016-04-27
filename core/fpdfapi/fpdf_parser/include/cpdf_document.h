@@ -70,7 +70,7 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
 
   CPDF_Pattern* LoadPattern(CPDF_Object* pObj,
                             FX_BOOL bShading,
-                            const CFX_Matrix* matrix = NULL);
+                            const CFX_Matrix& matrix);
 
   CPDF_Image* LoadImageF(CPDF_Object* pObj);
   CPDF_StreamAcc* LoadFontFile(CPDF_Stream* pStream);

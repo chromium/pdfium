@@ -753,7 +753,7 @@ CPDF_ColorSpace* CPDF_Document::LoadColorSpace(CPDF_Object* pCSObj,
 
 CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj,
                                          FX_BOOL bShading,
-                                         const CFX_Matrix* matrix) {
+                                         const CFX_Matrix& matrix) {
   return m_pDocPage->GetPattern(pPatternObj, bShading, matrix);
 }
 

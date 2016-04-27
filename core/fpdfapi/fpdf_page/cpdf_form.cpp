@@ -18,15 +18,13 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pParentResources) {
   m_pDocument = pDoc;
   m_pFormStream = pFormStream;
-  m_pFormDict = pFormStream ? pFormStream->GetDict() : NULL;
+  m_pFormDict = pFormStream ? pFormStream->GetDict() : nullptr;
   m_pResources = m_pFormDict->GetDictBy("Resources");
   m_pPageResources = pPageResources;
-  if (!m_pResources) {
+  if (!m_pResources)
     m_pResources = pParentResources;
-  }
-  if (!m_pResources) {
+  if (!m_pResources)
     m_pResources = pPageResources;
-  }
   m_Transparency = 0;
   LoadTransInfo();
 }
@@ -34,23 +32,23 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
 CPDF_Form::~CPDF_Form() {}
 
 void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
-                           CFX_Matrix* pParentMatrix,
+                           const CFX_Matrix* pParentMatrix,
                            CPDF_Type3Char* pType3Char,
                            int level) {
-  if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING) {
+  if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING)
     return;
-  }
+
   m_pParser.reset(new CPDF_ContentParser);
   m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, level);
   m_ParseState = CONTENT_PARSING;
 }
 
 void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
-                             CFX_Matrix* pParentMatrix,
+                             const CFX_Matrix* pParentMatrix,
                              CPDF_Type3Char* pType3Char,
                              int level) {
   StartParse(pGraphicStates, pParentMatrix, pType3Char, level);
-  ContinueParse(NULL);
+  ContinueParse(nullptr);
 }
 
 CPDF_Form* CPDF_Form::Clone() const {

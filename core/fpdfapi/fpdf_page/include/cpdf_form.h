@@ -25,17 +25,18 @@ class CPDF_Form : public CPDF_PageObjectHolder {
 
   ~CPDF_Form();
 
-  void StartParse(CPDF_AllStates* pGraphicStates,
-                  CFX_Matrix* pParentMatrix,
-                  CPDF_Type3Char* pType3Char,
-                  int level = 0);
-
   void ParseContent(CPDF_AllStates* pGraphicStates,
-                    CFX_Matrix* pParentMatrix,
+                    const CFX_Matrix* pParentMatrix,
                     CPDF_Type3Char* pType3Char,
                     int level = 0);
 
   CPDF_Form* Clone() const;
+
+ private:
+  void StartParse(CPDF_AllStates* pGraphicStates,
+                  const CFX_Matrix* pParentMatrix,
+                  CPDF_Type3Char* pType3Char,
+                  int level = 0);
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORM_H_

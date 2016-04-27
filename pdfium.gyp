@@ -410,7 +410,6 @@
         'core/fpdfapi/fpdf_page/fpdf_page_func.cpp',
         'core/fpdfapi/fpdf_page/fpdf_page_parser.cpp',
         'core/fpdfapi/fpdf_page/fpdf_page_parser_old.cpp',
-        'core/fpdfapi/fpdf_page/fpdf_page_pattern.cpp',
         'core/fpdfapi/fpdf_page/include/cpdf_clippath.h',
         'core/fpdfapi/fpdf_page/include/cpdf_color.h',
         'core/fpdfapi/fpdf_page/include/cpdf_colorspace.h',

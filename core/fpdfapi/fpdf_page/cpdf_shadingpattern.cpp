@@ -25,7 +25,7 @@ ShadingType ToShadingType(int type) {
 CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
                                          CPDF_Object* pPatternObj,
                                          FX_BOOL bShading,
-                                         const CFX_Matrix* parentMatrix)
+                                         const CFX_Matrix& parentMatrix)
     : CPDF_Pattern(SHADING,
                    pDoc,
                    bShading ? nullptr : pPatternObj,
@@ -40,8 +40,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
     m_Pattern2Form = pDict->GetMatrixBy("Matrix");
     m_pShadingObj = pDict->GetDirectObjectBy("Shading");
-    if (parentMatrix)
-      m_Pattern2Form.Concat(*parentMatrix);
+    m_Pattern2Form.Concat(parentMatrix);
   }
   for (size_t i = 0; i < FX_ArraySize(m_pFunctions); ++i)
     m_pFunctions[i] = nullptr;
