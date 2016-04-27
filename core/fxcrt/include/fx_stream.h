@@ -79,7 +79,7 @@ class IFX_StreamRead {
   virtual size_t ReadBlock(void* buffer, size_t size) = 0;
 };
 
-class IFX_FileRead : IFX_StreamRead {
+class IFX_FileRead : public IFX_StreamRead {
  public:
   // IFX_StreamRead:
   void Release() override = 0;

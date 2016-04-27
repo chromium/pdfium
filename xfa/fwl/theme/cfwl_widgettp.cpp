@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fgas/font/fgas_stdfontmgr.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
@@ -690,7 +691,7 @@ FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     m_pFontMgr = IFX_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
-    m_pFontSource = FX_CreateDefaultFontSourceEnum();
+    m_pFontSource = new CFX_FontSourceEnum_File;
     m_pFontMgr = IFX_FontMgr::Create(m_pFontSource);
 #endif
   }

@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/xml/fgas_sax_imp.h"
+#include "xfa/fgas/xml/fgas_sax.h"
 
 #include <algorithm>
+
+#include "xfa/fxfa/include/xfa_checksum.h"
 
 namespace {
 
@@ -14,9 +16,6 @@ const uint32_t kSaxFileBufSize = 32768;
 
 }  // namespace
 
-IFX_SAXReader* FX_SAXReader_Create() {
-  return new CFX_SAXReader;
-}
 CFX_SAXFile::CFX_SAXFile()
     : m_pFile(NULL),
       m_dwStart(0),
@@ -618,16 +617,16 @@ void CFX_SAXReader::SkipNode() {
     ParseChar(m_CurByte);
   }
 }
+
 void CFX_SAXReader::NotifyData() {
-  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag)
     m_pHandler->OnTagData(m_pCurItem->m_pNode,
                           m_bCharData ? FX_SAXNODE_CharData : FX_SAXNODE_Text,
                           CFX_ByteStringC(m_pszData, m_iDataLength),
                           m_File.m_dwCur + m_dwDataOffset);
 }
+
 void CFX_SAXReader::NotifyEnter() {
-  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
       m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pCurItem->m_pNode =
@@ -635,8 +634,8 @@ void CFX_SAXReader::NotifyEnter() {
                                m_pCurItem->m_eNode, m_dwNodePos);
   }
 }
+
 void CFX_SAXReader::NotifyAttribute() {
-  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
       m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pHandler->OnTagAttribute(m_pCurItem->m_pNode,
@@ -644,29 +643,28 @@ void CFX_SAXReader::NotifyAttribute() {
                                CFX_ByteStringC(m_pszData, m_iDataLength));
   }
 }
+
 void CFX_SAXReader::NotifyBreak() {
-  ASSERT(m_pHandler != NULL);
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag) {
+  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag)
     m_pHandler->OnTagBreak(m_pCurItem->m_pNode);
-  }
 }
+
 void CFX_SAXReader::NotifyClose() {
-  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
       m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pHandler->OnTagClose(m_pCurItem->m_pNode, m_dwNodePos);
   }
 }
+
 void CFX_SAXReader::NotifyEnd() {
-  ASSERT(m_pHandler != NULL);
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag) {
-    m_pHandler->OnTagEnd(m_pCurItem->m_pNode,
-                         CFX_ByteStringC(m_pszData, m_iDataLength),
-                         m_dwNodePos);
-  }
+  if (m_pCurItem->m_eNode != FX_SAXNODE_Tag)
+    return;
+
+  m_pHandler->OnTagEnd(m_pCurItem->m_pNode,
+                       CFX_ByteStringC(m_pszData, m_iDataLength), m_dwNodePos);
 }
+
 void CFX_SAXReader::NotifyTargetData() {
-  ASSERT(m_pHandler != NULL);
   if (m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
     m_pHandler->OnTargetData(m_pCurItem->m_pNode, m_pCurItem->m_eNode,
                              CFX_ByteStringC(m_pszName, m_iNameLength),
@@ -677,12 +675,14 @@ void CFX_SAXReader::NotifyTargetData() {
                              m_dwNodePos);
   }
 }
+
 void CFX_SAXReader::SkipCurrentNode() {
-  if (!m_pCurItem) {
+  if (!m_pCurItem)
     return;
-  }
+
   m_pCurItem->m_bSkip = TRUE;
 }
-void CFX_SAXReader::SetHandler(IFX_SAXReaderHandler* pHandler) {
+
+void CFX_SAXReader::SetHandler(CXFA_SAXReaderHandler* pHandler) {
   m_pHandler = pHandler;
 }

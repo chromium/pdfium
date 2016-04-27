@@ -67,7 +67,7 @@ class CXFA_FFApp : public IFWL_AdapterNative {
   IXFA_AppProvider* m_pProvider;
   CXFA_FontMgr* m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  IFX_FontSourceEnum* m_pFontSource;
+  CFX_FontSourceEnum_File* m_pFontSource;
 #endif
   CXFA_FWLAdapterWidgetMgr* m_pAdapterWidgetMgr;
   IFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;

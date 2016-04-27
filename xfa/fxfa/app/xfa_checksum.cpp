@@ -126,30 +126,28 @@ void CXFA_SAXReaderHandler::UpdateChecksum(FX_BOOL bCheckSpace) {
 }
 
 CXFA_ChecksumContext::CXFA_ChecksumContext()
-    : m_pSAXReader(NULL), m_pByteContext(NULL) {}
+    : m_pSAXReader(nullptr), m_pByteContext(nullptr) {}
+
 CXFA_ChecksumContext::~CXFA_ChecksumContext() {
   FinishChecksum();
 }
-FX_BOOL CXFA_ChecksumContext::StartChecksum() {
+
+void CXFA_ChecksumContext::StartChecksum() {
   FinishChecksum();
   m_pByteContext = FX_Alloc(uint8_t, 128);
   CRYPT_SHA1Start(m_pByteContext);
   m_bsChecksum.clear();
-  m_pSAXReader = FX_SAXReader_Create();
-  return m_pSAXReader != NULL;
+  m_pSAXReader = new CFX_SAXReader;
 }
+
 FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_FileRead* pSrcFile,
                                              FX_FILESIZE offset,
                                              size_t size) {
-  if (m_pSAXReader == NULL) {
+  if (!m_pSAXReader || !pSrcFile)
     return FALSE;
-  }
-  if (pSrcFile == NULL) {
-    return FALSE;
-  }
-  if (size < 1) {
+  if (size < 1)
     size = pSrcFile->GetSize();
-  }
+
   CXFA_SAXReaderHandler handler(this);
   m_pSAXReader->SetHandler(&handler);
   if (m_pSAXReader->StartParse(
@@ -161,6 +159,7 @@ FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_FileRead* pSrcFile,
   }
   return m_pSAXReader->ContinueParse(NULL) > 99;
 }
+
 void CXFA_ChecksumContext::FinishChecksum() {
   if (m_pSAXReader) {
     m_pSAXReader->Release();

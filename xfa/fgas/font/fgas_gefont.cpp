@@ -8,6 +8,7 @@
 
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
+#include "xfa/fxfa/include/xfa_fontmgr.h"
 
 IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
                              uint32_t dwFontStyles,

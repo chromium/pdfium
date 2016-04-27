@@ -126,19 +126,22 @@ struct FX_HandleParentPath {
   CFX_ByteString bsParentPath;
 };
 
-class CFX_FontSourceEnum_File : public IFX_FontSourceEnum {
+class CFX_FontSourceEnum_File {
  public:
   CFX_FontSourceEnum_File();
-  virtual void Release() { delete this; }
-  virtual FX_POSITION GetStartPosition();
-  virtual IFX_FileAccess* GetNext(FX_POSITION& pos);
+
+  void Release() { delete this; }
+  FX_POSITION GetStartPosition();
+  IFX_FileAccess* GetNext(FX_POSITION& pos);
 
  private:
   CFX_ByteString GetNextFile();
+
   CFX_WideString m_wsNext;
   CFX_ObjectArray<FX_HandleParentPath> m_FolderQueue;
   CFX_ByteStringArray m_FolderPaths;
 };
+
 typedef CFX_MapPtrTemplate<uint32_t, IFX_FileAccess*> CFX_HashFileMap;
 typedef CFX_MapPtrTemplate<uint32_t, IFX_Font*> CFX_HashFontMap;
 typedef CFX_MapPtrTemplate<uint32_t, CFX_FontDescriptorInfos*>
@@ -152,7 +155,8 @@ typedef CFX_MapPtrTemplate<IFX_Font*, IFX_FileRead*> CFX_FonStreamtMap;
 
 class CFX_FontMgrImp : public IFX_FontMgr {
  public:
-  CFX_FontMgrImp(IFX_FontSourceEnum* pFontEnum);
+  CFX_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum);
+
   virtual void Release();
   virtual IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
                                          uint32_t dwFontStyles,
@@ -239,7 +243,7 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   CFX_HashFontMap m_FileAccess2IFXFont;
   CFX_FonStreamtMap m_IFXFont2FileRead;
   CFX_UnicodeFontMap m_FailedUnicodes2NULL;
-  IFX_FontSourceEnum* m_pFontSource;
+  CFX_FontSourceEnum_File* m_pFontSource;
 };
 #endif
 

@@ -101,7 +101,7 @@ class CFWL_ThemePart;
 class CFWL_ThemeText;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-class IFX_FontSourceEnum;
+class CFX_FontSourceEnum_File;
 #endif
 
 class CFWL_WidgetTP {
@@ -270,7 +270,7 @@ class CFWL_FontData {
   IFX_Font* m_pFont;
   IFX_FontMgr* m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  IFX_FontSourceEnum* m_pFontSource;
+  CFX_FontSourceEnum_File* m_pFontSource;
 #endif
 };
 

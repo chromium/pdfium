@@ -15,6 +15,8 @@
 #include "xfa/fgas/crt/fgas_utils.h"
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
+class CFX_FontSourceEnum_File;
+class CXFA_PDFFontMgr;
 class IFX_Font;
 class IFX_FontMgr;
 
@@ -47,15 +49,6 @@ class IFX_FontMgr;
 #define FX_BOUNDINGSHAPE_Square 2
 #define FX_BOUNDINGSHAPE_Triangle 3
 #define FX_BOUNDINGSHAPE_Diamond 4
-
-class IFX_FontProvider {
- public:
-  virtual ~IFX_FontProvider() {}
-  virtual FX_BOOL GetCharWidth(IFX_Font* pFont,
-                               FX_WCHAR wUnicode,
-                               int32_t& iWidth,
-                               FX_BOOL bCharCode = FALSE) = 0;
-};
 
 class IFX_Font {
  public:
@@ -96,7 +89,7 @@ class IFX_Font {
   virtual void Reset() = 0;
   virtual IFX_Font* GetSubstFont(int32_t iGlyphIndex) const = 0;
   virtual void* GetDevFont() const = 0;
-  virtual void SetFontProvider(IFX_FontProvider* pProvider) = 0;
+  virtual void SetFontProvider(CXFA_PDFFontMgr* pProvider) = 0;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   virtual void SetLogicalFontStyle(uint32_t dwLogFontStyle) = 0;
 #endif
@@ -192,17 +185,9 @@ class IFX_FontMgr {
 
 #else   //  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-class IFX_FontSourceEnum {
- public:
-  virtual ~IFX_FontSourceEnum() {}
-  virtual void Release() = 0;
-  virtual FX_POSITION GetStartPosition() = 0;
-  virtual IFX_FileAccess* GetNext(FX_POSITION& pos) = 0;
-};
-IFX_FontSourceEnum* FX_CreateDefaultFontSourceEnum();
 class IFX_FontMgr {
  public:
-  static IFX_FontMgr* Create(IFX_FontSourceEnum* pFontEnum);
+  static IFX_FontMgr* Create(CFX_FontSourceEnum_File* pFontEnum);
   virtual ~IFX_FontMgr() {}
   virtual void Release() = 0;
   virtual IFX_Font* GetDefFontByCodePage(

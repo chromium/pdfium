@@ -12,6 +12,8 @@
 
 #define FXFONT_SUBST_ITALIC 0x02
 
+class CXFA_PDFFontMgr;
+
 class CFX_GEFont : public IFX_Font {
  public:
   CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles);
@@ -45,7 +47,7 @@ class CFX_GEFont : public IFX_Font {
   virtual void Reset();
   virtual IFX_Font* GetSubstFont(int32_t iGlyphIndex) const;
   virtual void* GetDevFont() const { return (void*)m_pFont; }
-  virtual void SetFontProvider(IFX_FontProvider* pProvider) {
+  virtual void SetFontProvider(CXFA_PDFFontMgr* pProvider) {
     m_pProvider = pProvider;
   }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -70,7 +72,7 @@ class CFX_GEFont : public IFX_Font {
   CFX_WordDiscreteArray* m_pCharWidthMap;
   CFX_RectMassArray* m_pRectArray;
   CFX_MapPtrToPtr* m_pBBoxMap;
-  IFX_FontProvider* m_pProvider;
+  CXFA_PDFFontMgr* m_pProvider;
   uint16_t m_wCharSet;
   CFX_PtrArray m_SubstFonts;
   CFX_MapPtrToPtr m_FontMapper;

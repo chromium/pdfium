@@ -42,10 +42,11 @@ class CXFA_DefFontMgr {
   CFX_PtrArray m_CacheFonts;
 };
 
-class CXFA_PDFFontMgr : public IFX_FontProvider {
+class CXFA_PDFFontMgr {
  public:
   CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
   ~CXFA_PDFFontMgr();
+
   IFX_Font* GetFont(const CFX_WideStringC& wsFontFamily,
                     uint32_t dwFontStyles,
                     CPDF_Font** pPDFFont,

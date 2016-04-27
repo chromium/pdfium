@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "xfa/fgas/font/fgas_stdfontmgr.h"
 #include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
@@ -146,7 +147,7 @@ IFX_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     m_pFDEFontMgr = IFX_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
-    m_pFontSource = FX_CreateDefaultFontSourceEnum();
+    m_pFontSource = new CFX_FontSourceEnum_File;
     m_pFDEFontMgr = IFX_FontMgr::Create(m_pFontSource);
 #endif
   }

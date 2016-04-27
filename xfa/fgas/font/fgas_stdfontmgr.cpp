@@ -555,21 +555,19 @@ IFX_FileAccess* CFX_FontSourceEnum_File::GetNext(FX_POSITION& pos) {
   pos = 0 != m_wsNext.GetLength() ? pAccess : NULL;
   return (IFX_FileAccess*)pAccess;
 }
-IFX_FontSourceEnum* FX_CreateDefaultFontSourceEnum() {
-  return (IFX_FontSourceEnum*)new CFX_FontSourceEnum_File;
-}
-IFX_FontMgr* IFX_FontMgr::Create(IFX_FontSourceEnum* pFontEnum) {
-  if (NULL == pFontEnum) {
-    return NULL;
-  }
+
+IFX_FontMgr* IFX_FontMgr::Create(CFX_FontSourceEnum_File* pFontEnum) {
+  if (!pFontEnum)
+    return nullptr;
+
   CFX_FontMgrImp* pFontMgr = new CFX_FontMgrImp(pFontEnum);
-  if (pFontMgr->EnumFonts()) {
+  if (pFontMgr->EnumFonts())
     return pFontMgr;
-  }
+
   delete pFontMgr;
-  return NULL;
+  return nullptr;
 }
-CFX_FontMgrImp::CFX_FontMgrImp(IFX_FontSourceEnum* pFontEnum)
+CFX_FontMgrImp::CFX_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum)
     : m_pFontSource(pFontEnum) {}
 
 FX_BOOL CFX_FontMgrImp::EnumFontsFromFontMapper() {
