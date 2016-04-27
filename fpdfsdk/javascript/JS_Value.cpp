@@ -151,7 +151,7 @@ void CJS_Value::MaybeCoerceToNumber() {
     if (bstr == "NaN")
       bAllowNaN = true;
   }
-  v8::TryCatch(m_pJSRuntime->GetIsolate());
+  v8::TryCatch try_catch(m_pJSRuntime->GetIsolate());
   v8::MaybeLocal<v8::Number> maybeNum =
       m_pValue->ToNumber(m_pJSRuntime->GetIsolate()->GetCurrentContext());
   if (maybeNum.IsEmpty())
