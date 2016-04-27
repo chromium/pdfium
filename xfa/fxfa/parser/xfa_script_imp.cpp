@@ -58,10 +58,8 @@ CXFA_ScriptContext::~CXFA_ScriptContext() {
     m_pResolveProcessor = NULL;
   }
   m_upObjectArray.RemoveAll();
-  for (int32_t i = 0; i < m_CacheListArray.GetSize(); i++) {
-    delete ((CXFA_NodeList*)m_CacheListArray[i]);
-  }
-  m_CacheListArray.RemoveAll();
+  for (int32_t i = 0; i < m_CacheListArray.GetSize(); i++)
+    delete m_CacheListArray[i];
 }
 void CXFA_ScriptContext::Initialize(FXJSE_HRUNTIME hRuntime) {
   m_hJsRuntime = hRuntime;

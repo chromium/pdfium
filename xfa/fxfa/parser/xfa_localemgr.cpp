@@ -1134,14 +1134,11 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
   m_pDefLocale = GetLocaleByName(wsDeflcid.AsStringC());
 }
 CXFA_LocaleMgr::~CXFA_LocaleMgr() {
-  int32_t iCount = m_LocaleArray.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
-    ((IFX_Locale*)m_LocaleArray[i])->Release();
-  }
-  int32_t iXmls = m_XMLLocaleArray.GetSize();
-  for (int32_t j = 0; j < iXmls; j++) {
-    ((IFX_Locale*)m_XMLLocaleArray[j])->Release();
-  }
+  for (int32_t i = 0; i < m_LocaleArray.GetSize(); i++)
+    m_LocaleArray[i]->Release();
+
+  for (int32_t j = 0; j < m_XMLLocaleArray.GetSize(); j++)
+    m_XMLLocaleArray[j]->Release();
 }
 void CXFA_LocaleMgr::Release() {
   delete this;
@@ -1149,19 +1146,24 @@ void CXFA_LocaleMgr::Release() {
 uint16_t CXFA_LocaleMgr::GetDefLocaleID() {
   return m_dwDeflcid;
 }
+
 IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
-  if (m_pDefLocale) {
+  if (m_pDefLocale)
     return m_pDefLocale;
-  } else if (m_LocaleArray.GetSize()) {
-    return (IFX_Locale*)m_LocaleArray[0];
-  } else if (m_XMLLocaleArray.GetSize()) {
-    return (IFX_Locale*)m_XMLLocaleArray[0];
-  }
+
+  if (m_LocaleArray.GetSize())
+    return m_LocaleArray[0];
+
+  if (m_XMLLocaleArray.GetSize())
+    return m_XMLLocaleArray[0];
+
   m_pDefLocale = GetLocale(m_dwDeflcid);
   if (m_pDefLocale)
     m_XMLLocaleArray.Add(m_pDefLocale);
+
   return m_pDefLocale;
 }
+
 IFX_Locale* CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   IFX_Locale* pLocal = NULL;
   switch (lcid) {
@@ -1219,7 +1221,7 @@ IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
   int32_t iCount = m_LocaleArray.GetSize();
   int32_t i = 0;
   for (i = 0; i < iCount; i++) {
-    IFX_Locale* pLocale = ((IFX_Locale*)m_LocaleArray[i]);
+    IFX_Locale* pLocale = m_LocaleArray[i];
     if (pLocale->GetName() == wsLocaleName) {
       return pLocale;
     }
@@ -1230,7 +1232,7 @@ IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
   }
   iCount = m_XMLLocaleArray.GetSize();
   for (i = 0; i < iCount; i++) {
-    IFX_Locale* pLocale = ((IFX_Locale*)m_XMLLocaleArray[i]);
+    IFX_Locale* pLocale = m_XMLLocaleArray[i];
     if (pLocale->GetName() == wsLocaleName) {
       return pLocale;
     }

@@ -43,8 +43,8 @@ class CXFA_LocaleMgr : public IFX_LocaleMgr {
   CFX_WideStringC GetConfigLocaleName(CXFA_Node* pConfig);
 
  protected:
-  CFX_PtrArray m_LocaleArray;
-  CFX_PtrArray m_XMLLocaleArray;
+  CFX_ArrayTemplate<IFX_Locale*> m_LocaleArray;
+  CFX_ArrayTemplate<IFX_Locale*> m_XMLLocaleArray;
   IFX_Locale* m_pDefLocale;
   CFX_WideString m_wsConfigLocale;
   uint16_t m_dwDeflcid;

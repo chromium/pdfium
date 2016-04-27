@@ -651,7 +651,7 @@ void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
       (CXFA_CalcData*)pNodeChange->GetUserData(XFA_CalcData);
   int32_t iCount = pGlobalData ? pGlobalData->m_Globals.GetSize() : 0;
   for (int32_t i = 0; i < iCount; i++) {
-    CXFA_WidgetAcc* pResultAcc = (CXFA_WidgetAcc*)pGlobalData->m_Globals[i];
+    CXFA_WidgetAcc* pResultAcc = pGlobalData->m_Globals[i];
     if (pResultAcc->GetNode()->HasFlag(XFA_NODEFLAG_HasRemoved)) {
       continue;
     }

@@ -97,8 +97,8 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
   void ClearInvalidEventTargets(FX_BOOL bRemoveAll);
   CFX_ArrayTemplate<CFWL_TargetImp*> m_forms;
-  CFX_PtrArray m_noteQueue;
-  CFX_PtrArray m_noteLoopQueue;
+  CFX_ArrayTemplate<CFWL_Message*> m_noteQueue;
+  CFX_ArrayTemplate<IFWL_NoteLoop*> m_noteLoopQueue;
   CFX_MapPtrToPtr m_eventTargets;
   int32_t m_sendEventCalled;
   IFWL_Widget* m_pHover;
@@ -147,7 +147,7 @@ class CFWL_ToolTipContainer {
   IFWL_ToolTipTarget* pCurTarget;
   CFWL_ToolTipImp* m_pToolTipImp;
   CFWL_CoreToolTipDP* m_ToolTipDp;
-  CFX_PtrArray m_arrWidget;
+  CFX_ArrayTemplate<IFWL_ToolTipTarget*> m_arrWidget;
 
  private:
   static CFWL_ToolTipContainer* s_pInstance;

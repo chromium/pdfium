@@ -644,8 +644,7 @@ FX_ERR CFX_Graphics::RestoreGraphState() {
       return FX_ERR_Intermediate_Value_Invalid;
     }
     int32_t topIndex = size - 1;
-    std::unique_ptr<TInfo> info(
-        reinterpret_cast<TInfo*>(m_infoStack.GetAt(topIndex)));
+    std::unique_ptr<TInfo> info(m_infoStack.GetAt(topIndex));
     if (!info)
       return FX_ERR_Intermediate_Value_Invalid;
     m_info = *info;

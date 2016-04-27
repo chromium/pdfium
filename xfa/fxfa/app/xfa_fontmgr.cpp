@@ -1737,11 +1737,8 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
 }
 
 CXFA_DefFontMgr::~CXFA_DefFontMgr() {
-  int32_t iCounts = m_CacheFonts.GetSize();
-  for (int32_t i = 0; i < iCounts; i++) {
-    ((IFX_Font*)m_CacheFonts[i])->Release();
-  }
-  m_CacheFonts.RemoveAll();
+  for (int32_t i = 0; i < m_CacheFonts.GetSize(); i++)
+    m_CacheFonts[i]->Release();
 }
 
 IFX_Font* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,

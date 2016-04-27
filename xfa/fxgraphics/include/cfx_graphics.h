@@ -245,7 +245,7 @@ class CFX_Graphics {
                       CFX_RectF& rect);
 
   CFX_RenderDevice* m_renderDevice;
-  CFX_PtrArray m_infoStack;
+  CFX_ArrayTemplate<TInfo*> m_infoStack;
   CAGG_Graphics* m_aggGraphics;
   friend class CAGG_Graphics;
 };

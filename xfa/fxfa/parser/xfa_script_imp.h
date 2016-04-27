@@ -113,7 +113,7 @@ class CXFA_ScriptContext {
   CFX_MapPtrTemplate<CXFA_Object*, FXJSE_HCONTEXT> m_mapVariableToHValue;
   CXFA_EventParam m_eventParam;
   CXFA_NodeArray m_upObjectArray;
-  CFX_PtrArray m_CacheListArray;
+  CFX_ArrayTemplate<CXFA_NodeList*> m_CacheListArray;
   CXFA_NodeArray* m_pScriptNodeArray;
   CXFA_ResolveProcessor* m_pResolveProcessor;
   XFA_HFM2JSCONTEXT m_hFM2JSContext;

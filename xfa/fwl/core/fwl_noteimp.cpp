@@ -164,8 +164,7 @@ IFWL_NoteLoop* CFWL_NoteDriver::PopNoteLoop() {
   int32_t pos = m_noteLoopQueue.GetSize();
   if (pos <= 0)
     return NULL;
-  IFWL_NoteLoop* p =
-      static_cast<IFWL_NoteLoop*>(m_noteLoopQueue.GetAt(pos - 1));
+  IFWL_NoteLoop* p = m_noteLoopQueue.GetAt(pos - 1);
   m_noteLoopQueue.RemoveAt(pos - 1);
   return p;
 }
@@ -351,7 +350,7 @@ FX_BOOL CFWL_NoteDriver::UnqueueMessage(CFWL_NoteLoop* pNoteLoop) {
   if (m_noteQueue.GetSize() < 1) {
     return FALSE;
   }
-  CFWL_Message* pMessage = static_cast<CFWL_Message*>(m_noteQueue[0]);
+  CFWL_Message* pMessage = m_noteQueue[0];
   m_noteQueue.RemoveAt(0);
   if (!IsValidMessage(pMessage)) {
     pMessage->Release();
@@ -365,7 +364,7 @@ FX_BOOL CFWL_NoteDriver::UnqueueMessage(CFWL_NoteLoop* pNoteLoop) {
 CFWL_NoteLoop* CFWL_NoteDriver::GetTopLoop() {
   int32_t size = m_noteLoopQueue.GetSize();
   if (size <= 0)
-    return NULL;
+    return nullptr;
   return static_cast<CFWL_NoteLoop*>(m_noteLoopQueue[size - 1]);
 }
 int32_t CFWL_NoteDriver::CountLoop() {
@@ -885,14 +884,14 @@ void CFWL_ToolTipContainer::DeleteInstance() {
   }
 }
 FX_ERR CFWL_ToolTipContainer::AddToolTipTarget(IFWL_ToolTipTarget* pTarget) {
-  if (m_arrWidget.Find((void*)pTarget) < 0) {
-    m_arrWidget.Add((void*)pTarget);
+  if (m_arrWidget.Find(pTarget) < 0) {
+    m_arrWidget.Add(pTarget);
     return FWL_ERR_Succeeded;
   }
   return FWL_ERR_Indefinite;
 }
 FX_ERR CFWL_ToolTipContainer::RemoveToolTipTarget(IFWL_ToolTipTarget* pTarget) {
-  int index = m_arrWidget.Find((void*)pTarget);
+  int index = m_arrWidget.Find(pTarget);
   if (index >= 0) {
     m_arrWidget.RemoveAt(index);
     return FWL_ERR_Succeeded;
@@ -902,7 +901,7 @@ FX_ERR CFWL_ToolTipContainer::RemoveToolTipTarget(IFWL_ToolTipTarget* pTarget) {
 FX_BOOL CFWL_ToolTipContainer::HasToolTip(IFWL_Widget* pWedget) {
   int32_t iCount = m_arrWidget.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ToolTipTarget* p = static_cast<IFWL_ToolTipTarget*>(m_arrWidget[i]);
+    IFWL_ToolTipTarget* p = m_arrWidget[i];
     if (p->GetWidget() == pWedget) {
       pCurTarget = p;
       return TRUE;

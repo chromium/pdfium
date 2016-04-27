@@ -29,13 +29,16 @@ enum XFA_WIDGETITEM {
   XFA_WIDGETITEM_NextSibling,
   XFA_WIDGETITEM_PrevSibling,
 };
+
 class CXFA_CalcData {
  public:
   CXFA_CalcData() : m_iRefCount(0) {}
   ~CXFA_CalcData() { m_Globals.RemoveAll(); }
-  CFX_PtrArray m_Globals;
+
+  CFX_ArrayTemplate<CXFA_WidgetAcc*> m_Globals;
   int32_t m_iRefCount;
 };
+
 class CXFA_FFWidget : public CFX_PrivateData, public CXFA_ContentLayoutItem {
  public:
   CXFA_FFWidget(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

@@ -39,7 +39,7 @@ class CXFA_DefFontMgr {
                            uint16_t wCodePage = 0xFFFF);
 
  protected:
-  CFX_PtrArray m_CacheFonts;
+  CFX_ArrayTemplate<IFX_Font*> m_CacheFonts;
 };
 
 class CXFA_PDFFontMgr {

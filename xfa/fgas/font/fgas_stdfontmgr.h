@@ -64,7 +64,7 @@ class CFX_StdFontMgrImp : public IFX_FontMgr {
 
   FX_LPEnumAllFonts m_pEnumerator;
   CFX_FontDescriptors m_FontFaces;
-  CFX_PtrArray m_Fonts;
+  CFX_ArrayTemplate<IFX_Font*> m_Fonts;
   CFX_MapPtrToPtr m_CPFonts;
   CFX_MapPtrToPtr m_FamilyFonts;
   CFX_MapPtrToPtr m_UnicodeFonts;
