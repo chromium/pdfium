@@ -22,6 +22,7 @@ class CFWL_MsgMouseWheel;
 class CFWL_MsgSetFocus;
 class CFWL_MsgSize;
 class CFWL_MsgWindowMove;
+class CFWL_TargetImp;
 class CFWL_ToolTipImp;
 class CFWL_WidgetImp;
 class IFWL_ToolTipTarget;
@@ -95,7 +96,7 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   FX_BOOL IsValidMessage(CFWL_Message* pMessage);
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
   void ClearInvalidEventTargets(FX_BOOL bRemoveAll);
-  CFX_PtrArray m_forms;
+  CFX_ArrayTemplate<CFWL_TargetImp*> m_forms;
   CFX_PtrArray m_noteQueue;
   CFX_PtrArray m_noteLoopQueue;
   CFX_MapPtrToPtr m_eventTargets;

@@ -284,7 +284,7 @@ class CFDE_BlockBuffer : public CFX_Target {
                                      int32_t& iBlockIndex,
                                      int32_t& iInnerIndex) const;
   void ClearBuffer();
-  CFX_PtrArray m_BlockArray;
+  CFX_ArrayTemplate<FX_WCHAR*> m_BlockArray;
   int32_t m_iDataLength;
   int32_t m_iBufferSize;
   int32_t m_iAllocStep;

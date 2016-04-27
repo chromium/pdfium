@@ -85,7 +85,7 @@ class CFDE_TxtEdtBuf : public IFDE_TxtEdtBuf {
 
   int32_t m_nTotal;
   FX_BOOL m_bChanged;
-  CFX_PtrArray m_Chunks;
+  CFX_ArrayTemplate<FDE_CHUNKHEADER*> m_Chunks;
   IFX_MEMAllocator* m_pAllocator;
 };
 

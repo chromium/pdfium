@@ -74,7 +74,7 @@ class CFX_GEFont : public IFX_Font {
   CFX_MapPtrToPtr* m_pBBoxMap;
   CXFA_PDFFontMgr* m_pProvider;
   uint16_t m_wCharSet;
-  CFX_PtrArray m_SubstFonts;
+  CFX_ArrayTemplate<IFX_Font*> m_SubstFonts;
   CFX_MapPtrToPtr m_FontMapper;
   FX_BOOL InitFont();
   FX_BOOL GetCharBBox(FX_WCHAR wUnicode,

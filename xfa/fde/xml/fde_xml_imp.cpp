@@ -1328,7 +1328,7 @@ FX_WCHAR* CFDE_BlockBuffer::GetAvailableBlock(int32_t& iIndexInBlock) {
     return pBlock;
   }
   iIndexInBlock = iRealIndex % m_iAllocStep;
-  return (FX_WCHAR*)m_BlockArray[iRealIndex / m_iAllocStep];
+  return m_BlockArray[iRealIndex / m_iAllocStep];
 }
 FX_BOOL CFDE_BlockBuffer::InitBuffer(int32_t iBufferSize) {
   ClearBuffer();
@@ -1355,7 +1355,7 @@ void CFDE_BlockBuffer::SetTextChar(int32_t iIndex, FX_WCHAR ch) {
       m_iBufferSize += m_iAllocStep;
     } while (--iNewBlocks);
   }
-  FX_WCHAR* pTextData = (FX_WCHAR*)m_BlockArray[iBlockIndex];
+  FX_WCHAR* pTextData = m_BlockArray[iBlockIndex];
   *(pTextData + iInnerIndex) = ch;
   if (m_iDataLength <= iIndex) {
     m_iDataLength = iIndex + 1;
@@ -1412,7 +1412,7 @@ void CFDE_BlockBuffer::GetTextData(CFX_WideString& wsTextData,
     if (i == iEndBlockIndex) {
       iCopyLength -= ((m_iAllocStep - 1) - iEndInnerIndex);
     }
-    FX_WCHAR* pBlockBuf = (FX_WCHAR*)m_BlockArray[i];
+    FX_WCHAR* pBlockBuf = m_BlockArray[i];
     FXSYS_memcpy(pBuf + iPointer, pBlockBuf + iBufferPointer,
                  iCopyLength * sizeof(FX_WCHAR));
     iPointer += iCopyLength;
@@ -1432,7 +1432,6 @@ void CFDE_BlockBuffer::ClearBuffer() {
   int32_t iSize = m_BlockArray.GetSize();
   for (int32_t i = 0; i < iSize; i++) {
     FX_Free(m_BlockArray[i]);
-    m_BlockArray[i] = NULL;
   }
   m_BlockArray.RemoveAll();
 }

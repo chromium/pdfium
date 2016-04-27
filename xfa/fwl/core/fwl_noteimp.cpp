@@ -698,25 +698,26 @@ FX_BOOL CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
 IFWL_Widget* CFWL_NoteDriver::GetMessageForm(IFWL_Widget* pDstTarget) {
   int32_t iTrackLoop = m_noteLoopQueue.GetSize();
   if (iTrackLoop <= 0)
-    return NULL;
-  IFWL_Widget* pMessageForm = NULL;
+    return nullptr;
+  IFWL_Widget* pMessageForm = nullptr;
   if (iTrackLoop > 1) {
     CFWL_NoteLoop* pNootLoop =
         static_cast<CFWL_NoteLoop*>(m_noteLoopQueue[iTrackLoop - 1]);
     pMessageForm = pNootLoop->GetForm()->GetInterface();
-  } else {
-    pMessageForm = (m_forms.Find(pDstTarget) < 0) ? NULL : pDstTarget;
+  } else if (m_forms.Find(pDstTarget->GetImpl()) < 0) {
+    pMessageForm = pDstTarget;
   }
   if (!pMessageForm && pDstTarget) {
     CFWL_WidgetMgr* pWidgetMgr =
         static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
     if (!pWidgetMgr)
-      return NULL;
+      return nullptr;
     pMessageForm =
         pWidgetMgr->GetWidget(pDstTarget, FWL_WGTRELATION_SystemForm);
   }
   return pMessageForm;
 }
+
 void CFWL_NoteDriver::ClearInvalidEventTargets(FX_BOOL bRemoveAll) {
   FX_POSITION pos = m_eventTargets.GetStartPosition();
   while (pos) {

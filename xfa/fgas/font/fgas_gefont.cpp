@@ -106,7 +106,6 @@ CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
       m_pBBoxMap(NULL),
       m_pProvider(NULL),
       m_wCharSet(0xFFFF),
-      m_SubstFonts(),
       m_FontMapper(16) {
 }
 
@@ -128,7 +127,6 @@ CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles)
       m_pBBoxMap(NULL),
       m_pProvider(NULL),
       m_wCharSet(0xFFFF),
-      m_SubstFonts(),
       m_FontMapper(16) {
   m_pFont = new CFX_Font;
   ASSERT(m_pFont != NULL);
@@ -146,36 +144,27 @@ CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles)
   }
   InitFont();
 }
+
 CFX_GEFont::~CFX_GEFont() {
-  int32_t iCount = m_SubstFonts.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
-    IFX_Font* pFont = (IFX_Font*)m_SubstFonts[i];
-    pFont->Release();
-  }
+  for (int32_t i = 0; i < m_SubstFonts.GetSize(); i++)
+    m_SubstFonts[i]->Release();
+
   m_SubstFonts.RemoveAll();
   m_FontMapper.RemoveAll();
-  if (m_pFileRead != NULL) {
+  if (m_pFileRead)
     m_pFileRead->Release();
-  }
-  if (m_pStream != NULL) {
+
+  if (m_pStream)
     m_pStream->Release();
-  }
-  if (m_pFontEncoding != NULL) {
-    delete m_pFontEncoding;
-  }
-  if (m_pCharWidthMap != NULL) {
-    delete m_pCharWidthMap;
-  }
-  if (m_pRectArray != NULL) {
-    delete m_pRectArray;
-  }
-  if (m_pBBoxMap != NULL) {
-    delete m_pBBoxMap;
-  }
-  if (m_pFont != NULL && !m_bExtFont) {
+
+  delete m_pFontEncoding;
+  delete m_pCharWidthMap;
+  delete m_pRectArray;
+  delete m_pBBoxMap;
+  if (!m_bExtFont)
     delete m_pFont;
-  }
 }
+
 void CFX_GEFont::Release() {
   if (--m_iRefCount < 1) {
     if (m_pFontMgr != NULL) {
@@ -554,7 +543,7 @@ int32_t CFX_GEFont::GetDescent() const {
 void CFX_GEFont::Reset() {
   int32_t iCount = m_SubstFonts.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
-    IFX_Font* pFont = (IFX_Font*)m_SubstFonts[i];
+    IFX_Font* pFont = m_SubstFonts[i];
     ((CFX_GEFont*)pFont)->Reset();
   }
   if (m_pCharWidthMap != NULL) {
@@ -569,6 +558,6 @@ void CFX_GEFont::Reset() {
 }
 IFX_Font* CFX_GEFont::GetSubstFont(int32_t iGlyphIndex) const {
   iGlyphIndex = ((uint32_t)iGlyphIndex) >> 24;
-  return iGlyphIndex == 0 ? (IFX_Font*)this
-                          : (IFX_Font*)m_SubstFonts[iGlyphIndex - 1];
+  return iGlyphIndex == 0 ? const_cast<CFX_GEFont*>(this)
+                          : m_SubstFonts[iGlyphIndex - 1];
 }

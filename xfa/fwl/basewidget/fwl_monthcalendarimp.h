@@ -15,6 +15,8 @@ class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 
+struct FWL_DATEINFO;
+
 extern uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 
 class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
@@ -160,7 +162,7 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
   CFX_WideString m_wsHead;
   CFX_WideString m_wsToday;
   CFX_DateTime* m_pDateTime;
-  CFX_PtrArray m_arrDates;
+  CFX_ArrayTemplate<FWL_DATEINFO*> m_arrDates;
   int32_t m_iCurYear;
   int32_t m_iCurMonth;
   int32_t m_iYear;
