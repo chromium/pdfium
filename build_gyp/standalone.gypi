@@ -66,7 +66,7 @@
       }],
       # Set default gomadir.
       ['OS=="win"', {
-        'gomadir%': 'c:\\goma\\goma-win',
+        'gomadir%': 'c:\\goma\\goma-win64',
       }, {
         'gomadir%': '<!(/bin/echo -n ${HOME}/goma)',
       }],
