@@ -14,7 +14,7 @@ class CPDFSDK_Annot;
 
 class CBA_FontMap : public CPWL_FontMap {
  public:
-  CBA_FontMap(CPDFSDK_Annot* pAnnot, IFX_SystemHandler* pSystemHandler);
+  CBA_FontMap(CPDFSDK_Annot* pAnnot, CFX_SystemHandler* pSystemHandler);
   ~CBA_FontMap() override;
 
   void SetDefaultFont(CPDF_Font* pFont, const CFX_ByteString& sFontName);

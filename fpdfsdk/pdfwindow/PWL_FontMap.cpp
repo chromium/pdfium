@@ -34,7 +34,7 @@ const char* const g_sDEStandardFontName[] = {"Courier",
 
 }  // namespace
 
-CPWL_FontMap::CPWL_FontMap(IFX_SystemHandler* pSystemHandler)
+CPWL_FontMap::CPWL_FontMap(CFX_SystemHandler* pSystemHandler)
     : m_pPDFDoc(NULL), m_pSystemHandler(pSystemHandler) {
   ASSERT(m_pSystemHandler);
 }
@@ -46,7 +46,7 @@ CPWL_FontMap::~CPWL_FontMap() {
   Empty();
 }
 
-void CPWL_FontMap::SetSystemHandler(IFX_SystemHandler* pSystemHandler) {
+void CPWL_FontMap::SetSystemHandler(CFX_SystemHandler* pSystemHandler) {
   m_pSystemHandler = pSystemHandler;
 }
 
@@ -284,7 +284,7 @@ CFX_ByteString CPWL_FontMap::GetNativeFont(int32_t nCharset) {
     if (m_pSystemHandler->FindNativeTrueTypeFont(nCharset, sFontName))
       return sFontName;
 
-    sFontName = m_pSystemHandler->GetNativeTrueTypeFont(nCharset);
+    sFontName = "";
   }
   return sFontName;
 }
@@ -491,7 +491,7 @@ int32_t CPWL_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   return ANSI_CHARSET;
 }
 
-CPWL_DocFontMap::CPWL_DocFontMap(IFX_SystemHandler* pSystemHandler,
+CPWL_DocFontMap::CPWL_DocFontMap(CFX_SystemHandler* pSystemHandler,
                                  CPDF_Document* pAttachedDoc)
     : CPWL_FontMap(pSystemHandler), m_pAttachedDoc(pAttachedDoc) {}
 

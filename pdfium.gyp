@@ -124,6 +124,8 @@
         'pdfwindow',
       ],
       'sources': [
+        'fpdfsdk/cfx_systemhandler.cpp',
+        'fpdfsdk/cfx_systemhandler.h',
         'fpdfsdk/include/fsdk_actionhandler.h',
         'fpdfsdk/include/fsdk_annothandler.h',
         'fpdfsdk/include/fsdk_baseannot.h',

@@ -83,13 +83,10 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   FX_BOOL CanClear() const;
   FX_BOOL CanCopy() const;
   FX_BOOL CanCut() const;
-  FX_BOOL CanPaste() const;
 
-  virtual void CopyText();
-  virtual void PasteText();
-  virtual void CutText();
+  void CutText();
 
-  virtual void SetText(const FX_WCHAR* csText);
+  void SetText(const FX_WCHAR* csText);
   void ReplaceSel(const FX_WCHAR* csText);
 
   CFX_ByteString GetTextAppearanceStream(const CFX_FloatPoint& ptOffset) const;

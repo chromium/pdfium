@@ -107,7 +107,7 @@ CJS_Timer::CJS_Timer(CJS_EmbedObj* pObj,
       m_swJScript(script),
       m_pRuntime(pRuntime),
       m_pApp(pApp) {
-  IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
+  CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
   m_nTimerID = pHandler->SetTimer(dwElapse, TimerProc);
   (*GetGlobalTimerMap())[m_nTimerID] = this;
   m_pRuntime->AddObserver(this);
@@ -123,7 +123,7 @@ CJS_Timer::~CJS_Timer() {
 void CJS_Timer::KillJSTimer() {
   if (m_nTimerID) {
     if (m_bValid) {
-      IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
+      CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
       pHandler->KillTimer(m_nTimerID);
     }
     GetGlobalTimerMap()->erase(m_nTimerID);

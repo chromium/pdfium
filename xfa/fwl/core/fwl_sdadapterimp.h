@@ -61,7 +61,6 @@ class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr {
   virtual FWL_ERR UpdateMenu(IFWL_Menu* pMenu,
                              const void* hItem,
                              int32_t iType);
-  virtual int32_t TrackPopupMenu(IFWL_Menu* pMenu, IFWL_MenuDP* pMenuData);
   virtual FWL_ERR SetMessageHook(IFWL_AdapterMessageHook* hook);
   virtual FWL_ERR GetSystemBorder(FX_FLOAT& l,
                                   FX_FLOAT& t,

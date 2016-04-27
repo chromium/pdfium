@@ -11,15 +11,15 @@
 
 #include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_basic.h"
-#include "fpdfsdk/include/fx_systemhandler.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
 class CPWL_Timer;
 class CPWL_TimerHandler;
 class CPWL_Wnd;
+class CFX_SystemHandler;
 class IPVT_FontMap;
-class IFX_SystemHandler;
 class IPWL_Provider;
 
 // window styles
@@ -218,7 +218,7 @@ struct PWL_CREATEPARAM {
         mtChild(1, 0, 0, 1, 0, 0) {}
 
   CFX_FloatRect rcRectWnd;            // required
-  IFX_SystemHandler* pSystemHandler;  // required
+  CFX_SystemHandler* pSystemHandler;  // required
   IPVT_FontMap* pFontMap;             // required for text window
   IPWL_Provider* pProvider;           // required for self coordinate
   IPWL_FocusHandler* pFocusHandler;   // optional
@@ -242,7 +242,7 @@ struct PWL_CREATEPARAM {
 
 class CPWL_Timer {
  public:
-  CPWL_Timer(CPWL_TimerHandler* pAttached, IFX_SystemHandler* pSystemHandler);
+  CPWL_Timer(CPWL_TimerHandler* pAttached, CFX_SystemHandler* pSystemHandler);
   virtual ~CPWL_Timer();
 
   int32_t SetPWLTimer(int32_t nElapse);
@@ -252,7 +252,7 @@ class CPWL_Timer {
  private:
   int32_t m_nTimerID;
   CPWL_TimerHandler* m_pAttached;
-  IFX_SystemHandler* m_pSystemHandler;
+  CFX_SystemHandler* m_pSystemHandler;
 };
 
 class CPWL_TimerHandler {
@@ -263,7 +263,7 @@ class CPWL_TimerHandler {
   void BeginTimer(int32_t nElapse);
   void EndTimer();
   virtual void TimerProc();
-  virtual IFX_SystemHandler* GetSystemHandler() const = 0;
+  virtual CFX_SystemHandler* GetSystemHandler() const = 0;
 
  private:
   CPWL_Timer* m_pTimer;
@@ -382,7 +382,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
  protected:
   // CPWL_TimerHandler
-  IFX_SystemHandler* GetSystemHandler() const override;
+  CFX_SystemHandler* GetSystemHandler() const override;
 
   virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
   virtual void RePosChildWnd();

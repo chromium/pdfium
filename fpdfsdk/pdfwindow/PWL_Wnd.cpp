@@ -17,7 +17,7 @@ static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
 }
 
 CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached,
-                       IFX_SystemHandler* pSystemHandler)
+                       CFX_SystemHandler* pSystemHandler)
     : m_nTimerID(0), m_pAttached(pAttached), m_pSystemHandler(pSystemHandler) {
   ASSERT(m_pAttached);
   ASSERT(m_pSystemHandler);
@@ -398,7 +398,7 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
     rcWin.right += PWL_INVALIDATE_INFLATE;
     rcWin.bottom += PWL_INVALIDATE_INFLATE;
 
-    if (IFX_SystemHandler* pSH = GetSystemHandler()) {
+    if (CFX_SystemHandler* pSH = GetSystemHandler()) {
       if (FX_HWND hWnd = GetAttachedHWnd()) {
         pSH->InvalidateRect(hWnd, rcWin);
       }
@@ -744,7 +744,7 @@ void CPWL_Wnd::CreateChildWnd(const PWL_CREATEPARAM& cp) {}
 
 void CPWL_Wnd::SetCursor() {
   if (IsValid()) {
-    if (IFX_SystemHandler* pSH = GetSystemHandler()) {
+    if (CFX_SystemHandler* pSH = GetSystemHandler()) {
       int32_t nCursorType = GetCreationParam().eCursorType;
       pSH->SetCursor(nCursorType);
     }
@@ -803,7 +803,7 @@ void CPWL_Wnd::SetFontSize(FX_FLOAT fFontSize) {
   m_sPrivateParam.fFontSize = fFontSize;
 }
 
-IFX_SystemHandler* CPWL_Wnd::GetSystemHandler() const {
+CFX_SystemHandler* CPWL_Wnd::GetSystemHandler() const {
   return m_sPrivateParam.pSystemHandler;
 }
 
@@ -1007,7 +1007,7 @@ void CPWL_Wnd::OnEnabled() {}
 void CPWL_Wnd::OnDisabled() {}
 
 FX_BOOL CPWL_Wnd::IsCTRLpressed(uint32_t nFlag) const {
-  if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
+  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsCTRLKeyDown(nFlag);
   }
 
@@ -1015,7 +1015,7 @@ FX_BOOL CPWL_Wnd::IsCTRLpressed(uint32_t nFlag) const {
 }
 
 FX_BOOL CPWL_Wnd::IsSHIFTpressed(uint32_t nFlag) const {
-  if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
+  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsSHIFTKeyDown(nFlag);
   }
 
@@ -1023,7 +1023,7 @@ FX_BOOL CPWL_Wnd::IsSHIFTpressed(uint32_t nFlag) const {
 }
 
 FX_BOOL CPWL_Wnd::IsALTpressed(uint32_t nFlag) const {
-  if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
+  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsALTKeyDown(nFlag);
   }
 
@@ -1031,7 +1031,7 @@ FX_BOOL CPWL_Wnd::IsALTpressed(uint32_t nFlag) const {
 }
 
 FX_BOOL CPWL_Wnd::IsINSERTpressed(uint32_t nFlag) const {
-  if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
+  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsINSERTKeyDown(nFlag);
   }
 

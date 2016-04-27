@@ -83,7 +83,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 
   // CPWL_TimerHandler
   void TimerProc() override;
-  IFX_SystemHandler* GetSystemHandler() const override;
+  CFX_SystemHandler* GetSystemHandler() const override;
 
   // IPWL_Provider
   CFX_Matrix GetWindowMatrix(void* pAttachedData) override;

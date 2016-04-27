@@ -127,10 +127,6 @@ FWL_ERR CFWL_SDAdapterWidgetMgr::UpdateMenu(IFWL_Menu* pMenu,
                                             int32_t iType) {
   return FWL_ERR_Succeeded;
 }
-int32_t CFWL_SDAdapterWidgetMgr::TrackPopupMenu(IFWL_Menu* pMenu,
-                                                IFWL_MenuDP* pMenuData) {
-  return 0;
-}
 FWL_ERR CFWL_SDAdapterWidgetMgr::SetMessageHook(IFWL_AdapterMessageHook* hook) {
   return FWL_ERR_Succeeded;
 }

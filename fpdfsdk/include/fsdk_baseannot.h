@@ -15,8 +15,8 @@
 
 #include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_basic.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/fx_systemhandler.h"
 
 class CPDFSDK_PageView;
 class CPDF_Annot;

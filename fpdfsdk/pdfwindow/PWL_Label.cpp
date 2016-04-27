@@ -96,7 +96,7 @@ void CPWL_Label::DrawThisAppearance(CFX_RenderDevice* pDevice,
     rcClip = GetClientRect();
     pRange = &wrRange;
   }
-  IFX_SystemHandler* pSysHandler = GetSystemHandler();
+  CFX_SystemHandler* pSysHandler = GetSystemHandler();
   IFX_Edit::DrawEdit(
       pDevice, pUser2Device, m_pEdit,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),

@@ -129,67 +129,9 @@ FX_BOOL CPWL_Edit::CanCopy() const {
 FX_BOOL CPWL_Edit::CanCut() const {
   return CanCopy() && !IsReadOnly();
 }
-
-FX_BOOL CPWL_Edit::CanPaste() const {
-  if (IsReadOnly())
-    return FALSE;
-
-  CFX_WideString swClipboard;
-  if (IFX_SystemHandler* pSH = GetSystemHandler())
-    swClipboard = pSH->GetClipboardText(GetAttachedHWnd());
-
-  return !swClipboard.IsEmpty();
-}
-
-void CPWL_Edit::CopyText() {
-  if (!CanCopy())
-    return;
-
-  CFX_WideString str = m_pEdit->GetSelText();
-
-  if (IFX_SystemHandler* pSH = GetSystemHandler())
-    pSH->SetClipboardText(GetAttachedHWnd(), str);
-}
-
-void CPWL_Edit::PasteText() {
-  if (!CanPaste())
-    return;
-
-  CFX_WideString swClipboard;
-  if (IFX_SystemHandler* pSH = GetSystemHandler())
-    swClipboard = pSH->GetClipboardText(GetAttachedHWnd());
-
-  if (m_pFillerNotify) {
-    FX_BOOL bRC = TRUE;
-    FX_BOOL bExit = FALSE;
-    CFX_WideString strChangeEx;
-    int nSelStart = 0;
-    int nSelEnd = 0;
-    GetSel(nSelStart, nSelEnd);
-    m_pFillerNotify->OnBeforeKeyStroke(GetAttachedData(), swClipboard,
-                                       strChangeEx, nSelStart, nSelEnd, TRUE,
-                                       bRC, bExit, 0);
-    if (!bRC)
-      return;
-    if (bExit)
-      return;
-  }
-
-  if (swClipboard.GetLength() > 0) {
-    Clear();
-    InsertText(swClipboard.c_str());
-  }
-}
-
 void CPWL_Edit::CutText() {
   if (!CanCut())
     return;
-
-  CFX_WideString str = m_pEdit->GetSelText();
-
-  if (IFX_SystemHandler* pSH = GetSystemHandler())
-    pSH->SetClipboardText(GetAttachedHWnd(), str);
-
   m_pEdit->Clear();
 }
 
@@ -442,7 +384,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     rcClip = GetClientRect();
     pRange = &wrRange;
   }
-  IFX_SystemHandler* pSysHandler = GetSystemHandler();
+  CFX_SystemHandler* pSysHandler = GetSystemHandler();
   IFX_Edit::DrawEdit(
       pDevice, pUser2Device, m_pEdit,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
@@ -477,15 +419,6 @@ FX_BOOL CPWL_Edit::OnLButtonDblClk(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-#define WM_PWLEDIT_UNDO 0x01
-#define WM_PWLEDIT_REDO 0x02
-#define WM_PWLEDIT_CUT 0x03
-#define WM_PWLEDIT_COPY 0x04
-#define WM_PWLEDIT_PASTE 0x05
-#define WM_PWLEDIT_DELETE 0x06
-#define WM_PWLEDIT_SELECTALL 0x07
-#define WM_PWLEDIT_SUGGEST 0x08
-
 FX_BOOL CPWL_Edit::OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   if (m_bMouseDown)
     return FALSE;
@@ -495,145 +428,13 @@ FX_BOOL CPWL_Edit::OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   if (!HasFlag(PES_TEXTOVERFLOW) && !ClientHitTest(point))
     return TRUE;
 
-  IFX_SystemHandler* pSH = GetSystemHandler();
+  CFX_SystemHandler* pSH = GetSystemHandler();
   if (!pSH)
     return FALSE;
 
   SetFocus();
 
-  CPVT_WordRange wrLatin = GetLatinWordsRange(point);
-  CFX_WideString swLatin = m_pEdit->GetRangeText(wrLatin);
-
-  FX_HMENU hPopup = pSH->CreatePopupMenu();
-  if (!hPopup)
-    return FALSE;
-
-  std::vector<CFX_ByteString> sSuggestWords;
-  CFX_FloatPoint ptPopup = point;
-
-  IPWL_Provider* pProvider = GetProvider();
-
-  if (HasFlag(PES_UNDO)) {
-    pSH->AppendMenuItem(
-        hPopup, WM_PWLEDIT_UNDO,
-        pProvider ? pProvider->LoadPopupMenuString(0) : L"&Undo");
-    pSH->AppendMenuItem(
-        hPopup, WM_PWLEDIT_REDO,
-        pProvider ? pProvider->LoadPopupMenuString(1) : L"&Redo");
-    pSH->AppendMenuItem(hPopup, 0, L"");
-
-    if (!m_pEdit->CanUndo())
-      pSH->EnableMenuItem(hPopup, WM_PWLEDIT_UNDO, FALSE);
-    if (!m_pEdit->CanRedo())
-      pSH->EnableMenuItem(hPopup, WM_PWLEDIT_REDO, FALSE);
-  }
-
-  pSH->AppendMenuItem(hPopup, WM_PWLEDIT_CUT,
-                      pProvider ? pProvider->LoadPopupMenuString(2) : L"Cu&t");
-  pSH->AppendMenuItem(hPopup, WM_PWLEDIT_COPY,
-                      pProvider ? pProvider->LoadPopupMenuString(3) : L"&Copy");
-  pSH->AppendMenuItem(
-      hPopup, WM_PWLEDIT_PASTE,
-      pProvider ? pProvider->LoadPopupMenuString(4) : L"&Paste");
-  pSH->AppendMenuItem(
-      hPopup, WM_PWLEDIT_DELETE,
-      pProvider ? pProvider->LoadPopupMenuString(5) : L"&Delete");
-
-  CFX_WideString swText = pSH->GetClipboardText(GetAttachedHWnd());
-  if (swText.IsEmpty())
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_PASTE, FALSE);
-
-  if (!m_pEdit->IsSelected()) {
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_CUT, FALSE);
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_COPY, FALSE);
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_DELETE, FALSE);
-  }
-
-  if (IsReadOnly()) {
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_CUT, FALSE);
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_DELETE, FALSE);
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_PASTE, FALSE);
-  }
-
-  if (HasFlag(PES_PASSWORD)) {
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_CUT, FALSE);
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_COPY, FALSE);
-  }
-
-  if (HasFlag(PES_NOREAD)) {
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_CUT, FALSE);
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_COPY, FALSE);
-  }
-
-  pSH->AppendMenuItem(hPopup, 0, L"");
-  pSH->AppendMenuItem(
-      hPopup, WM_PWLEDIT_SELECTALL,
-      pProvider ? pProvider->LoadPopupMenuString(6) : L"&Select All");
-
-  if (m_pEdit->GetTotalWords() == 0) {
-    pSH->EnableMenuItem(hPopup, WM_PWLEDIT_SELECTALL, FALSE);
-  }
-
-  int32_t x, y;
-  PWLtoWnd(ptPopup, x, y);
-  pSH->ClientToScreen(GetAttachedHWnd(), x, y);
-  pSH->SetCursor(FXCT_ARROW);
-  int32_t nCmd = pSH->TrackPopupMenu(hPopup, x, y, GetAttachedHWnd());
-
-  switch (nCmd) {
-    case WM_PWLEDIT_UNDO:
-      Undo();
-      break;
-    case WM_PWLEDIT_REDO:
-      Redo();
-      break;
-    case WM_PWLEDIT_CUT:
-      CutText();
-      break;
-    case WM_PWLEDIT_COPY:
-      CopyText();
-      break;
-    case WM_PWLEDIT_PASTE:
-      PasteText();
-      break;
-    case WM_PWLEDIT_DELETE:
-      Clear();
-      break;
-    case WM_PWLEDIT_SELECTALL:
-      SelectAll();
-      break;
-    case WM_PWLEDIT_SUGGEST + 0:
-      SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),
-             m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-      ReplaceSel(sSuggestWords[0].UTF8Decode().c_str());
-      break;
-    case WM_PWLEDIT_SUGGEST + 1:
-      SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),
-             m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-      ReplaceSel(sSuggestWords[1].UTF8Decode().c_str());
-      break;
-    case WM_PWLEDIT_SUGGEST + 2:
-      SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),
-             m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-      ReplaceSel(sSuggestWords[2].UTF8Decode().c_str());
-      break;
-    case WM_PWLEDIT_SUGGEST + 3:
-      SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),
-             m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-      ReplaceSel(sSuggestWords[3].UTF8Decode().c_str());
-      break;
-    case WM_PWLEDIT_SUGGEST + 4:
-      SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),
-             m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-      ReplaceSel(sSuggestWords[4].UTF8Decode().c_str());
-      break;
-    default:
-      break;
-  }
-
-  pSH->DestroyMenu(hPopup);
-
-  return TRUE;
+  return FALSE;
 }
 
 void CPWL_Edit::OnSetFocus() {

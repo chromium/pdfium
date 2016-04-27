@@ -13,9 +13,9 @@
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
 #include "core/fxge/include/fx_ge.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
-#include "fpdfsdk/include/fx_systemhandler.h"
 
 #define FX_EDIT_UNDERLINEHALFWIDTH 0.5f
 #define FX_EDIT_CROSSOUTHALFWIDTH 0.5f
@@ -151,7 +151,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                         const CFX_FloatRect& rcClip,
                         const CFX_FloatPoint& ptOffset,
                         const CPVT_WordRange* pRange,
-                        IFX_SystemHandler* pSystemHandler,
+                        CFX_SystemHandler* pSystemHandler,
                         void* pFFLData) {
   const bool bContinuous =
       pEdit->GetCharArray() == 0 && pEdit->GetCharSpace() <= 0.0f;

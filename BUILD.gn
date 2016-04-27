@@ -57,6 +57,8 @@ config("pdfium_config") {
 
 static_library("pdfium") {
   sources = [
+    "fpdfsdk/cfx_systemhandler.cpp",
+    "fpdfsdk/cfx_systemhandler.h",
     "fpdfsdk/fpdf_dataavail.cpp",
     "fpdfsdk/fpdf_ext.cpp",
     "fpdfsdk/fpdf_flatten.cpp",

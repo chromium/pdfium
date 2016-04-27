@@ -12,23 +12,23 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_annothandler.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 #include "fpdfsdk/include/fsdk_baseform.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/fx_systemhandler.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
 
 class CFFL_IFormFiller;
+class CFX_SystemHandler;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_Annot;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
-class IFX_SystemHandler;
 class IJS_Runtime;
 
 // NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
@@ -437,7 +437,7 @@ class CPDFDoc_Environment final {
     return m_pUnderlyingDoc;
   }
   CFX_ByteString GetAppName() const { return ""; }
-  IFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
+  CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 
   CFFL_IFormFiller* GetIFormFiller();             // Creates if not present.
@@ -453,7 +453,7 @@ class CPDFDoc_Environment final {
   CPDFSDK_Document* m_pSDKDoc;
   UnderlyingDocumentType* const m_pUnderlyingDoc;
   std::unique_ptr<CFFL_IFormFiller> m_pIFormFiller;
-  std::unique_ptr<IFX_SystemHandler> m_pSysHandler;
+  std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
 };
 
 class CPDFSDK_Document {

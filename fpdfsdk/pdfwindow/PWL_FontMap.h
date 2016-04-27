@@ -12,7 +12,7 @@
 #include "public/fpdf_sysfontinfo.h"
 
 class CPDF_Document;
-class IFX_SystemHandler;
+class CFX_SystemHandler;
 
 struct CPWL_FontMap_Data {
   CPDF_Font* pFont;
@@ -51,7 +51,7 @@ struct CPWL_FontMap_Native {
 
 class CPWL_FontMap : public IPVT_FontMap {
  public:
-  CPWL_FontMap(IFX_SystemHandler* pSystemHandler);
+  CPWL_FontMap(CFX_SystemHandler* pSystemHandler);
   ~CPWL_FontMap() override;
 
   // IPVT_FontMap
@@ -63,7 +63,7 @@ class CPWL_FontMap : public IPVT_FontMap {
   int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) override;
   int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) override;
 
-  void SetSystemHandler(IFX_SystemHandler* pSystemHandler);
+  void SetSystemHandler(CFX_SystemHandler* pSystemHandler);
   int32_t GetFontMapCount() const;
   const CPWL_FontMap_Data* GetFontMapData(int32_t nIndex) const;
   static int32_t GetNativeCharset();
@@ -119,12 +119,12 @@ class CPWL_FontMap : public IPVT_FontMap {
 
  private:
   CPDF_Document* m_pPDFDoc;
-  IFX_SystemHandler* m_pSystemHandler;
+  CFX_SystemHandler* m_pSystemHandler;
 };
 
 class CPWL_DocFontMap : public CPWL_FontMap {
  public:
-  CPWL_DocFontMap(IFX_SystemHandler* pSystemHandler,
+  CPWL_DocFontMap(CFX_SystemHandler* pSystemHandler,
                   CPDF_Document* pAttachedDoc);
   ~CPWL_DocFontMap() override;
 

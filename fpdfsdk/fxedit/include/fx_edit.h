@@ -17,6 +17,7 @@ class CPDF_TextObject;
 class CFX_FloatPoint;
 class CFX_Matrix;
 class CFX_RenderDevice;
+class CFX_SystemHandler;
 class IFX_Edit;
 class IPVT_FontMap;
 class IFX_Edit_Iterator;
@@ -24,7 +25,6 @@ class IFX_Edit_Notify;
 class IFX_Edit_UndoItem;
 class IFX_List;
 class IFX_List_Notify;
-class IFX_SystemHandler;
 
 struct CPVT_Line;
 struct CPVT_SecProps;
@@ -495,7 +495,7 @@ class IFX_Edit {
                        const CFX_FloatRect& rcClip,
                        const CFX_FloatPoint& ptOffset,
                        const CPVT_WordRange* pRange,
-                       IFX_SystemHandler* pSystemHandler,
+                       CFX_SystemHandler* pSystemHandler,
                        void* pFFLData);
   static void DrawUnderline(CFX_RenderDevice* pDevice,
                             CFX_Matrix* pUser2Device,

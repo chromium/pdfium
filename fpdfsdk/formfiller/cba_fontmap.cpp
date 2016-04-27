@@ -14,7 +14,7 @@
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
 CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
-                         IFX_SystemHandler* pSystemHandler)
+                         CFX_SystemHandler* pSystemHandler)
     : CPWL_FontMap(pSystemHandler),
       m_pDocument(NULL),
       m_pAnnotDict(NULL),

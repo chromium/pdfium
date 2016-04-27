@@ -60,7 +60,7 @@ FX_BOOL CPWL_EditCtrl::IsWndHorV() {
 
 void CPWL_EditCtrl::SetCursor() {
   if (IsValid()) {
-    if (IFX_SystemHandler* pSH = GetSystemHandler()) {
+    if (CFX_SystemHandler* pSH = GetSystemHandler()) {
       if (IsWndHorV())
         pSH->SetCursor(FXCT_VBEAM);
       else

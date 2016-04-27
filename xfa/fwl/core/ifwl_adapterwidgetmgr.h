@@ -64,7 +64,6 @@ class IFWL_AdapterWidgetMgr {
   virtual FWL_ERR UpdateMenu(IFWL_Menu* pMenu,
                              const void* hItem,
                              int32_t iType) = 0;
-  virtual int32_t TrackPopupMenu(IFWL_Menu* pMenu, IFWL_MenuDP* pMenuData) = 0;
   virtual FWL_ERR SetMessageHook(IFWL_AdapterMessageHook* hook) = 0;
   virtual FWL_ERR GetSystemBorder(FX_FLOAT& l,
                                   FX_FLOAT& t,
