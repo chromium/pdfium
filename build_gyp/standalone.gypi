@@ -339,18 +339,14 @@
             ],
           }],
           ['OS=="win" and clang==1 and MSVS_VERSION == "2013"', {
-            'VCCLCompilerTool': {
-              'AdditionalOptions': [
-                '-fmsc-version=1800',
-              ],
-            },
+            'AdditionalOptions': [
+              '-fmsc-version=1800',
+            ],
           }],
           ['OS=="win" and clang==1 and MSVS_VERSION == "2015"', {
-            'VCCLCompilerTool': {
-              'AdditionalOptions': [
-                '-fmsc-version=1900',
-              ],
-            },
+            'AdditionalOptions': [
+              '-fmsc-version=1900',
+            ],
           }],
         ],
       },
