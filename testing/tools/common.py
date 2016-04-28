@@ -18,12 +18,9 @@ def os_name():
   raise Exception('Confused, can not determine OS, aborting.')
 
 
-def RunCommand(cmd, redirect_output=False):
+def RunCommand(cmd):
   try:
-    if redirect_output:
-      sys.stdout.write(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
-    else:
-      subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     return None
   except subprocess.CalledProcessError as e:
     return e

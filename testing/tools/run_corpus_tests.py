@@ -26,8 +26,7 @@ class KeyboardInterruptError(Exception): pass
 #   c_dir - "path/to/a/b/c"
 
 def test_one_file(input_filename, source_dir, working_dir,
-                  pdfium_test_path, image_differ, drmem_wrapper,
-                  redirect_output=False):
+                  pdfium_test_path, image_differ, drmem_wrapper):
   input_path = os.path.join(source_dir, input_filename)
   pdf_path = os.path.join(working_dir, input_filename)
   # Remove any existing generated images from previous runs.
@@ -45,29 +44,21 @@ def test_one_file(input_filename, source_dir, working_dir,
                                       os.path.splitext(input_filename)[0])
   cmd_to_run.extend([pdfium_test_path, '--png', pdf_path])
   # run test
-  error = common.RunCommand(cmd_to_run, redirect_output)
+  error = common.RunCommand(cmd_to_run)
   if error:
     print "FAILURE: " + input_filename + "; " + str(error)
     return False
-  return not image_differ.HasDifferences(input_filename, source_dir,
-                                         working_dir, redirect_output)
+  return not image_differ.HasDifferences(input_filename, source_dir, working_dir)
 
 
 def test_one_file_parallel(working_dir, pdfium_test_path, image_differ,
                            test_case):
   """Wrapper function to call test_one_file() and redirect output to stdout."""
   try:
-    old_stdout = sys.stdout
-    old_stderr = sys.stderr
-    sys.stdout = cStringIO.StringIO()
-    sys.stderr = sys.stdout
     input_filename, source_dir = test_case
     result = test_one_file(input_filename, source_dir, working_dir,
-                           pdfium_test_path, image_differ, "", True);
-    output = sys.stdout
-    sys.stdout = old_stdout
-    sys.stderr = old_stderr
-    return (result, output.getvalue(), input_filename, source_dir)
+                           pdfium_test_path, image_differ, "");
+    return (result, input_filename, source_dir)
   except KeyboardInterrupt:
     raise KeyboardInterruptError()
 
@@ -138,9 +129,8 @@ def main():
                                       pdfium_test_path, image_differ)
       worker_results = pool.imap(worker_func, test_cases)
       for worker_result in worker_results:
-        result, output, input_filename, source_dir = worker_result
+        result, input_filename, source_dir = worker_result
         input_path = os.path.join(source_dir, input_filename)
-        sys.stdout.write(output)
         handle_result(test_suppressor, input_filename, input_path, result,
                       surprises, failures)
       pool.close()

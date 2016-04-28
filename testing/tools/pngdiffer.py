@@ -38,8 +38,7 @@ class PNGDiffer():
       i += 1
     return actual_paths
 
-  def HasDifferences(self, input_filename, source_dir, working_dir,
-                     redirect_output=False):
+  def HasDifferences(self, input_filename, source_dir, working_dir):
     template_paths = self._GetTemplatePaths(
         input_filename, source_dir, working_dir)
     actual_path_template = template_paths[0];
@@ -62,16 +61,14 @@ class PNGDiffer():
       sys.stdout.flush()
       if os.path.exists(expected_path):
         error = common.RunCommand(
-            [self.pdfium_diff_path, expected_path, actual_path],
-            redirect_output)
+            [self.pdfium_diff_path, expected_path, actual_path])
       else:
         error = 1;
       if error:
         # When failed, we check against platform based results.
         if os.path.exists(platform_expected_path):
           error = common.RunCommand(
-              [self.pdfium_diff_path, platform_expected_path, actual_path],
-              redirect_output)
+              [self.pdfium_diff_path, platform_expected_path, actual_path])
         if error:
           print "FAILURE: " + input_filename + "; " + str(error)
           return True
