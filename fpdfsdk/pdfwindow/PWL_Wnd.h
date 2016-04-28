@@ -425,7 +425,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   FX_BOOL IsCTRLpressed(uint32_t nFlag) const;
   FX_BOOL IsSHIFTpressed(uint32_t nFlag) const;
   FX_BOOL IsALTpressed(uint32_t nFlag) const;
-  FX_BOOL IsINSERTpressed(uint32_t nFlag) const;
 
  private:
   void AddChild(CPWL_Wnd* pWnd);

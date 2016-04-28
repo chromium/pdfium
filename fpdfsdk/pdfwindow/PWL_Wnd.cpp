@@ -1029,11 +1029,3 @@ FX_BOOL CPWL_Wnd::IsALTpressed(uint32_t nFlag) const {
 
   return FALSE;
 }
-
-FX_BOOL CPWL_Wnd::IsINSERTpressed(uint32_t nFlag) const {
-  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
-    return pSystemHandler->IsINSERTKeyDown(nFlag);
-  }
-
-  return FALSE;
-}

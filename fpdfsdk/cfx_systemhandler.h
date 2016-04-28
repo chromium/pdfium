@@ -68,7 +68,6 @@ class CFX_SystemHandler {
   bool IsSHIFTKeyDown(uint32_t nFlag) const;
   bool IsCTRLKeyDown(uint32_t nFlag) const;
   bool IsALTKeyDown(uint32_t nFlag) const;
-  bool IsINSERTKeyDown(uint32_t nFlag) const;
 
   FX_SYSTEMTIME GetLocalTime();
 

@@ -115,8 +115,6 @@ class CPDFDoc_Environment final {
     return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
   }
 
-  FX_BOOL FFI_IsINSERTKeyDown(uint32_t nFlag) const { return FALSE; }
-
   FPDF_PAGE FFI_GetPage(FPDF_DOCUMENT document, int nPageIndex) {
     if (m_pInfo && m_pInfo->FFI_GetPage)
       return m_pInfo->FFI_GetPage(m_pInfo, document, nPageIndex);

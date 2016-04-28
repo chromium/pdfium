@@ -284,8 +284,6 @@ FX_BOOL CPWL_EditCtrl::OnChar(uint16_t nChar, uint32_t nFlag) {
     case FWL_VKEY_Unknown:
       break;
     default:
-      if (IsINSERTpressed(nFlag))
-        Delete();
       InsertWord(word, GetCharSet());
       break;
   }

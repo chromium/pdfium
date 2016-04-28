@@ -126,17 +126,13 @@ FX_SYSTEMTIME CFX_SystemHandler::GetLocalTime() {
 }
 
 bool CFX_SystemHandler::IsSHIFTKeyDown(uint32_t nFlag) const {
-  return m_pEnv->FFI_IsSHIFTKeyDown(nFlag);
+  return !!m_pEnv->FFI_IsSHIFTKeyDown(nFlag);
 }
 
 bool CFX_SystemHandler::IsCTRLKeyDown(uint32_t nFlag) const {
-  return m_pEnv->FFI_IsCTRLKeyDown(nFlag);
+  return !!m_pEnv->FFI_IsCTRLKeyDown(nFlag);
 }
 
 bool CFX_SystemHandler::IsALTKeyDown(uint32_t nFlag) const {
-  return m_pEnv->FFI_IsALTKeyDown(nFlag);
-}
-
-bool CFX_SystemHandler::IsINSERTKeyDown(uint32_t nFlag) const {
-  return m_pEnv->FFI_IsINSERTKeyDown(nFlag);
+  return !!m_pEnv->FFI_IsALTKeyDown(nFlag);
 }
