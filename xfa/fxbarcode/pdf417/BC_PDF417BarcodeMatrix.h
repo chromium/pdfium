@@ -10,6 +10,7 @@
 #include "core/fxcrt/include/fx_basic.h"
 
 class CBC_BarcodeRow;
+
 class CBC_BarcodeMatrix {
  public:
   CBC_BarcodeMatrix();
@@ -26,7 +27,7 @@ class CBC_BarcodeMatrix {
   int32_t getHeight();
 
  private:
-  CFX_PtrArray m_matrix;
+  CFX_ArrayTemplate<CBC_BarcodeRow*> m_matrix;
   CFX_ByteArray m_matrixOut;
   int32_t m_currentRow;
   int32_t m_height;

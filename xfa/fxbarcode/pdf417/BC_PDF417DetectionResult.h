@@ -16,7 +16,7 @@ class CBC_DetectionResult {
   CBC_DetectionResult(CBC_BarcodeMetadata* barcodeMetadata,
                       CBC_BoundingBox* boundingBox);
   virtual ~CBC_DetectionResult();
-  CFX_PtrArray& getDetectionResultColumns();
+  CFX_ArrayTemplate<CBC_DetectionResultColumn*>& getDetectionResultColumns();
   void setBoundingBox(CBC_BoundingBox* boundingBox);
   CBC_BoundingBox* getBoundingBox();
   void setDetectionResultColumn(
@@ -32,7 +32,7 @@ class CBC_DetectionResult {
  private:
   static int32_t ADJUST_ROW_NUMBER_SKIP;
   CBC_BarcodeMetadata* m_barcodeMetadata;
-  CFX_PtrArray m_detectionResultColumns;
+  CFX_ArrayTemplate<CBC_DetectionResultColumn*> m_detectionResultColumns;
   CBC_BoundingBox* m_boundingBox;
   int32_t m_barcodeColumnCount;
 

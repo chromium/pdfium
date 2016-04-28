@@ -52,16 +52,16 @@ CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
   }
   CBC_QRCoderECBlocks* ecBlocks = version->GetECBlocksForLevel(ecLevel);
   int32_t totalBlocks = 0;
-  CFX_PtrArray* ecBlockArray = ecBlocks->GetECBlocks();
+  CFX_ArrayTemplate<CBC_QRCoderECB*>* ecBlockArray = ecBlocks->GetECBlocks();
   int32_t i = 0;
   for (i = 0; i < ecBlockArray->GetSize(); i++) {
-    totalBlocks += ((CBC_QRCoderECB*)(*ecBlockArray)[i])->GetCount();
+    totalBlocks += (*ecBlockArray)[i]->GetCount();
   }
   std::unique_ptr<CFX_PtrArray> result(new CFX_PtrArray());
   result->SetSize(totalBlocks);
   int32_t numResultBlocks = 0;
   for (int32_t j = 0; j < ecBlockArray->GetSize(); j++) {
-    CBC_QRCoderECB* ecBlock = (CBC_QRCoderECB*)(*ecBlockArray)[j];
+    CBC_QRCoderECB* ecBlock = (*ecBlockArray)[j];
     for (int32_t k = 0; k < ecBlock->GetCount(); k++) {
       int32_t numDataCodewords = ecBlock->GetDataCodeWords();
       int32_t numBlockCodewords =

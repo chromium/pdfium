@@ -37,8 +37,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree,
                                                                  int32_t& e) {
   if (degree >= m_cachedGenerators.GetSize()) {
     CBC_ReedSolomonGF256Poly* lastGenerator =
-        (CBC_ReedSolomonGF256Poly*)(m_cachedGenerators
-                                        [m_cachedGenerators.GetSize() - 1]);
+        m_cachedGenerators[m_cachedGenerators.GetSize() - 1];
     for (int32_t d = m_cachedGenerators.GetSize(); d <= degree; d++) {
       CFX_Int32Array temp;
       temp.Add(1);
@@ -53,7 +52,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree,
       lastGenerator = nextGenerator;
     }
   }
-  return (CBC_ReedSolomonGF256Poly*)(m_cachedGenerators[degree]);
+  return m_cachedGenerators[degree];
 }
 void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array* toEncode,
                                     int32_t ecBytes,
@@ -98,7 +97,6 @@ void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array* toEncode,
   }
 }
 CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {
-  for (int32_t i = 0; i < m_cachedGenerators.GetSize(); i++) {
-    delete (CBC_ReedSolomonGF256Poly*)m_cachedGenerators[i];
-  }
+  for (int32_t i = 0; i < m_cachedGenerators.GetSize(); i++)
+    delete m_cachedGenerators[i];
 }

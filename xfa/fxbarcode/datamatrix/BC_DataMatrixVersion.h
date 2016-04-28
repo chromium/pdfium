@@ -13,14 +13,11 @@ class CBC_DataMatrixVersion;
 
 class ECB {
  public:
-  ECB(int32_t count, int32_t dataCodewords) {
-    m_count = count;
-    m_dataCodewords = dataCodewords;
-  }
+  ECB(int32_t count, int32_t dataCodewords)
+      : m_count(count), m_dataCodewords(dataCodewords) {}
 
-  int32_t GetCount() { return m_count; }
-
-  int32_t GetDataCodewords() { return m_dataCodewords; }
+  int32_t GetCount() const { return m_count; }
+  int32_t GetDataCodewords() const { return m_dataCodewords; }
 
  private:
   int32_t m_count;
@@ -29,30 +26,27 @@ class ECB {
 
 class ECBlocks {
  public:
-  ECBlocks(int32_t ecCodewords, ECB* ecBlocks) {
-    m_ecCodewords = ecCodewords;
-    m_ecBlocks.Add(ecBlocks);
+  ECBlocks(int32_t ecCodewords, ECB* ecBlocks) : m_ecCodewords(ecCodewords) {
+    m_ecBlocksArray.Add(ecBlocks);
   }
 
-  ECBlocks(int32_t ecCodewords, ECB* ecBlocks1, ECB* ecBlocks2) {
-    m_ecCodewords = ecCodewords;
-    m_ecBlocks.Add(ecBlocks1);
-    m_ecBlocks.Add(ecBlocks2);
+  ECBlocks(int32_t ecCodewords, ECB* ecBlocks1, ECB* ecBlocks2)
+      : m_ecCodewords(ecCodewords) {
+    m_ecBlocksArray.Add(ecBlocks1);
+    m_ecBlocksArray.Add(ecBlocks2);
   }
+
   ~ECBlocks() {
-    for (int32_t i = 0; i < m_ecBlocks.GetSize(); i++) {
-      delete (ECB*)m_ecBlocks[i];
-    }
-    m_ecBlocks.RemoveAll();
+    for (int32_t i = 0; i < m_ecBlocksArray.GetSize(); i++)
+      delete m_ecBlocksArray[i];
   }
 
   int32_t GetECCodewords() { return m_ecCodewords; }
-
-  const CFX_PtrArray& GetECBlocks() { return m_ecBlocks; }
+  const CFX_ArrayTemplate<ECB*>& GetECBlocks() { return m_ecBlocksArray; }
 
  private:
   int32_t m_ecCodewords;
-  CFX_PtrArray m_ecBlocks;
+  CFX_ArrayTemplate<ECB*> m_ecBlocksArray;
 };
 
 class CBC_DataMatrixVersion {

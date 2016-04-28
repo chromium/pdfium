@@ -51,10 +51,10 @@ CBC_DataMatrixVersion::CBC_DataMatrixVersion(int32_t versionNumber,
   m_ecBlocks = ecBlocks;
   int32_t total = 0;
   int32_t ecCodewords = ecBlocks->GetECCodewords();
-  const CFX_PtrArray& ecbArray = ecBlocks->GetECBlocks();
+  const CFX_ArrayTemplate<ECB*>& ecbArray = ecBlocks->GetECBlocks();
   for (int32_t i = 0; i < ecbArray.GetSize(); i++) {
-    total += ((ECB*)ecbArray[i])->GetCount() *
-             (((ECB*)ecbArray[i])->GetDataCodewords() + ecCodewords);
+    total += ecbArray[i]->GetCount() *
+             (ecbArray[i]->GetDataCodewords() + ecCodewords);
   }
   m_totalCodewords = total;
 }

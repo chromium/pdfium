@@ -12,20 +12,21 @@
 class CBC_QRCoderECB;
 
 class CBC_QRCoderECBlocks {
- private:
-  int32_t m_ecCodeWordsPerBlock;
-  CFX_PtrArray m_ecBlocks;
-
  public:
   CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks);
   CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
                       CBC_QRCoderECB* ecBlocks1,
                       CBC_QRCoderECB* ecBlocks2);
-  virtual ~CBC_QRCoderECBlocks();
-  int32_t GetECCodeWordsPerBlock();
-  int32_t GetNumBlocks();
-  int32_t GetTotalECCodeWords();
-  CFX_PtrArray* GetECBlocks();
+  ~CBC_QRCoderECBlocks();
+
+  int32_t GetECCodeWordsPerBlock() const;
+  int32_t GetNumBlocks() const;
+  int32_t GetTotalECCodeWords() const;
+  CFX_ArrayTemplate<CBC_QRCoderECB*>* GetECBlocks();
+
+ private:
+  int32_t m_ecCodeWordsPerBlock;
+  CFX_ArrayTemplate<CBC_QRCoderECB*> m_ecBlocksArray;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERECBLOCKS_H_

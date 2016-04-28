@@ -39,10 +39,10 @@ CFX_PtrArray* CBC_DataMatrixDataBlock::GetDataBlocks(
     int32_t& e) {
   ECBlocks* ecBlocks = version->GetECBlocks();
   int32_t totalBlocks = 0;
-  const CFX_PtrArray& ecBlockArray = ecBlocks->GetECBlocks();
+  const CFX_ArrayTemplate<ECB*>& ecBlockArray = ecBlocks->GetECBlocks();
   int32_t i;
   for (i = 0; i < ecBlockArray.GetSize(); i++) {
-    totalBlocks += ((ECB*)ecBlockArray[i])->GetCount();
+    totalBlocks += ecBlockArray[i]->GetCount();
   }
   std::unique_ptr<CFX_PtrArray> result(new CFX_PtrArray());
   result->SetSize(totalBlocks);

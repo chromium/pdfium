@@ -9,26 +9,11 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 
-class CBC_QRCoderECBlocks;
 class CBC_CommonBitMatrix;
+class CBC_QRCoderECBlocks;
 class CBC_QRCoderErrorCorrectionLevel;
 
 class CBC_QRCoderVersion {
- private:
-  static const int32_t VERSION_DECODE_INFO[34];
-  static CFX_PtrArray* VERSION;
-  int32_t m_versionNumber;
-  int32_t m_totalCodeWords;
-  CFX_Int32Array m_alignmentPatternCenters;
-  CFX_PtrArray m_ecBlocks;
-
-  CBC_QRCoderVersion();
-  CBC_QRCoderVersion(int32_t versionNumber,
-                     CBC_QRCoderECBlocks* ecBlocks1,
-                     CBC_QRCoderECBlocks* ecBlocks2,
-                     CBC_QRCoderECBlocks* ecBlocks3,
-                     CBC_QRCoderECBlocks* ecBlocks4);
-
  public:
   virtual ~CBC_QRCoderVersion();
   static void Initialize();
@@ -49,6 +34,22 @@ class CBC_QRCoderVersion {
   static CBC_QRCoderVersion* DecodeVersionInformation(int32_t versionBits,
                                                       int32_t& e);
   static void Destroy();
+
+ private:
+  CBC_QRCoderVersion();
+  CBC_QRCoderVersion(int32_t versionNumber,
+                     CBC_QRCoderECBlocks* ecBlocks1,
+                     CBC_QRCoderECBlocks* ecBlocks2,
+                     CBC_QRCoderECBlocks* ecBlocks3,
+                     CBC_QRCoderECBlocks* ecBlocks4);
+
+  static const int32_t VERSION_DECODE_INFO[34];
+  static CFX_PtrArray* VERSION;
+
+  int32_t m_versionNumber;
+  int32_t m_totalCodeWords;
+  CFX_Int32Array m_alignmentPatternCenters;
+  CFX_ArrayTemplate<CBC_QRCoderECBlocks*> m_ecBlocksArray;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
