@@ -22,9 +22,6 @@ inline FX_BOOL FDE_IsSelectorStart(FX_WCHAR wch) {
 };
 #endif
 
-IFDE_CSSSyntaxParser* IFDE_CSSSyntaxParser::Create() {
-  return new CFDE_CSSSyntaxParser;
-}
 CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
     : m_pStream(NULL),
       m_iStreamPos(0),

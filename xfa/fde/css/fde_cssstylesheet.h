@@ -10,7 +10,9 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
 
-class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
+class CFDE_CSSSyntaxParser;
+
+class CFDE_CSSSelector : public CFX_Target {
  public:
   CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType,
                    const FX_WCHAR* psz,
@@ -23,11 +25,11 @@ class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
 
   virtual uint32_t GetNameHash() const { return m_dwHash; }
 
-  virtual IFDE_CSSSelector* GetNextSelector() const { return m_pNext; }
-  static IFDE_CSSSelector* FromString(IFX_MEMAllocator* pStaticStore,
+  virtual CFDE_CSSSelector* GetNextSelector() const { return m_pNext; }
+  static CFDE_CSSSelector* FromString(IFX_MEMAllocator* pStaticStore,
                                       const FX_WCHAR* psz,
                                       int32_t iLen);
-  void SetNext(IFDE_CSSSelector* pNext) { m_pNext = pNext; }
+  void SetNext(CFDE_CSSSelector* pNext) { m_pNext = pNext; }
 
  protected:
   static CFDE_CSSSelector* ParseSelector(IFX_MEMAllocator* pStaticStore,
@@ -38,28 +40,26 @@ class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
   void SetType(FDE_CSSSELECTORTYPE eType) { m_eType = eType; }
   FDE_CSSSELECTORTYPE m_eType;
   uint32_t m_dwHash;
-  IFDE_CSSSelector* m_pNext;
+  CFDE_CSSSelector* m_pNext;
 };
-typedef CFX_ArrayTemplate<IFDE_CSSSelector*> CFDE_CSSSelectorArray;
+typedef CFX_ArrayTemplate<CFDE_CSSSelector*> CFDE_CSSSelectorArray;
 
 class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
  public:
   CFDE_CSSStyleRule() : m_ppSelector(NULL), m_iSelectors(0) {}
-  virtual int32_t CountSelectorLists() const { return m_iSelectors; }
-  virtual IFDE_CSSSelector* GetSelectorList(int32_t index) const {
+  int32_t CountSelectorLists() const override { return m_iSelectors; }
+  CFDE_CSSSelector* GetSelectorList(int32_t index) const override {
     return m_ppSelector[index];
   }
 
-  virtual IFDE_CSSDeclaration* GetDeclaration() const {
-    return (IFDE_CSSDeclaration*)&m_Declaration;
-  }
+  CFDE_CSSDeclaration* GetDeclaration() override { return &m_Declaration; }
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
   void SetSelector(IFX_MEMAllocator* pStaticStore,
                    const CFDE_CSSSelectorArray& list);
 
  protected:
   CFDE_CSSDeclaration m_Declaration;
-  IFDE_CSSSelector** m_ppSelector;
+  CFDE_CSSSelector** m_ppSelector;
   int32_t m_iSelectors;
 };
 class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target {
@@ -81,9 +81,7 @@ class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target {
 };
 class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
  public:
-  virtual IFDE_CSSDeclaration* GetDeclaration() const {
-    return (IFDE_CSSDeclaration*)&m_Declaration;
-  }
+  CFDE_CSSDeclaration* GetDeclaration() override { return &m_Declaration; }
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
 
  protected:
@@ -120,15 +118,15 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
 
  protected:
   void Reset();
-  FX_BOOL LoadFromSyntax(IFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadStyleRule(IFDE_CSSSyntaxParser* pSyntax,
+  FX_BOOL LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSYNTAXSTATUS LoadStyleRule(CFDE_CSSSyntaxParser* pSyntax,
                                     CFDE_CSSRuleArray& ruleArray);
-  FDE_CSSSYNTAXSTATUS LoadImportRule(IFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadPageRule(IFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadMediaRule(IFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadFontFaceRule(IFDE_CSSSyntaxParser* pSyntax,
+  FDE_CSSSYNTAXSTATUS LoadImportRule(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSYNTAXSTATUS LoadPageRule(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSYNTAXSTATUS LoadMediaRule(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSYNTAXSTATUS LoadFontFaceRule(CFDE_CSSSyntaxParser* pSyntax,
                                        CFDE_CSSRuleArray& ruleArray);
-  FDE_CSSSYNTAXSTATUS SkipRuleSet(IFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSYNTAXSTATUS SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;

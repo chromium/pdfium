@@ -17,6 +17,7 @@
 
 #define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
 
+class CFDE_CSSStyleSelector;
 class CXFA_Para;
 class CXFA_Font;
 class CXFA_TextProvider;
@@ -63,15 +64,15 @@ class CXFA_TextParseContext : public CFX_Target {
   }
   void SetDisplay(FDE_CSSDISPLAY eDisplay) { m_eDisplay = eDisplay; }
   FDE_CSSDISPLAY GetDisplay() const { return m_eDisplay; }
-  void SetDecls(const IFDE_CSSDeclaration** ppDeclArray, int32_t iDeclCount);
-  const IFDE_CSSDeclaration** GetDecls() {
-    return (const IFDE_CSSDeclaration**)m_ppMatchedDecls;
+  void SetDecls(const CFDE_CSSDeclaration** ppDeclArray, int32_t iDeclCount);
+  const CFDE_CSSDeclaration** GetDecls() {
+    return const_cast<const CFDE_CSSDeclaration**>(m_ppMatchedDecls);
   }
   uint32_t CountDecls() const { return m_dwMatchedDecls; }
   IFDE_CSSComputedStyle* m_pParentStyle;
 
  protected:
-  IFDE_CSSDeclaration** m_ppMatchedDecls;
+  CFDE_CSSDeclaration** m_ppMatchedDecls;
   uint32_t m_dwMatchedDecls;
   FDE_CSSDISPLAY m_eDisplay;
 };
@@ -130,7 +131,7 @@ class CXFA_TextParser {
   IFDE_CSSStyleSheet* LoadDefaultSheetStyle();
   IFDE_CSSComputedStyle* CreateStyle(IFDE_CSSComputedStyle* pParentStyle);
   IFX_MEMAllocator* m_pAllocator;
-  IFDE_CSSStyleSelector* m_pSelector;
+  CFDE_CSSStyleSelector* m_pSelector;
   IFDE_CSSStyleSheet* m_pUASheet;
   CFX_MapPtrTemplate<CFDE_XMLNode*, CXFA_TextParseContext*>
       m_mapXMLNodeToParseContext;

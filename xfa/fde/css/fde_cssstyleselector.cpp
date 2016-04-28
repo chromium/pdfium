@@ -10,6 +10,8 @@
 
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
+#include "xfa/fde/css/fde_cssstylesheet.h"
+#include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')
@@ -78,8 +80,8 @@ void CFDE_CSSCounterStyle::UpdateIndex() {
   m_bIndexDirty = FALSE;
 }
 
-FDE_CSSRuleData::FDE_CSSRuleData(IFDE_CSSSelector* pSel,
-                                 IFDE_CSSDeclaration* pDecl,
+FDE_CSSRuleData::FDE_CSSRuleData(CFDE_CSSSelector* pSel,
+                                 CFDE_CSSDeclaration* pDecl,
                                  uint32_t dwPos)
     : pSelector(pSel), pDeclaration(pDecl), dwPriority(dwPos), pNext(NULL) {
   static const uint32_t s_Specific[5] = {0x00010000, 0x00010000, 0x00100000,
@@ -121,10 +123,10 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
   switch (pRule->GetType()) {
     case FDE_CSSRULETYPE_Style: {
       IFDE_CSSStyleRule* pStyleRule = (IFDE_CSSStyleRule*)pRule;
-      IFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
+      CFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
       int32_t iSelectors = pStyleRule->CountSelectorLists();
       for (int32_t i = 0; i < iSelectors; ++i) {
-        IFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
+        CFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
         if (pSelector->GetType() == FDE_CSSSELECTORTYPE_Persudo) {
           FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
           AddRuleTo(m_pPersudoRules, pData);
@@ -135,8 +137,8 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                     pDeclaration);
           continue;
         }
-        IFDE_CSSSelector* pNext = pSelector->GetNextSelector();
-        if (pNext == NULL) {
+        CFDE_CSSSelector* pNext = pSelector->GetNextSelector();
+        if (!pNext) {
           FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
           AddRuleTo(m_pUniversalRules, pData);
           continue;
@@ -175,8 +177,8 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
 }
 void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr& map,
                                        uint32_t dwKey,
-                                       IFDE_CSSSelector* pSel,
-                                       IFDE_CSSDeclaration* pDecl) {
+                                       CFDE_CSSSelector* pSel,
+                                       CFDE_CSSDeclaration* pDecl) {
   void* pKey = (void*)(uintptr_t)dwKey;
   FDE_CSSRuleData* pData = NewRuleData(pSel, pDecl);
   FDE_CSSRuleData* pList = NULL;
@@ -200,15 +202,12 @@ FX_BOOL CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData*& pList,
 }
 
 FDE_CSSRuleData* CFDE_CSSRuleCollection::NewRuleData(
-    IFDE_CSSSelector* pSel,
-    IFDE_CSSDeclaration* pDecl) {
+    CFDE_CSSSelector* pSel,
+    CFDE_CSSDeclaration* pDecl) {
   return FXTARGET_NewWith(m_pStaticStore)
       FDE_CSSRuleData(pSel, pDecl, ++m_iSelectors);
 }
 
-IFDE_CSSStyleSelector* IFDE_CSSStyleSelector::Create() {
-  return new CFDE_CSSStyleSelector;
-}
 CFDE_CSSStyleSelector::CFDE_CSSStyleSelector()
     : m_pFontMgr(NULL),
       m_fDefFontSize(12.0f),
@@ -367,7 +366,7 @@ void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTagCache* pCache,
 }
 
 FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
-                                             IFDE_CSSSelector* pSel,
+                                             CFDE_CSSSelector* pSel,
                                              FDE_CSSPERSUDO ePersudoType) {
   uint32_t dwHash;
   while (pSel != NULL && pCache != NULL) {
@@ -418,7 +417,7 @@ FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
 
 void CFDE_CSSStyleSelector::ComputeStyle(
     CXFA_CSSTagProvider* pTag,
-    const IFDE_CSSDeclaration** ppDeclArray,
+    const CFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
     IFDE_CSSComputedStyle* pDestStyle) {
   ASSERT(iDeclCount >= 0);
@@ -456,13 +455,14 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     if (pDecl) {
       CFDE_CSSDeclarationArray decls;
       decls.SetSize(iDeclCount + 1);
-      IFDE_CSSDeclaration** ppInline = decls.GetData();
+      CFDE_CSSDeclaration** ppInline = decls.GetData();
       FXSYS_memcpy(ppInline, ppDeclArray,
-                   iDeclCount * sizeof(IFDE_CSSDeclaration*));
+                   iDeclCount * sizeof(CFDE_CSSDeclaration*));
       ppInline[iDeclCount++] = pDecl;
-      ApplyDeclarations(TRUE, (const IFDE_CSSDeclaration**)ppInline, iDeclCount,
-                        pDestStyle);
-      ApplyDeclarations(FALSE, (const IFDE_CSSDeclaration**)ppInline,
+      ApplyDeclarations(TRUE, const_cast<const CFDE_CSSDeclaration**>(ppInline),
+                        iDeclCount, pDestStyle);
+      ApplyDeclarations(FALSE,
+                        const_cast<const CFDE_CSSDeclaration**>(ppInline),
                         iDeclCount, pDestStyle);
       return;
     }
@@ -478,7 +478,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
 
 void CFDE_CSSStyleSelector::ApplyDeclarations(
     FX_BOOL bPriority,
-    const IFDE_CSSDeclaration** ppDeclArray,
+    const CFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
     IFDE_CSSComputedStyle* pDestStyle) {
   CFDE_CSSComputedStyle* pComputedStyle = (CFDE_CSSComputedStyle*)pDestStyle;
@@ -504,7 +504,7 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
     }
   } else {
     CFDE_CSSDeclarationArray importants;
-    const IFDE_CSSDeclaration* pDecl = NULL;
+    const CFDE_CSSDeclaration* pDecl = nullptr;
     FDE_CSSPROPERTY eProp;
     FX_POSITION pos;
     for (i = 0; i < iDeclCount; ++i) {
@@ -518,7 +518,7 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
           ApplyProperty(eProp, pVal, pComputedStyle);
         } else if (importants.GetSize() == 0 ||
                    importants[importants.GetUpperBound()] != pDecl) {
-          importants.Add((IFDE_CSSDeclaration*)pDecl);
+          importants.Add(const_cast<CFDE_CSSDeclaration*>(pDecl));
         }
       }
     }
@@ -544,11 +544,9 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
 void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                                               const FX_WCHAR* psz,
                                               int32_t iLen) {
-  ASSERT(pDecl != NULL && psz != NULL && iLen > 0);
-  IFDE_CSSSyntaxParser* pSyntax = IFDE_CSSSyntaxParser::Create();
-  if (pSyntax == NULL) {
-    return;
-  }
+  ASSERT(pDecl && psz && iLen > 0);
+
+  CFDE_CSSSyntaxParser* pSyntax = new CFDE_CSSSyntaxParser;
   if (pSyntax->Init(psz, iLen, 32, TRUE)) {
     int32_t iLen;
     const FX_WCHAR* psz;

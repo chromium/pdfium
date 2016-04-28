@@ -11,6 +11,7 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/css/fde_csscache.h"
+#include "xfa/fde/css/fde_cssstyleselector.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
@@ -21,15 +22,15 @@
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 
-void CXFA_TextParseContext::SetDecls(const IFDE_CSSDeclaration** ppDeclArray,
+void CXFA_TextParseContext::SetDecls(const CFDE_CSSDeclaration** ppDeclArray,
                                      int32_t iDeclCount) {
   if (iDeclCount <= 0 || !ppDeclArray)
     return;
 
   m_dwMatchedDecls = iDeclCount;
-  m_ppMatchedDecls = FX_Alloc(IFDE_CSSDeclaration*, iDeclCount);
+  m_ppMatchedDecls = FX_Alloc(CFDE_CSSDeclaration*, iDeclCount);
   FXSYS_memcpy(m_ppMatchedDecls, ppDeclArray,
-               iDeclCount * sizeof(IFDE_CSSDeclaration*));
+               iDeclCount * sizeof(CFDE_CSSDeclaration*));
 }
 CXFA_TextParser::~CXFA_TextParser() {
   if (m_pUASheet)
@@ -71,7 +72,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
     IFX_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
     ASSERT(pFontMgr);
-    m_pSelector = IFDE_CSSStyleSelector::Create();
+    m_pSelector = new CFDE_CSSStyleSelector;
     m_pSelector->SetFontMgr(pFontMgr);
     FX_FLOAT fFontSize = 10;
     CXFA_Font font = pTextProvider->GetFontNode();
@@ -241,8 +242,8 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
       CFDE_CSSDeclarationArray DeclArray;
       int32_t iMatchedDecls =
           m_pSelector->MatchDeclarations(&tagProvider, DeclArray);
-      const IFDE_CSSDeclaration** ppMatchDecls =
-          (const IFDE_CSSDeclaration**)DeclArray.GetData();
+      const CFDE_CSSDeclaration** ppMatchDecls =
+          const_cast<const CFDE_CSSDeclaration**>(DeclArray.GetData());
       m_pSelector->ComputeStyle(&tagProvider, ppMatchDecls, iMatchedDecls,
                                 pNewStyle);
       pCSSAccel->OnLeaveTag(&tagProvider);

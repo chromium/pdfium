@@ -22,12 +22,12 @@ class CXFA_CSSTagProvider;
 
 class FDE_CSSRuleData : public CFX_Target {
  public:
-  FDE_CSSRuleData(IFDE_CSSSelector* pSel,
-                  IFDE_CSSDeclaration* pDecl,
+  FDE_CSSRuleData(CFDE_CSSSelector* pSel,
+                  CFDE_CSSDeclaration* pDecl,
                   uint32_t dwPos);
 
-  IFDE_CSSSelector* pSelector;
-  IFDE_CSSDeclaration* pDeclaration;
+  CFDE_CSSSelector* pSelector;
+  CFDE_CSSDeclaration* pDeclaration;
   uint32_t dwPriority;
   FDE_CSSRuleData* pNext;
 };
@@ -77,11 +77,11 @@ class CFDE_CSSRuleCollection : public CFX_Target {
                     IFX_FontMgr* pFontMgr);
   void AddRuleTo(CFX_MapPtrToPtr& map,
                  uint32_t dwKey,
-                 IFDE_CSSSelector* pSel,
-                 IFDE_CSSDeclaration* pDecl);
+                 CFDE_CSSSelector* pSel,
+                 CFDE_CSSDeclaration* pDecl);
   FX_BOOL AddRuleTo(FDE_CSSRuleData*& pList, FDE_CSSRuleData* pData);
-  FDE_CSSRuleData* NewRuleData(IFDE_CSSSelector* pSel,
-                               IFDE_CSSDeclaration* pDecl);
+  FDE_CSSRuleData* NewRuleData(CFDE_CSSSelector* pSel,
+                               CFDE_CSSDeclaration* pDecl);
   CFX_MapPtrToPtr m_IDRules;
   CFX_MapPtrToPtr m_TagRules;
   CFX_MapPtrToPtr m_ClassRules;
@@ -90,33 +90,33 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   int32_t m_iSelectors;
 };
 
-class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
+class CFDE_CSSStyleSelector : public CFX_Target {
  public:
   CFDE_CSSStyleSelector();
   ~CFDE_CSSStyleSelector();
-  virtual void Release() { delete this; }
 
-  virtual void SetFontMgr(IFX_FontMgr* pFontMgr);
-  virtual void SetDefFontSize(FX_FLOAT fFontSize);
+  void Release() { delete this; }
 
-  virtual FX_BOOL SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
-                                IFDE_CSSStyleSheet* pSheet);
-  virtual FX_BOOL SetStyleSheets(FDE_CSSSTYLESHEETGROUP eType,
-                                 const CFDE_CSSStyleSheetArray* pArray);
-  virtual void SetStylePriority(FDE_CSSSTYLESHEETGROUP eType,
-                                FDE_CSSSTYLESHEETPRIORITY ePriority);
-  virtual void UpdateStyleIndex(uint32_t dwMediaList);
-  virtual CFDE_CSSAccelerator* InitAccelerator();
-  virtual IFDE_CSSComputedStyle* CreateComputedStyle(
+  void SetFontMgr(IFX_FontMgr* pFontMgr);
+  void SetDefFontSize(FX_FLOAT fFontSize);
+
+  FX_BOOL SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
+                        IFDE_CSSStyleSheet* pSheet);
+  FX_BOOL SetStyleSheets(FDE_CSSSTYLESHEETGROUP eType,
+                         const CFDE_CSSStyleSheetArray* pArray);
+  void SetStylePriority(FDE_CSSSTYLESHEETGROUP eType,
+                        FDE_CSSSTYLESHEETPRIORITY ePriority);
+  void UpdateStyleIndex(uint32_t dwMediaList);
+  CFDE_CSSAccelerator* InitAccelerator();
+  IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle);
-  virtual int32_t MatchDeclarations(
-      CXFA_CSSTagProvider* pTag,
-      CFDE_CSSDeclarationArray& matchedDecls,
-      FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE);
-  virtual void ComputeStyle(CXFA_CSSTagProvider* pTag,
-                            const IFDE_CSSDeclaration** ppDeclArray,
-                            int32_t iDeclCount,
-                            IFDE_CSSComputedStyle* pDestStyle);
+  int32_t MatchDeclarations(CXFA_CSSTagProvider* pTag,
+                            CFDE_CSSDeclarationArray& matchedDecls,
+                            FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE);
+  void ComputeStyle(CXFA_CSSTagProvider* pTag,
+                    const CFDE_CSSDeclaration** ppDeclArray,
+                    int32_t iDeclCount,
+                    IFDE_CSSComputedStyle* pDestStyle);
 
  protected:
   void Reset();
@@ -124,13 +124,13 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
                   FDE_CSSRuleData* pList,
                   FDE_CSSPERSUDO ePersudoType);
   FX_BOOL MatchSelector(FDE_CSSTagCache* pCache,
-                        IFDE_CSSSelector* pSel,
+                        CFDE_CSSSelector* pSel,
                         FDE_CSSPERSUDO ePersudoType);
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                          const FX_WCHAR* psz,
                          int32_t iLen);
   void ApplyDeclarations(FX_BOOL bPriority,
-                         const IFDE_CSSDeclaration** ppDeclArray,
+                         const CFDE_CSSDeclaration** ppDeclArray,
                          int32_t iDeclCount,
                          IFDE_CSSComputedStyle* pDestStyle);
   void ApplyProperty(FDE_CSSPROPERTY eProperty,

@@ -74,21 +74,22 @@ enum FDE_CSSSYNTAXMODE {
   FDE_CSSSYNTAXMODE_PropertyValue,
 };
 
-class CFDE_CSSSyntaxParser : public IFDE_CSSSyntaxParser, public CFX_Target {
+class CFDE_CSSSyntaxParser : public CFX_Target {
  public:
   CFDE_CSSSyntaxParser();
   ~CFDE_CSSSyntaxParser();
-  virtual void Release() { delete this; }
-  virtual FX_BOOL Init(IFX_Stream* pStream,
-                       int32_t iCSSPlaneSize,
-                       int32_t iTextDataSize = 32,
-                       FX_BOOL bOnlyDeclaration = FALSE);
-  virtual FX_BOOL Init(const FX_WCHAR* pBuffer,
-                       int32_t iBufferSize,
-                       int32_t iTextDatSize = 32,
-                       FX_BOOL bOnlyDeclaration = FALSE);
-  virtual FDE_CSSSYNTAXSTATUS DoSyntaxParse();
-  virtual const FX_WCHAR* GetCurrentString(int32_t& iLength) const;
+
+  void Release() { delete this; }
+  FX_BOOL Init(IFX_Stream* pStream,
+               int32_t iCSSPlaneSize,
+               int32_t iTextDataSize = 32,
+               FX_BOOL bOnlyDeclaration = FALSE);
+  FX_BOOL Init(const FX_WCHAR* pBuffer,
+               int32_t iBufferSize,
+               int32_t iTextDatSize = 32,
+               FX_BOOL bOnlyDeclaration = FALSE);
+  FDE_CSSSYNTAXSTATUS DoSyntaxParse();
+  const FX_WCHAR* GetCurrentString(int32_t& iLength) const;
 
  protected:
   void Reset(FX_BOOL bOnlyDeclaration);
@@ -104,6 +105,7 @@ class CFDE_CSSSyntaxParser : public IFDE_CSSSyntaxParser, public CFX_Target {
   void DisableCharset() { m_dwCheck = FDE_CSSSYNTAXCHECK_AllowImport; }
   FX_BOOL IsImportEnabled() const;
   void DisableImport() { m_dwCheck = 0; }
+
   IFX_Stream* m_pStream;
   int32_t m_iStreamPos;
   int32_t m_iPlaneSize;

@@ -30,24 +30,25 @@ struct FDE_CSSPROPERTYARGS {
   FDE_LPCCSSPROPERTYTABLE pProperty;
 };
 
-class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
+class CFDE_CSSDeclaration : public CFX_Target {
  public:
   CFDE_CSSDeclaration()
-      : m_pFirstProperty(NULL),
-        m_pLastProperty(NULL),
-        m_pFirstCustom(NULL),
-        m_pLastCustom(NULL) {}
-  virtual IFDE_CSSValue* GetProperty(FDE_CSSPROPERTY eProperty,
-                                     FX_BOOL& bImportant) const;
-  virtual FX_POSITION GetStartPosition() const;
-  virtual void GetNextProperty(FX_POSITION& pos,
-                               FDE_CSSPROPERTY& eProperty,
-                               IFDE_CSSValue*& pValue,
-                               FX_BOOL& bImportant) const;
-  virtual FX_POSITION GetStartCustom() const;
-  virtual void GetNextCustom(FX_POSITION& pos,
-                             CFX_WideString& wsName,
-                             CFX_WideString& wsValue) const;
+      : m_pFirstProperty(nullptr),
+        m_pLastProperty(nullptr),
+        m_pFirstCustom(nullptr),
+        m_pLastCustom(nullptr) {}
+
+  IFDE_CSSValue* GetProperty(FDE_CSSPROPERTY eProperty,
+                             FX_BOOL& bImportant) const;
+  FX_POSITION GetStartPosition() const;
+  void GetNextProperty(FX_POSITION& pos,
+                       FDE_CSSPROPERTY& eProperty,
+                       IFDE_CSSValue*& pValue,
+                       FX_BOOL& bImportant) const;
+  FX_POSITION GetStartCustom() const;
+  void GetNextCustom(FX_POSITION& pos,
+                     CFX_WideString& wsName,
+                     CFX_WideString& wsValue) const;
   FX_BOOL AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
                       const FX_WCHAR* pszValue,
                       int32_t iValueLen);
@@ -149,10 +150,12 @@ class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
                                          FX_FLOAT fValue) const;
   IFDE_CSSPrimitiveValue* NewEnumValue(IFX_MEMAllocator* pStaticStore,
                                        FDE_CSSPROPERTYVALUE eValue) const;
+
   FDE_CSSPropertyHolder* m_pFirstProperty;
   FDE_CSSPropertyHolder* m_pLastProperty;
   FDE_CSSCustomProperty* m_pFirstCustom;
   FDE_CSSCustomProperty* m_pLastCustom;
 };
+using CFDE_CSSDeclarationArray = CFX_ArrayTemplate<CFDE_CSSDeclaration*>;
 
 #endif  // XFA_FDE_CSS_FDE_CSSDECLARATION_H_
