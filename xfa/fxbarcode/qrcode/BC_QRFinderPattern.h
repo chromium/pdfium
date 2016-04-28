@@ -18,7 +18,7 @@ class CBC_QRFinderPattern : public CBC_ResultPoint {
   CBC_QRFinderPattern(FX_FLOAT x, FX_FLOAT posY, FX_FLOAT estimatedModuleSize);
   virtual ~CBC_QRFinderPattern();
 
-  int32_t GetCount();
+  int32_t GetCount() const;
   FX_FLOAT GetX();
   FX_FLOAT GetY();
   FX_FLOAT GetEstimatedModuleSize();

@@ -15,16 +15,6 @@ class CBC_ResultPoint;
 class CBC_QRFinderPatternInfo;
 
 class CBC_QRFinderPatternFinder {
- private:
-  static const int32_t CENTER_QUORUM;
-  static const int32_t MIN_SKIP;
-  static const int32_t MAX_MODULES;
-  static const int32_t INTEGER_MATH_SHIFT;
-  FX_BOOL m_hasSkipped;
-  CBC_CommonBitMatrix* m_image;
-  CFX_Int32Array m_crossCheckStateCount;
-  CFX_PtrArray m_possibleCenters;
-
  public:
   CBC_QRFinderPatternFinder(CBC_CommonBitMatrix* image);
   virtual ~CBC_QRFinderPatternFinder();
@@ -33,8 +23,8 @@ class CBC_QRFinderPatternFinder {
   CBC_QRFinderPatternInfo* Find(int32_t hint, int32_t& e);
 
   CFX_Int32Array& GetCrossCheckStateCount();
-  CFX_PtrArray* GetPossibleCenters();
-  CFX_PtrArray* SelectBestpatterns(int32_t& e);
+  CFX_ArrayTemplate<CBC_QRFinderPattern*>* GetPossibleCenters();
+  CFX_ArrayTemplate<CBC_QRFinderPattern*>* SelectBestpatterns(int32_t& e);
 
   FX_BOOL HandlePossibleCenter(const CFX_Int32Array& stateCount,
                                int32_t i,
@@ -49,9 +39,21 @@ class CBC_QRFinderPatternFinder {
                                 int32_t CenterI,
                                 int32_t maxCOunt,
                                 int32_t originalStateCountTotal);
-  static void OrderBestPatterns(CFX_PtrArray* patterns);
+  static void OrderBestPatterns(
+      CFX_ArrayTemplate<CBC_QRFinderPattern*>* patterns);
   static FX_BOOL FoundPatternCross(const CFX_Int32Array& stateCount);
   static FX_FLOAT Distance(CBC_ResultPoint* point1, CBC_ResultPoint* point2);
+
+ private:
+  static const int32_t CENTER_QUORUM;
+  static const int32_t MIN_SKIP;
+  static const int32_t MAX_MODULES;
+  static const int32_t INTEGER_MATH_SHIFT;
+
+  FX_BOOL m_hasSkipped;
+  CBC_CommonBitMatrix* m_image;
+  CFX_Int32Array m_crossCheckStateCount;
+  CFX_ArrayTemplate<CBC_QRFinderPattern*> m_possibleCenters;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRFINDERPATTERNFINDER_H_

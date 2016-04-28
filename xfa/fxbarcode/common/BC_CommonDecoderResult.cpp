@@ -44,7 +44,6 @@ void CBC_CommonDecoderResult::Init(const CFX_ByteArray& rawBytes,
 }
 void CBC_CommonDecoderResult::Init(const CFX_ByteArray& rawBytes,
                                    const CFX_ByteString& text,
-                                   const CFX_PtrArray& byteSegments,
                                    const CFX_ByteString& ecLevel,
                                    int32_t& e) {
   if (text.IsEmpty()) {
@@ -53,7 +52,6 @@ void CBC_CommonDecoderResult::Init(const CFX_ByteArray& rawBytes,
   }
   m_rawBytes.Copy(rawBytes);
   m_text = text;
-  m_pdf417byteSegments.Copy(byteSegments);
   m_pdf417ecLevel = ecLevel;
   m_other = NULL;
 }

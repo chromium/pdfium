@@ -24,18 +24,23 @@
 #include "xfa/fxbarcode/qrcode/BC_FinderPatternInfo.h"
 #include "xfa/fxbarcode/qrcode/BC_QRFinderPattern.h"
 
-CBC_QRFinderPatternInfo::CBC_QRFinderPatternInfo(CFX_PtrArray* patternCenters) {
-  m_bottomLeft = (CBC_QRFinderPattern*)(*patternCenters)[0];
-  m_topLeft = (CBC_QRFinderPattern*)(*patternCenters)[1];
-  m_topRight = (CBC_QRFinderPattern*)(*patternCenters)[2];
+CBC_QRFinderPatternInfo::CBC_QRFinderPatternInfo(
+    CFX_ArrayTemplate<CBC_QRFinderPattern*>* patternCenters) {
+  m_bottomLeft = (*patternCenters)[0];
+  m_topLeft = (*patternCenters)[1];
+  m_topRight = (*patternCenters)[2];
 }
+
 CBC_QRFinderPatternInfo::~CBC_QRFinderPatternInfo() {}
-CBC_QRFinderPattern* CBC_QRFinderPatternInfo::GetBottomLeft() {
+
+CBC_QRFinderPattern* CBC_QRFinderPatternInfo::GetBottomLeft() const {
   return m_bottomLeft;
 }
-CBC_QRFinderPattern* CBC_QRFinderPatternInfo::GetTopLeft() {
+
+CBC_QRFinderPattern* CBC_QRFinderPatternInfo::GetTopLeft() const {
   return m_topLeft;
 }
-CBC_QRFinderPattern* CBC_QRFinderPatternInfo::GetTopRight() {
+
+CBC_QRFinderPattern* CBC_QRFinderPatternInfo::GetTopRight() const {
   return m_topRight;
 }

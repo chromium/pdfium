@@ -44,7 +44,7 @@ CBC_QRFinderPattern* CBC_QRFinderPattern::Clone() {
 FX_FLOAT CBC_QRFinderPattern::GetEstimatedModuleSize() {
   return m_estimatedModuleSize;
 }
-int32_t CBC_QRFinderPattern::GetCount() {
+int32_t CBC_QRFinderPattern::GetCount() const {
   return m_count;
 }
 void CBC_QRFinderPattern::IncrementCount() {

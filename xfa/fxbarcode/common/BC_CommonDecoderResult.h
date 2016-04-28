@@ -27,7 +27,6 @@ class CBC_CommonDecoderResult {
                     int32_t& e);
   virtual void Init(const CFX_ByteArray& rawBytes,
                     const CFX_ByteString& text,
-                    const CFX_PtrArray& byteSegments,
                     const CFX_ByteString& ecLevel,
                     int32_t& e);
   void setOther(CBC_PDF417ResultMetadata* other);
@@ -36,7 +35,6 @@ class CBC_CommonDecoderResult {
   CFX_ByteArray m_rawBytes;
   CFX_ByteString m_text;
   CFX_Int32Array m_byteSegments;
-  CFX_PtrArray m_pdf417byteSegments;
   CBC_QRCoderErrorCorrectionLevel* m_ecLevel;
   CFX_ByteString m_pdf417ecLevel;
   CBC_PDF417ResultMetadata* m_other;

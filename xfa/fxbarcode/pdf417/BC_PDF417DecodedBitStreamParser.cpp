@@ -113,9 +113,8 @@ CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(
     return NULL;
   }
   CFX_ByteArray rawBytes;
-  CFX_PtrArray byteSegments;
   CBC_CommonDecoderResult* tempCd = new CBC_CommonDecoderResult();
-  tempCd->Init(rawBytes, result, byteSegments, ecLevel, e);
+  tempCd->Init(rawBytes, result, ecLevel, e);
   if (e != BCExceptionNO) {
     delete resultMetadata;
     return NULL;

@@ -14,16 +14,6 @@ class CBC_CommonBitMatrix;
 class CBC_QRAlignmentPattern;
 
 class CBC_QRAlignmentPatternFinder {
- private:
-  CBC_CommonBitMatrix* m_image;
-  CFX_PtrArray m_possibleCenters;
-  int32_t m_startX;
-  int32_t m_startY;
-  int32_t m_width;
-  int32_t m_height;
-  FX_FLOAT m_moduleSize;
-  CFX_Int32Array m_crossCheckStateCount;
-
  public:
   CBC_QRAlignmentPatternFinder(CBC_CommonBitMatrix* image,
                                int32_t startX,
@@ -42,6 +32,16 @@ class CBC_QRAlignmentPatternFinder {
                                                int32_t i,
                                                int32_t j);
   static FX_FLOAT CenterFromEnd(const CFX_Int32Array& stateCount, int32_t end);
+
+ private:
+  CBC_CommonBitMatrix* m_image;
+  CFX_ArrayTemplate<CBC_QRAlignmentPattern*> m_possibleCenters;
+  int32_t m_startX;
+  int32_t m_startY;
+  int32_t m_width;
+  int32_t m_height;
+  FX_FLOAT m_moduleSize;
+  CFX_Int32Array m_crossCheckStateCount;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERNFINDER_H_

@@ -40,12 +40,12 @@ CBC_QRAlignmentPatternFinder::CBC_QRAlignmentPatternFinder(
       m_moduleSize(moduleSize) {
   m_crossCheckStateCount.SetSize(3);
 }
+
 CBC_QRAlignmentPatternFinder::~CBC_QRAlignmentPatternFinder() {
-  for (int32_t i = 0; i < m_possibleCenters.GetSize(); i++) {
-    delete (CBC_QRAlignmentPattern*)m_possibleCenters[i];
-  }
-  m_possibleCenters.RemoveAll();
+  for (int32_t i = 0; i < m_possibleCenters.GetSize(); i++)
+    delete m_possibleCenters[i];
 }
+
 CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::Find(int32_t& e) {
   int32_t startX = m_startX;
   int32_t height = m_height;
@@ -102,7 +102,7 @@ CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::Find(int32_t& e) {
     }
   }
   if (m_possibleCenters.GetSize() != 0) {
-    return ((CBC_QRAlignmentPattern*)(m_possibleCenters[0]))->Clone();
+    return m_possibleCenters[0]->Clone();
   }
   e = BCExceptionRead;
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -186,8 +186,7 @@ CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::HandlePossibleCenter(
         (FX_FLOAT)(stateCount[0] + stateCount[1] + stateCount[2]) / 3.0f;
     int32_t max = m_possibleCenters.GetSize();
     for (int32_t index = 0; index < max; index++) {
-      CBC_QRAlignmentPattern* center =
-          (CBC_QRAlignmentPattern*)(m_possibleCenters[index]);
+      CBC_QRAlignmentPattern* center = m_possibleCenters[index];
       if (center->AboutEquals(estimatedModuleSize, centerI, centerJ)) {
         return new CBC_QRAlignmentPattern(centerJ, centerI,
                                           estimatedModuleSize);

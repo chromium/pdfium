@@ -12,17 +12,19 @@
 class CBC_QRFinderPattern;
 
 class CBC_QRFinderPatternInfo {
+ public:
+  explicit CBC_QRFinderPatternInfo(
+      CFX_ArrayTemplate<CBC_QRFinderPattern*>* patternCenters);
+  ~CBC_QRFinderPatternInfo();
+
+  CBC_QRFinderPattern* GetBottomLeft() const;
+  CBC_QRFinderPattern* GetTopLeft() const;
+  CBC_QRFinderPattern* GetTopRight() const;
+
  private:
   CBC_QRFinderPattern* m_bottomLeft;
   CBC_QRFinderPattern* m_topLeft;
   CBC_QRFinderPattern* m_topRight;
-
- public:
-  CBC_QRFinderPatternInfo(CFX_PtrArray* patternCenters);
-  virtual ~CBC_QRFinderPatternInfo();
-  CBC_QRFinderPattern* GetBottomLeft();
-  CBC_QRFinderPattern* GetTopLeft();
-  CBC_QRFinderPattern* GetTopRight();
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_FINDERPATTERNINFO_H_
