@@ -53,8 +53,7 @@ class CPDF_StreamParser {
   }
   uint32_t GetPos() const { return m_Pos; }
   void SetPos(uint32_t pos) { m_Pos = pos; }
-  CPDF_Object* ReadNextObject(FX_BOOL bAllowNestedArray = FALSE,
-                              FX_BOOL bInArray = FALSE);
+  CPDF_Object* ReadNextObject(bool bAllowNestedArray, uint32_t dwInArrayLevel);
 
  protected:
   friend class fpdf_page_parser_old_ReadHexString_Test;
@@ -99,7 +98,6 @@ struct ContentParam {
 };
 #define _FPDF_MAX_FORM_LEVEL_ 30
 #define _FPDF_MAX_TYPE3_FORM_LEVEL_ 4
-#define _FPDF_MAX_OBJECT_STACK_SIZE_ 512
 class CPDF_StreamContentParser {
  public:
   CPDF_StreamContentParser(CPDF_Document* pDoc,

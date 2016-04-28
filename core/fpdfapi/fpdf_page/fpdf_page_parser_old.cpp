@@ -31,6 +31,14 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 
+namespace {
+
+const uint32_t kMaxNestedArrayLevel = 512;
+const uint32_t kMaxWordBuffer = 256;
+const FX_STRSIZE kMaxStringLength = 32767;
+
+}  // namespace
+
 CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize) {
   m_pBuf = pData;
   m_Size = dwSize;
@@ -230,9 +238,6 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
   return new CPDF_Stream(pData, dwStreamSize, pDict);
 }
 
-#define MAX_WORD_BUFFER 256
-#define MAX_STRING_LENGTH 32767
-
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
   if (m_pLastObj) {
     m_pLastObj->Release();
@@ -268,12 +273,12 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   if (PDFCharIsDelimiter(ch) && ch != '/') {
     m_Pos--;
-    m_pLastObj = ReadNextObject();
+    m_pLastObj = ReadNextObject(false, 0);
     return Others;
   }
 
   while (1) {
-    if (m_WordSize < MAX_WORD_BUFFER)
+    if (m_WordSize < kMaxWordBuffer)
       m_WordBuffer[m_WordSize++] = ch;
 
     if (!PDFCharIsNumeric(ch))
@@ -315,88 +320,90 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
   return Keyword;
 }
 
-CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
-                                               FX_BOOL bInArray) {
+CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
+                                               uint32_t dwInArrayLevel) {
   FX_BOOL bIsNumber;
   GetNextWord(bIsNumber);
-  if (m_WordSize == 0) {
-    return NULL;
-  }
+  if (!m_WordSize)
+    return nullptr;
+
   if (bIsNumber) {
     m_WordBuffer[m_WordSize] = 0;
     return new CPDF_Number(CFX_ByteStringC(m_WordBuffer, m_WordSize));
   }
+
   int first_char = m_WordBuffer[0];
   if (first_char == '/') {
     return new CPDF_Name(
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
-  if (first_char == '(') {
+
+  if (first_char == '(')
     return new CPDF_String(ReadString(), FALSE);
-  }
+
   if (first_char == '<') {
-    if (m_WordSize == 1) {
+    if (m_WordSize == 1)
       return new CPDF_String(ReadHexString(), TRUE);
-    }
+
     CPDF_Dictionary* pDict = new CPDF_Dictionary;
     while (1) {
       GetNextWord(bIsNumber);
-      if (m_WordSize == 0) {
-        pDict->Release();
-        return nullptr;
-      }
-      if (m_WordSize == 2 && m_WordBuffer[0] == '>') {
+      if (m_WordSize == 2 && m_WordBuffer[0] == '>')
         break;
-      }
-      if (m_WordBuffer[0] != '/') {
+
+      if (!m_WordSize || m_WordBuffer[0] != '/') {
         pDict->Release();
         return nullptr;
       }
+
       CFX_ByteString key =
           PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
-      CPDF_Object* pObj = ReadNextObject(TRUE);
+      CPDF_Object* pObj = ReadNextObject(true, 0);
       if (!pObj) {
         pDict->Release();
         return nullptr;
       }
-      if (!key.IsEmpty()) {
-        pDict->SetAt(key, pObj);
-      } else {
+
+      if (key.IsEmpty())
         pObj->Release();
-      }
+      else
+        pDict->SetAt(key, pObj);
     }
     return pDict;
   }
+
   if (first_char == '[') {
-    if (!bAllowNestedArray && bInArray) {
-      return NULL;
+    if ((!bAllowNestedArray && dwInArrayLevel) ||
+        dwInArrayLevel > kMaxNestedArrayLevel) {
+      return nullptr;
     }
+
     CPDF_Array* pArray = new CPDF_Array;
     while (1) {
-      CPDF_Object* pObj = ReadNextObject(bAllowNestedArray, TRUE);
+      CPDF_Object* pObj = ReadNextObject(bAllowNestedArray, dwInArrayLevel + 1);
       if (pObj) {
         pArray->Add(pObj);
         continue;
       }
 
-      if (m_WordSize == 0 || m_WordBuffer[0] == ']')
+      if (!m_WordSize || m_WordBuffer[0] == ']')
         break;
     }
     return pArray;
   }
+
+  if (m_WordSize == 5 && !memcmp(m_WordBuffer, "false", 5))
+    return new CPDF_Boolean(FALSE);
+
   if (m_WordSize == 4) {
-    if (memcmp(m_WordBuffer, "true", 4) == 0) {
+    if (memcmp(m_WordBuffer, "true", 4) == 0)
       return new CPDF_Boolean(TRUE);
-    }
-    if (memcmp(m_WordBuffer, "null", 4) == 0) {
+
+    if (memcmp(m_WordBuffer, "null", 4) == 0)
       return new CPDF_Null;
-    }
-  } else if (m_WordSize == 5) {
-    if (memcmp(m_WordBuffer, "false", 5) == 0) {
-      return new CPDF_Boolean(FALSE);
-    }
   }
-  return NULL;
+
+  return nullptr;
 }
 
 void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
@@ -439,7 +446,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
           return;
         }
 
-        if (m_WordSize < MAX_WORD_BUFFER)
+        if (m_WordSize < kMaxWordBuffer)
           m_WordBuffer[m_WordSize++] = ch;
       }
     } else if (ch == '<') {
@@ -463,7 +470,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
   }
 
   while (1) {
-    if (m_WordSize < MAX_WORD_BUFFER)
+    if (m_WordSize < kMaxWordBuffer)
       m_WordBuffer[m_WordSize++] = ch;
     if (!PDFCharIsNumeric(ch))
       bIsNumber = FALSE;
@@ -492,8 +499,8 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
       case 0:
         if (ch == ')') {
           if (parlevel == 0) {
-            if (buf.GetLength() > MAX_STRING_LENGTH) {
-              return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
+            if (buf.GetLength() > kMaxStringLength) {
+              return CFX_ByteString(buf.GetBuffer(), kMaxStringLength);
             }
             return buf.AsStringC();
           }
@@ -571,8 +578,8 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
   if (PositionIsInBounds())
     ++m_Pos;
 
-  if (buf.GetLength() > MAX_STRING_LENGTH) {
-    return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
+  if (buf.GetLength() > kMaxStringLength) {
+    return CFX_ByteString(buf.GetBuffer(), kMaxStringLength);
   }
   return buf.AsStringC();
 }
@@ -605,8 +612,8 @@ CFX_ByteString CPDF_StreamParser::ReadHexString() {
   if (!bFirst)
     buf.AppendChar((char)code);
 
-  if (buf.GetLength() > MAX_STRING_LENGTH)
-    return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
+  if (buf.GetLength() > kMaxStringLength)
+    return CFX_ByteString(buf.GetBuffer(), kMaxStringLength);
 
   return buf.AsStringC();
 }
