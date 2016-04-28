@@ -17,8 +17,6 @@
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_adapternative.h"
 #include "xfa/fwl/core/ifwl_adapterthreadmgr.h"
@@ -29,6 +27,28 @@
 
 #define FWL_CLASSHASH_Menu 3957949655
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)
+
+IFWL_Widget::~IFWL_Widget() {}
+
+FWL_ERR IFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
+  return m_pImpl->GetClassName(wsClass);
+}
+
+uint32_t IFWL_Widget::GetClassID() const {
+  return m_pImpl->GetClassID();
+}
+
+FX_BOOL IFWL_Widget::IsInstance(const CFX_WideStringC& wsClass) const {
+  return m_pImpl->IsInstance(wsClass);
+}
+
+FWL_ERR IFWL_Widget::Initialize() {
+  return m_pImpl->Initialize();
+}
+
+FWL_ERR IFWL_Widget::Finalize() {
+  return m_pImpl->Finalize();
+}
 
 FWL_ERR IFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   return static_cast<CFWL_WidgetImp*>(GetImpl())
@@ -134,12 +154,13 @@ FWL_ERR IFWL_Widget::SetDataProvider(IFWL_DataProvider* pDataProvider) {
 IFWL_WidgetDelegate* IFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
   return static_cast<CFWL_WidgetImp*>(GetImpl())->SetDelegate(pDelegate);
 }
-IFWL_Thread* IFWL_Widget::GetOwnerThread() const {
-  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetOwnerThread();
+IFWL_App* IFWL_Widget::GetOwnerApp() const {
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetOwnerApp();
 }
 CFX_SizeF IFWL_Widget::GetOffsetFromParent(IFWL_Widget* pParent) {
   return static_cast<CFWL_WidgetImp*>(GetImpl())->GetOffsetFromParent(pParent);
 }
+
 FWL_ERR CFWL_WidgetImp::Initialize() {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
@@ -150,8 +171,8 @@ FWL_ERR CFWL_WidgetImp::Initialize() {
   IFWL_AdapterThreadMgr* pAdapterThread = pAdapter->GetThreadMgr();
   if (!pAdapterThread)
     return FWL_ERR_Indefinite;
-  SetOwnerThread(static_cast<CFWL_ThreadImp*>(
-      pAdapterThread->GetCurrentThread()->GetImpl()));
+  SetOwnerApp(
+      static_cast<CFWL_AppImp*>(pAdapterThread->GetCurrentThread()->GetImpl()));
   IFWL_Widget* pParent = m_pProperties->m_pParent;
   m_pWidgetMgr->InsertWidget(pParent, m_pInterface);
   if (!IsChild()) {
@@ -165,6 +186,7 @@ FWL_ERR CFWL_WidgetImp::Initialize() {
   }
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CFWL_WidgetImp::Finalize() {
   NotifyDriver();
   if (!IsChild())
@@ -173,6 +195,20 @@ FWL_ERR CFWL_WidgetImp::Finalize() {
   m_pWidgetMgr->RemoveWidget(m_pInterface);
   return FWL_ERR_Succeeded;
 }
+
+FWL_ERR CFWL_WidgetImp::GetClassName(CFX_WideString& wsClass) const {
+  wsClass.clear();
+  return FWL_ERR_Succeeded;
+}
+
+uint32_t CFWL_WidgetImp::GetClassID() const {
+  return 0;
+}
+
+FX_BOOL CFWL_WidgetImp::IsInstance(const CFX_WideStringC& wsClass) const {
+  return FALSE;
+}
+
 FWL_ERR CFWL_WidgetImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     if (HasEdge()) {
@@ -286,7 +322,7 @@ FWL_ERR CFWL_WidgetImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
     if (bSet) {
       ret = m_pWidgetMgr->HideWidget_Native(m_pInterface);
       CFWL_NoteDriver* noteDriver =
-          static_cast<CFWL_NoteDriver*>(GetOwnerThread()->GetNoteDriver());
+          static_cast<CFWL_NoteDriver*>(GetOwnerApp()->GetNoteDriver());
       IFWL_WidgetMgr* widgetMgr = FWL_GetWidgetMgr();
       noteDriver->NotifyTargetHide(m_pInterface);
       IFWL_Widget* child =
@@ -497,11 +533,11 @@ IFWL_WidgetDelegate* CFWL_WidgetImp::SetDelegate(
   m_pCurDelegate = pDelegate;
   return pOldDelegate;
 }
-IFWL_Thread* CFWL_WidgetImp::GetOwnerThread() const {
-  return static_cast<IFWL_Thread*>(m_pOwnerThread->GetInterface());
+IFWL_App* CFWL_WidgetImp::GetOwnerApp() const {
+  return static_cast<IFWL_App*>(m_pOwnerApp->GetInterface());
 }
-FWL_ERR CFWL_WidgetImp::SetOwnerThread(CFWL_ThreadImp* pOwnerThread) {
-  m_pOwnerThread = pOwnerThread;
+FWL_ERR CFWL_WidgetImp::SetOwnerApp(CFWL_AppImp* pOwnerApp) {
+  m_pOwnerApp = pOwnerApp;
   return FWL_ERR_Succeeded;
 }
 IFWL_Widget* CFWL_WidgetImp::GetInterface() const {
@@ -682,13 +718,16 @@ void CFWL_WidgetImp::CalcTextRect(const CFX_WideString& wsText,
 void CFWL_WidgetImp::SetFocus(FX_BOOL bFocus) {
   if (m_pWidgetMgr->IsFormDisabled())
     return;
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
+
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pDriver)
     return;
+
   IFWL_Widget* curFocus = pDriver->GetFocus();
   if (bFocus && curFocus != m_pInterface) {
     pDriver->SetFocus(m_pInterface);
@@ -697,11 +736,11 @@ void CFWL_WidgetImp::SetFocus(FX_BOOL bFocus) {
   }
 }
 void CFWL_WidgetImp::SetGrab(FX_BOOL bSet) {
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   pDriver->SetGrab(m_pInterface, bSet);
 }
 FX_BOOL CFWL_WidgetImp::GetPopupPos(FX_FLOAT fMinHeight,
@@ -813,21 +852,25 @@ FX_BOOL CFWL_WidgetImp::GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy) {
 }
 void CFWL_WidgetImp::RegisterEventTarget(IFWL_Widget* pEventSource,
                                          uint32_t dwFilter) {
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
-  IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
+
+  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
   if (!pNoteDriver)
     return;
+
   pNoteDriver->RegisterEventTarget(m_pInterface, pEventSource, dwFilter);
 }
 void CFWL_WidgetImp::UnregisterEventTarget() {
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
-  IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
+
+  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
   if (!pNoteDriver)
     return;
+
   pNoteDriver->UnregisterEventTarget(m_pInterface);
 }
 void CFWL_WidgetImp::DispatchKeyEvent(CFWL_MsgKey* pNote) {
@@ -847,10 +890,10 @@ void CFWL_WidgetImp::DispatchEvent(CFWL_Event* pEvent) {
     pDelegate->OnProcessEvent(pEvent);
     return;
   }
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
-  IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
   if (!pNoteDriver)
     return;
   pNoteDriver->SendEvent(pEvent);
@@ -914,13 +957,15 @@ void CFWL_WidgetImp::DrawEdge(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 void CFWL_WidgetImp::NotifyDriver() {
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
+
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pDriver)
     return;
+
   pDriver->NotifyTargetDestroy(m_pInterface);
 }
 CFX_SizeF CFWL_WidgetImp::GetOffsetFromParent(IFWL_Widget* pParent) {

@@ -9,8 +9,6 @@
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_adapternative.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
@@ -695,22 +693,24 @@ int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
     return 0;
   if (!pMessage->m_pDstTarget)
     return 0;
+
   IFWL_Widget* pDstWidget = pMessage->m_pDstTarget;
-  IFWL_Thread* pThread = pDstWidget->GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = pDstWidget->GetOwnerApp();
+  if (!pApp)
     return 0;
+
   CFWL_NoteDriver* pNoteDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pNoteDriver)
     return 0;
-  if (m_pWidgetMgr->IsThreadEnabled()) {
+
+  if (m_pWidgetMgr->IsThreadEnabled())
     pMessage = static_cast<CFWL_Message*>(pMessage->Clone());
-  }
-  if (m_pWidgetMgr->IsFormDisabled()) {
+  if (m_pWidgetMgr->IsFormDisabled())
     pNoteDriver->ProcessMessage(pMessage);
-  } else {
+  else
     pNoteDriver->QueueMessage(pMessage);
-  }
+
 #if (_FX_OS_ == _FX_MACOSX_)
   CFWL_NoteLoop* pTopLoop = pNoteDriver->GetTopLoop();
   if (pTopLoop) {

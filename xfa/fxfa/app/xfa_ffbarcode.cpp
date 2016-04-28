@@ -7,8 +7,8 @@
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fwl/lightwidget/cfwl_barcode.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_fftextedit.h"
@@ -128,7 +128,7 @@ FX_BOOL CXFA_FFBarcode::LoadWidget() {
   m_pNormalWidget = pFWLBarcode;
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();

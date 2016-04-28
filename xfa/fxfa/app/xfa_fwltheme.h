@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_APP_XFA_FWLTHEME_H_
 #define XFA_FXFA_APP_XFA_FWLTHEME_H_
 
-#include "xfa/fwl/core/ifwl_target.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_barcodetp.h"
 #include "xfa/fwl/theme/cfwl_carettp.h"
@@ -31,7 +30,7 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
     delete this;
     return FWL_ERR_Succeeded;
   }
-  virtual IFWL_Target* Retain() { return NULL; }
+  virtual IFWL_Widget* Retain() { return NULL; }
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {
     return FWL_ERR_Succeeded;
   }

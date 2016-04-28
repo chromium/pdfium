@@ -7,8 +7,6 @@
 #include "xfa/fwl/core/fwl_appimp.h"
 
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
@@ -19,32 +17,46 @@ IFWL_App* IFWL_App::Create(IFWL_AdapterNative* pAdapter) {
   pApp->SetImpl(new CFWL_AppImp(pApp, pAdapter));
   return pApp;
 }
+
+void IFWL_App::Release() {}
+
 FWL_ERR IFWL_App::Initialize() {
   return static_cast<CFWL_AppImp*>(GetImpl())->Initialize();
 }
+
 FWL_ERR IFWL_App::Finalize() {
   return static_cast<CFWL_AppImp*>(GetImpl())->Finalize();
 }
+
 IFWL_AdapterNative* IFWL_App::GetAdapterNative() {
   return static_cast<CFWL_AppImp*>(GetImpl())->GetAdapterNative();
 }
+
 IFWL_WidgetMgr* IFWL_App::GetWidgetMgr() {
   return static_cast<CFWL_AppImp*>(GetImpl())->GetWidgetMgr();
 }
+
 IFWL_ThemeProvider* IFWL_App::GetThemeProvider() {
   return static_cast<CFWL_AppImp*>(GetImpl())->GetThemeProvider();
 }
+
 FWL_ERR IFWL_App::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   return static_cast<CFWL_AppImp*>(GetImpl())->SetThemeProvider(pThemeProvider);
 }
+
 FWL_ERR IFWL_App::Exit(int32_t iExitCode) {
   return static_cast<CFWL_AppImp*>(GetImpl())->Exit(iExitCode);
 }
 
+CFWL_NoteDriver* IFWL_App::GetNoteDriver() const {
+  return static_cast<CFWL_AppImp*>(GetImpl())->GetNoteDriver();
+}
+
 CFWL_AppImp::CFWL_AppImp(IFWL_App* pIface, IFWL_AdapterNative* pAdapter)
-    : CFWL_ThreadImp(pIface),
-      m_pAdapterNative(pAdapter),
-      m_pThemeProvider(nullptr) {}
+    : m_pAdapterNative(pAdapter),
+      m_pThemeProvider(nullptr),
+      m_pNoteDriver(new CFWL_NoteDriver),
+      m_pIface(pIface) {}
 
 CFWL_AppImp::~CFWL_AppImp() {
   CFWL_ToolTipContainer::DeleteInstance();

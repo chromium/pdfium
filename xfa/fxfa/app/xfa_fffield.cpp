@@ -8,7 +8,7 @@
 
 #include "xfa/fwl/basewidget/ifwl_edit.h"
 #include "xfa/fwl/core/cfwl_message.h"
-#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
+#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/lightwidget/cfwl_edit.h"
 #include "xfa/fwl/lightwidget/cfwl_picturebox.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
@@ -334,10 +334,8 @@ void CXFA_FFField::SetFWLRect() {
     return;
   }
   CFX_RectF rtUi = m_rtUI;
-  if (rtUi.width < 1.0) {
-    ASSERT(rtUi.width < 1.0);
+  if (rtUi.width < 1.0)
     rtUi.width = 1.0;
-  }
   if (!m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     FX_FLOAT fFontSize = m_pDataAcc->GetFontSize();
     if (rtUi.height < fFontSize) {

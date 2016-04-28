@@ -11,7 +11,7 @@
 #include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
 #include "xfa/fwl/basewidget/ifwl_edit.h"
 #include "xfa/fwl/core/cfwl_message.h"
-#include "xfa/fwl/core/ifwl_notedriver.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/lightwidget/cfwl_datetimepicker.h"
 #include "xfa/fwl/lightwidget/cfwl_edit.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
@@ -30,7 +30,7 @@ CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_FFPageView* pPageView,
 CXFA_FFTextEdit::~CXFA_FFTextEdit() {
   if (m_pNormalWidget) {
     IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-    IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+    CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
     pNoteDriver->UnregisterEventTarget(pWidget);
   }
 }
@@ -40,7 +40,7 @@ FX_BOOL CXFA_FFTextEdit::LoadWidget() {
   m_pNormalWidget = pFWLEdit;
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
@@ -449,7 +449,7 @@ FX_BOOL CXFA_FFNumericEdit::LoadWidget() {
   m_pNormalWidget = (CFWL_Widget*)pWidget;
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pIWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
@@ -523,7 +523,7 @@ FX_BOOL CXFA_FFPasswordEdit::LoadWidget() {
   m_pNormalWidget = (CFWL_Widget*)pWidget;
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pIWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
@@ -589,7 +589,7 @@ FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
   m_pNormalWidget = (CFWL_Widget*)pWidget;
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pIWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();

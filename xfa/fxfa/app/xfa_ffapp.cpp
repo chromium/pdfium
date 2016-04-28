@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "xfa/fgas/font/fgas_stdfontmgr.h"
-#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
+#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
@@ -160,7 +160,7 @@ CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme() {
   return m_pFWLTheme;
 }
 IFWL_AdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
-    IFWL_WidgetMgrDelegate* pDelegate) {
+    CFWL_WidgetMgrDelegate* pDelegate) {
   if (!m_pAdapterWidgetMgr) {
     m_pAdapterWidgetMgr = new CXFA_FWLAdapterWidgetMgr;
     pDelegate->OnSetCapability(FWL_WGTMGR_DisableThread |

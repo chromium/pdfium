@@ -7,8 +7,8 @@
 #include "xfa/fxfa/app/xfa_ffimageedit.h"
 
 #include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fwl/lightwidget/cfwl_picturebox.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
@@ -30,7 +30,7 @@ FX_BOOL CXFA_FFImageEdit::LoadWidget() {
   m_pNormalWidget = (CFWL_Widget*)pPictureBox;
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = pPictureBox->SetDelegate(this);
   CXFA_FFField::LoadWidget();

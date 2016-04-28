@@ -7,21 +7,38 @@
 #ifndef XFA_FWL_CORE_IFWL_WIDGET_H_
 #define XFA_FWL_CORE_IFWL_WIDGET_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fwl/core/ifwl_target.h"
+#include "xfa/fwl/core/fwl_widgetimp.h"
 
+// FWL contains three parallel inheritance hierarchies, which reference each
+// other via pointers as follows:
+//
+//                   m_pIface                m_pImpl
+//      CFWL_Widget ----------> IFWL_Widget ----------> CFWL_WidgetImp
+//           |                       |                       |
+//           A                       A                       A
+//           |                       |                       |
+//      CFWL_...                IFWL_...                CFWL_...Imp
+//
+
+class CFWL_WidgetImp;
 class CFX_Graphics;
+class IFWL_App;
 class IFWL_DataProvider;
 class IFWL_Form;
-class IFWL_Thread;
 class IFWL_ThemeProvider;
 class IFWL_WidgetDelegate;
 
-class IFWL_Widget : public IFWL_Target {
+class IFWL_Widget {
  public:
+  IFWL_Widget() : m_pImpl(nullptr) {}
+  virtual ~IFWL_Widget();
+
   FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   FWL_ERR GetGlobalRect(CFX_RectF& rect);
   FWL_ERR SetWidgetRect(const CFX_RectF& rect);
@@ -54,8 +71,25 @@ class IFWL_Widget : public IFWL_Target {
   FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   FWL_ERR SetDataProvider(IFWL_DataProvider* pDataProvider);
   IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
-  IFWL_Thread* GetOwnerThread() const;
+  IFWL_App* GetOwnerApp() const;
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
+
+  // These call into equivalent polymorphic methods of m_pImpl. There
+  // should be no need to override these in subclasses.
+  FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  uint32_t GetClassID() const;
+  FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
+  FWL_ERR Initialize();
+  FWL_ERR Finalize();
+
+  CFWL_WidgetImp* GetImpl() const { return m_pImpl.get(); }
+
+ protected:
+  // Takes ownership of |pImpl|.
+  void SetImpl(CFWL_WidgetImp* pImpl) { m_pImpl.reset(pImpl); }
+
+ private:
+  std::unique_ptr<CFWL_WidgetImp> m_pImpl;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_WIDGET_H_

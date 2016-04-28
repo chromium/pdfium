@@ -7,8 +7,8 @@
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 
 #include "xfa/fwl/core/cfwl_message.h"
-#include "xfa/fwl/core/ifwl_notedriver.h"
-#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/lightwidget/cfwl_checkbox.h"
 #include "xfa/fxfa/app/xfa_ffexclgroup.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
@@ -30,7 +30,7 @@ FX_BOOL CXFA_FFCheckButton::LoadWidget() {
   m_pNormalWidget = pCheckBox;
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   if (m_pDataAcc->IsRadioButton()) {

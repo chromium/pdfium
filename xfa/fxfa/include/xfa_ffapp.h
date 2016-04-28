@@ -49,14 +49,14 @@ class CXFA_FFApp : public IFWL_AdapterNative {
 
   // IFWL_AdapterNative:
   IFWL_AdapterWidgetMgr* GetWidgetMgr(
-      IFWL_WidgetMgrDelegate* pDelegate) override;
+      CFWL_WidgetMgrDelegate* pDelegate) override;
   IFWL_AdapterThreadMgr* GetThreadMgr() override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
   CXFA_FontMgr* GetXFAFontMgr();
   IFX_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
-  IFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() {
+  CFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() {
     return m_pWidgetMgrDelegate;
   }
 
@@ -70,7 +70,7 @@ class CXFA_FFApp : public IFWL_AdapterNative {
   CFX_FontSourceEnum_File* m_pFontSource;
 #endif
   CXFA_FWLAdapterWidgetMgr* m_pAdapterWidgetMgr;
-  IFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;
+  CFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;
   IFX_FontMgr* m_pFDEFontMgr;
   CFWL_SDAdapterThreadMgr* m_pAdapterThreadMgr;
 };

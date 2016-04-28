@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_ADAPTERNATIVE_H_
 #define XFA_FWL_CORE_IFWL_ADAPTERNATIVE_H_
 
-class IFWL_WidgetMgrDelegate;
+class CFWL_WidgetMgrDelegate;
 class IFWL_AdapterWidgetMgr;
 class IFWL_AdapterThreadMgr;
 class IFWL_AdapterTimerMgr;
@@ -16,7 +16,7 @@ class IFWL_AdapterNative {
  public:
   virtual ~IFWL_AdapterNative() {}
   virtual IFWL_AdapterWidgetMgr* GetWidgetMgr(
-      IFWL_WidgetMgrDelegate* pDelegate) = 0;
+      CFWL_WidgetMgrDelegate* pDelegate) = 0;
   virtual IFWL_AdapterThreadMgr* GetThreadMgr() = 0;
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };

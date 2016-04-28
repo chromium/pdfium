@@ -6,8 +6,8 @@
 
 #include "xfa/fxfa/app/xfa_ffpushbutton.h"
 
-#include "xfa/fwl/core/ifwl_notedriver.h"
-#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/lightwidget/cfwl_pushbutton.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
@@ -52,7 +52,7 @@ void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
                                                  pGS, &mt);
 }
 FX_BOOL CXFA_FFPushButton::LoadWidget() {
-  ASSERT(m_pNormalWidget == NULL);
+  ASSERT(!m_pNormalWidget);
   CFWL_PushButton* pPushButton = CFWL_PushButton::Create();
   if (pPushButton) {
     pPushButton->Initialize();
@@ -61,7 +61,7 @@ FX_BOOL CXFA_FFPushButton::LoadWidget() {
   m_pNormalWidget = (CFWL_Widget*)pPushButton;
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();

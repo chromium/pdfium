@@ -14,6 +14,7 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fwl/core/ifwl_widgetmgr.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"

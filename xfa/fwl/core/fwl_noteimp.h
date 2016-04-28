@@ -7,9 +7,19 @@
 #ifndef XFA_FWL_CORE_FWL_NOTEIMP_H_
 #define XFA_FWL_CORE_FWL_NOTEIMP_H_
 
-#include "xfa/fwl/core/ifwl_notedriver.h"
-#include "xfa/fwl/core/ifwl_noteloop.h"
+#include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
+
+#define FWL_KEYFLAG_Ctrl (1 << 0)
+#define FWL_KEYFLAG_Alt (1 << 1)
+#define FWL_KEYFLAG_Shift (1 << 2)
+#define FWL_KEYFLAG_Command (1 << 3)
+#define FWL_KEYFLAG_LButton (1 << 4)
+#define FWL_KEYFLAG_RButton (1 << 5)
+#define FWL_KEYFLAG_MButton (1 << 6)
 
 class CFWL_CoreToolTipDP;
 class CFWL_MsgActivate;
@@ -27,14 +37,12 @@ class CFWL_ToolTipImp;
 class CFWL_WidgetImp;
 class IFWL_ToolTipTarget;
 
-class CFWL_NoteLoop : public IFWL_NoteLoop {
+class CFWL_NoteLoop {
  public:
   CFWL_NoteLoop(CFWL_WidgetImp* pForm = nullptr);
-  ~CFWL_NoteLoop() override {}
+  ~CFWL_NoteLoop() {}
 
-  // IFWL_NoteLoop:
-  FWL_ERR Idle(int32_t count) override;
-
+  FWL_ERR Idle(int32_t count);
   CFWL_WidgetImp* GetForm();
   FX_BOOL ContinueModal();
   FWL_ERR EndModalLoop();
@@ -47,25 +55,24 @@ class CFWL_NoteLoop : public IFWL_NoteLoop {
   FX_BOOL m_bContinueModal;
 };
 
-class CFWL_NoteDriver : public IFWL_NoteDriver {
+class CFWL_NoteDriver {
  public:
   CFWL_NoteDriver();
-  ~CFWL_NoteDriver() override;
+  ~CFWL_NoteDriver();
 
-  // IFWL_NoteDriver:
-  FX_BOOL SendEvent(CFWL_Event* pNote) override;
+  FX_BOOL SendEvent(CFWL_Event* pNote);
   FWL_ERR RegisterEventTarget(IFWL_Widget* pListener,
                               IFWL_Widget* pEventSource = nullptr,
-                              uint32_t dwFilter = FWL_EVENT_ALL_MASK) override;
-  FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) override;
-  void ClearEventTargets(FX_BOOL bRemoveAll) override;
-  IFWL_Thread* GetOwnerThread() const override;
-  FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) override;
-  IFWL_NoteLoop* PopNoteLoop() override;
-  IFWL_Widget* GetFocus() override;
-  FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE) override;
-  void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet) override;
-  FWL_ERR Run() override;
+                              uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener);
+  void ClearEventTargets(FX_BOOL bRemoveAll);
+  IFWL_App* GetOwnerApp() const;
+  FWL_ERR PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
+  CFWL_NoteLoop* PopNoteLoop();
+  IFWL_Widget* GetFocus();
+  FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE);
+  void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet);
+  FWL_ERR Run();
 
   IFWL_Widget* GetHover();
   void SetHover(IFWL_Widget* pHover);
@@ -96,9 +103,10 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   FX_BOOL IsValidMessage(CFWL_Message* pMessage);
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
   void ClearInvalidEventTargets(FX_BOOL bRemoveAll);
-  CFX_ArrayTemplate<CFWL_TargetImp*> m_forms;
+
+  CFX_ArrayTemplate<CFWL_WidgetImp*> m_forms;
   CFX_ArrayTemplate<CFWL_Message*> m_noteQueue;
-  CFX_ArrayTemplate<IFWL_NoteLoop*> m_noteLoopQueue;
+  CFX_ArrayTemplate<CFWL_NoteLoop*> m_noteLoopQueue;
   CFX_MapPtrToPtr m_eventTargets;
   int32_t m_sendEventCalled;
   IFWL_Widget* m_pHover;

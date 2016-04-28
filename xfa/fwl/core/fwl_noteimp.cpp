@@ -12,8 +12,6 @@
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_formimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
@@ -31,7 +29,7 @@ FWL_ERR CFWL_NoteLoop::Idle(int32_t count) {
     IFWL_App* pApp = FWL_GetApp();
     if (!pApp)
       return FWL_ERR_Indefinite;
-    IFWL_NoteDriver* pDriver = pApp->GetNoteDriver();
+    CFWL_NoteDriver* pDriver = pApp->GetNoteDriver();
     if (!pDriver)
       return FWL_ERR_Indefinite;
     pDriver->SendEvent(&ev);
@@ -63,12 +61,14 @@ FWL_ERR CFWL_NoteLoop::SetMainForm(CFWL_WidgetImp* pForm) {
 void CFWL_NoteLoop::GenerateCommondEvent(uint32_t dwCommand) {
   CFWL_EvtMenuCommand ev;
   ev.m_iCommand = dwCommand;
-  IFWL_Thread* pThread = m_pForm->GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = m_pForm->GetOwnerApp();
+  if (!pApp)
     return;
-  IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
+
+  CFWL_NoteDriver* pDriver = pApp->GetNoteDriver();
   if (!pDriver)
     return;
+
   pDriver->SendEvent(&ev);
 }
 CFWL_NoteDriver::CFWL_NoteDriver()
@@ -153,18 +153,19 @@ FWL_ERR CFWL_NoteDriver::UnregisterEventTarget(IFWL_Widget* pListener) {
 void CFWL_NoteDriver::ClearEventTargets(FX_BOOL bRemoveAll) {
   ClearInvalidEventTargets(bRemoveAll);
 }
-IFWL_Thread* CFWL_NoteDriver::GetOwnerThread() const {
+IFWL_App* CFWL_NoteDriver::GetOwnerApp() const {
   return FWL_GetApp();
 }
-FWL_ERR CFWL_NoteDriver::PushNoteLoop(IFWL_NoteLoop* pNoteLoop) {
+FWL_ERR CFWL_NoteDriver::PushNoteLoop(CFWL_NoteLoop* pNoteLoop) {
   m_noteLoopQueue.Add(pNoteLoop);
   return FWL_ERR_Succeeded;
 }
-IFWL_NoteLoop* CFWL_NoteDriver::PopNoteLoop() {
+CFWL_NoteLoop* CFWL_NoteDriver::PopNoteLoop() {
   int32_t pos = m_noteLoopQueue.GetSize();
   if (pos <= 0)
-    return NULL;
-  IFWL_NoteLoop* p = m_noteLoopQueue.GetAt(pos - 1);
+    return nullptr;
+
+  CFWL_NoteLoop* p = m_noteLoopQueue.GetAt(pos - 1);
   m_noteLoopQueue.RemoveAt(pos - 1);
   return p;
 }

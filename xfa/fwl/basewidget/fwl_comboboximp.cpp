@@ -18,12 +18,10 @@
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
+#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_thread.h"
 
 // static
 IFWL_ComboBox* IFWL_ComboBox::Create(
@@ -1457,8 +1455,8 @@ FWL_ERR CFWL_ComboBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
 }
 void CFWL_ComboBoxImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
                                               FX_BOOL bSet) {
-  IFWL_Target* pDstTarget = pMsg->m_pDstTarget;
-  IFWL_Target* pSrcTarget = pMsg->m_pSrcTarget;
+  IFWL_Widget* pDstTarget = pMsg->m_pDstTarget;
+  IFWL_Widget* pSrcTarget = pMsg->m_pSrcTarget;
   FX_BOOL bDropDown = m_pOwner->IsDropDownStyle();
   if (bSet) {
     m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
@@ -1803,11 +1801,12 @@ FWL_ERR CFWL_ComboProxyImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
   return FWL_ERR_Succeeded;
 }
 void CFWL_ComboProxyImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  IFWL_Thread* pThread = m_pForm->GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = m_pForm->GetOwnerApp();
+  if (!pApp)
     return;
+
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   CFX_RectF rtWidget;
   m_pForm->GetWidgetRect(rtWidget);
   rtWidget.left = rtWidget.top = 0;
@@ -1822,11 +1821,12 @@ void CFWL_ComboProxyImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
 }
 void CFWL_ComboProxyImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_bLButtonDown = FALSE;
-  IFWL_Thread* pThread = m_pForm->GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = m_pForm->GetOwnerApp();
+  if (!pApp)
     return;
+
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   pDriver->SetGrab(m_pForm, FALSE);
   if (m_bLButtonUpSelf) {
     CFX_RectF rect;

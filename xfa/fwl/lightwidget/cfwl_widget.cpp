@@ -10,11 +10,10 @@
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
+#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_thread.h"
 
 IFWL_Widget* CFWL_Widget::GetWidget() {
   return m_pIface;
@@ -215,7 +214,7 @@ CFWL_Widget::CFWL_Widget()
     : m_pIface(NULL), m_pDelegate(NULL), m_pProperties(NULL) {
   m_pProperties = new CFWL_WidgetProperties;
   m_pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
-  ASSERT(m_pWidgetMgr != NULL);
+  ASSERT(m_pWidgetMgr);
 }
 
 CFWL_Widget::~CFWL_Widget() {
@@ -242,12 +241,15 @@ FWL_ERR CFWL_Widget::Repaint(const CFX_RectF* pRect) {
 FWL_ERR CFWL_Widget::SetFocus(FX_BOOL bFocus) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
-  IFWL_Thread* pThread = m_pIface->GetOwnerThread();
-  if (!pThread)
+
+  IFWL_App* pApp = m_pIface->GetOwnerApp();
+  if (!pApp)
     return FWL_ERR_Indefinite;
-  IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
+
+  CFWL_NoteDriver* pDriver = pApp->GetNoteDriver();
   if (!pDriver)
     return FWL_ERR_Indefinite;
+
   if (bFocus) {
     pDriver->SetFocus(m_pIface);
   } else {
@@ -261,12 +263,15 @@ FWL_ERR CFWL_Widget::SetFocus(FX_BOOL bFocus) {
 FWL_ERR CFWL_Widget::SetGrab(FX_BOOL bSet) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
-  IFWL_Thread* pThread = m_pIface->GetOwnerThread();
-  if (!pThread)
+
+  IFWL_App* pApp = m_pIface->GetOwnerApp();
+  if (!pApp)
     return FWL_ERR_Indefinite;
-  IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
+
+  CFWL_NoteDriver* pDriver = pApp->GetNoteDriver();
   if (!pDriver)
     return FWL_ERR_Indefinite;
+
   pDriver->SetGrab(m_pIface, bSet);
   return FWL_ERR_Succeeded;
 }
@@ -275,12 +280,15 @@ void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource,
                                       uint32_t dwFilter) {
   if (!m_pIface)
     return;
-  IFWL_Thread* pThread = m_pIface->GetOwnerThread();
-  if (!pThread)
+
+  IFWL_App* pApp = m_pIface->GetOwnerApp();
+  if (!pApp)
     return;
-  IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
+
+  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
   if (!pNoteDriver)
     return;
+
   IFWL_Widget* pEventSourceImp =
       !pEventSource ? NULL : pEventSource->GetWidget();
   pNoteDriver->RegisterEventTarget(GetWidget(), pEventSourceImp, dwFilter);
@@ -292,10 +300,10 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   if (m_pIface->GetOuter()) {
     return;
   }
-  IFWL_Thread* pThread = m_pIface->GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = m_pIface->GetOwnerApp();
+  if (!pApp)
     return;
-  IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
   if (!pNoteDriver)
     return;
   pNoteDriver->SendEvent(pEvent);

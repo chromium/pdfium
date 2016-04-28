@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
 enum class CFWL_Part {
   None = 0,
@@ -77,6 +76,8 @@ enum CFWL_PartState {
   CFWL_PartState_RSelected = 1 << 13,
   CFWL_PartState_Selected = 1 << 14
 };
+
+class IFWL_Widget;
 
 class CFWL_ThemePart {
  public:

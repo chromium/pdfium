@@ -74,7 +74,7 @@ class CFWL_SDAdapterThreadMgr : public IFWL_AdapterThreadMgr {
   ~CFWL_SDAdapterThreadMgr();
 
  public:
-  virtual IFWL_Thread* GetCurrentThread();
+  virtual IFWL_App* GetCurrentThread();
 };
 
 #endif  // XFA_FWL_CORE_FWL_SDADAPTERIMP_H_

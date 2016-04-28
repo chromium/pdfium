@@ -9,13 +9,14 @@
 
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fwl/core/ifwl_thread.h"
+
+class IFWL_App;
 
 class IFWL_AdapterThreadMgr {
  public:
   virtual ~IFWL_AdapterThreadMgr() {}
 
-  virtual IFWL_Thread* GetCurrentThread() = 0;
+  virtual IFWL_App* GetCurrentThread() = 0;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_ADAPTERTHREADMGR_H_

@@ -7,14 +7,21 @@
 #ifndef XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
 #define XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
 
+#include "core/fxcrt/include/fx_system.h"
+#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 
-class IFWL_Widget;
-class IFWL_AdapterWidgetMgr;
+#define FWL_WGTMGR_DisableThread 0x00000001
+#define FWL_WGTMGR_DisableForm 0x00000002
+
+class CFWL_Message;
 class CFWL_WidgetMgrDelegate;
+class CFX_Graphics;
+class CFX_Matrix;
+class IFWL_AdapterWidgetMgr;
 class IFWL_AdapterNative;
+class IFWL_Widget;
 
 class CFWL_WidgetMgrItem {
  public:
@@ -136,18 +143,16 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
 #endif
 };
 
-class CFWL_WidgetMgrDelegate : public IFWL_WidgetMgrDelegate {
+class CFWL_WidgetMgrDelegate {
  public:
   CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr);
-  ~CFWL_WidgetMgrDelegate() override {}
+  ~CFWL_WidgetMgrDelegate() {}
 
-  // IFWL_WidgetMgrDelegate:
-  FWL_ERR OnSetCapability(
-      uint32_t dwCapability = FWL_WGTMGR_DisableThread) override;
-  int32_t OnProcessMessageToForm(CFWL_Message* pMessage) override;
+  FWL_ERR OnSetCapability(uint32_t dwCapability = FWL_WGTMGR_DisableThread);
+  int32_t OnProcessMessageToForm(CFWL_Message* pMessage);
   FWL_ERR OnDrawWidget(IFWL_Widget* pWidget,
                        CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix) override;
+                       const CFX_Matrix* pMatrix);
 
  protected:
   void DrawChild(IFWL_Widget* pParent,

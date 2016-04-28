@@ -11,23 +11,27 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
+class CFWL_AppImp;
 class CFWL_MsgKey;
-class CFWL_ThreadImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetMgr;
+class IFWL_App;
 class IFWL_DataProvider;
-class IFWL_Thread;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 
-class CFWL_WidgetImp : public CFWL_TargetImp {
+class CFWL_WidgetImp {
  public:
+  virtual ~CFWL_WidgetImp();
+
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
+  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual uint32_t GetClassID() const;
+  virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
 
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR GetGlobalRect(CFX_RectF& rect);
@@ -64,16 +68,18 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   virtual FWL_ERR SetDataProvider(IFWL_DataProvider* pDataProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
-  virtual IFWL_Thread* GetOwnerThread() const;
-  FWL_ERR SetOwnerThread(CFWL_ThreadImp* pOwnerThread);
+  virtual IFWL_App* GetOwnerApp() const;
+  FWL_ERR SetOwnerApp(CFWL_AppImp* pOwnerApp);
   IFWL_Widget* GetInterface() const;
   void SetInterface(IFWL_Widget* pInterface);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 
  protected:
+  friend class CFWL_WidgetImpDelegate;
+
   CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
-  virtual ~CFWL_WidgetImp();
+
   FX_BOOL IsEnabled() const;
   FX_BOOL IsVisible() const;
   FX_BOOL IsActive() const;
@@ -141,10 +147,8 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
 
-  friend class CFWL_WidgetImpDelegate;
-
   CFWL_WidgetMgr* m_pWidgetMgr;
-  CFWL_ThreadImp* m_pOwnerThread;
+  CFWL_AppImp* m_pOwnerApp;
   CFWL_WidgetImpProperties* m_pProperties;
   CFX_PrivateData* m_pPrivateData;
   IFWL_WidgetDelegate* m_pDelegate;

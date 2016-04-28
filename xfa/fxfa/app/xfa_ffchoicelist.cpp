@@ -7,8 +7,8 @@
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 
 #include "xfa/fwl/basewidget/ifwl_edit.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fwl/lightwidget/cfwl_combobox.h"
 #include "xfa/fwl/lightwidget/cfwl_listbox.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
@@ -24,7 +24,7 @@ CXFA_FFListBox::CXFA_FFListBox(CXFA_FFPageView* pPageView,
 CXFA_FFListBox::~CXFA_FFListBox() {
   if (m_pNormalWidget) {
     IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-    IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+    CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
     pNoteDriver->UnregisterEventTarget(pWidget);
   }
 }
@@ -36,7 +36,7 @@ FX_BOOL CXFA_FFListBox::LoadWidget() {
   m_pNormalWidget = (CFWL_Widget*)pListBox;
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
@@ -232,7 +232,7 @@ FX_BOOL CXFA_FFComboBox::LoadWidget() {
   m_pNormalWidget = (CFWL_Widget*)pComboBox;
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
-  IFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();

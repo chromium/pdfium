@@ -8,8 +8,6 @@
 
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_adapterthreadmgr.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
@@ -148,6 +146,6 @@ CFWL_SDAdapterThreadMgr::CFWL_SDAdapterThreadMgr() {}
 
 CFWL_SDAdapterThreadMgr::~CFWL_SDAdapterThreadMgr() {}
 
-IFWL_Thread* CFWL_SDAdapterThreadMgr::GetCurrentThread() {
+IFWL_App* CFWL_SDAdapterThreadMgr::GetCurrentThread() {
   return FWL_GetApp();
 }

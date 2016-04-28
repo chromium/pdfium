@@ -15,7 +15,7 @@
 #include "core/fxcrt/include/fx_memory.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
-#include "xfa/fwl/core/ifwl_notedriver.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/include/xfa_checksum.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"

@@ -14,8 +14,6 @@
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
@@ -389,12 +387,14 @@ FWL_ERR CFWL_FormImp::SetFormSize(FWL_FORMSIZE eFormSize) {
   return FWL_ERR_Succeeded;
 }
 IFWL_Widget* CFWL_FormImp::DoModal() {
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
-    return NULL;
-  IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
+    return nullptr;
+
+  CFWL_NoteDriver* pDriver = pApp->GetNoteDriver();
   if (!pDriver)
-    return NULL;
+    return nullptr;
+
   m_pNoteLoop = new CFWL_NoteLoop(this);
   pDriver->PushNoteLoop(m_pNoteLoop);
   m_bDoModalFlag = TRUE;
@@ -417,13 +417,15 @@ FWL_ERR CFWL_FormImp::EndDoModal() {
   m_bDoModalFlag = FALSE;
 #if (_FX_OS_ == _FX_MACOSX_)
   m_pNoteLoop->EndModalLoop();
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return FWL_ERR_Indefinite;
+
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pDriver)
     return FWL_ERR_Indefinite;
+
   pDriver->PopNoteLoop();
   SetStates(FWL_WGTSTATE_Invisible, TRUE);
   return FWL_ERR_Succeeded;
@@ -745,23 +747,27 @@ void CFWL_FormImp::ReSetSysBtn() {
   }
 }
 void CFWL_FormImp::RegisterForm() {
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
+
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pDriver)
     return;
+
   pDriver->RegisterForm(this);
 }
 void CFWL_FormImp::UnRegisterForm() {
-  IFWL_Thread* pThread = GetOwnerThread();
-  if (!pThread)
+  IFWL_App* pApp = GetOwnerApp();
+  if (!pApp)
     return;
+
   CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pDriver)
     return;
+
   pDriver->UnRegisterForm(this);
 }
 FX_BOOL CFWL_FormImp::IsDoModal() {
@@ -888,9 +894,9 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-      IFWL_Thread* pThread = m_pOwner->GetOwnerThread();
+      IFWL_App* pApp = m_pOwner->GetOwnerApp();
       CFWL_NoteDriver* pDriver =
-          static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+          static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();
       IFWL_Widget* pSubFocus =
           pSubFocusImp ? pSubFocusImp->GetInterface() : nullptr;
@@ -902,9 +908,9 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Deactivate: {
       m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
-      IFWL_Thread* pThread = m_pOwner->GetOwnerThread();
+      IFWL_App* pApp = m_pOwner->GetOwnerApp();
       CFWL_NoteDriver* pDriver =
-          static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
+          static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();
       IFWL_Widget* pSubFocus =
           pSubFocusImp ? pSubFocusImp->GetInterface() : nullptr;
