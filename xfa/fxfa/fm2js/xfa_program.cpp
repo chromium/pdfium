@@ -17,20 +17,16 @@ int32_t CXFA_FMProgram::Init(const CFX_WideStringC& wsFormcalc) {
   return m_parse.Init(wsFormcalc, &m_pErrorInfo);
 }
 int32_t CXFA_FMProgram::ParseProgram() {
-  CFX_PtrArray* expressions = 0;
+  CFX_ArrayTemplate<CXFA_FMExpression*>* expressions = nullptr;
   m_parse.NextToken();
   if (!m_pErrorInfo.message.IsEmpty()) {
     return -1;
   }
   expressions = m_parse.ParseTopExpression();
   if (!m_pErrorInfo.message.IsEmpty()) {
-    CXFA_FMExpression* e = 0;
-    for (int32_t u = 0; u < expressions->GetSize(); ++u) {
-      e = (CXFA_FMExpression*)expressions->GetAt(u);
-      if (e) {
-        delete e;
-      }
-    }
+    for (int32_t u = 0; u < expressions->GetSize(); ++u)
+      delete expressions->GetAt(u);
+
     delete expressions;
     return -1;
   }

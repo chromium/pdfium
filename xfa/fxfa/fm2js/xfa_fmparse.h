@@ -19,7 +19,7 @@ class CXFA_FMParse {
   void NextToken();
   void Check(XFA_FM_TOKEN op);
   void Error(uint32_t lineNum, const FX_WCHAR* msg, ...);
-  CFX_PtrArray* ParseTopExpression();
+  CFX_ArrayTemplate<CXFA_FMExpression*>* ParseTopExpression();
   CXFA_FMExpression* ParseFunction();
   CXFA_FMExpression* ParseExpression();
   CXFA_FMExpression* ParseVarExpression();

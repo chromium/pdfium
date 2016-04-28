@@ -33,7 +33,7 @@ CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     FX_BOOL isGlobal,
     const CFX_WideStringC& wsName,
     CFX_WideStringCArray* pArguments,
-    CFX_PtrArray* pExpressions)
+    CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressions)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_FUNC),
       m_wsName(wsName),
       m_pArguments(pArguments),
@@ -41,15 +41,11 @@ CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
       m_isGlobal(isGlobal) {}
 
 CXFA_FMFunctionDefinition::~CXFA_FMFunctionDefinition() {
-  if (m_pArguments) {
-    m_pArguments->RemoveAll();
-    delete m_pArguments;
-  }
+  delete m_pArguments;
   if (m_pExpressions) {
-    for (int i = 0; i < m_pExpressions->GetSize(); ++i) {
-      delete reinterpret_cast<CXFA_FMExpression*>(m_pExpressions->GetAt(i));
-    }
-    m_pExpressions->RemoveAll();
+    for (int i = 0; i < m_pExpressions->GetSize(); ++i)
+      delete m_pExpressions->GetAt(i);
+
     delete m_pExpressions;
   }
 }
@@ -92,8 +88,7 @@ void CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L" = null;\n");
   if (m_pExpressions) {
     for (int i = 0; i < m_pExpressions->GetSize(); ++i) {
-      CXFA_FMExpression* e =
-          reinterpret_cast<CXFA_FMExpression*>(m_pExpressions->GetAt(i));
+      CXFA_FMExpression* e = m_pExpressions->GetAt(i);
       if (i + 1 < m_pExpressions->GetSize()) {
         e->ToJavaScript(javascript);
       } else {
@@ -208,17 +203,17 @@ void CXFA_FMExpExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   }
 }
 
-CXFA_FMBlockExpression::CXFA_FMBlockExpression(uint32_t line,
-                                               CFX_PtrArray* pExpressionList)
+CXFA_FMBlockExpression::CXFA_FMBlockExpression(
+    uint32_t line,
+    CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressionList)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_BLOCK),
       m_pExpressionList(pExpressionList) {}
 
 CXFA_FMBlockExpression::~CXFA_FMBlockExpression() {
   if (m_pExpressionList) {
-    for (int i = 0; i < m_pExpressionList->GetSize(); ++i) {
-      delete reinterpret_cast<CXFA_FMExpression*>(m_pExpressionList->GetAt(i));
-    }
-    m_pExpressionList->RemoveAll();
+    for (int i = 0; i < m_pExpressionList->GetSize(); ++i)
+      delete m_pExpressionList->GetAt(i);
+
     delete m_pExpressionList;
   }
 }
@@ -226,11 +221,8 @@ CXFA_FMBlockExpression::~CXFA_FMBlockExpression() {
 void CXFA_FMBlockExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"{\n");
   if (m_pExpressionList) {
-    for (int i = 0; i < m_pExpressionList->GetSize(); ++i) {
-      CXFA_FMExpression* e =
-          reinterpret_cast<CXFA_FMExpression*>(m_pExpressionList->GetAt(i));
-      e->ToJavaScript(javascript);
-    }
+    for (int i = 0; i < m_pExpressionList->GetSize(); ++i)
+      m_pExpressionList->GetAt(i)->ToJavaScript(javascript);
   }
   javascript << FX_WSTRC(L"}\n");
 }
@@ -239,8 +231,7 @@ void CXFA_FMBlockExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"{\n");
   if (m_pExpressionList) {
     for (int i = 0; i < m_pExpressionList->GetSize(); ++i) {
-      CXFA_FMExpression* e =
-          reinterpret_cast<CXFA_FMExpression*>(m_pExpressionList->GetAt(i));
+      CXFA_FMExpression* e = m_pExpressionList->GetAt(i);
       if (i + 1 == m_pExpressionList->GetSize()) {
         e->ToImpliedReturnJS(javascript);
       } else {
@@ -506,7 +497,7 @@ void CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 CXFA_FMForeachExpression::CXFA_FMForeachExpression(
     uint32_t line,
     const CFX_WideStringC& wsIdentifier,
-    CFX_PtrArray* pAccessors,
+    CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pAccessors,
     CXFA_FMExpression* pList)
     : CXFA_FMLoopExpression(line),
       m_wsIdentifier(wsIdentifier),
@@ -515,10 +506,9 @@ CXFA_FMForeachExpression::CXFA_FMForeachExpression(
 
 CXFA_FMForeachExpression::~CXFA_FMForeachExpression() {
   if (m_pAccessors) {
-    for (int i = 0; i < m_pAccessors->GetSize(); ++i) {
-      delete reinterpret_cast<CXFA_FMSimpleExpression*>(m_pAccessors->GetAt(i));
-    }
-    m_pAccessors->RemoveAll();
+    for (int i = 0; i < m_pAccessors->GetSize(); ++i)
+      m_pAccessors->GetAt(i);
+
     delete m_pAccessors;
   }
 }
@@ -541,8 +531,7 @@ void CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"(");
 
   for (int i = 0; i < m_pAccessors->GetSize(); ++i) {
-    CXFA_FMSimpleExpression* s =
-        reinterpret_cast<CXFA_FMSimpleExpression*>(m_pAccessors->GetAt(i));
+    CXFA_FMSimpleExpression* s = m_pAccessors->GetAt(i);
     s->ToJavaScript(javascript);
     if (i + 1 < m_pAccessors->GetSize()) {
       javascript << FX_WSTRC(L", ");
@@ -593,8 +582,7 @@ void CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << XFA_FM_EXPTypeToString(CONCATFMOBJECT);
   javascript << FX_WSTRC(L"(");
   for (int i = 0; i < m_pAccessors->GetSize(); ++i) {
-    CXFA_FMSimpleExpression* s =
-        reinterpret_cast<CXFA_FMSimpleExpression*>(m_pAccessors->GetAt(i));
+    CXFA_FMSimpleExpression* s = m_pAccessors->GetAt(i);
     s->ToJavaScript(javascript);
     if (i + 1 < m_pAccessors->GetSize()) {
       javascript << FX_WSTRC(L", ");

@@ -226,16 +226,17 @@ class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
  public:
   CXFA_FMCallExpression(uint32_t line,
                         CXFA_FMSimpleExpression* pExp,
-                        CFX_PtrArray* pArguments,
+                        CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pArguments,
                         FX_BOOL bIsSomMethod);
   ~CXFA_FMCallExpression() override;
+
   bool IsBuildInFunc(CFX_WideTextBuf* funcName);
   uint32_t IsMethodWithObjParam(const CFX_WideStringC& methodName);
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
  private:
   FX_BOOL m_bIsSomMethod;
-  CFX_PtrArray* m_pArguments;
+  CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* m_pArguments;
 };
 
 class CXFA_FMDotAccessorExpression : public CXFA_FMBinExpression {

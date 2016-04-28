@@ -39,19 +39,22 @@ class CXFA_FMExpression {
 
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
  public:
-  CXFA_FMFunctionDefinition(uint32_t line,
-                            FX_BOOL isGlobal,
-                            const CFX_WideStringC& wsName,
-                            CFX_WideStringCArray* pArguments,
-                            CFX_PtrArray* pExpressions);
+  // Takes ownership of |pExpressions|.
+  CXFA_FMFunctionDefinition(
+      uint32_t line,
+      FX_BOOL isGlobal,
+      const CFX_WideStringC& wsName,
+      CFX_WideStringCArray* pArguments,
+      CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressions);
   ~CXFA_FMFunctionDefinition() override;
+
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
   CFX_WideStringC m_wsName;
   CFX_WideStringCArray* m_pArguments;
-  CFX_PtrArray* m_pExpressions;
+  CFX_ArrayTemplate<CXFA_FMExpression*>* m_pExpressions;
   FX_BOOL m_isGlobal;
 };
 
@@ -80,13 +83,17 @@ class CXFA_FMExpExpression : public CXFA_FMExpression {
 
 class CXFA_FMBlockExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMBlockExpression(uint32_t line, CFX_PtrArray* pExpressionList);
+  // Takes ownership of |pExpressionList|.
+  CXFA_FMBlockExpression(
+      uint32_t line,
+      CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressionList);
   ~CXFA_FMBlockExpression() override;
+
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
-  CFX_PtrArray* m_pExpressionList;
+  CFX_ArrayTemplate<CXFA_FMExpression*>* m_pExpressionList;
 };
 
 class CXFA_FMDoExpression : public CXFA_FMExpression {
@@ -174,17 +181,20 @@ class CXFA_FMForExpression : public CXFA_FMLoopExpression {
 
 class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
  public:
-  CXFA_FMForeachExpression(uint32_t line,
-                           const CFX_WideStringC& wsIdentifier,
-                           CFX_PtrArray* pAccessors,
-                           CXFA_FMExpression* pList);
+  // Takes ownership of |pAccessors|.
+  CXFA_FMForeachExpression(
+      uint32_t line,
+      const CFX_WideStringC& wsIdentifier,
+      CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pAccessors,
+      CXFA_FMExpression* pList);
   ~CXFA_FMForeachExpression() override;
+
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
   CFX_WideStringC m_wsIdentifier;
-  CFX_PtrArray* m_pAccessors;
+  CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* m_pAccessors;
   std::unique_ptr<CXFA_FMExpression> m_pList;
 };
 
