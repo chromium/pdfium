@@ -2,8 +2,14 @@
 
 ## News
 
-As of 2016-02-04, the XFA branch is deprecated.  Instead, see the section on
-configuration below.
+As of 2016-02-04, the XFA branch is deprecated.  Instead, see
+[the section on configuration](#BuildConfig) below.
+
+As of 2016-04-28, the Visual Studio toolchain from depot_tools is used as the
+default Windows toolchain for Googlers. Please set DEPOT_TOOLS_WIN_TOOLCHAIN=0
+if you need to use the system toolchain. See
+[Windows development subsection](#WinDev) for details.
+
 
 ## Prerequisites
 
@@ -12,6 +18,34 @@ http://www.chromium.org/developers/how-tos/install-depot-tools (this provides
 the gclient utilty needed below).
 
 Also install Python, Subversion, and Git and make sure they're in your path.
+
+###<a name="WinDev"></a> Windows development
+
+PDFium uses a similar Windows toolchain as Chromium:
+
+#### Open source contributors
+Visual Studio 2015 Update 2 or later is highly recommended.
+
+Run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0`, or set that variable in your global
+environment.
+
+Compilation is done through ninja, **not** Visual Studio.
+
+#### Google employees
+
+Run: `download_from_google_storage --config` and follow the
+authentication instructions. **Note that you must authenticate with your
+@google.com credentials**. Enter "0" if asked for a project-id.
+
+Once you've done this, the toolchain will be installed automatically for
+you in [the step](#GenBuild) below.
+
+The toolchain will be in `depot_tools\win_toolchain\vs_files\<hash>`, and windbg
+can be found in `depot_tools\win_toolchain\vs_files\<hash>\win_sdk\Debuggers`.
+
+If you want the IDE for debugging and editing, you will need to install
+it separately, but this is optional and not needed for building PDFium.
+
 
 ## Get the code
 
@@ -27,7 +61,7 @@ gclient sync
 cd pdfium
 ```
 
-## Generate the build files
+##<a name="GenBuild"></a> Generate the build files
 
 We use the GYP library to generate the build files.
 
@@ -46,7 +80,7 @@ on Linux, sln files on Windows, and xcodeproj files on Mac. To do so, set the
 GYP\_GENERATORS environment variable appropriately (e.g. "make", "msvs", or
 "xcode") before running the above command.
 
-### Selecting build configuration
+###<a name="BuildConfig"></a> Selecting build configuration
 
 PDFium may be built either with or without JavaScript support, and with
 or without XFA forms support.  Both of these features are enabled by
