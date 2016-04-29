@@ -169,14 +169,15 @@ static void sycc_to_rgb(int offset,
   }
   *out_b = b;
 }
+
 static void sycc444_to_rgb(opj_image_t* img) {
   int prec = img->comps[0].prec;
   int offset = 1 << (prec - 1);
   int upb = (1 << prec) - 1;
   OPJ_UINT32 maxw =
-      std::min(std::min(img->comps[0].w, img->comps[1].w), img->comps[2].w);
+      std::min({img->comps[0].w, img->comps[1].w, img->comps[2].w});
   OPJ_UINT32 maxh =
-      std::min(std::min(img->comps[0].h, img->comps[1].h), img->comps[2].h);
+      std::min({img->comps[0].h, img->comps[1].h, img->comps[2].h});
   FX_SAFE_SIZE_T max_size = maxw;
   max_size *= maxh;
   if (!max_size.IsValid())
@@ -185,10 +186,15 @@ static void sycc444_to_rgb(opj_image_t* img) {
   const int* y = img->comps[0].data;
   const int* cb = img->comps[1].data;
   const int* cr = img->comps[2].data;
-  int *d0, *d1, *d2, *r, *g, *b;
-  d0 = r = FX_Alloc(int, max_size.ValueOrDie());
-  d1 = g = FX_Alloc(int, max_size.ValueOrDie());
-  d2 = b = FX_Alloc(int, max_size.ValueOrDie());
+  if (!y || !cb || !cr)
+    return;
+
+  int* r = FX_Alloc(int, max_size.ValueOrDie());
+  int* g = FX_Alloc(int, max_size.ValueOrDie());
+  int* b = FX_Alloc(int, max_size.ValueOrDie());
+  int* d0 = r;
+  int* d1 = g;
+  int* d2 = b;
   for (size_t i = 0; i < max_size.ValueOrDie(); ++i) {
     sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
     ++y;
@@ -199,12 +205,13 @@ static void sycc444_to_rgb(opj_image_t* img) {
     ++b;
   }
   FX_Free(img->comps[0].data);
-  img->comps[0].data = d0;
   FX_Free(img->comps[1].data);
-  img->comps[1].data = d1;
   FX_Free(img->comps[2].data);
+  img->comps[0].data = d0;
+  img->comps[1].data = d1;
   img->comps[2].data = d2;
 }
+
 static bool sycc420_422_size_is_valid(opj_image_t* img) {
   return (img && img->comps[0].w != std::numeric_limits<OPJ_UINT32>::max() &&
           (img->comps[0].w + 1) / 2 == img->comps[1].w &&
