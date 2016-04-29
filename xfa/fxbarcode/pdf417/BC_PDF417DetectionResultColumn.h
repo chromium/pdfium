@@ -9,22 +9,23 @@
 
 class CBC_Codeword;
 class CBC_BoundingBox;
+
 class CBC_DetectionResultColumn {
  public:
   CBC_DetectionResultColumn(CBC_BoundingBox* boundingBox);
   virtual ~CBC_DetectionResultColumn();
+
   CBC_Codeword* getCodewordNearby(int32_t imageRow);
   int32_t imageRowToCodewordIndex(int32_t imageRow);
   int32_t codewordIndexToImageRow(int32_t codewordIndex);
   void setCodeword(int32_t imageRow, CBC_Codeword* codeword);
   CBC_Codeword* getCodeword(int32_t imageRow);
   CBC_BoundingBox* getBoundingBox();
-  CFX_PtrArray* getCodewords();
+  CFX_ArrayTemplate<CBC_Codeword*>* getCodewords() const;
   CFX_ByteString toString();
 
- public:
   CBC_BoundingBox* m_boundingBox;
-  CFX_PtrArray* m_codewords;
+  CFX_ArrayTemplate<CBC_Codeword*>* m_codewords;
 
  private:
   static int32_t MAX_NEARBY_DISTANCE;

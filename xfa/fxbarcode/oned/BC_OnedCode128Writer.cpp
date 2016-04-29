@@ -137,30 +137,31 @@ FX_BOOL CBC_OnedCode128Writer::IsDigits(const CFX_ByteString& contents,
   }
   return TRUE;
 }
+
 uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,
                                        int32_t& outLength,
                                        int32_t& e) {
   if (contents.GetLength() < 1 || contents.GetLength() > 80) {
     e = BCExceptionContentsLengthShouldBetween1and80;
-    return NULL;
+    return nullptr;
   }
-  CFX_PtrArray patterns;
+  CFX_ArrayTemplate<const int32_t*> patterns;
   int32_t checkSum = 0;
   if (m_codeFormat == BC_CODE128_B) {
-    checkSum = Encode128B(contents, patterns);
+    checkSum = Encode128B(contents, &patterns);
   } else if (m_codeFormat == BC_CODE128_C) {
-    checkSum = Encode128C(contents, patterns);
+    checkSum = Encode128C(contents, &patterns);
   } else {
     e = BCExceptionFormatException;
-    return NULL;
+    return nullptr;
   }
   checkSum %= 103;
-  patterns.Add((int32_t*)CBC_OnedCode128Reader::CODE_PATTERNS[checkSum]);
-  patterns.Add((int32_t*)CBC_OnedCode128Reader::CODE_PATTERNS[CODE_STOP]);
+  patterns.Add(CBC_OnedCode128Reader::CODE_PATTERNS[checkSum]);
+  patterns.Add(CBC_OnedCode128Reader::CODE_PATTERNS[CODE_STOP]);
   m_iContentLen = contents.GetLength() + 3;
   int32_t codeWidth = 0;
   for (int32_t k = 0; k < patterns.GetSize(); k++) {
-    int32_t* pattern = (int32_t*)patterns[k];
+    const int32_t* pattern = patterns[k];
     for (int32_t j = 0; j < 7; j++) {
       codeWidth += pattern[j];
     }
@@ -169,27 +170,29 @@ uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,
   uint8_t* result = FX_Alloc(uint8_t, outLength);
   int32_t pos = 0;
   for (int32_t j = 0; j < patterns.GetSize(); j++) {
-    int32_t* pattern = (int32_t*)patterns[j];
+    const int32_t* pattern = patterns[j];
     pos += AppendPattern(result, pos, pattern, 7, 1, e);
     if (e != BCExceptionNO) {
       FX_Free(result);
-      return NULL;
+      return nullptr;
     }
   }
   return result;
 }
-int32_t CBC_OnedCode128Writer::Encode128B(const CFX_ByteString& contents,
-                                          CFX_PtrArray& patterns) {
+
+int32_t CBC_OnedCode128Writer::Encode128B(
+    const CFX_ByteString& contents,
+    CFX_ArrayTemplate<const int32_t*>* patterns) {
   int32_t checkSum = 0;
   int32_t checkWeight = 1;
   int32_t position = 0;
-  patterns.Add((int32_t*)CBC_OnedCode128Reader::CODE_PATTERNS[CODE_START_B]);
+  patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[CODE_START_B]);
   checkSum += CODE_START_B * checkWeight;
   while (position < contents.GetLength()) {
     int32_t patternIndex = 0;
     patternIndex = contents[position] - ' ';
     position += 1;
-    patterns.Add((int32_t*)CBC_OnedCode128Reader::CODE_PATTERNS[patternIndex]);
+    patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[patternIndex]);
     checkSum += patternIndex * checkWeight;
     if (position != 0) {
       checkWeight++;
@@ -197,12 +200,14 @@ int32_t CBC_OnedCode128Writer::Encode128B(const CFX_ByteString& contents,
   }
   return checkSum;
 }
-int32_t CBC_OnedCode128Writer::Encode128C(const CFX_ByteString& contents,
-                                          CFX_PtrArray& patterns) {
+
+int32_t CBC_OnedCode128Writer::Encode128C(
+    const CFX_ByteString& contents,
+    CFX_ArrayTemplate<const int32_t*>* patterns) {
   int32_t checkSum = 0;
   int32_t checkWeight = 1;
   int32_t position = 0;
-  patterns.Add((int32_t*)CBC_OnedCode128Reader::CODE_PATTERNS[CODE_START_C]);
+  patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[CODE_START_C]);
   checkSum += CODE_START_C * checkWeight;
   while (position < contents.GetLength()) {
     int32_t patternIndex = 0;
@@ -219,7 +224,7 @@ int32_t CBC_OnedCode128Writer::Encode128C(const CFX_ByteString& contents,
         position += 2;
       }
     }
-    patterns.Add((int32_t*)CBC_OnedCode128Reader::CODE_PATTERNS[patternIndex]);
+    patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[patternIndex]);
     checkSum += patternIndex * checkWeight;
     if (position != 0) {
       checkWeight++;

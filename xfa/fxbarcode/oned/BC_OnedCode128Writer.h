@@ -47,8 +47,10 @@ class CBC_OnedCode128Writer : public CBC_OneDimWriter {
   FX_BOOL IsDigits(const CFX_ByteString& contents,
                    int32_t start,
                    int32_t length);
-  int32_t Encode128B(const CFX_ByteString& contents, CFX_PtrArray& patterns);
-  int32_t Encode128C(const CFX_ByteString& contents, CFX_PtrArray& patterns);
+  int32_t Encode128B(const CFX_ByteString& contents,
+                     CFX_ArrayTemplate<const int32_t*>* patterns);
+  int32_t Encode128C(const CFX_ByteString& contents,
+                     CFX_ArrayTemplate<const int32_t*>* patterns);
 
   BC_TYPE m_codeFormat;
 };

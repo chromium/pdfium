@@ -28,6 +28,7 @@
 #include "xfa/fxbarcode/BC_ResultPoint.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/fxbarcode/qrcode/BC_FinderPatternInfo.h"
+#include "xfa/fxbarcode/qrcode/BC_QRAlignmentPattern.h"
 #include "xfa/fxbarcode/qrcode/BC_QRAlignmentPatternFinder.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/fxbarcode/qrcode/BC_QRDetectorResult.h"
@@ -90,17 +91,14 @@ CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
       SampleGrid(m_image, topLeft.get(), topRight.get(), bottomLeft.get(),
                  (CBC_ResultPoint*)(alignmentPattern), dimension, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CFX_PtrArray* points = new CFX_PtrArray;
-  if (alignmentPattern == NULL) {
-    points->Add(bottomLeft.release());
-    points->Add(topLeft.release());
-    points->Add(topRight.release());
-  } else {
-    points->Add(bottomLeft.release());
-    points->Add(topLeft.release());
-    points->Add(topRight.release());
+
+  CFX_ArrayTemplate<CBC_ResultPoint*>* points =
+      new CFX_ArrayTemplate<CBC_ResultPoint*>();
+  points->Add(bottomLeft.release());
+  points->Add(topLeft.release());
+  points->Add(topRight.release());
+  if (alignmentPattern)
     points->Add(alignmentPattern);
-  }
   return new CBC_QRDetectorResult(bits, points);
 }
 CBC_CommonBitMatrix* CBC_QRDetector::SampleGrid(

@@ -21,6 +21,8 @@
  */
 
 #include <limits>
+#include <memory>
+#include <vector>
 
 #include "xfa/fxbarcode/BC_Dimension.h"
 #include "xfa/fxbarcode/BC_UtilCodingConvert.h"
@@ -55,6 +57,7 @@ const wchar_t CBC_HighLevelEncoder::MACRO_TRAILER = 0x0004;
 
 CBC_HighLevelEncoder::CBC_HighLevelEncoder() {}
 CBC_HighLevelEncoder::~CBC_HighLevelEncoder() {}
+
 CFX_ByteArray& CBC_HighLevelEncoder::getBytesForMessage(CFX_WideString msg) {
   CFX_ByteString bytestr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytestr);
@@ -89,23 +92,20 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
     context.setSkipAtEnd(2);
     context.m_pos += 6;
   }
-  CFX_PtrArray encoders;
-  encoders.Add(new CBC_ASCIIEncoder());
-  encoders.Add(new CBC_C40Encoder());
-  encoders.Add(new CBC_TextEncoder());
-  encoders.Add(new CBC_X12Encoder());
-  encoders.Add(new CBC_EdifactEncoder());
-  encoders.Add(new CBC_Base256Encoder());
+
+  std::vector<std::unique_ptr<CBC_Encoder>> encoders;
+  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_ASCIIEncoder()));
+  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_C40Encoder()));
+  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_TextEncoder()));
+  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_X12Encoder()));
+  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_EdifactEncoder()));
+  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_Base256Encoder()));
   int32_t encodingMode = ASCII_ENCODATION;
   while (context.hasMoreCharacters()) {
-    ((CBC_Encoder*)encoders.GetAt(encodingMode))->Encode(context, e);
-    if (e != BCExceptionNO) {
-      for (int32_t i = 0; i < encoders.GetSize(); i++) {
-        delete (CBC_Encoder*)encoders.GetAt(i);
-      }
-      encoders.RemoveAll();
-      return (FX_WCHAR*)"";
-    }
+    encoders[encodingMode]->Encode(context, e);
+    if (e != BCExceptionNO)
+      return L"";
+
     if (context.m_newEncoding >= 0) {
       encodingMode = context.m_newEncoding;
       context.resetEncoderSignal();
@@ -113,13 +113,9 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
   }
   int32_t len = context.m_codewords.GetLength();
   context.updateSymbolInfo(e);
-  if (e != BCExceptionNO) {
-    for (int32_t i = 0; i < encoders.GetSize(); i++) {
-      delete (CBC_Encoder*)encoders.GetAt(i);
-    }
-    encoders.RemoveAll();
-    return (FX_WCHAR*)"";
-  }
+  if (e != BCExceptionNO)
+    return L"";
+
   int32_t capacity = context.m_symbolInfo->m_dataCapacity;
   if (len < capacity) {
     if (encodingMode != ASCII_ENCODATION &&
@@ -134,10 +130,6 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
   while (codewords.GetLength() < capacity) {
     codewords += (randomize253State(PAD, codewords.GetLength() + 1));
   }
-  for (int32_t i = 0; i < encoders.GetSize(); i++) {
-    delete (CBC_Encoder*)encoders.GetAt(i);
-  }
-  encoders.RemoveAll();
   return codewords;
 }
 int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,

@@ -27,16 +27,16 @@
 int32_t CBC_DetectionResultColumn::MAX_NEARBY_DISTANCE = 5;
 
 CBC_DetectionResultColumn::CBC_DetectionResultColumn(
-    CBC_BoundingBox* boundingBox) {
-  m_boundingBox = boundingBox;
-  m_codewords = new CFX_PtrArray;
+    CBC_BoundingBox* boundingBox)
+    : m_boundingBox(boundingBox),
+      m_codewords(new CFX_ArrayTemplate<CBC_Codeword*>()) {
   m_codewords->SetSize(boundingBox->getMaxY() - boundingBox->getMinY() + 1);
 }
+
 CBC_DetectionResultColumn::~CBC_DetectionResultColumn() {
   for (int32_t i = 0; i < m_codewords->GetSize(); i++) {
-    delete (CBC_Codeword*)m_codewords->GetAt(i);
+    delete m_codewords->GetAt(i);
   }
-  m_codewords->RemoveAll();
   delete m_codewords;
 }
 CBC_Codeword* CBC_DetectionResultColumn::getCodewordNearby(int32_t imageRow) {
@@ -79,7 +79,8 @@ CBC_Codeword* CBC_DetectionResultColumn::getCodeword(int32_t imageRow) {
 CBC_BoundingBox* CBC_DetectionResultColumn::getBoundingBox() {
   return m_boundingBox;
 }
-CFX_PtrArray* CBC_DetectionResultColumn::getCodewords() {
+CFX_ArrayTemplate<CBC_Codeword*>* CBC_DetectionResultColumn::getCodewords()
+    const {
   return m_codewords;
 }
 CFX_ByteString CBC_DetectionResultColumn::toString() {

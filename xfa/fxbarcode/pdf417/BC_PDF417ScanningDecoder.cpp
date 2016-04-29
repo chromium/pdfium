@@ -229,7 +229,8 @@ CBC_BoundingBox* CBC_PDF417ScanningDecoder::adjustBoundingBox(
       break;
     }
   }
-  CFX_PtrArray* codewords = rowIndicatorColumn->getCodewords();
+  CFX_ArrayTemplate<CBC_Codeword*>* codewords =
+      rowIndicatorColumn->getCodewords();
   for (int32_t row = 0; missingStartRows > 0 && codewords->GetAt(row) == NULL;
        row++) {
     missingStartRows--;
@@ -484,9 +485,10 @@ CFX_PtrArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
     if (detectionResultColumn == NULL) {
       continue;
     }
-    CFX_PtrArray* temp = detectionResultColumn->getCodewords();
+    CFX_ArrayTemplate<CBC_Codeword*>* temp =
+        detectionResultColumn->getCodewords();
     for (int32_t l = 0; l < temp->GetSize(); l++) {
-      CBC_Codeword* codeword = (CBC_Codeword*)temp->GetAt(l);
+      CBC_Codeword* codeword = temp->GetAt(l);
       if (codeword == NULL || codeword->getRowNumber() == -1) {
         continue;
       }

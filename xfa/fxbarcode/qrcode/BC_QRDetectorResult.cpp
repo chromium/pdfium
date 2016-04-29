@@ -24,20 +24,20 @@
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/fxbarcode/qrcode/BC_QRDetectorResult.h"
 
-CBC_QRDetectorResult::CBC_QRDetectorResult(CBC_CommonBitMatrix* bits,
-                                           CFX_PtrArray* points)
+CBC_QRDetectorResult::CBC_QRDetectorResult(
+    CBC_CommonBitMatrix* bits,
+    CFX_ArrayTemplate<CBC_ResultPoint*>* points)
     : m_bits(bits), m_points(points) {}
+
 CBC_QRDetectorResult::~CBC_QRDetectorResult() {
-  for (int32_t i = 0; i < m_points->GetSize(); i++) {
-    delete (CBC_ResultPoint*)(*m_points)[i];
-  }
-  m_points->RemoveAll();
-  delete m_points;
-  delete m_bits;
+  for (int32_t i = 0; i < m_points->GetSize(); i++)
+    delete (*m_points)[i];
 }
-CBC_CommonBitMatrix* CBC_QRDetectorResult::GetBits() {
-  return m_bits;
+
+CBC_CommonBitMatrix* CBC_QRDetectorResult::GetBits() const {
+  return m_bits.get();
 }
-CFX_PtrArray* CBC_QRDetectorResult::GetPoints() {
-  return m_points;
+
+CFX_ArrayTemplate<CBC_ResultPoint*>* CBC_QRDetectorResult::GetPoints() const {
+  return m_points.get();
 }

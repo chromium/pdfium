@@ -9,7 +9,7 @@
 
 class CBC_BarcodeMetadata;
 class CBC_BoundingBox;
-class CBC_DetectionResultRowIndicatorColumn;
+
 class CBC_DetectionResultRowIndicatorColumn : public CBC_DetectionResultColumn {
  public:
   CBC_DetectionResultRowIndicatorColumn(CBC_BoundingBox* boundingBox,
@@ -26,9 +26,10 @@ class CBC_DetectionResultRowIndicatorColumn : public CBC_DetectionResultColumn {
   CFX_ByteString toString();
 
  private:
-  FX_BOOL m_isLeft;
-  void removeIncorrectCodewords(CFX_PtrArray* codewords,
+  void removeIncorrectCodewords(CFX_ArrayTemplate<CBC_Codeword*>* codewords,
                                 CBC_BarcodeMetadata barcodeMetadata);
+
+  FX_BOOL m_isLeft;
 };
 
 #endif  // XFA_FXBARCODE_PDF417_BC_PDF417DETECTIONRESULTROWINDICATORCOLUMN_H_

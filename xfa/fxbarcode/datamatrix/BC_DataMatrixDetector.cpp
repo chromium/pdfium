@@ -195,7 +195,8 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
                           dimensionCorrected, e));
     BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
-  CFX_PtrArray* result = new CFX_PtrArray;
+  CFX_ArrayTemplate<CBC_ResultPoint*>* result =
+      new CFX_ArrayTemplate<CBC_ResultPoint*>();
   result->SetSize(4);
   result->Add(topLeft);
   result->Add(bottomLeft);

@@ -7,20 +7,26 @@
 #ifndef XFA_FXBARCODE_QRCODE_BC_QRDETECTORRESULT_H_
 #define XFA_FXBARCODE_QRCODE_BC_QRDETECTORRESULT_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_basic.h"
 
 class CBC_CommonBitMatrix;
+class CBC_ResultPoint;
 
-class CBC_QRDetectorResult {
- private:
-  CBC_CommonBitMatrix* m_bits;
-  CFX_PtrArray* m_points;
-
+class CBC_QRDetectorResult final {
  public:
-  CBC_QRDetectorResult(CBC_CommonBitMatrix* bits, CFX_PtrArray* points);
-  virtual ~CBC_QRDetectorResult();
-  CBC_CommonBitMatrix* GetBits();
-  CFX_PtrArray* GetPoints();
+  // Takes ownership of |bits| and |points|.
+  CBC_QRDetectorResult(CBC_CommonBitMatrix* bits,
+                       CFX_ArrayTemplate<CBC_ResultPoint*>* points);
+  ~CBC_QRDetectorResult();
+
+  CBC_CommonBitMatrix* GetBits() const;
+  CFX_ArrayTemplate<CBC_ResultPoint*>* GetPoints() const;
+
+ private:
+  std::unique_ptr<CBC_CommonBitMatrix> m_bits;
+  std::unique_ptr<CFX_ArrayTemplate<CBC_ResultPoint*>> m_points;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRDETECTORRESULT_H_

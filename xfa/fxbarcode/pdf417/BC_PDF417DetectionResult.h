@@ -49,7 +49,7 @@ class CBC_DetectionResult {
                                         CBC_Codeword* codeword);
   void adjustRowNumbers(int32_t barcodeColumn,
                         int32_t codewordsRow,
-                        CFX_PtrArray* codewords);
+                        CFX_ArrayTemplate<CBC_Codeword*>* codewords);
   static FX_BOOL adjustRowNumber(CBC_Codeword* codeword,
                                  CBC_Codeword* otherCodeword);
 };
