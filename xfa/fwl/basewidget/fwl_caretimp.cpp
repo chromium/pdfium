@@ -44,12 +44,11 @@ CFWL_CaretImp::CFWL_CaretImp(const CFWL_WidgetImpProperties& properties,
   m_pTimer = new CFWL_CaretTimer(this);
   SetStates(FWL_STATE_CAT_HightLight);
 }
+
 CFWL_CaretImp::~CFWL_CaretImp() {
-  if (m_pTimer) {
-    delete m_pTimer;
-    m_pTimer = NULL;
-  }
+  delete m_pTimer;
 }
+
 FWL_ERR CFWL_CaretImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Caret;
   return FWL_ERR_Succeeded;

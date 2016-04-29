@@ -11,6 +11,14 @@
 #include "xfa/fxjse/util_inline.h"
 #include "xfa/fxjse/value.h"
 
+namespace {
+
+CFXJSE_Context* CFXContextFromHContext(FXJSE_HCONTEXT hContext) {
+  return reinterpret_cast<CFXJSE_Context*>(hContext);
+}
+
+}  // namespace
+
 FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
                                     const FXJSE_CLASS* lpGlobalClass,
                                     void* lpGlobalObject) {
@@ -20,17 +28,14 @@ FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
 }
 
 void FXJSE_Context_Release(FXJSE_HCONTEXT hContext) {
-  CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
-  if (pContext) {
-    delete pContext;
-  }
+  delete CFXContextFromHContext(hContext);
 }
 
 FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext) {
-  CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
-  if (!pContext) {
-    return NULL;
-  }
+  CFXJSE_Context* pContext = CFXContextFromHContext(hContext);
+  if (!pContext)
+    return nullptr;
+
   CFXJSE_Value* lpValue = CFXJSE_Value::Create(pContext->GetRuntime());
   ASSERT(lpValue);
   pContext->GetGlobalObject(lpValue);
@@ -76,8 +81,7 @@ FX_BOOL FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext,
                             const FX_CHAR* szScript,
                             FXJSE_HVALUE hRetValue,
                             FXJSE_HVALUE hNewThisObject) {
-  CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
-  ASSERT(pContext);
+  CFXJSE_Context* pContext = CFXContextFromHContext(hContext);
   return pContext->ExecuteScript(
       szScript, reinterpret_cast<CFXJSE_Value*>(hRetValue),
       reinterpret_cast<CFXJSE_Value*>(hNewThisObject));
@@ -152,12 +156,8 @@ CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
 }
 
 CFXJSE_Context::~CFXJSE_Context() {
-  for (int32_t i = 0, count = m_rgClasses.GetSize(); i < count; i++) {
-    CFXJSE_Class* pClass = m_rgClasses[i];
-    if (pClass) {
-      delete pClass;
-    }
-  }
+  for (int32_t i = 0, count = m_rgClasses.GetSize(); i < count; i++)
+    delete m_rgClasses[i];
   m_rgClasses.RemoveAll();
 }
 

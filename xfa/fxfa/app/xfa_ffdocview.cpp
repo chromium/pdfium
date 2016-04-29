@@ -62,13 +62,12 @@ CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc)
       m_pOldFocusWidget(nullptr),
       m_iStatus(XFA_DOCVIEW_LAYOUTSTATUS_None),
       m_iLock(0) {}
+
 CXFA_FFDocView::~CXFA_FFDocView() {
   DestroyDocView();
-  if (m_pWidgetHandler) {
-    delete m_pWidgetHandler;
-  }
-  m_pWidgetHandler = NULL;
+  delete m_pWidgetHandler;
 }
+
 void CXFA_FFDocView::InitLayout(CXFA_Node* pNode) {
   RunBindItems();
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Initialize);

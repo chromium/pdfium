@@ -290,6 +290,7 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
   }
   FX_Free(pCharPos);
 }
+
 void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
                                           const CFX_WideStringC& contents,
                                           int32_t& e) {
@@ -319,11 +320,10 @@ void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
   CFX_DIBitmap* pStretchBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
-  if (pOutBitmap) {
-    delete pOutBitmap;
-  }
+  delete pOutBitmap;
   pOutBitmap = pStretchBitmap;
 }
+
 void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix,
                                           const CFX_WideStringC& contents,

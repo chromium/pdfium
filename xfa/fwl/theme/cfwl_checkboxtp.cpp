@@ -22,21 +22,19 @@
 #define CHECKBOX_COLOR_BOXRB1 (ArgbEncode(255, 241, 239, 226))
 #define CHECKBOX_COLOR_BOXRB2 (ArgbEncode(255, 255, 255, 255))
 
-CFWL_CheckBoxTP::CFWL_CheckBoxTP() : m_pCheckPath(NULL) {
-  m_pThemeData = new CKBThemeData;
+CFWL_CheckBoxTP::CFWL_CheckBoxTP()
+    : m_pThemeData(new CKBThemeData), m_pCheckPath(nullptr) {
   SetThemeData(0);
 }
+
 CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
-  if (m_pThemeData) {
-    delete m_pThemeData;
-    m_pThemeData = NULL;
-  }
+  delete m_pThemeData;
   if (m_pCheckPath) {
     m_pCheckPath->Clear();
     delete m_pCheckPath;
-    m_pCheckPath = NULL;
   }
 }
+
 FX_BOOL CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_CLASSHASH_CheckBox;
 }

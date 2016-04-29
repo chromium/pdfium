@@ -526,17 +526,14 @@ CXFA_ImageRenderer::CXFA_ImageRenderer() {
   m_Result = TRUE;
   m_bPrint = FALSE;
 }
+
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {
-  if (m_pCloneConvert) {
-    delete m_pCloneConvert;
-  }
-  if (m_pTransformer) {
-    delete m_pTransformer;
-  }
-  if (m_DeviceHandle) {
+  delete m_pCloneConvert;
+  delete m_pTransformer;
+  if (m_DeviceHandle)
     m_pDevice->CancelDIBits(m_DeviceHandle);
-  }
 }
+
 FX_BOOL CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
                                   CFX_DIBSource* pDIBSource,
                                   FX_ARGB bitmap_argb,

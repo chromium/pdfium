@@ -31,16 +31,14 @@ void CBC_ReedSolomonGF256::Initialize() {
   DataMatrixField = new CBC_ReedSolomonGF256(0x012D);
   DataMatrixField->Init();
 }
+
 void CBC_ReedSolomonGF256::Finalize() {
-  if (QRCodeFild) {
-    delete QRCodeFild;
-  }
-  QRCodeFild = NULL;
-  if (DataMatrixField) {
-    delete DataMatrixField;
-  }
-  DataMatrixField = NULL;
+  delete QRCodeFild;
+  QRCodeFild = nullptr;
+  delete DataMatrixField;
+  DataMatrixField = nullptr;
 }
+
 CBC_ReedSolomonGF256::CBC_ReedSolomonGF256(int32_t primitive) {
   int32_t x = 1;
   for (int32_t j = 0; j < 256; j++) {

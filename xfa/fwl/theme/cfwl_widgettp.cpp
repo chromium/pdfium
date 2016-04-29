@@ -741,27 +741,26 @@ uint32_t FWL_GetThemeColor(uint32_t dwThemeID) {
 }
 
 CFWL_ArrowData* CFWL_ArrowData::m_pInstance = NULL;
+
 CFWL_ArrowData* CFWL_ArrowData::GetInstance() {
-  if (!m_pInstance) {
+  if (!m_pInstance)
     m_pInstance = new CFWL_ArrowData;
-  }
   return m_pInstance;
 }
+
 FX_BOOL CFWL_ArrowData::IsInstance() {
-  return (m_pInstance != NULL);
+  return !!m_pInstance;
 }
+
 void CFWL_ArrowData::DestroyInstance() {
-  if (m_pInstance) {
-    delete m_pInstance;
-    m_pInstance = NULL;
-  }
+  delete m_pInstance;
+  m_pInstance = nullptr;
 }
+
 CFWL_ArrowData::~CFWL_ArrowData() {
-  if (m_pColorData) {
-    delete m_pColorData;
-    m_pColorData = NULL;
-  }
+  delete m_pColorData;
 }
+
 void CFWL_ArrowData::SetColorData(uint32_t dwID) {
   if (!m_pColorData) {
     m_pColorData = new CColorData;

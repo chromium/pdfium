@@ -19,15 +19,12 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_ResolveProcessor::CXFA_ResolveProcessor(void)
-    : m_pNodeHelper(NULL), m_iCurStart(0) {
-  m_pNodeHelper = new CXFA_NodeHelper;
-}
+    : m_pNodeHelper(new CXFA_NodeHelper), m_iCurStart(0) {}
+
 CXFA_ResolveProcessor::~CXFA_ResolveProcessor(void) {
-  if (m_pNodeHelper) {
-    delete m_pNodeHelper;
-    m_pNodeHelper = NULL;
-  }
+  delete m_pNodeHelper;
 }
+
 int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
   if (rnd.m_CurNode == NULL) {
     return -1;

@@ -53,6 +53,7 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
     }
   }
 }
+
 void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
                                           int32_t& e) {
   if (m_bFixedSize) {
@@ -80,12 +81,11 @@ void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
   }
   if (!m_bFixedSize) {
     CFX_DIBitmap* pStretchBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
-    if (pOutBitmap) {
-      delete pOutBitmap;
-    }
+    delete pOutBitmap;
     pOutBitmap = pStretchBitmap;
   }
 }
+
 void CBC_TwoDimWriter::RenderResult(uint8_t* code,
                                     int32_t codeWidth,
                                     int32_t codeHeight,

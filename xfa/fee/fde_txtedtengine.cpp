@@ -627,22 +627,16 @@ int32_t CFDE_TxtEdtEngine::GetSelRange(int32_t nIndex, int32_t& nStart) {
   nStart = m_SelRangePtrArr[nIndex]->nStart;
   return m_SelRangePtrArr[nIndex]->nCount;
 }
+
 void CFDE_TxtEdtEngine::ClearSelection() {
   int32_t nCount = m_SelRangePtrArr.GetSize();
-  FDE_LPTXTEDTSELRANGE lpRange = NULL;
-  int32_t i = 0;
-  for (i = 0; i < nCount; i++) {
-    lpRange = m_SelRangePtrArr[i];
-    if (lpRange != NULL) {
-      delete lpRange;
-      lpRange = NULL;
-    }
-  }
+  for (int i = 0; i < nCount; ++i)
+    delete m_SelRangePtrArr[i];
   m_SelRangePtrArr.RemoveAll();
-  if (nCount && m_Param.pEventSink) {
+  if (nCount && m_Param.pEventSink)
     m_Param.pEventSink->On_SelChanged(this);
-  }
 }
+
 FX_BOOL CFDE_TxtEdtEngine::Redo(const CFX_ByteStringC& bsRedo) {
   if (IsLocked()) {
     return FALSE;
@@ -906,8 +900,7 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
                                 ? ParagPosBgn.nParagIndex
                                 : (ParagPosBgn.nParagIndex + 1);
   for (i = nNextParagIndex; i <= ParagPosEnd.nParagIndex; i++) {
-    CFDE_TxtEdtParag* pParag = m_ParagPtrArray[nNextParagIndex];
-    delete pParag;
+    delete m_ParagPtrArray[nNextParagIndex];
     m_ParagPtrArray.RemoveAt(nNextParagIndex);
   }
   if (!(bLastParag && ParagPosBgn.nCharIndex == 0)) {
@@ -980,17 +973,14 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
   } while (pIter->Next());
   pIter->Release();
 }
+
 void CFDE_TxtEdtEngine::RemoveAllParags() {
   int32_t nCount = m_ParagPtrArray.GetSize();
-  int32_t i = 0;
-  for (i = 0; i < nCount; i++) {
-    CFDE_TxtEdtParag* pParag = m_ParagPtrArray[i];
-    if (pParag) {
-      delete pParag;
-    }
-  }
+  for (int i = 0; i < nCount; ++i)
+    delete m_ParagPtrArray[i];
   m_ParagPtrArray.RemoveAll();
 }
+
 void CFDE_TxtEdtEngine::RemoveAllPages() {
   int32_t nCount = m_PagePtrArray.GetSize();
   int32_t i = 0;
@@ -1610,8 +1600,7 @@ void CFDE_TxtEdtEngine::DeleteSelect() {
     int32_t nSelCount;
     while (nCountRange > 0) {
       nSelCount = GetSelRange(--nCountRange, nSelStart);
-      FDE_LPTXTEDTSELRANGE lpTemp = m_SelRangePtrArr[nCountRange];
-      delete lpTemp;
+      delete m_SelRangePtrArr[nCountRange];
       m_SelRangePtrArr.RemoveAt(nCountRange);
       DeleteRange_DoRecord(nSelStart, nSelCount, TRUE);
     }
@@ -1622,6 +1611,7 @@ void CFDE_TxtEdtEngine::DeleteSelect() {
     return;
   }
 }
+
 IFDE_TxtEdtDoRecord* IFDE_TxtEdtDoRecord::Create(
     const CFX_ByteStringC& bsDoRecord) {
   const FX_CHAR* lpBuf = bsDoRecord.c_str();
@@ -1632,10 +1622,10 @@ IFDE_TxtEdtDoRecord* IFDE_TxtEdtDoRecord::Create(
     case FDE_TXTEDT_DORECORD_DEL:
       return new CFDE_TxtEdtDoRecord_DeleteRange(bsDoRecord);
     default:
-      break;
+      return nullptr;
   }
-  return NULL;
 }
+
 CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
     const CFX_ByteStringC& bsDoRecord) {
   Deserialize(bsDoRecord);

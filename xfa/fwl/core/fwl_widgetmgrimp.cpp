@@ -39,6 +39,7 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
   m_rtScreen.Reset();
 #endif
 }
+
 CFWL_WidgetMgr::~CFWL_WidgetMgr() {
   FX_POSITION ps = m_mapWidgetItem.GetStartPosition();
   while (ps) {
@@ -48,11 +49,9 @@ CFWL_WidgetMgr::~CFWL_WidgetMgr() {
     delete pItem;
   }
   m_mapWidgetItem.RemoveAll();
-  if (m_pDelegate) {
-    delete m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
 }
+
 int32_t CFWL_WidgetMgr::CountWidgets(IFWL_Widget* pParent) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
   return TravelWidgetMgr(pParentItem, NULL, NULL);
@@ -480,18 +479,18 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
   }
   return parent;
 }
+
 void CFWL_WidgetMgr::NotifySizeChanged(IFWL_Widget* pForm,
                                        FX_FLOAT fx,
                                        FX_FLOAT fy) {
-  if (!FWL_UseOffscreen(pForm)) {
+  if (!FWL_UseOffscreen(pForm))
     return;
-  }
+
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pForm);
-  if (pItem->pOffscreen) {
-    delete pItem->pOffscreen;
-    pItem->pOffscreen = NULL;
-  }
+  delete pItem->pOffscreen;
+  pItem->pOffscreen = nullptr;
 }
+
 IFWL_Widget* CFWL_WidgetMgr::nextTab(IFWL_Widget* parent,
                                      IFWL_Widget* focus,
                                      FX_BOOL& bFind) {

@@ -42,20 +42,14 @@ CBC_BoundingBox::CBC_BoundingBox(CBC_BoundingBox* boundingBox) {
   init(boundingBox->m_image, boundingBox->m_topLeft, boundingBox->m_bottomLeft,
        boundingBox->m_topRight, boundingBox->m_bottomRight);
 }
+
 CBC_BoundingBox::~CBC_BoundingBox() {
-  if (m_topLeft) {
-    delete m_topLeft;
-  }
-  if (m_bottomLeft) {
-    delete m_bottomLeft;
-  }
-  if (m_topRight) {
-    delete m_topRight;
-  }
-  if (m_bottomRight) {
-    delete m_bottomRight;
-  }
+  delete m_topLeft;
+  delete m_bottomLeft;
+  delete m_topRight;
+  delete m_bottomRight;
 }
+
 CBC_BoundingBox* CBC_BoundingBox::merge(CBC_BoundingBox* leftBox,
                                         CBC_BoundingBox* rightBox,
                                         int32_t& e) {

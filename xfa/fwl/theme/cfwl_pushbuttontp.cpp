@@ -15,15 +15,14 @@
 
 #define PUSHBUTTON_SIZE_Corner 2
 
-CFWL_PushButtonTP::CFWL_PushButtonTP() {
-  m_pThemeData = new PBThemeData;
+CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
   SetThemeData(0);
 }
+
 CFWL_PushButtonTP::~CFWL_PushButtonTP() {
-  if (m_pThemeData) {
-    delete m_pThemeData;
-  }
+  delete m_pThemeData;
 }
+
 FX_BOOL CFWL_PushButtonTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget->GetClassID() == FWL_CLASSHASH_PushButton;
 }

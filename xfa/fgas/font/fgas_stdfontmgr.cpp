@@ -624,18 +624,14 @@ void CFX_FontMgrImp::Release() {
     uint32_t dwHash;
     CFX_FontDescriptorInfos* pDescs;
     m_Hash2CandidateList.GetNextAssoc(pos, dwHash, pDescs);
-    if (NULL != pDescs) {
-      delete pDescs;
-    }
+    delete pDescs;
   }
   pos = m_Hash2Fonts.GetStartPosition();
   while (pos) {
     uint32_t dwHash;
     CFX_ArrayTemplate<IFX_Font*>* pFonts;
     m_Hash2Fonts.GetNextAssoc(pos, dwHash, pFonts);
-    if (NULL != pFonts) {
-      delete pFonts;
-    }
+    delete pFonts;
   }
   m_Hash2Fonts.RemoveAll();
   pos = m_Hash2FileAccess.GetStartPosition();
@@ -1207,9 +1203,7 @@ void CFX_FontMgrImp::ClearFontCache() {
     uint32_t dwHash;
     CFX_FontDescriptorInfos* pDescs;
     m_Hash2CandidateList.GetNextAssoc(pos, dwHash, pDescs);
-    if (NULL != pDescs) {
-      delete pDescs;
-    }
+    delete pDescs;
   }
   pos = m_FileAccess2IFXFont.GetStartPosition();
   while (pos) {

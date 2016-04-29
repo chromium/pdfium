@@ -870,20 +870,20 @@ CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {
   }
   delete m_ToolTipDp;
 }
+
 // static
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::getInstance() {
-  if (!s_pInstance) {
+  if (!s_pInstance)
     s_pInstance = new CFWL_ToolTipContainer;
-  }
   return s_pInstance;
 }
+
 // static
 void CFWL_ToolTipContainer::DeleteInstance() {
-  if (s_pInstance) {
-    delete s_pInstance;
-    s_pInstance = NULL;
-  }
+  delete s_pInstance;
+  s_pInstance = NULL;
 }
+
 FX_ERR CFWL_ToolTipContainer::AddToolTipTarget(IFWL_ToolTipTarget* pTarget) {
   if (m_arrWidget.Find(pTarget) < 0) {
     m_arrWidget.Add(pTarget);

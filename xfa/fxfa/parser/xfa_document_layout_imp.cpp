@@ -42,14 +42,13 @@ CXFA_LayoutProcessor::~CXFA_LayoutProcessor() {
 CXFA_Document* CXFA_LayoutProcessor::GetDocument() const {
   return m_pDocument;
 }
+
 int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart) {
-  if (!bForceRestart && !IsNeedLayout()) {
+  if (!bForceRestart && !IsNeedLayout())
     return 100;
-  }
-  if (m_pRootItemLayoutProcessor) {
-    delete m_pRootItemLayoutProcessor;
-    m_pRootItemLayoutProcessor = NULL;
-  }
+
+  delete m_pRootItemLayoutProcessor;
+  m_pRootItemLayoutProcessor = nullptr;
   m_nProgressCounter = 0;
   CXFA_Node* pFormPacketNode =
       ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
@@ -147,17 +146,15 @@ void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
 CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetRootLayoutItem() : NULL;
 }
+
 void CXFA_LayoutProcessor::ClearLayoutData() {
-  if (m_pLayoutPageMgr) {
-    delete m_pLayoutPageMgr;
-    m_pLayoutPageMgr = NULL;
-  }
-  if (m_pRootItemLayoutProcessor) {
-    delete m_pRootItemLayoutProcessor;
-    m_pRootItemLayoutProcessor = NULL;
-  }
+  delete m_pLayoutPageMgr;
+  m_pLayoutPageMgr = nullptr;
+  delete m_pRootItemLayoutProcessor;
+  m_pRootItemLayoutProcessor = nullptr;
   m_nProgressCounter = 0;
 }
+
 FX_BOOL CXFA_LayoutProcessor::IsNeedLayout() {
   return m_bNeeLayout || m_rgChangedContainers.GetSize() > 0;
 }

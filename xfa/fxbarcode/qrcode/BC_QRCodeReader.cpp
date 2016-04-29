@@ -93,14 +93,10 @@ CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap* image, int32_t& e) {
   return bs;
 }
 void CBC_QRCodeReader::ReleaseAll() {
-  if (CBC_ReedSolomonGF256::QRCodeFild) {
-    delete CBC_ReedSolomonGF256::QRCodeFild;
-    CBC_ReedSolomonGF256::QRCodeFild = NULL;
-  }
-  if (CBC_ReedSolomonGF256::DataMatrixField) {
-    delete CBC_ReedSolomonGF256::DataMatrixField;
-    CBC_ReedSolomonGF256::DataMatrixField = NULL;
-  }
+  delete CBC_ReedSolomonGF256::QRCodeFild;
+  CBC_ReedSolomonGF256::QRCodeFild = nullptr;
+  delete CBC_ReedSolomonGF256::DataMatrixField;
+  CBC_ReedSolomonGF256::DataMatrixField = nullptr;
   CBC_QRCoderMode::Destroy();
   CBC_QRCoderErrorCorrectionLevel::Destroy();
   CBC_QRDataMask::Destroy();

@@ -105,10 +105,8 @@ void CFDE_RenderContext::StopRender() {
     m_pIterator->Release();
     m_pIterator = nullptr;
   }
-  if (m_pBrush) {
-    delete m_pBrush;
-    m_pBrush = nullptr;
-  }
+  delete m_pBrush;
+  m_pBrush = nullptr;
   FX_Free(m_pCharPos);
   m_pCharPos = nullptr;
   m_iCharPosCount = 0;

@@ -401,11 +401,11 @@ CBC_PDF417::CBC_PDF417(FX_BOOL compact) {
   m_minRows = 3;
   m_barcodeMatrix = NULL;
 }
+
 CBC_PDF417::~CBC_PDF417() {
-  if (m_barcodeMatrix) {
-    delete m_barcodeMatrix;
-  }
+  delete m_barcodeMatrix;
 }
+
 CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
   return m_barcodeMatrix;
 }
@@ -556,9 +556,7 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
       continue;
     }
     ratio = newRatio;
-    if (dimension) {
-      delete dimension;
-    }
+    delete dimension;
     dimension = new CFX_Int32Array;
     dimension->Add(cols);
     dimension->Add(rows);

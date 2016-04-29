@@ -153,32 +153,20 @@ CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
     n = j;
     if (rLast->isZero()) {
       e = BCExceptionChecksumException;
-      if (qtemp) {
-        delete qtemp;
-      }
-      if (rtemp) {
-        delete rtemp;
-      }
-      if (ttemp) {
-        delete ttemp;
-      }
-      return NULL;
+      delete qtemp;
+      delete rtemp;
+      delete ttemp;
+      return nullptr;
     }
     r = rLastLast;
     CBC_PDF417ECModulusPoly* q = m_field->getZero();
     int32_t denominatorLeadingTerm = rLast->getCoefficient(rLast->getDegree());
     int32_t dltInverse = m_field->inverse(denominatorLeadingTerm, e);
     if (e != BCExceptionNO) {
-      if (qtemp) {
-        delete qtemp;
-      }
-      if (rtemp) {
-        delete rtemp;
-      }
-      if (ttemp) {
-        delete ttemp;
-      }
-      return NULL;
+      delete qtemp;
+      delete rtemp;
+      delete ttemp;
+      return nullptr;
     }
     while (r->getDegree() >= rLast->getDegree() && !r->isZero()) {
       int32_t degreeDiff = r->getDegree() - rLast->getDegree();
@@ -187,81 +175,51 @@ CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
       CBC_PDF417ECModulusPoly* buildmonomial =
           m_field->buildMonomial(degreeDiff, scale, e);
       if (e != BCExceptionNO) {
-        if (qtemp) {
-          delete qtemp;
-        }
-        if (rtemp) {
-          delete rtemp;
-        }
-        if (ttemp) {
-          delete ttemp;
-        }
-        return NULL;
+        delete qtemp;
+        delete rtemp;
+        delete ttemp;
+        return nullptr;
       }
       q = q->add(buildmonomial, e);
       delete buildmonomial;
-      if (qtemp) {
-        delete qtemp;
-      }
+      delete qtemp;
       if (e != BCExceptionNO) {
-        if (rtemp) {
-          delete rtemp;
-        }
-        if (ttemp) {
-          delete ttemp;
-        }
-        return NULL;
+        delete rtemp;
+        delete ttemp;
+        return nullptr;
       }
       qtemp = q;
       CBC_PDF417ECModulusPoly* multiply =
           rLast->multiplyByMonomial(degreeDiff, scale, e);
       if (e != BCExceptionNO) {
-        if (qtemp) {
-          delete qtemp;
-        }
-        if (rtemp) {
-          delete rtemp;
-        }
-        if (ttemp) {
-          delete ttemp;
-        }
-        return NULL;
+        delete qtemp;
+        delete rtemp;
+        delete ttemp;
+        return nullptr;
       }
       CBC_PDF417ECModulusPoly* temp = r;
       r = temp->subtract(multiply, e);
       delete multiply;
       if (m > 1 && i > m) {
         delete temp;
-        temp = NULL;
+        temp = nullptr;
       }
       if (e != BCExceptionNO) {
-        if (qtemp) {
-          delete qtemp;
-        }
-        if (rtemp) {
-          delete rtemp;
-        }
-        if (ttemp) {
-          delete ttemp;
-        }
-        return NULL;
+        delete qtemp;
+        delete rtemp;
+        delete ttemp;
+        return nullptr;
       }
       rtemp = r;
       i = m + 1;
     }
     ttemp = q->multiply(tLast, e);
-    if (qtemp) {
-      delete qtemp;
-      qtemp = NULL;
-    }
+    delete qtemp;
+    qtemp = nullptr;
     if (e != BCExceptionNO) {
-      if (rtemp) {
-        delete rtemp;
-      }
-      if (ttemp) {
-        delete ttemp;
-      }
-      return NULL;
+      delete rtemp;
+      delete ttemp;
+      return nullptr;
     }
     t = ttemp->subtract(tLastLast, e);
     if (n > 1 && j > n) {
@@ -269,19 +227,15 @@ CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
     }
     delete ttemp;
     if (e != BCExceptionNO) {
-      if (rtemp) {
-        delete rtemp;
-      }
-      return NULL;
+      delete rtemp;
+      return nullptr;
     }
     ttemp = t;
     t = ttemp->negative(e);
     delete ttemp;
     if (e != BCExceptionNO) {
-      if (rtemp) {
-        delete rtemp;
-      }
-      return NULL;
+      delete rtemp;
+      return nullptr;
     }
     ttemp = t;
     j++;
@@ -289,38 +243,24 @@ CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
   int32_t sigmaTildeAtZero = t->getCoefficient(0);
   if (sigmaTildeAtZero == 0) {
     e = BCExceptionChecksumException;
-    if (rtemp) {
-      delete rtemp;
-    }
-    if (ttemp) {
-      delete ttemp;
-    }
-    return NULL;
+    delete rtemp;
+    delete ttemp;
+    return nullptr;
   }
   int32_t inverse = m_field->inverse(sigmaTildeAtZero, e);
   if (e != BCExceptionNO) {
-    if (rtemp) {
-      delete rtemp;
-    }
-    if (ttemp) {
-      delete ttemp;
-    }
-    return NULL;
+    delete rtemp;
+    delete ttemp;
+    return nullptr;
   }
   CBC_PDF417ECModulusPoly* sigma = t->multiply(inverse, e);
-  if (ttemp) {
-    delete ttemp;
-  }
+  delete ttemp;
   if (e != BCExceptionNO) {
-    if (rtemp) {
-      delete rtemp;
-    }
-    return NULL;
+    delete rtemp;
+    return nullptr;
   }
   CBC_PDF417ECModulusPoly* omega = r->multiply(inverse, e);
-  if (rtemp) {
-    delete rtemp;
-  }
+  delete rtemp;
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CFX_PtrArray* modulusPoly = new CFX_PtrArray;
   modulusPoly->Add(sigma);

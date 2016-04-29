@@ -46,13 +46,13 @@ static CBC_CodeBase* FX_Barcode_CreateBarCodeEngineObject(BC_TYPE type) {
       return NULL;
   }
 }
+
 CFX_Barcode::CFX_Barcode() {}
+
 CFX_Barcode::~CFX_Barcode() {
-  if (m_pBCEngine) {
-    delete m_pBCEngine;
-    m_pBCEngine = NULL;
-  }
+  delete m_pBCEngine;
 }
+
 FX_BOOL CFX_Barcode::Create(BC_TYPE type) {
   m_pBCEngine = FX_Barcode_CreateBarCodeEngineObject(type);
   return m_pBCEngine != NULL;

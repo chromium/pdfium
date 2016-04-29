@@ -471,25 +471,19 @@ void CFWL_FormImp::ShowChildWidget(IFWL_Widget* pParent) {
     pChild = pWidgetMgr->GetWidget(pChild, FWL_WGTRELATION_NextSibling);
   }
 }
+
 void CFWL_FormImp::RemoveSysButtons() {
   m_rtCaption.Reset();
-  if (m_pCloseBox) {
-    delete m_pCloseBox;
-    m_pCloseBox = NULL;
-  }
-  if (m_pMinBox) {
-    delete m_pMinBox;
-    m_pMinBox = NULL;
-  }
-  if (m_pMaxBox) {
-    delete m_pMaxBox;
-    m_pMaxBox = NULL;
-  }
-  if (m_pCaptionBox) {
-    delete m_pCaptionBox;
-    m_pCaptionBox = NULL;
-  }
+  delete m_pCloseBox;
+  m_pCloseBox = nullptr;
+  delete m_pMinBox;
+  m_pMinBox = nullptr;
+  delete m_pMaxBox;
+  m_pMaxBox = nullptr;
+  delete m_pCaptionBox;
+  m_pCaptionBox = nullptr;
 }
+
 void CFWL_FormImp::CalcContentRect(CFX_RectF& rtContent) {
 #ifdef FWL_UseMacSystemBorder
   rtContent = m_rtRelative;

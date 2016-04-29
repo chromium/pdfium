@@ -114,9 +114,7 @@ CFX_PtrArray* CBC_Detector::detect(FX_BOOL multiple,
     CFX_PtrArray* vertices = findVertices(bitMatrix, row, column);
     if (vertices->GetAt(0) == NULL && vertices->GetAt(3) == NULL) {
       if (!foundBarcodeInRow) {
-        if (vertices) {
-          delete (vertices);
-        }
+        delete vertices;
         break;
       }
       foundBarcodeInRow = FALSE;
@@ -132,9 +130,7 @@ CFX_PtrArray* CBC_Detector::detect(FX_BOOL multiple,
         }
       }
       row += ROW_STEP;
-      if (vertices) {
-        delete (vertices);
-      }
+      delete vertices;
       continue;
     }
     foundBarcodeInRow = TRUE;

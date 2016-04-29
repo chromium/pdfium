@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <memory>
+
 #include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
@@ -32,60 +34,35 @@ class CBC_Pause : public IFX_Pause {
 };
 
 static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread) {
-  CFX_DIBitmap* bitmap = nullptr;
-  CCodec_ModuleMgr* pCodecMgr = nullptr;
-  CCodec_ProgressiveDecoder* pImageCodec = nullptr;
-  pCodecMgr = new CCodec_ModuleMgr();
-  pImageCodec = pCodecMgr->CreateProgressiveDecoder();
+  std::unique_ptr<CCodec_ModuleMgr> pCodecMgr(new CCodec_ModuleMgr());
+  std::unique_ptr<CCodec_ProgressiveDecoder> pImageCodec(
+      pCodecMgr->CreateProgressiveDecoder());
   FXCODEC_STATUS status = FXCODEC_STATUS_DECODE_FINISH;
   status = pImageCodec->LoadImageInfo(fileread, FXCODEC_IMAGE_UNKNOWN, nullptr);
   if (status != FXCODEC_STATUS_FRAME_READY)
     return nullptr;
 
-  bitmap = new CFX_DIBitmap;
+  std::unique_ptr<CFX_DIBitmap> bitmap(new CFX_DIBitmap);
   bitmap->Create(pImageCodec->GetWidth(), pImageCodec->GetHeight(), FXDIB_Argb);
   bitmap->Clear(FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF));
   CBC_Pause pause;
   int32_t frames;
   status = pImageCodec->GetFrames(frames, &pause);
-  while (status == FXCODEC_STATUS_FRAME_TOBECONTINUE) {
+  while (status == FXCODEC_STATUS_FRAME_TOBECONTINUE)
     status = pImageCodec->GetFrames(frames, &pause);
-  }
-  if (status != FXCODEC_STATUS_DECODE_READY) {
-    goto except;
-  }
-  status = pImageCodec->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
+
+  if (status != FXCODEC_STATUS_DECODE_READY)
+    return nullptr;
+
+  status = pImageCodec->StartDecode(bitmap.get(), 0, 0, bitmap->GetWidth(),
                                     bitmap->GetHeight(), 0, FALSE);
-  if (status == FXCODEC_STATUS_ERR_PARAMS) {
-    goto except;
-  }
-  if (status != FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-    goto except;
-  }
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
+  if (status != FXCODEC_STATUS_DECODE_TOBECONTINUE)
+    return nullptr;
+
+  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
     status = pImageCodec->ContinueDecode(&pause);
-  }
-  if (status != FXCODEC_STATUS_DECODE_FINISH) {
-    goto except;
-  }
-  if (pImageCodec) {
-    delete pImageCodec;
-    pImageCodec = nullptr;
-  }
-  delete pCodecMgr;
-  pCodecMgr = nullptr;
-  return bitmap;
-except:
-  if (pImageCodec) {
-    delete pImageCodec;
-    pImageCodec = nullptr;
-  }
-  delete pCodecMgr;
-  pCodecMgr = nullptr;
-  if (bitmap) {
-    delete bitmap;
-  }
-  return nullptr;
+
+  return status == FXCODEC_STATUS_DECODE_FINISH ? bitmap.release() : nullptr;
 }
 
 CBC_BufferedImageLuminanceSource::CBC_BufferedImageLuminanceSource(

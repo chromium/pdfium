@@ -21,14 +21,13 @@ static const FX_WCHAR g_FX_Currency[] = L"$z,zzz,zzz,zzz,zzz,zz9.99";
 static const FX_WCHAR g_FX_Decimal[] = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
 static const FX_WCHAR g_FX_Integer[] = L"z,zzz,zzz,zzz,zzz,zzz";
 
-CXFA_XMLLocale::CXFA_XMLLocale(CXML_Element* pLocaleData) {
-  m_pLocaleData = pLocaleData;
-}
+CXFA_XMLLocale::CXFA_XMLLocale(CXML_Element* pLocaleData)
+    : m_pLocaleData(pLocaleData) {}
+
 CXFA_XMLLocale::~CXFA_XMLLocale() {
-  if (m_pLocaleData) {
-    delete m_pLocaleData;
-  }
+  delete m_pLocaleData;
 }
+
 void CXFA_XMLLocale::Release() {
   delete this;
 }

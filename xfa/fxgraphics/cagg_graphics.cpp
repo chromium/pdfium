@@ -26,7 +26,5 @@ FX_ERR CAGG_Graphics::Create(CFX_Graphics* owner,
 }
 
 CAGG_Graphics::~CAGG_Graphics() {
-  if (m_owner->m_renderDevice)
-    delete (CFX_FxgeDevice*)m_owner->m_renderDevice;
-  m_owner = nullptr;
+  delete m_owner->m_renderDevice;
 }

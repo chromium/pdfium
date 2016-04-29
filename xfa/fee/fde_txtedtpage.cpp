@@ -139,21 +139,15 @@ CFDE_TxtEdtPage::CFDE_TxtEdtPage(IFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
   FXSYS_memset(&m_rtPageCanvas, 0, sizeof(CFX_RectF));
   m_pEditEngine = (CFDE_TxtEdtEngine*)pEngine;
 }
+
 CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {
   m_PieceMassArr.RemoveAll(TRUE);
-  if (m_pTextSet) {
-    delete m_pTextSet;
-    m_pTextSet = NULL;
-  }
-  if (m_pCharWidth) {
-    delete[] m_pCharWidth;
-    m_pCharWidth = NULL;
-  }
-  if (m_pIter != NULL) {
+  delete m_pTextSet;
+  delete[] m_pCharWidth;
+  if (m_pIter)
     m_pIter->Release();
-    m_pIter = NULL;
-  }
 }
+
 void CFDE_TxtEdtPage::Release() {
   delete this;
 }
@@ -555,32 +549,28 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   m_bLoaded = TRUE;
   return 0;
 }
+
 void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
   ASSERT(m_nRefCount > 0);
   m_nRefCount--;
-  if (m_nRefCount == 0) {
-    m_PieceMassArr.RemoveAll();
-    if (m_pTextSet) {
-      delete m_pTextSet;
-      m_pTextSet = NULL;
-    }
-    if (m_pCharWidth) {
-      delete[] m_pCharWidth;
-      m_pCharWidth = NULL;
-    }
-    if (m_pBgnParag) {
-      m_pBgnParag->UnloadParag();
-    }
-    if (m_pEndParag) {
-      m_pEndParag->UnloadParag();
-    }
-    if (m_pIter) {
-      m_pIter->Release();
-      m_pIter = NULL;
-    }
-    m_pBgnParag = NULL;
-    m_pEndParag = NULL;
+  if (m_nRefCount != 0)
+    return;
+
+  m_PieceMassArr.RemoveAll();
+  delete m_pTextSet;
+  m_pTextSet = nullptr;
+  delete[] m_pCharWidth;
+  m_pCharWidth = nullptr;
+  if (m_pBgnParag)
+    m_pBgnParag->UnloadParag();
+  if (m_pEndParag)
+    m_pEndParag->UnloadParag();
+  if (m_pIter) {
+    m_pIter->Release();
+    m_pIter = nullptr;
   }
+  m_pBgnParag = nullptr;
+  m_pEndParag = nullptr;
 }
 
 const CFX_RectF& CFDE_TxtEdtPage::GetContentsBox() {

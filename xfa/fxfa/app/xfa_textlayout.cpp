@@ -996,6 +996,7 @@ int32_t CXFA_TextLayout::CountBlocks() const {
   int32_t iCount = m_Blocks.GetSize() / 2;
   return iCount > 0 ? iCount : 1;
 }
+
 FX_BOOL CXFA_TextLayout::CalcSize(const CFX_SizeF& minSize,
                                   const CFX_SizeF& maxSize,
                                   CFX_SizeF& defaultSize) {
@@ -1014,13 +1015,12 @@ FX_BOOL CXFA_TextLayout::CalcSize(const CFX_SizeF& minSize,
   if (fLinePos < 0.1f) {
     fLinePos = m_textParser.GetFontSize(m_pTextProvider, NULL);
   }
-  if (m_pTabstopContext) {
-    delete m_pTabstopContext;
-    m_pTabstopContext = NULL;
-  }
+  delete m_pTabstopContext;
+  m_pTabstopContext = nullptr;
   defaultSize = CFX_SizeF(m_fMaxWidth, fLinePos);
   return TRUE;
 }
+
 FX_BOOL CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
   if (size.x < 1) {
     return FALSE;
@@ -1035,15 +1035,13 @@ FX_BOOL CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
   FX_FLOAT fLinePos = 0;
   Loader(size, fLinePos, TRUE);
   UpdateAlign(size.y, fLinePos);
-  if (m_pTabstopContext) {
-    delete m_pTabstopContext;
-    m_pTabstopContext = NULL;
-  }
-  if (fHeight) {
+  delete m_pTabstopContext;
+  m_pTabstopContext = nullptr;
+  if (fHeight)
     *fHeight = fLinePos;
-  }
   return TRUE;
 }
+
 FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
   if (m_pLoader == NULL || iBlock < 0 || iBlock >= CountBlocks()) {
     return FALSE;

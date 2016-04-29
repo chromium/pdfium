@@ -398,9 +398,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   uint32_t Release() override {
     uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount == 0) {
-      if (m_NonInheritedData.m_pCounterStyle)
-        delete m_NonInheritedData.m_pCounterStyle;
-
+      delete m_NonInheritedData.m_pCounterStyle;
       FXTARGET_DeleteWith(CFDE_CSSComputedStyle, m_pAllocator, this);
     }
     return dwRefCount;

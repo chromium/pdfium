@@ -86,25 +86,19 @@ void CXFA_FFPushButton::UpdateWidgetProperty() {
   }
   m_pNormalWidget->ModifyStylesEx(dwStyleEx, 0xFFFFFFFF);
 }
+
 void CXFA_FFPushButton::UnloadWidget() {
-  if (m_pRolloverTextLayout) {
-    delete m_pRolloverTextLayout;
-    m_pRolloverTextLayout = NULL;
-  }
-  if (m_pDownTextLayout) {
-    delete m_pDownTextLayout;
-    m_pDownTextLayout = NULL;
-  }
-  if (m_pDownProvider) {
-    delete m_pDownProvider;
-    m_pDownProvider = NULL;
-  }
-  if (m_pRollProvider) {
-    delete m_pRollProvider;
-    m_pRollProvider = NULL;
-  }
+  delete m_pRolloverTextLayout;
+  m_pRolloverTextLayout = nullptr;
+  delete m_pDownTextLayout;
+  m_pDownTextLayout = nullptr;
+  delete m_pDownProvider;
+  m_pDownProvider = nullptr;
+  delete m_pRollProvider;
+  m_pRollProvider = nullptr;
   CXFA_FFField::UnloadWidget();
 }
+
 FX_BOOL CXFA_FFPushButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   CFX_RectF rtWidget;

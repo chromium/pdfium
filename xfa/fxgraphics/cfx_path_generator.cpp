@@ -6,18 +6,16 @@
 
 #include "xfa/fxgraphics/cfx_path_generator.h"
 
-CFX_PathGenerator::CFX_PathGenerator() {
-  m_pPathData = NULL;
-}
+CFX_PathGenerator::CFX_PathGenerator() : m_pPathData(nullptr) {}
+
 void CFX_PathGenerator::Create() {
   m_pPathData = new CFX_PathData;
 }
+
 CFX_PathGenerator::~CFX_PathGenerator() {
-  if (m_pPathData) {
-    delete m_pPathData;
-    m_pPathData = NULL;
-  }
+  delete m_pPathData;
 }
+
 void CFX_PathGenerator::AddPathData(CFX_PathData* pPathData) {
   if (pPathData && pPathData->GetPointCount() > 0) {
     int nCount = pPathData->GetPointCount();

@@ -35,30 +35,27 @@ CFWL_FormTP::CFWL_FormTP() : m_pActiveBitmap(NULL), m_pDeactivebitmap(NULL) {
   m_rtDisBBorder.Reset();
   m_rtDisCaption.Reset();
 }
+
 CFWL_FormTP::~CFWL_FormTP() {
-  if (m_pThemeData) {
-    delete m_pThemeData;
-    m_pThemeData = NULL;
-  }
+  delete m_pThemeData;
 }
+
 FWL_ERR CFWL_FormTP::Initialize() {
   InitTTO();
   InitCaption(TRUE);
   InitCaption(FALSE);
   return CFWL_WidgetTP::Initialize();
 }
+
 FWL_ERR CFWL_FormTP::Finalize() {
   FinalizeTTO();
-  if (m_pActiveBitmap) {
-    delete m_pActiveBitmap;
-    m_pActiveBitmap = NULL;
-  }
-  if (m_pDeactivebitmap) {
-    delete m_pDeactivebitmap;
-    m_pDeactivebitmap = NULL;
-  }
+  delete m_pActiveBitmap;
+  m_pActiveBitmap = nullptr;
+  delete m_pDeactivebitmap;
+  m_pDeactivebitmap = nullptr;
   return CFWL_WidgetTP::Finalize();
 }
+
 FX_BOOL CFWL_FormTP::IsValidWidget(IFWL_Widget* pWidget) {
   if (!pWidget)
     return FALSE;
@@ -850,10 +847,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     CFX_Graphics gs;
     CFX_Path path;
     path.Create();
-    if (m_pActiveBitmap) {
-      delete m_pActiveBitmap;
-      m_pActiveBitmap = NULL;
-    }
+    delete m_pActiveBitmap;
     m_pActiveBitmap = new CFX_DIBitmap;
     m_pActiveBitmap->Create(1, FWLTHEME_CAPACITY_CYCaption, FXDIB_Argb);
     dev.Attach(m_pActiveBitmap);
@@ -875,10 +869,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     CFX_Graphics gs;
     CFX_Path path;
     path.Create();
-    if (m_pDeactivebitmap) {
-      delete m_pDeactivebitmap;
-      m_pDeactivebitmap = NULL;
-    }
+    delete m_pDeactivebitmap;
     m_pDeactivebitmap = new CFX_DIBitmap;
     m_pDeactivebitmap->Create(1, FWLTHEME_CAPACITY_CYCaption, FXDIB_Argb);
     dev.Attach(m_pDeactivebitmap);

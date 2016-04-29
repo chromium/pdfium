@@ -220,18 +220,16 @@ CFDE_CSSStyleSelector::CFDE_CSSStyleSelector()
   m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_Low] =
       FDE_CSSSTYLESHEETGROUP_UserAgent;
 }
+
 CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {
   Reset();
-  if (m_pInlineStyleStore != NULL) {
+  if (m_pInlineStyleStore)
     m_pInlineStyleStore->Release();
-  }
-  if (m_pFixedStyleStore != NULL) {
+  if (m_pFixedStyleStore)
     m_pFixedStyleStore->Release();
-  }
-  if (m_pAccelerator != NULL) {
-    delete m_pAccelerator;
-  }
+  delete m_pAccelerator;
 }
+
 void CFDE_CSSStyleSelector::SetFontMgr(IFX_FontMgr* pFontMgr) {
   m_pFontMgr = pFontMgr;
 }
@@ -239,14 +237,14 @@ void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
   ASSERT(fFontSize > 0);
   m_fDefFontSize = fFontSize;
 }
+
 CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
-  if (m_pAccelerator == NULL) {
+  if (!m_pAccelerator)
     m_pAccelerator = new CFDE_CSSAccelerator;
-    ASSERT(m_pAccelerator != NULL);
-  }
   m_pAccelerator->Clear();
   return m_pAccelerator;
 }
+
 IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
     IFDE_CSSComputedStyle* pParentStyle) {
   if (m_pFixedStyleStore == NULL) {

@@ -1390,13 +1390,13 @@ void CXFA_DocumentParser::ConstructXFANode(CXFA_Node* pXFANode,
     m_pDocument->SetRoot(pRootNode);
   }
 }
+
 void CXFA_DocumentParser::CloseParser() {
-  if (m_pDocument) {
-    delete m_pDocument;
-    m_pDocument = NULL;
-  }
+  delete m_pDocument;
+  m_pDocument = nullptr;
   m_nodeParser.CloseParser();
 }
+
 CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream)
     : m_nElementStart(0),
       m_dwCheckStatus(0),

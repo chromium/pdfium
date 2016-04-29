@@ -45,44 +45,31 @@ CXFA_Document::~CXFA_Document() {
   delete m_pRootNode;
   PurgeNodes();
 }
+
 void CXFA_Document::ClearLayoutData() {
-  if (m_pLayoutProcessor) {
-    delete m_pLayoutProcessor;
-    m_pLayoutProcessor = NULL;
-  }
+  delete m_pLayoutProcessor;
+  m_pLayoutProcessor = nullptr;
+
   if (m_pScriptContext) {
     m_pScriptContext->Release();
-    m_pScriptContext = NULL;
+    m_pScriptContext = nullptr;
   }
-  if (m_pLocalMgr) {
-    delete m_pLocalMgr;
-    m_pLocalMgr = NULL;
-  }
-  if (m_pScriptDataWindow) {
-    delete m_pScriptDataWindow;
-    m_pScriptDataWindow = NULL;
-  }
-  if (m_pScriptEvent) {
-    delete m_pScriptEvent;
-    m_pScriptEvent = NULL;
-  }
-  if (m_pScriptHost) {
-    delete m_pScriptHost;
-    m_pScriptHost = NULL;
-  }
-  if (m_pScriptLog) {
-    delete m_pScriptLog;
-    m_pScriptLog = NULL;
-  }
-  if (m_pScriptLayout) {
-    delete m_pScriptLayout;
-    m_pScriptLayout = NULL;
-  }
-  if (m_pScriptSignature) {
-    delete m_pScriptSignature;
-    m_pScriptSignature = NULL;
-  }
+  delete m_pLocalMgr;
+  m_pLocalMgr = nullptr;
+  delete m_pScriptDataWindow;
+  m_pScriptDataWindow = nullptr;
+  delete m_pScriptEvent;
+  m_pScriptEvent = nullptr;
+  delete m_pScriptHost;
+  m_pScriptHost = nullptr;
+  delete m_pScriptLog;
+  m_pScriptLog = nullptr;
+  delete m_pScriptLayout;
+  m_pScriptLayout = nullptr;
+  delete m_pScriptSignature;
+  m_pScriptSignature = nullptr;
 }
+
 void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
   if (m_pRootNode) {
     AddPurgeNode(m_pRootNode);

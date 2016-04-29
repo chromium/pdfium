@@ -15,16 +15,14 @@
 
 #define FWL_SCROLL_PawLen 12.5f
 
-CFWL_ScrollBarTP::CFWL_ScrollBarTP() {
-  m_pThemeData = new SBThemeData;
+CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
   SetThemeData(0);
 }
+
 CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {
-  if (m_pThemeData) {
-    delete m_pThemeData;
-    m_pThemeData = NULL;
-  }
+  delete m_pThemeData;
 }
+
 FX_BOOL CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
   if (!pWidget)
     return FALSE;
