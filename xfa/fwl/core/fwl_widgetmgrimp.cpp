@@ -564,8 +564,9 @@ IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
   }
   return GetSiblingRadioButton(pNext, TRUE);
 }
-void CFWL_WidgetMgr::GetSameGroupRadioButton(IFWL_Widget* pRadioButton,
-                                             CFX_PtrArray& group) {
+void CFWL_WidgetMgr::GetSameGroupRadioButton(
+    IFWL_Widget* pRadioButton,
+    CFX_ArrayTemplate<IFWL_Widget*>& group) {
   IFWL_Widget* pFirst = GetWidget(pRadioButton, FWL_WGTRELATION_FirstSibling);
   if (!pFirst) {
     pFirst = pRadioButton;

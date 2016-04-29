@@ -361,7 +361,7 @@ void CFWL_CheckBoxImp::NextStates() {
       CFWL_WidgetMgr* pWidgetMgr =
           static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
       if (!pWidgetMgr->IsFormDisabled()) {
-        CFX_PtrArray radioarr;
+        CFX_ArrayTemplate<IFWL_Widget*> radioarr;
         pWidgetMgr->GetSameGroupRadioButton(m_pInterface, radioarr);
         IFWL_CheckBox* pCheckBox = NULL;
         int32_t iCount = radioarr.GetSize();

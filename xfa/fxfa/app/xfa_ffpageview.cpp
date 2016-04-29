@@ -351,7 +351,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     FX_BOOL& bCurrentItem,
     FX_BOOL& bContentArea,
     FX_BOOL bMarsterPage) {
-  CFX_PtrArray tabParams;
+  CFX_ArrayTemplate<CXFA_TabParam*> tabParams;
   CXFA_LayoutItem* pSearchItem = sIterator->MoveToNext();
   while (pSearchItem) {
     if (!pSearchItem->IsContentLayoutItem()) {
@@ -393,7 +393,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
                 XFA_TabOrderWidgetComparator);
   }
   for (int32_t iStart = 0; iStart < iChildren; iStart++) {
-    CXFA_TabParam* pParam = (CXFA_TabParam*)tabParams[iStart];
+    CXFA_TabParam* pParam = tabParams[iStart];
     pContainer->m_Children.Add(pParam->m_pWidget);
     if (pParam->m_Children.GetSize() > 0) {
       pContainer->m_Children.Append(pParam->m_Children);

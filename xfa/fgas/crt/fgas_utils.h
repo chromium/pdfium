@@ -202,11 +202,12 @@ class CFX_BaseMassArrayImp : public CFX_Target {
                int32_t iCount = -1);
   int32_t RemoveLast(int32_t iCount = -1);
   void RemoveAll(FX_BOOL bLeaveMemory = FALSE);
+
   int32_t m_iChunkSize;
   int32_t m_iBlockSize;
   int32_t m_iChunkCount;
   int32_t m_iBlockCount;
-  CFX_PtrArray* m_pData;
+  CFX_ArrayTemplate<void*>* m_pData;
 
  protected:
   void Append(int32_t iDstStart,

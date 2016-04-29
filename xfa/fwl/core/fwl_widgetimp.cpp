@@ -473,7 +473,7 @@ FWL_ERR CFWL_WidgetImp::GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal) {
     return FWL_ERR_Indefinite;
   if (bGlobal) {
     IFWL_Widget* parent = GetParent();
-    CFX_PtrArray parents;
+    CFX_ArrayTemplate<IFWL_Widget*> parents;
     while (parent) {
       parents.Add(parent);
       parent = parent->GetParent();
@@ -483,7 +483,7 @@ FWL_ERR CFWL_WidgetImp::GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal) {
     CFX_RectF rect;
     int32_t count = parents.GetSize();
     for (int32_t i = count - 2; i >= 0; i--) {
-      parent = static_cast<IFWL_Widget*>(parents.GetAt(i));
+      parent = parents.GetAt(i);
       parent->GetMatrix(ctmOnParent, FALSE);
       parent->GetWidgetRect(rect);
       matrix.Concat(ctmOnParent, TRUE);

@@ -141,9 +141,9 @@ CFX_BaseMassArrayImp::CFX_BaseMassArrayImp(int32_t iChunkSize,
     : m_iChunkSize(iChunkSize),
       m_iBlockSize(iBlockSize),
       m_iChunkCount(0),
-      m_iBlockCount(0) {
+      m_iBlockCount(0),
+      m_pData(new CFX_ArrayTemplate<void*>()) {
   ASSERT(m_iChunkSize > 0 && m_iBlockSize > 0);
-  m_pData = new CFX_PtrArray;
   m_pData->SetSize(16);
 }
 CFX_BaseMassArrayImp::~CFX_BaseMassArrayImp() {
@@ -335,7 +335,7 @@ struct FX_BASEDISCRETEARRAYDATA {
   int32_t iBlockSize;
   int32_t iChunkSize;
   int32_t iChunkCount;
-  CFX_PtrArray ChunkBuffer;
+  CFX_ArrayTemplate<uint8_t*> ChunkBuffer;
 };
 
 CFX_BaseDiscreteArray::CFX_BaseDiscreteArray(int32_t iChunkSize,
@@ -360,7 +360,7 @@ uint8_t* CFX_BaseDiscreteArray::AddSpaceTo(int32_t index) {
   uint8_t* pChunk = NULL;
   int32_t iChunk = index / iChunkSize;
   if (iChunk < iChunkCount) {
-    pChunk = (uint8_t*)pData->ChunkBuffer.GetAt(iChunk);
+    pChunk = pData->ChunkBuffer.GetAt(iChunk);
   }
   if (!pChunk) {
     pChunk = FX_Alloc2D(uint8_t, iChunkSize, pData->iBlockSize);
@@ -373,30 +373,26 @@ uint8_t* CFX_BaseDiscreteArray::AddSpaceTo(int32_t index) {
   return pChunk + (index % iChunkSize) * pData->iBlockSize;
 }
 uint8_t* CFX_BaseDiscreteArray::GetAt(int32_t index) const {
-  ASSERT(index > -1);
+  ASSERT(index >= 0);
   FX_BASEDISCRETEARRAYDATA* pData = (FX_BASEDISCRETEARRAYDATA*)m_pData;
   int32_t iChunkSize = pData->iChunkSize;
   int32_t iChunk = index / iChunkSize;
-  if (iChunk >= pData->iChunkCount) {
-    return NULL;
-  }
-  uint8_t* pChunk = (uint8_t*)pData->ChunkBuffer.GetAt(iChunk);
-  if (pChunk == NULL) {
-    return NULL;
-  }
+  if (iChunk >= pData->iChunkCount)
+    return nullptr;
+
+  uint8_t* pChunk = pData->ChunkBuffer.GetAt(iChunk);
+  if (!pChunk)
+    return nullptr;
+
   return pChunk + (index % iChunkSize) * pData->iBlockSize;
 }
 void CFX_BaseDiscreteArray::RemoveAll() {
   FX_BASEDISCRETEARRAYDATA* pData = (FX_BASEDISCRETEARRAYDATA*)m_pData;
-  CFX_PtrArray& ChunkBuffer = pData->ChunkBuffer;
+  CFX_ArrayTemplate<uint8_t*>& ChunkBuffer = pData->ChunkBuffer;
   int32_t& iChunkCount = pData->iChunkCount;
-  for (int32_t i = 0; i < iChunkCount; i++) {
-    void* p = ChunkBuffer.GetAt(i);
-    if (p == NULL) {
-      continue;
-    }
-    FX_Free(p);
-  }
+  for (int32_t i = 0; i < iChunkCount; i++)
+    FX_Free(ChunkBuffer.GetAt(i));
+
   ChunkBuffer.RemoveAll();
   iChunkCount = 0;
 }

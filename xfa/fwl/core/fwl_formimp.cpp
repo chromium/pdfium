@@ -526,32 +526,32 @@ CFWL_SysBtn* CFWL_FormImp::GetSysBtnByState(uint32_t dwState) {
   return NULL;
 }
 CFWL_SysBtn* CFWL_FormImp::GetSysBtnByIndex(int32_t nIndex) {
-  if (nIndex < 0) {
-    return NULL;
-  }
-  CFX_PtrArray arrBtn;
-  if (m_pMinBox) {
+  if (nIndex < 0)
+    return nullptr;
+
+  CFX_ArrayTemplate<CFWL_SysBtn*> arrBtn;
+  if (m_pMinBox)
     arrBtn.Add(m_pMinBox);
-  }
-  if (m_pMaxBox) {
+
+  if (m_pMaxBox)
     arrBtn.Add(m_pMaxBox);
-  }
-  if (m_pCloseBox) {
+
+  if (m_pCloseBox)
     arrBtn.Add(m_pCloseBox);
-  }
-  return static_cast<CFWL_SysBtn*>(arrBtn[nIndex]);
+
+  return arrBtn[nIndex];
 }
 int32_t CFWL_FormImp::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
-  CFX_PtrArray arrBtn;
-  if (m_pMinBox) {
+  CFX_ArrayTemplate<CFWL_SysBtn*> arrBtn;
+  if (m_pMinBox)
     arrBtn.Add(m_pMinBox);
-  }
-  if (m_pMaxBox) {
+
+  if (m_pMaxBox)
     arrBtn.Add(m_pMaxBox);
-  }
-  if (m_pCloseBox) {
+
+  if (m_pCloseBox)
     arrBtn.Add(m_pCloseBox);
-  }
+
   return arrBtn.Find(pBtn);
 }
 FX_FLOAT CFWL_FormImp::GetCaptionHeight() {

@@ -112,7 +112,8 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   int32_t CountRadioButtonGroup(IFWL_Widget* pFirst);
   IFWL_Widget* GetSiblingRadioButton(IFWL_Widget* pWidget, FX_BOOL bNext);
   IFWL_Widget* GetRadioButtonGroupHeader(IFWL_Widget* pRadioButton);
-  void GetSameGroupRadioButton(IFWL_Widget* pRadioButton, CFX_PtrArray& group);
+  void GetSameGroupRadioButton(IFWL_Widget* pRadioButton,
+                               CFX_ArrayTemplate<IFWL_Widget*>& group);
   IFWL_Widget* GetDefaultButton(IFWL_Widget* pParent);
   void AddRedrawCounts(IFWL_Widget* pWidget);
   void ResetRedrawCounts(IFWL_Widget* pWidget);
