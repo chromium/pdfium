@@ -25,14 +25,15 @@
 #include "xfa/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
 #include "xfa/fxbarcode/utils.h"
 
-CFX_PtrArray* CBC_DataMatrixVersion::VERSIONS = NULL;
+CFX_ArrayTemplate<CBC_DataMatrixVersion*>* CBC_DataMatrixVersion::VERSIONS =
+    nullptr;
 
 void CBC_DataMatrixVersion::Initialize() {
-  VERSIONS = new CFX_PtrArray();
+  VERSIONS = new CFX_ArrayTemplate<CBC_DataMatrixVersion*>();
 }
 void CBC_DataMatrixVersion::Finalize() {
   for (int32_t i = 0; i < VERSIONS->GetSize(); i++) {
-    delete ((CBC_DataMatrixVersion*)(VERSIONS->GetAt(i)));
+    delete VERSIONS->GetAt(i);
   }
   VERSIONS->RemoveAll();
   delete VERSIONS;
@@ -84,7 +85,7 @@ ECBlocks* CBC_DataMatrixVersion::GetECBlocks() {
 }
 void CBC_DataMatrixVersion::ReleaseAll() {
   for (int32_t i = 0; i < VERSIONS->GetSize(); i++) {
-    delete (CBC_DataMatrixVersion*)VERSIONS->GetAt(i);
+    delete VERSIONS->GetAt(i);
   }
   VERSIONS->RemoveAll();
 }
@@ -94,7 +95,7 @@ CBC_DataMatrixVersion* CBC_DataMatrixVersion::GetVersionForDimensions(
     int32_t& e) {
   if ((numRows & 0x01) != 0 || (numColumns & 0x01) != 0) {
     e = BCExceptionNotFound;
-    return NULL;
+    return nullptr;
   }
   if (VERSIONS->GetSize() == 0) {
     VERSIONS->Add(new CBC_DataMatrixVersion(1, 10, 10, 8, 8,
@@ -161,13 +162,11 @@ CBC_DataMatrixVersion* CBC_DataMatrixVersion::GetVersionForDimensions(
   }
   int32_t numVersions = VERSIONS->GetSize();
   for (int32_t i = 0; i < numVersions; ++i) {
-    if (((CBC_DataMatrixVersion*)((*VERSIONS)[i]))->m_symbolSizeRows ==
-            numRows &&
-        ((CBC_DataMatrixVersion*)((*VERSIONS)[i]))->m_symbolSizeColumns ==
-            numColumns) {
-      return (CBC_DataMatrixVersion*)(*VERSIONS)[i];
+    if ((*VERSIONS)[i]->m_symbolSizeRows == numRows &&
+        (*VERSIONS)[i]->m_symbolSizeColumns == numColumns) {
+      return (*VERSIONS)[i];
     }
   }
   e = BCExceptionNotFound;
-  return NULL;
+  return nullptr;
 }

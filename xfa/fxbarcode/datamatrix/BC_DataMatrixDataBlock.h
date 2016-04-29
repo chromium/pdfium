@@ -11,22 +11,23 @@
 
 class CBC_DataMatrixVersion;
 
-class CBC_DataMatrixDataBlock {
+class CBC_DataMatrixDataBlock final {
  public:
-  virtual ~CBC_DataMatrixDataBlock();
+  ~CBC_DataMatrixDataBlock();
 
   int32_t GetNumDataCodewords();
   CFX_ByteArray* GetCodewords();
 
-  static CFX_PtrArray* GetDataBlocks(CFX_ByteArray* rawCodewords,
-                                     CBC_DataMatrixVersion* version,
-                                     int32_t& e);
+  static CFX_ArrayTemplate<CBC_DataMatrixDataBlock*>* GetDataBlocks(
+      CFX_ByteArray* rawCodewords,
+      CBC_DataMatrixVersion* version,
+      int32_t& e);
 
  private:
+  CBC_DataMatrixDataBlock(int32_t numDataCodewords, CFX_ByteArray* codewords);
+
   int32_t m_numDataCodewords;
   CFX_ByteArray m_codewords;
-
-  CBC_DataMatrixDataBlock(int32_t numDataCodewords, CFX_ByteArray* codewords);
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDATABLOCK_H_

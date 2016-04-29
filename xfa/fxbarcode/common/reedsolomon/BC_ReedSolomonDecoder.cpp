@@ -58,13 +58,11 @@ void CBC_ReedSolomonDecoder::Decode(CFX_Int32Array* received,
   std::unique_ptr<CBC_ReedSolomonGF256Poly> temp(
       m_field->BuildMonomial(twoS, 1, e));
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  std::unique_ptr<CFX_PtrArray> sigmaOmega(
+  std::unique_ptr<CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>> sigmaOmega(
       RunEuclideanAlgorithm(temp.get(), &syndrome, twoS, e));
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  std::unique_ptr<CBC_ReedSolomonGF256Poly> sigma(
-      (CBC_ReedSolomonGF256Poly*)(*sigmaOmega)[0]);
-  std::unique_ptr<CBC_ReedSolomonGF256Poly> omega(
-      (CBC_ReedSolomonGF256Poly*)(*sigmaOmega)[1]);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> sigma((*sigmaOmega)[0]);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> omega((*sigmaOmega)[1]);
   std::unique_ptr<CFX_Int32Array> errorLocations(
       FindErrorLocations(sigma.get(), e));
   BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -83,28 +81,29 @@ void CBC_ReedSolomonDecoder::Decode(CFX_Int32Array* received,
         (*received)[position], (*errorMagnitudes)[k]);
   }
 }
-CFX_PtrArray* CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(
-    CBC_ReedSolomonGF256Poly* a,
-    CBC_ReedSolomonGF256Poly* b,
-    int32_t R,
-    int32_t& e) {
+
+CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>*
+CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(CBC_ReedSolomonGF256Poly* a,
+                                              CBC_ReedSolomonGF256Poly* b,
+                                              int32_t R,
+                                              int32_t& e) {
   if (a->GetDegree() < b->GetDegree()) {
     CBC_ReedSolomonGF256Poly* temp = a;
     a = b;
     b = temp;
   }
   std::unique_ptr<CBC_ReedSolomonGF256Poly> rLast(a->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> r(b->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> sLast(m_field->GetOne()->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> s(m_field->GetZero()->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> tLast(m_field->GetZero()->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> t(m_field->GetOne()->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   while (r->GetDegree() >= R / 2) {
     std::unique_ptr<CBC_ReedSolomonGF256Poly> rLastLast = std::move(rLast);
     std::unique_ptr<CBC_ReedSolomonGF256Poly> sLastLast = std::move(sLast);
@@ -114,53 +113,54 @@ CFX_PtrArray* CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(
     tLast = std::move(t);
     if (rLast->IsZero()) {
       e = BCExceptionR_I_1IsZero;
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     }
     r.reset(rLastLast->Clone(e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     std::unique_ptr<CBC_ReedSolomonGF256Poly> q(m_field->GetZero()->Clone(e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     int32_t denominatorLeadingTerm = rLast->GetCoefficients(rLast->GetDegree());
     int32_t dltInverse = m_field->Inverse(denominatorLeadingTerm, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     while (r->GetDegree() >= rLast->GetDegree() && !(r->IsZero())) {
       int32_t degreeDiff = r->GetDegree() - rLast->GetDegree();
       int32_t scale =
           m_field->Multiply(r->GetCoefficients(r->GetDegree()), dltInverse);
       std::unique_ptr<CBC_ReedSolomonGF256Poly> build(
           m_field->BuildMonomial(degreeDiff, scale, e));
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       q.reset(q->AddOrSubtract(build.get(), e));
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       std::unique_ptr<CBC_ReedSolomonGF256Poly> multiply(
           rLast->MultiplyByMonomial(degreeDiff, scale, e));
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       r.reset(r->AddOrSubtract(multiply.get(), e));
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     }
     std::unique_ptr<CBC_ReedSolomonGF256Poly> temp1(
         q->Multiply(sLast.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     s.reset(temp1->AddOrSubtract(sLastLast.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     std::unique_ptr<CBC_ReedSolomonGF256Poly> temp5(
         q->Multiply(tLast.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     t.reset(temp5->AddOrSubtract(tLastlast.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   int32_t sigmaTildeAtZero = t->GetCoefficients(0);
   if (sigmaTildeAtZero == 0) {
     e = BCExceptionIsZero;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   int32_t inverse = m_field->Inverse(sigmaTildeAtZero, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> sigma(t->Multiply(inverse, e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> omega(r->Multiply(inverse, e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CFX_PtrArray* temp = new CFX_PtrArray;
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* temp =
+      new CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>();
   temp->Add(sigma.release());
   temp->Add(omega.release());
   return temp;

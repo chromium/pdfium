@@ -42,40 +42,37 @@ void CBC_DataMatrixDecoder::Init() {
 CBC_DataMatrixDecoder::~CBC_DataMatrixDecoder() {
   delete m_rsDecoder;
 }
+
 CBC_CommonDecoderResult* CBC_DataMatrixDecoder::Decode(
     CBC_CommonBitMatrix* bits,
     int32_t& e) {
   CBC_DataMatrixBitMatrixParser parser;
   parser.Init(bits, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_DataMatrixVersion* version = parser.GetVersion();
   std::unique_ptr<CFX_ByteArray> codewords(parser.ReadCodewords(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CFX_PtrArray* dataBlocks =
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  CFX_ArrayTemplate<CBC_DataMatrixDataBlock*>* dataBlocks =
       CBC_DataMatrixDataBlock::GetDataBlocks(codewords.get(), version, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t dataBlocksCount = dataBlocks->GetSize();
   int32_t totalBytes = 0;
   int32_t i, j;
   for (i = 0; i < dataBlocksCount; i++) {
-    totalBytes +=
-        ((CBC_DataMatrixDataBlock*)(*dataBlocks)[i])->GetNumDataCodewords();
+    totalBytes += (*dataBlocks)[i]->GetNumDataCodewords();
   }
   CFX_ByteArray resultBytes;
   resultBytes.SetSize(totalBytes);
   for (j = 0; j < dataBlocksCount; j++) {
-    CFX_ByteArray* codewordBytes =
-        ((CBC_DataMatrixDataBlock*)(*dataBlocks)[j])->GetCodewords();
-    int32_t numDataCodewords =
-        ((CBC_DataMatrixDataBlock*)(*dataBlocks)[j])->GetNumDataCodewords();
+    CFX_ByteArray* codewordBytes = (*dataBlocks)[j]->GetCodewords();
+    int32_t numDataCodewords = (*dataBlocks)[j]->GetNumDataCodewords();
     CorrectErrors(*codewordBytes, numDataCodewords, e);
     if (e != BCExceptionNO) {
       for (int32_t i = 0; i < dataBlocks->GetSize(); i++) {
-        delete (CBC_DataMatrixDataBlock*)(*dataBlocks)[i];
+        delete (*dataBlocks)[i];
       }
       delete dataBlocks;
-      dataBlocks = NULL;
-      return NULL;
+      return nullptr;
     }
     int32_t i;
     for (i = 0; i < numDataCodewords; i++) {
@@ -83,15 +80,15 @@ CBC_CommonDecoderResult* CBC_DataMatrixDecoder::Decode(
     }
   }
   for (i = 0; i < (dataBlocks->GetSize()); i++) {
-    delete (CBC_DataMatrixDataBlock*)(*dataBlocks)[i];
+    delete (*dataBlocks)[i];
   }
   delete dataBlocks;
-  dataBlocks = NULL;
   CBC_CommonDecoderResult* resultR =
       CBC_DataMatrixDecodedBitStreamParser::Decode(resultBytes, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return resultR;
 }
+
 void CBC_DataMatrixDecoder::CorrectErrors(CFX_ByteArray& codewordBytes,
                                           int32_t numDataCodewords,
                                           int32_t& e) {

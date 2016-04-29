@@ -11,11 +11,15 @@
 
 class CBC_ReedSolomonGF256;
 
-class CBC_ReedSolomonGF256Poly {
+class CBC_ReedSolomonGF256Poly final {
  public:
   CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, int32_t coefficients);
   CBC_ReedSolomonGF256Poly();
-  virtual ~CBC_ReedSolomonGF256Poly();
+  ~CBC_ReedSolomonGF256Poly();
+  void Init(CBC_ReedSolomonGF256* field,
+            CFX_Int32Array* coefficients,
+            int32_t& e);
+
   int32_t GetCoefficients(int32_t degree);
   CFX_Int32Array* GetCoefficients();
   int32_t GetDegree();
@@ -29,11 +33,11 @@ class CBC_ReedSolomonGF256Poly {
   CBC_ReedSolomonGF256Poly* MultiplyByMonomial(int32_t degree,
                                                int32_t coefficient,
                                                int32_t& e);
-  CFX_PtrArray* Divide(CBC_ReedSolomonGF256Poly* other, int32_t& e);
+  CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* Divide(
+      CBC_ReedSolomonGF256Poly* other,
+      int32_t& e);
+
   CBC_ReedSolomonGF256Poly* Clone(int32_t& e);
-  virtual void Init(CBC_ReedSolomonGF256* field,
-                    CFX_Int32Array* coefficients,
-                    int32_t& e);
 
  private:
   CBC_ReedSolomonGF256* m_field;

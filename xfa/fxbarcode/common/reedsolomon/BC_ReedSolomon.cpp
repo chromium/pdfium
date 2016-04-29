@@ -79,10 +79,10 @@ void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array* toEncode,
   std::unique_ptr<CBC_ReedSolomonGF256Poly> infoTemp(
       info.MultiplyByMonomial(ecBytes, 1, e));
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  std::unique_ptr<CFX_PtrArray> temp(infoTemp->Divide(generator, e));
+  std::unique_ptr<CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>> temp(
+      infoTemp->Divide(generator, e));
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_ReedSolomonGF256Poly* remainder =
-      (CBC_ReedSolomonGF256Poly*)(temp->operator[](1));
+  CBC_ReedSolomonGF256Poly* remainder = (*temp)[1];
   CFX_Int32Array* coefficients = remainder->GetCoefficients();
   int32_t numZeroCoefficients = ecBytes - coefficients->GetSize();
   for (int32_t i = 0; i < numZeroCoefficients; i++) {
@@ -93,7 +93,7 @@ void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array* toEncode,
         coefficients->operator[](y);
   }
   for (int32_t k = 0; k < temp->GetSize(); k++) {
-    delete (CBC_ReedSolomonGF256Poly*)(*temp)[k];
+    delete (*temp)[k];
   }
 }
 CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {

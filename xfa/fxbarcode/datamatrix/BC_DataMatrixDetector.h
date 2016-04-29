@@ -10,11 +10,11 @@
 #include "core/fxcrt/include/fx_basic.h"
 
 class CBC_CommonBitMatrix;
-class CBC_WhiteRectangleDetector;
-class CBC_ResultPoint;
-class CBC_QRDetectorResult;
 class CBC_DataMatrixDetector;
-class ResultPointsAndTransitions;
+class CBC_QRDetectorResult;
+class CBC_ResultPoint;
+class CBC_WhiteRectangleDetector;
+
 class CBC_ResultPointsAndTransitions {
  public:
   CBC_ResultPointsAndTransitions(CBC_ResultPoint* from,
@@ -25,15 +25,16 @@ class CBC_ResultPointsAndTransitions {
     m_transitions = transitions;
   }
   ~CBC_ResultPointsAndTransitions() {}
-  CBC_ResultPoint* GetFrom() { return m_from; }
-  CBC_ResultPoint* GetTo() { return m_to; }
-  int32_t GetTransitions() { return m_transitions; }
+  CBC_ResultPoint* GetFrom() const { return m_from; }
+  CBC_ResultPoint* GetTo() const { return m_to; }
+  int32_t GetTransitions() const { return m_transitions; }
 
  private:
   CBC_ResultPoint* m_from;
   CBC_ResultPoint* m_to;
   int32_t m_transitions;
 };
+
 class CBC_DataMatrixDetector {
  public:
   CBC_DataMatrixDetector(CBC_CommonBitMatrix* image);
@@ -65,7 +66,7 @@ class CBC_DataMatrixDetector {
   void Increment(CFX_MapPtrTemplate<CBC_ResultPoint*, int32_t>& table,
                  CBC_ResultPoint* key);
   int32_t Round(FX_FLOAT d);
-  void OrderBestPatterns(CFX_PtrArray* patterns);
+  void OrderBestPatterns(CFX_ArrayTemplate<CBC_ResultPoint*>* patterns);
   virtual void Init(int32_t& e);
 
  private:

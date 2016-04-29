@@ -59,8 +59,11 @@ CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(
   m_upInit = y - halfsize;
   m_downInit = y + halfsize;
 }
+
 CBC_WhiteRectangleDetector::~CBC_WhiteRectangleDetector() {}
-CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
+
+CFX_ArrayTemplate<CBC_ResultPoint*>* CBC_WhiteRectangleDetector::Detect(
+    int32_t& e) {
   int32_t left = m_leftInit;
   int32_t right = m_rightInit;
   int32_t up = m_upInit;
@@ -131,9 +134,9 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       if (z)
         break;
     }
-    if (z.get() == NULL) {
+    if (!z.get()) {
       e = BCExceptionNotFound;
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     }
     std::unique_ptr<CBC_ResultPoint> t;
     for (int32_t j = 1; j < maxSize; j++) {
@@ -142,9 +145,9 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       if (t)
         break;
     }
-    if (t.get() == NULL) {
+    if (!t.get()) {
       e = BCExceptionNotFound;
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     }
     std::unique_ptr<CBC_ResultPoint> x;
     for (int32_t k = 1; k < maxSize; k++) {
@@ -153,9 +156,9 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       if (x)
         break;
     }
-    if (x.get() == NULL) {
+    if (!x.get()) {
       e = BCExceptionNotFound;
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     }
     std::unique_ptr<CBC_ResultPoint> y;
     for (int32_t m = 1; m < maxSize; m++) {
@@ -164,17 +167,18 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       if (y)
         break;
     }
-    if (y.get() == NULL) {
+    if (!y.get()) {
       e = BCExceptionNotFound;
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     }
     return CenterEdges(y.get(), z.get(), x.get(), t.get());
-  } else {
-    e = BCExceptionNotFound;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
-  return NULL;
+
+  e = BCExceptionNotFound;
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  return nullptr;
 }
+
 int32_t CBC_WhiteRectangleDetector::Round(FX_FLOAT d) {
   return (int32_t)(d + 0.5f);
 }
@@ -203,10 +207,16 @@ int32_t CBC_WhiteRectangleDetector::DistanceL2(FX_FLOAT aX,
   float yDiff = aY - bY;
   return Round((float)sqrt(xDiff * xDiff + yDiff * yDiff));
 }
-CFX_PtrArray* CBC_WhiteRectangleDetector::CenterEdges(CBC_ResultPoint* y,
-                                                      CBC_ResultPoint* z,
-                                                      CBC_ResultPoint* x,
-                                                      CBC_ResultPoint* t) {
+
+CFX_ArrayTemplate<CBC_ResultPoint*>* CBC_WhiteRectangleDetector::CenterEdges(
+    CBC_ResultPoint* y,
+    CBC_ResultPoint* z,
+    CBC_ResultPoint* x,
+    CBC_ResultPoint* t) const {
+  CFX_ArrayTemplate<CBC_ResultPoint*>* result =
+      new CFX_ArrayTemplate<CBC_ResultPoint*>();
+  result->SetSize(4);
+
   float yi = y->GetX();
   float yj = y->GetY();
   float zi = z->GetX();
@@ -215,24 +225,22 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::CenterEdges(CBC_ResultPoint* y,
   float xj = x->GetY();
   float ti = t->GetX();
   float tj = t->GetY();
+
   if (yi < m_width / 2) {
-    CFX_PtrArray* result = new CFX_PtrArray;
-    result->SetSize(4);
     (*result)[0] = new CBC_ResultPoint(ti - CORR, tj + CORR);
     (*result)[1] = new CBC_ResultPoint(zi + CORR, zj + CORR);
     (*result)[2] = new CBC_ResultPoint(xi - CORR, xj - CORR);
     (*result)[3] = new CBC_ResultPoint(yi + CORR, yj - CORR);
     return result;
-  } else {
-    CFX_PtrArray* result = new CFX_PtrArray;
-    result->SetSize(4);
-    (*result)[0] = new CBC_ResultPoint(ti + CORR, tj + CORR);
-    (*result)[1] = new CBC_ResultPoint(zi + CORR, zj - CORR);
-    (*result)[2] = new CBC_ResultPoint(xi - CORR, xj + CORR);
-    (*result)[3] = new CBC_ResultPoint(yi - CORR, yj - CORR);
-    return result;
   }
+
+  (*result)[0] = new CBC_ResultPoint(ti + CORR, tj + CORR);
+  (*result)[1] = new CBC_ResultPoint(zi + CORR, zj - CORR);
+  (*result)[2] = new CBC_ResultPoint(xi - CORR, xj + CORR);
+  (*result)[3] = new CBC_ResultPoint(yi - CORR, yj - CORR);
+  return result;
 }
+
 FX_BOOL CBC_WhiteRectangleDetector::ContainsBlackPoint(int32_t a,
                                                        int32_t b,
                                                        int32_t fixed,

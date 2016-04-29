@@ -20,8 +20,9 @@ class CBC_WhiteRectangleDetector {
                              int32_t x,
                              int32_t y);
   virtual ~CBC_WhiteRectangleDetector();
-  CFX_PtrArray* Detect(int32_t& e);
   virtual void Init(int32_t& e);
+
+  CFX_ArrayTemplate<CBC_ResultPoint*>* Detect(int32_t& e);
 
  private:
   int32_t Round(float d);
@@ -30,10 +31,11 @@ class CBC_WhiteRectangleDetector {
                                           FX_FLOAT bX,
                                           FX_FLOAT bY);
   int32_t DistanceL2(FX_FLOAT aX, FX_FLOAT aY, FX_FLOAT bX, FX_FLOAT bY);
-  CFX_PtrArray* CenterEdges(CBC_ResultPoint* y,
-                            CBC_ResultPoint* z,
-                            CBC_ResultPoint* x,
-                            CBC_ResultPoint* t);
+  CFX_ArrayTemplate<CBC_ResultPoint*>* CenterEdges(CBC_ResultPoint* y,
+                                                   CBC_ResultPoint* z,
+                                                   CBC_ResultPoint* x,
+                                                   CBC_ResultPoint* t) const;
+
   FX_BOOL ContainsBlackPoint(int32_t a,
                              int32_t b,
                              int32_t fixed,

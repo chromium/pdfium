@@ -213,21 +213,23 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return temp;
 }
-CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly* other,
-                                               int32_t& e) {
+
+CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* CBC_ReedSolomonGF256Poly::Divide(
+    CBC_ReedSolomonGF256Poly* other,
+    int32_t& e) {
   if (other->IsZero()) {
     e = BCExceptionDivideByZero;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   std::unique_ptr<CBC_ReedSolomonGF256Poly> quotient(
       m_field->GetZero()->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> remainder(Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
   int32_t inverseDenominatorLeadingTeam =
       m_field->Inverse(denominatorLeadingTerm, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   while (remainder->GetDegree() >= other->GetDegree() && !remainder->IsZero()) {
     int32_t degreeDifference = remainder->GetDegree() - other->GetDegree();
     int32_t scale =
@@ -235,20 +237,22 @@ CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly* other,
                           inverseDenominatorLeadingTeam);
     std::unique_ptr<CBC_ReedSolomonGF256Poly> term(
         other->MultiplyByMonomial(degreeDifference, scale, e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     std::unique_ptr<CBC_ReedSolomonGF256Poly> iteratorQuotient(
         m_field->BuildMonomial(degreeDifference, scale, e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     quotient.reset(quotient->AddOrSubtract(iteratorQuotient.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     remainder.reset(remainder->AddOrSubtract(term.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
-  CFX_PtrArray* tempPtrA = new CFX_PtrArray;
+  CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* tempPtrA =
+      new CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>();
   tempPtrA->Add(quotient.release());
   tempPtrA->Add(remainder.release());
   return tempPtrA;
 }
+
 CBC_ReedSolomonGF256Poly::~CBC_ReedSolomonGF256Poly() {
   m_coefficients.RemoveAll();
 }

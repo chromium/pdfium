@@ -31,18 +31,3 @@ void BC_FX_ByteString_Append(CFX_ByteString& dst, const CFX_ByteArray& ba) {
     dst += ba[i];
   }
 }
-void BC_FX_PtrArray_Sort(CFX_PtrArray& src, BC_PtrArrayCompareCallback fun) {
-  int32_t nLength = src.GetSize();
-  FX_BOOL changed = true;
-  do {
-    changed = false;
-    for (int32_t i = 0; i < nLength - 1; i++) {
-      if (fun(src[i + 1], src[i])) {
-        void* temp = src[i];
-        src.SetAt(i, src[i + 1]);
-        src.SetAt(i + 1, temp);
-        changed = true;
-      }
-    }
-  } while (changed);
-}

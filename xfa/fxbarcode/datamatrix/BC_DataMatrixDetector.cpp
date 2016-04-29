@@ -35,7 +35,7 @@
 
 const int32_t CBC_DataMatrixDetector::INTEGERS[5] = {0, 1, 2, 3, 4};
 CBC_DataMatrixDetector::CBC_DataMatrixDetector(CBC_CommonBitMatrix* image)
-    : m_image(image), m_rectangleDetector(NULL) {}
+    : m_image(image), m_rectangleDetector(nullptr) {}
 void CBC_DataMatrixDetector::Init(int32_t& e) {
   m_rectangleDetector = new CBC_WhiteRectangleDetector(m_image);
   m_rectangleDetector->Init(e);
@@ -44,42 +44,44 @@ void CBC_DataMatrixDetector::Init(int32_t& e) {
 CBC_DataMatrixDetector::~CBC_DataMatrixDetector() {
   delete m_rectangleDetector;
 }
-inline FX_BOOL ResultPointsAndTransitionsComparator(void* a, void* b) {
-  return ((CBC_ResultPointsAndTransitions*)b)->GetTransitions() >
-         ((CBC_ResultPointsAndTransitions*)a)->GetTransitions();
-}
+
 CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
-  CFX_PtrArray* cornerPoints = m_rectangleDetector->Detect(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_ResultPoint* pointA = (CBC_ResultPoint*)(*cornerPoints)[0];
-  CBC_ResultPoint* pointB = (CBC_ResultPoint*)(*cornerPoints)[1];
-  CBC_ResultPoint* pointC = (CBC_ResultPoint*)(*cornerPoints)[2];
-  CBC_ResultPoint* pointD = (CBC_ResultPoint*)(*cornerPoints)[3];
+  CFX_ArrayTemplate<CBC_ResultPoint*>* cornerPoints =
+      m_rectangleDetector->Detect(e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  CBC_ResultPoint* pointA = (*cornerPoints)[0];
+  CBC_ResultPoint* pointB = (*cornerPoints)[1];
+  CBC_ResultPoint* pointC = (*cornerPoints)[2];
+  CBC_ResultPoint* pointD = (*cornerPoints)[3];
   delete cornerPoints;
-  cornerPoints = NULL;
-  CFX_PtrArray transitions;
+
+  CFX_ArrayTemplate<CBC_ResultPointsAndTransitions*> transitions;
   transitions.Add(TransitionsBetween(pointA, pointB));
   transitions.Add(TransitionsBetween(pointA, pointC));
   transitions.Add(TransitionsBetween(pointB, pointD));
   transitions.Add(TransitionsBetween(pointC, pointD));
-  BC_FX_PtrArray_Sort(transitions, &ResultPointsAndTransitionsComparator);
-  delete ((CBC_ResultPointsAndTransitions*)transitions[2]);
-  delete ((CBC_ResultPointsAndTransitions*)transitions[3]);
-  CBC_ResultPointsAndTransitions* lSideOne =
-      (CBC_ResultPointsAndTransitions*)transitions[0];
-  CBC_ResultPointsAndTransitions* lSideTwo =
-      (CBC_ResultPointsAndTransitions*)transitions[1];
+  std::sort(transitions.GetData(),
+            transitions.GetData() + transitions.GetSize(),
+            [](const CBC_ResultPointsAndTransitions* a,
+               const CBC_ResultPointsAndTransitions* b) {
+              return a->GetTransitions() < b->GetTransitions();
+            });
+  delete transitions[2];
+  delete transitions[3];
+
+  CBC_ResultPointsAndTransitions* lSideOne = transitions[0];
+  CBC_ResultPointsAndTransitions* lSideTwo = transitions[1];
   CFX_MapPtrTemplate<CBC_ResultPoint*, int32_t> pointCount;
   Increment(pointCount, lSideOne->GetFrom());
   Increment(pointCount, lSideOne->GetTo());
   Increment(pointCount, lSideTwo->GetFrom());
   Increment(pointCount, lSideTwo->GetTo());
-  delete ((CBC_ResultPointsAndTransitions*)transitions[1]);
-  delete ((CBC_ResultPointsAndTransitions*)transitions[0]);
+  delete transitions[1];
+  delete transitions[0];
   transitions.RemoveAll();
-  CBC_ResultPoint* maybeTopLeft = NULL;
-  CBC_ResultPoint* bottomLeft = NULL;
-  CBC_ResultPoint* maybeBottomRight = NULL;
+  CBC_ResultPoint* maybeTopLeft = nullptr;
+  CBC_ResultPoint* bottomLeft = nullptr;
+  CBC_ResultPoint* maybeBottomRight = nullptr;
   FX_POSITION itBegin = pointCount.GetStartPosition();
   while (itBegin) {
     CBC_ResultPoint* key = 0;
@@ -88,31 +90,31 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
     if (value == 2) {
       bottomLeft = key;
     } else {
-      if (maybeBottomRight == NULL) {
-        maybeBottomRight = key;
-      } else {
+      if (maybeBottomRight) {
         maybeTopLeft = key;
+      } else {
+        maybeBottomRight = key;
       }
     }
   }
-  if (maybeTopLeft == NULL || bottomLeft == NULL || maybeBottomRight == NULL) {
+  if (!maybeTopLeft || !bottomLeft || !maybeBottomRight) {
     delete pointA;
     delete pointB;
     delete pointC;
     delete pointD;
     e = BCExceptionNotFound;
-    return NULL;
+    return nullptr;
   }
-  CFX_PtrArray corners;
+  CFX_ArrayTemplate<CBC_ResultPoint*> corners;
   corners.SetSize(3);
   corners[0] = maybeTopLeft;
   corners[1] = bottomLeft;
   corners[2] = maybeBottomRight;
   OrderBestPatterns(&corners);
-  CBC_ResultPoint* bottomRight = (CBC_ResultPoint*)corners[0];
-  bottomLeft = (CBC_ResultPoint*)corners[1];
-  CBC_ResultPoint* topLeft = (CBC_ResultPoint*)corners[2];
-  CBC_ResultPoint* topRight = NULL;
+  CBC_ResultPoint* bottomRight = corners[0];
+  bottomLeft = corners[1];
+  CBC_ResultPoint* topLeft = corners[2];
+  CBC_ResultPoint* topRight = nullptr;
   int32_t value;
   if (!pointCount.Lookup(pointA, value)) {
     topRight = pointA;
@@ -144,11 +146,11 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
     correctedTopRight.reset(
         CorrectTopRightRectangular(bottomLeft, bottomRight, topLeft, topRight,
                                    dimensionTop, dimensionRight));
-    if (correctedTopRight.get() == NULL) {
+    if (!correctedTopRight.get()) {
       correctedTopRight.reset(topRight);
     } else {
       delete topRight;
-      topRight = NULL;
+      topRight = nullptr;
     }
     dimensionTop = std::unique_ptr<CBC_ResultPointsAndTransitions>(
                        TransitionsBetween(topLeft, correctedTopRight.get()))
@@ -166,16 +168,16 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
     bits.reset(SampleGrid(m_image, topLeft, bottomLeft, bottomRight,
                           correctedTopRight.get(), dimensionTop, dimensionRight,
                           e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   } else {
     int32_t dimension = std::min(dimensionRight, dimensionTop);
     correctedTopRight.reset(
         CorrectTopRight(bottomLeft, bottomRight, topLeft, topRight, dimension));
-    if (correctedTopRight.get() == NULL) {
+    if (!correctedTopRight.get()) {
       correctedTopRight.reset(topRight);
     } else {
       delete topRight;
-      topRight = NULL;
+      topRight = nullptr;
     }
     int32_t dimensionCorrected =
         std::max(std::unique_ptr<CBC_ResultPointsAndTransitions>(
@@ -191,7 +193,7 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
     bits.reset(SampleGrid(m_image, topLeft, bottomLeft, bottomRight,
                           correctedTopRight.get(), dimensionCorrected,
                           dimensionCorrected, e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   CFX_PtrArray* result = new CFX_PtrArray;
   result->SetSize(4);
@@ -224,7 +226,7 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRightRectangular(
     if (IsValid(c2.get())) {
       return c2.release();
     }
-    return NULL;
+    return nullptr;
   } else if (!IsValid(c2.get())) {
     return c1.release();
   }
@@ -271,7 +273,7 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRight(
     if (IsValid(c2.get())) {
       return c2.release();
     }
-    return NULL;
+    return nullptr;
   } else if (!IsValid(c2.get())) {
     return c1.release();
   }
@@ -328,7 +330,7 @@ CBC_CommonBitMatrix* CBC_DataMatrixDetector::SampleGrid(
       topLeft->GetX(), topLeft->GetY(), topRight->GetX(), topRight->GetY(),
       bottomRight->GetX(), bottomRight->GetY(), bottomLeft->GetX(),
       bottomLeft->GetY(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return cbm;
 }
 CBC_ResultPointsAndTransitions* CBC_DataMatrixDetector::TransitionsBetween(
@@ -371,26 +373,24 @@ CBC_ResultPointsAndTransitions* CBC_DataMatrixDetector::TransitionsBetween(
   }
   return new CBC_ResultPointsAndTransitions(from, to, transitions);
 }
-void CBC_DataMatrixDetector::OrderBestPatterns(CFX_PtrArray* patterns) {
-  FX_FLOAT abDistance = (FX_FLOAT)Distance((CBC_ResultPoint*)(*patterns)[0],
-                                           (CBC_ResultPoint*)(*patterns)[1]);
-  FX_FLOAT bcDistance = (FX_FLOAT)Distance((CBC_ResultPoint*)(*patterns)[1],
-                                           (CBC_ResultPoint*)(*patterns)[2]);
-  FX_FLOAT acDistance = (FX_FLOAT)Distance((CBC_ResultPoint*)(*patterns)[0],
-                                           (CBC_ResultPoint*)(*patterns)[2]);
+void CBC_DataMatrixDetector::OrderBestPatterns(
+    CFX_ArrayTemplate<CBC_ResultPoint*>* patterns) {
+  FX_FLOAT abDistance = (FX_FLOAT)Distance((*patterns)[0], (*patterns)[1]);
+  FX_FLOAT bcDistance = (FX_FLOAT)Distance((*patterns)[1], (*patterns)[2]);
+  FX_FLOAT acDistance = (FX_FLOAT)Distance((*patterns)[0], (*patterns)[2]);
   CBC_ResultPoint *topLeft, *topRight, *bottomLeft;
   if (bcDistance >= abDistance && bcDistance >= acDistance) {
-    topLeft = (CBC_ResultPoint*)(*patterns)[0];
-    topRight = (CBC_ResultPoint*)(*patterns)[1];
-    bottomLeft = (CBC_ResultPoint*)(*patterns)[2];
+    topLeft = (*patterns)[0];
+    topRight = (*patterns)[1];
+    bottomLeft = (*patterns)[2];
   } else if (acDistance >= bcDistance && acDistance >= abDistance) {
-    topLeft = (CBC_ResultPoint*)(*patterns)[1];
-    topRight = (CBC_ResultPoint*)(*patterns)[0];
-    bottomLeft = (CBC_ResultPoint*)(*patterns)[2];
+    topLeft = (*patterns)[1];
+    topRight = (*patterns)[0];
+    bottomLeft = (*patterns)[2];
   } else {
-    topLeft = (CBC_ResultPoint*)(*patterns)[2];
-    topRight = (CBC_ResultPoint*)(*patterns)[0];
-    bottomLeft = (CBC_ResultPoint*)(*patterns)[1];
+    topLeft = (*patterns)[2];
+    topRight = (*patterns)[0];
+    bottomLeft = (*patterns)[1];
   }
   if ((bottomLeft->GetY() - topLeft->GetY()) *
           (topRight->GetX() - topLeft->GetX()) <

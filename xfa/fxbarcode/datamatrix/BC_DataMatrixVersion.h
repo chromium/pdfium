@@ -80,7 +80,7 @@ class CBC_DataMatrixVersion {
   int32_t m_dataRegionSizeColumns;
   ECBlocks* m_ecBlocks;
   int32_t m_totalCodewords;
-  static CFX_PtrArray* VERSIONS;
+  static CFX_ArrayTemplate<CBC_DataMatrixVersion*>* VERSIONS;
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_DATAMATRIXVERSION_H_
