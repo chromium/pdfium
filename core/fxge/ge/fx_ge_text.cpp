@@ -1580,7 +1580,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
       if (pFont->IsVertical())
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       else
-        ft_matrix.xy += -ft_matrix.xx * skew / 100;
+        ft_matrix.xy -= ft_matrix.xx * skew / 100;
     }
     if (pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) {
       pFont->AdjustMMParams(glyph_index, dest_width,
@@ -1850,7 +1850,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index, int dest_width) {
       if (m_bVertical)
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       else
-        ft_matrix.xy += -ft_matrix.xx * skew / 100;
+        ft_matrix.xy -= ft_matrix.xx * skew / 100;
     }
     if (m_pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) {
       AdjustMMParams(glyph_index, dest_width, m_pSubstFont->m_Weight);

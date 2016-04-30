@@ -219,7 +219,7 @@ void CFX_Edit_Refresh::Analyse(int32_t nAlignment) {
                     rcResult.left = rcResult.right - fWidthDiff;
                   } else {
                     rcResult.left = rcResult.right;
-                    rcResult.right += (-fWidthDiff);
+                    rcResult.right -= fWidthDiff;
                   }
                 }
                 m_RefreshRects.Add(rcResult);

@@ -372,7 +372,7 @@ CPVT_FloatRect CTypeset::CharArray() {
     pLine->m_LineInfo.fLineWidth = x - pLine->m_LineInfo.fLineX;
     pLine->m_LineInfo.fLineAscent = fLineAscent;
     pLine->m_LineInfo.fLineDescent = fLineDescent;
-    y += (-fLineDescent);
+    y -= fLineDescent;
   }
   return m_rcRet = CPVT_FloatRect(0, 0, x, y);
 }
@@ -640,7 +640,7 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
           m_pSection->AddLine(line);
         }
         fMaxY += (fLineAscent + m_pVT->GetLineLeading(m_pSection->m_SecInfo));
-        fMaxY += (-fLineDescent);
+        fMaxY -= fLineDescent;
         fMaxX = std::max(fLineWidth, fMaxX);
         nLineHead = i;
         fLineWidth = 0.0f;
@@ -666,7 +666,7 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
         m_pSection->AddLine(line);
       }
       fMaxY += (fLineAscent + m_pVT->GetLineLeading(m_pSection->m_SecInfo));
-      fMaxY += (-fLineDescent);
+      fMaxY -= fLineDescent;
       fMaxX = std::max(fLineWidth, fMaxX);
     }
   } else {
@@ -688,8 +688,8 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
       line.fLineDescent = fLineDescent;
       m_pSection->AddLine(line);
     }
-    fMaxY += (m_pVT->GetLineLeading(m_pSection->m_SecInfo) + fLineAscent +
-              (-fLineDescent));
+    fMaxY += m_pVT->GetLineLeading(m_pSection->m_SecInfo) + fLineAscent -
+             fLineDescent;
   }
   m_rcRet = CPVT_FloatRect(0, 0, fMaxX, fMaxY);
 }
@@ -761,7 +761,7 @@ void CTypeset::OutputLines() {
             fPosX += m_pVT->GetWordWidth(*pWord);
           }
         }
-        fPosY += (-pLine->m_LineInfo.fLineDescent);
+        fPosY -= pLine->m_LineInfo.fLineDescent;
       }
     }
   }
