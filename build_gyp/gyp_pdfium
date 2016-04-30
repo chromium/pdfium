@@ -17,7 +17,9 @@ output_rel_dir = 'out'
 
 sys.path.insert(0, os.path.join(pdfium_root, 'tools', 'gyp', 'pylib'))
 import gyp
+
 # vs_toolchain needs to be after gyp path setting since it also uses gyp.
+sys.path.insert(0, os.path.join(pdfium_root, 'build'))
 import vs_toolchain
 
 def run_gyp(args):

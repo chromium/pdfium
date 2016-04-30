@@ -1,5 +1,4 @@
 /build
-/build_gyp/win_toolchain.json
 /buildtools
 /out
 /testing/corpus

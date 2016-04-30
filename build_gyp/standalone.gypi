@@ -453,7 +453,7 @@
         ],  # target_conditions
         'variables': {
           'mac_sdk_min': '10.10',
-          'mac_sdk%': '<!(python <(DEPTH)/build_gyp/mac_find_sdk.py <(mac_sdk_min))',
+          'mac_sdk%': '<!(python <(DEPTH)/build/mac/find_sdk.py <(mac_sdk_min))',
         },
         'xcode_settings': {
           'SDKROOT': 'macosx<(mac_sdk)',  # -isysroot
