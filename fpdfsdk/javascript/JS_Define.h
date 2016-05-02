@@ -17,7 +17,7 @@
 struct JSConstSpec {
   const wchar_t* pName;
   double number;
-  const wchar_t* string;  // NOLINT
+  const wchar_t* str;
   uint8_t t;              // 0:double 1:str
 };
 
@@ -50,12 +50,9 @@ struct JSMethodSpec {
 
 #define BEGIN_JS_STATIC_PROP(js_class_name) \
   JSPropertySpec js_class_name::JS_Class_Properties[] = {
-#define JS_STATIC_PROP_ENTRY(prop_name)                                                    \
-  {                                                                                        \
-    JS_WIDESTRING(prop_name), get_##prop_name##_static, \
-        set_##prop_name##_static \
-  }                                                                                        \
-  ,
+#define JS_STATIC_PROP_ENTRY(prop_name)                \
+  {JS_WIDESTRING(prop_name), get_##prop_name##_static, \
+   set_##prop_name##_static},  // NOLINT
 
 #define END_JS_STATIC_PROP() \
   { 0, 0, 0 }                \
@@ -211,15 +208,15 @@ void JSMethod(const char* method_name_string,
   static JSConstSpec JS_Class_Consts[]; \
   static void DefineConsts(v8::Isolate* pIsolate);
 
-#define IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)      \
-  void js_class_name::DefineConsts(v8::Isolate* pIsolate) {           \
-    for (size_t i = 0; i < FX_ArraySize(JS_Class_Consts) - 1; ++i) {  \
-      FXJS_DefineObjConst(                                            \
-          pIsolate, g_nObjDefnID, JS_Class_Consts[i].pName,           \
-          JS_Class_Consts[i].t == 0                                   \
-              ? FXJS_NewNumber(pIsolate, JS_Class_Consts[i].number)   \
-              : FXJS_NewString(pIsolate, JS_Class_Consts[i].string)); \
-    }                                                                 \
+#define IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)     \
+  void js_class_name::DefineConsts(v8::Isolate* pIsolate) {          \
+    for (size_t i = 0; i < FX_ArraySize(JS_Class_Consts) - 1; ++i) { \
+      FXJS_DefineObjConst(                                           \
+          pIsolate, g_nObjDefnID, JS_Class_Consts[i].pName,          \
+          JS_Class_Consts[i].t == 0                                  \
+              ? FXJS_NewNumber(pIsolate, JS_Class_Consts[i].number)  \
+              : FXJS_NewString(pIsolate, JS_Class_Consts[i].str));   \
+    }                                                                \
   }
 
 // Convenience macros for declaring classes without an alternate.

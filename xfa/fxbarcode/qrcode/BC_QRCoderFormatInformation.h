@@ -7,26 +7,24 @@
 #ifndef XFA_FXBARCODE_QRCODE_BC_QRCODERFORMATINFORMATION_H_
 #define XFA_FXBARCODE_QRCODE_BC_QRCODERFORMATINFORMATION_H_
 
+#include <stdint.h>
+
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderFormatInformation {
- private:
-  static const uint16_t FORMAT_INFO_MASK_QR;
-  static const uint16_t FORMAT_INFO_DECODE_LOOKUP[32][2];
-  static const uint8_t BITS_SET_IN_HALF_BYTE[16];
-  CBC_QRCoderErrorCorrectionLevel* m_errorCorrectLevl;
-  uint8_t m_dataMask;
-
  public:
-  CBC_QRCoderFormatInformation(int32_t formatInfo);
-  virtual ~CBC_QRCoderFormatInformation();
-  uint8_t GetDataMask();
+  explicit CBC_QRCoderFormatInformation(int32_t formatInfo);
+  ~CBC_QRCoderFormatInformation();
+
+  uint8_t GetDataMask() const;
   CBC_QRCoderErrorCorrectionLevel* GetErrorCorrectionLevel();
 
   static int32_t NumBitsDiffering(int32_t a, int32_t b);
   static CBC_QRCoderFormatInformation* DecodeFormatInformation(
       int32_t maskedFormatInfo);
-  static CBC_QRCoderFormatInformation* DoDecodeFormatInformation(
-      int32_t maskedFormatInfo);
+
+ private:
+  CBC_QRCoderErrorCorrectionLevel* m_errorCorrectLevel;
+  const uint8_t m_dataMask;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERFORMATINFORMATION_H_

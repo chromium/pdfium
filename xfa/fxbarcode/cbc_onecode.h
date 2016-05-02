@@ -18,24 +18,7 @@ class CFX_RenderDevice;
 class CBC_OneCode : public CBC_CodeBase {
  public:
   CBC_OneCode();
-  virtual ~CBC_OneCode();
-
-  virtual BC_TYPE GetType() = 0;
-
-  virtual FX_BOOL Encode(const CFX_WideStringC& contents,
-                         FX_BOOL isDevice,
-                         int32_t& e) = 0;
-  virtual CFX_WideString Decode(uint8_t* buf,
-                                int32_t width,
-                                int32_t hight,
-                                int32_t& e) = 0;
-  virtual CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) = 0;
-
-  virtual FX_BOOL RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matirx,
-                               int32_t& e) = 0;
-  virtual FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) = 0;
-
+  ~CBC_OneCode() override;
 
   virtual FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
   virtual CFX_WideString FilterContents(const CFX_WideStringC& contents);

@@ -15,18 +15,22 @@
 class CBC_PDF417I : public CBC_CodeBase {
  public:
   CBC_PDF417I();
-  virtual ~CBC_PDF417I();
+  ~CBC_PDF417I() override;
 
-  FX_BOOL Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t& e);
-  CFX_WideString Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t& e);
-  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e);
-
+  // CBC_CodeBase::
+  FX_BOOL Encode(const CFX_WideStringC& contents,
+                 FX_BOOL isDevice,
+                 int32_t& e) override;
+  CFX_WideString Decode(uint8_t* buf,
+                        int32_t width,
+                        int32_t height,
+                        int32_t& e) override;
+  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) override;
   FX_BOOL RenderDevice(CFX_RenderDevice* device,
-                       const CFX_Matrix* matirx,
-                       int32_t& e);
-  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e);
-
-  BC_TYPE GetType() { return BC_PDF417; }
+                       const CFX_Matrix* matrix,
+                       int32_t& e) override;
+  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
+  BC_TYPE GetType() override { return BC_PDF417; }
 
   FX_BOOL SetErrorCorrectionLevel(int32_t level);
   void SetTruncated(FX_BOOL truncated);

@@ -28,7 +28,7 @@ class CFX_Barcode {
   BC_TYPE GetType();
   FX_BOOL Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t& e);
   FX_BOOL RenderDevice(CFX_RenderDevice* device,
-                       const CFX_Matrix* matirx,
+                       const CFX_Matrix* matrix,
                        int32_t& e);
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e);
   CFX_WideString Decode(uint8_t* buf,

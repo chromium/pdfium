@@ -43,7 +43,6 @@ class CBC_OnedUPCAReader : public CBC_OneDimReader {
 
  private:
   CBC_OnedEAN13Reader* m_ean13Reader;
-
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDUPCAREADER_H_

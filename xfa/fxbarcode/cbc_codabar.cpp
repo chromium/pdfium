@@ -84,13 +84,13 @@ FX_BOOL CBC_Codabar::Encode(const CFX_WideStringC& contents,
 }
 
 FX_BOOL CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
-                                  const CFX_Matrix* matirx,
+                                  const CFX_Matrix* matrix,
                                   int32_t& e) {
   CFX_WideString renderCon =
       ((CBC_OnedCodaBarWriter*)m_pBCWriter)
           ->encodedContents(m_renderContents.AsStringC());
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderDeviceResult(device, matirx, renderCon.AsStringC(), e);
+      ->RenderDeviceResult(device, matrix, renderCon.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
@@ -107,7 +107,7 @@ FX_BOOL CBC_Codabar::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 CFX_WideString CBC_Codabar::Decode(uint8_t* buf,
                                    int32_t width,
-                                   int32_t hight,
+                                   int32_t height,
                                    int32_t& e) {
   CFX_WideString str;
   return str;

@@ -15,18 +15,22 @@
 class CBC_EAN13 : public CBC_OneCode {
  public:
   CBC_EAN13();
-  virtual ~CBC_EAN13();
+  ~CBC_EAN13() override;
 
-  FX_BOOL Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t& e);
-  CFX_WideString Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t& e);
-  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e);
-
+  // CBC_OneCode:
+  FX_BOOL Encode(const CFX_WideStringC& contents,
+                 FX_BOOL isDevice,
+                 int32_t& e) override;
+  CFX_WideString Decode(uint8_t* buf,
+                        int32_t width,
+                        int32_t height,
+                        int32_t& e) override;
+  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) override;
   FX_BOOL RenderDevice(CFX_RenderDevice* device,
-                       const CFX_Matrix* matirx,
-                       int32_t& e);
-  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e);
-
-  BC_TYPE GetType() { return BC_EAN13; }
+                       const CFX_Matrix* matrix,
+                       int32_t& e) override;
+  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
+  BC_TYPE GetType() override { return BC_EAN13; }
 
  private:
   CFX_WideString Preprocess(const CFX_WideStringC& contents);

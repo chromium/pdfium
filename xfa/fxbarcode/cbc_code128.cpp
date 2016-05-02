@@ -73,10 +73,10 @@ FX_BOOL CBC_Code128::Encode(const CFX_WideStringC& contents,
 }
 
 FX_BOOL CBC_Code128::RenderDevice(CFX_RenderDevice* device,
-                                  const CFX_Matrix* matirx,
+                                  const CFX_Matrix* matrix,
                                   int32_t& e) {
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderDeviceResult(device, matirx, m_renderContents.AsStringC(), e);
+      ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
@@ -90,7 +90,7 @@ FX_BOOL CBC_Code128::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 CFX_WideString CBC_Code128::Decode(uint8_t* buf,
                                    int32_t width,
-                                   int32_t hight,
+                                   int32_t height,
                                    int32_t& e) {
   CFX_WideString str;
   return str;

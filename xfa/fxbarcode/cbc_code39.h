@@ -17,18 +17,23 @@ class CBC_Code39 : public CBC_OneCode {
   CBC_Code39();
   explicit CBC_Code39(FX_BOOL usingCheckDigit);
   CBC_Code39(FX_BOOL usingCheckDigit, FX_BOOL extendedMode);
-  virtual ~CBC_Code39();
+  ~CBC_Code39() override;
 
-  FX_BOOL Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t& e);
-  CFX_WideString Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t& e);
-  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e);
-
+  // CBC_OneCode:
+  FX_BOOL Encode(const CFX_WideStringC& contents,
+                 FX_BOOL isDevice,
+                 int32_t& e) override;
+  CFX_WideString Decode(uint8_t* buf,
+                        int32_t width,
+                        int32_t height,
+                        int32_t& e) override;
+  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) override;
   FX_BOOL RenderDevice(CFX_RenderDevice* device,
-                       const CFX_Matrix* matirx,
-                       int32_t& e);
-  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e);
+                       const CFX_Matrix* matrix,
+                       int32_t& e) override;
+  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
+  BC_TYPE GetType() override { return BC_CODE39; }
 
-  BC_TYPE GetType() { return BC_CODE39; }
   FX_BOOL SetTextLocation(BC_TEXT_LOC location);
   FX_BOOL SetWideNarrowRatio(int32_t ratio);
 

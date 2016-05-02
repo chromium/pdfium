@@ -338,12 +338,12 @@ FX_BOOL CFX_Barcode::Encode(const CFX_WideStringC& contents,
   return m_pBCEngine->Encode(contents, isDevice, e);
 }
 FX_BOOL CFX_Barcode::RenderDevice(CFX_RenderDevice* device,
-                                  const CFX_Matrix* matirx,
+                                  const CFX_Matrix* matrix,
                                   int32_t& e) {
   if (!m_pBCEngine) {
     return FALSE;
   }
-  return m_pBCEngine->RenderDevice(device, matirx, e);
+  return m_pBCEngine->RenderDevice(device, matrix, e);
 }
 FX_BOOL CFX_Barcode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   if (!m_pBCEngine) {

@@ -135,8 +135,8 @@ CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetRow(int32_t y,
 }
 
 CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetMatrix() {
-  CFX_ByteArray* matirx = new CFX_ByteArray();
-  matirx->SetSize(m_bytesPerLine * m_height);
+  CFX_ByteArray* matrix = new CFX_ByteArray();
+  matrix->SetSize(m_bytesPerLine * m_height);
   int32_t* rgb = (int32_t*)m_pBitmap->GetBuffer();
   int32_t y;
   for (y = 0; y < m_height; y++) {
@@ -148,8 +148,8 @@ CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetMatrix() {
           (306 * ((pixel >> 16) & 0xFF) + 601 * ((pixel >> 8) & 0xFF) +
            117 * (pixel & 0xFF)) >>
           10;
-      (*matirx)[offset + x] = (uint8_t)luminance;
+      (*matrix)[offset + x] = (uint8_t)luminance;
     }
   }
-  return matirx;
+  return matrix;
 }

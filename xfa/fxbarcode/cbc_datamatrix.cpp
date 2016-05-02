@@ -53,9 +53,9 @@ FX_BOOL CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
 }
 
 FX_BOOL CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
-                                     const CFX_Matrix* matirx,
+                                     const CFX_Matrix* matrix,
                                      int32_t& e) {
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx);
+  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matrix);
   return TRUE;
 }
 
@@ -67,7 +67,7 @@ FX_BOOL CBC_DataMatrix::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 CFX_WideString CBC_DataMatrix::Decode(uint8_t* buf,
                                       int32_t width,
-                                      int32_t hight,
+                                      int32_t height,
                                       int32_t& e) {
   CFX_WideString str;
   return str;
