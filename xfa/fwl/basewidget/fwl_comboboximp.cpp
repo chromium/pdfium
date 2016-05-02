@@ -7,6 +7,7 @@
 #include "xfa/fwl/basewidget/fwl_comboboximp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fee/fde_txtedtengine.h"
 #include "xfa/fwl/basewidget/fwl_editimp.h"
 #include "xfa/fwl/basewidget/fwl_formproxyimp.h"
 #include "xfa/fwl/basewidget/fwl_listboximp.h"

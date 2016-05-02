@@ -11,6 +11,7 @@
 
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_render.h"
+#include "xfa/fee/fde_txtedtengine.h"
 #include "xfa/fee/ifde_txtedtpage.h"
 #include "xfa/fwl/basewidget/fwl_caretimp.h"
 #include "xfa/fwl/basewidget/fwl_comboboximp.h"
@@ -755,8 +756,7 @@ FX_BOOL CFWL_EditImp::CanRedo() {
 FWL_ERR CFWL_EditImp::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
   if (!m_pEdtEngine)
     return FWL_ERR_Succeeded;
-  FDE_LPTXTEDTPARAMS pParams =
-      (FDE_LPTXTEDTPARAMS)m_pEdtEngine->GetEditParams();
+  FDE_TXTEDTPARAMS* pParams = m_pEdtEngine->GetEditParams();
   pParams->fTabWidth = fTabWidth;
   pParams->bTabEquidistant = bEquidistant;
   return FWL_ERR_Succeeded;
@@ -771,7 +771,7 @@ FWL_ERR CFWL_EditImp::SetNumberRange(int32_t iMin, int32_t iMax) {
   m_bSetRange = TRUE;
   return FWL_ERR_Succeeded;
 }
-void CFWL_EditImp::On_CaretChanged(IFDE_TxtEdtEngine* pEdit,
+void CFWL_EditImp::On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
                                    int32_t nPage,
                                    FX_BOOL bVisible) {
   if (m_rtEngine.IsEmpty()) {
@@ -799,7 +799,7 @@ void CFWL_EditImp::On_CaretChanged(IFDE_TxtEdtEngine* pEdit,
     Repaint(&rtInvalid);
   }
 }
-void CFWL_EditImp::On_TextChanged(IFDE_TxtEdtEngine* pEdit,
+void CFWL_EditImp::On_TextChanged(CFDE_TxtEdtEngine* pEdit,
                                   FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo) {
   uint32_t dwStyleEx = m_pProperties->m_dwStyleExes;
   if (dwStyleEx & FWL_STYLEEXT_EDT_VAlignMask) {
@@ -864,25 +864,25 @@ void CFWL_EditImp::On_TextChanged(IFDE_TxtEdtEngine* pEdit,
   LayoutScrollBar();
   Repaint(&rtTemp);
 }
-void CFWL_EditImp::On_SelChanged(IFDE_TxtEdtEngine* pEdit) {
+void CFWL_EditImp::On_SelChanged(CFDE_TxtEdtEngine* pEdit) {
   CFX_RectF rtTemp;
   GetClientRect(rtTemp);
   Repaint(&rtTemp);
 }
-FX_BOOL CFWL_EditImp::On_PageLoad(IFDE_TxtEdtEngine* pEdit,
+FX_BOOL CFWL_EditImp::On_PageLoad(CFDE_TxtEdtEngine* pEdit,
                                   int32_t nPageIndex,
                                   int32_t nPurpose) {
-  IFDE_TxtEdtEngine* pEdtEngine = m_pEdtEngine;
+  CFDE_TxtEdtEngine* pEdtEngine = m_pEdtEngine;
   IFDE_TxtEdtPage* pPage = pEdtEngine->GetPage(nPageIndex);
   if (!pPage)
     return FALSE;
   pPage->LoadPage(nullptr, nullptr);
   return TRUE;
 }
-FX_BOOL CFWL_EditImp::On_PageUnload(IFDE_TxtEdtEngine* pEdit,
+FX_BOOL CFWL_EditImp::On_PageUnload(CFDE_TxtEdtEngine* pEdit,
                                     int32_t nPageIndex,
                                     int32_t nPurpose) {
-  IFDE_TxtEdtEngine* pEdtEngine = m_pEdtEngine;
+  CFDE_TxtEdtEngine* pEdtEngine = m_pEdtEngine;
   IFDE_TxtEdtPage* pPage = pEdtEngine->GetPage(nPageIndex);
   if (!pPage)
     return FALSE;
@@ -890,28 +890,12 @@ FX_BOOL CFWL_EditImp::On_PageUnload(IFDE_TxtEdtEngine* pEdit,
   return TRUE;
 }
 
-void CFWL_EditImp::On_AddDoRecord(IFDE_TxtEdtEngine* pEdit,
+void CFWL_EditImp::On_AddDoRecord(CFDE_TxtEdtEngine* pEdit,
                                   const CFX_ByteStringC& bsDoRecord) {
   AddDoRecord(bsDoRecord);
 }
 
-FX_BOOL CFWL_EditImp::On_ValidateField(IFDE_TxtEdtEngine* pEdit,
-                                       int32_t nBlockIndex,
-                                       int32_t nFieldIndex,
-                                       const CFX_WideString& wsFieldText,
-                                       int32_t nCharIndex) {
-  return TRUE;
-}
-FX_BOOL CFWL_EditImp::On_ValidateBlock(IFDE_TxtEdtEngine* pEdit,
-                                       int32_t nBlockIndex) {
-  return TRUE;
-}
-FX_BOOL CFWL_EditImp::On_GetBlockFormatText(IFDE_TxtEdtEngine* pEdit,
-                                            int32_t nBlockIndex,
-                                            CFX_WideString& wsBlockText) {
-  return FALSE;
-}
-FX_BOOL CFWL_EditImp::On_Validate(IFDE_TxtEdtEngine* pEdit,
+FX_BOOL CFWL_EditImp::On_Validate(CFDE_TxtEdtEngine* pEdit,
                                   CFX_WideString& wsText) {
   IFWL_Widget* pDst = GetOuter();
   if (!pDst) {
@@ -1607,11 +1591,10 @@ void CFWL_EditImp::InitScrollBar(FX_BOOL bVert) {
   pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
+
 void CFWL_EditImp::InitEngine() {
-  if (m_pEdtEngine) {
-    return;
-  }
-  m_pEdtEngine = IFDE_TxtEdtEngine::Create();
+  if (!m_pEdtEngine)
+    m_pEdtEngine = new CFDE_TxtEdtEngine;
 }
 
 FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,

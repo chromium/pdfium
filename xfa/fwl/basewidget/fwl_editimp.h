@@ -24,7 +24,7 @@ class IFWL_Caret;
 class CFWL_EditImp;
 class CFWL_EditImpDelegate;
 
-class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
+class CFWL_EditImp : public CFWL_WidgetImp {
  public:
   CFWL_EditImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   ~CFWL_EditImp() override;
@@ -79,38 +79,24 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   virtual FWL_ERR SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
   virtual FWL_ERR SetOuter(IFWL_Widget* pOuter);
   virtual FWL_ERR SetNumberRange(int32_t iMin, int32_t iMax);
-  void On_CaretChanged(IFDE_TxtEdtEngine* pEdit,
-                       int32_t nPage,
-                       FX_BOOL bVisible = true) override;
-  void On_TextChanged(IFDE_TxtEdtEngine* pEdit,
-                      FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo) override;
-  void On_PageCountChanged(IFDE_TxtEdtEngine* pEdit) override {}
-  void On_SelChanged(IFDE_TxtEdtEngine* pEdit) override;
-  FX_BOOL On_PageLoad(IFDE_TxtEdtEngine* pEdit,
-                      int32_t nPageIndex,
-                      int32_t nPurpose) override;
-  FX_BOOL On_PageUnload(IFDE_TxtEdtEngine* pEdit,
-                        int32_t nPageIndex,
-                        int32_t nPurpose) override;
-  FX_BOOL On_PageChange(IFDE_TxtEdtEngine* pEdit, int32_t nPageIndex) override {
-    return TRUE;
-  }
-  void On_AddDoRecord(IFDE_TxtEdtEngine* pEdit,
-                      const CFX_ByteStringC& bsDoRecord) override;
-  FX_BOOL On_ValidateField(IFDE_TxtEdtEngine* pEdit,
-                           int32_t nBlockIndex,
-                           int32_t nFieldIndex,
-                           const CFX_WideString& wsFieldText,
-                           int32_t nCharIndex) override;
-  FX_BOOL On_ValidateBlock(IFDE_TxtEdtEngine* pEdit,
-                           int32_t nBlockIndex) override;
-  FX_BOOL On_GetBlockFormatText(IFDE_TxtEdtEngine* pEdit,
-                                int32_t nBlockIndex,
-                                CFX_WideString& wsBlockText) override;
-  FX_BOOL On_Validate(IFDE_TxtEdtEngine* pEdit,
-                      CFX_WideString& wsText) override;
   virtual FWL_ERR SetBackgroundColor(uint32_t color);
   virtual FWL_ERR SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
+
+  void On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
+                       int32_t nPage,
+                       FX_BOOL bVisible = true);
+  void On_TextChanged(CFDE_TxtEdtEngine* pEdit,
+                      FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo);
+  void On_SelChanged(CFDE_TxtEdtEngine* pEdit);
+  FX_BOOL On_PageLoad(CFDE_TxtEdtEngine* pEdit,
+                      int32_t nPageIndex,
+                      int32_t nPurpose);
+  FX_BOOL On_PageUnload(CFDE_TxtEdtEngine* pEdit,
+                        int32_t nPageIndex,
+                        int32_t nPurpose);
+  void On_AddDoRecord(CFDE_TxtEdtEngine* pEdit,
+                      const CFX_ByteStringC& bsDoRecord);
+  FX_BOOL On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
   FX_BOOL GetSuggestWords(CFX_PointF pointf,
                           std::vector<CFX_ByteString>& sSuggest);
@@ -160,7 +146,7 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   FX_FLOAT m_fVAlignOffset;
   FX_FLOAT m_fScrollOffsetX;
   FX_FLOAT m_fScrollOffsetY;
-  IFDE_TxtEdtEngine* m_pEdtEngine;
+  CFDE_TxtEdtEngine* m_pEdtEngine;
   FX_BOOL m_bLButtonDown;
   int32_t m_nSelStart;
   int32_t m_nLimit;

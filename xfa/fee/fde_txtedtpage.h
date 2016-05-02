@@ -97,11 +97,11 @@ class CFDE_TxtEdtTextSet : public IFDE_TextSet {
 
 class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
  public:
-  CFDE_TxtEdtPage(IFDE_TxtEdtEngine* pEngine, int32_t nLineIndex);
+  CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nLineIndex);
 
   // IFDE_TxtEditPage:
   void Release() override;
-  IFDE_TxtEdtEngine* GetEngine() const override;
+  CFDE_TxtEdtEngine* GetEngine() const override;
   int32_t GetCharRect(int32_t nIndex,
                       CFX_RectF& rect,
                       FX_BOOL bBBox = FALSE) const override;

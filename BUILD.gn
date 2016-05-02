@@ -930,7 +930,6 @@ if (pdf_enable_xfa) {
       "xfa/fee/fx_wordbreak/fx_wordbreak_impl.cpp",
       "xfa/fee/fx_wordbreak/fx_wordbreak_impl.h",
       "xfa/fee/fx_wordbreak/fx_wordbreakdata.cpp",
-      "xfa/fee/ifde_txtedtbuf.h",
       "xfa/fee/ifde_txtedtengine.h",
       "xfa/fee/ifde_txtedtpage.h",
       "xfa/fgas/crt/fgas_algorithm.cpp",

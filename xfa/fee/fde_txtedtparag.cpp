@@ -9,7 +9,6 @@
 #include "xfa/fee/fde_txtedtbuf.h"
 #include "xfa/fee/fde_txtedtengine.h"
 #include "xfa/fee/fx_wordbreak/fx_wordbreak.h"
-#include "xfa/fee/ifde_txtedtbuf.h"
 #include "xfa/fee/ifde_txtedtengine.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
@@ -32,7 +31,7 @@ void CFDE_TxtEdtParag::LoadParag() {
     return;
   }
   CFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
-  IFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
+  CFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParam = m_pEngine->GetEditParams();
   FX_WCHAR wcAlias = 0;
   if (pParam->dwMode & FDE_TEXTEDITMODE_Password) {
@@ -102,7 +101,7 @@ void CFDE_TxtEdtParag::UnloadParag() {
 }
 void CFDE_TxtEdtParag::CalcLines() {
   CFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
-  IFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
+  CFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   IFX_CharIter* pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf);
   int32_t nCount = 0;
   uint32_t dwBreakStatus = FX_TXTBREAK_None;

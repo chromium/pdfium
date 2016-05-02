@@ -7,7 +7,6 @@
 #ifndef XFA_FEE_FDE_TXTEDTBUF_H_
 #define XFA_FEE_FDE_TXTEDTBUF_H_
 
-#include "xfa/fee/ifde_txtedtbuf.h"
 #include "xfa/fee/ifde_txtedtengine.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
@@ -36,47 +35,43 @@ class CFDE_TxtEdtBufIter : public IFX_CharIter {
   int32_t m_nIndex;
   FX_WCHAR m_Alias;
 };
-class CFDE_TxtEdtBuf : public IFDE_TxtEdtBuf {
+class CFDE_TxtEdtBuf {
+ public:
+  CFDE_TxtEdtBuf();
+
+  void Release();
+  FX_BOOL SetChunkSize(int32_t nChunkSize);
+  int32_t GetChunkSize() const;
+  int32_t GetTextLength() const;
+  void SetText(const CFX_WideString& wsText);
+  void GetText(CFX_WideString& wsText) const;
+  FX_WCHAR GetCharByIndex(int32_t nIndex) const;
+  void GetRange(CFX_WideString& wsText,
+                int32_t nBegin,
+                int32_t nCount = -1) const;
+
+  void Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength = 1);
+  void Delete(int32_t nIndex, int32_t nLength = 1);
+  void Clear(FX_BOOL bRelease = TRUE);
+
+  FX_BOOL Optimize(IFX_Pause* pPause = nullptr);
+
+ protected:
+  ~CFDE_TxtEdtBuf();
+
+ private:
   friend class CFDE_TxtEdtBufIter;
-  struct _FDE_CHUNKHEADER {
+
+  struct FDE_CHUNKHEADER {
     int32_t nUsed;
     FX_WCHAR wChars[1];
   };
-  typedef _FDE_CHUNKHEADER FDE_CHUNKHEADER;
-  typedef _FDE_CHUNKHEADER* FDE_LPCHUNKHEADER;
-  struct _FDE_CHUNKPLACE {
+
+  struct FDE_CHUNKPLACE {
     int32_t nChunkIndex;
     int32_t nCharIndex;
   };
-  typedef _FDE_CHUNKPLACE FDE_CHUNKPLACE;
-  typedef _FDE_CHUNKPLACE* FDE_LPCHUNKPLACE;
 
- public:
-  CFDE_TxtEdtBuf(int32_t nDefChunkSize = FDE_DEFCHUNKLENGTH);
-
-  virtual void Release();
-  virtual FX_BOOL SetChunkSize(int32_t nChunkSize);
-  virtual int32_t GetChunkSize() const;
-  virtual int32_t GetTextLength() const;
-  virtual void SetText(const CFX_WideString& wsText);
-  virtual void GetText(CFX_WideString& wsText) const;
-  virtual FX_WCHAR GetCharByIndex(int32_t nIndex) const;
-  virtual void GetRange(CFX_WideString& wsText,
-                        int32_t nBegine,
-                        int32_t nCount = -1) const;
-
-  virtual void Insert(int32_t nPos,
-                      const FX_WCHAR* lpText,
-                      int32_t nLength = 1);
-  virtual void Delete(int32_t nIndex, int32_t nLength = 1);
-  virtual void Clear(FX_BOOL bRelease = TRUE);
-
-  virtual FX_BOOL Optimize(IFX_Pause* pPause = NULL);
-
- protected:
-  virtual ~CFDE_TxtEdtBuf();
-
- private:
   void ResetChunkBuffer(int32_t nDefChunkCount, int32_t nChunkSize);
   int32_t CP2Index(const FDE_CHUNKPLACE& cp) const;
   void Index2CP(int32_t nIndex, FDE_CHUNKPLACE& cp) const;

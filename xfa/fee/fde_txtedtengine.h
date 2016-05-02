@@ -8,7 +8,7 @@
 #define XFA_FEE_FDE_TXTEDTENGINE_H_
 
 #include "core/fxcrt/include/fx_string.h"
-#include "xfa/fee/ifde_txtedtbuf.h"
+#include "xfa/fee/fde_txtedtbuf.h"
 #include "xfa/fee/ifde_txtedtengine.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
@@ -28,83 +28,64 @@ class IFDE_TxtEdtDoRecord {
   virtual void Serialize(CFX_ByteString& bsDoRecord) const = 0;
 };
 
-class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
-  friend class CFDE_TxtEdtDoRecord_Insert;
-  friend class CFDE_TxtEdtDoRecord_DeleteRange;
-  friend class CFDE_TxtEdtPage;
-  struct _FDE_TXTEDTSELRANGE {
-    int32_t nStart;
-    int32_t nCount;
-  };
-  typedef _FDE_TXTEDTSELRANGE FDE_TXTEDTSELRANGE;
-  typedef _FDE_TXTEDTSELRANGE* FDE_LPTXTEDTSELRANGE;
-  struct _FDE_TXTEDTPARAGPOS {
-    int32_t nParagIndex;
-    int32_t nCharIndex;
-  };
-  typedef _FDE_TXTEDTPARAGPOS FDE_TXTEDTPARAGPOS;
-  typedef _FDE_TXTEDTPARAGPOS* FDE_LPTXTEDTPARAGPOS;
-
+class CFDE_TxtEdtEngine {
  public:
   CFDE_TxtEdtEngine();
-  virtual void Release();
 
-  virtual void SetEditParams(const FDE_TXTEDTPARAMS& params);
-  virtual const FDE_TXTEDTPARAMS* GetEditParams() const;
+  void Release();
 
-  virtual int32_t CountPages() const;
-  virtual IFDE_TxtEdtPage* GetPage(int32_t nIndex);
+  void SetEditParams(const FDE_TXTEDTPARAMS& params);
+  FDE_TXTEDTPARAMS* GetEditParams();
 
-  virtual FX_BOOL SetBufChunkSize(int32_t nChunkSize);
-  virtual void SetTextByStream(IFX_Stream* pStream);
-  virtual void SetText(const CFX_WideString& wsText);
-  virtual int32_t GetTextLength() const;
-  virtual void GetText(CFX_WideString& wsText,
-                       int32_t nStart,
-                       int32_t nCount = -1);
-  virtual void ClearText();
+  int32_t CountPages() const;
+  IFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
-  virtual int32_t GetCaretRect(CFX_RectF& rtCaret) const;
-  virtual int32_t GetCaretPos() const;
-  virtual int32_t SetCaretPos(int32_t nIndex, FX_BOOL bBefore);
-  virtual int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
-                               FX_BOOL bShift = FALSE,
-                               FX_BOOL bCtrl = FALSE);
-  virtual void Lock();
-  virtual void Unlock();
-  virtual FX_BOOL IsLocked() const;
+  FX_BOOL SetBufChunkSize(int32_t nChunkSize);
+  void SetTextByStream(IFX_Stream* pStream);
+  void SetText(const CFX_WideString& wsText);
+  int32_t GetTextLength() const;
+  void GetText(CFX_WideString& wsText, int32_t nStart, int32_t nCount = -1);
+  void ClearText();
 
-  virtual int32_t Insert(int32_t nStart,
-                         const FX_WCHAR* lpText,
-                         int32_t nLength);
-  virtual int32_t Delete(int32_t nStart, FX_BOOL bBackspace = FALSE);
-  virtual int32_t DeleteRange(int32_t nStart, int32_t nCount = -1);
-  virtual int32_t Replace(int32_t nStart,
-                          int32_t nLength,
-                          const CFX_WideString& wsReplace);
+  int32_t GetCaretRect(CFX_RectF& rtCaret) const;
+  int32_t GetCaretPos() const;
+  int32_t SetCaretPos(int32_t nIndex, FX_BOOL bBefore);
+  int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
+                       FX_BOOL bShift = FALSE,
+                       FX_BOOL bCtrl = FALSE);
+  void Lock();
+  void Unlock();
+  FX_BOOL IsLocked() const;
 
-  virtual void SetLimit(int32_t nLimit);
-  virtual void SetAliasChar(FX_WCHAR wcAlias);
+  int32_t Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
+  int32_t Delete(int32_t nStart, FX_BOOL bBackspace = FALSE);
+  int32_t DeleteRange(int32_t nStart, int32_t nCount = -1);
+  int32_t Replace(int32_t nStart,
+                  int32_t nLength,
+                  const CFX_WideString& wsReplace);
+
+  void SetLimit(int32_t nLimit);
+  void SetAliasChar(FX_WCHAR wcAlias);
 
   void RemoveSelRange(int32_t nStart, int32_t nCount = -1);
 
-  virtual void AddSelRange(int32_t nStart, int32_t nCount = -1);
-  virtual int32_t CountSelRanges();
-  virtual int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
-  virtual void ClearSelection();
+  void AddSelRange(int32_t nStart, int32_t nCount = -1);
+  int32_t CountSelRanges();
+  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
+  void ClearSelection();
 
-  virtual FX_BOOL Redo(const CFX_ByteStringC& bsRedo);
-  virtual FX_BOOL Undo(const CFX_ByteStringC& bsUndo);
+  FX_BOOL Redo(const CFX_ByteStringC& bsRedo);
+  FX_BOOL Undo(const CFX_ByteStringC& bsUndo);
 
-  virtual int32_t StartLayout();
-  virtual int32_t DoLayout(IFX_Pause* pPause);
-  virtual void EndLayout();
+  int32_t StartLayout();
+  int32_t DoLayout(IFX_Pause* pPause);
+  void EndLayout();
 
-  virtual FX_BOOL Optimize(IFX_Pause* pPause = NULL);
-  virtual int32_t CountParags() const;
-  virtual IFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const;
-  virtual IFX_CharIter* CreateCharIter();
-  IFDE_TxtEdtBuf* GetTextBuf() const;
+  FX_BOOL Optimize(IFX_Pause* pPause = NULL);
+  int32_t CountParags() const;
+  CFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const;
+  IFX_CharIter* CreateCharIter();
+  CFDE_TxtEdtBuf* GetTextBuf() const;
   int32_t GetTextBufLength() const;
   CFX_TxtBreak* GetTextBreak() const;
   int32_t GetLineCount() const;
@@ -117,9 +98,23 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   FX_WCHAR GetAliasChar() const { return m_wcAliasChar; }
 
  protected:
-  virtual ~CFDE_TxtEdtEngine();
+  ~CFDE_TxtEdtEngine();
 
  private:
+  friend class CFDE_TxtEdtDoRecord_Insert;
+  friend class CFDE_TxtEdtDoRecord_DeleteRange;
+  friend class CFDE_TxtEdtPage;
+
+  struct FDE_TXTEDTSELRANGE {
+    int32_t nStart;
+    int32_t nCount;
+  };
+
+  struct FDE_TXTEDTPARAGPOS {
+    int32_t nParagIndex;
+    int32_t nCharIndex;
+  };
+
   void Inner_Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
   void GetPreDeleteText(CFX_WideString& wsText,
                         int32_t nIndex,
@@ -173,12 +168,12 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   FX_BOOL IsSelect();
   void DeleteSelect();
 
-  IFDE_TxtEdtBuf* m_pTxtBuf;
+  CFDE_TxtEdtBuf* m_pTxtBuf;
   CFX_TxtBreak* m_pTextBreak;
   FDE_TXTEDTPARAMS m_Param;
   CFX_ArrayTemplate<IFDE_TxtEdtPage*> m_PagePtrArray;
   CFX_ArrayTemplate<CFDE_TxtEdtParag*> m_ParagPtrArray;
-  CFX_ArrayTemplate<FDE_LPTXTEDTSELRANGE> m_SelRangePtrArr;
+  CFX_ArrayTemplate<FDE_TXTEDTSELRANGE*> m_SelRangePtrArr;
   int32_t m_nPageLineCount;
   int32_t m_nLineCount;
   int32_t m_nAnchorPos;

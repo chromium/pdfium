@@ -8,8 +8,13 @@
 
 #include <algorithm>
 
-#include "xfa/fee/ifde_txtedtbuf.h"
 #include "xfa/fee/ifde_txtedtengine.h"
+
+namespace {
+
+const int kDefaultChunkSize = 1024;
+
+}  // namespace
 
 #define FDE_DEFCHUNKCOUNT 2
 #define FDE_TXTEDT_FORMATBLOCK_BGN 0xFFF9
@@ -34,7 +39,7 @@ FX_BOOL CFDE_TxtEdtBufIter::Next(FX_BOOL bPrev) {
       return FALSE;
     }
     ASSERT(m_nCurChunk < m_pBuf->m_Chunks.GetSize());
-    CFDE_TxtEdtBuf::FDE_LPCHUNKHEADER lpChunk = NULL;
+    CFDE_TxtEdtBuf::FDE_CHUNKHEADER* lpChunk = nullptr;
     if (m_nCurIndex > 0) {
       m_nCurIndex--;
     } else {
@@ -55,14 +60,14 @@ FX_BOOL CFDE_TxtEdtBufIter::Next(FX_BOOL bPrev) {
       return FALSE;
     }
     ASSERT(m_nCurChunk < m_pBuf->m_Chunks.GetSize());
-    CFDE_TxtEdtBuf::FDE_LPCHUNKHEADER lpChunk = m_pBuf->m_Chunks[m_nCurChunk];
+    CFDE_TxtEdtBuf::FDE_CHUNKHEADER* lpChunk = m_pBuf->m_Chunks[m_nCurChunk];
     if (lpChunk->nUsed != (m_nCurIndex + 1)) {
       m_nCurIndex++;
     } else {
       int32_t nEnd = m_pBuf->m_Chunks.GetSize() - 1;
       while (m_nCurChunk < nEnd) {
         m_nCurChunk++;
-        CFDE_TxtEdtBuf::FDE_LPCHUNKHEADER lpChunkTemp =
+        CFDE_TxtEdtBuf::FDE_CHUNKHEADER* lpChunkTemp =
             m_pBuf->m_Chunks[m_nCurChunk];
         if (lpChunkTemp->nUsed > 0) {
           m_nCurIndex = 0;
@@ -103,8 +108,9 @@ IFX_CharIter* CFDE_TxtEdtBufIter::Clone() {
   pIter->m_Alias = m_Alias;
   return pIter;
 }
-CFDE_TxtEdtBuf::CFDE_TxtEdtBuf(int32_t nDefChunkSize)
-    : m_nChunkSize(nDefChunkSize),
+
+CFDE_TxtEdtBuf::CFDE_TxtEdtBuf()
+    : m_nChunkSize(kDefaultChunkSize),
       m_nTotal(0),
       m_bChanged(FALSE),
       m_pAllocator(NULL) {
@@ -138,8 +144,9 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
       ((nTextLength - 1) / m_nChunkSize + 1) - m_Chunks.GetSize();
   int32_t i = 0;
   for (i = 0; i < nNeedCount; i++) {
-    FDE_LPCHUNKHEADER lpChunk = (FDE_LPCHUNKHEADER)m_pAllocator->Alloc(
-        sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR));
+    FDE_CHUNKHEADER* lpChunk =
+        static_cast<FDE_CHUNKHEADER*>(m_pAllocator->Alloc(
+            sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR)));
     lpChunk->nUsed = 0;
     m_Chunks.Add(lpChunk);
   }
@@ -151,7 +158,7 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
     if (nLeave < nCopyedLength) {
       nCopyedLength = nLeave;
     }
-    FDE_LPCHUNKHEADER lpChunk = m_Chunks[i];
+    FDE_CHUNKHEADER* lpChunk = m_Chunks[i];
     FXSYS_memcpy(lpChunk->wChars, lpSrcBuf, nCopyedLength * sizeof(FX_WCHAR));
     nLeave -= nCopyedLength;
     lpSrcBuf += nCopyedLength;
@@ -165,7 +172,7 @@ void CFDE_TxtEdtBuf::GetText(CFX_WideString& wsText) const {
 }
 FX_WCHAR CFDE_TxtEdtBuf::GetCharByIndex(int32_t nIndex) const {
   ASSERT(nIndex >= 0 && nIndex < GetTextLength());
-  FDE_LPCHUNKHEADER pChunkHeader = NULL;
+  FDE_CHUNKHEADER* pChunkHeader = nullptr;
   int32_t nTotal = 0;
   int32_t nCount = m_Chunks.GetSize();
   int32_t i = 0;
@@ -188,7 +195,7 @@ void CFDE_TxtEdtBuf::GetRange(CFX_WideString& wsText,
   int32_t nCount = m_Chunks.GetSize();
   FX_WCHAR* lpDstBuf = wsText.GetBuffer(nLength);
   int32_t nChunkIndex = cp.nChunkIndex;
-  FDE_LPCHUNKHEADER lpChunkHeader = m_Chunks[nChunkIndex];
+  FDE_CHUNKHEADER* lpChunkHeader = m_Chunks[nChunkIndex];
   int32_t nCopyLength = lpChunkHeader->nUsed - cp.nCharIndex;
   FX_WCHAR* lpSrcBuf = lpChunkHeader->wChars + cp.nCharIndex;
   while (nLeave > 0) {
@@ -216,9 +223,10 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
   Index2CP(nPos, cp);
   int32_t nLengthTemp = nLength;
   if (cp.nCharIndex != 0) {
-    FDE_LPCHUNKHEADER lpNewChunk = (FDE_LPCHUNKHEADER)m_pAllocator->Alloc(
-        sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR));
-    FDE_LPCHUNKHEADER lpChunk = m_Chunks[cp.nChunkIndex];
+    FDE_CHUNKHEADER* lpNewChunk =
+        static_cast<FDE_CHUNKHEADER*>(m_pAllocator->Alloc(
+            sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR)));
+    FDE_CHUNKHEADER* lpChunk = m_Chunks[cp.nChunkIndex];
     int32_t nCopy = lpChunk->nUsed - cp.nCharIndex;
     FXSYS_memcpy(lpNewChunk->wChars, lpChunk->wChars + cp.nCharIndex,
                  nCopy * sizeof(FX_WCHAR));
@@ -229,7 +237,7 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     cp.nCharIndex = 0;
   }
   if (cp.nChunkIndex != 0) {
-    FDE_LPCHUNKHEADER lpChunk = m_Chunks[cp.nChunkIndex - 1];
+    FDE_CHUNKHEADER* lpChunk = m_Chunks[cp.nChunkIndex - 1];
     if (lpChunk->nUsed != m_nChunkSize) {
       cp.nChunkIndex--;
       int32_t nFree = m_nChunkSize - lpChunk->nUsed;
@@ -243,8 +251,9 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     }
   }
   while (nLengthTemp > 0) {
-    FDE_LPCHUNKHEADER lpChunk = (FDE_LPCHUNKHEADER)m_pAllocator->Alloc(
-        sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR));
+    FDE_CHUNKHEADER* lpChunk =
+        static_cast<FDE_CHUNKHEADER*>(m_pAllocator->Alloc(
+            sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR)));
     ASSERT(lpChunk);
     int32_t nCopy = std::min(nLengthTemp, m_nChunkSize);
     FXSYS_memcpy(lpChunk->wChars, lpText, nCopy * sizeof(FX_WCHAR));
@@ -262,7 +271,7 @@ void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
   FDE_CHUNKPLACE cpEnd;
   Index2CP(nIndex + nLength - 1, cpEnd);
   m_nTotal -= nLength;
-  FDE_LPCHUNKHEADER lpChunk = m_Chunks[cpEnd.nChunkIndex];
+  FDE_CHUNKHEADER* lpChunk = m_Chunks[cpEnd.nChunkIndex];
   int32_t nFirstPart = cpEnd.nCharIndex + 1;
   int32_t nMovePart = lpChunk->nUsed - nFirstPart;
   if (nMovePart != 0) {
@@ -316,7 +325,7 @@ FX_BOOL CFDE_TxtEdtBuf::Optimize(IFX_Pause* pPause) {
   }
   int32_t i = 0;
   for (; i < nCount; i++) {
-    FDE_LPCHUNKHEADER lpChunk = m_Chunks[i];
+    FDE_CHUNKHEADER* lpChunk = m_Chunks[i];
     if (lpChunk->nUsed == 0) {
       m_pAllocator->Free(lpChunk);
       m_Chunks.RemoveAt(i);
@@ -324,11 +333,11 @@ FX_BOOL CFDE_TxtEdtBuf::Optimize(IFX_Pause* pPause) {
       --nCount;
     }
   }
-  if (pPause != NULL && pPause->NeedToPauseNow()) {
+  if (pPause && pPause->NeedToPauseNow())
     return FALSE;
-  }
-  FDE_LPCHUNKHEADER lpPreChunk = m_Chunks[0];
-  FDE_LPCHUNKHEADER lpCurChunk = NULL;
+
+  FDE_CHUNKHEADER* lpPreChunk = m_Chunks[0];
+  FDE_CHUNKHEADER* lpCurChunk = nullptr;
   for (i = 1; i < nCount; i++) {
     lpCurChunk = m_Chunks[i];
     if (lpPreChunk->nUsed + lpCurChunk->nUsed <= m_nChunkSize) {
@@ -364,8 +373,8 @@ void CFDE_TxtEdtBuf::ResetChunkBuffer(int32_t nDefChunkCount,
   m_pAllocator =
       FX_CreateAllocator(FX_ALLOCTYPE_Fixed, nDefChunkCount, nChunkLength);
   ASSERT(m_pAllocator);
-  FDE_LPCHUNKHEADER lpChunkHeader =
-      (FDE_LPCHUNKHEADER)m_pAllocator->Alloc(nChunkLength);
+  FDE_CHUNKHEADER* lpChunkHeader =
+      static_cast<FDE_CHUNKHEADER*>(m_pAllocator->Alloc(nChunkLength));
   ASSERT(lpChunkHeader);
   lpChunkHeader->nUsed = 0;
   m_Chunks.Add(lpChunkHeader);

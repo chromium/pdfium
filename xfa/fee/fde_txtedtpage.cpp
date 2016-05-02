@@ -12,13 +12,12 @@
 #include "xfa/fee/fde_txtedtengine.h"
 #include "xfa/fee/fde_txtedtparag.h"
 #include "xfa/fee/fx_wordbreak/fx_wordbreak.h"
-#include "xfa/fee/ifde_txtedtbuf.h"
 #include "xfa/fee/ifde_txtedtengine.h"
 #include "xfa/fee/ifde_txtedtpage.h"
 
 #define FDE_TXTEDT_TOLERANCE 0.1f
 
-IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(IFDE_TxtEdtEngine* pEngine,
+IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(CFDE_TxtEdtEngine* pEngine,
                                          int32_t nIndex) {
   return (IFDE_TxtEdtPage*)new CFDE_TxtEdtPage(pEngine, nIndex);
 }
@@ -122,7 +121,7 @@ int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText,
   tr.wLineBreakChar = pTextParams->wLineBreakChar;
   return pEngine->GetTextBreak()->GetCharRects(&tr, rtArray, bBBox);
 }
-CFDE_TxtEdtPage::CFDE_TxtEdtPage(IFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
+CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
     : m_pIter(nullptr),
       m_pTextSet(nullptr),
       m_pBgnParag(nullptr),
@@ -151,8 +150,8 @@ CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {
 void CFDE_TxtEdtPage::Release() {
   delete this;
 }
-IFDE_TxtEdtEngine* CFDE_TxtEdtPage::GetEngine() const {
-  return (IFDE_TxtEdtEngine*)m_pEditEngine;
+CFDE_TxtEdtEngine* CFDE_TxtEdtPage::GetEngine() const {
+  return m_pEditEngine;
 }
 FDE_VISUALOBJTYPE CFDE_TxtEdtPage::GetType() {
   return FDE_VISUALOBJ_Text;
@@ -349,7 +348,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   if (m_nRefCount < 0) {
     return -1;
   }
-  IFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
+  CFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
   FX_BOOL bBefore;
   int32_t nIndex = GetCharIndex(fPoint, bBefore);
   if (nIndex == m_pEditEngine->GetTextBufLength()) {
@@ -375,7 +374,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     m_nRefCount++;
     return m_nRefCount;
   }
-  IFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
+  CFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParams = m_pEditEngine->GetEditParams();
   if (m_pIter != NULL) {
     m_pIter->Release();

@@ -11,14 +11,15 @@
 #include "xfa/fde/fde_visualset.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
-class IFDE_TxtEdtEngine;
+class CFDE_TxtEdtEngine;
+
 class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
  public:
-  static IFDE_TxtEdtPage* Create(IFDE_TxtEdtEngine* pEngine, int32_t nIndex);
+  static IFDE_TxtEdtPage* Create(CFDE_TxtEdtEngine* pEngine, int32_t nIndex);
 
   virtual void Release() = 0;
 
-  virtual IFDE_TxtEdtEngine* GetEngine() const = 0;
+  virtual CFDE_TxtEdtEngine* GetEngine() const = 0;
   virtual int32_t GetCharRect(int32_t nIndex,
                               CFX_RectF& rect,
                               FX_BOOL bBBox = FALSE) const = 0;
