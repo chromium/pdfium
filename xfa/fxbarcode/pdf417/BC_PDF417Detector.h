@@ -7,7 +7,8 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417DETECTOR_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417DETECTOR_H_
 
-class CBC_PDF417DetectorResult;
+#include "xfa/fxbarcode/pdf417/BC_PDF417DetectorResult.h"
+
 class CBC_BinaryBitmap;
 class CBC_CommonBitMatrix;
 class CBC_CommonBitArray;
@@ -38,21 +39,22 @@ class CBC_Detector {
   static int32_t SKIPPED_ROW_COUNT_MAX;
   static int32_t ROW_STEP;
   static int32_t BARCODE_MIN_HEIGHT;
-  static CFX_PtrArray* detect(FX_BOOL multiple, CBC_CommonBitMatrix* bitMatrix);
-  static CFX_PtrArray* findVertices(CBC_CommonBitMatrix* matrix,
-                                    int32_t startRow,
-                                    int32_t startColumn);
-  static void copyToResult(CFX_PtrArray* result,
-                           CFX_PtrArray* tmpResult,
+  static CBC_ResultPointArrayArray* detect(FX_BOOL multiple,
+                                           CBC_CommonBitMatrix* bitMatrix);
+  static CBC_ResultPointArray* findVertices(CBC_CommonBitMatrix* matrix,
+                                            int32_t startRow,
+                                            int32_t startColumn);
+  static void copyToResult(CBC_ResultPointArray* result,
+                           CBC_ResultPointArray* tmpResult,
                            int32_t* destinationIndexes,
                            int32_t destinationLength);
-  static CFX_PtrArray* findRowsWithPattern(CBC_CommonBitMatrix* matrix,
-                                           int32_t height,
-                                           int32_t width,
-                                           int32_t startRow,
-                                           int32_t startColumn,
-                                           int32_t* pattern,
-                                           int32_t patternLength);
+  static CBC_ResultPointArray* findRowsWithPattern(CBC_CommonBitMatrix* matrix,
+                                                   int32_t height,
+                                                   int32_t width,
+                                                   int32_t startRow,
+                                                   int32_t startColumn,
+                                                   int32_t* pattern,
+                                                   int32_t patternLength);
   static CFX_Int32Array* findGuardPattern(CBC_CommonBitMatrix* matrix,
                                           int32_t column,
                                           int32_t row,

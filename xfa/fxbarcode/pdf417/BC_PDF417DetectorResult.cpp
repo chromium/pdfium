@@ -24,27 +24,25 @@
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417DetectorResult.h"
 
-CBC_PDF417DetectorResult::CBC_PDF417DetectorResult(CBC_CommonBitMatrix* bits,
-                                                   CFX_PtrArray* points) {
-  m_bits = bits;
-  m_points = points;
-}
+CBC_PDF417DetectorResult::CBC_PDF417DetectorResult(
+    CBC_CommonBitMatrix* bits,
+    CBC_ResultPointArrayArray* points)
+    : m_bits(bits), m_points(points) {}
+
 CBC_PDF417DetectorResult::~CBC_PDF417DetectorResult() {
   for (int32_t i = 0; i < m_points->GetSize(); i++) {
-    CFX_PtrArray* temp = (CFX_PtrArray*)m_points->GetAt(i);
-    for (int32_t j = 0; j < temp->GetSize(); j++) {
-      delete (CBC_ResultPoint*)temp->GetAt(j);
-    }
-    temp->RemoveAll();
+    CBC_ResultPointArray* temp = m_points->GetAt(i);
+    for (int32_t j = 0; j < temp->GetSize(); j++)
+      delete temp->GetAt(j);
+
     delete temp;
   }
-  m_points->RemoveAll();
-  delete m_points;
 }
-CBC_CommonBitMatrix* CBC_PDF417DetectorResult::getBits() {
+
+CBC_CommonBitMatrix* CBC_PDF417DetectorResult::getBits() const {
   return m_bits;
 }
 
-CFX_PtrArray* CBC_PDF417DetectorResult::getPoints() {
-  return m_points;
+CBC_ResultPointArrayArray* CBC_PDF417DetectorResult::getPoints() const {
+  return m_points.get();
 }

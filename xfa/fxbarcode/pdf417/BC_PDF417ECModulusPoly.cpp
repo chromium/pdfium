@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <memory>
+
 #include "xfa/fxbarcode/pdf417/BC_PDF417Common.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417ECModulusGF.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
@@ -212,19 +214,20 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(int32_t scalar,
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return modulusPoly;
 }
+
 CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiplyByMonomial(
     int32_t degree,
     int32_t coefficient,
     int32_t& e) {
   if (degree < 0) {
     e = BCExceptionIllegalArgument;
-    return NULL;
+    return nullptr;
   }
-  CBC_PDF417ECModulusPoly* modulusPoly = NULL;
+  CBC_PDF417ECModulusPoly* modulusPoly = nullptr;
   if (coefficient == 0) {
     modulusPoly = new CBC_PDF417ECModulusPoly(
         m_field->getZero()->m_field, m_field->getZero()->m_coefficients, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   int32_t size = m_coefficients.GetSize();
@@ -234,74 +237,62 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiplyByMonomial(
     product[i] = m_field->multiply(m_coefficients[i], coefficient);
   }
   modulusPoly = new CBC_PDF417ECModulusPoly(m_field, product, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return modulusPoly;
 }
-CFX_PtrArray* CBC_PDF417ECModulusPoly::divide(CBC_PDF417ECModulusPoly* other,
-                                              int32_t& e) {
+
+CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>* CBC_PDF417ECModulusPoly::divide(
+    CBC_PDF417ECModulusPoly* other,
+    int32_t& e) {
   if (other->isZero()) {
     e = BCExceptionDivideByZero;
-    return NULL;
+    return nullptr;
   }
-  CBC_PDF417ECModulusPoly* quotient = new CBC_PDF417ECModulusPoly(
-      m_field->getZero()->m_field, m_field->getZero()->m_coefficients, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_PDF417ECModulusPoly* remainder =
-      new CBC_PDF417ECModulusPoly(m_field, m_coefficients, e);
-  if (e != BCExceptionNO) {
-    delete quotient;
-    return NULL;
-  }
+  std::unique_ptr<CBC_PDF417ECModulusPoly> quotient(new CBC_PDF417ECModulusPoly(
+      m_field->getZero()->m_field, m_field->getZero()->m_coefficients, e));
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  std::unique_ptr<CBC_PDF417ECModulusPoly> remainder(
+      new CBC_PDF417ECModulusPoly(m_field, m_coefficients, e));
+  if (e != BCExceptionNO)
+    return nullptr;
+
   int32_t denominatorLeadingTerm = other->getCoefficient(other->getDegree());
   int32_t inverseDenominatorLeadingTerm =
       m_field->inverse(denominatorLeadingTerm, e);
-  if (e != BCExceptionNO) {
-    delete quotient;
-    delete remainder;
-    return NULL;
-  }
+  if (e != BCExceptionNO)
+    return nullptr;
+
   while (remainder->getDegree() >= other->getDegree() && !remainder->isZero()) {
     int32_t degreeDifference = remainder->getDegree() - other->getDegree();
     int32_t scale =
         m_field->multiply(remainder->getCoefficient(remainder->getDegree()),
                           inverseDenominatorLeadingTerm);
-    CBC_PDF417ECModulusPoly* term =
-        other->multiplyByMonomial(degreeDifference, scale, e);
-    if (e != BCExceptionNO) {
-      delete quotient;
-      delete remainder;
-      return NULL;
-    }
-    CBC_PDF417ECModulusPoly* iterationQuotient =
-        m_field->buildMonomial(degreeDifference, scale, e);
-    if (e != BCExceptionNO) {
-      delete quotient;
-      delete remainder;
-      delete term;
-      return NULL;
-    }
-    CBC_PDF417ECModulusPoly* temp = quotient;
-    quotient = temp->add(iterationQuotient, e);
-    delete iterationQuotient;
-    delete temp;
-    if (e != BCExceptionNO) {
-      delete remainder;
-      return NULL;
-    }
-    temp = remainder;
-    remainder = temp->subtract(term, e);
-    delete term;
-    delete temp;
-    if (e != BCExceptionNO) {
-      delete quotient;
-      return NULL;
-    }
+    std::unique_ptr<CBC_PDF417ECModulusPoly> term(
+        other->multiplyByMonomial(degreeDifference, scale, e));
+    if (e != BCExceptionNO)
+      return nullptr;
+
+    std::unique_ptr<CBC_PDF417ECModulusPoly> iterationQuotient(
+        m_field->buildMonomial(degreeDifference, scale, e));
+    if (e != BCExceptionNO)
+      return nullptr;
+
+    quotient.reset(quotient->add(iterationQuotient.get(), e));
+    if (e != BCExceptionNO)
+      return nullptr;
+
+    remainder.reset(remainder->subtract(term.get(), e));
+    if (e != BCExceptionNO)
+      return nullptr;
   }
-  CFX_PtrArray* modulusPoly = new CFX_PtrArray;
-  modulusPoly->Add(quotient);
-  modulusPoly->Add(remainder);
+
+  CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>* modulusPoly =
+      new CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>();
+  modulusPoly->Add(quotient.release());
+  modulusPoly->Add(remainder.release());
   return modulusPoly;
 }
+
 CFX_ByteString CBC_PDF417ECModulusPoly::toString() {
   CFX_ByteString result;
   for (int32_t degree = getDegree(); degree >= 0; degree--) {

@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_BC_RESULTPOINT_H_
 #define XFA_FXBARCODE_BC_RESULTPOINT_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CBC_ResultPoint {
  public:
@@ -21,5 +21,8 @@ class CBC_ResultPoint {
   FX_FLOAT m_x;
   FX_FLOAT m_y;
 };
+
+using CBC_ResultPointArray = CFX_ArrayTemplate<CBC_ResultPoint*>;
+using CBC_ResultPointArrayArray = CFX_ArrayTemplate<CBC_ResultPointArray*>;
 
 #endif  // XFA_FXBARCODE_BC_RESULTPOINT_H_

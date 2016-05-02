@@ -9,22 +9,25 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 
-class CBC_QRCoderVersion;
 class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRDataBlock {
- private:
-  int32_t m_numDataCodewords;
-  CFX_ByteArray* m_codewords;
-  CBC_QRDataBlock(int32_t numDataCodewords, CFX_ByteArray* codewords);
+class CBC_QRCoderVersion;
 
+class CBC_QRDataBlock final {
  public:
-  virtual ~CBC_QRDataBlock();
+  ~CBC_QRDataBlock();
   int32_t GetNumDataCodewords();
   CFX_ByteArray* GetCodewords();
-  static CFX_PtrArray* GetDataBlocks(CFX_ByteArray* rawCodewords,
-                                     CBC_QRCoderVersion* version,
-                                     CBC_QRCoderErrorCorrectionLevel* ecLevel,
-                                     int32_t& e);
+  static CFX_ArrayTemplate<CBC_QRDataBlock*>* GetDataBlocks(
+      CFX_ByteArray* rawCodewords,
+      CBC_QRCoderVersion* version,
+      CBC_QRCoderErrorCorrectionLevel* ecLevel,
+      int32_t& e);
+
+ private:
+  CBC_QRDataBlock(int32_t numDataCodewords, CFX_ByteArray* codewords);
+
+  int32_t m_numDataCodewords;
+  CFX_ByteArray* m_codewords;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRDATABLOCK_H_

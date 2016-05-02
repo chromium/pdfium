@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <memory>
+
 #include "xfa/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/fxbarcode/BC_ResultPoint.h"
 #include "xfa/fxbarcode/common/BC_CommonBitArray.h"
@@ -49,13 +51,14 @@ int32_t CBC_Detector::BARCODE_MIN_HEIGHT = 10;
 
 CBC_Detector::CBC_Detector() {}
 CBC_Detector::~CBC_Detector() {}
+
 CBC_PDF417DetectorResult* CBC_Detector::detect(CBC_BinaryBitmap* image,
                                                int32_t hints,
                                                FX_BOOL multiple,
                                                int32_t& e) {
   CBC_CommonBitMatrix* bitMatrix = image->GetBlackMatrix(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CFX_PtrArray* barcodeCoordinates = detect(multiple, bitMatrix);
+  CBC_ResultPointArrayArray* barcodeCoordinates = detect(multiple, bitMatrix);
   if (barcodeCoordinates->GetSize() == 0) {
     rotate180(bitMatrix);
     barcodeCoordinates = detect(multiple, bitMatrix);
@@ -64,9 +67,7 @@ CBC_PDF417DetectorResult* CBC_Detector::detect(CBC_BinaryBitmap* image,
     e = BCExceptionUnSupportedBarcode;
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
-  CBC_PDF417DetectorResult* detectorResult =
-      new CBC_PDF417DetectorResult(bitMatrix, barcodeCoordinates);
-  return detectorResult;
+  return new CBC_PDF417DetectorResult(bitMatrix, barcodeCoordinates);
 }
 void CBC_Detector::rotate180(CBC_CommonBitMatrix* bitMatrix) {
   int32_t width = bitMatrix->GetWidth();
@@ -104,14 +105,16 @@ CBC_CommonBitArray* CBC_Detector::mirror(CBC_CommonBitArray* input,
   }
   return array;
 }
-CFX_PtrArray* CBC_Detector::detect(FX_BOOL multiple,
-                                   CBC_CommonBitMatrix* bitMatrix) {
-  CFX_PtrArray* barcodeCoordinates = new CFX_PtrArray;
+
+CBC_ResultPointArrayArray* CBC_Detector::detect(
+    FX_BOOL multiple,
+    CBC_CommonBitMatrix* bitMatrix) {
+  CBC_ResultPointArrayArray* barcodeCoordinates = new CBC_ResultPointArrayArray;
   int32_t row = 0;
   int32_t column = 0;
   FX_BOOL foundBarcodeInRow = FALSE;
   while (row < bitMatrix->GetHeight()) {
-    CFX_PtrArray* vertices = findVertices(bitMatrix, row, column);
+    CBC_ResultPointArray* vertices = findVertices(bitMatrix, row, column);
     if (vertices->GetAt(0) == NULL && vertices->GetAt(3) == NULL) {
       if (!foundBarcodeInRow) {
         delete vertices;
@@ -120,13 +123,12 @@ CFX_PtrArray* CBC_Detector::detect(FX_BOOL multiple,
       foundBarcodeInRow = FALSE;
       column = 0;
       for (int32_t i = 0; i < barcodeCoordinates->GetSize(); i++) {
-        CFX_PtrArray* barcodeCoordinate =
-            (CFX_PtrArray*)barcodeCoordinates->GetAt(i);
+        CBC_ResultPointArray* barcodeCoordinate = barcodeCoordinates->GetAt(i);
         if (barcodeCoordinate->GetAt(1)) {
-          row = row > ((CBC_ResultPoint*)barcodeCoordinate->GetAt(1))->GetY();
+          row = row > barcodeCoordinate->GetAt(1)->GetY();
         }
         if (barcodeCoordinate->GetAt(3)) {
-          row = row > ((CBC_ResultPoint*)barcodeCoordinate->GetAt(3))->GetY();
+          row = row > barcodeCoordinate->GetAt(3)->GetY();
         }
       }
       row += ROW_STEP;
@@ -139,59 +141,58 @@ CFX_PtrArray* CBC_Detector::detect(FX_BOOL multiple,
       break;
     }
     if (vertices->GetAt(2)) {
-      column = (int32_t)((CBC_ResultPoint*)vertices->GetAt(2))->GetX();
-      row = (int32_t)((CBC_ResultPoint*)vertices->GetAt(2))->GetY();
+      column = (int32_t)vertices->GetAt(2)->GetX();
+      row = (int32_t)vertices->GetAt(2)->GetY();
     } else {
-      column = (int32_t)((CBC_ResultPoint*)vertices->GetAt(4))->GetX();
-      row = (int32_t)((CBC_ResultPoint*)vertices->GetAt(4))->GetY();
+      column = (int32_t)vertices->GetAt(4)->GetX();
+      row = (int32_t)vertices->GetAt(4)->GetY();
     }
   }
   return barcodeCoordinates;
 }
-CFX_PtrArray* CBC_Detector::findVertices(CBC_CommonBitMatrix* matrix,
-                                         int32_t startRow,
-                                         int32_t startColumn) {
+
+CBC_ResultPointArray* CBC_Detector::findVertices(CBC_CommonBitMatrix* matrix,
+                                                 int32_t startRow,
+                                                 int32_t startColumn) {
   int32_t height = matrix->GetHeight();
   int32_t width = matrix->GetWidth();
-  CFX_PtrArray* result = new CFX_PtrArray;
+  CBC_ResultPointArray* result = new CBC_ResultPointArray;
   result->SetSize(8);
-  CFX_PtrArray* startptr = findRowsWithPattern(
-      matrix, height, width, startRow, startColumn, START_PATTERN,
-      sizeof(START_PATTERN) / sizeof(START_PATTERN[0]));
-  copyToResult(
-      result, startptr, INDEXES_START_PATTERN,
-      sizeof(INDEXES_START_PATTERN) / sizeof(INDEXES_START_PATTERN[0]));
-  startptr->RemoveAll();
-  delete startptr;
+  std::unique_ptr<CBC_ResultPointArray> startptr(
+      findRowsWithPattern(matrix, height, width, startRow, startColumn,
+                          START_PATTERN, FX_ArraySize(START_PATTERN)));
+  copyToResult(result, startptr.get(), INDEXES_START_PATTERN,
+               FX_ArraySize(INDEXES_START_PATTERN));
   if (result->GetAt(4)) {
-    startColumn = (int32_t)((CBC_ResultPoint*)result->GetAt(4))->GetX();
-    startRow = (int32_t)((CBC_ResultPoint*)result->GetAt(4))->GetY();
+    startColumn = (int32_t)result->GetAt(4)->GetX();
+    startRow = (int32_t)result->GetAt(4)->GetY();
   }
-  CFX_PtrArray* stopptr = findRowsWithPattern(
-      matrix, height, width, startRow, startColumn, STOP_PATTERN,
-      sizeof(STOP_PATTERN) / sizeof(STOP_PATTERN[0]));
-  copyToResult(result, stopptr, INDEXES_STOP_PATTERN,
-               sizeof(INDEXES_STOP_PATTERN) / sizeof(INDEXES_STOP_PATTERN[0]));
-  stopptr->RemoveAll();
-  delete stopptr;
+  std::unique_ptr<CBC_ResultPointArray> stopptr(
+      findRowsWithPattern(matrix, height, width, startRow, startColumn,
+                          STOP_PATTERN, FX_ArraySize(STOP_PATTERN)));
+  copyToResult(result, stopptr.get(), INDEXES_STOP_PATTERN,
+               FX_ArraySize(INDEXES_STOP_PATTERN));
   return result;
 }
-void CBC_Detector::copyToResult(CFX_PtrArray* result,
-                                CFX_PtrArray* tmpResult,
+
+void CBC_Detector::copyToResult(CBC_ResultPointArray* result,
+                                CBC_ResultPointArray* tmpResult,
                                 int32_t* destinationIndexes,
                                 int32_t destinationLength) {
   for (int32_t i = 0; i < destinationLength; i++) {
     result->SetAt(destinationIndexes[i], tmpResult->GetAt(i));
   }
 }
-CFX_PtrArray* CBC_Detector::findRowsWithPattern(CBC_CommonBitMatrix* matrix,
-                                                int32_t height,
-                                                int32_t width,
-                                                int32_t startRow,
-                                                int32_t startColumn,
-                                                int32_t* pattern,
-                                                int32_t patternLength) {
-  CFX_PtrArray* result = new CFX_PtrArray;
+
+CBC_ResultPointArray* CBC_Detector::findRowsWithPattern(
+    CBC_CommonBitMatrix* matrix,
+    int32_t height,
+    int32_t width,
+    int32_t startRow,
+    int32_t startColumn,
+    int32_t* pattern,
+    int32_t patternLength) {
+  CBC_ResultPointArray* result = new CBC_ResultPointArray;
   result->SetSize(4);
   FX_BOOL found = FALSE;
   CFX_Int32Array counters;
@@ -226,8 +227,8 @@ CFX_PtrArray* CBC_Detector::findRowsWithPattern(CBC_CommonBitMatrix* matrix,
   if (found) {
     int32_t skippedRowCount = 0;
     CFX_Int32Array previousRowLoc;
-    previousRowLoc.Add((int32_t)((CBC_ResultPoint*)result->GetAt(0))->GetX());
-    previousRowLoc.Add((int32_t)((CBC_ResultPoint*)result->GetAt(1))->GetX());
+    previousRowLoc.Add((int32_t)result->GetAt(0)->GetX());
+    previousRowLoc.Add((int32_t)result->GetAt(1)->GetX());
     for (; stopRow < height; stopRow++) {
       CFX_Int32Array* loc =
           findGuardPattern(matrix, previousRowLoc[0], stopRow, width, FALSE,

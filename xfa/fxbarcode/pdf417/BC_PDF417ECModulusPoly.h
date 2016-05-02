@@ -8,12 +8,13 @@
 #define XFA_FXBARCODE_PDF417_BC_PDF417ECMODULUSPOLY_H_
 
 class CBC_PDF417ECModulusGF;
-class CBC_PDF417ECModulusPoly {
+class CBC_PDF417ECModulusPoly final {
  public:
   CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field,
                           CFX_Int32Array& coefficients,
                           int32_t& e);
-  virtual ~CBC_PDF417ECModulusPoly();
+  ~CBC_PDF417ECModulusPoly();
+
   CFX_Int32Array& getCoefficients();
   CBC_PDF417ECModulusGF* getField();
   int32_t getDegree();
@@ -28,7 +29,9 @@ class CBC_PDF417ECModulusPoly {
   CBC_PDF417ECModulusPoly* multiplyByMonomial(int32_t degree,
                                               int32_t coefficient,
                                               int32_t& e);
-  CFX_PtrArray* divide(CBC_PDF417ECModulusPoly* other, int32_t& e);
+  CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>* divide(
+      CBC_PDF417ECModulusPoly* other,
+      int32_t& e);
   CFX_ByteString toString();
 
  private:

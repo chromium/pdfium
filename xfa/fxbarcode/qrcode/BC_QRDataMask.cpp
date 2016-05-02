@@ -24,43 +24,47 @@
 #include "xfa/fxbarcode/qrcode/BC_QRDataMask.h"
 #include "xfa/fxbarcode/utils.h"
 
-static int32_t N_DATA_MASKS = 0;
-CFX_PtrArray* CBC_QRDataMask::DATA_MASKS = NULL;
+namespace {
+
+int32_t N_DATA_MASKS = 0;
+CFX_ArrayTemplate<CBC_QRDataMask*>* DATA_MASKS = nullptr;
+
+}  // namespace
 
 void CBC_QRDataMask::Initialize() {
-  DATA_MASKS = new CFX_PtrArray();
+  DATA_MASKS = new CFX_ArrayTemplate<CBC_QRDataMask*>();
   N_DATA_MASKS = BuildDataMasks();
 }
+
 void CBC_QRDataMask::Finalize() {
   Destroy();
   delete DATA_MASKS;
+  DATA_MASKS = nullptr;
 }
+
 void CBC_QRDataMask::Destroy() {
-  int32_t i;
-  for (i = 0; i < N_DATA_MASKS; i++) {
-    CBC_QRDataMask* p = (CBC_QRDataMask*)(*DATA_MASKS)[i];
-    if (p) {
-      delete p;
-    }
-  }
+  for (int32_t i = 0; i < N_DATA_MASKS; ++i)
+    delete (*DATA_MASKS)[i];
 }
-void CBC_QRDataMask::UnmaskBitMatirx(CBC_CommonBitMatrix* bits,
+
+void CBC_QRDataMask::UnmaskBitMatrix(CBC_CommonBitMatrix* bits,
                                      int32_t dimension) {
   for (int32_t i = 0; i < dimension; i++) {
     for (int32_t j = 0; j < dimension; j++) {
-      if (IsMasked(i, j)) {
+      if (IsMasked(i, j))
         bits->Flip(j, i);
-      }
     }
   }
 }
+
 CBC_QRDataMask* CBC_QRDataMask::ForReference(int32_t reference, int32_t& e) {
   if (reference < 0 || reference > 7) {
     e = BCExceptionReferenceMustBeBetween0And7;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
-  return (CBC_QRDataMask*)(*DATA_MASKS)[reference];
+  return (*DATA_MASKS)[reference];
 }
+
 class DataMask000 : public CBC_QRDataMask {
  public:
   FX_BOOL IsMasked(int32_t x, int32_t y) { return ((x + y) % 2) == 0; }

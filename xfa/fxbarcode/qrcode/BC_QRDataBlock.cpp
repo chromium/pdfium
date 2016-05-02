@@ -41,7 +41,7 @@ int32_t CBC_QRDataBlock::GetNumDataCodewords() {
 CFX_ByteArray* CBC_QRDataBlock::GetCodewords() {
   return m_codewords;
 }
-CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
+CFX_ArrayTemplate<CBC_QRDataBlock*>* CBC_QRDataBlock::GetDataBlocks(
     CFX_ByteArray* rawCodewords,
     CBC_QRCoderVersion* version,
     CBC_QRCoderErrorCorrectionLevel* ecLevel,
@@ -57,7 +57,8 @@ CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
   for (i = 0; i < ecBlockArray->GetSize(); i++) {
     totalBlocks += (*ecBlockArray)[i]->GetCount();
   }
-  std::unique_ptr<CFX_PtrArray> result(new CFX_PtrArray());
+  std::unique_ptr<CFX_ArrayTemplate<CBC_QRDataBlock*>> result(
+      new CFX_ArrayTemplate<CBC_QRDataBlock*>());
   result->SetSize(totalBlocks);
   int32_t numResultBlocks = 0;
   for (int32_t j = 0; j < ecBlockArray->GetSize(); j++) {
@@ -72,12 +73,11 @@ CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
           new CBC_QRDataBlock(numDataCodewords, bytearray);
     }
   }
-  int32_t shorterBlocksTotalCodewords =
-      ((CBC_QRDataBlock*)(*result)[0])->m_codewords->GetSize();
+  int32_t shorterBlocksTotalCodewords = (*result)[0]->m_codewords->GetSize();
   int32_t longerBlocksStartAt = result->GetSize() - 1;
   while (longerBlocksStartAt >= 0) {
-    int32_t numCodewords = ((CBC_QRDataBlock*)(*result)[longerBlocksStartAt])
-                               ->m_codewords->GetSize();
+    int32_t numCodewords =
+        (*result)[longerBlocksStartAt]->m_codewords->GetSize();
     if (numCodewords == shorterBlocksTotalCodewords) {
       break;
     }
@@ -90,20 +90,18 @@ CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
   int32_t x = 0;
   for (int32_t k = 0; k < shorterBlocksNumDataCodewords; k++) {
     for (x = 0; x < numResultBlocks; x++) {
-      (*(((CBC_QRDataBlock*)(*result)[x])->m_codewords))[k] =
-          (*rawCodewords)[rawCodewordsOffset++];
+      (*((*result)[x]->m_codewords))[k] = (*rawCodewords)[rawCodewordsOffset++];
     }
   }
   for (x = longerBlocksStartAt; x < numResultBlocks; x++) {
-    (*(((CBC_QRDataBlock*)(*result)[x])
-           ->m_codewords))[shorterBlocksNumDataCodewords] =
+    (*((*result)[x]->m_codewords))[shorterBlocksNumDataCodewords] =
         (*rawCodewords)[rawCodewordsOffset++];
   }
-  int32_t max = ((CBC_QRDataBlock*)(*result)[0])->m_codewords->GetSize();
+  int32_t max = (*result)[0]->m_codewords->GetSize();
   for (i = shorterBlocksNumDataCodewords; i < max; i++) {
     for (int32_t y = 0; y < numResultBlocks; y++) {
       int32_t iOffset = y < longerBlocksStartAt ? i : i + 1;
-      (*(((CBC_QRDataBlock*)(*result)[y])->m_codewords))[iOffset] =
+      (*((*result)[y]->m_codewords))[iOffset] =
           (*rawCodewords)[rawCodewordsOffset++];
     }
   }

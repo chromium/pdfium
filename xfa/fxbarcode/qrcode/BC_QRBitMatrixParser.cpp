@@ -142,7 +142,7 @@ CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(int32_t& e) {
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   int32_t dimension = m_bitMatrix->GetDimension(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  dataMask->UnmaskBitMatirx(m_bitMatrix, dimension);
+  dataMask->UnmaskBitMatrix(m_bitMatrix, dimension);
   std::unique_ptr<CBC_CommonBitMatrix> functionPattern(
       version->BuildFunctionPattern(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
