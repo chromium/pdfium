@@ -9,10 +9,10 @@
 
 #include "core/fpdfdoc/cpvt_floatrect.h"
 #include "core/fpdfdoc/cpvt_lineinfo.h"
+#include "core/fpdfdoc/doc_vt.h"
 #include "core/fpdfdoc/include/cpvt_line.h"
 #include "core/fpdfdoc/include/cpvt_wordplace.h"
 #include "core/fpdfdoc/include/cpvt_wordrange.h"
-#include "core/fpdfdoc/pdf_vt.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -60,7 +60,7 @@ class CPDF_VariableText : private CPDF_EditContainer {
 
   class Provider {
    public:
-    Provider(IPVT_FontMap* pFontMap);
+    explicit Provider(IPVT_FontMap* pFontMap);
     virtual ~Provider();
 
     virtual int32_t GetCharWidth(int32_t nFontIndex,
@@ -227,12 +227,12 @@ class CPDF_VariableText : private CPDF_EditContainer {
 
   CPVT_FloatRect Rearrange(const CPVT_WordRange& PlaceRange);
   FX_FLOAT GetAutoFontSize();
-  FX_BOOL IsBigger(FX_FLOAT fFontSize);
+  bool IsBigger(FX_FLOAT fFontSize) const;
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);
 
   void ResetSectionArray();
 
-  CPVT_ArrayTemplate<CSection*> m_SectionArray;
+  CFX_ArrayTemplate<CSection*> m_SectionArray;
   int32_t m_nLimitChar;
   int32_t m_nCharArray;
   FX_BOOL m_bMultiLine;

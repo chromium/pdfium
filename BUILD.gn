@@ -223,6 +223,7 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/doc_utils.h",
     "core/fpdfdoc/doc_viewerPreferences.cpp",
     "core/fpdfdoc/doc_vt.cpp",
+    "core/fpdfdoc/doc_vt.h",
     "core/fpdfdoc/include/cpdf_variabletext.h",
     "core/fpdfdoc/include/cpvt_line.h",
     "core/fpdfdoc/include/cpvt_secprops.h",
@@ -234,7 +235,6 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/include/fpdf_doc.h",
     "core/fpdfdoc/include/fpdf_tagged.h",
     "core/fpdfdoc/ipvt_fontmap.h",
-    "core/fpdfdoc/pdf_vt.h",
     "core/fpdfdoc/tagged_int.h",
   ]
   configs += [ ":pdfium_config" ]

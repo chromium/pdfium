@@ -16,14 +16,17 @@ class CSection;
 class CTypeset {
  public:
   explicit CTypeset(CSection* pSection);
-  virtual ~CTypeset();
-  CPVT_Size GetEditSize(FX_FLOAT fFontSize);
+  ~CTypeset();
+
+  CFX_PointF GetEditSize(FX_FLOAT fFontSize);
   CPVT_FloatRect Typeset();
   CPVT_FloatRect CharArray();
 
  private:
   void SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize);
   void OutputLines();
+  FX_FLOAT GetXPosForAlignment(FX_FLOAT fTypesetWidth,
+                               FX_FLOAT fLineWidth) const;
 
   CPVT_FloatRect m_rcRet;
   CPDF_VariableText* m_pVT;
