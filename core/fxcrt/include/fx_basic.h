@@ -376,7 +376,6 @@ typedef CFX_ArrayTemplate<CFX_WideStringC> CFX_WideStringCArray;
 typedef CFX_ArrayTemplate<FX_FLOAT> CFX_FloatArray;
 typedef CFX_ArrayTemplate<uint8_t> CFX_ByteArray;
 typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
-typedef CFX_ArrayTemplate<void*> CFX_PtrArray;
 #endif  // PDF_ENABLE_XFA
 
 #ifdef PDF_ENABLE_XFA

@@ -44,7 +44,7 @@ class CBC_QRCoderVersion {
                      CBC_QRCoderECBlocks* ecBlocks4);
 
   static const int32_t VERSION_DECODE_INFO[34];
-  static CFX_PtrArray* VERSION;
+  static CFX_ArrayTemplate<CBC_QRCoderVersion*>* VERSION;
 
   int32_t m_versionNumber;
   int32_t m_totalCodeWords;

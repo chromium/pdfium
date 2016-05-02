@@ -88,7 +88,7 @@ void CBC_QRCoderEncoder::Encode(const CFX_ByteString& content,
 }
 void CBC_QRCoderEncoder::AppendECI(CBC_QRCoderBitVector* bits) {}
 void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
-    CFX_PtrArray& splitResult,
+    const CFX_ArrayTemplate<Make_Pair*>& splitResult,
     CBC_QRCoderBitVector& headerAndDataBits,
     CBC_QRCoderMode* tempMode,
     CBC_QRCoder* qrCode,
@@ -141,7 +141,7 @@ void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
   }
 }
 void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
-                                     CFX_PtrArray& result) {
+                                     CFX_ArrayTemplate<Make_Pair*>* result) {
   int32_t index = 0, flag = 0;
   while (
       (((uint8_t)content[index] >= 0xA1 && (uint8_t)content[index] <= 0xAA) ||
@@ -150,7 +150,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index += 2;
   }
   if (index != flag) {
-    result.Add(
+    result->Add(
         new Make_Pair(CBC_QRCoderMode::sGBK, content.Mid(flag, index - flag)));
   }
   flag = index;
@@ -174,7 +174,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     }
   }
   if (index != flag) {
-    result.Add(
+    result->Add(
         new Make_Pair(CBC_QRCoderMode::sBYTE, content.Mid(flag, index - flag)));
   }
   flag = index;
@@ -186,8 +186,8 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index++;
   }
   if (index != flag) {
-    result.Add(new Make_Pair(CBC_QRCoderMode::sNUMERIC,
-                             content.Mid(flag, index - flag)));
+    result->Add(new Make_Pair(CBC_QRCoderMode::sNUMERIC,
+                              content.Mid(flag, index - flag)));
   }
   flag = index;
   if (index >= content.GetLength()) {
@@ -198,15 +198,14 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index++;
   }
   if (index != flag) {
-    result.Add(new Make_Pair(CBC_QRCoderMode::sALPHANUMERIC,
-                             content.Mid(flag, index - flag)));
+    result->Add(new Make_Pair(CBC_QRCoderMode::sALPHANUMERIC,
+                              content.Mid(flag, index - flag)));
   }
   flag = index;
-  if (index >= content.GetLength()) {
-    return;
-  }
-  SplitString(content.Mid(index, content.GetLength() - index), result);
+  if (index < content.GetLength())
+    SplitString(content.Mid(index, content.GetLength() - index), result);
 }
+
 int32_t CBC_QRCoderEncoder::GetSpanByVersion(CBC_QRCoderMode* modeFirst,
                                              CBC_QRCoderMode* modeSecond,
                                              int32_t versionNum,
@@ -253,16 +252,17 @@ int32_t CBC_QRCoderEncoder::GetSpanByVersion(CBC_QRCoderMode* modeFirst,
   }
   return -1;
 }
-void CBC_QRCoderEncoder::MergeString(CFX_PtrArray& result,
+
+void CBC_QRCoderEncoder::MergeString(CFX_ArrayTemplate<Make_Pair*>* result,
                                      int32_t versionNum,
                                      int32_t& e) {
   Make_Pair* first = NULL;
   Make_Pair* second = NULL;
   size_t mergeNum = 0;
   int32_t i;
-  for (i = 0; ((i < result.GetSize()) && (i + 1 < result.GetSize())); i++) {
-    first = (Make_Pair*)result[i];
-    second = (Make_Pair*)result[i + 1];
+  for (i = 0; ((i < result->GetSize()) && (i + 1 < result->GetSize())); i++) {
+    first = (*result)[i];
+    second = (*result)[i + 1];
     if (first->m_mode == CBC_QRCoderMode::sALPHANUMERIC) {
       int32_t tmp = GetSpanByVersion(CBC_QRCoderMode::sALPHANUMERIC,
                                      CBC_QRCoderMode::sBYTE, versionNum, e);
@@ -272,7 +272,7 @@ void CBC_QRCoderEncoder::MergeString(CFX_PtrArray& result,
         CFX_ByteString str = first->m_string + second->m_string;
         second->m_string = str;
         delete first;
-        result.RemoveAt(i);
+        result->RemoveAt(i);
         i--;
         mergeNum++;
       }
@@ -280,7 +280,7 @@ void CBC_QRCoderEncoder::MergeString(CFX_PtrArray& result,
       if (second->m_mode == CBC_QRCoderMode::sBYTE) {
         first->m_string += second->m_string;
         delete second;
-        result.RemoveAt(i + 1);
+        result->RemoveAt(i + 1);
         i--;
         mergeNum++;
       }
@@ -293,7 +293,7 @@ void CBC_QRCoderEncoder::MergeString(CFX_PtrArray& result,
         CFX_ByteString str = first->m_string + second->m_string;
         second->m_string = str;
         delete first;
-        result.RemoveAt(i);
+        result->RemoveAt(i);
         i--;
         mergeNum++;
       }
@@ -305,7 +305,7 @@ void CBC_QRCoderEncoder::MergeString(CFX_PtrArray& result,
         CFX_ByteString str = first->m_string + second->m_string;
         second->m_string = str;
         delete first;
-        result.RemoveAt(i);
+        result->RemoveAt(i);
         i--;
         mergeNum++;
       }
@@ -353,20 +353,18 @@ void CBC_QRCoderEncoder::EncodeWithSpecifyVersion(
     int32_t& e) {
   CFX_ByteString encoding = "utf8";
   CBC_QRCoderMode* mode = CBC_QRCoderMode::sBYTE;
-  CFX_PtrArray splitResult;
+  CFX_ArrayTemplate<Make_Pair*> splitResult;
   CBC_QRCoderBitVector dataBits;
   dataBits.Init();
-  SplitString(content, splitResult);
-  MergeString(splitResult, versionSpecify, e);
+  SplitString(content, &splitResult);
+  MergeString(&splitResult, versionSpecify, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e) CBC_QRCoderMode* tempMode = NULL;
   for (int32_t i = 0; i < splitResult.GetSize(); i++) {
-    AppendBytes(((Make_Pair*)splitResult[i])->m_string,
-                ((Make_Pair*)splitResult[i])->m_mode, &dataBits, encoding, e);
+    AppendBytes(splitResult[i]->m_string, splitResult[i]->m_mode, &dataBits,
+                encoding, e);
     if (e != BCExceptionNO) {
-      for (int32_t y = 0; y < splitResult.GetSize(); y++) {
-        delete (Make_Pair*)splitResult[y];
-      }
-      splitResult.RemoveAll();
+      for (int32_t y = 0; y < splitResult.GetSize(); y++)
+        delete splitResult[y];
       return;
     }
   }
@@ -375,34 +373,25 @@ void CBC_QRCoderEncoder::EncodeWithSpecifyVersion(
   headerAndDataBits.Init();
   InitQRCode(numInputBytes, versionSpecify, ecLevel, mode, qrCode, e);
   if (e != BCExceptionNO) {
-    for (int32_t k = 0; k < splitResult.GetSize(); k++) {
-      delete (Make_Pair*)splitResult[k];
-    }
-    splitResult.RemoveAll();
+    for (int32_t k = 0; k < splitResult.GetSize(); k++)
+      delete splitResult[k];
     return;
   }
   AppendDataModeLenghInfo(splitResult, headerAndDataBits, tempMode, qrCode,
                           encoding, e);
   if (e != BCExceptionNO) {
-    for (int32_t k = 0; k < splitResult.GetSize(); k++) {
-      delete (Make_Pair*)splitResult[k];
-    }
-    splitResult.RemoveAll();
+    for (int32_t k = 0; k < splitResult.GetSize(); k++)
+      delete splitResult[k];
     return;
   }
   numInputBytes = headerAndDataBits.sizeInBytes();
   TerminateBits(qrCode->GetNumDataBytes(), &headerAndDataBits, e);
-  if (e != BCExceptionNO) {
-    for (int32_t k = 0; k < splitResult.GetSize(); k++) {
-      delete (Make_Pair*)splitResult[k];
-    }
-    splitResult.RemoveAll();
-    return;
-  }
   for (int32_t j = 0; j < splitResult.GetSize(); j++) {
-    delete (Make_Pair*)splitResult[j];
+    delete splitResult[j];
   }
-  splitResult.RemoveAll();
+  if (e != BCExceptionNO)
+    return;
+
   CBC_QRCoderBitVector finalBits;
   finalBits.Init();
   InterleaveWithECBytes(&headerAndDataBits, qrCode->GetNumTotalBytes(),
@@ -433,21 +422,19 @@ void CBC_QRCoderEncoder::EncodeWithAutoVersion(
     int32_t& e) {
   CFX_ByteString encoding = "utf8";
   CBC_QRCoderMode* mode = CBC_QRCoderMode::sBYTE;
-  CFX_PtrArray splitResult;
+  CFX_ArrayTemplate<Make_Pair*> splitResult;
   CBC_QRCoderBitVector dataBits;
   dataBits.Init();
-  SplitString(content, splitResult);
-  MergeString(splitResult, 8, e);
+  SplitString(content, &splitResult);
+  MergeString(&splitResult, 8, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   CBC_QRCoderMode* tempMode = NULL;
   for (int32_t i = 0; i < splitResult.GetSize(); i++) {
-    AppendBytes(((Make_Pair*)splitResult[i])->m_string,
-                ((Make_Pair*)splitResult[i])->m_mode, &dataBits, encoding, e);
+    AppendBytes(splitResult[i]->m_string, splitResult[i]->m_mode, &dataBits,
+                encoding, e);
     if (e != BCExceptionNO) {
-      for (int32_t l = 0; l < splitResult.GetSize(); l++) {
-        delete (Make_Pair*)splitResult[l];
-      }
-      splitResult.RemoveAll();
+      for (int32_t l = 0; l < splitResult.GetSize(); l++)
+        delete splitResult[l];
       return;
     }
   }
@@ -482,17 +469,14 @@ catchException:
       e = BCExceptionNO;
       goto sign;
     } else {
-      for (int32_t j = 0; j < splitResult.GetSize(); j++) {
-        delete (Make_Pair*)splitResult[j];
-      }
-      splitResult.RemoveAll();
+      for (int32_t j = 0; j < splitResult.GetSize(); j++)
+        delete splitResult[j];
       return;
     }
   }
-  for (int32_t k = 0; k < splitResult.GetSize(); k++) {
-    delete (Make_Pair*)splitResult[k];
-  }
-  splitResult.RemoveAll();
+  for (int32_t k = 0; k < splitResult.GetSize(); k++)
+    delete splitResult[k];
+
   CBC_QRCoderBitVector finalBits;
   finalBits.Init();
   InterleaveWithECBytes(&headerAndDataBits, qrCode->GetNumTotalBytes(),
@@ -863,7 +847,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
   int32_t dataBytesOffset = 0;
   int32_t maxNumDataBytes = 0;
   int32_t maxNumEcBytes = 0;
-  CFX_PtrArray blocks;
+  CFX_ArrayTemplate<CBC_QRCoderBlockPair*> blocks;
   int32_t i;
   for (i = 0; i < numRSBlocks; i++) {
     int32_t numDataBytesInBlock;
@@ -887,8 +871,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
   }
   for (int32_t x = 0; x < maxNumDataBytes; x++) {
     for (int32_t j = 0; j < blocks.GetSize(); j++) {
-      CBC_CommonByteArray* dataBytes =
-          ((CBC_QRCoderBlockPair*)blocks[j])->GetDataBytes();
+      CBC_CommonByteArray* dataBytes = blocks[j]->GetDataBytes();
       if (x < dataBytes->Size()) {
         result->AppendBits(dataBytes->At(x), 8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -897,8 +880,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
   }
   for (int32_t y = 0; y < maxNumEcBytes; y++) {
     for (int32_t l = 0; l < blocks.GetSize(); l++) {
-      CBC_CommonByteArray* ecBytes =
-          ((CBC_QRCoderBlockPair*)blocks[l])->GetErrorCorrectionBytes();
+      CBC_CommonByteArray* ecBytes = blocks[l]->GetErrorCorrectionBytes();
       if (y < ecBytes->Size()) {
         result->AppendBits(ecBytes->At(y), 8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -906,7 +888,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     }
   }
   for (int32_t k = 0; k < blocks.GetSize(); k++) {
-    delete (CBC_QRCoderBlockPair*)blocks[k];
+    delete blocks[k];
   }
   if (numTotalBytes != result->sizeInBytes()) {
     e = BCExceptionSizeInBytesDiffer;

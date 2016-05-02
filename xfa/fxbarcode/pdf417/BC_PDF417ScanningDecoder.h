@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417SCANNINGDECODER_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417SCANNINGDECODER_H_
 
+#include "xfa/fxbarcode/pdf417/BC_PDF417BarcodeValue.h"
+
 class CBC_CommonDecoderResult;
 class CBC_CommonBitMatrix;
 class CBC_Codeword;
@@ -30,7 +32,7 @@ class CBC_PDF417ScanningDecoder {
                                          int32_t minCodewordWidth,
                                          int32_t maxCodewordWidth,
                                          int32_t& e);
-  static CFX_ByteString toString(CFX_PtrArray* barcodeMatrix);
+  static CFX_ByteString toString(CBC_BarcodeValueArrayArray* barcodeMatrix);
 
  private:
   static int32_t CODEWORD_SKEW_SIZE;
@@ -56,7 +58,7 @@ class CBC_PDF417ScanningDecoder {
       int32_t minCodewordWidth,
       int32_t maxCodewordWidth);
   static void adjustCodewordCount(CBC_DetectionResult* detectionResult,
-                                  CFX_PtrArray* barcodeMatrix,
+                                  CBC_BarcodeValueArrayArray* barcodeMatrix,
                                   int32_t& e);
   static CBC_CommonDecoderResult* createDecoderResult(
       CBC_DetectionResult* detectionResult,
@@ -66,9 +68,9 @@ class CBC_PDF417ScanningDecoder {
       CFX_Int32Array& codewords,
       CFX_Int32Array& erasureArray,
       CFX_Int32Array& ambiguousIndexes,
-      CFX_PtrArray& ambiguousIndexValues,
+      CFX_ArrayTemplate<CFX_Int32Array*>& ambiguousIndexValues,
       int32_t& e);
-  static CFX_PtrArray* createBarcodeMatrix(
+  static CBC_BarcodeValueArrayArray* createBarcodeMatrix(
       CBC_DetectionResult* detectionResult);
   static FX_BOOL isValidBarcodeColumn(CBC_DetectionResult* detectionResult,
                                       int32_t barcodeColumn);

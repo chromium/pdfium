@@ -22,10 +22,11 @@ class CBC_PDF417ECErrorCorrection {
 
  private:
   static CBC_PDF417ECModulusGF* m_field;
-  static CFX_PtrArray* runEuclideanAlgorithm(CBC_PDF417ECModulusPoly* a,
-                                             CBC_PDF417ECModulusPoly* b,
-                                             int32_t R,
-                                             int32_t& e);
+  static CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>* runEuclideanAlgorithm(
+      CBC_PDF417ECModulusPoly* a,
+      CBC_PDF417ECModulusPoly* b,
+      int32_t R,
+      int32_t& e);
   static CFX_Int32Array* findErrorLocations(
       CBC_PDF417ECModulusPoly* errorLocator,
       int32_t& e);

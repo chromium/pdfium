@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <memory>
+
 #include "xfa/fxbarcode/BC_DecoderResult.h"
 #include "xfa/fxbarcode/BC_ResultPoint.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
@@ -155,16 +157,14 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
   }
   return decoderresult;
 }
+
 CFX_ByteString CBC_PDF417ScanningDecoder::toString(
-    CFX_PtrArray* barcodeMatrix) {
+    CBC_BarcodeValueArrayArray* barcodeMatrix) {
   CFX_ByteString result;
   for (int32_t row = 0; row < barcodeMatrix->GetSize(); row++) {
     result += row;
-    int32_t l = 0;
-    for (; l < ((CFX_PtrArray*)barcodeMatrix->GetAt(row))->GetSize(); l++) {
-      CBC_BarcodeValue* barcodeValue =
-          (CBC_BarcodeValue*)((CFX_PtrArray*)barcodeMatrix->GetAt(row))
-              ->GetAt(l);
+    for (int32_t l = 0; l < barcodeMatrix->GetAt(row)->GetSize(); l++) {
+      CBC_BarcodeValue* barcodeValue = barcodeMatrix->GetAt(row)->GetAt(l);
       if (barcodeValue->getValue()->GetSize() == 0) {
         result += "";
       } else {
@@ -176,6 +176,7 @@ CFX_ByteString CBC_PDF417ScanningDecoder::toString(
   }
   return result;
 }
+
 CBC_DetectionResult* CBC_PDF417ScanningDecoder::merge(
     CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn,
     CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn,
@@ -323,13 +324,13 @@ CBC_PDF417ScanningDecoder::getRowIndicatorColumn(CBC_CommonBitMatrix* image,
   }
   return rowIndicatorColumn;
 }
+
 void CBC_PDF417ScanningDecoder::adjustCodewordCount(
     CBC_DetectionResult* detectionResult,
-    CFX_PtrArray* barcodeMatrix,
+    CBC_BarcodeValueArrayArray* barcodeMatrix,
     int32_t& e) {
-  CFX_Int32Array* numberOfCodewords =
-      ((CBC_BarcodeValue*)((CFX_PtrArray*)barcodeMatrix->GetAt(0))->GetAt(1))
-          ->getValue();
+  std::unique_ptr<CFX_Int32Array> numberOfCodewords(
+      barcodeMatrix->GetAt(0)->GetAt(1)->getValue());
   int32_t calculatedNumberOfCodewords =
       detectionResult->getBarcodeColumnCount() *
           detectionResult->getBarcodeRowCount() -
@@ -339,47 +340,39 @@ void CBC_PDF417ScanningDecoder::adjustCodewordCount(
         calculatedNumberOfCodewords >
             CBC_PDF417Common::MAX_CODEWORDS_IN_BARCODE) {
       e = BCExceptiontNotFoundInstance;
-      delete numberOfCodewords;
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    ((CBC_BarcodeValue*)((CFX_PtrArray*)barcodeMatrix->GetAt(0))->GetAt(1))
-        ->setValue(calculatedNumberOfCodewords);
+    barcodeMatrix->GetAt(0)->GetAt(1)->setValue(calculatedNumberOfCodewords);
   } else if (numberOfCodewords->GetAt(0) != calculatedNumberOfCodewords) {
-    ((CBC_BarcodeValue*)((CFX_PtrArray*)barcodeMatrix->GetAt(0))->GetAt(1))
-        ->setValue(calculatedNumberOfCodewords);
+    barcodeMatrix->GetAt(0)->GetAt(1)->setValue(calculatedNumberOfCodewords);
   }
-  delete numberOfCodewords;
 }
+
 CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::createDecoderResult(
     CBC_DetectionResult* detectionResult,
     int32_t& e) {
-  CFX_PtrArray* barcodeMatrix = createBarcodeMatrix(detectionResult);
-  adjustCodewordCount(detectionResult, barcodeMatrix, e);
+  std::unique_ptr<CBC_BarcodeValueArrayArray> barcodeMatrix(
+      createBarcodeMatrix(detectionResult));
+  adjustCodewordCount(detectionResult, barcodeMatrix.get(), e);
   if (e != BCExceptionNO) {
     for (int32_t i = 0; i < barcodeMatrix->GetSize(); i++) {
-      CFX_PtrArray* temp = (CFX_PtrArray*)barcodeMatrix->GetAt(i);
-      for (int32_t j = 0; j < temp->GetSize(); j++) {
-        delete (CBC_BarcodeValue*)temp->GetAt(j);
-      }
-      temp->RemoveAll();
+      CBC_BarcodeValueArray* temp = barcodeMatrix->GetAt(i);
+      for (int32_t j = 0; j < temp->GetSize(); j++)
+        delete temp->GetAt(j);
       delete temp;
     }
-    barcodeMatrix->RemoveAll();
-    delete barcodeMatrix;
-    return NULL;
+    return nullptr;
   }
   CFX_Int32Array erasures;
   CFX_Int32Array codewords;
   codewords.SetSize(detectionResult->getBarcodeRowCount() *
                     detectionResult->getBarcodeColumnCount());
-  CFX_PtrArray ambiguousIndexValuesList;
+  CFX_ArrayTemplate<CFX_Int32Array*> ambiguousIndexValuesList;
   CFX_Int32Array ambiguousIndexesList;
   for (int32_t row = 0; row < detectionResult->getBarcodeRowCount(); row++) {
     for (int32_t l = 0; l < detectionResult->getBarcodeColumnCount(); l++) {
       CFX_Int32Array* values =
-          ((CBC_BarcodeValue*)((CFX_PtrArray*)barcodeMatrix->GetAt(row))
-               ->GetAt(l + 1))
-              ->getValue();
+          barcodeMatrix->GetAt(row)->GetAt(l + 1)->getValue();
       int32_t codewordIndex =
           row * detectionResult->getBarcodeColumnCount() + l;
       if (values->GetSize() == 0) {
@@ -392,35 +385,33 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::createDecoderResult(
       }
     }
   }
-  CFX_PtrArray ambiguousIndexValues;
+  CFX_ArrayTemplate<CFX_Int32Array*> ambiguousIndexValues;
   ambiguousIndexValues.SetSize(ambiguousIndexValuesList.GetSize());
   for (int32_t i = 0; i < ambiguousIndexValues.GetSize(); i++) {
     ambiguousIndexValues.SetAt(i, ambiguousIndexValuesList.GetAt(i));
   }
   for (int32_t l = 0; l < barcodeMatrix->GetSize(); l++) {
-    CFX_PtrArray* temp = (CFX_PtrArray*)barcodeMatrix->GetAt(l);
-    for (int32_t j = 0; j < temp->GetSize(); j++) {
-      delete (CBC_BarcodeValue*)temp->GetAt(j);
-    }
+    CBC_BarcodeValueArray* temp = barcodeMatrix->GetAt(l);
+    for (int32_t j = 0; j < temp->GetSize(); j++)
+      delete temp->GetAt(j);
     temp->RemoveAll();
     delete temp;
   }
-  barcodeMatrix->RemoveAll();
-  delete barcodeMatrix;
   CBC_CommonDecoderResult* decoderResult =
       createDecoderResultFromAmbiguousValues(
           detectionResult->getBarcodeECLevel(), codewords, erasures,
           ambiguousIndexesList, ambiguousIndexValues, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return decoderResult;
 }
+
 CBC_CommonDecoderResult*
 CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
     int32_t ecLevel,
     CFX_Int32Array& codewords,
     CFX_Int32Array& erasureArray,
     CFX_Int32Array& ambiguousIndexes,
-    CFX_PtrArray& ambiguousIndexValues,
+    CFX_ArrayTemplate<CFX_Int32Array*>& ambiguousIndexValues,
     int32_t& e) {
   CFX_Int32Array ambiguousIndexCount;
   ambiguousIndexCount.SetSize(ambiguousIndexes.GetSize());
@@ -428,8 +419,7 @@ CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
   while (tries-- > 0) {
     for (int32_t l = 0; l < ambiguousIndexCount.GetSize(); l++) {
       codewords[ambiguousIndexes[l]] =
-          ((CFX_Int32Array*)ambiguousIndexValues.GetAt(l))
-              ->GetAt(ambiguousIndexCount[l]);
+          ambiguousIndexValues.GetAt(l)->GetAt(ambiguousIndexCount[l]);
     }
     CBC_CommonDecoderResult* decoderResult =
         decodeCodewords(codewords, ecLevel, erasureArray, e);
@@ -445,7 +435,7 @@ CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
     }
     for (int32_t i = 0; i < ambiguousIndexCount.GetSize(); i++) {
       if (ambiguousIndexCount[i] <
-          ((CFX_Int32Array*)(ambiguousIndexValues.GetAt(i)))->GetSize() - 1) {
+          ambiguousIndexValues.GetAt(i)->GetSize() - 1) {
         ambiguousIndexCount[i]++;
         break;
       } else {
@@ -460,28 +450,24 @@ CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
   e = BCExceptionChecksumInstance;
   return NULL;
 }
-CFX_PtrArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
+CBC_BarcodeValueArrayArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
     CBC_DetectionResult* detectionResult) {
-  CFX_PtrArray* barcodeMatrix = new CFX_PtrArray;
+  CBC_BarcodeValueArrayArray* barcodeMatrix = new CBC_BarcodeValueArrayArray;
   barcodeMatrix->SetSize(detectionResult->getBarcodeRowCount());
-  CFX_PtrArray* temp = NULL;
-  int32_t colume = 0;
   for (int32_t row = 0; row < barcodeMatrix->GetSize(); row++) {
-    temp = new CFX_PtrArray;
+    CBC_BarcodeValueArray* temp = new CBC_BarcodeValueArray;
     temp->SetSize(detectionResult->getBarcodeColumnCount() + 2);
-    for (colume = 0; colume < detectionResult->getBarcodeColumnCount() + 2;
-         colume++) {
-      temp->SetAt(colume, new CBC_BarcodeValue());
+    for (int32_t column = 0;
+         column < detectionResult->getBarcodeColumnCount() + 2; column++) {
+      temp->SetAt(column, new CBC_BarcodeValue());
     }
     barcodeMatrix->SetAt(row, temp);
   }
-  colume = -1;
   for (int32_t i = 0;
        i < detectionResult->getDetectionResultColumns().GetSize(); i++) {
     CBC_DetectionResultColumn* detectionResultColumn =
         (CBC_DetectionResultColumn*)detectionResult->getDetectionResultColumns()
             .GetAt(i);
-    colume++;
     if (detectionResultColumn == NULL) {
       continue;
     }
@@ -492,9 +478,8 @@ CFX_PtrArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
       if (codeword == NULL || codeword->getRowNumber() == -1) {
         continue;
       }
-      ((CBC_BarcodeValue*)((CFX_PtrArray*)barcodeMatrix->GetAt(
-                               codeword->getRowNumber()))
-           ->GetAt(colume))
+      barcodeMatrix->GetAt(codeword->getRowNumber())
+          ->GetAt(i)
           ->setValue(codeword->getValue());
     }
   }

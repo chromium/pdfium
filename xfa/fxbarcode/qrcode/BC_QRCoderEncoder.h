@@ -16,6 +16,7 @@ class CBC_QRCoderMode;
 class CBC_QRCoderBitVector;
 class CBC_CommonByteArray;
 class CBC_CommonByteMatrix;
+class Make_Pair;
 
 class CBC_QRCoderEncoder {
  private:
@@ -120,14 +121,18 @@ class CBC_QRCoderEncoder {
                                   CBC_QRCoderMode* modeSecond,
                                   int32_t versionNum,
                                   int32_t& e);
-  static void MergeString(CFX_PtrArray& result, int32_t versionNum, int32_t& e);
-  static void SplitString(const CFX_ByteString& content, CFX_PtrArray& result);
-  static void AppendDataModeLenghInfo(CFX_PtrArray& splitResult,
-                                      CBC_QRCoderBitVector& headerAndDataBits,
-                                      CBC_QRCoderMode* tempMode,
-                                      CBC_QRCoder* qrCode,
-                                      CFX_ByteString& encoding,
-                                      int32_t& e);
+  static void MergeString(CFX_ArrayTemplate<Make_Pair*>* result,
+                          int32_t versionNum,
+                          int32_t& e);
+  static void SplitString(const CFX_ByteString& content,
+                          CFX_ArrayTemplate<Make_Pair*>* result);
+  static void AppendDataModeLenghInfo(
+      const CFX_ArrayTemplate<Make_Pair*>& splitResult,
+      CBC_QRCoderBitVector& headerAndDataBits,
+      CBC_QRCoderMode* tempMode,
+      CBC_QRCoder* qrCode,
+      CFX_ByteString& encoding,
+      int32_t& e);
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERENCODER_H_

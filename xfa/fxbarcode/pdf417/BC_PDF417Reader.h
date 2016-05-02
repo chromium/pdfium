@@ -28,8 +28,10 @@ class CBC_PDF417Reader : public CBC_Reader {
  private:
   static int32_t getMaxWidth(CBC_ResultPoint* p1, CBC_ResultPoint* p2);
   static int32_t getMinWidth(CBC_ResultPoint* p1, CBC_ResultPoint* p2);
-  static int32_t getMaxCodewordWidth(CFX_PtrArray& p);
-  static int32_t getMinCodewordWidth(CFX_PtrArray& p);
+  static int32_t getMaxCodewordWidth(
+      const CFX_ArrayTemplate<CBC_ResultPoint*>& p);
+  static int32_t getMinCodewordWidth(
+      const CFX_ArrayTemplate<CBC_ResultPoint*>& p);
 };
 
 #endif  // XFA_FXBARCODE_PDF417_BC_PDF417READER_H_

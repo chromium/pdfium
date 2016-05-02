@@ -65,7 +65,7 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
     delete syndrome;
     return -1;
   }
-  CFX_PtrArray* sigmaOmega =
+  CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>* sigmaOmega =
       runEuclideanAlgorithm(buildmonomial, syndrome, numECCodewords, e);
   delete buildmonomial;
   delete syndrome;
@@ -123,11 +123,11 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
   delete sigmaOmega;
   return result;
 }
-CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
-    CBC_PDF417ECModulusPoly* a,
-    CBC_PDF417ECModulusPoly* b,
-    int32_t R,
-    int32_t& e) {
+CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>*
+CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(CBC_PDF417ECModulusPoly* a,
+                                                   CBC_PDF417ECModulusPoly* b,
+                                                   int32_t R,
+                                                   int32_t& e) {
   if (a->getDegree() < b->getDegree()) {
     CBC_PDF417ECModulusPoly* temp = a;
     a = b;
@@ -262,7 +262,8 @@ CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
   CBC_PDF417ECModulusPoly* omega = r->multiply(inverse, e);
   delete rtemp;
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CFX_PtrArray* modulusPoly = new CFX_PtrArray;
+  CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>* modulusPoly =
+      new CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>();
   modulusPoly->Add(sigma);
   modulusPoly->Add(omega);
   return modulusPoly;

@@ -20,7 +20,9 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include <limits>
+#include <memory>
 
 #include "xfa/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/fxbarcode/BC_BinaryBitmap.h"
@@ -64,27 +66,25 @@ CFX_ByteString CBC_PDF417Reader::Decode(CBC_BinaryBitmap* image,
                                         int32_t hints,
                                         int32_t& e) {
   CFX_ByteString results;
-  CBC_PDF417DetectorResult* detectorResult =
-      CBC_Detector::detect(image, hints, multiple, e);
+  std::unique_ptr<CBC_PDF417DetectorResult> detectorResult(
+      CBC_Detector::detect(image, hints, multiple, e));
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
   for (int32_t i = 0; i < detectorResult->getPoints()->GetSize(); i++) {
-    CFX_PtrArray* points = (CFX_PtrArray*)detectorResult->getPoints()->GetAt(i);
-    CBC_CommonDecoderResult* ResultTemp = CBC_PDF417ScanningDecoder::decode(
-        detectorResult->getBits(), (CBC_ResultPoint*)points->GetAt(4),
-        (CBC_ResultPoint*)points->GetAt(5), (CBC_ResultPoint*)points->GetAt(6),
-        (CBC_ResultPoint*)points->GetAt(7), getMinCodewordWidth(*points),
-        getMaxCodewordWidth(*points), e);
-    if (ResultTemp == NULL) {
-      delete detectorResult;
+    CBC_ResultPointArray* points = detectorResult->getPoints()->GetAt(i);
+    std::unique_ptr<CBC_CommonDecoderResult> ResultTemp(
+        CBC_PDF417ScanningDecoder::decode(
+            detectorResult->getBits(), points->GetAt(4), points->GetAt(5),
+            points->GetAt(6), points->GetAt(7), getMinCodewordWidth(*points),
+            getMaxCodewordWidth(*points), e));
+    if (!ResultTemp) {
       e = BCExceptiontNotFoundInstance;
-      return "";
+      return CFX_ByteString();
     }
     results += ResultTemp->GetText();
-    delete ResultTemp;
   }
-  delete detectorResult;
   return results;
 }
+
 CFX_ByteString CBC_PDF417Reader::Decode(CBC_BinaryBitmap* image,
                                         int32_t hints,
                                         int32_t& e) {
@@ -105,45 +105,29 @@ int32_t CBC_PDF417Reader::getMinWidth(CBC_ResultPoint* p1,
     return std::numeric_limits<int32_t>::max();
   return (int32_t)FXSYS_fabs(p1->GetX() - p2->GetX());
 }
-int32_t CBC_PDF417Reader::getMaxCodewordWidth(CFX_PtrArray& p) {
-  int32_t a =
-      getMaxWidth((CBC_ResultPoint*)p.GetAt(6), (CBC_ResultPoint*)p.GetAt(2)) *
-      CBC_PDF417Common::MODULES_IN_CODEWORD /
-      CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
-  int32_t b =
-      getMaxWidth((CBC_ResultPoint*)p.GetAt(7), (CBC_ResultPoint*)p.GetAt(3)) *
-      CBC_PDF417Common::MODULES_IN_CODEWORD /
-      CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
-  int32_t c = getMaxWidth((CBC_ResultPoint*)p.GetAt(0),
-                          (CBC_ResultPoint*)p.GetAt(4)) < a
-                  ? getMaxWidth((CBC_ResultPoint*)p.GetAt(0),
-                                (CBC_ResultPoint*)p.GetAt(4))
-                  : a;
-  int32_t d = getMaxWidth((CBC_ResultPoint*)p.GetAt(1),
-                          (CBC_ResultPoint*)p.GetAt(5)) < b
-                  ? getMaxWidth((CBC_ResultPoint*)p.GetAt(1),
-                                (CBC_ResultPoint*)p.GetAt(5))
-                  : b;
-  return c < d ? c : d;
+
+int32_t CBC_PDF417Reader::getMaxCodewordWidth(
+    const CFX_ArrayTemplate<CBC_ResultPoint*>& p) {
+  int32_t a = getMaxWidth(p.GetAt(6), p.GetAt(2)) *
+              CBC_PDF417Common::MODULES_IN_CODEWORD /
+              CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
+  int32_t b = getMaxWidth(p.GetAt(7), p.GetAt(3)) *
+              CBC_PDF417Common::MODULES_IN_CODEWORD /
+              CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
+  int32_t c = std::min(a, getMaxWidth(p.GetAt(0), p.GetAt(4)));
+  int32_t d = std::min(b, getMaxWidth(p.GetAt(1), p.GetAt(5)));
+  return std::min(c, d);
 }
-int32_t CBC_PDF417Reader::getMinCodewordWidth(CFX_PtrArray& p) {
-  int32_t a =
-      getMinWidth((CBC_ResultPoint*)p.GetAt(6), (CBC_ResultPoint*)p.GetAt(2)) *
-      CBC_PDF417Common::MODULES_IN_CODEWORD /
-      CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
-  int32_t b =
-      getMinWidth((CBC_ResultPoint*)p.GetAt(7), (CBC_ResultPoint*)p.GetAt(3)) *
-      CBC_PDF417Common::MODULES_IN_CODEWORD /
-      CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
-  int32_t c = getMinWidth((CBC_ResultPoint*)p.GetAt(0),
-                          (CBC_ResultPoint*)p.GetAt(4)) < a
-                  ? getMinWidth((CBC_ResultPoint*)p.GetAt(0),
-                                (CBC_ResultPoint*)p.GetAt(4))
-                  : a;
-  int32_t d = getMinWidth((CBC_ResultPoint*)p.GetAt(1),
-                          (CBC_ResultPoint*)p.GetAt(5)) < b
-                  ? getMinWidth((CBC_ResultPoint*)p.GetAt(1),
-                                (CBC_ResultPoint*)p.GetAt(5))
-                  : b;
-  return c < d ? c : d;
+
+int32_t CBC_PDF417Reader::getMinCodewordWidth(
+    const CFX_ArrayTemplate<CBC_ResultPoint*>& p) {
+  int32_t a = getMinWidth(p.GetAt(6), p.GetAt(2)) *
+              CBC_PDF417Common::MODULES_IN_CODEWORD /
+              CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
+  int32_t b = getMinWidth(p.GetAt(7), p.GetAt(3)) *
+              CBC_PDF417Common::MODULES_IN_CODEWORD /
+              CBC_PDF417Common::MODULES_IN_STOP_PATTERN;
+  int32_t c = std::min(a, getMinWidth(p.GetAt(0), p.GetAt(4)));
+  int32_t d = std::min(b, getMinWidth(p.GetAt(1), p.GetAt(5)));
+  return std::min(c, d);
 }
