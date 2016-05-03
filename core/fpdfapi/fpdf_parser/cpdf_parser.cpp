@@ -1077,13 +1077,8 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
     FX_SAFE_UINT32 dwMaxObjNum = startnum;
     dwMaxObjNum += count;
     uint32_t dwV5Size = m_ObjectInfo.empty() ? 0 : GetLastObjNum() + 1;
-    if (!dwMaxObjNum.IsValid())
+    if (!dwMaxObjNum.IsValid() || dwMaxObjNum.ValueOrDie() > dwV5Size)
       continue;
-    // When the max object number is larger than the defined size, try to
-    // increase the size to accomodate more objects.
-    // Some software messes this up, see chromium:596947.
-    if (dwMaxObjNum.ValueOrDie() > dwV5Size)
-      ShrinkObjectMap(dwMaxObjNum.ValueOrDie());
 
     for (uint32_t j = 0; j < count; j++) {
       int32_t type = 1;
