@@ -68,7 +68,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   FDE_CSSRuleData* GetUniversalRuleData() { return m_pUniversalRules; }
   FDE_CSSRuleData* GetPersudoRuleData() { return m_pPersudoRules; }
 
-  IFX_MEMAllocator* m_pStaticStore;
+  IFX_MemoryAllocator* m_pStaticStore;
 
  protected:
   void AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
@@ -182,12 +182,12 @@ class CFDE_CSSStyleSelector : public CFX_Target {
 
   IFX_FontMgr* m_pFontMgr;
   FX_FLOAT m_fDefFontSize;
-  IFX_MEMAllocator* m_pRuleDataStore;
+  IFX_MemoryAllocator* m_pRuleDataStore;
   CFDE_CSSStyleSheetArray m_SheetGroups[FDE_CSSSTYLESHEETGROUP_MAX];
   CFDE_CSSRuleCollection m_RuleCollection[FDE_CSSSTYLESHEETGROUP_MAX];
   FDE_CSSSTYLESHEETGROUP m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_MAX];
-  IFX_MEMAllocator* m_pInlineStyleStore;
-  IFX_MEMAllocator* m_pFixedStyleStore;
+  IFX_MemoryAllocator* m_pInlineStyleStore;
+  IFX_MemoryAllocator* m_pFixedStyleStore;
   CFDE_CSSAccelerator* m_pAccelerator;
   std::vector<FDE_CSSRuleData*> m_MatchedRules;
 };
@@ -387,7 +387,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
                               public IFDE_CSSParagraphStyle,
                               public CFX_Target {
  public:
-  CFDE_CSSComputedStyle(IFX_MEMAllocator* pAlloc)
+  CFDE_CSSComputedStyle(IFX_MemoryAllocator* pAlloc)
       : m_dwRefCount(1), m_pAllocator(pAlloc) {}
 
   ~CFDE_CSSComputedStyle() {}
@@ -580,7 +580,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   }
 
   uint32_t m_dwRefCount;
-  IFX_MEMAllocator* m_pAllocator;
+  IFX_MemoryAllocator* m_pAllocator;
   CFDE_CSSInheritedData m_InheritedData;
   CFDE_CSSNonInheritedData m_NonInheritedData;
   CFX_WideStringArray m_CustomProperties;

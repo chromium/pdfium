@@ -247,10 +247,9 @@ CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
 
 IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
     IFDE_CSSComputedStyle* pParentStyle) {
-  if (m_pFixedStyleStore == NULL) {
-    m_pFixedStyleStore = FX_CreateAllocator(FX_ALLOCTYPE_Fixed, 16,
-                                            sizeof(CFDE_CSSComputedStyle));
-    ASSERT(m_pFixedStyleStore != NULL);
+  if (!m_pFixedStyleStore) {
+    m_pFixedStyleStore = IFX_MemoryAllocator::Create(
+        FX_ALLOCTYPE_Fixed, 16, sizeof(CFDE_CSSComputedStyle));
   }
   CFDE_CSSComputedStyle* pStyle = FXTARGET_NewWith(m_pFixedStyleStore)
       CFDE_CSSComputedStyle(m_pFixedStyleStore);
@@ -292,8 +291,7 @@ void CFDE_CSSStyleSelector::SetStylePriority(
 }
 void CFDE_CSSStyleSelector::UpdateStyleIndex(uint32_t dwMediaList) {
   Reset();
-  m_pRuleDataStore = FX_CreateAllocator(FX_ALLOCTYPE_Static, 1024, 0);
-  ASSERT(m_pRuleDataStore != NULL);
+  m_pRuleDataStore = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 1024, 0);
   for (int32_t iGroup = 0; iGroup < FDE_CSSSTYLESHEETGROUP_MAX; ++iGroup) {
     CFDE_CSSRuleCollection& rules = m_RuleCollection[iGroup];
     rules.m_pStaticStore = m_pRuleDataStore;
@@ -425,9 +423,10 @@ void CFDE_CSSStyleSelector::ComputeStyle(
   static const uint32_t s_dwAlignHash = FX_HashCode_GetW(L"align", true);
 
   if (!pTag->empty()) {
-    if (!m_pInlineStyleStore)
-      m_pInlineStyleStore = FX_CreateAllocator(FX_ALLOCTYPE_Static, 2048, 0);
-
+    if (!m_pInlineStyleStore) {
+      m_pInlineStyleStore =
+          IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 2048, 0);
+    }
     CFDE_CSSDeclaration* pDecl = nullptr;
     for (auto it : *pTag) {
       CFX_WideString wsAttri = it.first;

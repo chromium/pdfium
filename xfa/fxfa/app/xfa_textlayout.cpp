@@ -212,8 +212,8 @@ void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
   if (pXMLContainer == NULL || pTextProvider == NULL || m_pAllocator) {
     return;
   }
-  m_pAllocator =
-      FX_CreateAllocator(FX_ALLOCTYPE_Fixed, 32, sizeof(CXFA_CSSTagProvider));
+  m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Fixed, 32,
+                                             sizeof(CXFA_CSSTagProvider));
   InitCSSData(pTextProvider);
   IFDE_CSSComputedStyle* pRootStyle = CreateRootStyle(pTextProvider);
   ParseRichText(pXMLContainer, pRootStyle);
@@ -1272,9 +1272,9 @@ void CXFA_TextLayout::UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom) {
 FX_BOOL CXFA_TextLayout::Loader(const CFX_SizeF& szText,
                                 FX_FLOAT& fLinePos,
                                 FX_BOOL bSavePieces) {
-  if (m_pAllocator == NULL) {
-    m_pAllocator = FX_CreateAllocator(FX_ALLOCTYPE_Static, 256, 0);
-  }
+  if (!m_pAllocator)
+    m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 256, 0);
+
   GetTextDataNode();
   if (m_pTextDataNode == NULL) {
     return TRUE;

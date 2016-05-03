@@ -779,7 +779,7 @@ FX_BOOL FDE_ParseCSSColor(const FX_WCHAR* pszValue,
   return FALSE;
 }
 
-CFDE_CSSValueList::CFDE_CSSValueList(IFX_MEMAllocator* pStaticStore,
+CFDE_CSSValueList::CFDE_CSSValueList(IFX_MemoryAllocator* pStaticStore,
                                      const CFDE_CSSValueArray& list) {
   m_iCount = list.GetSize();
   int32_t iByteCount = m_iCount * sizeof(IFDE_CSSValue*);

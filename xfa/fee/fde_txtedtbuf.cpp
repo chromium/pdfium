@@ -370,9 +370,8 @@ void CFDE_TxtEdtBuf::ResetChunkBuffer(int32_t nDefChunkCount,
   m_nChunkSize = nChunkSize;
   int32_t nChunkLength =
       sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR);
-  m_pAllocator =
-      FX_CreateAllocator(FX_ALLOCTYPE_Fixed, nDefChunkCount, nChunkLength);
-  ASSERT(m_pAllocator);
+  m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Fixed, nDefChunkCount,
+                                             nChunkLength);
   FDE_CHUNKHEADER* lpChunkHeader =
       static_cast<FDE_CHUNKHEADER*>(m_pAllocator->Alloc(nChunkLength));
   ASSERT(lpChunkHeader);

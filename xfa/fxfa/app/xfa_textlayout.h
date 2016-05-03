@@ -130,7 +130,7 @@ class CXFA_TextParser {
   void ParseTagInfo(CFDE_XMLNode* pXMLNode, CXFA_CSSTagProvider& tagProvider);
   IFDE_CSSStyleSheet* LoadDefaultSheetStyle();
   IFDE_CSSComputedStyle* CreateStyle(IFDE_CSSComputedStyle* pParentStyle);
-  IFX_MEMAllocator* m_pAllocator;
+  IFX_MemoryAllocator* m_pAllocator;
   CFDE_CSSStyleSelector* m_pSelector;
   IFDE_CSSStyleSheet* m_pUASheet;
   CFX_MapPtrTemplate<CFDE_XMLNode*, CXFA_TextParseContext*>
@@ -169,7 +169,7 @@ class CXFA_LoaderContext {
 
 class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target {
  public:
-  CXFA_LinkUserData(IFX_MEMAllocator* pAllocator, FX_WCHAR* pszText)
+  CXFA_LinkUserData(IFX_MemoryAllocator* pAllocator, FX_WCHAR* pszText)
       : m_pAllocator(pAllocator), m_dwRefCount(1) {
     m_pszURLContent = pszText;
   }
@@ -186,14 +186,15 @@ class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target {
   const FX_WCHAR* GetLinkURL() { return m_pszURLContent.c_str(); }
 
  protected:
-  IFX_MEMAllocator* m_pAllocator;
+  IFX_MemoryAllocator* m_pAllocator;
   uint32_t m_dwRefCount;
   CFX_WideString m_pszURLContent;
 };
 
 class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
  public:
-  CXFA_TextUserData(IFX_MEMAllocator* pAllocator, IFDE_CSSComputedStyle* pStyle)
+  CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
+                    IFDE_CSSComputedStyle* pStyle)
       : m_pStyle(pStyle),
         m_pLinkData(nullptr),
         m_pAllocator(pAllocator),
@@ -202,7 +203,7 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
     if (m_pStyle)
       m_pStyle->AddRef();
   }
-  CXFA_TextUserData(IFX_MEMAllocator* pAllocator,
+  CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
                     IFDE_CSSComputedStyle* pStyle,
                     CXFA_LinkUserData* pLinkData)
       : m_pStyle(pStyle),
@@ -232,7 +233,7 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
   CXFA_LinkUserData* m_pLinkData;
 
  protected:
-  IFX_MEMAllocator* m_pAllocator;
+  IFX_MemoryAllocator* m_pAllocator;
   uint32_t m_dwRefCount;
 };
 
@@ -404,7 +405,7 @@ class CXFA_TextLayout {
   CXFA_TextProvider* m_pTextProvider;
   CXFA_Node* m_pTextDataNode;
   FX_BOOL m_bRichText;
-  IFX_MEMAllocator* m_pAllocator;
+  IFX_MemoryAllocator* m_pAllocator;
   CFX_RTFBreak* m_pBreak;
   CXFA_LoaderContext* m_pLoader;
   int32_t m_iLines;

@@ -26,13 +26,13 @@ class CFDE_CSSSelector : public CFX_Target {
   virtual uint32_t GetNameHash() const { return m_dwHash; }
 
   virtual CFDE_CSSSelector* GetNextSelector() const { return m_pNext; }
-  static CFDE_CSSSelector* FromString(IFX_MEMAllocator* pStaticStore,
+  static CFDE_CSSSelector* FromString(IFX_MemoryAllocator* pStaticStore,
                                       const FX_WCHAR* psz,
                                       int32_t iLen);
   void SetNext(CFDE_CSSSelector* pNext) { m_pNext = pNext; }
 
  protected:
-  static CFDE_CSSSelector* ParseSelector(IFX_MEMAllocator* pStaticStore,
+  static CFDE_CSSSelector* ParseSelector(IFX_MemoryAllocator* pStaticStore,
                                          const FX_WCHAR* psz,
                                          int32_t& iOff,
                                          int32_t iLen,
@@ -54,7 +54,7 @@ class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
 
   CFDE_CSSDeclaration* GetDeclaration() override { return &m_Declaration; }
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
-  void SetSelector(IFX_MEMAllocator* pStaticStore,
+  void SetSelector(IFX_MemoryAllocator* pStaticStore,
                    const CFDE_CSSSelectorArray& list);
 
  protected:
@@ -130,7 +130,7 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;
-  IFX_MEMAllocator* m_pAllocator;
+  IFX_MemoryAllocator* m_pAllocator;
   CFDE_CSSRuleArray m_RuleArray;
   CFX_WideString m_szUrl;
   CFDE_CSSSelectorArray m_Selectors;

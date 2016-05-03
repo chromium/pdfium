@@ -91,7 +91,7 @@ typedef CFX_ArrayTemplate<IFDE_CSSPrimitiveValue*> CFDE_CSSPrimitiveArray;
 typedef CFX_ArrayTemplate<IFDE_CSSValue*> CFDE_CSSValueArray;
 class CFDE_CSSValueList : public IFDE_CSSValueList, public CFX_Target {
  public:
-  CFDE_CSSValueList(IFX_MEMAllocator* pStaticStore,
+  CFDE_CSSValueList(IFX_MemoryAllocator* pStaticStore,
                     const CFDE_CSSValueArray& list);
   virtual int32_t CountValues() const { return m_iCount; }
   virtual IFDE_CSSValue* GetValue(int32_t index) const {

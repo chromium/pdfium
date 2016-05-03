@@ -25,7 +25,7 @@ class FDE_CSSCustomProperty : public CFX_Target {
 };
 
 struct FDE_CSSPROPERTYARGS {
-  IFX_MEMAllocator* pStaticStore;
+  IFX_MemoryAllocator* pStaticStore;
   CFX_MapPtrToPtr* pStringCache;
   FDE_LPCCSSPROPERTYTABLE pProperty;
 };
@@ -87,13 +87,13 @@ class CFDE_CSSDeclaration : public CFX_Target {
                                  const FX_WCHAR* pszValue,
                                  int32_t iValueLen,
                                  FX_BOOL bImportant);
-  FX_BOOL ParseBorderPropoerty(IFX_MEMAllocator* pStaticStore,
+  FX_BOOL ParseBorderPropoerty(IFX_MemoryAllocator* pStaticStore,
                                const FX_WCHAR* pszValue,
                                int32_t iValueLen,
                                IFDE_CSSValue*& pColor,
                                IFDE_CSSValue*& pStyle,
                                IFDE_CSSValue*& pWidth) const;
-  void AddBorderProperty(IFX_MEMAllocator* pStaticStore,
+  void AddBorderProperty(IFX_MemoryAllocator* pStaticStore,
                          IFDE_CSSValue* pColor,
                          IFDE_CSSValue* pStyle,
                          IFDE_CSSValue* pWidth,
@@ -113,7 +113,7 @@ class CFDE_CSSDeclaration : public CFX_Target {
                                  const FX_WCHAR* pszValue,
                                  int32_t iValueLen,
                                  FX_BOOL bImportant);
-  FX_BOOL Add4ValuesProperty(IFX_MEMAllocator* pStaticStore,
+  FX_BOOL Add4ValuesProperty(IFX_MemoryAllocator* pStaticStore,
                              const CFDE_CSSValueArray& list,
                              FX_BOOL bImportant,
                              FDE_CSSPROPERTY eLeft,
@@ -141,14 +141,14 @@ class CFDE_CSSDeclaration : public CFX_Target {
   const FX_WCHAR* CopyToLocal(const FDE_CSSPROPERTYARGS* pArgs,
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen);
-  void AddPropertyHolder(IFX_MEMAllocator* pStaticStore,
+  void AddPropertyHolder(IFX_MemoryAllocator* pStaticStore,
                          FDE_CSSPROPERTY eProperty,
                          IFDE_CSSValue* pValue,
                          FX_BOOL bImportant);
-  IFDE_CSSPrimitiveValue* NewNumberValue(IFX_MEMAllocator* pStaticStore,
+  IFDE_CSSPrimitiveValue* NewNumberValue(IFX_MemoryAllocator* pStaticStore,
                                          FDE_CSSPRIMITIVETYPE eUnit,
                                          FX_FLOAT fValue) const;
-  IFDE_CSSPrimitiveValue* NewEnumValue(IFX_MEMAllocator* pStaticStore,
+  IFDE_CSSPrimitiveValue* NewEnumValue(IFX_MemoryAllocator* pStaticStore,
                                        FDE_CSSPROPERTYVALUE eValue) const;
 
   FDE_CSSPropertyHolder* m_pFirstProperty;

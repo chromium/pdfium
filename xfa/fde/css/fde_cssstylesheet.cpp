@@ -150,10 +150,7 @@ FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString& szUrl,
 }
 FX_BOOL CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
   Reset();
-  m_pAllocator = FX_CreateAllocator(FX_ALLOCTYPE_Static, 1024, 0);
-  if (m_pAllocator == NULL) {
-    return FALSE;
-  }
+  m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 1024, 0);
   FDE_CSSSYNTAXSTATUS eStatus;
   do {
     switch (eStatus = pSyntax->DoSyntaxParse()) {
@@ -357,7 +354,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::SkipRuleSet(
   }
   return FDE_CSSSYNTAXSTATUS_None;
 }
-void CFDE_CSSStyleRule::SetSelector(IFX_MEMAllocator* pStaticStore,
+void CFDE_CSSStyleRule::SetSelector(IFX_MemoryAllocator* pStaticStore,
                                     const CFDE_CSSSelectorArray& list) {
   ASSERT(m_ppSelector == NULL);
   m_iSelectors = list.GetSize();
@@ -409,9 +406,10 @@ int32_t FDE_GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
   }
   return psz - pStart;
 }
-CFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator* pStaticStore,
-                                               const FX_WCHAR* psz,
-                                               int32_t iLen) {
+CFDE_CSSSelector* CFDE_CSSSelector::FromString(
+    IFX_MemoryAllocator* pStaticStore,
+    const FX_WCHAR* psz,
+    int32_t iLen) {
   ASSERT(pStaticStore != NULL && psz != NULL && iLen > 0);
   const FX_WCHAR* pStart = psz;
   const FX_WCHAR* pEnd = psz + iLen;

@@ -81,7 +81,7 @@ class CFDE_TxtEdtBuf {
   int32_t m_nTotal;
   FX_BOOL m_bChanged;
   CFX_ArrayTemplate<FDE_CHUNKHEADER*> m_Chunks;
-  IFX_MEMAllocator* m_pAllocator;
+  IFX_MemoryAllocator* m_pAllocator;
 };
 
 #endif  // XFA_FEE_FDE_TXTEDTBUF_H_

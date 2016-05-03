@@ -10,39 +10,33 @@
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_system.h"
 
-class IFX_MEMAllocator;
-class CFX_Target;
 enum FX_ALLOCTYPE {
-  FX_ALLOCTYPE_Default = 0,
   FX_ALLOCTYPE_Static,
   FX_ALLOCTYPE_Fixed,
-  FX_ALLOCTYPE_Dynamic,
 };
 
-class IFX_MEMAllocator {
+class IFX_MemoryAllocator {
  public:
-  virtual ~IFX_MEMAllocator() {}
+  virtual ~IFX_MemoryAllocator() {}
   virtual void Release() = 0;
+
   virtual void* Alloc(size_t size) = 0;
   virtual void Free(void* pBlock) = 0;
-  virtual size_t GetBlockSize() const = 0;
-  virtual size_t GetDefChunkSize() const = 0;
-  virtual size_t SetDefChunkSize(size_t size) = 0;
-  virtual size_t GetCurrentDataSize() const = 0;
-};
 
-IFX_MEMAllocator* FX_CreateAllocator(FX_ALLOCTYPE eType,
+  static IFX_MemoryAllocator* Create(FX_ALLOCTYPE eType,
                                      size_t chunkSize,
                                      size_t blockSize);
+};
+
 class CFX_Target {
  public:
   virtual ~CFX_Target() {}
   void* operator new(size_t size) { return FX_Alloc(uint8_t, size); }
   void operator delete(void* p) { FX_Free(p); }
-  void* operator new(size_t size, IFX_MEMAllocator* pAllocator) {
+  void* operator new(size_t size, IFX_MemoryAllocator* pAllocator) {
     return pAllocator->Alloc(size);
   }
-  void operator delete(void* p, IFX_MEMAllocator* pAllocator) {
+  void operator delete(void* p, IFX_MemoryAllocator* pAllocator) {
     pAllocator->Free(p);
   }
   void* operator new(size_t size, void* place) { return place; }
