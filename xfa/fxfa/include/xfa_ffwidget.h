@@ -18,6 +18,7 @@ class CXFA_FFPageView;
 class CXFA_FFDocView;
 class CXFA_FFDoc;
 class CXFA_FFApp;
+enum class FWL_WidgetHit;
 
 inline FX_FLOAT XFA_UnitPx2Pt(FX_FLOAT fPx, FX_FLOAT fDpi) {
   return fPx * 72.0f / fDpi;
@@ -84,7 +85,7 @@ class CXFA_FFWidget : public CFX_PrivateData, public CXFA_ContentLayoutItem {
   virtual FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags);
-  virtual uint32_t OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL CanUndo() { return FALSE; }
   virtual FX_BOOL CanRedo() { return FALSE; }

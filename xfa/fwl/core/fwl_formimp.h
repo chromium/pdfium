@@ -78,7 +78,7 @@ class CFWL_FormImp : public CFWL_WidgetImp {
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR GetClientRect(CFX_RectF& rect);
   virtual FWL_ERR Update();
-  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual FWL_FORMSIZE GetFormSize();

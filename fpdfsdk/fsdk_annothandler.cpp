@@ -19,6 +19,7 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
+#include "xfa/fwl/core/include/fwl_widgethit.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 #endif  // PDF_ENABLE_XFA
@@ -723,14 +724,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
 }
 
 #ifdef PDF_ENABLE_XFA
-#define FWL_WGTHITTEST_Unknown 0
-#define FWL_WGTHITTEST_Client 1     // arrow
-#define FWL_WGTHITTEST_Titlebar 11  // caption
-#define FWL_WGTHITTEST_HScrollBar 15
-#define FWL_WGTHITTEST_VScrollBar 16
-#define FWL_WGTHITTEST_Border 17
-#define FWL_WGTHITTEST_Edit 19
-#define FWL_WGTHITTEST_HyperLink 20
 
 CPDFSDK_XFAAnnotHandler::CPDFSDK_XFAAnnotHandler(CPDFDoc_Environment* pApp)
     : m_pApp(pApp) {}
@@ -825,9 +818,9 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
   if (!pWidgetHandler)
     return FALSE;
 
-  uint32_t dwHitTest =
+  FWL_WidgetHit dwHitTest =
       pWidgetHandler->OnHitTest(pAnnot->GetXFAWidget(), point.x, point.y);
-  return (dwHitTest != FWL_WGTHITTEST_Unknown);
+  return dwHitTest != FWL_WidgetHit::Unknown;
 }
 
 void CPDFSDK_XFAAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,

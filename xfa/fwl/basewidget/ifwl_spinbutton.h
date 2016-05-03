@@ -12,8 +12,6 @@
 #define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
 #define FWL_CLASSHASH_SpinButton 3793043646
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
-#define FWL_WGTHITTEST_SPB_UpButton (FWL_WGTHITTEST_MAX + 1)
-#define FWL_WGTHITTEST_SPB_DownButton (FWL_WGTHITTEST_MAX + 2)
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click)
 FX_BOOL m_bUp;

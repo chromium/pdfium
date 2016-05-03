@@ -100,27 +100,22 @@ FWL_ERR CFWL_SpinButtonImp::Update() {
   }
   return FWL_ERR_Succeeded;
 }
-uint32_t CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  if (m_rtClient.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Client;
-  }
-  if (HasBorder() && (m_rtClient.Contains(fx, fy))) {
-    return FWL_WGTHITTEST_Border;
-  }
+FWL_WidgetHit CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+  if (m_rtClient.Contains(fx, fy))
+    return FWL_WidgetHit::Client;
+  if (HasBorder() && (m_rtClient.Contains(fx, fy)))
+    return FWL_WidgetHit::Border;
   if (HasEdge()) {
     CFX_RectF rtEdge;
     GetEdgeRect(rtEdge);
-    if (rtEdge.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Left;
-    }
+    if (rtEdge.Contains(fx, fy))
+      return FWL_WidgetHit::Left;
   }
-  if (m_rtUpButton.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_SPB_UpButton;
-  }
-  if (m_rtDnButton.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_SPB_DownButton;
-  }
-  return FWL_WGTHITTEST_Unknown;
+  if (m_rtUpButton.Contains(fx, fy))
+    return FWL_WidgetHit::UpButton;
+  if (m_rtDnButton.Contains(fx, fy))
+    return FWL_WidgetHit::DownButton;
+  return FWL_WidgetHit::Unknown;
 }
 FWL_ERR CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {

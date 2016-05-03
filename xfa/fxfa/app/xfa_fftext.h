@@ -16,7 +16,7 @@ class CXFA_FFText : public CXFA_FFDraw {
   virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual uint32_t OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
                             uint32_t dwStatus = 0,

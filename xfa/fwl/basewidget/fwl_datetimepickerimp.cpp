@@ -537,21 +537,18 @@ FWL_ERR CFWL_DateTimePickerImp::Update() {
   m_pMonthCal->Update();
   return FWL_ERR_Succeeded;
 }
-uint32_t CFWL_DateTimePickerImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  if (m_pWidgetMgr->IsFormDisabled()) {
+FWL_WidgetHit CFWL_DateTimePickerImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+  if (m_pWidgetMgr->IsFormDisabled())
     return DisForm_HitTest(fx, fy);
-  }
-  if (m_rtClient.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Client;
-  }
+  if (m_rtClient.Contains(fx, fy))
+    return FWL_WidgetHit::Client;
   if (IsMonthCalendarShowed()) {
     CFX_RectF rect;
     m_pMonthCal->GetWidgetRect(rect);
-    if (rect.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Client;
-    }
+    if (rect.Contains(fx, fy))
+      return FWL_WidgetHit::Client;
   }
-  return FWL_WGTHITTEST_Unknown;
+  return FWL_WidgetHit::Unknown;
 }
 FWL_ERR CFWL_DateTimePickerImp::DrawWidget(CFX_Graphics* pGraphics,
                                            const CFX_Matrix* pMatrix) {
@@ -907,26 +904,23 @@ void CFWL_DateTimePickerImp::DisForm_ShowMonthCalendar(FX_BOOL bActivate) {
   rtInvalidate.Inflate(2, 2);
   Repaint(&rtInvalidate);
 }
-uint32_t CFWL_DateTimePickerImp::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_DateTimePickerImp::DisForm_HitTest(FX_FLOAT fx,
+                                                      FX_FLOAT fy) {
   CFX_RectF rect;
   rect.Set(0, 0, m_pProperties->m_rtWidget.width,
            m_pProperties->m_rtWidget.height);
-  if (rect.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Edit;
-  }
-  if (DisForm_IsNeedShowButton()) {
+  if (rect.Contains(fx, fy))
+    return FWL_WidgetHit::Edit;
+  if (DisForm_IsNeedShowButton())
     rect.width += m_fBtn;
-  }
-  if (rect.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Client;
-  }
+  if (rect.Contains(fx, fy))
+    return FWL_WidgetHit::Client;
   if (IsMonthCalendarShowed()) {
     m_pMonthCal->GetWidgetRect(rect);
-    if (rect.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Client;
-    }
+    if (rect.Contains(fx, fy))
+      return FWL_WidgetHit::Client;
   }
-  return FWL_WGTHITTEST_Unknown;
+  return FWL_WidgetHit::Unknown;
 }
 FX_BOOL CFWL_DateTimePickerImp::DisForm_IsNeedShowButton() {
   FX_BOOL bFocus = m_pProperties->m_dwStates & FWL_WGTSTATE_Focused ||

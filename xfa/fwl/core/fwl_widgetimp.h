@@ -12,6 +12,7 @@
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
+#include "xfa/fwl/core/include/fwl_widgethit.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_AppImp;
@@ -57,7 +58,7 @@ class CFWL_WidgetImp {
   virtual FWL_ERR Update();
   virtual FWL_ERR LockUpdate();
   virtual FWL_ERR UnlockUpdate();
-  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
   virtual FWL_ERR TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
   virtual FWL_ERR GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);

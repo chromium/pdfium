@@ -139,16 +139,14 @@ FX_BOOL CXFA_FFText::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   pDoc->GetDocProvider()->GotoURL(pDoc, CFX_WideStringC(wsURLContent), FALSE);
   return TRUE;
 }
-uint32_t CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtBox;
   GetRectWithoutRotate(rtBox);
-  if (!rtBox.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Unknown;
-  }
-  if (!GetLinkURLAtPoint(fx, fy)) {
-    return FWL_WGTHITTEST_Unknown;
-  }
-  return FWL_WGTHITTEST_HyperLink;
+  if (!rtBox.Contains(fx, fy))
+    return FWL_WidgetHit::Unknown;
+  if (!GetLinkURLAtPoint(fx, fy))
+    return FWL_WidgetHit::Unknown;
+  return FWL_WidgetHit::HyperLink;
 }
 const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();

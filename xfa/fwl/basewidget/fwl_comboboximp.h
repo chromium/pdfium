@@ -93,7 +93,7 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
                                  uint32_t dwStylesExRemoved);
   virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   virtual FWL_ERR Update();
-  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
@@ -153,7 +153,7 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   FWL_ERR DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
                                  uint32_t dwStylesExRemoved);
   FWL_ERR DisForm_Update();
-  uint32_t DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
   FWL_ERR DisForm_DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   FWL_ERR DisForm_GetBBox(CFX_RectF& rect);

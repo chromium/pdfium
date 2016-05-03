@@ -593,7 +593,7 @@ FWL_ERR CFWL_ComboBoxImp::Update() {
           &part, CFWL_WidgetCapacity::ComboFormHandler));
   return FWL_ERR_Succeeded;
 }
-uint32_t CFWL_ComboBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_ComboBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_HitTest(fx, fy);
   }
@@ -1254,23 +1254,20 @@ FWL_ERR CFWL_ComboBoxImp::DisForm_Update() {
   Layout();
   return FWL_ERR_Succeeded;
 }
-uint32_t CFWL_ComboBoxImp::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_ComboBoxImp::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rect;
   rect.Set(0, 0, m_pProperties->m_rtWidget.width - m_rtBtn.width,
            m_pProperties->m_rtWidget.height);
-  if (rect.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Edit;
-  }
-  if (m_rtBtn.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Client;
-  }
+  if (rect.Contains(fx, fy))
+    return FWL_WidgetHit::Edit;
+  if (m_rtBtn.Contains(fx, fy))
+    return FWL_WidgetHit::Client;
   if (DisForm_IsDropListShowed()) {
     m_pListBox->GetWidgetRect(rect);
-    if (rect.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Client;
-    }
+    if (rect.Contains(fx, fy))
+      return FWL_WidgetHit::Client;
   }
-  return FWL_WGTHITTEST_Unknown;
+  return FWL_WidgetHit::Unknown;
 }
 FWL_ERR CFWL_ComboBoxImp::DisForm_DrawWidget(CFX_Graphics* pGraphics,
                                              const CFX_Matrix* pMatrix) {

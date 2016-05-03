@@ -46,7 +46,7 @@ class CFWL_Widget {
   FWL_ERR Update();
   FWL_ERR LockUpdate();
   FWL_ERR UnlockUpdate();
-  uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   FWL_ERR TransformTo(CFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
   FWL_ERR TransformTo(CFWL_Widget* pWidget, CFX_RectF& rt);
   FWL_ERR GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);

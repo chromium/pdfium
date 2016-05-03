@@ -197,69 +197,57 @@ FWL_ERR CFWL_FormImp::Update() {
   Layout();
   return FWL_ERR_Succeeded;
 }
-uint32_t CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  (void)GetAvailableTheme();
-  if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_CloseBox;
-  }
-  if (m_pMaxBox && m_pMaxBox->m_rtBtn.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_MaxBox;
-  }
-  if (m_pMinBox && m_pMinBox->m_rtBtn.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_MinBox;
-  }
+FWL_WidgetHit CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+  GetAvailableTheme();
+  if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy))
+    return FWL_WidgetHit::CloseBox;
+  if (m_pMaxBox && m_pMaxBox->m_rtBtn.Contains(fx, fy))
+    return FWL_WidgetHit::MaxBox;
+  if (m_pMinBox && m_pMinBox->m_rtBtn.Contains(fx, fy))
+    return FWL_WidgetHit::MinBox;
   CFX_RectF rtCap;
   rtCap.Set(m_rtCaption.left + m_fCYBorder, m_rtCaption.top + m_fCXBorder,
             m_rtCaption.width - FWL_SYSBTNSIZE * m_iSysBox - 2 * m_fCYBorder,
             m_rtCaption.height - m_fCXBorder);
-  if (rtCap.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Titlebar;
-  }
+  if (rtCap.Contains(fx, fy))
+    return FWL_WidgetHit::Titlebar;
   if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) &&
       (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize)) {
     FX_FLOAT fWidth = m_rtRelative.width - 2 * (m_fCYBorder + kCornerEnlarge);
     FX_FLOAT fHeight = m_rtRelative.height - 2 * (m_fCXBorder + kCornerEnlarge);
     CFX_RectF rt;
     rt.Set(0, m_fCXBorder + kCornerEnlarge, m_fCYBorder, fHeight);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Left;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::Left;
     rt.Set(m_rtRelative.width - m_fCYBorder, m_fCXBorder + kCornerEnlarge,
            m_fCYBorder, fHeight);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Right;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::Right;
     rt.Set(m_fCYBorder + kCornerEnlarge, 0, fWidth, m_fCXBorder);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Top;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::Top;
     rt.Set(m_fCYBorder + kCornerEnlarge, m_rtRelative.height - m_fCXBorder,
            fWidth, m_fCXBorder);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Bottom;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::Bottom;
     rt.Set(0, 0, m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_LeftTop;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::LeftTop;
     rt.Set(0, m_rtRelative.height - m_fCXBorder - kCornerEnlarge,
            m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_LeftBottom;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::LeftBottom;
     rt.Set(m_rtRelative.width - m_fCYBorder - kCornerEnlarge, 0,
            m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_RightTop;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::RightTop;
     rt.Set(m_rtRelative.width - m_fCYBorder - kCornerEnlarge,
            m_rtRelative.height - m_fCXBorder - kCornerEnlarge,
            m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_RightBottom;
-    }
+    if (rt.Contains(fx, fy))
+      return FWL_WidgetHit::RightBottom;
   }
-  return FWL_WGTHITTEST_Client;
+  return FWL_WidgetHit::Client;
 }
 FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
@@ -1140,7 +1128,7 @@ void CFWL_FormImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
 }
 void CFWL_FormImpDelegate::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
   if ((m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
-      m_pOwner->HitTest(pMsg->m_fx, pMsg->m_fy) == FWL_WGTHITTEST_Titlebar) {
+      m_pOwner->HitTest(pMsg->m_fx, pMsg->m_fy) == FWL_WidgetHit::Titlebar) {
     if (m_pOwner->m_bMaximized) {
       m_pOwner->SetWidgetRect(m_pOwner->m_rtRestore);
     } else {

@@ -13,6 +13,7 @@
 #include "xfa/fxfa/parser/xfa_document.h"
 
 class CXFA_FFDocView;
+enum class FWL_WidgetHit;
 
 class CXFA_FFWidgetHandler {
  public:
@@ -64,7 +65,7 @@ class CXFA_FFWidgetHandler {
                     uint32_t dwFlags);
   FX_BOOL OnKeyUp(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   FX_BOOL OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);
-  uint32_t OnHitTest(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
+  FWL_WidgetHit OnHitTest(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
   FX_BOOL OnSetCursor(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
   void RenderWidget(CXFA_FFWidget* hWidget,
                     CFX_Graphics* pGS,

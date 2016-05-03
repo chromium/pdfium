@@ -164,9 +164,9 @@ FWL_ERR CFWL_Widget::UnlockUpdate() {
   return m_pIface->UnlockUpdate();
 }
 
-uint32_t CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pIface)
-    return 0;
+    return FWL_WidgetHit::Unknown;
   return m_pIface->HitTest(fx, fy);
 }
 

@@ -118,7 +118,7 @@ FWL_ERR IFWL_Widget::LockUpdate() {
 FWL_ERR IFWL_Widget::UnlockUpdate() {
   return static_cast<CFWL_WidgetImp*>(GetImpl())->UnlockUpdate();
 }
-uint32_t IFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit IFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   return static_cast<CFWL_WidgetImp*>(GetImpl())->HitTest(fx, fy);
 }
 FWL_ERR IFWL_Widget::TransformTo(IFWL_Widget* pWidget,
@@ -365,27 +365,24 @@ FWL_ERR CFWL_WidgetImp::UnlockUpdate() {
   }
   return FWL_ERR_Succeeded;
 }
-uint32_t CFWL_WidgetImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_WidgetImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtClient;
   GetClientRect(rtClient);
-  if (rtClient.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Client;
-  }
+  if (rtClient.Contains(fx, fy))
+    return FWL_WidgetHit::Client;
   if (HasEdge()) {
     CFX_RectF rtEdge;
     GetEdgeRect(rtEdge);
-    if (rtEdge.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Edge;
-    }
+    if (rtEdge.Contains(fx, fy))
+      return FWL_WidgetHit::Edge;
   }
   if (HasBorder()) {
     CFX_RectF rtRelative;
     GetRelativeRect(rtRelative);
-    if (rtRelative.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_Border;
-    }
+    if (rtRelative.Contains(fx, fy))
+      return FWL_WidgetHit::Border;
   }
-  return FWL_WGTHITTEST_Unknown;
+  return FWL_WidgetHit::Unknown;
 }
 FWL_ERR CFWL_WidgetImp::TransformTo(IFWL_Widget* pWidget,
                                     FX_FLOAT& fx,

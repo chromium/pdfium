@@ -37,7 +37,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_ERR SetWidgetRect(const CFX_RectF& rect) override;
   FWL_ERR Update() override;
-  uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
   FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                      const CFX_Matrix* pMatrix = NULL) override;

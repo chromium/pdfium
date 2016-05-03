@@ -322,24 +322,24 @@ FWL_ERR CFWL_EditImp::Update() {
   return FWL_ERR_Succeeded;
 }
 
-uint32_t CFWL_EditImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_EditImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
     if (IsShowScrollBar(TRUE)) {
       CFX_RectF rect;
       m_pVertScrollBar->GetWidgetRect(rect);
       if (rect.Contains(fx, fy))
-        return FWL_WGTHITTEST_VScrollBar;
+        return FWL_WidgetHit::VScrollBar;
     }
     if (IsShowScrollBar(FALSE)) {
       CFX_RectF rect;
       m_pHorzScrollBar->GetWidgetRect(rect);
       if (rect.Contains(fx, fy))
-        return FWL_WGTHITTEST_HScrollBar;
+        return FWL_WidgetHit::HScrollBar;
     }
   }
   if (m_rtClient.Contains(fx, fy))
-    return FWL_WGTHITTEST_Edit;
-  return FWL_WGTHITTEST_Unknown;
+    return FWL_WidgetHit::Edit;
+  return FWL_WidgetHit::Unknown;
 }
 
 void CFWL_EditImp::AddSpellCheckObj(CFX_Path& PathData,

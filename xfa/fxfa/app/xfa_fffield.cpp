@@ -598,24 +598,20 @@ FX_BOOL CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   TranslateFWLMessage(&ms);
   return TRUE;
 }
-uint32_t CXFA_FFField::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CXFA_FFField::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pNormalWidget) {
     FX_FLOAT ffx = fx, ffy = fy;
     FWLToClient(ffx, ffy);
-    uint32_t dwWidgetHit = m_pNormalWidget->HitTest(ffx, ffy);
-    if (dwWidgetHit != FWL_WGTHITTEST_Unknown) {
-      return FWL_WGTHITTEST_Client;
-    }
+    if (m_pNormalWidget->HitTest(ffx, ffy) != FWL_WidgetHit::Unknown)
+      return FWL_WidgetHit::Client;
   }
   CFX_RectF rtBox;
   GetRectWithoutRotate(rtBox);
-  if (!rtBox.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Unknown;
-  }
-  if (m_rtCaption.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Titlebar;
-  }
-  return FWL_WGTHITTEST_Border;
+  if (!rtBox.Contains(fx, fy))
+    return FWL_WidgetHit::Unknown;
+  if (m_rtCaption.Contains(fx, fy))
+    return FWL_WidgetHit::Titlebar;
+  return FWL_WidgetHit::Border;
 }
 FX_BOOL CXFA_FFField::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
   return TRUE;

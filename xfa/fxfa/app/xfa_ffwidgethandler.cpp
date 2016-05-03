@@ -160,11 +160,11 @@ FX_BOOL CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
   return bRet;
 }
 
-uint32_t CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
-                                         FX_FLOAT fx,
-                                         FX_FLOAT fy) {
+FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
+                                              FX_FLOAT fx,
+                                              FX_FLOAT fy) {
   if (!(hWidget->GetStatus() & XFA_WIDGETSTATUS_Visible))
-    return FWL_WGTHITTEST_Unknown;
+    return FWL_WidgetHit::Unknown;
 
   hWidget->Rotate2Normal(fx, fy);
   return hWidget->OnHitTest(fx, fy);

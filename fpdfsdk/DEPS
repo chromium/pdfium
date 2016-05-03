@@ -11,6 +11,7 @@ include_rules = [
   '+core/fxge/include',
   '+public',
   '+v8',
+  '+xfa/fwl/core/include',
   '+xfa/fxfa/include',
   '+xfa/fxgraphics/include',
 ]

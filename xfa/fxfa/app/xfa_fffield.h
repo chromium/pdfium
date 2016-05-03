@@ -53,7 +53,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   virtual FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags);
-  virtual uint32_t OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
 
  protected:

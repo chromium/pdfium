@@ -26,7 +26,7 @@ class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR Update();
-  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual int32_t Run(FWL_HTIMER hTimer);

@@ -249,8 +249,8 @@ FX_BOOL CXFA_FFWidget::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
 FX_BOOL CXFA_FFWidget::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   return FALSE;
 }
-uint32_t CXFA_FFWidget::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  return FALSE;
+FWL_WidgetHit CXFA_FFWidget::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
+  return FWL_WidgetHit::Unknown;
 }
 FX_BOOL CXFA_FFWidget::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;

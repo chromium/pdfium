@@ -113,7 +113,7 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR Update();
-  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pTP);
@@ -166,7 +166,7 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   void DisForm_InitDateTimeEdit();
   FX_BOOL DisForm_IsMonthCalendarShowed();
   void DisForm_ShowMonthCalendar(FX_BOOL bActivate);
-  uint32_t DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
   FX_BOOL DisForm_IsNeedShowButton();
   FWL_ERR DisForm_Update();
   FWL_ERR DisForm_GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);

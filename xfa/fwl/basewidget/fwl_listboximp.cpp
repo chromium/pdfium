@@ -142,25 +142,22 @@ FWL_ERR CFWL_ListBoxImp::Update() {
   CalcSize();
   return FWL_ERR_Succeeded;
 }
-uint32_t CFWL_ListBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_ListBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (IsShowScrollBar(FALSE)) {
     CFX_RectF rect;
     m_pHorzScrollBar->GetWidgetRect(rect);
-    if (rect.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_HScrollBar;
-    }
+    if (rect.Contains(fx, fy))
+      return FWL_WidgetHit::HScrollBar;
   }
   if (IsShowScrollBar(TRUE)) {
     CFX_RectF rect;
     m_pVertScrollBar->GetWidgetRect(rect);
-    if (rect.Contains(fx, fy)) {
-      return FWL_WGTHITTEST_VScrollBar;
-    }
+    if (rect.Contains(fx, fy))
+      return FWL_WidgetHit::VScrollBar;
   }
-  if (m_rtClient.Contains(fx, fy)) {
-    return FWL_WGTHITTEST_Client;
-  }
-  return FWL_WGTHITTEST_Unknown;
+  if (m_rtClient.Contains(fx, fy))
+    return FWL_WidgetHit::Client;
+  return FWL_WidgetHit::Unknown;
 }
 FWL_ERR CFWL_ListBoxImp::DrawWidget(CFX_Graphics* pGraphics,
                                     const CFX_Matrix* pMatrix) {

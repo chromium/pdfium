@@ -203,6 +203,7 @@
         "xfa/fwl/core/ifwl_widget.h",
         "xfa/fwl/core/ifwl_widgetdelegate.h",
         "xfa/fwl/core/ifwl_widgetmgr.h",
+        "xfa/fwl/core/include/fwl_widgethit.h",
         "xfa/fwl/core/include/ifwl_adaptertimermgr.h",
         "xfa/fwl/lightwidget/cfwl_barcode.cpp",
         "xfa/fwl/lightwidget/cfwl_barcode.h",
