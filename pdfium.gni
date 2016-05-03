@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build_overrides/pdfium.gni")
+
 # This file contains PDFium-related build flags.
 
 declare_args() {
@@ -10,13 +12,13 @@ declare_args() {
   pdfium_bundle_freetype = !is_linux
 
   # Build PDFium either with or without v8 support.
-  pdf_enable_v8 = true
+  pdf_enable_v8 = pdf_enable_v8_override
 
   # Build PDFium either with or without XFA Forms support.
-  pdf_enable_xfa = false
+  pdf_enable_xfa = pdf_enable_xfa_override
 
   # Build PDFium against skia (experimental) rather than agg.
-  pdf_use_skia = false
+  pdf_use_skia = pdf_use_skia_override
 
   # Build PDFium standalone
   pdf_is_standalone = false
