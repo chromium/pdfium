@@ -2,8 +2,9 @@
 
 ## News
 
-As of 2016-02-04, the XFA branch is deprecated.  Instead, see
-[the section on configuration](#BuildConfig) below.
+As of 2016-05-04, GN is used to generate build files replacing GYP. GYP
+support will remain until it is disabled in Chromium and then will be removed
+from PDFium.
 
 As of 2016-04-28, the Visual Studio toolchain from depot_tools is used as the
 default Windows toolchain for Googlers. Please set DEPOT_TOOLS_WIN_TOOLCHAIN=0
@@ -19,6 +20,7 @@ the gclient utilty needed below).
 
 Also install Python, Subversion, and Git and make sure they're in your path.
 
+
 ###<a name="WinDev"></a> Windows development
 
 PDFium uses a similar Windows toolchain as Chromium:
@@ -30,6 +32,7 @@ Run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0`, or set that variable in your global
 environment.
 
 Compilation is done through ninja, **not** Visual Studio.
+
 
 #### Google employees
 
@@ -63,22 +66,17 @@ cd pdfium
 
 ##<a name="GenBuild"></a> Generate the build files
 
-We use the GYP library to generate the build files.
+We use GN to generate the build files and
+[Ninja](http://martine.github.io/ninja/) (also included with the depot\_tools
+checkout) to execute the build files.
 
-At this point, you have two options. The first option is to use the [Ninja]
-(http://martine.github.io/ninja/) build system (also included with the
-depot\_tools checkout). This is the default as of mid-September, 2015.
-Previously, the second option (platform-specific build files) was the default.
-Most PDFium developers use Ninja, as does our [continuous build system]
-(http://build.chromium.org/p/client.pdfium/).
+```
+gn gen <directory>
+```
 
- * On Windows: `build_gyp\gyp_pdfium`
- * For all other platforms: `build_gyp/gyp_pdfium`
-
-The second option is to generate platform-specific build files, i.e. Makefiles
-on Linux, sln files on Windows, and xcodeproj files on Mac. To do so, set the
-GYP\_GENERATORS environment variable appropriately (e.g. "make", "msvs", or
-"xcode") before running the above command.
+If you want to set <directory> to `out/Debug` or `out/Release` you'll need to
+export `GYP_PDFIUM_NO_ACTION=1` to stop `gclient sync` from executing GYP
+and overwritting your build files.
 
 ###<a name="BuildConfig"></a> Selecting build configuration
 
@@ -86,41 +84,36 @@ PDFium may be built either with or without JavaScript support, and with
 or without XFA forms support.  Both of these features are enabled by
 default. Also note that the XFA feature requires JavaScript.
 
-To build without XFA, set `pdf_enable_xfa=0` before running `gyp_pdfium`.
-To build without JavaScript, set `pdf_enable_v8=0 pdf_enable_xfa=0` before
-running `gyp_pdfium`. For example
-```
-GYP_DEFINES='pdf_enable_v8=0 pdf_enable_xfa=0' build_gyp/gyp_pdfium
-```
-gives the smallest possible build configuration.
-
-### Using goma (Googlers only)
-
-If you would like to build using goma, pass `use_goma=1` to `gyp_pdfium`. If
-you installed goma in a non-standard location, you will also need to set
-`gomadir`. e.g.
+Configuration is done by executing `gn args <directory>` to configure the build.
+This will lauch an editor in which you can set the following arguments.
 
 ```
-build_gyp/gyp_pdfium -D use_goma=1 -D gomadir=path/to/goma
+use_goma = true  # Googlers only.
+is_debug = true  # Enable debugging features.
+
+pdf_use_skia = false  # Set true to enable experimental skia backend.
+
+pdf_enable_xfa = true # Set false to remove XFA support (implies JS support).
+pdf_enable_v8 = true  # Set false to remove Javascript support.
+pdf_is_standalone = true  # Set for a non-embedded build.
+
+clang_use_chrome_plugins = false  # Currently must be false.
 ```
+
+When complete the arguments will be stored in `<directory>/args.gn`.
 
 ## Building the code
 
-If you used Ninja, you can build the sample program by: `ninja -C out/Debug
-pdfium_test` You can build the entire product (which includes a few unit
-tests) by: `ninja -C out/Debug`.
+If you used Ninja, you can build the sample program by:
+`ninja -C <directory>/pdfium_test` You can build the entire product (which
+includes a few unit tests) by: `ninja -C <directory>`.
 
-If you're not using Ninja, then building is platform-specific.
-
- * On Linux: `make pdfium_test`
- * On Mac: `open build_gyp/all.xcodeproj`
- * On Windows: open build_gyp\all.sln
 
 ## Running the sample program
 
 The pdfium\_test program supports reading, parsing, and rasterizing the pages of
 a .pdf file to .ppm or .png output image files (windows supports two other
-formats). For example: `out/Debug/pdfium_test --ppm path/to/myfile.pdf`. Note
+formats). For example: `<directory>/pdfium_test --ppm path/to/myfile.pdf`. Note
 that this will write output images to `path/to/myfile.pdf.<n>.ppm`.
 
 ## Testing
@@ -155,7 +148,7 @@ Note, the Reviews and Bugs lists are typically read-only.
 
 ## Bugs
 
- We will be using this
+ We use this
 [bug tracker](https://code.google.com/p/pdfium/issues/list), but for security
 bugs, please use [Chromium's security bug template]
 (https://code.google.com/p/chromium/issues/entry?template=Security%20Bug)
@@ -168,10 +161,4 @@ For contributing code, we will follow
 as much as possible. The main exceptions is:
 
 1. Code has to conform to the existing style and not Chromium/Google style.
-
-## Branches
-
-Prior to 2016-02-04, there existed an actively developed origin/xfa branch.
-The origin/xfa branch is now an evolutionary dead-end. Everything you need
-to build either with or without the XFA feature is on origin/master.
 
