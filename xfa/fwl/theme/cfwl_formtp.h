@@ -67,7 +67,7 @@ class CFWL_FormTP : public CFWL_WidgetTP {
   void DrawMaximizeBox(CFX_Graphics* pGraphics,
                        const CFX_RectF* pRect,
                        FWLTHEME_STATE eState,
-                       FX_BOOL bMax,
+                       bool bMax,
                        CFX_Matrix* pMatrix,
                        int32_t iActive = 0);
   void DrawIconImage(CFX_Graphics* pGraphics,

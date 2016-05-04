@@ -637,9 +637,6 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
       dwItemStyles & FWL_ITEMSTATE_LTB_Focused) {
     dwPartStates |= CFWL_PartState_Focused;
   }
-  FWL_ListBoxItemData itemData;
-  itemData.pDataProvider = pData;
-  itemData.iIndex = Index;
   {
     CFWL_ThemeBackground param;
     param.m_pWidget = m_pInterface;
@@ -648,7 +645,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
     param.m_pGraphics = pGraphics;
     param.m_matrix.Concat(*pMatrix);
     param.m_rtPart = rtItem;
-    param.m_dwData = (uint32_t)(uintptr_t)(&itemData);
+    param.m_bMaximize = true;
     CFX_RectF rtFocus(rtItem);
     param.m_pData = &rtFocus;
     if (m_pVertScrollBar && !m_pHorzScrollBar &&
@@ -672,7 +669,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
         param.m_pGraphics = pGraphics;
         param.m_matrix.Concat(*pMatrix);
         param.m_rtPart = rtDIB;
-        param.m_dwData = (uint32_t)(uintptr_t)(&itemData);
+        param.m_bMaximize = true;
         param.m_pImage = pDib;
         pTheme->DrawBackground(&param);
       }
@@ -694,7 +691,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
       }
       param.m_matrix.Concat(*pMatrix);
       param.m_rtPart = rtCheck;
-      param.m_dwData = (uint32_t)(uintptr_t)(&itemData);
+      param.m_bMaximize = true;
       pTheme->DrawBackground(&param);
     }
     CFX_WideString wsText;
@@ -717,7 +714,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
     textParam.m_wsText = wsText;
     textParam.m_dwTTOStyles = m_dwTTOStyles;
     textParam.m_iTTOAlign = m_iTTOAligns;
-    textParam.m_dwData = (uint32_t)(uintptr_t)(&itemData);
+    textParam.m_bMaximize = true;
     pTheme->DrawText(&textParam);
   }
 }
@@ -751,7 +748,7 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
       itemPart.m_pWidget = m_pInterface;
       itemPart.m_iPart = CFWL_Part::ListItem;
       itemPart.m_pData = m_pProperties->m_pDataProvider;
-      itemPart.m_dwData = i;
+      itemPart.m_bMaximize = i > 0;
       CFX_RectF r;
       m_pProperties->m_pThemeProvider->GetPartRect(&itemPart, r);
       if (!bAutoSize) {

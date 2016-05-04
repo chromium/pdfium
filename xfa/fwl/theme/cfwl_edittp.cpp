@@ -43,14 +43,12 @@ FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                             &pParams->m_matrix);
         pGraphics->RestoreGraphState();
       } else {
-        FX_BOOL bStatic =
-            pParams->m_dwData == FWL_PARTDATA_EDT_StaticBackground;
         CFX_Path path;
         path.Create();
         path.AddRectangle(pParams->m_rtPart.left, pParams->m_rtPart.top,
                           pParams->m_rtPart.width, pParams->m_rtPart.height);
         CFX_Color cr(FWLTHEME_COLOR_Background);
-        if (!bStatic) {
+        if (!pParams->m_bStaticBackground) {
           if (pParams->m_dwStates & CFWL_PartState_Disabled)
             cr.Set(FWLTHEME_COLOR_EDGERB1);
           else if (pParams->m_dwStates & CFWL_PartState_ReadOnly)

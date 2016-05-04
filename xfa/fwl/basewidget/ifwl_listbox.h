@@ -34,12 +34,6 @@
 typedef struct FWL_HLISTITEM_ { void* pData; } * FWL_HLISTITEM;
 
 class CFX_DIBitmap;
-class IFWL_ListBoxDP;
-
-struct FWL_ListBoxItemData {
-  IFWL_ListBoxDP* pDataProvider;
-  int32_t iIndex;
-};
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbSelChanged, CFWL_EventType::SelectChanged)
 CFX_Int32Array iarraySels;

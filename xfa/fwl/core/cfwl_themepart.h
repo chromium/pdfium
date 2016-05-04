@@ -85,7 +85,8 @@ class CFWL_ThemePart {
       : m_pWidget(nullptr),
         m_iPart(CFWL_Part::None),
         m_dwStates(CFWL_PartState_Normal),
-        m_dwData(0),
+        m_bMaximize(false),
+        m_bStaticBackground(false),
         m_pData(nullptr) {
     m_rtPart.Reset();
     m_matrix.SetIdentity();
@@ -96,7 +97,8 @@ class CFWL_ThemePart {
   IFWL_Widget* m_pWidget;
   CFWL_Part m_iPart;
   uint32_t m_dwStates;
-  uint32_t m_dwData;
+  bool m_bMaximize;
+  bool m_bStaticBackground;
   void* m_pData;
 };
 

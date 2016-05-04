@@ -48,8 +48,6 @@
 #define FWL_STYLEEXT_EDT_ShowScrollbarFocus (1L << 25)
 #define FWL_STYLEEXT_EDT_OuterScrollbar (1L << 26)
 #define FWL_STYLEEXT_EDT_LastLineHeight (1L << 27)
-#define FWL_PARTDATA_EDT_Background 0
-#define FWL_PARTDATA_EDT_StaticBackground 1
 
 typedef struct FWL_HEDTFIND_ { void* pData; } * FWL_HEDTFIND;
 

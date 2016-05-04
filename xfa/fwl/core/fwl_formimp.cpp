@@ -330,7 +330,7 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
         param.m_dwStates = CFWL_PartState_Hovered;
       }
       param.m_rtPart = m_pMaxBox->m_rtBtn;
-      param.m_dwData = m_bMaximized;
+      param.m_bMaximize = m_bMaximized;
       pTheme->DrawBackground(&param);
     }
     if (m_pMinBox) {
@@ -358,7 +358,7 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
       param.m_iPart = CFWL_Part::MaximizeBox;
       param.m_dwStates = m_pMaxBox->GetPartState();
       param.m_rtPart = m_pMaxBox->m_rtBtn;
-      param.m_dwData = m_bMaximized;
+      param.m_bMaximize = m_bMaximized;
       pTheme->DrawBackground(&param);
     }
     if (m_pMinBox) {

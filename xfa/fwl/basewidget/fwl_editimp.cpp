@@ -930,7 +930,7 @@ void CFWL_EditImp::DrawTextBk(CFX_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
   param.m_iPart = CFWL_Part::Background;
-  param.m_dwData = FWL_PARTDATA_EDT_Background;
+  param.m_bStaticBackground = false;
   param.m_dwStates = m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly
                          ? CFWL_PartState_ReadOnly
                          : CFWL_PartState_Normal;
@@ -951,7 +951,8 @@ void CFWL_EditImp::DrawTextBk(CFX_Graphics* pGraphics,
   rtStatic.Set(m_rtClient.right() - rtScorll.height,
                m_rtClient.bottom() - rtScorll.height, rtScorll.height,
                rtScorll.height);
-  param.m_dwData = FWL_PARTDATA_EDT_StaticBackground;
+  param.m_bStaticBackground = true;
+  param.m_bMaximize = true;
   param.m_rtPart = rtStatic;
   pTheme->DrawBackground(&param);
 }

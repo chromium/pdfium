@@ -137,7 +137,7 @@ FX_BOOL CFWL_FormTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     }
     case CFWL_Part::MaximizeBox: {
       DrawMaximizeBox(pParams->m_pGraphics, &pParams->m_rtPart, eState,
-                      pParams->m_dwData, &pParams->m_matrix, iActive);
+                      pParams->m_bMaximize, &pParams->m_matrix, iActive);
       break;
     }
     case CFWL_Part::Icon: {
@@ -515,7 +515,7 @@ void CFWL_FormTP::DrawMinimizeBox(CFX_Graphics* pGraphics,
 void CFWL_FormTP::DrawMaximizeBox(CFX_Graphics* pGraphics,
                                   const CFX_RectF* pRect,
                                   FWLTHEME_STATE eState,
-                                  FX_BOOL bMax,
+                                  bool bMax,
                                   CFX_Matrix* pMatrix,
                                   int32_t iActive) {
   DrawMinMaxBoxCommon(pGraphics, pRect, eState, pMatrix);
