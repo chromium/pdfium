@@ -18,8 +18,6 @@ enum FX_ALLOCTYPE {
 class IFX_MemoryAllocator {
  public:
   virtual ~IFX_MemoryAllocator() {}
-  virtual void Release() = 0;
-
   virtual void* Alloc(size_t size) = 0;
   virtual void Free(void* pBlock) = 0;
 

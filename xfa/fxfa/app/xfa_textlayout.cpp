@@ -37,8 +37,7 @@ CXFA_TextParser::~CXFA_TextParser() {
     m_pUASheet->Release();
   if (m_pSelector)
     m_pSelector->Release();
-  if (m_pAllocator)
-    m_pAllocator->Release();
+  delete m_pAllocator;
   FX_POSITION ps = m_mapXMLNodeToParseContext.GetStartPosition();
   while (ps) {
     CFDE_XMLNode* pXMLNode;
@@ -59,10 +58,8 @@ void CXFA_TextParser::Reset() {
       FXTARGET_DeleteWith(CXFA_TextParseContext, m_pAllocator, pParseContext);
   }
   m_mapXMLNodeToParseContext.RemoveAll();
-  if (m_pAllocator) {
-    m_pAllocator->Release();
-    m_pAllocator = NULL;
-  }
+  delete m_pAllocator;
+  m_pAllocator = nullptr;
 }
 void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   if (pTextProvider == NULL) {
@@ -665,10 +662,8 @@ void CXFA_TextLayout::Unload() {
     m_pBreak->Release();
     m_pBreak = NULL;
   }
-  if (m_pAllocator) {
-    m_pAllocator->Release();
-    m_pAllocator = NULL;
-  }
+  delete m_pAllocator;
+  m_pAllocator = nullptr;
 }
 const CXFA_PieceLineArray* CXFA_TextLayout::GetPieceLines() {
   return &m_pieceLines;

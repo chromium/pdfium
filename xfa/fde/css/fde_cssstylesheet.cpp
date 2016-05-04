@@ -101,10 +101,8 @@ void CFDE_CSSStyleSheet::Reset() {
   m_RuleArray.RemoveAll();
   m_Selectors.RemoveAll();
   m_StringCache.RemoveAll();
-  if (m_pAllocator) {
-    m_pAllocator->Release();
-    m_pAllocator = NULL;
-  }
+  delete m_pAllocator;
+  m_pAllocator = nullptr;
 }
 uint32_t CFDE_CSSStyleSheet::AddRef() {
   return ++m_wRefCount;

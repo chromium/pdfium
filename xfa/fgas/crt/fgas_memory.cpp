@@ -17,10 +17,9 @@ namespace {
 class CFX_DefStore : public IFX_MemoryAllocator, public CFX_Target {
  public:
   CFX_DefStore() {}
-  ~CFX_DefStore() {}
-  virtual void Release() { delete this; }
-  virtual void* Alloc(size_t size) { return FX_Alloc(uint8_t, size); }
-  virtual void Free(void* pBlock) { FX_Free(pBlock); }
+  ~CFX_DefStore() override {}
+  void* Alloc(size_t size) override { return FX_Alloc(uint8_t, size); }
+  void Free(void* pBlock) override { FX_Free(pBlock); }
 };
 
 }  // namespace
@@ -44,10 +43,9 @@ struct FX_STATICSTORECHUNK {
 class CFX_StaticStore : public IFX_MemoryAllocator, public CFX_Target {
  public:
   CFX_StaticStore(size_t iDefChunkSize = 4096);
-  ~CFX_StaticStore();
-  virtual void Release() { delete this; }
-  virtual void* Alloc(size_t size);
-  virtual void Free(void* pBlock) {}
+  ~CFX_StaticStore() override;
+  void* Alloc(size_t size) override;
+  void Free(void* pBlock) override {}
 
  protected:
   size_t m_iAllocatedSize;
@@ -70,10 +68,9 @@ struct FX_FIXEDSTORECHUNK {
 class CFX_FixedStore : public IFX_MemoryAllocator, public CFX_Target {
  public:
   CFX_FixedStore(size_t iBlockSize, size_t iBlockNumsInChunk);
-  virtual ~CFX_FixedStore();
-  virtual void Release() { delete this; }
-  virtual void* Alloc(size_t size);
-  virtual void Free(void* pBlock);
+  ~CFX_FixedStore() override;
+  void* Alloc(size_t size) override;
+  void Free(void* pBlock) override;
 
  protected:
   FX_FIXEDSTORECHUNK* AllocChunk();

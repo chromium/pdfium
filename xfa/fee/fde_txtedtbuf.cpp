@@ -122,7 +122,7 @@ void CFDE_TxtEdtBuf::Release() {
 }
 CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {
   Clear(TRUE);
-  m_pAllocator->Release();
+  delete m_pAllocator;
   m_Chunks.RemoveAll();
 }
 FX_BOOL CFDE_TxtEdtBuf::SetChunkSize(int32_t nChunkSize) {
@@ -362,10 +362,8 @@ void CFDE_TxtEdtBuf::ResetChunkBuffer(int32_t nDefChunkCount,
                                       int32_t nChunkSize) {
   ASSERT(nChunkSize);
   ASSERT(nDefChunkCount);
-  if (m_pAllocator) {
-    m_pAllocator->Release();
-    m_pAllocator = NULL;
-  }
+  delete m_pAllocator;
+  m_pAllocator = nullptr;
   m_Chunks.RemoveAll();
   m_nChunkSize = nChunkSize;
   int32_t nChunkLength =

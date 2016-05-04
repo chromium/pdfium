@@ -223,10 +223,8 @@ CFDE_CSSStyleSelector::CFDE_CSSStyleSelector()
 
 CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {
   Reset();
-  if (m_pInlineStyleStore)
-    m_pInlineStyleStore->Release();
-  if (m_pFixedStyleStore)
-    m_pFixedStyleStore->Release();
+  delete m_pInlineStyleStore;
+  delete m_pFixedStyleStore;
   delete m_pAccelerator;
 }
 
@@ -302,10 +300,8 @@ void CFDE_CSSStyleSelector::Reset() {
   for (int32_t iGroup = 0; iGroup < FDE_CSSSTYLESHEETGROUP_MAX; ++iGroup) {
     m_RuleCollection[iGroup].Clear();
   }
-  if (m_pRuleDataStore != NULL) {
-    m_pRuleDataStore->Release();
-    m_pRuleDataStore = NULL;
-  }
+  delete m_pRuleDataStore;
+  m_pRuleDataStore = nullptr;
 }
 int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CXFA_CSSTagProvider* pTag,
