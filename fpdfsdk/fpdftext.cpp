@@ -53,8 +53,9 @@ DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
   CPDF_ViewerPreferences viewRef(pPDFPage->m_pDocument);
 #endif  // PDF_ENABLE_XFA
 
-  CPDF_TextPage* textpage =
-      new CPDF_TextPage(pPDFPage, viewRef.IsDirectionR2L());
+  CPDF_TextPage* textpage = new CPDF_TextPage(
+      pPDFPage, viewRef.IsDirectionR2L() ? FPDFText_Direction::Right
+                                         : FPDFText_Direction::Left);
   textpage->ParseTextPage();
   return textpage;
 }

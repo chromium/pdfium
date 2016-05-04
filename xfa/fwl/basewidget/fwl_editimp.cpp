@@ -32,6 +32,8 @@
 
 namespace {
 
+const int kEditMargin = 3;
+
 bool FX_EDIT_ISLATINWORD(FX_WCHAR c) {
   return c == 0x2D || (c <= 0x005A && c >= 0x0041) ||
          (c <= 0x007A && c >= 0x0061) || (c <= 0x02AF && c >= 0x00C0) ||
@@ -195,7 +197,7 @@ FX_BOOL IFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf,
   return static_cast<CFWL_EditImp*>(GetImpl())
       ->ReplaceSpellCheckWord(pointf, bsReplace);
 }
-#define FWL_EDIT_Margin 3
+
 CFWL_EditImp::CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
@@ -282,13 +284,13 @@ FWL_ERR CFWL_EditImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
         FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
             GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
         rect.width += *pfWidth;
-        rect.width += FWL_EDIT_Margin;
+        rect.width += kEditMargin;
       }
       if (IsShowScrollBar(FALSE)) {
         FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
             GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
         rect.height += *pfWidth;
-        rect.height += FWL_EDIT_Margin;
+        rect.height += kEditMargin;
       }
     }
   }
@@ -1473,8 +1475,8 @@ void CFWL_EditImp::Layout() {
     InitScrollBar();
     CFX_RectF rtVertScr;
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
-      rtVertScr.Set(m_rtClient.right() + FWL_EDIT_Margin, m_rtClient.top,
-                    fWidth, m_rtClient.height);
+      rtVertScr.Set(m_rtClient.right() + kEditMargin, m_rtClient.top, fWidth,
+                    m_rtClient.height);
     } else {
       rtVertScr.Set(m_rtClient.right() - fWidth, m_rtClient.top, fWidth,
                     m_rtClient.height);
@@ -1493,7 +1495,7 @@ void CFWL_EditImp::Layout() {
     InitScrollBar(FALSE);
     CFX_RectF rtHoriScr;
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
-      rtHoriScr.Set(m_rtClient.left, m_rtClient.bottom() + FWL_EDIT_Margin,
+      rtHoriScr.Set(m_rtClient.left, m_rtClient.bottom() + kEditMargin,
                     m_rtClient.width, fWidth);
     } else {
       rtHoriScr.Set(m_rtClient.left, m_rtClient.bottom() - fWidth,
@@ -1526,8 +1528,8 @@ void CFWL_EditImp::LayoutScrollBar() {
       InitScrollBar();
       CFX_RectF rtVertScr;
       if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
-        rtVertScr.Set(m_rtClient.right() + FWL_EDIT_Margin, m_rtClient.top,
-                      fWidth, m_rtClient.height);
+        rtVertScr.Set(m_rtClient.right() + kEditMargin, m_rtClient.top, fWidth,
+                      m_rtClient.height);
       } else {
         rtVertScr.Set(m_rtClient.right() - fWidth, m_rtClient.top, fWidth,
                       m_rtClient.height);
@@ -1552,7 +1554,7 @@ void CFWL_EditImp::LayoutScrollBar() {
       InitScrollBar(FALSE);
       CFX_RectF rtHoriScr;
       if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
-        rtHoriScr.Set(m_rtClient.left, m_rtClient.bottom() + FWL_EDIT_Margin,
+        rtHoriScr.Set(m_rtClient.left, m_rtClient.bottom() + kEditMargin,
                       m_rtClient.width, fWidth);
       } else {
         rtHoriScr.Set(m_rtClient.left, m_rtClient.bottom() - fWidth,
@@ -1735,25 +1737,24 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      uint32_t dwCmd = pMsg->m_dwCmd;
-      switch (dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+      switch (pMsg->m_dwCmd) {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonDblClk: {
+        case FWL_MouseCommand::LeftButtonDblClk: {
           OnButtonDblClk(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_RButtonDown: {
+        case FWL_MouseCommand::RightButtonDown: {
           DoButtonDown(pMsg);
           break;
         }
@@ -1764,10 +1765,9 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      uint32_t dwCmd = pKey->m_dwCmd;
-      if (dwCmd == FWL_MSGKEYCMD_KeyDown)
+      if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
-      else if (dwCmd == FWL_MSGKEYCMD_Char)
+      else if (pKey->m_dwCmd == FWL_KeyCommand::Char)
         OnChar(pKey);
       break;
     }

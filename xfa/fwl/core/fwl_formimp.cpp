@@ -21,9 +21,13 @@
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-#define FWL_SYSBTNSIZE 21
-#define FWL_SYSBTNMARGIN 5
-#define FWL_SYSBTNSPAN 2
+namespace {
+
+const int kSystemButtonSize = 21;
+const int kSystemButtonMargin = 5;
+const int kSystemButtonSpan = 2;
+
+}  // namespace
 
 namespace {
 
@@ -207,7 +211,7 @@ FWL_WidgetHit CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
     return FWL_WidgetHit::MinBox;
   CFX_RectF rtCap;
   rtCap.Set(m_rtCaption.left + m_fCYBorder, m_rtCaption.top + m_fCXBorder,
-            m_rtCaption.width - FWL_SYSBTNSIZE * m_iSysBox - 2 * m_fCYBorder,
+            m_rtCaption.width - kSystemButtonSize * m_iSysBox - 2 * m_fCYBorder,
             m_rtCaption.height - m_fCXBorder);
   if (rtCap.Contains(fx, fy))
     return FWL_WidgetHit::Titlebar;
@@ -654,8 +658,8 @@ void CFWL_FormImp::ReSetSysBtn() {
       pTheme->GetPartRect(&param, m_pCloseBox->m_rtBtn);
     } else {
       m_pCloseBox->m_rtBtn.Set(
-          m_rtRelative.right() - FWL_SYSBTNMARGIN - FWL_SYSBTNSIZE,
-          FWL_SYSBTNMARGIN, FWL_SYSBTNSIZE, FWL_SYSBTNSIZE);
+          m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
+          kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
     }
     m_iSysBox++;
   }
@@ -669,12 +673,12 @@ void CFWL_FormImp::ReSetSysBtn() {
     } else {
       if (m_pCloseBox) {
         m_pMaxBox->m_rtBtn.Set(
-            m_pCloseBox->m_rtBtn.left - FWL_SYSBTNSPAN - FWL_SYSBTNSIZE,
-            m_pCloseBox->m_rtBtn.top, FWL_SYSBTNSIZE, FWL_SYSBTNSIZE);
+            m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
+            m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
       } else {
         m_pMaxBox->m_rtBtn.Set(
-            m_rtRelative.right() - FWL_SYSBTNMARGIN - FWL_SYSBTNSIZE,
-            FWL_SYSBTNMARGIN, FWL_SYSBTNSIZE, FWL_SYSBTNSIZE);
+            m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
+            kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
       }
     }
     m_iSysBox++;
@@ -689,16 +693,16 @@ void CFWL_FormImp::ReSetSysBtn() {
     } else {
       if (m_pMaxBox) {
         m_pMinBox->m_rtBtn.Set(
-            m_pMaxBox->m_rtBtn.left - FWL_SYSBTNSPAN - FWL_SYSBTNSIZE,
-            m_pMaxBox->m_rtBtn.top, FWL_SYSBTNSIZE, FWL_SYSBTNSIZE);
+            m_pMaxBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
+            m_pMaxBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
       } else if (m_pCloseBox) {
         m_pMinBox->m_rtBtn.Set(
-            m_pCloseBox->m_rtBtn.left - FWL_SYSBTNSPAN - FWL_SYSBTNSIZE,
-            m_pCloseBox->m_rtBtn.top, FWL_SYSBTNSIZE, FWL_SYSBTNSIZE);
+            m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
+            m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
       } else {
         m_pMinBox->m_rtBtn.Set(
-            m_rtRelative.right() - FWL_SYSBTNMARGIN - FWL_SYSBTNSIZE,
-            FWL_SYSBTNMARGIN, FWL_SYSBTNSIZE, FWL_SYSBTNSIZE);
+            m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
+            kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
       }
     }
     m_iSysBox++;
@@ -912,30 +916,32 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseHover: {
+        case FWL_MouseCommand::Hover: {
           OnMouseHover(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseLeave: {
+        case FWL_MouseCommand::Leave: {
           OnMouseLeave(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonDblClk: {
+        case FWL_MouseCommand::LeftButtonDblClk: {
           OnLButtonDblClk(pMsg);
           break;
         }
+        default:
+          break;
       }
       break;
     }
@@ -996,7 +1002,8 @@ void CFWL_FormImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   CFX_RectF rtCap;
   rtCap.Set(m_pOwner->m_rtCaption.left + m_pOwner->m_fCYBorder,
             m_pOwner->m_rtCaption.top + m_pOwner->m_fCXBorder,
-            m_pOwner->m_rtCaption.width - FWL_SYSBTNSIZE * m_pOwner->m_iSysBox -
+            m_pOwner->m_rtCaption.width -
+                kSystemButtonSize * m_pOwner->m_iSysBox -
                 2 * m_pOwner->m_fCYBorder,
             m_pOwner->m_rtCaption.height - m_pOwner->m_fCXBorder);
   if (pPressBtn) {
@@ -1121,8 +1128,7 @@ void CFWL_FormImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
     pHover->SetNormal();
     m_pOwner->Repaint(&pHover->m_rtBtn);
   }
-  if (pMsg->m_dwCmd == FWL_MSGMOUSECMD_MouseLeave &&
-      !m_pOwner->m_bLButtonDown) {
+  if (pMsg->m_dwCmd == FWL_MouseCommand::Leave && !m_pOwner->m_bLButtonDown) {
     m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
   }
 }

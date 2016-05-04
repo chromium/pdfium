@@ -107,7 +107,7 @@ FX_BOOL CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags,
   }
   SetButtonDown(TRUE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_LButtonDown;
+  ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -132,7 +132,7 @@ FX_BOOL CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags,
   }
   SetButtonDown(TRUE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_RButtonDown;
+  ms.m_dwCmd = FWL_MouseCommand::RightButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;

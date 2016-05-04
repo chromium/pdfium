@@ -636,21 +636,20 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   if (dwMsgCode == CFWL_MessageType::Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-    uint32_t dwCmd = pMsg->m_dwCmd;
-    switch (dwCmd) {
-      case FWL_MSGMOUSECMD_LButtonDown: {
+    switch (pMsg->m_dwCmd) {
+      case FWL_MouseCommand::LeftButtonDown: {
         OnLButtonDown(pMsg->m_dwFlags, pMsg->m_fx, pMsg->m_fy);
         break;
       }
-      case FWL_MSGMOUSECMD_LButtonUp: {
+      case FWL_MouseCommand::LeftButtonUp: {
         OnLButtonUp(pMsg->m_dwFlags, pMsg->m_fx, pMsg->m_fy);
         break;
       }
-      case FWL_MSGMOUSECMD_MouseMove: {
+      case FWL_MouseCommand::Move: {
         OnMouseMove(pMsg->m_dwFlags, pMsg->m_fx, pMsg->m_fy);
         break;
       }
-      case FWL_MSGMOUSECMD_MouseLeave: {
+      case FWL_MouseCommand::Leave: {
         OnMouseLeave();
         break;
       }

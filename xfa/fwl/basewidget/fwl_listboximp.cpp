@@ -17,7 +17,11 @@
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-#define FWL_LISTBOX_ItemTextMargin 2
+namespace {
+
+const int kItemTextMargin = 2;
+
+}  // namespace
 
 // static
 IFWL_ListBox* IFWL_ListBox::Create(const CFWL_WidgetImpProperties& properties,
@@ -699,7 +703,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
       return;
     }
     CFX_RectF rtText(rtItem);
-    rtText.Deflate(FWL_LISTBOX_ItemTextMargin, FWL_LISTBOX_ItemTextMargin);
+    rtText.Deflate(kItemTextMargin, kItemTextMargin);
     if (bHasIcon || bHasCheck) {
       rtText.Deflate(rtItem.height, 0, 0, 0);
     }
@@ -765,7 +769,7 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
     }
   } else {
     fWidth = GetMaxTextWidth();
-    fWidth += 2 * FWL_LISTBOX_ItemTextMargin;
+    fWidth += 2 * kItemTextMargin;
     if (!bAutoSize) {
       FX_FLOAT fActualWidth =
           m_rtClient.width - rtUIMargin.left - rtUIMargin.width;
@@ -935,7 +939,7 @@ FX_FLOAT CFWL_ListBoxImp::GetItemHeigt() {
       static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::FontSize));
   if (!pfFont)
     return 20;
-  return *pfFont + 2 * FWL_LISTBOX_ItemTextMargin;
+  return *pfFont + 2 * kItemTextMargin;
 }
 void CFWL_ListBoxImp::InitScrollBar(FX_BOOL bVert) {
   if ((bVert && m_pVertScrollBar) || (!bVert && m_pHorzScrollBar)) {
@@ -999,11 +1003,11 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
@@ -1018,7 +1022,7 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Key: {
       CFWL_MsgKey* pMsg = static_cast<CFWL_MsgKey*>(pMessage);
-      if (pMsg->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
+      if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pMsg);
       break;
     }

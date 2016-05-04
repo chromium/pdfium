@@ -74,7 +74,9 @@ class CFWL_Barcode : public CFWL_Edit {
     m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_TRUNCATED;
     m_barcodeData.m_bTruncated = truncated;
   }
-  void ResetBarcodeAttributes() { m_barcodeData.m_dwAttributeMask = 0; }
+  void ResetBarcodeAttributes() {
+    m_barcodeData.m_dwAttributeMask = FWL_BCDATTRIBUTE_NONE;
+  }
 
  protected:
   CFWL_Barcode();
@@ -82,38 +84,39 @@ class CFWL_Barcode : public CFWL_Edit {
 
   class CFWL_BarcodeDP : public IFWL_BarcodeDP {
    public:
-    virtual FWL_ERR GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
+    CFWL_BarcodeDP() : m_dwAttributeMask(FWL_BCDATTRIBUTE_NONE) {}
+
+    FWL_ERR GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
+    BC_CHAR_ENCODING GetCharEncoding() override { return m_eCharEncoding; }
+    int32_t GetModuleHeight() override { return m_nModuleHeight; }
+    int32_t GetModuleWidth() override { return m_nModuleWidth; }
+    int32_t GetDataLength() override { return m_nDataLength; }
+    int32_t GetCalChecksum() override { return m_nCalChecksum; }
+    FX_BOOL GetPrintChecksum() override { return m_bPrintChecksum; }
+    BC_TEXT_LOC GetTextLocation() override { return m_eTextLocation; }
+    int32_t GetWideNarrowRatio() override { return m_nWideNarrowRatio; }
+    FX_CHAR GetStartChar() override { return m_cStartChar; }
+    FX_CHAR GetEndChar() override { return m_cEndChar; }
+    int32_t GetVersion() override { return m_nVersion; }
+    int32_t GetErrorCorrectionLevel() override { return m_nECLevel; }
+    FX_BOOL GetTruncated() override { return m_bTruncated; }
+    uint32_t GetBarcodeAttributeMask() override { return m_dwAttributeMask; }
+
     BC_CHAR_ENCODING m_eCharEncoding;
-    virtual BC_CHAR_ENCODING GetCharEncoding() { return m_eCharEncoding; }
     int32_t m_nModuleHeight, m_nModuleWidth;
-    virtual int32_t GetModuleHeight() { return m_nModuleHeight; }
-    virtual int32_t GetModuleWidth() { return m_nModuleWidth; }
     int32_t m_nDataLength;
-    virtual int32_t GetDataLength() { return m_nDataLength; }
     int32_t m_nCalChecksum;
-    virtual int32_t GetCalChecksum() { return m_nCalChecksum; }
     FX_BOOL m_bPrintChecksum;
-    virtual FX_BOOL GetPrintChecksum() { return m_bPrintChecksum; }
-
     BC_TEXT_LOC m_eTextLocation;
-    virtual BC_TEXT_LOC GetTextLocation() { return m_eTextLocation; }
     int32_t m_nWideNarrowRatio;
-    virtual int32_t GetWideNarrowRatio() { return m_nWideNarrowRatio; }
     FX_CHAR m_cStartChar, m_cEndChar;
-    virtual FX_CHAR GetStartChar() { return m_cStartChar; }
-    virtual FX_CHAR GetEndChar() { return m_cEndChar; }
     int32_t m_nVersion;
-    virtual int32_t GetVersion() { return m_nVersion; }
     int32_t m_nECLevel;
-    virtual int32_t GetErrorCorrectionLevel() { return m_nECLevel; }
     FX_BOOL m_bTruncated;
-    virtual FX_BOOL GetTruncated() { return m_bTruncated; }
     uint32_t m_dwAttributeMask;
-    virtual uint32_t GetBarcodeAttributeMask() { return m_dwAttributeMask; }
-
-   public:
-    CFWL_BarcodeDP() : m_dwAttributeMask(0) {}
   };
+
   CFWL_BarcodeDP m_barcodeData;
 };
 

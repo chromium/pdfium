@@ -13,7 +13,11 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-#define FWL_SCROLL_PawLen 12.5f
+namespace {
+
+const float kPawLength = 12.5f;
+
+}  // namespace
 
 CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
   SetThemeData(0);
@@ -150,7 +154,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
   CFX_Path path;
   path.Create();
   if (bVert) {
-    FX_FLOAT fPawLen = FWL_SCROLL_PawLen;
+    FX_FLOAT fPawLen = kPawLength;
     if (pRect->width / 2 <= fPawLen) {
       fPawLen = (pRect->width - 6) / 2;
     }
@@ -183,7 +187,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
     pGraphics->SetStrokeColor(&clrDark);
     pGraphics->StrokePath(&path, pMatrix);
   } else {
-    FX_FLOAT fPawLen = FWL_SCROLL_PawLen;
+    FX_FLOAT fPawLen = kPawLength;
     if (pRect->height / 2 <= fPawLen) {
       fPawLen = (pRect->height - 6) / 2;
     }

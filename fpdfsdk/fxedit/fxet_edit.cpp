@@ -13,7 +13,11 @@
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
 
-#define FX_EDIT_UNDO_MAXITEM 10000
+namespace {
+
+const int kEditUndoMaxItems = 10000;
+
+}  // namespace
 
 CFX_Edit_Iterator::CFX_Edit_Iterator(CFX_Edit* pEdit,
                                      CPDF_VariableText::Iterator* pVTIterator)
@@ -755,7 +759,7 @@ CFX_Edit::CFX_Edit(CPDF_VariableText* pVT)
       m_bEnableScroll(FALSE),
       m_pIterator(NULL),
       m_ptCaret(0.0f, 0.0f),
-      m_Undo(FX_EDIT_UNDO_MAXITEM),
+      m_Undo(kEditUndoMaxItems),
       m_nAlignment(0),
       m_bNotifyFlag(FALSE),
       m_bEnableOverflow(FALSE),

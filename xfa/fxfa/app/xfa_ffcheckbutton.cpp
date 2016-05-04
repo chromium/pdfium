@@ -250,7 +250,7 @@ FX_BOOL CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
   }
   SetButtonDown(FALSE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_LButtonUp;
+  ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;

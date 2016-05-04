@@ -18,7 +18,11 @@
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-#define FWL_CKB_CaptionMargin 5
+namespace {
+
+const int kCaptionMargin = 5;
+
+}  // namespace
 
 // static
 IFWL_CheckBox* IFWL_CheckBox::Create(const CFWL_WidgetImpProperties& properties,
@@ -84,7 +88,7 @@ FWL_ERR CFWL_CheckBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
           m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine);
       rect.Set(0, 0, sz.x, sz.y);
     }
-    rect.Inflate(FWL_CKB_CaptionMargin, FWL_CKB_CaptionMargin);
+    rect.Inflate(kCaptionMargin, kCaptionMargin);
     IFWL_CheckBoxDP* pData =
         static_cast<IFWL_CheckBoxDP*>(m_pProperties->m_pDataProvider);
     FX_FLOAT fCheckBox = pData->GetBoxSize(m_pInterface);
@@ -241,7 +245,7 @@ void CFWL_CheckBoxImp::Layout() {
   m_rtBox.Set(fBoxLeft, fBoxTop, fCheckBox, fCheckBox);
   m_rtCaption.Set(fTextLeft, m_rtClient.top, fTextRight - fTextLeft,
                   m_rtClient.height);
-  m_rtCaption.Inflate(-FWL_CKB_CaptionMargin, -FWL_CKB_CaptionMargin);
+  m_rtCaption.Inflate(-kCaptionMargin, -kCaptionMargin);
   CFX_RectF rtFocus;
   rtFocus.Set(m_rtCaption.left, m_rtCaption.top, m_rtCaption.width,
               m_rtCaption.height);
@@ -429,21 +433,20 @@ int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      uint32_t dwCmd = pMsg->m_dwCmd;
-      switch (dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+      switch (pMsg->m_dwCmd) {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseLeave: {
+        case FWL_MouseCommand::Leave: {
           OnMouseLeave(pMsg);
           break;
         }
@@ -454,7 +457,7 @@ int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
+      if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
       break;
     }

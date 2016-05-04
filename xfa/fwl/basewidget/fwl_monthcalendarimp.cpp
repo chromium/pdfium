@@ -1039,19 +1039,19 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMouse->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMouse);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMouse);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMouse);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseLeave: {
+        case FWL_MouseCommand::Leave: {
           OnMouseLeave(pMouse);
           break;
         }

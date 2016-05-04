@@ -16,9 +16,13 @@
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_timer.h"
 
-#define FWL_SPN_MinWidth 18
-#define FWL_SPN_MinHeight 32
-#define FWL_SPIN_Elapse 200
+namespace {
+
+const int kMinWidth = 18;
+const int kMinHeight = 32;
+const int kElapseTime = 200;
+
+}  // namespace
 
 // static
 IFWL_SpinButton* IFWL_SpinButton::Create(
@@ -75,7 +79,7 @@ FWL_ERR CFWL_SpinButtonImp::Finalize() {
 }
 FWL_ERR CFWL_SpinButtonImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
-    rect.Set(0, 0, FWL_SPN_MinWidth, FWL_SPN_MinHeight);
+    rect.Set(0, 0, kMinWidth, kMinHeight);
     CFWL_WidgetImp::GetWidgetRect(rect, TRUE);
   } else {
     rect = m_pProperties->m_rtWidget;
@@ -218,19 +222,19 @@ int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseLeave: {
+        case FWL_MouseCommand::Leave: {
           OnMouseLeave(pMsg);
           break;
         }
@@ -241,7 +245,7 @@ int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
+      if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
       break;
     }
@@ -297,7 +301,7 @@ void CFWL_SpinButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->DispatchEvent(&wmPosChanged);
   m_pOwner->Repaint(bUpPress ? &m_pOwner->m_rtUpButton
                              : &m_pOwner->m_rtDnButton);
-  m_pOwner->m_hTimer = FWL_StartTimer(m_pOwner, FWL_SPIN_Elapse);
+  m_pOwner->m_hTimer = FWL_StartTimer(m_pOwner, kElapseTime);
 }
 void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_pProperties->m_dwStates & CFWL_PartState_Disabled) {

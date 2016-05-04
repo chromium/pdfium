@@ -90,15 +90,15 @@ FX_BOOL CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
     return TRUE;
   if (CFWL_EventType::Mouse == pNote->GetClassID()) {
     CFWL_EvtMouse* pMouse = static_cast<CFWL_EvtMouse*>(pNote);
-    if (FWL_MSGMOUSECMD_MouseHover == pMouse->m_dwCmd) {
+    if (FWL_MouseCommand::Hover == pMouse->m_dwCmd) {
       if (m_pNoteLoop->GetForm() &&
           CFWL_ToolTipContainer::getInstance()->ProcessEnter(
               pMouse, m_pNoteLoop->GetForm()->GetInterface())) {
       }
-    } else if (FWL_MSGMOUSECMD_MouseLeave == pMouse->m_dwCmd) {
+    } else if (FWL_MouseCommand::Leave == pMouse->m_dwCmd) {
       CFWL_ToolTipContainer::getInstance()->ProcessLeave(pMouse);
-    } else if ((FWL_MSGMOUSECMD_LButtonDown <= pMouse->m_dwCmd) &&
-               (FWL_MSGMOUSECMD_MButtonDblClk >= pMouse->m_dwCmd)) {
+    } else if ((FWL_MouseCommand::LeftButtonDown <= pMouse->m_dwCmd) &&
+               (FWL_MouseCommand::MiddleButtonDblClk >= pMouse->m_dwCmd)) {
       CFWL_ToolTipContainer::getInstance()->ProcessLeave(pMouse);
     }
   }
@@ -536,7 +536,7 @@ FX_BOOL CFWL_NoteDriver::DoKillFocus(CFWL_MsgKillFocus* pMsg,
 }
 FX_BOOL CFWL_NoteDriver::DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm) {
 #if (_FX_OS_ != _FX_MACOSX_)
-  if (pMsg->m_dwCmd == FWL_MSGKEYCMD_KeyDown &&
+  if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
       pMsg->m_dwKeyCode == FWL_VKEY_Tab) {
     CFWL_WidgetMgr* pWidgetMgr =
         static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
@@ -564,7 +564,7 @@ FX_BOOL CFWL_NoteDriver::DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm) {
   }
 #endif
   if (!m_pFocus) {
-    if (pMsg->m_dwCmd == FWL_MSGKEYCMD_KeyDown &&
+    if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
         pMsg->m_dwKeyCode == FWL_VKEY_Return) {
       CFWL_WidgetMgr* pWidgetMgr =
           static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
@@ -581,9 +581,9 @@ FX_BOOL CFWL_NoteDriver::DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm) {
 }
 FX_BOOL CFWL_NoteDriver::DoMouse(CFWL_MsgMouse* pMsg,
                                  IFWL_Widget* pMessageForm) {
-  if (pMsg->m_dwCmd == FWL_MSGMOUSECMD_MouseLeave ||
-      pMsg->m_dwCmd == FWL_MSGMOUSECMD_MouseHover ||
-      pMsg->m_dwCmd == FWL_MSGMOUSECMD_MouseEnter) {
+  if (pMsg->m_dwCmd == FWL_MouseCommand::Leave ||
+      pMsg->m_dwCmd == FWL_MouseCommand::Hover ||
+      pMsg->m_dwCmd == FWL_MouseCommand::Enter) {
     return pMsg->m_pDstTarget != NULL;
   }
   if (pMsg->m_pDstTarget != pMessageForm) {
@@ -659,7 +659,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_MsgMouse* pMsg) {
     msLeave.m_fy = pMsg->m_fy;
     pTarget->TransformTo(m_pHover, msLeave.m_fx, msLeave.m_fy);
     msLeave.m_dwFlags = 0;
-    msLeave.m_dwCmd = FWL_MSGMOUSECMD_MouseLeave;
+    msLeave.m_dwCmd = FWL_MouseCommand::Leave;
     DispatchMessage(&msLeave, NULL);
   }
   if (pTarget->GetClassID() == FWL_CLASSHASH_Form) {
@@ -672,7 +672,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_MsgMouse* pMsg) {
   msHover.m_fx = pMsg->m_fx;
   msHover.m_fy = pMsg->m_fy;
   msHover.m_dwFlags = 0;
-  msHover.m_dwCmd = FWL_MSGMOUSECMD_MouseHover;
+  msHover.m_dwCmd = FWL_MouseCommand::Hover;
   DispatchMessage(&msHover, NULL);
 }
 FX_BOOL CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {

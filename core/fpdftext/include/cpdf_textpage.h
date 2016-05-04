@@ -21,6 +21,10 @@ class CPDF_FormObject;
 class CPDF_Page;
 class CPDF_TextObject;
 
+enum class FPDFText_MarkedContent { Pass = 0, Done, Delay };
+
+enum class FPDFText_Direction { Left = -1, Right = 1 };
+
 struct FPDF_CHAR_INFO {
   FX_WCHAR m_Unicode;
   FX_WCHAR m_Charcode;
@@ -57,7 +61,10 @@ struct PDFTEXT_Obj {
 
 class CPDF_TextPage {
  public:
-  CPDF_TextPage(const CPDF_Page* pPage, int flags);
+  static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
+                                 const CFX_FloatRect& rect2);
+
+  CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags);
   ~CPDF_TextPage() {}
 
   // IPDF_TextPage:
@@ -91,16 +98,9 @@ class CPDF_TextPage {
                            FX_FLOAT bottom,
                            FX_BOOL bContains = FALSE);
 
-  int GetWordBreak(int index, int direction) const;
-
-  static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
-                                 const CFX_FloatRect& rect2);
-  static FX_BOOL IsLetter(FX_WCHAR unicode);
-
  private:
   FX_BOOL IsHyphen(FX_WCHAR curChar);
   bool IsControlChar(const PAGECHAR_INFO& charInfo);
-  FX_BOOL GetBaselineRotate(int start, int end, int& Rotate);
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
                          const CFX_Matrix& formMatrix);
@@ -119,8 +119,7 @@ class CPDF_TextPage {
                            CPDF_TextObject* pTextObj2);
   int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const;
   void CloseTempLine();
-  void OnPiece(CFX_BidiChar* pBidi, CFX_WideString& str);
-  int32_t PreMarkedContent(PDFTEXT_Obj pObj);
+  FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void CheckMarkedContentObject(int32_t& start, int32_t& nCount) const;
   void FindPreviousTextObject(void);
@@ -140,7 +139,7 @@ class CPDF_TextPage {
   std::deque<PAGECHAR_INFO> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
   CFX_WideTextBuf m_TempTextBuf;
-  const int m_parserflag;
+  const FPDFText_Direction m_parserflag;
   CPDF_TextObject* m_pPreTextObj;
   CFX_Matrix m_perMatrix;
   bool m_bIsParsed;

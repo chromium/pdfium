@@ -31,38 +31,23 @@ enum class CFWL_MessageType {
   WindowWillMove
 };
 
-#define FWL_MSG_Activate L"FWL_MESSAGE_Activate"
-#define FWL_MSG_Deactivate L"FWL_MESSAGE_Deactivate"
-#define FWL_MSG_SetFocus L"FWL_MESSAGE_SetFocus"
-#define FWL_MSG_KillFocus L"FWL_MESSAGE_KillFocus"
-#define FWL_MSG_Mouse L"FWL_MESSAGE_Mouse"
-#define FWL_MSG_MouseWheel L"FWL_MESSAGE_MouseWheel"
-#define FWL_MSG_Key L"FWL_MESSAGE_Key"
-#define FWL_MSG_Cursor L"FWL_MESSAGE_Cursor"
-#define FWL_MSG_Size L"FWL_MESSAGE_Size"
-#define FWL_MSG_WindowMove L"FWL_MESSAGE_WindowMove"
-#define FWL_MSG_DropFiles L"FWL_MESSAGE_DropFiles"
-#define FWL_MSG_TaskClicked L"FWL_MESSAGE_TaskClicked"
-#define FWL_MSG_Close L"FWL_MESSAGE_Close"
-#define FWL_MSG_Post L"FWL_MESSAGE_Post"
-#define FWL_MSG_WindowWillMove L"FWL_MESSAGE_WindowWillMove"
+enum class FWL_MouseCommand {
+  LeftButtonDown,
+  LeftButtonUp,
+  LeftButtonDblClk,
+  RightButtonDown,
+  RightButtonUp,
+  RightButtonDblClk,
+  MiddleButtonDown,
+  MiddleButtonUp,
+  MiddleButtonDblClk,
+  Move,
+  Enter,
+  Leave,
+  Hover
+};
 
-#define FWL_MSGMOUSECMD_LButtonDown 1
-#define FWL_MSGMOUSECMD_LButtonUp 2
-#define FWL_MSGMOUSECMD_LButtonDblClk 3
-#define FWL_MSGMOUSECMD_RButtonDown 4
-#define FWL_MSGMOUSECMD_RButtonUp 5
-#define FWL_MSGMOUSECMD_RButtonDblClk 6
-#define FWL_MSGMOUSECMD_MButtonDown 7
-#define FWL_MSGMOUSECMD_MButtonUp 8
-#define FWL_MSGMOUSECMD_MButtonDblClk 9
-#define FWL_MSGMOUSECMD_MouseMove 10
-#define FWL_MSGMOUSECMD_MouseEnter 11
-#define FWL_MSGMOUSECMD_MouseLeave 12
-#define FWL_MSGMOUSECMD_MouseHover 13
-#define FWL_MSGKEYCMD_KeyDown 1
-#define FWL_MSGKEYCMD_KeyUp 2
-#define FWL_MSGKEYCMD_Char 3
+enum class FWL_KeyCommand { KeyDown, KeyUp, Char };
 
 class IFWL_Widget;
 
@@ -127,7 +112,7 @@ BEGIN_FWL_MESSAGE_DEF(CFWL_MsgMouse, CFWL_MessageType::Mouse)
 FX_FLOAT m_fx;
 FX_FLOAT m_fy;
 uint32_t m_dwFlags;
-uint32_t m_dwCmd;
+FWL_MouseCommand m_dwCmd;
 END_FWL_MESSAGE_DEF
 
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgMouseWheel, CFWL_MessageType::MouseWheel)
@@ -149,7 +134,7 @@ END_FWL_MESSAGE_DEF
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgKey, CFWL_MessageType::Key)
 uint32_t m_dwKeyCode;
 uint32_t m_dwFlags;
-uint32_t m_dwCmd;
+FWL_KeyCommand m_dwCmd;
 END_FWL_MESSAGE_DEF
 
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgCursor, CFWL_MessageType::Cursor)

@@ -137,6 +137,123 @@ class IXFA_WidgetIterator;
 #define XFA_IDS_ValidateError 98
 #define XFA_IDS_ValidateNumberError 99
 
+#define XFA_DOCVIEW_View 0x00000000
+#define XFA_DOCVIEW_MasterPage 0x00000001
+#define XFA_DOCVIEW_Design 0x00000002
+#define XFA_DOCTYPE_Dynamic 0
+#define XFA_DOCTYPE_Static 1
+#define XFA_DOCTYPE_XDP 2
+#define XFA_PARSESTATUS_StatusErr -3
+#define XFA_PARSESTATUS_StreamErr -2
+#define XFA_PARSESTATUS_SyntaxErr -1
+#define XFA_PARSESTATUS_Ready 0
+#define XFA_PARSESTATUS_Done 100
+#define XFA_VALIDATE_preSubmit 1
+#define XFA_VALIDATE_prePrint 2
+#define XFA_VALIDATE_preExecute 3
+#define XFA_VALIDATE_preSave 4
+
+#define XFA_INVALIDATE_AllPages 0x00000000
+#define XFA_INVALIDATE_CurrentPage 0x00000001
+#define XFA_PRINTOPT_ShowDialog 0x00000001
+#define XFA_PRINTOPT_CanCancel 0x00000002
+#define XFA_PRINTOPT_ShrinkPage 0x00000004
+#define XFA_PRINTOPT_AsImage 0x00000008
+#define XFA_PRINTOPT_ReverseOrder 0x00000010
+#define XFA_PRINTOPT_PrintAnnot 0x00000020
+#define XFA_PAGEVIEWEVENT_PostAdded 1
+#define XFA_PAGEVIEWEVENT_PostRemoved 3
+#define XFA_PAGEVIEWEVENT_StopLayout 4
+#define XFA_WIDGETEVENT_PostAdded 2
+#define XFA_WIDGETEVENT_PreRemoved 3
+
+#define XFA_EVENTERROR_Success 1
+#define XFA_EVENTERROR_Error -1
+#define XFA_EVENTERROR_NotExist 0
+#define XFA_EVENTERROR_Disabled 2
+
+#define XFA_RENDERSTATUS_Ready 1
+#define XFA_RENDERSTATUS_ToBeContinued 2
+#define XFA_RENDERSTATUS_Done 3
+#define XFA_RENDERSTATUS_Failed -1
+
+#define XFA_TRAVERSEWAY_Tranvalse 0x0001
+#define XFA_TRAVERSEWAY_Form 0x0002
+#define XFA_WIDGETFILTER_Visible 0x0001
+#define XFA_WIDGETFILTER_Viewable 0x0010
+#define XFA_WIDGETFILTER_Printable 0x0020
+#define XFA_WIDGETFILTER_Field 0x0100
+#define XFA_WIDGETFILTER_AllType 0x0F00
+
+#define XFA_WIDGETSTATUS_Visible 0x00000001
+#define XFA_WIDGETSTATUS_Invisible 0x00000002
+#define XFA_WIDGETSTATUS_Hidden 0x00000004
+#define XFA_WIDGETSTATUS_Viewable 0x00000010
+#define XFA_WIDGETSTATUS_Printable 0x00000020
+#define XFA_WIDGETSTATUS_Focused 0x00000100
+
+enum XFA_EVENTTYPE {
+  XFA_EVENT_Click,
+  XFA_EVENT_Change,
+  XFA_EVENT_DocClose,
+  XFA_EVENT_DocReady,
+  XFA_EVENT_Enter,
+  XFA_EVENT_Exit,
+  XFA_EVENT_Full,
+  XFA_EVENT_IndexChange,
+  XFA_EVENT_Initialize,
+  XFA_EVENT_MouseDown,
+  XFA_EVENT_MouseEnter,
+  XFA_EVENT_MouseExit,
+  XFA_EVENT_MouseUp,
+  XFA_EVENT_PostExecute,
+  XFA_EVENT_PostOpen,
+  XFA_EVENT_PostPrint,
+  XFA_EVENT_PostSave,
+  XFA_EVENT_PostSign,
+  XFA_EVENT_PostSubmit,
+  XFA_EVENT_PreExecute,
+  XFA_EVENT_PreOpen,
+  XFA_EVENT_PrePrint,
+  XFA_EVENT_PreSave,
+  XFA_EVENT_PreSign,
+  XFA_EVENT_PreSubmit,
+  XFA_EVENT_Ready,
+  XFA_EVENT_InitCalculate,
+  XFA_EVENT_InitVariables,
+  XFA_EVENT_Calculate,
+  XFA_EVENT_Validate,
+  XFA_EVENT_Unknown,
+};
+
+enum XFA_WIDGETORDER {
+  XFA_WIDGETORDER_PreOrder,
+};
+
+enum XFA_WIDGETTYPE {
+  XFA_WIDGETTYPE_Barcode,
+  XFA_WIDGETTYPE_PushButton,
+  XFA_WIDGETTYPE_CheckButton,
+  XFA_WIDGETTYPE_RadioButton,
+  XFA_WIDGETTYPE_DatetimeEdit,
+  XFA_WIDGETTYPE_DecimalField,
+  XFA_WIDGETTYPE_NumericField,
+  XFA_WIDGETTYPE_Signature,
+  XFA_WIDGETTYPE_TextEdit,
+  XFA_WIDGETTYPE_DropdownList,
+  XFA_WIDGETTYPE_ListBox,
+  XFA_WIDGETTYPE_ImageField,
+  XFA_WIDGETTYPE_PasswordEdit,
+  XFA_WIDGETTYPE_Arc,
+  XFA_WIDGETTYPE_Rectangle,
+  XFA_WIDGETTYPE_Image,
+  XFA_WIDGETTYPE_Line,
+  XFA_WIDGETTYPE_Text,
+  XFA_WIDGETTYPE_ExcludeGroup,
+  XFA_WIDGETTYPE_Subform,
+  XFA_WIDGETTYPE_Unknown,
+};
+
 // Probably should be called IXFA_AppDelegate.
 class IXFA_AppProvider {
  public:
@@ -262,20 +379,6 @@ class IXFA_AppProvider {
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 
-#define XFA_INVALIDATE_AllPages 0x00000000
-#define XFA_INVALIDATE_CurrentPage 0x00000001
-#define XFA_PRINTOPT_ShowDialog 0x00000001
-#define XFA_PRINTOPT_CanCancel 0x00000002
-#define XFA_PRINTOPT_ShrinkPage 0x00000004
-#define XFA_PRINTOPT_AsImage 0x00000008
-#define XFA_PRINTOPT_ReverseOrder 0x00000010
-#define XFA_PRINTOPT_PrintAnnot 0x00000020
-#define XFA_PAGEVIEWEVENT_PostAdded 1
-#define XFA_PAGEVIEWEVENT_PostRemoved 3
-#define XFA_PAGEVIEWEVENT_StopLayout 4
-#define XFA_WIDGETEVENT_PostAdded 2
-#define XFA_WIDGETEVENT_PreRemoved 3
-
 class IXFA_DocProvider {
  public:
   virtual ~IXFA_DocProvider() {}
@@ -373,55 +476,7 @@ class IXFA_DocProvider {
   virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
                                        const CFX_WideString& wsLink) = 0;
 };
-#define XFA_DOCVIEW_View 0x00000000
-#define XFA_DOCVIEW_MasterPage 0x00000001
-#define XFA_DOCVIEW_Design 0x00000002
-#define XFA_DOCTYPE_Dynamic 0
-#define XFA_DOCTYPE_Static 1
-#define XFA_DOCTYPE_XDP 2
-#define XFA_PARSESTATUS_StatusErr -3
-#define XFA_PARSESTATUS_StreamErr -2
-#define XFA_PARSESTATUS_SyntaxErr -1
-#define XFA_PARSESTATUS_Ready 0
-#define XFA_PARSESTATUS_Done 100
 
-enum XFA_EVENTTYPE {
-  XFA_EVENT_Click,
-  XFA_EVENT_Change,
-  XFA_EVENT_DocClose,
-  XFA_EVENT_DocReady,
-  XFA_EVENT_Enter,
-  XFA_EVENT_Exit,
-  XFA_EVENT_Full,
-  XFA_EVENT_IndexChange,
-  XFA_EVENT_Initialize,
-  XFA_EVENT_MouseDown,
-  XFA_EVENT_MouseEnter,
-  XFA_EVENT_MouseExit,
-  XFA_EVENT_MouseUp,
-  XFA_EVENT_PostExecute,
-  XFA_EVENT_PostOpen,
-  XFA_EVENT_PostPrint,
-  XFA_EVENT_PostSave,
-  XFA_EVENT_PostSign,
-  XFA_EVENT_PostSubmit,
-  XFA_EVENT_PreExecute,
-  XFA_EVENT_PreOpen,
-  XFA_EVENT_PrePrint,
-  XFA_EVENT_PreSave,
-  XFA_EVENT_PreSign,
-  XFA_EVENT_PreSubmit,
-  XFA_EVENT_Ready,
-  XFA_EVENT_InitCalculate,
-  XFA_EVENT_InitVariables,
-  XFA_EVENT_Calculate,
-  XFA_EVENT_Validate,
-  XFA_EVENT_Unknown,
-};
-#define XFA_VALIDATE_preSubmit 1
-#define XFA_VALIDATE_prePrint 2
-#define XFA_VALIDATE_preExecute 3
-#define XFA_VALIDATE_preSave 4
 class CXFA_EventParam {
  public:
   CXFA_EventParam() {
@@ -471,21 +526,6 @@ class CXFA_EventParam {
   FX_BOOL m_bIsFormReady;
   int32_t m_iValidateActivities;
 };
-#define XFA_EVENTERROR_Success 1
-#define XFA_EVENTERROR_Error -1
-#define XFA_EVENTERROR_NotExist 0
-#define XFA_EVENTERROR_Disabled 2
-enum XFA_WIDGETORDER {
-  XFA_WIDGETORDER_PreOrder,
-};
-
-#define XFA_TRAVERSEWAY_Tranvalse 0x0001
-#define XFA_TRAVERSEWAY_Form 0x0002
-#define XFA_WIDGETFILTER_Visible 0x0001
-#define XFA_WIDGETFILTER_Viewable 0x0010
-#define XFA_WIDGETFILTER_Printable 0x0020
-#define XFA_WIDGETFILTER_Field 0x0100
-#define XFA_WIDGETFILTER_AllType 0x0F00
 
 class CXFA_RenderOptions {
  public:
@@ -493,40 +533,6 @@ class CXFA_RenderOptions {
   FX_BOOL m_bPrint;
   FX_BOOL m_bHighlight;
 };
-#define XFA_RENDERSTATUS_Ready 1
-#define XFA_RENDERSTATUS_ToBeContinued 2
-#define XFA_RENDERSTATUS_Done 3
-#define XFA_RENDERSTATUS_Failed -1
-
-enum XFA_WIDGETTYPE {
-  XFA_WIDGETTYPE_Barcode,
-  XFA_WIDGETTYPE_PushButton,
-  XFA_WIDGETTYPE_CheckButton,
-  XFA_WIDGETTYPE_RadioButton,
-  XFA_WIDGETTYPE_DatetimeEdit,
-  XFA_WIDGETTYPE_DecimalField,
-  XFA_WIDGETTYPE_NumericField,
-  XFA_WIDGETTYPE_Signature,
-  XFA_WIDGETTYPE_TextEdit,
-  XFA_WIDGETTYPE_DropdownList,
-  XFA_WIDGETTYPE_ListBox,
-  XFA_WIDGETTYPE_ImageField,
-  XFA_WIDGETTYPE_PasswordEdit,
-  XFA_WIDGETTYPE_Arc,
-  XFA_WIDGETTYPE_Rectangle,
-  XFA_WIDGETTYPE_Image,
-  XFA_WIDGETTYPE_Line,
-  XFA_WIDGETTYPE_Text,
-  XFA_WIDGETTYPE_ExcludeGroup,
-  XFA_WIDGETTYPE_Subform,
-  XFA_WIDGETTYPE_Unknown,
-};
-#define XFA_WIDGETSTATUS_Visible 0x00000001
-#define XFA_WIDGETSTATUS_Invisible 0x00000002
-#define XFA_WIDGETSTATUS_Hidden 0x00000004
-#define XFA_WIDGETSTATUS_Viewable 0x00000010
-#define XFA_WIDGETSTATUS_Printable 0x00000020
-#define XFA_WIDGETSTATUS_Focused 0x00000100
 
 class IXFA_WidgetIterator {
  public:

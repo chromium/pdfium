@@ -94,7 +94,7 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
 
   SetButtonDown(TRUE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_LButtonDown;
+  ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;

@@ -159,7 +159,7 @@ int32_t CFWL_ComboEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      if ((pMsg->m_dwCmd == FWL_MSGMOUSECMD_LButtonDown) &&
+      if ((pMsg->m_dwCmd == FWL_MouseCommand::LeftButtonDown) &&
           ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)) {
         m_pOwner->SetSelected();
         m_pOwner->SetComboBoxFocus(TRUE);
@@ -308,24 +308,24 @@ int32_t CFWL_ComboListImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         return pDelegate->OnProcessMessage(pMsg);
       }
     }
-    uint32_t dwCmd = pMsg->m_dwCmd;
-    switch (dwCmd) {
-      case FWL_MSGMOUSECMD_MouseMove: {
+    switch (pMsg->m_dwCmd) {
+      case FWL_MouseCommand::Move: {
         backDefault = FALSE;
         OnDropListMouseMove(pMsg);
         break;
       }
-      case FWL_MSGMOUSECMD_LButtonDown: {
+      case FWL_MouseCommand::LeftButtonDown: {
         backDefault = FALSE;
         OnDropListLButtonDown(pMsg);
         break;
       }
-      case FWL_MSGMOUSECMD_LButtonUp: {
+      case FWL_MouseCommand::LeftButtonUp: {
         backDefault = FALSE;
         OnDropListLButtonUp(pMsg);
         break;
       }
-      default: {}
+      default:
+        break;
     }
   } else if (dwHashCode == CFWL_MessageType::Key) {
     backDefault = !OnDropListKey(static_cast<CFWL_MsgKey*>(pMessage));
@@ -415,7 +415,7 @@ int32_t CFWL_ComboListImpDelegate::OnDropListKey(CFWL_MsgKey* pKey) {
   CFWL_ComboBoxImp* pOuter =
       static_cast<CFWL_ComboBoxImp*>(m_pOwner->m_pOuter->GetImpl());
   FX_BOOL bPropagate = FALSE;
-  if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
+  if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown) {
     uint32_t dwKeyCode = pKey->m_dwKeyCode;
     switch (dwKeyCode) {
       case FWL_VKEY_Return:
@@ -432,7 +432,7 @@ int32_t CFWL_ComboListImpDelegate::OnDropListKey(CFWL_MsgKey* pKey) {
       }
       default: { bPropagate = TRUE; }
     }
-  } else if (pKey->m_dwCmd == FWL_MSGKEYCMD_Char) {
+  } else if (pKey->m_dwCmd == FWL_KeyCommand::Char) {
     bPropagate = TRUE;
   }
   if (bPropagate) {
@@ -1381,19 +1381,19 @@ int32_t CFWL_ComboBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseLeave: {
+        case FWL_MouseCommand::Leave: {
           OnMouseLeave(pMsg);
           break;
         }
@@ -1615,11 +1615,11 @@ int32_t CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
       backDefault = FALSE;
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           DisForm_OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
@@ -1631,10 +1631,10 @@ int32_t CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
     case CFWL_MessageType::Key: {
       backDefault = FALSE;
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyUp)
+      if (pKey->m_dwCmd == FWL_KeyCommand::KeyUp)
         break;
       if (m_pOwner->DisForm_IsDropListShowed() &&
-          pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
+          pKey->m_dwCmd == FWL_KeyCommand::KeyDown) {
         FX_BOOL bListKey = pKey->m_dwKeyCode == FWL_VKEY_Up ||
                            pKey->m_dwKeyCode == FWL_VKEY_Down ||
                            pKey->m_dwKeyCode == FWL_VKEY_Return ||
@@ -1758,15 +1758,15 @@ int32_t CFWL_ComboProxyImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMsg);
           break;
         }

@@ -17,9 +17,6 @@
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 
-#define FX_EDIT_UNDERLINEHALFWIDTH 0.5f
-#define FX_EDIT_CROSSOUTHALFWIDTH 0.5f
-
 CFX_FloatRect GetUnderLineRect(const CPVT_Word& word) {
   return CFX_FloatRect(word.ptWord.x, word.ptWord.y + word.fDescent * 0.5f,
                        word.ptWord.x + word.fWidth,

@@ -422,19 +422,19 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MSGMOUSECMD_LButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown: {
           OnLButtonDown(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_LButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp: {
           OnLButtonUp(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseMove: {
+        case FWL_MouseCommand::Move: {
           OnMouseMove(pMsg);
           break;
         }
-        case FWL_MSGMOUSECMD_MouseLeave: {
+        case FWL_MouseCommand::Leave: {
           OnMouseLeave(pMsg);
           break;
         }
@@ -445,7 +445,7 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
+      if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
       break;
     }
@@ -544,7 +544,7 @@ void CFWL_PushButtonImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
   if (pMsg->m_dwKeyCode == FWL_VKEY_Return) {
     CFWL_EvtMouse wmMouse;
     wmMouse.m_pSrcTarget = m_pOwner->m_pInterface;
-    wmMouse.m_dwCmd = FWL_MSGMOUSECMD_LButtonUp;
+    wmMouse.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
     m_pOwner->DispatchEvent(&wmMouse);
     CFWL_EvtClick wmClick;
     wmClick.m_pSrcTarget = m_pOwner->m_pInterface;

@@ -10,23 +10,25 @@
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
-#define XFA_EVENT_CHANGE 0
-#define XFA_EVENT_COMMITKEY 1
-#define XFA_EVENT_FULLTEXT 2
-#define XFA_EVENT_KEYDOWN 3
-#define XFA_EVENT_MODIFIER 4
-#define XFA_EVENT_NEWCONTENTTYPE 5
-#define XFA_EVENT_NEWTEXT 6
-#define XFA_EVENT_PREVCONTENTTYPE 7
-#define XFA_EVENT_PREVTEXT 8
-#define XFA_EVENT_REENTER 9
-#define XFA_EVENT_SELEND 10
-#define XFA_EVENT_SELSTART 11
-#define XFA_EVENT_SHIFT 12
-#define XFA_EVENT_SOAPFAULTCODE 13
-#define XFA_EVENT_SOAPFAULTSTRING 14
-#define XFA_EVENT_TARGET 15
-#define XFA_EVENT_CANCELACTION 16
+enum class XFA_Event {
+  Change = 0,
+  CommitKey,
+  FullText,
+  Keydown,
+  Modifier,
+  NewContentType,
+  NewText,
+  PreviousContentType,
+  PreviousText,
+  Reenter,
+  SelectionEnd,
+  SelectionStart,
+  Shift,
+  SoapFaultCode,
+  SoapFaultString,
+  Target,
+  CancelAction
+};
 
 class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
  public:
@@ -87,7 +89,7 @@ class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
 
  protected:
   void Script_EventPseudoModel_Property(FXJSE_HVALUE hValue,
-                                        uint32_t dwFlag,
+                                        XFA_Event dwFlag,
                                         FX_BOOL bSetting);
 };
 

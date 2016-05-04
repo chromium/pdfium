@@ -15,6 +15,19 @@
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
 
+namespace {
+
+const int kNeedRepaintHitPoints = 12;
+const int kNeedRepaintHitPiece = 3;
+
+struct FWL_NEEDREPAINTHITDATA {
+  CFX_PointF hitPoint;
+  bool bNotNeedRepaint;
+  bool bNotContainByDirty;
+};
+
+}  // namespace
+
 FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
 #if (_FX_OS_ == _FX_MACOSX_)
   return FALSE;
@@ -22,12 +35,14 @@ FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
   return pWidget->GetStyles() & FWL_WGTSTYLE_Offscreen;
 #endif
 }
+
 IFWL_WidgetMgr* FWL_GetWidgetMgr() {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
     return NULL;
   return pApp->GetWidgetMgr();
 }
+
 CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
     : m_dwCapability(0) {
   m_pDelegate = new CFWL_WidgetMgrDelegate(this);
@@ -35,6 +50,7 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
   ASSERT(m_pAdapter);
   CFWL_WidgetMgrItem* pRoot = new CFWL_WidgetMgrItem;
   m_mapWidgetItem.SetAt(NULL, pRoot);
+
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   m_rtScreen.Reset();
 #endif
@@ -725,6 +741,7 @@ int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
   }
   return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
                                              CFX_Graphics* pGraphics,
                                              const CFX_Matrix* pMatrix) {
@@ -732,6 +749,7 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
     return FWL_ERR_Indefinite;
   if (!pGraphics)
     return FWL_ERR_Indefinite;
+
   CFX_Graphics* pTemp = DrawWidgetBefore(pWidget, pGraphics, pMatrix);
   CFX_RectF clipCopy;
   pWidget->GetWidgetRect(clipCopy);
@@ -741,6 +759,7 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
     return FWL_ERR_Succeeded;
   }
   CFX_RectF clipBounds;
+
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_) || \
     (_FX_OS_ == _FX_LINUX_DESKTOP_) || (_FX_OS_ == _FX_ANDROID_)
   IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
@@ -756,61 +775,58 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
   } else {
     clipBounds.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d);
     const_cast<CFX_Matrix*>(pMatrix)->SetIdentity();  // FIXME: const cast.
-#ifdef FWL_UseMacSystemBorder
-#else
-#endif
-    {
-      IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
-      pDelegate->OnDrawWidget(pTemp, pMatrix);
-    }
+    IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
+    pDelegate->OnDrawWidget(pTemp, pMatrix);
   }
-#endif
+#endif  // _FX_OS_ == _FX_MACOSX_
+
   if (!m_pWidgetMgr->IsFormDisabled()) {
     CFX_RectF rtClient;
     pWidget->GetClientRect(rtClient);
     clipBounds.Intersect(rtClient);
   }
-  if (!clipBounds.IsEmpty()) {
+  if (!clipBounds.IsEmpty())
     DrawChild(pWidget, clipBounds, pTemp, pMatrix);
-  }
+
   DrawWidgetAfter(pWidget, pGraphics, clipCopy, pMatrix);
   m_pWidgetMgr->ResetRedrawCounts(pWidget);
   return FWL_ERR_Succeeded;
 }
+
 void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
                                        const CFX_RectF& rtClip,
                                        CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   if (!parent)
     return;
+
   FX_BOOL bFormDisable = m_pWidgetMgr->IsFormDisabled();
   IFWL_Widget* pNextChild =
       m_pWidgetMgr->GetWidget(parent, FWL_WGTRELATION_FirstChild);
   while (pNextChild) {
     IFWL_Widget* child = pNextChild;
     pNextChild = m_pWidgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
-    if (child->GetStates() & FWL_WGTSTATE_Invisible) {
+    if (child->GetStates() & FWL_WGTSTATE_Invisible)
       continue;
-    }
+
     CFX_RectF rtWidget;
     child->GetWidgetRect(rtWidget);
-    if (rtWidget.IsEmpty()) {
+    if (rtWidget.IsEmpty())
       continue;
-    }
+
     CFX_Matrix widgetMatrix;
     CFX_RectF clipBounds(rtWidget);
-    if (!bFormDisable) {
+    if (!bFormDisable)
       child->GetMatrix(widgetMatrix, TRUE);
-    }
-    if (pMatrix) {
+    if (pMatrix)
       widgetMatrix.Concat(*pMatrix);
-    }
+
     if (!bFormDisable) {
       widgetMatrix.TransformPoint(clipBounds.left, clipBounds.top);
       clipBounds.Intersect(rtClip);
-      if (clipBounds.IsEmpty()) {
+      if (clipBounds.IsEmpty())
         continue;
-      }
+
       pGraphics->SaveGraphState();
       pGraphics->SetClipRect(clipBounds);
     }
@@ -822,21 +838,22 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
         pDelegate->OnDrawWidget(pGraphics, &widgetMatrix);
       }
     }
-    if (!bFormDisable) {
+    if (!bFormDisable)
       pGraphics->RestoreGraphState();
-    }
+
     DrawChild(child, clipBounds, pGraphics,
               bFormDisable ? &widgetMatrix : pMatrix);
     child = m_pWidgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
   }
 }
+
 CFX_Graphics* CFWL_WidgetMgrDelegate::DrawWidgetBefore(
     IFWL_Widget* pWidget,
     CFX_Graphics* pGraphics,
     const CFX_Matrix* pMatrix) {
-  if (!FWL_UseOffscreen(pWidget)) {
+  if (!FWL_UseOffscreen(pWidget))
     return pGraphics;
-  }
+
   CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
   if (!pItem->pOffscreen) {
     pItem->pOffscreen = new CFX_Graphics;
@@ -850,6 +867,7 @@ CFX_Graphics* CFWL_WidgetMgrDelegate::DrawWidgetBefore(
   pItem->pOffscreen->SetClipRect(rect);
   return pItem->pOffscreen;
 }
+
 void CFWL_WidgetMgrDelegate::DrawWidgetAfter(IFWL_Widget* pWidget,
                                              CFX_Graphics* pGraphics,
                                              CFX_RectF& rtClip,
@@ -866,14 +884,6 @@ void CFWL_WidgetMgrDelegate::DrawWidgetAfter(IFWL_Widget* pWidget,
   pItem->iRedrawCounter = 0;
 }
 
-#define FWL_NEEDREPAINTHIT_Point 12
-#define FWL_NEEDREPAINTHIT_Piece 3
-struct FWL_NEEDREPAINTHITDATA {
-  CFX_PointF hitPoint;
-  FX_BOOL bNotNeedRepaint;
-  FX_BOOL bNotContainByDirty;
-};
-
 FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
                                               CFX_Matrix* pMatrix,
                                               const CFX_RectF& rtDirty) {
@@ -886,23 +896,21 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.left = rtWidget.top = 0;
   pMatrix->TransformRect(rtWidget);
-  if (!rtWidget.IntersectWith(rtDirty)) {
+  if (!rtWidget.IntersectWith(rtDirty))
     return FALSE;
-  }
+
   IFWL_Widget* pChild =
       FWL_GetWidgetMgr()->GetWidget(pWidget, FWL_WGTRELATION_FirstChild);
-  if (!pChild) {
+  if (!pChild)
     return TRUE;
-  }
   if (pChild->GetClassID() == 3150298670) {
     CFX_RectF rtTemp;
     pChild->GetWidgetRect(rtTemp);
     if (rtTemp.width >= rtWidget.width && rtTemp.height >= rtWidget.height) {
       pChild =
           FWL_GetWidgetMgr()->GetWidget(pChild, FWL_WGTRELATION_FirstChild);
-      if (!pChild) {
+      if (!pChild)
         return TRUE;
-      }
     }
   }
   CFX_RectF rtChilds;
@@ -911,11 +919,11 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
   FX_BOOL bOrginPtIntersectWidthChild = FALSE;
   FX_BOOL bOrginPtIntersectWidthDirty =
       rtDirty.Contains(rtWidget.left, rtWidget.top);
-  static FWL_NEEDREPAINTHITDATA hitPoint[FWL_NEEDREPAINTHIT_Point];
+  static FWL_NEEDREPAINTHITDATA hitPoint[kNeedRepaintHitPoints];
   int32_t iSize = sizeof(FWL_NEEDREPAINTHITDATA);
   FXSYS_memset(hitPoint, 0, iSize);
-  FX_FLOAT fxPiece = rtWidget.width / FWL_NEEDREPAINTHIT_Piece;
-  FX_FLOAT fyPiece = rtWidget.height / FWL_NEEDREPAINTHIT_Piece;
+  FX_FLOAT fxPiece = rtWidget.width / kNeedRepaintHitPiece;
+  FX_FLOAT fyPiece = rtWidget.height / kNeedRepaintHitPiece;
   hitPoint[2].hitPoint.x = hitPoint[6].hitPoint.x = rtWidget.left;
   hitPoint[0].hitPoint.x = hitPoint[3].hitPoint.x = hitPoint[7].hitPoint.x =
       hitPoint[10].hitPoint.x = fxPiece + rtWidget.left;
@@ -936,77 +944,71 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
     CFX_RectF r = rect;
     r.left += rtWidget.left;
     r.top += rtWidget.top;
-    if (r.IsEmpty()) {
+    if (r.IsEmpty())
       continue;
-    }
-    if (r.Contains(rtDirty)) {
+    if (r.Contains(rtDirty))
       return FALSE;
-    }
-    if (!bChildIntersectWithDirty && r.IntersectWith(rtDirty)) {
+    if (!bChildIntersectWithDirty && r.IntersectWith(rtDirty))
       bChildIntersectWithDirty = TRUE;
-    }
-    if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild) {
+    if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild)
       bOrginPtIntersectWidthChild = rect.Contains(0, 0);
-    }
-    if (rtChilds.IsEmpty()) {
+
+    if (rtChilds.IsEmpty())
       rtChilds = rect;
-    } else if (!(pChild->GetStates() & FWL_WGTSTATE_Invisible)) {
+    else if (!(pChild->GetStates() & FWL_WGTSTATE_Invisible))
       rtChilds.Union(rect);
-    }
-    for (int32_t i = 0; i < FWL_NEEDREPAINTHIT_Point; i++) {
-      if (hitPoint[i].bNotContainByDirty || hitPoint[i].bNotNeedRepaint) {
+
+    for (int32_t i = 0; i < kNeedRepaintHitPoints; i++) {
+      if (hitPoint[i].bNotContainByDirty || hitPoint[i].bNotNeedRepaint)
         continue;
-      }
       if (!rtDirty.Contains(hitPoint[i].hitPoint)) {
-        hitPoint[i].bNotContainByDirty = TRUE;
+        hitPoint[i].bNotContainByDirty = true;
         continue;
       }
-      if (r.Contains(hitPoint[i].hitPoint)) {
-        hitPoint[i].bNotNeedRepaint = TRUE;
-      }
+      if (r.Contains(hitPoint[i].hitPoint))
+        hitPoint[i].bNotNeedRepaint = true;
     }
   } while ((pChild = FWL_GetWidgetMgr()->GetWidget(
                 pChild, FWL_WGTRELATION_NextSibling)) != NULL);
-  if (!bChildIntersectWithDirty) {
+
+  if (!bChildIntersectWithDirty)
     return TRUE;
-  }
-  if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild) {
+  if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild)
     return TRUE;
-  }
-  if (rtChilds.IsEmpty()) {
+  if (rtChilds.IsEmpty())
     return TRUE;
-  }
-  int32_t repaintPoint = FWL_NEEDREPAINTHIT_Point;
-  for (int32_t i = 0; i < FWL_NEEDREPAINTHIT_Point; i++) {
-    if (hitPoint[i].bNotNeedRepaint) {
+
+  int32_t repaintPoint = kNeedRepaintHitPoints;
+  for (int32_t i = 0; i < kNeedRepaintHitPoints; i++) {
+    if (hitPoint[i].bNotNeedRepaint)
       repaintPoint--;
-    }
   }
-  if (repaintPoint > 0) {
+  if (repaintPoint > 0)
     return TRUE;
-  }
+
   pMatrix->TransformRect(rtChilds);
-  if (rtChilds.Contains(rtDirty) || rtChilds.Contains(rtWidget)) {
+  if (rtChilds.Contains(rtDirty) || rtChilds.Contains(rtWidget))
     return FALSE;
-  }
   return TRUE;
 }
+
 FX_BOOL CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget* pWidget) {
   CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
-  if (!FWL_UseOffscreen(pWidget) || !(pItem->pOffscreen)) {
+  if (!FWL_UseOffscreen(pWidget) || !(pItem->pOffscreen))
     return FALSE;
-  }
+
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   if (pItem->bOutsideChanged) {
     CFX_RectF r;
     pWidget->GetWidgetRect(r);
     CFX_RectF temp(m_pWidgetMgr->m_rtScreen);
     temp.Deflate(50, 50);
-    if (!temp.Contains(r)) {
+    if (!temp.Contains(r))
       return FALSE;
-    }
+
     pItem->bOutsideChanged = FALSE;
   }
 #endif
+
   return pItem->iRedrawCounter == 0;
 }

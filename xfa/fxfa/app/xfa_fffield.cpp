@@ -349,7 +349,7 @@ FX_BOOL CXFA_FFField::OnMouseEnter() {
     return FALSE;
   }
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_MouseEnter;
+  ms.m_dwCmd = FWL_MouseCommand::Enter;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   ms.m_pSrcTarget = NULL;
   TranslateFWLMessage(&ms);
@@ -360,7 +360,7 @@ FX_BOOL CXFA_FFField::OnMouseExit() {
     return FALSE;
   }
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_MouseLeave;
+  ms.m_dwCmd = FWL_MouseCommand::Leave;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   TranslateFWLMessage(&ms);
   return TRUE;
@@ -389,7 +389,7 @@ FX_BOOL CXFA_FFField::OnLButtonDown(uint32_t dwFlags,
   }
   SetButtonDown(TRUE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_LButtonDown;
+  ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -407,7 +407,7 @@ FX_BOOL CXFA_FFField::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   }
   SetButtonDown(FALSE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_LButtonUp;
+  ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -423,7 +423,7 @@ FX_BOOL CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags,
     return FALSE;
   }
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_LButtonDblClk;
+  ms.m_dwCmd = FWL_MouseCommand::LeftButtonDblClk;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -437,7 +437,7 @@ FX_BOOL CXFA_FFField::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
     return FALSE;
   }
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_MouseMove;
+  ms.m_dwCmd = FWL_MouseCommand::Move;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -480,7 +480,7 @@ FX_BOOL CXFA_FFField::OnRButtonDown(uint32_t dwFlags,
   }
   SetButtonDown(TRUE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_RButtonDown;
+  ms.m_dwCmd = FWL_MouseCommand::RightButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -498,7 +498,7 @@ FX_BOOL CXFA_FFField::OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   }
   SetButtonDown(FALSE);
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_RButtonUp;
+  ms.m_dwCmd = FWL_MouseCommand::RightButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -514,7 +514,7 @@ FX_BOOL CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags,
     return FALSE;
   }
   CFWL_MsgMouse ms;
-  ms.m_dwCmd = FWL_MSGMOUSECMD_RButtonDblClk;
+  ms.m_dwCmd = FWL_MouseCommand::RightButtonDblClk;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -555,7 +555,7 @@ FX_BOOL CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
     return FALSE;
   }
   CFWL_MsgKey ms;
-  ms.m_dwCmd = FWL_MSGKEYCMD_KeyDown;
+  ms.m_dwCmd = FWL_KeyCommand::KeyDown;
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwKeyCode;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
@@ -568,7 +568,7 @@ FX_BOOL CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
     return FALSE;
   }
   CFWL_MsgKey ms;
-  ms.m_dwCmd = FWL_MSGKEYCMD_KeyUp;
+  ms.m_dwCmd = FWL_KeyCommand::KeyUp;
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwKeyCode;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
@@ -590,7 +590,7 @@ FX_BOOL CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
     return FALSE;
   }
   CFWL_MsgKey ms;
-  ms.m_dwCmd = FWL_MSGKEYCMD_Char;
+  ms.m_dwCmd = FWL_KeyCommand::Char;
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwChar;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
@@ -793,22 +793,22 @@ FWL_ERR CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
   switch (pEvent->GetClassID()) {
     case CFWL_EventType::Mouse: {
       CFWL_EvtMouse* event = (CFWL_EvtMouse*)pEvent;
-      if (event->m_dwCmd == FWL_MSGMOUSECMD_MouseEnter) {
+      if (event->m_dwCmd == FWL_MouseCommand::Enter) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseEnter;
         eParam.m_pTarget = m_pDataAcc;
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_MouseEnter, &eParam);
-      } else if (event->m_dwCmd == FWL_MSGMOUSECMD_MouseLeave) {
+      } else if (event->m_dwCmd == FWL_MouseCommand::Leave) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseExit;
         eParam.m_pTarget = m_pDataAcc;
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_MouseExit, &eParam);
-      } else if (event->m_dwCmd == FWL_MSGMOUSECMD_LButtonDown) {
+      } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonDown) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseDown;
         eParam.m_pTarget = m_pDataAcc;
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_MouseDown, &eParam);
-      } else if (event->m_dwCmd == FWL_MSGMOUSECMD_LButtonUp) {
+      } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonUp) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseUp;
         eParam.m_pTarget = m_pDataAcc;

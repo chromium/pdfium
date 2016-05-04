@@ -10,6 +10,7 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_error.h"
 
 enum class CFWL_EventType {
@@ -47,7 +48,7 @@ enum class CFWL_EventType {
   Validate
 };
 
-typedef enum {
+enum FWLEventMask {
   FWL_EVENT_MOUSE_MASK = 1 << 0,
   FWL_EVENT_MOUSEWHEEL_MASK = 1 << 1,
   FWL_EVENT_KEY_MASK = 1 << 2,
@@ -58,7 +59,7 @@ typedef enum {
   FWL_EVENT_IDLE_MASK = 1 << 7,
   FWL_EVENT_CONTROL_MASK = 1 << 8,
   FWL_EVENT_ALL_MASK = 0xFF
-} FWLEventMask;
+};
 
 class CFX_Graphics;
 class IFWL_Widget;
@@ -107,7 +108,7 @@ BEGIN_FWL_EVENT_DEF(CFWL_EvtMouse, CFWL_EventType::Mouse)
 FX_FLOAT m_fx;
 FX_FLOAT m_fy;
 uint32_t m_dwFlags;
-uint32_t m_dwCmd;
+FWL_MouseCommand m_dwCmd;
 END_FWL_EVENT_DEF
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtMouseWheel, CFWL_EventType::MouseWheel)
@@ -121,7 +122,7 @@ END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtKey, CFWL_EventType::Key)
 uint32_t m_dwKeyCode;
 uint32_t m_dwFlags;
-uint32_t m_dwCmd;
+FWL_KeyCommand m_dwCmd;
 END_FWL_EVENT_DEF
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSetFocus, CFWL_EventType::SetFocus)
