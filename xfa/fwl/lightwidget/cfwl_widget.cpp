@@ -15,6 +15,10 @@
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
+#define FWL_WGT_CalcHeight 2048
+#define FWL_WGT_CalcWidth 2048
+#define FWL_WGT_CalcMultiLineDefWidth 120.0f
+
 IFWL_Widget* CFWL_Widget::GetWidget() {
   return m_pIface;
 }
@@ -42,7 +46,7 @@ static void* gs_pFWLWidget = (void*)FXBSTR_ID('l', 'i', 'g', 't');
 FWL_ERR CFWL_Widget::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
-  return m_pIface->SetPrivateData(gs_pFWLWidget, this, NULL);
+  return m_pIface->SetPrivateData(gs_pFWLWidget, this, nullptr);
 }
 
 FWL_ERR CFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -71,24 +75,22 @@ FWL_ERR CFWL_Widget::GetClientRect(CFX_RectF& rect) {
 
 CFWL_Widget* CFWL_Widget::GetParent() {
   if (!m_pIface)
-    return NULL;
+    return nullptr;
+
   IFWL_Widget* parent = m_pIface->GetParent();
-  if (parent) {
+  if (parent)
     return static_cast<CFWL_Widget*>(parent->GetPrivateData(gs_pFWLWidget));
-  }
-  return NULL;
+  return nullptr;
 }
 
 FWL_ERR CFWL_Widget::SetParent(CFWL_Widget* pParent) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
-  return m_pIface->SetParent(pParent ? pParent->GetWidget() : NULL);
+  return m_pIface->SetParent(pParent ? pParent->GetWidget() : nullptr);
 }
 
 CFWL_Widget* CFWL_Widget::GetOwner() {
-  if (!m_pIface)
-    return NULL;
-  return NULL;
+  return nullptr;
 }
 
 FWL_ERR CFWL_Widget::SetOwner(CFWL_Widget* pOwner) {
@@ -109,6 +111,7 @@ FWL_ERR CFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,
     return FWL_ERR_Indefinite;
   return m_pIface->ModifyStyles(dwStylesAdded, dwStylesRemoved);
 }
+
 uint32_t CFWL_Widget::GetStylesEx() {
   if (!m_pIface)
     return 0;
@@ -126,10 +129,9 @@ uint32_t CFWL_Widget::GetStates() {
   return m_pIface->GetStates();
 }
 
-FWL_ERR CFWL_Widget::SetStates(uint32_t dwStates, FX_BOOL bSet) {
-  if (!m_pIface)
-    return FWL_ERR_Indefinite;
-  return m_pIface->SetStates(dwStates, bSet);
+void CFWL_Widget::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+  if (m_pIface)
+    m_pIface->SetStates(dwStates, bSet);
 }
 
 FWL_ERR CFWL_Widget::SetPrivateData(void* module_id,
@@ -142,7 +144,7 @@ FWL_ERR CFWL_Widget::SetPrivateData(void* module_id,
 
 void* CFWL_Widget::GetPrivateData(void* module_id) {
   if (!m_pIface)
-    return NULL;
+    return nullptr;
   return m_pIface->GetPrivateData(module_id);
 }
 
@@ -175,13 +177,14 @@ FWL_ERR CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
                                  FX_FLOAT& fy) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
-  return m_pIface->TransformTo(pWidget ? pWidget->GetWidget() : NULL, fx, fy);
+  return m_pIface->TransformTo(pWidget ? pWidget->GetWidget() : nullptr, fx,
+                               fy);
 }
 
 FWL_ERR CFWL_Widget::TransformTo(CFWL_Widget* pWidget, CFX_RectF& rt) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
-  return m_pIface->TransformTo(pWidget ? pWidget->GetWidget() : NULL, rt);
+  return m_pIface->TransformTo(pWidget ? pWidget->GetWidget() : nullptr, rt);
 }
 
 FWL_ERR CFWL_Widget::GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal) {
@@ -205,13 +208,14 @@ FWL_ERR CFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
 
 IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
   if (!m_pIface)
-    return NULL;
+    return nullptr;
+
   m_pDelegate = m_pIface->SetDelegate(pDelegate);
   return m_pDelegate;
 }
 
 CFWL_Widget::CFWL_Widget()
-    : m_pIface(NULL), m_pDelegate(NULL), m_pProperties(NULL) {
+    : m_pIface(nullptr), m_pDelegate(nullptr), m_pProperties(nullptr) {
   m_pProperties = new CFWL_WidgetProperties;
   m_pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   ASSERT(m_pWidgetMgr);
@@ -228,6 +232,7 @@ CFWL_Widget::~CFWL_Widget() {
 FWL_ERR CFWL_Widget::Repaint(const CFX_RectF* pRect) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
+
   CFX_RectF rect;
   if (pRect) {
     rect = *pRect;
@@ -254,7 +259,7 @@ FWL_ERR CFWL_Widget::SetFocus(FX_BOOL bFocus) {
     pDriver->SetFocus(m_pIface);
   } else {
     if (pDriver->GetFocus() == m_pIface) {
-      pDriver->SetFocus(NULL);
+      pDriver->SetFocus(nullptr);
     }
   }
   return FWL_ERR_Succeeded;
@@ -290,34 +295,33 @@ void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource,
     return;
 
   IFWL_Widget* pEventSourceImp =
-      !pEventSource ? NULL : pEventSource->GetWidget();
+      !pEventSource ? nullptr : pEventSource->GetWidget();
   pNoteDriver->RegisterEventTarget(GetWidget(), pEventSourceImp, dwFilter);
 }
 
 void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   if (!m_pIface)
     return;
-  if (m_pIface->GetOuter()) {
+  if (m_pIface->GetOuter())
     return;
-  }
+
   IFWL_App* pApp = m_pIface->GetOwnerApp();
   if (!pApp)
     return;
+
   CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
   if (!pNoteDriver)
     return;
+
   pNoteDriver->SendEvent(pEvent);
 }
-
-#define FWL_WGT_CalcHeight 2048
-#define FWL_WGT_CalcWidth 2048
-#define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
 CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
                                     FX_BOOL bMultiLine,
                                     int32_t iLineWidth) {
   if (!m_pIface)
     return CFX_SizeF();
+
   IFWL_ThemeProvider* pTheme = m_pIface->GetThemeProvider();
   if (!pTheme)
     return CFX_SizeF();

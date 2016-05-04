@@ -9,6 +9,10 @@
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
+CXFA_FWLAdapterWidgetMgr::CXFA_FWLAdapterWidgetMgr() {}
+
+CXFA_FWLAdapterWidgetMgr::~CXFA_FWLAdapterWidgetMgr() {}
+
 FWL_ERR CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                                 const CFX_RectF* pRect) {
   if (!pWidget)

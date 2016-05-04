@@ -7,16 +7,23 @@
 #ifndef XFA_FXFA_APP_XFA_FWLADAPTER_H_
 #define XFA_FXFA_APP_XFA_FWLADAPTER_H_
 
-#include "xfa/fwl/core/fwl_sdadapterimp.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
+#include "xfa/fwl/core/fwl_error.h"
 
-class CXFA_FWLAdapterWidgetMgr : public CFWL_SDAdapterWidgetMgr {
+class IFWL_Widget;
+
+class CXFA_FWLAdapterWidgetMgr {
  public:
-  virtual FWL_ERR RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect);
-  virtual FX_BOOL GetPopupPos(IFWL_Widget* pWidget,
-                              FX_FLOAT fMinHeight,
-                              FX_FLOAT fMaxHeight,
-                              const CFX_RectF& rtAnchor,
-                              CFX_RectF& rtPopup);
+  CXFA_FWLAdapterWidgetMgr();
+  ~CXFA_FWLAdapterWidgetMgr();
+
+  FWL_ERR RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect);
+  FX_BOOL GetPopupPos(IFWL_Widget* pWidget,
+                      FX_FLOAT fMinHeight,
+                      FX_FLOAT fMaxHeight,
+                      const CFX_RectF& rtAnchor,
+                      CFX_RectF& rtPopup);
 };
 
 #endif  // XFA_FXFA_APP_XFA_FWLADAPTER_H_

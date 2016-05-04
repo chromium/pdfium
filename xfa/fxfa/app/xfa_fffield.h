@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_APP_XFA_FFFIELD_H_
 #define XFA_FXFA_APP_XFA_FFFIELD_H_
 
-#include "xfa/fwl/core/fwl_sdadapterimp.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 #include "xfa/fxfa/include/xfa_ffpageview.h"

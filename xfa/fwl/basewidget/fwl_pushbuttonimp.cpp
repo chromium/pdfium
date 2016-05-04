@@ -83,13 +83,15 @@ FWL_ERR CFWL_PushButtonImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   }
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_PushButtonImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+
+void CFWL_PushButtonImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   if ((dwStates & FWL_WGTSTATE_Disabled) && bSet) {
     m_pProperties->m_dwStates = FWL_WGTSTATE_Disabled;
-    return FWL_ERR_Succeeded;
+    return;
   }
-  return CFWL_WidgetImp::SetStates(dwStates, bSet);
+  CFWL_WidgetImp::SetStates(dwStates, bSet);
 }
+
 FWL_ERR CFWL_PushButtonImp::Update() {
   if (IsLocked()) {
     return FWL_ERR_Indefinite;

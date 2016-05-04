@@ -50,7 +50,7 @@ class CFWL_WidgetImp {
   virtual FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded,
                                  uint32_t dwStylesExRemoved);
   virtual uint32_t GetStates();
-  virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   virtual FWL_ERR SetPrivateData(void* module_id,
                                  void* pData,
                                  PD_CALLBACK_FREEDATA callback);

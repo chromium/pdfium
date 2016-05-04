@@ -91,7 +91,7 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded,
                                  uint32_t dwStylesExRemoved);
-  virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   virtual FWL_ERR Update();
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,

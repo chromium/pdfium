@@ -73,8 +73,7 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
 #endif
       m_pAdapterWidgetMgr(nullptr),
       m_pWidgetMgrDelegate(nullptr),
-      m_pFDEFontMgr(nullptr),
-      m_pAdapterThreadMgr(nullptr) {
+      m_pFDEFontMgr(nullptr) {
   m_pFWLApp = IFWL_App::Create(this);
   FWL_SetApp(m_pFWLApp);
   m_pFWLApp->Initialize();
@@ -90,7 +89,6 @@ CXFA_FFApp::~CXFA_FFApp() {
   if (m_pFWLTheme)
     m_pFWLTheme->Release();
   delete m_pAdapterWidgetMgr;
-  delete m_pAdapterThreadMgr;
 
   CXFA_TimeZoneProvider::Destroy();
   delete m_pFontMgr;
@@ -159,7 +157,7 @@ CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme() {
   }
   return m_pFWLTheme;
 }
-IFWL_AdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
+CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
     CFWL_WidgetMgrDelegate* pDelegate) {
   if (!m_pAdapterWidgetMgr) {
     m_pAdapterWidgetMgr = new CXFA_FWLAdapterWidgetMgr;
@@ -168,12 +166,6 @@ IFWL_AdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
     m_pWidgetMgrDelegate = pDelegate;
   }
   return m_pAdapterWidgetMgr;
-}
-IFWL_AdapterThreadMgr* CXFA_FFApp::GetThreadMgr() {
-  if (!m_pAdapterThreadMgr) {
-    m_pAdapterThreadMgr = new CFWL_SDAdapterThreadMgr;
-  }
-  return m_pAdapterThreadMgr;
 }
 IFWL_AdapterTimerMgr* CXFA_FFApp::GetTimerMgr() {
   return m_pProvider->GetTimerMgr();

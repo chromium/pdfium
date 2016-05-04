@@ -22,8 +22,8 @@ IFWL_Caret* IFWL_Caret::Create(const CFWL_WidgetImpProperties& properties,
   return pCaret;
 }
 IFWL_Caret::IFWL_Caret() {}
-FWL_ERR IFWL_Caret::ShowCaret(FX_BOOL bFlag) {
-  return static_cast<CFWL_CaretImp*>(GetImpl())->ShowCaret(bFlag);
+void IFWL_Caret::ShowCaret(FX_BOOL bFlag) {
+  static_cast<CFWL_CaretImp*>(GetImpl())->ShowCaret(bFlag);
 }
 FWL_ERR IFWL_Caret::GetFrequency(uint32_t& elapse) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->GetFrequency(elapse);
@@ -82,15 +82,16 @@ FWL_ERR CFWL_CaretImp::DrawWidget(CFX_Graphics* pGraphics,
   DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_CaretImp::ShowCaret(FX_BOOL bFlag) {
+
+void CFWL_CaretImp::ShowCaret(FX_BOOL bFlag) {
   if (m_hTimer) {
     FWL_StopTimer(m_hTimer);
-    m_hTimer = NULL;
+    m_hTimer = nullptr;
   }
-  if (bFlag) {
+  if (bFlag)
     m_hTimer = FWL_StartTimer(m_pTimer, m_dwElapse);
-  }
-  return SetStates(FWL_WGTSTATE_Invisible, !bFlag);
+
+  SetStates(FWL_WGTSTATE_Invisible, !bFlag);
 }
 FWL_ERR CFWL_CaretImp::GetFrequency(uint32_t& elapse) {
   elapse = m_dwElapse;

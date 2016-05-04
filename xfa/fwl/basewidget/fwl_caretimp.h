@@ -30,7 +30,7 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
 
-  virtual FWL_ERR ShowCaret(FX_BOOL bFlag = TRUE);
+  virtual void ShowCaret(FX_BOOL bFlag = TRUE);
   virtual FWL_ERR GetFrequency(uint32_t& elapse);
   virtual FWL_ERR SetFrequency(uint32_t elapse);
   virtual FWL_ERR SetColor(CFX_Color crFill);

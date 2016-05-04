@@ -17,10 +17,10 @@
 
 class CFWL_Message;
 class CFWL_WidgetMgrDelegate;
+class CXFA_FFApp;
+class CXFA_FWLAdapterWidgetMgr;
 class CFX_Graphics;
 class CFX_Matrix;
-class IFWL_AdapterWidgetMgr;
-class IFWL_AdapterNative;
 class IFWL_Widget;
 
 class CFWL_WidgetMgrItem {
@@ -61,7 +61,7 @@ class CFWL_WidgetMgrItem {
 
 class CFWL_WidgetMgr : public IFWL_WidgetMgr {
  public:
-  CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative);
+  CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
   ~CFWL_WidgetMgr() override;
 
   // IFWL_WidgetMgr:
@@ -83,29 +83,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   void SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned);
   void SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild);
   FX_BOOL IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent);
-  FWL_ERR CreateWidget_Native(IFWL_Widget* pWidget);
-  FWL_ERR DestroyWidget_Native(IFWL_Widget* pWidget);
-  FWL_ERR GetWidgetRect_Native(IFWL_Widget* pWidget, CFX_RectF& rect);
   FWL_ERR SetWidgetRect_Native(IFWL_Widget* pWidget, const CFX_RectF& rect);
-  FWL_ERR SetWidgetPosition_Native(IFWL_Widget* pWidget,
-                                   FX_FLOAT fx,
-                                   FX_FLOAT fy);
-  FWL_ERR SetWidgetIcon_Native(IFWL_Widget* pWidget,
-                               const CFX_DIBitmap* pIcon,
-                               FX_BOOL bBig);
-  FWL_ERR SetWidgetCaption_Native(IFWL_Widget* pWidget,
-                                  const CFX_WideStringC& wsCaption);
-  FWL_ERR SetBorderRegion_Native(IFWL_Widget* pWidget, CFX_Path* pPath);
-  FWL_ERR ShowWidget_Native(IFWL_Widget* pWidget);
-  FWL_ERR HideWidget_Native(IFWL_Widget* pWidget);
-  FWL_ERR SetNormal_Native(IFWL_Widget* pWidget);
-  FWL_ERR SetMaximize_Native(IFWL_Widget* pWidget);
-  FWL_ERR SetMinimize_Native(IFWL_Widget* pWidget);
-  FX_BOOL CheckMessage_Native();
-  FWL_ERR DispatchMessage_Native();
-  FX_BOOL IsIdleMessage_Native();
-  FWL_ERR Exit_Native(int32_t iExitCode);
-  FWL_ERR CreateWidgetWithNativeId_Native(IFWL_Widget* pWidget, void* vp);
   IFWL_Widget* GetWidgetAtPoint(IFWL_Widget* pParent, FX_FLOAT fx, FX_FLOAT fy);
   void NotifySizeChanged(IFWL_Widget* pForm, FX_FLOAT fx, FX_FLOAT fy);
   IFWL_Widget* nextTab(IFWL_Widget* parent, IFWL_Widget* focus, FX_BOOL& bFind);
@@ -117,8 +95,8 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   IFWL_Widget* GetDefaultButton(IFWL_Widget* pParent);
   void AddRedrawCounts(IFWL_Widget* pWidget);
   void ResetRedrawCounts(IFWL_Widget* pWidget);
-  IFWL_AdapterWidgetMgr* GetAdapterWidgetMgr() { return m_pAdapter; }
-  CFWL_WidgetMgrDelegate* GetDelegate() { return m_pDelegate; }
+  CXFA_FWLAdapterWidgetMgr* GetAdapterWidgetMgr() const { return m_pAdapter; }
+  CFWL_WidgetMgrDelegate* GetDelegate() const { return m_pDelegate; }
   CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget);
   bool IsThreadEnabled();
   bool IsFormDisabled();
@@ -135,7 +113,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
                           IFWL_Widget** pWidget = NULL);
   FX_BOOL IsAbleNative(IFWL_Widget* pWidget);
   CFX_MapPtrToPtr m_mapWidgetItem;
-  IFWL_AdapterWidgetMgr* m_pAdapter;
+  CXFA_FWLAdapterWidgetMgr* m_pAdapter;
   CFWL_WidgetMgrDelegate* m_pDelegate;
   friend class CFWL_WidgetMgrDelegate;
   uint32_t m_dwCapability;

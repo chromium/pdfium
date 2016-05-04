@@ -28,7 +28,7 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   virtual FWL_ERR Update();
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet);
+  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet);
   virtual FWL_ERR GetClientRect(CFX_RectF& rect);
   FWL_ERR SetAnchor(const CFX_RectF& rtAnchor);
   FWL_ERR Show();

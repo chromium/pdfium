@@ -38,7 +38,7 @@ class CFWL_Widget {
   uint32_t GetStylesEx();
   FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
   uint32_t GetStates();
-  FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   FWL_ERR SetPrivateData(void* module_id,
                          void* pData,
                          PD_CALLBACK_FREEDATA callback);

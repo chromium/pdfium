@@ -10,16 +10,16 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "xfa/fgas/font/fgas_font.h"
-#include "xfa/fwl/core/fwl_sdadapterimp.h"
-#include "xfa/fwl/core/ifwl_adapternative.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fxfa/include/fxfa.h"
 
+class CFWL_WidgetMgrDelegate;
 class CXFA_DefFontMgr;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 class CXFA_FFDocHandler;
 class CXFA_FontMgr;
+class IFWL_AdapterTimerMgr;
 
 class CXFA_FileRead : public IFX_FileRead {
  public:
@@ -34,10 +34,10 @@ class CXFA_FileRead : public IFX_FileRead {
   CFX_ObjectArray<CPDF_StreamAcc> m_Data;
 };
 
-class CXFA_FFApp : public IFWL_AdapterNative {
+class CXFA_FFApp {
  public:
   CXFA_FFApp(IXFA_AppProvider* pProvider);
-  ~CXFA_FFApp() override;
+  ~CXFA_FFApp();
 
   CXFA_FFDocHandler* GetDocHandler();
   CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider,
@@ -47,11 +47,8 @@ class CXFA_FFApp : public IFWL_AdapterNative {
   IXFA_AppProvider* GetAppProvider() { return m_pProvider; }
   void SetDefaultFontMgr(CXFA_DefFontMgr* pFontMgr);
 
-  // IFWL_AdapterNative:
-  IFWL_AdapterWidgetMgr* GetWidgetMgr(
-      CFWL_WidgetMgrDelegate* pDelegate) override;
-  IFWL_AdapterThreadMgr* GetThreadMgr() override;
-  IFWL_AdapterTimerMgr* GetTimerMgr() override;
+  CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgrDelegate* pDelegate);
+  IFWL_AdapterTimerMgr* GetTimerMgr();
 
   CXFA_FontMgr* GetXFAFontMgr();
   IFX_FontMgr* GetFDEFontMgr();
@@ -72,7 +69,6 @@ class CXFA_FFApp : public IFWL_AdapterNative {
   CXFA_FWLAdapterWidgetMgr* m_pAdapterWidgetMgr;
   CFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;
   IFX_FontMgr* m_pFDEFontMgr;
-  CFWL_SDAdapterThreadMgr* m_pAdapterThreadMgr;
 };
 
 #endif  // XFA_FXFA_INCLUDE_XFA_FFAPP_H_

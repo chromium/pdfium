@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_APP_H_
 #define XFA_FWL_CORE_IFWL_APP_H_
 
-// The FWL thread/app code contains three parallel classes, which reference each
+// The FWL app code contains three parallel classes, which reference each
 // other via pointers as follows:
 //
 //                    m_pIface               m_pImpl
@@ -22,25 +22,25 @@
 #include "xfa/fwl/core/fwl_error.h"
 
 class CFWL_NoteDriver;
-class IFWL_AdapterNative;
-class IFWL_AdapterWidgetMgr;
+class CXFA_FFApp;
+class CXFA_FWLAdapterWidgetMgr;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 class IFWL_WidgetMgr;
 
 class IFWL_App {
  public:
-  static IFWL_App* Create(IFWL_AdapterNative* pAdapter);
+  static IFWL_App* Create(CXFA_FFApp* pAdapter);
 
   virtual ~IFWL_App() {}
 
   FWL_ERR Initialize();
   FWL_ERR Finalize();
-  IFWL_AdapterNative* GetAdapterNative();
+  CXFA_FFApp* GetAdapterNative();
   IFWL_WidgetMgr* GetWidgetMgr();
   IFWL_ThemeProvider* GetThemeProvider();
-  FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  FWL_ERR Exit(int32_t iExitCode);
+  void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
+  void Exit(int32_t iExitCode);
 
   // These call into polymorphic methods in the impl; no need to override.
   void Release();
@@ -61,7 +61,7 @@ class IFWL_App {
 IFWL_App* FWL_GetApp();
 void FWL_SetApp(IFWL_App* pApp);
 
-IFWL_AdapterNative* FWL_GetAdapterNative();
-IFWL_AdapterWidgetMgr* FWL_GetAdapterWidgetMgr();
+CXFA_FFApp* FWL_GetAdapterNative();
+CXFA_FWLAdapterWidgetMgr* FWL_GetAdapterWidgetMgr();
 
 #endif  // XFA_FWL_CORE_IFWL_APP_H_

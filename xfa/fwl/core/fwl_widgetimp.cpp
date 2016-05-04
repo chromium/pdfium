@@ -18,12 +18,10 @@
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/fwl/core/ifwl_adapternative.h"
-#include "xfa/fwl/core/ifwl_adapterthreadmgr.h"
-#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fxfa/include/xfa_ffapp.h"
 
 #define FWL_CLASSHASH_Menu 3957949655
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)
@@ -97,8 +95,8 @@ FWL_ERR IFWL_Widget::ModifyStylesEx(uint32_t dwStylesExAdded,
 uint32_t IFWL_Widget::GetStates() {
   return static_cast<CFWL_WidgetImp*>(GetImpl())->GetStates();
 }
-FWL_ERR IFWL_Widget::SetStates(uint32_t dwStates, FX_BOOL bSet) {
-  return static_cast<CFWL_WidgetImp*>(GetImpl())->SetStates(dwStates, bSet);
+void IFWL_Widget::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+  static_cast<CFWL_WidgetImp*>(GetImpl())->SetStates(dwStates, bSet);
 }
 FWL_ERR IFWL_Widget::SetPrivateData(void* module_id,
                                     void* pData,
@@ -165,33 +163,23 @@ FWL_ERR CFWL_WidgetImp::Initialize() {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
     return FWL_ERR_Indefinite;
-  IFWL_AdapterNative* pAdapter = pApp->GetAdapterNative();
+  CXFA_FFApp* pAdapter = pApp->GetAdapterNative();
   if (!pAdapter)
     return FWL_ERR_Indefinite;
-  IFWL_AdapterThreadMgr* pAdapterThread = pAdapter->GetThreadMgr();
-  if (!pAdapterThread)
-    return FWL_ERR_Indefinite;
-  SetOwnerApp(
-      static_cast<CFWL_AppImp*>(pAdapterThread->GetCurrentThread()->GetImpl()));
+
+  SetOwnerApp(static_cast<CFWL_AppImp*>(FWL_GetApp()->GetImpl()));
   IFWL_Widget* pParent = m_pProperties->m_pParent;
   m_pWidgetMgr->InsertWidget(pParent, m_pInterface);
   if (!IsChild()) {
-    {
-      IFWL_Widget* pOwner = m_pProperties->m_pOwner;
-      if (pOwner) {
-        m_pWidgetMgr->SetOwner(pOwner, m_pInterface);
-      }
-    }
-    m_pWidgetMgr->CreateWidget_Native(m_pInterface);
+    IFWL_Widget* pOwner = m_pProperties->m_pOwner;
+    if (pOwner)
+      m_pWidgetMgr->SetOwner(pOwner, m_pInterface);
   }
   return FWL_ERR_Succeeded;
 }
 
 FWL_ERR CFWL_WidgetImp::Finalize() {
   NotifyDriver();
-  if (!IsChild())
-    m_pWidgetMgr->DestroyWidget_Native(m_pInterface);
-
   m_pWidgetMgr->RemoveWidget(m_pInterface);
   return FWL_ERR_Succeeded;
 }
@@ -314,29 +302,24 @@ static void NotifyHideChildWidget(IFWL_WidgetMgr* widgetMgr,
     child = widgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
   }
 }
-FWL_ERR CFWL_WidgetImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+void CFWL_WidgetImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   bSet ? (m_pProperties->m_dwStates |= dwStates)
        : (m_pProperties->m_dwStates &= ~dwStates);
-  FWL_ERR ret = FWL_ERR_Succeeded;
-  if (dwStates & FWL_WGTSTATE_Invisible) {
-    if (bSet) {
-      ret = m_pWidgetMgr->HideWidget_Native(m_pInterface);
-      CFWL_NoteDriver* noteDriver =
-          static_cast<CFWL_NoteDriver*>(GetOwnerApp()->GetNoteDriver());
-      IFWL_WidgetMgr* widgetMgr = FWL_GetWidgetMgr();
-      noteDriver->NotifyTargetHide(m_pInterface);
-      IFWL_Widget* child =
-          widgetMgr->GetWidget(m_pInterface, FWL_WGTRELATION_FirstChild);
-      while (child) {
-        noteDriver->NotifyTargetHide(child);
-        NotifyHideChildWidget(widgetMgr, child, noteDriver);
-        child = widgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
-      }
-    } else {
-      ret = m_pWidgetMgr->ShowWidget_Native(m_pInterface);
-    }
+  if (!(dwStates & FWL_WGTSTATE_Invisible) || !bSet)
+    return;
+
+  CFWL_NoteDriver* noteDriver =
+      static_cast<CFWL_NoteDriver*>(GetOwnerApp()->GetNoteDriver());
+  IFWL_WidgetMgr* widgetMgr = FWL_GetWidgetMgr();
+  noteDriver->NotifyTargetHide(m_pInterface);
+  IFWL_Widget* child =
+      widgetMgr->GetWidget(m_pInterface, FWL_WGTRELATION_FirstChild);
+  while (child) {
+    noteDriver->NotifyTargetHide(child);
+    NotifyHideChildWidget(widgetMgr, child, noteDriver);
+    child = widgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
   }
-  return ret;
+  return;
 }
 FWL_ERR CFWL_WidgetImp::SetPrivateData(void* module_id,
                                        void* pData,
@@ -418,14 +401,6 @@ FWL_ERR CFWL_WidgetImp::TransformTo(IFWL_Widget* pWidget,
     form1->GetWidgetRect(r);
     fx += r.left;
     fy += r.top;
-#ifdef FWL_UseMacSystemBorder
-    if (form1->GetStyles() & FWL_WGTSTYLE_Caption) {
-      FX_FLOAT l, t, r, b;
-      l = t = r = b = 0;
-      FWL_GetAdapterWidgetMgr()->GetSystemBorder(l, t, r, b);
-      fy += t;
-    }
-#endif
     return FWL_ERR_Succeeded;
   }
   IFWL_Widget* form2 =
@@ -439,15 +414,6 @@ FWL_ERR CFWL_WidgetImp::TransformTo(IFWL_Widget* pWidget,
     form2->GetWidgetRect(r);
     fx -= r.left;
     fy -= r.top;
-#ifdef FWL_UseMacSystemBorder
-    if ((form1->GetStyles() & FWL_WGTSTYLE_Caption) !=
-        (form2->GetStyles() & FWL_WGTSTYLE_Caption)) {
-      FX_FLOAT l, t, r, b;
-      l = t = r = b = 0;
-      FWL_GetAdapterWidgetMgr()->GetSystemBorder(l, t, r, b);
-      (form1->GetStyles() & FWL_WGTSTYLE_Caption) ? (fy += t) : (fy -= t);
-    }
-#endif
   }
   parent = pWidget->GetParent();
   if (parent) {

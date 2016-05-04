@@ -16,7 +16,6 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
@@ -155,12 +154,9 @@ FWL_ERR CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
   CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return FWL_ERR_Indefinite;
-  IFWL_AdapterWidgetMgr* adapterWidgetMgr = pWidgetMgr->GetAdapterWidgetMgr();
-  FX_FLOAT l, t, r, b;
-  l = t = r = b = 0;
-  adapterWidgetMgr->GetSystemBorder(l, t, r, b);
-  rect.Deflate(l, t, r, b);
-  rect.left = rect.top = 0;
+
+  rect.left = 0;
+  rect.top = 0;
   return FWL_ERR_Succeeded;
 #else
   FX_FLOAT x = 0;
@@ -458,7 +454,6 @@ void CFWL_FormImp::ShowChildWidget(IFWL_Widget* pParent) {
   IFWL_Widget* pChild =
       pWidgetMgr->GetWidget(pParent, FWL_WGTRELATION_FirstChild);
   while (pChild) {
-    pWidgetMgr->ShowWidget_Native(pChild);
     ShowChildWidget(pChild);
     pChild = pWidgetMgr->GetWidget(pChild, FWL_WGTRELATION_NextSibling);
   }
@@ -625,7 +620,6 @@ void CFWL_FormImp::SetWorkAreaRect() {
   if (!pWidgetMgr)
     return;
   m_bSetMaximize = TRUE;
-  pWidgetMgr->SetMaximize_Native(m_pInterface);
   Repaint(&m_rtRelative);
 }
 void CFWL_FormImp::SetCursor(FX_FLOAT fx, FX_FLOAT fy) {}
@@ -778,14 +772,10 @@ void CFWL_FormImp::UpdateIcon() {
       static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   CFX_DIBitmap* pBigIcon = pData->GetIcon(m_pInterface, TRUE);
   CFX_DIBitmap* pSmallIcon = pData->GetIcon(m_pInterface, FALSE);
-  if (pBigIcon && pBigIcon != m_pBigIcon) {
+  if (pBigIcon)
     m_pBigIcon = pBigIcon;
-    pWidgetMgr->SetWidgetIcon_Native(m_pInterface, m_pBigIcon, TRUE);
-  }
-  if (pSmallIcon && pSmallIcon != m_pSmallIcon) {
+  if (pSmallIcon)
     m_pSmallIcon = pSmallIcon;
-    pWidgetMgr->SetWidgetIcon_Native(m_pInterface, m_pBigIcon, FALSE);
-  }
 }
 void CFWL_FormImp::UpdateCaption() {
   CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
@@ -797,7 +787,6 @@ void CFWL_FormImp::UpdateCaption() {
     return;
   CFX_WideString text;
   pData->GetCaption(m_pInterface, text);
-  pWidgetMgr->SetWidgetCaption_Native(m_pInterface, text.AsStringC());
 }
 void CFWL_FormImp::DoWidthLimit(FX_FLOAT& fLeft,
                                 FX_FLOAT& fWidth,
@@ -957,10 +946,8 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
 
       m_pOwner->m_bSetMaximize = FALSE;
       CFWL_MsgSize* pMsg = static_cast<CFWL_MsgSize*>(pMessage);
-      CFX_RectF rt;
-      pWidgetMgr->GetWidgetRect_Native(m_pOwner->m_pInterface, rt);
-      m_pOwner->m_pProperties->m_rtWidget.left = rt.left;
-      m_pOwner->m_pProperties->m_rtWidget.top = rt.top;
+      m_pOwner->m_pProperties->m_rtWidget.left = 0;
+      m_pOwner->m_pProperties->m_rtWidget.top = 0;
       m_pOwner->m_pProperties->m_rtWidget.width = (FX_FLOAT)pMsg->m_iWidth;
       m_pOwner->m_pProperties->m_rtWidget.height = (FX_FLOAT)pMsg->m_iHeight;
       m_pOwner->Update();
@@ -1044,13 +1031,7 @@ void CFWL_FormImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
       m_pOwner->Update();
     }
     m_pOwner->m_bMaximized = !m_pOwner->m_bMaximized;
-  } else if (pPressedBtn == m_pOwner->m_pMinBox) {
-    CFWL_WidgetMgr* pWidgetMgr =
-        static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
-    if (!pWidgetMgr)
-      return;
-    pWidgetMgr->SetMinimize_Native(m_pOwner->m_pInterface);
-  } else {
+  } else if (pPressedBtn != m_pOwner->m_pMinBox) {
     CFWL_EvtClose eClose;
     eClose.m_pSrcTarget = m_pOwner->m_pInterface;
     m_pOwner->DispatchEvent(&eClose);

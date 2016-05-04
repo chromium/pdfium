@@ -722,16 +722,16 @@ FWL_ERR CFWL_ComboBoxImp::SetCurSel(int32_t iSel) {
   m_iCurSel = bClearSel ? -1 : iSel;
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_ComboBoxImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+
+void CFWL_ComboBoxImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   FX_BOOL bIsDropDown = IsDropDownStyle();
-  if (bIsDropDown && m_pEdit) {
+  if (bIsDropDown && m_pEdit)
     m_pEdit->SetStates(dwStates, bSet);
-  }
-  if (m_pListBox) {
+  if (m_pListBox)
     m_pListBox->SetStates(dwStates, bSet);
-  }
-  return CFWL_WidgetImp::SetStates(dwStates, bSet);
+  CFWL_WidgetImp::SetStates(dwStates, bSet);
 }
+
 FWL_ERR CFWL_ComboBoxImp::SetEditText(const CFX_WideString& wsText) {
   if (!m_pEdit)
     return FWL_ERR_Indefinite;

@@ -10,10 +10,10 @@
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/fwl/core/ifwl_adapternative.h"
-#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
+#include "xfa/fxfa/app/xfa_fwladapter.h"
+#include "xfa/fxfa/include/xfa_ffapp.h"
 
 namespace {
 
@@ -43,8 +43,7 @@ IFWL_WidgetMgr* FWL_GetWidgetMgr() {
   return pApp->GetWidgetMgr();
 }
 
-CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
-    : m_dwCapability(0) {
+CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative) : m_dwCapability(0) {
   m_pDelegate = new CFWL_WidgetMgrDelegate(this);
   m_pAdapter = pAdapterNative->GetWidgetMgr(m_pDelegate);
   ASSERT(m_pAdapter);
@@ -360,10 +359,8 @@ void CFWL_WidgetMgr::SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild) {
   }
   pItem->pParent = pParentItem;
   SetWidgetIndex(pChild, -1);
-  if (!m_pAdapter)
-    return;
-  m_pAdapter->SetParentWidget(pChild, pParent);
 }
+
 FX_BOOL CFWL_WidgetMgr::IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent) {
   IFWL_Widget* pTemp = pChild;
   do {
@@ -373,25 +370,6 @@ FX_BOOL CFWL_WidgetMgr::IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent) {
     pTemp = GetWidget(pTemp, FWL_WGTRELATION_Parent);
   } while (pTemp);
   return FALSE;
-}
-FWL_ERR CFWL_WidgetMgr::CreateWidget_Native(IFWL_Widget* pWidget) {
-  if (!IsAbleNative(pWidget)) {
-    return FWL_ERR_Succeeded;
-  }
-  return m_pAdapter->CreateWidget(pWidget, pWidget->GetOwner());
-}
-FWL_ERR CFWL_WidgetMgr::DestroyWidget_Native(IFWL_Widget* pWidget) {
-  if (!IsAbleNative(pWidget)) {
-    return FWL_ERR_Succeeded;
-  }
-  return m_pAdapter->DestroyWidget(pWidget);
-}
-FWL_ERR CFWL_WidgetMgr::GetWidgetRect_Native(IFWL_Widget* pWidget,
-                                             CFX_RectF& rect) {
-  if (!IsAbleNative(pWidget)) {
-    return FWL_ERR_Succeeded;
-  }
-  return m_pAdapter->GetWidgetRect(pWidget, rect);
 }
 FWL_ERR CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
                                              const CFX_RectF& rect) {
@@ -413,57 +391,7 @@ FWL_ERR CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
     pItem->bOutsideChanged = !m_rtScreen.Contains(rect);
 #endif
   }
-  return m_pAdapter->SetWidgetRect(pWidget, rect);
-}
-FWL_ERR CFWL_WidgetMgr::SetWidgetPosition_Native(IFWL_Widget* pWidget,
-                                                 FX_FLOAT fx,
-                                                 FX_FLOAT fy) {
-  return m_pAdapter->SetWidgetPosition(pWidget, fx, fy);
-}
-FWL_ERR CFWL_WidgetMgr::SetWidgetIcon_Native(IFWL_Widget* pWidget,
-                                             const CFX_DIBitmap* pIcon,
-                                             FX_BOOL bBig) {
-  return m_pAdapter->SetWidgetIcon(pWidget, pIcon, bBig);
-}
-FWL_ERR CFWL_WidgetMgr::SetWidgetCaption_Native(
-    IFWL_Widget* pWidget,
-    const CFX_WideStringC& wsCaption) {
-  return m_pAdapter->SetWidgetCaption(pWidget, wsCaption);
-}
-FWL_ERR CFWL_WidgetMgr::SetBorderRegion_Native(IFWL_Widget* pWidget,
-                                               CFX_Path* pPath) {
-  return m_pAdapter->SetBorderRegion(pWidget, pPath);
-}
-FWL_ERR CFWL_WidgetMgr::ShowWidget_Native(IFWL_Widget* pWidget) {
-  return m_pAdapter->ShowWidget(pWidget);
-}
-FWL_ERR CFWL_WidgetMgr::HideWidget_Native(IFWL_Widget* pWidget) {
-  return m_pAdapter->HideWidget(pWidget);
-}
-FWL_ERR CFWL_WidgetMgr::SetNormal_Native(IFWL_Widget* pWidget) {
-  return m_pAdapter->SetNormal(pWidget);
-}
-FWL_ERR CFWL_WidgetMgr::SetMaximize_Native(IFWL_Widget* pWidget) {
-  return m_pAdapter->SetMaximize(pWidget);
-}
-FWL_ERR CFWL_WidgetMgr::SetMinimize_Native(IFWL_Widget* pWidget) {
-  return m_pAdapter->SetMinimize(pWidget);
-}
-FX_BOOL CFWL_WidgetMgr::CheckMessage_Native() {
-  return m_pAdapter->CheckMessage();
-}
-FWL_ERR CFWL_WidgetMgr::DispatchMessage_Native() {
-  return m_pAdapter->DispatchMessage();
-}
-FX_BOOL CFWL_WidgetMgr::IsIdleMessage_Native() {
-  return m_pAdapter->IsIdleMessage();
-}
-FWL_ERR CFWL_WidgetMgr::Exit_Native(int32_t iExitCode) {
-  return m_pAdapter->Exit(iExitCode);
-}
-FWL_ERR CFWL_WidgetMgr::CreateWidgetWithNativeId_Native(IFWL_Widget* pWidget,
-                                                        void* vp) {
-  return m_pAdapter->CreateWidgetWithNativeId(pWidget, vp);
+  return FWL_ERR_Succeeded;
 }
 IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
                                               FX_FLOAT x,
@@ -697,7 +625,7 @@ FX_BOOL CFWL_WidgetMgr::GetAdapterPopupPos(IFWL_Widget* pWidget,
                                            FX_FLOAT fMaxHeight,
                                            const CFX_RectF& rtAnchor,
                                            CFX_RectF& rtPopup) {
-  IFWL_AdapterWidgetMgr* pSDApapter = GetAdapterWidgetMgr();
+  CXFA_FWLAdapterWidgetMgr* pSDApapter = GetAdapterWidgetMgr();
   return pSDApapter->GetPopupPos(pWidget, fMinHeight, fMaxHeight, rtAnchor,
                                  rtPopup);
 }

@@ -14,7 +14,6 @@
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_tooltiptarget.h"
 
@@ -46,11 +45,6 @@ FX_BOOL CFWL_NoteLoop::ContinueModal() {
 }
 FWL_ERR CFWL_NoteLoop::EndModalLoop() {
   m_bContinueModal = FALSE;
-#if (_FX_OS_ == _FX_MACOSX_)
-  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
-  IFWL_AdapterWidgetMgr* adapterWidgetMgr = pWidgetMgr->GetAdapterWidgetMgr();
-  adapterWidgetMgr->EndLoop();
-#endif
   return FWL_ERR_Succeeded;
 }
 
@@ -213,60 +207,22 @@ FWL_ERR CFWL_NoteDriver::Run() {
   CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return FWL_ERR_Indefinite;
-#if (_FX_OS_ == _FX_MACOSX_)
-  IFWL_AdapterWidgetMgr* adapterWidgetMgr = pWidgetMgr->GetAdapterWidgetMgr();
-  CFWL_NoteLoop* pTopLoop = GetTopLoop();
-  if (pTopLoop) {
-    CFWL_WidgetImp* formImp = pTopLoop->GetForm();
-    if (formImp) {
-      IFWL_Widget* pForm = formImp->GetInterface();
-      adapterWidgetMgr->RunLoop(pForm);
-    }
+
+#if (_FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_WIN32_DESKTOP_ || \
+     _FX_OS_ == _FX_WIN64_)
+  CFWL_NoteLoop* pTopLoop = NULL;
+  for (;;) {
+    pTopLoop = GetTopLoop();
+    if (!pTopLoop || !pTopLoop->ContinueModal())
+      break;
+    if (UnqueueMessage(pTopLoop))
+      continue;
   }
-#elif(_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_)
-    FX_BOOL bIdle = TRUE;
-    int32_t iIdleCount = 0;
-    CFWL_NoteLoop* pTopLoop = NULL;
-    for (;;) {
-      pTopLoop = GetTopLoop();
-      if (!pTopLoop || !pTopLoop->ContinueModal()) {
-        break;
-      }
-      if (UnqueueMessage(pTopLoop)) {
-        continue;
-      }
-      while (bIdle && !(pWidgetMgr->CheckMessage_Native())) {
-        if (FWL_ERR_Indefinite == pTopLoop->Idle(iIdleCount++)) {
-          bIdle = FALSE;
-        }
-      }
-      do {
-        if (FWL_ERR_Indefinite == pWidgetMgr->DispatchMessage_Native()) {
-          break;
-        }
-        if (pWidgetMgr->IsIdleMessage_Native()) {
-          bIdle = TRUE;
-          iIdleCount = 0;
-        }
-      } while (pWidgetMgr->CheckMessage_Native());
-    }
-#elif(_FX_OS_ == _FX_LINUX_DESKTOP_)
-    CFWL_NoteLoop* pTopLoop = NULL;
-    for (;;) {
-      pTopLoop = GetTopLoop();
-      if (!pTopLoop || !pTopLoop->ContinueModal()) {
-        break;
-      }
-      if (UnqueueMessage(pTopLoop)) {
-        continue;
-      }
-      if (pWidgetMgr->CheckMessage_Native()) {
-        pWidgetMgr->DispatchMessage_Native();
-      }
-    }
 #endif
+
   return FWL_ERR_Succeeded;
 }
+
 IFWL_Widget* CFWL_NoteDriver::GetFocus() {
   return m_pFocus;
 }

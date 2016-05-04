@@ -225,15 +225,17 @@ FWL_ERR CFWL_ToolTipImp::Hide() {
   }
   return TRUE;
 }
-FWL_ERR CFWL_ToolTipImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+
+void CFWL_ToolTipImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   if ((dwStates & FWL_WGTSTATE_Invisible) && !bSet) {
     IFWL_ToolTipDP* pData =
         static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
     int32_t nAutoPopDelay = pData->GetAutoPopDelay(m_pInterface);
     m_hTimerHide = FWL_StartTimer(&m_TimerHide, nAutoPopDelay, FALSE);
   }
-  return CFWL_WidgetImp::SetStates(dwStates, bSet);
+  CFWL_WidgetImp::SetStates(dwStates, bSet);
 }
+
 void CFWL_ToolTipImp::RefreshToolTipPos() {
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_TTP_NoAnchor) == 0) {
     CFX_RectF rtPopup;
