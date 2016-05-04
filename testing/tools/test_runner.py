@@ -91,7 +91,8 @@ class TestRunner:
 
   def TestPixel(self, input_root, pdf_path):
     cmd_to_run = common.DrMemoryWrapper(self.drmem_wrapper, input_root)
-    cmd_to_run.extend([self.pdfium_test_path, '--png', pdf_path])
+    cmd_to_run.extend([self.pdfium_test_path, '--send-events', '--png',
+                       pdf_path])
     return common.RunCommand(cmd_to_run)
 
 

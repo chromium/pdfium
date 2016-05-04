@@ -42,8 +42,7 @@ def test_one_file(input_filename, source_dir, working_dir,
   # remove .pdf suffix
   cmd_to_run = common.DrMemoryWrapper(drmem_wrapper,
                                       os.path.splitext(input_filename)[0])
-  cmd_to_run.extend([pdfium_test_path, '--png', pdf_path])
-  # run test
+  cmd_to_run.extend([pdfium_test_path, '--send-events', '--png', pdf_path])
   error = common.RunCommand(cmd_to_run)
   if error:
     print "FAILURE: " + input_filename + "; " + str(error)

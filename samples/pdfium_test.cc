@@ -498,7 +498,7 @@ bool RenderPage(const std::string& name,
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
 
   if (options.send_events)
-    SendPageEvents(doc, form, events);
+    SendPageEvents(form, page, events);
 
   double scale = 1.0;
   if (!options.scale_factor_as_string.empty()) {
@@ -564,8 +564,6 @@ void RenderPdf(const std::string& name,
                size_t len,
                const Options& options,
                const std::string& events) {
-  fprintf(stderr, "Rendering PDF file %s.\n", name.c_str());
-
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
   platform_callbacks.version = 3;
@@ -606,7 +604,6 @@ void RenderPdf(const std::string& name,
   FPDF_AVAIL pdf_avail = FPDFAvail_Create(&file_avail, &file_access);
 
   if (FPDFAvail_IsLinearized(pdf_avail) == PDF_LINEARIZED) {
-    fprintf(stderr, "Linearized path...\n");
     doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
     if (doc) {
       while (nRet == PDF_DATA_NOTAVAIL) {
@@ -626,7 +623,6 @@ void RenderPdf(const std::string& name,
       bIsLinearized = true;
     }
   } else {
-    fprintf(stderr, "Non-linearized path...\n");
     doc = FPDF_LoadCustomDocument(&file_access, nullptr);
   }
 
@@ -718,7 +714,8 @@ void RenderPdf(const std::string& name,
   FPDFAvail_Destroy(pdf_avail);
 
   fprintf(stderr, "Rendered %d pages.\n", rendered_pages);
-  fprintf(stderr, "Skipped %d bad pages.\n", bad_pages);
+  if (bad_pages)
+    fprintf(stderr, "Skipped %d bad pages.\n", bad_pages);
 }
 
 static void ShowConfig() {
@@ -745,6 +742,7 @@ static void ShowConfig() {
 static const char usage_string[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
     "  --show-config     - print build options and exit\n"
+    "  --send-events     - send input described by .evt file\n"
     "  --bin-dir=<path>  - override path to v8 external data\n"
     "  --font-dir=<path> - override path to external fonts\n"
     "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
@@ -818,6 +816,7 @@ int main(int argc, const char* argv[]) {
         GetFileContents(filename.c_str(), &file_length);
     if (!file_contents)
       continue;
+    fprintf(stderr, "Rendering PDF file %s.\n", filename.c_str());
     std::string events;
     if (options.send_events) {
       std::string event_filename = filename;
@@ -828,10 +827,8 @@ int main(int argc, const char* argv[]) {
         std::unique_ptr<char, pdfium::FreeDeleter> event_contents =
             GetFileContents(event_filename.c_str(), &event_length);
         if (event_contents) {
+          fprintf(stderr, "Sending events from: %s\n", event_filename.c_str());
           events = std::string(event_contents.get(), event_length);
-        } else {
-          fprintf(stderr, "Warning: no event file: %s\n",
-                  event_filename.c_str());
         }
       }
     }
