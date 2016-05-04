@@ -13,7 +13,11 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-#define FWLTHEME_CAPACITY_ComboFormHandler 8.0f
+namespace {
+
+const float kComboFormHandler = 8.0f;
+
+}  // namespace
 
 CFWL_ComboBoxTP::CFWL_ComboBoxTP() {
   m_dwThemeID = 0;
@@ -85,7 +89,7 @@ void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
 void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart* pThemePart,
                                    CFWL_WidgetCapacity dwCapacity) {
   if (dwCapacity == CFWL_WidgetCapacity::ComboFormHandler) {
-    m_fValue = FWLTHEME_CAPACITY_ComboFormHandler;
+    m_fValue = kComboFormHandler;
     return &m_fValue;
   }
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);

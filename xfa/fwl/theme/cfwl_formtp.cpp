@@ -16,16 +16,20 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-#define FWLTHEME_CAPACITY_CXFormBorder 3
-#define FWLTHEME_CAPACITY_CYFormBorder 3
-#define FWLTHEME_CAPACITY_CYNarrowCaption 18
-#define FWLTHEME_CAPACITY_CYCaption 29
-#define FWLTHEME_CAPACITY_BigIconSize 32
-#define FWLTHEME_CAPACITY_SmallIconSize 16
-#define FWLTHEME_CAPACITY_FormTextColor 0xFFFFFFFF
-#define FWLTHEME_FORMBTN_Margin 5
-#define FWLTHEME_FORMBTN_Span 2
-#define FWLTHEME_FORMBTN_Size 21
+namespace {
+
+const int kCXFormBorder = 3;
+const int kCYFormBorder = 3;
+const int kCYCaption = 29;
+const int kFormBigIconSize = 32;
+const int kFormSmallIconSize = 16;
+const uint32_t kFormTextColor = 0xFFFFFFFF;
+
+const int kButtonSize = 21;
+const int kButtonMargin = 5;
+const int kButtonSpan = 2;
+
+}  // namespace
 
 CFWL_FormTP::CFWL_FormTP() : m_pActiveBitmap(NULL), m_pDeactivebitmap(NULL) {
   m_pThemeData = new SBThemeData;
@@ -161,32 +165,32 @@ void* CFWL_FormTP::GetCapacity(CFWL_ThemePart* pThemePart,
   FX_BOOL bDwordVal = FALSE;
   switch (dwCapacity) {
     case CFWL_WidgetCapacity::CXBorder: {
-      m_fValue = FWLTHEME_CAPACITY_CXFormBorder;
+      m_fValue = kCXFormBorder;
       break;
     }
     case CFWL_WidgetCapacity::CYBorder: {
-      m_fValue = FWLTHEME_CAPACITY_CYFormBorder;
+      m_fValue = kCYFormBorder;
       break;
     }
     case CFWL_WidgetCapacity::CYCaption: {
-      m_fValue = FWLTHEME_CAPACITY_CYCaption;
+      m_fValue = kCYCaption;
       break;
     }
     case CFWL_WidgetCapacity::CYNarrowCaption: {
-      m_fValue = FWLTHEME_CAPACITY_CYCaption;
+      m_fValue = kCYCaption;
       break;
     }
     case CFWL_WidgetCapacity::TextColor: {
       bDwordVal = TRUE;
-      m_dwValue = FWLTHEME_CAPACITY_FormTextColor;
+      m_dwValue = kFormTextColor;
       break;
     }
     case CFWL_WidgetCapacity::BigIcon: {
-      m_fValue = FWLTHEME_CAPACITY_BigIconSize;
+      m_fValue = kFormBigIconSize;
       break;
     }
     case CFWL_WidgetCapacity::SmallIcon: {
-      m_fValue = FWLTHEME_CAPACITY_SmallIconSize;
+      m_fValue = kFormSmallIconSize;
       break;
     }
     default: { bDefPro = TRUE; }
@@ -232,12 +236,11 @@ void CFWL_FormTP::CalCloseBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.Offset(-rtWidget.left, -rtWidget.top);
   if (dwStyles & FWL_WGTSTYLE_CloseBox) {
-    rect.Set(rtWidget.left + FWLTHEME_FORMBTN_Margin + FWLTHEME_FORMBTN_Span,
-             rtWidget.top + FWLTHEME_FORMBTN_Margin, FWLTHEME_FORMBTN_Size,
-             FWLTHEME_FORMBTN_Size);
+    rect.Set(rtWidget.left + kButtonMargin + kButtonSpan,
+             rtWidget.top + kButtonMargin, kButtonSize, kButtonSize);
   } else {
-    rect.Set(rtWidget.left + FWLTHEME_FORMBTN_Margin + FWLTHEME_FORMBTN_Span,
-             rtWidget.top + FWLTHEME_FORMBTN_Margin, 0, 0);
+    rect.Set(rtWidget.left + kButtonMargin + kButtonSpan,
+             rtWidget.top + kButtonMargin, 0, 0);
   }
 }
 void CFWL_FormTP::CalMaxBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
@@ -246,14 +249,11 @@ void CFWL_FormTP::CalMaxBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.Offset(-rtWidget.left, -rtWidget.top);
   if (dwStyles & FWL_WGTSTYLE_MaximizeBox) {
-    rect.Set(rtWidget.left + FWLTHEME_FORMBTN_Margin + FWLTHEME_FORMBTN_Size +
-                 FWLTHEME_FORMBTN_Span * 2,
-             rtWidget.top + FWLTHEME_FORMBTN_Margin, FWLTHEME_FORMBTN_Size,
-             FWLTHEME_FORMBTN_Size);
+    rect.Set(rtWidget.left + kButtonMargin + kButtonSize + kButtonSpan * 2,
+             rtWidget.top + kButtonMargin, kButtonSize, kButtonSize);
   } else {
-    rect.Set(rtWidget.left + FWLTHEME_FORMBTN_Margin + FWLTHEME_FORMBTN_Size +
-                 FWLTHEME_FORMBTN_Span * 2,
-             rtWidget.top + FWLTHEME_FORMBTN_Margin, 0, 0);
+    rect.Set(rtWidget.left + kButtonMargin + kButtonSize + kButtonSpan * 2,
+             rtWidget.top + kButtonMargin, 0, 0);
   }
 }
 void CFWL_FormTP::CalMinBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
@@ -262,24 +262,20 @@ void CFWL_FormTP::CalMinBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.Offset(-rtWidget.left, -rtWidget.top);
   if (dwStyles & FWL_WGTSTYLE_MinimizeBox) {
-    rect.Set(rtWidget.left + FWLTHEME_FORMBTN_Margin +
-                 FWLTHEME_FORMBTN_Size * 2 + FWLTHEME_FORMBTN_Span * 3,
-             rtWidget.top + FWLTHEME_FORMBTN_Margin, FWLTHEME_FORMBTN_Size,
-             FWLTHEME_FORMBTN_Size);
+    rect.Set(rtWidget.left + kButtonMargin + kButtonSize * 2 + kButtonSpan * 3,
+             rtWidget.top + kButtonMargin, kButtonSize, kButtonSize);
   } else {
-    rect.Set(rtWidget.left + FWLTHEME_FORMBTN_Margin +
-                 FWLTHEME_FORMBTN_Size * 2 + FWLTHEME_FORMBTN_Span * 3,
-             rtWidget.top + FWLTHEME_FORMBTN_Margin, 0, 0);
+    rect.Set(rtWidget.left + kButtonMargin + kButtonSize * 2 + kButtonSpan * 3,
+             rtWidget.top + kButtonMargin, 0, 0);
   }
 }
 void CFWL_FormTP::CalCaption(IFWL_Widget* pWidget, CFX_RectF& rect) {
   CFX_RectF rtWidget;
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.Offset(-rtWidget.left, -rtWidget.top);
-  rect.Set(rtWidget.left + FWLTHEME_FORMBTN_Margin,
-           rtWidget.top + FWLTHEME_FORMBTN_Margin - 2,
-           rtWidget.width - FWLTHEME_FORMBTN_Margin * 2,
-           FWLTHEME_FORMBTN_Size + 2 * FWLTHEME_FORMBTN_Margin + 4);
+  rect.Set(rtWidget.left + kButtonMargin, rtWidget.top + kButtonMargin - 2,
+           rtWidget.width - kButtonMargin * 2,
+           kButtonSize + 2 * kButtonMargin + 4);
 }
 void CFWL_FormTP::CalIcon(IFWL_Widget* pWidget, CFX_RectF& rect) {}
 void CFWL_FormTP::DrawFormBorder(CFX_Graphics* pGraphics,
@@ -849,7 +845,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     path.Create();
     delete m_pActiveBitmap;
     m_pActiveBitmap = new CFX_DIBitmap;
-    m_pActiveBitmap->Create(1, FWLTHEME_CAPACITY_CYCaption, FXDIB_Argb);
+    m_pActiveBitmap->Create(1, kCYCaption, FXDIB_Argb);
     dev.Attach(m_pActiveBitmap);
     gs.Create(&dev);
     path.AddRectangle(0, 0, 1, 5);
@@ -860,9 +856,8 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     DrawAxialShading(&gs, 0, 5, 0, 20, m_pThemeData->clrHeadBK[0][1],
                      m_pThemeData->clrHeadBK[0][2], &path);
     path.Clear();
-    path.AddRectangle(0, 20, 1, FWLTHEME_CAPACITY_CYCaption - 19);
-    DrawAxialShading(&gs, 0, 20, 0, FWLTHEME_CAPACITY_CYCaption,
-                     m_pThemeData->clrHeadBK[0][2],
+    path.AddRectangle(0, 20, 1, kCYCaption - 19);
+    DrawAxialShading(&gs, 0, 20, 0, kCYCaption, m_pThemeData->clrHeadBK[0][2],
                      m_pThemeData->clrHeadBK[0][3], &path);
   } else {
     CFX_FxgeDevice dev;
@@ -871,7 +866,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     path.Create();
     delete m_pDeactivebitmap;
     m_pDeactivebitmap = new CFX_DIBitmap;
-    m_pDeactivebitmap->Create(1, FWLTHEME_CAPACITY_CYCaption, FXDIB_Argb);
+    m_pDeactivebitmap->Create(1, kCYCaption, FXDIB_Argb);
     dev.Attach(m_pDeactivebitmap);
     gs.Create(&dev);
     path.AddRectangle(0, 0, 1, 5);
@@ -882,9 +877,8 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     DrawAxialShading(&gs, 0, 5, 0, 20, m_pThemeData->clrHeadBK[1][1],
                      m_pThemeData->clrHeadBK[1][2], &path);
     path.Clear();
-    path.AddRectangle(0, 20, 1, FWLTHEME_CAPACITY_CYCaption - 19);
-    DrawAxialShading(&gs, 0, 20, 0, FWLTHEME_CAPACITY_CYCaption,
-                     m_pThemeData->clrHeadBK[1][2],
+    path.AddRectangle(0, 20, 1, kCYCaption - 19);
+    DrawAxialShading(&gs, 0, 20, 0, kCYCaption, m_pThemeData->clrHeadBK[1][2],
                      m_pThemeData->clrHeadBK[1][3], &path);
   }
 }

@@ -29,22 +29,13 @@ enum FWLTHEME_DIRECTION {
   FWLTHEME_DIRECTION_Right
 };
 
-#define FWLTHEME_BEZIER FX_BEZIER
-#define FWLTHEME_PI FX_PI
 #define FWLTHEME_COLOR_EDGERB1 (ArgbEncode(255, 241, 239, 226))
 #define FWLTHEME_COLOR_Background (ArgbEncode(255, 236, 233, 216))
 #define FWLTHEME_COLOR_BKSelected (ArgbEncode(255, 153, 193, 218))
 #define FWLTHEME_COLOR_Green_BKSelected (ArgbEncode(255, 147, 160, 112))
-#define FWLTHEME_CAPACITY_EdgeFlat 2.0f
-#define FWLTHEME_CAPACITY_EdgeRaised 2.0f
-#define FWLTHEME_CAPACITY_EdgeSunken 2.0f
+
 #define FWLTHEME_CAPACITY_FontSize 12.0f
-#define FWLTHEME_CAPACITY_LineHeight 12.0f
 #define FWLTHEME_CAPACITY_TextColor (ArgbEncode(255, 0, 0, 0))
-#define FWLTHEME_CAPACITY_TextSelColor (ArgbEncode(255, 153, 193, 218))
 #define FWLTHEME_CAPACITY_TextDisColor (ArgbEncode(255, 172, 168, 153))
-#define FWLTHEME_CAPACITY_ScrollBarWidth 17.0f
-#define FWLTHEME_CAPACITY_CXBorder 1.0f
-#define FWLTHEME_CAPACITY_CYBorder 1.0f
 
 #endif  // XFA_FWL_THEME_CFWL_UTILS_H_

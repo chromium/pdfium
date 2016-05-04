@@ -20,6 +20,20 @@
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_shading.h"
 
+namespace {
+
+const float kEdgeFlat = 2.0f;
+const float kEdgeRaised = 2.0f;
+const float kEdgeSunken = 2.0f;
+const float kLineHeight = 12.0f;
+const float kScrollBarWidth = 17.0f;
+const float kCXBorder = 1.0f;
+const float kCYBorder = 1.0f;
+
+#define FWLTHEME_CAPACITY_TextSelColor (ArgbEncode(255, 153, 193, 218))
+
+}  // namespace
+
 static void FWL_SetChildThemeID(IFWL_Widget* pParent, uint32_t dwThemeID) {
   IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
   IFWL_Widget* pChild =
@@ -86,23 +100,23 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
                                  CFWL_WidgetCapacity dwCapacity) {
   switch (dwCapacity) {
     case CFWL_WidgetCapacity::CXBorder: {
-      m_fValue = FWLTHEME_CAPACITY_CXBorder;
+      m_fValue = kCXBorder;
       break;
     }
     case CFWL_WidgetCapacity::CYBorder: {
-      m_fValue = FWLTHEME_CAPACITY_CYBorder;
+      m_fValue = kCYBorder;
       break;
     }
     case CFWL_WidgetCapacity::EdgeFlat: {
-      m_fValue = FWLTHEME_CAPACITY_EdgeFlat;
+      m_fValue = kEdgeFlat;
       break;
     }
     case CFWL_WidgetCapacity::EdgeRaised: {
-      m_fValue = FWLTHEME_CAPACITY_EdgeRaised;
+      m_fValue = kEdgeRaised;
       break;
     }
     case CFWL_WidgetCapacity::EdgeSunken: {
-      m_fValue = FWLTHEME_CAPACITY_EdgeSunken;
+      m_fValue = kEdgeSunken;
       break;
     }
     case CFWL_WidgetCapacity::FontSize: {
@@ -114,7 +128,7 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
       return &m_dwValue;
     }
     case CFWL_WidgetCapacity::ScrollBarWidth: {
-      m_fValue = FWLTHEME_CAPACITY_ScrollBarWidth;
+      m_fValue = kScrollBarWidth;
       break;
     }
     case CFWL_WidgetCapacity::Font: {
@@ -126,7 +140,7 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
       return &m_dwValue;
     }
     case CFWL_WidgetCapacity::LineHeight: {
-      m_fValue = FWLTHEME_CAPACITY_LineHeight;
+      m_fValue = kLineHeight;
       break;
     }
     case CFWL_WidgetCapacity::UIMargin: {
@@ -353,7 +367,7 @@ void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
   CFX_Path path;
   path.Create();
   path.AddArc(pRect->left, pRect->top, pRect->width, pRect->height,
-              FWLTHEME_PI * 3 / 4, FWLTHEME_PI);
+              FX_PI * 3 / 4, FX_PI);
   CFX_Color crFill1(eType == FWLTHEME_EDGE_Raised ? cr4 : cr1);
   pGraphics->SetStrokeColor(&crFill1);
   pGraphics->StrokePath(&path, pMatrix);
@@ -361,18 +375,18 @@ void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
   rtInner.Deflate(pRect->width / 4, pRect->height / 4);
   path.Clear();
   path.AddArc(rtInner.left, rtInner.top, rtInner.width, rtInner.height,
-              FWLTHEME_PI * 3 / 4, FWLTHEME_PI);
+              FX_PI * 3 / 4, FX_PI);
   CFX_Color crFill2(eType == FWLTHEME_EDGE_Raised ? cr3 : cr2);
   pGraphics->SetStrokeColor(&crFill2);
   pGraphics->StrokePath(&path, pMatrix);
   path.Clear();
   path.AddArc(pRect->left, pRect->top, pRect->width, pRect->height,
-              FWLTHEME_PI * 7 / 4, FWLTHEME_PI);
+              FX_PI * 7 / 4, FX_PI);
   CFX_Color crFill3(eType == FWLTHEME_EDGE_Raised ? cr1 : cr3);
   pGraphics->SetStrokeColor(&crFill3);
   pGraphics->StrokePath(&path, pMatrix);
   path.AddArc(rtInner.left, rtInner.top, rtInner.width, rtInner.height,
-              FWLTHEME_PI * 7 / 4, FWLTHEME_PI);
+              FX_PI * 7 / 4, FX_PI);
   CFX_Color crFill4(eType == FWLTHEME_EDGE_Raised ? cr2 : cr4);
   pGraphics->SetStrokeColor(&crFill4);
   pGraphics->StrokePath(&path, pMatrix);
