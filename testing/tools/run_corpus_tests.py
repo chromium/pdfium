@@ -37,6 +37,11 @@ def test_one_file(input_filename, source_dir, working_dir,
       os.remove(image)
 
   shutil.copyfile(input_path, pdf_path)
+  input_event_path = os.path.splitext(input_path)[0] + ".evt"
+  output_event_path = os.path.splitext(pdf_path)[0] + ".evt"
+  if os.path.exists(input_event_path):
+    shutil.copyfile(input_event_path, output_event_path)
+
   sys.stdout.flush()
   # add Dr. Memory wrapper if exist
   # remove .pdf suffix
