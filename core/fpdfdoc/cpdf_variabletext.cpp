@@ -4,11 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_variabletext.h"
-
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
+#include "core/fpdfdoc/include/cpdf_variabletext.h"
 #include "core/fpdfdoc/include/cpvt_section.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
@@ -71,8 +70,11 @@ int32_t CPDF_VariableText::Provider::GetWordFontIndex(uint16_t word,
 }
 
 FX_BOOL CPDF_VariableText::Provider::IsLatinWord(uint16_t word) {
-  return (word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) ||
-         word == 0x2D || word == 0x27;
+  if ((word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) ||
+      word == 0x2D || word == 0x27) {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 int32_t CPDF_VariableText::Provider::GetDefaultFontIndex() {
@@ -162,36 +164,28 @@ FX_BOOL CPDF_VariableText::Iterator::PrevSection() {
 
 FX_BOOL CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   word.WordPlace = m_CurPos;
-  CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex);
-  if (!pSection)
-    return FALSE;
+  if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
+    if (pSection->m_LineArray.GetAt(m_CurPos.nLineIndex)) {
+      if (CPVT_WordInfo* pWord =
+              pSection->m_WordArray.GetAt(m_CurPos.nWordIndex)) {
+        word.Word = pWord->Word;
+        word.nCharset = pWord->nCharset;
+        word.fWidth = m_pVT->GetWordWidth(*pWord);
+        word.ptWord = m_pVT->InToOut(
+            CFX_FloatPoint(pWord->fWordX + pSection->m_SecInfo.rcSection.left,
+                           pWord->fWordY + pSection->m_SecInfo.rcSection.top));
+        word.fAscent = m_pVT->GetWordAscent(*pWord);
+        word.fDescent = m_pVT->GetWordDescent(*pWord);
+        if (pWord->pWordProps)
+          word.WordProps = *pWord->pWordProps;
 
-  if (!pSection->m_LineArray.GetAt(m_CurPos.nLineIndex))
-    return FALSE;
-
-  if (m_CurPos.nWordIndex < 0 ||
-      m_CurPos.nWordIndex >= pSection->m_WordArray.GetSize()) {
-    return FALSE;
+        word.nFontIndex = m_pVT->GetWordFontIndex(*pWord);
+        word.fFontSize = m_pVT->GetWordFontSize(*pWord);
+        return TRUE;
+      }
+    }
   }
-
-  CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(m_CurPos.nWordIndex);
-  if (!pWord)
-    return FALSE;
-
-  word.Word = pWord->Word;
-  word.nCharset = pWord->nCharset;
-  word.fWidth = m_pVT->GetWordWidth(*pWord);
-  word.ptWord = m_pVT->InToOut(
-      CFX_FloatPoint(pWord->fWordX + pSection->m_SecInfo.rcSection.left,
-                     pWord->fWordY + pSection->m_SecInfo.rcSection.top));
-  word.fAscent = m_pVT->GetWordAscent(*pWord);
-  word.fDescent = m_pVT->GetWordDescent(*pWord);
-  if (pWord->pWordProps)
-    word.WordProps = *pWord->pWordProps;
-
-  word.nFontIndex = m_pVT->GetWordFontIndex(*pWord);
-  word.fFontSize = m_pVT->GetWordFontSize(*pWord);
-  return TRUE;
+  return FALSE;
 }
 
 FX_BOOL CPDF_VariableText::Iterator::SetWord(const CPVT_Word& word) {
@@ -735,7 +729,7 @@ CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace& place,
 
 CPVT_WordPlace CPDF_VariableText::AddLine(const CPVT_WordPlace& place,
                                           const CPVT_LineInfo& lineinfo) {
-  if (m_SectionArray.GetSize() == 0)
+  if (m_SectionArray.IsEmpty())
     return place;
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex))
     return pSection->AddLine(lineinfo);
@@ -744,9 +738,9 @@ CPVT_WordPlace CPDF_VariableText::AddLine(const CPVT_WordPlace& place,
 
 CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace& place,
                                           const CPVT_WordInfo& wordinfo) {
-  if (m_SectionArray.GetSize() <= 0)
+  if (m_SectionArray.GetSize() <= 0) {
     return place;
-
+  }
   CPVT_WordPlace newplace = place;
   newplace.nSecIndex =
       std::max(std::min(newplace.nSecIndex, m_SectionArray.GetSize() - 1), 0);
@@ -1059,20 +1053,22 @@ FX_FLOAT CPDF_VariableText::GetAutoFontSize() {
   return (FX_FLOAT)gFontSizeSteps[nMid];
 }
 
-bool CPDF_VariableText::IsBigger(FX_FLOAT fFontSize) const {
-  CFX_PointF szTotal;
+FX_BOOL CPDF_VariableText::IsBigger(FX_FLOAT fFontSize) {
+  FX_BOOL bBigger = FALSE;
+  CPVT_Size szTotal;
   for (int32_t s = 0, sz = m_SectionArray.GetSize(); s < sz; s++) {
     if (CSection* pSection = m_SectionArray.GetAt(s)) {
-      CFX_PointF size = pSection->GetSectionSize(fFontSize);
+      CPVT_Size size = pSection->GetSectionSize(fFontSize);
       szTotal.x = std::max(size.x, szTotal.x);
       szTotal.y += size.y;
       if (IsFloatBigger(szTotal.x, GetPlateWidth()) ||
           IsFloatBigger(szTotal.y, GetPlateHeight())) {
-        return true;
+        bBigger = TRUE;
+        break;
       }
     }
   }
-  return false;
+  return bBigger;
 }
 
 CPVT_FloatRect CPDF_VariableText::RearrangeSections(

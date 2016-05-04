@@ -21,8 +21,7 @@ struct CPVT_WordPlace;
 class CSection {
  public:
   explicit CSection(CPDF_VariableText* pVT);
-  ~CSection();
-
+  virtual ~CSection();
   void ResetAll();
   void ResetLineArray();
   void ResetWordArray();
@@ -33,7 +32,7 @@ class CSection {
   void ClearWords(const CPVT_WordRange& PlaceRange);
   void ClearWord(const CPVT_WordPlace& place);
   CPVT_FloatRect Rearrange();
-  CFX_PointF GetSectionSize(FX_FLOAT fFontSize);
+  CPVT_Size GetSectionSize(FX_FLOAT fFontSize);
   CPVT_WordPlace GetBeginWordPlace() const;
   CPVT_WordPlace GetEndWordPlace() const;
   CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
@@ -48,7 +47,7 @@ class CSection {
   CPVT_WordPlace SecPlace;
   CPVT_SectionInfo m_SecInfo;
   CLines m_LineArray;
-  CFX_ArrayTemplate<CPVT_WordInfo*> m_WordArray;
+  CPVT_ArrayTemplate<CPVT_WordInfo*> m_WordArray;
 
  private:
   friend class CTypeset;
