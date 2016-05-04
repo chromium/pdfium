@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 
@@ -24,17 +25,28 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(uint32_t objnum) {
   if (objnum == 0)
     return nullptr;
 
+  CPDF_Object* result_obj = nullptr;
   auto it = m_IndirectObjs.find(objnum);
-  if (it != m_IndirectObjs.end())
-    return it->second->GetObjNum() != CPDF_Object::kInvalidObjNum ? it->second
-                                                                  : nullptr;
+  if (it != m_IndirectObjs.end()) {
+    CPDF_Object* obj = it->second;
+    result_obj =
+        obj->GetObjNum() != CPDF_Object::kInvalidObjNum ? it->second : nullptr;
+    // Xref object is not used by the pdf document itself. Some software thus
+    // reuse an object number for xref object. So when we get an xref object,
+    // try again to see whether another object with the same number is defined.
+    // If so, use that object instead. See chromium:596947.
+    CPDF_Dictionary* dict =
+        obj->IsStream() ? obj->GetDict() : obj->AsDictionary();
+    if (!dict || dict->GetStringBy("Type") != "XRef")
+      return result_obj;
+  }
 
   if (!m_pParser)
     return nullptr;
 
   CPDF_Object* pObj = m_pParser->ParseIndirectObject(this, objnum);
   if (!pObj)
-    return nullptr;
+    return result_obj;
 
   pObj->m_ObjNum = objnum;
   m_LastObjNum = std::max(m_LastObjNum, objnum);

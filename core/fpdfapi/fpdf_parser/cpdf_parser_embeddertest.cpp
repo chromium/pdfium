@@ -54,3 +54,19 @@ TEST_F(CPDFParserEmbeddertest, Bug_602650) {
   FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
+
+TEST_F(CPDFParserEmbeddertest, Bug_596947) {
+  // Test the case that the size of cross reference entries doesn't match with
+  // what is defined, and a certain case of reuse object number for cross
+  // reference object.
+  EXPECT_TRUE(OpenDocument("bug_596947.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  EXPECT_NE(nullptr, text_page);
+  // The page should not be blank.
+  EXPECT_LT(0, FPDFText_CountChars(text_page));
+
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
+}
