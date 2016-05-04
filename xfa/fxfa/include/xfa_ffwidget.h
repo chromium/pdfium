@@ -119,7 +119,7 @@ class CXFA_FFWidget : public CFX_PrivateData, public CXFA_ContentLayoutItem {
   void InvalidateWidget(const CFX_RectF* pRect = NULL);
   void AddInvalidateRect(const CFX_RectF* pRect = NULL);
   FX_BOOL GetCaptionText(CFX_WideString& wsCap);
-  FX_BOOL IsFocused();
+  bool IsFocused();
   void Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy);
   void GetRotateMatrix(CFX_Matrix& mt);
   FX_BOOL IsLayoutRectEmpty();
@@ -136,7 +136,7 @@ class CXFA_FFWidget : public CFX_PrivateData, public CXFA_ContentLayoutItem {
   void GetMinMaxWidth(FX_FLOAT fMinWidth, FX_FLOAT fMaxWidth);
   void GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight);
   void GetRectWithoutRotate(CFX_RectF& rtWidget);
-  FX_BOOL IsMatchVisibleStatus(uint32_t dwStatus);
+  bool IsMatchVisibleStatus(uint32_t dwStatus);
 
   void EventKillFocus();
   FX_BOOL IsButtonDown();

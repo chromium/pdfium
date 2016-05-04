@@ -750,7 +750,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       !bTextClip && !bGroupTransparent) {
     return FALSE;
   }
-  FX_BOOL isolated = Transparency & PDFTRANS_ISOLATED;
+  bool isolated = !!(Transparency & PDFTRANS_ISOLATED);
   if (m_bPrint) {
     FX_BOOL bRet = FALSE;
     int rendCaps = m_pDevice->GetRenderCaps();

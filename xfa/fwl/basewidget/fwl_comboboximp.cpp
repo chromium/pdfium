@@ -557,8 +557,8 @@ FWL_ERR CFWL_ComboBoxImp::ModifyStylesEx(uint32_t dwStylesExAdded,
   if (m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
   }
-  FX_BOOL bAddDropDown = dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown;
-  FX_BOOL bRemoveDropDown = dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown;
+  bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
+  bool bRemoveDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   if (bAddDropDown && !m_pEdit) {
     CFWL_WidgetImpProperties prop;
     m_pEdit.reset(IFWL_Edit::CreateComboEdit(prop, nullptr));
@@ -1232,8 +1232,8 @@ FWL_ERR CFWL_ComboBoxImp::DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
   if (!m_pEdit) {
     DisForm_InitComboEdit();
   }
-  FX_BOOL bAddDropDown = dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown;
-  FX_BOOL bDelDropDown = dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown;
+  bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
+  bool bDelDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   dwStylesExRemoved &= ~FWL_STYLEEXT_CMB_DropDown;
   m_pProperties->m_dwStyleExes |= FWL_STYLEEXT_CMB_DropDown;
   if (bAddDropDown) {

@@ -667,12 +667,15 @@ FX_BOOL CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) {
           FWL_WGTSTYLE_OverLapper) ||
          (dwStyles & FWL_WGTSTYLE_Popup);
 }
-FX_BOOL CFWL_WidgetMgr::IsThreadEnabled() {
+
+bool CFWL_WidgetMgr::IsThreadEnabled() {
   return !(m_dwCapability & FWL_WGTMGR_DisableThread);
 }
-FX_BOOL CFWL_WidgetMgr::IsFormDisabled() {
-  return m_dwCapability & FWL_WGTMGR_DisableForm;
+
+bool CFWL_WidgetMgr::IsFormDisabled() {
+  return !!(m_dwCapability & FWL_WGTMGR_DisableForm);
 }
+
 FX_BOOL CFWL_WidgetMgr::GetAdapterPopupPos(IFWL_Widget* pWidget,
                                            FX_FLOAT fMinHeight,
                                            FX_FLOAT fMaxHeight,

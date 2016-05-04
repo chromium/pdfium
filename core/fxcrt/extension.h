@@ -241,7 +241,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   }
   FX_BOOL Flush() override { return TRUE; }
   FX_BOOL IsConsecutive() const override {
-    return m_dwFlags & FX_MEMSTREAM_Consecutive;
+    return !!(m_dwFlags & FX_MEMSTREAM_Consecutive);
   }
   void EstimateSize(size_t nInitSize, size_t nGrowSize) override {
     if (m_dwFlags & FX_MEMSTREAM_Consecutive) {

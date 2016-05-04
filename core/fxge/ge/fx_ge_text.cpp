@@ -413,7 +413,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       }
       continue;
     }
-    FX_BOOL bBGRStripe = text_flags & FXTEXT_BGR_STRIPE;
+    bool bBGRStripe = !!(text_flags & FXTEXT_BGR_STRIPE);
     ncols /= 3;
     int x_subpixel = (int)(glyph.m_fOriginX * 3) % 3;
     uint8_t* src_buf = pGlyph->GetBuffer();

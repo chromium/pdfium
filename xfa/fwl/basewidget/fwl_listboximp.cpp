@@ -399,14 +399,11 @@ void CFWL_ListBoxImp::ClearSelection() {
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
     uint32_t dwState = pData->GetItemStyles(m_pInterface, hItem);
-    FX_BOOL bFindSel = dwState & FWL_ITEMSTATE_LTB_Selected;
-    if (!bFindSel) {
+    if (!(dwState & FWL_ITEMSTATE_LTB_Selected))
       continue;
-    }
     SetSelectionDirect(hItem, FALSE);
-    if (!bMulti) {
+    if (!bMulti)
       return;
-    }
   }
 }
 void CFWL_ListBoxImp::SelectAll() {

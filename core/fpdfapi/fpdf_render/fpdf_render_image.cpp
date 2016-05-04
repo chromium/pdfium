@@ -45,8 +45,6 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   if (!pDIBitmap) {
     return;
   }
-  FX_BOOL bIsolated = Transparency & PDFTRANS_ISOLATED;
-  FX_BOOL bGroup = Transparency & PDFTRANS_GROUP;
   if (blend_mode == FXDIB_BLEND_NORMAL) {
     if (!pDIBitmap->IsAlphaMask()) {
       if (bitmap_alpha < 255) {
@@ -66,8 +64,10 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       }
     }
   }
-  FX_BOOL bBackAlphaRequired = blend_mode && bIsolated && !m_bDropObjects;
-  FX_BOOL bGetBackGround =
+  bool bIsolated = !!(Transparency & PDFTRANS_ISOLATED);
+  bool bGroup = !!(Transparency & PDFTRANS_GROUP);
+  bool bBackAlphaRequired = blend_mode && bIsolated && !m_bDropObjects;
+  bool bGetBackGround =
       ((m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
       (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
        (m_pDevice->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);

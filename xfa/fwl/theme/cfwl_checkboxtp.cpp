@@ -114,7 +114,7 @@ void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget* pWidget,
   path.Create();
   FX_FLOAT fRight = pRect->right();
   FX_FLOAT fBottom = pRect->bottom();
-  FX_BOOL bClipSign = dwStates & CFWL_PartState_Hovered;
+  bool bClipSign = !!(dwStates & CFWL_PartState_Hovered);
   if ((dwStyleEx == FWL_STYLEEXT_CKB_ShapeSolidSquare) ||
       (dwStyleEx == FWL_STYLEEXT_CKB_ShapeSunkenSquare)) {
     path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);

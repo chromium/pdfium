@@ -32,7 +32,7 @@ class CFWL_SysBtn {
     m_dwState = 0;
   }
 
-  FX_BOOL IsDisabled() { return m_dwState & FWL_SYSBUTTONSTATE_Disabled; }
+  bool IsDisabled() { return !!(m_dwState & FWL_SYSBUTTONSTATE_Disabled); }
 
   void SetNormal() { m_dwState &= 0xFFF0; }
   void SetPressed() {

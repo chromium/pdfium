@@ -120,8 +120,8 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   IFWL_AdapterWidgetMgr* GetAdapterWidgetMgr() { return m_pAdapter; }
   CFWL_WidgetMgrDelegate* GetDelegate() { return m_pDelegate; }
   CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget);
-  FX_BOOL IsThreadEnabled();
-  FX_BOOL IsFormDisabled();
+  bool IsThreadEnabled();
+  bool IsFormDisabled();
   FX_BOOL GetAdapterPopupPos(IFWL_Widget* pWidget,
                              FX_FLOAT fMinHeight,
                              FX_FLOAT fMaxHeight,

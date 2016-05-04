@@ -172,9 +172,11 @@ FX_BOOL CXFA_FFWidget::GetCaptionText(CFX_WideString& wsCap) {
   pCapTextlayout->GetText(wsCap);
   return TRUE;
 }
-FX_BOOL CXFA_FFWidget::IsFocused() {
-  return m_dwStatus & XFA_WIDGETSTATUS_Focused;
+
+bool CXFA_FFWidget::IsFocused() {
+  return !!(m_dwStatus & XFA_WIDGETSTATUS_Focused);
 }
+
 FX_BOOL CXFA_FFWidget::OnMouseEnter() {
   return FALSE;
 }
@@ -400,9 +402,11 @@ void CXFA_FFWidget::GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight) {
     m_pDataAcc->GetMaxHeight(fMaxHeight);
   }
 }
-FX_BOOL CXFA_FFWidget::IsMatchVisibleStatus(uint32_t dwStatus) {
-  return m_dwStatus & XFA_WIDGETSTATUS_Visible;
+
+bool CXFA_FFWidget::IsMatchVisibleStatus(uint32_t dwStatus) {
+  return !!(m_dwStatus & XFA_WIDGETSTATUS_Visible);
 }
+
 void CXFA_FFWidget::EventKillFocus() {
   if (m_dwStatus & XFA_WIDGETSTATUS_Access) {
     m_dwStatus &= ~XFA_WIDGETSTATUS_Access;
@@ -671,8 +675,8 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   if (pDIBitmap == NULL) {
     return;
   }
-  FX_BOOL bIsolated = Transparency & PDFTRANS_ISOLATED;
-  FX_BOOL bGroup = Transparency & PDFTRANS_GROUP;
+  bool bIsolated = !!(Transparency & PDFTRANS_ISOLATED);
+  bool bGroup = !!(Transparency & PDFTRANS_GROUP);
   if (blend_mode == FXDIB_BLEND_NORMAL) {
     if (!pDIBitmap->IsAlphaMask()) {
       if (bitmap_alpha < 255) {

@@ -198,7 +198,7 @@ void CXFA_Document::SetFlag(uint32_t dwFlag, FX_BOOL bOn) {
 }
 FX_BOOL CXFA_Document::IsInteractive() {
   if (m_dwDocFlags & XFA_DOCFLAG_HasInteractive) {
-    return m_dwDocFlags & XFA_DOCFLAG_Interactive;
+    return !!(m_dwDocFlags & XFA_DOCFLAG_Interactive);
   }
   CXFA_Node* pConfig = ToNode(GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig) {

@@ -810,47 +810,27 @@ FX_BOOL CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) {
   if (dwFilter == FWL_EVENT_ALL_MASK)
     return TRUE;
 
-  FX_BOOL bRet = FALSE;
   switch (pEvent->GetClassID()) {
-    case CFWL_EventType::Mouse: {
-      bRet = dwFilter & FWL_EVENT_MOUSE_MASK;
-      break;
-    }
-    case CFWL_EventType::MouseWheel: {
-      bRet = dwFilter & FWL_EVENT_MOUSEWHEEL_MASK;
-      break;
-    }
-    case CFWL_EventType::Key: {
-      bRet = dwFilter & FWL_EVENT_KEY_MASK;
-      break;
-    }
+    case CFWL_EventType::Mouse:
+      return !!(dwFilter & FWL_EVENT_MOUSE_MASK);
+    case CFWL_EventType::MouseWheel:
+      return !!(dwFilter & FWL_EVENT_MOUSEWHEEL_MASK);
+    case CFWL_EventType::Key:
+      return !!(dwFilter & FWL_EVENT_KEY_MASK);
     case CFWL_EventType::SetFocus:
-    case CFWL_EventType::KillFocus: {
-      bRet = dwFilter & FWL_EVENT_FOCUSCHANGED_MASK;
-      break;
-    }
-    case CFWL_EventType::Draw: {
-      bRet = dwFilter & FWL_EVENT_DRAW_MASK;
-      break;
-    }
-    case CFWL_EventType::Close: {
-      bRet = dwFilter & FWL_EVENT_CLOSE_MASK;
-      break;
-    }
-    case CFWL_EventType::SizeChanged: {
-      bRet = dwFilter & FWL_EVENT_SIZECHANGED_MASK;
-      break;
-    }
-    case CFWL_EventType::Idle: {
-      bRet = dwFilter & FWL_EVENT_IDLE_MASK;
-      break;
-    }
-    default: {
-      bRet = dwFilter & FWL_EVENT_CONTROL_MASK;
-      break;
-    }
+    case CFWL_EventType::KillFocus:
+      return !!(dwFilter & FWL_EVENT_FOCUSCHANGED_MASK);
+    case CFWL_EventType::Draw:
+      return !!(dwFilter & FWL_EVENT_DRAW_MASK);
+    case CFWL_EventType::Close:
+      return !!(dwFilter & FWL_EVENT_CLOSE_MASK);
+    case CFWL_EventType::SizeChanged:
+      return !!(dwFilter & FWL_EVENT_SIZECHANGED_MASK);
+    case CFWL_EventType::Idle:
+      return !!(dwFilter & FWL_EVENT_IDLE_MASK);
+    default:
+      return !!(dwFilter & FWL_EVENT_CONTROL_MASK);
   }
-  return bRet;
 }
 
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = NULL;

@@ -1831,7 +1831,7 @@ void CFWL_EditImpDelegate::DoButtonDown(CFWL_MsgMouse* pMsg) {
 }
 void CFWL_EditImpDelegate::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
   uint32_t dwStyleEx = m_pOwner->GetStylesEx();
-  FX_BOOL bRepaint = dwStyleEx & FWL_STYLEEXT_EDT_InnerCaret;
+  bool bRepaint = !!(dwStyleEx & FWL_STYLEEXT_EDT_InnerCaret);
   if (bSet) {
     m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
     if (!m_pOwner->m_pEdtEngine) {
