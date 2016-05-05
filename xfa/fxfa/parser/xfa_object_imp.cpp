@@ -4576,6 +4576,7 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   pNode->m_pParent = this;
   FX_BOOL ret = m_pDocument->RemovePurgeNode(pNode);
   ASSERT(ret);
+  (void)ret;  // Avoid unused variable warning.
 
   if (m_pChild == NULL || index == 0) {
     if (index > 0) {
@@ -4625,6 +4626,7 @@ FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   }
   FX_BOOL ret = m_pDocument->RemovePurgeNode(pNode);
   ASSERT(ret);
+  (void)ret;  // Avoid unused variable warning.
 
   int32_t nIndex = -1;
   pNode->m_pParent = this;
