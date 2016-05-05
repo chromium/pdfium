@@ -23,8 +23,8 @@ CFWL_PushButtonTP::~CFWL_PushButtonTP() {
   delete m_pThemeData;
 }
 
-FX_BOOL CFWL_PushButtonTP::IsValidWidget(IFWL_Widget* pWidget) {
-  return pWidget->GetClassID() == FWL_CLASSHASH_PushButton;
+bool CFWL_PushButtonTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::PushButton;
 }
 uint32_t CFWL_PushButtonTP::SetThemeID(IFWL_Widget* pWidget,
                                        uint32_t dwThemeID,

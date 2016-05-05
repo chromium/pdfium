@@ -34,20 +34,26 @@ CFWL_PictureBoxImp::CFWL_PictureBoxImp(
   m_rtImage.Reset();
   m_matrix.SetIdentity();
 }
+
 CFWL_PictureBoxImp::~CFWL_PictureBoxImp() {}
+
 FWL_Error CFWL_PictureBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_PictureBox;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_PictureBoxImp::GetClassID() const {
-  return FWL_CLASSHASH_PictureBox;
+
+FWL_Type CFWL_PictureBoxImp::GetClassID() const {
+  return FWL_Type::PictureBox;
 }
+
 FWL_Error CFWL_PictureBoxImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_PictureBoxImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_PictureBoxImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;

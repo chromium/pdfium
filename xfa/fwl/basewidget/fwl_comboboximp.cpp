@@ -490,13 +490,14 @@ FWL_Error CFWL_ComboBoxImp::GetClassName(CFX_WideString& wsClass) const {
   return FWL_Error::Succeeded;
 }
 
-uint32_t CFWL_ComboBoxImp::GetClassID() const {
-  return FWL_CLASSHASH_ComboBox;
+FWL_Type CFWL_ComboBoxImp::GetClassID() const {
+  return FWL_Type::ComboBox;
 }
 
 FWL_Error CFWL_ComboBoxImp::Initialize() {
   if (m_pWidgetMgr->IsFormDisabled())
     return DisForm_Initialize();
+
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
 

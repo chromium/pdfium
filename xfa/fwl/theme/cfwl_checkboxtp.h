@@ -13,15 +13,17 @@
 class CFWL_CheckBoxTP : public CFWL_WidgetTP {
  public:
   CFWL_CheckBoxTP();
-  virtual ~CFWL_CheckBoxTP();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
-                              uint32_t dwThemeID,
-                              FX_BOOL bChildren = TRUE);
-  virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
+  ~CFWL_CheckBoxTP() override;
+
+  // CFWL_WidgeTP
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  uint32_t SetThemeID(IFWL_Widget* pWidget,
+                      uint32_t dwThemeID,
+                      FX_BOOL bChildren = TRUE) override;
+  FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
 
  protected:
   void DrawBoxBk(IFWL_Widget* pWidget,

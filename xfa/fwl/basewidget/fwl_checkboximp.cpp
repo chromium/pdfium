@@ -52,20 +52,26 @@ CFWL_CheckBoxImp::CFWL_CheckBoxImp(const CFWL_WidgetImpProperties& properties,
   m_rtCaption.Reset();
   m_rtFocus.Reset();
 }
+
 CFWL_CheckBoxImp::~CFWL_CheckBoxImp() {}
+
 FWL_Error CFWL_CheckBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_CheckBox;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_CheckBoxImp::GetClassID() const {
-  return FWL_CLASSHASH_CheckBox;
+
+FWL_Type CFWL_CheckBoxImp::GetClassID() const {
+  return FWL_Type::CheckBox;
 }
+
 FWL_Error CFWL_CheckBoxImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_CheckBoxImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_CheckBoxImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;

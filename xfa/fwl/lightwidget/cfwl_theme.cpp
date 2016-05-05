@@ -45,7 +45,7 @@ CFWL_Theme::CFWL_Theme() {
 
 CFWL_Theme::~CFWL_Theme() {}
 
-FX_BOOL CFWL_Theme::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_Theme::IsValidWidget(IFWL_Widget* pWidget) {
   return !!GetTheme(pWidget);
 }
 

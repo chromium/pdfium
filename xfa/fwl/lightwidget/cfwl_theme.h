@@ -26,7 +26,7 @@ class CFWL_Theme : public IFWL_ThemeProvider {
   ~CFWL_Theme() override;
 
   // IFWL_ThemeProvider:
-  FX_BOOL IsValidWidget(IFWL_Widget* pWidget) override;
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
   uint32_t GetThemeID(IFWL_Widget* pWidget) override;
   uint32_t SetThemeID(IFWL_Widget* pWidget,
                       uint32_t dwThemeID,

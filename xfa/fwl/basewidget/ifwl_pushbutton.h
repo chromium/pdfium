@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_PushButton L"FWL_PUSHBUTTON"
-#define FWL_CLASSHASH_PushButton 3521614244
 #define FWL_STYLEEXT_PSB_Left (0L << 0)
 #define FWL_STYLEEXT_PSB_Center (1L << 0)
 #define FWL_STYLEEXT_PSB_Right (2L << 0)

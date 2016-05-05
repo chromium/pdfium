@@ -14,7 +14,6 @@
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 #define FWL_CLASS_Edit L"FWL_EDIT"
-#define FWL_CLASSHASH_Edit 2893987822
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)
 #define FWL_STYLEEXT_EDT_MultiLine (1L << 1)
 #define FWL_STYLEEXT_EDT_WantReturn (1L << 2)

@@ -9,6 +9,7 @@
 
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 class CFWL_MonthCalendarImpDelegate;
 class CFWL_MsgMouse;
@@ -23,21 +24,23 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
  public:
   CFWL_MonthCalendarImp(const CFWL_WidgetImpProperties& properties,
                         IFWL_Widget* pOuter);
-  ~CFWL_MonthCalendarImp();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_Error Update();
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
-  virtual int32_t CountSelect();
-  virtual FX_BOOL GetSelect(int32_t& iYear,
-                            int32_t& iMonth,
-                            int32_t& iDay,
-                            int32_t nIndex = 0);
-  virtual FX_BOOL SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
+  ~CFWL_MonthCalendarImp() override;
+
+  // FWL_WidgetImp
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Type GetClassID() const override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error Update() override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
+  int32_t CountSelect();
+  FX_BOOL GetSelect(int32_t& iYear,
+                    int32_t& iMonth,
+                    int32_t& iDay,
+                    int32_t nIndex = 0);
+  FX_BOOL SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
 
  protected:
   struct DATE {

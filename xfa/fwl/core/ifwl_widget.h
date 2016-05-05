@@ -26,6 +26,26 @@
 //      CFWL_...                IFWL_...                CFWL_...Imp
 //
 
+enum class FWL_Type {
+  Unknown = 0,
+
+  Barcode,
+  Caret,
+  CheckBox,
+  ComboBox,
+  DateTimePicker,
+  Edit,
+  Form,
+  FormProxy,
+  ListBox,
+  MonthCalendar,
+  PictureBox,
+  PushButton,
+  ScrollBar,
+  SpinButton,
+  ToolTip
+};
+
 class CFWL_WidgetImp;
 class CFX_Graphics;
 class IFWL_App;
@@ -79,7 +99,7 @@ class IFWL_Widget {
   // These call into equivalent polymorphic methods of m_pImpl. There
   // should be no need to override these in subclasses.
   FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  uint32_t GetClassID() const;
+  FWL_Type GetClassID() const;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
   FWL_Error Initialize();
   FWL_Error Finalize();

@@ -13,14 +13,18 @@
 CFWL_FormProxyImp::CFWL_FormProxyImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_FormImp(properties, pOuter) {}
+
 CFWL_FormProxyImp::~CFWL_FormProxyImp() {}
+
 FWL_Error CFWL_FormProxyImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_FormProxy;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_FormProxyImp::GetClassID() const {
-  return FWL_CLASSHASH_FormProxy;
+
+FWL_Type CFWL_FormProxyImp::GetClassID() const {
+  return FWL_Type::FormProxy;
 }
+
 FX_BOOL CFWL_FormProxyImp::IsInstance(const CFX_WideStringC& wsClass) const {
   if (wsClass == CFX_WideStringC(FWL_CLASS_FormProxy)) {
     return TRUE;

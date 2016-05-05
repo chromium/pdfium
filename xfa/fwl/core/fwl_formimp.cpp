@@ -104,8 +104,8 @@ FWL_Error CFWL_FormImp::GetClassName(CFX_WideString& wsClass) const {
   return FWL_Error::Succeeded;
 }
 
-uint32_t CFWL_FormImp::GetClassID() const {
-  return FWL_CLASSHASH_Form;
+FWL_Type CFWL_FormImp::GetClassID() const {
+  return FWL_Type::Form;
 }
 
 FX_BOOL CFWL_FormImp::IsInstance(const CFX_WideStringC& wsClass) const {

@@ -23,7 +23,6 @@
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
 
-#define FWL_CLASSHASH_Menu 3957949655
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)
 
 IFWL_Widget::~IFWL_Widget() {}
@@ -32,7 +31,7 @@ FWL_Error IFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
   return m_pImpl->GetClassName(wsClass);
 }
 
-uint32_t IFWL_Widget::GetClassID() const {
+FWL_Type IFWL_Widget::GetClassID() const {
   return m_pImpl->GetClassID();
 }
 
@@ -189,10 +188,6 @@ FWL_Error CFWL_WidgetImp::Finalize() {
 FWL_Error CFWL_WidgetImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass.clear();
   return FWL_Error::Succeeded;
-}
-
-uint32_t CFWL_WidgetImp::GetClassID() const {
-  return 0;
 }
 
 FX_BOOL CFWL_WidgetImp::IsInstance(const CFX_WideStringC& wsClass) const {
@@ -709,30 +704,26 @@ void CFWL_WidgetImp::SetGrab(FX_BOOL bSet) {
       static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   pDriver->SetGrab(m_pInterface, bSet);
 }
+
 FX_BOOL CFWL_WidgetImp::GetPopupPos(FX_FLOAT fMinHeight,
                                     FX_FLOAT fMaxHeight,
                                     const CFX_RectF& rtAnchor,
                                     CFX_RectF& rtPopup) {
-  if (GetClassID() == FWL_CLASSHASH_Menu) {
-    return GetPopupPosMenu(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
-  } else {
-    if (GetClassID() == FWL_CLASSHASH_ComboBox) {
-      if (m_pWidgetMgr->IsFormDisabled()) {
-        return m_pWidgetMgr->GetAdapterPopupPos(m_pInterface, fMinHeight,
-                                                fMaxHeight, rtAnchor, rtPopup);
-      } else {
-        return GetPopupPosComboBox(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
-      }
-    } else if (GetClassID() == FWL_CLASSHASH_DateTimePicker &&
-               m_pWidgetMgr->IsFormDisabled()) {
+  if (GetClassID() == FWL_Type::ComboBox) {
+    if (m_pWidgetMgr->IsFormDisabled()) {
       return m_pWidgetMgr->GetAdapterPopupPos(m_pInterface, fMinHeight,
                                               fMaxHeight, rtAnchor, rtPopup);
-    } else {
-      return GetPopupPosGeneral(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
     }
+    return GetPopupPosComboBox(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
   }
-  return FALSE;
+  if (GetClassID() == FWL_Type::DateTimePicker &&
+      m_pWidgetMgr->IsFormDisabled()) {
+    return m_pWidgetMgr->GetAdapterPopupPos(m_pInterface, fMinHeight,
+                                            fMaxHeight, rtAnchor, rtPopup);
+  }
+  return GetPopupPosGeneral(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
 }
+
 FX_BOOL CFWL_WidgetImp::GetPopupPosMenu(FX_FLOAT fMinHeight,
                                         FX_FLOAT fMaxHeight,
                                         const CFX_RectF& rtAnchor,

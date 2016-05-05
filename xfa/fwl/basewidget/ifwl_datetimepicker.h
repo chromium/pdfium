@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 
 #define FWL_CLASS_DateTimePicker L"FWL_DATETIMEPICKER"
-#define FWL_CLASSHASH_DateTimePicker 3851176257
 #define FWL_STYLEEXT_DTP_AllowEdit (1L << 0)
 #define FWL_STYLEEXT_DTP_LongDateFormat (0L << 1)
 #define FWL_STYLEEXT_DTP_ShortDateFormat (1L << 1)

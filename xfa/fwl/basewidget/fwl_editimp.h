@@ -31,7 +31,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
 
   // CFWL_WidgetImp:
   FWL_Error GetClassName(CFX_WideString& wsClass) const override;
-  uint32_t GetClassID() const override;
+  FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
   FWL_Error Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;

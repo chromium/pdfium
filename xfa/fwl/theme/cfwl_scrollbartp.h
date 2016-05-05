@@ -12,14 +12,16 @@
 class CFWL_ScrollBarTP : public CFWL_WidgetTP {
  public:
   CFWL_ScrollBarTP();
-  virtual ~CFWL_ScrollBarTP();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
-                              uint32_t dwThemeID,
-                              FX_BOOL bChildren = TRUE);
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
-                            CFWL_WidgetCapacity dwCapacity);
+  ~CFWL_ScrollBarTP() override;
+
+  // CFWL_WidgetTP
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  uint32_t SetThemeID(IFWL_Widget* pWidget,
+                      uint32_t dwThemeID,
+                      FX_BOOL bChildren = TRUE) override;
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void* GetCapacity(CFWL_ThemePart* pThemePart,
+                    CFWL_WidgetCapacity dwCapacity) override;
 
  protected:
   struct SBThemeData {

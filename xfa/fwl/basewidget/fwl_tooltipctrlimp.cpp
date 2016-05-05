@@ -57,27 +57,33 @@ CFWL_ToolTipImp::CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
   m_TimerShow.m_pToolTip = this;
   m_TimerHide.m_pToolTip = this;
 }
+
 CFWL_ToolTipImp::~CFWL_ToolTipImp() {
   if (m_pTimer) {
     delete m_pTimer;
     m_pTimer = NULL;
   }
 }
+
 FWL_Error CFWL_ToolTipImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ToolTip;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_ToolTipImp::GetClassID() const {
-  return FWL_CLASSHASH_ToolTip;
+
+FWL_Type CFWL_ToolTipImp::GetClassID() const {
+  return FWL_Type::ToolTip;
 }
+
 FWL_Error CFWL_ToolTipImp::Initialize() {
   m_pProperties->m_dwStyles |= FWL_WGTSTYLE_Popup;
   m_pProperties->m_dwStyles &= ~FWL_WGTSTYLE_Child;
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_ToolTipImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_ToolTipImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;

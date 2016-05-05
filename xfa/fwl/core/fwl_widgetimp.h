@@ -23,6 +23,7 @@ class IFWL_App;
 class IFWL_DataProvider;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
+enum class FWL_Type;
 
 class CFWL_WidgetImp {
  public:
@@ -31,7 +32,7 @@ class CFWL_WidgetImp {
   virtual FWL_Error Initialize();
   virtual FWL_Error Finalize();
   virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
+  virtual FWL_Type GetClassID() const = 0;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
 
   virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);

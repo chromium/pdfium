@@ -53,13 +53,13 @@ CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() {
   m_pThemeData = new MCThemeData;
   SetThemeData(0);
 }
+
 CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {
   delete m_pThemeData;
 }
-FX_BOOL CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
-  if (!pWidget)
-    return FALSE;
-  return pWidget->GetClassID() == FWL_CLASSHASH_MonthCalendar;
+
+bool CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::MonthCalendar;
 }
 uint32_t CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
                                           uint32_t dwThemeID,

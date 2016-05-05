@@ -58,20 +58,26 @@ CFWL_SpinButtonImp::CFWL_SpinButtonImp(
   m_rtDnButton.Reset();
   m_pProperties->m_dwStyleExes |= FWL_STYLEEXE_SPB_Vert;
 }
+
 CFWL_SpinButtonImp::~CFWL_SpinButtonImp() {}
+
 FWL_Error CFWL_SpinButtonImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_SpinButton;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_SpinButtonImp::GetClassID() const {
-  return FWL_CLASSHASH_SpinButton;
+
+FWL_Type CFWL_SpinButtonImp::GetClassID() const {
+  return FWL_Type::SpinButton;
 }
+
 FWL_Error CFWL_SpinButtonImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_SpinButtonImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_SpinButtonImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;

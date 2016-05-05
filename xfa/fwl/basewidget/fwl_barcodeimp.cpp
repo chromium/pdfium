@@ -38,13 +38,16 @@ CFWL_BarcodeImp::CFWL_BarcodeImp(const CFWL_WidgetImpProperties& properties,
 CFWL_BarcodeImp::~CFWL_BarcodeImp() {
   ReleaseBarcodeEngine();
 }
+
 FWL_Error CFWL_BarcodeImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Barcode;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_BarcodeImp::GetClassID() const {
-  return FWL_CLASSHASH_Barcode;
+
+FWL_Type CFWL_BarcodeImp::GetClassID() const {
+  return FWL_Type::Barcode;
 }
+
 FWL_Error CFWL_BarcodeImp::Initialize() {
   if (!m_pDelegate) {
     m_pDelegate = new CFWL_BarcodeImpDelegate(this);

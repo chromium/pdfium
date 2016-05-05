@@ -38,20 +38,26 @@ CFWL_PushButtonImp::CFWL_PushButtonImp(
   m_rtClient.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
 }
+
 CFWL_PushButtonImp::~CFWL_PushButtonImp() {}
+
 FWL_Error CFWL_PushButtonImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_PushButton;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_PushButtonImp::GetClassID() const {
-  return FWL_CLASSHASH_PushButton;
+
+FWL_Type CFWL_PushButtonImp::GetClassID() const {
+  return FWL_Type::PushButton;
 }
+
 FWL_Error CFWL_PushButtonImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_PushButtonImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_PushButtonImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;

@@ -106,42 +106,45 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
  public:
   CFWL_DateTimePickerImp(const CFWL_WidgetImpProperties& properties,
                          IFWL_Widget* pOuter);
-  virtual ~CFWL_DateTimePickerImp();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_Error Update();
-  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pTP);
-  virtual FWL_Error GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  virtual FWL_Error SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
-  virtual FWL_Error SetEditText(const CFX_WideString& wsText);
-  virtual FWL_Error GetEditText(CFX_WideString& wsText,
-                                int32_t nStart = 0,
-                                int32_t nCount = -1) const;
+  ~CFWL_DateTimePickerImp() override;
+
+  // CFWL_WidgetImp
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Type GetClassID() const override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error Update() override;
+  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
+  FWL_Error SetThemeProvider(IFWL_ThemeProvider* pTP) override;
+
+  FWL_Error GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
+  FWL_Error SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
+  FWL_Error SetEditText(const CFX_WideString& wsText);
+  FWL_Error GetEditText(CFX_WideString& wsText,
+                        int32_t nStart = 0,
+                        int32_t nCount = -1) const;
 
  public:
-  virtual FX_BOOL CanUndo();
-  virtual FX_BOOL CanRedo();
-  virtual FX_BOOL Undo();
-  virtual FX_BOOL Redo();
-  virtual FX_BOOL CanCopy();
-  virtual FX_BOOL CanCut();
-  virtual FX_BOOL CanSelectAll();
-  virtual FX_BOOL Copy(CFX_WideString& wsCopy);
-  virtual FX_BOOL Cut(CFX_WideString& wsCut);
-  virtual FX_BOOL Paste(const CFX_WideString& wsPaste);
-  virtual FX_BOOL SelectAll();
-  virtual FX_BOOL Delete();
-  virtual FX_BOOL DeSelect();
-  virtual FWL_Error GetBBox(CFX_RectF& rect);
-  virtual FWL_Error SetEditLimit(int32_t nLimit);
-  virtual FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
-                                       uint32_t dwStylesExRemoved);
+  FX_BOOL CanUndo();
+  FX_BOOL CanRedo();
+  FX_BOOL Undo();
+  FX_BOOL Redo();
+  FX_BOOL CanCopy();
+  FX_BOOL CanCut();
+  FX_BOOL CanSelectAll();
+  FX_BOOL Copy(CFX_WideString& wsCopy);
+  FX_BOOL Cut(CFX_WideString& wsCut);
+  FX_BOOL Paste(const CFX_WideString& wsPaste);
+  FX_BOOL SelectAll();
+  FX_BOOL Delete();
+  FX_BOOL DeSelect();
+  FWL_Error GetBBox(CFX_RectF& rect);
+  FWL_Error SetEditLimit(int32_t nLimit);
+  FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                               uint32_t dwStylesExRemoved);
 
  public:
   IFWL_DateTimeEdit* GetDataTimeEdit();

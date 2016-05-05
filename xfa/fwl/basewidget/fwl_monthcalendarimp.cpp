@@ -175,24 +175,30 @@ CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
   m_bInit = FALSE;
   m_iMaxSel = 1;
 }
+
 CFWL_MonthCalendarImp::~CFWL_MonthCalendarImp() {
   ClearDateItem();
   delete m_pDateTime;
   m_arrSelDays.RemoveAll();
 }
+
 FWL_Error CFWL_MonthCalendarImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_MonthCalendar;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_MonthCalendarImp::GetClassID() const {
-  return FWL_CLASSHASH_MonthCalendar;
+
+FWL_Type CFWL_MonthCalendarImp::GetClassID() const {
+  return FWL_Type::MonthCalendar;
 }
+
 FWL_Error CFWL_MonthCalendarImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_MonthCalendarImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_MonthCalendarImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;

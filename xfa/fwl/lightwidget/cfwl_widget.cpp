@@ -29,9 +29,9 @@ FWL_Error CFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
   return m_pIface->GetClassName(wsClass);
 }
 
-uint32_t CFWL_Widget::GetClassID() const {
+FWL_Type CFWL_Widget::GetClassID() const {
   if (!m_pIface)
-    return 0;
+    return FWL_Type::Unknown;
   return m_pIface->GetClassID();
 }
 

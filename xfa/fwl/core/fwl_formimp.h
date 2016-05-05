@@ -68,27 +68,29 @@ typedef struct RestoreResizeInfo {
 class CFWL_FormImp : public CFWL_WidgetImp {
  public:
   CFWL_FormImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
-  virtual ~CFWL_FormImp();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
+  ~CFWL_FormImp() override;
 
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_Error GetClientRect(CFX_RectF& rect);
-  virtual FWL_Error Update();
-  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_FORMSIZE GetFormSize();
-  virtual FWL_Error SetFormSize(FWL_FORMSIZE eFormSize);
-  virtual IFWL_Widget* DoModal();
-  virtual IFWL_Widget* DoModal(uint32_t& dwCommandID);
-  virtual FWL_Error EndDoModal();
-  virtual FWL_Error SetBorderRegion(CFX_Path* pPath);
-  virtual void DrawBackground(CFX_Graphics* pGraphics,
-                              IFWL_ThemeProvider* pTheme);
+  // CFWL_WidgetImp
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Type GetClassID() const override;
+  FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetClientRect(CFX_RectF& rect) override;
+  FWL_Error Update() override;
+  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
+
+  FWL_FORMSIZE GetFormSize();
+  FWL_Error SetFormSize(FWL_FORMSIZE eFormSize);
+  IFWL_Widget* DoModal();
+  IFWL_Widget* DoModal(uint32_t& dwCommandID);
+  FWL_Error EndDoModal();
+  FWL_Error SetBorderRegion(CFX_Path* pPath);
+  void DrawBackground(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
   CFWL_WidgetImp* GetSubFocus();
   void SetSubFocus(CFWL_WidgetImp* pWidget);
 

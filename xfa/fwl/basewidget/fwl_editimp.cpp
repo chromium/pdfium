@@ -222,6 +222,7 @@ CFWL_EditImp::CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
   m_rtEngine.Reset();
   m_rtStatic.Reset();
 }
+
 CFWL_EditImp::~CFWL_EditImp() {
   if (m_pEdtEngine) {
     m_pEdtEngine->Release();
@@ -229,25 +230,29 @@ CFWL_EditImp::~CFWL_EditImp() {
   }
   ClearRecord();
 }
+
 FWL_Error CFWL_EditImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Edit;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_EditImp::GetClassID() const {
-  return FWL_CLASSHASH_Edit;
+
+FWL_Type CFWL_EditImp::GetClassID() const {
+  return FWL_Type::Edit;
 }
+
 FWL_Error CFWL_EditImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
-  if (!m_pDelegate) {
+  if (!m_pDelegate)
     m_pDelegate = new CFWL_EditImpDelegate(this);
-  }
+
   InitCaret();
-  if (!m_pEdtEngine) {
+  if (!m_pEdtEngine)
     InitEngine();
-  }
+
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_EditImp::Finalize() {
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
     ShowCaret(FALSE);
@@ -1507,7 +1512,7 @@ void CFWL_EditImp::Layout() {
       m_rtEngine.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                          pUIMargin->height);
     }
-  } else if (m_pOuter->GetClassID() == FWL_CLASSHASH_DateTimePicker) {
+  } else if (m_pOuter->GetClassID() == FWL_Type::DateTimePicker) {
     CFWL_ThemePart part;
     part.m_pWidget = m_pOuter;
     CFX_RectF* pUIMargin =

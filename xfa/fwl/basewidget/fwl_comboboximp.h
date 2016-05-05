@@ -53,15 +53,20 @@ class CFWL_ComboListImp : public CFWL_ListBoxImp {
  public:
   CFWL_ComboListImp(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
+
+  // CFWL_WidgetImp
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+
   int32_t MatchItem(const CFX_WideString& wsMatch);
   void ChangeSelected(int32_t iSel);
   int32_t CountItems();
   void GetItemRect(int32_t nIndex, CFX_RectF& rtItem);
   void ClientToOuter(FX_FLOAT& fx, FX_FLOAT& fy);
   void SetFocus(FX_BOOL bSet);
+
   FX_BOOL m_bNotifyOwner;
+
   friend class CFWL_ComboListImpDelegate;
   friend class CFWL_ComboBoxImp;
 };
@@ -83,55 +88,65 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
  public:
   CFWL_ComboBoxImp(const CFWL_WidgetImpProperties& properties,
                    IFWL_Widget* pOuter);
-  virtual ~CFWL_ComboBoxImp();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
-                                   uint32_t dwStylesExRemoved);
-  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
-  virtual FWL_Error Update();
-  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  virtual int32_t GetCurSel();
-  virtual FWL_Error SetCurSel(int32_t iSel);
-  virtual FWL_Error SetEditText(const CFX_WideString& wsText);
-  virtual int32_t GetEditTextLength() const;
-  virtual FWL_Error GetEditText(CFX_WideString& wsText,
-                                int32_t nStart = 0,
-                                int32_t nCount = -1) const;
-  virtual FWL_Error SetEditSelRange(int32_t nStart, int32_t nCount = -1);
-  virtual int32_t GetEditSelRange(int32_t nIndex, int32_t& nStart);
-  virtual int32_t GetEditLimit();
-  virtual FWL_Error SetEditLimit(int32_t nLimit);
-  virtual FWL_Error EditDoClipboard(int32_t iCmd);
-  virtual FX_BOOL EditRedo(const CFX_ByteStringC& bsRecord);
-  virtual FX_BOOL EditUndo(const CFX_ByteStringC& bsRecord);
-  virtual IFWL_ListBox* GetListBoxt();
-  virtual FX_BOOL AfterFocusShowDropList();
-  virtual FWL_Error OpenDropDownList(FX_BOOL bActivate);
-  virtual FX_BOOL EditCanUndo();
-  virtual FX_BOOL EditCanRedo();
-  virtual FX_BOOL EditUndo();
-  virtual FX_BOOL EditRedo();
-  virtual FX_BOOL EditCanCopy();
-  virtual FX_BOOL EditCanCut();
-  virtual FX_BOOL EditCanSelectAll();
-  virtual FX_BOOL EditCopy(CFX_WideString& wsCopy);
-  virtual FX_BOOL EditCut(CFX_WideString& wsCut);
-  virtual FX_BOOL EditPaste(const CFX_WideString& wsPaste);
-  virtual FX_BOOL EditSelectAll();
-  virtual FX_BOOL EditDelete();
-  virtual FX_BOOL EditDeSelect();
-  virtual FWL_Error GetBBox(CFX_RectF& rect);
-  virtual FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
-                                       uint32_t dwStylesExRemoved);
+  ~CFWL_ComboBoxImp() override;
+
+  // CFWL_WidgetImp
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Type GetClassID() const override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
+                           uint32_t dwStylesExRemoved) override;
+  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
+  FWL_Error Update() override;
+  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
+  FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+
+  int32_t GetCurSel();
+  FWL_Error SetCurSel(int32_t iSel);
+  FWL_Error SetEditText(const CFX_WideString& wsText);
+  int32_t GetEditTextLength() const;
+  FWL_Error GetEditText(CFX_WideString& wsText,
+                        int32_t nStart = 0,
+                        int32_t nCount = -1) const;
+  FWL_Error SetEditSelRange(int32_t nStart, int32_t nCount = -1);
+  int32_t GetEditSelRange(int32_t nIndex, int32_t& nStart);
+  int32_t GetEditLimit();
+  FWL_Error SetEditLimit(int32_t nLimit);
+  FWL_Error EditDoClipboard(int32_t iCmd);
+  FX_BOOL EditRedo(const CFX_ByteStringC& bsRecord);
+  FX_BOOL EditUndo(const CFX_ByteStringC& bsRecord);
+  IFWL_ListBox* GetListBoxt();
+  FX_BOOL AfterFocusShowDropList();
+  FWL_Error OpenDropDownList(FX_BOOL bActivate);
+  FX_BOOL EditCanUndo();
+  FX_BOOL EditCanRedo();
+  FX_BOOL EditUndo();
+  FX_BOOL EditRedo();
+  FX_BOOL EditCanCopy();
+  FX_BOOL EditCanCut();
+  FX_BOOL EditCanSelectAll();
+  FX_BOOL EditCopy(CFX_WideString& wsCopy);
+  FX_BOOL EditCut(CFX_WideString& wsCut);
+  FX_BOOL EditPaste(const CFX_WideString& wsPaste);
+  FX_BOOL EditSelectAll();
+  FX_BOOL EditDelete();
+  FX_BOOL EditDeSelect();
+  FWL_Error GetBBox(CFX_RectF& rect);
+  FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
+                               uint32_t dwStylesExRemoved);
 
  protected:
+  friend class CFWL_ComboListImp;
+  friend class CFWL_ComboEditImp;
+  friend class CFWL_ComboEditImpDelegate;
+  friend class CFWL_ComboListImpDelegate;
+  friend class CFWL_ComboBoxImpDelegate;
+  friend class CFWL_ComboProxyImpDelegate;
+
   void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   FX_FLOAT GetListHeight();
   void ShowDropList(FX_BOOL bActivate);
@@ -177,13 +192,6 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   FX_BOOL m_bNeedShowList;
   CFWL_FormProxyImp* m_pProxy;
   CFWL_ComboProxyImpDelegate* m_pListProxyDelegate;
-
-  friend class CFWL_ComboListImp;
-  friend class CFWL_ComboEditImp;
-  friend class CFWL_ComboEditImpDelegate;
-  friend class CFWL_ComboListImpDelegate;
-  friend class CFWL_ComboBoxImpDelegate;
-  friend class CFWL_ComboProxyImpDelegate;
 };
 class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:

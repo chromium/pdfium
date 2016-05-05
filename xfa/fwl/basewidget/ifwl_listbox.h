@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 
 #define FWL_CLASS_ListBox L"FWL_LISTBOX"
-#define FWL_CLASSHASH_ListBox 1777358317
 #define FWL_STYLEEXT_LTB_MultiSelection (1L << 0)
 #define FWL_STYLEEXT_LTB_ShowScrollBarAlaways (1L << 2)
 #define FWL_STYLEEXT_LTB_MultiColumn (1L << 3)

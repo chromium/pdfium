@@ -13,9 +13,7 @@
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 
 #define FWL_CLASS_Form L"FWL_FORM"
-#define FWL_CLASSHASH_Form 881567292
 #define FWL_CLASS_FormProxy L"FWL_FORMPROXY"
-#define FWL_CLASSHASH_FormProxy 881567291
 #define FWL_STYLEEXT_FRM_Resize (1L << 0)
 #define FWL_STYLEEXT_FRM_NativeBorder (1L << 1)
 #define FWL_STYLEEXT_FRM_RoundCorner (2L << 1)

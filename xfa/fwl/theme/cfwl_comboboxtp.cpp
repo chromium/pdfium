@@ -22,12 +22,13 @@ const float kComboFormHandler = 8.0f;
 CFWL_ComboBoxTP::CFWL_ComboBoxTP() {
   m_dwThemeID = 0;
 }
+
 CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
-FX_BOOL CFWL_ComboBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
-  if (!pWidget)
-    return FALSE;
-  return pWidget->GetClassID() == FWL_CLASSHASH_ComboBox;
+
+bool CFWL_ComboBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::ComboBox;
 }
+
 FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;

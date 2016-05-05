@@ -40,9 +40,10 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
   }
 }
 
-FX_BOOL CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_CLASSHASH_CheckBox;
+bool CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::CheckBox;
 }
+
 uint32_t CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget,
                                      uint32_t dwThemeID,
                                      FX_BOOL bChildren) {

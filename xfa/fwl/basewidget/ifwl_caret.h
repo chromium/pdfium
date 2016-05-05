@@ -11,7 +11,6 @@
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 
 #define FWL_CLASS_Caret L"FWL_CARET"
-#define FWL_CLASSHASH_Caret 671181879
 #define FWL_STATE_CAT_HightLight 1
 
 class IFWL_Caret : public IFWL_Widget {

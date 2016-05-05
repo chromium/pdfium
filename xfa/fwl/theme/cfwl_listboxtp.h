@@ -12,11 +12,13 @@
 class CFWL_ListBoxTP : public CFWL_WidgetTP {
  public:
   CFWL_ListBoxTP();
-  virtual ~CFWL_ListBoxTP();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
+  ~CFWL_ListBoxTP() override;
+
+  // CFWL_WidgetTP
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
 
  protected:
   void DrawListBoxItem(CFX_Graphics* pGraphics,

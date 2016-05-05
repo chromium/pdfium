@@ -8,6 +8,7 @@
 #define XFA_FWL_BASEWIDGET_FWL_PUSHBUTTONIMP_H_
 
 #include "xfa/fwl/core/fwl_widgetimp.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
@@ -18,18 +19,22 @@ class CFWL_PushButtonImp : public CFWL_WidgetImp {
  public:
   CFWL_PushButtonImp(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
-  virtual ~CFWL_PushButtonImp();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
-  virtual FWL_Error Update();
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  ~CFWL_PushButtonImp() override;
+
+  // CFWL_WidgetImp
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Type GetClassID() const override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
+  FWL_Error Update() override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
+  friend class CFWL_PushButtonImpDelegate;
+
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
@@ -38,12 +43,12 @@ class CFWL_PushButtonImp : public CFWL_WidgetImp {
                 const CFX_Matrix* pMatrix);
   uint32_t GetPartStates();
   void UpdateTextOutStyles();
+
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
   FX_BOOL m_bBtnDown;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
-  friend class CFWL_PushButtonImpDelegate;
 };
 
 class CFWL_PushButtonImpDelegate : public CFWL_WidgetImpDelegate {

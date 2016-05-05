@@ -98,20 +98,26 @@ CFWL_ScrollBarImp::CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
   m_rtMinTrack.Reset();
   m_rtMaxTrack.Reset();
 }
+
 CFWL_ScrollBarImp::~CFWL_ScrollBarImp() {}
+
 FWL_Error CFWL_ScrollBarImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ScrollBar;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_ScrollBarImp::GetClassID() const {
-  return FWL_CLASSHASH_ScrollBar;
+
+FWL_Type CFWL_ScrollBarImp::GetClassID() const {
+  return FWL_Type::ScrollBar;
 }
+
 FWL_Error CFWL_ScrollBarImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_ScrollBarImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_ScrollBarImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;

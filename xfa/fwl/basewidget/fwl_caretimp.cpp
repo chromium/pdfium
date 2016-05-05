@@ -53,15 +53,19 @@ FWL_Error CFWL_CaretImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Caret;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_CaretImp::GetClassID() const {
-  return FWL_CLASSHASH_Caret;
+
+FWL_Type CFWL_CaretImp::GetClassID() const {
+  return FWL_Type::Caret;
 }
+
 FWL_Error CFWL_CaretImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_CaretImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_CaretImp::Finalize() {
   if (m_hTimer) {
     FWL_StopTimer(m_hTimer);

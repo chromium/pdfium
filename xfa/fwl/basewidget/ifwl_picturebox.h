@@ -14,7 +14,6 @@
 #include "xfa/fwl/core/fwl_error.h"
 
 #define FWL_CLASS_PictureBox L"FWL_PICTUREBOX"
-#define FWL_CLASSHASH_PictureBox 2974721741
 #define FWL_STYLEEXT_PTB_Left 0L << 0
 #define FWL_STYLEEXT_PTB_Center 1L << 0
 #define FWL_STYLEEXT_PTB_Right 2L << 0

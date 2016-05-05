@@ -47,12 +47,15 @@ static void FWL_SetChildThemeID(IFWL_Widget* pParent, uint32_t dwThemeID) {
     pChild = pWidgetMgr->GetWidget(pChild, FWL_WGTRELATION_NextSibling);
   }
 }
-FX_BOOL CFWL_WidgetTP::IsValidWidget(IFWL_Widget* pWidget) {
+
+bool CFWL_WidgetTP::IsValidWidget(IFWL_Widget* pWidget) {
   return FALSE;
 }
+
 uint32_t CFWL_WidgetTP::GetThemeID(IFWL_Widget* pWidget) {
   return m_dwThemeID;
 }
+
 uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget,
                                    uint32_t dwThemeID,
                                    FX_BOOL bChildren) {

@@ -37,7 +37,7 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
   virtual uint32_t GetHashCode() const { return 0; }
   virtual FWL_Error Initialize();
   virtual FWL_Error Finalize();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
+  virtual bool IsValidWidget(IFWL_Widget* pWidget);
   virtual uint32_t GetThemeID(IFWL_Widget* pWidget);
   virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
                               uint32_t dwThemeID,

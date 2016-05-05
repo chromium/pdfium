@@ -106,7 +106,12 @@ class CFX_FontSourceEnum_File;
 
 class CFWL_WidgetTP {
  public:
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
+  virtual ~CFWL_WidgetTP();
+
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+
+  virtual bool IsValidWidget(IFWL_Widget* pWidget);
   virtual uint32_t GetThemeID(IFWL_Widget* pWidget);
   virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
                               uint32_t dwThemeID,
@@ -124,9 +129,7 @@ class CFWL_WidgetTP {
                            FX_FLOAT fx,
                            FX_FLOAT fy);
   virtual FX_BOOL CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual ~CFWL_WidgetTP();
+
   FWL_Error SetFont(IFWL_Widget* pWidget,
                     const FX_WCHAR* strFont,
                     FX_FLOAT fFontSize,

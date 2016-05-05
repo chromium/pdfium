@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 
 #define FWL_CLASS_MonthCalendar L"FWL_MONTHCALENDAR"
-#define FWL_CLASSHASH_MonthCalendar 2733931374
 #define FWL_STYLEEXT_MCD_MultiSelect (1L << 0)
 #define FWL_STYLEEXT_MCD_NoToday (1L << 1)
 #define FWL_STYLEEXT_MCD_NoTodayCircle (1L << 2)

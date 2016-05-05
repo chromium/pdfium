@@ -13,13 +13,13 @@
 #include "xfa/fxgraphics/cfx_path.h"
 
 CFWL_ListBoxTP::CFWL_ListBoxTP() {}
+
 CFWL_ListBoxTP::~CFWL_ListBoxTP() {}
 
-FX_BOOL CFWL_ListBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
-  if (!pWidget)
-    return FALSE;
-  return pWidget->GetClassID() == FWL_CLASSHASH_ListBox;
+bool CFWL_ListBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::ListBox;
 }
+
 FX_BOOL CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;

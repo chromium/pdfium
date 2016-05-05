@@ -9,6 +9,7 @@
 
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_timer.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
@@ -18,31 +19,38 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
  public:
   CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
-  ~CFWL_ScrollBarImp();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_Error Update();
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL IsVertical();
-  virtual FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
-  virtual FWL_Error SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
-  virtual FX_FLOAT GetPageSize();
-  virtual FWL_Error SetPageSize(FX_FLOAT fPageSize);
-  virtual FX_FLOAT GetStepSize();
-  virtual FWL_Error SetStepSize(FX_FLOAT fStepSize);
-  virtual FX_FLOAT GetPos();
-  virtual FWL_Error SetPos(FX_FLOAT fPos);
-  virtual FX_FLOAT GetTrackPos();
-  virtual FWL_Error SetTrackPos(FX_FLOAT fTrackPos);
-  virtual FX_BOOL DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
-  virtual FWL_Error SetOuter(IFWL_Widget* pOuter);
-  virtual int32_t Run(FWL_HTIMER hTimer);
+  ~CFWL_ScrollBarImp() override;
+
+  // CFWL_WidgetImp
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Type GetClassID() const override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error Update() override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
+
+  // IFWL_Timer
+  int32_t Run(FWL_HTIMER hTimer) override;
+
+  FX_BOOL IsVertical();
+  FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
+  FWL_Error SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
+  FX_FLOAT GetPageSize();
+  FWL_Error SetPageSize(FX_FLOAT fPageSize);
+  FX_FLOAT GetStepSize();
+  FWL_Error SetStepSize(FX_FLOAT fStepSize);
+  FX_FLOAT GetPos();
+  FWL_Error SetPos(FX_FLOAT fPos);
+  FX_FLOAT GetTrackPos();
+  FWL_Error SetTrackPos(FX_FLOAT fTrackPos);
+  FX_BOOL DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
+  FWL_Error SetOuter(IFWL_Widget* pOuter);
 
  protected:
+  friend class CFWL_ScrollBarImpDelegate;
+
   void DrawTrack(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  FX_BOOL bLower = TRUE,
@@ -96,8 +104,8 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
   CFX_RectF m_rtMaxTrack;
   FX_BOOL m_bCustomLayout;
   FX_FLOAT m_fMinThumb;
-  friend class CFWL_ScrollBarImpDelegate;
 };
+
 class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp* pOwner);

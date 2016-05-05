@@ -20,7 +20,7 @@ class IFWL_Widget;
 class IFWL_ThemeProvider {
  public:
   virtual ~IFWL_ThemeProvider() {}
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget) = 0;
+  virtual bool IsValidWidget(IFWL_Widget* pWidget) = 0;
   virtual uint32_t GetThemeID(IFWL_Widget* pWidget) = 0;
   virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
                               uint32_t dwThemeID,

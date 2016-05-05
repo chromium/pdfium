@@ -12,9 +12,11 @@
 class CFWL_CaretTP : public CFWL_WidgetTP {
  public:
   CFWL_CaretTP();
-  virtual ~CFWL_CaretTP();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
+  ~CFWL_CaretTP() override;
+
+  // CFWL_WidgetTP
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
 
  protected:
   void DrawCaretBK(CFX_Graphics* pGraphics,

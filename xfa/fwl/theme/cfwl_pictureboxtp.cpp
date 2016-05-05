@@ -14,14 +14,14 @@ CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
 
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}
 
-FX_BOOL CFWL_PictureBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
-  if (!pWidget)
-    return FALSE;
-  return pWidget->GetClassID() == FWL_CLASSHASH_PictureBox;
+bool CFWL_PictureBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::PictureBox;
 }
+
 FX_BOOL CFWL_PictureBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
+
   switch (pParams->m_iPart) {
     case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
@@ -32,7 +32,8 @@ FX_BOOL CFWL_PictureBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    default: {}
+    default:
+      break;
   }
   return TRUE;
 }

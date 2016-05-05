@@ -15,9 +15,10 @@ class CFWL_FormTP : public CFWL_WidgetTP {
   CFWL_FormTP();
   ~CFWL_FormTP() override;
 
+  // CFWL_WidgetTP
   FWL_Error Initialize() override;
   FWL_Error Finalize() override;
-  FX_BOOL IsValidWidget(IFWL_Widget* pWidget) override;
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
   uint32_t SetThemeID(IFWL_Widget* pWidget,
                       uint32_t dwThemeID,
                       FX_BOOL bChildren = TRUE) override;

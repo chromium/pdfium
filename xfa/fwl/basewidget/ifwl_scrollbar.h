@@ -15,7 +15,6 @@
 #include "xfa/fwl/core/fwl_error.h"
 
 #define FWL_CLASS_ScrollBar L"FWL_SCROLLBAR"
-#define FWL_CLASSHASH_ScrollBar 2826584844
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 

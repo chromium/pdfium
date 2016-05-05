@@ -25,14 +25,16 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
                   IFWL_Widget* pOuter);
   ~CFWL_BarcodeImp() override;
 
+  // CFWL_WidgetImp
   FWL_Error GetClassName(CFX_WideString& wsClass) const override;
-  uint32_t GetClassID() const override;
+  FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
   FWL_Error Finalize() override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetText(const CFX_WideString& wsText) override;
+
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 

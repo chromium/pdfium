@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 
 #define FWL_CLASS_CheckBox L"FWL_CHECKBOX"
-#define FWL_CLASSHASH_CheckBox 4107183823
 #define FWL_STYLEEXT_CKB_Left (0L << 0)
 #define FWL_STYLEEXT_CKB_Center (1L << 0)
 #define FWL_STYLEEXT_CKB_Right (2L << 0)

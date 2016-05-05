@@ -13,7 +13,6 @@ class CFWL_WidgetImpProperties;
 class IFWL_ToolTip;
 
 #define FWL_CLASS_ToolTip L"FWL_TOOLTIP"
-#define FWL_CLASSHASH_ToolTip 1111984755
 #define FWL_STYLEEXT_TTP_Rectangle (0L << 3)
 #define FWL_STYLEEXT_TTP_RoundCorner (1L << 3)
 #define FWL_STYLEEXT_TTP_Balloon (1L << 4)

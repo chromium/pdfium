@@ -20,9 +20,10 @@ class CFWL_WidgetMgr;
 class CFWL_Widget {
  public:
   virtual ~CFWL_Widget();
+
   IFWL_Widget* GetWidget();
   FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  uint32_t GetClassID() const;
+  FWL_Type GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
 
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);

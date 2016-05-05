@@ -461,25 +461,13 @@ IFWL_Widget* CFWL_WidgetMgr::nextTab(IFWL_Widget* parent,
 int32_t CFWL_WidgetMgr::CountRadioButtonGroup(IFWL_Widget* pFirst) {
   int32_t iRet = 0;
   IFWL_Widget* pChild = pFirst;
-  while (pChild) {
-    if ((pChild->GetStyles() & FWL_WGTSTYLE_Group) &&
-        pChild->GetClassID() == 3811304691) {
-      iRet++;
-    }
+  while (pChild)
     pChild = GetWidget(pChild, FWL_WGTRELATION_NextSibling);
-  }
   return iRet;
 }
 IFWL_Widget* CFWL_WidgetMgr::GetSiblingRadioButton(IFWL_Widget* pWidget,
                                                    FX_BOOL bNext) {
-  while ((pWidget = GetWidget(pWidget, bNext ? FWL_WGTRELATION_NextSibling
-                                             : FWL_WGTRELATION_PriorSibling)) !=
-         NULL) {
-    if (pWidget->GetClassID() == 3811304691) {
-      return pWidget;
-    }
-  }
-  return NULL;
+  return nullptr;
 }
 IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
     IFWL_Widget* pRadioButton) {
@@ -493,10 +481,6 @@ IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
     }
   }
   pNext = GetWidget(pRadioButton, FWL_WGTRELATION_LastSibling);
-  if ((pNext->GetStyles() & FWL_WGTSTYLE_Group) &&
-      pNext->GetClassID() == 3811304691) {
-    return pNext;
-  }
   while ((pNext = GetSiblingRadioButton(pNext, FALSE)) && pNext &&
          pNext != pRadioButton) {
     if (pNext->GetStyles() & FWL_WGTSTYLE_Group) {
@@ -504,10 +488,6 @@ IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
     }
   }
   pNext = GetWidget(pRadioButton, FWL_WGTRELATION_FirstSibling);
-  if (pNext && (pNext->GetStyles() == FWL_WGTSTYLE_Group) &&
-      pNext->GetClassID() == 3811304691) {
-    return pNext;
-  }
   return GetSiblingRadioButton(pNext, TRUE);
 }
 void CFWL_WidgetMgr::GetSameGroupRadioButton(
@@ -519,9 +499,6 @@ void CFWL_WidgetMgr::GetSameGroupRadioButton(
   }
   int32_t iGroup = CountRadioButtonGroup(pFirst);
   if (iGroup < 2) {
-    if (pFirst->GetClassID() == 3811304691) {
-      group.Add(pFirst);
-    }
     IFWL_Widget* pNext = pFirst;
     while ((pNext = GetSiblingRadioButton(pNext, TRUE)) != NULL) {
       group.Add(pNext);
@@ -532,24 +509,19 @@ void CFWL_WidgetMgr::GetSameGroupRadioButton(
   do {
     group.Add(pNext);
     pNext = GetSiblingRadioButton(pNext, TRUE);
-    if (!pNext) {
-      if (pFirst->GetClassID() == 3811304691) {
-        pNext = pFirst;
-      } else {
-        pNext = GetSiblingRadioButton(pFirst, TRUE);
-      }
-    }
+    if (!pNext)
+      pNext = GetSiblingRadioButton(pFirst, TRUE);
   } while (pNext && ((pNext->GetStyles() & FWL_WGTSTYLE_Group) == 0));
 }
 IFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(IFWL_Widget* pParent) {
-  if ((pParent->GetClassID() == 3521614244) &&
+  if ((pParent->GetClassID() == FWL_Type::PushButton) &&
       (pParent->GetStates() & (1 << (FWL_WGTSTATE_MAX + 2)))) {
     return pParent;
   }
   IFWL_Widget* child =
       FWL_GetWidgetMgr()->GetWidget(pParent, FWL_WGTRELATION_FirstChild);
   while (child) {
-    if ((child->GetClassID() == 3521614244) &&
+    if ((child->GetClassID() == FWL_Type::PushButton) &&
         (child->GetStates() & (1 << (FWL_WGTSTATE_MAX + 2)))) {
       return child;
     }
@@ -831,16 +803,7 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
       FWL_GetWidgetMgr()->GetWidget(pWidget, FWL_WGTRELATION_FirstChild);
   if (!pChild)
     return TRUE;
-  if (pChild->GetClassID() == 3150298670) {
-    CFX_RectF rtTemp;
-    pChild->GetWidgetRect(rtTemp);
-    if (rtTemp.width >= rtWidget.width && rtTemp.height >= rtWidget.height) {
-      pChild =
-          FWL_GetWidgetMgr()->GetWidget(pChild, FWL_WGTRELATION_FirstChild);
-      if (!pChild)
-        return TRUE;
-    }
-  }
+
   CFX_RectF rtChilds;
   rtChilds.Empty();
   FX_BOOL bChildIntersectWithDirty = FALSE;

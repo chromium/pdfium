@@ -426,7 +426,8 @@ FX_BOOL CFWL_NoteDriver::DoDeactivate(CFWL_MsgDeactivate* pMsg,
         pMsg->m_pSrcTarget->IsInstance(FX_WSTRC(L"FWL_FORMPROXY"))) {
       return FALSE;
     }
-    if (pMsg->m_pSrcTarget && pMsg->m_pSrcTarget->GetClassID() == 1111984755) {
+    if (pMsg->m_pSrcTarget &&
+        pMsg->m_pSrcTarget->GetClassID() == FWL_Type::ToolTip) {
       return FALSE;
     }
     return TRUE;
@@ -616,10 +617,10 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_MsgMouse* pMsg) {
     pTarget->TransformTo(m_pHover, msLeave.m_fx, msLeave.m_fy);
     msLeave.m_dwFlags = 0;
     msLeave.m_dwCmd = FWL_MouseCommand::Leave;
-    DispatchMessage(&msLeave, NULL);
+    DispatchMessage(&msLeave, nullptr);
   }
-  if (pTarget->GetClassID() == FWL_CLASSHASH_Form) {
-    m_pHover = NULL;
+  if (pTarget->GetClassID() == FWL_Type::Form) {
+    m_pHover = nullptr;
     return;
   }
   m_pHover = pTarget;
@@ -629,7 +630,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_MsgMouse* pMsg) {
   msHover.m_fy = pMsg->m_fy;
   msHover.m_dwFlags = 0;
   msHover.m_dwCmd = FWL_MouseCommand::Hover;
-  DispatchMessage(&msHover, NULL);
+  DispatchMessage(&msHover, nullptr);
 }
 FX_BOOL CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
   if (pMessage->GetClassID() == CFWL_MessageType::Post)

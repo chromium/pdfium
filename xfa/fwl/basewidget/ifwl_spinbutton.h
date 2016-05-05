@@ -10,7 +10,6 @@
 #include "xfa/fwl/core/fwl_widgetimp.h"
 
 #define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
-#define FWL_CLASSHASH_SpinButton 3793043646
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click)

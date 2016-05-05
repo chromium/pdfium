@@ -13,7 +13,6 @@
 class CFWL_WidgetImpProperties;
 
 #define FWL_CLASS_Barcode L"FWL_BARCODE"
-#define FWL_CLASSHASH_Barcode 366886968
 
 enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_NONE = 0,

@@ -421,6 +421,7 @@ void CFWL_DateTimeCalendarImpDelegate::DisForm_OnLButtonUpEx(
     pDateTime->ShowMonthCalendar(FALSE);
   }
 }
+
 CFWL_DateTimePickerImp::CFWL_DateTimePickerImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
@@ -435,17 +436,22 @@ CFWL_DateTimePickerImp::CFWL_DateTimePickerImp(
       m_pForm(nullptr) {
   m_rtBtn.Set(0, 0, 0, 0);
 }
+
 CFWL_DateTimePickerImp::~CFWL_DateTimePickerImp() {}
+
 FWL_Error CFWL_DateTimePickerImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_DateTimePicker;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_DateTimePickerImp::GetClassID() const {
-  return FWL_CLASSHASH_DateTimePicker;
+
+FWL_Type CFWL_DateTimePickerImp::GetClassID() const {
+  return FWL_Type::DateTimePicker;
 }
+
 FWL_Error CFWL_DateTimePickerImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_DateTimePickerImpDelegate(this);
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
   CFWL_WidgetImpProperties propMonth;
@@ -469,6 +475,7 @@ FWL_Error CFWL_DateTimePickerImp::Initialize() {
   RegisterEventTarget(m_pEdit.get());
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_DateTimePickerImp::Finalize() {
   if (m_pEdit) {
     m_pEdit->Finalize();

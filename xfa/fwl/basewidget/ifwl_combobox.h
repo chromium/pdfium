@@ -14,7 +14,6 @@ class CFWL_WidgetImpProperties;
 class IFWL_ComboBox;
 
 #define FWL_CLASS_ComboBox L"FWL_COMBOBOX"
-#define FWL_CLASSHASH_ComboBox 602353697
 #define FWL_STYLEEXT_CMB_DropList (0L << 0)
 #define FWL_STYLEEXT_CMB_DropDown (1L << 0)
 #define FWL_STYLEEXT_CMB_Sort (1L << 1)

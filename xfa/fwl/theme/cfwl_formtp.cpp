@@ -60,12 +60,10 @@ FWL_Error CFWL_FormTP::Finalize() {
   return CFWL_WidgetTP::Finalize();
 }
 
-FX_BOOL CFWL_FormTP::IsValidWidget(IFWL_Widget* pWidget) {
-  if (!pWidget)
-    return FALSE;
-  uint32_t dwHash = pWidget->GetClassID();
-  return dwHash == FWL_CLASSHASH_Form;
+bool CFWL_FormTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::Form;
 }
+
 uint32_t CFWL_FormTP::SetThemeID(IFWL_Widget* pWidget,
                                  uint32_t dwThemeID,
                                  FX_BOOL bChildren) {

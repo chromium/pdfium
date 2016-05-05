@@ -19,22 +19,39 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
  public:
   CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
                   IFWL_Widget* pOuter);
-  virtual ~CFWL_ToolTipImp();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_Error Update();
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
-  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet);
-  virtual FWL_Error GetClientRect(CFX_RectF& rect);
+  ~CFWL_ToolTipImp() override;
+
+  // CFWL_WidgetImp
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Type GetClassID() const override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error Update() override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
+  void SetStates(uint32_t dwStates, FX_BOOL bSet) override;
+  FWL_Error GetClientRect(CFX_RectF& rect) override;
+
   void SetAnchor(const CFX_RectF& rtAnchor);
   void Show();
   void Hide();
 
  protected:
+  friend class CFWL_ToolTipImpDelegate;
+  friend class CFWL_ToolTipTimer;
+
+  class CFWL_ToolTipTimer : public IFWL_Timer {
+   public:
+    CFWL_ToolTipTimer() {}
+    ~CFWL_ToolTipTimer() {}
+
+    CFWL_ToolTipTimer(CFWL_ToolTipImp* pToolTip);
+    virtual int32_t Run(FWL_HTIMER hTimer);
+
+    CFWL_ToolTipImp* m_pToolTip;
+  };
+
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
@@ -43,14 +60,7 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
                 const CFX_Matrix* pMatrix);
   void UpdateTextOutStyles();
   void RefreshToolTipPos();
-  class CFWL_ToolTipTimer : public IFWL_Timer {
-   public:
-    CFWL_ToolTipTimer() {}
-    ~CFWL_ToolTipTimer() {}
-    CFWL_ToolTipTimer(CFWL_ToolTipImp* pToolTip);
-    virtual int32_t Run(FWL_HTIMER hTimer);
-    CFWL_ToolTipImp* m_pToolTip;
-  };
+
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
   FX_BOOL m_bBtnDown;
@@ -62,9 +72,8 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   CFWL_ToolTipTimer* m_pTimer;
   CFWL_ToolTipTimer m_TimerShow;
   CFWL_ToolTipTimer m_TimerHide;
-  friend class CFWL_ToolTipImpDelegate;
-  friend class CFWL_ToolTipTimer;
 };
+
 class CFWL_ToolTipImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ToolTipImpDelegate(CFWL_ToolTipImp* pOwner);

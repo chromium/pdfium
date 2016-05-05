@@ -27,10 +27,8 @@ CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {
   delete m_pThemeData;
 }
 
-FX_BOOL CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
-  if (!pWidget)
-    return FALSE;
-  return pWidget->GetClassID() == FWL_CLASSHASH_ScrollBar;
+bool CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
+  return pWidget && pWidget->GetClassID() == FWL_Type::ScrollBar;
 }
 void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
                                     CFWL_WidgetCapacity dwCapacity) {

@@ -14,7 +14,8 @@ class CFWL_PushButtonTP : public CFWL_WidgetTP {
   CFWL_PushButtonTP();
   ~CFWL_PushButtonTP() override;
 
-  FX_BOOL IsValidWidget(IFWL_Widget* pWidget) override;
+  // CFWL_WidgetTP
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
   uint32_t SetThemeID(IFWL_Widget* pWidget,
                       uint32_t dwThemeID,
                       FX_BOOL bChildren = TRUE) override;

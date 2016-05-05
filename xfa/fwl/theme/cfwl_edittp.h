@@ -12,11 +12,13 @@
 class CFWL_EditTP : public CFWL_WidgetTP {
  public:
   CFWL_EditTP();
-  virtual ~CFWL_EditTP();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
+  ~CFWL_EditTP() override;
+
+  // CFWL_WidgeTTP
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_EDITTP_H_

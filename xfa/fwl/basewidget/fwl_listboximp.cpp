@@ -76,20 +76,26 @@ CFWL_ListBoxImp::CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
   m_rtConent.Reset();
   m_rtStatic.Reset();
 }
+
 CFWL_ListBoxImp::~CFWL_ListBoxImp() {}
+
 FWL_Error CFWL_ListBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ListBox;
   return FWL_Error::Succeeded;
 }
-uint32_t CFWL_ListBoxImp::GetClassID() const {
-  return FWL_CLASSHASH_ListBox;
+
+FWL_Type CFWL_ListBoxImp::GetClassID() const {
+  return FWL_Type::ListBox;
 }
+
 FWL_Error CFWL_ListBoxImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
     return FWL_Error::Indefinite;
+
   m_pDelegate = new CFWL_ListBoxImpDelegate(this);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_ListBoxImp::Finalize() {
   if (m_pVertScrollBar) {
     m_pVertScrollBar->Finalize();

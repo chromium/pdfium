@@ -12,9 +12,11 @@
 class CFWL_PictureBoxTP : public CFWL_WidgetTP {
  public:
   CFWL_PictureBoxTP();
-  virtual ~CFWL_PictureBoxTP();
-  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
+  ~CFWL_PictureBoxTP() override;
+
+  // CFWL_WidgetTP
+  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_PICTUREBOXTP_H_
