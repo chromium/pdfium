@@ -6,7 +6,9 @@
 
 #include "xfa/fgas/crt/fgas_memory.h"
 
+#ifndef MEMORY_TOOL_REPLACES_ALLOCATOR
 #define MEMORY_TOOL_REPLACES_ALLOCATOR  // Temporary, for CF testing.
+#endif
 
 #include <algorithm>
 
