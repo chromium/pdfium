@@ -4574,7 +4574,8 @@ CXFA_Node* CXFA_Node::GetChild(int32_t index,
 int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   ASSERT(!pNode->m_pNext);
   pNode->m_pParent = this;
-  ASSERT(m_pDocument->RemovePurgeNode(pNode));
+  FX_BOOL ret = m_pDocument->RemovePurgeNode(pNode);
+  ASSERT(ret);
 
   if (m_pChild == NULL || index == 0) {
     if (index > 0) {
@@ -4622,7 +4623,8 @@ FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
     ASSERT(false);
     return FALSE;
   }
-  ASSERT(m_pDocument->RemovePurgeNode(pNode));
+  FX_BOOL ret = m_pDocument->RemovePurgeNode(pNode);
+  ASSERT(ret);
 
   int32_t nIndex = -1;
   pNode->m_pParent = this;
