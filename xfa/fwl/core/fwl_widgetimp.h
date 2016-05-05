@@ -28,49 +28,51 @@ class CFWL_WidgetImp {
  public:
   virtual ~CFWL_WidgetImp();
 
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
 
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR GetGlobalRect(CFX_RectF& rect);
-  virtual FWL_ERR SetWidgetRect(const CFX_RectF& rect);
-  virtual FWL_ERR GetClientRect(CFX_RectF& rect);
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error GetGlobalRect(CFX_RectF& rect);
+  virtual FWL_Error SetWidgetRect(const CFX_RectF& rect);
+  virtual FWL_Error GetClientRect(CFX_RectF& rect);
   virtual IFWL_Widget* GetParent();
-  virtual FWL_ERR SetParent(IFWL_Widget* pParent);
+  virtual FWL_Error SetParent(IFWL_Widget* pParent);
   virtual IFWL_Widget* GetOwner();
-  virtual FWL_ERR SetOwner(IFWL_Widget* pOwner);
+  virtual FWL_Error SetOwner(IFWL_Widget* pOwner);
   virtual IFWL_Widget* GetOuter();
   virtual uint32_t GetStyles();
-  virtual FWL_ERR ModifyStyles(uint32_t dwStylesAdded,
-                               uint32_t dwStylesRemoved);
+  virtual FWL_Error ModifyStyles(uint32_t dwStylesAdded,
+                                 uint32_t dwStylesRemoved);
   virtual uint32_t GetStylesEx();
-  virtual FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded,
-                                 uint32_t dwStylesExRemoved);
+  virtual FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
+                                   uint32_t dwStylesExRemoved);
   virtual uint32_t GetStates();
   virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
-  virtual FWL_ERR SetPrivateData(void* module_id,
-                                 void* pData,
-                                 PD_CALLBACK_FREEDATA callback);
+  virtual FWL_Error SetPrivateData(void* module_id,
+                                   void* pData,
+                                   PD_CALLBACK_FREEDATA callback);
   virtual void* GetPrivateData(void* module_id);
-  virtual FWL_ERR Update();
-  virtual FWL_ERR LockUpdate();
-  virtual FWL_ERR UnlockUpdate();
+  virtual FWL_Error Update();
+  virtual FWL_Error LockUpdate();
+  virtual FWL_Error UnlockUpdate();
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_ERR TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
-  virtual FWL_ERR TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
-  virtual FWL_ERR GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
-  virtual FWL_ERR SetMatrix(const CFX_Matrix& matrix);
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error TransformTo(IFWL_Widget* pWidget,
+                                FX_FLOAT& fx,
+                                FX_FLOAT& fy);
+  virtual FWL_Error TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
+  virtual FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
+  virtual FWL_Error SetMatrix(const CFX_Matrix& matrix);
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
   virtual IFWL_ThemeProvider* GetThemeProvider();
-  virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  virtual FWL_ERR SetDataProvider(IFWL_DataProvider* pDataProvider);
+  virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
+  virtual FWL_Error SetDataProvider(IFWL_DataProvider* pDataProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   virtual IFWL_App* GetOwnerApp() const;
-  FWL_ERR SetOwnerApp(CFWL_AppImp* pOwnerApp);
+  FWL_Error SetOwnerApp(CFWL_AppImp* pOwnerApp);
   IFWL_Widget* GetInterface() const;
   void SetInterface(IFWL_Widget* pInterface);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
@@ -163,10 +165,10 @@ class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {
  public:
   CFWL_WidgetImpDelegate();
   ~CFWL_WidgetImpDelegate() override {}
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 };
 
 #endif  // XFA_FWL_CORE_FWL_WIDGETIMP_H_

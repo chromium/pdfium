@@ -53,11 +53,11 @@ class IFWL_Form : public IFWL_Widget {
                                     IFWL_Widget* pOuter);
 
   FWL_FORMSIZE GetFormSize();
-  FWL_ERR SetFormSize(FWL_FORMSIZE eFormSize);
+  FWL_Error SetFormSize(FWL_FORMSIZE eFormSize);
   IFWL_Widget* DoModal();
   IFWL_Widget* DoModal(uint32_t& dwCommandID);
-  FWL_ERR EndDoModal();
-  FWL_ERR SetBorderRegion(CFX_Path* pPath);
+  FWL_Error EndDoModal();
+  FWL_Error SetBorderRegion(CFX_Path* pPath);
 
  protected:
   IFWL_Form();

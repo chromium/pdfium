@@ -13,14 +13,14 @@
 class CFWL_DateTimePicker : public CFWL_Widget {
  public:
   static CFWL_DateTimePicker* Create();
-  FWL_ERR Initialize(const CFWL_WidgetProperties* pProperties = NULL);
-  FWL_ERR SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
-  FWL_ERR GetEditText(CFX_WideString& wsText);
-  FWL_ERR SetEditText(const CFX_WideString& wsText);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
+  FWL_Error GetEditText(CFX_WideString& wsText);
+  FWL_Error SetEditText(const CFX_WideString& wsText);
   int32_t CountSelRanges();
   int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
-  FWL_ERR GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  FWL_ERR SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
+  FWL_Error GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
+  FWL_Error SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
   FX_BOOL CanUndo();
   FX_BOOL CanRedo();
   FX_BOOL Undo();
@@ -34,10 +34,10 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   FX_BOOL SelectAll();
   FX_BOOL Delete();
   FX_BOOL DeSelect();
-  FWL_ERR GetBBox(CFX_RectF& rect);
-  FWL_ERR SetEditLimit(int32_t nLimit);
-  FWL_ERR ModifyEditStylesEx(uint32_t dwStylesExAdded,
-                             uint32_t dwStylesExRemoved);
+  FWL_Error GetBBox(CFX_RectF& rect);
+  FWL_Error SetEditLimit(int32_t nLimit);
+  FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                               uint32_t dwStylesExRemoved);
 
  protected:
   CFWL_DateTimePicker();
@@ -45,11 +45,12 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   class CFWL_DateTimePickerDP : public IFWL_DateTimePickerDP {
    public:
     CFWL_DateTimePickerDP();
-    virtual FWL_ERR GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
-    virtual FWL_ERR GetToday(IFWL_Widget* pWidget,
-                             int32_t& iYear,
-                             int32_t& iMonth,
-                             int32_t& iDay);
+    virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
+                                 CFX_WideString& wsCaption);
+    virtual FWL_Error GetToday(IFWL_Widget* pWidget,
+                               int32_t& iYear,
+                               int32_t& iMonth,
+                               int32_t& iDay);
     int32_t m_iYear;
     int32_t m_iMonth;
     int32_t m_iDay;

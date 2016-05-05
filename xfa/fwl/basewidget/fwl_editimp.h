@@ -30,42 +30,44 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   ~CFWL_EditImp() override;
 
   // CFWL_WidgetImp:
-  FWL_ERR GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   uint32_t GetClassID() const override;
-  FWL_ERR Initialize() override;
-  FWL_ERR Finalize() override;
-  FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
-  FWL_ERR SetWidgetRect(const CFX_RectF& rect) override;
-  FWL_ERR Update() override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error SetWidgetRect(const CFX_RectF& rect) override;
+  FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
-  FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                     const CFX_Matrix* pMatrix = NULL) override;
-  FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
+  FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
 
-  virtual FWL_ERR SetText(const CFX_WideString& wsText);
+  virtual FWL_Error SetText(const CFX_WideString& wsText);
   virtual int32_t GetTextLength() const;
-  virtual FWL_ERR GetText(CFX_WideString& wsText,
-                          int32_t nStart = 0,
-                          int32_t nCount = -1) const;
-  virtual FWL_ERR ClearText();
+  virtual FWL_Error GetText(CFX_WideString& wsText,
+                            int32_t nStart = 0,
+                            int32_t nCount = -1) const;
+  virtual FWL_Error ClearText();
   virtual int32_t GetCaretPos() const;
   virtual int32_t SetCaretPos(int32_t nIndex, FX_BOOL bBefore = TRUE);
-  virtual FWL_ERR AddSelRange(int32_t nStart, int32_t nCount = -1);
+  virtual FWL_Error AddSelRange(int32_t nStart, int32_t nCount = -1);
   virtual int32_t CountSelRanges();
   virtual int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
-  virtual FWL_ERR ClearSelections();
+  virtual FWL_Error ClearSelections();
   virtual int32_t GetLimit();
-  virtual FWL_ERR SetLimit(int32_t nLimit);
-  virtual FWL_ERR SetAliasChar(FX_WCHAR wAlias);
-  virtual FWL_ERR Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen);
-  virtual FWL_ERR DeleteSelections();
-  virtual FWL_ERR DeleteRange(int32_t nStart, int32_t nCount = -1);
-  virtual FWL_ERR ReplaceSelections(const CFX_WideStringC& wsReplace);
-  virtual FWL_ERR Replace(int32_t nStart,
-                          int32_t nLen,
-                          const CFX_WideStringC& wsReplace);
-  virtual FWL_ERR DoClipboard(int32_t iCmd);
+  virtual FWL_Error SetLimit(int32_t nLimit);
+  virtual FWL_Error SetAliasChar(FX_WCHAR wAlias);
+  virtual FWL_Error Insert(int32_t nStart,
+                           const FX_WCHAR* lpText,
+                           int32_t nLen);
+  virtual FWL_Error DeleteSelections();
+  virtual FWL_Error DeleteRange(int32_t nStart, int32_t nCount = -1);
+  virtual FWL_Error ReplaceSelections(const CFX_WideStringC& wsReplace);
+  virtual FWL_Error Replace(int32_t nStart,
+                            int32_t nLen,
+                            const CFX_WideStringC& wsReplace);
+  virtual FWL_Error DoClipboard(int32_t iCmd);
   virtual FX_BOOL Copy(CFX_WideString& wsCopy);
   virtual FX_BOOL Cut(CFX_WideString& wsCut);
   virtual FX_BOOL Paste(const CFX_WideString& wsPaste);
@@ -76,11 +78,11 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   virtual FX_BOOL Redo();
   virtual FX_BOOL CanUndo();
   virtual FX_BOOL CanRedo();
-  virtual FWL_ERR SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
-  virtual FWL_ERR SetOuter(IFWL_Widget* pOuter);
-  virtual FWL_ERR SetNumberRange(int32_t iMin, int32_t iMax);
-  virtual FWL_ERR SetBackgroundColor(uint32_t color);
-  virtual FWL_ERR SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
+  virtual FWL_Error SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
+  virtual FWL_Error SetOuter(IFWL_Widget* pOuter);
+  virtual FWL_Error SetNumberRange(int32_t iMin, int32_t iMax);
+  virtual FWL_Error SetBackgroundColor(uint32_t color);
+  virtual FWL_Error SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
 
   void On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
                        int32_t nPage,
@@ -174,10 +176,10 @@ class CFWL_EditImp : public CFWL_WidgetImp {
 class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_EditImpDelegate(CFWL_EditImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void DoActivate(CFWL_MsgActivate* pMsg);

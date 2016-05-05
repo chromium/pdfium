@@ -20,8 +20,8 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
 
  protected:
   void DrawBoxBk(IFWL_Widget* pWidget,

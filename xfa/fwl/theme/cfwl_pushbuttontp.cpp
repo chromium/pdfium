@@ -102,11 +102,11 @@ void* CFWL_PushButtonTP::GetCapacity(CFWL_ThemePart* pThemePart,
   }
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
-FWL_ERR CFWL_PushButtonTP::Initialize() {
+FWL_Error CFWL_PushButtonTP::Initialize() {
   InitTTO();
   return CFWL_WidgetTP::Initialize();
 }
-FWL_ERR CFWL_PushButtonTP::Finalize() {
+FWL_Error CFWL_PushButtonTP::Finalize() {
   FinalizeTTO();
   return CFWL_WidgetTP::Finalize();
 }

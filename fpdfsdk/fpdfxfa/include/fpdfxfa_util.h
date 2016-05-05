@@ -22,11 +22,11 @@ struct CFWL_TimerInfo;
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:
   CXFA_FWLAdapterTimerMgr(CPDFDoc_Environment* pEnv) : m_pEnv(pEnv) {}
-  virtual FWL_ERR Start(IFWL_Timer* pTimer,
-                        uint32_t dwElapse,
-                        FWL_HTIMER& hTimer,
-                        FX_BOOL bImmediately = TRUE);
-  virtual FWL_ERR Stop(FWL_HTIMER hTimer);
+  virtual FWL_Error Start(IFWL_Timer* pTimer,
+                          uint32_t dwElapse,
+                          FWL_HTIMER& hTimer,
+                          FX_BOOL bImmediately = TRUE);
+  virtual FWL_Error Stop(FWL_HTIMER hTimer);
 
  protected:
   static void TimerProc(int32_t idEvent);

@@ -23,12 +23,14 @@ FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
   pAdapterTimerMgr->Start(pTimer, dwElapse, hTimer, bImmediately);
   return hTimer;
 }
-int32_t FWL_StopTimer(FWL_HTIMER hTimer) {
+
+FWL_Error FWL_StopTimer(FWL_HTIMER hTimer) {
   CXFA_FFApp* pAdapterNative = FWL_GetAdapterNative();
   if (!pAdapterNative)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
+
   IFWL_AdapterTimerMgr* pAdapterTimerMgr = pAdapterNative->GetTimerMgr();
   if (!pAdapterTimerMgr)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return pAdapterTimerMgr->Stop(hTimer);
 }

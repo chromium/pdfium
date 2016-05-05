@@ -22,8 +22,8 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
   void* GetCapacity(CFWL_ThemePart* pThemePart,
                     CFWL_WidgetCapacity dwCapacity) override;
-  FWL_ERR Initialize() override;
-  FWL_ERR Finalize() override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
 
  protected:
   FX_BOOL DrawTotalBK(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);

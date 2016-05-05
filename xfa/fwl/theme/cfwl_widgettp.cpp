@@ -66,15 +66,15 @@ uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget,
   }
   return dwOld;
 }
-FWL_ERR CFWL_WidgetTP::GetThemeMatrix(IFWL_Widget* pWidget,
-                                      CFX_Matrix& matrix) {
+FWL_Error CFWL_WidgetTP::GetThemeMatrix(IFWL_Widget* pWidget,
+                                        CFX_Matrix& matrix) {
   matrix.Set(_ctm.a, _ctm.b, _ctm.c, _ctm.d, _ctm.e, _ctm.f);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_WidgetTP::SetThemeMatrix(IFWL_Widget* pWidget,
-                                      const CFX_Matrix& matrix) {
+FWL_Error CFWL_WidgetTP::SetThemeMatrix(IFWL_Widget* pWidget,
+                                        const CFX_Matrix& matrix) {
   _ctm.Set(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_BOOL CFWL_WidgetTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
@@ -154,9 +154,9 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
 FX_BOOL CFWL_WidgetTP::IsCustomizedLayout(IFWL_Widget* pWidget) {
   return FWL_GetThemeLayout(m_dwThemeID);
 }
-FWL_ERR CFWL_WidgetTP::GetPartRect(CFWL_ThemePart* pThemePart,
-                                   CFX_RectF& rect) {
-  return FWL_ERR_Succeeded;
+FWL_Error CFWL_WidgetTP::GetPartRect(CFWL_ThemePart* pThemePart,
+                                     CFX_RectF& rect) {
+  return FWL_Error::Succeeded;
 }
 FX_BOOL CFWL_WidgetTP::IsInPart(CFWL_ThemePart* pThemePart,
                                 FX_FLOAT fx,
@@ -174,51 +174,51 @@ FX_BOOL CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
                             pParams->m_wsText.GetLength(), rect);
   return TRUE;
 }
-FWL_ERR CFWL_WidgetTP::Initialize() {
+FWL_Error CFWL_WidgetTP::Initialize() {
   m_dwThemeID = 0;
   _ctm.SetIdentity();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_WidgetTP::Finalize() {
+FWL_Error CFWL_WidgetTP::Finalize() {
   if (!m_pTextOut) {
     FinalizeTTO();
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 CFWL_WidgetTP::~CFWL_WidgetTP() {}
-FWL_ERR CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
-                               const FX_WCHAR* strFont,
-                               FX_FLOAT fFontSize,
-                               FX_ARGB rgbFont) {
+FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
+                                 const FX_WCHAR* strFont,
+                                 FX_FLOAT fFontSize,
+                                 FX_ARGB rgbFont) {
   if (!m_pTextOut) {
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   m_pFDEFont = CFWL_FontManager::GetInstance()->FindFont(strFont, 0, 0);
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(fFontSize);
   m_pTextOut->SetTextColor(rgbFont);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
-                               IFX_Font* pFont,
-                               FX_FLOAT fFontSize,
-                               FX_ARGB rgbFont) {
+FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
+                                 IFX_Font* pFont,
+                                 FX_FLOAT fFontSize,
+                                 FX_ARGB rgbFont) {
   if (!m_pTextOut) {
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   m_pTextOut->SetFont(pFont);
   m_pTextOut->SetFontSize(fFontSize);
   m_pTextOut->SetTextColor(rgbFont);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 IFX_Font* CFWL_WidgetTP::GetFont(IFWL_Widget* pWidget) {
   return m_pFDEFont;
 }
 CFWL_WidgetTP::CFWL_WidgetTP()
     : m_dwRefCount(1), m_pTextOut(NULL), m_pFDEFont(NULL), m_dwThemeID(0) {}
-FX_ERR CFWL_WidgetTP::InitTTO() {
+FWL_Error CFWL_WidgetTP::InitTTO() {
   if (m_pTextOut) {
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   m_pFDEFont =
       CFWL_FontManager::GetInstance()->FindFont(FX_WSTRC(L"Helvetica"), 0, 0);
@@ -227,14 +227,14 @@ FX_ERR CFWL_WidgetTP::InitTTO() {
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
   m_pTextOut->SetEllipsisString(L"...");
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FX_ERR CFWL_WidgetTP::FinalizeTTO() {
+FWL_Error CFWL_WidgetTP::FinalizeTTO() {
   if (m_pTextOut) {
     m_pTextOut->Release();
     m_pTextOut = NULL;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 
 void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,

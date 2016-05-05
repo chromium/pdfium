@@ -26,8 +26,8 @@ class CFWL_AppImp {
   IFWL_App* GetInterface() const { return m_pIface; }
   CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
 
-  FWL_ERR Initialize();
-  FWL_ERR Finalize();
+  FWL_Error Initialize();
+  FWL_Error Finalize();
   CXFA_FFApp* GetAdapterNative() const;
   IFWL_WidgetMgr* GetWidgetMgr() const;
   IFWL_ThemeProvider* GetThemeProvider() const;

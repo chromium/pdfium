@@ -17,7 +17,7 @@ class CFWL_WidgetProperties;
 class CFWL_Barcode : public CFWL_Edit {
  public:
   static CFWL_Barcode* Create();
-  FWL_ERR Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 
@@ -86,8 +86,8 @@ class CFWL_Barcode : public CFWL_Edit {
    public:
     CFWL_BarcodeDP() : m_dwAttributeMask(FWL_BCDATTRIBUTE_NONE) {}
 
-    FWL_ERR GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+    FWL_Error GetCaption(IFWL_Widget* pWidget,
+                         CFX_WideString& wsCaption) override;
     BC_CHAR_ENCODING GetCharEncoding() override { return m_eCharEncoding; }
     int32_t GetModuleHeight() override { return m_nModuleHeight; }
     int32_t GetModuleWidth() override { return m_nModuleWidth; }

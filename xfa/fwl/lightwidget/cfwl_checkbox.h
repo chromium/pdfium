@@ -14,12 +14,12 @@ class CFWL_CheckBox : public CFWL_Widget {
  public:
   static CFWL_CheckBox* Create();
 
-  FWL_ERR Initialize(const CFWL_WidgetProperties* pProperties = NULL);
-  FWL_ERR GetCaption(CFX_WideString& wsCaption);
-  FWL_ERR SetCaption(const CFX_WideStringC& wsCaption);
-  FWL_ERR SetBoxSize(FX_FLOAT fHeight);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error GetCaption(CFX_WideString& wsCaption);
+  FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
+  FWL_Error SetBoxSize(FX_FLOAT fHeight);
   int32_t GetCheckState();
-  FWL_ERR SetCheckState(int32_t iCheck);
+  FWL_Error SetCheckState(int32_t iCheck);
   CFWL_CheckBox();
   virtual ~CFWL_CheckBox();
 
@@ -27,7 +27,8 @@ class CFWL_CheckBox : public CFWL_Widget {
   class CFWL_CheckBoxDP : public IFWL_CheckBoxDP {
    public:
     CFWL_CheckBoxDP();
-    virtual FWL_ERR GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
+    virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
+                                 CFX_WideString& wsCaption);
     virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget);
     FX_FLOAT m_fBoxHeight;
     CFX_WideString m_wsCaption;

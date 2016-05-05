@@ -349,11 +349,11 @@ void* CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart* pThemePart,
   }
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
-FWL_ERR CFWL_MonthCalendarTP::Initialize() {
+FWL_Error CFWL_MonthCalendarTP::Initialize() {
   InitTTO();
   return CFWL_WidgetTP::Initialize();
 }
-FWL_ERR CFWL_MonthCalendarTP::Finalize() {
+FWL_Error CFWL_MonthCalendarTP::Finalize() {
   FinalizeTTO();
   return CFWL_WidgetTP::Finalize();
 }

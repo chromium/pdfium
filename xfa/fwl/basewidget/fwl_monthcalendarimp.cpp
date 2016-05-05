@@ -180,26 +180,26 @@ CFWL_MonthCalendarImp::~CFWL_MonthCalendarImp() {
   delete m_pDateTime;
   m_arrSelDays.RemoveAll();
 }
-FWL_ERR CFWL_MonthCalendarImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_MonthCalendarImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_MonthCalendar;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_MonthCalendarImp::GetClassID() const {
   return FWL_CLASSHASH_MonthCalendar;
 }
-FWL_ERR CFWL_MonthCalendarImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_MonthCalendarImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_MonthCalendarImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_MonthCalendarImp::Finalize() {
+FWL_Error CFWL_MonthCalendarImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_MonthCalendarImp::GetWidgetRect(CFX_RectF& rect,
-                                             FX_BOOL bAutoSize) {
+FWL_Error CFWL_MonthCalendarImp::GetWidgetRect(CFX_RectF& rect,
+                                               FX_BOOL bAutoSize) {
   if (bAutoSize) {
     CFX_SizeF fs = CalcSize(TRUE);
     rect.Set(0, 0, fs.x, fs.y);
@@ -207,11 +207,11 @@ FWL_ERR CFWL_MonthCalendarImp::GetWidgetRect(CFX_RectF& rect,
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_MonthCalendarImp::Update() {
+FWL_Error CFWL_MonthCalendarImp::Update() {
   if (IsLocked()) {
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -223,12 +223,12 @@ FWL_ERR CFWL_MonthCalendarImp::Update() {
   ClearDateItem();
   ReSetDateItem();
   LayOut();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_MonthCalendarImp::DrawWidget(CFX_Graphics* pGraphics,
-                                          const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_MonthCalendarImp::DrawWidget(CFX_Graphics* pGraphics,
+                                            const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (m_pProperties->m_pThemeProvider == NULL) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
@@ -255,7 +255,7 @@ FWL_ERR CFWL_MonthCalendarImp::DrawWidget(CFX_Graphics* pGraphics,
     DrawWeekNumberSep(pGraphics, pTheme, pMatrix);
     DrawWeekNumber(pGraphics, pTheme, pMatrix);
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 int32_t CFWL_MonthCalendarImp::CountSelect() {
   return m_arrSelDays.GetSize();
@@ -1017,13 +1017,11 @@ CFWL_MonthCalendarImpDelegate::CFWL_MonthCalendarImpDelegate(
     CFWL_MonthCalendarImp* pOwner)
     : m_pOwner(pOwner) {}
 
-int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
-    CFWL_Message* pMessage) {
+void CFWL_MonthCalendarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
+    return;
 
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  int32_t iRet = 1;
   switch (dwMsgCode) {
     case CFWL_MessageType::SetFocus: {
       OnFocusChanged(pMessage, TRUE);
@@ -1061,17 +1059,15 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
       break;
     }
     default: {
-      iRet = 0;
       break;
     }
   }
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
-  return iRet;
 }
 
-FWL_ERR CFWL_MonthCalendarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                                    const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
+void CFWL_MonthCalendarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                                 const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
 
 void CFWL_MonthCalendarImpDelegate::OnActivate(CFWL_Message* pMsg) {}

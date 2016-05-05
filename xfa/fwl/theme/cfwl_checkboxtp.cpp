@@ -98,11 +98,11 @@ FX_BOOL CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
   return TRUE;
 }
-FWL_ERR CFWL_CheckBoxTP::Initialize() {
+FWL_Error CFWL_CheckBoxTP::Initialize() {
   InitTTO();
   return CFWL_WidgetTP::Initialize();
 }
-FWL_ERR CFWL_CheckBoxTP::Finalize() {
+FWL_Error CFWL_CheckBoxTP::Finalize() {
   FinalizeTTO();
   return CFWL_WidgetTP::Finalize();
 }

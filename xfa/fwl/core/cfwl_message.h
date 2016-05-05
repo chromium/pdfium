@@ -61,8 +61,8 @@ class CFWL_Message {
   virtual ~CFWL_Message() {}
 
   virtual CFWL_Message* Clone() { return nullptr; }
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {
-    return FWL_ERR_Succeeded;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const {
+    return FWL_Error::Succeeded;
   }
   virtual CFWL_MessageType GetClassID() const { return CFWL_MessageType::None; }
 
@@ -87,15 +87,15 @@ class CFWL_Message {
   uint32_t m_dwRefCount;
 };
 
-#define BEGIN_FWL_MESSAGE_DEF(classname, msgType)                   \
-  class classname : public CFWL_Message {                           \
-   public:                                                          \
-    classname() : CFWL_Message() {}                                 \
-    CFWL_Message* Clone() override { return new classname(*this); } \
-    FWL_ERR GetClassName(CFX_WideString& wsClass) const override {  \
-      wsClass = L## #classname;                                     \
-      return FWL_ERR_Succeeded;                                     \
-    }                                                               \
+#define BEGIN_FWL_MESSAGE_DEF(classname, msgType)                    \
+  class classname : public CFWL_Message {                            \
+   public:                                                           \
+    classname() : CFWL_Message() {}                                  \
+    CFWL_Message* Clone() override { return new classname(*this); }  \
+    FWL_Error GetClassName(CFX_WideString& wsClass) const override { \
+      wsClass = L## #classname;                                      \
+      return FWL_Error::Succeeded;                                   \
+    }                                                                \
     CFWL_MessageType GetClassID() const override { return msgType; }
 
 #define END_FWL_MESSAGE_DEF \

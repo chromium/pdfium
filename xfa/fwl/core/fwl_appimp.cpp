@@ -20,11 +20,11 @@ IFWL_App* IFWL_App::Create(CXFA_FFApp* pAdapter) {
 
 void IFWL_App::Release() {}
 
-FWL_ERR IFWL_App::Initialize() {
+FWL_Error IFWL_App::Initialize() {
   return static_cast<CFWL_AppImp*>(GetImpl())->Initialize();
 }
 
-FWL_ERR IFWL_App::Finalize() {
+FWL_Error IFWL_App::Finalize() {
   return static_cast<CFWL_AppImp*>(GetImpl())->Finalize();
 }
 
@@ -62,15 +62,15 @@ CFWL_AppImp::~CFWL_AppImp() {
   CFWL_ToolTipContainer::DeleteInstance();
 }
 
-FWL_ERR CFWL_AppImp::Initialize() {
+FWL_Error CFWL_AppImp::Initialize() {
   if (!m_pWidgetMgr) {
     m_pWidgetMgr.reset(new CFWL_WidgetMgr(m_pAdapterNative));
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_AppImp::Finalize() {
+FWL_Error CFWL_AppImp::Finalize() {
   m_pWidgetMgr.reset();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 CXFA_FFApp* CFWL_AppImp::GetAdapterNative() const {
   return m_pAdapterNative;
@@ -82,6 +82,7 @@ CXFA_FWLAdapterWidgetMgr* FWL_GetAdapterWidgetMgr() {
 IFWL_WidgetMgr* CFWL_AppImp::GetWidgetMgr() const {
   return m_pWidgetMgr.get();
 }
+
 void CFWL_AppImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pThemeProvider = pThemeProvider;
 }

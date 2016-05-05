@@ -14,9 +14,9 @@ CFWL_FormProxyImp::CFWL_FormProxyImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_FormImp(properties, pOuter) {}
 CFWL_FormProxyImp::~CFWL_FormProxyImp() {}
-FWL_ERR CFWL_FormProxyImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_FormProxyImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_FormProxy;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_FormProxyImp::GetClassID() const {
   return FWL_CLASSHASH_FormProxy;
@@ -27,27 +27,29 @@ FX_BOOL CFWL_FormProxyImp::IsInstance(const CFX_WideStringC& wsClass) const {
   }
   return CFWL_FormImp::IsInstance(wsClass);
 }
-FWL_ERR CFWL_FormProxyImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_FormProxyImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_FormProxyImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_FormProxyImp::Finalize() {
+FWL_Error CFWL_FormProxyImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_FormProxyImp::Update() {
-  return FWL_ERR_Succeeded;
+FWL_Error CFWL_FormProxyImp::Update() {
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_FormProxyImp::DrawWidget(CFX_Graphics* pGraphics,
-                                      const CFX_Matrix* pMatrix) {
-  return FWL_ERR_Succeeded;
+FWL_Error CFWL_FormProxyImp::DrawWidget(CFX_Graphics* pGraphics,
+                                        const CFX_Matrix* pMatrix) {
+  return FWL_Error::Succeeded;
 }
+
 CFWL_FormProxyImpDelegate::CFWL_FormProxyImpDelegate(CFWL_FormProxyImp* pOwner)
     : m_pOwner(pOwner) {}
-int32_t CFWL_FormProxyImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+
+void CFWL_FormProxyImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pOuter->SetDelegate(NULL);
-  return pDelegate->OnProcessMessage(pMessage);
+  pDelegate->OnProcessMessage(pMessage);
 }

@@ -38,45 +38,45 @@ CFWL_BarcodeImp::CFWL_BarcodeImp(const CFWL_WidgetImpProperties& properties,
 CFWL_BarcodeImp::~CFWL_BarcodeImp() {
   ReleaseBarcodeEngine();
 }
-FWL_ERR CFWL_BarcodeImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_BarcodeImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Barcode;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_BarcodeImp::GetClassID() const {
   return FWL_CLASSHASH_Barcode;
 }
-FWL_ERR CFWL_BarcodeImp::Initialize() {
+FWL_Error CFWL_BarcodeImp::Initialize() {
   if (!m_pDelegate) {
     m_pDelegate = new CFWL_BarcodeImpDelegate(this);
   }
-  if (CFWL_EditImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
-  return FWL_ERR_Succeeded;
+  if (CFWL_EditImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_BarcodeImp::Finalize() {
+FWL_Error CFWL_BarcodeImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   ReleaseBarcodeEngine();
   return CFWL_EditImp::Finalize();
 }
-FWL_ERR CFWL_BarcodeImp::Update() {
+FWL_Error CFWL_BarcodeImp::Update() {
   if (IsLocked()) {
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   }
-  FWL_ERR ret = CFWL_EditImp::Update();
+  FWL_Error ret = CFWL_EditImp::Update();
   GenerateBarcodeImageCache();
   return ret;
 }
-FWL_ERR CFWL_BarcodeImp::DrawWidget(CFX_Graphics* pGraphics,
-                                    const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_BarcodeImp::DrawWidget(CFX_Graphics* pGraphics,
+                                      const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
     GenerateBarcodeImageCache();
     if (!m_pBarcodeEngine || (m_dwStatus & XFA_BCS_EncodeSuccess) == 0) {
-      return FWL_ERR_Succeeded;
+      return FWL_Error::Succeeded;
     }
     CFX_Matrix mt;
     mt.e = m_rtClient.left;
@@ -87,9 +87,9 @@ FWL_ERR CFWL_BarcodeImp::DrawWidget(CFX_Graphics* pGraphics,
     int32_t errorCode = 0;
     if (!m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix,
                                         errorCode)) {
-      return FWL_ERR_Indefinite;
+      return FWL_Error::Indefinite;
     }
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   return CFWL_EditImp::DrawWidget(pGraphics, pMatrix);
 }
@@ -105,7 +105,7 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
   if (!m_pBarcodeEngine)
     return;
   CFX_WideString wsText;
-  if (GetText(wsText) != FWL_ERR_Succeeded)
+  if (GetText(wsText) != FWL_Error::Succeeded)
     return;
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
@@ -200,7 +200,7 @@ void CFWL_BarcodeImp::SetType(BC_TYPE type) {
   m_type = type;
   m_dwStatus = XFA_BCS_NeedUpdate;
 }
-FWL_ERR CFWL_BarcodeImp::SetText(const CFX_WideString& wsText) {
+FWL_Error CFWL_BarcodeImp::SetText(const CFX_WideString& wsText) {
   ReleaseBarcodeEngine();
   m_dwStatus = XFA_BCS_NeedUpdate;
   return CFWL_EditImp::SetText(wsText);
@@ -220,11 +220,11 @@ FX_BOOL CFWL_BarcodeImp::IsProtectedType() {
 CFWL_BarcodeImpDelegate::CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner)
     : CFWL_EditImpDelegate(pOwner) {}
 
-FWL_ERR CFWL_BarcodeImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
+void CFWL_BarcodeImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetClassID() == CFWL_EventType::TextChanged) {
     CFWL_BarcodeImp* pOwner = static_cast<CFWL_BarcodeImp*>(m_pOwner);
     pOwner->ReleaseBarcodeEngine();
     pOwner->m_dwStatus = XFA_BCS_NeedUpdate;
   }
-  return CFWL_EditImpDelegate::OnProcessEvent(pEvent);
+  CFWL_EditImpDelegate::OnProcessEvent(pEvent);
 }

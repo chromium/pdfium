@@ -76,7 +76,7 @@ CXFA_FWLTheme::~CXFA_FWLTheme() {
   delete m_pCaretTP;
   delete m_pBarcodeTP;
 }
-FWL_ERR CXFA_FWLTheme::Initialize() {
+FWL_Error CXFA_FWLTheme::Initialize() {
   m_pTextOut = new CFDE_TextOut;
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
        ++i) {
@@ -95,9 +95,9 @@ FWL_ERR CXFA_FWLTheme::Initialize() {
 
   ASSERT(NULL != m_pCalendarFont);
   FWLTHEME_Init();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CXFA_FWLTheme::Finalize() {
+FWL_Error CXFA_FWLTheme::Finalize() {
   if (m_pTextOut) {
     m_pTextOut->Release();
     m_pTextOut = NULL;
@@ -107,7 +107,7 @@ FWL_ERR CXFA_FWLTheme::Finalize() {
     m_pCalendarFont = NULL;
   }
   FWLTHEME_Release();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_BOOL CXFA_FWLTheme::IsValidWidget(IFWL_Widget* pWidget) {
   return TRUE;
@@ -124,14 +124,14 @@ FX_BOOL CXFA_FWLTheme::DrawBackground(CFWL_ThemeBackground* pParams) {
   return GetTheme(pParams->m_pWidget)->DrawBackground(pParams);
 }
 FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
-  if (pParams->m_wsText.IsEmpty()) {
-    return FWL_ERR_Indefinite;
-  }
+  if (pParams->m_wsText.IsEmpty())
+    return FALSE;
+
   if (pParams->m_pWidget->GetClassID() == FWL_CLASSHASH_MonthCalendar) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
-    if (!pWidget) {
-      return FWL_ERR_Indefinite;
-    }
+    if (!pWidget)
+      return FALSE;
+
     m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
     m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
     m_pTextOut->SetFont(m_pCalendarFont);
@@ -166,9 +166,9 @@ FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     return TRUE;
   }
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
-  if (!pWidget) {
-    return FWL_ERR_Indefinite;
-  }
+  if (!pWidget)
+    return FALSE;
+
   CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
   CFX_Graphics* pGraphics = pParams->m_pGraphics;
   CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
@@ -345,7 +345,7 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
 FX_BOOL CXFA_FWLTheme::IsCustomizedLayout(IFWL_Widget* pWidget) {
   return GetTheme(pWidget)->IsCustomizedLayout(pWidget);
 }
-FWL_ERR CXFA_FWLTheme::GetPartRect(CFWL_ThemePart* pThemePart) {
+FWL_Error CXFA_FWLTheme::GetPartRect(CFWL_ThemePart* pThemePart) {
   CFX_RectF rect;
   return GetTheme(pThemePart->m_pWidget)->GetPartRect(pThemePart, rect);
 }
@@ -357,9 +357,8 @@ FX_BOOL CXFA_FWLTheme::IsInPart(CFWL_ThemePart* pThemePart,
 FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   if (pParams->m_pWidget->GetClassID() == FWL_CLASSHASH_MonthCalendar) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
-    if (!pWidget) {
-      return FWL_ERR_Indefinite;
-    }
+    if (!pWidget)
+      return FALSE;
     if (!pParams)
       return FALSE;
     if (!m_pTextOut)
@@ -374,9 +373,9 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
     return TRUE;
   }
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
-  if (!pWidget) {
-    return FWL_ERR_Indefinite;
-  }
+  if (!pWidget)
+    return FALSE;
+
   CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
   m_pTextOut->SetFont(pAcc->GetFDEFont());
   m_pTextOut->SetFontSize(pAcc->GetFontSize());

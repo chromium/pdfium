@@ -22,8 +22,8 @@ class IFWL_ToolTip;
 
 class IFWL_ToolTipDP : public IFWL_DataProvider {
  public:
-  virtual FWL_ERR GetCaption(IFWL_Widget* pWidget,
-                             CFX_WideString& wsCaption) = 0;
+  virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
+                               CFX_WideString& wsCaption) = 0;
   virtual int32_t GetInitialDelay(IFWL_Widget* pWidget) = 0;
   virtual int32_t GetAutoPopDelay(IFWL_Widget* pWidget) = 0;
   virtual CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget) = 0;
@@ -35,9 +35,9 @@ class IFWL_ToolTip : public IFWL_Form {
   static IFWL_ToolTip* Create(const CFWL_WidgetImpProperties& properties,
                               IFWL_Widget* pOuter);
 
-  FWL_ERR SetAnchor(const CFX_RectF& rtAnchor);
-  FWL_ERR Show();
-  FWL_ERR Hide();
+  void SetAnchor(const CFX_RectF& rtAnchor);
+  void Show();
+  void Hide();
 
  protected:
   IFWL_ToolTip();

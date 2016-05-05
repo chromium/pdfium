@@ -40,16 +40,16 @@ class IFWL_ScrollBar : public IFWL_Widget {
                                 IFWL_Widget* pOuter);
 
   FX_BOOL IsVertical();
-  FWL_ERR GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
-  FWL_ERR SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
+  FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
+  FWL_Error SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
   FX_FLOAT GetPageSize();
-  FWL_ERR SetPageSize(FX_FLOAT fPageSize);
+  FWL_Error SetPageSize(FX_FLOAT fPageSize);
   FX_FLOAT GetStepSize();
-  FWL_ERR SetStepSize(FX_FLOAT fStepSize);
+  FWL_Error SetStepSize(FX_FLOAT fStepSize);
   FX_FLOAT GetPos();
-  FWL_ERR SetPos(FX_FLOAT fPos);
+  FWL_Error SetPos(FX_FLOAT fPos);
   FX_FLOAT GetTrackPos();
-  FWL_ERR SetTrackPos(FX_FLOAT fTrackPos);
+  FWL_Error SetTrackPos(FX_FLOAT fTrackPos);
   FX_BOOL DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
 
  protected:

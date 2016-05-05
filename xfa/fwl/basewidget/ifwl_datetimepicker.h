@@ -53,10 +53,10 @@ END_FWL_EVENT_DEF
 
 class IFWL_DateTimePickerDP : public IFWL_DataProvider {
  public:
-  virtual FWL_ERR GetToday(IFWL_Widget* pWidget,
-                           int32_t& iYear,
-                           int32_t& iMonth,
-                           int32_t& iDay) = 0;
+  virtual FWL_Error GetToday(IFWL_Widget* pWidget,
+                             int32_t& iYear,
+                             int32_t& iMonth,
+                             int32_t& iDay) = 0;
 };
 
 class IFWL_DateTimePicker : public IFWL_Widget {
@@ -64,12 +64,12 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   static IFWL_DateTimePicker* Create(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter);
 
-  FWL_ERR GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  FWL_ERR SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
-  FWL_ERR SetEditText(const CFX_WideString& wsText);
-  FWL_ERR GetEditText(CFX_WideString& wsText,
-                      int32_t nStart = 0,
-                      int32_t nCount = -1) const;
+  FWL_Error GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
+  FWL_Error SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
+  FWL_Error SetEditText(const CFX_WideString& wsText);
+  FWL_Error GetEditText(CFX_WideString& wsText,
+                        int32_t nStart = 0,
+                        int32_t nCount = -1) const;
   int32_t CountSelRanges();
   int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
   FX_BOOL CanUndo();
@@ -85,10 +85,10 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   FX_BOOL SelectAll();
   FX_BOOL Delete();
   FX_BOOL DeSelect();
-  FWL_ERR GetBBox(CFX_RectF& rect);
-  FWL_ERR SetEditLimit(int32_t nLimit);
-  FWL_ERR ModifyEditStylesEx(uint32_t dwStylesExAdded,
-                             uint32_t dwStylesExRemoved);
+  FWL_Error GetBBox(CFX_RectF& rect);
+  FWL_Error SetEditLimit(int32_t nLimit);
+  FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                               uint32_t dwStylesExRemoved);
 
  protected:
   IFWL_DateTimePicker();

@@ -8,21 +8,21 @@
 
 CAGG_Graphics::CAGG_Graphics() : m_owner(nullptr) {}
 
-FX_ERR CAGG_Graphics::Create(CFX_Graphics* owner,
-                             int32_t width,
-                             int32_t height,
-                             FXDIB_Format format) {
+FWL_Error CAGG_Graphics::Create(CFX_Graphics* owner,
+                                int32_t width,
+                                int32_t height,
+                                FXDIB_Format format) {
   if (owner->m_renderDevice)
-    return FX_ERR_Parameter_Invalid;
+    return FWL_Error::ParameterInvalid;
   if (m_owner)
-    return FX_ERR_Property_Invalid;
+    return FWL_Error::PropertyInvalid;
 
   CFX_FxgeDevice* device = new CFX_FxgeDevice;
   device->Create(width, height, format);
   m_owner = owner;
   m_owner->m_renderDevice = device;
   m_owner->m_renderDevice->GetBitmap()->Clear(0xFFFFFFFF);
-  return FX_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 
 CAGG_Graphics::~CAGG_Graphics() {

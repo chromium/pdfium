@@ -44,14 +44,14 @@ CFWL_FormTP::~CFWL_FormTP() {
   delete m_pThemeData;
 }
 
-FWL_ERR CFWL_FormTP::Initialize() {
+FWL_Error CFWL_FormTP::Initialize() {
   InitTTO();
   InitCaption(TRUE);
   InitCaption(FALSE);
   return CFWL_WidgetTP::Initialize();
 }
 
-FWL_ERR CFWL_FormTP::Finalize() {
+FWL_Error CFWL_FormTP::Finalize() {
   FinalizeTTO();
   delete m_pActiveBitmap;
   m_pActiveBitmap = nullptr;
@@ -203,8 +203,8 @@ void* CFWL_FormTP::GetCapacity(CFWL_ThemePart* pThemePart,
   }
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
-FWL_ERR CFWL_FormTP::GetPartRect(CFWL_ThemePart* pThemePart,
-                                 CFX_RectF& rtPart) {
+FWL_Error CFWL_FormTP::GetPartRect(CFWL_ThemePart* pThemePart,
+                                   CFX_RectF& rtPart) {
   switch (pThemePart->m_iPart) {
     case CFWL_Part::CloseBox: {
       CalCloseBox(pThemePart->m_pWidget, rtPart);
@@ -228,7 +228,7 @@ FWL_ERR CFWL_FormTP::GetPartRect(CFWL_ThemePart* pThemePart,
     }
     default: {}
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 void CFWL_FormTP::CalCloseBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
   uint32_t dwStyles = pWidget->GetStyles();

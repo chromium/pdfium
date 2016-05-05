@@ -111,36 +111,36 @@ class CFWL_WidgetTP {
   virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
                               uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
-  virtual FWL_ERR GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix);
-  virtual FWL_ERR SetThemeMatrix(IFWL_Widget* pWidget,
-                                 const CFX_Matrix& matrix);
+  virtual FWL_Error GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix);
+  virtual FWL_Error SetThemeMatrix(IFWL_Widget* pWidget,
+                                   const CFX_Matrix& matrix);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
                             CFWL_WidgetCapacity dwCapacity);
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget);
-  virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart);
+  virtual FWL_Error GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart);
   virtual FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,
                            FX_FLOAT fx,
                            FX_FLOAT fy);
   virtual FX_BOOL CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
   virtual ~CFWL_WidgetTP();
-  FWL_ERR SetFont(IFWL_Widget* pWidget,
-                  const FX_WCHAR* strFont,
-                  FX_FLOAT fFontSize,
-                  FX_ARGB rgbFont);
-  FWL_ERR SetFont(IFWL_Widget* pWidget,
-                  IFX_Font* pFont,
-                  FX_FLOAT fFontSize,
-                  FX_ARGB rgbFont);
+  FWL_Error SetFont(IFWL_Widget* pWidget,
+                    const FX_WCHAR* strFont,
+                    FX_FLOAT fFontSize,
+                    FX_ARGB rgbFont);
+  FWL_Error SetFont(IFWL_Widget* pWidget,
+                    IFX_Font* pFont,
+                    FX_FLOAT fFontSize,
+                    FX_ARGB rgbFont);
   IFX_Font* GetFont(IFWL_Widget* pWidget);
 
  protected:
   CFWL_WidgetTP();
-  FX_ERR InitTTO();
-  FX_ERR FinalizeTTO();
+  FWL_Error InitTTO();
+  FWL_Error FinalizeTTO();
   void DrawEdge(CFX_Graphics* pGraphics,
                 uint32_t dwStyles,
                 const CFX_RectF* pRect,

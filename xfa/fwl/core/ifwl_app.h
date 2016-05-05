@@ -34,8 +34,8 @@ class IFWL_App {
 
   virtual ~IFWL_App() {}
 
-  FWL_ERR Initialize();
-  FWL_ERR Finalize();
+  FWL_Error Initialize();
+  FWL_Error Finalize();
   CXFA_FFApp* GetAdapterNative();
   IFWL_WidgetMgr* GetWidgetMgr();
   IFWL_ThemeProvider* GetThemeProvider();

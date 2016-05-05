@@ -180,10 +180,12 @@ void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
   m_pNormalWidget->Update();
   AddInvalidateRect();
 }
-int32_t CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
-  return m_pOldDelegate->OnProcessMessage(pMessage);
+
+void CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
+  m_pOldDelegate->OnProcessMessage(pMessage);
 }
-FWL_ERR CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
+
+void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetClassID()) {
     case CFWL_EventType::SelectChanged: {
@@ -194,11 +196,11 @@ FWL_ERR CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
     default:
       break;
   }
-  return m_pOldDelegate->OnProcessEvent(pEvent);
+  m_pOldDelegate->OnProcessEvent(pEvent);
 }
-FWL_ERR CXFA_FFListBox::OnDrawWidget(CFX_Graphics* pGraphics,
-                                     const CFX_Matrix* pMatrix) {
-  return m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+void CXFA_FFListBox::OnDrawWidget(CFX_Graphics* pGraphics,
+                                  const CFX_Matrix* pMatrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }
 
 CXFA_FFComboBox::CXFA_FFComboBox(CXFA_FFPageView* pPageView,
@@ -495,11 +497,11 @@ void CXFA_FFComboBox::OnPostOpen(IFWL_Widget* pWidget) {
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_PostOpen, &eParam);
 }
 
-int32_t CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
-  return m_pOldDelegate->OnProcessMessage(pMessage);
+void CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
+  m_pOldDelegate->OnProcessMessage(pMessage);
 }
 
-FWL_ERR CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
+void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetClassID()) {
     case CFWL_EventType::SelectChanged: {
@@ -524,10 +526,10 @@ FWL_ERR CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
     default:
       break;
   }
-  return m_pOldDelegate->OnProcessEvent(pEvent);
+  m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
-FWL_ERR CXFA_FFComboBox::OnDrawWidget(CFX_Graphics* pGraphics,
-                                      const CFX_Matrix* pMatrix) {
-  return m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+void CXFA_FFComboBox::OnDrawWidget(CFX_Graphics* pGraphics,
+                                   const CFX_Matrix* pMatrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }

@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_WIDGETDELEGATE_H_
 #define XFA_FWL_CORE_IFWL_WIDGETDELEGATE_H_
 
+#include <stdint.h>
+
 #include "xfa/fwl/core/fwl_error.h"
 
 class CFWL_Event;
@@ -17,10 +19,10 @@ class CFX_Matrix;
 class IFWL_WidgetDelegate {
  public:
   virtual ~IFWL_WidgetDelegate() {}
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage) = 0;
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent) = 0;
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = nullptr) = 0;
+  virtual void OnProcessMessage(CFWL_Message* pMessage) = 0;
+  virtual void OnProcessEvent(CFWL_Event* pEvent) = 0;
+  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix = nullptr) = 0;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_WIDGETDELEGATE_H_

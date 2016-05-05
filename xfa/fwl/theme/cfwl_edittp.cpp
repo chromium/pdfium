@@ -77,11 +77,11 @@ FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
   return TRUE;
 }
-FWL_ERR CFWL_EditTP::Initialize() {
+FWL_Error CFWL_EditTP::Initialize() {
   InitTTO();
   return CFWL_WidgetTP::Initialize();
 }
-FWL_ERR CFWL_EditTP::Finalize() {
+FWL_Error CFWL_EditTP::Finalize() {
   FinalizeTTO();
   return CFWL_WidgetTP::Finalize();
 }

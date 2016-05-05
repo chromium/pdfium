@@ -37,7 +37,7 @@ IFWL_CheckBox::IFWL_CheckBox() {}
 int32_t IFWL_CheckBox::GetCheckState() {
   return static_cast<CFWL_CheckBoxImp*>(GetImpl())->GetCheckState();
 }
-FWL_ERR IFWL_CheckBox::SetCheckState(int32_t iCheck) {
+FWL_Error IFWL_CheckBox::SetCheckState(int32_t iCheck) {
   return static_cast<CFWL_CheckBoxImp*>(GetImpl())->SetCheckState(iCheck);
 }
 
@@ -53,33 +53,33 @@ CFWL_CheckBoxImp::CFWL_CheckBoxImp(const CFWL_WidgetImpProperties& properties,
   m_rtFocus.Reset();
 }
 CFWL_CheckBoxImp::~CFWL_CheckBoxImp() {}
-FWL_ERR CFWL_CheckBoxImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_CheckBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_CheckBox;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_CheckBoxImp::GetClassID() const {
   return FWL_CLASSHASH_CheckBox;
 }
-FWL_ERR CFWL_CheckBoxImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_CheckBoxImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_CheckBoxImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_CheckBoxImp::Finalize() {
+FWL_Error CFWL_CheckBoxImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_CheckBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error CFWL_CheckBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider)
       m_pProperties->m_pThemeProvider = GetAvailableTheme();
     if (!m_pProperties->m_pThemeProvider)
-      return FWL_ERR_Indefinite;
+      return FWL_Error::Indefinite;
     if (!m_pProperties->m_pDataProvider)
-      return FWL_ERR_Indefinite;
+      return FWL_Error::Indefinite;
     CFX_WideString wsCaption;
     m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsCaption);
     if (wsCaption.GetLength() > 0) {
@@ -100,25 +100,25 @@ FWL_ERR CFWL_CheckBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_CheckBoxImp::Update() {
+FWL_Error CFWL_CheckBoxImp::Update() {
   if (IsLocked()) {
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   UpdateTextOutStyles();
   Layout();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
-                                     const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
+                                       const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
@@ -147,13 +147,13 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
   }
   if (!m_pProperties->m_pDataProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   {
     CFX_WideString wsCaption;
     m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsCaption);
     int32_t iLen = wsCaption.GetLength();
     if (iLen <= 0)
-      return FWL_ERR_Indefinite;
+      return FWL_Error::Indefinite;
     CFWL_ThemeText textParam;
     textParam.m_pWidget = m_pInterface;
     textParam.m_iPart = CFWL_Part::Caption;
@@ -168,7 +168,7 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
     textParam.m_iTTOAlign = m_iTTOAlign;
     pTheme->DrawText(&textParam);
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 int32_t CFWL_CheckBoxImp::GetCheckState() {
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_3State) &&
@@ -182,7 +182,7 @@ int32_t CFWL_CheckBoxImp::GetCheckState() {
   }
   return 0;
 }
-FWL_ERR CFWL_CheckBoxImp::SetCheckState(int32_t iCheck) {
+FWL_Error CFWL_CheckBoxImp::SetCheckState(int32_t iCheck) {
   m_pProperties->m_dwStates &= ~FWL_STATE_CKB_CheckMask;
   switch (iCheck) {
     case 0: {
@@ -201,7 +201,7 @@ FWL_ERR CFWL_CheckBoxImp::SetCheckState(int32_t iCheck) {
     default: {}
   }
   Repaint(&m_rtClient);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 void CFWL_CheckBoxImp::Layout() {
   int32_t width = int32_t(m_pProperties->m_rtWidget.width + 0.5f);
@@ -413,11 +413,10 @@ void CFWL_CheckBoxImp::NextStates() {
 CFWL_CheckBoxImpDelegate::CFWL_CheckBoxImpDelegate(CFWL_CheckBoxImp* pOwner)
     : m_pOwner(pOwner) {}
 
-int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
+    return;
 
-  int32_t iRet = 1;
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
       OnActivate(pMessage);
@@ -462,18 +461,18 @@ int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     default: {
-      iRet = 0;
       break;
     }
   }
 
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
-  return iRet;
 }
-FWL_ERR CFWL_CheckBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                               const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
+
+void CFWL_CheckBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                            const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
+
 void CFWL_CheckBoxImpDelegate::OnActivate(CFWL_Message* pMsg) {
   m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
   m_pOwner->Repaint(&(m_pOwner->m_rtClient));

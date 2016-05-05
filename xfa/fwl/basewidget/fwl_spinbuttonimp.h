@@ -20,17 +20,17 @@ class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
   CFWL_SpinButtonImp(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   ~CFWL_SpinButtonImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error Update();
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
   virtual int32_t Run(FWL_HTIMER hTimer);
-  FWL_ERR EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
+  FWL_Error EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
   FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
 
  protected:
@@ -53,10 +53,10 @@ class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
 class CFWL_SpinButtonImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_SpinButtonImpDelegate(CFWL_SpinButtonImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

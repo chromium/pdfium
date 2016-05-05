@@ -37,8 +37,8 @@ class IFWL_WidgetMgr {
                                  FWL_WGTRELATION eRelation) = 0;
   virtual int32_t GetWidgetIndex(IFWL_Widget* pWidget) = 0;
   virtual FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) = 0;
-  virtual FWL_ERR RepaintWidget(IFWL_Widget* pWidget,
-                                const CFX_RectF* pRect = NULL) = 0;
+  virtual FWL_Error RepaintWidget(IFWL_Widget* pWidget,
+                                  const CFX_RectF* pRect = NULL) = 0;
   virtual uint32_t GetCapability() = 0;
 };
 

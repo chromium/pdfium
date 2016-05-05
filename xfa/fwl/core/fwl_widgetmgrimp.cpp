@@ -219,10 +219,10 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
   }
   return TRUE;
 }
-FWL_ERR CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
-                                      const CFX_RectF* pRect) {
+FWL_Error CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
+                                        const CFX_RectF* pRect) {
   if (!m_pAdapter)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   IFWL_Widget* pNative = pWidget;
   CFX_RectF rect(*pRect);
   if (IsFormDisabled()) {
@@ -238,7 +238,7 @@ FWL_ERR CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
   } else if (!IsAbleNative(pWidget)) {
     pNative = GetWidget(pWidget, FWL_WGTRELATION_SystemForm);
     if (!pNative)
-      return FWL_ERR_Indefinite;
+      return FWL_Error::Indefinite;
     pWidget->TransformTo(pNative, rect.left, rect.top);
   }
   AddRedrawCounts(pNative);
@@ -371,8 +371,9 @@ FX_BOOL CFWL_WidgetMgr::IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent) {
   } while (pTemp);
   return FALSE;
 }
-FWL_ERR CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
-                                             const CFX_RectF& rect) {
+
+FWL_Error CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
+                                               const CFX_RectF& rect) {
   if (FWL_UseOffscreen(pWidget)) {
     CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
     pItem->iRedrawCounter++;
@@ -391,8 +392,9 @@ FWL_ERR CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
     pItem->bOutsideChanged = !m_rtScreen.Contains(rect);
 #endif
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
+
 IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
                                               FX_FLOAT x,
                                               FX_FLOAT y) {
@@ -631,25 +633,26 @@ FX_BOOL CFWL_WidgetMgr::GetAdapterPopupPos(IFWL_Widget* pWidget,
 }
 CFWL_WidgetMgrDelegate::CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr)
     : m_pWidgetMgr(pWidgetMgr) {}
-FWL_ERR CFWL_WidgetMgrDelegate::OnSetCapability(uint32_t dwCapability) {
+FWL_Error CFWL_WidgetMgrDelegate::OnSetCapability(uint32_t dwCapability) {
   m_pWidgetMgr->m_dwCapability = dwCapability;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
+
+void CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
+    return;
   if (!pMessage->m_pDstTarget)
-    return 0;
+    return;
 
   IFWL_Widget* pDstWidget = pMessage->m_pDstTarget;
   IFWL_App* pApp = pDstWidget->GetOwnerApp();
   if (!pApp)
-    return 0;
+    return;
 
   CFWL_NoteDriver* pNoteDriver =
       static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pNoteDriver)
-    return 0;
+    return;
 
   if (m_pWidgetMgr->IsThreadEnabled())
     pMessage = static_cast<CFWL_Message*>(pMessage->Clone());
@@ -660,23 +663,21 @@ int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
 
 #if (_FX_OS_ == _FX_MACOSX_)
   CFWL_NoteLoop* pTopLoop = pNoteDriver->GetTopLoop();
-  if (pTopLoop) {
+  if (pTopLoop)
     pNoteDriver->UnqueueMessage(pTopLoop);
-  }
 #endif
-  if (m_pWidgetMgr->IsThreadEnabled()) {
+
+  if (m_pWidgetMgr->IsThreadEnabled())
     pMessage->Release();
-  }
-  return FWL_ERR_Succeeded;
+
+  return;
 }
 
-FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
-                                             CFX_Graphics* pGraphics,
-                                             const CFX_Matrix* pMatrix) {
-  if (!pWidget)
-    return FWL_ERR_Indefinite;
-  if (!pGraphics)
-    return FWL_ERR_Indefinite;
+void CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
+                                          CFX_Graphics* pGraphics,
+                                          const CFX_Matrix* pMatrix) {
+  if (!pWidget || !pGraphics)
+    return;
 
   CFX_Graphics* pTemp = DrawWidgetBefore(pWidget, pGraphics, pMatrix);
   CFX_RectF clipCopy;
@@ -684,7 +685,7 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
   clipCopy.left = clipCopy.top = 0;
   if (bUseOffscreenDirect(pWidget)) {
     DrawWidgetAfter(pWidget, pGraphics, clipCopy, pMatrix);
-    return FWL_ERR_Succeeded;
+    return;
   }
   CFX_RectF clipBounds;
 
@@ -718,7 +719,6 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
 
   DrawWidgetAfter(pWidget, pGraphics, clipCopy, pMatrix);
   m_pWidgetMgr->ResetRedrawCounts(pWidget);
-  return FWL_ERR_Succeeded;
 }
 
 void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,

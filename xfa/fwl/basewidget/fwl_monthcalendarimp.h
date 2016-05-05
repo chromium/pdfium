@@ -24,14 +24,14 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
   CFWL_MonthCalendarImp(const CFWL_WidgetImpProperties& properties,
                         IFWL_Widget* pOuter);
   ~CFWL_MonthCalendarImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error Update();
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
   virtual int32_t CountSelect();
   virtual FX_BOOL GetSelect(int32_t& iYear,
                             int32_t& iMonth,
@@ -229,9 +229,9 @@ struct FWL_DATEINFO {
 class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_MonthCalendarImpDelegate(CFWL_MonthCalendarImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnActivate(CFWL_Message* pMsg);

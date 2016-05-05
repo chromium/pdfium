@@ -31,34 +31,34 @@ IFWL_ScrollBar::IFWL_ScrollBar() {}
 FX_BOOL IFWL_ScrollBar::IsVertical() {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->IsVertical();
 }
-FWL_ERR IFWL_ScrollBar::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
+FWL_Error IFWL_ScrollBar::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetRange(fMin, fMax);
 }
-FWL_ERR IFWL_ScrollBar::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
+FWL_Error IFWL_ScrollBar::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetRange(fMin, fMax);
 }
 FX_FLOAT IFWL_ScrollBar::GetPageSize() {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetPageSize();
 }
-FWL_ERR IFWL_ScrollBar::SetPageSize(FX_FLOAT fPageSize) {
+FWL_Error IFWL_ScrollBar::SetPageSize(FX_FLOAT fPageSize) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetPageSize(fPageSize);
 }
 FX_FLOAT IFWL_ScrollBar::GetStepSize() {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetStepSize();
 }
-FWL_ERR IFWL_ScrollBar::SetStepSize(FX_FLOAT fStepSize) {
+FWL_Error IFWL_ScrollBar::SetStepSize(FX_FLOAT fStepSize) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetStepSize(fStepSize);
 }
 FX_FLOAT IFWL_ScrollBar::GetPos() {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetPos();
 }
-FWL_ERR IFWL_ScrollBar::SetPos(FX_FLOAT fPos) {
+FWL_Error IFWL_ScrollBar::SetPos(FX_FLOAT fPos) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetPos(fPos);
 }
 FX_FLOAT IFWL_ScrollBar::GetTrackPos() {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetTrackPos();
 }
-FWL_ERR IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
+FWL_Error IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetTrackPos(fTrackPos);
 }
 FX_BOOL IFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
@@ -99,31 +99,31 @@ CFWL_ScrollBarImp::CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
   m_rtMaxTrack.Reset();
 }
 CFWL_ScrollBarImp::~CFWL_ScrollBarImp() {}
-FWL_ERR CFWL_ScrollBarImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_ScrollBarImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ScrollBar;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_ScrollBarImp::GetClassID() const {
   return FWL_CLASSHASH_ScrollBar;
 }
-FWL_ERR CFWL_ScrollBarImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_ScrollBarImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_ScrollBarImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ScrollBarImp::Finalize() {
+FWL_Error CFWL_ScrollBarImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_ScrollBarImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error CFWL_ScrollBarImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     FX_FLOAT* pfMinWidth = static_cast<FX_FLOAT*>(
         GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
     if (!pfMinWidth)
-      return FWL_ERR_Indefinite;
+      return FWL_Error::Indefinite;
     if (IsVertical()) {
       rect.Set(0, 0, (*pfMinWidth), (*pfMinWidth) * 3);
     } else {
@@ -133,24 +133,24 @@ FWL_ERR CFWL_ScrollBarImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ScrollBarImp::Update() {
+FWL_Error CFWL_ScrollBarImp::Update() {
   if (IsLocked()) {
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   Layout();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ScrollBarImp::DrawWidget(CFX_Graphics* pGraphics,
-                                      const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_ScrollBarImp::DrawWidget(CFX_Graphics* pGraphics,
+                                        const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
@@ -163,51 +163,51 @@ FWL_ERR CFWL_ScrollBarImp::DrawWidget(CFX_Graphics* pGraphics,
   DrawArrowBtn(pGraphics, pTheme, TRUE, pMatrix);
   DrawArrowBtn(pGraphics, pTheme, FALSE, pMatrix);
   DrawThumb(pGraphics, pTheme, pMatrix);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 inline FX_BOOL CFWL_ScrollBarImp::IsVertical() {
   return m_pProperties->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert;
 }
-FWL_ERR CFWL_ScrollBarImp::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
+FWL_Error CFWL_ScrollBarImp::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
   fMin = m_fRangeMin;
   fMax = m_fRangeMax;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ScrollBarImp::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
+FWL_Error CFWL_ScrollBarImp::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
   m_fRangeMin = fMin;
   m_fRangeMax = fMax;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_FLOAT CFWL_ScrollBarImp::GetPageSize() {
   return m_fPageSize;
 }
-FWL_ERR CFWL_ScrollBarImp::SetPageSize(FX_FLOAT fPageSize) {
+FWL_Error CFWL_ScrollBarImp::SetPageSize(FX_FLOAT fPageSize) {
   m_fPageSize = fPageSize;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_FLOAT CFWL_ScrollBarImp::GetStepSize() {
   return m_fStepSize;
 }
-FWL_ERR CFWL_ScrollBarImp::SetStepSize(FX_FLOAT fStepSize) {
+FWL_Error CFWL_ScrollBarImp::SetStepSize(FX_FLOAT fStepSize) {
   m_fStepSize = fStepSize;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_FLOAT CFWL_ScrollBarImp::GetPos() {
   return m_fPos;
 }
-FWL_ERR CFWL_ScrollBarImp::SetPos(FX_FLOAT fPos) {
+FWL_Error CFWL_ScrollBarImp::SetPos(FX_FLOAT fPos) {
   m_fPos = fPos;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_FLOAT CFWL_ScrollBarImp::GetTrackPos() {
   return m_fTrackPos;
 }
-FWL_ERR CFWL_ScrollBarImp::SetTrackPos(FX_FLOAT fTrackPos) {
+FWL_Error CFWL_ScrollBarImp::SetTrackPos(FX_FLOAT fTrackPos) {
   m_fTrackPos = fTrackPos;
   CalcThumbButtonRect(m_rtThumb);
   CalcMinTrackRect(m_rtMinTrack);
   CalcMaxTrackRect(m_rtMaxTrack);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_BOOL CFWL_ScrollBarImp::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
   switch (dwCode) {
@@ -236,9 +236,9 @@ int32_t CFWL_ScrollBarImp::Run(FWL_HTIMER hTimer) {
   }
   return 1;
 }
-FWL_ERR CFWL_ScrollBarImp::SetOuter(IFWL_Widget* pOuter) {
+FWL_Error CFWL_ScrollBarImp::SetOuter(IFWL_Widget* pOuter) {
   m_pOuter = pOuter;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 void CFWL_ScrollBarImp::DrawTrack(CFX_Graphics* pGraphics,
                                   IFWL_ThemeProvider* pTheme,
@@ -628,11 +628,10 @@ FX_BOOL CFWL_ScrollBarImp::OnScroll(uint32_t dwCode, FX_FLOAT fPos) {
 CFWL_ScrollBarImpDelegate::CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp* pOwner)
     : m_pOwner(pOwner) {}
 
-int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
+    return;
 
-  int32_t iRet = 1;
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   if (dwMsgCode == CFWL_MessageType::Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
@@ -654,7 +653,6 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         break;
       }
       default: {
-        iRet = 0;
         break;
       }
     }
@@ -662,16 +660,14 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     CFWL_MsgMouseWheel* pMsg = static_cast<CFWL_MsgMouseWheel*>(pMessage);
     OnMouseWheel(pMsg->m_fx, pMsg->m_fy, pMsg->m_dwFlags, pMsg->m_fDeltaX,
                  pMsg->m_fDeltaY);
-  } else {
-    iRet = 0;
   }
-  return iRet;
 }
 
-FWL_ERR CFWL_ScrollBarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                                const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
+void CFWL_ScrollBarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                             const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
+
 void CFWL_ScrollBarImpDelegate::OnLButtonDown(uint32_t dwFlags,
                                               FX_FLOAT fx,
                                               FX_FLOAT fy) {

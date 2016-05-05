@@ -18,14 +18,14 @@ class CFWL_FormProxyImp : public CFWL_FormImp {
   CFWL_FormProxyImp(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
   ~CFWL_FormProxyImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR Update();
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error Update();
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
 
  protected:
   friend class CFWL_FormProxyImpDelegate;
@@ -33,7 +33,7 @@ class CFWL_FormProxyImp : public CFWL_FormImp {
 class CFWL_FormProxyImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_FormProxyImpDelegate(CFWL_FormProxyImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
 
  protected:
   CFWL_FormProxyImp* m_pOwner;

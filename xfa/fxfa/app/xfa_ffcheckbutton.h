@@ -25,10 +25,10 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   virtual void UpdateWidgetProperty();
   virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void SetFWLCheckState(XFA_CHECKSTATE eCheckState);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  virtual void OnProcessMessage(CFWL_Message* pMessage);
+  virtual void OnProcessEvent(CFWL_Event* pEvent);
+  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix = NULL);
 
  protected:
   virtual FX_BOOL CommitData();

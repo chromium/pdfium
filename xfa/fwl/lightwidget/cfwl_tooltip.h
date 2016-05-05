@@ -13,28 +13,35 @@
 class CFWL_ToolTip : public CFWL_Widget {
  public:
   static CFWL_ToolTip* Create();
-  FWL_ERR Initialize(const CFWL_WidgetProperties* pProperties = NULL);
-  FWL_ERR GetCaption(CFX_WideString& wsCaption);
-  FWL_ERR SetCaption(const CFX_WideStringC& wsCaption);
-  int32_t GetInitialDelay();
-  int32_t SetInitialDelay(int32_t nDelayTime);
-  int32_t GetAutoPopDelay();
-  int32_t SetAutoPopDelay(int32_t nDelayTime);
-  CFX_DIBitmap* GetToolTipIcon();
-  FWL_ERR SetToolTipIcon(CFX_DIBitmap* pBitmap);
-  CFX_SizeF GetToolTipIconSize();
-  FWL_ERR SetToolTipIconSize(CFX_SizeF fSize);
-  FWL_ERR SetAnchor(const CFX_RectF& rtAnchor);
-  FWL_ERR Show();
-  FWL_ERR Hide();
+
   CFWL_ToolTip();
   virtual ~CFWL_ToolTip();
+
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+
+  void GetCaption(CFX_WideString& wsCaption);
+  void SetCaption(const CFX_WideStringC& wsCaption);
+
+  int32_t GetInitialDelay();
+  void SetInitialDelay(int32_t nDelayTime);
+
+  int32_t GetAutoPopDelay();
+  void SetAutoPopDelay(int32_t nDelayTime);
+
+  CFX_DIBitmap* GetToolTipIcon();
+  void SetToolTipIcon(CFX_DIBitmap* pBitmap);
+  CFX_SizeF GetToolTipIconSize();
+  void SetToolTipIconSize(CFX_SizeF fSize);
+
+  void SetAnchor(const CFX_RectF& rtAnchor);
+  void Show();
+  void Hide();
 
  protected:
   class CFWL_ToolTipDP : public IFWL_ToolTipDP {
    public:
     CFWL_ToolTipDP();
-    FWL_ERR GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
+    FWL_Error GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
     int32_t GetInitialDelay(IFWL_Widget* pWidget);
     int32_t GetAutoPopDelay(IFWL_Widget* pWidget);
     CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget);

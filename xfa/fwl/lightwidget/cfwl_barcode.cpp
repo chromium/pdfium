@@ -12,21 +12,21 @@ CFWL_Barcode* CFWL_Barcode::Create() {
   return new CFWL_Barcode;
 }
 
-FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
+FWL_Error CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
   std::unique_ptr<IFWL_Barcode> pBarcode(IFWL_Barcode::Create(
       m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
-  FWL_ERR ret = pBarcode->Initialize();
-  if (ret != FWL_ERR_Succeeded) {
+  FWL_Error ret = pBarcode->Initialize();
+  if (ret != FWL_Error::Succeeded) {
     return ret;
   }
   m_pIface = pBarcode.release();
   CFWL_Widget::Initialize();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 
 CFWL_Barcode::CFWL_Barcode() {}
@@ -44,7 +44,7 @@ FX_BOOL CFWL_Barcode::IsProtectedType() {
     return 0;
   return static_cast<IFWL_Barcode*>(m_pIface)->IsProtectedType();
 }
-FWL_ERR CFWL_Barcode::CFWL_BarcodeDP::GetCaption(IFWL_Widget* pWidget,
-                                                 CFX_WideString& wsCaption) {
-  return FWL_ERR_Succeeded;
+FWL_Error CFWL_Barcode::CFWL_BarcodeDP::GetCaption(IFWL_Widget* pWidget,
+                                                   CFX_WideString& wsCaption) {
+  return FWL_Error::Succeeded;
 }

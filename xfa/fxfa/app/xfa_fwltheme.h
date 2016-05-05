@@ -26,17 +26,17 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
  public:
   CXFA_FWLTheme(CXFA_FFApp* pApp);
   virtual ~CXFA_FWLTheme();
-  virtual FWL_ERR Release() {
+  virtual FWL_Error Release() {
     delete this;
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   virtual IFWL_Widget* Retain() { return NULL; }
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {
-    return FWL_ERR_Succeeded;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const {
+    return FWL_Error::Succeeded;
   }
   virtual uint32_t GetHashCode() const { return 0; }
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
   virtual uint32_t GetThemeID(IFWL_Widget* pWidget);
   virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
@@ -47,21 +47,21 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
                             CFWL_WidgetCapacity dwCapacity);
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget);
-  virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart);
+  virtual FWL_Error GetPartRect(CFWL_ThemePart* pThemePart);
   virtual FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,
                            FX_FLOAT fx,
                            FX_FLOAT fy);
 
   virtual FX_BOOL CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
-  virtual FWL_ERR GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) {
-    return FWL_ERR_Succeeded;
+  virtual FWL_Error GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) {
+    return FWL_Error::Succeeded;
   }
-  virtual FWL_ERR SetThemeMatrix(IFWL_Widget* pWidget,
-                                 const CFX_Matrix& matrix) {
-    return FWL_ERR_Succeeded;
+  virtual FWL_Error SetThemeMatrix(IFWL_Widget* pWidget,
+                                   const CFX_Matrix& matrix) {
+    return FWL_Error::Succeeded;
   }
-  virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart) {
-    return FWL_ERR_Succeeded;
+  virtual FWL_Error GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart) {
+    return FWL_Error::Succeeded;
   }
 
  protected:

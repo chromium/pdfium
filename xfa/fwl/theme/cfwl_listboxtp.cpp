@@ -66,11 +66,11 @@ FX_BOOL CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
   return TRUE;
 }
-FWL_ERR CFWL_ListBoxTP::Initialize() {
+FWL_Error CFWL_ListBoxTP::Initialize() {
   InitTTO();
   return CFWL_WidgetTP::Initialize();
 }
-FWL_ERR CFWL_ListBoxTP::Finalize() {
+FWL_Error CFWL_ListBoxTP::Finalize() {
   FinalizeTTO();
   return CFWL_WidgetTP::Finalize();
 }

@@ -70,8 +70,8 @@ class CFWL_Event {
       : m_pSrcTarget(nullptr), m_pDstTarget(nullptr), m_dwRefCount(1) {}
   virtual ~CFWL_Event() {}
 
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {
-    return FWL_ERR_Succeeded;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const {
+    return FWL_Error::Succeeded;
   }
   virtual CFWL_EventType GetClassID() const { return CFWL_EventType::None; }
 
@@ -90,14 +90,14 @@ class CFWL_Event {
   uint32_t m_dwRefCount;
 };
 
-#define BEGIN_FWL_EVENT_DEF(classname, eventType)                 \
-  class classname : public CFWL_Event {                           \
-   public:                                                        \
-    classname() : CFWL_Event() {}                                 \
-    virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const { \
-      wsClass = L## #classname;                                   \
-      return FWL_ERR_Succeeded;                                   \
-    }                                                             \
+#define BEGIN_FWL_EVENT_DEF(classname, eventType)                   \
+  class classname : public CFWL_Event {                             \
+   public:                                                          \
+    classname() : CFWL_Event() {}                                   \
+    virtual FWL_Error GetClassName(CFX_WideString& wsClass) const { \
+      wsClass = L## #classname;                                     \
+      return FWL_Error::Succeeded;                                  \
+    }                                                               \
     virtual CFWL_EventType GetClassID() const { return eventType; }
 
 #define END_FWL_EVENT_DEF \

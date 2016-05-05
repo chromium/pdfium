@@ -25,23 +25,22 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
                   IFWL_Widget* pOuter);
   ~CFWL_ListBoxImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error Update();
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   virtual int32_t CountSelItems();
   virtual FWL_HLISTITEM GetSelItem(int32_t nIndexSel);
   virtual int32_t GetSelIndex(int32_t nIndex);
-  virtual FWL_ERR SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect = TRUE);
-  virtual FWL_ERR GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText);
-  virtual FWL_ERR GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert = TRUE);
-  virtual FWL_ERR* Sort(IFWL_ListBoxCompare* pCom);
+  virtual FWL_Error SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect = TRUE);
+  virtual FWL_Error GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText);
+  virtual FWL_Error GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert = TRUE);
 
  protected:
   FWL_HLISTITEM GetItem(FWL_HLISTITEM hItem, uint32_t dwKeyCode);
@@ -82,7 +81,6 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   FX_FLOAT GetScrollWidth();
   FX_FLOAT GetItemHeigt();
   void InitScrollBar(FX_BOOL bVert = TRUE);
-  void SortItem();
   FX_BOOL IsShowScrollBar(FX_BOOL bVert);
   void ProcessSelChanged();
 
@@ -104,10 +102,10 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
 class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ListBoxImpDelegate(CFWL_ListBoxImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

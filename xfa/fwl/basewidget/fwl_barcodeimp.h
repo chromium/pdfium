@@ -25,14 +25,14 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
                   IFWL_Widget* pOuter);
   ~CFWL_BarcodeImp() override;
 
-  FWL_ERR GetClassName(CFX_WideString& wsClass) const override;
+  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   uint32_t GetClassID() const override;
-  FWL_ERR Initialize() override;
-  FWL_ERR Finalize() override;
-  FWL_ERR Update() override;
-  FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                     const CFX_Matrix* pMatrix = nullptr) override;
-  FWL_ERR SetText(const CFX_WideString& wsText) override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
+  FWL_Error Update() override;
+  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = nullptr) override;
+  FWL_Error SetText(const CFX_WideString& wsText) override;
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 
@@ -51,7 +51,7 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
 class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
  public:
   CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner);
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
 };
 
 #endif  // XFA_FWL_BASEWIDGET_FWL_BARCODEIMP_H_

@@ -85,10 +85,10 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void SetEditScrollOffset();
 
  public:
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  virtual void OnProcessMessage(CFWL_Message* pMessage);
+  virtual void OnProcessEvent(CFWL_Event* pEvent);
+  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix = NULL);
 
  protected:
   CFWL_Widget* m_pNormalWidget;

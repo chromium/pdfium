@@ -19,15 +19,15 @@ class CFWL_PushButtonImp : public CFWL_WidgetImp {
   CFWL_PushButtonImp(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   virtual ~CFWL_PushButtonImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
-  virtual FWL_ERR Update();
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error Update();
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
 
  protected:
   void DrawBkground(CFX_Graphics* pGraphics,
@@ -49,10 +49,10 @@ class CFWL_PushButtonImp : public CFWL_WidgetImp {
 class CFWL_PushButtonImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_PushButtonImpDelegate(CFWL_PushButtonImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

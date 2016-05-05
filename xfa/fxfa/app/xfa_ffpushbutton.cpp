@@ -201,15 +201,18 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFX_Graphics* pGS,
     }
   }
 }
-int32_t CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {
-  return m_pOldDelegate->OnProcessMessage(pMessage);
+
+void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {
+  m_pOldDelegate->OnProcessMessage(pMessage);
 }
-FWL_ERR CXFA_FFPushButton::OnProcessEvent(CFWL_Event* pEvent) {
+
+void CXFA_FFPushButton::OnProcessEvent(CFWL_Event* pEvent) {
   m_pOldDelegate->OnProcessEvent(pEvent);
-  return CXFA_FFField::OnProcessEvent(pEvent);
+  CXFA_FFField::OnProcessEvent(pEvent);
 }
-FWL_ERR CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
-                                        const CFX_Matrix* pMatrix) {
+
+void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
+                                     const CFX_Matrix* pMatrix) {
   if (m_pNormalWidget->GetStylesEx() & XFA_FWL_PSBSTYLEEXT_HiliteInverted) {
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
@@ -240,7 +243,5 @@ FWL_ERR CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
       path.AddRectangle(0, 0, rect.width, rect.height);
       pGraphics->StrokePath(&path, (CFX_Matrix*)pMatrix);
     }
-  } else if (m_pNormalWidget->GetStylesEx() & XFA_FWL_PSBSTYLEEXT_HilitePush) {
   }
-  return FWL_ERR_Succeeded;
 }

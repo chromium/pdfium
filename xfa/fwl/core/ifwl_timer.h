@@ -19,6 +19,6 @@ class IFWL_Timer {
 FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
                           uint32_t dwElapse,
                           FX_BOOL bImmediately = TRUE);
-int32_t FWL_StopTimer(FWL_HTIMER hTimer);
+FWL_Error FWL_StopTimer(FWL_HTIMER hTimer);
 
 #endif  // XFA_FWL_CORE_IFWL_TIMER_H_

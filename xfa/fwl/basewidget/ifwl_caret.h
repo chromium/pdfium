@@ -20,9 +20,9 @@ class IFWL_Caret : public IFWL_Widget {
                             IFWL_Widget* pOuter);
 
   void ShowCaret(FX_BOOL bFlag = TRUE);
-  FWL_ERR GetFrequency(uint32_t& elapse);
-  FWL_ERR SetFrequency(uint32_t elapse);
-  FWL_ERR SetColor(CFX_Color crFill);
+  FWL_Error GetFrequency(uint32_t& elapse);
+  FWL_Error SetFrequency(uint32_t elapse);
+  FWL_Error SetColor(CFX_Color crFill);
 
  protected:
   IFWL_Caret();

@@ -80,22 +80,22 @@ class IFWL_ComboBox : public IFWL_Widget {
   static IFWL_ComboBox* Create(const CFWL_WidgetImpProperties& properties);
 
   int32_t GetCurSel();
-  FWL_ERR SetCurSel(int32_t iSel);
-  FWL_ERR SetEditText(const CFX_WideString& wsText);
+  FWL_Error SetCurSel(int32_t iSel);
+  FWL_Error SetEditText(const CFX_WideString& wsText);
   int32_t GetEditTextLength() const;
-  FWL_ERR GetEditText(CFX_WideString& wsText,
-                      int32_t nStart = 0,
-                      int32_t nCount = -1) const;
-  FWL_ERR SetEditSelRange(int32_t nStart, int32_t nCount = -1);
+  FWL_Error GetEditText(CFX_WideString& wsText,
+                        int32_t nStart = 0,
+                        int32_t nCount = -1) const;
+  FWL_Error SetEditSelRange(int32_t nStart, int32_t nCount = -1);
   int32_t GetEditSelRange(int32_t nIndex, int32_t& nStart);
   int32_t GetEditLimit();
-  FWL_ERR SetEditLimit(int32_t nLimit);
-  FWL_ERR EditDoClipboard(int32_t iCmd);
+  FWL_Error SetEditLimit(int32_t nLimit);
+  FWL_Error EditDoClipboard(int32_t iCmd);
   FX_BOOL EditRedo(const CFX_ByteStringC& bsRecord);
   FX_BOOL EditUndo(const CFX_ByteStringC& bsRecord);
   IFWL_ListBox* GetListBoxt();
   FX_BOOL AfterFocusShowDropList();
-  FX_ERR OpenDropDownList(FX_BOOL bActivate);
+  FWL_Error OpenDropDownList(FX_BOOL bActivate);
   FX_BOOL EditCanUndo();
   FX_BOOL EditCanRedo();
   FX_BOOL EditUndo();
@@ -109,9 +109,9 @@ class IFWL_ComboBox : public IFWL_Widget {
   FX_BOOL EditSelectAll();
   FX_BOOL EditDelete();
   FX_BOOL EditDeSelect();
-  FWL_ERR GetBBox(CFX_RectF& rect);
-  FWL_ERR EditModifyStylesEx(uint32_t dwStylesExAdded,
-                             uint32_t dwStylesExRemoved);
+  FWL_Error GetBBox(CFX_RectF& rect);
+  FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
+                               uint32_t dwStylesExRemoved);
 
  protected:
   IFWL_ComboBox();

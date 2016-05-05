@@ -15,8 +15,8 @@ class CFWL_FormTP : public CFWL_WidgetTP {
   CFWL_FormTP();
   ~CFWL_FormTP() override;
 
-  FWL_ERR Initialize() override;
-  FWL_ERR Finalize() override;
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
   FX_BOOL IsValidWidget(IFWL_Widget* pWidget) override;
   uint32_t SetThemeID(IFWL_Widget* pWidget,
                       uint32_t dwThemeID,
@@ -25,7 +25,7 @@ class CFWL_FormTP : public CFWL_WidgetTP {
   FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
   void* GetCapacity(CFWL_ThemePart* pThemePart,
                     CFWL_WidgetCapacity dwCapacity) override;
-  FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart) override;
+  FWL_Error GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart) override;
 
  protected:
   void CalCloseBox(IFWL_Widget* pWidget, CFX_RectF& rect);

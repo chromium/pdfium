@@ -20,13 +20,15 @@ class IFWL_ToolTipTarget {
   virtual ~IFWL_ToolTipTarget() {}
   virtual IFWL_Widget* GetWidget() = 0;
   virtual FX_BOOL IsShowed() = 0;
-  virtual FWL_ERR DrawToolTip(CFX_Graphics* pGraphics,
-                              const CFX_Matrix* pMatrix,
-                              IFWL_Widget* pToolTip) = 0;
+  virtual FWL_Error DrawToolTip(CFX_Graphics* pGraphics,
+                                const CFX_Matrix* pMatrix,
+                                IFWL_Widget* pToolTip) = 0;
   virtual FX_BOOL UseDefaultTheme() = 0;
-  virtual FWL_ERR GetCaption(CFX_WideString& wsCaption) = 0;
-  virtual FWL_ERR GetToolTipSize(CFX_SizeF& sz) = 0;
-  virtual FWL_ERR GetToolTipPos(CFX_PointF& pt) { return FWL_ERR_Indefinite; }
+  virtual FWL_Error GetCaption(CFX_WideString& wsCaption) = 0;
+  virtual FWL_Error GetToolTipSize(CFX_SizeF& sz) = 0;
+  virtual FWL_Error GetToolTipPos(CFX_PointF& pt) {
+    return FWL_Error::Indefinite;
+  }
 };
 
 #endif  // XFA_FWL_CORE_IFWL_TOOLTIPTARGET_H_

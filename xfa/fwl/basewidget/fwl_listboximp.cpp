@@ -52,17 +52,15 @@ FWL_HLISTITEM IFWL_ListBox::GetSelItem(int32_t nIndexSel) {
 int32_t IFWL_ListBox::GetSelIndex(int32_t nIndex) {
   return static_cast<CFWL_ListBoxImp*>(GetImpl())->GetSelIndex(nIndex);
 }
-FWL_ERR IFWL_ListBox::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
+FWL_Error IFWL_ListBox::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
   return static_cast<CFWL_ListBoxImp*>(GetImpl())->SetSelItem(hItem, bSelect);
 }
-FWL_ERR IFWL_ListBox::GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText) {
+FWL_Error IFWL_ListBox::GetItemText(FWL_HLISTITEM hItem,
+                                    CFX_WideString& wsText) {
   return static_cast<CFWL_ListBoxImp*>(GetImpl())->GetItemText(hItem, wsText);
 }
-FWL_ERR IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
+FWL_Error IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
   return static_cast<CFWL_ListBoxImp*>(GetImpl())->GetScrollPos(fPos, bVert);
-}
-FWL_ERR* IFWL_ListBox::Sort(IFWL_ListBoxCompare* pCom) {
-  return static_cast<CFWL_ListBoxImp*>(GetImpl())->Sort(pCom);
 }
 
 CFWL_ListBoxImp::CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
@@ -79,20 +77,20 @@ CFWL_ListBoxImp::CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
   m_rtStatic.Reset();
 }
 CFWL_ListBoxImp::~CFWL_ListBoxImp() {}
-FWL_ERR CFWL_ListBoxImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_ListBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ListBox;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_ListBoxImp::GetClassID() const {
   return FWL_CLASSHASH_ListBox;
 }
-FWL_ERR CFWL_ListBoxImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_ListBoxImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_ListBoxImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ListBoxImp::Finalize() {
+FWL_Error CFWL_ListBoxImp::Finalize() {
   if (m_pVertScrollBar) {
     m_pVertScrollBar->Finalize();
   }
@@ -103,7 +101,7 @@ FWL_ERR CFWL_ListBoxImp::Finalize() {
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_ListBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error CFWL_ListBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider) {
@@ -115,11 +113,11 @@ FWL_ERR CFWL_ListBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ListBoxImp::Update() {
+FWL_Error CFWL_ListBoxImp::Update() {
   if (IsLocked()) {
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -142,9 +140,8 @@ FWL_ERR CFWL_ListBoxImp::Update() {
   }
   m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
   m_fScorllBarWidth = GetScrollWidth();
-  SortItem();
   CalcSize();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FWL_WidgetHit CFWL_ListBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (IsShowScrollBar(FALSE)) {
@@ -163,12 +160,12 @@ FWL_WidgetHit CFWL_ListBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
     return FWL_WidgetHit::Client;
   return FWL_WidgetHit::Unknown;
 }
-FWL_ERR CFWL_ListBoxImp::DrawWidget(CFX_Graphics* pGraphics,
-                                    const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_ListBoxImp::DrawWidget(CFX_Graphics* pGraphics,
+                                      const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   pGraphics->SaveGraphState();
   if (HasBorder()) {
@@ -193,17 +190,18 @@ FWL_ERR CFWL_ListBoxImp::DrawWidget(CFX_Graphics* pGraphics,
   }
   DrawItems(pGraphics, pTheme, pMatrix);
   pGraphics->RestoreGraphState();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ListBoxImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
+FWL_Error CFWL_ListBoxImp::SetThemeProvider(
+    IFWL_ThemeProvider* pThemeProvider) {
   if (!pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!pThemeProvider->IsValidWidget(m_pInterface)) {
     m_pScrollBarTP = pThemeProvider;
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   m_pProperties->m_pThemeProvider = pThemeProvider;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 int32_t CFWL_ListBoxImp::CountSelItems() {
   if (!m_pProperties->m_pDataProvider)
@@ -270,9 +268,9 @@ int32_t CFWL_ListBoxImp::GetSelIndex(int32_t nIndex) {
   }
   return -1;
 }
-FWL_ERR CFWL_ListBoxImp::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
+FWL_Error CFWL_ListBoxImp::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
   if (!m_pProperties->m_pDataProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!hItem) {
     if (bSelect) {
       SelectAll();
@@ -280,52 +278,37 @@ FWL_ERR CFWL_ListBoxImp::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
       ClearSelection();
       SetFocusItem(NULL);
     }
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection) {
     SetSelectionDirect(hItem, bSelect);
   } else {
     SetSelection(hItem, hItem, bSelect);
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ListBoxImp::GetItemText(FWL_HLISTITEM hItem,
-                                     CFX_WideString& wsText) {
+FWL_Error CFWL_ListBoxImp::GetItemText(FWL_HLISTITEM hItem,
+                                       CFX_WideString& wsText) {
   if (!m_pProperties->m_pDataProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   if (!hItem)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   pData->GetItemText(m_pInterface, hItem, wsText);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_ListBoxImp::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
+
+FWL_Error CFWL_ListBoxImp::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
   if ((bVert && IsShowScrollBar(TRUE)) || (!bVert && IsShowScrollBar(FALSE))) {
     IFWL_ScrollBar* pScrollBar =
         bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
     fPos = pScrollBar->GetPos();
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
-  return FWL_ERR_Indefinite;
+  return FWL_Error::Indefinite;
 }
-FWL_ERR* CFWL_ListBoxImp::Sort(IFWL_ListBoxCompare* pCom) {
-  FWL_HLISTITEM hTemp;
-  IFWL_ListBoxDP* pData =
-      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-  int32_t sz = pData->CountItems(m_pInterface);
-  for (int32_t i = 0; i < sz - 1; i++) {
-    for (int32_t j = i + 1; j < sz; j++) {
-      if (pCom->Compare(pData->GetItem(m_pInterface, i),
-                        pData->GetItem(m_pInterface, j)) > 0) {
-        hTemp = pData->GetItem(m_pInterface, i);
-        pData->SetItemIndex(m_pInterface, pData->GetItem(m_pInterface, j), i);
-        pData->SetItemIndex(m_pInterface, hTemp, j);
-      }
-    }
-  }
-  return FWL_ERR_Succeeded;
-}
+
 FWL_HLISTITEM CFWL_ListBoxImp::GetItem(FWL_HLISTITEM hItem,
                                        uint32_t dwKeyCode) {
   FWL_HLISTITEM hRet = NULL;
@@ -951,7 +934,7 @@ void CFWL_ListBoxImp::InitScrollBar(FX_BOOL bVert) {
   pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
-void CFWL_ListBoxImp::SortItem() {}
+
 FX_BOOL CFWL_ListBoxImp::IsShowScrollBar(FX_BOOL bVert) {
   IFWL_ScrollBar* pScrollbar =
       bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
@@ -980,14 +963,13 @@ void CFWL_ListBoxImp::ProcessSelChanged() {
 CFWL_ListBoxImpDelegate::CFWL_ListBoxImpDelegate(CFWL_ListBoxImp* pOwner)
     : m_pOwner(pOwner) {}
 
-int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
+    return;
   if (!m_pOwner->IsEnabled())
-    return 1;
+    return;
 
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  int32_t iRet = 1;
   switch (dwMsgCode) {
     case CFWL_MessageType::SetFocus: {
       OnFocusChanged(pMessage, TRUE);
@@ -1024,19 +1006,17 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     default: {
-      iRet = 0;
       break;
     }
   }
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
-  return iRet;
 }
 
-FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
+void CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
-    return FWL_ERR_Indefinite;
+    return;
   if (pEvent->GetClassID() != CFWL_EventType::Scroll)
-    return FWL_ERR_Succeeded;
+    return;
 
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
   if ((pSrcTarget == m_pOwner->m_pVertScrollBar.get() &&
@@ -1047,13 +1027,13 @@ FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
     OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),
              pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
   }
-  return FWL_ERR_Succeeded;
 }
 
-FWL_ERR CFWL_ListBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                              const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
+void CFWL_ListBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                           const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
+
 void CFWL_ListBoxImpDelegate::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
   if (m_pOwner->GetStylesEx() & FWL_STYLEEXT_LTB_ShowScrollBarFocus) {
     if (m_pOwner->m_pVertScrollBar) {

@@ -123,14 +123,17 @@ FX_BOOL CXFA_FFImageEdit::UpdateFWLData() {
   m_pDataAcc->LoadImageEditImage();
   return TRUE;
 }
-int32_t CXFA_FFImageEdit::OnProcessMessage(CFWL_Message* pMessage) {
-  return m_pOldDelegate->OnProcessMessage(pMessage);
+
+void CXFA_FFImageEdit::OnProcessMessage(CFWL_Message* pMessage) {
+  m_pOldDelegate->OnProcessMessage(pMessage);
 }
-FWL_ERR CXFA_FFImageEdit::OnProcessEvent(CFWL_Event* pEvent) {
+
+void CXFA_FFImageEdit::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  return m_pOldDelegate->OnProcessEvent(pEvent);
+  m_pOldDelegate->OnProcessEvent(pEvent);
 }
-FWL_ERR CXFA_FFImageEdit::OnDrawWidget(CFX_Graphics* pGraphics,
-                                       const CFX_Matrix* pMatrix) {
-  return m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+
+void CXFA_FFImageEdit::OnDrawWidget(CFX_Graphics* pGraphics,
+                                    const CFX_Matrix* pMatrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }

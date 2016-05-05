@@ -785,11 +785,9 @@ FX_BOOL CXFA_FFField::IsDataChanged() {
 void CXFA_FFField::TranslateFWLMessage(CFWL_Message* pMessage) {
   GetApp()->GetWidgetMgrDelegate()->OnProcessMessageToForm(pMessage);
 }
-int32_t CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {
-  return FWL_ERR_Succeeded;
-}
+void CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {}
 
-FWL_ERR CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
+void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
   switch (pEvent->GetClassID()) {
     case CFWL_EventType::Mouse: {
       CFWL_EvtMouse* event = (CFWL_EvtMouse*)pEvent;
@@ -826,10 +824,7 @@ FWL_ERR CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
     default:
       break;
   }
-  return FWL_ERR_Succeeded;
 }
 
-FWL_ERR CXFA_FFField::OnDrawWidget(CFX_Graphics* pGraphics,
-                                   const CFX_Matrix* pMatrix) {
-  return FWL_ERR_Succeeded;
-}
+void CXFA_FFField::OnDrawWidget(CFX_Graphics* pGraphics,
+                                const CFX_Matrix* pMatrix) {}

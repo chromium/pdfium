@@ -15,8 +15,8 @@ class CFWL_EditTP : public CFWL_WidgetTP {
   virtual ~CFWL_EditTP();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_EDITTP_H_

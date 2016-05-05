@@ -25,13 +25,13 @@ IFWL_Caret::IFWL_Caret() {}
 void IFWL_Caret::ShowCaret(FX_BOOL bFlag) {
   static_cast<CFWL_CaretImp*>(GetImpl())->ShowCaret(bFlag);
 }
-FWL_ERR IFWL_Caret::GetFrequency(uint32_t& elapse) {
+FWL_Error IFWL_Caret::GetFrequency(uint32_t& elapse) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->GetFrequency(elapse);
 }
-FWL_ERR IFWL_Caret::SetFrequency(uint32_t elapse) {
+FWL_Error IFWL_Caret::SetFrequency(uint32_t elapse) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->SetFrequency(elapse);
 }
-FWL_ERR IFWL_Caret::SetColor(CFX_Color crFill) {
+FWL_Error IFWL_Caret::SetColor(CFX_Color crFill) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->SetColor(crFill);
 }
 
@@ -49,20 +49,20 @@ CFWL_CaretImp::~CFWL_CaretImp() {
   delete m_pTimer;
 }
 
-FWL_ERR CFWL_CaretImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_CaretImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Caret;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_CaretImp::GetClassID() const {
   return FWL_CLASSHASH_Caret;
 }
-FWL_ERR CFWL_CaretImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_CaretImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_CaretImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_CaretImp::Finalize() {
+FWL_Error CFWL_CaretImp::Finalize() {
   if (m_hTimer) {
     FWL_StopTimer(m_hTimer);
     m_hTimer = NULL;
@@ -71,16 +71,17 @@ FWL_ERR CFWL_CaretImp::Finalize() {
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_CaretImp::DrawWidget(CFX_Graphics* pGraphics,
-                                  const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_CaretImp::DrawWidget(CFX_Graphics* pGraphics,
+                                    const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
+
   DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 
 void CFWL_CaretImp::ShowCaret(FX_BOOL bFlag) {
@@ -93,22 +94,23 @@ void CFWL_CaretImp::ShowCaret(FX_BOOL bFlag) {
 
   SetStates(FWL_WGTSTATE_Invisible, !bFlag);
 }
-FWL_ERR CFWL_CaretImp::GetFrequency(uint32_t& elapse) {
+FWL_Error CFWL_CaretImp::GetFrequency(uint32_t& elapse) {
   elapse = m_dwElapse;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_CaretImp::SetFrequency(uint32_t elapse) {
+FWL_Error CFWL_CaretImp::SetFrequency(uint32_t elapse) {
   m_dwElapse = elapse;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_CaretImp::SetColor(CFX_Color crFill) {
+FWL_Error CFWL_CaretImp::SetColor(CFX_Color crFill) {
   m_bSetColor = TRUE;
   m_crFill = crFill;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FX_BOOL CFWL_CaretImp::DrawCaretBK(CFX_Graphics* pGraphics,
-                                   IFWL_ThemeProvider* pTheme,
-                                   const CFX_Matrix* pMatrix) {
+
+void CFWL_CaretImp::DrawCaretBK(CFX_Graphics* pGraphics,
+                                IFWL_ThemeProvider* pTheme,
+                                const CFX_Matrix* pMatrix) {
   CFX_RectF rect;
   GetWidgetRect(rect);
   rect.Set(0, 0, rect.width, rect.height);
@@ -116,19 +118,17 @@ FX_BOOL CFWL_CaretImp::DrawCaretBK(CFX_Graphics* pGraphics,
   param.m_pWidget = m_pInterface;
   param.m_pGraphics = pGraphics;
   param.m_rtPart = rect;
-  if (m_bSetColor) {
+  if (m_bSetColor)
     param.m_pData = &m_crFill;
-  }
-  if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight)) {
-    return FWL_ERR_Succeeded;
-  }
+  if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
+    return;
+
   param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = CFWL_PartState_HightLight;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  }
+
   pTheme->DrawBackground(&param);
-  return FWL_ERR_Succeeded;
 }
 
 CFWL_CaretImp::CFWL_CaretTimer::CFWL_CaretTimer(CFWL_CaretImp* pCaret)
@@ -146,12 +146,13 @@ int32_t CFWL_CaretImp::CFWL_CaretTimer::Run(FWL_HTIMER hTimer) {
   m_pCaret->Repaint(&rt);
   return 1;
 }
+
 CFWL_CaretImpDelegate::CFWL_CaretImpDelegate(CFWL_CaretImp* pOwner)
     : m_pOwner(pOwner) {}
-int32_t CFWL_CaretImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  return 1;
-}
-FWL_ERR CFWL_CaretImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                            const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
+
+void CFWL_CaretImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {}
+
+void CFWL_CaretImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                         const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }

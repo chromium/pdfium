@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_LIGHTWIDGET_CFWL_WIDGETDELEGATE_H_
 #define XFA_FWL_LIGHTWIDGET_CFWL_WIDGETDELEGATE_H_
 
+#include <stdint.h>
+
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
 
@@ -20,10 +22,10 @@ class CFWL_WidgetDelegate : public IFWL_WidgetDelegate {
   CFWL_WidgetDelegate();
   virtual ~CFWL_WidgetDelegate();
 
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = nullptr) override;
 };
 
 #endif  // XFA_FWL_LIGHTWIDGET_CFWL_WIDGETDELEGATE_H_

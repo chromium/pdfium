@@ -22,7 +22,7 @@ class IFWL_SpinButton : public IFWL_Widget {
   static IFWL_SpinButton* Create(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter);
 
-  FWL_ERR EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
+  FWL_Error EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
   FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
 
  protected:

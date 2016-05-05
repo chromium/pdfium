@@ -20,19 +20,19 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
                   IFWL_Widget* pOuter);
   virtual ~CFWL_ToolTipImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error Update();
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
   virtual void SetStates(uint32_t dwStates, FX_BOOL bSet);
-  virtual FWL_ERR GetClientRect(CFX_RectF& rect);
-  FWL_ERR SetAnchor(const CFX_RectF& rtAnchor);
-  FWL_ERR Show();
-  FWL_ERR Hide();
+  virtual FWL_Error GetClientRect(CFX_RectF& rect);
+  void SetAnchor(const CFX_RectF& rtAnchor);
+  void Show();
+  void Hide();
 
  protected:
   void DrawBkground(CFX_Graphics* pGraphics,
@@ -68,10 +68,10 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
 class CFWL_ToolTipImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ToolTipImpDelegate(CFWL_ToolTipImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

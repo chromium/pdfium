@@ -59,7 +59,7 @@ class IFWL_CheckBox : public IFWL_Widget {
   static IFWL_CheckBox* Create(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter);
   int32_t GetCheckState();
-  FWL_ERR SetCheckState(int32_t iCheck);
+  FWL_Error SetCheckState(int32_t iCheck);
 
  protected:
   IFWL_CheckBox();

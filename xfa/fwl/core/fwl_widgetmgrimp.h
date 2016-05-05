@@ -71,8 +71,8 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
                          FWL_WGTRELATION eRelation) override;
   int32_t GetWidgetIndex(IFWL_Widget* pWidget) override;
   FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) override;
-  FWL_ERR RepaintWidget(IFWL_Widget* pWidget,
-                        const CFX_RectF* pRect = NULL) override;
+  FWL_Error RepaintWidget(IFWL_Widget* pWidget,
+                          const CFX_RectF* pRect = NULL) override;
   uint32_t GetCapability() override { return m_dwCapability; }
 
   void AddWidget(IFWL_Widget* pWidget);
@@ -83,7 +83,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   void SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned);
   void SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild);
   FX_BOOL IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent);
-  FWL_ERR SetWidgetRect_Native(IFWL_Widget* pWidget, const CFX_RectF& rect);
+  FWL_Error SetWidgetRect_Native(IFWL_Widget* pWidget, const CFX_RectF& rect);
   IFWL_Widget* GetWidgetAtPoint(IFWL_Widget* pParent, FX_FLOAT fx, FX_FLOAT fy);
   void NotifySizeChanged(IFWL_Widget* pForm, FX_FLOAT fx, FX_FLOAT fy);
   IFWL_Widget* nextTab(IFWL_Widget* parent, IFWL_Widget* focus, FX_BOOL& bFind);
@@ -127,11 +127,11 @@ class CFWL_WidgetMgrDelegate {
   CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr);
   ~CFWL_WidgetMgrDelegate() {}
 
-  FWL_ERR OnSetCapability(uint32_t dwCapability = FWL_WGTMGR_DisableThread);
-  int32_t OnProcessMessageToForm(CFWL_Message* pMessage);
-  FWL_ERR OnDrawWidget(IFWL_Widget* pWidget,
-                       CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix);
+  FWL_Error OnSetCapability(uint32_t dwCapability = FWL_WGTMGR_DisableThread);
+  void OnProcessMessageToForm(CFWL_Message* pMessage);
+  void OnDrawWidget(IFWL_Widget* pWidget,
+                    CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix);
 
  protected:
   void DrawChild(IFWL_Widget* pParent,

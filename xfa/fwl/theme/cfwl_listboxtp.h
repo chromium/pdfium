@@ -15,8 +15,8 @@ class CFWL_ListBoxTP : public CFWL_WidgetTP {
   virtual ~CFWL_ListBoxTP();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
 
  protected:
   void DrawListBoxItem(CFX_Graphics* pGraphics,

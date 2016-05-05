@@ -35,29 +35,30 @@ CFWL_PictureBoxImp::CFWL_PictureBoxImp(
   m_matrix.SetIdentity();
 }
 CFWL_PictureBoxImp::~CFWL_PictureBoxImp() {}
-FWL_ERR CFWL_PictureBoxImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_PictureBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_PictureBox;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_PictureBoxImp::GetClassID() const {
   return FWL_CLASSHASH_PictureBox;
 }
-FWL_ERR CFWL_PictureBoxImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_PictureBoxImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_PictureBoxImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_PictureBoxImp::Finalize() {
+FWL_Error CFWL_PictureBoxImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_PictureBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error CFWL_PictureBoxImp::GetWidgetRect(CFX_RectF& rect,
+                                            FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pDataProvider)
-      return FWL_ERR_Indefinite;
+      return FWL_Error::Indefinite;
     CFX_DIBitmap* pBitmap =
         static_cast<IFWL_PictureBoxDP*>(m_pProperties->m_pDataProvider)
             ->GetPicture(m_pInterface);
@@ -69,24 +70,24 @@ FWL_ERR CFWL_PictureBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_PictureBoxImp::Update() {
+FWL_Error CFWL_PictureBoxImp::Update() {
   if (IsLocked()) {
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   GetClientRect(m_rtClient);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_PictureBoxImp::DrawWidget(CFX_Graphics* pGraphics,
-                                       const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_PictureBoxImp::DrawWidget(CFX_Graphics* pGraphics,
+                                         const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
@@ -95,7 +96,7 @@ FWL_ERR CFWL_PictureBoxImp::DrawWidget(CFX_Graphics* pGraphics,
     DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   DrawBkground(pGraphics, pTheme, pMatrix);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 void CFWL_PictureBoxImp::DrawBkground(CFX_Graphics* pGraphics,
                                       IFWL_ThemeProvider* pTheme,
@@ -141,10 +142,12 @@ FX_BOOL CFWL_PictureBoxImp::VStyle(FX_BOOL dwStyle) {
   }
   return FALSE;
 }
+
 CFWL_PictureBoxImpDelegate::CFWL_PictureBoxImpDelegate(
     CFWL_PictureBoxImp* pOwner)
     : m_pOwner(pOwner) {}
-FWL_ERR CFWL_PictureBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                                 const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
+
+void CFWL_PictureBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                              const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }

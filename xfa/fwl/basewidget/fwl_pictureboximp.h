@@ -18,14 +18,14 @@ class CFWL_PictureBoxImp : public CFWL_WidgetImp {
   CFWL_PictureBoxImp(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   ~CFWL_PictureBoxImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error Update();
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
 
  protected:
   void DrawBkground(CFX_Graphics* pGraphics,
@@ -40,11 +40,12 @@ class CFWL_PictureBoxImp : public CFWL_WidgetImp {
   FX_BOOL m_bButton;
   friend class CFWL_PictureBoxImpDelegate;
 };
+
 class CFWL_PictureBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_PictureBoxImpDelegate(CFWL_PictureBoxImp* pOwner);
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   CFWL_PictureBoxImp* m_pOwner;

@@ -10,20 +10,12 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
+#include "xfa/fwl/core/fwl_error.h"
 
 class CFX_Color;
 class CFX_Path;
 class CAGG_Graphics;
 
-#define FX_ERR_Succeeded 0
-#define FX_ERR_Indefinite -1
-#define FX_ERR_Parameter_Invalid -100
-#define FX_ERR_Property_Invalid -200
-#define FX_ERR_Intermediate_Value_Invalid -300
-#define FX_ERR_Method_Not_Supported -400
-#define FX_ERR_Out_Of_Memory -500
-
-using FX_ERR = int;
 using FX_DeviceCap = int32_t;
 using FX_FillMode = int32_t;
 
@@ -106,81 +98,82 @@ class CFX_Graphics {
   CFX_Graphics();
   virtual ~CFX_Graphics();
 
-  FX_ERR Create(CFX_RenderDevice* renderDevice, FX_BOOL isAntialiasing = TRUE);
-  FX_ERR Create(int32_t width,
-                int32_t height,
-                FXDIB_Format format,
-                FX_BOOL isNative = TRUE,
-                FX_BOOL isAntialiasing = TRUE);
+  FWL_Error Create(CFX_RenderDevice* renderDevice,
+                   FX_BOOL isAntialiasing = TRUE);
+  FWL_Error Create(int32_t width,
+                   int32_t height,
+                   FXDIB_Format format,
+                   FX_BOOL isNative = TRUE,
+                   FX_BOOL isAntialiasing = TRUE);
 
-  FX_ERR GetDeviceCap(const int32_t capID, FX_DeviceCap& capVal);
-  FX_ERR IsPrinterDevice(FX_BOOL& isPrinter);
-  FX_ERR EnableAntialiasing(FX_BOOL isAntialiasing);
+  FWL_Error GetDeviceCap(const int32_t capID, FX_DeviceCap& capVal);
+  FWL_Error IsPrinterDevice(FX_BOOL& isPrinter);
+  FWL_Error EnableAntialiasing(FX_BOOL isAntialiasing);
 
-  FX_ERR SaveGraphState();
-  FX_ERR RestoreGraphState();
+  FWL_Error SaveGraphState();
+  FWL_Error RestoreGraphState();
 
-  FX_ERR GetLineCap(CFX_GraphStateData::LineCap& lineCap) const;
-  FX_ERR GetDashCount(int32_t& dashCount) const;
-  FX_ERR GetLineDash(FX_FLOAT& dashPhase, FX_FLOAT* dashArray) const;
-  FX_ERR GetLineJoin(CFX_GraphStateData::LineJoin& lineJoin) const;
-  FX_ERR GetMiterLimit(FX_FLOAT& miterLimit) const;
-  FX_ERR GetLineWidth(FX_FLOAT& lineWidth) const;
-  FX_ERR GetStrokeAlignment(FX_StrokeAlignment& strokeAlignment) const;
-  FX_ERR GetClipRect(CFX_RectF& rect) const;
+  FWL_Error GetLineCap(CFX_GraphStateData::LineCap& lineCap) const;
+  FWL_Error GetDashCount(int32_t& dashCount) const;
+  FWL_Error GetLineDash(FX_FLOAT& dashPhase, FX_FLOAT* dashArray) const;
+  FWL_Error GetLineJoin(CFX_GraphStateData::LineJoin& lineJoin) const;
+  FWL_Error GetMiterLimit(FX_FLOAT& miterLimit) const;
+  FWL_Error GetLineWidth(FX_FLOAT& lineWidth) const;
+  FWL_Error GetStrokeAlignment(FX_StrokeAlignment& strokeAlignment) const;
+  FWL_Error GetClipRect(CFX_RectF& rect) const;
   CFX_Matrix* GetMatrix();
   CFX_RenderDevice* GetRenderDevice();
 
-  FX_ERR SetLineCap(CFX_GraphStateData::LineCap lineCap);
-  FX_ERR SetLineDash(FX_FLOAT dashPhase,
-                     FX_FLOAT* dashArray,
-                     int32_t dashCount);
-  FX_ERR SetLineDash(FX_DashStyle dashStyle);
-  FX_ERR SetLineJoin(CFX_GraphStateData::LineJoin lineJoin);
-  FX_ERR SetMiterLimit(FX_FLOAT miterLimit);
-  FX_ERR SetLineWidth(FX_FLOAT lineWidth, FX_BOOL isActOnDash = FALSE);
-  FX_ERR SetStrokeAlignment(FX_StrokeAlignment strokeAlignment);
-  FX_ERR SetStrokeColor(CFX_Color* color);
-  FX_ERR SetFillColor(CFX_Color* color);
-  FX_ERR SetClipRect(const CFX_RectF& rect);
-  FX_ERR SetFont(CFX_Font* font);
-  FX_ERR SetFontSize(const FX_FLOAT size);
-  FX_ERR SetFontHScale(const FX_FLOAT scale);
-  FX_ERR SetCharSpacing(const FX_FLOAT spacing);
-  FX_ERR SetTextDrawingMode(const int32_t mode);
+  FWL_Error SetLineCap(CFX_GraphStateData::LineCap lineCap);
+  FWL_Error SetLineDash(FX_FLOAT dashPhase,
+                        FX_FLOAT* dashArray,
+                        int32_t dashCount);
+  FWL_Error SetLineDash(FX_DashStyle dashStyle);
+  FWL_Error SetLineJoin(CFX_GraphStateData::LineJoin lineJoin);
+  FWL_Error SetMiterLimit(FX_FLOAT miterLimit);
+  FWL_Error SetLineWidth(FX_FLOAT lineWidth, FX_BOOL isActOnDash = FALSE);
+  FWL_Error SetStrokeAlignment(FX_StrokeAlignment strokeAlignment);
+  FWL_Error SetStrokeColor(CFX_Color* color);
+  FWL_Error SetFillColor(CFX_Color* color);
+  FWL_Error SetClipRect(const CFX_RectF& rect);
+  FWL_Error SetFont(CFX_Font* font);
+  FWL_Error SetFontSize(const FX_FLOAT size);
+  FWL_Error SetFontHScale(const FX_FLOAT scale);
+  FWL_Error SetCharSpacing(const FX_FLOAT spacing);
+  FWL_Error SetTextDrawingMode(const int32_t mode);
 
-  FX_ERR StrokePath(CFX_Path* path, CFX_Matrix* matrix = NULL);
-  FX_ERR FillPath(CFX_Path* path,
-                  FX_FillMode fillMode = FXFILL_WINDING,
-                  CFX_Matrix* matrix = NULL);
-  FX_ERR ClipPath(CFX_Path* path,
-                  FX_FillMode fillMode = FXFILL_WINDING,
-                  CFX_Matrix* matrix = NULL);
-  FX_ERR DrawImage(CFX_DIBSource* source,
-                   const CFX_PointF& point,
-                   CFX_Matrix* matrix = NULL);
-  FX_ERR StretchImage(CFX_DIBSource* source,
-                      const CFX_RectF& rect,
+  FWL_Error StrokePath(CFX_Path* path, CFX_Matrix* matrix = NULL);
+  FWL_Error FillPath(CFX_Path* path,
+                     FX_FillMode fillMode = FXFILL_WINDING,
+                     CFX_Matrix* matrix = NULL);
+  FWL_Error ClipPath(CFX_Path* path,
+                     FX_FillMode fillMode = FXFILL_WINDING,
+                     CFX_Matrix* matrix = NULL);
+  FWL_Error DrawImage(CFX_DIBSource* source,
+                      const CFX_PointF& point,
                       CFX_Matrix* matrix = NULL);
-  FX_ERR ConcatMatrix(const CFX_Matrix* matrix);
-  FX_ERR ClearClip();
-  FX_ERR ShowText(const CFX_PointF& point,
-                  const CFX_WideString& text,
-                  CFX_Matrix* matrix = NULL);
-  FX_ERR CalcTextRect(CFX_RectF& rect,
-                      const CFX_WideString& text,
-                      FX_BOOL isMultiline = FALSE,
-                      CFX_Matrix* matrix = NULL);
-  FX_ERR Transfer(CFX_Graphics* graphics, const CFX_Matrix* matrix);
-  FX_ERR Transfer(CFX_Graphics* graphics,
-                  FX_FLOAT srcLeft,
-                  FX_FLOAT srcTop,
-                  const CFX_RectF& dstRect,
-                  const CFX_Matrix* matrix);
+  FWL_Error StretchImage(CFX_DIBSource* source,
+                         const CFX_RectF& rect,
+                         CFX_Matrix* matrix = NULL);
+  FWL_Error ConcatMatrix(const CFX_Matrix* matrix);
+  FWL_Error ClearClip();
+  FWL_Error ShowText(const CFX_PointF& point,
+                     const CFX_WideString& text,
+                     CFX_Matrix* matrix = NULL);
+  FWL_Error CalcTextRect(CFX_RectF& rect,
+                         const CFX_WideString& text,
+                         FX_BOOL isMultiline = FALSE,
+                         CFX_Matrix* matrix = NULL);
+  FWL_Error Transfer(CFX_Graphics* graphics, const CFX_Matrix* matrix);
+  FWL_Error Transfer(CFX_Graphics* graphics,
+                     FX_FLOAT srcLeft,
+                     FX_FLOAT srcTop,
+                     const CFX_RectF& dstRect,
+                     const CFX_Matrix* matrix);
 
-  FX_ERR InverseRect(const CFX_RectF& rect);
-  FX_ERR XorDIBitmap(const CFX_DIBitmap* srcBitmap, const CFX_RectF& rect);
-  FX_ERR EqvDIBitmap(const CFX_DIBitmap* srcBitmap, const CFX_RectF& rect);
+  FWL_Error InverseRect(const CFX_RectF& rect);
+  FWL_Error XorDIBitmap(const CFX_DIBitmap* srcBitmap, const CFX_RectF& rect);
+  FWL_Error EqvDIBitmap(const CFX_DIBitmap* srcBitmap, const CFX_RectF& rect);
 
  protected:
   int32_t m_type;
@@ -213,36 +206,36 @@ class CFX_Graphics {
     FX_FLOAT fontSpacing;
   } m_info;
 
-  FX_ERR RenderDeviceSetLineDash(FX_DashStyle dashStyle);
-  FX_ERR RenderDeviceStrokePath(CFX_Path* path, CFX_Matrix* matrix);
-  FX_ERR RenderDeviceFillPath(CFX_Path* path,
-                              FX_FillMode fillMode,
-                              CFX_Matrix* matrix);
-  FX_ERR RenderDeviceDrawImage(CFX_DIBSource* source,
-                               const CFX_PointF& point,
-                               CFX_Matrix* matrix);
-  FX_ERR RenderDeviceStretchImage(CFX_DIBSource* source,
-                                  const CFX_RectF& rect,
+  FWL_Error RenderDeviceSetLineDash(FX_DashStyle dashStyle);
+  FWL_Error RenderDeviceStrokePath(CFX_Path* path, CFX_Matrix* matrix);
+  FWL_Error RenderDeviceFillPath(CFX_Path* path,
+                                 FX_FillMode fillMode,
+                                 CFX_Matrix* matrix);
+  FWL_Error RenderDeviceDrawImage(CFX_DIBSource* source,
+                                  const CFX_PointF& point,
                                   CFX_Matrix* matrix);
-  FX_ERR RenderDeviceShowText(const CFX_PointF& point,
-                              const CFX_WideString& text,
-                              CFX_Matrix* matrix);
+  FWL_Error RenderDeviceStretchImage(CFX_DIBSource* source,
+                                     const CFX_RectF& rect,
+                                     CFX_Matrix* matrix);
+  FWL_Error RenderDeviceShowText(const CFX_PointF& point,
+                                 const CFX_WideString& text,
+                                 CFX_Matrix* matrix);
 
-  FX_ERR StrokePathWithPattern(CFX_Path* path, CFX_Matrix* matrix);
-  FX_ERR StrokePathWithShading(CFX_Path* path, CFX_Matrix* matrix);
+  FWL_Error StrokePathWithPattern(CFX_Path* path, CFX_Matrix* matrix);
+  FWL_Error StrokePathWithShading(CFX_Path* path, CFX_Matrix* matrix);
 
-  FX_ERR FillPathWithPattern(CFX_Path* path,
-                             FX_FillMode fillMode,
-                             CFX_Matrix* matrix);
-  FX_ERR FillPathWithShading(CFX_Path* path,
-                             FX_FillMode fillMode,
-                             CFX_Matrix* matrix);
+  FWL_Error FillPathWithPattern(CFX_Path* path,
+                                FX_FillMode fillMode,
+                                CFX_Matrix* matrix);
+  FWL_Error FillPathWithShading(CFX_Path* path,
+                                FX_FillMode fillMode,
+                                CFX_Matrix* matrix);
 
-  FX_ERR SetDIBitsWithMatrix(CFX_DIBSource* source, CFX_Matrix* matrix);
-  FX_ERR CalcTextInfo(const CFX_WideString& text,
-                      uint32_t* charCodes,
-                      FXTEXT_CHARPOS* charPos,
-                      CFX_RectF& rect);
+  FWL_Error SetDIBitsWithMatrix(CFX_DIBSource* source, CFX_Matrix* matrix);
+  FWL_Error CalcTextInfo(const CFX_WideString& text,
+                         uint32_t* charCodes,
+                         FXTEXT_CHARPOS* charPos,
+                         CFX_RectF& rect);
 
   CFX_RenderDevice* m_renderDevice;
   CFX_ArrayTemplate<TInfo*> m_infoStack;

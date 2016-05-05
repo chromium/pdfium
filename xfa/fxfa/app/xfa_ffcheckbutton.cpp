@@ -295,11 +295,12 @@ FX_BOOL CXFA_FFCheckButton::UpdateFWLData() {
   m_pNormalWidget->Update();
   return TRUE;
 }
-int32_t CXFA_FFCheckButton::OnProcessMessage(CFWL_Message* pMessage) {
-  return m_pOldDelegate->OnProcessMessage(pMessage);
+
+void CXFA_FFCheckButton::OnProcessMessage(CFWL_Message* pMessage) {
+  m_pOldDelegate->OnProcessMessage(pMessage);
 }
 
-FWL_ERR CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
+void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetClassID()) {
     case CFWL_EventType::CheckStateChanged: {
@@ -330,10 +331,10 @@ FWL_ERR CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
     default:
       break;
   }
-  return m_pOldDelegate->OnProcessEvent(pEvent);
+  m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
-FWL_ERR CXFA_FFCheckButton::OnDrawWidget(CFX_Graphics* pGraphics,
-                                         const CFX_Matrix* pMatrix) {
-  return m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+void CXFA_FFCheckButton::OnDrawWidget(CFX_Graphics* pGraphics,
+                                      const CFX_Matrix* pMatrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }

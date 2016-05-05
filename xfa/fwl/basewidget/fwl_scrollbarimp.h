@@ -19,27 +19,27 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
   CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
   ~CFWL_ScrollBarImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR Update();
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error Update();
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
   virtual FX_BOOL IsVertical();
-  virtual FWL_ERR GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
-  virtual FWL_ERR SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
+  virtual FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
+  virtual FWL_Error SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
   virtual FX_FLOAT GetPageSize();
-  virtual FWL_ERR SetPageSize(FX_FLOAT fPageSize);
+  virtual FWL_Error SetPageSize(FX_FLOAT fPageSize);
   virtual FX_FLOAT GetStepSize();
-  virtual FWL_ERR SetStepSize(FX_FLOAT fStepSize);
+  virtual FWL_Error SetStepSize(FX_FLOAT fStepSize);
   virtual FX_FLOAT GetPos();
-  virtual FWL_ERR SetPos(FX_FLOAT fPos);
+  virtual FWL_Error SetPos(FX_FLOAT fPos);
   virtual FX_FLOAT GetTrackPos();
-  virtual FWL_ERR SetTrackPos(FX_FLOAT fTrackPos);
+  virtual FWL_Error SetTrackPos(FX_FLOAT fTrackPos);
   virtual FX_BOOL DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
-  virtual FWL_ERR SetOuter(IFWL_Widget* pOuter);
+  virtual FWL_Error SetOuter(IFWL_Widget* pOuter);
   virtual int32_t Run(FWL_HTIMER hTimer);
 
  protected:
@@ -101,9 +101,9 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
 class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);

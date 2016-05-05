@@ -21,10 +21,10 @@ class CXFA_FFImageEdit : public CXFA_FFField {
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();
   virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  virtual void OnProcessMessage(CFWL_Message* pMessage);
+  virtual void OnProcessEvent(CFWL_Event* pEvent);
+  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix = NULL);
 
  protected:
   virtual void SetFWLRect();

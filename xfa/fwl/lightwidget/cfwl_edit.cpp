@@ -15,26 +15,26 @@ CFWL_Edit* CFWL_Edit::Create() {
   return new CFWL_Edit;
 }
 
-FWL_ERR CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
+FWL_Error CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
   std::unique_ptr<IFWL_Edit> pEdit(IFWL_Edit::Create(
       m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
-  FWL_ERR ret = pEdit->Initialize();
-  if (ret != FWL_ERR_Succeeded) {
+  FWL_Error ret = pEdit->Initialize();
+  if (ret != FWL_Error::Succeeded) {
     return ret;
   }
   m_pIface = pEdit.release();
   CFWL_Widget::Initialize();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 
-FWL_ERR CFWL_Edit::SetText(const CFX_WideString& wsText) {
+FWL_Error CFWL_Edit::SetText(const CFX_WideString& wsText) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->SetText(wsText);
 }
 
@@ -44,17 +44,17 @@ int32_t CFWL_Edit::GetTextLength() const {
   return static_cast<IFWL_Edit*>(m_pIface)->GetTextLength();
 }
 
-FWL_ERR CFWL_Edit::GetText(CFX_WideString& wsText,
-                           int32_t nStart,
-                           int32_t nCount) const {
+FWL_Error CFWL_Edit::GetText(CFX_WideString& wsText,
+                             int32_t nStart,
+                             int32_t nCount) const {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->GetText(wsText, nStart, nCount);
 }
 
-FWL_ERR CFWL_Edit::ClearText() {
+FWL_Error CFWL_Edit::ClearText() {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->ClearText();
 }
 
@@ -70,9 +70,9 @@ int32_t CFWL_Edit::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
   return static_cast<IFWL_Edit*>(m_pIface)->SetCaretPos(nIndex, bBefore);
 }
 
-FWL_ERR CFWL_Edit::AddSelRange(int32_t nStart, int32_t nCount) {
+int32_t CFWL_Edit::AddSelRange(int32_t nStart, int32_t nCount) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return -1;
   static_cast<IFWL_Edit*>(m_pIface)->AddSelRange(nStart, nCount);
   int32_t pos = 0;
   int32_t sum = static_cast<IFWL_Edit*>(m_pIface)->GetTextLength();
@@ -96,9 +96,9 @@ int32_t CFWL_Edit::GetSelRange(int32_t nIndex, int32_t& nStart) {
   return static_cast<IFWL_Edit*>(m_pIface)->GetSelRange(nIndex, nStart);
 }
 
-FWL_ERR CFWL_Edit::ClearSelections() {
+FWL_Error CFWL_Edit::ClearSelections() {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->ClearSelections();
 }
 
@@ -108,55 +108,55 @@ int32_t CFWL_Edit::GetLimit() {
   return static_cast<IFWL_Edit*>(m_pIface)->GetLimit();
 }
 
-FWL_ERR CFWL_Edit::SetLimit(int32_t nLimit) {
+FWL_Error CFWL_Edit::SetLimit(int32_t nLimit) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->SetLimit(nLimit);
 }
 
-FWL_ERR CFWL_Edit::SetAliasChar(FX_WCHAR wAlias) {
+FWL_Error CFWL_Edit::SetAliasChar(FX_WCHAR wAlias) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->SetAliasChar(wAlias);
 }
 
-FWL_ERR CFWL_Edit::Insert(int32_t nStart,
-                          const FX_WCHAR* lpText,
-                          int32_t nLen) {
+FWL_Error CFWL_Edit::Insert(int32_t nStart,
+                            const FX_WCHAR* lpText,
+                            int32_t nLen) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->Insert(nStart, lpText, nLen);
 }
 
-FWL_ERR CFWL_Edit::DeleteSelections() {
+FWL_Error CFWL_Edit::DeleteSelections() {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->DeleteSelections();
 }
 
-FWL_ERR CFWL_Edit::DeleteRange(int32_t nStart, int32_t nCount) {
+FWL_Error CFWL_Edit::DeleteRange(int32_t nStart, int32_t nCount) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->DeleteRange(nStart, nCount);
 }
 
-FWL_ERR CFWL_Edit::ReplaceSelections(const CFX_WideStringC& wsReplace) {
+FWL_Error CFWL_Edit::ReplaceSelections(const CFX_WideStringC& wsReplace) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->ReplaceSelections(wsReplace);
 }
 
-FWL_ERR CFWL_Edit::Replace(int32_t nStart,
-                           int32_t nLen,
-                           const CFX_WideStringC& wsReplace) {
+FWL_Error CFWL_Edit::Replace(int32_t nStart,
+                             int32_t nLen,
+                             const CFX_WideStringC& wsReplace) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->Replace(nStart, nLen, wsReplace);
 }
 
-FWL_ERR CFWL_Edit::DoClipboard(int32_t iCmd) {
+FWL_Error CFWL_Edit::DoClipboard(int32_t iCmd) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->DoClipboard(iCmd);
 }
 
@@ -172,29 +172,29 @@ FX_BOOL CFWL_Edit::Undo(const CFX_ByteStringC& bsRecord) {
   return static_cast<IFWL_Edit*>(m_pIface)->Undo(bsRecord);
 }
 
-FWL_ERR CFWL_Edit::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
+FWL_Error CFWL_Edit::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)
       ->SetTabWidth(fTabWidth, bEquidistant);
 }
 
-FWL_ERR CFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
+FWL_Error CFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
   if (iMin > iMax) {
-    return FWL_ERR_Parameter_Invalid;
+    return FWL_Error::ParameterInvalid;
   }
   return static_cast<IFWL_Edit*>(m_pIface)->SetNumberRange(iMin, iMax);
 }
 
-FWL_ERR CFWL_Edit::SetBackColor(uint32_t dwColor) {
+FWL_Error CFWL_Edit::SetBackColor(uint32_t dwColor) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->SetBackColor(dwColor);
 }
 
-FWL_ERR CFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
+FWL_Error CFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->SetFont(wsFont, fSize);
 }
 

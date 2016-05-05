@@ -25,9 +25,9 @@ class CFX_Color {
   explicit CFX_Color(CFX_Shading* shading);
   virtual ~CFX_Color();
 
-  FX_ERR Set(const FX_ARGB argb);
-  FX_ERR Set(CFX_Pattern* pattern, const FX_ARGB argb = 0x0);
-  FX_ERR Set(CFX_Shading* shading);
+  FWL_Error Set(const FX_ARGB argb);
+  FWL_Error Set(CFX_Pattern* pattern, const FX_ARGB argb = 0x0);
+  FWL_Error Set(CFX_Shading* shading);
 
  private:
   friend class CFX_Graphics;

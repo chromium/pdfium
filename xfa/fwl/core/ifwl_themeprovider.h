@@ -25,16 +25,17 @@ class IFWL_ThemeProvider {
   virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
                               uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE) = 0;
-  virtual FWL_ERR GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) = 0;
-  virtual FWL_ERR SetThemeMatrix(IFWL_Widget* pWidget,
-                                 const CFX_Matrix& matrix) = 0;
+  virtual FWL_Error GetThemeMatrix(IFWL_Widget* pWidget,
+                                   CFX_Matrix& matrix) = 0;
+  virtual FWL_Error SetThemeMatrix(IFWL_Widget* pWidget,
+                                   const CFX_Matrix& matrix) = 0;
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) = 0;
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams) = 0;
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
                             CFWL_WidgetCapacity dwCapacity) = 0;
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget) = 0;
-  virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart,
-                              CFX_RectF& rtPart) = 0;
+  virtual FWL_Error GetPartRect(CFWL_ThemePart* pThemePart,
+                                CFX_RectF& rtPart) = 0;
   virtual FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,
                            FX_FLOAT fx,
                            FX_FLOAT fy) = 0;

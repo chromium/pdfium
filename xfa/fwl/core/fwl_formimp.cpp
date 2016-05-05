@@ -48,7 +48,7 @@ IFWL_Form::IFWL_Form() {}
 FWL_FORMSIZE IFWL_Form::GetFormSize() {
   return static_cast<CFWL_FormImp*>(GetImpl())->GetFormSize();
 }
-FWL_ERR IFWL_Form::SetFormSize(FWL_FORMSIZE eFormSize) {
+FWL_Error IFWL_Form::SetFormSize(FWL_FORMSIZE eFormSize) {
   return static_cast<CFWL_FormImp*>(GetImpl())->SetFormSize(eFormSize);
 }
 IFWL_Widget* IFWL_Form::DoModal() {
@@ -57,10 +57,10 @@ IFWL_Widget* IFWL_Form::DoModal() {
 IFWL_Widget* IFWL_Form::DoModal(uint32_t& dwCommandID) {
   return static_cast<CFWL_FormImp*>(GetImpl())->DoModal(dwCommandID);
 }
-FWL_ERR IFWL_Form::EndDoModal() {
+FWL_Error IFWL_Form::EndDoModal() {
   return static_cast<CFWL_FormImp*>(GetImpl())->EndDoModal();
 }
-FWL_ERR IFWL_Form::SetBorderRegion(CFX_Path* pPath) {
+FWL_Error IFWL_Form::SetBorderRegion(CFX_Path* pPath) {
   return static_cast<CFWL_FormImp*>(GetImpl())->SetBorderRegion(pPath);
 }
 
@@ -99,9 +99,9 @@ CFWL_FormImp::~CFWL_FormImp() {
   delete m_pNoteLoop;
 }
 
-FWL_ERR CFWL_FormImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_FormImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Form;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 
 uint32_t CFWL_FormImp::GetClassID() const {
@@ -114,22 +114,22 @@ FX_BOOL CFWL_FormImp::IsInstance(const CFX_WideStringC& wsClass) const {
   return CFWL_WidgetImp::IsInstance(wsClass);
 }
 
-FWL_ERR CFWL_FormImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_FormImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   RegisterForm();
   RegisterEventTarget();
   m_pDelegate = new CFWL_FormImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_FormImp::Finalize() {
+FWL_Error CFWL_FormImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   UnregisterEventTarget();
   UnRegisterForm();
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_FormImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error CFWL_FormImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Reset();
     FX_FLOAT fCapHeight = GetCaptionHeight();
@@ -141,23 +141,23 @@ FWL_ERR CFWL_FormImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
+FWL_Error CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
   if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption) == 0) {
     rect = m_pProperties->m_rtWidget;
     rect.Offset(-rect.left, -rect.top);
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
 #ifdef FWL_UseMacSystemBorder
   rect = m_rtRelative;
   CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
 
   rect.left = 0;
   rect.top = 0;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 #else
   FX_FLOAT x = 0;
   FX_FLOAT y = 0;
@@ -176,12 +176,12 @@ FWL_ERR CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
   rect.Deflate(x, t, x, y);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 #endif
 }
-FWL_ERR CFWL_FormImp::Update() {
+FWL_Error CFWL_FormImp::Update() {
   if (m_iLock > 0) {
-    return FWL_ERR_Succeeded;
+    return FWL_Error::Succeeded;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -195,7 +195,7 @@ FWL_ERR CFWL_FormImp::Update() {
 #endif
   UpdateCaption();
   Layout();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FWL_WidgetHit CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   GetAvailableTheme();
@@ -249,12 +249,12 @@ FWL_WidgetHit CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   }
   return FWL_WidgetHit::Client;
 }
-FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
-                                 const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
+                                   const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   FX_BOOL bInactive = !IsActive();
   int32_t iState = bInactive ? CFWL_PartState_Inactive : CFWL_PartState_Normal;
@@ -262,7 +262,7 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
     DrawBackground(pGraphics, pTheme);
   }
 #ifdef FWL_UseMacSystemBorder
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 #endif
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
@@ -365,14 +365,14 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
     }
   }
 #endif
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FWL_FORMSIZE CFWL_FormImp::GetFormSize() {
   return m_eFormSize;
 }
-FWL_ERR CFWL_FormImp::SetFormSize(FWL_FORMSIZE eFormSize) {
+FWL_Error CFWL_FormImp::SetFormSize(FWL_FORMSIZE eFormSize) {
   m_eFormSize = eFormSize;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 IFWL_Widget* CFWL_FormImp::DoModal() {
   IFWL_App* pApp = GetOwnerApp();
@@ -399,31 +399,31 @@ IFWL_Widget* CFWL_FormImp::DoModal() {
 IFWL_Widget* CFWL_FormImp::DoModal(uint32_t& dwCommandID) {
   return DoModal();
 }
-FWL_ERR CFWL_FormImp::EndDoModal() {
+FWL_Error CFWL_FormImp::EndDoModal() {
   if (!m_pNoteLoop)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   m_bDoModalFlag = FALSE;
 #if (_FX_OS_ == _FX_MACOSX_)
   m_pNoteLoop->EndModalLoop();
   IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
 
   CFWL_NoteDriver* pDriver =
       static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   if (!pDriver)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
 
   pDriver->PopNoteLoop();
   SetStates(FWL_WGTSTATE_Invisible, TRUE);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 #else
   SetStates(FWL_WGTSTATE_Invisible, TRUE);
   return m_pNoteLoop->EndModalLoop();
 #endif
 }
-FWL_ERR CFWL_FormImp::SetBorderRegion(CFX_Path* pPath) {
-  return FWL_ERR_Succeeded;
+FWL_Error CFWL_FormImp::SetBorderRegion(CFX_Path* pPath) {
+  return FWL_Error::Succeeded;
 }
 void CFWL_FormImp::DrawBackground(CFX_Graphics* pGraphics,
                                   IFWL_ThemeProvider* pTheme) {
@@ -842,9 +842,10 @@ CFWL_FormImpDelegate::CFWL_FormImpDelegate(CFWL_FormImp* pOwner)
     : m_pOwner(pOwner) {}
 
 #ifdef FWL_UseMacSystemBorder
-int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
+    return;
+
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
@@ -859,13 +860,12 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-  return FWL_ERR_Succeeded;
 }
 #else
-int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
-  int32_t iRet = 1;
+    return;
+
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
@@ -938,7 +938,7 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       CFWL_WidgetMgr* pWidgetMgr =
           static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
       if (!pWidgetMgr)
-        return 0;
+        return;
 
       pWidgetMgr->AddRedrawCounts(m_pOwner->m_pInterface);
       if (!m_pOwner->m_bSetMaximize)
@@ -962,24 +962,19 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     default: {
-      iRet = 0;
       break;
     }
   }
-  return iRet;
 }
 #endif  // FWL_UseMacSystemBorder
 
-FWL_ERR CFWL_FormImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  if (!pEvent)
-    return FWL_ERR_Indefinite;
-  return FWL_ERR_Succeeded;
+void CFWL_FormImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
+
+void CFWL_FormImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                        const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
 
-FWL_ERR CFWL_FormImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                           const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
-}
 void CFWL_FormImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->SetGrab(TRUE);
   m_pOwner->m_bLButtonDown = TRUE;

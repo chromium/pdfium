@@ -13,15 +13,9 @@ CFWL_WidgetDelegate::CFWL_WidgetDelegate() {}
 
 CFWL_WidgetDelegate::~CFWL_WidgetDelegate() {}
 
-int32_t CFWL_WidgetDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  return 1;
-}
+void CFWL_WidgetDelegate::OnProcessMessage(CFWL_Message* pMessage) {}
 
-FWL_ERR CFWL_WidgetDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  return FWL_ERR_Succeeded;
-}
+void CFWL_WidgetDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
 
-FWL_ERR CFWL_WidgetDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                          const CFX_Matrix* pMatrix) {
-  return FWL_ERR_Succeeded;
-}
+void CFWL_WidgetDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                       const CFX_Matrix* pMatrix) {}

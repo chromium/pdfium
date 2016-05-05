@@ -36,7 +36,7 @@ IFWL_SpinButton* IFWL_SpinButton::Create(
   return pSpinButton;
 }
 IFWL_SpinButton::IFWL_SpinButton() {}
-FWL_ERR IFWL_SpinButton::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
+FWL_Error IFWL_SpinButton::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
   return static_cast<CFWL_SpinButtonImp*>(GetImpl())
       ->EnableButton(bEnable, bUp);
 }
@@ -59,36 +59,37 @@ CFWL_SpinButtonImp::CFWL_SpinButtonImp(
   m_pProperties->m_dwStyleExes |= FWL_STYLEEXE_SPB_Vert;
 }
 CFWL_SpinButtonImp::~CFWL_SpinButtonImp() {}
-FWL_ERR CFWL_SpinButtonImp::GetClassName(CFX_WideString& wsClass) const {
+FWL_Error CFWL_SpinButtonImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_SpinButton;
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 uint32_t CFWL_SpinButtonImp::GetClassID() const {
   return FWL_CLASSHASH_SpinButton;
 }
-FWL_ERR CFWL_SpinButtonImp::Initialize() {
-  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
-    return FWL_ERR_Indefinite;
+FWL_Error CFWL_SpinButtonImp::Initialize() {
+  if (CFWL_WidgetImp::Initialize() != FWL_Error::Succeeded)
+    return FWL_Error::Indefinite;
   m_pDelegate = new CFWL_SpinButtonImpDelegate(this);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_SpinButtonImp::Finalize() {
+FWL_Error CFWL_SpinButtonImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
-FWL_ERR CFWL_SpinButtonImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error CFWL_SpinButtonImp::GetWidgetRect(CFX_RectF& rect,
+                                            FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, kMinWidth, kMinHeight);
     CFWL_WidgetImp::GetWidgetRect(rect, TRUE);
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
-FWL_ERR CFWL_SpinButtonImp::Update() {
+FWL_Error CFWL_SpinButtonImp::Update() {
   if (IsLocked()) {
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   }
   GetClientRect(m_rtClient);
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXE_SPB_Vert) {
@@ -102,7 +103,7 @@ FWL_ERR CFWL_SpinButtonImp::Update() {
     m_rtDnButton.Set(m_rtClient.left + m_rtClient.width / 2, m_rtClient.top,
                      m_rtClient.width / 2, m_rtClient.height);
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FWL_WidgetHit CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_rtClient.Contains(fx, fy))
@@ -121,10 +122,10 @@ FWL_WidgetHit CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
     return FWL_WidgetHit::DownButton;
   return FWL_WidgetHit::Unknown;
 }
-FWL_ERR CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
-                                       const CFX_Matrix* pMatrix) {
+FWL_Error CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
+                                         const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   CFX_RectF rtClip(m_rtClient);
   if (pMatrix != NULL) {
     pMatrix->TransformRect(rtClip);
@@ -138,7 +139,7 @@ FWL_ERR CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
   }
   DrawUpButton(pGraphics, pTheme, pMatrix);
   DrawDownButton(pGraphics, pTheme, pMatrix);
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 int32_t CFWL_SpinButtonImp::Run(FWL_HTIMER hTimer) {
   if (m_hTimer) {
@@ -149,7 +150,7 @@ int32_t CFWL_SpinButtonImp::Run(FWL_HTIMER hTimer) {
   }
   return 1;
 }
-FWL_ERR CFWL_SpinButtonImp::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
+FWL_Error CFWL_SpinButtonImp::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
   if (bUp) {
     if (bEnable) {
       m_dwUpState = CFWL_PartState_Normal;
@@ -163,7 +164,7 @@ FWL_ERR CFWL_SpinButtonImp::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
       m_dwDnState = CFWL_PartState_Disabled;
     }
   }
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 FX_BOOL CFWL_SpinButtonImp::IsButtonEnable(FX_BOOL bUp) {
   if (bUp) {
@@ -204,11 +205,10 @@ CFWL_SpinButtonImpDelegate::CFWL_SpinButtonImpDelegate(
     CFWL_SpinButtonImp* pOwner)
     : m_pOwner(pOwner) {}
 
-int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
-    return 0;
+    return;
 
-  int32_t iRet = 1;
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case CFWL_MessageType::SetFocus: {
@@ -250,21 +250,19 @@ int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     default: {
-      iRet = 0;
       break;
     }
   }
   CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
-  return iRet;
 }
 
-FWL_ERR CFWL_SpinButtonImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  return FWL_ERR_Succeeded;
+void CFWL_SpinButtonImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
+
+void CFWL_SpinButtonImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                              const CFX_Matrix* pMatrix) {
+  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
-FWL_ERR CFWL_SpinButtonImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                                 const CFX_Matrix* pMatrix) {
-  return m_pOwner->DrawWidget(pGraphics, pMatrix);
-}
+
 void CFWL_SpinButtonImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
                                                 FX_BOOL bSet) {
   if (bSet) {

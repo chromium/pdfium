@@ -28,10 +28,10 @@ class CXFA_FFListBox : public CXFA_FFField {
   void SetItemState(int32_t nIndex, FX_BOOL bSelected);
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  virtual void OnProcessMessage(CFWL_Message* pMessage);
+  virtual void OnProcessEvent(CFWL_Event* pEvent);
+  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix = NULL);
 
  protected:
   IFWL_WidgetDelegate* m_pOldDelegate;
@@ -84,10 +84,10 @@ class CXFA_FFComboBox : public CXFA_FFField {
   void SetItemState(int32_t nIndex, FX_BOOL bSelected);
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  virtual void OnProcessMessage(CFWL_Message* pMessage);
+  virtual void OnProcessEvent(CFWL_Event* pEvent);
+  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix = NULL);
 
  protected:
   IFWL_WidgetDelegate* m_pOldDelegate;

@@ -44,11 +44,11 @@ class CFWL_NoteLoop {
   CFWL_NoteLoop(CFWL_WidgetImp* pForm = nullptr);
   ~CFWL_NoteLoop() {}
 
-  FWL_ERR Idle(int32_t count);
+  FWL_Error Idle(int32_t count);
   CFWL_WidgetImp* GetForm();
   FX_BOOL ContinueModal();
-  FWL_ERR EndModalLoop();
-  FWL_ERR SetMainForm(CFWL_WidgetImp* pForm);
+  FWL_Error EndModalLoop();
+  FWL_Error SetMainForm(CFWL_WidgetImp* pForm);
 
  protected:
   void GenerateCommondEvent(uint32_t dwCommand);
@@ -63,25 +63,25 @@ class CFWL_NoteDriver {
   ~CFWL_NoteDriver();
 
   FX_BOOL SendEvent(CFWL_Event* pNote);
-  FWL_ERR RegisterEventTarget(IFWL_Widget* pListener,
-                              IFWL_Widget* pEventSource = nullptr,
-                              uint32_t dwFilter = FWL_EVENT_ALL_MASK);
-  FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener);
+  FWL_Error RegisterEventTarget(IFWL_Widget* pListener,
+                                IFWL_Widget* pEventSource = nullptr,
+                                uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  FWL_Error UnregisterEventTarget(IFWL_Widget* pListener);
   void ClearEventTargets(FX_BOOL bRemoveAll);
   IFWL_App* GetOwnerApp() const;
-  FWL_ERR PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
+  FWL_Error PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* PopNoteLoop();
   IFWL_Widget* GetFocus();
   FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE);
   void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet);
-  FWL_ERR Run();
+  FWL_Error Run();
 
   IFWL_Widget* GetHover();
   void SetHover(IFWL_Widget* pHover);
   void NotifyTargetHide(IFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(IFWL_Widget* pNoteTarget);
-  FWL_ERR RegisterForm(CFWL_WidgetImp* pForm);
-  FWL_ERR UnRegisterForm(CFWL_WidgetImp* pForm);
+  FWL_Error RegisterForm(CFWL_WidgetImp* pForm);
+  FWL_Error UnRegisterForm(CFWL_WidgetImp* pForm);
   FX_BOOL QueueMessage(CFWL_Message* pMessage);
   FX_BOOL UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* GetTopLoop();
@@ -141,8 +141,8 @@ class CFWL_ToolTipContainer {
   static CFWL_ToolTipContainer* getInstance();
   static void DeleteInstance();
 
-  FX_ERR AddToolTipTarget(IFWL_ToolTipTarget* pTarget);
-  FX_ERR RemoveToolTipTarget(IFWL_ToolTipTarget* pTarget);
+  FWL_Error AddToolTipTarget(IFWL_ToolTipTarget* pTarget);
+  FWL_Error RemoveToolTipTarget(IFWL_ToolTipTarget* pTarget);
   IFWL_ToolTipTarget* GetCurrentToolTipTarget();
 
   FX_BOOL HasToolTip(IFWL_Widget* pWidget);

@@ -18,21 +18,21 @@ CFWL_ScrollBar::CFWL_ScrollBar() {}
 
 CFWL_ScrollBar::~CFWL_ScrollBar() {}
 
-FWL_ERR CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
+FWL_Error CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
   std::unique_ptr<IFWL_ScrollBar> pScrollBar(IFWL_ScrollBar::Create(
       m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
-  FWL_ERR ret = pScrollBar->Initialize();
-  if (ret != FWL_ERR_Succeeded) {
+  FWL_Error ret = pScrollBar->Initialize();
+  if (ret != FWL_Error::Succeeded) {
     return ret;
   }
   m_pIface = pScrollBar.release();
   CFWL_Widget::Initialize();
-  return FWL_ERR_Succeeded;
+  return FWL_Error::Succeeded;
 }
 
 FX_BOOL CFWL_ScrollBar::IsVertical() {
@@ -41,15 +41,15 @@ FX_BOOL CFWL_ScrollBar::IsVertical() {
   return static_cast<IFWL_ScrollBar*>(m_pIface)->IsVertical();
 }
 
-FWL_ERR CFWL_ScrollBar::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
+FWL_Error CFWL_ScrollBar::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->GetRange(fMin, fMax);
 }
 
-FWL_ERR CFWL_ScrollBar::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
+FWL_Error CFWL_ScrollBar::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->SetRange(fMin, fMax);
 }
 
@@ -59,9 +59,9 @@ FX_FLOAT CFWL_ScrollBar::GetPageSize() {
   return static_cast<IFWL_ScrollBar*>(m_pIface)->GetPageSize();
 }
 
-FWL_ERR CFWL_ScrollBar::SetPageSize(FX_FLOAT fPageSize) {
+FWL_Error CFWL_ScrollBar::SetPageSize(FX_FLOAT fPageSize) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->SetPageSize(fPageSize);
 }
 
@@ -71,9 +71,9 @@ FX_FLOAT CFWL_ScrollBar::GetStepSize() {
   return static_cast<IFWL_ScrollBar*>(m_pIface)->GetStepSize();
 }
 
-FWL_ERR CFWL_ScrollBar::SetStepSize(FX_FLOAT fStepSize) {
+FWL_Error CFWL_ScrollBar::SetStepSize(FX_FLOAT fStepSize) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->SetStepSize(fStepSize);
 }
 
@@ -83,9 +83,9 @@ FX_FLOAT CFWL_ScrollBar::GetPos() {
   return static_cast<IFWL_ScrollBar*>(m_pIface)->GetPos();
 }
 
-FWL_ERR CFWL_ScrollBar::SetPos(FX_FLOAT fPos) {
+FWL_Error CFWL_ScrollBar::SetPos(FX_FLOAT fPos) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->SetPos(fPos);
 }
 
@@ -95,9 +95,9 @@ FX_FLOAT CFWL_ScrollBar::GetTrackPos() {
   return static_cast<IFWL_ScrollBar*>(m_pIface)->GetTrackPos();
 }
 
-FWL_ERR CFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
+FWL_Error CFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
   if (!m_pIface)
-    return FWL_ERR_Indefinite;
+    return FWL_Error::Indefinite;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->SetTrackPos(fTrackPos);
 }
 

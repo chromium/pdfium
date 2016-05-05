@@ -21,24 +21,24 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
                 IFWL_Widget* pOuter);
   virtual ~CFWL_CaretImp();
 
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
 
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
 
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
 
   virtual void ShowCaret(FX_BOOL bFlag = TRUE);
-  virtual FWL_ERR GetFrequency(uint32_t& elapse);
-  virtual FWL_ERR SetFrequency(uint32_t elapse);
-  virtual FWL_ERR SetColor(CFX_Color crFill);
+  virtual FWL_Error GetFrequency(uint32_t& elapse);
+  virtual FWL_Error SetFrequency(uint32_t elapse);
+  virtual FWL_Error SetColor(CFX_Color crFill);
 
  protected:
-  FX_BOOL DrawCaretBK(CFX_Graphics* pGraphics,
-                      IFWL_ThemeProvider* pTheme,
-                      const CFX_Matrix* pMatrix);
+  void DrawCaretBK(CFX_Graphics* pGraphics,
+                   IFWL_ThemeProvider* pTheme,
+                   const CFX_Matrix* pMatrix);
   class CFWL_CaretTimer : public IFWL_Timer {
    public:
     explicit CFWL_CaretTimer(CFWL_CaretImp* pCaret);
@@ -57,9 +57,9 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
 class CFWL_CaretImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_CaretImpDelegate(CFWL_CaretImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   CFWL_CaretImp* m_pOwner;

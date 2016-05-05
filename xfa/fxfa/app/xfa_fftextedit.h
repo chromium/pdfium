@@ -44,10 +44,10 @@ class CXFA_FFTextEdit : public CXFA_FFField {
                                 const CFX_ByteStringC& bsReplace) override;
 
   // IFWL_WidgetDelegate:
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
   void OnTextChanged(IFWL_Widget* pWidget,
                      const CFX_WideString& wsChanged,
@@ -73,7 +73,7 @@ class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
   virtual ~CXFA_FFNumericEdit();
   virtual FX_BOOL LoadWidget();
   virtual void UpdateWidgetProperty();
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
+  virtual void OnProcessEvent(CFWL_Event* pEvent);
 
  public:
   FX_BOOL OnValidate(IFWL_Widget* pWidget, CFX_WideString& wsText);
@@ -132,7 +132,7 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
                        int32_t iYear,
                        int32_t iMonth,
                        int32_t iDay);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
+  virtual void OnProcessEvent(CFWL_Event* pEvent);
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFTEXTEDIT_H_

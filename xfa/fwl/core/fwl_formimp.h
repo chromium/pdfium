@@ -69,24 +69,24 @@ class CFWL_FormImp : public CFWL_WidgetImp {
  public:
   CFWL_FormImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   virtual ~CFWL_FormImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual uint32_t GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
 
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR GetClientRect(CFX_RectF& rect);
-  virtual FWL_ERR Update();
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error GetClientRect(CFX_RectF& rect);
+  virtual FWL_Error Update();
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = NULL);
   virtual FWL_FORMSIZE GetFormSize();
-  virtual FWL_ERR SetFormSize(FWL_FORMSIZE eFormSize);
+  virtual FWL_Error SetFormSize(FWL_FORMSIZE eFormSize);
   virtual IFWL_Widget* DoModal();
   virtual IFWL_Widget* DoModal(uint32_t& dwCommandID);
-  virtual FWL_ERR EndDoModal();
-  virtual FWL_ERR SetBorderRegion(CFX_Path* pPath);
+  virtual FWL_Error EndDoModal();
+  virtual FWL_Error SetBorderRegion(CFX_Path* pPath);
   virtual void DrawBackground(CFX_Graphics* pGraphics,
                               IFWL_ThemeProvider* pTheme);
   CFWL_WidgetImp* GetSubFocus();
@@ -168,10 +168,10 @@ class CFWL_FormImp : public CFWL_WidgetImp {
 class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_FormImpDelegate(CFWL_FormImp* pOwner);
-  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
-  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
-  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
