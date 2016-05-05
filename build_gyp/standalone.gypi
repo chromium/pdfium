@@ -300,6 +300,7 @@
         'EnableFunctionLevelLinking': 'true',
         'RuntimeTypeInfo': 'false',
         'WarningLevel': '3',
+        'WarnAsError': 'true',
         'DebugInformationFormat': '3',
         'Detect64BitPortabilityProblems': 'false',
         'conditions': [
@@ -310,13 +311,6 @@
             'ExceptionHandling': '1',  # /EHsc
           }, {
             'ExceptionHandling': '0',
-          }],
-          ['target_arch=="x64"', {
-            # 64-bit warnings need to be resolved.
-            # https://code.google.com/p/pdfium/issues/detail?id=101
-            'WarnAsError': 'false',
-          }, {
-            'WarnAsError': 'true',
           }],
           ['clang==1', {
             'AdditionalOptions': [
