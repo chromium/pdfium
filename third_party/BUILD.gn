@@ -328,11 +328,21 @@ source_set("fx_lpng") {
 }
 
 if (pdf_enable_xfa) {
+  config("fx_tiff_warnings") {
+    visibility = [ ":*" ]
+    if (is_win) {
+      cflags = [
+        "/wd4005",  # Macro redefinition for 'WIN32_LEAN_AND_MEAN'.
+      ]
+    }
+  }
   source_set("fx_tiff") {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
       "../:pdfium_config",
+
+      ":fx_tiff_warnings",
     ]
     deps = [
       "//third_party:jpeg",

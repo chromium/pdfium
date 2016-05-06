@@ -12,7 +12,6 @@
       'OPJ_STATIC',
       'PNG_PREFIX',
       'PNG_USE_READ_MACROS',
-      '_CRT_SECURE_NO_WARNINGS',
     ],
     'include_dirs': [
       # This is implicit in GN.
@@ -20,7 +19,7 @@
       '..',
     ],
     'msvs_disabled_warnings': [
-      4005, 4018, 4146, 4333, 4345, 4267
+      4018, 4146, 4333, 4345, 4267
     ],
   },
   'targets': [
@@ -410,6 +409,15 @@
             'libtiff/tif_warning.c',
             'libtiff/tif_write.c',
             'libtiff/tif_zip.c',
+          ],
+          'conditions': [
+            ['OS=="win"', {
+              'defines!': [
+                 # Need to undefine the macro since it is redefined in
+                 # tif_ojpeg.c and tif_jpeg.c.
+                'WIN32_LEAN_AND_MEAN',
+              ],
+            }],
           ],
         },
       ],
