@@ -12,7 +12,6 @@
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
 
-class CFX_ArabicChar;
 class CFX_Char;
 class CFX_TxtChar;
 class CFX_TxtPiece;
@@ -270,7 +269,6 @@ class CFX_TxtBreak {
  protected:
   uint32_t m_dwPolicies;
   FX_BOOL m_bPagination;
-  CFX_ArabicChar* m_pArabicChar;
   int32_t m_iLineWidth;
   uint32_t m_dwLayoutStyles;
   FX_BOOL m_bVertical;

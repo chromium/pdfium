@@ -16,7 +16,6 @@
 
 CFX_TxtBreak::CFX_TxtBreak(uint32_t dwPolicies)
     : m_dwPolicies(dwPolicies),
-      m_pArabicChar(NULL),
       m_iLineWidth(2000000),
       m_dwLayoutStyles(0),
       m_bVertical(FALSE),
@@ -51,7 +50,6 @@ CFX_TxtBreak::CFX_TxtBreak(uint32_t dwPolicies)
       m_iVerScale(100),
       m_iCharSpace(0) {
   m_bPagination = (m_dwPolicies & FX_TXTBREAKPOLICY_Pagination) != 0;
-  m_pArabicChar = new CFX_ArabicChar;
   if (m_bPagination) {
     m_pTxtLine1 = new CFX_TxtLine(sizeof(CFX_Char));
     m_pTxtLine2 = new CFX_TxtLine(sizeof(CFX_Char));
@@ -66,7 +64,6 @@ CFX_TxtBreak::~CFX_TxtBreak() {
   Reset();
   delete m_pTxtLine1;
   delete m_pTxtLine2;
-  m_pArabicChar->Release();
 }
 void CFX_TxtBreak::SetLineWidth(FX_FLOAT fLineWidth) {
   m_iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
@@ -465,7 +462,7 @@ uint32_t CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar,
         iLineWidth -= iCharWidth;
       }
       CFX_Char* pPrevChar = GetLastChar(2);
-      wForm = m_pArabicChar->GetFormChar(pLastChar, pPrevChar, pCurChar);
+      wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
       int32_t iLastRotation = pLastChar->m_nRotation + m_iLineRotation;
@@ -488,7 +485,7 @@ uint32_t CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar,
     }
   }
   m_dwCharType = dwType;
-  wForm = m_pArabicChar->GetFormChar(pCurChar, bAlef ? NULL : pLastChar, NULL);
+  wForm = pdfium::arabic::GetFormChar(pCurChar, bAlef ? NULL : pLastChar, NULL);
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
   } else {
@@ -1268,7 +1265,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       } else {
         wNext = 0xFEFF;
       }
-      wForm = m_pArabicChar->GetFormChar(wch, wPrev, wNext);
+      wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
       bLam = (wPrev == 0x0644 && wch == 0x0644 && wNext == 0x0647);
     } else if (dwCharType == FX_CHARTYPE_Combination) {
       wForm = wch;

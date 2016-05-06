@@ -14,7 +14,6 @@
 #include "xfa/fgas/layout/fgas_textbreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
 
-class CFX_ArabicChar;
 class IFX_Unknown;
 class IFX_Font;
 
@@ -293,7 +292,6 @@ class CFX_RTFBreak {
 
  protected:
   uint32_t m_dwPolicies;
-  CFX_ArabicChar* m_pArabicChar;
   int32_t m_iBoundaryStart;
   int32_t m_iBoundaryEnd;
   uint32_t m_dwLayoutStyles;

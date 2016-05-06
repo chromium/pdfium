@@ -15,7 +15,6 @@
 
 CFX_RTFBreak::CFX_RTFBreak(uint32_t dwPolicies)
     : m_dwPolicies(dwPolicies),
-      m_pArabicChar(NULL),
       m_iBoundaryStart(0),
       m_iBoundaryEnd(2000000),
       m_dwLayoutStyles(0),
@@ -50,13 +49,11 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwPolicies)
       m_pCurLine(NULL),
       m_iReady(0),
       m_iTolerance(0) {
-  m_pArabicChar = new CFX_ArabicChar;
   m_pCurLine = &m_RTFLine1;
 }
 CFX_RTFBreak::~CFX_RTFBreak() {
   Reset();
   m_PositionedTabs.RemoveAll();
-  m_pArabicChar->Release();
   if (m_pUserData != NULL) {
     m_pUserData->Release();
   }
@@ -343,7 +340,7 @@ static const FX_RTFBreak_LPFAppendChar g_FX_RTFBreak_lpfAppendChar[16] = {
     &CFX_RTFBreak::AppendChar_Others,      &CFX_RTFBreak::AppendChar_Others,
 };
 uint32_t CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
-  ASSERT(m_pFont != NULL && m_pCurLine != NULL && m_pArabicChar != NULL);
+  ASSERT(m_pFont && m_pCurLine);
   if (m_bCharCode) {
     return AppendChar_CharCode(wch);
   }
@@ -520,7 +517,7 @@ uint32_t CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
     if (pLastChar != NULL) {
       iLineWidth -= pLastChar->m_iCharWidth;
       CFX_RTFChar* pPrevChar = GetLastChar(2);
-      wForm = m_pArabicChar->GetFormChar(pLastChar, pPrevChar, pCurChar);
+      wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
       int32_t iLastRotation = pLastChar->m_nRotation + m_iLineRotation;
@@ -544,8 +541,8 @@ uint32_t CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
       iCharWidth = 0;
     }
   }
-  wForm =
-      m_pArabicChar->GetFormChar(pCurChar, (bAlef ? NULL : pLastChar), NULL);
+  wForm = pdfium::arabic::GetFormChar(pCurChar, bAlef ? nullptr : pLastChar,
+                                      nullptr);
   if (m_bVertical != FX_IsOdd(iRotation)) {
     iCharWidth = 1000;
   } else if (!m_pFont->GetCharWidth(wForm, iCharWidth, m_bCharCode) &&
@@ -1268,7 +1265,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
             } else {
               wNext = 0xFEFF;
             }
-            wForm = m_pArabicChar->GetFormChar(wch, wPrev, wNext);
+            wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
           } else if (bRTLPiece || bVerticalChar) {
             wForm = FX_GetMirrorChar(wch, dwProps, bRTLPiece, bVerticalChar);
           } else if (dwCharType == FX_CHARTYPE_Numeric && bArabicNumber) {

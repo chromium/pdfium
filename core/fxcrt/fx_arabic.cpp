@@ -114,6 +114,23 @@ const FX_ARASHADDA gs_FX_ShaddaTable[] = {
     {0x064F, 0xFC61}, {0x0650, 0xFC62},
 };
 
+const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
+                                 FX_WCHAR& wChar,
+                                 FX_CHARTYPE& eType) {
+  if (!pTC) {
+    eType = FX_CHARTYPE_Unknown;
+    wChar = 0xFEFF;
+    return nullptr;
+  }
+  eType = (FX_CHARTYPE)pTC->GetCharType();
+  wChar = (FX_WCHAR)pTC->m_wCharCode;
+  const FX_ARBFORMTABLE* pFT = FX_GetArabicFormTable(wChar);
+  if (!pFT || eType >= FX_CHARTYPE_ArabicNormal)
+    eType = FX_CHARTYPE_Unknown;
+
+  return pFT;
+}
+
 }  // namespace
 
 const FX_ARBFORMTABLE* FX_GetArabicFormTable(FX_WCHAR unicode) {
@@ -145,26 +162,30 @@ FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda) {
   return shadda;
 }
 
-FX_BOOL CFX_ArabicChar::IsArabicChar(FX_WCHAR wch) const {
+namespace pdfium {
+namespace arabic {
+
+bool IsArabicChar(FX_WCHAR wch) {
   uint32_t dwRet =
       kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK;
   return dwRet >= FX_CHARTYPE_ArabicAlef;
 }
-FX_BOOL CFX_ArabicChar::IsArabicFormChar(FX_WCHAR wch) const {
+
+bool IsArabicFormChar(FX_WCHAR wch) {
   return (kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK) ==
          FX_CHARTYPE_ArabicForm;
 }
-FX_WCHAR CFX_ArabicChar::GetFormChar(FX_WCHAR wch,
-                                     FX_WCHAR prev,
-                                     FX_WCHAR next) const {
+
+FX_WCHAR GetFormChar(FX_WCHAR wch, FX_WCHAR prev, FX_WCHAR next) {
   CFX_Char c(wch, kTextLayoutCodeProperties[(uint16_t)wch]);
   CFX_Char p(prev, kTextLayoutCodeProperties[(uint16_t)prev]);
   CFX_Char n(next, kTextLayoutCodeProperties[(uint16_t)next]);
   return GetFormChar(&c, &p, &n);
 }
-FX_WCHAR CFX_ArabicChar::GetFormChar(const CFX_Char* cur,
-                                     const CFX_Char* prev,
-                                     const CFX_Char* next) const {
+
+FX_WCHAR GetFormChar(const CFX_Char* cur,
+                     const CFX_Char* prev,
+                     const CFX_Char* next) {
   FX_CHARTYPE eCur;
   FX_WCHAR wCur;
   const FX_ARBFORMTABLE* ft = ParseChar(cur, wCur, eCur);
@@ -184,37 +205,22 @@ FX_WCHAR CFX_ArabicChar::GetFormChar(const CFX_Char* cur,
   if (ePrev < FX_CHARTYPE_ArabicAlef) {
     if (bAlef) {
       return FX_GetArabicFromAlefTable(wNext);
-    } else {
-      return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wIsolated : ft->wInitial;
     }
-  } else {
-    if (bAlef) {
-      wCur = FX_GetArabicFromAlefTable(wNext);
-      return (ePrev != FX_CHARTYPE_ArabicDistortion) ? wCur : ++wCur;
-    } else if (ePrev == FX_CHARTYPE_ArabicAlef ||
-               ePrev == FX_CHARTYPE_ArabicSpecial) {
-      return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wIsolated : ft->wInitial;
-    } else {
-      return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wFinal : ft->wMedial;
-    }
+    return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wIsolated : ft->wInitial;
   }
+  if (bAlef) {
+    wCur = FX_GetArabicFromAlefTable(wNext);
+    return (ePrev != FX_CHARTYPE_ArabicDistortion) ? wCur : ++wCur;
+  }
+  if (ePrev == FX_CHARTYPE_ArabicAlef || ePrev == FX_CHARTYPE_ArabicSpecial) {
+    return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wIsolated : ft->wInitial;
+  }
+  return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wFinal : ft->wMedial;
 }
-const FX_ARBFORMTABLE* CFX_ArabicChar::ParseChar(const CFX_Char* pTC,
-                                                 FX_WCHAR& wChar,
-                                                 FX_CHARTYPE& eType) const {
-  if (pTC == NULL) {
-    eType = FX_CHARTYPE_Unknown;
-    wChar = 0xFEFF;
-    return NULL;
-  }
-  eType = (FX_CHARTYPE)pTC->GetCharType();
-  wChar = (FX_WCHAR)pTC->m_wCharCode;
-  const FX_ARBFORMTABLE* pFT = FX_GetArabicFormTable(wChar);
-  if (pFT == NULL || eType >= FX_CHARTYPE_ArabicNormal) {
-    eType = FX_CHARTYPE_Unknown;
-  }
-  return pFT;
-}
+
+}  // namespace arabic
+}  // namespace pdfium
+
 void FX_BidiReverseString(CFX_WideString& wsText,
                           int32_t iStart,
                           int32_t iCount) {

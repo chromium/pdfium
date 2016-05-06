@@ -14,25 +14,18 @@
 #define FX_BidiGetDeferredType(a) (((a) >> 4) & 0x0F)
 #define FX_BidiGetResolvedType(a) ((a)&0x0F)
 
-class CFX_ArabicChar {
- public:
-  void Release() { delete this; }
+namespace pdfium {
+namespace arabic {
 
-  FX_BOOL IsArabicChar(FX_WCHAR wch) const;
-  FX_BOOL IsArabicFormChar(FX_WCHAR wch) const;
+bool IsArabicChar(FX_WCHAR wch);
+bool IsArabicFormChar(FX_WCHAR wch);
+FX_WCHAR GetFormChar(FX_WCHAR wch, FX_WCHAR prev = 0, FX_WCHAR next = 0);
+FX_WCHAR GetFormChar(const CFX_Char* cur,
+                     const CFX_Char* prev,
+                     const CFX_Char* next);
 
-  FX_WCHAR GetFormChar(FX_WCHAR wch,
-                       FX_WCHAR prev = 0,
-                       FX_WCHAR next = 0) const;
-  FX_WCHAR GetFormChar(const CFX_Char* cur,
-                       const CFX_Char* prev,
-                       const CFX_Char* next) const;
-
- protected:
-  const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
-                                   FX_WCHAR& wChar,
-                                   FX_CHARTYPE& eType) const;
-};
+}  // namespace arabic
+}  // namespace pdfium
 
 void FX_BidiReverseString(CFX_WideString& wsText,
                           int32_t iStart,
