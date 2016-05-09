@@ -7,7 +7,6 @@
 #include "fpdfsdk/javascript/PublicMethods.h"
 
 #include <algorithm>
-#include <string>
 #include <vector>
 
 #include "core/fxcrt/include/fx_ext.h"
@@ -739,7 +738,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   int iSepStyle = params[1].ToInt();
   int iNegStyle = params[2].ToInt();
   // params[3] is iCurrStyle, it's not used.
-  std::wstring wstrCurrency(params[4].ToCFXWideString().c_str());
+  CFX_WideString wstrCurrency = params[4].ToCFXWideString();
   FX_BOOL bCurrencyPrepend = params[5].ToBool();
 
   if (iDec < 0)
@@ -812,21 +811,18 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
 
   // for processing currency string
   Value = CFX_WideString::FromLocal(strValue.AsStringC());
-  std::wstring strValue2 = Value.c_str();
 
   if (bCurrencyPrepend)
-    strValue2 = wstrCurrency + strValue2;
+    Value = wstrCurrency + Value;
   else
-    strValue2 = strValue2 + wstrCurrency;
+    Value = Value + wstrCurrency;
 
   // for processing negative style
   if (iNegative) {
     if (iNegStyle == 0) {
-      strValue2.insert(0, L"-");
-    }
-    if (iNegStyle == 2 || iNegStyle == 3) {
-      strValue2.insert(0, L"(");
-      strValue2.insert(strValue2.length(), L")");
+      Value = L"-" + Value;
+    } else if (iNegStyle == 2 || iNegStyle == 3) {
+      Value = L"(" + Value + L")";
     }
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
@@ -882,7 +878,6 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
       }
     }
   }
-  Value = strValue2.c_str();
 #endif
   return TRUE;
 }
@@ -899,19 +894,16 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
 
   if (params.size() < 2)
     return FALSE;
-  int iSepStyle = params[1].ToInt();
 
-  if (iSepStyle < 0 || iSepStyle > 3)
-    iSepStyle = 0;
   if (!pEvent->m_pValue)
     return FALSE;
+
   CFX_WideString& val = pEvent->Value();
-  CFX_WideString& w_strChange = pEvent->Change();
-  CFX_WideString w_strValue = val;
+  CFX_WideString& wstrChange = pEvent->Change();
+  CFX_WideString wstrValue = val;
 
   if (pEvent->WillCommit()) {
-    CFX_WideString wstrChange = w_strChange;
-    CFX_WideString wstrValue = StrTrim(w_strValue);
+    CFX_WideString wstrValue = StrTrim(wstrValue);
     if (wstrValue.IsEmpty())
       return TRUE;
 
@@ -921,19 +913,17 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
       pEvent->Rc() = FALSE;
       sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
       Alert(pContext, sError.c_str());
-      return TRUE;
     }
     return TRUE;  // it happens after the last keystroke and before validating,
   }
 
-  std::wstring w_strValue2 = w_strValue.c_str();
-  std::wstring w_strChange2 = w_strChange.c_str();
-  std::wstring w_strSelected;
-  if (-1 != pEvent->SelStart())
-    w_strSelected = w_strValue2.substr(pEvent->SelStart(),
-                                       (pEvent->SelEnd() - pEvent->SelStart()));
-  bool bHasSign = (w_strValue2.find('-') != std::wstring::npos) &&
-                  (w_strSelected.find('-') == std::wstring::npos);
+  CFX_WideString wstrSelected;
+  if (pEvent->SelStart() != -1) {
+    wstrSelected = wstrValue.Mid(pEvent->SelStart(),
+                                 pEvent->SelEnd() - pEvent->SelStart());
+  }
+
+  bool bHasSign = wstrValue.Find(L'-') != -1 && wstrSelected.Find(L'-') == -1;
   if (bHasSign) {
     // can't insert "change" in front to sign postion.
     if (pEvent->SelStart() == 0) {
@@ -943,23 +933,14 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
     }
   }
 
-  char cSep = L'.';
+  int iSepStyle = params[1].ToInt();
+  if (iSepStyle < 0 || iSepStyle > 3)
+    iSepStyle = 0;
+  const FX_WCHAR cSep = iSepStyle < 2 ? L'.' : L',';
 
-  switch (iSepStyle) {
-    case 0:
-    case 1:
-      cSep = L'.';
-      break;
-    case 2:
-    case 3:
-      cSep = L',';
-      break;
-  }
-
-  bool bHasSep = (w_strValue2.find(cSep) != std::wstring::npos);
-  for (std::wstring::iterator it = w_strChange2.begin();
-       it != w_strChange2.end(); it++) {
-    if (*it == cSep) {
+  bool bHasSep = wstrValue.Find(cSep) != -1;
+  for (FX_STRSIZE i = 0; i < wstrChange.GetLength(); ++i) {
+    if (wstrChange[i] == cSep) {
       if (bHasSep) {
         FX_BOOL& bRc = pEvent->Rc();
         bRc = FALSE;
@@ -968,14 +949,14 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
       bHasSep = TRUE;
       continue;
     }
-    if (*it == L'-') {
+    if (wstrChange[i] == L'-') {
       if (bHasSign) {
         FX_BOOL& bRc = pEvent->Rc();
         bRc = FALSE;
         return TRUE;
       }
       // sign's position is not correct
-      if (it != w_strChange2.begin()) {
+      if (i != 0) {
         FX_BOOL& bRc = pEvent->Rc();
         bRc = FALSE;
         return TRUE;
@@ -989,20 +970,18 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
       continue;
     }
 
-    if (!FXSYS_iswdigit(*it)) {
+    if (!FXSYS_iswdigit(wstrChange[i])) {
       FX_BOOL& bRc = pEvent->Rc();
       bRc = FALSE;
       return TRUE;
     }
   }
 
-  std::wstring w_prefix = w_strValue2.substr(0, pEvent->SelStart());
-  std::wstring w_postfix;
-  if (pEvent->SelEnd() < (int)w_strValue2.length())
-    w_postfix = w_strValue2.substr(pEvent->SelEnd());
-  w_strValue2 = w_prefix + w_strChange2 + w_postfix;
-  w_strValue = w_strValue2.c_str();
-  val = w_strValue;
+  CFX_WideString wprefix = wstrValue.Mid(0, pEvent->SelStart());
+  CFX_WideString wpostfix;
+  if (pEvent->SelEnd() < wstrValue.GetLength())
+    wpostfix = wstrValue.Mid(pEvent->SelEnd());
+  val = wprefix + wstrChange + wpostfix;
   return TRUE;
 }
 
@@ -1440,21 +1419,18 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
   if (wstrMask.IsEmpty())
     return TRUE;
 
-  const size_t wstrMaskLen = wstrMask.GetLength();
-  const std::wstring wstrValue = valEvent.c_str();
-
   if (pEvent->WillCommit()) {
-    if (wstrValue.empty())
+    if (valEvent.IsEmpty())
       return TRUE;
-    size_t iIndexMask = 0;
-    for (const auto& w_Value : wstrValue) {
-      if (!maskSatisfied(w_Value, wstrMask[iIndexMask]))
+
+    FX_STRSIZE iIndexMask = 0;
+    for (; iIndexMask < valEvent.GetLength(); ++iIndexMask) {
+      if (!maskSatisfied(valEvent[iIndexMask], wstrMask[iIndexMask]))
         break;
-      iIndexMask++;
     }
 
-    if (iIndexMask != wstrMaskLen ||
-        (iIndexMask != wstrValue.size() && wstrMaskLen != 0)) {
+    if (iIndexMask != wstrMask.GetLength() ||
+        (iIndexMask != valEvent.GetLength() && wstrMask.GetLength() != 0)) {
       Alert(
           pContext,
           JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE).c_str());
@@ -1464,48 +1440,45 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
   }
 
   CFX_WideString& wideChange = pEvent->Change();
-  std::wstring wChange = wideChange.c_str();
-  if (wChange.empty())
+  if (wideChange.IsEmpty())
     return TRUE;
 
-  size_t iIndexMask = pEvent->SelStart();
-
-  size_t combined_len = wstrValue.length() + wChange.length() -
-                        (pEvent->SelEnd() - pEvent->SelStart());
-  if (combined_len > wstrMaskLen) {
+  CFX_WideString wChange = wideChange;
+  FX_STRSIZE iIndexMask = pEvent->SelStart();
+  FX_STRSIZE combined_len = valEvent.GetLength() + wChange.GetLength() +
+                            pEvent->SelStart() - pEvent->SelEnd();
+  if (combined_len > wstrMask.GetLength()) {
     Alert(pContext,
           JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
     pEvent->Rc() = FALSE;
     return TRUE;
   }
 
-  if (iIndexMask >= wstrMaskLen && (!wChange.empty())) {
+  if (iIndexMask >= wstrMask.GetLength() && !wChange.IsEmpty()) {
     Alert(pContext,
           JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
     pEvent->Rc() = FALSE;
     return TRUE;
   }
 
-  for (std::wstring::iterator it = wChange.begin(); it != wChange.end(); it++) {
-    if (iIndexMask >= wstrMaskLen) {
+  for (FX_STRSIZE i = 0; i < wChange.GetLength(); ++i) {
+    if (iIndexMask >= wstrMask.GetLength()) {
       Alert(pContext,
             JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
       pEvent->Rc() = FALSE;
       return TRUE;
     }
-    wchar_t w_Mask = wstrMask[iIndexMask];
-    if (!isReservedMaskChar(w_Mask)) {
-      *it = w_Mask;
-    }
-    wchar_t w_Change = *it;
-    if (!maskSatisfied(w_Change, w_Mask)) {
+    FX_WCHAR wMask = wstrMask[iIndexMask];
+    if (!isReservedMaskChar(wMask))
+      wChange.SetAt(i, wMask);
+
+    if (!maskSatisfied(wChange[i], wMask)) {
       pEvent->Rc() = FALSE;
       return TRUE;
     }
     iIndexMask++;
   }
-
-  wideChange = wChange.c_str();
+  wideChange = wChange;
   return TRUE;
 }
 
@@ -1525,13 +1498,8 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(
   if (!pEvent->m_pValue)
     return FALSE;
 
-  std::string cFormat;
-  int iIndex = params[0].ToInt();
-  CFX_WideString& val = pEvent->Value();
-  std::string strSrc = CFX_ByteString::FromUnicode(val).c_str();
-  std::wstring wstrChange = pEvent->Change().c_str();
-
-  switch (iIndex) {
+  const char* cFormat = "";
+  switch (params[0].ToInt()) {
     case 0:
       cFormat = "99999";
       break;
@@ -1539,7 +1507,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(
       cFormat = "999999999";
       break;
     case 2:
-      if (strSrc.length() + wstrChange.length() > 7)
+      if (pEvent->Value().GetLength() + pEvent->Change().GetLength() > 7)
         cFormat = "9999999999";
       else
         cFormat = "9999999";
@@ -1550,7 +1518,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(
   }
 
   std::vector<CJS_Value> params2;
-  params2.push_back(CJS_Value(CJS_Runtime::FromContext(cc), cFormat.c_str()));
+  params2.push_back(CJS_Value(CJS_Runtime::FromContext(cc), cFormat));
   return AFSpecial_KeystrokeEx(cc, params2, vRet, sError);
 }
 
