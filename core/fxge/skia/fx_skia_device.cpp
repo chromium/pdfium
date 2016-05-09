@@ -568,6 +568,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
                          nullptr, /* to do : set color table */
                          nullptr, nullptr);
   m_pCanvas = new SkCanvas(skBitmap);
+  if (m_bGroupKnockout)
+    SkDebugf("");  // FIXME(caryclark) suppress 'm_bGroupKnockout is unused'
 }
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(int size_x, int size_y)
@@ -909,7 +911,8 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       skClip.transform(skMatrix);
     }
     SkMatrix inverse;
-    skMatrix.invert(&inverse);
+    if (!skMatrix.invert(&inverse))
+      return false;
     skPath.addRect(skRect);
     skPath.transform(inverse);
   }
