@@ -18,9 +18,6 @@
       '<(DEPTH)',
       '..',
     ],
-    'msvs_disabled_warnings': [
-      4018, 4146, 4333, 4345, 4267
-    ],
   },
   'targets': [
     {
@@ -96,6 +93,11 @@
           '-Wno-unused-function',
         ],
       },
+      'msvs_disabled_warnings': [
+        # Warnings about conversion from 'size_t' to 'long', possible loss of
+        # data.
+        4267,
+      ],
     },
     {
       'target_name': 'fx_agg',
@@ -253,7 +255,12 @@
           # Avoid warning for undefined behaviour.
           '-Wno-shift-negative-value',
         ],
-      }
+      },
+      'msvs_disabled_warnings': [
+        # Warnings about conversion from 'size_t' to 'long', possible loss of
+        # data.
+        4267,
+      ],
     },
     {
       'target_name': 'fx_libopenjpeg',
@@ -278,6 +285,9 @@
         'libopenjpeg20/t2.c',
         'libopenjpeg20/tcd.c',
         'libopenjpeg20/tgt.c',
+      ],
+      'msvs_disabled_warnings': [
+        4018,
       ],
     },
     {
@@ -413,8 +423,8 @@
           'conditions': [
             ['OS=="win"', {
               'defines!': [
-                 # Need to undefine the macro since it is redefined in
-                 # tif_ojpeg.c and tif_jpeg.c.
+                # Need to undefine the macro since it is redefined in
+                # tif_ojpeg.c and tif_jpeg.c.
                 'WIN32_LEAN_AND_MEAN',
               ],
             }],
