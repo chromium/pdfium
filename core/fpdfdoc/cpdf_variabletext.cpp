@@ -1153,9 +1153,6 @@ CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
   return m_pVTIterator;
 }
 
-CPDF_VariableText::Provider* CPDF_VariableText::SetProvider(
-    CPDF_VariableText::Provider* pProvider) {
-  CPDF_VariableText::Provider* pOld = m_pVTProvider;
+void CPDF_VariableText::SetProvider(CPDF_VariableText::Provider* pProvider) {
   m_pVTProvider = pProvider;
-  return pOld;
 }

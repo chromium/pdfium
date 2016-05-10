@@ -24,8 +24,8 @@ struct CPVT_SecProps;
 struct CPVT_Section;
 struct CPVT_SectionInfo;
 struct CPVT_Word;
-struct CPVT_WordProps;
 struct CPVT_WordInfo;
+struct CPVT_WordProps;
 
 #define VARIABLETEXT_HALF 0.5f
 
@@ -60,7 +60,7 @@ class CPDF_VariableText : private CPDF_EditContainer {
 
   class Provider {
    public:
-    Provider(IPVT_FontMap* pFontMap);
+    explicit Provider(IPVT_FontMap* pFontMap);
     virtual ~Provider();
 
     virtual int32_t GetCharWidth(int32_t nFontIndex,
@@ -79,10 +79,9 @@ class CPDF_VariableText : private CPDF_EditContainer {
   };
 
   CPDF_VariableText();
-  virtual ~CPDF_VariableText();
+  ~CPDF_VariableText() override;
 
-  CPDF_VariableText::Provider* SetProvider(
-      CPDF_VariableText::Provider* pProvider);
+  void SetProvider(CPDF_VariableText::Provider* pProvider);
   CPDF_VariableText::Iterator* GetIterator();
 
   // CPDF_EditContainer.

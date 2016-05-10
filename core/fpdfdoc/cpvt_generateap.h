@@ -42,8 +42,7 @@ class CPVT_GenerateAP {
                                        CPDF_VariableText::Iterator* pIterator,
                                        const CFX_FloatPoint& ptOffset,
                                        FX_BOOL bContinuous,
-                                       uint16_t SubWord = 0,
-                                       const CPVT_WordRange* pVisible = NULL);
+                                       uint16_t SubWord);
   static CFX_ByteString GenerateBorderAP(const CFX_FloatRect& rect,
                                          FX_FLOAT fWidth,
                                          const CPVT_Color& color,

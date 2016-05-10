@@ -169,10 +169,6 @@ class IFX_Edit {
   // set a IPVT_FontMap pointer implemented by user.
   virtual void SetFontMap(IPVT_FontMap* pFontMap) = 0;
 
-  // if user don't like to use FontMap, implement VTProvider and set it
-  // directly.
-  virtual void SetVTProvider(CPDF_VariableText::Provider* pProvider) = 0;
-
   // set a IFX_Edit_Notify pointer implemented by user.
   virtual void SetNotify(IFX_Edit_Notify* pNotify) = 0;
   virtual void SetOprNotify(IFX_Edit_OprNotify* pOprNotify) = 0;

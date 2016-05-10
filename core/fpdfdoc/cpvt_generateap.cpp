@@ -503,23 +503,16 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     CPDF_VariableText::Iterator* pIterator,
     const CFX_FloatPoint& ptOffset,
     FX_BOOL bContinuous,
-    uint16_t SubWord,
-    const CPVT_WordRange* pVisible) {
+    uint16_t SubWord) {
   CFX_ByteTextBuf sEditStream, sLineStream, sWords;
   CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
   int32_t nCurFontIndex = -1;
   if (pIterator) {
-    if (pVisible)
-      pIterator->SetAt(pVisible->BeginPos);
-    else
-      pIterator->SetAt(0);
+    pIterator->SetAt(0);
 
     CPVT_WordPlace oldplace;
     while (pIterator->NextWord()) {
       CPVT_WordPlace place = pIterator->GetAt();
-      if (pVisible && place.WordCmp(pVisible->EndPos) > 0)
-        break;
-
       if (bContinuous) {
         if (place.LineCmp(oldplace) != 0) {
           if (sWords.GetSize() > 0) {

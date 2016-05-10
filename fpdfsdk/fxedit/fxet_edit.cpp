@@ -791,10 +791,6 @@ void CFX_Edit::SetFontMap(IPVT_FontMap* pFontMap) {
   m_pVT->SetProvider(m_pVTProvide = new CFX_Edit_Provider(pFontMap));
 }
 
-void CFX_Edit::SetVTProvider(CPDF_VariableText::Provider* pProvider) {
-  m_pVT->SetProvider(pProvider);
-}
-
 void CFX_Edit::SetNotify(IFX_Edit_Notify* pNotify) {
   m_pNotify = pNotify;
 }

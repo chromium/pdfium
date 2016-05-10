@@ -46,7 +46,7 @@ class CLST_Rect : public CFX_FloatRect {
     bottom = other_bottom;
   }
 
-  CLST_Rect(const CFX_FloatRect& rect) {
+  explicit CLST_Rect(const CFX_FloatRect& rect) {
     left = rect.left;
     top = rect.top;
     right = rect.right;
@@ -113,33 +113,30 @@ class CLST_Rect : public CFX_FloatRect {
   }
 };
 
-class CFX_ListItem {
+class CFX_ListItem final {
  public:
   CFX_ListItem();
-  virtual ~CFX_ListItem();
+  ~CFX_ListItem();
 
   void SetFontMap(IPVT_FontMap* pFontMap);
-  IFX_Edit_Iterator* GetIterator() const;
   IFX_Edit* GetEdit() const;
 
- public:
   void SetRect(const CLST_Rect& rect);
   void SetSelect(FX_BOOL bSelected);
-  void SetCaret(FX_BOOL bCaret);
   void SetText(const FX_WCHAR* text);
   void SetFontSize(FX_FLOAT fFontSize);
   CFX_WideString GetText() const;
 
   CLST_Rect GetRect() const;
   FX_BOOL IsSelected() const;
-  FX_BOOL IsCaret() const;
   FX_FLOAT GetItemHeight() const;
   uint16_t GetFirstChar() const;
 
  private:
+  IFX_Edit_Iterator* GetIterator() const;
+
   IFX_Edit* m_pEdit;
   FX_BOOL m_bSelected;
-  FX_BOOL m_bCaret;
   CLST_Rect m_rcListItem;
 };
 
@@ -233,7 +230,6 @@ class CFX_List : protected CFX_ListContainer, public IFX_List {
   virtual void ReArrange(int32_t nItemIndex);
   CFX_WideString GetItemText(int32_t nIndex) const;
   void SetItemSelect(int32_t nItemIndex, FX_BOOL bSelected);
-  void SetItemCaret(int32_t nItemIndex, FX_BOOL bCaret);
   int32_t GetLastSelected() const;
   FX_WCHAR Toupper(FX_WCHAR c) const;
 

@@ -516,7 +516,6 @@ class CFX_Edit : public IFX_Edit {
 
   // IFX_Edit
   void SetFontMap(IPVT_FontMap* pFontMap) override;
-  void SetVTProvider(CPDF_VariableText::Provider* pProvider) override;
   void SetNotify(IFX_Edit_Notify* pNotify) override;
   void SetOprNotify(IFX_Edit_OprNotify* pOprNotify) override;
   IFX_Edit_Iterator* GetIterator() override;
