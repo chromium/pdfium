@@ -27,8 +27,7 @@
 namespace {
 
 struct SearchTagRecord {
-  const char* m_pTag;
-  uint32_t m_Len;
+  CFX_ByteStringC m_bsTag;
   uint32_t m_Offset;
 };
 
@@ -913,6 +912,10 @@ int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags,
       ++ntags;
   }
 
+  // Ensure that the input byte string happens to be nul-terminated. This
+  // need not be the case, but the loop below uses this guarantee to put
+  // the last pattern into the vector.
+  ASSERT(tags[tags.GetLength()] == 0);
   std::vector<SearchTagRecord> patterns(ntags);
   uint32_t start = 0;
   uint32_t itag = 0;
@@ -921,8 +924,7 @@ int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags,
     if (tags[i] == 0) {
       uint32_t len = i - start;
       max_len = std::max(len, max_len);
-      patterns[itag].m_pTag = tags.c_str() + start;
-      patterns[itag].m_Len = len;
+      patterns[itag].m_bsTag = tags.Mid(start, len);
       patterns[itag].m_Offset = 0;
       start = i + 1;
       ++itag;
@@ -937,22 +939,21 @@ int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags,
 
     for (int i = 0; i < ntags; ++i) {
       SearchTagRecord& pat = patterns[i];
-      if (pat.m_pTag[pat.m_Offset] != byte) {
-        pat.m_Offset = (pat.m_pTag[0] == byte) ? 1 : 0;
+      if (pat.m_bsTag[pat.m_Offset] != byte) {
+        pat.m_Offset = (pat.m_bsTag[0] == byte) ? 1 : 0;
         continue;
       }
 
       ++pat.m_Offset;
-      if (pat.m_Offset != pat.m_Len)
+      if (pat.m_Offset != pat.m_bsTag.GetLength())
         continue;
 
-      if (!bWholeWord ||
-          IsWholeWord(pos - pat.m_Len, limit,
-                      CFX_ByteStringC(pat.m_pTag, pat.m_Len), FALSE)) {
+      if (!bWholeWord || IsWholeWord(pos - pat.m_bsTag.GetLength(), limit,
+                                     pat.m_bsTag, FALSE)) {
         return i;
       }
 
-      pat.m_Offset = (pat.m_pTag[0] == byte) ? 1 : 0;
+      pat.m_Offset = (pat.m_bsTag[0] == byte) ? 1 : 0;
     }
   }
   return -1;

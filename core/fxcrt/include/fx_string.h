@@ -19,7 +19,8 @@ class CFX_ByteString;
 class CFX_WideString;
 
 // An immutable string with caller-provided storage which must outlive the
-// string itself.
+// string itself. These are not necessarily nul-terminated, so that substring
+// extraction (via the Mid() method) is copy-free.
 class CFX_ByteStringC {
  public:
   typedef FX_CHAR value_type;
