@@ -473,14 +473,6 @@ void CPDF_ColorSpace::GetDefaultColor(FX_FLOAT* buf) const {
   }
 }
 
-int CPDF_ColorSpace::GetMaxIndex() const {
-  if (m_Family != PDFCS_INDEXED) {
-    return 0;
-  }
-  CPDF_IndexedCS* pCS = (CPDF_IndexedCS*)this;
-  return pCS->m_MaxIndex;
-}
-
 void CPDF_ColorSpace::TranslateImageLine(uint8_t* dest_buf,
                                          const uint8_t* src_buf,
                                          int pixels,

@@ -1211,14 +1211,14 @@ void CPDF_RenderStatus::ProcessPathPattern(const CPDF_PathObject* pPathObj,
                                            FX_BOOL& bStroke) {
   if (filltype) {
     CPDF_Color& FillColor = *pPathObj->m_ColorState.GetFillColor();
-    if (FillColor.m_pCS && FillColor.m_pCS->GetFamily() == PDFCS_PATTERN) {
+    if (FillColor.IsPattern()) {
       DrawPathWithPattern(pPathObj, pObj2Device, &FillColor, FALSE);
       filltype = 0;
     }
   }
   if (bStroke) {
     CPDF_Color& StrokeColor = *pPathObj->m_ColorState.GetStrokeColor();
-    if (StrokeColor.m_pCS && StrokeColor.m_pCS->GetFamily() == PDFCS_PATTERN) {
+    if (StrokeColor.IsPattern()) {
       DrawPathWithPattern(pPathObj, pObj2Device, &StrokeColor, TRUE);
       bStroke = FALSE;
     }

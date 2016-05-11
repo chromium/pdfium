@@ -11,22 +11,15 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fxcrt/include/fx_system.h"
 
-CPDF_Color::CPDF_Color(int family) {
-  m_pCS = CPDF_ColorSpace::GetStockCS(family);
-  int nComps = 3;
-  if (family == PDFCS_DEVICEGRAY)
-    nComps = 1;
-  else if (family == PDFCS_DEVICECMYK)
-    nComps = 4;
-
-  m_pBuffer = FX_Alloc(FX_FLOAT, nComps);
-  for (int i = 0; i < nComps; i++)
-    m_pBuffer[i] = 0;
-}
+CPDF_Color::CPDF_Color() : m_pCS(nullptr), m_pBuffer(nullptr) {}
 
 CPDF_Color::~CPDF_Color() {
   ReleaseBuffer();
   ReleaseColorSpace();
+}
+
+bool CPDF_Color::IsPattern() const {
+  return m_pCS && m_pCS->GetFamily() == PDFCS_PATTERN;
 }
 
 void CPDF_Color::ReleaseBuffer() {
@@ -84,7 +77,7 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comps, int ncomps) {
   if (ncomps > MAX_PATTERN_COLORCOMPS)
     return;
 
-  if (!m_pCS || m_pCS->GetFamily() != PDFCS_PATTERN) {
+  if (!IsPattern()) {
     FX_Free(m_pBuffer);
     m_pCS = CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN);
     m_pBuffer = m_pCS->CreateBuf();
@@ -158,23 +151,4 @@ CPDF_Pattern* CPDF_Color::GetPattern() const {
 
   PatternValue* pvalue = (PatternValue*)m_pBuffer;
   return pvalue->m_pPattern;
-}
-
-CPDF_ColorSpace* CPDF_Color::GetPatternCS() const {
-  if (!m_pBuffer || m_pCS->GetFamily() != PDFCS_PATTERN)
-    return nullptr;
-  return m_pCS->GetBaseCS();
-}
-
-FX_FLOAT* CPDF_Color::GetPatternColor() const {
-  if (!m_pBuffer || m_pCS->GetFamily() != PDFCS_PATTERN)
-    return nullptr;
-
-  PatternValue* pvalue = (PatternValue*)m_pBuffer;
-  return pvalue->m_nComps ? pvalue->m_Comps : nullptr;
-}
-
-FX_BOOL CPDF_Color::IsEqual(const CPDF_Color& other) const {
-  return m_pCS && m_pCS == other.m_pCS &&
-         FXSYS_memcmp(m_pBuffer, other.m_pBuffer, m_pCS->GetBufSize()) == 0;
 }

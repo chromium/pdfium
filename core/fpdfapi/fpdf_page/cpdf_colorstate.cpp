@@ -34,9 +34,9 @@ void CPDF_ColorState::SetColor(CPDF_Color& color,
   } else if (color.IsNull()) {
     color.SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY));
   }
-  if (color.m_pCS->CountComponents() > nValues) {
+  if (color.GetColorSpace()->CountComponents() > nValues)
     return;
-  }
+
   color.SetValue(pValue);
   int R, G, B;
   rgb = color.GetRGB(R, G, B) ? FXSYS_RGB(R, G, B) : (uint32_t)-1;

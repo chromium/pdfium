@@ -386,10 +386,6 @@ FX_FLOAT CPDF_StreamContentParser::GetNumber(uint32_t index) {
   return 0;
 }
 
-FX_FLOAT CPDF_StreamContentParser::GetNumber16(uint32_t index) {
-  return GetNumber(index);
-}
-
 void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
                                                 FX_BOOL bColor,
                                                 FX_BOOL bText,
@@ -675,10 +671,8 @@ void CPDF_StreamContentParser::Handle_CurveTo_123() {
 }
 
 void CPDF_StreamContentParser::Handle_ConcatMatrix() {
-  FX_FLOAT a2 = GetNumber16(5), b2 = GetNumber16(4), c2 = GetNumber16(3),
-           d2 = GetNumber16(2);
-  FX_FLOAT e2 = GetNumber(1), f2 = GetNumber(0);
-  CFX_Matrix new_matrix(a2, b2, c2, d2, e2, f2);
+  CFX_Matrix new_matrix(GetNumber(5), GetNumber(4), GetNumber(3), GetNumber(2),
+                        GetNumber(1), GetNumber(0));
   new_matrix.Concat(m_pCurStates->m_CTM);
   m_pCurStates->m_CTM = new_matrix;
   OnChangeTextMatrix();
@@ -1366,8 +1360,8 @@ void CPDF_StreamContentParser::Handle_SetTextLeading() {
 }
 
 void CPDF_StreamContentParser::Handle_SetTextMatrix() {
-  m_pCurStates->m_TextMatrix.Set(GetNumber16(5), GetNumber16(4), GetNumber16(3),
-                                 GetNumber16(2), GetNumber(1), GetNumber(0));
+  m_pCurStates->m_TextMatrix.Set(GetNumber(5), GetNumber(4), GetNumber(3),
+                                 GetNumber(2), GetNumber(1), GetNumber(0));
   OnChangeTextMatrix();
   m_pCurStates->m_TextX = 0;
   m_pCurStates->m_TextY = 0;

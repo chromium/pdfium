@@ -14,15 +14,11 @@ class CPDF_Pattern;
 
 class CPDF_Color {
  public:
-  CPDF_Color() : m_pCS(nullptr), m_pBuffer(nullptr) {}
-  explicit CPDF_Color(int family);
+  CPDF_Color();
   ~CPDF_Color();
 
-  FX_BOOL IsNull() const { return !m_pBuffer; }
-  FX_BOOL IsEqual(const CPDF_Color& other) const;
-  FX_BOOL IsPattern() const {
-    return m_pCS && m_pCS->GetFamily() == PDFCS_PATTERN;
-  }
+  bool IsNull() const { return !m_pBuffer; }
+  bool IsPattern() const;
 
   void Copy(const CPDF_Color* pSrc);
 
@@ -32,15 +28,13 @@ class CPDF_Color {
 
   FX_BOOL GetRGB(int& R, int& G, int& B) const;
   CPDF_Pattern* GetPattern() const;
-  CPDF_ColorSpace* GetPatternCS() const;
-  FX_FLOAT* GetPatternColor() const;
-
-  CPDF_ColorSpace* m_pCS;
+  const CPDF_ColorSpace* GetColorSpace() const { return m_pCS; }
 
  protected:
   void ReleaseBuffer();
   void ReleaseColorSpace();
 
+  CPDF_ColorSpace* m_pCS;
   FX_FLOAT* m_pBuffer;
 };
 
