@@ -132,20 +132,19 @@ uint32_t CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) {
 
 // Static.
 uint32_t CPDF_ToUnicodeMap::StringToCode(const CFX_ByteStringC& str) {
-  const FX_CHAR* buf = str.c_str();
   int len = str.GetLength();
   if (len == 0)
     return 0;
 
   int result = 0;
-  if (buf[0] == '<') {
-    for (int i = 1; i < len && std::isxdigit(buf[i]); ++i)
-      result = result * 16 + FXSYS_toHexDigit(buf[i]);
+  if (str[0] == '<') {
+    for (int i = 1; i < len && std::isxdigit(str[i]); ++i)
+      result = result * 16 + FXSYS_toHexDigit(str[i]);
     return result;
   }
 
-  for (int i = 0; i < len && std::isdigit(buf[i]); ++i)
-    result = result * 10 + FXSYS_toDecimalDigit(buf[i]);
+  for (int i = 0; i < len && std::isdigit(str[i]); ++i)
+    result = result * 10 + FXSYS_toDecimalDigit(static_cast<FX_CHAR>(str[i]));
 
   return result;
 }
@@ -172,17 +171,16 @@ static CFX_WideString StringDataAdd(CFX_WideString str) {
 // Static.
 CFX_WideString CPDF_ToUnicodeMap::StringToWideString(
     const CFX_ByteStringC& str) {
-  const FX_CHAR* buf = str.c_str();
   int len = str.GetLength();
   if (len == 0)
     return CFX_WideString();
 
   CFX_WideString result;
-  if (buf[0] == '<') {
+  if (str[0] == '<') {
     int byte_pos = 0;
     FX_WCHAR ch = 0;
-    for (int i = 1; i < len && std::isxdigit(buf[i]); ++i) {
-      ch = ch * 16 + FXSYS_toHexDigit(buf[i]);
+    for (int i = 1; i < len && std::isxdigit(str[i]); ++i) {
+      ch = ch * 16 + FXSYS_toHexDigit(str[i]);
       byte_pos++;
       if (byte_pos == 4) {
         result += ch;
