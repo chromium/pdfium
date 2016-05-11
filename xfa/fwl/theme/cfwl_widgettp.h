@@ -220,7 +220,7 @@ class CFWL_WidgetTP {
                     FWLTHEME_STATE eState,
                     CFX_Matrix* pMatrix = NULL);
   uint32_t m_dwRefCount;
-  CFDE_TextOut* m_pTextOut;
+  std::unique_ptr<CFDE_TextOut> m_pTextOut;
   IFX_Font* m_pFDEFont;
   FX_FLOAT m_fValue;
   uint32_t m_dwValue;

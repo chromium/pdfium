@@ -6,6 +6,8 @@
 
 #include "xfa/fde/css/fde_cssstylesheet.h"
 
+#include <memory>
+
 #include "xfa/fde/css/fde_cssdatatable.h"
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
@@ -120,32 +122,33 @@ int32_t CFDE_CSSStyleSheet::CountRules() const {
 IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
+
 FX_BOOL CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString& szUrl,
                                            IFX_Stream* pStream,
                                            uint16_t wCodePage) {
-  CFDE_CSSSyntaxParser* pSyntax = new CFDE_CSSSyntaxParser;
-  if (pStream->GetCodePage() != wCodePage) {
+  std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
+  if (pStream->GetCodePage() != wCodePage)
     pStream->SetCodePage(wCodePage);
-  }
-  FX_BOOL bRet = pSyntax->Init(pStream, 4096) && LoadFromSyntax(pSyntax);
-  pSyntax->Release();
+
+  FX_BOOL bRet = pSyntax->Init(pStream, 4096) && LoadFromSyntax(pSyntax.get());
   m_wCodePage = wCodePage;
   m_szUrl = szUrl;
   return bRet;
 }
+
 FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString& szUrl,
                                            const FX_WCHAR* pBuffer,
                                            int32_t iBufSize,
                                            uint16_t wCodePage) {
   ASSERT(pBuffer && iBufSize > 0);
-
-  CFDE_CSSSyntaxParser* pSyntax = new CFDE_CSSSyntaxParser;
-  FX_BOOL bRet = pSyntax->Init(pBuffer, iBufSize) && LoadFromSyntax(pSyntax);
-  pSyntax->Release();
+  std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
+  FX_BOOL bRet =
+      pSyntax->Init(pBuffer, iBufSize) && LoadFromSyntax(pSyntax.get());
   m_wCodePage = wCodePage;
   m_szUrl = szUrl;
   return bRet;
 }
+
 FX_BOOL CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
   Reset();
   m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 1024, 0);

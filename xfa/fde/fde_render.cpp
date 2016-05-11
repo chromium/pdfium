@@ -16,11 +16,9 @@
 CFDE_RenderContext::CFDE_RenderContext()
     : m_eStatus(FDE_RENDERSTATUS_Reset),
       m_pRenderDevice(nullptr),
-      m_pBrush(nullptr),
       m_Transform(),
       m_pCharPos(nullptr),
-      m_iCharPosCount(0),
-      m_pIterator(nullptr) {
+      m_iCharPosCount(0) {
   m_Transform.SetIdentity();
 }
 
@@ -42,7 +40,7 @@ FX_BOOL CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
   m_pRenderDevice = pRenderDevice;
   m_Transform = tmDoc2Device;
   if (!m_pIterator)
-    m_pIterator = new CFDE_VisualSetIterator;
+    m_pIterator.reset(new CFDE_VisualSetIterator);
 
   return m_pIterator->AttachCanvas(pCanvasSet) && m_pIterator->FilterObjects();
 }
@@ -101,12 +99,8 @@ void CFDE_RenderContext::StopRender() {
   m_eStatus = FDE_RENDERSTATUS_Reset;
   m_pRenderDevice = nullptr;
   m_Transform.SetIdentity();
-  if (m_pIterator) {
-    m_pIterator->Release();
-    m_pIterator = nullptr;
-  }
-  delete m_pBrush;
-  m_pBrush = nullptr;
+  m_pIterator.reset();
+  m_pBrush.reset();
   FX_Free(m_pCharPos);
   m_pCharPos = nullptr;
   m_iCharPosCount = 0;
@@ -126,7 +120,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
     return;
 
   if (!m_pBrush)
-    m_pBrush = new CFDE_Brush;
+    m_pBrush.reset(new CFDE_Brush);
 
   if (!m_pCharPos)
     m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, iCount);
@@ -142,8 +136,8 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   m_pBrush->SetColor(dwColor);
   FDE_HDEVICESTATE hState;
   FX_BOOL bClip = ApplyClip(pTextSet, hText, hState);
-  m_pRenderDevice->DrawString(m_pBrush, pFont, m_pCharPos, iCount, fFontSize,
-                              &m_Transform);
+  m_pRenderDevice->DrawString(m_pBrush.get(), pFont, m_pCharPos, iCount,
+                              fFontSize, &m_Transform);
   if (bClip)
     RestoreClip(hState);
 }

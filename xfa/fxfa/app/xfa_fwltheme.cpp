@@ -44,7 +44,6 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
   return NULL;
 }
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp) : m_pApp(pApp) {
-  m_pTextOut = NULL;
   m_dwCapacity = 0;
   m_fCapacity = 0;
   m_pCalendarFont = NULL;
@@ -77,7 +76,7 @@ CXFA_FWLTheme::~CXFA_FWLTheme() {
   delete m_pBarcodeTP;
 }
 FWL_Error CXFA_FWLTheme::Initialize() {
-  m_pTextOut = new CFDE_TextOut;
+  m_pTextOut.reset(new CFDE_TextOut);
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
        ++i) {
     m_pCalendarFont = IFX_Font::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,
@@ -98,13 +97,10 @@ FWL_Error CXFA_FWLTheme::Initialize() {
   return FWL_Error::Succeeded;
 }
 FWL_Error CXFA_FWLTheme::Finalize() {
-  if (m_pTextOut) {
-    m_pTextOut->Release();
-    m_pTextOut = NULL;
-  }
+  m_pTextOut.reset();
   if (m_pCalendarFont) {
     m_pCalendarFont->Release();
-    m_pCalendarFont = NULL;
+    m_pCalendarFont = nullptr;
   }
   FWLTHEME_Release();
   return FWL_Error::Succeeded;
@@ -385,8 +381,6 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   m_pTextOut->SetFontSize(pAcc->GetFontSize());
   m_pTextOut->SetTextColor(pAcc->GetTextColor());
   if (!pParams)
-    return FALSE;
-  if (!m_pTextOut)
     return FALSE;
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);

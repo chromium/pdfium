@@ -7,6 +7,7 @@
 #include "xfa/fwl/basewidget/fwl_editimp.h"
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "xfa/fde/fde_gedevice.h"
@@ -1082,13 +1083,13 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
   CFX_RenderDevice* pRenderDev = pGraphics->GetRenderDevice();
   if (!pRenderDev)
     return;
-  CFDE_RenderDevice* pRenderDevice = new CFDE_RenderDevice(pRenderDev, FALSE);
-  CFDE_RenderContext* pRenderContext = new CFDE_RenderContext;
+
+  std::unique_ptr<CFDE_RenderDevice> pRenderDevice(
+      new CFDE_RenderDevice(pRenderDev, FALSE));
+  std::unique_ptr<CFDE_RenderContext> pRenderContext(new CFDE_RenderContext);
   pRenderDevice->SetClipRect(rtClip);
-  pRenderContext->StartRender(pRenderDevice, pPage, mt);
-  pRenderContext->DoRender(NULL);
-  pRenderContext->Release();
-  pRenderDevice->Release();
+  pRenderContext->StartRender(pRenderDevice.get(), pPage, mt);
+  pRenderContext->DoRender(nullptr);
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->RestoreGraphState();
     CFX_Path path;
@@ -1110,6 +1111,7 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
   }
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_EditImp::UpdateEditEngine() {
   UpdateEditParams();
   UpdateEditLayout();

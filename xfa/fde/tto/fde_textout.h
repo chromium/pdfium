@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_TTO_FDE_TEXTOUT_H_
 #define XFA_FDE_TTO_FDE_TEXTOUT_H_
 
+#include <memory>
+
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fde/fde_object.h"
@@ -72,9 +74,8 @@ typedef CFX_ObjectMassArrayTemplate<CFDE_TTOLine> CFDE_TTOLineArray;
 class CFDE_TextOut : public CFX_Target {
  public:
   CFDE_TextOut();
-  ~CFDE_TextOut();
+  ~CFDE_TextOut() override;
 
-  void Release() { delete this; }
   void SetFont(IFX_Font* pFont);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTextColor(FX_ARGB color);
@@ -179,7 +180,7 @@ class CFDE_TextOut : public CFX_Target {
   int32_t m_iTotalLines;
   FXTEXT_CHARPOS* m_pCharPos;
   int32_t m_iCharPosSize;
-  CFDE_RenderDevice* m_pRenderDevice;
+  std::unique_ptr<CFDE_RenderDevice> m_pRenderDevice;
   CFX_Int32Array m_hotKeys;
   CFX_RectFArray m_rectArray;
 };

@@ -20,9 +20,7 @@ struct FDE_CANVASITEM {
 class CFDE_VisualSetIterator : public CFX_Target {
  public:
   CFDE_VisualSetIterator();
-  ~CFDE_VisualSetIterator();
-
-  void Release() { delete this; }
+  ~CFDE_VisualSetIterator() override;
 
   FX_BOOL AttachCanvas(IFDE_CanvasSet* pCanvas);
   FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);

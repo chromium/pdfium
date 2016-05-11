@@ -318,7 +318,6 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
                  int height,
                  int nComps,
                  FX_BOOL ColorTransform);
-  void Destroy() { delete this; }
 
   // CCodec_ScanlineDecoder
   FX_BOOL v_Rewind() override;

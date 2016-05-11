@@ -12,8 +12,6 @@
 
 class CFDE_Path : public CFX_Target {
  public:
-  void Release() { delete this; }
-
   FX_BOOL StartFigure();
   FX_BOOL CloseFigure();
 

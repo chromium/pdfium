@@ -93,9 +93,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
 class CFDE_CSSStyleSelector : public CFX_Target {
  public:
   CFDE_CSSStyleSelector();
-  ~CFDE_CSSStyleSelector();
-
-  void Release() { delete this; }
+  ~CFDE_CSSStyleSelector() override;
 
   void SetFontMgr(IFX_FontMgr* pFontMgr);
   void SetDefFontSize(FX_FLOAT fFontSize);

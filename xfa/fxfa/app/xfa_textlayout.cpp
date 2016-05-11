@@ -32,11 +32,13 @@ void CXFA_TextParseContext::SetDecls(const CFDE_CSSDeclaration** ppDeclArray,
   FXSYS_memcpy(m_ppMatchedDecls, ppDeclArray,
                iDeclCount * sizeof(CFDE_CSSDeclaration*));
 }
+
+CXFA_TextParser::CXFA_TextParser() : m_pAllocator(NULL), m_pUASheet(NULL) {}
+
 CXFA_TextParser::~CXFA_TextParser() {
   if (m_pUASheet)
     m_pUASheet->Release();
-  if (m_pSelector)
-    m_pSelector->Release();
+
   delete m_pAllocator;
   FX_POSITION ps = m_mapXMLNodeToParseContext.GetStartPosition();
   while (ps) {
@@ -62,14 +64,14 @@ void CXFA_TextParser::Reset() {
   m_pAllocator = nullptr;
 }
 void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
-  if (pTextProvider == NULL) {
+  if (!pTextProvider)
     return;
-  }
-  if (m_pSelector == NULL) {
+
+  if (!m_pSelector) {
     CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
     IFX_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
     ASSERT(pFontMgr);
-    m_pSelector = new CFDE_CSSStyleSelector;
+    m_pSelector.reset(new CFDE_CSSStyleSelector);
     m_pSelector->SetFontMgr(pFontMgr);
     FX_FLOAT fFontSize = 10;
     CXFA_Font font = pTextProvider->GetFontNode();
@@ -78,7 +80,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     }
     m_pSelector->SetDefFontSize(fFontSize);
   }
-  if (m_pUASheet == NULL) {
+  if (!m_pUASheet) {
     m_pUASheet = LoadDefaultSheetStyle();
     m_pSelector->SetStyleSheet(FDE_CSSSTYLESHEETGROUP_UserAgent, m_pUASheet);
     m_pSelector->UpdateStyleIndex(FDE_CSSMEDIATYPE_ALL);
@@ -1183,13 +1185,13 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   if (!pFxDevice)
     return FALSE;
 
-  CFDE_RenderDevice* pDevice = new CFDE_RenderDevice(pFxDevice, FALSE);
+  std::unique_ptr<CFDE_RenderDevice> pDevice(
+      new CFDE_RenderDevice(pFxDevice, FALSE));
   FDE_HDEVICESTATE state = pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
-  CFDE_Brush* pSolidBrush = new CFDE_Brush;
-  CFDE_Pen* pPen = new CFDE_Pen;
-  ASSERT(pDevice);
 
+  std::unique_ptr<CFDE_Brush> pSolidBrush(new CFDE_Brush);
+  std::unique_ptr<CFDE_Pen> pPen(new CFDE_Pen);
   if (m_pieceLines.GetSize() == 0) {
     int32_t iBlockCount = CountBlocks();
     for (int32_t i = 0; i < iBlockCount; i++) {
@@ -1226,17 +1228,16 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
         iCharCount = iChars;
       }
       FXSYS_memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
-      RenderString(pDevice, pSolidBrush, pPieceLine, j, pCharPos, tmDoc2Device);
+      RenderString(pDevice.get(), pSolidBrush.get(), pPieceLine, j, pCharPos,
+                   tmDoc2Device);
     }
     for (j = 0; j < iPieces; j++) {
-      RenderPath(pDevice, pPen, pPieceLine, j, pCharPos, tmDoc2Device);
+      RenderPath(pDevice.get(), pPen.get(), pPieceLine, j, pCharPos,
+                 tmDoc2Device);
     }
   }
   pDevice->RestoreState(state);
   FX_Free(pCharPos);
-  delete pSolidBrush;
-  delete pPen;
-  pDevice->Release();
   return iPieceLines;
 }
 void CXFA_TextLayout::UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom) {
@@ -1817,6 +1818,7 @@ void CXFA_TextLayout::RenderString(CFDE_RenderDevice* pDevice,
   }
   pPieceLine->m_charCounts.Add(iCount);
 }
+
 void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
                                  CFDE_Pen* pPen,
                                  CXFA_PieceLine* pPieceLine,
@@ -1830,7 +1832,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
     return;
   }
   pPen->SetColor(pPiece->dwColor);
-  CFDE_Path* pPath = new CFDE_Path;
+  std::unique_ptr<CFDE_Path> pPath(new CFDE_Path);
   int32_t iChars = GetDisplayPos(pPiece, pCharPos);
   if (iChars > 0) {
     CFX_PointF pt1, pt2;
@@ -1870,7 +1872,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
   } else {
     if (bNoLineThrough &&
         (bNoUnderline || pPiece->iPeriod != XFA_ATTRIBUTEENUM_All)) {
-      goto XFA_RenderPathRet;
+      return;
     }
     int32_t iCharsTmp = 0;
     int32_t iPiecePrev = iPiece, iPieceNext = iPiece;
@@ -1882,7 +1884,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
       }
     }
     if (iCharsTmp == 0) {
-      goto XFA_RenderPathRet;
+      return;
     }
     iCharsTmp = 0;
     int32_t iPieces = pPieceLine->m_textPieces.GetSize();
@@ -1894,20 +1896,20 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
       }
     }
     if (iCharsTmp == 0) {
-      goto XFA_RenderPathRet;
+      return;
     }
     FX_FLOAT fOrgX = 0.0f, fEndX = 0.0f;
     pPiece = pPieceLine->m_textPieces.GetAt(iPiecePrev);
     iChars = GetDisplayPos(pPiece, pCharPos);
     if (iChars < 1) {
-      goto XFA_RenderPathRet;
+      return;
     }
     fOrgX = pCharPos[iChars - 1].m_OriginX +
             pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     pPiece = pPieceLine->m_textPieces.GetAt(iPieceNext);
     iChars = GetDisplayPos(pPiece, pCharPos);
     if (iChars < 1) {
-      goto XFA_RenderPathRet;
+      return;
     }
     fEndX = pCharPos[0].m_OriginX;
     CFX_PointF pt1, pt2;
@@ -1926,10 +1928,9 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
       fEndY += 2.0f;
     }
   }
-  pDevice->DrawPath(pPen, 1, pPath, &tmDoc2Device);
-XFA_RenderPathRet:
-  pPath->Release();
+  pDevice->DrawPath(pPen, 1, pPath.get(), &tmDoc2Device);
 }
+
 int32_t CXFA_TextLayout::GetDisplayPos(const XFA_TextPiece* pPiece,
                                        FXTEXT_CHARPOS* pCharPos,
                                        FX_BOOL bCharCode) {

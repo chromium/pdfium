@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_FDE_RENDER_H_
 #define XFA_FDE_FDE_RENDER_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_iterator.h"
@@ -24,9 +26,8 @@ enum FDE_RENDERSTATUS {
 class CFDE_RenderContext : public CFX_Target {
  public:
   CFDE_RenderContext();
-  ~CFDE_RenderContext();
+  ~CFDE_RenderContext() override;
 
-  void Release() { delete this; }
   FX_BOOL StartRender(CFDE_RenderDevice* pRenderDevice,
                       IFDE_CanvasSet* pCanvasSet,
                       const CFX_Matrix& tmDoc2Device);
@@ -42,11 +43,11 @@ class CFDE_RenderContext : public CFX_Target {
  protected:
   FDE_RENDERSTATUS m_eStatus;
   CFDE_RenderDevice* m_pRenderDevice;
-  CFDE_Brush* m_pBrush;
   CFX_Matrix m_Transform;
   FXTEXT_CHARPOS* m_pCharPos;
   int32_t m_iCharPosCount;
-  CFDE_VisualSetIterator* m_pIterator;
+  std::unique_ptr<CFDE_Brush> m_pBrush;
+  std::unique_ptr<CFDE_VisualSetIterator> m_pIterator;
 };
 
 #endif  // XFA_FDE_FDE_RENDER_H_

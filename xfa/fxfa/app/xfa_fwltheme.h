@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_FWLTHEME_H_
 #define XFA_FXFA_APP_XFA_FWLTHEME_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_barcodetp.h"
 #include "xfa/fwl/theme/cfwl_carettp.h"
@@ -77,7 +79,7 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
   CFWL_PushButtonTP* m_pPushButtonTP;
   CFWL_CaretTP* m_pCaretTP;
   CFWL_BarcodeTP* m_pBarcodeTP;
-  CFDE_TextOut* m_pTextOut;
+  std::unique_ptr<CFDE_TextOut> m_pTextOut;
   FX_FLOAT m_fCapacity;
   uint32_t m_dwCapacity;
   IFX_Font* m_pCalendarFont;

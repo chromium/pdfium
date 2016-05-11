@@ -750,7 +750,6 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
               int Colors,
               int BitsPerComponent,
               int Columns);
-  void Destroy() { delete this; }
 
   // CCodec_ScanlineDecoder
   FX_BOOL v_Rewind() override;

@@ -77,9 +77,8 @@ enum FDE_CSSSYNTAXMODE {
 class CFDE_CSSSyntaxParser : public CFX_Target {
  public:
   CFDE_CSSSyntaxParser();
-  ~CFDE_CSSSyntaxParser();
+  ~CFDE_CSSSyntaxParser() override;
 
-  void Release() { delete this; }
   FX_BOOL Init(IFX_Stream* pStream,
                int32_t iCSSPlaneSize,
                int32_t iTextDataSize = 32,

@@ -7,6 +7,7 @@
 #include "xfa/fee/fde_txtedtengine.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fee/fde_txtedtparag.h"
@@ -1488,7 +1489,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveEnd() {
 }
 
 FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
-  CFDE_TextOut* pTextOut = new CFDE_TextOut;
+  std::unique_ptr<CFDE_TextOut> pTextOut(new CFDE_TextOut);
   pTextOut->SetLineSpace(m_Param.fLineSpace);
   pTextOut->SetFont(m_Param.pFont);
   pTextOut->SetFontSize(m_Param.fFontSize);
@@ -1507,7 +1508,6 @@ FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   pTextOut->SetStyles(dwStyle);
   wsText += L"\n";
   pTextOut->CalcLogicSize(wsText.c_str(), wsText.GetLength(), rcText);
-  pTextOut->Release();
   wsText.Delete(wsText.GetLength() - 1);
   if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz) &&
       (rcText.width > m_Param.fPlateWidth)) {

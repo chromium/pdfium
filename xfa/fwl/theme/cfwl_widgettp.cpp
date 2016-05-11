@@ -83,9 +83,9 @@ FX_BOOL CFWL_WidgetTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
 }
 FX_BOOL CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
-  if (!m_pTextOut) {
+  if (!m_pTextOut)
     InitTTO();
-  }
+
   int32_t iLen = pParams->m_wsText.GetLength();
   if (iLen <= 0)
     return FALSE;
@@ -183,9 +183,8 @@ FWL_Error CFWL_WidgetTP::Initialize() {
   return FWL_Error::Succeeded;
 }
 FWL_Error CFWL_WidgetTP::Finalize() {
-  if (!m_pTextOut) {
+  if (!m_pTextOut)
     FinalizeTTO();
-  }
   return FWL_Error::Succeeded;
 }
 CFWL_WidgetTP::~CFWL_WidgetTP() {}
@@ -193,9 +192,9 @@ FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
                                  const FX_WCHAR* strFont,
                                  FX_FLOAT fFontSize,
                                  FX_ARGB rgbFont) {
-  if (!m_pTextOut) {
+  if (!m_pTextOut)
     return FWL_Error::Succeeded;
-  }
+
   m_pFDEFont = CFWL_FontManager::GetInstance()->FindFont(strFont, 0, 0);
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(fFontSize);
@@ -206,9 +205,9 @@ FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
                                  IFX_Font* pFont,
                                  FX_FLOAT fFontSize,
                                  FX_ARGB rgbFont) {
-  if (!m_pTextOut) {
+  if (!m_pTextOut)
     return FWL_Error::Succeeded;
-  }
+
   m_pTextOut->SetFont(pFont);
   m_pTextOut->SetFontSize(fFontSize);
   m_pTextOut->SetTextColor(rgbFont);
@@ -217,26 +216,26 @@ FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
 IFX_Font* CFWL_WidgetTP::GetFont(IFWL_Widget* pWidget) {
   return m_pFDEFont;
 }
+
 CFWL_WidgetTP::CFWL_WidgetTP()
-    : m_dwRefCount(1), m_pTextOut(NULL), m_pFDEFont(NULL), m_dwThemeID(0) {}
+    : m_dwRefCount(1), m_pFDEFont(nullptr), m_dwThemeID(0) {}
+
 FWL_Error CFWL_WidgetTP::InitTTO() {
-  if (m_pTextOut) {
+  if (m_pTextOut)
     return FWL_Error::Succeeded;
-  }
+
   m_pFDEFont =
       CFWL_FontManager::GetInstance()->FindFont(FX_WSTRC(L"Helvetica"), 0, 0);
-  m_pTextOut = new CFDE_TextOut;
+  m_pTextOut.reset(new CFDE_TextOut);
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
   m_pTextOut->SetEllipsisString(L"...");
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_WidgetTP::FinalizeTTO() {
-  if (m_pTextOut) {
-    m_pTextOut->Release();
-    m_pTextOut = NULL;
-  }
+  m_pTextOut.reset();
   return FWL_Error::Succeeded;
 }
 

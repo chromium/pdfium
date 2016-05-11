@@ -8,6 +8,7 @@
 #define XFA_FXFA_APP_XFA_TEXTLAYOUT_H_
 
 #include <map>
+#include <memory>
 
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fde/fde_gedevice.h"
@@ -79,7 +80,7 @@ class CXFA_TextParseContext : public CFX_Target {
 
 class CXFA_TextParser {
  public:
-  CXFA_TextParser() : m_pAllocator(NULL), m_pSelector(NULL), m_pUASheet(NULL) {}
+  CXFA_TextParser();
   virtual ~CXFA_TextParser();
   void Reset();
   void DoParse(CFDE_XMLNode* pXMLContainer, CXFA_TextProvider* pTextProvider);
@@ -131,7 +132,7 @@ class CXFA_TextParser {
   IFDE_CSSStyleSheet* LoadDefaultSheetStyle();
   IFDE_CSSComputedStyle* CreateStyle(IFDE_CSSComputedStyle* pParentStyle);
   IFX_MemoryAllocator* m_pAllocator;
-  CFDE_CSSStyleSelector* m_pSelector;
+  std::unique_ptr<CFDE_CSSStyleSelector> m_pSelector;
   IFDE_CSSStyleSheet* m_pUASheet;
   CFX_MapPtrTemplate<CFDE_XMLNode*, CXFA_TextParseContext*>
       m_mapXMLNodeToParseContext;

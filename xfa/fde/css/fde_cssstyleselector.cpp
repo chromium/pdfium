@@ -7,6 +7,7 @@
 #include "xfa/fde/css/fde_cssstyleselector.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
@@ -538,44 +539,42 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                                               const FX_WCHAR* psz,
                                               int32_t iLen) {
   ASSERT(pDecl && psz && iLen > 0);
+  std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
+  if (!pSyntax->Init(psz, iLen, 32, TRUE))
+    return;
 
-  CFDE_CSSSyntaxParser* pSyntax = new CFDE_CSSSyntaxParser;
-  if (pSyntax->Init(psz, iLen, 32, TRUE)) {
-    int32_t iLen;
-    const FX_WCHAR* psz;
-    FDE_CSSPROPERTYARGS args;
-    args.pStringCache = NULL;
-    args.pStaticStore = m_pInlineStyleStore;
-    args.pProperty = NULL;
-    CFX_WideString wsName;
-    for (;;) {
-      FDE_CSSSYNTAXSTATUS eStatus = pSyntax->DoSyntaxParse();
-      if (eStatus == FDE_CSSSYNTAXSTATUS_PropertyName) {
-        psz = pSyntax->GetCurrentString(iLen);
-        args.pProperty = FDE_GetCSSPropertyByName(CFX_WideStringC(psz, iLen));
-        if (args.pProperty == NULL) {
-          wsName = CFX_WideStringC(psz, iLen);
+  int32_t iLen2;
+  const FX_WCHAR* psz2;
+  FDE_CSSPROPERTYARGS args;
+  args.pStringCache = nullptr;
+  args.pStaticStore = m_pInlineStyleStore;
+  args.pProperty = nullptr;
+  CFX_WideString wsName;
+  while (1) {
+    FDE_CSSSYNTAXSTATUS eStatus = pSyntax->DoSyntaxParse();
+    if (eStatus == FDE_CSSSYNTAXSTATUS_PropertyName) {
+      psz2 = pSyntax->GetCurrentString(iLen2);
+      args.pProperty = FDE_GetCSSPropertyByName(CFX_WideStringC(psz2, iLen2));
+      if (!args.pProperty)
+        wsName = CFX_WideStringC(psz2, iLen2);
+    } else if (eStatus == FDE_CSSSYNTAXSTATUS_PropertyValue) {
+      if (args.pProperty) {
+        psz2 = pSyntax->GetCurrentString(iLen2);
+        if (iLen2 > 0)
+          pDecl->AddProperty(&args, psz2, iLen2);
+      } else if (iLen2 > 0) {
+        psz2 = pSyntax->GetCurrentString(iLen2);
+        if (iLen2 > 0) {
+          pDecl->AddProperty(&args, wsName.c_str(), wsName.GetLength(), psz2,
+                             iLen2);
         }
-      } else if (eStatus == FDE_CSSSYNTAXSTATUS_PropertyValue) {
-        if (args.pProperty != NULL) {
-          psz = pSyntax->GetCurrentString(iLen);
-          if (iLen > 0) {
-            pDecl->AddProperty(&args, psz, iLen);
-          }
-        } else if (iLen > 0) {
-          psz = pSyntax->GetCurrentString(iLen);
-          if (iLen > 0) {
-            pDecl->AddProperty(&args, wsName.c_str(), wsName.GetLength(), psz,
-                               iLen);
-          }
-        }
-      } else {
-        break;
       }
+    } else {
+      break;
     }
   }
-  pSyntax->Release();
 }
+
 #define FDE_CSSNONINHERITS (pComputedStyle->m_NonInheritedData)
 #define FDE_CSSINHERITS (pComputedStyle->m_InheritedData)
 #define FDE_CSSFONTSIZE (FDE_CSSINHERITS.m_fFontSize)

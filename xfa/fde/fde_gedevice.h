@@ -21,9 +21,7 @@ class IFX_Font;
 class CFDE_RenderDevice : public CFX_Target {
  public:
   CFDE_RenderDevice(CFX_RenderDevice* pDevice, FX_BOOL bOwnerDevice);
-  ~CFDE_RenderDevice();
-
-  void Release() { delete this; }
+  ~CFDE_RenderDevice() override;
 
   int32_t GetWidth() const;
   int32_t GetHeight() const;

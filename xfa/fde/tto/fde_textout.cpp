@@ -40,8 +40,7 @@ CFDE_TextOut::CFDE_TextOut()
       m_iCurPiece(0),
       m_iTotalLines(0),
       m_pCharPos(NULL),
-      m_iCharPosSize(0),
-      m_pRenderDevice(NULL) {
+      m_iCharPosSize(0) {
   m_pTxtBreak = new CFX_TxtBreak(FX_TXTBREAKPOLICY_None);
   m_Matrix.SetIdentity();
   m_rtClip.Reset();
@@ -53,9 +52,6 @@ CFDE_TextOut::~CFDE_TextOut() {
   }
   FX_Free(m_pCharWidths);
   FX_Free(m_pEllCharWidths);
-  if (m_pRenderDevice) {
-    m_pRenderDevice->Release();
-  }
   FX_Free(m_pCharPos);
   m_ttoLines.RemoveAll();
 }
@@ -134,21 +130,15 @@ void CFDE_TextOut::SetLineSpace(FX_FLOAT fLineSpace) {
 void CFDE_TextOut::SetDIBitmap(CFX_DIBitmap* pDIB) {
   ASSERT(pDIB);
 
-  if (m_pRenderDevice)
-    m_pRenderDevice->Release();
-
+  m_pRenderDevice.reset();
   CFX_FxgeDevice* device = new CFX_FxgeDevice;
   device->Attach(pDIB, 0, FALSE);
-  m_pRenderDevice = new CFDE_RenderDevice(device, FALSE);
+  m_pRenderDevice.reset(new CFDE_RenderDevice(device, FALSE));
 }
 
 void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
   ASSERT(pDevice);
-
-  if (m_pRenderDevice)
-    m_pRenderDevice->Release();
-
-  m_pRenderDevice = new CFDE_RenderDevice(pDevice, FALSE);
+  m_pRenderDevice.reset(new CFDE_RenderDevice(pDevice, FALSE));
 }
 
 void CFDE_TextOut::SetClipRect(const CFX_Rect& rtClip) {
@@ -780,13 +770,13 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   }
 }
 void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
-  if (m_pRenderDevice == NULL) {
+  if (!m_pRenderDevice)
     return;
-  }
+
   int32_t iLines = m_ttoLines.GetSize();
-  if (iLines < 1) {
+  if (iLines < 1)
     return;
-  }
+
   CFDE_Brush* pBrush = new CFDE_Brush;
   pBrush->SetColor(m_TxtColor);
   CFDE_Pen* pPen = NULL;
@@ -846,14 +836,14 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen*& pPen) {
   FX_BOOL bStrikeOut = !!(m_dwStyles & FDE_TTOSTYLE_Strikeout);
   FX_BOOL bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
   FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
-  if (!bUnderLine && !bStrikeOut && !bHotKey) {
+  if (!bUnderLine && !bStrikeOut && !bHotKey)
     return;
-  }
-  if (pPen == NULL) {
+
+  if (!pPen) {
     pPen = new CFDE_Pen;
     pPen->SetColor(m_TxtColor);
   }
-  CFDE_Path* pPath = new CFDE_Path;
+  std::unique_ptr<CFDE_Path> pPath(new CFDE_Path);
   int32_t iLineCount = 0;
   CFX_RectF rtText = pPiece->rtPiece;
   CFX_PointF pt1, pt2;
@@ -913,19 +903,21 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen*& pPen) {
       }
     }
   }
-  if (iLineCount > 0) {
-    m_pRenderDevice->DrawPath(pPen, 1, pPath, &m_Matrix);
-  }
-  pPath->Release();
+  if (iLineCount > 0)
+    m_pRenderDevice->DrawPath(pPen, 1, pPath.get(), &m_Matrix);
 }
+
 CFDE_TTOLine::CFDE_TTOLine()
     : m_bNewReload(FALSE), m_pieces(5), m_iPieceCount(0) {}
+
 CFDE_TTOLine::CFDE_TTOLine(const CFDE_TTOLine& ttoLine) : m_pieces(5) {
   m_bNewReload = ttoLine.m_bNewReload;
   m_iPieceCount = ttoLine.m_iPieceCount;
   m_pieces.Copy(ttoLine.m_pieces);
 }
+
 CFDE_TTOLine::~CFDE_TTOLine() {}
+
 int32_t CFDE_TTOLine::AddPiece(int32_t index, const FDE_TTOPIECE& ttoPiece) {
   if (index >= m_iPieceCount) {
     index = m_pieces.Add(ttoPiece) + 1;

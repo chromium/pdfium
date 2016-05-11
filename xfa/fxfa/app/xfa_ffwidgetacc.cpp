@@ -7,6 +7,7 @@
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
@@ -101,50 +102,30 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
   int32_t m_iImageXDpi;
   int32_t m_iImageYDpi;
 };
+
 class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
  public:
-  CXFA_FieldLayoutData()
-      : m_pCapTextLayout(NULL),
-        m_pCapTextProvider(NULL),
-        m_pTextOut(NULL),
-        m_pFieldSplitArray(NULL) {}
-  ~CXFA_FieldLayoutData() {
-    if (m_pCapTextLayout) {
-      delete m_pCapTextLayout;
-    }
-    m_pCapTextLayout = NULL;
-    if (m_pCapTextProvider) {
-      delete m_pCapTextProvider;
-    }
-    m_pCapTextProvider = NULL;
-    if (m_pTextOut) {
-      m_pTextOut->Release();
-    }
-    m_pTextOut = NULL;
-    if (m_pFieldSplitArray) {
-      m_pFieldSplitArray->RemoveAll();
-      delete m_pFieldSplitArray;
-      m_pFieldSplitArray = NULL;
-    }
-  }
+  CXFA_FieldLayoutData() {}
+  ~CXFA_FieldLayoutData() {}
+
   FX_BOOL LoadCaption(CXFA_WidgetAcc* pAcc) {
-    if (m_pCapTextLayout) {
+    if (m_pCapTextLayout)
       return TRUE;
-    }
     CXFA_Caption caption = pAcc->GetCaption();
-    if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
-      m_pCapTextProvider =
-          new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption);
-      m_pCapTextLayout = new CXFA_TextLayout(m_pCapTextProvider);
-      return TRUE;
-    }
-    return FALSE;
+    if (!caption || caption.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
+      return FALSE;
+    m_pCapTextProvider.reset(
+        new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption));
+    m_pCapTextLayout.reset(new CXFA_TextLayout(m_pCapTextProvider.get()));
+    return TRUE;
   }
-  CXFA_TextLayout* m_pCapTextLayout;
-  CXFA_TextProvider* m_pCapTextProvider;
-  CFDE_TextOut* m_pTextOut;
-  CFX_FloatArray* m_pFieldSplitArray;
+
+  std::unique_ptr<CXFA_TextLayout> m_pCapTextLayout;
+  std::unique_ptr<CXFA_TextProvider> m_pCapTextProvider;
+  std::unique_ptr<CFDE_TextOut> m_pTextOut;
+  std::unique_ptr<CFX_FloatArray> m_pFieldSplitArray;
 };
+
 class CXFA_TextEditData : public CXFA_FieldLayoutData {
  public:
 };
@@ -763,7 +744,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
                      iCapPlacement == XFA_ATTRIBUTEENUM_Bottom;
   const bool bReserveExit = fCapReserve > 0.01;
   CXFA_TextLayout* pCapTextLayout =
-      ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pCapTextLayout;
+      static_cast<CXFA_FieldLayoutData*>(m_pLayoutData)->m_pCapTextLayout.get();
   if (pCapTextLayout) {
     if (!bVert && eUIType != XFA_ELEMENT_Button) {
       szCap.x = fCapReserve;
@@ -886,8 +867,8 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
   CXFA_FieldLayoutData* layoutData =
       static_cast<CXFA_FieldLayoutData*>(m_pLayoutData);
   if (!layoutData->m_pTextOut) {
-    layoutData->m_pTextOut = new CFDE_TextOut;
-    CFDE_TextOut* pTextOut = layoutData->m_pTextOut;
+    layoutData->m_pTextOut.reset(new CFDE_TextOut);
+    CFDE_TextOut* pTextOut = layoutData->m_pTextOut.get();
     pTextOut->SetFont(GetFDEFont());
     pTextOut->SetFontSize(fFontSize);
     pTextOut->SetLineBreakTolerance(fFontSize * 0.2f);
@@ -1264,12 +1245,13 @@ FX_BOOL CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex,
     iLinesCount =
         ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pTextOut->GetTotalLines();
   }
-  if (!((CXFA_FieldLayoutData*)m_pLayoutData)->m_pFieldSplitArray) {
-    ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pFieldSplitArray =
-        new CFX_FloatArray;
+  if (!static_cast<CXFA_FieldLayoutData*>(m_pLayoutData)->m_pFieldSplitArray) {
+    static_cast<CXFA_FieldLayoutData*>(m_pLayoutData)
+        ->m_pFieldSplitArray.reset(new CFX_FloatArray);
   }
   CFX_FloatArray* pFieldArray =
-      ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pFieldSplitArray;
+      static_cast<CXFA_FieldLayoutData*>(m_pLayoutData)
+          ->m_pFieldSplitArray.get();
   int32_t iFieldSplitCount = pFieldArray->GetSize();
   for (int32_t i = 0; i < iBlockIndex * 3; i += 3) {
     iLinesCount -= (int32_t)pFieldArray->GetAt(i + 1);
@@ -1486,8 +1468,9 @@ FX_BOOL CXFA_WidgetAcc::LoadCaption() {
 }
 CXFA_TextLayout* CXFA_WidgetAcc::GetCaptionTextLayout() {
   return m_pLayoutData
-             ? ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pCapTextLayout
-             : NULL;
+             ? static_cast<CXFA_FieldLayoutData*>(m_pLayoutData)
+                   ->m_pCapTextLayout.get()
+             : nullptr;
 }
 CXFA_TextLayout* CXFA_WidgetAcc::GetTextLayout() {
   return m_pLayoutData ? ((CXFA_TextLayoutData*)m_pLayoutData)->m_pTextLayout
