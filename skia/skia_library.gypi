@@ -27,9 +27,6 @@
   'sources': [
     '../third_party/skia/src/lazy/SkDiscardableMemoryPool.cpp',
 
-    '../third_party/skia/src/ports/SkImageDecoder_empty.cpp',
-    '../third_party/skia/src/images/SkScaledBitmapSampler.cpp',
-
     '../third_party/skia/src/ports/SkFontConfigInterface_direct.cpp',
     '../third_party/skia/src/ports/SkFontConfigInterface_direct_factory.cpp',
 
@@ -39,6 +36,7 @@
     '../third_party/skia/src/fonts/SkRemotableFontMgr.cpp',
     '../third_party/skia/src/ports/SkRemotableFontMgr_win_dw.cpp',
 
+    '../third_party/skia/src/ports/SkImageEncoder_none.cpp',
     '../third_party/skia/src/ports/SkImageGenerator_none.cpp',
 
     '../third_party/skia/src/ports/SkFontHost_FreeType.cpp',
@@ -57,7 +55,6 @@
     '../third_party/skia/src/ports/SkOSFile_stdio.cpp',
     '../third_party/skia/src/ports/SkOSFile_win.cpp',
     '../third_party/skia/src/ports/SkScalerContext_win_dw.cpp',
-    '../third_party/skia/src/ports/SkTime_Unix.cpp',
     '../third_party/skia/src/ports/SkTLS_pthread.cpp',
     '../third_party/skia/src/ports/SkTLS_win.cpp',
     '../third_party/skia/src/ports/SkTypeface_win_dw.cpp',

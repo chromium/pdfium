@@ -222,7 +222,7 @@ void WriteSkp(const char* pdf_name, int num, const void* recorder) {
   }
 
   SkPictureRecorder* r = (SkPictureRecorder*)recorder;
-  SkPicture* picture = r->endRecordingAsPicture();
+  sk_sp<SkPicture> picture(r->finishRecordingAsPicture());
   SkFILEWStream wStream(filename);
   picture->serialize(&wStream);
 }
