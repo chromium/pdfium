@@ -10,6 +10,21 @@
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
 
+namespace {
+
+FXDIB_Format GetStretchedFormat(const CFX_DIBSource& src) {
+  FXDIB_Format format = src.GetFormat();
+  if (format == FXDIB_1bppMask)
+    return FXDIB_8bppMask;
+  if (format == FXDIB_1bppRgb)
+    return FXDIB_8bppRgb;
+  if (format == FXDIB_8bppRgb && src.GetPalette())
+    return FXDIB_Rgb;
+  return format;
+}
+
+}  // namespace
+
 void CWeightTable::Calc(int dest_len,
                         int dest_min,
                         int dest_max,
@@ -754,36 +769,28 @@ void CStretchEngine::StretchVert() {
                                    m_pDestMaskScanline);
   }
 }
-CFX_ImageStretcher::CFX_ImageStretcher() {
-  m_pScanline = NULL;
-  m_pStretchEngine = NULL;
-  m_pMaskScanline = NULL;
-}
+
+CFX_ImageStretcher::CFX_ImageStretcher()
+    : m_pStretchEngine(nullptr),
+      m_pScanline(nullptr),
+      m_pMaskScanline(nullptr) {}
+
 CFX_ImageStretcher::~CFX_ImageStretcher() {
   FX_Free(m_pScanline);
   delete m_pStretchEngine;
   FX_Free(m_pMaskScanline);
 }
-FXDIB_Format _GetStretchedFormat(const CFX_DIBSource* pSrc) {
-  FXDIB_Format format = pSrc->GetFormat();
-  if (format == FXDIB_1bppMask) {
-    format = FXDIB_8bppMask;
-  } else if (format == FXDIB_1bppRgb) {
-    format = FXDIB_8bppRgb;
-  } else if (format == FXDIB_8bppRgb) {
-    if (pSrc->GetPalette()) {
-      format = FXDIB_Rgb;
-    }
-  }
-  return format;
-}
+
 FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
                                   const CFX_DIBSource* pSource,
                                   int dest_width,
                                   int dest_height,
                                   const FX_RECT& rect,
                                   uint32_t flags) {
-  m_DestFormat = _GetStretchedFormat(pSource);
+  if (dest_width == 0 || dest_height == 0)
+    return FALSE;
+
+  m_DestFormat = GetStretchedFormat(*pSource);
   m_DestBPP = m_DestFormat & 0xff;
   m_pDest = pDest;
   m_pSource = pSource;
@@ -791,6 +798,7 @@ FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
   m_DestHeight = dest_height;
   m_ClipRect = rect;
   m_Flags = flags;
+
   if (pSource->GetFormat() == FXDIB_1bppRgb && pSource->GetPalette()) {
     FX_ARGB pal[256];
     int a0, r0, g0, b0, a1, r1, g1, b1;
@@ -824,17 +832,18 @@ FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
   } else if (!pDest->SetInfo(rect.Width(), rect.Height(), m_DestFormat, NULL)) {
     return FALSE;
   }
-  if (flags & FXDIB_DOWNSAMPLE) {
+
+  if (flags & FXDIB_DOWNSAMPLE)
     return StartQuickStretch();
-  }
   return StartStretch();
 }
+
 FX_BOOL CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
-  if (m_Flags & FXDIB_DOWNSAMPLE) {
+  if (m_Flags & FXDIB_DOWNSAMPLE)
     return ContinueQuickStretch(pPause);
-  }
   return ContinueStretch(pPause);
 }
+
 #define MAX_PROGRESSIVE_STRETCH_PIXELS 1000000
 FX_BOOL CFX_ImageStretcher::StartStretch() {
   m_pStretchEngine =
