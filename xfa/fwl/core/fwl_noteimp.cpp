@@ -66,11 +66,10 @@ void CFWL_NoteLoop::GenerateCommondEvent(uint32_t dwCommand) {
   pDriver->SendEvent(&ev);
 }
 CFWL_NoteDriver::CFWL_NoteDriver()
-    : m_sendEventCalled(0),
-      m_pHover(nullptr),
+    : m_pHover(nullptr),
       m_pFocus(nullptr),
-      m_pGrab(nullptr) {
-  m_pNoteLoop = new CFWL_NoteLoop;
+      m_pGrab(nullptr),
+      m_pNoteLoop(new CFWL_NoteLoop) {
   PushNoteLoop(m_pNoteLoop);
 }
 CFWL_NoteDriver::~CFWL_NoteDriver() {
@@ -78,10 +77,9 @@ CFWL_NoteDriver::~CFWL_NoteDriver() {
   ClearInvalidEventTargets(TRUE);
 }
 
-FX_BOOL CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
-  int32_t iCount = m_eventTargets.GetCount();
-  if (iCount < 1)
-    return TRUE;
+void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
+  if (m_eventTargets.empty())
+    return;
   if (CFWL_EventType::Mouse == pNote->GetClassID()) {
     CFWL_EvtMouse* pMouse = static_cast<CFWL_EvtMouse*>(pNote);
     if (FWL_MouseCommand::Hover == pMouse->m_dwCmd) {
@@ -96,54 +94,46 @@ FX_BOOL CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
       CFWL_ToolTipContainer::getInstance()->ProcessLeave(pMouse);
     }
   }
-  m_sendEventCalled++;
-  FX_POSITION pos = m_eventTargets.GetStartPosition();
-  while (pos) {
-    void* key = nullptr;
-    void* value = nullptr;
-    m_eventTargets.GetNextAssoc(pos, key, value);
-
-    CFWL_EventTarget* pEventTarget = static_cast<CFWL_EventTarget*>(value);
+  for (const auto& pair : m_eventTargets) {
+    CFWL_EventTarget* pEventTarget = pair.second;
     if (pEventTarget && !pEventTarget->IsInvalid())
       pEventTarget->ProcessEvent(pNote);
   }
-  m_sendEventCalled--;
-  return TRUE;
 }
 
 #define FWL_NoteDriver_EventKey 1100
 FWL_Error CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
                                                IFWL_Widget* pEventSource,
                                                uint32_t dwFilter) {
-  uint32_t dwkey = (uint32_t)(uintptr_t)pListener->GetPrivateData(
+  uint32_t key = (uint32_t)(uintptr_t)pListener->GetPrivateData(
       (void*)(uintptr_t)FWL_NoteDriver_EventKey);
-  if (dwkey == 0) {
+  if (key == 0) {
     void* random = FX_Random_MT_Start(0);
-    dwkey = rand();
+    key = rand();
     FX_Random_MT_Close(random);
     pListener->SetPrivateData((void*)(uintptr_t)FWL_NoteDriver_EventKey,
-                              (void*)(uintptr_t)dwkey, NULL);
+                              (void*)(uintptr_t)key, NULL);
   }
-  CFWL_EventTarget* value = NULL;
-  if (!m_eventTargets.Lookup((void*)(uintptr_t)dwkey, (void*&)value)) {
-    value = new CFWL_EventTarget(this, pListener);
-    m_eventTargets.SetAt((void*)(uintptr_t)dwkey, value);
-  }
-  value->SetEventSource(pEventSource, dwFilter);
+  if (!m_eventTargets[key])
+    m_eventTargets[key] = new CFWL_EventTarget(this, pListener);
+
+  m_eventTargets[key]->SetEventSource(pEventSource, dwFilter);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_NoteDriver::UnregisterEventTarget(IFWL_Widget* pListener) {
-  uint32_t dwkey = (uint32_t)(uintptr_t)pListener->GetPrivateData(
+  uint32_t key = (uint32_t)(uintptr_t)pListener->GetPrivateData(
       (void*)(uintptr_t)FWL_NoteDriver_EventKey);
-  if (dwkey == 0) {
+  if (key == 0)
     return FWL_Error::Indefinite;
-  }
-  CFWL_EventTarget* value = NULL;
-  if (m_eventTargets.Lookup((void*)(uintptr_t)dwkey, (void*&)value)) {
-    value->FlagInvalid();
-  }
+
+  auto it = m_eventTargets.find(key);
+  if (it != m_eventTargets.end())
+    it->second->FlagInvalid();
+
   return FWL_Error::Succeeded;
 }
+
 void CFWL_NoteDriver::ClearEventTargets(FX_BOOL bRemoveAll) {
   ClearInvalidEventTargets(bRemoveAll);
 }
@@ -676,17 +666,16 @@ IFWL_Widget* CFWL_NoteDriver::GetMessageForm(IFWL_Widget* pDstTarget) {
 }
 
 void CFWL_NoteDriver::ClearInvalidEventTargets(FX_BOOL bRemoveAll) {
-  FX_POSITION pos = m_eventTargets.GetStartPosition();
-  while (pos) {
-    void* key = NULL;
-    CFWL_EventTarget* pEventTarget = NULL;
-    m_eventTargets.GetNextAssoc(pos, key, (void*&)pEventTarget);
-    if (pEventTarget && (bRemoveAll || pEventTarget->IsInvalid())) {
-      m_eventTargets.RemoveKey(key);
-      delete pEventTarget;
+  auto it = m_eventTargets.begin();
+  while (it != m_eventTargets.end()) {
+    auto old = it++;
+    if (old->second && (bRemoveAll || old->second->IsInvalid())) {
+      delete old->second;
+      m_eventTargets.erase(old);
     }
   }
 }
+
 class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
  public:
   FWL_Error GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);

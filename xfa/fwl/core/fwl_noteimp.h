@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_FWL_NOTEIMP_H_
 #define XFA_FWL_CORE_FWL_NOTEIMP_H_
 
+#include <unordered_map>
+
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_error.h"
@@ -24,6 +26,7 @@ enum FWL_KeyFlag {
 };
 
 class CFWL_CoreToolTipDP;
+class CFWL_EventTarget;
 class CFWL_MsgActivate;
 class CFWL_MsgDeactivate;
 class CFWL_MsgDropFiles;
@@ -62,7 +65,7 @@ class CFWL_NoteDriver {
   CFWL_NoteDriver();
   ~CFWL_NoteDriver();
 
-  FX_BOOL SendEvent(CFWL_Event* pNote);
+  void SendEvent(CFWL_Event* pNote);
   FWL_Error RegisterEventTarget(IFWL_Widget* pListener,
                                 IFWL_Widget* pEventSource = nullptr,
                                 uint32_t dwFilter = FWL_EVENT_ALL_MASK);
@@ -109,8 +112,7 @@ class CFWL_NoteDriver {
   CFX_ArrayTemplate<CFWL_WidgetImp*> m_forms;
   CFX_ArrayTemplate<CFWL_Message*> m_noteQueue;
   CFX_ArrayTemplate<CFWL_NoteLoop*> m_noteLoopQueue;
-  CFX_MapPtrToPtr m_eventTargets;
-  int32_t m_sendEventCalled;
+  std::unordered_map<uint32_t, CFWL_EventTarget*> m_eventTargets;
   IFWL_Widget* m_pHover;
   IFWL_Widget* m_pFocus;
   IFWL_Widget* m_pGrab;
