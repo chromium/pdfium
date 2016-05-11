@@ -256,11 +256,9 @@ CPDF_VariableText::CPDF_VariableText()
       m_fFontSize(0.0f),
       m_bInitial(FALSE),
       m_bRichText(FALSE),
-      m_pVTProvider(nullptr),
-      m_pVTIterator(nullptr) {}
+      m_pVTProvider(nullptr) {}
 
 CPDF_VariableText::~CPDF_VariableText() {
-  delete m_pVTIterator;
   ResetAll();
 }
 
@@ -1149,8 +1147,8 @@ FX_BOOL CPDF_VariableText::IsLatinWord(uint16_t word) {
 
 CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
   if (!m_pVTIterator)
-    m_pVTIterator = new CPDF_VariableText::Iterator(this);
-  return m_pVTIterator;
+    m_pVTIterator.reset(new CPDF_VariableText::Iterator(this));
+  return m_pVTIterator.get();
 }
 
 void CPDF_VariableText::SetProvider(CPDF_VariableText::Provider* pProvider) {

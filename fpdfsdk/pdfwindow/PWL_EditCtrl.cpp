@@ -351,21 +351,20 @@ void CPWL_EditCtrl::SetEditCaret(FX_BOOL bVisible) {
 
 void CPWL_EditCtrl::GetCaretInfo(CFX_FloatPoint& ptHead,
                                  CFX_FloatPoint& ptFoot) const {
-  if (IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator()) {
-    pIterator->SetAt(m_pEdit->GetCaret());
-    CPVT_Word word;
-    CPVT_Line line;
-    if (pIterator->GetWord(word)) {
-      ptHead.x = word.ptWord.x + word.fWidth;
-      ptHead.y = word.ptWord.y + word.fAscent;
-      ptFoot.x = word.ptWord.x + word.fWidth;
-      ptFoot.y = word.ptWord.y + word.fDescent;
-    } else if (pIterator->GetLine(line)) {
-      ptHead.x = line.ptLine.x;
-      ptHead.y = line.ptLine.y + line.fLineAscent;
-      ptFoot.x = line.ptLine.x;
-      ptFoot.y = line.ptLine.y + line.fLineDescent;
-    }
+  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  pIterator->SetAt(m_pEdit->GetCaret());
+  CPVT_Word word;
+  CPVT_Line line;
+  if (pIterator->GetWord(word)) {
+    ptHead.x = word.ptWord.x + word.fWidth;
+    ptHead.y = word.ptWord.y + word.fAscent;
+    ptFoot.x = word.ptWord.x + word.fWidth;
+    ptFoot.y = word.ptWord.y + word.fDescent;
+  } else if (pIterator->GetLine(line)) {
+    ptHead.x = line.ptLine.x;
+    ptHead.y = line.ptLine.y + line.fLineAscent;
+    ptFoot.x = line.ptLine.x;
+    ptFoot.y = line.ptLine.y + line.fLineDescent;
   }
 }
 
@@ -453,16 +452,15 @@ CFX_FloatPoint CPWL_EditCtrl::GetScrollPos() const {
 CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
   int32_t nFontIndex = 0;
 
-  if (IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator()) {
-    pIterator->SetAt(m_pEdit->GetCaret());
-    CPVT_Word word;
-    CPVT_Section section;
-    if (pIterator->GetWord(word)) {
-      nFontIndex = word.nFontIndex;
-    } else if (HasFlag(PES_RICH)) {
-      if (pIterator->GetSection(section)) {
-        nFontIndex = section.WordProps.nFontIndex;
-      }
+  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  pIterator->SetAt(m_pEdit->GetCaret());
+  CPVT_Word word;
+  CPVT_Section section;
+  if (pIterator->GetWord(word)) {
+    nFontIndex = word.nFontIndex;
+  } else if (HasFlag(PES_RICH)) {
+    if (pIterator->GetSection(section)) {
+      nFontIndex = section.WordProps.nFontIndex;
     }
   }
 
@@ -475,16 +473,15 @@ CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
 FX_FLOAT CPWL_EditCtrl::GetCaretFontSize() const {
   FX_FLOAT fFontSize = GetFontSize();
 
-  if (IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator()) {
-    pIterator->SetAt(m_pEdit->GetCaret());
-    CPVT_Word word;
-    CPVT_Section section;
-    if (pIterator->GetWord(word)) {
-      fFontSize = word.fFontSize;
-    } else if (HasFlag(PES_RICH)) {
-      if (pIterator->GetSection(section)) {
-        fFontSize = section.WordProps.fFontSize;
-      }
+  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  pIterator->SetAt(m_pEdit->GetCaret());
+  CPVT_Word word;
+  CPVT_Section section;
+  if (pIterator->GetWord(word)) {
+    fFontSize = word.fFontSize;
+  } else if (HasFlag(PES_RICH)) {
+    if (pIterator->GetSection(section)) {
+      fFontSize = section.WordProps.fFontSize;
     }
   }
 

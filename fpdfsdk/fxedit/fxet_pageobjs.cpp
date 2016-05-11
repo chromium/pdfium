@@ -107,32 +107,31 @@ void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
     pDevice->SetClip_Rect(rcTemp.ToFxRect());
   }
 
-  if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (pEdit->GetFontMap()) {
-      if (pRange)
-        pIterator->SetAt(pRange->BeginPos);
-      else
-        pIterator->SetAt(0);
+  IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  if (pEdit->GetFontMap()) {
+    if (pRange)
+      pIterator->SetAt(pRange->BeginPos);
+    else
+      pIterator->SetAt(0);
 
-      while (pIterator->NextWord()) {
-        CPVT_WordPlace place = pIterator->GetAt();
-        if (pRange && place.WordCmp(pRange->EndPos) > 0)
-          break;
+    while (pIterator->NextWord()) {
+      CPVT_WordPlace place = pIterator->GetAt();
+      if (pRange && place.WordCmp(pRange->EndPos) > 0)
+        break;
 
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          CFX_PathData pathUnderline;
-          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-          rcUnderline.left += ptOffset.x;
-          rcUnderline.right += ptOffset.x;
-          rcUnderline.top += ptOffset.y;
-          rcUnderline.bottom += ptOffset.y;
-          pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
-                                   rcUnderline.right, rcUnderline.top);
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        CFX_PathData pathUnderline;
+        CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+        rcUnderline.left += ptOffset.x;
+        rcUnderline.right += ptOffset.x;
+        rcUnderline.top += ptOffset.y;
+        rcUnderline.bottom += ptOffset.y;
+        pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
+                                 rcUnderline.right, rcUnderline.top);
 
-          pDevice->DrawPath(&pathUnderline, pUser2Device, NULL, color, 0,
-                            FXFILL_WINDING);
-        }
+        pDevice->DrawPath(&pathUnderline, pUser2Device, NULL, color, 0,
+                          FXFILL_WINDING);
       }
     }
   }
@@ -176,95 +175,93 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
     pDevice->SetClip_Rect(rcTemp.ToFxRect());
   }
 
-  if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
-      if (pRange)
-        pIterator->SetAt(pRange->BeginPos);
-      else
-        pIterator->SetAt(0);
+  IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (pRange)
+      pIterator->SetAt(pRange->BeginPos);
+    else
+      pIterator->SetAt(0);
 
-      CPVT_WordPlace oldplace;
+    CPVT_WordPlace oldplace;
 
-      while (pIterator->NextWord()) {
-        CPVT_WordPlace place = pIterator->GetAt();
-        if (pRange && place.WordCmp(pRange->EndPos) > 0)
-          break;
+    while (pIterator->NextWord()) {
+      CPVT_WordPlace place = pIterator->GetAt();
+      if (pRange && place.WordCmp(pRange->EndPos) > 0)
+        break;
 
-        if (wrSelect.IsExist()) {
-          bSelect = place.WordCmp(wrSelect.BeginPos) > 0 &&
-                    place.WordCmp(wrSelect.EndPos) <= 0;
-          if (bSelect) {
-            crCurFill = crWhite;
-          } else {
-            crCurFill = crTextFill;
-          }
-        }
-        if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
+      if (wrSelect.IsExist()) {
+        bSelect = place.WordCmp(wrSelect.BeginPos) > 0 &&
+                  place.WordCmp(wrSelect.EndPos) <= 0;
+        if (bSelect) {
+          crCurFill = crWhite;
+        } else {
           crCurFill = crTextFill;
-          crOldFill = crCurFill;
         }
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          if (bSelect) {
-            CPVT_Line line;
-            pIterator->GetLine(line);
+      }
+      if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
+        crCurFill = crTextFill;
+        crOldFill = crCurFill;
+      }
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        if (bSelect) {
+          CPVT_Line line;
+          pIterator->GetLine(line);
 
-            if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
-              CFX_FloatRect rc(word.ptWord.x, line.ptLine.y + line.fLineDescent,
-                               word.ptWord.x + word.fWidth,
-                               line.ptLine.y + line.fLineAscent);
-              rc.Intersect(rcClip);
-              pSystemHandler->OutputSelectedRect(pFFLData, rc);
-            } else {
-              CFX_PathData pathSelBK;
-              pathSelBK.AppendRect(word.ptWord.x,
-                                   line.ptLine.y + line.fLineDescent,
-                                   word.ptWord.x + word.fWidth,
-                                   line.ptLine.y + line.fLineAscent);
-
-              pDevice->DrawPath(&pathSelBK, pUser2Device, NULL, crSelBK, 0,
-                                FXFILL_WINDING);
-            }
-          }
-
-          if (bContinuous) {
-            if (place.LineCmp(oldplace) != 0 || word.nFontIndex != nFontIndex ||
-                crOldFill != crCurFill) {
-              if (sTextBuf.GetLength() > 0) {
-                DrawTextString(
-                    pDevice,
-                    CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                    pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
-                    sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
-
-                sTextBuf.Clear();
-              }
-              nFontIndex = word.nFontIndex;
-              ptBT = word.ptWord;
-              crOldFill = crCurFill;
-            }
-
-            sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word,
-                                         SubWord)
-                            .AsStringC();
+          if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
+            CFX_FloatRect rc(word.ptWord.x, line.ptLine.y + line.fLineDescent,
+                             word.ptWord.x + word.fWidth,
+                             line.ptLine.y + line.fLineAscent);
+            rc.Intersect(rcClip);
+            pSystemHandler->OutputSelectedRect(pFFLData, rc);
           } else {
-            DrawTextString(
-                pDevice, CFX_FloatPoint(word.ptWord.x + ptOffset.x,
-                                        word.ptWord.y + ptOffset.y),
-                pFontMap->GetPDFFont(word.nFontIndex), fFontSize, pUser2Device,
-                GetPDFWordString(pFontMap, word.nFontIndex, word.Word, SubWord),
-                crCurFill, crTextStroke, nHorzScale);
-          }
-          oldplace = place;
-        }
-      }
+            CFX_PathData pathSelBK;
+            pathSelBK.AppendRect(
+                word.ptWord.x, line.ptLine.y + line.fLineDescent,
+                word.ptWord.x + word.fWidth, line.ptLine.y + line.fLineAscent);
 
-      if (sTextBuf.GetLength() > 0) {
-        DrawTextString(
-            pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-            pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
-            sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
+            pDevice->DrawPath(&pathSelBK, pUser2Device, NULL, crSelBK, 0,
+                              FXFILL_WINDING);
+          }
+        }
+
+        if (bContinuous) {
+          if (place.LineCmp(oldplace) != 0 || word.nFontIndex != nFontIndex ||
+              crOldFill != crCurFill) {
+            if (sTextBuf.GetLength() > 0) {
+              DrawTextString(
+                  pDevice,
+                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                  pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
+                  sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
+
+              sTextBuf.Clear();
+            }
+            nFontIndex = word.nFontIndex;
+            ptBT = word.ptWord;
+            crOldFill = crCurFill;
+          }
+
+          sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word,
+                                       SubWord)
+                          .AsStringC();
+        } else {
+          DrawTextString(
+              pDevice, CFX_FloatPoint(word.ptWord.x + ptOffset.x,
+                                      word.ptWord.y + ptOffset.y),
+              pFontMap->GetPDFFont(word.nFontIndex), fFontSize, pUser2Device,
+              GetPDFWordString(pFontMap, word.nFontIndex, word.Word, SubWord),
+              crCurFill, crTextStroke, nHorzScale);
+        }
+        oldplace = place;
       }
+    }
+
+    if (sTextBuf.GetLength() > 0) {
+      DrawTextString(pDevice,
+                     CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                     pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
+                     sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
     }
   }
 
@@ -297,101 +294,99 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
     pDevice->SetClip_Rect(rcTemp.ToFxRect());
   }
 
-  if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
-      if (pRange)
-        pIterator->SetAt(pRange->BeginPos);
-      else
-        pIterator->SetAt(0);
+  IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (pRange)
+      pIterator->SetAt(pRange->BeginPos);
+    else
+      pIterator->SetAt(0);
 
-      CPVT_WordPlace oldplace;
+    CPVT_WordPlace oldplace;
 
-      while (pIterator->NextWord()) {
-        CPVT_WordPlace place = pIterator->GetAt();
-        if (pRange && place.WordCmp(pRange->EndPos) > 0)
-          break;
+    while (pIterator->NextWord()) {
+      CPVT_WordPlace place = pIterator->GetAt();
+      if (pRange && place.WordCmp(pRange->EndPos) > 0)
+        break;
 
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          word.WordProps.fFontSize = word.fFontSize;
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        word.WordProps.fFontSize = word.fFontSize;
 
-          crCurText = ArgbEncode(255, word.WordProps.dwWordColor);
+        crCurText = ArgbEncode(255, word.WordProps.dwWordColor);
 
-          if (wrSelect.IsExist()) {
-            bSelect = place.WordCmp(wrSelect.BeginPos) > 0 &&
-                      place.WordCmp(wrSelect.EndPos) <= 0;
-            if (bSelect) {
-              crCurText = crWhite;
-            }
-          }
-
+        if (wrSelect.IsExist()) {
+          bSelect = place.WordCmp(wrSelect.BeginPos) > 0 &&
+                    place.WordCmp(wrSelect.EndPos) <= 0;
           if (bSelect) {
-            CPVT_Line line;
-            pIterator->GetLine(line);
-
-            CFX_PathData pathSelBK;
-            pathSelBK.AppendRect(word.ptWord.x + ptOffset.x,
-                                 line.ptLine.y + line.fLineDescent + ptOffset.y,
-                                 word.ptWord.x + word.fWidth + ptOffset.x,
-                                 line.ptLine.y + line.fLineAscent + ptOffset.y);
-
-            pDevice->DrawPath(&pathSelBK, pUser2Device, NULL, crSelBK, 0,
-                              FXFILL_WINDING);
+            crCurText = crWhite;
           }
-
-          if (place.LineCmp(oldplace) != 0 ||
-              word.WordProps.fCharSpace > 0.0f ||
-              word.WordProps.nHorzScale != 100 ||
-              FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
-              crOld != crCurText) {
-            if (sTextBuf.GetLength() > 0) {
-              DrawTextString(
-                  pDevice,
-                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                  pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize,
-                  pUser2Device, sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
-
-              sTextBuf.Clear();
-            }
-            wp = word.WordProps;
-            ptBT = word.ptWord;
-            crOld = crCurText;
-          }
-
-          sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
-                                       word.Word, 0)
-                          .AsStringC();
-
-          if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
-            CFX_PathData pathUnderline;
-            CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-            pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
-                                     rcUnderline.right, rcUnderline.top);
-
-            pDevice->DrawPath(&pathUnderline, pUser2Device, NULL, crCurText, 0,
-                              FXFILL_WINDING);
-          }
-
-          if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
-            CFX_PathData pathCrossout;
-            CFX_FloatRect rcCrossout = GetCrossoutRect(word);
-            pathCrossout.AppendRect(rcCrossout.left, rcCrossout.bottom,
-                                    rcCrossout.right, rcCrossout.top);
-
-            pDevice->DrawPath(&pathCrossout, pUser2Device, NULL, crCurText, 0,
-                              FXFILL_WINDING);
-          }
-
-          oldplace = place;
         }
-      }
 
-      if (sTextBuf.GetLength() > 0) {
-        DrawTextString(
-            pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-            pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
-            sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
+        if (bSelect) {
+          CPVT_Line line;
+          pIterator->GetLine(line);
+
+          CFX_PathData pathSelBK;
+          pathSelBK.AppendRect(word.ptWord.x + ptOffset.x,
+                               line.ptLine.y + line.fLineDescent + ptOffset.y,
+                               word.ptWord.x + word.fWidth + ptOffset.x,
+                               line.ptLine.y + line.fLineAscent + ptOffset.y);
+
+          pDevice->DrawPath(&pathSelBK, pUser2Device, NULL, crSelBK, 0,
+                            FXFILL_WINDING);
+        }
+
+        if (place.LineCmp(oldplace) != 0 || word.WordProps.fCharSpace > 0.0f ||
+            word.WordProps.nHorzScale != 100 ||
+            FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
+            crOld != crCurText) {
+          if (sTextBuf.GetLength() > 0) {
+            DrawTextString(
+                pDevice,
+                CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
+                sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
+
+            sTextBuf.Clear();
+          }
+          wp = word.WordProps;
+          ptBT = word.ptWord;
+          crOld = crCurText;
+        }
+
+        sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
+                                     word.Word, 0)
+                        .AsStringC();
+
+        if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
+          CFX_PathData pathUnderline;
+          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+          pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
+                                   rcUnderline.right, rcUnderline.top);
+
+          pDevice->DrawPath(&pathUnderline, pUser2Device, NULL, crCurText, 0,
+                            FXFILL_WINDING);
+        }
+
+        if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
+          CFX_PathData pathCrossout;
+          CFX_FloatRect rcCrossout = GetCrossoutRect(word);
+          pathCrossout.AppendRect(rcCrossout.left, rcCrossout.bottom,
+                                  rcCrossout.right, rcCrossout.top);
+
+          pDevice->DrawPath(&pathCrossout, pUser2Device, NULL, crCurText, 0,
+                            FXFILL_WINDING);
+        }
+
+        oldplace = place;
       }
+    }
+
+    if (sTextBuf.GetLength() > 0) {
+      DrawTextString(
+          pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+          pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
+          sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
     }
   }
 
@@ -471,51 +466,48 @@ void IFX_Edit::GeneratePageObjects(
 
   ObjArray.RemoveAll();
 
-  if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
-      if (pRange)
-        pIterator->SetAt(pRange->BeginPos);
-      else
-        pIterator->SetAt(0);
+  IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (pRange)
+      pIterator->SetAt(pRange->BeginPos);
+    else
+      pIterator->SetAt(0);
 
-      CPVT_WordPlace oldplace;
+    CPVT_WordPlace oldplace;
 
-      while (pIterator->NextWord()) {
-        CPVT_WordPlace place = pIterator->GetAt();
-        if (pRange && place.WordCmp(pRange->EndPos) > 0)
-          break;
+    while (pIterator->NextWord()) {
+      CPVT_WordPlace place = pIterator->GetAt();
+      if (pRange && place.WordCmp(pRange->EndPos) > 0)
+        break;
 
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          if (place.LineCmp(oldplace) != 0 ||
-              nOldFontIndex != word.nFontIndex) {
-            if (sTextBuf.GetLength() > 0) {
-              ObjArray.Add(AddTextObjToPageObjects(
-                  pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
-                  fFontSize, 0.0f, 100,
-                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                  sTextBuf.AsStringC()));
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        if (place.LineCmp(oldplace) != 0 || nOldFontIndex != word.nFontIndex) {
+          if (sTextBuf.GetLength() > 0) {
+            ObjArray.Add(AddTextObjToPageObjects(
+                pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
+                fFontSize, 0.0f, 100,
+                CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                sTextBuf.AsStringC()));
 
-              sTextBuf.Clear();
-            }
-
-            ptBT = word.ptWord;
-            nOldFontIndex = word.nFontIndex;
+            sTextBuf.Clear();
           }
 
-          sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word, 0)
-                          .AsStringC();
-          oldplace = place;
+          ptBT = word.ptWord;
+          nOldFontIndex = word.nFontIndex;
         }
-      }
 
-      if (sTextBuf.GetLength() > 0) {
-        ObjArray.Add(AddTextObjToPageObjects(
-            pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
-            fFontSize, 0.0f, 100,
-            CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-            sTextBuf.AsStringC()));
+        sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word, 0)
+                        .AsStringC();
+        oldplace = place;
       }
+    }
+
+    if (sTextBuf.GetLength() > 0) {
+      ObjArray.Add(AddTextObjToPageObjects(
+          pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex), fFontSize,
+          0.0f, 100, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+          sTextBuf.AsStringC()));
     }
   }
 }
@@ -535,81 +527,79 @@ void IFX_Edit::GenerateRichPageObjects(
 
   ObjArray.RemoveAll();
 
-  if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
-      if (pRange)
-        pIterator->SetAt(pRange->BeginPos);
-      else
-        pIterator->SetAt(0);
+  IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (pRange)
+      pIterator->SetAt(pRange->BeginPos);
+    else
+      pIterator->SetAt(0);
 
-      CPVT_WordPlace oldplace;
+    CPVT_WordPlace oldplace;
 
-      while (pIterator->NextWord()) {
-        CPVT_WordPlace place = pIterator->GetAt();
-        if (pRange && place.WordCmp(pRange->EndPos) > 0)
-          break;
+    while (pIterator->NextWord()) {
+      CPVT_WordPlace place = pIterator->GetAt();
+      if (pRange && place.WordCmp(pRange->EndPos) > 0)
+        break;
 
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          word.WordProps.fFontSize = word.fFontSize;
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        word.WordProps.fFontSize = word.fFontSize;
 
-          crCurText = ArgbEncode(255, word.WordProps.dwWordColor);
+        crCurText = ArgbEncode(255, word.WordProps.dwWordColor);
 
-          if (place.LineCmp(oldplace) != 0 ||
-              word.WordProps.fCharSpace > 0.0f ||
-              word.WordProps.nHorzScale != 100 ||
-              FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
-              crOld != crCurText) {
-            if (sTextBuf.GetLength() > 0) {
-              ObjArray.Add(AddTextObjToPageObjects(
-                  pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
-                  wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
-                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                  sTextBuf.AsStringC()));
+        if (place.LineCmp(oldplace) != 0 || word.WordProps.fCharSpace > 0.0f ||
+            word.WordProps.nHorzScale != 100 ||
+            FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
+            crOld != crCurText) {
+          if (sTextBuf.GetLength() > 0) {
+            ObjArray.Add(AddTextObjToPageObjects(
+                pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
+                wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
+                CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                sTextBuf.AsStringC()));
 
-              sTextBuf.Clear();
-            }
-
-            wp = word.WordProps;
-            ptBT = word.ptWord;
-            crOld = crCurText;
+            sTextBuf.Clear();
           }
 
-          sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
-                                       word.Word, 0)
-                          .AsStringC();
-
-          if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
-            CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-            rcUnderline.left += ptOffset.x;
-            rcUnderline.right += ptOffset.x;
-            rcUnderline.top += ptOffset.y;
-            rcUnderline.bottom += ptOffset.y;
-
-            AddRectToPageObjects(pObjectHolder, crCurText, rcUnderline);
-          }
-
-          if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
-            CFX_FloatRect rcCrossout = GetCrossoutRect(word);
-            rcCrossout.left += ptOffset.x;
-            rcCrossout.right += ptOffset.x;
-            rcCrossout.top += ptOffset.y;
-            rcCrossout.bottom += ptOffset.y;
-
-            AddRectToPageObjects(pObjectHolder, crCurText, rcCrossout);
-          }
-
-          oldplace = place;
+          wp = word.WordProps;
+          ptBT = word.ptWord;
+          crOld = crCurText;
         }
-      }
 
-      if (sTextBuf.GetLength() > 0) {
-        ObjArray.Add(AddTextObjToPageObjects(
-            pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
-            wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
-            CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-            sTextBuf.AsStringC()));
+        sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
+                                     word.Word, 0)
+                        .AsStringC();
+
+        if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
+          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+          rcUnderline.left += ptOffset.x;
+          rcUnderline.right += ptOffset.x;
+          rcUnderline.top += ptOffset.y;
+          rcUnderline.bottom += ptOffset.y;
+
+          AddRectToPageObjects(pObjectHolder, crCurText, rcUnderline);
+        }
+
+        if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
+          CFX_FloatRect rcCrossout = GetCrossoutRect(word);
+          rcCrossout.left += ptOffset.x;
+          rcCrossout.right += ptOffset.x;
+          rcCrossout.top += ptOffset.y;
+          rcCrossout.bottom += ptOffset.y;
+
+          AddRectToPageObjects(pObjectHolder, crCurText, rcCrossout);
+        }
+
+        oldplace = place;
       }
+    }
+
+    if (sTextBuf.GetLength() > 0) {
+      ObjArray.Add(AddTextObjToPageObjects(
+          pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
+          wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
+          CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+          sTextBuf.AsStringC()));
     }
   }
 }
@@ -619,29 +609,28 @@ void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
                                         const CFX_FloatPoint& ptOffset,
                                         const CPVT_WordRange* pRange,
                                         FX_COLORREF color) {
-  if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (pEdit->GetFontMap()) {
-      if (pRange)
-        pIterator->SetAt(pRange->BeginPos);
-      else
-        pIterator->SetAt(0);
+  IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  if (pEdit->GetFontMap()) {
+    if (pRange)
+      pIterator->SetAt(pRange->BeginPos);
+    else
+      pIterator->SetAt(0);
 
-      CPVT_WordPlace oldplace;
+    CPVT_WordPlace oldplace;
 
-      while (pIterator->NextWord()) {
-        CPVT_WordPlace place = pIterator->GetAt();
-        if (pRange && place.WordCmp(pRange->EndPos) > 0)
-          break;
+    while (pIterator->NextWord()) {
+      CPVT_WordPlace place = pIterator->GetAt();
+      if (pRange && place.WordCmp(pRange->EndPos) > 0)
+        break;
 
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-          rcUnderline.left += ptOffset.x;
-          rcUnderline.right += ptOffset.x;
-          rcUnderline.top += ptOffset.y;
-          rcUnderline.bottom += ptOffset.y;
-          AddRectToPageObjects(pObjectHolder, color, rcUnderline);
-        }
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+        rcUnderline.left += ptOffset.x;
+        rcUnderline.right += ptOffset.x;
+        rcUnderline.top += ptOffset.y;
+        rcUnderline.bottom += ptOffset.y;
+        AddRectToPageObjects(pObjectHolder, color, rcUnderline);
       }
     }
   }

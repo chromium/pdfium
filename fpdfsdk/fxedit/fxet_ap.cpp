@@ -70,91 +70,90 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
   CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
   int32_t nCurFontIndex = -1;
 
-  if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (pRange)
-      pIterator->SetAt(pRange->BeginPos);
-    else
-      pIterator->SetAt(0);
+  IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  if (pRange)
+    pIterator->SetAt(pRange->BeginPos);
+  else
+    pIterator->SetAt(0);
 
-    CPVT_WordPlace oldplace;
+  CPVT_WordPlace oldplace;
 
-    while (pIterator->NextWord()) {
-      CPVT_WordPlace place = pIterator->GetAt();
+  while (pIterator->NextWord()) {
+    CPVT_WordPlace place = pIterator->GetAt();
 
-      if (pRange && place.WordCmp(pRange->EndPos) > 0)
-        break;
+    if (pRange && place.WordCmp(pRange->EndPos) > 0)
+      break;
 
-      if (bContinuous) {
-        if (place.LineCmp(oldplace) != 0) {
-          if (sWords.GetSize() > 0) {
-            sEditStream << GetWordRenderString(sWords.AsStringC());
-            sWords.Clear();
-          }
-
-          CPVT_Word word;
-          if (pIterator->GetWord(word)) {
-            ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
-                                   word.ptWord.y + ptOffset.y);
-          } else {
-            CPVT_Line line;
-            pIterator->GetLine(line);
-            ptNew = CFX_FloatPoint(line.ptLine.x + ptOffset.x,
-                                   line.ptLine.y + ptOffset.y);
-          }
-
-          if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
-            sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
-                        << " Td\n";
-
-            ptOld = ptNew;
-          }
+    if (bContinuous) {
+      if (place.LineCmp(oldplace) != 0) {
+        if (sWords.GetSize() > 0) {
+          sEditStream << GetWordRenderString(sWords.AsStringC());
+          sWords.Clear();
         }
 
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          if (word.nFontIndex != nCurFontIndex) {
-            if (sWords.GetSize() > 0) {
-              sEditStream << GetWordRenderString(sWords.AsStringC());
-              sWords.Clear();
-            }
-            sEditStream << GetFontSetString(pEdit->GetFontMap(),
-                                            word.nFontIndex, word.fFontSize);
-            nCurFontIndex = word.nFontIndex;
-          }
-
-          sWords << GetPDFWordString(pEdit->GetFontMap(), nCurFontIndex,
-                                     word.Word, SubWord);
-        }
-
-        oldplace = place;
-      } else {
         CPVT_Word word;
         if (pIterator->GetWord(word)) {
           ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
                                  word.ptWord.y + ptOffset.y);
+        } else {
+          CPVT_Line line;
+          pIterator->GetLine(line);
+          ptNew = CFX_FloatPoint(line.ptLine.x + ptOffset.x,
+                                 line.ptLine.y + ptOffset.y);
+        }
 
-          if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
-            sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
-                        << " Td\n";
-            ptOld = ptNew;
-          }
+        if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
+          sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
+                      << " Td\n";
 
-          if (word.nFontIndex != nCurFontIndex) {
-            sEditStream << GetFontSetString(pEdit->GetFontMap(),
-                                            word.nFontIndex, word.fFontSize);
-            nCurFontIndex = word.nFontIndex;
-          }
-
-          sEditStream << GetWordRenderString(GetPDFWordString(
-              pEdit->GetFontMap(), nCurFontIndex, word.Word, SubWord));
+          ptOld = ptNew;
         }
       }
-    }
 
-    if (sWords.GetSize() > 0) {
-      sEditStream << GetWordRenderString(sWords.AsStringC());
-      sWords.Clear();
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        if (word.nFontIndex != nCurFontIndex) {
+          if (sWords.GetSize() > 0) {
+            sEditStream << GetWordRenderString(sWords.AsStringC());
+            sWords.Clear();
+          }
+          sEditStream << GetFontSetString(pEdit->GetFontMap(), word.nFontIndex,
+                                          word.fFontSize);
+          nCurFontIndex = word.nFontIndex;
+        }
+
+        sWords << GetPDFWordString(pEdit->GetFontMap(), nCurFontIndex,
+                                   word.Word, SubWord);
+      }
+
+      oldplace = place;
+    } else {
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
+                               word.ptWord.y + ptOffset.y);
+
+        if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
+          sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
+                      << " Td\n";
+          ptOld = ptNew;
+        }
+
+        if (word.nFontIndex != nCurFontIndex) {
+          sEditStream << GetFontSetString(pEdit->GetFontMap(), word.nFontIndex,
+                                          word.fFontSize);
+          nCurFontIndex = word.nFontIndex;
+        }
+
+        sEditStream << GetWordRenderString(GetPDFWordString(
+            pEdit->GetFontMap(), nCurFontIndex, word.Word, SubWord));
+      }
     }
+  }
+
+  if (sWords.GetSize() > 0) {
+    sEditStream << GetWordRenderString(sWords.AsStringC());
+    sWords.Clear();
   }
 
   CFX_ByteTextBuf sAppStream;
@@ -182,22 +181,21 @@ CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
   CFX_ByteTextBuf sRet;
 
   if (pRange && pRange->IsExist()) {
-    if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-      pIterator->SetAt(pRange->BeginPos);
+    IFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+    pIterator->SetAt(pRange->BeginPos);
 
-      while (pIterator->NextWord()) {
-        CPVT_WordPlace place = pIterator->GetAt();
+    while (pIterator->NextWord()) {
+      CPVT_WordPlace place = pIterator->GetAt();
 
-        if (pRange && place.WordCmp(pRange->EndPos) > 0)
-          break;
+      if (pRange && place.WordCmp(pRange->EndPos) > 0)
+        break;
 
-        CPVT_Word word;
-        CPVT_Line line;
-        if (pIterator->GetWord(word) && pIterator->GetLine(line)) {
-          sRet << word.ptWord.x + ptOffset.x << " "
-               << line.ptLine.y + line.fLineDescent << " " << word.fWidth << " "
-               << line.fLineAscent - line.fLineDescent << " re\nf\n";
-        }
+      CPVT_Word word;
+      CPVT_Line line;
+      if (pIterator->GetWord(word) && pIterator->GetLine(line)) {
+        sRet << word.ptWord.x + ptOffset.x << " "
+             << line.ptLine.y + line.fLineDescent << " " << word.fWidth << " "
+             << line.fLineAscent - line.fLineDescent << " re\nf\n";
       }
     }
   }

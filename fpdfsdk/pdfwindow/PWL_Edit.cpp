@@ -524,17 +524,16 @@ CFX_FloatPoint CPWL_Edit::GetWordRightBottomPoint(
     const CPVT_WordPlace& wpWord) {
   CFX_FloatPoint pt(0.0f, 0.0f);
 
-  if (IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator()) {
-    CPVT_WordPlace wpOld = pIterator->GetAt();
-    pIterator->SetAt(wpWord);
-    CPVT_Word word;
-    if (pIterator->GetWord(word)) {
-      pt = CFX_FloatPoint(word.ptWord.x + word.fWidth,
-                          word.ptWord.y + word.fDescent);
-    }
-
-    pIterator->SetAt(wpOld);
+  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CPVT_WordPlace wpOld = pIterator->GetAt();
+  pIterator->SetAt(wpWord);
+  CPVT_Word word;
+  if (pIterator->GetWord(word)) {
+    pt = CFX_FloatPoint(word.ptWord.x + word.fWidth,
+                        word.ptWord.y + word.fDescent);
   }
+
+  pIterator->SetAt(wpOld);
 
   return pt;
 }
@@ -879,52 +878,50 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
                                             FX_BOOL bArabic) const {
   CPVT_WordRange range;
 
-  if (IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator()) {
-    CPVT_Word wordinfo;
-    CPVT_WordPlace wpStart(place), wpEnd(place);
-    pIterator->SetAt(place);
+  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CPVT_Word wordinfo;
+  CPVT_WordPlace wpStart(place), wpEnd(place);
+  pIterator->SetAt(place);
 
-    if (bLatin) {
-      while (pIterator->NextWord()) {
-        if (!pIterator->GetWord(wordinfo) ||
-            !FX_EDIT_ISLATINWORD(wordinfo.Word)) {
-          break;
-        }
-
-        wpEnd = pIterator->GetAt();
+  if (bLatin) {
+    while (pIterator->NextWord()) {
+      if (!pIterator->GetWord(wordinfo) ||
+          !FX_EDIT_ISLATINWORD(wordinfo.Word)) {
+        break;
       }
-    } else if (bArabic) {
-      while (pIterator->NextWord()) {
-        if (!pIterator->GetWord(wordinfo) || !PWL_ISARABICWORD(wordinfo.Word))
-          break;
 
-        wpEnd = pIterator->GetAt();
-      }
+      wpEnd = pIterator->GetAt();
     }
+  } else if (bArabic) {
+    while (pIterator->NextWord()) {
+      if (!pIterator->GetWord(wordinfo) || !PWL_ISARABICWORD(wordinfo.Word))
+        break;
 
-    pIterator->SetAt(place);
-
-    if (bLatin) {
-      do {
-        if (!pIterator->GetWord(wordinfo) ||
-            !FX_EDIT_ISLATINWORD(wordinfo.Word)) {
-          break;
-        }
-
-        wpStart = pIterator->GetAt();
-      } while (pIterator->PrevWord());
-    } else if (bArabic) {
-      do {
-        if (!pIterator->GetWord(wordinfo) || !PWL_ISARABICWORD(wordinfo.Word))
-          break;
-
-        wpStart = pIterator->GetAt();
-      } while (pIterator->PrevWord());
+      wpEnd = pIterator->GetAt();
     }
-
-    range.Set(wpStart, wpEnd);
   }
 
+  pIterator->SetAt(place);
+
+  if (bLatin) {
+    do {
+      if (!pIterator->GetWord(wordinfo) ||
+          !FX_EDIT_ISLATINWORD(wordinfo.Word)) {
+        break;
+      }
+
+      wpStart = pIterator->GetAt();
+    } while (pIterator->PrevWord());
+  } else if (bArabic) {
+    do {
+      if (!pIterator->GetWord(wordinfo) || !PWL_ISARABICWORD(wordinfo.Word))
+        break;
+
+      wpStart = pIterator->GetAt();
+    } while (pIterator->PrevWord());
+  }
+
+  range.Set(wpStart, wpEnd);
   return range;
 }
 

@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_FXEDIT_INCLUDE_FXET_EDIT_H_
 #define FPDFSDK_FXEDIT_INCLUDE_FXET_EDIT_H_
 
+#include <memory>
+
 #include "core/fpdfdoc/include/cpvt_secprops.h"
 #include "core/fpdfdoc/include/cpvt_wordprops.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
@@ -727,7 +729,7 @@ class CFX_Edit : public IFX_Edit {
   CPDF_VariableText* m_pVT;
   IFX_Edit_Notify* m_pNotify;
   IFX_Edit_OprNotify* m_pOprNotify;
-  CFX_Edit_Provider* m_pVTProvide;
+  std::unique_ptr<CFX_Edit_Provider> m_pVTProvider;
 
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
@@ -736,7 +738,7 @@ class CFX_Edit : public IFX_Edit {
   CFX_FloatPoint m_ptScrollPos;
   CFX_FloatPoint m_ptRefreshScrollPos;
   FX_BOOL m_bEnableScroll;
-  IFX_Edit_Iterator* m_pIterator;
+  std::unique_ptr<IFX_Edit_Iterator> m_pIterator;
   CFX_Edit_Refresh m_Refresh;
   CFX_FloatPoint m_ptCaret;
   CFX_Edit_Undo m_Undo;

@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_INCLUDE_CPDF_VARIABLETEXT_H_
 #define CORE_FPDFDOC_INCLUDE_CPDF_VARIABLETEXT_H_
 
+#include <memory>
+
 #include "core/fpdfdoc/cpvt_floatrect.h"
 #include "core/fpdfdoc/cpvt_lineinfo.h"
 #include "core/fpdfdoc/include/cpvt_line.h"
@@ -246,7 +248,7 @@ class CPDF_VariableText : private CPDF_EditContainer {
   FX_BOOL m_bInitial;
   FX_BOOL m_bRichText;
   CPDF_VariableText::Provider* m_pVTProvider;
-  CPDF_VariableText::Iterator* m_pVTIterator;
+  std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
 };
 
 #endif  // CORE_FPDFDOC_INCLUDE_CPDF_VARIABLETEXT_H_
