@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfdoc/include/cpdf_variabletext.h"
+
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
-#include "core/fpdfdoc/include/cpdf_variabletext.h"
 #include "core/fpdfdoc/include/cpvt_section.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
@@ -70,11 +71,8 @@ int32_t CPDF_VariableText::Provider::GetWordFontIndex(uint16_t word,
 }
 
 FX_BOOL CPDF_VariableText::Provider::IsLatinWord(uint16_t word) {
-  if ((word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) ||
-      word == 0x2D || word == 0x27) {
-    return TRUE;
-  }
-  return FALSE;
+  return (word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) ||
+         word == 0x2D || word == 0x27;
 }
 
 int32_t CPDF_VariableText::Provider::GetDefaultFontIndex() {
@@ -1051,22 +1049,20 @@ FX_FLOAT CPDF_VariableText::GetAutoFontSize() {
   return (FX_FLOAT)gFontSizeSteps[nMid];
 }
 
-FX_BOOL CPDF_VariableText::IsBigger(FX_FLOAT fFontSize) {
-  FX_BOOL bBigger = FALSE;
-  CPVT_Size szTotal;
+bool CPDF_VariableText::IsBigger(FX_FLOAT fFontSize) const {
+  CFX_SizeF szTotal;
   for (int32_t s = 0, sz = m_SectionArray.GetSize(); s < sz; s++) {
     if (CSection* pSection = m_SectionArray.GetAt(s)) {
-      CPVT_Size size = pSection->GetSectionSize(fFontSize);
+      CFX_SizeF size = pSection->GetSectionSize(fFontSize);
       szTotal.x = std::max(size.x, szTotal.x);
       szTotal.y += size.y;
       if (IsFloatBigger(szTotal.x, GetPlateWidth()) ||
           IsFloatBigger(szTotal.y, GetPlateHeight())) {
-        bBigger = TRUE;
-        break;
+        return true;
       }
     }
   }
-  return bBigger;
+  return false;
 }
 
 CPVT_FloatRect CPDF_VariableText::RearrangeSections(

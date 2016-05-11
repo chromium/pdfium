@@ -82,7 +82,7 @@ CPVT_FloatRect CSection::Rearrange() {
   }
   return CTypeset(this).Typeset();
 }
-CPVT_Size CSection::GetSectionSize(FX_FLOAT fFontSize) {
+CFX_SizeF CSection::GetSectionSize(FX_FLOAT fFontSize) {
   return CTypeset(this).GetEditSize(fFontSize);
 }
 CPVT_WordPlace CSection::GetBeginWordPlace() const {
@@ -376,11 +376,11 @@ CPVT_FloatRect CTypeset::CharArray() {
   }
   return m_rcRet = CPVT_FloatRect(0, 0, x, y);
 }
-CPVT_Size CTypeset::GetEditSize(FX_FLOAT fFontSize) {
+CFX_SizeF CTypeset::GetEditSize(FX_FLOAT fFontSize) {
   ASSERT(m_pSection);
   ASSERT(m_pVT);
   SplitLines(FALSE, fFontSize);
-  return CPVT_Size(m_rcRet.Width(), m_rcRet.Height());
+  return CFX_SizeF(m_rcRet.Width(), m_rcRet.Height());
 }
 CPVT_FloatRect CTypeset::Typeset() {
   ASSERT(m_pVT);

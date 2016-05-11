@@ -13,11 +13,12 @@
 class CPDF_VariableText;
 class CSection;
 
-class CTypeset {
+class CTypeset final {
  public:
   explicit CTypeset(CSection* pSection);
-  virtual ~CTypeset();
-  CPVT_Size GetEditSize(FX_FLOAT fFontSize);
+  ~CTypeset();
+
+  CFX_SizeF GetEditSize(FX_FLOAT fFontSize);
   CPVT_FloatRect Typeset();
   CPVT_FloatRect CharArray();
 
@@ -26,7 +27,7 @@ class CTypeset {
   void OutputLines();
 
   CPVT_FloatRect m_rcRet;
-  CPDF_VariableText* m_pVT;
+  CPDF_VariableText* const m_pVT;
   CSection* const m_pSection;
 };
 

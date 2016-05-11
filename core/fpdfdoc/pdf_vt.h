@@ -20,22 +20,6 @@ struct CPVT_WordInfo;
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
-class CPVT_Size {
- public:
-  CPVT_Size() : x(0.0f), y(0.0f) {}
-  CPVT_Size(FX_FLOAT other_x, FX_FLOAT other_y) {
-    x = other_x;
-    y = other_y;
-  }
-  FX_FLOAT x, y;
-};
-
-struct CPVT_FloatRange {
-  CPVT_FloatRange() : fMin(0.0f), fMax(0.0f) {}
-  CPVT_FloatRange(FX_FLOAT min, FX_FLOAT max) : fMin(min), fMax(max) {}
-  FX_FLOAT Range() const { return fMax - fMin; }
-  FX_FLOAT fMin, fMax;
-};
 template <class TYPE>
 class CPVT_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
  public:
@@ -52,10 +36,11 @@ class CPVT_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
     }
   }
 };
-class CLine {
+class CLine final {
  public:
   CLine();
-  virtual ~CLine();
+  ~CLine();
+
   CPVT_WordPlace GetBeginWordPlace() const;
   CPVT_WordPlace GetEndWordPlace() const;
   CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
@@ -63,10 +48,12 @@ class CLine {
   CPVT_WordPlace LinePlace;
   CPVT_LineInfo m_LineInfo;
 };
-class CLines {
+
+class CLines final {
  public:
   CLines() : m_nTotal(0) {}
-  virtual ~CLines() { RemoveAll(); }
+  ~CLines() { RemoveAll(); }
+
   int32_t GetSize() const { return m_Lines.GetSize(); }
   CLine* GetAt(int32_t nIndex) const { return m_Lines.GetAt(nIndex); }
   void Empty() { m_nTotal = 0; }
@@ -103,6 +90,7 @@ class CPDF_EditContainer {
  public:
   CPDF_EditContainer() : m_rcPlate(0, 0, 0, 0), m_rcContent(0, 0, 0, 0) {}
   virtual ~CPDF_EditContainer() {}
+
   virtual void SetPlateRect(const CFX_FloatRect& rect) { m_rcPlate = rect; }
   virtual const CFX_FloatRect& GetPlateRect() const { return m_rcPlate; }
   virtual void SetContentRect(const CPVT_FloatRect& rect) {
@@ -111,8 +99,8 @@ class CPDF_EditContainer {
   virtual CFX_FloatRect GetContentRect() const { return m_rcContent; }
   FX_FLOAT GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; }
   FX_FLOAT GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; }
-  CPVT_Size GetPlateSize() const {
-    return CPVT_Size(GetPlateWidth(), GetPlateHeight());
+  CFX_SizeF GetPlateSize() const {
+    return CFX_SizeF(GetPlateWidth(), GetPlateHeight());
   }
   CFX_FloatPoint GetBTPoint() const {
     return CFX_FloatPoint(m_rcPlate.left, m_rcPlate.top);

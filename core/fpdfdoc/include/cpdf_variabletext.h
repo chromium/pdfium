@@ -228,7 +228,7 @@ class CPDF_VariableText : private CPDF_EditContainer {
 
   CPVT_FloatRect Rearrange(const CPVT_WordRange& PlaceRange);
   FX_FLOAT GetAutoFontSize();
-  FX_BOOL IsBigger(FX_FLOAT fFontSize);
+  bool IsBigger(FX_FLOAT fFontSize) const;
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);
 
   void ResetSectionArray();
