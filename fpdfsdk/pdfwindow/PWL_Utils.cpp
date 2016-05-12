@@ -441,29 +441,26 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
                                             const CPWL_Color& crText) {
   CFX_ByteTextBuf sRet;
 
-  if (IFX_Edit* pEdit = IFX_Edit::NewEdit()) {
-    pEdit->SetFontMap(pFontMap);
-    pEdit->SetPlateRect(rcBBox);
-    pEdit->SetAlignmentH(nAlignmentH);
-    pEdit->SetAlignmentV(nAlignmentV);
-    pEdit->SetMultiLine(bMultiLine);
-    pEdit->SetAutoReturn(bAutoReturn);
-    if (IsFloatZero(fFontSize))
-      pEdit->SetAutoFontSize(TRUE);
-    else
-      pEdit->SetFontSize(fFontSize);
+  IFX_Edit* pEdit = IFX_Edit::NewEdit();
+  pEdit->SetFontMap(pFontMap);
+  pEdit->SetPlateRect(rcBBox);
+  pEdit->SetAlignmentH(nAlignmentH);
+  pEdit->SetAlignmentV(nAlignmentV);
+  pEdit->SetMultiLine(bMultiLine);
+  pEdit->SetAutoReturn(bAutoReturn);
+  if (IsFloatZero(fFontSize))
+    pEdit->SetAutoFontSize(TRUE);
+  else
+    pEdit->SetFontSize(fFontSize);
 
-    pEdit->Initialize();
-    pEdit->SetText(sText.c_str());
+  pEdit->Initialize();
+  pEdit->SetText(sText.c_str());
 
-    CFX_ByteString sEdit =
-        CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
-    if (sEdit.GetLength() > 0) {
-      sRet << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit
-           << "ET\n";
-    }
-    IFX_Edit::DelEdit(pEdit);
-  }
+  CFX_ByteString sEdit =
+      CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
+  if (sEdit.GetLength() > 0)
+    sRet << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n";
+  IFX_Edit::DelEdit(pEdit);
 
   return sRet.AsStringC();
 }
@@ -478,222 +475,219 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                                   int32_t nLayOut) {
   const FX_FLOAT fAutoFontScale = 1.0f / 3.0f;
 
-  if (IFX_Edit* pEdit = IFX_Edit::NewEdit()) {
-    pEdit->SetFontMap(pFontMap);
-    pEdit->SetAlignmentH(1);
-    pEdit->SetAlignmentV(1);
-    pEdit->SetMultiLine(FALSE);
-    pEdit->SetAutoReturn(FALSE);
-    if (IsFloatZero(fFontSize))
-      pEdit->SetAutoFontSize(TRUE);
-    else
-      pEdit->SetFontSize(fFontSize);
+  IFX_Edit* pEdit = IFX_Edit::NewEdit();
+  pEdit->SetFontMap(pFontMap);
+  pEdit->SetAlignmentH(1);
+  pEdit->SetAlignmentV(1);
+  pEdit->SetMultiLine(FALSE);
+  pEdit->SetAutoReturn(FALSE);
+  if (IsFloatZero(fFontSize))
+    pEdit->SetAutoFontSize(TRUE);
+  else
+    pEdit->SetFontSize(fFontSize);
 
-    pEdit->Initialize();
-    pEdit->SetText(sLabel.c_str());
+  pEdit->Initialize();
+  pEdit->SetText(sLabel.c_str());
 
-    CFX_FloatRect rcLabelContent = pEdit->GetContentRect();
-    CPWL_Icon Icon;
-    PWL_CREATEPARAM cp;
-    cp.dwFlags = PWS_VISIBLE;
-    Icon.Create(cp);
-    Icon.SetIconFit(&IconFit);
-    Icon.SetPDFStream(pIconStream);
+  CFX_FloatRect rcLabelContent = pEdit->GetContentRect();
+  CPWL_Icon Icon;
+  PWL_CREATEPARAM cp;
+  cp.dwFlags = PWS_VISIBLE;
+  Icon.Create(cp);
+  Icon.SetIconFit(&IconFit);
+  Icon.SetPDFStream(pIconStream);
 
-    CFX_FloatRect rcLabel = CFX_FloatRect(0, 0, 0, 0);
-    CFX_FloatRect rcIcon = CFX_FloatRect(0, 0, 0, 0);
-    FX_FLOAT fWidth = 0.0f;
-    FX_FLOAT fHeight = 0.0f;
+  CFX_FloatRect rcLabel = CFX_FloatRect(0, 0, 0, 0);
+  CFX_FloatRect rcIcon = CFX_FloatRect(0, 0, 0, 0);
+  FX_FLOAT fWidth = 0.0f;
+  FX_FLOAT fHeight = 0.0f;
 
-    switch (nLayOut) {
-      case PPBL_LABEL:
-        rcLabel = rcBBox;
-        rcIcon = CFX_FloatRect(0, 0, 0, 0);
-        break;
-      case PPBL_ICON:
-        rcIcon = rcBBox;
-        rcLabel = CFX_FloatRect(0, 0, 0, 0);
-        break;
-      case PPBL_ICONTOPLABELBOTTOM:
+  switch (nLayOut) {
+    case PPBL_LABEL:
+      rcLabel = rcBBox;
+      rcIcon = CFX_FloatRect(0, 0, 0, 0);
+      break;
+    case PPBL_ICON:
+      rcIcon = rcBBox;
+      rcLabel = CFX_FloatRect(0, 0, 0, 0);
+      break;
+    case PPBL_ICONTOPLABELBOTTOM:
 
-        if (pIconStream) {
-          if (IsFloatZero(fFontSize)) {
-            fHeight = rcBBox.top - rcBBox.bottom;
+      if (pIconStream) {
+        if (IsFloatZero(fFontSize)) {
+          fHeight = rcBBox.top - rcBBox.bottom;
+          rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
+                                  rcBBox.bottom + fHeight * fAutoFontScale);
+          rcIcon =
+              CFX_FloatRect(rcBBox.left, rcLabel.top, rcBBox.right, rcBBox.top);
+        } else {
+          fHeight = rcLabelContent.Height();
+
+          if (rcBBox.bottom + fHeight > rcBBox.top) {
+            rcIcon = CFX_FloatRect(0, 0, 0, 0);
+            rcLabel = rcBBox;
+          } else {
             rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
-                                    rcBBox.bottom + fHeight * fAutoFontScale);
+                                    rcBBox.bottom + fHeight);
             rcIcon = CFX_FloatRect(rcBBox.left, rcLabel.top, rcBBox.right,
                                    rcBBox.top);
-          } else {
-            fHeight = rcLabelContent.Height();
-
-            if (rcBBox.bottom + fHeight > rcBBox.top) {
-              rcIcon = CFX_FloatRect(0, 0, 0, 0);
-              rcLabel = rcBBox;
-            } else {
-              rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
-                                      rcBBox.bottom + fHeight);
-              rcIcon = CFX_FloatRect(rcBBox.left, rcLabel.top, rcBBox.right,
-                                     rcBBox.top);
-            }
           }
-        } else {
-          rcLabel = rcBBox;
-          rcIcon = CFX_FloatRect(0, 0, 0, 0);
         }
+      } else {
+        rcLabel = rcBBox;
+        rcIcon = CFX_FloatRect(0, 0, 0, 0);
+      }
 
-        break;
-      case PPBL_LABELTOPICONBOTTOM:
+      break;
+    case PPBL_LABELTOPICONBOTTOM:
 
-        if (pIconStream) {
-          if (IsFloatZero(fFontSize)) {
-            fHeight = rcBBox.top - rcBBox.bottom;
-            rcLabel = CFX_FloatRect(rcBBox.left,
-                                    rcBBox.top - fHeight * fAutoFontScale,
+      if (pIconStream) {
+        if (IsFloatZero(fFontSize)) {
+          fHeight = rcBBox.top - rcBBox.bottom;
+          rcLabel =
+              CFX_FloatRect(rcBBox.left, rcBBox.top - fHeight * fAutoFontScale,
+                            rcBBox.right, rcBBox.top);
+          rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
+                                 rcLabel.bottom);
+        } else {
+          fHeight = rcLabelContent.Height();
+
+          if (rcBBox.bottom + fHeight > rcBBox.top) {
+            rcIcon = CFX_FloatRect(0, 0, 0, 0);
+            rcLabel = rcBBox;
+          } else {
+            rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.top - fHeight,
                                     rcBBox.right, rcBBox.top);
             rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
                                    rcLabel.bottom);
-          } else {
-            fHeight = rcLabelContent.Height();
-
-            if (rcBBox.bottom + fHeight > rcBBox.top) {
-              rcIcon = CFX_FloatRect(0, 0, 0, 0);
-              rcLabel = rcBBox;
-            } else {
-              rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.top - fHeight,
-                                      rcBBox.right, rcBBox.top);
-              rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
-                                     rcLabel.bottom);
-            }
           }
-        } else {
-          rcLabel = rcBBox;
-          rcIcon = CFX_FloatRect(0, 0, 0, 0);
         }
+      } else {
+        rcLabel = rcBBox;
+        rcIcon = CFX_FloatRect(0, 0, 0, 0);
+      }
 
-        break;
-      case PPBL_ICONLEFTLABELRIGHT:
+      break;
+    case PPBL_ICONLEFTLABELRIGHT:
 
-        if (pIconStream) {
-          if (IsFloatZero(fFontSize)) {
-            fWidth = rcBBox.right - rcBBox.left;
-            rcLabel = CFX_FloatRect(rcBBox.right - fWidth * fAutoFontScale,
-                                    rcBBox.bottom, rcBBox.right, rcBBox.top);
-            rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
-                                   rcBBox.top);
-
-            if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
-            } else {
-              if (rcLabelContent.Width() < fWidth) {
-                rcLabel =
-                    CFX_FloatRect(rcBBox.right - rcLabelContent.Width(),
+      if (pIconStream) {
+        if (IsFloatZero(fFontSize)) {
+          fWidth = rcBBox.right - rcBBox.left;
+          rcLabel = CFX_FloatRect(rcBBox.right - fWidth * fAutoFontScale,
                                   rcBBox.bottom, rcBBox.right, rcBBox.top);
-                rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
-                                       rcBBox.top);
-              } else {
-                rcLabel = rcBBox;
-                rcIcon = CFX_FloatRect(0, 0, 0, 0);
-              }
-            }
-          } else {
-            fWidth = rcLabelContent.Width();
+          rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
+                                 rcBBox.top);
 
-            if (rcBBox.left + fWidth > rcBBox.right) {
-              rcLabel = rcBBox;
-              rcIcon = CFX_FloatRect(0, 0, 0, 0);
-            } else {
-              rcLabel = CFX_FloatRect(rcBBox.right - fWidth, rcBBox.bottom,
-                                      rcBBox.right, rcBBox.top);
+          if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
+          } else {
+            if (rcLabelContent.Width() < fWidth) {
+              rcLabel = CFX_FloatRect(rcBBox.right - rcLabelContent.Width(),
+                                      rcBBox.bottom, rcBBox.right, rcBBox.top);
               rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
                                      rcBBox.top);
-            }
-          }
-        } else {
-          rcLabel = rcBBox;
-          rcIcon = CFX_FloatRect(0, 0, 0, 0);
-        }
-
-        break;
-      case PPBL_LABELLEFTICONRIGHT:
-
-        if (pIconStream) {
-          if (IsFloatZero(fFontSize)) {
-            fWidth = rcBBox.right - rcBBox.left;
-            rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
-                                    rcBBox.left + fWidth * fAutoFontScale,
-                                    rcBBox.top);
-            rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
-                                   rcBBox.top);
-
-            if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
             } else {
-              if (rcLabelContent.Width() < fWidth) {
-                rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
-                                        rcBBox.left + rcLabelContent.Width(),
-                                        rcBBox.top);
-                rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom,
-                                       rcBBox.right, rcBBox.top);
-              } else {
-                rcLabel = rcBBox;
-                rcIcon = CFX_FloatRect(0, 0, 0, 0);
-              }
-            }
-          } else {
-            fWidth = rcLabelContent.Width();
-
-            if (rcBBox.left + fWidth > rcBBox.right) {
               rcLabel = rcBBox;
               rcIcon = CFX_FloatRect(0, 0, 0, 0);
-            } else {
-              rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
-                                      rcBBox.left + fWidth, rcBBox.top);
-              rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
-                                     rcBBox.top);
             }
           }
         } else {
-          rcLabel = rcBBox;
-          rcIcon = CFX_FloatRect(0, 0, 0, 0);
+          fWidth = rcLabelContent.Width();
+
+          if (rcBBox.left + fWidth > rcBBox.right) {
+            rcLabel = rcBBox;
+            rcIcon = CFX_FloatRect(0, 0, 0, 0);
+          } else {
+            rcLabel = CFX_FloatRect(rcBBox.right - fWidth, rcBBox.bottom,
+                                    rcBBox.right, rcBBox.top);
+            rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
+                                   rcBBox.top);
+          }
         }
-
-        break;
-      case PPBL_LABELOVERICON:
+      } else {
         rcLabel = rcBBox;
-        rcIcon = rcBBox;
-        break;
-    }
-
-    CFX_ByteTextBuf sAppStream, sTemp;
-
-    if (!rcIcon.IsEmpty()) {
-      Icon.Move(rcIcon, FALSE, FALSE);
-      sTemp << Icon.GetImageAppStream();
-    }
-
-    Icon.Destroy();
-
-    if (!rcLabel.IsEmpty()) {
-      pEdit->SetPlateRect(rcLabel);
-      CFX_ByteString sEdit =
-          CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
-      if (sEdit.GetLength() > 0) {
-        sTemp << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit
-              << "ET\n";
+        rcIcon = CFX_FloatRect(0, 0, 0, 0);
       }
-    }
 
-    IFX_Edit::DelEdit(pEdit);
+      break;
+    case PPBL_LABELLEFTICONRIGHT:
 
-    if (sTemp.GetSize() > 0) {
-      sAppStream << "q\n" << rcBBox.left << " " << rcBBox.bottom << " "
-                 << rcBBox.right - rcBBox.left << " "
-                 << rcBBox.top - rcBBox.bottom << " re W n\n";
-      sAppStream << sTemp << "Q\n";
-    }
+      if (pIconStream) {
+        if (IsFloatZero(fFontSize)) {
+          fWidth = rcBBox.right - rcBBox.left;
+          rcLabel =
+              CFX_FloatRect(rcBBox.left, rcBBox.bottom,
+                            rcBBox.left + fWidth * fAutoFontScale, rcBBox.top);
+          rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
+                                 rcBBox.top);
 
-    return sAppStream.AsStringC();
+          if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
+          } else {
+            if (rcLabelContent.Width() < fWidth) {
+              rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
+                                      rcBBox.left + rcLabelContent.Width(),
+                                      rcBBox.top);
+              rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
+                                     rcBBox.top);
+            } else {
+              rcLabel = rcBBox;
+              rcIcon = CFX_FloatRect(0, 0, 0, 0);
+            }
+          }
+        } else {
+          fWidth = rcLabelContent.Width();
+
+          if (rcBBox.left + fWidth > rcBBox.right) {
+            rcLabel = rcBBox;
+            rcIcon = CFX_FloatRect(0, 0, 0, 0);
+          } else {
+            rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
+                                    rcBBox.left + fWidth, rcBBox.top);
+            rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
+                                   rcBBox.top);
+          }
+        }
+      } else {
+        rcLabel = rcBBox;
+        rcIcon = CFX_FloatRect(0, 0, 0, 0);
+      }
+
+      break;
+    case PPBL_LABELOVERICON:
+      rcLabel = rcBBox;
+      rcIcon = rcBBox;
+      break;
   }
 
-  return "";
+  CFX_ByteTextBuf sAppStream, sTemp;
+
+  if (!rcIcon.IsEmpty()) {
+    Icon.Move(rcIcon, FALSE, FALSE);
+    sTemp << Icon.GetImageAppStream();
+  }
+
+  Icon.Destroy();
+
+  if (!rcLabel.IsEmpty()) {
+    pEdit->SetPlateRect(rcLabel);
+    CFX_ByteString sEdit =
+        CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
+    if (sEdit.GetLength() > 0) {
+      sTemp << "BT\n"
+            << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n";
+    }
+  }
+
+  IFX_Edit::DelEdit(pEdit);
+
+  if (sTemp.GetSize() > 0) {
+    sAppStream << "q\n"
+               << rcBBox.left << " " << rcBBox.bottom << " "
+               << rcBBox.right - rcBBox.left << " "
+               << rcBBox.top - rcBBox.bottom << " re W n\n";
+    sAppStream << sTemp << "Q\n";
+  }
+
+  return sAppStream.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetColorAppStream(const CPWL_Color& color,

@@ -10,10 +10,9 @@
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 
 CFX_ListItem::CFX_ListItem()
-    : m_pEdit(NULL),
+    : m_pEdit(IFX_Edit::NewEdit()),
       m_bSelected(FALSE),
       m_rcListItem(0.0f, 0.0f, 0.0f, 0.0f) {
-  m_pEdit = IFX_Edit::NewEdit();
   m_pEdit->SetAlignmentV(1);
   m_pEdit->Initialize();
 }
@@ -23,8 +22,7 @@ CFX_ListItem::~CFX_ListItem() {
 }
 
 void CFX_ListItem::SetFontMap(IPVT_FontMap* pFontMap) {
-  if (m_pEdit)
-    m_pEdit->SetFontMap(pFontMap);
+  m_pEdit->SetFontMap(pFontMap);
 }
 
 IFX_Edit* CFX_ListItem::GetEdit() const {
@@ -32,10 +30,7 @@ IFX_Edit* CFX_ListItem::GetEdit() const {
 }
 
 IFX_Edit_Iterator* CFX_ListItem::GetIterator() const {
-  if (m_pEdit)
-    return m_pEdit->GetIterator();
-
-  return NULL;
+  return m_pEdit->GetIterator();
 }
 
 void CFX_ListItem::SetRect(const CLST_Rect& rect) {
@@ -55,20 +50,15 @@ void CFX_ListItem::SetSelect(FX_BOOL bSelected) {
 }
 
 void CFX_ListItem::SetText(const FX_WCHAR* text) {
-  if (m_pEdit)
-    m_pEdit->SetText(text);
+  m_pEdit->SetText(text);
 }
 
 void CFX_ListItem::SetFontSize(FX_FLOAT fFontSize) {
-  if (m_pEdit)
-    m_pEdit->SetFontSize(fFontSize);
+  m_pEdit->SetFontSize(fFontSize);
 }
 
 FX_FLOAT CFX_ListItem::GetItemHeight() const {
-  if (m_pEdit)
-    return m_pEdit->GetContentRect().Height();
-
-  return 0.0f;
+  return m_pEdit->GetContentRect().Height();
 }
 
 uint16_t CFX_ListItem::GetFirstChar() const {
@@ -83,10 +73,7 @@ uint16_t CFX_ListItem::GetFirstChar() const {
 }
 
 CFX_WideString CFX_ListItem::GetText() const {
-  if (m_pEdit)
-    return m_pEdit->GetText();
-
-  return L"";
+  return m_pEdit->GetText();
 }
 
 CFX_List::CFX_List()

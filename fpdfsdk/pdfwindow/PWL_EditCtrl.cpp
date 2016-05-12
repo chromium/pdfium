@@ -21,15 +21,12 @@
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
 CPWL_EditCtrl::CPWL_EditCtrl()
-    : m_pEdit(NULL),
+    : m_pEdit(IFX_Edit::NewEdit()),
       m_pEditCaret(NULL),
       m_bMouseDown(FALSE),
       m_pEditNotify(NULL),
       m_nCharSet(DEFAULT_CHARSET),
-      m_nCodePage(0) {
-  m_pEdit = IFX_Edit::NewEdit();
-  ASSERT(m_pEdit);
-}
+      m_nCodePage(0) {}
 
 CPWL_EditCtrl::~CPWL_EditCtrl() {
   IFX_Edit::DelEdit(m_pEdit);
@@ -121,19 +118,20 @@ void CPWL_EditCtrl::CreateChildWnd(const PWL_CREATEPARAM& cp) {
 }
 
 void CPWL_EditCtrl::CreateEditCaret(const PWL_CREATEPARAM& cp) {
-  if (!m_pEditCaret) {
-    m_pEditCaret = new CPWL_Caret;
-    m_pEditCaret->SetInvalidRect(GetClientRect());
+  if (m_pEditCaret)
+    return;
 
-    PWL_CREATEPARAM ecp = cp;
-    ecp.pParentWnd = this;
-    ecp.dwFlags = PWS_CHILD | PWS_NOREFRESHCLIP;
-    ecp.dwBorderWidth = 0;
-    ecp.nBorderStyle = PBS_SOLID;
-    ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
+  m_pEditCaret = new CPWL_Caret;
+  m_pEditCaret->SetInvalidRect(GetClientRect());
 
-    m_pEditCaret->Create(ecp);
-  }
+  PWL_CREATEPARAM ecp = cp;
+  ecp.pParentWnd = this;
+  ecp.dwFlags = PWS_CHILD | PWS_NOREFRESHCLIP;
+  ecp.dwBorderWidth = 0;
+  ecp.nBorderStyle = PBS_SOLID;
+  ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
+
+  m_pEditCaret->Create(ecp);
 }
 
 void CPWL_EditCtrl::SetFontSize(FX_FLOAT fFontSize) {
@@ -409,44 +407,31 @@ void CPWL_EditCtrl::SelectAll() {
 }
 
 void CPWL_EditCtrl::Paint() {
-  if (m_pEdit)
-    m_pEdit->Paint();
+  m_pEdit->Paint();
 }
 
 void CPWL_EditCtrl::EnableRefresh(FX_BOOL bRefresh) {
-  if (m_pEdit)
-    m_pEdit->EnableRefresh(bRefresh);
+  m_pEdit->EnableRefresh(bRefresh);
 }
 
 int32_t CPWL_EditCtrl::GetCaret() const {
-  if (m_pEdit)
-    return m_pEdit->GetCaret();
-
-  return -1;
+  return m_pEdit->GetCaret();
 }
 
 void CPWL_EditCtrl::SetCaret(int32_t nPos) {
-  if (m_pEdit)
-    m_pEdit->SetCaret(nPos);
+  m_pEdit->SetCaret(nPos);
 }
 
 int32_t CPWL_EditCtrl::GetTotalWords() const {
-  if (m_pEdit)
-    return m_pEdit->GetTotalWords();
-
-  return 0;
+  return m_pEdit->GetTotalWords();
 }
 
 void CPWL_EditCtrl::SetScrollPos(const CFX_FloatPoint& point) {
-  if (m_pEdit)
-    m_pEdit->SetScrollPos(point);
+  m_pEdit->SetScrollPos(point);
 }
 
 CFX_FloatPoint CPWL_EditCtrl::GetScrollPos() const {
-  if (m_pEdit)
-    return m_pEdit->GetScrollPos();
-
-  return CFX_FloatPoint(0.0f, 0.0f);
+  return m_pEdit->GetScrollPos();
 }
 
 CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {

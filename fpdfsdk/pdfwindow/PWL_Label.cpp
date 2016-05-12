@@ -9,10 +9,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-CPWL_Label::CPWL_Label() : m_pEdit(NULL) {
-  m_pEdit = IFX_Edit::NewEdit();
-  ASSERT(m_pEdit);
-}
+CPWL_Label::CPWL_Label() : m_pEdit(IFX_Edit::NewEdit()) {}
 
 CPWL_Label::~CPWL_Label() {
   IFX_Edit::DelEdit(m_pEdit);
@@ -144,8 +141,5 @@ void CPWL_Label::SetLimitChar(int32_t nLimitChar) {
 }
 
 int32_t CPWL_Label::GetTotalWords() {
-  if (m_pEdit)
-    return m_pEdit->GetTotalWords();
-
-  return 0;
+  return m_pEdit->GetTotalWords();
 }
