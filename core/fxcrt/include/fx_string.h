@@ -42,12 +42,7 @@ class CFX_ByteStringC {
   }
 
   // Deliberately implicit to avoid calling on every string literal.
-  // |ch| must be an lvalue that outlives the the CFX_ByteStringC. However,
-  // the use of char rvalues are not caught at compile time.  They are
-  // implicitly promoted to CFX_ByteString (see below) and then the
-  // CFX_ByteStringC is constructed from the CFX_ByteString via the alternate
-  // constructor below. The CFX_ByteString then typically goes out of scope
-  // and |m_Ptr| may be left pointing to invalid memory. Beware.
+  // |ch| must be an lvalue that outlives the the CFX_ByteStringC.
   CFX_ByteStringC(FX_CHAR& ch) {
     m_Ptr = (const uint8_t*)&ch;
     m_Length = 1;
@@ -364,12 +359,7 @@ class CFX_WideStringC {
   }
 
   // Deliberately implicit to avoid calling on every string literal.
-  // |ch| must be an lvalue that outlives the the CFX_WideStringC. However,
-  // the use of char rvalues are not caught at compile time.  They are
-  // implicitly promoted to CFX_WideString (see below) and then the
-  // CFX_WideStringC is constructed from the CFX_WideString via the alternate
-  // constructor below. The CFX_WideString then typically goes out of scope
-  // and |m_Ptr| may be left pointing to invalid memory. Beware.
+  // |ch| must be an lvalue that outlives the the CFX_WideStringC.
   CFX_WideStringC(FX_WCHAR& ch) {
     m_Ptr = &ch;
     m_Length = 1;
