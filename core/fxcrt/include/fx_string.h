@@ -94,6 +94,9 @@ class CFX_ByteStringC {
   bool IsEmpty() const { return m_Length == 0; }
 
   uint8_t GetAt(FX_STRSIZE index) const { return m_Ptr[index]; }
+  FX_CHAR CharAt(FX_STRSIZE index) const {
+    return static_cast<FX_CHAR>(m_Ptr[index]);
+  }
 
   FX_STRSIZE Find(FX_CHAR ch) const {
     const uint8_t* found =

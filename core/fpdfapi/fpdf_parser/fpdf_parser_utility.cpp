@@ -87,21 +87,20 @@ int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteStringC& key) {
 }
 
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
-  int size = bstr.GetLength();
-  const FX_CHAR* pSrc = bstr.c_str();
   if (bstr.Find('#') == -1)
     return bstr;
 
+  int size = bstr.GetLength();
   CFX_ByteString result;
   FX_CHAR* pDestStart = result.GetBuffer(size);
   FX_CHAR* pDest = pDestStart;
   for (int i = 0; i < size; i++) {
-    if (pSrc[i] == '#' && i < size - 2) {
+    if (bstr[i] == '#' && i < size - 2) {
       *pDest++ =
-          FXSYS_toHexDigit(pSrc[i + 1]) * 16 + FXSYS_toHexDigit(pSrc[i + 2]);
+          FXSYS_toHexDigit(bstr[i + 1]) * 16 + FXSYS_toHexDigit(bstr[i + 2]);
       i += 2;
     } else {
-      *pDest++ = pSrc[i];
+      *pDest++ = bstr[i];
     }
   }
   result.ReleaseBuffer((FX_STRSIZE)(pDest - pDestStart));

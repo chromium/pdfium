@@ -99,9 +99,8 @@ CFX_ByteString::CFX_ByteString(char ch) {
 }
 
 CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& stringSrc) {
-  if (!stringSrc.IsEmpty()) {
+  if (!stringSrc.IsEmpty())
     m_pData.Reset(StringData::Create(stringSrc.c_str(), stringSrc.GetLength()));
-  }
 }
 
 CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& str1,

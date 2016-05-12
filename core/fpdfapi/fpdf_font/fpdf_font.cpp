@@ -139,12 +139,12 @@ uint32_t CPDF_ToUnicodeMap::StringToCode(const CFX_ByteStringC& str) {
   int result = 0;
   if (str[0] == '<') {
     for (int i = 1; i < len && std::isxdigit(str[i]); ++i)
-      result = result * 16 + FXSYS_toHexDigit(str[i]);
+      result = result * 16 + FXSYS_toHexDigit(str.CharAt(i));
     return result;
   }
 
   for (int i = 0; i < len && std::isdigit(str[i]); ++i)
-    result = result * 10 + FXSYS_toDecimalDigit(static_cast<FX_CHAR>(str[i]));
+    result = result * 10 + FXSYS_toDecimalDigit(str.CharAt(i));
 
   return result;
 }

@@ -36,9 +36,9 @@ const FX_CHAR CBC_DataMatrixDecodedBitStreamParser::TEXT_BASIC_SET_CHARS[] = {
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
     'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 const FX_CHAR CBC_DataMatrixDecodedBitStreamParser::TEXT_SHIFT3_SET_CHARS[] = {
-    '\'', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',         'J',
-    'K',  'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',         'U',
-    'V',  'W', 'X', 'Y', 'Z', '{', '|', '}', '~', (FX_CHAR)127};
+    '\'', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    'K',  'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+    'V',  'W', 'X', 'Y', 'Z', '{', '|', '}', '~', 127};
 const int32_t CBC_DataMatrixDecodedBitStreamParser::PAD_ENCODE = 0;
 const int32_t CBC_DataMatrixDecodedBitStreamParser::ASCII_ENCODE = 1;
 const int32_t CBC_DataMatrixDecodedBitStreamParser::C40_ENCODE = 2;

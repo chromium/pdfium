@@ -226,9 +226,8 @@ int FXSYS_WideCharToMultiByte(uint32_t codepage,
   int len = 0;
   for (int i = 0; i < wlen; i++) {
     if (wstr[i] < 0x100) {
-      if (buf && len < buflen) {
-        buf[len] = (FX_CHAR)wstr[i];
-      }
+      if (buf && len < buflen)
+        buf[len] = static_cast<FX_CHAR>(wstr[i]);
       len++;
     }
   }

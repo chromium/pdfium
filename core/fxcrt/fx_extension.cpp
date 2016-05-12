@@ -219,17 +219,13 @@ int32_t FXSYS_strnicmp(const FX_CHAR* s1, const FX_CHAR* s2, size_t count) {
 }
 
 uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase) {
-  const FX_CHAR* pStr = str.c_str();
-  const FX_CHAR* pStrEnd = pStr + str.GetLength();
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
-    while (pStr < pStrEnd) {
-      dwHashCode = 31 * dwHashCode + FXSYS_tolower(*pStr++);
-    }
+    for (FX_STRSIZE i = 0; i < str.GetLength(); ++i)
+      dwHashCode = 31 * dwHashCode + FXSYS_tolower(str.CharAt(i));
   } else {
-    while (pStr < pStrEnd) {
-      dwHashCode = 31 * dwHashCode + *pStr++;
-    }
+    for (FX_STRSIZE i = 0; i < str.GetLength(); ++i)
+      dwHashCode = 31 * dwHashCode + str.CharAt(i);
   }
   return dwHashCode;
 }

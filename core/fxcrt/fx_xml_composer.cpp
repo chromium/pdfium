@@ -11,24 +11,18 @@
 void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
                                CFX_ByteStringC& bsSpace,
                                CFX_ByteStringC& bsName) {
-  if (bsFullName.IsEmpty()) {
+  if (bsFullName.IsEmpty())
     return;
-  }
-  int32_t iStart = 0;
-  for (; iStart < bsFullName.GetLength(); iStart++) {
-    if (bsFullName.GetAt(iStart) == ':') {
-      break;
-    }
-  }
-  if (iStart >= bsFullName.GetLength()) {
+
+  FX_STRSIZE iStart = bsFullName.Find(':');
+  if (iStart == -1) {
     bsName = bsFullName;
   } else {
-    bsSpace = CFX_ByteStringC(bsFullName.c_str(), iStart);
-    iStart++;
-    bsName = CFX_ByteStringC(bsFullName.c_str() + iStart,
-                             bsFullName.GetLength() - iStart);
+    bsSpace = bsFullName.Mid(0, iStart);
+    bsName = bsFullName.Mid(iStart + 1);
   }
 }
+
 void CXML_Element::SetTag(const CFX_ByteStringC& qSpace,
                           const CFX_ByteStringC& tagname) {
   m_QSpaceName = qSpace;

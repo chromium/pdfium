@@ -97,19 +97,19 @@ void CFX_PrivateData::ClearAll() {
 void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
   if (strc.Find('.') == -1) {
     bInteger = TRUE;
-    int cc = 0, integer = 0;
-    const FX_CHAR* str = strc.c_str();
-    int len = strc.GetLength();
-    FX_BOOL bNegative = FALSE;
-    if (str[0] == '+') {
+    int cc = 0;
+    int integer = 0;
+    FX_STRSIZE len = strc.GetLength();
+    bool bNegative = false;
+    if (strc[0] == '+') {
       cc++;
-    } else if (str[0] == '-') {
-      bNegative = TRUE;
+    } else if (strc[0] == '-') {
+      bNegative = true;
       cc++;
     }
-    while (cc < len && std::isdigit(str[cc])) {
+    while (cc < len && std::isdigit(strc[cc])) {
       // TODO(dsinclair): This is not the right way to handle overflow.
-      integer = integer * 10 + FXSYS_toDecimalDigit(str[cc]);
+      integer = integer * 10 + FXSYS_toDecimalDigit(strc.CharAt(cc));
       if (integer < 0)
         break;
       cc++;
@@ -124,31 +124,30 @@ void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
   }
 }
 FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
-  if (strc.GetLength() == 0) {
+  if (strc.IsEmpty())
     return 0.0;
-  }
+
   int cc = 0;
-  FX_BOOL bNegative = FALSE;
-  const FX_CHAR* str = strc.c_str();
+  bool bNegative = false;
   int len = strc.GetLength();
-  if (str[0] == '+') {
+  if (strc[0] == '+') {
     cc++;
-  } else if (str[0] == '-') {
+  } else if (strc[0] == '-') {
     bNegative = TRUE;
     cc++;
   }
   while (cc < len) {
-    if (str[cc] != '+' && str[cc] != '-') {
+    if (strc[cc] != '+' && strc[cc] != '-') {
       break;
     }
     cc++;
   }
   FX_FLOAT value = 0;
   while (cc < len) {
-    if (str[cc] == '.') {
+    if (strc[cc] == '.') {
       break;
     }
-    value = value * 10 + FXSYS_toDecimalDigit(str[cc]);
+    value = value * 10 + FXSYS_toDecimalDigit(strc.CharAt(cc));
     cc++;
   }
   static const FX_FLOAT fraction_scales[] = {
@@ -156,14 +155,13 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
       0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
       0.000000001f, 0.0000000001f, 0.00000000001f};
   int scale = 0;
-  if (cc < len && str[cc] == '.') {
+  if (cc < len && strc[cc] == '.') {
     cc++;
     while (cc < len) {
-      value += fraction_scales[scale] * FXSYS_toDecimalDigit(str[cc]);
+      value += fraction_scales[scale] * FXSYS_toDecimalDigit(strc.CharAt(cc));
       scale++;
-      if (scale == sizeof fraction_scales / sizeof(FX_FLOAT)) {
+      if (scale == FX_ArraySize(fraction_scales))
         break;
-      }
       cc++;
     }
   }

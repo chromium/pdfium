@@ -149,7 +149,7 @@ FX_BOOL CPDF_Font::IsVertWriting() const {
 }
 
 int CPDF_Font::AppendChar(FX_CHAR* buf, uint32_t charcode) const {
-  *buf = (FX_CHAR)charcode;
+  *buf = static_cast<FX_CHAR>(charcode);
   return 1;
 }
 
