@@ -28,7 +28,7 @@ namespace {
 
 struct SearchTagRecord {
   CFX_ByteStringC m_bsTag;
-  uint32_t m_Offset;
+  FX_STRSIZE m_Offset;
 };
 
 }  // namespace
