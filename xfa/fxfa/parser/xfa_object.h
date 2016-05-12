@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_XFA_OBJECT_H_
 #define XFA_FXFA_PARSER_XFA_OBJECT_H_
 
+#include <unordered_set>
+
 #include "xfa/fde/xml/fde_xml.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
@@ -105,9 +107,9 @@ enum XFA_SOM_MESSAGETYPE {
   XFA_SOM_MandatoryMessage
 };
 
-typedef CFX_ArrayTemplate<CXFA_Node*> CXFA_NodeArray;
-typedef CFX_StackTemplate<CXFA_Node*> CXFA_NodeStack;
-typedef CXFA_PtrSetTemplate<CXFA_Node*> CXFA_NodeSet;
+using CXFA_NodeArray = CFX_ArrayTemplate<CXFA_Node*>;
+using CXFA_NodeStack = CFX_StackTemplate<CXFA_Node*>;
+using CXFA_NodeSet = std::unordered_set<CXFA_Node*>;
 typedef void (*PD_CALLBACK_DUPLICATEDATA)(void*& pData);
 
 struct XFA_MAPDATABLOCKCALLBACKINFO {

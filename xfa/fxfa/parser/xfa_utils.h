@@ -13,6 +13,8 @@
 class CFDE_XMLElement;
 class CFDE_XMLNode;
 class CXFA_LocaleValue;
+class CXFA_Node;
+class CXFA_WidgetData;
 
 inline FX_BOOL XFA_IsSpace(FX_WCHAR c) {
   return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
@@ -162,43 +164,6 @@ class CXFA_NodeIteratorTemplate {
   NodeType* m_pRoot;
   CFX_StackTemplate<NodeType*> m_NodeStack;
 };
-template <class KeyType>
-class CXFA_PtrSetTemplate : private CFX_MapPtrToPtr {
- public:
-  CXFA_PtrSetTemplate() : CFX_MapPtrToPtr(10) {}
-
-  int GetCount() const { return CFX_MapPtrToPtr::GetCount(); }
-
-  FX_BOOL IsEmpty() const { return CFX_MapPtrToPtr::IsEmpty(); }
-
-  FX_BOOL Lookup(KeyType key) const {
-    void* pValue = NULL;
-    return CFX_MapPtrToPtr::Lookup((void*)key, pValue);
-  }
-
-  FX_BOOL operator[](KeyType key) { return Lookup(key); }
-
-  void Add(KeyType key) { CFX_MapPtrToPtr::SetAt((void*)key, (void*)key); }
-
-  FX_BOOL RemoveKey(KeyType key) {
-    return CFX_MapPtrToPtr::RemoveKey((void*)key);
-  }
-
-  void RemoveAll() { CFX_MapPtrToPtr::RemoveAll(); }
-
-  FX_POSITION GetStartPosition() const {
-    return CFX_MapPtrToPtr::GetStartPosition();
-  }
-
-  void GetNextAssoc(FX_POSITION& rNextPosition, KeyType& rKey) const {
-    void* pKey = NULL;
-    void* pValue = NULL;
-    CFX_MapPtrToPtr::GetNextAssoc(rNextPosition, pKey, pValue);
-    rKey = (KeyType)(uintptr_t)pKey;
-  }
-};
-class CXFA_Node;
-class CXFA_WidgetData;
 
 CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType);
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);

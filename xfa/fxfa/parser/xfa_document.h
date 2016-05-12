@@ -115,7 +115,7 @@ class CXFA_Document {
   CScript_LogPseudoModel* m_pScriptLog;
   CScript_LayoutPseudoModel* m_pScriptLayout;
   CScript_SignaturePseudoModel* m_pScriptSignature;
-  CXFA_NodeSet m_rgPurgeNodes;
+  CXFA_NodeSet m_PurgeNodes;
   XFA_VERSION m_eCurVersionMode;
   uint32_t m_dwDocFlags;
   friend class CXFA_SimpleParser;

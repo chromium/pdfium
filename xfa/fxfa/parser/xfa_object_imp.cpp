@@ -6,7 +6,10 @@
 
 #include "xfa/fxfa/parser/xfa_object.h"
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_ext.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/crt/fgas_system.h"
@@ -2843,112 +2846,91 @@ XFA_ScriptInstanceManager_ReorderDataNodes_SortNodeArrayByDocumentIdx(
     const CXFA_NodeSet& rgNodeSet,
     CXFA_NodeArray& rgNodeArray,
     CFX_ArrayTemplate<int32_t>& rgIdxArray) {
-  int32_t iCount = rgNodeSet.GetCount();
+  int32_t iCount = pdfium::CollectionSize<int32_t>(rgNodeSet);
   rgNodeArray.SetSize(iCount);
   rgIdxArray.SetSize(iCount);
-  if (iCount == 0) {
+  if (iCount == 0)
     return;
-  }
-  int32_t iIndex = -1, iTotalIndex = -1;
-  CXFA_Node* pNode = NULL;
-  FX_POSITION pos = rgNodeSet.GetStartPosition();
-  rgNodeSet.GetNextAssoc(pos, pNode);
-  for (pNode = pNode->GetNodeItem(XFA_NODEITEM_Parent)
-                   ->GetNodeItem(XFA_NODEITEM_FirstChild);
+
+  int32_t iIndex = -1;
+  int32_t iTotalIndex = -1;
+  CXFA_Node* pCommonParent =
+      (*rgNodeSet.begin())->GetNodeItem(XFA_NODEITEM_Parent);
+  for (CXFA_Node* pNode = pCommonParent->GetNodeItem(XFA_NODEITEM_FirstChild);
        pNode && iIndex < iCount;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     iTotalIndex++;
-    if (rgNodeSet.Lookup(pNode)) {
+    if (pdfium::ContainsValue(rgNodeSet, pNode)) {
       iIndex++;
       rgNodeArray[iIndex] = pNode;
       rgIdxArray[iIndex] = iTotalIndex;
     }
   }
 }
-struct CXFA_DualNodeArray {
-  CXFA_NodeSet firstNodeList;
-  CXFA_NodeSet secondNodeList;
-};
-static void XFA_ScriptInstanceManager_ReorderDataNodes(CXFA_NodeSet& sSet1,
-                                                       CXFA_NodeSet& sSet2,
-                                                       FX_BOOL bInsertBefore) {
-  CFX_MapPtrTemplate<CXFA_Node*,
-                     CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>*>
-      rgNodeListMap;
-  FX_POSITION pos;
-  pos = sSet1.GetStartPosition();
-  while (pos) {
-    CXFA_Node* pNode = NULL;
-    sSet1.GetNextAssoc(pos, pNode);
-    CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-    uint32_t dwNameHash = pNode->GetNameHash();
-    if (!pParentNode || !dwNameHash) {
-      continue;
-    }
-    CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>* pNodeListChildMap =
-        rgNodeListMap[pParentNode];
-    if (!pNodeListChildMap) {
-      rgNodeListMap[pParentNode] = pNodeListChildMap =
-          new CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>;
-    }
-    CXFA_DualNodeArray* pDualNodeArray = (*pNodeListChildMap)[dwNameHash];
-    if (!pDualNodeArray) {
-      (*pNodeListChildMap)[dwNameHash] = pDualNodeArray =
-          new CXFA_DualNodeArray;
-    }
-    pDualNodeArray->firstNodeList.Add(pNode);
+
+using CXFA_NodeSetPair = std::pair<CXFA_NodeSet, CXFA_NodeSet>;
+using CXFA_NodeSetPairMap =
+    std::map<uint32_t, std::unique_ptr<CXFA_NodeSetPair>>;
+using CXFA_NodeSetPairMapMap =
+    std::map<CXFA_Node*, std::unique_ptr<CXFA_NodeSetPairMap>>;
+
+static CXFA_NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode,
+                                            CXFA_NodeSetPairMapMap* pMap) {
+  CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  uint32_t dwNameHash = pNode->GetNameHash();
+  if (!pParentNode || !dwNameHash)
+    return nullptr;
+
+  if (!(*pMap)[pParentNode])
+    (*pMap)[pParentNode].reset(new CXFA_NodeSetPairMap);
+
+  CXFA_NodeSetPairMap* pNodeSetPairMap = (*pMap)[pParentNode].get();
+  if (!(*pNodeSetPairMap)[dwNameHash])
+    (*pNodeSetPairMap)[dwNameHash].reset(new CXFA_NodeSetPair);
+
+  return (*pNodeSetPairMap)[dwNameHash].get();
+}
+
+static void XFA_ScriptInstanceManager_ReorderDataNodes(
+    const CXFA_NodeSet& sSet1,
+    const CXFA_NodeSet& sSet2,
+    FX_BOOL bInsertBefore) {
+  CXFA_NodeSetPairMapMap rgMap;
+  for (CXFA_Node* pNode : sSet1) {
+    CXFA_NodeSetPair* pNodeSetPair = NodeSetPairForNode(pNode, &rgMap);
+    if (pNodeSetPair)
+      pNodeSetPair->first.insert(pNode);
   }
-  pos = sSet2.GetStartPosition();
-  while (pos) {
-    CXFA_Node* pNode = NULL;
-    sSet2.GetNextAssoc(pos, pNode);
-    CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-    uint32_t dwNameHash = pNode->GetNameHash();
-    if (!pParentNode || !dwNameHash) {
-      continue;
-    }
-    CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>* pNodeListChildMap =
-        rgNodeListMap[pParentNode];
-    if (!pNodeListChildMap) {
-      rgNodeListMap[pParentNode] = pNodeListChildMap =
-          new CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>;
-    }
-    CXFA_DualNodeArray* pDualNodeArray = (*pNodeListChildMap)[dwNameHash];
-    if (!pDualNodeArray) {
-      (*pNodeListChildMap)[dwNameHash] = pDualNodeArray =
-          new CXFA_DualNodeArray;
-    }
-    if (pDualNodeArray->firstNodeList.Lookup(pNode)) {
-      pDualNodeArray->firstNodeList.RemoveKey(pNode);
-    } else {
-      pDualNodeArray->secondNodeList.Add(pNode);
+  for (CXFA_Node* pNode : sSet2) {
+    CXFA_NodeSetPair* pNodeSetPair = NodeSetPairForNode(pNode, &rgMap);
+    if (pNodeSetPair) {
+      if (pdfium::ContainsValue(pNodeSetPair->first, pNode))
+        pNodeSetPair->first.erase(pNode);
+      else
+        pNodeSetPair->second.insert(pNode);
     }
   }
-  pos = rgNodeListMap.GetStartPosition();
-  while (pos) {
-    CXFA_Node* pParentNode = NULL;
-    CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>* pNodeListChildMap = NULL;
-    rgNodeListMap.GetNextAssoc(pos, pParentNode, pNodeListChildMap);
-    if (!pNodeListChildMap) {
+  for (const auto& iter1 : rgMap) {
+    CXFA_NodeSetPairMap* pNodeSetPairMap = iter1.second.get();
+    if (!pNodeSetPairMap) {
       continue;
     }
-    FX_POSITION childpos = pNodeListChildMap->GetStartPosition();
-    while (childpos) {
-      uint32_t dwNameHash = 0;
-      CXFA_DualNodeArray* pDualNodeArray = NULL;
-      pNodeListChildMap->GetNextAssoc(childpos, dwNameHash, pDualNodeArray);
-      if (!pDualNodeArray) {
+    for (const auto& iter2 : *pNodeSetPairMap) {
+      CXFA_NodeSetPair* pNodeSetPair = iter2.second.get();
+      if (!pNodeSetPair) {
         continue;
       }
-      if (pDualNodeArray->firstNodeList.GetCount() != 0 &&
-          pDualNodeArray->secondNodeList.GetCount() != 0) {
-        CXFA_NodeArray rgNodeArray1, rgNodeArray2;
-        CFX_ArrayTemplate<int32_t> rgIdxArray1, rgIdxArray2;
+      if (!pNodeSetPair->first.empty() && !pNodeSetPair->second.empty()) {
+        CXFA_NodeArray rgNodeArray1;
+        CXFA_NodeArray rgNodeArray2;
+        CFX_ArrayTemplate<int32_t> rgIdxArray1;
+        CFX_ArrayTemplate<int32_t> rgIdxArray2;
         XFA_ScriptInstanceManager_ReorderDataNodes_SortNodeArrayByDocumentIdx(
-            pDualNodeArray->firstNodeList, rgNodeArray1, rgIdxArray1);
+            pNodeSetPair->first, rgNodeArray1, rgIdxArray1);
         XFA_ScriptInstanceManager_ReorderDataNodes_SortNodeArrayByDocumentIdx(
-            pDualNodeArray->secondNodeList, rgNodeArray2, rgIdxArray2);
-        CXFA_Node *pParentNode = NULL, *pBeforeNode = NULL;
+            pNodeSetPair->second, rgNodeArray2, rgIdxArray2);
+        CXFA_Node* pParentNode = nullptr;
+        CXFA_Node* pBeforeNode = nullptr;
         if (bInsertBefore) {
           pBeforeNode = rgNodeArray2[0];
           pParentNode = pBeforeNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -2957,19 +2939,17 @@ static void XFA_ScriptInstanceManager_ReorderDataNodes(CXFA_NodeSet& sSet1,
           pParentNode = pLastNode->GetNodeItem(XFA_NODEITEM_Parent);
           pBeforeNode = pLastNode->GetNodeItem(XFA_NODEITEM_NextSibling);
         }
-        for (int32_t iIdx = 0, iCount = rgIdxArray1.GetSize(); iIdx < iCount;
-             iIdx++) {
+        for (int32_t iIdx = 0; iIdx < rgIdxArray1.GetSize(); iIdx++) {
           CXFA_Node* pCurNode = rgNodeArray1[iIdx];
           pParentNode->RemoveChild(pCurNode);
           pParentNode->InsertChild(pCurNode, pBeforeNode);
         }
       }
-      delete pDualNodeArray;
     }
-    pNodeListChildMap->RemoveAll();
+    pNodeSetPairMap->clear();
   }
-  rgNodeListMap.RemoveAll();
 }
+
 static void XFA_ScriptInstanceManager_InsertItem(
     CXFA_Node* pInstMgrNode,
     CXFA_Node* pNewInstance,
@@ -2991,7 +2971,8 @@ static void XFA_ScriptInstanceManager_InsertItem(
     pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent)
         ->InsertChild(pNewInstance, pNextSibling);
     if (bMoveDataBindingNodes) {
-      CXFA_NodeSet sNew, sAfter;
+      CXFA_NodeSet sNew;
+      CXFA_NodeSet sAfter;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorNew(pNewInstance);
@@ -3001,7 +2982,7 @@ static void XFA_ScriptInstanceManager_InsertItem(
         if (!pDataNode) {
           continue;
         }
-        sNew.Add(pDataNode);
+        sNew.insert(pDataNode);
       }
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
@@ -3012,7 +2993,7 @@ static void XFA_ScriptInstanceManager_InsertItem(
         if (!pDataNode) {
           continue;
         }
-        sAfter.Add(pDataNode);
+        sAfter.insert(pDataNode);
       }
       XFA_ScriptInstanceManager_ReorderDataNodes(sNew, sAfter, FALSE);
     }
@@ -3022,7 +3003,8 @@ static void XFA_ScriptInstanceManager_InsertItem(
     pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent)
         ->InsertChild(pNewInstance, pBeforeInstance);
     if (bMoveDataBindingNodes) {
-      CXFA_NodeSet sNew, sBefore;
+      CXFA_NodeSet sNew;
+      CXFA_NodeSet sBefore;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorNew(pNewInstance);
@@ -3032,7 +3014,7 @@ static void XFA_ScriptInstanceManager_InsertItem(
         if (!pDataNode) {
           continue;
         }
-        sNew.Add(pDataNode);
+        sNew.insert(pDataNode);
       }
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
@@ -3043,7 +3025,7 @@ static void XFA_ScriptInstanceManager_InsertItem(
         if (!pDataNode) {
           continue;
         }
-        sBefore.Add(pDataNode);
+        sBefore.insert(pDataNode);
       }
       XFA_ScriptInstanceManager_ReorderDataNodes(sNew, sBefore, TRUE);
     }

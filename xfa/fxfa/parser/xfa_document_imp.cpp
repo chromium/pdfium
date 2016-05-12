@@ -159,36 +159,37 @@ CXFA_Object* CXFA_Document::GetXFAObject(uint32_t dwNodeNameHash) {
 CXFA_Node* CXFA_Document::CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement) {
   return CreateNode(XFA_GetPacketByID(dwPacket), eElement);
 }
+
 CXFA_Node* CXFA_Document::CreateNode(const XFA_PACKETINFO* pPacket,
                                      XFA_ELEMENT eElement) {
-  if (pPacket == NULL) {
-    return NULL;
-  }
+  if (!pPacket)
+    return nullptr;
+
   const XFA_ELEMENTINFO* pElement = XFA_GetElementByID(eElement);
   if (pElement && (pElement->dwPackets & pPacket->eName)) {
     CXFA_Node* pNode = new CXFA_Node(this, pPacket->eName, pElement->eName);
-    if (pNode) {
-      AddPurgeNode(pNode);
-    }
+    AddPurgeNode(pNode);
     return pNode;
   }
-  return NULL;
+
+  return nullptr;
 }
+
 void CXFA_Document::AddPurgeNode(CXFA_Node* pNode) {
-  m_rgPurgeNodes.Add(pNode);
+  m_PurgeNodes.insert(pNode);
 }
+
 FX_BOOL CXFA_Document::RemovePurgeNode(CXFA_Node* pNode) {
-  return m_rgPurgeNodes.RemoveKey(pNode);
+  return !!m_PurgeNodes.erase(pNode);
 }
+
 void CXFA_Document::PurgeNodes() {
-  FX_POSITION psNode = m_rgPurgeNodes.GetStartPosition();
-  while (psNode) {
-    CXFA_Node* pNode;
-    m_rgPurgeNodes.GetNextAssoc(psNode, pNode);
+  for (CXFA_Node* pNode : m_PurgeNodes)
     delete pNode;
-  }
-  m_rgPurgeNodes.RemoveAll();
+
+  m_PurgeNodes.clear();
 }
+
 void CXFA_Document::SetFlag(uint32_t dwFlag, FX_BOOL bOn) {
   if (bOn) {
     m_dwDocFlags |= dwFlag;
@@ -357,16 +358,13 @@ void CXFA_Document::DoProtoMerge() {
     }
     CFX_WideStringC wsUseVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) && !wsUseVal.IsEmpty()) {
-      sUseNodes.Add(pNode);
+      sUseNodes.insert(pNode);
     } else if (pNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
                !wsUseVal.IsEmpty()) {
-      sUseNodes.Add(pNode);
+      sUseNodes.insert(pNode);
     }
   }
-  FX_POSITION pos = sUseNodes.GetStartPosition();
-  while (pos) {
-    CXFA_Node* pUseHrefNode = NULL;
-    sUseNodes.GetNextAssoc(pos, pUseHrefNode);
+  for (CXFA_Node* pUseHrefNode : sUseNodes) {
     CFX_WideString wsUseVal;
     CFX_WideStringC wsURI, wsID, wsSOM;
     if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
