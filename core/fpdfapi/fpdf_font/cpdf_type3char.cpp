@@ -13,31 +13,27 @@
 #include "core/fxge/include/fx_dib.h"
 
 CPDF_Type3Char::CPDF_Type3Char(CPDF_Form* pForm)
-    : m_pForm(pForm), m_pBitmap(nullptr), m_bColored(FALSE) {}
+    : m_pForm(pForm), m_bColored(FALSE) {}
 
 CPDF_Type3Char::~CPDF_Type3Char() {
-  delete m_pForm;
-  delete m_pBitmap;
 }
 
 FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
-  if (m_pBitmap || !m_pForm) {
+  if (m_pBitmap || !m_pForm)
     return TRUE;
-  }
-  if (m_pForm->GetPageObjectList()->size() == 1 && !m_bColored) {
-    auto& pPageObj = m_pForm->GetPageObjectList()->front();
-    if (pPageObj->IsImage()) {
-      m_ImageMatrix = pPageObj->AsImage()->m_Matrix;
-      const CFX_DIBSource* pSource =
-          pPageObj->AsImage()->m_pImage->LoadDIBSource();
-      if (pSource) {
-        m_pBitmap = pSource->Clone();
-        delete pSource;
-      }
-      delete m_pForm;
-      m_pForm = NULL;
-      return TRUE;
-    }
-  }
-  return FALSE;
+
+  if (m_pForm->GetPageObjectList()->size() != 1 || m_bColored)
+    return FALSE;
+
+  auto& pPageObj = m_pForm->GetPageObjectList()->front();
+  if (!pPageObj->IsImage())
+    return FALSE;
+
+  m_ImageMatrix = pPageObj->AsImage()->m_Matrix;
+  std::unique_ptr<CFX_DIBSource> pSource(
+      pPageObj->AsImage()->m_pImage->LoadDIBSource());
+  if (pSource)
+    m_pBitmap.reset(pSource->Clone());
+  m_pForm.reset();
+  return TRUE;
 }

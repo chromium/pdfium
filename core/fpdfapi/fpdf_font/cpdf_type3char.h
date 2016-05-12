@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3CHAR_H_
 #define CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3CHAR_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -22,8 +24,8 @@ class CPDF_Type3Char {
 
   FX_BOOL LoadBitmap(CPDF_RenderContext* pContext);
 
-  CPDF_Form* m_pForm;
-  CFX_DIBitmap* m_pBitmap;
+  std::unique_ptr<CPDF_Form> m_pForm;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
   FX_BOOL m_bColored;
   int m_Width;
   CFX_Matrix m_ImageMatrix;

@@ -558,20 +558,17 @@ class CFX_BitmapStorer : public IFX_ScanlineComposer {
   void ComposeScanline(int line,
                        const uint8_t* scanline,
                        const uint8_t* scan_extra_alpha) override;
-
   FX_BOOL SetInfo(int width,
                   int height,
                   FXDIB_Format src_format,
                   uint32_t* pSrcPalette) override;
 
-  CFX_DIBitmap* GetBitmap() { return m_pBitmap; }
-
-  CFX_DIBitmap* Detach();
-
-  void Replace(CFX_DIBitmap* pBitmap);
+  CFX_DIBitmap* GetBitmap() { return m_pBitmap.get(); }
+  std::unique_ptr<CFX_DIBitmap> Detach();
+  void Replace(std::unique_ptr<CFX_DIBitmap> pBitmap);
 
  private:
-  CFX_DIBitmap* m_pBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
 };
 
 class CFX_ImageStretcher {
@@ -613,26 +610,28 @@ class CFX_ImageStretcher {
 
 class CFX_ImageTransformer {
  public:
-  CFX_ImageTransformer();
+  CFX_ImageTransformer(const CFX_DIBSource* pSrc,
+                       const CFX_Matrix* pMatrix,
+                       int flags,
+                       const FX_RECT* pClip);
   ~CFX_ImageTransformer();
 
-  FX_BOOL Start(const CFX_DIBSource* pSrc,
-                const CFX_Matrix* pMatrix,
-                int flags,
-                const FX_RECT* pClip);
-
+  FX_BOOL Start();
   FX_BOOL Continue(IFX_Pause* pPause);
 
-  CFX_Matrix* m_pMatrix;
+  const FX_RECT& result() const { return m_result; }
+  std::unique_ptr<CFX_DIBitmap> DetachBitmap();
+
+ private:
+  const CFX_DIBSource* const m_pSrc;
+  const CFX_Matrix* const m_pMatrix;
+  const FX_RECT* const m_pClip;
   FX_RECT m_StretchClip;
-  int m_ResultLeft;
-  int m_ResultTop;
-  int m_ResultWidth;
-  int m_ResultHeight;
+  FX_RECT m_result;
   CFX_Matrix m_dest2stretch;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapStorer m_Storer;
-  uint32_t m_Flags;
+  const uint32_t m_Flags;
   int m_Status;
 };
 

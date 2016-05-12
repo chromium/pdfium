@@ -149,6 +149,7 @@ static int _DetectFirstLastScan(const CFX_DIBitmap* pBitmap, FX_BOOL bFirst) {
   }
   return -1;
 }
+
 CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
                                               uint32_t charcode,
                                               const CFX_Matrix* pMatrix,
@@ -158,12 +159,12 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   if (!pChar || !pChar->m_pBitmap)
     return nullptr;
 
-  CFX_DIBitmap* pBitmap = pChar->m_pBitmap;
+  CFX_DIBitmap* pBitmap = pChar->m_pBitmap.get();
   CFX_Matrix image_matrix, text_matrix;
   image_matrix = pChar->m_ImageMatrix;
   text_matrix.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
   image_matrix.Concat(text_matrix);
-  CFX_DIBitmap* pResBitmap = NULL;
+  std::unique_ptr<CFX_DIBitmap> pResBitmap;
   int left = 0;
   int top = 0;
   if (FXSYS_fabs(image_matrix.b) < FXSYS_fabs(image_matrix.a) / 100 &&
@@ -180,10 +181,10 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
         bottom_y = temp;
       }
       pSize->AdjustBlue(top_y, bottom_y, top_line, bottom_line);
-      pResBitmap = pBitmap->StretchTo(
+      pResBitmap.reset(pBitmap->StretchTo(
           (int)(FXSYS_round(image_matrix.a) * retinaScaleX),
           (int)((bFlipped ? top_line - bottom_line : bottom_line - top_line) *
-                retinaScaleY));
+                retinaScaleY)));
       top = top_line;
       if (image_matrix.a < 0) {
         image_matrix.Scale(retinaScaleX, retinaScaleY);
@@ -195,16 +196,15 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   }
   if (!pResBitmap) {
     image_matrix.Scale(retinaScaleX, retinaScaleY);
-    pResBitmap = pBitmap->TransformTo(&image_matrix, left, top);
+    pResBitmap.reset(pBitmap->TransformTo(&image_matrix, left, top));
   }
-  if (!pResBitmap) {
-    return NULL;
-  }
+  if (!pResBitmap)
+    return nullptr;
+
   CFX_GlyphBitmap* pGlyph = new CFX_GlyphBitmap;
   pGlyph->m_Left = left;
   pGlyph->m_Top = -top;
-  pGlyph->m_Bitmap.TakeOver(pResBitmap);
-  delete pResBitmap;
+  pGlyph->m_Bitmap.TakeOver(pResBitmap.get());
   return pGlyph;
 }
 
@@ -423,7 +423,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         status.m_Type3FontCache.Append(m_Type3FontCache);
         status.m_Type3FontCache.Add(pType3Font);
         m_pDevice->SaveState();
-        status.RenderObjectList(pType3Char->m_pForm, &matrix);
+        status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);
         m_pDevice->RestoreState();
       } else {
         CFX_FloatRect rect_f = pType3Char->m_pForm->CalcBoundingBox();
@@ -444,7 +444,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         status.m_Type3FontCache.Add(pType3Font);
         matrix.TranslateI(-rect.left, -rect.top);
         matrix.Scale(sa, sd);
-        status.RenderObjectList(pType3Char->m_pForm, &matrix);
+        status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
       }
       delete pStates;
@@ -470,13 +470,12 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         CFX_Matrix image_matrix = pType3Char->m_ImageMatrix;
         image_matrix.Concat(matrix);
         CPDF_ImageRenderer renderer;
-        if (renderer.Start(this, pType3Char->m_pBitmap, fill_argb, 255,
+        if (renderer.Start(this, pType3Char->m_pBitmap.get(), fill_argb, 255,
                            &image_matrix, 0, FALSE)) {
-          renderer.Continue(NULL);
+          renderer.Continue(nullptr);
         }
-        if (!renderer.m_Result) {
+        if (!renderer.m_Result)
           return FALSE;
-        }
       }
     }
   }

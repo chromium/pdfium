@@ -1591,6 +1591,7 @@ CFX_ImageRenderer::CFX_ImageRenderer() {
 CFX_ImageRenderer::~CFX_ImageRenderer() {
   delete m_pTransformer;
 }
+
 FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
                                  const CFX_ClipRgn* pClipRgn,
                                  const CFX_DIBSource* pSource,
@@ -1646,8 +1647,9 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
       return TRUE;
     }
     m_Status = 2;
-    m_pTransformer = new CFX_ImageTransformer;
-    m_pTransformer->Start(pSource, &m_Matrix, dib_flags, &m_ClipBox);
+    m_pTransformer =
+        new CFX_ImageTransformer(pSource, &m_Matrix, dib_flags, &m_ClipBox);
+    m_pTransformer->Start();
     return TRUE;
   }
 
@@ -1678,17 +1680,13 @@ FX_BOOL CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
     return m_Stretcher->Continue(pPause);
 
   if (m_Status == 2) {
-    if (m_pTransformer->Continue(pPause)) {
+    if (m_pTransformer->Continue(pPause))
       return TRUE;
-    }
-    CFX_DIBitmap* pBitmap = m_pTransformer->m_Storer.Detach();
-    if (!pBitmap) {
+
+    std::unique_ptr<CFX_DIBitmap> pBitmap(m_pTransformer->DetachBitmap());
+    if (!pBitmap || !pBitmap->GetBuffer())
       return FALSE;
-    }
-    if (!pBitmap->GetBuffer()) {
-      delete pBitmap;
-      return FALSE;
-    }
+
     if (pBitmap->IsAlphaMask()) {
       if (m_BitmapAlpha != 255) {
         if (m_AlphaFlag >> 8) {
@@ -1699,51 +1697,49 @@ FX_BOOL CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
           m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, m_BitmapAlpha);
         }
       }
-      m_pDevice->CompositeMask(m_pTransformer->m_ResultLeft,
-                               m_pTransformer->m_ResultTop, pBitmap->GetWidth(),
-                               pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-                               m_BlendType, m_pClipRgn, m_bRgbByteOrder,
-                               m_AlphaFlag, m_pIccTransform);
+      m_pDevice->CompositeMask(
+          m_pTransformer->result().left, m_pTransformer->result().top,
+          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap.get(), m_MaskColor,
+          0, 0, m_BlendType, m_pClipRgn, m_bRgbByteOrder, m_AlphaFlag,
+          m_pIccTransform);
     } else {
-      if (m_BitmapAlpha != 255) {
+      if (m_BitmapAlpha != 255)
         pBitmap->MultiplyAlpha(m_BitmapAlpha);
-      }
       m_pDevice->CompositeBitmap(
-          m_pTransformer->m_ResultLeft, m_pTransformer->m_ResultTop,
-          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0, m_BlendType,
-          m_pClipRgn, m_bRgbByteOrder, m_pIccTransform);
+          m_pTransformer->result().left, m_pTransformer->result().top,
+          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap.get(), 0, 0,
+          m_BlendType, m_pClipRgn, m_bRgbByteOrder, m_pIccTransform);
     }
-    delete pBitmap;
     return FALSE;
   }
   return FALSE;
 }
+
 CFX_BitmapStorer::CFX_BitmapStorer() {
-  m_pBitmap = NULL;
 }
+
 CFX_BitmapStorer::~CFX_BitmapStorer() {
-  delete m_pBitmap;
 }
-CFX_DIBitmap* CFX_BitmapStorer::Detach() {
-  CFX_DIBitmap* pBitmap = m_pBitmap;
-  m_pBitmap = NULL;
-  return pBitmap;
+
+std::unique_ptr<CFX_DIBitmap> CFX_BitmapStorer::Detach() {
+  return std::move(m_pBitmap);
 }
-void CFX_BitmapStorer::Replace(CFX_DIBitmap* pBitmap) {
-  delete m_pBitmap;
-  m_pBitmap = pBitmap;
+
+void CFX_BitmapStorer::Replace(std::unique_ptr<CFX_DIBitmap> pBitmap) {
+  m_pBitmap = std::move(pBitmap);
 }
+
 void CFX_BitmapStorer::ComposeScanline(int line,
                                        const uint8_t* scanline,
                                        const uint8_t* scan_extra_alpha) {
-  uint8_t* dest_buf = (uint8_t*)m_pBitmap->GetScanline(line);
+  uint8_t* dest_buf = const_cast<uint8_t*>(m_pBitmap->GetScanline(line));
   uint8_t* dest_alpha_buf =
       m_pBitmap->m_pAlphaMask
-          ? (uint8_t*)m_pBitmap->m_pAlphaMask->GetScanline(line)
-          : NULL;
-  if (dest_buf) {
+          ? const_cast<uint8_t*>(m_pBitmap->m_pAlphaMask->GetScanline(line))
+          : nullptr;
+  if (dest_buf)
     FXSYS_memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
-  }
+
   if (dest_alpha_buf) {
     FXSYS_memcpy(dest_alpha_buf, scan_extra_alpha,
                  m_pBitmap->m_pAlphaMask->GetPitch());
@@ -1753,14 +1749,12 @@ FX_BOOL CFX_BitmapStorer::SetInfo(int width,
                                   int height,
                                   FXDIB_Format src_format,
                                   uint32_t* pSrcPalette) {
-  m_pBitmap = new CFX_DIBitmap;
+  m_pBitmap.reset(new CFX_DIBitmap);
   if (!m_pBitmap->Create(width, height, src_format)) {
-    delete m_pBitmap;
-    m_pBitmap = NULL;
+    m_pBitmap.reset();
     return FALSE;
   }
-  if (pSrcPalette) {
+  if (pSrcPalette)
     m_pBitmap->CopyPalette(pSrcPalette);
-  }
   return TRUE;
 }

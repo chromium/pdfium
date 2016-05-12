@@ -7,6 +7,7 @@
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 #include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
@@ -480,10 +481,12 @@ CFX_GraphStateData::LineCap XFA_LineCapToFXGE(int32_t iLineCap) {
   }
   return CFX_GraphStateData::LineCapSquare;
 }
+
 class CXFA_ImageRenderer {
  public:
   CXFA_ImageRenderer();
   ~CXFA_ImageRenderer();
+
   FX_BOOL Start(CFX_RenderDevice* pDevice,
                 CFX_DIBSource* pDIBSource,
                 FX_ARGB bitmap_argb,
@@ -502,7 +505,7 @@ class CXFA_ImageRenderer {
   int m_BitmapAlpha;
   FX_ARGB m_FillArgb;
   uint32_t m_Flags;
-  CFX_ImageTransformer* m_pTransformer;
+  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   void* m_DeviceHandle;
   int32_t m_BlendType;
   FX_BOOL m_Result;
@@ -524,7 +527,6 @@ CXFA_ImageRenderer::CXFA_ImageRenderer() {
   m_BitmapAlpha = 255;
   m_FillArgb = 0;
   m_Flags = 0;
-  m_pTransformer = NULL;
   m_DeviceHandle = NULL;
   m_BlendType = FXDIB_BLEND_NORMAL;
   m_Result = TRUE;
@@ -533,7 +535,6 @@ CXFA_ImageRenderer::CXFA_ImageRenderer() {
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {
   delete m_pCloneConvert;
-  delete m_pTransformer;
   if (m_DeviceHandle)
     m_pDevice->CancelDIBits(m_DeviceHandle);
 }
@@ -588,8 +589,9 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
     FX_RECT clip_box = m_pDevice->GetClipBox();
     clip_box.Intersect(image_rect);
     m_Status = 2;
-    m_pTransformer = new CFX_ImageTransformer;
-    m_pTransformer->Start(pDib, &m_ImageMatrix, m_Flags, &clip_box);
+    m_pTransformer.reset(
+        new CFX_ImageTransformer(pDib, &m_ImageMatrix, m_Flags, &clip_box));
+    m_pTransformer->Start();
     return TRUE;
   }
   if (m_ImageMatrix.a < 0) {
@@ -626,45 +628,45 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  CFX_DIBitmap* pStretched =
-      m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
+  std::unique_ptr<CFX_DIBitmap> pStretched(
+      m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip));
   if (pStretched) {
-    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, m_FillArgb,
-                      m_BitmapAlpha, m_BlendType, FALSE);
-    delete pStretched;
-    pStretched = NULL;
+    CompositeDIBitmap(pStretched.get(), dest_rect.left, dest_rect.top,
+                      m_FillArgb, m_BitmapAlpha, m_BlendType, FALSE);
   }
   return FALSE;
 }
+
 FX_BOOL CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
   if (m_Status == 2) {
-    if (m_pTransformer->Continue(pPause)) {
+    if (m_pTransformer->Continue(pPause))
       return TRUE;
-    }
-    CFX_DIBitmap* pBitmap = m_pTransformer->m_Storer.Detach();
-    if (pBitmap == NULL) {
+
+    std::unique_ptr<CFX_DIBitmap> pBitmap(m_pTransformer->DetachBitmap());
+    if (!pBitmap)
       return FALSE;
-    }
+
     if (pBitmap->IsAlphaMask()) {
-      if (m_BitmapAlpha != 255) {
+      if (m_BitmapAlpha != 255)
         m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
-      }
-      m_Result = m_pDevice->SetBitMask(pBitmap, m_pTransformer->m_ResultLeft,
-                                       m_pTransformer->m_ResultTop, m_FillArgb);
+      m_Result =
+          m_pDevice->SetBitMask(pBitmap.get(), m_pTransformer->result().left,
+                                m_pTransformer->result().top, m_FillArgb);
     } else {
-      if (m_BitmapAlpha != 255) {
+      if (m_BitmapAlpha != 255)
         pBitmap->MultiplyAlpha(m_BitmapAlpha);
-      }
-      m_Result = m_pDevice->SetDIBits(pBitmap, m_pTransformer->m_ResultLeft,
-                                      m_pTransformer->m_ResultTop, m_BlendType);
+      m_Result =
+          m_pDevice->SetDIBits(pBitmap.get(), m_pTransformer->result().left,
+                               m_pTransformer->result().top, m_BlendType);
     }
-    delete pBitmap;
     return FALSE;
-  } else if (m_Status == 3) {
-    return m_pDevice->ContinueDIBits(m_DeviceHandle, pPause);
   }
+  if (m_Status == 3)
+    return m_pDevice->ContinueDIBits(m_DeviceHandle, pPause);
+
   return FALSE;
 }
+
 void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
                                            int left,
                                            int top,

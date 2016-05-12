@@ -136,10 +136,8 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   ASSERT(!pdfium::ContainsKey(m_CacheMap, charcode));
   CPDF_Type3Char* pCachedChar = pNewChar.release();
   m_CacheMap[charcode] = pCachedChar;
-  if (pCachedChar->m_pForm->GetPageObjectList()->empty()) {
-    delete pCachedChar->m_pForm;
-    pCachedChar->m_pForm = nullptr;
-  }
+  if (pCachedChar->m_pForm->GetPageObjectList()->empty())
+    pCachedChar->m_pForm.reset();
   return pCachedChar;
 }
 
