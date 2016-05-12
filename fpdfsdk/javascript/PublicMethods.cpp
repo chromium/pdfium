@@ -903,11 +903,10 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
   CFX_WideString wstrValue = val;
 
   if (pEvent->WillCommit()) {
-    CFX_WideString wstrValue = StrTrim(wstrValue);
-    if (wstrValue.IsEmpty())
+    CFX_WideString swTemp = StrTrim(wstrValue);
+    if (swTemp.IsEmpty())
       return TRUE;
 
-    CFX_WideString swTemp = wstrValue;
     swTemp.Replace(L",", L".");
     if (!IsNumber(swTemp.c_str())) {
       pEvent->Rc() = FALSE;
