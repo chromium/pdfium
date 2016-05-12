@@ -1754,11 +1754,10 @@ FX_BOOL CFX_AggDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
                    FALSE, m_bRgbByteOrder, alpha_flag, pIccTransform,
                    blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
-  CFX_ImageStretcher stretcher;
-  if (stretcher.Start(&composer, pSource, dest_width, dest_height, dest_clip,
-                      flags)) {
-    stretcher.Continue(NULL);
-  }
+  CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
+                               dest_clip, flags);
+  if (stretcher.Start())
+    stretcher.Continue(nullptr);
   return TRUE;
 }
 

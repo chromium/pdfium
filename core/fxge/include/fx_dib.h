@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_INCLUDE_FX_DIB_H_
 #define CORE_FXGE_INCLUDE_FX_DIB_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
@@ -574,37 +576,41 @@ class CFX_BitmapStorer : public IFX_ScanlineComposer {
 
 class CFX_ImageStretcher {
  public:
-  CFX_ImageStretcher();
+  CFX_ImageStretcher(IFX_ScanlineComposer* pDest,
+                     const CFX_DIBSource* pSource,
+                     int dest_width,
+                     int dest_height,
+                     const FX_RECT& bitmap_rect,
+                     uint32_t flags);
   ~CFX_ImageStretcher();
 
-  FX_BOOL Start(IFX_ScanlineComposer* pDest,
-                const CFX_DIBSource* pBitmap,
-                int dest_width,
-                int dest_height,
-                const FX_RECT& bitmap_rect,
-                uint32_t flags);
-
+  FX_BOOL Start();
   FX_BOOL Continue(IFX_Pause* pPause);
+
+  const CFX_DIBSource* source() { return m_pSource; }
+
+ private:
   FX_BOOL StartQuickStretch();
   FX_BOOL StartStretch();
   FX_BOOL ContinueQuickStretch(IFX_Pause* pPause);
   FX_BOOL ContinueStretch(IFX_Pause* pPause);
 
-  IFX_ScanlineComposer* m_pDest;
-  const CFX_DIBSource* m_pSource;
-  CStretchEngine* m_pStretchEngine;
-  uint32_t m_Flags;
+  IFX_ScanlineComposer* const m_pDest;
+  const CFX_DIBSource* const m_pSource;
+  std::unique_ptr<CStretchEngine> m_pStretchEngine;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanline;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskScanline;
+  const uint32_t m_Flags;
   FX_BOOL m_bFlipX;
   FX_BOOL m_bFlipY;
   int m_DestWidth;
   int m_DestHeight;
   FX_RECT m_ClipRect;
+  const FXDIB_Format m_DestFormat;
+  const int m_DestBPP;
   int m_LineIndex;
-  int m_DestBPP;
-  uint8_t* m_pScanline;
-  uint8_t* m_pMaskScanline;
-  FXDIB_Format m_DestFormat;
 };
+
 class CFX_ImageTransformer {
  public:
   CFX_ImageTransformer();
@@ -624,11 +630,12 @@ class CFX_ImageTransformer {
   int m_ResultWidth;
   int m_ResultHeight;
   CFX_Matrix m_dest2stretch;
-  CFX_ImageStretcher m_Stretcher;
+  std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapStorer m_Storer;
   uint32_t m_Flags;
   int m_Status;
 };
+
 class CFX_ImageRenderer {
  public:
   CFX_ImageRenderer();
@@ -655,7 +662,7 @@ class CFX_ImageRenderer {
   uint32_t m_MaskColor;
   CFX_Matrix m_Matrix;
   CFX_ImageTransformer* m_pTransformer;
-  CFX_ImageStretcher m_Stretcher;
+  std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapComposer m_Composer;
   int m_Status;
   FX_RECT m_ClipBox;

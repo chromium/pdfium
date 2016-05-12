@@ -309,33 +309,36 @@ CFX_DIBitmap* CFX_DIBSource::TransformTo(const CFX_Matrix* pDestMatrix,
   CFX_DIBitmap* pTransformed = transformer.m_Storer.Detach();
   return pTransformed;
 }
+
 CFX_DIBitmap* CFX_DIBSource::StretchTo(int dest_width,
                                        int dest_height,
                                        uint32_t flags,
                                        const FX_RECT* pClip) const {
   FX_RECT clip_rect(0, 0, FXSYS_abs(dest_width), FXSYS_abs(dest_height));
-  if (pClip) {
+  if (pClip)
     clip_rect.Intersect(*pClip);
-  }
-  if (clip_rect.IsEmpty()) {
-    return NULL;
-  }
-  if (dest_width == m_Width && dest_height == m_Height) {
+
+  if (clip_rect.IsEmpty())
+    return nullptr;
+
+  if (dest_width == m_Width && dest_height == m_Height)
     return Clone(&clip_rect);
-  }
-  CFX_ImageStretcher stretcher;
+
   CFX_BitmapStorer storer;
-  if (stretcher.Start(&storer, this, dest_width, dest_height, clip_rect,
-                      flags)) {
-    stretcher.Continue(NULL);
-  }
+  CFX_ImageStretcher stretcher(&storer, this, dest_width, dest_height,
+                               clip_rect, flags);
+  if (stretcher.Start())
+    stretcher.Continue(nullptr);
   return storer.Detach();
 }
+
 CFX_ImageTransformer::CFX_ImageTransformer() {
   m_Status = 0;
   m_pMatrix = NULL;
 }
+
 CFX_ImageTransformer::~CFX_ImageTransformer() {}
+
 FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
                                     const CFX_Matrix* pDestMatrix,
                                     int flags,
@@ -344,12 +347,12 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
   CFX_FloatRect unit_rect = pDestMatrix->GetUnitRect();
   FX_RECT result_rect = unit_rect.GetClosestRect();
   FX_RECT result_clip = result_rect;
-  if (pDestClip) {
+  if (pDestClip)
     result_clip.Intersect(*pDestClip);
-  }
-  if (result_clip.IsEmpty()) {
+
+  if (result_clip.IsEmpty())
     return FALSE;
-  }
+
   m_ResultLeft = result_clip.left;
   m_ResultTop = result_clip.top;
   m_ResultWidth = result_clip.Width();
@@ -363,8 +366,9 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
     result_clip.Offset(-result_rect.left, -result_rect.top);
     result_clip = FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
                                     pDestMatrix->c > 0, pDestMatrix->b < 0);
-    m_Stretcher.Start(&m_Storer, pSrc, dest_height, dest_width, result_clip,
-                      flags);
+    m_Stretcher.reset(new CFX_ImageStretcher(&m_Storer, pSrc, dest_height,
+                                             dest_width, result_clip, flags));
+    m_Stretcher->Start();
     m_Status = 1;
     return TRUE;
   }
@@ -375,8 +379,9 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
     int dest_height = pDestMatrix->d > 0 ? (int)-FXSYS_ceil(pDestMatrix->d)
                                          : (int)-FXSYS_floor(pDestMatrix->d);
     result_clip.Offset(-result_rect.left, -result_rect.top);
-    m_Stretcher.Start(&m_Storer, pSrc, dest_width, dest_height, result_clip,
-                      flags);
+    m_Stretcher.reset(new CFX_ImageStretcher(&m_Storer, pSrc, dest_width,
+                                             dest_height, result_clip, flags));
+    m_Stretcher->Start();
     m_Status = 2;
     return TRUE;
   }
@@ -395,53 +400,54 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
   clip_rect_f.Transform(&m_dest2stretch);
   m_StretchClip = clip_rect_f.GetOutterRect();
   m_StretchClip.Intersect(0, 0, stretch_width, stretch_height);
-  m_Stretcher.Start(&m_Storer, pSrc, stretch_width, stretch_height,
-                    m_StretchClip, flags);
+  m_Stretcher.reset(new CFX_ImageStretcher(
+      &m_Storer, pSrc, stretch_width, stretch_height, m_StretchClip, flags));
+  m_Stretcher->Start();
   m_Status = 3;
   return TRUE;
 }
 
 FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   if (m_Status == 1) {
-    if (m_Stretcher.Continue(pPause)) {
+    if (m_Stretcher->Continue(pPause))
       return TRUE;
-    }
+
     if (m_Storer.GetBitmap()) {
       m_Storer.Replace(
           m_Storer.GetBitmap()->SwapXY(m_pMatrix->c > 0, m_pMatrix->b < 0));
     }
     return FALSE;
   }
-  if (m_Status == 2) {
-    return m_Stretcher.Continue(pPause);
-  }
-  if (m_Status != 3) {
+
+  if (m_Status == 2)
+    return m_Stretcher->Continue(pPause);
+
+  if (m_Status != 3)
     return FALSE;
-  }
-  if (m_Stretcher.Continue(pPause)) {
+
+  if (m_Stretcher->Continue(pPause))
     return TRUE;
-  }
+
   int stretch_width = m_StretchClip.Width();
   int stretch_height = m_StretchClip.Height();
-  if (!m_Storer.GetBitmap()) {
+  if (!m_Storer.GetBitmap())
     return FALSE;
-  }
+
   const uint8_t* stretch_buf = m_Storer.GetBitmap()->GetBuffer();
-  const uint8_t* stretch_buf_mask = NULL;
-  if (m_Storer.GetBitmap()->m_pAlphaMask) {
+  const uint8_t* stretch_buf_mask = nullptr;
+  if (m_Storer.GetBitmap()->m_pAlphaMask)
     stretch_buf_mask = m_Storer.GetBitmap()->m_pAlphaMask->GetBuffer();
-  }
+
   int stretch_pitch = m_Storer.GetBitmap()->GetPitch();
-  CFX_DIBitmap* pTransformed = new CFX_DIBitmap;
-  FXDIB_Format transformF = GetTransformedFormat(m_Stretcher.m_pSource);
-  if (!pTransformed->Create(m_ResultWidth, m_ResultHeight, transformF)) {
-    delete pTransformed;
+  std::unique_ptr<CFX_DIBitmap> pTransformed(new CFX_DIBitmap);
+  FXDIB_Format transformF = GetTransformedFormat(m_Stretcher->source());
+  if (!pTransformed->Create(m_ResultWidth, m_ResultHeight, transformF))
     return FALSE;
-  }
+
   pTransformed->Clear(0);
-  if (pTransformed->m_pAlphaMask) {
+  if (pTransformed->m_pAlphaMask)
     pTransformed->m_pAlphaMask->Clear(0);
-  }
+
   CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, (FX_FLOAT)(m_ResultLeft),
                             (FX_FLOAT)(m_ResultTop));
   result2stretch.Concat(m_dest2stretch);
@@ -943,6 +949,6 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
       }
     }
   }
-  m_Storer.Replace(pTransformed);
+  m_Storer.Replace(pTransformed.release());
   return FALSE;
 }

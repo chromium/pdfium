@@ -1608,9 +1608,9 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
   m_ClipBox = pClipRgn ? pClipRgn->GetBox() : FX_RECT(0, 0, pDevice->GetWidth(),
                                                       pDevice->GetHeight());
   m_ClipBox.Intersect(image_rect);
-  if (m_ClipBox.IsEmpty()) {
+  if (m_ClipBox.IsEmpty())
     return FALSE;
-  }
+
   m_pDevice = pDevice;
   m_pClipRgn = pClipRgn;
   m_MaskColor = mask_color;
@@ -1621,7 +1621,7 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
   m_pIccTransform = pIccTransform;
   m_bRgbByteOrder = bRgbByteOrder;
   m_BlendType = blend_type;
-  FX_BOOL ret = TRUE;
+
   if ((FXSYS_fabs(m_Matrix.b) >= 0.5f || m_Matrix.a == 0) ||
       (FXSYS_fabs(m_Matrix.c) >= 0.5f || m_Matrix.d == 0)) {
     if (FXSYS_fabs(m_Matrix.a) < FXSYS_fabs(m_Matrix.b) / 20 &&
@@ -1636,10 +1636,12 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
       m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
                          TRUE, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
                          alpha_flag, pIccTransform, m_BlendType);
-      if (!m_Stretcher.Start(&m_Composer, pSource, dest_height, dest_width,
-                             bitmap_clip, dib_flags)) {
+      m_Stretcher.reset(new CFX_ImageStretcher(&m_Composer, pSource,
+                                               dest_height, dest_width,
+                                               bitmap_clip, dib_flags));
+      if (!m_Stretcher->Start())
         return FALSE;
-      }
+
       m_Status = 1;
       return TRUE;
     }
@@ -1648,31 +1650,33 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
     m_pTransformer->Start(pSource, &m_Matrix, dib_flags, &m_ClipBox);
     return TRUE;
   }
+
   int dest_width = image_rect.Width();
-  if (m_Matrix.a < 0) {
+  if (m_Matrix.a < 0)
     dest_width = -dest_width;
-  }
+
   int dest_height = image_rect.Height();
-  if (m_Matrix.d > 0) {
+  if (m_Matrix.d > 0)
     dest_height = -dest_height;
-  }
-  if (dest_width == 0 || dest_height == 0) {
+
+  if (dest_width == 0 || dest_height == 0)
     return FALSE;
-  }
+
   FX_RECT bitmap_clip = m_ClipBox;
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
   m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
                      FALSE, FALSE, FALSE, m_bRgbByteOrder, alpha_flag,
                      pIccTransform, m_BlendType);
   m_Status = 1;
-  ret = m_Stretcher.Start(&m_Composer, pSource, dest_width, dest_height,
-                          bitmap_clip, dib_flags);
-  return ret;
+  m_Stretcher.reset(new CFX_ImageStretcher(
+      &m_Composer, pSource, dest_width, dest_height, bitmap_clip, dib_flags));
+  return m_Stretcher->Start();
 }
+
 FX_BOOL CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
-  if (m_Status == 1) {
-    return m_Stretcher.Continue(pPause);
-  }
+  if (m_Status == 1)
+    return m_Stretcher->Continue(pPause);
+
   if (m_Status == 2) {
     if (m_pTransformer->Continue(pPause)) {
       return TRUE;

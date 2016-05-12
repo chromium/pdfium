@@ -6,11 +6,18 @@
 
 #include <limits.h>
 
+#include <algorithm>
+
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
 
 namespace {
+
+bool SourceSizeWithinLimit(int width, int height) {
+  const int kMaxProgressiveStretchPixels = 1000000;
+  return !height || width < kMaxProgressiveStretchPixels / height;
+}
 
 FXDIB_Format GetStretchedFormat(const CFX_DIBSource& src) {
   FXDIB_Format format = src.GetFormat();
@@ -770,40 +777,36 @@ void CStretchEngine::StretchVert() {
   }
 }
 
-CFX_ImageStretcher::CFX_ImageStretcher()
-    : m_pStretchEngine(nullptr),
-      m_pScanline(nullptr),
-      m_pMaskScanline(nullptr) {}
+CFX_ImageStretcher::CFX_ImageStretcher(IFX_ScanlineComposer* pDest,
+                                       const CFX_DIBSource* pSource,
+                                       int dest_width,
+                                       int dest_height,
+                                       const FX_RECT& bitmap_rect,
+                                       uint32_t flags)
+    : m_pDest(pDest),
+      m_pSource(pSource),
+      m_Flags(flags),
+      m_bFlipX(FALSE),
+      m_bFlipY(FALSE),
+      m_DestWidth(dest_width),
+      m_DestHeight(dest_height),
+      m_ClipRect(bitmap_rect),
+      m_DestFormat(GetStretchedFormat(*pSource)),
+      m_DestBPP(m_DestFormat & 0xff),
+      m_LineIndex(0) {}
 
 CFX_ImageStretcher::~CFX_ImageStretcher() {
-  FX_Free(m_pScanline);
-  delete m_pStretchEngine;
-  FX_Free(m_pMaskScanline);
 }
 
-FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
-                                  const CFX_DIBSource* pSource,
-                                  int dest_width,
-                                  int dest_height,
-                                  const FX_RECT& rect,
-                                  uint32_t flags) {
-  if (dest_width == 0 || dest_height == 0)
+FX_BOOL CFX_ImageStretcher::Start() {
+  if (m_DestWidth == 0 || m_DestHeight == 0)
     return FALSE;
 
-  m_DestFormat = GetStretchedFormat(*pSource);
-  m_DestBPP = m_DestFormat & 0xff;
-  m_pDest = pDest;
-  m_pSource = pSource;
-  m_DestWidth = dest_width;
-  m_DestHeight = dest_height;
-  m_ClipRect = rect;
-  m_Flags = flags;
-
-  if (pSource->GetFormat() == FXDIB_1bppRgb && pSource->GetPalette()) {
+  if (m_pSource->GetFormat() == FXDIB_1bppRgb && m_pSource->GetPalette()) {
     FX_ARGB pal[256];
     int a0, r0, g0, b0, a1, r1, g1, b1;
-    ArgbDecode(pSource->GetPaletteEntry(0), a0, r0, g0, b0);
-    ArgbDecode(pSource->GetPaletteEntry(1), a1, r1, g1, b1);
+    ArgbDecode(m_pSource->GetPaletteEntry(0), a0, r0, g0, b0);
+    ArgbDecode(m_pSource->GetPaletteEntry(1), a1, r1, g1, b1);
     for (int i = 0; i < 256; i++) {
       int a = a0 + (a1 - a0) * i / 255;
       int r = r0 + (r1 - r0) * i / 255;
@@ -811,14 +814,16 @@ FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
       int b = b0 + (b1 - b0) * i / 255;
       pal[i] = ArgbEncode(a, r, g, b);
     }
-    if (!pDest->SetInfo(rect.Width(), rect.Height(), m_DestFormat, pal)) {
+    if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
+                          pal)) {
       return FALSE;
     }
-  } else if (pSource->GetFormat() == FXDIB_1bppCmyk && pSource->GetPalette()) {
+  } else if (m_pSource->GetFormat() == FXDIB_1bppCmyk &&
+             m_pSource->GetPalette()) {
     FX_CMYK pal[256];
     int c0, m0, y0, k0, c1, m1, y1, k1;
-    CmykDecode(pSource->GetPaletteEntry(0), c0, m0, y0, k0);
-    CmykDecode(pSource->GetPaletteEntry(1), c1, m1, y1, k1);
+    CmykDecode(m_pSource->GetPaletteEntry(0), c0, m0, y0, k0);
+    CmykDecode(m_pSource->GetPaletteEntry(1), c1, m1, y1, k1);
     for (int i = 0; i < 256; i++) {
       int c = c0 + (c1 - c0) * i / 255;
       int m = m0 + (m1 - m0) * i / 255;
@@ -826,14 +831,16 @@ FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
       int k = k0 + (k1 - k0) * i / 255;
       pal[i] = CmykEncode(c, m, y, k);
     }
-    if (!pDest->SetInfo(rect.Width(), rect.Height(), m_DestFormat, pal)) {
+    if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
+                          pal)) {
       return FALSE;
     }
-  } else if (!pDest->SetInfo(rect.Width(), rect.Height(), m_DestFormat, NULL)) {
+  } else if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(),
+                               m_DestFormat, nullptr)) {
     return FALSE;
   }
 
-  if (flags & FXDIB_DOWNSAMPLE)
+  if (m_Flags & FXDIB_DOWNSAMPLE)
     return StartQuickStretch();
   return StartStretch();
 }
@@ -844,25 +851,23 @@ FX_BOOL CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
   return ContinueStretch(pPause);
 }
 
-#define MAX_PROGRESSIVE_STRETCH_PIXELS 1000000
 FX_BOOL CFX_ImageStretcher::StartStretch() {
-  m_pStretchEngine =
-      new CStretchEngine(m_pDest, m_DestFormat, m_DestWidth, m_DestHeight,
-                         m_ClipRect, m_pSource, m_Flags);
+  m_pStretchEngine.reset(new CStretchEngine(m_pDest, m_DestFormat, m_DestWidth,
+                                            m_DestHeight, m_ClipRect, m_pSource,
+                                            m_Flags));
   m_pStretchEngine->StartStretchHorz();
-  if (m_pSource->GetWidth() * m_pSource->GetHeight() <
-      MAX_PROGRESSIVE_STRETCH_PIXELS) {
-    m_pStretchEngine->Continue(NULL);
+  if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
+    m_pStretchEngine->Continue(nullptr);
     return FALSE;
   }
   return TRUE;
 }
+
 FX_BOOL CFX_ImageStretcher::ContinueStretch(IFX_Pause* pPause) {
   return m_pStretchEngine && m_pStretchEngine->Continue(pPause);
 }
+
 FX_BOOL CFX_ImageStretcher::StartQuickStretch() {
-  m_bFlipX = FALSE;
-  m_bFlipY = FALSE;
   if (m_DestWidth < 0) {
     m_bFlipX = TRUE;
     m_DestWidth = -m_DestWidth;
@@ -871,31 +876,32 @@ FX_BOOL CFX_ImageStretcher::StartQuickStretch() {
     m_bFlipY = TRUE;
     m_DestHeight = -m_DestHeight;
   }
-  m_LineIndex = 0;
   uint32_t size = m_ClipRect.Width();
   if (size && m_DestBPP > (int)(INT_MAX / size)) {
     return FALSE;
   }
   size *= m_DestBPP;
-  m_pScanline = FX_Alloc(uint8_t, (size / 8 + 3) / 4 * 4);
-  if (m_pSource->m_pAlphaMask) {
-    m_pMaskScanline = FX_Alloc(uint8_t, (m_ClipRect.Width() + 3) / 4 * 4);
-  }
-  if (m_pSource->GetWidth() * m_pSource->GetHeight() <
-      MAX_PROGRESSIVE_STRETCH_PIXELS) {
-    ContinueQuickStretch(NULL);
+  m_pScanline.reset(FX_Alloc(uint8_t, (size / 8 + 3) / 4 * 4));
+  if (m_pSource->m_pAlphaMask)
+    m_pMaskScanline.reset(FX_Alloc(uint8_t, (m_ClipRect.Width() + 3) / 4 * 4));
+
+  if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
+    ContinueQuickStretch(nullptr);
     return FALSE;
   }
   return TRUE;
 }
+
 FX_BOOL CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
-  if (!m_pScanline) {
+  if (!m_pScanline)
     return FALSE;
-  }
-  int result_width = m_ClipRect.Width(), result_height = m_ClipRect.Height();
+
+  int result_width = m_ClipRect.Width();
+  int result_height = m_ClipRect.Height();
   int src_height = m_pSource->GetHeight();
   for (; m_LineIndex < result_height; m_LineIndex++) {
-    int dest_y, src_y;
+    int dest_y;
+    int src_y;
     if (m_bFlipY) {
       dest_y = result_height - m_LineIndex - 1;
       src_y = (m_DestHeight - (dest_y + m_ClipRect.top) - 1) * src_height /
@@ -904,23 +910,20 @@ FX_BOOL CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
       dest_y = m_LineIndex;
       src_y = (dest_y + m_ClipRect.top) * src_height / m_DestHeight;
     }
-    if (src_y >= src_height) {
-      src_y = src_height - 1;
-    }
-    if (src_y < 0) {
-      src_y = 0;
-    }
-    if (m_pSource->SkipToScanline(src_y, pPause)) {
+    src_y = std::max(std::min(src_y, src_height - 1), 0);
+
+    if (m_pSource->SkipToScanline(src_y, pPause))
       return TRUE;
-    }
-    m_pSource->DownSampleScanline(src_y, m_pScanline, m_DestBPP, m_DestWidth,
-                                  m_bFlipX, m_ClipRect.left, result_width);
+
+    m_pSource->DownSampleScanline(src_y, m_pScanline.get(), m_DestBPP,
+                                  m_DestWidth, m_bFlipX, m_ClipRect.left,
+                                  result_width);
     if (m_pMaskScanline) {
       m_pSource->m_pAlphaMask->DownSampleScanline(
-          src_y, m_pMaskScanline, 1, m_DestWidth, m_bFlipX, m_ClipRect.left,
-          result_width);
+          src_y, m_pMaskScanline.get(), 1, m_DestWidth, m_bFlipX,
+          m_ClipRect.left, result_width);
     }
-    m_pDest->ComposeScanline(dest_y, m_pScanline, m_pMaskScanline);
+    m_pDest->ComposeScanline(dest_y, m_pScanline.get(), m_pMaskScanline.get());
   }
   return FALSE;
 }
