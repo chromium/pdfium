@@ -638,11 +638,12 @@ FX_STRSIZE CFX_WideString::Find(FX_WCHAR ch, FX_STRSIZE nStart) const {
   if (!m_pData)
     return -1;
 
-  if (nStart >= m_pData->m_nDataLength)
+  if (nStart < 0 || nStart >= m_pData->m_nDataLength)
     return -1;
 
-  const FX_WCHAR* pStr = FXSYS_wcschr(m_pData->m_String + nStart, ch);
-  return pStr ? (int)(pStr - m_pData->m_String) : -1;
+  const FX_WCHAR* pStr =
+      wmemchr(m_pData->m_String + nStart, ch, m_pData->m_nDataLength - nStart);
+  return pStr ? pStr - m_pData->m_String : -1;
 }
 
 FX_STRSIZE CFX_WideString::Find(const CFX_WideStringC& pSub,
@@ -858,19 +859,13 @@ FX_STRSIZE CFX_WideString::WStringLength(const unsigned short* str) {
 }
 
 void CFX_WideString::TrimRight(const CFX_WideStringC& pTargets) {
-  if (!m_pData || pTargets.IsEmpty()) {
+  if (IsEmpty() || pTargets.IsEmpty())
     return;
-  }
+
   FX_STRSIZE pos = GetLength();
-  if (pos < 1) {
-    return;
-  }
-  while (pos) {
-    if (!FXSYS_wcschr(pTargets.c_str(), m_pData->m_String[pos - 1])) {
-      break;
-    }
+  while (pos && pTargets.Find(m_pData->m_String[pos - 1]) != -1)
     pos--;
-  }
+
   if (pos < m_pData->m_nDataLength) {
     ReallocBeforeWrite(m_pData->m_nDataLength);
     m_pData->m_String[pos] = 0;

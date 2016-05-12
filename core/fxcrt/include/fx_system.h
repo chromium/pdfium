@@ -123,7 +123,6 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
-#define FXSYS_strchr strchr
 #define FXSYS_strncmp strncmp
 #define FXSYS_strcmp strcmp
 #define FXSYS_strcpy strcpy
@@ -166,7 +165,6 @@ extern "C" {
 #endif
 
 #define FXSYS_wcscmp wcscmp
-#define FXSYS_wcschr wcschr
 #define FXSYS_wcsstr wcsstr
 #define FXSYS_wcsncmp wcsncmp
 #define FXSYS_vswprintf vswprintf
@@ -176,7 +174,6 @@ extern "C" {
 #define FXSYS_memcpy memcpy
 #define FXSYS_memmove memmove
 #define FXSYS_memset memset
-#define FXSYS_memchr memchr
 #define FXSYS_qsort qsort
 #define FXSYS_bsearch bsearch
 

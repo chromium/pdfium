@@ -831,6 +831,31 @@ TEST(fxcrt, WideStringCOperatorNE) {
   EXPECT_TRUE(c_string3 != wide_string_c);
 }
 
+TEST(fxcrt, WideStringCFind) {
+  CFX_WideStringC null_string;
+  EXPECT_EQ(-1, null_string.Find(L'a'));
+  EXPECT_EQ(-1, null_string.Find(0));
+
+  CFX_WideStringC empty_string(L"");
+  EXPECT_EQ(-1, empty_string.Find(L'a'));
+  EXPECT_EQ(-1, empty_string.Find(0));
+
+  CFX_WideStringC single_string(L"a");
+  EXPECT_EQ(0, single_string.Find(L'a'));
+  EXPECT_EQ(-1, single_string.Find(L'b'));
+  EXPECT_EQ(-1, single_string.Find(0));
+
+  CFX_WideStringC longer_string(L"abccc");
+  EXPECT_EQ(0, longer_string.Find(L'a'));
+  EXPECT_EQ(2, longer_string.Find(L'c'));
+  EXPECT_EQ(-1, longer_string.Find(0));
+
+  CFX_WideStringC hibyte_string(
+      L"ab\xff08"
+      L"def");
+  EXPECT_EQ(2, hibyte_string.Find(L'\xff08'));
+}
+
 TEST(fxcrt, WideStringFormatWidth) {
   {
     CFX_WideString str;

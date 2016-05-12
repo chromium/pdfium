@@ -2147,7 +2147,7 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
     return FALSE;
   }
   while (iSubString--) {
-    lpszFullString = FXSYS_wcschr(lpszFullString, chSep);
+    lpszFullString = wcschr(lpszFullString, chSep);
     if (!lpszFullString) {
       rString.clear();
       return FALSE;
@@ -2157,7 +2157,7 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
       lpszFullString++;
     }
   }
-  const FX_WCHAR* lpchEnd = FXSYS_wcschr(lpszFullString, chSep);
+  const FX_WCHAR* lpchEnd = wcschr(lpszFullString, chSep);
   int nLen = lpchEnd ? (int)(lpchEnd - lpszFullString)
                      : (int)FXSYS_wcslen(lpszFullString);
   ASSERT(nLen >= 0);

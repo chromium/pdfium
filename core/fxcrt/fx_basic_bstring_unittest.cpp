@@ -802,6 +802,31 @@ TEST(fxcrt, ByteStringCGetID) {
   EXPECT_EQ(0u, longer_string.GetID(-1000000));
 }
 
+TEST(fxcrt, ByteStringCFind) {
+  CFX_ByteStringC null_string;
+  EXPECT_EQ(-1, null_string.Find('a'));
+  EXPECT_EQ(-1, null_string.Find(0));
+
+  CFX_ByteStringC empty_string("");
+  EXPECT_EQ(-1, empty_string.Find('a'));
+  EXPECT_EQ(-1, empty_string.Find(0));
+
+  CFX_ByteStringC single_string("a");
+  EXPECT_EQ(0, single_string.Find('a'));
+  EXPECT_EQ(-1, single_string.Find('b'));
+  EXPECT_EQ(-1, single_string.Find(0));
+
+  CFX_ByteStringC longer_string("abccc");
+  EXPECT_EQ(0, longer_string.Find('a'));
+  EXPECT_EQ(2, longer_string.Find('c'));
+  EXPECT_EQ(-1, longer_string.Find(0));
+
+  CFX_ByteStringC hibyte_string(
+      "ab\x8c"
+      "def");
+  EXPECT_EQ(2, hibyte_string.Find('\x8c'));
+}
+
 TEST(fxcrt, ByteStringCMid) {
   CFX_ByteStringC null_string;
   EXPECT_EQ(null_string, null_string.Mid(0, 1));

@@ -673,11 +673,12 @@ FX_STRSIZE CFX_ByteString::Find(FX_CHAR ch, FX_STRSIZE nStart) const {
   if (!m_pData)
     return -1;
 
-  if (nStart >= m_pData->m_nDataLength)
+  if (nStart < 0 || nStart >= m_pData->m_nDataLength)
     return -1;
 
-  const FX_CHAR* pStr = FXSYS_strchr(m_pData->m_String + nStart, ch);
-  return pStr ? (int)(pStr - m_pData->m_String) : -1;
+  const FX_CHAR* pStr = static_cast<const FX_CHAR*>(
+      memchr(m_pData->m_String + nStart, ch, m_pData->m_nDataLength - nStart));
+  return pStr ? pStr - m_pData->m_String : -1;
 }
 
 FX_STRSIZE CFX_ByteString::ReverseFind(FX_CHAR ch) const {

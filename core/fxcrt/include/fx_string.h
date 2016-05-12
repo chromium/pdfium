@@ -100,6 +100,12 @@ class CFX_ByteStringC {
 
   uint8_t GetAt(FX_STRSIZE index) const { return m_Ptr[index]; }
 
+  FX_STRSIZE Find(FX_CHAR ch) const {
+    const uint8_t* found =
+        static_cast<const uint8_t*>(memchr(m_Ptr, ch, m_Length));
+    return found ? found - m_Ptr : -1;
+  }
+
   CFX_ByteStringC Mid(FX_STRSIZE index, FX_STRSIZE count = -1) const {
     if (index < 0) {
       index = 0;
@@ -415,6 +421,12 @@ class CFX_WideStringC {
       count = m_Length;
     }
     return CFX_WideStringC(m_Ptr, count);
+  }
+
+  FX_STRSIZE Find(FX_WCHAR ch) const {
+    const FX_WCHAR* found =
+        static_cast<const FX_WCHAR*>(wmemchr(m_Ptr, ch, m_Length));
+    return found ? found - m_Ptr : -1;
   }
 
   CFX_WideStringC Mid(FX_STRSIZE index, FX_STRSIZE count = -1) const {

@@ -95,7 +95,7 @@ void CFX_PrivateData::ClearAll() {
   m_DataList.RemoveAll();
 }
 void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
-  if (!FXSYS_memchr(strc.raw_str(), '.', strc.GetLength())) {
+  if (strc.Find('.') == -1) {
     bInteger = TRUE;
     int cc = 0, integer = 0;
     const FX_CHAR* str = strc.c_str();

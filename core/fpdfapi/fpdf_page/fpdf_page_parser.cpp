@@ -271,18 +271,18 @@ int CPDF_StreamContentParser::GetNextParamPos() {
 }
 
 void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
+  CFX_ByteStringC bsName(name, len);
   int index = GetNextParamPos();
   if (len > 32) {
     m_ParamBuf[index].m_Type = ContentParam::OBJECT;
-    m_ParamBuf[index].m_pObject =
-        new CPDF_Name(PDF_NameDecode(CFX_ByteStringC(name, len)));
+    m_ParamBuf[index].m_pObject = new CPDF_Name(PDF_NameDecode(bsName));
   } else {
     m_ParamBuf[index].m_Type = ContentParam::NAME;
-    if (!FXSYS_memchr(name, '#', len)) {
+    if (bsName.Find('#') == -1) {
       FXSYS_memcpy(m_ParamBuf[index].m_Name.m_Buffer, name, len);
       m_ParamBuf[index].m_Name.m_Len = len;
     } else {
-      CFX_ByteString str = PDF_NameDecode(CFX_ByteStringC(name, len));
+      CFX_ByteString str = PDF_NameDecode(bsName);
       FXSYS_memcpy(m_ParamBuf[index].m_Name.m_Buffer, str.c_str(),
                    str.GetLength());
       m_ParamBuf[index].m_Name.m_Len = str.GetLength();
