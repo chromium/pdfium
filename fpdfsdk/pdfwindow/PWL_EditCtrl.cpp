@@ -173,10 +173,8 @@ FX_BOOL CPWL_EditCtrl::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
       break;
   }
 
-  if (nChar == FWL_VKEY_Delete) {
-    if (m_pEdit->IsSelected())
-      nChar = FWL_VKEY_Unknown;
-  }
+  if (nChar == FWL_VKEY_Delete && m_pEdit->IsSelected())
+    nChar = FWL_VKEY_Unknown;
 
   switch (nChar) {
     case FWL_VKEY_Delete:

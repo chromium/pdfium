@@ -1434,10 +1434,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
 
   FX_FLOAT fFontSize = GetFontSize();
 
-  if (IsFloatZero(fFontSize))
-    pEdit->SetFontSize(12.0f);
-  else
-    pEdit->SetFontSize(fFontSize);
+  pEdit->SetFontSize(IsFloatZero(fFontSize) ? 12.0f : fFontSize);
 
   pEdit->Initialize();
 
@@ -1448,11 +1445,11 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   int32_t nCount = pField->CountOptions();
   int32_t nSelCount = pField->CountSelectedItems();
 
-  for (int32_t i = nTop; i < nCount; i++) {
-    FX_BOOL bSelected = FALSE;
-    for (int32_t j = 0; j < nSelCount; j++) {
+  for (int32_t i = nTop; i < nCount; ++i) {
+    bool bSelected = false;
+    for (int32_t j = 0; j < nSelCount; ++j) {
       if (pField->GetSelectedIndex(j) == i) {
-        bSelected = TRUE;
+        bSelected = true;
         break;
       }
     }
@@ -1609,7 +1606,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
                  << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(), FALSE)
                  << " 2 J 0 j\n";
 
-          for (int32_t i = 1; i < nMaxLen; i++) {
+          for (int32_t i = 1; i < nMaxLen; ++i) {
             sLines << rcClient.left +
                           ((rcClient.right - rcClient.left) / nMaxLen) * i
                    << " " << rcClient.bottom << " m\n"
@@ -1633,7 +1630,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
                  << "[" << dsBorder.nDash << " " << dsBorder.nGap << "] "
                  << dsBorder.nPhase << " d\n";
 
-          for (int32_t i = 1; i < nMaxLen; i++) {
+          for (int32_t i = 1; i < nMaxLen; ++i) {
             sLines << rcClient.left +
                           ((rcClient.right - rcClient.left) / nMaxLen) * i
                    << " " << rcClient.bottom << " m\n"

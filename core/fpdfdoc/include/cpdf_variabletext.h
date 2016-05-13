@@ -77,7 +77,7 @@ class CPDF_VariableText : private CPDF_EditContainer {
     virtual int32_t GetDefaultFontIndex();
 
    private:
-    IPVT_FontMap* m_pFontMap;
+    IPVT_FontMap* const m_pFontMap;
   };
 
   CPDF_VariableText();

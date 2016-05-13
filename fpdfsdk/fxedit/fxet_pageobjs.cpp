@@ -183,7 +183,6 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
       pIterator->SetAt(0);
 
     CPVT_WordPlace oldplace;
-
     while (pIterator->NextWord()) {
       CPVT_WordPlace place = pIterator->GetAt();
       if (pRange && place.WordCmp(pRange->EndPos) > 0)
@@ -192,11 +191,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
       if (wrSelect.IsExist()) {
         bSelect = place.WordCmp(wrSelect.BeginPos) > 0 &&
                   place.WordCmp(wrSelect.EndPos) <= 0;
-        if (bSelect) {
-          crCurFill = crWhite;
-        } else {
-          crCurFill = crTextFill;
-        }
+        crCurFill = bSelect ? crWhite : crTextFill;
       }
       if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
         crCurFill = crTextFill;

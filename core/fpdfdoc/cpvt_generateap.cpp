@@ -504,9 +504,13 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     const CFX_FloatPoint& ptOffset,
     FX_BOOL bContinuous,
     uint16_t SubWord) {
-  CFX_ByteTextBuf sEditStream, sLineStream, sWords;
-  CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
+  CFX_ByteTextBuf sEditStream;
+  CFX_ByteTextBuf sLineStream;
+  CFX_ByteTextBuf sWords;
+  CFX_FloatPoint ptOld(0.0f, 0.0f);
+  CFX_FloatPoint ptNew(0.0f, 0.0f);
   int32_t nCurFontIndex = -1;
+
   pIterator->SetAt(0);
 
   CPVT_WordPlace oldplace;

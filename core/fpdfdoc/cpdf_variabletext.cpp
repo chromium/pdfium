@@ -1112,9 +1112,8 @@ int32_t CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
                                         int32_t nWordStyle) {
   if (!m_pVTProvider)
     return 0;
-  if (SubWord > 0)
-    return m_pVTProvider->GetCharWidth(nFontIndex, SubWord, nWordStyle);
-  return m_pVTProvider->GetCharWidth(nFontIndex, Word, nWordStyle);
+  uint16_t word = SubWord ? SubWord : Word;
+  return m_pVTProvider->GetCharWidth(nFontIndex, word, nWordStyle);
 }
 
 int32_t CPDF_VariableText::GetTypeAscent(int32_t nFontIndex) {

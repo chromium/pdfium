@@ -63,12 +63,9 @@ FX_FLOAT CFX_ListItem::GetItemHeight() const {
 
 uint16_t CFX_ListItem::GetFirstChar() const {
   CPVT_Word word;
-
-  if (IFX_Edit_Iterator* pIterator = GetIterator()) {
-    pIterator->SetAt(1);
-    pIterator->GetWord(word);
-  }
-
+  IFX_Edit_Iterator* pIterator = GetIterator();
+  pIterator->SetAt(1);
+  pIterator->GetWord(word);
   return word.Word;
 }
 
