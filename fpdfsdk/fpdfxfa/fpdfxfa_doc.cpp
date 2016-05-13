@@ -354,7 +354,7 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(CXFA_FFWidget* hWidget,
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (!pEnv)
     return FALSE;
-  FS_RECTF pageViewRect;
+  FS_RECTF pageViewRect = {0.0f, 0.0f, 0.0f, 0.0f};
   pEnv->FFI_GetPageViewRect(pPage, pageViewRect);
 
   CFX_FloatRect rcAnchor;

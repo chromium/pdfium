@@ -12,3 +12,5 @@ Local Modifications:
 0000-bug-466.patch: Fixes an infinite loop in stroke_calc_arc().
 Various changes to use FX_ library functions.
 Possibly more?
+0001-gcc-warning.patch: Fix a GCC warning about both enumeral and
+non-enumeral type in conditional.

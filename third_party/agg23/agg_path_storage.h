@@ -38,9 +38,9 @@ public:
         }
         unsigned vertex(FX_FLOAT* x, FX_FLOAT* y)
         {
-            return (m_vertex_idx < m_path->total_vertices()) ?
-                   m_path->vertex(m_vertex_idx++, x, y) :
-                   path_cmd_stop;
+          return (m_vertex_idx < m_path->total_vertices())
+                     ? m_path->vertex(m_vertex_idx++, x, y)
+                     : static_cast<unsigned>(path_cmd_stop);
         }
     private:
         const path_storage* m_path;
