@@ -5,7 +5,7 @@
 
 # This gypi file contains the Skia library.
 # In component mode (shared_lib) it is folded into a single shared library with
-# the Chrome-specific enhancements but in all other cases it is a separate lib.
+# the PDFium-specific enhancements but in all other cases it is a separate lib.
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # variables and defines should go in skia_common.gypi so they can be seen

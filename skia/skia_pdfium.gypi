@@ -3,7 +3,7 @@
 # found in the LICENSE file.
 
 
-# This gypi file contains all the Chrome-specific enhancements to Skia.
+# This gypi file contains all the PDFium-specific enhancements to Skia.
 # In component mode (shared_lib) it is folded into a single shared library with
 # the Skia files but in all other cases it is a separate library.
 {
@@ -24,6 +24,7 @@
     ],
   },
   'sources': [
+    'config/SkUserConfig.h',
     'ext/google_logging.cc',
   ],
 }
