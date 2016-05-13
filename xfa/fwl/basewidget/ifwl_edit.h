@@ -120,7 +120,6 @@ class IFWL_Edit : public IFWL_Widget {
   FWL_Error Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen);
   FWL_Error DeleteSelections();
   FWL_Error DeleteRange(int32_t nStart, int32_t nCount = -1);
-  FWL_Error ReplaceSelections(const CFX_WideStringC& wsReplace);
   FWL_Error Replace(int32_t nStart,
                     int32_t nLen,
                     const CFX_WideStringC& wsReplace);

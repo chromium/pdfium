@@ -127,9 +127,6 @@ FWL_Error IFWL_Edit::DeleteSelections() {
 FWL_Error IFWL_Edit::DeleteRange(int32_t nStart, int32_t nCount) {
   return static_cast<CFWL_EditImp*>(GetImpl())->DeleteRange(nStart, nCount);
 }
-FWL_Error IFWL_Edit::ReplaceSelections(const CFX_WideStringC& wsReplace) {
-  return static_cast<CFWL_EditImp*>(GetImpl())->ReplaceSelections(wsReplace);
-}
 FWL_Error IFWL_Edit::Replace(int32_t nStart,
                              int32_t nLen,
                              const CFX_WideStringC& wsReplace) {
@@ -661,19 +658,6 @@ FWL_Error CFWL_EditImp::DeleteRange(int32_t nStart, int32_t nCount) {
     return FWL_Error::Indefinite;
 
   m_pEdtEngine->DeleteRange(nStart, nCount);
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error CFWL_EditImp::ReplaceSelections(const CFX_WideStringC& wsReplace) {
-  if (!m_pEdtEngine)
-    return FWL_Error::Indefinite;
-
-  int32_t iCount = m_pEdtEngine->CountSelRanges();
-  for (int i = 0; i < iCount; i++) {
-    int32_t nStart;
-    int32_t nCount = m_pEdtEngine->GetSelRange(i, nStart);
-    m_pEdtEngine->Replace(nStart, nCount, wsReplace);
-  }
   return FWL_Error::Succeeded;
 }
 

@@ -140,12 +140,6 @@ FWL_Error CFWL_Edit::DeleteRange(int32_t nStart, int32_t nCount) {
   return static_cast<IFWL_Edit*>(m_pIface)->DeleteRange(nStart, nCount);
 }
 
-FWL_Error CFWL_Edit::ReplaceSelections(const CFX_WideStringC& wsReplace) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_Edit*>(m_pIface)->ReplaceSelections(wsReplace);
-}
-
 FWL_Error CFWL_Edit::Replace(int32_t nStart,
                              int32_t nLen,
                              const CFX_WideStringC& wsReplace) {

@@ -63,7 +63,6 @@ class CFWL_EditImp : public CFWL_WidgetImp {
                            int32_t nLen);
   virtual FWL_Error DeleteSelections();
   virtual FWL_Error DeleteRange(int32_t nStart, int32_t nCount = -1);
-  virtual FWL_Error ReplaceSelections(const CFX_WideStringC& wsReplace);
   virtual FWL_Error Replace(int32_t nStart,
                             int32_t nLen,
                             const CFX_WideStringC& wsReplace);
