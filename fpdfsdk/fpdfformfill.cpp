@@ -342,11 +342,9 @@ static void FFLCommon(FPDF_FORMHANDLE hHandle,
 
   FX_RECT clip(start_x, start_y, start_x + size_x, start_y + size_y);
 
-#ifdef _SKIA_SUPPORT_
-  std::unique_ptr<CFX_SkiaDevice> pDevice(new CFX_SkiaDevice());
-  pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
-#else
   std::unique_ptr<CFX_FxgeDevice> pDevice(new CFX_FxgeDevice);
+#ifdef _SKIA_SUPPORT_
+  pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
 #endif
   pDevice->Attach((CFX_DIBitmap*)bitmap);
   pDevice->SaveState();

@@ -1139,55 +1139,55 @@ void CFX_SkiaDeviceDriver::CancelDIBits(void* pHandle) {
   delete (CFX_ImageRenderer*)pHandle;
 }
 
-CFX_SkiaDevice::CFX_SkiaDevice() {
+CFX_FxgeDevice::CFX_FxgeDevice() {
   m_bOwnedBitmap = FALSE;
 }
 
-SkPictureRecorder* CFX_SkiaDevice::CreateRecorder(int size_x, int size_y) {
+SkPictureRecorder* CFX_FxgeDevice::CreateRecorder(int size_x, int size_y) {
   CFX_SkiaDeviceDriver* skDriver = new CFX_SkiaDeviceDriver(size_x, size_y);
   SetDeviceDriver(skDriver);
   return skDriver->GetRecorder();
 }
 
-FX_BOOL CFX_SkiaDevice::Attach(CFX_DIBitmap* pBitmap,
-                               int dither_bits,
-                               FX_BOOL bRgbByteOrder,
-                               CFX_DIBitmap* pOriDevice,
-                               FX_BOOL bGroupKnockout) {
+bool CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
+                            int dither_bits,
+                            bool bRgbByteOrder,
+                            CFX_DIBitmap* pOriDevice,
+                            bool bGroupKnockout) {
   if (!pBitmap)
-    return FALSE;
+    return false;
   SetBitmap(pBitmap);
   SetDeviceDriver(new CFX_SkiaDeviceDriver(pBitmap, dither_bits, bRgbByteOrder,
                                            pOriDevice, bGroupKnockout));
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_SkiaDevice::AttachRecorder(SkPictureRecorder* recorder) {
+bool CFX_FxgeDevice::AttachRecorder(SkPictureRecorder* recorder) {
   if (!recorder)
-    return FALSE;
+    return false;
   SetDeviceDriver(new CFX_SkiaDeviceDriver(recorder));
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_SkiaDevice::Create(int width,
-                               int height,
-                               FXDIB_Format format,
-                               int dither_bits,
-                               CFX_DIBitmap* pOriDevice) {
+bool CFX_FxgeDevice::Create(int width,
+                            int height,
+                            FXDIB_Format format,
+                            int dither_bits,
+                            CFX_DIBitmap* pOriDevice) {
   m_bOwnedBitmap = TRUE;
   CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
   if (!pBitmap->Create(width, height, format)) {
     delete pBitmap;
-    return FALSE;
+    return false;
   }
   SetBitmap(pBitmap);
   CFX_SkiaDeviceDriver* pDriver =
       new CFX_SkiaDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
   SetDeviceDriver(pDriver);
-  return TRUE;
+  return true;
 }
 
-CFX_SkiaDevice::~CFX_SkiaDevice() {
+CFX_FxgeDevice::~CFX_FxgeDevice() {
   if (m_bOwnedBitmap && GetBitmap())
     delete GetBitmap();
 }

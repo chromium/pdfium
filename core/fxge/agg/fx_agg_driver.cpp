@@ -1794,6 +1794,7 @@ void CFX_AggDeviceDriver::CancelDIBits(void* pHandle) {
   delete (CFX_ImageRenderer*)pHandle;
 }
 
+#ifndef _SKIA_SUPPORT_
 CFX_FxgeDevice::CFX_FxgeDevice() {
   m_bOwnedBitmap = FALSE;
 }
@@ -1836,3 +1837,4 @@ CFX_FxgeDevice::~CFX_FxgeDevice() {
     delete GetBitmap();
   }
 }
+#endif

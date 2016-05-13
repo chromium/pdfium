@@ -434,33 +434,13 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
               int dither_bits = 0,
               CFX_DIBitmap* pOriDevice = NULL);
 
+#ifdef _SKIA_SUPPORT_
+  bool AttachRecorder(SkPictureRecorder* recorder);
+  SkPictureRecorder* CreateRecorder(int size_x, int size_y);
+#endif
+
  protected:
   bool m_bOwnedBitmap;
-};
-
-class CFX_SkiaDevice : public CFX_RenderDevice {
- public:
-  CFX_SkiaDevice();
-  ~CFX_SkiaDevice() override;
-
-  FX_BOOL Attach(CFX_DIBitmap* pBitmap,
-                 int dither_bits = 0,
-                 FX_BOOL bRgbByteOrder = FALSE,
-                 CFX_DIBitmap* pOriDevice = NULL,
-                 FX_BOOL bGroupKnockout = FALSE);
-
-  FX_BOOL AttachRecorder(SkPictureRecorder* recorder);
-
-  FX_BOOL Create(int width,
-                 int height,
-                 FXDIB_Format format,
-                 int dither_bits = 0,
-                 CFX_DIBitmap* pOriDevice = NULL);
-
-  SkPictureRecorder* CreateRecorder(int size_x, int size_y);
-
- protected:
-  FX_BOOL m_bOwnedBitmap;
 };
 
 class IFX_RenderDeviceDriver {
