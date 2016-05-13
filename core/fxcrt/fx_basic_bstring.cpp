@@ -13,6 +13,7 @@
 #include "third_party/base/numerics/safe_math.h"
 
 template class CFX_StringDataTemplate<FX_CHAR>;
+template class CFX_StringCTemplate<FX_CHAR>;
 
 namespace {
 
@@ -930,26 +931,6 @@ void CFX_ByteString::TrimLeft() {
 
 uint32_t CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
   return AsStringC().GetID(start_pos);
-}
-uint32_t CFX_ByteStringC::GetID(FX_STRSIZE start_pos) const {
-  if (m_Length == 0) {
-    return 0;
-  }
-  if (start_pos < 0 || start_pos >= m_Length) {
-    return 0;
-  }
-  uint32_t strid = 0;
-  if (start_pos + 4 > m_Length) {
-    for (FX_STRSIZE i = 0; i < m_Length - start_pos; i++) {
-      strid = strid * 256 + m_Ptr[start_pos + i];
-    }
-    strid = strid << ((4 - m_Length + start_pos) * 8);
-  } else {
-    for (int i = 0; i < 4; i++) {
-      strid = strid * 256 + m_Ptr[start_pos + i];
-    }
-  }
-  return strid;
 }
 FX_STRSIZE FX_ftoa(FX_FLOAT d, FX_CHAR* buf) {
   buf[0] = '0';

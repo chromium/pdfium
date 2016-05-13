@@ -10,6 +10,7 @@
 #include <stdint.h>  // For intptr_t.
 #include <algorithm>
 
+#include "core/fxcrt/cfx_string_c_template.h"
 #include "core/fxcrt/cfx_string_data_template.h"
 #include "core/fxcrt/include/cfx_retain_ptr.h"
 #include "core/fxcrt/include/fx_memory.h"
@@ -18,134 +19,20 @@
 class CFX_ByteString;
 class CFX_WideString;
 
-// An immutable string with caller-provided storage which must outlive the
-// string itself. These are not necessarily nul-terminated, so that substring
-// extraction (via the Mid() method) is copy-free.
-class CFX_ByteStringC {
- public:
-  typedef FX_CHAR value_type;
+using CFX_ByteStringC = CFX_StringCTemplate<FX_CHAR>;
+using CFX_WideStringC = CFX_StringCTemplate<FX_WCHAR>;
 
-  CFX_ByteStringC() {
-    m_Ptr = NULL;
-    m_Length = 0;
-  }
-
-  CFX_ByteStringC(const uint8_t* ptr, FX_STRSIZE size) {
-    m_Ptr = ptr;
-    m_Length = size;
-  }
-
-  // Deliberately implicit to avoid calling on every string literal.
-  CFX_ByteStringC(const FX_CHAR* ptr) {
-    m_Ptr = (const uint8_t*)ptr;
-    m_Length = ptr ? FXSYS_strlen(ptr) : 0;
-  }
-
-  // Deliberately implicit to avoid calling on every string literal.
-  // |ch| must be an lvalue that outlives the the CFX_ByteStringC.
-  CFX_ByteStringC(FX_CHAR& ch) {
-    m_Ptr = (const uint8_t*)&ch;
-    m_Length = 1;
-  }
-
-  CFX_ByteStringC(const FX_CHAR* ptr, FX_STRSIZE len) {
-    m_Ptr = (const uint8_t*)ptr;
-    m_Length = (len == -1) ? FXSYS_strlen(ptr) : len;
-  }
-
-  CFX_ByteStringC(const CFX_ByteStringC& src) {
-    m_Ptr = src.m_Ptr;
-    m_Length = src.m_Length;
-  }
-
-  CFX_ByteStringC& operator=(const FX_CHAR* src) {
-    m_Ptr = (const uint8_t*)src;
-    m_Length = m_Ptr ? FXSYS_strlen(src) : 0;
-    return *this;
-  }
-
-  CFX_ByteStringC& operator=(const CFX_ByteStringC& src) {
-    m_Ptr = src.m_Ptr;
-    m_Length = src.m_Length;
-    return *this;
-  }
-
-  bool operator==(const char* ptr) const {
-    return FXSYS_strlen(ptr) == m_Length &&
-           FXSYS_memcmp(ptr, m_Ptr, m_Length) == 0;
-  }
-  bool operator==(const CFX_ByteStringC& other) const {
-    return other.m_Length == m_Length &&
-           FXSYS_memcmp(other.m_Ptr, m_Ptr, m_Length) == 0;
-  }
-  bool operator!=(const char* ptr) const { return !(*this == ptr); }
-  bool operator!=(const CFX_ByteStringC& other) const {
-    return !(*this == other);
-  }
-
-  uint32_t GetID(FX_STRSIZE start_pos = 0) const;
-
-  const uint8_t* raw_str() const { return m_Ptr; }
-  const FX_CHAR* c_str() const {
-    return reinterpret_cast<const FX_CHAR*>(m_Ptr);
-  }
-
-  FX_STRSIZE GetLength() const { return m_Length; }
-  bool IsEmpty() const { return m_Length == 0; }
-
-  uint8_t GetAt(FX_STRSIZE index) const { return m_Ptr[index]; }
-  FX_CHAR CharAt(FX_STRSIZE index) const {
-    return static_cast<FX_CHAR>(m_Ptr[index]);
-  }
-
-  FX_STRSIZE Find(FX_CHAR ch) const {
-    const uint8_t* found =
-        static_cast<const uint8_t*>(memchr(m_Ptr, ch, m_Length));
-    return found ? found - m_Ptr : -1;
-  }
-
-  CFX_ByteStringC Mid(FX_STRSIZE index, FX_STRSIZE count = -1) const {
-    if (index < 0) {
-      index = 0;
-    }
-    if (index > m_Length) {
-      return CFX_ByteStringC();
-    }
-    if (count < 0 || count > m_Length - index) {
-      count = m_Length - index;
-    }
-    return CFX_ByteStringC(m_Ptr + index, count);
-  }
-
-  const uint8_t& operator[](size_t index) const { return m_Ptr[index]; }
-
-  bool operator<(const CFX_ByteStringC& that) const {
-    int result = memcmp(m_Ptr, that.m_Ptr, std::min(m_Length, that.m_Length));
-    return result < 0 || (result == 0 && m_Length < that.m_Length);
-  }
-
- protected:
-  const uint8_t* m_Ptr;
-  FX_STRSIZE m_Length;
-
- private:
-  void* operator new(size_t) throw() { return NULL; }
-};
-inline bool operator==(const char* lhs, const CFX_ByteStringC& rhs) {
-  return rhs == lhs;
-}
-inline bool operator!=(const char* lhs, const CFX_ByteStringC& rhs) {
-  return rhs != lhs;
-}
 #define FXBSTR_ID(c1, c2, c3, c4)                                      \
   (((uint32_t)c1 << 24) | ((uint32_t)c2 << 16) | ((uint32_t)c3 << 8) | \
    ((uint32_t)c4))
+
+#define FX_WSTRC(wstr) CFX_WideStringC(wstr, FX_ArraySize(wstr) - 1)
 
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
 class CFX_ByteString {
  public:
-  typedef FX_CHAR value_type;
+  using CharType = FX_CHAR;
 
   CFX_ByteString() {}
   CFX_ByteString(const CFX_ByteString& other) : m_pData(other.m_pData) {}
@@ -346,133 +233,11 @@ inline CFX_ByteString operator+(const CFX_ByteStringC& str1,
   return CFX_ByteString(str1, str2.AsStringC());
 }
 
-class CFX_WideStringC {
- public:
-  typedef FX_WCHAR value_type;
-
-  CFX_WideStringC() {
-    m_Ptr = NULL;
-    m_Length = 0;
-  }
-
-  // Deliberately implicit to avoid calling on every string literal.
-  CFX_WideStringC(const FX_WCHAR* ptr) {
-    m_Ptr = ptr;
-    m_Length = ptr ? FXSYS_wcslen(ptr) : 0;
-  }
-
-  // Deliberately implicit to avoid calling on every string literal.
-  // |ch| must be an lvalue that outlives the the CFX_WideStringC.
-  CFX_WideStringC(FX_WCHAR& ch) {
-    m_Ptr = &ch;
-    m_Length = 1;
-  }
-
-  CFX_WideStringC(const FX_WCHAR* ptr, FX_STRSIZE len) {
-    m_Ptr = ptr;
-    m_Length = (len == -1) ? FXSYS_wcslen(ptr) : len;
-  }
-
-  CFX_WideStringC(const CFX_WideStringC& src) {
-    m_Ptr = src.m_Ptr;
-    m_Length = src.m_Length;
-  }
-
-  CFX_WideStringC& operator=(const FX_WCHAR* src) {
-    m_Ptr = src;
-    m_Length = FXSYS_wcslen(src);
-    return *this;
-  }
-
-  CFX_WideStringC& operator=(const CFX_WideStringC& src) {
-    m_Ptr = src.m_Ptr;
-    m_Length = src.m_Length;
-    return *this;
-  }
-
-  bool operator==(const wchar_t* ptr) const {
-    return FXSYS_wcslen(ptr) == m_Length && wmemcmp(ptr, m_Ptr, m_Length) == 0;
-  }
-  bool operator==(const CFX_WideStringC& str) const {
-    return str.m_Length == m_Length && wmemcmp(str.m_Ptr, m_Ptr, m_Length) == 0;
-  }
-  bool operator!=(const wchar_t* ptr) const { return !(*this == ptr); }
-  bool operator!=(const CFX_WideStringC& str) const { return !(*this == str); }
-
-  const FX_WCHAR* c_str() const { return m_Ptr; }
-
-  FX_STRSIZE GetLength() const { return m_Length; }
-  bool IsEmpty() const { return m_Length == 0; }
-
-  FX_WCHAR GetAt(FX_STRSIZE index) const { return m_Ptr[index]; }
-
-  CFX_WideStringC Left(FX_STRSIZE count) const {
-    if (count < 1) {
-      return CFX_WideStringC();
-    }
-    if (count > m_Length) {
-      count = m_Length;
-    }
-    return CFX_WideStringC(m_Ptr, count);
-  }
-
-  FX_STRSIZE Find(FX_WCHAR ch) const {
-    const FX_WCHAR* found =
-        static_cast<const FX_WCHAR*>(wmemchr(m_Ptr, ch, m_Length));
-    return found ? found - m_Ptr : -1;
-  }
-
-  CFX_WideStringC Mid(FX_STRSIZE index, FX_STRSIZE count = -1) const {
-    if (index < 0) {
-      index = 0;
-    }
-    if (index > m_Length) {
-      return CFX_WideStringC();
-    }
-    if (count < 0 || count > m_Length - index) {
-      count = m_Length - index;
-    }
-    return CFX_WideStringC(m_Ptr + index, count);
-  }
-
-  CFX_WideStringC Right(FX_STRSIZE count) const {
-    if (count < 1) {
-      return CFX_WideStringC();
-    }
-    if (count > m_Length) {
-      count = m_Length;
-    }
-    return CFX_WideStringC(m_Ptr + m_Length - count, count);
-  }
-
-  const FX_WCHAR& operator[](size_t index) const { return m_Ptr[index]; }
-
-  bool operator<(const CFX_WideStringC& that) const {
-    int result = wmemcmp(m_Ptr, that.m_Ptr, std::min(m_Length, that.m_Length));
-    return result < 0 || (result == 0 && m_Length < that.m_Length);
-  }
-
- protected:
-  const FX_WCHAR* m_Ptr;
-  FX_STRSIZE m_Length;
-
- private:
-  void* operator new(size_t) throw() { return NULL; }
-};
-
-inline bool operator==(const wchar_t* lhs, const CFX_WideStringC& rhs) {
-  return rhs == lhs;
-}
-inline bool operator!=(const wchar_t* lhs, const CFX_WideStringC& rhs) {
-  return rhs != lhs;
-}
-#define FX_WSTRC(wstr) CFX_WideStringC(wstr, FX_ArraySize(wstr) - 1)
-
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
 class CFX_WideString {
  public:
-  typedef FX_WCHAR value_type;
+  using CharType = FX_WCHAR;
 
   CFX_WideString() {}
   CFX_WideString(const CFX_WideString& other) : m_pData(other.m_pData) {}

@@ -17,7 +17,7 @@ std::ostream& output_string(std::ostream& out, const T& str) {
     unsigned int c = str.GetAt(i);
     if (c >= 0x20 && c < 0x7F) {
       out << static_cast<char>(c);
-    } else if (sizeof(typename T::value_type) == 1) {
+    } else if (sizeof(typename T::CharType) == 1) {
       out << "\\x" << std::setw(2) << c << std::setw(0);
     } else if (c < 0x10000) {
       out << "\\u" << std::setw(4) << c << std::setw(0);

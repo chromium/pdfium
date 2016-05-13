@@ -14,6 +14,7 @@
 #include "third_party/base/numerics/safe_math.h"
 
 template class CFX_StringDataTemplate<FX_WCHAR>;
+template class CFX_StringCTemplate<FX_WCHAR>;
 
 namespace {
 

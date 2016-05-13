@@ -158,6 +158,31 @@ FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode);
 #define FXSYS_strlen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(strlen(ptr))
 #define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
 
+// Overloaded functions for C++ templates
+inline FX_STRSIZE FXSYS_len(const FX_CHAR* ptr) {
+  return FXSYS_strlen(ptr);
+}
+
+inline FX_STRSIZE FXSYS_len(const FX_WCHAR* ptr) {
+  return FXSYS_wcslen(ptr);
+}
+
+inline int FXSYS_cmp(const FX_CHAR* ptr1, const FX_CHAR* ptr2, size_t len) {
+  return memcmp(ptr1, ptr2, len);
+}
+
+inline int FXSYS_cmp(const FX_WCHAR* ptr1, const FX_WCHAR* ptr2, size_t len) {
+  return wmemcmp(ptr1, ptr2, len);
+}
+
+inline const FX_CHAR* FXSYS_chr(const FX_CHAR* ptr, FX_CHAR ch, size_t len) {
+  return reinterpret_cast<const FX_CHAR*>(memchr(ptr, ch, len));
+}
+
+inline const FX_WCHAR* FXSYS_chr(const FX_WCHAR* ptr, FX_WCHAR ch, size_t len) {
+  return wmemchr(ptr, ch, len);
+}
+
 extern "C" {
 #else
 #define FXSYS_strlen(ptr) ((FX_STRSIZE)strlen(ptr))
