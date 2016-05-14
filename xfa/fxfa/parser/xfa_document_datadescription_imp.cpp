@@ -69,7 +69,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     CXFA_Document* pDocument,
     CXFA_Node* pDataParent,
     XFA_ELEMENT eNodeType,
-    const CFX_WideStringC& wsName) {
+    const CFX_WideString& wsName) {
   if (!pDataParent) {
     return NULL;
   }
@@ -98,7 +98,8 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
           continue;
         }
       }
-      CXFA_Node* pDDNode = pDDGroupNode->GetFirstChildByName(wsName);
+      CXFA_Node* pDDNode =
+          pDDGroupNode->GetFirstChildByName(wsName.AsStringC());
       if (!pDDNode) {
         continue;
       }

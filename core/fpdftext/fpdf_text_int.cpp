@@ -537,7 +537,8 @@ CFX_WideString CPDF_TextPage::GetPageText(int start, int nCount) const {
 
   if (nCount == -1) {
     nCount = pdfium::CollectionSize<int>(m_CharList) - start;
-    return m_TextBuf.AsStringC().Mid(start, m_TextBuf.AsStringC().GetLength());
+    return CFX_WideString(
+        m_TextBuf.AsStringC().Mid(start, m_TextBuf.AsStringC().GetLength()));
   }
   if (nCount <= 0 || m_CharList.empty()) {
     return L"";
@@ -574,7 +575,7 @@ CFX_WideString CPDF_TextPage::GetPageText(int start, int nCount) const {
   if (nCount <= 0) {
     return L"";
   }
-  return m_TextBuf.AsStringC().Mid(startindex, nCount);
+  return CFX_WideString(m_TextBuf.AsStringC().Mid(startindex, nCount));
 }
 
 int CPDF_TextPage::CountRects(int start, int nCount) {
@@ -890,7 +891,7 @@ void CPDF_TextPage::CloseTempLine() {
   if (m_TempCharList.empty())
     return;
 
-  CFX_WideString str = m_TempTextBuf.AsStringC();
+  CFX_WideString str = m_TempTextBuf.MakeString();
   FX_BOOL bPrevSpace = FALSE;
   for (int i = 0; i < str.GetLength(); i++) {
     if (str.GetAt(i) != ' ') {
@@ -1299,7 +1300,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     charinfo.m_OriginY = 0;
     pTextObj->GetItemInfo(i, &item);
     if (item.m_CharCode == (uint32_t)-1) {
-      CFX_WideString str = m_TempTextBuf.AsStringC();
+      CFX_WideString str = m_TempTextBuf.MakeString();
       if (str.IsEmpty()) {
         str = m_TextBuf.AsStringC();
       }
@@ -1435,7 +1436,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
           m_TempCharList.push_back(charinfo);
         }
       } else if (i == 0) {
-        CFX_WideString str = m_TempTextBuf.AsStringC();
+        CFX_WideString str = m_TempTextBuf.MakeString();
         if (!str.IsEmpty() &&
             str.GetAt(str.GetLength() - 1) == TEXT_BLANK_CHAR) {
           m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
@@ -1478,7 +1479,7 @@ int32_t CPDF_TextPage::GetTextObjectWritingMode(
   return m_TextlineDir;
 }
 FX_BOOL CPDF_TextPage::IsHyphen(FX_WCHAR curChar) {
-  CFX_WideString strCurText = m_TempTextBuf.AsStringC();
+  CFX_WideString strCurText = m_TempTextBuf.MakeString();
   if (strCurText.GetLength() == 0) {
     strCurText = m_TextBuf.AsStringC();
   }

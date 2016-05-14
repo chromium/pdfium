@@ -1713,7 +1713,7 @@ void XFA_LocalFontNameToEnglishName(const CFX_WideStringC& wsLocalName,
 }
 const XFA_FONTINFO* XFA_GetFontINFOByFontName(
     const CFX_WideStringC& wsFontName) {
-  CFX_WideString wsFontNameTemp = wsFontName;
+  CFX_WideString wsFontNameTemp(wsFontName);
   wsFontNameTemp.Remove(L' ');
   uint32_t dwCurFontNameHash =
       FX_HashCode_GetW(wsFontNameTemp.AsStringC(), true);
@@ -1745,7 +1745,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
                                    const CFX_WideStringC& wsFontFamily,
                                    uint32_t dwFontStyles,
                                    uint16_t wCodePage) {
-  CFX_WideString wsFontName = wsFontFamily;
+  CFX_WideString wsFontName(wsFontFamily);
   IFX_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   IFX_Font* pFont =
       pFDEFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
@@ -1882,7 +1882,8 @@ IFX_Font* CXFA_PDFFontMgr::GetFont(const CFX_WideStringC& wsFontFamily,
   auto it = m_FontMap.find(strKey);
   if (it != m_FontMap.end())
     return it->second;
-  CFX_ByteString bsPsName = CFX_ByteString::FromUnicode(wsFontFamily);
+  CFX_ByteString bsPsName =
+      CFX_ByteString::FromUnicode(CFX_WideString(wsFontFamily));
   FX_BOOL bBold = (dwFontStyles & FX_FONTSTYLE_Bold) == FX_FONTSTYLE_Bold;
   FX_BOOL bItalic = (dwFontStyles & FX_FONTSTYLE_Italic) == FX_FONTSTYLE_Italic;
   CFX_ByteString strFontName = PsNameToFontName(bsPsName, bBold, bItalic);

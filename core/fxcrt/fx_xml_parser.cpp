@@ -457,7 +457,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
             iState = 10;
           } else {
             content << decoder.GetResult();
-            CFX_WideString dataStr = content.AsStringC();
+            CFX_WideString dataStr = content.MakeString();
             if (!bCDATA && !m_bSaveSpaceChars) {
               dataStr.TrimRight(L" \t\r\n");
             }
@@ -501,7 +501,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
     }
   } while (ReadNextBlock());
   content << decoder.GetResult();
-  CFX_WideString dataStr = content.AsStringC();
+  CFX_WideString dataStr = content.MakeString();
   if (!m_bSaveSpaceChars) {
     dataStr.TrimRight(L" \t\r\n");
   }
@@ -784,7 +784,7 @@ void CXML_AttrMap::SetAt(const CFX_ByteStringC& space,
     }
   }
 
-  m_pMap->push_back({space, name, value});
+  m_pMap->push_back({space, name, CFX_WideString(value)});
 }
 
 int CXML_AttrMap::GetSize() const {

@@ -163,7 +163,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Title(
     CFX_ByteString bsValue;
     FXJSE_Value_ToUTF8String(hValue, bsValue);
     pNotify->GetDocProvider()->SetTitle(
-        hDoc, CFX_WideString::FromUTF8(bsValue.AsStringC()).AsStringC());
+        hDoc, CFX_WideString::FromUTF8(bsValue.AsStringC()));
     return;
   }
   CFX_WideString wsTitle;

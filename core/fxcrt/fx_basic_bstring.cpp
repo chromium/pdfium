@@ -820,7 +820,7 @@ CFX_WideString CFX_ByteString::UTF8Decode() const {
   for (FX_STRSIZE i = 0; i < GetLength(); i++) {
     decoder.Input((uint8_t)m_pData->m_String[i]);
   }
-  return decoder.GetResult();
+  return CFX_WideString(decoder.GetResult());
 }
 
 // static

@@ -91,7 +91,6 @@ IFX_Locale* CFX_LocaleMgr::GetLocale(uint16_t lcid) {
   }
   return pLocale;
 }
-IFX_Locale* CFX_LocaleMgr::GetLocaleByName(
-    const CFX_WideStringC& wsLocaleName) {
-  return NULL;
+IFX_Locale* CFX_LocaleMgr::GetLocaleByName(const CFX_WideString& wsLocaleName) {
+  return nullptr;
 }

@@ -13,6 +13,6 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     CXFA_Document* pDocument,
     CXFA_Node* pDataParent,
     XFA_ELEMENT eNodeType,
-    const CFX_WideStringC& wsName);
+    const CFX_WideString& wsName);
 
 #endif  // XFA_FXFA_PARSER_XFA_DOCUMENT_DATADESCRIPTION_IMP_H_

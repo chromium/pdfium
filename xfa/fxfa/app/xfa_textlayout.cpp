@@ -283,7 +283,7 @@ void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
     CFX_WideString wsValue;
     pXMLElement->GetString(FX_WSTRC(L"style").c_str(), wsValue);
     if (!wsValue.IsEmpty()) {
-      tagProvider.SetAttribute(FX_WSTRC(L"style"), wsValue);
+      tagProvider.SetAttribute(L"style", wsValue);
     }
   } else if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
     tagProvider.m_bTagAviliable = TRUE;

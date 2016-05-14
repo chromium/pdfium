@@ -140,7 +140,7 @@ CXFA_Node* CXFA_Node::Clone(FX_BOOL bRecursive) {
       CFDE_XMLElement* pCloneXMLElement = new CFDE_XMLElement(wsName);
       CFX_WideStringC wsValue = GetCData(XFA_ATTRIBUTE_Value);
       if (!wsValue.IsEmpty()) {
-        pCloneXMLElement->SetTextData(wsValue);
+        pCloneXMLElement->SetTextData(CFX_WideString(wsValue));
       }
       pCloneXML = pCloneXMLElement;
       pCloneXMLElement = NULL;
@@ -981,7 +981,8 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
   CXFA_Node* pFakeRoot = Clone(FALSE);
   CFX_WideStringC wsContentType = GetCData(XFA_ATTRIBUTE_ContentType);
   if (!wsContentType.IsEmpty()) {
-    pFakeRoot->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
+    pFakeRoot->SetCData(XFA_ATTRIBUTE_ContentType,
+                        CFX_WideString(wsContentType));
   }
   CFDE_XMLNode* pFakeXMLRoot = pFakeRoot->GetXMLMappingNode();
   if (!pFakeXMLRoot) {
@@ -991,7 +992,7 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
   if (!pFakeXMLRoot) {
     CFX_WideStringC wsClassName;
     GetClassName(wsClassName);
-    pFakeXMLRoot = new CFDE_XMLElement(wsClassName);
+    pFakeXMLRoot = new CFDE_XMLElement(CFX_WideString(wsClassName));
   }
   if (bIgnoreRoot) {
     CFDE_XMLNode* pXMLChild = pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
@@ -1724,7 +1725,7 @@ void CXFA_Node::Script_Boolean_Value(FXJSE_HVALUE hValue,
       FXJSE_Value_ToUTF8String(hValue, newValue);
     }
     int32_t iValue = FXSYS_atoi(newValue.c_str());
-    CFX_WideString wsNewValue = (iValue == 0) ? FX_WSTRC(L"0") : FX_WSTRC(L"1");
+    CFX_WideString wsNewValue(iValue == 0 ? L"0" : L"1");
     CFX_WideString wsFormatValue(wsNewValue);
     CXFA_WidgetData* pContainerWidgetData = GetContainerWidgetData();
     if (pContainerWidgetData) {
@@ -3263,9 +3264,9 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
   }
   if (iDesired < iCount) {
     CFX_WideStringC wsInstManagerName = GetCData(XFA_ATTRIBUTE_Name);
-    CFX_WideString wsInstanceName = wsInstManagerName.IsEmpty()
-                                        ? wsInstManagerName
-                                        : wsInstManagerName.Mid(1);
+    CFX_WideString wsInstanceName =
+        CFX_WideString(wsInstManagerName.IsEmpty() ? wsInstManagerName
+                                                   : wsInstManagerName.Mid(1));
     uint32_t dInstanceNameHash =
         FX_HashCode_GetW(wsInstanceName.AsStringC(), false);
     CXFA_Node* pPrevSibling =
@@ -3737,7 +3738,7 @@ FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
                      bNotify);
     } break;
     case XFA_ATTRIBUTETYPE_Cdata:
-      return SetCData(pAttr->eName, wsValue, bNotify);
+      return SetCData(pAttr->eName, CFX_WideString(wsValue), bNotify);
     case XFA_ATTRIBUTETYPE_Boolean:
       return SetBoolean(pAttr->eName, wsValue != FX_WSTRC(L"0"), bNotify);
     case XFA_ATTRIBUTETYPE_Integer:
@@ -3938,7 +3939,8 @@ FX_BOOL CXFA_Node::SetCData(XFA_ATTRIBUTE eAttr,
       case FDE_XMLNODE_Element:
         if (IsAttributeInXML()) {
           static_cast<CFDE_XMLElement*>(m_pXMLNode)
-              ->SetString(GetCData(XFA_ATTRIBUTE_QualifiedName), wsValue);
+              ->SetString(CFX_WideString(GetCData(XFA_ATTRIBUTE_QualifiedName)),
+                          wsValue);
         } else {
           FX_BOOL bDeleteChildren = TRUE;
           if (GetPacketID() == XFA_XDPPACKET_Datasets) {
@@ -3995,7 +3997,8 @@ FX_BOOL CXFA_Node::SetAttributeValue(const CFX_WideString& wsValue,
       case FDE_XMLNODE_Element:
         if (IsAttributeInXML()) {
           static_cast<CFDE_XMLElement*>(m_pXMLNode)
-              ->SetString(GetCData(XFA_ATTRIBUTE_QualifiedName), wsXMLValue);
+              ->SetString(CFX_WideString(GetCData(XFA_ATTRIBUTE_QualifiedName)),
+                          wsXMLValue);
         } else {
           FX_BOOL bDeleteChildren = TRUE;
           if (GetPacketID() == XFA_XDPPACKET_Datasets) {
@@ -4114,8 +4117,7 @@ FX_BOOL CXFA_Node::SetValue(XFA_ATTRIBUTE eAttr,
           break;
         case XFA_ATTRIBUTETYPE_Boolean:
           static_cast<CFDE_XMLElement*>(m_pXMLNode)
-              ->SetString(pInfo->pName,
-                          pValue ? FX_WSTRC(L"1") : FX_WSTRC(L"0"));
+              ->SetString(pInfo->pName, pValue ? L"1" : L"0");
           break;
         case XFA_ATTRIBUTETYPE_Integer:
           static_cast<CFDE_XMLElement*>(m_pXMLNode)
@@ -4172,7 +4174,7 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
         CXFA_Node* pValue = GetProperty(0, XFA_ELEMENT_Value);
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
         ASSERT(pChildValue);
-        pChildValue->SetCData(XFA_ATTRIBUTE_ContentType, FX_WSTRC(L"text/xml"));
+        pChildValue->SetCData(XFA_ATTRIBUTE_ContentType, L"text/xml");
         pChildValue->SetScriptContent(wsContent, wsContent, bNotify,
                                       bScriptModify, FALSE);
         CXFA_Node* pBind = GetBindData();
@@ -4212,7 +4214,7 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
               while (iAddNodes-- > 0) {
                 pValueNodes =
                     pBind->CreateSamePacketNode(XFA_ELEMENT_DataValue);
-                pValueNodes->SetCData(XFA_ATTRIBUTE_Name, FX_WSTRC(L"value"));
+                pValueNodes->SetCData(XFA_ATTRIBUTE_Name, L"value");
                 pValueNodes->CreateXMLMappingNode();
                 pBind->InsertChild(pValueNodes);
               }
@@ -4699,7 +4701,7 @@ FX_BOOL CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
       CFDE_XMLElement* pNewXMLElement = new CFDE_XMLElement(wsName);
       CFX_WideStringC wsValue = GetCData(XFA_ATTRIBUTE_Value);
       if (!wsValue.IsEmpty()) {
-        pNewXMLElement->SetTextData(wsValue);
+        pNewXMLElement->SetTextData(CFX_WideString(wsValue));
       }
       pNode->m_pXMLNode = pNewXMLElement;
       pNode->SetEnum(XFA_ATTRIBUTE_Contains, XFA_ATTRIBUTEENUM_Unknown);
@@ -4936,7 +4938,7 @@ void CXFA_Node::UpdateNameHash() {
 }
 CFDE_XMLNode* CXFA_Node::CreateXMLMappingNode() {
   if (!m_pXMLNode) {
-    CFX_WideStringC wsTag = GetCData(XFA_ATTRIBUTE_Name);
+    CFX_WideString wsTag(GetCData(XFA_ATTRIBUTE_Name));
     m_pXMLNode = new CFDE_XMLElement(wsTag);
     SetFlag(XFA_NODEFLAG_OwnXMLNode, false);
   }

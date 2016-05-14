@@ -90,7 +90,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   virtual FX_BOOL IsCalculationsEnabled(CXFA_FFDoc* hDoc);
   virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled);
   virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle);
-  virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideStringC& wsTitle);
+  virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle);
   virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideStringC& wsFilePath,
                           FX_BOOL bXDP = TRUE);

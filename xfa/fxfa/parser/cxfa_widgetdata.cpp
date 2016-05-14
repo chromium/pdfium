@@ -888,19 +888,19 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
   if (iCount < 1) {
     CXFA_Node* pItems = m_pNode->CreateSamePacketNode(XFA_ELEMENT_Items);
     m_pNode->InsertChild(-1, pItems);
-    InsertListTextItem(pItems, wsLabel.AsStringC(), nIndex);
+    InsertListTextItem(pItems, wsLabel, nIndex);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_ELEMENT_Items);
     m_pNode->InsertChild(-1, pSaveItems);
     pSaveItems->SetBoolean(XFA_ATTRIBUTE_Save, TRUE);
-    InsertListTextItem(pSaveItems, wsNewValue.AsStringC(), nIndex);
+    InsertListTextItem(pSaveItems, wsNewValue, nIndex);
   } else if (iCount > 1) {
     for (int32_t i = 0; i < 2; i++) {
       CXFA_Node* pNode = listitems[i];
       FX_BOOL bHasSave = pNode->GetBoolean(XFA_ATTRIBUTE_Save);
       if (bHasSave)
-        InsertListTextItem(pNode, wsNewValue.AsStringC(), nIndex);
+        InsertListTextItem(pNode, wsNewValue, nIndex);
       else
-        InsertListTextItem(pNode, wsLabel.AsStringC(), nIndex);
+        InsertListTextItem(pNode, wsLabel, nIndex);
     }
   } else {
     CXFA_Node* pNode = listitems[0];
@@ -916,12 +916,12 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
     while (pListNode) {
       CFX_WideString wsOldValue;
       pListNode->TryContent(wsOldValue);
-      InsertListTextItem(pSaveItems, wsOldValue.AsStringC(), i);
+      InsertListTextItem(pSaveItems, wsOldValue, i);
       i++;
       pListNode = pListNode->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
-    InsertListTextItem(pNode, wsLabel.AsStringC(), nIndex);
-    InsertListTextItem(pSaveItems, wsNewValue.AsStringC(), nIndex);
+    InsertListTextItem(pNode, wsLabel, nIndex);
+    InsertListTextItem(pSaveItems, wsNewValue, nIndex);
   }
   if (!bNotify)
     return;
@@ -1074,7 +1074,8 @@ int32_t CXFA_WidgetData::GetNumberOfCells() {
 
 CFX_WideString CXFA_WidgetData::GetBarcodeType() {
   CXFA_Node* pUIChild = GetUIChild();
-  return pUIChild ? pUIChild->GetCData(XFA_ATTRIBUTE_Type) : NULL;
+  return pUIChild ? CFX_WideString(pUIChild->GetCData(XFA_ATTRIBUTE_Type))
+                  : nullptr;
 }
 
 FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t& val) {
@@ -1084,7 +1085,8 @@ FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t& val) {
     if (wsCharEncoding.CompareNoCase(L"UTF-16")) {
       val = CHAR_ENCODING_UNICODE;
       return TRUE;
-    } else if (wsCharEncoding.CompareNoCase(L"UTF-8")) {
+    }
+    if (wsCharEncoding.CompareNoCase(L"UTF-8")) {
       val = CHAR_ENCODING_UTF8;
       return TRUE;
     }
@@ -1475,8 +1477,8 @@ IFX_Locale* CXFA_WidgetData::GetLocal() {
     if (wsLocaleName == FX_WSTRC(L"ambient")) {
       pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
     } else {
-      pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(
-          wsLocaleName.AsStringC());
+      pLocale =
+          m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
     }
   }
   return pLocale;
@@ -1739,7 +1741,7 @@ void CXFA_WidgetData::SyncValue(const CFX_WideString& wsValue,
 }
 
 void CXFA_WidgetData::InsertListTextItem(CXFA_Node* pItems,
-                                         const CFX_WideStringC& wsText,
+                                         const CFX_WideString& wsText,
                                          int32_t nIndex) {
   CXFA_Node* pText = pItems->CreateSamePacketNode(XFA_ELEMENT_Text);
   pItems->InsertChild(nIndex, pText);

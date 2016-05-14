@@ -12,15 +12,17 @@
 class CFX_LocaleMgr : public IFX_LocaleMgr {
  public:
   CFX_LocaleMgr(uint16_t wDefLCID);
-  virtual void Release() { delete this; }
-  virtual uint16_t GetDefLocaleID();
-  virtual IFX_Locale* GetDefLocale();
-  virtual IFX_Locale* GetLocale(uint16_t lcid);
-  virtual IFX_Locale* GetLocaleByName(const CFX_WideStringC& wsLocaleName);
+
+  void Release() override { delete this; }
+  uint16_t GetDefLocaleID() override;
+  IFX_Locale* GetDefLocale() override;
+  IFX_Locale* GetLocale(uint16_t lcid) override;
+  IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) override;
+
   CFX_MapPtrToPtr m_lcid2xml;
 
  protected:
-  ~CFX_LocaleMgr();
+  ~CFX_LocaleMgr() override;
   CFX_MapPtrToPtr m_lcid2locale;
   uint16_t m_wDefLCID;
 };

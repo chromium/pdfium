@@ -90,7 +90,7 @@ class IFX_LocaleMgr {
   virtual uint16_t GetDefLocaleID() = 0;
   virtual IFX_Locale* GetDefLocale() = 0;
   virtual IFX_Locale* GetLocale(uint16_t lcid) = 0;
-  virtual IFX_Locale* GetLocaleByName(const CFX_WideStringC& wsLocaleName) = 0;
+  virtual IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) = 0;
 };
 IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
                                    uint16_t wDefaultLCID);

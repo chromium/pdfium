@@ -786,10 +786,10 @@ CFX_WideString CFX_WideString::FromUTF8(const CFX_ByteStringC& str) {
     return CFX_WideString();
 
   CFX_UTF8Decoder decoder;
-  for (FX_STRSIZE i = 0; i < str.GetLength(); i++) {
+  for (FX_STRSIZE i = 0; i < str.GetLength(); i++)
     decoder.Input(str[i]);
-  }
-  return decoder.GetResult();
+
+  return CFX_WideString(decoder.GetResult());
 }
 
 // static

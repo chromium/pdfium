@@ -146,7 +146,7 @@ CXFA_FMStringExpression::CXFA_FMStringExpression(uint32_t line,
     : CXFA_FMSimpleExpression(line, TOKstring), m_wsString(wsString) {}
 
 void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
-  CFX_WideString tempStr = m_wsString;
+  CFX_WideString tempStr(m_wsString);
   if (tempStr.GetLength() > 2) {
     javascript.AppendChar(L'\"');
     FX_WCHAR oneChar;
@@ -178,7 +178,7 @@ CXFA_FMIdentifierExpressionn::CXFA_FMIdentifierExpressionn(
       m_wsIdentifier(wsIdentifier) {}
 
 void CXFA_FMIdentifierExpressionn::ToJavaScript(CFX_WideTextBuf& javascript) {
-  CFX_WideString tempStr = m_wsIdentifier;
+  CFX_WideString tempStr(m_wsIdentifier);
   if (tempStr == FX_WSTRC(L"$")) {
     tempStr = FX_WSTRC(L"this");
   } else if (tempStr == FX_WSTRC(L"!")) {

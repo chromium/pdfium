@@ -614,18 +614,16 @@ void CPDFXFA_Document::GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) {
   wsTitle = wsTitle.FromLocal(csTitle.GetBuffer(csTitle.GetLength()));
   csTitle.ReleaseBuffer(csTitle.GetLength());
 }
-void CPDFXFA_Document::SetTitle(CXFA_FFDoc* hDoc,
-                                const CFX_WideStringC& wsTitle) {
-  if (hDoc != m_pXFADoc)
-    return;
-  if (m_pPDFDoc == NULL)
-    return;
-  CPDF_Dictionary* pInfoDict = m_pPDFDoc->GetInfo();
 
-  if (pInfoDict == NULL)
+void CPDFXFA_Document::SetTitle(CXFA_FFDoc* hDoc,
+                                const CFX_WideString& wsTitle) {
+  if (hDoc != m_pXFADoc || !m_pPDFDoc)
     return;
-  pInfoDict->SetAt("Title", new CPDF_String(wsTitle));
+
+  if (CPDF_Dictionary* pInfoDict = m_pPDFDoc->GetInfo())
+    pInfoDict->SetAt("Title", new CPDF_String(wsTitle));
 }
+
 void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
                                   const CFX_WideStringC& wsFilePath,
                                   FX_BOOL bXDP) {
@@ -1140,7 +1138,7 @@ FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
     return FALSE;
   CFX_WideStringC csURLC;
   submit.GetSubmitTarget(csURLC);
-  CFX_WideString csURL = csURLC;
+  CFX_WideString csURL(csURLC);
   if (csURL.IsEmpty()) {
     CFX_WideString ws;
     ws.FromLocal("Submit cancelled.");

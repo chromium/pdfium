@@ -677,7 +677,7 @@ IFX_Locale* CFX_FormatString::GetTextFormat(const CFX_WideString& wsPattern,
           while (ccf < iLenf && pStr[ccf] != ')') {
             wsLCID += pStr[ccf++];
           }
-          pLocale = GetPatternLocale(wsLCID.AsStringC());
+          pLocale = GetPatternLocale(wsLCID);
         } else if (pStr[ccf] == '{') {
           bBrackOpen = TRUE;
           break;
@@ -737,7 +737,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
           while (ccf < iLenf && pStr[ccf] != ')') {
             wsLCID += pStr[ccf++];
           }
-          pLocale = GetPatternLocale(wsLCID.AsStringC());
+          pLocale = GetPatternLocale(wsLCID);
         } else if (pStr[ccf] == '{') {
           bBrackOpen = TRUE;
           break;
@@ -2192,7 +2192,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
           while (ccf < iLenf && pStr[ccf] != ')') {
             wsLCID += pStr[ccf++];
           }
-          pLocale = GetPatternLocale(wsLCID.AsStringC());
+          pLocale = GetPatternLocale(wsLCID);
         } else if (pStr[ccf] == '{') {
           bBraceOpen = TRUE;
           break;
@@ -2883,7 +2883,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   int32_t cc = 0, ccf = 0;
   const FX_WCHAR* strf = wsNumFormat.c_str();
   int lenf = wsNumFormat.GetLength();
-  CFX_WideString wsSrcNum = wsInputNum;
+  CFX_WideString wsSrcNum(wsInputNum);
   wsSrcNum.TrimLeft('0');
   if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.') {
     wsSrcNum.Insert(0, '0');
@@ -4269,7 +4269,7 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
                                wsOutput);
     }
   } else {
-    CFX_WideStringC wsSrcDate(wsSrcDateTime.c_str(), iT);
+    CFX_WideString wsSrcDate(wsSrcDateTime.c_str(), iT);
     CFX_WideStringC wsSrcTime(wsSrcDateTime.c_str() + iT + 1,
                               wsSrcDateTime.GetLength() - iT - 1);
     if (wsSrcDate.IsEmpty() || wsSrcTime.IsEmpty()) {
@@ -4345,10 +4345,7 @@ FX_BOOL CFX_FormatString::FormatNull(const CFX_WideString& wsPattern,
   }
   return TRUE;
 }
-IFX_Locale* CFX_FormatString::GetPatternLocale(
-    const CFX_WideStringC& wsLocale) {
-  if (m_bUseLCID) {
-  }
+IFX_Locale* CFX_FormatString::GetPatternLocale(const CFX_WideString& wsLocale) {
   return m_pLocaleMgr->GetLocaleByName(wsLocale);
 }
 #define FXMATH_DECIMAL_SCALELIMIT 0x1c

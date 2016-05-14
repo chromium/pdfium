@@ -250,8 +250,7 @@ class CFX_WideString {
 
   CFX_WideString(const FX_WCHAR* ptr, FX_STRSIZE len);
 
-  // TODO(tsepez): mark constructor as explicit.
-  CFX_WideString(const CFX_WideStringC& str);
+  explicit CFX_WideString(const CFX_WideStringC& str);
   CFX_WideString(const CFX_WideStringC& str1, const CFX_WideStringC& str2);
 
   ~CFX_WideString();

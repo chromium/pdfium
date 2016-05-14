@@ -65,7 +65,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
     return;
   }
   CXFA_Node* pNode = NULL;
-  CFX_WideString wsUnit = FX_WSTRC(L"pt");
+  CFX_WideString wsUnit(L"pt");
   int32_t iIndex = 0;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));

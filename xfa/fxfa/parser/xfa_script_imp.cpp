@@ -291,7 +291,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
         pPropOrChild = pNode->GetFirstChildByName(wsPropName.AsStringC());
       }
       if (pPropOrChild) {
-        CFX_WideString wsDefaultName = FX_WSTRC(L"{default}");
+        CFX_WideString wsDefaultName(L"{default}");
         const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
             XFA_GetScriptAttributeByName(pPropOrChild->GetClassID(),
                                          wsDefaultName.AsStringC());

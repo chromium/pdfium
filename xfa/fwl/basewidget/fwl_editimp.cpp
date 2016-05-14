@@ -667,7 +667,7 @@ FWL_Error CFWL_EditImp::Replace(int32_t nStart,
   if (!m_pEdtEngine)
     return FWL_Error::Indefinite;
 
-  m_pEdtEngine->Replace(nStart, nLen, wsReplace);
+  m_pEdtEngine->Replace(nStart, nLen, CFX_WideString(wsReplace));
   return FWL_Error::Succeeded;
 }
 

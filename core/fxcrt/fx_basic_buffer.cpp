@@ -186,11 +186,6 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideTextBuf& buf) {
   return *this;
 }
 
-CFX_WideStringC CFX_WideTextBuf::AsStringC() const {
-  return CFX_WideStringC(reinterpret_cast<const FX_WCHAR*>(m_pBuffer.get()),
-                         m_DataSize / sizeof(FX_WCHAR));
-}
-
 #ifdef PDF_ENABLE_XFA
 CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(uint8_t i) {
   if (m_pStream) {

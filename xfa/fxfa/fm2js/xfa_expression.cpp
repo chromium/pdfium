@@ -122,7 +122,7 @@ CXFA_FMVarExpression::CXFA_FMVarExpression(uint32_t line,
 
 void CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"var ");
-  CFX_WideString tempName = m_wsName;
+  CFX_WideString tempName(m_wsName);
   if (m_wsName.GetAt(0) == L'!') {
     tempName = EXCLAMATION_IN_IDENTIFIER + m_wsName.Mid(1);
   }
@@ -143,7 +143,7 @@ void CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 
 void CXFA_FMVarExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"var ");
-  CFX_WideString tempName = m_wsName;
+  CFX_WideString tempName(m_wsName);
   if (m_wsName.GetAt(0) == L'!') {
     tempName = EXCLAMATION_IN_IDENTIFIER + m_wsName.Mid(1);
   }

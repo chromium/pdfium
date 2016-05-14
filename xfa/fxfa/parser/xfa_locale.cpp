@@ -226,7 +226,8 @@ void CXFA_NodeLocale::Release() {
   delete this;
 }
 CFX_WideString CXFA_NodeLocale::GetName() {
-  return m_pLocale ? m_pLocale->GetCData(XFA_ATTRIBUTE_Name) : NULL;
+  return CFX_WideString(m_pLocale ? m_pLocale->GetCData(XFA_ATTRIBUTE_Name)
+                                  : nullptr);
 }
 void CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
                                         CFX_WideString& wsNumSymbol) const {

@@ -118,6 +118,6 @@ CFX_WideString CBC_Codabar::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_GlobalHistogramBinarizer binarizer(&source);
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
+  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
   return CFX_WideString::FromUTF8(str.AsStringC());
 }

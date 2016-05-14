@@ -315,7 +315,7 @@ CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideStringC& filepath) {
   result += ChangeSlashToPlatform(filepath.c_str());
   return result;
 #else
-  return filepath;
+  return CFX_WideString(filepath);
 #endif
 }
 
@@ -390,7 +390,7 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
   }
   return ChangeSlashToPDF(filepath.c_str());
 #else
-  return filepath;
+  return CFX_WideString(filepath);
 #endif
 }
 

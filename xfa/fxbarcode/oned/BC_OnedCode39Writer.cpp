@@ -341,13 +341,13 @@ uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
 CFX_WideString CBC_OnedCode39Writer::encodedContents(
     const CFX_WideStringC& contents,
     int32_t& e) {
-  CFX_WideString encodedContents = contents;
+  CFX_WideString encodedContents(contents);
   if (m_bCalcChecksum && m_bPrintChecksum) {
     CFX_WideString checksumContent = FilterContents(contents);
     CFX_ByteString str = checksumContent.UTF8Encode();
     FX_CHAR checksum;
     checksum = CalcCheckSum(str, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
+    BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
     str += checksum;
     encodedContents += checksum;
   }

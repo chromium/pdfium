@@ -40,7 +40,7 @@ int32_t CXFA_Validate::GetScriptTest() {
 }
 
 void CXFA_Validate::GetMessageText(CFX_WideString& wsMessage,
-                                   const CFX_WideStringC& wsMessageType) {
+                                   const CFX_WideString& wsMessageType) {
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Message, FALSE);
   if (!pNode)
     return;
@@ -61,23 +61,23 @@ void CXFA_Validate::GetMessageText(CFX_WideString& wsMessage,
 }
 
 void CXFA_Validate::SetFormatMessageText(CFX_WideString wsMessage) {
-  SetMessageText(wsMessage, FX_WSTRC(L"formatTest"));
+  SetMessageText(wsMessage, L"formatTest");
 }
 
 void CXFA_Validate::GetFormatMessageText(CFX_WideString& wsMessage) {
-  GetMessageText(wsMessage, FX_WSTRC(L"formatTest"));
+  GetMessageText(wsMessage, L"formatTest");
 }
 
 void CXFA_Validate::SetNullMessageText(CFX_WideString wsMessage) {
-  SetMessageText(wsMessage, FX_WSTRC(L"nullTest"));
+  SetMessageText(wsMessage, L"nullTest");
 }
 
 void CXFA_Validate::GetNullMessageText(CFX_WideString& wsMessage) {
-  GetMessageText(wsMessage, FX_WSTRC(L"nullTest"));
+  GetMessageText(wsMessage, L"nullTest");
 }
 
 void CXFA_Validate::SetMessageText(CFX_WideString& wsMessage,
-                                   const CFX_WideStringC& wsMessageType) {
+                                   const CFX_WideString& wsMessageType) {
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Message, TRUE);
   if (!pNode)
     return;
@@ -102,11 +102,11 @@ void CXFA_Validate::SetMessageText(CFX_WideString& wsMessage,
 }
 
 void CXFA_Validate::GetScriptMessageText(CFX_WideString& wsMessage) {
-  GetMessageText(wsMessage, FX_WSTRC(L"scriptTest"));
+  GetMessageText(wsMessage, L"scriptTest");
 }
 
 void CXFA_Validate::SetScriptMessageText(CFX_WideString wsMessage) {
-  SetMessageText(wsMessage, FX_WSTRC(L"scriptTest"));
+  SetMessageText(wsMessage, L"scriptTest");
 }
 
 void CXFA_Validate::GetPicture(CFX_WideString& wsPicture) {

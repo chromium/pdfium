@@ -33,9 +33,9 @@ class CXFA_Validate : public CXFA_Data {
 
  protected:
   void GetMessageText(CFX_WideString& wsMessage,
-                      const CFX_WideStringC& wsMessageType);
+                      const CFX_WideString& wsMessageType);
   void SetMessageText(CFX_WideString& wsMessage,
-                      const CFX_WideStringC& wsMessageType);
+                      const CFX_WideString& wsMessageType);
   FX_BOOL SetTestValue(int32_t iType,
                        CFX_WideString& wsValue,
                        XFA_ATTRIBUTEENUM eName);

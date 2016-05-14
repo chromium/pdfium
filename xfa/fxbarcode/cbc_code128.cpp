@@ -53,7 +53,7 @@ FX_BOOL CBC_Code128::Encode(const CFX_WideStringC& contents,
   BCFORMAT format = BCFORMAT_CODE_128;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  CFX_WideString content = contents;
+  CFX_WideString content(contents);
   if (contents.GetLength() % 2 &&
       ((CBC_OnedCode128Writer*)m_pBCWriter)->GetType() == BC_CODE128_C) {
     content += '0';
@@ -101,6 +101,6 @@ CFX_WideString CBC_Code128::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_GlobalHistogramBinarizer binarizer(&source);
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
+  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
   return CFX_WideString::FromUTF8(str.AsStringC());
 }

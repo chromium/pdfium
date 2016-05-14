@@ -1131,7 +1131,7 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
       pNodeLocale = pNodeLocale->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
   }
-  m_pDefLocale = GetLocaleByName(wsDeflcid.AsStringC());
+  m_pDefLocale = GetLocaleByName(wsDeflcid);
 }
 CXFA_LocaleMgr::~CXFA_LocaleMgr() {
   for (int32_t i = 0; i < m_LocaleArray.GetSize(); i++)
@@ -1217,7 +1217,7 @@ IFX_Locale* CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   return pLocal;
 }
 IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
-    const CFX_WideStringC& wsLocaleName) {
+    const CFX_WideString& wsLocaleName) {
   int32_t iCount = m_LocaleArray.GetSize();
   int32_t i = 0;
   for (i = 0; i < iCount; i++) {

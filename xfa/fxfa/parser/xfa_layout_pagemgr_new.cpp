@@ -274,7 +274,7 @@ static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   if (wsTargetExpr.IsEmpty()) {
     return NULL;
   }
-  CFX_WideString wsTargetAll = wsTargetExpr;
+  CFX_WideString wsTargetAll(wsTargetExpr);
   wsTargetAll.TrimLeft();
   wsTargetAll.TrimRight();
   int32_t iSpliteIndex = 0;

@@ -80,7 +80,15 @@ class CFX_WideTextBuf : public CFX_BinaryBuf {
   FX_WCHAR* GetBuffer() const {
     return reinterpret_cast<FX_WCHAR*>(m_pBuffer.get());
   }
-  CFX_WideStringC AsStringC() const;
+
+  CFX_WideStringC AsStringC() const {
+    return CFX_WideStringC(reinterpret_cast<const FX_WCHAR*>(m_pBuffer.get()),
+                           m_DataSize / sizeof(FX_WCHAR));
+  }
+  CFX_WideString MakeString() const {
+    return CFX_WideString(reinterpret_cast<const FX_WCHAR*>(m_pBuffer.get()),
+                          m_DataSize / sizeof(FX_WCHAR));
+  }
 
   void Delete(int start_index, int count) {
     CFX_BinaryBuf::Delete(start_index * sizeof(FX_WCHAR),

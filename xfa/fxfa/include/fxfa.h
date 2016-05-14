@@ -414,7 +414,7 @@ class IXFA_DocProvider {
   virtual FX_BOOL IsCalculationsEnabled(CXFA_FFDoc* hDoc) = 0;
   virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;
   virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) = 0;
-  virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideStringC& wsTitle) = 0;
+  virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle) = 0;
   virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideStringC& wsFilePath,
                           FX_BOOL bXDP = TRUE) = 0;
@@ -546,7 +546,7 @@ class IXFA_WidgetIterator {
   virtual FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
 
  protected:
-  ~IXFA_WidgetIterator() {}
+  virtual ~IXFA_WidgetIterator() {}
 };
 
 #endif  // XFA_FXFA_INCLUDE_FXFA_H_

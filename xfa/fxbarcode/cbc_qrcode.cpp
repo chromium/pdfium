@@ -59,10 +59,11 @@ FX_BOOL CBC_QRCode::Encode(const CFX_WideStringC& contents,
                            int32_t& e) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  uint8_t* data = ((CBC_QRCodeWriter*)m_pBCWriter)
-                      ->Encode(contents, ((CBC_QRCodeWriter*)m_pBCWriter)
-                                             ->GetErrorCorrectionLevel(),
-                               outWidth, outHeight, e);
+  uint8_t* data =
+      ((CBC_QRCodeWriter*)m_pBCWriter)
+          ->Encode(CFX_WideString(contents),
+                   ((CBC_QRCodeWriter*)m_pBCWriter)->GetErrorCorrectionLevel(),
+                   outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_TwoDimWriter*)m_pBCWriter)->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
@@ -96,6 +97,6 @@ CFX_WideString CBC_QRCode::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_GlobalHistogramBinarizer binarizer(&source);
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString retStr = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
+  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
   return CFX_WideString::FromUTF8(retStr.AsStringC());
 }

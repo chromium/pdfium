@@ -168,7 +168,7 @@ class CXFA_WidgetData : public CXFA_Data {
  protected:
   void SyncValue(const CFX_WideString& wsValue, FX_BOOL bNotify);
   void InsertListTextItem(CXFA_Node* pItems,
-                          const CFX_WideStringC& wsText,
+                          const CFX_WideString& wsText,
                           int32_t nIndex = -1);
   void FormatNumStr(const CFX_WideString& wsValue,
                     IFX_Locale* pLocale,

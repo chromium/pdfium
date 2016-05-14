@@ -93,7 +93,7 @@ CFX_WideString XFA_ExportEncodeAttribute(const CFX_WideString& str) {
         textBuf.AppendChar(str[i]);
     }
   }
-  return textBuf.AsStringC();
+  return textBuf.MakeString();
 }
 CFX_WideString XFA_ExportEncodeContent(const CFX_WideStringC& str) {
   CFX_WideTextBuf textBuf;
@@ -123,7 +123,7 @@ CFX_WideString XFA_ExportEncodeContent(const CFX_WideStringC& str) {
       textBuf.AppendChar(str.GetAt(i));
     }
   }
-  return textBuf.AsStringC();
+  return textBuf.MakeString();
 }
 static void XFA_SaveAttribute(CXFA_Node* pNode,
                               XFA_ATTRIBUTE eName,
@@ -547,8 +547,8 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
       return FALSE;
     }
     XFA_DataExporter_DealWithDataGroupNode(pExportNode);
-    pElement->SetString(FX_WSTRC(L"xmlns:xfa"),
-                        FX_WSTRC(L"http://www.xfa.org/schema/xfa-data/1.0/"));
+    pElement->SetString(L"xmlns:xfa",
+                        L"http://www.xfa.org/schema/xfa-data/1.0/");
     pXMLDoc->SaveXMLNode(pStream, pElement);
     pElement->RemoveAttribute(L"xmlns:xfa");
   }
@@ -576,8 +576,8 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
     } else {
       CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
       ASSERT(pXMLNode->GetType() == FDE_XMLNODE_Element);
-      static_cast<CFDE_XMLElement*>(pXMLNode)
-          ->SetString(FX_WSTRC(L"xfa:dataNode"), FX_WSTRC(L"dataGroup"));
+      static_cast<CFDE_XMLElement*>(pXMLNode)->SetString(L"xfa:dataNode",
+                                                         L"dataGroup");
     }
   }
 }

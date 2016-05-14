@@ -114,7 +114,8 @@ class CFX_FormatString {
                                     IFX_Locale*& pLocale,
                                     CFX_WideString& wsDatePattern,
                                     CFX_WideString& wsTimePattern);
-  IFX_Locale* GetPatternLocale(const CFX_WideStringC& wsLocale);
+  IFX_Locale* GetPatternLocale(const CFX_WideString& wsLocale);
+
   IFX_LocaleMgr* m_pLocaleMgr;
   FX_BOOL m_bUseLCID;
 };

@@ -35,13 +35,11 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
 
   FX_BOOL GetName(CFX_WideString& wsName, int32_t iNameType = 0);
   FX_BOOL ProcessValueChanged();
-
- public:
   void ResetData();
 
-  void SetImageEdit(const CFX_WideStringC& wsContentType,
-                    const CFX_WideStringC& wsHref,
-                    const CFX_WideStringC& wsData);
+  void SetImageEdit(const CFX_WideString& wsContentType,
+                    const CFX_WideString& wsHref,
+                    const CFX_WideString& wsData);
 
   CXFA_WidgetAcc* GetExclGroup();
   CXFA_FFDocView* GetDocView();

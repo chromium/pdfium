@@ -210,8 +210,7 @@ void CXFA_WidgetAcc::ResetData() {
         image.GetContentType(wsContentType);
         image.GetHref(wsHref);
       }
-      SetImageEdit(wsContentType.AsStringC(), wsHref.AsStringC(),
-                   wsValue.AsStringC());
+      SetImageEdit(wsContentType, wsHref, wsValue);
     } break;
     case XFA_ELEMENT_ExclGroup: {
       CXFA_Node* pNextChild = m_pNode->GetNodeItem(
@@ -252,12 +251,12 @@ void CXFA_WidgetAcc::ResetData() {
       break;
   }
 }
-void CXFA_WidgetAcc::SetImageEdit(const CFX_WideStringC& wsContentType,
-                                  const CFX_WideStringC& wsHref,
-                                  const CFX_WideStringC& wsData) {
+void CXFA_WidgetAcc::SetImageEdit(const CFX_WideString& wsContentType,
+                                  const CFX_WideString& wsHref,
+                                  const CFX_WideString& wsData) {
   CXFA_Image image = GetFormValue().GetImage();
   if (image) {
-    image.SetContentType(wsContentType);
+    image.SetContentType(CFX_WideString(wsContentType));
     image.SetHref(wsHref);
   }
   CFX_WideString wsFormatValue(wsData);
@@ -275,8 +274,7 @@ void CXFA_WidgetAcc::SetImageEdit(const CFX_WideStringC& wsContentType,
   } else {
     CFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element);
-    static_cast<CFDE_XMLElement*>(pXMLNode)
-        ->SetString(FX_WSTRC(L"href"), wsHref);
+    static_cast<CFDE_XMLElement*>(pXMLNode)->SetString(L"href", wsHref);
   }
 }
 
