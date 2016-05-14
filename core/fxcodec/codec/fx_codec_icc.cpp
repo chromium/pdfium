@@ -500,7 +500,7 @@ void* CCodec_IccModule::CreateTransform(
   }
   key << dwInputProfileType << dwOutputProfileType << dwIntent << dwFlag
       << (pProofProfile != NULL) << dwPrfIntent << dwPrfFlag;
-  CFX_ByteStringC TransformKey(key.GetBuffer(), key.GetSize());
+  CFX_ByteString TransformKey(key.GetBuffer(), key.GetSize());
   CFX_IccTransformCache* pTransformCache;
   auto it = m_MapTranform.find(TransformKey);
   if (it == m_MapTranform.end()) {

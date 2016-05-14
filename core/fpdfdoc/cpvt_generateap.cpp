@@ -38,7 +38,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
 
   CPDF_SimpleParser syntax(DA.AsStringC());
   syntax.FindTagParamFromStart("Tf", 2);
-  CFX_ByteString sFontName = syntax.GetWord();
+  CFX_ByteString sFontName(syntax.GetWord());
   sFontName = PDF_NameDecode(sFontName);
   if (sFontName.IsEmpty())
     return FALSE;
@@ -519,7 +519,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     if (bContinuous) {
       if (place.LineCmp(oldplace) != 0) {
         if (sWords.GetSize() > 0) {
-          sLineStream << GetWordRenderString(sWords.AsStringC());
+          sLineStream << GetWordRenderString(sWords.MakeString());
           sEditStream << sLineStream;
           sLineStream.Clear();
           sWords.Clear();
@@ -544,7 +544,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
       if (pIterator->GetWord(word)) {
         if (word.nFontIndex != nCurFontIndex) {
           if (sWords.GetSize() > 0) {
-            sLineStream << GetWordRenderString(sWords.AsStringC());
+            sLineStream << GetWordRenderString(sWords.MakeString());
             sWords.Clear();
           }
           sLineStream << GetFontSetString(pFontMap, word.nFontIndex,
@@ -575,11 +575,11 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     }
   }
   if (sWords.GetSize() > 0) {
-    sLineStream << GetWordRenderString(sWords.AsStringC());
+    sLineStream << GetWordRenderString(sWords.MakeString());
     sEditStream << sLineStream;
     sWords.Clear();
   }
-  return sEditStream.AsStringC();
+  return sEditStream.MakeString();
 }
 
 // Static.
@@ -687,7 +687,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
         break;
     }
   }
-  return sAppStream.AsStringC();
+  return sAppStream.MakeString();
 }
 
 // Static.
@@ -712,7 +712,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateColorAP(const CPVT_Color& color,
     case CPVT_Color::kTransparent:
       break;
   }
-  return sColorStream.AsStringC();
+  return sColorStream.MakeString();
 }
 
 // Static.
@@ -760,5 +760,5 @@ CFX_ByteString CPVT_GenerateAP::GetFontSetString(IPVT_FontMap* pFontMap,
     if (sFontAlias.GetLength() > 0 && fFontSize > 0)
       sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
   }
-  return sRet.AsStringC();
+  return sRet.MakeString();
 }

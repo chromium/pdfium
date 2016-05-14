@@ -408,7 +408,7 @@ void CFX_ByteString::AllocCopy(CFX_ByteString& dest,
 
 CFX_ByteString CFX_ByteString::FormatInteger(int i, uint32_t flags) {
   char buf[32];
-  return CFX_ByteStringC(buf, Buffer_itoa(buf, i, flags));
+  return CFX_ByteString(buf, Buffer_itoa(buf, i, flags));
 }
 
 void CFX_ByteString::FormatV(const FX_CHAR* pFormat, va_list argList) {

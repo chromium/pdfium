@@ -100,10 +100,6 @@ void CFX_BinaryBuf::InsertBlock(FX_STRSIZE pos,
   m_DataSize += size;
 }
 
-CFX_ByteStringC CFX_ByteTextBuf::AsStringC() const {
-  return CFX_ByteStringC(m_pBuffer.get(), m_DataSize);
-}
-
 CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(const CFX_ByteStringC& lpsz) {
   AppendBlock(lpsz.raw_str(), lpsz.GetLength());
   return *this;

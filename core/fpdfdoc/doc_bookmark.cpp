@@ -80,8 +80,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
     return CPDF_Dest();
   if (pDest->IsString() || pDest->IsName()) {
     CPDF_NameTree name_tree(pDocument, "Dests");
-    return CPDF_Dest(
-        name_tree.LookupNamedDest(pDocument, pDest->GetString().AsStringC()));
+    return CPDF_Dest(name_tree.LookupNamedDest(pDocument, pDest->GetString()));
   }
   if (CPDF_Array* pArray = pDest->AsArray())
     return CPDF_Dest(pArray);

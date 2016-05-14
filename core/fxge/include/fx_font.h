@@ -501,7 +501,7 @@ class CFX_FaceCache {
                                           int anti_alias);
   CFX_GlyphBitmap* LookUpGlyphBitmap(CFX_Font* pFont,
                                      const CFX_Matrix* pMatrix,
-                                     CFX_ByteStringC& FaceGlyphsKey,
+                                     const CFX_ByteString& FaceGlyphsKey,
                                      uint32_t glyph_index,
                                      FX_BOOL bFontStyle,
                                      int dest_width,

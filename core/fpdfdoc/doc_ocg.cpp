@@ -43,21 +43,21 @@ static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
   bsIntent = pIntent->GetString();
   return bsIntent == "All" || bsIntent == csElement;
 }
+
 static CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document* pDoc,
-                                              const CPDF_Dictionary* pOCGDict,
-                                              const CFX_ByteStringC& bsState) {
-  ASSERT(pDoc && pOCGDict);
+                                              const CPDF_Dictionary* pOCGDict) {
+  ASSERT(pOCGDict);
   CPDF_Dictionary* pOCProperties = pDoc->GetRoot()->GetDictBy("OCProperties");
-  if (!pOCProperties) {
-    return NULL;
-  }
+  if (!pOCProperties)
+    return nullptr;
+
   CPDF_Array* pOCGs = pOCProperties->GetArrayBy("OCGs");
-  if (!pOCGs) {
-    return NULL;
-  }
-  if (FPDFDOC_OCG_FindGroup(pOCGs, pOCGDict) < 0) {
-    return NULL;
-  }
+  if (!pOCGs)
+    return nullptr;
+
+  if (FPDFDOC_OCG_FindGroup(pOCGs, pOCGDict) < 0)
+    return nullptr;
+
   CPDF_Dictionary* pConfig = pOCProperties->GetDictBy("D");
   CPDF_Array* pConfigs = pOCProperties->GetArrayBy("Configs");
   if (pConfigs) {
@@ -96,14 +96,14 @@ CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType) {
 CPDF_OCContext::~CPDF_OCContext() {
   m_OCGStates.clear();
 }
-FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig,
+
+FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteString& csConfig,
                                                const CPDF_Dictionary* pOCGDict,
                                                FX_BOOL& bValidConfig) const {
-  CPDF_Dictionary* pConfig =
-      FPDFDOC_OCG_GetConfig(m_pDocument, pOCGDict, csConfig);
-  if (!pConfig) {
+  CPDF_Dictionary* pConfig = FPDFDOC_OCG_GetConfig(m_pDocument, pOCGDict);
+  if (!pConfig)
     return TRUE;
-  }
+
   bValidConfig = TRUE;
   FX_BOOL bState = pConfig->GetStringBy("BaseState", "ON") != "OFF";
   CPDF_Array* pArray = pConfig->GetArrayBy("ON");
@@ -167,7 +167,7 @@ FX_BOOL CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
     }
   }
   FX_BOOL bDefValid = FALSE;
-  return LoadOCGStateFromConfig(csState.AsStringC(), pOCGDict, bDefValid);
+  return LoadOCGStateFromConfig(csState, pOCGDict, bDefValid);
 }
 
 FX_BOOL CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) {

@@ -167,7 +167,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   if (!pStream) {
     pStream = new CPDF_Stream(NULL, 0, NULL);
     int32_t objnum = m_pDocument->AddIndirectObject(pStream);
-    pAPDict->SetAtReference(m_sAPType.AsStringC(), m_pDocument, objnum);
+    pAPDict->SetAtReference(m_sAPType, m_pDocument, objnum);
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
@@ -223,7 +223,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString& sAlias) {
   if (!sDA.IsEmpty()) {
     CPDF_SimpleParser syntax(sDA.AsStringC());
     syntax.FindTagParamFromStart("Tf", 2);
-    CFX_ByteString sFontName = syntax.GetWord();
+    CFX_ByteString sFontName(syntax.GetWord());
     sAlias = PDF_NameDecode(sFontName).Mid(1);
 
     if (CPDF_Dictionary* pDRDict = m_pAnnotDict->GetDictBy("DR"))

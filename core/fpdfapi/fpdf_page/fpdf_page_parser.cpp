@@ -1143,7 +1143,7 @@ void CPDF_StreamContentParser::Handle_SetFont() {
 }
 
 CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
-    const CFX_ByteStringC& type,
+    const CFX_ByteString& type,
     const CFX_ByteString& name) {
   if (!m_pResources) {
     return NULL;
@@ -1683,9 +1683,9 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
       }
       for (const auto& op : replacements) {
         if (op.is_replace_key)
-          pDict->ReplaceKey(op.key, op.replacement);
+          pDict->ReplaceKey(op.key, CFX_ByteString(op.replacement));
         else
-          pDict->SetAtName(op.key, op.replacement);
+          pDict->SetAtName(op.key, CFX_ByteString(op.replacement));
       }
       break;
     }
@@ -1699,7 +1699,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
               PDF_InlineValueAbbr, FX_ArraySize(PDF_InlineValueAbbr),
               name.AsStringC());
           if (!fullname.IsEmpty()) {
-            pArray->SetAt(i, new CPDF_Name(fullname));
+            pArray->SetAt(i, new CPDF_Name(CFX_ByteString(fullname)));
           }
         } else {
           PDF_ReplaceAbbr(pElement);

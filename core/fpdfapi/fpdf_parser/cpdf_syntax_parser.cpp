@@ -217,7 +217,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
       case 0:
         if (ch == ')') {
           if (parlevel == 0) {
-            return buf.AsStringC();
+            return buf.MakeString();
           }
           parlevel--;
           buf.AppendChar(')');
@@ -290,7 +290,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
   }
 
   GetNextChar(ch);
-  return buf.AsStringC();
+  return buf.MakeString();
 }
 
 CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
@@ -322,7 +322,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
   if (!bFirst)
     buf.AppendByte(code);
 
-  return buf.AsStringC();
+  return buf.MakeString();
 }
 
 void CPDF_SyntaxParser::ToNextLine() {
@@ -470,7 +470,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
       if (!pObj)
         continue;
 
-      CFX_ByteStringC keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
+      CFX_ByteString keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
       pDict->SetAt(keyNoSlash, pObj);
     }
 

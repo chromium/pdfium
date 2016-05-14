@@ -839,7 +839,7 @@ CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font,
   CFX_ByteString name(font);
   if (PDF_GetStandardFontName(&name) < 0)
     return nullptr;
-  return GetPageData()->GetStandardFont(name.AsStringC(), pEncoding);
+  return GetPageData()->GetStandardFont(name, pEncoding);
 }
 
 CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {

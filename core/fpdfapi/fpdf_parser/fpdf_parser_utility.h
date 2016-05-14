@@ -34,6 +34,6 @@ inline bool PDFCharIsLineEnding(uint8_t c) {
 }
 
 int32_t GetHeaderOffset(IFX_FileRead* pFile);
-int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteStringC& key);
+int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key);
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_FPDF_PARSER_UTILITY_H_

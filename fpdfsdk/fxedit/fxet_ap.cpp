@@ -48,15 +48,12 @@ static CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
                                        int32_t nFontIndex,
                                        FX_FLOAT fFontSize) {
   CFX_ByteTextBuf sRet;
-
   if (pFontMap) {
     CFX_ByteString sFontAlias = pFontMap->GetPDFFontAlias(nFontIndex);
-
     if (sFontAlias.GetLength() > 0 && fFontSize > 0)
       sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
   }
-
-  return sRet.AsStringC();
+  return sRet.MakeString();
 }
 
 CFX_ByteString IFX_Edit::GetEditAppearanceStream(
@@ -87,7 +84,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
     if (bContinuous) {
       if (place.LineCmp(oldplace) != 0) {
         if (sWords.GetSize() > 0) {
-          sEditStream << GetWordRenderString(sWords.AsStringC());
+          sEditStream << GetWordRenderString(sWords.MakeString());
           sWords.Clear();
         }
 
@@ -114,7 +111,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
       if (pIterator->GetWord(word)) {
         if (word.nFontIndex != nCurFontIndex) {
           if (sWords.GetSize() > 0) {
-            sEditStream << GetWordRenderString(sWords.AsStringC());
+            sEditStream << GetWordRenderString(sWords.MakeString());
             sWords.Clear();
           }
           sEditStream << GetFontSetString(pEdit->GetFontMap(), word.nFontIndex,
@@ -152,7 +149,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
   }
 
   if (sWords.GetSize() > 0) {
-    sEditStream << GetWordRenderString(sWords.AsStringC());
+    sEditStream << GetWordRenderString(sWords.MakeString());
     sWords.Clear();
   }
 
@@ -171,7 +168,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
     sAppStream << sEditStream;
   }
 
-  return sAppStream.AsStringC();
+  return sAppStream.MakeString();
 }
 
 CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
@@ -200,5 +197,5 @@ CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
     }
   }
 
-  return sRet.AsStringC();
+  return sRet.MakeString();
 }

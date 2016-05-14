@@ -1288,7 +1288,7 @@ void CFX_FaceCache::InitPlatform() {}
 CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     CFX_Font* pFont,
     const CFX_Matrix* pMatrix,
-    CFX_ByteStringC& FaceGlyphsKey,
+    const CFX_ByteString& FaceGlyphsKey,
     uint32_t glyph_index,
     FX_BOOL bFontStyle,
     int dest_width,
@@ -1359,7 +1359,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
                       dest_width, anti_alias, 3);
   }
 #endif
-  CFX_ByteStringC FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
+  CFX_ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
                            bFontStyle, dest_width, anti_alias);
@@ -1401,7 +1401,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
     keygen.Generate(6, (int)(pMatrix->a * 10000), (int)(pMatrix->b * 10000),
                     (int)(pMatrix->c * 10000), (int)(pMatrix->d * 10000),
                     dest_width, anti_alias);
-  CFX_ByteStringC FaceGlyphsKey2(keygen.m_Key, keygen.m_KeyLen);
+  CFX_ByteString FaceGlyphsKey2(keygen.m_Key, keygen.m_KeyLen);
   text_flags |= FXTEXT_NO_NATIVETEXT;
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);

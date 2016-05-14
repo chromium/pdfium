@@ -32,7 +32,7 @@ class CPDF_PageOrganizer {
                      CPDF_Document* pDestPDFDoc,
                      int nIndex);
   CPDF_Object* PageDictGetInheritableTag(CPDF_Dictionary* pDict,
-                                         CFX_ByteString nSrctag);
+                                         const CFX_ByteString& bsSrctag);
   FX_BOOL UpdateReference(CPDF_Object* pObj,
                           CPDF_Document* pDoc,
                           ObjectNumberMap* pObjNumberMap);
@@ -175,8 +175,8 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
 
 CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
     CPDF_Dictionary* pDict,
-    CFX_ByteString nSrctag) {
-  if (!pDict || nSrctag.IsEmpty())
+    const CFX_ByteString& bsSrcTag) {
+  if (!pDict || bsSrcTag.IsEmpty())
     return nullptr;
   if (!pDict->KeyExist("Parent") || !pDict->KeyExist("Type"))
     return nullptr;
@@ -191,13 +191,12 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
   if (!pp)
     return nullptr;
 
-  CFX_ByteStringC sSrcTag = nSrctag.AsStringC();
-  if (pDict->KeyExist(sSrcTag))
-    return pDict->GetObjectBy(sSrcTag);
+  if (pDict->KeyExist(bsSrcTag))
+    return pDict->GetObjectBy(bsSrcTag);
 
   while (pp) {
-    if (pp->KeyExist(sSrcTag))
-      return pp->GetObjectBy(sSrcTag);
+    if (pp->KeyExist(bsSrcTag))
+      return pp->GetObjectBy(bsSrcTag);
     if (!pp->KeyExist("Parent"))
       break;
     pp = ToDictionary(pp->GetObjectBy("Parent")->GetDirect());

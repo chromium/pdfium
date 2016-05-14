@@ -228,7 +228,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                   pDevice,
                   CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                   pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
-                  sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
+                  sTextBuf.MakeString(), crOldFill, crTextStroke, nHorzScale);
 
               sTextBuf.Clear();
             }
@@ -253,10 +253,10 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
     }
 
     if (sTextBuf.GetLength() > 0) {
-      DrawTextString(pDevice,
-                     CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                     pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
-                     sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
+      DrawTextString(
+          pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+          pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
+          sTextBuf.MakeString(), crOldFill, crTextStroke, nHorzScale);
     }
   }
 
@@ -340,7 +340,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
                 pDevice,
                 CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                 pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
-                sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
+                sTextBuf.MakeString(), crOld, 0, wp.nHorzScale);
 
             sTextBuf.Clear();
           }
@@ -381,7 +381,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
       DrawTextString(
           pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
           pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
-          sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
+          sTextBuf.MakeString(), crOld, 0, wp.nHorzScale);
     }
   }
 
@@ -483,7 +483,7 @@ void IFX_Edit::GeneratePageObjects(
                 pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
                 fFontSize, 0.0f, 100,
                 CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                sTextBuf.AsStringC()));
+                sTextBuf.MakeString()));
 
             sTextBuf.Clear();
           }
@@ -502,7 +502,7 @@ void IFX_Edit::GeneratePageObjects(
       ObjArray.Add(AddTextObjToPageObjects(
           pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex), fFontSize,
           0.0f, 100, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-          sTextBuf.AsStringC()));
+          sTextBuf.MakeString()));
     }
   }
 }
@@ -551,7 +551,7 @@ void IFX_Edit::GenerateRichPageObjects(
                 pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
                 wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
                 CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                sTextBuf.AsStringC()));
+                sTextBuf.MakeString()));
 
             sTextBuf.Clear();
           }
@@ -594,7 +594,7 @@ void IFX_Edit::GenerateRichPageObjects(
           pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
           wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
           CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-          sTextBuf.AsStringC()));
+          sTextBuf.MakeString()));
     }
   }
 }

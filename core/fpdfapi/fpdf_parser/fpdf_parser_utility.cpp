@@ -81,14 +81,14 @@ int32_t GetHeaderOffset(IFX_FileRead* pFile) {
   return -1;
 }
 
-int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteStringC& key) {
+int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key) {
   CPDF_Number* pObj = ToNumber(pDict->GetObjectBy(key));
   return pObj ? pObj->GetInteger() : 0;
 }
 
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
   if (bstr.Find('#') == -1)
-    return bstr;
+    return CFX_ByteString(bstr);
 
   int size = bstr.GetLength();
   CFX_ByteString result;

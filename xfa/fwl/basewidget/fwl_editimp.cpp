@@ -1480,7 +1480,7 @@ int32_t CFWL_EditImp::AddDoRecord(const CFX_ByteStringC& bsDoRecord) {
       m_RecordArr.RemoveAt(i);
     }
   }
-  m_RecordArr.Add(bsDoRecord);
+  m_RecordArr.Add(CFX_ByteString(bsDoRecord));
   return m_iCurRecord = m_RecordArr.GetSize() - 1;
 }
 void CFWL_EditImp::Layout() {

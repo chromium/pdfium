@@ -56,10 +56,15 @@ class CFX_BinaryBuf {
 
 class CFX_ByteTextBuf : public CFX_BinaryBuf {
  public:
-  void AppendChar(int ch) { AppendByte((uint8_t)ch); }
   FX_STRSIZE GetLength() const { return m_DataSize; }
-  CFX_ByteStringC AsStringC() const;
+  CFX_ByteString MakeString() const {
+    return CFX_ByteString(m_pBuffer.get(), m_DataSize);
+  }
+  CFX_ByteStringC AsStringC() const {
+    return CFX_ByteStringC(m_pBuffer.get(), m_DataSize);
+  }
 
+  void AppendChar(int ch) { AppendByte(static_cast<uint8_t>(ch)); }
   CFX_ByteTextBuf& operator<<(int i);
   CFX_ByteTextBuf& operator<<(uint32_t i);
   CFX_ByteTextBuf& operator<<(double f);

@@ -74,13 +74,12 @@ void CFX_UTF8Encoder::Input(FX_WCHAR unicode) {
   }
 }
 CFX_ByteString FX_UTF8Encode(const FX_WCHAR* pwsStr, FX_STRSIZE len) {
-  ASSERT(pwsStr);
-  if (len < 0) {
+  if (len < 0)
     len = FXSYS_wcslen(pwsStr);
-  }
+
   CFX_UTF8Encoder encoder;
-  while (len-- > 0) {
+  while (len-- > 0)
     encoder.Input(*pwsStr++);
-  }
-  return encoder.GetResult();
+
+  return CFX_ByteString(encoder.GetResult());
 }

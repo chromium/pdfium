@@ -46,7 +46,7 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
                << "Q\n";
   }
 
-  return sAppStream.AsStringC();
+  return sAppStream.MakeString();
 }
 
 void CPWL_Image::SetPDFStream(CPDF_Stream* pStream) {

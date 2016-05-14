@@ -112,10 +112,11 @@ FX_BOOL CPDF_SecurityHandler::CheckSecurity(int32_t key_len) {
 uint32_t CPDF_SecurityHandler::GetPermissions() {
   return m_Permissions;
 }
-static FX_BOOL _LoadCryptInfo(CPDF_Dictionary* pEncryptDict,
-                              const CFX_ByteStringC& name,
-                              int& cipher,
-                              int& keylen) {
+
+static FX_BOOL LoadCryptInfo(CPDF_Dictionary* pEncryptDict,
+                             const CFX_ByteString& name,
+                             int& cipher,
+                             int& keylen) {
   int Version = pEncryptDict->GetIntegerBy("V");
   cipher = FXCIPHER_RC4;
   keylen = 0;
@@ -163,19 +164,15 @@ FX_BOOL CPDF_SecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict) {
   m_Version = pEncryptDict->GetIntegerBy("V");
   m_Revision = pEncryptDict->GetIntegerBy("R");
   m_Permissions = pEncryptDict->GetIntegerBy("P", -1);
-  if (m_Version < 4) {
-    return _LoadCryptInfo(pEncryptDict, CFX_ByteStringC(), m_Cipher, m_KeyLen);
-  }
+  if (m_Version < 4)
+    return LoadCryptInfo(pEncryptDict, CFX_ByteString(), m_Cipher, m_KeyLen);
+
   CFX_ByteString stmf_name = pEncryptDict->GetStringBy("StmF");
   CFX_ByteString strf_name = pEncryptDict->GetStringBy("StrF");
-  if (stmf_name != strf_name) {
+  if (stmf_name != strf_name)
     return FALSE;
-  }
-  if (!_LoadCryptInfo(pEncryptDict, strf_name.AsStringC(), m_Cipher,
-                      m_KeyLen)) {
-    return FALSE;
-  }
-  return TRUE;
+
+  return LoadCryptInfo(pEncryptDict, strf_name, m_Cipher, m_KeyLen);
 }
 
 FX_BOOL CPDF_SecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict,
@@ -186,17 +183,18 @@ FX_BOOL CPDF_SecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict,
   m_Version = pEncryptDict->GetIntegerBy("V");
   m_Revision = pEncryptDict->GetIntegerBy("R");
   m_Permissions = pEncryptDict->GetIntegerBy("P", -1);
-  CFX_ByteString strf_name, stmf_name;
+
+  CFX_ByteString strf_name;
+  CFX_ByteString stmf_name;
   if (m_Version >= 4) {
     stmf_name = pEncryptDict->GetStringBy("StmF");
     strf_name = pEncryptDict->GetStringBy("StrF");
-    if (stmf_name != strf_name) {
+    if (stmf_name != strf_name)
       return FALSE;
-    }
   }
-  if (!_LoadCryptInfo(pEncryptDict, strf_name.AsStringC(), cipher, key_len)) {
+  if (!LoadCryptInfo(pEncryptDict, strf_name, cipher, key_len))
     return FALSE;
-  }
+
   m_Cipher = cipher;
   m_KeyLen = key_len;
   return TRUE;

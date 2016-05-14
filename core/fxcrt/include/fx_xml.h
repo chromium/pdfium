@@ -14,7 +14,7 @@
 
 class CXML_AttrItem {
  public:
-  bool Matches(const CFX_ByteStringC& space, const CFX_ByteStringC& name) const;
+  bool Matches(const CFX_ByteString& space, const CFX_ByteString& name) const;
 
   CFX_ByteString m_QSpaceName;
   CFX_ByteString m_AttrName;
@@ -23,11 +23,11 @@ class CXML_AttrItem {
 
 class CXML_AttrMap {
  public:
-  const CFX_WideString* Lookup(const CFX_ByteStringC& space,
-                               const CFX_ByteStringC& name) const;
-  void SetAt(const CFX_ByteStringC& space,
-             const CFX_ByteStringC& name,
-             const CFX_WideStringC& value);
+  const CFX_WideString* Lookup(const CFX_ByteString& space,
+                               const CFX_ByteString& name) const;
+  void SetAt(const CFX_ByteString& space,
+             const CFX_ByteString& name,
+             const CFX_WideString& value);
   int GetSize() const;
   CXML_AttrItem& GetAt(int index) const;
 
@@ -69,7 +69,7 @@ class CXML_Element {
   void Empty();
   CFX_ByteString GetTagName(FX_BOOL bQualified = FALSE) const;
   CFX_ByteString GetNamespace(FX_BOOL bQualified = FALSE) const;
-  CFX_ByteString GetNamespaceURI(const CFX_ByteStringC& qName) const;
+  CFX_ByteString GetNamespaceURI(const CFX_ByteString& qName) const;
   CXML_Element* GetParent() const { return m_pParent; }
   uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }
   void GetAttrByIndex(int index,

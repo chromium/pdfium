@@ -134,7 +134,7 @@ class CPDF_OCContext {
   void ResetOCContext();
 
  protected:
-  FX_BOOL LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig,
+  FX_BOOL LoadOCGStateFromConfig(const CFX_ByteString& csConfig,
                                  const CPDF_Dictionary* pOCGDict,
                                  FX_BOOL& bValidConfig) const;
   FX_BOOL LoadOCGState(const CPDF_Dictionary* pOCGDict) const;

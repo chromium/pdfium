@@ -503,13 +503,11 @@ CFX_ByteString CPWL_Edit::GetTextAppearanceStream(
     const CFX_FloatPoint& ptOffset) const {
   CFX_ByteTextBuf sRet;
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit, ptOffset);
-
   if (sEdit.GetLength() > 0) {
     sRet << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
          << sEdit.AsStringC() << "ET\n";
   }
-
-  return sRet.AsStringC();
+  return sRet.MakeString();
 }
 
 CFX_ByteString CPWL_Edit::GetCaretAppearanceStream(

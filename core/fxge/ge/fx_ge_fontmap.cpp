@@ -317,7 +317,7 @@ CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
 CFX_ByteString ParseStyle(const FX_CHAR* pStyle, int iLen, int iIndex) {
   CFX_ByteTextBuf buf;
   if (!iLen || iLen <= iIndex) {
-    return buf.AsStringC();
+    return buf.MakeString();
   }
   while (iIndex < iLen) {
     if (pStyle[iIndex] == ',') {
@@ -326,7 +326,7 @@ CFX_ByteString ParseStyle(const FX_CHAR* pStyle, int iLen, int iIndex) {
     buf.AppendChar(pStyle[iIndex]);
     ++iIndex;
   }
-  return buf.AsStringC();
+  return buf.MakeString();
 }
 
 int32_t GetStyleType(const CFX_ByteString& bsStyle, FX_BOOL bRevert) {
@@ -688,7 +688,7 @@ static CFX_ByteString GetStringFromTable(const uint8_t* string_ptr,
   if (string_ptr_length < static_cast<uint32_t>(offset + length)) {
     return CFX_ByteString();
   }
-  return CFX_ByteStringC(string_ptr + offset, length);
+  return CFX_ByteString(string_ptr + offset, length);
 }
 
 CFX_ByteString GetNameFromTT(const uint8_t* name_table,
@@ -1368,12 +1368,15 @@ CFX_FolderFontInfo::~CFX_FolderFontInfo() {
     delete pair.second;
   }
 }
+
 void CFX_FolderFontInfo::AddPath(const CFX_ByteStringC& path) {
-  m_PathList.push_back(path);
+  m_PathList.push_back(CFX_ByteString(path));
 }
+
 void CFX_FolderFontInfo::Release() {
   delete this;
 }
+
 FX_BOOL CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   m_pMapper = pMapper;
   for (const auto& path : m_PathList)

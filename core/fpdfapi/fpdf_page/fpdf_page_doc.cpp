@@ -159,7 +159,7 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict,
   return fontData->AddRef();
 }
 
-CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName,
+CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
                                              CPDF_FontEncoding* pEncoding) {
   if (fontName.IsEmpty())
     return nullptr;
@@ -425,7 +425,8 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
   stream.LoadAllData(pIccProfileStream, FALSE);
   uint8_t digest[20];
   CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
-  auto hash_it = m_HashProfileMap.find(CFX_ByteStringC(digest, 20));
+  CFX_ByteString bsDigest(digest, 20);
+  auto hash_it = m_HashProfileMap.find(bsDigest);
   if (hash_it != m_HashProfileMap.end()) {
     auto it_copied_stream = m_IccProfileMap.find(hash_it->second);
     return it_copied_stream->second->AddRef();
@@ -434,7 +435,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
       new CPDF_IccProfile(stream.GetData(), stream.GetSize());
   CPDF_CountedIccProfile* ipData = new CPDF_CountedIccProfile(pProfile);
   m_IccProfileMap[pIccProfileStream] = ipData;
-  m_HashProfileMap[CFX_ByteStringC(digest, 20)] = pIccProfileStream;
+  m_HashProfileMap[bsDigest] = pIccProfileStream;
   return ipData->AddRef();
 }
 

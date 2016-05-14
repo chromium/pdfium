@@ -46,8 +46,7 @@ class CFX_ByteString {
   CFX_ByteString(const FX_CHAR* ptr, FX_STRSIZE len);
   CFX_ByteString(const uint8_t* ptr, FX_STRSIZE len);
 
-  // TODO(tsepez): mark constructor as explicit.
-  CFX_ByteString(const CFX_ByteStringC& bstrc);
+  explicit CFX_ByteString(const CFX_ByteStringC& bstrc);
   CFX_ByteString(const CFX_ByteStringC& bstrc1, const CFX_ByteStringC& bstrc2);
 
   ~CFX_ByteString();

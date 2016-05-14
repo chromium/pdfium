@@ -20,36 +20,34 @@
 namespace {
 
 void SetBoundingBox(CPDF_Page* page,
-                    const CFX_ByteStringC& key,
+                    const CFX_ByteString& key,
                     float left,
                     float bottom,
                     float right,
                     float top) {
-  CPDF_Dictionary* pPageDict = page->m_pFormDict;
   CPDF_Array* pBoundingBoxArray = new CPDF_Array;
   pBoundingBoxArray->Add(new CPDF_Number(left));
   pBoundingBoxArray->Add(new CPDF_Number(bottom));
   pBoundingBoxArray->Add(new CPDF_Number(right));
   pBoundingBoxArray->Add(new CPDF_Number(top));
-  pPageDict->SetAt(key, pBoundingBoxArray);
+  page->m_pFormDict->SetAt(key, pBoundingBoxArray);
 }
 
-FPDF_BOOL GetBoundingBox(CPDF_Page* page,
-                         const CFX_ByteStringC& key,
-                         float* left,
-                         float* bottom,
-                         float* right,
-                         float* top) {
-  CPDF_Dictionary* pPageDict = page->m_pFormDict;
-  CPDF_Array* pArray = pPageDict->GetArrayBy(key);
+bool GetBoundingBox(CPDF_Page* page,
+                    const CFX_ByteString& key,
+                    float* left,
+                    float* bottom,
+                    float* right,
+                    float* top) {
+  CPDF_Array* pArray = page->m_pFormDict->GetArrayBy(key);
   if (!pArray)
-    return FALSE;
+    return false;
 
   *left = pArray->GetFloatAt(0);
   *bottom = pArray->GetFloatAt(1);
   *right = pArray->GetFloatAt(2);
   *top = pArray->GetFloatAt(3);
-  return TRUE;
+  return true;
 }
 
 }  // namespace

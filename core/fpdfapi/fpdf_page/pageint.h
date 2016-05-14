@@ -155,7 +155,7 @@ class CPDF_StreamContentParser {
   CPDF_Font* FindFont(const CFX_ByteString& name);
   CPDF_ColorSpace* FindColorSpace(const CFX_ByteString& name);
   CPDF_Pattern* FindPattern(const CFX_ByteString& name, bool bShading);
-  CPDF_Object* FindResourceObj(const CFX_ByteStringC& type,
+  CPDF_Object* FindResourceObj(const CFX_ByteString& type,
                                const CFX_ByteString& name);
 
  protected:
@@ -318,7 +318,7 @@ class CPDF_DocPageData {
 
   void Clear(FX_BOOL bRelease = FALSE);
   CPDF_Font* GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly);
-  CPDF_Font* GetStandardFont(const CFX_ByteStringC& fontName,
+  CPDF_Font* GetStandardFont(const CFX_ByteString& fontName,
                              CPDF_FontEncoding* pEncoding);
   void ReleaseFont(CPDF_Dictionary* pFontDict);
   CPDF_ColorSpace* GetColorSpace(CPDF_Object* pCSObj,

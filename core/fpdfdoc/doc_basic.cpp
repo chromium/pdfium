@@ -500,30 +500,25 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
   wsLabel.Format(L"%d", nPage + 1);
   return wsLabel;
 }
+
 int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
-  if (!m_pDocument) {
+  if (!m_pDocument)
     return -1;
-  }
+
   CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
-  if (!pPDFRoot) {
+  if (!pPDFRoot)
     return -1;
-  }
+
   int nPages = m_pDocument->GetPageCount();
-  CFX_ByteString bsLbl;
-  CFX_ByteString bsOrig = bsLabel;
   for (int i = 0; i < nPages; i++) {
-    bsLbl = PDF_EncodeText(GetLabel(i));
-    if (!bsLbl.Compare(bsOrig.AsStringC())) {
+    if (PDF_EncodeText(GetLabel(i)).Compare(bsLabel))
       return i;
-    }
   }
-  bsLbl = bsOrig;
-  int nPage = FXSYS_atoi(bsLbl.c_str());
-  if (nPage > 0 && nPage <= nPages) {
-    return nPage;
-  }
-  return -1;
+
+  int nPage = FXSYS_atoi(CFX_ByteString(bsLabel).c_str());  // NUL terminate.
+  return nPage > 0 && nPage <= nPages ? nPage : -1;
 }
+
 int32_t CPDF_PageLabel::GetPageByLabel(const CFX_WideStringC& wsLabel) const {
   return GetPageByLabel(PDF_EncodeText(wsLabel.c_str()).AsStringC());
 }

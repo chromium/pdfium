@@ -356,7 +356,7 @@ CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
   if (pA) {
     CPDF_Dictionary* pAttrDict = FindAttrDict(pA, owner);
     if (pAttrDict) {
-      CPDF_Object* pAttr = pAttrDict->GetDirectObjectBy(name);
+      CPDF_Object* pAttr = pAttrDict->GetDirectObjectBy(CFX_ByteString(name));
       if (pAttr) {
         return pAttr;
       }
@@ -375,14 +375,14 @@ CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
       CFX_ByteString class_name = pArray->GetStringAt(i);
       CPDF_Dictionary* pClassDict = pClassMap->GetDictBy(class_name);
       if (pClassDict && pClassDict->GetStringBy("O") == owner)
-        return pClassDict->GetDirectObjectBy(name);
+        return pClassDict->GetDirectObjectBy(CFX_ByteString(name));
     }
     return nullptr;
   }
   CFX_ByteString class_name = pC->GetString();
   CPDF_Dictionary* pClassDict = pClassMap->GetDictBy(class_name);
   if (pClassDict && pClassDict->GetStringBy("O") == owner)
-    return pClassDict->GetDirectObjectBy(name);
+    return pClassDict->GetDirectObjectBy(CFX_ByteString(name));
   return nullptr;
 }
 CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
@@ -407,7 +407,7 @@ CFX_ByteString CPDF_StructElementImpl::GetName(
   CPDF_Object* pAttr = GetAttr(owner, name, bInheritable, subindex);
   if (ToName(pAttr))
     return pAttr->GetString();
-  return default_value;
+  return CFX_ByteString(default_value);
 }
 
 FX_ARGB CPDF_StructElementImpl::GetColor(const CFX_ByteStringC& owner,
