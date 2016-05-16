@@ -131,8 +131,8 @@ void CPDFXFA_App::Beep(uint32_t dwType) {
   }
 }
 
-int32_t CPDFXFA_App::MsgBox(const CFX_WideStringC& wsMessage,
-                            const CFX_WideStringC& wsTitle,
+int32_t CPDFXFA_App::MsgBox(const CFX_WideString& wsMessage,
+                            const CFX_WideString& wsTitle,
                             uint32_t dwIconType,
                             uint32_t dwButtonType) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
@@ -184,11 +184,11 @@ int32_t CPDFXFA_App::MsgBox(const CFX_WideStringC& wsMessage,
   return XFA_IDYes;
 }
 
-void CPDFXFA_App::Response(CFX_WideString& wsAnswer,
-                           const CFX_WideStringC& wsQuestion,
-                           const CFX_WideStringC& wsTitle,
-                           const CFX_WideStringC& wsDefaultAnswer,
-                           FX_BOOL bMark) {
+CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
+                                     const CFX_WideString& wsTitle,
+                                     const CFX_WideString& wsDefaultAnswer,
+                                     FX_BOOL bMark) {
+  CFX_WideString wsAnswer;
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     int nLength = 2048;
@@ -206,6 +206,7 @@ void CPDFXFA_App::Response(CFX_WideString& wsAnswer,
     }
     delete[] pBuff;
   }
+  return wsAnswer;
 }
 
 int32_t CPDFXFA_App::GetCurDocumentInBatch() {
@@ -225,39 +226,34 @@ int32_t CPDFXFA_App::GetDocumentCountInBatch() {
   return 0;
 }
 
-IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideStringC& wsURL) {
+IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideString& wsURL) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    return pEnv->FFI_DownloadFromURL(wsURL.c_str());
-  }
-  return NULL;
+  return pEnv ? pEnv->FFI_DownloadFromURL(wsURL.c_str()) : nullptr;
 }
 
-FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideStringC& wsURL,
-                                    const CFX_WideStringC& wsData,
-                                    const CFX_WideStringC& wsContentType,
-                                    const CFX_WideStringC& wsEncode,
-                                    const CFX_WideStringC& wsHeader,
+FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideString& wsURL,
+                                    const CFX_WideString& wsData,
+                                    const CFX_WideString& wsContentType,
+                                    const CFX_WideString& wsEncode,
+                                    const CFX_WideString& wsHeader,
                                     CFX_WideString& wsResponse) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    wsResponse = pEnv->FFI_PostRequestURL(wsURL.c_str(), wsData.c_str(),
-                                          wsContentType.c_str(),
-                                          wsEncode.c_str(), wsHeader.c_str());
-    return TRUE;
-  }
-  return FALSE;
+  if (!pEnv)
+    return FALSE;
+
+  wsResponse = pEnv->FFI_PostRequestURL(wsURL.c_str(), wsData.c_str(),
+                                        wsContentType.c_str(), wsEncode.c_str(),
+                                        wsHeader.c_str());
+  return TRUE;
 }
 
-FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideStringC& wsURL,
-                                   const CFX_WideStringC& wsData,
-                                   const CFX_WideStringC& wsEncode) {
+FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideString& wsURL,
+                                   const CFX_WideString& wsData,
+                                   const CFX_WideString& wsEncode) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    return pEnv->FFI_PutRequestURL(wsURL.c_str(), wsData.c_str(),
-                                   wsEncode.c_str());
-  }
-  return FALSE;
+  return pEnv &&
+         pEnv->FFI_PutRequestURL(wsURL.c_str(), wsData.c_str(),
+                                 wsEncode.c_str());
 }
 
 void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {

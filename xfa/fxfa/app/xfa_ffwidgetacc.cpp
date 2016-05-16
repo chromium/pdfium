@@ -389,12 +389,11 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
           GetValidateMessage(pAppProvider, wsScriptMsg, FALSE, bVersionFlag);
         }
         if (bVersionFlag) {
-          pAppProvider->MsgBox(wsScriptMsg.AsStringC(), wsTitle.AsStringC(),
-                               XFA_MBICON_Warning, XFA_MB_OK);
+          pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
+                               XFA_MB_OK);
           return;
         }
-        if (pAppProvider->MsgBox(wsScriptMsg.AsStringC(), wsTitle.AsStringC(),
-                                 XFA_MBICON_Warning,
+        if (pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
                                  XFA_MB_YesNo) == XFA_IDYes) {
           GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
         }
@@ -402,8 +401,7 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
         if (wsScriptMsg.IsEmpty()) {
           GetValidateMessage(pAppProvider, wsScriptMsg, TRUE, bVersionFlag);
         }
-        pAppProvider->MsgBox(wsScriptMsg.AsStringC(), wsTitle.AsStringC(),
-                             XFA_MBICON_Error, XFA_MB_OK);
+        pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
       }
     }
   }
@@ -436,8 +434,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
         if (wsFormatMsg.IsEmpty()) {
           GetValidateMessage(pAppProvider, wsFormatMsg, TRUE, bVersionFlag);
         }
-        pAppProvider->MsgBox(wsFormatMsg.AsStringC(), wsTitle.AsStringC(),
-                             XFA_MBICON_Error, XFA_MB_OK);
+        pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
         return XFA_EVENTERROR_Success;
       }
       if (GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
@@ -447,12 +444,12 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
         GetValidateMessage(pAppProvider, wsFormatMsg, FALSE, bVersionFlag);
       }
       if (bVersionFlag) {
-        pAppProvider->MsgBox(wsFormatMsg.AsStringC(), wsTitle.AsStringC(),
-                             XFA_MBICON_Warning, XFA_MB_OK);
+        pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
+                             XFA_MB_OK);
         return XFA_EVENTERROR_Success;
       }
-      if (pAppProvider->MsgBox(wsFormatMsg.AsStringC(), wsTitle.AsStringC(),
-                               XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
+      if (pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
+                               XFA_MB_YesNo) == XFA_IDYes) {
         GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
       }
       return XFA_EVENTERROR_Success;
@@ -507,8 +504,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         pAppProvider->LoadString(XFA_IDS_ValidateNullError, wsError);
         wsNullMsg.Format(wsError.c_str(), wsCaptionName.c_str());
       }
-      pAppProvider->MsgBox(wsNullMsg.AsStringC(), wsTitle.AsStringC(),
-                           XFA_MBICON_Status, XFA_MB_OK);
+      pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
       return XFA_EVENTERROR_Error;
     }
     case XFA_ATTRIBUTEENUM_Warning: {
@@ -522,8 +518,8 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         wsNullMsg.Format(wsWarning.c_str(), wsCaptionName.c_str(),
                          wsCaptionName.c_str());
       }
-      if (pAppProvider->MsgBox(wsNullMsg.AsStringC(), wsTitle.AsStringC(),
-                               XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
+      if (pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Warning,
+                               XFA_MB_YesNo) == XFA_IDYes) {
         GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
       }
       return XFA_EVENTERROR_Error;

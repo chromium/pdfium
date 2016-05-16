@@ -725,8 +725,8 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
           wsMessage += wsWarning;
           CFX_WideString wsTitle;
           pAppProvider->LoadString(XFA_IDS_CalcOverride, wsTitle);
-          pAppProvider->MsgBox(wsMessage.AsStringC(), wsTitle.AsStringC(),
-                               XFA_MBICON_Warning, XFA_MB_OK);
+          pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Warning,
+                               XFA_MB_OK);
         }
       }
         return 0;
@@ -757,8 +757,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
           wsMessage += wsWarning;
           CFX_WideString wsTitle;
           pAppProvider->LoadString(XFA_IDS_CalcOverride, wsTitle);
-          if (pAppProvider->MsgBox(wsMessage.AsStringC(), wsTitle.AsStringC(),
-                                   XFA_MBICON_Warning,
+          if (pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Warning,
                                    XFA_MB_YesNo) == XFA_IDYes) {
             pAcc->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
             return 1;

@@ -290,7 +290,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_GotoURL(
     CFX_ByteString bsURL = pArguments->GetUTF8String(0);
     wsURL = CFX_WideString::FromUTF8(bsURL.AsStringC());
   }
-  pNotify->GetDocProvider()->GotoURL(hDoc, wsURL.AsStringC());
+  pNotify->GetDocProvider()->GotoURL(hDoc, wsURL);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
     CFXJSE_Arguments* pArguments) {
@@ -381,10 +381,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Response(
   if (iLength >= 4) {
     bMark = pArguments->GetInt32(3) == 0 ? FALSE : TRUE;
   }
-  CFX_WideString wsAnswer;
-  pNotify->GetAppProvider()->Response(wsAnswer, wsQuestion.AsStringC(),
-                                      wsTitle.AsStringC(),
-                                      wsDefaultAnswer.AsStringC(), bMark);
+  CFX_WideString wsAnswer = pNotify->GetAppProvider()->Response(
+      wsQuestion, wsTitle, wsDefaultAnswer, bMark);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
     FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAnswer).AsStringC());
@@ -598,7 +596,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_MessageBox(
     }
   }
   int32_t iValue = pNotify->GetAppProvider()->MsgBox(
-      wsMessage.AsStringC(), bsTitle.AsStringC(), dwMessageType, dwButtonType);
+      wsMessage, bsTitle, dwMessageType, dwButtonType);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
     FXJSE_Value_SetInteger(hValue, iValue);
@@ -730,7 +728,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ImportData(
     wsFilePath = CFX_WideString::FromUTF8(bsFilePath.AsStringC());
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  pNotify->GetDocProvider()->ImportData(hDoc, wsFilePath.AsStringC());
+  pNotify->GetDocProvider()->ImportData(hDoc, wsFilePath);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_ExportData(
     CFXJSE_Arguments* pArguments) {
@@ -753,7 +751,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ExportData(
   if (iLength >= 2) {
     bXDP = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;
   }
-  pNotify->GetDocProvider()->ExportData(hDoc, wsFilePath.AsStringC(), bXDP);
+  pNotify->GetDocProvider()->ExportData(hDoc, wsFilePath, bXDP);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_PageUp(
     CFXJSE_Arguments* pArguments) {

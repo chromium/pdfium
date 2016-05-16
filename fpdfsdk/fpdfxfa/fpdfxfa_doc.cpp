@@ -625,21 +625,22 @@ void CPDFXFA_Document::SetTitle(CXFA_FFDoc* hDoc,
 }
 
 void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
-                                  const CFX_WideStringC& wsFilePath,
+                                  const CFX_WideString& wsFilePath,
                                   FX_BOOL bXDP) {
   if (hDoc != m_pXFADoc)
     return;
+
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return;
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
-    return;
-  int fileType = bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML;
-  CFX_ByteString bs = CFX_WideString(wsFilePath).UTF16LE_Encode();
 
+  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  if (!pEnv)
+    return;
+
+  int fileType = bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML;
+  CFX_ByteString bs = wsFilePath.UTF16LE_Encode();
   if (wsFilePath.IsEmpty()) {
-    if (!pEnv->GetFormFillInfo() ||
-        pEnv->GetFormFillInfo()->m_pJsPlatform == NULL)
+    if (!pEnv->GetFormFillInfo() || !pEnv->GetFormFillInfo()->m_pJsPlatform)
       return;
     CFX_WideString filepath = pEnv->JS_fieldBrowse();
     bs = filepath.UTF16LE_Encode();
@@ -649,12 +650,10 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
       bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML,
       (FPDF_WIDESTRING)bs.GetBuffer(len * sizeof(unsigned short)), "wb");
   bs.ReleaseBuffer(len * sizeof(unsigned short));
-
-  if (pFileHandler == NULL)
+  if (!pFileHandler)
     return;
 
   CFPDF_FileStream fileWrite(pFileHandler);
-
   CFX_ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
@@ -725,10 +724,10 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
   }
 }
 void CPDFXFA_Document::ImportData(CXFA_FFDoc* hDoc,
-                                  const CFX_WideStringC& wsFilePath) {}
+                                  const CFX_WideString& wsFilePath) {}
 
 void CPDFXFA_Document::GotoURL(CXFA_FFDoc* hDoc,
-                               const CFX_WideStringC& bsURL,
+                               const CFX_WideString& bsURL,
                                FX_BOOL bAppend) {
   if (hDoc != m_pXFADoc)
     return;

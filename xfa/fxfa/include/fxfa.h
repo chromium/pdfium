@@ -311,25 +311,30 @@ class IXFA_AppProvider {
 
   /**
    * Displays a message box.
-   * @param[in] dwIconType    Icon type, refer to XFA_MBICON.
-   * @param[in] dwButtonType  Button type, refer to XFA_MESSAGEBUTTON.
+   * @param[in] wsMessage    - Message string to display in box.
+   * @param[in] wsTitle      - Title string for box.
+   * @param[in] dwIconType   - Icon type, refer to XFA_MBICON.
+   * @param[in] dwButtonType - Button type, refer to XFA_MESSAGEBUTTON.
    * @return A valid integer representing the value of the button pressed by the
    * user, refer to XFA_ID.
    */
-  virtual int32_t MsgBox(const CFX_WideStringC& wsMessage,
-                         const CFX_WideStringC& wsTitle = FX_WSTRC(L""),
+  virtual int32_t MsgBox(const CFX_WideString& wsMessage,
+                         const CFX_WideString& wsTitle = L"",
                          uint32_t dwIconType = 0,
                          uint32_t dwButtonType = 0) = 0;
 
   /**
    * Get a response from the user.
-   * @param[in] bMark - Mask the user input with * (asterisks) when true,
+   * @param[in] wsQuestion      - Message string to display in box.
+   * @param[in] wsTitle         - Title string for box.
+   * @param[in] wsDefaultAnswer - Initial contents for answer.
+   * @param[in] bMask           - Mask the user input with asterisks when true,
+   * @return A string containing the user's response.
    */
-  virtual void Response(CFX_WideString& wsAnswer,
-                        const CFX_WideStringC& wsQuestion,
-                        const CFX_WideStringC& wsTitle = FX_WSTRC(L""),
-                        const CFX_WideStringC& wsDefaultAnswer = FX_WSTRC(L""),
-                        FX_BOOL bMark = TRUE) = 0;
+  virtual CFX_WideString Response(const CFX_WideString& wsQuestion,
+                                  const CFX_WideString& wsTitle = L"",
+                                  const CFX_WideString& wsDefaultAnswer = L"",
+                                  FX_BOOL bMask = TRUE) = 0;
 
   virtual int32_t GetDocumentCountInBatch() = 0;
   virtual int32_t GetCurDocumentInBatch() = 0;
@@ -339,7 +344,7 @@ class IXFA_AppProvider {
    * @param[in] wsURL - http, ftp, such as
    * "http://www.w3.org/TR/REC-xml-names/".
    */
-  virtual IFX_FileRead* DownloadURL(const CFX_WideStringC& wsURL) = 0;
+  virtual IFX_FileRead* DownloadURL(const CFX_WideString& wsURL) = 0;
 
   /**
    * POST data to the given url.
@@ -356,11 +361,11 @@ class IXFA_AppProvider {
    * @param[out] wsResponse   decoded response from server.
    * @return TRUE Server permitted the post request, FALSE otherwise.
    */
-  virtual FX_BOOL PostRequestURL(const CFX_WideStringC& wsURL,
-                                 const CFX_WideStringC& wsData,
-                                 const CFX_WideStringC& wsContentType,
-                                 const CFX_WideStringC& wsEncode,
-                                 const CFX_WideStringC& wsHeader,
+  virtual FX_BOOL PostRequestURL(const CFX_WideString& wsURL,
+                                 const CFX_WideString& wsData,
+                                 const CFX_WideString& wsContentType,
+                                 const CFX_WideString& wsEncode,
+                                 const CFX_WideString& wsHeader,
                                  CFX_WideString& wsResponse) = 0;
 
   /**
@@ -371,9 +376,9 @@ class IXFA_AppProvider {
    * ISO8859-1, any recognized [IANA]character encoding
    * @return TRUE Server permitted the post request, FALSE otherwise.
    */
-  virtual FX_BOOL PutRequestURL(const CFX_WideStringC& wsURL,
-                                const CFX_WideStringC& wsData,
-                                const CFX_WideStringC& wsEncode) = 0;
+  virtual FX_BOOL PutRequestURL(const CFX_WideString& wsURL,
+                                const CFX_WideString& wsData,
+                                const CFX_WideString& wsEncode) = 0;
 
   virtual void LoadString(int32_t iStringID, CFX_WideString& wsString) = 0;
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
@@ -416,12 +421,12 @@ class IXFA_DocProvider {
   virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) = 0;
   virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle) = 0;
   virtual void ExportData(CXFA_FFDoc* hDoc,
-                          const CFX_WideStringC& wsFilePath,
+                          const CFX_WideString& wsFilePath,
                           FX_BOOL bXDP = TRUE) = 0;
   virtual void ImportData(CXFA_FFDoc* hDoc,
-                          const CFX_WideStringC& wsFilePath) = 0;
+                          const CFX_WideString& wsFilePath) = 0;
   virtual void GotoURL(CXFA_FFDoc* hDoc,
-                       const CFX_WideStringC& bsURL,
+                       const CFX_WideString& bsURL,
                        FX_BOOL bAppend = TRUE) = 0;
   virtual FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) = 0;
   virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;

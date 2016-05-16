@@ -162,8 +162,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
     }
     CFX_WideString wsTitle;
     pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
-    pAppProvider->MsgBox(wsMsg.AsStringC(), wsTitle.AsStringC(),
-                         XFA_MBICON_Status, XFA_MB_OK);
+    pAppProvider->MsgBox(wsMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
   }
   m_arrNullTestMsg.RemoveAll();
 }

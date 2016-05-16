@@ -92,11 +92,11 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle);
   virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle);
   virtual void ExportData(CXFA_FFDoc* hDoc,
-                          const CFX_WideStringC& wsFilePath,
+                          const CFX_WideString& wsFilePath,
                           FX_BOOL bXDP = TRUE);
-  virtual void ImportData(CXFA_FFDoc* hDoc, const CFX_WideStringC& wsFilePath);
+  virtual void ImportData(CXFA_FFDoc* hDoc, const CFX_WideString& wsFilePath);
   virtual void GotoURL(CXFA_FFDoc* hDoc,
-                       const CFX_WideStringC& bsURL,
+                       const CFX_WideString& bsURL,
                        FX_BOOL bAppend = TRUE);
   virtual FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc);
   virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled);

@@ -5440,7 +5440,7 @@ void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,
     CFX_ByteString urlString;
     HValueToUTF8String(argOne, urlString);
     IFX_FileRead* pFile = pAppProvider->DownloadURL(
-        CFX_WideString::FromUTF8(urlString.AsStringC()).AsStringC());
+        CFX_WideString::FromUTF8(urlString.AsStringC()));
     if (pFile) {
       int32_t size = pFile->GetSize();
       uint8_t* pData = FX_Alloc(uint8_t, size);
@@ -5500,12 +5500,11 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,
     }
     CFX_WideString decodedResponse;
     FX_BOOL bFlags = pAppProvider->PostRequestURL(
-        CFX_WideString::FromUTF8(bsURL.AsStringC()).AsStringC(),
-        CFX_WideString::FromUTF8(bsData.AsStringC()).AsStringC(),
-        CFX_WideString::FromUTF8(bsContentType.AsStringC()).AsStringC(),
-        CFX_WideString::FromUTF8(bsEncode.AsStringC()).AsStringC(),
-        CFX_WideString::FromUTF8(bsHeader.AsStringC()).AsStringC(),
-        decodedResponse);
+        CFX_WideString::FromUTF8(bsURL.AsStringC()),
+        CFX_WideString::FromUTF8(bsData.AsStringC()),
+        CFX_WideString::FromUTF8(bsContentType.AsStringC()),
+        CFX_WideString::FromUTF8(bsEncode.AsStringC()),
+        CFX_WideString::FromUTF8(bsHeader.AsStringC()), decodedResponse);
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
     if (argc > 2) {
@@ -5561,9 +5560,9 @@ void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argThree, bsEncode);
     }
     FX_BOOL bFlags = pAppProvider->PutRequestURL(
-        CFX_WideString::FromUTF8(bsURL.AsStringC()).AsStringC(),
-        CFX_WideString::FromUTF8(bsData.AsStringC()).AsStringC(),
-        CFX_WideString::FromUTF8(bsEncode.AsStringC()).AsStringC());
+        CFX_WideString::FromUTF8(bsURL.AsStringC()),
+        CFX_WideString::FromUTF8(bsData.AsStringC()),
+        CFX_WideString::FromUTF8(bsEncode.AsStringC()));
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
     if (argc > 2) {
