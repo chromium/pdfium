@@ -16,7 +16,7 @@ if you need to use the system toolchain. See
 
 Get the chromium depot tools via the instructions at
 http://www.chromium.org/developers/how-tos/install-depot-tools (this provides
-the gclient utilty needed below).
+the gclient utility needed below).
 
 Also install Python, Subversion, and Git and make sure they're in your path.
 
@@ -76,7 +76,7 @@ gn gen <directory>
 
 If you want to set <directory> to `out/Debug` or `out/Release` you'll need to
 export `GYP_PDFIUM_NO_ACTION=1` to stop `gclient sync` from executing GYP
-and overwritting your build files.
+and overwriting your build files.
 
 ###<a name="BuildConfig"></a> Selecting build configuration
 
@@ -85,7 +85,7 @@ or without XFA forms support.  Both of these features are enabled by
 default. Also note that the XFA feature requires JavaScript.
 
 Configuration is done by executing `gn args <directory>` to configure the build.
-This will lauch an editor in which you can set the following arguments.
+This will launch an editor in which you can set the following arguments.
 
 ```
 use_goma = true  # Googlers only.
@@ -99,6 +99,9 @@ pdf_is_standalone = true  # Set for a non-embedded build.
 
 clang_use_chrome_plugins = false  # Currently must be false.
 ```
+
+Note, you must set `pdf_is_standalone = true` if you want the sample
+applications like `pdfium_test` to build.
 
 When complete the arguments will be stored in `<directory>/args.gn`.
 
