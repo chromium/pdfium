@@ -164,8 +164,6 @@ class IXFA_WidgetIterator;
 #define XFA_PAGEVIEWEVENT_PostAdded 1
 #define XFA_PAGEVIEWEVENT_PostRemoved 3
 #define XFA_PAGEVIEWEVENT_StopLayout 4
-#define XFA_WIDGETEVENT_PostAdded 2
-#define XFA_WIDGETEVENT_PreRemoved 3
 
 #define XFA_EVENTERROR_Success 1
 #define XFA_EVENTERROR_Error -1
@@ -404,9 +402,10 @@ class IXFA_DocProvider {
                             CFX_PointF ptPopup,
                             const CFX_RectF* pRectExclude = NULL) = 0;
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
-  virtual void WidgetEvent(CXFA_FFWidget* hWidget,
-                           CXFA_WidgetAcc* pWidgetData,
-                           uint32_t dwEvent) = 0;
+  virtual void WidgetPostAdd(CXFA_FFWidget* hWidget,
+                             CXFA_WidgetAcc* pWidgetData) = 0;
+  virtual void WidgetPreRemove(CXFA_FFWidget* hWidget,
+                               CXFA_WidgetAcc* pWidgetData) = 0;
   virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
                                      CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,

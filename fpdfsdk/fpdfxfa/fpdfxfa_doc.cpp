@@ -527,14 +527,25 @@ void CPDFXFA_Document::PageViewEvent(CXFA_FFPageView* pPageView,
   }
 }
 
-void CPDFXFA_Document::WidgetEvent(CXFA_FFWidget* hWidget,
-                                   CXFA_WidgetAcc* pWidgetData,
-                                   uint32_t dwEvent) {
+void CPDFXFA_Document::WidgetPostAdd(CXFA_FFWidget* hWidget,
+                                     CXFA_WidgetAcc* pWidgetData) {
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA || !hWidget)
     return;
 
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (!pEnv)
+  CXFA_FFPageView* pPageView = hWidget->GetPageView();
+  if (!pPageView)
+    return;
+
+  CPDFXFA_Page* pXFAPage = GetPage(pPageView);
+  if (!pXFAPage)
+    return;
+
+  m_pSDKDoc->GetPageView(pXFAPage)->AddAnnot(hWidget);
+}
+
+void CPDFXFA_Document::WidgetPreRemove(CXFA_FFWidget* hWidget,
+                                       CXFA_WidgetAcc* pWidgetData) {
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA || !hWidget)
     return;
 
   CXFA_FFPageView* pPageView = hWidget->GetPageView();
@@ -546,13 +557,8 @@ void CPDFXFA_Document::WidgetEvent(CXFA_FFWidget* hWidget,
     return;
 
   CPDFSDK_PageView* pSdkPageView = m_pSDKDoc->GetPageView(pXFAPage);
-  if (dwEvent == XFA_WIDGETEVENT_PostAdded) {
-    pSdkPageView->AddAnnot(hWidget);
-  } else if (dwEvent == XFA_WIDGETEVENT_PreRemoved) {
-    CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget);
-    if (pAnnot)
-      pSdkPageView->DeleteAnnot(pAnnot);
-  }
+  if (CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget))
+    pSdkPageView->DeleteAnnot(pAnnot);
 }
 
 int32_t CPDFXFA_Document::CountPages(CXFA_FFDoc* hDoc) {

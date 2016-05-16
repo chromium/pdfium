@@ -70,10 +70,10 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags);
-  // dwEvent refer to XFA_WIDGETEVENT_XXX
-  virtual void WidgetEvent(CXFA_FFWidget* hWidget,
-                           CXFA_WidgetAcc* pWidgetData,
-                           uint32_t dwEvent);
+  virtual void WidgetPostAdd(CXFA_FFWidget* hWidget,
+                             CXFA_WidgetAcc* pWidgetData);
+  virtual void WidgetPreRemove(CXFA_FFWidget* hWidget,
+                               CXFA_WidgetAcc* pWidgetData);
 
   // return true if render it.
   virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
