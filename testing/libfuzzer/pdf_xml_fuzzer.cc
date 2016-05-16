@@ -55,7 +55,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   std::unique_ptr<CFDE_XMLDoc> doc(new CFDE_XMLDoc);
-  std::unique_ptr<CFDE_XMLParser, ReleaseDeleter<CFDE_XMLParser>> parser(
+  std::unique_ptr<IFDE_XMLParser> parser(
       new CXFA_XMLParser(doc->GetRoot(), stream.get()));
 
   if (!doc->LoadXML(parser.release()))

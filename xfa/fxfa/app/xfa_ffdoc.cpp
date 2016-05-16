@@ -7,6 +7,7 @@
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
@@ -145,10 +146,11 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
     if (!OpenDoc(pPDFDocument)) {
       return XFA_PARSESTATUS_SyntaxErr;
     }
-    IXFA_Parser* pParser = IXFA_Parser::Create(m_pDocument, TRUE);
-    if (!pParser) {
+    std::unique_ptr<IXFA_Parser> pParser(
+        IXFA_Parser::Create(m_pDocument, TRUE));
+    if (!pParser)
       return XFA_PARSESTATUS_SyntaxErr;
-    }
+
     CXFA_Node* pRootNode = NULL;
     if (pParser->StartParse(m_pStream) == XFA_PARSESTATUS_Ready &&
         pParser->DoParse(NULL) == XFA_PARSESTATUS_Done) {
@@ -160,8 +162,6 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
     } else {
       iStatus = XFA_PARSESTATUS_StatusErr;
     }
-    pParser->Release();
-    pParser = NULL;
   }
   return iStatus;
 }
@@ -265,7 +265,7 @@ FX_BOOL CXFA_FFDoc::CloseDoc() {
   m_TypeToDocViewMap.clear();
 
   if (m_pDocument) {
-    m_pDocument->GetParser()->Release();
+    m_pDocument->DestroyParser();
     m_pDocument = nullptr;
   }
 

@@ -7,17 +7,17 @@
 #ifndef XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
 #define XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
 
+#include <memory>
+
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
 
 class CXFA_XMLParser;
 
-class CXFA_SimpleParser : public IXFA_Parser {
+class CXFA_SimpleParser final : public IXFA_Parser {
  public:
   CXFA_SimpleParser(CXFA_Document* pFactory, FX_BOOL bDocumentParser = FALSE);
   ~CXFA_SimpleParser() override;
-
-  void Release() override { delete this; }
 
   int32_t StartParse(IFX_FileRead* pStream,
                      XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) override;
@@ -82,12 +82,11 @@ class CXFA_SimpleParser : public IXFA_Parser {
   friend class CXFA_DocumentParser;
 };
 
-class CXFA_DocumentParser : public IXFA_Parser {
+class CXFA_DocumentParser final : public IXFA_Parser {
  public:
   CXFA_DocumentParser(CXFA_FFNotify* pNotify);
   ~CXFA_DocumentParser() override;
 
-  void Release() override { delete this; }
   int32_t StartParse(IFX_FileRead* pStream,
                      XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) override;
   int32_t DoParse(IFX_Pause* pPause = NULL) override;
@@ -111,13 +110,12 @@ class CXFA_DocumentParser : public IXFA_Parser {
 };
 typedef CFX_StackTemplate<CFDE_XMLNode*> CXFA_XMLNodeStack;
 
-class CXFA_XMLParser : public CFDE_XMLParser {
+class CXFA_XMLParser : public IFDE_XMLParser {
  public:
   CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream);
-  ~CXFA_XMLParser();
+  ~CXFA_XMLParser() override;
 
-  virtual void Release() { delete this; }
-  virtual int32_t DoParser(IFX_Pause* pPause);
+  int32_t DoParser(IFX_Pause* pPause) override;
 
   FX_FILESIZE m_nStart[2];
   size_t m_nSize[2];
@@ -128,7 +126,7 @@ class CXFA_XMLParser : public CFDE_XMLParser {
  protected:
   CFDE_XMLNode* m_pRoot;
   IFX_Stream* m_pStream;
-  CFDE_XMLSyntaxParser* m_pParser;
+  std::unique_ptr<CFDE_XMLSyntaxParser> m_pParser;
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;
   CXFA_XMLNodeStack m_NodeStack;

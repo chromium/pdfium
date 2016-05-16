@@ -120,10 +120,10 @@ CXFA_Node::~CXFA_Node() {
     delete pNode;
     pNode = pNext;
   }
-  if (m_pXMLNode && HasFlag(XFA_NODEFLAG_OwnXMLNode)) {
-    m_pXMLNode->Release();
-  }
+  if (m_pXMLNode && HasFlag(XFA_NODEFLAG_OwnXMLNode))
+    delete m_pXMLNode;
 }
+
 CXFA_Node* CXFA_Node::Clone(FX_BOOL bRecursive) {
   CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
   CXFA_Node* pClone = pFactory->CreateNode(m_ePacket, m_eNodeClass);
@@ -962,17 +962,12 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
   if (iLength >= 3) {
     bOverwrite = pArguments->GetInt32(2) == 0 ? FALSE : TRUE;
   }
-  IXFA_Parser* pParser = IXFA_Parser::Create(m_pDocument);
-  if (!pParser) {
-    return;
-  }
+  std::unique_ptr<IXFA_Parser> pParser(IXFA_Parser::Create(m_pDocument));
   CFDE_XMLNode* pXMLNode = NULL;
   int32_t iParserStatus = pParser->ParseXMLData(wsExpression, pXMLNode, NULL);
-  if (iParserStatus != XFA_PARSESTATUS_Done || !pXMLNode) {
-    pParser->Release();
-    pParser = NULL;
+  if (iParserStatus != XFA_PARSESTATUS_Done || !pXMLNode)
     return;
-  }
+
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != FDE_XMLNODE_Element ||
        XFA_RecognizeRichText(static_cast<CFDE_XMLElement*>(pXMLNode)))) {
@@ -1059,14 +1054,11 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     }
     pFakeRoot->SetFlag(XFA_NODEFLAG_HasRemoved, false);
   } else {
-    if (pFakeXMLRoot) {
-      pFakeXMLRoot->Release();
-      pFakeXMLRoot = NULL;
-    }
+    delete pFakeXMLRoot;
+    pFakeXMLRoot = nullptr;
   }
-  pParser->Release();
-  pParser = NULL;
 }
+
 void CXFA_Node::Script_NodeClass_SaveFilteredXML(CFXJSE_Arguments* pArguments) {
 }
 

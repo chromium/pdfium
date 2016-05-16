@@ -77,15 +77,17 @@ CFDE_XMLNode::CFDE_XMLNode()
 CFDE_XMLNode::~CFDE_XMLNode() {
   DeleteChildren();
 }
+
 void CFDE_XMLNode::DeleteChildren() {
-  CFDE_XMLNode *pChild = m_pChild, *pTemp;
-  while (pChild != NULL) {
-    pTemp = pChild->m_pNext;
-    pChild->Release();
-    pChild = pTemp;
+  CFDE_XMLNode* pChild = m_pChild;
+  while (pChild) {
+    CFDE_XMLNode* pNext = pChild->m_pNext;
+    delete pChild;
+    pChild = pNext;
   }
-  m_pChild = NULL;
+  m_pChild = nullptr;
 }
+
 int32_t CFDE_XMLNode::CountChildNodes() const {
   int32_t iCount = 0;
   CFDE_XMLNode* pChild = m_pChild;
@@ -510,6 +512,9 @@ CFDE_XMLInstruction::CFDE_XMLInstruction(const CFX_WideString& wsTarget)
     : m_wsTarget(wsTarget) {
   ASSERT(m_wsTarget.GetLength() > 0);
 }
+
+CFDE_XMLInstruction::~CFDE_XMLInstruction() {}
+
 CFDE_XMLNode* CFDE_XMLInstruction::Clone(FX_BOOL bRecursive) {
   CFDE_XMLInstruction* pClone = new CFDE_XMLInstruction(m_wsTarget);
   if (!pClone) {
@@ -827,8 +832,12 @@ void CFDE_XMLElement::SetTextData(const CFX_WideString& wsText) {
   }
   InsertChildNode(new CFDE_XMLText(wsText));
 }
+
 CFDE_XMLText::CFDE_XMLText(const CFX_WideString& wsText)
     : CFDE_XMLNode(), m_wsText(wsText) {}
+
+CFDE_XMLText::~CFDE_XMLText() {}
+
 CFDE_XMLNode* CFDE_XMLText::Clone(FX_BOOL bRecursive) {
   CFDE_XMLText* pClone = new CFDE_XMLText(m_wsText);
   return pClone;
@@ -836,6 +845,9 @@ CFDE_XMLNode* CFDE_XMLText::Clone(FX_BOOL bRecursive) {
 
 CFDE_XMLCharData::CFDE_XMLCharData(const CFX_WideString& wsCData)
     : CFDE_XMLDeclaration(), m_wsCharData(wsCData) {}
+
+CFDE_XMLCharData::~CFDE_XMLCharData() {}
+
 CFDE_XMLNode* CFDE_XMLCharData::Clone(FX_BOOL bRecursive) {
   CFDE_XMLCharData* pClone = new CFDE_XMLCharData(m_wsCharData);
   return pClone;
@@ -860,23 +872,19 @@ void CFDE_XMLDoc::Reset(FX_BOOL bInitRoot) {
       m_pRoot->DeleteChildren();
     }
   } else {
-    if (m_pRoot != NULL) {
-      m_pRoot->Release();
-      m_pRoot = NULL;
-    }
+    delete m_pRoot;
+    m_pRoot = nullptr;
   }
   ReleaseParser();
 }
+
 void CFDE_XMLDoc::ReleaseParser() {
-  if (m_pXMLParser != NULL) {
-    m_pXMLParser->Release();
-    m_pXMLParser = NULL;
-  }
-  if (m_pSyntaxParser != NULL) {
-    m_pSyntaxParser->Release();
-    m_pSyntaxParser = NULL;
-  }
+  delete m_pXMLParser;
+  m_pXMLParser = nullptr;
+  delete m_pSyntaxParser;
+  m_pSyntaxParser = nullptr;
 }
+
 FX_BOOL CFDE_XMLDoc::LoadXML(IFX_Stream* pXMLStream,
                              int32_t iXMLPlaneSize,
                              int32_t iTextDataSize,
@@ -919,21 +927,23 @@ FX_BOOL CFDE_XMLDoc::LoadXML(IFX_Stream* pXMLStream,
   }
   return TRUE;
 }
-FX_BOOL CFDE_XMLDoc::LoadXML(CFDE_XMLParser* pXMLParser) {
-  if (pXMLParser == NULL) {
+
+FX_BOOL CFDE_XMLDoc::LoadXML(IFDE_XMLParser* pXMLParser) {
+  if (!pXMLParser)
     return FALSE;
-  }
+
   Reset(TRUE);
   m_pXMLParser = pXMLParser;
-  return m_pXMLParser != NULL;
+  return TRUE;
 }
+
 int32_t CFDE_XMLDoc::DoLoad(IFX_Pause* pPause) {
   if (m_iStatus >= 100) {
     return m_iStatus;
   }
-  ASSERT(m_pXMLParser != NULL);
   return m_iStatus = m_pXMLParser->DoParser(pPause);
 }
+
 void CFDE_XMLDoc::CloseXML() {
   ReleaseParser();
 }

@@ -77,6 +77,12 @@ void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
   m_pRootNode = pNewRoot;
   RemovePurgeNode(pNewRoot);
 }
+
+void CXFA_Document::DestroyParser() {
+  delete m_pParser;
+  m_pParser = nullptr;
+}
+
 CXFA_FFNotify* CXFA_Document::GetNotify() const {
   return m_pParser->GetNotify();
 }

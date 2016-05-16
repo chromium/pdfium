@@ -16,7 +16,7 @@ class IXFA_Parser {
   static IXFA_Parser* Create(CXFA_Document* pFactory,
                              FX_BOOL bDocumentParser = FALSE);
   virtual ~IXFA_Parser() {}
-  virtual void Release() = 0;
+
   virtual int32_t StartParse(IFX_FileRead* pStream,
                              XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) = 0;
   virtual int32_t DoParse(IFX_Pause* pPause = NULL) = 0;
