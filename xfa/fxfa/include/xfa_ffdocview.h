@@ -125,20 +125,20 @@ class CXFA_FFDocView {
   int32_t m_iLock;
   friend class CXFA_FFNotify;
 };
+
 class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator {
  public:
   CXFA_FFDocWidgetIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
-  virtual ~CXFA_FFDocWidgetIterator();
+  ~CXFA_FFDocWidgetIterator() override;
 
-  virtual void Release() { delete this; }
-
-  virtual void Reset();
-  virtual CXFA_FFWidget* MoveToFirst();
-  virtual CXFA_FFWidget* MoveToLast();
-  virtual CXFA_FFWidget* MoveToNext();
-  virtual CXFA_FFWidget* MoveToPrevious();
-  virtual CXFA_FFWidget* GetCurrentWidget();
-  virtual FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget);
+  // IXFA_WidgetIterator:
+  void Reset() override;
+  CXFA_FFWidget* MoveToFirst() override;
+  CXFA_FFWidget* MoveToLast() override;
+  CXFA_FFWidget* MoveToNext() override;
+  CXFA_FFWidget* MoveToPrevious() override;
+  CXFA_FFWidget* GetCurrentWidget() override;
+  FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
  protected:
   CXFA_ContainerIterator m_ContentIterator;

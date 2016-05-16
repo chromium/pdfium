@@ -68,8 +68,6 @@ int32_t CXFA_RenderContext::DoRender(IFX_Pause* pPause) {
   return XFA_RENDERSTATUS_Done;
 }
 void CXFA_RenderContext::StopRender() {
-  if (m_pWidgetIterator) {
-    m_pWidgetIterator->Release();
-    m_pWidgetIterator = NULL;
-  }
+  delete m_pWidgetIterator;
+  m_pWidgetIterator = nullptr;
 }

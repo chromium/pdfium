@@ -541,7 +541,8 @@ class CXFA_RenderOptions {
 
 class IXFA_WidgetIterator {
  public:
-  virtual void Release() = 0;
+  virtual ~IXFA_WidgetIterator() {}
+
   virtual void Reset() = 0;
   virtual CXFA_FFWidget* MoveToFirst() = 0;
   virtual CXFA_FFWidget* MoveToLast() = 0;
@@ -549,9 +550,6 @@ class IXFA_WidgetIterator {
   virtual CXFA_FFWidget* MoveToPrevious() = 0;
   virtual CXFA_FFWidget* GetCurrentWidget() = 0;
   virtual FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
-
- protected:
-  virtual ~IXFA_WidgetIterator() {}
 };
 
 #endif  // XFA_FXFA_INCLUDE_FXFA_H_

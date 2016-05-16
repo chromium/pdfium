@@ -905,10 +905,11 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   m_page->AddRef();
   if (m_pSDKDoc->GetXFADocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
     CXFA_FFPageView* pageView = m_page->GetXFAPageView();
-    IXFA_WidgetIterator* pWidgetHander = pageView->CreateWidgetIterator(
-        XFA_TRAVERSEWAY_Form, XFA_WIDGETFILTER_Visible |
-                                  XFA_WIDGETFILTER_Viewable |
-                                  XFA_WIDGETFILTER_AllType);
+    std::unique_ptr<IXFA_WidgetIterator> pWidgetHander(
+        pageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form,
+                                       XFA_WIDGETFILTER_Visible |
+                                           XFA_WIDGETFILTER_Viewable |
+                                           XFA_WIDGETFILTER_AllType));
     if (!pWidgetHander) {
       m_page->Release();
       SetLock(FALSE);
@@ -919,11 +920,9 @@ void CPDFSDK_PageView::LoadFXAnnots() {
       CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pXFAAnnot, this);
       if (!pAnnot)
         continue;
-
       m_fxAnnotArray.push_back(pAnnot);
       pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
     }
-    pWidgetHander->Release();
   } else {
     CPDF_Page* pPage = m_page->GetPDFPage();
     ASSERT(pPage);

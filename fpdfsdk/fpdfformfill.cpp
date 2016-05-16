@@ -91,8 +91,8 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (!pWidgetHandler)
     return -1;
 
-  std::unique_ptr<IXFA_WidgetIterator, ReleaseDeleter<IXFA_WidgetIterator>>
-      pWidgetIterator(pPageView->CreateWidgetIterator(
+  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
+      pPageView->CreateWidgetIterator(
           XFA_TRAVERSEWAY_Form,
           XFA_WIDGETFILTER_Viewable | XFA_WIDGETFILTER_AllType));
   if (!pWidgetIterator)

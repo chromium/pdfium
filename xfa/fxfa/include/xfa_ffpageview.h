@@ -36,12 +36,11 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
 typedef CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
                                   CXFA_TraverseStrategy_LayoutItem>
     CXFA_LayoutItemIterator;
+
 class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
  public:
   CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView, uint32_t dwFilter);
-  virtual ~CXFA_FFPageWidgetIterator();
-
-  void Release() override { delete this; }
+  ~CXFA_FFPageWidgetIterator() override;
 
   void Reset() override;
   CXFA_FFWidget* MoveToFirst() override;
@@ -73,9 +72,7 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
  public:
   CXFA_FFTabOrderPageWidgetIterator(CXFA_FFPageView* pPageView,
                                     uint32_t dwFilter);
-  virtual ~CXFA_FFTabOrderPageWidgetIterator();
-
-  void Release() override;
+  ~CXFA_FFTabOrderPageWidgetIterator() override;
 
   void Reset() override;
   CXFA_FFWidget* MoveToFirst() override;

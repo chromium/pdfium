@@ -197,6 +197,7 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetWidget(
   }
   return NULL;
 }
+
 CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     CXFA_FFPageView* pPageView,
     uint32_t dwFilter)
@@ -206,10 +207,9 @@ CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
                           ->GetCurVersionMode() < XFA_VERSION_205;
   Reset();
 }
+
 CXFA_FFTabOrderPageWidgetIterator::~CXFA_FFTabOrderPageWidgetIterator() {}
-void CXFA_FFTabOrderPageWidgetIterator::Release() {
-  delete this;
-}
+
 void CXFA_FFTabOrderPageWidgetIterator::Reset() {
   CreateTabOrderWidgetArray();
   m_iCurWidget = -1;

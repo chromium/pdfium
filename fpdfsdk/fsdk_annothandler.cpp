@@ -376,22 +376,20 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
     return pNext;
   }
   // for xfa annots
-  IXFA_WidgetIterator* pWidgetIterator =
+  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
       pPage->GetXFAPageView()->CreateWidgetIterator(
           XFA_TRAVERSEWAY_Tranvalse, XFA_WIDGETFILTER_Visible |
                                          XFA_WIDGETFILTER_Viewable |
-                                         XFA_WIDGETFILTER_Field);
-  if (pWidgetIterator == NULL)
-    return NULL;
+                                         XFA_WIDGETFILTER_Field));
+  if (!pWidgetIterator)
+    return nullptr;
   if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
     pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
-  CXFA_FFWidget* hNextFocus = NULL;
-  hNextFocus =
+  CXFA_FFWidget* hNextFocus =
       bNext ? pWidgetIterator->MoveToNext() : pWidgetIterator->MoveToPrevious();
   if (!hNextFocus && pSDKAnnot)
     hNextFocus = pWidgetIterator->MoveToFirst();
 
-  pWidgetIterator->Release();
   return pPageView->GetAnnotByXFAWidget(hNextFocus);
 #else   // PDF_ENABLE_XFA
   CBA_AnnotIterator ai(pSDKAnnot->GetPageView(), "Widget", "");
