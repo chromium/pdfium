@@ -277,7 +277,7 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
 
   const TYPE GetAt(int nIndex) const {
     if (nIndex < 0 || nIndex >= m_nSize) {
-      return (const TYPE&)(*(volatile const TYPE*)NULL);
+      PDFIUM_IMMEDIATE_CRASH();
     }
     return ((const TYPE*)m_pData)[nIndex];
   }
@@ -292,7 +292,7 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
 
   TYPE& ElementAt(int nIndex) {
     if (nIndex < 0 || nIndex >= m_nSize) {
-      return *(TYPE*)NULL;
+      PDFIUM_IMMEDIATE_CRASH();
     }
     return ((TYPE*)m_pData)[nIndex];
   }

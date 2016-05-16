@@ -103,6 +103,12 @@ static_assert(FALSE == false, "false_needs_to_be_false");
 #endif
 #endif
 
+#if defined(__clang__) || defined(__GNUC__)
+#define PDFIUM_IMMEDIATE_CRASH() __builtin_trap()
+#else
+#define PDFIUM_IMMEDIATE_CRASH() ((void)(*(volatile char*)0 = 0))
+#endif
+
 // M_PI not universally present on all platforms.
 #define FX_PI 3.1415926535897932384626433832795f
 #define FX_BEZIER 0.5522847498308f
