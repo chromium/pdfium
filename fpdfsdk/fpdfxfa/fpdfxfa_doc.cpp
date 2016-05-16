@@ -160,7 +160,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
   if (nCount > 0 && page_index < nCount) {
     pPage = m_XFAPageList.GetAt(page_index);
     if (pPage)
-      pPage->AddRef();
+      pPage->Retain();
   } else {
     m_nPageCount = GetPageCount();
     m_XFAPageList.SetSize(m_nPageCount);

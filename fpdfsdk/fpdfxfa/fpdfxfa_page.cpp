@@ -21,16 +21,9 @@ CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index)
       m_iPageIndex(page_index),
       m_iRef(1) {}
 
-CPDFXFA_Page::~CPDFXFA_Page() {}
-
-void CPDFXFA_Page::Release() {
-  if (--m_iRef > 0)
-    return;
-
+CPDFXFA_Page::~CPDFXFA_Page() {
   if (m_pDocument)
     m_pDocument->RemovePage(this);
-
-  delete this;
 }
 
 FX_BOOL CPDFXFA_Page::LoadPDFPage() {

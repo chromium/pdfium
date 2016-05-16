@@ -22,8 +22,11 @@ class CPDFXFA_Page {
  public:
   CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index);
 
-  void AddRef() { m_iRef++; }
-  void Release();
+  void Retain() { m_iRef++; }
+  void Release() {
+    if (--m_iRef <= 0)
+      delete this;
+  }
 
   FX_BOOL LoadPage();
   FX_BOOL LoadPDFPage(CPDF_Dictionary* pageDict);

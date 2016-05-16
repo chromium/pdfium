@@ -12,6 +12,7 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fxcrt/include/cfx_retain_ptr.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
@@ -902,7 +903,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   SetLock(TRUE);
 
 #ifdef PDF_ENABLE_XFA
-  m_page->AddRef();
+  CFX_RetainPtr<CPDFXFA_Page> protector(m_page);
   if (m_pSDKDoc->GetXFADocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
     CXFA_FFPageView* pageView = m_page->GetXFAPageView();
     std::unique_ptr<IXFA_WidgetIterator> pWidgetHander(
@@ -911,7 +912,6 @@ void CPDFSDK_PageView::LoadFXAnnots() {
                                            XFA_WIDGETFILTER_Viewable |
                                            XFA_WIDGETFILTER_AllType));
     if (!pWidgetHander) {
-      m_page->Release();
       SetLock(FALSE);
       return;
     }
@@ -944,7 +944,6 @@ void CPDFSDK_PageView::LoadFXAnnots() {
       pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
     }
   }
-  m_page->Release();
 #else   // PDF_ENABLE_XFA
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_Annot* pPDFAnnot = m_pAnnotList->GetAt(i);
