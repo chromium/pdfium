@@ -691,10 +691,10 @@ TEST(fxcrt, WideStringUTF16LE_Encode) {
 TEST(fxcrt, WideStringCOperatorSubscript) {
   // CFX_WideStringC includes the NUL terminator for non-empty strings.
   CFX_WideStringC abc(L"abc");
-  EXPECT_EQ(L'a', abc[0]);
-  EXPECT_EQ(L'b', abc[1]);
-  EXPECT_EQ(L'c', abc[2]);
-  EXPECT_EQ(L'\0', abc[3]);
+  EXPECT_EQ(L'a', abc.CharAt(0));
+  EXPECT_EQ(L'b', abc.CharAt(1));
+  EXPECT_EQ(L'c', abc.CharAt(2));
+  EXPECT_EQ(L'\0', abc.CharAt(3));
 }
 
 TEST(fxcrt, WideStringCOperatorLT) {

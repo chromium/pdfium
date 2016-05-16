@@ -158,7 +158,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
   int32_t charsProcessed = 0;
   while (TRUE) {
     if ((startpos + charsProcessed) == msg.GetLength()) {
-      uint32_t min = std::numeric_limits<int32_t>::max();
+      int32_t min = std::numeric_limits<int32_t>::max();
       CFX_ByteArray mins;
       mins.SetSize(6);
       CFX_Int32Array intCharCounts;

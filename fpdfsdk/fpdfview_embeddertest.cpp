@@ -56,7 +56,7 @@ TEST_F(FPDFViewEmbeddertest, EmptyDocument) {
   EXPECT_EQ(1, FPDF_VIEWERREF_GetNumCopies(document()));
   EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
 
-  EXPECT_EQ(0, FPDF_CountNamedDests(document()));
+  EXPECT_EQ(0u, FPDF_CountNamedDests(document()));
 }
 
 TEST_F(FPDFViewEmbeddertest, Page) {
@@ -86,7 +86,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   buffer_size = 2000000;  // Absurdly large, check not used for this case.
   dest = FPDF_GetNamedDest(document(), 0, nullptr, &buffer_size);
   EXPECT_NE(nullptr, dest);
-  EXPECT_EQ(12u, buffer_size);
+  EXPECT_EQ(12, buffer_size);
 
   // Try to retrieve the first item with too small a buffer.
   buffer_size = 10;
@@ -99,7 +99,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   buffer_size = 12;
   dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
-  EXPECT_EQ(12u, buffer_size);
+  EXPECT_EQ(12, buffer_size);
   EXPECT_EQ(std::string("F\0i\0r\0s\0t\0\0\0", 12),
             std::string(fixed_buffer, buffer_size));
 
@@ -108,7 +108,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 1, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
-  EXPECT_EQ(10u, buffer_size);
+  EXPECT_EQ(10, buffer_size);
   EXPECT_EQ(std::string("N\0e\0x\0t\0\0\0", 10),
             std::string(fixed_buffer, buffer_size));
 
@@ -134,7 +134,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 4, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
-  EXPECT_EQ(30u, buffer_size);
+  EXPECT_EQ(30, buffer_size);
   EXPECT_EQ(std::string("F\0i\0r\0s\0t\0A\0l\0t\0e\0r\0n\0a\0t\0e\0\0\0", 30),
             std::string(fixed_buffer, buffer_size));
 
@@ -144,7 +144,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 5, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
-  EXPECT_EQ(28u, buffer_size);
+  EXPECT_EQ(28, buffer_size);
   EXPECT_EQ(std::string("L\0a\0s\0t\0A\0l\0t\0e\0r\0n\0a\0t\0e\0\0\0", 28),
             std::string(fixed_buffer, buffer_size));
 

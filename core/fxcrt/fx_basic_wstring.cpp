@@ -894,7 +894,8 @@ void CFX_WideString::TrimLeft(const CFX_WideStringC& pTargets) {
   FX_STRSIZE pos = 0;
   while (pos < len) {
     FX_STRSIZE i = 0;
-    while (i < pTargets.GetLength() && pTargets[i] != m_pData->m_String[pos]) {
+    while (i < pTargets.GetLength() &&
+           pTargets.CharAt(i) != m_pData->m_String[pos]) {
       i++;
     }
     if (i == pTargets.GetLength()) {

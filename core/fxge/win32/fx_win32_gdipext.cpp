@@ -673,7 +673,7 @@ static void OutputImage(GpGraphics* pGraphics,
 CGdiplusExt::CGdiplusExt() {
   m_hModule = NULL;
   m_GdiModule = NULL;
-  for (int i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
+  for (size_t i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
     m_Functions[i] = NULL;
   }
   m_pGdiAddFontMemResourceEx = NULL;
@@ -690,7 +690,7 @@ void CGdiplusExt::Load() {
   if (!m_hModule) {
     return;
   }
-  for (int i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
+  for (size_t i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
     m_Functions[i] = GetProcAddress(m_hModule, g_GdipFuncNames[i]);
     if (!m_Functions[i]) {
       m_hModule = NULL;

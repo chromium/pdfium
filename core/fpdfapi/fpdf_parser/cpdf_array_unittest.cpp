@@ -76,7 +76,7 @@ TEST(cpdf_array, InsertAt) {
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertAt(i, new CPDF_Number(elems[i]));
     arr->InsertAt(10, new CPDF_Number(10));
-    EXPECT_EQ(11, arr->GetCount());
+    EXPECT_EQ(11u, arr->GetCount());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       EXPECT_EQ(elems[i], arr->GetIntegerAt(i));
     for (size_t i = FX_ArraySize(elems); i < 10; ++i)

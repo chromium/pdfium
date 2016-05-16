@@ -2304,12 +2304,12 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    uint32_t dwSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwSymbol) {
+    FX_WCHAR dwCharSymbol = strf[ccf++];
+    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
     }
-    dwSymbol = (dwSymbol << 8) | (dwSymbolNum + '0');
+    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
     if (dwSymbol == FXBSTR_ID(0, 0, 'D', '1')) {
       if (!FX_IsDigit(str[cc])) {
         return FALSE;
@@ -2523,12 +2523,12 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    uint32_t dwSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwSymbol) {
+    FX_WCHAR dwCharSymbol = strf[ccf++];
+    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
     }
-    dwSymbol = (dwSymbol << 8) | (dwSymbolNum + '0');
+    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
     if (dwSymbol == FXBSTR_ID(0, 0, 'k', '1') ||
         dwSymbol == FXBSTR_ID(0, 0, 'H', '1') ||
         dwSymbol == FXBSTR_ID(0, 0, 'h', '1') ||
@@ -3952,12 +3952,12 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    uint32_t dwSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwSymbol) {
+    FX_WCHAR dwCharSymbol = strf[ccf++];
+    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
     }
-    dwSymbol = (dwSymbol << 8) | (dwSymbolNum + '0');
+    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
     if (dwSymbol == FXBSTR_ID(0, 0, 'D', '1')) {
       CFX_WideString wsDay;
       wsDay.Format(L"%d", day);
@@ -4079,12 +4079,12 @@ static FX_BOOL FX_TimeFormat(const CFX_WideString& wsTimePattern,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    uint32_t dwSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwSymbol) {
+    FX_WCHAR dwCharSymbol = strf[ccf++];
+    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
     }
-    dwSymbol = (dwSymbol << 8) | (dwSymbolNum + '0');
+    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
     if (dwSymbol == FXBSTR_ID(0, 0, 'h', '1')) {
       if (wHour > 12) {
         wHour -= 12;

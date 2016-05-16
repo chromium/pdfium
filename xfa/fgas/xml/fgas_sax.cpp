@@ -32,7 +32,7 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
   if (dwStart >= dwSize) {
     return FALSE;
   }
-  if (dwLen == -1 || dwStart + dwLen > dwSize) {
+  if (dwLen == static_cast<uint32_t>(-1) || dwStart + dwLen > dwSize) {
     dwLen = dwSize - dwStart;
   }
   if (dwLen == 0) {

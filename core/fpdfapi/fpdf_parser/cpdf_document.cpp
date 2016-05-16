@@ -1102,7 +1102,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
       pBaseDict->SetAtName("Encoding", "WinAnsiEncoding");
     } else {
       flags |= PDFFONT_NONSYMBOLIC;
-      int i;
+      size_t i;
       for (i = 0; i < FX_ArraySize(g_FX_CharsetUnicodes); ++i) {
         if (g_FX_CharsetUnicodes[i].m_Charset == pLogFont->lfCharSet)
           break;
@@ -1136,7 +1136,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
     int char_widths[224];
     GetCharWidth(hDC, 32, 255, char_widths);
     CPDF_Array* pWidths = new CPDF_Array;
-    for (int i = 0; i < 224; i++)
+    for (size_t i = 0; i < 224; i++)
       pWidths->AddInteger(char_widths[i]);
 
     pBaseDict->SetAt("Widths", pWidths);

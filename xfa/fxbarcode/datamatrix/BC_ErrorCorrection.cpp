@@ -172,14 +172,12 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords,
                                                    int32_t len,
                                                    int32_t numECWords,
                                                    int32_t& e) {
-  int32_t table = -1;
-  for (int32_t i = 0; i < sizeof(FACTOR_SETS) / sizeof(int32_t); i++) {
-    if (FACTOR_SETS[i] == numECWords) {
-      table = i;
-      break;
-    }
-  }
-  if (table < 0) {
+  static const size_t kFactorTableNum = sizeof(FACTOR_SETS) / sizeof(int32_t);
+  size_t table = 0;
+  while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
+    table++;
+
+  if (table >= kFactorTableNum) {
     e = BCExceptionIllegalArgument;
     return (FX_WCHAR*)"";
   }
