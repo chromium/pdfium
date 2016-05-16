@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 #define CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Array;
@@ -26,7 +28,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj);
 
 class CPDF_Creator {
  public:
-  CPDF_Creator(CPDF_Document* pDoc);
+  explicit CPDF_Creator(CPDF_Document* pDoc);
   ~CPDF_Creator();
 
   void RemoveSecurity();
@@ -71,18 +73,16 @@ class CPDF_Creator {
                       uint32_t objnum,
                       CPDF_CryptoHandler* pCrypto);
 
-  CPDF_Document* m_pDocument;
-  CPDF_Parser* m_pParser;
-  FX_BOOL m_bCompress;
+  CPDF_Document* const m_pDocument;
+  CPDF_Parser* const m_pParser;
   FX_BOOL m_bSecurityChanged;
   CPDF_Dictionary* m_pEncryptDict;
-  uint32_t m_dwEnryptObjNum;
+  uint32_t m_dwEncryptObjNum;
   FX_BOOL m_bEncryptCloned;
   CPDF_CryptoHandler* m_pCryptoHandler;
   FX_BOOL m_bLocalCryptoHandler;
-  FX_BOOL m_bEncryptMetadata;
   CPDF_Object* m_pMetadata;
-  CPDF_XRefStream* m_pXRefStream;
+  std::unique_ptr<CPDF_XRefStream> m_pXRefStream;
   int32_t m_ObjectStreamSize;
   uint32_t m_dwLastObjNum;
   CFX_FileBufferArchive m_File;
