@@ -281,7 +281,7 @@ void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
     tagProvider.m_bTagAviliable =
         lookup.Lookup(dwHashCode, s_XFATagName, s_iCount) > -1;
     CFX_WideString wsValue;
-    pXMLElement->GetString(FX_WSTRC(L"style").c_str(), wsValue);
+    pXMLElement->GetString(L"style", wsValue);
     if (!wsValue.IsEmpty()) {
       tagProvider.SetAttribute(L"style", wsValue);
     }
@@ -497,7 +497,7 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
   if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
     CFDE_XMLElement* pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
     CFX_WideString wsAttr;
-    pElement->GetString(FX_WSTRC(L"xfa:embed").c_str(), wsAttr);
+    pElement->GetString(L"xfa:embed", wsAttr);
     if (wsAttr.IsEmpty()) {
       return FALSE;
     }
@@ -505,7 +505,7 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
       wsAttr.Delete(0);
     }
     CFX_WideString ws;
-    pElement->GetString(FX_WSTRC(L"xfa:embedType").c_str(), ws);
+    pElement->GetString(L"xfa:embedType", ws);
     if (ws.IsEmpty()) {
       ws = L"som";
     } else {
@@ -516,7 +516,7 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
       return FALSE;
     }
     ws.clear();
-    pElement->GetString(FX_WSTRC(L"xfa:embedMode").c_str(), ws);
+    pElement->GetString(L"xfa:embedMode", ws);
     if (ws.IsEmpty()) {
       ws = L"formatted";
     } else {
@@ -1386,7 +1386,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
         if (wsName == FX_WSTRC(L"a")) {
           CFX_WideString wsLinkContent;
           ASSERT(pElement);
-          pElement->GetString(FX_WSTRC(L"href").c_str(), wsLinkContent);
+          pElement->GetString(L"href", wsLinkContent);
           if (!wsLinkContent.IsEmpty()) {
             pLinkData = FXTARGET_NewWith(m_pAllocator) CXFA_LinkUserData(
                 m_pAllocator,
