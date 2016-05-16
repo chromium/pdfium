@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/parser/xfa_document_serialize.h"
 
-#include <memory>
-
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
@@ -24,26 +22,31 @@ CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {
   ASSERT(m_pDocument);
 }
-
 FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
-  std::unique_ptr<IXFA_Parser> pDataDocumentParser(
-      IXFA_Parser::Create(m_pDocument));
-  if (pDataDocumentParser->StartParse(pDataDocument, XFA_XDPPACKET_Datasets) !=
-      XFA_PARSESTATUS_Ready) {
+  IXFA_Parser* pDataDocumentParser = IXFA_Parser::Create(m_pDocument);
+  if (!pDataDocumentParser) {
     return FALSE;
   }
-  if (pDataDocumentParser->DoParse(nullptr) < XFA_PARSESTATUS_Done)
+  if (pDataDocumentParser->StartParse(pDataDocument, XFA_XDPPACKET_Datasets) !=
+      XFA_PARSESTATUS_Ready) {
+    pDataDocumentParser->Release();
     return FALSE;
-
+  }
+  if (pDataDocumentParser->DoParse(NULL) < XFA_PARSESTATUS_Done) {
+    pDataDocumentParser->Release();
+    return FALSE;
+  }
   CXFA_Node* pImportDataRoot = pDataDocumentParser->GetRootNode();
-  if (!pImportDataRoot)
+  if (!pImportDataRoot) {
+    pDataDocumentParser->Release();
     return FALSE;
-
+  }
   CXFA_Node* pDataModel =
       ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Datasets));
-  if (!pDataModel)
+  if (!pDataModel) {
+    pDataDocumentParser->Release();
     return FALSE;
-
+  }
   CXFA_Node* pDataNode = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Data));
   if (pDataNode) {
     pDataModel->RemoveChild(pDataNode);
@@ -63,9 +66,9 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
     pDataModel->InsertChild(pImportDataRoot);
   }
   m_pDocument->DoDataRemerge(FALSE);
+  pDataDocumentParser->Release();
   return TRUE;
 }
-
 CFX_WideString XFA_ExportEncodeAttribute(const CFX_WideString& str) {
   CFX_WideTextBuf textBuf;
   int32_t iLen = str.GetLength();

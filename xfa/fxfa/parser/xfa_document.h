@@ -67,7 +67,6 @@ class CXFA_Document {
   ~CXFA_Document();
   CXFA_Node* GetRoot() const { return m_pRootNode; }
   CXFA_DocumentParser* GetParser() const { return m_pParser; }
-  void DestroyParser();
   CXFA_FFNotify* GetNotify() const;
   void SetRoot(CXFA_Node* pNewRoot);
   CXFA_Object* GetXFAObject(const CFX_WideStringC& wsNodeName);

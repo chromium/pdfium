@@ -680,9 +680,10 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(
     CXFA_Node* pNode =
         m_pFactory->CreateNode(XFA_XDPPACKET_Datasets, XFA_ELEMENT_DataGroup);
     if (!pNode) {
-      if (pDataXMLNode != pXMLDocumentNode)
-        delete pDataXMLNode;
-      return nullptr;
+      if (pDataXMLNode != pXMLDocumentNode) {
+        pDataXMLNode->Release();
+      }
+      return NULL;
     }
     CFX_WideString wsLocalName;
     static_cast<CFDE_XMLElement*>(pDataXMLNode)->GetLocalTagName(wsLocalName);
@@ -1334,11 +1335,13 @@ void CXFA_SimpleParser::ParseInstruction(CXFA_Node* pXFANode,
   }
 }
 void CXFA_SimpleParser::CloseParser() {
-  delete m_pXMLDoc;
-  m_pXMLDoc = nullptr;
+  if (m_pXMLDoc) {
+    m_pXMLDoc->Release();
+    m_pXMLDoc = NULL;
+  }
   if (m_pStream) {
     m_pStream->Release();
-    m_pStream = nullptr;
+    m_pStream = NULL;
   }
 }
 
@@ -1407,16 +1410,17 @@ CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream)
       m_syntaxParserResult(FDE_XmlSyntaxResult::None) {
   ASSERT(m_pParent && m_pStream);
   m_NodeStack.Push(m_pParent);
-  m_pParser.reset(new CFDE_XMLSyntaxParser);
+  m_pParser = new CFDE_XMLSyntaxParser;
   m_pParser->Init(m_pStream, 32 * 1024, 1024 * 1024);
 }
-
 CXFA_XMLParser::~CXFA_XMLParser() {
+  if (m_pParser) {
+    m_pParser->Release();
+  }
   m_NodeStack.RemoveAll();
   m_ws1.clear();
   m_ws2.clear();
 }
-
 int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
   if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error)
     return -1;
