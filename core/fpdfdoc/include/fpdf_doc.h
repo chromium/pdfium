@@ -48,6 +48,8 @@ class CPDF_ViewerPreferences;
 class CXML_Element;
 class CFX_RenderDevice;
 
+enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
+
 class CPDF_NameTree {
  public:
   explicit CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}

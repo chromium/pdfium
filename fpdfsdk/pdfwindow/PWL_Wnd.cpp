@@ -585,11 +585,11 @@ CPWL_Color CPWL_Wnd::GetTextStrokeColor() const {
   return m_sPrivateParam.sTextStrokeColor;
 }
 
-int32_t CPWL_Wnd::GetBorderStyle() const {
+BorderStyle CPWL_Wnd::GetBorderStyle() const {
   return m_sPrivateParam.nBorderStyle;
 }
 
-void CPWL_Wnd::SetBorderStyle(int32_t nBorderStyle) {
+void CPWL_Wnd::SetBorderStyle(BorderStyle nBorderStyle) {
   if (HasFlag(PWS_BORDER))
     m_sPrivateParam.nBorderStyle = nBorderStyle;
 }
@@ -819,46 +819,26 @@ IPVT_FontMap* CPWL_Wnd::GetFontMap() const {
   return m_sPrivateParam.pFontMap;
 }
 
-CPWL_Color CPWL_Wnd::GetBorderLeftTopColor(int32_t nBorderStyle) const {
-  CPWL_Color color;
-
+CPWL_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
-    case PBS_SOLID:
-      break;
-    case PBS_DASH:
-      break;
-    case PBS_BEVELED:
-      color = CPWL_Color(COLORTYPE_GRAY, 1);
-      break;
-    case PBS_INSET:
-      color = CPWL_Color(COLORTYPE_GRAY, 0.5f);
-      break;
-    case PBS_UNDERLINED:
-      break;
+    case BorderStyle::BEVELED:
+      return CPWL_Color(COLORTYPE_GRAY, 1);
+    case BorderStyle::INSET:
+      return CPWL_Color(COLORTYPE_GRAY, 0.5f);
+    default:
+      return CPWL_Color();
   }
-
-  return color;
 }
 
-CPWL_Color CPWL_Wnd::GetBorderRightBottomColor(int32_t nBorderStyle) const {
-  CPWL_Color color;
-
+CPWL_Color CPWL_Wnd::GetBorderRightBottomColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
-    case PBS_SOLID:
-      break;
-    case PBS_DASH:
-      break;
-    case PBS_BEVELED:
-      color = CPWL_Utils::DevideColor(GetBackgroundColor(), 2);
-      break;
-    case PBS_INSET:
-      color = CPWL_Color(COLORTYPE_GRAY, 0.75f);
-      break;
-    case PBS_UNDERLINED:
-      break;
+    case BorderStyle::BEVELED:
+      return CPWL_Utils::DevideColor(GetBackgroundColor(), 2);
+    case BorderStyle::INSET:
+      return CPWL_Color(COLORTYPE_GRAY, 0.75f);
+    default:
+      return CPWL_Color();
   }
-
-  return color;
 }
 
 int32_t CPWL_Wnd::GetTransparency() {

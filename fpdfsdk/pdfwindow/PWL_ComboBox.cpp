@@ -303,7 +303,7 @@ void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
 
     ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
     ecp.dwBorderWidth = 0;
-    ecp.nBorderStyle = PBS_SOLID;
+    ecp.nBorderStyle = BorderStyle::SOLID;
 
     m_pEdit->Create(ecp);
   }
@@ -319,7 +319,7 @@ void CPWL_ComboBox::CreateButton(const PWL_CREATEPARAM& cp) {
     bcp.sBackgroundColor = PWL_SCROLLBAR_BKCOLOR;
     bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
     bcp.dwBorderWidth = 2;
-    bcp.nBorderStyle = PBS_BEVELED;
+    bcp.nBorderStyle = BorderStyle::BEVELED;
     bcp.eCursorType = FXCT_ARROW;
 
     m_pButton->Create(bcp);
@@ -334,7 +334,7 @@ void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
     lcp.pParentWnd = this;
     lcp.dwFlags =
         PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
-    lcp.nBorderStyle = PBS_SOLID;
+    lcp.nBorderStyle = BorderStyle::SOLID;
     lcp.dwBorderWidth = 1;
     lcp.eCursorType = FXCT_ARROW;
     lcp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);

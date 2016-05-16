@@ -199,7 +199,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
   if (nCharArray > 0) {
     switch (GetBorderStyle()) {
-      case PBS_SOLID: {
+      case BorderStyle::SOLID: {
         sLine << "q\n" << GetBorderWidth() << " w\n"
               << CPWL_Utils::GetColorAppStream(GetBorderColor(), FALSE)
                      .AsStringC()
@@ -215,8 +215,9 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
         }
 
         sLine << "Q\n";
-      } break;
-      case PBS_DASH: {
+        break;
+      }
+      case BorderStyle::DASH: {
         sLine << "q\n" << GetBorderWidth() << " w\n"
               << CPWL_Utils::GetColorAppStream(GetBorderColor(), FALSE)
                      .AsStringC()
@@ -234,7 +235,10 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
         }
 
         sLine << "Q\n";
-      } break;
+        break;
+      }
+      default:
+        break;
     }
   }
 
@@ -318,7 +322,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   if (nCharArray > 0 && nCharArraySafe.IsValid()) {
     switch (GetBorderStyle()) {
-      case PBS_SOLID: {
+      case BorderStyle::SOLID: {
         CFX_GraphStateData gsd;
         gsd.m_LineWidth = (FX_FLOAT)GetBorderWidth();
 
@@ -337,13 +341,15 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
                   ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
               rcClient.top, FXPT_LINETO);
         }
-        if (path.GetPointCount() > 0)
+        if (path.GetPointCount() > 0) {
           pDevice->DrawPath(
               &path, pUser2Device, &gsd, 0,
               CPWL_Utils::PWLColorToFXColor(GetBorderColor(), 255),
               FXFILL_ALTERNATE);
-      } break;
-      case PBS_DASH: {
+        }
+        break;
+      }
+      case BorderStyle::DASH: {
         CFX_GraphStateData gsd;
         gsd.m_LineWidth = (FX_FLOAT)GetBorderWidth();
 
@@ -367,12 +373,16 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
                   ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
               rcClient.top, FXPT_LINETO);
         }
-        if (path.GetPointCount() > 0)
+        if (path.GetPointCount() > 0) {
           pDevice->DrawPath(
               &path, pUser2Device, &gsd, 0,
               CPWL_Utils::PWLColorToFXColor(GetBorderColor(), 255),
               FXFILL_ALTERNATE);
-      } break;
+        }
+        break;
+      }
+      default:
+        break;
     }
   }
 

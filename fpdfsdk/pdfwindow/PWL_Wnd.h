@@ -68,14 +68,6 @@ class IPWL_Provider;
 #define PRES_MULTIPAGES 0x0200L
 #define PRES_TEXTOVERFLOW 0x0400L
 
-// border style
-#define PBS_SOLID 0
-#define PBS_DASH 1
-#define PBS_BEVELED 2
-#define PBS_INSET 3
-#define PBS_UNDERLINED 4
-#define PBS_SHADOW 5
-
 // notification messages
 #define PNM_ADDCHILD 0x00000000L
 #define PNM_REMOVECHILD 0x00000001L
@@ -203,7 +195,7 @@ struct PWL_CREATEPARAM {
         dwFlags(0),
         sBackgroundColor(),
         hAttachedWnd(NULL),
-        nBorderStyle(PBS_SOLID),
+        nBorderStyle(BorderStyle::SOLID),
         dwBorderWidth(1),
         sBorderColor(),
         sTextColor(),
@@ -225,7 +217,7 @@ struct PWL_CREATEPARAM {
   uint32_t dwFlags;                   // optional
   CPWL_Color sBackgroundColor;        // optional
   FX_HWND hAttachedWnd;               // required for no-reader framework
-  int32_t nBorderStyle;               // optional
+  BorderStyle nBorderStyle;           // optional
   int32_t dwBorderWidth;              // optional
   CPWL_Color sBorderColor;            // optional
   CPWL_Color sTextColor;              // optional
@@ -322,14 +314,14 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual CPWL_Color GetTextStrokeColor() const;
   virtual FX_FLOAT GetFontSize() const;
   virtual int32_t GetInnerBorderWidth() const;
-  virtual CPWL_Color GetBorderLeftTopColor(int32_t nBorderStyle) const;
-  virtual CPWL_Color GetBorderRightBottomColor(int32_t nBorderStyle) const;
+  virtual CPWL_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
+  virtual CPWL_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
 
   virtual void SetFontSize(FX_FLOAT fFontSize);
 
   void SetBackgroundColor(const CPWL_Color& color);
   void SetClipRect(const CFX_FloatRect& rect);
-  void SetBorderStyle(int32_t eBorderStyle);
+  void SetBorderStyle(BorderStyle eBorderStyle);
 
   virtual CFX_FloatRect GetWindowRect() const;
   virtual CFX_FloatRect GetClientRect() const;
@@ -341,7 +333,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void RemoveFlag(uint32_t dwFlags);
   const CFX_FloatRect& GetClipRect() const;
   CPWL_Wnd* GetParentWindow() const;
-  int32_t GetBorderStyle() const;
+  BorderStyle GetBorderStyle() const;
   const CPWL_Dash& GetBorderDash() const;
   void* GetAttachedData() const;
 

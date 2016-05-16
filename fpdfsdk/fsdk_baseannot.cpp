@@ -19,19 +19,24 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
+namespace {
+
+const float kMinWidth = 1.0f;
+const float kMinHeight = 1.0f;
+
 int gAfxGetTimeZoneInSeconds(int8_t tzhour, uint8_t tzminute) {
   return (int)tzhour * 3600 + (int)tzminute * (tzhour >= 0 ? 60 : -60);
 }
 
-FX_BOOL _gAfxIsLeapYear(int16_t year) {
+bool gAfxIsLeapYear(int16_t year) {
   return ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0)));
 }
 
-uint16_t _gAfxGetYearDays(int16_t year) {
-  return (_gAfxIsLeapYear(year) == TRUE ? 366 : 365);
+uint16_t gAfxGetYearDays(int16_t year) {
+  return (gAfxIsLeapYear(year) ? 366 : 365);
 }
 
-uint8_t _gAfxGetMonthDays(int16_t year, uint8_t month) {
+uint8_t gAfxGetMonthDays(int16_t year, uint8_t month) {
   uint8_t mDays;
   switch (month) {
     case 1:
@@ -52,7 +57,7 @@ uint8_t _gAfxGetMonthDays(int16_t year, uint8_t month) {
       break;
 
     case 2:
-      if (_gAfxIsLeapYear(year) == TRUE)
+      if (gAfxIsLeapYear(year))
         mDays = 29;
       else
         mDays = 28;
@@ -65,6 +70,8 @@ uint8_t _gAfxGetMonthDays(int16_t year, uint8_t month) {
 
   return mDays;
 }
+
+}  // namespace
 
 CPDFSDK_DateTime::CPDFSDK_DateTime() {
   ResetDateTime();
@@ -406,24 +413,24 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days) {
     yy = y;
     if (((uint16_t)m * 100 + d) > 300)
       yy++;
-    ydays = _gAfxGetYearDays(yy);
+    ydays = gAfxGetYearDays(yy);
     while (ldays >= ydays) {
       y++;
       ldays -= ydays;
       yy++;
-      mdays = _gAfxGetMonthDays(y, m);
+      mdays = gAfxGetMonthDays(y, m);
       if (d > mdays) {
         m++;
         d -= mdays;
       }
-      ydays = _gAfxGetYearDays(yy);
+      ydays = gAfxGetYearDays(yy);
     }
-    mdays = _gAfxGetMonthDays(y, m) - d + 1;
+    mdays = gAfxGetMonthDays(y, m) - d + 1;
     while (ldays >= mdays) {
       ldays -= mdays;
       m++;
       d = 1;
-      mdays = _gAfxGetMonthDays(y, m);
+      mdays = gAfxGetMonthDays(y, m);
     }
     d += ldays;
   } else {
@@ -431,22 +438,22 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days) {
     yy = y;
     if (((uint16_t)m * 100 + d) < 300)
       yy--;
-    ydays = _gAfxGetYearDays(yy);
+    ydays = gAfxGetYearDays(yy);
     while (ldays >= ydays) {
       y--;
       ldays -= ydays;
       yy--;
-      mdays = _gAfxGetMonthDays(y, m);
+      mdays = gAfxGetMonthDays(y, m);
       if (d > mdays) {
         m++;
         d -= mdays;
       }
-      ydays = _gAfxGetYearDays(yy);
+      ydays = gAfxGetYearDays(yy);
     }
     while (ldays >= d) {
       ldays -= d;
       m--;
-      mdays = _gAfxGetMonthDays(y, m);
+      mdays = gAfxGetMonthDays(y, m);
       d = mdays;
     }
     d -= ldays;
@@ -677,7 +684,7 @@ int CPDFSDK_BAAnnot::GetBorderWidth() const {
   return 1;
 }
 
-void CPDFSDK_BAAnnot::SetBorderStyle(int nStyle) {
+void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
   CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS");
   if (!pBSDict) {
     pBSDict = new CPDF_Dictionary;
@@ -685,38 +692,40 @@ void CPDFSDK_BAAnnot::SetBorderStyle(int nStyle) {
   }
 
   switch (nStyle) {
-    case BBS_SOLID:
+    case BorderStyle::SOLID:
       pBSDict->SetAtName("S", "S");
       break;
-    case BBS_DASH:
+    case BorderStyle::DASH:
       pBSDict->SetAtName("S", "D");
       break;
-    case BBS_BEVELED:
+    case BorderStyle::BEVELED:
       pBSDict->SetAtName("S", "B");
       break;
-    case BBS_INSET:
+    case BorderStyle::INSET:
       pBSDict->SetAtName("S", "I");
       break;
-    case BBS_UNDERLINE:
+    case BorderStyle::UNDERLINE:
       pBSDict->SetAtName("S", "U");
+      break;
+    default:
       break;
   }
 }
 
-int CPDFSDK_BAAnnot::GetBorderStyle() const {
+BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
   CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS");
   if (pBSDict) {
     CFX_ByteString sBorderStyle = pBSDict->GetStringBy("S", "S");
     if (sBorderStyle == "S")
-      return BBS_SOLID;
+      return BorderStyle::SOLID;
     if (sBorderStyle == "D")
-      return BBS_DASH;
+      return BorderStyle::DASH;
     if (sBorderStyle == "B")
-      return BBS_BEVELED;
+      return BorderStyle::BEVELED;
     if (sBorderStyle == "I")
-      return BBS_INSET;
+      return BorderStyle::INSET;
     if (sBorderStyle == "U")
-      return BBS_UNDERLINE;
+      return BorderStyle::UNDERLINE;
   }
 
   CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayBy("Border");
@@ -724,11 +733,11 @@ int CPDFSDK_BAAnnot::GetBorderStyle() const {
     if (pBorder->GetCount() >= 4) {
       CPDF_Array* pDP = pBorder->GetArrayAt(3);
       if (pDP && pDP->GetCount() > 0)
-        return BBS_DASH;
+        return BorderStyle::DASH;
     }
   }
 
-  return BBS_SOLID;
+  return BorderStyle::SOLID;
 }
 
 void CPDFSDK_BAAnnot::SetColor(FX_COLORREF color) {
@@ -832,15 +841,12 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
                    FALSE);
 }
 
-#define BA_ANNOT_MINWIDTH 1
-#define BA_ANNOT_MINHEIGHT 1
-
 FX_FLOAT CPDFSDK_Annot::GetMinWidth() const {
-  return BA_ANNOT_MINWIDTH;
+  return kMinWidth;
 }
 
 FX_FLOAT CPDFSDK_Annot::GetMinHeight() const {
-  return BA_ANNOT_MINHEIGHT;
+  return kMinHeight;
 }
 
 FX_BOOL CPDFSDK_BAAnnot::CreateFormFiller() {

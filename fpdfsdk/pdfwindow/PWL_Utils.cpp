@@ -714,7 +714,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
                                               const CPWL_Color& color,
                                               const CPWL_Color& crLeftTop,
                                               const CPWL_Color& crRightBottom,
-                                              int32_t nStyle,
+                                              BorderStyle nStyle,
                                               const CPWL_Dash& dash) {
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sColor;
@@ -731,7 +731,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
 
     switch (nStyle) {
       default:
-      case PBS_SOLID:
+      case BorderStyle::SOLID:
         sColor = CPWL_Utils::GetColorAppStream(color, TRUE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -743,7 +743,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
           sAppStream << "f*\n";
         }
         break;
-      case PBS_DASH:
+      case BorderStyle::DASH:
         sColor = CPWL_Utils::GetColorAppStream(color, FALSE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -762,8 +762,8 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
                      << " l S\n";
         }
         break;
-      case PBS_BEVELED:
-      case PBS_INSET:
+      case BorderStyle::BEVELED:
+      case BorderStyle::INSET:
         sColor = CPWL_Utils::GetColorAppStream(crLeftTop, TRUE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -808,7 +808,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
                      << fTop - fBottom - fHalfWidth * 2 << " re f*\n";
         }
         break;
-      case PBS_UNDERLINED:
+      case BorderStyle::UNDERLINE:
         sColor = CPWL_Utils::GetColorAppStream(color, FALSE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -831,7 +831,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
     const CPWL_Color& color,
     const CPWL_Color& crLeftTop,
     const CPWL_Color& crRightBottom,
-    int32_t nStyle,
+    BorderStyle nStyle,
     const CPWL_Dash& dash) {
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sColor;
@@ -841,8 +841,8 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
 
     switch (nStyle) {
       default:
-      case PBS_SOLID:
-      case PBS_UNDERLINED: {
+      case BorderStyle::SOLID:
+      case BorderStyle::UNDERLINE: {
         sColor = CPWL_Utils::GetColorAppStream(color, FALSE);
         if (sColor.GetLength() > 0) {
           sAppStream << "q\n" << fWidth << " w\n" << sColor
@@ -851,7 +851,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
                      << " S\nQ\n";
         }
       } break;
-      case PBS_DASH: {
+      case BorderStyle::DASH: {
         sColor = CPWL_Utils::GetColorAppStream(color, FALSE);
         if (sColor.GetLength() > 0) {
           sAppStream << "q\n" << fWidth << " w\n"
@@ -862,7 +862,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
                      << " S\nQ\n";
         }
       } break;
-      case PBS_BEVELED: {
+      case BorderStyle::BEVELED: {
         FX_FLOAT fHalfWidth = fWidth / 2.0f;
 
         sColor = CPWL_Utils::GetColorAppStream(color, FALSE);
@@ -889,7 +889,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
                      << " S\nQ\n";
         }
       } break;
-      case PBS_INSET: {
+      case BorderStyle::INSET: {
         FX_FLOAT fHalfWidth = fWidth / 2.0f;
 
         sColor = CPWL_Utils::GetColorAppStream(color, FALSE);
@@ -1078,11 +1078,12 @@ CFX_ByteString CPWL_Utils::GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
                << rcBBox.top - rcBBox.bottom << " re f\n";
     sAppStream << "Q\n";
 
-    sAppStream << "q\n" << CPWL_Utils::GetBorderAppStream(
-                               rcBBox, 2, CPWL_Color(COLORTYPE_GRAY, 0),
-                               CPWL_Color(COLORTYPE_GRAY, 1),
-                               CPWL_Color(COLORTYPE_GRAY, 0.5), PBS_BEVELED,
-                               CPWL_Dash(3, 0, 0))
+    sAppStream << "q\n"
+               << CPWL_Utils::GetBorderAppStream(
+                      rcBBox, 2, CPWL_Color(COLORTYPE_GRAY, 0),
+                      CPWL_Color(COLORTYPE_GRAY, 1),
+                      CPWL_Color(COLORTYPE_GRAY, 0.5), BorderStyle::BEVELED,
+                      CPWL_Dash(3, 0, 0))
                << "Q\n";
 
     CFX_FloatPoint ptCenter = CFX_FloatPoint((rcBBox.left + rcBBox.right) / 2,
@@ -1322,7 +1323,7 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
                             const CPWL_Color& color,
                             const CPWL_Color& crLeftTop,
                             const CPWL_Color& crRightBottom,
-                            int32_t nStyle,
+                            BorderStyle nStyle,
                             int32_t nTransparancy) {
   FX_FLOAT fLeft = rect.left;
   FX_FLOAT fRight = rect.right;
@@ -1334,7 +1335,7 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
 
     switch (nStyle) {
       default:
-      case PBS_SOLID: {
+      case BorderStyle::SOLID: {
         CFX_PathData path;
         path.AppendRect(fLeft, fBottom, fRight, fTop);
         path.AppendRect(fLeft + fWidth, fBottom + fWidth, fRight - fWidth,
@@ -1342,8 +1343,9 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
         pDevice->DrawPath(&path, pUser2Device, NULL,
                           PWLColorToFXColor(color, nTransparancy), 0,
                           FXFILL_ALTERNATE);
-      } break;
-      case PBS_DASH: {
+        break;
+      }
+      case BorderStyle::DASH: {
         CFX_PathData path;
 
         path.SetPointCount(5);
@@ -1368,9 +1370,10 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
         pDevice->DrawPath(&path, pUser2Device, &gsd, 0,
                           PWLColorToFXColor(color, nTransparancy),
                           FXFILL_WINDING);
-      } break;
-      case PBS_BEVELED:
-      case PBS_INSET: {
+        break;
+      }
+      case BorderStyle::BEVELED:
+      case BorderStyle::INSET: {
         CFX_GraphStateData gsd;
         gsd.m_LineWidth = fHalfWidth;
 
@@ -1423,8 +1426,9 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
         pDevice->DrawPath(&path, pUser2Device, &gsd,
                           PWLColorToFXColor(color, nTransparancy), 0,
                           FXFILL_ALTERNATE);
-      } break;
-      case PBS_UNDERLINED: {
+        break;
+      }
+      case BorderStyle::UNDERLINE: {
         CFX_PathData path;
 
         path.SetPointCount(2);
@@ -1437,16 +1441,8 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
         pDevice->DrawPath(&path, pUser2Device, &gsd, 0,
                           PWLColorToFXColor(color, nTransparancy),
                           FXFILL_ALTERNATE);
-      } break;
-      case PBS_SHADOW: {
-        CFX_PathData path;
-        path.AppendRect(fLeft, fBottom, fRight, fTop);
-        path.AppendRect(fLeft + fWidth, fBottom + fWidth, fRight - fWidth,
-                        fTop - fWidth);
-        pDevice->DrawPath(&path, pUser2Device, NULL,
-                          PWLColorToFXColor(color, nTransparancy / 2), 0,
-                          FXFILL_ALTERNATE);
-      } break;
+        break;
+      }
     }
   }
 }

@@ -16,6 +16,7 @@
 #include "xfa/fxbarcode/cbc_pdf417i.h"
 #include "xfa/fxbarcode/cbc_qrcode.h"
 #include "xfa/fxbarcode/cbc_upca.h"
+#include "xfa/fxbarcode/utils.h"
 
 static CBC_CodeBase* FX_Barcode_CreateBarCodeEngineObject(BC_TYPE type) {
   switch (type) {
@@ -320,15 +321,7 @@ FX_BOOL CFX_Barcode::SetTruncated(FX_BOOL truncated) {
   return m_pBCEngine && memptr ? ((m_pBCEngine->*memptr)(truncated), TRUE)
                                : FALSE;
 }
-#ifndef BCExceptionNO
-#define BCExceptionNO 0
-#endif
-#ifndef BCExceptionFormatException
-#define BCExceptionFormatException 8
-#endif
-#ifndef BCExceptionUnSupportedBarcode
-#define BCExceptionUnSupportedBarcode 18
-#endif
+
 FX_BOOL CFX_Barcode::Encode(const CFX_WideStringC& contents,
                             FX_BOOL isDevice,
                             int32_t& e) {
@@ -351,13 +344,12 @@ FX_BOOL CFX_Barcode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   }
   return m_pBCEngine->RenderBitmap(pOutBitmap, e);
 }
-#define BC_TYPE_MIN BC_CODE39
-#define BC_TYPE_MAX BC_DATAMATRIX
+
 CFX_WideString CFX_Barcode::Decode(uint8_t* buf,
                                    int32_t width,
                                    int32_t height,
                                    int32_t& errorCode) {
-  for (BC_TYPE t = BC_TYPE_MIN; t <= BC_TYPE_MAX;
+  for (BC_TYPE t = BC_CODE39; t <= BC_DATAMATRIX;
        t = (BC_TYPE)((int32_t)t + 1)) {
     CBC_CodeBase* pTmpEngine = FX_Barcode_CreateBarCodeEngineObject(t);
     if (!pTmpEngine) {
@@ -372,7 +364,7 @@ CFX_WideString CFX_Barcode::Decode(uint8_t* buf,
   return CFX_WideString();
 }
 CFX_WideString CFX_Barcode::Decode(CFX_DIBitmap* pBitmap, int32_t& errorCode) {
-  for (BC_TYPE t = BC_TYPE_MIN; t <= BC_TYPE_MAX;
+  for (BC_TYPE t = BC_CODE39; t <= BC_DATAMATRIX;
        t = (BC_TYPE)((int32_t)t + 1)) {
     CBC_CodeBase* pTmpEngine = FX_Barcode_CreateBarCodeEngineObject(t);
     if (!pTmpEngine) {

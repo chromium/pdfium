@@ -132,11 +132,6 @@ void FaxFillBits(uint8_t* dest_buf, int columns, int startpos, int endpos) {
 #define NEXTBIT                                  \
   src_buf[bitpos / 8] & (1 << (7 - bitpos % 8)); \
   bitpos++;
-#define ADDBIT(code, bit) \
-  code = code << 1;       \
-  if (bit)                \
-    code++;
-#define GETBIT(bitpos) src_buf[bitpos / 8] & (1 << (7 - bitpos % 8))
 
 const uint8_t FaxBlackRunIns[] = {
     0,          2,          0x02,       3,          0,          0x03,

@@ -323,32 +323,23 @@ PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
   cp.fFontSize = m_pWidget->GetFontSize();
   cp.dwBorderWidth = m_pWidget->GetBorderWidth();
 
-  int nBorderStyle = m_pWidget->GetBorderStyle();
-
-  switch (nBorderStyle) {
-    case BBS_SOLID:
-      cp.nBorderStyle = PBS_SOLID;
-      break;
-    case BBS_DASH:
-      cp.nBorderStyle = PBS_DASH;
+  cp.nBorderStyle = m_pWidget->GetBorderStyle();
+  switch (cp.nBorderStyle) {
+    case BorderStyle::DASH:
       cp.sDash = CPWL_Dash(3, 3, 0);
       break;
-    case BBS_BEVELED:
-      cp.nBorderStyle = PBS_BEVELED;
+    case BorderStyle::BEVELED:
       cp.dwBorderWidth *= 2;
       break;
-    case BBS_INSET:
-      cp.nBorderStyle = PBS_INSET;
+    case BorderStyle::INSET:
       cp.dwBorderWidth *= 2;
       break;
-    case BBS_UNDERLINE:
-      cp.nBorderStyle = PBS_UNDERLINED;
+    default:
       break;
   }
 
-  if (cp.fFontSize <= 0) {
+  if (cp.fFontSize <= 0)
     dwCreateFlags |= PWS_AUTOFONTSIZE;
-  }
 
   cp.dwFlags = dwCreateFlags;
   cp.pSystemHandler = m_pApp->GetSysHandler();

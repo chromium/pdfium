@@ -16,6 +16,7 @@
 #include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
+#include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 class CPDFSDK_PageView;
@@ -155,29 +156,17 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void SetStructParent(int key);
   int GetStructParent() const;
 
-  // border
   void SetBorderWidth(int nWidth);
   int GetBorderWidth() const;
 
-  // BBS_SOLID
-  // BBS_DASH
-  // BBS_BEVELED
-  // BBS_INSET
-  // BBS_UNDERLINE
-
-  void SetBorderStyle(int nStyle);
-  int GetBorderStyle() const;
-
-  // The background of the annotation's icon when closed
-  // The title bar of the annotation's pop-up window
-  // The border of a link annotation
+  void SetBorderStyle(BorderStyle nStyle);
+  BorderStyle GetBorderStyle() const;
 
   void SetColor(FX_COLORREF color);
   void RemoveColor();
   FX_BOOL GetColor(FX_COLORREF& color) const;
 
   FX_BOOL IsVisible() const;
-  // action
 
   CPDF_Action GetAction() const;
   void SetAction(const CPDF_Action& a);

@@ -395,22 +395,20 @@ FX_BOOL Field::borderStyle(IJS_Context* cc,
     if (!pWidget)
       return FALSE;
 
-    int nBorderstyle = pWidget->GetBorderStyle();
-
-    switch (nBorderstyle) {
-      case BBS_SOLID:
+    switch (pWidget->GetBorderStyle()) {
+      case BorderStyle::SOLID:
         vp << L"solid";
         break;
-      case BBS_DASH:
+      case BorderStyle::DASH:
         vp << L"dashed";
         break;
-      case BBS_BEVELED:
+      case BorderStyle::BEVELED:
         vp << L"beveled";
         break;
-      case BBS_INSET:
+      case BorderStyle::INSET:
         vp << L"inset";
         break;
-      case BBS_UNDERLINE:
+      case BorderStyle::UNDERLINE:
         vp << L"underline";
         break;
       default:
@@ -428,18 +426,17 @@ void Field::SetBorderStyle(CPDFSDK_Document* pDocument,
                            const CFX_ByteString& string) {
   ASSERT(pDocument);
 
-  int nBorderStyle = 0;
-
+  BorderStyle nBorderStyle = BorderStyle::SOLID;
   if (string == "solid")
-    nBorderStyle = BBS_SOLID;
+    nBorderStyle = BorderStyle::SOLID;
   else if (string == "beveled")
-    nBorderStyle = BBS_BEVELED;
+    nBorderStyle = BorderStyle::BEVELED;
   else if (string == "dashed")
-    nBorderStyle = BBS_DASH;
+    nBorderStyle = BorderStyle::DASH;
   else if (string == "inset")
-    nBorderStyle = BBS_INSET;
+    nBorderStyle = BorderStyle::INSET;
   else if (string == "underline")
-    nBorderStyle = BBS_UNDERLINE;
+    nBorderStyle = BorderStyle::UNDERLINE;
   else
     return;
 

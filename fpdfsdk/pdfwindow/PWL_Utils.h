@@ -136,7 +136,7 @@ class CPWL_Utils {
                                            const CPWL_Color& color,
                                            const CPWL_Color& crLeftTop,
                                            const CPWL_Color& crRightBottom,
-                                           int32_t nStyle,
+                                           BorderStyle nStyle,
                                            const CPWL_Dash& dash);
   static CFX_ByteString GetCircleBorderAppStream(
       const CFX_FloatRect& rect,
@@ -144,7 +144,7 @@ class CPWL_Utils {
       const CPWL_Color& color,
       const CPWL_Color& crLeftTop,
       const CPWL_Color& crRightBottom,
-      int32_t nStyle,
+      BorderStyle nStyle,
       const CPWL_Dash& dash);
   static CFX_ByteString GetRectFillAppStream(const CFX_FloatRect& rect,
                                              const CPWL_Color& color);
@@ -213,7 +213,7 @@ class CPWL_Utils {
                          const CPWL_Color& color,
                          const CPWL_Color& crLeftTop,
                          const CPWL_Color& crRightBottom,
-                         int32_t nStyle,
+                         BorderStyle nStyle,
                          int32_t nTransparancy);
   static void DrawFillArea(CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,

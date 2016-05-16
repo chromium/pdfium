@@ -852,7 +852,7 @@ void CPWL_ScrollBar::CreateButtons(const PWL_CREATEPARAM& cp) {
   PWL_CREATEPARAM scp = cp;
   scp.pParentWnd = this;
   scp.dwBorderWidth = 2;
-  scp.nBorderStyle = PBS_BEVELED;
+  scp.nBorderStyle = BorderStyle::BEVELED;
 
   scp.dwFlags =
       PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;

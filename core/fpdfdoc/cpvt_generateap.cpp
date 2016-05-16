@@ -107,7 +107,8 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
                              rcAnnot.right - rcAnnot.left);
       break;
   }
-  int32_t nBorderStyle = PBS_SOLID;
+
+  BorderStyle nBorderStyle = BorderStyle::SOLID;
   FX_FLOAT fBorderWidth = 1;
   CPVT_Dash dsBorder(3, 0, 0);
   CPVT_Color crLeftTop, crRightBottom;
@@ -121,25 +122,25 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     }
     switch (pBSDict->GetStringBy("S").GetAt(0)) {
       case 'S':
-        nBorderStyle = PBS_SOLID;
+        nBorderStyle = BorderStyle::SOLID;
         break;
       case 'D':
-        nBorderStyle = PBS_DASH;
+        nBorderStyle = BorderStyle::DASH;
         break;
       case 'B':
-        nBorderStyle = PBS_BEVELED;
+        nBorderStyle = BorderStyle::BEVELED;
         fBorderWidth *= 2;
         crLeftTop = CPVT_Color(CPVT_Color::kGray, 1);
         crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.5);
         break;
       case 'I':
-        nBorderStyle = PBS_INSET;
+        nBorderStyle = BorderStyle::INSET;
         fBorderWidth *= 2;
         crLeftTop = CPVT_Color(CPVT_Color::kGray, 0.5);
         crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.75);
         break;
       case 'U':
-        nBorderStyle = PBS_UNDERLINED;
+        nBorderStyle = BorderStyle::UNDERLINE;
         break;
     }
   }
@@ -318,7 +319,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         CFX_ByteString sButtonBorder = CPVT_GenerateAP::GenerateBorderAP(
             rcButton, 2, CPVT_Color(CPVT_Color::kGray, 0),
             CPVT_Color(CPVT_Color::kGray, 1),
-            CPVT_Color(CPVT_Color::kGray, 0.5), PBS_BEVELED,
+            CPVT_Color(CPVT_Color::kGray, 0.5), BorderStyle::BEVELED,
             CPVT_Dash(3, 0, 0));
         if (sButtonBorder.GetLength() > 0)
           sAppStream << "q\n" << sButtonBorder << "Q\n";
@@ -589,7 +590,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
     const CPVT_Color& color,
     const CPVT_Color& crLeftTop,
     const CPVT_Color& crRightBottom,
-    int32_t nStyle,
+    BorderStyle nStyle,
     const CPVT_Dash& dash) {
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sColor;
@@ -601,7 +602,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
     FX_FLOAT fHalfWidth = fWidth / 2.0f;
     switch (nStyle) {
       default:
-      case PBS_SOLID:
+      case BorderStyle::SOLID:
         sColor = GenerateColorAP(color, TRUE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -613,7 +614,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
           sAppStream << "f*\n";
         }
         break;
-      case PBS_DASH:
+      case BorderStyle::DASH:
         sColor = GenerateColorAP(color, FALSE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -632,8 +633,8 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
                      << " l S\n";
         }
         break;
-      case PBS_BEVELED:
-      case PBS_INSET:
+      case BorderStyle::BEVELED:
+      case BorderStyle::INSET:
         sColor = GenerateColorAP(crLeftTop, TRUE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -676,7 +677,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
                      << fTop - fBottom - fHalfWidth * 2 << " re f*\n";
         }
         break;
-      case PBS_UNDERLINED:
+      case BorderStyle::UNDERLINE:
         sColor = GenerateColorAP(color, FALSE);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
