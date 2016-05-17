@@ -249,6 +249,53 @@ const XFA_FMHtmlReserveCode reservesForEncode[] = {
     {9827, L"clubs"},  {9829, L"hearts"}, {9830, L"diams"},
 };
 
+const uint8_t g_sAltTable_Date[] = {
+    255, 255, 255, 3,   9,   255, 255, 255, 255, 255, 255, 255, 2,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 1,   255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+};
+
+const uint8_t g_sAltTable_Time[] = {
+    14,  255, 255, 3,   9,   255, 255, 15,  255, 255, 255, 255, 6,
+    255, 255, 255, 255, 255, 7,   255, 255, 255, 255, 255, 1,   17,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    15,  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+};
+
+void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
+                              const CFX_WideString& wsAltSymbols,
+                              const uint8_t* pAltTable) {
+  int32_t nLength = wsPattern.GetLength();
+  FX_BOOL bInConstRange = FALSE;
+  FX_BOOL bEscape = FALSE;
+  int32_t i = 0, n = 0;
+  while (i < nLength) {
+    FX_WCHAR wc = wsPattern[i];
+    if (wc == L'\'') {
+      bInConstRange = !bInConstRange;
+      if (bEscape) {
+        i++;
+      } else {
+        wsPattern.Delete(i);
+        nLength--;
+      }
+      bEscape = !bEscape;
+      continue;
+    }
+    if (!bInConstRange && (n = wc - L'A') >= 0 && n <= (L'a' - L'A')) {
+      int32_t nAlt = (int32_t)pAltTable[n];
+      if (nAlt != 255) {
+        wsPattern.SetAt(i, wsAltSymbols[nAlt]);
+      }
+    }
+    i++;
+    bEscape = FALSE;
+  }
+}
+
 }  // namespace
 
 void CXFA_FM2JSContext::Abs(FXJSE_HOBJECT hThis,
@@ -2275,54 +2322,7 @@ int32_t CXFA_FM2JSContext::DateString2Num(const CFX_ByteStringC& szDateString) {
   }
   return (int32_t)dDays;
 }
-#define XFA_N 19
-static uint8_t g_sAltTable_Date[] = {
-    XFA_N, XFA_N, XFA_N, 3,     9,     XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, 2,     XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, 1,     XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-};
-static uint8_t g_sAltTable_Time[] = {
-    14,    XFA_N, XFA_N, 3,     9,     XFA_N, XFA_N, 15,    XFA_N, XFA_N, XFA_N,
-    XFA_N, 6,     XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, 7,     XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, 1,     17,    XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, 15,    XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-    XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N, XFA_N,
-};
-static void XFA_FM_AlternateDateTimeSymbols(CFX_WideString& wsPattern,
-                                            const CFX_WideString& wsAltSymbols,
-                                            uint8_t* pAltTable) {
-  int32_t nLength = wsPattern.GetLength();
-  FX_BOOL bInConstRange = FALSE;
-  FX_BOOL bEscape = FALSE;
-  int32_t i = 0, n = 0;
-  while (i < nLength) {
-    FX_WCHAR wc = wsPattern[i];
-    if (wc == L'\'') {
-      bInConstRange = !bInConstRange;
-      if (bEscape) {
-        i++;
-      } else {
-        wsPattern.Delete(i);
-        nLength--;
-      }
-      bEscape = !bEscape;
-      continue;
-    }
-    if (!bInConstRange && (n = wc - L'A') >= 0 && n <= (L'a' - L'A')) {
-      int32_t nAlt = (int32_t)pAltTable[n];
-      if (nAlt != XFA_N) {
-        wsPattern.SetAt(i, wsAltSymbols[nAlt]);
-      }
-    }
-    i++;
-    bEscape = FALSE;
-  }
-}
-#undef XFA_N
+
 void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis,
                                            int32_t iStyle,
                                            const CFX_ByteStringC& szLocalStr,
@@ -2373,7 +2373,7 @@ void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis,
   if (!bStandard) {
     CFX_WideString wsSymbols;
     pLocale->GetDateTimeSymbols(wsSymbols);
-    XFA_FM_AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Date);
+    AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Date);
   }
   strFormat = FX_UTF8Encode(strRet.c_str(), strRet.GetLength());
 }
@@ -2427,7 +2427,7 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis,
   if (!bStandard) {
     CFX_WideString wsSymbols;
     pLocale->GetDateTimeSymbols(wsSymbols);
-    XFA_FM_AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Time);
+    AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Time);
   }
   strFormat = FX_UTF8Encode(strRet.c_str(), strRet.GetLength());
 }
