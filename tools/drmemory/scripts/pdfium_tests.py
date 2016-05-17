@@ -296,9 +296,6 @@ class ChromeTests:
     script_cmd = ["python", script]
     if self._options.build_dir:
       script_cmd.extend(["--build-dir", self._options.build_dir])
-    # TODO(zhaoqin): it only runs in single process mode now,
-    # need figure out why it does not work with test_one_file_parallel.
-    script_cmd.extend(["-j", "1"])
     # Now run script_cmd with the wrapper in cmd
     cmd.append("--")
     cmd.extend(script_cmd)
