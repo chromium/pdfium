@@ -19,7 +19,6 @@ class CXFA_DataImporter {
  public:
   explicit CXFA_DataImporter(CXFA_Document* pDocument);
 
-  void Release() { delete this; }
   FX_BOOL ImportData(IFX_FileRead* pDataDocument);
 
  protected:
@@ -30,7 +29,6 @@ class CXFA_DataExporter {
  public:
   explicit CXFA_DataExporter(CXFA_Document* pDocument);
 
-  void Release() { delete this; }
   FX_BOOL Export(IFX_FileWrite* pWrite);
   FX_BOOL Export(IFX_FileWrite* pWrite,
                  CXFA_Node* pNode,
@@ -42,6 +40,7 @@ class CXFA_DataExporter {
                  CXFA_Node* pNode,
                  uint32_t dwFlag,
                  const FX_CHAR* pChecksum);
+
   CXFA_Document* const m_pDocument;
 };
 

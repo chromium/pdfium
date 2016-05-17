@@ -362,34 +362,29 @@ CFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
              ? static_cast<CFDE_XMLElement*>(pXMLNode)
              : NULL;
 }
+
 FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
                                 IFX_FileWrite* pFile,
                                 CXFA_ChecksumContext* pCSContext) {
-  CXFA_DataExporter* pExport = new CXFA_DataExporter(m_pDocument);
+  std::unique_ptr<CXFA_DataExporter> pExport(
+      new CXFA_DataExporter(m_pDocument));
   uint32_t packetHash = FX_HashCode_GetW(wsPackage, false);
-  CXFA_Node* pNode = NULL;
-  if (packetHash == XFA_HASHCODE_Xfa) {
-    pNode = m_pDocument->GetRoot();
-  } else {
-    pNode = ToNode(m_pDocument->GetXFAObject(packetHash));
-  }
-  FX_BOOL bFlags = FALSE;
-  if (pNode) {
-    CFX_ByteString bsChecksum;
-    if (pCSContext) {
-      pCSContext->GetChecksum(bsChecksum);
-    }
-    bFlags = pExport->Export(
-        pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : NULL);
-  } else {
-    bFlags = pExport->Export(pFile);
-  }
-  pExport->Release();
-  return bFlags;
-}
-FX_BOOL CXFA_FFDoc::ImportData(IFX_FileRead* pStream, FX_BOOL bXDP) {
-  std::unique_ptr<CXFA_DataImporter, ReleaseDeleter<CXFA_DataImporter>>
-      importer(new CXFA_DataImporter(m_pDocument));
+  CXFA_Node* pNode = packetHash == XFA_HASHCODE_Xfa
+                         ? m_pDocument->GetRoot()
+                         : ToNode(m_pDocument->GetXFAObject(packetHash));
+  if (!pNode)
+    return pExport->Export(pFile);
 
+  CFX_ByteString bsChecksum;
+  if (pCSContext)
+    pCSContext->GetChecksum(bsChecksum);
+
+  return pExport->Export(pFile, pNode, 0,
+                         bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
+}
+
+FX_BOOL CXFA_FFDoc::ImportData(IFX_FileRead* pStream, FX_BOOL bXDP) {
+  std::unique_ptr<CXFA_DataImporter> importer(
+      new CXFA_DataImporter(m_pDocument));
   return importer->ImportData(pStream);
 }
