@@ -280,11 +280,13 @@ class CFX_FontMgr {
   bool GetBuiltinFont(size_t index, const uint8_t** pFontData, uint32_t* size);
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
   FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
+  bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }
 
  private:
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<CFX_ByteString, CTTFontDesc*> m_FaceMap;
   FXFT_Library m_FTLibrary;
+  bool m_FTLibrarySupportsHinting;
 };
 
 class CFX_FontMapper {

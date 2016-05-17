@@ -257,7 +257,14 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       } else {
         bClearType = text_flags & FXTEXT_CLEARTYPE;
       }
-      if ((m_RenderCaps & (FXRC_ALPHA_OUTPUT | FXRC_CMYK_OUTPUT))) {
+      if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
+        // Some Freetype implementations (like the one packaged with Fedora) do
+        // not support hinting due to patents 6219025, 6239783, 6307566,
+        // 6225973, 6243070, 6393145, 6421054, 6282327, and 6624828; the latest
+        // one expires 10/7/19.  This makes LCD antialiasing very ugly, so we
+        // instead fall back on NORMAL antialiasing.
+        anti_alias = FXFT_RENDER_MODE_NORMAL;
+      } else if ((m_RenderCaps & (FXRC_ALPHA_OUTPUT | FXRC_CMYK_OUTPUT))) {
         anti_alias = FXFT_RENDER_MODE_LCD;
         bNormal = TRUE;
       } else if (m_bpp < 16) {

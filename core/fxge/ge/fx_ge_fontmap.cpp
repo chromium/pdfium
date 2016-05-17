@@ -454,7 +454,8 @@ int CTTFontDesc::ReleaseFace(FXFT_Face face) {
   return 0;
 }
 
-CFX_FontMgr::CFX_FontMgr() : m_FTLibrary(nullptr) {
+CFX_FontMgr::CFX_FontMgr()
+    : m_FTLibrary(nullptr), m_FTLibrarySupportsHinting(false) {
   m_pBuiltinMapper.reset(new CFX_FontMapper(this));
 }
 
@@ -472,6 +473,9 @@ void CFX_FontMgr::InitFTLibrary() {
   if (m_FTLibrary)
     return;
   FXFT_Init_FreeType(&m_FTLibrary);
+  m_FTLibrarySupportsHinting =
+      FXFT_Library_SetLcdFilter(m_FTLibrary, FT_LCD_FILTER_DEFAULT) !=
+      FT_Err_Unimplemented_Feature;
 }
 
 void CFX_FontMgr::SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo) {
