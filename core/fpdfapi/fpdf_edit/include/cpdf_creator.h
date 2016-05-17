@@ -80,7 +80,6 @@ class CPDF_Creator {
   uint32_t m_dwEncryptObjNum;
   FX_BOOL m_bEncryptCloned;
   CPDF_CryptoHandler* m_pCryptoHandler;
-  FX_BOOL m_bLocalCryptoHandler;
   CPDF_Object* m_pMetadata;
   std::unique_ptr<CPDF_XRefStream> m_pXRefStream;
   int32_t m_ObjectStreamSize;

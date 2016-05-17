@@ -881,8 +881,10 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc)
       m_bSecurityChanged(FALSE),
       m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),
       m_dwEncryptObjNum(0),
+      m_bEncryptCloned(FALSE),
       m_pCryptoHandler(m_pParser ? m_pParser->GetCryptoHandler() : nullptr),
       m_pMetadata(nullptr),
+      m_pXRefStream(nullptr),
       m_ObjectStreamSize(200),
       m_dwLastObjNum(m_pDocument->GetLastObjNum()),
       m_Offset(0),
@@ -1959,11 +1961,9 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       CPDF_SecurityHandler handler;
       handler.OnCreate(m_pEncryptDict, m_pIDArray, user_pass.raw_str(),
                        user_pass.GetLength(), flag);
-      if (m_bLocalCryptoHandler)
-        delete m_pCryptoHandler;
+      delete m_pCryptoHandler;
       m_pCryptoHandler = new CPDF_CryptoHandler;
       m_pCryptoHandler->Init(m_pEncryptDict, &handler);
-      m_bLocalCryptoHandler = TRUE;
       m_bSecurityChanged = TRUE;
     }
   }
@@ -2008,10 +2008,6 @@ void CPDF_Creator::RemoveSecurity() {
   m_pCryptoHandler = nullptr;
 }
 void CPDF_Creator::ResetStandardSecurity() {
-  if (!m_bLocalCryptoHandler)
-    return;
-
   delete m_pCryptoHandler;
   m_pCryptoHandler = nullptr;
-  m_bLocalCryptoHandler = FALSE;
 }
