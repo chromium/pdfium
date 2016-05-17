@@ -7,6 +7,7 @@
 {
   'variables': {
     'component%': 'static_library',
+    'chromium_code%': 0,
     'clang%': 0,
     'asan%': 0,
     'sanitizer_coverage%': 0,
@@ -172,11 +173,9 @@
     'cflags': [
       '-Wall',
       '-Werror',
-      '-W',
+      '-Wextra',
+      # Two common warning flags for Clang and GCC.
       '-Wno-missing-field-initializers',
-      # Code might someday be made clean for -Wsign-compare, but for now
-      # this produces too much noise to be useful.
-      '-Wno-sign-compare',
       '-Wno-unused-parameter',
       '-pthread',
       '-fno-exceptions',
@@ -360,6 +359,7 @@
     'xcode_settings': {
       'ALWAYS_SEARCH_USER_PATHS': 'NO',
       'CLANG_CXX_LANGUAGE_STANDARD': 'c++11',
+      'CLANG_CXX_LIBRARY': 'libc++',            # -stdlib=libc++
       'GCC_CW_ASM_SYNTAX': 'NO',                # No -fasm-blocks
       'GCC_DYNAMIC_NO_PIC': 'NO',               # No -mdynamic-no-pic
                                                 # (Equivalent to -fPIC)
@@ -371,6 +371,7 @@
       'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES',      # -fvisibility=hidden
       'GCC_TREAT_WARNINGS_AS_ERRORS': 'NO',     # -Werror
       'GCC_WARN_NON_VIRTUAL_DESTRUCTOR': 'YES', # -Wnon-virtual-dtor
+      'MACOSX_DEPLOYMENT_TARGET': '10.7',       # -mmacosx-version-min
       'SYMROOT': '<(DEPTH)/xcodebuild',
       'USE_HEADERMAP': 'NO',
       'OTHER_CFLAGS': [
@@ -378,12 +379,13 @@
       ],
       'WARNING_CFLAGS': [
         '-Wall',
-        '-Wendif-labels',
-        '-W',
+        '-Werror',
+        '-Wextra',
         '-Wno-unused-parameter',
       ],
     },
     'variables': {
+      'chromium_code%': '<(chromium_code)',
       'clang_warning_flags': [
         # TODO(thakis): https://crbug.com/604888
         '-Wno-undefined-var-template',
@@ -469,6 +471,43 @@
         'defines': ['CR_CLANG_REVISION=<!(python <(DEPTH)/tools/clang/scripts/update.py --print-revision)'],
       }],
     ],
+    'target_conditions': [
+      ['chromium_code==0', {
+        'variables': {
+          'clang_warning_flags': [
+            # Suppress unused variable warnings from third-party libraries.
+            '-Wno-unused-variable',
+          ],
+        },
+        'msvs_settings': {
+          'VCCLCompilerTool': {
+            'WarningLevel': '3',
+          },
+        },
+        'conditions': [
+          ['OS!="win"', {
+            # Remove -Wextra for third-party code.
+            'cflags!': [ '-Wextra' ],
+          }],
+          ['OS!="win" and clang==0', {
+            'cflags!': [
+              '-Wall',
+            ],
+          }],
+          ['OS=="mac"', {
+            'xcode_settings': {
+              'WARNING_CFLAGS!': ['-Wextra'],
+            },
+          }],
+        ],
+      }, {  # chromium_code==1
+        'msvs_settings': {
+          'VCCLCompilerTool': {
+            'WarningLevel': '4',
+          },
+        },
+      }],
+    ],  # target_conditions for 'target_defaults'
   },
   'conditions': [
     ['OS=="linux" or OS=="mac"', {

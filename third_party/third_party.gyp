@@ -85,6 +85,13 @@
            'freetype/src/base/fttype1.c',
           ],
         }],
+        ['os_posix==1 and clang==0', {
+          'cflags': [
+            # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
+            # ftbase.h are unused. GCC needs this flag too.
+            '-Wno-unused-function',
+          ],
+        }],
       ],
       'variables': {
         'clang_warning_flags': [
@@ -122,7 +129,7 @@
       'conditions': [
         ['os_posix==1', {
           # library contains several enum vs non-enum conditionals.
-          'cflags': [ '-Wno-extra', ],
+          'cflags': [ '-Wno-extra' ],
         }],
       ],
       'variables': {

@@ -4,8 +4,7 @@
 
 {
   'variables': {
-    # TODO(thakis): Enable this, pdfium:29
-    #'chromium_code': 1,
+    'chromium_code': 1,
 
     'variables': {
       'clang_use_pdfium_plugins%': 0,
@@ -95,14 +94,6 @@
     'msvs_disabled_warnings': [
       4267,
     ],
-    'variables': {
-      'clang_warning_flags': [
-        # TODO(thestig): Fix all instances, remove this, pdfium:29
-        '-Wno-sign-compare',
-      ],
-      # Make sure Chromium's build/common.gypi doesn't re-add the flag on linux.
-      'cflags_cc!': [ '-Wsign-compare' ],
-    },
   },
   'targets': [
     {
