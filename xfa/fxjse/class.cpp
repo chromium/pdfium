@@ -305,16 +305,15 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
                               const_cast<FXJSE_CLASS*>(lpClassDefinition))));
   }
   pClass->m_hTemplate.Reset(lpContext->m_pIsolate, hFunctionTemplate);
-  lpContext->m_rgClasses.Add(pClass);
+  lpContext->m_rgClasses.push_back(std::unique_ptr<CFXJSE_Class>(pClass));
   return pClass;
 }
+
 CFXJSE_Class* CFXJSE_Class::GetClassFromContext(CFXJSE_Context* pContext,
                                                 const CFX_ByteStringC& szName) {
-  for (int count = pContext->m_rgClasses.GetSize(), i = 0; i < count; i++) {
-    CFXJSE_Class* pClass = pContext->m_rgClasses[i];
-    if (pClass->m_szClassName == szName) {
-      return pClass;
-    }
+  for (const auto& pClass : pContext->m_rgClasses) {
+    if (pClass->m_szClassName == szName)
+      return pClass.get();
   }
-  return NULL;
+  return nullptr;
 }

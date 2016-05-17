@@ -6,6 +6,8 @@
 
 #include "xfa/fxjse/runtime.h"
 
+#include <algorithm>
+
 #include "fpdfsdk/jsapi/include/fxjs_v8.h"
 #include "xfa/fxjse/scope_inline.h"
 
@@ -99,30 +101,27 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
   return pData->m_pFXJSERuntimeData;
 }
 
-CFXJSE_RuntimeList* CFXJSE_RuntimeData::g_RuntimeList = NULL;
+CFXJSE_RuntimeList* CFXJSE_RuntimeData::g_RuntimeList = nullptr;
+
 void CFXJSE_RuntimeList::AppendRuntime(v8::Isolate* pIsolate) {
-  m_RuntimeList.Add(pIsolate);
+  m_RuntimeList.push_back(pIsolate);
 }
 
 void CFXJSE_RuntimeList::RemoveRuntime(
     v8::Isolate* pIsolate,
     CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback) {
-  int32_t iIdx = m_RuntimeList.Find(pIsolate, 0);
-  if (iIdx >= 0) {
-    m_RuntimeList.RemoveAt(iIdx, 1);
-  }
-  if (lpfnDisposeCallback) {
+  auto it = std::find(m_RuntimeList.begin(), m_RuntimeList.end(), pIsolate);
+  if (it != m_RuntimeList.end())
+    m_RuntimeList.erase(it);
+  if (lpfnDisposeCallback)
     lpfnDisposeCallback(pIsolate);
-  }
 }
 
 void CFXJSE_RuntimeList::RemoveAllRuntimes(
     CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback) {
-  int32_t iSize = m_RuntimeList.GetSize();
   if (lpfnDisposeCallback) {
-    for (int32_t iIdx = 0; iIdx < iSize; iIdx++) {
-      lpfnDisposeCallback(m_RuntimeList[iIdx]);
-    }
+    for (v8::Isolate* pIsolate : m_RuntimeList)
+      lpfnDisposeCallback(pIsolate);
   }
-  m_RuntimeList.RemoveAll();
+  m_RuntimeList.clear();
 }

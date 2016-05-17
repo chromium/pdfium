@@ -7,6 +7,8 @@
 #ifndef XFA_FXJSE_RUNTIME_H_
 #define XFA_FXJSE_RUNTIME_H_
 
+#include <vector>
+
 #include "core/fxcrt/include/fx_basic.h"
 #include "v8/include/v8.h"
 
@@ -45,7 +47,7 @@ class CFXJSE_RuntimeList {
   void RemoveAllRuntimes(RuntimeDisposeCallback lpfnDisposeCallback);
 
  protected:
-  CFX_ArrayTemplate<v8::Isolate*> m_RuntimeList;
+  std::vector<v8::Isolate*> m_RuntimeList;
 };
 
 #endif  // XFA_FXJSE_RUNTIME_H_

@@ -155,11 +155,8 @@ CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
   return pContext;
 }
 
-CFXJSE_Context::~CFXJSE_Context() {
-  for (int32_t i = 0, count = m_rgClasses.GetSize(); i < count; i++)
-    delete m_rgClasses[i];
-  m_rgClasses.RemoveAll();
-}
+CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
+CFXJSE_Context::~CFXJSE_Context() {}
 
 void CFXJSE_Context::GetGlobalObject(CFXJSE_Value* pValue) {
   ASSERT(pValue);
