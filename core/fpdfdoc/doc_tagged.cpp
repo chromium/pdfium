@@ -15,43 +15,59 @@
 #include "core/fpdfdoc/include/fpdf_tagged.h"
 #include "core/fpdfdoc/tagged_int.h"
 
+namespace {
+
 const int nMaxRecursion = 32;
-static FX_BOOL IsTagged(const CPDF_Document* pDoc) {
+
+bool IsTagged(const CPDF_Document* pDoc) {
   CPDF_Dictionary* pCatalog = pDoc->GetRoot();
   CPDF_Dictionary* pMarkInfo = pCatalog->GetDictBy("MarkInfo");
   return pMarkInfo && pMarkInfo->GetIntegerBy("Marked");
 }
-CPDF_StructTree* CPDF_StructTree::LoadPage(const CPDF_Document* pDoc,
+
+}  // namespace
+
+// static
+IPDF_StructTree* IPDF_StructTree::LoadPage(const CPDF_Document* pDoc,
                                            const CPDF_Dictionary* pPageDict) {
-  if (!IsTagged(pDoc)) {
-    return NULL;
-  }
+  if (!IsTagged(pDoc))
+    return nullptr;
+
   CPDF_StructTreeImpl* pTree = new CPDF_StructTreeImpl(pDoc);
   pTree->LoadPageTree(pPageDict);
   return pTree;
 }
-CPDF_StructTree* CPDF_StructTree::LoadDoc(const CPDF_Document* pDoc) {
-  if (!IsTagged(pDoc)) {
-    return NULL;
-  }
+
+// static.
+IPDF_StructTree* IPDF_StructTree::LoadDoc(const CPDF_Document* pDoc) {
+  if (!IsTagged(pDoc))
+    return nullptr;
+
   CPDF_StructTreeImpl* pTree = new CPDF_StructTreeImpl(pDoc);
   pTree->LoadDocTree();
   return pTree;
 }
-CPDF_StructTreeImpl::CPDF_StructTreeImpl(const CPDF_Document* pDoc) {
-  CPDF_Dictionary* pCatalog = pDoc->GetRoot();
-  m_pTreeRoot = pCatalog->GetDictBy("StructTreeRoot");
-  if (!m_pTreeRoot) {
-    return;
-  }
-  m_pRoleMap = m_pTreeRoot->GetDictBy("RoleMap");
-}
+
+CPDF_StructTreeImpl::CPDF_StructTreeImpl(const CPDF_Document* pDoc)
+    : m_pTreeRoot(pDoc->GetRoot()->GetDictBy("StructTreeRoot")),
+      m_pRoleMap(m_pTreeRoot ? m_pTreeRoot->GetDictBy("RoleMap") : nullptr),
+      m_pPage(nullptr) {}
+
 CPDF_StructTreeImpl::~CPDF_StructTreeImpl() {
-  for (int i = 0; i < m_Kids.GetSize(); i++)
-    if (m_Kids[i]) {
+  for (int i = 0; i < m_Kids.GetSize(); i++) {
+    if (m_Kids[i])
       m_Kids[i]->Release();
-    }
+  }
 }
+
+int CPDF_StructTreeImpl::CountTopElements() const {
+  return m_Kids.GetSize();
+}
+
+IPDF_StructElement* CPDF_StructTreeImpl::GetTopElement(int i) const {
+  return m_Kids.GetAt(i);
+}
+
 void CPDF_StructTreeImpl::LoadDocTree() {
   m_pPage = nullptr;
   if (!m_pTreeRoot)
@@ -197,22 +213,23 @@ FX_BOOL CPDF_StructTreeImpl::AddTopLevelNode(CPDF_Dictionary* pDict,
   }
   return TRUE;
 }
+
 CPDF_StructElementImpl::CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree,
                                                CPDF_StructElementImpl* pParent,
                                                CPDF_Dictionary* pDict)
-    : m_RefCount(0) {
-  m_pTree = pTree;
-  m_pDict = pDict;
-  m_Type = pDict->GetStringBy("S");
+    : m_RefCount(0),
+      m_pTree(pTree),
+      m_pParent(pParent),
+      m_pDict(pDict),
+      m_Type(pDict->GetStringBy("S")) {
   if (pTree->m_pRoleMap) {
     CFX_ByteString mapped = pTree->m_pRoleMap->GetStringBy(m_Type);
-    if (!mapped.IsEmpty()) {
+    if (!mapped.IsEmpty())
       m_Type = mapped;
-    }
   }
-  m_pParent = pParent;
   LoadKids(pDict);
 }
+
 CPDF_StructElementImpl::~CPDF_StructElementImpl() {
   for (int i = 0; i < m_Kids.GetSize(); i++) {
     if (m_Kids[i].m_Type == CPDF_StructKid::Element &&

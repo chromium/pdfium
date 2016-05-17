@@ -9,66 +9,55 @@
 
 #include "core/fxge/include/fx_dib.h"
 
+class CPDF_Dictionary;
 class CPDF_Document;
-class CPDF_StructElement;
-class CPDF_StructTree;
-struct CPDF_StructKid;
+class IPDF_StructElement;
 
-class CPDF_StructTree {
+class IPDF_StructTree {
  public:
-  static CPDF_StructTree* LoadDoc(const CPDF_Document* pDoc);
-
-  static CPDF_StructTree* LoadPage(const CPDF_Document* pDoc,
+  static IPDF_StructTree* LoadDoc(const CPDF_Document* pDoc);
+  static IPDF_StructTree* LoadPage(const CPDF_Document* pDoc,
                                    const CPDF_Dictionary* pPageDict);
 
-  virtual ~CPDF_StructTree() {}
+  virtual ~IPDF_StructTree() {}
 
   virtual int CountTopElements() const = 0;
-
-  virtual CPDF_StructElement* GetTopElement(int i) const = 0;
+  virtual IPDF_StructElement* GetTopElement(int i) const = 0;
 };
+
 struct CPDF_StructKid {
   enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
 
   union {
     struct {
-      CPDF_StructElement* m_pElement;
-
+      IPDF_StructElement* m_pElement;
       CPDF_Dictionary* m_pDict;
     } m_Element;
     struct {
       uint32_t m_PageObjNum;
-
       uint32_t m_ContentId;
     } m_PageContent;
     struct {
       uint32_t m_PageObjNum;
-
       uint32_t m_ContentId;
-
       uint32_t m_RefObjNum;
     } m_StreamContent;
     struct {
       uint32_t m_PageObjNum;
-
       uint32_t m_RefObjNum;
     } m_Object;
   };
 };
-class CPDF_StructElement {
+
+class IPDF_StructElement {
  public:
-  virtual ~CPDF_StructElement() {}
+  virtual ~IPDF_StructElement() {}
 
-  virtual CPDF_StructTree* GetTree() const = 0;
-
+  virtual IPDF_StructTree* GetTree() const = 0;
   virtual const CFX_ByteString& GetType() const = 0;
-
-  virtual CPDF_StructElement* GetParent() const = 0;
-
+  virtual IPDF_StructElement* GetParent() const = 0;
   virtual CPDF_Dictionary* GetDict() const = 0;
-
   virtual int CountKids() const = 0;
-
   virtual const CPDF_StructKid& GetKid(int index) const = 0;
 
   virtual CPDF_Object* GetAttr(const CFX_ByteStringC& owner,

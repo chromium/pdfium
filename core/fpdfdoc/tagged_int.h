@@ -13,16 +13,14 @@
 
 class CPDF_StructElementImpl;
 
-class CPDF_StructTreeImpl : public CPDF_StructTree {
+class CPDF_StructTreeImpl final : public IPDF_StructTree {
  public:
   explicit CPDF_StructTreeImpl(const CPDF_Document* pDoc);
   ~CPDF_StructTreeImpl() override;
 
-  // CPDF_StructTree
-  int CountTopElements() const override { return m_Kids.GetSize(); }
-  CPDF_StructElement* GetTopElement(int i) const override {
-    return (CPDF_StructElement*)m_Kids.GetAt(i);
-  }
+  // IPDF_StructTree:
+  int CountTopElements() const override;
+  IPDF_StructElement* GetTopElement(int i) const override;
 
   void LoadDocTree();
   void LoadPageTree(const CPDF_Dictionary* pPageDict);
@@ -34,23 +32,23 @@ class CPDF_StructTreeImpl : public CPDF_StructTree {
                           CPDF_StructElementImpl* pElement);
 
  protected:
-  const CPDF_Dictionary* m_pTreeRoot;
-  const CPDF_Dictionary* m_pRoleMap;
+  const CPDF_Dictionary* const m_pTreeRoot;
+  const CPDF_Dictionary* const m_pRoleMap;
   const CPDF_Dictionary* m_pPage;
   CFX_ArrayTemplate<CPDF_StructElementImpl*> m_Kids;
   friend class CPDF_StructElementImpl;
 };
 
-class CPDF_StructElementImpl final : public CPDF_StructElement {
+class CPDF_StructElementImpl final : public IPDF_StructElement {
  public:
   CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree,
                          CPDF_StructElementImpl* pParent,
                          CPDF_Dictionary* pDict);
 
-  // CPDF_StructTreeImpl
-  CPDF_StructTree* GetTree() const override { return m_pTree; }
+  // IPDF_StructElement:
+  IPDF_StructTree* GetTree() const override { return m_pTree; }
   const CFX_ByteString& GetType() const override { return m_Type; }
-  CPDF_StructElement* GetParent() const override { return m_pParent; }
+  IPDF_StructElement* GetParent() const override { return m_pParent; }
   CPDF_Dictionary* GetDict() const override { return m_pDict; }
   int CountKids() const override { return m_Kids.GetSize(); }
   const CPDF_StructKid& GetKid(int index) const override {
@@ -93,12 +91,12 @@ class CPDF_StructElementImpl final : public CPDF_StructElement {
  protected:
   ~CPDF_StructElementImpl() override;
 
-  CPDF_StructTreeImpl* m_pTree;
-  CFX_ByteString m_Type;
-  CPDF_StructElementImpl* m_pParent;
-  CPDF_Dictionary* m_pDict;
-  CFX_ArrayTemplate<CPDF_StructKid> m_Kids;
   int m_RefCount;
+  CPDF_StructTreeImpl* const m_pTree;
+  CPDF_StructElementImpl* const m_pParent;
+  CPDF_Dictionary* const m_pDict;
+  CFX_ByteString m_Type;
+  CFX_ArrayTemplate<CPDF_StructKid> m_Kids;
 
   friend class CPDF_StructTreeImpl;
 };
