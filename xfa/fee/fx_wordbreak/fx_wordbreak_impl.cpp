@@ -12,14 +12,14 @@ FX_WordBreakProp FX_GetWordBreakProperty(FX_WCHAR wcCodePoint) {
   return (FX_WordBreakProp)(((wcCodePoint)&1) ? (dwProperty & 0x0F)
                                               : (dwProperty >> 4));
 }
+
 CFX_CharIter::CFX_CharIter(const CFX_WideString& wsText)
     : m_wsText(wsText), m_nIndex(0) {
   ASSERT(!wsText.IsEmpty());
 }
+
 CFX_CharIter::~CFX_CharIter() {}
-void CFX_CharIter::Release() {
-  delete this;
-}
+
 FX_BOOL CFX_CharIter::Next(FX_BOOL bPrev) {
   if (bPrev) {
     if (m_nIndex <= 0) {
@@ -54,60 +54,46 @@ IFX_CharIter* CFX_CharIter::Clone() {
   pIter->m_nIndex = m_nIndex;
   return pIter;
 }
-CFX_WordBreak::CFX_WordBreak() : m_pPreIter(NULL), m_pCurIter(NULL) {}
-CFX_WordBreak::~CFX_WordBreak() {
-  if (m_pPreIter) {
-    m_pPreIter->Release();
-    m_pPreIter = NULL;
-  }
-  if (m_pCurIter) {
-    m_pCurIter->Release();
-    m_pCurIter = NULL;
-  }
-}
-void CFX_WordBreak::Release() {
-  delete this;
-}
+
+CFX_WordBreak::CFX_WordBreak() {}
+
+CFX_WordBreak::~CFX_WordBreak() {}
+
 void CFX_WordBreak::Attach(IFX_CharIter* pIter) {
   ASSERT(pIter);
-  m_pCurIter = pIter;
+  m_pCurIter.reset(pIter);
 }
 void CFX_WordBreak::Attach(const CFX_WideString& wsText) {
-  m_pCurIter = new CFX_CharIter(wsText);
+  m_pCurIter.reset(new CFX_CharIter(wsText));
 }
 FX_BOOL CFX_WordBreak::Next(FX_BOOL bPrev) {
-  IFX_CharIter* pIter = bPrev ? m_pPreIter->Clone() : m_pCurIter->Clone();
-  if (pIter->IsEOF(!bPrev)) {
+  std::unique_ptr<IFX_CharIter> pIter(
+      (bPrev ? m_pPreIter : m_pCurIter)->Clone());
+  if (pIter->IsEOF(!bPrev))
     return FALSE;
-  }
+
   pIter->Next(bPrev);
-  if (!FindNextBreakPos(pIter, bPrev, TRUE)) {
-    pIter->Release();
+  if (!FindNextBreakPos(pIter.get(), bPrev, TRUE))
     return FALSE;
-  }
+
   if (bPrev) {
-    m_pCurIter->Release();
-    m_pCurIter = m_pPreIter;
+    m_pCurIter = std::move(m_pPreIter);
     m_pCurIter->Next(TRUE);
-    m_pPreIter = pIter;
+    m_pPreIter = std::move(pIter);
   } else {
-    m_pPreIter->Release();
-    m_pPreIter = m_pCurIter;
+    m_pPreIter = std::move(m_pCurIter);
     m_pPreIter->Next();
-    m_pCurIter = pIter;
+    m_pCurIter = std::move(pIter);
   }
   return TRUE;
 }
 void CFX_WordBreak::SetAt(int32_t nIndex) {
-  if (m_pPreIter) {
-    m_pPreIter->Release();
-    m_pPreIter = NULL;
-  }
+  m_pPreIter.reset();
   m_pCurIter->SetAt(nIndex);
-  FindNextBreakPos(m_pCurIter, TRUE, FALSE);
-  m_pPreIter = m_pCurIter;
-  m_pCurIter = m_pPreIter->Clone();
-  FindNextBreakPos(m_pCurIter, FALSE, FALSE);
+  FindNextBreakPos(m_pCurIter.get(), TRUE, FALSE);
+  m_pPreIter = std::move(m_pCurIter);
+  m_pCurIter.reset(m_pPreIter->Clone());
+  FindNextBreakPos(m_pCurIter.get(), FALSE, FALSE);
 }
 int32_t CFX_WordBreak::GetWordPos() const {
   return m_pPreIter->GetAt();
@@ -121,16 +107,13 @@ void CFX_WordBreak::GetWord(CFX_WideString& wsWord) const {
     return;
   }
   FX_WCHAR* lpBuf = wsWord.GetBuffer(nWordLength);
-  IFX_CharIter* pTempIter = m_pPreIter->Clone();
+  std::unique_ptr<IFX_CharIter> pTempIter(m_pPreIter->Clone());
   int32_t i = 0;
   while (pTempIter->GetAt() <= m_pCurIter->GetAt()) {
     lpBuf[i++] = pTempIter->GetChar();
-    FX_BOOL bEnd = pTempIter->Next();
-    if (!bEnd) {
+    if (!pTempIter->Next())
       break;
-    }
   }
-  pTempIter->Release();
   wsWord.ReleaseBuffer(nWordLength);
 }
 FX_BOOL CFX_WordBreak::IsEOF(FX_BOOL bTail) const {

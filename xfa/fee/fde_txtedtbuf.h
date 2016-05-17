@@ -10,23 +10,19 @@
 #include "xfa/fee/ifde_txtedtengine.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
-class IFX_CharIter;
 class CFDE_TxtEdtBuf;
 
 class CFDE_TxtEdtBufIter : public IFX_CharIter {
  public:
   CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias = 0);
+  ~CFDE_TxtEdtBufIter() override;
 
-  virtual void Release();
-  virtual FX_BOOL Next(FX_BOOL bPrev = FALSE);
-  virtual FX_WCHAR GetChar();
-  virtual void SetAt(int32_t nIndex);
-  virtual int32_t GetAt() const;
-  virtual FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const;
-  virtual IFX_CharIter* Clone();
-
- protected:
-  ~CFDE_TxtEdtBufIter();
+  FX_BOOL Next(FX_BOOL bPrev = FALSE) override;
+  FX_WCHAR GetChar() override;
+  void SetAt(int32_t nIndex) override;
+  int32_t GetAt() const override;
+  FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const override;
+  IFX_CharIter* Clone() override;
 
  private:
   CFDE_TxtEdtBuf* m_pBuf;
@@ -35,6 +31,7 @@ class CFDE_TxtEdtBufIter : public IFX_CharIter {
   int32_t m_nIndex;
   FX_WCHAR m_Alias;
 };
+
 class CFDE_TxtEdtBuf {
  public:
   CFDE_TxtEdtBuf();

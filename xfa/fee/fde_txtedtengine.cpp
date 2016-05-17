@@ -954,7 +954,8 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
   FX_WCHAR wChar = L' ';
   int32_t nParagStart = 0;
   int32_t nIndex = 0;
-  IFX_CharIter* pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)m_pTxtBuf);
+  std::unique_ptr<IFX_CharIter> pIter(
+      new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(m_pTxtBuf)));
   pIter->SetAt(0);
   do {
     wChar = pIter->GetChar();
@@ -968,7 +969,6 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
       nParagStart = nIndex + 1;
     }
   } while (pIter->Next());
-  pIter->Release();
 }
 
 void CFDE_TxtEdtEngine::RemoveAllParags() {

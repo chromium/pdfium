@@ -142,7 +142,7 @@ struct FDE_TXTEDT_TEXTCHANGE_INFO {
 class IFX_CharIter {
  public:
   virtual ~IFX_CharIter() {}
-  virtual void Release() = 0;
+
   virtual FX_BOOL Next(FX_BOOL bPrev = FALSE) = 0;
   virtual FX_WCHAR GetChar() = 0;
   virtual void SetAt(int32_t nIndex) = 0;

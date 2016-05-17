@@ -143,8 +143,6 @@ CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {
   m_PieceMassArr.RemoveAll(TRUE);
   delete m_pTextSet;
   delete[] m_pCharWidth;
-  if (m_pIter)
-    m_pIter->Release();
 }
 
 void CFDE_TxtEdtPage::Release() {
@@ -357,13 +355,11 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   if (nIndex < 0) {
     return -1;
   }
-  CFX_WordBreak* pIter = new CFX_WordBreak;
+  std::unique_ptr<CFX_WordBreak> pIter(new CFX_WordBreak);
   pIter->Attach(new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf));
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
-  int32_t nRet = pIter->GetWordPos();
-  pIter->Release();
-  return nRet;
+  return pIter->GetWordPos();
 }
 FX_BOOL CFDE_TxtEdtPage::IsLoaded(const CFX_RectF* pClipBox) {
   return m_bLoaded;
@@ -376,14 +372,12 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   }
   CFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParams = m_pEditEngine->GetEditParams();
-  if (m_pIter != NULL) {
-    m_pIter->Release();
-  }
   FX_WCHAR wcAlias = 0;
   if (pParams->dwMode & FDE_TEXTEDITMODE_Password) {
     wcAlias = m_pEditEngine->GetAliasChar();
   }
-  m_pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf, wcAlias);
+  m_pIter.reset(
+      new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(pBuf), wcAlias));
   CFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
   pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pBreak->ClearBreakPieces();
@@ -429,7 +423,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   m_nCharCount = nPageEnd - nPageStart + 1;
   FX_BOOL bReload = FALSE;
   FX_FLOAT fDefCharWidth = 0;
-  IFX_CharIter* pIter = m_pIter->Clone();
+  std::unique_ptr<IFX_CharIter> pIter(m_pIter->Clone());
   pIter->SetAt(nPageStart);
   m_pIter->SetAt(nPageStart);
   FX_BOOL bFirstPiece = TRUE;
@@ -543,7 +537,6 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     FDE_TEXTEDITPIECE* pPiece = m_PieceMassArr.GetPtrAt(nCount - 1);
     pPiece->rtPiece.height = pParams->fFontSize;
   }
-  pIter->Release();
   m_nRefCount = 1;
   m_bLoaded = TRUE;
   return 0;
@@ -560,16 +553,15 @@ void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
   m_pTextSet = nullptr;
   delete[] m_pCharWidth;
   m_pCharWidth = nullptr;
-  if (m_pBgnParag)
+  if (m_pBgnParag) {
     m_pBgnParag->UnloadParag();
-  if (m_pEndParag)
-    m_pEndParag->UnloadParag();
-  if (m_pIter) {
-    m_pIter->Release();
-    m_pIter = nullptr;
+    m_pBgnParag = nullptr;
   }
-  m_pBgnParag = nullptr;
-  m_pEndParag = nullptr;
+  if (m_pEndParag) {
+    m_pEndParag->UnloadParag();
+    m_pEndParag = nullptr;
+  }
+  m_pIter.reset();
 }
 
 const CFX_RectF& CFDE_TxtEdtPage::GetContentsBox() {

@@ -29,10 +29,9 @@ CFDE_TxtEdtBufIter::CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias)
       m_Alias(wcAlias) {
   ASSERT(m_pBuf);
 }
+
 CFDE_TxtEdtBufIter::~CFDE_TxtEdtBufIter() {}
-void CFDE_TxtEdtBufIter::Release() {
-  delete this;
-}
+
 FX_BOOL CFDE_TxtEdtBufIter::Next(FX_BOOL bPrev) {
   if (bPrev) {
     if (m_nIndex == 0) {
