@@ -177,18 +177,21 @@ class IXFA_WidgetIterator;
 
 #define XFA_TRAVERSEWAY_Tranvalse 0x0001
 #define XFA_TRAVERSEWAY_Form 0x0002
-#define XFA_WIDGETFILTER_Visible 0x0001
-#define XFA_WIDGETFILTER_Viewable 0x0010
-#define XFA_WIDGETFILTER_Printable 0x0020
-#define XFA_WIDGETFILTER_Field 0x0100
-#define XFA_WIDGETFILTER_AllType 0x0F00
 
-#define XFA_WIDGETSTATUS_Visible 0x00000001
-#define XFA_WIDGETSTATUS_Invisible 0x00000002
-#define XFA_WIDGETSTATUS_Hidden 0x00000004
-#define XFA_WIDGETSTATUS_Viewable 0x00000010
-#define XFA_WIDGETSTATUS_Printable 0x00000020
-#define XFA_WIDGETSTATUS_Focused 0x00000100
+enum XFA_WidgetStatus {
+  XFA_WidgetStatus_None = 0,
+
+  XFA_WidgetStatus_Access = 1 << 0,
+  XFA_WidgetStatus_ButtonDown = 1 << 1,
+  XFA_WidgetStatus_Disabled = 1 << 2,
+  XFA_WidgetStatus_Focused = 1 << 3,
+  XFA_WidgetStatus_Highlight = 1 << 4,
+  XFA_WidgetStatus_Printable = 1 << 5,
+  XFA_WidgetStatus_RectCached = 1 << 6,
+  XFA_WidgetStatus_TextEditValueChanged = 1 << 7,
+  XFA_WidgetStatus_Viewable = 1 << 8,
+  XFA_WidgetStatus_Visible = 1 << 9
+};
 
 enum XFA_EVENTTYPE {
   XFA_EVENT_Click,

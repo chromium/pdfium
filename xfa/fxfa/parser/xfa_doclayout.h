@@ -63,13 +63,6 @@ class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
   CXFA_Node* m_pOldSubform;
 };
 
-#define XFA_WIDGETSTATUS_Access 0x80000000
-#define XFA_WIDGETSTATUS_Disabled 0x40000000
-#define XFA_WIDGETSTATUS_RectCached 0x20000000
-#define XFA_WIDGETSTATUS_ButtonDown 0x10000000
-#define XFA_WIDGETSTATUS_Highlight 0x08000000
-#define XFA_WIDGETSTATUS_TextEditValueChanged 0x04000000
-
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
   CXFA_ContentLayoutItem(CXFA_Node* pNode);

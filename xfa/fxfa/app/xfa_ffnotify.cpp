@@ -473,18 +473,18 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
     return;
 
   CXFA_FFPageView* pNewPageView = pDocView->GetPageView(iPageIdx);
-  uint32_t dwFilter = XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable |
-                      XFA_WIDGETSTATUS_Printable;
+  uint32_t dwFilter = XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable |
+                      XFA_WidgetStatus_Printable;
   pWidget->ModifyStatus(dwStatus, dwFilter);
   CXFA_FFPageView* pPrePageView = pWidget->GetPageView();
   if (pPrePageView != pNewPageView ||
-      (dwStatus & (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) ==
-          (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) {
+      (dwStatus & (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)) ==
+          (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)) {
     pWidget->SetPageView(pNewPageView);
     m_pDoc->GetDocProvider()->WidgetPostAdd(pWidget, pWidget->GetDataAcc());
   }
   if (pDocView->GetLayoutStatus() != XFA_DOCVIEW_LAYOUTSTATUS_End ||
-      !(dwStatus & XFA_WIDGETSTATUS_Visible)) {
+      !(dwStatus & XFA_WidgetStatus_Visible)) {
     return;
   }
   if (pWidget->IsLoaded()) {

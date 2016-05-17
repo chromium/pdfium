@@ -39,14 +39,14 @@ void CXFA_FFWidget::SetPageView(CXFA_FFPageView* pPageView) {
   m_pPageView = pPageView;
 }
 void CXFA_FFWidget::GetWidgetRect(CFX_RectF& rtWidget) {
-  if ((m_dwStatus & XFA_WIDGETSTATUS_RectCached) == 0) {
-    m_dwStatus |= XFA_WIDGETSTATUS_RectCached;
+  if ((m_dwStatus & XFA_WidgetStatus_RectCached) == 0) {
+    m_dwStatus |= XFA_WidgetStatus_RectCached;
     GetRect(m_rtWidget);
   }
   rtWidget = m_rtWidget;
 }
 CFX_RectF CXFA_FFWidget::ReCacheWidgetRect() {
-  m_dwStatus |= XFA_WIDGETSTATUS_RectCached;
+  m_dwStatus |= XFA_WidgetStatus_RectCached;
   GetRect(m_rtWidget);
   return m_rtWidget;
 }
@@ -146,7 +146,7 @@ void CXFA_FFWidget::DrawBorder(CFX_Graphics* pGS,
 void CXFA_FFWidget::InvalidateWidget(const CFX_RectF* pRect) {
   if (!pRect) {
     CFX_RectF rtWidget;
-    GetBBox(rtWidget, XFA_WIDGETSTATUS_Focused);
+    GetBBox(rtWidget, XFA_WidgetStatus_Focused);
     rtWidget.Inflate(2, 2);
     GetDoc()->GetDocProvider()->InvalidateRect(m_pPageView, rtWidget,
                                                XFA_INVALIDATE_CurrentPage);
@@ -160,7 +160,7 @@ void CXFA_FFWidget::AddInvalidateRect(const CFX_RectF* pRect) {
   if (pRect) {
     rtWidget = *pRect;
   } else {
-    GetBBox(rtWidget, XFA_WIDGETSTATUS_Focused);
+    GetBBox(rtWidget, XFA_WidgetStatus_Focused);
     rtWidget.Inflate(2, 2);
   }
   m_pDocView->AddInvalidateRect(m_pPageView, rtWidget);
@@ -175,7 +175,7 @@ FX_BOOL CXFA_FFWidget::GetCaptionText(CFX_WideString& wsCap) {
 }
 
 bool CXFA_FFWidget::IsFocused() {
-  return !!(m_dwStatus & XFA_WIDGETSTATUS_Focused);
+  return !!(m_dwStatus & XFA_WidgetStatus_Focused);
 }
 
 FX_BOOL CXFA_FFWidget::OnMouseEnter() {
@@ -225,7 +225,7 @@ FX_BOOL CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (pParent && !pParent->IsAncestorOf(pOldWidget)) {
     pParent->OnSetFocus(pOldWidget);
   }
-  m_dwStatus |= XFA_WIDGETSTATUS_Focused;
+  m_dwStatus |= XFA_WidgetStatus_Focused;
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
   eParam.m_pTarget = m_pDataAcc;
@@ -233,7 +233,7 @@ FX_BOOL CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   return TRUE;
 }
 FX_BOOL CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  m_dwStatus &= ~XFA_WIDGETSTATUS_Focused;
+  m_dwStatus &= ~XFA_WidgetStatus_Focused;
   EventKillFocus();
   if (pNewWidget) {
     CXFA_FFWidget* pParent = GetParent();
@@ -405,12 +405,12 @@ void CXFA_FFWidget::GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight) {
 }
 
 bool CXFA_FFWidget::IsMatchVisibleStatus(uint32_t dwStatus) {
-  return !!(m_dwStatus & XFA_WIDGETSTATUS_Visible);
+  return !!(m_dwStatus & XFA_WidgetStatus_Visible);
 }
 
 void CXFA_FFWidget::EventKillFocus() {
-  if (m_dwStatus & XFA_WIDGETSTATUS_Access) {
-    m_dwStatus &= ~XFA_WIDGETSTATUS_Access;
+  if (m_dwStatus & XFA_WidgetStatus_Access) {
+    m_dwStatus &= ~XFA_WidgetStatus_Access;
     return;
   }
   CXFA_EventParam eParam;
@@ -419,11 +419,11 @@ void CXFA_FFWidget::EventKillFocus() {
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Exit, &eParam);
 }
 FX_BOOL CXFA_FFWidget::IsButtonDown() {
-  return (m_dwStatus & XFA_WIDGETSTATUS_ButtonDown) != 0;
+  return (m_dwStatus & XFA_WidgetStatus_ButtonDown) != 0;
 }
 void CXFA_FFWidget::SetButtonDown(FX_BOOL bSet) {
-  bSet ? m_dwStatus |= XFA_WIDGETSTATUS_ButtonDown
-       : m_dwStatus &= ~XFA_WIDGETSTATUS_ButtonDown;
+  bSet ? m_dwStatus |= XFA_WidgetStatus_ButtonDown
+       : m_dwStatus &= ~XFA_WidgetStatus_ButtonDown;
 }
 int32_t XFA_StrokeTypeSetLineDash(CFX_Graphics* pGraphics,
                                   int32_t iStrokeType,

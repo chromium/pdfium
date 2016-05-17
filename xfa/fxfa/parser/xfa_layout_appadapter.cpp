@@ -20,26 +20,6 @@
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-uint32_t XFA_GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
-  uint32_t dwRelevant = XFA_LAYOUTSTATUS_Viewable | XFA_LAYOUTSTATUS_Printable;
-  CFX_WideStringC wsRelevant;
-  if (pFormItem->TryCData(XFA_ATTRIBUTE_Relevant, wsRelevant)) {
-    if (wsRelevant == FX_WSTRC(L"+print") || wsRelevant == FX_WSTRC(L"print")) {
-      dwRelevant &= ~XFA_LAYOUTSTATUS_Viewable;
-    } else if (wsRelevant == FX_WSTRC(L"-print")) {
-      dwRelevant &= ~XFA_LAYOUTSTATUS_Printable;
-    }
-  }
-  if (!(dwParentRelvant & XFA_LAYOUTSTATUS_Viewable) &&
-      (dwRelevant != XFA_LAYOUTSTATUS_Viewable)) {
-    dwRelevant &= ~XFA_LAYOUTSTATUS_Viewable;
-  }
-  if (!(dwParentRelvant & XFA_LAYOUTSTATUS_Printable) &&
-      (dwRelevant != XFA_LAYOUTSTATUS_Printable)) {
-    dwRelevant &= ~XFA_LAYOUTSTATUS_Printable;
-  }
-  return dwRelevant;
-}
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
   CXFA_FFNotify* pNotify =

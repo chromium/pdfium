@@ -378,9 +378,9 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
   // for xfa annots
   std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
       pPage->GetXFAPageView()->CreateWidgetIterator(
-          XFA_TRAVERSEWAY_Tranvalse, XFA_WIDGETFILTER_Visible |
-                                         XFA_WIDGETFILTER_Viewable |
-                                         XFA_WIDGETFILTER_Field));
+          XFA_TRAVERSEWAY_Tranvalse, XFA_WidgetStatus_Visible |
+                                         XFA_WidgetStatus_Viewable |
+                                         XFA_WidgetStatus_Focused));
   if (!pWidgetIterator)
     return nullptr;
   if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
@@ -780,9 +780,9 @@ CFX_FloatRect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   CFX_RectF rcBBox;
   XFA_ELEMENT eType = pAnnot->GetXFAWidget()->GetDataAcc()->GetUIType();
   if (eType == XFA_ELEMENT_Signature)
-    pAnnot->GetXFAWidget()->GetBBox(rcBBox, XFA_WIDGETSTATUS_Visible, TRUE);
+    pAnnot->GetXFAWidget()->GetBBox(rcBBox, XFA_WidgetStatus_Visible, TRUE);
   else
-    pAnnot->GetXFAWidget()->GetBBox(rcBBox, 0);
+    pAnnot->GetXFAWidget()->GetBBox(rcBBox, XFA_WidgetStatus_None);
 
   CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                          rcBBox.top + rcBBox.height);

@@ -907,10 +907,9 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   if (m_pSDKDoc->GetXFADocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
     CXFA_FFPageView* pageView = m_page->GetXFAPageView();
     std::unique_ptr<IXFA_WidgetIterator> pWidgetHander(
-        pageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form,
-                                       XFA_WIDGETFILTER_Visible |
-                                           XFA_WIDGETFILTER_Viewable |
-                                           XFA_WIDGETFILTER_AllType));
+        pageView->CreateWidgetIterator(
+            XFA_TRAVERSEWAY_Form,
+            XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable));
     if (!pWidgetHander) {
       SetLock(FALSE);
       return;

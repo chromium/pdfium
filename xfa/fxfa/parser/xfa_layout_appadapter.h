@@ -71,7 +71,7 @@ class CXFA_TraverseStrategy_ContentLayoutItem {
     return (CXFA_ContentLayoutItem*)pLayoutItem->m_pParent;
   }
 };
-uint32_t XFA_GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant);
+
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
 #endif  // XFA_FXFA_PARSER_XFA_LAYOUT_APPADAPTER_H_

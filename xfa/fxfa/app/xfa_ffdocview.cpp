@@ -329,7 +329,7 @@ CXFA_FFWidget* CXFA_FFDocView::GetFocusWidget() {
 }
 void CXFA_FFDocView::KillFocus() {
   if (m_pFocusWidget &&
-      (m_pFocusWidget->GetStatus() & XFA_WIDGETSTATUS_Focused)) {
+      (m_pFocusWidget->GetStatus() & XFA_WidgetStatus_Focused)) {
     (m_pFocusWidget)->OnKillFocus(NULL);
   }
   m_pFocusAcc = NULL;
@@ -345,10 +345,10 @@ FX_BOOL CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
   m_pOldFocusWidget = pNewFocus;
   if (pOldFocus) {
     if (m_pFocusWidget != m_pOldFocusWidget &&
-        (pOldFocus->GetStatus() & XFA_WIDGETSTATUS_Focused)) {
+        (pOldFocus->GetStatus() & XFA_WidgetStatus_Focused)) {
       m_pFocusWidget = pOldFocus;
       pOldFocus->OnKillFocus(pNewFocus);
-    } else if ((pOldFocus->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
+    } else if ((pOldFocus->GetStatus() & XFA_WidgetStatus_Visible)) {
       if (!pOldFocus->IsLoaded()) {
         pOldFocus->LoadWidget();
       }
@@ -368,7 +368,7 @@ FX_BOOL CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
     m_pOldFocusWidget = NULL;
     return FALSE;
   }
-  if (pNewFocus && (pNewFocus->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
+  if (pNewFocus && (pNewFocus->GetStatus() & XFA_WidgetStatus_Visible)) {
     if (!pNewFocus->IsLoaded()) {
       pNewFocus->LoadWidget();
     }
@@ -844,7 +844,7 @@ CXFA_FFWidget* CXFA_FFDocWidgetIterator::MoveToNext() {
     if (CXFA_WidgetAcc* pAcc = (CXFA_WidgetAcc*)pItem->GetWidgetData()) {
       while ((m_pCurWidget = pAcc->GetNextWidget(NULL))) {
         if (!m_pCurWidget->IsLoaded() &&
-            (m_pCurWidget->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
+            (m_pCurWidget->GetStatus() & XFA_WidgetStatus_Visible)) {
           m_pCurWidget->LoadWidget();
         }
         return m_pCurWidget;

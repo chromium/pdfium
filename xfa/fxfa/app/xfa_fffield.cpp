@@ -81,7 +81,7 @@ void CXFA_FFField::DrawHighlight(CFX_Graphics* pGS,
   if (m_rtUI.IsEmpty() || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     return;
   }
-  if ((dwStatus & XFA_WIDGETSTATUS_Highlight) &&
+  if ((dwStatus & XFA_WidgetStatus_Highlight) &&
       m_pDataAcc->GetAccess() == XFA_ATTRIBUTEENUM_Open) {
     CXFA_FFDoc* pDoc = GetDoc();
     CFX_Color crHighlight(pDoc->GetDocProvider()->GetHighlightColor(pDoc));
@@ -97,7 +97,7 @@ void CXFA_FFField::DrawHighlight(CFX_Graphics* pGS,
   }
 }
 void CXFA_FFField::DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
-  if (m_dwStatus & XFA_WIDGETSTATUS_Focused) {
+  if (m_dwStatus & XFA_WidgetStatus_Focused) {
     CFX_Color cr(0xFF000000);
     pGS->SetStrokeColor(&cr);
     FX_FLOAT DashPattern[2] = {1, 1};
@@ -533,7 +533,7 @@ FX_BOOL CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   ms.m_pSrcTarget = NULL;
   TranslateFWLMessage(&ms);
-  m_dwStatus |= XFA_WIDGETSTATUS_Focused;
+  m_dwStatus |= XFA_WidgetStatus_Focused;
   AddInvalidateRect();
   return TRUE;
 }
@@ -545,7 +545,7 @@ FX_BOOL CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   ms.m_pSrcTarget = NULL;
   TranslateFWLMessage(&ms);
-  m_dwStatus &= ~XFA_WIDGETSTATUS_Focused;
+  m_dwStatus &= ~XFA_WidgetStatus_Focused;
   AddInvalidateRect();
   CXFA_FFWidget::OnKillFocus(pNewWidget);
   return TRUE;

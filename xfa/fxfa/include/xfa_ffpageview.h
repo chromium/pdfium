@@ -25,9 +25,8 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
                         int32_t iRotate) const;
   IXFA_WidgetIterator* CreateWidgetIterator(
       uint32_t dwTraverseWay = XFA_TRAVERSEWAY_Form,
-      uint32_t dwWidgetFilter = XFA_WIDGETFILTER_Visible |
-                                XFA_WIDGETFILTER_Viewable |
-                                XFA_WIDGETFILTER_AllType);
+      uint32_t dwWidgetFilter = XFA_WidgetStatus_Visible |
+                                XFA_WidgetStatus_Viewable);
 
  protected:
   CXFA_FFDocView* const m_pDocView;

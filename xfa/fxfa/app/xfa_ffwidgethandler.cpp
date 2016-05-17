@@ -163,7 +163,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
 FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
                                               FX_FLOAT fx,
                                               FX_FLOAT fy) {
-  if (!(hWidget->GetStatus() & XFA_WIDGETSTATUS_Visible))
+  if (!(hWidget->GetStatus() & XFA_WidgetStatus_Visible))
     return FWL_WidgetHit::Unknown;
 
   hWidget->Rotate2Normal(fx, fy);
@@ -182,7 +182,7 @@ void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
                                         CFX_Matrix* pMatrix,
                                         FX_BOOL bHighlight) {
   hWidget->RenderWidget(pGS, pMatrix,
-                        bHighlight ? XFA_WIDGETSTATUS_Highlight : 0, 0);
+                        bHighlight ? XFA_WidgetStatus_Highlight : 0, 0);
 }
 
 FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,

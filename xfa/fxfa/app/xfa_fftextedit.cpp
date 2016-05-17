@@ -101,7 +101,7 @@ FX_BOOL CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags,
     return FALSE;
   }
   if (!IsFocused()) {
-    m_dwStatus |= XFA_WIDGETSTATUS_Focused;
+    m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
     AddInvalidateRect();
   }
@@ -126,7 +126,7 @@ FX_BOOL CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags,
     return FALSE;
   }
   if (!IsFocused()) {
-    m_dwStatus |= XFA_WIDGETSTATUS_Focused;
+    m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
     AddInvalidateRect();
   }
@@ -150,9 +150,9 @@ FX_BOOL CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags,
   return TRUE;
 }
 FX_BOOL CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
-  m_dwStatus &= ~XFA_WIDGETSTATUS_TextEditValueChanged;
+  m_dwStatus &= ~XFA_WidgetStatus_TextEditValueChanged;
   if (!IsFocused()) {
-    m_dwStatus |= XFA_WIDGETSTATUS_Focused;
+    m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
     AddInvalidateRect();
   }
@@ -168,13 +168,13 @@ FX_BOOL CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   ms.m_pSrcTarget = NULL;
   TranslateFWLMessage(&ms);
-  m_dwStatus &= ~XFA_WIDGETSTATUS_Focused;
+  m_dwStatus &= ~XFA_WidgetStatus_Focused;
   SetEditScrollOffset();
   ProcessCommittedData();
   UpdateFWLData();
   AddInvalidateRect();
   CXFA_FFWidget::OnKillFocus(pNewWidget);
-  m_dwStatus &= ~XFA_WIDGETSTATUS_TextEditValueChanged;
+  m_dwStatus &= ~XFA_WidgetStatus_TextEditValueChanged;
   return TRUE;
 }
 FX_BOOL CXFA_FFTextEdit::CommitData() {
@@ -205,7 +205,7 @@ void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText) {
   }
 }
 FX_BOOL CXFA_FFTextEdit::IsDataChanged() {
-  return (m_dwStatus & XFA_WIDGETSTATUS_TextEditValueChanged) != 0;
+  return (m_dwStatus & XFA_WidgetStatus_TextEditValueChanged) != 0;
 }
 uint32_t CXFA_FFTextEdit::GetAlignment() {
   uint32_t dwExtendedStyle = 0;
@@ -356,7 +356,7 @@ FX_BOOL CXFA_FFTextEdit::ReplaceSpellCheckWord(
 void CXFA_FFTextEdit::OnTextChanged(IFWL_Widget* pWidget,
                                     const CFX_WideString& wsChanged,
                                     const CFX_WideString& wsPrevText) {
-  m_dwStatus |= XFA_WIDGETSTATUS_TextEditValueChanged;
+  m_dwStatus |= XFA_WidgetStatus_TextEditValueChanged;
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_wsChange = wsChanged;
@@ -712,7 +712,7 @@ FX_BOOL CXFA_FFDateTimeEdit::UpdateFWLData() {
   return TRUE;
 }
 FX_BOOL CXFA_FFDateTimeEdit::IsDataChanged() {
-  if (m_dwStatus & XFA_WIDGETSTATUS_TextEditValueChanged) {
+  if (m_dwStatus & XFA_WidgetStatus_TextEditValueChanged) {
     return TRUE;
   }
   CFX_WideString wsText;
