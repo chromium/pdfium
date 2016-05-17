@@ -3,9 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import cStringIO
+import functools
+import multiprocessing
 import optparse
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -13,11 +17,23 @@ import common
 import pngdiffer
 import suppressor
 
+class KeyboardInterruptError(Exception): pass
+
 # Nomenclature:
 #   x_root - "x"
 #   x_filename - "x.ext"
 #   x_path - "path/to/a/b/c/x.ext"
 #   c_dir - "path/to/a/b/c"
+
+def TestOneFileParallel(this, test_case):
+  """Wrapper to call GenerateAndTest() and redirect output to stdout."""
+  try:
+    input_filename, source_dir = test_case
+    result = this.GenerateAndTest(input_filename, source_dir);
+    return (result, input_filename, source_dir)
+  except KeyboardInterrupt:
+    raise KeyboardInterruptError()
+
 
 class TestRunner:
   def __init__(self, dirname):
@@ -65,12 +81,18 @@ class TestRunner:
     original_path = os.path.join(source_dir, input_filename)
     input_path = os.path.join(source_dir, input_root + '.in')
 
+    input_event_path = os.path.join(source_dir, input_root + ".evt")
+    if os.path.exists(input_event_path):
+      output_event_path = os.path.splitext(pdf_path)[0] + ".evt"
+      shutil.copyfile(input_event_path, output_event_path)
+
     if not os.path.exists(input_path):
       if os.path.exists(original_path):
         shutil.copyfile(original_path, pdf_path)
       return None
 
     sys.stdout.flush()
+
     return common.RunCommand(
         [sys.executable, self.fixup_path, '--output-dir=' + self.working_dir,
             input_path])
@@ -109,7 +131,7 @@ class TestRunner:
     parser = optparse.OptionParser()
     parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                       help='relative path from the base source directory')
-    parser.add_option('-j', default=1,
+    parser.add_option('-j', default=multiprocessing.cpu_count(),
                       dest='num_workers', type='int',
                       help='run NUM_WORKERS jobs in parallel')
     parser.add_option('--wrapper', default='', dest="wrapper",
@@ -123,6 +145,11 @@ class TestRunner:
     self.drmem_wrapper = options.wrapper
 
     self.source_dir = finder.TestingDir()
+    if self.test_dir != 'corpus':
+      test_dir = finder.TestingDir(os.path.join('resources', self.test_dir))
+    else:
+      test_dir = finder.TestingDir(self.test_dir)
+
     self.pdfium_test_path = finder.ExecutablePath('pdfium_test')
     if not os.path.exists(self.pdfium_test_path):
       print "FAILURE: Can't find test executable '%s'" % self.pdfium_test_path
@@ -138,7 +165,6 @@ class TestRunner:
     self.test_suppressor = suppressor.Suppressor(finder, self.feature_string)
     self.image_differ = pngdiffer.PNGDiffer(finder)
 
-    test_dir = finder.TestingDir(os.path.join('resources', self.test_dir))
     walk_from_dir = finder.TestingDir(test_dir);
 
     test_cases = []
@@ -165,11 +191,29 @@ class TestRunner:
     self.failures = []
     self.surprises = []
 
-    for test_case in test_cases:
-      input_filename, input_file_dir = test_case
-      result = self.GenerateAndTest(input_filename, input_file_dir)
-      self.HandleResult(input_filename,
-                        os.path.join(input_file_dir, input_filename), result)
+    if options.num_workers > 1 and len(test_cases) > 1:
+      try:
+        pool = multiprocessing.Pool(options.num_workers)
+        worker_func = functools.partial(TestOneFileParallel, self)
+
+        worker_results = pool.imap(worker_func, test_cases)
+        for worker_result in worker_results:
+          result, input_filename, source_dir = worker_result
+          input_path = os.path.join(source_dir, input_filename)
+
+          self.HandleResult(input_filename, input_path, result)
+
+      except KeyboardInterrupt:
+        pool.terminate()
+      finally:
+        pool.close()
+        pool.join()
+    else:
+      for test_case in test_cases:
+        input_filename, input_file_dir = test_case
+        result = self.GenerateAndTest(input_filename, input_file_dir)
+        self.HandleResult(input_filename,
+                          os.path.join(input_file_dir, input_filename), result)
 
     if self.surprises:
       self.surprises.sort()
