@@ -60,14 +60,13 @@ class CXFA_ChecksumContext {
   CXFA_ChecksumContext();
   ~CXFA_ChecksumContext();
 
-  void Release() { delete this; }
   void StartChecksum();
+  void Update(const CFX_ByteStringC& bsText);
   FX_BOOL UpdateChecksum(IFX_FileRead* pSrcFile,
                          FX_FILESIZE offset = 0,
                          size_t size = 0);
   void FinishChecksum();
-  void GetChecksum(CFX_ByteString& bsChecksum);
-  void Update(const CFX_ByteStringC& bsText);
+  CFX_ByteString GetChecksum() const;
 
  protected:
   CFX_SAXReader* m_pSAXReader;

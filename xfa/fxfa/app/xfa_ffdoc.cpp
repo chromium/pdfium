@@ -377,7 +377,7 @@ FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
 
   CFX_ByteString bsChecksum;
   if (pCSContext)
-    pCSContext->GetChecksum(bsChecksum);
+    bsChecksum = pCSContext->GetChecksum();
 
   return pExport->Export(pFile, pNode, 0,
                          bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);

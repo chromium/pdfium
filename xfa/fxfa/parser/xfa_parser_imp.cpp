@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 
+#include <memory>
+
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
@@ -565,24 +567,21 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
           m_pXMLParser->m_dwCheckStatus != 0x03) {
         return NULL;
       }
-      CXFA_ChecksumContext* pChecksum = new CXFA_ChecksumContext;
+      std::unique_ptr<CXFA_ChecksumContext> pChecksum(new CXFA_ChecksumContext);
       pChecksum->StartChecksum();
       pChecksum->UpdateChecksum(m_pFileRead, m_pXMLParser->m_nStart[0],
                                 m_pXMLParser->m_nSize[0]);
       pChecksum->UpdateChecksum(m_pFileRead, m_pXMLParser->m_nStart[1],
                                 m_pXMLParser->m_nSize[1]);
       pChecksum->FinishChecksum();
-      CFX_ByteString bsCheck;
-      pChecksum->GetChecksum(bsCheck);
-      pChecksum->Release();
-      if (bsCheck != wsChecksum.UTF8Encode()) {
-        return NULL;
-      }
+      CFX_ByteString bsCheck = pChecksum->GetChecksum();
+      if (bsCheck != wsChecksum.UTF8Encode())
+        return nullptr;
 
       pNode = m_pFactory->CreateNode(XFA_XDPPACKET_Form, XFA_ELEMENT_Form);
-      if (!pNode) {
-        return NULL;
-      }
+      if (!pNode)
+        return nullptr;
+
       pNode->SetCData(XFA_ATTRIBUTE_Name,
                       XFA_GetPacketByIndex(XFA_PACKET_Form)->pName);
       pNode->SetAttribute(XFA_ATTRIBUTE_Checksum, wsChecksum.AsStringC());

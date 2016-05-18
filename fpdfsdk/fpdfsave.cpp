@@ -130,8 +130,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
     else if (pPDFObj->GetString() == "template")
       iTemplate = i + 1;
   }
-  std::unique_ptr<CXFA_ChecksumContext, ReleaseDeleter<CXFA_ChecksumContext>>
-      pContext(new CXFA_ChecksumContext);
+  std::unique_ptr<CXFA_ChecksumContext> pContext(new CXFA_ChecksumContext);
   pContext->StartChecksum();
 
   // template
