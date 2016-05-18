@@ -77,13 +77,12 @@ void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
   m_pRootNode = pNewRoot;
   RemovePurgeNode(pNewRoot);
 }
+
 CXFA_FFNotify* CXFA_Document::GetNotify() const {
   return m_pParser->GetNotify();
 }
-CXFA_Object* CXFA_Document::GetXFAObject(const CFX_WideStringC& wsNodeName) {
-  return GetXFAObject(FX_HashCode_GetW(wsNodeName, false));
-}
-CXFA_Object* CXFA_Document::GetXFAObject(uint32_t dwNodeNameHash) {
+
+CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
   switch (dwNodeNameHash) {
     case XFA_HASHCODE_Data: {
       CXFA_Node* pDatasetsNode = ToNode(GetXFAObject(XFA_HASHCODE_Datasets));

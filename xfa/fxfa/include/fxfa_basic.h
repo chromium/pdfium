@@ -11,32 +11,39 @@
 #include "xfa/fxjse/include/fxjse.h"
 
 class CXFA_Measurement;
-#define XFA_HASHCODE_Xfa 0xc56b9ff
-#define XFA_HASHCODE_Config 0x4e1e39b6
-#define XFA_HASHCODE_Template 0x803550fc
-#define XFA_HASHCODE_Datasets 0x99b95079
-#define XFA_HASHCODE_Data 0xbde9abda
-#define XFA_HASHCODE_Form 0xcd309ff4
-#define XFA_HASHCODE_LocaleSet 0x5473b6dc
-#define XFA_HASHCODE_ConnectionSet 0xe14c801c
-#define XFA_HASHCODE_SourceSet 0x811929d
-#define XFA_HASHCODE_Xdc 0xc56afbf
-#define XFA_HASHCODE_Pdf 0xb843dba
-#define XFA_HASHCODE_Xfdf 0x48d004a8
-#define XFA_HASHCODE_Xmpmeta 0x132a8fbc
-#define XFA_HASHCODE_Signature 0x8b036f32
-#define XFA_HASHCODE_Stylesheet 0x6038580a
-#define XFA_HASHCODE_XDP 0xc56afcc
-#define XFA_HASHCODE_Record 0x5779d65f
-#define XFA_HASHCODE_DataWindow 0x83a550d2
-#define XFA_HASHCODE_Host 0xdb075bde
-#define XFA_HASHCODE_Log 0x0b1b3d22
-#define XFA_HASHCODE_Event 0x185e41e2
-#define XFA_HASHCODE_Layout 0x7e7e845e
-#define XFA_HASHCODE_Occur 0xf7eebe1c
-#define XFA_HASHCODE_This 0x2d574d58
-#define XFA_HASHCODE_DataDescription 0x2b5df51e
-#define XFA_HASHCODE_Name 0x31b19c1
+
+enum XFA_HashCode : uint32_t {
+  XFA_HASHCODE_None = 0,
+
+  XFA_HASHCODE_Config = 0x4e1e39b6,
+  XFA_HASHCODE_ConnectionSet = 0xe14c801c,
+  XFA_HASHCODE_Data = 0xbde9abda,
+  XFA_HASHCODE_DataDescription = 0x2b5df51e,
+  XFA_HASHCODE_Datasets = 0x99b95079,
+  XFA_HASHCODE_DataWindow = 0x83a550d2,
+  XFA_HASHCODE_Event = 0x185e41e2,
+  XFA_HASHCODE_Form = 0xcd309ff4,
+  XFA_HASHCODE_Group = 0xf7f75fcd,
+  XFA_HASHCODE_Host = 0xdb075bde,
+  XFA_HASHCODE_Layout = 0x7e7e845e,
+  XFA_HASHCODE_LocaleSet = 0x5473b6dc,
+  XFA_HASHCODE_Log = 0x0b1b3d22,
+  XFA_HASHCODE_Name = 0x31b19c1,
+  XFA_HASHCODE_Occur = 0xf7eebe1c,
+  XFA_HASHCODE_Pdf = 0xb843dba,
+  XFA_HASHCODE_Record = 0x5779d65f,
+  XFA_HASHCODE_Signature = 0x8b036f32,
+  XFA_HASHCODE_SourceSet = 0x811929d,
+  XFA_HASHCODE_Stylesheet = 0x6038580a,
+  XFA_HASHCODE_Template = 0x803550fc,
+  XFA_HASHCODE_This = 0x2d574d58,
+  XFA_HASHCODE_Xdc = 0xc56afbf,
+  XFA_HASHCODE_XDP = 0xc56afcc,
+  XFA_HASHCODE_Xfa = 0xc56b9ff,
+  XFA_HASHCODE_Xfdf = 0x48d004a8,
+  XFA_HASHCODE_Xmpmeta = 0x132a8fbc
+};
+
 enum XFA_PACKET {
   XFA_PACKET_USER,
   XFA_PACKET_SourceSet,
@@ -54,6 +61,7 @@ enum XFA_PACKET {
   XFA_PACKET_Form,
   XFA_PACKET_ConnectionSet,
 };
+
 enum XFA_XDPPACKET {
   XFA_XDPPACKET_UNKNOWN = 0,
   XFA_XDPPACKET_Config = 1 << XFA_PACKET_Config,

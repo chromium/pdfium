@@ -19,7 +19,7 @@ class CXFA_ResolveNodesData {
       : m_pSC(pSC),
         m_CurNode(NULL),
         m_wsName(),
-        m_uHashName(0),
+        m_uHashName(XFA_HASHCODE_None),
         m_wsCondition(),
         m_nLevel(0),
         m_Nodes(),
@@ -30,7 +30,7 @@ class CXFA_ResolveNodesData {
   CXFA_ScriptContext* m_pSC;
   CXFA_Object* m_CurNode;
   CFX_WideString m_wsName;
-  uint32_t m_uHashName;
+  XFA_HashCode m_uHashName;
   CFX_WideString m_wsCondition;
   int32_t m_nLevel;
   CXFA_ObjArray m_Nodes;

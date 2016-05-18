@@ -443,7 +443,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
     pStream->WriteString(pURI, FXSYS_wcslen(pURI));
     CFX_WideString wsVersionNumber;
     XFA_DataExporter_RecognizeXFAVersionNumber(
-        ToNode(pNode->GetDocument()->GetXFAObject(XFA_XDPPACKET_Template)),
+        ToNode(pNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Template)),
         wsVersionNumber);
     if (wsVersionNumber.IsEmpty()) {
       wsVersionNumber = FX_WSTRC(L"2.8");

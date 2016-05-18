@@ -46,10 +46,10 @@ class CXFA_FFDoc {
   CFX_DIBitmap* GetPDFNamedImage(const CFX_WideStringC& wsName,
                                  int32_t& iImageXDpi,
                                  int32_t& iImageYDpi);
-  CFDE_XMLElement* GetPackageData(const CFX_WideStringC& wsPackage);
-  FX_BOOL SavePackage(const CFX_WideStringC& wsPackage,
-                      IFX_FileWrite* pFile,
-                      CXFA_ChecksumContext* pCSContext = NULL);
+
+  bool SavePackage(XFA_HashCode code,
+                   IFX_FileWrite* pFile,
+                   CXFA_ChecksumContext* pCSContext);
   FX_BOOL ImportData(IFX_FileRead* pStream, FX_BOOL bXDP = TRUE);
 
  protected:

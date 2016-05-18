@@ -174,8 +174,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   // L"datasets"
   {
     ScopedFileStream pDsfileWrite(FX_CreateMemoryStream());
-    if (pXFADocView->GetDoc()->SavePackage(CFX_WideStringC(L"datasets"),
-                                           pDsfileWrite.get()) &&
+    if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Datasets,
+                                           pDsfileWrite.get(), nullptr) &&
         pDsfileWrite->GetSize() > 0) {
       // Datasets
       pContext->UpdateChecksum(pDsfileWrite.get());
@@ -198,8 +198,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   // L"form"
   {
     ScopedFileStream pfileWrite(FX_CreateMemoryStream());
-    if (pXFADocView->GetDoc()->SavePackage(CFX_WideStringC(L"form"),
-                                           pfileWrite.get(), pContext.get()) &&
+    if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, pfileWrite.get(),
+                                           pContext.get()) &&
         pfileWrite->GetSize() > 0) {
       CPDF_Dictionary* pDataDict = new CPDF_Dictionary;
       if (iFormIndex != -1) {

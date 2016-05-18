@@ -65,8 +65,7 @@ class CXFA_Document {
   CXFA_DocumentParser* GetParser() const { return m_pParser; }
   CXFA_FFNotify* GetNotify() const;
   void SetRoot(CXFA_Node* pNewRoot);
-  CXFA_Object* GetXFAObject(const CFX_WideStringC& wsNodeName);
-  CXFA_Object* GetXFAObject(uint32_t wsNodeNameHash);
+  CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   void AddPurgeNode(CXFA_Node* pNode);
   FX_BOOL RemovePurgeNode(CXFA_Node* pNode);
   void PurgeNodes();

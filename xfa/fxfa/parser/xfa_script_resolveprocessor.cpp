@@ -49,7 +49,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
       return XFA_ResolveNodes_NumberSign(rnd);
     case '*':
       return XFA_ResolveNodes_Asterisk(rnd);
-    // TODO(dsinclair@chromium.org): We could probably remove this.
+    // TODO(dsinclair): We could probably remove this.
     case '.':
       return XFA_ResolveNodes_AnyChild(rnd);
     default:
@@ -119,8 +119,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(
   if (rnd.m_nLevel > 0) {
     return -1;
   }
-  uint32_t dwNameHash = FX_HashCode_GetW(
-      CFX_WideStringC(wsName.c_str() + 1, iNameLen - 1), false);
+  XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(FX_HashCode_GetW(
+      CFX_WideStringC(wsName.c_str() + 1, iNameLen - 1), false));
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     nodes.Add(rnd.m_pSC->GetDocument()->GetRoot());
   } else {
@@ -148,7 +148,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(
   rndFind.m_pSC = rnd.m_pSC;
   rndFind.m_CurNode = datasets;
   rndFind.m_wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
-  rndFind.m_uHashName = FX_HashCode_GetW(rndFind.m_wsName.AsStringC(), false);
+  rndFind.m_uHashName = static_cast<XFA_HashCode>(
+      FX_HashCode_GetW(rndFind.m_wsName.AsStringC(), false));
   rndFind.m_nLevel = rnd.m_nLevel + 1;
   rndFind.m_dwStyles = XFA_RESOLVENODE_Children;
   rndFind.m_wsCondition = rnd.m_wsCondition;
@@ -174,7 +175,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(
   rndFind.m_dwStyles |= XFA_RESOLVENODE_TagName;
   rndFind.m_dwStyles &= ~XFA_RESOLVENODE_Attributes;
   rndFind.m_wsName = wsName;
-  rndFind.m_uHashName = FX_HashCode_GetW(rndFind.m_wsName.AsStringC(), false);
+  rndFind.m_uHashName = static_cast<XFA_HashCode>(
+      FX_HashCode_GetW(rndFind.m_wsName.AsStringC(), false));
   rndFind.m_wsCondition = wsCondition;
   rndFind.m_CurNode = curNode;
   XFA_ResolveNodes_Normal(rndFind);
@@ -215,7 +217,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
   int32_t nNum = nodes.GetSize();
   uint32_t dwStyles = rnd.m_dwStyles;
   CFX_WideString& wsName = rnd.m_wsName;
-  uint32_t uNameHash = rnd.m_uHashName;
+  XFA_HashCode uNameHash = rnd.m_uHashName;
   CFX_WideString& wsCondition = rnd.m_wsCondition;
   CXFA_ResolveNodesData rndFind;
   rndFind.m_wsName = rnd.m_wsName;
@@ -612,7 +614,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(
   wsCondition.ReleaseBuffer(nConditionCount);
   wsCondition.TrimLeft();
   wsCondition.TrimRight();
-  rnd.m_uHashName = FX_HashCode_GetW(wsName.AsStringC(), false);
+  rnd.m_uHashName =
+      static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringC(), false));
   return nStart;
 }
 void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(

@@ -660,10 +660,8 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileWrite.WriteBlock(content.c_str(), fileWrite.GetSize(),
                          content.GetLength());
-    CFX_WideStringC data(L"data");
-    if (m_pXFADocView->GetDoc()->SavePackage(data, &fileWrite)) {
-      // Ignoring error.
-    }
+    m_pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Data, &fileWrite,
+                                         nullptr);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (m_pPDFDoc == NULL)
       return;
@@ -693,11 +691,11 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
       if (!pDirectObj->IsStream())
         continue;
       if (pPrePDFObj->GetString() == "form") {
-        CFX_WideStringC form(L"form");
-        m_pXFADocView->GetDoc()->SavePackage(form, &fileWrite);
+        m_pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, &fileWrite,
+                                             nullptr);
       } else if (pPrePDFObj->GetString() == "datasets") {
-        CFX_WideStringC datasets(L"datasets");
-        m_pXFADocView->GetDoc()->SavePackage(datasets, &fileWrite);
+        m_pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Datasets, &fileWrite,
+                                             nullptr);
       } else {
         if (i == size - 1) {
           CFX_WideString wPath = CFX_WideString::FromUTF16LE(
@@ -954,11 +952,9 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   CFPDF_FileStream fileStream(pFileHandler);
 
   if (fileType == FXFA_SAVEAS_XML) {
-    CFX_WideString ws;
-    ws.FromLocal("data");
     const char* content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileStream.WriteBlock(content, 0, strlen(content));
-    m_pXFADoc->SavePackage(ws.AsStringC(), &fileStream);
+    m_pXFADoc->SavePackage(XFA_HASHCODE_Data, &fileStream, nullptr);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (flag == 0)
       flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
@@ -1017,13 +1013,9 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       if (pPrePDFObj->GetString() == "form" && !(flag & FXFA_FORM))
         continue;
       if (pPrePDFObj->GetString() == "form") {
-        CFX_WideString ws;
-        ws.FromLocal("form");
-        m_pXFADoc->SavePackage(ws.AsStringC(), &fileStream);
+        m_pXFADoc->SavePackage(XFA_HASHCODE_Form, &fileStream, nullptr);
       } else if (pPrePDFObj->GetString() == "datasets") {
-        CFX_WideString ws;
-        ws.FromLocal("datasets");
-        m_pXFADoc->SavePackage(ws.AsStringC(), &fileStream);
+        m_pXFADoc->SavePackage(XFA_HASHCODE_Datasets, &fileStream, nullptr);
       } else {
         // PDF,creator.
       }

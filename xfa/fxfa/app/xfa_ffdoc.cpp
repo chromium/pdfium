@@ -351,36 +351,23 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   return pDibSource;
 }
 
-CFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
-  uint32_t packetHash = FX_HashCode_GetW(wsPackage, false);
-  CXFA_Node* pNode = ToNode(m_pDocument->GetXFAObject(packetHash));
-  if (!pNode) {
-    return NULL;
-  }
-  CFDE_XMLNode* pXMLNode = pNode->GetXMLMappingNode();
-  return (pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element)
-             ? static_cast<CFDE_XMLElement*>(pXMLNode)
-             : NULL;
-}
-
-FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
-                                IFX_FileWrite* pFile,
-                                CXFA_ChecksumContext* pCSContext) {
+bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
+                             IFX_FileWrite* pFile,
+                             CXFA_ChecksumContext* pCSContext) {
   std::unique_ptr<CXFA_DataExporter> pExport(
       new CXFA_DataExporter(m_pDocument));
-  uint32_t packetHash = FX_HashCode_GetW(wsPackage, false);
-  CXFA_Node* pNode = packetHash == XFA_HASHCODE_Xfa
+  CXFA_Node* pNode = code == XFA_HASHCODE_Xfa
                          ? m_pDocument->GetRoot()
-                         : ToNode(m_pDocument->GetXFAObject(packetHash));
+                         : ToNode(m_pDocument->GetXFAObject(code));
   if (!pNode)
-    return pExport->Export(pFile);
+    return !!pExport->Export(pFile);
 
   CFX_ByteString bsChecksum;
   if (pCSContext)
     bsChecksum = pCSContext->GetChecksum();
 
-  return pExport->Export(pFile, pNode, 0,
-                         bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
+  return !!pExport->Export(
+      pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
 }
 
 FX_BOOL CXFA_FFDoc::ImportData(IFX_FileRead* pStream, FX_BOOL bXDP) {

@@ -13,8 +13,6 @@
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-#define XFA_HASHCODE_Group 0xf7f75fcd
-
 class CXFA_TraverseStrategy_DDGroup {
  public:
   static inline CXFA_Node* GetFirstChild(CXFA_Node* pDDGroupNode) {
