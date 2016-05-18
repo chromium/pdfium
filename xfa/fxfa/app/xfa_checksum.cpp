@@ -161,10 +161,8 @@ FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_FileRead* pSrcFile,
 }
 
 void CXFA_ChecksumContext::FinishChecksum() {
-  if (m_pSAXReader) {
-    m_pSAXReader->Release();
-    m_pSAXReader = NULL;
-  }
+  delete m_pSAXReader;
+  m_pSAXReader = nullptr;
   if (m_pByteContext) {
     uint8_t digest[20];
     FXSYS_memset(digest, 0, 20);

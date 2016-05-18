@@ -91,7 +91,6 @@ class CFX_SAXReader {
   CFX_SAXReader();
   ~CFX_SAXReader();
 
-  void Release() { delete this; }
   int32_t StartParse(IFX_FileRead* pFile,
                      uint32_t dwStart = 0,
                      uint32_t dwLen = -1,
