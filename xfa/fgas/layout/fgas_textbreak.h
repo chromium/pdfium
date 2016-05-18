@@ -224,7 +224,6 @@ class CFX_TxtBreak {
   CFX_TxtBreak(uint32_t dwPolicies);
   ~CFX_TxtBreak();
 
-  void Release() { delete this; }
   void SetLineWidth(FX_FLOAT fLineWidth);
   void SetLinePos(FX_FLOAT fLinePos);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
@@ -266,7 +265,31 @@ class CFX_TxtBreak {
   uint32_t AppendChar_Arabic(CFX_Char* pCurChar, int32_t iRotation);
   uint32_t AppendChar_Others(CFX_Char* pCurChar, int32_t iRotation);
 
- protected:
+ private:
+  void SetBreakStatus();
+  int32_t GetLineRotation(uint32_t dwStyles) const;
+  CFX_TxtChar* GetLastChar(int32_t index, FX_BOOL bOmitChar = TRUE) const;
+  CFX_TxtLine* GetTxtLine(FX_BOOL bReady) const;
+  CFX_TxtPieceArray* GetTxtPieces(FX_BOOL bReady) const;
+  uint32_t GetUnifiedCharType(uint32_t dwType) const;
+  void ResetArabicContext();
+  void ResetContextCharStyles();
+  void EndBreak_UpdateArabicShapes();
+  FX_BOOL EndBreak_SplitLine(CFX_TxtLine* pNextLine,
+                             FX_BOOL bAllChars,
+                             uint32_t dwStatus);
+  void EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus);
+  void EndBreak_Alignment(CFX_TPOArray& tpos,
+                          FX_BOOL bAllChars,
+                          uint32_t dwStatus);
+  int32_t GetBreakPos(CFX_TxtCharArray& ca,
+                      int32_t& iEndPos,
+                      FX_BOOL bAllChars = FALSE,
+                      FX_BOOL bOnlyBrk = FALSE);
+  void SplitTextLine(CFX_TxtLine* pCurLine,
+                     CFX_TxtLine* pNextLine,
+                     FX_BOOL bAllChars = FALSE);
+
   uint32_t m_dwPolicies;
   FX_BOOL m_bPagination;
   int32_t m_iLineWidth;
@@ -306,29 +329,6 @@ class CFX_TxtBreak {
   int32_t m_iHorScale;
   int32_t m_iVerScale;
   int32_t m_iCharSpace;
-  void SetBreakStatus();
-  int32_t GetLineRotation(uint32_t dwStyles) const;
-  CFX_TxtChar* GetLastChar(int32_t index, FX_BOOL bOmitChar = TRUE) const;
-  CFX_TxtLine* GetTxtLine(FX_BOOL bReady) const;
-  CFX_TxtPieceArray* GetTxtPieces(FX_BOOL bReady) const;
-  uint32_t GetUnifiedCharType(uint32_t dwType) const;
-  void ResetArabicContext();
-  void ResetContextCharStyles();
-  void EndBreak_UpdateArabicShapes();
-  FX_BOOL EndBreak_SplitLine(CFX_TxtLine* pNextLine,
-                             FX_BOOL bAllChars,
-                             uint32_t dwStatus);
-  void EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus);
-  void EndBreak_Alignment(CFX_TPOArray& tpos,
-                          FX_BOOL bAllChars,
-                          uint32_t dwStatus);
-  int32_t GetBreakPos(CFX_TxtCharArray& ca,
-                      int32_t& iEndPos,
-                      FX_BOOL bAllChars = FALSE,
-                      FX_BOOL bOnlyBrk = FALSE);
-  void SplitTextLine(CFX_TxtLine* pCurLine,
-                     CFX_TxtLine* pNextLine,
-                     FX_BOOL bAllChars = FALSE);
 };
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_

@@ -48,10 +48,7 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
 
 CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
   delete m_pTxtBuf;
-  if (m_pTextBreak) {
-    m_pTextBreak->Release();
-    m_pTextBreak = NULL;
-  }
+  delete m_pTextBreak;
   RemoveAllParags();
   RemoveAllPages();
   m_Param.pEventSink = NULL;

@@ -47,9 +47,7 @@ CFDE_TextOut::CFDE_TextOut()
   m_rtLogicClip.Reset();
 }
 CFDE_TextOut::~CFDE_TextOut() {
-  if (m_pTxtBreak) {
-    m_pTxtBreak->Release();
-  }
+  delete m_pTxtBreak;
   FX_Free(m_pCharWidths);
   FX_Free(m_pEllCharWidths);
   FX_Free(m_pCharPos);
