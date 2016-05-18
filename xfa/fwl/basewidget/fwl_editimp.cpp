@@ -148,11 +148,11 @@ FX_BOOL IFWL_Edit::Paste(const CFX_WideString& wsPaste) {
 FX_BOOL IFWL_Edit::Delete() {
   return static_cast<CFWL_EditImp*>(GetImpl())->Delete();
 }
-FX_BOOL IFWL_Edit::Redo(const CFX_ByteStringC& bsRecord) {
-  return static_cast<CFWL_EditImp*>(GetImpl())->Redo(bsRecord);
+FX_BOOL IFWL_Edit::Redo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return static_cast<CFWL_EditImp*>(GetImpl())->Redo(pRecord);
 }
-FX_BOOL IFWL_Edit::Undo(const CFX_ByteStringC& bsRecord) {
-  return static_cast<CFWL_EditImp*>(GetImpl())->Undo(bsRecord);
+FX_BOOL IFWL_Edit::Undo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return static_cast<CFWL_EditImp*>(GetImpl())->Undo(pRecord);
 }
 FX_BOOL IFWL_Edit::Undo() {
   return static_cast<CFWL_EditImp*>(GetImpl())->Undo();
@@ -749,36 +749,32 @@ FX_BOOL CFWL_EditImp::Delete() {
   return TRUE;
 }
 
-FX_BOOL CFWL_EditImp::Redo(const CFX_ByteStringC& bsRecord) {
+FX_BOOL CFWL_EditImp::Redo(const IFDE_TxtEdtDoRecord* pRecord) {
   if (!m_pEdtEngine)
     return FALSE;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo)
     return TRUE;
-  return m_pEdtEngine->Redo(bsRecord);
+  return m_pEdtEngine->Redo(pRecord);
 }
 
-FX_BOOL CFWL_EditImp::Undo(const CFX_ByteStringC& bsRecord) {
+FX_BOOL CFWL_EditImp::Undo(const IFDE_TxtEdtDoRecord* pRecord) {
   if (!m_pEdtEngine)
     return FALSE;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo)
     return TRUE;
-  return m_pEdtEngine->Undo(bsRecord);
+  return m_pEdtEngine->Undo(pRecord);
 }
 
 FX_BOOL CFWL_EditImp::Undo() {
   if (!CanUndo())
     return FALSE;
-
-  CFX_ByteString bsRecord = m_RecordArr[m_iCurRecord--];
-  return Undo(bsRecord.AsStringC());
+  return Undo(m_DoRecords[m_iCurRecord--].get());
 }
 
 FX_BOOL CFWL_EditImp::Redo() {
   if (!CanRedo())
     return FALSE;
-
-  CFX_ByteString bsRecord = m_RecordArr[++m_iCurRecord];
-  return Redo(bsRecord.AsStringC());
+  return Redo(m_DoRecords[++m_iCurRecord].get());
 }
 
 FX_BOOL CFWL_EditImp::CanUndo() {
@@ -786,7 +782,7 @@ FX_BOOL CFWL_EditImp::CanUndo() {
 }
 
 FX_BOOL CFWL_EditImp::CanRedo() {
-  return m_iCurRecord < m_RecordArr.GetSize() - 1;
+  return m_iCurRecord < m_DoRecords.size() - 1;
 }
 
 FWL_Error CFWL_EditImp::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
@@ -931,8 +927,8 @@ FX_BOOL CFWL_EditImp::On_PageUnload(CFDE_TxtEdtEngine* pEdit,
 }
 
 void CFWL_EditImp::On_AddDoRecord(CFDE_TxtEdtEngine* pEdit,
-                                  const CFX_ByteStringC& bsDoRecord) {
-  AddDoRecord(bsDoRecord);
+                                  IFDE_TxtEdtDoRecord* pRecord) {
+  AddDoRecord(pRecord);
 }
 
 FX_BOOL CFWL_EditImp::On_Validate(CFDE_TxtEdtEngine* pEdit,
@@ -1468,20 +1464,21 @@ FX_BOOL CFWL_EditImp::IsContentHeightOverflow() {
     return FALSE;
   return pPage->GetContentsBox().height > m_rtEngine.height + 1.0f;
 }
-int32_t CFWL_EditImp::AddDoRecord(const CFX_ByteStringC& bsDoRecord) {
-  int32_t nCount = m_RecordArr.GetSize();
+int32_t CFWL_EditImp::AddDoRecord(IFDE_TxtEdtDoRecord* pRecord) {
+  int32_t nCount = m_DoRecords.size();
   if (m_iCurRecord == nCount - 1) {
     if (nCount == m_iMaxRecord) {
-      m_RecordArr.RemoveAt(0);
+      m_DoRecords.pop_front();
       m_iCurRecord--;
     }
   } else {
-    for (int32_t i = nCount - 1; i > m_iCurRecord; i--) {
-      m_RecordArr.RemoveAt(i);
-    }
+    m_DoRecords.erase(m_DoRecords.begin() + m_iCurRecord + 1,
+                      m_DoRecords.end());
   }
-  m_RecordArr.Add(CFX_ByteString(bsDoRecord));
-  return m_iCurRecord = m_RecordArr.GetSize() - 1;
+
+  m_DoRecords.push_back(std::unique_ptr<IFDE_TxtEdtDoRecord>(pRecord));
+  m_iCurRecord = m_DoRecords.size() - 1;
+  return m_iCurRecord;
 }
 void CFWL_EditImp::Layout() {
   GetClientRect(m_rtClient);
@@ -1736,10 +1733,12 @@ void CFWL_EditImp::InitCaret() {
     m_pCaret.reset();
   }
 }
+
 void CFWL_EditImp::ClearRecord() {
   m_iCurRecord = -1;
-  m_RecordArr.RemoveAll();
+  m_DoRecords.clear();
 }
+
 void CFWL_EditImp::ProcessInsertError(int32_t iError) {
   switch (iError) {
     case -2: {

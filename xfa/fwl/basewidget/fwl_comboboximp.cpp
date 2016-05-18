@@ -69,11 +69,11 @@ FWL_Error IFWL_ComboBox::SetEditLimit(int32_t nLimit) {
 FWL_Error IFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
   return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditDoClipboard(iCmd);
 }
-FX_BOOL IFWL_ComboBox::EditRedo(const CFX_ByteStringC& bsRecord) {
-  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditRedo(bsRecord);
+FX_BOOL IFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditRedo(pRecord);
 }
-FX_BOOL IFWL_ComboBox::EditUndo(const CFX_ByteStringC& bsRecord) {
-  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditUndo(bsRecord);
+FX_BOOL IFWL_ComboBox::EditUndo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditUndo(pRecord);
 }
 IFWL_ListBox* IFWL_ComboBox::GetListBoxt() {
   return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetListBoxt();
@@ -789,16 +789,15 @@ FWL_Error CFWL_ComboBoxImp::EditDoClipboard(int32_t iCmd) {
     return FWL_Error::Indefinite;
   return m_pEdit->DoClipboard(iCmd);
 }
-FX_BOOL CFWL_ComboBoxImp::EditRedo(const CFX_ByteStringC& bsRecord) {
-  if (!m_pEdit)
-    return FALSE;
-  return m_pEdit->Redo(bsRecord);
+
+FX_BOOL CFWL_ComboBoxImp::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return m_pEdit && m_pEdit->Redo(pRecord);
 }
-FX_BOOL CFWL_ComboBoxImp::EditUndo(const CFX_ByteStringC& bsRecord) {
-  if (!m_pEdit)
-    return FALSE;
-  return m_pEdit->Undo(bsRecord);
+
+FX_BOOL CFWL_ComboBoxImp::EditUndo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return m_pEdit && m_pEdit->Undo(pRecord);
 }
+
 IFWL_ListBox* CFWL_ComboBoxImp::GetListBoxt() {
   return m_pListBox.get();
 }

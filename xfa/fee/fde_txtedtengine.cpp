@@ -383,14 +383,11 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   if (IsSelect()) {
     DeleteSelect();
   }
-  if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-    IFDE_TxtEdtDoRecord* pRecord =
-        new CFDE_TxtEdtDoRecord_Insert(this, m_nCaret, lpBuffer, nLength);
-    CFX_ByteString bsDoRecord;
-    pRecord->Serialize(bsDoRecord);
-    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord.AsStringC());
-    pRecord->Release();
-  }
+  if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo))
+    m_Param.pEventSink->On_AddDoRecord(
+        this,
+        new CFDE_TxtEdtDoRecord_Insert(this, m_nCaret, lpBuffer, nLength));
+
   GetText(m_ChangeInfo.wsPrevText, 0);
   Inner_Insert(m_nCaret, lpBuffer, nLength);
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
@@ -447,12 +444,9 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, FX_BOOL bBackspace) {
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
     CFX_WideString wsRange;
     m_pTxtBuf->GetRange(wsRange, nStart, nCount);
-    IFDE_TxtEdtDoRecord* pRecord =
-        new CFDE_TxtEdtDoRecord_DeleteRange(this, nStart, m_nCaret, wsRange);
-    CFX_ByteString bsDoRecord;
-    pRecord->Serialize(bsDoRecord);
-    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord.AsStringC());
-    pRecord->Release();
+    m_Param.pEventSink->On_AddDoRecord(
+        this,
+        new CFDE_TxtEdtDoRecord_DeleteRange(this, nStart, m_nCaret, wsRange));
   }
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
   GetText(m_ChangeInfo.wsDelete, nStart, nCount);
@@ -634,38 +628,22 @@ void CFDE_TxtEdtEngine::ClearSelection() {
     m_Param.pEventSink->On_SelChanged(this);
 }
 
-FX_BOOL CFDE_TxtEdtEngine::Redo(const CFX_ByteStringC& bsRedo) {
-  if (IsLocked()) {
+FX_BOOL CFDE_TxtEdtEngine::Redo(const IFDE_TxtEdtDoRecord* pDoRecord) {
+  if (IsLocked())
     return FALSE;
-  }
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo) {
+  if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)
     return FALSE;
-  }
-  IFDE_TxtEdtDoRecord* pDoRecord = IFDE_TxtEdtDoRecord::Create(bsRedo);
-  ASSERT(pDoRecord);
-  if (pDoRecord == NULL) {
-    return FALSE;
-  }
-  FX_BOOL bOK = pDoRecord->Redo();
-  pDoRecord->Release();
-  return bOK;
+  return pDoRecord->Redo();
 }
-FX_BOOL CFDE_TxtEdtEngine::Undo(const CFX_ByteStringC& bsUndo) {
-  if (IsLocked()) {
+
+FX_BOOL CFDE_TxtEdtEngine::Undo(const IFDE_TxtEdtDoRecord* pDoRecord) {
+  if (IsLocked())
     return FALSE;
-  }
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo) {
+  if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)
     return FALSE;
-  }
-  IFDE_TxtEdtDoRecord* pDoRecord = IFDE_TxtEdtDoRecord::Create(bsUndo);
-  ASSERT(pDoRecord);
-  if (pDoRecord == NULL) {
-    return FALSE;
-  }
-  FX_BOOL bOK = pDoRecord->Undo();
-  pDoRecord->Release();
-  return bOK;
+  return pDoRecord->Undo();
 }
+
 int32_t CFDE_TxtEdtEngine::StartLayout() {
   Lock();
   RemoveAllPages();
@@ -930,12 +908,9 @@ void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
     CFX_WideString wsRange;
     m_pTxtBuf->GetRange(wsRange, nStart, nCount);
-    IFDE_TxtEdtDoRecord* pRecord = new CFDE_TxtEdtDoRecord_DeleteRange(
-        this, nStart, m_nCaret, wsRange, bSel);
-    CFX_ByteString bsDoRecord;
-    pRecord->Serialize(bsDoRecord);
-    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord.AsStringC());
-    pRecord->Release();
+    m_Param.pEventSink->On_AddDoRecord(
+        this, new CFDE_TxtEdtDoRecord_DeleteRange(this, nStart, m_nCaret,
+                                                  wsRange, bSel));
   }
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
   GetText(m_ChangeInfo.wsDelete, nStart, nCount);
@@ -1601,24 +1576,6 @@ void CFDE_TxtEdtEngine::DeleteSelect() {
   }
 }
 
-IFDE_TxtEdtDoRecord* IFDE_TxtEdtDoRecord::Create(
-    const CFX_ByteStringC& bsDoRecord) {
-  const uint32_t* lpBuf =
-      reinterpret_cast<const uint32_t*>(bsDoRecord.raw_str());
-  switch (*lpBuf) {
-    case FDE_TXTEDT_DORECORD_INS:
-      return new CFDE_TxtEdtDoRecord_Insert(bsDoRecord);
-    case FDE_TXTEDT_DORECORD_DEL:
-      return new CFDE_TxtEdtDoRecord_DeleteRange(bsDoRecord);
-    default:
-      return nullptr;
-  }
-}
-
-CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
-    const CFX_ByteStringC& bsDoRecord) {
-  Deserialize(bsDoRecord);
-}
 CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
     CFDE_TxtEdtEngine* pEngine,
     int32_t nCaret,
@@ -1630,11 +1587,10 @@ CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
   FXSYS_memcpy(lpBuffer, lpText, nLength * sizeof(FX_WCHAR));
   m_wsInsert.ReleaseBuffer();
 }
+
 CFDE_TxtEdtDoRecord_Insert::~CFDE_TxtEdtDoRecord_Insert() {}
-void CFDE_TxtEdtDoRecord_Insert::Release() {
-  delete this;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_Insert::Undo() {
+
+FX_BOOL CFDE_TxtEdtDoRecord_Insert::Undo() const {
   if (m_pEngine->IsSelect()) {
     m_pEngine->ClearSelection();
   }
@@ -1646,7 +1602,8 @@ FX_BOOL CFDE_TxtEdtDoRecord_Insert::Undo() {
   m_pEngine->SetCaretPos(m_nCaret, TRUE);
   return TRUE;
 }
-FX_BOOL CFDE_TxtEdtDoRecord_Insert::Redo() {
+
+FX_BOOL CFDE_TxtEdtDoRecord_Insert::Redo() const {
   m_pEngine->Inner_Insert(m_nCaret, m_wsInsert.c_str(), m_wsInsert.GetLength());
   FDE_TXTEDTPARAMS& Param = m_pEngine->m_Param;
   m_pEngine->m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
@@ -1655,34 +1612,7 @@ FX_BOOL CFDE_TxtEdtDoRecord_Insert::Redo() {
   m_pEngine->SetCaretPos(m_nCaret, FALSE);
   return TRUE;
 }
-void CFDE_TxtEdtDoRecord_Insert::Serialize(CFX_ByteString& bsDoRecord) const {
-  CFX_ArchiveSaver ArchiveSaver;
-  ArchiveSaver << int32_t(FDE_TXTEDT_DORECORD_INS);
-  ArchiveSaver << (int32_t)(uintptr_t)m_pEngine;
-  ArchiveSaver << m_nCaret;
-  ArchiveSaver << m_wsInsert;
-  int32_t nLength = ArchiveSaver.GetLength();
-  const uint8_t* lpSrcBuf = ArchiveSaver.GetBuffer();
-  FX_CHAR* lpDstBuf = bsDoRecord.GetBuffer(nLength);
-  FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
-  bsDoRecord.ReleaseBuffer(nLength);
-}
-void CFDE_TxtEdtDoRecord_Insert::Deserialize(
-    const CFX_ByteStringC& bsDoRecord) {
-  CFX_ArchiveLoader ArchiveLoader(bsDoRecord.raw_str(), bsDoRecord.GetLength());
-  int32_t nType = 0;
-  ArchiveLoader >> nType;
-  ASSERT(nType == FDE_TXTEDT_DORECORD_INS);
-  int32_t nEngine = 0;
-  ArchiveLoader >> nEngine;
-  m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;
-  ArchiveLoader >> m_nCaret;
-  ArchiveLoader >> m_wsInsert;
-}
-CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(
-    const CFX_ByteStringC& bsDoRecord) {
-  Deserialize(bsDoRecord);
-}
+
 CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(
     CFDE_TxtEdtEngine* pEngine,
     int32_t nIndex,
@@ -1696,11 +1626,10 @@ CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(
       m_wsRange(wsRange) {
   ASSERT(pEngine);
 }
+
 CFDE_TxtEdtDoRecord_DeleteRange::~CFDE_TxtEdtDoRecord_DeleteRange() {}
-void CFDE_TxtEdtDoRecord_DeleteRange::Release() {
-  delete this;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Undo() {
+
+FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Undo() const {
   if (m_pEngine->IsSelect()) {
     m_pEngine->ClearSelection();
   }
@@ -1715,7 +1644,8 @@ FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Undo() {
   m_pEngine->SetCaretPos(m_nCaret, TRUE);
   return TRUE;
 }
-FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Redo() {
+
+FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Redo() const {
   m_pEngine->Inner_DeleteRange(m_nIndex, m_wsRange.GetLength());
   if (m_bSel) {
     m_pEngine->RemoveSelRange(m_nIndex, m_wsRange.GetLength());
@@ -1726,35 +1656,4 @@ FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Redo() {
   Param.pEventSink->On_TextChanged(m_pEngine, m_pEngine->m_ChangeInfo);
   m_pEngine->SetCaretPos(m_nIndex, TRUE);
   return TRUE;
-}
-void CFDE_TxtEdtDoRecord_DeleteRange::Serialize(
-    CFX_ByteString& bsDoRecord) const {
-  CFX_ArchiveSaver ArchiveSaver;
-  ArchiveSaver << int32_t(FDE_TXTEDT_DORECORD_DEL);
-  ArchiveSaver << (int32_t)(uintptr_t)m_pEngine;
-  ArchiveSaver << (int32_t)m_bSel;
-  ArchiveSaver << m_nIndex;
-  ArchiveSaver << m_nCaret;
-  ArchiveSaver << m_wsRange;
-  int32_t nLength = ArchiveSaver.GetLength();
-  const uint8_t* lpSrcBuf = ArchiveSaver.GetBuffer();
-  FX_CHAR* lpDstBuf = bsDoRecord.GetBuffer(nLength);
-  FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
-  bsDoRecord.ReleaseBuffer(nLength);
-}
-void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(
-    const CFX_ByteStringC& bsDoRecord) {
-  CFX_ArchiveLoader ArchiveLoader(bsDoRecord.raw_str(), bsDoRecord.GetLength());
-  int32_t nType = 0;
-  ArchiveLoader >> nType;
-  ASSERT(nType == FDE_TXTEDT_DORECORD_DEL);
-  int32_t nEngine = 0;
-  ArchiveLoader >> nEngine;
-  m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;
-  int32_t iSel = 0;
-  ArchiveLoader >> iSel;
-  m_bSel = !!iSel;
-  ArchiveLoader >> m_nIndex;
-  ArchiveLoader >> m_nCaret;
-  ArchiveLoader >> m_wsRange;
 }

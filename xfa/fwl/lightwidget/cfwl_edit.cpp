@@ -154,16 +154,12 @@ FWL_Error CFWL_Edit::DoClipboard(int32_t iCmd) {
   return static_cast<IFWL_Edit*>(m_pIface)->DoClipboard(iCmd);
 }
 
-FX_BOOL CFWL_Edit::Redo(const CFX_ByteStringC& bsRecord) {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_Edit*>(m_pIface)->Redo(bsRecord);
+FX_BOOL CFWL_Edit::Redo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return m_pIface && static_cast<IFWL_Edit*>(m_pIface)->Redo(pRecord);
 }
 
-FX_BOOL CFWL_Edit::Undo(const CFX_ByteStringC& bsRecord) {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_Edit*>(m_pIface)->Undo(bsRecord);
+FX_BOOL CFWL_Edit::Undo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return m_pIface && static_cast<IFWL_Edit*>(m_pIface)->Undo(pRecord);
 }
 
 FWL_Error CFWL_Edit::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {

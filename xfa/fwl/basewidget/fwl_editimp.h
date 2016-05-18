@@ -7,6 +7,7 @@
 #ifndef XFA_FWL_BASEWIDGET_FWL_EDITIMP_H_
 #define XFA_FWL_BASEWIDGET_FWL_EDITIMP_H_
 
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -15,14 +16,15 @@
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
+class CFWL_EditImp;
+class CFWL_EditImpDelegate;
 class CFWL_MsgActivate;
 class CFWL_MsgDeactivate;
 class CFWL_MsgMouse;
-class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
+class CFWL_WidgetImpProperties;
+class IFDE_TxtEdtDoRecord;
 class IFWL_Caret;
-class CFWL_EditImp;
-class CFWL_EditImpDelegate;
 
 class CFWL_EditImp : public CFWL_WidgetImp {
  public:
@@ -71,8 +73,8 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   virtual FX_BOOL Cut(CFX_WideString& wsCut);
   virtual FX_BOOL Paste(const CFX_WideString& wsPaste);
   virtual FX_BOOL Delete();
-  virtual FX_BOOL Redo(const CFX_ByteStringC& bsRecord);
-  virtual FX_BOOL Undo(const CFX_ByteStringC& bsRecord);
+  virtual FX_BOOL Redo(const IFDE_TxtEdtDoRecord* pRecord);
+  virtual FX_BOOL Undo(const IFDE_TxtEdtDoRecord* pRecord);
   virtual FX_BOOL Undo();
   virtual FX_BOOL Redo();
   virtual FX_BOOL CanUndo();
@@ -95,8 +97,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   FX_BOOL On_PageUnload(CFDE_TxtEdtEngine* pEdit,
                         int32_t nPageIndex,
                         int32_t nPurpose);
-  void On_AddDoRecord(CFDE_TxtEdtEngine* pEdit,
-                      const CFX_ByteStringC& bsDoRecord);
+  void On_AddDoRecord(CFDE_TxtEdtEngine* pEdit, IFDE_TxtEdtDoRecord* pRecord);
   FX_BOOL On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
   FX_BOOL GetSuggestWords(CFX_PointF pointf,
@@ -105,6 +106,9 @@ class CFWL_EditImp : public CFWL_WidgetImp {
                                 const CFX_ByteStringC& bsReplace);
 
  protected:
+  friend class CFWL_TxtEdtEventSink;
+  friend class CFWL_EditImpDelegate;
+
   void DrawTextBk(CFX_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix = NULL);
@@ -130,7 +134,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   void ClearRecord();
   FX_BOOL IsShowScrollBar(FX_BOOL bVert);
   FX_BOOL IsContentHeightOverflow();
-  int32_t AddDoRecord(const CFX_ByteStringC& bsDoRecord);
+  int32_t AddDoRecord(IFDE_TxtEdtDoRecord* pRecord);
   void ProcessInsertError(int32_t iError);
 
   void DrawSpellCheck(CFX_Graphics* pGraphics,
@@ -141,6 +145,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
                         FX_FLOAT fOffSetX,
                         FX_FLOAT fOffSetY);
   int32_t GetWordAtPoint(CFX_PointF pointf, int32_t& nCount);
+
   CFX_RectF m_rtClient;
   CFX_RectF m_rtEngine;
   CFX_RectF m_rtStatic;
@@ -162,12 +167,10 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   std::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
   std::unique_ptr<IFWL_Caret> m_pCaret;
   CFX_WideString m_wsCache;
-  friend class CFWL_TxtEdtEventSink;
-  friend class CFWL_EditImpDelegate;
   uint32_t m_backColor;
   FX_BOOL m_updateBackColor;
   CFX_WideString m_wsFont;
-  CFX_ByteStringArray m_RecordArr;
+  std::deque<std::unique_ptr<IFDE_TxtEdtDoRecord>> m_DoRecords;
   int32_t m_iCurRecord;
   int32_t m_iMaxRecord;
 };

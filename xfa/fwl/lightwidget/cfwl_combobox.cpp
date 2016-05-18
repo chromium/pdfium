@@ -140,16 +140,16 @@ FWL_Error CFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
   return static_cast<IFWL_ComboBox*>(m_pIface)->EditDoClipboard(iCmd);
 }
 
-FX_BOOL CFWL_ComboBox::EditRedo(const CFX_ByteStringC& bsRecord) {
+FX_BOOL CFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
   if (!m_pIface)
     return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditRedo(bsRecord);
+  return static_cast<IFWL_ComboBox*>(m_pIface)->EditRedo(pRecord);
 }
 
-FX_BOOL CFWL_ComboBox::EditUndo(const CFX_ByteStringC& bsRecord) {
+FX_BOOL CFWL_ComboBox::EditUndo(const IFDE_TxtEdtDoRecord* pRecord) {
   if (!m_pIface)
     return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditUndo(bsRecord);
+  return static_cast<IFWL_ComboBox*>(m_pIface)->EditUndo(pRecord);
 }
 
 FWL_Error CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight) {

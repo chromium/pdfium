@@ -11,6 +11,7 @@
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 
 class CFWL_WidgetImpProperties;
+class IFDE_TxtEdtDoRecord;
 class IFWL_ComboBox;
 
 #define FWL_CLASS_ComboBox L"FWL_COMBOBOX"
@@ -90,8 +91,8 @@ class IFWL_ComboBox : public IFWL_Widget {
   int32_t GetEditLimit();
   FWL_Error SetEditLimit(int32_t nLimit);
   FWL_Error EditDoClipboard(int32_t iCmd);
-  FX_BOOL EditRedo(const CFX_ByteStringC& bsRecord);
-  FX_BOOL EditUndo(const CFX_ByteStringC& bsRecord);
+  FX_BOOL EditRedo(const IFDE_TxtEdtDoRecord* pRecord);
+  FX_BOOL EditUndo(const IFDE_TxtEdtDoRecord* pRecord);
   IFWL_ListBox* GetListBoxt();
   FX_BOOL AfterFocusShowDropList();
   FWL_Error OpenDropDownList(FX_BOOL bActivate);

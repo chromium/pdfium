@@ -91,6 +91,7 @@ std::vector<CFX_ByteString> bsArraySuggestWords;
 END_FWL_EVENT_DEF
 
 class CFWL_WidgetImpProperties;
+class IFDE_TxtEdtDoRecord;
 
 class IFWL_EditDP : public IFWL_DataProvider {};
 
@@ -128,8 +129,8 @@ class IFWL_Edit : public IFWL_Widget {
   FX_BOOL Cut(CFX_WideString& wsCut);
   FX_BOOL Paste(const CFX_WideString& wsPaste);
   FX_BOOL Delete();
-  FX_BOOL Redo(const CFX_ByteStringC& bsRecord);
-  FX_BOOL Undo(const CFX_ByteStringC& bsRecord);
+  FX_BOOL Redo(const IFDE_TxtEdtDoRecord* pRecord);
+  FX_BOOL Undo(const IFDE_TxtEdtDoRecord* pRecord);
   FX_BOOL Undo();
   FX_BOOL Redo();
   FX_BOOL CanUndo();

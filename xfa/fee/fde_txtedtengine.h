@@ -20,12 +20,10 @@ class CFDE_TxtEdtDoRecord_DeleteRange;
 
 class IFDE_TxtEdtDoRecord {
  public:
-  static IFDE_TxtEdtDoRecord* Create(const CFX_ByteStringC& bsDoRecord);
   virtual ~IFDE_TxtEdtDoRecord() {}
-  virtual void Release() = 0;
-  virtual FX_BOOL Redo() = 0;
-  virtual FX_BOOL Undo() = 0;
-  virtual void Serialize(CFX_ByteString& bsDoRecord) const = 0;
+
+  virtual FX_BOOL Redo() const = 0;
+  virtual FX_BOOL Undo() const = 0;
 };
 
 class CFDE_TxtEdtEngine {
@@ -74,8 +72,8 @@ class CFDE_TxtEdtEngine {
   int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
   void ClearSelection();
 
-  FX_BOOL Redo(const CFX_ByteStringC& bsRedo);
-  FX_BOOL Undo(const CFX_ByteStringC& bsUndo);
+  FX_BOOL Redo(const IFDE_TxtEdtDoRecord* pRecord);
+  FX_BOOL Undo(const IFDE_TxtEdtDoRecord* pRecord);
 
   int32_t StartLayout();
   int32_t DoLayout(IFX_Pause* pPause);
@@ -195,19 +193,14 @@ class CFDE_TxtEdtEngine {
 
 class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {
  public:
-  CFDE_TxtEdtDoRecord_Insert(const CFX_ByteStringC& bsDoRecord);
   CFDE_TxtEdtDoRecord_Insert(CFDE_TxtEdtEngine* pEngine,
                              int32_t nCaret,
                              const FX_WCHAR* lpText,
                              int32_t nLength);
-  virtual void Release();
-  virtual FX_BOOL Undo();
-  virtual FX_BOOL Redo();
-  virtual void Serialize(CFX_ByteString& bsDoRecord) const;
+  ~CFDE_TxtEdtDoRecord_Insert() override;
 
- protected:
-  ~CFDE_TxtEdtDoRecord_Insert();
-  void Deserialize(const CFX_ByteStringC& bsDoRecord);
+  FX_BOOL Undo() const override;
+  FX_BOOL Redo() const override;
 
  private:
   CFDE_TxtEdtEngine* m_pEngine;
@@ -217,20 +210,15 @@ class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {
 
 class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord {
  public:
-  CFDE_TxtEdtDoRecord_DeleteRange(const CFX_ByteStringC& bsDoRecord);
   CFDE_TxtEdtDoRecord_DeleteRange(CFDE_TxtEdtEngine* pEngine,
                                   int32_t nIndex,
                                   int32_t nCaret,
                                   const CFX_WideString& wsRange,
                                   FX_BOOL bSel = FALSE);
-  virtual void Release();
-  virtual FX_BOOL Undo();
-  virtual FX_BOOL Redo();
-  virtual void Serialize(CFX_ByteString& bsDoRecord) const;
+  ~CFDE_TxtEdtDoRecord_DeleteRange() override;
 
- protected:
-  ~CFDE_TxtEdtDoRecord_DeleteRange();
-  void Deserialize(const CFX_ByteStringC& bsDoRecord);
+  FX_BOOL Undo() const override;
+  FX_BOOL Redo() const override;
 
  private:
   CFDE_TxtEdtEngine* m_pEngine;
