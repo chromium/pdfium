@@ -79,6 +79,7 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
   m_pFWLApp->Initialize();
   CXFA_TimeZoneProvider::Create();
 }
+
 CXFA_FFApp::~CXFA_FFApp() {
   delete m_pDocHandler;
   if (m_pFWLApp) {
@@ -86,8 +87,7 @@ CXFA_FFApp::~CXFA_FFApp() {
     m_pFWLApp->Release();
     delete m_pFWLApp;
   }
-  if (m_pFWLTheme)
-    m_pFWLTheme->Release();
+  delete m_pFWLTheme;
   delete m_pAdapterWidgetMgr;
 
   CXFA_TimeZoneProvider::Destroy();

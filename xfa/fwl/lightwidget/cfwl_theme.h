@@ -20,7 +20,7 @@ class IFWL_Widget;
 class CFWL_ThemePart;
 class CFWL_ThemeText;
 
-class CFWL_Theme : public IFWL_ThemeProvider {
+class CFWL_Theme final : public IFWL_ThemeProvider {
  public:
   CFWL_Theme();
   ~CFWL_Theme() override;
