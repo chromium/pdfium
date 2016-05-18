@@ -521,14 +521,13 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                  static_cast<FX_FLOAT>(pClip.Width()),
                  static_cast<FX_FLOAT>(pClip.Height()));
     gs.SetClipRect(rectClip);
-    CXFA_RenderContext* pRenderContext = new CXFA_RenderContext;
+    std::unique_ptr<CXFA_RenderContext> pRenderContext(new CXFA_RenderContext);
     CXFA_RenderOptions renderOptions;
     renderOptions.m_bHighlight = TRUE;
     CXFA_FFPageView* xfaView = pPage->GetXFAPageView();
     pRenderContext->StartRender(xfaView, &gs, *pUser2Device, renderOptions);
     pRenderContext->DoRender();
     pRenderContext->StopRender();
-    pRenderContext->Release();
     CXFA_FFDocView* docView = xfaView->GetDocView();
     if (!docView)
       return;
