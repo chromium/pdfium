@@ -23,7 +23,6 @@ class CXFA_ScriptContext {
   explicit CXFA_ScriptContext(CXFA_Document* pDocument);
   ~CXFA_ScriptContext();
 
-  void Release();
   void Initialize(FXJSE_HRUNTIME hRuntime);
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() { return &m_eventParam; }

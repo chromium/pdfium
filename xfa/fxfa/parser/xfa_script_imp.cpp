@@ -64,9 +64,6 @@ void CXFA_ScriptContext::Initialize(FXJSE_HRUNTIME hRuntime) {
   DefineJsClass();
   m_pResolveProcessor = new CXFA_ResolveProcessor;
 }
-void CXFA_ScriptContext::Release() {
-  delete this;
-}
 FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
                                       const CFX_WideStringC& wsScript,
                                       FXJSE_HVALUE hRetValue,

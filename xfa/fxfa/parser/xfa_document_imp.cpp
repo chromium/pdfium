@@ -49,11 +49,8 @@ CXFA_Document::~CXFA_Document() {
 void CXFA_Document::ClearLayoutData() {
   delete m_pLayoutProcessor;
   m_pLayoutProcessor = nullptr;
-
-  if (m_pScriptContext) {
-    m_pScriptContext->Release();
-    m_pScriptContext = nullptr;
-  }
+  delete m_pScriptContext;
+  m_pScriptContext = nullptr;
   delete m_pLocalMgr;
   m_pLocalMgr = nullptr;
   delete m_pScriptDataWindow;
