@@ -24,10 +24,6 @@ CFDE_TxtEdtBuf::CFDE_TxtEdtBuf()
   ResetChunkBuffer(kDefaultChunkCount, m_nChunkSize);
 }
 
-void CFDE_TxtEdtBuf::Release() {
-  delete this;
-}
-
 CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {
   Clear(TRUE);
   delete m_pAllocator;

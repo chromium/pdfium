@@ -47,10 +47,7 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
 }
 
 CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
-  if (m_pTxtBuf) {
-    m_pTxtBuf->Release();
-    m_pTxtBuf = NULL;
-  }
+  delete m_pTxtBuf;
   if (m_pTextBreak) {
     m_pTextBreak->Release();
     m_pTextBreak = NULL;
@@ -59,10 +56,6 @@ CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
   RemoveAllPages();
   m_Param.pEventSink = NULL;
   ClearSelection();
-}
-
-void CFDE_TxtEdtEngine::Release() {
-  delete this;
 }
 
 void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
@@ -994,21 +987,14 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
 }
 
 void CFDE_TxtEdtEngine::RemoveAllParags() {
-  int32_t nCount = m_ParagPtrArray.GetSize();
-  for (int i = 0; i < nCount; ++i)
+  for (int32_t i = 0; i < m_ParagPtrArray.GetSize(); ++i)
     delete m_ParagPtrArray[i];
   m_ParagPtrArray.RemoveAll();
 }
 
 void CFDE_TxtEdtEngine::RemoveAllPages() {
-  int32_t nCount = m_PagePtrArray.GetSize();
-  int32_t i = 0;
-  for (i = 0; i < nCount; i++) {
-    IFDE_TxtEdtPage* pPage = m_PagePtrArray[i];
-    if (pPage) {
-      pPage->Release();
-    }
-  }
+  for (int32_t i = 0; i < m_PagePtrArray.GetSize(); i++)
+    delete m_PagePtrArray[i];
   m_PagePtrArray.RemoveAll();
 }
 
@@ -1043,10 +1029,7 @@ void CFDE_TxtEdtEngine::UpdatePages() {
     IFDE_TxtEdtPage* pPage = NULL;
     int32_t i = 0;
     for (i = nSize - 1; i >= nPageCount; i--) {
-      pPage = m_PagePtrArray[i];
-      if (pPage) {
-        pPage->Release();
-      }
+      delete m_PagePtrArray[i];
       m_PagePtrArray.RemoveAt(i);
     }
     return;

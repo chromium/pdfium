@@ -26,9 +26,9 @@ class CFDE_TxtEdtTextSet;
 class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
  public:
   CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nLineIndex);
+  ~CFDE_TxtEdtPage() override;
 
   // IFDE_TxtEditPage:
-  void Release() override;
   CFDE_TxtEdtEngine* GetEngine() const override;
   int32_t GetCharRect(int32_t nIndex,
                       CFX_RectF& rect,
@@ -66,9 +66,6 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   // IFX_TxtAccess:
   FX_WCHAR GetChar(void* pIdentity, int32_t index) const override;
   int32_t GetWidth(void* pIdentity, int32_t index) const override;
-
- protected:
-  virtual ~CFDE_TxtEdtPage();
 
  private:
   void NormalizePt2Rect(CFX_PointF& ptF,

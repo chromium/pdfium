@@ -16,8 +16,7 @@ class CFDE_TxtEdtEngine;
 class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
  public:
   static IFDE_TxtEdtPage* Create(CFDE_TxtEdtEngine* pEngine, int32_t nIndex);
-
-  virtual void Release() = 0;
+  ~IFDE_TxtEdtPage() override {}
 
   virtual CFDE_TxtEdtEngine* GetEngine() const = 0;
   virtual int32_t GetCharRect(int32_t nIndex,

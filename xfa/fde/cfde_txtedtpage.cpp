@@ -52,10 +52,6 @@ CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {
   delete[] m_pCharWidth;
 }
 
-void CFDE_TxtEdtPage::Release() {
-  delete this;
-}
-
 CFDE_TxtEdtEngine* CFDE_TxtEdtPage::GetEngine() const {
   return m_pEditEngine;
 }

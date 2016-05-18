@@ -18,8 +18,7 @@ class IFX_CharIter;
 class CFDE_TxtEdtEngine {
  public:
   CFDE_TxtEdtEngine();
-
-  void Release();
+  ~CFDE_TxtEdtEngine();
 
   void SetEditParams(const FDE_TXTEDTPARAMS& params);
   FDE_TXTEDTPARAMS* GetEditParams();
@@ -83,9 +82,6 @@ class CFDE_TxtEdtEngine {
                      int32_t nLineIndex,
                      int32_t& nStartLine) const;
   FX_WCHAR GetAliasChar() const { return m_wcAliasChar; }
-
- protected:
-  ~CFDE_TxtEdtEngine();
 
  private:
   friend class CFDE_TxtEdtDoRecord_Insert;

@@ -222,10 +222,7 @@ CFWL_EditImp::CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
 }
 
 CFWL_EditImp::~CFWL_EditImp() {
-  if (m_pEdtEngine) {
-    m_pEdtEngine->Release();
-    m_pEdtEngine = NULL;
-  }
+  delete m_pEdtEngine;
   ClearRecord();
 }
 

@@ -16,8 +16,8 @@ class IFX_Pause;
 class CFDE_TxtEdtBuf {
  public:
   CFDE_TxtEdtBuf();
+  ~CFDE_TxtEdtBuf();
 
-  void Release();
   FX_BOOL SetChunkSize(int32_t nChunkSize);
   int32_t GetChunkSize() const;
   int32_t GetTextLength() const;
@@ -33,9 +33,6 @@ class CFDE_TxtEdtBuf {
   void Clear(FX_BOOL bRelease = TRUE);
 
   FX_BOOL Optimize(IFX_Pause* pPause = nullptr);
-
- protected:
-  ~CFDE_TxtEdtBuf();
 
  private:
   friend class CFDE_TxtEdtBufIter;
