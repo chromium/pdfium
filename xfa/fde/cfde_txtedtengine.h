@@ -4,27 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FEE_FDE_TXTEDTENGINE_H_
-#define XFA_FEE_FDE_TXTEDTENGINE_H_
+#ifndef XFA_FDE_CFDE_TXTEDTENGINE_H_
+#define XFA_FDE_CFDE_TXTEDTENGINE_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "xfa/fee/fde_txtedtbuf.h"
-#include "xfa/fee/ifde_txtedtengine.h"
-#include "xfa/fgas/layout/fgas_textbreak.h"
+#include "xfa/fde/ifde_txtedtengine.h"
 
-class CFX_TxtBreak;
-class IFX_CharIter;
+class CFDE_TxtEdtBuf;
 class CFDE_TxtEdtParag;
-class CFDE_TxtEdtDoRecord_Insert;
-class CFDE_TxtEdtDoRecord_DeleteRange;
-
-class IFDE_TxtEdtDoRecord {
- public:
-  virtual ~IFDE_TxtEdtDoRecord() {}
-
-  virtual FX_BOOL Redo() const = 0;
-  virtual FX_BOOL Undo() const = 0;
-};
+class CFX_TxtBreak;
+class IFDE_TxtEdtDoRecord;
+class IFX_CharIter;
 
 class CFDE_TxtEdtEngine {
  public:
@@ -191,41 +180,4 @@ class CFDE_TxtEdtEngine {
   FDE_TXTEDT_TEXTCHANGE_INFO m_ChangeInfo;
 };
 
-class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {
- public:
-  CFDE_TxtEdtDoRecord_Insert(CFDE_TxtEdtEngine* pEngine,
-                             int32_t nCaret,
-                             const FX_WCHAR* lpText,
-                             int32_t nLength);
-  ~CFDE_TxtEdtDoRecord_Insert() override;
-
-  FX_BOOL Undo() const override;
-  FX_BOOL Redo() const override;
-
- private:
-  CFDE_TxtEdtEngine* m_pEngine;
-  int32_t m_nCaret;
-  CFX_WideString m_wsInsert;
-};
-
-class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord {
- public:
-  CFDE_TxtEdtDoRecord_DeleteRange(CFDE_TxtEdtEngine* pEngine,
-                                  int32_t nIndex,
-                                  int32_t nCaret,
-                                  const CFX_WideString& wsRange,
-                                  FX_BOOL bSel = FALSE);
-  ~CFDE_TxtEdtDoRecord_DeleteRange() override;
-
-  FX_BOOL Undo() const override;
-  FX_BOOL Redo() const override;
-
- private:
-  CFDE_TxtEdtEngine* m_pEngine;
-  FX_BOOL m_bSel;
-  int32_t m_nIndex;
-  int32_t m_nCaret;
-  CFX_WideString m_wsRange;
-};
-
-#endif  // XFA_FEE_FDE_TXTEDTENGINE_H_
+#endif  // XFA_FDE_CFDE_TXTEDTENGINE_H_

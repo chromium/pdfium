@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FEE_IFDE_TXTEDTPAGE_H_
-#define XFA_FEE_IFDE_TXTEDTPAGE_H_
+#ifndef XFA_FDE_IFDE_TXTEDTPAGE_H_
+#define XFA_FDE_IFDE_TXTEDTPAGE_H_
 
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fde/fde_visualset.h"
@@ -40,4 +40,4 @@ class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
   virtual const CFX_RectF& GetContentsBox() = 0;
 };
 
-#endif  // XFA_FEE_IFDE_TXTEDTPAGE_H_
+#endif  // XFA_FDE_IFDE_TXTEDTPAGE_H_

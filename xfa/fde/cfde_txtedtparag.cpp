@@ -4,13 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fee/fde_txtedtparag.h"
+#include "xfa/fde/cfde_txtedtparag.h"
 
-#include "xfa/fee/fde_txtedtbuf.h"
-#include "xfa/fee/fde_txtedtengine.h"
-#include "xfa/fee/fx_wordbreak/fx_wordbreak.h"
-#include "xfa/fee/ifde_txtedtengine.h"
+#include "xfa/fde/cfde_txtedtbuf.h"
+#include "xfa/fde/cfde_txtedtbufiter.h"
+#include "xfa/fde/cfde_txtedtengine.h"
+#include "xfa/fde/ifde_txtedtengine.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
+#include "xfa/fde/ifx_chariter.h"
 
 CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
     : m_nCharStart(0),
@@ -20,11 +21,12 @@ CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
       m_pEngine(pEngine) {
   ASSERT(m_pEngine);
 }
+
 CFDE_TxtEdtParag::~CFDE_TxtEdtParag() {
-  if (m_lpData != NULL) {
+  if (m_lpData)
     FX_Free(m_lpData);
-  }
 }
+
 void CFDE_TxtEdtParag::LoadParag() {
   if (m_lpData != NULL) {
     ((int32_t*)m_lpData)[0]++;
@@ -89,6 +91,7 @@ void CFDE_TxtEdtParag::LoadParag() {
   }
   LineBaseArr.RemoveAll();
 }
+
 void CFDE_TxtEdtParag::UnloadParag() {
   ASSERT(m_lpData != NULL);
   ((int32_t*)m_lpData)[0]--;
@@ -98,6 +101,7 @@ void CFDE_TxtEdtParag::UnloadParag() {
     m_lpData = NULL;
   }
 }
+
 void CFDE_TxtEdtParag::CalcLines() {
   CFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
   CFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
@@ -133,6 +137,7 @@ void CFDE_TxtEdtParag::CalcLines() {
   pTxtBreak->ClearBreakPieces();
   m_nLineCount = nCount;
 }
+
 void CFDE_TxtEdtParag::GetLineRange(int32_t nLineIndex,
                                     int32_t& nStart,
                                     int32_t& nCount) const {

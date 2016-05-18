@@ -4,33 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FEE_FDE_TXTEDTBUF_H_
-#define XFA_FEE_FDE_TXTEDTBUF_H_
+#ifndef XFA_FDE_CFDE_TXTEDTBUF_H_
+#define XFA_FDE_CFDE_TXTEDTBUF_H_
 
-#include "xfa/fee/ifde_txtedtengine.h"
-#include "xfa/fgas/crt/fgas_memory.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_system.h"
 
-class CFDE_TxtEdtBuf;
-
-class CFDE_TxtEdtBufIter : public IFX_CharIter {
- public:
-  CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias = 0);
-  ~CFDE_TxtEdtBufIter() override;
-
-  FX_BOOL Next(FX_BOOL bPrev = FALSE) override;
-  FX_WCHAR GetChar() override;
-  void SetAt(int32_t nIndex) override;
-  int32_t GetAt() const override;
-  FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const override;
-  IFX_CharIter* Clone() override;
-
- private:
-  CFDE_TxtEdtBuf* m_pBuf;
-  int32_t m_nCurChunk;
-  int32_t m_nCurIndex;
-  int32_t m_nIndex;
-  FX_WCHAR m_Alias;
-};
+class IFX_MemoryAllocator;
+class IFX_Pause;
 
 class CFDE_TxtEdtBuf {
  public:
@@ -81,4 +62,4 @@ class CFDE_TxtEdtBuf {
   IFX_MemoryAllocator* m_pAllocator;
 };
 
-#endif  // XFA_FEE_FDE_TXTEDTBUF_H_
+#endif  // XFA_FDE_CFDE_TXTEDTBUF_H_

@@ -4,31 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
-#define XFA_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
+#ifndef XFA_FDE_CFX_WORDBREAK_H_
+#define XFA_FDE_CFX_WORDBREAK_H_
 
 #include <memory>
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "xfa/fee/ifde_txtedtengine.h"
 
-class CFX_CharIter : public IFX_CharIter {
- public:
-  explicit CFX_CharIter(const CFX_WideString& wsText);
-  ~CFX_CharIter() override;
-
-  FX_BOOL Next(FX_BOOL bPrev = FALSE) override;
-  FX_WCHAR GetChar() override;
-  void SetAt(int32_t nIndex) override;
-  int32_t GetAt() const override;
-  FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const override;
-  IFX_CharIter* Clone() override;
-
- private:
-  const CFX_WideString& m_wsText;
-  int32_t m_nIndex;
-};
+class IFX_CharIter;
 
 class CFX_WordBreak {
  public:
@@ -54,4 +38,4 @@ class CFX_WordBreak {
   std::unique_ptr<IFX_CharIter> m_pCurIter;
 };
 
-#endif  // XFA_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
+#endif  // XFA_FDE_CFX_WORDBREAK_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FEE_FDE_TXTEDTPARAG_H_
-#define XFA_FEE_FDE_TXTEDTPARAG_H_
+#ifndef XFA_FDE_CFDE_TXTEDTPARAG_H_
+#define XFA_FDE_CFDE_TXTEDTPARAG_H_
 
 #include <stdint.h>
 
@@ -40,4 +40,4 @@ class CFDE_TxtEdtParag {
   CFDE_TxtEdtEngine* m_pEngine;
 };
 
-#endif  // XFA_FEE_FDE_TXTEDTPARAG_H_
+#endif  // XFA_FDE_CFDE_TXTEDTPARAG_H_

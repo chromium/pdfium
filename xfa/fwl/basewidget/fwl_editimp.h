@@ -11,7 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/fee/ifde_txtedtengine.h"
+#include "xfa/fde/ifde_txtedtdorecord.h"
+#include "xfa/fde/ifde_txtedtengine.h"
 #include "xfa/fwl/basewidget/ifwl_scrollbar.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fxgraphics/cfx_path.h"
@@ -23,7 +24,6 @@ class CFWL_MsgDeactivate;
 class CFWL_MsgMouse;
 class CFWL_WidgetImpDelegate;
 class CFWL_WidgetImpProperties;
-class IFDE_TxtEdtDoRecord;
 class IFWL_Caret;
 
 class CFWL_EditImp : public CFWL_WidgetImp {

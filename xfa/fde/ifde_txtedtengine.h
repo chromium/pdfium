@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FEE_IFDE_TXTEDTENGINE_H_
-#define XFA_FEE_IFDE_TXTEDTENGINE_H_
+#ifndef XFA_FDE_IFDE_TXTEDTENGINE_H_
+#define XFA_FDE_IFDE_TXTEDTENGINE_H_
 
 #include "core/fxge/include/fx_dib.h"
 #include "xfa/fgas/font/fgas_font.h"
@@ -139,16 +139,4 @@ struct FDE_TXTEDT_TEXTCHANGE_INFO {
   CFX_WideString wsPrevText;
 };
 
-class IFX_CharIter {
- public:
-  virtual ~IFX_CharIter() {}
-
-  virtual FX_BOOL Next(FX_BOOL bPrev = FALSE) = 0;
-  virtual FX_WCHAR GetChar() = 0;
-  virtual void SetAt(int32_t nIndex) = 0;
-  virtual int32_t GetAt() const = 0;
-  virtual FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const = 0;
-  virtual IFX_CharIter* Clone() = 0;
-};
-
-#endif  // XFA_FEE_IFDE_TXTEDTENGINE_H_
+#endif  // XFA_FDE_IFDE_TXTEDTENGINE_H_

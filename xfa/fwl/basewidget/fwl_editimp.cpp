@@ -10,10 +10,10 @@
 #include <memory>
 #include <vector>
 
+#include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_render.h"
-#include "xfa/fee/fde_txtedtengine.h"
-#include "xfa/fee/ifde_txtedtpage.h"
+#include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fwl/basewidget/fwl_caretimp.h"
 #include "xfa/fwl/basewidget/fwl_comboboximp.h"
 #include "xfa/fwl/basewidget/fwl_scrollbarimp.h"
