@@ -346,11 +346,7 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(CXFA_FFWidget* hWidget,
     return FALSE;
 
   CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc();
-  int nRotate = 0;
-#ifdef PDF_ENABLE_XFA
-  nRotate = pWidgetAcc->GetRotate();
-#endif
-
+  int nRotate = pWidgetAcc->GetRotate();
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (!pEnv)
     return FALSE;
@@ -358,7 +354,6 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(CXFA_FFWidget* hWidget,
   pEnv->FFI_GetPageViewRect(pPage, pageViewRect);
 
   CFX_FloatRect rcAnchor;
-
   rcAnchor.left = rtAnchor.left;
   rcAnchor.top = rtAnchor.bottom();
   rcAnchor.right = rtAnchor.right();
@@ -845,27 +840,26 @@ FX_BOOL CPDFXFA_Document::_NotifySubmit(FX_BOOL bPrevOrPost) {
 }
 
 FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
-#ifdef PDF_ENABLE_XFA
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return TRUE;
-  if (m_pXFADocView == NULL)
+
+  if (!m_pXFADocView)
     return TRUE;
+
   CXFA_FFWidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
-  if (pWidgetHandler == NULL)
+  if (!pWidgetHandler)
     return TRUE;
-  CXFA_WidgetAccIterator* pWidgetAccIterator =
-      m_pXFADocView->CreateWidgetAccIterator();
+
+  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator(
+      m_pXFADocView->CreateWidgetAccIterator());
   if (pWidgetAccIterator) {
     CXFA_EventParam Param;
     Param.m_eType = XFA_EVENT_PreSubmit;
-    CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
-    while (pWidgetAcc) {
+    while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext())
       pWidgetHandler->ProcessEvent(pWidgetAcc, &Param);
-      pWidgetAcc = pWidgetAccIterator->MoveToNext();
-    }
-    pWidgetAccIterator->Release();
   }
-  pWidgetAccIterator = m_pXFADocView->CreateWidgetAccIterator();
+
+  pWidgetAccIterator.reset(m_pXFADocView->CreateWidgetAccIterator());
   if (pWidgetAccIterator) {
     CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
     pWidgetAcc = pWidgetAccIterator->MoveToNext();
@@ -873,7 +867,7 @@ FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
       int fRet = pWidgetAcc->ProcessValidate(-1);
       if (fRet == XFA_EVENTERROR_Error) {
         CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-        if (pEnv == NULL)
+        if (!pEnv)
           return FALSE;
         CFX_WideString ws;
         ws.FromLocal(IDS_XFA_Validate_Input);
@@ -883,38 +877,38 @@ FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
             (FPDF_WIDESTRING)bs.GetBuffer(len * sizeof(unsigned short)),
             (FPDF_WIDESTRING)L"", 0, 1);
         bs.ReleaseBuffer(len * sizeof(unsigned short));
-        pWidgetAccIterator->Release();
         return FALSE;
       }
       pWidgetAcc = pWidgetAccIterator->MoveToNext();
     }
-    pWidgetAccIterator->Release();
     m_pXFADocView->UpdateDocView();
   }
-#endif
   return TRUE;
 }
+
 void CPDFXFA_Document::_OnAfterNotifySumbit() {
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return;
-  if (m_pXFADocView == NULL)
+
+  if (!m_pXFADocView)
     return;
+
   CXFA_FFWidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
-  if (pWidgetHandler == NULL)
+  if (!pWidgetHandler)
     return;
-  CXFA_WidgetAccIterator* pWidgetAccIterator =
-      m_pXFADocView->CreateWidgetAccIterator();
-  if (pWidgetAccIterator == NULL)
+
+  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator(
+      m_pXFADocView->CreateWidgetAccIterator());
+  if (!pWidgetAccIterator)
     return;
+
   CXFA_EventParam Param;
   Param.m_eType = XFA_EVENT_PostSubmit;
-
   CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
   while (pWidgetAcc) {
     pWidgetHandler->ProcessEvent(pWidgetAcc, &Param);
     pWidgetAcc = pWidgetAccIterator->MoveToNext();
   }
-  pWidgetAccIterator->Release();
   m_pXFADocView->UpdateDocView();
 }
 
@@ -1137,7 +1131,6 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL,
 }
 
 FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
-#ifdef PDF_ENABLE_XFA
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (!pEnv)
     return FALSE;
@@ -1232,9 +1225,6 @@ FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
     bs.ReleaseBuffer(len * sizeof(unsigned short));
   }
   return bRet;
-#else
-  return TRUE;
-#endif
 }
 
 FX_BOOL CPDFXFA_Document::SetGlobalProperty(CXFA_FFDoc* hDoc,

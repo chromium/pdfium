@@ -145,12 +145,12 @@ class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator {
   CXFA_FFDocView* m_pDocView;
   CXFA_FFWidget* m_pCurWidget;
 };
+
 class CXFA_WidgetAccIterator {
  public:
   CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
   ~CXFA_WidgetAccIterator();
 
-  void Release() { delete this; }
   void Reset();
   CXFA_WidgetAcc* MoveToFirst();
   CXFA_WidgetAcc* MoveToLast();
