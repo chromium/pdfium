@@ -8,8 +8,12 @@
 #define CORE_FPDFDOC_TAGGED_INT_H_
 
 #include <map>
+#include <memory>
+#include <vector>
 
 #include "core/fpdfdoc/include/fpdf_tagged.h"
+#include "core/fxcrt/include/cfx_retain_ptr.h"
+#include "third_party/base/stl_util.h"
 
 class CPDF_StructElementImpl;
 
@@ -35,7 +39,8 @@ class CPDF_StructTreeImpl final : public IPDF_StructTree {
   const CPDF_Dictionary* const m_pTreeRoot;
   const CPDF_Dictionary* const m_pRoleMap;
   const CPDF_Dictionary* m_pPage;
-  CFX_ArrayTemplate<CPDF_StructElementImpl*> m_Kids;
+  std::vector<CFX_RetainPtr<CPDF_StructElementImpl>> m_Kids;
+
   friend class CPDF_StructElementImpl;
 };
 
@@ -50,9 +55,9 @@ class CPDF_StructElementImpl final : public IPDF_StructElement {
   const CFX_ByteString& GetType() const override { return m_Type; }
   IPDF_StructElement* GetParent() const override { return m_pParent; }
   CPDF_Dictionary* GetDict() const override { return m_pDict; }
-  int CountKids() const override { return m_Kids.GetSize(); }
+  int CountKids() const override { return pdfium::CollectionSize<int>(m_Kids); }
   const CPDF_StructKid& GetKid(int index) const override {
-    return m_Kids.GetData()[index];
+    return m_Kids[index];
   }
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
@@ -96,7 +101,7 @@ class CPDF_StructElementImpl final : public IPDF_StructElement {
   CPDF_StructElementImpl* const m_pParent;
   CPDF_Dictionary* const m_pDict;
   CFX_ByteString m_Type;
-  CFX_ArrayTemplate<CPDF_StructKid> m_Kids;
+  std::vector<CPDF_StructKid> m_Kids;
 
   friend class CPDF_StructTreeImpl;
 };

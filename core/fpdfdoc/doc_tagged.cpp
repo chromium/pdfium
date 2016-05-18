@@ -53,19 +53,14 @@ CPDF_StructTreeImpl::CPDF_StructTreeImpl(const CPDF_Document* pDoc)
       m_pRoleMap(m_pTreeRoot ? m_pTreeRoot->GetDictBy("RoleMap") : nullptr),
       m_pPage(nullptr) {}
 
-CPDF_StructTreeImpl::~CPDF_StructTreeImpl() {
-  for (int i = 0; i < m_Kids.GetSize(); i++) {
-    if (m_Kids[i])
-      m_Kids[i]->Release();
-  }
-}
+CPDF_StructTreeImpl::~CPDF_StructTreeImpl() {}
 
 int CPDF_StructTreeImpl::CountTopElements() const {
-  return m_Kids.GetSize();
+  return pdfium::CollectionSize<int>(m_Kids);
 }
 
 IPDF_StructElement* CPDF_StructTreeImpl::GetTopElement(int i) const {
-  return m_Kids.GetAt(i);
+  return m_Kids[i].Get();
 }
 
 void CPDF_StructTreeImpl::LoadDocTree() {
@@ -76,23 +71,23 @@ void CPDF_StructTreeImpl::LoadDocTree() {
   CPDF_Object* pKids = m_pTreeRoot->GetDirectObjectBy("K");
   if (!pKids)
     return;
+
   if (CPDF_Dictionary* pDict = pKids->AsDictionary()) {
-    CPDF_StructElementImpl* pStructElementImpl =
-        new CPDF_StructElementImpl(this, nullptr, pDict);
-    m_Kids.Add(pStructElementImpl);
+    m_Kids.push_back(CFX_RetainPtr<CPDF_StructElementImpl>(
+        new CPDF_StructElementImpl(this, nullptr, pDict)));
     return;
   }
+
   CPDF_Array* pArray = pKids->AsArray();
   if (!pArray)
     return;
 
   for (size_t i = 0; i < pArray->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pArray->GetDictAt(i);
-    CPDF_StructElementImpl* pStructElementImpl =
-        new CPDF_StructElementImpl(this, nullptr, pKid);
-    m_Kids.Add(pStructElementImpl);
+    m_Kids.push_back(CFX_RetainPtr<CPDF_StructElementImpl>(
+        new CPDF_StructElementImpl(this, nullptr, pArray->GetDictAt(i))));
   }
 }
+
 void CPDF_StructTreeImpl::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   m_pPage = pPageDict;
   if (!m_pTreeRoot)
@@ -110,32 +105,28 @@ void CPDF_StructTreeImpl::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   else
     return;
 
-  uint32_t i;
-  m_Kids.SetSize(dwKids);
-  for (i = 0; i < dwKids; i++) {
-    m_Kids[i] = NULL;
-  }
-  std::map<CPDF_Dictionary*, CPDF_StructElementImpl*> element_map;
+  m_Kids.clear();
+  m_Kids.resize(dwKids);
   CPDF_Dictionary* pParentTree = m_pTreeRoot->GetDictBy("ParentTree");
-  if (!pParentTree) {
+  if (!pParentTree)
     return;
-  }
+
   CPDF_NumberTree parent_tree(pParentTree);
   int parents_id = pPageDict->GetIntegerBy("StructParents", -1);
-  if (parents_id >= 0) {
-    CPDF_Array* pParentArray = ToArray(parent_tree.LookupValue(parents_id));
-    if (!pParentArray)
-      return;
+  if (parents_id < 0)
+    return;
 
-    for (i = 0; i < pParentArray->GetCount(); i++) {
-      CPDF_Dictionary* pParent = pParentArray->GetDictAt(i);
-      if (!pParent) {
-        continue;
-      }
+  CPDF_Array* pParentArray = ToArray(parent_tree.LookupValue(parents_id));
+  if (!pParentArray)
+    return;
+
+  std::map<CPDF_Dictionary*, CPDF_StructElementImpl*> element_map;
+  for (size_t i = 0; i < pParentArray->GetCount(); i++) {
+    if (CPDF_Dictionary* pParent = pParentArray->GetDictAt(i))
       AddPageNode(pParent, element_map);
-    }
   }
 }
+
 CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(
     CPDF_Dictionary* pDict,
     std::map<CPDF_Dictionary*, CPDF_StructElementImpl*>& map,
@@ -160,14 +151,12 @@ CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(
     CPDF_StructElementImpl* pParentElement =
         AddPageNode(pParent, map, nLevel + 1);
     FX_BOOL bSave = FALSE;
-    for (int i = 0; i < pParentElement->m_Kids.GetSize(); i++) {
-      if (pParentElement->m_Kids[i].m_Type != CPDF_StructKid::Element) {
+    for (CPDF_StructKid& kid : pParentElement->m_Kids) {
+      if (kid.m_Type != CPDF_StructKid::Element)
         continue;
-      }
-      if (pParentElement->m_Kids[i].m_Element.m_pDict != pDict) {
+      if (kid.m_Element.m_pDict != pDict)
         continue;
-      }
-      pParentElement->m_Kids[i].m_Element.m_pElement = pElement->Retain();
+      kid.m_Element.m_pElement = pElement->Retain();
       bSave = TRUE;
     }
     if (!bSave) {
@@ -180,33 +169,22 @@ CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(
 FX_BOOL CPDF_StructTreeImpl::AddTopLevelNode(CPDF_Dictionary* pDict,
                                              CPDF_StructElementImpl* pElement) {
   CPDF_Object* pObj = m_pTreeRoot->GetDirectObjectBy("K");
-  if (!pObj) {
+  if (!pObj)
     return FALSE;
-  }
+
   if (pObj->IsDictionary()) {
-    if (pObj->GetObjNum() == pDict->GetObjNum()) {
-      if (m_Kids[0]) {
-        m_Kids[0]->Release();
-      }
-      m_Kids[0] = pElement->Retain();
-    } else {
+    if (pObj->GetObjNum() != pDict->GetObjNum())
       return FALSE;
-    }
+    m_Kids[0].Reset(pElement);
   }
   if (CPDF_Array* pTopKids = pObj->AsArray()) {
-    uint32_t i;
-    FX_BOOL bSave = FALSE;
-    for (i = 0; i < pTopKids->GetCount(); i++) {
+    bool bSave = false;
+    for (size_t i = 0; i < pTopKids->GetCount(); i++) {
       CPDF_Reference* pKidRef = ToReference(pTopKids->GetObjectAt(i));
-      if (!pKidRef)
-        continue;
-      if (pKidRef->GetRefObjNum() != pDict->GetObjNum())
-        continue;
-
-      if (m_Kids[i])
-        m_Kids[i]->Release();
-      m_Kids[i] = pElement->Retain();
-      bSave = TRUE;
+      if (pKidRef && pKidRef->GetRefObjNum() == pDict->GetObjNum()) {
+        m_Kids[i].Reset(pElement);
+        bSave = true;
+      }
     }
     if (!bSave)
       return FALSE;
@@ -231,13 +209,12 @@ CPDF_StructElementImpl::CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree,
 }
 
 CPDF_StructElementImpl::~CPDF_StructElementImpl() {
-  for (int i = 0; i < m_Kids.GetSize(); i++) {
-    if (m_Kids[i].m_Type == CPDF_StructKid::Element &&
-        m_Kids[i].m_Element.m_pElement) {
-      ((CPDF_StructElementImpl*)m_Kids[i].m_Element.m_pElement)->Release();
-    }
+  for (CPDF_StructKid& kid : m_Kids) {
+    if (kid.m_Type == CPDF_StructKid::Element && kid.m_Element.m_pElement)
+      static_cast<CPDF_StructElementImpl*>(kid.m_Element.m_pElement)->Release();
   }
 }
+
 CPDF_StructElementImpl* CPDF_StructElementImpl::Retain() {
   m_RefCount++;
   return this;
@@ -257,14 +234,15 @@ void CPDF_StructElementImpl::LoadKids(CPDF_Dictionary* pDict) {
   if (!pKids)
     return;
 
+  m_Kids.clear();
   if (CPDF_Array* pArray = pKids->AsArray()) {
-    m_Kids.SetSize(pArray->GetCount());
+    m_Kids.resize(pArray->GetCount());
     for (uint32_t i = 0; i < pArray->GetCount(); i++) {
       CPDF_Object* pKid = pArray->GetDirectObjectAt(i);
       LoadKid(PageObjNum, pKid, &m_Kids[i]);
     }
   } else {
-    m_Kids.SetSize(1);
+    m_Kids.resize(1);
     LoadKid(PageObjNum, pKids, &m_Kids[0]);
   }
 }
