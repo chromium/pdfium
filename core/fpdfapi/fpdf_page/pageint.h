@@ -250,7 +250,7 @@ class CPDF_StreamContentParser {
   CPDF_StreamParser* m_pSyntax;
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
   CPDF_ContentMark m_CurContentMark;
-  CFX_ArrayTemplate<CPDF_TextObject*> m_ClipTextList;
+  std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
   CPDF_TextObject* m_pLastTextObject;
   FX_FLOAT m_DefFontSize;
   FX_PATHPOINT* m_pPathPoints;
@@ -260,7 +260,7 @@ class CPDF_StreamContentParser {
   FX_FLOAT m_PathStartY;
   FX_FLOAT m_PathCurrentX;
   FX_FLOAT m_PathCurrentY;
-  int m_PathClipType;
+  uint8_t m_PathClipType;
   CFX_ByteString m_LastImageName;
   CPDF_Image* m_pLastImage;
   CFX_BinaryBuf m_LastImageDict;

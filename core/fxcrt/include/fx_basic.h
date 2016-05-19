@@ -717,51 +717,20 @@ class CFX_CountRef {
     }
   }
 
-  ~CFX_CountRef() {
-    if (!m_pObject) {
-      return;
-    }
-    m_pObject->m_RefCount--;
-    if (m_pObject->m_RefCount <= 0) {
-      delete m_pObject;
-    }
-  }
+  ~CFX_CountRef() { SetNull(); }
 
   ObjClass* New() {
-    if (m_pObject) {
-      m_pObject->m_RefCount--;
-      if (m_pObject->m_RefCount <= 0) {
-        delete m_pObject;
-      }
-    }
+    SetNull();
     m_pObject = new CountedObj;
     m_pObject->m_RefCount = 1;
     return m_pObject;
   }
 
   void operator=(const Ref& ref) {
-    if (ref.m_pObject) {
+    if (ref.m_pObject)
       ref.m_pObject->m_RefCount++;
-    }
-    if (m_pObject) {
-      m_pObject->m_RefCount--;
-      if (m_pObject->m_RefCount <= 0) {
-        delete m_pObject;
-      }
-    }
+    SetNull();
     m_pObject = ref.m_pObject;
-  }
-
-  void operator=(void* p) {
-    ASSERT(p == 0);
-    if (!m_pObject) {
-      return;
-    }
-    m_pObject->m_RefCount--;
-    if (m_pObject->m_RefCount <= 0) {
-      delete m_pObject;
-    }
-    m_pObject = NULL;
   }
 
   const ObjClass* GetObject() const { return m_pObject; }

@@ -17,17 +17,14 @@ class CPDF_TextObject;
 
 class CPDF_ClipPath : public CFX_CountRef<CPDF_ClipPathData> {
  public:
-  uint32_t GetPathCount() const { return m_pObject->m_PathCount; }
-  CPDF_Path GetPath(int i) const { return m_pObject->m_pPathList[i]; }
-  int GetClipType(int i) const { return m_pObject->m_pTypeList[i]; }
-  uint32_t GetTextCount() const { return m_pObject->m_TextCount; }
-  CPDF_TextObject* GetText(int i) const { return m_pObject->m_pTextList[i]; }
+  uint32_t GetPathCount() const;
+  CPDF_Path GetPath(size_t i) const;
+  uint8_t GetClipType(size_t i) const;
+  uint32_t GetTextCount() const;
+  CPDF_TextObject* GetText(size_t i) const;
   CFX_FloatRect GetClipBox() const;
-
-  void AppendPath(CPDF_Path path, int type, FX_BOOL bAutoMerge);
-  void DeletePath(int layer_index);
-
-  void AppendTexts(CPDF_TextObject** pTexts, int count);
+  void AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge);
+  void AppendTexts(std::vector<std::unique_ptr<CPDF_TextObject>>* pTexts);
   void Transform(const CFX_Matrix& matrix);
 };
 

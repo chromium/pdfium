@@ -9,22 +9,22 @@
 
 #include <stdint.h>
 
+#include <memory>
+#include <utility>
+#include <vector>
+
 class CPDF_Path;
 class CPDF_TextObject;
 
 class CPDF_ClipPathData {
  public:
+  using PathAndTypeData = std::pair<CPDF_Path, uint8_t>;
   CPDF_ClipPathData();
   CPDF_ClipPathData(const CPDF_ClipPathData&);
   ~CPDF_ClipPathData();
 
-  void SetCount(int path_count, int text_count);
-
-  int m_PathCount;
-  CPDF_Path* m_pPathList;
-  uint8_t* m_pTypeList;
-  int m_TextCount;
-  CPDF_TextObject** m_pTextList;
+  std::vector<PathAndTypeData> m_PathAndTypeList;
+  std::vector<std::unique_ptr<CPDF_TextObject>> m_TextList;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_CLIPPATHDATA_H_

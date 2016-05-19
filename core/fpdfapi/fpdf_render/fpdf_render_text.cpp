@@ -736,10 +736,11 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 FX_BOOL bStroke) {
   if (!bStroke) {
     CPDF_PathObject path;
-    CPDF_TextObject* pCopy = textobj->Clone();
+    std::vector<std::unique_ptr<CPDF_TextObject>> pCopy;
+    pCopy.push_back(std::unique_ptr<CPDF_TextObject>(textobj->Clone()));
     path.m_bStroke = FALSE;
     path.m_FillType = FXFILL_WINDING;
-    path.m_ClipPath.AppendTexts(&pCopy, 1);
+    path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
     path.m_Path.New()->AppendRect(textobj->m_Left, textobj->m_Bottom,
                                   textobj->m_Right, textobj->m_Top);

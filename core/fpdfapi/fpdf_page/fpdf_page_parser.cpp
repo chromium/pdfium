@@ -813,18 +813,12 @@ void CPDF_StreamContentParser::Handle_EndMarkedContent() {
 }
 
 void CPDF_StreamContentParser::Handle_EndText() {
-  int count = m_ClipTextList.GetSize();
-  if (count == 0) {
+  if (m_ClipTextList.empty())
     return;
-  }
-  if (m_pCurStates->m_TextState.GetObject()->m_TextMode < 4) {
-    for (int i = 0; i < count; i++) {
-      delete m_ClipTextList.GetAt(i);
-    }
-  } else {
-    m_pCurStates->m_ClipPath.AppendTexts(m_ClipTextList.GetData(), count);
-  }
-  m_ClipTextList.RemoveAll();
+
+  if (m_pCurStates->m_TextState.GetObject()->m_TextMode >= 4)
+    m_pCurStates->m_ClipPath.AppendTexts(&m_ClipTextList);
+  m_ClipTextList.clear();
 }
 
 void CPDF_StreamContentParser::Handle_FillPath() {
@@ -1284,8 +1278,10 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
                             m_pCurStates->m_TextHorzScale, m_Level);
     m_pCurStates->m_TextX += x_advance;
     m_pCurStates->m_TextY += y_advance;
-    if (textmode > 3)
-      m_ClipTextList.Add(pText->Clone());
+    if (textmode > 3) {
+      m_ClipTextList.push_back(
+          std::unique_ptr<CPDF_TextObject>(pText->Clone()));
+    }
     m_pObjectHolder->GetPageObjectList()->push_back(std::move(pText));
   }
   if (pKerning && pKerning[nsegs - 1] != 0) {
@@ -1483,7 +1479,8 @@ void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag) {
 }
 
 void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
-  int PathPointCount = m_PathPointCount, PathClipType = m_PathClipType;
+  int PathPointCount = m_PathPointCount;
+  uint8_t PathClipType = m_PathClipType;
   m_PathPointCount = 0;
   m_PathClipType = 0;
   if (PathPointCount <= 1) {
