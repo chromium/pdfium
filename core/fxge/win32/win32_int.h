@@ -361,9 +361,5 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
   CPSOutput* m_pPSOutput;
   CFX_PSRenderer m_PSRenderer;
 };
-void _Color2Argb(FX_ARGB& argb,
-                 uint32_t color,
-                 int alpha_flag,
-                 void* pIccTransform);
 
 #endif  // CORE_FXGE_WIN32_WIN32_INT_H_

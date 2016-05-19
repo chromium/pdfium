@@ -348,13 +348,15 @@ class CPDF_RefType3Cache {
   uint32_t m_dwCount;
   CPDF_Type3Font* m_pType3Font;
 };
+
 FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
                                             const CFX_Matrix* pObj2Device) {
   CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->AsType3Font();
-  for (int j = 0; j < m_Type3FontCache.GetSize(); j++) {
-    if (m_Type3FontCache.GetAt(j) == pType3Font)
+  for (int i = 0; i < m_Type3FontCache.GetSize(); ++i) {
+    if (m_Type3FontCache.GetAt(i) == pType3Font)
       return TRUE;
   }
+
   CFX_Matrix dCTM = m_pDevice->GetCTM();
   FX_FLOAT sa = FXSYS_fabs(dCTM.a);
   FX_FLOAT sd = FXSYS_fabs(dCTM.d);
@@ -366,44 +368,43 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
   FX_ARGB fill_argb = GetFillArgb(textobj, TRUE);
   int fill_alpha = FXARGB_A(fill_argb);
   int device_class = m_pDevice->GetDeviceClass();
-  FXTEXT_GLYPHPOS* pGlyphAndPos = NULL;
-  if (device_class == FXDC_DISPLAY) {
-    pGlyphAndPos = FX_Alloc(FXTEXT_GLYPHPOS, textobj->m_nChars);
-  } else if (fill_alpha < 255) {
+  std::vector<FXTEXT_GLYPHPOS> glyphs;
+  if (device_class == FXDC_DISPLAY)
+    glyphs.resize(textobj->m_nChars);
+  else if (fill_alpha < 255)
     return FALSE;
-  }
+
   CPDF_RefType3Cache refTypeCache(pType3Font);
   uint32_t* pChars = textobj->m_pCharCodes;
-  if (textobj->m_nChars == 1) {
+  if (textobj->m_nChars == 1)
     pChars = (uint32_t*)(&textobj->m_pCharCodes);
-  }
+
   for (int iChar = 0; iChar < textobj->m_nChars; iChar++) {
     uint32_t charcode = pChars[iChar];
-    if (charcode == (uint32_t)-1) {
+    if (charcode == (uint32_t)-1)
       continue;
-    }
+
     CPDF_Type3Char* pType3Char = pType3Font->LoadChar(charcode);
-    if (!pType3Char) {
+    if (!pType3Char)
       continue;
-    }
+
     CFX_Matrix matrix = char_matrix;
     matrix.e += iChar ? textobj->m_pCharPos[iChar - 1] : 0;
     matrix.Concat(text_matrix);
     matrix.Concat(*pObj2Device);
     if (!pType3Char->LoadBitmap(m_pContext)) {
-      if (pGlyphAndPos) {
+      if (!glyphs.empty()) {
         for (int i = 0; i < iChar; i++) {
-          FXTEXT_GLYPHPOS& glyph = pGlyphAndPos[i];
-          if (!glyph.m_pGlyph) {
+          const FXTEXT_GLYPHPOS& glyph = glyphs[i];
+          if (!glyph.m_pGlyph)
             continue;
-          }
+
           m_pDevice->SetBitMask(&glyph.m_pGlyph->m_Bitmap,
                                 glyph.m_OriginX + glyph.m_pGlyph->m_Left,
                                 glyph.m_OriginY - glyph.m_pGlyph->m_Top,
                                 fill_argb);
         }
-        FX_Free(pGlyphAndPos);
-        pGlyphAndPos = NULL;
+        glyphs.clear();
       }
       CPDF_GraphicStates* pStates = CloneObjStates(textobj, FALSE);
       CPDF_RenderOptions Options = m_Options;
@@ -453,18 +454,18 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         CPDF_Type3Cache* pCache = GetCachedType3(pType3Font);
         refTypeCache.m_dwCount++;
         CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix, sa, sd);
-        if (!pBitmap) {
+        if (!pBitmap)
           continue;
-        }
+
         int origin_x = FXSYS_round(matrix.e);
         int origin_y = FXSYS_round(matrix.f);
-        if (pGlyphAndPos) {
-          pGlyphAndPos[iChar].m_pGlyph = pBitmap;
-          pGlyphAndPos[iChar].m_OriginX = origin_x;
-          pGlyphAndPos[iChar].m_OriginY = origin_y;
-        } else {
+        if (glyphs.empty()) {
           m_pDevice->SetBitMask(&pBitmap->m_Bitmap, origin_x + pBitmap->m_Left,
                                 origin_y - pBitmap->m_Top, fill_argb);
+        } else {
+          glyphs[iChar].m_pGlyph = pBitmap;
+          glyphs[iChar].m_OriginX = origin_x;
+          glyphs[iChar].m_OriginY = origin_y;
         }
       } else {
         CFX_Matrix image_matrix = pType3Char->m_ImageMatrix;
@@ -479,33 +480,33 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
       }
     }
   }
-  if (pGlyphAndPos) {
-    FX_RECT rect =
-        FXGE_GetGlyphsBBox(pGlyphAndPos, textobj->m_nChars, 0, sa, sd);
-    CFX_DIBitmap bitmap;
-    if (!bitmap.Create((int)(rect.Width() * sa), (int)(rect.Height() * sd),
-                       FXDIB_8bppMask)) {
-      FX_Free(pGlyphAndPos);
-      return TRUE;
-    }
-    bitmap.Clear(0);
-    for (int iChar = 0; iChar < textobj->m_nChars; iChar++) {
-      FXTEXT_GLYPHPOS& glyph = pGlyphAndPos[iChar];
-      if (!glyph.m_pGlyph) {
-        continue;
-      }
-      bitmap.TransferBitmap(
-          (int)((glyph.m_OriginX + glyph.m_pGlyph->m_Left - rect.left) * sa),
-          (int)((glyph.m_OriginY - glyph.m_pGlyph->m_Top - rect.top) * sd),
-          glyph.m_pGlyph->m_Bitmap.GetWidth(),
-          glyph.m_pGlyph->m_Bitmap.GetHeight(), &glyph.m_pGlyph->m_Bitmap, 0,
-          0);
-    }
-    m_pDevice->SetBitMask(&bitmap, rect.left, rect.top, fill_argb);
-    FX_Free(pGlyphAndPos);
+
+  if (glyphs.empty())
+    return TRUE;
+
+  FX_RECT rect = FXGE_GetGlyphsBBox(glyphs, 0, sa, sd);
+  CFX_DIBitmap bitmap;
+  if (!bitmap.Create(static_cast<int>(rect.Width() * sa),
+                     static_cast<int>(rect.Height() * sd), FXDIB_8bppMask)) {
+    return TRUE;
   }
+  bitmap.Clear(0);
+  for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
+    if (!glyph.m_pGlyph)
+      continue;
+
+    bitmap.TransferBitmap(
+        static_cast<int>(
+            (glyph.m_OriginX + glyph.m_pGlyph->m_Left - rect.left) * sa),
+        static_cast<int>((glyph.m_OriginY - glyph.m_pGlyph->m_Top - rect.top) *
+                         sd),
+        glyph.m_pGlyph->m_Bitmap.GetWidth(),
+        glyph.m_pGlyph->m_Bitmap.GetHeight(), &glyph.m_pGlyph->m_Bitmap, 0, 0);
+  }
+  m_pDevice->SetBitMask(&bitmap, rect.left, rect.top, fill_argb);
   return TRUE;
 }
+
 class CPDF_CharPosList {
  public:
   CPDF_CharPosList();

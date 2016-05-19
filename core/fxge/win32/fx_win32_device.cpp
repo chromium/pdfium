@@ -13,6 +13,7 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/include/fx_font.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "core/fxge/include/fx_ge_win32.h"
 #include "core/fxge/win32/dwrite_int.h"
@@ -627,8 +628,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1,
   if (!pBitmap || dest_width == 0 || dest_height == 0) {
     return FALSE;
   }
-  _Color2Argb(bitmap_color, bitmap_color, alpha_flag | (1 << 24),
-              pIccTransform);
+  Color2Argb(bitmap_color, bitmap_color, alpha_flag | (1 << 24), pIccTransform);
   int width = pBitmap->GetWidth(), height = pBitmap->GetHeight();
   struct {
     BITMAPINFOHEADER bmiHeader;
@@ -855,8 +855,8 @@ FX_BOOL CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   if (blend_type != FXDIB_BLEND_NORMAL) {
     return FALSE;
   }
-  _Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
-  _Color2Argb(stroke_color, stroke_color, alpha_flag, pIccTransform);
+  Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
+  Color2Argb(stroke_color, stroke_color, alpha_flag, pIccTransform);
   CWin32Platform* pPlatform =
       (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
   if (!(pGraphState || stroke_color == 0) &&
@@ -963,7 +963,7 @@ FX_BOOL CGdiDeviceDriver::FillRect(const FX_RECT* pRect,
   if (blend_type != FXDIB_BLEND_NORMAL) {
     return FALSE;
   }
-  _Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
+  Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
   int alpha;
   FX_COLORREF rgb;
   ArgbDecode(fill_color, alpha, rgb);
@@ -1019,7 +1019,7 @@ FX_BOOL CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
   if (blend_type != FXDIB_BLEND_NORMAL) {
     return FALSE;
   }
-  _Color2Argb(color, color, alpha_flag | (1 << 24), pIccTransform);
+  Color2Argb(color, color, alpha_flag | (1 << 24), pIccTransform);
   int a;
   FX_COLORREF rgb;
   ArgbDecode(color, a, rgb);
