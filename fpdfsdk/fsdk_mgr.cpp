@@ -51,6 +51,8 @@ CPDFDoc_Environment::~CPDFDoc_Environment() {
   if (pProvider->m_pEnvList.GetSize() == 0)
     pProvider->SetJavaScriptInitialized(FALSE);
 #endif  // PDF_ENABLE_XFA
+  if (m_pInfo && m_pInfo->Release)
+    m_pInfo->Release(m_pInfo);
 }
 
 int CPDFDoc_Environment::JS_appAlert(const FX_WCHAR* Msg,

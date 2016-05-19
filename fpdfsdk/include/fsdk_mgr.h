@@ -40,14 +40,6 @@ class CPDFDoc_Environment final {
   CPDFDoc_Environment(UnderlyingDocumentType* pDoc, FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFDoc_Environment();
 
-#ifdef PDF_ENABLE_XFA
-  void Release() {
-    if (m_pInfo && m_pInfo->Release)
-      m_pInfo->Release(m_pInfo);
-    delete this;
-  }
-#endif  // PDF_ENABLE_XFA
-
   void FFI_Invalidate(FPDF_PAGE page,
                       double left,
                       double top,
