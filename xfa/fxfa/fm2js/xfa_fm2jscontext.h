@@ -431,14 +431,15 @@ class CXFA_FM2JSContext {
   static FX_DOUBLE HValueToDouble(FXJSE_HOBJECT hThis, FXJSE_HVALUE hValue);
   static void HValueToUTF8String(FXJSE_HVALUE hValue,
                                  CFX_ByteString& outputValue);
+
   CXFA_FM2JSContext();
   ~CXFA_FM2JSContext();
-  static CXFA_FM2JSContext* Create();
+
   void Initialize(FXJSE_HRUNTIME hScriptRuntime,
                   FXJSE_HCONTEXT hScriptContext,
                   CXFA_Document* pDoc);
   void GlobalPropertyGetter(FXJSE_HVALUE hValue);
-  void Release();
+
   FXJSE_HRUNTIME GetScriptRuntime() const { return m_hScriptRuntime; }
   CXFA_Document* GetDocument() const { return m_pDocument; }
   void ThrowScriptErrorMessage(int32_t iStringID, ...);

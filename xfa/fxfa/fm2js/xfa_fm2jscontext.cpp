@@ -7179,9 +7179,6 @@ CXFA_FM2JSContext::~CXFA_FM2JSContext() {
   }
   m_hScriptRuntime = NULL;
 }
-CXFA_FM2JSContext* CXFA_FM2JSContext::Create() {
-  return new CXFA_FM2JSContext;
-}
 void CXFA_FM2JSContext::Initialize(FXJSE_HRUNTIME hScriptRuntime,
                                    FXJSE_HCONTEXT hScriptContext,
                                    CXFA_Document* pDoc) {
@@ -7201,9 +7198,6 @@ void CXFA_FM2JSContext::Initialize(FXJSE_HRUNTIME hScriptRuntime,
 }
 void CXFA_FM2JSContext::GlobalPropertyGetter(FXJSE_HVALUE hValue) {
   FXJSE_Value_Set(hValue, m_hValue);
-}
-void CXFA_FM2JSContext::Release() {
-  delete this;
 }
 void CXFA_FM2JSContext::ThrowScriptErrorMessage(int32_t iStringID, ...) {
   IXFA_AppProvider* pAppProvider = m_pDocument->GetNotify()->GetAppProvider();
