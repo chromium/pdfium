@@ -508,55 +508,55 @@ bool RenderPage(const std::string& name,
   int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
   FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, alpha);
-  if (!bitmap) {
-    fprintf(stderr, "Page was too large to be rendered.\n");
-    return false;
-  }
-  FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, fill_color);
-  FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
+  if (bitmap) {
+    FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
+    FPDFBitmap_FillRect(bitmap, 0, 0, width, height, fill_color);
+    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
 
-  FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, 0);
-  int stride = FPDFBitmap_GetStride(bitmap);
-  const char* buffer =
-      reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+    FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, 0);
+    int stride = FPDFBitmap_GetStride(bitmap);
+    const char* buffer =
+        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
-  switch (options.output_format) {
+    switch (options.output_format) {
 #ifdef _WIN32
-    case OUTPUT_BMP:
-      WriteBmp(name.c_str(), page_index, buffer, stride, width, height);
-      break;
+      case OUTPUT_BMP:
+        WriteBmp(name.c_str(), page_index, buffer, stride, width, height);
+        break;
 
-    case OUTPUT_EMF:
-      WriteEmf(page, name.c_str(), page_index);
-      break;
+      case OUTPUT_EMF:
+        WriteEmf(page, name.c_str(), page_index);
+        break;
 #endif
-    case OUTPUT_PNG:
-      WritePng(name.c_str(), page_index, buffer, stride, width, height);
-      break;
+      case OUTPUT_PNG:
+        WritePng(name.c_str(), page_index, buffer, stride, width, height);
+        break;
 
-    case OUTPUT_PPM:
-      WritePpm(name.c_str(), page_index, buffer, stride, width, height);
-      break;
+      case OUTPUT_PPM:
+        WritePpm(name.c_str(), page_index, buffer, stride, width, height);
+        break;
 
 #ifdef PDF_ENABLE_SKIA
-    case OUTPUT_SKP: {
-      std::unique_ptr<SkPictureRecorder> recorder(
-          (SkPictureRecorder*)FPDF_RenderPageSkp(page, width, height));
-      FPDF_FFLRecord(form, recorder.get(), page, 0, 0, width, height, 0, 0);
-      WriteSkp(name.c_str(), page_index, recorder.get());
-    } break;
+      case OUTPUT_SKP: {
+        std::unique_ptr<SkPictureRecorder> recorder(
+            (SkPictureRecorder*)FPDF_RenderPageSkp(page, width, height));
+        FPDF_FFLRecord(form, recorder.get(), page, 0, 0, width, height, 0, 0);
+        WriteSkp(name.c_str(), page_index, recorder.get());
+      } break;
 #endif
-    default:
-      break;
-  }
+      default:
+        break;
+    }
 
-  FPDFBitmap_Destroy(bitmap);
+    FPDFBitmap_Destroy(bitmap);
+  } else {
+    fprintf(stderr, "Page was too large to be rendered.\n");
+  }
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form);
   FPDFText_ClosePage(text_page);
   FPDF_ClosePage(page);
-  return true;
+  return !!bitmap;
 }
 
 void RenderPdf(const std::string& name,
