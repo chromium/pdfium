@@ -107,39 +107,6 @@
       ],
     },
     {
-      'target_name': 'fx_agg',
-      'type': 'static_library',
-      'sources': [
-        'agg23/agg_basics.h',
-        'agg23/agg_clip_liang_barsky.h',
-        'agg23/agg_conv_dash.h',
-        'agg23/agg_conv_stroke.h',
-        'agg23/agg_curves.cpp',
-        'agg23/agg_curves.h',
-        'agg23/agg_path_storage.cpp',
-        'agg23/agg_path_storage.h',
-        'agg23/agg_rasterizer_scanline_aa.cpp',
-        'agg23/agg_rasterizer_scanline_aa.h',
-        'agg23/agg_renderer_scanline.h',
-        'agg23/agg_rendering_buffer.h',
-        'agg23/agg_scanline_u.h',
-        'agg23/agg_vcgen_dash.cpp',
-        'agg23/agg_vcgen_stroke.cpp',
-      ],
-      'conditions': [
-        ['os_posix==1', {
-          # library contains several enum vs non-enum conditionals.
-          'cflags': [ '-Wno-extra' ],
-        }],
-      ],
-      'variables': {
-        'clang_warning_flags': [
-          # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
-          '-Wno-unused-function',
-        ],
-      },
-    },
-    {
       'target_name': 'fx_lcms2',
       'type': 'static_library',
       'sources': [
@@ -436,6 +403,43 @@
               ],
             }],
           ],
+        },
+      ],
+    }],
+    ['pdf_use_skia!=1', {
+      'targets': [
+        {
+          'target_name': 'fx_agg',
+          'type': 'static_library',
+          'sources': [
+            'agg23/agg_basics.h',
+            'agg23/agg_clip_liang_barsky.h',
+            'agg23/agg_conv_dash.h',
+            'agg23/agg_conv_stroke.h',
+            'agg23/agg_curves.cpp',
+            'agg23/agg_curves.h',
+            'agg23/agg_path_storage.cpp',
+            'agg23/agg_path_storage.h',
+            'agg23/agg_rasterizer_scanline_aa.cpp',
+            'agg23/agg_rasterizer_scanline_aa.h',
+            'agg23/agg_renderer_scanline.h',
+            'agg23/agg_rendering_buffer.h',
+            'agg23/agg_scanline_u.h',
+            'agg23/agg_vcgen_dash.cpp',
+            'agg23/agg_vcgen_stroke.cpp',
+          ],
+          'conditions': [
+            ['os_posix==1', {
+              # library contains several enum vs non-enum conditionals.
+              'cflags': [ '-Wno-extra', ],
+            }],
+          ],
+          'variables': {
+            'clang_warning_flags': [
+              # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
+              '-Wno-unused-function',
+            ],
+          },
         },
       ],
     }],

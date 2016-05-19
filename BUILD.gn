@@ -647,12 +647,7 @@ static_library("fxcrt") {
 }
 
 static_library("fxge") {
-  deps = [
-    "third_party:fx_agg",
-  ]
   sources = [
-    "core/fxge/agg/fx_agg_driver.cpp",
-    "core/fxge/agg/fx_agg_driver.h",
     "core/fxge/android/fpf_skiafont.cpp",
     "core/fxge/android/fpf_skiafont.h",
     "core/fxge/android/fpf_skiafontmgr.cpp",
@@ -714,7 +709,17 @@ static_library("fxge") {
 
   if (pdf_use_skia) {
     sources += [ "core/fxge/skia/fx_skia_device.cpp" ]
-    deps += [ "//skia" ]
+    deps = [
+      "//skia",
+    ]
+  } else {
+    sources += [
+      "core/fxge/agg/fx_agg_driver.cpp",
+      "core/fxge/agg/fx_agg_driver.h",
+    ]
+    deps = [
+      "third_party:fx_agg",
+    ]
   }
 
   if (is_win) {

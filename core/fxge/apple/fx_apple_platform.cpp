@@ -9,7 +9,10 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
+#ifndef _SKIA_SUPPORT_
 #include "core/fxge/agg/fx_agg_driver.h"
+#endif
+
 #include "core/fxge/apple/apple_int.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"

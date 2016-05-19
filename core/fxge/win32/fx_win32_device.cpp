@@ -10,7 +10,11 @@
 #include <crtdbg.h>
 
 #include "core/fxcodec/include/fx_codec.h"
+
+#ifndef _SKIA_SUPPORT_
 #include "core/fxge/agg/fx_agg_driver.h"
+#endif
+
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_font.h"
@@ -807,6 +811,112 @@ static void _SetPathToDC(HDC hDC,
   }
   EndPath(hDC);
 }
+
+#ifdef _SKIA_SUPPORT_
+// TODO(caryclark)  This antigrain function is duplicated here to permit
+// removing the last remaining dependency. Eventually, this will be elminiated
+// altogether and replace by Skia code.
+
+struct rect_base {
+  FX_FLOAT x1;
+  FX_FLOAT y1;
+  FX_FLOAT x2;
+  FX_FLOAT y2;
+};
+
+static unsigned clip_liang_barsky(FX_FLOAT x1,
+                                  FX_FLOAT y1,
+                                  FX_FLOAT x2,
+                                  FX_FLOAT y2,
+                                  const rect_base& clip_box,
+                                  FX_FLOAT* x,
+                                  FX_FLOAT* y) {
+  const FX_FLOAT nearzero = 1e-30f;
+  FX_FLOAT deltax = x2 - x1;
+  FX_FLOAT deltay = y2 - y1;
+  unsigned np = 0;
+  if (deltax == 0)
+    deltax = (x1 > clip_box.x1) ? -nearzero : nearzero;
+  FX_FLOAT xin, xout;
+  if (deltax > 0) {
+    xin = clip_box.x1;
+    xout = clip_box.x2;
+  } else {
+    xin = clip_box.x2;
+    xout = clip_box.x1;
+  }
+  FX_FLOAT tinx = (xin - x1) / deltax;
+  if (deltay == 0)
+    deltay = (y1 > clip_box.y1) ? -nearzero : nearzero;
+  FX_FLOAT yin, yout;
+  if (deltay > 0) {
+    yin = clip_box.y1;
+    yout = clip_box.y2;
+  } else {
+    yin = clip_box.y2;
+    yout = clip_box.y1;
+  }
+  FX_FLOAT tiny = (yin - y1) / deltay;
+  FX_FLOAT tin1, tin2;
+  if (tinx < tiny) {
+    tin1 = tinx;
+    tin2 = tiny;
+  } else {
+    tin1 = tiny;
+    tin2 = tinx;
+  }
+  if (tin1 <= 1.0f) {
+    if (0 < tin1) {
+      *x++ = xin;
+      *y++ = yin;
+      ++np;
+    }
+    if (tin2 <= 1.0f) {
+      FX_FLOAT toutx = (xout - x1) / deltax;
+      FX_FLOAT touty = (yout - y1) / deltay;
+      FX_FLOAT tout1 = (toutx < touty) ? toutx : touty;
+      if (tin2 > 0 || tout1 > 0) {
+        if (tin2 <= tout1) {
+          if (tin2 > 0) {
+            if (tinx > tiny) {
+              *x++ = xin;
+              *y++ = y1 + (deltay * tinx);
+            } else {
+              *x++ = x1 + (deltax * tiny);
+              *y++ = yin;
+            }
+            ++np;
+          }
+          if (tout1 < 1.0f) {
+            if (toutx < touty) {
+              *x++ = xout;
+              *y++ = y1 + (deltay * toutx);
+            } else {
+              *x++ = x1 + (deltax * touty);
+              *y++ = yout;
+            }
+          } else {
+            *x++ = x2;
+            *y++ = y2;
+          }
+          ++np;
+        } else {
+          if (tinx > tiny) {
+            *x++ = xin;
+            *y++ = yout;
+          } else {
+            *x++ = xout;
+            *y++ = yin;
+          }
+          ++np;
+        }
+      }
+    }
+  }
+  return np;
+}
+#endif
+
 void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
                                 FX_FLOAT y1,
                                 FX_FLOAT x2,
@@ -819,10 +929,18 @@ void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
     return;
   }
   if (flag1 || flag2) {
+    FX_FLOAT x[2], y[2];
+    int np;
+#ifdef _SKIA_SUPPORT_
+    // TODO(caryclark) temporary replacement of antigrain in line function
+    // to permit removing antigrain altogether
+    rect_base rect = {0.0f, 0.0f, (FX_FLOAT)(m_Width), (FX_FLOAT)(m_Height)};
+    np = clip_liang_barsky(x1, y1, x2, y2, rect, x, y);
+#else
     agg::rect_base<FX_FLOAT> rect(0.0f, 0.0f, (FX_FLOAT)(m_Width),
                                   (FX_FLOAT)(m_Height));
-    FX_FLOAT x[2], y[2];
-    int np = agg::clip_liang_barsky<FX_FLOAT>(x1, y1, x2, y2, rect, x, y);
+    np = agg::clip_liang_barsky<FX_FLOAT>(x1, y1, x2, y2, rect, x, y);
+#endif
     if (np == 0) {
       return;
     }

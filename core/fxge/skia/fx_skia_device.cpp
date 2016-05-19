@@ -233,7 +233,7 @@ bool AddSamples(const CPDF_Function* pFunc,
     return false;
   uint32_t sampleSize = sampledFunc->m_nBitsPerSample;
   uint32_t sampleCount = encodeInfo.sizes;
-  if (sampleCount != 1 << sampleSize)
+  if (sampleCount != 1U << sampleSize)
     return false;
   if (sampledFunc->m_pSampleStream->GetSize() <
       sampleCount * 3 * sampleSize / 8) {

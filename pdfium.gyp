@@ -732,8 +732,15 @@
           'sources': [
             'core/fxge/skia/fx_skia_device.cpp',
           ],
+          'sources!': [
+            'core/fxge/agg/fx_agg_driver.h',
+            'core/fxge/agg/fx_agg_driver.cpp',
+          ],
           'dependencies': [
             '<(DEPTH)/skia/skia.gyp:skia',
+          ],
+          'dependencies!': [
+            'third_party/third_party.gyp:fx_agg',
           ],
         }],
         ['OS=="win"', {
