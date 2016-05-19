@@ -23,4 +23,5 @@ Local Modifications:
 0011-j2k_update_image_data.patch: Prevent bad signed -> unsigned casting.
 0012-mct_sse.patch: Don't use SSE intrinsics in 32-bit builds.
 0013-attrib_fix.patch: Don't needlessly redefine __attribute__, https://github.com/uclouvain/openjpeg/issues/727
+0014-opj_jp2_read_ihdr_leak.patch: Memory leak in opj_jp2_read_ihdr().
 TODO(thestig): List all the other patches.
