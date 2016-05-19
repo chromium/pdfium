@@ -8,22 +8,26 @@
 #include "core/fxcrt/plex.h"
 
 CFX_MapPtrToPtr::CFX_MapPtrToPtr(int nBlockSize)
-    : m_pHashTable(NULL),
+    : m_pHashTable(nullptr),
       m_nHashTableSize(17),
       m_nCount(0),
-      m_pFreeList(NULL),
-      m_pBlocks(NULL),
+      m_pFreeList(nullptr),
+      m_pBlocks(nullptr),
       m_nBlockSize(nBlockSize) {
   ASSERT(m_nBlockSize > 0);
 }
+
 void CFX_MapPtrToPtr::RemoveAll() {
   FX_Free(m_pHashTable);
-  m_pHashTable = NULL;
+  m_pHashTable = nullptr;
   m_nCount = 0;
-  m_pFreeList = NULL;
-  m_pBlocks->FreeDataChain();
-  m_pBlocks = NULL;
+  m_pFreeList = nullptr;
+  if (m_pBlocks) {
+    m_pBlocks->FreeDataChain();
+    m_pBlocks = nullptr;
+  }
 }
+
 CFX_MapPtrToPtr::~CFX_MapPtrToPtr() {
   RemoveAll();
   ASSERT(m_nCount == 0);
@@ -63,14 +67,13 @@ FX_BOOL CFX_MapPtrToPtr::Lookup(void* key, void*& rValue) const {
   rValue = pAssoc->value;
   return TRUE;
 }
+
 void* CFX_MapPtrToPtr::GetValueAt(void* key) const {
   uint32_t nHash;
   CAssoc* pAssoc = GetAssocAt(key, nHash);
-  if (!pAssoc) {
-    return NULL;
-  }
-  return pAssoc->value;
+  return pAssoc ? pAssoc->value : nullptr;
 }
+
 void*& CFX_MapPtrToPtr::operator[](void* key) {
   uint32_t nHash;
   CAssoc* pAssoc;

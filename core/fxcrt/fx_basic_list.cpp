@@ -73,12 +73,18 @@ void CFX_PtrList::FreeNode(CFX_PtrList::CNode* pNode) {
     RemoveAll();
   }
 }
+
 void CFX_PtrList::RemoveAll() {
   m_nCount = 0;
-  m_pNodeHead = m_pNodeTail = m_pNodeFree = NULL;
-  m_pBlocks->FreeDataChain();
-  m_pBlocks = NULL;
+  m_pNodeHead = nullptr;
+  m_pNodeTail = nullptr;
+  m_pNodeFree = nullptr;
+  if (m_pBlocks) {
+    m_pBlocks->FreeDataChain();
+    m_pBlocks = nullptr;
+  }
 }
+
 CFX_PtrList::CNode* CFX_PtrList::NewNode(CFX_PtrList::CNode* pPrev,
                                          CFX_PtrList::CNode* pNext) {
   if (!m_pNodeFree) {
