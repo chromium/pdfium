@@ -114,8 +114,9 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
                                   FX_FLOAT& fCalcHeight);
   void InitLayoutData();
   void StartTextLayout(FX_FLOAT& fCalcWidth, FX_FLOAT& fCalcHeight);
+
   CXFA_FFDocView* m_pDocView;
-  CXFA_WidgetLayoutData* m_pLayoutData;
+  std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
   uint32_t m_nRecursionDepth;
 };
 
