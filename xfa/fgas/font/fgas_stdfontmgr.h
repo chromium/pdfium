@@ -149,8 +149,6 @@ typedef CFX_MapPtrTemplate<uint32_t, CFX_FontDescriptorInfos*>
 typedef CFX_MapPtrTemplate<uint32_t, CFX_ArrayTemplate<IFX_Font*>*>
     CFX_HashFontsMap;
 typedef CFX_MapPtrTemplate<FX_WCHAR, IFX_Font*> CFX_UnicodeFontMap;
-typedef CFX_MapPtrTemplate<IFX_FileAccess*, CFX_ArrayTemplate<IFX_Font*>*>
-    CFX_FileFontMap;
 typedef CFX_MapPtrTemplate<IFX_Font*, IFX_FileRead*> CFX_FonStreamtMap;
 
 class CFX_FontMgrImp : public IFX_FontMgr {

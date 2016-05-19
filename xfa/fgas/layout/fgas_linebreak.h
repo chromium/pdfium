@@ -30,11 +30,4 @@ enum FX_LINEBREAKTYPE : uint8_t {
 
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 
-void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
-                              FX_LINEBREAKTYPE* pBrkType,
-                              int32_t iLength);
-void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
-                              int32_t iLength,
-                              CFX_Int32MassArray& bp);
-
 #endif  // XFA_FGAS_LAYOUT_FGAS_LINEBREAK_H_

@@ -54,7 +54,6 @@ enum FX_DATETIMETYPE {
 
 class IFX_Locale {
  public:
-  static IFX_Locale* Create(CXML_Element* pLocaleData);
 
   virtual ~IFX_Locale() {}
   virtual void Release() = 0;
@@ -92,9 +91,7 @@ class IFX_LocaleMgr {
   virtual IFX_Locale* GetLocale(uint16_t lcid) = 0;
   virtual IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) = 0;
 };
-IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
-                                   uint16_t wDefaultLCID);
-void FX_ParseNumString(const CFX_WideString& wsNum, CFX_WideString& wsResult);
+
 FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
                              CFX_Unitime& datetime);
 FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,

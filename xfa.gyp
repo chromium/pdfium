@@ -125,8 +125,6 @@
         "xfa/fgas/localization/fgas_locale.cpp",
         "xfa/fgas/localization/fgas_locale.h",
         "xfa/fgas/localization/fgas_localeimp.h",
-        "xfa/fgas/localization/fgas_localemgr.cpp",
-        "xfa/fgas/localization/fgas_localemgr.h",
         "xfa/fgas/xml/fgas_sax.cpp",
         "xfa/fgas/xml/fgas_sax.h",
         "xfa/fwl/basewidget/fwl_barcodeimp.cpp",

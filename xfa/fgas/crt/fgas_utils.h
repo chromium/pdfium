@@ -80,9 +80,7 @@ class CFX_BaseArrayTemplate : public CFX_BaseArray {
     CFX_BaseArray::RemoveAll(bLeaveMemory);
   }
 };
-typedef CFX_BaseArrayTemplate<void*> CFDE_PtrArray;
 typedef CFX_BaseArrayTemplate<uint32_t> CFDE_DWordArray;
-typedef CFX_BaseArrayTemplate<uint16_t> CFDE_WordArray;
 
 template <class baseType>
 class CFX_ObjectBaseArrayTemplate : public CFX_BaseArray {
@@ -277,12 +275,7 @@ class CFX_MassArrayTemplate : public CFX_BaseMassArray {
     CFX_BaseMassArray::RemoveAll(bLeaveMemory);
   }
 };
-typedef CFX_MassArrayTemplate<void*> CFX_PtrMassArray;
-typedef CFX_MassArrayTemplate<int32_t> CFX_Int32MassArray;
-typedef CFX_MassArrayTemplate<uint32_t> CFX_DWordMassArray;
-typedef CFX_MassArrayTemplate<uint16_t> CFX_WordMassArray;
 typedef CFX_MassArrayTemplate<CFX_Rect> CFX_RectMassArray;
-typedef CFX_MassArrayTemplate<CFX_RectF> CFX_RectFMassArray;
 
 template <class baseType>
 class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
