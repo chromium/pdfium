@@ -94,11 +94,12 @@ void CFX_PrivateData::ClearAll() {
   }
   m_DataList.RemoveAll();
 }
+
 void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
   if (strc.Find('.') == -1) {
     bInteger = TRUE;
     int cc = 0;
-    int integer = 0;
+    pdfium::base::CheckedNumeric<int> integer = 0;
     FX_STRSIZE len = strc.GetLength();
     bool bNegative = false;
     if (strc[0] == '+') {
@@ -108,21 +109,21 @@ void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
       cc++;
     }
     while (cc < len && std::isdigit(strc[cc])) {
-      // TODO(dsinclair): This is not the right way to handle overflow.
       integer = integer * 10 + FXSYS_toDecimalDigit(strc.CharAt(cc));
-      if (integer < 0)
+      if (!integer.IsValid())
         break;
       cc++;
     }
     if (bNegative) {
       integer = -integer;
     }
-    *(int*)pData = integer;
+    *(int*)pData = integer.ValueOrDefault(0);
   } else {
     bInteger = FALSE;
     *(FX_FLOAT*)pData = FX_atof(strc);
   }
 }
+
 FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
   if (strc.IsEmpty())
     return 0.0;
