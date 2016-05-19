@@ -46,7 +46,7 @@ class FDE_CSSTagCache : public CFX_Target {
   uint32_t dwIDHash;
   uint32_t dwTagHash;
   int32_t iClassIndex;
-  CFDE_DWordArray dwClassHashs;
+  CFX_BaseArrayTemplate<uint32_t> dwClassHashs;
 };
 typedef CFX_ObjectStackTemplate<FDE_CSSTagCache> CFDE_CSSTagStack;
 

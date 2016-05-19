@@ -299,24 +299,20 @@ FX_BOOL CFX_GEFont::LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver) {
   return bRet;
 }
 FX_BOOL CFX_GEFont::InitFont() {
-  if (!m_pFont) {
+  if (!m_pFont)
     return FALSE;
-  }
   if (!m_pFontEncoding) {
     m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont);
-    if (!m_pFontEncoding) {
+    if (!m_pFontEncoding)
       return FALSE;
-    }
   }
-  if (!m_pCharWidthMap) {
+  if (!m_pCharWidthMap)
     m_pCharWidthMap = new CFX_WordDiscreteArray(1024);
-  }
-  if (!m_pRectArray) {
-    m_pRectArray = new CFX_RectMassArray(16);
-  }
-  if (!m_pBBoxMap) {
+  if (!m_pRectArray)
+    m_pRectArray = new CFX_MassArrayTemplate<CFX_Rect>(16);
+  if (!m_pBBoxMap)
     m_pBBoxMap = new CFX_MapPtrToPtr(16);
-  }
+
   return TRUE;
 }
 IFX_Font* CFX_GEFont::Derive(uint32_t dwFontStyles, uint16_t wCodePage) {

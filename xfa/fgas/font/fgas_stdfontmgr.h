@@ -142,15 +142,6 @@ class CFX_FontSourceEnum_File {
   CFX_ByteStringArray m_FolderPaths;
 };
 
-typedef CFX_MapPtrTemplate<uint32_t, IFX_FileAccess*> CFX_HashFileMap;
-typedef CFX_MapPtrTemplate<uint32_t, IFX_Font*> CFX_HashFontMap;
-typedef CFX_MapPtrTemplate<uint32_t, CFX_FontDescriptorInfos*>
-    CFX_HashFontDescsMap;
-typedef CFX_MapPtrTemplate<uint32_t, CFX_ArrayTemplate<IFX_Font*>*>
-    CFX_HashFontsMap;
-typedef CFX_MapPtrTemplate<FX_WCHAR, IFX_Font*> CFX_UnicodeFontMap;
-typedef CFX_MapPtrTemplate<IFX_Font*, IFX_FileRead*> CFX_FonStreamtMap;
-
 class CFX_FontMgrImp : public IFX_FontMgr {
  public:
   CFX_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum);
@@ -235,12 +226,12 @@ class CFX_FontMgrImp : public IFX_FontMgr {
                                  uint32_t index);
   IFX_FileRead* CreateFontStream(const CFX_ByteString& bsFaceName);
 
-  CFX_HashFontDescsMap m_Hash2CandidateList;
-  CFX_HashFontsMap m_Hash2Fonts;
-  CFX_HashFileMap m_Hash2FileAccess;
-  CFX_HashFontMap m_FileAccess2IFXFont;
-  CFX_FonStreamtMap m_IFXFont2FileRead;
-  CFX_UnicodeFontMap m_FailedUnicodes2NULL;
+  CFX_MapPtrTemplate<uint32_t, CFX_FontDescriptorInfos*> m_Hash2CandidateList;
+  CFX_MapPtrTemplate<uint32_t, CFX_ArrayTemplate<IFX_Font*>*> m_Hash2Fonts;
+  CFX_MapPtrTemplate<uint32_t, IFX_FileAccess*> m_Hash2FileAccess;
+  CFX_MapPtrTemplate<uint32_t, IFX_Font*> m_FileAccess2IFXFont;
+  CFX_MapPtrTemplate<IFX_Font*, IFX_FileRead*> m_IFXFont2FileRead;
+  CFX_MapPtrTemplate<FX_WCHAR, IFX_Font*> m_FailedUnicodes2NULL;
   CFX_FontSourceEnum_File* m_pFontSource;
 };
 #endif

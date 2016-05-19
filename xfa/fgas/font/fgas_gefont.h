@@ -70,7 +70,7 @@ class CFX_GEFont : public IFX_Font {
   IFX_FileRead* m_pFileRead;
   CFX_UnicodeEncoding* m_pFontEncoding;
   CFX_WordDiscreteArray* m_pCharWidthMap;
-  CFX_RectMassArray* m_pRectArray;
+  CFX_MassArrayTemplate<CFX_Rect>* m_pRectArray;
   CFX_MapPtrToPtr* m_pBBoxMap;
   CXFA_PDFFontMgr* m_pProvider;
   uint16_t m_wCharSet;
