@@ -220,14 +220,14 @@ void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
 }
 void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
                                     IFDE_CSSComputedStyle* pParentStyle) {
-  if (pXMLNode == NULL) {
+  if (!pXMLNode)
     return;
-  }
+
   CXFA_CSSTagProvider tagProvider;
   ParseTagInfo(pXMLNode, tagProvider);
-  if (!tagProvider.m_bTagAviliable) {
+  if (!tagProvider.m_bTagAvailable)
     return;
-  }
+
   IFDE_CSSComputedStyle* pNewStyle = NULL;
   if ((tagProvider.GetTagName() != FX_WSTRC(L"body")) ||
       (tagProvider.GetTagName() != FX_WSTRC(L"html"))) {
@@ -263,30 +263,45 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
   if (pNewStyle)
     pNewStyle->Release();
 }
+
+bool CXFA_TextParser::TagValidate(const CFX_WideString& wsName) const {
+  static const uint32_t s_XFATagName[] = {
+      0x61,        // a
+      0x62,        // b
+      0x69,        // i
+      0x70,        // p
+      0x0001f714,  // br
+      0x00022a55,  // li
+      0x000239bb,  // ol
+      0x00025881,  // ul
+      0x0bd37faa,  // sub
+      0x0bd37fb8,  // sup
+      0xa73e3af2,  // span
+      0xb182eaae,  // body
+      0xdb8ac455,  // html
+  };
+  static const int32_t s_iCount = FX_ArraySize(s_XFATagName);
+
+  return std::binary_search(s_XFATagName, s_XFATagName + s_iCount,
+                            FX_HashCode_GetW(wsName.AsStringC(), true));
+}
+
 void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
                                    CXFA_CSSTagProvider& tagProvider) {
-  static const uint32_t s_XFATagName[] = {
-      0x61,       0x62,       0x69,       0x70,       0x0001f714,
-      0x00022a55, 0x000239bb, 0x00025881, 0x0bd37faa, 0x0bd37fb8,
-      0xa73e3af2, 0xb182eaae, 0xdb8ac455,
-  };
   CFX_WideString wsName;
   if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
     CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
     pXMLElement->GetLocalTagName(wsName);
     tagProvider.SetTagNameObj(wsName);
-    uint32_t dwHashCode = FX_HashCode_GetW(wsName.AsStringC(), true);
-    static const int32_t s_iCount = sizeof(s_XFATagName) / sizeof(uint32_t);
-    CFX_DSPATemplate<uint32_t> lookup;
-    tagProvider.m_bTagAviliable =
-        lookup.Lookup(dwHashCode, s_XFATagName, s_iCount) > -1;
+    tagProvider.m_bTagAvailable = TagValidate(wsName);
+
     CFX_WideString wsValue;
     pXMLElement->GetString(L"style", wsValue);
     if (!wsValue.IsEmpty()) {
       tagProvider.SetAttribute(L"style", wsValue);
     }
   } else if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
-    tagProvider.m_bTagAviliable = TRUE;
+    tagProvider.m_bTagAvailable = TRUE;
     tagProvider.m_bContent = TRUE;
   }
 }

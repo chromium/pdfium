@@ -26,7 +26,7 @@ class CXFA_TextTabstopsContext;
 
 class CXFA_CSSTagProvider {
  public:
-  CXFA_CSSTagProvider() : m_bTagAviliable(FALSE), m_bContent(FALSE) {}
+  CXFA_CSSTagProvider() : m_bTagAvailable(FALSE), m_bContent(FALSE) {}
   ~CXFA_CSSTagProvider() {}
 
   CFX_WideString GetTagName() { return m_wsTagName; }
@@ -43,7 +43,7 @@ class CXFA_CSSTagProvider {
     m_Attributes.insert({wsAttr, wsValue});
   }
 
-  FX_BOOL m_bTagAviliable;
+  FX_BOOL m_bTagAvailable;
   FX_BOOL m_bContent;
 
  protected:
@@ -123,6 +123,9 @@ class CXFA_TextParser {
                        CFDE_XMLNode* pXMLNode,
                        CFX_WideString& wsValue);
   CXFA_TextParseContext* GetParseContextFromMap(CFDE_XMLNode* pXMLNode);
+
+ protected:
+  bool TagValidate(const CFX_WideString& str) const;
 
  private:
   void InitCSSData(CXFA_TextProvider* pTextProvider);
