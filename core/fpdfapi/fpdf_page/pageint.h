@@ -19,6 +19,7 @@
 
 class CPDF_AllStates;
 class CPDF_ColorSpace;
+class CPDF_ExpIntFunc;
 class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_Form;
@@ -27,6 +28,8 @@ class CPDF_Image;
 class CPDF_ImageObject;
 class CPDF_Page;
 class CPDF_Pattern;
+class CPDF_SampledFunc;
+class CPDF_StitchFunc;
 class CPDF_StreamAcc;
 class CPDF_TextObject;
 class CPDF_Type3Char;
@@ -384,9 +387,15 @@ class CPDF_Function {
                int& nresults) const;
   uint32_t CountInputs() const { return m_nInputs; }
   uint32_t CountOutputs() const { return m_nOutputs; }
+  FX_FLOAT GetDomain(int i) const { return m_pDomains[i]; }
+  FX_FLOAT GetRange(int i) const { return m_pRanges[i]; }
+
+  const CPDF_SampledFunc* ToSampledFunc() const;
+  const CPDF_ExpIntFunc* ToExpIntFunc() const;
+  const CPDF_StitchFunc* ToStitchFunc() const;
 
  protected:
-  CPDF_Function();
+  explicit CPDF_Function(Type type);
 
   FX_BOOL Init(CPDF_Object* pObj);
   virtual FX_BOOL v_Init(CPDF_Object* pObj) = 0;
@@ -396,6 +405,7 @@ class CPDF_Function {
   uint32_t m_nOutputs;
   FX_FLOAT* m_pDomains;
   FX_FLOAT* m_pRanges;
+  const Type m_Type;
 };
 
 class CPDF_ExpIntFunc : public CPDF_Function {
@@ -433,9 +443,17 @@ class CPDF_SampledFunc : public CPDF_Function {
   FX_BOOL v_Init(CPDF_Object* pObj) override;
   FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
+  const std::vector<SampleEncodeInfo>& GetEncodeInfo() const {
+    return m_EncodeInfo;
+  }
+  uint32_t GetBitsPerSample() const { return m_nBitsPerSample; }
+  const CPDF_StreamAcc* GetSampleStream() const {
+    return m_pSampleStream.get();
+  }
+
  private:
-  std::vector<SampleEncodeInfo> m_pEncodeInfo;
-  std::vector<SampleDecodeInfo> m_pDecodeInfo;
+  std::vector<SampleEncodeInfo> m_EncodeInfo;
+  std::vector<SampleDecodeInfo> m_DecodeInfo;
   uint32_t m_nBitsPerSample;
   uint32_t m_SampleMax;
   std::unique_ptr<CPDF_StreamAcc> m_pSampleStream;
@@ -450,6 +468,12 @@ class CPDF_StitchFunc : public CPDF_Function {
   FX_BOOL v_Init(CPDF_Object* pObj) override;
   FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
+  const std::vector<std::unique_ptr<CPDF_Function>>& GetSubFunctions() const {
+    return m_pSubFunctions;
+  }
+  FX_FLOAT GetBound(size_t i) const { return m_pBounds[i]; }
+
+ private:
   std::vector<std::unique_ptr<CPDF_Function>> m_pSubFunctions;
   FX_FLOAT* m_pBounds;
   FX_FLOAT* m_pEncode;

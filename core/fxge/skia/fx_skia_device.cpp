@@ -156,25 +156,21 @@ SkXfermode::Mode GetSkiaBlendMode(int blend_type) {
   }
 }
 
-bool AddColors(const CPDF_Function* pFunc, SkTDArray<SkColor>* skColors) {
+bool AddColors(const CPDF_ExpIntFunc* pFunc, SkTDArray<SkColor>* skColors) {
   if (pFunc->CountInputs() != 1)
     return false;
-  ASSERT(CPDF_Function::Type::kType2ExpotentialInterpolation ==
-         pFunc->GetType());
-  const CPDF_ExpIntFunc* expIntFunc =
-      static_cast<const CPDF_ExpIntFunc*>(pFunc);
-  if (expIntFunc->m_Exponent != 1)
+  if (pFunc->m_Exponent != 1)
     return false;
-  if (expIntFunc->m_nOrigOutputs != 3)
+  if (pFunc->m_nOrigOutputs != 3)
     return false;
-  skColors->push(SkColorSetARGB(
-      0xFF, SkUnitScalarClampToByte(expIntFunc->m_pBeginValues[0]),
-      SkUnitScalarClampToByte(expIntFunc->m_pBeginValues[1]),
-      SkUnitScalarClampToByte(expIntFunc->m_pBeginValues[2])));
   skColors->push(
-      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(expIntFunc->m_pEndValues[0]),
-                     SkUnitScalarClampToByte(expIntFunc->m_pEndValues[1]),
-                     SkUnitScalarClampToByte(expIntFunc->m_pEndValues[2])));
+      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_pBeginValues[0]),
+                     SkUnitScalarClampToByte(pFunc->m_pBeginValues[1]),
+                     SkUnitScalarClampToByte(pFunc->m_pBeginValues[2])));
+  skColors->push(
+      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_pEndValues[0]),
+                     SkUnitScalarClampToByte(pFunc->m_pEndValues[1]),
+                     SkUnitScalarClampToByte(pFunc->m_pEndValues[2])));
   return true;
 }
 
@@ -213,39 +209,35 @@ uint8_t FloatToByte(FX_FLOAT f) {
   return (uint8_t)(f * 255.99f);
 }
 
-bool AddSamples(const CPDF_Function* pFunc,
+bool AddSamples(const CPDF_SampledFunc* pFunc,
                 SkTDArray<SkColor>* skColors,
                 SkTDArray<SkScalar>* skPos) {
   if (pFunc->CountInputs() != 1)
     return false;
   if (pFunc->CountOutputs() != 3)  // expect rgb
     return false;
-  ASSERT(CPDF_Function::Type::kType0Sampled == pFunc->GetType());
-  const CPDF_SampledFunc* sampledFunc =
-      static_cast<const CPDF_SampledFunc*>(pFunc);
-  if (!sampledFunc->m_pEncodeInfo)
+  if (pFunc->GetEncodeInfo().empty())
     return false;
   const CPDF_SampledFunc::SampleEncodeInfo& encodeInfo =
-      sampledFunc->m_pEncodeInfo[0];
+      pFunc->GetEncodeInfo()[0];
   if (encodeInfo.encode_min != 0)
     return false;
   if (encodeInfo.encode_max != encodeInfo.sizes - 1)
     return false;
-  uint32_t sampleSize = sampledFunc->m_nBitsPerSample;
+  uint32_t sampleSize = pFunc->GetBitsPerSample();
   uint32_t sampleCount = encodeInfo.sizes;
   if (sampleCount != 1U << sampleSize)
     return false;
-  if (sampledFunc->m_pSampleStream->GetSize() <
-      sampleCount * 3 * sampleSize / 8) {
+  if (pFunc->GetSampleStream()->GetSize() < sampleCount * 3 * sampleSize / 8)
     return false;
-  }
+
   FX_FLOAT colorsMin[3];
   FX_FLOAT colorsMax[3];
   for (int i = 0; i < 3; ++i) {
-    colorsMin[i] = sampledFunc->GetRange(i * 2);
-    colorsMax[i] = sampledFunc->GetRange(i * 2 + 1);
+    colorsMin[i] = pFunc->GetRange(i * 2);
+    colorsMax[i] = pFunc->GetRange(i * 2 + 1);
   }
-  const uint8_t* pSampleData = sampledFunc->m_pSampleStream->GetData();
+  const uint8_t* pSampleData = pFunc->GetSampleStream()->GetData();
   for (uint32_t i = 0; i < sampleCount; ++i) {
     FX_FLOAT floatColors[3];
     for (uint32_t j = 0; j < 3; ++j) {
@@ -262,24 +254,21 @@ bool AddSamples(const CPDF_Function* pFunc,
   return true;
 }
 
-bool AddStitching(const CPDF_Function* pFunc,
+bool AddStitching(const CPDF_StitchFunc* pFunc,
                   SkTDArray<SkColor>* skColors,
                   SkTDArray<SkScalar>* skPos) {
   int inputs = pFunc->CountInputs();
-  ASSERT(CPDF_Function::Type::kType3Stitching == pFunc->GetType());
-  const CPDF_StitchFunc* stitchFunc =
-      static_cast<const CPDF_StitchFunc*>(pFunc);
-  FX_FLOAT boundsStart = stitchFunc->GetDomain(0);
+  FX_FLOAT boundsStart = pFunc->GetDomain(0);
 
+  const auto& subFunctions = pFunc->GetSubFunctions();
   for (int i = 0; i < inputs; ++i) {
-    const CPDF_Function* pSubFunc = stitchFunc->m_pSubFunctions[i];
-    if (pSubFunc->GetType() !=
-        CPDF_Function::Type::kType2ExpotentialInterpolation)
+    const CPDF_ExpIntFunc* pSubFunc = subFunctions[i]->ToExpIntFunc();
+    if (!pSubFunc)
       return false;
     if (!AddColors(pSubFunc, skColors))
       return false;
     FX_FLOAT boundsEnd =
-        i < inputs - 1 ? stitchFunc->m_pBounds[i] : stitchFunc->GetDomain(1);
+        i < inputs - 1 ? pFunc->GetBound(i) : pFunc->GetDomain(1);
     skPos->push(boundsStart);
     skPos->push(boundsEnd);
     boundsStart = boundsEnd;
@@ -814,27 +803,24 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     const CPDF_Function* pFunc = pFuncs[j];
     if (!pFunc)
       continue;
-    switch (pFunc->GetType()) {
-      case CPDF_Function::Type::kType0Sampled:
-        /* TODO(caryclark)
-           Type 0 Sampled Functions in PostScript can also have an Order integer
-           in the dictionary. PDFium doesn't appear to check for this anywhere.
-         */
-        if (!AddSamples(pFunc, &skColors, &skPos))
-          return false;
-        break;
-      case CPDF_Function::Type::kType2ExpotentialInterpolation:
-        if (!AddColors(pFunc, &skColors))
-          return false;
-        skPos.push(0);
-        skPos.push(1);
-        break;
-      case CPDF_Function::Type::kType3Stitching:
-        if (!AddStitching(pFunc, &skColors, &skPos))
-          return false;
-        break;
-      default:
+
+    if (const CPDF_SampledFunc* pSampledFunc = pFunc->ToSampledFunc()) {
+      /* TODO(caryclark)
+         Type 0 Sampled Functions in PostScript can also have an Order integer
+         in the dictionary. PDFium doesn't appear to check for this anywhere.
+       */
+      if (!AddSamples(pSampledFunc, &skColors, &skPos))
         return false;
+    } else if (const CPDF_ExpIntFunc* pExpIntFuc = pFunc->ToExpIntFunc()) {
+      if (!AddColors(pExpIntFuc, &skColors))
+        return false;
+      skPos.push(0);
+      skPos.push(1);
+    } else if (const CPDF_StitchFunc* pStitchFunc = pFunc->ToStitchFunc()) {
+      if (!AddStitching(pStitchFunc, &skColors, &skPos))
+        return false;
+    } else {
+      return false;
     }
   }
   CPDF_Array* pArray = pDict->GetArrayBy("Extend");
