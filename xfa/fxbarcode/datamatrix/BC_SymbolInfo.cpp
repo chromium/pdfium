@@ -228,28 +228,3 @@ int32_t CBC_SymbolInfo::getDataLengthForInterleavedBlock(int32_t index) {
 int32_t CBC_SymbolInfo::getErrorLengthForInterleavedBlock(int32_t index) {
   return m_rsBlockError;
 }
-CFX_WideString CBC_SymbolInfo::toString(int32_t& e) {
-  CFX_WideString sb;
-  sb += (FX_WCHAR*)(m_rectangular ? "Rectangular Symbol:" : "Square Symbol:");
-  sb += (FX_WCHAR*)" data region ";
-  sb += m_matrixWidth;
-  sb += (FX_WCHAR)'x';
-  sb += m_matrixHeight;
-  sb += (FX_WCHAR*)", symbol size ";
-  sb += getSymbolWidth(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
-  sb += (FX_WCHAR)'x';
-  sb += getSymbolHeight(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
-  sb += (FX_WCHAR*)", symbol data size ";
-  sb += getSymbolDataWidth(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
-  sb += (FX_WCHAR)'x';
-  sb += getSymbolDataHeight(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
-  sb += (FX_WCHAR*)", codewords ";
-  sb += m_dataCapacity;
-  sb += (FX_WCHAR)'+';
-  sb += m_errorCodewords;
-  return sb;
-}

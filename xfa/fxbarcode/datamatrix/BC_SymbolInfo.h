@@ -53,7 +53,6 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
   int32_t getInterleavedBlockCount();
   int32_t getDataLengthForInterleavedBlock(int32_t index);
   int32_t getErrorLengthForInterleavedBlock(int32_t index);
-  CFX_WideString toString(int32_t& e);
 
  public:
   int32_t m_dataCapacity;

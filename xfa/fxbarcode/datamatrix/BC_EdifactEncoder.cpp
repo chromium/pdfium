@@ -132,7 +132,7 @@ CFX_WideString CBC_EdifactEncoder::encodeToCodewords(CFX_WideString sb,
   int32_t len = sb.GetLength() - startPos;
   if (len == 0) {
     e = BCExceptionNoContents;
-    return (FX_WCHAR*)"";
+    return CFX_WideString();
   }
   FX_WCHAR c1 = sb.GetAt(startPos);
   FX_WCHAR c2 = len >= 2 ? sb.GetAt(startPos + 1) : 0;

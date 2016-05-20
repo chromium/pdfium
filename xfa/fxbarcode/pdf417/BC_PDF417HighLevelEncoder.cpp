@@ -52,7 +52,9 @@ int32_t CBC_PDF417HighLevelEncoder::PUNCTUATION[128] = {0};
 void CBC_PDF417HighLevelEncoder::Initialize() {
   Inverse();
 }
+
 void CBC_PDF417HighLevelEncoder::Finalize() {}
+
 CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
     CFX_WideString wideMsg,
     Compaction compaction,
@@ -65,7 +67,7 @@ CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
     FX_WCHAR ch = (FX_WCHAR)(bytes.GetAt(i) & 0xff);
     if (ch == '?' && bytes.GetAt(i) != '?') {
       e = BCExceptionCharactersOutsideISO88591Encoding;
-      return (FX_WCHAR*)"";
+      return CFX_WideString();
     }
     msg += ch;
   }
