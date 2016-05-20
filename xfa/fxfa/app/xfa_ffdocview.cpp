@@ -540,42 +540,31 @@ FX_BOOL CXFA_FFDocView::IsUpdateLocked() {
   return m_iLock;
 }
 void CXFA_FFDocView::ClearInvalidateList() {
-  FX_POSITION ps = m_mapPageInvalidate.GetStartPosition();
-  while (ps) {
-    void* pPageView = NULL;
-    CFX_RectF* pRect = NULL;
-    m_mapPageInvalidate.GetNextAssoc(ps, pPageView, (void*&)pRect);
-    delete pRect;
-  }
-  m_mapPageInvalidate.RemoveAll();
+  m_mapPageInvalidate.clear();
 }
 void CXFA_FFDocView::AddInvalidateRect(CXFA_FFWidget* pWidget,
                                        const CFX_RectF& rtInvalidate) {
   AddInvalidateRect(pWidget->GetPageView(), rtInvalidate);
 }
+
 void CXFA_FFDocView::AddInvalidateRect(CXFA_FFPageView* pPageView,
                                        const CFX_RectF& rtInvalidate) {
-  CFX_RectF* pRect = (CFX_RectF*)m_mapPageInvalidate.GetValueAt(pPageView);
-  if (!pRect) {
-    pRect = new CFX_RectF;
-    pRect->Set(rtInvalidate.left, rtInvalidate.top, rtInvalidate.width,
-               rtInvalidate.height);
-    m_mapPageInvalidate.SetAt(pPageView, pRect);
-  } else {
-    pRect->Union(rtInvalidate);
+  if (m_mapPageInvalidate[pPageView]) {
+    m_mapPageInvalidate[pPageView]->Union(rtInvalidate);
+    return;
   }
+  CFX_RectF* pRect = new CFX_RectF;
+  pRect->Set(rtInvalidate.left, rtInvalidate.top, rtInvalidate.width,
+             rtInvalidate.height);
+  m_mapPageInvalidate[pPageView].reset(pRect);
 }
+
 void CXFA_FFDocView::RunInvalidate() {
-  FX_POSITION ps = m_mapPageInvalidate.GetStartPosition();
-  while (ps) {
-    CXFA_FFPageView* pPageView = NULL;
-    CFX_RectF* pRect = NULL;
-    m_mapPageInvalidate.GetNextAssoc(ps, (void*&)pPageView, (void*&)pRect);
-    m_pDoc->GetDocProvider()->InvalidateRect(pPageView, *pRect);
-    delete pRect;
-  }
-  m_mapPageInvalidate.RemoveAll();
+  for (const auto& pair : m_mapPageInvalidate)
+    m_pDoc->GetDocProvider()->InvalidateRect(pair.first, *pair.second);
+  m_mapPageInvalidate.clear();
 }
+
 FX_BOOL CXFA_FFDocView::RunLayout() {
   LockUpdate();
   m_bInLayoutStatus = TRUE;

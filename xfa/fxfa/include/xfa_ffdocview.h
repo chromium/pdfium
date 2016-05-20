@@ -7,6 +7,9 @@
 #ifndef XFA_FXFA_INCLUDE_XFA_FFDOCVIEW_H_
 #define XFA_FXFA_INCLUDE_XFA_FFDOCVIEW_H_
 
+#include <map>
+#include <memory>
+
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
 class CXFA_FFWidgetHandler;
@@ -115,7 +118,7 @@ class CXFA_FFDocView {
   CXFA_WidgetAcc* m_pFocusAcc;
   CXFA_FFWidget* m_pFocusWidget;
   CXFA_FFWidget* m_pOldFocusWidget;
-  CFX_MapPtrToPtr m_mapPageInvalidate;
+  std::map<CXFA_FFPageView*, std::unique_ptr<CFX_RectF>> m_mapPageInvalidate;
   CFX_ArrayTemplate<CXFA_WidgetAcc*> m_ValidateAccs;
   CFX_ArrayTemplate<CXFA_WidgetAcc*> m_CalculateAccs;
   CFX_ArrayTemplate<CXFA_Node*> m_BindItems;
