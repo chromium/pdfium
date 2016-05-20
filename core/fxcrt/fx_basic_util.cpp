@@ -7,14 +7,15 @@
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_ext.h"
 
-#include <cctype>
-
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 #include <dirent.h>
 #include <sys/types.h>
 #else
 #include <direct.h>
 #endif
+
+#include <algorithm>
+#include <cctype>
 
 CFX_PrivateData::CFX_PrivateData() {}
 
@@ -363,4 +364,34 @@ CFX_Vector_3by1 CFX_Matrix_3by3::TransformVector(const CFX_Vector_3by1& v) {
   return CFX_Vector_3by1(a * v.a + b * v.b + c * v.c,
                          d * v.a + e * v.b + f * v.c,
                          g * v.a + h * v.b + i * v.c);
+}
+
+uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits) {
+  ASSERT(0 < nbits && nbits <= 32);
+  const uint8_t* dataPtr = &pData[bitpos / 8];
+  int bitShift;
+  int bitMask;
+  int dstShift;
+  int bitCount = bitpos & 0x07;
+  if (nbits < 8 && nbits + bitCount <= 8) {
+    bitShift = 8 - nbits - bitCount;
+    bitMask = (1 << nbits) - 1;
+    dstShift = 0;
+  } else {
+    bitShift = 0;
+    int bitOffset = 8 - bitCount;
+    bitMask = (1 << std::min(bitOffset, nbits)) - 1;
+    dstShift = nbits - bitOffset;
+  }
+  uint32_t result = (uint32_t)(*dataPtr++ >> bitShift & bitMask) << dstShift;
+  while (dstShift >= 8) {
+    dstShift -= 8;
+    result |= *dataPtr++ << dstShift;
+  }
+  if (dstShift > 0) {
+    bitShift = 8 - dstShift;
+    bitMask = (1 << dstShift) - 1;
+    result |= *dataPtr++ >> bitShift & bitMask;
+  }
+  return result;
 }

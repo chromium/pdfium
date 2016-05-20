@@ -1622,6 +1622,7 @@ test("pdfium_unittests") {
     "core/fxcrt/fx_basic_bstring_unittest.cpp",
     "core/fxcrt/fx_basic_gcc_unittest.cpp",
     "core/fxcrt/fx_basic_memmgr_unittest.cpp",
+    "core/fxcrt/fx_basic_util_unittest.cpp",
     "core/fxcrt/fx_basic_wstring_unittest.cpp",
     "core/fxcrt/fx_bidi_unittest.cpp",
     "core/fxcrt/fx_extension_unittest.cpp",

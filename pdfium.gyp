@@ -932,6 +932,7 @@
         'core/fxcrt/fx_basic_bstring_unittest.cpp',
         'core/fxcrt/fx_basic_gcc_unittest.cpp',
         'core/fxcrt/fx_basic_memmgr_unittest.cpp',
+        'core/fxcrt/fx_basic_util_unittest.cpp',
         'core/fxcrt/fx_basic_wstring_unittest.cpp',
         'core/fxcrt/fx_bidi_unittest.cpp',
         'core/fxcrt/fx_extension_unittest.cpp',
@@ -957,15 +958,6 @@
           ],
           'sources': [
             'fpdfsdk/javascript/public_methods_unittest.cpp',
-          ],
-        }],
-        ['pdf_use_skia==1', {
-          'defines': ['PDF_ENABLE_SKIA'],
-          'dependencies': [
-            '<(DEPTH)/skia/skia.gyp:skia',
-          ],
-          'sources': [
-            'core/fxge/skia/fx_skia_device_unittest.cpp',
           ],
         }],
       ],

@@ -178,7 +178,7 @@ class CFX_UTF8Encoder {
 
 class CFX_BasicArray {
  protected:
-  CFX_BasicArray(int unit_size);
+  explicit CFX_BasicArray(int unit_size);
   CFX_BasicArray(const CFX_BasicArray&) = delete;
   ~CFX_BasicArray();
 
@@ -971,5 +971,7 @@ class CFX_Matrix_3by3 {
   FX_FLOAT h;
   FX_FLOAT i;
 };
+
+uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits);
 
 #endif  // CORE_FXCRT_INCLUDE_FX_BASIC_H_

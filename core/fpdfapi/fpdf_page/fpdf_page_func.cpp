@@ -8,6 +8,7 @@
 
 #include <limits.h>
 
+#include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -502,15 +503,6 @@ FX_FLOAT PDF_Interpolate(FX_FLOAT x,
                          FX_FLOAT ymax) {
   FX_FLOAT divisor = xmax - xmin;
   return ymin + (divisor ? (x - xmin) * (ymax - ymin) / divisor : 0);
-}
-
-uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits) {
-  int result = 0;
-  for (int i = 0; i < nbits; i++) {
-    if (pData[(bitpos + i) / 8] & (1 << (7 - (bitpos + i) % 8)))
-      result |= 1 << (nbits - i - 1);
-  }
-  return result;
 }
 
 class CPDF_PSFunc : public CPDF_Function {
