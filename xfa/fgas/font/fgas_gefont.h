@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_FONT_FGAS_GEFONT_H_
 #define XFA_FGAS_FONT_FGAS_GEFONT_H_
 
+#include <map>
+
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/fgas_font.h"
 
@@ -75,7 +77,7 @@ class CFX_GEFont : public IFX_Font {
   CXFA_PDFFontMgr* m_pProvider;
   uint16_t m_wCharSet;
   CFX_ArrayTemplate<IFX_Font*> m_SubstFonts;
-  CFX_MapPtrToPtr m_FontMapper;
+  std::map<FX_WCHAR, IFX_Font*> m_FontMapper;
   FX_BOOL InitFont();
   FX_BOOL GetCharBBox(FX_WCHAR wUnicode,
                       CFX_Rect& bbox,

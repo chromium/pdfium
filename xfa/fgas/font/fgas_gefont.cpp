@@ -105,8 +105,7 @@ CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
       m_pRectArray(NULL),
       m_pBBoxMap(NULL),
       m_pProvider(NULL),
-      m_wCharSet(0xFFFF),
-      m_FontMapper(16) {
+      m_wCharSet(0xFFFF) {
 }
 
 CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles)
@@ -126,11 +125,9 @@ CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles)
       m_pRectArray(NULL),
       m_pBBoxMap(NULL),
       m_pProvider(NULL),
-      m_wCharSet(0xFFFF),
-      m_FontMapper(16) {
+      m_wCharSet(0xFFFF) {
+  ASSERT(src.m_pFont);
   m_pFont = new CFX_Font;
-  ASSERT(m_pFont != NULL);
-  ASSERT(src.m_pFont != NULL);
   m_pFont->LoadClone(src.m_pFont);
   CFX_SubstFont* pSubst = m_pFont->GetSubstFont();
   if (!pSubst) {
@@ -150,7 +147,7 @@ CFX_GEFont::~CFX_GEFont() {
     m_SubstFonts[i]->Release();
 
   m_SubstFonts.RemoveAll();
-  m_FontMapper.RemoveAll();
+  m_FontMapper.clear();
   if (m_pFileRead)
     m_pFileRead->Release();
 
@@ -480,23 +477,22 @@ int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
   if (wBitField >= 128) {
     return 0xFFFF;
   }
-  IFX_Font* pFont = NULL;
-  m_FontMapper.Lookup((void*)(uintptr_t)wUnicode, (void*&)pFont);
-  if (pFont != NULL && pFont != (IFX_Font*)this) {
+  auto it = m_FontMapper.find(wUnicode);
+  IFX_Font* pFont = it != m_FontMapper.end() ? it->second : nullptr;
+  if (pFont && pFont != this) {
     iGlyphIndex =
         ((CFX_GEFont*)pFont)->GetGlyphIndex(wUnicode, FALSE, NULL, bCharCode);
     if (iGlyphIndex != 0xFFFF) {
       int32_t i = m_SubstFonts.Find(pFont);
       if (i > -1) {
         iGlyphIndex |= ((i + 1) << 24);
-        if (ppFont != NULL) {
+        if (ppFont)
           *ppFont = pFont;
-        }
         return iGlyphIndex;
       }
     }
   }
-  if (m_pFontMgr != NULL && bRecursive) {
+  if (m_pFontMgr && bRecursive) {
     CFX_WideString wsFamily;
     GetFamilyName(wsFamily);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -505,25 +501,23 @@ int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
 #else
     IFX_Font* pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(),
                                                    wsFamily.c_str());
-    if (NULL == pFont) {
+    if (!pFont)
       pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), NULL);
-    }
 #endif
-    if (pFont != NULL) {
-      if (pFont == (IFX_Font*)this) {
+    if (pFont) {
+      if (pFont == this) {
         pFont->Release();
         return 0xFFFF;
       }
-      m_FontMapper.SetAt((void*)(uintptr_t)wUnicode, (void*)pFont);
+      m_FontMapper[wUnicode] = pFont;
       int32_t i = m_SubstFonts.GetSize();
       m_SubstFonts.Add(pFont);
       iGlyphIndex =
           ((CFX_GEFont*)pFont)->GetGlyphIndex(wUnicode, FALSE, NULL, bCharCode);
       if (iGlyphIndex != 0xFFFF) {
         iGlyphIndex |= ((i + 1) << 24);
-        if (ppFont != NULL) {
+        if (ppFont)
           *ppFont = pFont;
-        }
         return iGlyphIndex;
       }
     }
