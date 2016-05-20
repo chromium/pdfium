@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/xfa_script_layoutpseudomodel.h"
 
+#include <set>
+
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -232,8 +235,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     }
     return;
   }
-  CFX_MapPtrToPtr formItems;
-  formItems.InitHashTable(256, TRUE);
+  std::set<CXFA_Node*> formItems;
   if (wsType.IsEmpty()) {
     if (CXFA_Node* pMasterPage = pLayoutPage->m_pFormNode) {
       retArray.Add(pMasterPage);
@@ -258,10 +260,10 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
                 eElementType != XFA_ELEMENT_Area) {
               continue;
             }
-            if (formItems.GetValueAt(pItemChild->m_pFormNode)) {
+            if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
               continue;
-            }
-            formItems.SetAt(pItemChild->m_pFormNode, this);
+
+            formItems.insert(pItemChild->m_pFormNode);
             retArray.Add(pItemChild->m_pFormNode);
           }
         }
@@ -282,10 +284,9 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
                 eElementType != XFA_ELEMENT_Area) {
               continue;
             }
-            if (formItems.GetValueAt(pItemChild->m_pFormNode)) {
+            if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
               continue;
-            }
-            formItems.SetAt(pItemChild->m_pFormNode, this);
+            formItems.insert(pItemChild->m_pFormNode);
             retArray.Add(pItemChild->m_pFormNode);
           }
         }
@@ -313,16 +314,13 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
           iterator((CXFA_ContentLayoutItem*)pItem->m_pFirstChild);
           for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
-            if (!pItemChild->IsContentLayoutItem()) {
+            if (!pItemChild->IsContentLayoutItem())
               continue;
-            }
-            if (pItemChild->m_pFormNode->GetClassID() != eType) {
+            if (pItemChild->m_pFormNode->GetClassID() != eType)
               continue;
-            }
-            if (formItems.GetValueAt(pItemChild->m_pFormNode)) {
+            if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
               continue;
-            }
-            formItems.SetAt(pItemChild->m_pFormNode, this);
+            formItems.insert(pItemChild->m_pFormNode);
             retArray.Add(pItemChild->m_pFormNode);
           }
         }
@@ -333,16 +331,13 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
           iterator((CXFA_ContentLayoutItem*)pItem);
           for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
-            if (!pItemChild->IsContentLayoutItem()) {
+            if (!pItemChild->IsContentLayoutItem())
               continue;
-            }
-            if (pItemChild->m_pFormNode->GetClassID() != eType) {
+            if (pItemChild->m_pFormNode->GetClassID() != eType)
               continue;
-            }
-            if (formItems.GetValueAt(pItemChild->m_pFormNode)) {
+            if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
               continue;
-            }
-            formItems.SetAt(pItemChild->m_pFormNode, this);
+            formItems.insert(pItemChild->m_pFormNode);
             retArray.Add(pItemChild->m_pFormNode);
           }
         }
