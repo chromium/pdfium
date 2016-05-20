@@ -34,9 +34,9 @@ class IFWL_ComboBox;
 #define FWL_STYLEEXT_CMB_ListItemLeftAlign (0L << 10)
 #define FWL_STYLEEXT_CMB_ListItemCenterAlign (1L << 10)
 #define FWL_STYLEEXT_CMB_ListItemRightAlign (2L << 10)
+#define FWL_STYLEEXT_CMB_ListItemAlignMask (3L << 10)
 #define FWL_STYLEEXT_CMB_ListItemText (0L << 12)
 #define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
-#define FWL_STYLEEXT_CMB_ListItemAlignMask (3L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, CFWL_EventType::PreDropDown)
