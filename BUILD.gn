@@ -948,11 +948,9 @@ if (pdf_enable_xfa) {
       "xfa/fde/xml/fde_xml.h",
       "xfa/fde/xml/fde_xml_imp.cpp",
       "xfa/fde/xml/fde_xml_imp.h",
-      "xfa/fgas/crt/fgas_algorithm.cpp",
       "xfa/fgas/crt/fgas_algorithm.h",
       "xfa/fgas/crt/fgas_codepage.cpp",
       "xfa/fgas/crt/fgas_codepage.h",
-      "xfa/fgas/crt/fgas_encode.cpp",
       "xfa/fgas/crt/fgas_language.h",
       "xfa/fgas/crt/fgas_memory.cpp",
       "xfa/fgas/crt/fgas_memory.h",
@@ -1639,6 +1637,7 @@ test("pdfium_unittests") {
   include_dirs = []
   if (pdf_enable_xfa) {
     sources += [
+      "xfa/fde/css/fde_cssdatatable_unittest.cpp",
       "xfa/fde/xml/fde_xml_imp_unittest.cpp",
       "xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
       "xfa/fxfa/app/xfa_textlayout_unittest.cpp",

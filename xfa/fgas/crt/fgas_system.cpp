@@ -10,13 +10,6 @@
 
 #include "core/fxcrt/include/fx_system.h"
 
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
-    _FX_OS_ == _FX_WIN64_
-#include <io.h>
-#elif _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_LINUX_Mini_
-#include <sys/times.h>
-#endif
-
 namespace {
 
 inline FX_BOOL FX_isupper(int32_t ch) {
@@ -41,35 +34,6 @@ int32_t FX_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count) {
     }
   }
   return wch1 - wch2;
-}
-
-int32_t FX_filelength(FXSYS_FILE* file) {
-  ASSERT(file != NULL);
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
-  return _filelength(_fileno(file));
-#else
-  int32_t iPos = FXSYS_ftell(file);
-  FXSYS_fseek(file, 0, FXSYS_SEEK_END);
-  int32_t iLen = FXSYS_ftell(file);
-  FXSYS_fseek(file, iPos, FXSYS_SEEK_SET);
-  return iLen;
-#endif
-}
-
-FX_BOOL FX_fsetsize(FXSYS_FILE* file, int32_t size) {
-  ASSERT(file != NULL);
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
-  return _chsize(_fileno(file), size) == 0;
-#elif _FX_OS_ == _FX_WIN32_MOBILE_
-  HANDLE hFile = _fileno(file);
-  uint32_t dwPos = ::SetFilePointer(hFile, 0, 0, FILE_CURRENT);
-  ::SetFilePointer(hFile, size, 0, FILE_BEGIN);
-  FX_BOOL bRet = ::SetEndOfFile(hFile);
-  ::SetFilePointer(hFile, (int32_t)dwPos, 0, FILE_BEGIN);
-  return bRet;
-#else
-  return FALSE;
-#endif
 }
 
 FX_FLOAT FX_wcstof(const FX_WCHAR* pwsStr, int32_t iLength, int32_t* pUsedLen) {

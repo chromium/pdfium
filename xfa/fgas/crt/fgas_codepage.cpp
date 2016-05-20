@@ -8,7 +8,24 @@
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/crt/fgas_language.h"
 
-static const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
+namespace {
+
+struct FX_STR2CPHASH {
+  uint32_t uHash;
+  uint16_t uCodePage;
+};
+
+struct FX_CHARSET_MAP {
+  uint16_t charset;
+  uint16_t codepage;
+};
+
+struct FX_LANG2CPMAP {
+  uint16_t wLanguage;
+  uint16_t wCodepage;
+};
+
+const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {0, 1252},   {1, 0},      {2, 42},     {77, 10000}, {78, 10001},
     {79, 10003}, {80, 10008}, {81, 10002}, {83, 10005}, {84, 10004},
     {85, 10006}, {86, 10081}, {87, 10021}, {88, 10029}, {89, 10007},
@@ -17,24 +34,8 @@ static const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {186, 1257}, {204, 1251}, {222, 874},  {238, 1250}, {254, 437},
     {255, 850},
 };
-uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
-  int32_t iEnd = sizeof(g_FXCharset2CodePageTable) / sizeof(FX_CHARSET_MAP) - 1;
-  ASSERT(iEnd >= 0);
-  int32_t iStart = 0, iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    const FX_CHARSET_MAP& cp = g_FXCharset2CodePageTable[iMid];
-    if (charset == cp.charset) {
-      return cp.codepage;
-    } else if (charset < cp.charset) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  return 0xFFFF;
-}
-static const FX_CHARSET_MAP g_FXCodepage2CharsetTable[] = {
+
+const FX_CHARSET_MAP g_FXCodepage2CharsetTable[] = {
     {1, 0},      {2, 42},     {254, 437},  {255, 850},  {222, 874},
     {128, 932},  {134, 936},  {129, 949},  {136, 950},  {238, 1250},
     {204, 1251}, {0, 1252},   {161, 1253}, {162, 1254}, {177, 1255},
@@ -43,23 +44,7 @@ static const FX_CHARSET_MAP g_FXCodepage2CharsetTable[] = {
     {84, 10004}, {85, 10006}, {86, 10081}, {87, 10021}, {88, 10029},
     {89, 10007},
 };
-uint16_t FX_GetCharsetFromCodePage(uint16_t codepage) {
-  int32_t iEnd = sizeof(g_FXCodepage2CharsetTable) / sizeof(FX_CHARSET_MAP) - 1;
-  ASSERT(iEnd >= 0);
-  int32_t iStart = 0, iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    const FX_CHARSET_MAP& cp = g_FXCodepage2CharsetTable[iMid];
-    if (codepage == cp.codepage) {
-      return cp.charset;
-    } else if (codepage < cp.codepage) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  return 0xFFFF;
-}
+
 const FX_LANG2CPMAP g_FXLang2CodepageTable[] = {
     {FX_LANG_Arabic_SaudiArabia, FX_CODEPAGE_MSWin_Arabic},
     {FX_LANG_Bulgarian_Bulgaria, FX_CODEPAGE_MSWin_Cyrillic},
@@ -197,24 +182,8 @@ const FX_LANG2CPMAP g_FXLang2CodepageTable[] = {
     {FX_LANG_Spanish_Nicaragua, FX_CODEPAGE_MSWin_WesternEuropean},
     {FX_LANG_Spanish_PuertoRico, FX_CODEPAGE_MSWin_WesternEuropean},
 };
-uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage) {
-  int32_t iEnd = sizeof(g_FXLang2CodepageTable) / sizeof(FX_LANG2CPMAP) - 1;
-  ASSERT(iEnd >= 0);
-  int32_t iStart = 0, iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    const FX_LANG2CPMAP& cp = g_FXLang2CodepageTable[iMid];
-    if (wLanguage == cp.wLanguage) {
-      return cp.wCodepage;
-    } else if (wLanguage < cp.wLanguage) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  return 0xFFFF;
-}
-static const FX_STR2CPHASH g_FXCPHashTable[] = {
+
+const FX_STR2CPHASH g_FXCPHashTable[] = {
     {0xd45, 0x6faf},      {0xd46, 0x6fb0},      {0xd47, 0x6fb1},
     {0xd48, 0x6fb2},      {0xd49, 0x4e6},       {0xd4d, 0x6fbd},
     {0xe9e, 0x4e4},       {0xc998, 0x1b5},      {0x18ef0, 0x3a8},
@@ -301,7 +270,8 @@ static const FX_STR2CPHASH g_FXCPHashTable[] = {
     {0xf3d463c2, 0x3a4},  {0xf52a70a3, 0xc42e}, {0xf5693147, 0x6fb3},
     {0xf637e157, 0x478},  {0xfc213f3a, 0x2717}, {0xff654d14, 0x3b5},
 };
-uint16_t FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
+
+uint16_t GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
   ASSERT(pStr != NULL);
   if (iLength < 0) {
     iLength = FXSYS_strlen(pStr);
@@ -326,7 +296,64 @@ uint16_t FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
   } while (iStart <= iEnd);
   return 0xFFFF;
 }
-uint16_t FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength) {
+
+}  // namespace
+
+uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
+  int32_t iEnd = sizeof(g_FXCharset2CodePageTable) / sizeof(FX_CHARSET_MAP) - 1;
+  ASSERT(iEnd >= 0);
+  int32_t iStart = 0, iMid;
+  do {
+    iMid = (iStart + iEnd) / 2;
+    const FX_CHARSET_MAP& cp = g_FXCharset2CodePageTable[iMid];
+    if (charset == cp.charset) {
+      return cp.codepage;
+    } else if (charset < cp.charset) {
+      iEnd = iMid - 1;
+    } else {
+      iStart = iMid + 1;
+    }
+  } while (iStart <= iEnd);
+  return 0xFFFF;
+}
+
+uint16_t FX_GetCharsetFromCodePage(uint16_t codepage) {
+  int32_t iEnd = sizeof(g_FXCodepage2CharsetTable) / sizeof(FX_CHARSET_MAP) - 1;
+  ASSERT(iEnd >= 0);
+  int32_t iStart = 0, iMid;
+  do {
+    iMid = (iStart + iEnd) / 2;
+    const FX_CHARSET_MAP& cp = g_FXCodepage2CharsetTable[iMid];
+    if (codepage == cp.codepage) {
+      return cp.charset;
+    } else if (codepage < cp.codepage) {
+      iEnd = iMid - 1;
+    } else {
+      iStart = iMid + 1;
+    }
+  } while (iStart <= iEnd);
+  return 0xFFFF;
+}
+
+uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage) {
+  int32_t iEnd = sizeof(g_FXLang2CodepageTable) / sizeof(FX_LANG2CPMAP) - 1;
+  ASSERT(iEnd >= 0);
+  int32_t iStart = 0, iMid;
+  do {
+    iMid = (iStart + iEnd) / 2;
+    const FX_LANG2CPMAP& cp = g_FXLang2CodepageTable[iMid];
+    if (wLanguage == cp.wLanguage) {
+      return cp.wCodepage;
+    } else if (wLanguage < cp.wLanguage) {
+      iEnd = iMid - 1;
+    } else {
+      iStart = iMid + 1;
+    }
+  } while (iStart <= iEnd);
+  return 0xFFFF;
+}
+
+uint16_t FX_GetCodePageFromStringW(const FX_WCHAR* pStr, int32_t iLength) {
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pStr);
   }
@@ -339,5 +366,141 @@ uint16_t FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength) {
     *pBuf++ = (FX_CHAR)*pStr++;
   }
   csStr.ReleaseBuffer(iLength);
-  return FX_GetCodePageFromStringA(csStr.c_str(), iLength);
+  return GetCodePageFromStringA(csStr.c_str(), iLength);
+}
+
+void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
+  ASSERT(pStr != NULL);
+  if (iLength < 0) {
+    iLength = FXSYS_wcslen(pStr);
+  }
+  uint16_t wch;
+  if (sizeof(FX_WCHAR) > 2) {
+    while (iLength-- > 0) {
+      wch = (uint16_t)*pStr;
+      wch = (wch >> 8) | (wch << 8);
+      wch &= 0x00FF;
+      *pStr++ = wch;
+    }
+  } else {
+    while (iLength-- > 0) {
+      wch = (uint16_t)*pStr;
+      wch = (wch >> 8) | (wch << 8);
+      *pStr++ = wch;
+    }
+  }
+}
+
+void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
+  ASSERT(pBuffer != NULL && iLength > 0);
+  if (sizeof(FX_WCHAR) == 2) {
+    return;
+  }
+  uint16_t* pSrc = (uint16_t*)pBuffer;
+  FX_WCHAR* pDst = (FX_WCHAR*)pBuffer;
+  while (--iLength >= 0) {
+    pDst[iLength] = (FX_WCHAR)pSrc[iLength];
+  }
+}
+
+void FX_WCharToUTF16(void* pBuffer, int32_t iLength) {
+  ASSERT(pBuffer != NULL && iLength > 0);
+  if (sizeof(FX_WCHAR) == 2) {
+    return;
+  }
+  const FX_WCHAR* pSrc = (const FX_WCHAR*)pBuffer;
+  uint16_t* pDst = (uint16_t*)pBuffer;
+  while (--iLength >= 0) {
+    *pDst++ = (uint16_t)*pSrc++;
+  }
+}
+
+int32_t FX_DecodeString(uint16_t wCodePage,
+                        const FX_CHAR* pSrc,
+                        int32_t* pSrcLen,
+                        FX_WCHAR* pDst,
+                        int32_t* pDstLen,
+                        FX_BOOL bErrBreak) {
+  if (wCodePage == FX_CODEPAGE_UTF8) {
+    return FX_UTF8Decode(pSrc, pSrcLen, pDst, pDstLen);
+  }
+  return -1;
+}
+int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
+                      int32_t* pSrcLen,
+                      FX_WCHAR* pDst,
+                      int32_t* pDstLen) {
+  if (pSrcLen == NULL || pDstLen == NULL) {
+    return -1;
+  }
+  int32_t iSrcLen = *pSrcLen;
+  if (iSrcLen < 1) {
+    *pSrcLen = *pDstLen = 0;
+    return 1;
+  }
+  int32_t iDstLen = *pDstLen;
+  FX_BOOL bValidDst = (pDst != NULL && iDstLen > 0);
+  uint32_t dwCode = 0;
+  int32_t iPending = 0;
+  int32_t iSrcNum = 0, iDstNum = 0;
+  int32_t k = 0;
+  int32_t iIndex = 0;
+  k = 1;
+  while (iIndex < iSrcLen) {
+    uint8_t byte = (uint8_t) * (pSrc + iIndex);
+    if (byte < 0x80) {
+      iPending = 0;
+      k = 1;
+      iDstNum++;
+      iSrcNum += k;
+      if (bValidDst) {
+        *pDst++ = byte;
+        if (iDstNum >= iDstLen) {
+          break;
+        }
+      }
+    } else if (byte < 0xc0) {
+      if (iPending < 1) {
+        break;
+      }
+      iPending--;
+      dwCode |= (byte & 0x3f) << (iPending * 6);
+      if (iPending == 0) {
+        iDstNum++;
+        iSrcNum += k;
+        if (bValidDst) {
+          *pDst++ = dwCode;
+          if (iDstNum >= iDstLen) {
+            break;
+          }
+        }
+      }
+    } else if (byte < 0xe0) {
+      iPending = 1;
+      k = 2;
+      dwCode = (byte & 0x1f) << 6;
+    } else if (byte < 0xf0) {
+      iPending = 2;
+      k = 3;
+      dwCode = (byte & 0x0f) << 12;
+    } else if (byte < 0xf8) {
+      iPending = 3;
+      k = 4;
+      dwCode = (byte & 0x07) << 18;
+    } else if (byte < 0xfc) {
+      iPending = 4;
+      k = 5;
+      dwCode = (byte & 0x03) << 24;
+    } else if (byte < 0xfe) {
+      iPending = 5;
+      k = 6;
+      dwCode = (byte & 0x01) << 30;
+    } else {
+      break;
+    }
+    iIndex++;
+  }
+  *pSrcLen = iSrcNum;
+  *pDstLen = iDstNum;
+  return 1;
 }

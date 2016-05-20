@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <memory>
 
-#include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
@@ -24,6 +23,34 @@
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+
+namespace {
+
+int32_t SeparateStringW(const FX_WCHAR* pStr,
+                        int32_t iStrLen,
+                        FX_WCHAR delimiter,
+                        CFX_WideStringArray& pieces) {
+  if (!pStr)
+    return 0;
+  if (iStrLen < 0)
+    iStrLen = FXSYS_wcslen(pStr);
+
+  const FX_WCHAR* pToken = pStr;
+  const FX_WCHAR* pEnd = pStr + iStrLen;
+  while (TRUE) {
+    if (pStr >= pEnd || delimiter == *pStr) {
+      CFX_WideString sub(pToken, pStr - pToken);
+      pieces.Add(sub);
+      pToken = pStr + 1;
+      if (pStr >= pEnd)
+        break;
+    }
+    pStr++;
+  }
+  return pieces.GetSize();
+}
+
+}  // namespace
 
 CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
                                                    CXFA_LayoutPageMgr* pPageMgr)
@@ -1380,8 +1407,8 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   CFX_WideStringC wsColumnWidths;
   if (pLayoutNode->TryCData(XFA_ATTRIBUTE_ColumnWidths, wsColumnWidths)) {
     CFX_WideStringArray widths;
-    if (FX_SeparateStringW(wsColumnWidths.c_str(), wsColumnWidths.GetLength(),
-                           L' ', widths) > 0) {
+    if (SeparateStringW(wsColumnWidths.c_str(), wsColumnWidths.GetLength(),
+                        L' ', widths) > 0) {
       int32_t iCols = widths.GetSize();
       CFX_WideString wsWidth;
       for (int32_t i = 0; i < iCols; i++) {

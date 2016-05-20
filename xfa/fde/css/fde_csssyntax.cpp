@@ -334,7 +334,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
               DisableCharset();
               if (m_iTextDatLen > 0) {
                 if (m_pStream != NULL) {
-                  uint16_t wCodePage = FX_GetCodePageFormStringW(
+                  uint16_t wCodePage = FX_GetCodePageFromStringW(
                       m_TextData.GetBuffer(), m_iTextDatLen);
                   if (wCodePage < 0xFFFF &&
                       m_pStream->GetCodePage() != wCodePage) {

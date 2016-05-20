@@ -943,6 +943,7 @@
       'conditions': [
         ['pdf_enable_xfa==1', {
           'sources': [
+            'xfa/fde/css/fde_cssdatatable.cpp',
             'xfa/fde/xml/fde_xml_imp_unittest.cpp',
             'xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
             'xfa/fxfa/app/xfa_textlayout_unittest.cpp',

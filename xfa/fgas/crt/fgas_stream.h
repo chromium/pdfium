@@ -14,11 +14,7 @@ class IFX_Stream;
 
 IFX_FileRead* FX_CreateFileRead(IFX_Stream* pBaseStream,
                                 FX_BOOL bReleaseStream = FALSE);
-IFX_FileRead* FX_CreateFileRead(IFX_BufferRead* pBufferRead,
-                                FX_FILESIZE iFileSize = -1,
-                                FX_BOOL bReleaseStream = TRUE);
-IFX_FileWrite* FX_CreateFileWrite(IFX_Stream* pBaseStream,
-                                  FX_BOOL bReleaseStream = FALSE);
+
 enum FX_STREAMACCESS {
   FX_STREAMACCESS_Binary = 0x00,
   FX_STREAMACCESS_Text = 0x01,

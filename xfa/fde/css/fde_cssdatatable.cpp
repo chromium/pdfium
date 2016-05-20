@@ -11,6 +11,14 @@
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/crt/fgas_system.h"
 
+namespace {
+
+uint8_t Hex2Dec(uint8_t hexHigh, uint8_t hexLow) {
+  return (FXSYS_toHexDigit(hexHigh) << 4) + FXSYS_toHexDigit(hexLow);
+}
+
+}  // namespace
+
 FX_BOOL FDE_CSSLengthToFloat(const FDE_CSSLENGTH& len,
                              FX_FLOAT fPercentBase,
                              FX_FLOAT& fResult) {
@@ -666,16 +674,17 @@ FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const CFX_WideStringC& wsName) {
   } while (iStart <= iEnd);
   return NULL;
 }
+
 FX_BOOL FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
                            int32_t iValueLen,
                            FX_FLOAT& fValue,
                            FDE_CSSPRIMITIVETYPE& eUnit) {
-  ASSERT(pszValue != NULL && iValueLen > 0);
+  ASSERT(pszValue && iValueLen > 0);
   int32_t iUsedLen = 0;
   fValue = FX_wcstof(pszValue, iValueLen, &iUsedLen);
-  if (iUsedLen <= 0) {
+  if (iUsedLen <= 0)
     return FALSE;
-  }
+
   iValueLen -= iUsedLen;
   pszValue += iUsedLen;
   eUnit = FDE_CSSPRIMITIVETYPE_Number;
@@ -684,9 +693,8 @@ FX_BOOL FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
   } else if (iValueLen == 2) {
     FDE_LPCCSSLENGTHUNITTABLE pUnit =
         FDE_GetCSSLengthUnitByName(CFX_WideStringC(pszValue, 2));
-    if (pUnit != NULL) {
+    if (pUnit)
       eUnit = (FDE_CSSPRIMITIVETYPE)pUnit->wValue;
-    }
   }
   return TRUE;
 }
@@ -726,57 +734,60 @@ FX_BOOL FDE_ParseCSSURI(const FX_WCHAR* pszValue,
 FX_BOOL FDE_ParseCSSColor(const FX_WCHAR* pszValue,
                           int32_t iValueLen,
                           FX_ARGB& dwColor) {
-  ASSERT(pszValue != NULL && iValueLen > 0);
+  ASSERT(pszValue && iValueLen > 0);
+
   if (*pszValue == '#') {
     switch (iValueLen) {
       case 4: {
-        uint8_t red = FX_Hex2Dec((uint8_t)pszValue[1], (uint8_t)pszValue[1]);
-        uint8_t green = FX_Hex2Dec((uint8_t)pszValue[2], (uint8_t)pszValue[2]);
-        uint8_t blue = FX_Hex2Dec((uint8_t)pszValue[3], (uint8_t)pszValue[3]);
+        uint8_t red = Hex2Dec((uint8_t)pszValue[1], (uint8_t)pszValue[1]);
+        uint8_t green = Hex2Dec((uint8_t)pszValue[2], (uint8_t)pszValue[2]);
+        uint8_t blue = Hex2Dec((uint8_t)pszValue[3], (uint8_t)pszValue[3]);
         dwColor = ArgbEncode(255, red, green, blue);
-      }
         return TRUE;
+      }
       case 7: {
-        uint8_t red = FX_Hex2Dec((uint8_t)pszValue[1], (uint8_t)pszValue[2]);
-        uint8_t green = FX_Hex2Dec((uint8_t)pszValue[3], (uint8_t)pszValue[4]);
-        uint8_t blue = FX_Hex2Dec((uint8_t)pszValue[5], (uint8_t)pszValue[6]);
+        uint8_t red = Hex2Dec((uint8_t)pszValue[1], (uint8_t)pszValue[2]);
+        uint8_t green = Hex2Dec((uint8_t)pszValue[3], (uint8_t)pszValue[4]);
+        uint8_t blue = Hex2Dec((uint8_t)pszValue[5], (uint8_t)pszValue[6]);
         dwColor = ArgbEncode(255, red, green, blue);
-      }
         return TRUE;
+      }
+      default:
+        return FALSE;
     }
-  } else if (iValueLen >= 10) {
-    if (pszValue[iValueLen - 1] != ')' || FX_wcsnicmp(L"rgb(", pszValue, 4)) {
+  }
+
+  if (iValueLen >= 10) {
+    if (pszValue[iValueLen - 1] != ')' || FX_wcsnicmp(L"rgb(", pszValue, 4))
       return FALSE;
-    }
+
     uint8_t rgb[3] = {0};
     FX_FLOAT fValue;
     FDE_CSSPRIMITIVETYPE eType;
     CFDE_CSSValueListParser list(pszValue + 4, iValueLen - 5, ',');
     for (int32_t i = 0; i < 3; ++i) {
-      if (!list.NextValue(eType, pszValue, iValueLen)) {
+      if (!list.NextValue(eType, pszValue, iValueLen))
         return FALSE;
-      }
-      if (eType != FDE_CSSPRIMITIVETYPE_Number) {
+      if (eType != FDE_CSSPRIMITIVETYPE_Number)
         return FALSE;
-      }
-      if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eType)) {
+      if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eType))
         return FALSE;
-      }
+
       rgb[i] = eType == FDE_CSSPRIMITIVETYPE_Percent
                    ? FXSYS_round(fValue * 2.55f)
                    : FXSYS_round(fValue);
     }
     dwColor = ArgbEncode(255, rgb[0], rgb[1], rgb[2]);
     return TRUE;
-  } else {
-    FDE_LPCCSSCOLORTABLE pColor =
-        FDE_GetCSSColorByName(CFX_WideStringC(pszValue, iValueLen));
-    if (pColor != NULL) {
-      dwColor = pColor->dwValue;
-      return TRUE;
-    }
   }
-  return FALSE;
+
+  FDE_LPCCSSCOLORTABLE pColor =
+      FDE_GetCSSColorByName(CFX_WideStringC(pszValue, iValueLen));
+  if (!pColor)
+    return FALSE;
+
+  dwColor = pColor->dwValue;
+  return TRUE;
 }
 
 CFDE_CSSValueList::CFDE_CSSValueList(IFX_MemoryAllocator* pStaticStore,

@@ -135,21 +135,12 @@
 
 uint16_t FX_GetCodePageFromCharset(uint8_t charset);
 uint16_t FX_GetCharsetFromCodePage(uint16_t codepage);
-uint16_t FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength);
-uint16_t FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength);
+uint16_t FX_GetCodePageFromStringW(const FX_WCHAR* pStr, int32_t iLength);
 uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage);
 void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength);
-void FX_SwapByteOrderCopy(const FX_WCHAR* pSrc,
-                          FX_WCHAR* pDst,
-                          int32_t iLength);
+
 void FX_UTF16ToWChar(void* pBuffer, int32_t iLength);
-void FX_UTF16ToWCharCopy(const uint16_t* pUTF16,
-                         FX_WCHAR* pWChar,
-                         int32_t iLength);
 void FX_WCharToUTF16(void* pBuffer, int32_t iLength);
-void FX_WCharToUTF16Copy(const FX_WCHAR* pWChar,
-                         uint16_t* pUTF16,
-                         int32_t iLength);
 int32_t FX_DecodeString(uint16_t wCodePage,
                         const FX_CHAR* pSrc,
                         int32_t* pSrcLen,
@@ -160,20 +151,5 @@ int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
                       int32_t* pSrcLen,
                       FX_WCHAR* pDst,
                       int32_t* pDstLen);
-
-struct FX_STR2CPHASH {
-  uint32_t uHash;
-  uint16_t uCodePage;
-};
-
-struct FX_CHARSET_MAP {
-  uint16_t charset;
-  uint16_t codepage;
-};
-
-struct FX_LANG2CPMAP {
-  uint16_t wLanguage;
-  uint16_t wCodepage;
-};
 
 #endif  // XFA_FGAS_CRT_FGAS_CODEPAGE_H_

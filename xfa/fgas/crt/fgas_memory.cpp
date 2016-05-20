@@ -20,6 +20,7 @@ class CFX_DefStore : public IFX_MemoryAllocator, public CFX_Target {
  public:
   CFX_DefStore() {}
   ~CFX_DefStore() override {}
+
   void* Alloc(size_t size) override { return FX_Alloc(uint8_t, size); }
   void Free(void* pBlock) override { FX_Free(pBlock); }
 };
@@ -44,12 +45,13 @@ struct FX_STATICSTORECHUNK {
 
 class CFX_StaticStore : public IFX_MemoryAllocator, public CFX_Target {
  public:
-  CFX_StaticStore(size_t iDefChunkSize = 4096);
+  CFX_StaticStore(size_t iDefChunkSize);
   ~CFX_StaticStore() override;
+
   void* Alloc(size_t size) override;
   void Free(void* pBlock) override {}
 
- protected:
+ private:
   size_t m_iAllocatedSize;
   size_t m_iDefChunkSize;
   FX_STATICSTORECHUNK* m_pChunk;
@@ -74,7 +76,7 @@ class CFX_FixedStore : public IFX_MemoryAllocator, public CFX_Target {
   void* Alloc(size_t size) override;
   void Free(void* pBlock) override;
 
- protected:
+ private:
   FX_FIXEDSTORECHUNK* AllocChunk();
 
   size_t m_iBlockSize;
