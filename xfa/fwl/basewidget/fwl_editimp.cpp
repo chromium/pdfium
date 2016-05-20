@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_render.h"
@@ -779,7 +780,7 @@ FX_BOOL CFWL_EditImp::CanUndo() {
 }
 
 FX_BOOL CFWL_EditImp::CanRedo() {
-  return m_iCurRecord < m_DoRecords.size() - 1;
+  return m_iCurRecord < pdfium::CollectionSize<int32_t>(m_DoRecords) - 1;
 }
 
 FWL_Error CFWL_EditImp::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
@@ -1462,7 +1463,7 @@ FX_BOOL CFWL_EditImp::IsContentHeightOverflow() {
   return pPage->GetContentsBox().height > m_rtEngine.height + 1.0f;
 }
 int32_t CFWL_EditImp::AddDoRecord(IFDE_TxtEdtDoRecord* pRecord) {
-  int32_t nCount = m_DoRecords.size();
+  int32_t nCount = pdfium::CollectionSize<int32_t>(m_DoRecords);
   if (m_iCurRecord == nCount - 1) {
     if (nCount == m_iMaxRecord) {
       m_DoRecords.pop_front();
@@ -1474,7 +1475,7 @@ int32_t CFWL_EditImp::AddDoRecord(IFDE_TxtEdtDoRecord* pRecord) {
   }
 
   m_DoRecords.push_back(std::unique_ptr<IFDE_TxtEdtDoRecord>(pRecord));
-  m_iCurRecord = m_DoRecords.size() - 1;
+  m_iCurRecord = pdfium::CollectionSize<int32_t>(m_DoRecords) - 1;
   return m_iCurRecord;
 }
 void CFWL_EditImp::Layout() {
