@@ -2974,26 +2974,25 @@ void CXFA_ItemLayoutProcessor::SetCurrentComponentSize(FX_FLOAT fWidth,
                                                        FX_FLOAT fHeight) {
   m_pLayoutItem->m_sSize = CFX_SizeF(fWidth, fHeight);
 }
+
 FX_BOOL CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(
     CXFA_Node* pFormNode) {
-  if (pFormNode == NULL) {
+  if (!pFormNode)
     return FALSE;
-  }
+
   CXFA_Node* pTemplate = pFormNode->GetTemplateNode();
-  if (!pTemplate) {
+  if (!pTemplate)
     pTemplate = pFormNode;
-  }
+
   CXFA_Occur NodeOccur(pTemplate->GetFirstChildByClass(XFA_ELEMENT_Occur));
   int32_t iMax = NodeOccur.GetMax();
-  if (iMax > -1) {
-    int32_t iCount =
-        (int32_t)(uintptr_t)m_PendingNodesCount.GetValueAt(pTemplate);
-    if (iCount >= iMax) {
-      return FALSE;
-    }
-    iCount++;
-    m_PendingNodesCount.SetAt(pTemplate, (void*)(uintptr_t)(iCount));
+  if (iMax < 0)
     return TRUE;
-  }
+
+  int32_t iCount = m_PendingNodesCount[pTemplate];
+  if (iCount >= iMax)
+    return FALSE;
+
+  m_PendingNodesCount[pTemplate] = iCount + 1;
   return TRUE;
 }

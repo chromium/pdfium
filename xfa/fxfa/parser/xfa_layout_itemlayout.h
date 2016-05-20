@@ -10,6 +10,7 @@
 #include <float.h>
 
 #include <list>
+#include <map>
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -182,7 +183,7 @@ class CXFA_ItemLayoutProcessor {
   FX_BOOL m_bBreakPending;
   CFX_ArrayTemplate<FX_FLOAT> m_rgSpecifiedColumnWidths;
   CFX_ArrayTemplate<CXFA_ContentLayoutItem*> m_arrayKeepItems;
-  CFX_MapPtrToPtr m_PendingNodesCount;
+  std::map<CXFA_Node*, int32_t> m_PendingNodesCount;
   FX_FLOAT m_fLastRowWidth;
   FX_FLOAT m_fLastRowY;
   FX_FLOAT m_fWidthLimite;
