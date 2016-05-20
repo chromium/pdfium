@@ -4,30 +4,74 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/xml/fgas_sax.h"
+#include "xfa/fde/xml/cfx_saxreader.h"
 
 #include <algorithm>
 
 #include "xfa/fxfa/include/xfa_checksum.h"
 
+enum class CFX_SaxMode {
+  Text = 0,
+  NodeStart,
+  DeclOrComment,
+  DeclNode,
+  Comment,
+  CommentContent,
+  TagName,
+  TagAttributeName,
+  TagAttributeEqual,
+  TagAttributeValue,
+  TagMaybeClose,
+  TagClose,
+  TagEnd,
+  TargetData,
+  MAX
+};
+
+class CFX_SAXCommentContext {
+ public:
+  CFX_SAXCommentContext() : m_iHeaderCount(0), m_iTailCount(0) {}
+  int32_t m_iHeaderCount;
+  int32_t m_iTailCount;
+};
+
 namespace {
 
 const uint32_t kSaxFileBufSize = 32768;
 
+typedef void (CFX_SAXReader::*FX_SAXReader_LPFParse)();
+static const FX_SAXReader_LPFParse
+    g_FX_SAXReader_LPFParse[static_cast<int>(CFX_SaxMode::MAX)] = {
+        &CFX_SAXReader::ParseText,
+        &CFX_SAXReader::ParseNodeStart,
+        &CFX_SAXReader::ParseDeclOrComment,
+        &CFX_SAXReader::ParseDeclNode,
+        &CFX_SAXReader::ParseComment,
+        &CFX_SAXReader::ParseCommentContent,
+        &CFX_SAXReader::ParseTagName,
+        &CFX_SAXReader::ParseTagAttributeName,
+        &CFX_SAXReader::ParseTagAttributeEqual,
+        &CFX_SAXReader::ParseTagAttributeValue,
+        &CFX_SAXReader::ParseMaybeClose,
+        &CFX_SAXReader::ParseTagClose,
+        &CFX_SAXReader::ParseTagEnd,
+        &CFX_SAXReader::ParseTargetData,
+};
+
 }  // namespace
 
 CFX_SAXFile::CFX_SAXFile()
-    : m_pFile(NULL),
+    : m_pFile(nullptr),
       m_dwStart(0),
       m_dwEnd(0),
       m_dwCur(0),
-      m_pBuf(NULL),
+      m_pBuf(nullptr),
       m_dwBufSize(0),
       m_dwBufIndex(0) {}
 FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
                                uint32_t dwStart,
                                uint32_t dwLen) {
-  ASSERT(m_pFile == NULL && pFile != NULL);
+  ASSERT(!m_pFile && pFile);
   uint32_t dwSize = pFile->GetSize();
   if (dwStart >= dwSize) {
     return FALSE;
@@ -51,7 +95,7 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
   return TRUE;
 }
 FX_BOOL CFX_SAXFile::ReadNextBlock() {
-  ASSERT(m_pFile != NULL);
+  ASSERT(m_pFile);
   uint32_t dwSize = m_dwEnd - m_dwCur;
   if (dwSize == 0) {
     return FALSE;
@@ -66,9 +110,9 @@ FX_BOOL CFX_SAXFile::ReadNextBlock() {
 void CFX_SAXFile::Reset() {
   if (m_pBuf) {
     FX_Free(m_pBuf);
-    m_pBuf = NULL;
+    m_pBuf = nullptr;
   }
-  m_pFile = NULL;
+  m_pFile = nullptr;
 }
 CFX_SAXReader::CFX_SAXReader()
     : m_File(),
@@ -88,11 +132,11 @@ CFX_SAXReader::~CFX_SAXReader() {
   Reset();
   if (m_pszData) {
     FX_Free(m_pszData);
-    m_pszData = NULL;
+    m_pszData = nullptr;
   }
   if (m_pszName) {
     FX_Free(m_pszName);
-    m_pszName = NULL;
+    m_pszName = nullptr;
   }
 }
 void CFX_SAXReader::Reset() {
@@ -103,8 +147,8 @@ void CFX_SAXReader::Reset() {
     delete pItem;
     pItem = pNext;
   }
-  m_pRoot = NULL;
-  m_pCurItem = NULL;
+  m_pRoot = nullptr;
+  m_pCurItem = nullptr;
   m_dwItemID = 0;
   m_SkipStack.RemoveAll();
   m_SkipChar = 0;
@@ -114,7 +158,7 @@ void CFX_SAXReader::Reset() {
   m_iDataPos = 0;
   if (m_pCommentContext) {
     delete m_pCommentContext;
-    m_pCommentContext = NULL;
+    m_pCommentContext = nullptr;
   }
 }
 inline void CFX_SAXReader::Push() {
@@ -130,7 +174,7 @@ inline void CFX_SAXReader::Pop() {
     return;
   }
   CFX_SAXItem* pPrev = m_pCurItem->m_pPrev;
-  pPrev->m_pNext = NULL;
+  pPrev->m_pNext = nullptr;
   delete m_pCurItem;
   m_pCurItem = pPrev;
 }
@@ -165,7 +209,7 @@ void CFX_SAXReader::ReallocNameBuffer() {
   m_pszName = (uint8_t*)FX_Realloc(uint8_t, m_pszName, m_iNameSize);
 }
 inline FX_BOOL CFX_SAXReader::SkipSpace(uint8_t ch) {
-  return (m_dwParseMode & FX_SAXPARSEMODE_NotSkipSpace) == 0 && ch < 0x21;
+  return (m_dwParseMode & CFX_SaxParseMode_NotSkipSpace) == 0 && ch < 0x21;
 }
 int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
                                   uint32_t dwStart,
@@ -177,8 +221,8 @@ int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
     return -1;
   }
   m_iState = 0;
-  m_eMode = FX_SAXMODE_Text;
-  m_ePrevMode = FX_SAXMODE_Text;
+  m_eMode = CFX_SaxMode::Text;
+  m_ePrevMode = CFX_SaxMode::Text;
   m_bCharData = FALSE;
   m_dwDataOffset = 0;
   m_pRoot = m_pCurItem = new CFX_SAXItem;
@@ -186,23 +230,7 @@ int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
   m_dwParseMode = dwParseMode;
   return 0;
 }
-typedef void (CFX_SAXReader::*FX_SAXReader_LPFParse)();
-static const FX_SAXReader_LPFParse g_FX_SAXReader_LPFParse[FX_SAXMODE_MAX] = {
-    &CFX_SAXReader::ParseText,
-    &CFX_SAXReader::ParseNodeStart,
-    &CFX_SAXReader::ParseDeclOrComment,
-    &CFX_SAXReader::ParseDeclNode,
-    &CFX_SAXReader::ParseComment,
-    &CFX_SAXReader::ParseCommentContent,
-    &CFX_SAXReader::ParseTagName,
-    &CFX_SAXReader::ParseTagAttributeName,
-    &CFX_SAXReader::ParseTagAttributeEqual,
-    &CFX_SAXReader::ParseTagAttributeValue,
-    &CFX_SAXReader::ParseMaybeClose,
-    &CFX_SAXReader::ParseTagClose,
-    &CFX_SAXReader::ParseTagEnd,
-    &CFX_SAXReader::ParseTargetData,
-};
+
 int32_t CFX_SAXReader::ContinueParse(IFX_Pause* pPause) {
   if (m_iState < 0 || m_iState > 99) {
     return m_iState;
@@ -213,7 +241,7 @@ int32_t CFX_SAXReader::ContinueParse(IFX_Pause* pPause) {
     const uint8_t* pBuf = m_File.m_pBuf;
     while (index < size) {
       m_CurByte = pBuf[index];
-      (this->*g_FX_SAXReader_LPFParse[m_eMode])();
+      (this->*g_FX_SAXReader_LPFParse[static_cast<int>(m_eMode)])();
       index++;
     }
     m_File.m_dwCur += index;
@@ -243,7 +271,7 @@ void CFX_SAXReader::ParseChar(uint8_t ch) {
     int32_t iLen = csEntity.GetLength();
     if (iLen > 0) {
       if (csEntity[0] == '#') {
-        if ((m_dwParseMode & FX_SAXPARSEMODE_NotConvert_sharp) == 0) {
+        if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_sharp) == 0) {
           ch = 0;
           uint8_t w;
           if (iLen > 1 && csEntity[1] == 'x') {
@@ -274,23 +302,23 @@ void CFX_SAXReader::ParseChar(uint8_t ch) {
         }
       } else {
         if (csEntity.Compare("amp") == 0) {
-          if ((m_dwParseMode & FX_SAXPARSEMODE_NotConvert_amp) == 0) {
+          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_amp) == 0) {
             m_pszData[m_iEntityStart++] = '&';
           }
         } else if (csEntity.Compare("lt") == 0) {
-          if ((m_dwParseMode & FX_SAXPARSEMODE_NotConvert_lt) == 0) {
+          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_lt) == 0) {
             m_pszData[m_iEntityStart++] = '<';
           }
         } else if (csEntity.Compare("gt") == 0) {
-          if ((m_dwParseMode & FX_SAXPARSEMODE_NotConvert_gt) == 0) {
+          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_gt) == 0) {
             m_pszData[m_iEntityStart++] = '>';
           }
         } else if (csEntity.Compare("apos") == 0) {
-          if ((m_dwParseMode & FX_SAXPARSEMODE_NotConvert_apos) == 0) {
+          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_apos) == 0) {
             m_pszData[m_iEntityStart++] = '\'';
           }
         } else if (csEntity.Compare("quot") == 0) {
-          if ((m_dwParseMode & FX_SAXPARSEMODE_NotConvert_quot) == 0) {
+          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_quot) == 0) {
             m_pszData[m_iEntityStart++] = '\"';
           }
         }
@@ -321,7 +349,7 @@ void CFX_SAXReader::ParseText() {
     }
     Push();
     m_dwNodePos = m_File.m_dwCur + m_File.m_dwBufIndex;
-    m_eMode = FX_SAXMODE_NodeStart;
+    m_eMode = CFX_SaxMode::NodeStart;
     return;
   }
   if (m_iDataPos < 1 && SkipSpace(m_CurByte)) {
@@ -331,41 +359,41 @@ void CFX_SAXReader::ParseText() {
 }
 void CFX_SAXReader::ParseNodeStart() {
   if (m_CurByte == '?') {
-    m_pCurItem->m_eNode = FX_SAXNODE_Instruction;
-    m_eMode = FX_SAXMODE_TagName;
+    m_pCurItem->m_eNode = CFX_SAXItem::Type::Instruction;
+    m_eMode = CFX_SaxMode::TagName;
     return;
   }
   if (m_CurByte == '!') {
-    m_eMode = FX_SAXMODE_DeclOrComment;
+    m_eMode = CFX_SaxMode::DeclOrComment;
     return;
   }
   if (m_CurByte == '/') {
-    m_eMode = FX_SAXMODE_TagEnd;
+    m_eMode = CFX_SaxMode::TagEnd;
     return;
   }
   if (m_CurByte == '>') {
     Pop();
-    m_eMode = FX_SAXMODE_Text;
+    m_eMode = CFX_SaxMode::Text;
     return;
   }
   if (m_CurByte > 0x20) {
     m_dwDataOffset = m_File.m_dwBufIndex;
-    m_pCurItem->m_eNode = FX_SAXNODE_Tag;
-    m_eMode = FX_SAXMODE_TagName;
+    m_pCurItem->m_eNode = CFX_SAXItem::Type::Tag;
+    m_eMode = CFX_SaxMode::TagName;
     AppendData(m_CurByte);
   }
 }
 void CFX_SAXReader::ParseDeclOrComment() {
   if (m_CurByte == '-') {
-    m_eMode = FX_SAXMODE_Comment;
-    m_pCurItem->m_eNode = FX_SAXNODE_Comment;
-    if (m_pCommentContext == NULL) {
+    m_eMode = CFX_SaxMode::Comment;
+    m_pCurItem->m_eNode = CFX_SAXItem::Type::Comment;
+    if (!m_pCommentContext)
       m_pCommentContext = new CFX_SAXCommentContext;
-    }
+
     m_pCommentContext->m_iHeaderCount = 1;
     m_pCommentContext->m_iTailCount = 0;
   } else {
-    m_eMode = FX_SAXMODE_DeclNode;
+    m_eMode = CFX_SaxMode::DeclNode;
     m_dwDataOffset = m_File.m_dwBufIndex;
     m_SkipChar = '>';
     m_SkipStack.Add('>');
@@ -375,7 +403,7 @@ void CFX_SAXReader::ParseDeclOrComment() {
 void CFX_SAXReader::ParseComment() {
   m_pCommentContext->m_iHeaderCount = 2;
   m_dwNodePos = m_File.m_dwCur + m_File.m_dwBufIndex;
-  m_eMode = FX_SAXMODE_CommentContent;
+  m_eMode = CFX_SaxMode::CommentContent;
 }
 void CFX_SAXReader::ParseCommentContent() {
   if (m_CurByte == '-') {
@@ -387,7 +415,7 @@ void CFX_SAXReader::ParseCommentContent() {
       NotifyTargetData();
     }
     Pop();
-    m_eMode = FX_SAXMODE_Text;
+    m_eMode = CFX_SaxMode::Text;
   } else {
     while (m_pCommentContext->m_iTailCount > 0) {
       AppendData('-');
@@ -408,15 +436,15 @@ void CFX_SAXReader::ParseTagName() {
       NotifyEnter();
     }
     if (m_CurByte < 0x21) {
-      m_eMode = FX_SAXMODE_TagAttributeName;
+      m_eMode = CFX_SaxMode::TagAttributeName;
     } else if (m_CurByte == '/' || m_CurByte == '?') {
       m_ePrevMode = m_eMode;
-      m_eMode = FX_SAXMODE_TagMaybeClose;
+      m_eMode = CFX_SaxMode::TagMaybeClose;
     } else {
       if (m_pHandler) {
         NotifyBreak();
       }
-      m_eMode = FX_SAXMODE_Text;
+      m_eMode = CFX_SaxMode::Text;
     }
   } else {
     AppendData(m_CurByte);
@@ -430,19 +458,19 @@ void CFX_SAXReader::ParseTagAttributeName() {
     m_iNameLength = m_iDataPos;
     m_iDataPos = 0;
     m_SkipChar = 0;
-    m_eMode = m_CurByte == '=' ? FX_SAXMODE_TagAttributeValue
-                               : FX_SAXMODE_TagAttributeEqual;
+    m_eMode = m_CurByte == '=' ? CFX_SaxMode::TagAttributeValue
+                               : CFX_SaxMode::TagAttributeEqual;
     return;
   }
   if (m_CurByte == '/' || m_CurByte == '>' || m_CurByte == '?') {
     if (m_CurByte == '/' || m_CurByte == '?') {
       m_ePrevMode = m_eMode;
-      m_eMode = FX_SAXMODE_TagMaybeClose;
+      m_eMode = CFX_SaxMode::TagMaybeClose;
     } else {
       if (m_pHandler) {
         NotifyBreak();
       }
-      m_eMode = FX_SAXMODE_Text;
+      m_eMode = CFX_SaxMode::Text;
     }
     return;
   }
@@ -454,12 +482,12 @@ void CFX_SAXReader::ParseTagAttributeName() {
 void CFX_SAXReader::ParseTagAttributeEqual() {
   if (m_CurByte == '=') {
     m_SkipChar = 0;
-    m_eMode = FX_SAXMODE_TagAttributeValue;
+    m_eMode = CFX_SaxMode::TagAttributeValue;
     return;
-  } else if (m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
+  } else if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_iDataPos = m_iNameLength;
     AppendName(0x20);
-    m_eMode = FX_SAXMODE_TargetData;
+    m_eMode = CFX_SaxMode::TargetData;
     ParseTargetData();
   }
 }
@@ -474,7 +502,7 @@ void CFX_SAXReader::ParseTagAttributeValue() {
         }
       }
       m_SkipChar = 0;
-      m_eMode = FX_SAXMODE_TagAttributeName;
+      m_eMode = CFX_SaxMode::TagAttributeName;
       return;
     }
     ParseChar(m_CurByte);
@@ -491,7 +519,7 @@ void CFX_SAXReader::ParseTagAttributeValue() {
 }
 void CFX_SAXReader::ParseMaybeClose() {
   if (m_CurByte == '>') {
-    if (m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
+    if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
       m_iNameLength = m_iDataPos;
       m_iDataPos = 0;
       if (m_pHandler) {
@@ -499,21 +527,21 @@ void CFX_SAXReader::ParseMaybeClose() {
       }
     }
     ParseTagClose();
-    m_eMode = FX_SAXMODE_Text;
-  } else if (m_ePrevMode == FX_SAXMODE_TagName) {
+    m_eMode = CFX_SaxMode::Text;
+  } else if (m_ePrevMode == CFX_SaxMode::TagName) {
     AppendData('/');
-    m_eMode = FX_SAXMODE_TagName;
-    m_ePrevMode = FX_SAXMODE_Text;
+    m_eMode = CFX_SaxMode::TagName;
+    m_ePrevMode = CFX_SaxMode::Text;
     ParseTagName();
-  } else if (m_ePrevMode == FX_SAXMODE_TagAttributeName) {
+  } else if (m_ePrevMode == CFX_SaxMode::TagAttributeName) {
     AppendName('/');
-    m_eMode = FX_SAXMODE_TagAttributeName;
-    m_ePrevMode = FX_SAXMODE_Text;
+    m_eMode = CFX_SaxMode::TagAttributeName;
+    m_ePrevMode = CFX_SaxMode::Text;
     ParseTagAttributeName();
-  } else if (m_ePrevMode == FX_SAXMODE_TargetData) {
+  } else if (m_ePrevMode == CFX_SaxMode::TargetData) {
     AppendName('?');
-    m_eMode = FX_SAXMODE_TargetData;
-    m_ePrevMode = FX_SAXMODE_Text;
+    m_eMode = CFX_SaxMode::TargetData;
+    m_ePrevMode = CFX_SaxMode::Text;
     ParseTargetData();
   }
 }
@@ -537,7 +565,7 @@ void CFX_SAXReader::ParseTagEnd() {
       NotifyEnd();
     }
     Pop();
-    m_eMode = FX_SAXMODE_Text;
+    m_eMode = CFX_SaxMode::Text;
   } else {
     ParseChar(m_CurByte);
   }
@@ -545,7 +573,7 @@ void CFX_SAXReader::ParseTagEnd() {
 void CFX_SAXReader::ParseTargetData() {
   if (m_CurByte == '?') {
     m_ePrevMode = m_eMode;
-    m_eMode = FX_SAXMODE_TagMaybeClose;
+    m_eMode = CFX_SaxMode::TagMaybeClose;
   } else {
     AppendName(m_CurByte);
   }
@@ -608,7 +636,7 @@ void CFX_SAXReader::SkipNode() {
           } else {
             Pop();
           }
-          m_eMode = FX_SAXMODE_Text;
+          m_eMode = CFX_SaxMode::Text;
         }
       }
       break;
@@ -619,16 +647,17 @@ void CFX_SAXReader::SkipNode() {
 }
 
 void CFX_SAXReader::NotifyData() {
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag)
-    m_pHandler->OnTagData(m_pCurItem->m_pNode,
-                          m_bCharData ? FX_SAXNODE_CharData : FX_SAXNODE_Text,
-                          CFX_ByteStringC(m_pszData, m_iDataLength),
-                          m_File.m_dwCur + m_dwDataOffset);
+  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag)
+    m_pHandler->OnTagData(
+        m_pCurItem->m_pNode,
+        m_bCharData ? CFX_SAXItem::Type::CharData : CFX_SAXItem::Type::Text,
+        CFX_ByteStringC(m_pszData, m_iDataLength),
+        m_File.m_dwCur + m_dwDataOffset);
 }
 
 void CFX_SAXReader::NotifyEnter() {
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
-      m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
+  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag ||
+      m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_pCurItem->m_pNode =
         m_pHandler->OnTagEnter(CFX_ByteStringC(m_pszData, m_iDataLength),
                                m_pCurItem->m_eNode, m_dwNodePos);
@@ -636,8 +665,8 @@ void CFX_SAXReader::NotifyEnter() {
 }
 
 void CFX_SAXReader::NotifyAttribute() {
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
-      m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
+  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag ||
+      m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_pHandler->OnTagAttribute(m_pCurItem->m_pNode,
                                CFX_ByteStringC(m_pszName, m_iNameLength),
                                CFX_ByteStringC(m_pszData, m_iDataLength));
@@ -645,19 +674,19 @@ void CFX_SAXReader::NotifyAttribute() {
 }
 
 void CFX_SAXReader::NotifyBreak() {
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag)
+  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag)
     m_pHandler->OnTagBreak(m_pCurItem->m_pNode);
 }
 
 void CFX_SAXReader::NotifyClose() {
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Tag ||
-      m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
+  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag ||
+      m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_pHandler->OnTagClose(m_pCurItem->m_pNode, m_dwNodePos);
   }
 }
 
 void CFX_SAXReader::NotifyEnd() {
-  if (m_pCurItem->m_eNode != FX_SAXNODE_Tag)
+  if (m_pCurItem->m_eNode != CFX_SAXItem::Type::Tag)
     return;
 
   m_pHandler->OnTagEnd(m_pCurItem->m_pNode,
@@ -665,11 +694,11 @@ void CFX_SAXReader::NotifyEnd() {
 }
 
 void CFX_SAXReader::NotifyTargetData() {
-  if (m_pCurItem->m_eNode == FX_SAXNODE_Instruction) {
+  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_pHandler->OnTargetData(m_pCurItem->m_pNode, m_pCurItem->m_eNode,
                              CFX_ByteStringC(m_pszName, m_iNameLength),
                              m_dwNodePos);
-  } else if (m_pCurItem->m_eNode == FX_SAXNODE_Comment) {
+  } else if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Comment) {
     m_pHandler->OnTargetData(m_pCurItem->m_pNode, m_pCurItem->m_eNode,
                              CFX_ByteStringC(m_pszData, m_iDataLength),
                              m_dwNodePos);

@@ -4,48 +4,38 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_XML_FGAS_SAX_H_
-#define XFA_FGAS_XML_FGAS_SAX_H_
+#ifndef XFA_FDE_XML_CFX_SAXREADER_H_
+#define XFA_FDE_XML_CFX_SAXREADER_H_
 
 #include "core/fxcrt/include/fx_basic.h"
 
-#define FX_SAXPARSEMODE_NotConvert_amp 0x0001
-#define FX_SAXPARSEMODE_NotConvert_lt 0x0002
-#define FX_SAXPARSEMODE_NotConvert_gt 0x0004
-#define FX_SAXPARSEMODE_NotConvert_apos 0x0008
-#define FX_SAXPARSEMODE_NotConvert_quot 0x0010
-#define FX_SAXPARSEMODE_NotConvert_sharp 0x0020
-#define FX_SAXPARSEMODE_NotSkipSpace 0x0100
+class CFX_SAXItem {
+ public:
+  enum class Type {
+    Unknown = 0,
+    Instruction,
+    Declaration,
+    Comment,
+    Tag,
+    Text,
+    CharData,
+  };
 
-enum FX_SAXNODE {
-  FX_SAXNODE_Unknown = 0,
-  FX_SAXNODE_Instruction,
-  FX_SAXNODE_Declaration,
-  FX_SAXNODE_Comment,
-  FX_SAXNODE_Tag,
-  FX_SAXNODE_Text,
-  FX_SAXNODE_CharData,
+  CFX_SAXItem()
+      : m_pNode(nullptr),
+        m_eNode(Type::Unknown),
+        m_dwID(0),
+        m_bSkip(FALSE),
+        m_pPrev(nullptr),
+        m_pNext(nullptr) {}
+
+  void* m_pNode;
+  Type m_eNode;
+  uint32_t m_dwID;
+  FX_BOOL m_bSkip;
+  CFX_SAXItem* m_pPrev;
+  CFX_SAXItem* m_pNext;
 };
-
-enum FX_SAXMODE {
-  FX_SAXMODE_Text = 0,
-  FX_SAXMODE_NodeStart,
-  FX_SAXMODE_DeclOrComment,
-  FX_SAXMODE_DeclNode,
-  FX_SAXMODE_Comment,
-  FX_SAXMODE_CommentContent,
-  FX_SAXMODE_TagName,
-  FX_SAXMODE_TagAttributeName,
-  FX_SAXMODE_TagAttributeEqual,
-  FX_SAXMODE_TagAttributeValue,
-  FX_SAXMODE_TagMaybeClose,
-  FX_SAXMODE_TagClose,
-  FX_SAXMODE_TagEnd,
-  FX_SAXMODE_TargetData,
-  FX_SAXMODE_MAX,
-};
-
-class CXFA_SAXReaderHandler;
 
 class CFX_SAXFile {
  public:
@@ -62,29 +52,20 @@ class CFX_SAXFile {
   uint32_t m_dwBufIndex;
 };
 
-class CFX_SAXItem {
- public:
-  CFX_SAXItem()
-      : m_pNode(NULL),
-        m_eNode(FX_SAXNODE_Unknown),
-        m_dwID(0),
-        m_bSkip(FALSE),
-        m_pPrev(NULL),
-        m_pNext(NULL) {}
-  void* m_pNode;
-  FX_SAXNODE m_eNode;
-  uint32_t m_dwID;
-  FX_BOOL m_bSkip;
-  CFX_SAXItem* m_pPrev;
-  CFX_SAXItem* m_pNext;
+class CFX_SAXCommentContext;
+enum class CFX_SaxMode;
+
+enum CFX_SaxParseMode {
+  CFX_SaxParseMode_NotConvert_amp = 1 << 0,
+  CFX_SaxParseMode_NotConvert_lt = 1 << 1,
+  CFX_SaxParseMode_NotConvert_gt = 1 << 2,
+  CFX_SaxParseMode_NotConvert_apos = 1 << 3,
+  CFX_SaxParseMode_NotConvert_quot = 1 << 4,
+  CFX_SaxParseMode_NotConvert_sharp = 1 << 5,
+  CFX_SaxParseMode_NotSkipSpace = 1 << 6
 };
 
-class CFX_SAXCommentContext {
- public:
-  CFX_SAXCommentContext() : m_iHeaderCount(0), m_iTailCount(0) {}
-  int32_t m_iHeaderCount;
-  int32_t m_iTailCount;
-};
+class CXFA_SAXReaderHandler;
 
 class CFX_SAXReader {
  public:
@@ -95,7 +76,7 @@ class CFX_SAXReader {
                      uint32_t dwStart = 0,
                      uint32_t dwLen = -1,
                      uint32_t dwParseMode = 0);
-  int32_t ContinueParse(IFX_Pause* pPause = NULL);
+  int32_t ContinueParse(IFX_Pause* pPause = nullptr);
   void SkipCurrentNode();
   void SetHandler(CXFA_SAXReaderHandler* pHandler);
   void AppendData(uint8_t ch);
@@ -116,7 +97,7 @@ class CFX_SAXReader {
   void ParseTagEnd();
   void ParseTargetData();
 
- protected:
+ private:
   void Reset();
   void Push();
   void Pop();
@@ -139,8 +120,8 @@ class CFX_SAXReader {
   CFX_SAXItem* m_pRoot;
   CFX_SAXItem* m_pCurItem;
   uint32_t m_dwItemID;
-  FX_SAXMODE m_eMode;
-  FX_SAXMODE m_ePrevMode;
+  CFX_SaxMode m_eMode;
+  CFX_SaxMode m_ePrevMode;
   FX_BOOL m_bCharData;
   uint8_t m_CurByte;
   uint32_t m_dwDataOffset;
@@ -159,4 +140,4 @@ class CFX_SAXReader {
   CFX_SAXCommentContext* m_pCommentContext;
 };
 
-#endif  // XFA_FGAS_XML_FGAS_SAX_H_
+#endif  // XFA_FDE_XML_CFX_SAXREADER_H_
