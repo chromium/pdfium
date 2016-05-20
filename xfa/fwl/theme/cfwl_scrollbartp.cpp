@@ -51,20 +51,12 @@ FX_BOOL CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     return FALSE;
   IFWL_Widget* pWidget = pParams->m_pWidget;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
-  switch (pParams->m_dwStates & 0x03) {
-    case CFWL_PartState_Hovered: {
-      eState = FWLTHEME_STATE_Hover;
-      break;
-    }
-    case CFWL_PartState_Pressed: {
-      eState = FWLTHEME_STATE_Pressed;
-      break;
-    }
-    case CFWL_PartState_Disabled: {
-      eState = FWLTHEME_STATE_Disabale;
-      break;
-    }
-  }
+  if (pParams->m_dwStates & CFWL_PartState_Hovered)
+    eState = FWLTHEME_STATE_Hover;
+  else if (pParams->m_dwStates & CFWL_PartState_Pressed)
+    eState = FWLTHEME_STATE_Pressed;
+  else if (pParams->m_dwStates & CFWL_PartState_Disabled)
+    eState = FWLTHEME_STATE_Disabale;
   CFX_Graphics* pGraphics = pParams->m_pGraphics;
   CFX_RectF* pRect = &pParams->m_rtPart;
   FX_BOOL bVert = pWidget->GetStylesEx();
