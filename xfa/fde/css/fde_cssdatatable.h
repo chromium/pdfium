@@ -129,27 +129,29 @@ class CFDE_CSSValueListParser : public CFX_Target {
 #define FDE_CSSVALUETYPE_MaybeFunction 0x2000
 #define FDE_IsOnlyValue(type, enum) \
   (((type) & ~(enum)) == FDE_CSSVALUETYPE_Primitive)
+
 struct FDE_CSSPROPERTYTABLE {
   FDE_CSSPROPERTY eName;
   const FX_WCHAR* pszName;
   uint32_t dwHash;
   uint32_t dwType;
 };
-typedef FDE_CSSPROPERTYTABLE const* FDE_LPCCSSPROPERTYTABLE;
 
-FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(const CFX_WideStringC& wsName);
-FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName);
+const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByName(
+    const CFX_WideStringC& wsName);
+const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName);
+
 struct FDE_CSSPROPERTYVALUETABLE {
   FDE_CSSPROPERTYVALUE eName;
   const FX_WCHAR* pszName;
   uint32_t dwHash;
 };
-typedef FDE_CSSPROPERTYVALUETABLE const* FDE_LPCCSSPROPERTYVALUETABLE;
 
-FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(
+const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByName(
     const CFX_WideStringC& wsName);
-FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByEnum(
+const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByEnum(
     FDE_CSSPROPERTYVALUE eName);
+
 struct FDE_CSSMEDIATYPETABLE {
   uint16_t wHash;
   uint16_t wValue;

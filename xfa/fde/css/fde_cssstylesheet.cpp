@@ -102,7 +102,7 @@ void CFDE_CSSStyleSheet::Reset() {
   }
   m_RuleArray.RemoveAll();
   m_Selectors.RemoveAll();
-  m_StringCache.RemoveAll();
+  m_StringCache.clear();
   delete m_pAllocator;
   m_pAllocator = nullptr;
 }
@@ -175,7 +175,7 @@ FX_BOOL CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
     }
   } while (eStatus >= FDE_CSSSYNTAXSTATUS_None);
   m_Selectors.RemoveAll();
-  m_StringCache.RemoveAll();
+  m_StringCache.clear();
   return eStatus != FDE_CSSSYNTAXSTATUS_Error;
 }
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(

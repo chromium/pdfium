@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_CSS_FDE_CSSDECLARATION_H_
 #define XFA_FDE_CSS_FDE_CSSDECLARATION_H_
 
+#include <unordered_map>
+
 #include "xfa/fde/css/fde_cssdatatable.h"
 
 class FDE_CSSPropertyHolder : public CFX_Target {
@@ -26,8 +28,8 @@ class FDE_CSSCustomProperty : public CFX_Target {
 
 struct FDE_CSSPROPERTYARGS {
   IFX_MemoryAllocator* pStaticStore;
-  CFX_MapPtrToPtr* pStringCache;
-  FDE_LPCCSSPROPERTYTABLE pProperty;
+  std::unordered_map<uint32_t, FX_WCHAR*>* pStringCache;
+  const FDE_CSSPROPERTYTABLE* pProperty;
 };
 
 class CFDE_CSSDeclaration : public CFX_Target {

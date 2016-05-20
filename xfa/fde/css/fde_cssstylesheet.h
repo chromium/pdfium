@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_CSS_FDE_CSSSTYLESHEET_H_
 #define XFA_FDE_CSS_FDE_CSSSTYLESHEET_H_
 
+#include <unordered_map>
+
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
 
@@ -134,7 +136,7 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   CFDE_CSSRuleArray m_RuleArray;
   CFX_WideString m_szUrl;
   CFDE_CSSSelectorArray m_Selectors;
-  CFX_MapPtrToPtr m_StringCache;
+  std::unordered_map<uint32_t, FX_WCHAR*> m_StringCache;
 };
 
 #endif  // XFA_FDE_CSS_FDE_CSSSTYLESHEET_H_

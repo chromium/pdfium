@@ -565,7 +565,7 @@ FDE_LPCCSSPERSUDOTABLE FDE_GetCSSPersudoByEnum(FDE_CSSPERSUDO ePersudo) {
   return (ePersudo < FDE_CSSPERSUDO_NONE) ? (g_FDE_CSSPersudoType + ePersudo)
                                           : NULL;
 }
-FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(
+const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByName(
     const CFX_WideStringC& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint32_t dwHash = FX_HashCode_GetW(wsName, true);
@@ -585,10 +585,10 @@ FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(
   } while (iStart <= iEnd);
   return NULL;
 }
-FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName) {
+const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName) {
   return (eName < FDE_CSSPROPERTY_MAX) ? (g_FDE_CSSProperties + eName) : NULL;
 }
-FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(
+const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByName(
     const CFX_WideStringC& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint32_t dwHash = FX_HashCode_GetW(wsName, true);
@@ -608,7 +608,7 @@ FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(
   } while (iStart <= iEnd);
   return NULL;
 }
-FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByEnum(
+const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByEnum(
     FDE_CSSPROPERTYVALUE eName) {
   return (eName < FDE_CSSPROPERTYVALUE_MAX) ? (g_FDE_CSSPropertyValues + eName)
                                             : NULL;

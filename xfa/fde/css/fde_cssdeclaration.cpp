@@ -53,26 +53,21 @@ const FX_WCHAR* CFDE_CSSDeclaration::CopyToLocal(
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
   ASSERT(iValueLen > 0);
-  CFX_MapPtrToPtr* pCache = pArgs->pStringCache;
-  void* pKey = NULL;
+  std::unordered_map<uint32_t, FX_WCHAR*>* pCache = pArgs->pStringCache;
+  uint32_t key = 0;
   if (pCache) {
-    void* pszCached = NULL;
-    pKey = (void*)(uintptr_t)FX_HashCode_GetW(
-        CFX_WideStringC(pszValue, iValueLen), false);
-    if (pCache->Lookup(pKey, pszCached)) {
-      return (const FX_WCHAR*)pszCached;
-    }
+    key = FX_HashCode_GetW(CFX_WideStringC(pszValue, iValueLen), false);
+    auto it = pCache->find(key);
+    if (it != pCache->end())
+      return it->second;
   }
   FX_WCHAR* psz =
       (FX_WCHAR*)pArgs->pStaticStore->Alloc((iValueLen + 1) * sizeof(FX_WCHAR));
-  if (psz == NULL) {
-    return NULL;
-  }
   FXSYS_wcsncpy(psz, pszValue, iValueLen);
   psz[iValueLen] = '\0';
-  if (pCache) {
-    pCache->SetAt(pKey, psz);
-  }
+  if (pCache)
+    (*pCache)[key] = psz;
+
   return psz;
 }
 IFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewNumberValue(
