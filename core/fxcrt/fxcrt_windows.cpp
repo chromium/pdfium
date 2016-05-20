@@ -9,9 +9,12 @@
 #include "core/fxcrt/include/fx_string.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
+
+// static
+IFXCRT_FileAccess* IFXCRT_FileAccess::Create() {
   return new CFXCRT_FileAccess_Win64;
 }
+
 void FXCRT_Windows_GetFileMode(uint32_t dwMode,
                                uint32_t& dwAccess,
                                uint32_t& dwShare,
@@ -74,9 +77,6 @@ void CFXCRT_FileAccess_Win64::Close() {
   }
   ::CloseHandle(m_hFile);
   m_hFile = NULL;
-}
-void CFXCRT_FileAccess_Win64::Release() {
-  delete this;
 }
 FX_FILESIZE CFXCRT_FileAccess_Win64::GetSize() const {
   if (!m_hFile) {

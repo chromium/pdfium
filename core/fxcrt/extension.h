@@ -8,17 +8,19 @@
 #define CORE_FXCRT_EXTENSION_H_
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 
 class IFXCRT_FileAccess {
  public:
+  static IFXCRT_FileAccess* Create();
   virtual ~IFXCRT_FileAccess() {}
+
   virtual FX_BOOL Open(const CFX_ByteStringC& fileName, uint32_t dwMode) = 0;
   virtual FX_BOOL Open(const CFX_WideStringC& fileName, uint32_t dwMode) = 0;
   virtual void Close() = 0;
-  virtual void Release() = 0;
   virtual FX_FILESIZE GetSize() const = 0;
   virtual FX_FILESIZE GetPosition() const = 0;
   virtual FX_FILESIZE SetPosition(FX_FILESIZE pos) = 0;
@@ -31,7 +33,6 @@ class IFXCRT_FileAccess {
   virtual FX_BOOL Flush() = 0;
   virtual FX_BOOL Truncate(FX_FILESIZE szFile) = 0;
 };
-IFXCRT_FileAccess* FXCRT_FileAccess_Create();
 
 #ifdef PDF_ENABLE_XFA
 class CFX_CRTFileAccess : public IFX_FileAccess {
@@ -69,7 +70,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
 
 class CFX_CRTFileStream final : public IFX_FileStream {
  public:
-  explicit CFX_CRTFileStream(IFXCRT_FileAccess* pFA);
+  explicit CFX_CRTFileStream(std::unique_ptr<IFXCRT_FileAccess> pFA);
   ~CFX_CRTFileStream() override;
 
   // IFX_FileStream:
@@ -86,7 +87,7 @@ class CFX_CRTFileStream final : public IFX_FileStream {
   FX_BOOL Flush() override;
 
  protected:
-  IFXCRT_FileAccess* m_pFile;
+  std::unique_ptr<IFXCRT_FileAccess> m_pFile;
   uint32_t m_dwCount;
 };
 

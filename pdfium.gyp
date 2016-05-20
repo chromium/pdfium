@@ -627,8 +627,6 @@
         'core/fxcrt/fx_unicode.cpp',
         'core/fxcrt/fx_xml_composer.cpp',
         'core/fxcrt/fx_xml_parser.cpp',
-        'core/fxcrt/fxcrt_platforms.cpp',
-        'core/fxcrt/fxcrt_platforms.h',
         'core/fxcrt/fxcrt_posix.cpp',
         'core/fxcrt/fxcrt_posix.h',
         'core/fxcrt/fxcrt_stream.cpp',

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <utility>
+
 #include "core/fxcrt/extension.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_ext.h"
@@ -14,14 +16,10 @@
 #include <ctime>
 #endif
 
-CFX_CRTFileStream::CFX_CRTFileStream(IFXCRT_FileAccess* pFA)
-    : m_pFile(pFA), m_dwCount(1) {}
+CFX_CRTFileStream::CFX_CRTFileStream(std::unique_ptr<IFXCRT_FileAccess> pFA)
+    : m_pFile(std::move(pFA)), m_dwCount(1) {}
 
-CFX_CRTFileStream::~CFX_CRTFileStream() {
-  if (m_pFile) {
-    m_pFile->Release();
-  }
-}
+CFX_CRTFileStream::~CFX_CRTFileStream() {}
 
 IFX_FileStream* CFX_CRTFileStream::Retain() {
   m_dwCount++;
@@ -83,27 +81,18 @@ IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath) {
 #endif  // PDF_ENABLE_XFA
 
 IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, uint32_t dwModes) {
-  IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();
-  if (!pFA) {
-    return NULL;
-  }
-  if (!pFA->Open(filename, dwModes)) {
-    pFA->Release();
-    return NULL;
-  }
-  return new CFX_CRTFileStream(pFA);
+  std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
+  if (!pFA->Open(filename, dwModes))
+    return nullptr;
+  return new CFX_CRTFileStream(std::move(pFA));
 }
+
 IFX_FileStream* FX_CreateFileStream(const FX_WCHAR* filename,
                                     uint32_t dwModes) {
-  IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();
-  if (!pFA) {
-    return NULL;
-  }
-  if (!pFA->Open(filename, dwModes)) {
-    pFA->Release();
-    return NULL;
-  }
-  return new CFX_CRTFileStream(pFA);
+  std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
+  if (!pFA->Open(filename, dwModes))
+    return nullptr;
+  return new CFX_CRTFileStream(std::move(pFA));
 }
 IFX_FileRead* FX_CreateFileRead(const FX_CHAR* filename) {
   return FX_CreateFileStream(filename, FX_FILEMODE_ReadOnly);

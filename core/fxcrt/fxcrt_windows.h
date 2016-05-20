@@ -19,7 +19,6 @@ class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess {
   FX_BOOL Open(const CFX_ByteStringC& fileName, uint32_t dwMode) override;
   FX_BOOL Open(const CFX_WideStringC& fileName, uint32_t dwMode) override;
   void Close() override;
-  void Release() override;
   FX_FILESIZE GetSize() const override;
   FX_FILESIZE GetPosition() const override;
   FX_FILESIZE SetPosition(FX_FILESIZE pos) override;

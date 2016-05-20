@@ -11,9 +11,12 @@
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
-IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
+
+// static
+IFXCRT_FileAccess* IFXCRT_FileAccess::Create() {
   return new CFXCRT_FileAccess_Posix;
 }
+
 void FXCRT_Posix_GetFileMode(uint32_t dwModes,
                              int32_t& nFlags,
                              int32_t& nMasks) {
@@ -53,9 +56,6 @@ void CFXCRT_FileAccess_Posix::Close() {
   }
   close(m_nFD);
   m_nFD = -1;
-}
-void CFXCRT_FileAccess_Posix::Release() {
-  delete this;
 }
 FX_FILESIZE CFXCRT_FileAccess_Posix::GetSize() const {
   if (m_nFD < 0) {
@@ -127,4 +127,5 @@ FX_BOOL CFXCRT_FileAccess_Posix::Truncate(FX_FILESIZE szFile) {
   }
   return !ftruncate(m_nFD, szFile);
 }
+
 #endif
