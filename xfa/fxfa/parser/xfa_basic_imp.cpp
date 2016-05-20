@@ -488,7 +488,6 @@ FX_BOOL CXFA_Measurement::ToUnit(XFA_UNIT eUnit, FX_FLOAT& fValue) const {
       fValue = 0;
       return FALSE;
   }
-  return FALSE;
 }
 XFA_UNIT CXFA_Measurement::GetUnit(const CFX_WideStringC& wsUnit) {
   if (wsUnit == FX_WSTRC(L"mm")) {

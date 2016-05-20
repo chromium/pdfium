@@ -1194,15 +1194,10 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   FX_BOOL bVerticalDoc = (dwStyles & FX_TXTLAYOUTSTYLE_VerticalLayout) != 0;
   FX_BOOL bVerticalChar = (dwStyles & FX_TXTLAYOUTSTYLE_VerticalChars) != 0;
   int32_t iRotation = GetLineRotation(dwStyles) + pTxtRun->iCharRotation;
-  int32_t iCharRotation;
-  FX_WCHAR wch, wPrev = 0xFEFF, wNext, wForm, wLast = 0xFEFF;
-  int32_t iWidth, iCharWidth, iCharHeight;
   FX_FLOAT fX, fY, fCharWidth, fCharHeight;
   int32_t iHorScale = pTxtRun->iHorizontalScale;
   int32_t iVerScale = pTxtRun->iVerticalScale;
   FX_BOOL bSkipSpace = pTxtRun->bSkipSpace;
-  FX_BOOL bEmptyChar, bShadda = FALSE, bLam = FALSE;
-  uint32_t dwProps, dwCharType;
   FX_FORMCHAR formChars[3];
   FX_FLOAT fYBase;
   fX = rtText.left;
@@ -1217,8 +1212,17 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
     fYBase = rtText.top + (rtText.height - fFontSize) / 2.0f;
     fY = fYBase + fAscent;
   }
-  int32_t iCount = 0, iNext, iForms;
+  int32_t iCount = 0;
+  int32_t iNext = 0;
+  FX_WCHAR wPrev = 0xFEFF;
+  FX_WCHAR wNext = 0xFEFF;
+  FX_WCHAR wForm = 0xFEFF;
+  FX_WCHAR wLast = 0xFEFF;
+  FX_BOOL bShadda = FALSE;
+  FX_BOOL bLam = FALSE;
   for (int32_t i = 0; i <= iLength; i++) {
+    int32_t iWidth;
+    FX_WCHAR wch;
     if (pAccess != NULL) {
       wch = pAccess->GetChar(pIdentity, i);
       iWidth = pAccess->GetWidth(pIdentity, i);
@@ -1226,8 +1230,8 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       wch = *pStr++;
       iWidth = *pWidths++;
     }
-    dwProps = FX_GetUnicodeProperties(wch);
-    dwCharType = (dwProps & FX_CHARTYPEBITSMASK);
+    uint32_t dwProps = FX_GetUnicodeProperties(wch);
+    uint32_t dwCharType = (dwProps & FX_CHARTYPEBITSMASK);
     if (dwCharType == FX_CHARTYPE_ArabicAlef && iWidth == 0) {
       wPrev = 0xFEFF;
       wLast = wch;
@@ -1340,17 +1344,17 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       bLam = FALSE;
     }
     dwProps = FX_GetUnicodeProperties(wForm);
-    iCharRotation = iRotation;
+    int32_t iCharRotation = iRotation;
     if (bVerticalChar && (dwProps & 0x8000) != 0) {
       iCharRotation++;
     }
     iCharRotation %= 4;
-    bEmptyChar =
+    FX_BOOL bEmptyChar =
         (dwCharType >= FX_CHARTYPE_Tab && dwCharType <= FX_CHARTYPE_Control);
     if (wForm == 0xFEFF) {
       bEmptyChar = TRUE;
     }
-    iForms = bLam ? 3 : 1;
+    int32_t iForms = bLam ? 3 : 1;
     iCount += (bEmptyChar && bSkipSpace) ? 0 : iForms;
     if (pCharPos == NULL) {
       if (iWidth > 0) {
@@ -1359,7 +1363,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       wLast = wch;
       continue;
     }
-    iCharWidth = iWidth;
+    int32_t iCharWidth = iWidth;
     if (iCharWidth < 0) {
       iCharWidth = -iCharWidth;
     }
@@ -1394,6 +1398,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
           *pWSForms += wForm;
         }
       }
+      int32_t iCharHeight;
       if (bVerticalDoc) {
         iCharHeight = iCharWidth;
         iCharWidth = 1000;

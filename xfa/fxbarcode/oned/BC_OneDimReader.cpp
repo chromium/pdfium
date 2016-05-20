@@ -211,9 +211,7 @@ int32_t CBC_OneDimReader::DecodeDigit(CBC_CommonBitArray* row,
   }
   if (bestMatch >= 0) {
     return bestMatch;
-  } else {
-    e = BCExceptionNotFound;
-    return 0;
   }
+  e = BCExceptionNotFound;
   return 0;
 }

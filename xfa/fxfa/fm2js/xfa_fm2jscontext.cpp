@@ -1291,7 +1291,7 @@ void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,
   int32_t argc = args.GetLength();
   if ((argc > 0) && (argc < 4)) {
     FX_BOOL bFlags = FALSE;
-    int32_t dDate;
+    int32_t dDate = 0;
     CFX_ByteString formatString;
     CFX_ByteString localString;
     FXJSE_HVALUE dateValue = GetSimpleHValue(hThis, args, 0);
@@ -1446,7 +1446,7 @@ void CXFA_FM2JSContext::Num2GMTime(FXJSE_HOBJECT hThis,
   int32_t argc = args.GetLength();
   if ((argc > 0) && (argc < 4)) {
     FX_BOOL bFlags = FALSE;
-    int32_t iTime;
+    int32_t iTime = 0;
     CFX_ByteString formatString;
     CFX_ByteString localString;
     FXJSE_HVALUE timeValue = GetSimpleHValue(hThis, args, 0);
@@ -1508,7 +1508,7 @@ void CXFA_FM2JSContext::Num2Time(FXJSE_HOBJECT hThis,
   int32_t argc = args.GetLength();
   if ((argc > 0) && (argc < 4)) {
     FX_BOOL bFlags = FALSE;
-    FX_FLOAT fTime;
+    FX_FLOAT fTime = 0.0f;
     CFX_ByteString formatString;
     CFX_ByteString localString;
     FXJSE_HVALUE timeValue = GetSimpleHValue(hThis, args, 0);
@@ -4860,7 +4860,7 @@ void CXFA_FM2JSContext::Str(FXJSE_HOBJECT hThis,
   int32_t argc = args.GetLength();
   if ((argc > 0) && (argc < 4)) {
     FX_BOOL bFlags = FALSE;
-    FX_FLOAT fNumber;
+    FX_FLOAT fNumber = 0.0f;
     int32_t iWidth = 10;
     int32_t iPrecision = 0;
     FXJSE_HVALUE numberValue = GetSimpleHValue(hThis, args, 0);
@@ -5171,7 +5171,7 @@ void CXFA_FM2JSContext::WordNum(FXJSE_HOBJECT hThis,
   int32_t argc = args.GetLength();
   if ((argc > 0) && (argc < 4)) {
     FX_BOOL bFlags = FALSE;
-    FX_FLOAT fNumber;
+    FX_FLOAT fNumber = 0.0f;
     int32_t iIdentifier = 0;
     CFX_ByteString localeString;
     FXJSE_HVALUE numberValue = GetSimpleHValue(hThis, args, 0);
@@ -5477,14 +5477,12 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,
     CFX_ByteString bsContentType;
     CFX_ByteString bsEncode;
     CFX_ByteString bsHeader;
-    FXJSE_HVALUE argOne;
-    FXJSE_HVALUE argTwo;
-    FXJSE_HVALUE argThree;
-    FXJSE_HVALUE argFour;
-    FXJSE_HVALUE argFive;
-    argOne = GetSimpleHValue(hThis, args, 0);
+    FXJSE_HVALUE argThree = nullptr;
+    FXJSE_HVALUE argFour = nullptr;
+    FXJSE_HVALUE argFive = nullptr;
+    FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     HValueToUTF8String(argOne, bsURL);
-    argTwo = GetSimpleHValue(hThis, args, 1);
+    FXJSE_HVALUE argTwo = GetSimpleHValue(hThis, args, 1);
     HValueToUTF8String(argTwo, bsData);
     if (argc > 2) {
       argThree = GetSimpleHValue(hThis, args, 2);
@@ -5548,12 +5546,10 @@ void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,
     CFX_ByteString bsURL;
     CFX_ByteString bsData;
     CFX_ByteString bsEncode;
-    FXJSE_HVALUE argOne;
-    FXJSE_HVALUE argTwo;
-    FXJSE_HVALUE argThree;
-    argOne = GetSimpleHValue(hThis, args, 0);
+    FXJSE_HVALUE argThree = nullptr;
+    FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     HValueToUTF8String(argOne, bsURL);
-    argTwo = GetSimpleHValue(hThis, args, 1);
+    FXJSE_HVALUE argTwo = GetSimpleHValue(hThis, args, 1);
     HValueToUTF8String(argTwo, bsData);
     if (argc > 2) {
       argThree = GetSimpleHValue(hThis, args, 2);

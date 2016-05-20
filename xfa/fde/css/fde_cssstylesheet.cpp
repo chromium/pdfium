@@ -321,7 +321,6 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadFontFaceRule(
         FDE_CSSSWITCHDEFAULTS();
     }
   }
-  return FDE_CSSSYNTAXSTATUS_None;
 }
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadImportRule(
     CFDE_CSSSyntaxParser* pSyntax) {
@@ -353,7 +352,6 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::SkipRuleSet(
         FDE_CSSSWITCHDEFAULTS();
     }
   }
-  return FDE_CSSSYNTAXSTATUS_None;
 }
 void CFDE_CSSStyleRule::SetSelector(IFX_MemoryAllocator* pStaticStore,
                                     const CFDE_CSSSelectorArray& list) {

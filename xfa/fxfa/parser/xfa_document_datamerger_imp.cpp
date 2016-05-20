@@ -886,13 +886,13 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
                                                 pTemplateChild, TRUE);
           } else if (pTemplateChild->GetObjectType() ==
                      XFA_OBJECTTYPE_ContainerNode) {
-            CXFA_Node* pDataMatch;
             bSelfMatch = FALSE;
             eBindMatch = XFA_ATTRIBUTEENUM_None;
+            CXFA_Node* pDataMatch;
             if (eRelation != XFA_ATTRIBUTEENUM_Ordered &&
                 (pDataMatch = XFA_DataMerge_FindMatchingDataNode(
                      pDocument, pTemplateChild, pDataScope, bAccessedDataDOM,
-                     FALSE, NULL, bSelfMatch, eBindMatch))) {
+                     FALSE, NULL, bSelfMatch, eBindMatch)) != nullptr) {
               XFA_DataMerge_RecurseRecord sNewRecord = {pTemplateChild,
                                                         pDataMatch};
               if (bSelfMatch) {

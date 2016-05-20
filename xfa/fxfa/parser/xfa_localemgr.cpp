@@ -1123,9 +1123,8 @@ static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
 CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
     : m_dwLocaleFlags(0x00) {
   m_dwDeflcid = XFA_GetLanguage(wsDeflcid);
-  CXFA_Node* pNodeLocale = NULL;
-  if (pLocaleSet &&
-      (pNodeLocale = pLocaleSet->GetNodeItem(XFA_NODEITEM_FirstChild))) {
+  if (pLocaleSet) {
+    CXFA_Node* pNodeLocale = pLocaleSet->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pNodeLocale) {
       m_LocaleArray.Add(new CXFA_NodeLocale(pNodeLocale));
       pNodeLocale = pNodeLocale->GetNodeItem(XFA_NODEITEM_NextSibling);

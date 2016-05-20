@@ -362,7 +362,6 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket(CFDE_XMLNode* pXMLDocumentNode,
     default:
       return ParseAsXDPPacket_User(pXMLDocumentNode, ePacketID);
   }
-  return NULL;
 }
 CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
     CFDE_XMLNode* pXMLDocumentNode,

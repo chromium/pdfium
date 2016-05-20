@@ -120,7 +120,7 @@ class CXFA_NodeIteratorTemplate {
     NodeType** ppNode = NULL;
     NodeType* pCurrent = GetCurrent();
     while (m_NodeStack.GetSize() > 0) {
-      while ((ppNode = m_NodeStack.GetTopElement())) {
+      while ((ppNode = m_NodeStack.GetTopElement()) != nullptr) {
         if (pCurrent != *ppNode) {
           return *ppNode;
         }
@@ -130,7 +130,7 @@ class CXFA_NodeIteratorTemplate {
         }
         m_NodeStack.Push(pChild);
       }
-      while ((ppNode = m_NodeStack.GetTopElement())) {
+      while ((ppNode = m_NodeStack.GetTopElement()) != nullptr) {
         NodeType* pNext = TraverseStrategy::GetNextSibling(*ppNode);
         m_NodeStack.Pop();
         if (m_NodeStack.GetSize() == 0) {
@@ -145,8 +145,8 @@ class CXFA_NodeIteratorTemplate {
     return NULL;
   }
   NodeType* SkipChildrenAndMoveToNext() {
-    NodeType** ppNode = NULL;
-    while ((ppNode = m_NodeStack.GetTopElement())) {
+    NodeType** ppNode = nullptr;
+    while ((ppNode = m_NodeStack.GetTopElement()) != nullptr) {
       NodeType* pNext = TraverseStrategy::GetNextSibling(*ppNode);
       m_NodeStack.Pop();
       if (m_NodeStack.GetSize() == 0) {

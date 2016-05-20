@@ -270,12 +270,13 @@ void CXFA_FFWidget::Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy) {
 }
 static void XFA_GetMatrix(CFX_Matrix& m,
                           int32_t iRotate,
-                          int32_t at,
+                          XFA_ATTRIBUTEENUM at,
                           const CFX_RectF& rt) {
   if (!iRotate) {
     return;
   }
-  FX_FLOAT fAnchorX, fAnchorY;
+  FX_FLOAT fAnchorX = 0;
+  FX_FLOAT fAnchorY = 0;
   switch (at) {
     case XFA_ATTRIBUTEENUM_TopLeft:
       fAnchorX = rt.left, fAnchorY = rt.top;
@@ -304,6 +305,8 @@ static void XFA_GetMatrix(CFX_Matrix& m,
       break;
     case XFA_ATTRIBUTEENUM_BottomRight:
       fAnchorX = rt.right(), fAnchorY = rt.bottom();
+      break;
+    default:
       break;
   }
   switch (iRotate) {
@@ -1157,20 +1160,15 @@ static void XFA_BOX_GetPath(CXFA_Box box,
                             FX_BOOL bStart,
                             FX_BOOL bCorner) {
   ASSERT(nIndex >= 0 && nIndex < 8);
-  FX_BOOL bInverted, bRound;
-  FX_FLOAT fRadius1, fRadius2, sx, sy, vx, vy, nx, ny, offsetY, offsetX,
-      offsetEX, offsetEY;
-  CFX_PointF cpStart, cp, cp1, cp2;
-  CFX_RectF rtRadius;
   int32_t n = (nIndex & 1) ? nIndex - 1 : nIndex;
   CXFA_Corner corner1(strokes[n].GetNode());
   CXFA_Corner corner2(strokes[(n + 2) % 8].GetNode());
-  fRadius1 = bCorner ? corner1.GetRadius() : 0;
-  fRadius2 = bCorner ? corner2.GetRadius() : 0;
-  bInverted = corner1.IsInverted();
-  offsetY = 0.0f;
-  offsetX = 0.0f;
-  bRound = corner1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
+  FX_FLOAT fRadius1 = bCorner ? corner1.GetRadius() : 0.0f;
+  FX_FLOAT fRadius2 = bCorner ? corner2.GetRadius() : 0.0f;
+  FX_BOOL bInverted = corner1.IsInverted();
+  FX_FLOAT offsetY = 0.0f;
+  FX_FLOAT offsetX = 0.0f;
+  FX_BOOL bRound = corner1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
   FX_FLOAT halfAfter = 0.0f;
   FX_FLOAT halfBefore = 0.0f;
   CXFA_Stroke stroke = strokes[nIndex];
@@ -1189,12 +1187,21 @@ static void XFA_BOX_GetPath(CXFA_Box box,
     CXFA_Stroke edgeBefore = strokes[(nIndex + 8 - 2) % 8];
     CXFA_Stroke edgeAfter = strokes[(nIndex + 2) % 8];
     if (!bRound && !bInverted) {
-      { halfBefore = edgeBefore.GetThickness() / 2; }
-      { halfAfter = edgeAfter.GetThickness() / 2; }
+      halfBefore = edgeBefore.GetThickness() / 2;
+      halfAfter = edgeAfter.GetThickness() / 2;
     }
   }
-  offsetEX = 0.0f;
-  offsetEY = 0.0f;
+  FX_FLOAT offsetEX = 0.0f;
+  FX_FLOAT offsetEY = 0.0f;
+  FX_FLOAT sx = 0.0f;
+  FX_FLOAT sy = 0.0f;
+  FX_FLOAT vx = 1.0f;
+  FX_FLOAT vy = 1.0f;
+  FX_FLOAT nx = 1.0f;
+  FX_FLOAT ny = 1.0f;
+  CFX_PointF cpStart;
+  CFX_PointF cp1;
+  CFX_PointF cp2;
   if (bRound) {
     sy = FX_PI / 2;
   }
@@ -1291,6 +1298,7 @@ static void XFA_BOX_GetPath(CXFA_Box box,
     if (bInverted) {
       sy *= -1;
     }
+    CFX_RectF rtRadius;
     rtRadius.Set(cp1.x + offsetX * 2, cp1.y + offsetY * 2,
                  fRadius1 * 2 * vx - offsetX * 2,
                  fRadius1 * 2 * vy - offsetY * 2);
@@ -1301,6 +1309,7 @@ static void XFA_BOX_GetPath(CXFA_Box box,
     path.ArcTo(rtRadius.left, rtRadius.top, rtRadius.width, rtRadius.height, sx,
                sy);
   } else {
+    CFX_PointF cp;
     if (bInverted) {
       cp.x = cp1.x + fRadius1 * vx, cp.y = cp1.y + fRadius1 * vy;
     } else {
@@ -1369,17 +1378,21 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
                           rtWidget.height);
     return;
   }
-  FX_BOOL bInverted, bRound;
-  FX_FLOAT fRadius1, fRadius2, sx, sy, vx, vy, nx, ny;
-  CFX_PointF cp, cp1, cp2;
-  CFX_RectF rtRadius;
+
   for (int32_t i = 0; i < 8; i += 2) {
+    FX_FLOAT sx = 0.0f;
+    FX_FLOAT sy = 0.0f;
+    FX_FLOAT vx = 1.0f;
+    FX_FLOAT vy = 1.0f;
+    FX_FLOAT nx = 1.0f;
+    FX_FLOAT ny = 1.0f;
+    CFX_PointF cp1, cp2;
     CXFA_Corner corner1(strokes[i].GetNode());
     CXFA_Corner corner2(strokes[(i + 2) % 8].GetNode());
-    fRadius1 = corner1.GetRadius();
-    fRadius2 = corner2.GetRadius();
-    bInverted = corner1.IsInverted();
-    bRound = corner1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
+    FX_FLOAT fRadius1 = corner1.GetRadius();
+    FX_FLOAT fRadius2 = corner2.GetRadius();
+    FX_BOOL bInverted = corner1.IsInverted();
+    FX_BOOL bRound = corner1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
     if (bRound) {
       sy = FX_PI / 2;
     }
@@ -1439,6 +1452,7 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
       if (bInverted) {
         sy *= -1;
       }
+      CFX_RectF rtRadius;
       rtRadius.Set(cp1.x, cp1.y, fRadius1 * 2 * vx, fRadius1 * 2 * vy);
       rtRadius.Normalize();
       if (bInverted) {
@@ -1447,6 +1461,7 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
       fillPath.ArcTo(rtRadius.left, rtRadius.top, rtRadius.width,
                      rtRadius.height, sx, sy);
     } else {
+      CFX_PointF cp;
       if (bInverted) {
         cp.x = cp1.x + fRadius1 * vx, cp.y = cp1.y + fRadius1 * vy;
       } else {

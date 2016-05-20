@@ -713,7 +713,7 @@ CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
 }
 void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
   CXFA_FFWidget* pWidget = NULL;
-  while ((pWidget = GetNextWidget(pWidget))) {
+  while ((pWidget = GetNextWidget(pWidget)) != nullptr) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
         (GetUIType() != XFA_ELEMENT_CheckButton && pWidget->IsFocused())) {
       continue;

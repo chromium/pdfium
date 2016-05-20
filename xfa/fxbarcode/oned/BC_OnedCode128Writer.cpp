@@ -45,10 +45,7 @@ FX_BOOL CBC_OnedCode128Writer::CheckContentValidity(
   if (m_codeFormat == BC_CODE128_B || m_codeFormat == BC_CODE128_C) {
     while (position < contents.GetLength()) {
       patternIndex = (int32_t)contents.GetAt(position);
-      if (patternIndex >= 32 && patternIndex <= 126 && patternIndex != 34) {
-        position++;
-        continue;
-      } else {
+      if (patternIndex < 32 || patternIndex > 126 || patternIndex == 34) {
         ret = FALSE;
         break;
       }

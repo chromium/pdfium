@@ -1023,21 +1023,15 @@ void CFDE_TxtEdtEngine::UpdatePages() {
     return;
 
   if (nSize > nPageCount) {
-    IFDE_TxtEdtPage* pPage = NULL;
-    int32_t i = 0;
-    for (i = nSize - 1; i >= nPageCount; i--) {
+    for (int32_t i = nSize - 1; i >= nPageCount; i--) {
       delete m_PagePtrArray[i];
       m_PagePtrArray.RemoveAt(i);
     }
     return;
   }
   if (nSize < nPageCount) {
-    IFDE_TxtEdtPage* pPage = NULL;
-    int32_t i = 0;
-    for (i = nSize; i < nPageCount; i++) {
-      pPage = IFDE_TxtEdtPage::Create(this, i);
-      m_PagePtrArray.Add(pPage);
-    }
+    for (int32_t i = nSize; i < nPageCount; i++)
+      m_PagePtrArray.Add(IFDE_TxtEdtPage::Create(this, i));
     return;
   }
 }
@@ -1606,10 +1600,9 @@ FX_BOOL CFDE_TxtEdtEngine::IsSelect() {
 void CFDE_TxtEdtEngine::DeleteSelect() {
   int32_t nCountRange = CountSelRanges();
   if (nCountRange > 0) {
-    int32_t nSelStart;
-    int32_t nSelCount;
+    int32_t nSelStart = 0;
     while (nCountRange > 0) {
-      nSelCount = GetSelRange(--nCountRange, nSelStart);
+      int32_t nSelCount = GetSelRange(--nCountRange, nSelStart);
       delete m_SelRangePtrArr[nCountRange];
       m_SelRangePtrArr.RemoveAt(nCountRange);
       DeleteRange_DoRecord(nSelStart, nSelCount, TRUE);

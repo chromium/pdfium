@@ -150,10 +150,8 @@ int32_t CBC_OnedCode128Reader::DecodeCode(CBC_CommonBitArray* row,
   }
   if (bestMatch >= 0) {
     return bestMatch;
-  } else {
-    e = BCExceptionNotFound;
-    return 0;
   }
+  e = BCExceptionNotFound;
   return 0;
 }
 CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber,

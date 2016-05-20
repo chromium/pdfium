@@ -354,7 +354,6 @@ FX_BOOL CFDE_XMLNode::InsertNodeItem(CFDE_XMLNode::NodeItem eItem,
     default:
       return FALSE;
   }
-  return FALSE;
 }
 CFDE_XMLNode* CFDE_XMLNode::RemoveNodeItem(CFDE_XMLNode::NodeItem eItem) {
   CFDE_XMLNode* pNode = NULL;

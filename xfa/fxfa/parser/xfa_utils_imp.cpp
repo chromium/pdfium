@@ -255,14 +255,12 @@ FX_BOOL XFA_IsLayoutElement(XFA_ELEMENT eElement, FX_BOOL bLayoutContainer) {
     case XFA_ELEMENT_Subform:
     case XFA_ELEMENT_ExclGroup:
     case XFA_ELEMENT_SubformSet:
-      return TRUE;
     case XFA_ELEMENT_PageArea:
     case XFA_ELEMENT_Form:
       return TRUE;
     default:
       return FALSE;
   }
-  return FALSE;
 }
 
 static const FX_DOUBLE fraction_scales[] = {0.1,

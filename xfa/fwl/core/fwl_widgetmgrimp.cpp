@@ -447,21 +447,17 @@ IFWL_Widget* CFWL_WidgetMgr::GetSiblingRadioButton(IFWL_Widget* pWidget,
 }
 IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
     IFWL_Widget* pRadioButton) {
-  if (pRadioButton->GetStyles() & FWL_WGTSTYLE_Group) {
-    return pRadioButton;
-  }
   IFWL_Widget* pNext = pRadioButton;
-  while ((pNext = GetSiblingRadioButton(pNext, FALSE)) != NULL) {
-    if (pNext->GetStyles() & FWL_WGTSTYLE_Group) {
+  while (pNext) {
+    if (pNext->GetStyles() & FWL_WGTSTYLE_Group)
       return pNext;
-    }
+    pNext = GetSiblingRadioButton(pNext, FALSE);
   }
   pNext = GetWidget(pRadioButton, FWL_WGTRELATION_LastSibling);
-  while ((pNext = GetSiblingRadioButton(pNext, FALSE)) && pNext &&
+  while ((pNext = GetSiblingRadioButton(pNext, FALSE)) != nullptr &&
          pNext != pRadioButton) {
-    if (pNext->GetStyles() & FWL_WGTSTYLE_Group) {
+    if (pNext->GetStyles() & FWL_WGTSTYLE_Group)
       return pNext;
-    }
   }
   pNext = GetWidget(pRadioButton, FWL_WGTRELATION_FirstSibling);
   return GetSiblingRadioButton(pNext, TRUE);

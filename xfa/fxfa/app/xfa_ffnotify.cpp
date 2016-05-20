@@ -56,7 +56,7 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetData* pSender,
     return;
 
   CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget))) {
+  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
     if (pWidget->IsLoaded()) {
       if (pWidgetAcc->IsListBox()) {
         static_cast<CXFA_FFListBox*>(pWidget)->InsertItem(pLabel, iIndex);
@@ -74,7 +74,7 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_WidgetData* pSender,
     return;
 
   CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget))) {
+  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
     if (pWidget->IsLoaded()) {
       if (pWidgetAcc->IsListBox()) {
         static_cast<CXFA_FFListBox*>(pWidget)->DeleteItem(iIndex);
@@ -360,7 +360,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_ATTRIBUTE eAttr) {
     return;
 
   CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget))) {
+  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
     if (pWidget->IsLoaded())
       pWidget->AddInvalidateRect();
   }
@@ -422,7 +422,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     }
   }
   CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget))) {
+  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
     if (!pWidget->IsLoaded())
       continue;
 

@@ -543,7 +543,7 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
   if (!pSyntax->Init(psz, iLen, 32, TRUE))
     return;
 
-  int32_t iLen2;
+  int32_t iLen2 = 0;
   const FX_WCHAR* psz2;
   FDE_CSSPROPERTYARGS args;
   args.pStringCache = nullptr;

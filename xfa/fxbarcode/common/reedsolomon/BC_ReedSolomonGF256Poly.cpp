@@ -104,14 +104,11 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Clone(int32_t& e) {
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(
     CBC_ReedSolomonGF256Poly* other,
     int32_t& e) {
-  if (IsZero()) {
+  if (IsZero())
     return other->Clone(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  }
-  if (other->IsZero()) {
+  if (other->IsZero())
     return Clone(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  }
+
   CFX_Int32Array smallerCoefficients;
   smallerCoefficients.Copy(m_coefficients);
   CFX_Int32Array largerCoefficients;
@@ -141,11 +138,9 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(
     CBC_ReedSolomonGF256Poly* other,
     int32_t& e) {
-  if (IsZero() || other->IsZero()) {
-    CBC_ReedSolomonGF256Poly* temp = m_field->GetZero()->Clone(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    return temp;
-  }
+  if (IsZero() || other->IsZero())
+    return m_field->GetZero()->Clone(e);
+
   CFX_Int32Array aCoefficients;
   aCoefficients.Copy(m_coefficients);
   int32_t aLength = m_coefficients.GetSize();
@@ -169,15 +164,11 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(
 }
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(int32_t scalar,
                                                              int32_t& e) {
-  if (scalar == 0) {
-    CBC_ReedSolomonGF256Poly* temp = m_field->GetZero()->Clone(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    return temp;
-  }
-  if (scalar == 1) {
+  if (scalar == 0)
+    return m_field->GetZero()->Clone(e);
+  if (scalar == 1)
     return Clone(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  }
+
   int32_t size = m_coefficients.GetSize();
   CFX_Int32Array product;
   product.SetSize(size);
@@ -195,13 +186,11 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(
     int32_t& e) {
   if (degree < 0) {
     e = BCExceptionDegreeIsNegative;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    return nullptr;
   }
-  if (coefficient == 0) {
-    CBC_ReedSolomonGF256Poly* temp = m_field->GetZero()->Clone(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    return temp;
-  }
+  if (coefficient == 0)
+    return m_field->GetZero()->Clone(e);
+
   int32_t size = m_coefficients.GetSize();
   CFX_Int32Array product;
   product.SetSize(size + degree);
@@ -219,7 +208,7 @@ CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* CBC_ReedSolomonGF256Poly::Divide(
     int32_t& e) {
   if (other->IsZero()) {
     e = BCExceptionDivideByZero;
-    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+    return nullptr;
   }
   std::unique_ptr<CBC_ReedSolomonGF256Poly> quotient(
       m_field->GetZero()->Clone(e));

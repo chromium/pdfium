@@ -4504,7 +4504,7 @@ CXFA_Node* CXFA_Node::GetProperty(int32_t index,
   }
   CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
   const XFA_PACKETINFO* pPacket = XFA_GetPacketByID(dwPacket);
-  CXFA_Node* pNewNode;
+  CXFA_Node* pNewNode = nullptr;
   for (; iCount <= index; iCount++) {
     pNewNode = pFactory->CreateNode(pPacket, eProperty);
     if (!pNewNode) {

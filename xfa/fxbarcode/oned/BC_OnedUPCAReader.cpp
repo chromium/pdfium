@@ -89,9 +89,7 @@ CFX_ByteString CBC_OnedUPCAReader::MaybeReturnResult(CFX_ByteString& result,
   if (result[0] == '0') {
     result.Delete(0);
     return result;
-  } else {
-    e = BCExceptionFormatException;
-    return "";
   }
+  e = BCExceptionFormatException;
   return "";
 }

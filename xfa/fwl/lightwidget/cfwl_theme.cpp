@@ -56,7 +56,7 @@ uint32_t CFWL_Theme::GetThemeID(IFWL_Widget* pWidget) {
 uint32_t CFWL_Theme::SetThemeID(IFWL_Widget* pWidget,
                                 uint32_t dwThemeID,
                                 FX_BOOL bChildren) {
-  uint32_t dwID;
+  uint32_t dwID = 0;
   for (const auto& pTheme : m_ThemesArray) {
     dwID = pTheme->GetThemeID(pWidget);
     pTheme->SetThemeID(pWidget, dwThemeID, FALSE);
