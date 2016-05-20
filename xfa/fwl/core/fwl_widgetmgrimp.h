@@ -7,6 +7,9 @@
 #ifndef XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
 #define XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
 
+#include <map>
+#include <memory>
+
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_widgetmgr.h"
@@ -25,14 +28,14 @@ class IFWL_Widget;
 
 class CFWL_WidgetMgrItem {
  public:
-  CFWL_WidgetMgrItem()
-      : pParent(NULL),
-        pOwner(NULL),
-        pChild(NULL),
-        pPrevious(NULL),
-        pNext(NULL),
-        pWidget(NULL),
-        pOffscreen(NULL),
+  CFWL_WidgetMgrItem() : CFWL_WidgetMgrItem(nullptr) {}
+  explicit CFWL_WidgetMgrItem(IFWL_Widget* widget)
+      : pParent(nullptr),
+        pOwner(nullptr),
+        pChild(nullptr),
+        pPrevious(nullptr),
+        pNext(nullptr),
+        pWidget(widget),
         iRedrawCounter(0)
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
         ,
@@ -40,19 +43,15 @@ class CFWL_WidgetMgrItem {
 #endif
   {
   }
-  ~CFWL_WidgetMgrItem() {
-    if (pOffscreen) {
-      delete pOffscreen;
-      pOffscreen = NULL;
-    }
-  }
+  ~CFWL_WidgetMgrItem() {}
+
   CFWL_WidgetMgrItem* pParent;
   CFWL_WidgetMgrItem* pOwner;
   CFWL_WidgetMgrItem* pChild;
   CFWL_WidgetMgrItem* pPrevious;
   CFWL_WidgetMgrItem* pNext;
-  IFWL_Widget* pWidget;
-  CFX_Graphics* pOffscreen;
+  IFWL_Widget* const pWidget;
+  std::unique_ptr<CFX_Graphics> pOffscreen;
   int32_t iRedrawCounter;
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   FX_BOOL bOutsideChanged;
@@ -96,8 +95,8 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   void AddRedrawCounts(IFWL_Widget* pWidget);
   void ResetRedrawCounts(IFWL_Widget* pWidget);
   CXFA_FWLAdapterWidgetMgr* GetAdapterWidgetMgr() const { return m_pAdapter; }
-  CFWL_WidgetMgrDelegate* GetDelegate() const { return m_pDelegate; }
-  CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget);
+  CFWL_WidgetMgrDelegate* GetDelegate() const { return m_pDelegate.get(); }
+  CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget) const;
   bool IsThreadEnabled();
   bool IsFormDisabled();
   FX_BOOL GetAdapterPopupPos(IFWL_Widget* pWidget,
@@ -112,14 +111,15 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
                           CFWL_WidgetMgrItem* pItem,
                           IFWL_Widget** pWidget = NULL);
   FX_BOOL IsAbleNative(IFWL_Widget* pWidget);
-  CFX_MapPtrToPtr m_mapWidgetItem;
-  CXFA_FWLAdapterWidgetMgr* m_pAdapter;
-  CFWL_WidgetMgrDelegate* m_pDelegate;
-  friend class CFWL_WidgetMgrDelegate;
+
   uint32_t m_dwCapability;
+  std::unique_ptr<CFWL_WidgetMgrDelegate> m_pDelegate;
+  std::map<IFWL_Widget*, std::unique_ptr<CFWL_WidgetMgrItem>> m_mapWidgetItem;
+  CXFA_FWLAdapterWidgetMgr* const m_pAdapter;
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   CFX_RectF m_rtScreen;
 #endif
+  friend class CFWL_WidgetMgrDelegate;
 };
 
 class CFWL_WidgetMgrDelegate {

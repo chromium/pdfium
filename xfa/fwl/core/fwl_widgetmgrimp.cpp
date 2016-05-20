@@ -43,29 +43,18 @@ IFWL_WidgetMgr* FWL_GetWidgetMgr() {
   return pApp->GetWidgetMgr();
 }
 
-CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative) : m_dwCapability(0) {
-  m_pDelegate = new CFWL_WidgetMgrDelegate(this);
-  m_pAdapter = pAdapterNative->GetWidgetMgr(m_pDelegate);
+CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
+    : m_dwCapability(0),
+      m_pDelegate(new CFWL_WidgetMgrDelegate(this)),
+      m_pAdapter(pAdapterNative->GetWidgetMgr(m_pDelegate.get())) {
   ASSERT(m_pAdapter);
-  CFWL_WidgetMgrItem* pRoot = new CFWL_WidgetMgrItem;
-  m_mapWidgetItem.SetAt(NULL, pRoot);
-
+  m_mapWidgetItem[nullptr].reset(new CFWL_WidgetMgrItem);
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   m_rtScreen.Reset();
 #endif
 }
 
-CFWL_WidgetMgr::~CFWL_WidgetMgr() {
-  FX_POSITION ps = m_mapWidgetItem.GetStartPosition();
-  while (ps) {
-    void* pWidget;
-    CFWL_WidgetMgrItem* pItem;
-    m_mapWidgetItem.GetNextAssoc(ps, pWidget, (void*&)pItem);
-    delete pItem;
-  }
-  m_mapWidgetItem.RemoveAll();
-  delete m_pDelegate;
-}
+CFWL_WidgetMgr::~CFWL_WidgetMgr() {}
 
 int32_t CFWL_WidgetMgr::CountWidgets(IFWL_Widget* pParent) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
@@ -248,9 +237,8 @@ void CFWL_WidgetMgr::AddWidget(IFWL_Widget* pWidget) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(NULL);
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem) {
-    pItem = new CFWL_WidgetMgrItem;
-    pItem->pWidget = pWidget;
-    m_mapWidgetItem.SetAt(pWidget, pItem);
+    pItem = new CFWL_WidgetMgrItem(pWidget);
+    m_mapWidgetItem[pWidget].reset(pItem);
   }
   if (pItem->pParent && pItem->pParent != pParentItem) {
     if (pItem->pPrevious) {
@@ -271,18 +259,15 @@ void CFWL_WidgetMgr::InsertWidget(IFWL_Widget* pParent,
                                   int32_t nIndex) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
   if (!pParentItem) {
-    pParentItem = new CFWL_WidgetMgrItem;
-    pParentItem->pWidget = pParent;
-    m_mapWidgetItem.SetAt(pParent, pParentItem);
-    CFWL_WidgetMgrItem* pRoot = GetWidgetMgrItem(NULL);
-    pParentItem->pParent = pRoot;
+    pParentItem = new CFWL_WidgetMgrItem(pParent);
+    m_mapWidgetItem[pParent].reset(pParentItem);
+    pParentItem->pParent = GetWidgetMgrItem(nullptr);
     SetWidgetIndex(pParent, -1);
   }
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pChild);
   if (!pItem) {
-    pItem = new CFWL_WidgetMgrItem;
-    pItem->pWidget = pChild;
-    m_mapWidgetItem.SetAt(pChild, pItem);
+    pItem = new CFWL_WidgetMgrItem(pChild);
+    m_mapWidgetItem[pChild].reset(pItem);
   }
   if (pItem->pParent && pItem->pParent != pParentItem) {
     if (pItem->pPrevious) {
@@ -318,24 +303,20 @@ void CFWL_WidgetMgr::RemoveWidget(IFWL_Widget* pWidget) {
     RemoveWidget(pChild->pWidget);
     pChild = pNext;
   }
-  m_mapWidgetItem.RemoveKey(pWidget);
-  delete pItem;
+  m_mapWidgetItem.erase(pWidget);
 }
 void CFWL_WidgetMgr::SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pOwner);
   if (!pParentItem) {
-    pParentItem = new CFWL_WidgetMgrItem;
-    pParentItem->pWidget = pOwner;
-    m_mapWidgetItem.SetAt(pOwner, pParentItem);
-    CFWL_WidgetMgrItem* pRoot = GetWidgetMgrItem(NULL);
-    pParentItem->pParent = pRoot;
+    pParentItem = new CFWL_WidgetMgrItem(pOwner);
+    m_mapWidgetItem[pOwner].reset(pParentItem);
+    pParentItem->pParent = GetWidgetMgrItem(nullptr);
     SetWidgetIndex(pOwner, -1);
   }
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pOwned);
   if (!pItem) {
-    pItem = new CFWL_WidgetMgrItem;
-    pItem->pWidget = pOwned;
-    m_mapWidgetItem.SetAt(pOwned, pItem);
+    pItem = new CFWL_WidgetMgrItem(pOwned);
+    m_mapWidgetItem[pOwned].reset(pItem);
   }
   pItem->pOwner = pParentItem;
 }
@@ -383,8 +364,7 @@ FWL_Error CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
         CFX_DIBitmap* pBitmap = pDevice->GetBitmap();
         if (pBitmap->GetWidth() - rect.width > 1 ||
             pBitmap->GetHeight() - rect.height > 1) {
-          delete pItem->pOffscreen;
-          pItem->pOffscreen = NULL;
+          pItem->pOffscreen.reset();
         }
       }
     }
@@ -429,12 +409,8 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
 void CFWL_WidgetMgr::NotifySizeChanged(IFWL_Widget* pForm,
                                        FX_FLOAT fx,
                                        FX_FLOAT fy) {
-  if (!FWL_UseOffscreen(pForm))
-    return;
-
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pForm);
-  delete pItem->pOffscreen;
-  pItem->pOffscreen = nullptr;
+  if (FWL_UseOffscreen(pForm))
+    GetWidgetMgrItem(pForm)->pOffscreen.reset();
 }
 
 IFWL_Widget* CFWL_WidgetMgr::nextTab(IFWL_Widget* parent,
@@ -541,8 +517,12 @@ void CFWL_WidgetMgr::ResetRedrawCounts(IFWL_Widget* pWidget) {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
   pItem->iRedrawCounter = 0;
 }
-CFWL_WidgetMgrItem* CFWL_WidgetMgr::GetWidgetMgrItem(IFWL_Widget* pWidget) {
-  return static_cast<CFWL_WidgetMgrItem*>(m_mapWidgetItem.GetValueAt(pWidget));
+CFWL_WidgetMgrItem* CFWL_WidgetMgr::GetWidgetMgrItem(
+    IFWL_Widget* pWidget) const {
+  auto it = m_mapWidgetItem.find(pWidget);
+  return it != m_mapWidgetItem.end()
+             ? static_cast<CFWL_WidgetMgrItem*>(it->second.get())
+             : nullptr;
 }
 int32_t CFWL_WidgetMgr::TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
                                         int32_t* pIndex,
@@ -756,7 +736,7 @@ CFX_Graphics* CFWL_WidgetMgrDelegate::DrawWidgetBefore(
 
   CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
   if (!pItem->pOffscreen) {
-    pItem->pOffscreen = new CFX_Graphics;
+    pItem->pOffscreen.reset(new CFX_Graphics);
     CFX_RectF rect;
     pWidget->GetWidgetRect(rect);
     pItem->pOffscreen->Create((int32_t)rect.width, (int32_t)rect.height,
@@ -765,7 +745,7 @@ CFX_Graphics* CFWL_WidgetMgrDelegate::DrawWidgetBefore(
   CFX_RectF rect;
   pGraphics->GetClipRect(rect);
   pItem->pOffscreen->SetClipRect(rect);
-  return pItem->pOffscreen;
+  return pItem->pOffscreen.get();
 }
 
 void CFWL_WidgetMgrDelegate::DrawWidgetAfter(IFWL_Widget* pWidget,
@@ -774,8 +754,8 @@ void CFWL_WidgetMgrDelegate::DrawWidgetAfter(IFWL_Widget* pWidget,
                                              const CFX_Matrix* pMatrix) {
   if (FWL_UseOffscreen(pWidget)) {
     CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
-    pGraphics->Transfer(pItem->pOffscreen, rtClip.left, rtClip.top, rtClip,
-                        pMatrix);
+    pGraphics->Transfer(pItem->pOffscreen.get(), rtClip.left, rtClip.top,
+                        rtClip, pMatrix);
 #ifdef _WIN32
     pItem->pOffscreen->ClearClip();
 #endif
