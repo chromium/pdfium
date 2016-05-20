@@ -58,9 +58,6 @@ FX_BOOL CFX_Barcode::Create(BC_TYPE type) {
   m_pBCEngine = FX_Barcode_CreateBarCodeEngineObject(type);
   return m_pBCEngine != NULL;
 }
-void CFX_Barcode::Release() {
-  delete this;
-}
 BC_TYPE CFX_Barcode::GetType() {
   return m_pBCEngine ? m_pBCEngine->GetType() : BC_UNKNOWN;
 }

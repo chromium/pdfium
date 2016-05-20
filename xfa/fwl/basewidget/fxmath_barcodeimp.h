@@ -24,7 +24,6 @@ class CFX_Barcode {
   ~CFX_Barcode();
 
   FX_BOOL Create(BC_TYPE type);
-  void Release();
   BC_TYPE GetType();
   FX_BOOL Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t& e);
   FX_BOOL RenderDevice(CFX_RenderDevice* device,

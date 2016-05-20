@@ -32,12 +32,10 @@ FX_BOOL IFWL_Barcode::IsProtectedType() {
 CFWL_BarcodeImp::CFWL_BarcodeImp(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter)
     : CFWL_EditImp(properties, pOuter),
-      m_pBarcodeEngine(NULL),
       m_dwStatus(0),
       m_type(BC_UNKNOWN) {}
-CFWL_BarcodeImp::~CFWL_BarcodeImp() {
-  ReleaseBarcodeEngine();
-}
+
+CFWL_BarcodeImp::~CFWL_BarcodeImp() {}
 
 FWL_Error CFWL_BarcodeImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Barcode;
@@ -59,7 +57,7 @@ FWL_Error CFWL_BarcodeImp::Initialize() {
 FWL_Error CFWL_BarcodeImp::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  ReleaseBarcodeEngine();
+  m_pBarcodeEngine.reset();
   return CFWL_EditImp::Finalize();
 }
 FWL_Error CFWL_BarcodeImp::Update() {
@@ -182,29 +180,21 @@ void CFWL_BarcodeImp::CreateBarcodeEngine() {
   if (m_pBarcodeEngine || m_type == BC_UNKNOWN)
     return;
 
-  m_pBarcodeEngine = new CFX_Barcode;
-  if (!m_pBarcodeEngine->Create(m_type)) {
-    m_pBarcodeEngine->Release();
-    m_pBarcodeEngine = nullptr;
-  }
+  std::unique_ptr<CFX_Barcode> pBarcode(new CFX_Barcode);
+  if (pBarcode->Create(m_type))
+    m_pBarcodeEngine = std::move(pBarcode);
 }
 
-void CFWL_BarcodeImp::ReleaseBarcodeEngine() {
-  if (m_pBarcodeEngine) {
-    m_pBarcodeEngine->Release();
-    m_pBarcodeEngine = NULL;
-  }
-}
 void CFWL_BarcodeImp::SetType(BC_TYPE type) {
-  if (m_type == type) {
+  if (m_type == type)
     return;
-  }
-  ReleaseBarcodeEngine();
+
+  m_pBarcodeEngine.reset();
   m_type = type;
   m_dwStatus = XFA_BCS_NeedUpdate;
 }
 FWL_Error CFWL_BarcodeImp::SetText(const CFX_WideString& wsText) {
-  ReleaseBarcodeEngine();
+  m_pBarcodeEngine.reset();
   m_dwStatus = XFA_BCS_NeedUpdate;
   return CFWL_EditImp::SetText(wsText);
 }
@@ -226,7 +216,7 @@ CFWL_BarcodeImpDelegate::CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner)
 void CFWL_BarcodeImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetClassID() == CFWL_EventType::TextChanged) {
     CFWL_BarcodeImp* pOwner = static_cast<CFWL_BarcodeImp*>(m_pOwner);
-    pOwner->ReleaseBarcodeEngine();
+    pOwner->m_pBarcodeEngine.reset();
     pOwner->m_dwStatus = XFA_BCS_NeedUpdate;
   }
   CFWL_EditImpDelegate::OnProcessEvent(pEvent);

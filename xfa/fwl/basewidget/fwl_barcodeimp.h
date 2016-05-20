@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_BASEWIDGET_FWL_BARCODEIMP_H_
 #define XFA_FWL_BASEWIDGET_FWL_BARCODEIMP_H_
 
+#include <memory>
+
 #include "xfa/fwl/basewidget/fwl_editimp.h"
 #include "xfa/fwl/basewidget/ifwl_barcode.h"
 #include "xfa/fwl/basewidget/ifwl_scrollbar.h"
@@ -43,16 +45,15 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
 
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
-  void ReleaseBarcodeEngine();
 
-  CFX_Barcode* m_pBarcodeEngine;
+  std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
   uint32_t m_dwStatus;
   BC_TYPE m_type;
 };
 
 class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
  public:
-  CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner);
+  explicit CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner);
   void OnProcessEvent(CFWL_Event* pEvent) override;
 };
 
