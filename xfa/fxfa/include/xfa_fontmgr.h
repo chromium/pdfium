@@ -8,6 +8,7 @@
 #define XFA_FXFA_INCLUDE_XFA_FONTMGR_H_
 
 #include <map>
+#include <memory>
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -55,7 +56,7 @@ class CXFA_PDFFontMgr {
                        FX_WCHAR wUnicode,
                        int32_t& iWidth,
                        FX_BOOL bCharCode);
-  CFX_MapPtrToPtr m_FDE2PDFFont;
+  std::map<IFX_Font*, CPDF_Font*> m_FDE2PDFFont;
 
  protected:
   IFX_Font* FindFont(CFX_ByteString strFamilyName,
@@ -80,20 +81,18 @@ class CXFA_FontMgr {
  public:
   CXFA_FontMgr();
   ~CXFA_FontMgr();
+
   IFX_Font* GetFont(CXFA_FFDoc* hDoc,
                     const CFX_WideStringC& wsFontFamily,
                     uint32_t dwFontStyles,
                     uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(CXFA_FFDoc* hDoc);
   void ReleaseDocFonts(CXFA_FFDoc* hDoc);
-
   void SetDefFontMgr(CXFA_DefFontMgr* pFontMgr);
 
  protected:
-  void DelAllMgrMap();
-
-  CFX_MapPtrToPtr m_PDFFontMgrArray;
   CXFA_DefFontMgr* m_pDefFontMgr;
+  std::map<CXFA_FFDoc*, std::unique_ptr<CXFA_PDFFontMgr>> m_PDFFontMgrMap;
   std::map<CFX_ByteString, IFX_Font*> m_FontMap;
 };
 
