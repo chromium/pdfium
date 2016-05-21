@@ -422,7 +422,7 @@ static CPDF_TextObject* AddTextObjToPageObjects(
   pTextStateData->m_FontSize = fFontSize;
   pTextStateData->m_CharSpace = fCharSpace;
   pTextStateData->m_WordSpace = 0;
-  pTextStateData->m_TextMode = 0;
+  pTextStateData->m_TextMode = TextRenderingMode::MODE_FILL;
   pTextStateData->m_Matrix[0] = nHorzScale / 100.0f;
   pTextStateData->m_Matrix[1] = 0;
   pTextStateData->m_Matrix[2] = 0;

@@ -816,8 +816,10 @@ void CPDF_StreamContentParser::Handle_EndText() {
   if (m_ClipTextList.empty())
     return;
 
-  if (m_pCurStates->m_TextState.GetObject()->m_TextMode >= 4)
+  if (TextRenderingModeIsClipMode(
+          m_pCurStates->m_TextState.GetObject()->m_TextMode)) {
     m_pCurStates->m_ClipPath.AppendTexts(&m_ClipTextList);
+  }
   m_ClipTextList.clear();
 }
 
@@ -1251,17 +1253,14 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   if (nsegs == 0) {
     return;
   }
-  int textmode;
-  if (pFont->IsType3Font()) {
-    textmode = 0;
-  } else {
-    textmode = m_pCurStates->m_TextState.GetObject()->m_TextMode;
-  }
+  const TextRenderingMode text_mode =
+      pFont->IsType3Font() ? TextRenderingMode::MODE_FILL
+                           : m_pCurStates->m_TextState.GetObject()->m_TextMode;
   {
     std::unique_ptr<CPDF_TextObject> pText(new CPDF_TextObject);
     m_pLastTextObject = pText.get();
     SetGraphicStates(m_pLastTextObject, TRUE, TRUE, TRUE);
-    if (textmode && textmode != 3 && textmode != 4 && textmode != 7) {
+    if (TextRenderingModeIsStrokeMode(text_mode)) {
       FX_FLOAT* pCTM = pText->m_TextState.GetModify()->m_CTM;
       pCTM[0] = m_pCurStates->m_CTM.a;
       pCTM[1] = m_pCurStates->m_CTM.c;
@@ -1278,7 +1277,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
                             m_pCurStates->m_TextHorzScale, m_Level);
     m_pCurStates->m_TextX += x_advance;
     m_pCurStates->m_TextY += y_advance;
-    if (textmode > 3) {
+    if (TextRenderingModeIsClipMode(text_mode)) {
       m_ClipTextList.push_back(
           std::unique_ptr<CPDF_TextObject>(pText->Clone()));
     }
@@ -1380,10 +1379,8 @@ void CPDF_StreamContentParser::OnChangeTextMatrix() {
 
 void CPDF_StreamContentParser::Handle_SetTextRenderMode() {
   int mode = GetInteger(0);
-  if (mode < 0 || mode > 7) {
-    return;
-  }
-  m_pCurStates->m_TextState.GetModify()->m_TextMode = mode;
+  SetTextRenderingModeFromInt(
+      mode, &m_pCurStates->m_TextState.GetModify()->m_TextMode);
 }
 
 void CPDF_StreamContentParser::Handle_SetTextRise() {

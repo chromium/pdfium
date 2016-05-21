@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
+#include <vector>
+
 #include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
@@ -211,72 +213,76 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
 FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
                                        const CFX_Matrix* pObj2Device,
                                        CFX_PathData* pClippingPath) {
-  if (textobj->m_nChars == 0) {
+  if (textobj->m_nChars == 0)
     return TRUE;
-  }
-  int text_render_mode = textobj->m_TextState.GetObject()->m_TextMode;
-  if (text_render_mode == 3) {
+
+  const TextRenderingMode& text_render_mode =
+      textobj->m_TextState.GetObject()->m_TextMode;
+  if (text_render_mode == TextRenderingMode::MODE_INVISIBLE)
     return TRUE;
-  }
+
   CPDF_Font* pFont = textobj->m_TextState.GetFont();
-  if (pFont->IsType3Font()) {
+  if (pFont->IsType3Font())
     return ProcessType3Text(textobj, pObj2Device);
-  }
-  FX_BOOL bFill = FALSE, bStroke = FALSE, bClip = FALSE;
+
+  bool bFill = false;
+  bool bStroke = false;
+  bool bClip = false;
   if (pClippingPath) {
-    bClip = TRUE;
+    bClip = true;
   } else {
     switch (text_render_mode) {
-      case 0:
-      case 4:
-        bFill = TRUE;
+      case TextRenderingMode::MODE_FILL:
+      case TextRenderingMode::MODE_FILL_CLIP:
+        bFill = true;
         break;
-      case 1:
-      case 5:
-        if (!pFont->GetFace() &&
-            !(pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
-          bFill = TRUE;
+      case TextRenderingMode::MODE_STROKE:
+      case TextRenderingMode::MODE_STROKE_CLIP:
+        if (pFont->GetFace() ||
+            (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
+          bStroke = true;
         } else {
-          bStroke = TRUE;
+          bFill = true;
         }
         break;
-      case 2:
-      case 6:
-        if (!pFont->GetFace() &&
-            !(pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
-          bFill = TRUE;
-        } else {
-          bFill = bStroke = TRUE;
+      case TextRenderingMode::MODE_FILL_STROKE:
+      case TextRenderingMode::MODE_FILL_STROKE_CLIP:
+        bFill = true;
+        if (pFont->GetFace() ||
+            (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
+          bStroke = true;
         }
         break;
-      case 3:
-      case 7:
+      case TextRenderingMode::MODE_INVISIBLE:
+        // Already handled above, but the compiler is not smart enough to
+        // realize it. Fall through.
+        ASSERT(false);
+      case TextRenderingMode::MODE_CLIP:
         return TRUE;
-      default:
-        bFill = TRUE;
     }
   }
-  FX_ARGB stroke_argb = 0, fill_argb = 0;
-  FX_BOOL bPattern = FALSE;
+  FX_ARGB stroke_argb = 0;
+  FX_ARGB fill_argb = 0;
+  bool bPattern = false;
   if (bStroke) {
     if (textobj->m_ColorState.GetStrokeColor()->IsPattern()) {
-      bPattern = TRUE;
+      bPattern = true;
     } else {
       stroke_argb = GetStrokeArgb(textobj);
     }
   }
   if (bFill) {
     if (textobj->m_ColorState.GetFillColor()->IsPattern()) {
-      bPattern = TRUE;
+      bPattern = true;
     } else {
       fill_argb = GetFillArgb(textobj);
     }
   }
   CFX_Matrix text_matrix;
   textobj->GetTextMatrix(&text_matrix);
-  if (IsAvailableMatrix(text_matrix) == FALSE) {
+  if (!IsAvailableMatrix(text_matrix))
     return TRUE;
-  }
+
   FX_FLOAT font_size = textobj->m_TextState.GetFontSize();
   if (bPattern) {
     DrawTextPathWithPattern(textobj, pObj2Device, pFont, font_size,
@@ -319,6 +325,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
       m_pDevice, textobj->m_nChars, textobj->m_pCharCodes, textobj->m_pCharPos,
       pFont, font_size, &text_matrix, fill_argb, &m_Options);
 }
+
 CPDF_Type3Cache* CPDF_RenderStatus::GetCachedType3(CPDF_Type3Font* pFont) {
   if (!pFont->m_pDocument) {
     return NULL;
@@ -336,17 +343,15 @@ static void ReleaseCachedType3(CPDF_Type3Font* pFont) {
 
 class CPDF_RefType3Cache {
  public:
-  CPDF_RefType3Cache(CPDF_Type3Font* pType3Font) {
-    m_dwCount = 0;
-    m_pType3Font = pType3Font;
-  }
+  explicit CPDF_RefType3Cache(CPDF_Type3Font* pType3Font)
+      : m_dwCount(0), m_pType3Font(pType3Font) {}
   ~CPDF_RefType3Cache() {
     while (m_dwCount--) {
       ReleaseCachedType3(m_pType3Font);
     }
   }
   uint32_t m_dwCount;
-  CPDF_Type3Font* m_pType3Font;
+  CPDF_Type3Font* const m_pType3Font;
 };
 
 FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
