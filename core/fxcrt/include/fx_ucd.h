@@ -107,6 +107,9 @@ enum FX_CHARTYPE {
   FX_CHARTYPE_ArabicForm = (11 << FX_CHARTYPEBITS),
   FX_CHARTYPE_Arabic = (12 << FX_CHARTYPEBITS),
 };
+inline FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
+  return static_cast<FX_CHARTYPE>(prop & FX_CHARTYPEBITSMASK);
+}
 
 FX_BOOL FX_IsCtrlCode(FX_WCHAR ch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
@@ -133,7 +136,9 @@ class CFX_Char {
         m_iCharWidth(0),
         m_iHorizontalScale(100),
         m_iVertialScale(100) {}
-  uint32_t GetCharType() const { return m_dwCharProps & FX_CHARTYPEBITSMASK; }
+
+  FX_CHARTYPE GetCharType() const { return GetCharTypeFromProp(m_dwCharProps); }
+
   uint16_t m_wCharCode;
   uint8_t m_nBreakType;
   int8_t m_nRotation;

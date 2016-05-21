@@ -271,7 +271,7 @@ class CFX_TxtBreak {
   CFX_TxtChar* GetLastChar(int32_t index, FX_BOOL bOmitChar = TRUE) const;
   CFX_TxtLine* GetTxtLine(FX_BOOL bReady) const;
   CFX_TxtPieceArray* GetTxtPieces(FX_BOOL bReady) const;
-  uint32_t GetUnifiedCharType(uint32_t dwType) const;
+  FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
   void ResetArabicContext();
   void ResetContextCharStyles();
   void EndBreak_UpdateArabicShapes();
@@ -316,7 +316,7 @@ class CFX_TxtBreak {
   uint32_t m_dwContextCharStyles;
   int32_t m_iCombWidth;
   void* m_pUserData;
-  uint32_t m_dwCharType;
+  FX_CHARTYPE m_eCharType;
   FX_BOOL m_bCurRTL;
   int32_t m_iCurAlignment;
   FX_BOOL m_bArabicNumber;

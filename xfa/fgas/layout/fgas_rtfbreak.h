@@ -319,7 +319,7 @@ class CFX_RTFBreak {
   FX_BOOL m_bRTL;
   int32_t m_iAlignment;
   IFX_Unknown* m_pUserData;
-  uint32_t m_dwCharType;
+  FX_CHARTYPE m_eCharType;
   uint32_t m_dwIdentity;
   CFX_RTFLine m_RTFLine1;
   CFX_RTFLine m_RTFLine2;
@@ -331,7 +331,7 @@ class CFX_RTFBreak {
   CFX_RTFChar* GetLastChar(int32_t index) const;
   CFX_RTFLine* GetRTFLine(FX_BOOL bReady) const;
   CFX_RTFPieceArray* GetRTFPieces(FX_BOOL bReady) const;
-  uint32_t GetUnifiedCharType(uint32_t dwType) const;
+  FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE chartype) const;
   int32_t GetLastPositionedTab() const;
   FX_BOOL GetPositionedTab(int32_t& iTabPos) const;
   int32_t GetBreakPos(CFX_RTFCharArray& tca,

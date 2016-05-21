@@ -122,7 +122,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
     wChar = 0xFEFF;
     return nullptr;
   }
-  eType = (FX_CHARTYPE)pTC->GetCharType();
+  eType = pTC->GetCharType();
   wChar = (FX_WCHAR)pTC->m_wCharCode;
   const FX_ARBFORMTABLE* pFT = FX_GetArabicFormTable(wChar);
   if (!pFT || eType >= FX_CHARTYPE_ArabicNormal)
