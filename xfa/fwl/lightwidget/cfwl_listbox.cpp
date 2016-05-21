@@ -249,7 +249,7 @@ FX_BOOL CFWL_ListBox::CFWL_ListBoxDP::SetItemIndex(IFWL_Widget* pWidget,
 uint32_t CFWL_ListBox::CFWL_ListBoxDP::GetItemStyles(IFWL_Widget* pWidget,
                                                      FWL_HLISTITEM hItem) {
   if (!hItem)
-    return -1;
+    return 0;
   return reinterpret_cast<CFWL_ListItem*>(hItem)->m_dwStates;
 }
 
