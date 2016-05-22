@@ -50,7 +50,6 @@ class CPDF_Object {
   virtual FX_FLOAT GetNumber() const;
   virtual int GetInteger() const;
   virtual CPDF_Dictionary* GetDict() const;
-  virtual CPDF_Array* GetArray() const;
 
   virtual void SetString(const CFX_ByteString& str);
 

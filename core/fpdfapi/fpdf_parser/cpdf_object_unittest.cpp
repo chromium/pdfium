@@ -183,7 +183,7 @@ class PDFObjectsTest : public testing::Test {
 };
 
 TEST_F(PDFObjectsTest, GetString) {
-  const char* direct_obj_results[] = {
+  const char* const direct_obj_results[] = {
       "false", "true", "1245", "9.00345", "A simple test", "\t\n", "space",
       "",      "",     "",     ""};
   // Check for direct objects.
@@ -191,15 +191,15 @@ TEST_F(PDFObjectsTest, GetString) {
     EXPECT_STREQ(direct_obj_results[i], m_DirectObjs[i]->GetString().c_str());
 
   // Check indirect references.
-  const char* indirect_obj_results[] = {"true", "1245", "\t\n", "space",
-                                        "",     "",     ""};
+  const char* const indirect_obj_results[] = {"true", "1245", "\t\n", "space",
+                                              "",     "",     ""};
   for (size_t i = 0; i < m_RefObjs.size(); ++i) {
     EXPECT_STREQ(indirect_obj_results[i], m_RefObjs[i]->GetString().c_str());
   }
 }
 
 TEST_F(PDFObjectsTest, GetUnicodeText) {
-  const wchar_t* direct_obj_results[] = {
+  const wchar_t* const direct_obj_results[] = {
       L"",     L"",      L"", L"", L"A simple test",
       L"\t\n", L"space", L"", L"", L"abcdefghijklmnopqrstuvwxyz",
       L""};
@@ -240,7 +240,7 @@ TEST_F(PDFObjectsTest, GetInteger) {
 }
 
 TEST_F(PDFObjectsTest, GetDict) {
-  const CPDF_Dictionary* direct_obj_results[] = {
+  const CPDF_Dictionary* const direct_obj_results[] = {
       nullptr, nullptr, nullptr,   nullptr,         nullptr, nullptr,
       nullptr, nullptr, m_DictObj, m_StreamDictObj, nullptr};
   // Check for direct objects.
@@ -248,23 +248,23 @@ TEST_F(PDFObjectsTest, GetDict) {
     EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetDict());
 
   // Check indirect references.
-  const CPDF_Dictionary* indirect_obj_results[] = {
+  const CPDF_Dictionary* const indirect_obj_results[] = {
       nullptr, nullptr, nullptr, nullptr, nullptr, m_DictObj, m_StreamDictObj};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
     EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetDict());
 }
 
 TEST_F(PDFObjectsTest, GetArray) {
-  const CPDF_Array* direct_obj_results[] = {
+  const CPDF_Array* const direct_obj_results[] = {
       nullptr, nullptr,    nullptr, nullptr, nullptr, nullptr,
       nullptr, m_ArrayObj, nullptr, nullptr, nullptr};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetArray());
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->AsArray());
 
   // Check indirect references.
   for (const auto& it : m_RefObjs)
-    EXPECT_EQ(nullptr, it->GetArray());
+    EXPECT_EQ(nullptr, it->AsArray());
 }
 
 TEST_F(PDFObjectsTest, Clone) {
@@ -305,8 +305,8 @@ TEST_F(PDFObjectsTest, SetString) {
   // Check for direct objects.
   const char* const set_values[] = {"true",    "fake", "3.125f", "097",
                                     "changed", "",     "NewName"};
-  const char* expected[] = {"true",    "false", "3.125",  "97",
-                            "changed", "",      "NewName"};
+  const char* const expected[] = {"true",    "false", "3.125",  "97",
+                                  "changed", "",      "NewName"};
   for (size_t i = 0; i < FX_ArraySize(set_values); ++i) {
     m_DirectObjs[i]->SetString(set_values[i]);
     EXPECT_STREQ(expected[i], m_DirectObjs[i]->GetString().c_str());
@@ -424,7 +424,7 @@ TEST(PDFArrayTest, GetRect) {
 TEST(PDFArrayTest, GetTypeAt) {
   {
     // Boolean array.
-    bool vals[] = {true, false, false, true, true};
+    const bool vals[] = {true, false, false, true, true};
     ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(vals); ++i)
       arr->InsertAt(i, new CPDF_Boolean(vals[i]));
@@ -441,7 +441,7 @@ TEST(PDFArrayTest, GetTypeAt) {
   }
   {
     // Integer array.
-    int vals[] = {10, 0, -345, 2089345456, -1000000000, 567, 93658767};
+    const int vals[] = {10, 0, -345, 2089345456, -1000000000, 567, 93658767};
     ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(vals); ++i)
       arr->InsertAt(i, new CPDF_Number(vals[i]));
@@ -459,10 +459,10 @@ TEST(PDFArrayTest, GetTypeAt) {
   }
   {
     // Float array.
-    float vals[] = {0.0f,    0,     10,    10.0f,   0.0345f,
-                    897.34f, -2.5f, -1.0f, -345.0f, -0.0f};
-    const char* expected_str[] = {"0",      "0",    "10", "10",   "0.0345",
-                                  "897.34", "-2.5", "-1", "-345", "0"};
+    const float vals[] = {0.0f,    0,     10,    10.0f,   0.0345f,
+                          897.34f, -2.5f, -1.0f, -345.0f, -0.0f};
+    const char* const expected_str[] = {
+        "0", "0", "10", "10", "0.0345", "897.34", "-2.5", "-1", "-345", "0"};
     ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
       arr->InsertAt(i, new CPDF_Number(vals[i]));

@@ -49,10 +49,6 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
   return nullptr;
 }
 
-CPDF_Array* CPDF_Object::GetArray() const {
-  return nullptr;
-}
-
 void CPDF_Object::SetString(const CFX_ByteString& str) {
   ASSERT(FALSE);
 }

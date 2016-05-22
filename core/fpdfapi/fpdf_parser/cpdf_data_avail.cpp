@@ -151,7 +151,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(
     int32_t type = pObj->GetType();
     switch (type) {
       case CPDF_Object::ARRAY: {
-        CPDF_Array* pArray = pObj->GetArray();
+        CPDF_Array* pArray = pObj->AsArray();
         for (size_t k = 0; k < pArray->GetCount(); ++k)
           new_obj_array.Add(pArray->GetObjectAt(k));
       } break;
@@ -509,13 +509,11 @@ FX_BOOL CPDF_DataAvail::CheckPage(IPDF_DataAvail::DownloadHints* pHints) {
       continue;
     }
 
-    if (pObj->IsArray()) {
-      CPDF_Array* pArray = pObj->GetArray();
-      if (pArray) {
-        for (size_t j = 0; j < pArray->GetCount(); ++j) {
-          if (CPDF_Reference* pRef = ToReference(pArray->GetObjectAt(j)))
-            UnavailObjList.Add(pRef->GetRefObjNum());
-        }
+    CPDF_Array* pArray = ToArray(pObj);
+    if (pArray) {
+      for (CPDF_Object* pArrayObj : *pArray) {
+        if (CPDF_Reference* pRef = ToReference(pArrayObj))
+          UnavailObjList.Add(pRef->GetRefObjNum());
       }
     }
 

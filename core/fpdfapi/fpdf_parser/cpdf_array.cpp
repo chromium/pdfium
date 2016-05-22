@@ -25,12 +25,6 @@ CPDF_Object::Type CPDF_Array::GetType() const {
   return ARRAY;
 }
 
-CPDF_Array* CPDF_Array::GetArray() const {
-  // The method should be made non-const if we want to not be const.
-  // See bug #234.
-  return const_cast<CPDF_Array*>(this);
-}
-
 bool CPDF_Array::IsArray() const {
   return true;
 }

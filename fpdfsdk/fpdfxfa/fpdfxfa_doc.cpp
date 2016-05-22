@@ -663,22 +663,18 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
     m_pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Data, &fileWrite,
                                          nullptr);
   } else if (fileType == FXFA_SAVEAS_XDP) {
-    if (m_pPDFDoc == NULL)
+    if (!m_pPDFDoc)
       return;
     CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
-    if (pRoot == NULL)
+    if (!pRoot)
       return;
     CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
-    if (NULL == pAcroForm)
+    if (!pAcroForm)
       return;
-    CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
-    if (pXFA == NULL)
+    CPDF_Array* pArray = ToArray(pAcroForm->GetObjectBy("XFA"));
+    if (!pArray)
       return;
-    if (!pXFA->IsArray())
-      return;
-    CPDF_Array* pArray = pXFA->GetArray();
-    if (NULL == pArray)
-      return;
+
     int size = pArray->GetCount();
     for (int i = 1; i < size; i += 2) {
       CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
@@ -952,73 +948,70 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   CFPDF_FileStream fileStream(pFileHandler);
 
   if (fileType == FXFA_SAVEAS_XML) {
-    const char* content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-    fileStream.WriteBlock(content, 0, strlen(content));
+    const char kContent[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
+    fileStream.WriteBlock(kContent, 0, strlen(kContent));
     m_pXFADoc->SavePackage(XFA_HASHCODE_Data, &fileStream, nullptr);
-  } else if (fileType == FXFA_SAVEAS_XDP) {
-    if (flag == 0)
-      flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
-             FXFA_XMPMETA | FXFA_XFDF | FXFA_FORM;
-    if (m_pPDFDoc == NULL) {
-      fileStream.Flush();
-      return FALSE;
-    }
-    CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
-    if (pRoot == NULL) {
-      fileStream.Flush();
-      return FALSE;
-    }
-    CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
-    if (NULL == pAcroForm) {
-      fileStream.Flush();
-      return FALSE;
-    }
-    CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
-    if (pXFA == NULL) {
-      fileStream.Flush();
-      return FALSE;
-    }
-    if (!pXFA->IsArray()) {
-      fileStream.Flush();
-      return FALSE;
-    }
-    CPDF_Array* pArray = pXFA->GetArray();
-    if (NULL == pArray) {
-      fileStream.Flush();
-      return FALSE;
-    }
-    int size = pArray->GetCount();
-    for (int i = 1; i < size; i += 2) {
-      CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
-      CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
-      if (!pPrePDFObj->IsString())
-        continue;
-      if (!pPDFObj->IsReference())
-        continue;
-      CPDF_Object* pDirectObj = pPDFObj->GetDirect();
-      if (!pDirectObj->IsStream())
-        continue;
-      if (pPrePDFObj->GetString() == "config" && !(flag & FXFA_CONFIG))
-        continue;
-      if (pPrePDFObj->GetString() == "template" && !(flag & FXFA_TEMPLATE))
-        continue;
-      if (pPrePDFObj->GetString() == "localeSet" && !(flag & FXFA_LOCALESET))
-        continue;
-      if (pPrePDFObj->GetString() == "datasets" && !(flag & FXFA_DATASETS))
-        continue;
-      if (pPrePDFObj->GetString() == "xmpmeta" && !(flag & FXFA_XMPMETA))
-        continue;
-      if (pPrePDFObj->GetString() == "xfdf" && !(flag & FXFA_XFDF))
-        continue;
-      if (pPrePDFObj->GetString() == "form" && !(flag & FXFA_FORM))
-        continue;
-      if (pPrePDFObj->GetString() == "form") {
-        m_pXFADoc->SavePackage(XFA_HASHCODE_Form, &fileStream, nullptr);
-      } else if (pPrePDFObj->GetString() == "datasets") {
-        m_pXFADoc->SavePackage(XFA_HASHCODE_Datasets, &fileStream, nullptr);
-      } else {
-        // PDF,creator.
-      }
+    return TRUE;
+  }
+
+  if (fileType != FXFA_SAVEAS_XDP)
+    return TRUE;
+
+  if (!flag) {
+    flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
+           FXFA_XMPMETA | FXFA_XFDF | FXFA_FORM;
+  }
+  if (!m_pPDFDoc) {
+    fileStream.Flush();
+    return FALSE;
+  }
+  CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
+  if (!pRoot) {
+    fileStream.Flush();
+    return FALSE;
+  }
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
+  if (!pAcroForm) {
+    fileStream.Flush();
+    return FALSE;
+  }
+  CPDF_Array* pArray = ToArray(pAcroForm->GetObjectBy("XFA"));
+  if (!pArray) {
+    fileStream.Flush();
+    return FALSE;
+  }
+
+  int size = pArray->GetCount();
+  for (int i = 1; i < size; i += 2) {
+    CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
+    CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
+    if (!pPrePDFObj->IsString())
+      continue;
+    if (!pPDFObj->IsReference())
+      continue;
+    CPDF_Object* pDirectObj = pPDFObj->GetDirect();
+    if (!pDirectObj->IsStream())
+      continue;
+    if (pPrePDFObj->GetString() == "config" && !(flag & FXFA_CONFIG))
+      continue;
+    if (pPrePDFObj->GetString() == "template" && !(flag & FXFA_TEMPLATE))
+      continue;
+    if (pPrePDFObj->GetString() == "localeSet" && !(flag & FXFA_LOCALESET))
+      continue;
+    if (pPrePDFObj->GetString() == "datasets" && !(flag & FXFA_DATASETS))
+      continue;
+    if (pPrePDFObj->GetString() == "xmpmeta" && !(flag & FXFA_XMPMETA))
+      continue;
+    if (pPrePDFObj->GetString() == "xfdf" && !(flag & FXFA_XFDF))
+      continue;
+    if (pPrePDFObj->GetString() == "form" && !(flag & FXFA_FORM))
+      continue;
+    if (pPrePDFObj->GetString() == "form") {
+      m_pXFADoc->SavePackage(XFA_HASHCODE_Form, &fileStream, nullptr);
+    } else if (pPrePDFObj->GetString() == "datasets") {
+      m_pXFADoc->SavePackage(XFA_HASHCODE_Datasets, &fileStream, nullptr);
+    } else {
+      // PDF,creator.
     }
   }
   return TRUE;

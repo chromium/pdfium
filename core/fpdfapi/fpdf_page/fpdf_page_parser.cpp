@@ -697,7 +697,7 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
 }
 
 void CPDF_StreamContentParser::Handle_SetDash() {
-  CPDF_Array* pArray = GetObject(1) ? GetObject(1)->GetArray() : nullptr;
+  CPDF_Array* pArray = ToArray(GetObject(1));
   if (!pArray)
     return;
 
@@ -1305,10 +1305,10 @@ void CPDF_StreamContentParser::Handle_ShowText() {
 }
 
 void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
-  CPDF_Array* pArray = GetObject(0) ? GetObject(0)->GetArray() : NULL;
-  if (!pArray) {
+  CPDF_Array* pArray = ToArray(GetObject(0));
+  if (!pArray)
     return;
-  }
+
   size_t n = pArray->GetCount();
   size_t nsegs = 0;
   for (size_t i = 0; i < n; i++) {

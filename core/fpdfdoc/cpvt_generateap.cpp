@@ -344,15 +344,10 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
           pDoc, pStreamDict ? pStreamDict->GetDictBy("Resources") : nullptr,
           pDefFont, sFontName.Right(sFontName.GetLength() - 1));
       CPDF_VariableText::Provider prd(&map);
-      CPDF_Array* pOpts = FPDF_GetFieldAttr(pAnnotDict, "Opt")
-                              ? FPDF_GetFieldAttr(pAnnotDict, "Opt")->GetArray()
-                              : nullptr;
-      CPDF_Array* pSels = FPDF_GetFieldAttr(pAnnotDict, "I")
-                              ? FPDF_GetFieldAttr(pAnnotDict, "I")->GetArray()
-                              : nullptr;
-      int32_t nTop = FPDF_GetFieldAttr(pAnnotDict, "TI")
-                         ? FPDF_GetFieldAttr(pAnnotDict, "TI")->GetInteger()
-                         : 0;
+      CPDF_Array* pOpts = ToArray(FPDF_GetFieldAttr(pAnnotDict, "Opt"));
+      CPDF_Array* pSels = ToArray(FPDF_GetFieldAttr(pAnnotDict, "I"));
+      CPDF_Object* pTi = FPDF_GetFieldAttr(pAnnotDict, "TI");
+      int32_t nTop = pTi ? pTi->GetInteger() : 0;
       CFX_ByteTextBuf sBody;
       if (pOpts) {
         FX_FLOAT fy = rcBody.top;
@@ -415,11 +410,10 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         }
       }
       if (sBody.GetSize() > 0) {
-        sAppStream << "/Tx BMC\n"
-                   << "q\n";
-        sAppStream << rcBody.left << " " << rcBody.bottom << " "
-                   << rcBody.Width() << " " << rcBody.Height() << " re\nW\nn\n";
-        sAppStream << sBody.AsStringC() << "Q\nEMC\n";
+        sAppStream << "/Tx BMC\nq\n"
+                   << rcBody.left << " " << rcBody.bottom << " "
+                   << rcBody.Width() << " " << rcBody.Height() << " re\nW\nn\n"
+                   << sBody.AsStringC() << "Q\nEMC\n";
       }
     } break;
   }

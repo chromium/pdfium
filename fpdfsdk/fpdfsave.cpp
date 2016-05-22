@@ -107,10 +107,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   if (!pXFA)
     return true;
 
-  if (!pXFA->IsArray())
-    return false;
-
-  CPDF_Array* pArray = pXFA->GetArray();
+  CPDF_Array* pArray = pXFA->AsArray();
   if (!pArray)
     return false;
 
