@@ -382,7 +382,7 @@ class CPDF_Function {
     kType4PostScript = 4,
   };
 
-  static CPDF_Function* Load(CPDF_Object* pFuncObj);
+  static std::unique_ptr<CPDF_Function> Load(CPDF_Object* pFuncObj);
   static Type IntegerToFunctionType(int iType);
 
   virtual ~CPDF_Function();

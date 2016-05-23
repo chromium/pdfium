@@ -205,8 +205,8 @@ class CPDF_RenderStatus {
                          int bitmap_alpha,
                          int blend_mode,
                          int bIsolated);
-  FX_BOOL ProcessShading(const CPDF_ShadingObject* pShadingObj,
-                         const CFX_Matrix* pObj2Device);
+  void ProcessShading(const CPDF_ShadingObject* pShadingObj,
+                      const CFX_Matrix* pObj2Device);
   void DrawShading(CPDF_ShadingPattern* pPattern,
                    CFX_Matrix* pMatrix,
                    FX_RECT& clip_rect,

@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 
+#include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
@@ -34,28 +35,22 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
       m_bShadingObj(bShading),
       m_pShadingObj(pPatternObj),
       m_pCS(nullptr),
-      m_pCountedCS(nullptr),
-      m_nFuncs(0) {
+      m_pCountedCS(nullptr) {
   if (!bShading) {
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
     m_Pattern2Form = pDict->GetMatrixBy("Matrix");
     m_pShadingObj = pDict->GetDirectObjectBy("Shading");
     m_Pattern2Form.Concat(parentMatrix);
   }
-  for (size_t i = 0; i < FX_ArraySize(m_pFunctions); ++i)
-    m_pFunctions[i] = nullptr;
 }
 
 CPDF_ShadingPattern::~CPDF_ShadingPattern() {
-  for (size_t i = 0; i < m_nFuncs; ++i)
-    delete m_pFunctions[i];
-
   CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->get() : nullptr;
   if (pCS && m_pDocument)
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
 }
 
-FX_BOOL CPDF_ShadingPattern::Load() {
+bool CPDF_ShadingPattern::Load() {
   if (m_ShadingType != kInvalidShading)
     return TRUE;
 
@@ -64,21 +59,15 @@ FX_BOOL CPDF_ShadingPattern::Load() {
   if (!pShadingDict)
     return FALSE;
 
-  if (m_nFuncs) {
-    for (size_t i = 0; i < m_nFuncs; i++)
-      delete m_pFunctions[i];
-    m_nFuncs = 0;
-  }
+  m_pFunctions.clear();
   CPDF_Object* pFunc = pShadingDict->GetDirectObjectBy("Function");
   if (pFunc) {
     if (CPDF_Array* pArray = pFunc->AsArray()) {
-      m_nFuncs = std::min<size_t>(pArray->GetCount(), 4);
-
-      for (size_t i = 0; i < m_nFuncs; i++)
+      m_pFunctions.resize(std::min<size_t>(pArray->GetCount(), 4));
+      for (size_t i = 0; i < m_pFunctions.size(); ++i)
         m_pFunctions[i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
     } else {
-      m_pFunctions[0] = CPDF_Function::Load(pFunc);
-      m_nFuncs = 1;
+      m_pFunctions.push_back(CPDF_Function::Load(pFunc));
     }
   }
   CPDF_Object* pCSObj = pShadingDict->GetDirectObjectBy("ColorSpace");

@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
@@ -220,7 +222,7 @@ class CPDF_SeparationCS : public CPDF_ColorSpace {
   void EnableStdConversion(FX_BOOL bEnabled) override;
 
   CPDF_ColorSpace* m_pAltCS;
-  CPDF_Function* m_pFunc;
+  std::unique_ptr<CPDF_Function> m_pFunc;
   enum { None, All, Colorant } m_Type;
 };
 
@@ -242,7 +244,7 @@ class CPDF_DeviceNCS : public CPDF_ColorSpace {
   void EnableStdConversion(FX_BOOL bEnabled) override;
 
   CPDF_ColorSpace* m_pAltCS;
-  CPDF_Function* m_pFunc;
+  std::unique_ptr<CPDF_Function> m_pFunc;
 };
 
 FX_FLOAT RGB_Conversion(FX_FLOAT colorComponent) {
@@ -1098,15 +1100,11 @@ CPDF_ColorSpace* CPDF_PatternCS::GetBaseCS() const {
 }
 
 CPDF_SeparationCS::CPDF_SeparationCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_SEPARATION, 1),
-      m_pAltCS(nullptr),
-      m_pFunc(nullptr) {}
+    : CPDF_ColorSpace(pDoc, PDFCS_SEPARATION, 1), m_pAltCS(nullptr) {}
 
 CPDF_SeparationCS::~CPDF_SeparationCS() {
-  if (m_pAltCS) {
+  if (m_pAltCS)
     m_pAltCS->ReleaseCS();
-  }
-  delete m_pFunc;
 }
 
 void CPDF_SeparationCS::GetDefaultValue(int iComponent,
@@ -1122,25 +1120,24 @@ FX_BOOL CPDF_SeparationCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   CFX_ByteString name = pArray->GetStringAt(1);
   if (name == "None") {
     m_Type = None;
-  } else {
-    m_Type = Colorant;
-    CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
-    if (pAltCS == m_pArray) {
-      return FALSE;
-    }
-    m_pAltCS = Load(pDoc, pAltCS);
-    if (!m_pAltCS) {
-      return FALSE;
-    }
-    CPDF_Object* pFuncObj = pArray->GetDirectObjectAt(3);
-    if (pFuncObj && !pFuncObj->IsName())
-      m_pFunc = CPDF_Function::Load(pFuncObj);
-
-    if (m_pFunc && m_pFunc->CountOutputs() < m_pAltCS->CountComponents()) {
-      delete m_pFunc;
-      m_pFunc = NULL;
-    }
+    return TRUE;
   }
+
+  m_Type = Colorant;
+  CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
+  if (pAltCS == m_pArray)
+    return FALSE;
+
+  m_pAltCS = Load(pDoc, pAltCS);
+  if (!m_pAltCS)
+    return FALSE;
+
+  CPDF_Object* pFuncObj = pArray->GetDirectObjectAt(3);
+  if (pFuncObj && !pFuncObj->IsName())
+    m_pFunc = CPDF_Function::Load(pFuncObj);
+
+  if (m_pFunc && m_pFunc->CountOutputs() < m_pAltCS->CountComponents())
+    m_pFunc.reset();
   return TRUE;
 }
 
@@ -1148,50 +1145,47 @@ FX_BOOL CPDF_SeparationCS::GetRGB(FX_FLOAT* pBuf,
                                   FX_FLOAT& R,
                                   FX_FLOAT& G,
                                   FX_FLOAT& B) const {
-  if (m_Type == None) {
+  if (m_Type == None)
     return FALSE;
-  }
+
   if (!m_pFunc) {
-    if (!m_pAltCS) {
+    if (!m_pAltCS)
       return FALSE;
-    }
+
     int nComps = m_pAltCS->CountComponents();
     CFX_FixedBufGrow<FX_FLOAT, 16> results(nComps);
-    for (int i = 0; i < nComps; i++) {
+    for (int i = 0; i < nComps; i++)
       results[i] = *pBuf;
-    }
     return m_pAltCS->GetRGB(results, R, G, B);
   }
+
   CFX_FixedBufGrow<FX_FLOAT, 16> results(m_pFunc->CountOutputs());
   int nresults = 0;
   m_pFunc->Call(pBuf, 1, results, nresults);
-  if (nresults == 0) {
+  if (nresults == 0)
     return FALSE;
-  }
-  if (m_pAltCS) {
+
+  if (m_pAltCS)
     return m_pAltCS->GetRGB(results, R, G, B);
-  }
-  R = G = B = 0;
+
+  R = 0;
+  G = 0;
+  B = 0;
   return FALSE;
 }
 
 void CPDF_SeparationCS::EnableStdConversion(FX_BOOL bEnabled) {
   CPDF_ColorSpace::EnableStdConversion(bEnabled);
-  if (m_pAltCS) {
+  if (m_pAltCS)
     m_pAltCS->EnableStdConversion(bEnabled);
-  }
 }
 
 CPDF_DeviceNCS::CPDF_DeviceNCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_DEVICEN, 0),
-      m_pAltCS(nullptr),
-      m_pFunc(nullptr) {}
+    : CPDF_ColorSpace(pDoc, PDFCS_DEVICEN, 0), m_pAltCS(nullptr) {}
 
 CPDF_DeviceNCS::~CPDF_DeviceNCS() {
-  delete m_pFunc;
-  if (m_pAltCS) {
+  if (m_pAltCS)
     m_pAltCS->ReleaseCS();
-  }
 }
 
 void CPDF_DeviceNCS::GetDefaultValue(int iComponent,
@@ -1210,33 +1204,30 @@ FX_BOOL CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
 
   m_nComponents = pObj->GetCount();
   CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
-  if (!pAltCS || pAltCS == m_pArray) {
+  if (!pAltCS || pAltCS == m_pArray)
     return FALSE;
-  }
+
   m_pAltCS = Load(pDoc, pAltCS);
   m_pFunc = CPDF_Function::Load(pArray->GetDirectObjectAt(3));
-  if (!m_pAltCS || !m_pFunc) {
+  if (!m_pAltCS || !m_pFunc)
     return FALSE;
-  }
-  if (m_pFunc->CountOutputs() < m_pAltCS->CountComponents()) {
-    return FALSE;
-  }
-  return TRUE;
+
+  return m_pFunc->CountOutputs() >= m_pAltCS->CountComponents();
 }
 
 FX_BOOL CPDF_DeviceNCS::GetRGB(FX_FLOAT* pBuf,
                                FX_FLOAT& R,
                                FX_FLOAT& G,
                                FX_FLOAT& B) const {
-  if (!m_pFunc) {
+  if (!m_pFunc)
     return FALSE;
-  }
+
   CFX_FixedBufGrow<FX_FLOAT, 16> results(m_pFunc->CountOutputs());
   int nresults = 0;
   m_pFunc->Call(pBuf, m_nComponents, results, nresults);
-  if (nresults == 0) {
+  if (nresults == 0)
     return FALSE;
-  }
+
   return m_pAltCS->GetRGB(results, R, G, B);
 }
 

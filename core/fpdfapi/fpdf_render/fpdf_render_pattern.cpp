@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
 #include "core/fpdfapi/fpdf_page/cpdf_meshstream.h"
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
@@ -21,14 +23,25 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fxge/include/fx_ge.h"
 
+namespace {
+
+uint32_t CountOutputs(
+    const std::vector<std::unique_ptr<CPDF_Function>>& funcs) {
+  uint32_t total = 0;
+  for (const auto& func : funcs) {
+    if (func)
+      total += func->CountOutputs();
+  }
+  return total;
+}
+
 #define SHADING_STEPS 256
-static void DrawAxialShading(CFX_DIBitmap* pBitmap,
-                             CFX_Matrix* pObject2Bitmap,
-                             CPDF_Dictionary* pDict,
-                             CPDF_Function** pFuncs,
-                             int nFuncs,
-                             CPDF_ColorSpace* pCS,
-                             int alpha) {
+void DrawAxialShading(CFX_DIBitmap* pBitmap,
+                      CFX_Matrix* pObject2Bitmap,
+                      CPDF_Dictionary* pDict,
+                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+                      CPDF_ColorSpace* pCS,
+                      int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
   if (!pCoords) {
@@ -57,13 +70,8 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT axis_len_square = (x_span * x_span) + (y_span * y_span);
   CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
-  uint32_t total_results = 0;
-  for (int j = 0; j < nFuncs; j++) {
-    if (pFuncs[j])
-      total_results += pFuncs[j]->CountOutputs();
-  }
-  if (pCS->CountComponents() > total_results)
-    total_results = pCS->CountComponents();
+  uint32_t total_results =
+      std::max(CountOutputs(funcs), pCS->CountComponents());
   CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
@@ -71,12 +79,11 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   for (int i = 0; i < SHADING_STEPS; i++) {
     FX_FLOAT input = (t_max - t_min) * i / SHADING_STEPS + t_min;
     int offset = 0;
-    for (int j = 0; j < nFuncs; j++) {
-      if (pFuncs[j]) {
+    for (const auto& func : funcs) {
+      if (func) {
         int nresults = 0;
-        if (pFuncs[j]->Call(&input, 1, pResults + offset, nresults)) {
+        if (func->Call(&input, 1, pResults + offset, nresults))
           offset += nresults;
-        }
       }
     }
     FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
@@ -109,13 +116,13 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
     }
   }
 }
-static void DrawRadialShading(CFX_DIBitmap* pBitmap,
-                              CFX_Matrix* pObject2Bitmap,
-                              CPDF_Dictionary* pDict,
-                              CPDF_Function** pFuncs,
-                              int nFuncs,
-                              CPDF_ColorSpace* pCS,
-                              int alpha) {
+
+void DrawRadialShading(CFX_DIBitmap* pBitmap,
+                       CFX_Matrix* pObject2Bitmap,
+                       CPDF_Dictionary* pDict,
+                       const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+                       CPDF_ColorSpace* pCS,
+                       int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
   if (!pCoords) {
@@ -141,15 +148,8 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
     bStartExtend = pArray->GetIntegerAt(0);
     bEndExtend = pArray->GetIntegerAt(1);
   }
-  uint32_t total_results = 0;
-  for (int j = 0; j < nFuncs; j++) {
-    if (pFuncs[j]) {
-      total_results += pFuncs[j]->CountOutputs();
-    }
-  }
-  if (pCS->CountComponents() > total_results) {
-    total_results = pCS->CountComponents();
-  }
+  uint32_t total_results =
+      std::max(CountOutputs(funcs), pCS->CountComponents());
   CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
@@ -157,12 +157,11 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
   for (int i = 0; i < SHADING_STEPS; i++) {
     FX_FLOAT input = (t_max - t_min) * i / SHADING_STEPS + t_min;
     int offset = 0;
-    for (int j = 0; j < nFuncs; j++) {
-      if (pFuncs[j]) {
+    for (const auto& func : funcs) {
+      if (func) {
         int nresults;
-        if (pFuncs[j]->Call(&input, 1, pResults + offset, nresults)) {
+        if (func->Call(&input, 1, pResults + offset, nresults))
           offset += nresults;
-        }
       }
     }
     FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
@@ -246,13 +245,13 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
     }
   }
 }
-static void DrawFuncShading(CFX_DIBitmap* pBitmap,
-                            CFX_Matrix* pObject2Bitmap,
-                            CPDF_Dictionary* pDict,
-                            CPDF_Function** pFuncs,
-                            int nFuncs,
-                            CPDF_ColorSpace* pCS,
-                            int alpha) {
+
+void DrawFuncShading(CFX_DIBitmap* pBitmap,
+                     CFX_Matrix* pObject2Bitmap,
+                     CPDF_Dictionary* pDict,
+                     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+                     CPDF_ColorSpace* pCS,
+                     int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pDomain = pDict->GetArrayBy("Domain");
   FX_FLOAT xmin = 0, ymin = 0, xmax = 1.0f, ymax = 1.0f;
@@ -270,13 +269,8 @@ static void DrawFuncShading(CFX_DIBitmap* pBitmap,
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
-  uint32_t total_results = 0;
-  for (int j = 0; j < nFuncs; j++) {
-    if (pFuncs[j])
-      total_results += pFuncs[j]->CountOutputs();
-  }
-  if (pCS->CountComponents() > total_results)
-    total_results = pCS->CountComponents();
+  uint32_t total_results =
+      std::max(CountOutputs(funcs), pCS->CountComponents());
   CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
@@ -292,12 +286,11 @@ static void DrawFuncShading(CFX_DIBitmap* pBitmap,
       int offset = 0;
       input[0] = x;
       input[1] = y;
-      for (int j = 0; j < nFuncs; j++) {
-        if (pFuncs[j]) {
+      for (const auto& func : funcs) {
+        if (func) {
           int nresults;
-          if (pFuncs[j]->Call(input, 2, pResults + offset, nresults)) {
+          if (func->Call(input, 2, pResults + offset, nresults))
             offset += nresults;
-          }
         }
       }
       FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
@@ -307,30 +300,30 @@ static void DrawFuncShading(CFX_DIBitmap* pBitmap,
     }
   }
 }
-FX_BOOL _GetScanlineIntersect(int y,
-                              FX_FLOAT x1,
-                              FX_FLOAT y1,
-                              FX_FLOAT x2,
-                              FX_FLOAT y2,
-                              FX_FLOAT& x) {
-  if (y1 == y2) {
+
+bool GetScanlineIntersect(int y,
+                          FX_FLOAT x1,
+                          FX_FLOAT y1,
+                          FX_FLOAT x2,
+                          FX_FLOAT y2,
+                          FX_FLOAT* x) {
+  if (y1 == y2)
     return FALSE;
-  }
+
   if (y1 < y2) {
-    if (y < y1 || y > y2) {
+    if (y < y1 || y > y2)
       return FALSE;
-    }
   } else {
-    if (y < y2 || y > y1) {
+    if (y < y2 || y > y1)
       return FALSE;
-    }
   }
-  x = x1 + ((x2 - x1) * (y - y1) / (y2 - y1));
+  *x = x1 + ((x2 - x1) * (y - y1) / (y2 - y1));
   return TRUE;
 }
-static void DrawGouraud(CFX_DIBitmap* pBitmap,
-                        int alpha,
-                        CPDF_MeshVertex triangle[3]) {
+
+void DrawGouraud(CFX_DIBitmap* pBitmap,
+                 int alpha,
+                 CPDF_MeshVertex triangle[3]) {
   FX_FLOAT min_y = triangle[0].y, max_y = triangle[0].y;
   for (int i = 1; i < 3; i++) {
     if (min_y > triangle[i].y) {
@@ -356,11 +349,10 @@ static void DrawGouraud(CFX_DIBitmap* pBitmap,
     for (int i = 0; i < 3; i++) {
       CPDF_MeshVertex& vertex1 = triangle[i];
       CPDF_MeshVertex& vertex2 = triangle[(i + 1) % 3];
-      FX_BOOL bIntersect = _GetScanlineIntersect(
-          y, vertex1.x, vertex1.y, vertex2.x, vertex2.y, inter_x[nIntersects]);
-      if (!bIntersect) {
+      bool bIntersect = GetScanlineIntersect(y, vertex1.x, vertex1.y, vertex2.x,
+                                             vertex2.y, &inter_x[nIntersects]);
+      if (!bIntersect)
         continue;
-      }
 
       FX_FLOAT y_dist = (y - vertex1.y) / (vertex2.y - vertex1.y);
       r[nIntersects] = vertex1.r + ((vertex2.r - vertex1.r) * y_dist);
@@ -409,23 +401,24 @@ static void DrawGouraud(CFX_DIBitmap* pBitmap,
     }
   }
 }
-static void DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
-                                   CFX_Matrix* pObject2Bitmap,
-                                   CPDF_Stream* pShadingStream,
-                                   CPDF_Function** pFuncs,
-                                   int nFuncs,
-                                   CPDF_ColorSpace* pCS,
-                                   int alpha) {
+
+void DrawFreeGouraudShading(
+    CFX_DIBitmap* pBitmap,
+    CFX_Matrix* pObject2Bitmap,
+    CPDF_Stream* pShadingStream,
+    const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+    CPDF_ColorSpace* pCS,
+    int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
-  CPDF_MeshStream stream;
-  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS))
+  CPDF_MeshStream stream(funcs, pCS);
+  if (!stream.Load(pShadingStream))
     return;
 
   CPDF_MeshVertex triangle[3];
   FXSYS_memset(triangle, 0, sizeof(triangle));
 
-  while (!stream.m_BitStream.IsEOF()) {
+  while (!stream.BitStream()->IsEOF()) {
     CPDF_MeshVertex vertex;
     uint32_t flag = stream.GetVertex(vertex, pObject2Bitmap);
     if (flag == 0) {
@@ -443,36 +436,36 @@ static void DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
     DrawGouraud(pBitmap, alpha, triangle);
   }
 }
-static void DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap,
-                                      CFX_Matrix* pObject2Bitmap,
-                                      CPDF_Stream* pShadingStream,
-                                      CPDF_Function** pFuncs,
-                                      int nFuncs,
-                                      CPDF_ColorSpace* pCS,
-                                      int alpha) {
+
+void DrawLatticeGouraudShading(
+    CFX_DIBitmap* pBitmap,
+    CFX_Matrix* pObject2Bitmap,
+    CPDF_Stream* pShadingStream,
+    const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+    CPDF_ColorSpace* pCS,
+    int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
   int row_verts = pShadingStream->GetDict()->GetIntegerBy("VerticesPerRow");
   if (row_verts < 2)
     return;
 
-  CPDF_MeshStream stream;
-  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS))
+  CPDF_MeshStream stream(funcs, pCS);
+  if (!stream.Load(pShadingStream))
     return;
 
-  CPDF_MeshVertex* vertex = FX_Alloc2D(CPDF_MeshVertex, row_verts, 2);
-  if (!stream.GetVertexRow(vertex, row_verts, pObject2Bitmap)) {
-    FX_Free(vertex);
+  std::unique_ptr<CPDF_MeshVertex, FxFreeDeleter> vertex(
+      FX_Alloc2D(CPDF_MeshVertex, row_verts, 2));
+  if (!stream.GetVertexRow(vertex.get(), row_verts, pObject2Bitmap))
     return;
-  }
+
   int last_index = 0;
   while (1) {
-    CPDF_MeshVertex* last_row = vertex + last_index * row_verts;
-    CPDF_MeshVertex* this_row = vertex + (1 - last_index) * row_verts;
-    if (!stream.GetVertexRow(this_row, row_verts, pObject2Bitmap)) {
-      FX_Free(vertex);
+    CPDF_MeshVertex* last_row = vertex.get() + last_index * row_verts;
+    CPDF_MeshVertex* this_row = vertex.get() + (1 - last_index) * row_verts;
+    if (!stream.GetVertexRow(this_row, row_verts, pObject2Bitmap))
       return;
-    }
+
     CPDF_MeshVertex triangle[3];
     for (int i = 1; i < row_verts; i++) {
       triangle[0] = last_row[i];
@@ -484,8 +477,8 @@ static void DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap,
     }
     last_index = 1 - last_index;
   }
-  FX_Free(vertex);
 }
+
 struct Coon_BezierCoeff {
   float a, b, c, d;
   void FromPoints(float p0, float p1, float p2, float p3) {
@@ -537,6 +530,7 @@ struct Coon_BezierCoeff {
     return dis < 0 ? -dis : dis;
   }
 };
+
 struct Coon_Bezier {
   Coon_BezierCoeff x, y;
   void FromPoints(float x0,
@@ -595,45 +589,43 @@ struct Coon_Bezier {
   }
   float Distance() { return x.Distance() + y.Distance(); }
 };
-static int _BiInterpol(int c0,
-                       int c1,
-                       int c2,
-                       int c3,
-                       int x,
-                       int y,
-                       int x_scale,
-                       int y_scale) {
+
+int BiInterpolImpl(int c0,
+                   int c1,
+                   int c2,
+                   int c3,
+                   int x,
+                   int y,
+                   int x_scale,
+                   int y_scale) {
   int x1 = c0 + (c3 - c0) * x / x_scale;
   int x2 = c1 + (c2 - c1) * x / x_scale;
   return x1 + (x2 - x1) * y / y_scale;
 }
+
 struct Coon_Color {
   Coon_Color() { FXSYS_memset(comp, 0, sizeof(int) * 3); }
   int comp[3];
+
   void BiInterpol(Coon_Color colors[4],
                   int x,
                   int y,
                   int x_scale,
                   int y_scale) {
-    for (int i = 0; i < 3; i++)
-      comp[i] =
-          _BiInterpol(colors[0].comp[i], colors[1].comp[i], colors[2].comp[i],
-                      colors[3].comp[i], x, y, x_scale, y_scale);
+    for (int i = 0; i < 3; i++) {
+      comp[i] = BiInterpolImpl(colors[0].comp[i], colors[1].comp[i],
+                               colors[2].comp[i], colors[3].comp[i], x, y,
+                               x_scale, y_scale);
+    }
   }
+
   int Distance(Coon_Color& o) {
-    int max, diff;
-    max = FXSYS_abs(comp[0] - o.comp[0]);
-    diff = FXSYS_abs(comp[1] - o.comp[1]);
-    if (max < diff) {
-      max = diff;
-    }
-    diff = FXSYS_abs(comp[2] - o.comp[2]);
-    if (max < diff) {
-      max = diff;
-    }
-    return max;
+    return std::max({FXSYS_abs(comp[0] - o.comp[0]),
+                     FXSYS_abs(comp[1] - o.comp[1]),
+                     FXSYS_abs(comp[2] - o.comp[2])});
   }
 };
+
 struct CPDF_PatchDrawer {
   Coon_Color patch_colors[4];
   int max_delta;
@@ -732,39 +724,39 @@ struct CPDF_PatchDrawer {
   }
 };
 
-bool _CheckCoonTensorPara(const CPDF_MeshStream& stream) {
-  bool bCoorBits = (stream.m_nCoordBits == 1 || stream.m_nCoordBits == 2 ||
-                    stream.m_nCoordBits == 4 || stream.m_nCoordBits == 8 ||
-                    stream.m_nCoordBits == 12 || stream.m_nCoordBits == 16 ||
-                    stream.m_nCoordBits == 24 || stream.m_nCoordBits == 32);
+bool CheckCoonTensorPara(const CPDF_MeshStream& stream) {
+  uint32_t coord = stream.CoordBits();
+  bool bCoordBitsValid =
+      (coord == 1 || coord == 2 || coord == 4 || coord == 8 || coord == 12 ||
+       coord == 16 || coord == 24 || coord == 32);
 
-  bool bCompBits = (stream.m_nCompBits == 1 || stream.m_nCompBits == 2 ||
-                    stream.m_nCompBits == 4 || stream.m_nCompBits == 8 ||
-                    stream.m_nCompBits == 12 || stream.m_nCompBits == 16);
+  uint32_t comp = stream.CompBits();
+  bool bCompBitsValid = (comp == 1 || comp == 2 || comp == 4 || comp == 8 ||
+                         comp == 12 || comp == 16);
 
-  bool bFlagBits = (stream.m_nFlagBits == 2 || stream.m_nFlagBits == 4 ||
-                    stream.m_nFlagBits == 8);
+  uint32_t flag = stream.FlagBits();
+  bool bFlagBitsValid = (flag == 2 || flag == 4 || flag == 8);
 
-  return bCoorBits && bCompBits && bFlagBits;
+  return bCoordBitsValid && bCompBitsValid && bFlagBitsValid;
 }
 
-static void DrawCoonPatchMeshes(FX_BOOL bTensor,
-                                CFX_DIBitmap* pBitmap,
-                                CFX_Matrix* pObject2Bitmap,
-                                CPDF_Stream* pShadingStream,
-                                CPDF_Function** pFuncs,
-                                int nFuncs,
-                                CPDF_ColorSpace* pCS,
-                                int fill_mode,
-                                int alpha) {
+void DrawCoonPatchMeshes(
+    FX_BOOL bTensor,
+    CFX_DIBitmap* pBitmap,
+    CFX_Matrix* pObject2Bitmap,
+    CPDF_Stream* pShadingStream,
+    const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+    CPDF_ColorSpace* pCS,
+    int fill_mode,
+    int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
   CFX_FxgeDevice device;
   device.Attach(pBitmap);
-  CPDF_MeshStream stream;
-  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS))
+  CPDF_MeshStream stream(funcs, pCS);
+  if (!stream.Load(pShadingStream))
     return;
-  if (!_CheckCoonTensorPara(stream))
+  if (!CheckCoonTensorPara(stream))
     return;
 
   CPDF_PatchDrawer patch;
@@ -779,7 +771,7 @@ static void DrawCoonPatchMeshes(FX_BOOL bTensor,
   }
   CFX_PointF coords[16];
   int point_count = bTensor ? 16 : 12;
-  while (!stream.m_BitStream.IsEOF()) {
+  while (!stream.BitStream()->IsEOF()) {
     uint32_t flag = stream.GetFlag();
     int iStartPoint = 0, iStartColor = 0, i = 0;
     if (flag) {
@@ -823,23 +815,59 @@ static void DrawCoonPatchMeshes(FX_BOOL bTensor,
     patch.Draw(1, 1, 0, 0, C1, C2, D1, D2);
   }
 }
+
+std::unique_ptr<CFX_DIBitmap> DrawPatternBitmap(
+    CPDF_Document* pDoc,
+    CPDF_PageRenderCache* pCache,
+    CPDF_TilingPattern* pPattern,
+    const CFX_Matrix* pObject2Device,
+    int width,
+    int height,
+    int flags) {
+  std::unique_ptr<CFX_DIBitmap> pBitmap(new CFX_DIBitmap);
+  if (!pBitmap->Create(width, height,
+                       pPattern->colored() ? FXDIB_Argb : FXDIB_8bppMask)) {
+    return std::unique_ptr<CFX_DIBitmap>();
+  }
+  CFX_FxgeDevice bitmap_device;
+  bitmap_device.Attach(pBitmap.get());
+  pBitmap->Clear(0);
+  CFX_FloatRect cell_bbox = pPattern->bbox();
+  pPattern->pattern_to_form()->TransformRect(cell_bbox);
+  pObject2Device->TransformRect(cell_bbox);
+  CFX_FloatRect bitmap_rect(0.0f, 0.0f, (FX_FLOAT)width, (FX_FLOAT)height);
+  CFX_Matrix mtAdjust;
+  mtAdjust.MatchRect(bitmap_rect, cell_bbox);
+  CFX_Matrix mtPattern2Bitmap = *pObject2Device;
+  mtPattern2Bitmap.Concat(mtAdjust);
+  CPDF_RenderOptions options;
+  if (!pPattern->colored())
+    options.m_ColorMode = RENDER_COLOR_ALPHA;
+
+  flags |= RENDER_FORCE_HALFTONE;
+  options.m_Flags = flags;
+  CPDF_RenderContext context(pDoc, pCache);
+  context.AppendLayer(pPattern->form(), &mtPattern2Bitmap);
+  context.Render(&bitmap_device, &options, nullptr);
+  return pBitmap;
+}
+
+}  // namespace
+
 void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
                                     CFX_Matrix* pMatrix,
                                     FX_RECT& clip_rect,
                                     int alpha,
                                     FX_BOOL bAlphaMode) {
-  CPDF_Function** pFuncs = pPattern->m_pFunctions;
-  int nFuncs = pPattern->m_nFuncs;
-  CPDF_Dictionary* pDict = pPattern->m_pShadingObj->GetDict();
-  CPDF_ColorSpace* pColorSpace = pPattern->m_pCS;
-  if (!pColorSpace) {
+  const auto& funcs = pPattern->GetFuncs();
+  CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
+  CPDF_ColorSpace* pColorSpace = pPattern->GetCS();
+  if (!pColorSpace)
     return;
-  }
+
   FX_ARGB background = 0;
-  if (!pPattern->m_bShadingObj &&
-      pPattern->m_pShadingObj->GetDict()->KeyExist("Background")) {
-    CPDF_Array* pBackColor =
-        pPattern->m_pShadingObj->GetDict()->GetArrayBy("Background");
+  if (!pPattern->IsShadingObject() && pDict->KeyExist("Background")) {
+    CPDF_Array* pBackColor = pDict->GetArrayBy("Background");
     if (pBackColor &&
         pBackColor->GetCount() >= pColorSpace->CountComponents()) {
       CFX_FixedBufGrow<FX_FLOAT, 16> comps(pColorSpace->CountComponents());
@@ -866,70 +894,68 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   CFX_Matrix FinalMatrix = *pMatrix;
   FinalMatrix.Concat(*buffer.GetMatrix());
   CFX_DIBitmap* pBitmap = buffer.GetBitmap();
-  if (!pBitmap->GetBuffer()) {
+  if (!pBitmap->GetBuffer())
     return;
-  }
+
   pBitmap->Clear(background);
   int fill_mode = m_Options.m_Flags;
-  switch (pPattern->m_ShadingType) {
+  switch (pPattern->GetShadingType()) {
     case kInvalidShading:
     case kMaxShading:
       return;
     case kFunctionBasedShading:
-      DrawFuncShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs, pColorSpace,
-                      alpha);
+      DrawFuncShading(pBitmap, &FinalMatrix, pDict, funcs, pColorSpace, alpha);
       break;
     case kAxialShading:
-      DrawAxialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
-                       pColorSpace, alpha);
+      DrawAxialShading(pBitmap, &FinalMatrix, pDict, funcs, pColorSpace, alpha);
       break;
     case kRadialShading:
-      DrawRadialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
-                        pColorSpace, alpha);
+      DrawRadialShading(pBitmap, &FinalMatrix, pDict, funcs, pColorSpace,
+                        alpha);
       break;
     case kFreeFormGouraudTriangleMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      if (CPDF_Stream* pStream = ToStream(pPattern->m_pShadingObj)) {
-        DrawFreeGouraudShading(pBitmap, &FinalMatrix, pStream, pFuncs, nFuncs,
+      if (CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject())) {
+        DrawFreeGouraudShading(pBitmap, &FinalMatrix, pStream, funcs,
                                pColorSpace, alpha);
       }
     } break;
     case kLatticeFormGouraudTriangleMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      if (CPDF_Stream* pStream = ToStream(pPattern->m_pShadingObj)) {
-        DrawLatticeGouraudShading(pBitmap, &FinalMatrix, pStream, pFuncs,
-                                  nFuncs, pColorSpace, alpha);
+      if (CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject())) {
+        DrawLatticeGouraudShading(pBitmap, &FinalMatrix, pStream, funcs,
+                                  pColorSpace, alpha);
       }
     } break;
     case kCoonsPatchMeshShading:
     case kTensorProductPatchMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      if (CPDF_Stream* pStream = ToStream(pPattern->m_pShadingObj)) {
+      if (CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject())) {
         DrawCoonPatchMeshes(
-            pPattern->m_ShadingType == kTensorProductPatchMeshShading, pBitmap,
-            &FinalMatrix, pStream, pFuncs, nFuncs, pColorSpace, fill_mode,
+            pPattern->GetShadingType() == kTensorProductPatchMeshShading,
+            pBitmap, &FinalMatrix, pStream, funcs, pColorSpace, fill_mode,
             alpha);
       }
     } break;
   }
-  if (bAlphaMode) {
+  if (bAlphaMode)
     pBitmap->LoadChannel(FXDIB_Red, pBitmap, FXDIB_Alpha);
-  }
-  if (m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
+
+  if (m_Options.m_ColorMode == RENDER_COLOR_GRAY)
     pBitmap->ConvertColorScale(m_Options.m_ForeColor, m_Options.m_BackColor);
-  }
   buffer.OutputToDevice();
 }
+
 void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
                                            const CPDF_PageObject* pPageObj,
                                            const CFX_Matrix* pObj2Device,
                                            FX_BOOL bStroke) {
-  if (!pattern->Load()) {
+  if (!pattern->Load())
     return;
-  }
+
   m_pDevice->SaveState();
   if (pPageObj->IsPath()) {
     if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
@@ -954,56 +980,22 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
   m_pDevice->RestoreState();
 }
-FX_BOOL CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
-                                          const CFX_Matrix* pObj2Device) {
+
+void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
+                                       const CFX_Matrix* pObj2Device) {
   FX_RECT rect = pShadingObj->GetBBox(pObj2Device);
   FX_RECT clip_box = m_pDevice->GetClipBox();
   rect.Intersect(clip_box);
-  if (rect.IsEmpty()) {
-    return TRUE;
-  }
+  if (rect.IsEmpty())
+    return;
+
   CFX_Matrix matrix = pShadingObj->m_Matrix;
   matrix.Concat(*pObj2Device);
   DrawShading(pShadingObj->m_pShading, &matrix, rect,
               pShadingObj->m_GeneralState.GetAlpha(FALSE),
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
-  return TRUE;
 }
-static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc,
-                                       CPDF_PageRenderCache* pCache,
-                                       CPDF_TilingPattern* pPattern,
-                                       const CFX_Matrix* pObject2Device,
-                                       int width,
-                                       int height,
-                                       int flags) {
-  CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
-  if (!pBitmap->Create(width, height,
-                       pPattern->colored() ? FXDIB_Argb : FXDIB_8bppMask)) {
-    delete pBitmap;
-    return NULL;
-  }
-  CFX_FxgeDevice bitmap_device;
-  bitmap_device.Attach(pBitmap);
-  pBitmap->Clear(0);
-  CFX_FloatRect cell_bbox = pPattern->bbox();
-  pPattern->pattern_to_form()->TransformRect(cell_bbox);
-  pObject2Device->TransformRect(cell_bbox);
-  CFX_FloatRect bitmap_rect(0.0f, 0.0f, (FX_FLOAT)width, (FX_FLOAT)height);
-  CFX_Matrix mtAdjust;
-  mtAdjust.MatchRect(bitmap_rect, cell_bbox);
-  CFX_Matrix mtPattern2Bitmap = *pObject2Device;
-  mtPattern2Bitmap.Concat(mtAdjust);
-  CPDF_RenderOptions options;
-  if (!pPattern->colored())
-    options.m_ColorMode = RENDER_COLOR_ALPHA;
 
-  flags |= RENDER_FORCE_HALFTONE;
-  options.m_Flags = flags;
-  CPDF_RenderContext context(pDoc, pCache);
-  context.AppendLayer(pPattern->form(), &mtPattern2Bitmap);
-  context.Render(&bitmap_device, &options, nullptr);
-  return pBitmap;
-}
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                                           const CPDF_PageObject* pPageObj,
                                           const CFX_Matrix* pObj2Device,
@@ -1120,13 +1112,12 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   }
   FX_FLOAT left_offset = cell_bbox.left - mtPattern2Device.e;
   FX_FLOAT top_offset = cell_bbox.bottom - mtPattern2Device.f;
-  CFX_DIBitmap* pPatternBitmap = NULL;
+  std::unique_ptr<CFX_DIBitmap> pPatternBitmap;
   if (width * height < 16) {
-    CFX_DIBitmap* pEnlargedBitmap =
+    std::unique_ptr<CFX_DIBitmap> pEnlargedBitmap =
         DrawPatternBitmap(m_pContext->GetDocument(), m_pContext->GetPageCache(),
                           pPattern, pObj2Device, 8, 8, m_Options.m_Flags);
-    pPatternBitmap = pEnlargedBitmap->StretchTo(width, height);
-    delete pEnlargedBitmap;
+    pPatternBitmap.reset(pEnlargedBitmap->StretchTo(width, height));
   } else {
     pPatternBitmap = DrawPatternBitmap(
         m_pContext->GetDocument(), m_pContext->GetPageCache(), pPattern,
@@ -1177,10 +1168,10 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       } else {
         if (pPattern->colored()) {
           screen.CompositeBitmap(start_x, start_y, width, height,
-                                 pPatternBitmap, 0, 0);
+                                 pPatternBitmap.get(), 0, 0);
         } else {
-          screen.CompositeMask(start_x, start_y, width, height, pPatternBitmap,
-                               fill_argb, 0, 0);
+          screen.CompositeMask(start_x, start_y, width, height,
+                               pPatternBitmap.get(), fill_argb, 0, 0);
         }
       }
     }
@@ -1188,7 +1179,6 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   CompositeDIBitmap(&screen, clip_box.left, clip_box.top, 0, 255,
                     FXDIB_BLEND_NORMAL, FALSE);
   m_pDevice->RestoreState();
-  delete pPatternBitmap;
 }
 
 void CPDF_RenderStatus::DrawPathWithPattern(const CPDF_PathObject* pPathObj,

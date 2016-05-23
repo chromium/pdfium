@@ -351,8 +351,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
   }
   CPDF_Pattern* pPattern = nullptr;
   if (bShading) {
-    pPattern =
-        new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, bShading, matrix);
+    pPattern = new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, TRUE, matrix);
   } else {
     CPDF_Dictionary* pDict = pPatternObj ? pPatternObj->GetDict() : nullptr;
     if (pDict) {

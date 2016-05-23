@@ -31,6 +31,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fxcrt/include/fx_safe_types.h"
 
 namespace {
 
@@ -97,17 +98,16 @@ CFX_ByteStringC PDF_FindFullName(const PDF_AbbrPair* table,
                              : CFX_ByteStringC();
 }
 
-CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
-                             ShadingType type,
-                             const CFX_Matrix& matrix,
-                             CPDF_Function** pFuncs,
-                             int nFuncs,
-                             CPDF_ColorSpace* pCS) {
-  if (!pStream || !pFuncs || !pCS)
+CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
+                             const CFX_Matrix& matrix) {
+  ShadingType type = pShading->GetShadingType();
+  CPDF_Stream* pStream = ToStream(pShading->GetShadingObject());
+  CPDF_ColorSpace* pCS = pShading->GetCS();
+  if (!pStream || !pCS)
     return CFX_FloatRect(0, 0, 0, 0);
 
-  CPDF_MeshStream stream;
-  if (!stream.Load(pStream, pFuncs, nFuncs, pCS))
+  CPDF_MeshStream stream(pShading->GetFuncs(), pCS);
+  if (!stream.Load(pStream))
     return CFX_FloatRect(0, 0, 0, 0);
 
   CFX_FloatRect rect;
@@ -125,7 +125,7 @@ CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
   if (type == kCoonsPatchMeshShading || type == kTensorProductPatchMeshShading)
     color_count = kQuadColorsPerPatch;
 
-  while (!stream.m_BitStream.IsEOF()) {
+  while (!stream.BitStream()->IsEOF()) {
     uint32_t flag = 0;
     if (type != kLatticeFormGouraudTriangleMeshShading)
       flag = stream.GetFlag();
@@ -146,10 +146,15 @@ CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
         bStarted = true;
       }
     }
-    stream.m_BitStream.SkipBits(stream.m_nComps * stream.m_nCompBits *
-                                color_count);
+    FX_SAFE_UINT32 nBits = stream.comps();
+    nBits *= stream.CompBits();
+    nBits *= color_count;
+    if (!nBits.IsValid())
+      break;
+
+    stream.BitStream()->SkipBits(nBits.ValueOrDie());
     if (bGouraud)
-      stream.m_BitStream.ByteAlign();
+      stream.BitStream()->ByteAlign();
   }
   rect.Transform(&matrix);
   return rect;
@@ -171,16 +176,13 @@ CFX_ByteStringC PDF_FindValueAbbreviationForTesting(
 bool IsPathOperator(const uint8_t* buf, size_t len) {
   if (len == 1) {
     uint8_t op = buf[0];
-    if (op == kPathOperatorSubpath || op == kPathOperatorLine ||
-        op == kPathOperatorCubicBezier1 || op == kPathOperatorCubicBezier2 ||
-        op == kPathOperatorCubicBezier3) {
-      return true;
-    }
-  } else if (len == 2) {
-    if (buf[0] == kPathOperatorRectangle[0] &&
-        buf[1] == kPathOperatorRectangle[1]) {
-      return true;
-    }
+    return op == kPathOperatorSubpath || op == kPathOperatorLine ||
+           op == kPathOperatorCubicBezier1 || op == kPathOperatorCubicBezier2 ||
+           op == kPathOperatorCubicBezier3;
+  }
+  if (len == 2) {
+    return buf[0] == kPathOperatorRectangle[0] &&
+           buf[1] == kPathOperatorRectangle[1];
   }
   return false;
 }
@@ -1087,7 +1089,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   if (!pShading)
     return;
 
-  if (!pShading->m_bShadingObj || !pShading->Load())
+  if (!pShading->IsShadingObject() || !pShading->Load())
     return;
 
   std::unique_ptr<CPDF_ShadingObject> pObj(new CPDF_ShadingObject);
@@ -1097,12 +1099,8 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   pObj->m_Matrix.Concat(m_mtContentToUser);
   CFX_FloatRect bbox =
       pObj->m_ClipPath.IsNull() ? m_BBox : pObj->m_ClipPath.GetClipBox();
-  if (pShading->IsMeshShading()) {
-    bbox.Intersect(GetShadingBBox(ToStream(pShading->m_pShadingObj),
-                                  pShading->m_ShadingType, pObj->m_Matrix,
-                                  pShading->m_pFunctions, pShading->m_nFuncs,
-                                  pShading->m_pCS));
-  }
+  if (pShading->IsMeshShading())
+    bbox.Intersect(GetShadingBBox(pShading, pObj->m_Matrix));
   pObj->m_Left = bbox.left;
   pObj->m_Right = bbox.right;
   pObj->m_Top = bbox.top;

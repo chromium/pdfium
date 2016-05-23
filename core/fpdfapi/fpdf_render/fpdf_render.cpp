@@ -342,6 +342,7 @@ void CPDF_RenderStatus::DitherObjectArea(const CPDF_PageObject* pObj,
     pBitmap->DitherFS(pal, 16, &rect);
   }
 }
+
 void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
                                             const CFX_Matrix* pObj2Device) {
   FX_BOOL bRet = FALSE;
@@ -356,16 +357,16 @@ void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
       bRet = ProcessImage(pObj->AsImage(), pObj2Device);
       break;
     case CPDF_PageObject::SHADING:
-      bRet = ProcessShading(pObj->AsShading(), pObj2Device);
-      break;
+      ProcessShading(pObj->AsShading(), pObj2Device);
+      return;
     case CPDF_PageObject::FORM:
       bRet = ProcessForm(pObj->AsForm(), pObj2Device);
       break;
   }
-  if (!bRet) {
+  if (!bRet)
     DrawObjWithBackground(pObj, pObj2Device);
-  }
 }
+
 FX_BOOL CPDF_RenderStatus::DrawObjWithBlend(const CPDF_PageObject* pObj,
                                             const CFX_Matrix* pObj2Device) {
   FX_BOOL bRet = FALSE;
@@ -1112,12 +1113,12 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
       return nullptr;
 
     for (uint32_t i = 0; i < 3; ++i) {
-      pFuncs[2 - i].reset(CPDF_Function::Load(pArray->GetDirectObjectAt(i)));
+      pFuncs[2 - i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
       if (!pFuncs[2 - i])
         return nullptr;
     }
   } else {
-    pFuncs[0].reset(CPDF_Function::Load(pObj));
+    pFuncs[0] = CPDF_Function::Load(pObj);
     if (!pFuncs[0])
       return nullptr;
   }

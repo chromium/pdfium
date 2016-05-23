@@ -872,20 +872,21 @@ CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     int nComps,
     int bpc,
     const CPDF_Dictionary* pParams);
+
 CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                                            FX_RECT* pClipRect,
                                            const CFX_Matrix* pMatrix) {
-  if (!pSMaskDict) {
-    return NULL;
-  }
+  if (!pSMaskDict)
+    return nullptr;
+
   CPDF_Stream* pGroup = pSMaskDict->GetStreamBy("G");
-  if (!pGroup) {
-    return NULL;
-  }
+  if (!pGroup)
+    return nullptr;
+
   std::unique_ptr<CPDF_Function> pFunc;
   CPDF_Object* pFuncObj = pSMaskDict->GetDirectObjectBy("TR");
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
-    pFunc.reset(CPDF_Function::Load(pFuncObj));
+    pFunc = CPDF_Function::Load(pFuncObj);
 
   CFX_Matrix matrix = *pMatrix;
   matrix.TranslateI(-pClipRect->left, -pClipRect->top);

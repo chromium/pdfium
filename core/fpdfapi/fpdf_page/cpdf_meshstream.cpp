@@ -10,15 +10,14 @@
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 
-FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
-                              CPDF_Function** pFuncs,
-                              int nFuncs,
-                              CPDF_ColorSpace* pCS) {
+CPDF_MeshStream::CPDF_MeshStream(
+    const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+    CPDF_ColorSpace* pCS)
+    : m_funcs(funcs), m_pCS(pCS) {}
+
+bool CPDF_MeshStream::Load(CPDF_Stream* pShadingStream) {
   m_Stream.LoadAllData(pShadingStream);
   m_BitStream.Init(m_Stream.GetData(), m_Stream.GetSize());
-  m_pFuncs = pFuncs;
-  m_nFuncs = nFuncs;
-  m_pCS = pCS;
   CPDF_Dictionary* pDict = pShadingStream->GetDict();
   m_nCoordBits = pDict->GetIntegerBy("BitsPerCoordinate");
   m_nCompBits = pDict->GetIntegerBy("BitsPerComponent");
@@ -26,14 +25,11 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   if (!m_nCoordBits || !m_nCompBits)
     return FALSE;
 
-  uint32_t nComps = pCS->CountComponents();
+  uint32_t nComps = m_pCS->CountComponents();
   if (nComps > 8)
     return FALSE;
 
-  m_nComps = nFuncs ? 1 : nComps;
-  if (((int)m_nComps < 0) || m_nComps > 8)
-    return FALSE;
-
+  m_nComps = m_funcs.empty() ? nComps : 1;
   m_CoordMax = m_nCoordBits == 32 ? -1 : (1 << m_nCoordBits) - 1;
   m_CompMax = (1 << m_nCompBits) - 1;
   CPDF_Array* pDecode = pDict->GetArrayBy("Decode");
@@ -44,7 +40,7 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   m_xmax = pDecode->GetNumberAt(1);
   m_ymin = pDecode->GetNumberAt(2);
   m_ymax = pDecode->GetNumberAt(3);
-  for (uint32_t i = 0; i < m_nComps; i++) {
+  for (uint32_t i = 0; i < m_nComps; ++i) {
     m_ColorMin[i] = pDecode->GetNumberAt(i * 2 + 4);
     m_ColorMax[i] = pDecode->GetNumberAt(i * 2 + 5);
   }
@@ -70,27 +66,26 @@ void CPDF_MeshStream::GetCoords(FX_FLOAT& x, FX_FLOAT& y) {
 }
 
 void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
-  uint32_t i;
-  FX_FLOAT color_value[8];
-  for (i = 0; i < m_nComps; i++) {
+  static const int kMaxResults = 8;
+  FX_FLOAT color_value[kMaxResults];
+  for (uint32_t i = 0; i < m_nComps; ++i) {
     color_value[i] = m_ColorMin[i] +
                      m_BitStream.GetBits(m_nCompBits) *
                          (m_ColorMax[i] - m_ColorMin[i]) / m_CompMax;
   }
-  if (m_nFuncs) {
-    static const int kMaxResults = 8;
-    FX_FLOAT result[kMaxResults];
-    int nResults;
-    FXSYS_memset(result, 0, sizeof(result));
-    for (uint32_t i = 0; i < m_nFuncs; i++) {
-      if (m_pFuncs[i] && m_pFuncs[i]->CountOutputs() <= kMaxResults) {
-        m_pFuncs[i]->Call(color_value, 1, result, nResults);
-      }
-    }
-    m_pCS->GetRGB(result, r, g, b);
-  } else {
+  if (m_funcs.empty()) {
     m_pCS->GetRGB(color_value, r, g, b);
+    return;
   }
+
+  FX_FLOAT result[kMaxResults];
+  FXSYS_memset(result, 0, sizeof(result));
+  int nResults;
+  for (const auto& func : m_funcs) {
+    if (func && func->CountOutputs() <= kMaxResults)
+      func->Call(color_value, 1, result, nResults);
+  }
+  m_pCS->GetRGB(result, r, g, b);
 }
 
 uint32_t CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,

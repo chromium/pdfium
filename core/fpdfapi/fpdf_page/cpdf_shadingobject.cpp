@@ -22,7 +22,7 @@ CPDF_ShadingObject* CPDF_ShadingObject::Clone() const {
   if (obj->m_pShading && obj->m_pShading->document()) {
     CPDF_DocPageData* pDocPageData = obj->m_pShading->document()->GetPageData();
     CPDF_Pattern* pattern = pDocPageData->GetPattern(
-        obj->m_pShading->m_pShadingObj, m_pShading->m_bShadingObj,
+        obj->m_pShading->GetShadingObject(), m_pShading->IsShadingObject(),
         obj->m_pShading->parent_matrix());
     obj->m_pShading = pattern ? pattern->AsShadingPattern() : nullptr;
   }

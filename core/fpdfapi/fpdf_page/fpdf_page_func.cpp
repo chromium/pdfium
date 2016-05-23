@@ -792,9 +792,10 @@ FX_BOOL CPDF_StitchFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* outputs) const {
 }
 
 // static
-CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
+std::unique_ptr<CPDF_Function> CPDF_Function::Load(CPDF_Object* pFuncObj) {
+  std::unique_ptr<CPDF_Function> pFunc;
   if (!pFuncObj)
-    return nullptr;
+    return pFunc;
 
   int iType = -1;
   if (CPDF_Stream* pStream = pFuncObj->AsStream())
@@ -803,7 +804,6 @@ CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
     iType = pDict->GetIntegerBy("FunctionType");
 
   Type type = IntegerToFunctionType(iType);
-  std::unique_ptr<CPDF_Function> pFunc;
   if (type == Type::kType0Sampled)
     pFunc.reset(new CPDF_SampledFunc());
   else if (type == Type::kType2ExpotentialInterpolation)
@@ -814,8 +814,8 @@ CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
     pFunc.reset(new CPDF_PSFunc());
 
   if (!pFunc || !pFunc->Init(pFuncObj))
-    return nullptr;
-  return pFunc.release();
+    return std::unique_ptr<CPDF_Function>();
+  return pFunc;
 }
 
 // static

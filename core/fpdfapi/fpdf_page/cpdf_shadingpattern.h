@@ -7,9 +7,11 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_SHADINGPATTERN_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_SHADINGPATTERN_H_
 
+#include <memory>
+#include <vector>
+
 #include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
-#include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fxcrt/include/fx_system.h"
 
 enum ShadingType {
@@ -27,6 +29,7 @@ enum ShadingType {
 class CFX_Matrix;
 class CPDF_ColorSpace;
 class CPDF_Document;
+class CPDF_Function;
 class CPDF_Object;
 
 class CPDF_ShadingPattern : public CPDF_Pattern {
@@ -35,7 +38,6 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
                       CPDF_Object* pPatternObj,
                       FX_BOOL bShading,
                       const CFX_Matrix& parentMatrix);
-
   ~CPDF_ShadingPattern() override;
 
   CPDF_TilingPattern* AsTilingPattern() override { return nullptr; }
@@ -47,8 +49,17 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
            m_ShadingType == kCoonsPatchMeshShading ||
            m_ShadingType == kTensorProductPatchMeshShading;
   }
-  FX_BOOL Load();
+  bool Load();
 
+  ShadingType GetShadingType() const { return m_ShadingType; }
+  FX_BOOL IsShadingObject() const { return m_bShadingObj; }
+  CPDF_Object* GetShadingObject() const { return m_pShadingObj; }
+  CPDF_ColorSpace* GetCS() const { return m_pCS; }
+  const std::vector<std::unique_ptr<CPDF_Function>>& GetFuncs() {
+    return m_pFunctions;
+  }
+
+ private:
   ShadingType m_ShadingType;
   FX_BOOL m_bShadingObj;
   CPDF_Object* m_pShadingObj;
@@ -58,8 +69,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
   CPDF_ColorSpace* m_pCS;
 
   CPDF_CountedColorSpace* m_pCountedCS;
-  CPDF_Function* m_pFunctions[4];
-  size_t m_nFuncs;
+  std::vector<std::unique_ptr<CPDF_Function>> m_pFunctions;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_SHADINGPATTERN_H_
