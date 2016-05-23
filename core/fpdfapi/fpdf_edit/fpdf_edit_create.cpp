@@ -1353,28 +1353,26 @@ void CPDF_Creator::InitOldObjNumOffsets() {
     dwStart = j;
   }
 }
+
 void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bIncremental = (m_dwFlags & FPDFCREATE_INCREMENTAL) != 0;
   FX_BOOL bNoOriginal = (m_dwFlags & FPDFCREATE_NO_ORIGINAL) != 0;
   for (const auto& pair : m_pDocument->m_IndirectObjs) {
     const uint32_t objnum = pair.first;
     const CPDF_Object* pObj = pair.second;
-    if (pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)
+    if (bIncremental || pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)
       continue;
-    if (bIncremental) {
-      if (!pObj->IsModified())
-        continue;
-    } else if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
-               m_pParser->GetObjectType(objnum)) {
+    if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
+        m_pParser->GetObjectType(objnum)) {
       continue;
     }
     AppendNewObjNum(objnum);
   }
 
   int32_t iCount = m_NewObjNumArray.GetSize();
-  if (iCount == 0) {
+  if (iCount == 0)
     return;
-  }
+
   int32_t i = 0;
   uint32_t dwStartObjNum = 0;
   FX_BOOL bCrossRefValid = m_pParser && m_pParser->GetLastXRefOffset() > 0;
@@ -1386,12 +1384,12 @@ void CPDF_Creator::InitNewObjNumOffsets() {
     }
     i++;
   }
-  if (i >= iCount) {
+  if (i >= iCount)
     return;
-  }
+
   uint32_t dwLastObjNum = dwStartObjNum;
   i++;
-  FX_BOOL bNewStart = FALSE;
+  bool bNewStart = false;
   for (; i < iCount; i++) {
     uint32_t dwCurObjNum = m_NewObjNumArray.ElementAt(i);
     bool bExist = m_pParser && m_pParser->IsValidObjectNumber(dwCurObjNum) &&
@@ -1401,14 +1399,15 @@ void CPDF_Creator::InitNewObjNumOffsets() {
         m_ObjectOffset.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);
       dwStartObjNum = dwCurObjNum;
     }
-    if (bNewStart) {
+    if (bNewStart)
       dwStartObjNum = dwCurObjNum;
-    }
+
     bNewStart = bExist;
     dwLastObjNum = dwCurObjNum;
   }
   m_ObjectOffset.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);
 }
+
 void CPDF_Creator::AppendNewObjNum(uint32_t objbum) {
   int32_t iStart = 0, iFind = 0;
   int32_t iEnd = m_NewObjNumArray.GetUpperBound();

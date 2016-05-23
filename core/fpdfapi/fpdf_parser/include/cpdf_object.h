@@ -42,7 +42,6 @@ class CPDF_Object {
   virtual CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const = 0;
   virtual CPDF_Object* GetDirect() const;
 
-  FX_BOOL IsModified() const { return FALSE; }
   void Release();
 
   virtual CFX_ByteString GetString() const;
