@@ -133,6 +133,8 @@ class CPDF_CMap {
   };
 
   CPDF_CMap();
+  ~CPDF_CMap();
+
   FX_BOOL LoadPredefined(CPDF_CMapManager* pMgr,
                          const FX_CHAR* name,
                          FX_BOOL bPromptCJK);
@@ -148,7 +150,6 @@ class CPDF_CMap {
   int AppendChar(FX_CHAR* str, uint32_t charcode) const;
 
  protected:
-  ~CPDF_CMap();
   friend class CPDF_CMapParser;
   friend class CPDF_CMapManager;
   friend class CPDF_CIDFont;
