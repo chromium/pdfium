@@ -246,7 +246,7 @@ class CFX_RTFBreak {
  public:
   CFX_RTFBreak(uint32_t dwPolicies);
   ~CFX_RTFBreak();
-  void Release() { delete this; }
+
   void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd);
   void SetLineStartPos(FX_FLOAT fLinePos);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
