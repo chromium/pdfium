@@ -309,13 +309,7 @@ CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   }
   return m_pWidgetHandler;
 }
-IXFA_WidgetIterator* CXFA_FFDocView::CreateWidgetIterator() {
-  CXFA_Node* pFormRoot = GetRootSubform();
-  if (!pFormRoot) {
-    return NULL;
-  }
-  return new CXFA_FFDocWidgetIterator(this, pFormRoot);
-}
+
 CXFA_WidgetAccIterator* CXFA_FFDocView::CreateWidgetAccIterator(
     XFA_WIDGETORDER eOrder) {
   CXFA_Node* pFormRoot = GetRootSubform();
@@ -808,49 +802,6 @@ CXFA_Node* CXFA_FFDocView::GetRootSubform() {
     return NULL;
   }
   return pFormPacketNode->GetFirstChildByClass(XFA_ELEMENT_Subform);
-}
-CXFA_FFDocWidgetIterator::CXFA_FFDocWidgetIterator(CXFA_FFDocView* pDocView,
-                                                   CXFA_Node* pTravelRoot)
-    : m_ContentIterator(pTravelRoot) {
-  m_pDocView = pDocView;
-  m_pCurWidget = NULL;
-}
-CXFA_FFDocWidgetIterator::~CXFA_FFDocWidgetIterator() {}
-void CXFA_FFDocWidgetIterator::Reset() {
-  m_ContentIterator.Reset();
-  m_pCurWidget = NULL;
-}
-CXFA_FFWidget* CXFA_FFDocWidgetIterator::MoveToFirst() {
-  return NULL;
-}
-CXFA_FFWidget* CXFA_FFDocWidgetIterator::MoveToLast() {
-  return NULL;
-}
-CXFA_FFWidget* CXFA_FFDocWidgetIterator::MoveToNext() {
-  CXFA_Node* pItem = m_pCurWidget ? m_ContentIterator.MoveToNext()
-                                  : m_ContentIterator.GetCurrent();
-  while (pItem) {
-    if (CXFA_WidgetAcc* pAcc = (CXFA_WidgetAcc*)pItem->GetWidgetData()) {
-      while ((m_pCurWidget = pAcc->GetNextWidget(NULL))) {
-        if (!m_pCurWidget->IsLoaded() &&
-            (m_pCurWidget->GetStatus() & XFA_WidgetStatus_Visible)) {
-          m_pCurWidget->LoadWidget();
-        }
-        return m_pCurWidget;
-      }
-    }
-    pItem = m_ContentIterator.MoveToNext();
-  }
-  return NULL;
-}
-CXFA_FFWidget* CXFA_FFDocWidgetIterator::MoveToPrevious() {
-  return NULL;
-}
-CXFA_FFWidget* CXFA_FFDocWidgetIterator::GetCurrentWidget() {
-  return NULL;
-}
-FX_BOOL CXFA_FFDocWidgetIterator::SetCurrentWidget(CXFA_FFWidget* hWidget) {
-  return FALSE;
 }
 
 CXFA_WidgetAccIterator::CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView,

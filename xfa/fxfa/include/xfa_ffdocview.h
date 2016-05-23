@@ -52,7 +52,6 @@ class CXFA_FFDocView {
   int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
                              CXFA_WidgetAcc* pWidgetAcc = nullptr);
   CXFA_FFWidgetHandler* GetWidgetHandler();
-  IXFA_WidgetIterator* CreateWidgetIterator();
   CXFA_WidgetAccIterator* CreateWidgetAccIterator(
       XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
   CXFA_FFWidget* GetFocusWidget();
@@ -127,26 +126,6 @@ class CXFA_FFDocView {
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus;
   int32_t m_iLock;
   friend class CXFA_FFNotify;
-};
-
-class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator {
- public:
-  CXFA_FFDocWidgetIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
-  ~CXFA_FFDocWidgetIterator() override;
-
-  // IXFA_WidgetIterator:
-  void Reset() override;
-  CXFA_FFWidget* MoveToFirst() override;
-  CXFA_FFWidget* MoveToLast() override;
-  CXFA_FFWidget* MoveToNext() override;
-  CXFA_FFWidget* MoveToPrevious() override;
-  CXFA_FFWidget* GetCurrentWidget() override;
-  FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) override;
-
- protected:
-  CXFA_ContainerIterator m_ContentIterator;
-  CXFA_FFDocView* m_pDocView;
-  CXFA_FFWidget* m_pCurWidget;
 };
 
 class CXFA_WidgetAccIterator {
