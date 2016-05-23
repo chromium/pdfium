@@ -1317,7 +1317,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
             bAdjusted = pAdjustPos(wForm, bMBCSCode, pFont, fFontSize,
                                    bVerticalChar, ptOffset);
           }
-          if (!pAdjustPos && bVerticalChar && (dwProps & 0x00010000) != 0) {
+          if (!bAdjusted && bVerticalChar && (dwProps & 0x00010000) != 0) {
             CFX_Rect rtBBox;
             rtBBox.Reset();
             if (pFont->GetCharBBox(wForm, rtBBox, bMBCSCode)) {

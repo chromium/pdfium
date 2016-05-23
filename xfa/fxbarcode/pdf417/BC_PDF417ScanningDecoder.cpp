@@ -423,15 +423,13 @@ CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
     }
     CBC_CommonDecoderResult* decoderResult =
         decodeCodewords(codewords, ecLevel, erasureArray, e);
-    if (e != BCExceptionNO) {
-      e = BCExceptionNO;
-      continue;
-    } else {
+    if (e == BCExceptionNO)
       return decoderResult;
-    }
+
+    e = BCExceptionNO;
     if (ambiguousIndexCount.GetSize() == 0) {
       e = BCExceptionChecksumInstance;
-      return NULL;
+      return nullptr;
     }
     for (int32_t i = 0; i < ambiguousIndexCount.GetSize(); i++) {
       if (ambiguousIndexCount[i] <
@@ -442,7 +440,7 @@ CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
         ambiguousIndexCount[i] = 0;
         if (i == ambiguousIndexCount.GetSize() - 1) {
           e = BCExceptionChecksumInstance;
-          return NULL;
+          return nullptr;
         }
       }
     }

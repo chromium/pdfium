@@ -56,17 +56,17 @@ CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
       CalculateModuleSize(topLeft.get(), topRight.get(), bottomLeft.get());
   if (moduleSize < 1.0f) {
     e = BCExceptionRead;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    return nullptr;
   }
   int32_t dimension = ComputeDimension(topLeft.get(), topRight.get(),
                                        bottomLeft.get(), moduleSize, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_QRCoderVersion* provisionalVersion =
       CBC_QRCoderVersion::GetProvisionalVersionForDimension(dimension, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t modulesBetweenFPCenters =
       provisionalVersion->GetDimensionForVersion() - 7;
-  CBC_QRAlignmentPattern* alignmentPattern = NULL;
+  CBC_QRAlignmentPattern* alignmentPattern = nullptr;
   if (provisionalVersion->GetAlignmentPatternCenters()->GetSize() > 0) {
     FX_FLOAT bottomRightX =
         topRight->GetX() - topLeft->GetX() + bottomLeft->GetX();
@@ -83,8 +83,10 @@ CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
     for (int32_t i = 4; i <= 16; i <<= 1) {
       CBC_QRAlignmentPattern* temp = FindAlignmentInRegion(
           moduleSize, estAlignmentX, estAlignmentY, (FX_FLOAT)i, e);
-      alignmentPattern = temp;
-      break;
+      if (temp) {
+        alignmentPattern = temp;
+        break;
+      }
     }
   }
   CBC_CommonBitMatrix* bits =

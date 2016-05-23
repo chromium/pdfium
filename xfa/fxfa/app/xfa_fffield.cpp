@@ -450,7 +450,6 @@ FX_BOOL CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
                                    int16_t zDelta,
                                    FX_FLOAT fx,
                                    FX_FLOAT fy) {
-  return FALSE;
   if (!m_pNormalWidget) {
     return FALSE;
   }

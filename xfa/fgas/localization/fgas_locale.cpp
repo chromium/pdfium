@@ -3655,9 +3655,8 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
             }
             millisecond = millisecond * 10 + str[cc++] - '0';
           }
-          if (cc < cc_start + 3 || millisecond >= 1000) {
+          if (cc < cc_start + 3)
             return FALSE;
-          }
         }
         if (cc < len) {
           FX_TIMEZONE tzDiff;

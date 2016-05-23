@@ -246,7 +246,7 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeC40Segment(
           shift = 0;
           break;
         default:
-          break;
+          // Should never be reached.
           e = BCExceptionFormatException;
           return;
       }
@@ -337,7 +337,7 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeTextSegment(
           }
           break;
         default:
-          break;
+          // Should never be reached.
           e = BCExceptionFormatException;
           return;
       }
