@@ -719,9 +719,16 @@ int CPDF_Document::RetrievePageCount() const {
   return CountPages(pPages, &visited_pages);
 }
 
-uint32_t CPDF_Document::GetUserPermissions(FX_BOOL bCheckRevision) const {
-  return m_pParser ? m_pParser->GetPermissions(bCheckRevision)
-                   : static_cast<uint32_t>(-1);
+uint32_t CPDF_Document::GetUserPermissions() const {
+  // https://bugs.chromium.org/p/pdfium/issues/detail?id=499
+  if (!m_pParser) {
+#ifndef PDF_ENABLE_XFA
+    return 0;
+#else  // PDF_ENABLE_XFA
+    return 0xFFFFFFFF;
+#endif
+  }
+  return m_pParser->GetPermissions();
 }
 
 FX_BOOL CPDF_Document::IsFormStream(uint32_t objnum, FX_BOOL& bForm) const {

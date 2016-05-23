@@ -111,6 +111,7 @@ bool EmbedderTest::CreateEmptyDocument() {
 }
 
 bool EmbedderTest::OpenDocument(const std::string& filename,
+                                const char* password,
                                 bool must_linearize) {
   std::string file_path;
   if (!PathService::GetTestFilePath(filename, &file_path))
@@ -133,7 +134,7 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
   avail_ = FPDFAvail_Create(&file_avail_, &file_access_);
 
   if (FPDFAvail_IsLinearized(avail_) == PDF_LINEARIZED) {
-    document_ = FPDFAvail_GetDocument(avail_, nullptr);
+    document_ = FPDFAvail_GetDocument(avail_, password);
     if (!document_) {
       return false;
     }

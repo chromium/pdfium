@@ -104,6 +104,7 @@ class CPDF_SecurityHandler {
   int m_Cipher;
   uint8_t m_EncryptKey[32];
   int m_KeyLen;
+  bool m_bOwnerUnlocked;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_SECURITY_HANDLER_H_

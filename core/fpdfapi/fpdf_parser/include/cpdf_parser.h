@@ -38,7 +38,7 @@ class CPDF_Parser {
   ~CPDF_Parser();
 
   Error StartParse(IFX_FileRead* pFile);
-  uint32_t GetPermissions(FX_BOOL bCheckRevision = FALSE);
+  uint32_t GetPermissions() const;
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }

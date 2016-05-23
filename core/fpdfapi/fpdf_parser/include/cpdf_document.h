@@ -52,7 +52,7 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int iPage);
   int GetPageIndex(uint32_t objnum);
-  uint32_t GetUserPermissions(FX_BOOL bCheckRevision = FALSE) const;
+  uint32_t GetUserPermissions() const;
   CPDF_DocPageData* GetPageData() const { return m_pDocPage; }
   void ClearPageData();
   void RemoveColorSpaceFromPageData(CPDF_Object* pObject);

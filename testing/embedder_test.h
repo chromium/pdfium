@@ -88,6 +88,7 @@ class EmbedderTest : public ::testing::Test,
   // The filename is relative to the test data directory where we store all the
   // test files.
   virtual bool OpenDocument(const std::string& filename,
+                            const char* password = nullptr,
                             bool must_linearize = false);
 
   // Perform JavaScript actions that are to run at document open time.

@@ -1479,16 +1479,15 @@ CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
   return pObj.release()->AsDictionary();
 }
 
-uint32_t CPDF_Parser::GetPermissions(FX_BOOL bCheckRevision) {
+uint32_t CPDF_Parser::GetPermissions() const {
   if (!m_pSecurityHandler)
-    return (uint32_t)-1;
+    return 0xFFFFFFFF;
 
   uint32_t dwPermission = m_pSecurityHandler->GetPermissions();
   if (m_pEncryptDict && m_pEncryptDict->GetStringBy("Filter") == "Standard") {
+    // See PDF Reference 1.7, page 123, table 3.20.
     dwPermission &= 0xFFFFFFFC;
     dwPermission |= 0xFFFFF0C0;
-    if (bCheckRevision && m_pEncryptDict->GetIntegerBy("R") == 2)
-      dwPermission &= 0xFFFFF0FF;
   }
   return dwPermission;
 }

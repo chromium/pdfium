@@ -67,15 +67,15 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt,
 
 }  // namespace
 
-CPDF_SecurityHandler::CPDF_SecurityHandler() {
-  m_Version = 0;
-  m_Revision = 0;
-  m_pParser = NULL;
-  m_pEncryptDict = NULL;
-  m_Permissions = 0;
-  m_Cipher = FXCIPHER_NONE;
-  m_KeyLen = 0;
-}
+CPDF_SecurityHandler::CPDF_SecurityHandler()
+    : m_Version(0),
+      m_Revision(0),
+      m_pParser(nullptr),
+      m_pEncryptDict(nullptr),
+      m_Permissions(0),
+      m_Cipher(FXCIPHER_NONE),
+      m_KeyLen(0),
+      m_bOwnerUnlocked(false) {}
 
 CPDF_SecurityHandler::~CPDF_SecurityHandler() {}
 
@@ -94,23 +94,21 @@ FX_BOOL CPDF_SecurityHandler::OnInit(CPDF_Parser* pParser,
   }
   return CheckSecurity(m_KeyLen);
 }
+
 FX_BOOL CPDF_SecurityHandler::CheckSecurity(int32_t key_len) {
   CFX_ByteString password = m_pParser->GetPassword();
-  if (CheckPassword(password.raw_str(), password.GetLength(), TRUE,
+  if (!password.IsEmpty() &&
+      CheckPassword(password.raw_str(), password.GetLength(), TRUE,
                     m_EncryptKey, key_len)) {
-    if (password.IsEmpty()) {
-      if (!CheckPassword(password.raw_str(), password.GetLength(), FALSE,
-                         m_EncryptKey, key_len)) {
-        return FALSE;
-      }
-    }
+    m_bOwnerUnlocked = true;
     return TRUE;
   }
   return CheckPassword(password.raw_str(), password.GetLength(), FALSE,
                        m_EncryptKey, key_len);
 }
+
 uint32_t CPDF_SecurityHandler::GetPermissions() {
-  return m_Permissions;
+  return m_bOwnerUnlocked ? 0xFFFFFFFF : m_Permissions;
 }
 
 static FX_BOOL LoadCryptInfo(CPDF_Dictionary* pEncryptDict,

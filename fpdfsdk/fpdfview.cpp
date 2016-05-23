@@ -464,15 +464,16 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 // header).
 DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc || !pDoc->GetParser())
+  // https://bugs.chromium.org/p/pdfium/issues/detail?id=499
+  if (!pDoc) {
 #ifndef PDF_ENABLE_XFA
     return 0;
 #else   // PDF_ENABLE_XFA
-    return (uint32_t)-1;
+    return 0xFFFFFFFF;
 #endif  // PDF_ENABLE_XFA
+  }
 
-  CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
-  return pDict ? pDict->GetIntegerBy("P") : (uint32_t)-1;
+  return pDoc->GetUserPermissions();
 }
 
 DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
