@@ -191,7 +191,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
 #endif  // PDF_ENABLE_XFA
 }
 
-DLLEXPORT int FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
+DLLEXPORT int STDCALL FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return PAGEMODE_UNKNOWN;

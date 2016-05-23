@@ -88,7 +88,7 @@ FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info);
 // Returns one of the |PAGEMODE_*| flags defined above.
 //
 // The page mode defines how the document should be initially displayed.
-DLLEXPORT int FPDFDoc_GetPageMode(FPDF_DOCUMENT document);
+DLLEXPORT int STDCALL FPDFDoc_GetPageMode(FPDF_DOCUMENT document);
 
 #ifdef __cplusplus
 }  // extern "C"
