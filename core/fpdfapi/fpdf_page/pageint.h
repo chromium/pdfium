@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <unordered_map>
+#include <set>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
@@ -355,6 +356,10 @@ class CPDF_DocPageData {
   using CPDF_IccProfileMap = std::map<CPDF_Stream*, CPDF_CountedIccProfile*>;
   using CPDF_ImageMap = std::map<uint32_t, CPDF_CountedImage*>;
   using CPDF_PatternMap = std::map<CPDF_Object*, CPDF_CountedPattern*>;
+
+  CPDF_ColorSpace* GetColorSpaceImpl(CPDF_Object* pCSObj,
+                                     const CPDF_Dictionary* pResources,
+                                     std::set<CPDF_Object*>* pVisited);
 
   CPDF_Document* const m_pPDFDoc;
   FX_BOOL m_bForceClear;

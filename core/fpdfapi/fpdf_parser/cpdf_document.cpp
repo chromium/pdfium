@@ -394,9 +394,10 @@ int InsertDeletePDFPage(CPDF_Document* pDoc,
     } else {
       int nPages = pKid->GetIntegerBy("Count");
       if (nPagesToGo < nPages) {
-        if (pdfium::ContainsValue(*pVisited, pKid))
+        if (pdfium::ContainsKey(*pVisited, pKid))
           return -1;
-        pdfium::ScopedSetInsertion<CPDF_Dictionary*>(pVisited, pKid);
+
+        pdfium::ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
         if (InsertDeletePDFPage(pDoc, pKid, nPagesToGo, pPage, bInsert,
                                 pVisited) < 0) {
           return -1;
