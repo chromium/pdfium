@@ -328,8 +328,10 @@ FX_BOOL CPDFSDK_Document::ProcOpenAction() {
 }
 
 CPDF_OCContext* CPDFSDK_Document::GetOCContext() {
-  if (!m_pOccontent)
-    m_pOccontent.reset(new CPDF_OCContext(GetPDFDocument()));
+  if (!m_pOccontent) {
+    m_pOccontent.reset(
+        new CPDF_OCContext(GetPDFDocument(), CPDF_OCContext::View));
+  }
   return m_pOccontent.get();
 }
 

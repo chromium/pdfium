@@ -322,7 +322,8 @@ static void FFLCommon(FPDF_FORMHANDLE hHandle,
     options.m_BackColor = 0xffffff;
   }
   options.m_AddFlags = flags >> 8;
-  options.m_pOCContext = new CPDF_OCContext(pPage->m_pDocument);
+  options.m_pOCContext =
+      new CPDF_OCContext(pPage->m_pDocument, CPDF_OCContext::View);
 #else   // PDF_ENABLE_XFA
   CPDFXFA_Document* pDocument = pPage->GetDocument();
   if (!pDocument)
@@ -366,7 +367,7 @@ static void FFLCommon(FPDF_FORMHANDLE hHandle,
     options.m_BackColor = 0xffffff;
   }
   options.m_AddFlags = flags >> 8;
-  options.m_pOCContext = new CPDF_OCContext(pPDFDoc);
+  options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);
 
   if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView(pPage))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);

@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
@@ -124,31 +125,23 @@ class CPDF_OCContext {
  public:
   enum UsageType { View = 0, Design, Print, Export };
 
-  explicit CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType = View);
+  CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);
   ~CPDF_OCContext();
 
-  FX_BOOL CheckOCGVisible(const CPDF_Dictionary* pOCGDict);
-  FX_BOOL CheckObjectVisible(const CPDF_PageObject* pObj);
-
-  CPDF_Document* GetDocument() const { return m_pDocument; }
-  UsageType GetUsageType() const { return m_eUsageType; }
-
-  void ResetOCContext();
+  bool CheckOCGVisible(const CPDF_Dictionary* pOCGDict);
+  bool CheckObjectVisible(const CPDF_PageObject* pObj);
 
  protected:
-  FX_BOOL LoadOCGStateFromConfig(const CFX_ByteString& csConfig,
-                                 const CPDF_Dictionary* pOCGDict,
-                                 FX_BOOL& bValidConfig) const;
-  FX_BOOL LoadOCGState(const CPDF_Dictionary* pOCGDict) const;
-  FX_BOOL GetOCGVisible(const CPDF_Dictionary* pOCGDict);
-  FX_BOOL GetOCGVE(CPDF_Array* pExpression,
-                   FX_BOOL bFromConfig,
-                   int nLevel = 0);
-  FX_BOOL LoadOCMDState(const CPDF_Dictionary* pOCMDDict, FX_BOOL bFromConfig);
+  bool LoadOCGStateFromConfig(const CFX_ByteString& csConfig,
+                              const CPDF_Dictionary* pOCGDict) const;
+  bool LoadOCGState(const CPDF_Dictionary* pOCGDict) const;
+  bool GetOCGVisible(const CPDF_Dictionary* pOCGDict);
+  bool GetOCGVE(CPDF_Array* pExpression, int nLevel);
+  bool LoadOCMDState(const CPDF_Dictionary* pOCMDDict);
 
-  CPDF_Document* m_pDocument;
-  UsageType m_eUsageType;
-  std::map<const CPDF_Dictionary*, FX_BOOL> m_OCGStates;
+  CPDF_Document* const m_pDocument;
+  const UsageType m_eUsageType;
+  std::unordered_map<const CPDF_Dictionary*, bool> m_OCGStates;
 };
 
 class CPDF_ActionFields {
