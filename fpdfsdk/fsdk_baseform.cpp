@@ -1967,24 +1967,20 @@ CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {
 
 CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
     : m_pDocument(pDocument),
-      m_pInterForm(NULL),
+      m_pInterForm(new CPDF_InterForm(m_pDocument->GetPDFDocument())),
 #ifdef PDF_ENABLE_XFA
       m_bXfaCalculate(TRUE),
       m_bXfaValidationsEnabled(TRUE),
 #endif  // PDF_ENABLE_XFA
       m_bCalculate(TRUE),
       m_bBusy(FALSE) {
-  m_pInterForm = new CPDF_InterForm(m_pDocument->GetPDFDocument(), FALSE);
   m_pInterForm->SetFormNotify(this);
-
   for (int i = 0; i < kNumFieldTypes; ++i)
     m_bNeedHightlight[i] = FALSE;
   m_iHighlightAlpha = 0;
 }
 
 CPDFSDK_InterForm::~CPDFSDK_InterForm() {
-  delete m_pInterForm;
-  m_pInterForm = nullptr;
   m_Map.clear();
 #ifdef PDF_ENABLE_XFA
   m_XFAMap.clear();

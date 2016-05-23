@@ -18,6 +18,7 @@
 
 class CFDF_Document;
 class CFieldTree;
+class CFX_RenderDevice;
 class CPDF_AAction;
 class CPDF_Action;
 class CPDF_ActionFields;
@@ -28,26 +29,24 @@ class CPDF_Bookmark;
 class CPDF_BookmarkTree;
 class CPDF_DefaultAppearance;
 class CPDF_Dest;
-class CPDF_Document;
 class CPDF_DocJSActions;
+class CPDF_Document;
 class CPDF_FileSpec;
+class CPDF_Font;
+class CPDF_Form;
 class CPDF_FormControl;
 class CPDF_FormField;
-class CPDF_FormNotify;
 class CPDF_IconFit;
-class CPDF_InterForm;
 class CPDF_Link;
 class CPDF_Metadata;
 class CPDF_OCContext;
 class CPDF_Page;
 class CPDF_PageObject;
-class CPDF_Font;
-class CPDF_Form;
-class CPDF_RenderOptions;
 class CPDF_RenderContext;
+class CPDF_RenderOptions;
 class CPDF_ViewerPreferences;
 class CXML_Element;
-class CFX_RenderDevice;
+class IPDF_FormNotify;
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
 
@@ -445,9 +444,10 @@ class CPDF_DefaultAppearance {
 #define FIELDTYPE_LISTBOX 5
 #define FIELDTYPE_TEXTFIELD 6
 #define FIELDTYPE_SIGNATURE 7
+
 class CPDF_InterForm : public CFX_PrivateData {
  public:
-  CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bUpdateAP);
+  explicit CPDF_InterForm(CPDF_Document* pDocument);
   ~CPDF_InterForm();
 
   static void EnableUpdateAP(FX_BOOL bUpdateAP);
@@ -499,9 +499,7 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   CPDF_Dictionary* GetFormDict() const { return m_pFormDict; }
 
-  FX_BOOL NeedConstructAP();
-
-  void NeedConstructAP(FX_BOOL bNeedAP);
+  FX_BOOL NeedConstructAP() const;
 
   int CountFieldsInCalculationOrder();
 
@@ -569,13 +567,7 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   bool ResetForm(bool bNotify = false);
 
-  CPDF_FormNotify* GetFormNotify() const { return m_pFormNotify; }
-
-  void SetFormNotify(const CPDF_FormNotify* pNotify);
-
-  FX_BOOL IsUpdated() { return m_bUpdated; }
-
-  void ClearUpdatedFlag() { m_bUpdated = FALSE; }
+  void SetFormNotify(IPDF_FormNotify* pNotify);
 
   FX_BOOL HasXFAForm() const;
 
@@ -611,8 +603,6 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   CPDF_Document* const m_pDocument;
 
-  FX_BOOL m_bGenerateAP;
-
   CPDF_Dictionary* m_pFormDict;
 
   std::map<const CPDF_Dictionary*, CPDF_FormControl*> m_ControlMap;
@@ -621,9 +611,8 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   CFX_ByteString m_bsEncoding;
 
-  CPDF_FormNotify* m_pFormNotify;
+  IPDF_FormNotify* m_pFormNotify;
 
-  FX_BOOL m_bUpdated;
   friend class CPDF_FormControl;
   friend class CPDF_FormField;
 };
@@ -664,9 +653,11 @@ class CPDF_FormField {
 
   FX_BOOL ResetField(FX_BOOL bNotify = FALSE);
 
-  int CountControls() { return m_ControlList.GetSize(); }
+  int CountControls() const { return m_ControlList.GetSize(); }
 
-  CPDF_FormControl* GetControl(int index) { return m_ControlList.GetAt(index); }
+  CPDF_FormControl* GetControl(int index) const {
+    return m_ControlList.GetAt(index);
+  }
 
   int GetControlIndex(const CPDF_FormControl* pControl);
 
@@ -764,13 +755,20 @@ class CPDF_FormField {
 
   void LoadDA();
 
-  void UpdateAP(CPDF_FormControl* pControl);
-
   CFX_WideString GetCheckValue(FX_BOOL bDefault);
 
   FX_BOOL SetCheckValue(const CFX_WideString& value,
                         FX_BOOL bDefault,
                         FX_BOOL bNotify);
+
+  bool NotifyBeforeSelectionChange(const CFX_WideString& value);
+  void NotifyAfterSelectionChange();
+
+  bool NotifyBeforeValueChange(const CFX_WideString& value);
+  void NotifyAfterValueChange();
+
+  bool NotifyListOrComboBoxBeforeChange(const CFX_WideString& value);
+  void NotifyListOrComboBoxAfterChange();
 
   CPDF_FormField::Type m_Type;
   uint32_t m_Flags;
@@ -828,7 +826,7 @@ class CPDF_FormControl {
                    const CPDF_RenderOptions* pOptions = nullptr);
 
   CFX_ByteString GetCheckedAPState();
-  CFX_WideString GetExportValue();
+  CFX_WideString GetExportValue() const;
 
   bool IsChecked() const;
   bool IsDefaultChecked() const;
@@ -894,17 +892,17 @@ class CPDF_FormControl {
   CPDF_Stream* GetIcon(const CFX_ByteString& csEntry);
   CPDF_ApSettings GetMK() const;
 
-  CPDF_InterForm* m_pForm;
-  CPDF_FormField* m_pField;
-  CPDF_Dictionary* m_pWidgetDict;
+  CPDF_FormField* const m_pField;
+  CPDF_Dictionary* const m_pWidgetDict;
+  CPDF_InterForm* const m_pForm;
 
   friend class CPDF_InterForm;
   friend class CPDF_FormField;
 };
 
-class CPDF_FormNotify {
+class IPDF_FormNotify {
  public:
-  virtual ~CPDF_FormNotify() {}
+  virtual ~IPDF_FormNotify() {}
 
   virtual int BeforeValueChange(CPDF_FormField* pField,
                                 const CFX_WideString& csValue) {
@@ -1015,5 +1013,8 @@ class CPDF_ApSettings {
 
   CPDF_Dictionary* const m_pDict;
 };
+
+CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
+                                CPDF_Annot::AppearanceMode mode);
 
 #endif  // CORE_FPDFDOC_INCLUDE_FPDF_DOC_H_

@@ -212,7 +212,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   FX_BOOL HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
 
  private:
-  CPDFSDK_InterForm* m_pInterForm;
+  CPDFSDK_InterForm* const m_pInterForm;
   FX_BOOL m_bAppModified;
   int32_t m_nAppAge;
   int32_t m_nValueAge;
@@ -245,12 +245,12 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
 };
 #endif  // PDF_ENABLE_XFA
 
-class CPDFSDK_InterForm : public CPDF_FormNotify {
+class CPDFSDK_InterForm : public IPDF_FormNotify {
  public:
   explicit CPDFSDK_InterForm(CPDFSDK_Document* pDocument);
   ~CPDFSDK_InterForm() override;
 
-  CPDF_InterForm* GetInterForm() const { return m_pInterForm; }
+  CPDF_InterForm* GetInterForm() const { return m_pInterForm.get(); }
   CPDFSDK_Document* GetDocument() const { return m_pDocument; }
 
   FX_BOOL HighlightWidgets();
@@ -313,7 +313,7 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
 #endif  // PDF_ENABLE_XFA
 
  private:
-  // CPDF_FormNotify:
+  // IPDF_FormNotify:
   int BeforeValueChange(CPDF_FormField* pField,
                         const CFX_WideString& csValue) override;
   void AfterValueChange(CPDF_FormField* pField) override;
@@ -335,7 +335,7 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   using CPDFSDK_WidgetMap = std::map<CPDF_FormControl*, CPDFSDK_Widget*>;
 
   CPDFSDK_Document* m_pDocument;
-  CPDF_InterForm* m_pInterForm;
+  std::unique_ptr<CPDF_InterForm> m_pInterForm;
   CPDFSDK_WidgetMap m_Map;
 #ifdef PDF_ENABLE_XFA
   std::map<CXFA_FFWidget*, CPDFSDK_XFAWidget*> m_XFAMap;

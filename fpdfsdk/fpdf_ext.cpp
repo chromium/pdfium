@@ -6,6 +6,8 @@
 
 #include "public/fpdf_ext.h"
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
@@ -20,13 +22,13 @@
 
 class CFSDK_UnsupportInfo_Adapter {
  public:
-  CFSDK_UnsupportInfo_Adapter(UNSUPPORT_INFO* unsp_info) {
-    m_unsp_info = unsp_info;
-  }
+  explicit CFSDK_UnsupportInfo_Adapter(UNSUPPORT_INFO* unsp_info)
+      : m_unsp_info(unsp_info) {}
+
   void ReportError(int nErrorType);
 
  private:
-  UNSUPPORT_INFO* m_unsp_info;
+  UNSUPPORT_INFO* const m_unsp_info;
 };
 
 void CFSDK_UnsupportInfo_Adapter::ReportError(int nErrorType) {
@@ -183,11 +185,9 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
 
 #ifndef PDF_ENABLE_XFA
   // XFA Forms
-  CPDF_InterForm* pInterForm = new CPDF_InterForm(pDoc, FALSE);
-  if (pInterForm->HasXFAForm()) {
+  CPDF_InterForm interform(pDoc);
+  if (interform.HasXFAForm())
     FPDF_UnSupportError(FPDF_UNSP_DOC_XFAFORM);
-  }
-  delete pInterForm;
 #endif  // PDF_ENABLE_XFA
 }
 

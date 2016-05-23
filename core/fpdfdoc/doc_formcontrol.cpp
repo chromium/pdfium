@@ -13,34 +13,43 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfdoc/include/fpdf_doc.h"
 
+namespace {
+
+const FX_CHAR* const g_sHighlightingMode[] = {
+    // Must match order of HighlightingMode enum.
+    "N", "I", "O", "P", "T"};
+
+}  // namespace
+
 CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
-                                   CPDF_Dictionary* pWidgetDict) {
-  m_pField = pField;
-  m_pWidgetDict = pWidgetDict;
-  m_pForm = m_pField->m_pForm;
-}
+                                   CPDF_Dictionary* pWidgetDict)
+    : m_pField(pField),
+      m_pWidgetDict(pWidgetDict),
+      m_pForm(m_pField->m_pForm) {}
+
 CFX_FloatRect CPDF_FormControl::GetRect() const {
   return m_pWidgetDict->GetRectBy("Rect");
 }
+
 CFX_ByteString CPDF_FormControl::GetOnStateName() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CFX_ByteString csOn;
   CPDF_Dictionary* pAP = m_pWidgetDict->GetDictBy("AP");
-  if (!pAP) {
+  if (!pAP)
     return csOn;
-  }
+
   CPDF_Dictionary* pN = pAP->GetDictBy("N");
-  if (!pN) {
+  if (!pN)
     return csOn;
-  }
+
   for (const auto& it : *pN) {
-    if (it.first != "Off") {
+    if (it.first != "Off")
       return it.first;
-    }
   }
   return CFX_ByteString();
 }
+
 void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
@@ -99,7 +108,8 @@ CFX_ByteString CPDF_FormControl::GetCheckedAPState() {
     csOn = "Yes";
   return csOn;
 }
-CFX_WideString CPDF_FormControl::GetExportValue() {
+
+CFX_WideString CPDF_FormControl::GetExportValue() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CFX_ByteString csOn = GetOnStateName();
@@ -111,11 +121,9 @@ CFX_WideString CPDF_FormControl::GetExportValue() {
       csOn = pArray->GetStringAt(iIndex);
     }
   }
-  if (csOn.IsEmpty()) {
+  if (csOn.IsEmpty())
     csOn = "Yes";
-  }
-  CFX_WideString csWOn = PDF_DecodeText(csOn);
-  return csWOn;
+  return PDF_DecodeText(csOn);
 }
 
 bool CPDF_FormControl::IsChecked() const {
@@ -144,29 +152,25 @@ void CPDF_FormControl::CheckControl(FX_BOOL bChecked) {
   CFX_ByteString csOn = GetOnStateName();
   CFX_ByteString csOldAS = m_pWidgetDict->GetStringBy("AS", "Off");
   CFX_ByteString csAS = "Off";
-  if (bChecked) {
+  if (bChecked)
     csAS = csOn;
-  }
-  if (csOldAS == csAS) {
+  if (csOldAS == csAS)
     return;
-  }
   m_pWidgetDict->SetAtName("AS", csAS);
-  m_pForm->m_bUpdated = TRUE;
 }
-CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
-                                CPDF_Annot::AppearanceMode mode);
+
 void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
                                    CFX_Matrix* pMatrix,
                                    CPDF_Page* pPage,
                                    CPDF_Annot::AppearanceMode mode,
                                    const CPDF_RenderOptions* pOptions) {
-  if (m_pWidgetDict->GetIntegerBy("F") & ANNOTFLAG_HIDDEN) {
+  if (m_pWidgetDict->GetIntegerBy("F") & ANNOTFLAG_HIDDEN)
     return;
-  }
+
   CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(m_pWidgetDict, mode);
-  if (!pStream) {
+  if (!pStream)
     return;
-  }
+
   CFX_FloatRect form_bbox = pStream->GetDict()->GetRectBy("BBox");
   CFX_Matrix form_matrix = pStream->GetDict()->GetMatrixBy("Matrix");
   form_matrix.TransformRect(form_bbox);
@@ -181,15 +185,13 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
   context.AppendLayer(&form, &matrix);
   context.Render(pDevice, pOptions, nullptr);
 }
-static const FX_CHAR* const g_sHighlightingMode[] = {
-    // Must match order of HiglightingMode enum.
-    "N", "I", "O", "P", "T", nullptr};
+
 CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode() {
-  if (!m_pWidgetDict) {
+  if (!m_pWidgetDict)
     return Invert;
-  }
+
   CFX_ByteString csH = m_pWidgetDict->GetStringBy("H", "I");
-  for (int i = 0; g_sHighlightingMode[i]; ++i) {
+  for (size_t i = 0; i < FX_ArraySize(g_sHighlightingMode); ++i) {
     if (csH == g_sHighlightingMode[i])
       return static_cast<HighlightingMode>(i);
   }
@@ -241,16 +243,16 @@ int CPDF_FormControl::GetTextPosition() {
 }
 
 CPDF_Action CPDF_FormControl::GetAction() {
-  if (!m_pWidgetDict) {
+  if (!m_pWidgetDict)
     return CPDF_Action();
-  }
-  if (m_pWidgetDict->KeyExist("A")) {
+
+  if (m_pWidgetDict->KeyExist("A"))
     return CPDF_Action(m_pWidgetDict->GetDictBy("A"));
-  }
+
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "A");
-  if (!pObj) {
+  if (!pObj)
     return CPDF_Action();
-  }
+
   return CPDF_Action(pObj->GetDict());
 }
 

@@ -260,14 +260,13 @@ CFieldTree::_Node* CFieldTree::FindNode(const CFX_WideString& full_name) {
   }
   return pNode;
 }
-CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bGenerateAP)
+
+CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
     : CFX_PrivateData(),
       m_pDocument(pDocument),
-      m_bGenerateAP(bGenerateAP),
       m_pFormDict(nullptr),
       m_pFieldTree(new CFieldTree),
-      m_pFormNotify(nullptr),
-      m_bUpdated(FALSE) {
+      m_pFormNotify(nullptr) {
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   if (!pRoot)
     return;
@@ -732,47 +731,38 @@ CPDF_FormControl* CPDF_InterForm::GetControlByDict(
   return it != m_ControlMap.end() ? it->second : nullptr;
 }
 
-FX_BOOL CPDF_InterForm::NeedConstructAP() {
+FX_BOOL CPDF_InterForm::NeedConstructAP() const {
   return m_pFormDict && m_pFormDict->GetBooleanBy("NeedAppearances");
-}
-void CPDF_InterForm::NeedConstructAP(FX_BOOL bNeedAP) {
-  if (!m_pFormDict) {
-    InitInterFormDict(m_pFormDict, m_pDocument);
-  }
-  m_pFormDict->SetAtBoolean("NeedAppearances", bNeedAP);
-  m_bGenerateAP = bNeedAP;
 }
 
 int CPDF_InterForm::CountFieldsInCalculationOrder() {
-  if (!m_pFormDict) {
+  if (!m_pFormDict)
     return 0;
-  }
+
   CPDF_Array* pArray = m_pFormDict->GetArrayBy("CO");
   return pArray ? pArray->GetCount() : 0;
 }
 
 CPDF_FormField* CPDF_InterForm::GetFieldInCalculationOrder(int index) {
-  if (!m_pFormDict || index < 0) {
-    return NULL;
-  }
+  if (!m_pFormDict || index < 0)
+    return nullptr;
+
   CPDF_Array* pArray = m_pFormDict->GetArrayBy("CO");
-  if (!pArray) {
-    return NULL;
-  }
-  if (CPDF_Dictionary* pElement =
-          ToDictionary(pArray->GetDirectObjectAt(index))) {
-    return GetFieldByDict(pElement);
-  }
-  return NULL;
+  if (!pArray)
+    return nullptr;
+
+  CPDF_Dictionary* pElement = ToDictionary(pArray->GetDirectObjectAt(index));
+  return pElement ? GetFieldByDict(pElement) : nullptr;
 }
+
 int CPDF_InterForm::FindFieldInCalculationOrder(const CPDF_FormField* pField) {
-  if (!m_pFormDict || !pField) {
+  if (!m_pFormDict || !pField)
     return -1;
-  }
+
   CPDF_Array* pArray = m_pFormDict->GetArrayBy("CO");
-  if (!pArray) {
+  if (!pArray)
     return -1;
-  }
+
   for (size_t i = 0; i < pArray->GetCount(); i++) {
     CPDF_Object* pElement = pArray->GetDirectObjectAt(i);
     if (pElement == pField->m_pDict) {
@@ -781,9 +771,11 @@ int CPDF_InterForm::FindFieldInCalculationOrder(const CPDF_FormField* pField) {
   }
   return -1;
 }
+
 uint32_t CPDF_InterForm::CountFormFonts() {
   return CountInterFormFonts(m_pFormDict);
 }
+
 CPDF_Font* CPDF_InterForm::GetFormFont(uint32_t index,
                                        CFX_ByteString& csNameTag) {
   return GetInterFormFont(m_pFormDict, m_pDocument, index, csNameTag);
@@ -815,23 +807,22 @@ FX_BOOL CPDF_InterForm::FindFormFont(CFX_ByteString csFontName,
 void CPDF_InterForm::AddFormFont(const CPDF_Font* pFont,
                                  CFX_ByteString& csNameTag) {
   AddInterFormFont(m_pFormDict, m_pDocument, pFont, csNameTag);
-  m_bUpdated = TRUE;
 }
+
 CPDF_Font* CPDF_InterForm::AddNativeFormFont(uint8_t charSet,
                                              CFX_ByteString& csNameTag) {
-  m_bUpdated = TRUE;
   return AddNativeInterFormFont(m_pFormDict, m_pDocument, charSet, csNameTag);
 }
+
 CPDF_Font* CPDF_InterForm::AddNativeFormFont(CFX_ByteString& csNameTag) {
-  m_bUpdated = TRUE;
   return AddNativeInterFormFont(m_pFormDict, m_pDocument, csNameTag);
 }
+
 void CPDF_InterForm::RemoveFormFont(const CPDF_Font* pFont) {
-  m_bUpdated = TRUE;
   RemoveInterFormFont(m_pFormDict, pFont);
 }
+
 void CPDF_InterForm::RemoveFormFont(CFX_ByteString csNameTag) {
-  m_bUpdated = TRUE;
   RemoveInterFormFont(m_pFormDict, csNameTag);
 }
 
@@ -1171,42 +1162,37 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
       m_pFormNotify->AfterValueChange(pField);
     }
   }
-  if (CPDF_InterForm::m_bUpdateAP) {
-    pField->UpdateAP(NULL);
-  }
 }
+
 FX_BOOL CPDF_InterForm::ImportFromFDF(const CFDF_Document* pFDF,
                                       FX_BOOL bNotify) {
-  if (!pFDF) {
+  if (!pFDF)
     return FALSE;
-  }
+
   CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictBy("FDF");
-  if (!pMainDict) {
+  if (!pMainDict)
     return FALSE;
-  }
+
   CPDF_Array* pFields = pMainDict->GetArrayBy("Fields");
-  if (!pFields) {
+  if (!pFields)
     return FALSE;
-  }
+
   m_bsEncoding = pMainDict->GetStringBy("Encoding");
-  if (bNotify && m_pFormNotify) {
-    int iRet = m_pFormNotify->BeforeFormImportData(this);
-    if (iRet < 0) {
-      return FALSE;
-    }
-  }
+  if (bNotify && m_pFormNotify && m_pFormNotify->BeforeFormImportData(this) < 0)
+    return FALSE;
+
   for (size_t i = 0; i < pFields->GetCount(); i++) {
     CPDF_Dictionary* pField = pFields->GetDictAt(i);
-    if (!pField) {
+    if (!pField)
       continue;
-    }
+
     FDF_ImportField(pField, L"", bNotify);
   }
-  if (bNotify && m_pFormNotify) {
+  if (bNotify && m_pFormNotify)
     m_pFormNotify->AfterFormImportData(this);
-  }
   return TRUE;
 }
-void CPDF_InterForm::SetFormNotify(const CPDF_FormNotify* pNotify) {
-  m_pFormNotify = (CPDF_FormNotify*)pNotify;
+
+void CPDF_InterForm::SetFormNotify(IPDF_FormNotify* pNotify) {
+  m_pFormNotify = pNotify;
 }
