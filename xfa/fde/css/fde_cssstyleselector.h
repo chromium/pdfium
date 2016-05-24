@@ -388,11 +388,10 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   CFDE_CSSComputedStyle(IFX_MemoryAllocator* pAlloc)
       : m_dwRefCount(1), m_pAllocator(pAlloc) {}
 
-  ~CFDE_CSSComputedStyle() {}
+  ~CFDE_CSSComputedStyle() override {}
 
-  // IFX_Unknown:
-  uint32_t AddRef() override { return ++m_dwRefCount; }
-
+  // IFX_Retainable:
+  uint32_t Retain() override { return ++m_dwRefCount; }
   uint32_t Release() override {
     uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount == 0) {

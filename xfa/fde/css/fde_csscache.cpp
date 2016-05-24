@@ -13,8 +13,7 @@
 
 FDE_CSSCacheItem::FDE_CSSCacheItem(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {
-  ASSERT(pStylesheet);
-  pStylesheet->AddRef();
+  pStylesheet->Retain();
 }
 
 FDE_CSSCacheItem::~FDE_CSSCacheItem() {

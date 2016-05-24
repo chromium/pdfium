@@ -189,7 +189,7 @@ class CFX_RTFChar : public CFX_Char {
   int16_t m_iBidiOrder;
   uint32_t m_dwLayoutStyles;
   uint32_t m_dwIdentity;
-  IFX_Unknown* m_pUserData;
+  IFX_Retainable* m_pUserData;
 };
 typedef CFX_ArrayTemplate<CFX_RTFChar> CFX_RTFCharArray;
 #endif  // PDF_ENABLE_XFA

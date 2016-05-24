@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
 #define XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
 
+#include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_ucd.h"
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_memory.h"
@@ -14,7 +15,6 @@
 #include "xfa/fgas/layout/fgas_textbreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
 
-class IFX_Unknown;
 class IFX_Font;
 
 #define FX_RTFBREAKPOLICY_None 0x00
@@ -186,7 +186,7 @@ class CFX_RTFPiece : public CFX_Target {
   uint32_t m_dwLayoutStyles;
   uint32_t m_dwIdentity;
   CFX_RTFCharArray* m_pChars;
-  IFX_Unknown* m_pUserData;
+  IFX_Retainable* m_pUserData;
 };
 typedef CFX_BaseArrayTemplate<CFX_RTFPiece> CFX_RTFPieceArray;
 
@@ -220,7 +220,7 @@ class CFX_RTFLine {
   int32_t GetLineEnd() const { return m_iStart + m_iWidth; }
   void RemoveAll(FX_BOOL bLeaveMemory = FALSE) {
     CFX_RTFChar* pChar;
-    IFX_Unknown* pUnknown;
+    IFX_Retainable* pUnknown;
     int32_t iCount = m_LineChars.GetSize();
     for (int32_t i = 0; i < iCount; i++) {
       pChar = m_LineChars.GetDataPtr(i);
@@ -267,7 +267,7 @@ class CFX_RTFBreak {
   void SetWordSpace(FX_BOOL bDefault, FX_FLOAT fWordSpace);
   void SetReadingOrder(FX_BOOL bRTL = FALSE);
   void SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left);
-  void SetUserData(IFX_Unknown* pUserData);
+  void SetUserData(IFX_Retainable* pUserData);
   uint32_t AppendChar(FX_WCHAR wch);
   uint32_t EndBreak(uint32_t dwStatus = FX_RTFBREAK_PieceBreak);
   int32_t CountBreakPieces() const;
@@ -318,7 +318,7 @@ class CFX_RTFBreak {
   int32_t m_iWordSpace;
   FX_BOOL m_bRTL;
   int32_t m_iAlignment;
-  IFX_Unknown* m_pUserData;
+  IFX_Retainable* m_pUserData;
   FX_CHARTYPE m_eCharType;
   uint32_t m_dwIdentity;
   CFX_RTFLine m_RTFLine1;

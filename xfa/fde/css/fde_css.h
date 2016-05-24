@@ -739,7 +739,7 @@ class IFDE_CSSFontFaceRule : public IFDE_CSSRule {
   virtual CFDE_CSSDeclaration* GetDeclaration() = 0;
 };
 
-class IFDE_CSSStyleSheet : public IFX_Unknown {
+class IFDE_CSSStyleSheet : public IFX_Retainable {
  public:
   static IFDE_CSSStyleSheet* LoadHTMLStandardStyleSheet();
   static IFDE_CSSStyleSheet* LoadFromStream(
@@ -882,7 +882,7 @@ class IFDE_CSSParagraphStyle {
   virtual void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing) = 0;
 };
 
-class IFDE_CSSComputedStyle : public IFX_Unknown {
+class IFDE_CSSComputedStyle : public IFX_Retainable {
  public:
   virtual void Reset() = 0;
   virtual IFDE_CSSFontStyle* GetFontStyles() = 0;

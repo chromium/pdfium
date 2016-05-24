@@ -98,18 +98,22 @@ class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
 class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
  public:
   CFDE_CSSStyleSheet(uint32_t dwMediaList);
-  ~CFDE_CSSStyleSheet();
-  virtual uint32_t AddRef();
-  virtual uint32_t Release();
+  ~CFDE_CSSStyleSheet() override;
 
-  virtual FX_BOOL GetUrl(CFX_WideString& szUrl) {
+  // IFX_Retainable:
+  uint32_t Retain() override;
+  uint32_t Release() override;
+
+  // IFDE_CSSStyleSheet:
+  FX_BOOL GetUrl(CFX_WideString& szUrl) override {
     szUrl = m_szUrl;
     return szUrl.GetLength() > 0;
   }
-  virtual uint32_t GetMediaList() const { return m_dwMediaList; }
-  virtual uint16_t GetCodePage() const { return m_wCodePage; }
-  virtual int32_t CountRules() const;
-  virtual IFDE_CSSRule* GetRule(int32_t index);
+  uint32_t GetMediaList() const override { return m_dwMediaList; }
+  uint16_t GetCodePage() const override { return m_wCodePage; }
+  int32_t CountRules() const override;
+  IFDE_CSSRule* GetRule(int32_t index) override;
+
   FX_BOOL LoadFromStream(const CFX_WideString& szUrl,
                          IFX_Stream* pStream,
                          uint16_t wCodePage);

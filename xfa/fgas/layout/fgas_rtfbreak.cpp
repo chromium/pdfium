@@ -239,7 +239,7 @@ void CFX_RTFBreak::SetAlignment(int32_t iAlignment) {
          iAlignment <= FX_RTFLINEALIGNMENT_Distributed);
   m_iAlignment = iAlignment;
 }
-void CFX_RTFBreak::SetUserData(IFX_Unknown* pUserData) {
+void CFX_RTFBreak::SetUserData(IFX_Retainable* pUserData) {
   if (m_pUserData == pUserData) {
     return;
   }
@@ -249,7 +249,7 @@ void CFX_RTFBreak::SetUserData(IFX_Unknown* pUserData) {
   }
   m_pUserData = pUserData;
   if (m_pUserData != NULL) {
-    m_pUserData->AddRef();
+    m_pUserData->Retain();
   }
 }
 static const int32_t gs_FX_RTFLineRotations[8] = {0, 3, 1, 0, 2, 1, 3, 2};
@@ -362,7 +362,7 @@ uint32_t CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   pCurChar->m_iCharWidth = 0;
   pCurChar->m_dwIdentity = m_dwIdentity;
   if (m_pUserData != NULL) {
-    m_pUserData->AddRef();
+    m_pUserData->Retain();
   }
   pCurChar->m_pUserData = m_pUserData;
   uint32_t dwRet1 = FX_RTFBREAK_None;
@@ -409,7 +409,7 @@ uint32_t CFX_RTFBreak::AppendChar_CharCode(FX_WCHAR wch) {
   pCurChar->m_iCharWidth = 0;
   pCurChar->m_dwIdentity = m_dwIdentity;
   if (m_pUserData != NULL) {
-    m_pUserData->AddRef();
+    m_pUserData->Retain();
   }
   pCurChar->m_pUserData = m_pUserData;
   int32_t iCharWidth = 0;

@@ -171,14 +171,15 @@ class CXFA_LoaderContext {
   CFX_FloatArray m_BlocksHeight;
 };
 
-class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target {
+class CXFA_LinkUserData : public IFX_Retainable, public CFX_Target {
  public:
   CXFA_LinkUserData(IFX_MemoryAllocator* pAllocator, FX_WCHAR* pszText)
       : m_pAllocator(pAllocator), m_dwRefCount(1), m_wsURLContent(pszText) {}
 
   ~CXFA_LinkUserData() override {}
 
-  uint32_t AddRef() override { return ++m_dwRefCount; }
+  // IFX_Retainable:
+  uint32_t Retain() override { return ++m_dwRefCount; }
   uint32_t Release() override {
     uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount <= 0)
@@ -194,7 +195,7 @@ class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target {
   CFX_WideString m_wsURLContent;
 };
 
-class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
+class CXFA_TextUserData : public IFX_Retainable, public CFX_Target {
  public:
   CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
                     IFDE_CSSComputedStyle* pStyle)
@@ -204,7 +205,7 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
         m_dwRefCount(0) {
     ASSERT(m_pAllocator);
     if (m_pStyle)
-      m_pStyle->AddRef();
+      m_pStyle->Retain();
   }
   CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
                     IFDE_CSSComputedStyle* pStyle,
@@ -215,7 +216,7 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
         m_dwRefCount(0) {
     ASSERT(m_pAllocator);
     if (m_pStyle)
-      m_pStyle->AddRef();
+      m_pStyle->Retain();
   }
   ~CXFA_TextUserData() override {
     if (m_pStyle)
@@ -224,7 +225,8 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
       m_pLinkData->Release();
   }
 
-  uint32_t AddRef() override { return ++m_dwRefCount; }
+  // IFX_Retainable:
+  uint32_t Retain() override { return ++m_dwRefCount; }
   uint32_t Release() override {
     uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount == 0)

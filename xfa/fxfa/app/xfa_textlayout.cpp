@@ -193,7 +193,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
   if (!pContext)
     return nullptr;
   pContext->m_pParentStyle = pParentStyle;
-  pParentStyle->AddRef();
+  pParentStyle->Retain();
   CXFA_CSSTagProvider tagProvider;
   ParseTagInfo(pXMLNode, tagProvider);
   if (tagProvider.m_bContent)
@@ -1444,7 +1444,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
         if (wsText.GetLength() > 0) {
           if (m_pLoader == NULL || m_pLoader->m_iChar == 0) {
             if (pLinkData) {
-              pLinkData->AddRef();
+              pLinkData->Retain();
             }
             CXFA_TextUserData* pUserData = FXTARGET_NewWith(m_pAllocator.get())
                 CXFA_TextUserData(m_pAllocator.get(),
@@ -1722,7 +1722,7 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
       }
       fLineStep = std::max(fLineStep, fLineHeight);
       if (pUserData && pUserData->m_pLinkData) {
-        pUserData->m_pLinkData->AddRef();
+        pUserData->m_pLinkData->Retain();
         pTP->pLinkData = pUserData->m_pLinkData;
       } else {
         pTP->pLinkData = NULL;
@@ -1768,7 +1768,7 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
     }
   }
   if (pStyle) {
-    pStyle->AddRef();
+    pStyle->Retain();
   }
   m_pBreak->ClearBreakPieces();
   if (dwStatus == FX_RTFBREAK_ParagraphBreak) {

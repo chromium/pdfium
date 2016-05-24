@@ -911,11 +911,13 @@ typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_FILESIZE)>,
                               FX_FILESIZE> CFX_FileSizeListArray;
 
 #ifdef PDF_ENABLE_XFA
-class IFX_Unknown {
+class IFX_Retainable {
  public:
-  virtual ~IFX_Unknown() {}
+  virtual uint32_t Retain() = 0;
   virtual uint32_t Release() = 0;
-  virtual uint32_t AddRef() = 0;
+
+ protected:
+  virtual ~IFX_Retainable() {}
 };
 #define FX_IsOdd(a) ((a)&1)
 #endif  // PDF_ENABLE_XFA

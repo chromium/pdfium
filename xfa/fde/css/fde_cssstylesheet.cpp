@@ -106,7 +106,7 @@ void CFDE_CSSStyleSheet::Reset() {
   delete m_pAllocator;
   m_pAllocator = nullptr;
 }
-uint32_t CFDE_CSSStyleSheet::AddRef() {
+uint32_t CFDE_CSSStyleSheet::Retain() {
   return ++m_wRefCount;
 }
 uint32_t CFDE_CSSStyleSheet::Release() {
