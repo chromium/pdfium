@@ -188,24 +188,14 @@ class CPDF_Action {
   explicit CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
   CPDF_Dictionary* GetDict() const { return m_pDict; }
-  CFX_ByteString GetTypeName() const { return m_pDict->GetStringBy("S"); }
   ActionType GetType() const;
   CPDF_Dest GetDest(CPDF_Document* pDoc) const;
   CFX_WideString GetFilePath() const;
-  FX_BOOL GetNewWindow() const { return m_pDict->GetBooleanBy("NewWindow"); }
   CFX_ByteString GetURI(CPDF_Document* pDoc) const;
-  FX_BOOL GetMouseMap() const { return m_pDict->GetBooleanBy("IsMap"); }
-  FX_BOOL GetHideStatus() const { return m_pDict->GetBooleanBy("H", TRUE); }
+  bool GetHideStatus() const { return m_pDict->GetBooleanBy("H", true); }
   CFX_ByteString GetNamedAction() const { return m_pDict->GetStringBy("N"); }
   uint32_t GetFlags() const { return m_pDict->GetIntegerBy("Flags"); }
   CFX_WideString GetJavaScript() const;
-  CPDF_Dictionary* GetAnnot() const;
-  int32_t GetOperationType() const;
-  CPDF_Stream* GetSoundStream() const { return m_pDict->GetStreamBy("Sound"); }
-  FX_FLOAT GetVolume() const { return m_pDict->GetNumberBy("Volume"); }
-  FX_BOOL IsSynchronous() const { return m_pDict->GetBooleanBy("Synchronous"); }
-  FX_BOOL IsRepeat() const { return m_pDict->GetBooleanBy("Repeat"); }
-  FX_BOOL IsMixPlay() const { return m_pDict->GetBooleanBy("Mix"); }
   size_t GetSubActionsCount() const;
   CPDF_Action GetSubAction(size_t iIndex) const;
 
@@ -794,7 +784,7 @@ class CPDF_IconFit {
   ScaleMethod GetScaleMethod();
   FX_BOOL IsProportionalScale();
   void GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom);
-  FX_BOOL GetFittingBounds();
+  bool GetFittingBounds();
   const CPDF_Dictionary* GetDict() const { return m_pDict; }
 
  protected:

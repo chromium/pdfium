@@ -39,8 +39,7 @@ class CPDF_Dictionary : public CPDF_Object {
   CFX_WideString GetUnicodeTextBy(const CFX_ByteString& key) const;
   int GetIntegerBy(const CFX_ByteString& key) const;
   int GetIntegerBy(const CFX_ByteString& key, int default_int) const;
-  FX_BOOL GetBooleanBy(const CFX_ByteString& key,
-                       FX_BOOL bDefault = FALSE) const;
+  bool GetBooleanBy(const CFX_ByteString& key, bool bDefault = false) const;
   FX_FLOAT GetNumberBy(const CFX_ByteString& key) const;
   CPDF_Dictionary* GetDictBy(const CFX_ByteString& key) const;
   CPDF_Stream* GetStreamBy(const CFX_ByteString& key) const;
@@ -70,7 +69,7 @@ class CPDF_Dictionary : public CPDF_Object {
   }
   void SetAtRect(const CFX_ByteString& key, const CFX_FloatRect& rect);
   void SetAtMatrix(const CFX_ByteString& key, const CFX_Matrix& matrix);
-  void SetAtBoolean(const CFX_ByteString& key, FX_BOOL bValue);
+  void SetAtBoolean(const CFX_ByteString& key, bool bValue);
 
   void AddReference(const CFX_ByteString& key,
                     CPDF_IndirectObjectHolder* pDoc,

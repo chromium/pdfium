@@ -193,44 +193,7 @@ CFX_WideString CPDF_Action::GetJavaScript() const {
   CPDF_Object* pJS = m_pDict->GetDirectObjectBy("JS");
   return pJS ? pJS->GetUnicodeText() : csJS;
 }
-CPDF_Dictionary* CPDF_Action::GetAnnot() const {
-  if (!m_pDict) {
-    return nullptr;
-  }
-  CFX_ByteString csType = m_pDict->GetStringBy("S");
-  if (csType == "Rendition") {
-    return m_pDict->GetDictBy("AN");
-  }
-  if (csType == "Movie") {
-    return m_pDict->GetDictBy("Annotation");
-  }
-  return nullptr;
-}
-int32_t CPDF_Action::GetOperationType() const {
-  if (!m_pDict) {
-    return 0;
-  }
-  CFX_ByteString csType = m_pDict->GetStringBy("S");
-  if (csType == "Rendition") {
-    return m_pDict->GetIntegerBy("OP");
-  }
-  if (csType == "Movie") {
-    CFX_ByteString csOP = m_pDict->GetStringBy("Operation");
-    if (csOP == "Play") {
-      return 0;
-    }
-    if (csOP == "Stop") {
-      return 1;
-    }
-    if (csOP == "Pause") {
-      return 2;
-    }
-    if (csOP == "Resume") {
-      return 3;
-    }
-  }
-  return 0;
-}
+
 size_t CPDF_Action::GetSubActionsCount() const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return 0;

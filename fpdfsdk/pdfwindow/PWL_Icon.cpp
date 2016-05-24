@@ -145,13 +145,6 @@ void CPWL_Icon::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
   }
 }
 
-FX_BOOL CPWL_Icon::GetFittingBounds() {
-  if (m_pIconFit)
-    return m_pIconFit->GetFittingBounds();
-
-  return FALSE;
-}
-
 void CPWL_Icon::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
   fHScale = 1.0f;
   fVScale = 1.0f;

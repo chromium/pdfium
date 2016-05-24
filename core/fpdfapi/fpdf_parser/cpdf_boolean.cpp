@@ -8,7 +8,7 @@
 
 CPDF_Boolean::CPDF_Boolean() : m_bValue(false) {}
 
-CPDF_Boolean::CPDF_Boolean(FX_BOOL value) : m_bValue(value) {}
+CPDF_Boolean::CPDF_Boolean(bool value) : m_bValue(value) {}
 
 CPDF_Boolean::~CPDF_Boolean() {}
 

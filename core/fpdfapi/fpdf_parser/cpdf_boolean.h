@@ -14,7 +14,7 @@
 class CPDF_Boolean : public CPDF_Object {
  public:
   CPDF_Boolean();
-  explicit CPDF_Boolean(FX_BOOL value);
+  explicit CPDF_Boolean(bool value);
 
   // CPDF_Object.
   Type GetType() const override;
@@ -29,7 +29,7 @@ class CPDF_Boolean : public CPDF_Object {
  protected:
   ~CPDF_Boolean() override;
 
-  FX_BOOL m_bValue;
+  bool m_bValue;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_BOOLEAN_H_

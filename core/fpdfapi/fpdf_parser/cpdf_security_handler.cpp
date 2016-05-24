@@ -512,8 +512,9 @@ FX_BOOL CPDF_SecurityHandler::CheckOwnerPassword(const uint8_t* password,
   return CheckUserPassword(user_pass.raw_str(), user_pass.GetLength(), TRUE,
                            key, key_len);
 }
-FX_BOOL CPDF_SecurityHandler::IsMetadataEncrypted() {
-  return m_pEncryptDict->GetBooleanBy("EncryptMetadata", TRUE);
+
+bool CPDF_SecurityHandler::IsMetadataEncrypted() const {
+  return m_pEncryptDict->GetBooleanBy("EncryptMetadata", true);
 }
 
 void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
@@ -545,7 +546,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
       AES256_SetPassword(pEncryptDict, owner_pass, owner_size, TRUE,
                          m_EncryptKey);
       AES256_SetPerms(pEncryptDict, m_Permissions,
-                      pEncryptDict->GetBooleanBy("EncryptMetadata", TRUE),
+                      pEncryptDict->GetBooleanBy("EncryptMetadata", true),
                       m_EncryptKey);
     }
     return;

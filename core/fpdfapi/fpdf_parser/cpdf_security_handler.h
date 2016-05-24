@@ -30,7 +30,7 @@ class CPDF_SecurityHandler {
   FX_BOOL OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict);
   uint32_t GetPermissions();
   FX_BOOL GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen);
-  FX_BOOL IsMetadataEncrypted();
+  bool IsMetadataEncrypted() const;
   CPDF_CryptoHandler* CreateCryptoHandler();
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,

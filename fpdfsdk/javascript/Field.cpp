@@ -601,8 +601,7 @@ FX_BOOL Field::buttonFitBounds(IJS_Context* cc,
     if (!pFormControl)
       return FALSE;
 
-    CPDF_IconFit IconFit = pFormControl->GetIconFit();
-    vp << IconFit.GetFittingBounds();
+    vp << pFormControl->GetIconFit().GetFittingBounds();
   }
 
   return TRUE;

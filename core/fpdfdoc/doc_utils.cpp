@@ -716,11 +716,9 @@ void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
     }
   }
 }
-FX_BOOL CPDF_IconFit::GetFittingBounds() {
-  if (!m_pDict) {
-    return FALSE;
-  }
-  return m_pDict->GetBooleanBy("FB");
+
+bool CPDF_IconFit::GetFittingBounds() {
+  return m_pDict ? m_pDict->GetBooleanBy("FB") : false;
 }
 
 std::vector<bool> SaveCheckedFieldStatus(CPDF_FormField* pField) {

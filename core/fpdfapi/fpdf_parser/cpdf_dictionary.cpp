@@ -96,10 +96,10 @@ FX_FLOAT CPDF_Dictionary::GetNumberBy(const CFX_ByteString& key) const {
   return p ? p->GetNumber() : 0;
 }
 
-FX_BOOL CPDF_Dictionary::GetBooleanBy(const CFX_ByteString& key,
-                                      FX_BOOL bDefault) const {
+bool CPDF_Dictionary::GetBooleanBy(const CFX_ByteString& key,
+                                   bool bDefault) const {
   CPDF_Object* p = GetObjectBy(key);
-  return ToBoolean(p) ? p->GetInteger() : bDefault;
+  return ToBoolean(p) ? p->GetInteger() != 0 : bDefault;
 }
 
 CPDF_Dictionary* CPDF_Dictionary::GetDictBy(const CFX_ByteString& key) const {
@@ -224,7 +224,7 @@ void CPDF_Dictionary::SetAtNumber(const CFX_ByteString& key, FX_FLOAT f) {
   SetAt(key, new CPDF_Number(f));
 }
 
-void CPDF_Dictionary::SetAtBoolean(const CFX_ByteString& key, FX_BOOL bValue) {
+void CPDF_Dictionary::SetAtBoolean(const CFX_ByteString& key, bool bValue) {
   SetAt(key, new CPDF_Boolean(bValue));
 }
 

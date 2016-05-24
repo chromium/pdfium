@@ -2312,7 +2312,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
   std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
   std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
 
-  FX_BOOL bHide = action.GetHideStatus();
+  bool bHide = action.GetHideStatus();
   FX_BOOL bChanged = FALSE;
 
   for (CPDF_FormField* pField : fields) {
