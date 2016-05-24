@@ -100,9 +100,9 @@ struct ReleaseDeleter {
   inline void operator()(T* ptr) const { ptr->Release(); }
 };
 
-class CFX_DestructObject {
+class CFX_Deletable {
  public:
-  virtual ~CFX_DestructObject() {}
+  virtual ~CFX_Deletable() {}
 };
 
 #endif  // __cplusplus

@@ -27,7 +27,7 @@ void FX_PRIVATEDATA::FreeData() {
     return;
   }
   if (m_bSelfDestruct) {
-    delete (CFX_DestructObject*)m_pData;
+    delete static_cast<CFX_Deletable*>(m_pData);
   } else if (m_pCallback) {
     m_pCallback(m_pData);
   }
@@ -57,7 +57,7 @@ void CFX_PrivateData::SetPrivateData(void* pModuleId,
                                      PD_CALLBACK_FREEDATA callback) {
   AddData(pModuleId, pData, callback, FALSE);
 }
-void CFX_PrivateData::SetPrivateObj(void* pModuleId, CFX_DestructObject* pObj) {
+void CFX_PrivateData::SetPrivateObj(void* pModuleId, CFX_Deletable* pObj) {
   AddData(pModuleId, pObj, NULL, TRUE);
 }
 FX_BOOL CFX_PrivateData::RemovePrivateData(void* pModuleId) {

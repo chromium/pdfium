@@ -639,7 +639,7 @@ class CFX_PrivateData {
   void SetPrivateData(void* module_id,
                       void* pData,
                       PD_CALLBACK_FREEDATA callback);
-  void SetPrivateObj(void* module_id, CFX_DestructObject* pObj);
+  void SetPrivateObj(void* module_id, CFX_Deletable* pObj);
 
   void* GetPrivateData(void* module_id);
   FX_BOOL LookupPrivateData(void* module_id, void*& pData) const {

@@ -30,7 +30,7 @@ class CCodec_Jbig2Context {
 }  // namespace
 
 // Holds per-document JBig2 related data.
-class JBig2DocumentContext : public CFX_DestructObject {
+class JBig2DocumentContext : public CFX_Deletable {
  public:
   std::list<CJBig2_CachePair>* GetSymbolDictCache() {
     return &m_SymbolDictCache;
@@ -50,9 +50,9 @@ JBig2DocumentContext* GetJBig2DocumentContext(CCodec_Jbig2Module* pModule,
                                               CFX_PrivateData* pPrivateData) {
   void* pModulePrivateData = pPrivateData->GetPrivateData(pModule);
   if (pModulePrivateData) {
-    CFX_DestructObject* pDestructObject =
-        reinterpret_cast<CFX_DestructObject*>(pModulePrivateData);
-    return static_cast<JBig2DocumentContext*>(pDestructObject);
+    CFX_Deletable* pDeletable =
+        reinterpret_cast<CFX_Deletable*>(pModulePrivateData);
+    return static_cast<JBig2DocumentContext*>(pDeletable);
   }
   JBig2DocumentContext* pJBig2DocumentContext = new JBig2DocumentContext();
   pPrivateData->SetPrivateObj(pModule, pJBig2DocumentContext);

@@ -11,14 +11,13 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 
-class CCodec_ModuleMgr;
 class CCodec_FaxModule;
 class CCodec_FlateModule;
 class CCodec_IccModule;
 class CCodec_Jbig2Module;
 class CCodec_JpegModule;
 class CCodec_JpxModule;
-
+class CCodec_ModuleMgr;
 class CPDF_PageModule;
 
 class CPDF_ModuleMgr {
@@ -32,8 +31,14 @@ class CPDF_ModuleMgr {
   CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
 
   void InitPageModule();
-
   CPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
+
+  void SetUnsupportInfoAdapter(std::unique_ptr<CFX_Deletable> pAdapter) {
+    m_pUnsupportInfoAdapter = std::move(pAdapter);
+  }
+  CFX_Deletable* GetUnsupportInfoAdapter() const {
+    return m_pUnsupportInfoAdapter.get();
+  }
 
   void LoadEmbeddedGB1CMaps();
   void LoadEmbeddedCNS1CMaps();
@@ -47,19 +52,13 @@ class CPDF_ModuleMgr {
   CCodec_IccModule* GetIccModule();
   CCodec_FlateModule* GetFlateModule();
 
-  void SetPrivateData(void* module_id,
-                      void* pData,
-                      PD_CALLBACK_FREEDATA callback);
-
-  void* GetPrivateData(void* module_id);
-
  private:
   CPDF_ModuleMgr();
   ~CPDF_ModuleMgr();
 
   CCodec_ModuleMgr* m_pCodecModule;
   std::unique_ptr<CPDF_PageModule> m_pPageModule;
-  CFX_PrivateData m_privateData;
+  std::unique_ptr<CFX_Deletable> m_pUnsupportInfoAdapter;
 };
 
 #endif  // CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_

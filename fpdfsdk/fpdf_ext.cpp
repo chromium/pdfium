@@ -11,6 +11,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
@@ -20,7 +21,7 @@
 
 #define FPDFSDK_UNSUPPORT_CALL 100
 
-class CFSDK_UnsupportInfo_Adapter {
+class CFSDK_UnsupportInfo_Adapter : public CFX_Deletable {
  public:
   explicit CFSDK_UnsupportInfo_Adapter(UNSUPPORT_INFO* unsp_info)
       : m_unsp_info(unsp_info) {}
@@ -37,18 +38,13 @@ void CFSDK_UnsupportInfo_Adapter::ReportError(int nErrorType) {
   }
 }
 
-void FreeUnsupportInfo(void* pData) {
-  CFSDK_UnsupportInfo_Adapter* pAdapter = (CFSDK_UnsupportInfo_Adapter*)pData;
-  delete pAdapter;
-}
-
 FX_BOOL FPDF_UnSupportError(int nError) {
   CFSDK_UnsupportInfo_Adapter* pAdapter =
-      (CFSDK_UnsupportInfo_Adapter*)CPDF_ModuleMgr::Get()->GetPrivateData(
-          (void*)FPDFSDK_UNSUPPORT_CALL);
-
+      static_cast<CFSDK_UnsupportInfo_Adapter*>(
+          CPDF_ModuleMgr::Get()->GetUnsupportInfoAdapter());
   if (!pAdapter)
     return FALSE;
+
   pAdapter->ReportError(nError);
   return TRUE;
 }
@@ -57,12 +53,9 @@ DLLEXPORT FPDF_BOOL STDCALL
 FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
   if (!unsp_info || unsp_info->version != 1)
     return FALSE;
-  CFSDK_UnsupportInfo_Adapter* pAdapter =
-      new CFSDK_UnsupportInfo_Adapter(unsp_info);
 
-  CPDF_ModuleMgr::Get()->SetPrivateData((void*)FPDFSDK_UNSUPPORT_CALL, pAdapter,
-                                        &FreeUnsupportInfo);
-
+  CPDF_ModuleMgr::Get()->SetUnsupportInfoAdapter(std::unique_ptr<CFX_Deletable>(
+      new CFSDK_UnsupportInfo_Adapter(unsp_info)));
   return TRUE;
 }
 

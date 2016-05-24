@@ -36,16 +36,6 @@ CPDF_ModuleMgr::CPDF_ModuleMgr() : m_pCodecModule(nullptr) {}
 
 CPDF_ModuleMgr::~CPDF_ModuleMgr() {}
 
-void CPDF_ModuleMgr::SetPrivateData(void* module_id,
-                                    void* pData,
-                                    PD_CALLBACK_FREEDATA callback) {
-  m_privateData.SetPrivateData(module_id, pData, callback);
-}
-
-void* CPDF_ModuleMgr::GetPrivateData(void* module_id) {
-  return m_privateData.GetPrivateData(module_id);
-}
-
 CCodec_FaxModule* CPDF_ModuleMgr::GetFaxModule() {
   return m_pCodecModule ? m_pCodecModule->GetFaxModule() : nullptr;
 }
