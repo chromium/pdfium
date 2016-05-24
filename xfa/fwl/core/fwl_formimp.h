@@ -47,8 +47,14 @@ class CFWL_SysBtn {
     bDisabled ? m_dwState |= FWL_SYSBUTTONSTATE_Disabled
               : m_dwState &= ~FWL_SYSBUTTONSTATE_Disabled;
   }
-  int32_t GetPartState() {
-    return (IsDisabled() ? CFWL_PartState_Disabled : (m_dwState + 1));
+  uint32_t GetPartState() {
+    if (IsDisabled())
+      return CFWL_PartState_Disabled;
+    if (m_dwState & FWL_SYSBUTTONSTATE_Pressed)
+      return CFWL_PartState_Pressed;
+    if (m_dwState & FWL_SYSBUTTONSTATE_Hover)
+      return CFWL_PartState_Hovered;
+    return CFWL_PartState_Normal;
   }
 
   CFX_RectF m_rtBtn;
