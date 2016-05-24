@@ -16,7 +16,6 @@ class CXFA_FFApp;
 class IFWL_App;
 class IFWL_NoteThread;
 class IFWL_ThemeProvider;
-class IFWL_WidgetMgr;
 
 class CFWL_AppImp {
  public:
@@ -29,7 +28,7 @@ class CFWL_AppImp {
   FWL_Error Initialize();
   FWL_Error Finalize();
   CXFA_FFApp* GetAdapterNative() const;
-  IFWL_WidgetMgr* GetWidgetMgr() const;
+  CFWL_WidgetMgr* GetWidgetMgr() const;
   IFWL_ThemeProvider* GetThemeProvider() const;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   void Exit(int32_t iExitCode);

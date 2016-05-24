@@ -32,7 +32,7 @@ CXFA_FFApp* IFWL_App::GetAdapterNative() {
   return static_cast<CFWL_AppImp*>(GetImpl())->GetAdapterNative();
 }
 
-IFWL_WidgetMgr* IFWL_App::GetWidgetMgr() {
+CFWL_WidgetMgr* IFWL_App::GetWidgetMgr() {
   return static_cast<CFWL_AppImp*>(GetImpl())->GetWidgetMgr();
 }
 
@@ -76,10 +76,9 @@ CXFA_FFApp* CFWL_AppImp::GetAdapterNative() const {
   return m_pAdapterNative;
 }
 CXFA_FWLAdapterWidgetMgr* FWL_GetAdapterWidgetMgr() {
-  return static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr())
-      ->GetAdapterWidgetMgr();
+  return CFWL_WidgetMgr::GetInstance()->GetAdapterWidgetMgr();
 }
-IFWL_WidgetMgr* CFWL_AppImp::GetWidgetMgr() const {
+CFWL_WidgetMgr* CFWL_AppImp::GetWidgetMgr() const {
   return m_pWidgetMgr.get();
 }
 

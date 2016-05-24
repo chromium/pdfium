@@ -22,11 +22,11 @@
 #include "xfa/fwl/core/fwl_error.h"
 
 class CFWL_NoteDriver;
+class CFWL_WidgetMgr;
 class CXFA_FFApp;
 class CXFA_FWLAdapterWidgetMgr;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
-class IFWL_WidgetMgr;
 
 class IFWL_App {
  public:
@@ -37,7 +37,7 @@ class IFWL_App {
   FWL_Error Initialize();
   FWL_Error Finalize();
   CXFA_FFApp* GetAdapterNative();
-  IFWL_WidgetMgr* GetWidgetMgr();
+  CFWL_WidgetMgr* GetWidgetMgr();
   IFWL_ThemeProvider* GetThemeProvider();
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   void Exit(int32_t iExitCode);

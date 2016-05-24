@@ -368,8 +368,7 @@ void CFWL_CheckBoxImp::NextStates() {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton) {
     if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
         FWL_STATE_CKB_Unchecked) {
-      CFWL_WidgetMgr* pWidgetMgr =
-          static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
+      CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
       if (!pWidgetMgr->IsFormDisabled()) {
         CFX_ArrayTemplate<IFWL_Widget*> radioarr;
         pWidgetMgr->GetSameGroupRadioButton(m_pInterface, radioarr);

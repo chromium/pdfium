@@ -217,7 +217,7 @@ IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
 CFWL_Widget::CFWL_Widget()
     : m_pIface(nullptr), m_pDelegate(nullptr), m_pProperties(nullptr) {
   m_pProperties = new CFWL_WidgetProperties;
-  m_pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
+  m_pWidgetMgr = CFWL_WidgetMgr::GetInstance();
   ASSERT(m_pWidgetMgr);
 }
 

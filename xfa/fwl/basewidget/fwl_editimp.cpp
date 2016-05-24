@@ -1013,8 +1013,7 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
       (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoHideSel) ||
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
   if (bShowSel) {
-    IFWL_Widget* pForm =
-        m_pWidgetMgr->GetWidget(m_pInterface, FWL_WGTRELATION_SystemForm);
+    IFWL_Widget* pForm = m_pWidgetMgr->GetSystemFormWidget(m_pInterface);
     if (pForm) {
       bShowSel = (pForm->GetStates() & FWL_WGTSTATE_Deactivated) !=
                  FWL_WGTSTATE_Deactivated;

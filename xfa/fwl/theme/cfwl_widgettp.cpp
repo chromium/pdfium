@@ -13,9 +13,9 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
+#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fwl/core/ifwl_widgetmgr.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_shading.h"
@@ -35,16 +35,15 @@ const float kCYBorder = 1.0f;
 }  // namespace
 
 static void FWL_SetChildThemeID(IFWL_Widget* pParent, uint32_t dwThemeID) {
-  IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
-  IFWL_Widget* pChild =
-      pWidgetMgr->GetWidget(pParent, FWL_WGTRELATION_FirstChild);
+  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+  IFWL_Widget* pChild = pWidgetMgr->GetFirstChildWidget(pParent);
   while (pChild) {
     IFWL_ThemeProvider* pTheme = pChild->GetThemeProvider();
     if (pTheme) {
       pTheme->SetThemeID(pChild, dwThemeID, FALSE);
     }
     FWL_SetChildThemeID(pChild, dwThemeID);
-    pChild = pWidgetMgr->GetWidget(pChild, FWL_WGTRELATION_NextSibling);
+    pChild = pWidgetMgr->GetNextSiblingWidget(pChild);
   }
 }
 

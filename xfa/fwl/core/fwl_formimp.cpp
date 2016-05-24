@@ -151,7 +151,7 @@ FWL_Error CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
   }
 #ifdef FWL_UseMacSystemBorder
   rect = m_rtRelative;
-  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
+  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
   if (!pWidgetMgr)
     return FWL_Error::Indefinite;
 
@@ -447,15 +447,15 @@ void CFWL_FormImp::ShowChildWidget(IFWL_Widget* pParent) {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
     return;
-  CFWL_WidgetMgr* pWidgetMgr =
-      static_cast<CFWL_WidgetMgr*>(pApp->GetWidgetMgr());
+
+  CFWL_WidgetMgr* pWidgetMgr = pApp->GetWidgetMgr();
   if (!pWidgetMgr)
     return;
-  IFWL_Widget* pChild =
-      pWidgetMgr->GetWidget(pParent, FWL_WGTRELATION_FirstChild);
+
+  IFWL_Widget* pChild = pWidgetMgr->GetFirstChildWidget(pParent);
   while (pChild) {
     ShowChildWidget(pChild);
-    pChild = pWidgetMgr->GetWidget(pChild, FWL_WGTRELATION_NextSibling);
+    pChild = pWidgetMgr->GetNextSiblingWidget(pChild);
   }
 }
 
@@ -616,7 +616,7 @@ void CFWL_FormImp::GetEdgeRect(CFX_RectF& rtEdge) {
 }
 void CFWL_FormImp::SetWorkAreaRect() {
   m_rtRestore = m_pProperties->m_rtWidget;
-  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
+  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
   if (!pWidgetMgr)
     return;
   m_bSetMaximize = TRUE;
@@ -765,7 +765,7 @@ FX_BOOL CFWL_FormImp::HasIcon() {
   return !!pData->GetIcon(m_pInterface, FALSE);
 }
 void CFWL_FormImp::UpdateIcon() {
-  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
+  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
   if (!pWidgetMgr)
     return;
   IFWL_FormDP* pData =
@@ -778,7 +778,7 @@ void CFWL_FormImp::UpdateIcon() {
     m_pSmallIcon = pSmallIcon;
 }
 void CFWL_FormImp::UpdateCaption() {
-  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
+  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
   if (!pWidgetMgr)
     return;
   IFWL_FormDP* pData =
@@ -935,8 +935,7 @@ void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case CFWL_MessageType::Size: {
-      CFWL_WidgetMgr* pWidgetMgr =
-          static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
+      CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
       if (!pWidgetMgr)
         return;
 

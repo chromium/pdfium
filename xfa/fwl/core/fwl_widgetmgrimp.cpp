@@ -36,11 +36,10 @@ FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
 #endif
 }
 
-IFWL_WidgetMgr* FWL_GetWidgetMgr() {
+// static
+CFWL_WidgetMgr* CFWL_WidgetMgr::GetInstance() {
   IFWL_App* pApp = FWL_GetApp();
-  if (!pApp)
-    return NULL;
-  return pApp->GetWidgetMgr();
+  return pApp ? pApp->GetWidgetMgr() : nullptr;
 }
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
@@ -56,88 +55,68 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
 
 CFWL_WidgetMgr::~CFWL_WidgetMgr() {}
 
-int32_t CFWL_WidgetMgr::CountWidgets(IFWL_Widget* pParent) {
-  CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
-  return TravelWidgetMgr(pParentItem, NULL, NULL);
-}
-IFWL_Widget* CFWL_WidgetMgr::GetWidget(int32_t nIndex, IFWL_Widget* pParent) {
-  CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
-  IFWL_Widget* pWidget = NULL;
-  TravelWidgetMgr(pParentItem, &nIndex, NULL, &pWidget);
-  return pWidget;
-}
-IFWL_Widget* CFWL_WidgetMgr::GetWidget(IFWL_Widget* pWidget,
-                                       FWL_WGTRELATION eRelation) {
+IFWL_Widget* CFWL_WidgetMgr::GetParentWidget(IFWL_Widget* pWidget) const {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem) {
-    return NULL;
-  }
-  IFWL_Widget* pRet = NULL;
-  switch (eRelation) {
-    case FWL_WGTRELATION_Parent: {
-      pRet = pItem->pParent ? pItem->pParent->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_Owner: {
-      pRet = pItem->pOwner ? pItem->pOwner->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_FirstSibling: {
-      pItem = pItem->pPrevious;
-      while (pItem && pItem->pPrevious) {
-        pItem = pItem->pPrevious;
-      }
-      pRet = pItem ? pItem->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_PriorSibling: {
-      pRet = pItem->pPrevious ? pItem->pPrevious->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_NextSibling: {
-      pRet = pItem->pNext ? pItem->pNext->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_LastSibling: {
-      pItem = pItem->pNext;
-      while (pItem && pItem->pNext) {
-        pItem = pItem->pNext;
-      }
-      pRet = pItem ? pItem->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_FirstChild: {
-      pRet = pItem->pChild ? pItem->pChild->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_LastChild: {
-      pItem = pItem->pChild;
-      while (pItem && pItem->pNext) {
-        pItem = pItem->pNext;
-      }
-      pRet = pItem ? pItem->pWidget : NULL;
-      break;
-    }
-    case FWL_WGTRELATION_SystemForm: {
-      while (pItem) {
-        if (IsAbleNative(pItem->pWidget)) {
-          pRet = pItem->pWidget;
-          break;
-        }
-        pItem = pItem->pParent;
-      }
-      break;
-    }
-    default: {}
-  }
-  return pRet;
+  return pItem && pItem->pParent ? pItem->pParent->pWidget : nullptr;
 }
-int32_t CFWL_WidgetMgr::GetWidgetIndex(IFWL_Widget* pWidget) {
+
+IFWL_Widget* CFWL_WidgetMgr::GetOwnerWidget(IFWL_Widget* pWidget) const {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
-    return -1;
-  return TravelWidgetMgr(pItem->pParent, NULL, pItem);
+  return pItem && pItem->pOwner ? pItem->pOwner->pWidget : nullptr;
 }
+
+IFWL_Widget* CFWL_WidgetMgr::GetFirstSiblingWidget(IFWL_Widget* pWidget) const {
+  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  pItem = pItem ? pItem->pPrevious : nullptr;  // Not self.
+  while (pItem && pItem->pPrevious)
+    pItem = pItem->pPrevious;
+
+  return pItem ? pItem->pWidget : nullptr;
+}
+
+IFWL_Widget* CFWL_WidgetMgr::GetPriorSiblingWidget(IFWL_Widget* pWidget) const {
+  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  return pItem && pItem->pPrevious ? pItem->pPrevious->pWidget : nullptr;
+}
+
+IFWL_Widget* CFWL_WidgetMgr::GetNextSiblingWidget(IFWL_Widget* pWidget) const {
+  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  return pItem && pItem->pNext ? pItem->pNext->pWidget : nullptr;
+}
+
+IFWL_Widget* CFWL_WidgetMgr::GetLastSiblingWidget(IFWL_Widget* pWidget) const {
+  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  pItem = pItem ? pItem->pNext : nullptr;  // Not self.
+  while (pItem && pItem->pNext)
+    pItem = pItem->pNext;
+
+  return pItem ? pItem->pWidget : nullptr;
+}
+
+IFWL_Widget* CFWL_WidgetMgr::GetFirstChildWidget(IFWL_Widget* pWidget) const {
+  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  return pItem && pItem->pChild ? pItem->pChild->pWidget : nullptr;
+}
+
+IFWL_Widget* CFWL_WidgetMgr::GetLastChildWidget(IFWL_Widget* pWidget) const {
+  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  pItem = pItem ? pItem->pChild : nullptr;
+  while (pItem && pItem->pNext)
+    pItem = pItem->pNext;
+
+  return pItem ? pItem->pWidget : nullptr;
+}
+
+IFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(IFWL_Widget* pWidget) const {
+  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  while (pItem) {
+    if (IsAbleNative(pItem->pWidget))
+      return pItem->pWidget;
+    pItem = pItem->pParent;
+  }
+  return nullptr;
+}
+
 FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
@@ -225,7 +204,7 @@ FWL_Error CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
       pOuter = pOuter->GetOuter();
     }
   } else if (!IsAbleNative(pWidget)) {
-    pNative = GetWidget(pWidget, FWL_WGTRELATION_SystemForm);
+    pNative = GetSystemFormWidget(pWidget);
     if (!pNative)
       return FWL_Error::Indefinite;
     pWidget->TransformTo(pNative, rect.left, rect.top);
@@ -345,10 +324,9 @@ void CFWL_WidgetMgr::SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild) {
 FX_BOOL CFWL_WidgetMgr::IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent) {
   IFWL_Widget* pTemp = pChild;
   do {
-    if (pTemp == pParent) {
+    if (pTemp == pParent)
       return TRUE;
-    }
-    pTemp = GetWidget(pTemp, FWL_WGTRELATION_Parent);
+    pTemp = GetParentWidget(pTemp);
   } while (pTemp);
   return FALSE;
 }
@@ -382,7 +360,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
     return NULL;
   FX_FLOAT x1;
   FX_FLOAT y1;
-  IFWL_Widget* child = GetWidget(parent, FWL_WGTRELATION_LastChild);
+  IFWL_Widget* child = GetLastChildWidget(parent);
   while (child) {
     if ((child->GetStates() & FWL_WGTSTATE_Invisible) == 0) {
       x1 = x;
@@ -401,7 +379,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
         return GetWidgetAtPoint(child, x1, y1);
       }
     }
-    child = GetWidget(child, FWL_WGTRELATION_PriorSibling);
+    child = GetPriorSiblingWidget(child);
   }
   return parent;
 }
@@ -416,29 +394,32 @@ void CFWL_WidgetMgr::NotifySizeChanged(IFWL_Widget* pForm,
 IFWL_Widget* CFWL_WidgetMgr::nextTab(IFWL_Widget* parent,
                                      IFWL_Widget* focus,
                                      FX_BOOL& bFind) {
-  IFWL_Widget* child =
-      FWL_GetWidgetMgr()->GetWidget(parent, FWL_WGTRELATION_FirstChild);
+  CFWL_WidgetMgr* pMgr = CFWL_WidgetMgr::GetInstance();
+  IFWL_Widget* child = pMgr->GetFirstChildWidget(parent);
   while (child) {
-    if (focus == child) {
+    if (focus == child)
       bFind = TRUE;
-    }
+
     if ((child->GetStyles() & FWL_WGTSTYLE_TabStop) &&
         (!focus || (focus != child && bFind))) {
       return child;
     }
     IFWL_Widget* bRet = nextTab(child, focus, bFind);
-    if (bRet) {
+    if (bRet)
       return bRet;
-    }
-    child = FWL_GetWidgetMgr()->GetWidget(child, FWL_WGTRELATION_NextSibling);
+
+    child = pMgr->GetNextSiblingWidget(child);
   }
-  return NULL;
+  return nullptr;
 }
+
 int32_t CFWL_WidgetMgr::CountRadioButtonGroup(IFWL_Widget* pFirst) {
   int32_t iRet = 0;
   IFWL_Widget* pChild = pFirst;
-  while (pChild)
-    pChild = GetWidget(pChild, FWL_WGTRELATION_NextSibling);
+  while (pChild) {
+    pChild = GetNextSiblingWidget(pChild);
+    ++iRet;
+  }
   return iRet;
 }
 IFWL_Widget* CFWL_WidgetMgr::GetSiblingRadioButton(IFWL_Widget* pWidget,
@@ -453,19 +434,19 @@ IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
       return pNext;
     pNext = GetSiblingRadioButton(pNext, FALSE);
   }
-  pNext = GetWidget(pRadioButton, FWL_WGTRELATION_LastSibling);
+  pNext = GetLastSiblingWidget(pRadioButton);
   while ((pNext = GetSiblingRadioButton(pNext, FALSE)) != nullptr &&
          pNext != pRadioButton) {
     if (pNext->GetStyles() & FWL_WGTSTYLE_Group)
       return pNext;
   }
-  pNext = GetWidget(pRadioButton, FWL_WGTRELATION_FirstSibling);
+  pNext = GetFirstSiblingWidget(pRadioButton);
   return GetSiblingRadioButton(pNext, TRUE);
 }
 void CFWL_WidgetMgr::GetSameGroupRadioButton(
     IFWL_Widget* pRadioButton,
     CFX_ArrayTemplate<IFWL_Widget*>& group) {
-  IFWL_Widget* pFirst = GetWidget(pRadioButton, FWL_WGTRELATION_FirstSibling);
+  IFWL_Widget* pFirst = GetFirstSiblingWidget(pRadioButton);
   if (!pFirst) {
     pFirst = pRadioButton;
   }
@@ -491,7 +472,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(IFWL_Widget* pParent) {
     return pParent;
   }
   IFWL_Widget* child =
-      FWL_GetWidgetMgr()->GetWidget(pParent, FWL_WGTRELATION_FirstChild);
+      CFWL_WidgetMgr::GetInstance()->GetFirstChildWidget(pParent);
   while (child) {
     if ((child->GetClassID() == FWL_Type::PushButton) &&
         (child->GetStates() & (1 << (FWL_WGTSTATE_MAX + 2)))) {
@@ -501,7 +482,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(IFWL_Widget* pParent) {
     if (find) {
       return find;
     }
-    child = FWL_GetWidgetMgr()->GetWidget(child, FWL_WGTRELATION_NextSibling);
+    child = CFWL_WidgetMgr::GetInstance()->GetNextSiblingWidget(child);
   }
   return NULL;
 }
@@ -550,7 +531,8 @@ int32_t CFWL_WidgetMgr::TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
   }
   return iCount - 1;
 }
-FX_BOOL CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) {
+
+FX_BOOL CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) const {
   if (!pWidget)
     return FALSE;
   if (!pWidget->IsInstance(FX_WSTRC(FWL_CLASS_Form))) {
@@ -677,11 +659,10 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
     return;
 
   FX_BOOL bFormDisable = m_pWidgetMgr->IsFormDisabled();
-  IFWL_Widget* pNextChild =
-      m_pWidgetMgr->GetWidget(parent, FWL_WGTRELATION_FirstChild);
+  IFWL_Widget* pNextChild = m_pWidgetMgr->GetFirstChildWidget(parent);
   while (pNextChild) {
     IFWL_Widget* child = pNextChild;
-    pNextChild = m_pWidgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
+    pNextChild = m_pWidgetMgr->GetNextSiblingWidget(child);
     if (child->GetStates() & FWL_WGTSTATE_Invisible)
       continue;
 
@@ -719,7 +700,7 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
 
     DrawChild(child, clipBounds, pGraphics,
               bFormDisable ? &widgetMatrix : pMatrix);
-    child = m_pWidgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
+    child = m_pWidgetMgr->GetNextSiblingWidget(child);
   }
 }
 
@@ -776,7 +757,7 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
     return FALSE;
 
   IFWL_Widget* pChild =
-      FWL_GetWidgetMgr()->GetWidget(pWidget, FWL_WGTRELATION_FirstChild);
+      CFWL_WidgetMgr::GetInstance()->GetFirstChildWidget(pWidget);
   if (!pChild)
     return TRUE;
 
@@ -835,8 +816,8 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
       if (r.Contains(hitPoint[i].hitPoint))
         hitPoint[i].bNotNeedRepaint = true;
     }
-  } while ((pChild = FWL_GetWidgetMgr()->GetWidget(
-                pChild, FWL_WGTRELATION_NextSibling)) != NULL);
+  } while (
+      (pChild = CFWL_WidgetMgr::GetInstance()->GetNextSiblingWidget(pChild)));
 
   if (!bChildIntersectWithDirty)
     return TRUE;

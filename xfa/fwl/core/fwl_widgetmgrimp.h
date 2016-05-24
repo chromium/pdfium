@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fwl/core/ifwl_widgetmgr.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 
 #define FWL_WGTMGR_DisableThread 0x00000001
@@ -58,21 +57,25 @@ class CFWL_WidgetMgrItem {
 #endif
 };
 
-class CFWL_WidgetMgr : public IFWL_WidgetMgr {
+class CFWL_WidgetMgr {
  public:
-  CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
-  ~CFWL_WidgetMgr() override;
+  static CFWL_WidgetMgr* GetInstance();
 
-  // IFWL_WidgetMgr:
-  int32_t CountWidgets(IFWL_Widget* pParent = NULL) override;
-  IFWL_Widget* GetWidget(int32_t nIndex, IFWL_Widget* pParent = NULL) override;
-  IFWL_Widget* GetWidget(IFWL_Widget* pWidget,
-                         FWL_WGTRELATION eRelation) override;
-  int32_t GetWidgetIndex(IFWL_Widget* pWidget) override;
-  FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) override;
-  FWL_Error RepaintWidget(IFWL_Widget* pWidget,
-                          const CFX_RectF* pRect = NULL) override;
-  uint32_t GetCapability() override { return m_dwCapability; }
+  explicit CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
+  ~CFWL_WidgetMgr();
+
+  IFWL_Widget* GetParentWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetOwnerWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetFirstSiblingWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetPriorSiblingWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetNextSiblingWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetLastSiblingWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetFirstChildWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetLastChildWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetSystemFormWidget(IFWL_Widget* pWidget) const;
+
+  FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
+  FWL_Error RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect = NULL);
 
   void AddWidget(IFWL_Widget* pWidget);
   void InsertWidget(IFWL_Widget* pParent,
@@ -110,7 +113,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
                           int32_t* pIndex,
                           CFWL_WidgetMgrItem* pItem,
                           IFWL_Widget** pWidget = NULL);
-  FX_BOOL IsAbleNative(IFWL_Widget* pWidget);
+  FX_BOOL IsAbleNative(IFWL_Widget* pWidget) const;
 
   uint32_t m_dwCapability;
   std::unique_ptr<CFWL_WidgetMgrDelegate> m_pDelegate;
