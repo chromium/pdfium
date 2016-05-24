@@ -93,7 +93,6 @@
         "xfa/fde/xml/fde_xml.h",
         "xfa/fde/xml/fde_xml_imp.cpp",
         "xfa/fde/xml/fde_xml_imp.h",
-        "xfa/fgas/crt/fgas_algorithm.h",
         "xfa/fgas/crt/fgas_codepage.cpp",
         "xfa/fgas/crt/fgas_codepage.h",
         "xfa/fgas/crt/fgas_language.h",

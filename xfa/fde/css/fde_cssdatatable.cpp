@@ -7,7 +7,6 @@
 #include "xfa/fde/css/fde_cssdatatable.h"
 
 #include "core/fxcrt/include/fx_ext.h"
-#include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/crt/fgas_system.h"
 

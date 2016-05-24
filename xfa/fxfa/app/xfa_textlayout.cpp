@@ -15,7 +15,6 @@
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
-#include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"

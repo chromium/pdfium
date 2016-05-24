@@ -7,7 +7,6 @@
 #include "xfa/fxfa/parser/xfa_basic_imp.h"
 
 #include "core/fxcrt/include/fx_ext.h"
-#include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/crt/fgas_system.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
@@ -215,24 +214,23 @@ const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount) {
   iCount = pElement->wCount;
   return g_XFAElementAttributeData + pElement->wStart;
 }
+
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
                                                    XFA_ATTRIBUTE eAttribute,
                                                    uint32_t dwPacket) {
   int32_t iCount = 0;
   const uint8_t* pAttr = XFA_GetElementAttributes(eElement, iCount);
-  if (pAttr == NULL || iCount < 1) {
-    return NULL;
-  }
-  CFX_DSPATemplate<uint8_t> search;
-  int32_t index = search.Lookup(eAttribute, pAttr, iCount);
-  if (index < 0) {
-    return NULL;
-  }
+  if (!pAttr || iCount < 1)
+    return nullptr;
+
+  if (!std::binary_search(pAttr, pAttr + iCount, eAttribute))
+    return nullptr;
+
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
   ASSERT(pInfo);
   if (dwPacket == XFA_XDPPACKET_UNKNOWN)
     return pInfo;
-  return (dwPacket & pInfo->dwPackets) ? pInfo : NULL;
+  return (dwPacket & pInfo->dwPackets) ? pInfo : nullptr;
 }
 
 const XFA_PROPERTY* XFA_GetElementProperties(XFA_ELEMENT eElement,
