@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cctype>
 
+#ifdef PDF_ENABLE_XFA
 CFX_PrivateData::CFX_PrivateData() {}
 
 CFX_PrivateData::~CFX_PrivateData() {
@@ -95,6 +96,7 @@ void CFX_PrivateData::ClearAll() {
   }
   m_DataList.RemoveAll();
 }
+#endif  // PDF_ENABLE_XFA
 
 void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
   if (strc.Find('.') == -1) {

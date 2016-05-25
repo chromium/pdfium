@@ -618,8 +618,9 @@ class CFX_PtrList {
  public:
   ~CFX_PtrList();
 };
-typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
 
+#ifdef PDF_ENABLE_XFA
+typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
 struct FX_PRIVATEDATA {
   void FreeData();
 
@@ -666,6 +667,7 @@ class CFX_PrivateData {
                PD_CALLBACK_FREEDATA callback,
                FX_BOOL bSelfDestruct);
 };
+#endif  // PDF_ENABLE_XFA
 
 class CFX_BitStream {
  public:

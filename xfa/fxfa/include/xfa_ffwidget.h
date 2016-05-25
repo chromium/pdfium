@@ -40,7 +40,7 @@ class CXFA_CalcData {
   int32_t m_iRefCount;
 };
 
-class CXFA_FFWidget : public CFX_PrivateData, public CXFA_ContentLayoutItem {
+class CXFA_FFWidget : public CXFA_ContentLayoutItem {
  public:
   CXFA_FFWidget(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
   virtual ~CXFA_FFWidget();

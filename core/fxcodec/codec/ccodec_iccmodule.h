@@ -14,7 +14,6 @@
 class CFX_BinaryBuf;
 class CFX_IccProfileCache;
 class CFX_IccTransformCache;
-class CFX_PrivateData;
 class IFX_FileRead;
 
 class CCodec_IccModule {
