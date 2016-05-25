@@ -6,8 +6,8 @@
 
 #include "xfa/fwl/core/fwl_appimp.h"
 
+#include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"

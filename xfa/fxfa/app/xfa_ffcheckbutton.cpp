@@ -7,8 +7,8 @@
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 
 #include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/lightwidget/cfwl_checkbox.h"
 #include "xfa/fxfa/app/xfa_ffexclgroup.h"
 #include "xfa/fxfa/app/xfa_fffield.h"

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/fwl_widgetmgrimp.h"
+#include "xfa/fwl/core/cfwl_widgetmgr.h"
 
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_appimp.h"
@@ -619,13 +619,13 @@ void CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
   }
   CFX_RectF clipBounds;
 
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_) || \
-    (_FX_OS_ == _FX_LINUX_DESKTOP_) || (_FX_OS_ == _FX_ANDROID_)
+#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_ || \
+    _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_
   IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
   pDelegate->OnDrawWidget(pTemp, pMatrix);
   pGraphics->GetClipRect(clipBounds);
   clipCopy = clipBounds;
-#elif(_FX_OS_ == _FX_MACOSX_)
+#elif _FX_OS_ == _FX_MACOSX_
   if (m_pWidgetMgr->IsFormDisabled()) {
     IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
     pDelegate->OnDrawWidget(pTemp, pMatrix);

@@ -10,10 +10,10 @@
 #include "xfa/fwl/basewidget/fwl_tooltipctrlimp.h"
 #include "xfa/fwl/basewidget/ifwl_tooltip.h"
 #include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_tooltiptarget.h"
 

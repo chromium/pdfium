@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "xfa/fgas/font/fgas_stdfontmgr.h"
-#include "xfa/fwl/core/fwl_widgetmgrimp.h"
+#include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"

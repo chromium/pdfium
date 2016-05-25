@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
-#define XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
+#ifndef XFA_FWL_CORE_CFWL_WIDGETMGR_H_
+#define XFA_FWL_CORE_CFWL_WIDGETMGR_H_
 
 #include <map>
 #include <memory>
@@ -127,7 +127,7 @@ class CFWL_WidgetMgr {
 
 class CFWL_WidgetMgrDelegate {
  public:
-  CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr);
+  explicit CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr);
   ~CFWL_WidgetMgrDelegate() {}
 
   FWL_Error OnSetCapability(uint32_t dwCapability = FWL_WGTMGR_DisableThread);
@@ -156,4 +156,4 @@ class CFWL_WidgetMgrDelegate {
   CFWL_WidgetMgr* m_pWidgetMgr;
 };
 
-#endif  // XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
+#endif  // XFA_FWL_CORE_CFWL_WIDGETMGR_H_
