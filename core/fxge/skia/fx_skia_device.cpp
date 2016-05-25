@@ -15,6 +15,7 @@
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include "third_party/skia/include/core/SkCanvas.h"
+#include "third_party/skia/include/core/SkColorFilter.h"
 #include "third_party/skia/include/core/SkColorPriv.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
@@ -1012,8 +1013,6 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   int rowBytes = pSource->GetPitch();
   switch (pSource->GetBPP()) {
     case 1: {
-      uint8_t zero = pSource->IsAlphaMask() ? 0xFF : 0x00;
-      uint8_t one = zero ^ 0xFF;
       dst8Storage.reset(FX_Alloc2D(uint8_t, width, height));
       uint8_t* dst8Pixels = dst8Storage.get();
       for (int y = 0; y < height; ++y) {
@@ -1021,11 +1020,12 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
             static_cast<const uint8_t*>(buffer) + y * rowBytes;
         uint8_t* dstRow = dst8Pixels + y * width;
         for (int x = 0; x < width; ++x)
-          dstRow[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? one : zero;
+          dstRow[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? 0xFF : 0x00;
       }
       buffer = dst8Storage.get();
       rowBytes = width;
-      colorType = SkColorType::kGray_8_SkColorType;
+      colorType = pSource->IsAlphaMask() ? SkColorType::kAlpha_8_SkColorType
+                                         : SkColorType::kGray_8_SkColorType;
     } break;
     case 8:
       colorType = SkColorType::kGray_8_SkColorType;
@@ -1051,31 +1051,26 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
     default:
       colorType = SkColorType::kUnknown_SkColorType;
   }
-  SkImageInfo imageInfo =
-      SkImageInfo::Make(width, height, colorType, kOpaque_SkAlphaType);
+  SkImageInfo imageInfo = SkImageInfo::Make(
+      width, height, colorType,
+      pSource->IsAlphaMask() ? kPremul_SkAlphaType : kOpaque_SkAlphaType);
   SkBitmap skBitmap;
   skBitmap.installPixels(imageInfo, buffer, rowBytes,
                          nullptr, /* TODO(caryclark) : set color table */
                          nullptr, nullptr);
   m_pCanvas->save();
-  bool landscape = !pMatrix->a;
-  if (landscape)
-    m_pCanvas->translate(m_pCanvas->imageInfo().width(), 0);
-  else
-    m_pCanvas->translate(pMatrix->e, pMatrix->f + pMatrix->d);
-
-  SkMatrix skMatrix = SkMatrix::MakeScale(1.f / width, 1.f / height);
-  m_pCanvas->concat(skMatrix);
+  SkMatrix skMatrix;
   const CFX_Matrix& m = *pMatrix;
-  // note that PDF's y-axis goes up; Skia's y-axis goes down
-  if (landscape)
-    skMatrix.setAll(-m.a, -m.b, m.e, m.c, m.d, m.f, 0, 0, 1);
-  else
-    skMatrix.setAll(m.a, m.b, 0, -m.c, -m.d, 0, 0, 0, 1);
+  skMatrix.setAll(m.a / width, -m.c / height, m.c + m.e, m.b / width,
+                  -m.d / height, m.d + m.f, 0, 0, 1);
   m_pCanvas->concat(skMatrix);
   SkPaint paint;
   paint.setAntiAlias(true);
-  paint.setFilterQuality(kHigh_SkFilterQuality);
+  if (pSource->IsAlphaMask()) {
+    paint.setColorFilter(
+        SkColorFilter::MakeModeFilter(argb, SkXfermode::kSrc_Mode));
+  }
+  // paint.setFilterQuality(kHigh_SkFilterQuality);
   paint.setXfermodeMode(GetSkiaBlendMode(blend_type));
   paint.setAlpha(bitmap_alpha);
   m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
