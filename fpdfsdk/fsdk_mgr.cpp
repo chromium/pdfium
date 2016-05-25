@@ -480,7 +480,7 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
 #endif  // PDF_ENABLE_XFA
   }
 #ifndef PDF_ENABLE_XFA
-  m_page->SetPrivateData((void*)m_page, (void*)this, nullptr);
+  m_page->SetView(this);
 #endif  // PDF_ENABLE_XFA
 }
 
@@ -493,7 +493,7 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
   m_fxAnnotArray.clear();
   m_pAnnotList.reset();
 #ifndef PDF_ENABLE_XFA
-  m_page->RemovePrivateData((void*)m_page);
+  m_page->SetView(nullptr);
   if (m_bTakeOverPage) {
     delete m_page;
   }

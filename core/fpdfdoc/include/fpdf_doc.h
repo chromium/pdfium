@@ -317,7 +317,7 @@ class CPDF_Link {
 #define ANNOTFLAG_LOCKED 0x0080
 #define ANNOTFLAG_TOGGLENOVIEW 0x0100
 
-class CPDF_Annot : public CFX_PrivateData {
+class CPDF_Annot {
  public:
   enum AppearanceMode { Normal, Rollover, Down };
 

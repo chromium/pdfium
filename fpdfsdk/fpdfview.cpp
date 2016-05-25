@@ -517,10 +517,6 @@ DLLEXPORT double STDCALL FPDF_GetPageHeight(FPDF_PAGE page) {
   return pPage ? pPage->GetPageHeight() : 0.0;
 }
 
-void DropContext(void* data) {
-  delete (CRenderContext*)data;
-}
-
 #if defined(_WIN32)
 DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
                                        FPDF_PAGE page,
@@ -535,7 +531,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     return;
 
   CRenderContext* pContext = new CRenderContext;
-  pPage->SetPrivateData((void*)1, pContext, DropContext);
+  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
 
 #if !defined(_WIN32_WCE)
   CFX_DIBitmap* pBitmap = nullptr;
@@ -619,8 +615,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   if (bBackgroundAlphaNeeded || bHasImageMask)
     delete pBitmap;
 
-  delete pContext;
-  pPage->RemovePrivateData((void*)1);
+  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
 }
 #endif  // defined(_WIN32)
 
@@ -634,24 +629,25 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                              int flags) {
   if (!bitmap)
     return;
+
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
-  CRenderContext* pContext = new CRenderContext;
-  pPage->SetPrivateData((void*)1, pContext, DropContext);
-  pContext->m_pDevice = new CFX_FxgeDevice;
 
-  if (flags & FPDF_REVERSE_BYTE_ORDER)
+  CRenderContext* pContext = new CRenderContext;
+  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
+  pContext->m_pDevice = new CFX_FxgeDevice;
+  if (flags & FPDF_REVERSE_BYTE_ORDER) {
     ((CFX_FxgeDevice*)pContext->m_pDevice)
         ->Attach((CFX_DIBitmap*)bitmap, 0, TRUE);
-  else
+  } else {
     ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
+  }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                         rotate, flags, TRUE, NULL);
+                         rotate, flags, TRUE, nullptr);
 
-  delete pContext;
-  pPage->RemovePrivateData((void*)1);
+  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
 }
 
 #ifdef _SKIA_SUPPORT_
@@ -661,33 +657,33 @@ DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return nullptr;
-  std::unique_ptr<CRenderContext> pContext(new CRenderContext);
-  pPage->SetPrivateData((void*)1, pContext.get(), DropContext);
+
+  CRenderContext* pContext = new CRenderContext;
+  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
   CFX_FxgeDevice* skDevice = new CFX_FxgeDevice;
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice = skDevice;
-
   FPDF_RenderPage_Retail(pContext.get(), page, 0, 0, size_x, size_y, 0, 0, TRUE,
-                         NULL);
-  pPage->RemovePrivateData((void*)1);
+                         nullptr);
+  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
   return recorder;
 }
 #endif
 
 DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!page)
     return;
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
   pPage->Release();
 #else   // PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView =
-      (CPDFSDK_PageView*)(((CPDF_Page*)page))->GetPrivateData((void*)page);
+      static_cast<CPDFSDK_PageView*>(pPage->GetView());
   if (pPageView && pPageView->IsLocked()) {
     pPageView->TakeOverPage();
     return;
   }
-  delete (CPDF_Page*)page;
+  delete pPage;
 #endif  // PDF_ENABLE_XFA
 }
 

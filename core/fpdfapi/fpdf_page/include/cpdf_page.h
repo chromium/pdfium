@@ -19,8 +19,10 @@ class CPDF_Document;
 class CPDF_Object;
 class CPDF_PageRenderCache;
 
-class CPDF_Page : public CPDF_PageObjectHolder, public CFX_PrivateData {
+class CPDF_Page : public CPDF_PageObjectHolder {
  public:
+  class View {};  // Caller implements as desired, empty here due to layering.
+
   CPDF_Page(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageDict,
             bool bPageCache);
@@ -42,6 +44,14 @@ class CPDF_Page : public CPDF_PageObjectHolder, public CFX_PrivateData {
   CPDF_Object* GetPageAttr(const CFX_ByteString& name) const;
   CPDF_PageRenderCache* GetRenderCache() const { return m_pPageRender.get(); }
 
+  CFX_Deletable* GetRenderContext() const { return m_pRenderContext.get(); }
+  void SetRenderContext(std::unique_ptr<CFX_Deletable> pContext) {
+    m_pRenderContext = std::move(pContext);
+  }
+
+  View* GetView() const { return m_pView; }
+  void SetView(View* pView) { m_pView = pView; }
+
  protected:
   friend class CPDF_ContentParser;
 
@@ -50,7 +60,9 @@ class CPDF_Page : public CPDF_PageObjectHolder, public CFX_PrivateData {
   FX_FLOAT m_PageWidth;
   FX_FLOAT m_PageHeight;
   CFX_Matrix m_PageMatrix;
+  View* m_pView;
   std::unique_ptr<CPDF_PageRenderCache> m_pPageRender;
+  std::unique_ptr<CFX_Deletable> m_pRenderContext;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGE_H_

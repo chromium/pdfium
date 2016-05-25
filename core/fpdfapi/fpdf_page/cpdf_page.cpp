@@ -21,6 +21,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
                      bool bPageCache)
     : m_PageWidth(100),
       m_PageHeight(100),
+      m_pView(nullptr),
       m_pPageRender(bPageCache ? new CPDF_PageRenderCache(this) : nullptr) {
   m_pFormDict = pPageDict;
   m_pDocument = pDocument;

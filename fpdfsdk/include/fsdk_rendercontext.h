@@ -8,14 +8,15 @@
 #define FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_
 
 #include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_progressive.h"
 
 // Everything about rendering is put here: for OOM recovery
-class CRenderContext {
+class CRenderContext : public CFX_Deletable {
  public:
   CRenderContext() { Clear(); }
-  ~CRenderContext();
+  ~CRenderContext() override;
 
   void Clear();
 

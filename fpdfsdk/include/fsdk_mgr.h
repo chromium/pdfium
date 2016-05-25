@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
@@ -530,7 +531,7 @@ class CPDFSDK_Document {
   FX_BOOL m_bBeingDestroyed;
 };
 
-class CPDFSDK_PageView final {
+class CPDFSDK_PageView final : public CPDF_Page::View {
  public:
   CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc, UnderlyingPageType* page);
   ~CPDFSDK_PageView();
