@@ -7,7 +7,9 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include <memory>
+
+#include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_StreamAcc;
 class IFX_Pause;
@@ -19,7 +21,7 @@ class CCodec_Jbig2Module {
 
   void* CreateJbig2Context();
   FXCODEC_STATUS StartDecode(void* pJbig2Context,
-                             CFX_PrivateData* pPrivateData,
+                             std::unique_ptr<CFX_Deletable>* pContextHolder,
                              uint32_t width,
                              uint32_t height,
                              CPDF_StreamAcc* src_stream,

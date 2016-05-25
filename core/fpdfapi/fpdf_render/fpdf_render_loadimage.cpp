@@ -355,9 +355,9 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
         }
       }
       ret = pJbig2Module->StartDecode(
-          m_pJbig2Context, m_pDocument, m_Width, m_Height, m_pStreamAcc.get(),
-          m_pGlobalStream.get(), m_pCachedBitmap->GetBuffer(),
-          m_pCachedBitmap->GetPitch(), pPause);
+          m_pJbig2Context, m_pDocument->CodecContext(), m_Width, m_Height,
+          m_pStreamAcc.get(), m_pGlobalStream.get(),
+          m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
       if (ret < 0) {
         m_pCachedBitmap.reset();
         m_pGlobalStream.reset();

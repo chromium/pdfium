@@ -16,8 +16,6 @@
 
 namespace {
 
-int THISMODULE = 0;
-
 CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
                            CPDF_Bookmark bookmark,
                            const CFX_WideString& title,
@@ -45,22 +43,15 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
   return CPDF_Bookmark();
 }
 
-void ReleaseLinkList(void* data) {
-  delete (CPDF_LinkList*)data;
-}
-
 CPDF_LinkList* GetLinkList(CPDF_Page* page) {
   if (!page)
     return nullptr;
 
-  // Link list is stored with the document
   CPDF_Document* pDoc = page->m_pDocument;
-  CPDF_LinkList* pLinkList = (CPDF_LinkList*)pDoc->GetPrivateData(&THISMODULE);
-  if (!pLinkList) {
-    pLinkList = new CPDF_LinkList;
-    pDoc->SetPrivateData(&THISMODULE, pLinkList, ReleaseLinkList);
-  }
-  return pLinkList;
+  std::unique_ptr<CPDF_LinkList>* pHolder = pDoc->LinksContext();
+  if (!pHolder->get())
+    pHolder->reset(new CPDF_LinkList);
+  return pHolder->get();
 }
 
 }  // namespace

@@ -46,17 +46,11 @@ class JBig2DocumentContext : public CFX_Deletable {
   std::list<CJBig2_CachePair> m_SymbolDictCache;
 };
 
-JBig2DocumentContext* GetJBig2DocumentContext(CCodec_Jbig2Module* pModule,
-                                              CFX_PrivateData* pPrivateData) {
-  void* pModulePrivateData = pPrivateData->GetPrivateData(pModule);
-  if (pModulePrivateData) {
-    CFX_Deletable* pDeletable =
-        reinterpret_cast<CFX_Deletable*>(pModulePrivateData);
-    return static_cast<JBig2DocumentContext*>(pDeletable);
-  }
-  JBig2DocumentContext* pJBig2DocumentContext = new JBig2DocumentContext();
-  pPrivateData->SetPrivateObj(pModule, pJBig2DocumentContext);
-  return pJBig2DocumentContext;
+JBig2DocumentContext* GetJBig2DocumentContext(
+    std::unique_ptr<CFX_Deletable>* pContextHolder) {
+  if (!pContextHolder->get())
+    pContextHolder->reset(new JBig2DocumentContext());
+  return static_cast<JBig2DocumentContext*>(pContextHolder->get());
 }
 
 CCodec_Jbig2Context::CCodec_Jbig2Context() {
@@ -76,20 +70,21 @@ void CCodec_Jbig2Module::DestroyJbig2Context(void* pJbig2Content) {
   }
   pJbig2Content = NULL;
 }
-FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
-                                               CFX_PrivateData* pPrivateData,
-                                               uint32_t width,
-                                               uint32_t height,
-                                               CPDF_StreamAcc* src_stream,
-                                               CPDF_StreamAcc* global_stream,
-                                               uint8_t* dest_buf,
-                                               uint32_t dest_pitch,
-                                               IFX_Pause* pPause) {
+FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
+    void* pJbig2Context,
+    std::unique_ptr<CFX_Deletable>* pContextHolder,
+    uint32_t width,
+    uint32_t height,
+    CPDF_StreamAcc* src_stream,
+    CPDF_StreamAcc* global_stream,
+    uint8_t* dest_buf,
+    uint32_t dest_pitch,
+    IFX_Pause* pPause) {
   if (!pJbig2Context) {
     return FXCODEC_STATUS_ERR_PARAMS;
   }
   JBig2DocumentContext* pJBig2DocumentContext =
-      GetJBig2DocumentContext(this, pPrivateData);
+      GetJBig2DocumentContext(pContextHolder);
   CCodec_Jbig2Context* m_pJbig2Context = (CCodec_Jbig2Context*)pJbig2Context;
   m_pJbig2Context->m_width = width;
   m_pJbig2Context->m_height = height;

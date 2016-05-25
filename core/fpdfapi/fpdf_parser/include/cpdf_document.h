@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CFX_Font;
@@ -35,7 +36,7 @@ class CPDF_StreamAcc;
 #define FPDFPERM_PRINT_HIGH 0x0800
 #define FPDF_PAGE_MAX_NUM 0xFFFFF
 
-class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
+class CPDF_Document : public CPDF_IndirectObjectHolder {
  public:
   explicit CPDF_Document(CPDF_Parser* pParser);
   ~CPDF_Document();
@@ -56,6 +57,9 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   CPDF_DocPageData* GetPageData() const { return m_pDocPage; }
   void ClearPageData();
   void RemoveColorSpaceFromPageData(CPDF_Object* pObject);
+
+  std::unique_ptr<CFX_Deletable>* CodecContext() { return &m_pCodecContext; }
+  std::unique_ptr<CPDF_LinkList>* LinksContext() { return &m_pLinksContext; }
 
   CPDF_DocRenderData* GetRenderData() const { return m_pDocRender.get(); }
   void ClearRenderData();
@@ -107,7 +111,6 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   friend class CPDF_OCContext;
 
   // Retrieve page count information by getting count value from the tree nodes
-  // or walking through the tree nodes to calculate it.
   int RetrievePageCount() const;
   CPDF_Dictionary* FindPDFPage(CPDF_Dictionary* pPages,
                                int iPage,
@@ -131,6 +134,8 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   // TODO(thestig): Figure out why this cannot be a std::unique_ptr.
   CPDF_DocPageData* m_pDocPage;
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
+  std::unique_ptr<CFX_Deletable> m_pCodecContext;
+  std::unique_ptr<CPDF_LinkList> m_pLinksContext;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_
