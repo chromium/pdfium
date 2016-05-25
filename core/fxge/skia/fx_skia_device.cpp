@@ -753,16 +753,17 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
                                           const FX_RECT& clip_rect,
                                           int alpha,
                                           FX_BOOL bAlphaMode) {
-  if (kAxialShading != pPattern->m_ShadingType &&
-      kRadialShading != pPattern->m_ShadingType) {
+  if (kAxialShading != pPattern->GetShadingType() &&
+      kRadialShading != pPattern->GetShadingType()) {
     // TODO(caryclark) more types
     return false;
   }
-  CPDF_Function* const* pFuncs = pPattern->m_pFunctions;
-  int nFuncs = pPattern->m_nFuncs;
+  const std::vector<std::unique_ptr<CPDF_Function>>& pFuncs =
+      pPattern->GetFuncs();
+  int nFuncs = pFuncs.size();
   if (nFuncs != 1)  // TODO(caryclark) remove this restriction
     return false;
-  CPDF_Dictionary* pDict = pPattern->m_pShadingObj->GetDict();
+  CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
   CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
   if (!pCoords)
     return true;
@@ -771,23 +772,22 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   SkTDArray<SkColor> skColors;
   SkTDArray<SkScalar> skPos;
   for (int j = 0; j < nFuncs; j++) {
-    const CPDF_Function* pFunc = pFuncs[j];
-    if (!pFunc)
+    if (!pFuncs[j])
       continue;
 
-    if (const CPDF_SampledFunc* pSampledFunc = pFunc->ToSampledFunc()) {
+    if (const CPDF_SampledFunc* pSampledFunc = pFuncs[j]->ToSampledFunc()) {
       /* TODO(caryclark)
          Type 0 Sampled Functions in PostScript can also have an Order integer
          in the dictionary. PDFium doesn't appear to check for this anywhere.
        */
       if (!AddSamples(pSampledFunc, &skColors, &skPos))
         return false;
-    } else if (const CPDF_ExpIntFunc* pExpIntFuc = pFunc->ToExpIntFunc()) {
+    } else if (const CPDF_ExpIntFunc* pExpIntFuc = pFuncs[j]->ToExpIntFunc()) {
       if (!AddColors(pExpIntFuc, &skColors))
         return false;
       skPos.push(0);
       skPos.push(1);
-    } else if (const CPDF_StitchFunc* pStitchFunc = pFunc->ToStitchFunc()) {
+    } else if (const CPDF_StitchFunc* pStitchFunc = pFuncs[j]->ToStitchFunc()) {
       if (!AddStitching(pStitchFunc, &skColors, &skPos))
         return false;
     } else {
@@ -805,7 +805,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
                                    clip_rect.right, clip_rect.bottom);
   SkPath skClip;
   SkPath skPath;
-  if (kAxialShading == pPattern->m_ShadingType) {
+  if (kAxialShading == pPattern->GetShadingType()) {
     FX_FLOAT start_x = pCoords->GetNumberAt(0);
     FX_FLOAT start_y = pCoords->GetNumberAt(1);
     FX_FLOAT end_x = pCoords->GetNumberAt(2);
@@ -846,7 +846,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     skPath.addRect(skRect);
     skMatrix.setIdentity();
   } else {
-    ASSERT(kRadialShading == pPattern->m_ShadingType);
+    ASSERT(kRadialShading == pPattern->GetShadingType());
     FX_FLOAT start_x = pCoords->GetNumberAt(0);
     FX_FLOAT start_y = pCoords->GetNumberAt(1);
     FX_FLOAT start_r = pCoords->GetNumberAt(2);
