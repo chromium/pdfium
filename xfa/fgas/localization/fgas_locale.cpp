@@ -60,11 +60,6 @@ static const FX_WCHAR gs_wsTimeSymbols[] = L"hHkKMSFAzZ";
 static const FX_WCHAR gs_wsDateSymbols[] = L"DJMEeGgYwW";
 static const FX_WCHAR gs_wsConstChars[] = L",-:/. ";
 
-static const FX_WCHAR* const gs_LocalNumberSymbols[] = {
-    L"decimal", L"grouping",       L"percent",      L"minus",
-    L"zero",    L"currencySymbol", L"currencyName",
-};
-
 static int32_t FX_ParseTimeZone(const FX_WCHAR* pStr,
                                 int32_t iLen,
                                 FX_TIMEZONE& tz) {

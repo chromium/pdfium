@@ -902,6 +902,7 @@ void CXFA_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments) {
   FXJSE_Value_Set(pArguments->GetReturnValue(),
                   m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
 }
+
 void CXFA_Node::Script_NodeClass_IsPropertySpecified(
     CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
@@ -914,32 +915,35 @@ void CXFA_Node::Script_NodeClass_IsPropertySpecified(
   FX_BOOL bParent = TRUE;
   int32_t iIndex = 0;
   if (iLength >= 1) {
-    CFX_ByteString bsExpression = pArguments->GetUTF8String(0);
-    wsExpression = CFX_WideString::FromUTF8(bsExpression.AsStringC());
+    wsExpression =
+        CFX_WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringC());
   }
-  if (iLength >= 2) {
-    bParent = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;
-  }
-  if (iLength >= 3) {
+  if (iLength >= 2)
+    bParent = !!pArguments->GetInt32(1) ? TRUE : FALSE;
+  if (iLength >= 3)
     iIndex = pArguments->GetInt32(2);
-  }
   FX_BOOL bHas = FALSE;
   const XFA_ATTRIBUTEINFO* pAttributeInfo =
       XFA_GetAttributeByName(wsExpression.AsStringC());
   CFX_WideString wsValue;
-  if (pAttributeInfo) {
+  if (pAttributeInfo)
     bHas = HasAttribute(pAttributeInfo->eName);
-  }
   if (!bHas) {
     const XFA_ELEMENTINFO* pElementInfo =
         XFA_GetElementByName(wsExpression.AsStringC());
-    bHas = (GetProperty(iIndex, pElementInfo->eName) != NULL);
+    bHas = !!GetProperty(iIndex, pElementInfo->eName);
+    if (!bHas && bParent && m_pParent) {
+      // Also check on the parent.
+      bHas = m_pParent->HasAttribute(pAttributeInfo->eName);
+      if (!bHas)
+        bHas = !!m_pParent->GetProperty(iIndex, pElementInfo->eName);
+    }
   }
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
-  if (hValue) {
+  if (hValue)
     FXJSE_Value_SetBoolean(hValue, bHas);
-  }
 }
+
 void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 3) {
@@ -1078,64 +1082,45 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
   }
   FX_BOOL bPrettyMode = FALSE;
   if (iLength == 1) {
-    CFX_ByteString bsPretty = pArguments->GetUTF8String(0);
-    if (bsPretty != "pretty") {
+    if (pArguments->GetUTF8String(0) != "pretty") {
       ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
       return;
     }
     bPrettyMode = TRUE;
   }
   CFX_ByteStringC bsXMLHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-  if (GetPacketID() == XFA_XDPPACKET_Form) {
-    IFX_MemoryStream* pMemoryStream = FX_CreateMemoryStream(TRUE);
-    IFX_Stream* pStream = IFX_Stream::CreateStream(
-        (IFX_FileWrite*)pMemoryStream,
-        FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
+  if (GetPacketID() == XFA_XDPPACKET_Form ||
+      GetPacketID() == XFA_XDPPACKET_Datasets) {
+    CFDE_XMLNode* pElement = nullptr;
+    if (GetPacketID() == XFA_XDPPACKET_Datasets) {
+      pElement = GetXMLMappingNode();
+      if (!pElement || pElement->GetType() != FDE_XMLNODE_Element) {
+        FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), bsXMLHeader);
+        return;
+      }
+      XFA_DataExporter_DealWithDataGroupNode(this);
+    }
+    std::unique_ptr<IFX_MemoryStream> pMemoryStream(
+        FX_CreateMemoryStream(TRUE));
+    std::unique_ptr<IFX_Stream> pStream(IFX_Stream::CreateStream(
+        (IFX_FileWrite*)pMemoryStream.get(),
+        FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append));
     if (!pStream) {
       FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), bsXMLHeader);
-      pMemoryStream->Release();
-      pMemoryStream = NULL;
       return;
     }
     pStream->SetCodePage(FX_CODEPAGE_UTF8);
     pStream->WriteData(bsXMLHeader.raw_str(), bsXMLHeader.GetLength());
-    XFA_DataExporter_RegenerateFormFile(this, pStream, NULL, TRUE);
+    if (GetPacketID() == XFA_XDPPACKET_Form)
+      XFA_DataExporter_RegenerateFormFile(this, pStream.get(), NULL, TRUE);
+    else
+      pElement->SaveXMLNode(pStream.get());
+    // TODO(weili): Check whether we need to save pretty print XML, pdfium:501.
+    // For now, just put it here to avoid unused variable warning.
+    (void)bPrettyMode;
     FXJSE_Value_SetUTF8String(
         pArguments->GetReturnValue(),
         CFX_ByteStringC(pMemoryStream->GetBuffer(), pMemoryStream->GetSize()));
-    pStream->Release();
-    pStream = NULL;
-    if (pMemoryStream) {
-      pMemoryStream->Release();
-      pMemoryStream = NULL;
-    }
-    return;
-  }
-  if (GetPacketID() == XFA_XDPPACKET_Datasets) {
-    CFDE_XMLNode* pElement = GetXMLMappingNode();
-    if (!pElement || pElement->GetType() != FDE_XMLNODE_Element) {
-      FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), bsXMLHeader);
-      return;
-    }
-    XFA_DataExporter_DealWithDataGroupNode(this);
-    IFX_MemoryStream* pMemoryStream = FX_CreateMemoryStream(TRUE);
-    IFX_Stream* pStream = IFX_Stream::CreateStream(
-        (IFX_FileWrite*)pMemoryStream,
-        FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
-    if (pStream) {
-      pStream->SetCodePage(FX_CODEPAGE_UTF8);
-      pStream->WriteData(bsXMLHeader.raw_str(), bsXMLHeader.GetLength());
-      pElement->SaveXMLNode(pStream);
-      FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(),
-                                CFX_ByteStringC(pMemoryStream->GetBuffer(),
-                                                pMemoryStream->GetSize()));
-      pStream->Release();
-      pStream = NULL;
-    }
-    if (pMemoryStream) {
-      pMemoryStream->Release();
-      pMemoryStream = NULL;
-    }
     return;
   }
   FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), "");
