@@ -91,7 +91,7 @@ class CXFA_Document {
   CXFA_Node* GetNotBindNode(CXFA_ObjArray& arrayNodes);
   CXFA_LayoutProcessor* GetLayoutProcessor();
   CXFA_LayoutProcessor* GetDocLayout();
-  CXFA_ScriptContext* InitScriptContext(FXJSE_HRUNTIME hRuntime);
+  CXFA_ScriptContext* InitScriptContext(v8::Isolate* pIsolate);
   CXFA_ScriptContext* GetScriptContext();
   void ClearLayoutData();
 

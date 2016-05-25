@@ -20,7 +20,7 @@ class CPDFXFA_App : public IXFA_AppProvider {
   CPDFXFA_App();
   ~CPDFXFA_App() override;
 
-  FX_BOOL Initialize(FXJSE_HRUNTIME hRuntime);
+  FX_BOOL Initialize(v8::Isolate* pIsolate);
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp; }
 
   FX_BOOL AddFormFillEnv(CPDFDoc_Environment* pEnv);
@@ -31,7 +31,7 @@ class CPDFXFA_App : public IXFA_AppProvider {
     m_bJavaScriptInitialized = bInitialized;
   }
 
-  FXJSE_HRUNTIME GetJSERuntime() const { return m_hJSERuntime; }
+  v8::Isolate* GetJSERuntime() const { return m_pIsolate; }
 
   // IFXA_AppProvider:
   void GetAppType(CFX_WideString& wsAppType) override;
@@ -84,7 +84,7 @@ class CPDFXFA_App : public IXFA_AppProvider {
 
   FX_BOOL m_bJavaScriptInitialized;
   CXFA_FFApp* m_pXFAApp;
-  FXJSE_HRUNTIME m_hJSERuntime;
+  v8::Isolate* m_pIsolate;
   IFXJS_Runtime* m_pJSRuntime;
   CFX_WideString m_csAppType;
   bool m_bOwnedRuntime;

@@ -247,9 +247,8 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App::GetInstance()->Initialize(
-      (cfg && cfg->version >= 2)
-          ? reinterpret_cast<FXJSE_HRUNTIME>(cfg->m_pIsolate)
-          : nullptr);
+      (cfg && cfg->version >= 2) ? static_cast<v8::Isolate*>(cfg->m_pIsolate)
+                                 : nullptr);
 #else   // PDF_ENABLE_XFA
   pModuleMgr->LoadEmbeddedGB1CMaps();
   pModuleMgr->LoadEmbeddedJapan1CMaps();

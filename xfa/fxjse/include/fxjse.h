@@ -9,11 +9,11 @@
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "v8/include/v8.h"
 
 struct FXJSE_CLASS;
 class CFXJSE_Arguments;
 
-typedef struct FXJSE_HRUNTIME_ { void* pData; } * FXJSE_HRUNTIME;
 typedef struct FXJSE_HCONTEXT_ { void* pData; } * FXJSE_HCONTEXT;
 typedef struct FXJSE_HCLASS_ { void* pData; } * FXJSE_HCLASS;
 typedef struct FXJSE_HVALUE_ { void* pData; } * FXJSE_HVALUE;
@@ -71,10 +71,10 @@ struct FXJSE_CLASS {
 void FXJSE_Initialize();
 void FXJSE_Finalize();
 
-FXJSE_HRUNTIME FXJSE_Runtime_Create();
-void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime, bool bOwnedRuntime);
+v8::Isolate* FXJSE_Runtime_Create();
+void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime);
 
-FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
+FXJSE_HCONTEXT FXJSE_Context_Create(v8::Isolate* pIsolate,
                                     const FXJSE_CLASS* lpGlobalClass = nullptr,
                                     void* lpGlobalObject = nullptr);
 void FXJSE_Context_Release(FXJSE_HCONTEXT hContext);
@@ -86,7 +86,7 @@ void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
 FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
                                const FXJSE_CLASS* lpClass);
 
-FXJSE_HVALUE FXJSE_Value_Create(FXJSE_HRUNTIME hRuntime);
+FXJSE_HVALUE FXJSE_Value_Create(v8::Isolate* pIsolate);
 void FXJSE_Value_Release(FXJSE_HVALUE hValue);
 
 FX_BOOL FXJSE_Value_IsUndefined(FXJSE_HVALUE hValue);

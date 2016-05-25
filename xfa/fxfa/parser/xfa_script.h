@@ -37,7 +37,7 @@ enum XFA_RESOVENODE_RSTYPE {
 
 class CXFA_HVALUEArray : public CFX_ArrayTemplate<FXJSE_HVALUE> {
  public:
-  CXFA_HVALUEArray(FXJSE_HRUNTIME hRunTime) : m_hRunTime(hRunTime) {}
+  CXFA_HVALUEArray(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
   ~CXFA_HVALUEArray() {
     for (int32_t i = 0; i < GetSize(); i++) {
       FXJSE_Value_Release(GetAt(i));
@@ -49,7 +49,7 @@ class CXFA_HVALUEArray : public CFX_ArrayTemplate<FXJSE_HVALUE> {
       objArray.Add(pObject);
     }
   }
-  FXJSE_HRUNTIME m_hRunTime;
+  v8::Isolate* m_pIsolate;
 };
 
 struct XFA_RESOLVENODE_RS {
@@ -58,9 +58,9 @@ struct XFA_RESOLVENODE_RS {
   ~XFA_RESOLVENODE_RS() { nodes.RemoveAll(); }
   int32_t GetAttributeResult(CXFA_HVALUEArray& hValueArray) const {
     if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
-      FXJSE_HRUNTIME hRunTime = hValueArray.m_hRunTime;
+      v8::Isolate* pIsolate = hValueArray.m_pIsolate;
       for (int32_t i = 0; i < nodes.GetSize(); i++) {
-        FXJSE_HVALUE hValue = FXJSE_Value_Create(hRunTime);
+        FXJSE_HVALUE hValue = FXJSE_Value_Create(pIsolate);
         (nodes[i]->*(pScriptAttribute->lpfnCallback))(
             hValue, FALSE, (XFA_ATTRIBUTE)pScriptAttribute->eAttribute);
         hValueArray.Add(hValue);

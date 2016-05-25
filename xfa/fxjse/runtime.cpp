@@ -55,17 +55,16 @@ void FXJSE_Finalize() {
   }
 }
 
-FXJSE_HRUNTIME FXJSE_Runtime_Create() {
+v8::Isolate* FXJSE_Runtime_Create() {
   v8::Isolate::CreateParams params;
   params.array_buffer_allocator = new FXJSE_ArrayBufferAllocator();
   v8::Isolate* pIsolate = v8::Isolate::New(params);
   ASSERT(pIsolate && CFXJSE_RuntimeData::g_RuntimeList);
   CFXJSE_RuntimeData::g_RuntimeList->AppendRuntime(pIsolate);
-  return reinterpret_cast<FXJSE_HRUNTIME>(pIsolate);
+  return pIsolate;
 }
 
-void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime, bool bOwnedRuntime) {
-  v8::Isolate* pIsolate = reinterpret_cast<v8::Isolate*>(hRuntime);
+void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime) {
   if (!pIsolate)
     return;
   if (bOwnedRuntime) {

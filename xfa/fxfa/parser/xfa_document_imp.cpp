@@ -230,10 +230,10 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   }
   return m_pLocalMgr;
 }
-CXFA_ScriptContext* CXFA_Document::InitScriptContext(FXJSE_HRUNTIME hRuntime) {
+CXFA_ScriptContext* CXFA_Document::InitScriptContext(v8::Isolate* pIsolate) {
   if (!m_pScriptContext)
     m_pScriptContext = new CXFA_ScriptContext(this);
-  m_pScriptContext->Initialize(hRuntime);
+  m_pScriptContext->Initialize(pIsolate);
   return m_pScriptContext;
 }
 CXFA_ScriptContext* CXFA_Document::GetScriptContext() {

@@ -11,7 +11,7 @@
 
 class CFXJSE_Arguments {
  public:
-  FXJSE_HRUNTIME GetRuntime() const;
+  v8::Isolate* GetRuntime() const;
   int32_t GetLength() const;
   FXJSE_HVALUE GetValue(int32_t index) const;
   FX_BOOL GetBoolean(int32_t index) const;

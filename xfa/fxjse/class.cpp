@@ -136,11 +136,10 @@ static void FXJSE_V8ConstructorCallback_Wrapper(
   info.This()->SetAlignedPointerInInternalField(0, NULL);
 }
 
-FXJSE_HRUNTIME CFXJSE_Arguments::GetRuntime() const {
+v8::Isolate* CFXJSE_Arguments::GetRuntime() const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return reinterpret_cast<FXJSE_HRUNTIME>(
-      lpArguments->m_pRetValue->GetIsolate());
+  return lpArguments->m_pRetValue->GetIsolate();
 }
 
 int32_t CFXJSE_Arguments::GetLength() const {

@@ -193,9 +193,8 @@ FX_BOOL FXJSE_Value_SetFunctionBind(FXJSE_HVALUE hValue,
   return lpValue->SetFunctionBind(lpOldFunction, lpNewThis);
 }
 
-FXJSE_HVALUE FXJSE_Value_Create(FXJSE_HRUNTIME hRuntime) {
-  return reinterpret_cast<FXJSE_HVALUE>(
-      CFXJSE_Value::Create(reinterpret_cast<v8::Isolate*>(hRuntime)));
+FXJSE_HVALUE FXJSE_Value_Create(v8::Isolate* pIsolate) {
+  return reinterpret_cast<FXJSE_HVALUE>(CFXJSE_Value::Create(pIsolate));
 }
 
 void FXJSE_Value_Release(FXJSE_HVALUE hValue) {

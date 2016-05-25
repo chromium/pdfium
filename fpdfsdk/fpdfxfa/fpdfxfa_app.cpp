@@ -31,7 +31,7 @@ void CPDFXFA_App::ReleaseInstance() {
 CPDFXFA_App::CPDFXFA_App()
     : m_bJavaScriptInitialized(FALSE),
       m_pXFAApp(NULL),
-      m_hJSERuntime(NULL),
+      m_pIsolate(nullptr),
       m_csAppType(JS_STR_VIEWERTYPE_STANDARD),
       m_bOwnedRuntime(false) {
   m_pEnvList.RemoveAll();
@@ -42,22 +42,22 @@ CPDFXFA_App::~CPDFXFA_App() {
   m_pXFAApp = NULL;
 
 #ifdef PDF_ENABLE_XFA
-  FXJSE_Runtime_Release(m_hJSERuntime, m_bOwnedRuntime);
-  m_hJSERuntime = NULL;
+  FXJSE_Runtime_Release(m_pIsolate, m_bOwnedRuntime);
+  m_pIsolate = nullptr;
 
   FXJSE_Finalize();
   BC_Library_Destory();
 #endif
 }
 
-FX_BOOL CPDFXFA_App::Initialize(FXJSE_HRUNTIME hRuntime) {
+FX_BOOL CPDFXFA_App::Initialize(v8::Isolate* pIsolate) {
 #ifdef PDF_ENABLE_XFA
   BC_Library_Init();
   FXJSE_Initialize();
 
-  m_bOwnedRuntime = !hRuntime;
-  m_hJSERuntime = hRuntime ? hRuntime : FXJSE_Runtime_Create();
-  if (!m_hJSERuntime)
+  m_bOwnedRuntime = !pIsolate;
+  m_pIsolate = pIsolate ? pIsolate : FXJSE_Runtime_Create();
+  if (!m_pIsolate)
     return FALSE;
 
   m_pXFAApp = new CXFA_FFApp(this);

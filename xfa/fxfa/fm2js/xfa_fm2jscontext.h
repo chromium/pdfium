@@ -435,17 +435,17 @@ class CXFA_FM2JSContext {
   CXFA_FM2JSContext();
   ~CXFA_FM2JSContext();
 
-  void Initialize(FXJSE_HRUNTIME hScriptRuntime,
+  void Initialize(v8::Isolate* pScriptRuntime,
                   FXJSE_HCONTEXT hScriptContext,
                   CXFA_Document* pDoc);
   void GlobalPropertyGetter(FXJSE_HVALUE hValue);
 
-  FXJSE_HRUNTIME GetScriptRuntime() const { return m_hScriptRuntime; }
+  v8::Isolate* GetScriptRuntime() const { return m_pIsolate; }
   CXFA_Document* GetDocument() const { return m_pDocument; }
   void ThrowScriptErrorMessage(int32_t iStringID, ...);
 
  private:
-  FXJSE_HRUNTIME m_hScriptRuntime;
+  v8::Isolate* m_pIsolate;
   FXJSE_CLASS m_fmClass;
   FXJSE_HCLASS m_hFMClass;
   FXJSE_HVALUE m_hValue;

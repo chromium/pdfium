@@ -23,7 +23,7 @@ class CXFA_ScriptContext {
   explicit CXFA_ScriptContext(CXFA_Document* pDocument);
   ~CXFA_ScriptContext();
 
-  void Initialize(FXJSE_HRUNTIME hRuntime);
+  void Initialize(v8::Isolate* pIsolate);
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() { return &m_eventParam; }
   FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
@@ -39,7 +39,7 @@ class CXFA_ScriptContext {
   FXJSE_HVALUE GetJSValueFromMap(CXFA_Object* pObject);
   void CacheList(CXFA_NodeList* pList) { m_CacheListArray.Add(pList); }
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
-  FXJSE_HRUNTIME GetRuntime() const { return m_hJsRuntime; }
+  v8::Isolate* GetRuntime() const { return m_pIsolate; }
 
   int32_t GetIndexByName(CXFA_Node* refNode);
   int32_t GetIndexByClassName(CXFA_Node* refNode);
@@ -102,7 +102,7 @@ class CXFA_ScriptContext {
 
   CXFA_Document* m_pDocument;
   FXJSE_HCONTEXT m_hJsContext;
-  FXJSE_HRUNTIME m_hJsRuntime;
+  v8::Isolate* m_pIsolate;
   FXJSE_HCLASS m_hJsClass;
   XFA_SCRIPTLANGTYPE m_eScriptType;
   FXJSE_CLASS m_JsGlobalClass;

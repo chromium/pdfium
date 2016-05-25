@@ -19,11 +19,11 @@ CFXJSE_Context* CFXContextFromHContext(FXJSE_HCONTEXT hContext) {
 
 }  // namespace
 
-FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
+FXJSE_HCONTEXT FXJSE_Context_Create(v8::Isolate* pIsolate,
                                     const FXJSE_CLASS* lpGlobalClass,
                                     void* lpGlobalObject) {
-  CFXJSE_Context* pContext = CFXJSE_Context::Create(
-      reinterpret_cast<v8::Isolate*>(hRuntime), lpGlobalClass, lpGlobalObject);
+  CFXJSE_Context* pContext =
+      CFXJSE_Context::Create(pIsolate, lpGlobalClass, lpGlobalObject);
   return reinterpret_cast<FXJSE_HCONTEXT>(pContext);
 }
 

@@ -325,7 +325,7 @@ void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   uint32_t uCount = 0;
   FX_DOUBLE dSum = 0.0;
@@ -337,18 +337,18 @@ void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,
         FXJSE_Value_Release(argValue);
         continue;
       } else if (FXJSE_Value_IsArray(argValue)) {
-        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectProp(argValue, "length", lengthValue);
         int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
         FXJSE_Value_Release(lengthValue);
         if (iLength > 2) {
-          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectPropByIdx(argValue, 1, propertyValue);
-          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
           if (FXJSE_Value_IsNull(propertyValue)) {
             for (int32_t j = 2; j < iLength; j++) {
               FXJSE_Value_GetObjectPropByIdx(argValue, j, jsObjectValue);
-              FXJSE_HVALUE defaultPropValue = FXJSE_Value_Create(hruntime);
+              FXJSE_HVALUE defaultPropValue = FXJSE_Value_Create(pIsolate);
               GetObjectDefaultValue(jsObjectValue, defaultPropValue);
               if (!FXJSE_Value_IsNull(defaultPropValue)) {
                 dSum += HValueToDouble(hThis, defaultPropValue);
@@ -359,7 +359,7 @@ void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,
           } else {
             CFX_ByteString propertyStr;
             FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-            FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+            FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
             for (int32_t j = 2; j < iLength; j++) {
               FXJSE_Value_GetObjectPropByIdx(argValue, j, jsObjectValue);
               FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
@@ -412,7 +412,7 @@ void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   uint32_t uCount = 0;
   FXJSE_HVALUE argValue = 0;
@@ -422,14 +422,14 @@ void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,
       FXJSE_Value_Release(argValue);
       continue;
     } else if (FXJSE_Value_IsArray(argValue)) {
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argValue, "length", lengthValue);
       int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
       FXJSE_Value_Release(lengthValue);
       if (iLength > 2) {
-        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argValue, 1, propertyValue);
         FXJSE_Value_GetObjectPropByIdx(argValue, 2, jsObjectValue);
         if (FXJSE_Value_IsNull(propertyValue)) {
@@ -457,7 +457,7 @@ void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,
         pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
       }
     } else if (FXJSE_Value_IsObject(argValue)) {
-      FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
       GetObjectDefaultValue(argValue, newPropertyValue);
       if (!FXJSE_Value_IsNull(newPropertyValue)) {
         uCount++;
@@ -495,7 +495,7 @@ void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   uint32_t uCount = 0;
   FX_DOUBLE dMaxValue = 0.0;
@@ -506,14 +506,14 @@ void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,
       FXJSE_Value_Release(argValue);
       continue;
     } else if (FXJSE_Value_IsArray(argValue)) {
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argValue, "length", lengthValue);
       int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
       FXJSE_Value_Release(lengthValue);
       if (iLength > 2) {
-        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argValue, 1, propertyValue);
         FXJSE_Value_GetObjectPropByIdx(argValue, 2, jsObjectValue);
         if (FXJSE_Value_IsNull(propertyValue)) {
@@ -559,7 +559,7 @@ void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,
         pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
       }
     } else if (FXJSE_Value_IsObject(argValue)) {
-      FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
       GetObjectDefaultValue(argValue, newPropertyValue);
       if (!FXJSE_Value_IsNull(newPropertyValue)) {
         uCount++;
@@ -598,7 +598,7 @@ void CXFA_FM2JSContext::Min(FXJSE_HOBJECT hThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   uint32_t uCount = 0;
   FX_DOUBLE dMinValue = 0.0;
@@ -609,14 +609,14 @@ void CXFA_FM2JSContext::Min(FXJSE_HOBJECT hThis,
       FXJSE_Value_Release(argValue);
       continue;
     } else if (FXJSE_Value_IsArray(argValue)) {
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argValue, "length", lengthValue);
       int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
       FXJSE_Value_Release(lengthValue);
       if (iLength > 2) {
-        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argValue, 1, propertyValue);
         FXJSE_Value_GetObjectPropByIdx(argValue, 2, jsObjectValue);
         if (FXJSE_Value_IsNull(propertyValue)) {
@@ -662,7 +662,7 @@ void CXFA_FM2JSContext::Min(FXJSE_HOBJECT hThis,
         pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
       }
     } else if (FXJSE_Value_IsObject(argValue)) {
-      FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
       GetObjectDefaultValue(argValue, newPropertyValue);
       if (!FXJSE_Value_IsNull(newPropertyValue)) {
         uCount++;
@@ -701,7 +701,7 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 2) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     FXJSE_HVALUE argTwo = args.GetValue(1);
@@ -711,13 +711,13 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,
       FX_DOUBLE dDividend = 0.0;
       FX_DOUBLE dDividor = 0.0;
       if (FXJSE_Value_IsArray(argOne)) {
-        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
         int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
         FXJSE_Value_Release(lengthValue);
         if (iLength > 2) {
-          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectPropByIdx(argOne, 1, propertyValue);
           FXJSE_Value_GetObjectPropByIdx(argOne, 2, jsObjectValue);
           if (FXJSE_Value_IsNull(propertyValue)) {
@@ -725,7 +725,7 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,
           } else {
             CFX_ByteString propertyStr;
             FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-            FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+            FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
             FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                       newPropertyValue);
             dDividend = HValueToDouble(hThis, newPropertyValue);
@@ -740,13 +740,13 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,
         dDividend = HValueToDouble(hThis, argOne);
       }
       if (FXJSE_Value_IsArray(argTwo)) {
-        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectProp(argTwo, "length", lengthValue);
         int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
         FXJSE_Value_Release(lengthValue);
         if (iLength > 2) {
-          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectPropByIdx(argTwo, 1, propertyValue);
           FXJSE_Value_GetObjectPropByIdx(argTwo, 2, jsObjectValue);
           if (FXJSE_Value_IsNull(propertyValue)) {
@@ -754,7 +754,7 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,
           } else {
             CFX_ByteString propertyStr;
             FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-            FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+            FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
             FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                       newPropertyValue);
             dDividor = HValueToDouble(hThis, newPropertyValue);
@@ -788,7 +788,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   uint8_t uPrecision = 0;
   if (argc == 1) {
@@ -798,8 +798,8 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
     } else {
       FX_DOUBLE dValue = 0.0;
       if (FXJSE_Value_IsArray(argOne)) {
-        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argOne, 1, propertyValue);
         FXJSE_Value_GetObjectPropByIdx(argOne, 2, jsObjectValue);
         if (FXJSE_Value_IsNull(propertyValue)) {
@@ -807,7 +807,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
         } else {
           CFX_ByteString propertyStr;
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                     newPropertyValue);
           dValue = HValueToDouble(hThis, newPropertyValue);
@@ -832,8 +832,8 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
     } else {
       FX_DOUBLE dValue = 0.0;
       if (FXJSE_Value_IsArray(argOne)) {
-        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argOne, 1, propertyValue);
         FXJSE_Value_GetObjectPropByIdx(argOne, 2, jsObjectValue);
         if (FXJSE_Value_IsNull(propertyValue)) {
@@ -841,7 +841,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
         } else {
           CFX_ByteString propertyStr;
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                     newPropertyValue);
           dValue = HValueToDouble(hThis, newPropertyValue);
@@ -854,8 +854,8 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
       }
       FX_DOUBLE dPrecision = 0.0;
       if (FXJSE_Value_IsArray(argTwo)) {
-        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argTwo, 1, propertyValue);
         FXJSE_Value_GetObjectPropByIdx(argTwo, 2, jsObjectValue);
         if (FXJSE_Value_IsNull(propertyValue)) {
@@ -863,7 +863,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
         } else {
           CFX_ByteString propertyStr;
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                     newPropertyValue);
           dPrecision = HValueToDouble(hThis, newPropertyValue);
@@ -898,7 +898,7 @@ void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   uint32_t uCount = 0;
   FX_DOUBLE dSum = 0.0;
@@ -910,15 +910,15 @@ void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,
         FXJSE_Value_Release(argValue);
         continue;
       } else if (FXJSE_Value_IsArray(argValue)) {
-        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectProp(argValue, "length", lengthValue);
         int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
         FXJSE_Value_Release(lengthValue);
         if (iLength > 2) {
-          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectPropByIdx(argValue, 1, propertyValue);
-          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
-          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
+          FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
           if (FXJSE_Value_IsNull(propertyValue)) {
             for (int32_t j = 2; j < iLength; j++) {
               FXJSE_Value_GetObjectPropByIdx(argValue, j, jsObjectValue);
@@ -948,7 +948,7 @@ void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,
           pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
         }
       } else if (FXJSE_Value_IsObject(argValue)) {
-        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
         GetObjectDefaultValue(argValue, newPropertyValue);
         if (!FXJSE_Value_IsNull(newPropertyValue)) {
           dSum += HValueToDouble(hThis, argValue);
@@ -3012,7 +3012,7 @@ void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,
                                CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc > 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
@@ -3035,7 +3035,7 @@ void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,
       while (!bFound && !bStopCounterFlags && (iArgIndex < argc)) {
         FXJSE_HVALUE argIndexValue = args.GetValue(iArgIndex);
         if (FXJSE_Value_IsArray(argIndexValue)) {
-          FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+          FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
           FXJSE_Value_GetObjectProp(argIndexValue, "length", lengthValue);
           int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
           FXJSE_Value_Release(lengthValue);
@@ -3044,9 +3044,9 @@ void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,
           }
           iValueIndex += (iLength - 2);
           if (iValueIndex >= iIndex) {
-            FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-            FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(hruntime);
-            FXJSE_HVALUE newProperty = FXJSE_Value_Create(hruntime);
+            FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+            FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(pIsolate);
+            FXJSE_HVALUE newProperty = FXJSE_Value_Create(pIsolate);
             FXJSE_Value_GetObjectPropByIdx(argIndexValue, 1, propertyValue);
             FXJSE_Value_GetObjectPropByIdx(
                 argIndexValue, ((iLength - 1) - (iValueIndex - iIndex)),
@@ -3225,7 +3225,7 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,
                              CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE scriptValue = GetSimpleHValue(hThis, args, 0);
     CFX_ByteString utf8ScriptString;
@@ -3239,8 +3239,8 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,
       XFA_FM2JS_Translate(
           CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
           wsJavaScriptBuf, wsError);
-      FXJSE_HCONTEXT hContext = FXJSE_Context_Create(hruntime);
-      FXJSE_HVALUE returnValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HCONTEXT hContext = FXJSE_Context_Create(pIsolate);
+      FXJSE_HVALUE returnValue = FXJSE_Value_Create(pIsolate);
       javaScript = wsJavaScriptBuf.AsStringC();
       FXJSE_ExecuteScript(
           hContext,
@@ -3261,13 +3261,13 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsNull(argOne)) {
       FXJSE_HVALUE rgValues[3];
       for (int32_t i = 0; i < 3; i++) {
-        rgValues[i] = FXJSE_Value_Create(hruntime);
+        rgValues[i] = FXJSE_Value_Create(pIsolate);
       }
       FXJSE_Value_SetInteger(rgValues[0], 4);
       FXJSE_Value_SetNull(rgValues[1]);
@@ -3278,13 +3278,13 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,
       }
     } else if (FXJSE_Value_IsArray(argOne)) {
 #ifndef NDEBUG
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
       ASSERT(FXJSE_Value_ToInteger(lengthValue) >= 3);
       FXJSE_Value_Release(lengthValue);
 #endif
-      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-      FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+      FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectPropByIdx(argOne, 1, propertyValue);
       FXJSE_Value_GetObjectPropByIdx(argOne, 2, jsObjectValue);
       if (FXJSE_Value_IsNull(jsObjectValue)) {
@@ -3293,7 +3293,7 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,
                  (!FXJSE_Value_IsNull(jsObjectValue))) {
         FXJSE_HVALUE rgValues[3];
         for (int32_t i = 0; i < 3; i++) {
-          rgValues[i] = FXJSE_Value_Create(hruntime);
+          rgValues[i] = FXJSE_Value_Create(pIsolate);
         }
         FXJSE_Value_SetInteger(rgValues[0], 3);
         FXJSE_Value_SetNull(rgValues[1]);
@@ -3310,7 +3310,7 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,
     } else if (FXJSE_Value_IsObject(argOne)) {
       FXJSE_HVALUE rgValues[3];
       for (int32_t i = 0; i < 3; i++) {
-        rgValues[i] = FXJSE_Value_Create(hruntime);
+        rgValues[i] = FXJSE_Value_Create(pIsolate);
       }
       FXJSE_Value_SetInteger(rgValues[0], 3);
       FXJSE_Value_SetNull(rgValues[1]);
@@ -5579,18 +5579,18 @@ void CXFA_FM2JSContext::assign_value_operator(FXJSE_HOBJECT hThis,
                                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 2) {
     FXJSE_HVALUE lValue = args.GetValue(0);
     FXJSE_HVALUE rValue = GetSimpleHValue(hThis, args, 1);
     FX_BOOL bSetStatus = TRUE;
     if (FXJSE_Value_IsArray(lValue)) {
-      FXJSE_HVALUE leftLengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE leftLengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(lValue, "length", leftLengthValue);
       int32_t iLeftLength = FXJSE_Value_ToInteger(leftLengthValue);
       FXJSE_Value_Release(leftLengthValue);
-      FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
-      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
+      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectPropByIdx(lValue, 1, propertyValue);
       if (FXJSE_Value_IsNull(propertyValue)) {
         for (int32_t i = 2; i < iLeftLength; i++) {
@@ -5747,18 +5747,18 @@ FX_BOOL CXFA_FM2JSContext::fm_ref_equal(FXJSE_HOBJECT hThis,
   FX_BOOL bRet = FALSE;
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   FXJSE_HVALUE argFirst = args.GetValue(0);
   FXJSE_HVALUE argSecond = args.GetValue(0);
   if (FXJSE_Value_IsArray(argFirst) && FXJSE_Value_IsArray(argSecond)) {
-    FXJSE_HVALUE firstFlagValue = FXJSE_Value_Create(hruntime);
-    FXJSE_HVALUE secondFlagValue = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE firstFlagValue = FXJSE_Value_Create(pIsolate);
+    FXJSE_HVALUE secondFlagValue = FXJSE_Value_Create(pIsolate);
     FXJSE_Value_GetObjectPropByIdx(argFirst, 0, firstFlagValue);
     FXJSE_Value_GetObjectPropByIdx(argSecond, 0, secondFlagValue);
     if ((FXJSE_Value_ToInteger(firstFlagValue) == 3) &&
         (FXJSE_Value_ToInteger(secondFlagValue) == 3)) {
-      FXJSE_HVALUE firstJSObject = FXJSE_Value_Create(hruntime);
-      FXJSE_HVALUE secondJSObject = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE firstJSObject = FXJSE_Value_Create(pIsolate);
+      FXJSE_HVALUE secondJSObject = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectPropByIdx(argFirst, 2, firstJSObject);
       FXJSE_Value_GetObjectPropByIdx(argSecond, 2, secondJSObject);
       if (!FXJSE_Value_IsNull(firstJSObject) &&
@@ -6052,7 +6052,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
                                      CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if ((argc == 4) || (argc == 5)) {
     FX_BOOL bIsStar = TRUE;
@@ -6071,7 +6071,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
     GenerateSomExpression(szName.AsStringC(), iIndexFlags, iIndexValue, bIsStar,
                           szSomExp);
     if (FXJSE_Value_IsArray(argAccessor)) {
-      FXJSE_HVALUE hLengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE hLengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argAccessor, "length", hLengthValue);
       int32_t iLength = FXJSE_Value_ToInteger(hLengthValue);
       FXJSE_Value_Release(hLengthValue);
@@ -6081,7 +6081,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
       for (int32_t i = 0; i < (iLength - 2); i++) {
         iSizes[i] = 0;
       }
-      FXJSE_HVALUE hJSObjValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE hJSObjValue = FXJSE_Value_Create(pIsolate);
       FX_BOOL bAttribute = FALSE;
       for (int32_t i = 2; i < iLength; i++) {
         FXJSE_Value_GetObjectPropByIdx(argAccessor, i, hJSObjValue);
@@ -6098,7 +6098,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
       if (iCounter > 0) {
         FXJSE_HVALUE* rgValues = FX_Alloc(FXJSE_HVALUE, iCounter + 2);
         for (int32_t i = 0; i < (iCounter + 2); i++) {
-          rgValues[i] = FXJSE_Value_Create(hruntime);
+          rgValues[i] = FXJSE_Value_Create(pIsolate);
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
@@ -6161,7 +6161,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
                            iSize, bAttribute);
         FXJSE_HVALUE* rgValues = FX_Alloc(FXJSE_HVALUE, iSize + 2);
         for (int32_t i = 0; i < (iSize + 2); i++) {
-          rgValues[i] = FXJSE_Value_Create(hruntime);
+          rgValues[i] = FXJSE_Value_Create(pIsolate);
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
@@ -6204,7 +6204,7 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
                                         CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if ((argc == 4) || (argc == 5)) {
     FX_BOOL bIsStar = TRUE;
@@ -6223,13 +6223,13 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
     GenerateSomExpression(szName.AsStringC(), iIndexFlags, iIndexValue, bIsStar,
                           szSomExp);
     if (FXJSE_Value_IsArray(argAccessor)) {
-      FXJSE_HVALUE hLengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE hLengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argAccessor, "length", hLengthValue);
       int32_t iLength = FXJSE_Value_ToInteger(hLengthValue);
       int32_t iCounter = 0;
       FXJSE_HVALUE** hResolveValues = FX_Alloc(FXJSE_HVALUE*, iLength - 2);
       int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
-      FXJSE_HVALUE hJSObjValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE hJSObjValue = FXJSE_Value_Create(pIsolate);
       FX_BOOL bAttribute = FALSE;
       for (int32_t i = 2; i < iLength; i++) {
         FXJSE_Value_GetObjectPropByIdx(argAccessor, i, hJSObjValue);
@@ -6246,7 +6246,7 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
       if (iCounter > 0) {
         FXJSE_HVALUE* rgValues = FX_Alloc(FXJSE_HVALUE, iCounter + 2);
         for (int32_t i = 0; i < (iCounter + 2); i++) {
-          rgValues[i] = FXJSE_Value_Create(hruntime);
+          rgValues[i] = FXJSE_Value_Create(pIsolate);
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
@@ -6308,7 +6308,7 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
                            iSize, bAttribute);
         FXJSE_HVALUE* rgValues = FX_Alloc(FXJSE_HVALUE, iSize + 2);
         for (int32_t i = 0; i < (iSize + 2); i++) {
-          rgValues[i] = FXJSE_Value_Create(hruntime);
+          rgValues[i] = FXJSE_Value_Create(pIsolate);
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
@@ -6410,13 +6410,13 @@ void CXFA_FM2JSContext::get_fm_value(FXJSE_HOBJECT hThis,
                                      CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t iLength = args.GetLength();
   if (iLength == 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne)) {
-      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-      FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+      FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectPropByIdx(argOne, 1, propertyValue);
       FXJSE_Value_GetObjectPropByIdx(argOne, 2, jsobjectValue);
       if (FXJSE_Value_IsNull(propertyValue)) {
@@ -6449,8 +6449,8 @@ void CXFA_FM2JSContext::get_fm_jsobj(FXJSE_HOBJECT hThis,
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne)) {
 #ifndef NDEBUG
-      FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
       ASSERT(FXJSE_Value_ToInteger(lengthValue) >= 3);
       FXJSE_Value_Release(lengthValue);
@@ -6469,25 +6469,25 @@ void CXFA_FM2JSContext::fm_var_filter(FXJSE_HOBJECT hThis,
                                       CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc == 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne)) {
 #ifndef NDEBUG
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
       ASSERT(FXJSE_Value_ToInteger(lengthValue) >= 3);
       FXJSE_Value_Release(lengthValue);
 #endif
-      FXJSE_HVALUE flagsValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE flagsValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectPropByIdx(argOne, 0, flagsValue);
       int32_t iFlags = FXJSE_Value_ToInteger(flagsValue);
       FXJSE_Value_Release(flagsValue);
       if (iFlags == 4) {
         FXJSE_HVALUE rgValues[3];
         for (int32_t i = 0; i < 3; i++) {
-          rgValues[i] = FXJSE_Value_Create(hruntime);
+          rgValues[i] = FXJSE_Value_Create(pIsolate);
         }
         FXJSE_Value_SetInteger(rgValues[0], 3);
         FXJSE_Value_SetNull(rgValues[1]);
@@ -6497,7 +6497,7 @@ void CXFA_FM2JSContext::fm_var_filter(FXJSE_HOBJECT hThis,
           FXJSE_Value_Release(rgValues[i]);
         }
       } else if (iFlags == 3) {
-        FXJSE_HVALUE objectValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE objectValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argOne, 2, objectValue);
         if (!FXJSE_Value_IsNull(objectValue)) {
           FXJSE_Value_Set(args.GetReturnValue(), argOne);
@@ -6525,14 +6525,14 @@ void CXFA_FM2JSContext::concat_fm_object(FXJSE_HOBJECT hThis,
                                          CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t iLength = 0;
   int32_t argCount = args.GetLength();
   FXJSE_HVALUE* argValues = FX_Alloc(FXJSE_HVALUE, argCount);
   for (int32_t i = 0; i < argCount; i++) {
     argValues[i] = args.GetValue(i);
     if (FXJSE_Value_IsArray(argValues[i])) {
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argValues[i], "length", lengthValue);
       int32_t length = FXJSE_Value_ToInteger(lengthValue);
       iLength = iLength + ((length > 2) ? (length - 2) : 0);
@@ -6542,12 +6542,12 @@ void CXFA_FM2JSContext::concat_fm_object(FXJSE_HOBJECT hThis,
   }
   FXJSE_HVALUE* returnValues = FX_Alloc(FXJSE_HVALUE, iLength);
   for (int32_t i = 0; i < (int32_t)iLength; i++) {
-    returnValues[i] = FXJSE_Value_Create(hruntime);
+    returnValues[i] = FXJSE_Value_Create(pIsolate);
   }
   int32_t index = 0;
   for (int32_t i = 0; i < argCount; i++) {
     if (FXJSE_Value_IsArray(argValues[i])) {
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argValues[i], "length", lengthValue);
       int32_t length = FXJSE_Value_ToInteger(lengthValue);
       for (int32_t j = 2; j < length; j++) {
@@ -6574,18 +6574,18 @@ FXJSE_HVALUE CXFA_FM2JSContext::GetSimpleHValue(FXJSE_HOBJECT hThis,
                                                 uint32_t index) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   ASSERT(index < (uint32_t)args.GetLength());
   FXJSE_HVALUE argIndex = args.GetValue(index);
   if (FXJSE_Value_IsArray(argIndex)) {
-    FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
     FXJSE_Value_GetObjectProp(argIndex, "length", lengthValue);
     int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
     FXJSE_Value_Release(lengthValue);
-    FXJSE_HVALUE simpleValue = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE simpleValue = FXJSE_Value_Create(pIsolate);
     if (iLength > 2) {
-      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-      FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+      FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectPropByIdx(argIndex, 1, propertyValue);
       FXJSE_Value_GetObjectPropByIdx(argIndex, 2, jsobjectValue);
       if (FXJSE_Value_IsNull(propertyValue)) {
@@ -6604,7 +6604,7 @@ FXJSE_HVALUE CXFA_FM2JSContext::GetSimpleHValue(FXJSE_HOBJECT hThis,
     FXJSE_Value_Release(argIndex);
     return simpleValue;
   } else if (FXJSE_Value_IsObject(argIndex)) {
-    FXJSE_HVALUE defaultValue = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE defaultValue = FXJSE_Value_Create(pIsolate);
     GetObjectDefaultValue(argIndex, defaultValue);
     FXJSE_Value_Release(argIndex);
     return defaultValue;
@@ -6615,19 +6615,19 @@ FXJSE_HVALUE CXFA_FM2JSContext::GetSimpleHValue(FXJSE_HOBJECT hThis,
 FX_BOOL CXFA_FM2JSContext::HValueIsNull(FXJSE_HOBJECT hThis, FXJSE_HVALUE arg) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   FX_BOOL isNull = FALSE;
   if (FXJSE_Value_IsNull(arg)) {
     isNull = TRUE;
   } else if (FXJSE_Value_IsArray(arg)) {
     int32_t iLength = hvalue_get_array_length(hThis, arg);
     if (iLength > 2) {
-      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-      FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+      FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectPropByIdx(arg, 1, propertyValue);
       FXJSE_Value_GetObjectPropByIdx(arg, 2, jsObjectValue);
       if (FXJSE_Value_IsNull(propertyValue)) {
-        FXJSE_HVALUE defaultValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE defaultValue = FXJSE_Value_Create(pIsolate);
         GetObjectDefaultValue(jsObjectValue, defaultValue);
         if (FXJSE_Value_IsNull(defaultValue)) {
           isNull = TRUE;
@@ -6636,7 +6636,7 @@ FX_BOOL CXFA_FM2JSContext::HValueIsNull(FXJSE_HOBJECT hThis, FXJSE_HVALUE arg) {
       } else {
         CFX_ByteString propertyStr;
         FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                   newPropertyValue);
         if (FXJSE_Value_IsNull(newPropertyValue)) {
@@ -6650,7 +6650,7 @@ FX_BOOL CXFA_FM2JSContext::HValueIsNull(FXJSE_HOBJECT hThis, FXJSE_HVALUE arg) {
       isNull = TRUE;
     }
   } else if (FXJSE_Value_IsObject(arg)) {
-    FXJSE_HVALUE defaultValue = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE defaultValue = FXJSE_Value_Create(pIsolate);
     GetObjectDefaultValue(arg, defaultValue);
     if (FXJSE_Value_IsNull(defaultValue)) {
       isNull = TRUE;
@@ -6663,10 +6663,10 @@ int32_t CXFA_FM2JSContext::hvalue_get_array_length(FXJSE_HOBJECT hThis,
                                                    FXJSE_HVALUE arg) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t iLength = 0;
   if (FXJSE_Value_IsArray(arg)) {
-    FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
     FXJSE_Value_GetObjectProp(arg, "length", lengthValue);
     iLength = FXJSE_Value_ToInteger(lengthValue);
     FXJSE_Value_Release(lengthValue);
@@ -6702,14 +6702,14 @@ void CXFA_FM2JSContext::unfoldArgs(FXJSE_HOBJECT hThis,
                                    int32_t iStart) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   iCount = 0;
   int32_t argc = args.GetLength();
   FXJSE_HVALUE* argsValue = FX_Alloc(FXJSE_HVALUE, argc);
   for (int32_t i = iStart; i < argc; i++) {
     argsValue[i] = args.GetValue(i);
     if (FXJSE_Value_IsArray(argsValue[i])) {
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argsValue[i], "length", lengthValue);
       int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
       FXJSE_Value_Release(lengthValue);
@@ -6720,18 +6720,18 @@ void CXFA_FM2JSContext::unfoldArgs(FXJSE_HOBJECT hThis,
   }
   resultValues = FX_Alloc(FXJSE_HVALUE, iCount);
   for (int32_t i = 0; i < iCount; i++) {
-    resultValues[i] = FXJSE_Value_Create(hruntime);
+    resultValues[i] = FXJSE_Value_Create(pIsolate);
   }
   int32_t index = 0;
   for (int32_t i = iStart; i < argc; i++) {
     if (FXJSE_Value_IsArray(argsValue[i])) {
-      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
+      FXJSE_HVALUE lengthValue = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_GetObjectProp(argsValue[i], "length", lengthValue);
       int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
       FXJSE_Value_Release(lengthValue);
       if (iLength > 2) {
-        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
+        FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+        FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_GetObjectPropByIdx(argsValue[i], 1, propertyValue);
         if (FXJSE_Value_IsNull(propertyValue)) {
           for (int32_t j = 2; j < iLength; j++) {
@@ -6900,7 +6900,7 @@ void CXFA_FM2JSContext::ParseResolveResult(
     FX_BOOL& bAttribute) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hRuntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   iSize = 0;
   resultValues = NULL;
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
@@ -6908,28 +6908,28 @@ void CXFA_FM2JSContext::ParseResolveResult(
     iSize = resoveNodeRS.nodes.GetSize();
     resultValues = FX_Alloc(FXJSE_HVALUE, iSize);
     for (int32_t i = 0; i < iSize; i++) {
-      resultValues[i] = FXJSE_Value_Create(hRuntime);
+      resultValues[i] = FXJSE_Value_Create(pIsolate);
       FXJSE_Value_Set(
           resultValues[i],
           pContext->GetDocument()->GetScriptContext()->GetJSValueFromMap(
               resoveNodeRS.nodes.GetAt(i)));
     }
   } else {
-    CXFA_HVALUEArray objectProperties(hRuntime);
+    CXFA_HVALUEArray objectProperties(pIsolate);
     int32_t iRet = resoveNodeRS.GetAttributeResult(objectProperties);
     bAttribute = (iRet == 0);
     if (bAttribute) {
       if (FXJSE_Value_IsObject(hParentValue)) {
         iSize = 1;
         resultValues = FX_Alloc(FXJSE_HVALUE, 1);
-        resultValues[0] = FXJSE_Value_Create(hRuntime);
+        resultValues[0] = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_Set(resultValues[0], hParentValue);
       }
     } else {
       iSize = iRet;
       resultValues = FX_Alloc(FXJSE_HVALUE, iSize);
       for (int32_t i = 0; i < iSize; i++) {
-        resultValues[i] = FXJSE_Value_Create(hRuntime);
+        resultValues[i] = FXJSE_Value_Create(pIsolate);
         FXJSE_Value_Set(resultValues[i], objectProperties[i]);
       }
     }
@@ -6939,12 +6939,12 @@ int32_t CXFA_FM2JSContext::HValueToInteger(FXJSE_HOBJECT hThis,
                                            FXJSE_HVALUE hValue) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t iValue = 0;
   if (FXJSE_Value_IsArray(hValue)) {
-    FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-    FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(hruntime);
-    FXJSE_HVALUE newProperty = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+    FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(pIsolate);
+    FXJSE_HVALUE newProperty = FXJSE_Value_Create(pIsolate);
     FXJSE_Value_GetObjectPropByIdx(hValue, 1, propertyValue);
     FXJSE_Value_GetObjectPropByIdx(hValue, 2, jsobjectValue);
     if (FXJSE_Value_IsNull(propertyValue)) {
@@ -6961,7 +6961,7 @@ int32_t CXFA_FM2JSContext::HValueToInteger(FXJSE_HOBJECT hThis,
     FXJSE_Value_Release(propertyValue);
     return iValue;
   } else if (FXJSE_Value_IsObject(hValue)) {
-    FXJSE_HVALUE newProperty = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE newProperty = FXJSE_Value_Create(pIsolate);
     GetObjectDefaultValue(hValue, newProperty);
     iValue = HValueToInteger(hThis, newProperty);
     FXJSE_Value_Release(newProperty);
@@ -6983,12 +6983,12 @@ FX_FLOAT CXFA_FM2JSContext::HValueToFloat(FXJSE_HOBJECT hThis,
                                           FXJSE_HVALUE arg) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   FX_FLOAT fRet = 0.0f;
   if (FXJSE_Value_IsArray(arg)) {
-    FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-    FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(hruntime);
-    FXJSE_HVALUE newProperty = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+    FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(pIsolate);
+    FXJSE_HVALUE newProperty = FXJSE_Value_Create(pIsolate);
     FXJSE_Value_GetObjectPropByIdx(arg, 1, propertyValue);
     FXJSE_Value_GetObjectPropByIdx(arg, 2, jsobjectValue);
     if (FXJSE_Value_IsNull(propertyValue)) {
@@ -7004,7 +7004,7 @@ FX_FLOAT CXFA_FM2JSContext::HValueToFloat(FXJSE_HOBJECT hThis,
     FXJSE_Value_Release(jsobjectValue);
     FXJSE_Value_Release(propertyValue);
   } else if (FXJSE_Value_IsObject(arg)) {
-    FXJSE_HVALUE newProperty = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE newProperty = FXJSE_Value_Create(pIsolate);
     GetObjectDefaultValue(arg, newProperty);
     fRet = HValueToFloat(hThis, newProperty);
     FXJSE_Value_Release(newProperty);
@@ -7023,12 +7023,12 @@ FX_DOUBLE CXFA_FM2JSContext::HValueToDouble(FXJSE_HOBJECT hThis,
                                             FXJSE_HVALUE arg) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   FX_DOUBLE dRet = 0;
   if (FXJSE_Value_IsArray(arg)) {
-    FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
-    FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(hruntime);
-    FXJSE_HVALUE newProperty = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE propertyValue = FXJSE_Value_Create(pIsolate);
+    FXJSE_HVALUE jsobjectValue = FXJSE_Value_Create(pIsolate);
+    FXJSE_HVALUE newProperty = FXJSE_Value_Create(pIsolate);
     FXJSE_Value_GetObjectPropByIdx(arg, 1, propertyValue);
     FXJSE_Value_GetObjectPropByIdx(arg, 2, jsobjectValue);
     if (FXJSE_Value_IsNull(propertyValue)) {
@@ -7044,7 +7044,7 @@ FX_DOUBLE CXFA_FM2JSContext::HValueToDouble(FXJSE_HOBJECT hThis,
     FXJSE_Value_Release(jsobjectValue);
     FXJSE_Value_Release(propertyValue);
   } else if (FXJSE_Value_IsObject(arg)) {
-    FXJSE_HVALUE newProperty = FXJSE_Value_Create(hruntime);
+    FXJSE_HVALUE newProperty = FXJSE_Value_Create(pIsolate);
     GetObjectDefaultValue(arg, newProperty);
     dRet = HValueToDouble(hThis, newProperty);
     FXJSE_Value_Release(newProperty);
@@ -7173,13 +7173,13 @@ CXFA_FM2JSContext::~CXFA_FM2JSContext() {
     FXJSE_Value_Release(m_hValue);
     m_hValue = NULL;
   }
-  m_hScriptRuntime = NULL;
+  m_pIsolate = NULL;
 }
-void CXFA_FM2JSContext::Initialize(FXJSE_HRUNTIME hScriptRuntime,
+void CXFA_FM2JSContext::Initialize(v8::Isolate* hScriptRuntime,
                                    FXJSE_HCONTEXT hScriptContext,
                                    CXFA_Document* pDoc) {
   m_pDocument = pDoc;
-  m_hScriptRuntime = hScriptRuntime;
+  m_pIsolate = hScriptRuntime;
   m_fmClass.name = "XFA_FM2JS_FormCalcClass";
   m_fmClass.constructor = NULL;
   m_fmClass.properties = NULL;
