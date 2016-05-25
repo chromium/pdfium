@@ -262,8 +262,7 @@ CFieldTree::_Node* CFieldTree::FindNode(const CFX_WideString& full_name) {
 }
 
 CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
-    : CFX_PrivateData(),
-      m_pDocument(pDocument),
+    : m_pDocument(pDocument),
       m_pFormDict(nullptr),
       m_pFieldTree(new CFieldTree),
       m_pFormNotify(nullptr) {
@@ -293,12 +292,12 @@ CPDF_InterForm::~CPDF_InterForm() {
   }
 }
 
-FX_BOOL CPDF_InterForm::m_bUpdateAP = TRUE;
+FX_BOOL CPDF_InterForm::s_bUpdateAP = TRUE;
 FX_BOOL CPDF_InterForm::UpdatingAPEnabled() {
-  return m_bUpdateAP;
+  return s_bUpdateAP;
 }
 void CPDF_InterForm::EnableUpdateAP(FX_BOOL bUpdateAP) {
-  m_bUpdateAP = bUpdateAP;
+  s_bUpdateAP = bUpdateAP;
 }
 CFX_ByteString CPDF_InterForm::GenerateNewResourceName(
     const CPDF_Dictionary* pResDict,
