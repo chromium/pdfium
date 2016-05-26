@@ -662,7 +662,7 @@ DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
   CFX_FxgeDevice* skDevice = new CFX_FxgeDevice;
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice = skDevice;
-  FPDF_RenderPage_Retail(pContext.get(), page, 0, 0, size_x, size_y, 0, 0, TRUE,
+  FPDF_RenderPage_Retail(pContext, page, 0, 0, size_x, size_y, 0, 0, TRUE,
                          nullptr);
   pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
   return recorder;
