@@ -18,7 +18,7 @@ class CFXJSE_Arguments {
   int32_t GetInt32(int32_t index) const;
   FX_FLOAT GetFloat(int32_t index) const;
   CFX_ByteString GetUTF8String(int32_t index) const;
-  void* GetObject(int32_t index, FXJSE_HCLASS hClass = nullptr) const;
+  void* GetObject(int32_t index) const;
   FXJSE_HVALUE GetReturnValue();
 };
 

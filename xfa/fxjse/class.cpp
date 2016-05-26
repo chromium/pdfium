@@ -183,7 +183,7 @@ CFX_ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   return CFX_ByteString(*szStringVal);
 }
 
-void* CFXJSE_Arguments::GetObject(int32_t index, FXJSE_HCLASS hClass) const {
+void* CFXJSE_Arguments::GetObject(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
   v8::Local<v8::Value> hValue = (*lpArguments->m_pInfo)[index];
@@ -191,8 +191,7 @@ void* CFXJSE_Arguments::GetObject(int32_t index, FXJSE_HCLASS hClass) const {
   if (!hValue->IsObject()) {
     return NULL;
   }
-  CFXJSE_Class* lpClass = reinterpret_cast<CFXJSE_Class*>(hClass);
-  return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>(), lpClass);
+  return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>());
 }
 
 FXJSE_HVALUE CFXJSE_Arguments::GetReturnValue() {

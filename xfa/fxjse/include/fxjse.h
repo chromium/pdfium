@@ -103,7 +103,7 @@ FX_FLOAT FXJSE_Value_ToFloat(FXJSE_HVALUE hValue);
 double FXJSE_Value_ToDouble(FXJSE_HVALUE hValue);
 int32_t FXJSE_Value_ToInteger(FXJSE_HVALUE hValue);
 void FXJSE_Value_ToUTF8String(FXJSE_HVALUE hValue, CFX_ByteString& szStrOutput);
-void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass);
+void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue);
 
 void FXJSE_Value_SetUndefined(FXJSE_HVALUE hValue);
 void FXJSE_Value_SetNull(FXJSE_HVALUE hValue);

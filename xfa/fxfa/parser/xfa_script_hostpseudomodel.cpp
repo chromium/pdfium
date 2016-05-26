@@ -310,7 +310,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
   if (iLength >= 1) {
     FXJSE_HVALUE hValue = pArguments->GetValue(0);
     if (FXJSE_Value_IsObject(hValue)) {
-      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(hValue, nullptr));
+      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(hValue));
     } else if (FXJSE_Value_IsUTF8String(hValue)) {
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(hValue, bsString);
@@ -511,7 +511,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
   if (iLength >= 1) {
     FXJSE_HVALUE hValue = pArguments->GetValue(0);
     if (FXJSE_Value_IsObject(hValue)) {
-      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(hValue, NULL));
+      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(hValue));
     } else if (FXJSE_Value_IsUTF8String(hValue)) {
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(hValue, bsString);
