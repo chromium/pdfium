@@ -51,8 +51,8 @@ class CFX_StdFontMgrImp : public IFX_FontMgr {
                      uint32_t dwFontStyles,
                      uint16_t wCodePage = 0xFFFF) override;
 
-  void ClearFontCache();
-  void RemoveFont(IFX_Font* pFont);
+  void ClearFontCache() override;
+  void RemoveFont(IFX_Font* pFont) override;
 
  protected:
   void RemoveFont(CFX_MapPtrToPtr& fontMap, IFX_Font* pFont);
