@@ -148,7 +148,7 @@ class CFXJSE_Value {
     v8::String::Utf8Value hStringVal(hString);
     szStrOutput = *hStringVal;
   }
-  void* ToObject() const;
+  void* ToObject(CFXJSE_Class* lpClass) const;
 
  public:
   V8_INLINE void SetUndefined() {

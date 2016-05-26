@@ -45,7 +45,7 @@ class CXFA_HVALUEArray : public CFX_ArrayTemplate<FXJSE_HVALUE> {
   }
   void GetAttributeObject(CXFA_ObjArray& objArray) {
     for (int32_t i = 0; i < GetSize(); i++) {
-      CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(GetAt(i));
+      CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(GetAt(i), NULL);
       objArray.Add(pObject);
     }
   }

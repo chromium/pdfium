@@ -20,7 +20,8 @@ static V8_INLINE void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
   hObject->SetAlignedPointerInInternalField(0, lpNewBinding);
 }
 static V8_INLINE void* FXJSE_RetrieveObjectBinding(
-    const v8::Local<v8::Object>& hJSObject) {
+    const v8::Local<v8::Object>& hJSObject,
+    CFXJSE_Class* lpClass = NULL) {
   ASSERT(!hJSObject.IsEmpty());
   if (!hJSObject->IsObject()) {
     return NULL;
@@ -33,6 +34,14 @@ static V8_INLINE void* FXJSE_RetrieveObjectBinding(
     }
     hObject = hProtoObject.As<v8::Object>();
     if (hObject->InternalFieldCount() == 0) {
+      return NULL;
+    }
+  }
+  if (lpClass) {
+    v8::Local<v8::FunctionTemplate> hClass =
+        v8::Local<v8::FunctionTemplate>::New(
+            lpClass->GetContext()->GetRuntime(), lpClass->GetTemplate());
+    if (!hClass->HasInstance(hObject)) {
       return NULL;
     }
   }

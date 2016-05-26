@@ -72,8 +72,9 @@ int32_t FXJSE_Value_ToInteger(FXJSE_HVALUE hValue) {
   return reinterpret_cast<CFXJSE_Value*>(hValue)->ToInteger();
 }
 
-void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToObject();
+void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass) {
+  CFXJSE_Class* lpClass = reinterpret_cast<CFXJSE_Class*>(hClass);
+  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToObject(lpClass);
 }
 
 void FXJSE_Value_SetUndefined(FXJSE_HVALUE hValue) {
@@ -237,7 +238,7 @@ CFXJSE_Value* CFXJSE_Value::Create(v8::Isolate* pIsolate) {
   return new CFXJSE_Value(pIsolate);
 }
 
-void* CFXJSE_Value::ToObject() const {
+void* CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const {
   ASSERT(!m_hValue.IsEmpty());
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
@@ -247,7 +248,7 @@ void* CFXJSE_Value::ToObject() const {
   if (!hValue->IsObject())
     return nullptr;
 
-  return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>());
+  return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>(), lpClass);
 }
 
 V8_INLINE static double FXJSE_ftod(FX_FLOAT fNumber) {
