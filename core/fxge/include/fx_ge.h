@@ -104,14 +104,7 @@ class CFX_ClipRgn {
 
   void IntersectMaskRect(FX_RECT rect, FX_RECT mask_box, CFX_DIBitmapRef Mask);
 };
-#define FX_GAMMA(value) (value)
-#define FX_GAMMA_INVERSE(value) (value)
-inline FX_ARGB ArgbGamma(FX_ARGB argb) {
-  return argb;
-}
-inline FX_ARGB ArgbGammaInverse(FX_ARGB argb) {
-  return argb;
-}
+
 class CFX_PathData {
  public:
   CFX_PathData();

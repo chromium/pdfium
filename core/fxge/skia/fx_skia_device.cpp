@@ -259,7 +259,7 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
     return;
   pBitmap->GetOverlapRect(dest_left, dest_top, width, height,
                           pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(),
-                          src_left, src_top, NULL);
+                          src_left, src_top, nullptr);
   if (width == 0 || height == 0)
     return;
   int Bpp = pBitmap->GetBPP() / 8;
@@ -313,21 +313,11 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
         uint8_t* dest_scan = (uint8_t*)(dest_buf + row * pitch);
         uint8_t* src_scan =
             (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
-        if (src_format == FXDIB_Argb) {
-          for (int col = 0; col < width; col++) {
-            FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, FX_GAMMA(src_scan[0]),
-                                                 FX_GAMMA(src_scan[1]),
-                                                 FX_GAMMA(src_scan[2])));
-            dest_scan += 4;
-            src_scan += 3;
-          }
-        } else {
-          for (int col = 0; col < width; col++) {
-            FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
-                                                 src_scan[2]));
-            dest_scan += 4;
-            src_scan += 3;
-          }
+        for (int col = 0; col < width; col++) {
+          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
+                                               src_scan[2]));
+          dest_scan += 4;
+          src_scan += 3;
         }
       }
     } else if (src_format == FXDIB_Rgb32) {

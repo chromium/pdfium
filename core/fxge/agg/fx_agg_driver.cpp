@@ -200,10 +200,10 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
                                          FX_BOOL bGroupKnockout) {
   m_pBitmap = pBitmap;
   m_DitherBits = dither_bits;
-  m_pClipRgn = NULL;
-  m_pPlatformBitmap = NULL;
-  m_pPlatformGraphics = NULL;
-  m_pDwRenderTartget = NULL;
+  m_pClipRgn = nullptr;
+  m_pPlatformBitmap = nullptr;
+  m_pPlatformGraphics = nullptr;
+  m_pDwRenderTartget = nullptr;
   m_bRgbByteOrder = bRgbByteOrder;
   m_pOriDevice = pOriDevice;
   m_bGroupKnockout = bGroupKnockout;
@@ -277,7 +277,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) {
 }
 
 void CFX_AggDeviceDriver::SaveState() {
-  CFX_ClipRgn* pClip = NULL;
+  CFX_ClipRgn* pClip = nullptr;
   if (m_pClipRgn) {
     pClip = new CFX_ClipRgn(*m_pClipRgn);
   }
@@ -287,12 +287,12 @@ void CFX_AggDeviceDriver::SaveState() {
 void CFX_AggDeviceDriver::RestoreState(FX_BOOL bKeepSaved) {
   if (m_StateStack.GetSize() == 0) {
     delete m_pClipRgn;
-    m_pClipRgn = NULL;
+    m_pClipRgn = nullptr;
     return;
   }
   CFX_ClipRgn* pSavedClip = m_StateStack[m_StateStack.GetSize() - 1];
   delete m_pClipRgn;
-  m_pClipRgn = NULL;
+  m_pClipRgn = nullptr;
   if (bKeepSaved) {
     if (pSavedClip) {
       m_pClipRgn = new CFX_ClipRgn(*pSavedClip);
@@ -370,7 +370,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
                                  GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
   CAgg_PathData path_data;
-  path_data.BuildPath(pPathData, NULL);
+  path_data.BuildPath(pPathData, nullptr);
   agg::rasterizer_scanline_aa rasterizer;
   rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
@@ -1028,13 +1028,13 @@ class CFX_Renderer {
       return;
     }
     uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * y;
-    uint8_t* dest_scan_extra_alpha = NULL;
+    uint8_t* dest_scan_extra_alpha = nullptr;
     CFX_DIBitmap* pAlphaMask = m_pDevice->m_pAlphaMask;
     if (pAlphaMask) {
       dest_scan_extra_alpha =
           pAlphaMask->GetBuffer() + pAlphaMask->GetPitch() * y;
     }
-    uint8_t* ori_scan = NULL;
+    uint8_t* ori_scan = nullptr;
     if (m_pOriDevice) {
       ori_scan = m_pOriDevice->GetBuffer() + m_pOriDevice->GetPitch() * y;
     }
@@ -1045,19 +1045,19 @@ class CFX_Renderer {
     while (1) {
       int x = span->x;
       ASSERT(span->len > 0);
-      uint8_t* dest_pos = NULL;
-      uint8_t* dest_extra_alpha_pos = NULL;
-      uint8_t* ori_pos = NULL;
+      uint8_t* dest_pos = nullptr;
+      uint8_t* dest_extra_alpha_pos = nullptr;
+      uint8_t* ori_pos = nullptr;
       if (Bpp) {
-        ori_pos = ori_scan ? ori_scan + x * Bpp : NULL;
+        ori_pos = ori_scan ? ori_scan + x * Bpp : nullptr;
         dest_pos = dest_scan + x * Bpp;
         dest_extra_alpha_pos =
-            dest_scan_extra_alpha ? dest_scan_extra_alpha + x : NULL;
+            dest_scan_extra_alpha ? dest_scan_extra_alpha + x : nullptr;
       } else {
         dest_pos = dest_scan + x / 8;
-        ori_pos = ori_scan ? ori_scan + x / 8 : NULL;
+        ori_pos = ori_scan ? ori_scan + x / 8 : nullptr;
       }
-      uint8_t* clip_pos = NULL;
+      uint8_t* clip_pos = nullptr;
       if (m_pClipMask) {
         clip_pos = m_pClipMask->GetBuffer() +
                    (y - m_ClipBox.top) * m_pClipMask->GetPitch() + x -
@@ -1085,10 +1085,10 @@ class CFX_Renderer {
                FX_BOOL bFullCover,
                FX_BOOL bRgbByteOrder,
                int alpha_flag = 0,
-               void* pIccTransform = NULL) {
+               void* pIccTransform = nullptr) {
     m_pDevice = pDevice;
     m_pClipRgn = pClipRgn;
-    composite_span = NULL;
+    composite_span = nullptr;
     m_bRgbByteOrder = bRgbByteOrder;
     m_pOriDevice = pOriDevice;
     if (m_pClipRgn) {
@@ -1098,7 +1098,7 @@ class CFX_Renderer {
       m_ClipBox.right = m_pDevice->GetWidth();
       m_ClipBox.bottom = m_pDevice->GetHeight();
     }
-    m_pClipMask = NULL;
+    m_pClipMask = nullptr;
     if (m_pClipRgn && m_pClipRgn->GetType() == CFX_ClipRgn::MaskF) {
       m_pClipMask = m_pClipRgn->GetMask();
     }
@@ -1106,10 +1106,10 @@ class CFX_Renderer {
     FX_BOOL bObjectCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
     FX_BOOL bDeviceCMYK = pDevice->IsCmykImage();
     m_Alpha = bObjectCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
-    CCodec_IccModule* pIccModule = NULL;
+    CCodec_IccModule* pIccModule = nullptr;
     if (!CFX_GEModule::Get()->GetCodecModule() ||
         !CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) {
-      pIccTransform = NULL;
+      pIccTransform = nullptr;
     } else {
       pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     }
@@ -1216,7 +1216,7 @@ FX_BOOL CFX_AggDeviceDriver::RenderRasterizer(
     FX_BOOL bGroupKnockout,
     int alpha_flag,
     void* pIccTransform) {
-  CFX_DIBitmap* pt = bGroupKnockout ? m_pOriDevice : NULL;
+  CFX_DIBitmap* pt = bGroupKnockout ? m_pOriDevice : nullptr;
   CFX_Renderer render;
   if (!render.Init(m_pBitmap, pt, m_pClipRgn, color, bFullCover,
                    m_bRgbByteOrder, alpha_flag, pIccTransform)) {
@@ -1270,7 +1270,7 @@ FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
       rasterizer.clip_box(0.0f, 0.0f,
                           (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                           (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
-      RasterizeStroke(rasterizer, path_data.m_PathData, NULL, pGraphState, 1,
+      RasterizeStroke(rasterizer, path_data.m_PathData, nullptr, pGraphState, 1,
                       FALSE, fill_mode & FX_STROKE_TEXT_MODE);
       int fill_flag = FXGETFLAG_COLORTYPE(alpha_flag) << 8 |
                       FXGETFLAG_ALPHA_STROKE(alpha_flag);
@@ -1319,7 +1319,7 @@ void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, uint32_t argb) {
   uint8_t* pos = (uint8_t*)pBitmap->GetBuffer() + y * pBitmap->GetPitch() +
                  x * pBitmap->GetBPP() / 8;
   if (pBitmap->GetFormat() == FXDIB_Argb) {
-    FXARGB_SETRGBORDERDIB(pos, ArgbGamma(argb));
+    FXARGB_SETRGBORDERDIB(pos, argb);
   } else {
     int alpha = FXARGB_A(argb);
     pos[0] = (FXARGB_R(argb) * alpha + pos[0] * (255 - alpha)) / 255;
@@ -1365,9 +1365,6 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap,
     }
     return;
   }
-  src_r = FX_GAMMA(src_r);
-  src_g = FX_GAMMA(src_g);
-  src_b = FX_GAMMA(src_b);
   for (int row = rect.top; row < rect.bottom; row++) {
     uint8_t* dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
     if (bAlpha) {
@@ -1392,14 +1389,11 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap,
       }
     } else {
       for (int col = 0; col < width; col++) {
-        *dest_scan = FX_GAMMA_INVERSE(
-            FXDIB_ALPHA_MERGE(FX_GAMMA(*dest_scan), src_r, src_alpha));
+        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_r, src_alpha);
         dest_scan++;
-        *dest_scan = FX_GAMMA_INVERSE(
-            FXDIB_ALPHA_MERGE(FX_GAMMA(*dest_scan), src_g, src_alpha));
+        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_g, src_alpha);
         dest_scan++;
-        *dest_scan = FX_GAMMA_INVERSE(
-            FXDIB_ALPHA_MERGE(FX_GAMMA(*dest_scan), src_b, src_alpha));
+        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_b, src_alpha);
         dest_scan++;
         if (Bpp == 4) {
           dest_scan++;
@@ -1422,7 +1416,7 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
   }
   pBitmap->GetOverlapRect(dest_left, dest_top, width, height,
                           pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(),
-                          src_left, src_top, NULL);
+                          src_left, src_top, nullptr);
   if (width == 0 || height == 0) {
     return;
   }
@@ -1477,21 +1471,11 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
         uint8_t* dest_scan = (uint8_t*)(dest_buf + row * pitch);
         uint8_t* src_scan =
             (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
-        if (src_format == FXDIB_Argb) {
-          for (int col = 0; col < width; col++) {
-            FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, FX_GAMMA(src_scan[0]),
-                                                 FX_GAMMA(src_scan[1]),
-                                                 FX_GAMMA(src_scan[2])));
-            dest_scan += 4;
-            src_scan += 3;
-          }
-        } else {
-          for (int col = 0; col < width; col++) {
-            FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
-                                                 src_scan[2]));
-            dest_scan += 4;
-            src_scan += 3;
-          }
+        for (int col = 0; col < width; col++) {
+          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
+                                               src_scan[2]));
+          dest_scan += 4;
+          src_scan += 3;
         }
       }
     } else if (src_format == FXDIB_Rgb32) {
@@ -1566,7 +1550,7 @@ FX_BOOL CFX_AggDeviceDriver::SetPixel(int x,
   }
   if (!CFX_GEModule::Get()->GetCodecModule() ||
       !CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) {
-    pIccTransform = NULL;
+    pIccTransform = nullptr;
   }
   if (!m_pClipRgn) {
     if (m_bRgbByteOrder) {
@@ -1639,7 +1623,7 @@ FX_BOOL CFX_AggDeviceDriver::FillRect(const FX_RECT* pRect,
       draw_rect.left, draw_rect.top, draw_rect.Width(), draw_rect.Height(),
       (const CFX_DIBitmap*)m_pClipRgn->GetMask(), fill_color,
       draw_rect.left - clip_rect.left, draw_rect.top - clip_rect.top,
-      FXDIB_BLEND_NORMAL, NULL, m_bRgbByteOrder, alpha_flag, pIccTransform);
+      FXDIB_BLEND_NORMAL, nullptr, m_bRgbByteOrder, alpha_flag, pIccTransform);
   return TRUE;
 }
 
@@ -1675,7 +1659,7 @@ FX_BOOL CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
   }
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
-  CFX_DIBitmap* pBack = NULL;
+  CFX_DIBitmap* pBack = nullptr;
   if (m_pOriDevice) {
     pBack = m_pOriDevice->Clone(&rect);
     if (!pBack) {
