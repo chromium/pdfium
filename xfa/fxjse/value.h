@@ -13,12 +13,6 @@ class CFXJSE_Value {
  public:
   CFXJSE_Value(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
 
- protected:
-  CFXJSE_Value();
-  CFXJSE_Value(const CFXJSE_Value&);
-  CFXJSE_Value& operator=(const CFXJSE_Value&);
-
- public:
   V8_INLINE FX_BOOL IsUndefined() const {
     if (m_hValue.IsEmpty()) {
       return FALSE;
@@ -110,7 +104,6 @@ class CFXJSE_Value {
     return hValue->IsDate();
   }
 
- public:
   V8_INLINE FX_BOOL ToBoolean() const {
     ASSERT(!m_hValue.IsEmpty());
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
@@ -150,7 +143,6 @@ class CFXJSE_Value {
   }
   void* ToObject(CFXJSE_Class* lpClass) const;
 
- public:
   V8_INLINE void SetUndefined() {
     CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
     v8::Local<v8::Value> hValue = v8::Undefined(m_pIsolate);
@@ -194,7 +186,6 @@ class CFXJSE_Value {
   void SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues);
   void SetDate(double dDouble);
 
- public:
   FX_BOOL GetObjectProperty(const CFX_ByteStringC& szPropName,
                             CFXJSE_Value* lpPropValue);
   FX_BOOL SetObjectProperty(const CFX_ByteStringC& szPropName,
@@ -212,7 +203,6 @@ class CFXJSE_Value {
                uint32_t nArgCount,
                FXJSE_HVALUE* lpArgs);
 
- public:
   V8_INLINE v8::Isolate* GetIsolate() const { return m_pIsolate; }
   V8_INLINE const v8::Global<v8::Value>& DirectGetValue() const {
     return m_hValue;
@@ -228,14 +218,18 @@ class CFXJSE_Value {
     }
   }
 
- public:
   static CFXJSE_Value* Create(v8::Isolate* pIsolate);
 
- protected:
+ private:
+  friend class CFXJSE_Class;
+  friend class CFXJSE_Context;
+
+  CFXJSE_Value();
+  CFXJSE_Value(const CFXJSE_Value&);
+  CFXJSE_Value& operator=(const CFXJSE_Value&);
+
   v8::Isolate* m_pIsolate;
   v8::Global<v8::Value> m_hValue;
-  friend class CFXJSE_Context;
-  friend class CFXJSE_Class;
 };
 
 #endif  // XFA_FXJSE_VALUE_H_

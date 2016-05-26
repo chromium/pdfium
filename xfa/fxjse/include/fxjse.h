@@ -11,10 +11,9 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "v8/include/v8.h"
 
-struct FXJSE_CLASS;
 class CFXJSE_Arguments;
+class CFXJSE_Context;
 
-typedef struct FXJSE_HCONTEXT_ { void* pData; } * FXJSE_HCONTEXT;
 typedef struct FXJSE_HCLASS_ { void* pData; } * FXJSE_HCLASS;
 typedef struct FXJSE_HVALUE_ { void* pData; } * FXJSE_HVALUE;
 // NOLINTNEXTLINE
@@ -74,16 +73,16 @@ void FXJSE_Finalize();
 v8::Isolate* FXJSE_Runtime_Create();
 void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime);
 
-FXJSE_HCONTEXT FXJSE_Context_Create(v8::Isolate* pIsolate,
-                                    const FXJSE_CLASS* lpGlobalClass = nullptr,
-                                    void* lpGlobalObject = nullptr);
-void FXJSE_Context_Release(FXJSE_HCONTEXT hContext);
-FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext);
+CFXJSE_Context* FXJSE_Context_Create(v8::Isolate* pIsolate,
+                                     const FXJSE_CLASS* lpGlobalClass = nullptr,
+                                     void* lpGlobalObject = nullptr);
+void FXJSE_Context_Release(CFXJSE_Context* pContext);
+FXJSE_HVALUE FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
 
-void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
+void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
                                         uint32_t dwCompatibleFlags);
 
-FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
+FXJSE_HCLASS FXJSE_DefineClass(CFXJSE_Context* pContext,
                                const FXJSE_CLASS* lpClass);
 
 FXJSE_HVALUE FXJSE_Value_Create(v8::Isolate* pIsolate);
@@ -143,7 +142,7 @@ FX_BOOL FXJSE_Value_SetFunctionBind(FXJSE_HVALUE hValue,
                                     FXJSE_HVALUE hOldFunction,
                                     FXJSE_HVALUE hNewThis);
 
-FX_BOOL FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext,
+FX_BOOL FXJSE_ExecuteScript(CFXJSE_Context* pContext,
                             const FX_CHAR* szScript,
                             FXJSE_HVALUE hRetValue,
                             FXJSE_HVALUE hNewThisObject = nullptr);

@@ -3239,16 +3239,16 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,
       XFA_FM2JS_Translate(
           CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
           wsJavaScriptBuf, wsError);
-      FXJSE_HCONTEXT hContext = FXJSE_Context_Create(pIsolate);
+      CFXJSE_Context* pContext = FXJSE_Context_Create(pIsolate);
       FXJSE_HVALUE returnValue = FXJSE_Value_Create(pIsolate);
       javaScript = wsJavaScriptBuf.AsStringC();
       FXJSE_ExecuteScript(
-          hContext,
+          pContext,
           FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).c_str(),
           returnValue);
       FXJSE_Value_Set(args.GetReturnValue(), returnValue);
       FXJSE_Value_Release(returnValue);
-      FXJSE_Context_Release(hContext);
+      FXJSE_Context_Release(pContext);
     }
     FXJSE_Value_Release(scriptValue);
   } else {
@@ -7175,11 +7175,11 @@ CXFA_FM2JSContext::~CXFA_FM2JSContext() {
   }
   m_pIsolate = NULL;
 }
-void CXFA_FM2JSContext::Initialize(v8::Isolate* hScriptRuntime,
-                                   FXJSE_HCONTEXT hScriptContext,
+void CXFA_FM2JSContext::Initialize(v8::Isolate* pScriptIsolate,
+                                   CFXJSE_Context* pScriptContext,
                                    CXFA_Document* pDoc) {
   m_pDocument = pDoc;
-  m_pIsolate = hScriptRuntime;
+  m_pIsolate = pScriptIsolate;
   m_fmClass.name = "XFA_FM2JS_FormCalcClass";
   m_fmClass.constructor = NULL;
   m_fmClass.properties = NULL;
@@ -7187,8 +7187,8 @@ void CXFA_FM2JSContext::Initialize(v8::Isolate* hScriptRuntime,
   m_fmClass.propNum = 0;
   m_fmClass.methNum =
       sizeof(formcalc_fm2js_functions) / sizeof(formcalc_fm2js_functions[0]);
-  m_hFMClass = FXJSE_DefineClass(hScriptContext, &m_fmClass);
-  m_hValue = FXJSE_Value_Create(hScriptRuntime);
+  m_hFMClass = FXJSE_DefineClass(pScriptContext, &m_fmClass);
+  m_hValue = FXJSE_Value_Create(pScriptIsolate);
   FXJSE_Value_SetNull(m_hValue);
   FXJSE_Value_SetObject(m_hValue, this, m_hFMClass);
 }

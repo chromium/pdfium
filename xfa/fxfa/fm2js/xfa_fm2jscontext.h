@@ -435,8 +435,8 @@ class CXFA_FM2JSContext {
   CXFA_FM2JSContext();
   ~CXFA_FM2JSContext();
 
-  void Initialize(v8::Isolate* pScriptRuntime,
-                  FXJSE_HCONTEXT hScriptContext,
+  void Initialize(v8::Isolate* pScriptIsolate,
+                  CFXJSE_Context* pScriptContext,
                   CXFA_Document* pDoc);
   void GlobalPropertyGetter(FXJSE_HVALUE hValue);
 

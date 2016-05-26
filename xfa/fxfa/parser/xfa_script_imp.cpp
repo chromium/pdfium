@@ -22,7 +22,7 @@
 
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
-      m_hJsContext(nullptr),
+      m_pJsContext(nullptr),
       m_pIsolate(nullptr),
       m_hJsClass(nullptr),
       m_eScriptType(XFA_SCRIPTLANGTYPE_Unkown),
@@ -49,9 +49,9 @@ CXFA_ScriptContext::~CXFA_ScriptContext() {
     XFA_FM2JS_ContextRelease(m_hFM2JSContext);
     m_hFM2JSContext = NULL;
   }
-  if (m_hJsContext) {
-    FXJSE_Context_Release(m_hJsContext);
-    m_hJsContext = NULL;
+  if (m_pJsContext) {
+    FXJSE_Context_Release(m_pJsContext);
+    m_pJsContext = NULL;
   }
   delete m_pResolveProcessor;
   m_upObjectArray.RemoveAll();
@@ -74,7 +74,7 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   if (eScriptType == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (!m_hFM2JSContext) {
       m_hFM2JSContext = XFA_FM2JS_ContextCreate();
-      XFA_FM2JS_ContextInitialize(m_hFM2JSContext, m_pIsolate, m_hJsContext,
+      XFA_FM2JS_ContextInitialize(m_hFM2JSContext, m_pIsolate, m_pJsContext,
                                   m_pDocument);
     }
     CFX_WideTextBuf wsJavaScript;
@@ -93,7 +93,7 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   m_pThisObject = pThisObject;
   FXJSE_HVALUE pValue = pThisObject ? GetJSValueFromMap(pThisObject) : NULL;
   FX_BOOL bRet =
-      FXJSE_ExecuteScript(m_hJsContext, btScript.c_str(), hRetValue, pValue);
+      FXJSE_ExecuteScript(m_pJsContext, btScript.c_str(), hRetValue, pValue);
   m_pThisObject = pOriginalObject;
   m_eScriptType = eSaveType;
   return bRet;
@@ -384,19 +384,19 @@ void CXFA_ScriptContext::DefineJsContext() {
   m_JsGlobalClass.dynPropTypeGetter = CXFA_ScriptContext::GlobalPropTypeGetter;
   m_JsGlobalClass.dynPropDeleter = NULL;
   m_JsGlobalClass.dynMethodCall = CXFA_ScriptContext::NormalMethodCall;
-  m_hJsContext = FXJSE_Context_Create(m_pIsolate, &m_JsGlobalClass,
+  m_pJsContext = FXJSE_Context_Create(m_pIsolate, &m_JsGlobalClass,
                                       m_pDocument->GetRoot());
-  RemoveBuiltInObjs(m_hJsContext);
+  RemoveBuiltInObjs(m_pJsContext);
   FXJSE_Context_EnableCompatibleMode(
-      m_hJsContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
+      m_pJsContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
 }
-FXJSE_HCONTEXT CXFA_ScriptContext::CreateVariablesContext(
+CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
     CXFA_Node* pScriptNode,
     CXFA_Node* pSubform) {
   if (!pScriptNode || !pSubform)
     return nullptr;
 
-  if (m_mapVariableToHValue.GetCount() == 0) {
+  if (m_mapVariableToContext.GetCount() == 0) {
     m_JsGlobalVariablesClass.constructor = nullptr;
     m_JsGlobalVariablesClass.name = "XFAScriptObject";
     m_JsGlobalVariablesClass.propNum = 0;
@@ -413,14 +413,14 @@ FXJSE_HCONTEXT CXFA_ScriptContext::CreateVariablesContext(
     m_JsGlobalVariablesClass.dynMethodCall =
         CXFA_ScriptContext::NormalMethodCall;
   }
-  FXJSE_HCONTEXT hVariablesContext =
+  CFXJSE_Context* pVariablesContext =
       FXJSE_Context_Create(m_pIsolate, &m_JsGlobalVariablesClass,
                            new CXFA_ThisProxy(pSubform, pScriptNode));
-  RemoveBuiltInObjs(hVariablesContext);
+  RemoveBuiltInObjs(pVariablesContext);
   FXJSE_Context_EnableCompatibleMode(
-      hVariablesContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
-  m_mapVariableToHValue.SetAt(pScriptNode, hVariablesContext);
-  return hVariablesContext;
+      pVariablesContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
+  m_mapVariableToContext.SetAt(pScriptNode, pVariablesContext);
+  return pVariablesContext;
 }
 CXFA_Object* CXFA_ScriptContext::GetVariablesThis(CXFA_Object* pObject,
                                                   FX_BOOL bScriptNode) {
@@ -442,7 +442,7 @@ FX_BOOL CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (!pParent || pParent->GetClassID() != XFA_ELEMENT_Variables)
     return FALSE;
 
-  if (m_mapVariableToHValue.GetValueAt(pScriptNode))
+  if (m_mapVariableToContext.GetValueAt(pScriptNode))
     return TRUE;
 
   CXFA_Node* pTextNode = pScriptNode->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -457,12 +457,12 @@ FX_BOOL CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
       FX_UTF8Encode(wsScript.c_str(), wsScript.GetLength());
   FXJSE_HVALUE hRetValue = FXJSE_Value_Create(m_pIsolate);
   CXFA_Node* pThisObject = pParent->GetNodeItem(XFA_NODEITEM_Parent);
-  FXJSE_HCONTEXT hVariablesContext =
+  CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
   CXFA_Object* pOriginalObject = m_pThisObject;
   m_pThisObject = pThisObject;
   FX_BOOL bRet =
-      FXJSE_ExecuteScript(hVariablesContext, btScript.c_str(), hRetValue);
+      FXJSE_ExecuteScript(pVariablesContext, btScript.c_str(), hRetValue);
   m_pThisObject = pOriginalObject;
   FXJSE_Value_Release(hRetValue);
   return bRet;
@@ -480,13 +480,13 @@ FX_BOOL CXFA_ScriptContext::QueryVariableHValue(
   if (!variablesNode || variablesNode->GetClassID() != XFA_ELEMENT_Variables)
     return FALSE;
 
-  void* lpVariables = m_mapVariableToHValue.GetValueAt(pScriptNode);
+  void* lpVariables = m_mapVariableToContext.GetValueAt(pScriptNode);
   if (!lpVariables)
     return FALSE;
 
   FX_BOOL bRes = FALSE;
-  FXJSE_HCONTEXT hVariableContext = (FXJSE_HCONTEXT)lpVariables;
-  FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(hVariableContext);
+  CFXJSE_Context* pVariableContext = static_cast<CFXJSE_Context*>(lpVariables);
+  FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(pVariableContext);
   FXJSE_HVALUE hVariableValue = FXJSE_Value_Create(m_pIsolate);
   if (!bGetter) {
     FXJSE_Value_SetObjectOwnProp(hObject, szPropName, hValue);
@@ -507,17 +507,17 @@ FX_BOOL CXFA_ScriptContext::QueryVariableHValue(
 }
 
 void CXFA_ScriptContext::ReleaseVariablesMap() {
-  FX_POSITION ps = m_mapVariableToHValue.GetStartPosition();
+  FX_POSITION ps = m_mapVariableToContext.GetStartPosition();
   while (ps) {
     CXFA_Object* pScriptNode;
-    FXJSE_HCONTEXT hVariableContext = nullptr;
-    m_mapVariableToHValue.GetNextAssoc(ps, pScriptNode, hVariableContext);
-    FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(hVariableContext);
+    CFXJSE_Context* pVariableContext = nullptr;
+    m_mapVariableToContext.GetNextAssoc(ps, pScriptNode, pVariableContext);
+    FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(pVariableContext);
     delete static_cast<CXFA_ThisProxy*>(FXJSE_Value_ToObject(hObject, nullptr));
     FXJSE_Value_Release(hObject);
-    FXJSE_Context_Release(hVariableContext);
+    FXJSE_Context_Release(pVariableContext);
   }
-  m_mapVariableToHValue.RemoveAll();
+  m_mapVariableToContext.RemoveAll();
 }
 
 void CXFA_ScriptContext::DefineJsClass() {
@@ -532,11 +532,11 @@ void CXFA_ScriptContext::DefineJsClass() {
   m_JsNormalClass.dynPropTypeGetter = CXFA_ScriptContext::NormalPropTypeGetter;
   m_JsNormalClass.dynPropDeleter = NULL;
   m_JsNormalClass.dynMethodCall = CXFA_ScriptContext::NormalMethodCall;
-  m_hJsClass = FXJSE_DefineClass(m_hJsContext, &m_JsNormalClass);
+  m_hJsClass = FXJSE_DefineClass(m_pJsContext, &m_JsNormalClass);
 }
-void CXFA_ScriptContext::RemoveBuiltInObjs(FXJSE_HCONTEXT jsContext) const {
+void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
   static const CFX_ByteStringC OBJ_NAME[2] = {"Number", "Date"};
-  FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(jsContext);
+  FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(pContext);
   FXJSE_HVALUE hProp = FXJSE_Value_Create(m_pIsolate);
   for (int i = 0; i < 2; ++i) {
     if (FXJSE_Value_GetObjectProp(hObject, OBJ_NAME[i], hProp))

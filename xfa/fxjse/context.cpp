@@ -11,28 +11,17 @@
 #include "xfa/fxjse/util_inline.h"
 #include "xfa/fxjse/value.h"
 
-namespace {
-
-CFXJSE_Context* CFXContextFromHContext(FXJSE_HCONTEXT hContext) {
-  return reinterpret_cast<CFXJSE_Context*>(hContext);
+CFXJSE_Context* FXJSE_Context_Create(v8::Isolate* pIsolate,
+                                     const FXJSE_CLASS* lpGlobalClass,
+                                     void* lpGlobalObject) {
+  return CFXJSE_Context::Create(pIsolate, lpGlobalClass, lpGlobalObject);
 }
 
-}  // namespace
-
-FXJSE_HCONTEXT FXJSE_Context_Create(v8::Isolate* pIsolate,
-                                    const FXJSE_CLASS* lpGlobalClass,
-                                    void* lpGlobalObject) {
-  CFXJSE_Context* pContext =
-      CFXJSE_Context::Create(pIsolate, lpGlobalClass, lpGlobalObject);
-  return reinterpret_cast<FXJSE_HCONTEXT>(pContext);
+void FXJSE_Context_Release(CFXJSE_Context* pContext) {
+  delete pContext;
 }
 
-void FXJSE_Context_Release(FXJSE_HCONTEXT hContext) {
-  delete CFXContextFromHContext(hContext);
-}
-
-FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext) {
-  CFXJSE_Context* pContext = CFXContextFromHContext(hContext);
+FXJSE_HVALUE FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext) {
   if (!pContext)
     return nullptr;
 
@@ -68,20 +57,19 @@ static const FX_CHAR* szCompatibleModeScripts[] = {
     "    }\n"
     "  }\n"
     "}(this, {String: ['substr', 'toUpperCase']}));"};
-void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
+void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
                                         uint32_t dwCompatibleFlags) {
   for (uint32_t i = 0; i < (uint32_t)FXJSE_COMPATIBLEMODEFLAGCOUNT; i++) {
     if (dwCompatibleFlags & (1 << i)) {
-      FXJSE_ExecuteScript(hContext, szCompatibleModeScripts[i], NULL, NULL);
+      FXJSE_ExecuteScript(pContext, szCompatibleModeScripts[i], NULL, NULL);
     }
   }
 }
 
-FX_BOOL FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext,
+FX_BOOL FXJSE_ExecuteScript(CFXJSE_Context* pContext,
                             const FX_CHAR* szScript,
                             FXJSE_HVALUE hRetValue,
                             FXJSE_HVALUE hNewThisObject) {
-  CFXJSE_Context* pContext = CFXContextFromHContext(hContext);
   return pContext->ExecuteScript(
       szScript, reinterpret_cast<CFXJSE_Value*>(hRetValue),
       reinterpret_cast<CFXJSE_Value*>(hNewThisObject));

@@ -93,15 +93,15 @@ class CXFA_ScriptContext {
   CXFA_NodeArray& GetUpObjectArray() { return m_upObjectArray; }
   CXFA_Document* GetDocument() const { return m_pDocument; }
 
- protected:
+ private:
   void DefineJsContext();
-  FXJSE_HCONTEXT CreateVariablesContext(CXFA_Node* pScriptNode,
-                                        CXFA_Node* pSubform);
+  CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,
+                                         CXFA_Node* pSubform);
   void DefineJsClass();
-  void RemoveBuiltInObjs(FXJSE_HCONTEXT jsContext) const;
+  void RemoveBuiltInObjs(CFXJSE_Context* pContext) const;
 
   CXFA_Document* m_pDocument;
-  FXJSE_HCONTEXT m_hJsContext;
+  CFXJSE_Context* m_pJsContext;
   v8::Isolate* m_pIsolate;
   FXJSE_HCLASS m_hJsClass;
   XFA_SCRIPTLANGTYPE m_eScriptType;
@@ -109,7 +109,7 @@ class CXFA_ScriptContext {
   FXJSE_CLASS m_JsNormalClass;
   CFX_MapPtrTemplate<CXFA_Object*, FXJSE_HVALUE> m_mapXFAToHValue;
   FXJSE_CLASS m_JsGlobalVariablesClass;
-  CFX_MapPtrTemplate<CXFA_Object*, FXJSE_HCONTEXT> m_mapVariableToHValue;
+  CFX_MapPtrTemplate<CXFA_Object*, CFXJSE_Context*> m_mapVariableToContext;
   CXFA_EventParam m_eventParam;
   CXFA_NodeArray m_upObjectArray;
   CFX_ArrayTemplate<CXFA_NodeList*> m_CacheListArray;

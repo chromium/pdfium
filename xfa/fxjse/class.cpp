@@ -24,12 +24,11 @@ static void FXJSE_V8SetterCallback_Wrapper(
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<void>& info);
 
-FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
+FXJSE_HCLASS FXJSE_DefineClass(CFXJSE_Context* pContext,
                                const FXJSE_CLASS* lpClass) {
-  CFXJSE_Context* lpContext = reinterpret_cast<CFXJSE_Context*>(hContext);
-  ASSERT(lpContext);
+  ASSERT(pContext);
   return reinterpret_cast<FXJSE_HCLASS>(
-      CFXJSE_Class::Create(lpContext, lpClass, FALSE));
+      CFXJSE_Class::Create(pContext, lpClass, FALSE));
 }
 
 static void FXJSE_V8FunctionCallback_Wrapper(
