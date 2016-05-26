@@ -97,11 +97,7 @@ typedef struct _FPDF_BSTR {
 // For Linux/Unix programmers: most compiler/library environments use 4 bytes
 // for a Unicode character, and you have to convert between FPDF_WIDESTRING and
 // system wide string by yourself.
-#ifdef _WIN32_WCE
-typedef const unsigned short* FPDF_STRING;
-#else
 typedef const char* FPDF_STRING;
-#endif
 
 // Matrix for transformation.
 typedef struct _FS_MATRIX_ {

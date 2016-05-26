@@ -537,7 +537,6 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   CRenderContext* pContext = new CRenderContext;
   pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
 
-#if !defined(_WIN32_WCE)
   CFX_DIBitmap* pBitmap = nullptr;
   FX_BOOL bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
   FX_BOOL bHasImageMask = pPage->HasImageMask();
@@ -572,50 +571,6 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
       }
     }
   }
-#else
-  // get clip region
-  RECT rect, cliprect;
-  rect.left = start_x;
-  rect.top = start_y;
-  rect.right = start_x + size_x;
-  rect.bottom = start_y + size_y;
-  GetClipBox(dc, &cliprect);
-  IntersectRect(&rect, &rect, &cliprect);
-  int width = rect.right - rect.left;
-  int height = rect.bottom - rect.top;
-
-  // Create a DIB section
-  LPVOID pBuffer;
-  BITMAPINFOHEADER bmih;
-  FXSYS_memset(&bmih, 0, sizeof bmih);
-  bmih.biSize = sizeof bmih;
-  bmih.biBitCount = 24;
-  bmih.biHeight = -height;
-  bmih.biPlanes = 1;
-  bmih.biWidth = width;
-  pContext->m_hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmih, DIB_RGB_COLORS,
-                                         &pBuffer, NULL, 0);
-  FXSYS_memset(pBuffer, 0xff, height * ((width * 3 + 3) / 4 * 4));
-
-  // Create a device with this external buffer
-  pContext->m_pBitmap = new CFX_DIBitmap;
-  pContext->m_pBitmap->Create(width, height, FXDIB_Rgb, (uint8_t*)pBuffer);
-  pContext->m_pDevice = new CPDF_FxgeDevice;
-  ((CPDF_FxgeDevice*)pContext->m_pDevice)->Attach(pContext->m_pBitmap);
-
-  // output to bitmap device
-  FPDF_RenderPage_Retail(pContext, page, start_x - rect.left,
-                         start_y - rect.top, size_x, size_y, rotate, flags);
-
-  // Now output to real device
-  HDC hMemDC = CreateCompatibleDC(dc);
-  HGDIOBJ hOldBitmap = SelectObject(hMemDC, pContext->m_hBitmap);
-
-  BitBlt(dc, rect.left, rect.top, width, height, hMemDC, 0, 0, SRCCOPY);
-  SelectObject(hMemDC, hOldBitmap);
-  DeleteDC(hMemDC);
-
-#endif  // !defined(_WIN32_WCE)
   if (bBackgroundAlphaNeeded || bHasImageMask)
     delete pBitmap;
 

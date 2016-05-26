@@ -25,10 +25,6 @@ class CRenderContext : public CFX_Deletable {
   CPDF_ProgressiveRenderer* m_pRenderer;
   CPDF_AnnotList* m_pAnnots;
   CPDF_RenderOptions* m_pOptions;
-#ifdef _WIN32_WCE
-  CFX_DIBitmap* m_pBitmap;
-  HBITMAP m_hBitmap;
-#endif
 };
 
 class IFSDK_PAUSE_Adapter : public IFX_Pause {

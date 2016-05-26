@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <memory>
 
 #ifdef PDF_ENABLE_XFA
 CFX_PrivateData::CFX_PrivateData() {}
@@ -208,41 +209,35 @@ class CFindFileDataW : public CFindFileData {
   WIN32_FIND_DATAW m_FindData;
 };
 #endif
+
 void* FX_OpenFolder(const FX_CHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#ifndef _WIN32_WCE
-  CFindFileDataA* pData = new CFindFileDataA;
+  std::unique_ptr<CFindFileDataA> pData(new CFindFileDataA);
   pData->m_Handle = FindFirstFileExA((CFX_ByteString(path) + "/*.*").c_str(),
                                      FindExInfoStandard, &pData->m_FindData,
-                                     FindExSearchNameMatch, NULL, 0);
-#else
-  CFindFileDataW* pData = new CFindFileDataW;
-  pData->m_Handle = FindFirstFileW(CFX_WideString::FromLocal(path) + L"/*.*",
-                                   &pData->m_FindData);
-#endif
-  if (pData->m_Handle == INVALID_HANDLE_VALUE) {
-    delete pData;
-    return NULL;
-  }
+                                     FindExSearchNameMatch, nullptr, 0);
+  if (pData->m_Handle == INVALID_HANDLE_VALUE)
+    return nullptr;
+
   pData->m_bEnd = FALSE;
-  return pData;
+  return pData.release();
 #else
   DIR* dir = opendir(path);
   return dir;
 #endif
 }
+
 void* FX_OpenFolder(const FX_WCHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  CFindFileDataW* pData = new CFindFileDataW;
+  std::unique_ptr<CFindFileDataW> pData(new CFindFileDataW);
   pData->m_Handle = FindFirstFileExW((CFX_WideString(path) + L"/*.*").c_str(),
                                      FindExInfoStandard, &pData->m_FindData,
-                                     FindExSearchNameMatch, NULL, 0);
-  if (pData->m_Handle == INVALID_HANDLE_VALUE) {
-    delete pData;
-    return NULL;
-  }
+                                     FindExSearchNameMatch, nullptr, 0);
+  if (pData->m_Handle == INVALID_HANDLE_VALUE)
+    return nullptr;
+
   pData->m_bEnd = FALSE;
-  return pData;
+  return pData.release();
 #else
   DIR* dir = opendir(CFX_ByteString::FromUnicode(path).c_str());
   return dir;
@@ -255,29 +250,15 @@ FX_BOOL FX_GetNextFile(void* handle,
     return FALSE;
   }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#ifndef _WIN32_WCE
   CFindFileDataA* pData = (CFindFileDataA*)handle;
-  if (pData->m_bEnd) {
+  if (pData->m_bEnd)
     return FALSE;
-  }
+
   filename = pData->m_FindData.cFileName;
   bFolder = pData->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
-  if (!FindNextFileA(pData->m_Handle, &pData->m_FindData)) {
+  if (!FindNextFileA(pData->m_Handle, &pData->m_FindData))
     pData->m_bEnd = TRUE;
-  }
   return TRUE;
-#else
-  CFindFileDataW* pData = (CFindFileDataW*)handle;
-  if (pData->m_bEnd) {
-    return FALSE;
-  }
-  filename = CFX_ByteString::FromUnicode(pData->m_FindData.cFileName);
-  bFolder = pData->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
-  if (!FindNextFileW(pData->m_Handle, &pData->m_FindData)) {
-    pData->m_bEnd = TRUE;
-  }
-  return TRUE;
-#endif
 #elif defined(__native_client__)
   abort();
   return FALSE;
