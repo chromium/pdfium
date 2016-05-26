@@ -13,8 +13,7 @@ enum class FWL_Error {
   ParameterInvalid,
   PropertyInvalid,
   IntermediateValueInvalid,
-  MethodNotSupported,
-  OutOfMemory
+  MethodNotSupported
 };
 
 #endif  // XFA_FWL_CORE_FWL_ERROR_H_
