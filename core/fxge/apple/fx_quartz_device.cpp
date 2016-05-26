@@ -218,7 +218,8 @@ void CFX_QuartzDeviceDriver::SaveState() {
   CGContextSaveGState(m_context);
   m_saveCount++;
 }
-void CFX_QuartzDeviceDriver::RestoreState(FX_BOOL isKeepSaved) {
+
+void CFX_QuartzDeviceDriver::RestoreState(bool isKeepSaved) {
   CGContextRestoreGState(m_context);
   if (isKeepSaved) {
     CGContextSaveGState(m_context);
@@ -226,6 +227,7 @@ void CFX_QuartzDeviceDriver::RestoreState(FX_BOOL isKeepSaved) {
     m_saveCount--;
   }
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::SetClip_PathFill(const CFX_PathData* pathData,
                                                  const CFX_Matrix* matrix,
                                                  int fillMode) {
@@ -238,7 +240,7 @@ FX_BOOL CFX_QuartzDeviceDriver::SetClip_PathFill(const CFX_PathData* pathData,
   m = CGAffineTransformConcat(m, m_foxitDevice2User);
   CGContextConcatCTM(m_context, m);
   setPathToContext(pathData);
-  RestoreState(FALSE);
+  RestoreState(false);
   if ((fillMode & 3) == FXFILL_WINDING) {
     CGContextClip(m_context);
   } else {
@@ -277,7 +279,7 @@ FX_BOOL CFX_QuartzDeviceDriver::SetClip_PathStroke(
   setStrokeInfo(graphState, 0xFF000000, lineWidth);
   setPathToContext(pathData);
   CGContextReplacePathWithStrokedPath(m_context);
-  RestoreState(FALSE);
+  RestoreState(false);
   CGContextClip(m_context);
   return TRUE;
 }
@@ -389,7 +391,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData* pathData,
   } else if (pathMode == 6) {
     CGContextDrawPath(m_context, kCGPathEOFillStroke);
   }
-  RestoreState(FALSE);
+  RestoreState(false);
   return TRUE;
 }
 FX_BOOL CFX_QuartzDeviceDriver::FillRect(const FX_RECT* rect,
@@ -553,7 +555,7 @@ FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
       pBitmap1 = pBitmap->Clone();
     }
     if (NULL == pBitmap1) {
-      RestoreState(FALSE);
+      RestoreState(false);
       return FALSE;
     }
     CGDataProviderRef pBitmapProvider = CGDataProviderCreateWithData(
@@ -576,7 +578,7 @@ FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
     if (pBitmap1 != pBitmap) {
       delete pBitmap1;
     }
-    RestoreState(FALSE);
+    RestoreState(false);
     return TRUE;
   }
   if (pBitmap->GetBPP() < 32) {
@@ -589,14 +591,14 @@ FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
     }
   }
   if (NULL == pBitmap1) {
-    RestoreState(FALSE);
+    RestoreState(false);
     return FALSE;
   }
   if (pBitmap1->HasAlpha()) {
     if (pBitmap1 == pBitmap) {
       pBitmap1 = pBitmap->Clone();
       if (!pBitmap1) {
-        RestoreState(FALSE);
+        RestoreState(false);
         return FALSE;
       }
     }
@@ -630,7 +632,7 @@ FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
   if (pBitmap1 != pBitmap) {
     delete pBitmap1;
   }
-  RestoreState(FALSE);
+  RestoreState(false);
   return TRUE;
 }
 FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
@@ -671,7 +673,7 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
       pBitmap1 = pBitmap->Clone();
     }
     if (NULL == pBitmap1) {
-      RestoreState(FALSE);
+      RestoreState(false);
       return FALSE;
     }
     CGDataProviderRef pBitmapProvider = CGDataProviderCreateWithData(
@@ -694,7 +696,7 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
     if (pBitmap1 != pBitmap) {
       delete pBitmap1;
     }
-    RestoreState(FALSE);
+    RestoreState(false);
     return TRUE;
   }
   if (pBitmap->GetBPP() < 32) {
@@ -707,14 +709,14 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
     }
   }
   if (NULL == pBitmap1) {
-    RestoreState(FALSE);
+    RestoreState(false);
     return FALSE;
   }
   if (pBitmap1->HasAlpha()) {
     if (pBitmap1 == pBitmap) {
       pBitmap1 = pBitmap->Clone();
       if (!pBitmap1) {
-        RestoreState(FALSE);
+        RestoreState(false);
         return FALSE;
       }
     }
@@ -736,7 +738,7 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
   if (pBitmap1 != pBitmap) {
     delete pBitmap1;
   }
-  RestoreState(FALSE);
+  RestoreState(false);
   return TRUE;
 }
 FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
@@ -803,7 +805,7 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
   }
   CGContextShowGlyphsAtPositions(m_context, (CGGlyph*)glyph_indices,
                                  glyph_positions, nChars);
-  RestoreState(FALSE);
+  RestoreState(false);
   return TRUE;
 }
 FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
@@ -833,7 +835,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
         ret = CG_DrawGlypRun(i, pCharPos, pFont, pCache, NULL, pObject2Device,
                              font_size, color, alpha_flag, pIccTransform);
         if (!ret) {
-          RestoreState(FALSE);
+          RestoreState(false);
           return ret;
         }
       }
@@ -851,7 +853,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
                            pObject2Device, font_size, color, alpha_flag,
                            pIccTransform);
       if (!ret) {
-        RestoreState(FALSE);
+        RestoreState(false);
         return ret;
       }
       i++;
@@ -866,7 +868,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
     ret = CG_DrawGlypRun(i, pCharPos, pFont, pCache, NULL, pObject2Device,
                          font_size, color, alpha_flag, pIccTransform);
   }
-  RestoreState(FALSE);
+  RestoreState(false);
   return ret;
 }
 void CFX_QuartzDeviceDriver::setStrokeInfo(const CFX_GraphStateData* graphState,

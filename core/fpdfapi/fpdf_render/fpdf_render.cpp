@@ -443,7 +443,7 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   m_pDevice->SaveState();
   status.RenderObjectList(pFormObj->m_pForm, &matrix);
   m_bStopped = status.m_bStopped;
-  m_pDevice->RestoreState();
+  m_pDevice->RestoreState(false);
   return TRUE;
 }
 FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix) {
@@ -583,7 +583,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
                                         const CFX_Matrix* pObj2Device) {
   if (ClipPath.IsNull()) {
     if (!m_LastClipPath.IsNull()) {
-      m_pDevice->RestoreState(TRUE);
+      m_pDevice->RestoreState(true);
       m_LastClipPath.SetNull();
     }
     return;
@@ -592,7 +592,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
     return;
 
   m_LastClipPath = ClipPath;
-  m_pDevice->RestoreState(TRUE);
+  m_pDevice->RestoreState(true);
   int nClipPath = ClipPath.GetPathCount();
   for (int i = 0; i < nClipPath; ++i) {
     const CFX_PathData* pPathData = ClipPath.GetPath(i);
@@ -974,7 +974,7 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
       }
       if (status.m_bStopped) {
-        pDevice->RestoreState();
+        pDevice->RestoreState(false);
         break;
       }
     } else {
@@ -986,11 +986,11 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
       }
       if (status.m_bStopped) {
-        pDevice->RestoreState();
+        pDevice->RestoreState(false);
         break;
       }
     }
-    pDevice->RestoreState();
+    pDevice->RestoreState(false);
   }
 }
 
@@ -1007,7 +1007,7 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
   if (m_pRenderStatus)
-    m_pDevice->RestoreState();
+    m_pDevice->RestoreState(false);
 }
 
 void CPDF_ProgressiveRenderer::Start(IFX_Pause* pPause) {
@@ -1080,7 +1080,7 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
     }
     if (m_pCurrentLayer->m_pObjectHolder->IsParsed()) {
       m_pRenderStatus.reset();
-      m_pDevice->RestoreState();
+      m_pDevice->RestoreState(false);
       m_pCurrentLayer = nullptr;
       m_LayerIndex++;
       if (pPause && pPause->NeedToPauseNow()) {

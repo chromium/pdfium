@@ -507,6 +507,7 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class) {
     m_RenderCaps = FXRC_GET_BITS | FXRC_BIT_MASK;
   }
 }
+
 int CGdiDeviceDriver::GetDeviceCaps(int caps_id) {
   switch (caps_id) {
     case FXDC_DEVICE_CLASS:
@@ -522,6 +523,17 @@ int CGdiDeviceDriver::GetDeviceCaps(int caps_id) {
   }
   return 0;
 }
+
+void CGdiDeviceDriver::SaveState() {
+  SaveDC(m_hDC);
+}
+
+void CGdiDeviceDriver::RestoreState(bool bKeepSaved) {
+  RestoreDC(m_hDC, -1);
+  if (bKeepSaved)
+    SaveDC(m_hDC);
+}
+
 void* CGdiDeviceDriver::GetClipRgn() {
   HRGN hClipRgn = CreateRectRgn(0, 0, 1, 1);
   if (::GetClipRgn(m_hDC, hClipRgn) == 0) {

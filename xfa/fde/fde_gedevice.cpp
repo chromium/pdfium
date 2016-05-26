@@ -41,7 +41,7 @@ FDE_HDEVICESTATE CFDE_RenderDevice::SaveState() {
   return NULL;
 }
 void CFDE_RenderDevice::RestoreState(FDE_HDEVICESTATE hState) {
-  m_pDevice->RestoreState();
+  m_pDevice->RestoreState(false);
   const FX_RECT& rt = m_pDevice->GetClipBox();
   m_rtClip.Set((FX_FLOAT)rt.left, (FX_FLOAT)rt.top, (FX_FLOAT)rt.Width(),
                (FX_FLOAT)rt.Height());

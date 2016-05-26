@@ -430,7 +430,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         status.m_Type3FontCache.Add(pType3Font);
         m_pDevice->SaveState();
         status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);
-        m_pDevice->RestoreState();
+        m_pDevice->RestoreState(false);
       } else {
         CFX_FloatRect rect_f = pType3Char->m_pForm->CalcBoundingBox();
         rect_f.Transform(&matrix);

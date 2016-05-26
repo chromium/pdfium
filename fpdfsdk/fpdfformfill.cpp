@@ -374,7 +374,7 @@ static void FFLCommon(FPDF_FORMHANDLE hHandle,
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 #endif  // PDF_ENABLE_XFA
 
-  pDevice->RestoreState();
+  pDevice->RestoreState(false);
   delete options.m_pOCContext;
 #ifdef PDF_ENABLE_XFA
   options.m_pOCContext = NULL;

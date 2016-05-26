@@ -109,13 +109,8 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
  protected:
   // IFX_RenderDeviceDriver
   int GetDeviceCaps(int caps_id) override;
-  void SaveState() override { SaveDC(m_hDC); }
-  void RestoreState(FX_BOOL bKeepSaved = FALSE) override {
-    RestoreDC(m_hDC, -1);
-    if (bKeepSaved) {
-      SaveDC(m_hDC);
-    }
-  }
+  void SaveState() override;
+  void RestoreState(bool bKeepSaved) override;
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                            const CFX_Matrix* pObject2Device,
                            int fill_mode) override;
@@ -298,7 +293,7 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
   FX_BOOL StartRendering() override;
   void EndRendering() override;
   void SaveState() override;
-  void RestoreState(FX_BOOL bKeepSaved = FALSE) override;
+  void RestoreState(bool bKeepSaved) override;
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                            const CFX_Matrix* pObject2Device,
                            int fill_mode) override;

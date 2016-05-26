@@ -284,21 +284,21 @@ void CFX_AggDeviceDriver::SaveState() {
   m_StateStack.Add(pClip);
 }
 
-void CFX_AggDeviceDriver::RestoreState(FX_BOOL bKeepSaved) {
-  if (m_StateStack.GetSize() == 0) {
-    delete m_pClipRgn;
-    m_pClipRgn = nullptr;
-    return;
-  }
-  CFX_ClipRgn* pSavedClip = m_StateStack[m_StateStack.GetSize() - 1];
+void CFX_AggDeviceDriver::RestoreState(bool bKeepSaved) {
   delete m_pClipRgn;
   m_pClipRgn = nullptr;
+
+  int size = m_StateStack.GetSize();
+  if (!size)
+    return;
+
+  CFX_ClipRgn* pSavedClip = m_StateStack[size - 1];
   if (bKeepSaved) {
     if (pSavedClip) {
       m_pClipRgn = new CFX_ClipRgn(*pSavedClip);
     }
   } else {
-    m_StateStack.RemoveAt(m_StateStack.GetSize() - 1);
+    m_StateStack.RemoveAt(size - 1);
     m_pClipRgn = pSavedClip;
   }
 }

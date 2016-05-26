@@ -40,7 +40,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   // IFX_RenderDeviceDriver
   int GetDeviceCaps(int caps_id) override;
   void SaveState() override;
-  void RestoreState(FX_BOOL bKeepSaved) override;
+  void RestoreState(bool bKeepSaved) override;
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                            const CFX_Matrix* pObject2Device,
                            int fill_mode) override;

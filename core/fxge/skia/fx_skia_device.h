@@ -30,7 +30,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
 
   /** Save and restore all graphic states */
   void SaveState() override;
-  void RestoreState(FX_BOOL bKeepSaved) override;
+  void RestoreState(bool bKeepSaved) override;
 
   /** Set clipping path using filled region */
   FX_BOOL SetClip_PathFill(

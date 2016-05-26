@@ -160,7 +160,7 @@ void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice,
     }
   }
 
-  pDevice->RestoreState();
+  pDevice->RestoreState(false);
 }
 
 int32_t CPWL_ListCtrl::GetItemIndex(CPWL_Wnd* pItem) {

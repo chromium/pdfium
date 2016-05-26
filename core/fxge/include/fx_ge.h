@@ -216,7 +216,7 @@ class CFX_RenderDevice {
   FX_BOOL StartRendering();
   void EndRendering();
   void SaveState();
-  void RestoreState(FX_BOOL bKeepSaved = FALSE);
+  void RestoreState(bool bKeepSaved);
 
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
@@ -431,7 +431,7 @@ class IFX_RenderDeviceDriver {
 
   virtual void SaveState() = 0;
 
-  virtual void RestoreState(FX_BOOL bKeepSaved = FALSE) = 0;
+  virtual void RestoreState(bool bKeepSaved) = 0;
 
   virtual FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                                    const CFX_Matrix* pObject2Device,
@@ -575,7 +575,7 @@ class CFX_PSRenderer {
   FX_BOOL StartRendering();
   void EndRendering();
   void SaveState();
-  void RestoreState(FX_BOOL bKeepSaved = FALSE);
+  void RestoreState(bool bKeepSaved);
   void SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
                         int fill_mode);

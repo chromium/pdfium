@@ -639,7 +639,7 @@ FWL_Error CFX_Graphics::SaveGraphState() {
 
 FWL_Error CFX_Graphics::RestoreGraphState() {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
-    m_renderDevice->RestoreState();
+    m_renderDevice->RestoreState(false);
     int32_t size = m_infoStack.GetSize();
     if (size <= 0) {
       return FWL_Error::IntermediateValueInvalid;
@@ -1356,7 +1356,7 @@ FWL_Error CFX_Graphics::FillPathWithPattern(CFX_Path* path,
   m_renderDevice->SetClip_PathFill(path->GetPathData(), (CFX_Matrix*)matrix,
                                    fillMode);
   SetDIBitsWithMatrix(&bmp, &pattern->m_matrix);
-  m_renderDevice->RestoreState();
+  m_renderDevice->RestoreState(false);
   return FWL_Error::Succeeded;
 }
 
@@ -1477,7 +1477,7 @@ FWL_Error CFX_Graphics::FillPathWithShading(CFX_Path* path,
     m_renderDevice->SetClip_PathFill(path->GetPathData(), (CFX_Matrix*)matrix,
                                      fillMode);
     SetDIBitsWithMatrix(&bmp, matrix);
-    m_renderDevice->RestoreState();
+    m_renderDevice->RestoreState(false);
   }
   return result ? FWL_Error::Succeeded : FWL_Error::PropertyInvalid;
 }

@@ -912,7 +912,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
       pContext->m_pContext, pContext->m_pDevice, pContext->m_pOptions);
   pContext->m_pRenderer->Start(pause);
   if (bNeedToRestore)
-    pContext->m_pDevice->RestoreState();
+    pContext->m_pDevice->RestoreState(false);
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,

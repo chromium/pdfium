@@ -959,7 +959,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   m_pDevice->SaveState();
   if (pPageObj->IsPath()) {
     if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
-      m_pDevice->RestoreState();
+      m_pDevice->RestoreState(false);
       return;
     }
   } else if (pPageObj->IsImage()) {
@@ -969,7 +969,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   }
   FX_RECT rect;
   if (GetObjectClippedRect(pPageObj, pObj2Device, FALSE, rect)) {
-    m_pDevice->RestoreState();
+    m_pDevice->RestoreState(false);
     return;
   }
   CFX_Matrix matrix = *pattern->pattern_to_form();
@@ -978,7 +978,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   int alpha = pPageObj->m_GeneralState.GetAlpha(bStroke);
   DrawShading(pattern, &matrix, rect, alpha,
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
-  m_pDevice->RestoreState();
+  m_pDevice->RestoreState(false);
 }
 
 void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
@@ -1006,7 +1006,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   m_pDevice->SaveState();
   if (pPageObj->IsPath()) {
     if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
-      m_pDevice->RestoreState();
+      m_pDevice->RestoreState(false);
       return;
     }
   } else if (pPageObj->IsImage()) {
@@ -1016,7 +1016,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   }
   FX_RECT clip_box = m_pDevice->GetClipBox();
   if (clip_box.IsEmpty()) {
-    m_pDevice->RestoreState();
+    m_pDevice->RestoreState(false);
     return;
   }
   CFX_Matrix dCTM = m_pDevice->GetCTM();
@@ -1084,9 +1084,9 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                           pStates, &m_Options, pPattern->form()->m_Transparency,
                           m_bDropObjects, pFormResource);
         status.RenderObjectList(pPattern->form(), &matrix);
-        m_pDevice->RestoreState();
+        m_pDevice->RestoreState(false);
       }
-    m_pDevice->RestoreState();
+    m_pDevice->RestoreState(false);
     delete pStates;
     return;
   }
@@ -1124,7 +1124,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         pObj2Device, width, height, m_Options.m_Flags);
   }
   if (!pPatternBitmap) {
-    m_pDevice->RestoreState();
+    m_pDevice->RestoreState(false);
     return;
   }
   if (m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
@@ -1178,7 +1178,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   }
   CompositeDIBitmap(&screen, clip_box.left, clip_box.top, 0, 255,
                     FXDIB_BLEND_NORMAL, FALSE);
-  m_pDevice->RestoreState();
+  m_pDevice->RestoreState(false);
 }
 
 void CPDF_RenderStatus::DrawPathWithPattern(const CPDF_PathObject* pPathObj,

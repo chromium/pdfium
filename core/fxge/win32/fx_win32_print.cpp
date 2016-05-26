@@ -270,7 +270,7 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
     FX_BOOL ret = StretchDIBits(
         pTransformed, color, full_rect.left, full_rect.top, full_rect.Width(),
         full_rect.Height(), NULL, 0, alpha_flag, pIccTransform, blend_type);
-    RestoreState();
+    RestoreState(false);
     delete pTransformed;
     handle = NULL;
     return ret;
@@ -371,9 +371,11 @@ void CPSPrinterDriver::EndRendering() {
 void CPSPrinterDriver::SaveState() {
   m_PSRenderer.SaveState();
 }
-void CPSPrinterDriver::RestoreState(FX_BOOL bKeepSaved) {
+
+void CPSPrinterDriver::RestoreState(bool bKeepSaved) {
   m_PSRenderer.RestoreState(bKeepSaved);
 }
+
 FX_BOOL CPSPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                                            const CFX_Matrix* pObject2Device,
                                            int fill_mode) {

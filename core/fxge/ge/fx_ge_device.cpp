@@ -40,10 +40,12 @@ void CFX_RenderDevice::EndRendering() {
 void CFX_RenderDevice::SaveState() {
   m_pDeviceDriver->SaveState();
 }
-void CFX_RenderDevice::RestoreState(FX_BOOL bKeepSaved) {
+
+void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
   m_pDeviceDriver->RestoreState(bKeepSaved);
   UpdateClipBox();
 }
+
 int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
   return m_pDeviceDriver->GetDeviceCaps(caps_id);
 }

@@ -835,7 +835,7 @@ void XFA_DrawImage(CFX_Graphics* pGS,
   while (bRet) {
     bRet = imageRender.Continue(NULL);
   }
-  pRenderDevice->RestoreState();
+  pRenderDevice->RestoreState(false);
 }
 
 static const uint8_t g_inv_base64[128] = {

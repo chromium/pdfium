@@ -77,19 +77,25 @@ void CFX_PSRenderer::SaveState() {
   OUTPUT_PS("q\n");
   m_ClipBoxStack.Add(m_ClipBox);
 }
-void CFX_PSRenderer::RestoreState(FX_BOOL bKeepSaved) {
+
+void CFX_PSRenderer::RestoreState(bool bKeepSaved) {
   StartRendering();
   if (bKeepSaved) {
     OUTPUT_PS("Q\nq\n");
   } else {
     OUTPUT_PS("Q\n");
   }
-  m_bColorSet = m_bGraphStateSet = FALSE;
-  m_ClipBox = m_ClipBoxStack.GetAt(m_ClipBoxStack.GetSize() - 1);
-  if (!bKeepSaved) {
-    m_ClipBoxStack.RemoveAt(m_ClipBoxStack.GetSize() - 1);
-  }
+  m_bColorSet = FALSE;
+  m_bGraphStateSet = FALSE;
+  int size = m_ClipBoxStack.GetSize();
+  if (!size)
+    return;
+
+  m_ClipBox = m_ClipBoxStack.GetAt(size - 1);
+  if (!bKeepSaved)
+    m_ClipBoxStack.RemoveAt(size - 1);
 }
+
 void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
                                 const CFX_Matrix* pObject2Device) {
   int nPoints = pPathData->GetPointCount();

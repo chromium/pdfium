@@ -136,7 +136,7 @@ void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
     }
   }
 
-  pDevice->RestoreState();
+  pDevice->RestoreState(false);
 }
 
 void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
@@ -260,7 +260,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
     }
   }
 
-  pDevice->RestoreState();
+  pDevice->RestoreState(false);
 }
 
 void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
@@ -385,7 +385,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
     }
   }
 
-  pDevice->RestoreState();
+  pDevice->RestoreState(false);
 }
 
 static void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,

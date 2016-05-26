@@ -91,6 +91,6 @@ DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page) {
   if (!pContext)
     return;
 
-  pContext->m_pDevice->RestoreState();
+  pContext->m_pDevice->RestoreState(false);
   pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
 }

@@ -604,7 +604,7 @@ void CFX_SkiaDeviceDriver::SaveState() {
   m_pCanvas->save();
 }
 
-void CFX_SkiaDeviceDriver::RestoreState(FX_BOOL bKeepSaved) {
+void CFX_SkiaDeviceDriver::RestoreState(bool bKeepSaved) {
   m_pCanvas->restore();
   if (bKeepSaved)
     m_pCanvas->save();

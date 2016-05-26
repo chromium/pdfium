@@ -91,7 +91,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL StartRendering() override { return TRUE; }
   void EndRendering() override {}
   void SaveState() override;
-  void RestoreState(FX_BOOL bKeepSaved) override;
+  void RestoreState(bool bKeepSaved) override;
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                            const CFX_Matrix* pObject2Device,
                            int fill_mode) override;
