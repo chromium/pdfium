@@ -249,6 +249,114 @@ const XFA_FMHtmlReserveCode reservesForEncode[] = {
     {9827, L"clubs"},  {9829, L"hearts"}, {9830, L"diams"},
 };
 
+const FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
+    {"Abs", CXFA_FM2JSContext::Abs},
+    {"Avg", CXFA_FM2JSContext::Avg},
+    {"Ceil", CXFA_FM2JSContext::Ceil},
+    {"Count", CXFA_FM2JSContext::Count},
+    {"Floor", CXFA_FM2JSContext::Floor},
+    {"Max", CXFA_FM2JSContext::Max},
+    {"Min", CXFA_FM2JSContext::Min},
+    {"Mod", CXFA_FM2JSContext::Mod},
+    {"Round", CXFA_FM2JSContext::Round},
+    {"Sum", CXFA_FM2JSContext::Sum},
+    {"Date", CXFA_FM2JSContext::Date},
+    {"Date2Num", CXFA_FM2JSContext::Date2Num},
+    {"DateFmt", CXFA_FM2JSContext::DateFmt},
+    {"IsoDate2Num", CXFA_FM2JSContext::IsoDate2Num},
+    {"IsoTime2Num", CXFA_FM2JSContext::IsoTime2Num},
+    {"LocalDateFmt", CXFA_FM2JSContext::LocalDateFmt},
+    {"LocalTimeFmt", CXFA_FM2JSContext::LocalTimeFmt},
+    {"Num2Date", CXFA_FM2JSContext::Num2Date},
+    {"Num2GMTime", CXFA_FM2JSContext::Num2GMTime},
+    {"Num2Time", CXFA_FM2JSContext::Num2Time},
+    {"Time", CXFA_FM2JSContext::Time},
+    {"Time2Num", CXFA_FM2JSContext::Time2Num},
+    {"TimeFmt", CXFA_FM2JSContext::TimeFmt},
+    {"Apr", CXFA_FM2JSContext::Apr},
+    {"Cterm", CXFA_FM2JSContext::CTerm},
+    {"FV", CXFA_FM2JSContext::FV},
+    {"Ipmt", CXFA_FM2JSContext::IPmt},
+    {"NPV", CXFA_FM2JSContext::NPV},
+    {"Pmt", CXFA_FM2JSContext::Pmt},
+    {"PPmt", CXFA_FM2JSContext::PPmt},
+    {"PV", CXFA_FM2JSContext::PV},
+    {"Rate", CXFA_FM2JSContext::Rate},
+    {"Term", CXFA_FM2JSContext::Term},
+    {"Choose", CXFA_FM2JSContext::Choose},
+    {"Exists", CXFA_FM2JSContext::Exists},
+    {"HasValue", CXFA_FM2JSContext::HasValue},
+    {"Oneof", CXFA_FM2JSContext::Oneof},
+    {"Within", CXFA_FM2JSContext::Within},
+    {"If", CXFA_FM2JSContext::If},
+    {"Eval", CXFA_FM2JSContext::Eval},
+    {"Translate", CXFA_FM2JSContext::eval_translation},
+    {"Ref", CXFA_FM2JSContext::Ref},
+    {"UnitType", CXFA_FM2JSContext::UnitType},
+    {"UnitValue", CXFA_FM2JSContext::UnitValue},
+    {"At", CXFA_FM2JSContext::At},
+    {"Concat", CXFA_FM2JSContext::Concat},
+    {"Decode", CXFA_FM2JSContext::Decode},
+    {"Encode", CXFA_FM2JSContext::Encode},
+    {"Format", CXFA_FM2JSContext::Format},
+    {"Left", CXFA_FM2JSContext::Left},
+    {"Len", CXFA_FM2JSContext::Len},
+    {"Lower", CXFA_FM2JSContext::Lower},
+    {"Ltrim", CXFA_FM2JSContext::Ltrim},
+    {"Parse", CXFA_FM2JSContext::Parse},
+    {"Replace", CXFA_FM2JSContext::Replace},
+    {"Right", CXFA_FM2JSContext::Right},
+    {"Rtrim", CXFA_FM2JSContext::Rtrim},
+    {"Space", CXFA_FM2JSContext::Space},
+    {"Str", CXFA_FM2JSContext::Str},
+    {"Stuff", CXFA_FM2JSContext::Stuff},
+    {"Substr", CXFA_FM2JSContext::Substr},
+    {"Uuid", CXFA_FM2JSContext::Uuid},
+    {"Upper", CXFA_FM2JSContext::Upper},
+    {"WordNum", CXFA_FM2JSContext::WordNum},
+    {"Get", CXFA_FM2JSContext::Get},
+    {"Post", CXFA_FM2JSContext::Post},
+    {"Put", CXFA_FM2JSContext::Put},
+    {"positive_operator", CXFA_FM2JSContext::positive_operator},
+    {"negative_operator", CXFA_FM2JSContext::negative_operator},
+    {"logical_or_operator", CXFA_FM2JSContext::logical_or_operator},
+    {"logical_and_operator", CXFA_FM2JSContext::logical_and_operator},
+    {"logical_not_operator", CXFA_FM2JSContext::logical_not_operator},
+    {"equality_operator", CXFA_FM2JSContext::equality_operator},
+    {"notequality_operator", CXFA_FM2JSContext::notequality_operator},
+    {"less_operator", CXFA_FM2JSContext::less_operator},
+    {"lessequal_operator", CXFA_FM2JSContext::lessequal_operator},
+    {"greater_operator", CXFA_FM2JSContext::greater_operator},
+    {"greaterequal_operator", CXFA_FM2JSContext::greaterequal_operator},
+    {"plus_operator", CXFA_FM2JSContext::plus_operator},
+    {"minus_operator", CXFA_FM2JSContext::minus_operator},
+    {"multiple_operator", CXFA_FM2JSContext::multiple_operator},
+    {"divide_operator", CXFA_FM2JSContext::divide_operator},
+    {"assign_value_operator", CXFA_FM2JSContext::assign_value_operator},
+    {"dot_accessor", CXFA_FM2JSContext::dot_accessor},
+    {"dotdot_accessor", CXFA_FM2JSContext::dotdot_accessor},
+    {"concat_fm_object", CXFA_FM2JSContext::concat_fm_object},
+    {"is_fm_object", CXFA_FM2JSContext::is_fm_object},
+    {"is_fm_array", CXFA_FM2JSContext::is_fm_array},
+    {"get_fm_value", CXFA_FM2JSContext::get_fm_value},
+    {"get_fm_jsobj", CXFA_FM2JSContext::get_fm_jsobj},
+    {"fm_var_filter", CXFA_FM2JSContext::fm_var_filter},
+};
+
+const FXJSE_CLASS_DESCRIPTOR formcalc_fm2js_descriptor = {
+    "XFA_FM2JS_FormCalcClass",               // name
+    nullptr,                                 // constructor
+    nullptr,                                 // properties
+    formcalc_fm2js_functions,                // methods
+    0,                                       // number of properties
+    FX_ArraySize(formcalc_fm2js_functions),  // number of methods
+    nullptr,                                 // dynamic prop type
+    nullptr,                                 // dynamic prop getter
+    nullptr,                                 // dynamic prop setter
+    nullptr,                                 // dynamic prop deleter
+    nullptr,                                 // dynamic prop method call
+};
+
 const uint8_t g_sAltTable_Date[] = {
     255, 255, 255, 3,   9,   255, 255, 255, 255, 255, 255, 255, 2,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 1,   255,
@@ -7061,6 +7169,7 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
   }
   return dRet;
 }
+
 void CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg,
                                           CFX_ByteString& szOutputString) {
   if (FXJSE_Value_IsNull(arg) || FXJSE_Value_IsUndefined(arg)) {
@@ -7072,103 +7181,9 @@ void CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg,
     FXJSE_Value_ToUTF8String(arg, szOutputString);
   }
 }
-static FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
-    {"Abs", CXFA_FM2JSContext::Abs},
-    {"Avg", CXFA_FM2JSContext::Avg},
-    {"Ceil", CXFA_FM2JSContext::Ceil},
-    {"Count", CXFA_FM2JSContext::Count},
-    {"Floor", CXFA_FM2JSContext::Floor},
-    {"Max", CXFA_FM2JSContext::Max},
-    {"Min", CXFA_FM2JSContext::Min},
-    {"Mod", CXFA_FM2JSContext::Mod},
-    {"Round", CXFA_FM2JSContext::Round},
-    {"Sum", CXFA_FM2JSContext::Sum},
-    {"Date", CXFA_FM2JSContext::Date},
-    {"Date2Num", CXFA_FM2JSContext::Date2Num},
-    {"DateFmt", CXFA_FM2JSContext::DateFmt},
-    {"IsoDate2Num", CXFA_FM2JSContext::IsoDate2Num},
-    {"IsoTime2Num", CXFA_FM2JSContext::IsoTime2Num},
-    {"LocalDateFmt", CXFA_FM2JSContext::LocalDateFmt},
-    {"LocalTimeFmt", CXFA_FM2JSContext::LocalTimeFmt},
-    {"Num2Date", CXFA_FM2JSContext::Num2Date},
-    {"Num2GMTime", CXFA_FM2JSContext::Num2GMTime},
-    {"Num2Time", CXFA_FM2JSContext::Num2Time},
-    {"Time", CXFA_FM2JSContext::Time},
-    {"Time2Num", CXFA_FM2JSContext::Time2Num},
-    {"TimeFmt", CXFA_FM2JSContext::TimeFmt},
-    {"Apr", CXFA_FM2JSContext::Apr},
-    {"Cterm", CXFA_FM2JSContext::CTerm},
-    {"FV", CXFA_FM2JSContext::FV},
-    {"Ipmt", CXFA_FM2JSContext::IPmt},
-    {"NPV", CXFA_FM2JSContext::NPV},
-    {"Pmt", CXFA_FM2JSContext::Pmt},
-    {"PPmt", CXFA_FM2JSContext::PPmt},
-    {"PV", CXFA_FM2JSContext::PV},
-    {"Rate", CXFA_FM2JSContext::Rate},
-    {"Term", CXFA_FM2JSContext::Term},
-    {"Choose", CXFA_FM2JSContext::Choose},
-    {"Exists", CXFA_FM2JSContext::Exists},
-    {"HasValue", CXFA_FM2JSContext::HasValue},
-    {"Oneof", CXFA_FM2JSContext::Oneof},
-    {"Within", CXFA_FM2JSContext::Within},
-    {"If", CXFA_FM2JSContext::If},
-    {"Eval", CXFA_FM2JSContext::Eval},
-    {"Translate", CXFA_FM2JSContext::eval_translation},
-    {"Ref", CXFA_FM2JSContext::Ref},
-    {"UnitType", CXFA_FM2JSContext::UnitType},
-    {"UnitValue", CXFA_FM2JSContext::UnitValue},
-    {"At", CXFA_FM2JSContext::At},
-    {"Concat", CXFA_FM2JSContext::Concat},
-    {"Decode", CXFA_FM2JSContext::Decode},
-    {"Encode", CXFA_FM2JSContext::Encode},
-    {"Format", CXFA_FM2JSContext::Format},
-    {"Left", CXFA_FM2JSContext::Left},
-    {"Len", CXFA_FM2JSContext::Len},
-    {"Lower", CXFA_FM2JSContext::Lower},
-    {"Ltrim", CXFA_FM2JSContext::Ltrim},
-    {"Parse", CXFA_FM2JSContext::Parse},
-    {"Replace", CXFA_FM2JSContext::Replace},
-    {"Right", CXFA_FM2JSContext::Right},
-    {"Rtrim", CXFA_FM2JSContext::Rtrim},
-    {"Space", CXFA_FM2JSContext::Space},
-    {"Str", CXFA_FM2JSContext::Str},
-    {"Stuff", CXFA_FM2JSContext::Stuff},
-    {"Substr", CXFA_FM2JSContext::Substr},
-    {"Uuid", CXFA_FM2JSContext::Uuid},
-    {"Upper", CXFA_FM2JSContext::Upper},
-    {"WordNum", CXFA_FM2JSContext::WordNum},
-    {"Get", CXFA_FM2JSContext::Get},
-    {"Post", CXFA_FM2JSContext::Post},
-    {"Put", CXFA_FM2JSContext::Put},
-    {"positive_operator", CXFA_FM2JSContext::positive_operator},
-    {"negative_operator", CXFA_FM2JSContext::negative_operator},
-    {"logical_or_operator", CXFA_FM2JSContext::logical_or_operator},
-    {"logical_and_operator", CXFA_FM2JSContext::logical_and_operator},
-    {"logical_not_operator", CXFA_FM2JSContext::logical_not_operator},
-    {"equality_operator", CXFA_FM2JSContext::equality_operator},
-    {"notequality_operator", CXFA_FM2JSContext::notequality_operator},
-    {"less_operator", CXFA_FM2JSContext::less_operator},
-    {"lessequal_operator", CXFA_FM2JSContext::lessequal_operator},
-    {"greater_operator", CXFA_FM2JSContext::greater_operator},
-    {"greaterequal_operator", CXFA_FM2JSContext::greaterequal_operator},
-    {"plus_operator", CXFA_FM2JSContext::plus_operator},
-    {"minus_operator", CXFA_FM2JSContext::minus_operator},
-    {"multiple_operator", CXFA_FM2JSContext::multiple_operator},
-    {"divide_operator", CXFA_FM2JSContext::divide_operator},
-    {"assign_value_operator", CXFA_FM2JSContext::assign_value_operator},
-    {"dot_accessor", CXFA_FM2JSContext::dot_accessor},
-    {"dotdot_accessor", CXFA_FM2JSContext::dotdot_accessor},
-    {"concat_fm_object", CXFA_FM2JSContext::concat_fm_object},
-    {"is_fm_object", CXFA_FM2JSContext::is_fm_object},
-    {"is_fm_array", CXFA_FM2JSContext::is_fm_array},
-    {"get_fm_value", CXFA_FM2JSContext::get_fm_value},
-    {"get_fm_jsobj", CXFA_FM2JSContext::get_fm_jsobj},
-    {"fm_var_filter", CXFA_FM2JSContext::fm_var_filter},
-};
+
 CXFA_FM2JSContext::CXFA_FM2JSContext()
-    : m_pFMClass(nullptr), m_pDocument(nullptr) {
-  FXSYS_memset(&m_ClassDescriptor, 0, sizeof(FXJSE_CLASS_DESCRIPTOR));
-}
+    : m_pClassDescriptor(nullptr), m_pFMClass(nullptr), m_pDocument(nullptr) {}
 
 CXFA_FM2JSContext::~CXFA_FM2JSContext() {
   if (m_pValue)
@@ -7180,18 +7195,13 @@ void CXFA_FM2JSContext::Initialize(v8::Isolate* pScriptIsolate,
                                    CXFA_Document* pDoc) {
   m_pDocument = pDoc;
   m_pIsolate = pScriptIsolate;
-  m_ClassDescriptor.name = "XFA_FM2JS_FormCalcClass";
-  m_ClassDescriptor.constructor = NULL;
-  m_ClassDescriptor.properties = NULL;
-  m_ClassDescriptor.methods = formcalc_fm2js_functions;
-  m_ClassDescriptor.propNum = 0;
-  m_ClassDescriptor.methNum =
-      sizeof(formcalc_fm2js_functions) / sizeof(formcalc_fm2js_functions[0]);
-  m_pFMClass = FXJSE_DefineClass(pScriptContext, &m_ClassDescriptor);
+  m_pClassDescriptor = &formcalc_fm2js_descriptor;
+  m_pFMClass = FXJSE_DefineClass(pScriptContext, m_pClassDescriptor);
   m_pValue = FXJSE_Value_Create(pScriptIsolate);
   FXJSE_Value_SetNull(m_pValue);
   FXJSE_Value_SetObject(m_pValue, this, m_pFMClass);
 }
+
 void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
   FXJSE_Value_Set(pValue, m_pValue);
 }

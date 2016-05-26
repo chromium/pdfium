@@ -53,8 +53,8 @@ struct FXJSE_PROPERTY_DESCRIPTOR {
 struct FXJSE_CLASS_DESCRIPTOR {
   const FX_CHAR* name;
   FXJSE_FuncCallback constructor;
-  FXJSE_PROPERTY_DESCRIPTOR* properties;
-  FXJSE_FUNCTION_DESCRIPTOR* methods;
+  const FXJSE_PROPERTY_DESCRIPTOR* properties;
+  const FXJSE_FUNCTION_DESCRIPTOR* methods;
   int32_t propNum;
   int32_t methNum;
   FXJSE_PropTypeGetter dynPropTypeGetter;
