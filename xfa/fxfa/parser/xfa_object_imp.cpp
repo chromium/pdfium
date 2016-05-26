@@ -829,8 +829,11 @@ void CXFA_Node::Script_NodeClass_ApplyXSL(CFXJSE_Arguments* pArguments) {
   }
   CFX_WideString wsExpression =
       CFX_WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringC());
-  // TODO(tsepez): actually do something here?
+  // TODO(weili): check whether we need to implement this, pdfium:501.
+  // For now, just put the variables here to avoid unused variable warning.
+  (void)wsExpression;
 }
+
 void CXFA_Node::Script_NodeClass_AssignNode(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 3) {
@@ -841,17 +844,22 @@ void CXFA_Node::Script_NodeClass_AssignNode(CFXJSE_Arguments* pArguments) {
   CFX_WideString wsValue;
   int32_t iAction = 0;
   if (iLength >= 1) {
-    CFX_ByteString bsExpression = pArguments->GetUTF8String(0);
-    wsExpression = CFX_WideString::FromUTF8(bsExpression.AsStringC());
+    wsExpression =
+        CFX_WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringC());
   }
   if (iLength >= 2) {
-    CFX_ByteString bsValue = pArguments->GetUTF8String(1);
-    wsValue = CFX_WideString::FromUTF8(bsValue.AsStringC());
+    wsValue =
+        CFX_WideString::FromUTF8(pArguments->GetUTF8String(1).AsStringC());
   }
-  if (iLength >= 3) {
+  if (iLength >= 3)
     iAction = pArguments->GetInt32(2);
-  }
+  // TODO(weili): check whether we need to implement this, pdfium:501.
+  // For now, just put the variables here to avoid unused variable warning.
+  (void)wsExpression;
+  (void)wsValue;
+  (void)iAction;
 }
+
 void CXFA_Node::Script_NodeClass_Clone(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
@@ -1139,22 +1147,26 @@ void CXFA_Node::Script_NodeClass_SetAttribute(CFXJSE_Arguments* pArguments) {
       CFX_WideString::FromUTF8(pArguments->GetUTF8String(1).AsStringC());
   SetAttribute(wsAttribute.AsStringC(), wsAttributeValue.AsStringC(), TRUE);
 }
+
 void CXFA_Node::Script_NodeClass_SetElement(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1 && iLength != 2) {
     ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setElement");
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   CFX_WideString wsName;
-  if (iLength >= 1) {
+  if (iLength >= 1)
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-  }
   if (iLength >= 2) {
-    CFX_ByteString bsName = pArguments->GetUTF8String(1);
-    wsName = CFX_WideString::FromUTF8(bsName.AsStringC());
+    wsName = CFX_WideString::FromUTF8(pArguments->GetUTF8String(1).AsStringC());
   }
+  // TODO(weili): check whether we need to implement this, pdfium:501.
+  // For now, just put the variables here to avoid unused variable warning.
+  (void)pNode;
+  (void)wsName;
 }
+
 void CXFA_Node::Script_NodeClass_Ns(CFXJSE_Value* pValue,
                                     FX_BOOL bSetting,
                                     XFA_ATTRIBUTE eAttribute) {

@@ -816,8 +816,8 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
       if (r.Contains(hitPoint[i].hitPoint))
         hitPoint[i].bNotNeedRepaint = true;
     }
-  } while (
-      (pChild = CFWL_WidgetMgr::GetInstance()->GetNextSiblingWidget(pChild)));
+    pChild = CFWL_WidgetMgr::GetInstance()->GetNextSiblingWidget(pChild);
+  } while (pChild);
 
   if (!bChildIntersectWithDirty)
     return TRUE;

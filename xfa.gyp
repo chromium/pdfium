@@ -1,5 +1,6 @@
 {
   "variables": {
+    "chromium_code": 1,
     "pdf_enable_v8%": 1,
   },
   "target_defaults": {
@@ -7,9 +8,7 @@
       "PDF_ENABLE_XFA",
     ],
     'msvs_disabled_warnings': [
-      4005, 4018, 4146, 4333, 4345, 4267,
-      # TODO(thestig): Fix all instances, remove this, pdfium:29
-      4245, 4310, 4389, 4701, 4702, 4706, 4800,
+      4267,
     ],
   },
   "targets":[
@@ -698,6 +697,9 @@
       ],
       "conditions": [
         ["clang==1" , {
+        }],
+        ["os_posix==1 and clang==0", { # When GCC
+          'cflags': [ '-Wno-error=strict-overflow' ],
         }],
         ["pdf_enable_v8==1", {
           'dependencies': [
