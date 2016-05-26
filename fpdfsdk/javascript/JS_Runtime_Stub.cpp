@@ -139,11 +139,11 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   CPDFSDK_Document* GetReaderDocument() override { return m_pDoc; }
 
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL GetHValueByName(const CFX_ByteStringC&, FXJSE_HVALUE) override {
+  FX_BOOL GetValueByName(const CFX_ByteStringC&, CFXJSE_Value*) override {
     return FALSE;
   }
 
-  FX_BOOL SetHValueByName(const CFX_ByteStringC&, FXJSE_HVALUE) override {
+  FX_BOOL SetValueByName(const CFX_ByteStringC&, CFXJSE_Value*) override {
     return FALSE;
   }
 #endif  // PDF_ENABLE_XFA

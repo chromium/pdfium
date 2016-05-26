@@ -13,13 +13,13 @@ class CFXJSE_Arguments {
  public:
   v8::Isolate* GetRuntime() const;
   int32_t GetLength() const;
-  FXJSE_HVALUE GetValue(int32_t index) const;
+  CFXJSE_Value* GetValue(int32_t index) const;
   FX_BOOL GetBoolean(int32_t index) const;
   int32_t GetInt32(int32_t index) const;
   FX_FLOAT GetFloat(int32_t index) const;
   CFX_ByteString GetUTF8String(int32_t index) const;
-  void* GetObject(int32_t index, CFXJSE_Class* hClass = nullptr) const;
-  FXJSE_HVALUE GetReturnValue();
+  void* GetObject(int32_t index, CFXJSE_Class* pClass = nullptr) const;
+  CFXJSE_Value* GetReturnValue();
 };
 
 #endif  // XFA_FXJSE_CFXJSE_ARGUMENTS_H_

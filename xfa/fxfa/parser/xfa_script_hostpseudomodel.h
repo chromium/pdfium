@@ -16,46 +16,46 @@ class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
   CScript_HostPseudoModel(CXFA_Document* pDocument);
   virtual ~CScript_HostPseudoModel();
 
-  void Script_HostPseudoModel_AppType(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_AppType(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_FoxitAppType(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_FoxitAppType(CFXJSE_Value* pValue,
                                            FX_BOOL bSetting,
                                            XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_CalculationsEnabled(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_CalculationsEnabled(CFXJSE_Value* pValue,
                                                   FX_BOOL bSetting,
                                                   XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_CurrentPage(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_CurrentPage(CFXJSE_Value* pValue,
                                           FX_BOOL bSetting,
                                           XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Language(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_Language(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_NumPages(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_NumPages(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Platform(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_Platform(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Title(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_Title(CFXJSE_Value* pValue,
                                     FX_BOOL bSetting,
                                     XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_ValidationsEnabled(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_ValidationsEnabled(CFXJSE_Value* pValue,
                                                  FX_BOOL bSetting,
                                                  XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Variation(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_Variation(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Version(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_Version(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_FoxitVersion(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_FoxitVersion(CFXJSE_Value* pValue,
                                            FX_BOOL bSetting,
                                            XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Name(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_Name(CFXJSE_Value* pValue,
                                    FX_BOOL bSetting,
                                    XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_FoxitName(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_FoxitName(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute);
 
@@ -78,7 +78,7 @@ class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
   void Script_HostPseudoModel_CurrentDateTime(CFXJSE_Arguments* pArguments);
 
  protected:
-  void Script_HostPseudoModel_LoadString(FXJSE_HVALUE hValue,
+  void Script_HostPseudoModel_LoadString(CFXJSE_Value* pValue,
                                          CXFA_FFNotify* pNotify,
                                          uint32_t dwFlag);
   FX_BOOL Script_HostPseudoModel_ValidateArgsForMsg(

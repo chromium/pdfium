@@ -16,14 +16,14 @@ class CXFA_FFDocHandler {
   CXFA_FFDocHandler();
   ~CXFA_FFDocHandler();
 
-  FXJSE_HVALUE GetXFAScriptObject(CXFA_FFDoc* hDoc);
+  CFXJSE_Value* GetXFAScriptObject(CXFA_FFDoc* hDoc);
   XFA_ATTRIBUTEENUM GetRestoreState(CXFA_FFDoc* hDoc);
 
   FX_BOOL RunDocScript(CXFA_FFDoc* hDoc,
                        XFA_SCRIPTTYPE eScriptType,
                        const CFX_WideStringC& wsScript,
-                       FXJSE_HVALUE hRetValue,
-                       FXJSE_HVALUE hThisObject);
+                       CFXJSE_Value* pRetValue,
+                       CFXJSE_Value* pThisObject);
 
  protected:
 };

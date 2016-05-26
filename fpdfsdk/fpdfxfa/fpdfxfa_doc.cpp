@@ -1214,18 +1214,18 @@ FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
 
 FX_BOOL CPDFXFA_Document::SetGlobalProperty(CXFA_FFDoc* hDoc,
                                             const CFX_ByteStringC& szPropName,
-                                            FXJSE_HVALUE hValue) {
+                                            CFXJSE_Value* pValue) {
   if (hDoc != m_pXFADoc)
     return FALSE;
 
   if (m_pSDKDoc && m_pSDKDoc->GetEnv()->GetJSRuntime())
-    return m_pSDKDoc->GetEnv()->GetJSRuntime()->SetHValueByName(szPropName,
-                                                                hValue);
+    return m_pSDKDoc->GetEnv()->GetJSRuntime()->SetValueByName(szPropName,
+                                                               pValue);
   return FALSE;
 }
 FX_BOOL CPDFXFA_Document::GetPDFScriptObject(CXFA_FFDoc* hDoc,
                                              const CFX_ByteStringC& utf8Name,
-                                             FXJSE_HVALUE hValue) {
+                                             CFXJSE_Value* pValue) {
   if (hDoc != m_pXFADoc)
     return FALSE;
 
@@ -1237,12 +1237,11 @@ FX_BOOL CPDFXFA_Document::GetPDFScriptObject(CXFA_FFDoc* hDoc,
     m_pJSContext = m_pSDKDoc->GetEnv()->GetJSRuntime()->NewContext();
   }
 
-  return _GetHValueByName(utf8Name, hValue,
-                          m_pSDKDoc->GetEnv()->GetJSRuntime());
+  return m_pSDKDoc->GetEnv()->GetJSRuntime()->GetValueByName(utf8Name, pValue);
 }
 FX_BOOL CPDFXFA_Document::GetGlobalProperty(CXFA_FFDoc* hDoc,
                                             const CFX_ByteStringC& szPropName,
-                                            FXJSE_HVALUE hValue) {
+                                            CFXJSE_Value* pValue) {
   if (hDoc != m_pXFADoc)
     return FALSE;
   if (!m_pSDKDoc || !m_pSDKDoc->GetEnv()->GetJSRuntime())
@@ -1253,11 +1252,6 @@ FX_BOOL CPDFXFA_Document::GetGlobalProperty(CXFA_FFDoc* hDoc,
     m_pJSContext = m_pSDKDoc->GetEnv()->GetJSRuntime()->NewContext();
   }
 
-  return _GetHValueByName(szPropName, hValue,
-                          m_pSDKDoc->GetEnv()->GetJSRuntime());
-}
-FX_BOOL CPDFXFA_Document::_GetHValueByName(const CFX_ByteStringC& utf8Name,
-                                           FXJSE_HVALUE hValue,
-                                           IJS_Runtime* runTime) {
-  return runTime->GetHValueByName(utf8Name, hValue);
+  return m_pSDKDoc->GetEnv()->GetJSRuntime()->GetValueByName(szPropName,
+                                                             pValue);
 }

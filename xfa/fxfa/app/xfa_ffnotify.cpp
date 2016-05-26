@@ -201,7 +201,7 @@ FX_BOOL CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
   }
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Unknown;
-  FXJSE_HVALUE pRetValue = NULL;
+  CFXJSE_Value* pRetValue = nullptr;
   int32_t iRet =
       pWidgetAcc->ExecuteScript(CXFA_Script(pScript), &EventParam, &pRetValue);
   if (iRet == XFA_EVENTERROR_Success && pRetValue) {

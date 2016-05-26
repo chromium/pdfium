@@ -470,13 +470,13 @@ class IXFA_DocProvider {
                                   std::vector<CFX_ByteString>& sSuggest) = 0;
   virtual FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
                                      const CFX_ByteStringC& utf8Name,
-                                     FXJSE_HVALUE hValue) = 0;
+                                     CFXJSE_Value* pValue) = 0;
   virtual FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
-                                    FXJSE_HVALUE hValue) = 0;
+                                    CFXJSE_Value* pValue) = 0;
   virtual FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
-                                    FXJSE_HVALUE hValue) = 0;
+                                    CFXJSE_Value* pValue) = 0;
   virtual CPDF_Document* OpenPDF(CXFA_FFDoc* hDoc,
                                  IFX_FileRead* pFile,
                                  FX_BOOL bTakeOverFile) = 0;

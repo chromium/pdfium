@@ -11,193 +11,166 @@
 #include "xfa/fxjse/class.h"
 #include "xfa/fxjse/util_inline.h"
 
-FX_BOOL FXJSE_Value_IsUndefined(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsUndefined();
+FX_BOOL FXJSE_Value_IsUndefined(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsUndefined();
 }
 
-FX_BOOL FXJSE_Value_IsNull(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsNull();
+FX_BOOL FXJSE_Value_IsNull(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsNull();
 }
 
-FX_BOOL FXJSE_Value_IsBoolean(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsBoolean();
+FX_BOOL FXJSE_Value_IsBoolean(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsBoolean();
 }
 
-FX_BOOL FXJSE_Value_IsUTF8String(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsString();
+FX_BOOL FXJSE_Value_IsUTF8String(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsString();
 }
 
-FX_BOOL FXJSE_Value_IsNumber(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsNumber();
+FX_BOOL FXJSE_Value_IsNumber(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsNumber();
 }
 
-FX_BOOL FXJSE_Value_IsObject(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsObject();
+FX_BOOL FXJSE_Value_IsObject(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsObject();
 }
 
-FX_BOOL FXJSE_Value_IsArray(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsArray();
+FX_BOOL FXJSE_Value_IsArray(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsArray();
 }
 
-FX_BOOL FXJSE_Value_IsFunction(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  return lpValue && lpValue->IsFunction();
+FX_BOOL FXJSE_Value_IsFunction(CFXJSE_Value* pValue) {
+  return pValue && pValue->IsFunction();
 }
 
-FX_BOOL FXJSE_Value_ToBoolean(FXJSE_HVALUE hValue) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToBoolean();
+FX_BOOL FXJSE_Value_ToBoolean(CFXJSE_Value* pValue) {
+  return pValue->ToBoolean();
 }
 
-FX_FLOAT FXJSE_Value_ToFloat(FXJSE_HVALUE hValue) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToFloat();
+FX_FLOAT FXJSE_Value_ToFloat(CFXJSE_Value* pValue) {
+  return pValue->ToFloat();
 }
 
-double FXJSE_Value_ToDouble(FXJSE_HVALUE hValue) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToDouble();
+double FXJSE_Value_ToDouble(CFXJSE_Value* pValue) {
+  return pValue->ToDouble();
 }
 
-void FXJSE_Value_ToUTF8String(FXJSE_HVALUE hValue,
+void FXJSE_Value_ToUTF8String(CFXJSE_Value* pValue,
                               CFX_ByteString& szStrOutput) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToString(szStrOutput);
+  pValue->ToString(szStrOutput);
 }
 
-int32_t FXJSE_Value_ToInteger(FXJSE_HVALUE hValue) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToInteger();
+int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue) {
+  return pValue->ToInteger();
 }
 
-void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, CFXJSE_Class* pClass) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToObject(pClass);
+void* FXJSE_Value_ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
+  return pValue->ToObject(pClass);
 }
 
-void FXJSE_Value_SetUndefined(FXJSE_HVALUE hValue) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetUndefined();
+void FXJSE_Value_SetUndefined(CFXJSE_Value* pValue) {
+  pValue->SetUndefined();
 }
 
-void FXJSE_Value_SetNull(FXJSE_HVALUE hValue) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetNull();
+void FXJSE_Value_SetNull(CFXJSE_Value* pValue) {
+  pValue->SetNull();
 }
 
-void FXJSE_Value_SetBoolean(FXJSE_HVALUE hValue, FX_BOOL bBoolean) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetBoolean(bBoolean);
+void FXJSE_Value_SetBoolean(CFXJSE_Value* pValue, FX_BOOL bBoolean) {
+  pValue->SetBoolean(bBoolean);
 }
 
-void FXJSE_Value_SetUTF8String(FXJSE_HVALUE hValue,
+void FXJSE_Value_SetUTF8String(CFXJSE_Value* pValue,
                                const CFX_ByteStringC& szString) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetString(szString);
+  pValue->SetString(szString);
 }
 
-void FXJSE_Value_SetInteger(FXJSE_HVALUE hValue, int32_t nInteger) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetInteger(nInteger);
+void FXJSE_Value_SetInteger(CFXJSE_Value* pValue, int32_t nInteger) {
+  pValue->SetInteger(nInteger);
 }
 
-void FXJSE_Value_SetFloat(FXJSE_HVALUE hValue, FX_FLOAT fFloat) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetFloat(fFloat);
+void FXJSE_Value_SetFloat(CFXJSE_Value* pValue, FX_FLOAT fFloat) {
+  pValue->SetFloat(fFloat);
 }
 
-void FXJSE_Value_SetDouble(FXJSE_HVALUE hValue, double dDouble) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)->SetDouble(dDouble);
+void FXJSE_Value_SetDouble(CFXJSE_Value* pValue, double dDouble) {
+  pValue->SetDouble(dDouble);
 }
 
-void FXJSE_Value_SetObject(FXJSE_HVALUE hValue,
+void FXJSE_Value_SetObject(CFXJSE_Value* pValue,
                            void* lpObject,
                            CFXJSE_Class* pClass) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
   if (!pClass) {
     ASSERT(!lpObject);
-    lpValue->SetJSObject();
+    pValue->SetJSObject();
   } else {
-    lpValue->SetHostObject(lpObject, pClass);
+    pValue->SetHostObject(lpObject, pClass);
   }
 }
 
-void FXJSE_Value_SetArray(FXJSE_HVALUE hValue,
+void FXJSE_Value_SetArray(CFXJSE_Value* pValue,
                           uint32_t uValueCount,
-                          FXJSE_HVALUE* rgValues) {
-  reinterpret_cast<CFXJSE_Value*>(hValue)
-      ->SetArray(uValueCount, reinterpret_cast<CFXJSE_Value**>(rgValues));
+                          CFXJSE_Value** rgValues) {
+  pValue->SetArray(uValueCount, rgValues);
 }
 
-void FXJSE_Value_Set(FXJSE_HVALUE hValue, FXJSE_HVALUE hOriginalValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Value* lpOriginalValue =
-      reinterpret_cast<CFXJSE_Value*>(hOriginalValue);
-  ASSERT(lpValue && lpOriginalValue);
-  lpValue->Assign(lpOriginalValue);
+void FXJSE_Value_Set(CFXJSE_Value* pValue, CFXJSE_Value* pOriginalValue) {
+  ASSERT(pOriginalValue);
+  pValue->Assign(pOriginalValue);
 }
 
-FX_BOOL FXJSE_Value_GetObjectProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_GetObjectProp(CFXJSE_Value* pValue,
                                   const CFX_ByteStringC& szPropName,
-                                  FXJSE_HVALUE hPropValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
-  ASSERT(lpValue && lpPropValue);
-  return lpValue->GetObjectProperty(szPropName, lpPropValue);
+                                  CFXJSE_Value* pPropValue) {
+  ASSERT(pPropValue);
+  return pValue->GetObjectProperty(szPropName, pPropValue);
 }
 
-FX_BOOL FXJSE_Value_SetObjectProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_SetObjectProp(CFXJSE_Value* pValue,
                                   const CFX_ByteStringC& szPropName,
-                                  FXJSE_HVALUE hPropValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
-  ASSERT(lpValue && lpPropValue);
-  return lpValue->SetObjectProperty(szPropName, lpPropValue);
+                                  CFXJSE_Value* pPropValue) {
+  ASSERT(pPropValue);
+  return pValue->SetObjectProperty(szPropName, pPropValue);
 }
 
-FX_BOOL FXJSE_Value_GetObjectPropByIdx(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_GetObjectPropByIdx(CFXJSE_Value* pValue,
                                        uint32_t uPropIdx,
-                                       FXJSE_HVALUE hPropValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
-  ASSERT(lpValue && lpPropValue);
-  return lpValue->GetObjectProperty(uPropIdx, lpPropValue);
+                                       CFXJSE_Value* pPropValue) {
+  ASSERT(pPropValue);
+  return pValue->GetObjectProperty(uPropIdx, pPropValue);
 }
 
-FX_BOOL FXJSE_Value_DeleteObjectProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_DeleteObjectProp(CFXJSE_Value* pValue,
                                      const CFX_ByteStringC& szPropName) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)
-      ->DeleteObjectProperty(szPropName);
+  return pValue->DeleteObjectProperty(szPropName);
 }
 
-FX_BOOL FXJSE_Value_ObjectHasOwnProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_ObjectHasOwnProp(CFXJSE_Value* pValue,
                                      const CFX_ByteStringC& szPropName,
                                      FX_BOOL bUseTypeGetter) {
-  return reinterpret_cast<CFXJSE_Value*>(hValue)
-      ->HasObjectOwnProperty(szPropName, bUseTypeGetter);
+  return pValue->HasObjectOwnProperty(szPropName, bUseTypeGetter);
 }
 
-FX_BOOL FXJSE_Value_SetObjectOwnProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_SetObjectOwnProp(CFXJSE_Value* pValue,
                                      const CFX_ByteStringC& szPropName,
-                                     FXJSE_HVALUE hPropValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
-  ASSERT(lpValue && lpPropValue);
-  return lpValue->SetObjectOwnProperty(szPropName, lpPropValue);
+                                     CFXJSE_Value* pPropValue) {
+  ASSERT(pPropValue);
+  return pValue->SetObjectOwnProperty(szPropName, pPropValue);
 }
 
-FX_BOOL FXJSE_Value_SetFunctionBind(FXJSE_HVALUE hValue,
-                                    FXJSE_HVALUE hOldFunction,
-                                    FXJSE_HVALUE hNewThis) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Value* lpOldFunction = reinterpret_cast<CFXJSE_Value*>(hOldFunction);
-  CFXJSE_Value* lpNewThis = reinterpret_cast<CFXJSE_Value*>(hNewThis);
-  ASSERT(lpValue && lpOldFunction && lpNewThis);
-  return lpValue->SetFunctionBind(lpOldFunction, lpNewThis);
+FX_BOOL FXJSE_Value_SetFunctionBind(CFXJSE_Value* pValue,
+                                    CFXJSE_Value* pOldFunction,
+                                    CFXJSE_Value* pNewThis) {
+  ASSERT(pOldFunction && pNewThis);
+  return pValue->SetFunctionBind(pOldFunction, pNewThis);
 }
 
-FXJSE_HVALUE FXJSE_Value_Create(v8::Isolate* pIsolate) {
-  return reinterpret_cast<FXJSE_HVALUE>(CFXJSE_Value::Create(pIsolate));
+CFXJSE_Value* FXJSE_Value_Create(v8::Isolate* pIsolate) {
+  return CFXJSE_Value::Create(pIsolate);
 }
 
-void FXJSE_Value_Release(FXJSE_HVALUE hValue) {
-  CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  delete lpValue;
+void FXJSE_Value_Release(CFXJSE_Value* pValue) {
+  delete pValue;
 }
 
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
@@ -240,13 +213,13 @@ void* CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const {
   ASSERT(!m_hValue.IsEmpty());
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
-  v8::Local<v8::Value> hValue = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
-  ASSERT(!hValue.IsEmpty());
+  v8::Local<v8::Value> pValue = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
+  ASSERT(!pValue.IsEmpty());
 
-  if (!hValue->IsObject())
+  if (!pValue->IsObject())
     return nullptr;
 
-  return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>(), lpClass);
+  return FXJSE_RetrieveObjectBinding(pValue.As<v8::Object>(), lpClass);
 }
 
 V8_INLINE static double FXJSE_ftod(FX_FLOAT fNumber) {
@@ -291,8 +264,8 @@ V8_INLINE static double FXJSE_ftod(FX_FLOAT fNumber) {
 
 void CFXJSE_Value::SetFloat(FX_FLOAT fFloat) {
   CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
-  v8::Local<v8::Value> hValue = v8::Number::New(m_pIsolate, FXJSE_ftod(fFloat));
-  m_hValue.Reset(m_pIsolate, hValue);
+  v8::Local<v8::Value> pValue = v8::Number::New(m_pIsolate, FXJSE_ftod(fFloat));
+  m_hValue.Reset(m_pIsolate, pValue);
 }
 
 void CFXJSE_Value::SetHostObject(void* lpObject, CFXJSE_Class* lpClass) {
@@ -423,7 +396,7 @@ FX_BOOL CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
   if (!hObject->IsObject())
     return FALSE;
 
-  v8::Local<v8::Value> hValue =
+  v8::Local<v8::Value> pValue =
       v8::Local<v8::Value>::New(m_pIsolate, lpPropValue->m_hValue);
   return hObject.As<v8::Object>()
       ->DefineOwnProperty(
@@ -431,7 +404,7 @@ FX_BOOL CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
           v8::String::NewFromUtf8(m_pIsolate, szPropName.c_str(),
                                   v8::String::kNormalString,
                                   szPropName.GetLength()),
-          hValue)
+          pValue)
       .FromMaybe(false);
 }
 
@@ -470,7 +443,7 @@ FX_BOOL CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
 FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver,
                            CFXJSE_Value* lpRetValue,
                            uint32_t nArgCount,
-                           FXJSE_HVALUE* lpArgs) {
+                           CFXJSE_Value** lpArgs) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hFunctionValue =
       v8::Local<v8::Value>::New(m_pIsolate, DirectGetValue());
@@ -492,7 +465,7 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver,
     lpLocalArgs = FX_Alloc(v8::Local<v8::Value>, nArgCount);
     for (uint32_t i = 0; i < nArgCount; i++) {
       new (lpLocalArgs + i) v8::Local<v8::Value>;
-      CFXJSE_Value* lpArg = (CFXJSE_Value*)lpArgs[i];
+      CFXJSE_Value* lpArg = lpArgs[i];
       if (lpArg) {
         lpLocalArgs[i] =
             v8::Local<v8::Value>::New(m_pIsolate, lpArg->DirectGetValue());

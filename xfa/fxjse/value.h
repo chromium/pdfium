@@ -201,7 +201,7 @@ class CFXJSE_Value {
   FX_BOOL Call(CFXJSE_Value* lpReceiver,
                CFXJSE_Value* lpRetValue,
                uint32_t nArgCount,
-               FXJSE_HVALUE* lpArgs);
+               CFXJSE_Value** lpArgs);
 
   V8_INLINE v8::Isolate* GetIsolate() const { return m_pIsolate; }
   V8_INLINE const v8::Global<v8::Value>& DirectGetValue() const {

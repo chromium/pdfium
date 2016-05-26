@@ -35,38 +35,43 @@ enum XFA_RESOVENODE_RSTYPE {
   XFA_RESOVENODE_RSTYPE_ExistNodes,
 };
 
-class CXFA_HVALUEArray : public CFX_ArrayTemplate<FXJSE_HVALUE> {
+class CXFA_ValueArray : public CFX_ArrayTemplate<CFXJSE_Value*> {
  public:
-  CXFA_HVALUEArray(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
-  ~CXFA_HVALUEArray() {
+  CXFA_ValueArray(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
+
+  ~CXFA_ValueArray() {
     for (int32_t i = 0; i < GetSize(); i++) {
       FXJSE_Value_Release(GetAt(i));
     }
   }
+
   void GetAttributeObject(CXFA_ObjArray& objArray) {
     for (int32_t i = 0; i < GetSize(); i++) {
       CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(GetAt(i), NULL);
       objArray.Add(pObject);
     }
   }
+
   v8::Isolate* m_pIsolate;
 };
 
 struct XFA_RESOLVENODE_RS {
   XFA_RESOLVENODE_RS()
       : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(NULL) {}
+
   ~XFA_RESOLVENODE_RS() { nodes.RemoveAll(); }
-  int32_t GetAttributeResult(CXFA_HVALUEArray& hValueArray) const {
+
+  int32_t GetAttributeResult(CXFA_ValueArray& valueArray) const {
     if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
-      v8::Isolate* pIsolate = hValueArray.m_pIsolate;
+      v8::Isolate* pIsolate = valueArray.m_pIsolate;
       for (int32_t i = 0; i < nodes.GetSize(); i++) {
-        FXJSE_HVALUE hValue = FXJSE_Value_Create(pIsolate);
+        CFXJSE_Value* pValue = FXJSE_Value_Create(pIsolate);
         (nodes[i]->*(pScriptAttribute->lpfnCallback))(
-            hValue, FALSE, (XFA_ATTRIBUTE)pScriptAttribute->eAttribute);
-        hValueArray.Add(hValue);
+            pValue, FALSE, (XFA_ATTRIBUTE)pScriptAttribute->eAttribute);
+        valueArray.Add(pValue);
       }
     }
-    return hValueArray.GetSize();
+    return valueArray.GetSize();
   }
 
   CXFA_ObjArray nodes;

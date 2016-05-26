@@ -18,16 +18,16 @@ class CScript_DataWindow : public CXFA_OrdinaryObject {
   void Script_DataWindow_Record(CFXJSE_Arguments* pArguments);
   void Script_DataWindow_GotoRecord(CFXJSE_Arguments* pArguments);
   void Script_DataWindow_IsRecordGroup(CFXJSE_Arguments* pArguments);
-  void Script_DataWindow_RecordsBefore(FXJSE_HVALUE hValue,
+  void Script_DataWindow_RecordsBefore(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute);
-  void Script_DataWindow_CurrentRecordNumber(FXJSE_HVALUE hValue,
+  void Script_DataWindow_CurrentRecordNumber(CFXJSE_Value* pValue,
                                              FX_BOOL bSetting,
                                              XFA_ATTRIBUTE eAttribute);
-  void Script_DataWindow_RecordsAfter(FXJSE_HVALUE hValue,
+  void Script_DataWindow_RecordsAfter(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);
-  void Script_DataWindow_IsDefined(FXJSE_HVALUE hValue,
+  void Script_DataWindow_IsDefined(CFXJSE_Value* pValue,
                                    FX_BOOL bSetting,
                                    XFA_ATTRIBUTE eAttribute);
 };

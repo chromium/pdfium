@@ -260,8 +260,8 @@ CFX_WideString ChangeObjName(const CFX_WideString& str) {
   sRet.Replace(L"_", L".");
   return sRet;
 }
-FX_BOOL CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name,
-                                     FXJSE_HVALUE hValue) {
+FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
+                                    CFXJSE_Value* pValue) {
 #ifdef PDF_ENABLE_XFA
   const FX_CHAR* name = utf8Name.c_str();
 
@@ -287,18 +287,18 @@ FX_BOOL CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name,
           GetIsolate(), name, v8::String::kNormalString, utf8Name.GetLength()));
 
   if (propvalue.IsEmpty()) {
-    FXJSE_Value_SetUndefined(hValue);
+    FXJSE_Value_SetUndefined(pValue);
     return FALSE;
   }
-  ((CFXJSE_Value*)hValue)->ForceSetValue(propvalue);
+  pValue->ForceSetValue(propvalue);
 #endif
 
   return TRUE;
 }
-FX_BOOL CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name,
-                                     FXJSE_HVALUE hValue) {
+FX_BOOL CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
+                                    CFXJSE_Value* pValue) {
 #ifdef PDF_ENABLE_XFA
-  if (utf8Name.IsEmpty() || hValue == NULL)
+  if (utf8Name.IsEmpty() || !pValue)
     return FALSE;
   const FX_CHAR* name = utf8Name.c_str();
   v8::Isolate* pIsolate = GetIsolate();
@@ -311,8 +311,8 @@ FX_BOOL CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name,
 
   // v8::Local<v8::Context> tmpCotext =
   // v8::Local<v8::Context>::New(GetIsolate(), m_context);
-  v8::Local<v8::Value> propvalue = v8::Local<v8::Value>::New(
-      GetIsolate(), ((CFXJSE_Value*)hValue)->DirectGetValue());
+  v8::Local<v8::Value> propvalue =
+      v8::Local<v8::Value>::New(GetIsolate(), pValue->DirectGetValue());
   context->Global()->Set(
       v8::String::NewFromUtf8(pIsolate, name, v8::String::kNormalString,
                               utf8Name.GetLength()),

@@ -366,7 +366,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
 
 void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
                                                int32_t iRet,
-                                               FXJSE_HVALUE pRetValue,
+                                               CFXJSE_Value* pRetValue,
                                                FX_BOOL bVersionFlag) {
   if (iRet == XFA_EVENTERROR_Success && pRetValue) {
     if (FXJSE_Value_IsBoolean(pRetValue) && !FXJSE_Value_ToBoolean(pRetValue)) {
@@ -580,7 +580,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   FX_BOOL bStatus =
       m_pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
-  FXJSE_HVALUE pRetValue = NULL;
+  CFXJSE_Value* pRetValue = nullptr;
   int32_t iRet = XFA_EVENTERROR_NotExist;
   CXFA_Script script = validate.GetScript();
   if (script) {
@@ -616,7 +616,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
 }
 int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
                                       CXFA_EventParam* pEventParam,
-                                      FXJSE_HVALUE* pRetValue) {
+                                      CFXJSE_Value** pRetValue) {
   static const uint32_t MAX_RECURSION_DEPTH = 2;
   if (m_nRecursionDepth > MAX_RECURSION_DEPTH)
     return XFA_EVENTERROR_Success;
@@ -645,21 +645,21 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
       pEventParam->m_eType == XFA_EVENT_Calculate) {
     pContext->SetNodesOfRunScript(&refNodes);
   }
-  FXJSE_HVALUE hRetValue = FXJSE_Value_Create(pContext->GetRuntime());
+  CFXJSE_Value* pTmpRetValue = FXJSE_Value_Create(pContext->GetRuntime());
   ++m_nRecursionDepth;
   FX_BOOL bRet =
       pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
-                          wsExpression.AsStringC(), hRetValue, m_pNode);
+                          wsExpression.AsStringC(), pTmpRetValue, m_pNode);
   --m_nRecursionDepth;
   int32_t iRet = XFA_EVENTERROR_Error;
   if (bRet) {
     iRet = XFA_EVENTERROR_Success;
     if (pEventParam->m_eType == XFA_EVENT_Calculate ||
         pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-      if (!FXJSE_Value_IsUndefined(hRetValue)) {
-        if (!FXJSE_Value_IsNull(hRetValue)) {
+      if (!FXJSE_Value_IsUndefined(pTmpRetValue)) {
+        if (!FXJSE_Value_IsNull(pTmpRetValue)) {
           CFX_ByteString bsString;
-          FXJSE_Value_ToUTF8String(hRetValue, bsString);
+          FXJSE_Value_ToUTF8String(pTmpRetValue, bsString);
           pEventParam->m_wsResult =
               CFX_WideString::FromUTF8(bsString.AsStringC());
         }
@@ -695,9 +695,9 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
     }
   }
   if (pRetValue) {
-    *pRetValue = hRetValue;
+    *pRetValue = pTmpRetValue;
   } else {
-    FXJSE_Value_Release(hRetValue);
+    FXJSE_Value_Release(pTmpRetValue);
   }
   pContext->SetNodesOfRunScript(NULL);
   return iRet;

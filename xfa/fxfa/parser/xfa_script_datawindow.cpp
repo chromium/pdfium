@@ -30,18 +30,18 @@ void CScript_DataWindow::Script_DataWindow_GotoRecord(
 void CScript_DataWindow::Script_DataWindow_IsRecordGroup(
     CFXJSE_Arguments* pArguments) {}
 void CScript_DataWindow::Script_DataWindow_RecordsBefore(
-    FXJSE_HVALUE hValue,
+    CFXJSE_Value* pValue,
     FX_BOOL bSetting,
     XFA_ATTRIBUTE eAttribute) {}
 void CScript_DataWindow::Script_DataWindow_CurrentRecordNumber(
-    FXJSE_HVALUE hValue,
+    CFXJSE_Value* pValue,
     FX_BOOL bSetting,
     XFA_ATTRIBUTE eAttribute) {}
 void CScript_DataWindow::Script_DataWindow_RecordsAfter(
-    FXJSE_HVALUE hValue,
+    CFXJSE_Value* pValue,
     FX_BOOL bSetting,
     XFA_ATTRIBUTE eAttribute) {}
-void CScript_DataWindow::Script_DataWindow_IsDefined(FXJSE_HVALUE hValue,
+void CScript_DataWindow::Script_DataWindow_IsDefined(CFXJSE_Value* pValue,
                                                      FX_BOOL bSetting,
                                                      XFA_ATTRIBUTE eAttribute) {
 }

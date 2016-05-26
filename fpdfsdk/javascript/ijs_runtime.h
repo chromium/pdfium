@@ -35,10 +35,10 @@ class IJS_Runtime {
                       CFX_WideString* info) = 0;
 
 #ifdef PDF_ENABLE_XFA
-  virtual FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
-                                  FXJSE_HVALUE hValue) = 0;
-  virtual FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
-                                  FXJSE_HVALUE hValue) = 0;
+  virtual FX_BOOL GetValueByName(const CFX_ByteStringC& utf8Name,
+                                 CFXJSE_Value* pValue) = 0;
+  virtual FX_BOOL SetValueByName(const CFX_ByteStringC& utf8Name,
+                                 CFXJSE_Value* pValue) = 0;
 #endif  // PDF_ENABLE_XFA
 
  protected:

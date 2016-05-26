@@ -53,7 +53,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   int32_t ProcessValidate(int32_t iFlags = 0);
   int32_t ExecuteScript(CXFA_Script script,
                         CXFA_EventParam* pEventParam,
-                        FXJSE_HVALUE* pRetValue = NULL);
+                        CFXJSE_Value** pRetValue = nullptr);
 
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
   void StartWidgetLayout(FX_FLOAT& fCalcWidth, FX_FLOAT& fCalcHeight);
@@ -82,7 +82,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
  protected:
   void ProcessScriptTestValidate(CXFA_Validate validate,
                                  int32_t iRet,
-                                 FXJSE_HVALUE pRetValue,
+                                 CFXJSE_Value* pRetValue,
                                  FX_BOOL bVersionFlag);
   int32_t ProcessFormatTestValidate(CXFA_Validate validate,
                                     FX_BOOL bVersionFlag);

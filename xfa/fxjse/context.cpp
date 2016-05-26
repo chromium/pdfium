@@ -21,14 +21,14 @@ void FXJSE_Context_Release(CFXJSE_Context* pContext) {
   delete pContext;
 }
 
-FXJSE_HVALUE FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext) {
+CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext) {
   if (!pContext)
     return nullptr;
 
   CFXJSE_Value* lpValue = CFXJSE_Value::Create(pContext->GetRuntime());
   ASSERT(lpValue);
   pContext->GetGlobalObject(lpValue);
-  return reinterpret_cast<FXJSE_HVALUE>(lpValue);
+  return lpValue;
 }
 
 static const FX_CHAR* szCompatibleModeScripts[] = {
@@ -68,11 +68,9 @@ void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
 
 FX_BOOL FXJSE_ExecuteScript(CFXJSE_Context* pContext,
                             const FX_CHAR* szScript,
-                            FXJSE_HVALUE hRetValue,
-                            FXJSE_HVALUE hNewThisObject) {
-  return pContext->ExecuteScript(
-      szScript, reinterpret_cast<CFXJSE_Value*>(hRetValue),
-      reinterpret_cast<CFXJSE_Value*>(hNewThisObject));
+                            CFXJSE_Value* pRetValue,
+                            CFXJSE_Value* pNewThisObject) {
+  return pContext->ExecuteScript(szScript, pRetValue, pNewThisObject);
 }
 
 v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,

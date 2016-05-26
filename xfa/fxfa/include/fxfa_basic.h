@@ -1063,7 +1063,7 @@ struct XFA_METHODINFO {
 
 const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
                                           const CFX_WideStringC& wsMethodName);
-typedef void (CXFA_Object::*XFA_ATTRIBUTE_CALLBACK)(FXJSE_HVALUE hValue,
+typedef void (CXFA_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
                                                     FX_BOOL bSetting,
                                                     XFA_ATTRIBUTE eAttribute);
 enum XFA_SCRIPT_TYPE {

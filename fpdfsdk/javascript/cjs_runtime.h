@@ -64,10 +64,10 @@ class CJS_Runtime : public IJS_Runtime {
   v8::Local<v8::Array> GetConstArray(const CFX_WideString& name);
 
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
-                          FXJSE_HVALUE hValue) override;
-  FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
-                          FXJSE_HVALUE hValue) override;
+  FX_BOOL GetValueByName(const CFX_ByteStringC& utf8Name,
+                         CFXJSE_Value* pValue) override;
+  FX_BOOL SetValueByName(const CFX_ByteStringC& utf8Name,
+                         CFXJSE_Value* pValue) override;
 #endif  // PDF_ENABLE_XFA
 
   void AddObserver(Observer* observer);

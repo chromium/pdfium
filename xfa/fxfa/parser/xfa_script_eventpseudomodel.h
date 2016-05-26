@@ -35,52 +35,52 @@ class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
   explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
   virtual ~CScript_EventPseudoModel();
 
-  void Script_EventPseudoModel_Change(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_Change(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_CommitKey(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_CommitKey(CFXJSE_Value* pValue,
                                          FX_BOOL bSetting,
                                          XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_FullText(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_FullText(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_KeyDown(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_KeyDown(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_Modifier(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_Modifier(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_NewContentType(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_NewContentType(CFXJSE_Value* pValue,
                                               FX_BOOL bSetting,
                                               XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_NewText(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_NewText(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_PrevContentType(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_PrevContentType(CFXJSE_Value* pValue,
                                                FX_BOOL bSetting,
                                                XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_PrevText(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_PrevText(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_Reenter(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_Reenter(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_SelEnd(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_SelEnd(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_SelStart(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_SelStart(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_Shift(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_Shift(CFXJSE_Value* pValue,
                                      FX_BOOL bSetting,
                                      XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_SoapFaultCode(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_SoapFaultCode(CFXJSE_Value* pValue,
                                              FX_BOOL bSetting,
                                              XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_SoapFaultString(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_SoapFaultString(CFXJSE_Value* pValue,
                                                FX_BOOL bSetting,
                                                XFA_ATTRIBUTE eAttribute);
-  void Script_EventPseudoModel_Target(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_Target(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);
 
@@ -88,7 +88,7 @@ class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
   void Script_EventPseudoModel_Reset(CFXJSE_Arguments* pArguments);
 
  protected:
-  void Script_EventPseudoModel_Property(FXJSE_HVALUE hValue,
+  void Script_EventPseudoModel_Property(CFXJSE_Value* pValue,
                                         XFA_Event dwFlag,
                                         FX_BOOL bSetting);
 };

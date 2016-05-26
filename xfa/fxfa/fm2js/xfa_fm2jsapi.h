@@ -27,7 +27,7 @@ void XFA_FM2JS_ContextInitialize(XFA_HFM2JSCONTEXT hFM2JSContext,
                                  CFXJSE_Context* pScriptContext,
                                  CXFA_Document* pDocument);
 void XFA_FM2JS_GlobalPropertyGetter(XFA_HFM2JSCONTEXT hFM2JSContext,
-                                    FXJSE_HVALUE hValue);
+                                    CFXJSE_Value* pValue);
 void XFA_FM2JS_ContextRelease(XFA_HFM2JSCONTEXT hFM2JSContext);
 
 #ifdef __cplusplus

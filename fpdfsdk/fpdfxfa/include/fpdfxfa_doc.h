@@ -163,17 +163,17 @@ class CPDFXFA_Document : public IXFA_DocProvider {
     return FALSE;
   }
 
-  // Get PDF javascript object, set the object to hValue.
+  // Get PDF javascript object, set the object to pValue.
   virtual FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
                                      const CFX_ByteStringC& utf8Name,
-                                     FXJSE_HVALUE hValue);
+                                     CFXJSE_Value* pValue);
 
   virtual FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
-                                    FXJSE_HVALUE hValue);
+                                    CFXJSE_Value* pValue);
   virtual FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
-                                    FXJSE_HVALUE hValue);
+                                    CFXJSE_Value* pValue);
   virtual CPDF_Document* OpenPDF(CXFA_FFDoc* hDoc,
                                  IFX_FileRead* pFile,
                                  FX_BOOL bTakeOverFile) {
@@ -183,9 +183,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
                                        const CFX_WideString& wsLink);
 
-  FX_BOOL _GetHValueByName(const CFX_ByteStringC& utf8Name,
-                           FXJSE_HVALUE hValue,
-                           IJS_Runtime* runTime);
   FX_BOOL _OnBeforeNotifySumbit();
   void _OnAfterNotifySumbit();
   FX_BOOL _NotifySubmit(FX_BOOL bPrevOrPost);

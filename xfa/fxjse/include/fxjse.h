@@ -14,21 +14,18 @@
 class CFXJSE_Arguments;
 class CFXJSE_Class;
 class CFXJSE_Context;
+class CFXJSE_Value;
 
-typedef struct FXJSE_HVALUE_ { void* pData; } * FXJSE_HVALUE;
-// NOLINTNEXTLINE
-typedef struct FXJSE_HOBJECT_ : public FXJSE_HVALUE_{} * FXJSE_HOBJECT;
-
-typedef void (*FXJSE_FuncCallback)(FXJSE_HOBJECT hThis,
+typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,
                                    const CFX_ByteStringC& szFuncName,
                                    CFXJSE_Arguments& args);
-typedef void (*FXJSE_PropAccessor)(FXJSE_HOBJECT hObject,
+typedef void (*FXJSE_PropAccessor)(CFXJSE_Value* pObject,
                                    const CFX_ByteStringC& szPropName,
-                                   FXJSE_HVALUE hValue);
-typedef int32_t (*FXJSE_PropTypeGetter)(FXJSE_HOBJECT hObject,
+                                   CFXJSE_Value* pValue);
+typedef int32_t (*FXJSE_PropTypeGetter)(CFXJSE_Value* pObject,
                                         const CFX_ByteStringC& szPropName,
                                         FX_BOOL bQueryIn);
-typedef FX_BOOL (*FXJSE_PropDeleter)(FXJSE_HOBJECT hObject,
+typedef FX_BOOL (*FXJSE_PropDeleter)(CFXJSE_Value* pObject,
                                      const CFX_ByteStringC& szPropName);
 
 enum FXJSE_ClassPropTypes {
@@ -77,7 +74,7 @@ CFXJSE_Context* FXJSE_Context_Create(v8::Isolate* pIsolate,
                                      const FXJSE_CLASS* lpGlobalClass = nullptr,
                                      void* lpGlobalObject = nullptr);
 void FXJSE_Context_Release(CFXJSE_Context* pContext);
-FXJSE_HVALUE FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
+CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
 
 void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
                                         uint32_t dwCompatibleFlags);
@@ -85,67 +82,68 @@ void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
 CFXJSE_Class* FXJSE_DefineClass(CFXJSE_Context* pContext,
                                 const FXJSE_CLASS* lpClass);
 
-FXJSE_HVALUE FXJSE_Value_Create(v8::Isolate* pIsolate);
-void FXJSE_Value_Release(FXJSE_HVALUE hValue);
+CFXJSE_Value* FXJSE_Value_Create(v8::Isolate* pIsolate);
+void FXJSE_Value_Release(CFXJSE_Value* pValue);
 
-FX_BOOL FXJSE_Value_IsUndefined(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsNull(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsBoolean(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsUTF8String(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsNumber(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsObject(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsArray(FXJSE_HVALUE hValue);
-FX_BOOL FXJSE_Value_IsFunction(FXJSE_HVALUE hValue);
+FX_BOOL FXJSE_Value_IsUndefined(CFXJSE_Value* pValue);
+FX_BOOL FXJSE_Value_IsNull(CFXJSE_Value* pValue);
+FX_BOOL FXJSE_Value_IsBoolean(CFXJSE_Value* pValue);
+FX_BOOL FXJSE_Value_IsUTF8String(CFXJSE_Value* pValue);
+FX_BOOL FXJSE_Value_IsNumber(CFXJSE_Value* pValue);
+FX_BOOL FXJSE_Value_IsObject(CFXJSE_Value* pValue);
+FX_BOOL FXJSE_Value_IsArray(CFXJSE_Value* pValue);
+FX_BOOL FXJSE_Value_IsFunction(CFXJSE_Value* pValue);
 
-FX_BOOL FXJSE_Value_ToBoolean(FXJSE_HVALUE hValue);
-FX_FLOAT FXJSE_Value_ToFloat(FXJSE_HVALUE hValue);
-double FXJSE_Value_ToDouble(FXJSE_HVALUE hValue);
-int32_t FXJSE_Value_ToInteger(FXJSE_HVALUE hValue);
-void FXJSE_Value_ToUTF8String(FXJSE_HVALUE hValue, CFX_ByteString& szStrOutput);
-void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, CFXJSE_Class* hClass);
+FX_BOOL FXJSE_Value_ToBoolean(CFXJSE_Value* pValue);
+FX_FLOAT FXJSE_Value_ToFloat(CFXJSE_Value* pValue);
+double FXJSE_Value_ToDouble(CFXJSE_Value* pValue);
+int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue);
+void FXJSE_Value_ToUTF8String(CFXJSE_Value* pValue,
+                              CFX_ByteString& szStrOutput);
+void* FXJSE_Value_ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
 
-void FXJSE_Value_SetUndefined(FXJSE_HVALUE hValue);
-void FXJSE_Value_SetNull(FXJSE_HVALUE hValue);
-void FXJSE_Value_SetBoolean(FXJSE_HVALUE hValue, FX_BOOL bBoolean);
-void FXJSE_Value_SetUTF8String(FXJSE_HVALUE hValue,
+void FXJSE_Value_SetUndefined(CFXJSE_Value* pValue);
+void FXJSE_Value_SetNull(CFXJSE_Value* pValue);
+void FXJSE_Value_SetBoolean(CFXJSE_Value* pValue, FX_BOOL bBoolean);
+void FXJSE_Value_SetUTF8String(CFXJSE_Value* pValue,
                                const CFX_ByteStringC& szString);
-void FXJSE_Value_SetInteger(FXJSE_HVALUE hValue, int32_t nInteger);
-void FXJSE_Value_SetFloat(FXJSE_HVALUE hValue, FX_FLOAT fFloat);
-void FXJSE_Value_SetDouble(FXJSE_HVALUE hValue, double dDouble);
-void FXJSE_Value_SetObject(FXJSE_HVALUE hValue,
+void FXJSE_Value_SetInteger(CFXJSE_Value* pValue, int32_t nInteger);
+void FXJSE_Value_SetFloat(CFXJSE_Value* pValue, FX_FLOAT fFloat);
+void FXJSE_Value_SetDouble(CFXJSE_Value* pValue, double dDouble);
+void FXJSE_Value_SetObject(CFXJSE_Value* pValue,
                            void* lpObject,
                            CFXJSE_Class* pClass);
-void FXJSE_Value_SetArray(FXJSE_HVALUE hValue,
+void FXJSE_Value_SetArray(CFXJSE_Value* pValue,
                           uint32_t uValueCount,
-                          FXJSE_HVALUE* rgValues);
-void FXJSE_Value_Set(FXJSE_HVALUE hValue, FXJSE_HVALUE hOriginalValue);
+                          CFXJSE_Value** rgValues);
+void FXJSE_Value_Set(CFXJSE_Value* pValue, CFXJSE_Value* pOriginalValue);
 
-FX_BOOL FXJSE_Value_GetObjectProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_GetObjectProp(CFXJSE_Value* pValue,
                                   const CFX_ByteStringC& szPropName,
-                                  FXJSE_HVALUE hPropValue);
-FX_BOOL FXJSE_Value_SetObjectProp(FXJSE_HVALUE hValue,
+                                  CFXJSE_Value* pPropValue);
+FX_BOOL FXJSE_Value_SetObjectProp(CFXJSE_Value* pValue,
                                   const CFX_ByteStringC& szPropName,
-                                  FXJSE_HVALUE hPropValue);
-FX_BOOL FXJSE_Value_GetObjectPropByIdx(FXJSE_HVALUE hValue,
+                                  CFXJSE_Value* pPropValue);
+FX_BOOL FXJSE_Value_GetObjectPropByIdx(CFXJSE_Value* pValue,
                                        uint32_t uPropIdx,
-                                       FXJSE_HVALUE hPropValue);
-FX_BOOL FXJSE_Value_DeleteObjectProp(FXJSE_HVALUE hValue,
+                                       CFXJSE_Value* pPropValue);
+FX_BOOL FXJSE_Value_DeleteObjectProp(CFXJSE_Value* pValue,
                                      const CFX_ByteStringC& szPropName);
-FX_BOOL FXJSE_Value_ObjectHasOwnProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_ObjectHasOwnProp(CFXJSE_Value* pValue,
                                      const CFX_ByteStringC& szPropName,
                                      FX_BOOL bUseTypeGetter);
-FX_BOOL FXJSE_Value_SetObjectOwnProp(FXJSE_HVALUE hValue,
+FX_BOOL FXJSE_Value_SetObjectOwnProp(CFXJSE_Value* pValue,
                                      const CFX_ByteStringC& szPropName,
-                                     FXJSE_HVALUE hPropValue);
+                                     CFXJSE_Value* pPropValue);
 
-FX_BOOL FXJSE_Value_SetFunctionBind(FXJSE_HVALUE hValue,
-                                    FXJSE_HVALUE hOldFunction,
-                                    FXJSE_HVALUE hNewThis);
+FX_BOOL FXJSE_Value_SetFunctionBind(CFXJSE_Value* pValue,
+                                    CFXJSE_Value* pOldFunction,
+                                    CFXJSE_Value* pNewThis);
 
 FX_BOOL FXJSE_ExecuteScript(CFXJSE_Context* pContext,
                             const FX_CHAR* szScript,
-                            FXJSE_HVALUE hRetValue,
-                            FXJSE_HVALUE hNewThisObject = nullptr);
+                            CFXJSE_Value* pRetValue,
+                            CFXJSE_Value* pNewThisObject = nullptr);
 
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
                         const CFX_ByteStringC& utf8Message);

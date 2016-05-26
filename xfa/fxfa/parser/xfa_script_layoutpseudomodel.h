@@ -23,7 +23,7 @@ class CScript_LayoutPseudoModel : public CXFA_OrdinaryObject {
   explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
   ~CScript_LayoutPseudoModel();
 
-  void Script_LayoutPseudoModel_Ready(FXJSE_HVALUE hValue,
+  void Script_LayoutPseudoModel_Ready(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute);
 
