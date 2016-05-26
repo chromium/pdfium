@@ -65,20 +65,21 @@ void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
   m_IndirectObjs.erase(it);
 }
 
-FX_BOOL CPDF_IndirectObjectHolder::InsertIndirectObject(uint32_t objnum,
-                                                        CPDF_Object* pObj) {
+bool CPDF_IndirectObjectHolder::InsertIndirectObject(uint32_t objnum,
+                                                     CPDF_Object* pObj) {
   if (!objnum || !pObj)
-    return FALSE;
+    return false;
+
   auto it = m_IndirectObjs.find(objnum);
   if (it != m_IndirectObjs.end()) {
     if (pObj->GetGenNum() <= it->second->GetGenNum()) {
       pObj->Destroy();
-      return FALSE;
+      return false;
     }
     it->second->Destroy();
   }
   pObj->m_ObjNum = objnum;
   m_IndirectObjs[objnum] = pObj;
   m_LastObjNum = std::max(m_LastObjNum, objnum);
-  return TRUE;
+  return true;
 }

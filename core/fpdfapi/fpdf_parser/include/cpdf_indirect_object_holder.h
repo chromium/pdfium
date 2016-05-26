@@ -27,7 +27,7 @@ class CPDF_IndirectObjectHolder {
   void ReleaseIndirectObject(uint32_t objnum);
 
   // Takes ownership of |pObj|.
-  FX_BOOL InsertIndirectObject(uint32_t objnum, CPDF_Object* pObj);
+  bool InsertIndirectObject(uint32_t objnum, CPDF_Object* pObj);
 
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   iterator begin() { return m_IndirectObjs.begin(); }

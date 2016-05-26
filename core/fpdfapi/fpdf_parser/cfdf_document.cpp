@@ -28,22 +28,21 @@ CFDF_Document* CFDF_Document::CreateNewDoc() {
   pDoc->m_pRootDict->SetAt("FDF", pFDFDict);
   return pDoc;
 }
+
 CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
-  if (!pFile) {
-    return NULL;
-  }
-  CFDF_Document* pDoc = new CFDF_Document;
+  if (!pFile)
+    return nullptr;
+
+  std::unique_ptr<CFDF_Document> pDoc(new CFDF_Document);
   pDoc->ParseStream(pFile, bOwnFile);
-  if (!pDoc->m_pRootDict) {
-    delete pDoc;
-    return NULL;
-  }
-  return pDoc;
+  return pDoc->m_pRootDict ? pDoc.release() : nullptr;
 }
+
 CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, uint32_t size) {
   return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size),
                                   TRUE);
 }
+
 void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
   m_pFile = pFile;
   m_bOwnFile = bOwnFile;
@@ -55,26 +54,25 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
     if (bNumber) {
       uint32_t objnum = FXSYS_atoui(word.c_str());
       word = parser.GetNextWord(&bNumber);
-      if (!bNumber) {
+      if (!bNumber)
         break;
-      }
+
       word = parser.GetNextWord(nullptr);
-      if (word != "obj") {
+      if (word != "obj")
         break;
-      }
+
       CPDF_Object* pObj = parser.GetObject(this, objnum, 0, true);
-      if (!pObj) {
+      if (!pObj)
         break;
-      }
+
       InsertIndirectObject(objnum, pObj);
       word = parser.GetNextWord(nullptr);
-      if (word != "endobj") {
+      if (word != "endobj")
         break;
-      }
     } else {
-      if (word != "trailer") {
+      if (word != "trailer")
         break;
-      }
+
       if (CPDF_Dictionary* pMainDict =
               ToDictionary(parser.GetObject(this, 0, 0, true))) {
         m_pRootDict = pMainDict->GetDictBy("Root");
@@ -84,6 +82,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
     }
   }
 }
+
 FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
   if (!m_pRootDict) {
     return FALSE;

@@ -979,16 +979,13 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
     return FALSE;
 
   if (m_pDocument) {
-    FX_BOOL bInserted = FALSE;
-    CPDF_Dictionary* pDict = m_pDocument->GetRoot();
-    if (!pDict || pDict->GetObjNum() != pObject->m_ObjNum) {
-      bInserted = m_pDocument->InsertIndirectObject(pObject->m_ObjNum, pObject);
-    } else {
+    CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
+    if (pRootDict && pRootDict->GetObjNum() == pObject->m_ObjNum) {
       if (pObject->IsStream())
         pObject->Release();
+      return FALSE;
     }
-
-    if (!bInserted)
+    if (!m_pDocument->InsertIndirectObject(pObject->m_ObjNum, pObject))
       return FALSE;
   }
 
@@ -996,24 +993,26 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   if (!pStream)
     return FALSE;
 
-  *pos = pStream->GetDict()->GetIntegerBy("Prev");
-  int32_t size = pStream->GetDict()->GetIntegerBy("Size");
+  CPDF_Dictionary* pDict = pStream->GetDict();
+  *pos = pDict->GetIntegerBy("Prev");
+  int32_t size = pDict->GetIntegerBy("Size");
   if (size < 0) {
     pStream->Release();
     return FALSE;
   }
 
+  CPDF_Dictionary* pNewTrailer = ToDictionary(pDict->Clone());
   if (bMainXRef) {
-    m_pTrailer = ToDictionary(pStream->GetDict()->Clone());
+    m_pTrailer = pNewTrailer;
     ShrinkObjectMap(size);
     for (auto& it : m_ObjectInfo)
       it.second.type = 0;
   } else {
-    m_Trailers.Add(ToDictionary(pStream->GetDict()->Clone()));
+    m_Trailers.Add(pNewTrailer);
   }
 
   std::vector<std::pair<int32_t, int32_t>> arrIndex;
-  CPDF_Array* pArray = pStream->GetDict()->GetArrayBy("Index");
+  CPDF_Array* pArray = pDict->GetArrayBy("Index");
   if (pArray) {
     for (size_t i = 0; i < pArray->GetCount() / 2; i++) {
       CPDF_Object* pStartNumObj = pArray->GetObjectAt(i * 2);
@@ -1031,7 +1030,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   if (arrIndex.size() == 0)
     arrIndex.push_back(std::make_pair(0, size));
 
-  pArray = pStream->GetDict()->GetArrayBy("W");
+  pArray = pDict->GetArrayBy("W");
   if (!pArray) {
     pStream->Release();
     return FALSE;
@@ -1039,7 +1038,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
 
   CFX_ArrayTemplate<uint32_t> WidthArray;
   FX_SAFE_UINT32 dwAccWidth = 0;
-  for (size_t i = 0; i < pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->GetCount(); ++i) {
     WidthArray.Add(pArray->GetIntegerAt(i));
     dwAccWidth += WidthArray[i];
   }
