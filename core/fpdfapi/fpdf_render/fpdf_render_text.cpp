@@ -589,6 +589,7 @@ void CPDF_CharPosList::Load(int nChars,
     }
   }
 }
+
 FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                         int nChars,
                                         uint32_t* pCharCodes,
@@ -604,14 +605,15 @@ FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                         int nFlag) {
   CFX_FontCache* pCache =
       pFont->m_pDocument ? pFont->m_pDocument->GetRenderData()->GetFontCache()
-                         : NULL;
+                         : nullptr;
   CPDF_CharPosList CharPosList;
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
-  return pDevice->DrawTextPath(CharPosList.m_nChars, CharPosList.m_pCharPos,
-                               &pFont->m_Font, pCache, font_size, pText2User,
-                               pUser2Device, pGraphState, fill_argb,
-                               stroke_argb, pClippingPath, nFlag);
+  return pDevice->DrawTextPathWithFlags(
+      CharPosList.m_nChars, CharPosList.m_pCharPos, &pFont->m_Font, pCache,
+      font_size, pText2User, pUser2Device, pGraphState, fill_argb, stroke_argb,
+      pClippingPath, nFlag);
 }
+
 void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        int left,
                                        int top,

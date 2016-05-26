@@ -112,29 +112,16 @@ void CFX_RenderDevice::UpdateClipBox() {
   m_ClipBox.bottom = m_Height;
 }
 
-FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
-                                   const CFX_Matrix* pObject2Device,
-                                   const CFX_GraphStateData* pGraphState,
-                                   uint32_t fill_color,
-                                   uint32_t stroke_color,
-                                   int fill_mode,
-                                   int alpha_flag,
-                                   void* pIccTransform,
-                                   int blend_type) {
-  uint8_t fill_alpha, stroke_alpha;
-  if (FXGETFLAG_COLORTYPE(alpha_flag)) {
-    fill_alpha = FXGETFLAG_ALPHA_FILL(alpha_flag);
-    stroke_alpha = FXGETFLAG_ALPHA_STROKE(alpha_flag);
-  } else {
-    fill_alpha = FXARGB_A(fill_color);
-    stroke_alpha = FXARGB_A(stroke_color);
-  }
-  if ((fill_mode & 3) == 0) {
-    fill_alpha = 0;
-  }
-  if (!pGraphState) {
-    stroke_alpha = 0;
-  }
+FX_BOOL CFX_RenderDevice::DrawPathWithBlend(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_GraphStateData* pGraphState,
+    uint32_t fill_color,
+    uint32_t stroke_color,
+    int fill_mode,
+    int blend_type) {
+  uint8_t stroke_alpha = pGraphState ? FXARGB_A(stroke_color) : 0;
+  uint8_t fill_alpha = (fill_mode & 3) ? FXARGB_A(fill_color) : 0;
   if (stroke_alpha == 0 && pPathData->GetPointCount() == 2) {
     FX_PATHPOINT* pPoints = pPathData->GetPoints();
     FX_FLOAT x1, x2, y1, y2;
@@ -149,8 +136,8 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
       x2 = pPoints[1].m_PointX;
       y2 = pPoints[1].m_PointY;
     }
-    DrawCosmeticLine(x1, y1, x2, y2, fill_color, fill_mode, alpha_flag,
-                     pIccTransform, blend_type);
+    DrawCosmeticLineWithFillModeAndBlend(x1, y1, x2, y2, fill_color, fill_mode,
+                                         blend_type);
     return TRUE;
   }
   if ((pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) &&
@@ -189,8 +176,7 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
           rect_i.bottom--;
         }
       }
-      if (FillRect(&rect_i, fill_color, alpha_flag, pIccTransform,
-                   blend_type)) {
+      if (FillRectWithBlend(&rect_i, fill_color, blend_type)) {
         return TRUE;
       }
     }
@@ -205,12 +191,7 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
       graphState.m_LineWidth = 0.0f;
       uint32_t strokecolor = fill_color;
       if (bThin) {
-        if (FXGETFLAG_COLORTYPE(alpha_flag)) {
-          FXSETFLAG_ALPHA_STROKE(alpha_flag, fill_alpha >> 2);
-        } else {
-          strokecolor =
-              (((fill_alpha >> 2) << 24) | (strokecolor & 0x00ffffff));
-        }
+        strokecolor = (((fill_alpha >> 2) << 24) | (strokecolor & 0x00ffffff));
       }
       CFX_Matrix* pMatrix = NULL;
       if (pObject2Device && !pObject2Device->IsIdentity()) {
@@ -221,24 +202,22 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
         smooth_path |= FXFILL_NOPATHSMOOTH;
       }
       m_pDeviceDriver->DrawPath(&newPath, pMatrix, &graphState, 0, strokecolor,
-                                smooth_path, alpha_flag, pIccTransform,
-                                blend_type);
+                                smooth_path, 0, nullptr, blend_type);
     }
   }
   if ((fill_mode & 3) && fill_alpha && stroke_alpha < 0xff &&
       (fill_mode & FX_FILL_STROKE)) {
     if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
       return m_pDeviceDriver->DrawPath(pPathData, pObject2Device, pGraphState,
-                                       fill_color, stroke_color, fill_mode,
-                                       alpha_flag, pIccTransform, blend_type);
+                                       fill_color, stroke_color, fill_mode, 0,
+                                       nullptr, blend_type);
     }
     return DrawFillStrokePath(pPathData, pObject2Device, pGraphState,
-                              fill_color, stroke_color, fill_mode, alpha_flag,
-                              pIccTransform, blend_type);
+                              fill_color, stroke_color, fill_mode, blend_type);
   }
   return m_pDeviceDriver->DrawPath(pPathData, pObject2Device, pGraphState,
-                                   fill_color, stroke_color, fill_mode,
-                                   alpha_flag, pIccTransform, blend_type);
+                                   fill_color, stroke_color, fill_mode, 0,
+                                   nullptr, blend_type);
 }
 
 // This can be removed once PDFium entirely relies on Skia
@@ -249,8 +228,6 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
     uint32_t fill_color,
     uint32_t stroke_color,
     int fill_mode,
-    int alpha_flag,
-    void* pIccTransform,
     int blend_type) {
     if (!(m_RenderCaps & FXRC_GET_BITS)) {
       return FALSE;
@@ -293,7 +270,7 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
     matrix.Concat(fScaleX, 0, 0, fScaleY, 0, 0);
     if (!bitmap_device.GetDeviceDriver()->DrawPath(
             pPathData, &matrix, pGraphState, fill_color, stroke_color,
-            fill_mode, alpha_flag, pIccTransform, blend_type)) {
+            fill_mode, 0, nullptr, blend_type)) {
       return FALSE;
     }
     FX_RECT src_rect(0, 0, FXSYS_round(rect.Width() * fScaleX),
@@ -302,38 +279,32 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
                                       rect.top, FXDIB_BLEND_NORMAL);
 }
 
-FX_BOOL CFX_RenderDevice::SetPixel(int x,
-                                   int y,
-                                   uint32_t color,
-                                   int alpha_flag,
-                                   void* pIccTransform) {
-  if (m_pDeviceDriver->SetPixel(x, y, color, alpha_flag, pIccTransform)) {
+FX_BOOL CFX_RenderDevice::SetPixel(int x, int y, uint32_t color) {
+  if (m_pDeviceDriver->SetPixel(x, y, color, 0, nullptr))
     return TRUE;
-  }
+
   FX_RECT rect(x, y, x + 1, y + 1);
-  return FillRect(&rect, color, alpha_flag, pIccTransform);
+  return FillRectWithBlend(&rect, color, FXDIB_BLEND_NORMAL);
 }
-FX_BOOL CFX_RenderDevice::FillRect(const FX_RECT* pRect,
-                                   uint32_t fill_color,
-                                   int alpha_flag,
-                                   void* pIccTransform,
-                                   int blend_type) {
-  if (m_pDeviceDriver->FillRect(pRect, fill_color, alpha_flag, pIccTransform,
-                                blend_type)) {
+
+FX_BOOL CFX_RenderDevice::FillRectWithBlend(const FX_RECT* pRect,
+                                            uint32_t fill_color,
+                                            int blend_type) {
+  if (m_pDeviceDriver->FillRect(pRect, fill_color, 0, nullptr, blend_type))
     return TRUE;
-  }
-  if (!(m_RenderCaps & FXRC_GET_BITS)) {
+
+  if (!(m_RenderCaps & FXRC_GET_BITS))
     return FALSE;
-  }
+
   CFX_DIBitmap bitmap;
-  if (!CreateCompatibleBitmap(&bitmap, pRect->Width(), pRect->Height())) {
+  if (!CreateCompatibleBitmap(&bitmap, pRect->Width(), pRect->Height()))
     return FALSE;
-  }
-  if (!m_pDeviceDriver->GetDIBits(&bitmap, pRect->left, pRect->top)) {
+
+  if (!m_pDeviceDriver->GetDIBits(&bitmap, pRect->left, pRect->top))
     return FALSE;
-  }
+
   if (!bitmap.CompositeRect(0, 0, pRect->Width(), pRect->Height(), fill_color,
-                            alpha_flag, pIccTransform)) {
+                            0, nullptr)) {
     return FALSE;
   }
   FX_RECT src_rect(0, 0, pRect->Width(), pRect->Height());
@@ -341,50 +312,42 @@ FX_BOOL CFX_RenderDevice::FillRect(const FX_RECT* pRect,
                              FXDIB_BLEND_NORMAL);
   return TRUE;
 }
-FX_BOOL CFX_RenderDevice::DrawCosmeticLine(FX_FLOAT x1,
-                                           FX_FLOAT y1,
-                                           FX_FLOAT x2,
-                                           FX_FLOAT y2,
-                                           uint32_t color,
-                                           int fill_mode,
-                                           int alpha_flag,
-                                           void* pIccTransform,
-                                           int blend_type) {
-  if (((m_RenderCaps & FXRC_ALPHA_PATH) &&
-       (FXGETFLAG_COLORTYPE(alpha_flag) &&
-        FXGETFLAG_ALPHA_FILL(alpha_flag) == 0xff)) ||
-      color >= 0xff000000) {
-    if (m_pDeviceDriver->DrawCosmeticLine(x1, y1, x2, y2, color, alpha_flag,
-                                          pIccTransform, blend_type)) {
-      return TRUE;
-    }
+
+FX_BOOL CFX_RenderDevice::DrawCosmeticLineWithFillModeAndBlend(FX_FLOAT x1,
+                                                               FX_FLOAT y1,
+                                                               FX_FLOAT x2,
+                                                               FX_FLOAT y2,
+                                                               uint32_t color,
+                                                               int fill_mode,
+                                                               int blend_type) {
+  if ((color >= 0xff000000) &&
+      m_pDeviceDriver->DrawCosmeticLine(x1, y1, x2, y2, color, 0, nullptr,
+                                        blend_type)) {
+    return TRUE;
   }
   CFX_GraphStateData graph_state;
   CFX_PathData path;
   path.SetPointCount(2);
   path.SetPoint(0, x1, y1, FXPT_MOVETO);
   path.SetPoint(1, x2, y2, FXPT_LINETO);
-  return m_pDeviceDriver->DrawPath(&path, NULL, &graph_state, 0, color,
-                                   fill_mode, alpha_flag, pIccTransform,
-                                   blend_type);
+  return m_pDeviceDriver->DrawPath(&path, nullptr, &graph_state, 0, color,
+                                   fill_mode, 0, nullptr, blend_type);
 }
-FX_BOOL CFX_RenderDevice::GetDIBits(CFX_DIBitmap* pBitmap,
-                                    int left,
-                                    int top,
-                                    void* pIccTransform) {
-  if (!(m_RenderCaps & FXRC_GET_BITS)) {
+
+FX_BOOL CFX_RenderDevice::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) {
+  if (!(m_RenderCaps & FXRC_GET_BITS))
     return FALSE;
-  }
-  return m_pDeviceDriver->GetDIBits(pBitmap, left, top, pIccTransform);
+  return m_pDeviceDriver->GetDIBits(pBitmap, left, top, nullptr);
 }
+
 CFX_DIBitmap* CFX_RenderDevice::GetBackDrop() {
   return m_pDeviceDriver->GetBackDrop();
 }
-FX_BOOL CFX_RenderDevice::SetDIBits(const CFX_DIBSource* pBitmap,
-                                    int left,
-                                    int top,
-                                    int blend_mode,
-                                    void* pIccTransform) {
+
+FX_BOOL CFX_RenderDevice::SetDIBitsWithBlend(const CFX_DIBSource* pBitmap,
+                                             int left,
+                                             int top,
+                                             int blend_mode) {
   ASSERT(!pBitmap->IsAlphaMask());
   CFX_Matrix ctm = GetCTM();
   FX_FLOAT fScaleX = FXSYS_fabs(ctm.a);
@@ -422,7 +385,7 @@ FX_BOOL CFX_RenderDevice::SetDIBits(const CFX_DIBSource* pBitmap,
     }
     if (!background.CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
                                     pBitmap, src_rect.left, src_rect.top,
-                                    blend_mode, NULL, FALSE, pIccTransform)) {
+                                    blend_mode, nullptr, FALSE, nullptr)) {
       return FALSE;
     }
     FX_RECT src_rect(0, 0, bg_pixel_width, bg_pixel_height);
@@ -430,70 +393,66 @@ FX_BOOL CFX_RenderDevice::SetDIBits(const CFX_DIBSource* pBitmap,
                                       dest_rect.top, FXDIB_BLEND_NORMAL);
   }
   return m_pDeviceDriver->SetDIBits(pBitmap, 0, &src_rect, dest_rect.left,
-                                    dest_rect.top, blend_mode, 0,
-                                    pIccTransform);
+                                    dest_rect.top, blend_mode, 0, nullptr);
 }
-FX_BOOL CFX_RenderDevice::StretchDIBits(const CFX_DIBSource* pBitmap,
-                                        int left,
-                                        int top,
-                                        int dest_width,
-                                        int dest_height,
-                                        uint32_t flags,
-                                        void* pIccTransform,
-                                        int blend_mode) {
+
+FX_BOOL CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
+    const CFX_DIBSource* pBitmap,
+    int left,
+    int top,
+    int dest_width,
+    int dest_height,
+    uint32_t flags,
+    int blend_mode) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
   FX_RECT clip_box = m_ClipBox;
   clip_box.Intersect(dest_rect);
-  if (clip_box.IsEmpty()) {
+  if (clip_box.IsEmpty())
     return TRUE;
-  }
   return m_pDeviceDriver->StretchDIBits(pBitmap, 0, left, top, dest_width,
                                         dest_height, &clip_box, flags, 0,
-                                        pIccTransform, blend_mode);
+                                        nullptr, blend_mode);
 }
+
 FX_BOOL CFX_RenderDevice::SetBitMask(const CFX_DIBSource* pBitmap,
                                      int left,
                                      int top,
-                                     uint32_t argb,
-                                     int alpha_flag,
-                                     void* pIccTransform) {
+                                     uint32_t argb) {
   FX_RECT src_rect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
   return m_pDeviceDriver->SetDIBits(pBitmap, argb, &src_rect, left, top,
-                                    FXDIB_BLEND_NORMAL, alpha_flag,
-                                    pIccTransform);
+                                    FXDIB_BLEND_NORMAL, 0, nullptr);
 }
-FX_BOOL CFX_RenderDevice::StretchBitMask(const CFX_DIBSource* pBitmap,
-                                         int left,
-                                         int top,
-                                         int dest_width,
-                                         int dest_height,
-                                         uint32_t argb,
-                                         uint32_t flags,
-                                         int alpha_flag,
-                                         void* pIccTransform) {
+
+FX_BOOL CFX_RenderDevice::StretchBitMaskWithFlags(const CFX_DIBSource* pBitmap,
+                                                  int left,
+                                                  int top,
+                                                  int dest_width,
+                                                  int dest_height,
+                                                  uint32_t argb,
+                                                  uint32_t flags) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
   FX_RECT clip_box = m_ClipBox;
   clip_box.Intersect(dest_rect);
   return m_pDeviceDriver->StretchDIBits(pBitmap, argb, left, top, dest_width,
-                                        dest_height, &clip_box, flags,
-                                        alpha_flag, pIccTransform);
+                                        dest_height, &clip_box, flags, 0,
+                                        nullptr);
 }
-FX_BOOL CFX_RenderDevice::StartDIBits(const CFX_DIBSource* pBitmap,
-                                      int bitmap_alpha,
-                                      uint32_t argb,
-                                      const CFX_Matrix* pMatrix,
-                                      uint32_t flags,
-                                      void*& handle,
-                                      int alpha_flag,
-                                      void* pIccTransform,
-                                      int blend_mode) {
+
+FX_BOOL CFX_RenderDevice::StartDIBitsWithBlend(const CFX_DIBSource* pBitmap,
+                                               int bitmap_alpha,
+                                               uint32_t argb,
+                                               const CFX_Matrix* pMatrix,
+                                               uint32_t flags,
+                                               void*& handle,
+                                               int blend_mode) {
   return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha, argb, pMatrix,
-                                      flags, handle, alpha_flag, pIccTransform,
-                                      blend_mode);
+                                      flags, handle, 0, nullptr, blend_mode);
 }
+
 FX_BOOL CFX_RenderDevice::ContinueDIBits(void* handle, IFX_Pause* pPause) {
   return m_pDeviceDriver->ContinueDIBits(handle, pPause);
 }
+
 void CFX_RenderDevice::CancelDIBits(void* handle) {
   m_pDeviceDriver->CancelDIBits(handle);
 }

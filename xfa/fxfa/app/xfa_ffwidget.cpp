@@ -558,10 +558,11 @@ FX_BOOL CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
   m_BlendType = blendType;
   return StartDIBSource();
 }
+
 FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
-  if (m_pDevice->StartDIBits(m_pDIBSource, m_BitmapAlpha, m_FillArgb,
-                             &m_ImageMatrix, m_Flags, m_DeviceHandle, 0, NULL,
-                             m_BlendType)) {
+  if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, m_BitmapAlpha, m_FillArgb,
+                                      &m_ImageMatrix, m_Flags, m_DeviceHandle,
+                                      m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return TRUE;
@@ -607,8 +608,9 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
   dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
   dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
   if (m_pDIBSource->IsOpaqueImage() && m_BitmapAlpha == 255) {
-    if (m_pDevice->StretchDIBits(m_pDIBSource, dest_left, dest_top, dest_width,
-                                 dest_height, m_Flags, NULL, m_BlendType)) {
+    if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
+            m_pDIBSource, dest_left, dest_top, dest_width, dest_height, m_Flags,
+            m_BlendType)) {
       return FALSE;
     }
   }
@@ -616,8 +618,9 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
     if (m_BitmapAlpha != 255) {
       m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
     }
-    if (m_pDevice->StretchBitMask(m_pDIBSource, dest_left, dest_top, dest_width,
-                                  dest_height, m_FillArgb, m_Flags)) {
+    if (m_pDevice->StretchBitMaskWithFlags(m_pDIBSource, dest_left, dest_top,
+                                           dest_width, dest_height, m_FillArgb,
+                                           m_Flags)) {
       return FALSE;
     }
   }
@@ -658,9 +661,9 @@ FX_BOOL CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
     } else {
       if (m_BitmapAlpha != 255)
         pBitmap->MultiplyAlpha(m_BitmapAlpha);
-      m_Result =
-          m_pDevice->SetDIBits(pBitmap.get(), m_pTransformer->result().left,
-                               m_pTransformer->result().top, m_BlendType);
+      m_Result = m_pDevice->SetDIBitsWithBlend(
+          pBitmap.get(), m_pTransformer->result().left,
+          m_pTransformer->result().top, m_BlendType);
     }
     return FALSE;
   }
@@ -711,7 +714,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       if (pDIBitmap->IsAlphaMask()) {
         return;
       }
-      m_pDevice->SetDIBits(pDIBitmap, left, top, blend_mode);
+      m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, blend_mode);
     } else {
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
@@ -738,10 +741,10 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       if (m_pDevice->GetBackDrop()) {
         m_pDevice->SetDIBits(pClone, rect.left, rect.top);
       } else {
-        if (pDIBitmap->IsAlphaMask()) {
+        if (pDIBitmap->IsAlphaMask())
           return;
-        }
-        m_pDevice->SetDIBits(pDIBitmap, rect.left, rect.top, blend_mode);
+        m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
+                                      blend_mode);
       }
       if (bClone) {
         delete pClone;

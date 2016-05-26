@@ -455,6 +455,7 @@ FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix) {
   }
   return TRUE;
 }
+
 FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
                                        const CFX_Matrix* pObj2Device) {
   int FillType = pPathObj->m_FillType;
@@ -500,10 +501,11 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
   if (m_Options.m_Flags & RENDER_THINLINE) {
     graphState.m_LineWidth = 0;
   }
-  return m_pDevice->DrawPath(pPathObj->m_Path, &path_matrix, &graphState,
-                             fill_argb, stroke_argb, FillType, 0, NULL,
-                             m_curBlend);
+  return m_pDevice->DrawPathWithBlend(pPathObj->m_Path, &path_matrix,
+                                      &graphState, fill_argb, stroke_argb,
+                                      FillType, m_curBlend);
 }
+
 CPDF_TransferFunc* CPDF_RenderStatus::GetTransferFunc(CPDF_Object* pObj) const {
   ASSERT(pObj);
   CPDF_DocRenderData* pDocCache = m_pContext->GetDocument()->GetRenderData();

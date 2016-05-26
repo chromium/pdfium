@@ -76,7 +76,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       if (pDIBitmap->IsAlphaMask()) {
         return;
       }
-      m_pDevice->SetDIBits(pDIBitmap, left, top, blend_mode);
+      m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, blend_mode);
     } else {
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
@@ -106,7 +106,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
         if (pDIBitmap->IsAlphaMask()) {
           return;
         }
-        m_pDevice->SetDIBits(pDIBitmap, rect.left, rect.top, blend_mode);
+        m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
+                                      blend_mode);
       }
       if (bClone) {
         delete pClone;
@@ -600,8 +601,8 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
     bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
     bitmap_device1.GetBitmap()->MultiplyAlpha(255);
   }
-  m_pRenderStatus->m_pDevice->SetDIBits(bitmap_device1.GetBitmap(), rect.left,
-                                        rect.top, m_BlendType);
+  m_pRenderStatus->m_pDevice->SetDIBitsWithBlend(
+      bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
   return FALSE;
 }
 FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
@@ -695,8 +696,8 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
       bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);
     }
   }
-  m_pRenderStatus->m_pDevice->SetDIBits(bitmap_device1.GetBitmap(), rect.left,
-                                        rect.top, m_BlendType);
+  m_pRenderStatus->m_pDevice->SetDIBitsWithBlend(
+      bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
   return FALSE;
 }
 
@@ -709,9 +710,9 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
       m_Flags |= RENDER_FORCE_DOWNSAMPLE;
     }
   }
-  if (m_pRenderStatus->m_pDevice->StartDIBits(
+  if (m_pRenderStatus->m_pDevice->StartDIBitsWithBlend(
           m_pDIBSource, m_BitmapAlpha, m_FillArgb, &m_ImageMatrix, m_Flags,
-          m_DeviceHandle, 0, nullptr, m_BlendType)) {
+          m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return TRUE;
@@ -746,16 +747,16 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
   int dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
   int dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
   if (m_pDIBSource->IsOpaqueImage() && m_BitmapAlpha == 255) {
-    if (m_pRenderStatus->m_pDevice->StretchDIBits(
+    if (m_pRenderStatus->m_pDevice->StretchDIBitsWithFlagsAndBlend(
             m_pDIBSource, dest_left, dest_top, dest_width, dest_height, m_Flags,
-            nullptr, m_BlendType)) {
+            m_BlendType)) {
       return FALSE;
     }
   }
   if (m_pDIBSource->IsAlphaMask()) {
     if (m_BitmapAlpha != 255)
       m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
-    if (m_pRenderStatus->m_pDevice->StretchBitMask(
+    if (m_pRenderStatus->m_pDevice->StretchBitMaskWithFlags(
             m_pDIBSource, dest_left, dest_top, dest_width, dest_height,
             m_FillArgb, m_Flags)) {
       return FALSE;
@@ -845,7 +846,7 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
     } else {
       if (m_BitmapAlpha != 255)
         pBitmap->MultiplyAlpha(m_BitmapAlpha);
-      m_Result = m_pRenderStatus->m_pDevice->SetDIBits(
+      m_Result = m_pRenderStatus->m_pDevice->SetDIBitsWithBlend(
           pBitmap.get(), m_pTransformer->result().left,
           m_pTransformer->result().top, m_BlendType);
     }

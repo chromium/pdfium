@@ -427,9 +427,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
                                          FX_FLOAT font_size,
                                          const CFX_Matrix* pText2Device,
                                          uint32_t fill_color,
-                                         uint32_t text_flags,
-                                         int alpha_flag,
-                                         void* pIccTransform) {
+                                         uint32_t text_flags) {
   int nativetext_flags = text_flags;
   if (m_DeviceClass != FXDC_DISPLAY) {
     if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
@@ -445,16 +443,12 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       if (should_call_draw_device_text &&
           m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
                                           pText2Device, font_size, fill_color,
-                                          alpha_flag, pIccTransform)) {
+                                          0, nullptr)) {
         return TRUE;
       }
     }
-    int alpha = FXGETFLAG_COLORTYPE(alpha_flag)
-                    ? FXGETFLAG_ALPHA_FILL(alpha_flag)
-                    : FXARGB_A(fill_color);
-    if (alpha < 255) {
+    if (FXARGB_A(fill_color) < 255)
       return FALSE;
-    }
   } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
     bool should_call_draw_device_text = true;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -465,8 +459,8 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
 #endif
     if (should_call_draw_device_text &&
         m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
-                                        pText2Device, font_size, fill_color,
-                                        alpha_flag, pIccTransform)) {
+                                        pText2Device, font_size, fill_color, 0,
+                                        nullptr)) {
       return TRUE;
     }
   }
@@ -484,9 +478,9 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
         (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
-      return DrawTextPath(nChars, pCharPos, pFont, pCache, font_size,
-                          pText2Device, NULL, NULL, fill_color, 0, NULL,
-                          nPathFlags, alpha_flag, pIccTransform);
+      return DrawTextPathWithFlags(nChars, pCharPos, pFont, pCache, font_size,
+                                   pText2Device, nullptr, nullptr, fill_color,
+                                   0, nullptr, nPathFlags);
     }
   }
   int anti_alias = FXFT_RENDER_MODE_MONO;
@@ -621,7 +615,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   int g = 0;
   int b = 0;
   if (anti_alias == FXFT_RENDER_MODE_LCD) {
-    Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
+    Color2Argb(fill_color, fill_color, (1 << 24), nullptr);
     ArgbDecode(fill_color, a, r, g, b);
   }
   for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
@@ -635,8 +629,8 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
     int nrows = pGlyph->GetHeight();
     if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
       if (!bitmap.CompositeMask(left, top, ncols, nrows, pGlyph, fill_color, 0,
-                                0, FXDIB_BLEND_NORMAL, nullptr, FALSE,
-                                alpha_flag, pIccTransform)) {
+                                0, FXDIB_BLEND_NORMAL, nullptr, FALSE, 0,
+                                nullptr)) {
         return FALSE;
       }
       continue;
@@ -653,34 +647,29 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
     DrawNormalTextHelper(&bitmap, pGlyph, nrows, left, top, start_col, end_col,
                          bNormal, bBGRStripe, x_subpixel, a, r, g, b);
   }
-  if (bitmap.IsAlphaMask()) {
-    SetBitMask(&bitmap, bmp_rect.left, bmp_rect.top, fill_color, alpha_flag,
-               pIccTransform);
-  } else {
+  if (bitmap.IsAlphaMask())
+    SetBitMask(&bitmap, bmp_rect.left, bmp_rect.top, fill_color);
+  else
     SetDIBits(&bitmap, bmp_rect.left, bmp_rect.top);
-  }
-
   return TRUE;
 }
 
-FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
-                                       const FXTEXT_CHARPOS* pCharPos,
-                                       CFX_Font* pFont,
-                                       CFX_FontCache* pCache,
-                                       FX_FLOAT font_size,
-                                       const CFX_Matrix* pText2User,
-                                       const CFX_Matrix* pUser2Device,
-                                       const CFX_GraphStateData* pGraphState,
-                                       uint32_t fill_color,
-                                       FX_ARGB stroke_color,
-                                       CFX_PathData* pClippingPath,
-                                       int nFlag,
-                                       int alpha_flag,
-                                       void* pIccTransform,
-                                       int blend_type) {
-  if (!pCache) {
+FX_BOOL CFX_RenderDevice::DrawTextPathWithFlags(
+    int nChars,
+    const FXTEXT_CHARPOS* pCharPos,
+    CFX_Font* pFont,
+    CFX_FontCache* pCache,
+    FX_FLOAT font_size,
+    const CFX_Matrix* pText2User,
+    const CFX_Matrix* pUser2Device,
+    const CFX_GraphStateData* pGraphState,
+    uint32_t fill_color,
+    FX_ARGB stroke_color,
+    CFX_PathData* pClippingPath,
+    int nFlag) {
+  if (!pCache)
     pCache = CFX_GEModule::Get()->GetFontCache();
-  }
+
   CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
   FX_FONTCACHE_DEFINE(pCache, pFont);
   for (int iChar = 0; iChar < nChars; iChar++) {
@@ -693,37 +682,25 @@ FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
                   charpos.m_OriginY);
     const CFX_PathData* pPath = pFaceCache->LoadGlyphPath(
         pFont, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
-    if (!pPath) {
+    if (!pPath)
       continue;
-    }
+
     matrix.Concat(*pText2User);
     CFX_PathData TransformedPath(*pPath);
     TransformedPath.Transform(&matrix);
-    FX_BOOL bHasAlpha = FXGETFLAG_COLORTYPE(alpha_flag)
-                            ? (FXGETFLAG_ALPHA_FILL(alpha_flag) ||
-                               FXGETFLAG_ALPHA_STROKE(alpha_flag))
-                            : (fill_color || stroke_color);
-    if (bHasAlpha) {
+    if (fill_color || stroke_color) {
       int fill_mode = nFlag;
-      if (FXGETFLAG_COLORTYPE(alpha_flag)) {
-        if (FXGETFLAG_ALPHA_FILL(alpha_flag)) {
-          fill_mode |= FXFILL_WINDING;
-        }
-      } else {
-        if (fill_color) {
-          fill_mode |= FXFILL_WINDING;
-        }
-      }
+      if (fill_color)
+        fill_mode |= FXFILL_WINDING;
       fill_mode |= FX_FILL_TEXT_MODE;
-      if (!DrawPath(&TransformedPath, pUser2Device, pGraphState, fill_color,
-                    stroke_color, fill_mode, alpha_flag, pIccTransform,
-                    blend_type)) {
+      if (!DrawPathWithBlend(&TransformedPath, pUser2Device, pGraphState,
+                             fill_color, stroke_color, fill_mode,
+                             FXDIB_BLEND_NORMAL)) {
         return FALSE;
       }
     }
-    if (pClippingPath) {
+    if (pClippingPath)
       pClippingPath->Append(&TransformedPath, pUser2Device);
-    }
   }
   return TRUE;
 }
