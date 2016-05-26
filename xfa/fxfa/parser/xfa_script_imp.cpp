@@ -21,6 +21,52 @@
 #include "xfa/fxjse/cfxjse_arguments.h"
 #include "xfa/fxjse/value.h"
 
+namespace {
+
+const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor = {
+    "Root",   // name
+    nullptr,  // constructor
+    nullptr,  // properties
+    nullptr,  // methods
+    0,        // property count
+    0,        // method count
+    CXFA_ScriptContext::GlobalPropTypeGetter,
+    CXFA_ScriptContext::GlobalPropertyGetter,
+    CXFA_ScriptContext::GlobalPropertySetter,
+    nullptr,  // property deleter
+    CXFA_ScriptContext::NormalMethodCall,
+};
+
+const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor = {
+    "XFAObject",  // name
+    nullptr,      // constructor
+    nullptr,      // properties
+    nullptr,      // methods
+    0,            // property count
+    0,            // method count
+    CXFA_ScriptContext::NormalPropTypeGetter,
+    CXFA_ScriptContext::NormalPropertyGetter,
+    CXFA_ScriptContext::NormalPropertySetter,
+    nullptr,  // property deleter
+    CXFA_ScriptContext::NormalMethodCall,
+};
+
+const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor = {
+    "XFAScriptObject",  // name
+    nullptr,            // constructor
+    nullptr,            // properties
+    nullptr,            // methods
+    0,                  // property count
+    0,                  // method count
+    CXFA_ScriptContext::NormalPropTypeGetter,
+    CXFA_ScriptContext::GlobalPropertyGetter,
+    CXFA_ScriptContext::GlobalPropertySetter,
+    nullptr,  // property deleter
+    CXFA_ScriptContext::NormalMethodCall,
+};
+
+}  // namespace
+
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
       m_pJsContext(nullptr),
@@ -33,8 +79,6 @@ CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
       m_pThisObject(nullptr),
       m_dwBuiltInInFlags(0),
       m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {
-  FXSYS_memset(&m_JsGlobalClass, 0, sizeof(FXJSE_CLASS_DESCRIPTOR));
-  FXSYS_memset(&m_JsNormalClass, 0, sizeof(FXJSE_CLASS_DESCRIPTOR));
 }
 CXFA_ScriptContext::~CXFA_ScriptContext() {
   FX_POSITION ps = m_mapXFAToValue.GetStartPosition();
@@ -375,18 +419,7 @@ XFA_SCRIPTLANGTYPE CXFA_ScriptContext::GetType() {
   return m_eScriptType;
 }
 void CXFA_ScriptContext::DefineJsContext() {
-  m_JsGlobalClass.constructor = NULL;
-  m_JsGlobalClass.name = "Root";
-  m_JsGlobalClass.propNum = 0;
-  m_JsGlobalClass.properties = NULL;
-  m_JsGlobalClass.methNum = 0;
-  m_JsGlobalClass.methods = NULL;
-  m_JsGlobalClass.dynPropGetter = CXFA_ScriptContext::GlobalPropertyGetter;
-  m_JsGlobalClass.dynPropSetter = CXFA_ScriptContext::GlobalPropertySetter;
-  m_JsGlobalClass.dynPropTypeGetter = CXFA_ScriptContext::GlobalPropTypeGetter;
-  m_JsGlobalClass.dynPropDeleter = NULL;
-  m_JsGlobalClass.dynMethodCall = CXFA_ScriptContext::NormalMethodCall;
-  m_pJsContext = FXJSE_Context_Create(m_pIsolate, &m_JsGlobalClass,
+  m_pJsContext = FXJSE_Context_Create(m_pIsolate, &GlobalClassDescriptor,
                                       m_pDocument->GetRoot());
   RemoveBuiltInObjs(m_pJsContext);
   FXJSE_Context_EnableCompatibleMode(
@@ -398,25 +431,8 @@ CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
   if (!pScriptNode || !pSubform)
     return nullptr;
 
-  if (m_mapVariableToContext.GetCount() == 0) {
-    m_JsGlobalVariablesClass.constructor = nullptr;
-    m_JsGlobalVariablesClass.name = "XFAScriptObject";
-    m_JsGlobalVariablesClass.propNum = 0;
-    m_JsGlobalVariablesClass.properties = nullptr;
-    m_JsGlobalVariablesClass.methNum = 0;
-    m_JsGlobalVariablesClass.methods = nullptr;
-    m_JsGlobalVariablesClass.dynPropGetter =
-        CXFA_ScriptContext::GlobalPropertyGetter;
-    m_JsGlobalVariablesClass.dynPropSetter =
-        CXFA_ScriptContext::GlobalPropertySetter;
-    m_JsGlobalVariablesClass.dynPropTypeGetter =
-        CXFA_ScriptContext::NormalPropTypeGetter;
-    m_JsGlobalVariablesClass.dynPropDeleter = nullptr;
-    m_JsGlobalVariablesClass.dynMethodCall =
-        CXFA_ScriptContext::NormalMethodCall;
-  }
   CFXJSE_Context* pVariablesContext =
-      FXJSE_Context_Create(m_pIsolate, &m_JsGlobalVariablesClass,
+      FXJSE_Context_Create(m_pIsolate, &VariablesClassDescriptor,
                            new CXFA_ThisProxy(pSubform, pScriptNode));
   RemoveBuiltInObjs(pVariablesContext);
   FXJSE_Context_EnableCompatibleMode(
@@ -523,19 +539,9 @@ void CXFA_ScriptContext::ReleaseVariablesMap() {
 }
 
 void CXFA_ScriptContext::DefineJsClass() {
-  m_JsNormalClass.constructor = NULL;
-  m_JsNormalClass.name = "XFAObject";
-  m_JsNormalClass.propNum = 0;
-  m_JsNormalClass.properties = NULL;
-  m_JsNormalClass.methNum = 0;
-  m_JsNormalClass.methods = NULL;
-  m_JsNormalClass.dynPropGetter = CXFA_ScriptContext::NormalPropertyGetter;
-  m_JsNormalClass.dynPropSetter = CXFA_ScriptContext::NormalPropertySetter;
-  m_JsNormalClass.dynPropTypeGetter = CXFA_ScriptContext::NormalPropTypeGetter;
-  m_JsNormalClass.dynPropDeleter = NULL;
-  m_JsNormalClass.dynMethodCall = CXFA_ScriptContext::NormalMethodCall;
-  m_pJsClass = FXJSE_DefineClass(m_pJsContext, &m_JsNormalClass);
+  m_pJsClass = FXJSE_DefineClass(m_pJsContext, &NormalClassDescriptor);
 }
+
 void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
   static const CFX_ByteStringC OBJ_NAME[2] = {"Number", "Date"};
   CFXJSE_Value* pObject = FXJSE_Context_GetGlobalObject(pContext);

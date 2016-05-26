@@ -7183,7 +7183,7 @@ void CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg,
 }
 
 CXFA_FM2JSContext::CXFA_FM2JSContext()
-    : m_pClassDescriptor(nullptr), m_pFMClass(nullptr), m_pDocument(nullptr) {}
+    : m_pFMClass(nullptr), m_pDocument(nullptr) {}
 
 CXFA_FM2JSContext::~CXFA_FM2JSContext() {
   if (m_pValue)
@@ -7195,8 +7195,7 @@ void CXFA_FM2JSContext::Initialize(v8::Isolate* pScriptIsolate,
                                    CXFA_Document* pDoc) {
   m_pDocument = pDoc;
   m_pIsolate = pScriptIsolate;
-  m_pClassDescriptor = &formcalc_fm2js_descriptor;
-  m_pFMClass = FXJSE_DefineClass(pScriptContext, m_pClassDescriptor);
+  m_pFMClass = FXJSE_DefineClass(pScriptContext, &formcalc_fm2js_descriptor);
   m_pValue = FXJSE_Value_Create(pScriptIsolate);
   FXJSE_Value_SetNull(m_pValue);
   FXJSE_Value_SetObject(m_pValue, this, m_pFMClass);
@@ -7205,6 +7204,7 @@ void CXFA_FM2JSContext::Initialize(v8::Isolate* pScriptIsolate,
 void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
   FXJSE_Value_Set(pValue, m_pValue);
 }
+
 void CXFA_FM2JSContext::ThrowScriptErrorMessage(int32_t iStringID, ...) {
   IXFA_AppProvider* pAppProvider = m_pDocument->GetNotify()->GetAppProvider();
   ASSERT(pAppProvider);

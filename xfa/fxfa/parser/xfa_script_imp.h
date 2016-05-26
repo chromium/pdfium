@@ -105,10 +105,7 @@ class CXFA_ScriptContext {
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pJsClass;
   XFA_SCRIPTLANGTYPE m_eScriptType;
-  FXJSE_CLASS_DESCRIPTOR m_JsGlobalClass;
-  FXJSE_CLASS_DESCRIPTOR m_JsNormalClass;
   CFX_MapPtrTemplate<CXFA_Object*, CFXJSE_Value*> m_mapXFAToValue;
-  FXJSE_CLASS_DESCRIPTOR m_JsGlobalVariablesClass;
   CFX_MapPtrTemplate<CXFA_Object*, CFXJSE_Context*> m_mapVariableToContext;
   CXFA_EventParam m_eventParam;
   CXFA_NodeArray m_upObjectArray;
