@@ -994,7 +994,10 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
                                           int alpha_flag,
                                           void* pIccTransform,
                                           int blend_type) {
-  SkColorType colorType;
+  SkColorType colorType = pSource->IsAlphaMask()
+                              ? SkColorType::kAlpha_8_SkColorType
+                              : SkColorType::kGray_8_SkColorType;
+  SkColorTable* ct = nullptr;
   void* buffer = pSource->GetBuffer();
   std::unique_ptr<uint8_t, FxFreeDeleter> dst8Storage;
   std::unique_ptr<uint32_t, FxFreeDeleter> dst32Storage;
@@ -1014,11 +1017,12 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
       }
       buffer = dst8Storage.get();
       rowBytes = width;
-      colorType = pSource->IsAlphaMask() ? SkColorType::kAlpha_8_SkColorType
-                                         : SkColorType::kGray_8_SkColorType;
     } break;
     case 8:
-      colorType = SkColorType::kGray_8_SkColorType;
+      if (pSource->GetPalette()) {
+        ct = new SkColorTable(pSource->GetPalette(), pSource->GetPaletteSize());
+        colorType = SkColorType::kIndex_8_SkColorType;
+      }
       break;
     case 24: {
       dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
@@ -1045,9 +1049,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
       width, height, colorType,
       pSource->IsAlphaMask() ? kPremul_SkAlphaType : kOpaque_SkAlphaType);
   SkBitmap skBitmap;
-  skBitmap.installPixels(imageInfo, buffer, rowBytes,
-                         nullptr, /* TODO(caryclark) : set color table */
-                         nullptr, nullptr);
+  skBitmap.installPixels(imageInfo, buffer, rowBytes, ct, nullptr, nullptr);
   m_pCanvas->save();
   SkMatrix skMatrix;
   const CFX_Matrix& m = *pMatrix;
@@ -1065,6 +1067,8 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   paint.setAlpha(bitmap_alpha);
   m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
   m_pCanvas->restore();
+  if (ct)
+    ct->unref();
   return TRUE;
 }
 
