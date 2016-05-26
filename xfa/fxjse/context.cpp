@@ -11,9 +11,10 @@
 #include "xfa/fxjse/util_inline.h"
 #include "xfa/fxjse/value.h"
 
-CFXJSE_Context* FXJSE_Context_Create(v8::Isolate* pIsolate,
-                                     const FXJSE_CLASS* lpGlobalClass,
-                                     void* lpGlobalObject) {
+CFXJSE_Context* FXJSE_Context_Create(
+    v8::Isolate* pIsolate,
+    const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
+    void* lpGlobalObject) {
   return CFXJSE_Context::Create(pIsolate, lpGlobalClass, lpGlobalObject);
 }
 
@@ -111,9 +112,10 @@ v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
   return hReturnValue;
 }
 
-CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
-                                       const FXJSE_CLASS* lpGlobalClass,
-                                       void* lpGlobalObject) {
+CFXJSE_Context* CFXJSE_Context::Create(
+    v8::Isolate* pIsolate,
+    const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
+    void* lpGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   CFXJSE_Context* pContext = new CFXJSE_Context(pIsolate);
   CFXJSE_Class* lpGlobalClassObj = NULL;

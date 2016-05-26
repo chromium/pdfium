@@ -39,22 +39,22 @@ enum FXJSE_CompatibleModeFlags {
   FXJSE_COMPATIBLEMODEFLAGCOUNT = 1,
 };
 
-struct FXJSE_FUNCTION {
+struct FXJSE_FUNCTION_DESCRIPTOR {
   const FX_CHAR* name;
   FXJSE_FuncCallback callbackProc;
 };
 
-struct FXJSE_PROPERTY {
+struct FXJSE_PROPERTY_DESCRIPTOR {
   const FX_CHAR* name;
   FXJSE_PropAccessor getProc;
   FXJSE_PropAccessor setProc;
 };
 
-struct FXJSE_CLASS {
+struct FXJSE_CLASS_DESCRIPTOR {
   const FX_CHAR* name;
   FXJSE_FuncCallback constructor;
-  FXJSE_PROPERTY* properties;
-  FXJSE_FUNCTION* methods;
+  FXJSE_PROPERTY_DESCRIPTOR* properties;
+  FXJSE_FUNCTION_DESCRIPTOR* methods;
   int32_t propNum;
   int32_t methNum;
   FXJSE_PropTypeGetter dynPropTypeGetter;
@@ -70,9 +70,10 @@ void FXJSE_Finalize();
 v8::Isolate* FXJSE_Runtime_Create();
 void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime);
 
-CFXJSE_Context* FXJSE_Context_Create(v8::Isolate* pIsolate,
-                                     const FXJSE_CLASS* lpGlobalClass = nullptr,
-                                     void* lpGlobalObject = nullptr);
+CFXJSE_Context* FXJSE_Context_Create(
+    v8::Isolate* pIsolate,
+    const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass = nullptr,
+    void* lpGlobalObject = nullptr);
 void FXJSE_Context_Release(CFXJSE_Context* pContext);
 CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
 
@@ -80,7 +81,7 @@ void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
                                         uint32_t dwCompatibleFlags);
 
 CFXJSE_Class* FXJSE_DefineClass(CFXJSE_Context* pContext,
-                                const FXJSE_CLASS* lpClass);
+                                const FXJSE_CLASS_DESCRIPTOR* lpClass);
 
 CFXJSE_Value* FXJSE_Value_Create(v8::Isolate* pIsolate);
 void FXJSE_Value_Release(CFXJSE_Value* pValue);

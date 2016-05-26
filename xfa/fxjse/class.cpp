@@ -25,15 +25,16 @@ static void FXJSE_V8SetterCallback_Wrapper(
     const v8::PropertyCallbackInfo<void>& info);
 
 CFXJSE_Class* FXJSE_DefineClass(CFXJSE_Context* pContext,
-                                const FXJSE_CLASS* lpClass) {
+                                const FXJSE_CLASS_DESCRIPTOR* lpClass) {
   ASSERT(pContext);
   return CFXJSE_Class::Create(pContext, lpClass, FALSE);
 }
 
 static void FXJSE_V8FunctionCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  const FXJSE_FUNCTION* lpFunctionInfo =
-      static_cast<FXJSE_FUNCTION*>(info.Data().As<v8::External>()->Value());
+  const FXJSE_FUNCTION_DESCRIPTOR* lpFunctionInfo =
+      static_cast<FXJSE_FUNCTION_DESCRIPTOR*>(
+          info.Data().As<v8::External>()->Value());
   if (!lpFunctionInfo) {
     return;
   }
@@ -55,8 +56,9 @@ static void FXJSE_V8FunctionCallback_Wrapper(
 
 static void FXJSE_V8ClassGlobalConstructorCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  const FXJSE_CLASS* lpClassDefinition =
-      static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
+  const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition =
+      static_cast<FXJSE_CLASS_DESCRIPTOR*>(
+          info.Data().As<v8::External>()->Value());
   if (!lpClassDefinition) {
     return;
   }
@@ -79,8 +81,9 @@ static void FXJSE_V8ClassGlobalConstructorCallback_Wrapper(
 static void FXJSE_V8GetterCallback_Wrapper(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  const FXJSE_PROPERTY* lpPropertyInfo =
-      static_cast<FXJSE_PROPERTY*>(info.Data().As<v8::External>()->Value());
+  const FXJSE_PROPERTY_DESCRIPTOR* lpPropertyInfo =
+      static_cast<FXJSE_PROPERTY_DESCRIPTOR*>(
+          info.Data().As<v8::External>()->Value());
   if (!lpPropertyInfo) {
     return;
   }
@@ -100,8 +103,9 @@ static void FXJSE_V8SetterCallback_Wrapper(
     v8::Local<v8::String> property,
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<void>& info) {
-  const FXJSE_PROPERTY* lpPropertyInfo =
-      static_cast<FXJSE_PROPERTY*>(info.Data().As<v8::External>()->Value());
+  const FXJSE_PROPERTY_DESCRIPTOR* lpPropertyInfo =
+      static_cast<FXJSE_PROPERTY_DESCRIPTOR*>(
+          info.Data().As<v8::External>()->Value());
   if (!lpPropertyInfo) {
     return;
   }
@@ -119,8 +123,9 @@ static void FXJSE_V8SetterCallback_Wrapper(
 
 static void FXJSE_V8ConstructorCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  const FXJSE_CLASS* lpClassDefinition =
-      static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
+  const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition =
+      static_cast<FXJSE_CLASS_DESCRIPTOR*>(
+          info.Data().As<v8::External>()->Value());
   if (!lpClassDefinition) {
     return;
   }
@@ -193,8 +198,8 @@ CFXJSE_Value* CFXJSE_Arguments::GetReturnValue() {
 }
 static void FXJSE_Context_GlobalObjToString(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  const FXJSE_CLASS* lpClass =
-      static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
+  const FXJSE_CLASS_DESCRIPTOR* lpClass = static_cast<FXJSE_CLASS_DESCRIPTOR*>(
+      info.Data().As<v8::External>()->Value());
   if (!lpClass) {
     return;
   }
@@ -213,9 +218,10 @@ static void FXJSE_Context_GlobalObjToString(
   }
 }
 
-CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
-                                   const FXJSE_CLASS* lpClassDefinition,
-                                   FX_BOOL bIsJSGlobal) {
+CFXJSE_Class* CFXJSE_Class::Create(
+    CFXJSE_Context* lpContext,
+    const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition,
+    FX_BOOL bIsJSGlobal) {
   if (!lpContext || !lpClassDefinition) {
     return NULL;
   }
@@ -231,7 +237,8 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::FunctionTemplate> hFunctionTemplate = v8::FunctionTemplate::New(
       pIsolate, bIsJSGlobal ? 0 : FXJSE_V8ConstructorCallback_Wrapper,
-      v8::External::New(pIsolate, const_cast<FXJSE_CLASS*>(lpClassDefinition)));
+      v8::External::New(
+          pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)));
   hFunctionTemplate->SetClassName(
       v8::String::NewFromUtf8(pIsolate, lpClassDefinition->name));
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(1);
@@ -250,7 +257,7 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
           lpClassDefinition->properties[i].setProc
               ? FXJSE_V8SetterCallback_Wrapper
               : NULL,
-          v8::External::New(pIsolate, const_cast<FXJSE_PROPERTY*>(
+          v8::External::New(pIsolate, const_cast<FXJSE_PROPERTY_DESCRIPTOR*>(
                                           lpClassDefinition->properties + i)),
           static_cast<v8::PropertyAttribute>(v8::DontDelete));
     }
@@ -261,8 +268,9 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
           v8::String::NewFromUtf8(pIsolate, lpClassDefinition->methods[i].name),
           v8::FunctionTemplate::New(
               pIsolate, FXJSE_V8FunctionCallback_Wrapper,
-              v8::External::New(pIsolate, const_cast<FXJSE_FUNCTION*>(
-                                              lpClassDefinition->methods + i))),
+              v8::External::New(pIsolate,
+                                const_cast<FXJSE_FUNCTION_DESCRIPTOR*>(
+                                    lpClassDefinition->methods + i))),
           static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
     }
   }
@@ -272,8 +280,8 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
           v8::String::NewFromUtf8(pIsolate, lpClassDefinition->name),
           v8::FunctionTemplate::New(
               pIsolate, FXJSE_V8ClassGlobalConstructorCallback_Wrapper,
-              v8::External::New(pIsolate,
-                                const_cast<FXJSE_CLASS*>(lpClassDefinition))),
+              v8::External::New(pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(
+                                              lpClassDefinition))),
           static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
     } else {
       v8::Local<v8::Context> hLocalContext =
@@ -282,8 +290,9 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
           ->Set(v8::String::NewFromUtf8(pIsolate, lpClassDefinition->name),
                 v8::Function::New(
                     pIsolate, FXJSE_V8ClassGlobalConstructorCallback_Wrapper,
-                    v8::External::New(pIsolate, const_cast<FXJSE_CLASS*>(
-                                                    lpClassDefinition))));
+                    v8::External::New(pIsolate,
+                                      const_cast<FXJSE_CLASS_DESCRIPTOR*>(
+                                          lpClassDefinition))));
     }
   }
   if (bIsJSGlobal) {
@@ -291,8 +300,8 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
         v8::String::NewFromUtf8(pIsolate, "toString"),
         v8::FunctionTemplate::New(
             pIsolate, FXJSE_Context_GlobalObjToString,
-            v8::External::New(pIsolate,
-                              const_cast<FXJSE_CLASS*>(lpClassDefinition))));
+            v8::External::New(pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(
+                                            lpClassDefinition))));
   }
   pClass->m_hTemplate.Reset(lpContext->m_pIsolate, hFunctionTemplate);
   lpContext->m_rgClasses.push_back(std::unique_ptr<CFXJSE_Class>(pClass));

@@ -33,8 +33,8 @@ CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
       m_pThisObject(nullptr),
       m_dwBuiltInInFlags(0),
       m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {
-  FXSYS_memset(&m_JsGlobalClass, 0, sizeof(FXJSE_CLASS));
-  FXSYS_memset(&m_JsNormalClass, 0, sizeof(FXJSE_CLASS));
+  FXSYS_memset(&m_JsGlobalClass, 0, sizeof(FXJSE_CLASS_DESCRIPTOR));
+  FXSYS_memset(&m_JsNormalClass, 0, sizeof(FXJSE_CLASS_DESCRIPTOR));
 }
 CXFA_ScriptContext::~CXFA_ScriptContext() {
   FX_POSITION ps = m_mapXFAToValue.GetStartPosition();

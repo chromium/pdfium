@@ -16,13 +16,14 @@
 
 class CFXJSE_Class;
 class CFXJSE_Value;
-struct FXJSE_CLASS;
+struct FXJSE_CLASS_DESCRIPTOR;
 
 class CFXJSE_Context {
  public:
-  static CFXJSE_Context* Create(v8::Isolate* pIsolate,
-                                const FXJSE_CLASS* lpGlobalClass = nullptr,
-                                void* lpGlobalObject = nullptr);
+  static CFXJSE_Context* Create(
+      v8::Isolate* pIsolate,
+      const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass = nullptr,
+      void* lpGlobalObject = nullptr);
   ~CFXJSE_Context();
 
   V8_INLINE v8::Isolate* GetRuntime(void) { return m_pIsolate; }

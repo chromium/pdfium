@@ -7072,7 +7072,7 @@ void CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg,
     FXJSE_Value_ToUTF8String(arg, szOutputString);
   }
 }
-static FXJSE_FUNCTION formcalc_fm2js_functions[] = {
+static FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
     {"Abs", CXFA_FM2JSContext::Abs},
     {"Avg", CXFA_FM2JSContext::Avg},
     {"Ceil", CXFA_FM2JSContext::Ceil},
@@ -7167,7 +7167,7 @@ static FXJSE_FUNCTION formcalc_fm2js_functions[] = {
 };
 CXFA_FM2JSContext::CXFA_FM2JSContext()
     : m_pFMClass(nullptr), m_pDocument(nullptr) {
-  FXSYS_memset(&m_fmClass, 0, sizeof(FXJSE_CLASS));
+  FXSYS_memset(&m_ClassDescriptor, 0, sizeof(FXJSE_CLASS_DESCRIPTOR));
 }
 
 CXFA_FM2JSContext::~CXFA_FM2JSContext() {
@@ -7180,14 +7180,14 @@ void CXFA_FM2JSContext::Initialize(v8::Isolate* pScriptIsolate,
                                    CXFA_Document* pDoc) {
   m_pDocument = pDoc;
   m_pIsolate = pScriptIsolate;
-  m_fmClass.name = "XFA_FM2JS_FormCalcClass";
-  m_fmClass.constructor = NULL;
-  m_fmClass.properties = NULL;
-  m_fmClass.methods = formcalc_fm2js_functions;
-  m_fmClass.propNum = 0;
-  m_fmClass.methNum =
+  m_ClassDescriptor.name = "XFA_FM2JS_FormCalcClass";
+  m_ClassDescriptor.constructor = NULL;
+  m_ClassDescriptor.properties = NULL;
+  m_ClassDescriptor.methods = formcalc_fm2js_functions;
+  m_ClassDescriptor.propNum = 0;
+  m_ClassDescriptor.methNum =
       sizeof(formcalc_fm2js_functions) / sizeof(formcalc_fm2js_functions[0]);
-  m_pFMClass = FXJSE_DefineClass(pScriptContext, &m_fmClass);
+  m_pFMClass = FXJSE_DefineClass(pScriptContext, &m_ClassDescriptor);
   m_pValue = FXJSE_Value_Create(pScriptIsolate);
   FXJSE_Value_SetNull(m_pValue);
   FXJSE_Value_SetObject(m_pValue, this, m_pFMClass);
