@@ -17,6 +17,8 @@
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 
+namespace {
+
 CFX_FloatRect GetUnderLineRect(const CPVT_Word& word) {
   return CFX_FloatRect(word.ptWord.x, word.ptWord.y + word.fDescent * 0.5f,
                        word.ptWord.x + word.fWidth,
@@ -31,15 +33,15 @@ CFX_FloatRect GetCrossoutRect(const CPVT_Word& word) {
                        word.ptWord.y + (word.fAscent + word.fDescent) * 0.5f);
 }
 
-static void DrawTextString(CFX_RenderDevice* pDevice,
-                           const CFX_FloatPoint& pt,
-                           CPDF_Font* pFont,
-                           FX_FLOAT fFontSize,
-                           CFX_Matrix* pUser2Device,
-                           const CFX_ByteString& str,
-                           FX_ARGB crTextFill,
-                           FX_ARGB crTextStroke,
-                           int32_t nHorzScale) {
+void DrawTextString(CFX_RenderDevice* pDevice,
+                    const CFX_FloatPoint& pt,
+                    CPDF_Font* pFont,
+                    FX_FLOAT fFontSize,
+                    CFX_Matrix* pUser2Device,
+                    const CFX_ByteString& str,
+                    FX_ARGB crTextFill,
+                    FX_ARGB crTextStroke,
+                    int32_t nHorzScale) {
   FX_FLOAT x = pt.x, y = pt.y;
   pUser2Device->Transform(x, y);
 
@@ -65,7 +67,7 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
                                           &ro);
       } else {
         CPDF_TextRenderer::DrawTextString(pDevice, x, y, pFont, fFontSize, &mt,
-                                          str, crTextFill, 0, NULL, &ro);
+                                          str, crTextFill, 0, nullptr, &ro);
       }
     } else {
       CPDF_RenderOptions ro;
@@ -86,11 +88,69 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
       } else {
         CPDF_TextRenderer::DrawTextString(pDevice, x, y, pFont, fFontSize,
                                           pUser2Device, str, crTextFill, 0,
-                                          NULL, &ro);
+                                          nullptr, &ro);
       }
     }
   }
 }
+
+void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
+                          FX_COLORREF crFill,
+                          const CFX_FloatRect& rcFill) {
+  std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
+  CFX_PathData* pPathData = pPathObj->m_Path.GetModify();
+  pPathData->AppendRect(rcFill.left, rcFill.bottom, rcFill.right, rcFill.top);
+
+  FX_FLOAT rgb[3];
+  rgb[0] = FXARGB_R(crFill) / 255.0f;
+  rgb[1] = FXARGB_G(crFill) / 255.0f;
+  rgb[2] = FXARGB_B(crFill) / 255.0f;
+  pPathObj->m_ColorState.SetFillColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
+
+  pPathObj->m_FillType = FXFILL_ALTERNATE;
+  pPathObj->m_bStroke = FALSE;
+  pObjectHolder->GetPageObjectList()->push_back(std::move(pPathObj));
+}
+
+CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
+                                         FX_COLORREF crText,
+                                         CPDF_Font* pFont,
+                                         FX_FLOAT fFontSize,
+                                         FX_FLOAT fCharSpace,
+                                         int32_t nHorzScale,
+                                         const CFX_FloatPoint& point,
+                                         const CFX_ByteString& text) {
+  std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
+  CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetModify();
+  pTextStateData->m_pFont = pFont;
+  pTextStateData->m_FontSize = fFontSize;
+  pTextStateData->m_CharSpace = fCharSpace;
+  pTextStateData->m_WordSpace = 0;
+  pTextStateData->m_TextMode = TextRenderingMode::MODE_FILL;
+  pTextStateData->m_Matrix[0] = nHorzScale / 100.0f;
+  pTextStateData->m_Matrix[1] = 0;
+  pTextStateData->m_Matrix[2] = 0;
+  pTextStateData->m_Matrix[3] = 1;
+
+  FX_FLOAT rgb[3];
+  rgb[0] = FXARGB_R(crText) / 255.0f;
+  rgb[1] = FXARGB_G(crText) / 255.0f;
+  rgb[2] = FXARGB_B(crText) / 255.0f;
+  pTxtObj->m_ColorState.SetFillColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
+  pTxtObj->m_ColorState.SetStrokeColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
+
+  pTxtObj->SetPosition(point.x, point.y);
+  pTxtObj->SetText(text);
+
+  CPDF_TextObject* pRet = pTxtObj.get();
+  pObjectHolder->GetPageObjectList()->push_back(std::move(pTxtObj));
+  return pRet;
+}
+
+}  // namespace
 
 void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
@@ -386,63 +446,6 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
   }
 
   pDevice->RestoreState(false);
-}
-
-static void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                 FX_COLORREF crFill,
-                                 const CFX_FloatRect& rcFill) {
-  std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
-  CFX_PathData* pPathData = pPathObj->m_Path.GetModify();
-  pPathData->AppendRect(rcFill.left, rcFill.bottom, rcFill.right, rcFill.top);
-
-  FX_FLOAT rgb[3];
-  rgb[0] = FXARGB_R(crFill) / 255.0f;
-  rgb[1] = FXARGB_G(crFill) / 255.0f;
-  rgb[2] = FXARGB_B(crFill) / 255.0f;
-  pPathObj->m_ColorState.SetFillColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-
-  pPathObj->m_FillType = FXFILL_ALTERNATE;
-  pPathObj->m_bStroke = FALSE;
-  pObjectHolder->GetPageObjectList()->push_back(std::move(pPathObj));
-}
-
-static CPDF_TextObject* AddTextObjToPageObjects(
-    CPDF_PageObjectHolder* pObjectHolder,
-    FX_COLORREF crText,
-    CPDF_Font* pFont,
-    FX_FLOAT fFontSize,
-    FX_FLOAT fCharSpace,
-    int32_t nHorzScale,
-    const CFX_FloatPoint& point,
-    const CFX_ByteString& text) {
-  std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
-  CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetModify();
-  pTextStateData->m_pFont = pFont;
-  pTextStateData->m_FontSize = fFontSize;
-  pTextStateData->m_CharSpace = fCharSpace;
-  pTextStateData->m_WordSpace = 0;
-  pTextStateData->m_TextMode = TextRenderingMode::MODE_FILL;
-  pTextStateData->m_Matrix[0] = nHorzScale / 100.0f;
-  pTextStateData->m_Matrix[1] = 0;
-  pTextStateData->m_Matrix[2] = 0;
-  pTextStateData->m_Matrix[3] = 1;
-
-  FX_FLOAT rgb[3];
-  rgb[0] = FXARGB_R(crText) / 255.0f;
-  rgb[1] = FXARGB_G(crText) / 255.0f;
-  rgb[2] = FXARGB_B(crText) / 255.0f;
-  pTxtObj->m_ColorState.SetFillColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-  pTxtObj->m_ColorState.SetStrokeColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-
-  pTxtObj->SetPosition(point.x, point.y);
-  pTxtObj->SetText(text);
-
-  CPDF_TextObject* pRet = pTxtObj.get();
-  pObjectHolder->GetPageObjectList()->push_back(std::move(pTxtObj));
-  return pRet;
 }
 
 void IFX_Edit::GeneratePageObjects(

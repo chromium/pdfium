@@ -528,9 +528,11 @@ class CPDF_CharPosList {
 CPDF_CharPosList::CPDF_CharPosList() {
   m_pCharPos = NULL;
 }
+
 CPDF_CharPosList::~CPDF_CharPosList() {
   FX_Free(m_pCharPos);
 }
+
 void CPDF_CharPosList::Load(int nChars,
                             uint32_t* pCharCodes,
                             FX_FLOAT* pCharPos,
@@ -590,6 +592,7 @@ void CPDF_CharPosList::Load(int nChars,
   }
 }
 
+// static
 FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                         int nChars,
                                         uint32_t* pCharCodes,
@@ -614,24 +617,7 @@ FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
       pClippingPath, nFlag);
 }
 
-void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
-                                       int left,
-                                       int top,
-                                       CPDF_Font* pFont,
-                                       int height,
-                                       const CFX_ByteString& str,
-                                       FX_ARGB argb) {
-  FX_RECT font_bbox;
-  pFont->GetFontBBox(font_bbox);
-  FX_FLOAT font_size =
-      (FX_FLOAT)height * 1000.0f / (FX_FLOAT)(font_bbox.top - font_bbox.bottom);
-  FX_FLOAT origin_x = (FX_FLOAT)left;
-  FX_FLOAT origin_y =
-      (FX_FLOAT)top + font_size * (FX_FLOAT)font_bbox.top / 1000.0f;
-  CFX_Matrix matrix(1.0f, 0, 0, -1.0f, 0, 0);
-  DrawTextString(pDevice, origin_x, origin_y, pFont, font_size, &matrix, str,
-                 argb);
-}
+// static
 void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        FX_FLOAT origin_x,
                                        FX_FLOAT origin_y,
@@ -680,7 +666,8 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                      &matrix, fill_argb, pOptions);
     } else {
       DrawTextPath(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
-                   &matrix, NULL, pGraphState, fill_argb, stroke_argb, NULL);
+                   &matrix, nullptr, pGraphState, fill_argb, stroke_argb,
+                   nullptr, 0);
     }
   }
 
@@ -689,6 +676,8 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
     FX_Free(pCharPos);
   }
 }
+
+// static
 FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                           int nChars,
                                           uint32_t* pCharCodes,
@@ -734,6 +723,7 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                  &pFont->m_Font, pCache, font_size,
                                  pText2Device, fill_argb, FXGE_flags);
 }
+
 void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 const CFX_Matrix* pObj2Device,
                                                 CPDF_Font* pFont,
