@@ -12,9 +12,9 @@
 #include "v8/include/v8.h"
 
 class CFXJSE_Arguments;
+class CFXJSE_Class;
 class CFXJSE_Context;
 
-typedef struct FXJSE_HCLASS_ { void* pData; } * FXJSE_HCLASS;
 typedef struct FXJSE_HVALUE_ { void* pData; } * FXJSE_HVALUE;
 // NOLINTNEXTLINE
 typedef struct FXJSE_HOBJECT_ : public FXJSE_HVALUE_{} * FXJSE_HOBJECT;
@@ -82,8 +82,8 @@ FXJSE_HVALUE FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
 void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
                                         uint32_t dwCompatibleFlags);
 
-FXJSE_HCLASS FXJSE_DefineClass(CFXJSE_Context* pContext,
-                               const FXJSE_CLASS* lpClass);
+CFXJSE_Class* FXJSE_DefineClass(CFXJSE_Context* pContext,
+                                const FXJSE_CLASS* lpClass);
 
 FXJSE_HVALUE FXJSE_Value_Create(v8::Isolate* pIsolate);
 void FXJSE_Value_Release(FXJSE_HVALUE hValue);
@@ -102,7 +102,7 @@ FX_FLOAT FXJSE_Value_ToFloat(FXJSE_HVALUE hValue);
 double FXJSE_Value_ToDouble(FXJSE_HVALUE hValue);
 int32_t FXJSE_Value_ToInteger(FXJSE_HVALUE hValue);
 void FXJSE_Value_ToUTF8String(FXJSE_HVALUE hValue, CFX_ByteString& szStrOutput);
-void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass);
+void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, CFXJSE_Class* hClass);
 
 void FXJSE_Value_SetUndefined(FXJSE_HVALUE hValue);
 void FXJSE_Value_SetNull(FXJSE_HVALUE hValue);
@@ -114,7 +114,7 @@ void FXJSE_Value_SetFloat(FXJSE_HVALUE hValue, FX_FLOAT fFloat);
 void FXJSE_Value_SetDouble(FXJSE_HVALUE hValue, double dDouble);
 void FXJSE_Value_SetObject(FXJSE_HVALUE hValue,
                            void* lpObject,
-                           FXJSE_HCLASS hClass);
+                           CFXJSE_Class* pClass);
 void FXJSE_Value_SetArray(FXJSE_HVALUE hValue,
                           uint32_t uValueCount,
                           FXJSE_HVALUE* rgValues);

@@ -24,7 +24,7 @@ CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
       m_pJsContext(nullptr),
       m_pIsolate(nullptr),
-      m_hJsClass(nullptr),
+      m_pJsClass(nullptr),
       m_eScriptType(XFA_SCRIPTLANGTYPE_Unkown),
       m_pScriptNodeArray(nullptr),
       m_pResolveProcessor(nullptr),
@@ -532,7 +532,7 @@ void CXFA_ScriptContext::DefineJsClass() {
   m_JsNormalClass.dynPropTypeGetter = CXFA_ScriptContext::NormalPropTypeGetter;
   m_JsNormalClass.dynPropDeleter = NULL;
   m_JsNormalClass.dynMethodCall = CXFA_ScriptContext::NormalMethodCall;
-  m_hJsClass = FXJSE_DefineClass(m_pJsContext, &m_JsNormalClass);
+  m_pJsClass = FXJSE_DefineClass(m_pJsContext, &m_JsNormalClass);
 }
 void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
   static const CFX_ByteStringC OBJ_NAME[2] = {"Number", "Date"};
@@ -545,8 +545,8 @@ void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
   FXJSE_Value_Release(hProp);
   FXJSE_Value_Release(hObject);
 }
-FXJSE_HCLASS CXFA_ScriptContext::GetJseNormalClass() {
-  return m_hJsClass;
+CFXJSE_Class* CXFA_ScriptContext::GetJseNormalClass() {
+  return m_pJsClass;
 }
 int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
                                            const CFX_WideStringC& wsExpression,
@@ -722,7 +722,7 @@ FXJSE_HVALUE CXFA_ScriptContext::GetJSValueFromMap(CXFA_Object* pObject) {
   void* pValue = m_mapXFAToHValue.GetValueAt(pObject);
   if (pValue == NULL) {
     FXJSE_HVALUE jsHvalue = FXJSE_Value_Create(m_pIsolate);
-    FXJSE_Value_SetObject(jsHvalue, pObject, m_hJsClass);
+    FXJSE_Value_SetObject(jsHvalue, pObject, m_pJsClass);
     m_mapXFAToHValue.SetAt(pObject, jsHvalue);
     pValue = jsHvalue;
   }

@@ -7164,7 +7164,7 @@ static FXJSE_FUNCTION formcalc_fm2js_functions[] = {
     {"fm_var_filter", CXFA_FM2JSContext::fm_var_filter},
 };
 CXFA_FM2JSContext::CXFA_FM2JSContext()
-    : m_hFMClass(nullptr), m_pDocument(nullptr) {
+    : m_pFMClass(nullptr), m_pDocument(nullptr) {
   FXSYS_memset(&m_fmClass, 0, sizeof(FXJSE_CLASS));
 }
 CXFA_FM2JSContext::~CXFA_FM2JSContext() {
@@ -7187,10 +7187,10 @@ void CXFA_FM2JSContext::Initialize(v8::Isolate* pScriptIsolate,
   m_fmClass.propNum = 0;
   m_fmClass.methNum =
       sizeof(formcalc_fm2js_functions) / sizeof(formcalc_fm2js_functions[0]);
-  m_hFMClass = FXJSE_DefineClass(pScriptContext, &m_fmClass);
+  m_pFMClass = FXJSE_DefineClass(pScriptContext, &m_fmClass);
   m_hValue = FXJSE_Value_Create(pScriptIsolate);
   FXJSE_Value_SetNull(m_hValue);
-  FXJSE_Value_SetObject(m_hValue, this, m_hFMClass);
+  FXJSE_Value_SetObject(m_hValue, this, m_pFMClass);
 }
 void CXFA_FM2JSContext::GlobalPropertyGetter(FXJSE_HVALUE hValue) {
   FXJSE_Value_Set(hValue, m_hValue);

@@ -48,7 +48,7 @@ class CXFA_ScriptContext {
   void SetNodesOfRunScript(CXFA_NodeArray* pArray);
   void AddNodesOfRunScript(const CXFA_NodeArray& nodes);
   void AddNodesOfRunScript(CXFA_Node* pNode);
-  FXJSE_HCLASS GetJseNormalClass();
+  CFXJSE_Class* GetJseNormalClass();
 
   void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) { m_eRunAtType = eRunAt; }
   FX_BOOL IsRunAtClient() { return m_eRunAtType != XFA_ATTRIBUTEENUM_Server; }
@@ -103,7 +103,7 @@ class CXFA_ScriptContext {
   CXFA_Document* m_pDocument;
   CFXJSE_Context* m_pJsContext;
   v8::Isolate* m_pIsolate;
-  FXJSE_HCLASS m_hJsClass;
+  CFXJSE_Class* m_pJsClass;
   XFA_SCRIPTLANGTYPE m_eScriptType;
   FXJSE_CLASS m_JsGlobalClass;
   FXJSE_CLASS m_JsNormalClass;

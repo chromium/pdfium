@@ -447,7 +447,7 @@ class CXFA_FM2JSContext {
  private:
   v8::Isolate* m_pIsolate;
   FXJSE_CLASS m_fmClass;
-  FXJSE_HCLASS m_hFMClass;
+  CFXJSE_Class* m_pFMClass;
   FXJSE_HVALUE m_hValue;
   CXFA_Document* m_pDocument;
 };

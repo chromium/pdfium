@@ -72,9 +72,8 @@ int32_t FXJSE_Value_ToInteger(FXJSE_HVALUE hValue) {
   return reinterpret_cast<CFXJSE_Value*>(hValue)->ToInteger();
 }
 
-void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass) {
-  CFXJSE_Class* lpClass = reinterpret_cast<CFXJSE_Class*>(hClass);
-  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToObject(lpClass);
+void* FXJSE_Value_ToObject(FXJSE_HVALUE hValue, CFXJSE_Class* pClass) {
+  return reinterpret_cast<CFXJSE_Value*>(hValue)->ToObject(pClass);
 }
 
 void FXJSE_Value_SetUndefined(FXJSE_HVALUE hValue) {
@@ -108,14 +107,13 @@ void FXJSE_Value_SetDouble(FXJSE_HVALUE hValue, double dDouble) {
 
 void FXJSE_Value_SetObject(FXJSE_HVALUE hValue,
                            void* lpObject,
-                           FXJSE_HCLASS hClass) {
+                           CFXJSE_Class* pClass) {
   CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
-  CFXJSE_Class* lpClass = reinterpret_cast<CFXJSE_Class*>(hClass);
-  if (!lpClass) {
+  if (!pClass) {
     ASSERT(!lpObject);
     lpValue->SetJSObject();
   } else {
-    lpValue->SetHostObject(lpObject, lpClass);
+    lpValue->SetHostObject(lpObject, pClass);
   }
 }
 
