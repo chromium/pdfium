@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_ucd.h"
-#include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
@@ -244,7 +243,7 @@ class CFX_RTFLine {
 
 class CFX_RTFBreak {
  public:
-  CFX_RTFBreak(uint32_t dwPolicies);
+  explicit CFX_RTFBreak(uint32_t dwPolicies);
   ~CFX_RTFBreak();
 
   void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd);

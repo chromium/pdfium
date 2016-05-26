@@ -15,6 +15,7 @@
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/fsdk_rendercontext.h"
@@ -30,6 +31,10 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
 #include "public/fpdf_formfill.h"
 #endif  // PDF_ENABLE_XFA
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#include "core/fxge/include/fx_ge_win32.h"
+#endif
 
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
   return static_cast<UnderlyingDocumentType*>(doc);

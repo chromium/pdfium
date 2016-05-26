@@ -7,6 +7,7 @@
 #include "xfa/fgas/font/fgas_stdfontmgr.h"
 
 #include "core/fxcrt/include/fx_stream.h"
+#include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
@@ -24,7 +25,7 @@ CFX_StdFontMgrImp::CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator)
       m_FileFonts(4),
       m_StreamFonts(4),
       m_DeriveFonts(4) {
-  if (m_pEnumerator != NULL) {
+  if (m_pEnumerator) {
     m_pEnumerator(m_FontFaces, NULL, 0xFEFF);
   }
 }
@@ -58,7 +59,7 @@ IFX_Font* CFX_StdFontMgrImp::GetDefFontByCodePage(
         return NULL;
     }
   }
-  ASSERT(pFD != NULL);
+  ASSERT(pFD);
   pFont = IFX_Font::LoadFont(pFD->wsFontFace, dwFontStyles, wCodePage, this);
   if (pFont) {
     m_Fonts.Add(pFont);
@@ -139,7 +140,7 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(const FX_WCHAR* pszFontFamily,
       return NULL;
     }
   }
-  ASSERT(pFD != NULL);
+  ASSERT(pFD);
   if (wCodePage == 0xFFFF) {
     wCodePage = FX_GetCodePageFromCharset(pFD->uCharSet);
   }
@@ -154,10 +155,10 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(const FX_WCHAR* pszFontFamily,
   return NULL;
 }
 IFX_Font* CFX_StdFontMgrImp::LoadFont(const uint8_t* pBuffer, int32_t iLength) {
-  ASSERT(pBuffer != NULL && iLength > 0);
+  ASSERT(pBuffer && iLength > 0);
   IFX_Font* pFont = NULL;
   if (m_BufferFonts.Lookup((void*)pBuffer, (void*&)pFont)) {
-    if (pFont != NULL) {
+    if (pFont) {
       return pFont->Retain();
     }
   }
@@ -170,11 +171,11 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(const uint8_t* pBuffer, int32_t iLength) {
   return NULL;
 }
 IFX_Font* CFX_StdFontMgrImp::LoadFont(const FX_WCHAR* pszFileName) {
-  ASSERT(pszFileName != NULL);
+  ASSERT(pszFileName);
   uint32_t dwHash = FX_HashCode_GetW(pszFileName, false);
   IFX_Font* pFont = NULL;
   if (m_FileFonts.Lookup((void*)(uintptr_t)dwHash, (void*&)pFont)) {
-    if (pFont != NULL) {
+    if (pFont) {
       return pFont->Retain();
     }
   }
@@ -191,11 +192,11 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(IFX_Stream* pFontStream,
                                       uint32_t dwFontStyles,
                                       uint16_t wCodePage,
                                       FX_BOOL bSaveStream) {
-  ASSERT(pFontStream != NULL && pFontStream->GetLength() > 0);
+  ASSERT(pFontStream && pFontStream->GetLength() > 0);
   IFX_Font* pFont = NULL;
   if (m_StreamFonts.Lookup((void*)pFontStream, (void*&)pFont)) {
-    if (pFont != NULL) {
-      if (pszFontAlias != NULL) {
+    if (pFont) {
+      if (pszFontAlias) {
         uint32_t dwHash =
             FGAS_GetFontFamilyHash(pszFontAlias, dwFontStyles, wCodePage);
         m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
@@ -207,7 +208,7 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(IFX_Stream* pFontStream,
   if (pFont) {
     m_Fonts.Add(pFont);
     m_StreamFonts.SetAt((void*)pFontStream, (void*)pFont);
-    if (pszFontAlias != NULL) {
+    if (pszFontAlias) {
       uint32_t dwHash =
           FGAS_GetFontFamilyHash(pszFontAlias, dwFontStyles, wCodePage);
       m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
@@ -219,7 +220,7 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(IFX_Stream* pFontStream,
 IFX_Font* CFX_StdFontMgrImp::LoadFont(IFX_Font* pSrcFont,
                                       uint32_t dwFontStyles,
                                       uint16_t wCodePage) {
-  ASSERT(pSrcFont != NULL);
+  ASSERT(pSrcFont);
   if (pSrcFont->GetFontStyles() == dwFontStyles) {
     return pSrcFont->Retain();
   }
@@ -230,7 +231,7 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(IFX_Font* pSrcFont,
   IFX_Font* pFont = NULL;
   if (m_DeriveFonts.GetCount() > 0) {
     m_DeriveFonts.Lookup((void*)(uintptr_t)dwHash, (void*&)pFont);
-    if (pFont != NULL) {
+    if (pFont) {
       return pFont->Retain();
     }
   }
@@ -256,7 +257,7 @@ void CFX_StdFontMgrImp::RemoveFont(CFX_MapPtrToPtr& fontMap, IFX_Font* pFont) {
   FX_POSITION pos = fontMap.GetStartPosition();
   void* pKey;
   void* pFind;
-  while (pos != NULL) {
+  while (pos) {
     pFind = NULL;
     fontMap.GetNextAssoc(pos, pKey, pFind);
     if (pFind != (void*)pFont) {
@@ -355,13 +356,11 @@ FX_FONTDESCRIPTOR const* FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams,
       }
     }
     if (bMatchStyle) {
-      if ((pFont->dwFontStyles & 0x0F) == (pParams->dwFontStyles & 0x0F)) {
+      if ((pFont->dwFontStyles & 0x0F) == (pParams->dwFontStyles & 0x0F))
         return pFont;
-      } else {
-        continue;
-      }
+      continue;
     }
-    if (pParams->pwsFamily != NULL) {
+    if (pParams->pwsFamily) {
       if (FXSYS_wcsicmp(pParams->pwsFamily, pFont->wsFontFace) == 0) {
         return pFont;
       }
@@ -552,15 +551,16 @@ IFX_FontMgr* IFX_FontMgr::Create(CFX_FontSourceEnum_File* pFontEnum) {
   if (!pFontEnum)
     return nullptr;
 
-  CFX_FontMgrImp* pFontMgr = new CFX_FontMgrImp(pFontEnum);
-  if (pFontMgr->EnumFonts())
-    return pFontMgr;
-
-  delete pFontMgr;
-  return nullptr;
+  std::unique_ptr<CFX_FontMgrImp> pFontMgr(new CFX_FontMgrImp(pFontEnum));
+  if (!pFontMgr->EnumFonts())
+    return nullptr;
+  return pFontMgr.release();
 }
+
 CFX_FontMgrImp::CFX_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum)
     : m_pFontSource(pFontEnum) {}
+
+CFX_FontMgrImp::~CFX_FontMgrImp() {}
 
 FX_BOOL CFX_FontMgrImp::EnumFontsFromFontMapper() {
   CFX_FontMapper* pFontMapper =

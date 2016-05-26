@@ -15,7 +15,6 @@ typedef struct FDE_HDEVICESTATE_ { void* pData; } * FDE_HDEVICESTATE;
 class CFDE_Brush;
 class CFDE_Path;
 class CFDE_Pen;
-class CFX_RenderDevice;
 class IFX_Font;
 
 class CFDE_RenderDevice : public CFX_Target {

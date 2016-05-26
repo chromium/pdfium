@@ -7,10 +7,10 @@
 #ifndef XFA_FXBARCODE_BC_TWODIMWRITER_H_
 #define XFA_FXBARCODE_BC_TWODIMWRITER_H_
 
-#include "core/fxge/include/fx_ge.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 
 class CBC_CommonBitMatrix;
+class CFX_RenderDevice;
 
 class CBC_TwoDimWriter : public CBC_Writer {
  public:

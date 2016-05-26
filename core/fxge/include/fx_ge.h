@@ -10,26 +10,23 @@
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_font.h"
 
-class CFX_Font;
-class CFX_FontMgr;
-class CFX_FontCache;
-class CFX_FaceCache;
-class CPDF_ShadingPattern;
-class IFX_RenderDeviceDriver;
 class CCodec_ModuleMgr;
+class CFX_FaceCache;
+class CFX_Font;
+class CFX_FontCache;
+class CFX_FontMgr;
+class CPDF_ShadingPattern;
+class CPSFont;
+class IFX_RenderDeviceDriver;
 class SkPictureRecorder;
 
 class CFX_GEModule {
  public:
   static void Create(const char** pUserFontPaths);
-
   static void Use(CFX_GEModule* pMgr);
-
   static CFX_GEModule* Get();
-
   static void Destroy();
 
- public:
   CFX_FontCache* GetFontCache();
   CFX_FontMgr* GetFontMgr() { return m_pFontMgr; }
   void SetTextGamma(FX_FLOAT gammaValue);
@@ -44,8 +41,8 @@ class CFX_GEModule {
 
  protected:
   explicit CFX_GEModule(const char** pUserFontPaths);
-
   ~CFX_GEModule();
+
   void InitPlatform();
   void DestroyPlatform();
 
@@ -57,13 +54,13 @@ class CFX_GEModule {
   void* m_pPlatformData;
   const char** m_pUserFontPaths;
 };
-typedef struct {
+
+struct FX_PATHPOINT {
   FX_FLOAT m_PointX;
-
   FX_FLOAT m_PointY;
-
   int m_Flag;
-} FX_PATHPOINT;
+};
+
 #define FXPT_CLOSEFIGURE 0x01
 #define FXPT_LINETO 0x02
 #define FXPT_BEZIERTO 0x04
@@ -71,95 +68,67 @@ typedef struct {
 #define FXPT_TYPE 0x06
 #define FXFILL_ALTERNATE 1
 #define FXFILL_WINDING 2
+
 class CFX_ClipRgn {
  public:
   CFX_ClipRgn(int device_width, int device_height);
-
-  CFX_ClipRgn(const FX_RECT& rect);
-
+  explicit CFX_ClipRgn(const FX_RECT& rect);
   CFX_ClipRgn(const CFX_ClipRgn& src);
-
   ~CFX_ClipRgn();
 
-  typedef enum { RectI, MaskF } ClipType;
-
+  enum ClipType { RectI, MaskF };
   void Reset(const FX_RECT& rect);
-
   ClipType GetType() const { return m_Type; }
-
   const FX_RECT& GetBox() const { return m_Box; }
-
   CFX_DIBitmapRef GetMask() const { return m_Mask; }
-
   void IntersectRect(const FX_RECT& rect);
-
   void IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask);
 
  protected:
-  ClipType m_Type;
-
-  FX_RECT m_Box;
-
-  CFX_DIBitmapRef m_Mask;
-
   void IntersectMaskRect(FX_RECT rect, FX_RECT mask_box, CFX_DIBitmapRef Mask);
+
+  ClipType m_Type;
+  FX_RECT m_Box;
+  CFX_DIBitmapRef m_Mask;
 };
 
 class CFX_PathData {
  public:
   CFX_PathData();
-
   CFX_PathData(const CFX_PathData& src);
-
   ~CFX_PathData();
 
   int GetPointCount() const { return m_PointCount; }
-
   int GetFlag(int index) const { return m_pPoints[index].m_Flag; }
-
   FX_FLOAT GetPointX(int index) const { return m_pPoints[index].m_PointX; }
-
   FX_FLOAT GetPointY(int index) const { return m_pPoints[index].m_PointY; }
-
   FX_PATHPOINT* GetPoints() const { return m_pPoints; }
-
   void SetPointCount(int nPoints);
   void AllocPointCount(int nPoints);
   void AddPointCount(int addPoints);
-
   CFX_FloatRect GetBoundingBox() const;
-
   CFX_FloatRect GetBoundingBox(FX_FLOAT line_width, FX_FLOAT miter_limit) const;
-
   void Transform(const CFX_Matrix* pMatrix);
-
   FX_BOOL IsRect() const;
-
   FX_BOOL GetZeroAreaPath(CFX_PathData& NewPath,
                           CFX_Matrix* pMatrix,
                           FX_BOOL& bThin,
                           FX_BOOL bAdjust) const;
-
   FX_BOOL IsRect(const CFX_Matrix* pMatrix, CFX_FloatRect* rect) const;
-
   void Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix);
   void AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
-
   void SetPoint(int index, FX_FLOAT x, FX_FLOAT y, int flag);
-
   void TrimPoints(int nPoints);
-
   void Copy(const CFX_PathData& src);
 
  protected:
   friend class CPDF_Path;
 
   int m_PointCount;
-
   FX_PATHPOINT* m_pPoints;
-
   int m_AllocCount;
 };
+
 class CFX_GraphStateData {
  public:
   CFX_GraphStateData();
@@ -169,21 +138,22 @@ class CFX_GraphStateData {
   void Copy(const CFX_GraphStateData& src);
   void SetDashCount(int count);
 
-  typedef enum { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 } LineCap;
+  enum LineCap { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 };
   LineCap m_LineCap;
   int m_DashCount;
   FX_FLOAT* m_DashArray;
   FX_FLOAT m_DashPhase;
 
-  typedef enum {
+  enum LineJoin {
     LineJoinMiter = 0,
     LineJoinRound = 1,
     LineJoinBevel = 2,
-  } LineJoin;
+  };
   LineJoin m_LineJoin;
   FX_FLOAT m_MiterLimit;
   FX_FLOAT m_LineWidth;
 };
+
 #define FXDC_DEVICE_CLASS 1
 #define FXDC_PIXEL_WIDTH 2
 #define FXDC_PIXEL_HEIGHT 3
@@ -224,7 +194,8 @@ class CFX_GraphStateData {
 #define FXTEXT_NO_NATIVETEXT 0x08
 #define FXTEXT_PRINTIMAGETEXT 0x10
 #define FXTEXT_NOSMOOTH 0x20
-typedef struct {
+
+struct FXTEXT_CHARPOS {
   uint32_t m_GlyphIndex;
   FX_FLOAT m_OriginX, m_OriginY;
   int m_FontCharWidth;
@@ -232,7 +203,7 @@ typedef struct {
   FX_FLOAT m_AdjustMatrix[4];
   uint32_t m_ExtGID;
   FX_BOOL m_bFontStyle;
-} FXTEXT_CHARPOS;
+};
 
 class CFX_RenderDevice {
  public:
@@ -591,11 +562,9 @@ class IFX_PSOutput {
   virtual ~IFX_PSOutput() {}
 };
 
-class CPSFont;
 class CFX_PSRenderer {
  public:
   CFX_PSRenderer();
-
   ~CFX_PSRenderer();
 
   void Init(IFX_PSOutput* pOutput,
@@ -605,21 +574,15 @@ class CFX_PSRenderer {
             FX_BOOL bCmykOutput);
   FX_BOOL StartRendering();
   void EndRendering();
-
   void SaveState();
-
   void RestoreState(FX_BOOL bKeepSaved = FALSE);
-
   void SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
                         int fill_mode);
-
   void SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
-
   FX_RECT GetClipBox() { return m_ClipBox; }
-
   FX_BOOL DrawPath(const CFX_PathData* pPathData,
                    const CFX_Matrix* pObject2Device,
                    const CFX_GraphStateData* pGraphState,
@@ -628,14 +591,12 @@ class CFX_PSRenderer {
                    int fill_mode,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL);
-
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
                     int dest_left,
                     int dest_top,
                     int alpha_flag = 0,
                     void* pIccTransform = NULL);
-
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                         uint32_t color,
                         int dest_left,
@@ -645,14 +606,12 @@ class CFX_PSRenderer {
                         uint32_t flags,
                         int alpha_flag = 0,
                         void* pIccTransform = NULL);
-
   FX_BOOL DrawDIBits(const CFX_DIBSource* pBitmap,
                      uint32_t color,
                      const CFX_Matrix* pMatrix,
                      uint32_t flags,
                      int alpha_flag = 0,
                      void* pIccTransform = NULL);
-
   FX_BOOL DrawText(int nChars,
                    const FXTEXT_CHARPOS* pCharPos,
                    CFX_Font* pFont,
@@ -664,41 +623,28 @@ class CFX_PSRenderer {
                    void* pIccTransform = NULL);
 
  private:
-  IFX_PSOutput* m_pOutput;
-
-  int m_PSLevel;
-
-  CFX_GraphStateData m_CurGraphState;
-
-  FX_BOOL m_bGraphStateSet;
-
-  FX_BOOL m_bCmykOutput;
-
-  FX_BOOL m_bColorSet;
-
-  uint32_t m_LastColor;
-
-  FX_RECT m_ClipBox;
-
-  CFX_ArrayTemplate<CPSFont*> m_PSFontList;
-
-  CFX_ArrayTemplate<FX_RECT> m_ClipBoxStack;
-  FX_BOOL m_bInited;
-
   void OutputPath(const CFX_PathData* pPathData,
                   const CFX_Matrix* pObject2Device);
-
   void SetGraphState(const CFX_GraphStateData* pGraphState);
-
   void SetColor(uint32_t color, int alpha_flag, void* pIccTransform);
-
   void FindPSFontGlyph(CFX_FaceCache* pFaceCache,
                        CFX_Font* pFont,
                        const FXTEXT_CHARPOS& charpos,
                        int& ps_fontnum,
                        int& ps_glyphindex);
-
   void WritePSBinary(const uint8_t* data, int len);
+
+  IFX_PSOutput* m_pOutput;
+  int m_PSLevel;
+  CFX_GraphStateData m_CurGraphState;
+  FX_BOOL m_bGraphStateSet;
+  FX_BOOL m_bCmykOutput;
+  FX_BOOL m_bColorSet;
+  uint32_t m_LastColor;
+  FX_RECT m_ClipBox;
+  CFX_ArrayTemplate<CPSFont*> m_PSFontList;
+  CFX_ArrayTemplate<FX_RECT> m_ClipBoxStack;
+  FX_BOOL m_bInited;
 };
 
 #endif  // CORE_FXGE_INCLUDE_FX_GE_H_

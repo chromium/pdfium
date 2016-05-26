@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/fx_ge.h"
 #include "third_party/freetype/include/freetype/fttypes.h"
 #include "xfa/fgas/font/fgas_font.h"
 
@@ -21,36 +20,39 @@ FX_FONTDESCRIPTOR const* FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams,
 
 class CFX_StdFontMgrImp : public IFX_FontMgr {
  public:
-  CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator);
-  ~CFX_StdFontMgrImp();
-  virtual void Release() { delete this; }
-  virtual IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
-                                         uint32_t dwFontStyles,
-                                         const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByCharset(uint8_t nCharset,
-                                        uint32_t dwFontStyles,
-                                        const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByUnicode(FX_WCHAR wUnicode,
-                                        uint32_t dwFontStyles,
-                                        const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByLanguage(uint16_t wLanguage,
-                                         uint32_t dwFontStyles,
-                                         const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* LoadFont(const FX_WCHAR* pszFontFamily,
-                             uint32_t dwFontStyles,
-                             uint16_t wCodePage = 0xFFFF);
-  virtual IFX_Font* LoadFont(const uint8_t* pBuffer, int32_t iLength);
-  virtual IFX_Font* LoadFont(const FX_WCHAR* pszFileName);
-  virtual IFX_Font* LoadFont(IFX_Stream* pFontStream,
-                             const FX_WCHAR* pszFontAlias = NULL,
-                             uint32_t dwFontStyles = 0,
-                             uint16_t wCodePage = 0,
-                             FX_BOOL bSaveStream = FALSE);
-  virtual IFX_Font* LoadFont(IFX_Font* pSrcFont,
-                             uint32_t dwFontStyles,
-                             uint16_t wCodePage = 0xFFFF);
-  virtual void ClearFontCache();
-  virtual void RemoveFont(IFX_Font* pFont);
+  explicit CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator);
+  ~CFX_StdFontMgrImp() override;
+
+  // IFX_FontMgr:
+  void Release() override { delete this; }
+  IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
+                                 uint32_t dwFontStyles,
+                                 const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetDefFontByCharset(uint8_t nCharset,
+                                uint32_t dwFontStyles,
+                                const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetDefFontByUnicode(FX_WCHAR wUnicode,
+                                uint32_t dwFontStyles,
+                                const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetDefFontByLanguage(uint16_t wLanguage,
+                                 uint32_t dwFontStyles,
+                                 const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* LoadFont(const FX_WCHAR* pszFontFamily,
+                     uint32_t dwFontStyles,
+                     uint16_t wCodePage = 0xFFFF) override;
+  IFX_Font* LoadFont(const uint8_t* pBuffer, int32_t iLength) override;
+  IFX_Font* LoadFont(const FX_WCHAR* pszFileName) override;
+  IFX_Font* LoadFont(IFX_Stream* pFontStream,
+                     const FX_WCHAR* pszFontAlias = NULL,
+                     uint32_t dwFontStyles = 0,
+                     uint16_t wCodePage = 0,
+                     FX_BOOL bSaveStream = FALSE) override;
+  IFX_Font* LoadFont(IFX_Font* pSrcFont,
+                     uint32_t dwFontStyles,
+                     uint16_t wCodePage = 0xFFFF) override;
+
+  void ClearFontCache();
+  void RemoveFont(IFX_Font* pFont);
 
  protected:
   void RemoveFont(CFX_MapPtrToPtr& fontMap, IFX_Font* pFont);
@@ -144,49 +146,52 @@ class CFX_FontSourceEnum_File {
 
 class CFX_FontMgrImp : public IFX_FontMgr {
  public:
-  CFX_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum);
+  explicit CFX_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum);
+  ~CFX_FontMgrImp() override;
 
-  virtual void Release();
-  virtual IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
-                                         uint32_t dwFontStyles,
-                                         const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByCharset(uint8_t nCharset,
-                                        uint32_t dwFontStyles,
-                                        const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByUnicode(FX_WCHAR wUnicode,
-                                        uint32_t dwFontStyles,
-                                        const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByLanguage(uint16_t wLanguage,
-                                         uint32_t dwFontStyles,
-                                         const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetFontByCodePage(uint16_t wCodePage,
-                                      uint32_t dwFontStyles,
-                                      const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetFontByCharset(uint8_t nCharset,
-                                     uint32_t dwFontStyles,
-                                     const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetFontByUnicode(FX_WCHAR wUnicode,
-                                     uint32_t dwFontStyles,
-                                     const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetFontByLanguage(uint16_t wLanguage,
-                                      uint32_t dwFontStyles,
-                                      const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* LoadFont(const uint8_t* pBuffer,
-                             int32_t iLength,
-                             int32_t iFaceIndex,
-                             int32_t* pFaceCount);
-  virtual IFX_Font* LoadFont(const FX_WCHAR* pszFileName,
-                             int32_t iFaceIndex,
-                             int32_t* pFaceCount);
-  virtual IFX_Font* LoadFont(IFX_Stream* pFontStream,
-                             int32_t iFaceIndex,
-                             int32_t* pFaceCount,
-                             FX_BOOL bSaveStream = FALSE);
-  virtual IFX_Font* LoadFont(const CFX_WideString& wsFaceName,
-                             int32_t iFaceIndex,
-                             int32_t* pFaceCount);
-  virtual void ClearFontCache();
-  virtual void RemoveFont(IFX_Font* pFont);
+  // IFX_FontMgr:
+  void Release() override;
+  IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
+                                 uint32_t dwFontStyles,
+                                 const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetDefFontByCharset(uint8_t nCharset,
+                                uint32_t dwFontStyles,
+                                const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetDefFontByUnicode(FX_WCHAR wUnicode,
+                                uint32_t dwFontStyles,
+                                const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetDefFontByLanguage(uint16_t wLanguage,
+                                 uint32_t dwFontStyles,
+                                 const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetFontByCodePage(uint16_t wCodePage,
+                              uint32_t dwFontStyles,
+                              const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetFontByCharset(uint8_t nCharset,
+                             uint32_t dwFontStyles,
+                             const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetFontByUnicode(FX_WCHAR wUnicode,
+                             uint32_t dwFontStyles,
+                             const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* GetFontByLanguage(uint16_t wLanguage,
+                              uint32_t dwFontStyles,
+                              const FX_WCHAR* pszFontFamily = NULL) override;
+  IFX_Font* LoadFont(const uint8_t* pBuffer,
+                     int32_t iLength,
+                     int32_t iFaceIndex,
+                     int32_t* pFaceCount) override;
+  IFX_Font* LoadFont(const FX_WCHAR* pszFileName,
+                     int32_t iFaceIndex,
+                     int32_t* pFaceCount) override;
+  IFX_Font* LoadFont(IFX_Stream* pFontStream,
+                     int32_t iFaceIndex,
+                     int32_t* pFaceCount,
+                     FX_BOOL bSaveStream = FALSE) override;
+  void ClearFontCache() override;
+  void RemoveFont(IFX_Font* pFont) override;
+
+  IFX_Font* LoadFont(const CFX_WideString& wsFaceName,
+                     int32_t iFaceIndex,
+                     int32_t* pFaceCount);
   FX_BOOL EnumFonts();
   FX_BOOL EnumFontsFromFontMapper();
   FX_BOOL EnumFontsFromFiles();
@@ -232,7 +237,7 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   CFX_MapPtrTemplate<uint32_t, IFX_Font*> m_FileAccess2IFXFont;
   CFX_MapPtrTemplate<IFX_Font*, IFX_FileRead*> m_IFXFont2FileRead;
   CFX_MapPtrTemplate<FX_WCHAR, IFX_Font*> m_FailedUnicodes2NULL;
-  CFX_FontSourceEnum_File* m_pFontSource;
+  CFX_FontSourceEnum_File* const m_pFontSource;
 };
 #endif
 

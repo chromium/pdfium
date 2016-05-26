@@ -7,6 +7,7 @@
 #include "fpdfsdk/include/fsdk_rendercontext.h"
 
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fxge/include/fx_ge.h"
 
 void CRenderContext::Clear() {
   m_pDevice = NULL;

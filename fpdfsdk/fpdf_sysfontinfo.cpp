@@ -6,6 +6,8 @@
 
 #include "public/fpdf_sysfontinfo.h"
 
+#include "core/fxge/include/fx_font.h"
+#include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 

@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
+#include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_rendercontext.h"
 #include "public/fpdfview.h"
