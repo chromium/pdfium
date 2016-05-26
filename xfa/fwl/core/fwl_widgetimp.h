@@ -73,10 +73,13 @@ class CFWL_WidgetImp {
   virtual FWL_Error SetDataProvider(IFWL_DataProvider* pDataProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   virtual IFWL_App* GetOwnerApp() const;
+
   FWL_Error SetOwnerApp(CFWL_AppImp* pOwnerApp);
   IFWL_Widget* GetInterface() const;
   void SetInterface(IFWL_Widget* pInterface);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
+  uint32_t GetEventKey() const;
+  void SetEventKey(uint32_t key);
 
  protected:
   friend class CFWL_WidgetImpDelegate;
@@ -160,6 +163,7 @@ class CFWL_WidgetImp {
   IFWL_Widget* m_pOuter;
   IFWL_Widget* m_pInterface;
   int32_t m_iLock;
+  uint32_t m_nEventKey;
 };
 
 class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {

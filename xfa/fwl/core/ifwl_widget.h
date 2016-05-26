@@ -75,6 +75,8 @@ class IFWL_Widget {
                            uint32_t dwStylesExRemoved);
   uint32_t GetStates();
   void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  uint32_t GetEventKey() const;
+  void SetEventKey(uint32_t key);
   FWL_Error SetPrivateData(void* module_id,
                            void* pData,
                            PD_CALLBACK_FREEDATA callback);

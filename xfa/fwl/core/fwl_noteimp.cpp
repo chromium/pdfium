@@ -7,6 +7,7 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fwl/basewidget/fwl_tooltipctrlimp.h"
 #include "xfa/fwl/basewidget/ifwl_tooltip.h"
 #include "xfa/fwl/core/cfwl_message.h"
@@ -101,18 +102,15 @@ void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
   }
 }
 
-#define FWL_NoteDriver_EventKey 1100
 FWL_Error CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
                                                IFWL_Widget* pEventSource,
                                                uint32_t dwFilter) {
-  uint32_t key = (uint32_t)(uintptr_t)pListener->GetPrivateData(
-      (void*)(uintptr_t)FWL_NoteDriver_EventKey);
+  uint32_t key = pListener->GetEventKey();
   if (key == 0) {
-    void* random = FX_Random_MT_Start(0);
-    key = rand();
-    FX_Random_MT_Close(random);
-    pListener->SetPrivateData((void*)(uintptr_t)FWL_NoteDriver_EventKey,
-                              (void*)(uintptr_t)key, NULL);
+    do {
+      key = rand();
+    } while (key == 0 || pdfium::ContainsKey(m_eventTargets, key));
+    pListener->SetEventKey(key);
   }
   if (!m_eventTargets[key])
     m_eventTargets[key] = new CFWL_EventTarget(this, pListener);
@@ -122,8 +120,7 @@ FWL_Error CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
 }
 
 FWL_Error CFWL_NoteDriver::UnregisterEventTarget(IFWL_Widget* pListener) {
-  uint32_t key = (uint32_t)(uintptr_t)pListener->GetPrivateData(
-      (void*)(uintptr_t)FWL_NoteDriver_EventKey);
+  uint32_t key = pListener->GetEventKey();
   if (key == 0)
     return FWL_Error::Indefinite;
 
