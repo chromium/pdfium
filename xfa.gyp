@@ -699,7 +699,7 @@
         ["clang==1" , {
         }],
         ["os_posix==1 and clang==0", { # When GCC
-          'cflags': [ '-Wno-error=strict-overflow' ],
+          'cflags': [ '-Wno-strict-overflow' ],
         }],
         ["pdf_enable_v8==1", {
           'dependencies': [
