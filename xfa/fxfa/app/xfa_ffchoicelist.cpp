@@ -62,44 +62,41 @@ FX_BOOL CXFA_FFListBox::LoadWidget() {
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
+
 FX_BOOL CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
-  FX_BOOL flag = ProcessCommittedData();
-  if (!flag) {
+  if (!ProcessCommittedData())
     UpdateFWLData();
-  }
   CXFA_FFField::OnKillFocus(pNewFocus);
   return TRUE;
 }
+
 FX_BOOL CXFA_FFListBox::CommitData() {
   CFWL_ListBox* pListBox = static_cast<CFWL_ListBox*>(m_pNormalWidget);
   int32_t iSels = pListBox->CountSelItems();
   CFX_Int32Array iSelArray;
-  for (int32_t i = 0; i < iSels; i++) {
+  for (int32_t i = 0; i < iSels; ++i)
     iSelArray.Add(pListBox->GetSelIndex(i));
-  }
-  m_pDataAcc->SetSelectedItems(iSelArray, TRUE);
+  m_pDataAcc->SetSelectedItems(iSelArray, true, FALSE, TRUE);
   return TRUE;
 }
+
 FX_BOOL CXFA_FFListBox::IsDataChanged() {
   CFX_Int32Array iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iOldSels = iSelArray.GetSize();
   CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
   int32_t iSels = pListBox->CountSelItems();
-  if (iOldSels == iSels) {
-    int32_t iIndex = 0;
-    for (; iIndex < iSels; iIndex++) {
-      FWL_HLISTITEM hlistItem = pListBox->GetItem(iSelArray[iIndex]);
-      if (!(pListBox->GetItemStates(hlistItem) && FWL_ITEMSTATE_LTB_Selected)) {
-        break;
-      }
-    }
-    if (iIndex == iSels) {
-      return FALSE;
-    }
+  if (iOldSels != iSels)
+    return TRUE;
+
+  for (int32_t i = 0; i < iSels; ++i) {
+    FWL_HLISTITEM hlistItem = pListBox->GetItem(iSelArray[i]);
+    if (!(pListBox->GetItemStates(hlistItem) && FWL_ITEMSTATE_LTB_Selected))
+      return TRUE;
   }
-  return TRUE;
+  return FALSE;
 }
+
 uint32_t CXFA_FFListBox::GetAlignment() {
   uint32_t dwExtendedStyle = 0;
   if (CXFA_Para para = m_pDataAcc->GetPara()) {

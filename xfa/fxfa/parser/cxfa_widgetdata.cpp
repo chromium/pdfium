@@ -380,8 +380,7 @@ XFA_CHECKSTATE CXFA_WidgetData::GetCheckState() {
   return XFA_CHECKSTATE_Off;
 }
 
-void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState,
-                                    FX_BOOL bNotify) {
+void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
   CXFA_WidgetData exclGroup(GetExclGroupNode());
   if (exclGroup) {
     CFX_WideString wsValue;
@@ -464,23 +463,21 @@ CXFA_Node* CXFA_WidgetData::GetSelectedMember() {
 }
 
 CXFA_Node* CXFA_WidgetData::SetSelectedMember(const CFX_WideStringC& wsName,
-                                              FX_BOOL bNotify) {
-  CXFA_Node* pSelectedMember = NULL;
+                                              bool bNotify) {
   uint32_t nameHash = FX_HashCode_GetW(wsName, false);
   for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
        pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetNameHash() == nameHash) {
       CXFA_WidgetData widgetData(pNode);
       widgetData.SetCheckState(XFA_CHECKSTATE_On, bNotify);
-      pSelectedMember = pNode;
-      break;
+      return pNode;
     }
   }
-  return pSelectedMember;
+  return nullptr;
 }
 
 void CXFA_WidgetData::SetSelectedMemberByValue(const CFX_WideStringC& wsValue,
-                                               FX_BOOL bNotify,
+                                               bool bNotify,
                                                FX_BOOL bScriptModify,
                                                FX_BOOL bSyncData) {
   CFX_WideString wsExclGroup;
@@ -771,7 +768,7 @@ FX_BOOL CXFA_WidgetData::GetItemState(int32_t nIndex) {
 
 void CXFA_WidgetData::SetItemState(int32_t nIndex,
                                    FX_BOOL bSelected,
-                                   FX_BOOL bNotify,
+                                   bool bNotify,
                                    FX_BOOL bScriptModify,
                                    FX_BOOL bSyncData) {
   if (nIndex < 0)
@@ -831,7 +828,7 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
 }
 
 void CXFA_WidgetData::SetSelectedItems(CFX_Int32Array& iSelArray,
-                                       FX_BOOL bNotify,
+                                       bool bNotify,
                                        FX_BOOL bScriptModify,
                                        FX_BOOL bSyncData) {
   CFX_WideString wsValue;
@@ -856,14 +853,13 @@ void CXFA_WidgetData::SetSelectedItems(CFX_Int32Array& iSelArray,
 
 void CXFA_WidgetData::ClearAllSelections() {
   CXFA_Node* pBind = m_pNode->GetBindData();
-  if (pBind && GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
-    while (CXFA_Node* pChildNode =
-               pBind->GetNodeItem(XFA_NODEITEM_FirstChild)) {
-      pBind->RemoveChild(pChildNode);
-    }
-  } else {
-    SyncValue(CFX_WideString(), FALSE);
+  if (!pBind || GetChoiceListOpen() != XFA_ATTRIBUTEENUM_MultiSelect) {
+    SyncValue(CFX_WideString(), false);
+    return;
   }
+
+  while (CXFA_Node* pChildNode = pBind->GetNodeItem(XFA_NODEITEM_FirstChild))
+    pBind->RemoveChild(pChildNode);
 }
 
 void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
@@ -1036,7 +1032,7 @@ FX_BOOL CXFA_WidgetData::DeleteItem(int32_t nIndex,
       }
     } else {
       if (!bSetValue && pItems->GetBoolean(XFA_ATTRIBUTE_Save)) {
-        SetItemState(nIndex, FALSE, TRUE, bScriptModify, bSyncData);
+        SetItemState(nIndex, FALSE, true, bScriptModify, bSyncData);
         bSetValue = TRUE;
       }
       int32_t i = 0;
@@ -1318,7 +1314,7 @@ FX_BOOL CXFA_WidgetData::GetLeadDigits(int32_t& iLeadDigits) {
 FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
                                   XFA_VALUEPICTURE eValueType) {
   if (wsValue.IsEmpty()) {
-    SyncValue(wsValue, TRUE);
+    SyncValue(wsValue, true);
     return TRUE;
   }
   m_bPreNull = m_bIsNull;
@@ -1365,7 +1361,7 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
     }
   }
   if (uiType != XFA_ELEMENT_NumericEdit || bSyncData)
-    SyncValue(wsNewText, TRUE);
+    SyncValue(wsNewText, true);
 
   return bValidate;
 }
@@ -1727,8 +1723,7 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
   }
 }
 
-void CXFA_WidgetData::SyncValue(const CFX_WideString& wsValue,
-                                FX_BOOL bNotify) {
+void CXFA_WidgetData::SyncValue(const CFX_WideString& wsValue, bool bNotify) {
   if (!m_pNode)
     return;
 

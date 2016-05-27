@@ -160,7 +160,7 @@ class CFWL_FormImp : public CFWL_WidgetImp {
   int32_t m_iSysBox;
   int32_t m_eResizeType;
   FX_BOOL m_bLButtonDown;
-  FX_BOOL m_bMaximized;
+  bool m_bMaximized;
   FX_BOOL m_bSetMaximize;
   FX_BOOL m_bCustomizeLayout;
   FWL_FORMSIZE m_eFormSize;

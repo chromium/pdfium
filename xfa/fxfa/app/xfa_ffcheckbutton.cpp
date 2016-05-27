@@ -239,12 +239,9 @@ void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
 FX_BOOL CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
                                         FX_FLOAT fx,
                                         FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+  if (!m_pNormalWidget || !IsButtonDown())
     return FALSE;
-  }
-  if (!IsButtonDown()) {
-    return FALSE;
-  }
+
   SetButtonDown(FALSE);
   CFWL_MsgMouse ms;
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
@@ -256,21 +253,22 @@ FX_BOOL CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
   TranslateFWLMessage(&ms);
   return TRUE;
 }
+
 XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
-  XFA_CHECKSTATE eCheckState = XFA_CHECKSTATE_Off;
   uint32_t dwState = m_pNormalWidget->GetStates();
-  if (dwState & FWL_STATE_CKB_Checked) {
-    eCheckState = XFA_CHECKSTATE_On;
-  } else if (dwState & FWL_STATE_CKB_Neutral) {
-    eCheckState = XFA_CHECKSTATE_Neutral;
-  }
-  return eCheckState;
+  if (dwState & FWL_STATE_CKB_Checked)
+    return XFA_CHECKSTATE_On;
+  if (dwState & FWL_STATE_CKB_Neutral)
+    return XFA_CHECKSTATE_Neutral;
+  return XFA_CHECKSTATE_Off;
 }
+
 FX_BOOL CXFA_FFCheckButton::CommitData() {
   XFA_CHECKSTATE eCheckState = FWLState2XFAState();
-  m_pDataAcc->SetCheckState(eCheckState, TRUE);
+  m_pDataAcc->SetCheckState(eCheckState, true);
   return TRUE;
 }
+
 FX_BOOL CXFA_FFCheckButton::IsDataChanged() {
   XFA_CHECKSTATE eCheckState = FWLState2XFAState();
   return m_pDataAcc->GetCheckState() != eCheckState;

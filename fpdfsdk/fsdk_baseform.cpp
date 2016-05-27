@@ -267,7 +267,7 @@ void CPDFSDK_Widget::Synchronize(FX_BOOL bSynchronizeElse) {
           CPDF_FormControl* pFormCtrl = GetFormControl();
           XFA_CHECKSTATE eCheckState =
               pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
-          pWidgetAcc->SetCheckState(eCheckState);
+          pWidgetAcc->SetCheckState(eCheckState, true);
         } break;
         case FIELDTYPE_TEXTFIELD:
           pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
@@ -278,7 +278,7 @@ void CPDFSDK_Widget::Synchronize(FX_BOOL bSynchronizeElse) {
           for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
             int nIndex = pFormField->GetSelectedIndex(i);
             if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
-              pWidgetAcc->SetItemState(nIndex, TRUE, FALSE);
+              pWidgetAcc->SetItemState(nIndex, TRUE, false, FALSE, TRUE);
           }
         } break;
         case FIELDTYPE_COMBOBOX: {
@@ -287,7 +287,7 @@ void CPDFSDK_Widget::Synchronize(FX_BOOL bSynchronizeElse) {
           for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
             int nIndex = pFormField->GetSelectedIndex(i);
             if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
-              pWidgetAcc->SetItemState(nIndex, TRUE, FALSE);
+              pWidgetAcc->SetItemState(nIndex, TRUE, false, FALSE, TRUE);
           }
         }
 

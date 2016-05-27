@@ -80,15 +80,14 @@ class CXFA_WidgetData : public CXFA_Data {
   FX_BOOL IsAllowNeutral();
   FX_BOOL IsRadioButton();
   XFA_CHECKSTATE GetCheckState();
-  void SetCheckState(XFA_CHECKSTATE eCheckState, FX_BOOL bNotify = TRUE);
+  void SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify);
   CXFA_Node* GetExclGroupNode();
   CXFA_Node* GetSelectedMember();
-  CXFA_Node* SetSelectedMember(const CFX_WideStringC& wsName,
-                               FX_BOOL bNotify = TRUE);
+  CXFA_Node* SetSelectedMember(const CFX_WideStringC& wsName, bool bNotify);
   void SetSelectedMemberByValue(const CFX_WideStringC& wsValue,
-                                FX_BOOL bNotify = TRUE,
-                                FX_BOOL bScriptModify = FALSE,
-                                FX_BOOL bSyncData = TRUE);
+                                bool bNotify,
+                                FX_BOOL bScriptModify,
+                                FX_BOOL bSyncData);
   CXFA_Node* GetExclGroupFirstMember();
   CXFA_Node* GetExclGroupNextMember(CXFA_Node* pNode);
   int32_t GetChoiceListCommitOn();
@@ -108,13 +107,13 @@ class CXFA_WidgetData : public CXFA_Data {
   FX_BOOL GetItemState(int32_t nIndex);
   void SetItemState(int32_t nIndex,
                     FX_BOOL bSelected,
-                    FX_BOOL bNotify = FALSE,
-                    FX_BOOL bScriptModify = FALSE,
-                    FX_BOOL bSyncData = TRUE);
+                    bool bNotify,
+                    FX_BOOL bScriptModify,
+                    FX_BOOL bSyncData);
   void SetSelectedItems(CFX_Int32Array& iSelArray,
-                        FX_BOOL bNotify = FALSE,
-                        FX_BOOL bScriptModify = FALSE,
-                        FX_BOOL bSyncData = TRUE);
+                        bool bNotify,
+                        FX_BOOL bScriptModify,
+                        FX_BOOL bSyncData);
   void ClearAllSelections();
   void InsertItem(const CFX_WideString& wsLabel,
                   const CFX_WideString& wsValue,
@@ -166,7 +165,7 @@ class CXFA_WidgetData : public CXFA_Data {
   FX_BOOL m_bPreNull;
 
  protected:
-  void SyncValue(const CFX_WideString& wsValue, FX_BOOL bNotify);
+  void SyncValue(const CFX_WideString& wsValue, bool bNotify);
   void InsertListTextItem(CXFA_Node* pItems,
                           const CFX_WideString& wsText,
                           int32_t nIndex = -1);

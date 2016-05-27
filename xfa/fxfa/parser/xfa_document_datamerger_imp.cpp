@@ -112,7 +112,6 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
   }
   CXFA_WidgetData* pWidgetData = pFormNode->GetWidgetData();
   ASSERT(pWidgetData);
-  FX_BOOL bNotify = FALSE;
   XFA_ELEMENT eUIType = pWidgetData->GetUIType();
   CXFA_Value defValue(pFormNode->GetProperty(0, XFA_ELEMENT_Value));
   if (!bDataToForm) {
@@ -312,7 +311,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         break;
       case XFA_ELEMENT_ExclGroup: {
         pWidgetData->SetSelectedMemberByValue(wsNormailizeValue.AsStringC(),
-                                              bNotify, FALSE, FALSE);
+                                              false, FALSE, FALSE);
       } break;
       case XFA_ELEMENT_DateTimeEdit:
         XFA_DataMerge_FormValueNode_SetChildContent(
