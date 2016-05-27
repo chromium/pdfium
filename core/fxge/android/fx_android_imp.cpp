@@ -8,6 +8,9 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
+#include <memory>
+#include <utility>
+
 #include "core/fxge/android/fpf_skiamodule.h"
 #include "core/fxge/android/fx_android_font.h"
 #include "core/fxge/include/fx_ge.h"
@@ -19,9 +22,9 @@ void CFX_GEModule::InitPlatform() {
 
   CFPF_SkiaFontMgr* pFontMgr = pDeviceModule->GetFontMgr();
   if (pFontMgr) {
-    CFX_AndroidFontInfo* pFontInfo = new CFX_AndroidFontInfo;
+    std::unique_ptr<CFX_AndroidFontInfo> pFontInfo(new CFX_AndroidFontInfo);
     pFontInfo->Init(pFontMgr);
-    m_pFontMgr->SetSystemFontInfo(pFontInfo);
+    m_pFontMgr->SetSystemFontInfo(std::move(pFontInfo));
   }
   m_pPlatformData = pDeviceModule;
 }

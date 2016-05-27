@@ -269,7 +269,7 @@ class CFX_FontMgr {
   FXFT_Face GetFileFace(const FX_CHAR* filename, int face_index);
   FXFT_Face GetFixedFace(const uint8_t* pData, uint32_t size, int face_index);
   void ReleaseFace(FXFT_Face face);
-  void SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo);
+  void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
   FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
                           FX_BOOL bTrueType,
                           uint32_t flags,
@@ -294,8 +294,8 @@ class CFX_FontMapper {
   explicit CFX_FontMapper(CFX_FontMgr* mgr);
   ~CFX_FontMapper();
 
-  void SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo);
-  IFX_SystemFontInfo* GetSystemFontInfo() { return m_pFontInfo; }
+  void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
+  IFX_SystemFontInfo* GetSystemFontInfo() { return m_pFontInfo.get(); }
   void AddInstalledFont(const CFX_ByteString& name, int charset);
   void LoadInstalledFonts();
 
@@ -341,15 +341,17 @@ class CFX_FontMapper {
   FXFT_Face m_MMFaces[MM_FACE_COUNT];
   CFX_ByteString m_LastFamily;
   std::vector<FaceData> m_FaceArray;
-  IFX_SystemFontInfo* m_pFontInfo;
+  std::unique_ptr<IFX_SystemFontInfo> m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
   CFX_FontMgr* const m_pFontMgr;
 };
 
 class IFX_SystemFontInfo {
  public:
-  static IFX_SystemFontInfo* CreateDefault(const char** pUserPaths);
-  virtual void Release() = 0;
+  static std::unique_ptr<IFX_SystemFontInfo> CreateDefault(
+      const char** pUserPaths);
+
+  virtual ~IFX_SystemFontInfo() {}
 
   virtual FX_BOOL EnumFontList(CFX_FontMapper* pMapper) = 0;
   virtual void* MapFont(int weight,
@@ -376,19 +378,16 @@ class IFX_SystemFontInfo {
   virtual int GetFaceIndex(void* hFont);
   virtual void DeleteFont(void* hFont) = 0;
   virtual void* RetainFont(void* hFont);
-
- protected:
-  virtual ~IFX_SystemFontInfo() {}
 };
 
 class CFX_FolderFontInfo : public IFX_SystemFontInfo {
  public:
   CFX_FolderFontInfo();
   ~CFX_FolderFontInfo() override;
+
   void AddPath(const CFX_ByteStringC& path);
 
   // IFX_SytemFontInfo:
-  void Release() override;
   FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 FX_BOOL bItalic,

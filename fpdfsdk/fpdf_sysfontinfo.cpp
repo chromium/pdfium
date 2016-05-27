@@ -14,11 +14,9 @@
 class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
  public:
   explicit CFX_ExternalFontInfo(FPDF_SYSFONTINFO* pInfo) : m_pInfo(pInfo) {}
-
-  void Release() override {
+  ~CFX_ExternalFontInfo() override {
     if (m_pInfo->Release)
       m_pInfo->Release(m_pInfo);
-    delete this;
   }
 
   FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override {
@@ -83,8 +81,6 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
   }
 
  private:
-  ~CFX_ExternalFontInfo() override {}
-
   FPDF_SYSFONTINFO* const m_pInfo;
 };
 
@@ -99,7 +95,8 @@ DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
     return;
 
   CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
-      new CFX_ExternalFontInfo(pFontInfoExt));
+      std::unique_ptr<IFX_SystemFontInfo>(
+          new CFX_ExternalFontInfo(pFontInfoExt)));
 }
 
 DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap() {
@@ -111,7 +108,9 @@ struct FPDF_SYSFONTINFO_DEFAULT : public FPDF_SYSFONTINFO {
 };
 
 static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {
-  ((FPDF_SYSFONTINFO_DEFAULT*)pThis)->m_pFontInfo->Release();
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  // TODO(thestig): Should this be set to nullptr too?
+  delete pDefault->m_pFontInfo;
 }
 
 static void DefaultEnumFonts(struct _FPDF_SYSFONTINFO* pThis, void* pMapper) {
@@ -171,9 +170,10 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
 }
 
 DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {
-  IFX_SystemFontInfo* pFontInfo = IFX_SystemFontInfo::CreateDefault(nullptr);
+  std::unique_ptr<IFX_SystemFontInfo> pFontInfo =
+      IFX_SystemFontInfo::CreateDefault(nullptr);
   if (!pFontInfo)
-    return NULL;
+    return nullptr;
 
   FPDF_SYSFONTINFO_DEFAULT* pFontInfoExt =
       FX_Alloc(FPDF_SYSFONTINFO_DEFAULT, 1);
@@ -186,6 +186,6 @@ DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {
   pFontInfoExt->MapFont = DefaultMapFont;
   pFontInfoExt->Release = DefaultRelease;
   pFontInfoExt->version = 1;
-  pFontInfoExt->m_pFontInfo = pFontInfo;
+  pFontInfoExt->m_pFontInfo = pFontInfo.release();
   return pFontInfoExt;
 }

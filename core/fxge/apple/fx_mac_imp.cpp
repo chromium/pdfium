@@ -95,13 +95,16 @@ void* CFX_MacFontInfo::MapFont(int weight,
 
   return NULL;
 }
-IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
-  CFX_MacFontInfo* pInfo = new CFX_MacFontInfo;
+
+std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
+    const char** pUnused) {
+  CFX_MacFontInfo* pInfo(new CFX_MacFontInfo);
   pInfo->AddPath("~/Library/Fonts");
   pInfo->AddPath("/Library/Fonts");
   pInfo->AddPath("/System/Library/Fonts");
-  return pInfo;
+  return std::unique_ptr<CFX_MacFontInfo>(pInfo);
 }
+
 void CFX_GEModule::InitPlatform() {
   m_pPlatformData = new CApplePlatform;
   m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault(nullptr));

@@ -16,135 +16,18 @@
 #include "core/fxge/include/fx_ge_win32.h"
 #include "core/fxge/win32/win32_int.h"
 
-#define SIZETHRESHOLD 1000
-#define OUTPUTPSLEN 4096
-CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
-    : CGdiDeviceDriver(hDC, FXDC_PRINTER) {
-  m_HorzSize = ::GetDeviceCaps(m_hDC, HORZSIZE);
-  m_VertSize = ::GetDeviceCaps(m_hDC, VERTSIZE);
-  m_bSupportROP = TRUE;
-}
-int CGdiPrinterDriver::GetDeviceCaps(int caps_id) {
-  if (caps_id == FXDC_HORZ_SIZE) {
-    return m_HorzSize;
-  }
-  if (caps_id == FXDC_VERT_SIZE) {
-    return m_VertSize;
-  }
-  return CGdiDeviceDriver::GetDeviceCaps(caps_id);
-}
-FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
-                                     uint32_t color,
-                                     const FX_RECT* pSrcRect,
-                                     int left,
-                                     int top,
-                                     int blend_type,
-                                     int alpha_flag,
-                                     void* pIccTransform) {
-  if (pSource->IsAlphaMask()) {
-    FX_RECT clip_rect(left, top, left + pSrcRect->Width(),
-                      top + pSrcRect->Height());
-    return StretchDIBits(pSource, color, left - pSrcRect->left,
-                         top - pSrcRect->top, pSource->GetWidth(),
-                         pSource->GetHeight(), &clip_rect, 0, alpha_flag,
-                         pIccTransform, FXDIB_BLEND_NORMAL);
-  }
-  ASSERT(pSource && !pSource->IsAlphaMask() && pSrcRect);
-  ASSERT(blend_type == FXDIB_BLEND_NORMAL);
-  if (pSource->HasAlpha()) {
-    return FALSE;
-  }
-  CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp;
-  if (!pBitmap) {
-    return FALSE;
-  }
-  return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
-}
-FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
-                                         uint32_t color,
-                                         int dest_left,
-                                         int dest_top,
-                                         int dest_width,
-                                         int dest_height,
-                                         const FX_RECT* pClipRect,
-                                         uint32_t flags,
-                                         int alpha_flag,
-                                         void* pIccTransform,
-                                         int blend_type) {
-  if (pSource->IsAlphaMask()) {
-    int alpha = FXGETFLAG_COLORTYPE(alpha_flag)
-                    ? FXGETFLAG_ALPHA_FILL(alpha_flag)
-                    : FXARGB_A(color);
-    if (pSource->GetBPP() != 1 || alpha != 255 || !m_bSupportROP) {
-      return FALSE;
-    }
-    if (dest_width < 0 || dest_height < 0) {
-      CFX_DIBitmap* pFlipped =
-          pSource->FlipImage(dest_width < 0, dest_height < 0);
-      if (!pFlipped) {
-        return FALSE;
-      }
-      if (dest_width < 0) {
-        dest_left += dest_width;
-      }
-      if (dest_height < 0) {
-        dest_top += dest_height;
-      }
-      FX_BOOL ret = GDI_StretchBitMask(pFlipped, dest_left, dest_top,
-                                       abs(dest_width), abs(dest_height), color,
-                                       flags, alpha_flag, pIccTransform);
-      delete pFlipped;
-      return ret;
-    }
-    CFX_DIBExtractor temp(pSource);
-    CFX_DIBitmap* pBitmap = temp;
-    if (!pBitmap) {
-      return FALSE;
-    }
-    return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
-                              dest_height, color, flags, alpha_flag,
-                              pIccTransform);
-  }
-  if (pSource->HasAlpha()) {
-    return FALSE;
-  }
-  if (dest_width < 0 || dest_height < 0) {
-    CFX_DIBitmap* pFlipped =
-        pSource->FlipImage(dest_width < 0, dest_height < 0);
-    if (!pFlipped) {
-      return FALSE;
-    }
-    if (dest_width < 0) {
-      dest_left += dest_width;
-    }
-    if (dest_height < 0) {
-      dest_top += dest_height;
-    }
-    FX_BOOL ret =
-        GDI_StretchDIBits(pFlipped, dest_left, dest_top, abs(dest_width),
-                          abs(dest_height), flags, pIccTransform);
-    delete pFlipped;
-    return ret;
-  }
-  CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp;
-  if (!pBitmap) {
-    return FALSE;
-  }
-  return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
-                           dest_height, flags, pIccTransform);
-}
-static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
-                                         const CFX_Matrix* pDestMatrix) {
+namespace {
+
+CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
+                                  const CFX_Matrix* pDestMatrix) {
   ASSERT(pSrc->GetFormat() == FXDIB_1bppRgb ||
          pSrc->GetFormat() == FXDIB_1bppMask ||
          pSrc->GetFormat() == FXDIB_1bppCmyk);
   CFX_DIBExtractor src_bitmap(pSrc);
   CFX_DIBitmap* pSrcBitmap = src_bitmap;
-  if (!pSrcBitmap) {
-    return NULL;
-  }
+  if (!pSrcBitmap)
+    return nullptr;
+
   int src_width = pSrcBitmap->GetWidth(), src_height = pSrcBitmap->GetHeight();
   uint8_t* src_buf = pSrcBitmap->GetBuffer();
   uint32_t src_pitch = pSrcBitmap->GetPitch();
@@ -168,14 +51,13 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
   CPDF_FixedMatrix result2src_fix(result2src, 8);
   int result_width = result_rect.Width();
   int result_height = result_rect.Height();
-  CFX_DIBitmap* pTempBitmap = new CFX_DIBitmap;
+  std::unique_ptr<CFX_DIBitmap> pTempBitmap(new CFX_DIBitmap);
   if (!pTempBitmap->Create(result_width, result_height, pSrc->GetFormat())) {
-    delete pTempBitmap;
-    if (pSrcBitmap != src_bitmap) {
+    if (pSrcBitmap != src_bitmap)
       delete pSrcBitmap;
-    }
-    return NULL;
+    return nullptr;
   }
+
   pTempBitmap->CopyPalette(pSrc->GetPalette());
   uint8_t* dest_buf = pTempBitmap->GetBuffer();
   int dest_pitch = pTempBitmap->GetPitch();
@@ -215,11 +97,128 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
       }
     }
   }
-  if (pSrcBitmap != src_bitmap) {
+  if (pSrcBitmap != src_bitmap)
     delete pSrcBitmap;
-  }
-  return pTempBitmap;
+
+  return pTempBitmap.release();
 }
+
+}  // namespace
+
+CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
+    : CGdiDeviceDriver(hDC, FXDC_PRINTER),
+      m_HorzSize(::GetDeviceCaps(m_hDC, HORZSIZE)),
+      m_VertSize(::GetDeviceCaps(m_hDC, VERTSIZE)) {}
+
+CGdiPrinterDriver::~CGdiPrinterDriver() {}
+
+int CGdiPrinterDriver::GetDeviceCaps(int caps_id) {
+  if (caps_id == FXDC_HORZ_SIZE)
+    return m_HorzSize;
+  if (caps_id == FXDC_VERT_SIZE)
+    return m_VertSize;
+  return CGdiDeviceDriver::GetDeviceCaps(caps_id);
+}
+
+FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
+                                     uint32_t color,
+                                     const FX_RECT* pSrcRect,
+                                     int left,
+                                     int top,
+                                     int blend_type,
+                                     int alpha_flag,
+                                     void* pIccTransform) {
+  if (pSource->IsAlphaMask()) {
+    FX_RECT clip_rect(left, top, left + pSrcRect->Width(),
+                      top + pSrcRect->Height());
+    return StretchDIBits(pSource, color, left - pSrcRect->left,
+                         top - pSrcRect->top, pSource->GetWidth(),
+                         pSource->GetHeight(), &clip_rect, 0, alpha_flag,
+                         pIccTransform, FXDIB_BLEND_NORMAL);
+  }
+  ASSERT(pSource && !pSource->IsAlphaMask() && pSrcRect);
+  ASSERT(blend_type == FXDIB_BLEND_NORMAL);
+  if (pSource->HasAlpha())
+    return FALSE;
+
+  CFX_DIBExtractor temp(pSource);
+  CFX_DIBitmap* pBitmap = temp;
+  if (!pBitmap)
+    return FALSE;
+
+  return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
+}
+
+FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
+                                         uint32_t color,
+                                         int dest_left,
+                                         int dest_top,
+                                         int dest_width,
+                                         int dest_height,
+                                         const FX_RECT* pClipRect,
+                                         uint32_t flags,
+                                         int alpha_flag,
+                                         void* pIccTransform,
+                                         int blend_type) {
+  if (pSource->IsAlphaMask()) {
+    int alpha = FXGETFLAG_COLORTYPE(alpha_flag)
+                    ? FXGETFLAG_ALPHA_FILL(alpha_flag)
+                    : FXARGB_A(color);
+    if (pSource->GetBPP() != 1 || alpha != 255)
+      return FALSE;
+
+    if (dest_width < 0 || dest_height < 0) {
+      std::unique_ptr<CFX_DIBitmap> pFlipped(
+          pSource->FlipImage(dest_width < 0, dest_height < 0));
+      if (!pFlipped)
+        return FALSE;
+
+      if (dest_width < 0)
+        dest_left += dest_width;
+      if (dest_height < 0)
+        dest_top += dest_height;
+
+      return GDI_StretchBitMask(pFlipped.get(), dest_left, dest_top,
+                                abs(dest_width), abs(dest_height), color, flags,
+                                alpha_flag, pIccTransform);
+    }
+
+    CFX_DIBExtractor temp(pSource);
+    CFX_DIBitmap* pBitmap = temp;
+    if (!pBitmap)
+      return FALSE;
+    return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
+                              dest_height, color, flags, alpha_flag,
+                              pIccTransform);
+  }
+
+  if (pSource->HasAlpha())
+    return FALSE;
+
+  if (dest_width < 0 || dest_height < 0) {
+    std::unique_ptr<CFX_DIBitmap> pFlipped(
+        pSource->FlipImage(dest_width < 0, dest_height < 0));
+    if (!pFlipped)
+      return FALSE;
+
+    if (dest_width < 0)
+      dest_left += dest_width;
+    if (dest_height < 0)
+      dest_top += dest_height;
+
+    return GDI_StretchDIBits(pFlipped.get(), dest_left, dest_top,
+                             abs(dest_width), abs(dest_height), flags,
+                             pIccTransform);
+  }
+
+  CFX_DIBExtractor temp(pSource);
+  CFX_DIBitmap* pBitmap = temp;
+  if (!pBitmap)
+    return FALSE;
+  return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
+                           dest_height, flags, pIccTransform);
+}
+
 FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
                                        int bitmap_alpha,
                                        uint32_t color,
@@ -230,7 +229,7 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
                                        void* pIccTransform,
                                        int blend_type) {
   if (bitmap_alpha < 255 || pSource->HasAlpha() ||
-      (pSource->IsAlphaMask() && (pSource->GetBPP() != 1 || !m_bSupportROP))) {
+      (pSource->IsAlphaMask() && (pSource->GetBPP() != 1))) {
     return FALSE;
   }
   CFX_FloatRect unit_rect = pMatrix->GetUnitRect();
@@ -244,39 +243,39 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
                          bFlipY ? full_rect.bottom : full_rect.top,
                          bFlipX ? -full_rect.Width() : full_rect.Width(),
                          bFlipY ? -full_rect.Height() : full_rect.Height(),
-                         NULL, 0, alpha_flag, pIccTransform, blend_type);
+                         nullptr, 0, alpha_flag, pIccTransform, blend_type);
   }
   if (FXSYS_fabs(pMatrix->a) < 0.5f && FXSYS_fabs(pMatrix->d) < 0.5f) {
-    CFX_DIBitmap* pTransformed =
-        pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0);
-    if (!pTransformed) {
+    std::unique_ptr<CFX_DIBitmap> pTransformed(
+        pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0));
+    if (!pTransformed)
       return FALSE;
-    }
-    FX_BOOL ret = StretchDIBits(
-        pTransformed, color, full_rect.left, full_rect.top, full_rect.Width(),
-        full_rect.Height(), NULL, 0, alpha_flag, pIccTransform, blend_type);
-    delete pTransformed;
-    return ret;
+
+    return StretchDIBits(pTransformed.get(), color, full_rect.left,
+                         full_rect.top, full_rect.Width(), full_rect.Height(),
+                         nullptr, 0, alpha_flag, pIccTransform, blend_type);
   }
-  if (pSource->GetBPP() == 1) {
-    CFX_DIBitmap* pTransformed = Transform1bppBitmap(pSource, pMatrix);
-    if (!pIccTransform) {
-      return FALSE;
-    }
-    SaveState();
-    CFX_PathData path;
-    path.AppendRect(0, 0, 1.0f, 1.0f);
-    SetClip_PathFill(&path, pMatrix, WINDING);
-    FX_BOOL ret = StretchDIBits(
-        pTransformed, color, full_rect.left, full_rect.top, full_rect.Width(),
-        full_rect.Height(), NULL, 0, alpha_flag, pIccTransform, blend_type);
-    RestoreState(false);
-    delete pTransformed;
-    handle = NULL;
-    return ret;
-  }
-  return FALSE;
+  if (pSource->GetBPP() != 1)
+    return FALSE;
+
+  std::unique_ptr<CFX_DIBitmap> pTransformed(
+      Transform1bppBitmap(pSource, pMatrix));
+  if (!pIccTransform)
+    return FALSE;
+
+  SaveState();
+  CFX_PathData path;
+  path.AppendRect(0, 0, 1.0f, 1.0f);
+  SetClip_PathFill(&path, pMatrix, WINDING);
+  FX_BOOL ret =
+      StretchDIBits(pTransformed.get(), color, full_rect.left, full_rect.top,
+                    full_rect.Width(), full_rect.Height(), nullptr, 0,
+                    alpha_flag, pIccTransform, blend_type);
+  RestoreState(false);
+  handle = nullptr;
+  return ret;
 }
+
 CPSOutput::CPSOutput(HDC hDC) {
   m_hDC = hDC;
   m_pBuf = NULL;

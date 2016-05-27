@@ -107,6 +107,9 @@ class CWin32Platform {
 
 class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
  protected:
+  CGdiDeviceDriver(HDC hDC, int device_class);
+  ~CGdiDeviceDriver() override {}
+
   // IFX_RenderDeviceDriver
   int GetDeviceCaps(int caps_id) override;
   void SaveState() override;
@@ -147,19 +150,19 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   virtual FX_BOOL DeleteDeviceRgn(void* pRgn);
   virtual void DrawLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
 
-  FX_BOOL GDI_SetDIBits(const CFX_DIBitmap* pBitmap,
+  FX_BOOL GDI_SetDIBits(CFX_DIBitmap* pBitmap,
                         const FX_RECT* pSrcRect,
                         int left,
                         int top,
                         void* pIccTransform);
-  FX_BOOL GDI_StretchDIBits(const CFX_DIBitmap* pBitmap,
+  FX_BOOL GDI_StretchDIBits(CFX_DIBitmap* pBitmap,
                             int dest_left,
                             int dest_top,
                             int dest_width,
                             int dest_height,
                             uint32_t flags,
                             void* pIccTransform);
-  FX_BOOL GDI_StretchBitMask(const CFX_DIBitmap* pBitmap,
+  FX_BOOL GDI_StretchBitMask(CFX_DIBitmap* pBitmap,
                              int dest_left,
                              int dest_top,
                              int dest_width,
@@ -168,11 +171,13 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
                              uint32_t flags,
                              int alpha_flag,
                              void* pIccTransform);
+
   HDC m_hDC;
-  int m_Width, m_Height, m_nBitsPerPixel;
-  int m_DeviceClass, m_RenderCaps;
-  CGdiDeviceDriver(HDC hDC, int device_class);
-  ~CGdiDeviceDriver() override {}
+  int m_Width;
+  int m_Height;
+  int m_nBitsPerPixel;
+  int m_DeviceClass;
+  int m_RenderCaps;
 };
 
 class CGdiDisplayDriver : public CGdiDeviceDriver {
@@ -227,9 +232,11 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                                 void* pIccTransform = NULL,
                                 int blend_type = FXDIB_BLEND_NORMAL);
 };
+
 class CGdiPrinterDriver : public CGdiDeviceDriver {
  public:
-  CGdiPrinterDriver(HDC hDC);
+  explicit CGdiPrinterDriver(HDC hDC);
+  ~CGdiPrinterDriver() override;
 
  protected:
   int GetDeviceCaps(int caps_id) override;
@@ -261,8 +268,9 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                       int alpha_flag,
                       void* pIccTransform,
                       int blend_type) override;
-  int m_HorzSize, m_VertSize;
-  FX_BOOL m_bSupportROP;
+
+  const int m_HorzSize;
+  const int m_VertSize;
 };
 
 class CPSOutput : public IFX_PSOutput {

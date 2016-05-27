@@ -123,7 +123,9 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   }
   return FindFont(weight, bItalic, charset, pitch_family, cstr_face, !bCJK);
 }
-IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUserPaths) {
+
+std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
+    const char** pUserPaths) {
   CFX_LinuxFontInfo* pInfo = new CFX_LinuxFontInfo;
   if (!pInfo->ParseFontCfg(pUserPaths)) {
     pInfo->AddPath("/usr/share/fonts");
@@ -131,17 +133,18 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUserPaths) {
     pInfo->AddPath("/usr/share/X11/fonts/TTF");
     pInfo->AddPath("/usr/local/share/fonts");
   }
-  return pInfo;
+  return std::unique_ptr<IFX_SystemFontInfo>(pInfo);
 }
+
 FX_BOOL CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
-  if (!pUserPaths) {
+  if (!pUserPaths)
     return FALSE;
-  }
-  for (const char** pPath = pUserPaths; *pPath; ++pPath) {
+
+  for (const char** pPath = pUserPaths; *pPath; ++pPath)
     AddPath(*pPath);
-  }
   return TRUE;
 }
+
 void CFX_GEModule::InitPlatform() {
   m_pFontMgr->SetSystemFontInfo(
       IFX_SystemFontInfo::CreateDefault(m_pUserFontPaths));

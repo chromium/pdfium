@@ -18,28 +18,27 @@ class CFPF_SkiaFontMgr;
 class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
  public:
   CFX_AndroidFontInfo();
-  virtual void Release() { delete this; }
+  ~CFX_AndroidFontInfo() override;
 
-  virtual FX_BOOL EnumFontList(CFX_FontMapper* pMapper);
-
-  virtual void* MapFont(int weight,
-                        FX_BOOL bItalic,
-                        int charset,
-                        int pitch_family,
-                        const FX_CHAR* face,
-                        int& bExact);
-
-  virtual void* GetFont(const FX_CHAR* face);
-  virtual uint32_t GetFontData(void* hFont,
-                               uint32_t table,
-                               uint8_t* buffer,
-                               uint32_t size);
-  virtual FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name);
-  virtual FX_BOOL GetFontCharset(void* hFont, int& charset);
-
-  virtual void DeleteFont(void* hFont);
-  virtual void* RetainFont(void* hFont);
   FX_BOOL Init(CFPF_SkiaFontMgr* pFontMgr);
+
+  // IFX_SystemFontInfo:
+  FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override;
+  void* MapFont(int weight,
+                FX_BOOL bItalic,
+                int charset,
+                int pitch_family,
+                const FX_CHAR* face,
+                int& bExact) override;
+  void* GetFont(const FX_CHAR* face) override;
+  uint32_t GetFontData(void* hFont,
+                       uint32_t table,
+                       uint8_t* buffer,
+                       uint32_t size) override;
+  FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override;
+  FX_BOOL GetFontCharset(void* hFont, int& charset) override;
+  void DeleteFont(void* hFont) override;
+  void* RetainFont(void* hFont) override;
 
  protected:
   CFPF_SkiaFontMgr* m_pFontMgr;
