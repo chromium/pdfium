@@ -52,10 +52,6 @@ class CFWL_WidgetImp {
                                    uint32_t dwStylesExRemoved);
   virtual uint32_t GetStates();
   virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
-  virtual FWL_Error SetPrivateData(void* module_id,
-                                   void* pData,
-                                   PD_CALLBACK_FREEDATA callback);
-  virtual void* GetPrivateData(void* module_id);
   virtual FWL_Error Update();
   virtual FWL_Error LockUpdate();
   virtual FWL_Error UnlockUpdate();
@@ -82,6 +78,8 @@ class CFWL_WidgetImp {
   void SetEventKey(uint32_t key);
   void* GetLayoutItem() const;
   void SetLayoutItem(void* pItem);
+  void* GetAssociateWidget() const;
+  void SetAssociateWidget(void* pAssociate);
 
  protected:
   friend class CFWL_WidgetImpDelegate;
@@ -159,12 +157,12 @@ class CFWL_WidgetImp {
   CFWL_WidgetMgr* m_pWidgetMgr;
   CFWL_AppImp* m_pOwnerApp;
   CFWL_WidgetImpProperties* m_pProperties;
-  CFX_PrivateData* m_pPrivateData;
   IFWL_WidgetDelegate* m_pDelegate;
   IFWL_WidgetDelegate* m_pCurDelegate;
   IFWL_Widget* m_pOuter;
   IFWL_Widget* m_pInterface;
   void* m_pLayoutItem;
+  void* m_pAssociate;
   int32_t m_iLock;
   uint32_t m_nEventKey;
 };

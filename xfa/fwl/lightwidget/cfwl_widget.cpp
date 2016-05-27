@@ -41,12 +41,11 @@ FX_BOOL CFWL_Widget::IsInstance(const CFX_WideStringC& wsClass) const {
   return m_pIface->IsInstance(wsClass);
 }
 
-static void* gs_pFWLWidget = (void*)FXBSTR_ID('l', 'i', 'g', 't');
-
 FWL_Error CFWL_Widget::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (!m_pIface)
     return FWL_Error::Indefinite;
-  return m_pIface->SetPrivateData(gs_pFWLWidget, this, nullptr);
+  m_pIface->SetAssociateWidget(this);
+  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -78,9 +77,10 @@ CFWL_Widget* CFWL_Widget::GetParent() {
     return nullptr;
 
   IFWL_Widget* parent = m_pIface->GetParent();
-  if (parent)
-    return static_cast<CFWL_Widget*>(parent->GetPrivateData(gs_pFWLWidget));
-  return nullptr;
+  if (!parent)
+    return nullptr;
+
+  return static_cast<CFWL_Widget*>(parent->GetAssociateWidget());
 }
 
 FWL_Error CFWL_Widget::SetParent(CFWL_Widget* pParent) {
@@ -139,20 +139,6 @@ void* CFWL_Widget::GetLayoutItem() const {
 void CFWL_Widget::SetLayoutItem(void* pItem) {
   if (m_pIface)
     m_pIface->SetLayoutItem(pItem);
-}
-
-FWL_Error CFWL_Widget::SetPrivateData(void* module_id,
-                                      void* pData,
-                                      PD_CALLBACK_FREEDATA callback) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return m_pIface->SetPrivateData(module_id, pData, callback);
-}
-
-void* CFWL_Widget::GetPrivateData(void* module_id) {
-  if (!m_pIface)
-    return nullptr;
-  return m_pIface->GetPrivateData(module_id);
 }
 
 FWL_Error CFWL_Widget::Update() {

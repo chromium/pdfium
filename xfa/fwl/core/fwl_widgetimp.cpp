@@ -111,14 +111,14 @@ void IFWL_Widget::SetLayoutItem(void* pItem) {
   GetImpl()->SetLayoutItem(pItem);
 }
 
-FWL_Error IFWL_Widget::SetPrivateData(void* module_id,
-                                      void* pData,
-                                      PD_CALLBACK_FREEDATA callback) {
-  return GetImpl()->SetPrivateData(module_id, pData, callback);
+void* IFWL_Widget::GetAssociateWidget() const {
+  return GetImpl()->GetAssociateWidget();
 }
-void* IFWL_Widget::GetPrivateData(void* module_id) {
-  return GetImpl()->GetPrivateData(module_id);
+
+void IFWL_Widget::SetAssociateWidget(void* pAssociate) {
+  GetImpl()->SetAssociateWidget(pAssociate);
 }
+
 FWL_Error IFWL_Widget::Update() {
   return GetImpl()->Update();
 }
@@ -330,20 +330,6 @@ void CFWL_WidgetImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   }
   return;
 }
-FWL_Error CFWL_WidgetImp::SetPrivateData(void* module_id,
-                                         void* pData,
-                                         PD_CALLBACK_FREEDATA callback) {
-  if (!m_pPrivateData) {
-    m_pPrivateData = new CFX_PrivateData;
-  }
-  m_pPrivateData->SetPrivateData(module_id, pData, callback);
-  return FWL_Error::Succeeded;
-}
-void* CFWL_WidgetImp::GetPrivateData(void* module_id) {
-  if (!m_pPrivateData)
-    return NULL;
-  return m_pPrivateData->GetPrivateData(module_id);
-}
 FWL_Error CFWL_WidgetImp::Update() {
   return FWL_Error::Succeeded;
 }
@@ -533,15 +519,23 @@ void CFWL_WidgetImp::SetLayoutItem(void* pItem) {
   m_pLayoutItem = pItem;
 }
 
+void* CFWL_WidgetImp::GetAssociateWidget() const {
+  return m_pAssociate;
+}
+
+void CFWL_WidgetImp::SetAssociateWidget(void* pAssociate) {
+  m_pAssociate = pAssociate;
+}
+
 CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : m_pProperties(new CFWL_WidgetImpProperties),
-      m_pPrivateData(nullptr),
       m_pDelegate(nullptr),
       m_pCurDelegate(nullptr),
       m_pOuter(pOuter),
       m_pInterface(nullptr),
       m_pLayoutItem(nullptr),
+      m_pAssociate(nullptr),
       m_iLock(0),
       m_nEventKey(0) {
   *m_pProperties = properties;
@@ -550,7 +544,6 @@ CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
 }
 
 CFWL_WidgetImp::~CFWL_WidgetImp() {
-  delete m_pPrivateData;
   delete m_pProperties;
 }
 

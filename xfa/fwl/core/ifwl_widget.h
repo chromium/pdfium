@@ -18,12 +18,15 @@
 // FWL contains three parallel inheritance hierarchies, which reference each
 // other via pointers as follows:
 //
-//                   m_pIface                m_pImpl
+//                              m_pAssociate
+//                  <----------------------------------
 //      CFWL_Widget ----------> IFWL_Widget ----------> CFWL_WidgetImp
-//           |                       |                       |
+//           |       m_pIface        |       m_pImpl         |
 //           A                       A                       A
 //           |                       |                       |
 //      CFWL_...                IFWL_...                CFWL_...Imp
+//
+// TODO(tsepez): Collapse these into a single hierarchy.
 //
 
 enum class FWL_Type {
@@ -79,10 +82,8 @@ class IFWL_Widget {
   void SetEventKey(uint32_t key);
   void* GetLayoutItem() const;
   void SetLayoutItem(void* pItem);
-  FWL_Error SetPrivateData(void* module_id,
-                           void* pData,
-                           PD_CALLBACK_FREEDATA callback);
-  void* GetPrivateData(void* module_id);
+  void* GetAssociateWidget() const;
+  void SetAssociateWidget(void* pAssociate);
   FWL_Error Update();
   FWL_Error LockUpdate();
   FWL_Error UnlockUpdate();

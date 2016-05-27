@@ -324,9 +324,7 @@ typedef CFX_ArrayTemplate<CFX_WideStringC> CFX_WideStringCArray;
 typedef CFX_ArrayTemplate<FX_FLOAT> CFX_FloatArray;
 typedef CFX_ArrayTemplate<uint8_t> CFX_ByteArray;
 typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
-#endif  // PDF_ENABLE_XFA
 
-#ifdef PDF_ENABLE_XFA
 template <class ObjectClass>
 class CFX_ObjectArray : public CFX_BasicArray {
  public:
@@ -621,52 +619,6 @@ class CFX_PtrList {
 
 #ifdef PDF_ENABLE_XFA
 typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
-struct FX_PRIVATEDATA {
-  void FreeData();
-
-  void* m_pModuleId;
-  void* m_pData;
-  PD_CALLBACK_FREEDATA m_pCallback;
-  FX_BOOL m_bSelfDestruct;
-};
-
-class CFX_PrivateData {
- public:
-  CFX_PrivateData();
-  ~CFX_PrivateData();
-
-  void ClearAll();
-
-  void SetPrivateData(void* module_id,
-                      void* pData,
-                      PD_CALLBACK_FREEDATA callback);
-  void SetPrivateObj(void* module_id, CFX_Deletable* pObj);
-
-  void* GetPrivateData(void* module_id);
-  FX_BOOL LookupPrivateData(void* module_id, void*& pData) const {
-    if (!module_id) {
-      return FALSE;
-    }
-    uint32_t nCount = m_DataList.GetSize();
-    for (uint32_t n = 0; n < nCount; n++) {
-      if (m_DataList[n].m_pModuleId == module_id) {
-        pData = m_DataList[n].m_pData;
-        return TRUE;
-      }
-    }
-    return FALSE;
-  }
-
-  FX_BOOL RemovePrivateData(void* module_id);
-
- protected:
-  CFX_ArrayTemplate<FX_PRIVATEDATA> m_DataList;
-
-  void AddData(void* module_id,
-               void* pData,
-               PD_CALLBACK_FREEDATA callback,
-               FX_BOOL bSelfDestruct);
-};
 #endif  // PDF_ENABLE_XFA
 
 class CFX_BitStream {
