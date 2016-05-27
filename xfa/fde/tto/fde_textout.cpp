@@ -125,12 +125,13 @@ void CFDE_TextOut::SetLineSpace(FX_FLOAT fLineSpace) {
   ASSERT(fLineSpace > 1.0f);
   m_fLineSpace = fLineSpace;
 }
+
 void CFDE_TextOut::SetDIBitmap(CFX_DIBitmap* pDIB) {
   ASSERT(pDIB);
 
   m_pRenderDevice.reset();
   CFX_FxgeDevice* device = new CFX_FxgeDevice;
-  device->Attach(pDIB, 0, FALSE);
+  device->Attach(pDIB, false, nullptr, false);
   m_pRenderDevice.reset(new CFDE_RenderDevice(device, FALSE));
 }
 

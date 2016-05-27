@@ -18,7 +18,7 @@ FWL_Error CAGG_Graphics::Create(CFX_Graphics* owner,
     return FWL_Error::PropertyInvalid;
 
   CFX_FxgeDevice* device = new CFX_FxgeDevice;
-  device->Create(width, height, format);
+  device->Create(width, height, format, nullptr);
   m_owner = owner;
   m_owner->m_renderDevice = device;
   m_owner->m_renderDevice->GetBitmap()->Clear(0xFFFFFFFF);

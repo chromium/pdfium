@@ -142,7 +142,6 @@ CPDF_RenderStatus::CPDF_RenderStatus()
       m_HalftoneLimit(0),
       m_bPrint(FALSE),
       m_Transparency(0),
-      m_DitherBits(0),
       m_bDropObjects(FALSE),
       m_bStdCS(FALSE),
       m_GroupFamily(0),
@@ -170,7 +169,6 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
                                       FX_BOOL bLoadMask) {
   m_pContext = pContext;
   m_pDevice = pDevice;
-  m_DitherBits = pDevice->GetDeviceCaps(FXDC_DITHER_BITS);
   m_bPrint = m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
   if (pDeviceMatrix) {
     m_DeviceMatrix = *pDeviceMatrix;
@@ -319,28 +317,6 @@ FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,
   }
   rect.Intersect(rtClip);
   return rect.IsEmpty();
-}
-void CPDF_RenderStatus::DitherObjectArea(const CPDF_PageObject* pObj,
-                                         const CFX_Matrix* pObj2Device) {
-  CFX_DIBitmap* pBitmap = m_pDevice->GetBitmap();
-  if (!pBitmap) {
-    return;
-  }
-  FX_RECT rect;
-  if (GetObjectClippedRect(pObj, pObj2Device, FALSE, rect)) {
-    return;
-  }
-  if (m_DitherBits == 2) {
-    static FX_ARGB pal[4] = {0, 85, 170, 255};
-    pBitmap->DitherFS(pal, 4, &rect);
-  } else if (m_DitherBits == 3) {
-    static FX_ARGB pal[8] = {0, 36, 73, 109, 146, 182, 219, 255};
-    pBitmap->DitherFS(pal, 8, &rect);
-  } else if (m_DitherBits == 4) {
-    static FX_ARGB pal[16] = {0,   17,  34,  51,  68,  85,  102, 119,
-                              136, 153, 170, 187, 204, 221, 238, 255};
-    pBitmap->DitherFS(pal, 16, &rect);
-  }
 }
 
 void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
@@ -788,7 +764,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
 
     m_pDevice->GetDIBits(oriDevice.get(), rect.left, rect.top);
   }
-  if (!bitmap_device.Create(width, height, FXDIB_Argb, 0, oriDevice.get()))
+  if (!bitmap_device.Create(width, height, FXDIB_Argb, oriDevice.get()))
     return TRUE;
 
   CFX_DIBitmap* bitmap = bitmap_device.GetBitmap();
@@ -804,7 +780,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
 
     pTextMask->Clear(0);
     CFX_FxgeDevice text_device;
-    text_device.Attach(pTextMask.get());
+    text_device.Attach(pTextMask.get(), false, nullptr, false);
     for (uint32_t i = 0; i < pPageObj->m_ClipPath.GetTextCount(); i++) {
       CPDF_TextObject* textobj = pPageObj->m_ClipPath.GetText(i);
       if (!textobj) {
@@ -890,7 +866,7 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
   FinalMatrix.Scale(scaleX, scaleY);
   pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
   CFX_FxgeDevice device;
-  device.Attach(pBackdrop.get());
+  device.Attach(pBackdrop.get(), false, nullptr, false);
   m_pContext->Render(&device, pObj, &m_Options, &FinalMatrix);
   return pBackdrop.release();
 }
@@ -900,7 +876,7 @@ void CPDF_RenderContext::GetBackground(CFX_DIBitmap* pBuffer,
                                        const CPDF_RenderOptions* pOptions,
                                        CFX_Matrix* pFinalMatrix) {
   CFX_FxgeDevice device;
-  device.Attach(pBuffer);
+  device.Attach(pBuffer, false, nullptr, false);
 
   FX_RECT rect(0, 0, device.GetWidth(), device.GetHeight());
   device.FillRect(&rect, 0xffffffff);
@@ -1282,7 +1258,7 @@ FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
       return FALSE;
 
     if (iPitch * iHeight <= _FPDFAPI_IMAGESIZE_LIMIT_ &&
-        m_pBitmapDevice->Create(iWidth, iHeight, dibFormat)) {
+        m_pBitmapDevice->Create(iWidth, iHeight, dibFormat, nullptr)) {
       break;
     }
     m_Matrix.Scale(0.5f, 0.5f);

@@ -437,7 +437,8 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         FX_RECT rect = rect_f.GetOutterRect();
         CFX_FxgeDevice bitmap_device;
         if (!bitmap_device.Create((int)(rect.Width() * sa),
-                                  (int)(rect.Height() * sd), FXDIB_Argb)) {
+                                  (int)(rect.Height() * sd), FXDIB_Argb,
+                                  nullptr)) {
           return TRUE;
         }
         bitmap_device.GetBitmap()->Clear(0);

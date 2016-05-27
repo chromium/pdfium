@@ -752,7 +752,7 @@ void DrawCoonPatchMeshes(
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
   CFX_FxgeDevice device;
-  device.Attach(pBitmap);
+  device.Attach(pBitmap, false, nullptr, false);
   CPDF_MeshStream stream(funcs, pCS);
   if (!stream.Load(pShadingStream))
     return;
@@ -830,7 +830,7 @@ std::unique_ptr<CFX_DIBitmap> DrawPatternBitmap(
     return std::unique_ptr<CFX_DIBitmap>();
   }
   CFX_FxgeDevice bitmap_device;
-  bitmap_device.Attach(pBitmap.get());
+  bitmap_device.Attach(pBitmap.get(), false, nullptr, false);
   pBitmap->Clear(0);
   CFX_FloatRect cell_bbox = pPattern->bbox();
   pPattern->pattern_to_form()->TransformRect(cell_bbox);

@@ -42,13 +42,10 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
 
   CRenderContext* pContext = new CRenderContext;
   pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
-  pContext->m_pDevice = new CFX_FxgeDevice;
-  if (flags & FPDF_REVERSE_BYTE_ORDER) {
-    ((CFX_FxgeDevice*)pContext->m_pDevice)
-        ->Attach((CFX_DIBitmap*)bitmap, 0, TRUE);
-  } else {
-    ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
-  }
+  CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
+  pContext->m_pDevice = pDevice;
+  CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);
+  pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   IFSDK_PAUSE_Adapter IPauseAdapter(pause);
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,

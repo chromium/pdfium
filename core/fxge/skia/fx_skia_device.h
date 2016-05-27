@@ -17,11 +17,10 @@ struct SkIRect;
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
  public:
   CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
-                       int dither_bits,
                        FX_BOOL bRgbByteOrder,
                        CFX_DIBitmap* pOriDevice,
                        FX_BOOL bGroupKnockout);
-  CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
+  explicit CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
   CFX_SkiaDeviceDriver(int size_x, int size_y);
   ~CFX_SkiaDeviceDriver() override;
 
@@ -145,7 +144,6 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   CFX_DIBitmap* m_pOriDevice;
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
-  int m_ditherBits;
   FX_BOOL m_bRgbByteOrder;
   FX_BOOL m_bGroupKnockout;
 };

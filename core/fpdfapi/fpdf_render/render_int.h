@@ -123,6 +123,7 @@ class CPDF_RenderStatus {
  public:
   CPDF_RenderStatus();
   ~CPDF_RenderStatus();
+
   FX_BOOL Initialize(class CPDF_RenderContext* pContext,
                      CFX_RenderDevice* pDevice,
                      const CFX_Matrix* pDeviceMatrix,
@@ -155,6 +156,7 @@ class CPDF_RenderStatus {
  protected:
   friend class CPDF_ImageRenderer;
   friend class CPDF_RenderContext;
+
   void ProcessClipPath(CPDF_ClipPath ClipPath, const CFX_Matrix* pObj2Device);
   void DrawClipPath(CPDF_ClipPath ClipPath, const CFX_Matrix* pObj2Device);
   FX_BOOL ProcessTransparency(const CPDF_PageObject* PageObj,
@@ -242,20 +244,17 @@ class CPDF_RenderStatus {
   FX_ARGB GetFillArgb(const CPDF_PageObject* pObj,
                       FX_BOOL bType3 = FALSE) const;
   FX_ARGB GetStrokeArgb(const CPDF_PageObject* pObj) const;
-  CPDF_RenderContext* m_pContext;
-  FX_BOOL m_bStopped;
-  void DitherObjectArea(const CPDF_PageObject* pObj,
-                        const CFX_Matrix* pObj2Device);
   FX_BOOL GetObjectClippedRect(const CPDF_PageObject* pObj,
                                const CFX_Matrix* pObj2Device,
                                FX_BOOL bLogical,
                                FX_RECT& rect) const;
   void GetScaledMatrix(CFX_Matrix& matrix) const;
 
- protected:
   static const int kRenderMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
+  CPDF_RenderContext* m_pContext;
+  FX_BOOL m_bStopped;
   CFX_RenderDevice* m_pDevice;
   CFX_Matrix m_DeviceMatrix;
   CPDF_ClipPath m_LastClipPath;
@@ -266,7 +265,6 @@ class CPDF_RenderStatus {
   std::unique_ptr<CPDF_ImageRenderer> m_pImageRenderer;
   FX_BOOL m_bPrint;
   int m_Transparency;
-  int m_DitherBits;
   FX_BOOL m_bDropObjects;
   FX_BOOL m_bStdCS;
   uint32_t m_GroupFamily;
@@ -275,6 +273,7 @@ class CPDF_RenderStatus {
   FX_ARGB m_T3FillColor;
   int m_curBlend;
 };
+
 class CPDF_ImageLoader {
  public:
   CPDF_ImageLoader()

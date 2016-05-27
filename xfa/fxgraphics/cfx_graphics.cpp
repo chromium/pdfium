@@ -1343,7 +1343,7 @@ FWL_Error CFX_Graphics::FillPathWithPattern(CFX_Path* path,
   FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
                FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
   CFX_FxgeDevice device;
-  device.Attach(&bmp);
+  device.Attach(&bmp, false, nullptr, false);
   device.FillRect(&rect, m_info.fillColor->m_info.pattern->m_backArgb);
   for (int32_t j = rect.bottom; j < rect.top; j += mask.GetHeight()) {
     for (int32_t i = rect.left; i < rect.right; i += mask.GetWidth()) {

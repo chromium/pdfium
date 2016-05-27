@@ -500,14 +500,12 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
 }
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
-                                           int dither_bits,
                                            FX_BOOL bRgbByteOrder,
                                            CFX_DIBitmap* pOriDevice,
                                            FX_BOOL bGroupKnockout)
     : m_pBitmap(pBitmap),
       m_pOriDevice(pOriDevice),
       m_pRecorder(nullptr),
-      m_ditherBits(dither_bits),
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
   SkBitmap skBitmap;
@@ -526,7 +524,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(int size_x, int size_y)
     : m_pBitmap(nullptr),
       m_pOriDevice(nullptr),
       m_pRecorder(new SkPictureRecorder),
-      m_ditherBits(0),
       m_bRgbByteOrder(FALSE),
       m_bGroupKnockout(FALSE) {
   m_pRecorder->beginRecording(SkIntToScalar(size_x), SkIntToScalar(size_y));
@@ -537,7 +534,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
     : m_pBitmap(nullptr),
       m_pOriDevice(nullptr),
       m_pRecorder(recorder),
-      m_ditherBits(0),
       m_bRgbByteOrder(FALSE),
       m_bGroupKnockout(FALSE) {
   m_pCanvas = m_pRecorder->getRecordingCanvas();
@@ -594,8 +590,6 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) {
       return FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE |
              FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT |
              FXRC_FILLSTROKE_PATH | FXRC_SHADING;
-    case FXDC_DITHER_BITS:
-      return m_ditherBits;
   }
   return 0;
 }
@@ -1095,15 +1089,14 @@ SkPictureRecorder* CFX_FxgeDevice::CreateRecorder(int size_x, int size_y) {
 }
 
 bool CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
-                            int dither_bits,
                             bool bRgbByteOrder,
                             CFX_DIBitmap* pOriDevice,
                             bool bGroupKnockout) {
   if (!pBitmap)
     return false;
   SetBitmap(pBitmap);
-  SetDeviceDriver(new CFX_SkiaDeviceDriver(pBitmap, dither_bits, bRgbByteOrder,
-                                           pOriDevice, bGroupKnockout));
+  SetDeviceDriver(new CFX_SkiaDeviceDriver(pBitmap, bRgbByteOrder, pOriDevice,
+                                           bGroupKnockout));
   return true;
 }
 
@@ -1117,7 +1110,6 @@ bool CFX_FxgeDevice::AttachRecorder(SkPictureRecorder* recorder) {
 bool CFX_FxgeDevice::Create(int width,
                             int height,
                             FXDIB_Format format,
-                            int dither_bits,
                             CFX_DIBitmap* pOriDevice) {
   m_bOwnedBitmap = TRUE;
   CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
@@ -1127,7 +1119,7 @@ bool CFX_FxgeDevice::Create(int width,
   }
   SetBitmap(pBitmap);
   CFX_SkiaDeviceDriver* pDriver =
-      new CFX_SkiaDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
+      new CFX_SkiaDeviceDriver(pBitmap, FALSE, pOriDevice, FALSE);
   SetDeviceDriver(pDriver);
   return true;
 }

@@ -161,7 +161,6 @@ class CFX_GraphStateData {
 #define FXDC_HORZ_SIZE 5
 #define FXDC_VERT_SIZE 6
 #define FXDC_RENDER_CAPS 7
-#define FXDC_DITHER_BITS 8
 #define FXDC_DISPLAY 1
 #define FXDC_PRINTER 2
 #define FXRC_GET_BITS 0x01
@@ -402,16 +401,13 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
   ~CFX_FxgeDevice() override;
 
   bool Attach(CFX_DIBitmap* pBitmap,
-              int dither_bits = 0,
-              bool bRgbByteOrder = false,
-              CFX_DIBitmap* pOriDevice = NULL,
-              bool bGroupKnockout = false);
-
+              bool bRgbByteOrder,
+              CFX_DIBitmap* pOriDevice,
+              bool bGroupKnockout);
   bool Create(int width,
               int height,
               FXDIB_Format format,
-              int dither_bits = 0,
-              CFX_DIBitmap* pOriDevice = NULL);
+              CFX_DIBitmap* pOriDevice);
 
 #ifdef _SKIA_SUPPORT_
   bool AttachRecorder(SkPictureRecorder* recorder);

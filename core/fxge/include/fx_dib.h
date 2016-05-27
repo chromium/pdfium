@@ -256,6 +256,7 @@ class CFX_DIBSource {
   int FindPalette(uint32_t color) const;
   void GetPalette(uint32_t* pal, int alpha) const;
 };
+
 class CFX_DIBitmap : public CFX_DIBSource {
  public:
   CFX_DIBitmap();
@@ -357,17 +358,13 @@ class CFX_DIBitmap : public CFX_DIBSource {
 
   FX_BOOL ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 
-  FX_BOOL DitherFS(const uint32_t* pPalette,
-                   int pal_size,
-                   const FX_RECT* pRect = NULL);
-
  protected:
-  uint8_t* m_pBuffer;
-
-  FX_BOOL m_bExtBuf;
-
   FX_BOOL GetGrayData(void* pIccTransform = NULL);
+
+  uint8_t* m_pBuffer;
+  FX_BOOL m_bExtBuf;
 };
+
 class CFX_DIBExtractor {
  public:
   CFX_DIBExtractor(const CFX_DIBSource* pSrc);

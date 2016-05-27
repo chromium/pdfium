@@ -28,7 +28,6 @@ class CAgg_PathData {
 class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
  public:
   CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
-                      int dither_bits,
                       FX_BOOL bRgbByteOrder,
                       CFX_DIBitmap* pOriDevice,
                       FX_BOOL bGroupKnockout);
@@ -144,7 +143,6 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   void* m_pPlatformBitmap;
   void* m_pDwRenderTartget;
   int m_FillFlags;
-  int m_DitherBits;
   FX_BOOL m_bRgbByteOrder;
   CFX_DIBitmap* m_pOriDevice;
   FX_BOOL m_bGroupKnockout;

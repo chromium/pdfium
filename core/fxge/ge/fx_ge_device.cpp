@@ -261,7 +261,7 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
       Backdrop.Copy(&bitmap);
     }
     CFX_FxgeDevice bitmap_device;
-    bitmap_device.Attach(&bitmap, 0, FALSE, &Backdrop, TRUE);
+    bitmap_device.Attach(&bitmap, false, &Backdrop, true);
     CFX_Matrix matrix;
     if (pObject2Device) {
       matrix = *pObject2Device;

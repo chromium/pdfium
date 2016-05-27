@@ -523,9 +523,9 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
   int width = rect.Width();
   int height = rect.Height();
   CFX_FxgeDevice bitmap_device1;
-  if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Rgb32)) {
+  if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Rgb32, nullptr))
     return TRUE;
-  }
+
   bitmap_device1.GetBitmap()->Clear(0xffffff);
   {
     CPDF_RenderStatus bitmap_render;
@@ -545,7 +545,8 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
   }
   {
     CFX_FxgeDevice bitmap_device2;
-    if (!bitmap_device2.Create(rect.Width(), rect.Height(), FXDIB_8bppRgb)) {
+    if (!bitmap_device2.Create(rect.Width(), rect.Height(), FXDIB_8bppRgb,
+                               nullptr)) {
       return TRUE;
     }
     bitmap_device2.GetBitmap()->Clear(0);
@@ -621,9 +622,9 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
   int width = rect.Width();
   int height = rect.Height();
   CFX_FxgeDevice bitmap_device1;
-  if (!bitmap_device1.Create(width, height, FXDIB_Rgb32)) {
+  if (!bitmap_device1.Create(width, height, FXDIB_Rgb32, nullptr))
     return TRUE;
-  }
+
   bitmap_device1.GetBitmap()->Clear(0xffffff);
   {
     CPDF_RenderStatus bitmap_render;
@@ -638,9 +639,9 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
   }
   {
     CFX_FxgeDevice bitmap_device2;
-    if (!bitmap_device2.Create(width, height, FXDIB_8bppRgb)) {
+    if (!bitmap_device2.Create(width, height, FXDIB_8bppRgb, nullptr))
       return TRUE;
-    }
+
     bitmap_device2.GetBitmap()->Clear(0);
     CPDF_RenderStatus bitmap_render;
     bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device2, NULL,
@@ -900,17 +901,15 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   FX_BOOL bLuminosity = pSMaskDict->GetStringBy("S") != "Alpha";
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
+  FXDIB_Format format;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  if (!bitmap_device.Create(width, height,
-                            bLuminosity ? FXDIB_Rgb32 : FXDIB_8bppMask)) {
-    return NULL;
-  }
+  format = bLuminosity ? FXDIB_Rgb32 : FXDIB_8bppMask;
 #else
-  if (!bitmap_device.Create(width, height,
-                            bLuminosity ? FXDIB_Rgb : FXDIB_8bppMask)) {
-    return NULL;
-  }
+  format = bLuminosity ? FXDIB_Rgb : FXDIB_8bppMask;
 #endif
+  if (!bitmap_device.Create(width, height, format, nullptr))
+    return nullptr;
+
   CFX_DIBitmap& bitmap = *bitmap_device.GetBitmap();
   CPDF_Object* pCSObj = NULL;
   CPDF_ColorSpace* pCS = NULL;

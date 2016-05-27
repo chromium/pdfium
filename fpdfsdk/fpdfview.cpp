@@ -74,6 +74,10 @@ CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
 #endif  // PDF_ENABLE_XFA
 }
 
+CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
+  return static_cast<CFX_DIBitmap*>(bitmap);
+}
+
 #ifdef PDF_ENABLE_XFA
 CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
   m_pFS = pFS;
@@ -544,14 +548,15 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     pBitmap = new CFX_DIBitmap;
     pBitmap->Create(size_x, size_y, FXDIB_Argb);
     pBitmap->Clear(0x00ffffff);
-    pContext->m_pDevice = new CFX_FxgeDevice;
-    ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)pBitmap);
+    CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
+    pContext->m_pDevice = pDevice;
+    pDevice->Attach(pBitmap, false, nullptr, false);
   } else {
     pContext->m_pDevice = new CFX_WindowsDevice(dc);
   }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                         rotate, flags, TRUE, NULL);
+                         rotate, flags, TRUE, nullptr);
 
   if (bBackgroundAlphaNeeded || bHasImageMask) {
     if (pBitmap) {
@@ -595,13 +600,10 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 
   CRenderContext* pContext = new CRenderContext;
   pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
-  pContext->m_pDevice = new CFX_FxgeDevice;
-  if (flags & FPDF_REVERSE_BYTE_ORDER) {
-    ((CFX_FxgeDevice*)pContext->m_pDevice)
-        ->Attach((CFX_DIBitmap*)bitmap, 0, TRUE);
-  } else {
-    ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
-  }
+  CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
+  pContext->m_pDevice = pDevice;
+  CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);
+  pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, TRUE, nullptr);
@@ -771,32 +773,34 @@ DLLEXPORT void STDCALL FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
                                            FPDF_DWORD color) {
   if (!bitmap)
     return;
+
   CFX_FxgeDevice device;
-  device.Attach((CFX_DIBitmap*)bitmap);
-  if (!((CFX_DIBitmap*)bitmap)->HasAlpha())
+  CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);
+  device.Attach(pBitmap, false, nullptr, false);
+  if (!pBitmap->HasAlpha())
     color |= 0xFF000000;
   FX_RECT rect(left, top, left + width, top + height);
   device.FillRect(&rect, color);
 }
 
 DLLEXPORT void* STDCALL FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap) {
-  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetBuffer() : nullptr;
+  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetBuffer() : nullptr;
 }
 
 DLLEXPORT int STDCALL FPDFBitmap_GetWidth(FPDF_BITMAP bitmap) {
-  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetWidth() : 0;
+  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetWidth() : 0;
 }
 
 DLLEXPORT int STDCALL FPDFBitmap_GetHeight(FPDF_BITMAP bitmap) {
-  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetHeight() : 0;
+  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetHeight() : 0;
 }
 
 DLLEXPORT int STDCALL FPDFBitmap_GetStride(FPDF_BITMAP bitmap) {
-  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetPitch() : 0;
+  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetPitch() : 0;
 }
 
 DLLEXPORT void STDCALL FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {
-  delete (CFX_DIBitmap*)bitmap;
+  delete CFXBitmapFromFPDFBitmap(bitmap);
 }
 
 void FPDF_RenderPage_Retail(CRenderContext* pContext,

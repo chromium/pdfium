@@ -844,7 +844,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     delete m_pActiveBitmap;
     m_pActiveBitmap = new CFX_DIBitmap;
     m_pActiveBitmap->Create(1, kCYCaption, FXDIB_Argb);
-    dev.Attach(m_pActiveBitmap);
+    dev.Attach(m_pActiveBitmap, false, nullptr, false);
     gs.Create(&dev);
     path.AddRectangle(0, 0, 1, 5);
     DrawAxialShading(&gs, 0, 0, 0, 5, m_pThemeData->clrHeadBK[0][0],
@@ -865,7 +865,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
     delete m_pDeactivebitmap;
     m_pDeactivebitmap = new CFX_DIBitmap;
     m_pDeactivebitmap->Create(1, kCYCaption, FXDIB_Argb);
-    dev.Attach(m_pDeactivebitmap);
+    dev.Attach(m_pDeactivebitmap, false, nullptr, false);
     gs.Create(&dev);
     path.AddRectangle(0, 0, 1, 5);
     DrawAxialShading(&gs, 0, 0, 0, 5, m_pThemeData->clrHeadBK[1][0],
