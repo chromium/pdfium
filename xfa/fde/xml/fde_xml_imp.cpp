@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/include/fx_safe_types.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/crt/fgas_system.h"
 
@@ -1475,7 +1476,15 @@ void CFDE_XMLSyntaxParser::Init(IFX_Stream* pStream,
   uint8_t bom[4];
   m_iCurrentPos = m_pStream->GetBOM(bom);
   ASSERT(m_pBuffer == NULL);
-  m_pBuffer = FX_Alloc(FX_WCHAR, m_iXMLPlaneSize);
+
+  FX_SAFE_INT32 alloc_size_safe = m_iXMLPlaneSize;
+  alloc_size_safe += 1;  // For NUL.
+  if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0) {
+    m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+    return;
+  }
+
+  m_pBuffer = FX_Alloc(FX_WCHAR, alloc_size_safe.ValueOrDie());
   m_pStart = m_pEnd = m_pBuffer;
   ASSERT(!m_BlockBuffer.IsInitialized());
   m_BlockBuffer.InitBuffer();
