@@ -78,25 +78,17 @@ FX_BOOL CFWL_FormTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;
   int32_t iActive = 0;
-  if (pParams->m_dwStates & CFWL_PartState_Inactive) {
+  if (pParams->m_dwStates & CFWL_PartState_Inactive)
     iActive = 1;
-  }
+
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
-  switch (pParams->m_dwStates & 0x03) {
-    case CFWL_PartState_Hovered: {
-      eState = FWLTHEME_STATE_Hover;
-      break;
-    }
-    case CFWL_PartState_Pressed: {
-      eState = FWLTHEME_STATE_Pressed;
-      break;
-    }
-    case CFWL_PartState_Disabled: {
-      eState = FWLTHEME_STATE_Disabale;
-      break;
-    }
-    default: {}
-  }
+  if (pParams->m_dwStates & CFWL_PartState_Hovered)
+    eState = FWLTHEME_STATE_Hover;
+  else if (pParams->m_dwStates & CFWL_PartState_Pressed)
+    eState = FWLTHEME_STATE_Pressed;
+  else if (pParams->m_dwStates & CFWL_PartState_Disabled)
+    eState = FWLTHEME_STATE_Disabale;
+
   switch (pParams->m_iPart) {
     case CFWL_Part::Border: {
       DrawFormBorder(pParams->m_pGraphics, &pParams->m_rtPart, eState,

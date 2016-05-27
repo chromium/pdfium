@@ -166,22 +166,21 @@ void CFWL_CheckBoxTP::DrawSign(IFWL_Widget* pWidget,
   CFX_RectF rtSign(*pRtBox);
   rtSign.Deflate(kSignMargin, kSignMargin);
   uint32_t dwColor = m_pThemeData->clrSignCheck;
-  FX_BOOL bCheck = TRUE;
+  bool bCheck = true;
   if ((dwStates & CFWL_PartState_Disabled) &&
       (dwStates & CFWL_PartState_Checked)) {
     dwColor = m_pThemeData->clrSignBorderDisable;
   } else if (dwStates & CFWL_PartState_Neutral) {
-    if (dwStates & CFWL_PartState_Normal) {
-      bCheck = FALSE;
-      dwColor = m_pThemeData->clrSignNeutralNormal;
-    } else if (dwStates & CFWL_PartState_Hovered) {
-      bCheck = FALSE;
+    if (dwStates & CFWL_PartState_Hovered) {
       dwColor = m_pThemeData->clrSignNeutralHover;
     } else if (dwStates & CFWL_PartState_Pressed) {
-      bCheck = FALSE, dwColor = m_pThemeData->clrSignNeutralPressed;
+      dwColor = m_pThemeData->clrSignNeutralPressed;
     } else if (dwStates & CFWL_PartState_Disabled) {
-      bCheck = FALSE, dwColor = m_pThemeData->clrSignBorderDisable;
+      dwColor = m_pThemeData->clrSignBorderDisable;
+    } else {
+      dwColor = m_pThemeData->clrSignNeutralNormal;
     }
+    bCheck = false;
   }
   if (bCheck) {
     uint32_t dwStyle = pWidget->GetStylesEx();
