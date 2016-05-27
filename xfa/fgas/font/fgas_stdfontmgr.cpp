@@ -445,7 +445,7 @@ static void FX_EnumGdiFonts(CFX_FontDescriptors& fonts,
   FXSYS_memset(&lfFind, 0, sizeof(lfFind));
   lfFind.lfCharSet = DEFAULT_CHARSET;
   if (pwsFaceName) {
-    FXSYS_wcsncpy((FX_WCHAR*)lfFind.lfFaceName, pwsFaceName, 31);
+    FXSYS_wcsncpy(lfFind.lfFaceName, pwsFaceName, 31);
     lfFind.lfFaceName[31] = 0;
   }
   EnumFontFamiliesExW(hDC, (LPLOGFONTW)&lfFind,

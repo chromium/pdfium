@@ -426,7 +426,7 @@ void CFDE_CSSTextBuf::Reset() {
 FX_BOOL CFDE_CSSTextBuf::AttachBuffer(const FX_WCHAR* pBuffer,
                                       int32_t iBufLen) {
   Reset();
-  m_pBuffer = (FX_WCHAR*)pBuffer;
+  m_pBuffer = const_cast<FX_WCHAR*>(pBuffer);
   m_iDatLen = m_iBufLen = iBufLen;
   return m_bExtBuf = TRUE;
 }
