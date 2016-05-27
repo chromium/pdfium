@@ -8744,7 +8744,9 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
                                 p_j2k->m_specific_param.m_decoder.m_default_tcp;
 
         /* precondition again */
-        assert(compno < p_j2k->m_private_image->numcomps);
+        if (compno >= p_j2k->m_private_image->numcomps) {
+                return OPJ_FALSE;
+        }
 
         l_tccp = &l_tcp->tccps[compno];
         l_current_ptr = p_header_data;
