@@ -42,9 +42,8 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
   }
   FXCODEC_STATUS status =
       pGRD->Start_decode_Arith(&BHDC, pArithDecoder, gbContext, nullptr);
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-    pGRD->Continue_decode(pPause);
-  }
+  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
+    status = pGRD->Continue_decode(pPause);
   if (!BHDC)
     return nullptr;
 
@@ -70,10 +69,7 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
-  FXCODEC_STATUS status = pGRD->Start_decode_MMR(&BHDC, pStream, nullptr);
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-    pGRD->Continue_decode(pPause);
-  }
+  pGRD->Start_decode_MMR(&BHDC, pStream, nullptr);
   if (!BHDC)
     return nullptr;
 

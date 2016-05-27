@@ -1147,11 +1147,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       m_pStream->offset(2);
     }
   } else {
-    FXCODEC_STATUS status = m_pGRD->Start_decode_MMR(&pSegment->m_Result.im,
-                                                     m_pStream.get(), pPause);
-    while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-      m_pGRD->Continue_decode(pPause);
-    }
+    m_pGRD->Start_decode_MMR(&pSegment->m_Result.im, m_pStream.get(), pPause);
     if (!pSegment->m_Result.im) {
       m_pGRD.reset();
       return JBIG2_ERROR_FATAL;

@@ -46,7 +46,7 @@ uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     FXCODEC_STATUS status =
         pGRD->Start_decode_Arith(&pImage, pArithDecoder, gbContext, nullptr);
     while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-      pGRD->Continue_decode(pPause);
+      status = pGRD->Continue_decode(pPause);
 
     if (!pImage)
       return nullptr;
@@ -78,11 +78,7 @@ uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
 
   std::unique_ptr<CJBig2_Image*> GSPLANES(FX_Alloc(CJBig2_Image*, GSBPP));
   JBIG2_memset(GSPLANES.get(), 0, sizeof(CJBig2_Image*) * GSBPP);
-  FXCODEC_STATUS status =
-      pGRD->Start_decode_MMR(&GSPLANES.get()[GSBPP - 1], pStream, nullptr);
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-    pGRD->Continue_decode(pPause);
-  }
+  pGRD->Start_decode_MMR(&GSPLANES.get()[GSBPP - 1], pStream, nullptr);
   if (!GSPLANES.get()[GSBPP - 1])
     return nullptr;
 
@@ -90,11 +86,7 @@ uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
   pStream->offset(3);
   int32_t J = GSBPP - 2;
   while (J >= 0) {
-    FXCODEC_STATUS status =
-        pGRD->Start_decode_MMR(&GSPLANES.get()[J], pStream, nullptr);
-    while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-      pGRD->Continue_decode(pPause);
-    }
+    pGRD->Start_decode_MMR(&GSPLANES.get()[J], pStream, nullptr);
     if (!GSPLANES.get()[J]) {
       for (int32_t K = GSBPP - 1; K > J; --K)
         delete GSPLANES.get()[K];

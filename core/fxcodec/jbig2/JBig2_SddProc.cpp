@@ -535,10 +535,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
         pGRD->MMR = 1;
         pGRD->GBW = TOTWIDTH;
         pGRD->GBH = HCHEIGHT;
-        FXCODEC_STATUS status = pGRD->Start_decode_MMR(&BHC, pStream, nullptr);
-        while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-          pGRD->Continue_decode(pPause);
-        }
+        pGRD->Start_decode_MMR(&BHC, pStream, nullptr);
         pStream->alignByte();
       }
       nTmp = 0;
