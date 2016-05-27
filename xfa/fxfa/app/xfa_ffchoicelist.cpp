@@ -34,8 +34,8 @@ FX_BOOL CXFA_FFListBox::LoadWidget() {
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);
   m_pNormalWidget = (CFWL_Widget*)pListBox;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
@@ -232,8 +232,8 @@ FX_BOOL CXFA_FFComboBox::LoadWidget() {
   CFWL_ComboBox* pComboBox = CFWL_ComboBox::Create();
   pComboBox->Initialize();
   m_pNormalWidget = (CFWL_Widget*)pComboBox;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);

@@ -28,8 +28,8 @@ FX_BOOL CXFA_FFImageEdit::LoadWidget() {
     pPictureBox->Initialize();
   }
   m_pNormalWidget = (CFWL_Widget*)pPictureBox;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = pPictureBox->SetDelegate(this);

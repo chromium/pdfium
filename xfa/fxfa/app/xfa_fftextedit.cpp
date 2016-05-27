@@ -38,8 +38,8 @@ FX_BOOL CXFA_FFTextEdit::LoadWidget() {
   CFWL_Edit* pFWLEdit = CFWL_Edit::Create();
   pFWLEdit->Initialize();
   m_pNormalWidget = pFWLEdit;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
@@ -450,7 +450,7 @@ FX_BOOL CXFA_FFNumericEdit::LoadWidget() {
   pWidget->Initialize();
   m_pNormalWidget = (CFWL_Widget*)pWidget;
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pIWidget, this, NULL);
+  m_pNormalWidget->SetLayoutItem(this);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
@@ -523,8 +523,8 @@ FX_BOOL CXFA_FFPasswordEdit::LoadWidget() {
   CFWL_Edit* pWidget = CFWL_Edit::Create();
   pWidget->Initialize();
   m_pNormalWidget = (CFWL_Widget*)pWidget;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pIWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
@@ -589,8 +589,8 @@ FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
   CFWL_DateTimePicker* pWidget = CFWL_DateTimePicker::Create();
   pWidget->Initialize();
   m_pNormalWidget = (CFWL_Widget*)pWidget;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pIWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);

@@ -124,14 +124,21 @@ FWL_Error CFWL_Widget::ModifyStylesEx(uint32_t dwStylesExAdded,
 }
 
 uint32_t CFWL_Widget::GetStates() {
-  if (!m_pIface)
-    return 0;
-  return m_pIface->GetStates();
+  return m_pIface ? m_pIface->GetStates() : 0;
 }
 
 void CFWL_Widget::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   if (m_pIface)
     m_pIface->SetStates(dwStates, bSet);
+}
+
+void* CFWL_Widget::GetLayoutItem() const {
+  return m_pIface ? m_pIface->GetLayoutItem() : nullptr;
+}
+
+void CFWL_Widget::SetLayoutItem(void* pItem) {
+  if (m_pIface)
+    m_pIface->SetLayoutItem(pItem);
 }
 
 FWL_Error CFWL_Widget::SetPrivateData(void* module_id,

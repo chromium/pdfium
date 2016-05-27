@@ -28,20 +28,17 @@ FX_BOOL CXFA_FFCheckButton::LoadWidget() {
   CFWL_CheckBox* pCheckBox = CFWL_CheckBox::Create();
   pCheckBox->Initialize();
   m_pNormalWidget = pCheckBox;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   if (m_pDataAcc->IsRadioButton()) {
     pCheckBox->ModifyStylesEx(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
   }
-  m_pNormalWidget = (CFWL_Widget*)pCheckBox;
-  m_pNormalWidget->SetPrivateData(m_pNormalWidget->GetWidget(), this, NULL);
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();
-  XFA_CHECKSTATE eState = m_pDataAcc->GetCheckState();
-  SetFWLCheckState(eState);
+  SetFWLCheckState(m_pDataAcc->GetCheckState());
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }

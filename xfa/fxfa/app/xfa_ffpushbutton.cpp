@@ -59,8 +59,8 @@ FX_BOOL CXFA_FFPushButton::LoadWidget() {
   }
   m_pOldDelegate = pPushButton->SetDelegate(this);
   m_pNormalWidget = (CFWL_Widget*)pPushButton;
+  m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  m_pNormalWidget->SetPrivateData(pWidget, this, NULL);
   CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pNormalWidget->LockUpdate();

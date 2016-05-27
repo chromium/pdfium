@@ -103,6 +103,14 @@ void IFWL_Widget::SetEventKey(uint32_t key) {
   GetImpl()->SetEventKey(key);
 }
 
+void* IFWL_Widget::GetLayoutItem() const {
+  return GetImpl()->GetLayoutItem();
+}
+
+void IFWL_Widget::SetLayoutItem(void* pItem) {
+  GetImpl()->SetLayoutItem(pItem);
+}
+
 FWL_Error IFWL_Widget::SetPrivateData(void* module_id,
                                       void* pData,
                                       PD_CALLBACK_FREEDATA callback) {
@@ -517,30 +525,35 @@ void CFWL_WidgetImp::SetEventKey(uint32_t key) {
   m_nEventKey = key;
 }
 
+void* CFWL_WidgetImp::GetLayoutItem() const {
+  return m_pLayoutItem;
+}
+
+void CFWL_WidgetImp::SetLayoutItem(void* pItem) {
+  m_pLayoutItem = pItem;
+}
+
 CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : m_pProperties(new CFWL_WidgetImpProperties),
-      m_pPrivateData(NULL),
-      m_pDelegate(NULL),
-      m_pCurDelegate(NULL),
+      m_pPrivateData(nullptr),
+      m_pDelegate(nullptr),
+      m_pCurDelegate(nullptr),
       m_pOuter(pOuter),
-      m_pInterface(NULL),
+      m_pInterface(nullptr),
+      m_pLayoutItem(nullptr),
       m_iLock(0),
       m_nEventKey(0) {
   *m_pProperties = properties;
   m_pWidgetMgr = CFWL_WidgetMgr::GetInstance();
-  ASSERT(m_pWidgetMgr != NULL);
+  ASSERT(m_pWidgetMgr);
 }
+
 CFWL_WidgetImp::~CFWL_WidgetImp() {
-  if (m_pPrivateData) {
-    delete m_pPrivateData;
-    m_pPrivateData = NULL;
-  }
-  if (m_pProperties) {
-    delete m_pProperties;
-    m_pProperties = NULL;
-  }
+  delete m_pPrivateData;
+  delete m_pProperties;
 }
+
 FX_BOOL CFWL_WidgetImp::IsEnabled() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;
 }

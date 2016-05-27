@@ -41,6 +41,9 @@ class CFWL_Widget {
                            uint32_t dwStylesExRemoved);
   uint32_t GetStates();
   void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  void* GetLayoutItem() const;
+  void SetLayoutItem(void* pItem);
+
   FWL_Error SetPrivateData(void* module_id,
                            void* pData,
                            PD_CALLBACK_FREEDATA callback);

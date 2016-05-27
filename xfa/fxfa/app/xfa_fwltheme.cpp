@@ -35,14 +35,13 @@ const FX_WCHAR* const g_FWLTheme_CalFonts[] = {
 
 CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
   IFWL_Widget* pOuter = pWidget;
-  while (pOuter->GetOuter()) {
+  while (pOuter && pOuter->GetOuter())
     pOuter = pOuter->GetOuter();
-  }
-  if (pOuter) {
-    return (CXFA_FFWidget*)pOuter->GetPrivateData(pOuter);
-  }
-  return NULL;
+
+  return pOuter ? static_cast<CXFA_FFWidget*>(pOuter->GetLayoutItem())
+                : nullptr;
 }
+
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp) : m_pApp(pApp) {
   m_dwCapacity = 0;
   m_fCapacity = 0;

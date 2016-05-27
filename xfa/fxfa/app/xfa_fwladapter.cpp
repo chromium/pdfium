@@ -18,11 +18,12 @@ FWL_Error CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
   if (!pWidget)
     return FWL_Error::Indefinite;
 
-  CXFA_FFField* pField = (CXFA_FFField*)pWidget->GetPrivateData(pWidget);
-  if (!pField)
+  CXFA_FFWidget* pFFWidget =
+      static_cast<CXFA_FFWidget*>(pWidget->GetLayoutItem());
+  if (!pFFWidget)
     return FWL_Error::Indefinite;
 
-  pField->AddInvalidateRect(nullptr);
+  pFFWidget->AddInvalidateRect(nullptr);
   return FWL_Error::Succeeded;
 }
 
@@ -31,7 +32,8 @@ FX_BOOL CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
                                               FX_FLOAT fMaxHeight,
                                               const CFX_RectF& rtAnchor,
                                               CFX_RectF& rtPopup) {
-  CXFA_FFWidget* pFFWidget = (CXFA_FFWidget*)(pWidget->GetPrivateData(pWidget));
+  CXFA_FFWidget* pFFWidget =
+      static_cast<CXFA_FFWidget*>(pWidget->GetLayoutItem());
   CFX_Matrix mt;
   pFFWidget->GetRotateMatrix(mt);
   CFX_RectF rtRotateAnchor(rtAnchor);

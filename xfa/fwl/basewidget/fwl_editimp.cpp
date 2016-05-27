@@ -1637,7 +1637,7 @@ FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
                       FX_BOOL bVisible,
                       const CFX_RectF* pRtAnchor) {
   CXFA_FFWidget* pXFAWidget =
-      static_cast<CXFA_FFWidget*>(pWidget->GetPrivateData(pWidget));
+      static_cast<CXFA_FFWidget*>(pWidget->GetLayoutItem());
   if (!pXFAWidget)
     return FALSE;
 

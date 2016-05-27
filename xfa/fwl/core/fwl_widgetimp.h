@@ -80,6 +80,8 @@ class CFWL_WidgetImp {
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
   uint32_t GetEventKey() const;
   void SetEventKey(uint32_t key);
+  void* GetLayoutItem() const;
+  void SetLayoutItem(void* pItem);
 
  protected:
   friend class CFWL_WidgetImpDelegate;
@@ -162,6 +164,7 @@ class CFWL_WidgetImp {
   IFWL_WidgetDelegate* m_pCurDelegate;
   IFWL_Widget* m_pOuter;
   IFWL_Widget* m_pInterface;
+  void* m_pLayoutItem;
   int32_t m_iLock;
   uint32_t m_nEventKey;
 };
