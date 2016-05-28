@@ -76,14 +76,13 @@ bool GetSubFontName(CFX_ByteString* name) {
   return false;
 }
 
-FX_BOOL IsGDIEnabled() {
+bool IsGDIEnabled() {
   // If GDI is disabled then GetDC for the desktop will fail.
   HDC hdc = ::GetDC(nullptr);
-  if (hdc) {
-    ::ReleaseDC(nullptr, hdc);
-    return TRUE;
-  }
-  return FALSE;
+  if (!hdc)
+    return false;
+  ::ReleaseDC(nullptr, hdc);
+  return true;
 }
 
 HPEN CreatePen(const CFX_GraphStateData* pGraphState,
@@ -715,9 +714,8 @@ void CFX_GEModule::InitPlatform() {
   ver.dwOSVersionInfoSize = sizeof(ver);
   GetVersionEx(&ver);
   pPlatformData->m_bHalfTone = ver.dwMajorVersion >= 5;
-  if (IsGDIEnabled()) {
+  if (IsGDIEnabled())
     pPlatformData->m_GdiplusExt.Load();
-  }
   m_pPlatformData = pPlatformData;
   m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault(nullptr));
 }
