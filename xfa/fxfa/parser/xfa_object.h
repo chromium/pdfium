@@ -41,9 +41,12 @@ enum XFA_OBJECTTYPE {
   XFA_NODEFLAG_UnusedNode = 0x08000,
   XFA_NODEFLAG_LayoutGeneratedNode = 0x10000,
 };
+
 class CXFA_Object {
  public:
   CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags);
+  virtual ~CXFA_Object() {}
+
   CXFA_Document* GetDocument() const { return m_pDocument; }
   uint32_t GetFlag() const { return m_uFlags; }
   XFA_OBJECTTYPE GetObjectType() const {
@@ -590,7 +593,7 @@ class CXFA_Node : public CXFA_Object {
 
  protected:
   CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_ELEMENT eElement);
-  ~CXFA_Node();
+  ~CXFA_Node() override;
   friend class CXFA_Document;
   CXFA_Node* Deprecated_GetPrevSibling();
   FX_BOOL SetValue(XFA_ATTRIBUTE eAttr,
@@ -669,7 +672,7 @@ class CXFA_ThisProxy : public CXFA_Object {
     m_pThisNode = pThisNode;
     m_pScriptNode = pScriptNode;
   }
-  virtual ~CXFA_ThisProxy() {}
+  ~CXFA_ThisProxy() override {}
   CXFA_Node* GetThisNode() { return m_pThisNode; }
   CXFA_Node* GetScriptNode() { return m_pScriptNode; }
 

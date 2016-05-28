@@ -722,7 +722,6 @@
             "xfa/fxjse/runtime.cpp",
             "xfa/fxjse/runtime.h",
             "xfa/fxjse/scope_inline.h",
-            "xfa/fxjse/util_inline.h",
             "xfa/fxjse/value.cpp",
             "xfa/fxjse/value.h"
           ],

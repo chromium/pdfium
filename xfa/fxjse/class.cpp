@@ -9,7 +9,6 @@
 #include "xfa/fxjse/cfxjse_arguments.h"
 #include "xfa/fxjse/context.h"
 #include "xfa/fxjse/scope_inline.h"
-#include "xfa/fxjse/util_inline.h"
 #include "xfa/fxjse/value.h"
 
 static void FXJSE_V8ConstructorCallback_Wrapper(

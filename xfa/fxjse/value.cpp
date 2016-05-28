@@ -9,7 +9,7 @@
 #include <math.h>
 
 #include "xfa/fxjse/class.h"
-#include "xfa/fxjse/util_inline.h"
+#include "xfa/fxjse/context.h"
 
 FX_BOOL FXJSE_Value_IsUndefined(CFXJSE_Value* pValue) {
   return pValue && pValue->IsUndefined();

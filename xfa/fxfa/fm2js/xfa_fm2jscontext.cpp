@@ -3347,7 +3347,8 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
       XFA_FM2JS_Translate(
           CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
           wsJavaScriptBuf, wsError);
-      CFXJSE_Context* pContext = FXJSE_Context_Create(pIsolate);
+      CFXJSE_Context* pContext =
+          FXJSE_Context_Create(pIsolate, nullptr, nullptr);
       CFXJSE_Value* returnValue = FXJSE_Value_Create(pIsolate);
       javaScript = wsJavaScriptBuf.AsStringC();
       FXJSE_ExecuteScript(

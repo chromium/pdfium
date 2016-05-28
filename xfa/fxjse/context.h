@@ -50,4 +50,13 @@ class CFXJSE_Context {
 v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
                                               v8::TryCatch& trycatch);
 
+v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
+    const v8::Local<v8::Context>& hContext);
+
+void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
+                               void* lpNewBinding = nullptr);
+
+void* FXJSE_RetrieveObjectBinding(const v8::Local<v8::Object>& hJSObject,
+                                  CFXJSE_Class* lpClass = nullptr);
+
 #endif  // XFA_FXJSE_CONTEXT_H_

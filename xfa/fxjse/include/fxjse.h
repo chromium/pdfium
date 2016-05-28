@@ -72,8 +72,8 @@ void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime);
 
 CFXJSE_Context* FXJSE_Context_Create(
     v8::Isolate* pIsolate,
-    const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass = nullptr,
-    void* lpGlobalObject = nullptr);
+    const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
+    void* lpGlobalObject);
 void FXJSE_Context_Release(CFXJSE_Context* pContext);
 CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
 
