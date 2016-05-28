@@ -205,8 +205,7 @@
       # This section is PDFium specific.
       # ####
 
-      # C4800: forcing value to bool 'true' or 'false' (performance warning)
-      4800,
+      # Now there is no PDFium specific flag. Add here if needed.
 
       # ####
       # This section should match Chromium's build/common.gypi.
@@ -479,6 +478,10 @@
             '-Wno-unused-variable',
           ],
         },
+        'msvs_disabled_warnings': [
+          # forcing value to bool 'true' or 'false' (performance warning)
+          4800,
+        ],
         'msvs_settings': {
           'VCCLCompilerTool': {
             'WarningLevel': '3',

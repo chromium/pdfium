@@ -44,14 +44,12 @@ config("pdfium_config") {
   if (is_win) {
     cflags += [ "/wd4267" ]
   }
+}
 
-  if (is_clang || is_posix) {
-    # TODO(thestig): Fix all instances, remove this, pdfium:29
-    cflags += [ "-Wno-sign-compare" ]
-  }
-
+config("xfa_warnings") {
+  visibility = [ ":*" ]
   if (is_posix && !is_clang) {  # When GCC.
-    cflags += [ "-Wno-strict-overflow" ]
+    cflags = [ "-Wno-strict-overflow" ]
   }
 }
 
@@ -888,11 +886,7 @@ if (pdf_enable_xfa) {
     deps = [
       ":xfa",
     ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      ":pdfium_config",
-      "//build/config/compiler:no_chromium_code",
-    ]
+    configs += [ ":pdfium_config" ]
   }
 
   static_library("xfa") {
@@ -1592,10 +1586,9 @@ if (pdf_enable_xfa) {
         "//v8:v8_libplatform",
       ]
     }
-    configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       ":pdfium_config",
-      "//build/config/compiler:no_chromium_code",
+      ":xfa_warnings",
     ]
   }
 }
