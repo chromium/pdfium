@@ -26,12 +26,10 @@ void BC_FX_ByteString_Append(CFX_ByteString& dst, const CFX_ByteArray& ba);
 #endif
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_)
 #define FXSYS_isnan(x) _isnan(x)
-#elif(_FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_)
+#elif(_FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_ || \
+      _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_)
 #include <cmath>
 #define FXSYS_isnan(x) std::isnan(x)
-#elif(_FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_)
-#include <math.h>
-#define FXSYS_isnan(x) isnan(x)
 #endif
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_)
 #define FXSYS_nan() (std::numeric_limits<float>::quiet_NaN())
