@@ -7,6 +7,7 @@
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
@@ -1997,7 +1998,7 @@ FX_BOOL CXFA_PDFFontMgr::GetCharWidth(IFX_Font* pFont,
   return TRUE;
 }
 
-CXFA_FontMgr::CXFA_FontMgr() : m_pDefFontMgr(nullptr) {}
+CXFA_FontMgr::CXFA_FontMgr() {}
 
 CXFA_FontMgr::~CXFA_FontMgr() {}
 
@@ -2023,9 +2024,9 @@ IFX_Font* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
     if (pFont)
       return pFont;
   }
-  if (!pFont && m_pDefFontMgr) {
+  if (!pFont && m_pDefFontMgr)
     pFont = m_pDefFontMgr->GetFont(hDoc, wsFontFamily, dwFontStyles, wCodePage);
-  }
+
   if (!pFont && pMgr) {
     pPDFFont = nullptr;
     pFont = pMgr->GetFont(wsEnglishName.AsStringC(), dwFontStyles, &pPDFFont,
@@ -2056,6 +2057,6 @@ void CXFA_FontMgr::ReleaseDocFonts(CXFA_FFDoc* hDoc) {
   m_PDFFontMgrMap.erase(hDoc);
 }
 
-void CXFA_FontMgr::SetDefFontMgr(CXFA_DefFontMgr* pFontMgr) {
-  m_pDefFontMgr = pFontMgr;
+void CXFA_FontMgr::SetDefFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr) {
+  m_pDefFontMgr = std::move(pFontMgr);
 }

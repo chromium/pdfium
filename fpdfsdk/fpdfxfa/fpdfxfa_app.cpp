@@ -61,7 +61,8 @@ FX_BOOL CPDFXFA_App::Initialize(v8::Isolate* pIsolate) {
     return FALSE;
 
   m_pXFAApp = new CXFA_FFApp(this);
-  m_pXFAApp->SetDefaultFontMgr(new CXFA_DefFontMgr);
+  m_pXFAApp->SetDefaultFontMgr(
+      std::unique_ptr<CXFA_DefFontMgr>(new CXFA_DefFontMgr));
 #endif
   return TRUE;
 }

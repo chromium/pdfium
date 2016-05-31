@@ -36,7 +36,7 @@ class CXFA_FileRead : public IFX_FileRead {
 
 class CXFA_FFApp {
  public:
-  CXFA_FFApp(IXFA_AppProvider* pProvider);
+  explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp();
 
   CXFA_FFDocHandler* GetDocHandler();
@@ -45,7 +45,7 @@ class CXFA_FFApp {
                         FX_BOOL bTakeOverFile);
   CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);
   IXFA_AppProvider* GetAppProvider() { return m_pProvider; }
-  void SetDefaultFontMgr(CXFA_DefFontMgr* pFontMgr);
+  void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
 
   CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgrDelegate* pDelegate);
   IFWL_AdapterTimerMgr* GetTimerMgr();

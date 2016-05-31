@@ -7,6 +7,7 @@
 #include "xfa/fxfa/include/xfa_ffapp.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "xfa/fgas/font/fgas_stdfontmgr.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
@@ -131,15 +132,16 @@ CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
   return pDoc;
 }
 
-void CXFA_FFApp::SetDefaultFontMgr(CXFA_DefFontMgr* pFontMgr) {
-  if (!m_pFontMgr) {
+void CXFA_FFApp::SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr) {
+  if (!m_pFontMgr)
     m_pFontMgr = new CXFA_FontMgr();
-  }
-  m_pFontMgr->SetDefFontMgr(pFontMgr);
+  m_pFontMgr->SetDefFontMgr(std::move(pFontMgr));
 }
+
 CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() {
   return m_pFontMgr;
 }
+
 IFX_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

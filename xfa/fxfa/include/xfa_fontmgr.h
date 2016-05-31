@@ -45,7 +45,7 @@ class CXFA_DefFontMgr {
 
 class CXFA_PDFFontMgr {
  public:
-  CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
+  explicit CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
   ~CXFA_PDFFontMgr();
 
   IFX_Font* GetFont(const CFX_WideStringC& wsFontFamily,
@@ -88,10 +88,10 @@ class CXFA_FontMgr {
                     uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(CXFA_FFDoc* hDoc);
   void ReleaseDocFonts(CXFA_FFDoc* hDoc);
-  void SetDefFontMgr(CXFA_DefFontMgr* pFontMgr);
+  void SetDefFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
 
  protected:
-  CXFA_DefFontMgr* m_pDefFontMgr;
+  std::unique_ptr<CXFA_DefFontMgr> m_pDefFontMgr;
   std::map<CXFA_FFDoc*, std::unique_ptr<CXFA_PDFFontMgr>> m_PDFFontMgrMap;
   std::map<CFX_ByteString, IFX_Font*> m_FontMap;
 };
