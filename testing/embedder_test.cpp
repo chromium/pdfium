@@ -58,7 +58,12 @@ EmbedderTest::EmbedderTest()
 #endif  // FPDF_ENABLE_V8
 }
 
-EmbedderTest::~EmbedderTest() {}
+EmbedderTest::~EmbedderTest() {
+#ifdef PDF_ENABLE_V8
+  v8::V8::ShutdownPlatform();
+  delete platform_;
+#endif  // PDF_ENABLE_V8
+}
 
 void EmbedderTest::SetUp() {
   FPDF_LIBRARY_CONFIG config;
@@ -92,11 +97,6 @@ void EmbedderTest::TearDown() {
 
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
-
-#ifdef PDF_ENABLE_V8
-  v8::V8::ShutdownPlatform();
-  delete platform_;
-#endif  // PDF_ENABLE_V8
 
   delete loader_;
 }
