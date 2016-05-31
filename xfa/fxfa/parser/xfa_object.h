@@ -42,7 +42,7 @@ enum XFA_OBJECTTYPE {
   XFA_NODEFLAG_LayoutGeneratedNode = 0x10000,
 };
 
-class CXFA_Object {
+class CXFA_Object : public CFXJSE_HostObject {
  public:
   CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags);
   virtual ~CXFA_Object() {}

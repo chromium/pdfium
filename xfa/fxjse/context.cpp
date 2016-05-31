@@ -16,27 +16,29 @@ v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
 }
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
-                               void* lpNewBinding) {
+                               CFXJSE_HostObject* lpNewBinding) {
   ASSERT(!hObject.IsEmpty());
   ASSERT(hObject->InternalFieldCount() > 0);
-  hObject->SetAlignedPointerInInternalField(0, lpNewBinding);
+  hObject->SetAlignedPointerInInternalField(0,
+                                            static_cast<void*>(lpNewBinding));
 }
 
-void* FXJSE_RetrieveObjectBinding(const v8::Local<v8::Object>& hJSObject,
-                                  CFXJSE_Class* lpClass) {
+CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
+    const v8::Local<v8::Object>& hJSObject,
+    CFXJSE_Class* lpClass) {
   ASSERT(!hJSObject.IsEmpty());
   if (!hJSObject->IsObject()) {
-    return NULL;
+    return nullptr;
   }
   v8::Local<v8::Object> hObject = hJSObject;
   if (hObject->InternalFieldCount() == 0) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
     if (hProtoObject.IsEmpty() || !hProtoObject->IsObject()) {
-      return NULL;
+      return nullptr;
     }
     hObject = hProtoObject.As<v8::Object>();
     if (hObject->InternalFieldCount() == 0) {
-      return NULL;
+      return nullptr;
     }
   }
   if (lpClass) {
@@ -44,16 +46,17 @@ void* FXJSE_RetrieveObjectBinding(const v8::Local<v8::Object>& hJSObject,
         v8::Local<v8::FunctionTemplate>::New(
             lpClass->GetContext()->GetRuntime(), lpClass->GetTemplate());
     if (!hClass->HasInstance(hObject)) {
-      return NULL;
+      return nullptr;
     }
   }
-  return hObject->GetAlignedPointerFromInternalField(0);
+  return static_cast<CFXJSE_HostObject*>(
+      hObject->GetAlignedPointerFromInternalField(0));
 }
 
 CFXJSE_Context* FXJSE_Context_Create(
     v8::Isolate* pIsolate,
     const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
-    void* lpGlobalObject) {
+    CFXJSE_HostObject* lpGlobalObject) {
   return CFXJSE_Context::Create(pIsolate, lpGlobalClass, lpGlobalObject);
 }
 
@@ -153,7 +156,7 @@ v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
 CFXJSE_Context* CFXJSE_Context::Create(
     v8::Isolate* pIsolate,
     const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
-    void* lpGlobalObject) {
+    CFXJSE_HostObject* lpGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   CFXJSE_Context* pContext = new CFXJSE_Context(pIsolate);
   CFXJSE_Class* lpGlobalClassObj = NULL;

@@ -16,6 +16,8 @@ class CFXJSE_Class;
 class CFXJSE_Context;
 class CFXJSE_Value;
 
+class CFXJSE_HostObject {};  // C++ object which can be wrapped by CFXJSE_value.
+
 typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,
                                    const CFX_ByteStringC& szFuncName,
                                    CFXJSE_Arguments& args);
@@ -73,7 +75,7 @@ void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime);
 CFXJSE_Context* FXJSE_Context_Create(
     v8::Isolate* pIsolate,
     const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
-    void* lpGlobalObject);
+    CFXJSE_HostObject* lpGlobalObject);
 void FXJSE_Context_Release(CFXJSE_Context* pContext);
 CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
 
@@ -98,7 +100,8 @@ double FXJSE_Value_ToDouble(CFXJSE_Value* pValue);
 int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue);
 void FXJSE_Value_ToUTF8String(CFXJSE_Value* pValue,
                               CFX_ByteString& szStrOutput);
-void* FXJSE_Value_ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
+CFXJSE_HostObject* FXJSE_Value_ToObject(CFXJSE_Value* pValue,
+                                        CFXJSE_Class* pClass);
 
 void FXJSE_Value_SetUndefined(CFXJSE_Value* pValue);
 void FXJSE_Value_SetNull(CFXJSE_Value* pValue);
@@ -109,7 +112,7 @@ void FXJSE_Value_SetInteger(CFXJSE_Value* pValue, int32_t nInteger);
 void FXJSE_Value_SetFloat(CFXJSE_Value* pValue, FX_FLOAT fFloat);
 void FXJSE_Value_SetDouble(CFXJSE_Value* pValue, double dDouble);
 void FXJSE_Value_SetObject(CFXJSE_Value* pValue,
-                           void* lpObject,
+                           CFXJSE_HostObject* lpObject,
                            CFXJSE_Class* pClass);
 void FXJSE_Value_SetArray(CFXJSE_Value* pValue,
                           uint32_t uValueCount,

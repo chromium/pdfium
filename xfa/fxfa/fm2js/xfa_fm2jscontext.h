@@ -10,7 +10,7 @@
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
-class CXFA_FM2JSContext {
+class CXFA_FM2JSContext : public CFXJSE_HostObject {
  public:
   static void Abs(CFXJSE_Value* pThis,
                   const CFX_ByteStringC& szFuncName,

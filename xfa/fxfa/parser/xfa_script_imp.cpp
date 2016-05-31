@@ -146,7 +146,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(CFXJSE_Value* pObject,
                                               const CFX_ByteStringC& szPropName,
                                               CFXJSE_Value* pValue) {
   CXFA_Object* lpOrginalNode =
-      (CXFA_Object*)FXJSE_Value_ToObject(pObject, nullptr);
+      static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pObject, nullptr));
   CXFA_Document* pDoc = lpOrginalNode->GetDocument();
   CXFA_ScriptContext* lpScriptContext =
       (CXFA_ScriptContext*)pDoc->GetScriptContext();
@@ -203,7 +203,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(CFXJSE_Value* pObject,
                                               const CFX_ByteStringC& szPropName,
                                               CFXJSE_Value* pValue) {
   CXFA_Object* pOriginalObject =
-      (CXFA_Object*)FXJSE_Value_ToObject(pObject, nullptr);
+      static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pObject, nullptr));
   CXFA_Document* pDoc = pOriginalObject->GetDocument();
   CXFA_ScriptContext* lpScriptContext =
       (CXFA_ScriptContext*)pDoc->GetScriptContext();
@@ -258,7 +258,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                               const CFX_ByteStringC& szPropName,
                                               CFXJSE_Value* pReturnValue) {
   CXFA_Object* pOriginalObject =
-      (CXFA_Object*)FXJSE_Value_ToObject(pOriginalValue, nullptr);
+      static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pOriginalValue, nullptr));
   if (!pOriginalObject) {
     FXJSE_Value_SetUndefined(pReturnValue);
     return;
@@ -304,7 +304,7 @@ void CXFA_ScriptContext::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
                                               const CFX_ByteStringC& szPropName,
                                               CFXJSE_Value* pReturnValue) {
   CXFA_Object* pOriginalObject =
-      (CXFA_Object*)FXJSE_Value_ToObject(pOriginalValue, nullptr);
+      static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pOriginalValue, nullptr));
   if (!pOriginalObject)
     return;
 
@@ -356,7 +356,7 @@ int32_t CXFA_ScriptContext::NormalPropTypeGetter(
     const CFX_ByteStringC& szPropName,
     FX_BOOL bQueryIn) {
   CXFA_Object* pObject =
-      (CXFA_Object*)FXJSE_Value_ToObject(pOriginalValue, nullptr);
+      static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pOriginalValue, nullptr));
   if (!pObject)
     return FXJSE_ClassPropType_None;
 
@@ -379,7 +379,7 @@ int32_t CXFA_ScriptContext::GlobalPropTypeGetter(
     const CFX_ByteStringC& szPropName,
     FX_BOOL bQueryIn) {
   CXFA_Object* pObject =
-      (CXFA_Object*)FXJSE_Value_ToObject(pOriginalValue, nullptr);
+      static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pOriginalValue, nullptr));
   if (!pObject)
     return FXJSE_ClassPropType_None;
 
@@ -396,7 +396,8 @@ int32_t CXFA_ScriptContext::GlobalPropTypeGetter(
 void CXFA_ScriptContext::NormalMethodCall(CFXJSE_Value* pThis,
                                           const CFX_ByteStringC& szFuncName,
                                           CFXJSE_Arguments& args) {
-  CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(pThis, nullptr);
+  CXFA_Object* pObject =
+      static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pThis, nullptr));
   if (!pObject)
     return;
 
@@ -441,11 +442,11 @@ CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
 }
 CXFA_Object* CXFA_ScriptContext::GetVariablesThis(CXFA_Object* pObject,
                                                   FX_BOOL bScriptNode) {
-  if (pObject->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
-    return bScriptNode ? ((CXFA_ThisProxy*)pObject)->GetScriptNode()
-                       : ((CXFA_ThisProxy*)pObject)->GetThisNode();
-  }
-  return pObject;
+  if (pObject->GetObjectType() != XFA_OBJECTTYPE_VariablesThis)
+    return pObject;
+
+  CXFA_ThisProxy* pProxy = static_cast<CXFA_ThisProxy*>(pObject);
+  return bScriptNode ? pProxy->GetScriptNode() : pProxy->GetThisNode();
 }
 
 FX_BOOL CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
@@ -652,8 +653,8 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
         (rndFind.m_Nodes[0]->*(rndFind.m_pScriptAttribute->lpfnCallback))(
             pValue.get(), FALSE,
             (XFA_ATTRIBUTE)rndFind.m_pScriptAttribute->eAttribute);
-        rndFind.m_Nodes.SetAt(
-            0, (CXFA_Object*)FXJSE_Value_ToObject(pValue.get(), nullptr));
+        rndFind.m_Nodes.SetAt(0, static_cast<CXFA_Object*>(FXJSE_Value_ToObject(
+                                     pValue.get(), nullptr)));
       }
       int32_t iSize = m_upObjectArray.GetSize();
       if (iSize) {

@@ -48,8 +48,8 @@ class CXFA_ValueArray : public CFX_ArrayTemplate<CFXJSE_Value*> {
 
   void GetAttributeObject(CXFA_ObjArray& objArray) {
     for (int32_t i = 0; i < GetSize(); i++) {
-      CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(GetAt(i), NULL);
-      objArray.Add(pObject);
+      objArray.Add(
+          static_cast<CXFA_Object*>(FXJSE_Value_ToObject(GetAt(i), nullptr)));
     }
   }
 

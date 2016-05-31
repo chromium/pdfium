@@ -23,7 +23,7 @@ class CFXJSE_Context {
   static CFXJSE_Context* Create(
       v8::Isolate* pIsolate,
       const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass = nullptr,
-      void* lpGlobalObject = nullptr);
+      CFXJSE_HostObject* lpGlobalObject = nullptr);
   ~CFXJSE_Context();
 
   V8_INLINE v8::Isolate* GetRuntime(void) { return m_pIsolate; }
@@ -54,9 +54,10 @@ v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
     const v8::Local<v8::Context>& hContext);
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
-                               void* lpNewBinding = nullptr);
+                               CFXJSE_HostObject* lpNewBinding = nullptr);
 
-void* FXJSE_RetrieveObjectBinding(const v8::Local<v8::Object>& hJSObject,
-                                  CFXJSE_Class* lpClass = nullptr);
+CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
+    const v8::Local<v8::Object>& hJSObject,
+    CFXJSE_Class* lpClass = nullptr);
 
 #endif  // XFA_FXJSE_CONTEXT_H_

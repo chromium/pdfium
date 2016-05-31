@@ -64,7 +64,8 @@ int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue) {
   return pValue->ToInteger();
 }
 
-void* FXJSE_Value_ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
+CFXJSE_HostObject* FXJSE_Value_ToObject(CFXJSE_Value* pValue,
+                                        CFXJSE_Class* pClass) {
   return pValue->ToObject(pClass);
 }
 
@@ -98,14 +99,14 @@ void FXJSE_Value_SetDouble(CFXJSE_Value* pValue, double dDouble) {
 }
 
 void FXJSE_Value_SetObject(CFXJSE_Value* pValue,
-                           void* lpObject,
+                           CFXJSE_HostObject* lpObject,
                            CFXJSE_Class* pClass) {
   if (!pClass) {
     ASSERT(!lpObject);
     pValue->SetJSObject();
-  } else {
-    pValue->SetHostObject(lpObject, pClass);
+    return;
   }
+  pValue->SetHostObject(lpObject, pClass);
 }
 
 void FXJSE_Value_SetArray(CFXJSE_Value* pValue,
@@ -197,7 +198,7 @@ void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
   pIsolate->ThrowException(hError);
 }
 
-void* CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const {
+CFXJSE_HostObject* CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const {
   ASSERT(!m_hValue.IsEmpty());
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
@@ -256,7 +257,8 @@ void CFXJSE_Value::SetFloat(FX_FLOAT fFloat) {
   m_hValue.Reset(m_pIsolate, pValue);
 }
 
-void CFXJSE_Value::SetHostObject(void* lpObject, CFXJSE_Class* lpClass) {
+void CFXJSE_Value::SetHostObject(CFXJSE_HostObject* lpObject,
+                                 CFXJSE_Class* lpClass) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   ASSERT(lpClass);
   v8::Local<v8::FunctionTemplate> hClass =

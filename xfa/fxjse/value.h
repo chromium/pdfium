@@ -141,7 +141,7 @@ class CFXJSE_Value {
     v8::String::Utf8Value hStringVal(hString);
     szStrOutput = *hStringVal;
   }
-  void* ToObject(CFXJSE_Class* lpClass) const;
+  CFXJSE_HostObject* ToObject(CFXJSE_Class* lpClass) const;
 
   V8_INLINE void SetUndefined() {
     CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
@@ -182,7 +182,7 @@ class CFXJSE_Value {
     v8::Local<v8::Value> hValue = v8::Object::New(m_pIsolate);
     m_hValue.Reset(m_pIsolate, hValue);
   }
-  void SetHostObject(void* lpObject, CFXJSE_Class* lpClass);
+  void SetHostObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* lpClass);
   void SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues);
   void SetDate(double dDouble);
 
