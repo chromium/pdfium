@@ -44,7 +44,6 @@ class CFXJSE_Context {
 
   friend class CFXJSE_Class;
   friend class CFXJSE_ScopeUtil_IsolateHandleContext;
-  friend class CFXJSE_ScopeUtil_IsolateHandleRootOrNormalContext;
 };
 
 v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
