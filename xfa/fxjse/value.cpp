@@ -165,14 +165,6 @@ FX_BOOL FXJSE_Value_SetFunctionBind(CFXJSE_Value* pValue,
   return pValue->SetFunctionBind(pOldFunction, pNewThis);
 }
 
-CFXJSE_Value* FXJSE_Value_Create(v8::Isolate* pIsolate) {
-  return CFXJSE_Value::Create(pIsolate);
-}
-
-void FXJSE_Value_Release(CFXJSE_Value* pValue) {
-  delete pValue;
-}
-
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
                         const CFX_ByteStringC& utf8Message) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
@@ -203,10 +195,6 @@ void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
     }
   }
   pIsolate->ThrowException(hError);
-}
-
-CFXJSE_Value* CFXJSE_Value::Create(v8::Isolate* pIsolate) {
-  return new CFXJSE_Value(pIsolate);
 }
 
 void* CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const {

@@ -218,8 +218,6 @@ class CFXJSE_Value {
     }
   }
 
-  static CFXJSE_Value* Create(v8::Isolate* pIsolate);
-
  private:
   friend class CFXJSE_Class;
   friend class CFXJSE_Context;

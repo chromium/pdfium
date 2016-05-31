@@ -422,9 +422,9 @@ class CXFA_FM2JSContext {
                                  int32_t& iSize,
                                  FX_BOOL& bAttribute);
 
-  static CFXJSE_Value* GetSimpleValue(CFXJSE_Value* pThis,
-                                      CFXJSE_Arguments& args,
-                                      uint32_t index);
+  static std::unique_ptr<CFXJSE_Value> GetSimpleValue(CFXJSE_Value* pThis,
+                                                      CFXJSE_Arguments& args,
+                                                      uint32_t index);
   static FX_BOOL ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static int32_t ValueToInteger(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static FX_DOUBLE StringToDouble(const CFX_ByteStringC& szStringVal);
@@ -448,7 +448,7 @@ class CXFA_FM2JSContext {
  private:
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pFMClass;
-  CFXJSE_Value* m_pValue;
+  std::unique_ptr<CFXJSE_Value> m_pValue;
   CXFA_Document* m_pDocument;
 };
 

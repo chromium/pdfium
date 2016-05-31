@@ -38,19 +38,16 @@ static void FXJSE_V8FunctionCallback_Wrapper(
     return;
   }
   CFX_ByteStringC szFunctionName(lpFunctionInfo->name);
-  CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
+  std::unique_ptr<CFXJSE_Value> lpThisValue(
+      new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(info.This());
-  CFXJSE_Value* lpRetValue = CFXJSE_Value::Create(info.GetIsolate());
-  CFXJSE_ArgumentsImpl impl = {&info, lpRetValue};
-  lpFunctionInfo->callbackProc(lpThisValue, szFunctionName,
+  std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
+  CFXJSE_ArgumentsImpl impl = {&info, lpRetValue.get()};
+  lpFunctionInfo->callbackProc(lpThisValue.get(), szFunctionName,
                                reinterpret_cast<CFXJSE_Arguments&>(impl));
   if (!lpRetValue->DirectGetValue().IsEmpty()) {
     info.GetReturnValue().Set(lpRetValue->DirectGetValue());
   }
-  delete lpRetValue;
-  lpRetValue = NULL;
-  delete lpThisValue;
-  lpThisValue = NULL;
 }
 
 static void FXJSE_V8ClassGlobalConstructorCallback_Wrapper(
@@ -62,19 +59,16 @@ static void FXJSE_V8ClassGlobalConstructorCallback_Wrapper(
     return;
   }
   CFX_ByteStringC szFunctionName(lpClassDefinition->name);
-  CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
+  std::unique_ptr<CFXJSE_Value> lpThisValue(
+      new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(info.This());
-  CFXJSE_Value* lpRetValue = CFXJSE_Value::Create(info.GetIsolate());
-  CFXJSE_ArgumentsImpl impl = {&info, lpRetValue};
-  lpClassDefinition->constructor(lpThisValue, szFunctionName,
+  std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
+  CFXJSE_ArgumentsImpl impl = {&info, lpRetValue.get()};
+  lpClassDefinition->constructor(lpThisValue.get(), szFunctionName,
                                  reinterpret_cast<CFXJSE_Arguments&>(impl));
   if (!lpRetValue->DirectGetValue().IsEmpty()) {
     info.GetReturnValue().Set(lpRetValue->DirectGetValue());
   }
-  delete lpRetValue;
-  lpRetValue = NULL;
-  delete lpThisValue;
-  lpThisValue = NULL;
 }
 
 static void FXJSE_V8GetterCallback_Wrapper(
@@ -87,15 +81,13 @@ static void FXJSE_V8GetterCallback_Wrapper(
     return;
   }
   CFX_ByteStringC szPropertyName(lpPropertyInfo->name);
-  CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
-  CFXJSE_Value* lpPropValue = CFXJSE_Value::Create(info.GetIsolate());
+  std::unique_ptr<CFXJSE_Value> lpThisValue(
+      new CFXJSE_Value(info.GetIsolate()));
+  std::unique_ptr<CFXJSE_Value> lpPropValue(
+      new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(info.This());
-  lpPropertyInfo->getProc(lpThisValue, szPropertyName, lpPropValue);
+  lpPropertyInfo->getProc(lpThisValue.get(), szPropertyName, lpPropValue.get());
   info.GetReturnValue().Set(lpPropValue->DirectGetValue());
-  delete lpThisValue;
-  lpThisValue = NULL;
-  delete lpPropValue;
-  lpPropValue = NULL;
 }
 
 static void FXJSE_V8SetterCallback_Wrapper(
@@ -109,15 +101,13 @@ static void FXJSE_V8SetterCallback_Wrapper(
     return;
   }
   CFX_ByteStringC szPropertyName(lpPropertyInfo->name);
-  CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
-  CFXJSE_Value* lpPropValue = CFXJSE_Value::Create(info.GetIsolate());
+  std::unique_ptr<CFXJSE_Value> lpThisValue(
+      new CFXJSE_Value(info.GetIsolate()));
+  std::unique_ptr<CFXJSE_Value> lpPropValue(
+      new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(info.This());
   lpPropValue->ForceSetValue(value);
-  lpPropertyInfo->setProc(lpThisValue, szPropertyName, lpPropValue);
-  delete lpThisValue;
-  lpThisValue = NULL;
-  delete lpPropValue;
-  lpPropValue = NULL;
+  lpPropertyInfo->setProc(lpThisValue.get(), szPropertyName, lpPropValue.get());
 }
 
 static void FXJSE_V8ConstructorCallback_Wrapper(
@@ -144,11 +134,11 @@ int32_t CFXJSE_Arguments::GetLength() const {
   return lpArguments->m_pInfo->Length();
 }
 
-CFXJSE_Value* CFXJSE_Arguments::GetValue(int32_t index) const {
+std::unique_ptr<CFXJSE_Value> CFXJSE_Arguments::GetValue(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  CFXJSE_Value* lpArgValue = CFXJSE_Value::Create(v8::Isolate::GetCurrent());
-  ASSERT(lpArgValue);
+  std::unique_ptr<CFXJSE_Value> lpArgValue(
+      new CFXJSE_Value(v8::Isolate::GetCurrent()));
   lpArgValue->ForceSetValue((*lpArguments->m_pInfo)[index]);
   return lpArgValue;
 }

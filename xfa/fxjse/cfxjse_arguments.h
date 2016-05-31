@@ -13,7 +13,7 @@ class CFXJSE_Arguments {
  public:
   v8::Isolate* GetRuntime() const;
   int32_t GetLength() const;
-  CFXJSE_Value* GetValue(int32_t index) const;
+  std::unique_ptr<CFXJSE_Value> GetValue(int32_t index) const;
   FX_BOOL GetBoolean(int32_t index) const;
   int32_t GetInt32(int32_t index) const;
   FX_FLOAT GetFloat(int32_t index) const;

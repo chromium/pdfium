@@ -65,8 +65,7 @@ CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext) {
   if (!pContext)
     return nullptr;
 
-  CFXJSE_Value* lpValue = CFXJSE_Value::Create(pContext->GetRuntime());
-  ASSERT(lpValue);
+  CFXJSE_Value* lpValue = new CFXJSE_Value(pContext->GetRuntime());
   pContext->GetGlobalObject(lpValue);
   return lpValue;
 }

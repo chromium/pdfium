@@ -654,20 +654,19 @@ void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
   if (iRet < 1) {
     return FXJSE_Value_SetNull(pArguments->GetReturnValue());
   }
-  CFXJSE_Value* pValue = nullptr;
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     CXFA_Object* pNode = resoveNodeRS.nodes[0];
-    pValue = pScriptContext->GetJSValueFromMap(pNode);
-    FXJSE_Value_Set(pArguments->GetReturnValue(), pValue);
+    FXJSE_Value_Set(pArguments->GetReturnValue(),
+                    pScriptContext->GetJSValueFromMap(pNode));
   } else {
     const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
         resoveNodeRS.pScriptAttribute;
     if (lpAttributeInfo && lpAttributeInfo->eValueType == XFA_SCRIPT_Object) {
-      pValue = FXJSE_Value_Create(pScriptContext->GetRuntime());
+      std::unique_ptr<CFXJSE_Value> pValue(
+          new CFXJSE_Value(pScriptContext->GetRuntime()));
       (resoveNodeRS.nodes[0]->*(lpAttributeInfo->lpfnCallback))(
-          pValue, FALSE, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
-      FXJSE_Value_Set(pArguments->GetReturnValue(), pValue);
-      FXJSE_Value_Release(pValue);
+          pValue.get(), FALSE, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
+      FXJSE_Value_Set(pArguments->GetReturnValue(), pValue.get());
     } else {
       FXJSE_Value_SetNull(pArguments->GetReturnValue());
     }

@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_SCRIPT_H_
 
 #include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxjse/value.h"
 
 #define XFA_RESOLVENODE_Children 0x0001
 #define XFA_RESOLVENODE_Attributes 0x0004
@@ -41,7 +42,7 @@ class CXFA_ValueArray : public CFX_ArrayTemplate<CFXJSE_Value*> {
 
   ~CXFA_ValueArray() {
     for (int32_t i = 0; i < GetSize(); i++) {
-      FXJSE_Value_Release(GetAt(i));
+      delete GetAt(i);
     }
   }
 
@@ -65,10 +66,10 @@ struct XFA_RESOLVENODE_RS {
     if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
       v8::Isolate* pIsolate = valueArray.m_pIsolate;
       for (int32_t i = 0; i < nodes.GetSize(); i++) {
-        CFXJSE_Value* pValue = FXJSE_Value_Create(pIsolate);
+        std::unique_ptr<CFXJSE_Value> pValue(new CFXJSE_Value(pIsolate));
         (nodes[i]->*(pScriptAttribute->lpfnCallback))(
-            pValue, FALSE, (XFA_ATTRIBUTE)pScriptAttribute->eAttribute);
-        valueArray.Add(pValue);
+            pValue.get(), FALSE, (XFA_ATTRIBUTE)pScriptAttribute->eAttribute);
+        valueArray.Add(pValue.release());
       }
     }
     return valueArray.GetSize();

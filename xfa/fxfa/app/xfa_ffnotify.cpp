@@ -29,6 +29,7 @@
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"
+#include "xfa/fxjse/value.h"
 
 static void XFA_FFDeleteWidgetAcc(void* pData) {
   delete static_cast<CXFA_WidgetAcc*>(pData);
@@ -206,7 +207,7 @@ FX_BOOL CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
       pWidgetAcc->ExecuteScript(CXFA_Script(pScript), &EventParam, &pRetValue);
   if (iRet == XFA_EVENTERROR_Success && pRetValue) {
     bRet = FXJSE_Value_ToBoolean(pRetValue);
-    FXJSE_Value_Release(pRetValue);
+    delete pRetValue;
   }
   return bRet;
 }

@@ -83,9 +83,6 @@ void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
 CFXJSE_Class* FXJSE_DefineClass(CFXJSE_Context* pContext,
                                 const FXJSE_CLASS_DESCRIPTOR* lpClass);
 
-CFXJSE_Value* FXJSE_Value_Create(v8::Isolate* pIsolate);
-void FXJSE_Value_Release(CFXJSE_Value* pValue);
-
 FX_BOOL FXJSE_Value_IsUndefined(CFXJSE_Value* pValue);
 FX_BOOL FXJSE_Value_IsNull(CFXJSE_Value* pValue);
 FX_BOOL FXJSE_Value_IsBoolean(CFXJSE_Value* pValue);

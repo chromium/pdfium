@@ -709,13 +709,12 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(
   for (int32_t i = iFoundCount - 1; i >= 0; i--) {
     CXFA_Object* node = findNodes[i];
     FX_BOOL bRet = FALSE;
-    CFXJSE_Value* pRetValue = FXJSE_Value_Create(rnd.m_pSC->GetRuntime());
-    bRet = pContext->RunScript(eLangType, wsExpression.AsStringC(), pRetValue,
-                               node);
-    if (!bRet || !FXJSE_Value_ToBoolean(pRetValue)) {
+    std::unique_ptr<CFXJSE_Value> pRetValue(
+        new CFXJSE_Value(rnd.m_pSC->GetRuntime()));
+    bRet = pContext->RunScript(eLangType, wsExpression.AsStringC(),
+                               pRetValue.get(), node);
+    if (!bRet || !FXJSE_Value_ToBoolean(pRetValue.get()))
       findNodes.RemoveAt(i);
-    }
-    FXJSE_Value_Release(pRetValue);
   }
 }
 

@@ -308,36 +308,33 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
   }
   CXFA_Node* pNode = NULL;
   if (iLength >= 1) {
-    CFXJSE_Value* pValue = pArguments->GetValue(0);
-    if (FXJSE_Value_IsObject(pValue)) {
-      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(pValue, nullptr));
-    } else if (FXJSE_Value_IsUTF8String(pValue)) {
+    std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
+    if (FXJSE_Value_IsObject(pValue.get())) {
+      pNode =
+          static_cast<CXFA_Node*>(FXJSE_Value_ToObject(pValue.get(), nullptr));
+    } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
       CFX_ByteString bsString;
-      FXJSE_Value_ToUTF8String(pValue, bsString);
+      FXJSE_Value_ToUTF8String(pValue.get(), bsString);
       CFX_WideString wsExpression =
           CFX_WideString::FromUTF8(bsString.AsStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
-      if (!pScriptContext) {
-        FXJSE_Value_Release(pValue);
+      if (!pScriptContext)
         return;
-      }
+
       CXFA_Object* pObject = pScriptContext->GetThisObject();
-      if (!pObject) {
-        FXJSE_Value_Release(pValue);
+      if (!pObject)
         return;
-      }
+
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
           pObject, wsExpression.AsStringC(), resoveNodeRS, dwFlag);
-      if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode()) {
-        FXJSE_Value_Release(pValue);
+      if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode())
         return;
-      }
+
       pNode = resoveNodeRS.nodes[0]->AsNode();
     }
-    FXJSE_Value_Release(pValue);
   }
   CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
@@ -509,36 +506,33 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
   }
   CXFA_Node* pNode = NULL;
   if (iLength >= 1) {
-    CFXJSE_Value* pValue = pArguments->GetValue(0);
-    if (FXJSE_Value_IsObject(pValue)) {
-      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(pValue, nullptr));
-    } else if (FXJSE_Value_IsUTF8String(pValue)) {
+    std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
+    if (FXJSE_Value_IsObject(pValue.get())) {
+      pNode =
+          static_cast<CXFA_Node*>(FXJSE_Value_ToObject(pValue.get(), nullptr));
+    } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
       CFX_ByteString bsString;
-      FXJSE_Value_ToUTF8String(pValue, bsString);
+      FXJSE_Value_ToUTF8String(pValue.get(), bsString);
       CFX_WideString wsExpression =
           CFX_WideString::FromUTF8(bsString.AsStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
-      if (!pScriptContext) {
-        FXJSE_Value_Release(pValue);
+      if (!pScriptContext)
         return;
-      }
+
       CXFA_Object* pObject = pScriptContext->GetThisObject();
-      if (!pObject) {
-        FXJSE_Value_Release(pValue);
+      if (!pObject)
         return;
-      }
+
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
           pObject, wsExpression.AsStringC(), resoveNodeRS, dwFlag);
-      if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode()) {
-        FXJSE_Value_Release(pValue);
+      if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode())
         return;
-      }
+
       pNode = resoveNodeRS.nodes[0]->AsNode();
     }
-    FXJSE_Value_Release(pValue);
   }
   pNotify->SetFocusWidgetNode(pNode);
 }
@@ -614,20 +608,18 @@ FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(
       XFA_SCRIPTLANGTYPE_Javascript) {
     bIsJsType = TRUE;
   }
-  CFXJSE_Value* pValueArg = pArguments->GetValue(iArgIndex);
-  if (!FXJSE_Value_IsUTF8String(pValueArg) && bIsJsType) {
+  std::unique_ptr<CFXJSE_Value> pValueArg(pArguments->GetValue(iArgIndex));
+  if (!FXJSE_Value_IsUTF8String(pValueArg.get()) && bIsJsType) {
     ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
-    FXJSE_Value_Release(pValueArg);
     return FALSE;
   }
-  if (FXJSE_Value_IsNull(pValueArg)) {
+  if (FXJSE_Value_IsNull(pValueArg.get())) {
     wsValue = FX_WSTRC(L"");
   } else {
     CFX_ByteString byMessage;
-    FXJSE_Value_ToUTF8String(pValueArg, byMessage);
+    FXJSE_Value_ToUTF8String(pValueArg.get(), byMessage);
     wsValue = CFX_WideString::FromUTF8(byMessage.AsStringC());
   }
-  FXJSE_Value_Release(pValueArg);
   return TRUE;
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentCountInBatch(

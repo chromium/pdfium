@@ -26,6 +26,7 @@
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
+#include "xfa/fxjse/value.h"
 
 static void XFA_FFDeleteCalcData(void* pData) {
   if (pData) {
@@ -609,9 +610,8 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (iFormat != XFA_EVENTERROR_Success) {
     ProcessScriptTestValidate(validate, iRet, pRetValue, bVersionFlag);
   }
-  if (pRetValue) {
-    FXJSE_Value_Release(pRetValue);
-  }
+  delete pRetValue;
+
   return iRet | iFormat;
 }
 int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
@@ -645,21 +645,22 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
       pEventParam->m_eType == XFA_EVENT_Calculate) {
     pContext->SetNodesOfRunScript(&refNodes);
   }
-  CFXJSE_Value* pTmpRetValue = FXJSE_Value_Create(pContext->GetRuntime());
+  std::unique_ptr<CFXJSE_Value> pTmpRetValue(
+      new CFXJSE_Value(pContext->GetRuntime()));
   ++m_nRecursionDepth;
-  FX_BOOL bRet =
-      pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
-                          wsExpression.AsStringC(), pTmpRetValue, m_pNode);
+  FX_BOOL bRet = pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
+                                     wsExpression.AsStringC(),
+                                     pTmpRetValue.get(), m_pNode);
   --m_nRecursionDepth;
   int32_t iRet = XFA_EVENTERROR_Error;
   if (bRet) {
     iRet = XFA_EVENTERROR_Success;
     if (pEventParam->m_eType == XFA_EVENT_Calculate ||
         pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-      if (!FXJSE_Value_IsUndefined(pTmpRetValue)) {
-        if (!FXJSE_Value_IsNull(pTmpRetValue)) {
+      if (!FXJSE_Value_IsUndefined(pTmpRetValue.get())) {
+        if (!FXJSE_Value_IsNull(pTmpRetValue.get())) {
           CFX_ByteString bsString;
-          FXJSE_Value_ToUTF8String(pTmpRetValue, bsString);
+          FXJSE_Value_ToUTF8String(pTmpRetValue.get(), bsString);
           pEventParam->m_wsResult =
               CFX_WideString::FromUTF8(bsString.AsStringC());
         }
@@ -694,11 +695,9 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
       }
     }
   }
-  if (pRetValue) {
-    *pRetValue = pTmpRetValue;
-  } else {
-    FXJSE_Value_Release(pTmpRetValue);
-  }
+  if (pRetValue)
+    *pRetValue = pTmpRetValue.release();
+
   pContext->SetNodesOfRunScript(NULL);
   return iRet;
 }
