@@ -427,29 +427,27 @@ class CXFA_FM2JSContext {
                                                       uint32_t index);
   static FX_BOOL ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static int32_t ValueToInteger(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
-  static FX_DOUBLE StringToDouble(const CFX_ByteStringC& szStringVal);
   static FX_FLOAT ValueToFloat(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static FX_DOUBLE ValueToDouble(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static void ValueToUTF8String(CFXJSE_Value* pValue,
                                 CFX_ByteString& outputValue);
 
-  CXFA_FM2JSContext();
+  CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
+                    CFXJSE_Context* pScriptContext,
+                    CXFA_Document* pDoc);
   ~CXFA_FM2JSContext();
 
-  void Initialize(v8::Isolate* pScriptIsolate,
-                  CFXJSE_Context* pScriptContext,
-                  CXFA_Document* pDoc);
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 
+ private:
   v8::Isolate* GetScriptRuntime() const { return m_pIsolate; }
   CXFA_Document* GetDocument() const { return m_pDocument; }
   void ThrowScriptErrorMessage(int32_t iStringID, ...);
 
- private:
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pFMClass;
   std::unique_ptr<CFXJSE_Value> m_pValue;
-  CXFA_Document* m_pDocument;
+  CXFA_Document* const m_pDocument;
 };
 
 #endif  // XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_

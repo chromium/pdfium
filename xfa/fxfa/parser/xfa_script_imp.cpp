@@ -118,9 +118,8 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   m_eScriptType = eScriptType;
   if (eScriptType == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (!m_hFM2JSContext) {
-      m_hFM2JSContext = XFA_FM2JS_ContextCreate();
-      XFA_FM2JS_ContextInitialize(m_hFM2JSContext, m_pIsolate, m_pJsContext,
-                                  m_pDocument);
+      m_hFM2JSContext =
+          XFA_FM2JS_ContextCreate(m_pIsolate, m_pJsContext, m_pDocument);
     }
     CFX_WideTextBuf wsJavaScript;
     CFX_WideString wsErrorInfo;

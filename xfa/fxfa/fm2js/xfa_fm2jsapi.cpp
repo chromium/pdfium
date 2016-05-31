@@ -39,17 +39,11 @@ int32_t XFA_FM2JS_Translate(const CFX_WideStringC& wsFormcalc,
   return 0;
 }
 
-XFA_HFM2JSCONTEXT XFA_FM2JS_ContextCreate() {
-  return reinterpret_cast<XFA_HFM2JSCONTEXT>(new CXFA_FM2JSContext);
-}
-
-void XFA_FM2JS_ContextInitialize(XFA_HFM2JSCONTEXT hFM2JSContext,
-                                 v8::Isolate* pScriptIsolate,
-                                 CFXJSE_Context* pScriptContext,
-                                 CXFA_Document* pDocument) {
-  CXFA_FM2JSContext* pContext =
-      reinterpret_cast<CXFA_FM2JSContext*>(hFM2JSContext);
-  pContext->Initialize(pScriptIsolate, pScriptContext, pDocument);
+XFA_HFM2JSCONTEXT XFA_FM2JS_ContextCreate(v8::Isolate* pScriptIsolate,
+                                          CFXJSE_Context* pScriptContext,
+                                          CXFA_Document* pDocument) {
+  return reinterpret_cast<XFA_HFM2JSCONTEXT>(
+      new CXFA_FM2JSContext(pScriptIsolate, pScriptContext, pDocument));
 }
 
 void XFA_FM2JS_GlobalPropertyGetter(XFA_HFM2JSCONTEXT hFM2JSContext,

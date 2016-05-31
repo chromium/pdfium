@@ -21,11 +21,9 @@ typedef struct XFA_HFM2JSCONTEXT_ { void** pData; } * XFA_HFM2JSCONTEXT;
 int32_t XFA_FM2JS_Translate(const CFX_WideStringC& wsFormcalc,
                             CFX_WideTextBuf& wsJavascript,
                             CFX_WideString& wsError);
-XFA_HFM2JSCONTEXT XFA_FM2JS_ContextCreate();
-void XFA_FM2JS_ContextInitialize(XFA_HFM2JSCONTEXT hFM2JSContext,
-                                 v8::Isolate* pScriptIsolate,
-                                 CFXJSE_Context* pScriptContext,
-                                 CXFA_Document* pDocument);
+XFA_HFM2JSCONTEXT XFA_FM2JS_ContextCreate(v8::Isolate* pScriptIsolate,
+                                          CFXJSE_Context* pScriptContext,
+                                          CXFA_Document* pDocument);
 void XFA_FM2JS_GlobalPropertyGetter(XFA_HFM2JSCONTEXT hFM2JSContext,
                                     CFXJSE_Value* pValue);
 void XFA_FM2JS_ContextRelease(XFA_HFM2JSCONTEXT hFM2JSContext);
