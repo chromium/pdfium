@@ -14,6 +14,7 @@ vars = {
   'icu_revision': 'c291cde264469b20ca969ce8832088acb21e0c48',
   'pdfium_tests_revision': '6c769320872e6ca82da4adaec1a497237f71b543',
   'skia_revision': '6f47dbaff54a7705ef3e98f1f65c765e56fd9bd0',
+  'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
   'v8_revision': '055bfa771a7bd763305d3bafd43e39459abc95a4',
 }
@@ -50,11 +51,16 @@ deps = {
   "tools/gyp":
     Var('chromium_git') + "/external/gyp",
 
+  "tools/memory":
+    Var('chromium_git') + "/chromium/src/tools/memory@" +
+        Var('tools_memory_revision'),
+
   "v8":
     Var('chromium_git') + "/v8/v8.git@" + Var('v8_revision'),
 
   "v8/base/trace_event/common":
-    Var('chromium_git') + "/chromium/src/base/trace_event/common.git@" + Var('trace_event_revision'),
+    Var('chromium_git') + "/chromium/src/base/trace_event/common.git@" +
+        Var('trace_event_revision'),
 }
 
 deps_os = {

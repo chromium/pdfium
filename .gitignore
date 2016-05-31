@@ -11,6 +11,7 @@
 /tools/clang
 /tools/generate_library_loader
 /tools/gyp
+/tools/memory
 /v8
 /xcodebuild
 Makefile
