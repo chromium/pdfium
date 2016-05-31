@@ -10,6 +10,42 @@
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 
+namespace {
+
+// See PDF Reference 1.7, page 315, table 4.32. (Also table 4.33 and 4.34)
+bool IsValidBitsPerComponent(uint32_t x) {
+  switch (x) {
+    case 1:
+    case 2:
+    case 4:
+    case 8:
+    case 12:
+    case 16:
+      return true;
+    default:
+      return false;
+  }
+}
+
+// Same references as IsValidBitsPerComponent() above.
+bool IsValidBitsPerCoordinate(uint32_t x) {
+  switch (x) {
+    case 1:
+    case 2:
+    case 4:
+    case 8:
+    case 12:
+    case 16:
+    case 24:
+    case 32:
+      return true;
+    default:
+      return false;
+  }
+}
+
+}  // namespace
+
 CPDF_MeshStream::CPDF_MeshStream(
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     CPDF_ColorSpace* pCS)
@@ -20,21 +56,24 @@ bool CPDF_MeshStream::Load(CPDF_Stream* pShadingStream) {
   m_BitStream.Init(m_Stream.GetData(), m_Stream.GetSize());
   CPDF_Dictionary* pDict = pShadingStream->GetDict();
   m_nCoordBits = pDict->GetIntegerBy("BitsPerCoordinate");
-  m_nCompBits = pDict->GetIntegerBy("BitsPerComponent");
-  m_nFlagBits = pDict->GetIntegerBy("BitsPerFlag");
-  if (!m_nCoordBits || !m_nCompBits)
-    return FALSE;
+  if (!IsValidBitsPerCoordinate(m_nCoordBits))
+    return false;
 
+  m_nCompBits = pDict->GetIntegerBy("BitsPerComponent");
+  if (!IsValidBitsPerComponent(m_nCompBits))
+    return false;
+
+  m_nFlagBits = pDict->GetIntegerBy("BitsPerFlag");
   uint32_t nComps = m_pCS->CountComponents();
   if (nComps > 8)
-    return FALSE;
+    return false;
 
   m_nComps = m_funcs.empty() ? nComps : 1;
   m_CoordMax = m_nCoordBits == 32 ? -1 : (1 << m_nCoordBits) - 1;
   m_CompMax = (1 << m_nCompBits) - 1;
   CPDF_Array* pDecode = pDict->GetArrayBy("Decode");
   if (!pDecode || pDecode->GetCount() != 4 + m_nComps * 2)
-    return FALSE;
+    return false;
 
   m_xmin = pDecode->GetNumberAt(0);
   m_xmax = pDecode->GetNumberAt(1);
@@ -44,7 +83,7 @@ bool CPDF_MeshStream::Load(CPDF_Stream* pShadingStream) {
     m_ColorMin[i] = pDecode->GetNumberAt(i * 2 + 4);
     m_ColorMax[i] = pDecode->GetNumberAt(i * 2 + 5);
   }
-  return TRUE;
+  return true;
 }
 
 uint32_t CPDF_MeshStream::GetFlag() {
