@@ -31,137 +31,136 @@ struct XFA_FMHtmlReserveCode {
 
 struct XFA_FMHtmlHashedReserveCode {
   uint32_t m_uHash;
-  const FX_WCHAR* m_htmlReserve;
   uint32_t m_uCode;
 };
 
 const XFA_FMHtmlHashedReserveCode reservesForDecode[] = {
-    {0x00018b62, L"Mu", 924},       {0x00019083, L"Nu", 925},
-    {0x00019ab9, L"Pi", 928},       {0x0001c3c1, L"Xi", 926},
-    {0x000210ac, L"ge", 8805},      {0x000210bb, L"gt", 62},
-    {0x00022a51, L"le", 8804},      {0x00022a60, L"lt", 60},
-    {0x00022f82, L"mu", 956},       {0x00023493, L"ne", 8800},
-    {0x00023497, L"ni", 8715},      {0x000234a3, L"nu", 957},
-    {0x000239c1, L"or", 8744},      {0x00023ed9, L"pi", 960},
-    {0x000267e1, L"xi", 958},       {0x00c41789, L"lceil", 8968},
-    {0x00eef34f, L"thetasym", 977}, {0x012d7ead, L"lcirc", 206},
-    {0x01637b56, L"agrave", 224},   {0x020856da, L"crarr", 8629},
-    {0x022188c3, L"gamma", 947},    {0x033586d3, L"nbsp", 160},
-    {0x04f4c358, L"nsub", 8836},    {0x0581466a, L"dagger", 8224},
-    {0x06b1f790, L"oelig", 339},    {0x06e490d4, L"Chi", 935},
-    {0x0718c6a1, L"ETH", 208},      {0x07196ada, L"Eta", 919},
-    {0x07f667ca, L"Ugrave", 217},   {0x083a8a21, L"Phi", 934},
-    {0x083ac28c, L"Psi", 936},      {0x086f26a9, L"Rho", 929},
-    {0x089b5b51, L"aring", 229},    {0x08a39f4a, L"Tau", 932},
-    {0x08b6188b, L"THORN", 222},    {0x09ce792a, L"icirc", 238},
-    {0x09f9d61e, L"amp", 38},       {0x09f9db33, L"and", 8743},
-    {0x09f9db36, L"ang", 8736},     {0x0a2e3514, L"cap", 8745},
-    {0x0a2e58f4, L"chi", 967},      {0x0a2e9ba8, L"cup", 8746},
-    {0x0a4897d0, L"deg", 176},      {0x0a6332fa, L"eta", 951},
-    {0x0a633301, L"eth", 240},      {0x0acc4d4b, L"int", 8747},
-    {0x0b1b3d35, L"loz", 9674},     {0x0b1b4c8b, L"lrm", 8206},
-    {0x0b4fd9b1, L"not", 172},      {0x0b845241, L"phi", 966},
-    {0x0b84576f, L"piv", 982},      {0x0b848aac, L"psi", 968},
-    {0x0bb8df5e, L"reg", 174},      {0x0bb8eec9, L"rho", 961},
-    {0x0bb9034b, L"rlm", 8207},     {0x0bd33d14, L"shy", 173},
-    {0x0bd34229, L"sim", 8764},     {0x0bd37faa, L"sub", 8834},
-    {0x0bd37fb5, L"sum", 8721},     {0x0bd37fb8, L"sup", 8835},
-    {0x0bed676a, L"tau", 964},      {0x0c07f32e, L"uml", 168},
-    {0x0c71032c, L"yen", 165},      {0x0c7f2889, L"szlig", 223},
-    {0x0c8badbb, L"zwj", 8205},     {0x10ba4dba, L"Egrave", 200},
-    {0x10f1ea24, L"para", 182},     {0x10f1ea37, L"part", 8706},
-    {0x115b2337, L"perp", 8869},    {0x12b10d15, L"prod", 8719},
-    {0x12b10d21, L"prop", 8733},    {0x12dfa9f4, L"rfloor", 8971},
-    {0x12eb4736, L"Agrave", 192},   {0x12fff2b7, L"pund", 163},
-    {0x13fda9f2, L"tilde", 732},    {0x1417fd62, L"times", 215},
-    {0x154fc726, L"ecirc", 234},    {0x165aa451, L"sigma", 963},
-    {0x1709124a, L"Dagger", 8225},  {0x192f78d5, L"iexcl", 161},
-    {0x1b7ed8d7, L"rArr", 8658},    {0x1ec88c68, L"rang", 9002},
-    {0x1ec8a0f7, L"rarr", 8594},    {0x1eda07f3, L"atilde", 227},
-    {0x1f3182c4, L"real", 8476},    {0x1fc34f8b, L"yacute", 253},
-    {0x20d11522, L"acirc", 226},    {0x21933a9b, L"rsaquo", 8250},
-    {0x21f44907, L"uacute", 250},   {0x220cca72, L"acute", 180},
-    {0x242cded1, L"alefsym", 8501}, {0x2655c66a, L"delta", 948},
-    {0x269e4b4d, L"exist", 8707},   {0x273379fa, L"micro", 181},
-    {0x27a37440, L"forall", 8704},  {0x2854e62c, L"minus", 8722},
-    {0x28636f81, L"cedil", 184},    {0x2887357b, L"iacute", 237},
-    {0x2994d5ff, L"frac12", 189},   {0x2994d601, L"frac14", 188},
-    {0x2994e043, L"frac34", 190},   {0x2a1feb41, L"lambda", 955},
-    {0x2ab215f3, L"apos", 39},      {0x2ab82ef7, L"eacute", 233},
-    {0x2b3592ef, L"auml", 228},     {0x2ce92873, L"aacute", 225},
-    {0x2daff48a, L"oslash", 248},   {0x2ef68882, L"aelig", 230},
-    {0x3061d3d3, L"Atilde", 195},   {0x314b1b6b, L"Yacute", 221},
-    {0x337c14e7, L"Uacute", 218},   {0x37676aca, L"cent", 162},
-    {0x37d0b841, L"circ", 710},     {0x386e7947, L"cong", 8773},
-    {0x386e839b, L"copy", 169},     {0x3a0e225a, L"Epsilon", 917},
-    {0x3ba7b721, L"Lambda", 923},   {0x3bd9abe6, L"Alpha", 913},
-    {0x3c3ffad7, L"Eacute", 201},   {0x3cfaf69f, L"brvbar", 166},
-    {0x3d54a489, L"omega", 969},    {0x3e70f453, L"Aacute", 193},
-    {0x3f37c06a, L"Oslash", 216},   {0x40e1b34e, L"diams", 9830},
-    {0x416596df, L"plusmn", 177},   {0x4354ff16, L"Ucirc", 219},
-    {0x454fce6a, L"Upsilon", 933},  {0x4610ad35, L"emsp", 8195},
-    {0x462afb76, L"ensp", 8194},    {0x46e30073, L"euml", 235},
-    {0x46e31a1b, L"euro", 8364},    {0x46f2eada, L"lowast", 8727},
-    {0x4dca26cf, L"Auml", 196},     {0x4e2d6083, L"image", 8465},
-    {0x4f964ee8, L"notin", 8713},   {0x50917a7a, L"epsilon", 949},
-    {0x52f9a4cd, L"Kappa", 922},    {0x5496f410, L"Ocirc", 212},
-    {0x568cbf34, L"zeta", 950},     {0x57badd20, L"ntilde", 241},
-    {0x58662109, L"zwnj", 8204},    {0x5b39870f, L"empty", 8709},
-    {0x5bd3268a, L"upsilon", 965},  {0x5e2bf8a3, L"Gamma", 915},
-    {0x5f73c13a, L"rsquo", 8217},   {0x61f2bc4d, L"iota", 953},
-    {0x625bbcf3, L"isin", 8712},    {0x62906df7, L"iuml", 239},
-    {0x64a5cb31, L"Aring", 197},    {0x66f25c4a, L"sbquo", 8218},
-    {0x6851ab60, L"spades", 9824},  {0x6942a900, L"Ntilde", 209},
-    {0x69779453, L"Euml", 203},     {0x6cda6e23, L"current", 164},
-    {0x70b5b634, L"lsquo", 8216},   {0x715a3706, L"Ecirc", 202},
-    {0x71e8bf8d, L"tdquo", 8221},   {0x72651431, L"Sigma", 931},
-    {0x7569813b, L"iquest", 191},   {0x776a436a, L"equiv", 8801},
-    {0x79215314, L"Zeta", 918},     {0x79b81224, L"ograve", 242},
-    {0x7c2f8b23, L"macr", 175},     {0x7cdb8502, L"Acirc", 194},
-    {0x8185c62e, L"ndash", 8211},   {0x8260364a, L"Delta", 916},
-    {0x846619ad, L"mdash", 8212},   {0x8550fb50, L"OElig", 338},
-    {0x88eb5b85, L"ldquo", 8220},   {0x8b3fde04, L"Ograve", 210},
-    {0x8bc5794b, L"ordf", 170},     {0x8bc57952, L"ordm", 186},
-    {0x8c14923d, L"ouml", 246},     {0x8c5a7cd6, L"theta", 952},
-    {0x8d61812b, L"thorn", 254},    {0x912b95aa, L"asymp", 8776},
-    {0x947faf81, L"middot", 183},   {0x9629202e, L"lfloor", 8970},
-    {0x972e9ec1, L"otilde", 245},   {0x9748f231, L"otimes", 8855},
-    {0x995f1469, L"Omega", 937},    {0x99eb5349, L"quot", 34},
-    {0x9aeb639e, L"hellip", 8230},  {0xa0ae2f86, L"Scaron", 352},
-    {0xa4dcb0d5, L"lsaquo", 8249},  {0xa53dbf41, L"oacute", 243},
-    {0xa5ae9e7b, L"bdquo", 8222},   {0xa602d7ba, L"sdot", 8901},
-    {0xa61ce86f, L"sect", 167},     {0xa6e4c3d7, L"sigmaf", 962},
-    {0xa7c1c74f, L"sube", 8838},    {0xa7c20ee9, L"sup1", 185},
-    {0xa7c20eea, L"sup2", 178},     {0xa7c20eeb, L"sup3", 179},
-    {0xa7c20f1d, L"supe", 8839},    {0xa8b66aa1, L"Otilde", 213},
-    {0xad958c42, L"AElig", 198},    {0xaea9261d, L"Ouml", 214},
-    {0xb040eafa, L"uArr", 8657},    {0xb07c2e1c, L"beta", 946},
-    {0xb220e92f, L"bull", 8226},    {0xb22750c4, L"ccedil", 231},
-    {0xb38ab31a, L"uarr", 8593},    {0xb598b683, L"uuml", 252},
-    {0xb6c58b21, L"Oacute", 211},   {0xb6d2a617, L"oline", 8254},
-    {0xba9fd989, L"dArr", 8659},    {0xbb5ccd41, L"lgrave", 204},
-    {0xbd39b44c, L"weierp", 8472},  {0xbde9a1a9, L"darr", 8595},
-    {0xc027e329, L"permil", 8240},  {0xc2451389, L"upsih", 978},
-    {0xc3af1ca4, L"Ccedil", 199},   {0xcd164249, L"fnof", 402},
-    {0xcf6c8467, L"hearts", 9829},  {0xd1228390, L"trade", 8482},
-    {0xd1462407, L"yuml", 255},     {0xd2cf2253, L"oplus", 8853},
-    {0xd310c1fc, L"Beta", 914},     {0xd59c4d74, L"infin", 8734},
-    {0xd64d470d, L"hArr", 8660},    {0xd67d9c75, L"divide", 247},
-    {0xd698dd37, L"Omicron", 927},  {0xd82d4a63, L"Uuml", 220},
-    {0xd9970f2d, L"harr", 8596},    {0xda91fd99, L"clubs", 9827},
-    {0xdbe5bdcc, L"there4", 8756},  {0xdd7671bd, L"prime", 8242},
-    {0xdfcf3c06, L"alpha", 945},    {0xe0213063, L"saron", 353},
-    {0xe1911d83, L"radic", 8730},   {0xe2e75468, L"raquo", 187},
-    {0xe6e27a5e, L"lacute", 205},   {0xe74a8f36, L"ucirc", 251},
-    {0xe864ecb6, L"Theta", 920},    {0xecddde5e, L"nabla", 8711},
-    {0xed1c3557, L"omicron", 959},  {0xef82228f, L"rceil", 8969},
-    {0xf1fab491, L"lArr", 8656},    {0xf3dab7e7, L"Yuml", 376},
-    {0xf4294962, L"laquo", 171},    {0xf5446822, L"lang", 9001},
-    {0xf5447cb1, L"larr", 8592},    {0xf66e9bea, L"ugrave", 249},
-    {0xf6b4ce70, L"lota", 921},     {0xf6ef34ed, L"kappa", 954},
-    {0xf72a3a56, L"thinsp", 8201},  {0xf752801a, L"luml", 207},
-    {0xf88c8430, L"ocirc", 244},    {0xf9676178, L"frasl", 8260},
-    {0xfd01885e, L"igrave", 236},   {0xff3281da, L"egrave", 232},
+    {0x00018b62, /*L"Mu",*/ 924},       {0x00019083, /*L"Nu",*/ 925},
+    {0x00019ab9, /*L"Pi",*/ 928},       {0x0001c3c1, /*L"Xi",*/ 926},
+    {0x000210ac, /*L"ge",*/ 8805},      {0x000210bb, /*L"gt",*/ 62},
+    {0x00022a51, /*L"le",*/ 8804},      {0x00022a60, /*L"lt",*/ 60},
+    {0x00022f82, /*L"mu",*/ 956},       {0x00023493, /*L"ne",*/ 8800},
+    {0x00023497, /*L"ni",*/ 8715},      {0x000234a3, /*L"nu",*/ 957},
+    {0x000239c1, /*L"or",*/ 8744},      {0x00023ed9, /*L"pi",*/ 960},
+    {0x000267e1, /*L"xi",*/ 958},       {0x00c41789, /*L"lceil",*/ 8968},
+    {0x00eef34f, /*L"thetasym",*/ 977}, {0x012d7ead, /*L"lcirc",*/ 206},
+    {0x01637b56, /*L"agrave",*/ 224},   {0x020856da, /*L"crarr",*/ 8629},
+    {0x022188c3, /*L"gamma",*/ 947},    {0x033586d3, /*L"nbsp",*/ 160},
+    {0x04f4c358, /*L"nsub",*/ 8836},    {0x0581466a, /*L"dagger",*/ 8224},
+    {0x06b1f790, /*L"oelig",*/ 339},    {0x06e490d4, /*L"Chi",*/ 935},
+    {0x0718c6a1, /*L"ETH",*/ 208},      {0x07196ada, /*L"Eta",*/ 919},
+    {0x07f667ca, /*L"Ugrave",*/ 217},   {0x083a8a21, /*L"Phi",*/ 934},
+    {0x083ac28c, /*L"Psi",*/ 936},      {0x086f26a9, /*L"Rho",*/ 929},
+    {0x089b5b51, /*L"aring",*/ 229},    {0x08a39f4a, /*L"Tau",*/ 932},
+    {0x08b6188b, /*L"THORN",*/ 222},    {0x09ce792a, /*L"icirc",*/ 238},
+    {0x09f9d61e, /*L"amp",*/ 38},       {0x09f9db33, /*L"and",*/ 8743},
+    {0x09f9db36, /*L"ang",*/ 8736},     {0x0a2e3514, /*L"cap",*/ 8745},
+    {0x0a2e58f4, /*L"chi",*/ 967},      {0x0a2e9ba8, /*L"cup",*/ 8746},
+    {0x0a4897d0, /*L"deg",*/ 176},      {0x0a6332fa, /*L"eta",*/ 951},
+    {0x0a633301, /*L"eth",*/ 240},      {0x0acc4d4b, /*L"int",*/ 8747},
+    {0x0b1b3d35, /*L"loz",*/ 9674},     {0x0b1b4c8b, /*L"lrm",*/ 8206},
+    {0x0b4fd9b1, /*L"not",*/ 172},      {0x0b845241, /*L"phi",*/ 966},
+    {0x0b84576f, /*L"piv",*/ 982},      {0x0b848aac, /*L"psi",*/ 968},
+    {0x0bb8df5e, /*L"reg",*/ 174},      {0x0bb8eec9, /*L"rho",*/ 961},
+    {0x0bb9034b, /*L"rlm",*/ 8207},     {0x0bd33d14, /*L"shy",*/ 173},
+    {0x0bd34229, /*L"sim",*/ 8764},     {0x0bd37faa, /*L"sub",*/ 8834},
+    {0x0bd37fb5, /*L"sum",*/ 8721},     {0x0bd37fb8, /*L"sup",*/ 8835},
+    {0x0bed676a, /*L"tau",*/ 964},      {0x0c07f32e, /*L"uml",*/ 168},
+    {0x0c71032c, /*L"yen",*/ 165},      {0x0c7f2889, /*L"szlig",*/ 223},
+    {0x0c8badbb, /*L"zwj",*/ 8205},     {0x10ba4dba, /*L"Egrave",*/ 200},
+    {0x10f1ea24, /*L"para",*/ 182},     {0x10f1ea37, /*L"part",*/ 8706},
+    {0x115b2337, /*L"perp",*/ 8869},    {0x12b10d15, /*L"prod",*/ 8719},
+    {0x12b10d21, /*L"prop",*/ 8733},    {0x12dfa9f4, /*L"rfloor",*/ 8971},
+    {0x12eb4736, /*L"Agrave",*/ 192},   {0x12fff2b7, /*L"pund",*/ 163},
+    {0x13fda9f2, /*L"tilde",*/ 732},    {0x1417fd62, /*L"times",*/ 215},
+    {0x154fc726, /*L"ecirc",*/ 234},    {0x165aa451, /*L"sigma",*/ 963},
+    {0x1709124a, /*L"Dagger",*/ 8225},  {0x192f78d5, /*L"iexcl",*/ 161},
+    {0x1b7ed8d7, /*L"rArr",*/ 8658},    {0x1ec88c68, /*L"rang",*/ 9002},
+    {0x1ec8a0f7, /*L"rarr",*/ 8594},    {0x1eda07f3, /*L"atilde",*/ 227},
+    {0x1f3182c4, /*L"real",*/ 8476},    {0x1fc34f8b, /*L"yacute",*/ 253},
+    {0x20d11522, /*L"acirc",*/ 226},    {0x21933a9b, /*L"rsaquo",*/ 8250},
+    {0x21f44907, /*L"uacute",*/ 250},   {0x220cca72, /*L"acute",*/ 180},
+    {0x242cded1, /*L"alefsym",*/ 8501}, {0x2655c66a, /*L"delta",*/ 948},
+    {0x269e4b4d, /*L"exist",*/ 8707},   {0x273379fa, /*L"micro",*/ 181},
+    {0x27a37440, /*L"forall",*/ 8704},  {0x2854e62c, /*L"minus",*/ 8722},
+    {0x28636f81, /*L"cedil",*/ 184},    {0x2887357b, /*L"iacute",*/ 237},
+    {0x2994d5ff, /*L"frac12",*/ 189},   {0x2994d601, /*L"frac14",*/ 188},
+    {0x2994e043, /*L"frac34",*/ 190},   {0x2a1feb41, /*L"lambda",*/ 955},
+    {0x2ab215f3, /*L"apos",*/ 39},      {0x2ab82ef7, /*L"eacute",*/ 233},
+    {0x2b3592ef, /*L"auml",*/ 228},     {0x2ce92873, /*L"aacute",*/ 225},
+    {0x2daff48a, /*L"oslash",*/ 248},   {0x2ef68882, /*L"aelig",*/ 230},
+    {0x3061d3d3, /*L"Atilde",*/ 195},   {0x314b1b6b, /*L"Yacute",*/ 221},
+    {0x337c14e7, /*L"Uacute",*/ 218},   {0x37676aca, /*L"cent",*/ 162},
+    {0x37d0b841, /*L"circ",*/ 710},     {0x386e7947, /*L"cong",*/ 8773},
+    {0x386e839b, /*L"copy",*/ 169},     {0x3a0e225a, /*L"Epsilon",*/ 917},
+    {0x3ba7b721, /*L"Lambda",*/ 923},   {0x3bd9abe6, /*L"Alpha",*/ 913},
+    {0x3c3ffad7, /*L"Eacute",*/ 201},   {0x3cfaf69f, /*L"brvbar",*/ 166},
+    {0x3d54a489, /*L"omega",*/ 969},    {0x3e70f453, /*L"Aacute",*/ 193},
+    {0x3f37c06a, /*L"Oslash",*/ 216},   {0x40e1b34e, /*L"diams",*/ 9830},
+    {0x416596df, /*L"plusmn",*/ 177},   {0x4354ff16, /*L"Ucirc",*/ 219},
+    {0x454fce6a, /*L"Upsilon",*/ 933},  {0x4610ad35, /*L"emsp",*/ 8195},
+    {0x462afb76, /*L"ensp",*/ 8194},    {0x46e30073, /*L"euml",*/ 235},
+    {0x46e31a1b, /*L"euro",*/ 8364},    {0x46f2eada, /*L"lowast",*/ 8727},
+    {0x4dca26cf, /*L"Auml",*/ 196},     {0x4e2d6083, /*L"image",*/ 8465},
+    {0x4f964ee8, /*L"notin",*/ 8713},   {0x50917a7a, /*L"epsilon",*/ 949},
+    {0x52f9a4cd, /*L"Kappa",*/ 922},    {0x5496f410, /*L"Ocirc",*/ 212},
+    {0x568cbf34, /*L"zeta",*/ 950},     {0x57badd20, /*L"ntilde",*/ 241},
+    {0x58662109, /*L"zwnj",*/ 8204},    {0x5b39870f, /*L"empty",*/ 8709},
+    {0x5bd3268a, /*L"upsilon",*/ 965},  {0x5e2bf8a3, /*L"Gamma",*/ 915},
+    {0x5f73c13a, /*L"rsquo",*/ 8217},   {0x61f2bc4d, /*L"iota",*/ 953},
+    {0x625bbcf3, /*L"isin",*/ 8712},    {0x62906df7, /*L"iuml",*/ 239},
+    {0x64a5cb31, /*L"Aring",*/ 197},    {0x66f25c4a, /*L"sbquo",*/ 8218},
+    {0x6851ab60, /*L"spades",*/ 9824},  {0x6942a900, /*L"Ntilde",*/ 209},
+    {0x69779453, /*L"Euml",*/ 203},     {0x6cda6e23, /*L"current",*/ 164},
+    {0x70b5b634, /*L"lsquo",*/ 8216},   {0x715a3706, /*L"Ecirc",*/ 202},
+    {0x71e8bf8d, /*L"tdquo",*/ 8221},   {0x72651431, /*L"Sigma",*/ 931},
+    {0x7569813b, /*L"iquest",*/ 191},   {0x776a436a, /*L"equiv",*/ 8801},
+    {0x79215314, /*L"Zeta",*/ 918},     {0x79b81224, /*L"ograve",*/ 242},
+    {0x7c2f8b23, /*L"macr",*/ 175},     {0x7cdb8502, /*L"Acirc",*/ 194},
+    {0x8185c62e, /*L"ndash",*/ 8211},   {0x8260364a, /*L"Delta",*/ 916},
+    {0x846619ad, /*L"mdash",*/ 8212},   {0x8550fb50, /*L"OElig",*/ 338},
+    {0x88eb5b85, /*L"ldquo",*/ 8220},   {0x8b3fde04, /*L"Ograve",*/ 210},
+    {0x8bc5794b, /*L"ordf",*/ 170},     {0x8bc57952, /*L"ordm",*/ 186},
+    {0x8c14923d, /*L"ouml",*/ 246},     {0x8c5a7cd6, /*L"theta",*/ 952},
+    {0x8d61812b, /*L"thorn",*/ 254},    {0x912b95aa, /*L"asymp",*/ 8776},
+    {0x947faf81, /*L"middot",*/ 183},   {0x9629202e, /*L"lfloor",*/ 8970},
+    {0x972e9ec1, /*L"otilde",*/ 245},   {0x9748f231, /*L"otimes",*/ 8855},
+    {0x995f1469, /*L"Omega",*/ 937},    {0x99eb5349, /*L"quot",*/ 34},
+    {0x9aeb639e, /*L"hellip",*/ 8230},  {0xa0ae2f86, /*L"Scaron",*/ 352},
+    {0xa4dcb0d5, /*L"lsaquo",*/ 8249},  {0xa53dbf41, /*L"oacute",*/ 243},
+    {0xa5ae9e7b, /*L"bdquo",*/ 8222},   {0xa602d7ba, /*L"sdot",*/ 8901},
+    {0xa61ce86f, /*L"sect",*/ 167},     {0xa6e4c3d7, /*L"sigmaf",*/ 962},
+    {0xa7c1c74f, /*L"sube",*/ 8838},    {0xa7c20ee9, /*L"sup1",*/ 185},
+    {0xa7c20eea, /*L"sup2",*/ 178},     {0xa7c20eeb, /*L"sup3",*/ 179},
+    {0xa7c20f1d, /*L"supe",*/ 8839},    {0xa8b66aa1, /*L"Otilde",*/ 213},
+    {0xad958c42, /*L"AElig",*/ 198},    {0xaea9261d, /*L"Ouml",*/ 214},
+    {0xb040eafa, /*L"uArr",*/ 8657},    {0xb07c2e1c, /*L"beta",*/ 946},
+    {0xb220e92f, /*L"bull",*/ 8226},    {0xb22750c4, /*L"ccedil",*/ 231},
+    {0xb38ab31a, /*L"uarr",*/ 8593},    {0xb598b683, /*L"uuml",*/ 252},
+    {0xb6c58b21, /*L"Oacute",*/ 211},   {0xb6d2a617, /*L"oline",*/ 8254},
+    {0xba9fd989, /*L"dArr",*/ 8659},    {0xbb5ccd41, /*L"lgrave",*/ 204},
+    {0xbd39b44c, /*L"weierp",*/ 8472},  {0xbde9a1a9, /*L"darr",*/ 8595},
+    {0xc027e329, /*L"permil",*/ 8240},  {0xc2451389, /*L"upsih",*/ 978},
+    {0xc3af1ca4, /*L"Ccedil",*/ 199},   {0xcd164249, /*L"fnof",*/ 402},
+    {0xcf6c8467, /*L"hearts",*/ 9829},  {0xd1228390, /*L"trade",*/ 8482},
+    {0xd1462407, /*L"yuml",*/ 255},     {0xd2cf2253, /*L"oplus",*/ 8853},
+    {0xd310c1fc, /*L"Beta",*/ 914},     {0xd59c4d74, /*L"infin",*/ 8734},
+    {0xd64d470d, /*L"hArr",*/ 8660},    {0xd67d9c75, /*L"divide",*/ 247},
+    {0xd698dd37, /*L"Omicron",*/ 927},  {0xd82d4a63, /*L"Uuml",*/ 220},
+    {0xd9970f2d, /*L"harr",*/ 8596},    {0xda91fd99, /*L"clubs",*/ 9827},
+    {0xdbe5bdcc, /*L"there4",*/ 8756},  {0xdd7671bd, /*L"prime",*/ 8242},
+    {0xdfcf3c06, /*L"alpha",*/ 945},    {0xe0213063, /*L"saron",*/ 353},
+    {0xe1911d83, /*L"radic",*/ 8730},   {0xe2e75468, /*L"raquo",*/ 187},
+    {0xe6e27a5e, /*L"lacute",*/ 205},   {0xe74a8f36, /*L"ucirc",*/ 251},
+    {0xe864ecb6, /*L"Theta",*/ 920},    {0xecddde5e, /*L"nabla",*/ 8711},
+    {0xed1c3557, /*L"omicron",*/ 959},  {0xef82228f, /*L"rceil",*/ 8969},
+    {0xf1fab491, /*L"lArr",*/ 8656},    {0xf3dab7e7, /*L"Yuml",*/ 376},
+    {0xf4294962, /*L"laquo",*/ 171},    {0xf5446822, /*L"lang",*/ 9001},
+    {0xf5447cb1, /*L"larr",*/ 8592},    {0xf66e9bea, /*L"ugrave",*/ 249},
+    {0xf6b4ce70, /*L"lota",*/ 921},     {0xf6ef34ed, /*L"kappa",*/ 954},
+    {0xf72a3a56, /*L"thinsp",*/ 8201},  {0xf752801a, /*L"luml",*/ 207},
+    {0xf88c8430, /*L"ocirc",*/ 244},    {0xf9676178, /*L"frasl",*/ 8260},
+    {0xfd01885e, /*L"igrave",*/ 236},   {0xff3281da, /*L"egrave",*/ 232},
 };
 
 const XFA_FMHtmlReserveCode reservesForEncode[] = {
@@ -501,114 +500,123 @@ bool PatternStringType(const CFX_ByteStringC& szPattern,
 void CXFA_FM2JSContext::Abs(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      FX_DOUBLE dValue = ValueToDouble(pThis, argOne.get());
-      if (dValue < 0) {
-        dValue = -dValue;
-      }
-      FXJSE_Value_SetDouble(args.GetReturnValue(), dValue);
-    }
-  } else {
+  if (args.GetLength() != 1) {
     CXFA_FM2JSContext* pContext =
         (CXFA_FM2JSContext*)FXJSE_Value_ToObject(pThis, nullptr);
     pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
                                       L"Abs");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
+  if (ValueIsNull(pThis, argOne.get())) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  FX_DOUBLE dValue = ValueToDouble(pThis, argOne.get());
+  if (dValue < 0)
+    dValue = -dValue;
+
+  FXJSE_Value_SetDouble(args.GetReturnValue(), dValue);
 }
 
 // static
 void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
+  int32_t argc = args.GetLength();
+  if (argc < 1) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  int32_t argc = args.GetLength();
   uint32_t uCount = 0;
   FX_DOUBLE dSum = 0.0;
-  if (argc >= 1) {
-    for (int32_t i = 0; i < argc; i++) {
-      std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
-      if (FXJSE_Value_IsNull(argValue.get())) {
-        continue;
-      } else if (FXJSE_Value_IsArray(argValue.get())) {
-        std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-        FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
-        int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+  for (int32_t i = 0; i < argc; i++) {
+    std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
+    if (FXJSE_Value_IsNull(argValue.get()))
+      continue;
 
-        if (iLength > 2) {
-          std::unique_ptr<CFXJSE_Value> propertyValue(
+    if (!FXJSE_Value_IsArray(argValue.get())) {
+      dSum += ValueToDouble(pThis, argValue.get());
+      uCount++;
+      continue;
+    }
+
+    std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+    FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
+    int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+
+    if (iLength > 2) {
+      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
+
+      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+      if (FXJSE_Value_IsNull(propertyValue.get())) {
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
+                                         jsObjectValue.get());
+          std::unique_ptr<CFXJSE_Value> defaultPropValue(
               new CFXJSE_Value(pIsolate));
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1,
-                                         propertyValue.get());
-          std::unique_ptr<CFXJSE_Value> jsObjectValue(
-              new CFXJSE_Value(pIsolate));
-          if (FXJSE_Value_IsNull(propertyValue.get())) {
-            for (int32_t j = 2; j < iLength; j++) {
-              FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                             jsObjectValue.get());
-              std::unique_ptr<CFXJSE_Value> defaultPropValue(
-                  new CFXJSE_Value(pIsolate));
-              GetObjectDefaultValue(jsObjectValue.get(),
-                                    defaultPropValue.get());
-              if (!FXJSE_Value_IsNull(defaultPropValue.get())) {
-                dSum += ValueToDouble(pThis, defaultPropValue.get());
-                uCount++;
-              }
-            }
-          } else {
-            CFX_ByteString propertyStr;
-            FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-            std::unique_ptr<CFXJSE_Value> newPropertyValue(
-                new CFXJSE_Value(pIsolate));
-            for (int32_t j = 2; j < iLength; j++) {
-              FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                             jsObjectValue.get());
-              FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                        propertyStr.AsStringC(),
-                                        newPropertyValue.get());
-              if (!FXJSE_Value_IsNull(newPropertyValue.get())) {
-                dSum += ValueToDouble(pThis, newPropertyValue.get());
-                uCount++;
-              }
-            }
-          }
+          GetObjectDefaultValue(jsObjectValue.get(), defaultPropValue.get());
+          if (FXJSE_Value_IsNull(defaultPropValue.get()))
+            continue;
+
+          dSum += ValueToDouble(pThis, defaultPropValue.get());
+          uCount++;
         }
       } else {
-        dSum += ValueToDouble(pThis, argValue.get());
-        uCount++;
+        CFX_ByteString propertyStr;
+        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
+                                         jsObjectValue.get());
+          std::unique_ptr<CFXJSE_Value> newPropertyValue(
+              new CFXJSE_Value(pIsolate));
+          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
+                                    propertyStr.AsStringC(),
+                                    newPropertyValue.get());
+          if (FXJSE_Value_IsNull(newPropertyValue.get()))
+            continue;
+
+          dSum += ValueToDouble(pThis, newPropertyValue.get());
+          uCount++;
+        }
       }
     }
   }
-  if (0 == uCount) {
+  if (uCount == 0) {
     FXJSE_Value_SetNull(args.GetReturnValue());
-  } else {
-    FXJSE_Value_SetDouble(args.GetReturnValue(), dSum / uCount);
+    return;
   }
+
+  FXJSE_Value_SetDouble(args.GetReturnValue(), dSum / uCount);
 }
 
 // static
 void CXFA_FM2JSContext::Ceil(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(pThis, args, 0);
-    if (ValueIsNull(pThis, argValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      FXJSE_Value_SetFloat(args.GetReturnValue(),
-                           FXSYS_ceil(ValueToFloat(pThis, argValue.get())));
-    }
-  } else {
+  if (args.GetLength() != 1) {
     CXFA_FM2JSContext* pContext =
         (CXFA_FM2JSContext*)FXJSE_Value_ToObject(pThis, nullptr);
     pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
                                       L"Ceil");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(pThis, args, 0);
+  if (ValueIsNull(pThis, argValue.get())) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  FXJSE_Value_SetFloat(args.GetReturnValue(),
+                       FXSYS_ceil(ValueToFloat(pThis, argValue.get())));
 }
 
 // static
@@ -618,79 +626,81 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  uint32_t uCount = 0;
+  int32_t iCount = 0;
   for (int32_t i = 0; i < args.GetLength(); i++) {
     std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
-    if (FXJSE_Value_IsNull(argValue.get())) {
+    if (FXJSE_Value_IsNull(argValue.get()))
       continue;
-    } else if (FXJSE_Value_IsArray(argValue.get())) {
+
+    if (FXJSE_Value_IsArray(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
       FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
 
-      if (iLength > 2) {
-        std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-        std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-        std::unique_ptr<CFXJSE_Value> newPropertyValue(
-            new CFXJSE_Value(pIsolate));
-        FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
-        FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
-        if (FXJSE_Value_IsNull(propertyValue.get())) {
-          for (int32_t i = 2; i < iLength; i++) {
-            FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
-                                           jsObjectValue.get());
-            GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
-            if (!FXJSE_Value_IsNull(newPropertyValue.get())) {
-              uCount++;
-            }
-          }
-        } else {
-          CFX_ByteString propertyStr;
-          FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-          for (int32_t i = 2; i < iLength; i++) {
-            FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
-                                           jsObjectValue.get());
-            FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                      propertyStr.AsStringC(),
-                                      newPropertyValue.get());
-            uCount += (FXJSE_Value_IsNull(newPropertyValue.get()) ? 0 : 1);
-          }
+      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      if (iLength <= 2) {
+        pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
+        return;
+      }
+
+      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+      std::unique_ptr<CFXJSE_Value> newPropertyValue(
+          new CFXJSE_Value(pIsolate));
+      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
+      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
+      if (FXJSE_Value_IsNull(propertyValue.get())) {
+        for (int32_t i = 2; i < iLength; i++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+                                         jsObjectValue.get());
+          GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
+          if (!FXJSE_Value_IsNull(newPropertyValue.get()))
+            iCount++;
         }
       } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
+        CFX_ByteString propertyStr;
+        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        for (int32_t i = 2; i < iLength; i++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+                                         jsObjectValue.get());
+          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
+                                    propertyStr.AsStringC(),
+                                    newPropertyValue.get());
+          iCount += (FXJSE_Value_IsNull(newPropertyValue.get()) ? 0 : 1);
+        }
       }
     } else if (FXJSE_Value_IsObject(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> newPropertyValue(
           new CFXJSE_Value(pIsolate));
       GetObjectDefaultValue(argValue.get(), newPropertyValue.get());
-      if (!FXJSE_Value_IsNull(newPropertyValue.get())) {
-        uCount++;
-      }
+      if (!FXJSE_Value_IsNull(newPropertyValue.get()))
+        iCount++;
     } else {
-      uCount++;
+      iCount++;
     }
   }
-  FXJSE_Value_SetInteger(args.GetReturnValue(), (int32_t)uCount);
+  FXJSE_Value_SetInteger(args.GetReturnValue(), iCount);
 }
 
 // static
 void CXFA_FM2JSContext::Floor(CFXJSE_Value* pThis,
                               const CFX_ByteStringC& szFuncName,
                               CFXJSE_Arguments& args) {
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(pThis, args, 0);
-    if (ValueIsNull(pThis, argValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      FXJSE_Value_SetFloat(args.GetReturnValue(),
-                           FXSYS_floor(ValueToFloat(pThis, argValue.get())));
-    }
-  } else {
+  if (args.GetLength() != 1) {
     CXFA_FM2JSContext* pContext =
         (CXFA_FM2JSContext*)FXJSE_Value_ToObject(pThis, nullptr);
     pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
                                       L"Floor");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(pThis, args, 0);
+  if (ValueIsNull(pThis, argValue.get())) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  FXJSE_Value_SetFloat(args.GetReturnValue(),
+                       FXSYS_floor(ValueToFloat(pThis, argValue.get())));
 }
 
 // static
@@ -704,95 +714,75 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
   FX_DOUBLE dMaxValue = 0.0;
   for (int32_t i = 0; i < args.GetLength(); i++) {
     std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
-    if (FXJSE_Value_IsNull(argValue.get())) {
+    if (FXJSE_Value_IsNull(argValue.get()))
       continue;
-    } else if (FXJSE_Value_IsArray(argValue.get())) {
+
+    if (FXJSE_Value_IsArray(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
       FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
       int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      if (iLength <= 2) {
+        pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
+        return;
+      }
 
-      if (iLength > 2) {
-        std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-        std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-        std::unique_ptr<CFXJSE_Value> newPropertyValue(
-            new CFXJSE_Value(pIsolate));
-        FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
-        FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
-        if (FXJSE_Value_IsNull(propertyValue.get())) {
-          for (int32_t i = 2; i < iLength; i++) {
-            FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
-                                           jsObjectValue.get());
-            GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
-            if (!FXJSE_Value_IsNull(newPropertyValue.get())) {
-              uCount++;
-              if (uCount == 1) {
-                dMaxValue = ValueToDouble(pThis, newPropertyValue.get());
-              } else {
-                FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
-                if (dMaxValue < dValue) {
-                  dMaxValue = dValue;
-                }
-              }
-            }
-          }
-        } else {
-          CFX_ByteString propertyStr;
-          FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-          for (int32_t i = 2; i < iLength; i++) {
-            FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
-                                           jsObjectValue.get());
-            FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                      propertyStr.AsStringC(),
-                                      newPropertyValue.get());
-            if (!FXJSE_Value_IsNull(newPropertyValue.get())) {
-              uCount++;
-              if (uCount == 1) {
-                dMaxValue = ValueToDouble(pThis, newPropertyValue.get());
-              } else {
-                FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
-                if (dMaxValue < dValue) {
-                  dMaxValue = dValue;
-                }
-              }
-            }
-          }
+      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+      std::unique_ptr<CFXJSE_Value> newPropertyValue(
+          new CFXJSE_Value(pIsolate));
+      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
+      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
+      if (FXJSE_Value_IsNull(propertyValue.get())) {
+        for (int32_t i = 2; i < iLength; i++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+                                         jsObjectValue.get());
+          GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
+          if (FXJSE_Value_IsNull(newPropertyValue.get()))
+            continue;
+
+          uCount++;
+          FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+          dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
+        CFX_ByteString propertyStr;
+        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        for (int32_t i = 2; i < iLength; i++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+                                         jsObjectValue.get());
+          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
+                                    propertyStr.AsStringC(),
+                                    newPropertyValue.get());
+          if (FXJSE_Value_IsNull(newPropertyValue.get()))
+            continue;
+
+          uCount++;
+          FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+          dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
+        }
       }
     } else if (FXJSE_Value_IsObject(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> newPropertyValue(
           new CFXJSE_Value(pIsolate));
       GetObjectDefaultValue(argValue.get(), newPropertyValue.get());
-      if (!FXJSE_Value_IsNull(newPropertyValue.get())) {
-        uCount++;
-        if (uCount == 1) {
-          dMaxValue = ValueToDouble(pThis, newPropertyValue.get());
-        } else {
-          FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
-          if (dMaxValue < dValue) {
-            dMaxValue = dValue;
-          }
-        }
-      }
+      if (FXJSE_Value_IsNull(newPropertyValue.get()))
+        continue;
+
+      uCount++;
+      FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+      dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     } else {
       uCount++;
-      if (uCount == 1) {
-        dMaxValue = ValueToDouble(pThis, argValue.get());
-      } else {
-        FX_DOUBLE dValue = ValueToDouble(pThis, argValue.get());
-        if (dMaxValue < dValue) {
-          dMaxValue = dValue;
-        }
-      }
+      FX_DOUBLE dValue = ValueToDouble(pThis, argValue.get());
+      dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     }
   }
-
-  if (uCount) {
-    FXJSE_Value_SetDouble(args.GetReturnValue(), dMaxValue);
-  } else {
+  if (uCount == 0) {
     FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
   }
+
+  FXJSE_Value_SetDouble(args.GetReturnValue(), dMaxValue);
 }
 
 // static
