@@ -36,11 +36,6 @@ enum FXJSE_ClassPropTypes {
   FXJSE_ClassPropType_Method
 };
 
-enum FXJSE_CompatibleModeFlags {
-  FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS = (1 << 0),
-  FXJSE_COMPATIBLEMODEFLAGCOUNT = 1,
-};
-
 struct FXJSE_FUNCTION_DESCRIPTOR {
   const FX_CHAR* name;
   FXJSE_FuncCallback callbackProc;
@@ -78,9 +73,7 @@ CFXJSE_Context* FXJSE_Context_Create(
     CFXJSE_HostObject* lpGlobalObject);
 void FXJSE_Context_Release(CFXJSE_Context* pContext);
 CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext);
-
-void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
-                                        uint32_t dwCompatibleFlags);
+void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext);
 
 CFXJSE_Class* FXJSE_DefineClass(CFXJSE_Context* pContext,
                                 const FXJSE_CLASS_DESCRIPTOR* lpClass);

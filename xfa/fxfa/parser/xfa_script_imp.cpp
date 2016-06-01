@@ -424,8 +424,7 @@ void CXFA_ScriptContext::DefineJsContext() {
   m_pJsContext = FXJSE_Context_Create(m_pIsolate, &GlobalClassDescriptor,
                                       m_pDocument->GetRoot());
   RemoveBuiltInObjs(m_pJsContext);
-  FXJSE_Context_EnableCompatibleMode(
-      m_pJsContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
+  FXJSE_Context_EnableCompatibleMode(m_pJsContext);
 }
 CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
     CXFA_Node* pScriptNode,
@@ -437,8 +436,7 @@ CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
       FXJSE_Context_Create(m_pIsolate, &VariablesClassDescriptor,
                            new CXFA_ThisProxy(pSubform, pScriptNode));
   RemoveBuiltInObjs(pVariablesContext);
-  FXJSE_Context_EnableCompatibleMode(
-      pVariablesContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
+  FXJSE_Context_EnableCompatibleMode(pVariablesContext);
   m_mapVariableToContext.SetAt(pScriptNode, pVariablesContext);
   return pVariablesContext;
 }

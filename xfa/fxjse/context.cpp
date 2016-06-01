@@ -10,6 +10,37 @@
 #include "xfa/fxjse/scope_inline.h"
 #include "xfa/fxjse/value.h"
 
+namespace {
+
+const FX_CHAR szCompatibleModeScript[] =
+    "(function(global, list) {\n"
+    "  'use strict';\n"
+    "  var objname;\n"
+    "  for (objname in list) {\n"
+    "    var globalobj = global[objname];\n"
+    "    if (globalobj) {\n"
+    "      list[objname].forEach(function(name) {\n"
+    "        if (!globalobj[name]) {\n"
+    "          Object.defineProperty(globalobj, name, {\n"
+    "            writable: true,\n"
+    "            enumerable: false,\n"
+    "            value: (function(obj) {\n"
+    "              if (arguments.length === 0) {\n"
+    "                throw new TypeError('missing argument 0 when calling "
+    "                    function ' + objname + '.' + name);\n"
+    "              }\n"
+    "              return globalobj.prototype[name].apply(obj, "
+    "                  Array.prototype.slice.call(arguments, 1));\n"
+    "            })\n"
+    "          });\n"
+    "        }\n"
+    "      });\n"
+    "    }\n"
+    "  }\n"
+    "}(this, {String: ['substr', 'toUpperCase']}));";
+
+}  // namespace
+
 v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
     const v8::Local<v8::Context>& hContext) {
   return hContext->Global()->GetPrototype().As<v8::Object>();
@@ -73,39 +104,8 @@ CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext) {
   return lpValue;
 }
 
-static const FX_CHAR* szCompatibleModeScripts[] = {
-    "(function(global, list) {\n"
-    "  'use strict';\n"
-    "  var objname;\n"
-    "  for (objname in list) {\n"
-    "    var globalobj = global[objname];\n"
-    "    if (globalobj) {\n"
-    "      list[objname].forEach(function(name) {\n"
-    "        if (!globalobj[name]) {\n"
-    "          Object.defineProperty(globalobj, name, {\n"
-    "            writable: true,\n"
-    "            enumerable: false,\n"
-    "            value: (function(obj) {\n"
-    "              if (arguments.length === 0) {\n"
-    "                throw new TypeError('missing argument 0 when calling "
-    "                    function ' + objname + '.' + name);\n"
-    "              }\n"
-    "              return globalobj.prototype[name].apply(obj, "
-    "                  Array.prototype.slice.call(arguments, 1));\n"
-    "            })\n"
-    "          });\n"
-    "        }\n"
-    "      });\n"
-    "    }\n"
-    "  }\n"
-    "}(this, {String: ['substr', 'toUpperCase']}));"};
-void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext,
-                                        uint32_t dwCompatibleFlags) {
-  for (uint32_t i = 0; i < (uint32_t)FXJSE_COMPATIBLEMODEFLAGCOUNT; i++) {
-    if (dwCompatibleFlags & (1 << i)) {
-      FXJSE_ExecuteScript(pContext, szCompatibleModeScripts[i], NULL, NULL);
-    }
-  }
+void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext) {
+  FXJSE_ExecuteScript(pContext, szCompatibleModeScript, nullptr, nullptr);
 }
 
 FX_BOOL FXJSE_ExecuteScript(CFXJSE_Context* pContext,
