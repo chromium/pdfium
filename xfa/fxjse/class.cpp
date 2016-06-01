@@ -42,9 +42,8 @@ static void FXJSE_V8FunctionCallback_Wrapper(
       new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(info.This());
   std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
-  CFXJSE_ArgumentsImpl impl = {&info, lpRetValue.get()};
-  lpFunctionInfo->callbackProc(lpThisValue.get(), szFunctionName,
-                               reinterpret_cast<CFXJSE_Arguments&>(impl));
+  CFXJSE_Arguments impl(&info, lpRetValue.get());
+  lpFunctionInfo->callbackProc(lpThisValue.get(), szFunctionName, impl);
   if (!lpRetValue->DirectGetValue().IsEmpty()) {
     info.GetReturnValue().Set(lpRetValue->DirectGetValue());
   }
@@ -63,9 +62,8 @@ static void FXJSE_V8ClassGlobalConstructorCallback_Wrapper(
       new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(info.This());
   std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
-  CFXJSE_ArgumentsImpl impl = {&info, lpRetValue.get()};
-  lpClassDefinition->constructor(lpThisValue.get(), szFunctionName,
-                                 reinterpret_cast<CFXJSE_Arguments&>(impl));
+  CFXJSE_Arguments impl(&info, lpRetValue.get());
+  lpClassDefinition->constructor(lpThisValue.get(), szFunctionName, impl);
   if (!lpRetValue->DirectGetValue().IsEmpty()) {
     info.GetReturnValue().Set(lpRetValue->DirectGetValue());
   }
@@ -123,68 +121,50 @@ static void FXJSE_V8ConstructorCallback_Wrapper(
 }
 
 v8::Isolate* CFXJSE_Arguments::GetRuntime() const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return lpArguments->m_pRetValue->GetIsolate();
+  return m_pRetValue->GetIsolate();
 }
 
 int32_t CFXJSE_Arguments::GetLength() const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return lpArguments->m_pInfo->Length();
+  return m_pInfo->Length();
 }
 
 std::unique_ptr<CFXJSE_Value> CFXJSE_Arguments::GetValue(int32_t index) const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
   std::unique_ptr<CFXJSE_Value> lpArgValue(
       new CFXJSE_Value(v8::Isolate::GetCurrent()));
-  lpArgValue->ForceSetValue((*lpArguments->m_pInfo)[index]);
+  lpArgValue->ForceSetValue((*m_pInfo)[index]);
   return lpArgValue;
 }
 
 FX_BOOL CFXJSE_Arguments::GetBoolean(int32_t index) const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return (*lpArguments->m_pInfo)[index]->BooleanValue();
+  return (*m_pInfo)[index]->BooleanValue();
 }
 
 int32_t CFXJSE_Arguments::GetInt32(int32_t index) const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return static_cast<int32_t>((*lpArguments->m_pInfo)[index]->NumberValue());
+  return static_cast<int32_t>((*m_pInfo)[index]->NumberValue());
 }
 
 FX_FLOAT CFXJSE_Arguments::GetFloat(int32_t index) const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return static_cast<FX_FLOAT>((*lpArguments->m_pInfo)[index]->NumberValue());
+  return static_cast<FX_FLOAT>((*m_pInfo)[index]->NumberValue());
 }
 
 CFX_ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  v8::Local<v8::String> hString = (*lpArguments->m_pInfo)[index]->ToString();
+  v8::Local<v8::String> hString = (*m_pInfo)[index]->ToString();
   v8::String::Utf8Value szStringVal(hString);
   return CFX_ByteString(*szStringVal);
 }
 
 void* CFXJSE_Arguments::GetObject(int32_t index, CFXJSE_Class* pClass) const {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  v8::Local<v8::Value> hValue = (*lpArguments->m_pInfo)[index];
+  v8::Local<v8::Value> hValue = (*m_pInfo)[index];
   ASSERT(!hValue.IsEmpty());
-  if (!hValue->IsObject()) {
-    return NULL;
-  }
+  if (!hValue->IsObject())
+    return nullptr;
   return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>(), pClass);
 }
 
 CFXJSE_Value* CFXJSE_Arguments::GetReturnValue() {
-  const CFXJSE_ArgumentsImpl* lpArguments =
-      reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return lpArguments->m_pRetValue;
+  return m_pRetValue;
 }
+
 static void FXJSE_Context_GlobalObjToString(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   const FXJSE_CLASS_DESCRIPTOR* lpClass = static_cast<FXJSE_CLASS_DESCRIPTOR*>(

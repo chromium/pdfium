@@ -11,6 +11,10 @@
 
 class CFXJSE_Arguments {
  public:
+  CFXJSE_Arguments(const v8::FunctionCallbackInfo<v8::Value>* pInfo,
+                   CFXJSE_Value* pRetValue)
+      : m_pInfo(pInfo), m_pRetValue(pRetValue) {}
+
   v8::Isolate* GetRuntime() const;
   int32_t GetLength() const;
   std::unique_ptr<CFXJSE_Value> GetValue(int32_t index) const;
@@ -20,6 +24,10 @@ class CFXJSE_Arguments {
   CFX_ByteString GetUTF8String(int32_t index) const;
   void* GetObject(int32_t index, CFXJSE_Class* pClass = nullptr) const;
   CFXJSE_Value* GetReturnValue();
+
+ private:
+  const v8::FunctionCallbackInfo<v8::Value>* m_pInfo;
+  CFXJSE_Value* m_pRetValue;
 };
 
 #endif  // XFA_FXJSE_CFXJSE_ARGUMENTS_H_

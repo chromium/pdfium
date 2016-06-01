@@ -22,9 +22,8 @@ static void FXJSE_DynPropGetterAdapter_MethodCallback(
       new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(info.This());
   std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
-  CFXJSE_ArgumentsImpl impl = {&info, lpRetValue.get()};
-  lpClass->dynMethodCall(lpThisValue.get(), szFxPropName,
-                         reinterpret_cast<CFXJSE_Arguments&>(impl));
+  CFXJSE_Arguments impl(&info, lpRetValue.get());
+  lpClass->dynMethodCall(lpThisValue.get(), szFxPropName, impl);
   if (!lpRetValue->DirectGetValue().IsEmpty()) {
     info.GetReturnValue().Set(lpRetValue->DirectGetValue());
   }
