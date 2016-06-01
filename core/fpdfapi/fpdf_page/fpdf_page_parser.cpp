@@ -146,8 +146,8 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
         bStarted = true;
       }
     }
-    FX_SAFE_UINT32 nBits = stream.comps();
-    nBits *= stream.CompBits();
+    FX_SAFE_UINT32 nBits = stream.Components();
+    nBits *= stream.ComponentBits();
     nBits *= color_count;
     if (!nBits.IsValid())
       break;

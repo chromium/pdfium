@@ -47,28 +47,28 @@ class CPDF_MeshStream {
                        CFX_Matrix* pObject2Bitmap);
 
   CFX_BitStream* BitStream() { return &m_BitStream; }
-  uint32_t CompBits() const { return m_nCompBits; }
-  uint32_t comps() const { return m_nComps; }
+  uint32_t ComponentBits() const { return m_nComponentBits; }
+  uint32_t Components() const { return m_nComponents; }
 
  private:
-  static const uint32_t kMaxResults = 8;
+  static const uint32_t kMaxComponents = 8;
 
   const ShadingType m_type;
   const std::vector<std::unique_ptr<CPDF_Function>>& m_funcs;
   CPDF_Stream* const m_pShadingStream;
   CPDF_ColorSpace* const m_pCS;
   uint32_t m_nCoordBits;
-  uint32_t m_nCompBits;
+  uint32_t m_nComponentBits;
   uint32_t m_nFlagBits;
-  uint32_t m_nComps;
+  uint32_t m_nComponents;
   uint32_t m_CoordMax;
-  uint32_t m_CompMax;
+  uint32_t m_ComponentMax;
   FX_FLOAT m_xmin;
   FX_FLOAT m_xmax;
   FX_FLOAT m_ymin;
   FX_FLOAT m_ymax;
-  FX_FLOAT m_ColorMin[kMaxResults];
-  FX_FLOAT m_ColorMax[kMaxResults];
+  FX_FLOAT m_ColorMin[kMaxComponents];
+  FX_FLOAT m_ColorMax[kMaxComponents];
   CPDF_StreamAcc m_Stream;
   CFX_BitStream m_BitStream;
 };
