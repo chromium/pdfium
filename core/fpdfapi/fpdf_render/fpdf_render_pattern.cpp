@@ -411,8 +411,9 @@ void DrawFreeGouraudShading(
     int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
-  CPDF_MeshStream stream(funcs, pCS);
-  if (!stream.Load(pShadingStream))
+  CPDF_MeshStream stream(kFreeFormGouraudTriangleMeshShading, funcs,
+                         pShadingStream, pCS);
+  if (!stream.Load())
     return;
 
   CPDF_MeshVertex triangle[3];
@@ -450,8 +451,9 @@ void DrawLatticeGouraudShading(
   if (row_verts < 2)
     return;
 
-  CPDF_MeshStream stream(funcs, pCS);
-  if (!stream.Load(pShadingStream))
+  CPDF_MeshStream stream(kLatticeFormGouraudTriangleMeshShading, funcs,
+                         pShadingStream, pCS);
+  if (!stream.Load())
     return;
 
   std::unique_ptr<CPDF_MeshVertex, FxFreeDeleter> vertex(
@@ -724,24 +726,8 @@ struct CPDF_PatchDrawer {
   }
 };
 
-bool CheckCoonTensorPara(const CPDF_MeshStream& stream) {
-  uint32_t coord = stream.CoordBits();
-  bool bCoordBitsValid =
-      (coord == 1 || coord == 2 || coord == 4 || coord == 8 || coord == 12 ||
-       coord == 16 || coord == 24 || coord == 32);
-
-  uint32_t comp = stream.CompBits();
-  bool bCompBitsValid = (comp == 1 || comp == 2 || comp == 4 || comp == 8 ||
-                         comp == 12 || comp == 16);
-
-  uint32_t flag = stream.FlagBits();
-  bool bFlagBitsValid = (flag == 2 || flag == 4 || flag == 8);
-
-  return bCoordBitsValid && bCompBitsValid && bFlagBitsValid;
-}
-
 void DrawCoonPatchMeshes(
-    FX_BOOL bTensor,
+    ShadingType type,
     CFX_DIBitmap* pBitmap,
     CFX_Matrix* pObject2Bitmap,
     CPDF_Stream* pShadingStream,
@@ -750,13 +736,13 @@ void DrawCoonPatchMeshes(
     int fill_mode,
     int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
+  ASSERT(type == kCoonsPatchMeshShading ||
+         type == kTensorProductPatchMeshShading);
 
   CFX_FxgeDevice device;
   device.Attach(pBitmap, false, nullptr, false);
-  CPDF_MeshStream stream(funcs, pCS);
-  if (!stream.Load(pShadingStream))
-    return;
-  if (!CheckCoonTensorPara(stream))
+  CPDF_MeshStream stream(type, funcs, pShadingStream, pCS);
+  if (!stream.Load())
     return;
 
   CPDF_PatchDrawer patch;
@@ -766,11 +752,10 @@ void DrawCoonPatchMeshes(
   patch.path.SetPointCount(13);
   FX_PATHPOINT* pPoints = patch.path.GetPoints();
   pPoints[0].m_Flag = FXPT_MOVETO;
-  for (int i = 1; i < 13; i++) {
+  for (int i = 1; i < 13; i++)
     pPoints[i].m_Flag = FXPT_BEZIERTO;
-  }
   CFX_PointF coords[16];
-  int point_count = bTensor ? 16 : 12;
+  int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
   while (!stream.BitStream()->IsEOF()) {
     uint32_t flag = stream.GetFlag();
     int iStartPoint = 0, iStartColor = 0, i = 0;
@@ -934,10 +919,8 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
       if (CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject())) {
-        DrawCoonPatchMeshes(
-            pPattern->GetShadingType() == kTensorProductPatchMeshShading,
-            pBitmap, &FinalMatrix, pStream, funcs, pColorSpace, fill_mode,
-            alpha);
+        DrawCoonPatchMeshes(pPattern->GetShadingType(), pBitmap, &FinalMatrix,
+                            pStream, funcs, pColorSpace, fill_mode, alpha);
       }
     } break;
   }

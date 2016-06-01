@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -29,12 +30,14 @@ class CPDF_Stream;
 
 class CPDF_MeshStream {
  public:
-  CPDF_MeshStream(const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+  CPDF_MeshStream(ShadingType type,
+                  const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+                  CPDF_Stream* pShadingStream,
                   CPDF_ColorSpace* pCS);
 
-  bool Load(CPDF_Stream* pShadingStream);
-  uint32_t GetFlag();
+  bool Load();
 
+  uint32_t GetFlag();
   void GetCoords(FX_FLOAT& x, FX_FLOAT& y);
   void GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b);
 
@@ -44,13 +47,15 @@ class CPDF_MeshStream {
                        CFX_Matrix* pObject2Bitmap);
 
   CFX_BitStream* BitStream() { return &m_BitStream; }
-  uint32_t CoordBits() const { return m_nCoordBits; }
   uint32_t CompBits() const { return m_nCompBits; }
-  uint32_t FlagBits() const { return m_nFlagBits; }
   uint32_t comps() const { return m_nComps; }
 
  private:
+  static const uint32_t kMaxResults = 8;
+
+  const ShadingType m_type;
   const std::vector<std::unique_ptr<CPDF_Function>>& m_funcs;
+  CPDF_Stream* const m_pShadingStream;
   CPDF_ColorSpace* const m_pCS;
   uint32_t m_nCoordBits;
   uint32_t m_nCompBits;
@@ -62,8 +67,8 @@ class CPDF_MeshStream {
   FX_FLOAT m_xmax;
   FX_FLOAT m_ymin;
   FX_FLOAT m_ymax;
-  FX_FLOAT m_ColorMin[8];
-  FX_FLOAT m_ColorMax[8];
+  FX_FLOAT m_ColorMin[kMaxResults];
+  FX_FLOAT m_ColorMax[kMaxResults];
   CPDF_StreamAcc m_Stream;
   CFX_BitStream m_BitStream;
 };

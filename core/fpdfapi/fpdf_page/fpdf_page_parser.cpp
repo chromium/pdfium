@@ -106,8 +106,8 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
   if (!pStream || !pCS)
     return CFX_FloatRect(0, 0, 0, 0);
 
-  CPDF_MeshStream stream(pShading->GetFuncs(), pCS);
-  if (!stream.Load(pStream))
+  CPDF_MeshStream stream(type, pShading->GetFuncs(), pStream, pCS);
+  if (!stream.Load())
     return CFX_FloatRect(0, 0, 0, 0);
 
   CFX_FloatRect rect;

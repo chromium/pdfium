@@ -44,17 +44,46 @@ bool IsValidBitsPerCoordinate(uint32_t x) {
   }
 }
 
+// See PDF Reference 1.7, page 315, table 4.32. (Also table 4.34)
+bool ShouldCheckBitsPerFlag(ShadingType type) {
+  switch (type) {
+    case kFreeFormGouraudTriangleMeshShading:
+    case kCoonsPatchMeshShading:
+    case kTensorProductPatchMeshShading:
+      return true;
+    default:
+      return false;
+  }
+}
+
+// Same references as ShouldCheckBitsPerFlag() above.
+bool IsValidBitsPerFlag(uint32_t x) {
+  switch (x) {
+    case 2:
+    case 4:
+    case 8:
+      return true;
+    default:
+      return false;
+  }
+}
+
 }  // namespace
 
 CPDF_MeshStream::CPDF_MeshStream(
+    ShadingType type,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+    CPDF_Stream* pShadingStream,
     CPDF_ColorSpace* pCS)
-    : m_funcs(funcs), m_pCS(pCS) {}
+    : m_type(type),
+      m_funcs(funcs),
+      m_pShadingStream(pShadingStream),
+      m_pCS(pCS) {}
 
-bool CPDF_MeshStream::Load(CPDF_Stream* pShadingStream) {
-  m_Stream.LoadAllData(pShadingStream);
+bool CPDF_MeshStream::Load() {
+  m_Stream.LoadAllData(m_pShadingStream);
   m_BitStream.Init(m_Stream.GetData(), m_Stream.GetSize());
-  CPDF_Dictionary* pDict = pShadingStream->GetDict();
+  CPDF_Dictionary* pDict = m_pShadingStream->GetDict();
   m_nCoordBits = pDict->GetIntegerBy("BitsPerCoordinate");
   if (!IsValidBitsPerCoordinate(m_nCoordBits))
     return false;
@@ -64,6 +93,9 @@ bool CPDF_MeshStream::Load(CPDF_Stream* pShadingStream) {
     return false;
 
   m_nFlagBits = pDict->GetIntegerBy("BitsPerFlag");
+  if (ShouldCheckBitsPerFlag(m_type) && !IsValidBitsPerFlag(m_nFlagBits))
+    return false;
+
   uint32_t nComps = m_pCS->CountComponents();
   if (nComps > 8)
     return false;
@@ -87,6 +119,7 @@ bool CPDF_MeshStream::Load(CPDF_Stream* pShadingStream) {
 }
 
 uint32_t CPDF_MeshStream::GetFlag() {
+  ASSERT(ShouldCheckBitsPerFlag(m_type));
   return m_BitStream.GetBits(m_nFlagBits) & 0x03;
 }
 
@@ -105,7 +138,6 @@ void CPDF_MeshStream::GetCoords(FX_FLOAT& x, FX_FLOAT& y) {
 }
 
 void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
-  static const int kMaxResults = 8;
   FX_FLOAT color_value[kMaxResults];
   for (uint32_t i = 0; i < m_nComps; ++i) {
     color_value[i] = m_ColorMin[i] +
