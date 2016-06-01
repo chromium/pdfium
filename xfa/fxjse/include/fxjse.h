@@ -69,8 +69,8 @@ struct FXJSE_CLASS_DESCRIPTOR {
 void FXJSE_Initialize();
 void FXJSE_Finalize();
 
-v8::Isolate* FXJSE_Runtime_Create();
-void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime);
+v8::Isolate* FXJSE_Runtime_Create_Own();
+void FXJSE_Runtime_Release(v8::Isolate* pIsolate);
 
 CFXJSE_Context* FXJSE_Context_Create(
     v8::Isolate* pIsolate,

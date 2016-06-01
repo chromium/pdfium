@@ -15,39 +15,32 @@
 class CFXJSE_RuntimeList;
 
 class CFXJSE_RuntimeData {
- protected:
-  CFXJSE_RuntimeData(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
-
  public:
-  static CFXJSE_RuntimeData* Create(v8::Isolate* pIsolate);
   static CFXJSE_RuntimeData* Get(v8::Isolate* pIsolate);
 
- public:
   v8::Isolate* m_pIsolate;
   v8::Global<v8::FunctionTemplate> m_hRootContextGlobalTemplate;
   v8::Global<v8::Context> m_hRootContext;
 
- public:
-  static CFXJSE_RuntimeList* g_RuntimeList;
-
  protected:
+  static CFXJSE_RuntimeData* Create(v8::Isolate* pIsolate);
+  CFXJSE_RuntimeData(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
   CFXJSE_RuntimeData();
   CFXJSE_RuntimeData(const CFXJSE_RuntimeData&);
   CFXJSE_RuntimeData& operator=(const CFXJSE_RuntimeData&);
 };
 
-class CFXJSE_RuntimeList {
+class CFXJSE_IsolateTracker {
  public:
-  typedef void (*RuntimeDisposeCallback)(v8::Isolate*);
+  typedef void (*DisposeCallback)(v8::Isolate*, bool bOwnedIsolate);
+  static CFXJSE_IsolateTracker* g_pInstance;
 
- public:
-  void AppendRuntime(v8::Isolate* pIsolate);
-  void RemoveRuntime(v8::Isolate* pIsolate,
-                     RuntimeDisposeCallback lpfnDisposeCallback);
-  void RemoveAllRuntimes(RuntimeDisposeCallback lpfnDisposeCallback);
+  void Append(v8::Isolate* pIsolate);
+  void Remove(v8::Isolate* pIsolate, DisposeCallback lpfnDisposeCallback);
+  void RemoveAll(DisposeCallback lpfnDisposeCallback);
 
  protected:
-  std::vector<v8::Isolate*> m_RuntimeList;
+  std::vector<v8::Isolate*> m_OwnedIsolates;
 };
 
 #endif  // XFA_FXJSE_RUNTIME_H_

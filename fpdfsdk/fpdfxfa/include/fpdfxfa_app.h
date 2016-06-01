@@ -87,7 +87,6 @@ class CPDFXFA_App : public IXFA_AppProvider {
   v8::Isolate* m_pIsolate;
   IFXJS_Runtime* m_pJSRuntime;
   CFX_WideString m_csAppType;
-  bool m_bOwnedRuntime;
 };
 
 #endif  // FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_APP_H_

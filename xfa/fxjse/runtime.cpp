@@ -24,56 +24,49 @@ static void FXJSE_KillV8() {
 }
 
 void FXJSE_Initialize() {
-  if (!CFXJSE_RuntimeData::g_RuntimeList) {
-    CFXJSE_RuntimeData::g_RuntimeList = new CFXJSE_RuntimeList;
-  }
+  if (!CFXJSE_IsolateTracker::g_pInstance)
+    CFXJSE_IsolateTracker::g_pInstance = new CFXJSE_IsolateTracker;
+
   static FX_BOOL bV8Initialized = FALSE;
-  if (bV8Initialized) {
+  if (bV8Initialized)
     return;
-  }
+
   bV8Initialized = TRUE;
   atexit(FXJSE_KillV8);
 }
 
-static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate) {
+static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate, bool bOwned) {
   if (FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate)) {
     delete pData->m_pFXJSERuntimeData;
     pData->m_pFXJSERuntimeData = nullptr;
   }
-  pIsolate->Dispose();
+  if (bOwned)
+    pIsolate->Dispose();
 }
 
 void FXJSE_Finalize() {
-  if (CFXJSE_RuntimeData::g_RuntimeList) {
-    CFXJSE_RuntimeData::g_RuntimeList->RemoveAllRuntimes(
-        FXJSE_Runtime_DisposeCallback);
-    delete CFXJSE_RuntimeData::g_RuntimeList;
-    CFXJSE_RuntimeData::g_RuntimeList = NULL;
-  }
+  if (!CFXJSE_IsolateTracker::g_pInstance)
+    return;
+
+  CFXJSE_IsolateTracker::g_pInstance->RemoveAll(FXJSE_Runtime_DisposeCallback);
+  delete CFXJSE_IsolateTracker::g_pInstance;
+  CFXJSE_IsolateTracker::g_pInstance = nullptr;
 }
 
-v8::Isolate* FXJSE_Runtime_Create() {
+v8::Isolate* FXJSE_Runtime_Create_Own() {
   v8::Isolate::CreateParams params;
   params.array_buffer_allocator = new FXJSE_ArrayBufferAllocator();
   v8::Isolate* pIsolate = v8::Isolate::New(params);
-  ASSERT(pIsolate && CFXJSE_RuntimeData::g_RuntimeList);
-  CFXJSE_RuntimeData::g_RuntimeList->AppendRuntime(pIsolate);
+  ASSERT(pIsolate && CFXJSE_IsolateTracker::g_pInstance);
+  CFXJSE_IsolateTracker::g_pInstance->Append(pIsolate);
   return pIsolate;
 }
 
-void FXJSE_Runtime_Release(v8::Isolate* pIsolate, bool bOwnedRuntime) {
+void FXJSE_Runtime_Release(v8::Isolate* pIsolate) {
   if (!pIsolate)
     return;
-  if (bOwnedRuntime) {
-    ASSERT(CFXJSE_RuntimeData::g_RuntimeList);
-    CFXJSE_RuntimeData::g_RuntimeList->RemoveRuntime(
-        pIsolate, FXJSE_Runtime_DisposeCallback);
-  } else {
-    if (FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate)) {
-      delete pData->m_pFXJSERuntimeData;
-      pData->m_pFXJSERuntimeData = nullptr;
-    }
-  }
+  CFXJSE_IsolateTracker::g_pInstance->Remove(pIsolate,
+                                             FXJSE_Runtime_DisposeCallback);
 }
 
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
@@ -97,27 +90,26 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
   return pData->m_pFXJSERuntimeData;
 }
 
-CFXJSE_RuntimeList* CFXJSE_RuntimeData::g_RuntimeList = nullptr;
+CFXJSE_IsolateTracker* CFXJSE_IsolateTracker::g_pInstance = nullptr;
 
-void CFXJSE_RuntimeList::AppendRuntime(v8::Isolate* pIsolate) {
-  m_RuntimeList.push_back(pIsolate);
+void CFXJSE_IsolateTracker::Append(v8::Isolate* pIsolate) {
+  m_OwnedIsolates.push_back(pIsolate);
 }
 
-void CFXJSE_RuntimeList::RemoveRuntime(
+void CFXJSE_IsolateTracker::Remove(
     v8::Isolate* pIsolate,
-    CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback) {
-  auto it = std::find(m_RuntimeList.begin(), m_RuntimeList.end(), pIsolate);
-  if (it != m_RuntimeList.end())
-    m_RuntimeList.erase(it);
-  if (lpfnDisposeCallback)
-    lpfnDisposeCallback(pIsolate);
+    CFXJSE_IsolateTracker::DisposeCallback lpfnDisposeCallback) {
+  auto it = std::find(m_OwnedIsolates.begin(), m_OwnedIsolates.end(), pIsolate);
+  bool bFound = it != m_OwnedIsolates.end();
+  if (bFound)
+    m_OwnedIsolates.erase(it);
+  lpfnDisposeCallback(pIsolate, bFound);
 }
 
-void CFXJSE_RuntimeList::RemoveAllRuntimes(
-    CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback) {
-  if (lpfnDisposeCallback) {
-    for (v8::Isolate* pIsolate : m_RuntimeList)
-      lpfnDisposeCallback(pIsolate);
-  }
-  m_RuntimeList.clear();
+void CFXJSE_IsolateTracker::RemoveAll(
+    CFXJSE_IsolateTracker::DisposeCallback lpfnDisposeCallback) {
+  for (v8::Isolate* pIsolate : m_OwnedIsolates)
+    lpfnDisposeCallback(pIsolate, true);
+
+  m_OwnedIsolates.clear();
 }

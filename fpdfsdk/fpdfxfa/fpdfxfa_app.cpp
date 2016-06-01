@@ -32,8 +32,7 @@ CPDFXFA_App::CPDFXFA_App()
     : m_bJavaScriptInitialized(FALSE),
       m_pXFAApp(NULL),
       m_pIsolate(nullptr),
-      m_csAppType(JS_STR_VIEWERTYPE_STANDARD),
-      m_bOwnedRuntime(false) {
+      m_csAppType(JS_STR_VIEWERTYPE_STANDARD) {
   m_pEnvList.RemoveAll();
 }
 
@@ -41,29 +40,25 @@ CPDFXFA_App::~CPDFXFA_App() {
   delete m_pXFAApp;
   m_pXFAApp = NULL;
 
-#ifdef PDF_ENABLE_XFA
-  FXJSE_Runtime_Release(m_pIsolate, m_bOwnedRuntime);
+  FXJSE_Runtime_Release(m_pIsolate);
   m_pIsolate = nullptr;
 
   FXJSE_Finalize();
   BC_Library_Destory();
-#endif
 }
 
 FX_BOOL CPDFXFA_App::Initialize(v8::Isolate* pIsolate) {
-#ifdef PDF_ENABLE_XFA
   BC_Library_Init();
   FXJSE_Initialize();
 
-  m_bOwnedRuntime = !pIsolate;
-  m_pIsolate = pIsolate ? pIsolate : FXJSE_Runtime_Create();
+  m_pIsolate = pIsolate ? pIsolate : FXJSE_Runtime_Create_Own();
   if (!m_pIsolate)
     return FALSE;
 
   m_pXFAApp = new CXFA_FFApp(this);
   m_pXFAApp->SetDefaultFontMgr(
       std::unique_ptr<CXFA_DefFontMgr>(new CXFA_DefFontMgr));
-#endif
+
   return TRUE;
 }
 
