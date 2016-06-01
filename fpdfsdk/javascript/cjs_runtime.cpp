@@ -88,7 +88,6 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
 
   v8::Isolate* isolate = m_isolate;
   v8::Isolate::Scope isolate_scope(isolate);
-  v8::Locker locker(isolate);
   v8::HandleScope handle_scope(isolate);
   if (CPDFXFA_App::GetInstance()->IsJavaScriptInitialized()) {
     CJS_Context* pContext = (CJS_Context*)NewContext();
@@ -128,9 +127,6 @@ CJS_Runtime::~CJS_Runtime() {
 
 void CJS_Runtime::DefineJSObjects() {
   v8::Isolate::Scope isolate_scope(GetIsolate());
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(GetIsolate());
-#endif
   v8::HandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> context = v8::Context::New(GetIsolate());
   v8::Context::Scope context_scope(context);
@@ -197,9 +193,6 @@ IJS_Context* CJS_Runtime::GetCurrentContext() {
 void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
   if (m_pDocument != pReaderDoc) {
     v8::Isolate::Scope isolate_scope(m_isolate);
-#ifdef PDF_ENABLE_XFA
-    v8::Locker locker(m_isolate);
-#endif
     v8::HandleScope handle_scope(m_isolate);
     v8::Local<v8::Context> context =
         v8::Local<v8::Context>::New(m_isolate, m_context);
@@ -265,7 +258,6 @@ FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
 #ifdef PDF_ENABLE_XFA
   const FX_CHAR* name = utf8Name.c_str();
 
-  v8::Locker lock(GetIsolate());
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> old_context = GetIsolate()->GetCurrentContext();
@@ -302,7 +294,6 @@ FX_BOOL CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
     return FALSE;
   const FX_CHAR* name = utf8Name.c_str();
   v8::Isolate* pIsolate = GetIsolate();
-  v8::Locker lock(pIsolate);
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> context =

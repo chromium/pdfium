@@ -312,9 +312,6 @@ void FXJS_InitializeRuntime(
     ++g_isolate_ref_count;
 
   v8::Isolate::Scope isolate_scope(pIsolate);
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(pIsolate);
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> v8Context =
       v8::Context::New(pIsolate, NULL, GetGlobalObjectTemplate(pIsolate));
@@ -363,9 +360,6 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          v8::Global<v8::Context>* pV8PersistentContext,
                          std::vector<v8::Global<v8::Object>*>* pStaticObjects) {
   v8::Isolate::Scope isolate_scope(pIsolate);
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(pIsolate);
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> context =
       v8::Local<v8::Context>::New(pIsolate, *pV8PersistentContext);

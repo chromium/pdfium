@@ -14,7 +14,6 @@ class CFXJSE_ScopeUtil_IsolateHandle {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandle(v8::Isolate* pIsolate)
       : m_isolate(pIsolate),
-        m_locker(pIsolate),
         m_iscope(pIsolate),
         m_hscope(pIsolate) {}
   v8::Isolate* GetIsolate() { return m_isolate; }
@@ -27,7 +26,6 @@ class CFXJSE_ScopeUtil_IsolateHandle {
   void operator delete(void*, size_t) = delete;
 
   v8::Isolate* m_isolate;
-  v8::Locker m_locker;
   v8::Isolate::Scope m_iscope;
   v8::HandleScope m_hscope;
 };

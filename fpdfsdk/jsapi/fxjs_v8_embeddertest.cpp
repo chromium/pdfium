@@ -36,9 +36,6 @@ class FXJSV8EmbedderTest : public JSEmbedderTest {
 
 TEST_F(FXJSV8EmbedderTest, Getters) {
   v8::Isolate::Scope isolate_scope(isolate());
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(isolate());
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
@@ -48,9 +45,6 @@ TEST_F(FXJSV8EmbedderTest, Getters) {
 
 TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
   v8::Isolate::Scope isolate_scope(isolate());
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(isolate());
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(isolate());
 
   v8::Global<v8::Context> global_context1;

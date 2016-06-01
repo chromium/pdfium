@@ -30,9 +30,6 @@ CPDFDoc_Environment* CJS_Context::GetReaderApp() {
 FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
                                CFX_WideString* info) {
   v8::Isolate::Scope isolate_scope(m_pRuntime->GetIsolate());
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(m_pRuntime->GetIsolate());
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(m_pRuntime->GetIsolate());
   v8::Local<v8::Context> context = m_pRuntime->NewJSContext();
   v8::Context::Scope context_scope(context);

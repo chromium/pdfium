@@ -36,12 +36,9 @@ void FXJSE_Initialize() {
 }
 
 static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate) {
-  {
-    v8::Locker locker(pIsolate);
-    if (FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate)) {
-      delete pData->m_pFXJSERuntimeData;
-      pData->m_pFXJSERuntimeData = nullptr;
-    }
+  if (FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate)) {
+    delete pData->m_pFXJSERuntimeData;
+    pData->m_pFXJSERuntimeData = nullptr;
   }
   pIsolate->Dispose();
 }

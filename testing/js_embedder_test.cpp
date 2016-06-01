@@ -19,9 +19,6 @@ void JSEmbedderTest::SetUp() {
   EmbedderTest::SetUp();
 
   v8::Isolate::Scope isolate_scope(m_pIsolate);
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(m_pIsolate);
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(m_pIsolate);
   FXJS_PerIsolateData::SetUp(m_pIsolate);
   FXJS_InitializeRuntime(m_pIsolate, nullptr, &m_pPersistentContext,

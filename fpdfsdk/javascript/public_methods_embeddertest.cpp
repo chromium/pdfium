@@ -21,9 +21,6 @@ class PublicMethodsEmbedderTest : public JSEmbedderTest {};
 
 TEST_F(PublicMethodsEmbedderTest, MakeRegularDate) {
   v8::Isolate::Scope isolate_scope(isolate());
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(isolate());
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
   bool bWrongFormat;
@@ -104,9 +101,6 @@ TEST_F(PublicMethodsEmbedderTest, MakeRegularDate) {
 
 TEST_F(PublicMethodsEmbedderTest, MakeFormatDate) {
   v8::Isolate::Scope isolate_scope(isolate());
-#ifdef PDF_ENABLE_XFA
-  v8::Locker locker(isolate());
-#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
   CFX_WideString formatted_date;
