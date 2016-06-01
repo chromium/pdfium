@@ -432,6 +432,10 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static void ValueToUTF8String(CFXJSE_Value* pValue,
                                 CFX_ByteString& outputValue);
 
+  static int32_t Translate(const CFX_WideStringC& wsFormcalc,
+                           CFX_WideTextBuf& wsJavascript,
+                           CFX_WideString& wsError);
+
   CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
                     CFXJSE_Context* pScriptContext,
                     CXFA_Document* pDoc);

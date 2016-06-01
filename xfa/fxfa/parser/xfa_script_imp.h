@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
+#include "xfa/fxfa/fm2js/xfa_fm2jscontext.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
@@ -112,7 +112,7 @@ class CXFA_ScriptContext {
   CFX_ArrayTemplate<CXFA_NodeList*> m_CacheListArray;
   CXFA_NodeArray* m_pScriptNodeArray;
   CXFA_ResolveProcessor* m_pResolveProcessor;
-  XFA_HFM2JSCONTEXT m_hFM2JSContext;
+  CXFA_FM2JSContext* m_hFM2JSContext;
   CXFA_Object* m_pThisObject;
   uint32_t m_dwBuiltInInFlags;
   XFA_ATTRIBUTEENUM m_eRunAtType;

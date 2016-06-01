@@ -8,7 +8,6 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
-#include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -65,6 +64,8 @@ const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor = {
     CXFA_ScriptContext::NormalMethodCall,
 };
 
+const char kFormCalcRuntime[] = "foxit_xfa_formcalc_runtime";
+
 }  // namespace
 
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
@@ -80,6 +81,7 @@ CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
       m_dwBuiltInInFlags(0),
       m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {
 }
+
 CXFA_ScriptContext::~CXFA_ScriptContext() {
   FX_POSITION ps = m_mapXFAToValue.GetStartPosition();
   while (ps) {
@@ -90,10 +92,9 @@ CXFA_ScriptContext::~CXFA_ScriptContext() {
   }
   m_mapXFAToValue.RemoveAll();
   ReleaseVariablesMap();
-  if (m_hFM2JSContext) {
-    XFA_FM2JS_ContextRelease(m_hFM2JSContext);
-    m_hFM2JSContext = NULL;
-  }
+
+  delete m_hFM2JSContext;
+
   if (m_pJsContext) {
     FXJSE_Context_Release(m_pJsContext);
     m_pJsContext = NULL;
@@ -119,11 +120,12 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   if (eScriptType == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (!m_hFM2JSContext) {
       m_hFM2JSContext =
-          XFA_FM2JS_ContextCreate(m_pIsolate, m_pJsContext, m_pDocument);
+          new CXFA_FM2JSContext(m_pIsolate, m_pJsContext, m_pDocument);
     }
     CFX_WideTextBuf wsJavaScript;
     CFX_WideString wsErrorInfo;
-    int32_t iFlags = XFA_FM2JS_Translate(wsScript, wsJavaScript, wsErrorInfo);
+    int32_t iFlags =
+        CXFA_FM2JSContext::Translate(wsScript, wsJavaScript, wsErrorInfo);
     if (iFlags) {
       FXJSE_Value_SetUndefined(hRetValue);
       return FALSE;
@@ -210,8 +212,8 @@ void CXFA_ScriptContext::GlobalPropertyGetter(CFXJSE_Value* pObject,
   CXFA_Object* lpCurNode = lpScriptContext->GetVariablesThis(pOriginalObject);
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   if (lpScriptContext->GetType() == XFA_SCRIPTLANGTYPE_Formcalc) {
-    if (szPropName == FOXIT_XFA_FM2JS_FORMCALC_RUNTIME) {
-      XFA_FM2JS_GlobalPropertyGetter(lpScriptContext->m_hFM2JSContext, pValue);
+    if (szPropName == kFormCalcRuntime) {
+      lpScriptContext->m_hFM2JSContext->GlobalPropertyGetter(pValue);
       return;
     }
     XFA_HashCode uHashCode = static_cast<XFA_HashCode>(

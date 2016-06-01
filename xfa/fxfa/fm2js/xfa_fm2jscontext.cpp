@@ -11,7 +11,7 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fgas/localization/fgas_locale.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
-#include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
+#include "xfa/fxfa/fm2js/xfa_program.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
@@ -3404,7 +3404,7 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
       CFX_WideTextBuf wsJavaScriptBuf;
       CFX_WideString javaScript;
       CFX_WideString wsError;
-      XFA_FM2JS_Translate(
+      CXFA_FM2JSContext::Translate(
           CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
           wsJavaScriptBuf, wsError);
       CFXJSE_Context* pContext =
@@ -6417,7 +6417,8 @@ void CXFA_FM2JSContext::eval_translation(CFXJSE_Value* pThis,
           CFX_WideString::FromUTF8(argString.AsStringC());
       CFX_WideTextBuf wsJavaScriptBuf;
       CFX_WideString wsError;
-      XFA_FM2JS_Translate(scriptString.AsStringC(), wsJavaScriptBuf, wsError);
+      CXFA_FM2JSContext::Translate(scriptString.AsStringC(), wsJavaScriptBuf,
+                                   wsError);
       if (wsError.IsEmpty()) {
         CFX_WideString javaScript = wsJavaScriptBuf.MakeString();
         FXJSE_Value_SetUTF8String(
@@ -7120,6 +7121,31 @@ void CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg,
     szOutputString = "";
     FXJSE_Value_ToUTF8String(arg, szOutputString);
   }
+}
+
+// static.
+int32_t CXFA_FM2JSContext::Translate(const CFX_WideStringC& wsFormcalc,
+                                     CFX_WideTextBuf& wsJavascript,
+                                     CFX_WideString& wsError) {
+  if (wsFormcalc.IsEmpty()) {
+    wsJavascript.Clear();
+    wsError.clear();
+    return 0;
+  }
+  int32_t status = 0;
+  CXFA_FMProgram program;
+  status = program.Init(wsFormcalc);
+  if (status) {
+    wsError = program.GetError().message;
+    return status;
+  }
+  status = program.ParseProgram();
+  if (status) {
+    wsError = program.GetError().message;
+    return status;
+  }
+  program.TranslateProgram(wsJavascript);
+  return 0;
 }
 
 CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,

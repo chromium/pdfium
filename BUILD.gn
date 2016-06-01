@@ -1413,8 +1413,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/fm2js/xfa_error.h",
       "xfa/fxfa/fm2js/xfa_expression.cpp",
       "xfa/fxfa/fm2js/xfa_expression.h",
-      "xfa/fxfa/fm2js/xfa_fm2jsapi.cpp",
-      "xfa/fxfa/fm2js/xfa_fm2jsapi.h",
       "xfa/fxfa/fm2js/xfa_fm2jscontext.cpp",
       "xfa/fxfa/fm2js/xfa_fm2jscontext.h",
       "xfa/fxfa/fm2js/xfa_fmparse.cpp",
