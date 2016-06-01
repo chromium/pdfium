@@ -359,20 +359,20 @@ const FXJSE_CLASS_DESCRIPTOR formcalc_fm2js_descriptor = {
 };
 
 const uint8_t g_sAltTable_Date[] = {
-    255, 255, 255, 3,   9,   255, 255, 255, 255, 255, 255, 255, 2,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 1,   255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 3,   9,   255, 255, 255, 255, 255, 255,
+    255, 2,   255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 1,   255, 255, 255, 255, 255, 255, 255, 255,
 };
+static_assert(FX_ArraySize(g_sAltTable_Date) == L'a' - L'A' + 1,
+              "Invalid g_sAltTable_Date size.");
 
 const uint8_t g_sAltTable_Time[] = {
-    14,  255, 255, 3,   9,   255, 255, 15,  255, 255, 255, 255, 6,
-    255, 255, 255, 255, 255, 7,   255, 255, 255, 255, 255, 1,   17,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    15,  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    14,  255, 255, 3,   9,   255, 255, 15,  255, 255, 255,
+    255, 6,   255, 255, 255, 255, 255, 7,   255, 255, 255,
+    255, 255, 1,   17,  255, 255, 255, 255, 255, 255, 255,
 };
+static_assert(FX_ArraySize(g_sAltTable_Time) == L'a' - L'A' + 1,
+              "Invalid g_sAltTable_Time size.");
 
 void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
                               const CFX_WideString& wsAltSymbols,
@@ -380,7 +380,7 @@ void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
   int32_t nLength = wsPattern.GetLength();
   FX_BOOL bInConstRange = FALSE;
   FX_BOOL bEscape = FALSE;
-  int32_t i = 0, n = 0;
+  int32_t i = 0;
   while (i < nLength) {
     FX_WCHAR wc = wsPattern[i];
     if (wc == L'\'') {
@@ -394,8 +394,8 @@ void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
       bEscape = !bEscape;
       continue;
     }
-    if (!bInConstRange && (n = wc - L'A') >= 0 && n <= (L'a' - L'A')) {
-      int32_t nAlt = (int32_t)pAltTable[n];
+    if (!bInConstRange && wc >= L'A' && wc <= L'a') {
+      uint8_t nAlt = pAltTable[wc - L'A'];
       if (nAlt != 255)
         wsPattern.SetAt(i, wsAltSymbols[nAlt]);
     }
@@ -4228,7 +4228,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
     } else if (ch >= 0x20 && ch <= 0x7e) {
       wsResultBuf.AppendChar(ch);
     } else {
-      int32_t iRadix = 16;
+      const FX_WCHAR iRadix = 16;
       CFX_WideString strTmp;
       while (ch >= iRadix) {
         FX_WCHAR tmp = strCode[ch % iRadix];
