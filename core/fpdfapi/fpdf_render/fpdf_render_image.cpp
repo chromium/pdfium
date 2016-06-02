@@ -48,7 +48,15 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   if (blend_mode == FXDIB_BLEND_NORMAL) {
     if (!pDIBitmap->IsAlphaMask()) {
       if (bitmap_alpha < 255) {
+#ifdef _SKIA_SUPPORT_
+        void* dummy;
+        CFX_Matrix m(pDIBitmap->GetWidth(), 0, 0, -pDIBitmap->GetHeight(), left,
+                     top + pDIBitmap->GetHeight());
+        m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, &m, 0, dummy);
+        return;
+#else
         pDIBitmap->MultiplyAlpha(bitmap_alpha);
+#endif
       }
       if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
         return;
@@ -693,6 +701,9 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
     }
     bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_8bppMask);
     bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
+#ifdef _SKIA_SUPPORT_
+    bitmap_device1.PreMultiply();  // convert unpremultiplied to premultiplied
+#endif
     if (m_BitmapAlpha < 255) {
       bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);
     }

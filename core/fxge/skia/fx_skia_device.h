@@ -114,8 +114,12 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       int alpha_flag = 0,
                       void* pIccTransform = NULL,
                       int blend_type = FXDIB_BLEND_NORMAL) override;
-  FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) override;
-  void CancelDIBits(void* handle) override;
+
+  FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) override {
+    return FALSE;
+  }
+
+  void CancelDIBits(void* handle) override {}
 
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
@@ -138,6 +142,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                    const CFX_GraphStateData* pGraphState,
                    const SkMatrix& matrix);
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
+  void PreMultiply();
 
  private:
   CFX_DIBitmap* m_pBitmap;

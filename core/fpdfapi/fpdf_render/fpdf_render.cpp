@@ -815,14 +815,19 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     bitmap->MultiplyAlpha(pTextMask.get());
     pTextMask.reset();
   }
+  int32_t blitAlpha = 255;
   if (Transparency & PDFTRANS_GROUP && group_alpha != 1.0f) {
-    bitmap->MultiplyAlpha((int32_t)(group_alpha * 255));
+    blitAlpha = (int32_t)(group_alpha * 255);
+#ifndef _SKIA_SUPPORT_
+    bitmap->MultiplyAlpha(blitAlpha);
+    blitAlpha = 255;
+#endif
   }
   Transparency = m_Transparency;
   if (pPageObj->IsForm()) {
     Transparency |= PDFTRANS_GROUP;
   }
-  CompositeDIBitmap(bitmap, rect.left, rect.top, 0, 255, blend_type,
+  CompositeDIBitmap(bitmap, rect.left, rect.top, 0, blitAlpha, blend_type,
                     Transparency);
   return TRUE;
 }

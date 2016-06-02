@@ -81,6 +81,45 @@ void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {}
 #undef SHOW_SKIA_PATH
 #undef DRAW_SKIA_CLIP
 
+static void DebugVerifyBitmapIsPreMultiplied(void* buffer,
+                                             int width,
+                                             int height) {
+#ifdef SK_DEBUG
+  // verify that input is really premultiplied
+  for (int y = 0; y < height; ++y) {
+    const uint32_t* srcRow = static_cast<const uint32_t*>(buffer) + y * width;
+    for (int x = 0; x < width; ++x) {
+      uint8_t a = SkGetPackedA32(srcRow[x]);
+      uint8_t r = SkGetPackedR32(srcRow[x]);
+      uint8_t g = SkGetPackedG32(srcRow[x]);
+      uint8_t b = SkGetPackedB32(srcRow[x]);
+      SkA32Assert(a);
+      SkASSERT(r <= a);
+      SkASSERT(g <= a);
+      SkASSERT(b <= a);
+    }
+  }
+#endif
+}
+
+static void DebugValidate(const CFX_DIBitmap* bitmap,
+                          const CFX_DIBitmap* device) {
+  if (bitmap) {
+    SkASSERT(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
+    if (bitmap->GetBPP() == 32) {
+      DebugVerifyBitmapIsPreMultiplied(bitmap->GetBuffer(), bitmap->GetWidth(),
+                                       bitmap->GetHeight());
+    }
+  }
+  if (device) {
+    SkASSERT(device->GetBPP() == 8 || device->GetBPP() == 32);
+    if (device->GetBPP() == 32) {
+      DebugVerifyBitmapIsPreMultiplied(device->GetBuffer(), device->GetWidth(),
+                                       device->GetHeight());
+    }
+  }
+}
+
 SkPath BuildPath(const CFX_PathData* pPathData) {
   SkPath skPath;
   const CFX_PathData* pFPath = pPathData;
@@ -509,9 +548,11 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
   SkBitmap skBitmap;
-  SkImageInfo imageInfo =
-      SkImageInfo::Make(pBitmap->GetWidth(), pBitmap->GetHeight(),
-                        kN32_SkColorType, kOpaque_SkAlphaType);
+  SkASSERT(pBitmap->GetBPP() == 8 || pBitmap->GetBPP() == 32);
+  SkImageInfo imageInfo = SkImageInfo::Make(
+      pBitmap->GetWidth(), pBitmap->GetHeight(),
+      pBitmap->GetBPP() == 8 ? kAlpha_8_SkColorType : kN32_SkColorType,
+      kOpaque_SkAlphaType);
   skBitmap.installPixels(imageInfo, pBitmap->GetBuffer(), pBitmap->GetPitch(),
                          nullptr, /* to do : set color table */
                          nullptr, nullptr);
@@ -553,7 +594,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              uint32_t color,
                                              int alpha_flag,
                                              void* pIccTransform) {
-  CFX_TypeFace* typeface = pCache->GetDeviceCache(pFont);
+  sk_sp<SkTypeface> typeface(SkSafeRef(pCache->GetDeviceCache(pFont)));
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setColor(color);
@@ -932,15 +973,12 @@ FX_BOOL CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
                                         void* pIccTransform) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return TRUE;
-  if (pBitmap->IsAlphaMask()) {
-    return m_pBitmap->CompositeMask(
-        left, top, pSrcRect->Width(), pSrcRect->Height(), pBitmap, argb,
-        pSrcRect->left, pSrcRect->top, blend_type, nullptr, m_bRgbByteOrder,
-        alpha_flag, pIccTransform);
-  }
-  return m_pBitmap->CompositeBitmap(
-      left, top, pSrcRect->Width(), pSrcRect->Height(), pBitmap, pSrcRect->left,
-      pSrcRect->top, blend_type, nullptr, m_bRgbByteOrder, pIccTransform);
+
+  CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), left,
+               top + pBitmap->GetHeight());
+  void* dummy;
+  return this->StartDIBits(pBitmap, 0xFF, argb, &m, 0, dummy, alpha_flag,
+                           pIccTransform, blend_type);
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
@@ -956,27 +994,19 @@ FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
                                             int blend_type) {
   if (!m_pBitmap->GetBuffer())
     return TRUE;
-  if (dest_width == pSource->GetWidth() &&
-      dest_height == pSource->GetHeight()) {
-    FX_RECT rect(0, 0, dest_width, dest_height);
-    return SetDIBits(pSource, argb, &rect, dest_left, dest_top, blend_type,
-                     alpha_flag, pIccTransform);
-  }
-  FX_RECT dest_rect(dest_left, dest_top, dest_left + dest_width,
-                    dest_top + dest_height);
-  dest_rect.Normalize();
-  FX_RECT dest_clip = dest_rect;
-  dest_clip.Intersect(*pClipRect);
-  CFX_BitmapComposer composer;
-  composer.Compose(m_pBitmap, nullptr, 255, argb, dest_clip, FALSE, FALSE,
-                   FALSE, m_bRgbByteOrder, alpha_flag, pIccTransform,
-                   blend_type);
-  dest_clip.Offset(-dest_rect.left, -dest_rect.top);
-  CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
-                               dest_clip, flags);
-  if (stretcher.Start())
-    stretcher.Continue(nullptr);
-  return TRUE;
+  CFX_Matrix m(dest_width, 0, 0, -dest_height, dest_left,
+               dest_top + dest_height);
+
+  m_pCanvas->save();
+  SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
+                                       pClipRect->right, pClipRect->top);
+  m_pCanvas->clipRect(skClipRect);
+  void* dummy;
+  FX_BOOL result = this->StartDIBits(pSource, 0xFF, argb, &m, 0, dummy,
+                                     alpha_flag, pIccTransform, blend_type);
+  m_pCanvas->restore();
+
+  return result;
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
@@ -988,9 +1018,12 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
                                           int alpha_flag,
                                           void* pIccTransform,
                                           int blend_type) {
+  DebugValidate(m_pBitmap, m_pOriDevice);
   SkColorType colorType = pSource->IsAlphaMask()
                               ? SkColorType::kAlpha_8_SkColorType
                               : SkColorType::kGray_8_SkColorType;
+  SkAlphaType alphaType =
+      pSource->IsAlphaMask() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
   SkColorTable* ct = nullptr;
   void* buffer = pSource->GetBuffer();
   std::unique_ptr<uint8_t, FxFreeDeleter> dst8Storage;
@@ -1025,23 +1058,27 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
         const uint8_t* srcRow =
             static_cast<const uint8_t*>(buffer) + y * rowBytes;
         uint32_t* dstRow = dst32Pixels + y * width;
-        for (int x = 0; x < width; ++x)
+        for (int x = 0; x < width; ++x) {
           dstRow[x] = SkPackARGB32(0xFF, srcRow[x * 3 + 2], srcRow[x * 3 + 1],
                                    srcRow[x * 3 + 0]);
+        }
       }
       buffer = dst32Storage.get();
       rowBytes = width * sizeof(uint32_t);
       colorType = SkColorType::kN32_SkColorType;
+      alphaType = kOpaque_SkAlphaType;
     } break;
     case 32:
       colorType = SkColorType::kN32_SkColorType;
+      alphaType = kPremul_SkAlphaType;
+      DebugVerifyBitmapIsPreMultiplied(buffer, width, height);
       break;
     default:
+      SkASSERT(0);  // TODO(caryclark) ensure that all cases are covered
       colorType = SkColorType::kUnknown_SkColorType;
   }
-  SkImageInfo imageInfo = SkImageInfo::Make(
-      width, height, colorType,
-      pSource->IsAlphaMask() ? kPremul_SkAlphaType : kOpaque_SkAlphaType);
+  SkImageInfo imageInfo =
+      SkImageInfo::Make(width, height, colorType, alphaType);
   SkBitmap skBitmap;
   skBitmap.installPixels(imageInfo, buffer, rowBytes, ct, nullptr, nullptr);
   m_pCanvas->save();
@@ -1063,19 +1100,28 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   m_pCanvas->restore();
   if (ct)
     ct->unref();
+  DebugValidate(m_pBitmap, m_pOriDevice);
   return TRUE;
 }
 
-FX_BOOL CFX_SkiaDeviceDriver::ContinueDIBits(void* pHandle, IFX_Pause* pPause) {
-  if (!m_pBitmap->GetBuffer())
-    return TRUE;
-  return ((CFX_ImageRenderer*)pHandle)->Continue(pPause);
-}
-
-void CFX_SkiaDeviceDriver::CancelDIBits(void* pHandle) {
-  if (!m_pBitmap->GetBuffer())
+void CFX_SkiaDeviceDriver::PreMultiply() {
+  void* buffer = m_pBitmap->GetBuffer();
+  if (!buffer)
     return;
-  delete (CFX_ImageRenderer*)pHandle;
+  if (m_pBitmap->GetBPP() != 32) {
+    return;
+  }
+  int height = m_pBitmap->GetHeight();
+  int width = m_pBitmap->GetWidth();
+  int rowBytes = m_pBitmap->GetPitch();
+  SkImageInfo unpremultipliedInfo =
+      SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
+  SkPixmap unpremultiplied(unpremultipliedInfo, buffer, rowBytes);
+  SkImageInfo premultipliedInfo =
+      SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
+  SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
+  unpremultiplied.readPixels(premultiplied);
+  DebugVerifyBitmapIsPreMultiplied(buffer, width, height);
 }
 
 CFX_FxgeDevice::CFX_FxgeDevice() {
@@ -1127,6 +1173,10 @@ bool CFX_FxgeDevice::Create(int width,
 CFX_FxgeDevice::~CFX_FxgeDevice() {
   if (m_bOwnedBitmap && GetBitmap())
     delete GetBitmap();
+}
+
+void CFX_FxgeDevice::PreMultiply() {
+  (static_cast<CFX_SkiaDeviceDriver*>(this->GetDeviceDriver()))->PreMultiply();
 }
 
 #endif

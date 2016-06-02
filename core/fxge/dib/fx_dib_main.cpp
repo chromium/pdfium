@@ -344,6 +344,11 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     case FXDIB_Rgb32:
     case FXDIB_Argb: {
       color = IsCmykImage() ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
+#ifdef _SKIA_SUPPORT_
+      if (FXDIB_Rgb32 == GetFormat() && !IsCmykImage()) {
+        color |= 0xFF000000;
+      }
+#endif
       for (int i = 0; i < m_Width; i++) {
         ((uint32_t*)m_pBuffer)[i] = color;
       }

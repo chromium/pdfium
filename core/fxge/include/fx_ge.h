@@ -412,6 +412,7 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
 #ifdef _SKIA_SUPPORT_
   bool AttachRecorder(SkPictureRecorder* recorder);
   SkPictureRecorder* CreateRecorder(int size_x, int size_y);
+  void PreMultiply();
 #endif
 
  protected:
