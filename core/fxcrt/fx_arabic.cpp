@@ -114,6 +114,122 @@ const FX_ARASHADDA gs_FX_ShaddaTable[] = {
     {0x064F, 0xFC61}, {0x0650, 0xFC62},
 };
 
+const int32_t gc_FX_BidiNTypes[] = {
+    FX_BIDICLASS_N,   FX_BIDICLASS_L,   FX_BIDICLASS_R,   FX_BIDICLASS_AN,
+    FX_BIDICLASS_EN,  FX_BIDICLASS_AL,  FX_BIDICLASS_NSM, FX_BIDICLASS_CS,
+    FX_BIDICLASS_ES,  FX_BIDICLASS_ET,  FX_BIDICLASS_BN,  FX_BIDICLASS_BN,
+    FX_BIDICLASS_N,   FX_BIDICLASS_B,   FX_BIDICLASS_RLO, FX_BIDICLASS_RLE,
+    FX_BIDICLASS_LRO, FX_BIDICLASS_LRE, FX_BIDICLASS_PDF, FX_BIDICLASS_ON,
+};
+
+const int32_t gc_FX_BidiWeakStates[][10] = {
+    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSxa,
+     FX_BWSao, FX_BWSao, FX_BWSao},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSxr,
+     FX_BWSro, FX_BWSro, FX_BWSrt},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSxl,
+     FX_BWSlo, FX_BWSlo, FX_BWSlt},
+    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSao,
+     FX_BWSao, FX_BWSao, FX_BWSao},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSro,
+     FX_BWSro, FX_BWSro, FX_BWSrt},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlo,
+     FX_BWSlo, FX_BWSlo, FX_BWSlt},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSrt,
+     FX_BWSro, FX_BWSro, FX_BWSrt},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlt,
+     FX_BWSlo, FX_BWSlo, FX_BWSlt},
+    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWScn,
+     FX_BWSac, FX_BWSao, FX_BWSao},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSra,
+     FX_BWSrc, FX_BWSro, FX_BWSrt},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSre,
+     FX_BWSrs, FX_BWSrs, FX_BWSret},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSla,
+     FX_BWSlc, FX_BWSlo, FX_BWSlt},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSle,
+     FX_BWSls, FX_BWSls, FX_BWSlet},
+    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSao,
+     FX_BWSao, FX_BWSao, FX_BWSao},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSro,
+     FX_BWSro, FX_BWSro, FX_BWSrt},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSro,
+     FX_BWSro, FX_BWSro, FX_BWSrt},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlo,
+     FX_BWSlo, FX_BWSlo, FX_BWSlt},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlo,
+     FX_BWSlo, FX_BWSlo, FX_BWSlt},
+    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSret,
+     FX_BWSro, FX_BWSro, FX_BWSret},
+    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlet,
+     FX_BWSlo, FX_BWSlo, FX_BWSlet},
+};
+
+const int32_t gc_FX_BidiWeakActions[][10] = {
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
+     FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxxN},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
+     FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
+     FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
+     FX_BWAxxN, FX_BWAxxN, FX_BWAxxN, FX_BWAxxN},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
+     FX_BWAxxN, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
+     FX_BWAxxN, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
+    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAExE, FX_BWANxR,
+     FX_BWAxIx, FX_BWANxN, FX_BWANxN, FX_BWAxIx},
+    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWALxL, FX_BWANxR,
+     FX_BWAxIx, FX_BWANxN, FX_BWANxN, FX_BWAxIx},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
+     FX_BWAxxA, FX_BWAxIx, FX_BWAxxN, FX_BWAxxN},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
+     FX_BWAxxA, FX_BWAxIx, FX_BWAxxN, FX_BWAxIx},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
+     FX_BWAxxE, FX_BWAxIx, FX_BWAxIx, FX_BWAxxE},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
+     FX_BWAxxA, FX_BWAxIx, FX_BWAxxN, FX_BWAxIx},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
+     FX_BWAxxL, FX_BWAxIx, FX_BWAxIx, FX_BWAxxL},
+    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAAxx, FX_BWAAxA, FX_BWANxR,
+     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANxN},
+    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAAxx, FX_BWANxE, FX_BWANxR,
+     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
+    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAExE, FX_BWANxR,
+     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
+    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAAxx, FX_BWANxL, FX_BWANxR,
+     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
+    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWALxL, FX_BWANxR,
+     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
+     FX_BWAxxE, FX_BWAxxN, FX_BWAxxN, FX_BWAxxE},
+    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
+     FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxxL},
+};
+
+const int32_t gc_FX_BidiNeutralStates[][5] = {
+    {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
+    {FX_BNSln, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
+    {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
+    {FX_BNSln, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
+    {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
+    {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
+};
+const int32_t gc_FX_BidiNeutralActions[][5] = {
+    {FX_BNAIn, 0, 0, 0, 0},
+    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
+    {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNARn},
+    {FX_BNAIn, FX_BNALn, FX_BNAEn, FX_BNAEn, FX_BNALnL},
+    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
+    {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNAEn},
+};
+
+const int32_t gc_FX_BidiAddLevel[][4] = {
+    {0, 1, 2, 2},
+    {1, 0, 1, 1},
+};
+
 const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
                                  FX_WCHAR& wChar,
                                  FX_CHARTYPE& eType) {
@@ -236,217 +352,8 @@ void FX_BidiReverseString(CFX_WideString& wsText,
     *pEnd-- = wch;
   }
 }
-void FX_BidiSetDeferredRun(CFX_Int32Array& values,
-                           int32_t iStart,
-                           int32_t iCount,
-                           int32_t iValue) {
-  ASSERT(iStart > -1 && iStart <= values.GetSize());
-  ASSERT(iStart - iCount > -1);
-  for (int32_t i = iStart - 1; i >= iStart - iCount; i--) {
-    values.SetAt(i, iValue);
-  }
-}
-const int32_t gc_FX_BidiNTypes[] = {
-    FX_BIDICLASS_N,   FX_BIDICLASS_L,   FX_BIDICLASS_R,   FX_BIDICLASS_AN,
-    FX_BIDICLASS_EN,  FX_BIDICLASS_AL,  FX_BIDICLASS_NSM, FX_BIDICLASS_CS,
-    FX_BIDICLASS_ES,  FX_BIDICLASS_ET,  FX_BIDICLASS_BN,  FX_BIDICLASS_BN,
-    FX_BIDICLASS_N,   FX_BIDICLASS_B,   FX_BIDICLASS_RLO, FX_BIDICLASS_RLE,
-    FX_BIDICLASS_LRO, FX_BIDICLASS_LRE, FX_BIDICLASS_PDF, FX_BIDICLASS_ON,
-};
-void FX_BidiClassify(const CFX_WideString& wsText,
-                     CFX_Int32Array& classes,
-                     FX_BOOL bWS) {
-  ASSERT(wsText.GetLength() == classes.GetSize());
-  int32_t iCount = wsText.GetLength();
-  const FX_WCHAR* pwsStart = wsText.c_str();
-  FX_WCHAR wch;
-  int32_t iCls;
-  if (bWS) {
-    for (int32_t i = 0; i < iCount; i++) {
-      wch = *pwsStart++;
-      iCls =
-          ((kTextLayoutCodeProperties[(uint16_t)wch] & FX_BIDICLASSBITSMASK) >>
-           FX_BIDICLASSBITS);
-      classes.SetAt(i, iCls);
-    }
-  } else {
-    for (int32_t i = 0; i < iCount; i++) {
-      wch = *pwsStart++;
-      iCls =
-          ((kTextLayoutCodeProperties[(uint16_t)wch] & FX_BIDICLASSBITSMASK) >>
-           FX_BIDICLASSBITS);
-      classes.SetAt(i, gc_FX_BidiNTypes[iCls]);
-    }
-  }
-}
-int32_t FX_BidiResolveExplicit(int32_t iBaseLevel,
-                               int32_t iDirection,
-                               CFX_Int32Array& classes,
-                               CFX_Int32Array& levels,
-                               int32_t iStart,
-                               int32_t iCount,
-                               int32_t iNest) {
-  ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL && iNest >= 0);
-  ASSERT(classes.GetSize() == levels.GetSize());
-  ASSERT(iStart >= 0 && iStart < classes.GetSize());
-  ASSERT(iCount >= 0 && iStart + iCount <= classes.GetSize());
-  if (iCount < 1) {
-    return 0;
-  }
 
-  int32_t iSize = classes.GetSize();
-  int32_t i = iStart, iCur, iCls;
-  for (; i < iSize && iCount > 0; i++, iCount--) {
-    iCur = iCls = classes.GetAt(i);
 
-    if (iDirection != FX_BIDICLASS_N) {
-      iCls = iDirection;
-    }
-    if (iCur != FX_BIDICLASS_BN) {
-      classes.SetAt(i, iCls);
-    }
-    levels.SetAt(i, iBaseLevel);
-  }
-  return i - iStart;
-}
-const int32_t gc_FX_BidiWeakStates[][10] = {
-    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSxa,
-     FX_BWSao, FX_BWSao, FX_BWSao},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSxr,
-     FX_BWSro, FX_BWSro, FX_BWSrt},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSxl,
-     FX_BWSlo, FX_BWSlo, FX_BWSlt},
-    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSao,
-     FX_BWSao, FX_BWSao, FX_BWSao},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSro,
-     FX_BWSro, FX_BWSro, FX_BWSrt},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlo,
-     FX_BWSlo, FX_BWSlo, FX_BWSlt},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSrt,
-     FX_BWSro, FX_BWSro, FX_BWSrt},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlt,
-     FX_BWSlo, FX_BWSlo, FX_BWSlt},
-    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWScn,
-     FX_BWSac, FX_BWSao, FX_BWSao},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSra,
-     FX_BWSrc, FX_BWSro, FX_BWSrt},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSre,
-     FX_BWSrs, FX_BWSrs, FX_BWSret},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSla,
-     FX_BWSlc, FX_BWSlo, FX_BWSlt},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSle,
-     FX_BWSls, FX_BWSls, FX_BWSlet},
-    {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSao,
-     FX_BWSao, FX_BWSao, FX_BWSao},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSro,
-     FX_BWSro, FX_BWSro, FX_BWSrt},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSro,
-     FX_BWSro, FX_BWSro, FX_BWSrt},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlo,
-     FX_BWSlo, FX_BWSlo, FX_BWSlt},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlo,
-     FX_BWSlo, FX_BWSlo, FX_BWSlt},
-    {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSret,
-     FX_BWSro, FX_BWSro, FX_BWSret},
-    {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlet,
-     FX_BWSlo, FX_BWSlo, FX_BWSlet},
-};
-const int32_t gc_FX_BidiWeakActions[][10] = {
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
-     FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxxN},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
-     FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
-     FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
-     FX_BWAxxN, FX_BWAxxN, FX_BWAxxN, FX_BWAxxN},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
-     FX_BWAxxN, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
-     FX_BWAxxN, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
-    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAExE, FX_BWANxR,
-     FX_BWAxIx, FX_BWANxN, FX_BWANxN, FX_BWAxIx},
-    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWALxL, FX_BWANxR,
-     FX_BWAxIx, FX_BWANxN, FX_BWANxN, FX_BWAxIx},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
-     FX_BWAxxA, FX_BWAxIx, FX_BWAxxN, FX_BWAxxN},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
-     FX_BWAxxA, FX_BWAxIx, FX_BWAxxN, FX_BWAxIx},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
-     FX_BWAxxE, FX_BWAxIx, FX_BWAxIx, FX_BWAxxE},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
-     FX_BWAxxA, FX_BWAxIx, FX_BWAxxN, FX_BWAxIx},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
-     FX_BWAxxL, FX_BWAxIx, FX_BWAxIx, FX_BWAxxL},
-    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAAxx, FX_BWAAxA, FX_BWANxR,
-     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANxN},
-    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAAxx, FX_BWANxE, FX_BWANxR,
-     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
-    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAExE, FX_BWANxR,
-     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
-    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWAAxx, FX_BWANxL, FX_BWANxR,
-     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
-    {FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWANxx, FX_BWALxL, FX_BWANxR,
-     FX_BWANxN, FX_BWANxN, FX_BWANxN, FX_BWANIx},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
-     FX_BWAxxE, FX_BWAxxN, FX_BWAxxN, FX_BWAxxE},
-    {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
-     FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxxL},
-};
-void FX_BidiResolveWeak(int32_t iBaseLevel,
-                        CFX_Int32Array& classes,
-                        CFX_Int32Array& levels) {
-  ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
-  ASSERT(classes.GetSize() == levels.GetSize());
-  int32_t iSize = classes.GetSize();
-  if (iSize < 1) {
-    return;
-  }
-  iSize--;
-  int32_t iLevelCur = iBaseLevel;
-  int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BWSxr : FX_BWSxl;
-  int32_t i = 0, iCount = 0, iClsCur, iClsRun, iClsNew, iAction;
-  for (; i <= iSize; i++) {
-    iClsCur = classes.GetAt(i);
-
-    ASSERT(iClsCur <= FX_BIDICLASS_BN);
-    iAction = gc_FX_BidiWeakActions[iState][iClsCur];
-    iClsRun = FX_BidiGetDeferredType(iAction);
-    if (iClsRun != FX_BIDIWEAKACTION_XX && iCount > 0) {
-      FX_BidiSetDeferredRun(classes, i, iCount, iClsRun);
-      iCount = 0;
-    }
-    iClsNew = FX_BidiGetResolvedType(iAction);
-    if (iClsNew != FX_BIDIWEAKACTION_XX) {
-      classes.SetAt(i, iClsNew);
-    }
-    if (FX_BIDIWEAKACTION_IX & iAction) {
-      iCount++;
-    }
-    iState = gc_FX_BidiWeakStates[iState][iClsCur];
-  }
-  iClsCur = FX_BidiDirection(iLevelCur);
-  iClsRun = FX_BidiGetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
-  if (iClsRun != FX_BIDIWEAKACTION_XX && iCount > 0) {
-    FX_BidiSetDeferredRun(classes, i, iCount, iClsRun);
-  }
-}
-const int32_t gc_FX_BidiNeutralStates[][5] = {
-    {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
-    {FX_BNSln, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
-    {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
-    {FX_BNSln, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
-    {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
-    {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
-};
-const int32_t gc_FX_BidiNeutralActions[][5] = {
-    {FX_BNAIn, 0, 0, 0, 0},
-    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
-    {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNARn},
-    {FX_BNAIn, FX_BNALn, FX_BNAEn, FX_BNAEn, FX_BNALnL},
-    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
-    {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNAEn},
-};
 int32_t FX_BidiGetDeferredNeutrals(int32_t iAction, int32_t iLevel) {
   iAction = (iAction >> 4) & 0xF;
   if (iAction == (FX_BIDINEUTRALACTION_En >> 4)) {
@@ -455,6 +362,7 @@ int32_t FX_BidiGetDeferredNeutrals(int32_t iAction, int32_t iLevel) {
     return iAction;
   }
 }
+
 int32_t FX_BidiGetResolvedNeutrals(int32_t iAction) {
   iAction = (iAction & 0xF);
   if (iAction == FX_BIDINEUTRALACTION_In) {
@@ -463,119 +371,7 @@ int32_t FX_BidiGetResolvedNeutrals(int32_t iAction) {
     return iAction;
   }
 }
-void FX_BidiResolveNeutrals(int32_t iBaseLevel,
-                            CFX_Int32Array& classes,
-                            const CFX_Int32Array& levels) {
-  ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
-  ASSERT(classes.GetSize() == levels.GetSize());
-  int32_t iSize = classes.GetSize();
-  if (iSize < 1) {
-    return;
-  }
-  iSize--;
-  int32_t iLevel = iBaseLevel;
-  int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BNSr : FX_BNSl;
-  int32_t i = 0, iCount = 0, iClsCur, iClsRun, iClsNew, iAction;
-  for (; i <= iSize; i++) {
-    iClsCur = classes.GetAt(i);
-    if (iClsCur == FX_BIDICLASS_BN) {
-      if (iCount) {
-        iCount++;
-      }
-      continue;
-    }
-    ASSERT(iClsCur < FX_BIDICLASS_AL);
-    iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
-    iClsRun = FX_BidiGetDeferredNeutrals(iAction, iLevel);
-    if (iClsRun != FX_BIDICLASS_N && iCount > 0) {
-      FX_BidiSetDeferredRun(classes, i, iCount, iClsRun);
-      iCount = 0;
-    }
-    iClsNew = FX_BidiGetResolvedNeutrals(iAction);
-    if (iClsNew != FX_BIDICLASS_N) {
-      classes.SetAt(i, iClsNew);
-    }
-    if (FX_BIDINEUTRALACTION_In & iAction) {
-      iCount++;
-    }
-    iState = gc_FX_BidiNeutralStates[iState][iClsCur];
-    iLevel = levels.GetAt(i);
-  }
-  iClsCur = FX_BidiDirection(iLevel);
-  iClsRun = FX_BidiGetDeferredNeutrals(
-      gc_FX_BidiNeutralActions[iState][iClsCur], iLevel);
-  if (iClsRun != FX_BIDICLASS_N && iCount > 0) {
-    FX_BidiSetDeferredRun(classes, i, iCount, iClsRun);
-  }
-}
-const int32_t gc_FX_BidiAddLevel[][4] = {
-    {0, 1, 2, 2},
-    {1, 0, 1, 1},
-};
-void FX_BidiResolveImplicit(const CFX_Int32Array& classes,
-                            CFX_Int32Array& levels) {
-  ASSERT(classes.GetSize() == levels.GetSize());
-  int32_t iSize = classes.GetSize();
-  if (iSize < 1) {
-    return;
-  }
-  iSize--;
-  int32_t iCls, iLevel;
-  for (int32_t i = 0; i <= iSize; i++) {
-    iCls = classes.GetAt(i);
-    if (iCls == FX_BIDICLASS_BN) {
-      continue;
-    }
-    ASSERT(iCls > FX_BIDICLASS_ON && iCls < FX_BIDICLASS_AL);
-    iLevel = levels.GetAt(i);
-    iLevel += gc_FX_BidiAddLevel[FX_IsOdd(iLevel)][iCls - 1];
-    levels.SetAt(i, iLevel);
-  }
-}
-void FX_BidiResolveWhitespace(int32_t iBaseLevel,
-                              const CFX_Int32Array& classes,
-                              CFX_Int32Array& levels) {
-  ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
-  ASSERT(classes.GetSize() == levels.GetSize());
-  int32_t iSize = classes.GetSize();
-  if (iSize < 1) {
-    return;
-  }
-  iSize--;
-  int32_t iLevel = iBaseLevel;
-  int32_t i = 0, iCount = 0;
-  for (; i <= iSize; i++) {
-    switch (classes.GetAt(i)) {
-      case FX_BIDICLASS_WS:
-        iCount++;
-        break;
-      case FX_BIDICLASS_RLE:
-      case FX_BIDICLASS_LRE:
-      case FX_BIDICLASS_LRO:
-      case FX_BIDICLASS_RLO:
-      case FX_BIDICLASS_PDF:
-      case FX_BIDICLASS_BN:
-        levels.SetAt(i, iLevel);
-        iCount++;
-        break;
-      case FX_BIDICLASS_S:
-      case FX_BIDICLASS_B:
-        if (iCount > 0) {
-          FX_BidiSetDeferredRun(levels, i, iCount, iBaseLevel);
-        }
-        levels.SetAt(i, iBaseLevel);
-        iCount = 0;
-        break;
-      default:
-        iCount = 0;
-        break;
-    }
-    iLevel = levels.GetAt(i);
-  }
-  if (iCount > 0) {
-    FX_BidiSetDeferredRun(levels, i, iCount, iBaseLevel);
-  }
-}
+
 int32_t FX_BidiReorderLevel(int32_t iBaseLevel,
                             CFX_WideString& wsText,
                             const CFX_Int32Array& levels,
@@ -619,26 +415,7 @@ void FX_BidiReorder(int32_t iBaseLevel,
     i += FX_BidiReorderLevel(iBaseLevel, wsText, levels, i, FALSE);
   }
 }
-void FX_BidiLine(CFX_WideString& wsText, int32_t iBaseLevel) {
-  int32_t iLength = wsText.GetLength();
-  if (iLength < 2) {
-    return;
-  }
-  CFX_Int32Array classes, levels;
-  classes.SetAtGrow(iLength - 1, 0);
-  levels.SetAtGrow(iLength - 1, 0);
-  FX_BidiClassify(wsText, classes, FALSE);
-  FX_BidiResolveExplicit(iBaseLevel, FX_BIDICLASS_N, classes, levels, 0,
-                         iLength, 0);
-  FX_BidiResolveWeak(iBaseLevel, classes, levels);
-  FX_BidiResolveNeutrals(iBaseLevel, classes, levels);
-  FX_BidiResolveImplicit(classes, levels);
-  FX_BidiClassify(wsText, classes, TRUE);
-  FX_BidiResolveWhitespace(iBaseLevel, classes, levels);
-  FX_BidiReorder(iBaseLevel, wsText, levels);
-  classes.RemoveAll();
-  levels.RemoveAll();
-}
+
 template <class baseType>
 class CFX_BidiLineTemplate {
  public:
