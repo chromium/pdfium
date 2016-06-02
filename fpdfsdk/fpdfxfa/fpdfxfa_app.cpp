@@ -255,7 +255,7 @@ FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideString& wsURL,
 void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {
   switch (iStringID) {
     case XFA_IDS_ValidateFailed:
-      wsString = L"%s validate failed";
+      wsString = L"%s validation failed";
       return;
     case XFA_IDS_CalcOverride:
       wsString = L"Calculate Override";
@@ -267,241 +267,84 @@ void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {
       wsString = L"You are not allowed to modify this field.";
       return;
     case XFA_IDS_AppName:
-      wsString = L"Foxit";
-      return;
-    case XFA_IDS_ImageFilter:
-      wsString =
-          L"Image "
-          L"Files(*.bmp;*.jpg;*.png;*.gif;*.tif)|*.bmp;*.jpg;*.png;*.gif;*.tif|"
-          L"All Files(*.*)|*.*||";
-      return;
-    case XFA_IDS_UNKNOW_CATCHED:
-      wsString = L"unknown error is catched!";
+      wsString = L"pdfium";
       return;
     case XFA_IDS_Unable_TO_SET:
       wsString = L"Unable to set ";
       return;
-    case XFA_IDS_VALUE_EXCALMATORY:
-      wsString = L" value!";
-      return;
-    case XFA_IDS_INVALID_ENUM_VALUE:
-      wsString = L"Invalid enumerated value: ";
-      return;
-    case XFA_IDS_UNSUPPORT_METHOD:
-      wsString = L"unsupport %s method.";
-      return;
-    case XFA_IDS_UNSUPPORT_PROP:
-      wsString = L"unsupport %s property.";
-      return;
     case XFA_IDS_INVAlID_PROP_SET:
-      wsString = L"Invalid property set operation;";
+      wsString = L"Invalid property set operation.";
       return;
     case XFA_IDS_NOT_DEFAUL_VALUE:
-      wsString = L" doesn't have a default property";
+      wsString = L" doesn't have a default property.";
       return;
     case XFA_IDS_UNABLE_SET_LANGUAGE:
-      wsString = L"Unable to set language value!";
+      wsString = L"Unable to set language value.";
       return;
     case XFA_IDS_UNABLE_SET_NUMPAGES:
-      wsString = L"Unable to set numPages value!";
+      wsString = L"Unable to set numPages value.";
       return;
     case XFA_IDS_UNABLE_SET_PLATFORM:
-      wsString = L"Unable to set platform value!";
-      return;
-    case XFA_IDS_UNABLE_SET_VALIDATIONENABLE:
-      wsString = L"Unable to set validationsEnabled value!";
+      wsString = L"Unable to set platform value.";
       return;
     case XFA_IDS_UNABLE_SET_VARIATION:
-      wsString = L"Unable to set variation value!";
+      wsString = L"Unable to set variation value.";
       return;
     case XFA_IDS_UNABLE_SET_VERSION:
-      wsString = L"Unable to set version value!";
+      wsString = L"Unable to set version value.";
       return;
     case XFA_IDS_UNABLE_SET_READY:
-      wsString = L"Unable to set ready value!";
-      return;
-    case XFA_IDS_NUMBER_OF_OCCUR:
-      wsString =
-          L"The element [%s] has violated its allowable number of occurrences";
-      return;
-    case XFA_IDS_UNABLE_SET_CLASS_NAME:
-      wsString = L"Unable to set className value!";
-      return;
-    case XFA_IDS_UNABLE_SET_LENGTH_VALUE:
-      wsString = L"Unable to set length value!";
-      return;
-    case XFA_IDS_UNSUPPORT_CHAR:
-      wsString = L"unsupported char '%c'";
-      return;
-    case XFA_IDS_BAD_SUFFIX:
-      wsString = L"bad suffix on number";
-      return;
-    case XFA_IDS_EXPECTED_IDENT:
-      wsString = L"expected identifier instead of '%s'";
-      return;
-    case XFA_IDS_EXPECTED_STRING:
-      wsString = L"expected '%s' instead of '%s'";
-      return;
-    case XFA_IDS_INVALIDATE_CHAR:
-      wsString = L"invalidate char '%c'";
-      return;
-    case XFA_IDS_REDEFINITION:
-      wsString = L"'%s' redefinition ";
-      return;
-    case XFA_IDS_INVALIDATE_TOKEN:
-      wsString = L"invalidate token '%s'";
-      return;
-    case XFA_IDS_INVALIDATE_EXPRESSION:
-      wsString = L"invalidate expression '%s'";
-      return;
-    case XFA_IDS_UNDEFINE_IDENTIFIER:
-      wsString = L"undefined identifier '%s'";
-      return;
-    case XFA_IDS_INVALIDATE_LEFTVALUE:
-      wsString = L"invalidate left-value '%s'";
+      wsString = L"Unable to set ready value.";
       return;
     case XFA_IDS_COMPILER_ERROR:
-      wsString = L"compiler error";
-      return;
-    case XFA_IDS_CANNOT_MODIFY_VALUE:
-      wsString = L"can't modify the '%s' value";
-      return;
-    case XFA_IDS_ERROR_PARAMETERS:
-      wsString = L"function '%s' has not %d parameters";
-      return;
-    case XFA_IDS_EXPECT_ENDIF:
-      wsString = L"expected 'endif' instead of '%s'";
-      return;
-    case XFA_IDS_UNEXPECTED_EXPRESSION:
-      wsString = L"unexpected expression '%s'";
-      return;
-    case XFA_IDS_CONDITION_IS_NULL:
-      wsString = L"condition is null";
-      return;
-    case XFA_IDS_ILLEGALBREAK:
-      wsString = L"illegal break";
-      return;
-    case XFA_IDS_ILLEGALCONTINUE:
-      wsString = L"illegal continue";
-      return;
-    case XFA_IDS_EXPECTED_OPERATOR:
-      wsString = L"expected operator '%s' instead of '%s'";
+      wsString = L"Compiler error.";
       return;
     case XFA_IDS_DIVIDE_ZERO:
-      wsString = L"divide by zero";
-      return;
-    case XFA_IDS_CANNOT_COVERT_OBJECT:
-      wsString = L"%s.%s can not covert to object";
-      return;
-    case XFA_IDS_NOT_FOUND_CONTAINER:
-      wsString = L"can not found container '%s'";
-      return;
-    case XFA_IDS_NOT_FOUND_PROPERTY:
-      wsString = L"can not found property '%s'";
-      return;
-    case XFA_IDS_NOT_FOUND_METHOD:
-      wsString = L"can not found method '%s'";
-      return;
-    case XFA_IDS_NOT_FOUND_CONST:
-      wsString = L"can not found const '%s'";
-      return;
-    case XFA_IDS_NOT_ASSIGN_OBJECT:
-      wsString = L"can not direct assign value to object";
-      return;
-    case XFA_IDS_IVALIDATE_INSTRUCTION:
-      wsString = L"invalidate instruction";
-      return;
-    case XFA_IDS_EXPECT_NUMBER:
-      wsString = L"expected number instead of '%s'";
-      return;
-    case XFA_IDS_VALIDATE_OUT_ARRAY:
-      wsString = L"validate access index '%s' out of array";
-      return;
-    case XFA_IDS_CANNOT_ASSIGN_IDENT:
-      wsString = L"can not assign to %s";
-      return;
-    case XFA_IDS_NOT_FOUNT_FUNCTION:
-      wsString = L"can not found '%s' function";
-      return;
-    case XFA_IDS_NOT_ARRAY:
-      wsString = L"'%s' doesn't an array";
-      return;
-    case XFA_IDS_OUT_ARRAY:
-      wsString = L"out of range of '%s' array";
-      return;
-    case XFA_IDS_NOT_SUPPORT_CALC:
-      wsString = L"'%s' operator can not support array calculate";
-      return;
-    case XFA_IDS_ARGUMENT_NOT_ARRAY:
-      wsString = L"'%s' function's %d argument can not be array";
-      return;
-    case XFA_IDS_ARGUMENT_EXPECT_CONTAINER:
-      wsString = L"'%s' argument expected a container";
+      wsString = L"Divide by zero.";
       return;
     case XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT:
       wsString =
-          L"an attempt was made to reference property '%s' of a non-object in "
-          L"SOM expression %s";
-      return;
-    case XFA_IDS_FUNCTION_IS_BUILDIN:
-      wsString = L"function '%s' is buildin";
-      return;
-    case XFA_IDS_ERROR_MSG:
-      wsString = L"%s : %s";
+          L"An attempt was made to reference property '%s' of a non-object in "
+          L"SOM expression %s.";
       return;
     case XFA_IDS_INDEX_OUT_OF_BOUNDS:
-      wsString = L"Index value is out of bounds";
+      wsString = L"Index value is out of bounds.";
       return;
     case XFA_IDS_INCORRECT_NUMBER_OF_METHOD:
-      wsString = L"Incorrect number of parameters calling method '%s'";
+      wsString = L"Incorrect number of parameters calling method '%s'.";
       return;
     case XFA_IDS_ARGUMENT_MISMATCH:
-      wsString = L"Argument mismatch in property or function argument";
-      return;
-    case XFA_IDS_INVALID_ENUMERATE:
-      wsString = L"Invalid enumerated value: %s";
-      return;
-    case XFA_IDS_INVALID_APPEND:
-      wsString =
-          L"Invalid append operation: %s cannot have a child element of %s";
-      return;
-    case XFA_IDS_SOM_EXPECTED_LIST:
-      wsString =
-          L"SOM expression returned list when single result was expected";
+      wsString = L"Argument mismatch in property or function argument.";
       return;
     case XFA_IDS_NOT_HAVE_PROPERTY:
-      wsString = L"'%s' doesn't have property '%s'";
-      return;
-    case XFA_IDS_INVALID_NODE_TYPE:
-      wsString = L"Invalid node type : '%s'";
+      wsString = L"'%s' doesn't have property '%s'.";
       return;
     case XFA_IDS_VIOLATE_BOUNDARY:
       wsString =
-          L"The element [%s] has violated its allowable number of occurrences";
+          L"The element [%s] has violated its allowable number of occurrences.";
       return;
     case XFA_IDS_SERVER_DENY:
-      wsString = L"Server does not permit";
+      wsString = L"Server does not permit.";
       return;
     case XFA_IDS_ValidateLimit:
-      wsString = FX_WSTRC(
+      wsString =
           L"Message limit exceeded. Remaining %d validation errors not "
-          L"reported.");
+          L"reported.";
       return;
     case XFA_IDS_ValidateNullWarning:
-      wsString = FX_WSTRC(
-          L"%s cannot be left blank. To ignore validations for %s, click "
-          L"Ignore.");
+      wsString =
+          L"%s cannot be blank. To ignore validations for %s, click Ignore.";
       return;
     case XFA_IDS_ValidateNullError:
-      wsString = FX_WSTRC(L"%s cannot be left blank.");
+      wsString = L"%s cannot be blank.";
       return;
     case XFA_IDS_ValidateWarning:
-      wsString = FX_WSTRC(
+      wsString =
           L"The value you entered for %s is invalid. To ignore validations for "
-          L"%s, click Ignore.");
+          L"%s, click Ignore.";
       return;
     case XFA_IDS_ValidateError:
-      wsString = FX_WSTRC(L"The value you entered for %s is invalid.");
+      wsString = L"The value you entered for %s is invalid.";
       return;
   }
 }
