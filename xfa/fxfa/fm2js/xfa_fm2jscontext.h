@@ -449,7 +449,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
  private:
   v8::Isolate* GetScriptRuntime() const { return m_pIsolate; }
   CXFA_Document* GetDocument() const { return m_pDocument; }
-  void ThrowScriptErrorMessage(int32_t iStringID, ...);
+  void ThrowException(int32_t iStringID, ...);
 
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pFMClass;

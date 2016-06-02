@@ -86,7 +86,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                     FX_BOOL bSetting,
                                     XFA_ATTRIBUTE eAttribute);
-  void ThrowScriptErrorMessage(int32_t iStringID, ...);
+  void ThrowException(int32_t iStringID, ...);
 
  protected:
   CXFA_Document* const m_pDocument;
