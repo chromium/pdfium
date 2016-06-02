@@ -2859,17 +2859,14 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter,
   }
   if (!(bFromNext || pIter->IsEOF(bPrev))) {
     pIter->Next(!bPrev);
-    FX_WCHAR wcTemp = pIter->GetChar();
-    ePreType = GetWordBreakProperty(wcTemp);
+    ePreType = GetWordBreakProperty(pIter->GetChar());
     pIter->Next(bPrev);
   }
-  FX_WCHAR wcTemp = pIter->GetChar();
-  eCurType = GetWordBreakProperty(wcTemp);
+  eCurType = GetWordBreakProperty(pIter->GetChar());
   FX_BOOL bFirst = TRUE;
   do {
     pIter->Next(bPrev);
-    FX_WCHAR wcTemp = pIter->GetChar();
-    eNextType = GetWordBreakProperty(wcTemp);
+    eNextType = GetWordBreakProperty(pIter->GetChar());
     uint16_t wBreak =
         gs_FX_WordBreak_Table[eCurType] & ((uint16_t)(1 << eNextType));
     if (wBreak) {
@@ -2929,8 +2926,7 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter,
         }
         ASSERT(nFlags <= 2);
         pIter->Next(bPrev);
-        wcTemp = pIter->GetChar();
-        eNextType = (FX_WordBreakProp)GetWordBreakProperty(wcTemp);
+        eNextType = (FX_WordBreakProp)GetWordBreakProperty(pIter->GetChar());
         if (!((nFlags == 1 && eNextType == FX_WordBreakProp_ALetter) ||
               (nFlags == 2 && eNextType == FX_WordBreakProp_Numberic))) {
           pIter->Next(!bPrev);

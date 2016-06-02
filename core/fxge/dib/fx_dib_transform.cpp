@@ -624,7 +624,6 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
     }
   } else {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;
-    int destBpp = pTransformed->GetBPP() / 8;
     if (Bpp == 1) {
       uint32_t argb[256];
       FX_ARGB* pPal = m_Storer.GetBitmap()->GetPalette();
@@ -643,6 +642,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
           }
         }
       }
+      int destBpp = pTransformed->GetBPP() / 8;
       if (!(m_Flags & FXDIB_DOWNSAMPLE) &&
           !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
         CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);

@@ -735,16 +735,14 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   FX_FLOAT fLineStopS = bVertical ? rect.right() : rect.bottom();
   int32_t iLines = m_ttoLines.GetSize();
-  if (iLines < 1) {
+  if (iLines < 1)
     return;
-  }
-  CFDE_TTOLine* pLine = m_ttoLines.GetPtrAt(iLines - 1);
-  FDE_TTOPIECE* pPiece = pLine->GetPtrAt(0);
-  if (pPiece == NULL) {
+  FDE_TTOPIECE* pFirstPiece = m_ttoLines.GetPtrAt(iLines - 1)->GetPtrAt(0);
+  if (!pFirstPiece)
     return;
-  }
+
   FX_FLOAT fLineStopD =
-      bVertical ? pPiece->rtPiece.right() : pPiece->rtPiece.bottom();
+      bVertical ? pFirstPiece->rtPiece.right() : pFirstPiece->rtPiece.bottom();
   FX_FLOAT fInc = fLineStopS - fLineStopD;
   if (m_iAlignment >= FDE_TTOALIGNMENT_CenterLeft &&
       m_iAlignment < FDE_TTOALIGNMENT_BottomLeft) {
@@ -752,19 +750,17 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   } else if (m_iAlignment < FDE_TTOALIGNMENT_CenterLeft) {
     fInc = 0.0f;
   }
-  if (fInc < 1.0f) {
+  if (fInc < 1.0f)
     return;
-  }
   for (int32_t i = 0; i < iLines; i++) {
     CFDE_TTOLine* pLine = m_ttoLines.GetPtrAt(i);
     int32_t iPieces = pLine->GetSize();
     for (int32_t j = 0; j < iPieces; j++) {
       FDE_TTOPIECE* pPiece = pLine->GetPtrAt(j);
-      if (bVertical) {
+      if (bVertical)
         pPiece->rtPiece.left += fInc;
-      } else {
+      else
         pPiece->rtPiece.top += fInc;
-      }
     }
   }
 }

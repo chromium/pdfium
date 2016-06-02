@@ -381,7 +381,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
       }
       return ret1;
     }
-    FXCODEC_STATUS ret = pJbig2Module->ContinueDecode(m_pJbig2Context, pPause);
+    ret = pJbig2Module->ContinueDecode(m_pJbig2Context, pPause);
     if (ret < 0) {
       m_pCachedBitmap.reset();
       m_pGlobalStream.reset();
@@ -864,8 +864,8 @@ void CPDF_DIBSource::LoadPalette() {
           m_pColorSpace->CountComponents() > 1) {
         int nComponents = m_pColorSpace->CountComponents();
         std::vector<FX_FLOAT> temp_buf(nComponents);
-        for (int i = 0; i < nComponents; i++) {
-          temp_buf[i] = *color_value;
+        for (int k = 0; k < nComponents; k++) {
+          temp_buf[k] = *color_value;
         }
         m_pColorSpace->GetRGB(temp_buf.data(), R, G, B);
       } else {

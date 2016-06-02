@@ -743,9 +743,9 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
       if (!bAutoSize) {
         CFX_RectF rtItem;
         rtItem.Set(m_rtClient.left, m_rtClient.top + fs.y, r.width, r.height);
-        IFWL_ListBoxDP* pData =
+        IFWL_ListBoxDP* pBox =
             static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-        pData->SetItemRect(m_pInterface, pItem, rtItem);
+        pBox->SetItemRect(m_pInterface, pItem, rtItem);
       }
       fs.y += r.height;
       if (fs.x < r.width) {

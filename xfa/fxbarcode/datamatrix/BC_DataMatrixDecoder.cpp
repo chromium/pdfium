@@ -57,13 +57,12 @@ CBC_CommonDecoderResult* CBC_DataMatrixDecoder::Decode(
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t dataBlocksCount = dataBlocks->GetSize();
   int32_t totalBytes = 0;
-  int32_t i, j;
-  for (i = 0; i < dataBlocksCount; i++) {
+  for (int32_t i = 0; i < dataBlocksCount; i++) {
     totalBytes += (*dataBlocks)[i]->GetNumDataCodewords();
   }
   CFX_ByteArray resultBytes;
   resultBytes.SetSize(totalBytes);
-  for (j = 0; j < dataBlocksCount; j++) {
+  for (int32_t j = 0; j < dataBlocksCount; j++) {
     CFX_ByteArray* codewordBytes = (*dataBlocks)[j]->GetCodewords();
     int32_t numDataCodewords = (*dataBlocks)[j]->GetNumDataCodewords();
     CorrectErrors(*codewordBytes, numDataCodewords, e);
@@ -74,12 +73,11 @@ CBC_CommonDecoderResult* CBC_DataMatrixDecoder::Decode(
       delete dataBlocks;
       return nullptr;
     }
-    int32_t i;
-    for (i = 0; i < numDataCodewords; i++) {
+    for (int32_t i = 0; i < numDataCodewords; i++) {
       resultBytes[i * dataBlocksCount + j] = (*codewordBytes)[i];
     }
   }
-  for (i = 0; i < (dataBlocks->GetSize()); i++) {
+  for (int32_t i = 0; i < (dataBlocks->GetSize()); i++) {
     delete (*dataBlocks)[i];
   }
   delete dataBlocks;

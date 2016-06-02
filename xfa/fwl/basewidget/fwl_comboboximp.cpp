@@ -660,20 +660,20 @@ FWL_Error CFWL_ComboBoxImp::DrawWidget(CFX_Graphics* pGraphics,
       IFWL_ListItem* hItem = pData->GetItem(m_pInterface, m_iCurSel);
       static_cast<CFWL_ComboListImp*>(m_pListBox->GetImpl())
           ->GetItemText(hItem, wsText);
-      CFWL_ThemeText param;
-      param.m_pWidget = m_pInterface;
-      param.m_iPart = CFWL_Part::Caption;
-      param.m_dwStates = m_iBtnState;
-      param.m_pGraphics = pGraphics;
-      param.m_matrix.Concat(*pMatrix);
-      param.m_rtPart = rtTextBk;
-      param.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
-                             ? CFWL_PartState_Selected
-                             : CFWL_PartState_Normal;
-      param.m_wsText = wsText;
-      param.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
-      param.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
-      pTheme->DrawText(&param);
+      CFWL_ThemeText theme_text;
+      theme_text.m_pWidget = m_pInterface;
+      theme_text.m_iPart = CFWL_Part::Caption;
+      theme_text.m_dwStates = m_iBtnState;
+      theme_text.m_pGraphics = pGraphics;
+      theme_text.m_matrix.Concat(*pMatrix);
+      theme_text.m_rtPart = rtTextBk;
+      theme_text.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
+                                  ? CFWL_PartState_Selected
+                                  : CFWL_PartState_Normal;
+      theme_text.m_wsText = wsText;
+      theme_text.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
+      theme_text.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
+      pTheme->DrawText(&theme_text);
     }
   }
   {

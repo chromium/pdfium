@@ -1095,8 +1095,7 @@ void CFX_RTFBreak::SplitTextLine(CFX_RTFLine* pCurLine,
   pNextLine->m_iStart = pCurLine->m_iStart;
   pNextLine->m_iWidth = pCurLine->GetLineEnd() - iEndPos;
   pCurLine->m_iWidth = iEndPos;
-  CFX_RTFChar* tc = curChars.GetDataPtr(iCharPos - 1);
-  tc->m_nBreakType = FX_LBT_UNKNOWN;
+  curChars.GetDataPtr(iCharPos - 1)->m_nBreakType = FX_LBT_UNKNOWN;
   iCount = nextChars.GetSize();
   CFX_RTFChar* pNextChars = nextChars.GetData();
   for (int32_t i = 0; i < iCount; i++) {

@@ -2512,11 +2512,10 @@ void CompositeRow_ByteMask2Argb(uint8_t* dest_scan,
     int alpha_ratio = src_alpha * 255 / dest_alpha;
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      RGB_Blend(blend_type, scan, dest_scan, blended_colors);
       *dest_scan =
           FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[0], alpha_ratio);
       dest_scan++;
@@ -2583,11 +2582,10 @@ void CompositeRow_ByteMask2Rgba(uint8_t* dest_scan,
     int alpha_ratio = src_alpha * 255 / dest_alpha;
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      RGB_Blend(blend_type, scan, dest_scan, blended_colors);
       *dest_scan =
           FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[0], alpha_ratio);
       dest_scan++;
@@ -2644,11 +2642,10 @@ void CompositeRow_ByteMask2Rgb(uint8_t* dest_scan,
     }
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      RGB_Blend(blend_type, scan, dest_scan, blended_colors);
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[0], src_alpha);
       dest_scan++;
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[1], src_alpha);
@@ -2791,11 +2788,10 @@ void CompositeRow_BitMask2Argb(uint8_t* dest_scan,
     int alpha_ratio = src_alpha * 255 / dest_alpha;
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      RGB_Blend(blend_type, scan, dest_scan, blended_colors);
       *dest_scan =
           FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[0], alpha_ratio);
       dest_scan++;
@@ -2866,11 +2862,10 @@ void CompositeRow_BitMask2Rgb(uint8_t* dest_scan,
     }
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      RGB_Blend(blend_type, scan, dest_scan, blended_colors);
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[0], src_alpha);
       dest_scan++;
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended_colors[1], src_alpha);
@@ -3584,15 +3579,11 @@ void CompositeRow_ByteMask2Argb_RgbByteOrder(uint8_t* dest_scan,
     int alpha_ratio = src_alpha * 255 / dest_alpha;
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      uint8_t dest_scan_o[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      dest_scan_o[0] = dest_scan[2];
-      dest_scan_o[1] = dest_scan[1];
-      dest_scan_o[2] = dest_scan[0];
-      RGB_Blend(blend_type, src_scan, dest_scan_o, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      uint8_t dest_scan_o[3] = {dest_scan[2], dest_scan[1], dest_scan[0]};
+      RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
       dest_scan[2] =
           FXDIB_ALPHA_MERGE(dest_scan[2], blended_colors[0], alpha_ratio);
       dest_scan[1] =
@@ -3641,15 +3632,11 @@ void CompositeRow_ByteMask2Rgb_RgbByteOrder(uint8_t* dest_scan,
     }
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      uint8_t dest_scan_o[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      dest_scan_o[0] = dest_scan[2];
-      dest_scan_o[1] = dest_scan[1];
-      dest_scan_o[2] = dest_scan[0];
-      RGB_Blend(blend_type, src_scan, dest_scan_o, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      uint8_t dest_scan_o[3] = {dest_scan[2], dest_scan[1], dest_scan[0]};
+      RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
       dest_scan[2] =
           FXDIB_ALPHA_MERGE(dest_scan[2], blended_colors[0], src_alpha);
       dest_scan[1] =
@@ -3715,15 +3702,11 @@ void CompositeRow_BitMask2Argb_RgbByteOrder(uint8_t* dest_scan,
     int alpha_ratio = src_alpha * 255 / dest_alpha;
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      uint8_t dest_scan_o[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      dest_scan_o[0] = dest_scan[2];
-      dest_scan_o[1] = dest_scan[1];
-      dest_scan_o[2] = dest_scan[0];
-      RGB_Blend(blend_type, src_scan, dest_scan_o, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      uint8_t dest_scan_o[3] = {dest_scan[2], dest_scan[1], dest_scan[0]};
+      RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
       dest_scan[2] =
           FXDIB_ALPHA_MERGE(dest_scan[2], blended_colors[0], alpha_ratio);
       dest_scan[1] =
@@ -3788,15 +3771,11 @@ void CompositeRow_BitMask2Rgb_RgbByteOrder(uint8_t* dest_scan,
     }
     if (blend_type >= FXDIB_BLEND_NONSEPARABLE) {
       int blended_colors[3];
-      uint8_t src_scan[3];
-      uint8_t dest_scan_o[3];
-      src_scan[0] = src_b;
-      src_scan[1] = src_g;
-      src_scan[2] = src_r;
-      dest_scan_o[0] = dest_scan[2];
-      dest_scan_o[1] = dest_scan[1];
-      dest_scan_o[2] = dest_scan[0];
-      RGB_Blend(blend_type, src_scan, dest_scan_o, blended_colors);
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      uint8_t dest_scan_o[3] = {dest_scan[2], dest_scan[1], dest_scan[0]};
+      RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
       dest_scan[2] =
           FXDIB_ALPHA_MERGE(dest_scan[2], blended_colors[0], src_alpha);
       dest_scan[1] =
@@ -4710,7 +4689,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
     ASSERT(!IsCmykImage() && (uint8_t)(alpha_flag >> 8) == 0);
     int left_shift = rect.left % 8;
     int right_shift = rect.right % 8;
-    int width = rect.right / 8 - rect.left / 8;
+    int new_width = rect.right / 8 - rect.left / 8;
     int index = 0;
     if (m_pPalette) {
       for (int i = 0; i < 2; i++) {
@@ -4726,8 +4705,8 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
       uint8_t* dest_scan_top_r = (uint8_t*)GetScanline(row) + rect.right / 8;
       uint8_t left_flag = *dest_scan_top & (255 << (8 - left_shift));
       uint8_t right_flag = *dest_scan_top_r & (255 >> right_shift);
-      if (width) {
-        FXSYS_memset(dest_scan_top + 1, index ? 255 : 0, width - 1);
+      if (new_width) {
+        FXSYS_memset(dest_scan_top + 1, index ? 255 : 0, new_width - 1);
         if (!index) {
           *dest_scan_top &= left_flag;
           *dest_scan_top_r &= right_flag;

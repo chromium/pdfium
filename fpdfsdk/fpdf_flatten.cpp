@@ -482,8 +482,8 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CFX_ByteString sFormName;
     sFormName.Format("F%d", i);
-    uint32_t dwObjNum = pDocument->AddIndirectObject(pObj);
-    pXObject->SetAtReference(sFormName, pDocument, dwObjNum);
+    uint32_t dwStreamObjNum = pDocument->AddIndirectObject(pObj);
+    pXObject->SetAtReference(sFormName, pDocument, dwStreamObjNum);
 
     CPDF_StreamAcc acc;
     acc.LoadAllData(pNewXObject);

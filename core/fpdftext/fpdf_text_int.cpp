@@ -988,19 +988,16 @@ void CPDF_TextPage::ProcessTextObject(
   }
   int i = 0;
   for (i = count - 1; i >= 0; i--) {
-    PDFTEXT_Obj prev_Obj = m_LineObj.GetAt(i);
-    CFX_Matrix prev_matrix;
-    prev_Obj.m_pTextObj->GetTextMatrix(&prev_matrix);
-    FX_FLOAT Prev_x = prev_Obj.m_pTextObj->GetPosX(),
-             Prev_y = prev_Obj.m_pTextObj->GetPosY();
-    prev_Obj.m_formMatrix.Transform(Prev_x, Prev_y);
+    PDFTEXT_Obj prev_text_obj = m_LineObj.GetAt(i);
+    FX_FLOAT Prev_x = prev_text_obj.m_pTextObj->GetPosX(),
+             Prev_y = prev_text_obj.m_pTextObj->GetPosY();
+    prev_text_obj.m_formMatrix.Transform(Prev_x, Prev_y);
     m_DisplayMatrix.Transform(Prev_x, Prev_y);
     if (this_x >= Prev_x) {
-      if (i == count - 1) {
+      if (i == count - 1)
         m_LineObj.Add(Obj);
-      } else {
+      else
         m_LineObj.InsertAt(i + 1, Obj);
-      }
       break;
     }
   }
@@ -1611,9 +1608,9 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
           if (re.Contains(pObj->GetPosX(), pObj->GetPosY())) {
             bNewline = FALSE;
           } else {
-            CFX_FloatRect re(0, pObj->m_Bottom, 1000, pObj->m_Top);
-            if (re.Contains(m_pPreTextObj->GetPosX(),
-                            m_pPreTextObj->GetPosY())) {
+            CFX_FloatRect rect(0, pObj->m_Bottom, 1000, pObj->m_Top);
+            if (rect.Contains(m_pPreTextObj->GetPosX(),
+                              m_pPreTextObj->GetPosY())) {
               bNewline = FALSE;
             }
           }

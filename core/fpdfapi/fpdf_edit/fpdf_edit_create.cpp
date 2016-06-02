@@ -779,11 +779,11 @@ FX_BOOL CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator,
     FX_CHAR offset_buf[20];
     FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
     FXSYS_i64toa(m_PrevOffset, offset_buf, 10);
-    int32_t len = (int32_t)FXSYS_strlen(offset_buf);
-    if (pFile->AppendBlock(offset_buf, len) < 0) {
+    int32_t offset_len = (int32_t)FXSYS_strlen(offset_buf);
+    if (pFile->AppendBlock(offset_buf, offset_len) < 0) {
       return FALSE;
     }
-    offset += len + 6;
+    offset += offset_len + 6;
   }
   FX_BOOL bPredictor = TRUE;
   CPDF_FlateEncoder encoder(m_Buffer.GetBuffer(), m_Buffer.GetLength(), TRUE,

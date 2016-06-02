@@ -345,10 +345,9 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
       CFX_PathData rect;
       rect.AppendRect((FX_FLOAT)x, (FX_FLOAT)y, (FX_FLOAT)(x + 1),
                       (FX_FLOAT)(y + 1));
-      CFX_GraphStateData stateData;
       if (m_output->Get(x, y)) {
-        device->DrawPath(&rect, &matri, &stateData, m_barColor, 0,
-                         FXFILL_WINDING);
+        CFX_GraphStateData data;
+        device->DrawPath(&rect, &matri, &data, m_barColor, 0, FXFILL_WINDING);
       }
     }
   }

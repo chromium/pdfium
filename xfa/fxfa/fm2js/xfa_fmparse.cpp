@@ -555,10 +555,8 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
         if (m_pToken->m_type != TOKrparen) {
           pArray.reset(new CFX_ArrayTemplate<CXFA_FMSimpleExpression*>());
           while (m_pToken->m_type != TOKrparen) {
-            CXFA_FMSimpleExpression* e = ParseSimpleExpression();
-            if (e) {
-              pArray->Add(e);
-            }
+            if (CXFA_FMSimpleExpression* expr = ParseSimpleExpression())
+              pArray->Add(expr);
             if (m_pToken->m_type == TOKcomma) {
               NextToken();
             } else if (m_pToken->m_type == TOKeof ||

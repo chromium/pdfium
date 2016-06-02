@@ -144,9 +144,9 @@ void Field::ParseFieldName(const std::wstring& strFieldNameParsed,
   std::wstring suffixal = strFieldNameParsed.substr(iStart + 1);
   iControlNo = FXSYS_wtoi(suffixal.c_str());
   if (iControlNo == 0) {
-    int iStart;
-    while ((iStart = suffixal.find_last_of(L" ")) != -1) {
-      suffixal.erase(iStart, 1);
+    int iSpaceStart;
+    while ((iSpaceStart = suffixal.find_last_of(L" ")) != -1) {
+      suffixal.erase(iSpaceStart, 1);
     }
 
     if (suffixal.compare(L"0") != 0) {
@@ -249,8 +249,8 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
                               FX_BOOL bRefresh) {
   ASSERT(pFormControl);
 
-  CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
-  CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl);
+  CPDFSDK_InterForm* pForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
+  CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
 
   if (pWidget) {
     if (bResetAP) {

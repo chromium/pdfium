@@ -811,7 +811,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
       sNodeIterator.MoveToNext();
     } else {
       CFX_MapPtrTemplate<CXFA_Node*, CXFA_Node*> subformMapArray;
-      CXFA_NodeArray subformArray;
+      CXFA_NodeArray nodeArray;
       for (; iMax < 0 || iCurRepeatIndex < iMax; iCurRepeatIndex++) {
         FX_BOOL bSelfMatch = FALSE;
         XFA_ATTRIBUTEENUM eBindMatch = XFA_ATTRIBUTEENUM_None;
@@ -830,11 +830,11 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
         XFA_DataMerge_CreateDataBinding(pSubformNode, pDataNode);
         ASSERT(pSubformNode);
         subformMapArray.SetAt(pSubformNode, pDataNode);
-        subformArray.Add(pSubformNode);
+        nodeArray.Add(pSubformNode);
       }
       subformMapArray.GetStartPosition();
-      for (int32_t iIndex = 0; iIndex < subformArray.GetSize(); iIndex++) {
-        CXFA_Node* pSubform = subformArray[iIndex];
+      for (int32_t iIndex = 0; iIndex < nodeArray.GetSize(); iIndex++) {
+        CXFA_Node* pSubform = nodeArray[iIndex];
         CXFA_Node* pDataNode =
             reinterpret_cast<CXFA_Node*>(subformMapArray.GetValueAt(pSubform));
         for (CXFA_Node* pTemplateChild =

@@ -721,8 +721,7 @@ FX_BOOL CXFA_FFDocView::RunEventLayoutReady() {
   return TRUE;
 }
 void CXFA_FFDocView::RunBindItems() {
-  int32_t iCount = m_BindItems.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
+  for (int32_t i = 0; i < m_BindItems.GetSize(); i++) {
     if (m_BindItems[i]->HasFlag(XFA_NODEFLAG_HasRemoved))
       continue;
 
@@ -757,8 +756,8 @@ void CXFA_FFDocView::RunBindItems() {
     CFX_WideString wsValue;
     CFX_WideString wsLabel;
     uint32_t uValueHash = FX_HashCode_GetW(wsValueRef, false);
-    for (int32_t i = 0; i < iCount; i++) {
-      CXFA_Object* refObj = rs.nodes[i];
+    for (int32_t j = 0; j < iCount; j++) {
+      CXFA_Object* refObj = rs.nodes[j];
       if (!refObj->IsNode()) {
         continue;
       }

@@ -359,16 +359,16 @@ FX_BOOL FaxG4GetRow(const uint8_t* src_buf,
           if (bitpos >= bitsize) {
             return FALSE;
           }
-          FX_BOOL bit1 = NEXTBIT;
+          FX_BOOL next_bit1 = NEXTBIT;
           if (bitpos >= bitsize) {
             return FALSE;
           }
-          FX_BOOL bit2 = NEXTBIT;
-          if (bit1 && bit2) {
+          FX_BOOL next_bit2 = NEXTBIT;
+          if (next_bit1 && next_bit2) {
             v_delta = 2;
-          } else if (bit1) {
+          } else if (next_bit1) {
             v_delta = -2;
-          } else if (bit2) {
+          } else if (next_bit2) {
             if (bitpos >= bitsize) {
               return FALSE;
             }

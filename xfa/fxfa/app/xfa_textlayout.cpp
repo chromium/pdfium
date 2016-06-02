@@ -1042,12 +1042,11 @@ FX_BOOL CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
 }
 
 FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
-  if (m_pLoader == NULL || iBlock < 0 || iBlock >= CountBlocks()) {
+  if (m_pLoader == NULL || iBlock < 0 || iBlock >= CountBlocks())
     return FALSE;
-  }
-  if (m_pLoader->m_fWidth < 1) {
+  if (m_pLoader->m_fWidth < 1)
     return FALSE;
-  }
+
   m_pLoader->m_iTotalLines = -1;
   m_iLines = 0;
   FX_FLOAT fLinePos = 0;
@@ -1056,9 +1055,8 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
   int32_t iCount = m_Blocks.GetSize();
   int32_t iBlocksHeightCount = m_pLoader->m_BlocksHeight.GetSize();
   iBlocksHeightCount /= 2;
-  if (iBlock < iBlocksHeightCount) {
+  if (iBlock < iBlocksHeightCount)
     return TRUE;
-  }
   if (iBlock == iBlocksHeightCount) {
     Unload();
     m_pBreak.reset(CreateBreak(TRUE));
@@ -1067,18 +1065,15 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
       fLinePos -= m_pLoader->m_BlocksHeight.ElementAt(i * 2 + 1);
     }
     m_pLoader->m_iChar = 0;
-    if (iCount > 1) {
+    if (iCount > 1)
       m_pLoader->m_iTotalLines = m_Blocks.ElementAt(iBlock * 2 + 1);
-    }
     Loader(szText, fLinePos, TRUE);
-    if (iCount == 0 && m_pLoader->m_fStartLineOffset < 0.1f) {
+    if (iCount == 0 && m_pLoader->m_fStartLineOffset < 0.1f)
       UpdateAlign(szText.y, fLinePos);
-    }
   } else if (m_pTextDataNode) {
     iBlock *= 2;
-    if (iBlock < iCount - 2) {
+    if (iBlock < iCount - 2)
       m_pLoader->m_iTotalLines = m_Blocks.ElementAt(iBlock + 1);
-    }
     m_pBreak->Reset();
     if (m_bRichText) {
       CFDE_XMLNode* pContainerNode = GetXMLContainerNode();
@@ -1086,48 +1081,40 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
         return TRUE;
       }
       CFDE_XMLNode* pXMLNode = m_pLoader->m_pXMLNode;
-      if (pXMLNode == NULL) {
+      if (!pXMLNode)
         return TRUE;
-      }
       CFDE_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
       for (; pXMLNode;
            pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-        FX_BOOL bFlag = LoadRichText(pXMLNode, szText, fLinePos,
-                                     m_pLoader->m_pParentStyle, TRUE);
-        if (!bFlag) {
+        if (!LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
+                          TRUE)) {
           break;
         }
       }
-      while (pXMLNode == NULL) {
+      while (!pXMLNode) {
         pXMLNode = pSaveXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
-        if (pXMLNode == pContainerNode) {
+        if (pXMLNode == pContainerNode)
           break;
-        }
-        FX_BOOL bFlag =
-            LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
-                         TRUE, NULL, FALSE);
-        if (!bFlag) {
+        if (!LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
+                          TRUE, NULL, FALSE)) {
           break;
         }
         pSaveXMLNode = pXMLNode;
         pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling);
-        if (!pXMLNode) {
+        if (!pXMLNode)
           continue;
-        }
         for (; pXMLNode;
              pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-          FX_BOOL bFlag = LoadRichText(pXMLNode, szText, fLinePos,
-                                       m_pLoader->m_pParentStyle, TRUE);
-          if (!bFlag) {
+          if (!LoadRichText(pXMLNode, szText, fLinePos,
+                            m_pLoader->m_pParentStyle, TRUE)) {
             break;
           }
         }
       }
     } else {
       pNode = m_pLoader->m_pNode;
-      if (pNode == NULL) {
+      if (!pNode)
         return TRUE;
-      }
       LoadText(pNode, szText, fLinePos, TRUE);
     }
   }
@@ -1839,7 +1826,6 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
   if (iChars > 0) {
     CFX_PointF pt1, pt2;
     FX_FLOAT fEndY = pCharPos[0].m_OriginY + 1.05f;
-    int32_t i = 0;
     if (pPiece->iPeriod == XFA_ATTRIBUTEENUM_Word) {
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         for (int32_t j = 0; j < iChars; j++) {
@@ -1866,7 +1852,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
     pt1.x = pCharPos[0].m_OriginX;
     pt2.x = pCharPos[iChars - 1].m_OriginX +
             pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
-    for (i = 0; i < pPiece->iLineThrough; i++) {
+    for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
       pPath->AddLine(pt1, pt2);
       fEndY += 2.0f;
@@ -1917,14 +1903,13 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
     CFX_PointF pt1, pt2;
     pt1.x = fOrgX, pt2.x = fEndX;
     FX_FLOAT fEndY = pCharPos[0].m_OriginY + 1.05f;
-    int32_t i = 0;
-    for (i = 0; i < pPiece->iUnderline; i++) {
+    for (int32_t i = 0; i < pPiece->iUnderline; i++) {
       pt1.y = pt2.y = fEndY;
       pPath->AddLine(pt1, pt2);
       fEndY += 2.0f;
     }
     fEndY = pCharPos[0].m_OriginY - pPiece->rtPiece.height * 0.25f;
-    for (i = 0; i < pPiece->iLineThrough; i++) {
+    for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
       pPath->AddLine(pt1, pt2);
       fEndY += 2.0f;

@@ -197,9 +197,9 @@ CFX_Int32Array* CBC_ReedSolomonDecoder::FindErrorMagnitudes(
     FX_BOOL dataMatrix,
     int32_t& e) {
   int32_t s = errorLocations->GetSize();
-  CFX_Int32Array* temp = new CFX_Int32Array;
-  temp->SetSize(s);
-  std::unique_ptr<CFX_Int32Array> result(temp);
+  CFX_Int32Array* tempArray = new CFX_Int32Array;
+  tempArray->SetSize(s);
+  std::unique_ptr<CFX_Int32Array> result(tempArray);
   for (int32_t i = 0; i < s; i++) {
     int32_t xiInverse = m_field->Inverse(errorLocations->operator[](i), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -212,7 +212,7 @@ CFX_Int32Array* CBC_ReedSolomonDecoder::FindErrorMagnitudes(
                                                   xiInverse)));
       }
     }
-    int32_t temp = m_field->Inverse(denominator, temp);
+    int32_t temp = m_field->Inverse(denominator, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     (*result)[i] =
         m_field->Multiply(errorEvaluator->EvaluateAt(xiInverse), temp);

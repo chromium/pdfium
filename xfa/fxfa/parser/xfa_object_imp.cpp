@@ -1393,8 +1393,8 @@ void CXFA_Node::Script_Attribute_SendAttributeChangeMessage(
       if (!pValueNode) {
         return;
       }
-      XFA_ELEMENT eType = pValueNode->GetClassID();
-      if (eType == XFA_ELEMENT_Value) {
+      XFA_ELEMENT eNodeType = pValueNode->GetClassID();
+      if (eNodeType == XFA_ELEMENT_Value) {
         bNeedFindContainer = true;
         CXFA_Node* pNode = pValueNode->GetNodeItem(XFA_NODEITEM_Parent);
         if (pNode && pNode->IsContainerNode()) {
@@ -1407,7 +1407,7 @@ void CXFA_Node::Script_Attribute_SendAttributeChangeMessage(
                                   pNode->GetNodeItem(XFA_NODEITEM_Parent));
         }
       } else {
-        if (eType == XFA_ELEMENT_Items) {
+        if (eNodeType == XFA_ELEMENT_Items) {
           CXFA_Node* pNode = pValueNode->GetNodeItem(XFA_NODEITEM_Parent);
           if (pNode && pNode->IsContainerNode()) {
             pNotify->OnValueChanged(this, eAttribute, pValueNode, pNode);
@@ -4190,12 +4190,10 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
           CXFA_NodeArray nodeArray;
           pBind->GetBindItems(nodeArray);
           for (int32_t i = 0; i < nodeArray.GetSize(); i++) {
-            CXFA_Node* pNode = nodeArray[i];
-            if (pNode == this) {
-              continue;
+            if (nodeArray[i] != this) {
+              nodeArray[i]->SetScriptContent(wsContent, wsContent, bNotify,
+                                             bScriptModify, FALSE);
             }
-            pNode->SetScriptContent(wsContent, wsContent, bNotify,
-                                    bScriptModify, FALSE);
           }
         }
         break;
@@ -4215,11 +4213,10 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
         CXFA_NodeArray nodeArray;
         pBindNode->GetBindItems(nodeArray);
         for (int32_t i = 0; i < nodeArray.GetSize(); i++) {
-          CXFA_Node* pNode = nodeArray[i];
-          if (pNode == this) {
-            continue;
+          if (nodeArray[i] != this) {
+            nodeArray[i]->SetScriptContent(wsContent, wsContent, bNotify, true,
+                                           FALSE);
           }
-          pNode->SetScriptContent(wsContent, wsContent, bNotify, true, FALSE);
         }
       }
       pBindNode = nullptr;
@@ -4280,9 +4277,8 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       CXFA_NodeArray nodeArray;
       pBindNode->GetBindItems(nodeArray);
       for (int32_t i = 0; i < nodeArray.GetSize(); i++) {
-        CXFA_Node* pNode = nodeArray[i];
-        pNode->SetScriptContent(wsContent, wsContent, bNotify, bScriptModify,
-                                FALSE);
+        nodeArray[i]->SetScriptContent(wsContent, wsContent, bNotify,
+                                       bScriptModify, FALSE);
       }
     }
     return TRUE;

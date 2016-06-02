@@ -433,7 +433,6 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
                                               int src_top,
                                               uint32_t* dst_plt) {
   int bpp = pSrcBitmap->GetBPP() / 8;
-  int row, col;
   CFX_Palette palette;
   palette.BuildPalette(pSrcBitmap);
   uint32_t* cLut = palette.GetColorLut();
@@ -446,7 +445,7 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
   if (lut > 256) {
     int err, min_err;
     int lut_256 = lut - 256;
-    for (row = 0; row < lut_256; row++) {
+    for (int row = 0; row < lut_256; row++) {
       min_err = 1000000;
       uint8_t r, g, b;
       _ColorDecode(cLut[row], r, g, b);
@@ -466,11 +465,11 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
     }
   }
   int32_t lut_1 = lut - 1;
-  for (row = 0; row < height; row++) {
+  for (int row = 0; row < height; row++) {
     uint8_t* src_scan =
         (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left;
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
-    for (col = 0; col < width; col++) {
+    for (int col = 0; col < width; col++) {
       uint8_t* src_port = src_scan + col * bpp;
       int r = src_port[2] & 0xf0;
       int g = src_port[1] & 0xf0;

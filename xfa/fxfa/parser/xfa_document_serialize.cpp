@@ -336,13 +336,12 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
           pNode->GetClassID() == XFA_ELEMENT_Items) {
         wsChildren.clear();
         bSaveXML = TRUE;
-        CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-        while (pChildNode) {
-          XFA_DataExporter_RegenerateFormFile_Changed(pChildNode, newBuf,
-                                                      bSaveXML);
+        CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+        while (pChild) {
+          XFA_DataExporter_RegenerateFormFile_Changed(pChild, newBuf, bSaveXML);
           wsChildren += newBuf.AsStringC();
           newBuf.Clear();
-          pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+          pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
         }
       }
       break;

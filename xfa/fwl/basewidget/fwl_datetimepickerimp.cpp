@@ -326,10 +326,6 @@ void CFWL_DateTimeCalendarImpDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
                                iCurSel);
     pPicker->ShowMonthCalendar(FALSE);
   } else if (m_bFlag && (!rt.Contains(pMsg->m_fx, pMsg->m_fy))) {
-    IFWL_DateTimePicker* pIPicker =
-        static_cast<IFWL_DateTimePicker*>(m_pOwner->m_pOuter);
-    CFWL_DateTimePickerImp* pPicker =
-        static_cast<CFWL_DateTimePickerImp*>(pIPicker->GetImpl());
     pPicker->ShowMonthCalendar(FALSE);
   }
   m_bFlag = 0;

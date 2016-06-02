@@ -647,8 +647,8 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
       FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
       FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
-        for (int32_t i = 2; i < iLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
                                          jsObjectValue.get());
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
           if (!FXJSE_Value_IsNull(newPropertyValue.get()))
@@ -657,8 +657,8 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
       } else {
         CFX_ByteString propertyStr;
         FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-        for (int32_t i = 2; i < iLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
                                          jsObjectValue.get());
           FXJSE_Value_GetObjectProp(jsObjectValue.get(),
                                     propertyStr.AsStringC(),
@@ -730,8 +730,8 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
       FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
       FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
-        for (int32_t i = 2; i < iLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
                                          jsObjectValue.get());
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
@@ -744,8 +744,8 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
       } else {
         CFX_ByteString propertyStr;
         FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-        for (int32_t i = 2; i < iLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
                                          jsObjectValue.get());
           FXJSE_Value_GetObjectProp(jsObjectValue.get(),
                                     propertyStr.AsStringC(),
@@ -812,8 +812,8 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
       FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
       FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
-        for (int32_t i = 2; i < iLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
                                          jsObjectValue.get());
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
@@ -826,8 +826,8 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
       } else {
         CFX_ByteString propertyStr;
         FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-        for (int32_t i = 2; i < iLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), i,
+        for (int32_t j = 2; j < iLength; j++) {
+          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
                                          jsObjectValue.get());
           FXJSE_Value_GetObjectProp(jsObjectValue.get(),
                                     propertyStr.AsStringC(),
@@ -1943,21 +1943,21 @@ FX_BOOL CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
   }
   if (*(pData + iIndex) == '.') {
     ++iIndex;
-    FX_CHAR strTemp[4];
-    strTemp[3] = '\0';
+    FX_CHAR strSec[4];
+    strSec[3] = '\0';
     if (*(pData + iIndex) > '9' || *(pData + iIndex) < '0') {
       return iRet;
     }
-    strTemp[0] = *(pData + iIndex);
+    strSec[0] = *(pData + iIndex);
     if (*(pData + iIndex + 1) > '9' || *(pData + iIndex + 1) < '0') {
       return iRet;
     }
-    strTemp[1] = *(pData + iIndex + 1);
+    strSec[1] = *(pData + iIndex + 1);
     if (*(pData + iIndex + 2) > '9' || *(pData + iIndex + 2) < '0') {
       return iRet;
     }
-    strTemp[2] = *(pData + iIndex + 2);
-    iMilliSecond = FXSYS_atoi(strTemp);
+    strSec[2] = *(pData + iIndex + 2);
+    iMilliSecond = FXSYS_atoi(strSec);
     if (iMilliSecond > 100) {
       iMilliSecond = 0;
       return iRet;
@@ -3033,9 +3033,9 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
                                CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc > 1) {
+    v8::Isolate* pIsolate = pContext->GetScriptRuntime();
     std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
     FX_BOOL argOneIsNull = FALSE;
     int32_t iIndex = 0;
@@ -3245,8 +3245,8 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
                              CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
+    v8::Isolate* pIsolate = pContext->GetScriptRuntime();
     std::unique_ptr<CFXJSE_Value> scriptValue = GetSimpleValue(pThis, args, 0);
     CFX_ByteString utf8ScriptString;
     ValueToUTF8String(scriptValue.get(), utf8ScriptString);
@@ -3259,16 +3259,16 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
       CXFA_FM2JSContext::Translate(
           CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
           wsJavaScriptBuf, wsError);
-      CFXJSE_Context* pContext =
+      CFXJSE_Context* pNewContext =
           FXJSE_Context_Create(pIsolate, nullptr, nullptr);
       std::unique_ptr<CFXJSE_Value> returnValue(new CFXJSE_Value(pIsolate));
       javaScript = wsJavaScriptBuf.AsStringC();
       FXJSE_ExecuteScript(
-          pContext,
+          pNewContext,
           FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).c_str(),
           returnValue.get());
       FXJSE_Value_Set(args.GetReturnValue(), returnValue.get());
-      FXJSE_Context_Release(pContext);
+      FXJSE_Context_Release(pNewContext);
     }
   } else {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Eval");
@@ -3517,32 +3517,32 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
               GetSimpleValue(pThis, args, 1);
           CFX_ByteString unitTempString;
           ValueToUTF8String(unitValue.get(), unitTempString);
-          const FX_CHAR* pData = unitTempString.c_str();
-          int32_t u = 0;
-          while (*(pData + u) == ' ' || *(pData + u) == 0x09 ||
-                 *(pData + u) == 0x0B || *(pData + u) == 0x0C ||
-                 *(pData + u) == 0x0A || *(pData + u) == 0x0D) {
-            ++u;
+          const FX_CHAR* pChar = unitTempString.c_str();
+          int32_t uVal = 0;
+          while (*(pChar + uVal) == ' ' || *(pChar + uVal) == 0x09 ||
+                 *(pChar + uVal) == 0x0B || *(pChar + uVal) == 0x0C ||
+                 *(pChar + uVal) == 0x0A || *(pChar + uVal) == 0x0D) {
+            ++uVal;
           }
-          while (u < unitTempString.GetLength()) {
-            if ((*(pData + u) > '9' || *(pData + u) < '0') &&
-                *(pData + u) != '.') {
+          while (uVal < unitTempString.GetLength()) {
+            if ((*(pChar + uVal) > '9' || *(pChar + uVal) < '0') &&
+                *(pChar + uVal) != '.') {
               break;
             }
-            ++u;
+            ++uVal;
           }
-          while (*(pData + u) == ' ' || *(pData + u) == 0x09 ||
-                 *(pData + u) == 0x0B || *(pData + u) == 0x0C ||
-                 *(pData + u) == 0x0A || *(pData + u) == 0x0D) {
-            ++u;
+          while (*(pChar + uVal) == ' ' || *(pChar + uVal) == 0x09 ||
+                 *(pChar + uVal) == 0x0B || *(pChar + uVal) == 0x0C ||
+                 *(pChar + uVal) == 0x0A || *(pChar + uVal) == 0x0D) {
+            ++uVal;
           }
-          int32_t uLen = unitTempString.GetLength();
-          while (u < uLen) {
-            if (*(pData + u) == ' ') {
+          int32_t uValLen = unitTempString.GetLength();
+          while (uVal < uValLen) {
+            if (*(pChar + uVal) == ' ') {
               break;
             }
-            strUnit += (*(pData + u));
-            ++u;
+            strUnit += (*(pChar + uVal));
+            ++uVal;
           }
           strUnit.MakeLower();
         } else {
@@ -4614,10 +4614,10 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
             } else {
               wsTestPattern = FX_WSTRC(L"text{") + wsPattern;
               wsTestPattern += FX_WSTRC(L"}");
-              CXFA_LocaleValue localeValue(XFA_VT_TEXT, wsValue, wsTestPattern,
-                                           pLocale, (CXFA_LocaleMgr*)pMgr);
-              if (localeValue.IsValid()) {
-                szParsedValue = FX_UTF8Encode(localeValue.GetValue());
+              CXFA_LocaleValue localeValue2(XFA_VT_TEXT, wsValue, wsTestPattern,
+                                            pLocale, (CXFA_LocaleMgr*)pMgr);
+              if (localeValue2.IsValid()) {
+                szParsedValue = FX_UTF8Encode(localeValue2.GetValue());
                 FXJSE_Value_SetUTF8String(args.GetReturnValue(),
                                           szParsedValue.AsStringC());
               } else {
@@ -5296,14 +5296,12 @@ void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
       if (iInteger < iLength) {
         strBuf << " And ";
         iIndex = iInteger + 1;
-        int32_t iCount = 0;
         while (iIndex < iLength) {
-          iCount = (iLength - iIndex) % 12;
-          if (!iCount && iLength - iIndex > 0) {
-            iCount = 12;
-          }
-          TrillionUS(CFX_ByteStringC(pData + iIndex, iCount), strBuf);
-          iIndex += iCount;
+          int32_t iSize = (iLength - iIndex) % 12;
+          if (!iSize && iLength - iIndex > 0)
+            iSize = 12;
+          TrillionUS(CFX_ByteStringC(pData + iIndex, iSize), strBuf);
+          iIndex += iSize;
           if (iIndex < iLength) {
             strBuf << " Trillion ";
           }

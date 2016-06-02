@@ -1139,31 +1139,16 @@ void CPDF_StreamContentParser::Handle_SetFont() {
 CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     const CFX_ByteString& type,
     const CFX_ByteString& name) {
-  if (!m_pResources) {
-    return NULL;
-  }
-  if (m_pResources == m_pPageResources) {
-    CPDF_Dictionary* pList = m_pResources->GetDictBy(type);
-    if (!pList) {
-      return NULL;
-    }
-    CPDF_Object* pRes = pList->GetDirectObjectBy(name);
-    return pRes;
-  }
-  CPDF_Dictionary* pList = m_pResources->GetDictBy(type);
-  if (!pList) {
-    if (!m_pPageResources) {
-      return NULL;
-    }
-    CPDF_Dictionary* pList = m_pPageResources->GetDictBy(type);
-    if (!pList) {
-      return NULL;
-    }
-    CPDF_Object* pRes = pList->GetDirectObjectBy(name);
-    return pRes;
-  }
-  CPDF_Object* pRes = pList->GetDirectObjectBy(name);
-  return pRes;
+  if (!m_pResources)
+    return nullptr;
+  CPDF_Dictionary* pDict = m_pResources->GetDictBy(type);
+  if (pDict)
+    return pDict->GetDirectObjectBy(name);
+  if (m_pResources == m_pPageResources || !m_pPageResources)
+    return nullptr;
+
+  CPDF_Dictionary* pPageDict = m_pPageResources->GetDictBy(type);
+  return pPageDict ? pPageDict->GetDirectObjectBy(name) : nullptr;
 }
 
 CPDF_Font* CPDF_StreamContentParser::FindFont(const CFX_ByteString& name) {

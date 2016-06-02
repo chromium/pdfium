@@ -140,30 +140,29 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   int32_t iSpliteIndex = 0;
   FX_BOOL bTargetAllFind = TRUE;
   while (iSpliteIndex != -1) {
-    CFX_WideString wsTargetExpr;
+    CFX_WideString wsExpr;
     int32_t iSpliteNextIndex = 0;
     if (!bTargetAllFind) {
       iSpliteNextIndex = wsTargetAll.Find(' ', iSpliteIndex);
-      wsTargetExpr =
-          wsTargetAll.Mid(iSpliteIndex, iSpliteNextIndex - iSpliteIndex);
+      wsExpr = wsTargetAll.Mid(iSpliteIndex, iSpliteNextIndex - iSpliteIndex);
     } else {
-      wsTargetExpr = wsTargetAll;
+      wsExpr = wsTargetAll;
     }
-    if (wsTargetExpr.IsEmpty())
+    if (wsExpr.IsEmpty())
       return nullptr;
 
     bTargetAllFind = FALSE;
-    if (wsTargetExpr.GetAt(0) == '#') {
+    if (wsExpr.GetAt(0) == '#') {
       CXFA_Node* pNode = pDocument->GetNodeByID(
           ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Template)),
-          wsTargetExpr.Mid(1).AsStringC());
+          wsExpr.Mid(1).AsStringC());
       if (pNode)
         return pNode;
     } else if (bNewExprStyle) {
-      CFX_WideString wsProcessedTarget = wsTargetExpr;
-      if (wsTargetExpr.Left(4) == FX_WSTRC(L"som(") &&
-          wsTargetExpr.Right(1) == FX_WSTRC(L")")) {
-        wsProcessedTarget = wsTargetExpr.Mid(4, wsTargetExpr.GetLength() - 5);
+      CFX_WideString wsProcessedTarget = wsExpr;
+      if (wsExpr.Left(4) == FX_WSTRC(L"som(") &&
+          wsExpr.Right(1) == FX_WSTRC(L")")) {
+        wsProcessedTarget = wsExpr.Mid(4, wsExpr.GetLength() - 5);
       }
       XFA_RESOLVENODE_RS rs;
       int32_t iCount = pDocument->GetScriptContext()->ResolveObjects(
@@ -893,7 +892,6 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
                                              CXFA_Node*& pLeaderTemplate,
                                              CXFA_Node*& pTrailerTemplate,
                                              FX_BOOL bCreatePage) {
-  CFX_WideStringC wsOverflowLeader, wsOverflowTrailer;
   CXFA_Node* pContainer =
       pOverflowNode->GetNodeItem(XFA_NODEITEM_Parent,
                                  XFA_OBJECTTYPE_ContainerNode)
@@ -937,6 +935,8 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
     }
     return NULL;
   } else if (pOverflowNode->GetClassID() == XFA_ELEMENT_Overflow) {
+    CFX_WideStringC wsOverflowLeader;
+    CFX_WideStringC wsOverflowTrailer;
     CFX_WideStringC wsOverflowTarget;
     pOverflowNode->TryCData(XFA_ATTRIBUTE_Leader, wsOverflowLeader);
     pOverflowNode->TryCData(XFA_ATTRIBUTE_Trailer, wsOverflowTrailer);
@@ -967,8 +967,9 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
     }
     return pOverflowNode;
   }
-  return NULL;
+  return nullptr;
 }
+
 FX_BOOL CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
                                             CXFA_Node*& pLeaderNode,
                                             CXFA_Node*& pTrailerNode,
@@ -1718,11 +1719,11 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
                   pDocument, pContainerItem->m_pFormNode->GetClassID(),
                   pContainerItem->m_pFormNode->GetNameHash(), pParentNode);
               CXFA_ContainerIterator sIterator(pExistingNode);
-              for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
-                   pNode = sIterator.MoveToNext()) {
-                if (pNode->GetClassID() != XFA_ELEMENT_ContentArea) {
+              for (CXFA_Node* pIter = sIterator.GetCurrent(); pIter;
+                   pIter = sIterator.MoveToNext()) {
+                if (pIter->GetClassID() != XFA_ELEMENT_ContentArea) {
                   CXFA_LayoutItem* pLayoutItem = static_cast<CXFA_LayoutItem*>(
-                      pNode->GetUserData(XFA_LAYOUTITEMKEY));
+                      pIter->GetUserData(XFA_LAYOUTITEMKEY));
                   if (pLayoutItem) {
                     pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
                     delete pLayoutItem;

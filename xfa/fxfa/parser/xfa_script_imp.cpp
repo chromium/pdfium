@@ -219,10 +219,10 @@ void CXFA_ScriptContext::GlobalPropertyGetter(CFXJSE_Value* pObject,
     XFA_HashCode uHashCode = static_cast<XFA_HashCode>(
         FX_HashCode_GetW(wsPropName.AsStringC(), false));
     if (uHashCode != XFA_HASHCODE_Layout) {
-      CXFA_Object* pObject =
+      CXFA_Object* pObj =
           lpScriptContext->GetDocument()->GetXFAObject(uHashCode);
-      if (pObject) {
-        FXJSE_Value_Set(pValue, lpScriptContext->GetJSValueFromMap(pObject));
+      if (pObj) {
+        FXJSE_Value_Set(pValue, lpScriptContext->GetJSValueFromMap(pObj));
         return;
       }
     }
@@ -335,12 +335,12 @@ void CXFA_ScriptContext::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
       }
       if (pPropOrChild) {
         CFX_WideString wsDefaultName(L"{default}");
-        const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
+        const XFA_SCRIPTATTRIBUTEINFO* lpAttrInfo =
             XFA_GetScriptAttributeByName(pPropOrChild->GetClassID(),
                                          wsDefaultName.AsStringC());
-        if (lpAttributeInfo) {
-          (pPropOrChild->*(lpAttributeInfo->lpfnCallback))(
-              pReturnValue, TRUE, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
+        if (lpAttrInfo) {
+          (pPropOrChild->*(lpAttrInfo->lpfnCallback))(
+              pReturnValue, TRUE, (XFA_ATTRIBUTE)lpAttrInfo->eAttribute);
           return;
         }
       }

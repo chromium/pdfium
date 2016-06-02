@@ -899,10 +899,10 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
   int32_t nTotalCharCount = 0;
   int32_t i = 0;
   for (i = ParagPosBgn.nParagIndex; i <= ParagPosEnd.nParagIndex; i++) {
-    CFDE_TxtEdtParag* pParag = m_ParagPtrArray[i];
-    pParag->CalcLines();
-    nTotalLineCount += pParag->GetLineCount();
-    nTotalCharCount += pParag->GetTextLength();
+    CFDE_TxtEdtParag* pTextParag = m_ParagPtrArray[i];
+    pTextParag->CalcLines();
+    nTotalLineCount += pTextParag->GetLineCount();
+    nTotalCharCount += pTextParag->GetTextLength();
   }
   m_pTxtBuf->Delete(nStart, nCount);
   int32_t nNextParagIndex = (ParagPosBgn.nCharIndex == 0 && bLastParag)

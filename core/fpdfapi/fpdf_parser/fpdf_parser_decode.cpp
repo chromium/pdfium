@@ -447,12 +447,11 @@ CFX_WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
       if (unicode == 0x1b) {
         i += 2;
         while (i < max_chars * 2) {
-          uint16_t unicode = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
-                                 : (uni_str[i + 1] << 8 | uni_str[i]);
+          uint16_t unicode2 = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
+                                  : (uni_str[i + 1] << 8 | uni_str[i]);
           i += 2;
-          if (unicode == 0x1b) {
+          if (unicode2 == 0x1b)
             break;
-          }
         }
       } else {
         dest_buf[dest_pos++] = unicode;
@@ -506,9 +505,9 @@ CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len) {
   dest_buf2[0] = 0xfe;
   dest_buf2[1] = 0xff;
   dest_buf2 += 2;
-  for (int i = 0; i < len; i++) {
+  for (int j = 0; j < len; j++) {
     *dest_buf2++ = pString[i] >> 8;
-    *dest_buf2++ = (uint8_t)pString[i];
+    *dest_buf2++ = (uint8_t)pString[j];
   }
   result.ReleaseBuffer(encLen);
   return result;

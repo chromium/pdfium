@@ -64,7 +64,7 @@ TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
   {
     v8::Local<v8::Context> context1 =
         v8::Local<v8::Context>::New(isolate(), global_context1);
-    v8::Context::Scope context_scope(context1);
+    v8::Context::Scope context_scope1(context1);
     ExecuteInCurrentContext(kScript1);
     CheckAssignmentInCurrentContext(kExpected1);
   }
@@ -73,7 +73,7 @@ TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
   {
     v8::Local<v8::Context> context2 =
         v8::Local<v8::Context>::New(isolate(), global_context2);
-    v8::Context::Scope context_scope(context2);
+    v8::Context::Scope context_scope2(context2);
     ExecuteInCurrentContext(kScript2);
     CheckAssignmentInCurrentContext(kExpected2);
   }

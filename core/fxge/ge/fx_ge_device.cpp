@@ -388,8 +388,8 @@ FX_BOOL CFX_RenderDevice::SetDIBitsWithBlend(const CFX_DIBSource* pBitmap,
                                     blend_mode, nullptr, FALSE, nullptr)) {
       return FALSE;
     }
-    FX_RECT src_rect(0, 0, bg_pixel_width, bg_pixel_height);
-    return m_pDeviceDriver->SetDIBits(&background, 0, &src_rect, dest_rect.left,
+    FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);
+    return m_pDeviceDriver->SetDIBits(&background, 0, &rect, dest_rect.left,
                                       dest_rect.top, FXDIB_BLEND_NORMAL);
   }
   return m_pDeviceDriver->SetDIBits(pBitmap, 0, &src_rect, dest_rect.left,

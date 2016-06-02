@@ -381,7 +381,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
     return nullptr;
 
-  FX_FILESIZE SavedPos = m_Pos;
+  FX_FILESIZE SavedObjPos = m_Pos;
   bool bIsNumber;
   CFX_ByteString word = GetNextWord(&bIsNumber);
   if (word.GetLength() == 0)
@@ -392,10 +392,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     CFX_ByteString nextword = GetNextWord(&bIsNumber);
     if (bIsNumber) {
       CFX_ByteString nextword2 = GetNextWord(nullptr);
-      if (nextword2 == "R") {
-        uint32_t objnum = FXSYS_atoui(word.c_str());
-        return new CPDF_Reference(pObjList, objnum);
-      }
+      if (nextword2 == "R")
+        return new CPDF_Reference(pObjList, FXSYS_atoui(word.c_str()));
     }
     m_Pos = SavedPos;
     return new CPDF_Number(word.AsStringC());
@@ -492,7 +490,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
   }
 
   if (word == ">>")
-    m_Pos = SavedPos;
+    m_Pos = SavedObjPos;
 
   return nullptr;
 }
@@ -505,7 +503,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
     return nullptr;
 
-  FX_FILESIZE SavedPos = m_Pos;
+  FX_FILESIZE SavedObjPos = m_Pos;
   bool bIsNumber;
   CFX_ByteString word = GetNextWord(&bIsNumber);
   if (word.GetLength() == 0)
@@ -605,7 +603,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   }
 
   if (word == ">>")
-    m_Pos = SavedPos;
+    m_Pos = SavedObjPos;
 
   return nullptr;
 }

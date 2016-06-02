@@ -179,8 +179,8 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
     if (as.IsEmpty()) {
       CFX_ByteString value = pAnnotDict->GetStringBy("V");
       if (value.IsEmpty()) {
-        CPDF_Dictionary* pDict = pAnnotDict->GetDictBy("Parent");
-        value = pDict ? pDict->GetStringBy("V") : CFX_ByteString();
+        CPDF_Dictionary* pParentDict = pAnnotDict->GetDictBy("Parent");
+        value = pParentDict ? pParentDict->GetStringBy("V") : CFX_ByteString();
       }
       if (value.IsEmpty() || !pDict->KeyExist(value))
         as = "Off";

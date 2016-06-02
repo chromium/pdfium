@@ -682,17 +682,17 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph) {
       if (!name) {
         return charcode == 0 ? -1 : (int)charcode;
       }
-      uint16_t unicode = PDF_UnicodeFromAdobeName(name);
-      if (unicode) {
+      uint16_t name_unicode = PDF_UnicodeFromAdobeName(name);
+      if (name_unicode) {
         if (bMSUnicode) {
-          index = FXFT_Get_Char_Index(face, unicode);
+          index = FXFT_Get_Char_Index(face, name_unicode);
         } else if (bMacRoman) {
           uint32_t maccode =
-              FT_CharCodeFromUnicode(FXFT_ENCODING_APPLE_ROMAN, unicode);
+              FT_CharCodeFromUnicode(FXFT_ENCODING_APPLE_ROMAN, name_unicode);
           index = !maccode ? FXFT_Get_Name_Index(face, (char*)name)
                            : FXFT_Get_Char_Index(face, maccode);
         } else {
-          return FXFT_Get_Char_Index(face, unicode);
+          return FXFT_Get_Char_Index(face, name_unicode);
         }
       } else {
         return charcode == 0 ? -1 : (int)charcode;
@@ -815,16 +815,15 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
     if (!pObj)
       continue;
 
-    if (CPDF_Array* pArray = pObj->AsArray()) {
+    if (CPDF_Array* pObjArray = pObj->AsArray()) {
       if (width_status != 1)
         return;
 
-      for (size_t j = 0; j < pArray->GetCount(); j += nElements) {
+      for (size_t j = 0; j < pObjArray->GetCount(); j += nElements) {
         result.Add(first_code);
         result.Add(first_code);
-        for (int k = 0; k < nElements; k++) {
-          result.Add(pArray->GetIntegerAt(j + k));
-        }
+        for (int k = 0; k < nElements; k++)
+          result.Add(pObjArray->GetIntegerAt(j + k));
         first_code++;
       }
       width_status = 0;

@@ -1345,9 +1345,8 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
     return;
   }
   FX_BOOL bSameStyles = TRUE;
-  int32_t i;
   CXFA_Stroke stroke1 = strokes[0];
-  for (i = 1; i < 8; i++) {
+  for (int32_t i = 1; i < 8; i++) {
     CXFA_Stroke stroke2 = strokes[i];
     if (!stroke1.SameStyles(stroke2)) {
       bSameStyles = FALSE;
@@ -1357,7 +1356,7 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
   }
   if (bSameStyles) {
     stroke1 = strokes[0];
-    for (i = 2; i < 8; i += 2) {
+    for (int32_t i = 2; i < 8; i += 2) {
       CXFA_Stroke stroke2 = strokes[i];
       if (!stroke1.SameStyles(stroke2, XFA_STROKE_SAMESTYLE_NoPresence |
                                            XFA_STROKE_SAMESTYLE_Corner)) {
@@ -1839,9 +1838,8 @@ static void XFA_BOX_Stroke_Rect(CXFA_Box box,
   }
   FX_BOOL bClose = FALSE;
   FX_BOOL bSameStyles = TRUE;
-  int32_t i;
   CXFA_Stroke stroke1 = strokes[0];
-  for (i = 1; i < 8; i++) {
+  for (int32_t i = 1; i < 8; i++) {
     CXFA_Stroke stroke2 = strokes[i];
     if (!stroke1.SameStyles(stroke2)) {
       bSameStyles = FALSE;
@@ -1852,7 +1850,7 @@ static void XFA_BOX_Stroke_Rect(CXFA_Box box,
   if (bSameStyles) {
     stroke1 = strokes[0];
     bClose = TRUE;
-    for (i = 2; i < 8; i += 2) {
+    for (int32_t i = 2; i < 8; i += 2) {
       CXFA_Stroke stroke2 = strokes[i];
       if (!stroke1.SameStyles(stroke2, XFA_STROKE_SAMESTYLE_NoPresence |
                                            XFA_STROKE_SAMESTYLE_Corner)) {
@@ -1874,12 +1872,12 @@ static void XFA_BOX_Stroke_Rect(CXFA_Box box,
   FX_BOOL bStart = TRUE;
   CFX_Path path;
   path.Create();
-  for (i = 0; i < 8; i++) {
-    CXFA_Stroke stroke1 = strokes[i];
-    if ((i % 1) == 0 && stroke1.GetRadius() < 0) {
+  for (int32_t i = 0; i < 8; i++) {
+    CXFA_Stroke stroke = strokes[i];
+    if ((i % 1) == 0 && stroke.GetRadius() < 0) {
       FX_BOOL bEmpty = path.IsEmpty();
       if (!bEmpty) {
-        XFA_BOX_StrokePath(stroke1, &path, pGS, pMatrix);
+        XFA_BOX_StrokePath(stroke, &path, pGS, pMatrix);
         path.Clear();
       }
       bStart = TRUE;
@@ -1887,9 +1885,9 @@ static void XFA_BOX_Stroke_Rect(CXFA_Box box,
     }
     XFA_BOX_GetPath(box, strokes, rtWidget, path, i, bStart, !bSameStyles);
     CXFA_Stroke stroke2 = strokes[(i + 1) % 8];
-    bStart = !stroke1.SameStyles(stroke2);
+    bStart = !stroke.SameStyles(stroke2);
     if (bStart) {
-      XFA_BOX_StrokePath(stroke1, &path, pGS, pMatrix);
+      XFA_BOX_StrokePath(stroke, &path, pGS, pMatrix);
       path.Clear();
     }
   }

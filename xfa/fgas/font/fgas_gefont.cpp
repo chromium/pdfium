@@ -494,11 +494,11 @@ int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
     CFX_WideString wsFamily;
     GetFamilyName(wsFamily);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    IFX_Font* pFont = m_pFontMgr->GetDefFontByUnicode(wUnicode, GetFontStyles(),
-                                                      wsFamily.c_str());
+    pFont = m_pFontMgr->GetDefFontByUnicode(wUnicode, GetFontStyles(),
+                                            wsFamily.c_str());
 #else
-    IFX_Font* pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(),
-                                                   wsFamily.c_str());
+    pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(),
+                                         wsFamily.c_str());
     if (!pFont)
       pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), NULL);
 #endif

@@ -440,9 +440,9 @@ FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
       m_bNotifying = FALSE;
 
       if (pWidget->IsAppModified()) {
-        if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, FALSE)) {
-          pFormFiller->ResetPDFWindow(pPageView,
-                                      nValueAge == pWidget->GetValueAge());
+        if (CFFL_FormFiller* pFiller = GetFormFiller(pWidget, FALSE)) {
+          pFiller->ResetPDFWindow(pPageView,
+                                  nValueAge == pWidget->GetValueAge());
         }
       }
     }

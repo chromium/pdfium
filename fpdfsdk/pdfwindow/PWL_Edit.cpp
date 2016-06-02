@@ -294,13 +294,13 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
           << sEditAfter.AsStringC() << "ET\n";
 
   if (sText.GetLength() > 0) {
-    CFX_FloatRect rcClient = GetClientRect();
+    CFX_FloatRect rect = GetClientRect();
     sAppStream << "q\n/Tx BMC\n";
 
     if (!HasFlag(PES_TEXTOVERFLOW))
-      sAppStream << rcClient.left << " " << rcClient.bottom << " "
-                 << rcClient.right - rcClient.left << " "
-                 << rcClient.top - rcClient.bottom << " re W n\n";
+      sAppStream << rect.left << " " << rect.bottom << " "
+                 << rect.right - rect.left << " " << rect.top - rect.bottom
+                 << " re W n\n";
 
     sAppStream << sText;
 

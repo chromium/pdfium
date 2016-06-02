@@ -1439,10 +1439,10 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
             uint32_t dwLastProps = FX_GetUnicodeProperties(wLast);
             if ((dwLastProps & FX_CHARTYPEBITSMASK) ==
                 FX_CHARTYPE_Combination) {
-              CFX_Rect rtBBox;
-              rtBBox.Reset();
-              if (pFont->GetCharBBox(wLast, rtBBox, FALSE)) {
-                pCharPos->m_OriginY -= fFontSize * rtBBox.height / iMaxHeight;
+              CFX_Rect rtBox;
+              rtBox.Reset();
+              if (pFont->GetCharBBox(wLast, rtBox, FALSE)) {
+                pCharPos->m_OriginY -= fFontSize * rtBox.height / iMaxHeight;
               }
             }
           }
