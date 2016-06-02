@@ -56,7 +56,7 @@ FX_BOOL CXFA_FFListBox::LoadWidget() {
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iSelCount = iSelArray.GetSize();
   for (int32_t j = 0; j < iSelCount; j++) {
-    FWL_HLISTITEM item = pListBox->GetItem(iSelArray[j]);
+    IFWL_ListItem* item = pListBox->GetItem(iSelArray[j]);
     pListBox->SetSelItem(item, TRUE);
   }
   m_pNormalWidget->UnlockUpdate();
@@ -90,7 +90,7 @@ FX_BOOL CXFA_FFListBox::IsDataChanged() {
     return TRUE;
 
   for (int32_t i = 0; i < iSels; ++i) {
-    FWL_HLISTITEM hlistItem = pListBox->GetItem(iSelArray[i]);
+    IFWL_ListItem* hlistItem = pListBox->GetItem(iSelArray[i]);
     if (!(pListBox->GetItemStates(hlistItem) && FWL_ITEMSTATE_LTB_Selected))
       return TRUE;
   }
@@ -126,12 +126,12 @@ FX_BOOL CXFA_FFListBox::UpdateFWLData() {
     return FALSE;
   }
   CFWL_ListBox* pListBox = ((CFWL_ListBox*)m_pNormalWidget);
-  CFX_ArrayTemplate<FWL_HLISTITEM> selItemArray;
+  CFX_ArrayTemplate<IFWL_ListItem*> selItemArray;
   CFX_Int32Array iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iSelCount = iSelArray.GetSize();
   for (int32_t j = 0; j < iSelCount; j++) {
-    FWL_HLISTITEM lpItemSel = pListBox->GetSelItem(iSelArray[j]);
+    IFWL_ListItem* lpItemSel = pListBox->GetSelItem(iSelArray[j]);
     selItemArray.Add(lpItemSel);
   }
   pListBox->SetSelItem(pListBox->GetSelItem(-1), FALSE);
@@ -155,7 +155,7 @@ void CXFA_FFListBox::OnSelectChanged(IFWL_Widget* pWidget,
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
 void CXFA_FFListBox::SetItemState(int32_t nIndex, FX_BOOL bSelected) {
-  FWL_HLISTITEM item = ((CFWL_ListBox*)m_pNormalWidget)->GetSelItem(nIndex);
+  IFWL_ListItem* item = ((CFWL_ListBox*)m_pNormalWidget)->GetSelItem(nIndex);
   ((CFWL_ListBox*)m_pNormalWidget)->SetSelItem(item, bSelected);
   m_pNormalWidget->Update();
   AddInvalidateRect();

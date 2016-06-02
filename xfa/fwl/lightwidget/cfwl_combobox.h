@@ -79,42 +79,42 @@ class CFWL_ComboBox : public CFWL_Widget {
     }
 
     virtual int32_t CountItems(IFWL_Widget* pWidget);
-    virtual FWL_HLISTITEM GetItem(IFWL_Widget* pWidget, int32_t nIndex);
-    virtual int32_t GetItemIndex(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
+    virtual IFWL_ListItem* GetItem(IFWL_Widget* pWidget, int32_t nIndex);
+    virtual int32_t GetItemIndex(IFWL_Widget* pWidget, IFWL_ListItem* pItem);
     virtual FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
-                                 FWL_HLISTITEM hItem,
+                                 IFWL_ListItem* pItem,
                                  int32_t nIndex);
 
-    virtual uint32_t GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
+    virtual uint32_t GetItemStyles(IFWL_Widget* pWidget, IFWL_ListItem* pItem);
     virtual FWL_Error GetItemText(IFWL_Widget* pWidget,
-                                  FWL_HLISTITEM hItem,
+                                  IFWL_ListItem* pItem,
                                   CFX_WideString& wsText);
     virtual FWL_Error GetItemRect(IFWL_Widget* pWidget,
-                                  FWL_HLISTITEM hItem,
+                                  IFWL_ListItem* pItem,
                                   CFX_RectF& rtItem);
-    virtual void* GetItemData(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
+    virtual void* GetItemData(IFWL_Widget* pWidget, IFWL_ListItem* pItem);
     virtual FWL_Error SetItemStyles(IFWL_Widget* pWidget,
-                                    FWL_HLISTITEM hItem,
+                                    IFWL_ListItem* pItem,
                                     uint32_t dwStyle);
     virtual FWL_Error SetItemText(IFWL_Widget* pWidget,
-                                  FWL_HLISTITEM hItem,
+                                  IFWL_ListItem* pItem,
                                   const FX_WCHAR* pszText);
     virtual FWL_Error SetItemRect(IFWL_Widget* pWidget,
-                                  FWL_HLISTITEM hItem,
+                                  IFWL_ListItem* pItem,
                                   const CFX_RectF& rtItem);
     virtual FX_FLOAT GetItemHeight(IFWL_Widget* pWidget);
     virtual CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
-                                      FWL_HLISTITEM hItem);
+                                      IFWL_ListItem* pItem);
     virtual FWL_Error GetItemCheckRect(IFWL_Widget* pWidget,
-                                       FWL_HLISTITEM hItem,
+                                       IFWL_ListItem* pItem,
                                        CFX_RectF& rtCheck);
     virtual FWL_Error SetItemCheckRect(IFWL_Widget* pWidget,
-                                       FWL_HLISTITEM hItem,
+                                       IFWL_ListItem* pItem,
                                        const CFX_RectF& rtCheck);
     virtual uint32_t GetItemCheckState(IFWL_Widget* pWidget,
-                                       FWL_HLISTITEM hItem);
+                                       IFWL_ListItem* pItem);
     virtual FWL_Error SetItemCheckState(IFWL_Widget* pWidget,
-                                        FWL_HLISTITEM hItem,
+                                        IFWL_ListItem* pItem,
                                         uint32_t dwCheckState);
     virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget);
 
@@ -125,12 +125,10 @@ class CFWL_ComboBox : public CFWL_Widget {
   CFWL_ComboBoxDP m_comboBoxData;
 };
 
-class CFWL_ComboBoxItem {
+class CFWL_ComboBoxItem : public IFWL_ListItem {
  public:
-  CFWL_ComboBoxItem() {
-    m_pDIB = NULL;
-    m_pData = NULL;
-  }
+  CFWL_ComboBoxItem() : m_pDIB(nullptr), m_pData(nullptr) {}
+
   CFX_RectF m_rtItem;
   uint32_t m_dwStyles;
   CFX_WideString m_wsText;

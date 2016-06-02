@@ -29,8 +29,6 @@
 #define FWL_ITEMSTATE_LTB_Focused (1L << 1)
 #define FWL_ITEMSTATE_LTB_Checked (1L << 2)
 
-typedef struct FWL_HLISTITEM_ { void* pData; } * FWL_HLISTITEM;
-
 class CFX_DIBitmap;
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbSelChanged, CFWL_EventType::SelectChanged)
@@ -44,51 +42,54 @@ int32_t m_index;
 CFX_RectF m_rect;
 END_FWL_EVENT_DEF
 
+class IFWL_ListItem {};
+
 class IFWL_ListBoxDP : public IFWL_DataProvider {
  public:
   virtual int32_t CountItems(IFWL_Widget* pWidget) = 0;
-  virtual FWL_HLISTITEM GetItem(IFWL_Widget* pWidget, int32_t nIndex) = 0;
-  virtual int32_t GetItemIndex(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) = 0;
+  virtual IFWL_ListItem* GetItem(IFWL_Widget* pWidget, int32_t nIndex) = 0;
+  virtual int32_t GetItemIndex(IFWL_Widget* pWidget, IFWL_ListItem* pItem) = 0;
   virtual FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
-                               FWL_HLISTITEM hItem,
+                               IFWL_ListItem* pItem,
                                int32_t nIndex) = 0;
-  virtual uint32_t GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) = 0;
+  virtual uint32_t GetItemStyles(IFWL_Widget* pWidget,
+                                 IFWL_ListItem* pItem) = 0;
   virtual FWL_Error GetItemText(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
+                                IFWL_ListItem* pItem,
                                 CFX_WideString& wsText) = 0;
   virtual FWL_Error GetItemRect(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
+                                IFWL_ListItem* pItem,
                                 CFX_RectF& rtItem) = 0;
-  virtual void* GetItemData(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) = 0;
+  virtual void* GetItemData(IFWL_Widget* pWidget, IFWL_ListItem* pItem) = 0;
   virtual FWL_Error SetItemStyles(IFWL_Widget* pWidget,
-                                  FWL_HLISTITEM hItem,
+                                  IFWL_ListItem* pItem,
                                   uint32_t dwStyle) = 0;
   virtual FWL_Error SetItemText(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
+                                IFWL_ListItem* pItem,
                                 const FX_WCHAR* pszText) = 0;
   virtual FWL_Error SetItemRect(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
+                                IFWL_ListItem* pItem,
                                 const CFX_RectF& rtItem) = 0;
   virtual FX_FLOAT GetItemHeight(IFWL_Widget* pWidget) = 0;
   virtual CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
-                                    FWL_HLISTITEM hItem) = 0;
+                                    IFWL_ListItem* pItem) = 0;
   virtual FWL_Error GetItemCheckRect(IFWL_Widget* pWidget,
-                                     FWL_HLISTITEM hItem,
+                                     IFWL_ListItem* pItem,
                                      CFX_RectF& rtCheck) = 0;
   virtual FWL_Error SetItemCheckRect(IFWL_Widget* pWidget,
-                                     FWL_HLISTITEM hItem,
+                                     IFWL_ListItem* pItem,
                                      const CFX_RectF& rtCheck) = 0;
   virtual uint32_t GetItemCheckState(IFWL_Widget* pWidget,
-                                     FWL_HLISTITEM hItem) = 0;
+                                     IFWL_ListItem* pItem) = 0;
   virtual FWL_Error SetItemCheckState(IFWL_Widget* pWidget,
-                                      FWL_HLISTITEM hItem,
+                                      IFWL_ListItem* pItem,
                                       uint32_t dwCheckState) = 0;
 };
 
 class IFWL_ListBoxCompare {
  public:
   virtual ~IFWL_ListBoxCompare() {}
-  virtual int32_t Compare(FWL_HLISTITEM hLeft, FWL_HLISTITEM hRight) = 0;
+  virtual int32_t Compare(IFWL_ListItem* hLeft, IFWL_ListItem* hRight) = 0;
 };
 
 class IFWL_ListBox : public IFWL_Widget {
@@ -100,10 +101,10 @@ class IFWL_ListBox : public IFWL_Widget {
       IFWL_Widget* pOuter);
 
   int32_t CountSelItems();
-  FWL_HLISTITEM GetSelItem(int32_t nIndexSel);
+  IFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
-  FWL_Error SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect = TRUE);
-  FWL_Error GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText);
+  FWL_Error SetSelItem(IFWL_ListItem* pItem, FX_BOOL bSelect = TRUE);
+  FWL_Error GetItemText(IFWL_ListItem* pItem, CFX_WideString& wsText);
   FWL_Error GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert = TRUE);
 
  protected:

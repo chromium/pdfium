@@ -39,31 +39,31 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
 
   int32_t CountSelItems();
-  FWL_HLISTITEM GetSelItem(int32_t nIndexSel);
+  IFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
-  FWL_Error SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect = TRUE);
-  FWL_Error GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText);
+  FWL_Error SetSelItem(IFWL_ListItem* hItem, FX_BOOL bSelect = TRUE);
+  FWL_Error GetItemText(IFWL_ListItem* hItem, CFX_WideString& wsText);
   FWL_Error GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert = TRUE);
   FWL_Error* Sort(IFWL_ListBoxCompare* pCom);
 
  protected:
   friend class CFWL_ListBoxImpDelegate;
 
-  FWL_HLISTITEM GetItem(FWL_HLISTITEM hItem, uint32_t dwKeyCode);
-  void SetSelection(FWL_HLISTITEM hStart,
-                    FWL_HLISTITEM hEnd,
+  IFWL_ListItem* GetItem(IFWL_ListItem* hItem, uint32_t dwKeyCode);
+  void SetSelection(IFWL_ListItem* hStart,
+                    IFWL_ListItem* hEnd,
                     FX_BOOL bSelected);
-  void SetSelectionDirect(FWL_HLISTITEM hItem, FX_BOOL bSelect);
-  FX_BOOL IsItemSelected(FWL_HLISTITEM hItem);
+  void SetSelectionDirect(IFWL_ListItem* hItem, FX_BOOL bSelect);
+  FX_BOOL IsItemSelected(IFWL_ListItem* hItem);
   void ClearSelection();
   void SelectAll();
-  FWL_HLISTITEM GetFocusedItem();
-  void SetFocusItem(FWL_HLISTITEM hItem);
-  FWL_HLISTITEM GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
-  FX_BOOL GetItemCheckRect(FWL_HLISTITEM hItem, CFX_RectF& rtCheck);
-  FX_BOOL SetItemChecked(FWL_HLISTITEM hItem, FX_BOOL bChecked);
-  FX_BOOL GetItemChecked(FWL_HLISTITEM hItem);
-  FX_BOOL ScrollToVisible(FWL_HLISTITEM hItem);
+  IFWL_ListItem* GetFocusedItem();
+  void SetFocusItem(IFWL_ListItem* hItem);
+  IFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
+  FX_BOOL GetItemCheckRect(IFWL_ListItem* hItem, CFX_RectF& rtCheck);
+  FX_BOOL SetItemChecked(IFWL_ListItem* hItem, FX_BOOL bChecked);
+  FX_BOOL GetItemChecked(IFWL_ListItem* hItem);
+  FX_BOOL ScrollToVisible(IFWL_ListItem* hItem);
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix = NULL);
@@ -72,14 +72,14 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
                  const CFX_Matrix* pMatrix = NULL);
   void DrawItem(CFX_Graphics* pGraphics,
                 IFWL_ThemeProvider* pTheme,
-                FWL_HLISTITEM hItem,
+                IFWL_ListItem* hItem,
                 int32_t Index,
                 const CFX_RectF& rtItem,
                 const CFX_Matrix* pMatrix = NULL);
   void DrawStatic(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
   CFX_SizeF CalcSize(FX_BOOL bAutoSize = FALSE);
   void GetItemSize(CFX_SizeF& size,
-                   FWL_HLISTITEM hItem,
+                   IFWL_ListItem* hItem,
                    FX_FLOAT fWidth,
                    FX_FLOAT fHeight,
                    FX_BOOL bAutoSize = FALSE);
@@ -97,7 +97,7 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAligns;
-  FWL_HLISTITEM m_hAnchor;
+  IFWL_ListItem* m_hAnchor;
   FX_FLOAT m_fItemHeight;
   FX_FLOAT m_fScorllBarWidth;
   FX_BOOL m_bLButtonDown;
@@ -117,7 +117,7 @@ class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
-  void OnVK(FWL_HLISTITEM hItem, FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnVK(IFWL_ListItem* hItem, FX_BOOL bShift, FX_BOOL bCtrl);
   FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
   void DispatchSelChangedEv();
   CFWL_ListBoxImp* m_pOwner;
