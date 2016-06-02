@@ -118,19 +118,18 @@ void CPDF_Type1Font::LoadGlyphMap() {
     return;
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  FX_BOOL bCoreText = TRUE;
+  bool bCoreText = true;
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
           ->m_quartz2d;
   if (!m_Font.GetPlatformFont()) {
-    if (m_Font.GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
-      bCoreText = FALSE;
-    }
+    if (m_Font.GetPsName() == "DFHeiStd-W5")
+      bCoreText = false;
+
     m_Font.SetPlatformFont(
         quartz2d.CreateFont(m_Font.GetFontData(), m_Font.GetSize()));
-    if (!m_Font.GetPlatformFont()) {
-      bCoreText = FALSE;
-    }
+    if (!m_Font.GetPlatformFont())
+      bCoreText = false;
   }
 #endif
   if (!IsEmbedded() && (m_Base14Font < 12) && m_Font.IsTTFont()) {
@@ -164,9 +163,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
       if (bGotOne) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        if (!bCoreText) {
+        if (!bCoreText)
           FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
-        }
 #endif
         return;
       }
@@ -218,9 +216,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-    if (!bCoreText) {
+    if (!bCoreText)
       FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
-    }
 #endif
     return;
   }
@@ -366,9 +363,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-    if (!bCoreText) {
+    if (!bCoreText)
       FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
-    }
+
 #endif
     return;
   }
@@ -397,8 +394,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
   }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  if (!bCoreText) {
+  if (!bCoreText)
     FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
-  }
 #endif
 }

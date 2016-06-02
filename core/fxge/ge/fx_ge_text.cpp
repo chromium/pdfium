@@ -347,6 +347,21 @@ void DrawNormalTextHelper(CFX_DIBitmap* bitmap,
   }
 }
 
+bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  if (text_flags & FXFONT_CIDFONT)
+    return false;
+
+  const CFX_ByteString bsPsName = pFont->GetPsName();
+  if (bsPsName.Find("+ZJHL") != -1)
+    return false;
+
+  if (bsPsName == "CNAAJI+cmex10")
+    return false;
+#endif
+  return true;
+}
+
 }  // namespace
 
 void Color2Argb(FX_ARGB& argb,
@@ -431,16 +446,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   int nativetext_flags = text_flags;
   if (m_DeviceClass != FXDC_DISPLAY) {
     if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
-      bool should_call_draw_device_text = true;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-      if ((text_flags & FXFONT_CIDFONT) ||
-          (pFont->GetPsName().Find(
-               CFX_WideString::FromLocal("+ZJHL").AsStringC()) != -1) ||
-          (pFont->GetPsName() == CFX_WideString::FromLocal("CNAAJI+cmex10"))) {
-        should_call_draw_device_text = false;
-      }
-#endif
-      if (should_call_draw_device_text &&
+      if (ShouldDrawDeviceText(pFont, text_flags) &&
           m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
                                           pText2Device, font_size, fill_color,
                                           0, nullptr)) {
@@ -450,14 +456,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
     if (FXARGB_A(fill_color) < 255)
       return FALSE;
   } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
-    bool should_call_draw_device_text = true;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-    if ((text_flags & FXFONT_CIDFONT) ||
-        (pFont->GetPsName() == CFX_WideString::FromLocal("CNAAJI+cmex10"))) {
-      should_call_draw_device_text = false;
-    }
-#endif
-    if (should_call_draw_device_text &&
+    if (ShouldDrawDeviceText(pFont, text_flags) &&
         m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
                                         pText2Device, font_size, fill_color, 0,
                                         nullptr)) {

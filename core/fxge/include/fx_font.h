@@ -102,7 +102,7 @@ class CFX_Font {
   FX_BOOL IsBold() const;
   FX_BOOL IsFixedWidth() const;
   FX_BOOL IsVertical() const { return m_bVertical; }
-  CFX_WideString GetPsName() const;
+  CFX_ByteString GetPsName() const;
   CFX_ByteString GetFamilyName() const;
   CFX_ByteString GetFaceName() const;
   FX_BOOL IsTTFont() const;

@@ -71,9 +71,9 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
           ->m_quartz2d;
   if (!pFont->GetPlatformFont()) {
-    if (pFont->GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
+    if (pFont->GetPsName() == "DFHeiStd-W5")
       return FALSE;
-    }
+
     pFont->SetPlatformFont(
         quartz2d.CreateFont(pFont->GetFontData(), pFont->GetSize()));
     if (!pFont->GetPlatformFont()) {

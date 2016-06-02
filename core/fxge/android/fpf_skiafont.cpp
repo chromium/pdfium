@@ -49,10 +49,10 @@ CFX_ByteString CFPF_SkiaFont::GetFamilyName() {
   return CFX_ByteString(FXFT_Get_Face_Family_Name(m_Face));
 }
 
-CFX_WideString CFPF_SkiaFont::GetPsName() {
+CFX_ByteString CFPF_SkiaFont::GetPsName() {
   if (!m_Face)
-    return CFX_WideString();
-  return CFX_WideString::FromLocal(FXFT_Get_Postscript_Name(m_Face));
+    return CFX_ByteString();
+  return FXFT_Get_Postscript_Name(m_Face);
 }
 
 int32_t CFPF_SkiaFont::GetGlyphIndex(FX_WCHAR wUnicode) {

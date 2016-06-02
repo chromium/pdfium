@@ -336,9 +336,7 @@ void CFX_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {
         m_pFont->GetSubstFont()->m_Family.AsStringC());
   }
 }
-void CFX_GEFont::GetPsName(CFX_WideString& wsName) const {
-  wsName = m_pFont->GetPsName();
-}
+
 uint32_t CFX_GEFont::GetFontStyles() const {
   ASSERT(m_pFont != NULL);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_

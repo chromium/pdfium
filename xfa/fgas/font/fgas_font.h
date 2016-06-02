@@ -71,7 +71,6 @@ class IFX_Font {
   virtual IFX_Font* Retain() = 0;
   virtual IFX_Font* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0) = 0;
   virtual void GetFamilyName(CFX_WideString& wsFamily) const = 0;
-  virtual void GetPsName(CFX_WideString& wsName) const = 0;
   virtual uint32_t GetFontStyles() const = 0;
   virtual uint8_t GetCharSet() const = 0;
   virtual FX_BOOL GetCharWidth(FX_WCHAR wUnicode,

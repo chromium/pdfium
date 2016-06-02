@@ -19,8 +19,10 @@ class CXFA_PDFFontMgr;
 class CFX_GEFont : public IFX_Font {
  public:
   CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles);
-  CFX_GEFont(IFX_FontMgr* pFontMgr);
+  explicit CFX_GEFont(IFX_FontMgr* pFontMgr);
   ~CFX_GEFont();
+
+  // IFX_Font:
   virtual void Release();
   virtual IFX_Font* Retain();
   FX_BOOL LoadFont(const FX_WCHAR* pszFontFamily,
@@ -32,7 +34,6 @@ class CFX_GEFont : public IFX_Font {
   FX_BOOL LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver = FALSE);
   virtual IFX_Font* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   virtual void GetFamilyName(CFX_WideString& wsFamily) const;
-  virtual void GetPsName(CFX_WideString& wsName) const;
   virtual uint32_t GetFontStyles() const;
   virtual uint8_t GetCharSet() const;
   virtual FX_BOOL GetCharWidth(FX_WCHAR wUnicode,

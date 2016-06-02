@@ -356,17 +356,16 @@ FX_BOOL CFX_Font::IsFixedWidth() const {
   return FXFT_Is_Face_fixedwidth(m_Face);
 }
 
-CFX_WideString CFX_Font::GetPsName() const {
-  if (!m_Face) {
-    return CFX_WideString();
-  }
-  CFX_WideString psName =
-      CFX_WideString::FromLocal(FXFT_Get_Postscript_Name(m_Face));
-  if (psName.IsEmpty()) {
-    psName = CFX_WideString::FromLocal("Untitled");
-  }
+CFX_ByteString CFX_Font::GetPsName() const {
+  if (!m_Face)
+    return CFX_ByteString();
+
+  CFX_ByteString psName = FXFT_Get_Postscript_Name(m_Face);
+  if (psName.IsEmpty())
+    psName = "Untitled";
   return psName;
 }
+
 CFX_ByteString CFX_Font::GetFamilyName() const {
   if (!m_Face && !m_pSubstFont) {
     return CFX_ByteString();
