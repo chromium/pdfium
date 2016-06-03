@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_SCRIPT_H_
 
 #include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/parser/cxfa_valuearray.h"
 #include "xfa/fxjse/value.h"
 
 #define XFA_RESOLVENODE_Children 0x0001
@@ -34,26 +35,6 @@ enum XFA_RESOVENODE_RSTYPE {
   XFA_RESOLVENODE_RSTYPE_CreateNodeAll,
   XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll,
   XFA_RESOVENODE_RSTYPE_ExistNodes,
-};
-
-class CXFA_ValueArray : public CFX_ArrayTemplate<CFXJSE_Value*> {
- public:
-  CXFA_ValueArray(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
-
-  ~CXFA_ValueArray() {
-    for (int32_t i = 0; i < GetSize(); i++) {
-      delete GetAt(i);
-    }
-  }
-
-  void GetAttributeObject(CXFA_ObjArray& objArray) {
-    for (int32_t i = 0; i < GetSize(); i++) {
-      objArray.Add(
-          static_cast<CXFA_Object*>(FXJSE_Value_ToObject(GetAt(i), nullptr)));
-    }
-  }
-
-  v8::Isolate* m_pIsolate;
 };
 
 struct XFA_RESOLVENODE_RS {

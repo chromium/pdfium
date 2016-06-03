@@ -56,7 +56,5 @@ FX_BOOL CXFA_FFDocHandler::RunDocScript(CXFA_FFDoc* hDoc,
 
   return pScriptContext->RunScript(
       (XFA_SCRIPTLANGTYPE)eScriptType, wsScript, pRetValue,
-      pThisValue
-          ? static_cast<CXFA_Object*>(FXJSE_Value_ToObject(pThisValue, nullptr))
-          : nullptr);
+      pThisValue ? CXFA_ScriptContext::ToObject(pThisValue, nullptr) : nullptr);
 }

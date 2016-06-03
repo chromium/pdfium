@@ -19,6 +19,14 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
+namespace {
+
+CXFA_Node* ToNode(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
+  return static_cast<CXFA_Node*>(pValue->ToHostObject(pClass));
+}
+
+}  // namespace
+
 CScript_HostPseudoModel::CScript_HostPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_HostPseudoModel) {
   m_uScriptHash = XFA_HASHCODE_Host;
@@ -309,8 +317,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
   if (iLength >= 1) {
     std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
     if (FXJSE_Value_IsObject(pValue.get())) {
-      pNode =
-          static_cast<CXFA_Node*>(FXJSE_Value_ToObject(pValue.get(), nullptr));
+      pNode = ToNode(pValue.get(), nullptr);
     } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(pValue.get(), bsString);
@@ -507,8 +514,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
   if (iLength >= 1) {
     std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
     if (FXJSE_Value_IsObject(pValue.get())) {
-      pNode =
-          static_cast<CXFA_Node*>(FXJSE_Value_ToObject(pValue.get(), nullptr));
+      pNode = ToNode(pValue.get(), nullptr);
     } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(pValue.get(), bsString);

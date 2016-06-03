@@ -64,11 +64,6 @@ int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue) {
   return pValue->ToInteger();
 }
 
-CFXJSE_HostObject* FXJSE_Value_ToObject(CFXJSE_Value* pValue,
-                                        CFXJSE_Class* pClass) {
-  return pValue->ToObject(pClass);
-}
-
 void FXJSE_Value_SetUndefined(CFXJSE_Value* pValue) {
   pValue->SetUndefined();
 }
@@ -198,7 +193,7 @@ void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
   pIsolate->ThrowException(hError);
 }
 
-CFXJSE_HostObject* CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const {
+CFXJSE_HostObject* CFXJSE_Value::ToHostObject(CFXJSE_Class* lpClass) const {
   ASSERT(!m_hValue.IsEmpty());
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);

@@ -93,6 +93,8 @@ class CXFA_ScriptContext {
   CXFA_NodeArray& GetUpObjectArray() { return m_upObjectArray; }
   CXFA_Document* GetDocument() const { return m_pDocument; }
 
+  static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
+
  private:
   void DefineJsContext();
   CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,

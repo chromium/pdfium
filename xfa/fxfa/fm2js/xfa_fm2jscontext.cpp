@@ -494,6 +494,10 @@ bool PatternStringType(const CFX_ByteStringC& szPattern,
   return false;
 }
 
+CXFA_FM2JSContext* ToJSContext(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
+  return static_cast<CXFA_FM2JSContext*>(pValue->ToHostObject(pClass));
+}
+
 }  // namespace
 
 // static
@@ -501,9 +505,8 @@ void CXFA_FM2JSContext::Abs(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Abs");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Abs");
     return;
   }
 
@@ -530,9 +533,7 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
     return;
   }
 
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   uint32_t uCount = 0;
   FX_DOUBLE dSum = 0.0;
   for (int32_t i = 0; i < argc; i++) {
@@ -601,9 +602,8 @@ void CXFA_FM2JSContext::Ceil(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ceil");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ceil");
     return;
   }
 
@@ -621,8 +621,7 @@ void CXFA_FM2JSContext::Ceil(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
                               const CFX_ByteStringC& szFuncName,
                               CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t iCount = 0;
   for (int32_t i = 0; i < args.GetLength(); i++) {
@@ -684,9 +683,8 @@ void CXFA_FM2JSContext::Floor(CFXJSE_Value* pThis,
                               const CFX_ByteStringC& szFuncName,
                               CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Floor");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Floor");
     return;
   }
 
@@ -704,8 +702,7 @@ void CXFA_FM2JSContext::Floor(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
   FX_DOUBLE dMaxValue = 0.0;
@@ -786,8 +783,7 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
   FX_DOUBLE dMinValue = 0.0;
@@ -868,8 +864,7 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Mod(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 2) {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Mod");
     return;
@@ -904,8 +899,7 @@ void CXFA_FM2JSContext::Mod(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
                               const CFX_ByteStringC& szFuncName,
                               CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc != 1 && argc != 2) {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Round");
@@ -960,8 +954,7 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
     return;
   }
 
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
   FX_DOUBLE dSum = 0.0;
@@ -1038,9 +1031,8 @@ void CXFA_FM2JSContext::Date(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
   if (args.GetLength() != 0) {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date");
     return;
   }
 
@@ -1066,9 +1058,8 @@ void CXFA_FM2JSContext::Date2Num(CFXJSE_Value* pThis,
                                  CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc <= 0 || argc >= 4) {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
     return;
   }
 
@@ -1118,9 +1109,8 @@ void CXFA_FM2JSContext::DateFmt(CFXJSE_Value* pThis,
                                 CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc >= 3) {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
     return;
   }
 
@@ -1157,10 +1147,8 @@ void CXFA_FM2JSContext::IsoDate2Num(CFXJSE_Value* pThis,
                                     const CFX_ByteStringC& szFuncName,
                                     CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
-                             L"IsoDate2Num");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"IsoDate2Num");
     return;
   }
 
@@ -1180,8 +1168,7 @@ void CXFA_FM2JSContext::IsoDate2Num(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
                                     const CFX_ByteStringC& szFuncName,
                                     CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 1) {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
                              L"IsoTime2Num");
@@ -1274,10 +1261,8 @@ void CXFA_FM2JSContext::LocalDateFmt(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
-                             L"LocalDateFmt");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"LocalDateFmt");
   }
 }
 
@@ -1319,10 +1304,8 @@ void CXFA_FM2JSContext::LocalTimeFmt(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
-                             L"LocalTimeFmt");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"LocalTimeFmt");
   }
 }
 
@@ -1468,9 +1451,8 @@ void CXFA_FM2JSContext::Num2Date(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Date");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Date");
   }
 }
 
@@ -1523,9 +1505,8 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2GMTime");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2GMTime");
   }
 }
 
@@ -1578,9 +1559,8 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Time");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Time");
   }
 }
 
@@ -1598,9 +1578,8 @@ void CXFA_FM2JSContext::Time(CFXJSE_Value* pThis,
     FXJSE_Value_SetInteger(args.GetReturnValue(),
                            ((iGMHour * 3600 + iGMMin * 60 + iGMSec) * 1000));
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time");
   }
 }
 
@@ -1638,9 +1617,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
       }
     }
     if (!bFlags) {
-      CXFA_FM2JSContext* pContext =
-          static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-      CXFA_Document* pDoc = pContext->GetDocument();
+      CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
       IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
       IFX_Locale* pLocale = nullptr;
       if (localString.IsEmpty()) {
@@ -1695,9 +1672,8 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time2Num");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time2Num");
   }
 }
 
@@ -1739,9 +1715,8 @@ void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"TimeFmt");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"TimeFmt");
   }
 }
 
@@ -2076,9 +2051,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
                                          const CFX_ByteStringC& szFormat,
                                          const CFX_ByteStringC& szLocale,
                                          CFX_ByteString& strIsoDate) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return FALSE;
   }
@@ -2114,9 +2087,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(CFXJSE_Value* pThis,
                                          const CFX_ByteStringC& szFormat,
                                          const CFX_ByteStringC& szLocale,
                                          CFX_ByteString& strIsoTime) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return FALSE;
   }
@@ -2155,9 +2126,7 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
                                          const CFX_ByteStringC& szFormat,
                                          const CFX_ByteStringC& szLocale,
                                          CFX_ByteString& strLocalDate) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return FALSE;
   }
@@ -2195,9 +2164,7 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
                                          const CFX_ByteStringC& szFormat,
                                          const CFX_ByteStringC& szLocale,
                                          CFX_ByteString& strLocalTime) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return FALSE;
   }
@@ -2237,9 +2204,7 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(CFXJSE_Value* pThis,
                                       const CFX_ByteStringC& szFormat,
                                       const CFX_ByteStringC& szLocale,
                                       CFX_ByteString& strGMTTime) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return FALSE;
   }
@@ -2374,9 +2339,7 @@ void CXFA_FM2JSContext::GetLocalDateFormat(CFXJSE_Value* pThis,
       strStyle = FX_LOCALEDATETIMESUBCATEGORY_Medium;
       break;
   }
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return;
   }
@@ -2430,9 +2393,7 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(CFXJSE_Value* pThis,
       strStyle = FX_LOCALEDATETIMESUBCATEGORY_Medium;
       break;
   }
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return;
   }
@@ -2535,8 +2496,7 @@ void CXFA_FM2JSContext::GetLocalTimeZone(int32_t& iHour,
 void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 3) {
     FX_BOOL bFlags = FALSE;
     FX_DOUBLE nPrincipal = 0;
@@ -2599,8 +2559,7 @@ void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::CTerm(CFXJSE_Value* pThis,
                               const CFX_ByteStringC& szFuncName,
                               CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 3) {
     FX_BOOL bFlags = FALSE;
     FX_FLOAT nRate = 0;
@@ -2636,8 +2595,7 @@ void CXFA_FM2JSContext::CTerm(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::FV(CFXJSE_Value* pThis,
                            const CFX_ByteStringC& szFuncName,
                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 3) {
     FX_BOOL bFlags = FALSE;
     FX_DOUBLE nAmount = 0;
@@ -2681,8 +2639,7 @@ void CXFA_FM2JSContext::FV(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 5) {
     FX_BOOL bFlags = FALSE;
     FX_FLOAT nPrincpalAmount = 0;
@@ -2752,8 +2709,7 @@ void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::NPV(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc > 2) {
     FX_BOOL bFlags = FALSE;
@@ -2800,8 +2756,7 @@ void CXFA_FM2JSContext::NPV(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Pmt(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 3) {
     FX_BOOL bFlags = FALSE;
     FX_FLOAT nPrincipal = 0;
@@ -2842,8 +2797,7 @@ void CXFA_FM2JSContext::Pmt(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::PPmt(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 5) {
     FX_BOOL bFlags = FALSE;
     FX_FLOAT nPrincpalAmount = 0;
@@ -2914,8 +2868,7 @@ void CXFA_FM2JSContext::PPmt(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::PV(CFXJSE_Value* pThis,
                            const CFX_ByteStringC& szFuncName,
                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 3) {
     FX_BOOL bFlags = FALSE;
     FX_DOUBLE nAmount = 0;
@@ -2955,8 +2908,7 @@ void CXFA_FM2JSContext::PV(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Rate(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 3) {
     FX_BOOL bFlags = FALSE;
     FX_FLOAT nFuture = 0;
@@ -2993,8 +2945,7 @@ void CXFA_FM2JSContext::Rate(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Term(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 3) {
     FX_BOOL bFlags = FALSE;
     FX_FLOAT nMount = 0;
@@ -3031,8 +2982,7 @@ void CXFA_FM2JSContext::Term(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
                                const CFX_ByteStringC& szFuncName,
                                CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc > 1) {
     v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -3108,8 +3058,6 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Choose");
   }
 }
@@ -3123,9 +3071,8 @@ void CXFA_FM2JSContext::Exists(CFXJSE_Value* pThis,
     FXJSE_Value_SetInteger(args.GetReturnValue(),
                            FXJSE_Value_IsObject(argOne.get()));
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Exists");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Exists");
   }
 }
 
@@ -3147,9 +3094,8 @@ void CXFA_FM2JSContext::HasValue(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), FALSE);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"HasValue");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"HasValue");
   }
 }
 
@@ -3175,9 +3121,8 @@ void CXFA_FM2JSContext::Oneof(CFXJSE_Value* pThis,
     }
     FX_Free(parametersValue);
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Oneof");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Oneof");
   }
 }
 
@@ -3213,9 +3158,8 @@ void CXFA_FM2JSContext::Within(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Within");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Within");
   }
 }
 
@@ -3233,9 +3177,8 @@ void CXFA_FM2JSContext::If(CFXJSE_Value* pThis,
     FXJSE_Value_Set(args.GetReturnValue(),
                     bCondition ? argFirstValue.get() : argSecondValue.get());
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"If");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"If");
   }
 }
 
@@ -3243,8 +3186,7 @@ void CXFA_FM2JSContext::If(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 1) {
     v8::Isolate* pIsolate = pContext->GetScriptRuntime();
     std::unique_ptr<CFXJSE_Value> scriptValue = GetSimpleValue(pThis, args, 0);
@@ -3279,8 +3221,7 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
@@ -3459,9 +3400,8 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitType");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitType");
   }
 }
 
@@ -3616,9 +3556,8 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitValue");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitValue");
   }
 }
 
@@ -3644,9 +3583,8 @@ void CXFA_FM2JSContext::At(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"At");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"At");
   }
 }
 
@@ -3676,9 +3614,8 @@ void CXFA_FM2JSContext::Concat(CFXJSE_Value* pThis,
                                 resultString.AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Concat");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Concat");
   }
 }
 
@@ -3719,9 +3656,8 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
       FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Decode");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Decode");
   }
 }
 
@@ -3994,9 +3930,8 @@ void CXFA_FM2JSContext::Encode(CFXJSE_Value* pThis,
       FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Encode");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Encode");
   }
 }
 
@@ -4296,8 +4231,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
 void CXFA_FM2JSContext::Format(CFXJSE_Value* pThis,
                                const CFX_ByteStringC& szFuncName,
                                CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() >= 2) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
@@ -4401,9 +4335,8 @@ void CXFA_FM2JSContext::Left(CFXJSE_Value* pThis,
                                 sourceString.Left(count).AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Left");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Left");
   }
 }
 
@@ -4421,9 +4354,8 @@ void CXFA_FM2JSContext::Len(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), sourceString.GetLength());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Len");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Len");
   }
 }
 
@@ -4465,9 +4397,8 @@ void CXFA_FM2JSContext::Lower(CFXJSE_Value* pThis,
               .AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Lower");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Lower");
   }
 }
 
@@ -4487,9 +4418,8 @@ void CXFA_FM2JSContext::Ltrim(CFXJSE_Value* pThis,
                                 sourceString.AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ltrim");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ltrim");
   }
 }
 
@@ -4497,8 +4427,7 @@ void CXFA_FM2JSContext::Ltrim(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
                               const CFX_ByteStringC& szFuncName,
                               CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 2) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
@@ -4688,9 +4617,8 @@ void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
     resultString.AppendChar(0);
     FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultString.AsStringC());
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Replace");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Replace");
   }
 }
 
@@ -4719,9 +4647,8 @@ void CXFA_FM2JSContext::Right(CFXJSE_Value* pThis,
                                 sourceString.Right(count).AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Right");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Right");
   }
 }
 
@@ -4741,9 +4668,8 @@ void CXFA_FM2JSContext::Rtrim(CFXJSE_Value* pThis,
                                 sourceString.AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Rtrim");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Rtrim");
   }
 }
 
@@ -4769,9 +4695,8 @@ void CXFA_FM2JSContext::Space(CFXJSE_Value* pThis,
       FXJSE_Value_SetUTF8String(args.GetReturnValue(), spaceString.AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Space");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Space");
   }
 }
 
@@ -4888,9 +4813,8 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Str");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Str");
   }
 }
 
@@ -4946,9 +4870,8 @@ void CXFA_FM2JSContext::Stuff(CFXJSE_Value* pThis,
     resultString.AppendChar(0);
     FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultString.AsStringC());
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Stuff");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Stuff");
   }
 }
 
@@ -4990,9 +4913,8 @@ void CXFA_FM2JSContext::Substr(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Substr");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Substr");
   }
 }
 
@@ -5013,9 +4935,8 @@ void CXFA_FM2JSContext::Uuid(CFXJSE_Value* pThis,
     FX_GUID_ToString(&guid, bsUId, iNum);
     FXJSE_Value_SetUTF8String(args.GetReturnValue(), bsUId.AsStringC());
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Uuid");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Uuid");
   }
 }
 
@@ -5057,9 +4978,8 @@ void CXFA_FM2JSContext::Upper(CFXJSE_Value* pThis,
               .AsStringC());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Upper");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Upper");
   }
 }
 
@@ -5111,9 +5031,8 @@ void CXFA_FM2JSContext::WordNum(CFXJSE_Value* pThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"WordNum");
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"WordNum");
   }
 }
 
@@ -5318,8 +5237,7 @@ void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
 void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 1) {
     CXFA_Document* pDoc = pContext->GetDocument();
     if (!pDoc) {
@@ -5353,8 +5271,7 @@ void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Post(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if ((argc >= 2) && (argc <= 5)) {
     CXFA_Document* pDoc = pContext->GetDocument();
@@ -5411,8 +5328,7 @@ void CXFA_FM2JSContext::Post(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Put(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if ((argc == 2) || (argc == 3)) {
     CXFA_Document* pDoc = pContext->GetDocument();
@@ -5453,8 +5369,7 @@ void CXFA_FM2JSContext::Put(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
                                               const CFX_ByteStringC& szFuncName,
                                               CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 2) {
     std::unique_ptr<CFXJSE_Value> lValue = args.GetValue(0);
@@ -5513,9 +5428,7 @@ void CXFA_FM2JSContext::logical_or_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), (first || second) ? 1 : 0);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5535,9 +5448,7 @@ void CXFA_FM2JSContext::logical_and_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), (first && second) ? 1 : 0);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5574,9 +5485,7 @@ void CXFA_FM2JSContext::equality_operator(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5612,9 +5521,7 @@ void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
       }
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5622,9 +5529,7 @@ void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
 FX_BOOL CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
                                         CFXJSE_Arguments& args) {
   FX_BOOL bRet = FALSE;
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   std::unique_ptr<CFXJSE_Value> argFirst = args.GetValue(0);
   std::unique_ptr<CFXJSE_Value> argSecond = args.GetValue(1);
   if (FXJSE_Value_IsArray(argFirst.get()) &&
@@ -5641,8 +5546,8 @@ FX_BOOL CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
       FXJSE_Value_GetObjectPropByIdx(argSecond.get(), 2, secondJSObject.get());
       if (!FXJSE_Value_IsNull(firstJSObject.get()) &&
           !FXJSE_Value_IsNull(secondJSObject.get())) {
-        bRet = (FXJSE_Value_ToObject(firstJSObject.get(), nullptr) ==
-                FXJSE_Value_ToObject(secondJSObject.get(), nullptr));
+        bRet = (firstJSObject->ToHostObject(nullptr) ==
+                secondJSObject->ToHostObject(nullptr));
       }
     }
   }
@@ -5674,9 +5579,7 @@ void CXFA_FM2JSContext::less_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), (first < second) ? 1 : 0);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5709,9 +5612,7 @@ void CXFA_FM2JSContext::lessequal_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), (first <= second) ? 1 : 0);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5740,9 +5641,7 @@ void CXFA_FM2JSContext::greater_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), (first > second) ? 1 : 0);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5775,9 +5674,7 @@ void CXFA_FM2JSContext::greaterequal_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), (first >= second) ? 1 : 0);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5797,9 +5694,7 @@ void CXFA_FM2JSContext::plus_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetDouble(args.GetReturnValue(), first + second);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5819,9 +5714,7 @@ void CXFA_FM2JSContext::minus_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetDouble(args.GetReturnValue(), first - second);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5841,9 +5734,7 @@ void CXFA_FM2JSContext::multiple_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetDouble(args.GetReturnValue(), first * second);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5851,8 +5742,7 @@ void CXFA_FM2JSContext::multiple_operator(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::divide_operator(CFXJSE_Value* pThis,
                                         const CFX_ByteStringC& szFuncName,
                                         CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 2) {
     std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(pThis, args, 0);
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
@@ -5886,9 +5776,7 @@ void CXFA_FM2JSContext::positive_operator(CFXJSE_Value* pThis,
                             0.0 + ValueToDouble(pThis, argOne.get()));
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5905,9 +5793,7 @@ void CXFA_FM2JSContext::negative_operator(CFXJSE_Value* pThis,
                             0.0 - ValueToDouble(pThis, argOne.get()));
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5924,9 +5810,7 @@ void CXFA_FM2JSContext::logical_not_operator(CFXJSE_Value* pThis,
       FXJSE_Value_SetInteger(args.GetReturnValue(), (first == 0.0) ? 1 : 0);
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
 
@@ -5934,8 +5818,7 @@ void CXFA_FM2JSContext::logical_not_operator(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
                                      const CFX_ByteStringC& szFuncName,
                                      CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if ((argc == 4) || (argc == 5)) {
@@ -6083,8 +5966,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
                                         const CFX_ByteStringC& szFuncName,
                                         CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if ((argc == 4) || (argc == 5)) {
@@ -6227,8 +6109,7 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::eval_translation(CFXJSE_Value* pThis,
                                          const CFX_ByteStringC& szFuncName,
                                          CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     CFX_ByteString argString;
@@ -6287,8 +6168,7 @@ void CXFA_FM2JSContext::is_fm_array(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::get_fm_value(CFXJSE_Value* pThis,
                                      const CFX_ByteStringC& szFuncName,
                                      CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
@@ -6323,8 +6203,7 @@ void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne.get())) {
 #ifndef NDEBUG
-      CXFA_FM2JSContext* pContext =
-          static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+      CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
       v8::Isolate* pIsolate = pContext->GetScriptRuntime();
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
       FXJSE_Value_GetObjectProp(argOne.get(), "length", lengthValue.get());
@@ -6335,8 +6214,7 @@ void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
       FXJSE_Value_Set(args.GetReturnValue(), argOne.get());
     }
   } else {
-    CXFA_FM2JSContext* pContext =
-        static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+    CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
 }
@@ -6345,8 +6223,7 @@ void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
                                       const CFX_ByteStringC& szFuncName,
                                       CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
@@ -6397,9 +6274,7 @@ void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
                                          const CFX_ByteStringC& szFuncName,
                                          CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   uint32_t iLength = 0;
   int32_t argc = args.GetLength();
   std::vector<std::unique_ptr<CFXJSE_Value>> argValues;
@@ -6446,9 +6321,7 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
     CFXJSE_Value* pThis,
     CFXJSE_Arguments& args,
     uint32_t index) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   ASSERT(index < (uint32_t)args.GetLength());
   std::unique_ptr<CFXJSE_Value> argIndex = args.GetValue(index);
   if (FXJSE_Value_IsArray(argIndex.get())) {
@@ -6484,9 +6357,7 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
 
 // static
 FX_BOOL CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   FX_BOOL isNull = FALSE;
   if (FXJSE_Value_IsNull(arg)) {
     isNull = TRUE;
@@ -6530,9 +6401,7 @@ FX_BOOL CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
 // static
 int32_t CXFA_FM2JSContext::hvalue_get_array_length(CFXJSE_Value* pThis,
                                                    CFXJSE_Value* arg) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   int32_t iLength = 0;
   if (FXJSE_Value_IsArray(arg)) {
     std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
@@ -6572,9 +6441,7 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
                                    CFXJSE_Value**& resultValues,
                                    int32_t& iCount,
                                    int32_t iStart) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   iCount = 0;
   int32_t argc = args.GetLength();
   std::vector<std::unique_ptr<CFXJSE_Value>> argsValue;
@@ -6637,27 +6504,25 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::GetObjectDefaultValue(CFXJSE_Value* pObjectValue,
+void CXFA_FM2JSContext::GetObjectDefaultValue(CFXJSE_Value* pValue,
                                               CFXJSE_Value* pDefaultValue) {
-  CXFA_Node* pNode =
-      ToNode((CXFA_Object*)FXJSE_Value_ToObject(pObjectValue, nullptr));
-  if (pNode) {
-    pNode->Script_Som_DefaultValue(pDefaultValue, FALSE, (XFA_ATTRIBUTE)-1);
-  } else {
+  CXFA_Node* pNode = ToNode(CXFA_ScriptContext::ToObject(pValue, nullptr));
+  if (!pNode) {
     FXJSE_Value_SetNull(pDefaultValue);
+    return;
   }
+  pNode->Script_Som_DefaultValue(pDefaultValue, FALSE, (XFA_ATTRIBUTE)-1);
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::SetObjectDefaultValue(CFXJSE_Value* pObjectValue,
+FX_BOOL CXFA_FM2JSContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
                                                  CFXJSE_Value* hNewValue) {
-  CXFA_Node* pNode =
-      ToNode((CXFA_Object*)FXJSE_Value_ToObject(pObjectValue, nullptr));
-  if (pNode) {
-    pNode->Script_Som_DefaultValue(hNewValue, TRUE, (XFA_ATTRIBUTE)-1);
-    return TRUE;
-  }
-  return FALSE;
+  CXFA_Node* pNode = ToNode(CXFA_ScriptContext::ToObject(pValue, nullptr));
+  if (!pNode)
+    return FALSE;
+
+  pNode->Script_Som_DefaultValue(hNewValue, TRUE, (XFA_ATTRIBUTE)-1);
+  return TRUE;
 }
 
 // static
@@ -6697,9 +6562,7 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
     CFXJSE_Value* accessorValue,
     const CFX_ByteStringC& szAccessorName) {
   FX_BOOL bFlags = FALSE;
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return bFlags;
   }
@@ -6728,9 +6591,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
                                           FX_BOOL bHasNoResolveName) {
   CFX_WideString wsSomExpression = CFX_WideString::FromUTF8(bsSomExp);
   int32_t iRet = -1;
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  CXFA_Document* pDoc = pContext->GetDocument();
+  CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc) {
     return iRet;
   }
@@ -6742,7 +6603,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
       pNode = pScriptContext->GetThisObject();
       dFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
     } else {
-      pNode = (CXFA_Object*)FXJSE_Value_ToObject(pRefValue, nullptr);
+      pNode = CXFA_ScriptContext::ToObject(pRefValue, nullptr);
       ASSERT(pNode);
       if (bHasNoResolveName) {
         CFX_WideString wsName;
@@ -6764,7 +6625,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
       }
     }
   } else {
-    pNode = (CXFA_Object*)FXJSE_Value_ToObject(pRefValue, nullptr);
+    pNode = CXFA_ScriptContext::ToObject(pRefValue, nullptr);
     dFlags = XFA_RESOLVENODE_AnyChild;
   }
   iRet = pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringC(),
@@ -6780,8 +6641,7 @@ void CXFA_FM2JSContext::ParseResolveResult(
     CFXJSE_Value**& resultValues,
     int32_t& iSize,
     FX_BOOL& bAttribute) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   iSize = 0;
   resultValues = nullptr;
@@ -6821,9 +6681,7 @@ void CXFA_FM2JSContext::ParseResolveResult(
 // static
 int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
                                           CFXJSE_Value* pValue) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   int32_t iValue = 0;
   if (FXJSE_Value_IsArray(pValue)) {
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
@@ -6859,9 +6717,7 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
 // static
 FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
                                          CFXJSE_Value* arg) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   FX_FLOAT fRet = 0.0f;
   if (FXJSE_Value_IsArray(arg)) {
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
@@ -6897,9 +6753,7 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
 // static
 FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
                                            CFXJSE_Value* arg) {
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   FX_DOUBLE dRet = 0;
   if (FXJSE_Value_IsArray(arg)) {
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
@@ -6938,10 +6792,7 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
                                         bool* ret) {
   ASSERT(ret);
 
-  CXFA_FM2JSContext* pContext =
-      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(pThis, nullptr));
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   *ret = true;
 
   if (FXJSE_Value_IsArray(src)) {

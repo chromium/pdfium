@@ -93,8 +93,6 @@ double FXJSE_Value_ToDouble(CFXJSE_Value* pValue);
 int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue);
 void FXJSE_Value_ToUTF8String(CFXJSE_Value* pValue,
                               CFX_ByteString& szStrOutput);
-CFXJSE_HostObject* FXJSE_Value_ToObject(CFXJSE_Value* pValue,
-                                        CFXJSE_Class* pClass);
 
 void FXJSE_Value_SetUndefined(CFXJSE_Value* pValue);
 void FXJSE_Value_SetNull(CFXJSE_Value* pValue);

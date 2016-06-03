@@ -141,7 +141,7 @@ class CFXJSE_Value {
     v8::String::Utf8Value hStringVal(hString);
     szStrOutput = *hStringVal;
   }
-  CFXJSE_HostObject* ToObject(CFXJSE_Class* lpClass) const;
+  CFXJSE_HostObject* ToHostObject(CFXJSE_Class* lpClass) const;
 
   V8_INLINE void SetUndefined() {
     CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);

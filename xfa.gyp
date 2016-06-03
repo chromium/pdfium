@@ -622,6 +622,8 @@
         "xfa/fxfa/parser/cxfa_validate.h",
         "xfa/fxfa/parser/cxfa_value.cpp",
         "xfa/fxfa/parser/cxfa_value.h",
+        "xfa/fxfa/parser/cxfa_valuearray.cpp",
+        "xfa/fxfa/parser/cxfa_valuearray.h",
         "xfa/fxfa/parser/cxfa_widgetdata.cpp",
         "xfa/fxfa/parser/cxfa_widgetdata.h",
         "xfa/fxfa/parser/xfa_basic_data.cpp",
