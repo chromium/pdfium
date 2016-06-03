@@ -91,7 +91,7 @@ FX_BOOL CXFA_FFListBox::IsDataChanged() {
 
   for (int32_t i = 0; i < iSels; ++i) {
     IFWL_ListItem* hlistItem = pListBox->GetItem(iSelArray[i]);
-    if (!(pListBox->GetItemStates(hlistItem) && FWL_ITEMSTATE_LTB_Selected))
+    if (!(pListBox->GetItemStates(hlistItem) & FWL_ITEMSTATE_LTB_Selected))
       return TRUE;
   }
   return FALSE;

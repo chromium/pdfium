@@ -42,55 +42,40 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
   } else {
     pSrcData = pStream->GetRawData();
   }
-  uint8_t* pDecryptedData = pSrcData;
-  uint32_t dwDecryptedSize = dwSrcSize;
   if (!pStream->GetDict()->KeyExist("Filter") || bRawAccess) {
-    m_pData = pDecryptedData;
-    m_dwSize = dwDecryptedSize;
+    m_pData = pSrcData;
+    m_dwSize = dwSrcSize;
   } else {
-    FX_BOOL bRet = PDF_DataDecode(
-        pDecryptedData, dwDecryptedSize, m_pStream->GetDict(), m_pData,
-        m_dwSize, m_ImageDecoder, m_pImageParam, estimated_size, bImageAcc);
+    FX_BOOL bRet = PDF_DataDecode(pSrcData, dwSrcSize, m_pStream->GetDict(),
+                                  m_pData, m_dwSize, m_ImageDecoder,
+                                  m_pImageParam, estimated_size, bImageAcc);
     if (!bRet) {
-      m_pData = pDecryptedData;
-      m_dwSize = dwDecryptedSize;
+      m_pData = pSrcData;
+      m_dwSize = dwSrcSize;
     }
   }
-  if (pSrcData != pStream->GetRawData() && pSrcData != m_pData) {
+  if (pSrcData != pStream->GetRawData() && pSrcData != m_pData)
     FX_Free(pSrcData);
-  }
-  if (pDecryptedData != pSrcData && pDecryptedData != m_pData) {
-    FX_Free(pDecryptedData);
-  }
   m_pSrcData = nullptr;
   m_bNewBuf = m_pData != pStream->GetRawData();
 }
 
 CPDF_StreamAcc::~CPDF_StreamAcc() {
-  if (m_bNewBuf) {
+  if (m_bNewBuf)
     FX_Free(m_pData);
-  }
   FX_Free(m_pSrcData);
 }
 
 const uint8_t* CPDF_StreamAcc::GetData() const {
-  if (m_bNewBuf) {
+  if (m_bNewBuf)
     return m_pData;
-  }
-  if (!m_pStream) {
-    return nullptr;
-  }
-  return m_pStream->GetRawData();
+  return m_pStream ? m_pStream->GetRawData() : nullptr;
 }
 
 uint32_t CPDF_StreamAcc::GetSize() const {
-  if (m_bNewBuf) {
+  if (m_bNewBuf)
     return m_dwSize;
-  }
-  if (!m_pStream) {
-    return 0;
-  }
-  return m_pStream->GetRawSize();
+  return m_pStream ? m_pStream->GetRawSize() : 0;
 }
 
 uint8_t* CPDF_StreamAcc::DetachData() {
