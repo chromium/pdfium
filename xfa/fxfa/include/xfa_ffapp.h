@@ -51,7 +51,7 @@ class CXFA_FFApp {
   IFWL_AdapterTimerMgr* GetTimerMgr();
 
   CXFA_FontMgr* GetXFAFontMgr();
-  IFX_FontMgr* GetFDEFontMgr();
+  IFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
   CFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() {
     return m_pWidgetMgrDelegate;
@@ -68,7 +68,7 @@ class CXFA_FFApp {
 #endif
   CXFA_FWLAdapterWidgetMgr* m_pAdapterWidgetMgr;
   CFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;
-  IFX_FontMgr* m_pFDEFontMgr;
+  IFGAS_FontMgr* m_pFDEFontMgr;
 };
 
 #endif  // XFA_FXFA_INCLUDE_XFA_FFAPP_H_

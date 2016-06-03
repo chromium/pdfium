@@ -43,7 +43,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
 
   void AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
                     uint32_t dwMediaList,
-                    IFX_FontMgr* pFontMgr);
+                    IFGAS_FontMgr* pFontMgr);
   void Clear();
 
   int32_t CountSelectors() const { return m_iSelectors; }
@@ -74,7 +74,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   void AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                     IFDE_CSSRule* pRule,
                     uint32_t dwMediaList,
-                    IFX_FontMgr* pFontMgr);
+                    IFGAS_FontMgr* pFontMgr);
   void AddRuleTo(CFX_MapPtrToPtr& map,
                  uint32_t dwKey,
                  CFDE_CSSSelector* pSel,
@@ -95,7 +95,7 @@ class CFDE_CSSStyleSelector : public CFX_Target {
   CFDE_CSSStyleSelector();
   ~CFDE_CSSStyleSelector() override;
 
-  void SetFontMgr(IFX_FontMgr* pFontMgr);
+  void SetFontMgr(IFGAS_FontMgr* pFontMgr);
   void SetDefFontSize(FX_FLOAT fFontSize);
 
   FX_BOOL SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
@@ -178,7 +178,7 @@ class CFDE_CSSStyleSelector : public CFX_Target {
   FDE_CSSRUBYPOSITION ToRubyPosition(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSRUBYSPAN ToRubySpan(FDE_CSSPROPERTYVALUE eValue);
 
-  IFX_FontMgr* m_pFontMgr;
+  IFGAS_FontMgr* m_pFontMgr;
   FX_FLOAT m_fDefFontSize;
   IFX_MemoryAllocator* m_pRuleDataStore;
   CFDE_CSSStyleSheetArray m_SheetGroups[FDE_CSSSTYLESHEETGROUP_MAX];

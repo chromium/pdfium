@@ -94,7 +94,7 @@ enum class CFWL_WidgetCapacity {
 class IFWL_Widget;
 class CFDE_TextOut;
 class IFGAS_Font;
-class IFX_FontMgr;
+class IFGAS_FontMgr;
 class CFWL_ArrowData;
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
@@ -271,7 +271,7 @@ class CFWL_FontData {
   uint32_t m_dwStyles;
   uint32_t m_dwCodePage;
   IFGAS_Font* m_pFont;
-  IFX_FontMgr* m_pFontMgr;
+  IFGAS_FontMgr* m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   CFX_FontSourceEnum_File* m_pFontSource;
 #endif

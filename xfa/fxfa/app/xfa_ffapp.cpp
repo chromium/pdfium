@@ -142,13 +142,13 @@ CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() {
   return m_pFontMgr;
 }
 
-IFX_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
+IFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    m_pFDEFontMgr = IFX_FontMgr::Create(FX_GetDefFontEnumerator());
+    m_pFDEFontMgr = IFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
     m_pFontSource = new CFX_FontSourceEnum_File;
-    m_pFDEFontMgr = IFX_FontMgr::Create(m_pFontSource);
+    m_pFDEFontMgr = IFGAS_FontMgr::Create(m_pFontSource);
 #endif
   }
   return m_pFDEFontMgr;

@@ -18,7 +18,7 @@
 class CFX_FontSourceEnum_File;
 class CXFA_PDFFontMgr;
 class IFGAS_Font;
-class IFX_FontMgr;
+class IFGAS_FontMgr;
 
 #define FX_FONTSTYLE_Normal 0x00
 #define FX_FONTSTYLE_FixedPitch 0x01
@@ -55,17 +55,17 @@ class IFGAS_Font {
   static IFGAS_Font* LoadFont(const FX_WCHAR* pszFontFamily,
                               uint32_t dwFontStyles,
                               uint16_t wCodePage,
-                              IFX_FontMgr* pFontMgr);
+                              IFGAS_FontMgr* pFontMgr);
   static IFGAS_Font* LoadFont(const uint8_t* pBuffer,
                               int32_t iLength,
-                              IFX_FontMgr* pFontMgr);
+                              IFGAS_FontMgr* pFontMgr);
   static IFGAS_Font* LoadFont(const FX_WCHAR* pszFileName,
-                              IFX_FontMgr* pFontMgr);
+                              IFGAS_FontMgr* pFontMgr);
   static IFGAS_Font* LoadFont(IFX_Stream* pFontStream,
-                              IFX_FontMgr* pFontMgr,
+                              IFGAS_FontMgr* pFontMgr,
                               FX_BOOL bSaveStream = FALSE);
   static IFGAS_Font* LoadFont(CFX_Font* pExtFont,
-                              IFX_FontMgr* pFontMgr,
+                              IFGAS_FontMgr* pFontMgr,
                               FX_BOOL bTakeOver = FALSE);
   virtual ~IFGAS_Font() {}
   virtual void Release() = 0;
@@ -145,10 +145,10 @@ typedef FX_FONTDESCRIPTOR const* (*FX_LPMatchFont)(
     FX_LPFONTMATCHPARAMS pParams,
     const CFX_FontDescriptors& fonts);
 FX_LPMatchFont FX_GetDefFontMatchor();
-class IFX_FontMgr {
+class IFGAS_FontMgr {
  public:
-  static IFX_FontMgr* Create(FX_LPEnumAllFonts pEnumerator);
-  virtual ~IFX_FontMgr() {}
+  static IFGAS_FontMgr* Create(FX_LPEnumAllFonts pEnumerator);
+  virtual ~IFGAS_FontMgr() {}
   virtual void Release() = 0;
   virtual IFGAS_Font* GetDefFontByCodePage(
       uint16_t wCodePage,
@@ -185,10 +185,10 @@ class IFX_FontMgr {
 
 #else   //  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-class IFX_FontMgr {
+class IFGAS_FontMgr {
  public:
-  static IFX_FontMgr* Create(CFX_FontSourceEnum_File* pFontEnum);
-  virtual ~IFX_FontMgr() {}
+  static IFGAS_FontMgr* Create(CFX_FontSourceEnum_File* pFontEnum);
+  virtual ~IFGAS_FontMgr() {}
   virtual void Release() = 0;
   virtual IFGAS_Font* GetDefFontByCodePage(
       uint16_t wCodePage,

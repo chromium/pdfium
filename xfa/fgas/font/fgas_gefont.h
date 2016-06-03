@@ -19,7 +19,7 @@ class CXFA_PDFFontMgr;
 class CFX_GEFont : public IFGAS_Font {
  public:
   CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles);
-  explicit CFX_GEFont(IFX_FontMgr* pFontMgr);
+  explicit CFX_GEFont(IFGAS_FontMgr* pFontMgr);
   ~CFX_GEFont();
 
   // IFGAS_Font:
@@ -66,7 +66,7 @@ class CFX_GEFont : public IFGAS_Font {
   uint32_t m_dwLogFontStyle;
 #endif
   CFX_Font* m_pFont;
-  IFX_FontMgr* m_pFontMgr;
+  IFGAS_FontMgr* m_pFontMgr;
   int32_t m_iRefCount;
   FX_BOOL m_bExtFont;
   IFX_Stream* m_pStream;

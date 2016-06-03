@@ -105,7 +105,7 @@ void CFDE_CSSRuleCollection::Clear() {
 }
 void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
                                           uint32_t dwMediaList,
-                                          IFX_FontMgr* pFontMgr) {
+                                          IFGAS_FontMgr* pFontMgr) {
   int32_t iSheets = sheets.GetSize();
   for (int32_t i = 0; i < iSheets; ++i) {
     IFDE_CSSStyleSheet* pSheet = sheets.GetAt(i);
@@ -120,7 +120,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
 void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                                           IFDE_CSSRule* pRule,
                                           uint32_t dwMediaList,
-                                          IFX_FontMgr* pFontMgr) {
+                                          IFGAS_FontMgr* pFontMgr) {
   switch (pRule->GetType()) {
     case FDE_CSSRULETYPE_Style: {
       IFDE_CSSStyleRule* pStyleRule = (IFDE_CSSStyleRule*)pRule;
@@ -229,7 +229,7 @@ CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {
   delete m_pAccelerator;
 }
 
-void CFDE_CSSStyleSelector::SetFontMgr(IFX_FontMgr* pFontMgr) {
+void CFDE_CSSStyleSelector::SetFontMgr(IFGAS_FontMgr* pFontMgr) {
   m_pFontMgr = pFontMgr;
 }
 void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {

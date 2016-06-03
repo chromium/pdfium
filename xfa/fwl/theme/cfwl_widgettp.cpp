@@ -705,10 +705,10 @@ FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
   m_dwCodePage = dwCodePage;
   if (!m_pFontMgr) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    m_pFontMgr = IFX_FontMgr::Create(FX_GetDefFontEnumerator());
+    m_pFontMgr = IFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
     m_pFontSource = new CFX_FontSourceEnum_File;
-    m_pFontMgr = IFX_FontMgr::Create(m_pFontSource);
+    m_pFontMgr = IFGAS_FontMgr::Create(m_pFontSource);
 #endif
   }
   m_pFont = IFGAS_Font::LoadFont(wsFontFamily.c_str(), dwFontStyles, dwCodePage,

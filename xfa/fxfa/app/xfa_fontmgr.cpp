@@ -1747,7 +1747,7 @@ IFGAS_Font* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
                                      uint32_t dwFontStyles,
                                      uint16_t wCodePage) {
   CFX_WideString wsFontName(wsFontFamily);
-  IFX_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
+  IFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   IFGAS_Font* pFont =
       pFDEFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
   if (!pFont) {
@@ -1791,7 +1791,7 @@ IFGAS_Font* CXFA_DefFontMgr::GetDefaultFont(CXFA_FFDoc* hDoc,
                                             const CFX_WideStringC& wsFontFamily,
                                             uint32_t dwFontStyles,
                                             uint16_t wCodePage) {
-  IFX_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
+  IFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   IFGAS_Font* pFont =
       pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
   if (!pFont)
@@ -1843,7 +1843,7 @@ IFGAS_Font* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
     return NULL;
   }
   strPsName.Remove(' ');
-  IFX_FontMgr* pFDEFontMgr = m_pDoc->GetApp()->GetFDEFontMgr();
+  IFGAS_FontMgr* pFDEFontMgr = m_pDoc->GetApp()->GetFDEFontMgr();
   for (const auto& it : *pFontSetDict) {
     const CFX_ByteString& key = it.first;
     CPDF_Object* pObj = it.second;

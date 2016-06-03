@@ -18,12 +18,12 @@ int32_t FX_GetSimilarValue(FX_FONTDESCRIPTOR const* pFont,
 FX_FONTDESCRIPTOR const* FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams,
                                            const CFX_FontDescriptors& fonts);
 
-class CFX_StdFontMgrImp : public IFX_FontMgr {
+class CFGAS_StdFontMgrImp : public IFGAS_FontMgr {
  public:
-  explicit CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator);
-  ~CFX_StdFontMgrImp() override;
+  explicit CFGAS_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator);
+  ~CFGAS_StdFontMgrImp() override;
 
-  // IFX_FontMgr:
+  // IFGAS_FontMgr:
   void Release() override { delete this; }
   IFGAS_Font* GetDefFontByCodePage(
       uint16_t wCodePage,
@@ -148,12 +148,12 @@ class CFX_FontSourceEnum_File {
   CFX_ByteStringArray m_FolderPaths;
 };
 
-class CFX_FontMgrImp : public IFX_FontMgr {
+class CFGAS_FontMgrImp : public IFGAS_FontMgr {
  public:
-  explicit CFX_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum);
-  ~CFX_FontMgrImp() override;
+  explicit CFGAS_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum);
+  ~CFGAS_FontMgrImp() override;
 
-  // IFX_FontMgr:
+  // IFGAS_FontMgr:
   void Release() override;
   IFGAS_Font* GetDefFontByCodePage(
       uint16_t wCodePage,

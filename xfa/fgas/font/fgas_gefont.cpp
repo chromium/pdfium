@@ -13,7 +13,7 @@
 IFGAS_Font* IFGAS_Font::LoadFont(const FX_WCHAR* pszFontFamily,
                                  uint32_t dwFontStyles,
                                  uint16_t wCodePage,
-                                 IFX_FontMgr* pFontMgr) {
+                                 IFGAS_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (NULL != pFontMgr) {
     return pFontMgr->GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
@@ -30,7 +30,7 @@ IFGAS_Font* IFGAS_Font::LoadFont(const FX_WCHAR* pszFontFamily,
 }
 IFGAS_Font* IFGAS_Font::LoadFont(const uint8_t* pBuffer,
                                  int32_t iLength,
-                                 IFX_FontMgr* pFontMgr) {
+                                 IFGAS_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (NULL != pFontMgr) {
     return pFontMgr->LoadFont(pBuffer, iLength, 0, NULL);
@@ -46,7 +46,7 @@ IFGAS_Font* IFGAS_Font::LoadFont(const uint8_t* pBuffer,
 #endif
 }
 IFGAS_Font* IFGAS_Font::LoadFont(const FX_WCHAR* pszFileName,
-                                 IFX_FontMgr* pFontMgr) {
+                                 IFGAS_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (NULL != pFontMgr) {
     return pFontMgr->LoadFont(pszFileName, 0, NULL);
@@ -62,7 +62,7 @@ IFGAS_Font* IFGAS_Font::LoadFont(const FX_WCHAR* pszFileName,
 #endif
 }
 IFGAS_Font* IFGAS_Font::LoadFont(IFX_Stream* pFontStream,
-                                 IFX_FontMgr* pFontMgr,
+                                 IFGAS_FontMgr* pFontMgr,
                                  FX_BOOL bSaveStream) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (NULL != pFontMgr) {
@@ -79,7 +79,7 @@ IFGAS_Font* IFGAS_Font::LoadFont(IFX_Stream* pFontStream,
 #endif
 }
 IFGAS_Font* IFGAS_Font::LoadFont(CFX_Font* pExtFont,
-                                 IFX_FontMgr* pFontMgr,
+                                 IFGAS_FontMgr* pFontMgr,
                                  FX_BOOL bTakeOver) {
   CFX_GEFont* pFont = new CFX_GEFont(pFontMgr);
   if (!pFont->LoadFont(pExtFont, bTakeOver)) {
@@ -88,7 +88,7 @@ IFGAS_Font* IFGAS_Font::LoadFont(CFX_Font* pExtFont,
   }
   return pFont;
 }
-CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
+CFX_GEFont::CFX_GEFont(IFGAS_FontMgr* pFontMgr)
     :
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(FALSE),
