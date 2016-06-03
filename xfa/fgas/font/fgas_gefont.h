@@ -16,15 +16,15 @@
 
 class CXFA_PDFFontMgr;
 
-class CFX_GEFont : public IFX_Font {
+class CFX_GEFont : public IFGAS_Font {
  public:
   CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles);
   explicit CFX_GEFont(IFX_FontMgr* pFontMgr);
   ~CFX_GEFont();
 
-  // IFX_Font:
+  // IFGAS_Font:
   virtual void Release();
-  virtual IFX_Font* Retain();
+  virtual IFGAS_Font* Retain();
   FX_BOOL LoadFont(const FX_WCHAR* pszFontFamily,
                    uint32_t dwFontStyles,
                    uint16_t wCodePage);
@@ -32,7 +32,7 @@ class CFX_GEFont : public IFX_Font {
   FX_BOOL LoadFont(const FX_WCHAR* pszFileName);
   FX_BOOL LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream);
   FX_BOOL LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver = FALSE);
-  virtual IFX_Font* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
+  virtual IFGAS_Font* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   virtual void GetFamilyName(CFX_WideString& wsFamily) const;
   virtual uint32_t GetFontStyles() const;
   virtual uint8_t GetCharSet() const;
@@ -48,7 +48,7 @@ class CFX_GEFont : public IFX_Font {
   virtual FX_BOOL GetBBox(CFX_Rect& bbox);
   virtual int32_t GetItalicAngle() const;
   virtual void Reset();
-  virtual IFX_Font* GetSubstFont(int32_t iGlyphIndex) const;
+  virtual IFGAS_Font* GetSubstFont(int32_t iGlyphIndex) const;
   virtual void* GetDevFont() const { return (void*)m_pFont; }
   virtual void SetFontProvider(CXFA_PDFFontMgr* pProvider) {
     m_pProvider = pProvider;
@@ -77,8 +77,8 @@ class CFX_GEFont : public IFX_Font {
   CFX_MapPtrToPtr* m_pBBoxMap;
   CXFA_PDFFontMgr* m_pProvider;
   uint16_t m_wCharSet;
-  CFX_ArrayTemplate<IFX_Font*> m_SubstFonts;
-  std::map<FX_WCHAR, IFX_Font*> m_FontMapper;
+  CFX_ArrayTemplate<IFGAS_Font*> m_SubstFonts;
+  std::map<FX_WCHAR, IFGAS_Font*> m_FontMapper;
   FX_BOOL InitFont();
   FX_BOOL GetCharBBox(FX_WCHAR wUnicode,
                       CFX_Rect& bbox,
@@ -90,7 +90,7 @@ class CFX_GEFont : public IFX_Font {
                        FX_BOOL bCharCode = FALSE);
   int32_t GetGlyphIndex(FX_WCHAR wUnicode,
                         FX_BOOL bRecursive,
-                        IFX_Font** ppFont,
+                        IFGAS_Font** ppFont,
                         FX_BOOL bCharCode = FALSE);
 };
 

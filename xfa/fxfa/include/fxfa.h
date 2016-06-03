@@ -19,7 +19,7 @@ class CXFA_Node;
 class CXFA_NodeList;
 class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
-class IFX_Font;
+class IFGAS_Font;
 class IXFA_AppProvider;
 class IXFA_DocProvider;
 class IXFA_WidgetAccIterator;

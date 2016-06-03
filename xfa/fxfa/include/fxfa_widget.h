@@ -25,7 +25,7 @@ class CXFA_EventParam;
 class CXFA_FFWidget;
 class CXFA_TextLayout;
 class CXFA_WidgetLayoutData;
-class IFX_Font;
+class IFGAS_Font;
 class IXFA_AppProvider;
 
 class CXFA_WidgetAcc : public CXFA_WidgetData {
@@ -73,7 +73,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void UpdateUIDisplay(CXFA_FFWidget* pExcept = NULL);
 
   CXFA_Node* GetDatasets();
-  IFX_Font* GetFDEFont();
+  IFGAS_Font* GetFDEFont();
   FX_FLOAT GetFontSize();
   FX_ARGB GetTextColor();
   FX_FLOAT GetLineHeight();

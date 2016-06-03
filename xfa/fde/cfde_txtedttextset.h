@@ -22,7 +22,7 @@ class CFDE_TxtEdtTextSet : public IFDE_TextSet {
   FX_BOOL GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) override;
   FX_BOOL GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) override;
   int32_t GetString(FDE_HVISUALOBJ hText, CFX_WideString& wsText) override;
-  IFX_Font* GetFont(FDE_HVISUALOBJ hText) override;
+  IFGAS_Font* GetFont(FDE_HVISUALOBJ hText) override;
   FX_FLOAT GetFontSize(FDE_HVISUALOBJ hText) override;
   FX_ARGB GetFontColor(FDE_HVISUALOBJ hText) override;
   int32_t GetDisplayPos(FDE_HVISUALOBJ hText,

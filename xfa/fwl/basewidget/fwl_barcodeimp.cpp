@@ -111,7 +111,7 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  IFX_Font* pFont = static_cast<IFX_Font*>(
+  IFGAS_Font* pFont = static_cast<IFGAS_Font*>(
       pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Font));
   CFX_Font* pCXFont =
       pFont ? static_cast<CFX_Font*>(pFont->GetDevFont()) : nullptr;

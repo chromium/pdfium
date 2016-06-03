@@ -78,8 +78,8 @@ FWL_Error CXFA_FWLTheme::Initialize() {
   m_pTextOut.reset(new CFDE_TextOut);
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
        ++i) {
-    m_pCalendarFont = IFX_Font::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,
-                                         m_pApp->GetFDEFontMgr());
+    m_pCalendarFont = IFGAS_Font::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,
+                                           m_pApp->GetFDEFontMgr());
   }
   if (!m_pCalendarFont) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

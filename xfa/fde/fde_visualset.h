@@ -45,7 +45,7 @@ class IFDE_CanvasSet : public IFDE_VisualSet {
 class IFDE_TextSet : public IFDE_VisualSet {
  public:
   virtual int32_t GetString(FDE_HVISUALOBJ hText, CFX_WideString& wsText) = 0;
-  virtual IFX_Font* GetFont(FDE_HVISUALOBJ hText) = 0;
+  virtual IFGAS_Font* GetFont(FDE_HVISUALOBJ hText) = 0;
   virtual FX_FLOAT GetFontSize(FDE_HVISUALOBJ hText) = 0;
   virtual FX_ARGB GetFontColor(FDE_HVISUALOBJ hText) = 0;
   virtual int32_t GetDisplayPos(FDE_HVISUALOBJ hText,

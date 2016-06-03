@@ -109,7 +109,7 @@ struct FDE_TXTEDTPARAMS {
   uint32_t dwLayoutStyles;
   uint32_t dwAlignment;
   uint32_t dwMode;
-  IFX_Font* pFont;
+  IFGAS_Font* pFont;
   FX_FLOAT fFontSize;
   FX_ARGB dwFontColor;
   FX_FLOAT fLineSpace;

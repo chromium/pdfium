@@ -49,7 +49,7 @@ int32_t CFDE_TxtEdtTextSet::GetString(FDE_HVISUALOBJ hText,
   return pPiece->nCount;
 }
 
-IFX_Font* CFDE_TxtEdtTextSet::GetFont(FDE_HVISUALOBJ hText) {
+IFGAS_Font* CFDE_TxtEdtTextSet::GetFont(FDE_HVISUALOBJ hText) {
   return m_pPage->GetEngine()->GetEditParams()->pFont;
 }
 

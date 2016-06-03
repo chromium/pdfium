@@ -30,17 +30,17 @@ class CXFA_DefFontMgr {
   CXFA_DefFontMgr() {}
   ~CXFA_DefFontMgr();
 
-  IFX_Font* GetFont(CXFA_FFDoc* hDoc,
-                    const CFX_WideStringC& wsFontFamily,
-                    uint32_t dwFontStyles,
-                    uint16_t wCodePage = 0xFFFF);
-  IFX_Font* GetDefaultFont(CXFA_FFDoc* hDoc,
-                           const CFX_WideStringC& wsFontFamily,
-                           uint32_t dwFontStyles,
-                           uint16_t wCodePage = 0xFFFF);
+  IFGAS_Font* GetFont(CXFA_FFDoc* hDoc,
+                      const CFX_WideStringC& wsFontFamily,
+                      uint32_t dwFontStyles,
+                      uint16_t wCodePage = 0xFFFF);
+  IFGAS_Font* GetDefaultFont(CXFA_FFDoc* hDoc,
+                             const CFX_WideStringC& wsFontFamily,
+                             uint32_t dwFontStyles,
+                             uint16_t wCodePage = 0xFFFF);
 
  protected:
-  CFX_ArrayTemplate<IFX_Font*> m_CacheFonts;
+  CFX_ArrayTemplate<IFGAS_Font*> m_CacheFonts;
 };
 
 class CXFA_PDFFontMgr {
@@ -48,22 +48,22 @@ class CXFA_PDFFontMgr {
   explicit CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
   ~CXFA_PDFFontMgr();
 
-  IFX_Font* GetFont(const CFX_WideStringC& wsFontFamily,
-                    uint32_t dwFontStyles,
-                    CPDF_Font** pPDFFont,
-                    FX_BOOL bStrictMatch = TRUE);
-  FX_BOOL GetCharWidth(IFX_Font* pFont,
+  IFGAS_Font* GetFont(const CFX_WideStringC& wsFontFamily,
+                      uint32_t dwFontStyles,
+                      CPDF_Font** pPDFFont,
+                      FX_BOOL bStrictMatch = TRUE);
+  FX_BOOL GetCharWidth(IFGAS_Font* pFont,
                        FX_WCHAR wUnicode,
                        int32_t& iWidth,
                        FX_BOOL bCharCode);
-  std::map<IFX_Font*, CPDF_Font*> m_FDE2PDFFont;
+  std::map<IFGAS_Font*, CPDF_Font*> m_FDE2PDFFont;
 
  protected:
-  IFX_Font* FindFont(CFX_ByteString strFamilyName,
-                     FX_BOOL bBold,
-                     FX_BOOL bItalic,
-                     CPDF_Font** pPDFFont,
-                     FX_BOOL bStrictMatch = TRUE);
+  IFGAS_Font* FindFont(CFX_ByteString strFamilyName,
+                       FX_BOOL bBold,
+                       FX_BOOL bItalic,
+                       CPDF_Font** pPDFFont,
+                       FX_BOOL bStrictMatch = TRUE);
   CFX_ByteString PsNameToFontName(const CFX_ByteString& strPsName,
                                   FX_BOOL bBold,
                                   FX_BOOL bItalic);
@@ -74,7 +74,7 @@ class CXFA_PDFFontMgr {
                                 FX_BOOL bStrictMatch = TRUE);
 
   CXFA_FFDoc* m_pDoc;
-  std::map<CFX_ByteString, IFX_Font*> m_FontMap;
+  std::map<CFX_ByteString, IFGAS_Font*> m_FontMap;
 };
 
 class CXFA_FontMgr {
@@ -82,10 +82,10 @@ class CXFA_FontMgr {
   CXFA_FontMgr();
   ~CXFA_FontMgr();
 
-  IFX_Font* GetFont(CXFA_FFDoc* hDoc,
-                    const CFX_WideStringC& wsFontFamily,
-                    uint32_t dwFontStyles,
-                    uint16_t wCodePage = 0xFFFF);
+  IFGAS_Font* GetFont(CXFA_FFDoc* hDoc,
+                      const CFX_WideStringC& wsFontFamily,
+                      uint32_t dwFontStyles,
+                      uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(CXFA_FFDoc* hDoc);
   void ReleaseDocFonts(CXFA_FFDoc* hDoc);
   void SetDefFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
@@ -93,7 +93,7 @@ class CXFA_FontMgr {
  protected:
   std::unique_ptr<CXFA_DefFontMgr> m_pDefFontMgr;
   std::map<CXFA_FFDoc*, std::unique_ptr<CXFA_PDFFontMgr>> m_PDFFontMgrMap;
-  std::map<CFX_ByteString, IFX_Font*> m_FontMap;
+  std::map<CFX_ByteString, IFGAS_Font*> m_FontMap;
 };
 
 #endif  //  XFA_FXFA_INCLUDE_XFA_FONTMGR_H_

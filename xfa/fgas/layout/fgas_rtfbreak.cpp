@@ -86,7 +86,7 @@ void CFX_RTFBreak::SetLayoutStyles(uint32_t dwLayoutStyles) {
   m_iRotation = m_iLineRotation + m_iCharRotation;
   m_iRotation %= 4;
 }
-void CFX_RTFBreak::SetFont(IFX_Font* pFont) {
+void CFX_RTFBreak::SetFont(IFGAS_Font* pFont) {
   if (pFont == NULL) {
     return;
   }
@@ -1184,7 +1184,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   const FX_WCHAR* pStr = pText->pStr;
   int32_t* pWidths = pText->pWidths;
   int32_t iLength = pText->iLength - 1;
-  IFX_Font* pFont = pText->pFont;
+  IFGAS_Font* pFont = pText->pFont;
   uint32_t dwStyles = pText->dwLayoutStyles;
   CFX_RectF rtText(*pText->pRect);
   FX_BOOL bRTLPiece = FX_IsOdd(pText->iBidiLevel);
@@ -1430,7 +1430,7 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
   FX_FLOAT fFontSize = pText->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   FX_FLOAT fScale = fFontSize / 1000.0f;
-  IFX_Font* pFont = pText->pFont;
+  IFGAS_Font* pFont = pText->pFont;
   if (pFont == NULL) {
     bCharBBox = FALSE;
   }

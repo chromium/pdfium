@@ -81,7 +81,7 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   FX_FLOAT m_fCapacity;
   uint32_t m_dwCapacity;
-  IFX_Font* m_pCalendarFont;
+  IFGAS_Font* m_pCalendarFont;
   CFX_WideString m_wsResource;
   CXFA_FFApp* m_pApp;
   CFX_RectF m_Rect;

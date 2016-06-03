@@ -14,7 +14,7 @@
 #include "xfa/fgas/layout/fgas_textbreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
 
-class IFX_Font;
+class IFGAS_Font;
 
 #define FX_RTFBREAKPOLICY_None 0x00
 #define FX_RTFBREAKPOLICY_SpaceBreak 0x01
@@ -82,7 +82,7 @@ struct FX_RTFTEXTOBJ {
   const FX_WCHAR* pStr;
   int32_t* pWidths;
   int32_t iLength;
-  IFX_Font* pFont;
+  IFGAS_Font* pFont;
   FX_FLOAT fFontSize;
   uint32_t dwLayoutStyles;
   int32_t iCharRotation;
@@ -250,7 +250,7 @@ class CFX_RTFBreak {
   void SetLineStartPos(FX_FLOAT fLinePos);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
   void SetLayoutStyles(uint32_t dwLayoutStyles);
-  void SetFont(IFX_Font* pFont);
+  void SetFont(IFGAS_Font* pFont);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTabWidth(FX_FLOAT fTabWidth);
   void AddPositionedTab(FX_FLOAT fTabPos);
@@ -298,7 +298,7 @@ class CFX_RTFBreak {
   FX_BOOL m_bVertical;
   FX_BOOL m_bSingleLine;
   FX_BOOL m_bCharCode;
-  IFX_Font* m_pFont;
+  IFGAS_Font* m_pFont;
   int32_t m_iFontHeight;
   int32_t m_iFontSize;
   int32_t m_iTabWidth;

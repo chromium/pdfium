@@ -93,7 +93,7 @@ enum class CFWL_WidgetCapacity {
 
 class IFWL_Widget;
 class CFDE_TextOut;
-class IFX_Font;
+class IFGAS_Font;
 class IFX_FontMgr;
 class CFWL_ArrowData;
 class CFWL_ThemeBackground;
@@ -135,10 +135,10 @@ class CFWL_WidgetTP {
                     FX_FLOAT fFontSize,
                     FX_ARGB rgbFont);
   FWL_Error SetFont(IFWL_Widget* pWidget,
-                    IFX_Font* pFont,
+                    IFGAS_Font* pFont,
                     FX_FLOAT fFontSize,
                     FX_ARGB rgbFont);
-  IFX_Font* GetFont(IFWL_Widget* pWidget);
+  IFGAS_Font* GetFont(IFWL_Widget* pWidget);
 
  protected:
   CFWL_WidgetTP();
@@ -221,7 +221,7 @@ class CFWL_WidgetTP {
                     CFX_Matrix* pMatrix = NULL);
   uint32_t m_dwRefCount;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  IFX_Font* m_pFDEFont;
+  IFGAS_Font* m_pFDEFont;
   FX_FLOAT m_fValue;
   uint32_t m_dwValue;
   CFX_RectF m_rtMargin;
@@ -264,13 +264,13 @@ class CFWL_FontData {
   FX_BOOL LoadFont(const CFX_WideStringC& wsFontFamily,
                    uint32_t dwFontStyles,
                    uint16_t wCodePage);
-  IFX_Font* GetFont() const { return m_pFont; }
+  IFGAS_Font* GetFont() const { return m_pFont; }
 
  protected:
   CFX_WideString m_wsFamily;
   uint32_t m_dwStyles;
   uint32_t m_dwCodePage;
-  IFX_Font* m_pFont;
+  IFGAS_Font* m_pFont;
   IFX_FontMgr* m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   CFX_FontSourceEnum_File* m_pFontSource;
@@ -282,9 +282,9 @@ class CFWL_FontManager {
   static CFWL_FontManager* GetInstance();
   static void DestroyInstance();
 
-  IFX_Font* FindFont(const CFX_WideStringC& wsFontFamily,
-                     uint32_t dwFontStyles,
-                     uint16_t dwCodePage);
+  IFGAS_Font* FindFont(const CFX_WideStringC& wsFontFamily,
+                       uint32_t dwFontStyles,
+                       uint16_t dwCodePage);
 
  protected:
   CFWL_FontManager();

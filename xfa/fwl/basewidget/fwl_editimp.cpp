@@ -1194,8 +1194,8 @@ void CFWL_EditImp::UpdateEditParams() {
   if (!pLineHeight)
     return;
   params.fLineSpace = *pLineHeight;
-  IFX_Font* pFont =
-      static_cast<IFX_Font*>(GetThemeCapacity(CFWL_WidgetCapacity::Font));
+  IFGAS_Font* pFont =
+      static_cast<IFGAS_Font*>(GetThemeCapacity(CFWL_WidgetCapacity::Font));
   if (!pFont)
     return;
   params.pFont = pFont;

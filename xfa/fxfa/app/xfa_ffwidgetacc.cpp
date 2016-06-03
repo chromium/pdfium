@@ -1517,7 +1517,7 @@ CXFA_WidgetLayoutData* CXFA_WidgetAcc::GetWidgetLayoutData() {
   return m_pLayoutData.get();
 }
 
-IFX_Font* CXFA_WidgetAcc::GetFDEFont() {
+IFGAS_Font* CXFA_WidgetAcc::GetFDEFont() {
   CFX_WideStringC wsFontName = FX_WSTRC(L"Courier");
   uint32_t dwFontStyle = 0;
   if (CXFA_Font font = GetFont()) {
