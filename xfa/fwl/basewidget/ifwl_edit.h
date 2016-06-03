@@ -48,8 +48,6 @@
 #define FWL_STYLEEXT_EDT_OuterScrollbar (1L << 26)
 #define FWL_STYLEEXT_EDT_LastLineHeight (1L << 27)
 
-typedef struct FWL_HEDTFIND_ { void* pData; } * FWL_HEDTFIND;
-
 enum FWL_EDT_TEXTCHANGED {
   FWL_EDT_TEXTCHANGED_Insert = 0,
   FWL_EDT_TEXTCHANGED_Delete,

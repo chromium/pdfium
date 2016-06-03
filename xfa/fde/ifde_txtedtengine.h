@@ -14,8 +14,6 @@ class CFDE_TxtEdtEngine;
 class CFWL_EditImp;
 class IFDE_TxtEdtPage;
 
-typedef struct FDE_HTXTEDTFIND_ { void* pData; } * FDE_HTXTEDTFIND;
-
 #define FDE_TEXTEDITMODE_MultiLines (1L << 0)
 #define FDE_TEXTEDITMODE_AutoLineWrap (1L << 1)
 #define FDE_TEXTEDITMODE_ReadOnly (1L << 2)
