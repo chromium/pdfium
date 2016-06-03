@@ -16,11 +16,11 @@
 
 class CXFA_PDFFontMgr;
 
-class CFX_GEFont : public IFGAS_Font {
+class CFGAS_GEFont : public IFGAS_Font {
  public:
-  CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles);
-  explicit CFX_GEFont(IFGAS_FontMgr* pFontMgr);
-  ~CFX_GEFont();
+  CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles);
+  explicit CFGAS_GEFont(IFGAS_FontMgr* pFontMgr);
+  ~CFGAS_GEFont();
 
   // IFGAS_Font:
   virtual void Release();
