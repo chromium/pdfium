@@ -346,14 +346,14 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
 
 CFX_ByteString CPDFSDK_DateTime::ToCommonDateTimeString() {
   CFX_ByteString str1;
-  str1.Format("%04d-%02d-%02d %02d:%02d:%02d ", dt.year, dt.month, dt.day,
+  str1.Format("%04d-%02u-%02u %02u:%02u:%02u ", dt.year, dt.month, dt.day,
               dt.hour, dt.minute, dt.second);
   if (dt.tzHour < 0)
     str1 += "-";
   else
     str1 += "+";
   CFX_ByteString str2;
-  str2.Format("%02d:%02d", abs(dt.tzHour), dt.tzMinute);
+  str2.Format("%02d:%02u", abs(dt.tzHour), dt.tzMinute);
   return str1 + str2;
 }
 
@@ -361,7 +361,7 @@ CFX_ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {
   CFX_ByteString dtStr;
   char tempStr[32];
   memset(tempStr, 0, sizeof(tempStr));
-  FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "D:%04d%02d%02d%02d%02d%02d",
+  FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "D:%04d%02u%02u%02u%02u%02u",
                  dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second);
   dtStr = CFX_ByteString(tempStr);
   if (dt.tzHour < 0)
@@ -369,7 +369,7 @@ CFX_ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {
   else
     dtStr += CFX_ByteString("+");
   memset(tempStr, 0, sizeof(tempStr));
-  FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "%02d'%02d'", abs(dt.tzHour),
+  FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "%02d'%02u'", abs(dt.tzHour),
                  dt.tzMinute);
   dtStr += CFX_ByteString(tempStr);
   return dtStr;

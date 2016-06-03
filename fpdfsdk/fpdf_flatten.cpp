@@ -156,7 +156,8 @@ FX_FLOAT GetMinMaxValue(CPDF_RectArray& array,
       break;
     }
     default:
-      break;
+      // Not reachable.
+      return 0.0f;
   }
   fRet = pArray[0];
   if (type == MAX) {

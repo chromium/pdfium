@@ -73,7 +73,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
 
   for (size_t i = 0; i < FX_ArraySize(flate_decode_cases); ++i) {
     const pdfium::DecodeTestData& data = flate_decode_cases[i];
-    unsigned char* result;
+    unsigned char* result = nullptr;
     unsigned int result_size;
     EXPECT_EQ(data.processed_size,
               FlateDecode(data.input, data.input_size, result, result_size))

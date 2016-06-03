@@ -56,7 +56,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
     if (t) {
       FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
       FXSYS_snprintf((FX_CHAR*)pAttribute->m_strTime,
-                     sizeof(pAttribute->m_strTime), "%4d:%2d:%2d %2d:%2d:%2d",
+                     sizeof(pAttribute->m_strTime), "%4u:%2u:%2u %2u:%2u:%2u",
                      t->year, t->month, t->day, t->hour, t->minute, t->second);
       pAttribute->m_strTime[sizeof(pAttribute->m_strTime) - 1] = 0;
       bTime = 1;

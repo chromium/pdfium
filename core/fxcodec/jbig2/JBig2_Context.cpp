@@ -631,7 +631,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
         return JBIG2_ERROR_FATAL;
       m_pStream->alignByte();
     }
-    if (m_bIsGlobal && kSymbolDictCacheMaxSize > 0) {
+    if (m_bIsGlobal) {
       std::unique_ptr<CJBig2_SymbolDict> value =
           pSegment->m_Result.sd->DeepCopy();
       int size = pdfium::CollectionSize<int>(*m_pSymbolDictCache);

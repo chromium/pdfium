@@ -718,7 +718,7 @@ int _MonthFromTime(double t) {
 int _DateFromTime(double t) {
   int day = _DayWithinYear(t);
   int year = _YearFromTime(t);
-  bool leap = _isLeapYear(year);
+  int leap = _isLeapYear(year);
   int month = _MonthFromTime(t);
   switch (month) {
     case 0:
