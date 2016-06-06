@@ -6,7 +6,7 @@ import("//build_overrides/v8.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
-config("pdfium_config") {
+config("pdfium_common_config") {
   cflags = []
   include_dirs = [
     ".",
@@ -17,7 +17,6 @@ config("pdfium_config") {
     "OPJ_STATIC",
     "PNG_PREFIX",
     "PNG_USE_READ_MACROS",
-    "V8_DEPRECATION_WARNINGS",
   ]
 
   if (pdf_use_skia) {
@@ -31,7 +30,12 @@ config("pdfium_config") {
   if (pdf_enable_xfa) {
     defines += [ "PDF_ENABLE_XFA" ]
   }
+}
 
+config("pdfium_core_config") {
+  cflags = []
+  configs = [":pdfium_common_config"]
+  defines = ["V8_DEPRECATION_WARNINGS"]
   if (is_linux) {
     if (current_cpu == "x64") {
       defines += [ "_FX_CPU_=_FX_X64_" ]
@@ -40,7 +44,6 @@ config("pdfium_config") {
       defines += [ "_FX_CPU_=_FX_X86_" ]
     }
   }
-
   if (is_win) {
     cflags += [ "/wd4267" ]
   }
@@ -100,7 +103,7 @@ static_library("pdfium") {
   ]
 
   libs = []
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 
   deps = [
     ":fdrm",
@@ -170,7 +173,7 @@ source_set("test_support") {
     ]
     configs += [ "//v8:external_startup_data" ]
   }
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 # Targets below this are only visible within this file (and to the
@@ -187,7 +190,7 @@ static_library("fdrm") {
     "core/fdrm/crypto/fx_crypt_sha.cpp",
     "core/fdrm/crypto/include/fx_crypt.h",
   ]
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("fpdfdoc") {
@@ -237,7 +240,7 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/pdf_vt.h",
     "core/fpdfdoc/tagged_int.h",
   ]
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("fpdfapi") {
@@ -464,7 +467,7 @@ static_library("fpdfapi") {
     "core/fpdfapi/fpdf_render/render_int.h",
     "core/fpdfapi/include/cpdf_modulemgr.h",
   ]
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("fpdftext") {
@@ -477,7 +480,7 @@ static_library("fpdftext") {
     "core/fpdftext/unicodenormalizationdata.cpp",
     "core/fpdftext/unicodenormalizationdata.h",
   ]
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("fxcodec") {
@@ -577,7 +580,7 @@ static_library("fxcodec") {
     # conversion to check that an address is 16-bit aligned (benign).
     cflags_c = [ "-Wno-pointer-to-int-cast" ]
   }
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 config("fxge_warnings") {
@@ -639,7 +642,7 @@ static_library("fxcrt") {
       "core/fxcrt/include/fx_arb.h",
     ]
   }
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("fxge") {
@@ -700,7 +703,7 @@ static_library("fxge") {
 
   configs += [
     ":fxge_warnings",
-    ":pdfium_config",
+    ":pdfium_core_config",
   ]
 
   if (pdf_use_skia) {
@@ -743,7 +746,7 @@ static_library("fxedit") {
     "fpdfsdk/fxedit/include/fxet_edit.h",
     "fpdfsdk/fxedit/include/fxet_list.h",
   ]
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("pdfwindow") {
@@ -781,7 +784,7 @@ static_library("pdfwindow") {
     "fpdfsdk/pdfwindow/PWL_Wnd.cpp",
     "fpdfsdk/pdfwindow/PWL_Wnd.h",
   ]
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("javascript") {
@@ -844,7 +847,7 @@ static_library("javascript") {
   } else {
     sources += [ "fpdfsdk/javascript/JS_Runtime_Stub.cpp" ]
   }
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("formfiller") {
@@ -868,7 +871,7 @@ static_library("formfiller") {
     "fpdfsdk/formfiller/cffl_textfield.cpp",
     "fpdfsdk/formfiller/cffl_textfield.h",
   ]
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 if (pdf_enable_xfa) {
@@ -886,7 +889,7 @@ if (pdf_enable_xfa) {
     deps = [
       ":xfa",
     ]
-    configs += [ ":pdfium_config" ]
+    configs += [ ":pdfium_core_config" ]
   }
 
   static_library("xfa") {
@@ -1587,7 +1590,7 @@ if (pdf_enable_xfa) {
       ]
     }
     configs += [
-      ":pdfium_config",
+      ":pdfium_core_config",
       ":xfa_warnings",
     ]
   }
@@ -1642,7 +1645,7 @@ test("pdfium_unittests") {
       "//v8/include",
     ]
   }
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 test("pdfium_embeddertests") {
@@ -1695,7 +1698,7 @@ test("pdfium_embeddertests") {
     ]
     configs += [ "//v8:external_startup_data" ]
   }
-  configs += [ ":pdfium_config" ]
+  configs += [ ":pdfium_core_config" ]
 }
 
 if (pdf_is_standalone) {

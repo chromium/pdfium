@@ -12,11 +12,15 @@ group("third_party") {
   ]
 }
 
+config("pdfium_third_party_config") {
+  configs = ["..:pdfium_common_config"]
+}
+
 source_set("bigint") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
   ]
   sources = [
     "bigint/BigInteger.cc",
@@ -47,7 +51,7 @@ static_library("fx_freetype") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
 
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_freetype_warnings",
@@ -99,7 +103,7 @@ if (!pdf_use_skia) {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
-      "../:pdfium_config",
+      ":pdfium_third_party_config",
 
       # Must be after no_chromium_code for warning flags to be ordered correctly.
       ":fx_agg_warnings",
@@ -142,7 +146,7 @@ source_set("fx_lcms2") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
 
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_lcms2_warnings",
@@ -190,7 +194,7 @@ source_set("jpeg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
 
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":jpeg_warnings",
@@ -268,7 +272,7 @@ source_set("fx_libopenjpeg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
 
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_libopenjpeg_warnings",
@@ -300,7 +304,7 @@ source_set("fx_lpng") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
   ]
   sources = [
     "libpng16/png.c",
@@ -334,7 +338,7 @@ if (pdf_enable_xfa) {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
-      "../:pdfium_config",
+      ":pdfium_third_party_config",
     ]
     if (is_win) {
       # Need to undefine the macro since it is redefined in
@@ -398,7 +402,7 @@ source_set("fx_zlib") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
 
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_zlib_warnings",
@@ -426,7 +430,7 @@ source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "../:pdfium_config",
+    ":pdfium_third_party_config",
   ]
   sources = [
     "base/logging.h",
