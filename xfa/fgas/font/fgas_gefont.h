@@ -49,7 +49,7 @@ class CFGAS_GEFont : public IFGAS_Font {
   virtual int32_t GetItalicAngle() const;
   virtual void Reset();
   virtual IFGAS_Font* GetSubstFont(int32_t iGlyphIndex) const;
-  virtual void* GetDevFont() const { return (void*)m_pFont; }
+  virtual CFX_Font* GetDevFont() const { return m_pFont; }
   virtual void SetFontProvider(CXFA_PDFFontMgr* pProvider) {
     m_pProvider = pProvider;
   }

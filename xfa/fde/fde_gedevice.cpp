@@ -110,10 +110,9 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
                                       int32_t iCount,
                                       FX_FLOAT fFontSize,
                                       const CFX_Matrix* pMatrix) {
-  ASSERT(pBrush != NULL && pFont != NULL && pCharPos != NULL && iCount > 0);
+  ASSERT(pBrush && pFont && pCharPos && iCount > 0);
   CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
-  CFX_Font* pFxFont = (CFX_Font*)pFont->GetDevFont();
-
+  CFX_Font* pFxFont = pFont->GetDevFont();
   FX_ARGB argb = pBrush->GetColor();
   if ((pFont->GetFontStyles() & FX_FONTSTYLE_Italic) != 0 &&
       !pFxFont->IsItalic()) {
@@ -149,9 +148,8 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
     pCP->m_GlyphIndex &= 0x00FFFFFF;
     pCP->m_bFontStyle = FALSE;
     if (pCurFont != pSTFont) {
-      if (pCurFont != NULL) {
-        pFxFont = (CFX_Font*)pCurFont->GetDevFont();
-
+      if (pCurFont) {
+        pFxFont = pCurFont->GetDevFont();
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
         FxFont.SetFace(pFxFont->GetFace());
         m_pDevice->DrawNormalText(iCurCount, pCurCP, &FxFont, pCache,
@@ -171,9 +169,8 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
     }
     pCP++;
   }
-  if (pCurFont != NULL && iCurCount) {
-    pFxFont = (CFX_Font*)pCurFont->GetDevFont();
-
+  if (pCurFont && iCurCount) {
+    pFxFont = pCurFont->GetDevFont();
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     FxFont.SetFace(pFxFont->GetFace());
     FX_BOOL bRet = m_pDevice->DrawNormalText(

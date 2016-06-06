@@ -88,7 +88,7 @@ class IFGAS_Font {
   virtual int32_t GetItalicAngle() const = 0;
   virtual void Reset() = 0;
   virtual IFGAS_Font* GetSubstFont(int32_t iGlyphIndex) const = 0;
-  virtual void* GetDevFont() const = 0;
+  virtual CFX_Font* GetDevFont() const = 0;
   virtual void SetFontProvider(CXFA_PDFFontMgr* pProvider) = 0;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   virtual void SetLogicalFontStyle(uint32_t dwLogFontStyle) = 0;

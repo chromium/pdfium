@@ -813,7 +813,7 @@ FX_BOOL CFGAS_FontMgrImp::VerifyUnicode(IFGAS_Font* pFont, FX_WCHAR wcUnicode) {
   if (!pFont)
     return FALSE;
 
-  FXFT_Face pFace = ((CFX_Font*)pFont->GetDevFont())->GetFace();
+  FXFT_Face pFace = pFont->GetDevFont()->GetFace();
   FXFT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
   if (FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE) != 0)
     return FALSE;
@@ -889,7 +889,7 @@ IFGAS_Font* CFGAS_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
     if (m_FileAccess2IFXFont.Lookup(dwHash, pFont)) {
       if (pFont) {
         if (pFaceCount)
-          *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->GetFace()->num_faces;
+          *pFaceCount = pFont->GetDevFont()->GetFace()->num_faces;
         return pFont->Retain();
       }
     }
@@ -918,7 +918,7 @@ IFGAS_Font* CFGAS_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
 
   m_IFXFont2FileRead.SetAt(pFont, pFontStream);
   if (pFaceCount)
-    *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->GetFace()->num_faces;
+    *pFaceCount = pFont->GetDevFont()->GetFace()->num_faces;
 
   return pFont;
 }
@@ -958,7 +958,7 @@ IFGAS_Font* CFGAS_FontMgrImp::LoadFont(const CFX_WideString& wsFaceName,
 
   m_IFXFont2FileRead.SetAt(pFont, pFontStream);
   if (pFaceCount)
-    *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->GetFace()->num_faces;
+    *pFaceCount = pFont->GetDevFont()->GetFace()->num_faces;
 
   return pFont;
 }
