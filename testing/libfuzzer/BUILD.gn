@@ -51,6 +51,67 @@ if (pdf_enable_xfa) {
     testonly = true
     sources = [
       "pdf_codec_png_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
+    ]
+    deps = [
+      "//third_party/pdfium:pdfium",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
+  source_set("pdf_codec_jpeg_fuzzer") {
+    testonly = true
+    sources = [
+      "pdf_codec_jpeg_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
+    ]
+    deps = [
+      "//third_party/pdfium:pdfium",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
+  source_set("pdf_codec_gif_fuzzer") {
+    testonly = true
+    sources = [
+      "pdf_codec_gif_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
+    ]
+    deps = [
+      "//third_party/pdfium:pdfium",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
+  source_set("pdf_codec_bmp_fuzzer") {
+    testonly = true
+    sources = [
+      "pdf_codec_bmp_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
+    ]
+    deps = [
+      "//third_party/pdfium:pdfium",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
+  source_set("pdf_codec_tiff_fuzzer") {
+    testonly = true
+    sources = [
+      "pdf_codec_tiff_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
     ]
     deps = [
       "//third_party/pdfium:pdfium",
