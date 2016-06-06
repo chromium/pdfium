@@ -26,7 +26,6 @@ class CFDE_TxtEdtEngine {
   int32_t CountPages() const;
   IFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
-  FX_BOOL SetBufChunkSize(int32_t nChunkSize);
   void SetTextByStream(IFX_Stream* pStream);
   void SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;

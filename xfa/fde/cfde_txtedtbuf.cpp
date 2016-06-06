@@ -30,12 +30,6 @@ CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {
   m_Chunks.RemoveAll();
 }
 
-FX_BOOL CFDE_TxtEdtBuf::SetChunkSize(int32_t nChunkSize) {
-  ASSERT(nChunkSize);
-  ResetChunkBuffer(kDefaultChunkCount, nChunkSize);
-  return TRUE;
-}
-
 int32_t CFDE_TxtEdtBuf::GetChunkSize() const {
   return m_nChunkSize;
 }

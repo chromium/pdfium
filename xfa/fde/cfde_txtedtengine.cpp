@@ -83,10 +83,6 @@ IFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
   return (IFDE_TxtEdtPage*)m_PagePtrArray[nIndex];
 }
 
-FX_BOOL CFDE_TxtEdtEngine::SetBufChunkSize(int32_t nChunkSize) {
-  return m_pTxtBuf->SetChunkSize(nChunkSize);
-}
-
 void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
   ResetEngine();
   int32_t nIndex = 0;

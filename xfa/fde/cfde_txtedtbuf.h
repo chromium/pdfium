@@ -18,7 +18,6 @@ class CFDE_TxtEdtBuf {
   CFDE_TxtEdtBuf();
   ~CFDE_TxtEdtBuf();
 
-  FX_BOOL SetChunkSize(int32_t nChunkSize);
   int32_t GetChunkSize() const;
   int32_t GetTextLength() const;
   void SetText(const CFX_WideString& wsText);
