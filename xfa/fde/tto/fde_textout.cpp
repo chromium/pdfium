@@ -775,7 +775,7 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
   CFDE_Brush* pBrush = new CFDE_Brush;
   pBrush->SetColor(m_TxtColor);
   CFDE_Pen* pPen = NULL;
-  FDE_HDEVICESTATE hDev = m_pRenderDevice->SaveState();
+  m_pRenderDevice->SaveState();
   if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f) {
     m_pRenderDevice->SetClipRect(rtClip);
   }
@@ -795,7 +795,7 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
       DrawLine(pPiece, pPen);
     }
   }
-  m_pRenderDevice->RestoreState(hDev);
+  m_pRenderDevice->RestoreState();
   delete pBrush;
   delete pPen;
 }

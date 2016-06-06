@@ -36,11 +36,10 @@ int32_t CFDE_RenderDevice::GetWidth() const {
 int32_t CFDE_RenderDevice::GetHeight() const {
   return m_pDevice->GetHeight();
 }
-FDE_HDEVICESTATE CFDE_RenderDevice::SaveState() {
+void CFDE_RenderDevice::SaveState() {
   m_pDevice->SaveState();
-  return NULL;
 }
-void CFDE_RenderDevice::RestoreState(FDE_HDEVICESTATE hState) {
+void CFDE_RenderDevice::RestoreState() {
   m_pDevice->RestoreState(false);
   const FX_RECT& rt = m_pDevice->GetClipBox();
   m_rtClip.Set((FX_FLOAT)rt.left, (FX_FLOAT)rt.top, (FX_FLOAT)rt.Width(),

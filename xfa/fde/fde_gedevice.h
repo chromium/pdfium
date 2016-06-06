@@ -10,8 +10,6 @@
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
-typedef struct FDE_HDEVICESTATE_ { void* pData; } * FDE_HDEVICESTATE;
-
 class CFDE_Brush;
 class CFDE_Path;
 class CFDE_Pen;
@@ -24,8 +22,8 @@ class CFDE_RenderDevice : public CFX_Target {
 
   int32_t GetWidth() const;
   int32_t GetHeight() const;
-  FDE_HDEVICESTATE SaveState();
-  void RestoreState(FDE_HDEVICESTATE hState);
+  void SaveState();
+  void RestoreState();
   FX_BOOL SetClipPath(const CFDE_Path* pClip);
   CFDE_Path* GetClipPath() const;
   FX_BOOL SetClipRect(const CFX_RectF& rtClip);

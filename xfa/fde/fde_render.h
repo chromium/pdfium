@@ -35,10 +35,8 @@ class CFDE_RenderContext : public CFX_Target {
   FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
   void StopRender();
   void RenderText(IFDE_TextSet* pTextSet, FDE_HVISUALOBJ hText);
-  FX_BOOL ApplyClip(IFDE_VisualSet* pVisualSet,
-                    FDE_HVISUALOBJ hObj,
-                    FDE_HDEVICESTATE& hState);
-  void RestoreClip(FDE_HDEVICESTATE hState);
+  FX_BOOL ApplyClip(IFDE_VisualSet* pVisualSet, FDE_HVISUALOBJ hObj);
+  void RestoreClip();
 
  protected:
   FDE_RENDERSTATUS m_eStatus;

@@ -1174,7 +1174,7 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
 
   std::unique_ptr<CFDE_RenderDevice> pDevice(
       new CFDE_RenderDevice(pFxDevice, FALSE));
-  FDE_HDEVICESTATE state = pDevice->SaveState();
+  pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
 
   std::unique_ptr<CFDE_Brush> pSolidBrush(new CFDE_Brush);
@@ -1223,7 +1223,7 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
                  tmDoc2Device);
     }
   }
-  pDevice->RestoreState(state);
+  pDevice->RestoreState();
   FX_Free(pCharPos);
   return iPieceLines;
 }
