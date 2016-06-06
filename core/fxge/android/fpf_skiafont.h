@@ -16,8 +16,6 @@
 class CFPF_SkiaFontDescriptor;
 class CFPF_SkiaFontMgr;
 
-typedef struct FPF_HFONT_ { void* pData; } * FPF_HFONT;
-
 class CFPF_SkiaFont {
  public:
   CFPF_SkiaFont();
@@ -26,7 +24,6 @@ class CFPF_SkiaFont {
   void Release();
   CFPF_SkiaFont* Retain();
 
-  FPF_HFONT GetHandle();
   CFX_ByteString GetFamilyName();
   CFX_ByteString GetPsName();
   uint32_t GetFontStyle() const { return m_dwStyle; }

@@ -39,10 +39,6 @@ CFPF_SkiaFont* CFPF_SkiaFont::Retain() {
   return this;
 }
 
-FPF_HFONT CFPF_SkiaFont::GetHandle() {
-  return nullptr;
-}
-
 CFX_ByteString CFPF_SkiaFont::GetFamilyName() {
   if (!m_Face)
     return CFX_ByteString();
