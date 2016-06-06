@@ -27,35 +27,34 @@
 #include "xfa/fxbarcode/oned/BC_OnedCodaBarReader.h"
 #include "xfa/fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
-CBC_Codabar::CBC_Codabar() {
-  m_pBCReader = (CBC_Reader*)new (CBC_OnedCodaBarReader);
-  m_pBCWriter = (CBC_Writer*)new (CBC_OnedCodaBarWriter);
-}
+CBC_Codabar::CBC_Codabar()
+    : CBC_OneCode(new CBC_OnedCodaBarReader, new CBC_OnedCodaBarWriter) {}
 
-CBC_Codabar::~CBC_Codabar() {
-  delete (m_pBCReader);
-  delete (m_pBCWriter);
-}
+CBC_Codabar::~CBC_Codabar() {}
 
 FX_BOOL CBC_Codabar::SetStartChar(FX_CHAR start) {
-  if (m_pBCWriter)
-    return ((CBC_OnedCodaBarWriter*)m_pBCWriter)->SetStartChar(start);
-  return FALSE;
+  if (!m_pBCWriter)
+    return FALSE;
+  return static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
+      ->SetStartChar(start);
 }
 
 FX_BOOL CBC_Codabar::SetEndChar(FX_CHAR end) {
   if (m_pBCWriter)
-    return ((CBC_OnedCodaBarWriter*)m_pBCWriter)->SetEndChar(end);
+    return static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
+        ->SetEndChar(end);
   return FALSE;
 }
 
 FX_BOOL CBC_Codabar::SetTextLocation(BC_TEXT_LOC location) {
-  return ((CBC_OnedCodaBarWriter*)m_pBCWriter)->SetTextLocation(location);
+  return static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
+      ->SetTextLocation(location);
 }
 
 FX_BOOL CBC_Codabar::SetWideNarrowRatio(int32_t ratio) {
   if (m_pBCWriter)
-    return ((CBC_OnedCodaBarWriter*)m_pBCWriter)->SetWideNarrowRatio(ratio);
+    return static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
+        ->SetWideNarrowRatio(ratio);
   return FALSE;
 }
 
@@ -70,13 +69,14 @@ FX_BOOL CBC_Codabar::Encode(const CFX_WideStringC& contents,
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   CFX_WideString filtercontents =
-      ((CBC_OneDimWriter*)m_pBCWriter)->FilterContents(contents);
+      static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
+          ->FilterContents(contents);
   CFX_ByteString byteString = filtercontents.UTF8Encode();
   m_renderContents = filtercontents;
-  uint8_t* data = static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter)
+  uint8_t* data = static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
                       ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  ((CBC_OneDimWriter*)m_pBCWriter)
+  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderResult(filtercontents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
@@ -87,9 +87,9 @@ FX_BOOL CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
                                   const CFX_Matrix* matrix,
                                   int32_t& e) {
   CFX_WideString renderCon =
-      ((CBC_OnedCodaBarWriter*)m_pBCWriter)
+      static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
           ->encodedContents(m_renderContents.AsStringC());
-  ((CBC_OneDimWriter*)m_pBCWriter)
+  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, renderCon.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -97,9 +97,9 @@ FX_BOOL CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
 
 FX_BOOL CBC_Codabar::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   CFX_WideString renderCon =
-      ((CBC_OnedCodaBarWriter*)m_pBCWriter)
+      static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
           ->encodedContents(m_renderContents.AsStringC());
-  ((CBC_OneDimWriter*)m_pBCWriter)
+  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, renderCon.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;

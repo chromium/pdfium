@@ -27,31 +27,27 @@
 #include "xfa/fxbarcode/qrcode/BC_QRCodeReader.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCodeWriter.h"
 
-CBC_QRCode::CBC_QRCode() {
-  m_pBCReader = (CBC_Reader*)new (CBC_QRCodeReader);
-  ((CBC_QRCodeReader*)m_pBCReader)->Init();
-  m_pBCWriter = (CBC_Writer*)new (CBC_QRCodeWriter);
+CBC_QRCode::CBC_QRCode()
+    : CBC_CodeBase(new CBC_QRCodeReader, new CBC_QRCodeWriter) {
+  static_cast<CBC_QRCodeReader*>(m_pBCReader.get())->Init();
 }
 
-CBC_QRCode::~CBC_QRCode() {
-  delete (m_pBCReader);
-  delete (m_pBCWriter);
-}
+CBC_QRCode::~CBC_QRCode() {}
 
 FX_BOOL CBC_QRCode::SetVersion(int32_t version) {
   if (version < 0 || version > 40)
     return FALSE;
-  if (!m_pBCWriter)
-    return FALSE;
-  return ((CBC_QRCodeWriter*)m_pBCWriter)->SetVersion(version);
+  return m_pBCWriter &&
+         static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get())->SetVersion(version);
 }
 
 FX_BOOL CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3)
     return FALSE;
-  if (!m_pBCWriter)
-    return FALSE;
-  return ((CBC_TwoDimWriter*)m_pBCWriter)->SetErrorCorrectionLevel(level);
+
+  return m_pBCWriter &&
+         static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+             ->SetErrorCorrectionLevel(level);
 }
 
 FX_BOOL CBC_QRCode::Encode(const CFX_WideStringC& contents,
@@ -59,13 +55,12 @@ FX_BOOL CBC_QRCode::Encode(const CFX_WideStringC& contents,
                            int32_t& e) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  uint8_t* data =
-      ((CBC_QRCodeWriter*)m_pBCWriter)
-          ->Encode(CFX_WideString(contents),
-                   ((CBC_QRCodeWriter*)m_pBCWriter)->GetErrorCorrectionLevel(),
-                   outWidth, outHeight, e);
+  CBC_QRCodeWriter* pWriter = static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get());
+  uint8_t* data = pWriter->Encode(CFX_WideString(contents),
+                                  pWriter->GetErrorCorrectionLevel(), outWidth,
+                                  outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderResult(data, outWidth, outHeight, e);
+  pWriter->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -74,12 +69,14 @@ FX_BOOL CBC_QRCode::Encode(const CFX_WideStringC& contents,
 FX_BOOL CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
                                  const CFX_Matrix* matrix,
                                  int32_t& e) {
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matrix);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderDeviceResult(device, matrix);
   return TRUE;
 }
 
 FX_BOOL CBC_QRCode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, e);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderBitmapResult(pOutBitmap, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }

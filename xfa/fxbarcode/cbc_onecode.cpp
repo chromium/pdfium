@@ -23,55 +23,57 @@
 
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 
-CBC_OneCode::CBC_OneCode() {}
+CBC_OneCode::CBC_OneCode(CBC_Reader* pReader, CBC_Writer* pWriter)
+    : CBC_CodeBase(pReader, pWriter) {}
 
 CBC_OneCode::~CBC_OneCode() {}
 
 FX_BOOL CBC_OneCode::CheckContentValidity(const CFX_WideStringC& contents) {
-  if (m_pBCWriter)
-    return ((CBC_OneDimWriter*)m_pBCWriter)->CheckContentValidity(contents);
-  return FALSE;
+  return m_pBCWriter &&
+         static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
+             ->CheckContentValidity(contents);
 }
 
 CFX_WideString CBC_OneCode::FilterContents(const CFX_WideStringC& contents) {
-  CFX_WideString tmp;
   if (!m_pBCWriter)
-    return tmp;
-  return ((CBC_OneDimWriter*)m_pBCWriter)->FilterContents(contents);
+    return CFX_WideString();
+  return static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
+      ->FilterContents(contents);
 }
 
 void CBC_OneCode::SetPrintChecksum(FX_BOOL checksum) {
   if (m_pBCWriter)
-    ((CBC_OneDimWriter*)m_pBCWriter)->SetPrintChecksum(checksum);
+    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
+        ->SetPrintChecksum(checksum);
 }
 
 void CBC_OneCode::SetDataLength(int32_t length) {
   if (m_pBCWriter)
-    ((CBC_OneDimWriter*)m_pBCWriter)->SetDataLength(length);
+    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetDataLength(length);
 }
 
 void CBC_OneCode::SetCalChecksum(FX_BOOL calc) {
   if (m_pBCWriter)
-    ((CBC_OneDimWriter*)m_pBCWriter)->SetCalcChecksum(calc);
+    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetCalcChecksum(calc);
 }
 
 FX_BOOL CBC_OneCode::SetFont(CFX_Font* cFont) {
   if (m_pBCWriter)
-    return ((CBC_OneDimWriter*)m_pBCWriter)->SetFont(cFont);
+    return static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFont(cFont);
   return FALSE;
 }
 
 void CBC_OneCode::SetFontSize(FX_FLOAT size) {
   if (m_pBCWriter)
-    ((CBC_OneDimWriter*)m_pBCWriter)->SetFontSize(size);
+    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFontSize(size);
 }
 
 void CBC_OneCode::SetFontStyle(int32_t style) {
   if (m_pBCWriter)
-    ((CBC_OneDimWriter*)m_pBCWriter)->SetFontStyle(style);
+    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFontStyle(style);
 }
 
 void CBC_OneCode::SetFontColor(FX_ARGB color) {
   if (m_pBCWriter)
-    ((CBC_OneDimWriter*)m_pBCWriter)->SetFontColor(color);
+    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFontColor(color);
 }

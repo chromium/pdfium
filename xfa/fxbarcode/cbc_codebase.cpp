@@ -21,9 +21,11 @@
 
 #include "xfa/fxbarcode/cbc_codebase.h"
 
+#include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 
-CBC_CodeBase::CBC_CodeBase() {}
+CBC_CodeBase::CBC_CodeBase(CBC_Reader* pReader, CBC_Writer* pWriter)
+    : m_pBCReader(pReader), m_pBCWriter(pWriter) {}
 
 CBC_CodeBase::~CBC_CodeBase() {}
 

@@ -27,16 +27,12 @@
 #include "xfa/fxbarcode/datamatrix/BC_DataMatrixReader.h"
 #include "xfa/fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 
-CBC_DataMatrix::CBC_DataMatrix() {
-  m_pBCReader = (CBC_Reader*)new (CBC_DataMatrixReader);
-  ((CBC_DataMatrixReader*)m_pBCReader)->Init();
-  m_pBCWriter = (CBC_Writer*)new (CBC_DataMatrixWriter);
+CBC_DataMatrix::CBC_DataMatrix()
+    : CBC_CodeBase(new CBC_DataMatrixReader, new CBC_DataMatrixWriter) {
+  static_cast<CBC_DataMatrixReader*>(m_pBCReader.get())->Init();
 }
 
-CBC_DataMatrix::~CBC_DataMatrix() {
-  delete (m_pBCReader);
-  delete (m_pBCWriter);
-}
+CBC_DataMatrix::~CBC_DataMatrix() {}
 
 FX_BOOL CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
                                FX_BOOL isDevice,
@@ -44,10 +40,11 @@ FX_BOOL CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   uint8_t* data =
-      ((CBC_DataMatrixWriter*)m_pBCWriter)
+      static_cast<CBC_DataMatrixWriter*>(m_pBCWriter.get())
           ->Encode(CFX_WideString(contents), outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderResult(data, outWidth, outHeight, e);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -56,12 +53,14 @@ FX_BOOL CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
 FX_BOOL CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
                                      const CFX_Matrix* matrix,
                                      int32_t& e) {
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matrix);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderDeviceResult(device, matrix);
   return TRUE;
 }
 
 FX_BOOL CBC_DataMatrix::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, e);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderBitmapResult(pOutBitmap, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }

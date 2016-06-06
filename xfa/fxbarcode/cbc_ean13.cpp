@@ -27,27 +27,23 @@
 #include "xfa/fxbarcode/oned/BC_OnedEAN13Reader.h"
 #include "xfa/fxbarcode/oned/BC_OnedEAN13Writer.h"
 
-CBC_EAN13::CBC_EAN13() {
-  m_pBCReader = (CBC_Reader*)new (CBC_OnedEAN13Reader);
-  m_pBCWriter = (CBC_Writer*)new (CBC_OnedEAN13Writer);
-}
+CBC_EAN13::CBC_EAN13()
+    : CBC_OneCode(new CBC_OnedEAN13Reader, new CBC_OnedEAN13Writer) {}
 
-CBC_EAN13::~CBC_EAN13() {
-  delete (m_pBCReader);
-  delete (m_pBCWriter);
-}
+CBC_EAN13::~CBC_EAN13() {}
 
 CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
   CFX_WideString encodeContents =
-      ((CBC_OnedEAN13Writer*)m_pBCWriter)->FilterContents(contents);
+      static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter.get())
+          ->FilterContents(contents);
   int32_t length = encodeContents.GetLength();
   if (length <= 12) {
     for (int32_t i = 0; i < 12 - length; i++)
       encodeContents = FX_WCHAR('0') + encodeContents;
 
     CFX_ByteString byteString = encodeContents.UTF8Encode();
-    int32_t checksum =
-        ((CBC_OnedEAN13Writer*)m_pBCWriter)->CalcChecksum(byteString);
+    int32_t checksum = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter.get())
+                           ->CalcChecksum(byteString);
     byteString += checksum - 0 + '0';
     encodeContents = byteString.UTF8Decode();
   }
@@ -70,10 +66,10 @@ FX_BOOL CBC_EAN13::Encode(const CFX_WideStringC& contents,
   CFX_WideString encodeContents = Preprocess(contents);
   CFX_ByteString byteString = encodeContents.UTF8Encode();
   m_renderContents = encodeContents;
-  uint8_t* data = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter)
+  uint8_t* data = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter.get())
                       ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  ((CBC_OneDimWriter*)m_pBCWriter)
+  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
@@ -83,14 +79,14 @@ FX_BOOL CBC_EAN13::Encode(const CFX_WideStringC& contents,
 FX_BOOL CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
                                 const CFX_Matrix* matrix,
                                 int32_t& e) {
-  ((CBC_OneDimWriter*)m_pBCWriter)
+  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
 
 FX_BOOL CBC_EAN13::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
-  ((CBC_OneDimWriter*)m_pBCWriter)
+  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;

@@ -27,23 +27,19 @@
 #include "xfa/fxbarcode/pdf417/BC_PDF417Reader.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417Writer.h"
 
-CBC_PDF417I::CBC_PDF417I() {
-  m_pBCReader = (CBC_Reader*)new (CBC_PDF417Reader);
-  m_pBCWriter = (CBC_Writer*)new (CBC_PDF417Writer);
-}
+CBC_PDF417I::CBC_PDF417I()
+    : CBC_CodeBase(new CBC_PDF417Reader, new CBC_PDF417Writer) {}
 
-CBC_PDF417I::~CBC_PDF417I() {
-  delete (m_pBCReader);
-  delete (m_pBCWriter);
-}
+CBC_PDF417I::~CBC_PDF417I() {}
 
 FX_BOOL CBC_PDF417I::SetErrorCorrectionLevel(int32_t level) {
-  ((CBC_PDF417Writer*)m_pBCWriter)->SetErrorCorrectionLevel(level);
+  static_cast<CBC_PDF417Writer*>(m_pBCWriter.get())
+      ->SetErrorCorrectionLevel(level);
   return TRUE;
 }
 
 void CBC_PDF417I::SetTruncated(FX_BOOL truncated) {
-  ((CBC_PDF417Writer*)m_pBCWriter)->SetTruncated(truncated);
+  static_cast<CBC_PDF417Writer*>(m_pBCWriter.get())->SetTruncated(truncated);
 }
 
 FX_BOOL CBC_PDF417I::Encode(const CFX_WideStringC& contents,
@@ -52,10 +48,11 @@ FX_BOOL CBC_PDF417I::Encode(const CFX_WideStringC& contents,
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   uint8_t* data =
-      ((CBC_PDF417Writer*)m_pBCWriter)
+      static_cast<CBC_PDF417Writer*>(m_pBCWriter.get())
           ->Encode(CFX_WideString(contents), outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderResult(data, outWidth, outHeight, e);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -64,12 +61,14 @@ FX_BOOL CBC_PDF417I::Encode(const CFX_WideStringC& contents,
 FX_BOOL CBC_PDF417I::RenderDevice(CFX_RenderDevice* device,
                                   const CFX_Matrix* matrix,
                                   int32_t& e) {
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matrix);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderDeviceResult(device, matrix);
   return TRUE;
 }
 
 FX_BOOL CBC_PDF417I::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
-  ((CBC_TwoDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, e);
+  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
+      ->RenderBitmapResult(pOutBitmap, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
