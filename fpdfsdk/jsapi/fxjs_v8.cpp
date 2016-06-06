@@ -414,12 +414,11 @@ void FXJS_SetRuntimeForV8Context(v8::Local<v8::Context> v8Context,
 #endif  // PDF_ENABLE_XFA
 
 int FXJS_Execute(v8::Isolate* pIsolate,
-                 IJS_Context* pJSContext,
-                 const wchar_t* script,
+                 const CFX_WideString& script,
                  FXJSErr* pError) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::TryCatch try_catch(pIsolate);
-  CFX_ByteString bsScript = CFX_WideString(script).UTF8Encode();
+  CFX_ByteString bsScript = script.UTF8Encode();
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::Local<v8::Script> compiled_script;
   if (!v8::Script::Compile(context,

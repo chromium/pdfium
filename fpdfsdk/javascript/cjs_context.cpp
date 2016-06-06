@@ -51,7 +51,7 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   CFX_WideString sErrorMessage;
   int nRet = 0;
   if (script.GetLength() > 0) {
-    nRet = m_pRuntime->Execute(this, script.c_str(), &sErrorMessage);
+    nRet = m_pRuntime->Execute(script.c_str(), &sErrorMessage);
   }
 
   if (nRet < 0) {

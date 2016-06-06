@@ -19,9 +19,9 @@ const wchar_t kScript2[] = L"fred = 8";
 
 class FXJSV8EmbedderTest : public JSEmbedderTest {
  public:
-  void ExecuteInCurrentContext(const wchar_t* script) {
+  void ExecuteInCurrentContext(const CFX_WideString& script) {
     FXJSErr error;
-    int sts = FXJS_Execute(isolate(), nullptr, script, &error);
+    int sts = FXJS_Execute(isolate(), script, &error);
     EXPECT_EQ(0, sts);
   }
   void CheckAssignmentInCurrentContext(double expected) {
@@ -39,7 +39,7 @@ TEST_F(FXJSV8EmbedderTest, Getters) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
-  ExecuteInCurrentContext(kScript1);
+  ExecuteInCurrentContext(CFX_WideString(kScript1));
   CheckAssignmentInCurrentContext(kExpected1);
 }
 
@@ -58,14 +58,14 @@ TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
                          &static_objects2);
 
   v8::Context::Scope context_scope(GetV8Context());
-  ExecuteInCurrentContext(kScript0);
+  ExecuteInCurrentContext(CFX_WideString(kScript0));
   CheckAssignmentInCurrentContext(kExpected0);
 
   {
     v8::Local<v8::Context> context1 =
         v8::Local<v8::Context>::New(isolate(), global_context1);
     v8::Context::Scope context_scope1(context1);
-    ExecuteInCurrentContext(kScript1);
+    ExecuteInCurrentContext(CFX_WideString(kScript1));
     CheckAssignmentInCurrentContext(kExpected1);
   }
   FXJS_ReleaseRuntime(isolate(), &global_context1, &static_objects1);
@@ -74,7 +74,7 @@ TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
     v8::Local<v8::Context> context2 =
         v8::Local<v8::Context>::New(isolate(), global_context2);
     v8::Context::Scope context_scope2(context2);
-    ExecuteInCurrentContext(kScript2);
+    ExecuteInCurrentContext(CFX_WideString(kScript2));
     CheckAssignmentInCurrentContext(kExpected2);
   }
   FXJS_ReleaseRuntime(isolate(), &global_context2, &static_objects2);

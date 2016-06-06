@@ -211,8 +211,7 @@ void FXJS_SetRuntimeForV8Context(v8::Local<v8::Context> v8Context,
 
 // Called after FXJS_InitializeRuntime call made.
 int FXJS_Execute(v8::Isolate* pIsolate,
-                 IJS_Context* pJSContext,
-                 const wchar_t* script,
+                 const CFX_WideString& script,
                  FXJSErr* perror);
 
 v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,

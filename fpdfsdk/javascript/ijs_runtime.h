@@ -30,9 +30,7 @@ class IJS_Runtime {
   virtual IJS_Context* GetCurrentContext() = 0;
   virtual void SetReaderDocument(CPDFSDK_Document* pReaderDoc) = 0;
   virtual CPDFSDK_Document* GetReaderDocument() = 0;
-  virtual int Execute(IJS_Context* cc,
-                      const wchar_t* script,
-                      CFX_WideString* info) = 0;
+  virtual int Execute(const CFX_WideString& script, CFX_WideString* info) = 0;
 
 #ifdef PDF_ENABLE_XFA
   virtual FX_BOOL GetValueByName(const CFX_ByteStringC& utf8Name,

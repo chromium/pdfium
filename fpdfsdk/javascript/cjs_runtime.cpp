@@ -214,11 +214,9 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
   }
 }
 
-int CJS_Runtime::Execute(IJS_Context* cc,
-                         const wchar_t* script,
-                         CFX_WideString* info) {
+int CJS_Runtime::Execute(const CFX_WideString& script, CFX_WideString* info) {
   FXJSErr error = {};
-  int nRet = FXJS_Execute(m_isolate, cc, script, &error);
+  int nRet = FXJS_Execute(m_isolate, script, &error);
   if (nRet < 0) {
     info->Format(L"[ Line: %05d { %s } ] : %s", error.linnum - 1, error.srcline,
                  error.message);
