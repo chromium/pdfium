@@ -67,7 +67,7 @@ FX_BOOL IFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
 CFWL_ScrollBarImp::CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
-      m_hTimer(nullptr),
+      m_pTimerInfo(nullptr),
       m_fRangeMin(0),
       m_fRangeMax(-1),
       m_fPageSize(0),
@@ -233,15 +233,15 @@ FX_BOOL CFWL_ScrollBarImp::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
   }
   return OnScroll(dwCode, fPos);
 }
-int32_t CFWL_ScrollBarImp::Run(FWL_HTIMER hTimer) {
-  if (m_hTimer) {
-    FWL_StopTimer(m_hTimer);
-  }
-  if (!SendEvent()) {
-    m_hTimer = FWL_StartTimer(this, 0);
-  }
-  return 1;
+
+void CFWL_ScrollBarImp::Run(IFWL_TimerInfo* pTimerInfo) {
+  if (m_pTimerInfo)
+    m_pTimerInfo->StopTimer();
+
+  if (!SendEvent())
+    m_pTimerInfo = StartTimer(0, true);
 }
+
 FWL_Error CFWL_ScrollBarImp::SetOuter(IFWL_Widget* pOuter) {
   m_pOuter = pOuter;
   return FWL_Error::Succeeded;
@@ -281,8 +281,6 @@ void CFWL_ScrollBarImp::DrawArrowBtn(CFX_Graphics* pGraphics,
 void CFWL_ScrollBarImp::DrawThumb(CFX_Graphics* pGraphics,
                                   IFWL_ThemeProvider* pTheme,
                                   const CFX_Matrix* pMatrix) {
-  if (!IsEnabled()) {
-  }
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
   param.m_iPart = CFWL_Part::Thumb;
@@ -706,14 +704,14 @@ void CFWL_ScrollBarImpDelegate::OnLButtonDown(uint32_t dwFlags,
       }
     }
   }
-  if (!m_pOwner->SendEvent()) {
-    m_pOwner->m_hTimer = FWL_StartTimer(m_pOwner, FWL_SCROLLBAR_Elapse);
-  }
+  if (!m_pOwner->SendEvent())
+    m_pOwner->m_pTimerInfo = m_pOwner->StartTimer(FWL_SCROLLBAR_Elapse, true);
 }
+
 void CFWL_ScrollBarImpDelegate::OnLButtonUp(uint32_t dwFlags,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
-  FWL_StopTimer(m_pOwner->m_hTimer);
+  m_pOwner->m_pTimerInfo->StopTimer();
   m_pOwner->m_bMouseDown = FALSE;
   DoMouseUp(0, m_pOwner->m_rtMinBtn, m_pOwner->m_iMinButtonState, fx, fy);
   DoMouseUp(1, m_pOwner->m_rtThumb, m_pOwner->m_iThumbButtonState, fx, fy);

@@ -44,10 +44,10 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   class CFWL_ToolTipTimer : public IFWL_Timer {
    public:
     CFWL_ToolTipTimer() {}
-    ~CFWL_ToolTipTimer() {}
+    explicit CFWL_ToolTipTimer(CFWL_ToolTipImp* pToolTip);
+    ~CFWL_ToolTipTimer() override {}
 
-    CFWL_ToolTipTimer(CFWL_ToolTipImp* pToolTip);
-    virtual int32_t Run(FWL_HTIMER hTimer);
+    void Run(IFWL_TimerInfo* pTimerInfo) override;
 
     CFWL_ToolTipImp* m_pToolTip;
   };
@@ -67,8 +67,8 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   CFX_RectF m_rtAnchor;
-  FWL_HTIMER m_hTimerShow;
-  FWL_HTIMER m_hTimerHide;
+  IFWL_TimerInfo* m_pTimerInfoShow;
+  IFWL_TimerInfo* m_pTimerInfoHide;
   CFWL_ToolTipTimer* m_pTimer;
   CFWL_ToolTipTimer m_TimerShow;
   CFWL_ToolTipTimer m_TimerHide;

@@ -8,17 +8,21 @@
 #define XFA_FWL_CORE_IFWL_TIMER_H_
 
 #include "core/fxcrt/include/fx_system.h"
+#include "xfa/fwl/core/fwl_error.h"
 
-typedef struct FWL_HTIMER_ { void* pData; } * FWL_HTIMER;
+class IFWL_TimerInfo;
 
 class IFWL_Timer {
  public:
   virtual ~IFWL_Timer() {}
-  virtual int32_t Run(FWL_HTIMER hTimer) = 0;
+  virtual void Run(IFWL_TimerInfo* hTimer) = 0;
+  IFWL_TimerInfo* StartTimer(uint32_t dwElapse, bool bImmediately);
 };
-FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
-                          uint32_t dwElapse,
-                          FX_BOOL bImmediately = TRUE);
-FWL_Error FWL_StopTimer(FWL_HTIMER hTimer);
+
+class IFWL_TimerInfo {
+ public:
+  virtual ~IFWL_TimerInfo() {}
+  FWL_Error StopTimer();
+};
 
 #endif  // XFA_FWL_CORE_IFWL_TIMER_H_

@@ -48,9 +48,9 @@ CFWL_ToolTipImp::CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
       m_bBtnDown(FALSE),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
-      m_hTimerShow(NULL),
-      m_hTimerHide(NULL),
-      m_pTimer(NULL) {
+      m_pTimerInfoShow(nullptr),
+      m_pTimerInfoHide(nullptr),
+      m_pTimer(nullptr) {
   m_rtClient.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
   m_rtAnchor.Set(0, 0, 0, 0);
@@ -59,10 +59,8 @@ CFWL_ToolTipImp::CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
 }
 
 CFWL_ToolTipImp::~CFWL_ToolTipImp() {
-  if (m_pTimer) {
-    delete m_pTimer;
-    m_pTimer = NULL;
-  }
+  delete m_pTimer;
+  m_pTimer = nullptr;
 }
 
 FWL_Error CFWL_ToolTipImp::GetClassName(CFX_WideString& wsClass) const {
@@ -92,7 +90,7 @@ FWL_Error CFWL_ToolTipImp::Finalize() {
 FWL_Error CFWL_ToolTipImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
-    if (m_pProperties->m_pThemeProvider == NULL) {
+    if (!m_pProperties->m_pThemeProvider) {
       m_pProperties->m_pThemeProvider = GetAvailableTheme();
     }
     CFX_WideString wsCaption;
@@ -221,18 +219,18 @@ void CFWL_ToolTipImp::Show() {
       static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
   int32_t nInitDelay = pData->GetInitialDelay(m_pInterface);
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible))
-    m_hTimerShow = FWL_StartTimer(&m_TimerShow, nInitDelay, FALSE);
+    m_pTimerInfoShow = m_TimerShow.StartTimer(nInitDelay, false);
 }
 
 void CFWL_ToolTipImp::Hide() {
   SetStates(FWL_WGTSTATE_Invisible, TRUE);
-  if (m_hTimerHide) {
-    FWL_StopTimer(m_hTimerHide);
-    m_hTimerHide = nullptr;
+  if (m_pTimerInfoHide) {
+    m_pTimerInfoHide->StopTimer();
+    m_pTimerInfoHide = nullptr;
   }
-  if (m_hTimerShow) {
-    FWL_StopTimer(m_hTimerShow);
-    m_hTimerShow = nullptr;
+  if (m_pTimerInfoShow) {
+    m_pTimerInfoShow->StopTimer();
+    m_pTimerInfoShow = nullptr;
   }
 }
 
@@ -241,7 +239,7 @@ void CFWL_ToolTipImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
     IFWL_ToolTipDP* pData =
         static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
     int32_t nAutoPopDelay = pData->GetAutoPopDelay(m_pInterface);
-    m_hTimerHide = FWL_StartTimer(&m_TimerHide, nAutoPopDelay, FALSE);
+    m_pTimerInfoHide = m_TimerHide.StartTimer(nAutoPopDelay, false);
   }
   CFWL_WidgetImp::SetStates(dwStates, bSet);
 }
@@ -276,23 +274,24 @@ void CFWL_ToolTipImp::RefreshToolTipPos() {
 }
 CFWL_ToolTipImp::CFWL_ToolTipTimer::CFWL_ToolTipTimer(CFWL_ToolTipImp* pToolTip)
     : m_pToolTip(pToolTip) {}
-int32_t CFWL_ToolTipImp::CFWL_ToolTipTimer::Run(FWL_HTIMER hTimer) {
-  if (m_pToolTip->m_hTimerShow == hTimer && m_pToolTip->m_hTimerShow) {
+
+void CFWL_ToolTipImp::CFWL_ToolTipTimer::Run(IFWL_TimerInfo* pTimerInfo) {
+  if (m_pToolTip->m_pTimerInfoShow == pTimerInfo &&
+      m_pToolTip->m_pTimerInfoShow) {
     if (m_pToolTip->GetStates() & FWL_WGTSTATE_Invisible) {
       m_pToolTip->SetStates(FWL_WGTSTATE_Invisible, FALSE);
       m_pToolTip->RefreshToolTipPos();
-      FWL_StopTimer(m_pToolTip->m_hTimerShow);
-      m_pToolTip->m_hTimerShow = NULL;
-      return TRUE;
+      m_pToolTip->m_pTimerInfoShow->StopTimer();
+      m_pToolTip->m_pTimerInfoShow = nullptr;
+      return;
     }
   }
-  if (m_pToolTip->m_hTimerHide == hTimer && m_pToolTip->m_hTimerHide) {
+  if (m_pToolTip->m_pTimerInfoHide == pTimerInfo &&
+      m_pToolTip->m_pTimerInfoHide) {
     m_pToolTip->SetStates(FWL_WGTSTATE_Invisible, TRUE);
-    FWL_StopTimer(m_pToolTip->m_hTimerHide);
-    m_pToolTip->m_hTimerHide = NULL;
-    return TRUE;
+    m_pToolTip->m_pTimerInfoHide->StopTimer();
+    m_pToolTip->m_pTimerInfoHide = nullptr;
   }
-  return TRUE;
 }
 
 CFWL_ToolTipImpDelegate::CFWL_ToolTipImpDelegate(CFWL_ToolTipImp* pOwner)

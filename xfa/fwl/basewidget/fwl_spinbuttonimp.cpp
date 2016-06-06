@@ -52,7 +52,7 @@ CFWL_SpinButtonImp::CFWL_SpinButtonImp(
       m_dwDnState(CFWL_PartState_Normal),
       m_iButtonIndex(0),
       m_bLButtonDwn(FALSE),
-      m_hTimer(NULL) {
+      m_pTimerInfo(nullptr) {
   m_rtClient.Reset();
   m_rtUpButton.Reset();
   m_rtDnButton.Reset();
@@ -133,7 +133,7 @@ FWL_Error CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
   if (!pGraphics)
     return FWL_Error::Indefinite;
   CFX_RectF rtClip(m_rtClient);
-  if (pMatrix != NULL) {
+  if (pMatrix) {
     pMatrix->TransformRect(rtClip);
   }
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
@@ -147,15 +147,17 @@ FWL_Error CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
   DrawDownButton(pGraphics, pTheme, pMatrix);
   return FWL_Error::Succeeded;
 }
-int32_t CFWL_SpinButtonImp::Run(FWL_HTIMER hTimer) {
-  if (m_hTimer) {
-    CFWL_EvtSpbClick wmPosChanged;
-    wmPosChanged.m_pSrcTarget = m_pInterface;
-    wmPosChanged.m_bUp = m_iButtonIndex == 0;
-    DispatchEvent(&wmPosChanged);
-  }
-  return 1;
+
+void CFWL_SpinButtonImp::Run(IFWL_TimerInfo* pTimerInfo) {
+  if (!m_pTimerInfo)
+    return;
+
+  CFWL_EvtSpbClick wmPosChanged;
+  wmPosChanged.m_pSrcTarget = m_pInterface;
+  wmPosChanged.m_bUp = m_iButtonIndex == 0;
+  DispatchEvent(&wmPosChanged);
 }
+
 FWL_Error CFWL_SpinButtonImp::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
   if (bUp) {
     if (bEnable) {
@@ -305,8 +307,9 @@ void CFWL_SpinButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->DispatchEvent(&wmPosChanged);
   m_pOwner->Repaint(bUpPress ? &m_pOwner->m_rtUpButton
                              : &m_pOwner->m_rtDnButton);
-  m_pOwner->m_hTimer = FWL_StartTimer(m_pOwner, kElapseTime);
+  m_pOwner->m_pTimerInfo = m_pOwner->StartTimer(kElapseTime, true);
 }
+
 void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_pProperties->m_dwStates & CFWL_PartState_Disabled) {
     return;
@@ -314,9 +317,9 @@ void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_pOwner->m_bLButtonDwn = FALSE;
   m_pOwner->SetGrab(FALSE);
   m_pOwner->SetFocus(FALSE);
-  if (m_pOwner->m_hTimer) {
-    FWL_StopTimer(m_pOwner->m_hTimer);
-    m_pOwner->m_hTimer = NULL;
+  if (m_pOwner->m_pTimerInfo) {
+    m_pOwner->m_pTimerInfo->StopTimer();
+    m_pOwner->m_pTimerInfo = nullptr;
   }
   FX_BOOL bRepaint = FALSE;
   CFX_RectF rtInvalidate;

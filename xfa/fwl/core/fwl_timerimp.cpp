@@ -10,21 +10,21 @@
 #include "xfa/fwl/core/include/ifwl_adaptertimermgr.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
 
-FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
-                          uint32_t dwElapse,
-                          FX_BOOL bImmediately) {
+IFWL_TimerInfo* IFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   CXFA_FFApp* pAdapterNative = FWL_GetAdapterNative();
   if (!pAdapterNative)
-    return NULL;
+    return nullptr;
+
   IFWL_AdapterTimerMgr* pAdapterTimerMgr = pAdapterNative->GetTimerMgr();
   if (!pAdapterTimerMgr)
-    return NULL;
-  FWL_HTIMER hTimer = NULL;
-  pAdapterTimerMgr->Start(pTimer, dwElapse, hTimer, bImmediately);
-  return hTimer;
+    return nullptr;
+
+  IFWL_TimerInfo* pTimerInfo = nullptr;
+  pAdapterTimerMgr->Start(this, dwElapse, bImmediately, &pTimerInfo);
+  return pTimerInfo;
 }
 
-FWL_Error FWL_StopTimer(FWL_HTIMER hTimer) {
+FWL_Error IFWL_TimerInfo::StopTimer() {
   CXFA_FFApp* pAdapterNative = FWL_GetAdapterNative();
   if (!pAdapterNative)
     return FWL_Error::Indefinite;
@@ -32,5 +32,6 @@ FWL_Error FWL_StopTimer(FWL_HTIMER hTimer) {
   IFWL_AdapterTimerMgr* pAdapterTimerMgr = pAdapterNative->GetTimerMgr();
   if (!pAdapterTimerMgr)
     return FWL_Error::Indefinite;
-  return pAdapterTimerMgr->Stop(hTimer);
+
+  return pAdapterTimerMgr->Stop(this);
 }

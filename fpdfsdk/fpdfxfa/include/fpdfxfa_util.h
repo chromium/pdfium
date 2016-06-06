@@ -22,11 +22,12 @@ struct CFWL_TimerInfo;
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:
   CXFA_FWLAdapterTimerMgr(CPDFDoc_Environment* pEnv) : m_pEnv(pEnv) {}
-  virtual FWL_Error Start(IFWL_Timer* pTimer,
-                          uint32_t dwElapse,
-                          FWL_HTIMER& hTimer,
-                          FX_BOOL bImmediately = TRUE);
-  virtual FWL_Error Stop(FWL_HTIMER hTimer);
+
+  FWL_Error Start(IFWL_Timer* pTimer,
+                  uint32_t dwElapse,
+                  bool bImmediately,
+                  IFWL_TimerInfo** pTimerInfo) override;
+  FWL_Error Stop(IFWL_TimerInfo* pTimerInfo) override;
 
  protected:
   static void TimerProc(int32_t idEvent);
@@ -35,7 +36,7 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
   CPDFDoc_Environment* const m_pEnv;
 };
 
-struct CFWL_TimerInfo {
+struct CFWL_TimerInfo : public IFWL_TimerInfo {
   CFWL_TimerInfo() : pTimer(nullptr) {}
   CFWL_TimerInfo(int32_t event, IFWL_Timer* timer)
       : idEvent(event), pTimer(timer) {}

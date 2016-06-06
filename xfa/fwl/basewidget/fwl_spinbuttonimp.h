@@ -33,7 +33,7 @@ class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
                        const CFX_Matrix* pMatrix = nullptr) override;
 
   // IFWL_Timer
-  int32_t Run(FWL_HTIMER hTimer) override;
+  void Run(IFWL_TimerInfo* pTimerInfo) override;
 
   FWL_Error EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
   FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
@@ -55,8 +55,9 @@ class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
   uint32_t m_dwDnState;
   int32_t m_iButtonIndex;
   FX_BOOL m_bLButtonDwn;
-  FWL_HTIMER m_hTimer;
+  IFWL_TimerInfo* m_pTimerInfo;
 };
+
 class CFWL_SpinButtonImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_SpinButtonImpDelegate(CFWL_SpinButtonImp* pOwner);

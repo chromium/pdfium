@@ -38,7 +38,7 @@ FWL_Error IFWL_Caret::SetColor(CFX_Color crFill) {
 CFWL_CaretImp::CFWL_CaretImp(const CFWL_WidgetImpProperties& properties,
                              IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
-      m_hTimer(nullptr),
+      m_pTimerInfo(nullptr),
       m_dwElapse(400),
       m_bSetColor(FALSE) {
   m_pTimer = new CFWL_CaretTimer(this);
@@ -67,9 +67,9 @@ FWL_Error CFWL_CaretImp::Initialize() {
 }
 
 FWL_Error CFWL_CaretImp::Finalize() {
-  if (m_hTimer) {
-    FWL_StopTimer(m_hTimer);
-    m_hTimer = NULL;
+  if (m_pTimerInfo) {
+    m_pTimerInfo->StopTimer();
+    m_pTimerInfo = nullptr;
   }
   delete m_pDelegate;
   m_pDelegate = nullptr;
@@ -89,12 +89,12 @@ FWL_Error CFWL_CaretImp::DrawWidget(CFX_Graphics* pGraphics,
 }
 
 void CFWL_CaretImp::ShowCaret(FX_BOOL bFlag) {
-  if (m_hTimer) {
-    FWL_StopTimer(m_hTimer);
-    m_hTimer = nullptr;
+  if (m_pTimerInfo) {
+    m_pTimerInfo->StopTimer();
+    m_pTimerInfo = nullptr;
   }
   if (bFlag)
-    m_hTimer = FWL_StartTimer(m_pTimer, m_dwElapse);
+    m_pTimerInfo = m_pTimer->StartTimer(m_dwElapse, true);
 
   SetStates(FWL_WGTSTATE_Invisible, !bFlag);
 }
@@ -138,17 +138,14 @@ void CFWL_CaretImp::DrawCaretBK(CFX_Graphics* pGraphics,
 CFWL_CaretImp::CFWL_CaretTimer::CFWL_CaretTimer(CFWL_CaretImp* pCaret)
     : m_pCaret(pCaret) {}
 
-int32_t CFWL_CaretImp::CFWL_CaretTimer::Run(FWL_HTIMER hTimer) {
-  if (m_pCaret->GetStates() & FWL_STATE_CAT_HightLight) {
-    m_pCaret->SetStates(FWL_STATE_CAT_HightLight, FALSE);
-  } else {
-    m_pCaret->SetStates(FWL_STATE_CAT_HightLight);
-  }
+void CFWL_CaretImp::CFWL_CaretTimer::Run(IFWL_TimerInfo* pTimerInfo) {
+  bool toggle = !(m_pCaret->GetStates() & FWL_STATE_CAT_HightLight);
+  m_pCaret->SetStates(FWL_STATE_CAT_HightLight, toggle);
+
   CFX_RectF rt;
   m_pCaret->GetWidgetRect(rt);
   rt.Set(0, 0, rt.width + 1, rt.height);
   m_pCaret->Repaint(&rt);
-  return 1;
 }
 
 CFWL_CaretImpDelegate::CFWL_CaretImpDelegate(CFWL_CaretImp* pOwner)

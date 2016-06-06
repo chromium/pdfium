@@ -10,16 +10,14 @@
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_timer.h"
 
-class IFWL_Timer;
-
 class IFWL_AdapterTimerMgr {
  public:
   virtual ~IFWL_AdapterTimerMgr() {}
   virtual FWL_Error Start(IFWL_Timer* pTimer,
                           uint32_t dwElapse,
-                          FWL_HTIMER& hTimer,
-                          FX_BOOL bImmediately = TRUE) = 0;
-  virtual FWL_Error Stop(FWL_HTIMER hTimer) = 0;
+                          bool bImmediately,
+                          IFWL_TimerInfo** pTimerInfo) = 0;
+  virtual FWL_Error Stop(IFWL_TimerInfo* pTimerInfo) = 0;
 };
 
 #endif  // XFA_FWL_CORE_INCLUDE_IFWL_ADAPTERTIMERMGR_H_

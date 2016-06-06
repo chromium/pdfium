@@ -43,7 +43,7 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
    public:
     explicit CFWL_CaretTimer(CFWL_CaretImp* pCaret);
     ~CFWL_CaretTimer() override {}
-    int32_t Run(FWL_HTIMER hTimer) override;
+    void Run(IFWL_TimerInfo* hTimer) override;
     CFWL_CaretImp* const m_pCaret;
   };
 
@@ -52,7 +52,7 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
                    const CFX_Matrix* pMatrix);
 
   CFWL_CaretTimer* m_pTimer;
-  FWL_HTIMER m_hTimer;
+  IFWL_TimerInfo* m_pTimerInfo;
   uint32_t m_dwElapse;
   CFX_Color m_crFill;
   FX_BOOL m_bSetColor;
