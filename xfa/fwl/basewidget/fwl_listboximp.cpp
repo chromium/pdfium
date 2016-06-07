@@ -879,19 +879,19 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
 void CFWL_ListBoxImp::GetItemSize(CFX_SizeF& size,
                                   IFWL_ListItem* pItem,
                                   FX_FLOAT fWidth,
-                                  FX_FLOAT m_fItemHeight,
+                                  FX_FLOAT fItemHeight,
                                   FX_BOOL bAutoSize) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiColumn) {
   } else {
     if (!bAutoSize) {
       CFX_RectF rtItem;
-      rtItem.Set(0, size.y, fWidth, m_fItemHeight);
+      rtItem.Set(0, size.y, fWidth, fItemHeight);
       IFWL_ListBoxDP* pData =
           static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
       pData->SetItemRect(m_pInterface, pItem, rtItem);
     }
     size.x = fWidth;
-    size.y += m_fItemHeight;
+    size.y += fItemHeight;
   }
 }
 FX_FLOAT CFWL_ListBoxImp::GetMaxTextWidth() {

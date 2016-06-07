@@ -332,13 +332,13 @@ FX_BOOL CGifLZWEncoder::Encode(const uint8_t* src_buf,
 }
 FX_BOOL CGifLZWEncoder::LookUpInTable(const uint8_t* buf,
                                       uint32_t& offset,
-                                      uint8_t& bit_offset) {
+                                      uint8_t& out_bit_offset) {
   for (uint16_t i = table_cur; i < index_num; i++) {
     if (code_table[i].prefix == code_table[index_num].prefix &&
         code_table[i].suffix == code_table[index_num].suffix) {
       code_table[index_num].prefix = i;
       code_table[index_num].suffix =
-          gif_cut_buf(buf, offset, src_bit_cut, bit_offset, src_bit_num);
+          gif_cut_buf(buf, offset, src_bit_cut, out_bit_offset, src_bit_num);
       table_cur = i;
       return TRUE;
     }

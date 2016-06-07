@@ -117,7 +117,7 @@ class CJBig2_GRDProc {
   CJBig2_ArithDecoder* m_pArithDecoder;
   JBig2ArithCtx* m_gbContext;
   uint16_t m_DecodeType;
-  FX_BOOL LTP;
+  FX_BOOL m_LTP;
   FX_RECT m_ReplaceRect;
 };
 

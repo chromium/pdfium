@@ -376,8 +376,7 @@ CFX_ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {
 }
 
 void CPDFSDK_DateTime::ToSystemTime(FX_SYSTEMTIME& st) {
-  CPDFSDK_DateTime dt = *this;
-  time_t t = (time_t)dt;
+  time_t t = (time_t)(*this);
   struct tm* pTime = localtime(&t);
   if (pTime) {
     st.wYear = (uint16_t)pTime->tm_year + 1900;
@@ -392,11 +391,12 @@ void CPDFSDK_DateTime::ToSystemTime(FX_SYSTEMTIME& st) {
 }
 
 CPDFSDK_DateTime CPDFSDK_DateTime::ToGMT() const {
-  CPDFSDK_DateTime dt = *this;
-  dt.AddSeconds(-gAfxGetTimeZoneInSeconds(dt.dt.tzHour, dt.dt.tzMinute));
-  dt.dt.tzHour = 0;
-  dt.dt.tzMinute = 0;
-  return dt;
+  CPDFSDK_DateTime new_dt = *this;
+  new_dt.AddSeconds(
+      -gAfxGetTimeZoneInSeconds(new_dt.dt.tzHour, new_dt.dt.tzMinute));
+  new_dt.dt.tzHour = 0;
+  new_dt.dt.tzMinute = 0;
+  return new_dt;
 }
 
 CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days) {

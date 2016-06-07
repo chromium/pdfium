@@ -34,7 +34,7 @@ class CJS_GlobalVariableArray {
   void Empty();
 
  private:
-  CFX_ArrayTemplate<CJS_KeyValue*> array;
+  CFX_ArrayTemplate<CJS_KeyValue*> m_Array;
 };
 
 class CJS_KeyValue {

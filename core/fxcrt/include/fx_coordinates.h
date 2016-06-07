@@ -319,33 +319,51 @@ class CFX_RTemplate {
   typedef CFX_PSTemplate<baseType> FXT_SIZE;
   typedef CFX_VTemplate<baseType> FXT_VECTOR;
   typedef CFX_RTemplate<baseType> FXT_RECT;
-  void Set(baseType left, baseType top, baseType width, baseType height) {
-    FXT_RECT::left = left, FXT_RECT::top = top, FXT_RECT::width = width,
-    FXT_RECT::height = height;
+  void Set(baseType dst_left,
+           baseType dst_top,
+           baseType dst_width,
+           baseType dst_height) {
+    left = dst_left;
+    top = dst_top;
+    width = dst_width;
+    height = dst_height;
   }
-  void Set(baseType left, baseType top, const FXT_SIZE& size) {
-    FXT_RECT::left = left, FXT_RECT::top = top, FXT_RECT::Size(size);
+  void Set(baseType dst_left, baseType dst_top, const FXT_SIZE& dst_size) {
+    left = dst_left;
+    top = dst_top;
+    Size(dst_size);
   }
-  void Set(const FXT_POINT& p, baseType width, baseType height) {
-    TopLeft(p), FXT_RECT::width = width, FXT_RECT::height = height;
+  void Set(const FXT_POINT& p, baseType dst_width, baseType dst_height) {
+    TopLeft(p);
+    width = dst_width;
+    height = dst_height;
   }
   void Set(const FXT_POINT& p1, const FXT_POINT& p2) {
-    TopLeft(p1), FXT_RECT::width = p2.x - p1.x, FXT_RECT::height = p2.y - p1.y,
-                 FXT_RECT::Normalize();
+    TopLeft(p1);
+    width = p2.x - p1.x;
+    height = p2.y - p1.y;
+    Normalize();
   }
   void Set(const FXT_POINT& p, const FXT_VECTOR& v) {
-    TopLeft(p), FXT_RECT::width = v.x, FXT_RECT::height = v.y,
-                FXT_RECT::Normalize();
+    TopLeft(p);
+    width = v.x;
+    height = v.y;
+    Normalize();
   }
   void Reset() {
-    FXT_RECT::left = FXT_RECT::top = FXT_RECT::width = FXT_RECT::height = 0;
+    left = 0;
+    top = 0;
+    width = 0;
+    height = 0;
   }
   FXT_RECT& operator+=(const FXT_POINT& p) {
-    left += p.x, top += p.y;
+    left += p.x;
+    top += p.y;
     return *this;
   }
   FXT_RECT& operator-=(const FXT_POINT& p) {
-    left -= p.x, top -= p.y;
+    left -= p.x;
+    top -= p.y;
     return *this;
   }
   baseType right() const { return left + width; }
@@ -371,11 +389,14 @@ class CFX_RTemplate {
     height += y * 2;
   }
   void Inflate(const FXT_POINT& p) { Inflate(p.x, p.y); }
-  void Inflate(baseType left, baseType top, baseType right, baseType bottom) {
-    FXT_RECT::left -= left;
-    FXT_RECT::top -= top;
-    FXT_RECT::width += left + right;
-    FXT_RECT::height += top + bottom;
+  void Inflate(baseType off_left,
+               baseType off_top,
+               baseType off_right,
+               baseType off_bottom) {
+    left -= off_left;
+    top -= off_top;
+    width += off_left + off_right;
+    height += off_top + off_bottom;
   }
   void Inflate(const FXT_RECT& rt) {
     Inflate(rt.left, rt.top, rt.left + rt.width, rt.top + rt.height);
@@ -387,11 +408,14 @@ class CFX_RTemplate {
     height -= y * 2;
   }
   void Deflate(const FXT_POINT& p) { Deflate(p.x, p.y); }
-  void Deflate(baseType left, baseType top, baseType right, baseType bottom) {
-    FXT_RECT::left += left;
-    FXT_RECT::top += top;
-    FXT_RECT::width -= left + right;
-    FXT_RECT::height -= top + bottom;
+  void Deflate(baseType off_left,
+               baseType off_top,
+               baseType off_right,
+               baseType off_bottom) {
+    left += off_left;
+    top += off_top;
+    width -= off_left + off_right;
+    height -= off_top + off_bottom;
   }
   void Deflate(const FXT_RECT& rt) {
     Deflate(rt.left, rt.top, rt.top + rt.width, rt.top + rt.height);
@@ -464,54 +488,45 @@ class CFX_RTemplate {
     return p;
   }
   void Union(baseType x, baseType y) {
-    baseType r = right(), b = bottom();
-    if (left > x) {
+    baseType r = right();
+    baseType b = bottom();
+    if (left > x)
       left = x;
-    }
-    if (r < x) {
+    if (r < x)
       r = x;
-    }
-    if (top > y) {
+    if (top > y)
       top = y;
-    }
-    if (b < y) {
+    if (b < y)
       b = y;
-    }
     width = r - left;
     height = b - top;
   }
   void Union(const FXT_POINT& p) { Union(p.x, p.y); }
   void Union(const FXT_RECT& rt) {
-    baseType r = right(), b = bottom();
-    if (left > rt.left) {
+    baseType r = right();
+    baseType b = bottom();
+    if (left > rt.left)
       left = rt.left;
-    }
-    if (r < rt.right()) {
+    if (r < rt.right())
       r = rt.right();
-    }
-    if (top > rt.top) {
+    if (top > rt.top)
       top = rt.top;
-    }
-    if (b < rt.bottom()) {
+    if (b < rt.bottom())
       b = rt.bottom();
-    }
     width = r - left;
     height = b - top;
   }
   void Intersect(const FXT_RECT& rt) {
-    baseType r = right(), b = bottom();
-    if (left < rt.left) {
+    baseType r = right();
+    baseType b = bottom();
+    if (left < rt.left)
       left = rt.left;
-    }
-    if (r > rt.right()) {
+    if (r > rt.right())
       r = rt.right();
-    }
-    if (top < rt.top) {
+    if (top < rt.top)
       top = rt.top;
-    }
-    if (b > rt.bottom()) {
+    if (b > rt.bottom())
       b = rt.bottom();
-    }
     width = r - left;
     height = b - top;
   }

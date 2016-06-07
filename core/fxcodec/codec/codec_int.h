@@ -22,9 +22,9 @@ class CPDF_ColorSpace;
 
 struct DecodeData {
  public:
-  DecodeData(unsigned char* src_data, OPJ_SIZE_T src_size)
-      : src_data(src_data), src_size(src_size), offset(0) {}
-  unsigned char* src_data;
+  DecodeData(uint8_t* data, OPJ_SIZE_T size)
+      : src_data(data), src_size(size), offset(0) {}
+  uint8_t* src_data;
   OPJ_SIZE_T src_size;
   OPJ_SIZE_T offset;
 };

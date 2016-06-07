@@ -284,15 +284,15 @@ static void FXCRT_Matrix_Concat(CFX_Matrix& m,
   FX_FLOAT ff = m1.e * m2.b + m1.f * m2.d + m2.f;
   m.a = aa, m.b = bb, m.c = cc, m.d = dd, m.e = ee, m.f = ff;
 }
-void CFX_Matrix::Concat(FX_FLOAT a,
-                        FX_FLOAT b,
-                        FX_FLOAT c,
-                        FX_FLOAT d,
-                        FX_FLOAT e,
-                        FX_FLOAT f,
+void CFX_Matrix::Concat(FX_FLOAT a_in,
+                        FX_FLOAT b_in,
+                        FX_FLOAT c_in,
+                        FX_FLOAT d_in,
+                        FX_FLOAT e_in,
+                        FX_FLOAT f_in,
                         FX_BOOL bPrepended) {
   CFX_Matrix m;
-  m.Set(a, b, c, d, e, f);
+  m.Set(a_in, b_in, c_in, d_in, e_in, f_in);
   Concat(m, bPrepended);
 }
 void CFX_Matrix::Concat(const CFX_Matrix& m, FX_BOOL bPrepended) {
