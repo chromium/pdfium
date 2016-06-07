@@ -39,30 +39,30 @@ FXFT_Face FT_LoadFont(const uint8_t* pData, int size) {
 }  // namespace
 
 CFX_Font::CFX_Font() {
-  m_pSubstFont = NULL;
-  m_Face = NULL;
+  m_pSubstFont = nullptr;
+  m_Face = nullptr;
   m_bEmbedded = FALSE;
   m_bVertical = FALSE;
-  m_pFontData = NULL;
-  m_pFontDataAllocation = NULL;
+  m_pFontData = nullptr;
+  m_pFontDataAllocation = nullptr;
   m_dwSize = 0;
-  m_pGsubData = NULL;
-  m_pPlatformFont = NULL;
-  m_pPlatformFontCollection = NULL;
-  m_pDwFont = NULL;
-  m_hHandle = NULL;
+  m_pGsubData = nullptr;
+  m_pPlatformFont = nullptr;
+  m_pPlatformFontCollection = nullptr;
+  m_pDwFont = nullptr;
+  m_hHandle = nullptr;
   m_bDwLoaded = FALSE;
 #ifdef PDF_ENABLE_XFA
   m_bLogic = FALSE;
-  m_pOwnedStream = NULL;
+  m_pOwnedStream = nullptr;
 #endif  // PDF_ENABLE_XFA
 }
 
 #ifdef PDF_ENABLE_XFA
 FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
-  if (pFont == NULL) {
+  if (!pFont)
     return FALSE;
-  }
+
   m_bLogic = TRUE;
   if (pFont->m_pSubstFont) {
     m_pSubstFont = new CFX_SubstFont;
@@ -124,7 +124,7 @@ CFX_Font::~CFX_Font() {
 }
 void CFX_Font::DeleteFace() {
   FXFT_Done_Face(m_Face);
-  m_Face = NULL;
+  m_Face = nullptr;
 }
 void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                          FX_BOOL bTrueType,
@@ -142,7 +142,7 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (m_pSubstFont->m_ExtHandle) {
     m_pPlatformFont = m_pSubstFont->m_ExtHandle;
-    m_pSubstFont->m_ExtHandle = NULL;
+    m_pSubstFont->m_ExtHandle = nullptr;
   }
 #endif
   if (m_Face) {
@@ -174,7 +174,7 @@ FX_BOOL _LoadFile(FXFT_Library library,
                   FXFT_Stream* stream,
                   int32_t faceIndex = 0) {
   FXFT_Stream stream1 = (FXFT_Stream)FX_Alloc(uint8_t, sizeof(FXFT_StreamRec));
-  stream1->base = NULL;
+  stream1->base = nullptr;
   stream1->size = (unsigned long)pFile->GetSize();
   stream1->pos = 0;
   stream1->descriptor.pointer = pFile;
@@ -239,7 +239,7 @@ FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, uint32_t size) {
   m_pFontData = m_pFontDataAllocation;
   m_bEmbedded = TRUE;
   m_dwSize = size;
-  return m_Face != NULL;
+  return !!m_Face;
 }
 
 FX_BOOL CFX_Font::IsTTFont() const {
@@ -534,6 +534,6 @@ CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
       return pFontEncoding;
     }
   }
-  return NULL;
+  return nullptr;
 }
 #endif  // PDF_ENABLE_XFA

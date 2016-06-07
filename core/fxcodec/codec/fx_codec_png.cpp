@@ -51,7 +51,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
 #endif
     int bTime = 0;
 #if defined(PNG_tIME_SUPPORTED)
-    png_timep t = NULL;
+    png_timep t = nullptr;
     png_get_tIME(png_ptr, info_ptr, &t);
     if (t) {
       FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
@@ -67,7 +67,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
     FX_STRSIZE len;
     const FX_CHAR* buf;
     int num_text;
-    png_textp text = NULL;
+    png_textp text = nullptr;
     png_get_text(png_ptr, info_ptr, &text, &num_text);
     for (i = 0; i < num_text; i++) {
       len = FXSYS_strlen(text[i].key);
@@ -110,18 +110,18 @@ static void _png_free_func(void* p) {
 };
 static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   FXPNG_Context* p = (FXPNG_Context*)png_get_progressive_ptr(png_ptr);
-  if (p == NULL) {
+  if (!p)
     return;
-  }
+
   CCodec_PngModule* pModule = (CCodec_PngModule*)p->parent_ptr;
-  if (pModule == NULL) {
+  if (!pModule)
     return;
-  }
+
   png_uint_32 width = 0, height = 0;
   int bpc = 0, color_type = 0, color_type1 = 0, pass = 0;
   double gamma = 1.0;
-  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bpc, &color_type, NULL,
-               NULL, NULL);
+  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bpc, &color_type, nullptr,
+               nullptr, nullptr);
   color_type1 = color_type;
   if (bpc > 8) {
     png_set_strip_16(png_ptr);
@@ -182,11 +182,11 @@ static void _png_get_row_func(png_structp png_ptr,
                               png_uint_32 row_num,
                               int pass) {
   FXPNG_Context* p = (FXPNG_Context*)png_get_progressive_ptr(png_ptr);
-  if (p == NULL) {
+  if (!p)
     return;
-  }
+
   CCodec_PngModule* pModule = (CCodec_PngModule*)p->parent_ptr;
-  uint8_t* src_buf = NULL;
+  uint8_t* src_buf = nullptr;
   if (!pModule->AskScanlineBufCallback(p->child_ptr, row_num, src_buf)) {
     png_error(png_ptr, "Ask Scanline buffer Callback Error");
   }

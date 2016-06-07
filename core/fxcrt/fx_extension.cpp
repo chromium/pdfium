@@ -68,13 +68,9 @@ FX_BOOL CFX_CRTFileStream::Flush() {
 #ifdef PDF_ENABLE_XFA
 IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath) {
   if (wsPath.GetLength() == 0)
-    return NULL;
+    return nullptr;
 
-  CFX_CRTFileAccess* pFA = NULL;
-  pFA = new CFX_CRTFileAccess;
-  if (NULL == pFA)
-    return NULL;
-
+  CFX_CRTFileAccess* pFA = new CFX_CRTFileAccess;
   pFA->Init(wsPath);
   return pFA;
 }
@@ -305,9 +301,9 @@ void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount) {
       FX_HashCode_GetA(CFX_ByteStringC((uint8_t*)&st2, sizeof(st2)), true);
   ::srand((dwHash1 << 16) | (uint32_t)dwHash2);
 #else
-  time_t tmLast = time(NULL);
+  time_t tmLast = time(nullptr);
   time_t tmCur;
-  while ((tmCur = time(NULL)) == tmLast) {
+  while ((tmCur = time(nullptr)) == tmLast) {
     continue;
   }
 
@@ -319,8 +315,9 @@ void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount) {
 }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 FX_BOOL FX_GenerateCryptoRandom(uint32_t* pBuffer, int32_t iCount) {
-  HCRYPTPROV hCP = NULL;
-  if (!::CryptAcquireContext(&hCP, NULL, NULL, PROV_RSA_FULL, 0) || !hCP) {
+  HCRYPTPROV hCP = 0;
+  if (!::CryptAcquireContext(&hCP, nullptr, nullptr, PROV_RSA_FULL, 0) ||
+      !hCP) {
     return FALSE;
   }
   ::CryptGenRandom(hCP, iCount * sizeof(uint32_t), (uint8_t*)pBuffer);

@@ -14,7 +14,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   m_nWidth = w;
   m_nHeight = h;
   if (m_nWidth <= 0 || m_nHeight <= 0 || m_nWidth > INT_MAX - 31) {
-    m_pData = NULL;
+    m_pData = nullptr;
     m_bNeedFree = FALSE;
     return;
   }
@@ -22,7 +22,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   if (m_nStride * m_nHeight > 0 && 104857600 / (int)m_nStride > m_nHeight) {
     m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
   } else {
-    m_pData = NULL;
+    m_pData = nullptr;
   }
   m_bNeedFree = TRUE;
 }
@@ -44,7 +44,7 @@ CJBig2_Image::CJBig2_Image(const CJBig2_Image& im) {
     m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
     JBIG2_memcpy(m_pData, im.m_pData, m_nStride * m_nHeight);
   } else {
-    m_pData = NULL;
+    m_pData = nullptr;
   }
   m_bNeedFree = TRUE;
 }
@@ -120,12 +120,12 @@ FX_BOOL CJBig2_Image::composeTo(CJBig2_Image* pDst,
                                 int32_t y,
                                 JBig2ComposeOp op,
                                 const FX_RECT* pSrcRect) {
-  if (!m_pData) {
+  if (!m_pData)
     return FALSE;
-  }
-  if (NULL == pSrcRect || *pSrcRect == FX_RECT(0, 0, m_nWidth, m_nHeight)) {
+
+  if (!pSrcRect || *pSrcRect == FX_RECT(0, 0, m_nWidth, m_nHeight))
     return composeTo_opt2(pDst, x, y, op);
-  }
+
   return composeTo_opt2(pDst, x, y, op, pSrcRect);
 }
 
@@ -159,7 +159,7 @@ CJBig2_Image* CJBig2_Image::subImage(int32_t x,
   uint32_t wTmp;
   uint8_t *pSrc, *pSrcEnd, *pDst, *pDstEnd;
   if (w == 0 || h == 0) {
-    return NULL;
+    return nullptr;
   }
   CJBig2_Image* pImage = new CJBig2_Image(w, h);
   if (!m_pData) {
@@ -243,14 +243,12 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
   uint32_t s1 = 0, d1 = 0, d2 = 0, shift = 0, shift1 = 0, shift2 = 0, tmp = 0,
            tmp1 = 0, tmp2 = 0, maskL = 0, maskR = 0, maskM = 0;
 
-  uint8_t *lineSrc = NULL, *lineDst = NULL, *sp = NULL, *dp = NULL;
+  if (!m_pData)
+    return FALSE;
 
-  if (!m_pData) {
+  if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576)
     return FALSE;
-  }
-  if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576) {
-    return FALSE;
-  }
+
   if (y < 0) {
     ys0 = -y;
   }
@@ -286,9 +284,9 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
   maskL = 0xffffffff >> d1;
   maskR = 0xffffffff << ((32 - (xd1 & 31)) % 32);
   maskM = maskL & maskR;
-  lineSrc = m_pData + ys0 * m_nStride + ((xs0 >> 5) << 2);
+  uint8_t* lineSrc = m_pData + ys0 * m_nStride + ((xs0 >> 5) << 2);
   lineLeft = m_nStride - ((xs0 >> 5) << 2);
-  lineDst = pDst->m_pData + yd0 * pDst->m_nStride + ((xd0 >> 5) << 2);
+  uint8_t* lineDst = pDst->m_pData + yd0 * pDst->m_nStride + ((xd0 >> 5) << 2);
   if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
     if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
       if (s1 > d1) {
@@ -383,6 +381,9 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
       }
     }
   } else {
+    uint8_t* sp = nullptr;
+    uint8_t* dp = nullptr;
+
     if (s1 > d1) {
       shift1 = s1 - d1;
       shift2 = 32 - shift1;

@@ -41,7 +41,7 @@ class CPDF_PageRenderCache {
                        FX_BOOL bStdCS = FALSE,
                        uint32_t GroupFamily = 0,
                        FX_BOOL bLoadMask = FALSE,
-                       CPDF_RenderStatus* pRenderStatus = NULL,
+                       CPDF_RenderStatus* pRenderStatus = nullptr,
                        int32_t downsampleWidth = 0,
                        int32_t downsampleHeight = 0);
 
@@ -56,7 +56,7 @@ class CPDF_PageRenderCache {
                                FX_BOOL bStdCS = FALSE,
                                uint32_t GroupFamily = 0,
                                FX_BOOL bLoadMask = FALSE,
-                               CPDF_RenderStatus* pRenderStatus = NULL,
+                               CPDF_RenderStatus* pRenderStatus = nullptr,
                                int32_t downsampleWidth = 0,
                                int32_t downsampleHeight = 0);
 

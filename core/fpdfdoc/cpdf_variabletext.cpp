@@ -310,7 +310,7 @@ CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace& place,
   int32_t nFontIndex =
       GetSubWord() > 0 ? GetDefaultFontIndex()
                        : GetWordFontIndex(word, charset, GetDefaultFontIndex());
-  return AddWord(newplace, CPVT_WordInfo(word, charset, nFontIndex, NULL));
+  return AddWord(newplace, CPVT_WordInfo(word, charset, nFontIndex, nullptr));
 }
 
 CPVT_WordPlace CPDF_VariableText::InsertSection(

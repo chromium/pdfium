@@ -126,7 +126,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
           FXSYS_memcpy(pGeneralState->m_SMaskMatrix,
                        &pParser->GetCurStates()->m_CTM, sizeof(CFX_Matrix));
         } else {
-          pGeneralState->m_pSoftMask = NULL;
+          pGeneralState->m_pSoftMask = nullptr;
         }
         break;
       case FXBSTR_ID('C', 'A', 0, 0):

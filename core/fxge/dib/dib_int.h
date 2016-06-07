@@ -42,10 +42,10 @@ struct PixelWeight {
 };
 class CWeightTable {
  public:
-  CWeightTable() { m_pWeightTables = NULL; }
+  CWeightTable() { m_pWeightTables = nullptr; }
   ~CWeightTable() {
     FX_Free(m_pWeightTables);
-    m_pWeightTables = NULL;
+    m_pWeightTables = nullptr;
   }
   void Calc(int dest_len,
             int dest_min,

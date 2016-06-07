@@ -328,7 +328,7 @@ FX_BOOL CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
   return TRUE;
 }
 CPDF_CryptoHandler::CPDF_CryptoHandler() {
-  m_pAESContext = NULL;
+  m_pAESContext = nullptr;
   m_Cipher = FXCIPHER_NONE;
   m_KeyLen = 0;
 }

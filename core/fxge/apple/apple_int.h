@@ -66,7 +66,7 @@ class CQuartz2D {
                              CGPoint* glyphPositions,
                              int32_t chars,
                              FX_ARGB argb,
-                             CFX_Matrix* matrix = NULL);
+                             CFX_Matrix* matrix = nullptr);
   void saveGraphicsState(void* graphics);
   void restoreGraphicsState(void* graphics);
 };
@@ -102,12 +102,12 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                    uint32_t stroke_color,
                    int fill_mode,
                    int alpha_flag = 0,
-                   void* pIccTransform = NULL,
+                   void* pIccTransform = nullptr,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
   FX_BOOL FillRect(const FX_RECT* pRect,
                    uint32_t fill_color,
                    int alpha_flag = 0,
-                   void* pIccTransform = NULL,
+                   void* pIccTransform = nullptr,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
   FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
                            FX_FLOAT y1,
@@ -115,13 +115,13 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                            FX_FLOAT y2,
                            uint32_t color,
                            int alpha_flag = 0,
-                           void* pIccTransform = NULL,
+                           void* pIccTransform = nullptr,
                            int blend_type = FXDIB_BLEND_NORMAL) override;
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
   FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
                     int left,
                     int top,
-                    void* pIccTransform = NULL,
+                    void* pIccTransform = nullptr,
                     FX_BOOL bDEdge = FALSE) override;
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
@@ -130,7 +130,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                     int dest_top,
                     int blend_type,
                     int alpha_flag = 0,
-                    void* pIccTransform = NULL) override;
+                    void* pIccTransform = nullptr) override;
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                         uint32_t color,
                         int dest_left,
@@ -140,7 +140,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                         const FX_RECT* pClipRect,
                         uint32_t flags,
                         int alpha_flag = 0,
-                        void* pIccTransform = NULL,
+                        void* pIccTransform = nullptr,
                         int blend_type = FXDIB_BLEND_NORMAL) override;
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
@@ -149,7 +149,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                       uint32_t flags,
                       void*& handle,
                       int alpha_flag = 0,
-                      void* pIccTransform = NULL,
+                      void* pIccTransform = nullptr,
                       int blend_type = FXDIB_BLEND_NORMAL) override {
     return FALSE;
   }
@@ -161,7 +161,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          FX_FLOAT font_size,
                          uint32_t color,
                          int alpha_flag = 0,
-                         void* pIccTransform = NULL) override;
+                         void* pIccTransform = nullptr) override;
   void ClearDriver() override;
 
  protected:
@@ -186,7 +186,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                             int dest_top,
                             int dest_width,
                             int dest_height,
-                            CGRect* rect = NULL);
+                            CGRect* rect = nullptr);
 
   CGContextRef m_context;
   CGAffineTransform m_foxitDevice2User;

@@ -74,13 +74,13 @@ CPDF_DataAvail::CPDF_DataAvail(IPDF_DataAvail::FileAvail* pFileAvail,
   m_bPageLoadedOK = FALSE;
   m_bNeedDownLoadResource = FALSE;
   m_bLinearizedFormParamLoad = FALSE;
-  m_pLinearized = NULL;
-  m_pRoot = NULL;
-  m_pTrailer = NULL;
-  m_pCurrentParser = NULL;
-  m_pAcroForm = NULL;
-  m_pPageDict = NULL;
-  m_pPageResource = NULL;
+  m_pLinearized = nullptr;
+  m_pRoot = nullptr;
+  m_pTrailer = nullptr;
+  m_pCurrentParser = nullptr;
+  m_pAcroForm = nullptr;
+  m_pPageDict = nullptr;
+  m_pPageResource = nullptr;
   m_docStatus = PDF_DATAAVAIL_HEADER;
   m_parser.m_bOwnFileRead = false;
   m_bTotalLoadPageTree = FALSE;
@@ -569,7 +569,7 @@ FX_BOOL CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
   }
 
   CPDF_Dictionary* pDict = pPages->GetDict();
-  CPDF_Object* pKids = pDict ? pDict->GetObjectBy("Kids") : NULL;
+  CPDF_Object* pKids = pDict ? pDict->GetObjectBy("Kids") : nullptr;
   if (!pKids)
     return TRUE;
 
@@ -642,19 +642,19 @@ FX_BOOL CPDF_DataAvail::CheckHeader(IPDF_DataAvail::DownloadHints* pHints) {
 
 FX_BOOL CPDF_DataAvail::CheckFirstPage(IPDF_DataAvail::DownloadHints* pHints) {
   CPDF_Dictionary* pDict = m_pLinearized->GetDict();
-  CPDF_Object* pEndOffSet = pDict ? pDict->GetObjectBy("E") : NULL;
+  CPDF_Object* pEndOffSet = pDict ? pDict->GetObjectBy("E") : nullptr;
   if (!pEndOffSet) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
 
-  CPDF_Object* pXRefOffset = pDict ? pDict->GetObjectBy("T") : NULL;
+  CPDF_Object* pXRefOffset = pDict ? pDict->GetObjectBy("T") : nullptr;
   if (!pXRefOffset) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
 
-  CPDF_Object* pFileLen = pDict ? pDict->GetObjectBy("L") : NULL;
+  CPDF_Object* pFileLen = pDict ? pDict->GetObjectBy("L") : nullptr;
   if (!pFileLen) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;

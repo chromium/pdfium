@@ -290,7 +290,7 @@ void CFX_CTTGSUBTable::ParseLookup(FT_Bytes raw, TLookup* rec) {
   }
   rec->SubTable = new struct TSubTableBase*[rec->SubTableCount];
   for (i = 0; i < rec->SubTableCount; i++) {
-    rec->SubTable[i] = NULL;
+    rec->SubTable[i] = nullptr;
   }
   if (rec->LookupType != 1) {
     return;

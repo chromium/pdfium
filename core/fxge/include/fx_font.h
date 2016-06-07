@@ -83,7 +83,7 @@ class CFX_Font {
 #ifdef PDF_ENABLE_XFA
   FX_BOOL LoadFile(IFX_FileRead* pFile,
                    int nFaceIndex = 0,
-                   int* pFaceCount = NULL);
+                   int* pFaceCount = nullptr);
 
   FX_BOOL LoadClone(const CFX_Font* pFont);
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }

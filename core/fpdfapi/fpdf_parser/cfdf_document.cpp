@@ -10,9 +10,9 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 
-CFDF_Document::CFDF_Document() : CPDF_IndirectObjectHolder(NULL) {
-  m_pRootDict = NULL;
-  m_pFile = NULL;
+CFDF_Document::CFDF_Document() : CPDF_IndirectObjectHolder(nullptr) {
+  m_pRootDict = nullptr;
+  m_pFile = nullptr;
   m_bOwnFile = FALSE;
 }
 CFDF_Document::~CFDF_Document() {

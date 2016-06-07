@@ -115,20 +115,20 @@ class CPDF_VariableText : private CPDF_EditContainer {
   void ResetAll();
   void SetText(const FX_WCHAR* text,
                int32_t charset = 1,
-               const CPVT_SecProps* pSecProps = NULL,
-               const CPVT_WordProps* pWordProps = NULL);
+               const CPVT_SecProps* pSecProps = nullptr,
+               const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace InsertWord(const CPVT_WordPlace& place,
                             uint16_t word,
                             int32_t charset = 1,
-                            const CPVT_WordProps* pWordProps = NULL);
+                            const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace InsertSection(const CPVT_WordPlace& place,
-                               const CPVT_SecProps* pSecProps = NULL,
-                               const CPVT_WordProps* pWordProps = NULL);
+                               const CPVT_SecProps* pSecProps = nullptr,
+                               const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace InsertText(const CPVT_WordPlace& place,
                             const FX_WCHAR* text,
                             int32_t charset = 1,
-                            const CPVT_SecProps* pSecProps = NULL,
-                            const CPVT_WordProps* pWordProps = NULL);
+                            const CPVT_SecProps* pSecProps = nullptr,
+                            const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace DeleteWords(const CPVT_WordRange& PlaceRange);
   CPVT_WordPlace DeleteWord(const CPVT_WordPlace& place);
   CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place);

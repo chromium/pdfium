@@ -32,10 +32,10 @@ class FPDFTextEmbeddertest : public EmbedderTest {};
 TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_NE(nullptr, textpage);
+  EXPECT_TRUE(textpage);
 
   static const char expected[] = "Hello, world!\r\nGoodbye, world!";
   unsigned short fixed_buffer[128];
@@ -141,10 +141,10 @@ TEST_F(FPDFTextEmbeddertest, Text) {
 TEST_F(FPDFTextEmbeddertest, TextSearch) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_NE(nullptr, textpage);
+  EXPECT_TRUE(textpage);
 
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> nope =
       GetFPDFWideString(L"nope");
@@ -157,7 +157,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 
   // No occurences of "nope" in test page.
   FPDF_SCHHANDLE search = FPDFText_FindStart(textpage, nope.get(), 0, 0);
-  EXPECT_NE(nullptr, search);
+  EXPECT_TRUE(search);
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
   EXPECT_EQ(0, FPDFText_GetSchCount(search));
 
@@ -174,7 +174,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 
   // Two occurences of "world" in test page.
   search = FPDFText_FindStart(textpage, world.get(), 0, 2);
-  EXPECT_NE(nullptr, search);
+  EXPECT_TRUE(search);
 
   // Remains not found until advanced.
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
@@ -209,7 +209,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   // Exact search unaffected by case sensitiity and whole word flags.
   search = FPDFText_FindStart(textpage, world.get(),
                               FPDF_MATCHCASE | FPDF_MATCHWHOLEWORD, 0);
-  EXPECT_NE(nullptr, search);
+  EXPECT_TRUE(search);
   EXPECT_TRUE(FPDFText_FindNext(search));
   EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
   EXPECT_EQ(5, FPDFText_GetSchCount(search));
@@ -217,7 +217,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 
   // Default is case-insensitive, so matching agaist caps works.
   search = FPDFText_FindStart(textpage, world_caps.get(), 0, 0);
-  EXPECT_NE(nullptr, search);
+  EXPECT_TRUE(search);
   EXPECT_TRUE(FPDFText_FindNext(search));
   EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
   EXPECT_EQ(5, FPDFText_GetSchCount(search));
@@ -252,10 +252,10 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
   EXPECT_TRUE(OpenDocument("bug_57.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_NE(nullptr, textpage);
+  EXPECT_TRUE(textpage);
   EXPECT_EQ(13, FPDFText_CountChars(textpage));
 
   FPDFText_ClosePage(textpage);
@@ -265,13 +265,13 @@ TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
 TEST_F(FPDFTextEmbeddertest, WebLinks) {
   EXPECT_TRUE(OpenDocument("weblinks.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_NE(nullptr, textpage);
+  EXPECT_TRUE(textpage);
 
   FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
-  EXPECT_NE(nullptr, pagelink);
+  EXPECT_TRUE(pagelink);
 
   // Page contains two HTTP-style URLs.
   EXPECT_EQ(2, FPDFLink_CountWebLinks(pagelink));
@@ -371,10 +371,10 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
 TEST_F(FPDFTextEmbeddertest, GetFontSize) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_NE(nullptr, textpage);
+  EXPECT_TRUE(textpage);
 
   const double kExpectedFontsSizes[] = {12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
                                         12, 12, 12, 1,  1,  16, 16, 16, 16, 16,

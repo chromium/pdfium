@@ -444,7 +444,7 @@ void* CGdiplusExt::GdiAddFontMemResourceEx(void* pFontdata,
     return ((FuncType_GdiAddFontMemResourceEx)m_pGdiAddFontMemResourceEx)(
         (PVOID)pFontdata, (DWORD)size, (PVOID)pdv, (DWORD*)num_face);
   }
-  return NULL;
+  return nullptr;
 }
 FX_BOOL CGdiplusExt::GdiRemoveFontMemResourceEx(void* handle) {
   if (m_pGdiRemoveFontMemResourseEx) {
@@ -456,7 +456,7 @@ FX_BOOL CGdiplusExt::GdiRemoveFontMemResourceEx(void* handle) {
 static GpBrush* _GdipCreateBrush(DWORD argb) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpSolidFill* solidBrush = NULL;
+  GpSolidFill* solidBrush = nullptr;
   CallFunc(GdipCreateSolidFill)((ARGB)argb, &solidBrush);
   return solidBrush;
 }
@@ -478,7 +478,7 @@ static CFX_DIBitmap* _StretchMonoToGray(int dest_width,
   CFX_DIBitmap* pStretched = new CFX_DIBitmap;
   if (!pStretched->Create(result_width, result_height, FXDIB_8bppRgb)) {
     delete pStretched;
-    return NULL;
+    return nullptr;
   }
   LPBYTE dest_buf = pStretched->GetBuffer();
   int src_width = pSource->GetWidth();
@@ -560,7 +560,7 @@ static void OutputImageMask(GpGraphics* pGraphics,
       return;
     }
     image_clip.Offset(-image_rect.left, -image_rect.top);
-    CFX_DIBitmap* pStretched = NULL;
+    CFX_DIBitmap* pStretched = nullptr;
     if (src_width * src_height > 10000) {
       pStretched =
           _StretchMonoToGray(dest_width, dest_height, pBitmap, &image_clip);
@@ -624,7 +624,7 @@ static void OutputImage(GpGraphics* pGraphics,
   int src_pitch = pBitmap->GetPitch();
   uint8_t* scan0 = pBitmap->GetBuffer() + pSrcRect->top * src_pitch +
                    pBitmap->GetBPP() * pSrcRect->left / 8;
-  GpBitmap* bitmap = NULL;
+  GpBitmap* bitmap = nullptr;
   switch (pBitmap->GetFormat()) {
     case FXDIB_Argb:
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
@@ -671,13 +671,13 @@ static void OutputImage(GpGraphics* pGraphics,
   CallFunc(GdipDisposeImage)(bitmap);
 }
 CGdiplusExt::CGdiplusExt() {
-  m_hModule = NULL;
-  m_GdiModule = NULL;
+  m_hModule = nullptr;
+  m_GdiModule = nullptr;
   for (size_t i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
-    m_Functions[i] = NULL;
+    m_Functions[i] = nullptr;
   }
-  m_pGdiAddFontMemResourceEx = NULL;
-  m_pGdiRemoveFontMemResourseEx = NULL;
+  m_pGdiAddFontMemResourceEx = nullptr;
+  m_pGdiRemoveFontMemResourseEx = nullptr;
 }
 void CGdiplusExt::Load() {
   CFX_ByteString strPlusPath = "";
@@ -693,14 +693,14 @@ void CGdiplusExt::Load() {
   for (size_t i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
     m_Functions[i] = GetProcAddress(m_hModule, g_GdipFuncNames[i]);
     if (!m_Functions[i]) {
-      m_hModule = NULL;
+      m_hModule = nullptr;
       return;
     }
   }
   uintptr_t gdiplusToken;
   GdiplusStartupInput gdiplusStartupInput;
   ((FuncType_GdiplusStartup)m_Functions[FuncId_GdiplusStartup])(
-      &gdiplusToken, &gdiplusStartupInput, NULL);
+      &gdiplusToken, &gdiplusStartupInput, nullptr);
   m_GdiModule = LoadLibraryA("GDI32.DLL");
   if (!m_GdiModule) {
     return;
@@ -712,7 +712,7 @@ void CGdiplusExt::Load() {
 }
 CGdiplusExt::~CGdiplusExt() {}
 LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
-  GpFontCollection* pCollection = NULL;
+  GpFontCollection* pCollection = nullptr;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   CallFunc(GdipNewPrivateFontCollection)(&pCollection);
@@ -722,7 +722,7 @@ LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
     return pCollection;
   }
   CallFunc(GdipDeletePrivateFontCollection)(&pCollection);
-  return NULL;
+  return nullptr;
 }
 void CGdiplusExt::DeleteMemFont(LPVOID pCollection) {
   CGdiplusExt& GdiplusExt =
@@ -852,19 +852,19 @@ void* CGdiplusExt::GdipCreateFontFromCollection(void* pFontCollection,
   GpStatus status = CallFunc(GdipGetFontCollectionFamilyCount)(
       (GpFontCollection*)pFontCollection, &numFamilies);
   if (status != Ok) {
-    return NULL;
+    return nullptr;
   }
   GpFontFamily* family_list[1];
   status = CallFunc(GdipGetFontCollectionFamilyList)(
       (GpFontCollection*)pFontCollection, 1, family_list, &numFamilies);
   if (status != Ok) {
-    return NULL;
+    return nullptr;
   }
-  GpFont* pFont = NULL;
+  GpFont* pFont = nullptr;
   status = CallFunc(GdipCreateFont)(family_list[0], font_size, fontstyle,
                                     UnitPixel, &pFont);
   if (status != Ok) {
-    return NULL;
+    return nullptr;
   }
   return pFont;
 }
@@ -922,7 +922,7 @@ FX_BOOL CGdiplusExt::StretchBitMask(HDC hDC,
   ASSERT(pBitmap->GetBPP() == 1);
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpGraphics* pGraphics = NULL;
+  GpGraphics* pGraphics = nullptr;
   CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
   CallFunc(GdipSetPageUnit)(pGraphics, UnitPixel);
   if (flags & FXDIB_NOSMOOTH) {
@@ -980,7 +980,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
       width = unit;
     }
   }
-  GpPen* pPen = NULL;
+  GpPen* pPen = nullptr;
   CallFunc(GdipCreatePen1)((ARGB)argb, width, UnitWorld, &pPen);
   LineCap lineCap = LineCapFlat;
   DashCap dashCap = DashCapFlat;
@@ -1066,7 +1066,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
     }
     CallFunc(GdipSetPenDashOffset)(pPen, phase);
     FX_Free(pDashArray);
-    pDashArray = NULL;
+    pDashArray = nullptr;
   }
   CallFunc(GdipSetPenMiterLimit)(pPen, pGraphState->m_MiterLimit);
   return pPen;
@@ -1108,13 +1108,13 @@ FX_BOOL CGdiplusExt::DrawPath(HDC hDC,
     return TRUE;
   }
   FX_PATHPOINT* pPoints = pPathData->GetPoints();
-  GpGraphics* pGraphics = NULL;
+  GpGraphics* pGraphics = nullptr;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
   CallFunc(GdipSetPageUnit)(pGraphics, UnitPixel);
   CallFunc(GdipSetPixelOffsetMode)(pGraphics, PixelOffsetModeHalf);
-  GpMatrix* pMatrix = NULL;
+  GpMatrix* pMatrix = nullptr;
   if (pObject2Device) {
     CallFunc(GdipCreateMatrix2)(pObject2Device->a, pObject2Device->b,
                                 pObject2Device->c, pObject2Device->d,
@@ -1201,7 +1201,7 @@ FX_BOOL CGdiplusExt::DrawPath(HDC hDC,
   if (nPoints == 4 && !pGraphState) {
     int v1, v2;
     if (IsSmallTriangle(points, pObject2Device, v1, v2)) {
-      GpPen* pPen = NULL;
+      GpPen* pPen = nullptr;
       CallFunc(GdipCreatePen1)(fill_argb, 1.0f, UnitPixel, &pPen);
       CallFunc(GdipDrawLineI)(
           pGraphics, pPen, FXSYS_round(points[v1].X), FXSYS_round(points[v1].Y),
@@ -1210,7 +1210,7 @@ FX_BOOL CGdiplusExt::DrawPath(HDC hDC,
       return TRUE;
     }
   }
-  GpPath* pGpPath = NULL;
+  GpPath* pGpPath = nullptr;
   CallFunc(GdipCreatePath2)(points, types, nPoints,
                             GdiFillType2Gdip(new_fill_mode), &pGpPath);
   if (!pGpPath) {
@@ -1400,7 +1400,7 @@ typedef struct {
 } PREVIEW3_DIBITMAP;
 static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   GpBitmap* pBitmap;
-  GpStream* pStream = NULL;
+  GpStream* pStream = nullptr;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   Status status = Ok;
@@ -1409,17 +1409,17 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
                                                    &pBitmap);
   } else {
     if (args.memory_size == 0 || !args.memory_base) {
-      return NULL;
+      return nullptr;
     }
     pStream = new GpStream;
-    pStream->Write(args.memory_base, (ULONG)args.memory_size, NULL);
+    pStream->Write(args.memory_base, (ULONG)args.memory_size, nullptr);
     status = CallFunc(GdipCreateBitmapFromStreamICM)(pStream, &pBitmap);
   }
   if (status != Ok) {
     if (pStream) {
       pStream->Release();
     }
-    return NULL;
+    return nullptr;
   }
   UINT height, width;
   CallFunc(GdipGetImageHeight)(pBitmap, &height);
@@ -1495,7 +1495,7 @@ CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
 CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   PREVIEW3_DIBITMAP* pInfo = ::LoadDIBitmap(args);
   if (!pInfo) {
-    return NULL;
+    return nullptr;
   }
   int height = abs(pInfo->pbmi->bmiHeader.biHeight);
   int width = pInfo->pbmi->bmiHeader.biWidth;

@@ -53,13 +53,13 @@ class CXML_Element {
   static CXML_Element* Parse(const void* pBuffer,
                              size_t size,
                              FX_BOOL bSaveSpaceChars = FALSE,
-                             FX_FILESIZE* pParsedSize = NULL);
+                             FX_FILESIZE* pParsedSize = nullptr);
   static CXML_Element* Parse(IFX_FileRead* pFile,
                              FX_BOOL bSaveSpaceChars = FALSE,
-                             FX_FILESIZE* pParsedSize = NULL);
+                             FX_FILESIZE* pParsedSize = nullptr);
   static CXML_Element* Parse(IFX_BufferRead* pBuffer,
                              FX_BOOL bSaveSpaceChars = FALSE,
-                             FX_FILESIZE* pParsedSize = NULL);
+                             FX_FILESIZE* pParsedSize = nullptr);
 
   CXML_Element(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagName);
   CXML_Element(const CFX_ByteStringC& qTagName);

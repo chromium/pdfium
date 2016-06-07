@@ -44,7 +44,6 @@ class CPDF_Page;
 class CPDF_PageObject;
 class CPDF_RenderContext;
 class CPDF_RenderOptions;
-class CPDF_ViewerPreferences;
 class CXML_Element;
 class IPDF_FormNotify;
 
@@ -899,6 +898,8 @@ class CPDF_ViewerPreferences {
   CFX_ByteString Duplex() const;
 
  protected:
+  CPDF_Dictionary* GetViewerPreferences() const;
+
   CPDF_Document* const m_pDoc;
 };
 

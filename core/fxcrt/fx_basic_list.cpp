@@ -8,14 +8,14 @@
 #include "core/fxcrt/plex.h"
 
 CFX_PtrList::CFX_PtrList(int nBlockSize)
-    : m_pNodeHead(NULL),
-      m_pNodeTail(NULL),
+    : m_pNodeHead(nullptr),
+      m_pNodeTail(nullptr),
       m_nCount(0),
-      m_pNodeFree(NULL),
-      m_pBlocks(NULL),
+      m_pNodeFree(nullptr),
+      m_pBlocks(nullptr),
       m_nBlockSize(nBlockSize) {}
 FX_POSITION CFX_PtrList::AddTail(void* newElement) {
-  CNode* pNewNode = NewNode(m_pNodeTail, NULL);
+  CNode* pNewNode = NewNode(m_pNodeTail, nullptr);
   pNewNode->data = newElement;
   if (m_pNodeTail) {
     m_pNodeTail->pNext = pNewNode;
@@ -26,7 +26,7 @@ FX_POSITION CFX_PtrList::AddTail(void* newElement) {
   return (FX_POSITION)pNewNode;
 }
 FX_POSITION CFX_PtrList::AddHead(void* newElement) {
-  CNode* pNewNode = NewNode(NULL, m_pNodeHead);
+  CNode* pNewNode = NewNode(nullptr, m_pNodeHead);
   pNewNode->data = newElement;
   if (m_pNodeHead) {
     m_pNodeHead->pPrev = pNewNode;
@@ -112,7 +112,7 @@ CFX_PtrList::~CFX_PtrList() {
 }
 FX_POSITION CFX_PtrList::FindIndex(int nIndex) const {
   if (nIndex >= m_nCount || nIndex < 0) {
-    return NULL;
+    return nullptr;
   }
   CNode* pNode = m_pNodeHead;
   while (nIndex--) {
@@ -127,5 +127,5 @@ FX_POSITION CFX_PtrList::Find(void* searchValue, FX_POSITION startAfter) const {
     if (pNode->data == searchValue)
       return (FX_POSITION)pNode;
   }
-  return NULL;
+  return nullptr;
 }

@@ -114,7 +114,7 @@ void CFX_ClipRgn::IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask) {
 }
 CFX_PathData::CFX_PathData() {
   m_PointCount = m_AllocCount = 0;
-  m_pPoints = NULL;
+  m_pPoints = nullptr;
 }
 CFX_PathData::~CFX_PathData() {
   FX_Free(m_pPoints);
@@ -460,7 +460,7 @@ FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath,
                       m_pPoints[mid - i - 1].m_PointY, FXPT_LINETO);
     }
     if (!bZeroArea) {
-      NewPath.Append(&t_path, NULL);
+      NewPath.Append(&t_path, nullptr);
       bThin = TRUE;
       return TRUE;
     }
@@ -620,21 +620,21 @@ void CFX_PathData::Copy(const CFX_PathData& src) {
 CFX_GraphStateData::CFX_GraphStateData() {
   m_LineCap = LineCapButt;
   m_DashCount = 0;
-  m_DashArray = NULL;
+  m_DashArray = nullptr;
   m_DashPhase = 0;
   m_LineJoin = LineJoinMiter;
   m_MiterLimit = 10 * 1.0f;
   m_LineWidth = 1.0f;
 }
 CFX_GraphStateData::CFX_GraphStateData(const CFX_GraphStateData& src) {
-  m_DashArray = NULL;
+  m_DashArray = nullptr;
   Copy(src);
 }
 void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
   m_LineCap = src.m_LineCap;
   m_DashCount = src.m_DashCount;
   FX_Free(m_DashArray);
-  m_DashArray = NULL;
+  m_DashArray = nullptr;
   m_DashPhase = src.m_DashPhase;
   m_LineJoin = src.m_LineJoin;
   m_MiterLimit = src.m_MiterLimit;
@@ -649,7 +649,7 @@ CFX_GraphStateData::~CFX_GraphStateData() {
 }
 void CFX_GraphStateData::SetDashCount(int count) {
   FX_Free(m_DashArray);
-  m_DashArray = NULL;
+  m_DashArray = nullptr;
   m_DashCount = count;
   if (count == 0) {
     return;

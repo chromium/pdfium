@@ -537,7 +537,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
   int bitsize = m_SrcSize * 8;
   FaxSkipEOL(m_pSrcBuf, bitsize, bitpos);
   if (bitpos >= bitsize) {
-    return NULL;
+    return nullptr;
   }
   FXSYS_memset(m_pScanlineBuf, 0xff, m_Pitch);
   if (m_Encoding < 0) {

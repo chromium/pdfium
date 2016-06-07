@@ -652,12 +652,8 @@ CXFA_TextLayout::CXFA_TextLayout(CXFA_TextProvider* pTextProvider)
       m_pTextProvider(pTextProvider),
       m_pTextDataNode(nullptr),
       m_bRichText(FALSE),
-      m_pAllocator(nullptr),
-      m_pBreak(nullptr),
-      m_pLoader(nullptr),
       m_iLines(0),
       m_fMaxWidth(0),
-      m_pTabstopContext(nullptr),
       m_bBlockContinue(TRUE) {
   ASSERT(m_pTextProvider);
 }

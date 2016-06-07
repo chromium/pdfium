@@ -40,7 +40,7 @@ const FX_CHAR* GlyphNameRemap(const FX_CHAR* pStrAdobe) {
       compareString);
   if (found)
     return found->m_pStrUnicode;
-  return NULL;
+  return nullptr;
 }
 
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

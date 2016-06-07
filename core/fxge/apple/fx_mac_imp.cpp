@@ -74,7 +74,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
     return GetFont("Courier New");
   }
   if (charset == FXFONT_ANSI_CHARSET || charset == FXFONT_SYMBOL_CHARSET) {
-    return NULL;
+    return nullptr;
   }
   switch (charset) {
     case FXFONT_SHIFTJIS_CHARSET:
@@ -93,7 +93,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
   if (it != m_FontList.end())
     return it->second;
 
-  return NULL;
+  return nullptr;
 }
 
 std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
@@ -111,6 +111,6 @@ void CFX_GEModule::InitPlatform() {
 }
 void CFX_GEModule::DestroyPlatform() {
   delete (CApplePlatform*)m_pPlatformData;
-  m_pPlatformData = NULL;
+  m_pPlatformData = nullptr;
 }
 #endif

@@ -648,11 +648,11 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
 };
 
 CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder() {
-  m_pFlate = NULL;
-  m_pScanline = NULL;
-  m_pLastLine = NULL;
-  m_pPredictBuffer = NULL;
-  m_pPredictRaw = NULL;
+  m_pFlate = nullptr;
+  m_pScanline = nullptr;
+  m_pLastLine = nullptr;
+  m_pPredictBuffer = nullptr;
+  m_pPredictRaw = nullptr;
   m_LeftOver = 0;
 }
 CCodec_FlateScanlineDecoder::~CCodec_FlateScanlineDecoder() {
@@ -799,7 +799,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
                                               uint32_t estimated_size,
                                               uint8_t*& dest_buf,
                                               uint32_t& dest_size) {
-  dest_buf = NULL;
+  dest_buf = nullptr;
   uint32_t offset = 0;
   int predictor_type = 0;
   if (predictor) {
@@ -814,7 +814,8 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
       std::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
       dest_size = (uint32_t)-1;
       offset = src_size;
-      int err = decoder->Decode(NULL, dest_size, src_buf, offset, bEarlyChange);
+      int err =
+          decoder->Decode(nullptr, dest_size, src_buf, offset, bEarlyChange);
       if (err || dest_size == 0 || dest_size + 1 < dest_size) {
         return FX_INVALID_OFFSET;
       }

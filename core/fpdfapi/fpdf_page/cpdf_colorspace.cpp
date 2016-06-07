@@ -325,7 +325,7 @@ CPDF_ColorSpace* CPDF_ColorSpace::ColorspaceFromName(
   if (name == "Pattern") {
     return CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN);
   }
-  return NULL;
+  return nullptr;
 }
 
 CPDF_ColorSpace* CPDF_ColorSpace::GetStockCS(int family) {
@@ -366,7 +366,7 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
   if (pArray->GetCount() == 1)
     return ColorspaceFromName(familyname);
 
-  CPDF_ColorSpace* pCS = NULL;
+  CPDF_ColorSpace* pCS = nullptr;
   uint32_t id = familyname.GetID();
   if (id == FXBSTR_ID('C', 'a', 'l', 'G')) {
     pCS = new CPDF_CalGray(pDoc);
@@ -386,12 +386,12 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
   } else if (id == FXBSTR_ID('P', 'a', 't', 't')) {
     pCS = new CPDF_PatternCS(pDoc);
   } else {
-    return NULL;
+    return nullptr;
   }
   pCS->m_pArray = pArray;
   if (!pCS->v_Load(pDoc, pArray)) {
     pCS->ReleaseCS();
-    return NULL;
+    return nullptr;
   }
   return pCS;
 }
@@ -965,7 +965,7 @@ CPDF_IndexedCS::CPDF_IndexedCS(CPDF_Document* pDoc)
 
 CPDF_IndexedCS::~CPDF_IndexedCS() {
   FX_Free(m_pCompMinMax);
-  CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : NULL;
+  CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
   if (pCS && m_pDocument) {
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
   }
@@ -980,7 +980,7 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
     return FALSE;
   }
   CPDF_DocPageData* pDocPageData = pDoc->GetPageData();
-  m_pBaseCS = pDocPageData->GetColorSpace(pBaseObj, NULL);
+  m_pBaseCS = pDocPageData->GetColorSpace(pBaseObj, nullptr);
   if (!m_pBaseCS) {
     return FALSE;
   }
@@ -1052,7 +1052,7 @@ CPDF_PatternCS::CPDF_PatternCS(CPDF_Document* pDoc)
       m_pCountedBaseCS(nullptr) {}
 
 CPDF_PatternCS::~CPDF_PatternCS() {
-  CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : NULL;
+  CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
   if (pCS && m_pDocument) {
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
   }
@@ -1064,7 +1064,7 @@ FX_BOOL CPDF_PatternCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
     return FALSE;
   }
   CPDF_DocPageData* pDocPageData = pDoc->GetPageData();
-  m_pBaseCS = pDocPageData->GetColorSpace(pBaseCS, NULL);
+  m_pBaseCS = pDocPageData->GetColorSpace(pBaseCS, nullptr);
   if (m_pBaseCS) {
     if (m_pBaseCS->GetFamily() == PDFCS_PATTERN) {
       return FALSE;

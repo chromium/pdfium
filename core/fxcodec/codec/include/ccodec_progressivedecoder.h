@@ -73,7 +73,7 @@ class CCodec_ProgressiveDecoder {
 
   class CFXCODEC_WeightTable {
    public:
-    CFXCODEC_WeightTable() { m_pWeightTables = NULL; }
+    CFXCODEC_WeightTable() { m_pWeightTables = nullptr; }
     ~CFXCODEC_WeightTable() { FX_Free(m_pWeightTables); }
 
     void Calc(int dest_len,
@@ -93,7 +93,7 @@ class CCodec_ProgressiveDecoder {
 
   class CFXCODEC_HorzTable {
    public:
-    CFXCODEC_HorzTable() { m_pWeightTables = NULL; }
+    CFXCODEC_HorzTable() { m_pWeightTables = nullptr; }
     ~CFXCODEC_HorzTable() { FX_Free(m_pWeightTables); }
 
     void Calc(int dest_len, int src_len, FX_BOOL bInterpol);
@@ -107,7 +107,7 @@ class CCodec_ProgressiveDecoder {
 
   class CFXCODEC_VertTable {
    public:
-    CFXCODEC_VertTable() { m_pWeightTables = NULL; }
+    CFXCODEC_VertTable() { m_pWeightTables = nullptr; }
     ~CFXCODEC_VertTable() { FX_Free(m_pWeightTables); }
     void Calc(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {

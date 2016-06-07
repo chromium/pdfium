@@ -251,7 +251,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
 
 const FX_ARBFORMTABLE* FX_GetArabicFormTable(FX_WCHAR unicode) {
   if (unicode < 0x622 || unicode > 0x6d5) {
-    return NULL;
+    return nullptr;
   }
   return g_FX_ArabicFormTables + unicode - 0x622;
 }

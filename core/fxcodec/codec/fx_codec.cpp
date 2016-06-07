@@ -127,8 +127,8 @@ class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder {
   uint8_t m_Operator;
 };
 CCodec_RLScanlineDecoder::CCodec_RLScanlineDecoder()
-    : m_pScanline(NULL),
-      m_pSrcBuf(NULL),
+    : m_pScanline(nullptr),
+      m_pSrcBuf(nullptr),
       m_SrcSize(0),
       m_dwLineBytes(0),
       m_SrcOffset(0),
@@ -206,7 +206,7 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
     GetNextOperator();
   } else {
     if (m_bEOD) {
-      return NULL;
+      return nullptr;
     }
   }
   FXSYS_memset(m_pScanline, 0, m_Pitch);

@@ -128,7 +128,7 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
 CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict,
                                      FX_BOOL findOnly) {
   if (!pFontDict) {
-    return NULL;
+    return nullptr;
   }
   if (findOnly) {
     auto it = m_FontMap.find(pFontDict);
@@ -434,7 +434,7 @@ void CPDF_DocPageData::ReleaseImage(CPDF_Object* pImageStream) {
 CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
     CPDF_Stream* pIccProfileStream) {
   if (!pIccProfileStream)
-    return NULL;
+    return nullptr;
 
   auto it = m_IccProfileMap.find(pIccProfileStream);
   if (it != m_IccProfileMap.end()) {

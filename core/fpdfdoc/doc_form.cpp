@@ -97,13 +97,13 @@ class CFieldTree {
           return field_ptr;
         }
         --*fields_to_go;
-        return NULL;
+        return nullptr;
       }
       for (int i = 0; i < children.GetSize(); i++) {
         if (CPDF_FormField* pField = children.GetAt(i)->GetField(fields_to_go))
           return pField;
       }
-      return NULL;
+      return nullptr;
     }
     CPDF_FormField* GetField(int index) {
       int fields_to_go = index;
@@ -125,8 +125,8 @@ class CFieldTree {
   _Node m_Root;
 };
 CFieldTree::CFieldTree() {
-  m_Root.parent = NULL;
-  m_Root.field_ptr = NULL;
+  m_Root.parent = nullptr;
+  m_Root.field_ptr = nullptr;
 }
 CFieldTree::~CFieldTree() {
   RemoveAll();
@@ -135,7 +135,7 @@ CFieldTree::_Node* CFieldTree::AddChild(_Node* pParent,
                                         const CFX_WideString& short_name,
                                         CPDF_FormField* field_ptr) {
   if (!pParent) {
-    return NULL;
+    return nullptr;
   }
   _Node* pNode = new _Node;
   pNode->parent = pParent;
@@ -158,7 +158,7 @@ void CFieldTree::RemoveNode(_Node* pNode, int nLevel) {
 CFieldTree::_Node* CFieldTree::_Lookup(_Node* pParent,
                                        const CFX_WideString& short_name) {
   if (!pParent) {
-    return NULL;
+    return nullptr;
   }
   for (int i = 0; i < pParent->children.GetSize(); i++) {
     _Node* pNode = pParent->children[i];
@@ -168,7 +168,7 @@ CFieldTree::_Node* CFieldTree::_Lookup(_Node* pParent,
       return pNode;
     }
   }
-  return NULL;
+  return nullptr;
 }
 void CFieldTree::RemoveAll() {
   for (int i = 0; i < m_Root.children.GetSize(); i++) {
@@ -184,13 +184,13 @@ void CFieldTree::SetField(const CFX_WideString& full_name,
   const FX_WCHAR* pName;
   FX_STRSIZE nLength;
   name_extractor.GetNext(pName, nLength);
-  _Node *pNode = &m_Root, *pLast = NULL;
+  _Node *pNode = &m_Root, *pLast = nullptr;
   while (nLength > 0) {
     pLast = pNode;
     CFX_WideString name = CFX_WideString(pName, nLength);
     pNode = _Lookup(pLast, name);
     if (!pNode) {
-      pNode = AddChild(pLast, name, NULL);
+      pNode = AddChild(pLast, name, nullptr);
     }
     name_extractor.GetNext(pName, nLength);
   }
@@ -200,30 +200,31 @@ void CFieldTree::SetField(const CFX_WideString& full_name,
 }
 CPDF_FormField* CFieldTree::GetField(const CFX_WideString& full_name) {
   if (full_name == L"") {
-    return NULL;
+    return nullptr;
   }
   CFieldNameExtractor name_extractor(full_name);
   const FX_WCHAR* pName;
   FX_STRSIZE nLength;
   name_extractor.GetNext(pName, nLength);
-  _Node *pNode = &m_Root, *pLast = NULL;
+  _Node *pNode = &m_Root, *pLast = nullptr;
   while (nLength > 0 && pNode) {
     pLast = pNode;
     CFX_WideString name = CFX_WideString(pName, nLength);
     pNode = _Lookup(pLast, name);
     name_extractor.GetNext(pName, nLength);
   }
-  return pNode ? pNode->field_ptr : NULL;
+  return pNode ? pNode->field_ptr : nullptr;
 }
 CPDF_FormField* CFieldTree::RemoveField(const CFX_WideString& full_name) {
   if (full_name == L"") {
-    return NULL;
+    return nullptr;
   }
   CFieldNameExtractor name_extractor(full_name);
   const FX_WCHAR* pName;
   FX_STRSIZE nLength;
   name_extractor.GetNext(pName, nLength);
-  _Node *pNode = &m_Root, *pLast = NULL;
+  _Node* pNode = &m_Root;
+  _Node* pLast = nullptr;
   while (nLength > 0 && pNode) {
     pLast = pNode;
     CFX_WideString name = CFX_WideString(pName, nLength);
@@ -241,17 +242,17 @@ CPDF_FormField* CFieldTree::RemoveField(const CFX_WideString& full_name) {
     RemoveNode(pNode);
     return pField;
   }
-  return NULL;
+  return nullptr;
 }
 CFieldTree::_Node* CFieldTree::FindNode(const CFX_WideString& full_name) {
   if (full_name == L"") {
-    return NULL;
+    return nullptr;
   }
   CFieldNameExtractor name_extractor(full_name);
   const FX_WCHAR* pName;
   FX_STRSIZE nLength;
   name_extractor.GetNext(pName, nLength);
-  _Node *pNode = &m_Root, *pLast = NULL;
+  _Node *pNode = &m_Root, *pLast = nullptr;
   while (nLength > 0 && pNode) {
     pLast = pNode;
     CFX_WideString name = CFX_WideString(pName, nLength);
@@ -375,10 +376,10 @@ static int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
 static FX_BOOL RetrieveSpecificFont(LOGFONTA& lf) {
   PDF_FONTDATA fd;
   memset(&fd, 0, sizeof(PDF_FONTDATA));
-  HDC hDC = ::GetDC(NULL);
+  HDC hDC = ::GetDC(nullptr);
   EnumFontFamiliesExA(hDC, &lf, (FONTENUMPROCA)EnumFontFamExProc, (LPARAM)&fd,
                       0);
-  ::ReleaseDC(NULL, hDC);
+  ::ReleaseDC(nullptr, hDC);
   if (fd.bFind) {
     memcpy(&lf, &fd.lf, sizeof(LOGFONTA));
   }
@@ -440,7 +441,8 @@ CFX_ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
                                 "Microsoft Sans Serif", lf);
   }
   if (!bRet) {
-    bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, NULL, lf);
+    bRet =
+        RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, nullptr, lf);
   }
   if (bRet) {
     if (pLogFont) {
@@ -613,14 +615,14 @@ FX_BOOL CPDF_InterForm::ValidateFieldName(
 }
 FX_BOOL CPDF_InterForm::ValidateFieldName(CFX_WideString& csNewFieldName,
                                           int iType) {
-  return ValidateFieldName(csNewFieldName, iType, NULL, NULL);
+  return ValidateFieldName(csNewFieldName, iType, nullptr, nullptr);
 }
 FX_BOOL CPDF_InterForm::ValidateFieldName(const CPDF_FormField* pField,
                                           CFX_WideString& csNewFieldName) {
   return pField && !csNewFieldName.IsEmpty() &&
          ValidateFieldName(csNewFieldName,
                            ((CPDF_FormField*)pField)->GetFieldType(), pField,
-                           NULL);
+                           nullptr);
 }
 FX_BOOL CPDF_InterForm::ValidateFieldName(const CPDF_FormControl* pControl,
                                           CFX_WideString& csNewFieldName) {
@@ -688,7 +690,7 @@ CPDF_FormField* CPDF_InterForm::GetField(uint32_t index,
 CPDF_FormField* CPDF_InterForm::GetFieldByDict(
     CPDF_Dictionary* pFieldDict) const {
   if (!pFieldDict) {
-    return NULL;
+    return nullptr;
   }
   CFX_WideString csWName = GetFullName(pFieldDict);
   return m_pFieldTree->GetField(csWName);
@@ -926,14 +928,14 @@ void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
 }
 CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   if (!pFieldDict->KeyExist("T")) {
-    return NULL;
+    return nullptr;
   }
   CPDF_Dictionary* pDict = pFieldDict;
   CFX_WideString csWName = GetFullName(pFieldDict);
   if (csWName.IsEmpty()) {
-    return NULL;
+    return nullptr;
   }
-  CPDF_FormField* pField = NULL;
+  CPDF_FormField* pField = nullptr;
   pField = m_pFieldTree->GetField(csWName);
   if (!pField) {
     CPDF_Dictionary* pParent = pFieldDict;
@@ -1049,7 +1051,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
     bool bSimpleFileSpec) const {
   CFDF_Document* pDoc = CFDF_Document::CreateNewDoc();
   if (!pDoc) {
-    return NULL;
+    return nullptr;
   }
   CPDF_Dictionary* pMainDict = pDoc->GetRoot()->GetDictBy("FDF");
   if (!pdf_path.IsEmpty()) {

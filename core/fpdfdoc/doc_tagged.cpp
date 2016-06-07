@@ -132,14 +132,14 @@ CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(
     std::map<CPDF_Dictionary*, CPDF_StructElementImpl*>& map,
     int nLevel) {
   if (nLevel > nMaxRecursion)
-    return NULL;
+    return nullptr;
 
   auto it = map.find(pDict);
   if (it != map.end())
     return it->second;
 
   CPDF_StructElementImpl* pElement =
-      new CPDF_StructElementImpl(this, NULL, pDict);
+      new CPDF_StructElementImpl(this, nullptr, pDict);
   map[pDict] = pElement;
   CPDF_Dictionary* pParent = pDict->GetDictBy("P");
   if (!pParent || pParent->GetStringBy("Type") == "StructTreeRoot") {
@@ -301,7 +301,7 @@ void CPDF_StructElementImpl::LoadKid(uint32_t PageObjNum,
       pKid->m_Element.m_pElement =
           new CPDF_StructElementImpl(m_pTree, this, pKidDict);
     } else {
-      pKid->m_Element.m_pElement = NULL;
+      pKid->m_Element.m_pElement = nullptr;
     }
   }
 }
@@ -335,7 +335,7 @@ CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
                                              FX_BOOL bInheritable,
                                              FX_FLOAT fLevel) {
   if (fLevel > nMaxRecursion) {
-    return NULL;
+    return nullptr;
   }
   if (bInheritable) {
     CPDF_Object* pAttr = GetAttr(owner, name, FALSE);
@@ -343,7 +343,7 @@ CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
       return pAttr;
     }
     if (!m_pParent) {
-      return NULL;
+      return nullptr;
     }
     return m_pParent->GetAttr(owner, name, TRUE, fLevel + 1);
   }

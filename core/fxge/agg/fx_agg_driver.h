@@ -79,7 +79,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
                     int left,
                     int top,
-                    void* pIccTransform = NULL,
+                    void* pIccTransform = nullptr,
                     FX_BOOL bDEdge = FALSE) override;
   CFX_DIBitmap* GetBackDrop() override { return m_pOriDevice; }
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,

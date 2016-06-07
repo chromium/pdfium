@@ -13,11 +13,11 @@ void CPDF_TextState::SetFont(CPDF_Font* pFont) {
   CPDF_TextStateData* pStateData = GetModify();
   if (pStateData) {
     CPDF_Document* pDoc = pStateData->m_pDocument;
-    CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : NULL;
+    CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
     if (pPageData && pStateData->m_pFont && !pPageData->IsForceClear()) {
       pPageData->ReleaseFont(pStateData->m_pFont->GetFontDict());
     }
-    pStateData->m_pDocument = pFont ? pFont->m_pDocument : NULL;
+    pStateData->m_pDocument = pFont ? pFont->m_pDocument : nullptr;
     pStateData->m_pFont = pFont;
   }
 }

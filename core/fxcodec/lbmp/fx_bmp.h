@@ -125,7 +125,7 @@ void bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
                       uint8_t* src_buf,
                       uint32_t src_size);
 uint32_t bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
-                             uint8_t** avial_buf_ptr);
+                             uint8_t** avail_buf_ptr);
 typedef struct tag_bmp_compress_struct bmp_compress_struct;
 typedef bmp_compress_struct* bmp_compress_struct_p;
 typedef bmp_compress_struct_p* bmp_compress_struct_pp;

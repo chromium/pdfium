@@ -10,7 +10,7 @@
 
 CJBig2_PatternDict::CJBig2_PatternDict() {
   NUMPATS = 0;
-  HDPATS = NULL;
+  HDPATS = nullptr;
 }
 
 CJBig2_PatternDict::~CJBig2_PatternDict() {

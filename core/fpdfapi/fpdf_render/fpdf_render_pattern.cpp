@@ -677,7 +677,7 @@ struct CPDF_PatchDrawer {
         fillFlags |= FXFILL_NOPATHSMOOTH;
       }
       pDevice->DrawPath(
-          &path, NULL, NULL,
+          &path, nullptr, nullptr,
           FXARGB_MAKE(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
                       div_colors[0].comp[2]),
           0, fillFlags);
@@ -1044,7 +1044,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
 
   if (width > clip_box.Width() || height > clip_box.Height() ||
       width * height > clip_box.Width() * clip_box.Height()) {
-    CPDF_GraphicStates* pStates = NULL;
+    CPDF_GraphicStates* pStates = nullptr;
     if (!pPattern->colored())
       pStates = CloneObjStates(pPageObj, bStroke);
 

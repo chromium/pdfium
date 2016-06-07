@@ -20,7 +20,7 @@ template <typename InterfaceType>
 inline void SafeRelease(InterfaceType** currentObject) {
   if (*currentObject) {
     (*currentObject)->Release();
-    *currentObject = NULL;
+    *currentObject = nullptr;
   }
 }
 template <typename InterfaceType>
@@ -46,7 +46,7 @@ class CDwFontFileStream final : public IDWriteFontFileStream {
   virtual void STDMETHODCALLTYPE ReleaseFileFragment(void* fragmentContext);
   virtual HRESULT STDMETHODCALLTYPE GetFileSize(OUT UINT64* fileSize);
   virtual HRESULT STDMETHODCALLTYPE GetLastWriteTime(OUT UINT64* lastWriteTime);
-  bool IsInitialized() { return resourcePtr_ != NULL; }
+  bool IsInitialized() { return !!resourcePtr_; }
 
  private:
   ULONG refCount_;
@@ -70,7 +70,7 @@ class CDwFontFileLoader final : public IDWriteFontFileLoader {
     }
     return instance_;
   }
-  static bool IsLoaderInitialized() { return instance_ != NULL; }
+  static bool IsLoaderInitialized() { return !!instance_; }
 
  private:
   CDwFontFileLoader();
@@ -110,16 +110,16 @@ class CDwGdiTextRenderer {
   IDWriteRenderingParams* pRenderingParams_;
 };
 CDWriteExt::CDWriteExt() {
-  m_hModule = NULL;
-  m_pDWriteFactory = NULL;
-  m_pDwFontContext = NULL;
-  m_pDwTextRenderer = NULL;
+  m_hModule = nullptr;
+  m_pDWriteFactory = nullptr;
+  m_pDwFontContext = nullptr;
+  m_pDwTextRenderer = nullptr;
 }
 void CDWriteExt::Load() {}
 void CDWriteExt::Unload() {
   if (m_pDwFontContext) {
     delete (CDwFontContext*)m_pDwFontContext;
-    m_pDwFontContext = NULL;
+    m_pDwFontContext = nullptr;
   }
   SafeRelease((IDWriteFactory**)&m_pDWriteFactory);
 }
@@ -130,8 +130,8 @@ LPVOID CDWriteExt::DwCreateFontFaceFromStream(uint8_t* pData,
                                               uint32_t size,
                                               int simulation_style) {
   IDWriteFactory* pDwFactory = (IDWriteFactory*)m_pDWriteFactory;
-  IDWriteFontFile* pDwFontFile = NULL;
-  IDWriteFontFace* pDwFontFace = NULL;
+  IDWriteFontFile* pDwFontFile = nullptr;
+  IDWriteFontFace* pDwFontFace = nullptr;
   BOOL isSupportedFontType = FALSE;
   DWRITE_FONT_FILE_TYPE fontFileType;
   DWRITE_FONT_FACE_TYPE fontFaceType;
@@ -160,7 +160,7 @@ LPVOID CDWriteExt::DwCreateFontFaceFromStream(uint8_t* pData,
   return pDwFontFace;
 failed:
   SafeRelease(&pDwFontFile);
-  return NULL;
+  return nullptr;
 }
 FX_BOOL CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap,
                                             void** renderTarget) {
@@ -168,16 +168,16 @@ FX_BOOL CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap,
     return FALSE;
   }
   IDWriteFactory* pDwFactory = (IDWriteFactory*)m_pDWriteFactory;
-  IDWriteGdiInterop* pGdiInterop = NULL;
-  IDWriteBitmapRenderTarget* pBitmapRenderTarget = NULL;
-  IDWriteRenderingParams* pRenderingParams = NULL;
+  IDWriteGdiInterop* pGdiInterop = nullptr;
+  IDWriteBitmapRenderTarget* pBitmapRenderTarget = nullptr;
+  IDWriteRenderingParams* pRenderingParams = nullptr;
   HRESULT hr = S_OK;
   hr = pDwFactory->GetGdiInterop(&pGdiInterop);
   if (FAILED(hr)) {
     goto failed;
   }
   hr = pGdiInterop->CreateBitmapRenderTarget(
-      NULL, pBitmap->GetWidth(), pBitmap->GetHeight(), &pBitmapRenderTarget);
+      nullptr, pBitmap->GetWidth(), pBitmap->GetHeight(), &pBitmapRenderTarget);
   if (FAILED(hr)) {
     goto failed;
   }
@@ -240,7 +240,7 @@ FX_BOOL CDWriteExt::DwRendingString(void* renderTarget,
   glyphRun.isSideways = FALSE;
   glyphRun.bidiLevel = 0;
   hr = pTextRenderer->DrawGlyphRun(
-      stringRect, pClipRgn, pMatrix ? &transform : NULL, baselineOriginX,
+      stringRect, pClipRgn, pMatrix ? &transform : nullptr, baselineOriginX,
       baselineOriginY, DWRITE_MEASURING_MODE_NATURAL, &glyphRun,
       RGB(FXARGB_R(text_color), FXARGB_G(text_color), FXARGB_B(text_color)));
   return SUCCEEDED(hr);
@@ -266,7 +266,7 @@ HRESULT STDMETHODCALLTYPE CDwFontFileStream::QueryInterface(REFIID iid,
     AddRef();
     return S_OK;
   }
-  *ppvObject = NULL;
+  *ppvObject = nullptr;
   return E_NOINTERFACE;
 }
 ULONG STDMETHODCALLTYPE CDwFontFileStream::AddRef() {
@@ -288,11 +288,11 @@ CDwFontFileStream::ReadFileFragment(void const** fragmentStart,
       fragmentSize <= resourceSize_ - fileOffset) {
     *fragmentStart = static_cast<uint8_t const*>(resourcePtr_) +
                      static_cast<size_t>(fileOffset);
-    *fragmentContext = NULL;
+    *fragmentContext = nullptr;
     return S_OK;
   }
-  *fragmentStart = NULL;
-  *fragmentContext = NULL;
+  *fragmentStart = nullptr;
+  *fragmentContext = nullptr;
   return E_FAIL;
 }
 void STDMETHODCALLTYPE
@@ -306,7 +306,7 @@ CDwFontFileStream::GetLastWriteTime(OUT UINT64* lastWriteTime) {
   *lastWriteTime = 0;
   return E_NOTIMPL;
 }
-IDWriteFontFileLoader* CDwFontFileLoader::instance_ = NULL;
+IDWriteFontFileLoader* CDwFontFileLoader::instance_ = nullptr;
 CDwFontFileLoader::CDwFontFileLoader() : refCount_(0) {}
 HRESULT STDMETHODCALLTYPE CDwFontFileLoader::QueryInterface(REFIID iid,
                                                             void** ppvObject) {
@@ -315,7 +315,7 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::QueryInterface(REFIID iid,
     AddRef();
     return S_OK;
   }
-  *ppvObject = NULL;
+  *ppvObject = nullptr;
   return E_NOINTERFACE;
 }
 ULONG STDMETHODCALLTYPE CDwFontFileLoader::AddRef() {
@@ -324,7 +324,7 @@ ULONG STDMETHODCALLTYPE CDwFontFileLoader::AddRef() {
 ULONG STDMETHODCALLTYPE CDwFontFileLoader::Release() {
   ULONG newCount = InterlockedDecrement((long*)(&refCount_));
   if (newCount == 0) {
-    instance_ = NULL;
+    instance_ = nullptr;
     delete this;
   }
   return newCount;
@@ -333,7 +333,7 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::CreateStreamFromKey(
     void const* fontFileReferenceKey,
     UINT32 fontFileReferenceKeySize,
     OUT IDWriteFontFileStream** fontFileStream) {
-  *fontFileStream = NULL;
+  *fontFileStream = nullptr;
   CDwFontFileStream* stream =
       new CDwFontFileStream(fontFileReferenceKey, fontFileReferenceKeySize);
   if (!stream->IsInitialized()) {
@@ -395,7 +395,7 @@ STDMETHODIMP CDwGdiTextRenderer::DrawGlyphRun(
              (uint8_t*)bitmap.bmBits);
   dib.CompositeBitmap(text_bbox.left, text_bbox.top, text_bbox.Width(),
                       text_bbox.Height(), pBitmap_, text_bbox.left,
-                      text_bbox.top, FXDIB_BLEND_NORMAL, NULL);
+                      text_bbox.top, FXDIB_BLEND_NORMAL, nullptr);
   hr = pRenderTarget_->DrawGlyphRun(baselineOriginX, baselineOriginY,
                                     measuringMode, glyphRun, pRenderingParams_,
                                     textColor);

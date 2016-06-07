@@ -44,7 +44,7 @@ class CJBig2_Context {
       CPDF_StreamAcc* pGlobalStream,
       CPDF_StreamAcc* pSrcStream,
       std::list<CJBig2_CachePair>* pSymbolDictCache,
-      IFX_Pause* pPause = NULL);
+      IFX_Pause* pPause = nullptr);
 
   static void DestroyContext(CJBig2_Context* pContext);
 

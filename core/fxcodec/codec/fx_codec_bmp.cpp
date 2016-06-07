@@ -113,8 +113,8 @@ int32_t CCodec_BmpModule::LoadImage(FXBMP_Context* ctx) {
 }
 
 uint32_t CCodec_BmpModule::GetAvailInput(FXBMP_Context* ctx,
-                                         uint8_t** avial_buf_ptr) {
-  return bmp_get_avail_input(ctx->bmp_ptr, avial_buf_ptr);
+                                         uint8_t** avail_buf_ptr) {
+  return bmp_get_avail_input(ctx->bmp_ptr, avail_buf_ptr);
 }
 
 void CCodec_BmpModule::Input(FXBMP_Context* ctx,

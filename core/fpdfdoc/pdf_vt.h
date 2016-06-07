@@ -28,7 +28,7 @@ class CPVT_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
     if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize()) {
       return CFX_ArrayTemplate<TYPE>::GetAt(nIndex);
     }
-    return NULL;
+    return nullptr;
   }
   void RemoveAt(int nIndex) {
     if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize()) {

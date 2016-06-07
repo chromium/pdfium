@@ -76,11 +76,10 @@ void* CFX_MapPtrToPtr::GetValueAt(void* key) const {
 
 void*& CFX_MapPtrToPtr::operator[](void* key) {
   uint32_t nHash;
-  CAssoc* pAssoc;
-  if ((pAssoc = GetAssocAt(key, nHash)) == NULL) {
-    if (!m_pHashTable) {
+  CAssoc* pAssoc = GetAssocAt(key, nHash);
+  if (!pAssoc) {
+    if (!m_pHashTable)
       InitHashTable(m_nHashTableSize);
-    }
     pAssoc = NewAssoc();
     pAssoc->key = key;
     pAssoc->pNext = m_pHashTable[nHash];
@@ -92,14 +91,14 @@ CFX_MapPtrToPtr::CAssoc* CFX_MapPtrToPtr::GetAssocAt(void* key,
                                                      uint32_t& nHash) const {
   nHash = HashKey(key) % m_nHashTableSize;
   if (!m_pHashTable) {
-    return NULL;
+    return nullptr;
   }
   CAssoc* pAssoc;
   for (pAssoc = m_pHashTable[nHash]; pAssoc; pAssoc = pAssoc->pNext) {
     if (pAssoc->key == key)
       return pAssoc;
   }
-  return NULL;
+  return nullptr;
 }
 CFX_MapPtrToPtr::CAssoc* CFX_MapPtrToPtr::NewAssoc() {
   if (!m_pFreeList) {
@@ -125,7 +124,7 @@ void CFX_MapPtrToPtr::InitHashTable(uint32_t nHashSize, FX_BOOL bAllocNow) {
   ASSERT(m_nCount == 0);
   ASSERT(nHashSize > 0);
   FX_Free(m_pHashTable);
-  m_pHashTable = NULL;
+  m_pHashTable = nullptr;
   if (bAllocNow) {
     m_pHashTable = FX_Alloc(CAssoc*, nHashSize);
   }

@@ -336,13 +336,13 @@ CPDF_CID2UnicodeMap* CPDF_CMapManager::LoadCID2UnicodeMap(CIDSet charset,
   CPDF_CID2UnicodeMap* pMap = new CPDF_CID2UnicodeMap();
   if (!pMap->Initialize()) {
     delete pMap;
-    return NULL;
+    return nullptr;
   }
   pMap->Load(this, charset, bPromptCJK);
   return pMap;
 }
 CPDF_CMapParser::CPDF_CMapParser() {
-  m_pCMap = NULL;
+  m_pCMap = nullptr;
   m_Status = 0;
   m_CodeSeq = 0;
 }
@@ -506,11 +506,11 @@ CPDF_CMap::CPDF_CMap() {
   m_CodingScheme = TwoBytes;
   m_bVertical = 0;
   m_bLoaded = FALSE;
-  m_pMapping = NULL;
-  m_pLeadingBytes = NULL;
-  m_pAddMapping = NULL;
-  m_pEmbedMap = NULL;
-  m_pUseMap = NULL;
+  m_pMapping = nullptr;
+  m_pLeadingBytes = nullptr;
+  m_pAddMapping = nullptr;
+  m_pEmbedMap = nullptr;
+  m_pUseMap = nullptr;
   m_nCodeRanges = 0;
 }
 CPDF_CMap::~CPDF_CMap() {

@@ -158,7 +158,7 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode mode) {
   CPDF_Dictionary* pAP = pAnnotDict->GetDictBy("AP");
   if (!pAP) {
-    return NULL;
+    return nullptr;
   }
   const FX_CHAR* ap_entry = "N";
   if (mode == CPDF_Annot::Down)
@@ -215,7 +215,7 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
                                           CFX_Matrix& matrix) {
   CPDF_Form* pForm = pAnnot->GetAPForm(pPage, mode);
   if (!pForm) {
-    return NULL;
+    return nullptr;
   }
   CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectBy("BBox");
   CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixBy("Matrix");
@@ -276,7 +276,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   CPDF_Dictionary* pBS = m_pAnnotDict->GetDictBy("BS");
   char style_char;
   FX_FLOAT width;
-  CPDF_Array* pDashArray = NULL;
+  CPDF_Array* pDashArray = nullptr;
   if (!pBS) {
     CPDF_Array* pBorderArray = m_pAnnotDict->GetArrayBy("Border");
     style_char = 'S';

@@ -14,7 +14,7 @@ void FPDFAPI_FindEmbeddedCMap(const char* name,
                               int charset,
                               int coding,
                               const FXCMAP_CMap*& pMap) {
-  pMap = NULL;
+  pMap = nullptr;
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
   const FXCMAP_CMap* pCMaps =

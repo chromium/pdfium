@@ -320,7 +320,7 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
   uint8_t buffer[32];
   int ret =
       FXSYS_WideCharToMultiByte(g_CharsetCPs[m_pCMap->m_Coding], 0, &unicode, 1,
-                                (char*)buffer, 4, NULL, NULL);
+                                (char*)buffer, 4, nullptr, nullptr);
   if (ret == 1) {
     return buffer[0];
   }
@@ -603,13 +603,13 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, FX_BOOL* pVertGlyph) {
     if (!m_Font.GetSubData()) {
       unsigned long length = 0;
       int error = FXFT_Load_Sfnt_Table(face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
-                                       NULL, &length);
+                                       nullptr, &length);
       if (!error) {
         m_Font.SetSubData(FX_Alloc(uint8_t, length));
       }
     }
     int error = FXFT_Load_Sfnt_Table(face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
-                                     m_Font.GetSubData(), NULL);
+                                     m_Font.GetSubData(), nullptr);
     if (!error && m_Font.GetSubData()) {
       m_pTTGSUBTable.reset(new CFX_CTTGSUBTable);
       m_pTTGSUBTable->LoadGSUBTable((FT_Bytes)m_Font.GetSubData());
@@ -678,7 +678,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph) {
       } else if (bMacRoman) {
         iBaseEncoding = PDFFONT_ENCODING_MACROMAN;
       }
-      const FX_CHAR* name = GetAdobeCharName(iBaseEncoding, NULL, charcode);
+      const FX_CHAR* name = GetAdobeCharName(iBaseEncoding, nullptr, charcode);
       if (!name) {
         return charcode == 0 ? -1 : (int)charcode;
       }

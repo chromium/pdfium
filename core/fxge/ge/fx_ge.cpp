@@ -8,20 +8,20 @@
 
 #include "core/fxge/ge/fx_text_int.h"
 
-static CFX_GEModule* g_pGEModule = NULL;
+static CFX_GEModule* g_pGEModule = nullptr;
 CFX_GEModule::CFX_GEModule(const char** pUserFontPaths) {
-  m_pFontCache = NULL;
-  m_pFontMgr = NULL;
-  m_FTLibrary = NULL;
-  m_pCodecModule = NULL;
-  m_pPlatformData = NULL;
+  m_pFontCache = nullptr;
+  m_pFontMgr = nullptr;
+  m_FTLibrary = nullptr;
+  m_pCodecModule = nullptr;
+  m_pPlatformData = nullptr;
   m_pUserFontPaths = pUserFontPaths;
 }
 CFX_GEModule::~CFX_GEModule() {
   delete m_pFontCache;
-  m_pFontCache = NULL;
+  m_pFontCache = nullptr;
   delete m_pFontMgr;
-  m_pFontMgr = NULL;
+  m_pFontMgr = nullptr;
   DestroyPlatform();
 }
 CFX_GEModule* CFX_GEModule::Get() {
@@ -38,7 +38,7 @@ void CFX_GEModule::Use(CFX_GEModule* pModule) {
 }
 void CFX_GEModule::Destroy() {
   delete g_pGEModule;
-  g_pGEModule = NULL;
+  g_pGEModule = nullptr;
 }
 CFX_FontCache* CFX_GEModule::GetFontCache() {
   if (!m_pFontCache) {

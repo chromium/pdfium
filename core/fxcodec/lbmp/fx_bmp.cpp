@@ -40,20 +40,17 @@ void bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg) {
 }
 bmp_decompress_struct_p bmp_create_decompress() {
   bmp_decompress_struct_p bmp_ptr = FX_Alloc(bmp_decompress_struct, 1);
-  if (bmp_ptr == NULL) {
-    return NULL;
-  }
   FXSYS_memset(bmp_ptr, 0, sizeof(bmp_decompress_struct));
   bmp_ptr->decode_status = BMP_D_STATUS_HEADER;
   bmp_ptr->bmp_header_ptr = FX_Alloc(BmpFileHeader, 1);
   return bmp_ptr;
 }
 void bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr) {
-  if (bmp_ptr_ptr == NULL || *bmp_ptr_ptr == NULL) {
+  if (!bmp_ptr_ptr || !*bmp_ptr_ptr)
     return;
-  }
+
   bmp_decompress_struct_p bmp_ptr = *bmp_ptr_ptr;
-  *bmp_ptr_ptr = NULL;
+  *bmp_ptr_ptr = nullptr;
   if (bmp_ptr->out_row_buffer) {
     FX_Free(bmp_ptr->out_row_buffer);
   }
@@ -62,16 +59,16 @@ void bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr) {
   FX_Free(bmp_ptr);
 }
 int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
-  if (bmp_ptr == NULL) {
+  if (!bmp_ptr)
     return 0;
-  }
+
   uint32_t skip_size_org = bmp_ptr->skip_size;
   if (bmp_ptr->decode_status == BMP_D_STATUS_HEADER) {
     ASSERT(sizeof(BmpFileHeader) == 14);
-    BmpFileHeader* bmp_header_ptr = NULL;
-    if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_header_ptr, 14) == NULL) {
+    BmpFileHeader* bmp_header_ptr = nullptr;
+    if (!bmp_read_data(bmp_ptr, (uint8_t**)&bmp_header_ptr, 14))
       return 2;
-    }
+
     bmp_ptr->bmp_header_ptr->bfType =
         GetWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfType);
     bmp_ptr->bmp_header_ptr->bfOffBits =
@@ -95,9 +92,9 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
     switch (bmp_ptr->img_ifh_size) {
       case kBmpCoreHeaderSize: {
         bmp_ptr->pal_type = 1;
-        BmpCoreHeaderPtr bmp_core_header_ptr = NULL;
-        if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_core_header_ptr,
-                          bmp_ptr->img_ifh_size) == NULL) {
+        BmpCoreHeaderPtr bmp_core_header_ptr = nullptr;
+        if (!bmp_read_data(bmp_ptr, (uint8_t**)&bmp_core_header_ptr,
+                           bmp_ptr->img_ifh_size)) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
@@ -111,9 +108,9 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         bmp_ptr->imgTB_flag = FALSE;
       } break;
       case kBmpInfoHeaderSize: {
-        BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
-        if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
-                          bmp_ptr->img_ifh_size) == NULL) {
+        BmpInfoHeaderPtr bmp_info_header_ptr = nullptr;
+        if (!bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
+                           bmp_ptr->img_ifh_size)) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
@@ -139,9 +136,9 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
       default: {
         if (bmp_ptr->img_ifh_size >
             std::min(kBmpInfoHeaderSize, sizeof(BmpInfoHeader))) {
-          BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
-          if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
-                            bmp_ptr->img_ifh_size) == NULL) {
+          BmpInfoHeaderPtr bmp_info_header_ptr = nullptr;
+          if (!bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
+                             bmp_ptr->img_ifh_size)) {
             bmp_ptr->skip_size = skip_size_org;
             return 2;
           }
@@ -229,7 +226,7 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
       }
       uint32_t* mask;
       if (bmp_read_data(bmp_ptr, (uint8_t**)&mask, 3 * sizeof(uint32_t)) ==
-          NULL) {
+          nullptr) {
         bmp_ptr->skip_size = skip_size_org;
         return 2;
       }
@@ -258,10 +255,10 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
       if (bmp_ptr->color_used != 0) {
         bmp_ptr->pal_num = bmp_ptr->color_used;
       }
-      uint8_t* src_pal_ptr = NULL;
+      uint8_t* src_pal_ptr = nullptr;
       uint32_t src_pal_size = bmp_ptr->pal_num * (bmp_ptr->pal_type ? 3 : 4);
       if (bmp_read_data(bmp_ptr, (uint8_t**)&src_pal_ptr, src_pal_size) ==
-          NULL) {
+          nullptr) {
         bmp_ptr->skip_size = skip_size_org;
         return 2;
       }
@@ -321,11 +318,11 @@ int32_t bmp_decode_image(bmp_decompress_struct_p bmp_ptr) {
 }
 int32_t bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
   uint8_t* row_buf = bmp_ptr->out_row_buffer;
-  uint8_t* des_buf = NULL;
+  uint8_t* des_buf = nullptr;
   while (bmp_ptr->row_num < bmp_ptr->height) {
-    if (bmp_read_data(bmp_ptr, &des_buf, bmp_ptr->src_row_bytes) == NULL) {
+    if (!bmp_read_data(bmp_ptr, &des_buf, bmp_ptr->src_row_bytes))
       return 2;
-    }
+
     bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
     switch (bmp_ptr->bitCounts) {
       case 1: {
@@ -384,17 +381,17 @@ int32_t bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
   return 1;
 }
 int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
-  uint8_t* first_byte_ptr = NULL;
-  uint8_t* second_byte_ptr = NULL;
+  uint8_t* first_byte_ptr = nullptr;
+  uint8_t* second_byte_ptr = nullptr;
   bmp_ptr->col_num = 0;
   while (TRUE) {
     uint32_t skip_size_org = bmp_ptr->skip_size;
-    if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+    if (!bmp_read_data(bmp_ptr, &first_byte_ptr, 1))
       return 2;
-    }
+
     switch (*first_byte_ptr) {
       case RLE_MARKER: {
-        if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+        if (!bmp_read_data(bmp_ptr, &first_byte_ptr, 1)) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
@@ -428,7 +425,7 @@ int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
           }
           case RLE_DELTA: {
             uint8_t* delta_ptr;
-            if (bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
+            if (!bmp_read_data(bmp_ptr, &delta_ptr, 2)) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -454,9 +451,9 @@ int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
               bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
               return 0;
             }
-            if (bmp_read_data(bmp_ptr, &second_byte_ptr,
-                              *first_byte_ptr & 1 ? *first_byte_ptr + 1
-                                                  : *first_byte_ptr) == NULL) {
+            if (!bmp_read_data(bmp_ptr, &second_byte_ptr,
+                               *first_byte_ptr & 1 ? *first_byte_ptr + 1
+                                                   : *first_byte_ptr)) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -467,7 +464,7 @@ int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
         }
       } break;
       default: {
-        if (bmp_read_data(bmp_ptr, &second_byte_ptr, 1) == NULL) {
+        if (!bmp_read_data(bmp_ptr, &second_byte_ptr, 1)) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
@@ -486,17 +483,17 @@ int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
   return 0;
 }
 int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
-  uint8_t* first_byte_ptr = NULL;
-  uint8_t* second_byte_ptr = NULL;
+  uint8_t* first_byte_ptr = nullptr;
+  uint8_t* second_byte_ptr = nullptr;
   bmp_ptr->col_num = 0;
   while (TRUE) {
     uint32_t skip_size_org = bmp_ptr->skip_size;
-    if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+    if (!bmp_read_data(bmp_ptr, &first_byte_ptr, 1))
       return 2;
-    }
+
     switch (*first_byte_ptr) {
       case RLE_MARKER: {
-        if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+        if (!bmp_read_data(bmp_ptr, &first_byte_ptr, 1)) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
@@ -530,7 +527,7 @@ int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
           }
           case RLE_DELTA: {
             uint8_t* delta_ptr;
-            if (bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
+            if (!bmp_read_data(bmp_ptr, &delta_ptr, 2)) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -560,8 +557,8 @@ int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
               }
               *first_byte_ptr = bmp_ptr->out_row_bytes - bmp_ptr->col_num - 1;
             }
-            if (bmp_read_data(bmp_ptr, &second_byte_ptr,
-                              size & 1 ? size + 1 : size) == NULL) {
+            if (!bmp_read_data(bmp_ptr, &second_byte_ptr,
+                               size & 1 ? size + 1 : size)) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -578,7 +575,7 @@ int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
         }
       } break;
       default: {
-        if (bmp_read_data(bmp_ptr, &second_byte_ptr, 1) == NULL) {
+        if (!bmp_read_data(bmp_ptr, &second_byte_ptr, 1)) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
@@ -609,9 +606,9 @@ int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
 uint8_t* bmp_read_data(bmp_decompress_struct_p bmp_ptr,
                        uint8_t** des_buf_pp,
                        uint32_t data_size) {
-  if (bmp_ptr == NULL || bmp_ptr->avail_in < bmp_ptr->skip_size + data_size) {
-    return NULL;
-  }
+  if (!bmp_ptr || bmp_ptr->avail_in < bmp_ptr->skip_size + data_size)
+    return nullptr;
+
   *des_buf_pp = bmp_ptr->next_in + bmp_ptr->skip_size;
   bmp_ptr->skip_size += data_size;
   return *des_buf_pp;
@@ -630,11 +627,11 @@ void bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
   bmp_ptr->skip_size = 0;
 }
 uint32_t bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
-                             uint8_t** avial_buf_ptr) {
-  if (avial_buf_ptr) {
-    *avial_buf_ptr = NULL;
+                             uint8_t** avail_buf_ptr) {
+  if (avail_buf_ptr) {
+    *avail_buf_ptr = nullptr;
     if (bmp_ptr->avail_in > 0) {
-      *avial_buf_ptr = bmp_ptr->next_in;
+      *avail_buf_ptr = bmp_ptr->next_in;
     }
   }
   return bmp_ptr->avail_in;
@@ -708,9 +705,6 @@ static void bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr,
   dst_pos = bmp_ptr->file_header.bfOffBits;
   dst_size += size;
   dst_buf = FX_Realloc(uint8_t, dst_buf, dst_size);
-  if (dst_buf == NULL) {
-    return;
-  }
   FXSYS_memset(&dst_buf[dst_pos], 0, size);
   uint32_t mask_red;
   uint32_t mask_green;
@@ -795,9 +789,6 @@ static void bmp_encode_rgb(bmp_compress_struct_p bmp_ptr,
   dst_pos = bmp_ptr->file_header.bfOffBits;
   dst_size += size;
   dst_buf = FX_Realloc(uint8_t, dst_buf, dst_size);
-  if (dst_buf == NULL) {
-    return;
-  }
   FXSYS_memset(&dst_buf[dst_pos], 0, size);
   for (int32_t row_num = bmp_ptr->src_row - 1; row_num > -1; row_num--) {
     FXSYS_memcpy(&dst_buf[dst_pos],
@@ -827,9 +818,6 @@ static void bmp_encode_rle8(bmp_compress_struct_p bmp_ptr,
   dst_pos = bmp_ptr->file_header.bfOffBits;
   dst_size += size;
   dst_buf = FX_Realloc(uint8_t, dst_buf, dst_size);
-  if (dst_buf == NULL) {
-    return;
-  }
   FXSYS_memset(&dst_buf[dst_pos], 0, size);
   for (int32_t row_num = bmp_ptr->src_row - 1, i = 0; row_num > -1;) {
     index = row_num * bmp_ptr->src_pitch;
@@ -875,9 +863,6 @@ static void bmp_encode_rle4(bmp_compress_struct_p bmp_ptr,
   dst_pos = bmp_ptr->file_header.bfOffBits;
   dst_size += size;
   dst_buf = FX_Realloc(uint8_t, dst_buf, dst_size);
-  if (dst_buf == NULL) {
-    return;
-  }
   FXSYS_memset(&dst_buf[dst_pos], 0, size);
   for (int32_t row_num = bmp_ptr->src_row - 1, i = 0; row_num > -1;
        rle[1] = 0) {
@@ -916,9 +901,9 @@ FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
   }
   dst_size = head_size + sizeof(uint32_t) * bmp_ptr->pal_num;
   dst_buf = FX_TryAlloc(uint8_t, dst_size);
-  if (dst_buf == NULL) {
+  if (!dst_buf)
     return FALSE;
-  }
+
   FXSYS_memset(dst_buf, 0, dst_size);
   bmp_ptr->file_header.bfOffBits = head_size;
   if (bmp_ptr->pal_ptr && pal_size) {

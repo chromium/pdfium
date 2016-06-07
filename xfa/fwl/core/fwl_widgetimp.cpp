@@ -25,6 +25,8 @@
 
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)
 
+IFWL_Widget::IFWL_Widget() {}
+
 IFWL_Widget::~IFWL_Widget() {}
 
 FWL_Error IFWL_Widget::GetClassName(CFX_WideString& wsClass) const {

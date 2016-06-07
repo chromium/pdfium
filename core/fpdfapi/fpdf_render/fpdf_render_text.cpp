@@ -328,7 +328,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
 
 CPDF_Type3Cache* CPDF_RenderStatus::GetCachedType3(CPDF_Type3Font* pFont) {
   if (!pFont->m_pDocument) {
-    return NULL;
+    return nullptr;
   }
   pFont->m_pDocument->GetPageData()->GetFont(pFont->GetFontDict(), FALSE);
   return pFont->m_pDocument->GetRenderData()->GetCachedType3(pFont);
@@ -415,17 +415,17 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
       CPDF_RenderOptions Options = m_Options;
       Options.m_Flags |= RENDER_FORCE_HALFTONE | RENDER_RECT_AA;
       Options.m_Flags &= ~RENDER_FORCE_DOWNSAMPLE;
-      CPDF_Dictionary* pFormResource = NULL;
+      CPDF_Dictionary* pFormResource = nullptr;
       if (pType3Char->m_pForm && pType3Char->m_pForm->m_pFormDict) {
         pFormResource =
             pType3Char->m_pForm->m_pFormDict->GetDictBy("Resources");
       }
       if (fill_alpha == 255) {
         CPDF_RenderStatus status;
-        status.Initialize(m_pContext, m_pDevice, NULL, NULL, this, pStates,
-                          &Options, pType3Char->m_pForm->m_Transparency,
-                          m_bDropObjects, pFormResource, FALSE, pType3Char,
-                          fill_argb);
+        status.Initialize(m_pContext, m_pDevice, nullptr, nullptr, this,
+                          pStates, &Options,
+                          pType3Char->m_pForm->m_Transparency, m_bDropObjects,
+                          pFormResource, FALSE, pType3Char, fill_argb);
         status.m_Type3FontCache.Append(m_Type3FontCache);
         status.m_Type3FontCache.Add(pType3Font);
         m_pDevice->SaveState();
@@ -443,10 +443,10 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         }
         bitmap_device.GetBitmap()->Clear(0);
         CPDF_RenderStatus status;
-        status.Initialize(m_pContext, &bitmap_device, NULL, NULL, this, pStates,
-                          &Options, pType3Char->m_pForm->m_Transparency,
-                          m_bDropObjects, pFormResource, FALSE, pType3Char,
-                          fill_argb);
+        status.Initialize(m_pContext, &bitmap_device, nullptr, nullptr, this,
+                          pStates, &Options,
+                          pType3Char->m_pForm->m_Transparency, m_bDropObjects,
+                          pFormResource, FALSE, pType3Char, fill_argb);
         status.m_Type3FontCache.Append(m_Type3FontCache);
         status.m_Type3FontCache.Add(pType3Font);
         matrix.TranslateI(-rect.left, -rect.top);
@@ -527,7 +527,7 @@ class CPDF_CharPosList {
 };
 
 CPDF_CharPosList::CPDF_CharPosList() {
-  m_pCharPos = NULL;
+  m_pCharPos = nullptr;
 }
 
 CPDF_CharPosList::~CPDF_CharPosList() {
@@ -641,7 +641,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   if (nChars == 1) {
     charcode = pFont->GetNextChar(str.c_str(), str.GetLength(), offset);
     pCharCodes = (uint32_t*)(uintptr_t)charcode;
-    pCharPos = NULL;
+    pCharPos = nullptr;
   } else {
     pCharCodes = FX_Alloc(uint32_t, nChars);
     pCharPos = FX_Alloc(FX_FLOAT, nChars - 1);
@@ -690,7 +690,7 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                           const CPDF_RenderOptions* pOptions) {
   CFX_FontCache* pCache =
       pFont->m_pDocument ? pFont->m_pDocument->GetRenderData()->GetFontCache()
-                         : NULL;
+                         : nullptr;
   CPDF_CharPosList CharPosList;
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
   int FXGE_flags = 0;

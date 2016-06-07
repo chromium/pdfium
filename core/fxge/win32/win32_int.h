@@ -16,7 +16,7 @@ class CGdiplusExt {
   CGdiplusExt();
   ~CGdiplusExt();
   void Load();
-  FX_BOOL IsAvailable() { return m_hModule != NULL; }
+  FX_BOOL IsAvailable() { return !!m_hModule; }
   FX_BOOL StretchBitMask(HDC hDC,
                          BOOL bMonoDevice,
                          const CFX_DIBitmap* pBitmap,
@@ -188,7 +188,7 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
   FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
                     int left,
                     int top,
-                    void* pIccTransform = NULL,
+                    void* pIccTransform = nullptr,
                     FX_BOOL bDEdge = FALSE) override;
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
@@ -229,7 +229,7 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                                 const FX_RECT* pClipRect,
                                 int render_flags,
                                 int alpha_flag = 0,
-                                void* pIccTransform = NULL,
+                                void* pIccTransform = nullptr,
                                 int blend_type = FXDIB_BLEND_NORMAL);
 };
 

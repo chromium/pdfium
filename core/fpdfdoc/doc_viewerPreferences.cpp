@@ -9,46 +9,35 @@
 
 CPDF_ViewerPreferences::CPDF_ViewerPreferences(CPDF_Document* pDoc)
     : m_pDoc(pDoc) {}
+
 CPDF_ViewerPreferences::~CPDF_ViewerPreferences() {}
+
 FX_BOOL CPDF_ViewerPreferences::IsDirectionR2L() const {
-  CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDictBy("ViewerPreferences");
-  if (!pDict) {
-    return FALSE;
-  }
-  return "R2L" == pDict->GetStringBy("Direction");
+  CPDF_Dictionary* pDict = GetViewerPreferences();
+  return pDict ? pDict->GetStringBy("Direction") == "R2L" : FALSE;
 }
+
 FX_BOOL CPDF_ViewerPreferences::PrintScaling() const {
-  CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDictBy("ViewerPreferences");
-  if (!pDict) {
-    return TRUE;
-  }
-  return "None" != pDict->GetStringBy("PrintScaling");
+  CPDF_Dictionary* pDict = GetViewerPreferences();
+  return pDict ? pDict->GetStringBy("PrintScaling") != "None" : TRUE;
 }
+
 int32_t CPDF_ViewerPreferences::NumCopies() const {
-  CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDictBy("ViewerPreferences");
-  if (!pDict) {
-    return 1;
-  }
-  return pDict->GetIntegerBy("NumCopies");
+  CPDF_Dictionary* pDict = GetViewerPreferences();
+  return pDict ? pDict->GetIntegerBy("NumCopies") : 1;
 }
+
 CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
-  CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  CPDF_Array* pRange = NULL;
-  pDict = pDict->GetDictBy("ViewerPreferences");
-  if (!pDict) {
-    return pRange;
-  }
-  pRange = pDict->GetArrayBy("PrintPageRange");
-  return pRange;
+  CPDF_Dictionary* pDict = GetViewerPreferences();
+  return pDict ? pDict->GetArrayBy("PrintPageRange") : nullptr;
 }
+
 CFX_ByteString CPDF_ViewerPreferences::Duplex() const {
+  CPDF_Dictionary* pDict = GetViewerPreferences();
+  return pDict ? pDict->GetStringBy("Duplex") : CFX_ByteString("None");
+}
+
+CPDF_Dictionary* CPDF_ViewerPreferences::GetViewerPreferences() const {
   CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDictBy("ViewerPreferences");
-  if (!pDict) {
-    return "None";
-  }
-  return pDict->GetStringBy("Duplex");
+  return pDict ? pDict->GetDictBy("ViewerPreferences") : nullptr;
 }

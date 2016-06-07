@@ -1071,7 +1071,7 @@ int32_t CXFA_WidgetData::GetNumberOfCells() {
 CFX_WideString CXFA_WidgetData::GetBarcodeType() {
   CXFA_Node* pUIChild = GetUIChild();
   return pUIChild ? CFX_WideString(pUIChild->GetCData(XFA_ATTRIBUTE_Type))
-                  : nullptr;
+                  : CFX_WideString();
 }
 
 FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t& val) {

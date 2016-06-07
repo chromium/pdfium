@@ -78,11 +78,10 @@ static void _error_do_nothing2(j_common_ptr cinfo, char*) {}
 #define JPEG_MARKER_ICC (JPEG_APP0 + 2)
 #define JPEG_MARKER_MAXSIZE 0xFFFF
 
-
 #ifdef PDF_ENABLE_XFA
 static void JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
                               CFX_DIBAttribute* pAttribute) {
-  if (!pInfo || !pAttribute)
+  if (!pAttribute)
     return;
 
   pAttribute->m_nXDPI = pInfo->X_density;
@@ -178,7 +177,7 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
 };
 
 CCodec_JpegDecoder::CCodec_JpegDecoder() {
-  m_pScanlineBuf = NULL;
+  m_pScanlineBuf = nullptr;
   m_bStarted = FALSE;
   m_bInited = FALSE;
   FXSYS_memset(&cinfo, 0, sizeof(cinfo));
@@ -470,7 +469,7 @@ FX_BOOL CCodec_JpegModule::ReadScanline(FXJPEG_Context* ctx,
 uint32_t CCodec_JpegModule::GetAvailInput(FXJPEG_Context* ctx,
                                           uint8_t** avail_buf_ptr) {
   if (avail_buf_ptr) {
-    *avail_buf_ptr = NULL;
+    *avail_buf_ptr = nullptr;
     if (ctx->m_SrcMgr.bytes_in_buffer > 0) {
       *avail_buf_ptr = (uint8_t*)ctx->m_SrcMgr.next_input_byte;
     }

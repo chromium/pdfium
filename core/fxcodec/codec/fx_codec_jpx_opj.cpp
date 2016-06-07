@@ -122,13 +122,13 @@ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data,
                                                  OPJ_BOOL p_is_read_stream) {
   opj_stream_t* l_stream = 00;
   if (!data || !data->src_data || data->src_size <= 0) {
-    return NULL;
+    return nullptr;
   }
   l_stream = opj_stream_create(p_size, p_is_read_stream);
   if (!l_stream) {
-    return NULL;
+    return nullptr;
   }
-  opj_stream_set_user_data(l_stream, data, NULL);
+  opj_stream_set_user_data(l_stream, data, nullptr);
   opj_stream_set_user_data_length(l_stream, data->src_size);
   opj_stream_set_read_function(l_stream, opj_read_from_memory);
   opj_stream_set_write_function(l_stream, opj_write_from_memory);
@@ -611,7 +611,7 @@ void color_apply_conversion(opj_image_t* image) {
     cmsHTRANSFORM transform;
     cmsUInt16Number RGB[3];
     cmsCIELab Lab;
-    in = cmsCreateLab4Profile(NULL);
+    in = cmsCreateLab4Profile(nullptr);
     out = cmsCreate_sRGBProfile();
     transform = cmsCreateTransform(in, TYPE_Lab_DBL, out, TYPE_RGB_16,
                                    INTENT_PERCEPTUAL, 0);
@@ -718,7 +718,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   if (!src_data || src_size < sizeof(szJP2Header))
     return FALSE;
 
-  image = NULL;
+  image = nullptr;
   m_SrcData = src_data;
   m_SrcSize = src_size;
   DecodeData srcData(const_cast<unsigned char*>(src_data), src_size);
@@ -749,7 +749,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     return FALSE;
   }
   if (!opj_read_header(l_stream, l_codec, &image)) {
-    image = NULL;
+    image = nullptr;
     return FALSE;
   }
   image->pdfium_use_colorspace = !!m_ColorSpace;
@@ -758,13 +758,13 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     if (!opj_set_decode_area(l_codec, image, parameters.DA_x0, parameters.DA_y0,
                              parameters.DA_x1, parameters.DA_y1)) {
       opj_image_destroy(image);
-      image = NULL;
+      image = nullptr;
       return FALSE;
     }
     if (!(opj_decode(l_codec, l_stream, image) &&
           opj_end_decompress(l_codec, l_stream))) {
       opj_image_destroy(image);
-      image = NULL;
+      image = nullptr;
       return FALSE;
     }
   } else {
@@ -774,7 +774,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     }
   }
   opj_stream_destroy(l_stream);
-  l_stream = NULL;
+  l_stream = nullptr;
   if (image->color_space != OPJ_CLRSPC_SYCC && image->numcomps == 3 &&
       image->comps[0].dx == image->comps[0].dy && image->comps[1].dx != 1) {
     image->color_space = OPJ_CLRSPC_SYCC;
@@ -786,7 +786,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   }
   if (image->icc_profile_buf) {
     FX_Free(image->icc_profile_buf);
-    image->icc_profile_buf = NULL;
+    image->icc_profile_buf = nullptr;
     image->icc_profile_len = 0;
   }
   if (!image) {

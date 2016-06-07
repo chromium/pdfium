@@ -118,7 +118,7 @@ class CGifLZWDecoder {
     uint16_t prefix;
     uint8_t suffix;
   };
-  CGifLZWDecoder(FX_CHAR* error_ptr = NULL) { err_msg_ptr = error_ptr; }
+  CGifLZWDecoder(FX_CHAR* error_ptr = nullptr) { err_msg_ptr = error_ptr; }
   void InitTable(uint8_t code_len);
 
   int32_t Decode(uint8_t* des_buf, uint32_t& des_size);
@@ -287,7 +287,7 @@ void gif_input_buffer(gif_decompress_struct_p gif_ptr,
                       uint8_t* src_buf,
                       uint32_t src_size);
 uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
-                             uint8_t** avial_buf_ptr);
+                             uint8_t** avail_buf_ptr);
 void interlace_buf(const uint8_t* buf, uint32_t width, uint32_t height);
 FX_BOOL gif_encode(gif_compress_struct_p gif_ptr,
                    uint8_t*& dst_buf,

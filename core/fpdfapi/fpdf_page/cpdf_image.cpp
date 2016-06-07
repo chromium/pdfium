@@ -58,7 +58,7 @@ FX_BOOL CPDF_Image::LoadImageF(CPDF_Stream* pStream, FX_BOOL bInline) {
   m_pStream = pStream;
   if (m_bInline && m_pInlineDict) {
     m_pInlineDict->Release();
-    m_pInlineDict = NULL;
+    m_pInlineDict = nullptr;
   }
   m_bInline = bInline;
   CPDF_Dictionary* pDict = pStream->GetDict();
@@ -168,7 +168,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
   pDict->SetAtName("Subtype", "Image");
   pDict->SetAtInteger("Width", BitmapWidth);
   pDict->SetAtInteger("Height", BitmapHeight);
-  uint8_t* dest_buf = NULL;
+  uint8_t* dest_buf = nullptr;
   FX_STRSIZE dest_pitch = 0, dest_size = 0, opType = -1;
   if (bpp == 1) {
     int32_t reset_a = 0, reset_r = 0, reset_g = 0, reset_b = 0;
@@ -252,7 +252,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       opType = 0;
     }
   }
-  const CFX_DIBitmap* pMaskBitmap = NULL;
+  const CFX_DIBitmap* pMaskBitmap = nullptr;
   FX_BOOL bDeleteMask = FALSE;
   if (pBitmap->HasAlpha()) {
     pMaskBitmap = pBitmap->GetAlphaMask();
@@ -261,7 +261,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
   if (pMaskBitmap) {
     int32_t maskWidth = pMaskBitmap->GetWidth();
     int32_t maskHeight = pMaskBitmap->GetHeight();
-    uint8_t* mask_buf = NULL;
+    uint8_t* mask_buf = nullptr;
     FX_STRSIZE mask_size = 0;
     CPDF_Dictionary* pMaskDict = new CPDF_Dictionary;
     pMaskDict->SetAtName("Type", "XObject");
@@ -301,10 +301,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
         SetImage(pNewBitmap, iCompress);
         if (pDict) {
           pDict->Release();
-          pDict = NULL;
+          pDict = nullptr;
         }
         FX_Free(dest_buf);
-        dest_buf = NULL;
+        dest_buf = nullptr;
         dest_size = 0;
         delete pNewBitmap;
         return;
@@ -343,7 +343,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     }
   }
   if (!m_pStream) {
-    m_pStream = new CPDF_Stream(NULL, 0, NULL);
+    m_pStream = new CPDF_Stream(nullptr, 0, nullptr);
   }
   m_pStream->InitStream(dest_buf, dest_size, pDict);
   m_bIsMask = pBitmap->IsAlphaMask();

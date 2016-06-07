@@ -476,7 +476,7 @@ class CFX_MapPtrToPtr {
   void RemoveAll();
 
   FX_POSITION GetStartPosition() const {
-    return (m_nCount == 0) ? NULL : (FX_POSITION)-1;
+    return m_nCount == 0 ? nullptr : (FX_POSITION)-1;
   }
 
   void GetNextAssoc(FX_POSITION& rNextPosition,
@@ -515,7 +515,7 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
   CFX_MapPtrTemplate() : CFX_MapPtrToPtr(10) {}
 
   FX_BOOL Lookup(KeyType key, ValueType& rValue) const {
-    void* pValue = NULL;
+    void* pValue = nullptr;
     if (!CFX_MapPtrToPtr::Lookup((void*)(uintptr_t)key, pValue)) {
       return FALSE;
     }
@@ -538,8 +538,8 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
   void GetNextAssoc(FX_POSITION& rNextPosition,
                     KeyType& rKey,
                     ValueType& rValue) const {
-    void* pKey = NULL;
-    void* pValue = NULL;
+    void* pKey = nullptr;
+    void* pValue = nullptr;
     CFX_MapPtrToPtr::GetNextAssoc(rNextPosition, pKey, pValue);
     rKey = (KeyType)(uintptr_t)pKey;
     rValue = (ValueType)(uintptr_t)pValue;
@@ -596,7 +596,7 @@ class CFX_PtrList {
   }
   FX_POSITION InsertAfter(FX_POSITION pos, void* newElement);
 
-  FX_POSITION Find(void* searchValue, FX_POSITION startAfter = NULL) const;
+  FX_POSITION Find(void* searchValue, FX_POSITION startAfter = nullptr) const;
   FX_POSITION FindIndex(int index) const;
 
   void RemoveAt(FX_POSITION pos);
@@ -662,7 +662,7 @@ class CFX_CountRef {
     int m_RefCount;
   };
 
-  CFX_CountRef() { m_pObject = NULL; }
+  CFX_CountRef() { m_pObject = nullptr; }
 
   CFX_CountRef(const Ref& ref) {
     m_pObject = ref.m_pObject;
@@ -716,7 +716,7 @@ class CFX_CountRef {
     if (m_pObject->m_RefCount <= 0) {
       delete m_pObject;
     }
-    m_pObject = NULL;
+    m_pObject = nullptr;
   }
 
   bool operator==(const Ref& ref) const { return m_pObject == ref.m_pObject; }
@@ -785,15 +785,15 @@ class CFX_SortListArray {
 
   uint8_t* GetAt(int32_t nIndex) {
     if (nIndex < 0) {
-      return NULL;
+      return nullptr;
     }
     if (m_CurList < 0 || m_CurList >= m_DataLists.GetSize()) {
-      return NULL;
+      return nullptr;
     }
     DataList* pCurList = m_DataLists.GetDataPtr(m_CurList);
     if (!pCurList || nIndex < pCurList->start ||
         nIndex >= pCurList->start + pCurList->count) {
-      pCurList = NULL;
+      pCurList = nullptr;
       int32_t iStart = 0;
       int32_t iEnd = m_DataLists.GetUpperBound();
       int32_t iMid = 0;
@@ -811,7 +811,8 @@ class CFX_SortListArray {
         }
       }
     }
-    return pCurList ? pCurList->data + (nIndex - pCurList->start) * unit : NULL;
+    return pCurList ? pCurList->data + (nIndex - pCurList->start) * unit
+                    : nullptr;
   }
 
  protected:

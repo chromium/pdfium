@@ -48,7 +48,7 @@ class CXML_DataBufAcc : public IFX_BufferRead {
 class CXML_DataStmAcc : public IFX_BufferRead {
  public:
   explicit CXML_DataStmAcc(IFX_FileRead* pFileRead)
-      : m_pFileRead(pFileRead), m_pBuffer(NULL), m_nStart(0), m_dwSize(0) {
+      : m_pFileRead(pFileRead), m_pBuffer(nullptr), m_nStart(0), m_dwSize(0) {
     ASSERT(m_pFileRead);
   }
   ~CXML_DataStmAcc() override { FX_Free(m_pBuffer); }

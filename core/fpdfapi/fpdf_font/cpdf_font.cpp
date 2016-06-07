@@ -60,7 +60,7 @@ CPDF_Font::CPDF_Font()
 
 CPDF_Font::~CPDF_Font() {
   delete m_pToUnicodeMap;
-  m_pToUnicodeMap = NULL;
+  m_pToUnicodeMap = nullptr;
 
   if (m_pFontFile) {
     m_pDocument->GetPageData()->ReleaseFontFileStreamAcc(
@@ -332,7 +332,7 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
   pDict->SetAtName("Subtype", "Type1");
   pDict->SetAtName("BaseFont", fontname);
   pDict->SetAtName("Encoding", "WinAnsiEncoding");
-  pFont = CPDF_Font::CreateFontF(NULL, pDict);
+  pFont = CPDF_Font::CreateFontF(nullptr, pDict);
   pFontGlobals->Set(pDoc, font_id, pFont);
   return pFont;
 }

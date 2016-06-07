@@ -39,7 +39,7 @@ WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE hFile,
 #ifdef __cplusplus
 }
 #endif
-CFXCRT_FileAccess_Win64::CFXCRT_FileAccess_Win64() : m_hFile(NULL) {}
+CFXCRT_FileAccess_Win64::CFXCRT_FileAccess_Win64() : m_hFile(nullptr) {}
 CFXCRT_FileAccess_Win64::~CFXCRT_FileAccess_Win64() {
   Close();
 }
@@ -50,12 +50,11 @@ FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
   }
   uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-  m_hFile = ::CreateFileA(fileName.c_str(), dwAccess, dwShare, NULL, dwCreation,
-                          FILE_ATTRIBUTE_NORMAL, NULL);
-  if (m_hFile == INVALID_HANDLE_VALUE) {
-    m_hFile = NULL;
-  }
-  return m_hFile != NULL;
+  m_hFile = ::CreateFileA(fileName.c_str(), dwAccess, dwShare, nullptr,
+                          dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
+  if (m_hFile == INVALID_HANDLE_VALUE)
+    m_hFile = nullptr;
+  return !!m_hFile;
 }
 FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
                                       uint32_t dwMode) {
@@ -64,19 +63,18 @@ FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
   }
   uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-  m_hFile = ::CreateFileW((LPCWSTR)fileName.c_str(), dwAccess, dwShare, NULL,
-                          dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
-  if (m_hFile == INVALID_HANDLE_VALUE) {
-    m_hFile = NULL;
-  }
-  return m_hFile != NULL;
+  m_hFile = ::CreateFileW((LPCWSTR)fileName.c_str(), dwAccess, dwShare, nullptr,
+                          dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
+  if (m_hFile == INVALID_HANDLE_VALUE)
+    m_hFile = nullptr;
+  return !!m_hFile;
 }
 void CFXCRT_FileAccess_Win64::Close() {
   if (!m_hFile) {
     return;
   }
   ::CloseHandle(m_hFile);
-  m_hFile = NULL;
+  m_hFile = nullptr;
 }
 FX_FILESIZE CFXCRT_FileAccess_Win64::GetSize() const {
   if (!m_hFile) {
@@ -116,7 +114,8 @@ size_t CFXCRT_FileAccess_Win64::Read(void* pBuffer, size_t szBuffer) {
     return 0;
   }
   size_t szRead = 0;
-  if (!::ReadFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szRead, NULL)) {
+  if (!::ReadFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szRead,
+                  nullptr)) {
     return 0;
   }
   return szRead;
@@ -127,7 +126,7 @@ size_t CFXCRT_FileAccess_Win64::Write(const void* pBuffer, size_t szBuffer) {
   }
   size_t szWrite = 0;
   if (!::WriteFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szWrite,
-                   NULL)) {
+                   nullptr)) {
     return 0;
   }
   return szWrite;

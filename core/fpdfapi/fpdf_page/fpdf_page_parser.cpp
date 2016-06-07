@@ -82,7 +82,7 @@ class CPDF_StreamParserAutoClearer {
       : scoped_variable_(scoped_variable) {
     *scoped_variable_ = new_parser;
   }
-  ~CPDF_StreamParserAutoClearer() { *scoped_variable_ = NULL; }
+  ~CPDF_StreamParserAutoClearer() { *scoped_variable_ = nullptr; }
 
  private:
   CPDF_StreamParser** scoped_variable_;
@@ -321,7 +321,7 @@ void CPDF_StreamContentParser::ClearAllParams() {
 
 CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
   if (index >= m_ParamCount) {
-    return NULL;
+    return nullptr;
   }
   int real_index = m_ParamStartPos + m_ParamCount - index - 1;
   if (real_index >= PARAM_BUF_SIZE) {
@@ -348,7 +348,7 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
     return param.m_pObject;
   }
   ASSERT(FALSE);
-  return NULL;
+  return nullptr;
 }
 
 CFX_ByteString CPDF_StreamContentParser::GetString(uint32_t index) {
@@ -612,7 +612,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   PDF_ReplaceAbbr(pDict);
-  CPDF_Object* pCSObj = NULL;
+  CPDF_Object* pCSObj = nullptr;
   if (pDict->KeyExist("ColorSpace")) {
     pCSObj = pDict->GetDirectObjectBy("ColorSpace");
     if (pCSObj->IsName()) {
@@ -642,7 +642,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   pDict->SetAtName("Subtype", "Image");
-  CPDF_ImageObject* pImgObj = AddImage(pStream, NULL, TRUE);
+  CPDF_ImageObject* pImgObj = AddImage(pStream, nullptr, TRUE);
   if (!pImgObj) {
     if (pStream) {
       pStream->Release();
@@ -654,7 +654,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
   CFX_ByteString tag = GetString(0);
-  m_CurContentMark.GetModify()->AddMark(tag, NULL, FALSE);
+  m_CurContentMark.GetModify()->AddMark(tag, nullptr, FALSE);
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
@@ -738,7 +738,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     type = pXObject->GetDict()->GetStringBy("Subtype");
 
   if (type == "Image") {
-    CPDF_ImageObject* pObj = AddImage(pXObject, NULL, FALSE);
+    CPDF_ImageObject* pObj = AddImage(pXObject, nullptr, FALSE);
     m_LastImageName = name;
     m_pLastImage = pObj->m_pImage;
     if (!m_pObjectHolder->HasImageMask())
@@ -773,7 +773,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
                                                      CPDF_Image* pImage,
                                                      FX_BOOL bInline) {
   if (!pStream && !pImage) {
-    return NULL;
+    return nullptr;
   }
   CFX_Matrix ImageMatrix;
   ImageMatrix.Copy(m_pCurStates->m_CTM);
@@ -1010,7 +1010,7 @@ void CPDF_StreamContentParser::Handle_SetColor_Fill() {
   for (int i = 0; i < nargs; i++) {
     values[i] = GetNumber(nargs - i - 1);
   }
-  m_pCurStates->m_ColorState.SetFillColor(NULL, values, nargs);
+  m_pCurStates->m_ColorState.SetFillColor(nullptr, values, nargs);
 }
 
 void CPDF_StreamContentParser::Handle_SetColor_Stroke() {
@@ -1022,7 +1022,7 @@ void CPDF_StreamContentParser::Handle_SetColor_Stroke() {
   for (int i = 0; i < nargs; i++) {
     values[i] = GetNumber(nargs - i - 1);
   }
-  m_pCurStates->m_ColorState.SetStrokeColor(NULL, values, nargs);
+  m_pCurStates->m_ColorState.SetStrokeColor(nullptr, values, nargs);
 }
 
 void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
@@ -1034,7 +1034,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
   uint32_t nvalues = nargs;
   if (pLastParam->IsName())
     nvalues--;
-  FX_FLOAT* values = NULL;
+  FX_FLOAT* values = nullptr;
   if (nvalues) {
     values = FX_Alloc(FX_FLOAT, nvalues);
     for (uint32_t i = 0; i < nvalues; i++) {
@@ -1047,7 +1047,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
       m_pCurStates->m_ColorState.SetFillPattern(pPattern, values, nvalues);
     }
   } else {
-    m_pCurStates->m_ColorState.SetFillColor(NULL, values, nvalues);
+    m_pCurStates->m_ColorState.SetFillColor(nullptr, values, nvalues);
   }
   FX_Free(values);
 }
@@ -1062,7 +1062,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
   if (pLastParam->IsName())
     nvalues--;
 
-  FX_FLOAT* values = NULL;
+  FX_FLOAT* values = nullptr;
   if (nvalues) {
     values = FX_Alloc(FX_FLOAT, nvalues);
     for (int i = 0; i < nvalues; i++) {
@@ -1075,7 +1075,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
       m_pCurStates->m_ColorState.SetStrokePattern(pPattern, values, nvalues);
     }
   } else {
-    m_pCurStates->m_ColorState.SetStrokeColor(NULL, values, nvalues);
+    m_pCurStates->m_ColorState.SetStrokeColor(nullptr, values, nvalues);
   }
   FX_Free(values);
 }
@@ -1189,7 +1189,7 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
   CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
   if (!pCSObj) {
     m_bResourceMissing = TRUE;
-    return NULL;
+    return nullptr;
   }
   return m_pDocument->LoadColorSpace(pCSObj);
 }
@@ -1284,7 +1284,7 @@ void CPDF_StreamContentParser::Handle_ShowText() {
   if (str.IsEmpty()) {
     return;
   }
-  AddTextObject(&str, 0, NULL, 1);
+  AddTextObject(&str, 0, nullptr, 1);
 }
 
 void CPDF_StreamContentParser::Handle_ShowText_Positioning() {

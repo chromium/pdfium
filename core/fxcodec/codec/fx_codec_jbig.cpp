@@ -68,7 +68,7 @@ void CCodec_Jbig2Module::DestroyJbig2Context(void* pJbig2Content) {
         ((CCodec_Jbig2Context*)pJbig2Content)->m_pContext);
     delete (CCodec_Jbig2Context*)pJbig2Content;
   }
-  pJbig2Content = NULL;
+  pJbig2Content = nullptr;
 }
 FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
     void* pJbig2Context,
@@ -105,7 +105,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
   if (m_pJbig2Context->m_pContext->GetProcessingStatus() ==
       FXCODEC_STATUS_DECODE_FINISH) {
     CJBig2_Context::DestroyContext(m_pJbig2Context->m_pContext);
-    m_pJbig2Context->m_pContext = NULL;
+    m_pJbig2Context->m_pContext = nullptr;
     if (ret != JBIG2_SUCCESS) {
       return FXCODEC_STATUS_ERROR;
     }
@@ -127,7 +127,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::ContinueDecode(void* pJbig2Context,
     return m_pJbig2Context->m_pContext->GetProcessingStatus();
   }
   CJBig2_Context::DestroyContext(m_pJbig2Context->m_pContext);
-  m_pJbig2Context->m_pContext = NULL;
+  m_pJbig2Context->m_pContext = nullptr;
   if (ret != JBIG2_SUCCESS) {
     return FXCODEC_STATUS_ERROR;
   }

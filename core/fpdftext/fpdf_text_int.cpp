@@ -177,7 +177,7 @@ void CPDF_TextPage::ParseTextPage() {
   m_bIsParsed = false;
   m_TextBuf.Clear();
   m_CharList.clear();
-  m_pPreTextObj = NULL;
+  m_pPreTextObj = nullptr;
   ProcessObject();
 
   m_bIsParsed = true;
@@ -836,7 +836,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(FX_WCHAR wChar,
   if (!IsControlChar(info)) {
     info.m_Index = m_TextBuf.GetLength();
     if (wChar >= 0xFB00 && wChar <= 0xFB06) {
-      FX_WCHAR* pDst = NULL;
+      FX_WCHAR* pDst = nullptr;
       FX_STRSIZE nCount = Unicode_GetNormalization(wChar, pDst);
       if (nCount >= 1) {
         pDst = FX_Alloc(FX_WCHAR, nCount);
@@ -864,7 +864,7 @@ void CPDF_TextPage::AddCharInfoByRLDirection(FX_WCHAR wChar,
   if (!IsControlChar(info)) {
     info.m_Index = m_TextBuf.GetLength();
     wChar = FX_GetMirrorChar(wChar, TRUE, FALSE);
-    FX_WCHAR* pDst = NULL;
+    FX_WCHAR* pDst = nullptr;
     FX_STRSIZE nCount = Unicode_GetNormalization(wChar, pDst);
     if (nCount >= 1) {
       pDst = FX_Alloc(FX_WCHAR, nCount);
@@ -1019,7 +1019,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
 
   CFX_WideString actText;
   FX_BOOL bExist = FALSE;
-  CPDF_Dictionary* pDict = NULL;
+  CPDF_Dictionary* pDict = nullptr;
   int n = 0;
   for (n = 0; n < nContentMark; n++) {
     CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
@@ -1085,7 +1085,7 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   if (nContentMark < 1)
     return;
   CFX_WideString actText;
-  CPDF_Dictionary* pDict = NULL;
+  CPDF_Dictionary* pDict = nullptr;
   for (int n = 0; n < nContentMark; n++) {
     CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
     if (item.GetParamType() == CPDF_ContentMarkItem::ParamType::None)
@@ -1760,7 +1760,7 @@ FX_BOOL CPDF_TextPage::GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info) {
   }
   info.m_Index = m_TextBuf.GetLength();
   info.m_Unicode = unicode;
-  info.m_pTextObj = NULL;
+  info.m_pTextObj = nullptr;
   info.m_CharCode = CPDF_Font::kInvalidCharCode;
   info.m_Flag = FPDFTEXT_CHAR_GENERATED;
   int preWidth = 0;

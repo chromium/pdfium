@@ -8,7 +8,7 @@
 #include "third_party/base/numerics/safe_math.h"
 
 CFX_BasicArray::CFX_BasicArray(int unit_size)
-    : m_pData(NULL), m_nSize(0), m_nMaxSize(0) {
+    : m_pData(nullptr), m_nSize(0), m_nMaxSize(0) {
   if (unit_size < 0 || unit_size > (1 << 28)) {
     m_nUnitSize = 4;
   } else {
@@ -21,7 +21,7 @@ CFX_BasicArray::~CFX_BasicArray() {
 FX_BOOL CFX_BasicArray::SetSize(int nNewSize) {
   if (nNewSize <= 0) {
     FX_Free(m_pData);
-    m_pData = NULL;
+    m_pData = nullptr;
     m_nSize = m_nMaxSize = 0;
     return 0 == nNewSize;
   }
@@ -82,16 +82,16 @@ FX_BOOL CFX_BasicArray::Copy(const CFX_BasicArray& src) {
 }
 uint8_t* CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount) {
   if (nIndex < 0 || nCount <= 0) {
-    return NULL;
+    return nullptr;
   }
   if (nIndex >= m_nSize) {
     if (!SetSize(nIndex + nCount)) {
-      return NULL;
+      return nullptr;
     }
   } else {
     int nOldSize = m_nSize;
     if (!SetSize(m_nSize + nCount)) {
-      return NULL;
+      return nullptr;
     }
     FXSYS_memmove(m_pData + (nIndex + nCount) * m_nUnitSize,
                   m_pData + nIndex * m_nUnitSize,
@@ -130,7 +130,7 @@ FX_BOOL CFX_BasicArray::InsertAt(int nStartIndex,
 }
 const void* CFX_BasicArray::GetDataPtr(int index) const {
   if (index < 0 || index >= m_nSize || !m_pData) {
-    return NULL;
+    return nullptr;
   }
   return m_pData + index * m_nUnitSize;
 }

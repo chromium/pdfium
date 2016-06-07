@@ -182,13 +182,13 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip,
     dest_clip.Intersect(*pDestClip);
   }
   if (dest_clip.IsEmpty()) {
-    return NULL;
+    return nullptr;
   }
   CFX_DIBitmap* pTransBitmap = new CFX_DIBitmap;
   int result_height = dest_clip.Height(), result_width = dest_clip.Width();
   if (!pTransBitmap->Create(result_width, result_height, GetFormat())) {
     delete pTransBitmap;
-    return NULL;
+    return nullptr;
   }
   pTransBitmap->CopyPalette(m_pPalette);
   int dest_pitch = pTransBitmap->GetPitch();

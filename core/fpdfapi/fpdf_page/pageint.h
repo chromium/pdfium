@@ -52,7 +52,7 @@ class CPDF_StreamParser {
   uint32_t GetWordSize() const { return m_WordSize; }
   CPDF_Object* GetObject() {
     CPDF_Object* pObj = m_pLastObj;
-    m_pLastObj = NULL;
+    m_pLastObj = nullptr;
     return pObj;
   }
   uint32_t GetPos() const { return m_Pos; }

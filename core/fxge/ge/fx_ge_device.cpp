@@ -7,8 +7,8 @@
 #include "core/fxge/include/fx_ge.h"
 
 CFX_RenderDevice::CFX_RenderDevice() {
-  m_pDeviceDriver = NULL;
-  m_pBitmap = NULL;
+  m_pDeviceDriver = nullptr;
+  m_pBitmap = nullptr;
 }
 CFX_RenderDevice::~CFX_RenderDevice() {
   delete m_pDeviceDriver;
@@ -193,7 +193,7 @@ FX_BOOL CFX_RenderDevice::DrawPathWithBlend(
       if (bThin) {
         strokecolor = (((fill_alpha >> 2) << 24) | (strokecolor & 0x00ffffff));
       }
-      CFX_Matrix* pMatrix = NULL;
+      CFX_Matrix* pMatrix = nullptr;
       if (pObject2Device && !pObject2Device->IsIdentity()) {
         pMatrix = (CFX_Matrix*)pObject2Device;
       }
@@ -255,7 +255,7 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
       bitmap.Clear(0);
       Backdrop.Copy(&bitmap);
     } else {
-      if (!m_pDeviceDriver->GetDIBits(&bitmap, rect.left, rect.top, NULL)) {
+      if (!m_pDeviceDriver->GetDIBits(&bitmap, rect.left, rect.top, nullptr)) {
         return FALSE;
       }
       Backdrop.Copy(&bitmap);

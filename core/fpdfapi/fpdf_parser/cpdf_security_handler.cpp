@@ -531,7 +531,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
     owner_size = user_size;
   }
   if (m_Revision >= 5) {
-    int t = (int)time(NULL);
+    int t = (int)time(nullptr);
     uint8_t sha[128];
     CRYPT_SHA256Start(sha);
     CRYPT_SHA256Update(sha, (uint8_t*)&t, sizeof t);
@@ -620,7 +620,8 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
                                     const uint8_t* user_pass,
                                     uint32_t user_size,
                                     uint32_t type) {
-  OnCreate(pEncryptDict, pIdArray, user_pass, user_size, NULL, 0, FALSE, type);
+  OnCreate(pEncryptDict, pIdArray, user_pass, user_size, nullptr, 0, FALSE,
+           type);
 }
 void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
                                               const uint8_t* password,

@@ -29,8 +29,7 @@ IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(CFDE_TxtEdtEngine* pEngine,
 }
 
 CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
-    : m_pIter(nullptr),
-      m_pTextSet(nullptr),
+    : m_pTextSet(nullptr),
       m_pBgnParag(nullptr),
       m_pEndParag(nullptr),
       m_nRefCount(0),

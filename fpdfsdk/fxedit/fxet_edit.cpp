@@ -756,7 +756,6 @@ CFX_Edit::CFX_Edit(CPDF_VariableText* pVT)
       m_ptScrollPos(0, 0),
       m_ptRefreshScrollPos(0, 0),
       m_bEnableScroll(FALSE),
-      m_pIterator(nullptr),
       m_ptCaret(0.0f, 0.0f),
       m_Undo(kEditUndoMaxItems),
       m_nAlignment(0),

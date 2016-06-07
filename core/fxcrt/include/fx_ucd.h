@@ -158,7 +158,7 @@ class CFX_TxtChar : public CFX_Char {
         m_iBidiLevel(0),
         m_iBidiPos(0),
         m_iBidiOrder(0),
-        m_pUserData(NULL) {}
+        m_pUserData(nullptr) {}
   uint32_t m_dwStatus;
   int16_t m_iBidiClass;
   int16_t m_iBidiLevel;
@@ -179,7 +179,7 @@ class CFX_RTFChar : public CFX_Char {
         m_iBidiPos(0),
         m_dwLayoutStyles(0),
         m_dwIdentity(0),
-        m_pUserData(NULL) {}
+        m_pUserData(nullptr) {}
   uint32_t m_dwStatus;
   int32_t m_iFontSize;
   int32_t m_iFontHeight;

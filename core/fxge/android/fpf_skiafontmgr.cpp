@@ -218,7 +218,7 @@ static FX_BOOL FPF_SkiaMaybeArabic(const CFX_ByteStringC& bsFacename) {
   bsName.MakeLower();
   return bsName.Find("arabic") > -1;
 }
-CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() : m_bLoaded(FALSE), m_FTLibrary(NULL) {}
+CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() : m_bLoaded(FALSE), m_FTLibrary(nullptr) {}
 CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
   for (const auto& pair : m_FamilyFonts) {
     if (pair.second)
@@ -234,10 +234,9 @@ CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
   }
 }
 FX_BOOL CFPF_SkiaFontMgr::InitFTLibrary() {
-  if (!m_FTLibrary) {
+  if (!m_FTLibrary)
     FXFT_Init_FreeType(&m_FTLibrary);
-  }
-  return m_FTLibrary != NULL;
+  return !!m_FTLibrary;
 }
 void CFPF_SkiaFontMgr::LoadSystemFonts() {
   if (m_bLoaded) {
@@ -333,18 +332,18 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
     }
     pFont->Release();
   }
-  return NULL;
+  return nullptr;
 }
 FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_FileRead* pFileRead,
                                         int32_t iFaceIndex) {
   if (!pFileRead) {
-    return NULL;
+    return nullptr;
   }
   if (pFileRead->GetSize() == 0) {
-    return NULL;
+    return nullptr;
   }
   if (iFaceIndex < 0) {
-    return NULL;
+    return nullptr;
   }
   FXFT_StreamRec streamRec;
   FXSYS_memset(&streamRec, 0, sizeof(FXFT_StreamRec));
@@ -357,7 +356,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_FileRead* pFileRead,
   args.stream = &streamRec;
   FXFT_Face face;
   if (FXFT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face)) {
-    return NULL;
+    return nullptr;
   }
   FXFT_Set_Pixel_Sizes(face, 0, 64);
   return face;
@@ -365,10 +364,10 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_FileRead* pFileRead,
 FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const CFX_ByteStringC& bsFile,
                                         int32_t iFaceIndex) {
   if (bsFile.IsEmpty()) {
-    return NULL;
+    return nullptr;
   }
   if (iFaceIndex < 0) {
-    return NULL;
+    return nullptr;
   }
   FXFT_Open_Args args;
   args.flags = FT_OPEN_PATHNAME;
@@ -384,10 +383,10 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const uint8_t* pBuffer,
                                         size_t szBuffer,
                                         int32_t iFaceIndex) {
   if (!pBuffer || szBuffer < 1) {
-    return NULL;
+    return nullptr;
   }
   if (iFaceIndex < 0) {
-    return NULL;
+    return nullptr;
   }
   FXFT_Open_Args args;
   args.flags = FT_OPEN_MEMORY;

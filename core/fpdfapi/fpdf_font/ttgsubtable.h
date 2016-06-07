@@ -53,7 +53,7 @@ class CFX_CTTGSUBTable {
         : LookupOrder(0),
           ReqFeatureIndex(0),
           FeatureCount(0),
-          FeatureIndex(NULL) {}
+          FeatureIndex(nullptr) {}
     ~TLangSys() { delete[] FeatureIndex; }
 
    private:
@@ -73,7 +73,7 @@ class CFX_CTTGSUBTable {
     uint16_t DefaultLangSys;
     uint16_t LangSysCount;
     struct TLangSysRecord* LangSysRecord;
-    TScript() : DefaultLangSys(0), LangSysCount(0), LangSysRecord(NULL) {}
+    TScript() : DefaultLangSys(0), LangSysCount(0), LangSysRecord(nullptr) {}
     ~TScript() { delete[] LangSysRecord; }
 
    private:
@@ -92,7 +92,7 @@ class CFX_CTTGSUBTable {
   struct TScriptList {
     uint16_t ScriptCount;
     struct TScriptRecord* ScriptRecord;
-    TScriptList() : ScriptCount(0), ScriptRecord(NULL) {}
+    TScriptList() : ScriptCount(0), ScriptRecord(nullptr) {}
     ~TScriptList() { delete[] ScriptRecord; }
 
    private:
@@ -103,7 +103,7 @@ class CFX_CTTGSUBTable {
     uint16_t FeatureParams;
     int LookupCount;
     uint16_t* LookupListIndex;
-    TFeature() : FeatureParams(0), LookupCount(0), LookupListIndex(NULL) {}
+    TFeature() : FeatureParams(0), LookupCount(0), LookupListIndex(nullptr) {}
     ~TFeature() { delete[] LookupListIndex; }
 
    private:
@@ -122,7 +122,7 @@ class CFX_CTTGSUBTable {
   struct TFeatureList {
     int FeatureCount;
     struct TFeatureRecord* FeatureRecord;
-    TFeatureList() : FeatureCount(0), FeatureRecord(NULL) {}
+    TFeatureList() : FeatureCount(0), FeatureRecord(nullptr) {}
     ~TFeatureList() { delete[] FeatureRecord; }
 
    private:
@@ -150,7 +150,9 @@ class CFX_CTTGSUBTable {
   struct TCoverageFormat1 : public TCoverageFormatBase {
     uint16_t GlyphCount;
     uint16_t* GlyphArray;
-    TCoverageFormat1() : GlyphCount(0), GlyphArray(NULL) { CoverageFormat = 1; }
+    TCoverageFormat1() : GlyphCount(0), GlyphArray(nullptr) {
+      CoverageFormat = 1;
+    }
     ~TCoverageFormat1() override { delete[] GlyphArray; }
 
    private:
@@ -172,7 +174,7 @@ class CFX_CTTGSUBTable {
   struct TCoverageFormat2 : public TCoverageFormatBase {
     uint16_t RangeCount;
     struct TRangeRecord* RangeRecord;
-    TCoverageFormat2() : RangeCount(0), RangeRecord(NULL) {
+    TCoverageFormat2() : RangeCount(0), RangeRecord(nullptr) {
       CoverageFormat = 2;
     }
     ~TCoverageFormat2() override { delete[] RangeRecord; }
@@ -194,7 +196,8 @@ class CFX_CTTGSUBTable {
     uint16_t StartGlyph;
     uint16_t GlyphCount;
     uint16_t* ClassValueArray;
-    TClassDefFormat1() : StartGlyph(0), GlyphCount(0), ClassValueArray(NULL) {
+    TClassDefFormat1()
+        : StartGlyph(0), GlyphCount(0), ClassValueArray(nullptr) {
       ClassFormat = 1;
     }
     ~TClassDefFormat1() override { delete[] ClassValueArray; }
@@ -216,7 +219,7 @@ class CFX_CTTGSUBTable {
   struct TClassDefFormat2 : public TClassDefFormatBase {
     uint16_t ClassRangeCount;
     struct TClassRangeRecord* ClassRangeRecord;
-    TClassDefFormat2() : ClassRangeCount(0), ClassRangeRecord(NULL) {
+    TClassDefFormat2() : ClassRangeCount(0), ClassRangeRecord(nullptr) {
       ClassFormat = 2;
     }
     ~TClassDefFormat2() override { delete[] ClassRangeRecord; }
@@ -247,7 +250,9 @@ class CFX_CTTGSUBTable {
   struct TSingleSubstFormat1 : public TSubTableBase {
     TCoverageFormatBase* Coverage;
     int16_t DeltaGlyphID;
-    TSingleSubstFormat1() : Coverage(NULL), DeltaGlyphID(0) { SubstFormat = 1; }
+    TSingleSubstFormat1() : Coverage(nullptr), DeltaGlyphID(0) {
+      SubstFormat = 1;
+    }
     ~TSingleSubstFormat1() override { delete Coverage; }
 
    private:
@@ -258,7 +263,8 @@ class CFX_CTTGSUBTable {
     TCoverageFormatBase* Coverage;
     uint16_t GlyphCount;
     uint16_t* Substitute;
-    TSingleSubstFormat2() : Coverage(NULL), GlyphCount(0), Substitute(NULL) {
+    TSingleSubstFormat2()
+        : Coverage(nullptr), GlyphCount(0), Substitute(nullptr) {
       SubstFormat = 2;
     }
     ~TSingleSubstFormat2() override {
@@ -276,7 +282,7 @@ class CFX_CTTGSUBTable {
     uint16_t SubTableCount;
     struct TSubTableBase** SubTable;
     TLookup()
-        : LookupType(0), LookupFlag(0), SubTableCount(0), SubTable(NULL) {}
+        : LookupType(0), LookupFlag(0), SubTableCount(0), SubTable(nullptr) {}
     ~TLookup() {
       if (SubTable) {
         for (int i = 0; i < SubTableCount; ++i)
@@ -292,7 +298,7 @@ class CFX_CTTGSUBTable {
   struct TLookupList {
     int LookupCount;
     struct TLookup* Lookup;
-    TLookupList() : LookupCount(0), Lookup(NULL) {}
+    TLookupList() : LookupCount(0), Lookup(nullptr) {}
     ~TLookupList() { delete[] Lookup; }
 
    private:

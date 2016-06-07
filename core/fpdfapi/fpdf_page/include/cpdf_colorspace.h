@@ -79,7 +79,7 @@ class CPDF_ColorSpace {
                                   FX_BOOL bTransMask = FALSE) const;
 
   CPDF_Array*& GetArray() { return m_pArray; }
-  virtual CPDF_ColorSpace* GetBaseCS() const { return NULL; }
+  virtual CPDF_ColorSpace* GetBaseCS() const { return nullptr; }
 
   virtual void EnableStdConversion(FX_BOOL bEnabled);
 

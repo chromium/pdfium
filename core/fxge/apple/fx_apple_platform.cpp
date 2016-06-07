@@ -31,7 +31,7 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
           ->m_quartz2d;
   if (m_pPlatformGraphics) {
     quartz2d.destroyGraphics(m_pPlatformGraphics);
-    m_pPlatformGraphics = NULL;
+    m_pPlatformGraphics = nullptr;
   }
 }
 void CFX_FaceCache::InitPlatform() {}
@@ -42,7 +42,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph_Nativetext(
     const CFX_Matrix* pMatrix,
     int dest_width,
     int anti_alias) {
-  return NULL;
+  return nullptr;
 }
 static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
                                int nChars,
@@ -100,7 +100,7 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
   quartz2d.setGraphicsTextMatrix(pContext, &new_matrix);
   return quartz2d.drawGraphicsString(pContext, pFont->GetPlatformFont(),
                                      font_size, glyph_indices, glyph_positions,
-                                     nChars, argb, NULL);
+                                     nChars, argb, nullptr);
 }
 static void _DoNothing(void* info, const void* data, size_t size) {}
 FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
@@ -127,13 +127,13 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
     }
   }
   CGContextRef ctx = CGContextRef(m_pPlatformGraphics);
-  if (NULL == ctx) {
+  if (!ctx)
     return FALSE;
-  }
+
   CGContextSaveGState(ctx);
   CGContextSetTextDrawingMode(ctx, kCGTextFillClip);
   CGRect rect_cg;
-  CGImageRef pImageCG = NULL;
+  CGImageRef pImageCG = nullptr;
   if (m_pClipRgn) {
     rect_cg =
         CGRectMake(m_pClipRgn->GetBox().left, m_pClipRgn->GetBox().top,
@@ -141,7 +141,7 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
     const CFX_DIBitmap* pClipMask = m_pClipRgn->GetMask();
     if (pClipMask) {
       CGDataProviderRef pClipMaskDataProvider = CGDataProviderCreateWithData(
-          NULL, pClipMask->GetBuffer(),
+          nullptr, pClipMask->GetBuffer(),
           pClipMask->GetPitch() * pClipMask->GetHeight(), _DoNothing);
       CGFloat decode_f[2] = {255.f, 0.f};
       pImageCG = CGImageMaskCreate(
@@ -173,7 +173,7 @@ void CFX_Font::ReleasePlatformResource() {
         static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
             ->m_quartz2d;
     quartz2d.DestroyFont(m_pPlatformFont);
-    m_pPlatformFont = NULL;
+    m_pPlatformFont = nullptr;
   }
 }
 

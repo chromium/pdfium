@@ -33,7 +33,7 @@ class CPDF_Creator {
 
   void RemoveSecurity();
   bool Create(IFX_StreamWrite* pFile, uint32_t flags = 0);
-  int32_t Continue(IFX_Pause* pPause = NULL);
+  int32_t Continue(IFX_Pause* pPause = nullptr);
   FX_BOOL SetFileVersion(int32_t fileVersion = 17);
 
  private:

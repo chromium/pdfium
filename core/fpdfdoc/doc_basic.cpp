@@ -92,7 +92,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
                                    CPDF_Array** ppFind,
                                    int nLevel = 0) {
   if (nLevel > nMaxRecursion) {
-    return NULL;
+    return nullptr;
   }
   CPDF_Array* pLimits = pNode->GetArrayBy("Limits");
   if (pLimits) {
@@ -105,7 +105,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     }
     if (csName.Compare(csLeft.AsStringC()) < 0 ||
         csName.Compare(csRight.AsStringC()) > 0) {
-      return NULL;
+      return nullptr;
     }
   }
   CPDF_Array* pNames = pNode->GetArrayBy("Names");
@@ -128,11 +128,11 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
       return pNames->GetDirectObjectAt(i * 2 + 1);
     }
     nIndex += dwCount;
-    return NULL;
+    return nullptr;
   }
   CPDF_Array* pKids = pNode->GetArrayBy("Kids");
   if (!pKids) {
-    return NULL;
+    return nullptr;
   }
   for (size_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
@@ -145,7 +145,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
       return pFound;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
@@ -155,14 +155,14 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
                                    CPDF_Array** ppFind,
                                    int nLevel = 0) {
   if (nLevel > nMaxRecursion)
-    return NULL;
+    return nullptr;
 
   CPDF_Array* pNames = pNode->GetArrayBy("Names");
   if (pNames) {
     size_t nCount = pNames->GetCount() / 2;
     if (nIndex >= nCurIndex + nCount) {
       nCurIndex += nCount;
-      return NULL;
+      return nullptr;
     }
     if (ppFind)
       *ppFind = pNames;
@@ -171,7 +171,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   }
   CPDF_Array* pKids = pNode->GetArrayBy("Kids");
   if (!pKids)
-    return NULL;
+    return nullptr;
   for (size_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
@@ -181,7 +181,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     if (pFound)
       return pFound;
   }
-  return NULL;
+  return nullptr;
 }
 
 static size_t CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
@@ -219,7 +219,7 @@ int CPDF_NameTree::GetIndex(const CFX_ByteString& csName) const {
     return -1;
   }
   size_t nIndex = 0;
-  if (!SearchNameNode(m_pRoot, csName, nIndex, NULL)) {
+  if (!SearchNameNode(m_pRoot, csName, nIndex, nullptr)) {
     return -1;
   }
   return nIndex;
@@ -227,17 +227,17 @@ int CPDF_NameTree::GetIndex(const CFX_ByteString& csName) const {
 CPDF_Object* CPDF_NameTree::LookupValue(int nIndex,
                                         CFX_ByteString& csName) const {
   if (!m_pRoot) {
-    return NULL;
+    return nullptr;
   }
   size_t nCurIndex = 0;
-  return SearchNameNode(m_pRoot, nIndex, nCurIndex, csName, NULL);
+  return SearchNameNode(m_pRoot, nIndex, nCurIndex, csName, nullptr);
 }
 CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const {
   if (!m_pRoot) {
-    return NULL;
+    return nullptr;
   }
   size_t nIndex = 0;
-  return SearchNameNode(m_pRoot, csName, nIndex, NULL);
+  return SearchNameNode(m_pRoot, csName, nIndex, nullptr);
 }
 CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
                                            const CFX_ByteString& sName) {
@@ -474,7 +474,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
   }
   CPDF_Dictionary* pLabels = pPDFRoot->GetDictBy("PageLabels");
   CPDF_NumberTree numberTree(pLabels);
-  CPDF_Object* pValue = NULL;
+  CPDF_Object* pValue = nullptr;
   int n = nPage;
   while (n >= 0) {
     pValue = numberTree.LookupValue(n);
@@ -489,7 +489,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
       if (pLabel->KeyExist("P")) {
         wsLabel += pLabel->GetUnicodeTextBy("P");
       }
-      CFX_ByteString bsNumberingStyle = pLabel->GetStringBy("S", nullptr);
+      CFX_ByteString bsNumberingStyle = pLabel->GetStringBy("S", "");
       int nLabelNum = nPage - n + pLabel->GetIntegerBy("St", 1);
       CFX_WideString wsNumPortion =
           _GetLabelNumPortion(nLabelNum, bsNumberingStyle);

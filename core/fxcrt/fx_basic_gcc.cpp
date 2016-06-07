@@ -138,7 +138,7 @@ FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode) {
 }
 char* FXSYS_strlwr(char* str) {
   if (!str) {
-    return NULL;
+    return nullptr;
   }
   char* s = str;
   while (*str) {
@@ -149,7 +149,7 @@ char* FXSYS_strlwr(char* str) {
 }
 char* FXSYS_strupr(char* str) {
   if (!str) {
-    return NULL;
+    return nullptr;
   }
   char* s = str;
   while (*str) {
@@ -160,7 +160,7 @@ char* FXSYS_strupr(char* str) {
 }
 FX_WCHAR* FXSYS_wcslwr(FX_WCHAR* str) {
   if (!str) {
-    return NULL;
+    return nullptr;
   }
   FX_WCHAR* s = str;
   while (*str) {
@@ -171,7 +171,7 @@ FX_WCHAR* FXSYS_wcslwr(FX_WCHAR* str) {
 }
 FX_WCHAR* FXSYS_wcsupr(FX_WCHAR* str) {
   if (!str) {
-    return NULL;
+    return nullptr;
   }
   FX_WCHAR* s = str;
   while (*str) {

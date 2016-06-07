@@ -53,13 +53,13 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                    uint32_t stroke_color,
                    int fill_mode,
                    int alpha_flag = 0,
-                   void* pIccTransform = NULL,
+                   void* pIccTransform = nullptr,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
 
   FX_BOOL FillRect(const FX_RECT* pRect,
                    uint32_t fill_color,
                    int alpha_flag = 0,
-                   void* pIccTransform = NULL,
+                   void* pIccTransform = nullptr,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
 
   /** Draw a single pixel (device dependant) line */
@@ -69,7 +69,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                            FX_FLOAT y2,
                            uint32_t color,
                            int alpha_flag = 0,
-                           void* pIccTransform = NULL,
+                           void* pIccTransform = nullptr,
                            int blend_type = FXDIB_BLEND_NORMAL) override {
     return FALSE;
   }
@@ -80,7 +80,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
                     int left,
                     int top,
-                    void* pIccTransform = NULL,
+                    void* pIccTransform = nullptr,
                     FX_BOOL bDEdge = FALSE) override;
 
   CFX_DIBitmap* GetBackDrop() override { return m_pOriDevice; }
@@ -92,7 +92,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                     int dest_top,
                     int blend_type,
                     int alpha_flag = 0,
-                    void* pIccTransform = NULL) override;
+                    void* pIccTransform = nullptr) override;
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                         uint32_t color,
                         int dest_left,
@@ -102,7 +102,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                         const FX_RECT* pClipRect,
                         uint32_t flags,
                         int alpha_flag = 0,
-                        void* pIccTransform = NULL,
+                        void* pIccTransform = nullptr,
                         int blend_type = FXDIB_BLEND_NORMAL) override;
 
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
@@ -112,7 +112,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       uint32_t flags,
                       void*& handle,
                       int alpha_flag = 0,
-                      void* pIccTransform = NULL,
+                      void* pIccTransform = nullptr,
                       int blend_type = FXDIB_BLEND_NORMAL) override;
 
   FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) override {
@@ -129,7 +129,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                          FX_FLOAT font_size,
                          uint32_t color,
                          int alpha_flag = 0,
-                         void* pIccTransform = NULL) override;
+                         void* pIccTransform = nullptr) override;
 
   FX_BOOL DrawShading(const CPDF_ShadingPattern* pPattern,
                       const CFX_Matrix* pMatrix,

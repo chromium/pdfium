@@ -40,7 +40,7 @@ void CWeightTable::Calc(int dest_len,
                         int src_max,
                         int flags) {
   FX_Free(m_pWeightTables);
-  m_pWeightTables = NULL;
+  m_pWeightTables = nullptr;
   double scale, base;
   scale = (FX_FLOAT)src_len / (FX_FLOAT)dest_len;
   if (dest_len < 0) {
@@ -249,9 +249,9 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
   m_pDestBitmap = pDestBitmap;
   m_DestWidth = dest_width;
   m_DestHeight = dest_height;
-  m_pInterBuf = NULL;
-  m_pExtraAlphaBuf = NULL;
-  m_pDestMaskScanline = NULL;
+  m_pInterBuf = nullptr;
+  m_pExtraAlphaBuf = nullptr;
+  m_pDestMaskScanline = nullptr;
   m_DestClip = clip_rect;
   uint32_t size = clip_rect.Width();
   if (size && m_DestBpp > (int)(INT_MAX / size)) {
@@ -272,7 +272,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
   }
   m_InterPitch = (m_DestClip.Width() * m_DestBpp + 31) / 32 * 4;
   m_ExtraMaskPitch = (m_DestClip.Width() * 8 + 31) / 32 * 4;
-  m_pInterBuf = NULL;
+  m_pInterBuf = nullptr;
   m_pSource = pSrcBitmap;
   m_SrcWidth = pSrcBitmap->GetWidth();
   m_SrcHeight = pSrcBitmap->GetHeight();
@@ -408,8 +408,8 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
     const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow);
     uint8_t* dest_scan =
         m_pInterBuf + (m_CurRow - m_SrcClip.top) * m_InterPitch;
-    const uint8_t* src_scan_mask = NULL;
-    uint8_t* dest_scan_mask = NULL;
+    const uint8_t* src_scan_mask = nullptr;
+    uint8_t* dest_scan_mask = nullptr;
     if (m_pExtraAlphaBuf) {
       src_scan_mask = m_pSource->m_pAlphaMask->GetScanline(m_CurRow);
       dest_scan_mask =
@@ -718,7 +718,7 @@ void CStretchEngine::StretchVert() {
         for (int col = m_DestClip.left; col < m_DestClip.right; col++) {
           unsigned char* src_scan =
               m_pInterBuf + (col - m_DestClip.left) * DestBpp;
-          unsigned char* src_scan_mask = NULL;
+          unsigned char* src_scan_mask = nullptr;
           if (m_DestFormat != FXDIB_Argb) {
             src_scan_mask = m_pExtraAlphaBuf + (col - m_DestClip.left);
           }

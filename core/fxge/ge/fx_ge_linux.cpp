@@ -28,11 +28,11 @@ static const struct {
 } LinuxGpFontList[] = {
     {{"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic", "Kochi Gothic",
       "VL Gothic regular"}},
-    {{"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic", NULL,
+    {{"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic", nullptr,
       "VL Gothic regular"}},
-    {{"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho", NULL,
+    {{"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho", nullptr,
       "VL Gothic regular"}},
-    {{"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho", NULL,
+    {{"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho", nullptr,
       "VL Gothic regular"}},
 };
 static const FX_CHAR* const g_LinuxGbFontList[] = {

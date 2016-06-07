@@ -73,15 +73,15 @@ CCodec_TiffContext::CCodec_TiffContext() {
   offset = 0;
   frame_num = 0;
   frame_cur = 0;
-  io.in = NULL;
-  tif_ctx = NULL;
-  icc_ctx = NULL;
+  io.in = nullptr;
+  tif_ctx = nullptr;
+  icc_ctx = nullptr;
   isDecoder = TRUE;
 }
 CCodec_TiffContext::~CCodec_TiffContext() {
   if (icc_ctx) {
     IccLib_DestroyTransform(icc_ctx);
-    icc_ctx = NULL;
+    icc_ctx = nullptr;
   }
   if (tif_ctx) {
     TIFFClose(tif_ctx);
@@ -193,9 +193,9 @@ int TIFFCmyk2Rgb(thandle_t context,
                  uint8* r,
                  uint8* g,
                  uint8* b) {
-  if (context == NULL) {
+  if (!context)
     return 0;
-  }
+
   CCodec_TiffContext* p = (CCodec_TiffContext*)context;
   if (p->icc_ctx) {
     unsigned char cmyk[4], bgr[3];
@@ -209,11 +209,7 @@ int TIFFCmyk2Rgb(thandle_t context,
 }
 FX_BOOL CCodec_TiffContext::InitDecoder(IFX_FileRead* file_ptr) {
   io.in = file_ptr;
-  tif_ctx = _tiff_open(this, "r");
-  if (tif_ctx == NULL) {
-    return FALSE;
-  }
-  return TRUE;
+  return !!_tiff_open(this, "r");
 }
 void CCodec_TiffContext::GetFrames(int32_t& frames) {
   frames = frame_num = TIFFNumberOfDirectories(tif_ctx);
@@ -231,11 +227,11 @@ void CCodec_TiffContext::GetFrames(int32_t& frames) {
       }                                     \
     }                                       \
   }                                         \
-  (key) = NULL;
+  (key) = nullptr;
 #define TIFF_EXIF_GETSTRINGINFO(key, tag)    \
   {                                          \
     uint32_t size = 0;                       \
-    uint8_t* buf = NULL;                     \
+    uint8_t* buf = nullptr;                  \
     TIFFGetField(tif_ctx, tag, &size, &buf); \
     if (size && buf) {                       \
       (key) = FX_Alloc(uint8_t, size);       \
@@ -245,7 +241,7 @@ void CCodec_TiffContext::GetFrames(int32_t& frames) {
       }                                      \
     }                                        \
   }                                          \
-  (key) = NULL;
+  (key) = nullptr;
 
 namespace {
 
@@ -287,7 +283,7 @@ FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame,
   }
   uint16_t tif_cs;
   uint32_t tif_icc_size = 0;
-  uint8_t* tif_icc_buf = NULL;
+  uint8_t* tif_icc_buf = nullptr;
   uint16_t tif_bpc = 0;
   uint16_t tif_cps;
   uint32_t tif_rps;
@@ -399,7 +395,7 @@ FX_BOOL CCodec_TiffContext::Decode1bppRGB(CFX_DIBitmap* pDIBitmap,
   SetPalette(pDIBitmap, bps);
   int32_t size = (int32_t)TIFFScanlineSize(tif_ctx);
   uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
-  if (buf == NULL) {
+  if (!buf) {
     TIFFError(TIFFFileName(tif_ctx), "No space for scanline buffer");
     return FALSE;
   }
@@ -426,7 +422,7 @@ FX_BOOL CCodec_TiffContext::Decode8bppRGB(CFX_DIBitmap* pDIBitmap,
   SetPalette(pDIBitmap, bps);
   int32_t size = (int32_t)TIFFScanlineSize(tif_ctx);
   uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
-  if (buf == NULL) {
+  if (!buf) {
     TIFFError(TIFFFileName(tif_ctx), "No space for scanline buffer");
     return FALSE;
   }
@@ -459,7 +455,7 @@ FX_BOOL CCodec_TiffContext::Decode24bppRGB(CFX_DIBitmap* pDIBitmap,
   }
   int32_t size = (int32_t)TIFFScanlineSize(tif_ctx);
   uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
-  if (buf == NULL) {
+  if (!buf) {
     TIFFError(TIFFFileName(tif_ctx), "No space for scanline buffer");
     return FALSE;
   }

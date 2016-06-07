@@ -43,7 +43,7 @@ CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize) {
   m_pBuf = pData;
   m_Size = dwSize;
   m_Pos = 0;
-  m_pLastObj = NULL;
+  m_pLastObj = nullptr;
 }
 
 CPDF_StreamParser::~CPDF_StreamParser() {
@@ -168,30 +168,30 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     }
     uint32_t pitch = width;
     if (bpc && pitch > INT_MAX / bpc) {
-      return NULL;
+      return nullptr;
     }
     pitch *= bpc;
     if (nComponents && pitch > INT_MAX / nComponents) {
-      return NULL;
+      return nullptr;
     }
     pitch *= nComponents;
     if (pitch > INT_MAX - 7) {
-      return NULL;
+      return nullptr;
     }
     pitch += 7;
     pitch /= 8;
     OrigSize = pitch;
   } else {
     if (width > INT_MAX - 7) {
-      return NULL;
+      return nullptr;
     }
     OrigSize = ((width + 7) / 8);
   }
   if (height && OrigSize > INT_MAX / height) {
-    return NULL;
+    return nullptr;
   }
   OrigSize *= height;
-  uint8_t* pData = NULL;
+  uint8_t* pData = nullptr;
   uint32_t dwStreamSize;
   if (Decoder.IsEmpty()) {
     if (OrigSize > m_Size - m_Pos) {
@@ -208,7 +208,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
                                Decoder, pParam, pData, dwDestSize);
     FX_Free(pData);
     if ((int)dwStreamSize < 0)
-      return NULL;
+      return nullptr;
 
     uint32_t dwSavePos = m_Pos;
     m_Pos += dwStreamSize;
@@ -714,7 +714,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
     pData->m_BlendType = FXDIB_BLEND_NORMAL;
     pData->m_StrokeAlpha = 1.0f;
     pData->m_FillAlpha = 1.0f;
-    pData->m_pSoftMask = NULL;
+    pData->m_pSoftMask = nullptr;
   }
   m_nStreams = 0;
   m_pSingleStream.reset(new CPDF_StreamAcc);

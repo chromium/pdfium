@@ -61,7 +61,7 @@ void CPDF_DocRenderData::Clear(FX_BOOL bRelease) {
   if (m_pFontCache) {
     if (bRelease) {
       delete m_pFontCache;
-      m_pFontCache = NULL;
+      m_pFontCache = nullptr;
     } else {
       m_pFontCache->FreeCache(FALSE);
     }
@@ -92,7 +92,7 @@ CPDF_RenderOptions::CPDF_RenderOptions()
       m_Flags(RENDER_CLEARTYPE),
       m_Interpolation(0),
       m_AddFlags(0),
-      m_pOCContext(NULL),
+      m_pOCContext(nullptr),
       m_dwLimitCacheSize(1024 * 1024 * 100),
       m_HalftoneLimit(-1) {}
 FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
@@ -324,7 +324,7 @@ void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
   FX_BOOL bRet = FALSE;
   switch (pObj->GetType()) {
     case CPDF_PageObject::TEXT:
-      bRet = ProcessText(pObj->AsText(), pObj2Device, NULL);
+      bRet = ProcessText(pObj->AsText(), pObj2Device, nullptr);
       break;
     case CPDF_PageObject::PATH:
       bRet = ProcessPath(pObj->AsPath(), pObj2Device);
@@ -384,7 +384,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
   CFX_Matrix matrix = *pObj2Device;
   matrix.Concat(*buffer.GetMatrix());
   GetScaledMatrix(matrix);
-  CPDF_Dictionary* pFormResource = NULL;
+  CPDF_Dictionary* pFormResource = nullptr;
   if (pObj->IsForm()) {
     const CPDF_FormObject* pFormObj = pObj->AsForm();
     if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
@@ -392,9 +392,9 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
     }
   }
   CPDF_RenderStatus status;
-  status.Initialize(m_pContext, buffer.GetDevice(), buffer.GetMatrix(), NULL,
-                    NULL, NULL, &m_Options, m_Transparency, m_bDropObjects,
-                    pFormResource);
+  status.Initialize(m_pContext, buffer.GetDevice(), buffer.GetMatrix(), nullptr,
+                    nullptr, nullptr, &m_Options, m_Transparency,
+                    m_bDropObjects, pFormResource);
   status.RenderSingleObject(pObj, &matrix);
   buffer.OutputToDevice();
 }
@@ -407,12 +407,12 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   }
   CFX_Matrix matrix = pFormObj->m_FormMatrix;
   matrix.Concat(*pObj2Device);
-  CPDF_Dictionary* pResources = NULL;
+  CPDF_Dictionary* pResources = nullptr;
   if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
     pResources = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
   }
   CPDF_RenderStatus status;
-  status.Initialize(m_pContext, m_pDevice, NULL, m_pStopObj, this, pFormObj,
+  status.Initialize(m_pContext, m_pDevice, nullptr, m_pStopObj, this, pFormObj,
                     &m_Options, m_Transparency, m_bDropObjects, pResources,
                     FALSE);
   status.m_curBlend = m_curBlend;
@@ -669,14 +669,14 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     return TRUE;
   }
   CPDF_Dictionary* pSMaskDict =
-      pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : NULL;
+      pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : nullptr;
   if (pSMaskDict) {
     if (pPageObj->IsImage() &&
         pPageObj->AsImage()->m_pImage->GetDict()->KeyExist("SMask")) {
-      pSMaskDict = NULL;
+      pSMaskDict = nullptr;
     }
   }
-  CPDF_Dictionary* pFormResource = NULL;
+  CPDF_Dictionary* pFormResource = nullptr;
   FX_FLOAT group_alpha = 1.0f;
   int Transparency = m_Transparency;
   FX_BOOL bGroupTransparent = FALSE;
@@ -701,15 +701,15 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   }
   if ((m_Options.m_Flags & RENDER_OVERPRINT) && pPageObj->IsImage() &&
       pGeneralState && pGeneralState->m_FillOP && pGeneralState->m_StrokeOP) {
-    CPDF_Document* pDocument = NULL;
-    CPDF_Page* pPage = NULL;
+    CPDF_Document* pDocument = nullptr;
+    CPDF_Page* pPage = nullptr;
     if (m_pContext->GetPageCache()) {
       pPage = m_pContext->GetPageCache()->GetPage();
       pDocument = pPage->m_pDocument;
     } else {
       pDocument = pPageObj->AsImage()->m_pImage->GetDocument();
     }
-    CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : NULL;
+    CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : nullptr;
     CPDF_Object* pCSObj = pPageObj->AsImage()
                               ->m_pImage->GetStream()
                               ->GetDict()
@@ -796,9 +796,9 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     }
   }
   CPDF_RenderStatus bitmap_render;
-  bitmap_render.Initialize(m_pContext, &bitmap_device, NULL, m_pStopObj, NULL,
-                           NULL, &m_Options, 0, m_bDropObjects, pFormResource,
-                           TRUE);
+  bitmap_render.Initialize(m_pContext, &bitmap_device, nullptr, m_pStopObj,
+                           nullptr, nullptr, &m_Options, 0, m_bDropObjects,
+                           pFormResource, TRUE);
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
@@ -891,7 +891,7 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
     const CPDF_GraphicStates* pSrcStates,
     FX_BOOL bStroke) {
   if (!pSrcStates) {
-    return NULL;
+    return nullptr;
   }
   CPDF_GraphicStates* pStates = new CPDF_GraphicStates;
   pStates->CopyStates(*pSrcStates);
@@ -935,7 +935,7 @@ void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
                                 const CPDF_RenderOptions* pOptions,
                                 const CFX_Matrix* pLastMatrix) {
-  Render(pDevice, NULL, pOptions, pLastMatrix);
+  Render(pDevice, nullptr, pOptions, pLastMatrix);
 }
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
                                 const CPDF_PageObject* pStopObj,
@@ -949,9 +949,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       CFX_Matrix FinalMatrix = pLayer->m_Matrix;
       FinalMatrix.Concat(*pLastMatrix);
       CPDF_RenderStatus status;
-      status.Initialize(this, pDevice, pLastMatrix, pStopObj, NULL, NULL,
+      status.Initialize(this, pDevice, pLastMatrix, pStopObj, nullptr, nullptr,
                         pOptions, pLayer->m_pObjectHolder->m_Transparency,
-                        FALSE, NULL);
+                        FALSE, nullptr);
       status.RenderObjectList(pLayer->m_pObjectHolder, &FinalMatrix);
       if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE) {
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
@@ -962,8 +962,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       }
     } else {
       CPDF_RenderStatus status;
-      status.Initialize(this, pDevice, NULL, pStopObj, NULL, NULL, pOptions,
-                        pLayer->m_pObjectHolder->m_Transparency, FALSE, NULL);
+      status.Initialize(this, pDevice, nullptr, pStopObj, nullptr, nullptr,
+                        pOptions, pLayer->m_pObjectHolder->m_Transparency,
+                        FALSE, nullptr);
       status.RenderObjectList(pLayer->m_pObjectHolder, &pLayer->m_Matrix);
       if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE) {
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
@@ -1014,8 +1015,8 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
           m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->end();
       m_pRenderStatus.reset(new CPDF_RenderStatus());
       m_pRenderStatus->Initialize(
-          m_pContext, m_pDevice, NULL, NULL, NULL, NULL, m_pOptions,
-          m_pCurrentLayer->m_pObjectHolder->m_Transparency, FALSE, NULL);
+          m_pContext, m_pDevice, nullptr, nullptr, nullptr, nullptr, m_pOptions,
+          m_pCurrentLayer->m_pObjectHolder->m_Transparency, FALSE, nullptr);
       m_pDevice->SaveState();
       m_ClipRect = CFX_FloatRect(m_pDevice->GetClipBox());
       CFX_Matrix device2object;
@@ -1204,7 +1205,7 @@ void CPDF_DeviceBuffer::OutputToDevice() {
     CFX_DIBitmap buffer;
     m_pDevice->CreateCompatibleBitmap(&buffer, m_pBitmap->GetWidth(),
                                       m_pBitmap->GetHeight());
-    m_pContext->GetBackground(&buffer, m_pObject, NULL, &m_Matrix);
+    m_pContext->GetBackground(&buffer, m_pObject, nullptr, &m_Matrix);
     buffer.CompositeBitmap(0, 0, buffer.GetWidth(), buffer.GetHeight(),
                            m_pBitmap.get(), 0, 0);
     m_pDevice->StretchDIBits(&buffer, m_Rect.left, m_Rect.top, m_Rect.Width(),

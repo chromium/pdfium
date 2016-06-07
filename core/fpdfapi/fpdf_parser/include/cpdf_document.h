@@ -70,7 +70,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   // |pFontDict| must not be null.
   CPDF_Font* LoadFont(CPDF_Dictionary* pFontDict);
   CPDF_ColorSpace* LoadColorSpace(CPDF_Object* pCSObj,
-                                  CPDF_Dictionary* pResources = NULL);
+                                  CPDF_Dictionary* pResources = nullptr);
 
   CPDF_Pattern* LoadPattern(CPDF_Object* pObj,
                             FX_BOOL bShading,

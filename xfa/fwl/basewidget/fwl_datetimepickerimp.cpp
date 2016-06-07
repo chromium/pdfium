@@ -426,10 +426,7 @@ CFWL_DateTimePickerImp::CFWL_DateTimePickerImp(
       m_iYear(-1),
       m_iMonth(-1),
       m_iDay(-1),
-      m_bLBtnDown(FALSE),
-      m_pEdit(nullptr),
-      m_pMonthCal(nullptr),
-      m_pForm(nullptr) {
+      m_bLBtnDown(FALSE) {
   m_rtBtn.Set(0, 0, 0, 0);
 }
 

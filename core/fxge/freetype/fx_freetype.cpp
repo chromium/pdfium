@@ -136,7 +136,7 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
   /* find variants like `A.swash', `e.final', etc.            */
   {
     const char* p = glyph_name;
-    const char* dot = NULL;
+    const char* dot = nullptr;
 
     for (; *p; p++) {
       if (*p == '.' && p > glyph_name) {

@@ -39,7 +39,7 @@ class CPDF_Image {
   CPDF_Dictionary* GetInlineDict() const { return m_pInlineDict; }
   CPDF_Stream* GetStream() const { return m_pStream; }
   CPDF_Dictionary* GetDict() const {
-    return m_pStream ? m_pStream->GetDict() : NULL;
+    return m_pStream ? m_pStream->GetDict() : nullptr;
   }
   CPDF_Dictionary* GetOC() const { return m_pOC; }
   CPDF_Document* GetDocument() const { return m_pDocument; }
@@ -51,8 +51,8 @@ class CPDF_Image {
   FX_BOOL IsMask() const { return m_bIsMask; }
   FX_BOOL IsInterpol() const { return m_bInterpolate; }
 
-  CFX_DIBSource* LoadDIBSource(CFX_DIBSource** ppMask = NULL,
-                               uint32_t* pMatteColor = NULL,
+  CFX_DIBSource* LoadDIBSource(CFX_DIBSource** ppMask = nullptr,
+                               uint32_t* pMatteColor = nullptr,
                                FX_BOOL bStdCS = FALSE,
                                uint32_t GroupFamily = 0,
                                FX_BOOL bLoadMask = FALSE) const;

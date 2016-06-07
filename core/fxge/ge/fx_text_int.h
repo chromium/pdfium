@@ -27,7 +27,7 @@ class CTTFontDesc {
  public:
   CTTFontDesc() {
     m_Type = 0;
-    m_pFontData = NULL;
+    m_pFontData = nullptr;
     m_RefCount = 0;
   }
   ~CTTFontDesc();

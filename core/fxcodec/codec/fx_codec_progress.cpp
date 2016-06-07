@@ -39,9 +39,6 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
             sizeof(int) * (FXSYS_ceil(FXSYS_fabs((FX_FLOAT)scale)) + 1));
   m_DestMin = dest_min;
   m_pWeightTables = FX_Alloc(uint8_t, (dest_max - dest_min) * m_ItemSize + 4);
-  if (m_pWeightTables == NULL) {
-    return;
-  }
   if (FXSYS_fabs((FX_FLOAT)scale) < 1.0f) {
     for (int dest_pixel = dest_min; dest_pixel < dest_max; dest_pixel++) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
@@ -131,9 +128,6 @@ void CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len,
   m_ItemSize = sizeof(int) * 4;
   int size = dest_len * m_ItemSize + 4;
   m_pWeightTables = FX_Alloc(uint8_t, size);
-  if (m_pWeightTables == NULL) {
-    return;
-  }
   FXSYS_memset(m_pWeightTables, 0, size);
   if (scale > 1) {
     int pre_des_col = 0;
@@ -192,9 +186,6 @@ void CCodec_ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len,
   m_ItemSize = sizeof(int) * 4;
   int size = dest_len * m_ItemSize + 4;
   m_pWeightTables = FX_Alloc(uint8_t, size);
-  if (m_pWeightTables == NULL) {
-    return;
-  }
   FXSYS_memset(m_pWeightTables, 0, size);
   if (scale > 1) {
     double step = 0.0;
@@ -247,17 +238,17 @@ void CCodec_ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len,
 }
 CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
     CCodec_ModuleMgr* pCodecMgr) {
-  m_pFile = NULL;
-  m_pJpegContext = NULL;
-  m_pPngContext = NULL;
-  m_pGifContext = NULL;
-  m_pBmpContext = NULL;
-  m_pTiffContext = NULL;
-  m_pCodecMgr = NULL;
-  m_pSrcBuf = NULL;
-  m_pDecodeBuf = NULL;
-  m_pDeviceBitmap = NULL;
-  m_pSrcPalette = NULL;
+  m_pFile = nullptr;
+  m_pJpegContext = nullptr;
+  m_pPngContext = nullptr;
+  m_pGifContext = nullptr;
+  m_pBmpContext = nullptr;
+  m_pTiffContext = nullptr;
+  m_pCodecMgr = nullptr;
+  m_pSrcBuf = nullptr;
+  m_pDecodeBuf = nullptr;
+  m_pDeviceBitmap = nullptr;
+  m_pSrcPalette = nullptr;
   m_pCodecMgr = pCodecMgr;
   m_offSet = 0;
   m_SrcSize = 0;
@@ -278,13 +269,13 @@ CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
   m_SrcPaletteNumber = 0;
   m_GifPltNumber = 0;
   m_GifBgIndex = 0;
-  m_pGifPalette = NULL;
+  m_pGifPalette = nullptr;
   m_GifTransIndex = -1;
   m_GifFrameRect = FX_RECT(0, 0, 0, 0);
   m_BmpIsTopBottom = FALSE;
 }
 CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
-  m_pFile = NULL;
+  m_pFile = nullptr;
   if (m_pJpegContext) {
     m_pCodecMgr->GetJpegModule()->Finish(m_pJpegContext);
   }
@@ -312,7 +303,7 @@ FX_BOOL CCodec_ProgressiveDecoder::JpegReadMoreData(
     return FALSE;
   }
   dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pJpegModule->GetAvailInput(m_pJpegContext, NULL);
+  uint32_t dwAvail = pJpegModule->GetAvailInput(m_pJpegContext, nullptr);
   if (dwAvail == m_SrcSize) {
     if (dwSize > FXCODEC_BLOCK_SIZE) {
       dwSize = FXCODEC_BLOCK_SIZE;
@@ -349,7 +340,7 @@ FX_BOOL CCodec_ProgressiveDecoder::PngReadHeaderFunc(void* pModule,
                                                      int* color_type,
                                                      double* gamma) {
   CCodec_ProgressiveDecoder* pCodec = (CCodec_ProgressiveDecoder*)pModule;
-  if (pCodec->m_pDeviceBitmap == NULL) {
+  if (!pCodec->m_pDeviceBitmap) {
     pCodec->m_SrcWidth = width;
     pCodec->m_SrcHeight = height;
     pCodec->m_SrcBPC = bpc;
@@ -570,7 +561,7 @@ FX_BOOL CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
     return FALSE;
   }
   dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pGifModule->GetAvailInput(m_pGifContext, NULL);
+  uint32_t dwAvail = pGifModule->GetAvailInput(m_pGifContext, nullptr);
   if (dwAvail == m_SrcSize) {
     if (dwSize > FXCODEC_BLOCK_SIZE) {
       dwSize = FXCODEC_BLOCK_SIZE;
@@ -631,21 +622,21 @@ FX_BOOL CCodec_ProgressiveDecoder::GifInputRecordPositionBufCallback(
                                error_status)) {
     return FALSE;
   }
-  uint8_t* pPalette = NULL;
+  uint8_t* pPalette = nullptr;
   if (pal_num != 0 && pal_ptr) {
     pPalette = (uint8_t*)pal_ptr;
   } else {
     pal_num = pCodec->m_GifPltNumber;
     pPalette = pCodec->m_pGifPalette;
   }
-  if (pCodec->m_pSrcPalette == NULL) {
+  if (!pCodec->m_pSrcPalette) {
     pCodec->m_pSrcPalette = FX_Alloc(FX_ARGB, pal_num);
   } else if (pal_num > pCodec->m_SrcPaletteNumber) {
     pCodec->m_pSrcPalette = FX_Realloc(FX_ARGB, pCodec->m_pSrcPalette, pal_num);
   }
-  if (pCodec->m_pSrcPalette == NULL) {
+  if (!pCodec->m_pSrcPalette)
     return FALSE;
-  }
+
   pCodec->m_SrcPaletteNumber = pal_num;
   for (int i = 0; i < pal_num; i++) {
     uint32_t j = i * 3;
@@ -852,7 +843,7 @@ FX_BOOL CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
     return FALSE;
   }
   dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pBmpModule->GetAvailInput(m_pBmpContext, NULL);
+  uint32_t dwAvail = pBmpModule->GetAvailInput(m_pBmpContext, nullptr);
   if (dwAvail == m_SrcSize) {
     if (dwSize > FXCODEC_BLOCK_SIZE) {
       dwSize = FXCODEC_BLOCK_SIZE;
@@ -1020,7 +1011,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
   switch (imageType) {
     case FXCODEC_IMAGE_BMP: {
       CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-      if (pBmpModule == NULL) {
+      if (!pBmpModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
@@ -1028,7 +1019,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
           BmpInputImagePositionBufCallback;
       pBmpModule->ReadScanlineCallback = BmpReadScanlineCallback;
       m_pBmpContext = pBmpModule->Start((void*)this);
-      if (m_pBmpContext == NULL) {
+      if (!m_pBmpContext) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
@@ -1039,7 +1030,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       }
       m_offSet += size;
       pBmpModule->Input(m_pBmpContext, m_pSrcBuf, size);
-      uint32_t* pPalette = NULL;
+      uint32_t* pPalette = nullptr;
       int32_t readResult = pBmpModule->ReadHeader(
           m_pBmpContext, &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
           &m_SrcComponents, &m_SrcPaletteNumber, &pPalette, pAttribute);
@@ -1068,19 +1059,19 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       }
       if (m_pBmpContext) {
         pBmpModule->Finish(m_pBmpContext);
-        m_pBmpContext = NULL;
+        m_pBmpContext = nullptr;
       }
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return FALSE;
     } break;
     case FXCODEC_IMAGE_JPG: {
       CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-      if (pJpegModule == NULL) {
+      if (!pJpegModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
       m_pJpegContext = pJpegModule->Start();
-      if (m_pJpegContext == NULL) {
+      if (!m_pJpegContext) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
@@ -1111,14 +1102,14 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       }
       if (m_pJpegContext) {
         pJpegModule->Finish(m_pJpegContext);
-        m_pJpegContext = NULL;
+        m_pJpegContext = nullptr;
       }
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return FALSE;
     } break;
     case FXCODEC_IMAGE_PNG: {
       CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-      if (pPngModule == NULL) {
+      if (!pPngModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
@@ -1129,7 +1120,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       pPngModule->FillScanlineBufCompletedCallback =
           CCodec_ProgressiveDecoder::PngFillScanlineBufCompletedFunc;
       m_pPngContext = pPngModule->Start((void*)this);
-      if (m_pPngContext == NULL) {
+      if (!m_pPngContext) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
@@ -1148,7 +1139,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
           if (m_pPngContext) {
             pPngModule->Finish(m_pPngContext);
           }
-          m_pPngContext = NULL;
+          m_pPngContext = nullptr;
           m_status = FXCODEC_STATUS_ERR_FORMAT;
           return FALSE;
         }
@@ -1170,7 +1161,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       ASSERT(!bResult);
       if (m_pPngContext) {
         pPngModule->Finish(m_pPngContext);
-        m_pPngContext = NULL;
+        m_pPngContext = nullptr;
       }
       if (m_SrcPassNumber == 0) {
         m_status = FXCODEC_STATUS_ERR_FORMAT;
@@ -1179,7 +1170,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
     } break;
     case FXCODEC_IMAGE_GIF: {
       CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-      if (pGifModule == NULL) {
+      if (!pGifModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
@@ -1192,7 +1183,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       pGifModule->ReadScanlineCallback =
           CCodec_ProgressiveDecoder::GifReadScanlineCallback;
       m_pGifContext = pGifModule->Start((void*)this);
-      if (m_pGifContext == NULL) {
+      if (!m_pGifContext) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return FALSE;
       }
@@ -1224,19 +1215,19 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       }
       if (m_pGifContext) {
         pGifModule->Finish(m_pGifContext);
-        m_pGifContext = NULL;
+        m_pGifContext = nullptr;
       }
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return FALSE;
     } break;
     case FXCODEC_IMAGE_TIF: {
       CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
-      if (pTiffModule == NULL) {
+      if (!pTiffModule) {
         m_status = FXCODEC_STATUS_ERR_FORMAT;
         return FALSE;
       }
       m_pTiffContext = pTiffModule->CreateDecoder(m_pFile);
-      if (m_pTiffContext == NULL) {
+      if (!m_pTiffContext) {
         m_status = FXCODEC_STATUS_ERR_FORMAT;
         return FALSE;
       }
@@ -1250,7 +1241,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
       m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
       if (!ret) {
         pTiffModule->DestroyDecoder(m_pTiffContext);
-        (m_pTiffContext = NULL);
+        (m_pTiffContext = nullptr);
         (m_status = FXCODEC_STATUS_ERR_FORMAT);
         return FALSE;
       }
@@ -1274,9 +1265,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
     default:
       break;
   }
-  if (pFile == NULL) {
+  if (!pFile) {
     m_status = FXCODEC_STATUS_ERR_PARAMS;
-    m_pFile = NULL;
+    m_pFile = nullptr;
     return m_status;
   }
   m_pFile = pFile;
@@ -1301,7 +1292,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
     }
   }
   m_status = FXCODEC_STATUS_ERR_FORMAT;
-  m_pFile = NULL;
+  m_pFile = nullptr;
   return m_status;
 }
 void CCodec_ProgressiveDecoder::SetClipBox(FX_RECT* clip) {
@@ -1830,7 +1821,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames,
         }
         if (m_pGifContext) {
           pGifModule->Finish(m_pGifContext);
-          m_pGifContext = NULL;
+          m_pGifContext = nullptr;
         }
         return m_status = FXCODEC_STATUS_ERROR;
       }
@@ -1847,10 +1838,10 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(CFX_DIBitmap* pDIBitmap,
                                                       int size_y,
                                                       int32_t frames,
                                                       FX_BOOL bInterpol) {
-  if (m_status != FXCODEC_STATUS_DECODE_READY) {
+  if (m_status != FXCODEC_STATUS_DECODE_READY)
     return FXCODEC_STATUS_ERROR;
-  }
-  if (pDIBitmap == NULL || pDIBitmap->GetBPP() < 8 || frames < 0 ||
+
+  if (!pDIBitmap || pDIBitmap->GetBPP() < 8 || frames < 0 ||
       frames >= m_FrameNumber) {
     return FXCODEC_STATUS_ERR_PARAMS;
   }
@@ -1906,8 +1897,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(CFX_DIBitmap* pDIBitmap,
       while (!bStart) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
         if (!JpegReadMoreData(pJpegModule, error_status)) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = error_status;
         }
         bStart = pJpegModule->StartScanline(m_pJpegContext, down_scale);
@@ -1936,19 +1927,19 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(CFX_DIBitmap* pDIBitmap,
     } break;
     case FXCODEC_IMAGE_PNG: {
       CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-      if (pPngModule == NULL) {
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+      if (!pPngModule) {
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         return m_status = FXCODEC_STATUS_ERR_MEMORY;
       }
       if (m_pPngContext) {
         pPngModule->Finish(m_pPngContext);
-        m_pPngContext = NULL;
+        m_pPngContext = nullptr;
       }
       m_pPngContext = pPngModule->Start((void*)this);
-      if (m_pPngContext == NULL) {
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+      if (!m_pPngContext) {
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         return m_status = FXCODEC_STATUS_ERR_MEMORY;
       }
       m_offSet = 0;
@@ -1968,8 +1959,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(CFX_DIBitmap* pDIBitmap,
           m_SrcFormat = FXCodec_Argb;
           break;
         default: {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERR_PARAMS;
         }
       }
@@ -1984,9 +1975,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(CFX_DIBitmap* pDIBitmap,
     } break;
     case FXCODEC_IMAGE_GIF: {
       CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-      if (pGifModule == NULL) {
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+      if (!pGifModule) {
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         return m_status = FXCODEC_STATUS_ERR_MEMORY;
       }
       m_SrcFormat = FXCodec_8bppRgb;
@@ -2003,9 +1994,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(CFX_DIBitmap* pDIBitmap,
     } break;
     case FXCODEC_IMAGE_BMP: {
       CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-      if (pBmpModule == NULL) {
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+      if (!pBmpModule) {
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         return m_status = FXCODEC_STATUS_ERR_MEMORY;
       }
       switch (m_SrcComponents) {
@@ -2049,8 +2040,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         while (!readRes) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
           if (!JpegReadMoreData(pJpegModule, error_status)) {
-            m_pDeviceBitmap = NULL;
-            m_pFile = NULL;
+            m_pDeviceBitmap = nullptr;
+            m_pFile = nullptr;
             return m_status = error_status;
           }
           readRes = pJpegModule->ReadScanline(m_pJpegContext, m_pDecodeBuf);
@@ -2060,8 +2051,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           _RGB2BGR(m_pDecodeBuf + m_clipBox.left * src_Bpp, m_clipBox.Width());
         }
         if (m_SrcRow >= m_clipBox.bottom) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_DECODE_FINISH;
         }
         Resample(m_pDeviceBitmap, m_SrcRow, m_pDecodeBuf, m_SrcFormat);
@@ -2081,9 +2072,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           if (m_pPngContext) {
             pPngModule->Finish(m_pPngContext);
           }
-          m_pPngContext = NULL;
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pPngContext = nullptr;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_DECODE_FINISH;
         }
         if (m_pSrcBuf && input_size > m_SrcSize) {
@@ -2094,16 +2085,16 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         }
         FX_BOOL bResult = m_pFile->ReadBlock(m_pSrcBuf, m_offSet, input_size);
         if (!bResult) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERR_READ;
         }
         m_offSet += input_size;
         bResult =
             pPngModule->Input(m_pPngContext, m_pSrcBuf, input_size, nullptr);
         if (!bResult) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERROR;
         }
         if (pPause && pPause->NeedToPauseNow()) {
@@ -2119,8 +2110,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         while (readRes == 2) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
           if (!GifReadMoreData(pGifModule, error_status)) {
-            m_pDeviceBitmap = NULL;
-            m_pFile = NULL;
+            m_pDeviceBitmap = nullptr;
+            m_pFile = nullptr;
             return m_status = error_status;
           }
           if (pPause && pPause->NeedToPauseNow()) {
@@ -2129,12 +2120,12 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           readRes = pGifModule->LoadFrame(m_pGifContext, m_FrameCur, nullptr);
         }
         if (readRes == 1) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_DECODE_FINISH;
         }
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         return m_status = FXCODEC_STATUS_ERROR;
       }
     } break;
@@ -2145,8 +2136,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         while (readRes == 2) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
           if (!BmpReadMoreData(pBmpModule, error_status)) {
-            m_pDeviceBitmap = NULL;
-            m_pFile = NULL;
+            m_pDeviceBitmap = nullptr;
+            m_pFile = nullptr;
             return m_status = error_status;
           }
           if (pPause && pPause->NeedToPauseNow()) {
@@ -2155,12 +2146,12 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           readRes = pBmpModule->LoadImage(m_pBmpContext);
         }
         if (readRes == 1) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_DECODE_FINISH;
         }
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         return m_status = FXCODEC_STATUS_ERROR;
       }
     } break;
@@ -2174,8 +2165,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           m_clipBox.left == 0 && m_clipBox.top == 0 &&
           m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight) {
         ret = pTiffModule->Decode(m_pTiffContext, m_pDeviceBitmap);
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         if (!ret) {
           return m_status = FXCODEC_STATUS_ERROR;
         }
@@ -2183,17 +2174,17 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
       } else {
         CFX_DIBitmap* pDIBitmap = new CFX_DIBitmap;
         pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Argb);
-        if (pDIBitmap->GetBuffer() == NULL) {
+        if (!pDIBitmap->GetBuffer()) {
           delete pDIBitmap;
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERR_MEMORY;
         }
         ret = pTiffModule->Decode(m_pTiffContext, pDIBitmap);
         if (!ret) {
           delete pDIBitmap;
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERROR;
         }
         CFX_DIBitmap* pClipBitmap =
@@ -2204,12 +2195,12 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         if (pDIBitmap != pClipBitmap) {
           delete pDIBitmap;
         }
-        if (pClipBitmap == NULL) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+        if (!pClipBitmap) {
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERR_MEMORY;
         }
-        CFX_DIBitmap* pFormatBitmap = NULL;
+        CFX_DIBitmap* pFormatBitmap = nullptr;
         switch (m_pDeviceBitmap->GetFormat()) {
           case FXDIB_8bppRgb:
             pFormatBitmap = new CFX_DIBitmap;
@@ -2279,26 +2270,26 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         if (pClipBitmap != pFormatBitmap) {
           delete pClipBitmap;
         }
-        if (pFormatBitmap == NULL) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+        if (!pFormatBitmap) {
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERR_MEMORY;
         }
         CFX_DIBitmap* pStrechBitmap = pFormatBitmap->StretchTo(
             m_sizeX, m_sizeY, m_bInterpol ? FXDIB_INTERPOL : FXDIB_DOWNSAMPLE);
         delete pFormatBitmap;
-        pFormatBitmap = NULL;
-        if (pStrechBitmap == NULL) {
-          m_pDeviceBitmap = NULL;
-          m_pFile = NULL;
+        pFormatBitmap = nullptr;
+        if (!pStrechBitmap) {
+          m_pDeviceBitmap = nullptr;
+          m_pFile = nullptr;
           return m_status = FXCODEC_STATUS_ERR_MEMORY;
         }
         m_pDeviceBitmap->TransferBitmap(m_startX, m_startY, m_sizeX, m_sizeY,
                                         pStrechBitmap, 0, 0);
         delete pStrechBitmap;
-        pStrechBitmap = NULL;
-        m_pDeviceBitmap = NULL;
-        m_pFile = NULL;
+        pStrechBitmap = nullptr;
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         return m_status = FXCODEC_STATUS_DECODE_FINISH;
       }
     } break;

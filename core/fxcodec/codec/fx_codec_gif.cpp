@@ -175,8 +175,8 @@ int32_t CCodec_GifModule::LoadFrame(FXGIF_Context* ctx,
 }
 
 uint32_t CCodec_GifModule::GetAvailInput(FXGIF_Context* ctx,
-                                         uint8_t** avial_buf_ptr) {
-  return gif_get_avail_input(ctx->gif_ptr, avial_buf_ptr);
+                                         uint8_t** avail_buf_ptr) {
+  return gif_get_avail_input(ctx->gif_ptr, avail_buf_ptr);
 }
 
 void CCodec_GifModule::Input(FXGIF_Context* ctx,

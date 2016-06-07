@@ -59,7 +59,7 @@ class IFWL_WidgetDelegate;
 
 class IFWL_Widget {
  public:
-  IFWL_Widget() : m_pImpl(nullptr) {}
+  IFWL_Widget();
   virtual ~IFWL_Widget();
 
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);

@@ -40,7 +40,8 @@ class CPDF_CIDFont : public CPDF_Font {
   bool IsCIDFont() const override;
   const CPDF_CIDFont* AsCIDFont() const override;
   CPDF_CIDFont* AsCIDFont() override;
-  int GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph = NULL) override;
+  int GlyphFromCharCode(uint32_t charcode,
+                        FX_BOOL* pVertGlyph = nullptr) override;
   int GetCharWidthF(uint32_t charcode, int level = 0) override;
   FX_RECT GetCharBBox(uint32_t charcode, int level = 0) override;
   uint32_t GetNextChar(const FX_CHAR* pString,

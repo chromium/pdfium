@@ -34,7 +34,7 @@ class CDWriteExt {
   void Load();
   void Unload();
 
-  FX_BOOL IsAvailable() { return m_pDWriteFactory != NULL; }
+  FX_BOOL IsAvailable() { return !!m_pDWriteFactory; }
 
   void* DwCreateFontFaceFromStream(uint8_t* pData,
                                    uint32_t size,

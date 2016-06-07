@@ -98,7 +98,7 @@ class CPDF_TransferFunc {
 
 class CPDF_DocRenderData {
  public:
-  CPDF_DocRenderData(CPDF_Document* pPDFDoc = NULL);
+  CPDF_DocRenderData(CPDF_Document* pPDFDoc = nullptr);
   ~CPDF_DocRenderData();
   CPDF_Type3Cache* GetCachedType3(CPDF_Type3Font* pFont);
   CPDF_TransferFunc* GetTransferFunc(CPDF_Object* pObj);
@@ -133,9 +133,9 @@ class CPDF_RenderStatus {
                      const CPDF_RenderOptions* pOptions,
                      int transparency,
                      FX_BOOL bDropObjects,
-                     CPDF_Dictionary* pFormResource = NULL,
+                     CPDF_Dictionary* pFormResource = nullptr,
                      FX_BOOL bStdCS = FALSE,
-                     CPDF_Type3Char* pType3Char = NULL,
+                     CPDF_Type3Char* pType3Char = nullptr,
                      FX_ARGB fill_color = 0,
                      uint32_t GroupFamily = 0,
                      FX_BOOL bLoadMask = FALSE);
@@ -291,7 +291,7 @@ class CPDF_ImageLoader {
                 FX_BOOL bStdCS = FALSE,
                 uint32_t GroupFamily = 0,
                 FX_BOOL bLoadMask = FALSE,
-                CPDF_RenderStatus* pRenderStatus = NULL,
+                CPDF_RenderStatus* pRenderStatus = nullptr,
                 int32_t nDownsampleWidth = 0,
                 int32_t nDownsampleHeight = 0);
   FX_BOOL Continue(CPDF_ImageLoaderHandle* LoadHandle, IFX_Pause* pPause);
@@ -316,7 +316,7 @@ class CPDF_ImageLoaderHandle {
                 FX_BOOL bStdCS = FALSE,
                 uint32_t GroupFamily = 0,
                 FX_BOOL bLoadMask = FALSE,
-                CPDF_RenderStatus* pRenderStatus = NULL,
+                CPDF_RenderStatus* pRenderStatus = nullptr,
                 int32_t nDownsampleWidth = 0,
                 int32_t nDownsampleHeight = 0);
   FX_BOOL Continue(IFX_Pause* pPause);
@@ -389,7 +389,7 @@ class CPDF_ScaledRenderBuffer {
                      CFX_RenderDevice* pDevice,
                      const FX_RECT& pRect,
                      const CPDF_PageObject* pObj,
-                     const CPDF_RenderOptions* pOptions = NULL,
+                     const CPDF_RenderOptions* pOptions = nullptr,
                      int max_dpi = 0);
   CFX_RenderDevice* GetDevice() {
     return m_pBitmapDevice ? m_pBitmapDevice.get() : m_pDevice;
@@ -441,7 +441,7 @@ class CPDF_ImageCacheEntry {
                           FX_BOOL bStdCS = FALSE,
                           uint32_t GroupFamily = 0,
                           FX_BOOL bLoadMask = FALSE,
-                          CPDF_RenderStatus* pRenderStatus = NULL,
+                          CPDF_RenderStatus* pRenderStatus = nullptr,
                           int32_t downsampleWidth = 0,
                           int32_t downsampleHeight = 0);
   uint32_t EstimateSize() const { return m_dwCacheSize; }
@@ -456,7 +456,7 @@ class CPDF_ImageCacheEntry {
                            FX_BOOL bStdCS = FALSE,
                            uint32_t GroupFamily = 0,
                            FX_BOOL bLoadMask = FALSE,
-                           CPDF_RenderStatus* pRenderStatus = NULL,
+                           CPDF_RenderStatus* pRenderStatus = nullptr,
                            int32_t downsampleWidth = 0,
                            int32_t downsampleHeight = 0);
   int Continue(IFX_Pause* pPause);
@@ -610,7 +610,7 @@ class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
 
   // CFX_FilteredDIB
   FXDIB_Format GetDestFormat() override;
-  FX_ARGB* GetDestPalette() override { return NULL; }
+  FX_ARGB* GetDestPalette() override { return nullptr; }
   void TranslateScanline(uint8_t* dest_buf,
                          const uint8_t* src_buf) const override;
   void TranslateDownSamples(uint8_t* dest_buf,
