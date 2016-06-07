@@ -115,7 +115,7 @@ void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
   CFX_FloatRect bbox = m_pPage->GetPageBBox();
   matrix.TransformRect(bbox);
   pFormDict->SetAtRect("BBox", bbox);
-  pStream->InitStream((uint8_t*)data, size, pFormDict);
+  pStream->InitStream(data, size, pFormDict);
   buf << "q " << matrix << " cm ";
   CFX_ByteString name = RealizeResource(pStream, "XObject");
   buf << "/" << PDF_NameEncode(name) << " Do Q\n";

@@ -32,7 +32,7 @@ class CPDF_Stream : public CPDF_Object {
                FX_BOOL bCompressed,
                FX_BOOL bKeepBuf);
 
-  void InitStream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
+  void InitStream(const uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
   void InitStreamFromFile(IFX_FileRead* pFile, CPDF_Dictionary* pDict);
 
   FX_BOOL ReadRawData(FX_FILESIZE start_pos,

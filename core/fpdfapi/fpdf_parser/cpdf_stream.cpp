@@ -57,7 +57,7 @@ void CPDF_Stream::InitStreamInternal(CPDF_Dictionary* pDict) {
   m_pFile = nullptr;
 }
 
-void CPDF_Stream::InitStream(uint8_t* pData,
+void CPDF_Stream::InitStream(const uint8_t* pData,
                              uint32_t size,
                              CPDF_Dictionary* pDict) {
   InitStreamInternal(pDict);
