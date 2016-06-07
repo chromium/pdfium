@@ -2959,56 +2959,55 @@ void CXFA_FM2JSContext::Oneof(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::Within(CFXJSE_Value* pThis,
                                const CFX_ByteStringC& szFuncName,
                                CFXJSE_Arguments& args) {
-  if (args.GetLength() == 3) {
-    std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
-    if (FXJSE_Value_IsNull(argOne.get())) {
-      FXJSE_Value_SetUndefined(args.GetReturnValue());
-    } else {
-      std::unique_ptr<CFXJSE_Value> argLow = GetSimpleValue(pThis, args, 1);
-      std::unique_ptr<CFXJSE_Value> argHeight = GetSimpleValue(pThis, args, 2);
-      if (FXJSE_Value_IsNumber(argOne.get())) {
-        FX_FLOAT oneNumber = ValueToFloat(pThis, argOne.get());
-        FX_FLOAT lowNumber = ValueToFloat(pThis, argLow.get());
-        FX_FLOAT heightNumber = ValueToFloat(pThis, argHeight.get());
-        FXJSE_Value_SetInteger(
-            args.GetReturnValue(),
-            ((oneNumber >= lowNumber) && (oneNumber <= heightNumber)));
-      } else {
-        CFX_ByteString oneString;
-        CFX_ByteString lowString;
-        CFX_ByteString heightString;
-        ValueToUTF8String(argOne.get(), oneString);
-        ValueToUTF8String(argLow.get(), lowString);
-        ValueToUTF8String(argHeight.get(), heightString);
-        FXJSE_Value_SetInteger(
-            args.GetReturnValue(),
-            ((oneString.Compare(lowString.AsStringC()) >= 0) &&
-             (oneString.Compare(heightString.AsStringC()) <= 0)));
-      }
-    }
-  } else {
+  if (args.GetLength() != 3) {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Within");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
+  if (FXJSE_Value_IsNull(argOne.get())) {
+    FXJSE_Value_SetUndefined(args.GetReturnValue());
+    return;
+  }
+
+  std::unique_ptr<CFXJSE_Value> argLow = GetSimpleValue(pThis, args, 1);
+  std::unique_ptr<CFXJSE_Value> argHigh = GetSimpleValue(pThis, args, 2);
+  if (FXJSE_Value_IsNumber(argOne.get())) {
+    FX_FLOAT oneNumber = ValueToFloat(pThis, argOne.get());
+    FX_FLOAT lowNumber = ValueToFloat(pThis, argLow.get());
+    FX_FLOAT heightNumber = ValueToFloat(pThis, argHigh.get());
+    FXJSE_Value_SetInteger(
+        args.GetReturnValue(),
+        ((oneNumber >= lowNumber) && (oneNumber <= heightNumber)));
+    return;
+  }
+
+  CFX_ByteString oneString;
+  CFX_ByteString lowString;
+  CFX_ByteString heightString;
+  ValueToUTF8String(argOne.get(), oneString);
+  ValueToUTF8String(argLow.get(), lowString);
+  ValueToUTF8String(argHigh.get(), heightString);
+  FXJSE_Value_SetInteger(args.GetReturnValue(),
+                         ((oneString.Compare(lowString.AsStringC()) >= 0) &&
+                          (oneString.Compare(heightString.AsStringC()) <= 0)));
 }
 
 // static
 void CXFA_FM2JSContext::If(CFXJSE_Value* pThis,
                            const CFX_ByteStringC& szFuncName,
                            CFXJSE_Arguments& args) {
-  if (args.GetLength() == 3) {
-    std::unique_ptr<CFXJSE_Value> argCondition = GetSimpleValue(pThis, args, 0);
-    std::unique_ptr<CFXJSE_Value> argFirstValue =
-        GetSimpleValue(pThis, args, 1);
-    std::unique_ptr<CFXJSE_Value> argSecondValue =
-        GetSimpleValue(pThis, args, 2);
-    FX_BOOL bCondition = FXJSE_Value_ToBoolean(argCondition.get());
-    FXJSE_Value_Set(args.GetReturnValue(),
-                    bCondition ? argFirstValue.get() : argSecondValue.get());
-  } else {
+  if (args.GetLength() != 3) {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"If");
+    return;
   }
+
+  FXJSE_Value_Set(args.GetReturnValue(),
+                  FXJSE_Value_ToBoolean(GetSimpleValue(pThis, args, 0).get())
+                      ? GetSimpleValue(pThis, args, 1).get()
+                      : GetSimpleValue(pThis, args, 2).get());
 }
 
 // static
@@ -3016,34 +3015,37 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
                              const CFX_ByteStringC& szFuncName,
                              CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
-  if (args.GetLength() == 1) {
-    v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-    std::unique_ptr<CFXJSE_Value> scriptValue = GetSimpleValue(pThis, args, 0);
-    CFX_ByteString utf8ScriptString;
-    ValueToUTF8String(scriptValue.get(), utf8ScriptString);
-    if (utf8ScriptString.IsEmpty()) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      CFX_WideTextBuf wsJavaScriptBuf;
-      CFX_WideString javaScript;
-      CFX_WideString wsError;
-      CXFA_FM2JSContext::Translate(
-          CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
-          wsJavaScriptBuf, wsError);
-      CFXJSE_Context* pNewContext =
-          FXJSE_Context_Create(pIsolate, nullptr, nullptr);
-      std::unique_ptr<CFXJSE_Value> returnValue(new CFXJSE_Value(pIsolate));
-      javaScript = wsJavaScriptBuf.AsStringC();
-      FXJSE_ExecuteScript(
-          pNewContext,
-          FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).c_str(),
-          returnValue.get());
-      FXJSE_Value_Set(args.GetReturnValue(), returnValue.get());
-      FXJSE_Context_Release(pNewContext);
-    }
-  } else {
+  if (args.GetLength() != 1) {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Eval");
+    return;
   }
+
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  std::unique_ptr<CFXJSE_Value> scriptValue = GetSimpleValue(pThis, args, 0);
+  CFX_ByteString utf8ScriptString;
+  ValueToUTF8String(scriptValue.get(), utf8ScriptString);
+  if (utf8ScriptString.IsEmpty()) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  CFX_WideTextBuf wsJavaScriptBuf;
+  CFX_WideString wsError;
+  CXFA_FM2JSContext::Translate(
+      CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
+      wsJavaScriptBuf, wsError);
+  CFXJSE_Context* pNewContext =
+      FXJSE_Context_Create(pIsolate, nullptr, nullptr);
+
+  std::unique_ptr<CFXJSE_Value> returnValue(new CFXJSE_Value(pIsolate));
+  CFX_WideString javaScript(wsJavaScriptBuf.AsStringC());
+  FXJSE_ExecuteScript(
+      pNewContext,
+      FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).c_str(),
+      returnValue.get());
+
+  FXJSE_Value_Set(args.GetReturnValue(), returnValue.get());
+  FXJSE_Context_Release(pNewContext);
 }
 
 // static
@@ -3052,182 +3054,180 @@ void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    if (FXJSE_Value_IsNull(argOne.get())) {
-      CFXJSE_Value* rgValues[3];
-      for (int32_t i = 0; i < 3; i++)
-        rgValues[i] = new CFXJSE_Value(pIsolate);
-
-      FXJSE_Value_SetInteger(rgValues[0], 4);
-      FXJSE_Value_SetNull(rgValues[1]);
-      FXJSE_Value_SetNull(rgValues[2]);
-      FXJSE_Value_SetArray(args.GetReturnValue(), 3, rgValues);
-      for (int32_t i = 0; i < 3; i++)
-        delete rgValues[i];
-
-    } else if (FXJSE_Value_IsArray(argOne.get())) {
-#ifndef NDEBUG
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argOne.get(), "length", lengthValue.get());
-      ASSERT(FXJSE_Value_ToInteger(lengthValue.get()) >= 3);
-#endif
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argOne.get(), 1, propertyValue.get());
-      FXJSE_Value_GetObjectPropByIdx(argOne.get(), 2, jsObjectValue.get());
-      if (FXJSE_Value_IsNull(jsObjectValue.get())) {
-        pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
-      } else if (FXJSE_Value_IsNull(propertyValue.get()) &&
-                 (!FXJSE_Value_IsNull(jsObjectValue.get()))) {
-        CFXJSE_Value* rgValues[3];
-        for (int32_t i = 0; i < 3; i++)
-          rgValues[i] = new CFXJSE_Value(pIsolate);
-
-        FXJSE_Value_SetInteger(rgValues[0], 3);
-        FXJSE_Value_SetNull(rgValues[1]);
-        FXJSE_Value_Set(rgValues[2], jsObjectValue.get());
-        FXJSE_Value_SetArray(args.GetReturnValue(), 3, rgValues);
-        for (int32_t i = 0; i < 3; i++)
-          delete rgValues[i];
-
-      } else {
-        pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
-      }
-    } else if (FXJSE_Value_IsObject(argOne.get())) {
-      CFXJSE_Value* rgValues[3];
-      for (int32_t i = 0; i < 3; i++)
-        rgValues[i] = new CFXJSE_Value(pIsolate);
-
-      FXJSE_Value_SetInteger(rgValues[0], 3);
-      FXJSE_Value_SetNull(rgValues[1]);
-      FXJSE_Value_Set(rgValues[2], argOne.get());
-      FXJSE_Value_SetArray(args.GetReturnValue(), 3, rgValues);
-
-      for (int32_t i = 0; i < 3; i++)
-        delete rgValues[i];
-    } else if (FXJSE_Value_IsBoolean(argOne.get()) ||
-               FXJSE_Value_IsUTF8String(argOne.get()) ||
-               FXJSE_Value_IsNumber(argOne.get())) {
-      FXJSE_Value_Set(args.GetReturnValue(), argOne.get());
-    } else {
-      pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
-    }
-  } else {
+  if (args.GetLength() != 1) {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ref");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
+  if (!FXJSE_Value_IsArray(argOne.get()) &&
+      !FXJSE_Value_IsObject(argOne.get()) &&
+      !FXJSE_Value_IsBoolean(argOne.get()) &&
+      !FXJSE_Value_IsUTF8String(argOne.get()) &&
+      !FXJSE_Value_IsNull(argOne.get()) &&
+      !FXJSE_Value_IsNumber(argOne.get())) {
+    pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
+    return;
+  }
+
+  if (FXJSE_Value_IsBoolean(argOne.get()) ||
+      FXJSE_Value_IsUTF8String(argOne.get()) ||
+      FXJSE_Value_IsNumber(argOne.get())) {
+    FXJSE_Value_Set(args.GetReturnValue(), argOne.get());
+    return;
+  }
+
+  CFXJSE_Value* rgValues[3];
+  for (int32_t i = 0; i < 3; i++)
+    rgValues[i] = new CFXJSE_Value(pIsolate);
+
+  int intVal = 3;
+  if (FXJSE_Value_IsNull(argOne.get())) {
+    intVal = 4;
+    FXJSE_Value_SetNull(rgValues[2]);
+  } else if (FXJSE_Value_IsArray(argOne.get())) {
+#ifndef NDEBUG
+    std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+    FXJSE_Value_GetObjectProp(argOne.get(), "length", lengthValue.get());
+    ASSERT(FXJSE_Value_ToInteger(lengthValue.get()) >= 3);
+#endif
+
+    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    FXJSE_Value_GetObjectPropByIdx(argOne.get(), 1, propertyValue.get());
+    FXJSE_Value_GetObjectPropByIdx(argOne.get(), 2, jsObjectValue.get());
+    if (!FXJSE_Value_IsNull(propertyValue.get()) ||
+        FXJSE_Value_IsNull(jsObjectValue.get())) {
+      for (int32_t i = 0; i < 3; i++)
+        delete rgValues[i];
+
+      pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
+      return;
+    }
+
+    FXJSE_Value_Set(rgValues[2], jsObjectValue.get());
+  } else if (FXJSE_Value_IsObject(argOne.get())) {
+    FXJSE_Value_Set(rgValues[2], argOne.get());
+  }
+
+  FXJSE_Value_SetInteger(rgValues[0], intVal);
+  FXJSE_Value_SetNull(rgValues[1]);
+  FXJSE_Value_SetArray(args.GetReturnValue(), 3, rgValues);
+
+  for (int32_t i = 0; i < 3; i++)
+    delete rgValues[i];
 }
 
 // static
 void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
                                  const CFX_ByteStringC& szFuncName,
                                  CFXJSE_Arguments& args) {
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> unitspanValue =
-        GetSimpleValue(pThis, args, 0);
-    if (FXJSE_Value_IsNull(unitspanValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-      return;
-    }
-    CFX_ByteString unitspanString;
-    ValueToUTF8String(unitspanValue.get(), unitspanString);
-    if (unitspanString.IsEmpty()) {
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "in");
-    } else {
-      enum XFA_FM2JS_VALUETYPE_ParserStatus {
-        VALUETYPE_START,
-        VALUETYPE_HAVEINVALIDCHAR,
-        VALUETYPE_HAVEDIGIT,
-        VALUETYPE_HAVEDIGITWHITE,
-        VALUETYPE_ISCM,
-        VALUETYPE_ISMM,
-        VALUETYPE_ISPT,
-        VALUETYPE_ISMP,
-        VALUETYPE_ISIN,
-      };
-      unitspanString.MakeLower();
-      CFX_WideString wsTypeString =
-          CFX_WideString::FromUTF8(unitspanString.AsStringC());
-      const FX_WCHAR* pData = wsTypeString.c_str();
-      int32_t u = 0;
-      int32_t uLen = wsTypeString.GetLength();
-      while (IsWhitespace(pData[u]))
-        u++;
-
-      XFA_FM2JS_VALUETYPE_ParserStatus eParserStatus = VALUETYPE_START;
-      FX_WCHAR typeChar;
-      while (u < uLen) {
-        typeChar = pData[u];
-        if (IsWhitespace(typeChar)) {
-          if (eParserStatus == VALUETYPE_HAVEDIGIT ||
-              eParserStatus == VALUETYPE_HAVEDIGITWHITE) {
-            eParserStatus = VALUETYPE_HAVEDIGITWHITE;
-          } else {
-            eParserStatus = VALUETYPE_ISIN;
-            break;
-          }
-        } else if ((typeChar >= '0' && typeChar <= '9') || typeChar == '-' ||
-                   typeChar == '.') {
-          if (eParserStatus == VALUETYPE_HAVEDIGITWHITE) {
-            eParserStatus = VALUETYPE_ISIN;
-            break;
-          } else {
-            eParserStatus = VALUETYPE_HAVEDIGIT;
-          }
-        } else if ((typeChar == 'c' || typeChar == 'p') && (u + 1 < uLen)) {
-          FX_WCHAR nextChar = pData[u + 1];
-          if ((eParserStatus == VALUETYPE_START ||
-               eParserStatus == VALUETYPE_HAVEDIGIT ||
-               eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
-              (nextChar > '9' || nextChar < '0') && nextChar != '.' &&
-              nextChar != '-') {
-            eParserStatus = (typeChar == 'c') ? VALUETYPE_ISCM : VALUETYPE_ISPT;
-            break;
-          } else {
-            eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
-          }
-        } else if (typeChar == 'm' && (u + 1 < uLen)) {
-          FX_WCHAR nextChar = pData[u + 1];
-          if ((eParserStatus == VALUETYPE_START ||
-               eParserStatus == VALUETYPE_HAVEDIGIT ||
-               eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
-              (nextChar > '9' || nextChar < '0') && nextChar != '.' &&
-              nextChar != '-') {
-            eParserStatus = VALUETYPE_ISMM;
-            if (nextChar == 'p' ||
-                ((u + 5 < uLen) && pData[u + 1] == 'i' && pData[u + 2] == 'l' &&
-                 pData[u + 3] == 'l' && pData[u + 4] == 'i' &&
-                 pData[u + 5] == 'p')) {
-              eParserStatus = VALUETYPE_ISMP;
-            }
-            break;
-          }
-        } else {
-          eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
-        }
-        u++;
-      }
-      switch (eParserStatus) {
-        case VALUETYPE_ISCM:
-          FXJSE_Value_SetUTF8String(args.GetReturnValue(), "cm");
-          break;
-        case VALUETYPE_ISMM:
-          FXJSE_Value_SetUTF8String(args.GetReturnValue(), "mm");
-          break;
-        case VALUETYPE_ISPT:
-          FXJSE_Value_SetUTF8String(args.GetReturnValue(), "pt");
-          break;
-        case VALUETYPE_ISMP:
-          FXJSE_Value_SetUTF8String(args.GetReturnValue(), "mp");
-          break;
-        default:
-          FXJSE_Value_SetUTF8String(args.GetReturnValue(), "in");
-          break;
-      }
-    }
-  } else {
+  if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitType");
+    return;
+  }
+
+  std::unique_ptr<CFXJSE_Value> unitspanValue = GetSimpleValue(pThis, args, 0);
+  if (FXJSE_Value_IsNull(unitspanValue.get())) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  CFX_ByteString unitspanString;
+  ValueToUTF8String(unitspanValue.get(), unitspanString);
+  if (unitspanString.IsEmpty()) {
+    FXJSE_Value_SetUTF8String(args.GetReturnValue(), "in");
+    return;
+  }
+
+  enum XFA_FM2JS_VALUETYPE_ParserStatus {
+    VALUETYPE_START,
+    VALUETYPE_HAVEINVALIDCHAR,
+    VALUETYPE_HAVEDIGIT,
+    VALUETYPE_HAVEDIGITWHITE,
+    VALUETYPE_ISCM,
+    VALUETYPE_ISMM,
+    VALUETYPE_ISPT,
+    VALUETYPE_ISMP,
+    VALUETYPE_ISIN,
+  };
+  unitspanString.MakeLower();
+  CFX_WideString wsTypeString =
+      CFX_WideString::FromUTF8(unitspanString.AsStringC());
+  const FX_WCHAR* pData = wsTypeString.c_str();
+  int32_t u = 0;
+  int32_t uLen = wsTypeString.GetLength();
+  while (IsWhitespace(pData[u]))
+    u++;
+
+  XFA_FM2JS_VALUETYPE_ParserStatus eParserStatus = VALUETYPE_START;
+  FX_WCHAR typeChar;
+  // TODO(dsinclair): Cleanup this parser, figure out what the various checks
+  //    are for.
+  while (u < uLen) {
+    typeChar = pData[u];
+    if (IsWhitespace(typeChar)) {
+      if (eParserStatus != VALUETYPE_HAVEDIGIT &&
+          eParserStatus != VALUETYPE_HAVEDIGITWHITE) {
+        eParserStatus = VALUETYPE_ISIN;
+        break;
+      }
+      eParserStatus = VALUETYPE_HAVEDIGITWHITE;
+    } else if ((typeChar >= '0' && typeChar <= '9') || typeChar == '-' ||
+               typeChar == '.') {
+      if (eParserStatus == VALUETYPE_HAVEDIGITWHITE) {
+        eParserStatus = VALUETYPE_ISIN;
+        break;
+      }
+      eParserStatus = VALUETYPE_HAVEDIGIT;
+    } else if ((typeChar == 'c' || typeChar == 'p') && (u + 1 < uLen)) {
+      FX_WCHAR nextChar = pData[u + 1];
+      if ((eParserStatus == VALUETYPE_START ||
+           eParserStatus == VALUETYPE_HAVEDIGIT ||
+           eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
+          (nextChar > '9' || nextChar < '0') && nextChar != '.' &&
+          nextChar != '-') {
+        eParserStatus = (typeChar == 'c') ? VALUETYPE_ISCM : VALUETYPE_ISPT;
+        break;
+      }
+      eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
+    } else if (typeChar == 'm' && (u + 1 < uLen)) {
+      FX_WCHAR nextChar = pData[u + 1];
+      if ((eParserStatus == VALUETYPE_START ||
+           eParserStatus == VALUETYPE_HAVEDIGIT ||
+           eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
+          (nextChar > '9' || nextChar < '0') && nextChar != '.' &&
+          nextChar != '-') {
+        eParserStatus = VALUETYPE_ISMM;
+        if (nextChar == 'p' || ((u + 5 < uLen) && pData[u + 1] == 'i' &&
+                                pData[u + 2] == 'l' && pData[u + 3] == 'l' &&
+                                pData[u + 4] == 'i' && pData[u + 5] == 'p')) {
+          eParserStatus = VALUETYPE_ISMP;
+        }
+        break;
+      }
+    } else {
+      eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
+    }
+    u++;
+  }
+  switch (eParserStatus) {
+    case VALUETYPE_ISCM:
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "cm");
+      break;
+    case VALUETYPE_ISMM:
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "mm");
+      break;
+    case VALUETYPE_ISPT:
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "pt");
+      break;
+    case VALUETYPE_ISMP:
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "mp");
+      break;
+    default:
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "in");
+      break;
   }
 }
 
@@ -3236,174 +3236,174 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
                                   const CFX_ByteStringC& szFuncName,
                                   CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
-  if ((argc == 1) || (argc == 2)) {
-    std::unique_ptr<CFXJSE_Value> unitspanValue =
-        GetSimpleValue(pThis, args, 0);
-    CFX_ByteString unitspanString;
-    FX_DOUBLE dFirstNumber = 0;
-    CFX_ByteString strFirstUnit;
-    CFX_ByteString strUnit;
-    if (FXJSE_Value_IsNull(unitspanValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      ValueToUTF8String(unitspanValue.get(), unitspanString);
-      const FX_CHAR* pData = unitspanString.c_str();
-      if (pData) {
-        int32_t u = 0;
-        while (IsWhitespace(pData[u]))
-          ++u;
-
-        while (u < unitspanString.GetLength()) {
-          if ((pData[u] > '9' || pData[u] < '0') && pData[u] != '.' &&
-              pData[u] != '-') {
-            break;
-          }
-          ++u;
-        }
-        FX_CHAR* pTemp = nullptr;
-        dFirstNumber = strtod(pData, &pTemp);
-        while (IsWhitespace(pData[u]))
-          ++u;
-
-        int32_t uLen = unitspanString.GetLength();
-        while (u < uLen) {
-          if (pData[u] == ' ') {
-            break;
-          }
-          strFirstUnit += pData[u];
-          ++u;
-        }
-        strFirstUnit.MakeLower();
-        if (argc == 2) {
-          std::unique_ptr<CFXJSE_Value> unitValue =
-              GetSimpleValue(pThis, args, 1);
-          CFX_ByteString unitTempString;
-          ValueToUTF8String(unitValue.get(), unitTempString);
-          const FX_CHAR* pChar = unitTempString.c_str();
-          int32_t uVal = 0;
-          while (IsWhitespace(pChar[uVal]))
-            ++uVal;
-
-          while (uVal < unitTempString.GetLength()) {
-            if ((pChar[uVal] > '9' || pChar[uVal] < '0') &&
-                pChar[uVal] != '.') {
-              break;
-            }
-            ++uVal;
-          }
-          while (IsWhitespace(pChar[uVal]))
-            ++uVal;
-
-          int32_t uValLen = unitTempString.GetLength();
-          while (uVal < uValLen) {
-            if (pChar[uVal] == ' ') {
-              break;
-            }
-            strUnit += pChar[uVal];
-            ++uVal;
-          }
-          strUnit.MakeLower();
-        } else {
-          strUnit = strFirstUnit;
-        }
-        FX_DOUBLE dResult = 0;
-        if (strFirstUnit == "in" || strFirstUnit == "inches") {
-          if (strUnit == "mm" || strUnit == "millimeters") {
-            dResult = dFirstNumber * 25.4;
-          } else if (strUnit == "cm" || strUnit == "centimeters") {
-            dResult = dFirstNumber * 2.54;
-          } else if (strUnit == "pt" || strUnit == "points") {
-            dResult = dFirstNumber / 72;
-          } else if (strUnit == "mp" || strUnit == "millipoints") {
-            dResult = dFirstNumber / 72000;
-          } else {
-            dResult = dFirstNumber;
-          }
-        } else if (strFirstUnit == "mm" || strFirstUnit == "millimeters") {
-          if (strUnit == "mm" || strUnit == "millimeters") {
-            dResult = dFirstNumber;
-          } else if (strUnit == "cm" || strUnit == "centimeters") {
-            dResult = dFirstNumber / 10;
-          } else if (strUnit == "pt" || strUnit == "points") {
-            dResult = dFirstNumber / 25.4 / 72;
-          } else if (strUnit == "mp" || strUnit == "millipoints") {
-            dResult = dFirstNumber / 25.4 / 72000;
-          } else {
-            dResult = dFirstNumber / 25.4;
-          }
-        } else if (strFirstUnit == "cm" || strFirstUnit == "centimeters") {
-          if (strUnit == "mm" || strUnit == "millimeters") {
-            dResult = dFirstNumber * 10;
-          } else if (strUnit == "cm" || strUnit == "centimeters") {
-            dResult = dFirstNumber;
-          } else if (strUnit == "pt" || strUnit == "points") {
-            dResult = dFirstNumber / 2.54 / 72;
-          } else if (strUnit == "mp" || strUnit == "millipoints") {
-            dResult = dFirstNumber / 2.54 / 72000;
-          } else {
-            dResult = dFirstNumber / 2.54;
-          }
-        } else if (strFirstUnit == "pt" || strFirstUnit == "points") {
-          if (strUnit == "mm" || strUnit == "millimeters") {
-            dResult = dFirstNumber / 72 * 25.4;
-          } else if (strUnit == "cm" || strUnit == "centimeters") {
-            dResult = dFirstNumber / 72 * 2.54;
-          } else if (strUnit == "pt" || strUnit == "points") {
-            dResult = dFirstNumber;
-          } else if (strUnit == "mp" || strUnit == "millipoints") {
-            dResult = dFirstNumber * 1000;
-          } else {
-            dResult = dFirstNumber / 72;
-          }
-        } else if (strFirstUnit == "mp" || strFirstUnit == "millipoints") {
-          if (strUnit == "mm" || strUnit == "millimeters") {
-            dResult = dFirstNumber / 72000 * 25.4;
-          } else if (strUnit == "cm" || strUnit == "centimeters") {
-            dResult = dFirstNumber / 72000 * 2.54;
-          } else if (strUnit == "pt" || strUnit == "points") {
-            dResult = dFirstNumber / 1000;
-          } else if (strUnit == "mp" || strUnit == "millipoints") {
-            dResult = dFirstNumber;
-          } else {
-            dResult = dFirstNumber / 72000;
-          }
-        }
-        FXJSE_Value_SetDouble(args.GetReturnValue(), dResult);
-      } else {
-        FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
-      }
-    }
-  } else {
+  if (argc < 1 || argc > 2) {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitValue");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> unitspanValue = GetSimpleValue(pThis, args, 0);
+  if (FXJSE_Value_IsNull(unitspanValue.get())) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  CFX_ByteString unitspanString;
+  ValueToUTF8String(unitspanValue.get(), unitspanString);
+  const FX_CHAR* pData = unitspanString.c_str();
+  if (!pData) {
+    FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+    return;
+  }
+
+  int32_t u = 0;
+  while (IsWhitespace(pData[u]))
+    ++u;
+
+  while (u < unitspanString.GetLength()) {
+    if ((pData[u] > '9' || pData[u] < '0') && pData[u] != '.' &&
+        pData[u] != '-') {
+      break;
+    }
+    ++u;
+  }
+
+  FX_CHAR* pTemp = nullptr;
+  FX_DOUBLE dFirstNumber = strtod(pData, &pTemp);
+  while (IsWhitespace(pData[u]))
+    ++u;
+
+  int32_t uLen = unitspanString.GetLength();
+  CFX_ByteString strFirstUnit;
+  while (u < uLen) {
+    if (pData[u] == ' ')
+      break;
+
+    strFirstUnit += pData[u];
+    ++u;
+  }
+  strFirstUnit.MakeLower();
+
+  CFX_ByteString strUnit;
+  if (argc > 1) {
+    std::unique_ptr<CFXJSE_Value> unitValue = GetSimpleValue(pThis, args, 1);
+    CFX_ByteString unitTempString;
+    ValueToUTF8String(unitValue.get(), unitTempString);
+    const FX_CHAR* pChar = unitTempString.c_str();
+    int32_t uVal = 0;
+    while (IsWhitespace(pChar[uVal]))
+      ++uVal;
+
+    while (uVal < unitTempString.GetLength()) {
+      if ((pChar[uVal] > '9' || pChar[uVal] < '0') && pChar[uVal] != '.') {
+        break;
+      }
+      ++uVal;
+    }
+    while (IsWhitespace(pChar[uVal]))
+      ++uVal;
+
+    int32_t uValLen = unitTempString.GetLength();
+    while (uVal < uValLen) {
+      if (pChar[uVal] == ' ')
+        break;
+
+      strUnit += pChar[uVal];
+      ++uVal;
+    }
+    strUnit.MakeLower();
+  } else {
+    strUnit = strFirstUnit;
+  }
+
+  FX_DOUBLE dResult = 0;
+  if (strFirstUnit == "in" || strFirstUnit == "inches") {
+    if (strUnit == "mm" || strUnit == "millimeters")
+      dResult = dFirstNumber * 25.4;
+    else if (strUnit == "cm" || strUnit == "centimeters")
+      dResult = dFirstNumber * 2.54;
+    else if (strUnit == "pt" || strUnit == "points")
+      dResult = dFirstNumber / 72;
+    else if (strUnit == "mp" || strUnit == "millipoints")
+      dResult = dFirstNumber / 72000;
+    else
+      dResult = dFirstNumber;
+  } else if (strFirstUnit == "mm" || strFirstUnit == "millimeters") {
+    if (strUnit == "mm" || strUnit == "millimeters")
+      dResult = dFirstNumber;
+    else if (strUnit == "cm" || strUnit == "centimeters")
+      dResult = dFirstNumber / 10;
+    else if (strUnit == "pt" || strUnit == "points")
+      dResult = dFirstNumber / 25.4 / 72;
+    else if (strUnit == "mp" || strUnit == "millipoints")
+      dResult = dFirstNumber / 25.4 / 72000;
+    else
+      dResult = dFirstNumber / 25.4;
+  } else if (strFirstUnit == "cm" || strFirstUnit == "centimeters") {
+    if (strUnit == "mm" || strUnit == "millimeters")
+      dResult = dFirstNumber * 10;
+    else if (strUnit == "cm" || strUnit == "centimeters")
+      dResult = dFirstNumber;
+    else if (strUnit == "pt" || strUnit == "points")
+      dResult = dFirstNumber / 2.54 / 72;
+    else if (strUnit == "mp" || strUnit == "millipoints")
+      dResult = dFirstNumber / 2.54 / 72000;
+    else
+      dResult = dFirstNumber / 2.54;
+  } else if (strFirstUnit == "pt" || strFirstUnit == "points") {
+    if (strUnit == "mm" || strUnit == "millimeters")
+      dResult = dFirstNumber / 72 * 25.4;
+    else if (strUnit == "cm" || strUnit == "centimeters")
+      dResult = dFirstNumber / 72 * 2.54;
+    else if (strUnit == "pt" || strUnit == "points")
+      dResult = dFirstNumber;
+    else if (strUnit == "mp" || strUnit == "millipoints")
+      dResult = dFirstNumber * 1000;
+    else
+      dResult = dFirstNumber / 72;
+  } else if (strFirstUnit == "mp" || strFirstUnit == "millipoints") {
+    if (strUnit == "mm" || strUnit == "millimeters")
+      dResult = dFirstNumber / 72000 * 25.4;
+    else if (strUnit == "cm" || strUnit == "centimeters")
+      dResult = dFirstNumber / 72000 * 2.54;
+    else if (strUnit == "pt" || strUnit == "points")
+      dResult = dFirstNumber / 1000;
+    else if (strUnit == "mp" || strUnit == "millipoints")
+      dResult = dFirstNumber;
+    else
+      dResult = dFirstNumber / 72000;
+  }
+  FXJSE_Value_SetDouble(args.GetReturnValue(), dResult);
 }
 
 // static
 void CXFA_FM2JSContext::At(CFXJSE_Value* pThis,
                            const CFX_ByteStringC& szFuncName,
                            CFXJSE_Arguments& args) {
-  if (args.GetLength() == 2) {
-    std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
-    std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
-    if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      CFX_ByteString stringTwo;
-      ValueToUTF8String(argTwo.get(), stringTwo);
-      if (stringTwo.IsEmpty()) {
-        FXJSE_Value_SetInteger(args.GetReturnValue(), 1);
-      } else {
-        CFX_ByteString stringOne;
-        ValueToUTF8String(argOne.get(), stringOne);
-        FX_STRSIZE iPosition = stringOne.Find(stringTwo.AsStringC());
-        FXJSE_Value_SetInteger(args.GetReturnValue(), iPosition + 1);
-      }
-    }
-  } else {
+  if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"At");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
+  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
+  if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get())) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  CFX_ByteString stringTwo;
+  ValueToUTF8String(argTwo.get(), stringTwo);
+  if (stringTwo.IsEmpty()) {
+    FXJSE_Value_SetInteger(args.GetReturnValue(), 1);
+    return;
+  }
+
+  CFX_ByteString stringOne;
+  ValueToUTF8String(argOne.get(), stringOne);
+  FX_STRSIZE iPosition = stringOne.Find(stringTwo.AsStringC());
+  FXJSE_Value_SetInteger(args.GetReturnValue(), iPosition + 1);
 }
 
 // static
@@ -3411,30 +3411,32 @@ void CXFA_FM2JSContext::Concat(CFXJSE_Value* pThis,
                                const CFX_ByteStringC& szFuncName,
                                CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
-  if (argc > 0) {
-    CFX_ByteString resultString;
-    FX_BOOL bAllNull = TRUE;
-
-    for (int32_t i = 0; i < argc; i++) {
-      std::unique_ptr<CFXJSE_Value> value = GetSimpleValue(pThis, args, i);
-      if (!ValueIsNull(pThis, value.get())) {
-        CFX_ByteString valueStr;
-        ValueToUTF8String(value.get(), valueStr);
-        resultString += valueStr;
-        bAllNull = FALSE;
-      }
-    }
-
-    if (bAllNull) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                resultString.AsStringC());
-    }
-  } else {
+  if (argc < 1) {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Concat");
+    return;
   }
+
+  CFX_ByteString resultString;
+  FX_BOOL bAllNull = TRUE;
+  for (int32_t i = 0; i < argc; i++) {
+    std::unique_ptr<CFXJSE_Value> value = GetSimpleValue(pThis, args, i);
+    if (ValueIsNull(pThis, value.get()))
+      continue;
+
+    bAllNull = FALSE;
+
+    CFX_ByteString valueStr;
+    ValueToUTF8String(value.get(), valueStr);
+    resultString += valueStr;
+  }
+
+  if (bAllNull) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultString.AsStringC());
 }
 
 // static
@@ -3442,41 +3444,49 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
                                const CFX_ByteStringC& szFuncName,
                                CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
+  if (argc < 1 || argc > 2) {
+    ToJSContext(pThis, nullptr)
+        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Decode");
+    return;
+  }
+
   if (argc == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
       FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      CFX_ByteString toDecodeString;
-      ValueToUTF8String(argOne.get(), toDecodeString);
-      CFX_ByteTextBuf resultBuf;
-      DecodeURL(toDecodeString.AsStringC(), resultBuf);
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+      return;
     }
-  } else if (argc == 2) {
-    std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
-    std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
-    if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
-    } else {
-      CFX_ByteString toDecodeString;
-      ValueToUTF8String(argOne.get(), toDecodeString);
-      CFX_ByteString identifyString;
-      ValueToUTF8String(argTwo.get(), identifyString);
-      CFX_ByteTextBuf resultBuf;
-      if (identifyString.EqualNoCase("html")) {
-        DecodeHTML(toDecodeString.AsStringC(), resultBuf);
-      } else if (identifyString.EqualNoCase("xml")) {
-        DecodeXML(toDecodeString.AsStringC(), resultBuf);
-      } else {
-        DecodeURL(toDecodeString.AsStringC(), resultBuf);
-      }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
-    }
-  } else {
-    ToJSContext(pThis, nullptr)
-        ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Decode");
+
+    CFX_ByteString toDecodeString;
+    ValueToUTF8String(argOne.get(), toDecodeString);
+    CFX_ByteTextBuf resultBuf;
+    DecodeURL(toDecodeString.AsStringC(), resultBuf);
+    FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
+  std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
+  if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get())) {
+    FXJSE_Value_SetNull(args.GetReturnValue());
+    return;
+  }
+
+  CFX_ByteString toDecodeString;
+  ValueToUTF8String(argOne.get(), toDecodeString);
+
+  CFX_ByteString identifyString;
+  ValueToUTF8String(argTwo.get(), identifyString);
+
+  CFX_ByteTextBuf resultBuf;
+  if (identifyString.EqualNoCase("html"))
+    DecodeHTML(toDecodeString.AsStringC(), resultBuf);
+  else if (identifyString.EqualNoCase("xml"))
+    DecodeXML(toDecodeString.AsStringC(), resultBuf);
+  else
+    DecodeURL(toDecodeString.AsStringC(), resultBuf);
+
+  FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
 }
 
 // static
@@ -3484,52 +3494,39 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultString) {
   CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
   const FX_WCHAR* pData = wsURLString.c_str();
-  int32_t iLen = wsURLString.GetLength();
   int32_t i = 0;
-  FX_WCHAR ch = 0;
-  FX_WCHAR chTemp = 0;
   CFX_WideTextBuf wsResultBuf;
-  while (i < iLen) {
-    ch = pData[i];
-    if ('%' == ch) {
-      chTemp = 0;
-      int32_t iCount = 0;
-      while (iCount < 2) {
-        ++i;
-        ch = pData[i];
-        if (ch <= '9' && ch >= '0') {
-          if (!iCount) {
-            chTemp += (ch - '0') * 16;
-          } else {
-            chTemp += (ch - '0');
-          }
-        } else {
-          if (ch <= 'F' && ch >= 'A') {
-            if (!iCount) {
-              chTemp += (ch - 'A' + 10) * 16;
-            } else {
-              chTemp += (ch - 'A' + 10);
-            }
-          } else if (ch <= 'f' && ch >= 'a') {
-            if (!iCount) {
-              chTemp += (ch - 'a' + 10) * 16;
-            } else {
-              chTemp += (ch - 'a' + 10);
-            }
-          } else {
-            wsResultBuf.Clear();
-            return;
-          }
-        }
-        ++iCount;
-      }
-      wsResultBuf.AppendChar(chTemp);
-    } else {
+  while (i < wsURLString.GetLength()) {
+    FX_WCHAR ch = pData[i];
+    if ('%' != ch) {
       wsResultBuf.AppendChar(ch);
+      ++i;
+      continue;
     }
+
+    FX_WCHAR chTemp = 0;
+    int32_t iCount = 0;
+    while (iCount < 2) {
+      ++i;
+      ch = pData[i];
+      if (ch <= '9' && ch >= '0') {
+        // TODO(dsinclair): Premultiply and add rather then scale.
+        chTemp += (ch - '0') * (!iCount ? 16 : 1);
+      } else if (ch <= 'F' && ch >= 'A') {
+        chTemp += (ch - 'A' + 10) * (!iCount ? 16 : 1);
+      } else if (ch <= 'f' && ch >= 'a') {
+        chTemp += (ch - 'a' + 10) * (!iCount ? 16 : 1);
+      } else {
+        wsResultBuf.Clear();
+        return;
+      }
+      ++iCount;
+    }
+    wsResultBuf.AppendChar(chTemp);
     ++i;
   }
   wsResultBuf.AppendChar(0);
+
   szResultString.Clear();
   szResultString << FX_UTF8Encode(wsResultBuf.GetBuffer(),
                                   wsResultBuf.GetLength())
@@ -3545,55 +3542,56 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
   int32_t iLen = wsHTMLString.GetLength();
   int32_t i = 0;
   int32_t iCode = 0;
-  FX_WCHAR ch = 0;
   const FX_WCHAR* pData = wsHTMLString.c_str();
   CFX_WideTextBuf wsResultBuf;
   while (i < iLen) {
-    ch = pData[i];
-    if (ch == '&') {
-      ++i;
-      ch = pData[i];
-      if (ch == '#') {
-        ++i;
-        ch = pData[i];
-        if (ch == 'x' || ch == 'X') {
-          ++i;
-          ch = pData[i];
-          if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
-              (ch <= 'F' && ch >= 'A')) {
-            while (ch != ';' && i < iLen) {
-              if (ch >= '0' && ch <= '9') {
-                iCode += ch - '0';
-              } else if (ch <= 'f' && ch >= 'a') {
-                iCode += ch - 'a' + 10;
-              } else if (ch <= 'F' && ch >= 'A') {
-                iCode += ch - 'A' + 10;
-              } else {
-                wsResultBuf.Clear();
-                return;
-              }
-              ++i;
-              iCode *= 16;
-              ch = pData[i];
-            }
-            iCode /= 16;
-          }
-        } else {
-          wsResultBuf.Clear();
-          return;
-        }
-      } else {
-        while (ch != ';' && i < iLen) {
-          strString[iStrIndex++] = ch;
-          ++i;
-          ch = pData[i];
-        }
-        strString[iStrIndex] = 0;
-      }
-    } else {
+    FX_WCHAR ch = pData[i];
+    if (ch != '&') {
       wsResultBuf.AppendChar(ch);
       ++i;
       continue;
+    }
+
+    ++i;
+    ch = pData[i];
+    if (ch == '#') {
+      ++i;
+      ch = pData[i];
+      if (ch != 'x' && ch != 'X') {
+        wsResultBuf.Clear();
+        return;
+      }
+
+      ++i;
+      ch = pData[i];
+      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
+          (ch <= 'F' && ch >= 'A')) {
+        while (ch != ';' && i < iLen) {
+          if (ch >= '0' && ch <= '9') {
+            iCode += ch - '0';
+          } else if (ch <= 'f' && ch >= 'a') {
+            iCode += ch - 'a' + 10;
+          } else if (ch <= 'F' && ch >= 'A') {
+            iCode += ch - 'A' + 10;
+          } else {
+            wsResultBuf.Clear();
+            return;
+          }
+          ++i;
+          // TODO(dsinclair): Postmultiply seems wrong, start at zero
+          //   and pre-multiply then can remove the post divide.
+          iCode *= 16;
+          ch = pData[i];
+        }
+        iCode /= 16;
+      }
+    } else {
+      while (ch != ';' && i < iLen) {
+        strString[iStrIndex++] = ch;
+        ++i;
+        ch = pData[i];
+      }
+      strString[iStrIndex] = 0;
     }
     uint32_t iData = 0;
     if (HTMLSTR2Code(strString, iData)) {
@@ -3606,6 +3604,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
     ++i;
   }
   wsResultBuf.AppendChar(0);
+
   szResultString.Clear();
   szResultString << FX_UTF8Encode(wsResultBuf.GetBuffer(),
                                   wsResultBuf.GetLength())
@@ -3626,51 +3625,54 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
   CFX_WideTextBuf wsXMLBuf;
   while (i < iLen) {
     ch = pData[i];
-    if (ch == '&') {
-      ++i;
-      ch = pData[i];
-      if (ch == '#') {
-        ++i;
-        ch = pData[i];
-        if (ch == 'x' || ch == 'X') {
-          ++i;
-          ch = pData[i];
-          if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
-              (ch <= 'F' && ch >= 'A')) {
-            while (ch != ';') {
-              if (ch >= '0' && ch <= '9') {
-                iCode += ch - '0';
-              } else if (ch <= 'f' && ch >= 'a') {
-                iCode += ch - 'a' + 10;
-              } else if (ch <= 'F' && ch >= 'A') {
-                iCode += ch - 'A' + 10;
-              } else {
-                wsXMLBuf.Clear();
-                return;
-              }
-              ++i;
-              iCode *= 16;
-              ch = pData[i];
-            }
-            iCode /= 16;
-          }
-        } else {
-          wsXMLBuf.Clear();
-          return;
-        }
-      } else {
-        while (ch != ';' && i < iLen) {
-          strString[iStrIndex++] = ch;
-          ++i;
-          ch = pData[i];
-        }
-        strString[iStrIndex] = 0;
-      }
-    } else {
+    if (ch != '&') {
       wsXMLBuf.AppendChar(ch);
       ++i;
       continue;
     }
+
+    // TODO(dsinclair): This is very similar to DecodeHTML, can they be
+    //   combined?
+    ++i;
+    ch = pData[i];
+    if (ch == '#') {
+      ++i;
+      ch = pData[i];
+      if (ch != 'x' && ch != 'X') {
+        wsXMLBuf.Clear();
+        return;
+      }
+
+      ++i;
+      ch = pData[i];
+      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
+          (ch <= 'F' && ch >= 'A')) {
+        while (ch != ';') {
+          if (ch >= '0' && ch <= '9') {
+            iCode += ch - '0';
+          } else if (ch <= 'f' && ch >= 'a') {
+            iCode += ch - 'a' + 10;
+          } else if (ch <= 'F' && ch >= 'A') {
+            iCode += ch - 'A' + 10;
+          } else {
+            wsXMLBuf.Clear();
+            return;
+          }
+          ++i;
+          iCode *= 16;
+          ch = pData[i];
+        }
+        iCode /= 16;
+      }
+    } else {
+      while (ch != ';' && i < iLen) {
+        strString[iStrIndex++] = ch;
+        ++i;
+        ch = pData[i];
+      }
+      strString[iStrIndex] = 0;
+    }
+
     const FX_WCHAR* const strName[] = {L"quot", L"amp", L"apos", L"lt", L"gt"};
     int32_t iIndex = 0;
     while (iIndex < 5) {
@@ -3706,6 +3708,7 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
     iCode = 0;
   }
   wsXMLBuf.AppendChar(0);
+
   szResultString.Clear();
   szResultString << FX_UTF8Encode(wsXMLBuf.GetBuffer(), wsXMLBuf.GetLength())
                         .AsStringC();
