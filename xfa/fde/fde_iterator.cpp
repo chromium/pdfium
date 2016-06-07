@@ -21,7 +21,7 @@ FX_BOOL CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
   FDE_CANVASITEM canvas;
   canvas.hCanvas = nullptr;
   canvas.pCanvas = pCanvas;
-  canvas.hPos = pCanvas->GetFirstPosition(nullptr);
+  canvas.hPos = pCanvas->GetFirstPosition();
   if (!canvas.hPos)
     return FALSE;
 
@@ -40,7 +40,7 @@ FX_BOOL CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
   FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
   ASSERT(pCanvas && pCanvas->pCanvas);
 
-  pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition(nullptr);
+  pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition();
   return !!pCanvas->hPos;
 }
 
@@ -48,9 +48,10 @@ void CFDE_VisualSetIterator::Reset() {
   FilterObjects(m_dwFilter);
 }
 
-FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
-                                               FDE_HVISUALOBJ* phCanvasObj,
-                                               IFDE_CanvasSet** ppCanvasSet) {
+FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
+    IFDE_VisualSet*& pVisualSet,
+    FDE_TEXTEDITPIECE** phCanvasObj,
+    IFDE_CanvasSet** ppCanvasSet) {
   while (m_CanvasStack.GetSize() > 0) {
     FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
     ASSERT(pCanvas && pCanvas->pCanvas);
@@ -63,16 +64,16 @@ FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
       continue;
     }
     do {
-      FDE_HVISUALOBJ hObj = pCanvas->pCanvas->GetNext(
-          pCanvas->hCanvas, pCanvas->hPos, pVisualSet);
-      ASSERT(hObj);
+      FDE_TEXTEDITPIECE* pObj =
+          pCanvas->pCanvas->GetNext(pCanvas->hPos, pVisualSet);
+      ASSERT(pObj);
 
       FDE_VISUALOBJTYPE eType = pVisualSet->GetType();
       if (eType == FDE_VISUALOBJ_Canvas) {
         FDE_CANVASITEM canvas;
-        canvas.hCanvas = hObj;
+        canvas.hCanvas = pObj;
         canvas.pCanvas = (IFDE_CanvasSet*)pVisualSet;
-        canvas.hPos = canvas.pCanvas->GetFirstPosition(hObj);
+        canvas.hPos = canvas.pCanvas->GetFirstPosition();
         m_CanvasStack.Push(canvas);
         break;
       }
@@ -82,7 +83,7 @@ FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
           *ppCanvasSet = pCanvas->pCanvas;
         if (phCanvasObj)
           *phCanvasObj = pCanvas->hCanvas;
-        return hObj;
+        return pObj;
       }
     } while (pCanvas->hPos);
   }

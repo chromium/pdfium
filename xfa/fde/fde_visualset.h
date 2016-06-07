@@ -20,40 +20,42 @@ enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Text = 0x01
 };
 
-typedef struct FDE_HVISUALOBJ_ { void* pData; } const* FDE_HVISUALOBJ;
+struct FDE_TEXTEDITPIECE {
+  int32_t nStart;
+  int32_t nCount;
+  int32_t nBidiLevel;
+  CFX_RectF rtPiece;
+  uint32_t dwCharStyles;
+};
 
 class IFDE_VisualSet {
  public:
   virtual ~IFDE_VisualSet() {}
   virtual FDE_VISUALOBJTYPE GetType() = 0;
-  virtual FX_BOOL GetBBox(FDE_HVISUALOBJ hVisualObj, CFX_RectF& bbox) = 0;
-  virtual FX_BOOL GetMatrix(FDE_HVISUALOBJ hVisualObj, CFX_Matrix& matrix) = 0;
-  virtual FX_BOOL GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) = 0;
-  virtual FX_BOOL GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) = 0;
+  virtual void GetRect(FDE_TEXTEDITPIECE* hVisualObj, CFX_RectF& rt) = 0;
 };
 
 class IFDE_CanvasSet : public IFDE_VisualSet {
  public:
-  virtual FX_POSITION GetFirstPosition(FDE_HVISUALOBJ hCanvas) = 0;
-  virtual FDE_HVISUALOBJ GetNext(FDE_HVISUALOBJ hCanvas,
-                                 FX_POSITION& pos,
-                                 IFDE_VisualSet*& pVisualSet) = 0;
-  virtual FDE_HVISUALOBJ GetParentCanvas(FDE_HVISUALOBJ hCanvas,
-                                         IFDE_VisualSet*& pVisualSet) = 0;
+  virtual FX_POSITION GetFirstPosition() = 0;
+  virtual FDE_TEXTEDITPIECE* GetNext(FX_POSITION& pos,
+                                     IFDE_VisualSet*& pVisualSet) = 0;
 };
 
 class IFDE_TextSet : public IFDE_VisualSet {
  public:
-  virtual int32_t GetString(FDE_HVISUALOBJ hText, CFX_WideString& wsText) = 0;
-  virtual IFGAS_Font* GetFont(FDE_HVISUALOBJ hText) = 0;
-  virtual FX_FLOAT GetFontSize(FDE_HVISUALOBJ hText) = 0;
-  virtual FX_ARGB GetFontColor(FDE_HVISUALOBJ hText) = 0;
-  virtual int32_t GetDisplayPos(FDE_HVISUALOBJ hText,
+  virtual int32_t GetString(FDE_TEXTEDITPIECE* hText,
+                            CFX_WideString& wsText) = 0;
+  virtual IFGAS_Font* GetFont() = 0;
+  virtual FX_FLOAT GetFontSize() = 0;
+  virtual FX_ARGB GetFontColor() = 0;
+  virtual int32_t GetDisplayPos(FDE_TEXTEDITPIECE* hText,
                                 FXTEXT_CHARPOS* pCharPos,
                                 FX_BOOL bCharCode = FALSE,
-                                CFX_WideString* pWSForms = NULL) = 0;
-  virtual int32_t GetCharRects(FDE_HVISUALOBJ hText,
-                               CFX_RectFArray& rtArray) = 0;
+                                CFX_WideString* pWSForms = nullptr) = 0;
+  virtual int32_t GetCharRects(const FDE_TEXTEDITPIECE* hText,
+                               CFX_RectFArray& rtArray,
+                               FX_BOOL bbox) = 0;
 };
 
 #endif  // XFA_FDE_FDE_VISUALSET_H_

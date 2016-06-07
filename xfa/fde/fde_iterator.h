@@ -13,7 +13,7 @@
 
 struct FDE_CANVASITEM {
   IFDE_CanvasSet* pCanvas;
-  FDE_HVISUALOBJ hCanvas;
+  FDE_TEXTEDITPIECE* hCanvas;
   FX_POSITION hPos;
 };
 
@@ -26,9 +26,9 @@ class CFDE_VisualSetIterator : public CFX_Target {
   FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);
 
   void Reset();
-  FDE_HVISUALOBJ GetNext(IFDE_VisualSet*& pVisualSet,
-                         FDE_HVISUALOBJ* phCanvasObj = NULL,
-                         IFDE_CanvasSet** ppCanvasSet = NULL);
+  FDE_TEXTEDITPIECE* GetNext(IFDE_VisualSet*& pVisualSet,
+                             FDE_TEXTEDITPIECE** phCanvasObj = nullptr,
+                             IFDE_CanvasSet** ppCanvasSet = nullptr);
 
  protected:
   uint32_t m_dwFilter;

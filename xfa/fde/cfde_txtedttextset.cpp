@@ -18,58 +18,39 @@ FDE_VISUALOBJTYPE CFDE_TxtEdtTextSet::GetType() {
   return FDE_VISUALOBJ_Text;
 }
 
-FX_BOOL CFDE_TxtEdtTextSet::GetBBox(FDE_HVISUALOBJ hVisualObj,
-                                    CFX_RectF& bbox) {
-  return FALSE;
+void CFDE_TxtEdtTextSet::GetRect(FDE_TEXTEDITPIECE* pPiece, CFX_RectF& rt) {
+  rt = pPiece->rtPiece;
 }
 
-FX_BOOL CFDE_TxtEdtTextSet::GetMatrix(FDE_HVISUALOBJ hVisualObj,
-                                      CFX_Matrix& matrix) {
-  return FALSE;
-}
-
-FX_BOOL CFDE_TxtEdtTextSet::GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) {
-  rt = reinterpret_cast<const FDE_TEXTEDITPIECE*>(hVisualObj)->rtPiece;
-  return TRUE;
-}
-
-FX_BOOL CFDE_TxtEdtTextSet::GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) {
-  return FALSE;
-}
-
-int32_t CFDE_TxtEdtTextSet::GetString(FDE_HVISUALOBJ hText,
+int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
                                       CFX_WideString& wsText) {
-  const FDE_TEXTEDITPIECE* pPiece =
-      reinterpret_cast<const FDE_TEXTEDITPIECE*>(hText);
   FX_WCHAR* pBuffer = wsText.GetBuffer(pPiece->nCount);
   for (int32_t i = 0; i < pPiece->nCount; i++) {
-    pBuffer[i] = m_pPage->GetChar((void*)hText, i);
+    pBuffer[i] = m_pPage->GetChar(pPiece, i);
   }
   wsText.ReleaseBuffer(pPiece->nCount);
   return pPiece->nCount;
 }
 
-IFGAS_Font* CFDE_TxtEdtTextSet::GetFont(FDE_HVISUALOBJ hText) {
+IFGAS_Font* CFDE_TxtEdtTextSet::GetFont() {
   return m_pPage->GetEngine()->GetEditParams()->pFont;
 }
 
-FX_FLOAT CFDE_TxtEdtTextSet::GetFontSize(FDE_HVISUALOBJ hText) {
+FX_FLOAT CFDE_TxtEdtTextSet::GetFontSize() {
   return m_pPage->GetEngine()->GetEditParams()->fFontSize;
 }
 
-FX_ARGB CFDE_TxtEdtTextSet::GetFontColor(FDE_HVISUALOBJ hText) {
+FX_ARGB CFDE_TxtEdtTextSet::GetFontColor() {
   return m_pPage->GetEngine()->GetEditParams()->dwFontColor;
 }
 
-int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText,
+int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_TEXTEDITPIECE* pPiece,
                                           FXTEXT_CHARPOS* pCharPos,
                                           FX_BOOL bCharCode,
                                           CFX_WideString* pWSForms) {
-  if (!hText)
+  if (!pPiece)
     return 0;
 
-  const FDE_TEXTEDITPIECE* pPiece =
-      reinterpret_cast<const FDE_TEXTEDITPIECE*>(hText);
   int32_t nLength = pPiece->nCount;
   if (nLength < 1)
     return 0;
@@ -81,7 +62,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText,
   uint32_t dwLayoutStyle = pBreak->GetLayoutStyles();
   FX_TXTRUN tr;
   tr.pAccess = m_pPage;
-  tr.pIdentity = (void*)hText;
+  tr.pIdentity = pPiece;
   tr.iLength = nLength;
   tr.pFont = pTextParams->pFont;
   tr.fFontSize = pTextParams->fFontSize;
@@ -93,19 +74,12 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText,
   return pBreak->GetDisplayPos(&tr, pCharPos, bCharCode, pWSForms);
 }
 
-int32_t CFDE_TxtEdtTextSet::GetCharRects(FDE_HVISUALOBJ hText,
-                                         CFX_RectFArray& rtArray) {
-  return GetCharRects_Impl(hText, rtArray);
-}
-
-int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText,
-                                              CFX_RectFArray& rtArray,
-                                              FX_BOOL bBBox) {
-  if (!hText)
+int32_t CFDE_TxtEdtTextSet::GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
+                                         CFX_RectFArray& rtArray,
+                                         FX_BOOL bBBox) {
+  if (!pPiece)
     return 0;
 
-  const FDE_TEXTEDITPIECE* pPiece =
-      reinterpret_cast<const FDE_TEXTEDITPIECE*>(hText);
   CFDE_TxtEdtEngine* pEngine =
       static_cast<CFDE_TxtEdtEngine*>(m_pPage->GetEngine());
   int32_t nLength = pPiece->nCount;
@@ -116,7 +90,7 @@ int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText,
   uint32_t dwLayoutStyle = pEngine->GetTextBreak()->GetLayoutStyles();
   FX_TXTRUN tr;
   tr.pAccess = m_pPage;
-  tr.pIdentity = (void*)hText;
+  tr.pIdentity = pPiece;
   tr.iLength = nLength;
   tr.pFont = pTextParams->pFont;
   tr.fFontSize = pTextParams->fFontSize;

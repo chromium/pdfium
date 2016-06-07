@@ -1170,7 +1170,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
     return 0;
   }
   IFX_TxtAccess* pAccess = pTxtRun->pAccess;
-  void* pIdentity = pTxtRun->pIdentity;
+  const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
   const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
@@ -1555,7 +1555,7 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
     return 0;
   }
   IFX_TxtAccess* pAccess = pTxtRun->pAccess;
-  void* pIdentity = pTxtRun->pIdentity;
+  const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
   const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength;

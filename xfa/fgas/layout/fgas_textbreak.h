@@ -70,11 +70,15 @@ class IFX_TxtAccess;
 #define FX_TXTLINEALIGNMENT_HigherMask 0x0C
 #define FX_TXTBREAK_MinimumTabWidth 160000
 
+struct FDE_TEXTEDITPIECE;
+
 class IFX_TxtAccess {
  public:
   virtual ~IFX_TxtAccess() {}
-  virtual FX_WCHAR GetChar(void* pIdentity, int32_t index) const = 0;
-  virtual int32_t GetWidth(void* pIdentity, int32_t index) const = 0;
+  virtual FX_WCHAR GetChar(const FDE_TEXTEDITPIECE* pIdentity,
+                           int32_t index) const = 0;
+  virtual int32_t GetWidth(const FDE_TEXTEDITPIECE* pIdentity,
+                           int32_t index) const = 0;
 };
 
 struct FX_TXTRUN {
@@ -95,7 +99,7 @@ struct FX_TXTRUN {
         bSkipSpace(TRUE) {}
 
   IFX_TxtAccess* pAccess;
-  void* pIdentity;
+  const FDE_TEXTEDITPIECE* pIdentity;
   CFX_WideString wsStr;
   int32_t* pWidths;
   int32_t iLength;

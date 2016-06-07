@@ -16,23 +16,22 @@ class CFDE_TxtEdtTextSet : public IFDE_TextSet {
   explicit CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage);
   ~CFDE_TxtEdtTextSet() override;
 
+  // IFDE_VisualSet
   FDE_VISUALOBJTYPE GetType() override;
-  FX_BOOL GetBBox(FDE_HVISUALOBJ hVisualObj, CFX_RectF& bbox) override;
-  FX_BOOL GetMatrix(FDE_HVISUALOBJ hVisualObj, CFX_Matrix& matrix) override;
-  FX_BOOL GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) override;
-  FX_BOOL GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) override;
-  int32_t GetString(FDE_HVISUALOBJ hText, CFX_WideString& wsText) override;
-  IFGAS_Font* GetFont(FDE_HVISUALOBJ hText) override;
-  FX_FLOAT GetFontSize(FDE_HVISUALOBJ hText) override;
-  FX_ARGB GetFontColor(FDE_HVISUALOBJ hText) override;
-  int32_t GetDisplayPos(FDE_HVISUALOBJ hText,
+  void GetRect(FDE_TEXTEDITPIECE* hVisualObj, CFX_RectF& rt) override;
+
+  // IFDE_TextSet
+  int32_t GetString(FDE_TEXTEDITPIECE* pPiece, CFX_WideString& wsText) override;
+  IFGAS_Font* GetFont() override;
+  FX_FLOAT GetFontSize() override;
+  FX_ARGB GetFontColor() override;
+  int32_t GetDisplayPos(FDE_TEXTEDITPIECE* pPiece,
                         FXTEXT_CHARPOS* pCharPos,
                         FX_BOOL bCharCode = FALSE,
-                        CFX_WideString* pWSForms = NULL) override;
-  int32_t GetCharRects(FDE_HVISUALOBJ hText, CFX_RectFArray& rtArray) override;
-  int32_t GetCharRects_Impl(FDE_HVISUALOBJ hText,
-                            CFX_RectFArray& rtArray,
-                            FX_BOOL bBBox = FALSE);
+                        CFX_WideString* pWSForms = nullptr) override;
+  int32_t GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
+                       CFX_RectFArray& rtArray,
+                       FX_BOOL bBBox) override;
 
  private:
   CFDE_TxtEdtPage* const m_pPage;

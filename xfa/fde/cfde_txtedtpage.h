@@ -10,15 +10,6 @@
 #include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fde/ifx_chariter.h"
 
-struct FDE_TEXTEDITPIECE {
-  int32_t nStart;
-  int32_t nCount;
-  int32_t nBidiLevel;
-  CFX_RectF rtPiece;
-  uint32_t dwCharStyles;
-};
-typedef CFX_MassArrayTemplate<FDE_TEXTEDITPIECE> CFDE_TXTEDTPieceMassArray;
-
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtParag;
 class CFDE_TxtEdtTextSet;
@@ -50,22 +41,18 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
 
   // IFDE_VisualSet:
   FDE_VISUALOBJTYPE GetType() override;
-  FX_BOOL GetBBox(FDE_HVISUALOBJ hVisualObj, CFX_RectF& bbox) override;
-  FX_BOOL GetMatrix(FDE_HVISUALOBJ hVisualObj, CFX_Matrix& matrix) override;
-  FX_BOOL GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) override;
-  FX_BOOL GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) override;
+  void GetRect(FDE_TEXTEDITPIECE* pPiece, CFX_RectF& rt) override;
 
   // IFDE_CanvasSet:
-  FX_POSITION GetFirstPosition(FDE_HVISUALOBJ hCanvas) override;
-  FDE_HVISUALOBJ GetNext(FDE_HVISUALOBJ hCanvas,
-                         FX_POSITION& pos,
-                         IFDE_VisualSet*& pVisualSet) override;
-  FDE_HVISUALOBJ GetParentCanvas(FDE_HVISUALOBJ hCanvas,
-                                 IFDE_VisualSet*& pVisualSet) override;
+  FX_POSITION GetFirstPosition() override;
+  FDE_TEXTEDITPIECE* GetNext(FX_POSITION& pos,
+                             IFDE_VisualSet*& pVisualSet) override;
 
   // IFX_TxtAccess:
-  FX_WCHAR GetChar(void* pIdentity, int32_t index) const override;
-  int32_t GetWidth(void* pIdentity, int32_t index) const override;
+  FX_WCHAR GetChar(const FDE_TEXTEDITPIECE* pIdentity,
+                   int32_t index) const override;
+  int32_t GetWidth(const FDE_TEXTEDITPIECE* pIdentity,
+                   int32_t index) const override;
 
  private:
   void NormalizePt2Rect(CFX_PointF& ptF,
@@ -75,7 +62,7 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   std::unique_ptr<IFX_CharIter> m_pIter;
   CFDE_TxtEdtTextSet* m_pTextSet;
   CFDE_TxtEdtEngine* m_pEditEngine;
-  CFDE_TXTEDTPieceMassArray m_PieceMassArr;
+  CFX_MassArrayTemplate<FDE_TEXTEDITPIECE> m_PieceMassArr;
   CFDE_TxtEdtParag* m_pBgnParag;
   CFDE_TxtEdtParag* m_pEndParag;
   int32_t m_nRefCount;
