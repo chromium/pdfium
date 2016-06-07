@@ -47,7 +47,6 @@ class CJBig2_TRDProc {
                              JBig2ArithCtx* grContext,
                              JBig2IntDecoderState* pIDS);
 
- public:
   FX_BOOL SBHUFF;
   FX_BOOL SBREFINE;
   uint32_t SBW;

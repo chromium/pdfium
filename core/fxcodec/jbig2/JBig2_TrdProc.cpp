@@ -324,11 +324,14 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         pIARDX->decode(pArithDecoder, &RDXI);
         pIARDY->decode(pArithDecoder, &RDYI);
         CJBig2_Image* IBOI = SBSYMS[IDI];
+        if (!IBOI)
+          return nullptr;
+
         uint32_t WOI = IBOI->m_nWidth;
         uint32_t HOI = IBOI->m_nHeight;
-        if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
+        if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0)
           return nullptr;
-        }
+
         std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
         pGRRD->GRW = WOI + RDWI;
         pGRRD->GRH = HOI + RDHI;
