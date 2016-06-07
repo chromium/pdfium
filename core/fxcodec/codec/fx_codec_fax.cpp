@@ -461,151 +461,22 @@ FX_BOOL FaxGet1DLine(const uint8_t* src_buf,
   return TRUE;
 }
 
-const uint8_t BlackRunTerminator[128] = {
-    0x37, 10, 0x02, 3,  0x03, 2,  0x02, 2,  0x03, 3,  0x03, 4,  0x02, 4,
-    0x03, 5,  0x05, 6,  0x04, 6,  0x04, 7,  0x05, 7,  0x07, 7,  0x04, 8,
-    0x07, 8,  0x18, 9,  0x17, 10, 0x18, 10, 0x08, 10, 0x67, 11, 0x68, 11,
-    0x6c, 11, 0x37, 11, 0x28, 11, 0x17, 11, 0x18, 11, 0xca, 12, 0xcb, 12,
-    0xcc, 12, 0xcd, 12, 0x68, 12, 0x69, 12, 0x6a, 12, 0x6b, 12, 0xd2, 12,
-    0xd3, 12, 0xd4, 12, 0xd5, 12, 0xd6, 12, 0xd7, 12, 0x6c, 12, 0x6d, 12,
-    0xda, 12, 0xdb, 12, 0x54, 12, 0x55, 12, 0x56, 12, 0x57, 12, 0x64, 12,
-    0x65, 12, 0x52, 12, 0x53, 12, 0x24, 12, 0x37, 12, 0x38, 12, 0x27, 12,
-    0x28, 12, 0x58, 12, 0x59, 12, 0x2b, 12, 0x2c, 12, 0x5a, 12, 0x66, 12,
-    0x67, 12,
-};
-
-const uint8_t BlackRunMarkup[80] = {
-    0x0f, 10, 0xc8, 12, 0xc9, 12, 0x5b, 12, 0x33, 12, 0x34, 12, 0x35, 12,
-    0x6c, 13, 0x6d, 13, 0x4a, 13, 0x4b, 13, 0x4c, 13, 0x4d, 13, 0x72, 13,
-    0x73, 13, 0x74, 13, 0x75, 13, 0x76, 13, 0x77, 13, 0x52, 13, 0x53, 13,
-    0x54, 13, 0x55, 13, 0x5a, 13, 0x5b, 13, 0x64, 13, 0x65, 13, 0x08, 11,
-    0x0c, 11, 0x0d, 11, 0x12, 12, 0x13, 12, 0x14, 12, 0x15, 12, 0x16, 12,
-    0x17, 12, 0x1c, 12, 0x1d, 12, 0x1e, 12, 0x1f, 12,
-};
-
-const uint8_t WhiteRunTerminator[128] = {
-    0x35, 8, 0x07, 6, 0x07, 4, 0x08, 4, 0x0B, 4, 0x0C, 4, 0x0E, 4, 0x0F, 4,
-    0x13, 5, 0x14, 5, 0x07, 5, 0x08, 5, 0x08, 6, 0x03, 6, 0x34, 6, 0x35, 6,
-    0x2a, 6, 0x2B, 6, 0x27, 7, 0x0c, 7, 0x08, 7, 0x17, 7, 0x03, 7, 0x04, 7,
-    0x28, 7, 0x2B, 7, 0x13, 7, 0x24, 7, 0x18, 7, 0x02, 8, 0x03, 8, 0x1a, 8,
-    0x1b, 8, 0x12, 8, 0x13, 8, 0x14, 8, 0x15, 8, 0x16, 8, 0x17, 8, 0x28, 8,
-    0x29, 8, 0x2a, 8, 0x2b, 8, 0x2c, 8, 0x2d, 8, 0x04, 8, 0x05, 8, 0x0a, 8,
-    0x0b, 8, 0x52, 8, 0x53, 8, 0x54, 8, 0x55, 8, 0x24, 8, 0x25, 8, 0x58, 8,
-    0x59, 8, 0x5a, 8, 0x5b, 8, 0x4a, 8, 0x4b, 8, 0x32, 8, 0x33, 8, 0x34, 8,
-};
-
-const uint8_t WhiteRunMarkup[80] = {
-    0x1b, 5,  0x12, 5,  0x17, 6,  0x37, 7,  0x36, 8,  0x37, 8,  0x64, 8,
-    0x65, 8,  0x68, 8,  0x67, 8,  0xcc, 9,  0xcd, 9,  0xd2, 9,  0xd3, 9,
-    0xd4, 9,  0xd5, 9,  0xd6, 9,  0xd7, 9,  0xd8, 9,  0xd9, 9,  0xda, 9,
-    0xdb, 9,  0x98, 9,  0x99, 9,  0x9a, 9,  0x18, 6,  0x9b, 9,  0x08, 11,
-    0x0c, 11, 0x0d, 11, 0x12, 12, 0x13, 12, 0x14, 12, 0x15, 12, 0x16, 12,
-    0x17, 12, 0x1c, 12, 0x1d, 12, 0x1e, 12, 0x1f, 12,
-};
-
-void AddBitStream(uint8_t* dest_buf, int& dest_bitpos, int data, int bitlen) {
-  for (int i = bitlen - 1; i >= 0; i--) {
-    if (data & (1 << i)) {
-      dest_buf[dest_bitpos / 8] |= 1 << (7 - dest_bitpos % 8);
-    }
-    dest_bitpos++;
-  }
-}
-
-void FaxEncodeRun(uint8_t* dest_buf, int& dest_bitpos, int run, bool bWhite) {
-  while (run >= 2560) {
-    AddBitStream(dest_buf, dest_bitpos, 0x1f, 12);
-    run -= 2560;
-  }
-  if (run >= 64) {
-    int markup = run - run % 64;
-    const uint8_t* p = bWhite ? WhiteRunMarkup : BlackRunMarkup;
-    p += (markup / 64 - 1) * 2;
-    AddBitStream(dest_buf, dest_bitpos, *p, p[1]);
-  }
-  run %= 64;
-  const uint8_t* p = bWhite ? WhiteRunTerminator : BlackRunTerminator;
-  p += run * 2;
-  AddBitStream(dest_buf, dest_bitpos, *p, p[1]);
-}
-
-void FaxEncode2DLine(uint8_t* dest_buf,
-                     int& dest_bitpos,
-                     const uint8_t* src_buf,
-                     const uint8_t* ref_buf,
-                     int cols) {
-  int a0 = -1;
-  bool a0color = true;
-  while (1) {
-    int a1 = FindBit(src_buf, cols, a0 + 1, !a0color);
-    int b1, b2;
-    FaxG4FindB1B2(ref_buf, cols, a0, a0color, b1, b2);
-    if (b2 < a1) {
-      dest_bitpos += 3;
-      dest_buf[dest_bitpos / 8] |= 1 << (7 - dest_bitpos % 8);
-      dest_bitpos++;
-      a0 = b2;
-    } else if (a1 - b1 <= 3 && b1 - a1 <= 3) {
-      int delta = a1 - b1;
-      switch (delta) {
-        case 0:
-          dest_buf[dest_bitpos / 8] |= 1 << (7 - dest_bitpos % 8);
-          break;
-        case 1:
-        case 2:
-        case 3:
-          dest_bitpos += delta == 1 ? 1 : delta + 2;
-          dest_buf[dest_bitpos / 8] |= 1 << (7 - dest_bitpos % 8);
-          dest_bitpos++;
-          dest_buf[dest_bitpos / 8] |= 1 << (7 - dest_bitpos % 8);
-          break;
-        case -1:
-        case -2:
-        case -3:
-          dest_bitpos += delta == -1 ? 1 : -delta + 2;
-          dest_buf[dest_bitpos / 8] |= 1 << (7 - dest_bitpos % 8);
-          dest_bitpos++;
-          break;
-      }
-      dest_bitpos++;
-      a0 = a1;
-      a0color = !a0color;
-    } else {
-      int a2 = FindBit(src_buf, cols, a1 + 1, a0color);
-      dest_bitpos++;
-      dest_bitpos++;
-      dest_buf[dest_bitpos / 8] |= 1 << (7 - dest_bitpos % 8);
-      dest_bitpos++;
-      if (a0 < 0) {
-        a0 = 0;
-      }
-      FaxEncodeRun(dest_buf, dest_bitpos, a1 - a0, a0color);
-      FaxEncodeRun(dest_buf, dest_bitpos, a2 - a1, !a0color);
-      a0 = a2;
-    }
-    if (a0 >= cols) {
-      return;
-    }
-  }
-}
-
 }  // namespace
 
 class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
  public:
-  CCodec_FaxDecoder();
+  CCodec_FaxDecoder(const uint8_t* src_buf,
+                    uint32_t src_size,
+                    int width,
+                    int height,
+                    int K,
+                    FX_BOOL EndOfLine,
+                    FX_BOOL EncodedByteAlign,
+                    FX_BOOL BlackIs1,
+                    int Columns,
+                    int Rows);
   ~CCodec_FaxDecoder() override;
 
-  FX_BOOL Create(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 int width,
-                 int height,
-                 int K,
-                 FX_BOOL EndOfLine,
-                 FX_BOOL EncodedByteAlign,
-                 FX_BOOL BlackIs1,
-                 int Columns,
-                 int Rows);
 
   // CCodec_ScanlineDecoder
   FX_BOOL v_Rewind() override;
@@ -620,36 +491,26 @@ class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
   uint8_t* m_pRefBuf;
 };
 
-CCodec_FaxDecoder::CCodec_FaxDecoder() {
-  m_pScanlineBuf = NULL;
-  m_pRefBuf = NULL;
-}
-CCodec_FaxDecoder::~CCodec_FaxDecoder() {
-  FX_Free(m_pScanlineBuf);
-  FX_Free(m_pRefBuf);
-}
-FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf,
-                                  uint32_t src_size,
-                                  int width,
-                                  int height,
-                                  int K,
-                                  FX_BOOL EndOfLine,
-                                  FX_BOOL EncodedByteAlign,
-                                  FX_BOOL BlackIs1,
-                                  int Columns,
-                                  int Rows) {
+CCodec_FaxDecoder::CCodec_FaxDecoder(const uint8_t* src_buf,
+                                     uint32_t src_size,
+                                     int width,
+                                     int height,
+                                     int K,
+                                     FX_BOOL EndOfLine,
+                                     FX_BOOL EncodedByteAlign,
+                                     FX_BOOL BlackIs1,
+                                     int Columns,
+                                     int Rows) {
   m_Encoding = K;
   m_bEndOfLine = EndOfLine;
   m_bByteAlign = EncodedByteAlign;
   m_bBlack = BlackIs1;
   m_OrigWidth = Columns;
   m_OrigHeight = Rows;
-  if (m_OrigWidth == 0) {
+  if (m_OrigWidth == 0)
     m_OrigWidth = width;
-  }
-  if (m_OrigHeight == 0) {
+  if (m_OrigHeight == 0)
     m_OrigHeight = height;
-  }
   // Should not overflow. Checked by FPDFAPI_CreateFaxDecoder.
   m_Pitch = (static_cast<uint32_t>(m_OrigWidth) + 31) / 32 * 4;
   m_OutputWidth = m_OrigWidth;
@@ -660,8 +521,13 @@ FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf,
   m_SrcSize = src_size;
   m_nComps = 1;
   m_bpc = 1;
-  return TRUE;
 }
+
+CCodec_FaxDecoder::~CCodec_FaxDecoder() {
+  FX_Free(m_pScanlineBuf);
+  FX_Free(m_pRefBuf);
+}
+
 FX_BOOL CCodec_FaxDecoder::v_Rewind() {
   FXSYS_memset(m_pRefBuf, 0xff, m_Pitch);
   bitpos = 0;
@@ -747,64 +613,6 @@ void FaxG4Decode(const uint8_t* src_buf,
   *pbitpos = bitpos;
 }
 
-class CCodec_FaxEncoder {
- public:
-  CCodec_FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch);
-  ~CCodec_FaxEncoder();
-  void Encode(uint8_t*& dest_buf, uint32_t& dest_size);
-  void Encode2DLine(const uint8_t* scan_line);
-  CFX_BinaryBuf m_DestBuf;
-  uint8_t* m_pRefLine;
-  uint8_t* m_pLineBuf;
-  int m_Cols, m_Rows, m_Pitch;
-  const uint8_t* m_pSrcBuf;
-};
-CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
-                                     int width,
-                                     int height,
-                                     int pitch) {
-  m_pSrcBuf = src_buf;
-  m_Cols = width;
-  m_Rows = height;
-  m_Pitch = pitch;
-  m_pRefLine = FX_Alloc(uint8_t, m_Pitch);
-  FXSYS_memset(m_pRefLine, 0xff, m_Pitch);
-  m_pLineBuf = FX_Alloc2D(uint8_t, m_Pitch, 8);
-  m_DestBuf.EstimateSize(0, 10240);
-}
-CCodec_FaxEncoder::~CCodec_FaxEncoder() {
-  FX_Free(m_pRefLine);
-  FX_Free(m_pLineBuf);
-}
-void CCodec_FaxEncoder::Encode(uint8_t*& dest_buf, uint32_t& dest_size) {
-  int dest_bitpos = 0;
-  uint8_t last_byte = 0;
-  for (int i = 0; i < m_Rows; i++) {
-    const uint8_t* scan_line = m_pSrcBuf + i * m_Pitch;
-    FXSYS_memset(m_pLineBuf, 0, m_Pitch * 8);
-    m_pLineBuf[0] = last_byte;
-    FaxEncode2DLine(m_pLineBuf, dest_bitpos, scan_line, m_pRefLine, m_Cols);
-    m_DestBuf.AppendBlock(m_pLineBuf, dest_bitpos / 8);
-    last_byte = m_pLineBuf[dest_bitpos / 8];
-    dest_bitpos %= 8;
-    FXSYS_memcpy(m_pRefLine, scan_line, m_Pitch);
-  }
-  if (dest_bitpos) {
-    m_DestBuf.AppendByte(last_byte);
-  }
-  dest_size = m_DestBuf.GetSize();
-  dest_buf = m_DestBuf.DetachBuffer();
-}
-FX_BOOL CCodec_FaxModule::Encode(const uint8_t* src_buf,
-                                 int width,
-                                 int height,
-                                 int pitch,
-                                 uint8_t*& dest_buf,
-                                 uint32_t& dest_size) {
-  CCodec_FaxEncoder encoder(src_buf, width, height, pitch);
-  encoder.Encode(dest_buf, dest_size);
-  return TRUE;
-}
 CCodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
@@ -816,8 +624,6 @@ CCodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(
     FX_BOOL BlackIs1,
     int Columns,
     int Rows) {
-  CCodec_FaxDecoder* pDecoder = new CCodec_FaxDecoder;
-  pDecoder->Create(src_buf, src_size, width, height, K, EndOfLine,
-                   EncodedByteAlign, BlackIs1, Columns, Rows);
-  return pDecoder;
+  return new CCodec_FaxDecoder(src_buf, src_size, width, height, K, EndOfLine,
+                               EncodedByteAlign, BlackIs1, Columns, Rows);
 }

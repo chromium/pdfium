@@ -709,7 +709,6 @@
         'core/fxge/ge/fx_ge_fontmap.cpp',
         'core/fxge/ge/fx_ge_linux.cpp',
         'core/fxge/ge/fx_ge_path.cpp',
-        'core/fxge/ge/fx_ge_ps.cpp',
         'core/fxge/ge/fx_ge_text.cpp',
         'core/fxge/ge/fx_text_int.h',
         'core/fxge/include/fx_dib.h',

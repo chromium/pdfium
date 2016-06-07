@@ -34,18 +34,14 @@ class CCodec_FlateModule {
                             uint32_t estimated_size,
                             uint8_t*& dest_buf,
                             uint32_t& dest_size);
-  FX_BOOL Encode(const uint8_t* src_buf,
+  bool Encode(const uint8_t* src_buf,
+              uint32_t src_size,
+              uint8_t** dest_buf,
+              uint32_t* dest_size);
+  bool PngEncode(const uint8_t* src_buf,
                  uint32_t src_size,
-                 int predictor,
-                 int Colors,
-                 int BitsPerComponent,
-                 int Columns,
-                 uint8_t*& dest_buf,
-                 uint32_t& dest_size);
-  FX_BOOL Encode(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 uint8_t*& dest_buf,
-                 uint32_t& dest_size);
+                 uint8_t** dest_buf,
+                 uint32_t* dest_size);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_

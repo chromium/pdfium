@@ -79,17 +79,18 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   int32_t height;
   int32_t num_comps;
   int32_t bits;
-  FX_BOOL color_trans;
+  bool color_trans;
   if (!CPDF_ModuleMgr::Get()->GetJpegModule()->LoadInfo(
-          pData, size, width, height, num_comps, bits, color_trans)) {
-    return NULL;
+          pData, size, &width, &height, &num_comps, &bits, &color_trans)) {
+    return nullptr;
   }
+
   CPDF_Dictionary* pDict = new CPDF_Dictionary;
   pDict->SetAtName("Type", "XObject");
   pDict->SetAtName("Subtype", "Image");
   pDict->SetAtInteger("Width", width);
   pDict->SetAtInteger("Height", height);
-  const FX_CHAR* csname = NULL;
+  const FX_CHAR* csname = nullptr;
   if (num_comps == 1) {
     csname = "DeviceGray";
   } else if (num_comps == 3) {
@@ -114,9 +115,8 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   m_bIsMask = FALSE;
   m_Width = width;
   m_Height = height;
-  if (!m_pStream) {
-    m_pStream = new CPDF_Stream(NULL, 0, NULL);
-  }
+  if (!m_pStream)
+    m_pStream = new CPDF_Stream(nullptr, 0, nullptr);
   return pDict;
 }
 

@@ -1408,31 +1408,19 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource,
   return FALSE;
 }
 
-// static
-int CFX_WindowsDevice::m_psLevel = 2;
-
-CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC,
-                                     FX_BOOL bCmykOutput,
-                                     FX_BOOL bForcePSOutput,
-                                     int psLevel) {
-  m_bForcePSOutput = bForcePSOutput;
-  m_psLevel = psLevel;
-  if (bForcePSOutput) {
-    IFX_RenderDeviceDriver* pDriver = new CPSPrinterDriver;
-    ((CPSPrinterDriver*)pDriver)->Init(hDC, psLevel, bCmykOutput);
-    SetDeviceDriver(pDriver);
-    return;
-  }
-  SetDeviceDriver(CreateDriver(hDC, bCmykOutput));
+CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC) {
+  SetDeviceDriver(CreateDriver(hDC));
 }
+
+CFX_WindowsDevice::~CFX_WindowsDevice() {}
 
 HDC CFX_WindowsDevice::GetDC() const {
   IFX_RenderDeviceDriver* pRDD = GetDeviceDriver();
   return pRDD ? reinterpret_cast<HDC>(pRDD->GetPlatformSurface()) : nullptr;
 }
 
-IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC,
-                                                        FX_BOOL bCmykOutput) {
+// static
+IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC) {
   int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||

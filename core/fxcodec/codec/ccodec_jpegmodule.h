@@ -20,27 +20,20 @@ class CFX_DIBAttribute;
 class CCodec_JpegModule {
  public:
   CCodec_JpegModule() {}
+
   CCodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
                                         uint32_t src_size,
                                         int width,
                                         int height,
                                         int nComps,
                                         FX_BOOL ColorTransform);
-  FX_BOOL LoadInfo(const uint8_t* src_buf,
-                   uint32_t src_size,
-                   int& width,
-                   int& height,
-                   int& num_components,
-                   int& bits_per_components,
-                   FX_BOOL& color_transform,
-                   uint8_t** icc_buf_ptr = nullptr,
-                   uint32_t* icc_length = nullptr);
-  FX_BOOL Encode(const CFX_DIBSource* pSource,
-                 uint8_t*& dest_buf,
-                 FX_STRSIZE& dest_size,
-                 int quality = 75,
-                 const uint8_t* icc_buf = nullptr,
-                 uint32_t icc_length = 0);
+  bool LoadInfo(const uint8_t* src_buf,
+                uint32_t src_size,
+                int* width,
+                int* height,
+                int* num_components,
+                int* bits_per_components,
+                bool* color_transform);
   FXJPEG_Context* Start();
   void Finish(FXJPEG_Context* pContext);
   void Input(FXJPEG_Context* pContext,

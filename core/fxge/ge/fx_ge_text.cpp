@@ -471,7 +471,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   }
   char2device.Scale(font_size, -font_size);
   if (FXSYS_fabs(char2device.a) + FXSYS_fabs(char2device.b) > 50 * 1.0f ||
-      ((m_DeviceClass == FXDC_PRINTER && !m_pDeviceDriver->IsPSPrintDriver()) &&
+      ((m_DeviceClass == FXDC_PRINTER) &&
        !(text_flags & FXTEXT_PRINTIMAGETEXT))) {
     if (pFont->GetFace() ||
         (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {

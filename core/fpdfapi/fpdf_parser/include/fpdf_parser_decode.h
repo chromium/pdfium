@@ -24,18 +24,19 @@ CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr);
 CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len = -1);
 CFX_ByteString PDF_EncodeText(const CFX_WideString& str);
 
-void FlateEncode(const uint8_t* src_buf,
+bool FlateEncode(const uint8_t* src_buf,
                  uint32_t src_size,
-                 uint8_t*& dest_buf,
-                 uint32_t& dest_size);
-void FlateEncode(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 int predictor,
-                 int Colors,
-                 int BitsPerComponent,
-                 int Columns,
-                 uint8_t*& dest_buf,
-                 uint32_t& dest_size);
+                 uint8_t** dest_buf,
+                 uint32_t* dest_size);
+
+// This used to have more parameters like the predictor and bpc, but there was
+// only one caller, so the interface has been simplified, the values are hard
+// coded, and dead code has been removed.
+bool PngEncode(const uint8_t* src_buf,
+               uint32_t src_size,
+               uint8_t** dest_buf,
+               uint32_t* dest_size);
+
 uint32_t FlateDecode(const uint8_t* src_buf,
                      uint32_t src_size,
                      uint8_t*& dest_buf,

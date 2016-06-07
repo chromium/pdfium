@@ -22,6 +22,7 @@ typedef struct WINDIB_Open_Args_ {
 
   const FX_WCHAR* path_name;
 } WINDIB_Open_Args_;
+
 class CFX_WindowsDIB : public CFX_DIBitmap {
  public:
   static CFX_ByteString GetBitmapInfo(const CFX_DIBitmap* pBitmap);
@@ -62,26 +63,20 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
 
   HBITMAP m_hOldBitmap;
 };
+
 class CFX_WindowsDevice : public CFX_RenderDevice {
  public:
-  static IFX_RenderDeviceDriver* CreateDriver(HDC hDC,
-                                              FX_BOOL bCmykOutput = FALSE);
+  static IFX_RenderDeviceDriver* CreateDriver(HDC hDC);
 
-  CFX_WindowsDevice(HDC hDC,
-                    FX_BOOL bCmykOutput = FALSE,
-                    FX_BOOL bForcePSOutput = FALSE,
-                    int psLevel = 2);
+  explicit CFX_WindowsDevice(HDC hDC);
+  ~CFX_WindowsDevice();
 
   HDC GetDC() const;
-
-  FX_BOOL m_bForcePSOutput;
-
-  static int m_psLevel;
 };
+
 class CFX_WinBitmapDevice : public CFX_RenderDevice {
  public:
   CFX_WinBitmapDevice(int width, int height, FXDIB_Format format);
-
   ~CFX_WinBitmapDevice();
 
   HDC GetDC() { return m_hDC; }

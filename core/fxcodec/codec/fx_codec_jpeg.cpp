@@ -23,15 +23,15 @@ extern "C" {
 }
 
 extern "C" {
-static void _JpegScanSOI(const uint8_t*& src_buf, uint32_t& src_size) {
-  if (src_size == 0) {
+static void JpegScanSOI(const uint8_t** src_buf, uint32_t* src_size) {
+  if (*src_size == 0)
     return;
-  }
+
   uint32_t offset = 0;
-  while (offset < src_size - 1) {
-    if (src_buf[offset] == 0xff && src_buf[offset + 1] == 0xd8) {
-      src_buf += offset;
-      src_size -= offset;
+  while (offset < *src_size - 1) {
+    if ((*src_buf)[offset] == 0xff && (*src_buf)[offset + 1] == 0xd8) {
+      *src_buf += offset;
+      *src_size -= offset;
       return;
     }
     offset++;
@@ -74,187 +74,31 @@ static void _error_do_nothing1(j_common_ptr cinfo, int) {}
 extern "C" {
 static void _error_do_nothing2(j_common_ptr cinfo, char*) {}
 };
-#define JPEG_MARKER_EXIF (JPEG_APP0 + 1)
-#define JPEG_MARKER_ICC (JPEG_APP0 + 2)
-#define JPEG_MARKER_AUTHORTIME (JPEG_APP0 + 3)
-#define JPEG_MARKER_MAXSIZE 0xFFFF
-#define JPEG_OVERHEAD_LEN 14
-static FX_BOOL _JpegEmbedIccProfile(j_compress_ptr cinfo,
-                                    const uint8_t* icc_buf_ptr,
-                                    uint32_t icc_length) {
-  if (!icc_buf_ptr || icc_length == 0) {
-    return FALSE;
-  }
-  uint32_t icc_segment_size = (JPEG_MARKER_MAXSIZE - 2 - JPEG_OVERHEAD_LEN);
-  uint32_t icc_segment_num = (icc_length / icc_segment_size) + 1;
-  if (icc_segment_num > 255) {
-    return FALSE;
-  }
-  uint32_t icc_data_length =
-      JPEG_OVERHEAD_LEN + (icc_segment_num > 1 ? icc_segment_size : icc_length);
-  uint8_t* icc_data = FX_Alloc(uint8_t, icc_data_length);
-  FXSYS_memcpy(icc_data, "\x49\x43\x43\x5f\x50\x52\x4f\x46\x49\x4c\x45\x00",
-               12);
-  icc_data[13] = (uint8_t)icc_segment_num;
-  for (uint8_t i = 0; i < (icc_segment_num - 1); i++) {
-    icc_data[12] = i + 1;
-    FXSYS_memcpy(icc_data + JPEG_OVERHEAD_LEN,
-                 icc_buf_ptr + i * icc_segment_size, icc_segment_size);
-    jpeg_write_marker(cinfo, JPEG_MARKER_ICC, icc_data, icc_data_length);
-  }
-  icc_data[12] = (uint8_t)icc_segment_num;
-  uint32_t icc_size = (icc_segment_num - 1) * icc_segment_size;
-  FXSYS_memcpy(icc_data + JPEG_OVERHEAD_LEN, icc_buf_ptr + icc_size,
-               icc_length - icc_size);
-  jpeg_write_marker(cinfo, JPEG_MARKER_ICC, icc_data,
-                    JPEG_OVERHEAD_LEN + icc_length - icc_size);
-  FX_Free(icc_data);
-  return TRUE;
-}
-extern "C" {
-static void _dest_do_nothing(j_compress_ptr cinfo) {}
-};
-extern "C" {
-static boolean _dest_empty(j_compress_ptr cinfo) {
-  return FALSE;
-}
-};
-#define JPEG_BLOCK_SIZE 1048576
-static void _JpegEncode(const CFX_DIBSource* pSource,
-                        uint8_t*& dest_buf,
-                        FX_STRSIZE& dest_size,
-                        int quality,
-                        const uint8_t* icc_buf,
-                        uint32_t icc_length) {
-  struct jpeg_error_mgr jerr;
-  jerr.error_exit = _error_do_nothing;
-  jerr.emit_message = _error_do_nothing1;
-  jerr.output_message = _error_do_nothing;
-  jerr.format_message = _error_do_nothing2;
-  jerr.reset_error_mgr = _error_do_nothing;
 
-  struct jpeg_compress_struct cinfo;
-  memset(&cinfo, 0, sizeof(cinfo));
-  cinfo.err = &jerr;
-  jpeg_create_compress(&cinfo);
-  int Bpp = pSource->GetBPP() / 8;
-  uint32_t nComponents = Bpp >= 3 ? (pSource->IsCmykImage() ? 4 : 3) : 1;
-  uint32_t pitch = pSource->GetPitch();
-  uint32_t width = pdfium::base::checked_cast<uint32_t>(pSource->GetWidth());
-  uint32_t height = pdfium::base::checked_cast<uint32_t>(pSource->GetHeight());
-  FX_SAFE_UINT32 safe_buf_len = width;
-  safe_buf_len *= height;
-  safe_buf_len *= nComponents;
-  safe_buf_len += 1024;
-  if (icc_length) {
-    safe_buf_len += 255 * 18;
-    safe_buf_len += icc_length;
-  }
-  uint32_t dest_buf_length = 0;
-  if (!safe_buf_len.IsValid()) {
-    dest_buf = nullptr;
-  } else {
-    dest_buf_length = safe_buf_len.ValueOrDie();
-    dest_buf = FX_TryAlloc(uint8_t, dest_buf_length);
-    const int MIN_TRY_BUF_LEN = 1024;
-    while (!dest_buf && dest_buf_length > MIN_TRY_BUF_LEN) {
-      dest_buf_length >>= 1;
-      dest_buf = FX_TryAlloc(uint8_t, dest_buf_length);
-    }
-  }
-  if (!dest_buf) {
-    FX_OutOfMemoryTerminate();
-  }
-  struct jpeg_destination_mgr dest;
-  dest.init_destination = _dest_do_nothing;
-  dest.term_destination = _dest_do_nothing;
-  dest.empty_output_buffer = _dest_empty;
-  dest.next_output_byte = dest_buf;
-  dest.free_in_buffer = dest_buf_length;
-  cinfo.dest = &dest;
-  cinfo.image_width = width;
-  cinfo.image_height = height;
-  cinfo.input_components = nComponents;
-  if (nComponents == 1) {
-    cinfo.in_color_space = JCS_GRAYSCALE;
-  } else if (nComponents == 3) {
-    cinfo.in_color_space = JCS_RGB;
-  } else {
-    cinfo.in_color_space = JCS_CMYK;
-  }
-  uint8_t* line_buf = NULL;
-  if (nComponents > 1) {
-    line_buf = FX_Alloc2D(uint8_t, width, nComponents);
-  }
-  jpeg_set_defaults(&cinfo);
-  if (quality != 75) {
-    jpeg_set_quality(&cinfo, quality, TRUE);
-  }
-  jpeg_start_compress(&cinfo, TRUE);
-  _JpegEmbedIccProfile(&cinfo, icc_buf, icc_length);
-  JSAMPROW row_pointer[1];
-  JDIMENSION row;
-  while (cinfo.next_scanline < cinfo.image_height) {
-    const uint8_t* src_scan = pSource->GetScanline(cinfo.next_scanline);
-    if (nComponents > 1) {
-      uint8_t* dest_scan = line_buf;
-      if (nComponents == 3) {
-        for (uint32_t i = 0; i < width; i++) {
-          dest_scan[0] = src_scan[2];
-          dest_scan[1] = src_scan[1];
-          dest_scan[2] = src_scan[0];
-          dest_scan += 3;
-          src_scan += Bpp;
-        }
-      } else {
-        for (uint32_t i = 0; i < pitch; i++) {
-          *dest_scan++ = ~*src_scan++;
-        }
-      }
-      row_pointer[0] = line_buf;
-    } else {
-      row_pointer[0] = (uint8_t*)src_scan;
-    }
-    row = cinfo.next_scanline;
-    jpeg_write_scanlines(&cinfo, row_pointer, 1);
-    if (cinfo.next_scanline == row) {
-      dest_buf =
-          FX_Realloc(uint8_t, dest_buf, dest_buf_length + JPEG_BLOCK_SIZE);
-      dest.next_output_byte = dest_buf + dest_buf_length - dest.free_in_buffer;
-      dest_buf_length += JPEG_BLOCK_SIZE;
-      dest.free_in_buffer += JPEG_BLOCK_SIZE;
-    }
-  }
-  jpeg_finish_compress(&cinfo);
-  jpeg_destroy_compress(&cinfo);
-  FX_Free(line_buf);
-  dest_size = dest_buf_length - (FX_STRSIZE)dest.free_in_buffer;
-}
+#define JPEG_MARKER_ICC (JPEG_APP0 + 2)
+#define JPEG_MARKER_MAXSIZE 0xFFFF
+
 
 #ifdef PDF_ENABLE_XFA
-static void _JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
-                               CFX_DIBAttribute* pAttribute) {
-  if (pInfo == NULL || pAttribute == NULL) {
+static void JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
+                              CFX_DIBAttribute* pAttribute) {
+  if (!pInfo || !pAttribute)
     return;
-  }
-  if (pAttribute) {
-    pAttribute->m_nXDPI = pInfo->X_density;
-    pAttribute->m_nYDPI = pInfo->Y_density;
-    pAttribute->m_wDPIUnit = pInfo->density_unit;
-  }
+
+  pAttribute->m_nXDPI = pInfo->X_density;
+  pAttribute->m_nYDPI = pInfo->Y_density;
+  pAttribute->m_wDPIUnit = pInfo->density_unit;
 }
 #endif  // PDF_ENABLE_XFA
 
-static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf,
-                             uint32_t src_size,
-                             int& width,
-                             int& height,
-                             int& num_components,
-                             int& bits_per_components,
-                             FX_BOOL& color_transform,
-                             uint8_t** icc_buf_ptr,
-                             uint32_t* icc_length) {
-  _JpegScanSOI(src_buf, src_size);
+static bool JpegLoadInfo(const uint8_t* src_buf,
+                         uint32_t src_size,
+                         int* width,
+                         int* height,
+                         int* num_components,
+                         int* bits_per_components,
+                         bool* color_transform) {
+  JpegScanSOI(&src_buf, &src_size);
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;
   jerr.error_exit = _error_fatal;
@@ -266,9 +110,9 @@ static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf,
   cinfo.err = &jerr;
   jmp_buf mark;
   cinfo.client_data = &mark;
-  if (setjmp(mark) == -1) {
-    return FALSE;
-  }
+  if (setjmp(mark) == -1)
+    return false;
+
   jpeg_create_decompress(&cinfo);
   struct jpeg_source_mgr src;
   src.init_source = _src_do_nothing;
@@ -281,30 +125,21 @@ static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf,
   cinfo.src = &src;
   if (setjmp(mark) == -1) {
     jpeg_destroy_decompress(&cinfo);
-    return FALSE;
-  }
-  if (icc_buf_ptr && icc_length) {
-    jpeg_save_markers(&cinfo, JPEG_MARKER_ICC, JPEG_MARKER_MAXSIZE);
+    return false;
   }
   int ret = jpeg_read_header(&cinfo, TRUE);
   if (ret != JPEG_HEADER_OK) {
     jpeg_destroy_decompress(&cinfo);
-    return FALSE;
+    return false;
   }
-  width = cinfo.image_width;
-  height = cinfo.image_height;
-  num_components = cinfo.num_components;
-  color_transform =
+  *width = cinfo.image_width;
+  *height = cinfo.image_height;
+  *num_components = cinfo.num_components;
+  *color_transform =
       cinfo.jpeg_color_space == JCS_YCbCr || cinfo.jpeg_color_space == JCS_YCCK;
-  bits_per_components = cinfo.data_precision;
-  if (icc_buf_ptr) {
-    *icc_buf_ptr = NULL;
-  }
-  if (icc_length) {
-    *icc_length = 0;
-  }
+  *bits_per_components = cinfo.data_precision;
   jpeg_destroy_decompress(&cinfo);
-  return TRUE;
+  return true;
 }
 
 class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
@@ -351,18 +186,19 @@ CCodec_JpegDecoder::CCodec_JpegDecoder() {
   FXSYS_memset(&src, 0, sizeof(src));
   m_nDefaultScaleDenom = 1;
 }
+
 CCodec_JpegDecoder::~CCodec_JpegDecoder() {
   FX_Free(m_pScanlineBuf);
-  if (m_bInited) {
+  if (m_bInited)
     jpeg_destroy_decompress(&cinfo);
-  }
 }
+
 FX_BOOL CCodec_JpegDecoder::InitDecode() {
   cinfo.err = &jerr;
   cinfo.client_data = &m_JmpBuf;
-  if (setjmp(m_JmpBuf) == -1) {
+  if (setjmp(m_JmpBuf) == -1)
     return FALSE;
-  }
+
   jpeg_create_decompress(&cinfo);
   m_bInited = TRUE;
   cinfo.src = &src;
@@ -376,15 +212,15 @@ FX_BOOL CCodec_JpegDecoder::InitDecode() {
   cinfo.image_width = m_OrigWidth;
   cinfo.image_height = m_OrigHeight;
   int ret = jpeg_read_header(&cinfo, TRUE);
-  if (ret != JPEG_HEADER_OK) {
+  if (ret != JPEG_HEADER_OK)
     return FALSE;
-  }
-  if (cinfo.saw_Adobe_marker) {
+
+  if (cinfo.saw_Adobe_marker)
     m_bJpegTransform = TRUE;
-  }
-  if (cinfo.num_components == 3 && !m_bJpegTransform) {
+
+  if (cinfo.num_components == 3 && !m_bJpegTransform)
     cinfo.out_color_space = cinfo.jpeg_color_space;
-  }
+
   m_OrigWidth = cinfo.image_width;
   m_OrigHeight = cinfo.image_height;
   m_OutputWidth = m_OrigWidth;
@@ -392,13 +228,14 @@ FX_BOOL CCodec_JpegDecoder::InitDecode() {
   m_nDefaultScaleDenom = cinfo.scale_denom;
   return TRUE;
 }
+
 FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf,
                                    uint32_t src_size,
                                    int width,
                                    int height,
                                    int nComps,
                                    FX_BOOL ColorTransform) {
-  _JpegScanSOI(src_buf, src_size);
+  JpegScanSOI(&src_buf, &src_size);
   m_SrcBuf = src_buf;
   m_SrcSize = src_size;
   jerr.error_exit = _error_fatal;
@@ -419,15 +256,15 @@ FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   }
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
-  if (!InitDecode()) {
+  if (!InitDecode())
     return FALSE;
-  }
-  if (cinfo.num_components < nComps) {
+
+  if (cinfo.num_components < nComps)
     return FALSE;
-  }
-  if ((int)cinfo.image_width < width) {
+
+  if ((int)cinfo.image_width < width)
     return FALSE;
-  }
+
   m_Pitch =
       (static_cast<uint32_t>(cinfo.image_width) * cinfo.num_components + 3) /
       4 * 4;
@@ -462,19 +299,19 @@ FX_BOOL CCodec_JpegDecoder::v_Rewind() {
   m_bStarted = TRUE;
   return TRUE;
 }
+
 uint8_t* CCodec_JpegDecoder::v_GetNextLine() {
   if (setjmp(m_JmpBuf) == -1)
     return nullptr;
 
   int nlines = jpeg_read_scanlines(&cinfo, &m_pScanlineBuf, 1);
-  if (nlines < 1) {
-    return nullptr;
-  }
-  return m_pScanlineBuf;
+  return nlines > 0 ? m_pScanlineBuf : nullptr;
 }
+
 uint32_t CCodec_JpegDecoder::GetSrcOffset() {
   return (uint32_t)(m_SrcSize - src.bytes_in_buffer);
 }
+
 CCodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
@@ -482,42 +319,28 @@ CCodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(
     int height,
     int nComps,
     FX_BOOL ColorTransform) {
-  if (!src_buf || src_size == 0) {
-    return NULL;
-  }
-  CCodec_JpegDecoder* pDecoder = new CCodec_JpegDecoder;
+  if (!src_buf || src_size == 0)
+    return nullptr;
+
+  std::unique_ptr<CCodec_JpegDecoder> pDecoder(new CCodec_JpegDecoder);
   if (!pDecoder->Create(src_buf, src_size, width, height, nComps,
                         ColorTransform)) {
-    delete pDecoder;
-    return NULL;
+    return nullptr;
   }
-  return pDecoder;
+  return pDecoder.release();
 }
-FX_BOOL CCodec_JpegModule::LoadInfo(const uint8_t* src_buf,
-                                    uint32_t src_size,
-                                    int& width,
-                                    int& height,
-                                    int& num_components,
-                                    int& bits_per_components,
-                                    FX_BOOL& color_transform,
-                                    uint8_t** icc_buf_ptr,
-                                    uint32_t* icc_length) {
-  return _JpegLoadInfo(src_buf, src_size, width, height, num_components,
-                       bits_per_components, color_transform, icc_buf_ptr,
-                       icc_length);
-}
-FX_BOOL CCodec_JpegModule::Encode(const CFX_DIBSource* pSource,
-                                  uint8_t*& dest_buf,
-                                  FX_STRSIZE& dest_size,
-                                  int quality,
-                                  const uint8_t* icc_buf,
-                                  uint32_t icc_length) {
-  if (pSource->GetBPP() < 8 || pSource->GetPalette())
-    return FALSE;
 
-  _JpegEncode(pSource, dest_buf, dest_size, quality, icc_buf, icc_length);
-  return TRUE;
+bool CCodec_JpegModule::LoadInfo(const uint8_t* src_buf,
+                                 uint32_t src_size,
+                                 int* width,
+                                 int* height,
+                                 int* num_components,
+                                 int* bits_per_components,
+                                 bool* color_transform) {
+  return JpegLoadInfo(src_buf, src_size, width, height, num_components,
+                      bits_per_components, color_transform);
 }
+
 struct FXJPEG_Context {
   jmp_buf m_JumpMark;
   jpeg_decompress_struct m_Info;
@@ -622,7 +445,7 @@ int CCodec_JpegModule::ReadHeader(FXJPEG_Context* ctx,
   *height = ctx->m_Info.image_height;
   *nComps = ctx->m_Info.num_components;
 #ifdef PDF_ENABLE_XFA
-  _JpegLoadAttribute(&ctx->m_Info, pAttribute);
+  JpegLoadAttribute(&ctx->m_Info, pAttribute);
 #endif
   return 0;
 }

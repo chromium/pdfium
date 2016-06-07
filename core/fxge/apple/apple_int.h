@@ -87,9 +87,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   // IFX_RenderDeviceDriver
   int GetDeviceCaps(int caps_id) override;
   CFX_Matrix GetCTM() const override;
-  FX_BOOL IsPSPrintDriver() override { return FALSE; }
-  FX_BOOL StartRendering() override { return TRUE; }
-  void EndRendering() override {}
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
@@ -107,13 +104,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                    int alpha_flag = 0,
                    void* pIccTransform = NULL,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
-  FX_BOOL SetPixel(int x,
-                   int y,
-                   uint32_t color,
-                   int alpha_flag = 0,
-                   void* pIccTransform = NULL) override {
-    return FALSE;
-  }
   FX_BOOL FillRect(const FX_RECT* pRect,
                    uint32_t fill_color,
                    int alpha_flag = 0,
@@ -133,7 +123,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                     int top,
                     void* pIccTransform = NULL,
                     FX_BOOL bDEdge = FALSE) override;
-  CFX_DIBitmap* GetBackDrop() override { return NULL; }
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
                     const FX_RECT* pSrcRect,
@@ -164,10 +153,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                       int blend_type = FXDIB_BLEND_NORMAL) override {
     return FALSE;
   }
-  FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) override {
-    return FALSE;
-  }
-  void CancelDIBits(void* handle) override {}
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
@@ -177,7 +162,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          uint32_t color,
                          int alpha_flag = 0,
                          void* pIccTransform = NULL) override;
-  void* GetPlatformSurface() const override { return NULL; }
   void ClearDriver() override;
 
  protected:
