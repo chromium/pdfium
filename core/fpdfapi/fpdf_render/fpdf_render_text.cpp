@@ -308,7 +308,8 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
       flag |= FX_STROKE_TEXT_MODE;
     }
     const CPDF_GeneralStateData* pGeneralData =
-        ((CPDF_PageObject*)textobj)->m_GeneralState;
+        static_cast<const CPDF_PageObject*>(textobj)
+            ->m_GeneralState.GetObject();
     if (pGeneralData && pGeneralData->m_StrokeAdjust) {
       flag |= FX_STROKE_ADJUST;
     }
@@ -318,7 +319,8 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
     return CPDF_TextRenderer::DrawTextPath(
         m_pDevice, textobj->m_nChars, textobj->m_pCharCodes,
         textobj->m_pCharPos, pFont, font_size, &text_matrix, pDeviceMatrix,
-        textobj->m_GraphState, fill_argb, stroke_argb, pClippingPath, flag);
+        textobj->m_GraphState.GetObject(), fill_argb, stroke_argb,
+        pClippingPath, flag);
   }
   text_matrix.Concat(*pObj2Device);
   return CPDF_TextRenderer::DrawNormalText(

@@ -232,7 +232,7 @@ DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
 }
 
 void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
-  const CFX_PathData* pPathData = path;
+  const CFX_PathData* pPathData = path.GetObject();
   if (!pPathData)
     return;
 

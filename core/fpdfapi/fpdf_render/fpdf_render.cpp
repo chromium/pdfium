@@ -188,12 +188,10 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
   if (pInitialStates && !m_pType3Char) {
     m_InitialStates.CopyStates(*pInitialStates);
     if (pParentState) {
-      CPDF_ColorStateData* pColorData =
-          (CPDF_ColorStateData*)(const CPDF_ColorStateData*)
-              m_InitialStates.m_ColorState;
-      CPDF_ColorStateData* pParentData =
-          (CPDF_ColorStateData*)(const CPDF_ColorStateData*)
-              pParentState->m_InitialStates.m_ColorState;
+      const CPDF_ColorStateData* pColorData =
+          m_InitialStates.m_ColorState.GetObject();
+      const CPDF_ColorStateData* pParentData =
+          pParentState->m_InitialStates.m_ColorState.GetObject();
       if (!pColorData || pColorData->m_FillColor.IsNull()) {
         CPDF_ColorStateData* pData = m_InitialStates.m_ColorState.GetModify();
         pData->m_FillRGB = pParentData->m_FillRGB;
@@ -466,20 +464,20 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
     FillType |= FX_FILL_STROKE;
   }
   const CPDF_GeneralStateData* pGeneralData =
-      ((CPDF_PageObject*)pPathObj)->m_GeneralState;
+      static_cast<const CPDF_PageObject*>(pPathObj)->m_GeneralState.GetObject();
   if (pGeneralData && pGeneralData->m_StrokeAdjust) {
     FillType |= FX_STROKE_ADJUST;
   }
   if (m_pType3Char) {
     FillType |= FX_FILL_TEXT_MODE;
   }
-  CFX_GraphStateData graphState(*pPathObj->m_GraphState);
+  CFX_GraphStateData graphState(*pPathObj->m_GraphState.GetObject());
   if (m_Options.m_Flags & RENDER_THINLINE) {
     graphState.m_LineWidth = 0;
   }
-  return m_pDevice->DrawPathWithBlend(pPathObj->m_Path, &path_matrix,
-                                      &graphState, fill_argb, stroke_argb,
-                                      FillType, m_curBlend);
+  return m_pDevice->DrawPathWithBlend(pPathObj->m_Path.GetObject(),
+                                      &path_matrix, &graphState, fill_argb,
+                                      stroke_argb, FillType, m_curBlend);
 }
 
 CPDF_TransferFunc* CPDF_RenderStatus::GetTransferFunc(CPDF_Object* pObj) const {
@@ -489,8 +487,7 @@ CPDF_TransferFunc* CPDF_RenderStatus::GetTransferFunc(CPDF_Object* pObj) const {
 }
 FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
                                        FX_BOOL bType3) const {
-  CPDF_ColorStateData* pColorData =
-      (CPDF_ColorStateData*)(const CPDF_ColorStateData*)pObj->m_ColorState;
+  const CPDF_ColorStateData* pColorData = pObj->m_ColorState.GetObject();
   if (m_pType3Char && !bType3 &&
       (!m_pType3Char->m_bColored ||
        (m_pType3Char->m_bColored &&
@@ -498,14 +495,13 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
     return m_T3FillColor;
   }
   if (!pColorData || pColorData->m_FillColor.IsNull()) {
-    pColorData = (CPDF_ColorStateData*)(const CPDF_ColorStateData*)
-                     m_InitialStates.m_ColorState;
+    pColorData = m_InitialStates.m_ColorState.GetObject();
   }
   FX_COLORREF rgb = pColorData->m_FillRGB;
   if (rgb == (uint32_t)-1) {
     return 0;
   }
-  const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState;
+  const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState.GetObject();
   int alpha;
   if (pGeneralData) {
     alpha = (int32_t)(pGeneralData->m_FillAlpha * 255);
@@ -524,22 +520,20 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
   return m_Options.TranslateColor(ArgbEncode(alpha, rgb));
 }
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
-  CPDF_ColorStateData* pColorData =
-      (CPDF_ColorStateData*)(const CPDF_ColorStateData*)pObj->m_ColorState;
+  const CPDF_ColorStateData* pColorData = pObj->m_ColorState.GetObject();
   if (m_pType3Char && (!m_pType3Char->m_bColored ||
                        (m_pType3Char->m_bColored &&
                         (!pColorData || pColorData->m_StrokeColor.IsNull())))) {
     return m_T3FillColor;
   }
   if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
-    pColorData = (CPDF_ColorStateData*)(const CPDF_ColorStateData*)
-                     m_InitialStates.m_ColorState;
+    pColorData = m_InitialStates.m_ColorState.GetObject();
   }
   FX_COLORREF rgb = pColorData->m_StrokeRGB;
   if (rgb == (uint32_t)-1) {
     return 0;
   }
-  const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState;
+  const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState.GetObject();
   int alpha;
   if (pGeneralData) {
     alpha = (int32_t)(pGeneralData->m_StrokeAlpha * 255);
@@ -573,7 +567,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
   m_pDevice->RestoreState(true);
   int nClipPath = ClipPath.GetPathCount();
   for (int i = 0; i < nClipPath; ++i) {
-    const CFX_PathData* pPathData = ClipPath.GetPath(i);
+    const CFX_PathData* pPathData = ClipPath.GetPath(i).GetObject();
     if (!pPathData)
       continue;
 
@@ -629,7 +623,7 @@ void CPDF_RenderStatus::DrawClipPath(CPDF_ClipPath ClipPath,
   int nClipPath = ClipPath.GetPathCount();
   int i;
   for (i = 0; i < nClipPath; i++) {
-    const CFX_PathData* pPathData = ClipPath.GetPath(i);
+    const CFX_PathData* pPathData = ClipPath.GetPath(i).GetObject();
     if (!pPathData) {
       continue;
     }
@@ -647,22 +641,24 @@ FX_BOOL CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
   CFX_Matrix path_matrix = pPathObj->m_Matrix;
   path_matrix.Concat(*pObj2Device);
   if (bStroke) {
-    CFX_GraphStateData graphState(*pPathObj->m_GraphState);
+    CFX_GraphStateData graphState(*pPathObj->m_GraphState.GetObject());
     if (m_Options.m_Flags & RENDER_THINLINE) {
       graphState.m_LineWidth = 0;
     }
-    return m_pDevice->SetClip_PathStroke(pPathObj->m_Path, &path_matrix,
-                                         &graphState);
+    return m_pDevice->SetClip_PathStroke(pPathObj->m_Path.GetObject(),
+                                         &path_matrix, &graphState);
   }
   int fill_mode = pPathObj->m_FillType;
   if (m_Options.m_Flags & RENDER_NOPATHSMOOTH) {
     fill_mode |= FXFILL_NOPATHSMOOTH;
   }
-  return m_pDevice->SetClip_PathFill(pPathObj->m_Path, &path_matrix, fill_mode);
+  return m_pDevice->SetClip_PathFill(pPathObj->m_Path.GetObject(), &path_matrix,
+                                     fill_mode);
 }
 FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
                                                const CFX_Matrix* pObj2Device) {
-  const CPDF_GeneralStateData* pGeneralState = pPageObj->m_GeneralState;
+  const CPDF_GeneralStateData* pGeneralState =
+      pPageObj->m_GeneralState.GetObject();
   int blend_type =
       pGeneralState ? pGeneralState->m_BlendType : FXDIB_BLEND_NORMAL;
   if (blend_type == FXDIB_BLEND_UNSUPPORTED) {
@@ -792,7 +788,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
           &text_device, textobj->m_nChars, textobj->m_pCharCodes,
           textobj->m_pCharPos, textobj->m_TextState.GetFont(),
           textobj->m_TextState.GetFontSize(), &text_matrix, &new_matrix,
-          textobj->m_GraphState, (FX_ARGB)-1, 0, nullptr, 0);
+          textobj->m_GraphState.GetObject(), (FX_ARGB)-1, 0, nullptr, 0);
     }
   }
   CPDF_RenderStatus bitmap_render;

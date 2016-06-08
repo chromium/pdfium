@@ -211,7 +211,8 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
     return FALSE;
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)pageObject;
 
-  const CPDF_GeneralStateData* pGeneralState = pPageObj->m_GeneralState;
+  const CPDF_GeneralStateData* pGeneralState =
+      pPageObj->m_GeneralState.GetObject();
   int blend_type =
       pGeneralState ? pGeneralState->m_BlendType : FXDIB_BLEND_NORMAL;
   if (blend_type != FXDIB_BLEND_NORMAL)

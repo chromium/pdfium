@@ -365,7 +365,8 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
     return FALSE;
   }
   m_BitmapAlpha = 255;
-  const CPDF_GeneralStateData* pGeneralState = m_pImageObject->m_GeneralState;
+  const CPDF_GeneralStateData* pGeneralState =
+      m_pImageObject->m_GeneralState.GetObject();
   if (pGeneralState) {
     m_BitmapAlpha = FXSYS_round(pGeneralState->m_FillAlpha * 255);
   }

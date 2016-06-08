@@ -1096,7 +1096,7 @@ class CFX_Renderer {
     }
     m_pClipMask = nullptr;
     if (m_pClipRgn && m_pClipRgn->GetType() == CFX_ClipRgn::MaskF) {
-      m_pClipMask = m_pClipRgn->GetMask();
+      m_pClipMask = m_pClipRgn->GetMask().GetObject();
     }
     m_bFullCover = bFullCover;
     FX_BOOL bObjectCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
@@ -1562,7 +1562,7 @@ FX_BOOL CFX_AggDeviceDriver::SetPixel(int x,
         return _DibSetPixel(m_pBitmap, x, y, color, alpha_flag, pIccTransform);
       }
     } else if (m_pClipRgn->GetType() == CFX_ClipRgn::MaskF) {
-      const CFX_DIBitmap* pMask = m_pClipRgn->GetMask();
+      const CFX_DIBitmap* pMask = m_pClipRgn->GetMask().GetObject();
       FX_BOOL bCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
       int new_alpha =
           bCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
@@ -1617,7 +1617,7 @@ FX_BOOL CFX_AggDeviceDriver::FillRect(const FX_RECT* pRect,
   }
   m_pBitmap->CompositeMask(
       draw_rect.left, draw_rect.top, draw_rect.Width(), draw_rect.Height(),
-      (const CFX_DIBitmap*)m_pClipRgn->GetMask(), fill_color,
+      m_pClipRgn->GetMask().GetObject(), fill_color,
       draw_rect.left - clip_rect.left, draw_rect.top - clip_rect.top,
       FXDIB_BLEND_NORMAL, nullptr, m_bRgbByteOrder, alpha_flag, pIccTransform);
   return TRUE;

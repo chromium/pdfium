@@ -648,27 +648,24 @@ class CFX_BitStream {
 
   const uint8_t* m_pData;
 };
+
 template <class ObjClass>
 class CFX_CountRef {
  public:
-  typedef CFX_CountRef<ObjClass> Ref;
+  using Ref = CFX_CountRef<ObjClass>;
 
   class CountedObj : public ObjClass {
    public:
     CountedObj() {}
-
     CountedObj(const CountedObj& src) : ObjClass(src) {}
 
     int m_RefCount;
   };
 
-  CFX_CountRef() { m_pObject = nullptr; }
-
-  CFX_CountRef(const Ref& ref) {
-    m_pObject = ref.m_pObject;
-    if (m_pObject) {
+  CFX_CountRef() : m_pObject(nullptr) {}
+  CFX_CountRef(const Ref& ref) : m_pObject(ref.m_pObject) {
+    if (m_pObject)
       m_pObject->m_RefCount++;
-    }
   }
 
   ~CFX_CountRef() { SetNull(); }
@@ -687,14 +684,10 @@ class CFX_CountRef {
     m_pObject = ref.m_pObject;
   }
 
+  bool IsNull() const { return !m_pObject; }
+  bool NotNull() const { return !IsNull(); }
+
   const ObjClass* GetObject() const { return m_pObject; }
-
-  operator const ObjClass*() const { return m_pObject; }
-
-  FX_BOOL IsNull() const { return !m_pObject; }
-
-  FX_BOOL NotNull() const { return !IsNull(); }
-
   ObjClass* GetModify() {
     if (!m_pObject) {
       m_pObject = new CountedObj;
@@ -724,6 +717,7 @@ class CFX_CountRef {
  protected:
   CountedObj* m_pObject;
 };
+
 class IFX_Pause {
  public:
   virtual ~IFX_Pause() {}

@@ -4508,7 +4508,7 @@ FX_BOOL CFX_DIBitmap::CompositeBitmap(int dest_left,
   FX_RECT clip_box;
   if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::RectI) {
     ASSERT(pClipRgn->GetType() == CFX_ClipRgn::MaskF);
-    pClipMask = pClipRgn->GetMask();
+    pClipMask = pClipRgn->GetMask().GetObject();
     clip_box = pClipRgn->GetBox();
   }
   CFX_ScanlineCompositor compositor;
@@ -4587,7 +4587,7 @@ FX_BOOL CFX_DIBitmap::CompositeMask(int dest_left,
   FX_RECT clip_box;
   if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::RectI) {
     ASSERT(pClipRgn->GetType() == CFX_ClipRgn::MaskF);
-    pClipMask = pClipRgn->GetMask();
+    pClipMask = pClipRgn->GetMask().GetObject();
     clip_box = pClipRgn->GetBox();
   }
   int src_bpp = pMask->GetBPP();
@@ -4870,7 +4870,7 @@ void CFX_BitmapComposer::Compose(CFX_DIBitmap* pDest,
   m_MaskColor = mask_color;
   m_pClipMask = nullptr;
   if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::RectI) {
-    m_pClipMask = pClipRgn->GetMask();
+    m_pClipMask = pClipRgn->GetMask().GetObject();
   }
   m_bVertical = bVertical;
   m_bFlipX = bFlipX;
