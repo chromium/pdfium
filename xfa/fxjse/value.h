@@ -9,6 +9,46 @@
 
 #include "xfa/fxjse/scope_inline.h"
 
+V8_INLINE static double FXJSE_ftod(FX_FLOAT fNumber) {
+  if (sizeof(FX_FLOAT) != 4) {
+    ASSERT(FALSE);
+    return fNumber;
+  }
+
+  uint32_t nFloatBits = (uint32_t&)fNumber;
+  uint8_t nExponent = (uint8_t)(nFloatBits >> 16 >> 7);
+  if (nExponent == 0 || nExponent == 255)
+    return fNumber;
+
+  int8_t nErrExp = nExponent - 127 - 23;
+  if (nErrExp >= 0)
+    return fNumber;
+
+  double dwError = pow(2.0, nErrExp), dwErrorHalf = dwError / 2;
+  double dNumber = fNumber, dNumberAbs = fabs(fNumber);
+  double dNumberAbsMin = dNumberAbs - dwErrorHalf,
+         dNumberAbsMax = dNumberAbs + dwErrorHalf;
+  int32_t iErrPos = 0;
+  if (floor(dNumberAbsMin) == floor(dNumberAbsMax)) {
+    dNumberAbsMin = fmod(dNumberAbsMin, 1.0);
+    dNumberAbsMax = fmod(dNumberAbsMax, 1.0);
+    int32_t iErrPosMin = 1, iErrPosMax = 38;
+    do {
+      int32_t iMid = (iErrPosMin + iErrPosMax) / 2;
+      double dPow = pow(10.0, iMid);
+      if (floor(dNumberAbsMin * dPow) == floor(dNumberAbsMax * dPow)) {
+        iErrPosMin = iMid + 1;
+      } else {
+        iErrPosMax = iMid;
+      }
+    } while (iErrPosMin < iErrPosMax);
+    iErrPos = iErrPosMax;
+  }
+  double dPow = pow(10.0, iErrPos);
+  return fNumber < 0 ? ceil(dNumber * dPow - 0.5) / dPow
+                     : floor(dNumber * dPow + 0.5) / dPow;
+}
+
 class CFXJSE_Value {
  public:
   CFXJSE_Value(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
@@ -176,12 +216,19 @@ class CFXJSE_Value {
         v8::String::kNormalString, szString.GetLength());
     m_hValue.Reset(m_pIsolate, hValue);
   }
-  V8_INLINE void SetFloat(FX_FLOAT fFloat);
+  V8_INLINE void SetFloat(FX_FLOAT fFloat) {
+    CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
+    v8::Local<v8::Value> pValue =
+        v8::Number::New(m_pIsolate, FXJSE_ftod(fFloat));
+    m_hValue.Reset(m_pIsolate, pValue);
+  }
   V8_INLINE void SetJSObject() {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hValue = v8::Object::New(m_pIsolate);
     m_hValue.Reset(m_pIsolate, hValue);
   }
+
+  void SetObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* pClass);
   void SetHostObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* lpClass);
   void SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues);
   void SetDate(double dDouble);
@@ -190,7 +237,7 @@ class CFXJSE_Value {
                             CFXJSE_Value* lpPropValue);
   FX_BOOL SetObjectProperty(const CFX_ByteStringC& szPropName,
                             CFXJSE_Value* lpPropValue);
-  FX_BOOL GetObjectProperty(uint32_t uPropIdx, CFXJSE_Value* lpPropValue);
+  FX_BOOL GetObjectPropertyByIdx(uint32_t uPropIdx, CFXJSE_Value* lpPropValue);
   FX_BOOL SetObjectProperty(uint32_t uPropIdx, CFXJSE_Value* lpPropValue);
   FX_BOOL DeleteObjectProperty(const CFX_ByteStringC& szPropName);
   FX_BOOL HasObjectOwnProperty(const CFX_ByteStringC& szPropName,
@@ -211,6 +258,7 @@ class CFXJSE_Value {
     m_hValue.Reset(m_pIsolate, hValue);
   }
   V8_INLINE void Assign(const CFXJSE_Value* lpValue) {
+    ASSERT(lpValue);
     if (lpValue) {
       m_hValue.Reset(m_pIsolate, lpValue->m_hValue);
     } else {

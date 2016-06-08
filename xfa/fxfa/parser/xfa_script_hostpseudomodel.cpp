@@ -38,7 +38,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_LoadString(
     uint32_t dwFlag) {
   CFX_WideString wsValue;
   pNotify->GetAppProvider()->LoadString(dwFlag, wsValue);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsValue).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_AppType(
     CFXJSE_Value* pValue,
@@ -54,7 +54,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_AppType(
   }
   CFX_WideString wsAppType;
   pNotify->GetAppProvider()->GetAppType(wsAppType);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsAppType).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsAppType).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitAppType(
     CFXJSE_Value* pValue,
@@ -70,7 +70,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitAppType(
   }
   CFX_WideString wsAppType;
   pNotify->GetAppProvider()->GetFoxitAppType(wsAppType);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsAppType).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsAppType).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_CalculationsEnabled(
     CFXJSE_Value* pValue,
@@ -82,12 +82,11 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_CalculationsEnabled(
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocProvider()->SetCalculationsEnabled(
-        hDoc, FXJSE_Value_ToBoolean(pValue));
+    pNotify->GetDocProvider()->SetCalculationsEnabled(hDoc,
+                                                      pValue->ToBoolean());
     return;
   }
-  FX_BOOL bEnabled = pNotify->GetDocProvider()->IsCalculationsEnabled(hDoc);
-  FXJSE_Value_SetBoolean(pValue, bEnabled);
+  pValue->SetBoolean(pNotify->GetDocProvider()->IsCalculationsEnabled(hDoc));
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_CurrentPage(
     CFXJSE_Value* pValue,
@@ -99,12 +98,10 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_CurrentPage(
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocProvider()->SetCurrentPage(hDoc,
-                                              FXJSE_Value_ToInteger(pValue));
+    pNotify->GetDocProvider()->SetCurrentPage(hDoc, pValue->ToInteger());
     return;
   }
-  int32_t iCurrentPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
-  FXJSE_Value_SetInteger(pValue, iCurrentPage);
+  pValue->SetInteger(pNotify->GetDocProvider()->GetCurrentPage(hDoc));
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Language(
     CFXJSE_Value* pValue,
@@ -120,7 +117,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Language(
   }
   CFX_WideString wsLanguage;
   pNotify->GetAppProvider()->GetLanguage(wsLanguage);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsLanguage).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsLanguage).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_NumPages(
     CFXJSE_Value* pValue,
@@ -135,8 +132,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_NumPages(
     ThrowException(XFA_IDS_UNABLE_SET_NUMPAGES);
     return;
   }
-  int32_t iNumPages = pNotify->GetDocProvider()->CountPages(hDoc);
-  FXJSE_Value_SetInteger(pValue, iNumPages);
+  pValue->SetInteger(pNotify->GetDocProvider()->CountPages(hDoc));
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Platform(
     CFXJSE_Value* pValue,
@@ -152,7 +148,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Platform(
   }
   CFX_WideString wsPlatform;
   pNotify->GetAppProvider()->GetPlatform(wsPlatform);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsPlatform).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsPlatform).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Title(
     CFXJSE_Value* pValue,
@@ -168,14 +164,14 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Title(
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
     CFX_ByteString bsValue;
-    FXJSE_Value_ToUTF8String(pValue, bsValue);
+    pValue->ToString(bsValue);
     pNotify->GetDocProvider()->SetTitle(
         hDoc, CFX_WideString::FromUTF8(bsValue.AsStringC()));
     return;
   }
   CFX_WideString wsTitle;
   pNotify->GetDocProvider()->GetTitle(hDoc, wsTitle);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsTitle).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsTitle).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_ValidationsEnabled(
     CFXJSE_Value* pValue,
@@ -187,12 +183,11 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ValidationsEnabled(
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocProvider()->SetValidationsEnabled(
-        hDoc, FXJSE_Value_ToBoolean(pValue));
+    pNotify->GetDocProvider()->SetValidationsEnabled(hDoc, pValue->ToBoolean());
     return;
   }
   FX_BOOL bEnabled = pNotify->GetDocProvider()->IsValidationsEnabled(hDoc);
-  FXJSE_Value_SetBoolean(pValue, bEnabled);
+  pValue->SetBoolean(bEnabled);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Variation(
     CFXJSE_Value* pValue,
@@ -211,7 +206,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Variation(
   }
   CFX_WideString wsVariation;
   pNotify->GetAppProvider()->GetVariation(wsVariation);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsVariation).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsVariation).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Version(
     CFXJSE_Value* pValue,
@@ -227,7 +222,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Version(
   }
   CFX_WideString wsVersion;
   pNotify->GetAppProvider()->GetVersion(wsVersion);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsVersion).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsVersion).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitVersion(
     CFXJSE_Value* pValue,
@@ -243,7 +238,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitVersion(
   }
   CFX_WideString wsVersion;
   pNotify->GetAppProvider()->GetFoxitVersion(wsVersion);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsVersion).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsVersion).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Name(
     CFXJSE_Value* pValue,
@@ -259,7 +254,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Name(
   }
   CFX_WideString wsAppName;
   pNotify->GetAppProvider()->GetAppName(wsAppName);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsAppName).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsAppName).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitName(
     CFXJSE_Value* pValue,
@@ -275,7 +270,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitName(
   }
   CFX_WideString wsFoxitAppName;
   pNotify->GetAppProvider()->GetFoxitAppName(wsFoxitAppName);
-  FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsFoxitAppName).AsStringC());
+  pValue->SetString(FX_UTF8Encode(wsFoxitAppName).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_GotoURL(
     CFXJSE_Arguments* pArguments) {
@@ -320,7 +315,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
       pNode = ToNode(pValue.get(), nullptr);
     } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
       CFX_ByteString bsString;
-      FXJSE_Value_ToUTF8String(pValue.get(), bsString);
+      pValue->ToString(bsString);
       CFX_WideString wsExpression =
           CFX_WideString::FromUTF8(bsString.AsStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
@@ -387,9 +382,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Response(
   CFX_WideString wsAnswer = pNotify->GetAppProvider()->Response(
       wsQuestion, wsTitle, wsDefaultAnswer, bMark);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsAnswer).AsStringC());
-  }
+  if (pValue)
+    pValue->SetString(FX_UTF8Encode(wsAnswer).AsStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentInBatch(
     CFXJSE_Arguments* pArguments) {
@@ -399,9 +393,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentInBatch(
   }
   int32_t iCur = pNotify->GetAppProvider()->GetCurDocumentInBatch();
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iCur);
-  }
+  if (pValue)
+    pValue->SetInteger(iCur);
 }
 static int32_t XFA_FilterName(const CFX_WideStringC& wsExpression,
                               int32_t nStart,
@@ -517,7 +510,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
       pNode = ToNode(pValue.get(), nullptr);
     } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
       CFX_ByteString bsString;
-      FXJSE_Value_ToUTF8String(pValue.get(), bsString);
+      pValue->ToString(bsString);
       CFX_WideString wsExpression =
           CFX_WideString::FromUTF8(bsString.AsStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
@@ -551,8 +544,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_GetFocus(
   if (!pNode) {
     return;
   }
-  FXJSE_Value_Set(pArguments->GetReturnValue(),
-                  m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
+  pArguments->GetReturnValue()->Assign(
+      m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_MessageBox(
     CFXJSE_Arguments* pArguments) {
@@ -597,9 +590,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_MessageBox(
   int32_t iValue = pNotify->GetAppProvider()->MsgBox(
       wsMessage, bsTitle, dwMessageType, dwButtonType);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iValue);
-  }
+  if (pValue)
+    pValue->SetInteger(iValue);
 }
 FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(
     CFXJSE_Arguments* pArguments,
@@ -622,7 +614,7 @@ FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(
     wsValue = FX_WSTRC(L"");
   } else {
     CFX_ByteString byMessage;
-    FXJSE_Value_ToUTF8String(pValueArg.get(), byMessage);
+    pValueArg->ToString(byMessage);
     wsValue = CFX_WideString::FromUTF8(byMessage.AsStringC());
   }
   return TRUE;
@@ -635,9 +627,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentCountInBatch(
   }
   int32_t iValue = pNotify->GetAppProvider()->GetDocumentCountInBatch();
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iValue);
-  }
+  if (pValue)
+    pValue->SetInteger(iValue);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Print(
     CFXJSE_Arguments* pArguments) {
@@ -793,7 +784,6 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_CurrentDateTime(
   }
   CFX_WideString wsDataTime = pNotify->GetCurrentDateTime();
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsDataTime).AsStringC());
-  }
+  if (pValue)
+    pValue->SetString(FX_UTF8Encode(wsDataTime).AsStringC());
 }

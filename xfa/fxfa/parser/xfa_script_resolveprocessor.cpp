@@ -712,7 +712,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(
         new CFXJSE_Value(rnd.m_pSC->GetRuntime()));
     bRet = pContext->RunScript(eLangType, wsExpression.AsStringC(),
                                pRetValue.get(), node);
-    if (!bRet || !FXJSE_Value_ToBoolean(pRetValue.get()))
+    if (!bRet || !pRetValue->ToBoolean())
       findNodes.RemoveAt(i);
   }
 }

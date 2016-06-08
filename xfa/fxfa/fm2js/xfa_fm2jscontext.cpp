@@ -517,7 +517,7 @@ void CXFA_FM2JSContext::Abs(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
   if (ValueIsNull(pThis, argOne.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -525,7 +525,7 @@ void CXFA_FM2JSContext::Abs(CFXJSE_Value* pThis,
   if (dValue < 0)
     dValue = -dValue;
 
-  FXJSE_Value_SetDouble(args.GetReturnValue(), dValue);
+  args.GetReturnValue()->SetDouble(dValue);
 }
 
 // static
@@ -534,7 +534,7 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
                             CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -553,18 +553,17 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
     }
 
     std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
-    int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+    argValue->GetObjectProperty("length", lengthValue.get());
+    int32_t iLength = lengthValue->ToInteger();
 
     if (iLength > 2) {
       std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
+      argValue->GetObjectPropertyByIdx(1, propertyValue.get());
 
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
           std::unique_ptr<CFXJSE_Value> defaultPropValue(
               new CFXJSE_Value(pIsolate));
           GetObjectDefaultValue(jsObjectValue.get(), defaultPropValue.get());
@@ -576,15 +575,13 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
         }
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
           std::unique_ptr<CFXJSE_Value> newPropertyValue(
               new CFXJSE_Value(pIsolate));
-          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                    propertyStr.AsStringC(),
-                                    newPropertyValue.get());
+          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                           newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
             continue;
 
@@ -595,11 +592,11 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
     }
   }
   if (uCount == 0) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
-  FXJSE_Value_SetDouble(args.GetReturnValue(), dSum / uCount);
+  args.GetReturnValue()->SetDouble(dSum / uCount);
 }
 
 // static
@@ -614,12 +611,12 @@ void CXFA_FM2JSContext::Ceil(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(pThis, args, 0);
   if (ValueIsNull(pThis, argValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
-  FXJSE_Value_SetFloat(args.GetReturnValue(),
-                       FXSYS_ceil(ValueToFloat(pThis, argValue.get())));
+  args.GetReturnValue()->SetFloat(
+      FXSYS_ceil(ValueToFloat(pThis, argValue.get())));
 }
 
 // static
@@ -636,9 +633,9 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
 
     if (FXJSE_Value_IsArray(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
+      argValue->GetObjectProperty("length", lengthValue.get());
 
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      int32_t iLength = lengthValue->ToInteger();
       if (iLength <= 2) {
         pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
         return;
@@ -648,25 +645,22 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> newPropertyValue(
           new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
+      argValue->GetObjectPropertyByIdx(1, propertyValue.get());
+      argValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
           if (!FXJSE_Value_IsNull(newPropertyValue.get()))
             iCount++;
         }
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
-          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                    propertyStr.AsStringC(),
-                                    newPropertyValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
+          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                           newPropertyValue.get());
           iCount += (FXJSE_Value_IsNull(newPropertyValue.get()) ? 0 : 1);
         }
       }
@@ -680,7 +674,7 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
       iCount++;
     }
   }
-  FXJSE_Value_SetInteger(args.GetReturnValue(), iCount);
+  args.GetReturnValue()->SetInteger(iCount);
 }
 
 // static
@@ -695,12 +689,12 @@ void CXFA_FM2JSContext::Floor(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(pThis, args, 0);
   if (ValueIsNull(pThis, argValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
-  FXJSE_Value_SetFloat(args.GetReturnValue(),
-                       FXSYS_floor(ValueToFloat(pThis, argValue.get())));
+  args.GetReturnValue()->SetFloat(
+      FXSYS_floor(ValueToFloat(pThis, argValue.get())));
 }
 
 // static
@@ -718,8 +712,8 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
 
     if (FXJSE_Value_IsArray(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      argValue->GetObjectProperty("length", lengthValue.get());
+      int32_t iLength = lengthValue->ToInteger();
       if (iLength <= 2) {
         pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
         return;
@@ -729,12 +723,11 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> newPropertyValue(
           new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
+      argValue->GetObjectPropertyByIdx(1, propertyValue.get());
+      argValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
             continue;
@@ -745,13 +738,11 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
         }
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
-          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                    propertyStr.AsStringC(),
-                                    newPropertyValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
+          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                           newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
             continue;
 
@@ -777,11 +768,11 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
     }
   }
   if (uCount == 0) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
-  FXJSE_Value_SetDouble(args.GetReturnValue(), dMaxValue);
+  args.GetReturnValue()->SetDouble(dMaxValue);
 }
 
 // static
@@ -799,8 +790,8 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
 
     if (FXJSE_Value_IsArray(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      argValue->GetObjectProperty("length", lengthValue.get());
+      int32_t iLength = lengthValue->ToInteger();
       if (iLength <= 2) {
         pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
         return;
@@ -810,12 +801,11 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> newPropertyValue(
           new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 2, jsObjectValue.get());
+      argValue->GetObjectPropertyByIdx(1, propertyValue.get());
+      argValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
             continue;
@@ -826,13 +816,11 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
         }
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
-          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                    propertyStr.AsStringC(),
-                                    newPropertyValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
+          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                           newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
             continue;
 
@@ -858,11 +846,11 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
     }
   }
   if (uCount == 0) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
-  FXJSE_Value_SetDouble(args.GetReturnValue(), dMinValue);
+  args.GetReturnValue()->SetDouble(dMinValue);
 }
 
 // static
@@ -878,7 +866,7 @@ void CXFA_FM2JSContext::Mod(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
   std::unique_ptr<CFXJSE_Value> argTwo = args.GetValue(1);
   if (FXJSE_Value_IsNull(argOne.get()) || FXJSE_Value_IsNull(argTwo.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -896,8 +884,8 @@ void CXFA_FM2JSContext::Mod(CFXJSE_Value* pThis,
     return;
   }
 
-  FXJSE_Value_SetDouble(args.GetReturnValue(),
-                        dDividend - dDivisor * (int32_t)(dDividend / dDivisor));
+  args.GetReturnValue()->SetDouble(dDividend -
+                                   dDivisor * (int32_t)(dDividend / dDivisor));
 }
 
 // static
@@ -913,7 +901,7 @@ void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
   if (FXJSE_Value_IsNull(argOne.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -928,7 +916,7 @@ void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> argTwo = args.GetValue(1);
     if (FXJSE_Value_IsNull(argTwo.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
 
@@ -945,8 +933,7 @@ void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
 
   CFX_Decimal decimalValue((FX_FLOAT)dValue, uPrecision);
   CFX_WideString wsValue = decimalValue;
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                            wsValue.UTF8Encode().AsStringC());
+  args.GetReturnValue()->SetString(wsValue.UTF8Encode().AsStringC());
 }
 
 // static
@@ -955,7 +942,7 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
                             CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc == 0) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -970,22 +957,21 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
 
     if (FXJSE_Value_IsArray(argValue.get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argValue.get(), "length", lengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      argValue->GetObjectProperty("length", lengthValue.get());
+      int32_t iLength = lengthValue->ToInteger();
       if (iLength <= 2) {
         pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
         return;
       }
 
       std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argValue.get(), 1, propertyValue.get());
+      argValue->GetObjectPropertyByIdx(1, propertyValue.get());
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> newPropertyValue(
           new CFXJSE_Value(pIsolate));
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
             continue;
@@ -995,13 +981,11 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
         }
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
-          FXJSE_Value_GetObjectPropByIdx(argValue.get(), j,
-                                         jsObjectValue.get());
-          FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                    propertyStr.AsStringC(),
-                                    newPropertyValue.get());
+          argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
+          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                           newPropertyValue.get());
           if (FXJSE_Value_IsNull(newPropertyValue.get()))
             continue;
 
@@ -1024,11 +1008,11 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
     }
   }
   if (uCount == 0) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
-  FXJSE_Value_SetDouble(args.GetReturnValue(), dSum);
+  args.GetReturnValue()->SetDouble(dSum);
 }
 
 // static
@@ -1053,8 +1037,7 @@ void CXFA_FM2JSContext::Date(CFXJSE_Value* pThis,
   bufferDay.Format("%02d", pTmStruct->tm_mday);
 
   CFX_ByteString bufferCurrent = bufferYear + bufferMon + bufferDay;
-  FXJSE_Value_SetInteger(args.GetReturnValue(),
-                         DateString2Num(bufferCurrent.AsStringC()));
+  args.GetReturnValue()->SetInteger(DateString2Num(bufferCurrent.AsStringC()));
 }
 
 // static
@@ -1070,7 +1053,7 @@ void CXFA_FM2JSContext::Date2Num(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> dateValue = GetSimpleValue(pThis, args, 0);
   if (ValueIsNull(pThis, dateValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -1081,7 +1064,7 @@ void CXFA_FM2JSContext::Date2Num(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(pThis, args, 1);
     if (ValueIsNull(pThis, formatValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(formatValue.get(), formatString);
@@ -1091,7 +1074,7 @@ void CXFA_FM2JSContext::Date2Num(CFXJSE_Value* pThis,
   if (argc > 2) {
     std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
     if (ValueIsNull(pThis, localValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(localValue.get(), localString);
@@ -1100,12 +1083,12 @@ void CXFA_FM2JSContext::Date2Num(CFXJSE_Value* pThis,
   CFX_ByteString szIsoDateString;
   if (!Local2IsoDate(pThis, dateString.AsStringC(), formatString.AsStringC(),
                      localString.AsStringC(), szIsoDateString)) {
-    FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+    args.GetReturnValue()->SetInteger(0);
     return;
   }
 
-  FXJSE_Value_SetInteger(args.GetReturnValue(),
-                         DateString2Num(szIsoDateString.AsStringC()));
+  args.GetReturnValue()->SetInteger(
+      DateString2Num(szIsoDateString.AsStringC()));
 }
 
 // static
@@ -1123,7 +1106,7 @@ void CXFA_FM2JSContext::DateFmt(CFXJSE_Value* pThis,
   if (argc > 0) {
     std::unique_ptr<CFXJSE_Value> argStyle = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argStyle.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
 
@@ -1136,7 +1119,7 @@ void CXFA_FM2JSContext::DateFmt(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argLocal.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(argLocal.get(), szLocal);
@@ -1144,7 +1127,7 @@ void CXFA_FM2JSContext::DateFmt(CFXJSE_Value* pThis,
 
   CFX_ByteString formatStr;
   GetStandardDateFormat(pThis, iStyle, szLocal.AsStringC(), formatStr);
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
+  args.GetReturnValue()->SetString(formatStr.AsStringC());
 }
 
 // static
@@ -1159,14 +1142,13 @@ void CXFA_FM2JSContext::IsoDate2Num(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   if (FXJSE_Value_IsNull(argOne.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
   CFX_ByteString szArgString;
   ValueToUTF8String(argOne.get(), szArgString);
-  FXJSE_Value_SetInteger(args.GetReturnValue(),
-                         DateString2Num(szArgString.AsStringC()));
+  args.GetReturnValue()->SetInteger(DateString2Num(szArgString.AsStringC()));
 }
 
 // static
@@ -1182,7 +1164,7 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   if (ValueIsNull(pThis, argOne.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -1193,14 +1175,14 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
   ValueToUTF8String(argOne.get(), szArgString);
   szArgString = szArgString.Mid(szArgString.Find('T', 0) + 1);
   if (szArgString.IsEmpty()) {
-    FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+    args.GetReturnValue()->SetInteger(0);
     return;
   }
 
   CXFA_LocaleValue timeValue(
       XFA_VT_TIME, CFX_WideString::FromUTF8(szArgString.AsStringC()), pMgr);
   if (!timeValue.IsValid()) {
-    FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+    args.GetReturnValue()->SetInteger(0);
     return;
   }
 
@@ -1223,9 +1205,9 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
     mins += 1440;
   hour = mins / 60;
   min = mins % 60;
-  int32_t iResult =
-      hour * 3600000 + min * 60000 + second * 1000 + milSecond + 1;
-  FXJSE_Value_SetInteger(args.GetReturnValue(), iResult);
+
+  args.GetReturnValue()->SetInteger(hour * 3600000 + min * 60000 +
+                                    second * 1000 + milSecond + 1);
 }
 
 // static
@@ -1243,7 +1225,7 @@ void CXFA_FM2JSContext::LocalDateFmt(CFXJSE_Value* pThis,
   if (argc > 0) {
     std::unique_ptr<CFXJSE_Value> argStyle = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argStyle.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     iStyle = (int32_t)ValueToFloat(pThis, argStyle.get());
@@ -1255,7 +1237,7 @@ void CXFA_FM2JSContext::LocalDateFmt(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argLocal.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(argLocal.get(), szLocal);
@@ -1263,7 +1245,7 @@ void CXFA_FM2JSContext::LocalDateFmt(CFXJSE_Value* pThis,
 
   CFX_ByteString formatStr;
   GetLocalDateFormat(pThis, iStyle, szLocal.AsStringC(), formatStr, FALSE);
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
+  args.GetReturnValue()->SetString(formatStr.AsStringC());
 }
 
 // static
@@ -1281,7 +1263,7 @@ void CXFA_FM2JSContext::LocalTimeFmt(CFXJSE_Value* pThis,
   if (argc > 0) {
     std::unique_ptr<CFXJSE_Value> argStyle = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argStyle.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     iStyle = (int32_t)ValueToFloat(pThis, argStyle.get());
@@ -1293,7 +1275,7 @@ void CXFA_FM2JSContext::LocalTimeFmt(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argLocal.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(argLocal.get(), szLocal);
@@ -1301,7 +1283,7 @@ void CXFA_FM2JSContext::LocalTimeFmt(CFXJSE_Value* pThis,
 
   CFX_ByteString formatStr;
   GetLocalTimeFormat(pThis, iStyle, szLocal.AsStringC(), formatStr, FALSE);
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
+  args.GetReturnValue()->SetString(formatStr.AsStringC());
 }
 
 // static
@@ -1317,12 +1299,12 @@ void CXFA_FM2JSContext::Num2Date(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> dateValue = GetSimpleValue(pThis, args, 0);
   if (ValueIsNull(pThis, dateValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
   int32_t dDate = (int32_t)ValueToFloat(pThis, dateValue.get());
   if (dDate < 1) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -1330,7 +1312,7 @@ void CXFA_FM2JSContext::Num2Date(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(pThis, args, 1);
     if (ValueIsNull(pThis, formatValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(formatValue.get(), formatString);
@@ -1340,7 +1322,7 @@ void CXFA_FM2JSContext::Num2Date(CFXJSE_Value* pThis,
   if (argc > 2) {
     std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
     if (ValueIsNull(pThis, localValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(localValue.get(), localString);
@@ -1443,8 +1425,7 @@ void CXFA_FM2JSContext::Num2Date(CFXJSE_Value* pThis,
   CFX_ByteString szLocalDateString;
   IsoDate2Local(pThis, szIsoDateString.AsStringC(), formatString.AsStringC(),
                 localString.AsStringC(), szLocalDateString);
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                            szLocalDateString.AsStringC());
+  args.GetReturnValue()->SetString(szLocalDateString.AsStringC());
 }
 
 // static
@@ -1460,12 +1441,12 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> timeValue = GetSimpleValue(pThis, args, 0);
   if (FXJSE_Value_IsNull(timeValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
   int32_t iTime = (int32_t)ValueToFloat(pThis, timeValue.get());
   if (FXSYS_abs(iTime) < 1.0) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -1473,7 +1454,7 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(formatValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(formatValue.get(), formatString);
@@ -1483,7 +1464,7 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
   if (argc > 2) {
     std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
     if (FXJSE_Value_IsNull(localValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(localValue.get(), localString);
@@ -1492,7 +1473,7 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
   CFX_ByteString szGMTTimeString;
   Num2AllTime(pThis, iTime, formatString.AsStringC(), localString.AsStringC(),
               TRUE, szGMTTimeString);
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(), szGMTTimeString.AsStringC());
+  args.GetReturnValue()->SetString(szGMTTimeString.AsStringC());
 }
 
 // static
@@ -1508,12 +1489,12 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> timeValue = GetSimpleValue(pThis, args, 0);
   if (FXJSE_Value_IsNull(timeValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
   FX_FLOAT fTime = ValueToFloat(pThis, timeValue.get());
   if (FXSYS_fabs(fTime) < 1.0) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -1521,7 +1502,7 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(formatValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(formatValue.get(), formatString);
@@ -1531,7 +1512,7 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
   if (argc > 2) {
     std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
     if (FXJSE_Value_IsNull(localValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(localValue.get(), localString);
@@ -1540,8 +1521,7 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
   CFX_ByteString szLocalTimeString;
   Num2AllTime(pThis, (int32_t)fTime, formatString.AsStringC(),
               localString.AsStringC(), FALSE, szLocalTimeString);
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                            szLocalTimeString.AsStringC());
+  args.GetReturnValue()->SetString(szLocalTimeString.AsStringC());
 }
 
 // static
@@ -1558,9 +1538,8 @@ void CXFA_FM2JSContext::Time(CFXJSE_Value* pThis,
   time(&now);
 
   struct tm* pGmt = gmtime(&now);
-  FXJSE_Value_SetInteger(
-      args.GetReturnValue(),
-      ((pGmt->tm_hour * 3600 + pGmt->tm_min * 60 + pGmt->tm_sec) * 1000));
+  args.GetReturnValue()->SetInteger(
+      (pGmt->tm_hour * 3600 + pGmt->tm_min * 60 + pGmt->tm_sec) * 1000);
 }
 
 // static
@@ -1577,7 +1556,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
   CFX_ByteString timeString;
   std::unique_ptr<CFXJSE_Value> timeValue = GetSimpleValue(pThis, args, 0);
   if (ValueIsNull(pThis, timeValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
   ValueToUTF8String(timeValue.get(), timeString);
@@ -1586,7 +1565,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> formatValue = GetSimpleValue(pThis, args, 1);
     if (ValueIsNull(pThis, formatValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(formatValue.get(), formatString);
@@ -1596,7 +1575,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
   if (argc > 2) {
     std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
     if (ValueIsNull(pThis, localValue.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(localValue.get(), localString);
@@ -1628,7 +1607,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
                                CFX_WideString::FromUTF8(timeString.AsStringC()),
                                wsFormat, pLocale, pMgr);
   if (!localeValue.IsValid()) {
-    FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+    args.GetReturnValue()->SetInteger(0);
     return;
   }
 
@@ -1651,9 +1630,8 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
     hour = mins / 60;
     min = mins % 60;
   }
-  FXJSE_Value_SetInteger(
-      args.GetReturnValue(),
-      hour * 3600000 + min * 60000 + second * 1000 + milSecond + 1);
+  args.GetReturnValue()->SetInteger(hour * 3600000 + min * 60000 +
+                                    second * 1000 + milSecond + 1);
 }
 
 // static
@@ -1671,7 +1649,7 @@ void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
   if (argc > 0) {
     std::unique_ptr<CFXJSE_Value> argStyle = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argStyle.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     iStyle = (int32_t)ValueToFloat(pThis, argStyle.get());
@@ -1683,7 +1661,7 @@ void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
   if (argc > 1) {
     std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argLocal.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
     ValueToUTF8String(argLocal.get(), szLocal);
@@ -1691,7 +1669,7 @@ void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
 
   CFX_ByteString formatStr;
   GetStandardTimeFormat(pThis, iStyle, szLocal.AsStringC(), formatStr);
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
+  args.GetReturnValue()->SetString(formatStr.AsStringC());
 }
 
 // static
@@ -2406,7 +2384,7 @@ void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(pThis, args, 2);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2431,7 +2409,7 @@ void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
          (r * nTemp * nPeriods * (nTemp / (1 + r)))) /
         ((nTemp - 1) * (nTemp - 1));
     if (nDerivative == 0) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
 
@@ -2442,7 +2420,7 @@ void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
     }
     nRet = r * nTemp / (nTemp - 1) - nPayment / nPrincipal;
   }
-  FXJSE_Value_SetDouble(args.GetReturnValue(), r * 12);
+  args.GetReturnValue()->SetDouble(r * 12);
 }
 
 // static
@@ -2460,7 +2438,7 @@ void CXFA_FM2JSContext::CTerm(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(pThis, args, 2);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2472,9 +2450,9 @@ void CXFA_FM2JSContext::CTerm(CFXJSE_Value* pThis,
     return;
   }
 
-  FXJSE_Value_SetFloat(args.GetReturnValue(),
-                       FXSYS_log((FX_FLOAT)(nFutureValue / nInitAmount)) /
-                           FXSYS_log((FX_FLOAT)(1 + nRate)));
+  args.GetReturnValue()->SetFloat(
+      FXSYS_log((FX_FLOAT)(nFutureValue / nInitAmount)) /
+      FXSYS_log((FX_FLOAT)(1 + nRate)));
 }
 
 // static
@@ -2492,7 +2470,7 @@ void CXFA_FM2JSContext::FV(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(pThis, args, 2);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2515,7 +2493,7 @@ void CXFA_FM2JSContext::FV(CFXJSE_Value* pThis,
     dResult = nAmount * nPeriod;
   }
 
-  FXJSE_Value_SetDouble(args.GetReturnValue(), dResult);
+  args.GetReturnValue()->SetDouble(dResult);
 }
 
 // static
@@ -2536,7 +2514,7 @@ void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get()) || ValueIsNull(pThis, argFour.get()) ||
       ValueIsNull(pThis, argFive.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2559,7 +2537,7 @@ void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
   int32_t iEnd = std::min((int32_t)(nFirstMonth + nNumberOfMonths - 1), iNums);
 
   if (nPayment < nPrincipalAmount * nRateOfMonth) {
-    FXJSE_Value_SetFloat(args.GetReturnValue(), 0);
+    args.GetReturnValue()->SetFloat(0);
     return;
   }
 
@@ -2572,7 +2550,7 @@ void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
     nSum += nPrincipalAmount * nRateOfMonth;
     nPrincipalAmount -= nPayment - nPrincipalAmount * nRateOfMonth;
   }
-  FXJSE_Value_SetFloat(args.GetReturnValue(), nSum);
+  args.GetReturnValue()->SetFloat(nSum);
 }
 
 // static
@@ -2590,7 +2568,7 @@ void CXFA_FM2JSContext::NPV(CFXJSE_Value* pThis,
   for (int32_t i = 0; i < argc; i++) {
     argValues.push_back(GetSimpleValue(pThis, args, i));
     if (ValueIsNull(pThis, argValues[i].get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
   }
@@ -2615,7 +2593,7 @@ void CXFA_FM2JSContext::NPV(CFXJSE_Value* pThis,
     FX_DOUBLE nNum = data[iIndex++];
     nSum += nNum / nTemp;
   }
-  FXJSE_Value_SetDouble(args.GetReturnValue(), nSum);
+  args.GetReturnValue()->SetDouble(nSum);
 }
 
 // static
@@ -2633,7 +2611,7 @@ void CXFA_FM2JSContext::Pmt(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(pThis, args, 2);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2650,8 +2628,7 @@ void CXFA_FM2JSContext::Pmt(CFXJSE_Value* pThis,
   for (int32_t i = 0; i < nPeriods - 1; ++i)
     nSum *= nTmp;
 
-  FXJSE_Value_SetFloat(args.GetReturnValue(),
-                       (nPrincipal * nRate * nSum) / (nSum - 1));
+  args.GetReturnValue()->SetFloat((nPrincipal * nRate * nSum) / (nSum - 1));
 }
 
 // static
@@ -2672,7 +2649,7 @@ void CXFA_FM2JSContext::PPmt(CFXJSE_Value* pThis,
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get()) || ValueIsNull(pThis, argFour.get()) ||
       ValueIsNull(pThis, argFive.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2709,7 +2686,7 @@ void CXFA_FM2JSContext::PPmt(CFXJSE_Value* pThis,
     nSum += nTemp;
     nPrincipalAmount -= nTemp;
   }
-  FXJSE_Value_SetFloat(args.GetReturnValue(), nSum);
+  args.GetReturnValue()->SetFloat(nSum);
 }
 
 // static
@@ -2727,7 +2704,7 @@ void CXFA_FM2JSContext::PV(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(pThis, args, 2);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2744,7 +2721,7 @@ void CXFA_FM2JSContext::PV(CFXJSE_Value* pThis,
     nTemp *= 1 + nRate;
 
   nTemp = 1 / nTemp;
-  FXJSE_Value_SetDouble(args.GetReturnValue(), nAmount * ((1 - nTemp) / nRate));
+  args.GetReturnValue()->SetDouble(nAmount * ((1 - nTemp) / nRate));
 }
 
 // static
@@ -2762,7 +2739,7 @@ void CXFA_FM2JSContext::Rate(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(pThis, args, 2);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2774,10 +2751,9 @@ void CXFA_FM2JSContext::Rate(CFXJSE_Value* pThis,
     return;
   }
 
-  FXJSE_Value_SetFloat(
-      args.GetReturnValue(),
-      (FXSYS_pow((FX_FLOAT)(nFuture / nPresent), (FX_FLOAT)(1 / nTotalNumber)) -
-       1));
+  args.GetReturnValue()->SetFloat(
+      FXSYS_pow((FX_FLOAT)(nFuture / nPresent), (FX_FLOAT)(1 / nTotalNumber)) -
+      1);
 }
 
 // static
@@ -2795,7 +2771,7 @@ void CXFA_FM2JSContext::Term(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argThree = GetSimpleValue(pThis, args, 2);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get()) ||
       ValueIsNull(pThis, argThree.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -2807,9 +2783,9 @@ void CXFA_FM2JSContext::Term(CFXJSE_Value* pThis,
     return;
   }
 
-  FXJSE_Value_SetFloat(args.GetReturnValue(),
-                       (FXSYS_log((FX_FLOAT)(nFuture / nMount * nRate) + 1) /
-                        FXSYS_log((FX_FLOAT)(1 + nRate))));
+  args.GetReturnValue()->SetFloat(
+      FXSYS_log((FX_FLOAT)(nFuture / nMount * nRate) + 1) /
+      FXSYS_log((FX_FLOAT)(1 + nRate)));
 }
 
 // static
@@ -2825,13 +2801,13 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
   if (ValueIsNull(pThis, argOne.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
   int32_t iIndex = (int32_t)ValueToFloat(pThis, argOne.get());
   if (iIndex < 1) {
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+    args.GetReturnValue()->SetString("");
     return;
   }
 
@@ -2844,9 +2820,8 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argIndexValue = args.GetValue(iArgIndex);
     if (FXJSE_Value_IsArray(argIndexValue.get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argIndexValue.get(), "length",
-                                lengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      argIndexValue->GetObjectProperty("length", lengthValue.get());
+      int32_t iLength = lengthValue->ToInteger();
       if (iLength > 3)
         bStopCounterFlags = TRUE;
 
@@ -2856,22 +2831,20 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
         std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
         std::unique_ptr<CFXJSE_Value> newPropertyValue(
             new CFXJSE_Value(pIsolate));
-        FXJSE_Value_GetObjectPropByIdx(argIndexValue.get(), 1,
-                                       propertyValue.get());
-        FXJSE_Value_GetObjectPropByIdx(argIndexValue.get(),
-                                       ((iLength - 1) - (iValueIndex - iIndex)),
-                                       jsObjectValue.get());
+        argIndexValue->GetObjectPropertyByIdx(1, propertyValue.get());
+        argIndexValue->GetObjectPropertyByIdx(
+            (iLength - 1) - (iValueIndex - iIndex), jsObjectValue.get());
         if (FXJSE_Value_IsNull(propertyValue.get())) {
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
         } else {
           CFX_ByteString propStr;
-          FXJSE_Value_ToUTF8String(propertyValue.get(), propStr);
-          FXJSE_Value_GetObjectProp(jsObjectValue.get(), propStr.AsStringC(),
-                                    newPropertyValue.get());
+          propertyValue->ToString(propStr);
+          jsObjectValue->GetObjectProperty(propStr.AsStringC(),
+                                           newPropertyValue.get());
         }
         CFX_ByteString bsChoosed;
         ValueToUTF8String(newPropertyValue.get(), bsChoosed);
-        FXJSE_Value_SetUTF8String(args.GetReturnValue(), bsChoosed.AsStringC());
+        args.GetReturnValue()->SetString(bsChoosed.AsStringC());
         bFound = TRUE;
       }
     } else {
@@ -2879,14 +2852,14 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
       if (iValueIndex == iIndex) {
         CFX_ByteString bsChoosed;
         ValueToUTF8String(argIndexValue.get(), bsChoosed);
-        FXJSE_Value_SetUTF8String(args.GetReturnValue(), bsChoosed.AsStringC());
+        args.GetReturnValue()->SetString(bsChoosed.AsStringC());
         bFound = TRUE;
       }
     }
     iArgIndex++;
   }
   if (!bFound)
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+    args.GetReturnValue()->SetString("");
 }
 
 // static
@@ -2899,8 +2872,8 @@ void CXFA_FM2JSContext::Exists(CFXJSE_Value* pThis,
     return;
   }
 
-  FXJSE_Value_SetInteger(args.GetReturnValue(),
-                         FXJSE_Value_IsObject(args.GetValue(0).get()));
+  args.GetReturnValue()->SetInteger(
+      FXJSE_Value_IsObject(args.GetValue(0).get()));
 }
 
 // static
@@ -2915,16 +2888,15 @@ void CXFA_FM2JSContext::HasValue(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   if (!FXJSE_Value_IsUTF8String(argOne.get())) {
-    FXJSE_Value_SetInteger(args.GetReturnValue(),
-                           FXJSE_Value_IsNumber(argOne.get()) ||
-                               FXJSE_Value_IsBoolean(argOne.get()));
+    args.GetReturnValue()->SetInteger(FXJSE_Value_IsNumber(argOne.get()) ||
+                                      FXJSE_Value_IsBoolean(argOne.get()));
     return;
   }
 
   CFX_ByteString valueStr;
-  FXJSE_Value_ToUTF8String(argOne.get(), valueStr);
+  argOne->ToString(valueStr);
   valueStr.TrimLeft();
-  FXJSE_Value_SetInteger(args.GetReturnValue(), (!valueStr.IsEmpty()));
+  args.GetReturnValue()->SetInteger(!valueStr.IsEmpty());
 }
 
 // static
@@ -2952,7 +2924,7 @@ void CXFA_FM2JSContext::Oneof(CFXJSE_Value* pThis,
     delete parametersValue[i];
   FX_Free(parametersValue);
 
-  FXJSE_Value_SetInteger(args.GetReturnValue(), bFlags);
+  args.GetReturnValue()->SetInteger(bFlags);
 }
 
 // static
@@ -2967,7 +2939,7 @@ void CXFA_FM2JSContext::Within(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   if (FXJSE_Value_IsNull(argOne.get())) {
-    FXJSE_Value_SetUndefined(args.GetReturnValue());
+    args.GetReturnValue()->SetUndefined();
     return;
   }
 
@@ -2977,9 +2949,8 @@ void CXFA_FM2JSContext::Within(CFXJSE_Value* pThis,
     FX_FLOAT oneNumber = ValueToFloat(pThis, argOne.get());
     FX_FLOAT lowNumber = ValueToFloat(pThis, argLow.get());
     FX_FLOAT heightNumber = ValueToFloat(pThis, argHigh.get());
-    FXJSE_Value_SetInteger(
-        args.GetReturnValue(),
-        ((oneNumber >= lowNumber) && (oneNumber <= heightNumber)));
+    args.GetReturnValue()->SetInteger((oneNumber >= lowNumber) &&
+                                      (oneNumber <= heightNumber));
     return;
   }
 
@@ -2989,9 +2960,9 @@ void CXFA_FM2JSContext::Within(CFXJSE_Value* pThis,
   ValueToUTF8String(argOne.get(), oneString);
   ValueToUTF8String(argLow.get(), lowString);
   ValueToUTF8String(argHigh.get(), heightString);
-  FXJSE_Value_SetInteger(args.GetReturnValue(),
-                         ((oneString.Compare(lowString.AsStringC()) >= 0) &&
-                          (oneString.Compare(heightString.AsStringC()) <= 0)));
+  args.GetReturnValue()->SetInteger(
+      (oneString.Compare(lowString.AsStringC()) >= 0) &&
+      (oneString.Compare(heightString.AsStringC()) <= 0));
 }
 
 // static
@@ -3004,10 +2975,9 @@ void CXFA_FM2JSContext::If(CFXJSE_Value* pThis,
     return;
   }
 
-  FXJSE_Value_Set(args.GetReturnValue(),
-                  FXJSE_Value_ToBoolean(GetSimpleValue(pThis, args, 0).get())
-                      ? GetSimpleValue(pThis, args, 1).get()
-                      : GetSimpleValue(pThis, args, 2).get());
+  args.GetReturnValue()->Assign(GetSimpleValue(pThis, args, 0)->ToBoolean()
+                                    ? GetSimpleValue(pThis, args, 1).get()
+                                    : GetSimpleValue(pThis, args, 2).get());
 }
 
 // static
@@ -3025,7 +2995,7 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
   CFX_ByteString utf8ScriptString;
   ValueToUTF8String(scriptValue.get(), utf8ScriptString);
   if (utf8ScriptString.IsEmpty()) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -3044,7 +3014,7 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
       FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).c_str(),
       returnValue.get());
 
-  FXJSE_Value_Set(args.GetReturnValue(), returnValue.get());
+  args.GetReturnValue()->Assign(returnValue.get());
   FXJSE_Context_Release(pNewContext);
 }
 
@@ -3073,7 +3043,7 @@ void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
   if (FXJSE_Value_IsBoolean(argOne.get()) ||
       FXJSE_Value_IsUTF8String(argOne.get()) ||
       FXJSE_Value_IsNumber(argOne.get())) {
-    FXJSE_Value_Set(args.GetReturnValue(), argOne.get());
+    args.GetReturnValue()->Assign(argOne.get());
     return;
   }
 
@@ -3084,18 +3054,18 @@ void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
   int intVal = 3;
   if (FXJSE_Value_IsNull(argOne.get())) {
     intVal = 4;
-    FXJSE_Value_SetNull(rgValues[2]);
+    rgValues[2]->SetNull();
   } else if (FXJSE_Value_IsArray(argOne.get())) {
 #ifndef NDEBUG
     std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectProp(argOne.get(), "length", lengthValue.get());
-    ASSERT(FXJSE_Value_ToInteger(lengthValue.get()) >= 3);
+    argOne->GetObjectProperty("length", lengthValue.get());
+    ASSERT(lengthValue->ToInteger() >= 3);
 #endif
 
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectPropByIdx(argOne.get(), 1, propertyValue.get());
-    FXJSE_Value_GetObjectPropByIdx(argOne.get(), 2, jsObjectValue.get());
+    argOne->GetObjectPropertyByIdx(1, propertyValue.get());
+    argOne->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (!FXJSE_Value_IsNull(propertyValue.get()) ||
         FXJSE_Value_IsNull(jsObjectValue.get())) {
       for (int32_t i = 0; i < 3; i++)
@@ -3105,14 +3075,14 @@ void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
       return;
     }
 
-    FXJSE_Value_Set(rgValues[2], jsObjectValue.get());
+    rgValues[2]->Assign(jsObjectValue.get());
   } else if (FXJSE_Value_IsObject(argOne.get())) {
-    FXJSE_Value_Set(rgValues[2], argOne.get());
+    rgValues[2]->Assign(argOne.get());
   }
 
-  FXJSE_Value_SetInteger(rgValues[0], intVal);
-  FXJSE_Value_SetNull(rgValues[1]);
-  FXJSE_Value_SetArray(args.GetReturnValue(), 3, rgValues);
+  rgValues[0]->SetInteger(intVal);
+  rgValues[1]->SetNull();
+  args.GetReturnValue()->SetArray(3, rgValues);
 
   for (int32_t i = 0; i < 3; i++)
     delete rgValues[i];
@@ -3130,14 +3100,14 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> unitspanValue = GetSimpleValue(pThis, args, 0);
   if (FXJSE_Value_IsNull(unitspanValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
   CFX_ByteString unitspanString;
   ValueToUTF8String(unitspanValue.get(), unitspanString);
   if (unitspanString.IsEmpty()) {
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), "in");
+    args.GetReturnValue()->SetString("in");
     return;
   }
 
@@ -3214,19 +3184,19 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
   }
   switch (eParserStatus) {
     case VALUETYPE_ISCM:
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "cm");
+      args.GetReturnValue()->SetString("cm");
       break;
     case VALUETYPE_ISMM:
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "mm");
+      args.GetReturnValue()->SetString("mm");
       break;
     case VALUETYPE_ISPT:
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "pt");
+      args.GetReturnValue()->SetString("pt");
       break;
     case VALUETYPE_ISMP:
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "mp");
+      args.GetReturnValue()->SetString("mp");
       break;
     default:
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "in");
+      args.GetReturnValue()->SetString("in");
       break;
   }
 }
@@ -3244,7 +3214,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> unitspanValue = GetSimpleValue(pThis, args, 0);
   if (FXJSE_Value_IsNull(unitspanValue.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -3252,7 +3222,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
   ValueToUTF8String(unitspanValue.get(), unitspanString);
   const FX_CHAR* pData = unitspanString.c_str();
   if (!pData) {
-    FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+    args.GetReturnValue()->SetInteger(0);
     return;
   }
 
@@ -3373,7 +3343,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
     else
       dResult = dFirstNumber / 72000;
   }
-  FXJSE_Value_SetDouble(args.GetReturnValue(), dResult);
+  args.GetReturnValue()->SetDouble(dResult);
 }
 
 // static
@@ -3389,21 +3359,21 @@ void CXFA_FM2JSContext::At(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
   CFX_ByteString stringTwo;
   ValueToUTF8String(argTwo.get(), stringTwo);
   if (stringTwo.IsEmpty()) {
-    FXJSE_Value_SetInteger(args.GetReturnValue(), 1);
+    args.GetReturnValue()->SetInteger(1);
     return;
   }
 
   CFX_ByteString stringOne;
   ValueToUTF8String(argOne.get(), stringOne);
   FX_STRSIZE iPosition = stringOne.Find(stringTwo.AsStringC());
-  FXJSE_Value_SetInteger(args.GetReturnValue(), iPosition + 1);
+  args.GetReturnValue()->SetInteger(iPosition + 1);
 }
 
 // static
@@ -3432,11 +3402,11 @@ void CXFA_FM2JSContext::Concat(CFXJSE_Value* pThis,
   }
 
   if (bAllNull) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultString.AsStringC());
+  args.GetReturnValue()->SetString(resultString.AsStringC());
 }
 
 // static
@@ -3453,7 +3423,7 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
   if (argc == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
       return;
     }
 
@@ -3461,14 +3431,14 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
     ValueToUTF8String(argOne.get(), toDecodeString);
     CFX_ByteTextBuf resultBuf;
     DecodeURL(toDecodeString.AsStringC(), resultBuf);
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+    args.GetReturnValue()->SetString(resultBuf.AsStringC());
     return;
   }
 
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
   if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get())) {
-    FXJSE_Value_SetNull(args.GetReturnValue());
+    args.GetReturnValue()->SetNull();
     return;
   }
 
@@ -3486,7 +3456,7 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
   else
     DecodeURL(toDecodeString.AsStringC(), resultBuf);
 
-  FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+  args.GetReturnValue()->SetString(resultBuf.AsStringC());
 }
 
 // static
@@ -3722,19 +3692,19 @@ void CXFA_FM2JSContext::Encode(CFXJSE_Value* pThis,
   if (argc == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString toEncodeString;
       ValueToUTF8String(argOne.get(), toEncodeString);
       CFX_ByteTextBuf resultBuf;
       EncodeURL(toEncodeString.AsStringC(), resultBuf);
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+      args.GetReturnValue()->SetString(resultBuf.AsStringC());
     }
   } else if (argc == 2) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
     if (ValueIsNull(pThis, argOne.get()) || ValueIsNull(pThis, argTwo.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString toEncodeString;
       ValueToUTF8String(argOne.get(), toEncodeString);
@@ -3748,7 +3718,7 @@ void CXFA_FM2JSContext::Encode(CFXJSE_Value* pThis,
       } else {
         EncodeURL(toEncodeString.AsStringC(), resultBuf);
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+      args.GetReturnValue()->SetString(resultBuf.AsStringC());
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4120,11 +4090,10 @@ void CXFA_FM2JSContext::Format(CFXJSE_Value* pThis,
     CFX_WideString wsRet;
     if (localeValue.FormatPatterns(wsRet, wsPattern, pLocale,
                                    XFA_VALUEPICTURE_Display)) {
-      FXJSE_Value_SetUTF8String(
-          args.GetReturnValue(),
+      args.GetReturnValue()->SetString(
           FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength()).AsStringC());
     } else {
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+      args.GetReturnValue()->SetString("");
     }
   } else {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Format");
@@ -4144,7 +4113,7 @@ void CXFA_FM2JSContext::Left(CFXJSE_Value* pThis,
       argIsNull = TRUE;
     }
     if (argIsNull) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString sourceString;
       ValueToUTF8String(argOne.get(), sourceString);
@@ -4152,8 +4121,7 @@ void CXFA_FM2JSContext::Left(CFXJSE_Value* pThis,
       if (count < 0) {
         count = 0;
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.Left(count).AsStringC());
+      args.GetReturnValue()->SetString(sourceString.Left(count).AsStringC());
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4168,11 +4136,11 @@ void CXFA_FM2JSContext::Len(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString sourceString;
       ValueToUTF8String(argOne.get(), sourceString);
-      FXJSE_Value_SetInteger(args.GetReturnValue(), sourceString.GetLength());
+      args.GetReturnValue()->SetInteger(sourceString.GetLength());
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4189,7 +4157,7 @@ void CXFA_FM2JSContext::Lower(CFXJSE_Value* pThis,
     CFX_ByteString argString;
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       ValueToUTF8String(argOne.get(), argString);
       CFX_WideTextBuf lowStringBuf;
@@ -4212,8 +4180,7 @@ void CXFA_FM2JSContext::Lower(CFXJSE_Value* pThis,
         ++i;
       }
       lowStringBuf.AppendChar(0);
-      FXJSE_Value_SetUTF8String(
-          args.GetReturnValue(),
+      args.GetReturnValue()->SetString(
           FX_UTF8Encode(lowStringBuf.GetBuffer(), lowStringBuf.GetLength())
               .AsStringC());
     }
@@ -4230,13 +4197,12 @@ void CXFA_FM2JSContext::Ltrim(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString sourceString;
       ValueToUTF8String(argOne.get(), sourceString);
       sourceString.TrimLeft();
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.AsStringC());
+      args.GetReturnValue()->SetString(sourceString.AsStringC());
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4253,7 +4219,7 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     std::unique_ptr<CFXJSE_Value> argTwo = GetSimpleValue(pThis, args, 1);
     if (ValueIsNull(pThis, argTwo.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString szPattern;
       ValueToUTF8String(argOne.get(), szPattern);
@@ -4275,10 +4241,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
                                      (CXFA_LocaleMgr*)pMgr);
         if (localeValue.IsValid()) {
           szParsedValue = FX_UTF8Encode(localeValue.GetValue());
-          FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                    szParsedValue.AsStringC());
+          args.GetReturnValue()->SetString(szParsedValue.AsStringC());
         } else {
-          FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+          args.GetReturnValue()->SetString("");
         }
       } else {
         switch (patternType) {
@@ -4295,10 +4260,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
                                          pLocale, (CXFA_LocaleMgr*)pMgr);
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsStringC());
+              args.GetReturnValue()->SetString(szParsedValue.AsStringC());
             } else {
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+              args.GetReturnValue()->SetString("");
             }
           } break;
           case XFA_VT_DATE: {
@@ -4308,10 +4272,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
                                          pLocale, (CXFA_LocaleMgr*)pMgr);
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsStringC());
+              args.GetReturnValue()->SetString(szParsedValue.AsStringC());
             } else {
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+              args.GetReturnValue()->SetString("");
             }
           } break;
           case XFA_VT_TIME: {
@@ -4321,10 +4284,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
                                          pLocale, (CXFA_LocaleMgr*)pMgr);
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsStringC());
+              args.GetReturnValue()->SetString(szParsedValue.AsStringC());
             } else {
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+              args.GetReturnValue()->SetString("");
             }
           } break;
           case XFA_VT_TEXT: {
@@ -4334,10 +4296,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
                                          pLocale, (CXFA_LocaleMgr*)pMgr);
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsStringC());
+              args.GetReturnValue()->SetString(szParsedValue.AsStringC());
             } else {
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+              args.GetReturnValue()->SetString("");
             }
           } break;
           case XFA_VT_FLOAT: {
@@ -4346,10 +4307,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
             CXFA_LocaleValue localeValue(XFA_VT_FLOAT, wsValue, wsPattern,
                                          pLocale, (CXFA_LocaleMgr*)pMgr);
             if (localeValue.IsValid()) {
-              FXJSE_Value_SetDouble(args.GetReturnValue(),
-                                    localeValue.GetDoubleNum());
+              args.GetReturnValue()->SetDouble(localeValue.GetDoubleNum());
             } else {
-              FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+              args.GetReturnValue()->SetString("");
             }
           } break;
           default: {
@@ -4359,8 +4319,7 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
             CXFA_LocaleValue localeValue(XFA_VT_FLOAT, wsValue, wsTestPattern,
                                          pLocale, (CXFA_LocaleMgr*)pMgr);
             if (localeValue.IsValid()) {
-              FXJSE_Value_SetDouble(args.GetReturnValue(),
-                                    localeValue.GetDoubleNum());
+              args.GetReturnValue()->SetDouble(localeValue.GetDoubleNum());
             } else {
               wsTestPattern = FX_WSTRC(L"text{") + wsPattern;
               wsTestPattern += FX_WSTRC(L"}");
@@ -4368,10 +4327,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
                                             pLocale, (CXFA_LocaleMgr*)pMgr);
               if (localeValue2.IsValid()) {
                 szParsedValue = FX_UTF8Encode(localeValue2.GetValue());
-                FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                          szParsedValue.AsStringC());
+                args.GetReturnValue()->SetString(szParsedValue.AsStringC());
               } else {
-                FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+                args.GetReturnValue()->SetString("");
               }
             }
           } break;
@@ -4436,7 +4394,7 @@ void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
       }
     }
     resultString.AppendChar(0);
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultString.AsStringC());
+    args.GetReturnValue()->SetString(resultString.AsStringC());
   } else {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Replace");
@@ -4456,7 +4414,7 @@ void CXFA_FM2JSContext::Right(CFXJSE_Value* pThis,
       argIsNull = TRUE;
     }
     if (argIsNull) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString sourceString;
       ValueToUTF8String(argOne.get(), sourceString);
@@ -4464,8 +4422,7 @@ void CXFA_FM2JSContext::Right(CFXJSE_Value* pThis,
       if (count < 0) {
         count = 0;
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.Right(count).AsStringC());
+      args.GetReturnValue()->SetString(sourceString.Right(count).AsStringC());
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4480,13 +4437,12 @@ void CXFA_FM2JSContext::Rtrim(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString sourceString;
       ValueToUTF8String(argOne.get(), sourceString);
       sourceString.TrimRight();
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.AsStringC());
+      args.GetReturnValue()->SetString(sourceString.AsStringC());
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4501,7 +4457,7 @@ void CXFA_FM2JSContext::Space(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       int32_t count = 0;
       count = ValueToInteger(pThis, argOne.get());
@@ -4513,7 +4469,7 @@ void CXFA_FM2JSContext::Space(CFXJSE_Value* pThis,
         index++;
       }
       spaceString.AppendByte(0);
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), spaceString.AsStringC());
+      args.GetReturnValue()->SetString(spaceString.AsStringC());
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4629,9 +4585,9 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
           resultBuf.AppendChar(0);
         }
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+      args.GetReturnValue()->SetString(resultBuf.AsStringC());
     } else {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -4689,7 +4645,7 @@ void CXFA_FM2JSContext::Stuff(CFXJSE_Value* pThis,
       ++i;
     }
     resultString.AppendChar(0);
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultString.AsStringC());
+    args.GetReturnValue()->SetString(resultString.AsStringC());
   } else {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Stuff");
@@ -4707,7 +4663,7 @@ void CXFA_FM2JSContext::Substr(CFXJSE_Value* pThis,
     if (ValueIsNull(pThis, stringValue.get()) ||
         (ValueIsNull(pThis, startValue.get())) ||
         (ValueIsNull(pThis, endValue.get()))) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       CFX_ByteString szSourceStr;
       int32_t iStart = 0;
@@ -4715,7 +4671,7 @@ void CXFA_FM2JSContext::Substr(CFXJSE_Value* pThis,
       ValueToUTF8String(stringValue.get(), szSourceStr);
       int32_t iLength = szSourceStr.GetLength();
       if (iLength == 0) {
-        FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+        args.GetReturnValue()->SetString("");
       } else {
         iStart = (int32_t)ValueToFloat(pThis, startValue.get());
         iCount = (int32_t)ValueToFloat(pThis, endValue.get());
@@ -4729,8 +4685,8 @@ void CXFA_FM2JSContext::Substr(CFXJSE_Value* pThis,
           iCount = 0;
         }
         iStart -= 1;
-        FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                  szSourceStr.Mid(iStart, iCount).AsStringC());
+        args.GetReturnValue()->SetString(
+            szSourceStr.Mid(iStart, iCount).AsStringC());
       }
     }
   } else {
@@ -4754,7 +4710,7 @@ void CXFA_FM2JSContext::Uuid(CFXJSE_Value* pThis,
     FX_GUID_CreateV4(&guid);
     CFX_ByteString bsUId;
     FX_GUID_ToString(&guid, bsUId, iNum);
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), bsUId.AsStringC());
+    args.GetReturnValue()->SetString(bsUId.AsStringC());
   } else {
     ToJSContext(pThis, nullptr)
         ->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Uuid");
@@ -4770,7 +4726,7 @@ void CXFA_FM2JSContext::Upper(CFXJSE_Value* pThis,
     CFX_ByteString argString;
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (ValueIsNull(pThis, argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       ValueToUTF8String(argOne.get(), argString);
       CFX_WideTextBuf upperStringBuf;
@@ -4793,8 +4749,7 @@ void CXFA_FM2JSContext::Upper(CFXJSE_Value* pThis,
         ++i;
       }
       upperStringBuf.AppendChar(0);
-      FXJSE_Value_SetUTF8String(
-          args.GetReturnValue(),
+      args.GetReturnValue()->SetString(
           FX_UTF8Encode(upperStringBuf.GetBuffer(), upperStringBuf.GetLength())
               .AsStringC());
     }
@@ -4840,16 +4795,16 @@ void CXFA_FM2JSContext::WordNum(CFXJSE_Value* pThis,
     }
     if (!bFlags) {
       if ((fNumber < 0) || (fNumber > 922337203685477550)) {
-        FXJSE_Value_SetUTF8String(args.GetReturnValue(), "*");
+        args.GetReturnValue()->SetString("*");
       } else {
         CFX_ByteTextBuf resultBuf;
         CFX_ByteString numberString;
         numberString.Format("%.2f", fNumber);
         WordUS(numberString.AsStringC(), iIdentifier, resultBuf);
-        FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultBuf.AsStringC());
+        args.GetReturnValue()->SetString(resultBuf.AsStringC());
       }
     } else {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     }
   } else {
     ToJSContext(pThis, nullptr)
@@ -5078,8 +5033,7 @@ void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
       int32_t size = pFile->GetSize();
       uint8_t* pData = FX_Alloc(uint8_t, size);
       pFile->ReadBlock(pData, size);
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                CFX_ByteStringC(pData, size));
+      args.GetReturnValue()->SetString(CFX_ByteStringC(pData, size));
       FX_Free(pData);
       pFile->Release();
     }
@@ -5133,8 +5087,7 @@ void CXFA_FM2JSContext::Post(CFXJSE_Value* pThis,
         CFX_WideString::FromUTF8(bsEncode.AsStringC()),
         CFX_WideString::FromUTF8(bsHeader.AsStringC()), decodedResponse);
     if (bFlags) {
-      FXJSE_Value_SetUTF8String(
-          args.GetReturnValue(),
+      args.GetReturnValue()->SetString(
           FX_UTF8Encode(decodedResponse.c_str(), decodedResponse.GetLength())
               .AsStringC());
     } else {
@@ -5177,7 +5130,7 @@ void CXFA_FM2JSContext::Put(CFXJSE_Value* pThis,
         CFX_WideString::FromUTF8(bsData.AsStringC()),
         CFX_WideString::FromUTF8(bsEncode.AsStringC()));
     if (bFlags) {
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
+      args.GetReturnValue()->SetString("");
     } else {
       pContext->ThrowException(XFA_IDS_SERVER_DENY);
     }
@@ -5198,14 +5151,14 @@ void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
     FX_BOOL bSetStatus = TRUE;
     if (FXJSE_Value_IsArray(lValue.get())) {
       std::unique_ptr<CFXJSE_Value> leftLengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(lValue.get(), "length", leftLengthValue.get());
-      int32_t iLeftLength = FXJSE_Value_ToInteger(leftLengthValue.get());
+      lValue->GetObjectProperty("length", leftLengthValue.get());
+      int32_t iLeftLength = leftLengthValue->ToInteger();
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(lValue.get(), 1, propertyValue.get());
+      lValue->GetObjectPropertyByIdx(1, propertyValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         for (int32_t i = 2; i < iLeftLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(lValue.get(), i, jsObjectValue.get());
+          lValue->GetObjectPropertyByIdx(i, jsObjectValue.get());
           bSetStatus = SetObjectDefaultValue(jsObjectValue.get(), rValue.get());
           if (!bSetStatus) {
             pContext->ThrowException(XFA_IDS_NOT_DEFAUL_VALUE);
@@ -5214,11 +5167,11 @@ void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
         }
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        propertyValue->ToString(propertyStr);
         for (int32_t i = 2; i < iLeftLength; i++) {
-          FXJSE_Value_GetObjectPropByIdx(lValue.get(), i, jsObjectValue.get());
-          FXJSE_Value_SetObjectProp(jsObjectValue.get(),
-                                    propertyStr.AsStringC(), rValue.get());
+          lValue->GetObjectPropertyByIdx(i, jsObjectValue.get());
+          jsObjectValue->SetObjectProperty(propertyStr.AsStringC(),
+                                           rValue.get());
         }
       }
     } else if (FXJSE_Value_IsObject(lValue.get())) {
@@ -5227,7 +5180,7 @@ void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
         pContext->ThrowException(XFA_IDS_NOT_DEFAUL_VALUE);
       }
     }
-    FXJSE_Value_Set(args.GetReturnValue(), rValue.get());
+    args.GetReturnValue()->Assign(rValue.get());
   } else {
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
   }
@@ -5242,11 +5195,11 @@ void CXFA_FM2JSContext::logical_or_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) &&
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       FX_FLOAT first = ValueToFloat(pThis, argFirst.get());
       FX_FLOAT second = ValueToFloat(pThis, argSecond.get());
-      FXJSE_Value_SetInteger(args.GetReturnValue(), (first || second) ? 1 : 0);
+      args.GetReturnValue()->SetInteger((first || second) ? 1 : 0);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5262,11 +5215,11 @@ void CXFA_FM2JSContext::logical_and_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) &&
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       FX_FLOAT first = ValueToFloat(pThis, argFirst.get());
       FX_FLOAT second = ValueToFloat(pThis, argSecond.get());
-      FXJSE_Value_SetInteger(args.GetReturnValue(), (first && second) ? 1 : 0);
+      args.GetReturnValue()->SetInteger((first && second) ? 1 : 0);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5279,30 +5232,27 @@ void CXFA_FM2JSContext::equality_operator(CFXJSE_Value* pThis,
                                           CFXJSE_Arguments& args) {
   if (args.GetLength() == 2) {
     if (fm_ref_equal(pThis, args)) {
-      FXJSE_Value_SetInteger(args.GetReturnValue(), 1);
+      args.GetReturnValue()->SetInteger(1);
     } else {
       std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(pThis, args, 0);
       std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
       if (FXJSE_Value_IsNull(argFirst.get()) ||
           FXJSE_Value_IsNull(argSecond.get())) {
-        FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               (FXJSE_Value_IsNull(argFirst.get()) &&
-                                FXJSE_Value_IsNull(argSecond.get()))
-                                   ? 1
-                                   : 0);
+        args.GetReturnValue()->SetInteger((FXJSE_Value_IsNull(argFirst.get()) &&
+                                           FXJSE_Value_IsNull(argSecond.get()))
+                                              ? 1
+                                              : 0);
       } else if (FXJSE_Value_IsUTF8String(argFirst.get()) &&
                  FXJSE_Value_IsUTF8String(argSecond.get())) {
         CFX_ByteString firstOutput;
         CFX_ByteString secondOutput;
-        FXJSE_Value_ToUTF8String(argFirst.get(), firstOutput);
-        FXJSE_Value_ToUTF8String(argSecond.get(), secondOutput);
-        FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               firstOutput == secondOutput);
+        argFirst->ToString(firstOutput);
+        argSecond->ToString(secondOutput);
+        args.GetReturnValue()->SetInteger(firstOutput == secondOutput);
       } else {
         FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
         FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-        FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               (first == second) ? 1 : 0);
+        args.GetReturnValue()->SetInteger((first == second) ? 1 : 0);
       }
     }
   } else {
@@ -5316,29 +5266,27 @@ void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
                                              CFXJSE_Arguments& args) {
   if (args.GetLength() == 2) {
     if (fm_ref_equal(pThis, args)) {
-      FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+      args.GetReturnValue()->SetInteger(0);
     } else {
       std::unique_ptr<CFXJSE_Value> argFirst = GetSimpleValue(pThis, args, 0);
       std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
       if (FXJSE_Value_IsNull(argFirst.get()) ||
           FXJSE_Value_IsNull(argSecond.get())) {
-        FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               (FXJSE_Value_IsNull(argFirst.get()) &&
-                                FXJSE_Value_IsNull(argSecond.get()))
-                                   ? 0
-                                   : 1);
+        args.GetReturnValue()->SetInteger((FXJSE_Value_IsNull(argFirst.get()) &&
+                                           FXJSE_Value_IsNull(argSecond.get()))
+                                              ? 0
+                                              : 1);
       } else if (FXJSE_Value_IsUTF8String(argFirst.get()) &&
                  FXJSE_Value_IsUTF8String(argSecond.get())) {
         CFX_ByteString firstOutput;
         CFX_ByteString secondOutput;
-        FXJSE_Value_ToUTF8String(argFirst.get(), firstOutput);
-        FXJSE_Value_ToUTF8String(argSecond.get(), secondOutput);
-        FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               firstOutput != secondOutput);
+        argFirst->ToString(firstOutput);
+        argSecond->ToString(secondOutput);
+        args.GetReturnValue()->SetInteger(firstOutput != secondOutput);
       } else {
         FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
         FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-        FXJSE_Value_SetInteger(args.GetReturnValue(), first != second);
+        args.GetReturnValue()->SetInteger(first != second);
       }
     }
   } else {
@@ -5357,14 +5305,13 @@ FX_BOOL CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
       FXJSE_Value_IsArray(argSecond.get())) {
     std::unique_ptr<CFXJSE_Value> firstFlagValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> secondFlagValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectPropByIdx(argFirst.get(), 0, firstFlagValue.get());
-    FXJSE_Value_GetObjectPropByIdx(argSecond.get(), 0, secondFlagValue.get());
-    if ((FXJSE_Value_ToInteger(firstFlagValue.get()) == 3) &&
-        (FXJSE_Value_ToInteger(secondFlagValue.get()) == 3)) {
+    argFirst->GetObjectPropertyByIdx(0, firstFlagValue.get());
+    argSecond->GetObjectPropertyByIdx(0, secondFlagValue.get());
+    if (firstFlagValue->ToInteger() == 3 && secondFlagValue->ToInteger() == 3) {
       std::unique_ptr<CFXJSE_Value> firstJSObject(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> secondJSObject(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argFirst.get(), 2, firstJSObject.get());
-      FXJSE_Value_GetObjectPropByIdx(argSecond.get(), 2, secondJSObject.get());
+      argFirst->GetObjectPropertyByIdx(2, firstJSObject.get());
+      argSecond->GetObjectPropertyByIdx(2, secondJSObject.get());
       if (!FXJSE_Value_IsNull(firstJSObject.get()) &&
           !FXJSE_Value_IsNull(secondJSObject.get())) {
         bRet = (firstJSObject->ToHostObject(nullptr) ==
@@ -5384,20 +5331,19 @@ void CXFA_FM2JSContext::less_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) ||
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+      args.GetReturnValue()->SetInteger(0);
     } else if (FXJSE_Value_IsUTF8String(argFirst.get()) &&
                FXJSE_Value_IsUTF8String(argSecond.get())) {
       CFX_ByteString firstOutput;
       CFX_ByteString secondOutput;
-      FXJSE_Value_ToUTF8String(argFirst.get(), firstOutput);
-      FXJSE_Value_ToUTF8String(argSecond.get(), secondOutput);
-      FXJSE_Value_SetInteger(
-          args.GetReturnValue(),
+      argFirst->ToString(firstOutput);
+      argSecond->ToString(secondOutput);
+      args.GetReturnValue()->SetInteger(
           firstOutput.Compare(secondOutput.AsStringC()) == -1);
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-      FXJSE_Value_SetInteger(args.GetReturnValue(), (first < second) ? 1 : 0);
+      args.GetReturnValue()->SetInteger((first < second) ? 1 : 0);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5413,24 +5359,22 @@ void CXFA_FM2JSContext::lessequal_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) ||
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetInteger(args.GetReturnValue(),
-                             (FXJSE_Value_IsNull(argFirst.get()) &&
-                              FXJSE_Value_IsNull(argSecond.get()))
-                                 ? 1
-                                 : 0);
+      args.GetReturnValue()->SetInteger((FXJSE_Value_IsNull(argFirst.get()) &&
+                                         FXJSE_Value_IsNull(argSecond.get()))
+                                            ? 1
+                                            : 0);
     } else if (FXJSE_Value_IsUTF8String(argFirst.get()) &&
                FXJSE_Value_IsUTF8String(argSecond.get())) {
       CFX_ByteString firstOutput;
       CFX_ByteString secondOutput;
-      FXJSE_Value_ToUTF8String(argFirst.get(), firstOutput);
-      FXJSE_Value_ToUTF8String(argSecond.get(), secondOutput);
-      FXJSE_Value_SetInteger(
-          args.GetReturnValue(),
+      argFirst->ToString(firstOutput);
+      argSecond->ToString(secondOutput);
+      args.GetReturnValue()->SetInteger(
           firstOutput.Compare(secondOutput.AsStringC()) != 1);
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-      FXJSE_Value_SetInteger(args.GetReturnValue(), (first <= second) ? 1 : 0);
+      args.GetReturnValue()->SetInteger((first <= second) ? 1 : 0);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5446,20 +5390,19 @@ void CXFA_FM2JSContext::greater_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) ||
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
+      args.GetReturnValue()->SetInteger(0);
     } else if (FXJSE_Value_IsUTF8String(argFirst.get()) &&
                FXJSE_Value_IsUTF8String(argSecond.get())) {
       CFX_ByteString firstOutput;
       CFX_ByteString secondOutput;
-      FXJSE_Value_ToUTF8String(argFirst.get(), firstOutput);
-      FXJSE_Value_ToUTF8String(argSecond.get(), secondOutput);
-      FXJSE_Value_SetInteger(
-          args.GetReturnValue(),
+      argFirst->ToString(firstOutput);
+      argSecond->ToString(secondOutput);
+      args.GetReturnValue()->SetInteger(
           firstOutput.Compare(secondOutput.AsStringC()) == 1);
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-      FXJSE_Value_SetInteger(args.GetReturnValue(), (first > second) ? 1 : 0);
+      args.GetReturnValue()->SetInteger((first > second) ? 1 : 0);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5475,24 +5418,22 @@ void CXFA_FM2JSContext::greaterequal_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) ||
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetInteger(args.GetReturnValue(),
-                             (FXJSE_Value_IsNull(argFirst.get()) &&
-                              FXJSE_Value_IsNull(argSecond.get()))
-                                 ? 1
-                                 : 0);
+      args.GetReturnValue()->SetInteger((FXJSE_Value_IsNull(argFirst.get()) &&
+                                         FXJSE_Value_IsNull(argSecond.get()))
+                                            ? 1
+                                            : 0);
     } else if (FXJSE_Value_IsUTF8String(argFirst.get()) &&
                FXJSE_Value_IsUTF8String(argSecond.get())) {
       CFX_ByteString firstOutput;
       CFX_ByteString secondOutput;
-      FXJSE_Value_ToUTF8String(argFirst.get(), firstOutput);
-      FXJSE_Value_ToUTF8String(argSecond.get(), secondOutput);
-      FXJSE_Value_SetInteger(
-          args.GetReturnValue(),
+      argFirst->ToString(firstOutput);
+      argSecond->ToString(secondOutput);
+      args.GetReturnValue()->SetInteger(
           firstOutput.Compare(secondOutput.AsStringC()) != -1);
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-      FXJSE_Value_SetInteger(args.GetReturnValue(), (first >= second) ? 1 : 0);
+      args.GetReturnValue()->SetInteger((first >= second) ? 1 : 0);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5508,11 +5449,11 @@ void CXFA_FM2JSContext::plus_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = args.GetValue(1);
     if (ValueIsNull(pThis, argFirst.get()) &&
         ValueIsNull(pThis, argSecond.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-      FXJSE_Value_SetDouble(args.GetReturnValue(), first + second);
+      args.GetReturnValue()->SetDouble(first + second);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5528,11 +5469,11 @@ void CXFA_FM2JSContext::minus_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) &&
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-      FXJSE_Value_SetDouble(args.GetReturnValue(), first - second);
+      args.GetReturnValue()->SetDouble(first - second);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5548,11 +5489,11 @@ void CXFA_FM2JSContext::multiple_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) &&
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
-      FXJSE_Value_SetDouble(args.GetReturnValue(), first * second);
+      args.GetReturnValue()->SetDouble(first * second);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5569,14 +5510,14 @@ void CXFA_FM2JSContext::divide_operator(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argSecond = GetSimpleValue(pThis, args, 1);
     if (FXJSE_Value_IsNull(argFirst.get()) &&
         FXJSE_Value_IsNull(argSecond.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
       FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
       if (second == 0.0) {
         pContext->ThrowException(XFA_IDS_DIVIDE_ZERO);
       } else {
-        FXJSE_Value_SetDouble(args.GetReturnValue(), first / second);
+        args.GetReturnValue()->SetDouble(first / second);
       }
     }
   } else {
@@ -5591,10 +5532,10 @@ void CXFA_FM2JSContext::positive_operator(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
-      FXJSE_Value_SetDouble(args.GetReturnValue(),
-                            0.0 + ValueToDouble(pThis, argOne.get()));
+      args.GetReturnValue()->SetDouble(0.0 +
+                                       ValueToDouble(pThis, argOne.get()));
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5608,10 +5549,10 @@ void CXFA_FM2JSContext::negative_operator(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
-      FXJSE_Value_SetDouble(args.GetReturnValue(),
-                            0.0 - ValueToDouble(pThis, argOne.get()));
+      args.GetReturnValue()->SetDouble(0.0 -
+                                       ValueToDouble(pThis, argOne.get()));
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5625,10 +5566,10 @@ void CXFA_FM2JSContext::logical_not_operator(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     if (FXJSE_Value_IsNull(argOne.get())) {
-      FXJSE_Value_SetNull(args.GetReturnValue());
+      args.GetReturnValue()->SetNull();
     } else {
       FX_DOUBLE first = ValueToDouble(pThis, argOne.get());
-      FXJSE_Value_SetInteger(args.GetReturnValue(), (first == 0.0) ? 1 : 0);
+      args.GetReturnValue()->SetInteger((first == 0.0) ? 1 : 0);
     }
   } else {
     ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -5659,9 +5600,8 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
                           szSomExp);
     if (FXJSE_Value_IsArray(argAccessor.get())) {
       std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argAccessor.get(), "length",
-                                pLengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(pLengthValue.get());
+      argAccessor->GetObjectProperty("length", pLengthValue.get());
+      int32_t iLength = pLengthValue->ToInteger();
       int32_t iCounter = 0;
       CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
       int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
@@ -5671,7 +5611,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
       std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
       FX_BOOL bAttribute = FALSE;
       for (int32_t i = 2; i < iLength; i++) {
-        FXJSE_Value_GetObjectPropByIdx(argAccessor.get(), i, hJSObjValue.get());
+        argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
         XFA_RESOLVENODE_RS resoveNodeRS;
         int32_t iRet =
             ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
@@ -5687,20 +5627,20 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
         for (int32_t i = 0; i < (iCounter + 2); i++)
           rgValues[i] = new CFXJSE_Value(pIsolate);
 
-        FXJSE_Value_SetInteger(rgValues[0], 1);
+        rgValues[0]->SetInteger(1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
+          rgValues[1]->SetString(szName.AsStringC());
         } else {
-          FXJSE_Value_SetNull(rgValues[1]);
+          rgValues[1]->SetNull();
         }
         int32_t iIndex = 2;
         for (int32_t i = 0; i < iLength - 2; i++) {
           for (int32_t j = 0; j < iSizes[i]; j++) {
-            FXJSE_Value_Set(rgValues[iIndex], hResolveValues[i][j]);
+            rgValues[iIndex]->Assign(hResolveValues[i][j]);
             iIndex++;
           }
         }
-        FXJSE_Value_SetArray(args.GetReturnValue(), (iCounter + 2), rgValues);
+        args.GetReturnValue()->SetArray(iCounter + 2, rgValues);
         for (int32_t i = 0; i < (iCounter + 2); i++)
           delete rgValues[i];
 
@@ -5750,16 +5690,16 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
         for (int32_t i = 0; i < (iSize + 2); i++)
           rgValues[i] = new CFXJSE_Value(pIsolate);
 
-        FXJSE_Value_SetInteger(rgValues[0], 1);
+        rgValues[0]->SetInteger(1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
+          rgValues[1]->SetString(szName.AsStringC());
         } else {
-          FXJSE_Value_SetNull(rgValues[1]);
+          rgValues[1]->SetNull();
         }
         for (int32_t i = 0; i < iSize; i++) {
-          FXJSE_Value_Set(rgValues[i + 2], hResolveValues[i]);
+          rgValues[i + 2]->Assign(hResolveValues[i]);
         }
-        FXJSE_Value_SetArray(args.GetReturnValue(), (iSize + 2), rgValues);
+        args.GetReturnValue()->SetArray(iSize + 2, rgValues);
         for (int32_t i = 0; i < (iSize + 2); i++)
           delete rgValues[i];
 
@@ -5807,16 +5747,15 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
                           szSomExp);
     if (FXJSE_Value_IsArray(argAccessor.get())) {
       std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argAccessor.get(), "length",
-                                pLengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(pLengthValue.get());
+      argAccessor->GetObjectProperty("length", pLengthValue.get());
+      int32_t iLength = pLengthValue->ToInteger();
       int32_t iCounter = 0;
       CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
       int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
       std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
       FX_BOOL bAttribute = FALSE;
       for (int32_t i = 2; i < iLength; i++) {
-        FXJSE_Value_GetObjectPropByIdx(argAccessor.get(), i, hJSObjValue.get());
+        argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
         XFA_RESOLVENODE_RS resoveNodeRS;
         int32_t iRet =
             ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
@@ -5832,20 +5771,20 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
         for (int32_t i = 0; i < (iCounter + 2); i++)
           rgValues[i] = new CFXJSE_Value(pIsolate);
 
-        FXJSE_Value_SetInteger(rgValues[0], 1);
+        rgValues[0]->SetInteger(1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
+          rgValues[1]->SetString(szName.AsStringC());
         } else {
-          FXJSE_Value_SetNull(rgValues[1]);
+          rgValues[1]->SetNull();
         }
         int32_t iIndex = 2;
         for (int32_t i = 0; i < iLength - 2; i++) {
           for (int32_t j = 0; j < iSizes[i]; j++) {
-            FXJSE_Value_Set(rgValues[iIndex], hResolveValues[i][j]);
+            rgValues[iIndex]->Assign(hResolveValues[i][j]);
             iIndex++;
           }
         }
-        FXJSE_Value_SetArray(args.GetReturnValue(), (iCounter + 2), rgValues);
+        args.GetReturnValue()->SetArray(iCounter + 2, rgValues);
         for (int32_t i = 0; i < (iCounter + 2); i++)
           delete rgValues[i];
 
@@ -5893,16 +5832,16 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
         for (int32_t i = 0; i < (iSize + 2); i++)
           rgValues[i] = new CFXJSE_Value(pIsolate);
 
-        FXJSE_Value_SetInteger(rgValues[0], 1);
+        rgValues[0]->SetInteger(1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
+          rgValues[1]->SetString(szName.AsStringC());
         } else {
-          FXJSE_Value_SetNull(rgValues[1]);
+          rgValues[1]->SetNull();
         }
         for (int32_t i = 0; i < iSize; i++) {
-          FXJSE_Value_Set(rgValues[i + 2], hResolveValues[i]);
+          rgValues[i + 2]->Assign(hResolveValues[i]);
         }
-        FXJSE_Value_SetArray(args.GetReturnValue(), (iSize + 2), rgValues);
+        args.GetReturnValue()->SetArray(iSize + 2, rgValues);
         for (int32_t i = 0; i < (iSize + 2); i++)
           delete rgValues[i];
 
@@ -5946,8 +5885,7 @@ void CXFA_FM2JSContext::eval_translation(CFXJSE_Value* pThis,
                                    wsError);
       if (wsError.IsEmpty()) {
         CFX_WideString javaScript = wsJavaScriptBuf.MakeString();
-        FXJSE_Value_SetUTF8String(
-            args.GetReturnValue(),
+        args.GetReturnValue()->SetString(
             FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength())
                 .AsStringC());
       } else {
@@ -5965,10 +5903,9 @@ void CXFA_FM2JSContext::is_fm_object(CFXJSE_Value* pThis,
                                      CFXJSE_Arguments& args) {
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    FXJSE_Value_SetBoolean(args.GetReturnValue(),
-                           FXJSE_Value_IsObject(argOne.get()));
+    args.GetReturnValue()->SetBoolean(FXJSE_Value_IsObject(argOne.get()));
   } else {
-    FXJSE_Value_SetBoolean(args.GetReturnValue(), FALSE);
+    args.GetReturnValue()->SetBoolean(FALSE);
   }
 }
 
@@ -5979,9 +5916,9 @@ void CXFA_FM2JSContext::is_fm_array(CFXJSE_Value* pThis,
   if (args.GetLength() == 1) {
     std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
     FX_BOOL bIsArray = FXJSE_Value_IsArray(argOne.get());
-    FXJSE_Value_SetBoolean(args.GetReturnValue(), bIsArray);
+    args.GetReturnValue()->SetBoolean(bIsArray);
   } else {
-    FXJSE_Value_SetBoolean(args.GetReturnValue(), FALSE);
+    args.GetReturnValue()->SetBoolean(FALSE);
   }
 }
 
@@ -5996,20 +5933,20 @@ void CXFA_FM2JSContext::get_fm_value(CFXJSE_Value* pThis,
     if (FXJSE_Value_IsArray(argOne.get())) {
       std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argOne.get(), 1, propertyValue.get());
-      FXJSE_Value_GetObjectPropByIdx(argOne.get(), 2, jsObjectValue.get());
+      argOne->GetObjectPropertyByIdx(1, propertyValue.get());
+      argOne->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         GetObjectDefaultValue(jsObjectValue.get(), args.GetReturnValue());
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-        FXJSE_Value_GetObjectProp(jsObjectValue.get(), propertyStr.AsStringC(),
-                                  args.GetReturnValue());
+        propertyValue->ToString(propertyStr);
+        jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                         args.GetReturnValue());
       }
     } else if (FXJSE_Value_IsObject(argOne.get())) {
       GetObjectDefaultValue(argOne.get(), args.GetReturnValue());
     } else {
-      FXJSE_Value_Set(args.GetReturnValue(), argOne.get());
+      args.GetReturnValue()->Assign(argOne.get());
     }
   } else {
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -6027,12 +5964,12 @@ void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
       CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
       v8::Isolate* pIsolate = pContext->GetScriptRuntime();
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argOne.get(), "length", lengthValue.get());
-      ASSERT(FXJSE_Value_ToInteger(lengthValue.get()) >= 3);
+      argOne->GetObjectProperty("length", lengthValue.get());
+      ASSERT(lengthValue->ToInteger() >= 3);
 #endif
-      FXJSE_Value_GetObjectPropByIdx(argOne.get(), 2, args.GetReturnValue());
+      argOne->GetObjectPropertyByIdx(2, args.GetReturnValue());
     } else {
-      FXJSE_Value_Set(args.GetReturnValue(), argOne.get());
+      args.GetReturnValue()->Assign(argOne.get());
     }
   } else {
     CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
@@ -6051,40 +5988,40 @@ void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
     if (FXJSE_Value_IsArray(argOne.get())) {
 #ifndef NDEBUG
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argOne.get(), "length", lengthValue.get());
-      ASSERT(FXJSE_Value_ToInteger(lengthValue.get()) >= 3);
+      argOne->GetObjectProperty("length", lengthValue.get());
+      ASSERT(lengthValue->ToInteger() >= 3);
 #endif
       std::unique_ptr<CFXJSE_Value> flagsValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argOne.get(), 0, flagsValue.get());
-      int32_t iFlags = FXJSE_Value_ToInteger(flagsValue.get());
+      argOne->GetObjectPropertyByIdx(0, flagsValue.get());
+      int32_t iFlags = flagsValue->ToInteger();
       if (iFlags == 4) {
         CFXJSE_Value* rgValues[3];
         for (int32_t i = 0; i < 3; i++)
           rgValues[i] = new CFXJSE_Value(pIsolate);
 
-        FXJSE_Value_SetInteger(rgValues[0], 3);
-        FXJSE_Value_SetNull(rgValues[1]);
-        FXJSE_Value_SetNull(rgValues[2]);
-        FXJSE_Value_SetArray(args.GetReturnValue(), 3, rgValues);
+        rgValues[0]->SetInteger(3);
+        rgValues[1]->SetNull();
+        rgValues[2]->SetNull();
+        args.GetReturnValue()->SetArray(3, rgValues);
         for (int32_t i = 0; i < 3; i++)
           delete rgValues[i];
       } else if (iFlags == 3) {
         std::unique_ptr<CFXJSE_Value> objectValue(new CFXJSE_Value(pIsolate));
-        FXJSE_Value_GetObjectPropByIdx(argOne.get(), 2, objectValue.get());
+        argOne->GetObjectPropertyByIdx(2, objectValue.get());
         if (!FXJSE_Value_IsNull(objectValue.get())) {
-          FXJSE_Value_Set(args.GetReturnValue(), argOne.get());
+          args.GetReturnValue()->Assign(argOne.get());
         } else {
           pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
         }
       } else {
         std::unique_ptr<CFXJSE_Value> simpleValue =
             GetSimpleValue(pThis, args, 0);
-        FXJSE_Value_Set(args.GetReturnValue(), simpleValue.get());
+        args.GetReturnValue()->Assign(simpleValue.get());
       }
     } else {
       std::unique_ptr<CFXJSE_Value> simpleValue =
           GetSimpleValue(pThis, args, 0);
-      FXJSE_Value_Set(args.GetReturnValue(), simpleValue.get());
+      args.GetReturnValue()->Assign(simpleValue.get());
     }
   } else {
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
@@ -6103,9 +6040,8 @@ void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
     argValues.push_back(args.GetValue(i));
     if (FXJSE_Value_IsArray(argValues[i].get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argValues[i].get(), "length",
-                                lengthValue.get());
-      int32_t length = FXJSE_Value_ToInteger(lengthValue.get());
+      argValues[i]->GetObjectProperty("length", lengthValue.get());
+      int32_t length = lengthValue->ToInteger();
       iLength = iLength + ((length > 2) ? (length - 2) : 0);
     }
     iLength += 1;
@@ -6118,19 +6054,17 @@ void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
   for (int32_t i = 0; i < argc; i++) {
     if (FXJSE_Value_IsArray(argValues[i].get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argValues[i].get(), "length",
-                                lengthValue.get());
-      int32_t length = FXJSE_Value_ToInteger(lengthValue.get());
+      argValues[i]->GetObjectProperty("length", lengthValue.get());
+      int32_t length = lengthValue->ToInteger();
       for (int32_t j = 2; j < length; j++) {
-        FXJSE_Value_GetObjectPropByIdx(argValues[i].get(), j,
-                                       returnValues[index]);
+        argValues[i]->GetObjectPropertyByIdx(j, returnValues[index]);
         index++;
       }
     }
-    FXJSE_Value_Set(returnValues[index], argValues[i].get());
+    returnValues[index]->Assign(argValues[i].get());
     index++;
   }
-  FXJSE_Value_SetArray(args.GetReturnValue(), iLength, returnValues);
+  args.GetReturnValue()->SetArray(iLength, returnValues);
   for (int32_t i = 0; i < (int32_t)iLength; i++)
     delete returnValues[i];
 
@@ -6147,24 +6081,24 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
   std::unique_ptr<CFXJSE_Value> argIndex = args.GetValue(index);
   if (FXJSE_Value_IsArray(argIndex.get())) {
     std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectProp(argIndex.get(), "length", lengthValue.get());
-    int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+    argIndex->GetObjectProperty("length", lengthValue.get());
+    int32_t iLength = lengthValue->ToInteger();
     std::unique_ptr<CFXJSE_Value> simpleValue(new CFXJSE_Value(pIsolate));
     if (iLength > 2) {
       std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(argIndex.get(), 1, propertyValue.get());
-      FXJSE_Value_GetObjectPropByIdx(argIndex.get(), 2, jsObjectValue.get());
+      argIndex->GetObjectPropertyByIdx(1, propertyValue.get());
+      argIndex->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         GetObjectDefaultValue(jsObjectValue.get(), simpleValue.get());
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-        FXJSE_Value_GetObjectProp(jsObjectValue.get(), propertyStr.AsStringC(),
-                                  simpleValue.get());
+        propertyValue->ToString(propertyStr);
+        jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                         simpleValue.get());
       }
     } else {
-      FXJSE_Value_SetUndefined(simpleValue.get());
+      simpleValue.get()->SetUndefined();
     }
     return simpleValue;
   } else if (FXJSE_Value_IsObject(argIndex.get())) {
@@ -6187,8 +6121,8 @@ FX_BOOL CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
     if (iLength > 2) {
       std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
       std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectPropByIdx(arg, 1, propertyValue.get());
-      FXJSE_Value_GetObjectPropByIdx(arg, 2, jsObjectValue.get());
+      arg->GetObjectPropertyByIdx(1, propertyValue.get());
+      arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (FXJSE_Value_IsNull(propertyValue.get())) {
         std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
         GetObjectDefaultValue(jsObjectValue.get(), defaultValue.get());
@@ -6197,11 +6131,11 @@ FX_BOOL CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
         }
       } else {
         CFX_ByteString propertyStr;
-        FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+        propertyValue->ToString(propertyStr);
         std::unique_ptr<CFXJSE_Value> newPropertyValue(
             new CFXJSE_Value(pIsolate));
-        FXJSE_Value_GetObjectProp(jsObjectValue.get(), propertyStr.AsStringC(),
-                                  newPropertyValue.get());
+        jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                         newPropertyValue.get());
         if (FXJSE_Value_IsNull(newPropertyValue.get())) {
           isNull = TRUE;
         }
@@ -6226,8 +6160,8 @@ int32_t CXFA_FM2JSContext::hvalue_get_array_length(CFXJSE_Value* pThis,
   int32_t iLength = 0;
   if (FXJSE_Value_IsArray(arg)) {
     std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectProp(arg, "length", lengthValue.get());
-    iLength = FXJSE_Value_ToInteger(lengthValue.get());
+    arg->GetObjectProperty("length", lengthValue.get());
+    iLength = lengthValue->ToInteger();
   }
   return iLength;
 }
@@ -6247,8 +6181,7 @@ FX_BOOL CXFA_FM2JSContext::simpleValueCompare(CFXJSE_Value* pThis,
     FX_FLOAT second = ValueToFloat(pThis, secondValue);
     bReturn = (first == second);
   } else if (FXJSE_Value_IsBoolean(firstValue)) {
-    bReturn = (FXJSE_Value_ToBoolean(firstValue) ==
-               FXJSE_Value_ToBoolean(secondValue));
+    bReturn = (firstValue->ToBoolean() == secondValue->ToBoolean());
   } else if (FXJSE_Value_IsNull(firstValue) &&
              FXJSE_Value_IsNull(secondValue)) {
     bReturn = TRUE;
@@ -6270,9 +6203,8 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
     argsValue.push_back(args.GetValue(i + iStart));
     if (FXJSE_Value_IsArray(argsValue[i].get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argsValue[i].get(), "length",
-                                lengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      argsValue[i]->GetObjectProperty("length", lengthValue.get());
+      int32_t iLength = lengthValue->ToInteger();
       iCount += ((iLength > 2) ? (iLength - 2) : 0);
     } else {
       iCount += 1;
@@ -6286,30 +6218,25 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
   for (int32_t i = 0; i < argc - iStart; i++) {
     if (FXJSE_Value_IsArray(argsValue[i].get())) {
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      FXJSE_Value_GetObjectProp(argsValue[i].get(), "length",
-                                lengthValue.get());
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+      argsValue[i]->GetObjectProperty("length", lengthValue.get());
+      int32_t iLength = lengthValue->ToInteger();
       if (iLength > 2) {
         std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
         std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-        FXJSE_Value_GetObjectPropByIdx(argsValue[i].get(), 1,
-                                       propertyValue.get());
+        argsValue[i]->GetObjectPropertyByIdx(1, propertyValue.get());
         if (FXJSE_Value_IsNull(propertyValue.get())) {
           for (int32_t j = 2; j < iLength; j++) {
-            FXJSE_Value_GetObjectPropByIdx(argsValue[i].get(), j,
-                                           jsObjectValue.get());
+            argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
             GetObjectDefaultValue(jsObjectValue.get(), resultValues[index]);
             index++;
           }
         } else {
           CFX_ByteString propertyString;
-          FXJSE_Value_ToUTF8String(propertyValue.get(), propertyString);
+          propertyValue->ToString(propertyString);
           for (int32_t j = 2; j < iLength; j++) {
-            FXJSE_Value_GetObjectPropByIdx(argsValue[i].get(), j,
-                                           jsObjectValue.get());
-            FXJSE_Value_GetObjectProp(jsObjectValue.get(),
-                                      propertyString.AsStringC(),
-                                      resultValues[index]);
+            argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
+            jsObjectValue->GetObjectProperty(propertyString.AsStringC(),
+                                             resultValues[index]);
             index++;
           }
         }
@@ -6318,7 +6245,7 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
       GetObjectDefaultValue(argsValue[i].get(), resultValues[index]);
       index++;
     } else {
-      FXJSE_Value_Set(resultValues[index], argsValue[i].get());
+      resultValues[index]->Assign(argsValue[i].get());
       index++;
     }
   }
@@ -6329,7 +6256,7 @@ void CXFA_FM2JSContext::GetObjectDefaultValue(CFXJSE_Value* pValue,
                                               CFXJSE_Value* pDefaultValue) {
   CXFA_Node* pNode = ToNode(CXFA_ScriptContext::ToObject(pValue, nullptr));
   if (!pNode) {
-    FXJSE_Value_SetNull(pDefaultValue);
+    pDefaultValue->SetNull();
     return;
   }
   pNode->Script_Som_DefaultValue(pDefaultValue, FALSE, (XFA_ATTRIBUTE)-1);
@@ -6396,8 +6323,8 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
       CFX_WideString::FromUTF8(szAccessorName).AsStringC(), resoveNodeRS,
       dwFlags);
   if (iRet >= 1 && resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-    FXJSE_Value_Set(accessorValue, pScriptContext->GetJSValueFromMap(
-                                       resoveNodeRS.nodes.GetAt(0)));
+    accessorValue->Assign(
+        pScriptContext->GetJSValueFromMap(resoveNodeRS.nodes.GetAt(0)));
     bFlags = TRUE;
   }
   return bFlags;
@@ -6472,8 +6399,7 @@ void CXFA_FM2JSContext::ParseResolveResult(
     resultValues = FX_Alloc(CFXJSE_Value*, iSize);
     for (int32_t i = 0; i < iSize; i++) {
       resultValues[i] = new CFXJSE_Value(pIsolate);
-      FXJSE_Value_Set(
-          resultValues[i],
+      resultValues[i]->Assign(
           pContext->GetDocument()->GetScriptContext()->GetJSValueFromMap(
               resoveNodeRS.nodes.GetAt(i)));
     }
@@ -6486,14 +6412,14 @@ void CXFA_FM2JSContext::ParseResolveResult(
         iSize = 1;
         resultValues = FX_Alloc(CFXJSE_Value*, 1);
         resultValues[0] = new CFXJSE_Value(pIsolate);
-        FXJSE_Value_Set(resultValues[0], pParentValue);
+        resultValues[0]->Assign(pParentValue);
       }
     } else {
       iSize = iRet;
       resultValues = FX_Alloc(CFXJSE_Value*, iSize);
       for (int32_t i = 0; i < iSize; i++) {
         resultValues[i] = new CFXJSE_Value(pIsolate);
-        FXJSE_Value_Set(resultValues[i], objectProperties[i]);
+        resultValues[i]->Assign(objectProperties[i]);
       }
     }
   }
@@ -6508,15 +6434,15 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectPropByIdx(pValue, 1, propertyValue.get());
-    FXJSE_Value_GetObjectPropByIdx(pValue, 2, jsObjectValue.get());
+    pValue->GetObjectPropertyByIdx(1, propertyValue.get());
+    pValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (FXJSE_Value_IsNull(propertyValue.get())) {
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
     } else {
       CFX_ByteString propertyStr;
-      FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-      FXJSE_Value_GetObjectProp(jsObjectValue.get(), propertyStr.AsStringC(),
-                                newPropertyValue.get());
+      propertyValue->ToString(propertyStr);
+      jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                       newPropertyValue.get());
     }
     iValue = ValueToInteger(pThis, newPropertyValue.get());
     return iValue;
@@ -6527,10 +6453,10 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
     return iValue;
   } else if (FXJSE_Value_IsUTF8String(pValue)) {
     CFX_ByteString szValue;
-    FXJSE_Value_ToUTF8String(pValue, szValue);
+    pValue->ToString(szValue);
     iValue = FXSYS_atoi(szValue.c_str());
   } else {
-    iValue = FXJSE_Value_ToInteger(pValue);
+    iValue = pValue->ToInteger();
   }
   return iValue;
 }
@@ -6544,15 +6470,15 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectPropByIdx(arg, 1, propertyValue.get());
-    FXJSE_Value_GetObjectPropByIdx(arg, 2, jsObjectValue.get());
+    arg->GetObjectPropertyByIdx(1, propertyValue.get());
+    arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (FXJSE_Value_IsNull(propertyValue.get())) {
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
     } else {
       CFX_ByteString propertyStr;
-      FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-      FXJSE_Value_GetObjectProp(jsObjectValue.get(), propertyStr.AsStringC(),
-                                newPropertyValue.get());
+      propertyValue->ToString(propertyStr);
+      jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                       newPropertyValue.get());
     }
     fRet = ValueToFloat(pThis, newPropertyValue.get());
   } else if (FXJSE_Value_IsObject(arg)) {
@@ -6561,12 +6487,12 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
     fRet = ValueToFloat(pThis, newPropertyValue.get());
   } else if (FXJSE_Value_IsUTF8String(arg)) {
     CFX_ByteString bsOutput;
-    FXJSE_Value_ToUTF8String(arg, bsOutput);
+    arg->ToString(bsOutput);
     fRet = (FX_FLOAT)XFA_ByteStringToDouble(bsOutput.AsStringC());
   } else if (FXJSE_Value_IsUndefined(arg)) {
     fRet = 0;
   } else {
-    fRet = FXJSE_Value_ToFloat(arg);
+    fRet = arg->ToFloat();
   }
   return fRet;
 }
@@ -6580,15 +6506,15 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectPropByIdx(arg, 1, propertyValue.get());
-    FXJSE_Value_GetObjectPropByIdx(arg, 2, jsObjectValue.get());
+    arg->GetObjectPropertyByIdx(1, propertyValue.get());
+    arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (FXJSE_Value_IsNull(propertyValue.get())) {
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
     } else {
       CFX_ByteString propertyStr;
-      FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
-      FXJSE_Value_GetObjectProp(jsObjectValue.get(), propertyStr.AsStringC(),
-                                newPropertyValue.get());
+      propertyValue->ToString(propertyStr);
+      jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                       newPropertyValue.get());
     }
     dRet = ValueToDouble(pThis, newPropertyValue.get());
   } else if (FXJSE_Value_IsObject(arg)) {
@@ -6597,12 +6523,12 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
     dRet = ValueToDouble(pThis, newPropertyValue.get());
   } else if (FXJSE_Value_IsUTF8String(arg)) {
     CFX_ByteString bsOutput;
-    FXJSE_Value_ToUTF8String(arg, bsOutput);
+    arg->ToString(bsOutput);
     dRet = XFA_ByteStringToDouble(bsOutput.AsStringC());
   } else if (FXJSE_Value_IsUndefined(arg)) {
     dRet = 0;
   } else {
-    dRet = FXJSE_Value_ToDouble(arg);
+    dRet = arg->ToDouble();
   }
   return dRet;
 }
@@ -6618,8 +6544,8 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
 
   if (FXJSE_Value_IsArray(src)) {
     std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectProp(src, "length", lengthValue.get());
-    int32_t iLength = FXJSE_Value_ToInteger(lengthValue.get());
+    src->GetObjectProperty("length", lengthValue.get());
+    int32_t iLength = lengthValue->ToInteger();
     if (iLength <= 2) {
       *ret = false;
       return 0.0;
@@ -6627,16 +6553,16 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
 
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectPropByIdx(src, 1, propertyValue.get());
-    FXJSE_Value_GetObjectPropByIdx(src, 2, jsObjectValue.get());
+    src->GetObjectPropertyByIdx(1, propertyValue.get());
+    src->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (FXJSE_Value_IsNull(propertyValue.get()))
       return ValueToDouble(pThis, jsObjectValue.get());
 
     CFX_ByteString propertyStr;
-    FXJSE_Value_ToUTF8String(propertyValue.get(), propertyStr);
+    propertyValue->ToString(propertyStr);
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
-    FXJSE_Value_GetObjectProp(jsObjectValue.get(), propertyStr.AsStringC(),
-                              newPropertyValue.get());
+    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                     newPropertyValue.get());
     return ValueToDouble(pThis, newPropertyValue.get());
   }
   return ValueToDouble(pThis, src);
@@ -6648,10 +6574,10 @@ void CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg,
   if (FXJSE_Value_IsNull(arg) || FXJSE_Value_IsUndefined(arg)) {
     szOutputString = "";
   } else if (FXJSE_Value_IsBoolean(arg)) {
-    szOutputString = FXJSE_Value_ToBoolean(arg) ? "1" : "0";
+    szOutputString = arg->ToBoolean() ? "1" : "0";
   } else {
     szOutputString = "";
-    FXJSE_Value_ToUTF8String(arg, szOutputString);
+    arg->ToString(szOutputString);
   }
 }
 
@@ -6687,14 +6613,14 @@ CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
       m_pFMClass(FXJSE_DefineClass(pScriptContext, &formcalc_fm2js_descriptor)),
       m_pValue(new CFXJSE_Value(pScriptIsolate)),
       m_pDocument(pDoc) {
-  FXJSE_Value_SetNull(m_pValue.get());
-  FXJSE_Value_SetObject(m_pValue.get(), this, m_pFMClass);
+  m_pValue.get()->SetNull();
+  m_pValue.get()->SetObject(this, m_pFMClass);
 }
 
 CXFA_FM2JSContext::~CXFA_FM2JSContext() {}
 
 void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
-  FXJSE_Value_Set(pValue, m_pValue.get());
+  pValue->Assign(m_pValue.get());
 }
 
 void CXFA_FM2JSContext::ThrowException(int32_t iStringID, ...) {

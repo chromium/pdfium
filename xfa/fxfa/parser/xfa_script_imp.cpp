@@ -137,7 +137,7 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
     int32_t iFlags =
         CXFA_FM2JSContext::Translate(wsScript, wsJavaScript, wsErrorInfo);
     if (iFlags) {
-      FXJSE_Value_SetUndefined(hRetValue);
+      hRetValue->SetUndefined();
       return FALSE;
     }
     btScript =
@@ -175,7 +175,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(CFXJSE_Value* pObject,
   }
   if (lpOrginalNode->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
     if (FXJSE_Value_IsUndefined(pValue)) {
-      FXJSE_Value_SetObjectOwnProp(pObject, szPropName, pValue);
+      pObject->SetObjectOwnProperty(szPropName, pValue);
       return;
     }
   }
@@ -197,7 +197,7 @@ FX_BOOL CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode,
   if (ResolveObjects(refNode, propname, resolveRs, dwFlag) <= 0)
     return false;
   if (resolveRs.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-    FXJSE_Value_Set(pValue, GetJSValueFromMap(resolveRs.nodes[0]));
+    pValue->Assign(GetJSValueFromMap(resolveRs.nodes[0]));
     return true;
   }
   if (resolveRs.dwFlags == XFA_RESOVENODE_RSTYPE_Attribute) {
@@ -228,7 +228,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(CFXJSE_Value* pObject,
       CXFA_Object* pObj =
           lpScriptContext->GetDocument()->GetXFAObject(uHashCode);
       if (pObj) {
-        FXJSE_Value_Set(pValue, lpScriptContext->GetJSValueFromMap(pObj));
+        pValue->Assign(lpScriptContext->GetJSValueFromMap(pObj));
         return;
       }
     }
@@ -267,7 +267,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                               CFXJSE_Value* pReturnValue) {
   CXFA_Object* pOriginalObject = ToObject(pOriginalValue, nullptr);
   if (!pOriginalObject) {
-    FXJSE_Value_SetUndefined(pReturnValue);
+    pReturnValue->SetUndefined();
     return;
   }
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
@@ -277,7 +277,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
   if (wsPropName == FX_WSTRC(L"xfa")) {
     CFXJSE_Value* pValue = lpScriptContext->GetJSValueFromMap(
         lpScriptContext->GetDocument()->GetRoot());
-    FXJSE_Value_Set(pReturnValue, pValue);
+    pReturnValue->Assign(pValue);
     return;
   }
   uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
@@ -304,7 +304,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                                szPropName, pReturnValue, TRUE);
   }
   if (!bRet) {
-    FXJSE_Value_SetUndefined(pReturnValue);
+    pReturnValue->SetUndefined();
   }
 }
 void CXFA_ScriptContext::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
@@ -508,16 +508,16 @@ FX_BOOL CXFA_ScriptContext::QueryVariableValue(
       FXJSE_Context_GetGlobalObject(pVariableContext));
   std::unique_ptr<CFXJSE_Value> hVariableValue(new CFXJSE_Value(m_pIsolate));
   if (!bGetter) {
-    FXJSE_Value_SetObjectOwnProp(pObject.get(), szPropName, pValue);
+    pObject->SetObjectOwnProperty(szPropName, pValue);
     bRes = TRUE;
-  } else if (FXJSE_Value_ObjectHasOwnProp(pObject.get(), szPropName, FALSE)) {
-    FXJSE_Value_GetObjectProp(pObject.get(), szPropName, hVariableValue.get());
+  } else if (pObject->HasObjectOwnProperty(szPropName, FALSE)) {
+    pObject->GetObjectProperty(szPropName, hVariableValue.get());
     if (FXJSE_Value_IsFunction(hVariableValue.get()))
-      FXJSE_Value_SetFunctionBind(pValue, hVariableValue.get(), pObject.get());
+      pValue->SetFunctionBind(hVariableValue.get(), pObject.get());
     else if (bGetter)
-      FXJSE_Value_Set(pValue, hVariableValue.get());
+      pValue->Assign(hVariableValue.get());
     else
-      FXJSE_Value_Set(hVariableValue.get(), pValue);
+      hVariableValue.get()->Assign(pValue);
     bRes = TRUE;
   }
   return bRes;
@@ -547,8 +547,8 @@ void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
       FXJSE_Context_GetGlobalObject(pContext));
   std::unique_ptr<CFXJSE_Value> hProp(new CFXJSE_Value(m_pIsolate));
   for (int i = 0; i < 2; ++i) {
-    if (FXJSE_Value_GetObjectProp(pObject.get(), OBJ_NAME[i], hProp.get()))
-      FXJSE_Value_DeleteObjectProp(pObject.get(), OBJ_NAME[i]);
+    if (pObject->GetObjectProperty(OBJ_NAME[i], hProp.get()))
+      pObject.get()->DeleteObjectProperty(OBJ_NAME[i]);
   }
 }
 CFXJSE_Class* CXFA_ScriptContext::GetJseNormalClass() {
@@ -725,7 +725,7 @@ CFXJSE_Value* CXFA_ScriptContext::GetJSValueFromMap(CXFA_Object* pObject) {
   void* pValue = m_mapXFAToValue.GetValueAt(pObject);
   if (!pValue) {
     CFXJSE_Value* jsValue = new CFXJSE_Value(m_pIsolate);
-    FXJSE_Value_SetObject(jsValue, pObject, m_pJsClass);
+    jsValue->SetObject(pObject, m_pJsClass);
     m_mapXFAToValue.SetAt(pObject, jsValue);
     pValue = jsValue;
   }

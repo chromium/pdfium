@@ -277,7 +277,7 @@ FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
           GetIsolate(), name, v8::String::kNormalString, utf8Name.GetLength()));
 
   if (propvalue.IsEmpty()) {
-    FXJSE_Value_SetUndefined(pValue);
+    pValue->SetUndefined();
     return FALSE;
   }
   pValue->ForceSetValue(propvalue);

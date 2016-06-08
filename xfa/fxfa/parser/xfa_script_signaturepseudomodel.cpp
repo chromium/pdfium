@@ -42,9 +42,8 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(
   }
   int32_t bVerify = pNotify->GetDocProvider()->Verify(hDoc, pNode);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, bVerify);
-  }
+  if (pValue)
+    pValue->SetInteger(bVerify);
 }
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
     CFXJSE_Arguments* pArguments) {
@@ -75,9 +74,8 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
   FX_BOOL bSign = pNotify->GetDocProvider()->Sign(
       hDoc, pNodeList, wsExpression.AsStringC(), wsXMLIdent.AsStringC());
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetBoolean(pValue, bSign);
-  }
+  if (pValue)
+    pValue->SetBoolean(bSign);
 }
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(
     CFXJSE_Arguments* pArguments) {
@@ -94,8 +92,8 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(
   CXFA_NodeList* pList = pNotify->GetDocProvider()->Enumerate(hDoc);
   if (!pList)
     return;
-  FXJSE_Value_Set(pArguments->GetReturnValue(),
-                  m_pDocument->GetScriptContext()->GetJSValueFromMap(pList));
+  pArguments->GetReturnValue()->Assign(
+      m_pDocument->GetScriptContext()->GetJSValueFromMap(pList));
 }
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(
     CFXJSE_Arguments* pArguments) {
@@ -119,7 +117,6 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(
   }
   FX_BOOL bFlag = pNotify->GetDocProvider()->Clear(hDoc, pNode, bClear);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetBoolean(pValue, bFlag);
-  }
+  if (pValue)
+    pValue->SetBoolean(bFlag);
 }

@@ -29,28 +29,28 @@ void Script_EventPseudoModel_StringProperty(CFXJSE_Value* pValue,
                                             FX_BOOL bSetting) {
   if (bSetting) {
     CFX_ByteString bsValue;
-    FXJSE_Value_ToUTF8String(pValue, bsValue);
+    pValue->ToString(bsValue);
     wsValue = CFX_WideString::FromUTF8(bsValue.AsStringC());
   } else {
-    FXJSE_Value_SetUTF8String(pValue, FX_UTF8Encode(wsValue).AsStringC());
+    pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
   }
 }
 void Script_EventPseudoModel_InterProperty(CFXJSE_Value* pValue,
                                            int32_t& iValue,
                                            FX_BOOL bSetting) {
   if (bSetting) {
-    iValue = FXJSE_Value_ToInteger(pValue);
+    iValue = pValue->ToInteger();
   } else {
-    FXJSE_Value_SetInteger(pValue, iValue);
+    pValue->SetInteger(iValue);
   }
 }
 void Script_EventPseudoModel_BooleanProperty(CFXJSE_Value* pValue,
                                              FX_BOOL& bValue,
                                              FX_BOOL bSetting) {
   if (bSetting)
-    bValue = FXJSE_Value_ToBoolean(pValue);
+    bValue = pValue->ToBoolean();
   else
-    FXJSE_Value_SetBoolean(pValue, bValue);
+    pValue->SetBoolean(bValue);
 }
 
 void CScript_EventPseudoModel::Script_EventPseudoModel_Property(

@@ -43,124 +43,6 @@ FX_BOOL FXJSE_Value_IsFunction(CFXJSE_Value* pValue) {
   return pValue && pValue->IsFunction();
 }
 
-FX_BOOL FXJSE_Value_ToBoolean(CFXJSE_Value* pValue) {
-  return pValue->ToBoolean();
-}
-
-FX_FLOAT FXJSE_Value_ToFloat(CFXJSE_Value* pValue) {
-  return pValue->ToFloat();
-}
-
-double FXJSE_Value_ToDouble(CFXJSE_Value* pValue) {
-  return pValue->ToDouble();
-}
-
-void FXJSE_Value_ToUTF8String(CFXJSE_Value* pValue,
-                              CFX_ByteString& szStrOutput) {
-  pValue->ToString(szStrOutput);
-}
-
-int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue) {
-  return pValue->ToInteger();
-}
-
-void FXJSE_Value_SetUndefined(CFXJSE_Value* pValue) {
-  pValue->SetUndefined();
-}
-
-void FXJSE_Value_SetNull(CFXJSE_Value* pValue) {
-  pValue->SetNull();
-}
-
-void FXJSE_Value_SetBoolean(CFXJSE_Value* pValue, FX_BOOL bBoolean) {
-  pValue->SetBoolean(bBoolean);
-}
-
-void FXJSE_Value_SetUTF8String(CFXJSE_Value* pValue,
-                               const CFX_ByteStringC& szString) {
-  pValue->SetString(szString);
-}
-
-void FXJSE_Value_SetInteger(CFXJSE_Value* pValue, int32_t nInteger) {
-  pValue->SetInteger(nInteger);
-}
-
-void FXJSE_Value_SetFloat(CFXJSE_Value* pValue, FX_FLOAT fFloat) {
-  pValue->SetFloat(fFloat);
-}
-
-void FXJSE_Value_SetDouble(CFXJSE_Value* pValue, double dDouble) {
-  pValue->SetDouble(dDouble);
-}
-
-void FXJSE_Value_SetObject(CFXJSE_Value* pValue,
-                           CFXJSE_HostObject* lpObject,
-                           CFXJSE_Class* pClass) {
-  if (!pClass) {
-    ASSERT(!lpObject);
-    pValue->SetJSObject();
-    return;
-  }
-  pValue->SetHostObject(lpObject, pClass);
-}
-
-void FXJSE_Value_SetArray(CFXJSE_Value* pValue,
-                          uint32_t uValueCount,
-                          CFXJSE_Value** rgValues) {
-  pValue->SetArray(uValueCount, rgValues);
-}
-
-void FXJSE_Value_Set(CFXJSE_Value* pValue, CFXJSE_Value* pOriginalValue) {
-  ASSERT(pOriginalValue);
-  pValue->Assign(pOriginalValue);
-}
-
-FX_BOOL FXJSE_Value_GetObjectProp(CFXJSE_Value* pValue,
-                                  const CFX_ByteStringC& szPropName,
-                                  CFXJSE_Value* pPropValue) {
-  ASSERT(pPropValue);
-  return pValue->GetObjectProperty(szPropName, pPropValue);
-}
-
-FX_BOOL FXJSE_Value_SetObjectProp(CFXJSE_Value* pValue,
-                                  const CFX_ByteStringC& szPropName,
-                                  CFXJSE_Value* pPropValue) {
-  ASSERT(pPropValue);
-  return pValue->SetObjectProperty(szPropName, pPropValue);
-}
-
-FX_BOOL FXJSE_Value_GetObjectPropByIdx(CFXJSE_Value* pValue,
-                                       uint32_t uPropIdx,
-                                       CFXJSE_Value* pPropValue) {
-  ASSERT(pPropValue);
-  return pValue->GetObjectProperty(uPropIdx, pPropValue);
-}
-
-FX_BOOL FXJSE_Value_DeleteObjectProp(CFXJSE_Value* pValue,
-                                     const CFX_ByteStringC& szPropName) {
-  return pValue->DeleteObjectProperty(szPropName);
-}
-
-FX_BOOL FXJSE_Value_ObjectHasOwnProp(CFXJSE_Value* pValue,
-                                     const CFX_ByteStringC& szPropName,
-                                     FX_BOOL bUseTypeGetter) {
-  return pValue->HasObjectOwnProperty(szPropName, bUseTypeGetter);
-}
-
-FX_BOOL FXJSE_Value_SetObjectOwnProp(CFXJSE_Value* pValue,
-                                     const CFX_ByteStringC& szPropName,
-                                     CFXJSE_Value* pPropValue) {
-  ASSERT(pPropValue);
-  return pValue->SetObjectOwnProperty(szPropName, pPropValue);
-}
-
-FX_BOOL FXJSE_Value_SetFunctionBind(CFXJSE_Value* pValue,
-                                    CFXJSE_Value* pOldFunction,
-                                    CFXJSE_Value* pNewThis) {
-  ASSERT(pOldFunction && pNewThis);
-  return pValue->SetFunctionBind(pOldFunction, pNewThis);
-}
-
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
                         const CFX_ByteStringC& utf8Message) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
@@ -206,50 +88,14 @@ CFXJSE_HostObject* CFXJSE_Value::ToHostObject(CFXJSE_Class* lpClass) const {
   return FXJSE_RetrieveObjectBinding(pValue.As<v8::Object>(), lpClass);
 }
 
-V8_INLINE static double FXJSE_ftod(FX_FLOAT fNumber) {
-  if (sizeof(FX_FLOAT) != 4) {
-    ASSERT(FALSE);
-    return fNumber;
+void CFXJSE_Value::SetObject(CFXJSE_HostObject* lpObject,
+                             CFXJSE_Class* pClass) {
+  if (!pClass) {
+    ASSERT(!lpObject);
+    SetJSObject();
+    return;
   }
-
-  uint32_t nFloatBits = (uint32_t&)fNumber;
-  uint8_t nExponent = (uint8_t)(nFloatBits >> 16 >> 7);
-  if (nExponent == 0 || nExponent == 255)
-    return fNumber;
-
-  int8_t nErrExp = nExponent - 127 - 23;
-  if (nErrExp >= 0)
-    return fNumber;
-
-  double dwError = pow(2.0, nErrExp), dwErrorHalf = dwError / 2;
-  double dNumber = fNumber, dNumberAbs = fabs(fNumber);
-  double dNumberAbsMin = dNumberAbs - dwErrorHalf,
-         dNumberAbsMax = dNumberAbs + dwErrorHalf;
-  int32_t iErrPos = 0;
-  if (floor(dNumberAbsMin) == floor(dNumberAbsMax)) {
-    dNumberAbsMin = fmod(dNumberAbsMin, 1.0);
-    dNumberAbsMax = fmod(dNumberAbsMax, 1.0);
-    int32_t iErrPosMin = 1, iErrPosMax = 38;
-    do {
-      int32_t iMid = (iErrPosMin + iErrPosMax) / 2;
-      double dPow = pow(10.0, iMid);
-      if (floor(dNumberAbsMin * dPow) == floor(dNumberAbsMax * dPow)) {
-        iErrPosMin = iMid + 1;
-      } else {
-        iErrPosMax = iMid;
-      }
-    } while (iErrPosMin < iErrPosMax);
-    iErrPos = iErrPosMax;
-  }
-  double dPow = pow(10.0, iErrPos);
-  return fNumber < 0 ? ceil(dNumber * dPow - 0.5) / dPow
-                     : floor(dNumber * dPow + 0.5) / dPow;
-}
-
-void CFXJSE_Value::SetFloat(FX_FLOAT fFloat) {
-  CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
-  v8::Local<v8::Value> pValue = v8::Number::New(m_pIsolate, FXJSE_ftod(fFloat));
-  m_hValue.Reset(m_pIsolate, pValue);
+  SetHostObject(lpObject, pClass);
 }
 
 void CFXJSE_Value::SetHostObject(CFXJSE_HostObject* lpObject,
@@ -285,6 +131,7 @@ void CFXJSE_Value::SetDate(double dDouble) {
 
 FX_BOOL CFXJSE_Value::SetObjectProperty(const CFX_ByteStringC& szPropName,
                                         CFXJSE_Value* lpPropValue) {
+  ASSERT(lpPropValue);
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hObject =
       v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -302,6 +149,7 @@ FX_BOOL CFXJSE_Value::SetObjectProperty(const CFX_ByteStringC& szPropName,
 
 FX_BOOL CFXJSE_Value::GetObjectProperty(const CFX_ByteStringC& szPropName,
                                         CFXJSE_Value* lpPropValue) {
+  ASSERT(lpPropValue);
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hObject =
       v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -329,8 +177,8 @@ FX_BOOL CFXJSE_Value::SetObjectProperty(uint32_t uPropIdx,
   return (FX_BOOL)hObject.As<v8::Object>()->Set(uPropIdx, hPropValue);
 }
 
-FX_BOOL CFXJSE_Value::GetObjectProperty(uint32_t uPropIdx,
-                                        CFXJSE_Value* lpPropValue) {
+FX_BOOL CFXJSE_Value::GetObjectPropertyByIdx(uint32_t uPropIdx,
+                                             CFXJSE_Value* lpPropValue) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hObject =
       v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -375,6 +223,7 @@ FX_BOOL CFXJSE_Value::HasObjectOwnProperty(const CFX_ByteStringC& szPropName,
 
 FX_BOOL CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
                                            CFXJSE_Value* lpPropValue) {
+  ASSERT(lpPropValue);
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hObject =
       v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -395,6 +244,8 @@ FX_BOOL CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
 
 FX_BOOL CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
                                       CFXJSE_Value* lpNewThis) {
+  ASSERT(lpOldFunction && lpNewThis);
+
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> rgArgs[2];
   v8::Local<v8::Value> hOldFunction =

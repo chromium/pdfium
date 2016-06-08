@@ -87,51 +87,6 @@ FX_BOOL FXJSE_Value_IsObject(CFXJSE_Value* pValue);
 FX_BOOL FXJSE_Value_IsArray(CFXJSE_Value* pValue);
 FX_BOOL FXJSE_Value_IsFunction(CFXJSE_Value* pValue);
 
-FX_BOOL FXJSE_Value_ToBoolean(CFXJSE_Value* pValue);
-FX_FLOAT FXJSE_Value_ToFloat(CFXJSE_Value* pValue);
-double FXJSE_Value_ToDouble(CFXJSE_Value* pValue);
-int32_t FXJSE_Value_ToInteger(CFXJSE_Value* pValue);
-void FXJSE_Value_ToUTF8String(CFXJSE_Value* pValue,
-                              CFX_ByteString& szStrOutput);
-
-void FXJSE_Value_SetUndefined(CFXJSE_Value* pValue);
-void FXJSE_Value_SetNull(CFXJSE_Value* pValue);
-void FXJSE_Value_SetBoolean(CFXJSE_Value* pValue, FX_BOOL bBoolean);
-void FXJSE_Value_SetUTF8String(CFXJSE_Value* pValue,
-                               const CFX_ByteStringC& szString);
-void FXJSE_Value_SetInteger(CFXJSE_Value* pValue, int32_t nInteger);
-void FXJSE_Value_SetFloat(CFXJSE_Value* pValue, FX_FLOAT fFloat);
-void FXJSE_Value_SetDouble(CFXJSE_Value* pValue, double dDouble);
-void FXJSE_Value_SetObject(CFXJSE_Value* pValue,
-                           CFXJSE_HostObject* lpObject,
-                           CFXJSE_Class* pClass);
-void FXJSE_Value_SetArray(CFXJSE_Value* pValue,
-                          uint32_t uValueCount,
-                          CFXJSE_Value** rgValues);
-void FXJSE_Value_Set(CFXJSE_Value* pValue, CFXJSE_Value* pOriginalValue);
-
-FX_BOOL FXJSE_Value_GetObjectProp(CFXJSE_Value* pValue,
-                                  const CFX_ByteStringC& szPropName,
-                                  CFXJSE_Value* pPropValue);
-FX_BOOL FXJSE_Value_SetObjectProp(CFXJSE_Value* pValue,
-                                  const CFX_ByteStringC& szPropName,
-                                  CFXJSE_Value* pPropValue);
-FX_BOOL FXJSE_Value_GetObjectPropByIdx(CFXJSE_Value* pValue,
-                                       uint32_t uPropIdx,
-                                       CFXJSE_Value* pPropValue);
-FX_BOOL FXJSE_Value_DeleteObjectProp(CFXJSE_Value* pValue,
-                                     const CFX_ByteStringC& szPropName);
-FX_BOOL FXJSE_Value_ObjectHasOwnProp(CFXJSE_Value* pValue,
-                                     const CFX_ByteStringC& szPropName,
-                                     FX_BOOL bUseTypeGetter);
-FX_BOOL FXJSE_Value_SetObjectOwnProp(CFXJSE_Value* pValue,
-                                     const CFX_ByteStringC& szPropName,
-                                     CFXJSE_Value* pPropValue);
-
-FX_BOOL FXJSE_Value_SetFunctionBind(CFXJSE_Value* pValue,
-                                    CFXJSE_Value* pOldFunction,
-                                    CFXJSE_Value* pNewThis);
-
 FX_BOOL FXJSE_ExecuteScript(CFXJSE_Context* pContext,
                             const FX_CHAR* szScript,
                             CFXJSE_Value* pRetValue,

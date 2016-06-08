@@ -206,7 +206,7 @@ FX_BOOL CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
   int32_t iRet =
       pWidgetAcc->ExecuteScript(CXFA_Script(pScript), &EventParam, &pRetValue);
   if (iRet == XFA_EVENTERROR_Success && pRetValue) {
-    bRet = FXJSE_Value_ToBoolean(pRetValue);
+    bRet = pRetValue->ToBoolean();
     delete pRetValue;
   }
   return bRet;

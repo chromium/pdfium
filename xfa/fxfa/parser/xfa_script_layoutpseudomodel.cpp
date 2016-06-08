@@ -41,7 +41,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Ready(
     return;
   }
   int32_t iStatus = pNotify->GetLayoutStatus();
-  FXJSE_Value_SetBoolean(pValue, iStatus >= 2);
+  pValue->SetBoolean(iStatus >= 2);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
     CFXJSE_Arguments* pArguments,
@@ -100,7 +100,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
   }
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (!pLayoutItem) {
-    FXJSE_Value_SetFloat(pValue, 0);
+    pValue->SetFloat(0);
     return;
   }
   pLayoutItem->GetRect(rtRect, TRUE);
@@ -121,9 +121,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
   XFA_UNIT unit = measure.GetUnit(wsUnit.AsStringC());
   FX_FLOAT fValue = measure.ToUnit(unit);
   fValue = FXSYS_round(fValue * 1000) / 1000.0f;
-  if (pValue) {
-    FXJSE_Value_SetFloat(pValue, fValue);
-  }
+  if (pValue)
+    pValue->SetFloat(fValue);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_H(
     CFXJSE_Arguments* pArguments) {
@@ -165,9 +164,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_NumberedPageCount(
     iPageCount = iPageNum;
   }
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iPageCount);
-  }
+  if (pValue)
+    pValue->SetInteger(iPageCount);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageCount(
     CFXJSE_Arguments* pArguments) {
@@ -194,15 +192,14 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageSpan(
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
-    FXJSE_Value_SetInteger(pValue, -1);
+    pValue->SetInteger(-1);
     return;
   }
   int32_t iLast = pLayoutItem->GetLast()->GetPage()->GetPageIndex();
   int32_t iFirst = pLayoutItem->GetFirst()->GetPage()->GetPageIndex();
   int32_t iPageSpan = iLast - iFirst + 1;
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iPageSpan);
-  }
+  if (pValue)
+    pValue->SetInteger(iPageSpan);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Page(
     CFXJSE_Arguments* pArguments) {
@@ -378,9 +375,9 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageContent(
                                        retArray);
   CXFA_ArrayNodeList* pArrayNodeList = new CXFA_ArrayNodeList(m_pDocument);
   pArrayNodeList->SetArrayNodeList(retArray);
-  FXJSE_Value_SetObject(pArguments->GetReturnValue(),
-                        (CXFA_Object*)pArrayNodeList,
-                        m_pDocument->GetScriptContext()->GetJseNormalClass());
+  pArguments->GetReturnValue()->SetObject(
+      (CXFA_Object*)pArrayNodeList,
+      m_pDocument->GetScriptContext()->GetJseNormalClass());
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageCount(
     CFXJSE_Arguments* pArguments) {
@@ -395,9 +392,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageCountInBatch(
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->AbsPageCountInBatch(hDoc);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iPageCount);
-  }
+  if (pValue)
+    pValue->SetInteger(iPageCount);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetCountInBatch(
     CFXJSE_Arguments* pArguments) {
@@ -408,9 +404,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetCountInBatch(
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->SheetCountInBatch(hDoc);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iPageCount);
-  }
+  if (pValue)
+    pValue->SetInteger(iPageCount);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Relayout(
     CFXJSE_Arguments* pArguments) {
@@ -458,9 +453,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageInBatch(
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->AbsPageInBatch(hDoc, hWidget);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iPageCount);
-  }
+  if (pValue)
+    pValue->SetInteger(iPageCount);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetInBatch(
     CFXJSE_Arguments* pArguments) {
@@ -492,9 +486,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetInBatch(
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->SheetInBatch(hDoc, hWidget);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, iPageCount);
-  }
+  if (pValue)
+    pValue->SetInteger(iPageCount);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Sheet(
     CFXJSE_Arguments* pArguments) {
@@ -530,20 +523,19 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageImp(
   }
   int32_t iPage = 0;
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (!pNode && pValue) {
-    FXJSE_Value_SetInteger(pValue, iPage);
-  }
+  if (!pNode && pValue)
+    pValue->SetInteger(iPage);
+
   CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }
   CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
-    FXJSE_Value_SetInteger(pValue, -1);
+    pValue->SetInteger(-1);
     return;
   }
   iPage = pLayoutItem->GetFirst()->GetPage()->GetPageIndex();
-  if (pValue) {
-    FXJSE_Value_SetInteger(pValue, bAbsPage ? iPage : iPage + 1);
-  }
+  if (pValue)
+    pValue->SetInteger(bAbsPage ? iPage : iPage + 1);
 }

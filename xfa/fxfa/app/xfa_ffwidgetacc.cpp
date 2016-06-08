@@ -370,7 +370,7 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
                                                CFXJSE_Value* pRetValue,
                                                FX_BOOL bVersionFlag) {
   if (iRet == XFA_EVENTERROR_Success && pRetValue) {
-    if (FXJSE_Value_IsBoolean(pRetValue) && !FXJSE_Value_ToBoolean(pRetValue)) {
+    if (FXJSE_Value_IsBoolean(pRetValue) && !pRetValue->ToBoolean()) {
       IXFA_AppProvider* pAppProvider = GetAppProvider();
       if (!pAppProvider) {
         return;
@@ -660,7 +660,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
       if (!FXJSE_Value_IsUndefined(pTmpRetValue.get())) {
         if (!FXJSE_Value_IsNull(pTmpRetValue.get())) {
           CFX_ByteString bsString;
-          FXJSE_Value_ToUTF8String(pTmpRetValue.get(), bsString);
+          pTmpRetValue->ToString(bsString);
           pEventParam->m_wsResult =
               CFX_WideString::FromUTF8(bsString.AsStringC());
         }
