@@ -467,7 +467,7 @@ CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict,
     if (!pFind) {
       continue;
     }
-    CFX_SubstFont* pSubst = (CFX_SubstFont*)pFind->GetSubstFont();
+    CFX_SubstFont* pSubst = pFind->GetSubstFont();
     if (!pSubst) {
       continue;
     }
@@ -486,7 +486,7 @@ CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict,
   CFX_SubstFont* pSubst;
   CPDF_Font* pFont = GetDefaultInterFormFont(pFormDict, pDocument);
   if (pFont) {
-    pSubst = (CFX_SubstFont*)pFont->GetSubstFont();
+    pSubst = pFont->GetSubstFont();
     if (pSubst && pSubst->m_Charset == (int)charSet) {
       FindInterFormFont(pFormDict, pFont, csNameTag);
       return pFont;

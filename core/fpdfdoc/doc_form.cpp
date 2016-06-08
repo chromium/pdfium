@@ -989,16 +989,15 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   }
   return pField;
 }
-CPDF_FormControl* CPDF_InterForm::AddControl(const CPDF_FormField* pField,
+CPDF_FormControl* CPDF_InterForm::AddControl(CPDF_FormField* pField,
                                              CPDF_Dictionary* pWidgetDict) {
   const auto it = m_ControlMap.find(pWidgetDict);
   if (it != m_ControlMap.end())
     return it->second;
 
-  CPDF_FormControl* pControl =
-      new CPDF_FormControl((CPDF_FormField*)pField, pWidgetDict);
+  CPDF_FormControl* pControl = new CPDF_FormControl(pField, pWidgetDict);
   m_ControlMap[pWidgetDict] = pControl;
-  ((CPDF_FormField*)pField)->m_ControlList.Add(pControl);
+  pField->m_ControlList.Add(pControl);
   return pControl;
 }
 

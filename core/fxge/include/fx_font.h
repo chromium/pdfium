@@ -77,8 +77,10 @@ class CFX_Font {
                  int italic_angle,
                  int CharsetCP,
                  FX_BOOL bVertical = FALSE);
+
   FX_BOOL LoadEmbedded(const uint8_t* data, uint32_t size);
   FXFT_Face GetFace() const { return m_Face; }
+  CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
 
 #ifdef PDF_ENABLE_XFA
   FX_BOOL LoadFile(IFX_FileRead* pFile,
@@ -86,11 +88,8 @@ class CFX_Font {
                    int* pFaceCount = nullptr);
 
   FX_BOOL LoadClone(const CFX_Font* pFont);
-  CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
   void SetFace(FXFT_Face face) { m_Face = face; }
   void SetSubstFont(CFX_SubstFont* subst) { m_pSubstFont = subst; }
-#else   // PDF_ENABLE_XFA
-  const CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
 #endif  // PDF_ENABLE_XFA
 
   CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width = 0);

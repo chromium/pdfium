@@ -71,7 +71,7 @@ class CPDF_Font {
   virtual uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const;
 
   const CFX_ByteString& GetBaseFont() const { return m_BaseFont; }
-  const CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
+  CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
   uint32_t GetFlags() const { return m_Flags; }
   FX_BOOL IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   CPDF_StreamAcc* GetFontFile() const { return m_pFontFile; }

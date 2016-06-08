@@ -533,7 +533,7 @@ class CPDF_InterForm {
   void LoadField(CPDF_Dictionary* pFieldDict, int nLevel = 0);
   CPDF_Object* GetFieldAttr(CPDF_Dictionary* pFieldDict, const FX_CHAR* name);
   CPDF_FormField* AddTerminalField(CPDF_Dictionary* pFieldDict);
-  CPDF_FormControl* AddControl(const CPDF_FormField* pField,
+  CPDF_FormControl* AddControl(CPDF_FormField* pField,
                                CPDF_Dictionary* pWidgetDict);
   void FDF_ImportField(CPDF_Dictionary* pField,
                        const CFX_WideString& parent_name,
