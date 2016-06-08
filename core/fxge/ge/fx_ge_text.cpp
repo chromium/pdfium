@@ -738,8 +738,10 @@ CFX_TypeFace* CFX_FontCache::GetDeviceCache(CFX_Font* pFont) {
 
 CFX_TypeFace* CFX_FaceCache::GetDeviceCache(CFX_Font* pFont) {
   if (!m_pTypeface) {
-    m_pTypeface = SkTypeface::CreateFromStream(
-        new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()));
+    m_pTypeface =
+        SkTypeface::MakeFromStream(
+            new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()))
+            .release();
   }
   return m_pTypeface;
 }

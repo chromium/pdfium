@@ -13,7 +13,7 @@ vars = {
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': 'c291cde264469b20ca969ce8832088acb21e0c48',
   'pdfium_tests_revision': '6c769320872e6ca82da4adaec1a497237f71b543',
-  'skia_revision': '6f47dbaff54a7705ef3e98f1f65c765e56fd9bd0',
+  'skia_revision': '7942f22c607caf826a6a609b89338a569d0a30e7',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
   'v8_revision': '055bfa771a7bd763305d3bafd43e39459abc95a4',
