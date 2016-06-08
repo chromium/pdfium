@@ -748,8 +748,10 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IPDF_DataAvail::DownloadHints* pHints) {
   }
 
   CPDF_Array* pHintStreamRange = pDict->GetArrayBy("H");
-  if (!pHintStreamRange)
+  if (!pHintStreamRange) {
+    m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
+  }
 
   FX_FILESIZE szHSStart =
       pHintStreamRange->GetDirectObjectAt(0)
