@@ -22,7 +22,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   return NULL;
 #else
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
-  if (!pFont->LoadFont(pszFontFamily, dwFontStyles, wCodePage)) {
+  if (!pFont->LoadFontInternal(pszFontFamily, dwFontStyles, wCodePage)) {
     pFont->Release();
     return NULL;
   }
@@ -32,10 +32,9 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
 
 // static
 CFGAS_GEFont* CFGAS_GEFont::LoadFont(CFX_Font* pExtFont,
-                                     IFGAS_FontMgr* pFontMgr,
-                                     FX_BOOL bTakeOver) {
+                                     IFGAS_FontMgr* pFontMgr) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
-  if (!pFont->LoadFont(pExtFont, bTakeOver)) {
+  if (!pFont->LoadFontInternal(pExtFont)) {
     pFont->Release();
     return NULL;
   }
@@ -48,17 +47,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const uint8_t* pBuffer,
                                      int32_t iLength,
                                      IFGAS_FontMgr* pFontMgr) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
-  if (!pFont->LoadFont(pBuffer, iLength)) {
-    pFont->Release();
-    return nullptr;
-  }
-  return pFont;
-}
-
-// static
-CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFileName) {
-  CFGAS_GEFont* pFont = new CFGAS_GEFont(nullptr);
-  if (!pFont->LoadFontInternal(pszFileName)) {
+  if (!pFont->LoadFontInternal(pBuffer, iLength)) {
     pFont->Release();
     return nullptr;
   }
@@ -70,7 +59,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(IFX_Stream* pFontStream,
                                      IFGAS_FontMgr* pFontMgr,
                                      FX_BOOL bSaveStream) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
-  if (!pFont->LoadFont(pFontStream, bSaveStream)) {
+  if (!pFont->LoadFontInternal(pFontStream, bSaveStream)) {
     pFont->Release();
     return nullptr;
   }
@@ -166,9 +155,9 @@ CFGAS_GEFont* CFGAS_GEFont::Retain() {
 }
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
-                               uint32_t dwFontStyles,
-                               uint16_t wCodePage) {
+FX_BOOL CFGAS_GEFont::LoadFontInternal(const FX_WCHAR* pszFontFamily,
+                                       uint32_t dwFontStyles,
+                                       uint16_t wCodePage) {
   if (m_pFont) {
     return FALSE;
   }
@@ -221,7 +210,7 @@ FX_BOOL CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   return bRet;
 }
 
-FX_BOOL CFGAS_GEFont::LoadFont(const uint8_t* pBuffer, int32_t length) {
+FX_BOOL CFGAS_GEFont::LoadFontInternal(const uint8_t* pBuffer, int32_t length) {
   if (m_pFont) {
     return FALSE;
   }
@@ -234,29 +223,8 @@ FX_BOOL CFGAS_GEFont::LoadFont(const uint8_t* pBuffer, int32_t length) {
   return bRet;
 }
 
-FX_BOOL CFGAS_GEFont::LoadFontInternal(const FX_WCHAR* pszFileName) {
-  if (m_pFont || m_pStream || m_pFileRead) {
-    return FALSE;
-  }
-  m_pStream = IFX_Stream::CreateStream(
-      pszFileName, FX_STREAMACCESS_Binary | FX_STREAMACCESS_Read);
-  m_pFileRead = FX_CreateFileRead(m_pStream);
-  FX_BOOL bRet = FALSE;
-  if (m_pStream && m_pFileRead) {
-    m_pFont = new CFX_Font;
-    bRet = m_pFont->LoadFile(m_pFileRead);
-    if (bRet) {
-      bRet = InitFont();
-    } else {
-      m_pFileRead->Release();
-      m_pFileRead = nullptr;
-    }
-  }
-  m_wCharSet = 0xFFFF;
-  return bRet;
-}
-
-FX_BOOL CFGAS_GEFont::LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream) {
+FX_BOOL CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream,
+                                       FX_BOOL bSaveStream) {
   if (m_pFont || m_pFileRead || !pFontStream || pFontStream->GetLength() < 1) {
     return FALSE;
   }
@@ -277,20 +245,14 @@ FX_BOOL CFGAS_GEFont::LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream) {
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-FX_BOOL CFGAS_GEFont::LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver) {
+FX_BOOL CFGAS_GEFont::LoadFontInternal(CFX_Font* pExtFont) {
   if (m_pFont || !pExtFont) {
     return FALSE;
   }
   m_pFont = pExtFont;
-  FX_BOOL bRet = !!m_pFont;
-  if (bRet) {
-    m_bExtFont = !bTakeOver;
-    bRet = InitFont();
-  } else {
-    m_bExtFont = TRUE;
-  }
+  m_bExtFont = TRUE;
   m_wCharSet = 0xFFFF;
-  return bRet;
+  return InitFont();
 }
 
 FX_BOOL CFGAS_GEFont::InitFont() {

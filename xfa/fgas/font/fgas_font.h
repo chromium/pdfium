@@ -105,7 +105,6 @@ class IFGAS_FontMgr {
                                  uint32_t dwFontStyles,
                                  uint16_t wCodePage = 0xFFFF) = 0;
   virtual CFGAS_GEFont* LoadFont(const uint8_t* pBuffer, int32_t iLength) = 0;
-  virtual CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFileName) = 0;
   virtual CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
                                  const FX_WCHAR* pszFontAlias = NULL,
                                  uint32_t dwFontStyles = 0,
@@ -162,18 +161,6 @@ class IFGAS_FontMgr {
       uint16_t wLanguage,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual CFGAS_GEFont* LoadFont(const uint8_t* pBuffer,
-                                 int32_t iLength,
-                                 int32_t iFaceIndex,
-                                 int32_t* pFaceCount = NULL) = 0;
-  virtual CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFileName,
-                                 int32_t iFaceIndex,
-                                 int32_t* pFaceCount = NULL) = 0;
-  virtual CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
-                                 int32_t iFaceIndex,
-                                 int32_t* pFaceCount = NULL,
-                                 FX_BOOL bSaveStream = FALSE) = 0;
-
   virtual void ClearFontCache() = 0;
   virtual void RemoveFont(CFGAS_GEFont* pFont) = 0;
 };

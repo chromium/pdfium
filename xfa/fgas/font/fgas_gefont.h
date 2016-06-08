@@ -22,14 +22,11 @@ class CFGAS_GEFont {
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage,
                                 IFGAS_FontMgr* pFontMgr);
-  static CFGAS_GEFont* LoadFont(CFX_Font* pExtFont,
-                                IFGAS_FontMgr* pFontMgr,
-                                FX_BOOL bTakeOver);
+  static CFGAS_GEFont* LoadFont(CFX_Font* pExtFont, IFGAS_FontMgr* pFontMgr);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   static CFGAS_GEFont* LoadFont(const uint8_t* pBuffer,
                                 int32_t iLength,
                                 IFGAS_FontMgr* pFontMgr);
-  static CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFileName);
   static CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
                                 IFGAS_FontMgr* pFontMgr,
                                 FX_BOOL bSaveStream);
@@ -70,14 +67,13 @@ class CFGAS_GEFont {
   CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles);
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  FX_BOOL LoadFont(const FX_WCHAR* pszFontFamily,
-                   uint32_t dwFontStyles,
-                   uint16_t wCodePage);
-  FX_BOOL LoadFont(const uint8_t* pBuffer, int32_t length);
-  FX_BOOL LoadFontInternal(const FX_WCHAR* pszFileName);
-  FX_BOOL LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream);
+  FX_BOOL LoadFontInternal(const FX_WCHAR* pszFontFamily,
+                           uint32_t dwFontStyles,
+                           uint16_t wCodePage);
+  FX_BOOL LoadFontInternal(const uint8_t* pBuffer, int32_t length);
+  FX_BOOL LoadFontInternal(IFX_Stream* pFontStream, FX_BOOL bSaveStream);
 #endif
-  FX_BOOL LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver);
+  FX_BOOL LoadFontInternal(CFX_Font* pExtFont);
   FX_BOOL InitFont();
   FX_BOOL GetCharBBoxInternal(FX_WCHAR wUnicode,
                               CFX_Rect& bbox,

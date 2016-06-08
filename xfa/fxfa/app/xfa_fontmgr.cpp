@@ -1869,7 +1869,7 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
       *pDstPDFFont = pPDFFont;
       return NULL;
     }
-    return CFGAS_GEFont::LoadFont(&pPDFFont->m_Font, pFDEFontMgr, FALSE);
+    return CFGAS_GEFont::LoadFont(&pPDFFont->m_Font, pFDEFontMgr);
   }
   return NULL;
 }
