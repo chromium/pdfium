@@ -1008,8 +1008,7 @@ void CPDF_TextPage::ProcessTextObject(
 
 FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
-  CPDF_ContentMarkData* pMarkData =
-      (CPDF_ContentMarkData*)pTextObj->m_ContentMark.GetObject();
+  const CPDF_ContentMarkData* pMarkData = pTextObj->m_ContentMark.GetObject();
   if (!pMarkData)
     return FPDFText_MarkedContent::Pass;
 
@@ -1022,7 +1021,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_Dictionary* pDict = nullptr;
   int n = 0;
   for (n = 0; n < nContentMark; n++) {
-    CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
+    const CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
     if (item.GetParamType() == CPDF_ContentMarkItem::ParamType::None)
       continue;
     pDict = item.GetParam();
@@ -1037,8 +1036,8 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
     return FPDFText_MarkedContent::Pass;
 
   if (m_pPreTextObj) {
-    CPDF_ContentMarkData* pPreMarkData =
-        (CPDF_ContentMarkData*)m_pPreTextObj->m_ContentMark.GetObject();
+    const CPDF_ContentMarkData* pPreMarkData =
+        m_pPreTextObj->m_ContentMark.GetObject();
     if (pPreMarkData && pPreMarkData->CountItems() == n &&
         pDict == pPreMarkData->GetItem(n - 1).GetParam()) {
       return FPDFText_MarkedContent::Done;
@@ -1076,8 +1075,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
 
 void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
-  CPDF_ContentMarkData* pMarkData =
-      (CPDF_ContentMarkData*)pTextObj->m_ContentMark.GetObject();
+  const CPDF_ContentMarkData* pMarkData = pTextObj->m_ContentMark.GetObject();
   if (!pMarkData)
     return;
 
@@ -1087,7 +1085,7 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   CFX_WideString actText;
   CPDF_Dictionary* pDict = nullptr;
   for (int n = 0; n < nContentMark; n++) {
-    CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
+    const CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
     if (item.GetParamType() == CPDF_ContentMarkItem::ParamType::None)
       continue;
     pDict = item.GetParam();

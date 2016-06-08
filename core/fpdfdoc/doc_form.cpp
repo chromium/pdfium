@@ -620,8 +620,7 @@ FX_BOOL CPDF_InterForm::ValidateFieldName(CFX_WideString& csNewFieldName,
 FX_BOOL CPDF_InterForm::ValidateFieldName(const CPDF_FormField* pField,
                                           CFX_WideString& csNewFieldName) {
   return pField && !csNewFieldName.IsEmpty() &&
-         ValidateFieldName(csNewFieldName,
-                           ((CPDF_FormField*)pField)->GetFieldType(), pField,
+         ValidateFieldName(csNewFieldName, pField->GetFieldType(), pField,
                            nullptr);
 }
 FX_BOOL CPDF_InterForm::ValidateFieldName(const CPDF_FormControl* pControl,
@@ -629,7 +628,7 @@ FX_BOOL CPDF_InterForm::ValidateFieldName(const CPDF_FormControl* pControl,
   if (!pControl || csNewFieldName.IsEmpty()) {
     return FALSE;
   }
-  CPDF_FormField* pField = ((CPDF_FormControl*)pControl)->GetField();
+  CPDF_FormField* pField = pControl->GetField();
   return ValidateFieldName(csNewFieldName, pField->GetFieldType(), pField,
                            pControl);
 }

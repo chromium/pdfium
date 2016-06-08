@@ -214,13 +214,11 @@ CPVT_FloatRect CTypeset::CharArray() {
         break;
       }
       fNextWidth = 0;
-      if (CPVT_WordInfo* pNextWord =
-              (CPVT_WordInfo*)m_pSection->m_WordArray.GetAt(w + 1)) {
+      if (CPVT_WordInfo* pNextWord = m_pSection->m_WordArray.GetAt(w + 1)) {
         pNextWord->fWordTail = 0;
         fNextWidth = m_pVT->GetWordWidth(*pNextWord);
       }
-      if (CPVT_WordInfo* pWord =
-              (CPVT_WordInfo*)m_pSection->m_WordArray.GetAt(w)) {
+      if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
         pWord->fWordTail = 0;
         FX_FLOAT fWordWidth = m_pVT->GetWordWidth(*pWord);
         FX_FLOAT fWordAscent = m_pVT->GetWordAscent(*pWord);

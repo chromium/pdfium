@@ -570,6 +570,7 @@ class CPDF_InterForm {
 #define FORMTEXT_COMB 0x800
 #define FORMCOMBO_EDIT 0x100
 #define FORMLIST_MULTISELECT 0x100
+
 class CPDF_FormField {
  public:
   enum Type {
@@ -585,7 +586,7 @@ class CPDF_FormField {
     Sign
   };
 
-  CFX_WideString GetFullName();
+  CFX_WideString GetFullName() const;
 
   Type GetType() const { return m_Type; }
   uint32_t GetFlags() const { return m_Flags; }
@@ -601,65 +602,49 @@ class CPDF_FormField {
     return m_ControlList.GetAt(index);
   }
 
-  int GetControlIndex(const CPDF_FormControl* pControl);
+  int GetControlIndex(const CPDF_FormControl* pControl) const;
+  int GetFieldType() const;
 
-  int GetFieldType();
+  CPDF_AAction GetAdditionalAction() const;
+  CFX_WideString GetAlternateName() const;
+  CFX_WideString GetMappingName() const;
 
-  CPDF_AAction GetAdditionalAction();
+  uint32_t GetFieldFlags() const;
+  CFX_ByteString GetDefaultStyle() const;
+  CFX_WideString GetRichTextString() const;
 
-  CFX_WideString GetAlternateName();
-
-  CFX_WideString GetMappingName();
-
-  uint32_t GetFieldFlags();
-
-  CFX_ByteString GetDefaultStyle();
-
-  CFX_WideString GetRichTextString();
-
-  CFX_WideString GetValue();
-
-  CFX_WideString GetDefaultValue();
-
+  CFX_WideString GetValue() const;
+  CFX_WideString GetDefaultValue() const;
   FX_BOOL SetValue(const CFX_WideString& value, FX_BOOL bNotify = FALSE);
 
-  int GetMaxLen();
-
-  int CountSelectedItems();
-
-  int GetSelectedIndex(int index);
+  int GetMaxLen() const;
+  int CountSelectedItems() const;
+  int GetSelectedIndex(int index) const;
 
   FX_BOOL ClearSelection(FX_BOOL bNotify = FALSE);
-
-  FX_BOOL IsItemSelected(int index);
-
+  FX_BOOL IsItemSelected(int index) const;
   FX_BOOL SetItemSelection(int index,
                            FX_BOOL bSelected,
                            FX_BOOL bNotify = FALSE);
 
-  FX_BOOL IsItemDefaultSelected(int index);
+  FX_BOOL IsItemDefaultSelected(int index) const;
 
-  int GetDefaultSelectedItem();
+  int GetDefaultSelectedItem() const;
+  int CountOptions() const;
 
-  int CountOptions();
+  CFX_WideString GetOptionLabel(int index) const;
+  CFX_WideString GetOptionValue(int index) const;
 
-  CFX_WideString GetOptionLabel(int index);
-
-  CFX_WideString GetOptionValue(int index);
-
-  int FindOption(CFX_WideString csOptLabel);
-
-  int FindOptionValue(const CFX_WideString& csOptValue);
+  int FindOption(CFX_WideString csOptLabel) const;
+  int FindOptionValue(const CFX_WideString& csOptValue) const;
 
   FX_BOOL CheckControl(int iControlIndex, bool bChecked, bool bNotify = false);
 
-  int GetTopVisibleIndex();
+  int GetTopVisibleIndex() const;
+  int CountSelectedOptions() const;
 
-  int CountSelectedOptions();
-
-  int GetSelectedOptionIndex(int index);
-
-  FX_BOOL IsOptionSelected(int iOptIndex);
+  int GetSelectedOptionIndex(int index) const;
+  FX_BOOL IsOptionSelected(int iOptIndex) const;
 
   FX_BOOL SelectOption(int iOptIndex,
                        FX_BOOL bSelected,
@@ -675,30 +660,24 @@ class CPDF_FormField {
                    FX_BOOL bNotify = FALSE);
 #endif  // PDF_ENABLE_XFA
 
-  FX_FLOAT GetFontSize() { return m_FontSize; }
-
-  CPDF_Font* GetFont() { return m_pFont; }
+  FX_FLOAT GetFontSize() const { return m_FontSize; }
+  CPDF_Font* GetFont() const { return m_pFont; }
 
  protected:
   CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict);
   ~CPDF_FormField();
 
-  CFX_WideString GetValue(FX_BOOL bDefault);
-
+  CFX_WideString GetValue(FX_BOOL bDefault) const;
   FX_BOOL SetValue(const CFX_WideString& value,
                    FX_BOOL bDefault,
                    FX_BOOL bNotify);
 
   void SyncFieldFlags();
-
   int FindListSel(CPDF_String* str);
-
-  CFX_WideString GetOptionText(int index, int sub_index);
+  CFX_WideString GetOptionText(int index, int sub_index) const;
 
   void LoadDA();
-
-  CFX_WideString GetCheckValue(FX_BOOL bDefault);
-
+  CFX_WideString GetCheckValue(FX_BOOL bDefault) const;
   FX_BOOL SetCheckValue(const CFX_WideString& value,
                         FX_BOOL bDefault,
                         FX_BOOL bNotify);
