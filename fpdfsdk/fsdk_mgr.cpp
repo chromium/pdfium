@@ -34,10 +34,16 @@
 #include <ctime>
 #endif
 
+namespace {
+
+// NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
+// since modifying the result would impact |bsUTF16LE|.
 FPDF_WIDESTRING AsFPDFWideString(CFX_ByteString* bsUTF16LE) {
   return reinterpret_cast<FPDF_WIDESTRING>(
       bsUTF16LE->GetBuffer(bsUTF16LE->GetLength()));
 }
+
+}  // namespace
 
 CPDFDoc_Environment::CPDFDoc_Environment(UnderlyingDocumentType* pDoc,
                                          FPDF_FORMFILLINFO* pFFinfo)
@@ -988,19 +994,26 @@ void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {
                        rcWindow.bottom);
 }
 
-int CPDFSDK_PageView::GetPageIndex() {
-  if (m_page) {
+int CPDFSDK_PageView::GetPageIndex() const {
+  if (!m_page)
+    return -1;
+
 #ifdef PDF_ENABLE_XFA
-    CPDF_Dictionary* pDic = m_page->GetPDFPage()->m_pFormDict;
-#else   // PDF_ENABLE_XFA
-    CPDF_Dictionary* pDic = m_page->m_pFormDict;
-#endif  // PDF_ENABLE_XFA
-    CPDF_Document* pDoc = m_pSDKDoc->GetPDFDocument();
-    if (pDoc && pDic) {
-      return pDoc->GetPageIndex(pDic->GetObjNum());
+  int nDocType = m_page->GetDocument()->GetDocType();
+  switch (nDocType) {
+    case DOCTYPE_DYNAMIC_XFA: {
+      CXFA_FFPageView* pPageView = m_page->GetXFAPageView();
+      return pPageView ? pPageView->GetPageIndex() : -1;
     }
+    case DOCTYPE_STATIC_XFA:
+    case DOCTYPE_PDF:
+      return GetPageIndexForStaticPDF();
+    default:
+      return -1;
   }
-  return -1;
+#else   // PDF_ENABLE_XFA
+  return GetPageIndexForStaticPDF();
+#endif  // PDF_ENABLE_XFA
 }
 
 bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
@@ -1021,4 +1034,15 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {
       return pAnnot;
   }
   return nullptr;
+}
+
+int CPDFSDK_PageView::GetPageIndexForStaticPDF() const {
+#ifdef PDF_ENABLE_XFA
+  CPDF_Page* pPage = m_page->GetPDFPage();
+#else   // PDF_ENABLE_XFA
+  CPDF_Page* pPage = m_page;
+#endif  // PDF_ENABLE_XFA
+  CPDF_Dictionary* pDict = pPage->m_pFormDict;
+  CPDF_Document* pDoc = m_pSDKDoc->GetPDFDocument();
+  return (pDoc && pDict) ? pDoc->GetPageIndex(pDict->GetObjNum()) : -1;
 }

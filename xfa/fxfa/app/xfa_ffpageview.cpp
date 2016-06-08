@@ -102,10 +102,6 @@ CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
   return m_pDocView;
 }
 
-int32_t CXFA_FFPageView::GetPageViewIndex() const {
-  return GetPageIndex();
-}
-
 void CXFA_FFPageView::GetPageViewRect(CFX_RectF& rtPage) const {
   CFX_SizeF sz;
   GetPageSize(sz);

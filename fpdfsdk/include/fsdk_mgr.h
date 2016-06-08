@@ -32,10 +32,6 @@ class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 class IJS_Runtime;
 
-// NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
-// since modifying the result would impact |bsUTF16LE|.
-FPDF_WIDESTRING AsFPDFWideString(CFX_ByteString* bsUTF16LE);
-
 class CPDFDoc_Environment final {
  public:
   CPDFDoc_Environment(UnderlyingDocumentType* pDoc, FPDF_FORMFILLINFO* pFFinfo);
@@ -604,7 +600,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
     return m_fxAnnotArray;
   }
 
-  int GetPageIndex();
+  int GetPageIndex() const;
   void LoadFXAnnots();
   void ClearFXAnnots();
   void SetValid(FX_BOOL bValid) { m_bValid = bValid; }
@@ -616,11 +612,10 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 #endif  // PDF_ENABLE_XFA
 
  private:
-  void PageView_OnHighlightFormFields(CFX_RenderDevice* pDevice,
-                                      CPDFSDK_Widget* pWidget);
+  int GetPageIndexForStaticPDF() const;
 
   CFX_Matrix m_curMatrix;
-  UnderlyingPageType* m_page;
+  UnderlyingPageType* const m_page;
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
   CPDFSDK_Document* m_pSDKDoc;

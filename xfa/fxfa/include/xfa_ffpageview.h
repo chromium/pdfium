@@ -18,7 +18,6 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
   ~CXFA_FFPageView() override;
 
   CXFA_FFDocView* GetDocView() const;
-  int32_t GetPageViewIndex() const;
   void GetPageViewRect(CFX_RectF& rtPage) const;
   void GetDisplayMatrix(CFX_Matrix& mt,
                         const CFX_Rect& rtDisp,
