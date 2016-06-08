@@ -111,13 +111,13 @@ class CPDFDoc_Environment final {
   FPDF_PAGE FFI_GetPage(FPDF_DOCUMENT document, int nPageIndex) {
     if (m_pInfo && m_pInfo->FFI_GetPage)
       return m_pInfo->FFI_GetPage(m_pInfo, document, nPageIndex);
-    return NULL;
+    return nullptr;
   }
 
   FPDF_PAGE FFI_GetCurrentPage(FPDF_DOCUMENT document) {
     if (m_pInfo && m_pInfo->FFI_GetCurrentPage)
       return m_pInfo->FFI_GetCurrentPage(m_pInfo, document);
-    return NULL;
+    return nullptr;
   }
 
   int FFI_GetRotation(FPDF_PAGE page) {
@@ -181,7 +181,7 @@ class CPDFDoc_Environment final {
 
   CFX_WideString FFI_GetPlatform() {
     if (m_pInfo && m_pInfo->FFI_GetPlatform) {
-      int nRequiredLen = m_pInfo->FFI_GetPlatform(m_pInfo, NULL, 0);
+      int nRequiredLen = m_pInfo->FFI_GetPlatform(m_pInfo, nullptr, 0);
       if (nRequiredLen <= 0)
         return L"";
 
@@ -275,7 +275,7 @@ class CPDFDoc_Environment final {
                                  const char* mode) {
     if (m_pInfo && m_pInfo->FFI_OpenFile)
       return m_pInfo->FFI_OpenFile(m_pInfo, fileType, wsURL, mode);
-    return NULL;
+    return nullptr;
   }
 
   CFX_WideString FFI_GetFilePath(FPDF_FILEHANDLER* pFileHandler) const {
@@ -296,7 +296,7 @@ class CPDFDoc_Environment final {
 
       return new CFPDF_FileStream(fileHandler);
     }
-    return NULL;
+    return nullptr;
   }
 
   CFX_WideString FFI_PostRequestURL(const FX_WCHAR* wsURL,
@@ -361,7 +361,7 @@ class CPDFDoc_Environment final {
 
   CFX_WideString FFI_GetLanguage() {
     if (m_pInfo && m_pInfo->FFI_GetLanguage) {
-      int nRequiredLen = m_pInfo->FFI_GetLanguage(m_pInfo, NULL, 0);
+      int nRequiredLen = m_pInfo->FFI_GetLanguage(m_pInfo, nullptr, 0);
       if (nRequiredLen <= 0)
         return L"";
 

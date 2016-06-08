@@ -49,7 +49,7 @@ class CFX_IFileWrite final : public IFX_StreamWrite {
 };
 
 CFX_IFileWrite::CFX_IFileWrite() {
-  m_pFileWriteStruct = NULL;
+  m_pFileWriteStruct = nullptr;
 }
 
 FX_BOOL CFX_IFileWrite::Init(FPDF_FILEWRITE* pFileWriteStruct) {
@@ -140,8 +140,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
     ScopedFileStream pTemplate(FX_CreateMemoryStream(pData, dwSize2));
     pContext->UpdateChecksum(pTemplate.get());
   }
-  CPDF_Stream* pFormStream = NULL;
-  CPDF_Stream* pDataSetsStream = NULL;
+  CPDF_Stream* pFormStream = nullptr;
+  CPDF_Stream* pDataSetsStream = nullptr;
   if (iFormIndex != -1) {
     // Get form CPDF_Stream
     CPDF_Object* pFormPDFObj = pArray->GetObjectAt(iFormIndex);
@@ -182,7 +182,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
         if (pDataSetsStream)
           pDataSetsStream->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
       } else {
-        CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
+        CPDF_Stream* pData = new CPDF_Stream(nullptr, 0, nullptr);
         pData->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;
@@ -203,7 +203,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
         if (pFormStream)
           pFormStream->InitStreamFromFile(pfileWrite.get(), pDataDict);
       } else {
-        CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
+        CPDF_Stream* pData = new CPDF_Stream(nullptr, 0, nullptr);
         pData->InitStreamFromFile(pfileWrite.get(), pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;
@@ -290,8 +290,7 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
     FileMaker.RemoveSecurity();
   }
 
-  CFX_IFileWrite* pStreamWrite = NULL;
-  pStreamWrite = new CFX_IFileWrite;
+  CFX_IFileWrite* pStreamWrite = new CFX_IFileWrite;
   pStreamWrite->Init(pFileWrite);
   bool bRet = FileMaker.Create(pStreamWrite, flags);
 #ifdef PDF_ENABLE_XFA

@@ -10,11 +10,11 @@
 #include "core/fxge/include/fx_ge.h"
 
 void CRenderContext::Clear() {
-  m_pDevice = NULL;
-  m_pContext = NULL;
-  m_pRenderer = NULL;
-  m_pAnnots = NULL;
-  m_pOptions = NULL;
+  m_pDevice = nullptr;
+  m_pContext = nullptr;
+  m_pRenderer = nullptr;
+  m_pAnnots = nullptr;
+  m_pOptions = nullptr;
 }
 
 CRenderContext::~CRenderContext() {

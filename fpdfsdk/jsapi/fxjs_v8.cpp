@@ -314,7 +314,7 @@ void FXJS_InitializeRuntime(
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> v8Context =
-      v8::Context::New(pIsolate, NULL, GetGlobalObjectTemplate(pIsolate));
+      v8::Context::New(pIsolate, nullptr, GetGlobalObjectTemplate(pIsolate));
   v8::Context::Scope context_scope(v8Context);
 
   FXJS_PerIsolateData::SetUp(pIsolate);
@@ -513,7 +513,7 @@ void FXJS_Error(v8::Isolate* pIsolate, const CFX_WideString& message) {
 
 const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj) {
   if (pObj.IsEmpty())
-    return NULL;
+    return nullptr;
   if (pObj->IsString())
     return kFXJSValueNameString;
   if (pObj->IsNumber())
@@ -528,7 +528,7 @@ const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj) {
     return kFXJSValueNameNull;
   if (pObj->IsUndefined())
     return kFXJSValueNameUndefined;
-  return NULL;
+  return nullptr;
 }
 
 void FXJS_SetPrivate(v8::Isolate* pIsolate,
@@ -572,7 +572,7 @@ void FXJS_FreePrivate(v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty() || !pObj->InternalFieldCount())
     return;
   FXJS_FreePrivate(pObj->GetAlignedPointerFromInternalField(0));
-  pObj->SetAlignedPointerInInternalField(0, NULL);
+  pObj->SetAlignedPointerInInternalField(0, nullptr);
 }
 
 v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,

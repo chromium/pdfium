@@ -168,13 +168,13 @@ class CPWL_Utils {
 
   static CFX_ByteString GetEditAppStream(IFX_Edit* pEdit,
                                          const CFX_FloatPoint& ptOffset,
-                                         const CPVT_WordRange* pRange = NULL,
+                                         const CPVT_WordRange* pRange = nullptr,
                                          FX_BOOL bContinuous = TRUE,
                                          uint16_t SubWord = 0);
   static CFX_ByteString GetEditSelAppStream(
       IFX_Edit* pEdit,
       const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange = NULL);
+      const CPVT_WordRange* pRange = nullptr);
   static CFX_ByteString GetTextAppStream(const CFX_FloatRect& rcBBox,
                                          IPVT_FontMap* pFontMap,
                                          const CFX_WideString& sText,

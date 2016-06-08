@@ -156,7 +156,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
       }
       if (pNameDict && pNameDict->KeyExist("JavaScript")) {
         CPDF_Dictionary* pJSDict = pNameDict->GetDictBy("JavaScript");
-        CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayBy("Names") : NULL;
+        CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayBy("Names") : nullptr;
         if (pArray) {
           for (size_t i = 0; i < pArray->GetCount(); i++) {
             CFX_ByteString cbStr = pArray->GetStringAt(i);

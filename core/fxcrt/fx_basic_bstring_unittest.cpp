@@ -758,7 +758,7 @@ TEST(fxcrt, ByteStringCFromChar) {
   CFX_ByteStringC nul_string_from_char(nul);
   CFX_ByteStringC lower_a_string_from_char(lower_a);
 
-  // Pointer to nul, not NULL ptr, hence length 1 ...
+  // Pointer to nul, not nullptr ptr, hence length 1 ...
   EXPECT_EQ(1, nul_string_from_char.GetLength());
   EXPECT_NE(null_string, nul_string_from_char);
 

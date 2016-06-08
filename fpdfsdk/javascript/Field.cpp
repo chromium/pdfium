@@ -122,12 +122,12 @@ void CJS_Field::InitInstance(IJS_Runtime* pIRuntime) {
 
 Field::Field(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject),
-      m_pJSDoc(NULL),
-      m_pDocument(NULL),
+      m_pJSDoc(nullptr),
+      m_pDocument(nullptr),
       m_nFormControlIndex(-1),
       m_bCanSet(FALSE),
       m_bDelay(FALSE),
-      m_isolate(NULL) {}
+      m_isolate(nullptr) {}
 
 Field::~Field() {}
 
@@ -262,16 +262,16 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
         if (bFormated)
           pWidget->ResetAppearance(sValue.c_str(), FALSE);
         else
-          pWidget->ResetAppearance(NULL, FALSE);
+          pWidget->ResetAppearance(nullptr, FALSE);
       } else {
-        pWidget->ResetAppearance(NULL, FALSE);
+        pWidget->ResetAppearance(nullptr, FALSE);
       }
     }
 
     if (bRefresh) {
       CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
       CPDFSDK_Document* pDoc = pInterForm->GetDocument();
-      pDoc->UpdateAllViews(NULL, pWidget);
+      pDoc->UpdateAllViews(nullptr, pWidget);
     }
   }
 
@@ -299,7 +299,7 @@ FX_BOOL Field::ValueIsOccur(CPDF_FormField* pFormField,
 CPDF_FormControl* Field::GetSmartFieldControl(CPDF_FormField* pFormField) {
   if (!pFormField->CountControls() ||
       m_nFormControlIndex >= pFormField->CountControls())
-    return NULL;
+    return nullptr;
 
   if (m_nFormControlIndex < 0)
     return pFormField->GetControl(0);
@@ -2956,7 +2956,7 @@ FX_BOOL Field::buttonGetIcon(IJS_Context* cc,
   CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
   Icon* pIcon = (Icon*)pJS_Icon->GetEmbedObject();
 
-  CPDF_Stream* pIconStream = NULL;
+  CPDF_Stream* pIconStream = nullptr;
   if (nface == 0)
     pIconStream = pFormControl->GetNormalIcon();
   else if (nface == 1)
@@ -3254,7 +3254,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
 
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-  CPDFSDK_Widget* pWidget = NULL;
+  CPDFSDK_Widget* pWidget = nullptr;
   if (nCount == 1) {
     pWidget = pInterForm->GetWidget(pFormField->GetControl(0));
   } else {
@@ -3343,7 +3343,7 @@ FX_BOOL Field::source(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   if (vp.IsGetting()) {
-    vp << (CJS_Object*)NULL;
+    vp << (CJS_Object*)nullptr;
   }
 
   return TRUE;

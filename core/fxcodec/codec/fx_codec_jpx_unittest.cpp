@@ -23,7 +23,7 @@ TEST(fxcodec, DecodeDataNullDecodeData) {
   unsigned char buffer[16];
   DecodeData* ptr = nullptr;
 
-  // Error codes, not segvs, should callers pass us a NULL pointer.
+  // Error codes, not segvs, should callers pass us a nullptr pointer.
   EXPECT_EQ(kReadError, opj_read_from_memory(buffer, sizeof(buffer), ptr));
   EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, sizeof(buffer), ptr));
   EXPECT_EQ(kSkipError, opj_skip_from_memory(1, ptr));

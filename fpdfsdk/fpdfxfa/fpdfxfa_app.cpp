@@ -14,7 +14,7 @@
 #include "xfa/fxfa/include/xfa_ffapp.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 
-CPDFXFA_App* CPDFXFA_App::g_pApp = NULL;
+CPDFXFA_App* CPDFXFA_App::g_pApp = nullptr;
 
 CPDFXFA_App* CPDFXFA_App::GetInstance() {
   if (!g_pApp) {
@@ -25,12 +25,12 @@ CPDFXFA_App* CPDFXFA_App::GetInstance() {
 
 void CPDFXFA_App::ReleaseInstance() {
   delete g_pApp;
-  g_pApp = NULL;
+  g_pApp = nullptr;
 }
 
 CPDFXFA_App::CPDFXFA_App()
     : m_bJavaScriptInitialized(FALSE),
-      m_pXFAApp(NULL),
+      m_pXFAApp(nullptr),
       m_pIsolate(nullptr),
       m_csAppType(JS_STR_VIEWERTYPE_STANDARD) {
   m_pEnvList.RemoveAll();
@@ -38,7 +38,7 @@ CPDFXFA_App::CPDFXFA_App()
 
 CPDFXFA_App::~CPDFXFA_App() {
   delete m_pXFAApp;
-  m_pXFAApp = NULL;
+  m_pXFAApp = nullptr;
 
   FXJSE_Runtime_Release(m_pIsolate);
   m_pIsolate = nullptr;
@@ -190,8 +190,8 @@ CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
     int nLength = 2048;
     char* pBuff = new char[nLength];
     nLength = pEnv->JS_appResponse(wsQuestion.c_str(), wsTitle.c_str(),
-                                   wsDefaultAnswer.c_str(), NULL, bMark, pBuff,
-                                   nLength);
+                                   wsDefaultAnswer.c_str(), nullptr, bMark,
+                                   pBuff, nLength);
     if (nLength > 0) {
       nLength = nLength > 2046 ? 2046 : nLength;
       pBuff[nLength] = 0;
@@ -350,7 +350,7 @@ void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {
 }
 
 IFWL_AdapterTimerMgr* CPDFXFA_App::GetTimerMgr() {
-  CXFA_FWLAdapterTimerMgr* pAdapter = NULL;
+  CXFA_FWLAdapterTimerMgr* pAdapter = nullptr;
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv)
     pAdapter = new CXFA_FWLAdapterTimerMgr(pEnv);

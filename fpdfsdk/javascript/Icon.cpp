@@ -23,7 +23,7 @@ END_JS_STATIC_METHOD()
 IMPLEMENT_JS_CLASS(CJS_Icon, Icon)
 
 Icon::Icon(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pIconStream(NULL), m_swIconName(L"") {}
+    : CJS_EmbedObj(pJSObject), m_pIconStream(nullptr), m_swIconName(L"") {}
 
 Icon::~Icon() {}
 

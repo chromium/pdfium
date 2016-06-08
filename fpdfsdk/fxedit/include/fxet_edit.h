@@ -102,7 +102,7 @@ class CFX_Edit_LineRectArray {
 
   CFX_Edit_LineRect* GetAt(int32_t nIndex) const {
     if (nIndex < 0 || nIndex >= m_LineRects.GetSize())
-      return NULL;
+      return nullptr;
 
     return m_LineRects.GetAt(nIndex);
   }
@@ -138,7 +138,7 @@ class CFX_Edit_RectArray {
 
   CFX_FloatRect* GetAt(int32_t nIndex) const {
     if (nIndex < 0 || nIndex >= m_Rects.GetSize())
-      return NULL;
+      return nullptr;
 
     return m_Rects.GetAt(nIndex);
   }
@@ -570,20 +570,20 @@ class CFX_Edit : public IFX_Edit {
   void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl) override;
   void SetText(const FX_WCHAR* text,
                int32_t charset = DEFAULT_CHARSET,
-               const CPVT_SecProps* pSecProps = NULL,
-               const CPVT_WordProps* pWordProps = NULL) override;
+               const CPVT_SecProps* pSecProps = nullptr,
+               const CPVT_WordProps* pWordProps = nullptr) override;
   FX_BOOL InsertWord(uint16_t word,
                      int32_t charset = DEFAULT_CHARSET,
-                     const CPVT_WordProps* pWordProps = NULL) override;
-  FX_BOOL InsertReturn(const CPVT_SecProps* pSecProps = NULL,
-                       const CPVT_WordProps* pWordProps = NULL) override;
+                     const CPVT_WordProps* pWordProps = nullptr) override;
+  FX_BOOL InsertReturn(const CPVT_SecProps* pSecProps = nullptr,
+                       const CPVT_WordProps* pWordProps = nullptr) override;
   FX_BOOL Backspace() override;
   FX_BOOL Delete() override;
   FX_BOOL Clear() override;
   FX_BOOL InsertText(const FX_WCHAR* text,
                      int32_t charset = DEFAULT_CHARSET,
-                     const CPVT_SecProps* pSecProps = NULL,
-                     const CPVT_WordProps* pWordProps = NULL) override;
+                     const CPVT_SecProps* pSecProps = nullptr,
+                     const CPVT_WordProps* pWordProps = nullptr) override;
   FX_BOOL Redo() override;
   FX_BOOL Undo() override;
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const override;
@@ -701,8 +701,8 @@ class CFX_Edit : public IFX_Edit {
   inline CFX_FloatRect EditToVT(const CFX_FloatRect& rect) const;
 
   void Refresh(REFRESH_PLAN_E ePlan,
-               const CPVT_WordRange* pRange1 = NULL,
-               const CPVT_WordRange* pRange2 = NULL);
+               const CPVT_WordRange* pRange1 = nullptr,
+               const CPVT_WordRange* pRange2 = nullptr);
   void RefreshPushLineRects(const CPVT_WordRange& wr);
   void RefreshPushRandomRects(const CPVT_WordRange& wr);
 

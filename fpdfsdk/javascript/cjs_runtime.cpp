@@ -52,9 +52,9 @@ CJS_Runtime* CJS_Runtime::FromContext(const IJS_Context* cc) {
 
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     : m_pApp(pApp),
-      m_pDocument(NULL),
+      m_pDocument(nullptr),
       m_bBlocking(FALSE),
-      m_isolate(NULL),
+      m_isolate(nullptr),
       m_isolateManaged(false) {
 #ifndef PDF_ENABLE_XFA
   IPDF_JSPLATFORM* pPlatform = m_pApp->GetFormFillInfo()->m_pJsPlatform;

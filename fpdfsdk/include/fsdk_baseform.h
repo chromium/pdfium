@@ -281,7 +281,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   FX_BOOL OnKeyStrokeCommit(CPDF_FormField* pFormField,
                             const CFX_WideString& csValue);
   FX_BOOL OnValidate(CPDF_FormField* pFormField, const CFX_WideString& csValue);
-  void OnCalculate(CPDF_FormField* pFormField = NULL);
+  void OnCalculate(CPDF_FormField* pFormField = nullptr);
   CFX_WideString OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormated);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,

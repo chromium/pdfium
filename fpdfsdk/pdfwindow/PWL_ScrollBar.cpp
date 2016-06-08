@@ -273,7 +273,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
             path.SetPoint(2, pt3.x, pt3.y, FXPT_LINETO);
             path.SetPoint(3, pt1.x, pt1.y, FXPT_LINETO);
 
-            pDevice->DrawPath(&path, pUser2Device, NULL,
+            pDevice->DrawPath(&path, pUser2Device, nullptr,
                               CPWL_Utils::PWLColorToFXColor(
                                   PWL_DEFAULT_BLACKCOLOR, nTransparancy),
                               0, FXFILL_ALTERNATE);
@@ -297,7 +297,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
             path.SetPoint(2, pt3.x, pt3.y, FXPT_LINETO);
             path.SetPoint(3, pt1.x, pt1.y, FXPT_LINETO);
 
-            pDevice->DrawPath(&path, pUser2Device, NULL,
+            pDevice->DrawPath(&path, pUser2Device, nullptr,
                               CPWL_Utils::PWLColorToFXColor(
                                   PWL_DEFAULT_BLACKCOLOR, nTransparancy),
                               0, FXFILL_ALTERNATE);
@@ -579,9 +579,9 @@ FX_BOOL CPWL_SBButton::OnMouseMove(const CFX_FloatPoint& point,
 
 CPWL_ScrollBar::CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType)
     : m_sbType(sbType),
-      m_pMinButton(NULL),
-      m_pMaxButton(NULL),
-      m_pPosButton(NULL),
+      m_pMinButton(nullptr),
+      m_pMaxButton(nullptr),
+      m_pPosButton(nullptr),
       m_bMouseDown(FALSE),
       m_bMinOrMax(FALSE),
       m_bNotifyForever(TRUE) {}

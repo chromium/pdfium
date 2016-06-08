@@ -56,12 +56,11 @@ static CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
   return sRet.MakeString();
 }
 
-CFX_ByteString IFX_Edit::GetEditAppearanceStream(
-    IFX_Edit* pEdit,
-    const CFX_FloatPoint& ptOffset,
-    const CPVT_WordRange* pRange /* = NULL*/,
-    FX_BOOL bContinuous /* = TRUE*/,
-    uint16_t SubWord /* = 0*/) {
+CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit,
+                                                 const CFX_FloatPoint& ptOffset,
+                                                 const CPVT_WordRange* pRange,
+                                                 FX_BOOL bContinuous,
+                                                 uint16_t SubWord) {
   CFX_ByteTextBuf sEditStream, sWords;
 
   CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);

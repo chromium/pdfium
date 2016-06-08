@@ -142,7 +142,7 @@ class IPDFSDK_AnnotHandler {
 class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
  public:
   explicit CPDFSDK_BFAnnotHandler(CPDFDoc_Environment* pApp)
-      : m_pApp(pApp), m_pFormFiller(NULL) {}
+      : m_pApp(pApp), m_pFormFiller(nullptr) {}
   ~CPDFSDK_BFAnnotHandler() override {}
 
   // IPDFSDK_AnnotHandler
@@ -255,7 +255,7 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
   virtual FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot);
 
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) {
-    return NULL;
+    return nullptr;
   }
 
   virtual CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* pAnnot,

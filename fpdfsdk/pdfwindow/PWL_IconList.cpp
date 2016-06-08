@@ -19,7 +19,10 @@
 #define PWL_IconList_ITEM_SPACE 4.0f
 
 CPWL_IconList_Item::CPWL_IconList_Item()
-    : m_nIconIndex(-1), m_pData(NULL), m_bSelected(FALSE), m_pText(NULL) {}
+    : m_nIconIndex(-1),
+      m_pData(nullptr),
+      m_bSelected(FALSE),
+      m_pText(nullptr) {}
 
 CPWL_IconList_Item::~CPWL_IconList_Item() {}
 
@@ -288,7 +291,7 @@ CPWL_IconList_Item* CPWL_IconList_Content::GetListItem(
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void CPWL_IconList_Content::SetListData(int32_t nItemIndex, void* pData) {
@@ -328,7 +331,7 @@ void CPWL_IconList_Content::SetIconFillColor(const CPWL_Color& color) {
 }
 
 CPWL_IconList::CPWL_IconList(int32_t nListCount)
-    : m_pListContent(NULL), m_nListCount(nListCount) {}
+    : m_pListContent(nullptr), m_nListCount(nListCount) {}
 
 CPWL_IconList::~CPWL_IconList() {}
 
@@ -392,7 +395,7 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd,
           m_pListContent->SetScrollPos(
               CFX_FloatPoint(0.0f, *(FX_FLOAT*)lParam));
           m_pListContent->ResetFace();
-          m_pListContent->InvalidateRect(NULL);
+          m_pListContent->InvalidateRect(nullptr);
         }
         return;
       case PNM_SETSCROLLPOS:
@@ -461,7 +464,7 @@ FX_BOOL CPWL_IconList::OnMouseWheel(short zDelta,
     if (ptNew.y != ptScroll.y) {
       m_pListContent->SetScrollPos(ptNew);
       m_pListContent->ResetFace();
-      m_pListContent->InvalidateRect(NULL);
+      m_pListContent->InvalidateRect(nullptr);
 
       if (CPWL_ScrollBar* pScrollBar = GetVScrollBar())
         pScrollBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL,

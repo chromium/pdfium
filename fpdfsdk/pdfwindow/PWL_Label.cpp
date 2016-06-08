@@ -87,7 +87,7 @@ void CPWL_Label::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_FloatRect rcClip;
   CPVT_WordRange wrRange = m_pEdit->GetVisibleWordRange();
-  CPVT_WordRange* pRange = NULL;
+  CPVT_WordRange* pRange = nullptr;
 
   if (!HasFlag(PES_TEXTOVERFLOW)) {
     rcClip = GetClientRect();
@@ -98,7 +98,7 @@ void CPWL_Label::DrawThisAppearance(CFX_RenderDevice* pDevice,
       pDevice, pUser2Device, m_pEdit,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor(), GetTransparency()),
-      rcClip, CFX_FloatPoint(0.0f, 0.0f), pRange, pSysHandler, NULL);
+      rcClip, CFX_FloatPoint(0.0f, 0.0f), pRange, pSysHandler, nullptr);
 }
 
 void CPWL_Label::SetHorzScale(int32_t nHorzScale) {

@@ -12,7 +12,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-CPWL_Signature_Image::CPWL_Signature_Image() : m_pImage(NULL) {}
+CPWL_Signature_Image::CPWL_Signature_Image() : m_pImage(nullptr) {}
 
 CPWL_Signature_Image::~CPWL_Signature_Image() {}
 
@@ -57,9 +57,9 @@ void CPWL_Signature_Image::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
 }
 
 CPWL_Signature::CPWL_Signature()
-    : m_pText(NULL),
-      m_pDescription(NULL),
-      m_pImage(NULL),
+    : m_pText(nullptr),
+      m_pDescription(nullptr),
+      m_pImage(nullptr),
       m_bTextExist(TRUE),
       m_bImageExist(FALSE),
       m_bFlagExist(TRUE) {}

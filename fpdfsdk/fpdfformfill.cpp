@@ -139,7 +139,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   pDevice->RestoreState(false);
   delete options.m_pOCContext;
 #ifdef PDF_ENABLE_XFA
-  options.m_pOCContext = NULL;
+  options.m_pOCContext = nullptr;
 #endif  // PDF_ENABLE_XFA
 }
 
@@ -266,7 +266,7 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   pApp->RemoveFormFillEnv(pEnv);
 #else   // PDF_ENABLE_XFA
   if (CPDFSDK_Document* pSDKDoc = pEnv->GetSDKDocument()) {
-    pEnv->SetSDKDocument(NULL);
+    pEnv->SetSDKDocument(nullptr);
     delete pSDKDoc;
   }
 #endif  // PDF_ENABLE_XFA

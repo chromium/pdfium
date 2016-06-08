@@ -190,7 +190,7 @@ void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
         pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
                                  rcUnderline.right, rcUnderline.top);
 
-        pDevice->DrawPath(&pathUnderline, pUser2Device, NULL, color, 0,
+        pDevice->DrawPath(&pathUnderline, pUser2Device, nullptr, color, 0,
                           FXFILL_WINDING);
       }
     }
@@ -275,7 +275,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                 word.ptWord.x, line.ptLine.y + line.fLineDescent,
                 word.ptWord.x + word.fWidth, line.ptLine.y + line.fLineAscent);
 
-            pDevice->DrawPath(&pathSelBK, pUser2Device, NULL, crSelBK, 0,
+            pDevice->DrawPath(&pathSelBK, pUser2Device, nullptr, crSelBK, 0,
                               FXFILL_WINDING);
           }
         }
@@ -387,7 +387,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
                                word.ptWord.x + word.fWidth + ptOffset.x,
                                line.ptLine.y + line.fLineAscent + ptOffset.y);
 
-          pDevice->DrawPath(&pathSelBK, pUser2Device, NULL, crSelBK, 0,
+          pDevice->DrawPath(&pathSelBK, pUser2Device, nullptr, crSelBK, 0,
                             FXFILL_WINDING);
         }
 
@@ -419,7 +419,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
           pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
                                    rcUnderline.right, rcUnderline.top);
 
-          pDevice->DrawPath(&pathUnderline, pUser2Device, NULL, crCurText, 0,
+          pDevice->DrawPath(&pathUnderline, pUser2Device, nullptr, crCurText, 0,
                             FXFILL_WINDING);
         }
 
@@ -429,7 +429,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
           pathCrossout.AppendRect(rcCrossout.left, rcCrossout.bottom,
                                   rcCrossout.right, rcCrossout.top);
 
-          pDevice->DrawPath(&pathCrossout, pUser2Device, NULL, crCurText, 0,
+          pDevice->DrawPath(&pathCrossout, pUser2Device, nullptr, crCurText, 0,
                             FXFILL_WINDING);
         }
 

@@ -130,7 +130,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFBookmark_GetDest(FPDF_DOCUMENT document,
 
 DLLEXPORT FPDF_ACTION STDCALL FPDFBookmark_GetAction(FPDF_BOOKMARK pDict) {
   if (!pDict)
-    return NULL;
+    return nullptr;
   CPDF_Bookmark bookmark(ToDictionary(static_cast<CPDF_Object*>(pDict)));
   return bookmark.GetAction().GetDict();
 }

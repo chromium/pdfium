@@ -66,7 +66,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
                               CFX_RectF& rtPopup);
   virtual FX_BOOL PopupMenu(CXFA_FFWidget* hWidget,
                             CFX_PointF ptPopup,
-                            const CFX_RectF* pRectExclude = NULL);
+                            const CFX_RectF* pRectExclude = nullptr);
 
   // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags);
@@ -177,7 +177,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   virtual CPDF_Document* OpenPDF(CXFA_FFDoc* hDoc,
                                  IFX_FileRead* pFile,
                                  FX_BOOL bTakeOverFile) {
-    return NULL;
+    return nullptr;
   }
 
   virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,

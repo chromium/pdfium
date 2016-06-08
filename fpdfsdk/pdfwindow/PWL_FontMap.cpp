@@ -35,13 +35,13 @@ const char* const g_sDEStandardFontName[] = {"Courier",
 }  // namespace
 
 CPWL_FontMap::CPWL_FontMap(CFX_SystemHandler* pSystemHandler)
-    : m_pPDFDoc(NULL), m_pSystemHandler(pSystemHandler) {
+    : m_pPDFDoc(nullptr), m_pSystemHandler(pSystemHandler) {
   ASSERT(m_pSystemHandler);
 }
 
 CPWL_FontMap::~CPWL_FontMap() {
   delete m_pPDFDoc;
-  m_pPDFDoc = NULL;
+  m_pPDFDoc = nullptr;
 
   Empty();
 }
@@ -68,7 +68,7 @@ CPDF_Font* CPWL_FontMap::GetPDFFont(int32_t nFontIndex) {
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 CFX_ByteString CPWL_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
@@ -208,7 +208,7 @@ int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName,
     return nFontIndex;
 
   CFX_ByteString sAlias;
-  CPDF_Font* pFont = NULL;
+  CPDF_Font* pFont = nullptr;
   if (bFind)
     pFont = FindFontSameCharset(sAlias, nCharset);
 
@@ -246,7 +246,7 @@ int32_t CPWL_FontMap::GetPWLFontIndex(uint16_t word, int32_t nCharset) {
 
 CPDF_Font* CPWL_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias,
                                              int32_t nCharset) {
-  return NULL;
+  return nullptr;
 }
 
 int32_t CPWL_FontMap::AddFontData(CPDF_Font* pFont,
@@ -301,12 +301,12 @@ CPDF_Font* CPWL_FontMap::AddFontToDocument(CPDF_Document* pDoc,
 CPDF_Font* CPWL_FontMap::AddStandardFont(CPDF_Document* pDoc,
                                          CFX_ByteString& sFontName) {
   if (!pDoc)
-    return NULL;
+    return nullptr;
 
-  CPDF_Font* pFont = NULL;
+  CPDF_Font* pFont = nullptr;
 
   if (sFontName == "ZapfDingbats") {
-    pFont = pDoc->AddStandardFont(sFontName.c_str(), NULL);
+    pFont = pDoc->AddStandardFont(sFontName.c_str(), nullptr);
   } else {
     CPDF_FontEncoding fe(PDFFONT_ENCODING_WINANSI);
     pFont = pDoc->AddStandardFont(sFontName.c_str(), &fe);
@@ -319,7 +319,7 @@ CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc,
                                        CFX_ByteString& sFontName,
                                        uint8_t nCharset) {
   if (!pDoc)
-    return NULL;
+    return nullptr;
 
   if (sFontName.IsEmpty())
     sFontName = GetNativeFont(nCharset);
@@ -330,7 +330,7 @@ CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc,
     return m_pSystemHandler->AddNativeTrueTypeFontToPDF(pDoc, sFontName,
                                                         nCharset);
 
-  return NULL;
+  return nullptr;
 }
 
 CFX_ByteString CPWL_FontMap::EncodeFontAlias(const CFX_ByteString& sFontName,
@@ -355,7 +355,7 @@ const CPWL_FontMap_Data* CPWL_FontMap::GetFontMapData(int32_t nIndex) const {
     return m_aData.GetAt(nIndex);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 int32_t CPWL_FontMap::GetNativeCharset() {
@@ -424,7 +424,7 @@ const CPWL_FontMap::CharsetFontMap CPWL_FontMap::defaultTTFMap[] = {
 #else
     {EASTEUROPE_CHARSET, "Tahoma"},
 #endif
-    {ARABIC_CHARSET, "Arial"},        {-1, NULL}};
+    {ARABIC_CHARSET, "Arial"},        {-1, nullptr}};
 
 CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(int32_t nCharset) {
   int i = 0;

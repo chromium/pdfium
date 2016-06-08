@@ -388,7 +388,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_FloatRect rcClip;
   CPVT_WordRange wrRange = m_pEdit->GetVisibleWordRange();
-  CPVT_WordRange* pRange = NULL;
+  CPVT_WordRange* pRange = nullptr;
 
   if (!HasFlag(PES_TEXTOVERFLOW)) {
     rcClip = GetClientRect();
@@ -938,7 +938,7 @@ void CPWL_Edit::GeneratePageObjects(
     const CFX_FloatPoint& ptOffset,
     CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
   IFX_Edit::GeneratePageObjects(
-      pObjectHolder, m_pEdit, ptOffset, NULL,
+      pObjectHolder, m_pEdit, ptOffset, nullptr,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       ObjArray);
 }
@@ -947,7 +947,7 @@ void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                     const CFX_FloatPoint& ptOffset) {
   CFX_ArrayTemplate<CPDF_TextObject*> ObjArray;
   IFX_Edit::GeneratePageObjects(
-      pObjectHolder, m_pEdit, ptOffset, NULL,
+      pObjectHolder, m_pEdit, ptOffset, nullptr,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       ObjArray);
 }

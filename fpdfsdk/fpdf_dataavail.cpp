@@ -37,7 +37,7 @@ static_assert(IPDF_DataAvail::FormNotExist == PDF_FORM_NOTEXIST,
 
 class CFPDF_FileAvailWrap : public IPDF_DataAvail::FileAvail {
  public:
-  CFPDF_FileAvailWrap() { m_pfileAvail = NULL; }
+  CFPDF_FileAvailWrap() { m_pfileAvail = nullptr; }
   ~CFPDF_FileAvailWrap() override {}
 
   void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
@@ -53,7 +53,7 @@ class CFPDF_FileAvailWrap : public IPDF_DataAvail::FileAvail {
 
 class CFPDF_FileAccessWrap : public IFX_FileRead {
  public:
-  CFPDF_FileAccessWrap() { m_pFileAccess = NULL; }
+  CFPDF_FileAccessWrap() { m_pFileAccess = nullptr; }
   ~CFPDF_FileAccessWrap() override {}
 
   void Set(FPDF_FILEACCESS* pFile) { m_pFileAccess = pFile; }
@@ -91,7 +91,7 @@ class CFPDF_DownloadHintsWrap : public IPDF_DataAvail::DownloadHints {
 
 class CFPDF_DataAvail {
  public:
-  CFPDF_DataAvail() { m_pDataAvail = NULL; }
+  CFPDF_DataAvail() { m_pDataAvail = nullptr; }
 
   ~CFPDF_DataAvail() { delete m_pDataAvail; }
 

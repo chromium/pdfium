@@ -188,13 +188,13 @@ struct PWL_CREATEPARAM {
  public:
   PWL_CREATEPARAM()
       : rcRectWnd(0, 0, 0, 0),
-        pSystemHandler(NULL),
-        pFontMap(NULL),
-        pProvider(NULL),
-        pFocusHandler(NULL),
+        pSystemHandler(nullptr),
+        pFontMap(nullptr),
+        pProvider(nullptr),
+        pFocusHandler(nullptr),
         dwFlags(0),
         sBackgroundColor(),
-        hAttachedWnd(NULL),
+        hAttachedWnd(nullptr),
         nBorderStyle(BorderStyle::SOLID),
         dwBorderWidth(1),
         sBorderColor(),
@@ -203,9 +203,9 @@ struct PWL_CREATEPARAM {
         nTransparency(255),
         fFontSize(PWL_DEFAULT_FONTSIZE),
         sDash(3, 0, 0),
-        pAttachedData(NULL),
-        pParentWnd(NULL),
-        pMsgControl(NULL),
+        pAttachedData(nullptr),
+        pParentWnd(nullptr),
+        pMsgControl(nullptr),
         eCursorType(FXCT_ARROW),
         mtChild(1, 0, 0, 1, 0, 0) {}
 
@@ -274,7 +274,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void InvalidateProvider(IPWL_Provider* provider);
   void Destroy();
   void Move(const CFX_FloatRect& rcNew, FX_BOOL bReset, FX_BOOL bRefresh);
-  virtual void InvalidateRect(CFX_FloatRect* pRect = NULL);
+  virtual void InvalidateRect(CFX_FloatRect* pRect = nullptr);
 
   void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 

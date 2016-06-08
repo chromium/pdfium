@@ -36,13 +36,13 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
     if (m_pInfo->MapFont)
       return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family,
                               family, &iExact);
-    return NULL;
+    return nullptr;
   }
 
   void* GetFont(const FX_CHAR* family) override {
     if (m_pInfo->GetFont)
       return m_pInfo->GetFont(m_pInfo, family);
-    return NULL;
+    return nullptr;
   }
 
   uint32_t GetFontData(void* hFont,
@@ -57,7 +57,7 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
   FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override {
     if (!m_pInfo->GetFaceName)
       return FALSE;
-    uint32_t size = m_pInfo->GetFaceName(m_pInfo, hFont, NULL, 0);
+    uint32_t size = m_pInfo->GetFaceName(m_pInfo, hFont, nullptr, 0);
     if (size == 0)
       return FALSE;
     char* buffer = FX_Alloc(char, size);

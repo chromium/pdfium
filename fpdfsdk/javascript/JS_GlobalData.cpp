@@ -280,7 +280,7 @@ CJS_GlobalData_Element* CJS_GlobalData::GetAt(int index) const {
 }
 
 void CJS_GlobalData::LoadGlobalPersistentVariables() {
-  uint8_t* pBuffer = NULL;
+  uint8_t* pBuffer = nullptr;
   int32_t nLength = 0;
 
   LoadFileBuffer(m_sFilePath.c_str(), pBuffer, nLength);

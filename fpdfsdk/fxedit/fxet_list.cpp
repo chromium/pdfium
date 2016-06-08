@@ -74,7 +74,7 @@ CFX_WideString CFX_ListItem::GetText() const {
 }
 
 CFX_List::CFX_List()
-    : m_fFontSize(0.0f), m_pFontMap(NULL), m_bMultiple(FALSE) {}
+    : m_fFontSize(0.0f), m_pFontMap(nullptr), m_bMultiple(FALSE) {}
 
 CFX_List::~CFX_List() {
   Empty();
@@ -125,7 +125,7 @@ IFX_Edit* CFX_List::GetItemEdit(int32_t nIndex) const {
     return pListItem->GetEdit();
   }
 
-  return NULL;
+  return nullptr;
 }
 
 int32_t CFX_List::GetCount() const {
@@ -378,7 +378,7 @@ void CPLST_Select::Done() {
 }
 
 CFX_ListCtrl::CFX_ListCtrl()
-    : m_pNotify(NULL),
+    : m_pNotify(nullptr),
       m_bNotifyFlag(FALSE),
       m_ptScrollPos(0.0f, 0.0f),
       m_nSelItem(-1),

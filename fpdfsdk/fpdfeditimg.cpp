@@ -38,7 +38,7 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (!pPage)
       continue;
-    pImgObj->m_pImage->ResetCache(pPage, NULL);
+    pImgObj->m_pImage->ResetCache(pPage, nullptr);
   }
   pImgObj->m_pImage->SetJpegImage(pFile);
 
@@ -71,7 +71,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
                                                    FPDF_BITMAP bitmap) {
   if (!image_object || !bitmap || !pages)
     return FALSE;
-  CFX_DIBitmap* pBmp = NULL;
+  CFX_DIBitmap* pBmp = nullptr;
   pBmp = (CFX_DIBitmap*)bitmap;
   CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
   pImgObj->m_GeneralState.GetModify();
@@ -79,7 +79,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (!pPage)
       continue;
-    pImgObj->m_pImage->ResetCache(pPage, NULL);
+    pImgObj->m_pImage->ResetCache(pPage, nullptr);
   }
   pImgObj->m_pImage->SetImage(pBmp, FALSE);
   pImgObj->CalcBoundingBox();

@@ -366,23 +366,23 @@ class IFX_Edit {
   // put text into edit.
   virtual void SetText(const FX_WCHAR* text,
                        int32_t charset = DEFAULT_CHARSET,
-                       const CPVT_SecProps* pSecProps = NULL,
-                       const CPVT_WordProps* pWordProps = NULL) = 0;
+                       const CPVT_SecProps* pSecProps = nullptr,
+                       const CPVT_WordProps* pWordProps = nullptr) = 0;
 
   // insert a word into the edit.
   virtual FX_BOOL InsertWord(uint16_t word,
                              int32_t charset = DEFAULT_CHARSET,
-                             const CPVT_WordProps* pWordProps = NULL) = 0;
+                             const CPVT_WordProps* pWordProps = nullptr) = 0;
 
   // insert a return into the edit.
-  virtual FX_BOOL InsertReturn(const CPVT_SecProps* pSecProps = NULL,
-                               const CPVT_WordProps* pWordProps = NULL) = 0;
+  virtual FX_BOOL InsertReturn(const CPVT_SecProps* pSecProps = nullptr,
+                               const CPVT_WordProps* pWordProps = nullptr) = 0;
 
   // insert text into the edit.
   virtual FX_BOOL InsertText(const FX_WCHAR* text,
                              int32_t charset = DEFAULT_CHARSET,
-                             const CPVT_SecProps* pSecProps = NULL,
-                             const CPVT_WordProps* pWordProps = NULL) = 0;
+                             const CPVT_SecProps* pSecProps = nullptr,
+                             const CPVT_WordProps* pWordProps = nullptr) = 0;
 
   // do backspace operation.
   virtual FX_BOOL Backspace() = 0;
@@ -476,13 +476,13 @@ class IFX_Edit {
   static CFX_ByteString GetEditAppearanceStream(
       IFX_Edit* pEdit,
       const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange = NULL,
+      const CPVT_WordRange* pRange = nullptr,
       FX_BOOL bContinuous = TRUE,
       uint16_t SubWord = 0);
   static CFX_ByteString GetSelectAppearanceStream(
       IFX_Edit* pEdit,
       const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange = NULL);
+      const CPVT_WordRange* pRange = nullptr);
   static void DrawEdit(CFX_RenderDevice* pDevice,
                        CFX_Matrix* pUser2Device,
                        IFX_Edit* pEdit,

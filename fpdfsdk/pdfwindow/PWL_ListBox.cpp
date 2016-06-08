@@ -65,18 +65,18 @@ void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {
 }
 
 CPWL_ListBox::CPWL_ListBox()
-    : m_pList(NULL),
-      m_pListNotify(NULL),
+    : m_pList(nullptr),
+      m_pListNotify(nullptr),
       m_bMouseDown(FALSE),
       m_bHoverSel(FALSE),
-      m_pFillerNotify(NULL) {
+      m_pFillerNotify(nullptr) {
   m_pList = IFX_List::NewList();
 }
 
 CPWL_ListBox::~CPWL_ListBox() {
   IFX_List::DelList(m_pList);
   delete m_pListNotify;
-  m_pListNotify = NULL;
+  m_pListNotify = nullptr;
 }
 
 CFX_ByteString CPWL_ListBox::GetClassName() const {
@@ -100,7 +100,7 @@ void CPWL_ListBox::OnCreated() {
 
 void CPWL_ListBox::OnDestroy() {
   delete m_pListNotify;
-  m_pListNotify = NULL;
+  m_pListNotify = nullptr;
 }
 
 void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
@@ -187,21 +187,21 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
               pDevice, pUser2Device, m_pList->GetItemEdit(i),
               CPWL_Utils::PWLColorToFXColor(GetTextColor()),
               CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor()), rcList,
-              ptOffset, NULL, pSysHandler, m_pFormFiller);
+              ptOffset, nullptr, pSysHandler, m_pFormFiller);
           pSysHandler->OutputSelectedRect(m_pFormFiller, rcItem);
         } else {
           CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcItem,
                                    ArgbEncode(255, 0, 51, 113));
           IFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
                              ArgbEncode(255, 255, 255, 255), 0, rcList,
-                             ptOffset, NULL, pSysHandler, m_pFormFiller);
+                             ptOffset, nullptr, pSysHandler, m_pFormFiller);
         }
       } else {
         CFX_SystemHandler* pSysHandler = GetSystemHandler();
         IFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
                            CPWL_Utils::PWLColorToFXColor(GetTextColor()),
                            CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor()),
-                           rcList, ptOffset, NULL, pSysHandler, NULL);
+                           rcList, ptOffset, nullptr, pSysHandler, nullptr);
       }
     }
   }

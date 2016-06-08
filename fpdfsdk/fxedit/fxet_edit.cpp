@@ -339,7 +339,7 @@ IFX_Edit_UndoItem* CFX_Edit_Undo::GetItem(int32_t nIndex) {
   if (nIndex >= 0 && nIndex < m_UndoItemStack.GetSize())
     return m_UndoItemStack.GetAt(nIndex);
 
-  return NULL;
+  return nullptr;
 }
 
 void CFX_Edit_Undo::RemoveHeads() {
@@ -576,8 +576,8 @@ void CFXEU_Clear::Undo() {
   if (m_pEdit) {
     m_pEdit->SelectNone();
     m_pEdit->SetCaret(m_wrSel.BeginPos);
-    m_pEdit->InsertText(m_swText.c_str(), DEFAULT_CHARSET, NULL, NULL, FALSE,
-                        TRUE);
+    m_pEdit->InsertText(m_swText.c_str(), DEFAULT_CHARSET, nullptr, nullptr,
+                        FALSE, TRUE);
     m_pEdit->SetSel(m_wrSel.BeginPos, m_wrSel.EndPos);
   }
 }
@@ -1079,83 +1079,83 @@ void CFX_Edit::SetRichText(FX_BOOL bRichText, FX_BOOL bPaint) {
 FX_BOOL CFX_Edit::SetRichFontIndex(int32_t nFontIndex) {
   CPVT_WordProps WordProps;
   WordProps.nFontIndex = nFontIndex;
-  return SetRichTextProps(EP_FONTINDEX, NULL, &WordProps);
+  return SetRichTextProps(EP_FONTINDEX, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichFontSize(FX_FLOAT fFontSize) {
   CPVT_WordProps WordProps;
   WordProps.fFontSize = fFontSize;
-  return SetRichTextProps(EP_FONTSIZE, NULL, &WordProps);
+  return SetRichTextProps(EP_FONTSIZE, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextColor(FX_COLORREF dwColor) {
   CPVT_WordProps WordProps;
   WordProps.dwWordColor = dwColor;
-  return SetRichTextProps(EP_WORDCOLOR, NULL, &WordProps);
+  return SetRichTextProps(EP_WORDCOLOR, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextScript(CPDF_VariableText::ScriptType nScriptType) {
   CPVT_WordProps WordProps;
   WordProps.nScriptType = nScriptType;
-  return SetRichTextProps(EP_SCRIPTTYPE, NULL, &WordProps);
+  return SetRichTextProps(EP_SCRIPTTYPE, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextBold(FX_BOOL bBold) {
   CPVT_WordProps WordProps;
   if (bBold)
     WordProps.nWordStyle |= PVTWORD_STYLE_BOLD;
-  return SetRichTextProps(EP_BOLD, NULL, &WordProps);
+  return SetRichTextProps(EP_BOLD, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextItalic(FX_BOOL bItalic) {
   CPVT_WordProps WordProps;
   if (bItalic)
     WordProps.nWordStyle |= PVTWORD_STYLE_ITALIC;
-  return SetRichTextProps(EP_ITALIC, NULL, &WordProps);
+  return SetRichTextProps(EP_ITALIC, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextUnderline(FX_BOOL bUnderline) {
   CPVT_WordProps WordProps;
   if (bUnderline)
     WordProps.nWordStyle |= PVTWORD_STYLE_UNDERLINE;
-  return SetRichTextProps(EP_UNDERLINE, NULL, &WordProps);
+  return SetRichTextProps(EP_UNDERLINE, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextCrossout(FX_BOOL bCrossout) {
   CPVT_WordProps WordProps;
   if (bCrossout)
     WordProps.nWordStyle |= PVTWORD_STYLE_CROSSOUT;
-  return SetRichTextProps(EP_CROSSOUT, NULL, &WordProps);
+  return SetRichTextProps(EP_CROSSOUT, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextCharSpace(FX_FLOAT fCharSpace) {
   CPVT_WordProps WordProps;
   WordProps.fCharSpace = fCharSpace;
-  return SetRichTextProps(EP_CHARSPACE, NULL, &WordProps);
+  return SetRichTextProps(EP_CHARSPACE, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextHorzScale(int32_t nHorzScale) {
   CPVT_WordProps WordProps;
   WordProps.nHorzScale = nHorzScale;
-  return SetRichTextProps(EP_HORZSCALE, NULL, &WordProps);
+  return SetRichTextProps(EP_HORZSCALE, nullptr, &WordProps);
 }
 
 FX_BOOL CFX_Edit::SetRichTextLineLeading(FX_FLOAT fLineLeading) {
   CPVT_SecProps SecProps;
   SecProps.fLineLeading = fLineLeading;
-  return SetRichTextProps(EP_LINELEADING, &SecProps, NULL);
+  return SetRichTextProps(EP_LINELEADING, &SecProps, nullptr);
 }
 
 FX_BOOL CFX_Edit::SetRichTextLineIndent(FX_FLOAT fLineIndent) {
   CPVT_SecProps SecProps;
   SecProps.fLineIndent = fLineIndent;
-  return SetRichTextProps(EP_LINEINDENT, &SecProps, NULL);
+  return SetRichTextProps(EP_LINEINDENT, &SecProps, nullptr);
 }
 
 FX_BOOL CFX_Edit::SetRichTextAlignment(int32_t nAlignment) {
   CPVT_SecProps SecProps;
   SecProps.nAlignment = nAlignment;
-  return SetRichTextProps(EP_ALIGNMENT, &SecProps, NULL);
+  return SetRichTextProps(EP_ALIGNMENT, &SecProps, nullptr);
 }
 
 FX_BOOL CFX_Edit::SetRichTextProps(EDIT_PROPS_E eProps,
@@ -2961,7 +2961,7 @@ void CFX_Edit::EndGroupUndo() {
   m_Undo.AddItem(m_pGroupUndoItem);
   if (m_bOprNotify && m_pOprNotify)
     m_pOprNotify->OnAddUndo(m_pGroupUndoItem);
-  m_pGroupUndoItem = NULL;
+  m_pGroupUndoItem = nullptr;
 }
 
 void CFX_Edit::AddEditUndoItem(CFX_Edit_UndoItem* pEditUndoItem) {

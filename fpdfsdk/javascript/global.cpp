@@ -94,7 +94,7 @@ void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
 }
 
 JSGlobalAlternate::JSGlobalAlternate(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pApp(NULL) {}
+    : CJS_EmbedObj(pJSObject), m_pApp(nullptr) {}
 
 JSGlobalAlternate::~JSGlobalAlternate() {
   DestroyGlobalPersisitentVariables();
@@ -232,14 +232,14 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
         SetGlobalVariables(pData->data.sKey, JS_GLOBALDATA_TYPE_NUMBER,
                            pData->data.dData, false, "",
                            v8::Local<v8::Object>(), pData->bPersistent == 1);
-        FXJS_PutObjectNumber(NULL, m_pJSObject->ToV8Object(),
+        FXJS_PutObjectNumber(nullptr, m_pJSObject->ToV8Object(),
                              pData->data.sKey.UTF8Decode(), pData->data.dData);
         break;
       case JS_GLOBALDATA_TYPE_BOOLEAN:
         SetGlobalVariables(pData->data.sKey, JS_GLOBALDATA_TYPE_BOOLEAN, 0,
                            (bool)(pData->data.bData == 1), "",
                            v8::Local<v8::Object>(), pData->bPersistent == 1);
-        FXJS_PutObjectBoolean(NULL, m_pJSObject->ToV8Object(),
+        FXJS_PutObjectBoolean(nullptr, m_pJSObject->ToV8Object(),
                               pData->data.sKey.UTF8Decode(),
                               (bool)(pData->data.bData == 1));
         break;
@@ -247,26 +247,27 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
         SetGlobalVariables(pData->data.sKey, JS_GLOBALDATA_TYPE_STRING, 0,
                            false, pData->data.sData, v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
-        FXJS_PutObjectString(NULL, m_pJSObject->ToV8Object(),
+        FXJS_PutObjectString(nullptr, m_pJSObject->ToV8Object(),
                              pData->data.sKey.UTF8Decode(),
                              pData->data.sData.UTF8Decode());
         break;
       case JS_GLOBALDATA_TYPE_OBJECT: {
         v8::Isolate* pRuntime = m_pJSObject->ToV8Object()->GetIsolate();
-        v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(pRuntime, NULL, -1);
+        v8::Local<v8::Object> pObj =
+            FXJS_NewFxDynamicObj(pRuntime, nullptr, -1);
 
         PutObjectProperty(pObj, &pData->data);
 
         SetGlobalVariables(pData->data.sKey, JS_GLOBALDATA_TYPE_OBJECT, 0,
                            false, "", pObj, pData->bPersistent == 1);
-        FXJS_PutObjectObject(NULL, m_pJSObject->ToV8Object(),
+        FXJS_PutObjectObject(nullptr, m_pJSObject->ToV8Object(),
                              pData->data.sKey.UTF8Decode(), pObj);
       } break;
       case JS_GLOBALDATA_TYPE_NULL:
         SetGlobalVariables(pData->data.sKey, JS_GLOBALDATA_TYPE_NULL, 0, false,
                            "", v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
-        FXJS_PutObjectNull(NULL, m_pJSObject->ToV8Object(),
+        FXJS_PutObjectNull(nullptr, m_pJSObject->ToV8Object(),
                            pData->data.sKey.UTF8Decode());
         break;
     }
@@ -373,26 +374,27 @@ void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
     CJS_KeyValue* pObjData = pData->objData.GetAt(i);
     switch (pObjData->nType) {
       case JS_GLOBALDATA_TYPE_NUMBER:
-        FXJS_PutObjectNumber(NULL, pObj, pObjData->sKey.UTF8Decode(),
+        FXJS_PutObjectNumber(nullptr, pObj, pObjData->sKey.UTF8Decode(),
                              pObjData->dData);
         break;
       case JS_GLOBALDATA_TYPE_BOOLEAN:
-        FXJS_PutObjectBoolean(NULL, pObj, pObjData->sKey.UTF8Decode(),
+        FXJS_PutObjectBoolean(nullptr, pObj, pObjData->sKey.UTF8Decode(),
                               pObjData->bData == 1);
         break;
       case JS_GLOBALDATA_TYPE_STRING:
-        FXJS_PutObjectString(NULL, pObj, pObjData->sKey.UTF8Decode(),
+        FXJS_PutObjectString(nullptr, pObj, pObjData->sKey.UTF8Decode(),
                              pObjData->sData.UTF8Decode());
         break;
       case JS_GLOBALDATA_TYPE_OBJECT: {
         v8::Isolate* pRuntime = m_pJSObject->ToV8Object()->GetIsolate();
         v8::Local<v8::Object> pNewObj =
-            FXJS_NewFxDynamicObj(pRuntime, NULL, -1);
+            FXJS_NewFxDynamicObj(pRuntime, nullptr, -1);
         PutObjectProperty(pNewObj, pObjData);
-        FXJS_PutObjectObject(NULL, pObj, pObjData->sKey.UTF8Decode(), pNewObj);
+        FXJS_PutObjectObject(nullptr, pObj, pObjData->sKey.UTF8Decode(),
+                             pNewObj);
       } break;
       case JS_GLOBALDATA_TYPE_NULL:
-        FXJS_PutObjectNull(NULL, pObj, pObjData->sKey.UTF8Decode());
+        FXJS_PutObjectNull(nullptr, pObj, pObjData->sKey.UTF8Decode());
         break;
     }
   }
@@ -447,7 +449,7 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
     return TRUE;
   }
 
-  JSGlobalData* pNewData = NULL;
+  JSGlobalData* pNewData = nullptr;
 
   switch (nType) {
     case JS_GLOBALDATA_TYPE_NUMBER: {

@@ -11,7 +11,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-CPWL_Image::CPWL_Image() : m_pPDFStream(NULL) {}
+CPWL_Image::CPWL_Image() : m_pPDFStream(nullptr) {}
 
 CPWL_Image::~CPWL_Image() {}
 
@@ -108,7 +108,7 @@ void CPWL_Image::GetImageOffset(FX_FLOAT& x, FX_FLOAT& y) {
   y = 0.0f;
 }
 
-CPWL_Icon::CPWL_Icon() : m_pIconFit(NULL) {}
+CPWL_Icon::CPWL_Icon() : m_pIconFit(nullptr) {}
 
 CPWL_Icon::~CPWL_Icon() {}
 
@@ -130,8 +130,9 @@ void CPWL_Icon::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
   if (m_pIconFit) {
     fLeft = 0.0f;
     fBottom = 0.0f;
-    CPDF_Array* pA =
-        m_pIconFit->GetDict() ? m_pIconFit->GetDict()->GetArrayBy("A") : NULL;
+    CPDF_Array* pA = m_pIconFit->GetDict()
+                         ? m_pIconFit->GetDict()->GetArrayBy("A")
+                         : nullptr;
     if (pA) {
       size_t dwCount = pA->GetCount();
       if (dwCount > 0)

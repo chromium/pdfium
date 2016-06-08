@@ -169,7 +169,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       path.SetPoint(2, pt3.x, pt3.y, FXPT_LINETO);
       path.SetPoint(3, pt1.x, pt1.y, FXPT_LINETO);
 
-      pDevice->DrawPath(&path, pUser2Device, NULL,
+      pDevice->DrawPath(&path, pUser2Device, nullptr,
                         CPWL_Utils::PWLColorToFXColor(PWL_DEFAULT_BLACKCOLOR,
                                                       GetTransparency()),
                         0, FXFILL_ALTERNATE);
@@ -201,13 +201,13 @@ FX_BOOL CPWL_CBButton::OnLButtonUp(const CFX_FloatPoint& point,
 }
 
 CPWL_ComboBox::CPWL_ComboBox()
-    : m_pEdit(NULL),
-      m_pButton(NULL),
-      m_pList(NULL),
+    : m_pEdit(nullptr),
+      m_pButton(nullptr),
+      m_pList(nullptr),
       m_bPopup(FALSE),
       m_nPopupWhere(0),
       m_nSelectItem(-1),
-      m_pFillerNotify(NULL) {}
+      m_pFillerNotify(nullptr) {}
 
 CFX_ByteString CPWL_ComboBox::GetClassName() const {
   return "CPWL_ComboBox";

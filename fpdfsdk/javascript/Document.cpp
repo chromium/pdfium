@@ -147,8 +147,8 @@ void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
 
 Document::Document(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject),
-      m_isolate(NULL),
-      m_pDocument(NULL),
+      m_isolate(nullptr),
+      m_pDocument(nullptr),
       m_cwBaseURL(L""),
       m_bDelay(FALSE) {}
 
@@ -715,8 +715,8 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
 
   pRuntime->BeginBlock();
   CPDFDoc_Environment* pEnv = pRuntime->GetReaderApp();
-  pEnv->JS_docmailForm(NULL, 0, bUI, cTo.c_str(), cSubject.c_str(), cCc.c_str(),
-                       cBcc.c_str(), cMsg.c_str());
+  pEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
+                       cCc.c_str(), cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
 
   return TRUE;

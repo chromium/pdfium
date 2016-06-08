@@ -193,7 +193,7 @@ class CLST_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
   TYPE GetAt(int32_t nIndex) const {
     if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize())
       return CFX_ArrayTemplate<TYPE>::GetAt(nIndex);
-    return NULL;
+    return nullptr;
   }
   void RemoveAt(int32_t nIndex) {
     if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize())

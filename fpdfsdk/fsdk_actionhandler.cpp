@@ -223,7 +223,7 @@ FX_BOOL CPDFSDK_ActionHandler::IsValidField(CPDFSDK_Document* pDocument,
 
   CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  return pPDFInterForm->GetFieldByDict(pFieldDict) != NULL;
+  return !!pPDFInterForm->GetFieldByDict(pFieldDict);
 }
 
 FX_BOOL CPDFSDK_ActionHandler::ExecuteFieldAction(

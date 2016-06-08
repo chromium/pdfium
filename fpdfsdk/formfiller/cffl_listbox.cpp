@@ -16,7 +16,7 @@
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
 
 CFFL_ListBox::CFFL_ListBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget)
-    : CFFL_FormFiller(pApp, pWidget), m_pFontMap(NULL) {}
+    : CFFL_FormFiller(pApp, pWidget), m_pFontMap(nullptr) {}
 
 CFFL_ListBox::~CFFL_ListBox() {
   delete m_pFontMap;
@@ -193,7 +193,7 @@ CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
 
   DestroyPDFWindow(pPageView);
 
-  CPWL_Wnd* pRet = NULL;
+  CPWL_Wnd* pRet = nullptr;
 
   if (bRestoreValue) {
     RestoreState(pPageView);

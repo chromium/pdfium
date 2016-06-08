@@ -31,7 +31,7 @@ int FXJS_MsgBox(CPDFDoc_Environment* pApp,
 CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
 
 CJS_EmbedObj::~CJS_EmbedObj() {
-  m_pJSObject = NULL;
+  m_pJSObject = nullptr;
 }
 
 int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp,
@@ -87,7 +87,7 @@ void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
   if (pContext->IsMsgBoxEnabled()) {
     CPDFDoc_Environment* pApp = pContext->GetReaderApp();
     if (pApp)
-      pApp->JS_appAlert(swMsg, NULL, 0, 3);
+      pApp->JS_appAlert(swMsg, nullptr, 0, 3);
   }
 }
 

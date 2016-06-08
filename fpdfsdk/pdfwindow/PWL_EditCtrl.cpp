@@ -22,9 +22,9 @@
 
 CPWL_EditCtrl::CPWL_EditCtrl()
     : m_pEdit(IFX_Edit::NewEdit()),
-      m_pEditCaret(NULL),
+      m_pEditCaret(nullptr),
       m_bMouseDown(FALSE),
-      m_pEditNotify(NULL),
+      m_pEditNotify(nullptr),
       m_nCharSet(DEFAULT_CHARSET),
       m_nCodePage(0) {}
 
@@ -450,7 +450,7 @@ CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
   if (IPVT_FontMap* pFontMap = GetFontMap())
     return pFontMap->GetPDFFont(nFontIndex);
 
-  return NULL;
+  return nullptr;
 }
 
 FX_FLOAT CPWL_EditCtrl::GetCaretFontSize() const {
@@ -563,7 +563,7 @@ void CPWL_EditCtrl::IOnSetCaret(FX_BOOL bVisible,
   cInfo.ptHead = ptHead;
   cInfo.ptFoot = ptFoot;
 
-  OnNotify(this, PNM_SETCARETINFO, (intptr_t)&cInfo, (intptr_t)NULL);
+  OnNotify(this, PNM_SETCARETINFO, (intptr_t)&cInfo, (intptr_t) nullptr);
 }
 
 void CPWL_EditCtrl::IOnCaretChange(const CPVT_SecProps& secProps,

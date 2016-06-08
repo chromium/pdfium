@@ -18,24 +18,24 @@ CJS_EventHandler::CJS_EventHandler(CJS_Context* pContext)
     : m_pJSContext(pContext),
       m_eEventType(JET_UNKNOWN),
       m_bValid(FALSE),
-      m_pWideStrChange(NULL),
+      m_pWideStrChange(nullptr),
       m_nCommitKey(-1),
       m_bKeyDown(FALSE),
       m_bModifier(FALSE),
       m_bShift(FALSE),
-      m_pISelEnd(NULL),
+      m_pISelEnd(nullptr),
       m_nSelEndDu(0),
-      m_pISelStart(NULL),
+      m_pISelStart(nullptr),
       m_nSelStartDu(0),
       m_bWillCommit(FALSE),
-      m_pValue(NULL),
+      m_pValue(nullptr),
       m_bFieldFull(FALSE),
-      m_pbRc(NULL),
+      m_pbRc(nullptr),
       m_bRcDu(FALSE),
-      m_pSourceDoc(NULL),
-      m_pTargetBookMark(NULL),
-      m_pTargetDoc(NULL),
-      m_pTargetAnnot(NULL) {}
+      m_pSourceDoc(nullptr),
+      m_pTargetBookMark(nullptr),
+      m_pTargetDoc(nullptr),
+      m_pTargetAnnot(nullptr) {}
 
 CJS_EventHandler::~CJS_EventHandler() {}
 
@@ -382,27 +382,27 @@ void CJS_EventHandler::Initial(JS_EVENT_T type) {
 
   m_strTargetName = L"";
   m_strSourceName = L"";
-  m_pWideStrChange = NULL;
+  m_pWideStrChange = nullptr;
   m_WideStrChangeDu = L"";
   m_WideStrChangeEx = L"";
   m_nCommitKey = -1;
   m_bKeyDown = FALSE;
   m_bModifier = FALSE;
   m_bShift = FALSE;
-  m_pISelEnd = NULL;
+  m_pISelEnd = nullptr;
   m_nSelEndDu = 0;
-  m_pISelStart = NULL;
+  m_pISelStart = nullptr;
   m_nSelStartDu = 0;
   m_bWillCommit = FALSE;
-  m_pValue = NULL;
+  m_pValue = nullptr;
   m_bFieldFull = FALSE;
-  m_pbRc = NULL;
+  m_pbRc = nullptr;
   m_bRcDu = FALSE;
 
-  m_pSourceDoc = NULL;
-  m_pTargetBookMark = NULL;
-  m_pTargetDoc = NULL;
-  m_pTargetAnnot = NULL;
+  m_pSourceDoc = nullptr;
+  m_pTargetBookMark = nullptr;
+  m_pTargetDoc = nullptr;
+  m_pTargetAnnot = nullptr;
 
   m_bValid = TRUE;
 }

@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-// For external C libraries to malloc through PDFium. These may return NULL.
+// For external C libraries to malloc through PDFium. These may return nullptr.
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags);
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size, int flags);
 void FXMEM_DefaultFree(void* pointer, int flags);
@@ -61,13 +61,13 @@ inline void* FX_ReallocOrDie(void* ptr,
   return nullptr;             // Suppress compiler warning.
 }
 
-// Never returns NULL.
+// Never returns nullptr.
 #define FX_Alloc(type, size) (type*) FX_AllocOrDie(size, sizeof(type))
 #define FX_Alloc2D(type, w, h) (type*) FX_AllocOrDie2D(w, h, sizeof(type))
 #define FX_Realloc(type, ptr, size) \
   (type*) FX_ReallocOrDie(ptr, size, sizeof(type))
 
-// May return NULL.
+// May return nullptr.
 #define FX_TryAlloc(type, size) (type*) calloc(size, sizeof(type))
 #define FX_TryRealloc(type, ptr, size) \
   (type*) FX_SafeRealloc(ptr, size, sizeof(type))

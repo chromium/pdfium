@@ -1222,7 +1222,7 @@ void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
   CFX_PathData path;
   CFX_FloatRect rcTemp(rect);
   path.AppendRect(rcTemp.left, rcTemp.bottom, rcTemp.right, rcTemp.top);
-  pDevice->DrawPath(&path, pUser2Device, NULL, color, 0, FXFILL_WINDING);
+  pDevice->DrawPath(&path, pUser2Device, nullptr, color, 0, FXFILL_WINDING);
 }
 
 void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
@@ -1237,7 +1237,7 @@ void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
   for (int32_t i = 1; i < nCount; i++)
     path.SetPoint(i, pPts[i].x, pPts[i].y, FXPT_LINETO);
 
-  pDevice->DrawPath(&path, pUser2Device, NULL, color, 0, FXFILL_ALTERNATE);
+  pDevice->DrawPath(&path, pUser2Device, nullptr, color, 0, FXFILL_ALTERNATE);
 }
 
 void CPWL_Utils::DrawStrokeRect(CFX_RenderDevice* pDevice,
@@ -1340,7 +1340,7 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
         path.AppendRect(fLeft, fBottom, fRight, fTop);
         path.AppendRect(fLeft + fWidth, fBottom + fWidth, fRight - fWidth,
                         fTop - fWidth);
-        pDevice->DrawPath(&path, pUser2Device, NULL,
+        pDevice->DrawPath(&path, pUser2Device, nullptr,
                           PWLColorToFXColor(color, nTransparancy), 0,
                           FXFILL_ALTERNATE);
         break;

@@ -753,7 +753,7 @@ int _DateFromTime(double t) {
 double JS_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
-  time_t t = time(NULL);
+  time_t t = time(nullptr);
   struct tm* pTm = localtime(&t);
 
   int year = pTm->tm_year + 1900;

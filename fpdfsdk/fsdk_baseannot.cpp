@@ -554,7 +554,7 @@ void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
 }
 
 FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid() {
-  return m_pAnnot->GetAnnotDict()->GetDictBy("AP") != NULL;
+  return !!m_pAnnot->GetAnnotDict()->GetDictBy("AP");
 }
 
 FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
@@ -914,7 +914,7 @@ void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
                                    CPDF_RenderOptions* pOptions) {
   m_pAnnot->GetAPForm(m_pPageView->GetPDFPage(), CPDF_Annot::Normal);
   m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device,
-                           CPDF_Annot::Normal, NULL);
+                           CPDF_Annot::Normal, nullptr);
 }
 
 UnderlyingPageType* CPDFSDK_Annot::GetUnderlyingPage() {

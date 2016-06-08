@@ -41,8 +41,8 @@ CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
       m_nValueAge(0)
 #ifdef PDF_ENABLE_XFA
       ,
-      m_hMixXFAWidget(NULL),
-      m_pWidgetHandler(NULL)
+      m_hMixXFAWidget(nullptr),
+      m_pWidgetHandler(nullptr)
 #endif  // PDF_ENABLE_XFA
 {
 }
@@ -72,7 +72,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
     return m_hMixXFAWidget;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
@@ -101,7 +101,7 @@ CXFA_FFWidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
     return m_pWidgetHandler;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 static XFA_EVENTTYPE GetXFAEventType(PDFSDK_XFAAActionType eXFAAAT) {
@@ -774,7 +774,7 @@ CFX_WideString CPDFSDK_Widget::OnFormat(FX_BOOL& bFormated) {
 void CPDFSDK_Widget::ResetFieldAppearance(FX_BOOL bValueChanged) {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  m_pInterForm->ResetFieldAppearance(pFormField, NULL, bValueChanged);
+  m_pInterForm->ResetFieldAppearance(pFormField, nullptr, bValueChanged);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
@@ -932,9 +932,9 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
     csDownCaption = pControl->GetDownCaption();
   }
 
-  CPDF_Stream* pNormalIcon = NULL;
-  CPDF_Stream* pRolloverIcon = NULL;
-  CPDF_Stream* pDownIcon = NULL;
+  CPDF_Stream* pNormalIcon = nullptr;
+  CPDF_Stream* pRolloverIcon = nullptr;
+  CPDF_Stream* pDownIcon = nullptr;
 
   if (pControl->HasMKEntry("I")) {
     pNormalIcon = pControl->GetNormalIcon();
@@ -1571,7 +1571,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   CFX_FloatRect rcContent = pEdit->GetContentRect();
 
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(
-      pEdit, CFX_FloatPoint(0.0f, 0.0f), NULL, !bCharArray, subWord);
+      pEdit, CFX_FloatPoint(0.0f, 0.0f), nullptr, !bCharArray, subWord);
 
   if (sEdit.GetLength() > 0) {
     sBody << "/Tx BMC\n"
@@ -2487,10 +2487,8 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
   pEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
 
-  if (bUrlEncoded) {
+  if (bUrlEncoded)
     FX_Free(pBuffer);
-    pBuffer = NULL;
-  }
 
   return TRUE;
 }
@@ -2586,7 +2584,7 @@ int CPDFSDK_InterForm::BeforeSelectionChange(CPDF_FormField* pField,
 void CPDFSDK_InterForm::AfterSelectionChange(CPDF_FormField* pField) {
   if (pField->GetFieldType() == FIELDTYPE_LISTBOX) {
     OnCalculate(pField);
-    ResetFieldAppearance(pField, NULL, TRUE);
+    ResetFieldAppearance(pField, nullptr, TRUE);
     UpdateField(pField);
   }
 }

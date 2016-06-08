@@ -41,7 +41,7 @@ FPDF_WIDESTRING AsFPDFWideString(CFX_ByteString* bsUTF16LE) {
 
 CPDFDoc_Environment::CPDFDoc_Environment(UnderlyingDocumentType* pDoc,
                                          FPDF_FORMFILLINFO* pFFinfo)
-    : m_pInfo(pFFinfo), m_pSDKDoc(NULL), m_pUnderlyingDoc(pDoc) {
+    : m_pInfo(pFFinfo), m_pSDKDoc(nullptr), m_pUnderlyingDoc(pDoc) {
   m_pSysHandler.reset(new CFX_SystemHandler(this));
 }
 
@@ -202,7 +202,7 @@ void CPDFDoc_Environment::JS_docgotoPage(int nPageNum) {
 
 IJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
   if (!IsJSInitiated())
-    return NULL;
+    return nullptr;
   if (!m_pJSRuntime)
     m_pJSRuntime.reset(IJS_Runtime::Create(this));
   return m_pJSRuntime.get();
@@ -427,7 +427,7 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(FX_UINT nFlag) {
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||
             FIELDTYPE_COMBOBOX == nFieldType) {
-          m_pEnv->FFI_OnSetFieldInputFocus(NULL, NULL, 0, FALSE);
+          m_pEnv->FFI_OnSetFieldInputFocus(nullptr, nullptr, 0, FALSE);
         }
       }
 
@@ -667,7 +667,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CPDF_Dictionary* pDict) {
 
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(const FX_CHAR* lpSubType,
                                           CPDF_Dictionary* pDict) {
-  return NULL;
+  return nullptr;
 }
 
 FX_BOOL CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
@@ -706,7 +706,7 @@ CPDF_Document* CPDFSDK_PageView::GetPDFDocument() {
     return m_page->m_pDocument;
 #endif  // PDF_ENABLE_XFA
   }
-  return NULL;
+  return nullptr;
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -714,7 +714,7 @@ CPDF_Page* CPDFSDK_PageView::GetPDFPage() {
   if (m_page) {
     return m_page->GetPDFPage();
   }
-  return NULL;
+  return nullptr;
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -775,7 +775,7 @@ FX_BOOL CPDFSDK_PageView::OnRButtonDown(const CFX_FloatPoint& point,
 
   CPDFSDK_Annot* pFXAnnot = GetFXWidgetAtPoint(point.x, point.y);
 
-  if (pFXAnnot == NULL)
+  if (!pFXAnnot)
     return FALSE;
 
   FX_BOOL bRet =
@@ -794,7 +794,7 @@ FX_BOOL CPDFSDK_PageView::OnRButtonUp(const CFX_FloatPoint& point,
 
   CPDFSDK_Annot* pFXAnnot = GetFXWidgetAtPoint(point.x, point.y);
 
-  if (pFXAnnot == NULL)
+  if (!pFXAnnot)
     return FALSE;
 
   FX_BOOL bRet =
@@ -848,7 +848,7 @@ FX_BOOL CPDFSDK_PageView::OnMouseMove(const CFX_FloatPoint& point, int nFlag) {
     m_bEnterWidget = FALSE;
     if (m_CaptureWidget) {
       pAnnotHandlerMgr->Annot_OnMouseExit(this, m_CaptureWidget, nFlag);
-      m_CaptureWidget = NULL;
+      m_CaptureWidget = nullptr;
     }
   }
   return FALSE;

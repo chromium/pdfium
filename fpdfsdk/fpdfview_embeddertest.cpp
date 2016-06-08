@@ -180,11 +180,11 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
 TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
-  // Null pointer returns NULL.
+  // Null pointer returns nullptr.
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), nullptr);
   EXPECT_EQ(nullptr, dest);
 
-  // Empty string returns NULL.
+  // Empty string returns nullptr.
   dest = FPDF_GetNamedDestByName(document(), "");
   EXPECT_EQ(nullptr, dest);
 
