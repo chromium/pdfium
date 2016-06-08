@@ -16,8 +16,8 @@
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 class CFX_FontSourceEnum_File;
+class CFGAS_GEFont;
 class CXFA_PDFFontMgr;
-class IFGAS_Font;
 class IFGAS_FontMgr;
 
 #define FX_FONTSTYLE_Normal 0x00
@@ -29,71 +29,6 @@ class IFGAS_FontMgr;
 #define FX_FONTSTYLE_Bold 0x40000
 #define FX_FONTSTYLE_BoldItalic (FX_FONTSTYLE_Bold | FX_FONTSTYLE_Italic)
 #define FX_FONTSTYLE_ExactMatch 0x80000000
-#define FX_FONTDECORATION_Underline 0x00000001
-#define FX_FONTDECORATION_Strikeout 0x00000002
-#define FX_FONTDECORATION_Overline 0x00000004
-#define FX_FONTDECORATION_Emphasis 0x00000008
-#define FX_FONTDECORATION_Superscript 0x00000010
-#define FX_FONTDECORATION_Subscript 0x00000020
-#define FX_FONTDECORATION_SmallCapital 0x00000040
-#define FX_FONTDECORATION_Capital 0x00000080
-#define FX_FONTDECORATION_Lowercase 0x000000C0
-#define FX_FONTDECORATION_Raised 0x00000100
-#define FX_FONTDECORATION_Sunken 0x00000200
-#define FX_FONTDECORATION_Shadow 0x00000400
-#define FX_FONTDECORATION_BoundingShape 0x20000000
-#define FX_FONTDECORATION_Hide 0x40000000
-#define FX_FONTDECORATION_StrokeFill 0x80000000
-#define FX_BOUNDINGSHAPE_None 0
-#define FX_BOUNDINGSHAPE_Circle 1
-#define FX_BOUNDINGSHAPE_Square 2
-#define FX_BOUNDINGSHAPE_Triangle 3
-#define FX_BOUNDINGSHAPE_Diamond 4
-
-class IFGAS_Font {
- public:
-  static IFGAS_Font* LoadFont(const FX_WCHAR* pszFontFamily,
-                              uint32_t dwFontStyles,
-                              uint16_t wCodePage,
-                              IFGAS_FontMgr* pFontMgr);
-  static IFGAS_Font* LoadFont(const uint8_t* pBuffer,
-                              int32_t iLength,
-                              IFGAS_FontMgr* pFontMgr);
-  static IFGAS_Font* LoadFont(const FX_WCHAR* pszFileName,
-                              IFGAS_FontMgr* pFontMgr);
-  static IFGAS_Font* LoadFont(IFX_Stream* pFontStream,
-                              IFGAS_FontMgr* pFontMgr,
-                              FX_BOOL bSaveStream = FALSE);
-  static IFGAS_Font* LoadFont(CFX_Font* pExtFont,
-                              IFGAS_FontMgr* pFontMgr,
-                              FX_BOOL bTakeOver = FALSE);
-  virtual ~IFGAS_Font() {}
-  virtual void Release() = 0;
-  virtual IFGAS_Font* Retain() = 0;
-  virtual IFGAS_Font* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0) = 0;
-  virtual void GetFamilyName(CFX_WideString& wsFamily) const = 0;
-  virtual uint32_t GetFontStyles() const = 0;
-  virtual uint8_t GetCharSet() const = 0;
-  virtual FX_BOOL GetCharWidth(FX_WCHAR wUnicode,
-                               int32_t& iWidth,
-                               FX_BOOL bCharCode = FALSE) = 0;
-  virtual int32_t GetGlyphIndex(FX_WCHAR wUnicode,
-                                FX_BOOL bCharCode = FALSE) = 0;
-  virtual int32_t GetAscent() const = 0;
-  virtual int32_t GetDescent() const = 0;
-  virtual FX_BOOL GetCharBBox(FX_WCHAR wUnicode,
-                              CFX_Rect& bbox,
-                              FX_BOOL bCharCode = FALSE) = 0;
-  virtual FX_BOOL GetBBox(CFX_Rect& bbox) = 0;
-  virtual int32_t GetItalicAngle() const = 0;
-  virtual void Reset() = 0;
-  virtual IFGAS_Font* GetSubstFont(int32_t iGlyphIndex) const = 0;
-  virtual CFX_Font* GetDevFont() const = 0;
-  virtual void SetFontProvider(CXFA_PDFFontMgr* pProvider) = 0;
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  virtual void SetLogicalFontStyle(uint32_t dwLogFontStyle) = 0;
-#endif
-};
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 struct FX_FONTMATCHPARAMS {
@@ -150,37 +85,37 @@ class IFGAS_FontMgr {
   static IFGAS_FontMgr* Create(FX_LPEnumAllFonts pEnumerator);
   virtual ~IFGAS_FontMgr() {}
   virtual void Release() = 0;
-  virtual IFGAS_Font* GetDefFontByCodePage(
+  virtual CFGAS_GEFont* GetDefFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetDefFontByCharset(
+  virtual CFGAS_GEFont* GetDefFontByCharset(
       uint8_t nCharset,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetDefFontByUnicode(
+  virtual CFGAS_GEFont* GetDefFontByUnicode(
       FX_WCHAR wUnicode,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetDefFontByLanguage(
+  virtual CFGAS_GEFont* GetDefFontByLanguage(
       uint16_t wLanguage,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* LoadFont(const FX_WCHAR* pszFontFamily,
-                               uint32_t dwFontStyles,
-                               uint16_t wCodePage = 0xFFFF) = 0;
-  virtual IFGAS_Font* LoadFont(const uint8_t* pBuffer, int32_t iLength) = 0;
-  virtual IFGAS_Font* LoadFont(const FX_WCHAR* pszFileName) = 0;
-  virtual IFGAS_Font* LoadFont(IFX_Stream* pFontStream,
-                               const FX_WCHAR* pszFontAlias = NULL,
-                               uint32_t dwFontStyles = 0,
-                               uint16_t wCodePage = 0,
-                               FX_BOOL bSaveStream = FALSE) = 0;
-  virtual IFGAS_Font* LoadFont(IFGAS_Font* pSrcFont,
-                               uint32_t dwFontStyles,
-                               uint16_t wCodePage = 0xFFFF) = 0;
+  virtual CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
+                                 uint32_t dwFontStyles,
+                                 uint16_t wCodePage = 0xFFFF) = 0;
+  virtual CFGAS_GEFont* LoadFont(const uint8_t* pBuffer, int32_t iLength) = 0;
+  virtual CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFileName) = 0;
+  virtual CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
+                                 const FX_WCHAR* pszFontAlias = NULL,
+                                 uint32_t dwFontStyles = 0,
+                                 uint16_t wCodePage = 0,
+                                 FX_BOOL bSaveStream = FALSE) = 0;
+  virtual CFGAS_GEFont* LoadFont(CFGAS_GEFont* pSrcFont,
+                                 uint32_t dwFontStyles,
+                                 uint16_t wCodePage = 0xFFFF) = 0;
   virtual void ClearFontCache() = 0;
-  virtual void RemoveFont(IFGAS_Font* pFont) = 0;
+  virtual void RemoveFont(CFGAS_GEFont* pFont) = 0;
 };
 
 #else   //  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -190,57 +125,57 @@ class IFGAS_FontMgr {
   static IFGAS_FontMgr* Create(CFX_FontSourceEnum_File* pFontEnum);
   virtual ~IFGAS_FontMgr() {}
   virtual void Release() = 0;
-  virtual IFGAS_Font* GetDefFontByCodePage(
+  virtual CFGAS_GEFont* GetDefFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetDefFontByCharset(
+  virtual CFGAS_GEFont* GetDefFontByCharset(
       uint8_t nCharset,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetDefFontByUnicode(
+  virtual CFGAS_GEFont* GetDefFontByUnicode(
       FX_WCHAR wUnicode,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetDefFontByLanguage(
+  virtual CFGAS_GEFont* GetDefFontByLanguage(
       uint16_t wLanguage,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetFontByCodePage(
+  virtual CFGAS_GEFont* GetFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  inline IFGAS_Font* LoadFont(const FX_WCHAR* pszFontFamily,
-                              uint32_t dwFontStyles,
-                              uint16_t wCodePage) {
+  inline CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
+                                uint32_t dwFontStyles,
+                                uint16_t wCodePage) {
     return GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
   }
-  virtual IFGAS_Font* GetFontByCharset(
+  virtual CFGAS_GEFont* GetFontByCharset(
       uint8_t nCharset,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetFontByUnicode(
+  virtual CFGAS_GEFont* GetFontByUnicode(
       FX_WCHAR wUnicode,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* GetFontByLanguage(
+  virtual CFGAS_GEFont* GetFontByLanguage(
       uint16_t wLanguage,
       uint32_t dwFontStyles,
       const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFGAS_Font* LoadFont(const uint8_t* pBuffer,
-                               int32_t iLength,
-                               int32_t iFaceIndex,
-                               int32_t* pFaceCount = NULL) = 0;
-  virtual IFGAS_Font* LoadFont(const FX_WCHAR* pszFileName,
-                               int32_t iFaceIndex,
-                               int32_t* pFaceCount = NULL) = 0;
-  virtual IFGAS_Font* LoadFont(IFX_Stream* pFontStream,
-                               int32_t iFaceIndex,
-                               int32_t* pFaceCount = NULL,
-                               FX_BOOL bSaveStream = FALSE) = 0;
+  virtual CFGAS_GEFont* LoadFont(const uint8_t* pBuffer,
+                                 int32_t iLength,
+                                 int32_t iFaceIndex,
+                                 int32_t* pFaceCount = NULL) = 0;
+  virtual CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFileName,
+                                 int32_t iFaceIndex,
+                                 int32_t* pFaceCount = NULL) = 0;
+  virtual CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
+                                 int32_t iFaceIndex,
+                                 int32_t* pFaceCount = NULL,
+                                 FX_BOOL bSaveStream = FALSE) = 0;
 
   virtual void ClearFontCache() = 0;
-  virtual void RemoveFont(IFGAS_Font* pFont) = 0;
+  virtual void RemoveFont(CFGAS_GEFont* pFont) = 0;
 };
 #endif  //  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 

@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fgas/font/fgas_stdfontmgr.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
@@ -201,7 +202,7 @@ FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
   return FWL_Error::Succeeded;
 }
 FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
-                                 IFGAS_Font* pFont,
+                                 CFGAS_GEFont* pFont,
                                  FX_FLOAT fFontSize,
                                  FX_ARGB rgbFont) {
   if (!m_pTextOut)
@@ -212,7 +213,7 @@ FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
   m_pTextOut->SetTextColor(rgbFont);
   return FWL_Error::Succeeded;
 }
-IFGAS_Font* CFWL_WidgetTP::GetFont(IFWL_Widget* pWidget) {
+CFGAS_GEFont* CFWL_WidgetTP::GetFont(IFWL_Widget* pWidget) {
   return m_pFDEFont;
 }
 
@@ -711,8 +712,8 @@ FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
     m_pFontMgr = IFGAS_FontMgr::Create(m_pFontSource);
 #endif
   }
-  m_pFont = IFGAS_Font::LoadFont(wsFontFamily.c_str(), dwFontStyles, dwCodePage,
-                                 m_pFontMgr);
+  m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.c_str(), dwFontStyles,
+                                   dwCodePage, m_pFontMgr);
   return m_pFont != NULL;
 }
 
@@ -728,9 +729,9 @@ void CFWL_FontManager::DestroyInstance() {
 }
 CFWL_FontManager::CFWL_FontManager() {}
 CFWL_FontManager::~CFWL_FontManager() {}
-IFGAS_Font* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
-                                       uint32_t dwFontStyles,
-                                       uint16_t wCodePage) {
+CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
+                                         uint32_t dwFontStyles,
+                                         uint16_t wCodePage) {
   for (const auto& pData : m_FontsArray) {
     if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
       return pData->GetFont();

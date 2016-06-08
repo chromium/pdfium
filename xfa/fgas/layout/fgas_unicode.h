@@ -20,7 +20,7 @@ void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray& tpos, int32_t iStart, int32_t iEnd);
 
 typedef FX_BOOL (*FX_AdjustCharDisplayPos)(FX_WCHAR wch,
                                            FX_BOOL bMBCSCode,
-                                           IFGAS_Font* pFont,
+                                           CFGAS_GEFont* pFont,
                                            FX_FLOAT fFontSize,
                                            FX_BOOL bVertical,
                                            CFX_PointF& ptOffset);

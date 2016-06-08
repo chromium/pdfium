@@ -13,7 +13,7 @@
 class CFDE_Brush;
 class CFDE_Path;
 class CFDE_Pen;
-class IFGAS_Font;
+class CFGAS_GEFont;
 
 class CFDE_RenderDevice : public CFX_Target {
  public:
@@ -38,7 +38,7 @@ class CFDE_RenderDevice : public CFX_Target {
                     const CFX_Matrix* pImgMatrix = NULL,
                     const CFX_Matrix* pDevMatrix = NULL);
   FX_BOOL DrawString(CFDE_Brush* pBrush,
-                     IFGAS_Font* pFont,
+                     CFGAS_GEFont* pFont,
                      const FXTEXT_CHARPOS* pCharPos,
                      int32_t iCount,
                      FX_FLOAT fFontSize,
@@ -99,13 +99,13 @@ class CFDE_RenderDevice : public CFX_Target {
                         const CFX_Matrix* pMatrix = NULL);
 
   FX_BOOL DrawSolidString(CFDE_Brush* pBrush,
-                          IFGAS_Font* pFont,
+                          CFGAS_GEFont* pFont,
                           const FXTEXT_CHARPOS* pCharPos,
                           int32_t iCount,
                           FX_FLOAT fFontSize,
                           const CFX_Matrix* pMatrix);
   FX_BOOL DrawStringPath(CFDE_Brush* pBrush,
-                         IFGAS_Font* pFont,
+                         CFGAS_GEFont* pFont,
                          const FXTEXT_CHARPOS* pCharPos,
                          int32_t iCount,
                          FX_FLOAT fFontSize,

@@ -46,7 +46,7 @@ class IFDE_TextSet : public IFDE_VisualSet {
  public:
   virtual int32_t GetString(FDE_TEXTEDITPIECE* hText,
                             CFX_WideString& wsText) = 0;
-  virtual IFGAS_Font* GetFont() = 0;
+  virtual CFGAS_GEFont* GetFont() = 0;
   virtual FX_FLOAT GetFontSize() = 0;
   virtual FX_ARGB GetFontColor() = 0;
   virtual int32_t GetDisplayPos(FDE_TEXTEDITPIECE* hText,

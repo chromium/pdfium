@@ -32,7 +32,7 @@ int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
   return pPiece->nCount;
 }
 
-IFGAS_Font* CFDE_TxtEdtTextSet::GetFont() {
+CFGAS_GEFont* CFDE_TxtEdtTextSet::GetFont() {
   return m_pPage->GetEngine()->GetEditParams()->pFont;
 }
 

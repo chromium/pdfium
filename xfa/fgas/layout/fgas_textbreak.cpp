@@ -11,6 +11,7 @@
 #include "core/fxcrt/include/fx_arabic.h"
 #include "core/fxcrt/include/fx_arb.h"
 #include "core/fxcrt/include/fx_memory.h"
+#include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
 
@@ -93,7 +94,7 @@ void CFX_TxtBreak::SetLayoutStyles(uint32_t dwLayoutStyles) {
   m_iRotation = m_iLineRotation + m_iCharRotation;
   m_iRotation %= 4;
 }
-void CFX_TxtBreak::SetFont(IFGAS_Font* pFont) {
+void CFX_TxtBreak::SetFont(CFGAS_GEFont* pFont) {
   if (pFont == NULL) {
     return;
   }
@@ -1174,7 +1175,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
-  IFGAS_Font* pFont = pTxtRun->pFont;
+  CFGAS_GEFont* pFont = pTxtRun->pFont;
   uint32_t dwStyles = pTxtRun->dwStyles;
   CFX_RectF rtText(*pTxtRun->pRect);
   FX_BOOL bRTLPiece =
@@ -1565,7 +1566,7 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   FX_FLOAT fFontSize = pTxtRun->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   FX_FLOAT fScale = fFontSize / 1000.0f;
-  IFGAS_Font* pFont = pTxtRun->pFont;
+  CFGAS_GEFont* pFont = pTxtRun->pFont;
   if (pFont == NULL) {
     bCharBBox = FALSE;
   }

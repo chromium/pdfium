@@ -11,6 +11,7 @@
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/fgas_gefont.h"
 
 CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,
                                      FX_BOOL bOwnerDevice)
@@ -104,7 +105,7 @@ FX_BOOL CFDE_RenderDevice::DrawImage(CFX_DIBSource* pDib,
   return handle != NULL;
 }
 FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
-                                      IFGAS_Font* pFont,
+                                      CFGAS_GEFont* pFont,
                                       const FXTEXT_CHARPOS* pCharPos,
                                       int32_t iCount,
                                       FX_FLOAT fFontSize,
@@ -126,8 +127,8 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
     }
   }
   FXTEXT_CHARPOS* pCP = (FXTEXT_CHARPOS*)pCharPos;
-  IFGAS_Font* pCurFont = NULL;
-  IFGAS_Font* pSTFont = NULL;
+  CFGAS_GEFont* pCurFont = NULL;
+  CFGAS_GEFont* pSTFont = NULL;
   FXTEXT_CHARPOS* pCurCP = NULL;
   int32_t iCurCount = 0;
 

@@ -12,6 +12,7 @@
 #include "xfa/fxfa/include/fxfa_basic.h"
 #include "xfa/fxfa/include/fxfa_widget.h"
 
+class CFGAS_GEFont;
 class CFX_Graphics;
 class CPDF_Document;
 class CXFA_FFPageView;
@@ -19,7 +20,6 @@ class CXFA_Node;
 class CXFA_NodeList;
 class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
-class IFGAS_Font;
 class IXFA_AppProvider;
 class IXFA_DocProvider;
 class IXFA_WidgetAccIterator;

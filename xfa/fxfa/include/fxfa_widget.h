@@ -17,15 +17,15 @@
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
-class CXFA_Node;
-class CXFA_FFDocView;
-class CXFA_FFDoc;
-class CXFA_FFApp;
+class CFGAS_GEFont;
 class CXFA_EventParam;
+class CXFA_FFApp;
+class CXFA_FFDoc;
+class CXFA_FFDocView;
 class CXFA_FFWidget;
+class CXFA_Node;
 class CXFA_TextLayout;
 class CXFA_WidgetLayoutData;
-class IFGAS_Font;
 class IXFA_AppProvider;
 
 class CXFA_WidgetAcc : public CXFA_WidgetData {
@@ -73,7 +73,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void UpdateUIDisplay(CXFA_FFWidget* pExcept = NULL);
 
   CXFA_Node* GetDatasets();
-  IFGAS_Font* GetFDEFont();
+  CFGAS_GEFont* GetFDEFont();
   FX_FLOAT GetFontSize();
   FX_ARGB GetTextColor();
   FX_FLOAT GetLineHeight();

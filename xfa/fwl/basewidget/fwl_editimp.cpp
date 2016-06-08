@@ -15,6 +15,7 @@
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_render.h"
 #include "xfa/fde/ifde_txtedtpage.h"
+#include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fwl/basewidget/fwl_caretimp.h"
 #include "xfa/fwl/basewidget/fwl_comboboximp.h"
 #include "xfa/fwl/basewidget/fwl_scrollbarimp.h"
@@ -1194,8 +1195,8 @@ void CFWL_EditImp::UpdateEditParams() {
   if (!pLineHeight)
     return;
   params.fLineSpace = *pLineHeight;
-  IFGAS_Font* pFont =
-      static_cast<IFGAS_Font*>(GetThemeCapacity(CFWL_WidgetCapacity::Font));
+  CFGAS_GEFont* pFont =
+      static_cast<CFGAS_GEFont*>(GetThemeCapacity(CFWL_WidgetCapacity::Font));
   if (!pFont)
     return;
   params.pFont = pFont;

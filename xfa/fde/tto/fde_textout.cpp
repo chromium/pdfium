@@ -53,7 +53,7 @@ CFDE_TextOut::~CFDE_TextOut() {
   FX_Free(m_pCharPos);
   m_ttoLines.RemoveAll();
 }
-void CFDE_TextOut::SetFont(IFGAS_Font* pFont) {
+void CFDE_TextOut::SetFont(CFGAS_GEFont* pFont) {
   ASSERT(pFont);
   m_pFont = pFont;
   m_pTxtBreak->SetFont(pFont);

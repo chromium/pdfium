@@ -8,6 +8,7 @@
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
+#include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fwl/basewidget/ifwl_barcode.h"
 #include "xfa/fwl/basewidget/ifwl_caret.h"
 #include "xfa/fwl/basewidget/ifwl_checkbox.h"
@@ -78,8 +79,8 @@ FWL_Error CXFA_FWLTheme::Initialize() {
   m_pTextOut.reset(new CFDE_TextOut);
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
        ++i) {
-    m_pCalendarFont = IFGAS_Font::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,
-                                           m_pApp->GetFDEFontMgr());
+    m_pCalendarFont = CFGAS_GEFont::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,
+                                             m_pApp->GetFDEFontMgr());
   }
   if (!m_pCalendarFont) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

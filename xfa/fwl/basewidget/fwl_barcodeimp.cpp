@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/basewidget/fwl_barcodeimp.h"
 
+#include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fwl/basewidget/fwl_editimp.h"
 #include "xfa/fwl/basewidget/fxmath_barcodeimp.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
@@ -111,7 +112,7 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  IFGAS_Font* pFont = static_cast<IFGAS_Font*>(
+  CFGAS_GEFont* pFont = static_cast<CFGAS_GEFont*>(
       pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Font));
   CFX_Font* pCXFont = pFont ? pFont->GetDevFont() : nullptr;
   if (pCXFont) {

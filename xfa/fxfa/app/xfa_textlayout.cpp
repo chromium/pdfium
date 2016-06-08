@@ -332,8 +332,8 @@ FX_BOOL CXFA_TextParser::IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const {
   }
   return FALSE;
 }
-IFGAS_Font* CXFA_TextParser::GetFont(CXFA_TextProvider* pTextProvider,
-                                     IFDE_CSSComputedStyle* pStyle) const {
+CFGAS_GEFont* CXFA_TextParser::GetFont(CXFA_TextProvider* pTextProvider,
+                                       IFDE_CSSComputedStyle* pStyle) const {
   CFX_WideStringC wsFamily = FX_WSTRC(L"Courier");
   uint32_t dwStyle = 0;
   CXFA_Font font = pTextProvider->GetFontNode();
