@@ -104,7 +104,7 @@ void CXFA_Object::ThrowException(int32_t iStringID, ...) {
   wsMessage.FormatV(wsFormat.c_str(), arg_ptr);
   va_end(arg_ptr);
   FXJSE_ThrowMessage(
-      "", FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());
+      FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());
 }
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
@@ -745,7 +745,6 @@ void CXFA_Node::Script_TreeClass_Nodes(CFXJSE_Value* pValue,
     CFX_WideString wsMessage;
     pAppProvider->LoadString(XFA_IDS_Unable_TO_SET, wsMessage);
     FXJSE_ThrowMessage(
-        "",
         FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());
   } else {
     CXFA_AttachNodeList* pNodeList = new CXFA_AttachNodeList(m_pDocument, this);
@@ -1620,7 +1619,7 @@ void CXFA_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
   }
   if (bSetting) {
     CFX_ByteString newValue;
-    if (!(FXJSE_Value_IsNull(pValue) || FXJSE_Value_IsUndefined(pValue)))
+    if (!(pValue && (pValue->IsNull() || pValue->IsUndefined())))
       pValue->ToString(newValue);
 
     CFX_WideString wsNewValue = CFX_WideString::FromUTF8(newValue.AsStringC());
@@ -1688,7 +1687,7 @@ void CXFA_Node::Script_Boolean_Value(CFXJSE_Value* pValue,
                                      XFA_ATTRIBUTE eAttribute) {
   if (bSetting) {
     CFX_ByteString newValue;
-    if (!(FXJSE_Value_IsNull(pValue) || FXJSE_Value_IsUndefined(pValue)))
+    if (!(pValue && (pValue->IsNull() || pValue->IsUndefined())))
       pValue->ToString(newValue);
 
     int32_t iValue = FXSYS_atoi(newValue.c_str());
@@ -1896,7 +1895,7 @@ void CXFA_Node::Script_Draw_DefaultValue(CFXJSE_Value* pValue,
                                          FX_BOOL bSetting,
                                          XFA_ATTRIBUTE eAttribute) {
   if (bSetting) {
-    if (FXJSE_Value_IsUTF8String(pValue)) {
+    if (pValue && pValue->IsString()) {
       CXFA_WidgetData* pWidgetData = GetWidgetData();
       ASSERT(pWidgetData);
       XFA_ELEMENT uiType = pWidgetData->GetUIType();
@@ -1907,7 +1906,6 @@ void CXFA_Node::Script_Draw_DefaultValue(CFXJSE_Value* pValue,
             CFX_WideString::FromUTF8(newValue.AsStringC());
         CFX_WideString wsFormatValue(wsNewValue);
         SetScriptContent(wsNewValue, wsFormatValue, true, TRUE);
-      } else if (uiType != XFA_ELEMENT_Image) {
       }
     }
   } else {
@@ -1928,7 +1926,7 @@ void CXFA_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
     return;
   }
   if (bSetting) {
-    if (FXJSE_Value_IsNull(pValue)) {
+    if (pValue && pValue->IsNull()) {
       pWidgetData->m_bPreNull = pWidgetData->m_bIsNull;
       pWidgetData->m_bIsNull = TRUE;
     } else {
@@ -1936,7 +1934,7 @@ void CXFA_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
       pWidgetData->m_bIsNull = FALSE;
     }
     CFX_ByteString newValue;
-    if (!(FXJSE_Value_IsNull(pValue) || FXJSE_Value_IsUndefined(pValue)))
+    if (!(pValue && (pValue->IsNull() || pValue->IsUndefined())))
       pValue->ToString(newValue);
 
     CFX_WideString wsNewText = CFX_WideString::FromUTF8(newValue.AsStringC());

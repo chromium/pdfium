@@ -7,7 +7,11 @@
 #ifndef XFA_FXJSE_CFXJSE_ARGUMENTS_H_
 #define XFA_FXJSE_CFXJSE_ARGUMENTS_H_
 
+#include <memory>
+
 #include "xfa/fxjse/include/fxjse.h"
+
+class CFXJSE_Class;
 
 class CFXJSE_Arguments {
  public:

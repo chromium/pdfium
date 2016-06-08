@@ -11,40 +11,7 @@
 #include "xfa/fxjse/class.h"
 #include "xfa/fxjse/context.h"
 
-FX_BOOL FXJSE_Value_IsUndefined(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsUndefined();
-}
-
-FX_BOOL FXJSE_Value_IsNull(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsNull();
-}
-
-FX_BOOL FXJSE_Value_IsBoolean(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsBoolean();
-}
-
-FX_BOOL FXJSE_Value_IsUTF8String(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsString();
-}
-
-FX_BOOL FXJSE_Value_IsNumber(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsNumber();
-}
-
-FX_BOOL FXJSE_Value_IsObject(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsObject();
-}
-
-FX_BOOL FXJSE_Value_IsArray(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsArray();
-}
-
-FX_BOOL FXJSE_Value_IsFunction(CFXJSE_Value* pValue) {
-  return pValue && pValue->IsFunction();
-}
-
-void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
-                        const CFX_ByteStringC& utf8Message) {
+void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Message) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
   ASSERT(pIsolate);
 
@@ -52,26 +19,7 @@ void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
   v8::Local<v8::String> hMessage = v8::String::NewFromUtf8(
       pIsolate, utf8Message.c_str(), v8::String::kNormalString,
       utf8Message.GetLength());
-  v8::Local<v8::Value> hError;
-
-  if (utf8Name == "RangeError") {
-    hError = v8::Exception::RangeError(hMessage);
-  } else if (utf8Name == "ReferenceError") {
-    hError = v8::Exception::ReferenceError(hMessage);
-  } else if (utf8Name == "SyntaxError") {
-    hError = v8::Exception::SyntaxError(hMessage);
-  } else if (utf8Name == "TypeError") {
-    hError = v8::Exception::TypeError(hMessage);
-  } else {
-    hError = v8::Exception::Error(hMessage);
-    if (utf8Name != "Error" && !utf8Name.IsEmpty()) {
-      hError.As<v8::Object>()->Set(
-          v8::String::NewFromUtf8(pIsolate, "name"),
-          v8::String::NewFromUtf8(pIsolate, utf8Name.c_str(),
-                                  v8::String::kNormalString,
-                                  utf8Name.GetLength()));
-    }
-  }
+  v8::Local<v8::Value> hError = v8::Exception::Error(hMessage);
   pIsolate->ThrowException(hError);
 }
 

@@ -28,6 +28,7 @@ class CFXJSE_Context {
 
   V8_INLINE v8::Isolate* GetRuntime(void) { return m_pIsolate; }
   void GetGlobalObject(CFXJSE_Value* pValue);
+  void EnableCompatibleMode();
   FX_BOOL ExecuteScript(const FX_CHAR* szScript,
                         CFXJSE_Value* lpRetValue,
                         CFXJSE_Value* lpNewThisObject = nullptr);

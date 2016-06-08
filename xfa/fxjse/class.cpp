@@ -23,12 +23,6 @@ static void FXJSE_V8SetterCallback_Wrapper(
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<void>& info);
 
-CFXJSE_Class* FXJSE_DefineClass(CFXJSE_Context* pContext,
-                                const FXJSE_CLASS_DESCRIPTOR* lpClass) {
-  ASSERT(pContext);
-  return CFXJSE_Class::Create(pContext, lpClass, FALSE);
-}
-
 static void FXJSE_V8FunctionCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   const FXJSE_FUNCTION_DESCRIPTOR* lpFunctionInfo =

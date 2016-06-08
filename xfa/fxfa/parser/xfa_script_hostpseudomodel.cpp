@@ -311,9 +311,9 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
   CXFA_Node* pNode = NULL;
   if (iLength >= 1) {
     std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
-    if (FXJSE_Value_IsObject(pValue.get())) {
+    if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
-    } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
+    } else if (pValue->IsString()) {
       CFX_ByteString bsString;
       pValue->ToString(bsString);
       CFX_WideString wsExpression =
@@ -506,9 +506,9 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
   CXFA_Node* pNode = NULL;
   if (iLength >= 1) {
     std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
-    if (FXJSE_Value_IsObject(pValue.get())) {
+    if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
-    } else if (FXJSE_Value_IsUTF8String(pValue.get())) {
+    } else if (pValue->IsString()) {
       CFX_ByteString bsString;
       pValue->ToString(bsString);
       CFX_WideString wsExpression =
@@ -606,11 +606,11 @@ FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(
     bIsJsType = TRUE;
   }
   std::unique_ptr<CFXJSE_Value> pValueArg(pArguments->GetValue(iArgIndex));
-  if (!FXJSE_Value_IsUTF8String(pValueArg.get()) && bIsJsType) {
+  if (!pValueArg->IsString() && bIsJsType) {
     ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
     return FALSE;
   }
-  if (FXJSE_Value_IsNull(pValueArg.get())) {
+  if (pValueArg->IsNull()) {
     wsValue = FX_WSTRC(L"");
   } else {
     CFX_ByteString byMessage;

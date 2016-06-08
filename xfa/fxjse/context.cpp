@@ -84,37 +84,6 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
       hObject->GetAlignedPointerFromInternalField(0));
 }
 
-CFXJSE_Context* FXJSE_Context_Create(
-    v8::Isolate* pIsolate,
-    const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
-    CFXJSE_HostObject* lpGlobalObject) {
-  return CFXJSE_Context::Create(pIsolate, lpGlobalClass, lpGlobalObject);
-}
-
-void FXJSE_Context_Release(CFXJSE_Context* pContext) {
-  delete pContext;
-}
-
-CFXJSE_Value* FXJSE_Context_GetGlobalObject(CFXJSE_Context* pContext) {
-  if (!pContext)
-    return nullptr;
-
-  CFXJSE_Value* lpValue = new CFXJSE_Value(pContext->GetRuntime());
-  pContext->GetGlobalObject(lpValue);
-  return lpValue;
-}
-
-void FXJSE_Context_EnableCompatibleMode(CFXJSE_Context* pContext) {
-  FXJSE_ExecuteScript(pContext, szCompatibleModeScript, nullptr, nullptr);
-}
-
-FX_BOOL FXJSE_ExecuteScript(CFXJSE_Context* pContext,
-                            const FX_CHAR* szScript,
-                            CFXJSE_Value* pRetValue,
-                            CFXJSE_Value* pNewThisObject) {
-  return pContext->ExecuteScript(szScript, pRetValue, pNewThisObject);
-}
-
 v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
                                               v8::TryCatch& trycatch) {
   v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
@@ -185,6 +154,7 @@ CFXJSE_Context* CFXJSE_Context::Create(
 }
 
 CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
+
 CFXJSE_Context::~CFXJSE_Context() {}
 
 void CFXJSE_Context::GetGlobalObject(CFXJSE_Value* pValue) {
@@ -194,6 +164,10 @@ void CFXJSE_Context::GetGlobalObject(CFXJSE_Value* pValue) {
       v8::Local<v8::Context>::New(m_pIsolate, m_hContext);
   v8::Local<v8::Object> hGlobalObject = hContext->Global();
   pValue->ForceSetValue(hGlobalObject);
+}
+
+void CFXJSE_Context::EnableCompatibleMode() {
+  ExecuteScript(szCompatibleModeScript, nullptr, nullptr);
 }
 
 FX_BOOL CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
