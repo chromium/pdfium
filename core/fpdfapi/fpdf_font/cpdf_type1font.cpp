@@ -23,24 +23,21 @@ struct GlyphNameMap {
 };
 
 const GlyphNameMap g_GlyphNameSubsts[] = {{"ff", "uniFB00"},
-                                          {"fi", "uniFB01"},
-                                          {"fl", "uniFB02"},
                                           {"ffi", "uniFB03"},
-                                          {"ffl", "uniFB04"}};
+                                          {"ffl", "uniFB04"},
+                                          {"fi", "uniFB01"},
+                                          {"fl", "uniFB02"}};
 
 int compareString(const void* key, const void* element) {
-  return FXSYS_stricmp((const FX_CHAR*)key,
-                       ((GlyphNameMap*)element)->m_pStrAdobe);
+  return FXSYS_stricmp(static_cast<const FX_CHAR*>(key),
+                       static_cast<const GlyphNameMap*>(element)->m_pStrAdobe);
 }
 
 const FX_CHAR* GlyphNameRemap(const FX_CHAR* pStrAdobe) {
-  GlyphNameMap* found = (GlyphNameMap*)FXSYS_bsearch(
-      pStrAdobe, g_GlyphNameSubsts,
-      sizeof(g_GlyphNameSubsts) / sizeof(GlyphNameMap), sizeof(GlyphNameMap),
-      compareString);
-  if (found)
-    return found->m_pStrUnicode;
-  return nullptr;
+  const GlyphNameMap* found = static_cast<const GlyphNameMap*>(FXSYS_bsearch(
+      pStrAdobe, g_GlyphNameSubsts, FX_ArraySize(g_GlyphNameSubsts),
+      sizeof(GlyphNameMap), compareString));
+  return found ? found->m_pStrUnicode : nullptr;
 }
 
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
