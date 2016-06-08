@@ -99,7 +99,7 @@ class CPDF_Font {
   virtual FX_BOOL Load() = 0;
 
   FX_BOOL Initialize();
-  void LoadUnicodeMap();
+  void LoadUnicodeMap() const;  // logically const only.
   void LoadPDFEncoding(CPDF_Object* pEncoding,
                        int& iBaseEncoding,
                        CFX_ByteString*& pCharNames,
@@ -115,8 +115,8 @@ class CPDF_Font {
   CFX_ByteString m_BaseFont;
   CPDF_StreamAcc* m_pFontFile;
   CPDF_Dictionary* m_pFontDict;
-  CPDF_ToUnicodeMap* m_pToUnicodeMap;
-  FX_BOOL m_bToUnicodeLoaded;
+  mutable CPDF_ToUnicodeMap* m_pToUnicodeMap;
+  mutable FX_BOOL m_bToUnicodeLoaded;
   int m_Flags;
   FX_RECT m_FontBBox;
   int m_StemV;

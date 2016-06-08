@@ -165,7 +165,7 @@ void CPDF_Font::AppendChar(CFX_ByteString& str, uint32_t charcode) const {
 
 CFX_WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
   if (!m_bToUnicodeLoaded)
-    ((CPDF_Font*)this)->LoadUnicodeMap();
+    LoadUnicodeMap();
 
   if (m_pToUnicodeMap)
     return m_pToUnicodeMap->Lookup(charcode);
@@ -174,7 +174,7 @@ CFX_WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
 
 uint32_t CPDF_Font::CharCodeFromUnicode(FX_WCHAR unicode) const {
   if (!m_bToUnicodeLoaded)
-    ((CPDF_Font*)this)->LoadUnicodeMap();
+    LoadUnicodeMap();
 
   if (m_pToUnicodeMap)
     return m_pToUnicodeMap->ReverseLookup(unicode);
@@ -294,7 +294,7 @@ void CPDF_Font::CheckFontMetrics() {
   }
 }
 
-void CPDF_Font::LoadUnicodeMap() {
+void CPDF_Font::LoadUnicodeMap() const {
   m_bToUnicodeLoaded = TRUE;
   CPDF_Stream* pStream = m_pFontDict->GetStreamBy("ToUnicode");
   if (!pStream) {
