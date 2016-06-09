@@ -47,7 +47,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
 
   IFX_FileAccess* Retain() override {
     m_RefCount++;
-    return (IFX_FileAccess*)this;
+    return this;
   }
 
   void GetPath(CFX_WideString& wsPath) override { wsPath = m_path; }

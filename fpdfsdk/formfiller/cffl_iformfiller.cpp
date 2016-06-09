@@ -709,10 +709,8 @@ void CFFL_IFormFiller::OnCalculate(CPDFSDK_Widget* pWidget,
   if (!m_bNotifying) {
     ASSERT(pWidget);
     CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-    CPDFSDK_InterForm* pInterForm =
-        (CPDFSDK_InterForm*)pDocument->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
     pInterForm->OnCalculate(pWidget->GetFormField());
-
     m_bNotifying = FALSE;
   }
 }
@@ -724,8 +722,7 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
   if (!m_bNotifying) {
     ASSERT(pWidget);
     CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-    CPDFSDK_InterForm* pInterForm =
-        (CPDFSDK_InterForm*)pDocument->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
 
     FX_BOOL bFormated = FALSE;
     CFX_WideString sValue =

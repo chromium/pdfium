@@ -604,7 +604,7 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
 
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_Hide(const CPDF_Action& action,
                                                  CPDFSDK_Document* pDocument) {
-  CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
   if (pInterForm->DoAction_Hide(action)) {
     pDocument->SetChangeMark();
     return TRUE;
@@ -616,21 +616,21 @@ FX_BOOL CPDFSDK_FormActionHandler::DoAction_Hide(const CPDF_Action& action,
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_SubmitForm(
     const CPDF_Action& action,
     CPDFSDK_Document* pDocument) {
-  CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
   return pInterForm->DoAction_SubmitForm(action);
 }
 
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_ResetForm(
     const CPDF_Action& action,
     CPDFSDK_Document* pDocument) {
-  CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
   return pInterForm->DoAction_ResetForm(action);
 }
 
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_ImportData(
     const CPDF_Action& action,
     CPDFSDK_Document* pDocument) {
-  CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
   if (pInterForm->DoAction_ImportData(action)) {
     pDocument->SetChangeMark();
     return TRUE;
