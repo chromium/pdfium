@@ -78,7 +78,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
 
     switch (pVisualSet->GetType()) {
       case FDE_VISUALOBJ_Text:
-        RenderText((IFDE_TextSet*)pVisualSet, pPiece);
+        RenderText(static_cast<IFDE_TextSet*>(pVisualSet), pPiece);
         iCount += 5;
         break;
       case FDE_VISUALOBJ_Canvas:

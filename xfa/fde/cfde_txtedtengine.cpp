@@ -80,7 +80,7 @@ IFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
   if (m_PagePtrArray.GetSize() <= nIndex) {
     return NULL;
   }
-  return (IFDE_TxtEdtPage*)m_PagePtrArray[nIndex];
+  return m_PagePtrArray[nIndex];
 }
 
 void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
@@ -734,7 +734,7 @@ IFX_CharIter* CFDE_TxtEdtEngine::CreateCharIter() {
   if (!m_pTxtBuf) {
     return NULL;
   }
-  return new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)m_pTxtBuf);
+  return new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(m_pTxtBuf));
 }
 
 int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,

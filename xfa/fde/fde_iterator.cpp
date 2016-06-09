@@ -72,7 +72,7 @@ FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
       if (eType == FDE_VISUALOBJ_Canvas) {
         FDE_CANVASITEM canvas;
         canvas.hCanvas = pObj;
-        canvas.pCanvas = (IFDE_CanvasSet*)pVisualSet;
+        canvas.pCanvas = static_cast<IFDE_CanvasSet*>(pVisualSet);
         canvas.hPos = canvas.pCanvas->GetFirstPosition();
         m_CanvasStack.Push(canvas);
         break;

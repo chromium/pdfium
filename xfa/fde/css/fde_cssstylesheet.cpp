@@ -87,13 +87,13 @@ void CFDE_CSSStyleSheet::Reset() {
     IFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
     switch (pRule->GetType()) {
       case FDE_CSSRULETYPE_Style:
-        ((CFDE_CSSStyleRule*)pRule)->~CFDE_CSSStyleRule();
+        static_cast<CFDE_CSSStyleRule*>(pRule)->~CFDE_CSSStyleRule();
         break;
       case FDE_CSSRULETYPE_Media:
-        ((CFDE_CSSMediaRule*)pRule)->~CFDE_CSSMediaRule();
+        static_cast<CFDE_CSSMediaRule*>(pRule)->~CFDE_CSSMediaRule();
         break;
       case FDE_CSSRULETYPE_FontFace:
-        ((CFDE_CSSFontFaceRule*)pRule)->~CFDE_CSSFontFaceRule();
+        static_cast<CFDE_CSSFontFaceRule*>(pRule)->~CFDE_CSSFontFaceRule();
         break;
       default:
         ASSERT(FALSE);

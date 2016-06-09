@@ -39,13 +39,16 @@ void CFDE_CSSCounterStyle::DoUpdateIndex(IFDE_CSSValueList* pList) {
     bDefIncrement = FALSE;
   }
   for (int32_t i = 0; i < iCount; i++) {
-    IFDE_CSSValueList* pCounter = (IFDE_CSSValueList*)pList->GetValue(i);
+    IFDE_CSSValueList* pCounter =
+        static_cast<IFDE_CSSValueList*>(pList->GetValue(i));
     int32_t iLen;
     const FX_WCHAR* pszIdentifier =
-        ((IFDE_CSSPrimitiveValue*)(pCounter->GetValue(0)))->GetString(iLen);
+        static_cast<IFDE_CSSPrimitiveValue*>(pCounter->GetValue(0))
+            ->GetString(iLen);
     FX_FLOAT fValue = fDefValue;
     if (pCounter->CountValues() > 1) {
-      fValue = ((IFDE_CSSPrimitiveValue*)(pCounter->GetValue(1)))->GetFloat();
+      fValue = static_cast<IFDE_CSSPrimitiveValue*>(pCounter->GetValue(1))
+                   ->GetFloat();
     }
     int32_t iIndex = FindIndex(pszIdentifier);
     if (iIndex == -1) {
@@ -123,7 +126,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                                           IFGAS_FontMgr* pFontMgr) {
   switch (pRule->GetType()) {
     case FDE_CSSRULETYPE_Style: {
-      IFDE_CSSStyleRule* pStyleRule = (IFDE_CSSStyleRule*)pRule;
+      IFDE_CSSStyleRule* pStyleRule = static_cast<IFDE_CSSStyleRule*>(pRule);
       CFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
       int32_t iSelectors = pStyleRule->CountSelectorLists();
       for (int32_t i = 0; i < iSelectors; ++i) {
@@ -163,7 +166,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
       }
     } break;
     case FDE_CSSRULETYPE_Media: {
-      IFDE_CSSMediaRule* pMediaRule = (IFDE_CSSMediaRule*)pRule;
+      IFDE_CSSMediaRule* pMediaRule = static_cast<IFDE_CSSMediaRule*>(pRule);
       if (pMediaRule->GetMediaList() & dwMediaList) {
         int32_t iRules = pMediaRule->CountRules();
         for (int32_t i = 0; i < iRules; ++i) {
@@ -254,7 +257,7 @@ IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
       CFDE_CSSComputedStyle(m_pFixedStyleStore);
   if (pParentStyle) {
     pStyle->m_InheritedData =
-        ((CFDE_CSSComputedStyle*)pParentStyle)->m_InheritedData;
+        static_cast<CFDE_CSSComputedStyle*>(pParentStyle)->m_InheritedData;
   } else {
     pStyle->m_InheritedData.Reset();
   }
@@ -475,7 +478,8 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
     const CFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
     IFDE_CSSComputedStyle* pDestStyle) {
-  CFDE_CSSComputedStyle* pComputedStyle = (CFDE_CSSComputedStyle*)pDestStyle;
+  CFDE_CSSComputedStyle* pComputedStyle =
+      static_cast<CFDE_CSSComputedStyle*>(pDestStyle);
   IFDE_CSSValue* pVal;
   FX_BOOL bImportant;
   int32_t i;
@@ -583,7 +587,8 @@ void CFDE_CSSStyleSelector::ApplyProperty(
     IFDE_CSSValue* pValue,
     CFDE_CSSComputedStyle* pComputedStyle) {
   if (pValue->GetType() == FDE_CSSVALUETYPE_Primitive) {
-    IFDE_CSSPrimitiveValue* pPrimitive = (IFDE_CSSPrimitiveValue*)pValue;
+    IFDE_CSSPrimitiveValue* pPrimitive =
+        static_cast<IFDE_CSSPrimitiveValue*>(pValue);
     FDE_CSSPRIMITIVETYPE eType = pPrimitive->GetPrimitiveType();
     switch (eProperty) {
       case FDE_CSSPROPERTY_Display:
@@ -1030,7 +1035,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
         break;
     }
   } else if (pValue->GetType() == FDE_CSSVALUETYPE_List) {
-    IFDE_CSSValueList* pList = (IFDE_CSSValueList*)pValue;
+    IFDE_CSSValueList* pList = static_cast<IFDE_CSSValueList*>(pValue);
     int32_t iCount = pList->CountValues();
     if (iCount > 0) {
       switch (eProperty) {
@@ -1061,7 +1066,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
         case FDE_CSSPROPERTY_TextCombine: {
           for (int32_t i = 0; i < pList->CountValues(); i++) {
             IFDE_CSSPrimitiveValue* pVal =
-                (IFDE_CSSPrimitiveValue*)pList->GetValue(i);
+                static_cast<IFDE_CSSPrimitiveValue*>(pList->GetValue(i));
             switch (pVal->GetPrimitiveType()) {
               case FDE_CSSPRIMITIVETYPE_Enum: {
                 switch (pVal->GetEnum()) {
@@ -1091,7 +1096,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
           FDE_CSSTEXTEMPHASISMARK eMark;
           for (int32_t i = 0; i < pList->CountValues(); i++) {
             IFDE_CSSPrimitiveValue* pVal =
-                (IFDE_CSSPrimitiveValue*)pList->GetValue(i);
+                static_cast<IFDE_CSSPrimitiveValue*>(pList->GetValue(i));
             switch (pVal->GetPrimitiveType()) {
               case FDE_CSSPRIMITIVETYPE_Enum: {
                 if (ToTextEmphasisFill(pVal->GetEnum(), eFill)) {
@@ -1736,7 +1741,7 @@ uint32_t CFDE_CSSStyleSelector::ToTextDecoration(IFDE_CSSValueList* pValue) {
   uint32_t dwDecoration = 0;
   for (int32_t i = pValue->CountValues() - 1; i >= 0; --i) {
     IFDE_CSSPrimitiveValue* pPrimitive =
-        (IFDE_CSSPrimitiveValue*)pValue->GetValue(i);
+        static_cast<IFDE_CSSPrimitiveValue*>(pValue->GetValue(i));
     if (pPrimitive->GetPrimitiveType() == FDE_CSSPRIMITIVETYPE_Enum) {
       switch (pPrimitive->GetEnum()) {
         case FDE_CSSPROPERTYVALUE_Underline:

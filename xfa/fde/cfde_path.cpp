@@ -202,17 +202,16 @@ void CFDE_Path::AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
 }
 
 void CFDE_Path::AddPath(const CFDE_Path* pSrc, FX_BOOL bConnect) {
-  CFDE_Path* pPath = (CFDE_Path*)pSrc;
-  if (!pPath)
+  if (!pSrc)
     return;
 
-  int32_t iCount = pPath->m_Path.GetPointCount();
+  int32_t iCount = pSrc->m_Path.GetPointCount();
   if (iCount < 1)
     return;
   if (bConnect)
-    LineTo(pPath->m_Path.GetPointX(0), pPath->m_Path.GetPointY(0));
+    LineTo(pSrc->m_Path.GetPointX(0), pSrc->m_Path.GetPointY(0));
 
-  m_Path.Append(&pPath->m_Path, nullptr);
+  m_Path.Append(&pSrc->m_Path, nullptr);
 }
 
 void CFDE_Path::AddPolygon(const CFX_PointsF& points) {

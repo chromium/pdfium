@@ -25,7 +25,7 @@ const double kTolerance = 0.1f;
 
 IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(CFDE_TxtEdtEngine* pEngine,
                                          int32_t nIndex) {
-  return (IFDE_TxtEdtPage*)new CFDE_TxtEdtPage(pEngine, nIndex);
+  return new CFDE_TxtEdtPage(pEngine, nIndex);
 }
 
 CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
@@ -42,7 +42,7 @@ CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
   FXSYS_memset(&m_rtPageMargin, 0, sizeof(CFX_RectF));
   FXSYS_memset(&m_rtPageContents, 0, sizeof(CFX_RectF));
   FXSYS_memset(&m_rtPageCanvas, 0, sizeof(CFX_RectF));
-  m_pEditEngine = (CFDE_TxtEdtEngine*)pEngine;
+  m_pEditEngine = static_cast<CFDE_TxtEdtEngine*>(pEngine);
 }
 
 CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {
@@ -251,7 +251,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
     return -1;
   }
   std::unique_ptr<CFX_WordBreak> pIter(new CFX_WordBreak);
-  pIter->Attach(new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf));
+  pIter->Attach(new CFDE_TxtEdtBufIter(pBuf));
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
   return pIter->GetWordPos();
@@ -285,12 +285,14 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   int32_t nPageStart, nPageEnd, nTemp, nBgnParag, nStartLineInParag, nEndParag,
       nEndLineInParag;
   nBgnParag = m_pEditEngine->Line2Parag(0, 0, nStartLine, nStartLineInParag);
-  m_pBgnParag = (CFDE_TxtEdtParag*)m_pEditEngine->GetParag(nBgnParag);
+  m_pBgnParag =
+      static_cast<CFDE_TxtEdtParag*>(m_pEditEngine->GetParag(nBgnParag));
   m_pBgnParag->LoadParag();
   m_pBgnParag->GetLineRange(nStartLine - nStartLineInParag, nPageStart, nTemp);
   nEndParag = m_pEditEngine->Line2Parag(nBgnParag, nStartLineInParag, nEndLine,
                                         nEndLineInParag);
-  m_pEndParag = (CFDE_TxtEdtParag*)m_pEditEngine->GetParag(nEndParag);
+  m_pEndParag =
+      static_cast<CFDE_TxtEdtParag*>(m_pEditEngine->GetParag(nEndParag));
   m_pEndParag->LoadParag();
   m_pEndParag->GetLineRange(nEndLine - nEndLineInParag, nPageEnd, nTemp);
   nPageEnd += (nTemp - 1);
