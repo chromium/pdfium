@@ -659,12 +659,9 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
     if (pEventParam->m_eType == XFA_EVENT_Calculate ||
         pEventParam->m_eType == XFA_EVENT_InitCalculate) {
       if (!pTmpRetValue->IsUndefined()) {
-        if (!pTmpRetValue->IsNull()) {
-          CFX_ByteString bsString;
-          pTmpRetValue->ToString(bsString);
-          pEventParam->m_wsResult =
-              CFX_WideString::FromUTF8(bsString.AsStringC());
-        }
+        if (!pTmpRetValue->IsNull())
+          pEventParam->m_wsResult = pTmpRetValue->ToWideString();
+
         iRet = XFA_EVENTERROR_Success;
       } else {
         iRet = XFA_EVENTERROR_Error;

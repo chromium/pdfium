@@ -172,14 +172,17 @@ class CFXJSE_Value {
         v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
     return static_cast<int32_t>(hValue->NumberValue());
   }
-  V8_INLINE void ToString(CFX_ByteString& szStrOutput) const {
+  V8_INLINE CFX_ByteString ToString() const {
     ASSERT(!m_hValue.IsEmpty());
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hValue =
         v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
     v8::Local<v8::String> hString = hValue->ToString();
     v8::String::Utf8Value hStringVal(hString);
-    szStrOutput = *hStringVal;
+    return CFX_ByteString(*hStringVal);
+  }
+  V8_INLINE CFX_WideString ToWideString() const {
+    return CFX_WideString::FromUTF8(ToString().AsStringC());
   }
   CFXJSE_HostObject* ToHostObject(CFXJSE_Class* lpClass) const;
 

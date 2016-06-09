@@ -575,14 +575,12 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
           uCount++;
         }
       } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
           std::unique_ptr<CFXJSE_Value> newPropertyValue(
               new CFXJSE_Value(pIsolate));
-          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                           newPropertyValue.get());
+          jsObjectValue->GetObjectProperty(
+              propertyValue->ToString().AsStringC(), newPropertyValue.get());
           if (newPropertyValue->IsNull())
             continue;
 
@@ -656,12 +654,10 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
             iCount++;
         }
       } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                           newPropertyValue.get());
+          jsObjectValue->GetObjectProperty(
+              propertyValue->ToString().AsStringC(), newPropertyValue.get());
           iCount += newPropertyValue->IsNull() ? 0 : 1;
         }
       }
@@ -738,12 +734,10 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
           dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                           newPropertyValue.get());
+          jsObjectValue->GetObjectProperty(
+              propertyValue->ToString().AsStringC(), newPropertyValue.get());
           if (newPropertyValue->IsNull())
             continue;
 
@@ -816,12 +810,10 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
           dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
         }
       } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                           newPropertyValue.get());
+          jsObjectValue->GetObjectProperty(
+              propertyValue->ToString().AsStringC(), newPropertyValue.get());
           if (newPropertyValue->IsNull())
             continue;
 
@@ -981,12 +973,10 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
           uCount++;
         }
       } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                           newPropertyValue.get());
+          jsObjectValue->GetObjectProperty(
+              propertyValue->ToString().AsStringC(), newPropertyValue.get());
           if (newPropertyValue->IsNull())
             continue;
 
@@ -2834,10 +2824,8 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
         if (propertyValue->IsNull()) {
           GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
         } else {
-          CFX_ByteString propStr;
-          propertyValue->ToString(propStr);
-          jsObjectValue->GetObjectProperty(propStr.AsStringC(),
-                                           newPropertyValue.get());
+          jsObjectValue->GetObjectProperty(
+              propertyValue->ToString().AsStringC(), newPropertyValue.get());
         }
         CFX_ByteString bsChoosed;
         ValueToUTF8String(newPropertyValue.get(), bsChoosed);
@@ -2888,8 +2876,7 @@ void CXFA_FM2JSContext::HasValue(CFXJSE_Value* pThis,
     return;
   }
 
-  CFX_ByteString valueStr;
-  argOne->ToString(valueStr);
+  CFX_ByteString valueStr = argOne->ToString();
   valueStr.TrimLeft();
   args.GetReturnValue()->SetInteger(!valueStr.IsEmpty());
 }
@@ -5084,11 +5071,10 @@ void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
         }
       }
     } else {
-      CFX_ByteString propertyStr;
-      propertyValue->ToString(propertyStr);
       for (int32_t i = 2; i < iLeftLength; i++) {
         lValue->GetObjectPropertyByIdx(i, jsObjectValue.get());
-        jsObjectValue->SetObjectProperty(propertyStr.AsStringC(), rValue.get());
+        jsObjectValue->SetObjectProperty(propertyValue->ToString().AsStringC(),
+                                         rValue.get());
       }
     }
   } else if (lValue->IsObject()) {
@@ -5165,11 +5151,8 @@ void CXFA_FM2JSContext::equality_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    CFX_ByteString firstOutput;
-    CFX_ByteString secondOutput;
-    argFirst->ToString(firstOutput);
-    argSecond->ToString(secondOutput);
-    args.GetReturnValue()->SetInteger(firstOutput == secondOutput);
+    args.GetReturnValue()->SetInteger(argFirst->ToString() ==
+                                      argSecond->ToString());
     return;
   }
 
@@ -5201,11 +5184,8 @@ void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    CFX_ByteString firstOutput;
-    CFX_ByteString secondOutput;
-    argFirst->ToString(firstOutput);
-    argSecond->ToString(secondOutput);
-    args.GetReturnValue()->SetInteger(firstOutput != secondOutput);
+    args.GetReturnValue()->SetInteger(argFirst->ToString() !=
+                                      argSecond->ToString());
     return;
   }
 
@@ -5258,12 +5238,8 @@ void CXFA_FM2JSContext::less_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    CFX_ByteString firstOutput;
-    CFX_ByteString secondOutput;
-    argFirst->ToString(firstOutput);
-    argSecond->ToString(secondOutput);
     args.GetReturnValue()->SetInteger(
-        firstOutput.Compare(secondOutput.AsStringC()) == -1);
+        argFirst->ToString().Compare(argSecond->ToString().AsStringC()) == -1);
     return;
   }
 
@@ -5290,12 +5266,8 @@ void CXFA_FM2JSContext::lessequal_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    CFX_ByteString firstOutput;
-    CFX_ByteString secondOutput;
-    argFirst->ToString(firstOutput);
-    argSecond->ToString(secondOutput);
     args.GetReturnValue()->SetInteger(
-        firstOutput.Compare(secondOutput.AsStringC()) != 1);
+        argFirst->ToString().Compare(argSecond->ToString().AsStringC()) != 1);
     return;
   }
 
@@ -5321,12 +5293,8 @@ void CXFA_FM2JSContext::greater_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    CFX_ByteString firstOutput;
-    CFX_ByteString secondOutput;
-    argFirst->ToString(firstOutput);
-    argSecond->ToString(secondOutput);
     args.GetReturnValue()->SetInteger(
-        firstOutput.Compare(secondOutput.AsStringC()) == 1);
+        argFirst->ToString().Compare(argSecond->ToString().AsStringC()) == 1);
     return;
   }
 
@@ -5353,12 +5321,8 @@ void CXFA_FM2JSContext::greaterequal_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    CFX_ByteString firstOutput;
-    CFX_ByteString secondOutput;
-    argFirst->ToString(firstOutput);
-    argSecond->ToString(secondOutput);
     args.GetReturnValue()->SetInteger(
-        firstOutput.Compare(secondOutput.AsStringC()) != -1);
+        argFirst->ToString().Compare(argSecond->ToString().AsStringC()) != -1);
     return;
   }
 
@@ -5876,9 +5840,7 @@ void CXFA_FM2JSContext::get_fm_value(CFXJSE_Value* pThis,
       return;
     }
 
-    CFX_ByteString propertyStr;
-    propertyValue->ToString(propertyStr);
-    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+    jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                      args.GetReturnValue());
     return;
   }
@@ -6049,9 +6011,7 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
       return simpleValue;
     }
 
-    CFX_ByteString propertyStr;
-    propertyValue->ToString(propertyStr);
-    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+    jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                      simpleValue.get());
     return simpleValue;
   }
@@ -6085,10 +6045,8 @@ FX_BOOL CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
       return defaultValue->IsNull();
     }
 
-    CFX_ByteString propertyStr;
-    propertyValue->ToString(propertyStr);
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
-    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+    jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                      newPropertyValue.get());
     return newPropertyValue->IsNull();
   }
@@ -6179,12 +6137,10 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
           index++;
         }
       } else {
-        CFX_ByteString propertyString;
-        propertyValue->ToString(propertyString);
         for (int32_t j = 2; j < iLength; j++) {
           argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          jsObjectValue->GetObjectProperty(propertyString.AsStringC(),
-                                           resultValues[index]);
+          jsObjectValue->GetObjectProperty(
+              propertyValue->ToString().AsStringC(), resultValues[index]);
           index++;
         }
       }
@@ -6391,9 +6347,7 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
       return ValueToInteger(pThis, newPropertyValue.get());
     }
 
-    CFX_ByteString propertyStr;
-    propertyValue->ToString(propertyStr);
-    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+    jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                      newPropertyValue.get());
     return ValueToInteger(pThis, newPropertyValue.get());
   }
@@ -6402,11 +6356,8 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
     GetObjectDefaultValue(pValue, newPropertyValue.get());
     return ValueToInteger(pThis, newPropertyValue.get());
   }
-  if (pValue->IsString()) {
-    CFX_ByteString szValue;
-    pValue->ToString(szValue);
-    return FXSYS_atoi(szValue.c_str());
-  }
+  if (pValue->IsString())
+    return FXSYS_atoi(pValue->ToString().c_str());
   return pValue->ToInteger();
 }
 
@@ -6427,9 +6378,7 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
       return ValueToFloat(pThis, newPropertyValue.get());
     }
-    CFX_ByteString propertyStr;
-    propertyValue->ToString(propertyStr);
-    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+    jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                      newPropertyValue.get());
     return ValueToFloat(pThis, newPropertyValue.get());
   }
@@ -6438,11 +6387,8 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
     GetObjectDefaultValue(arg, newPropertyValue.get());
     return ValueToFloat(pThis, newPropertyValue.get());
   }
-  if (arg->IsString()) {
-    CFX_ByteString bsOutput;
-    arg->ToString(bsOutput);
-    return (FX_FLOAT)XFA_ByteStringToDouble(bsOutput.AsStringC());
-  }
+  if (arg->IsString())
+    return (FX_FLOAT)XFA_ByteStringToDouble(arg->ToString().AsStringC());
   if (arg->IsUndefined())
     return 0;
 
@@ -6466,9 +6412,7 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
       return ValueToDouble(pThis, newPropertyValue.get());
     }
-    CFX_ByteString propertyStr;
-    propertyValue->ToString(propertyStr);
-    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+    jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                      newPropertyValue.get());
     return ValueToDouble(pThis, newPropertyValue.get());
   }
@@ -6477,11 +6421,8 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
     GetObjectDefaultValue(arg, newPropertyValue.get());
     return ValueToDouble(pThis, newPropertyValue.get());
   }
-  if (arg->IsString()) {
-    CFX_ByteString bsOutput;
-    arg->ToString(bsOutput);
-    return XFA_ByteStringToDouble(bsOutput.AsStringC());
-  }
+  if (arg->IsString())
+    return XFA_ByteStringToDouble(arg->ToString().AsStringC());
   if (arg->IsUndefined())
     return 0;
   return arg->ToDouble();
@@ -6516,10 +6457,8 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
   if (propertyValue->IsNull())
     return ValueToDouble(pThis, jsObjectValue.get());
 
-  CFX_ByteString propertyStr;
-  propertyValue->ToString(propertyStr);
   std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
-  jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+  jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                    newPropertyValue.get());
   return ValueToDouble(pThis, newPropertyValue.get());
 }
@@ -6530,14 +6469,12 @@ void CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg,
   if (!arg)
     return;
 
-  if (arg->IsNull() || arg->IsUndefined()) {
+  if (arg->IsNull() || arg->IsUndefined())
     szOutputString = "";
-  } else if (arg->IsBoolean()) {
+  else if (arg->IsBoolean())
     szOutputString = arg->ToBoolean() ? "1" : "0";
-  } else {
-    szOutputString = "";
-    arg->ToString(szOutputString);
-  }
+  else
+    szOutputString = arg->ToString();
 }
 
 // static.

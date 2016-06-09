@@ -28,9 +28,7 @@ void Script_EventPseudoModel_StringProperty(CFXJSE_Value* pValue,
                                             CFX_WideString& wsValue,
                                             FX_BOOL bSetting) {
   if (bSetting) {
-    CFX_ByteString bsValue;
-    pValue->ToString(bsValue);
-    wsValue = CFX_WideString::FromUTF8(bsValue.AsStringC());
+    wsValue = pValue->ToWideString();
   } else {
     pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
   }

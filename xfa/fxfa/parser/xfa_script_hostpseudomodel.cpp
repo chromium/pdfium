@@ -163,10 +163,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Title(
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    CFX_ByteString bsValue;
-    pValue->ToString(bsValue);
-    pNotify->GetDocProvider()->SetTitle(
-        hDoc, CFX_WideString::FromUTF8(bsValue.AsStringC()));
+    pNotify->GetDocProvider()->SetTitle(hDoc, pValue->ToWideString());
     return;
   }
   CFX_WideString wsTitle;
@@ -314,10 +311,6 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
     if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
     } else if (pValue->IsString()) {
-      CFX_ByteString bsString;
-      pValue->ToString(bsString);
-      CFX_WideString wsExpression =
-          CFX_WideString::FromUTF8(bsString.AsStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
       if (!pScriptContext)
         return;
@@ -330,7 +323,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
-          pObject, wsExpression.AsStringC(), resoveNodeRS, dwFlag);
+          pObject, pValue->ToWideString().AsStringC(), resoveNodeRS, dwFlag);
       if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode())
         return;
 
@@ -509,10 +502,6 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
     if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
     } else if (pValue->IsString()) {
-      CFX_ByteString bsString;
-      pValue->ToString(bsString);
-      CFX_WideString wsExpression =
-          CFX_WideString::FromUTF8(bsString.AsStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
       if (!pScriptContext)
         return;
@@ -525,7 +514,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
-          pObject, wsExpression.AsStringC(), resoveNodeRS, dwFlag);
+          pObject, pValue->ToWideString().AsStringC(), resoveNodeRS, dwFlag);
       if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode())
         return;
 
@@ -613,9 +602,7 @@ FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(
   if (pValueArg->IsNull()) {
     wsValue = FX_WSTRC(L"");
   } else {
-    CFX_ByteString byMessage;
-    pValueArg->ToString(byMessage);
-    wsValue = CFX_WideString::FromUTF8(byMessage.AsStringC());
+    wsValue = pValueArg->ToWideString();
   }
   return TRUE;
 }
