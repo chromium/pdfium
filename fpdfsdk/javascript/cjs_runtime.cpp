@@ -64,6 +64,10 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     if (pPlatform->version == 2) {
       pExternalIsolate = reinterpret_cast<v8::Isolate*>(pPlatform->m_isolate);
       embedderDataSlot = pPlatform->m_v8EmbedderSlot;
+    }
+    FXJS_Initialize(embedderDataSlot, pExternalIsolate);
+  }
+  m_isolateManaged = FXJS_GetIsolate(&m_isolate);
 #else
   if (CPDFXFA_App::GetInstance()->GetJSERuntime()) {
     // TODO(tsepez): CPDFXFA_App should also use the embedder provided isolate.
@@ -78,11 +82,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
         embedderDataSlot = pPlatform->m_v8EmbedderSlot;
       }
       FXJS_Initialize(embedderDataSlot, pExternalIsolate);
-#endif
     }
-#ifndef PDF_ENABLE_XFA
-    FXJS_Initialize(embedderDataSlot, pExternalIsolate);
-#else
     m_isolateManaged = FXJS_GetIsolate(&m_isolate);
   }
 
@@ -94,20 +94,16 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     FXJS_InitializeRuntime(GetIsolate(), this, &m_context, &m_StaticObjects);
     ReleaseContext(pContext);
     return;
-#endif
   }
-#ifndef PDF_ENABLE_XFA
-  m_isolateManaged = FXJS_GetIsolate(&m_isolate);
-#else
-
 #endif
+
   if (m_isolateManaged || FXJS_GlobalIsolateRefCount() == 0)
     DefineJSObjects();
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App::GetInstance()->SetJavaScriptInitialized(TRUE);
-
 #endif
+
   CJS_Context* pContext = (CJS_Context*)NewContext();
   FXJS_InitializeRuntime(GetIsolate(), this, &m_context, &m_StaticObjects);
   ReleaseContext(pContext);
@@ -245,6 +241,16 @@ v8::Local<v8::Array> CJS_Runtime::GetConstArray(const CFX_WideString& name) {
   return v8::Local<v8::Array>::New(m_isolate, m_ConstArrays[name]);
 }
 
+void CJS_Runtime::AddObserver(Observer* observer) {
+  ASSERT(!pdfium::ContainsKey(m_observers, observer));
+  m_observers.insert(observer);
+}
+
+void CJS_Runtime::RemoveObserver(Observer* observer) {
+  ASSERT(pdfium::ContainsKey(m_observers, observer));
+  m_observers.erase(observer);
+}
+
 #ifdef PDF_ENABLE_XFA
 CFX_WideString ChangeObjName(const CFX_WideString& str) {
   CFX_WideString sRet = str;
@@ -253,7 +259,6 @@ CFX_WideString ChangeObjName(const CFX_WideString& str) {
 }
 FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
                                     CFXJSE_Value* pValue) {
-#ifdef PDF_ENABLE_XFA
   const FX_CHAR* name = utf8Name.c_str();
 
   v8::Isolate::Scope isolate_scope(GetIsolate());
@@ -281,13 +286,10 @@ FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
     return FALSE;
   }
   pValue->ForceSetValue(propvalue);
-#endif
-
   return TRUE;
 }
 FX_BOOL CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
                                     CFXJSE_Value* pValue) {
-#ifdef PDF_ENABLE_XFA
   if (utf8Name.IsEmpty() || !pValue)
     return FALSE;
   const FX_CHAR* name = utf8Name.c_str();
@@ -306,17 +308,6 @@ FX_BOOL CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
       v8::String::NewFromUtf8(pIsolate, name, v8::String::kNormalString,
                               utf8Name.GetLength()),
       propvalue);
-#endif
   return TRUE;
 }
-
 #endif
-void CJS_Runtime::AddObserver(Observer* observer) {
-  ASSERT(!pdfium::ContainsKey(m_observers, observer));
-  m_observers.insert(observer);
-}
-
-void CJS_Runtime::RemoveObserver(Observer* observer) {
-  ASSERT(pdfium::ContainsKey(m_observers, observer));
-  m_observers.erase(observer);
-}
