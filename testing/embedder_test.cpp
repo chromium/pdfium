@@ -53,7 +53,7 @@ EmbedderTest::EmbedderTest()
   InitializeV8ForPDFium(g_exe_path_, std::string(), &natives_, &snapshot_,
                         &platform_);
 #else
-  InitializeV8ForPDFium(&platform_);
+  InitializeV8ForPDFium(g_exe_path_, &platform_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // FPDF_ENABLE_V8
 }

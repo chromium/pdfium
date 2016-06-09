@@ -4,8 +4,8 @@ vars = {
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
 
-  'build_revision': 'c557a3544d31513394681f40c8c2512cf7ddcb9e',
-  'buildtools_revision': '309289315767f615256eada4653b4917cf148c8e',
+  'build_revision': '4842479bd8da7b9e5eb027f8c15bee533f9c328f',
+  'buildtools_revision': '099f1da55bfe8caa12266371a7eb983698fb1d87',
   'clang_revision': 'b6f620b311665e2d96d0921833f54295b9bbf925',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'gen_library_loader_revision': '916d4acd8b2cde67a390737dfba90b3c37de23a1',
@@ -15,8 +15,8 @@ vars = {
   'pdfium_tests_revision': '6c769320872e6ca82da4adaec1a497237f71b543',
   'skia_revision': '7942f22c607caf826a6a609b89338a569d0a30e7',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
-  'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
-  'v8_revision': '055bfa771a7bd763305d3bafd43e39459abc95a4',
+  'trace_event_revision': '54b8455be9505c2cb0cf5c26bb86739c236471aa',
+  'v8_revision': 'cec0ed0f77e91bfd49bbd298ab58f77375eecead',
 }
 
 deps = {

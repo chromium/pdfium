@@ -783,7 +783,7 @@ int main(int argc, const char* argv[]) {
   InitializeV8ForPDFium(options.exe_path, options.bin_directory, &natives,
                         &snapshot, &platform);
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
-  InitializeV8ForPDFium(&platform);
+  InitializeV8ForPDFium(options.exe_path, &platform);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 

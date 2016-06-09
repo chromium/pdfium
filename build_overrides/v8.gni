@@ -6,8 +6,10 @@ if (is_android) {
   import("//build/config/android/config.gni")
 }
 
+v8_use_external_startup_data = !is_ios
+
+# Turns on compiler optimizations in V8 in Debug build.
 v8_optimized_debug = true
-v8_use_external_startup_data = false
 
 # V8 extras
 # Adding V8 extras files requires API owners review

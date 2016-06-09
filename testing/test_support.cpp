@@ -58,8 +58,8 @@ bool GetExternalData(const std::string& exe_path,
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
-void InitializeV8Common(v8::Platform** platform) {
-  v8::V8::InitializeICU();
+void InitializeV8Common(const char* exe_path, v8::Platform** platform) {
+  v8::V8::InitializeICUDefaultLocation(exe_path);
 
   *platform = v8::platform::CreateDefaultPlatform();
   v8::V8::InitializePlatform(*platform);
@@ -156,7 +156,7 @@ bool InitializeV8ForPDFium(const std::string& exe_path,
                            v8::StartupData* natives_blob,
                            v8::StartupData* snapshot_blob,
                            v8::Platform** platform) {
-  InitializeV8Common(platform);
+  InitializeV8Common(exe_path.c_str(), platform);
   if (!GetExternalData(exe_path, bin_dir, "natives_blob.bin", natives_blob))
     return false;
   if (!GetExternalData(exe_path, bin_dir, "snapshot_blob.bin", snapshot_blob))
@@ -166,8 +166,9 @@ bool InitializeV8ForPDFium(const std::string& exe_path,
   return true;
 }
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
-bool InitializeV8ForPDFium(v8::Platform** platform) {
-  InitializeV8Common(platform);
+bool InitializeV8ForPDFium(const std::string& exe_path,
+                           v8::Platform** platform) {
+  InitializeV8Common(exe_path.c_str(), platform);
   return true;
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
