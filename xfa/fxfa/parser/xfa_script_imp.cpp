@@ -502,10 +502,7 @@ FX_BOOL CXFA_ScriptContext::QueryVariableValue(
 
   FX_BOOL bRes = FALSE;
   CFXJSE_Context* pVariableContext = static_cast<CFXJSE_Context*>(lpVariables);
-  std::unique_ptr<CFXJSE_Value> pObject(
-      new CFXJSE_Value(pVariableContext->GetRuntime()));
-  pVariableContext->GetGlobalObject(pObject.get());
-
+  std::unique_ptr<CFXJSE_Value> pObject = pVariableContext->GetGlobalObject();
   std::unique_ptr<CFXJSE_Value> hVariableValue(new CFXJSE_Value(m_pIsolate));
   if (!bGetter) {
     pObject->SetObjectOwnProperty(szPropName, pValue);
@@ -529,11 +526,8 @@ void CXFA_ScriptContext::ReleaseVariablesMap() {
     CXFA_Object* pScriptNode;
     CFXJSE_Context* pVariableContext = nullptr;
     m_mapVariableToContext.GetNextAssoc(ps, pScriptNode, pVariableContext);
-    std::unique_ptr<CFXJSE_Value> pObject(
-        new CFXJSE_Value(pVariableContext->GetRuntime()));
-    pVariableContext->GetGlobalObject(pObject.get());
 
-    delete ToThisProxy(pObject.get(), nullptr);
+    delete ToThisProxy(pVariableContext->GetGlobalObject().get(), nullptr);
     delete pVariableContext;
   }
   m_mapVariableToContext.RemoveAll();
@@ -545,14 +539,11 @@ void CXFA_ScriptContext::DefineJsClass() {
 
 void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
   static const CFX_ByteStringC OBJ_NAME[2] = {"Number", "Date"};
-  std::unique_ptr<CFXJSE_Value> pObject(
-      new CFXJSE_Value(pContext->GetRuntime()));
-  pContext->GetGlobalObject(pObject.get());
-
+  std::unique_ptr<CFXJSE_Value> pObject = pContext->GetGlobalObject();
   std::unique_ptr<CFXJSE_Value> hProp(new CFXJSE_Value(m_pIsolate));
   for (int i = 0; i < 2; ++i) {
     if (pObject->GetObjectProperty(OBJ_NAME[i], hProp.get()))
-      pObject.get()->DeleteObjectProperty(OBJ_NAME[i]);
+      pObject->DeleteObjectProperty(OBJ_NAME[i]);
   }
 }
 CFXJSE_Class* CXFA_ScriptContext::GetJseNormalClass() {

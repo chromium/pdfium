@@ -157,13 +157,16 @@ CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
 
 CFXJSE_Context::~CFXJSE_Context() {}
 
-void CFXJSE_Context::GetGlobalObject(CFXJSE_Value* pValue) {
-  ASSERT(pValue);
+std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
+  std::unique_ptr<CFXJSE_Value> pValue(new CFXJSE_Value(m_pIsolate));
+
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext =
       v8::Local<v8::Context>::New(m_pIsolate, m_hContext);
   v8::Local<v8::Object> hGlobalObject = hContext->Global();
   pValue->ForceSetValue(hGlobalObject);
+
+  return pValue;
 }
 
 void CFXJSE_Context::EnableCompatibleMode() {
