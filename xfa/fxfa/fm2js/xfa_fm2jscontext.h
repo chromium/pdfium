@@ -404,7 +404,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static void GenerateSomExpression(const CFX_ByteStringC& szName,
                                     int32_t iIndexFlags,
                                     int32_t iIndexValue,
-                                    FX_BOOL bIsStar,
+                                    bool bIsStar,
                                     CFX_ByteString& szSomExp);
   static FX_BOOL GetObjectByName(CFXJSE_Value* pThis,
                                  CFXJSE_Value* accessorValue,

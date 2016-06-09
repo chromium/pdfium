@@ -5518,143 +5518,142 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
-  if ((argc == 4) || (argc == 5)) {
-    FX_BOOL bIsStar = TRUE;
-    std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
-    CFX_ByteString bsAccessorName = args.GetUTF8String(1);
-    CFX_ByteString szName = args.GetUTF8String(2);
-    int32_t iIndexFlags = args.GetInt32(3);
-    int32_t iIndexValue = 0;
-    if (argc > 4) {
-      bIsStar = FALSE;
-      std::unique_ptr<CFXJSE_Value> argIndex = args.GetValue(4);
-      iIndexValue = ValueToInteger(pThis, argIndex.get());
-    }
-    CFX_ByteString szSomExp;
-    GenerateSomExpression(szName.AsStringC(), iIndexFlags, iIndexValue, bIsStar,
-                          szSomExp);
-    if (argAccessor->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
-      argAccessor->GetObjectProperty("length", pLengthValue.get());
-      int32_t iLength = pLengthValue->ToInteger();
-      int32_t iCounter = 0;
-      CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
-      int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
-      for (int32_t i = 0; i < (iLength - 2); i++) {
-        iSizes[i] = 0;
-      }
-      std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
-      FX_BOOL bAttribute = FALSE;
-      for (int32_t i = 2; i < iLength; i++) {
-        argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
-        XFA_RESOLVENODE_RS resoveNodeRS;
-        int32_t iRet =
-            ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
-                           resoveNodeRS, TRUE, szName.IsEmpty());
-        if (iRet > 0) {
-          ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
-                             hResolveValues[i - 2], iSizes[i - 2], bAttribute);
-          iCounter += iSizes[i - 2];
-        }
-      }
-      if (iCounter > 0) {
-        CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iCounter + 2);
-        for (int32_t i = 0; i < (iCounter + 2); i++)
-          rgValues[i] = new CFXJSE_Value(pIsolate);
-
-        rgValues[0]->SetInteger(1);
-        if (bAttribute) {
-          rgValues[1]->SetString(szName.AsStringC());
-        } else {
-          rgValues[1]->SetNull();
-        }
-        int32_t iIndex = 2;
-        for (int32_t i = 0; i < iLength - 2; i++) {
-          for (int32_t j = 0; j < iSizes[i]; j++) {
-            rgValues[iIndex]->Assign(hResolveValues[i][j]);
-            iIndex++;
-          }
-        }
-        args.GetReturnValue()->SetArray(iCounter + 2, rgValues);
-        for (int32_t i = 0; i < (iCounter + 2); i++)
-          delete rgValues[i];
-
-        FX_Free(rgValues);
-      } else {
-        CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsStringC());
-        CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsStringC());
-        pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                 wsPropertyName.c_str(),
-                                 wsSomExpression.c_str());
-      }
-      for (int32_t i = 0; i < iLength - 2; i++) {
-        for (int32_t j = 0; j < iSizes[i]; j++)
-          delete hResolveValues[i][j];
-
-        if (iSizes[i] > 0) {
-          FX_Free(hResolveValues[i]);
-        }
-      }
-      FX_Free(hResolveValues);
-      FX_Free(iSizes);
-    } else {
-      XFA_RESOLVENODE_RS resoveNodeRS;
-      int32_t iRet = 0;
-      if (argAccessor->IsObject() ||
-          (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
-        iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                              resoveNodeRS, TRUE, szName.IsEmpty());
-      } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty()) {
-        FX_BOOL bGetObject = GetObjectByName(pThis, argAccessor.get(),
-                                             bsAccessorName.AsStringC());
-        if (bGetObject) {
-          iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                                resoveNodeRS, TRUE, szName.IsEmpty());
-        }
-      }
-      if (iRet > 0) {
-        CFXJSE_Value** hResolveValues;
-        int32_t iSize = 0;
-        FX_BOOL bAttribute = FALSE;
-        ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(),
-                           hResolveValues, iSize, bAttribute);
-        CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
-        for (int32_t i = 0; i < (iSize + 2); i++)
-          rgValues[i] = new CFXJSE_Value(pIsolate);
-
-        rgValues[0]->SetInteger(1);
-        if (bAttribute) {
-          rgValues[1]->SetString(szName.AsStringC());
-        } else {
-          rgValues[1]->SetNull();
-        }
-        for (int32_t i = 0; i < iSize; i++) {
-          rgValues[i + 2]->Assign(hResolveValues[i]);
-        }
-        args.GetReturnValue()->SetArray(iSize + 2, rgValues);
-        for (int32_t i = 0; i < (iSize + 2); i++)
-          delete rgValues[i];
-
-        FX_Free(rgValues);
-        for (int32_t i = 0; i < iSize; i++)
-          delete hResolveValues[i];
-
-        FX_Free(hResolveValues);
-      } else {
-        CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsStringC());
-        CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsStringC());
-        pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                 wsPropertyName.c_str(),
-                                 wsSomExpression.c_str());
-      }
-    }
-  } else {
+  if (argc < 4 || argc > 5) {
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    return;
   }
+
+  bool bIsStar = true;
+  int32_t iIndexValue = 0;
+  if (argc > 4) {
+    bIsStar = false;
+    iIndexValue = ValueToInteger(pThis, args.GetValue(4).get());
+  }
+
+  CFX_ByteString szName = args.GetUTF8String(2);
+  CFX_ByteString szSomExp;
+  GenerateSomExpression(szName.AsStringC(), args.GetInt32(3), iIndexValue,
+                        bIsStar, szSomExp);
+
+  std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
+  if (argAccessor->IsArray()) {
+    std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
+    argAccessor->GetObjectProperty("length", pLengthValue.get());
+    int32_t iLength = pLengthValue->ToInteger();
+    CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
+    int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
+    for (int32_t i = 0; i < (iLength - 2); i++)
+      iSizes[i] = 0;
+
+    std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
+    FX_BOOL bAttribute = FALSE;
+    int32_t iCounter = 0;
+    for (int32_t i = 2; i < iLength; i++) {
+      argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
+
+      XFA_RESOLVENODE_RS resoveNodeRS;
+      if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
+                         resoveNodeRS, TRUE, szName.IsEmpty()) > 0) {
+        ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
+                           hResolveValues[i - 2], iSizes[i - 2], bAttribute);
+        iCounter += iSizes[i - 2];
+      }
+    }
+    if (iCounter < 1) {
+      CFX_WideString wsPropertyName =
+          CFX_WideString::FromUTF8(szName.AsStringC());
+      CFX_WideString wsSomExpression =
+          CFX_WideString::FromUTF8(szSomExp.AsStringC());
+      pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
+                               wsPropertyName.c_str(), wsSomExpression.c_str());
+      return;
+    }
+
+    CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iCounter + 2);
+    for (int32_t i = 0; i < (iCounter + 2); i++)
+      rgValues[i] = new CFXJSE_Value(pIsolate);
+
+    rgValues[0]->SetInteger(1);
+    if (bAttribute)
+      rgValues[1]->SetString(szName.AsStringC());
+    else
+      rgValues[1]->SetNull();
+
+    int32_t iIndex = 2;
+    for (int32_t i = 0; i < iLength - 2; i++) {
+      for (int32_t j = 0; j < iSizes[i]; j++) {
+        rgValues[iIndex]->Assign(hResolveValues[i][j]);
+        iIndex++;
+      }
+    }
+    args.GetReturnValue()->SetArray(iCounter + 2, rgValues);
+
+    for (int32_t i = 0; i < (iCounter + 2); i++)
+      delete rgValues[i];
+    FX_Free(rgValues);
+
+    for (int32_t i = 0; i < iLength - 2; i++) {
+      for (int32_t j = 0; j < iSizes[i]; j++)
+        delete hResolveValues[i][j];
+
+      if (iSizes[i] > 0)
+        FX_Free(hResolveValues[i]);
+    }
+    FX_Free(hResolveValues);
+    FX_Free(iSizes);
+
+    return;
+  }
+
+  XFA_RESOLVENODE_RS resoveNodeRS;
+  int32_t iRet = 0;
+  CFX_ByteString bsAccessorName = args.GetUTF8String(1);
+  if (argAccessor->IsObject() ||
+      (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
+    iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
+                          resoveNodeRS, TRUE, szName.IsEmpty());
+  } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
+             GetObjectByName(pThis, argAccessor.get(),
+                             bsAccessorName.AsStringC())) {
+    iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
+                          resoveNodeRS, TRUE, szName.IsEmpty());
+  }
+  if (iRet < 1) {
+    CFX_WideString wsPropertyName =
+        CFX_WideString::FromUTF8(szName.AsStringC());
+    CFX_WideString wsSomExpression =
+        CFX_WideString::FromUTF8(szSomExp.AsStringC());
+    pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
+                             wsPropertyName.c_str(), wsSomExpression.c_str());
+    return;
+  }
+
+  CFXJSE_Value** hResolveValues;
+  int32_t iSize = 0;
+  FX_BOOL bAttribute = FALSE;
+  ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), hResolveValues,
+                     iSize, bAttribute);
+  CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
+  for (int32_t i = 0; i < (iSize + 2); i++)
+    rgValues[i] = new CFXJSE_Value(pIsolate);
+
+  rgValues[0]->SetInteger(1);
+  if (bAttribute)
+    rgValues[1]->SetString(szName.AsStringC());
+  else
+    rgValues[1]->SetNull();
+
+  for (int32_t i = 0; i < iSize; i++)
+    rgValues[i + 2]->Assign(hResolveValues[i]);
+
+  args.GetReturnValue()->SetArray(iSize + 2, rgValues);
+  for (int32_t i = 0; i < (iSize + 2); i++)
+    delete rgValues[i];
+  FX_Free(rgValues);
+
+  for (int32_t i = 0; i < iSize; i++)
+    delete hResolveValues[i];
+  FX_Free(hResolveValues);
 }
 
 // static
@@ -5664,138 +5663,136 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
-  if ((argc == 4) || (argc == 5)) {
-    FX_BOOL bIsStar = TRUE;
-    std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
-    CFX_ByteString bsAccessorName = args.GetUTF8String(1);
-    CFX_ByteString szName = args.GetUTF8String(2);
-    int32_t iIndexFlags = args.GetInt32(3);
-    int32_t iIndexValue = 0;
-    if (argc > 4) {
-      bIsStar = FALSE;
-      std::unique_ptr<CFXJSE_Value> argIndex = args.GetValue(4);
-      iIndexValue = ValueToInteger(pThis, argIndex.get());
-    }
-    CFX_ByteString szSomExp;
-    GenerateSomExpression(szName.AsStringC(), iIndexFlags, iIndexValue, bIsStar,
-                          szSomExp);
-    if (argAccessor->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
-      argAccessor->GetObjectProperty("length", pLengthValue.get());
-      int32_t iLength = pLengthValue->ToInteger();
-      int32_t iCounter = 0;
-      CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
-      int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
-      std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
-      FX_BOOL bAttribute = FALSE;
-      for (int32_t i = 2; i < iLength; i++) {
-        argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
-        XFA_RESOLVENODE_RS resoveNodeRS;
-        int32_t iRet =
-            ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
-                           resoveNodeRS, FALSE);
-        if (iRet > 0) {
-          ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
-                             hResolveValues[i - 2], iSizes[i - 2], bAttribute);
-          iCounter += iSizes[i - 2];
-        }
-      }
-      if (iCounter > 0) {
-        CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iCounter + 2);
-        for (int32_t i = 0; i < (iCounter + 2); i++)
-          rgValues[i] = new CFXJSE_Value(pIsolate);
-
-        rgValues[0]->SetInteger(1);
-        if (bAttribute) {
-          rgValues[1]->SetString(szName.AsStringC());
-        } else {
-          rgValues[1]->SetNull();
-        }
-        int32_t iIndex = 2;
-        for (int32_t i = 0; i < iLength - 2; i++) {
-          for (int32_t j = 0; j < iSizes[i]; j++) {
-            rgValues[iIndex]->Assign(hResolveValues[i][j]);
-            iIndex++;
-          }
-        }
-        args.GetReturnValue()->SetArray(iCounter + 2, rgValues);
-        for (int32_t i = 0; i < (iCounter + 2); i++)
-          delete rgValues[i];
-
-        FX_Free(rgValues);
-      } else {
-        CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsStringC());
-        CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsStringC());
-        pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                 wsPropertyName.c_str(),
-                                 wsSomExpression.c_str());
-      }
-      for (int32_t i = 0; i < iLength - 2; i++) {
-        for (int32_t j = 0; j < iSizes[i]; j++)
-          delete hResolveValues[i][j];
-
-        FX_Free(hResolveValues[i]);
-      }
-      FX_Free(hResolveValues);
-      FX_Free(iSizes);
-    } else {
-      XFA_RESOLVENODE_RS resoveNodeRS;
-      int32_t iRet = 0;
-      if (argAccessor->IsObject() ||
-          (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
-        iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                              resoveNodeRS, FALSE);
-      } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty()) {
-        FX_BOOL bGetObject = GetObjectByName(pThis, argAccessor.get(),
-                                             bsAccessorName.AsStringC());
-        if (bGetObject) {
-          iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                                resoveNodeRS, FALSE);
-        }
-      }
-      if (iRet > 0) {
-        CFXJSE_Value** hResolveValues;
-        int32_t iSize = 0;
-        FX_BOOL bAttribute = FALSE;
-        ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(),
-                           hResolveValues, iSize, bAttribute);
-        CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
-        for (int32_t i = 0; i < (iSize + 2); i++)
-          rgValues[i] = new CFXJSE_Value(pIsolate);
-
-        rgValues[0]->SetInteger(1);
-        if (bAttribute) {
-          rgValues[1]->SetString(szName.AsStringC());
-        } else {
-          rgValues[1]->SetNull();
-        }
-        for (int32_t i = 0; i < iSize; i++) {
-          rgValues[i + 2]->Assign(hResolveValues[i]);
-        }
-        args.GetReturnValue()->SetArray(iSize + 2, rgValues);
-        for (int32_t i = 0; i < (iSize + 2); i++)
-          delete rgValues[i];
-
-        FX_Free(rgValues);
-        for (int32_t i = 0; i < iSize; i++)
-          delete hResolveValues[i];
-
-        FX_Free(hResolveValues);
-      } else {
-        CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsStringC());
-        CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsStringC());
-        pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
-                                 wsPropertyName.c_str(),
-                                 wsSomExpression.c_str());
-      }
-    }
-  } else {
+  if (argc < 4 || argc > 5) {
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    return;
   }
+
+  bool bIsStar = true;
+  int32_t iIndexValue = 0;
+  if (argc > 4) {
+    bIsStar = false;
+    iIndexValue = ValueToInteger(pThis, args.GetValue(4).get());
+  }
+
+  CFX_ByteString szSomExp;
+  CFX_ByteString szName = args.GetUTF8String(2);
+  GenerateSomExpression(szName.AsStringC(), args.GetInt32(3), iIndexValue,
+                        bIsStar, szSomExp);
+
+  std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
+  if (argAccessor->IsArray()) {
+    std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
+    argAccessor->GetObjectProperty("length", pLengthValue.get());
+    int32_t iLength = pLengthValue->ToInteger();
+    int32_t iCounter = 0;
+
+    CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
+    int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
+    std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
+    FX_BOOL bAttribute = FALSE;
+    for (int32_t i = 2; i < iLength; i++) {
+      argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
+      XFA_RESOLVENODE_RS resoveNodeRS;
+      if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
+                         resoveNodeRS, FALSE) > 0) {
+        ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
+                           hResolveValues[i - 2], iSizes[i - 2], bAttribute);
+        iCounter += iSizes[i - 2];
+      }
+    }
+    if (iCounter < 1) {
+      CFX_WideString wsPropertyName =
+          CFX_WideString::FromUTF8(szName.AsStringC());
+      CFX_WideString wsSomExpression =
+          CFX_WideString::FromUTF8(szSomExp.AsStringC());
+      pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
+                               wsPropertyName.c_str(), wsSomExpression.c_str());
+      return;
+    }
+
+    CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iCounter + 2);
+    for (int32_t i = 0; i < (iCounter + 2); i++)
+      rgValues[i] = new CFXJSE_Value(pIsolate);
+
+    rgValues[0]->SetInteger(1);
+    if (bAttribute)
+      rgValues[1]->SetString(szName.AsStringC());
+    else
+      rgValues[1]->SetNull();
+
+    int32_t iIndex = 2;
+    for (int32_t i = 0; i < iLength - 2; i++) {
+      for (int32_t j = 0; j < iSizes[i]; j++) {
+        rgValues[iIndex]->Assign(hResolveValues[i][j]);
+        iIndex++;
+      }
+    }
+    args.GetReturnValue()->SetArray(iCounter + 2, rgValues);
+    for (int32_t i = 0; i < (iCounter + 2); i++)
+      delete rgValues[i];
+    FX_Free(rgValues);
+
+    for (int32_t i = 0; i < iLength - 2; i++) {
+      for (int32_t j = 0; j < iSizes[i]; j++)
+        delete hResolveValues[i][j];
+      FX_Free(hResolveValues[i]);
+    }
+    FX_Free(hResolveValues);
+    FX_Free(iSizes);
+    return;
+  }
+
+  XFA_RESOLVENODE_RS resoveNodeRS;
+  int32_t iRet = 0;
+  CFX_ByteString bsAccessorName = args.GetUTF8String(1);
+  if (argAccessor->IsObject() ||
+      (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
+    iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
+                          resoveNodeRS, FALSE);
+  } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
+             GetObjectByName(pThis, argAccessor.get(),
+                             bsAccessorName.AsStringC())) {
+    iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
+                          resoveNodeRS, FALSE);
+  }
+  if (iRet < 1) {
+    CFX_WideString wsPropertyName =
+        CFX_WideString::FromUTF8(szName.AsStringC());
+    CFX_WideString wsSomExpression =
+        CFX_WideString::FromUTF8(szSomExp.AsStringC());
+    pContext->ThrowException(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
+                             wsPropertyName.c_str(), wsSomExpression.c_str());
+    return;
+  }
+
+  CFXJSE_Value** hResolveValues;
+  int32_t iSize = 0;
+  FX_BOOL bAttribute = FALSE;
+  ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), hResolveValues,
+                     iSize, bAttribute);
+  CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
+  for (int32_t i = 0; i < (iSize + 2); i++)
+    rgValues[i] = new CFXJSE_Value(pIsolate);
+
+  rgValues[0]->SetInteger(1);
+  if (bAttribute)
+    rgValues[1]->SetString(szName.AsStringC());
+  else
+    rgValues[1]->SetNull();
+
+  for (int32_t i = 0; i < iSize; i++)
+    rgValues[i + 2]->Assign(hResolveValues[i]);
+
+  args.GetReturnValue()->SetArray(iSize + 2, rgValues);
+
+  for (int32_t i = 0; i < (iSize + 2); i++)
+    delete rgValues[i];
+  FX_Free(rgValues);
+
+  for (int32_t i = 0; i < iSize; i++)
+    delete hResolveValues[i];
+  FX_Free(hResolveValues);
 }
 
 // static
@@ -5803,55 +5800,58 @@ void CXFA_FM2JSContext::eval_translation(CFXJSE_Value* pThis,
                                          const CFX_ByteStringC& szFuncName,
                                          CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
-    CFX_ByteString argString;
-    ValueToUTF8String(argOne.get(), argString);
-    if (argString.IsEmpty()) {
-      pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
-    } else {
-      CFX_WideString scriptString =
-          CFX_WideString::FromUTF8(argString.AsStringC());
-      CFX_WideTextBuf wsJavaScriptBuf;
-      CFX_WideString wsError;
-      CXFA_FM2JSContext::Translate(scriptString.AsStringC(), wsJavaScriptBuf,
-                                   wsError);
-      if (wsError.IsEmpty()) {
-        CFX_WideString javaScript = wsJavaScriptBuf.MakeString();
-        args.GetReturnValue()->SetString(
-            FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength())
-                .AsStringC());
-      } else {
-        pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
-      }
-    }
-  } else {
+  if (args.GetLength() != 1) {
     pContext->ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Eval");
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
+  CFX_ByteString argString;
+  ValueToUTF8String(argOne.get(), argString);
+  if (argString.IsEmpty()) {
+    pContext->ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
+    return;
+  }
+
+  CFX_WideString scriptString = CFX_WideString::FromUTF8(argString.AsStringC());
+  CFX_WideTextBuf wsJavaScriptBuf;
+  CFX_WideString wsError;
+  CXFA_FM2JSContext::Translate(scriptString.AsStringC(), wsJavaScriptBuf,
+                               wsError);
+  if (!wsError.IsEmpty()) {
+    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    return;
+  }
+
+  CFX_WideString javaScript = wsJavaScriptBuf.MakeString();
+  args.GetReturnValue()->SetString(
+      FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).AsStringC());
 }
 
 // static
 void CXFA_FM2JSContext::is_fm_object(CFXJSE_Value* pThis,
                                      const CFX_ByteStringC& szFuncName,
                                      CFXJSE_Arguments& args) {
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    args.GetReturnValue()->SetBoolean(argOne->IsObject());
-  } else {
+  if (args.GetLength() != 1) {
     args.GetReturnValue()->SetBoolean(FALSE);
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
+  args.GetReturnValue()->SetBoolean(argOne->IsObject());
 }
 
 // static
 void CXFA_FM2JSContext::is_fm_array(CFXJSE_Value* pThis,
                                     const CFX_ByteStringC& szFuncName,
                                     CFXJSE_Arguments& args) {
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    args.GetReturnValue()->SetBoolean(argOne->IsArray());
-  } else {
+  if (args.GetLength() != 1) {
     args.GetReturnValue()->SetBoolean(FALSE);
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
+  args.GetReturnValue()->SetBoolean(argOne->IsArray());
 }
 
 // static
@@ -5859,54 +5859,62 @@ void CXFA_FM2JSContext::get_fm_value(CFXJSE_Value* pThis,
                                      const CFX_ByteStringC& szFuncName,
                                      CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    if (argOne->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      argOne->GetObjectPropertyByIdx(1, propertyValue.get());
-      argOne->GetObjectPropertyByIdx(2, jsObjectValue.get());
-      if (propertyValue->IsNull()) {
-        GetObjectDefaultValue(jsObjectValue.get(), args.GetReturnValue());
-      } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
-        jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                         args.GetReturnValue());
-      }
-    } else if (argOne->IsObject()) {
-      GetObjectDefaultValue(argOne.get(), args.GetReturnValue());
-    } else {
-      args.GetReturnValue()->Assign(argOne.get());
-    }
-  } else {
+  if (args.GetLength() != 1) {
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
+  if (argOne->IsArray()) {
+    v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    argOne->GetObjectPropertyByIdx(1, propertyValue.get());
+    argOne->GetObjectPropertyByIdx(2, jsObjectValue.get());
+    if (propertyValue->IsNull()) {
+      GetObjectDefaultValue(jsObjectValue.get(), args.GetReturnValue());
+      return;
+    }
+
+    CFX_ByteString propertyStr;
+    propertyValue->ToString(propertyStr);
+    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                     args.GetReturnValue());
+    return;
+  }
+
+  if (argOne->IsObject()) {
+    GetObjectDefaultValue(argOne.get(), args.GetReturnValue());
+    return;
+  }
+
+  args.GetReturnValue()->Assign(argOne.get());
 }
 
 // static
 void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
                                      const CFX_ByteStringC& szFuncName,
                                      CFXJSE_Arguments& args) {
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    if (argOne->IsArray()) {
-#ifndef NDEBUG
-      CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
-      v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      argOne->GetObjectProperty("length", lengthValue.get());
-      ASSERT(lengthValue->ToInteger() >= 3);
-#endif
-      argOne->GetObjectPropertyByIdx(2, args.GetReturnValue());
-    } else {
-      args.GetReturnValue()->Assign(argOne.get());
-    }
-  } else {
-    CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
-    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+  if (args.GetLength() != 1) {
+    ToJSContext(pThis, nullptr)->ThrowException(XFA_IDS_COMPILER_ERROR);
+    return;
   }
+
+  std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
+  if (!argOne->IsArray()) {
+    args.GetReturnValue()->Assign(argOne.get());
+    return;
+  }
+
+#ifndef NDEBUG
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+  argOne->GetObjectProperty("length", lengthValue.get());
+  ASSERT(lengthValue->ToInteger() >= 3);
+#endif
+
+  argOne->GetObjectPropertyByIdx(2, args.GetReturnValue());
 }
 
 // static
@@ -5914,50 +5922,56 @@ void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
                                       const CFX_ByteStringC& szFuncName,
                                       CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  if (args.GetLength() == 1) {
-    std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
-    if (argOne->IsArray()) {
-#ifndef NDEBUG
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-      argOne->GetObjectProperty("length", lengthValue.get());
-      ASSERT(lengthValue->ToInteger() >= 3);
-#endif
-      std::unique_ptr<CFXJSE_Value> flagsValue(new CFXJSE_Value(pIsolate));
-      argOne->GetObjectPropertyByIdx(0, flagsValue.get());
-      int32_t iFlags = flagsValue->ToInteger();
-      if (iFlags == 4) {
-        CFXJSE_Value* rgValues[3];
-        for (int32_t i = 0; i < 3; i++)
-          rgValues[i] = new CFXJSE_Value(pIsolate);
-
-        rgValues[0]->SetInteger(3);
-        rgValues[1]->SetNull();
-        rgValues[2]->SetNull();
-        args.GetReturnValue()->SetArray(3, rgValues);
-        for (int32_t i = 0; i < 3; i++)
-          delete rgValues[i];
-      } else if (iFlags == 3) {
-        std::unique_ptr<CFXJSE_Value> objectValue(new CFXJSE_Value(pIsolate));
-        argOne->GetObjectPropertyByIdx(2, objectValue.get());
-        if (!objectValue->IsNull()) {
-          args.GetReturnValue()->Assign(argOne.get());
-        } else {
-          pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
-        }
-      } else {
-        std::unique_ptr<CFXJSE_Value> simpleValue =
-            GetSimpleValue(pThis, args, 0);
-        args.GetReturnValue()->Assign(simpleValue.get());
-      }
-    } else {
-      std::unique_ptr<CFXJSE_Value> simpleValue =
-          GetSimpleValue(pThis, args, 0);
-      args.GetReturnValue()->Assign(simpleValue.get());
-    }
-  } else {
+  if (args.GetLength() != 1) {
     pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    return;
   }
+
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
+  if (!argOne->IsArray()) {
+    std::unique_ptr<CFXJSE_Value> simpleValue = GetSimpleValue(pThis, args, 0);
+    args.GetReturnValue()->Assign(simpleValue.get());
+    return;
+  }
+
+#ifndef NDEBUG
+  std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+  argOne->GetObjectProperty("length", lengthValue.get());
+  ASSERT(lengthValue->ToInteger() >= 3);
+#endif
+
+  std::unique_ptr<CFXJSE_Value> flagsValue(new CFXJSE_Value(pIsolate));
+  argOne->GetObjectPropertyByIdx(0, flagsValue.get());
+  int32_t iFlags = flagsValue->ToInteger();
+  if (iFlags != 3 && iFlags != 4) {
+    std::unique_ptr<CFXJSE_Value> simpleValue = GetSimpleValue(pThis, args, 0);
+    args.GetReturnValue()->Assign(simpleValue.get());
+    return;
+  }
+
+  if (iFlags == 4) {
+    CFXJSE_Value* rgValues[3];
+    for (int32_t i = 0; i < 3; i++)
+      rgValues[i] = new CFXJSE_Value(pIsolate);
+
+    rgValues[0]->SetInteger(3);
+    rgValues[1]->SetNull();
+    rgValues[2]->SetNull();
+    args.GetReturnValue()->SetArray(3, rgValues);
+    for (int32_t i = 0; i < 3; i++)
+      delete rgValues[i];
+
+    return;
+  }
+
+  std::unique_ptr<CFXJSE_Value> objectValue(new CFXJSE_Value(pIsolate));
+  argOne->GetObjectPropertyByIdx(2, objectValue.get());
+  if (objectValue->IsNull()) {
+    pContext->ThrowException(XFA_IDS_COMPILER_ERROR);
+    return;
+  }
+  args.GetReturnValue()->Assign(argOne.get());
 }
 
 // static
@@ -5978,6 +5992,7 @@ void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
     }
     iLength += 1;
   }
+
   CFXJSE_Value** returnValues = FX_Alloc(CFXJSE_Value*, iLength);
   for (int32_t i = 0; i < (int32_t)iLength; i++)
     returnValues[i] = new CFXJSE_Value(pIsolate);
@@ -6010,79 +6025,77 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
     uint32_t index) {
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   ASSERT(index < (uint32_t)args.GetLength());
+
   std::unique_ptr<CFXJSE_Value> argIndex = args.GetValue(index);
+  if (!argIndex->IsArray() && !argIndex->IsObject())
+    return argIndex;
+
   if (argIndex->IsArray()) {
     std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
     argIndex->GetObjectProperty("length", lengthValue.get());
     int32_t iLength = lengthValue->ToInteger();
     std::unique_ptr<CFXJSE_Value> simpleValue(new CFXJSE_Value(pIsolate));
-    if (iLength > 2) {
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      argIndex->GetObjectPropertyByIdx(1, propertyValue.get());
-      argIndex->GetObjectPropertyByIdx(2, jsObjectValue.get());
-      if (propertyValue->IsNull()) {
-        GetObjectDefaultValue(jsObjectValue.get(), simpleValue.get());
-      } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
-        jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                         simpleValue.get());
-      }
-    } else {
+    if (iLength < 3) {
       simpleValue.get()->SetUndefined();
+      return simpleValue;
     }
+
+    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    argIndex->GetObjectPropertyByIdx(1, propertyValue.get());
+    argIndex->GetObjectPropertyByIdx(2, jsObjectValue.get());
+    if (propertyValue->IsNull()) {
+      GetObjectDefaultValue(jsObjectValue.get(), simpleValue.get());
+      return simpleValue;
+    }
+
+    CFX_ByteString propertyStr;
+    propertyValue->ToString(propertyStr);
+    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                     simpleValue.get());
     return simpleValue;
-  } else if (argIndex->IsObject()) {
-    std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
-    GetObjectDefaultValue(argIndex.get(), defaultValue.get());
-    return defaultValue;
-  } else {
-    return argIndex;
   }
+
+  std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
+  GetObjectDefaultValue(argIndex.get(), defaultValue.get());
+  return defaultValue;
 }
 
 // static
 FX_BOOL CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
+  if (!arg || arg->IsNull())
+    return TRUE;
+
+  if (!arg->IsArray() && !arg->IsObject())
+    return FALSE;
+
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
-  FX_BOOL isNull = FALSE;
-  if (!arg || arg->IsNull()) {
-    isNull = TRUE;
-  } else if (arg->IsArray()) {
+  if (arg->IsArray()) {
     int32_t iLength = hvalue_get_array_length(pThis, arg);
-    if (iLength > 2) {
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      arg->GetObjectPropertyByIdx(1, propertyValue.get());
-      arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
-      if (propertyValue->IsNull()) {
-        std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
-        GetObjectDefaultValue(jsObjectValue.get(), defaultValue.get());
-        if (defaultValue->IsNull()) {
-          isNull = TRUE;
-        }
-      } else {
-        CFX_ByteString propertyStr;
-        propertyValue->ToString(propertyStr);
-        std::unique_ptr<CFXJSE_Value> newPropertyValue(
-            new CFXJSE_Value(pIsolate));
-        jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                         newPropertyValue.get());
-        if (newPropertyValue->IsNull()) {
-          isNull = TRUE;
-        }
-      }
-    } else {
-      isNull = TRUE;
+    if (iLength < 3)
+      return TRUE;
+
+    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    arg->GetObjectPropertyByIdx(1, propertyValue.get());
+    arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
+    if (propertyValue->IsNull()) {
+      std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
+      GetObjectDefaultValue(jsObjectValue.get(), defaultValue.get());
+      return defaultValue->IsNull();
     }
-  } else if (arg->IsObject()) {
-    std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
-    GetObjectDefaultValue(arg, defaultValue.get());
-    if (defaultValue->IsNull()) {
-      isNull = TRUE;
-    }
+
+    CFX_ByteString propertyStr;
+    propertyValue->ToString(propertyStr);
+    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                     newPropertyValue.get());
+    return newPropertyValue->IsNull();
   }
-  return isNull;
+
+  std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
+  GetObjectDefaultValue(arg, defaultValue.get());
+  return defaultValue->IsNull();
 }
 
 // static
@@ -6104,22 +6117,21 @@ FX_BOOL CXFA_FM2JSContext::simpleValueCompare(CFXJSE_Value* pThis,
   if (!firstValue)
     return FALSE;
 
-  FX_BOOL bReturn = FALSE;
   if (firstValue->IsString()) {
     CFX_ByteString firstString, secondString;
     ValueToUTF8String(firstValue, firstString);
     ValueToUTF8String(secondValue, secondString);
-    bReturn = firstString == secondString;
-  } else if (firstValue->IsNumber()) {
+    return firstString == secondString;
+  }
+  if (firstValue->IsNumber()) {
     FX_FLOAT first = ValueToFloat(pThis, firstValue);
     FX_FLOAT second = ValueToFloat(pThis, secondValue);
-    bReturn = (first == second);
-  } else if (firstValue->IsBoolean()) {
-    bReturn = (firstValue->ToBoolean() == secondValue->ToBoolean());
-  } else if (firstValue->IsNull() && secondValue && secondValue->IsNull()) {
-    bReturn = TRUE;
+    return (first == second);
   }
-  return bReturn;
+  if (firstValue->IsBoolean())
+    return (firstValue->ToBoolean() == secondValue->ToBoolean());
+
+  return firstValue->IsNull() && secondValue && secondValue->IsNull();
 }
 
 // static
@@ -6128,8 +6140,9 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
                                    CFXJSE_Value**& resultValues,
                                    int32_t& iCount,
                                    int32_t iStart) {
-  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   iCount = 0;
+
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   int32_t argc = args.GetLength();
   std::vector<std::unique_ptr<CFXJSE_Value>> argsValue;
   for (int32_t i = 0; i < argc - iStart; i++) {
@@ -6153,25 +6166,26 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
       std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
       argsValue[i]->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
-      if (iLength > 2) {
-        std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-        std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-        argsValue[i]->GetObjectPropertyByIdx(1, propertyValue.get());
-        if (propertyValue->IsNull()) {
-          for (int32_t j = 2; j < iLength; j++) {
-            argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
-            GetObjectDefaultValue(jsObjectValue.get(), resultValues[index]);
-            index++;
-          }
-        } else {
-          CFX_ByteString propertyString;
-          propertyValue->ToString(propertyString);
-          for (int32_t j = 2; j < iLength; j++) {
-            argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
-            jsObjectValue->GetObjectProperty(propertyString.AsStringC(),
-                                             resultValues[index]);
-            index++;
-          }
+      if (iLength < 3)
+        continue;
+
+      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+      argsValue[i]->GetObjectPropertyByIdx(1, propertyValue.get());
+      if (propertyValue->IsNull()) {
+        for (int32_t j = 2; j < iLength; j++) {
+          argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
+          GetObjectDefaultValue(jsObjectValue.get(), resultValues[index]);
+          index++;
+        }
+      } else {
+        CFX_ByteString propertyString;
+        propertyValue->ToString(propertyString);
+        for (int32_t j = 2; j < iLength; j++) {
+          argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
+          jsObjectValue->GetObjectProperty(propertyString.AsStringC(),
+                                           resultValues[index]);
+          index++;
         }
       }
     } else if (argsValue[i]->IsObject()) {
@@ -6210,7 +6224,7 @@ FX_BOOL CXFA_FM2JSContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
 void CXFA_FM2JSContext::GenerateSomExpression(const CFX_ByteStringC& szName,
                                               int32_t iIndexFlags,
                                               int32_t iIndexValue,
-                                              FX_BOOL bIsStar,
+                                              bool bIsStar,
                                               CFX_ByteString& szSomExp) {
   if (bIsStar) {
     szSomExp = szName + "[*]";
@@ -6242,11 +6256,10 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
     CFXJSE_Value* pThis,
     CFXJSE_Value* accessorValue,
     const CFX_ByteStringC& szAccessorName) {
-  FX_BOOL bFlags = FALSE;
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
-  if (!pDoc) {
-    return bFlags;
-  }
+  if (!pDoc)
+    return FALSE;
+
   CXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
   XFA_RESOLVENODE_RS resoveNodeRS;
   uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
@@ -6258,9 +6271,9 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
   if (iRet >= 1 && resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     accessorValue->Assign(
         pScriptContext->GetJSValueFromMap(resoveNodeRS.nodes.GetAt(0)));
-    bFlags = TRUE;
+    return TRUE;
   }
-  return bFlags;
+  return FALSE;
 }
 
 // static
@@ -6270,12 +6283,11 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
                                           XFA_RESOLVENODE_RS& resoveNodeRS,
                                           FX_BOOL bdotAccessor,
                                           FX_BOOL bHasNoResolveName) {
-  CFX_WideString wsSomExpression = CFX_WideString::FromUTF8(bsSomExp);
-  int32_t iRet = -1;
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
-  if (!pDoc) {
-    return iRet;
-  }
+  if (!pDoc)
+    return -1;
+
+  CFX_WideString wsSomExpression = CFX_WideString::FromUTF8(bsSomExp);
   CXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
   CXFA_Object* pNode = nullptr;
   uint32_t dFlags = 0UL;
@@ -6288,9 +6300,9 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
       ASSERT(pNode);
       if (bHasNoResolveName) {
         CFX_WideString wsName;
-        if (CXFA_Node* pXFANode = pNode->AsNode()) {
+        if (CXFA_Node* pXFANode = pNode->AsNode())
           pXFANode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, FALSE);
-        }
+
         if (wsName.IsEmpty()) {
           CFX_WideStringC className;
           pNode->GetClassName(className);
@@ -6309,9 +6321,8 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
     pNode = CXFA_ScriptContext::ToObject(pRefValue, nullptr);
     dFlags = XFA_RESOLVENODE_AnyChild;
   }
-  iRet = pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringC(),
+  return pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringC(),
                                         resoveNodeRS, dFlags);
-  return iRet;
 }
 
 // static
@@ -6322,10 +6333,11 @@ void CXFA_FM2JSContext::ParseResolveResult(
     CFXJSE_Value**& resultValues,
     int32_t& iSize,
     FX_BOOL& bAttribute) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   iSize = 0;
   resultValues = nullptr;
+
+  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     bAttribute = FALSE;
     iSize = resoveNodeRS.nodes.GetSize();
@@ -6336,26 +6348,29 @@ void CXFA_FM2JSContext::ParseResolveResult(
           pContext->GetDocument()->GetScriptContext()->GetJSValueFromMap(
               resoveNodeRS.nodes.GetAt(i)));
     }
-  } else {
-    CXFA_ValueArray objectProperties(pIsolate);
-    int32_t iRet = resoveNodeRS.GetAttributeResult(objectProperties);
-    bAttribute = (iRet == 0);
-    if (bAttribute) {
-      if (pParentValue && pParentValue->IsObject()) {
-        iSize = 1;
-        resultValues = FX_Alloc(CFXJSE_Value*, 1);
-        resultValues[0] = new CFXJSE_Value(pIsolate);
-        resultValues[0]->Assign(pParentValue);
-      }
-    } else {
-      iSize = iRet;
-      resultValues = FX_Alloc(CFXJSE_Value*, iSize);
-      for (int32_t i = 0; i < iSize; i++) {
-        resultValues[i] = new CFXJSE_Value(pIsolate);
-        resultValues[i]->Assign(objectProperties[i]);
-      }
-    }
+    return;
   }
+
+  CXFA_ValueArray objectProperties(pIsolate);
+  int32_t iRet = resoveNodeRS.GetAttributeResult(objectProperties);
+  bAttribute = (iRet == 0);
+  if (!bAttribute) {
+    iSize = iRet;
+    resultValues = FX_Alloc(CFXJSE_Value*, iSize);
+    for (int32_t i = 0; i < iSize; i++) {
+      resultValues[i] = new CFXJSE_Value(pIsolate);
+      resultValues[i]->Assign(objectProperties[i]);
+    }
+    return;
+  }
+
+  if (!pParentValue || !pParentValue->IsObject())
+    return;
+
+  iSize = 1;
+  resultValues = FX_Alloc(CFXJSE_Value*, 1);
+  resultValues[0] = new CFXJSE_Value(pIsolate);
+  resultValues[0]->Assign(pParentValue);
 }
 
 // static
@@ -6365,7 +6380,6 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
     return 0;
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
-  int32_t iValue = 0;
   if (pValue->IsArray()) {
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
@@ -6374,27 +6388,26 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
     pValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
-    } else {
-      CFX_ByteString propertyStr;
-      propertyValue->ToString(propertyStr);
-      jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                       newPropertyValue.get());
+      return ValueToInteger(pThis, newPropertyValue.get());
     }
-    iValue = ValueToInteger(pThis, newPropertyValue.get());
-    return iValue;
-  } else if (pValue->IsObject()) {
+
+    CFX_ByteString propertyStr;
+    propertyValue->ToString(propertyStr);
+    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                     newPropertyValue.get());
+    return ValueToInteger(pThis, newPropertyValue.get());
+  }
+  if (pValue->IsObject()) {
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
     GetObjectDefaultValue(pValue, newPropertyValue.get());
-    iValue = ValueToInteger(pThis, newPropertyValue.get());
-    return iValue;
-  } else if (pValue->IsString()) {
+    return ValueToInteger(pThis, newPropertyValue.get());
+  }
+  if (pValue->IsString()) {
     CFX_ByteString szValue;
     pValue->ToString(szValue);
-    iValue = FXSYS_atoi(szValue.c_str());
-  } else {
-    iValue = pValue->ToInteger();
+    return FXSYS_atoi(szValue.c_str());
   }
-  return iValue;
+  return pValue->ToInteger();
 }
 
 // static
@@ -6404,7 +6417,6 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
     return 0.0f;
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
-  FX_FLOAT fRet = 0.0f;
   if (arg->IsArray()) {
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
@@ -6413,27 +6425,28 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
     arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
-    } else {
-      CFX_ByteString propertyStr;
-      propertyValue->ToString(propertyStr);
-      jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                       newPropertyValue.get());
+      return ValueToFloat(pThis, newPropertyValue.get());
     }
-    fRet = ValueToFloat(pThis, newPropertyValue.get());
-  } else if (arg->IsObject()) {
+    CFX_ByteString propertyStr;
+    propertyValue->ToString(propertyStr);
+    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                     newPropertyValue.get());
+    return ValueToFloat(pThis, newPropertyValue.get());
+  }
+  if (arg->IsObject()) {
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
     GetObjectDefaultValue(arg, newPropertyValue.get());
-    fRet = ValueToFloat(pThis, newPropertyValue.get());
-  } else if (arg->IsString()) {
+    return ValueToFloat(pThis, newPropertyValue.get());
+  }
+  if (arg->IsString()) {
     CFX_ByteString bsOutput;
     arg->ToString(bsOutput);
-    fRet = (FX_FLOAT)XFA_ByteStringToDouble(bsOutput.AsStringC());
-  } else if (arg->IsUndefined()) {
-    fRet = 0;
-  } else {
-    fRet = arg->ToFloat();
+    return (FX_FLOAT)XFA_ByteStringToDouble(bsOutput.AsStringC());
   }
-  return fRet;
+  if (arg->IsUndefined())
+    return 0;
+
+  return arg->ToFloat();
 }
 
 // static
@@ -6443,7 +6456,6 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
     return 0;
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
-  FX_DOUBLE dRet = 0;
   if (arg->IsArray()) {
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
@@ -6452,27 +6464,27 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
     arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
       GetObjectDefaultValue(jsObjectValue.get(), newPropertyValue.get());
-    } else {
-      CFX_ByteString propertyStr;
-      propertyValue->ToString(propertyStr);
-      jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                       newPropertyValue.get());
+      return ValueToDouble(pThis, newPropertyValue.get());
     }
-    dRet = ValueToDouble(pThis, newPropertyValue.get());
-  } else if (arg->IsObject()) {
+    CFX_ByteString propertyStr;
+    propertyValue->ToString(propertyStr);
+    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                     newPropertyValue.get());
+    return ValueToDouble(pThis, newPropertyValue.get());
+  }
+  if (arg->IsObject()) {
     std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
     GetObjectDefaultValue(arg, newPropertyValue.get());
-    dRet = ValueToDouble(pThis, newPropertyValue.get());
-  } else if (arg->IsString()) {
+    return ValueToDouble(pThis, newPropertyValue.get());
+  }
+  if (arg->IsString()) {
     CFX_ByteString bsOutput;
     arg->ToString(bsOutput);
-    dRet = XFA_ByteStringToDouble(bsOutput.AsStringC());
-  } else if (arg->IsUndefined()) {
-    dRet = 0;
-  } else {
-    dRet = arg->ToDouble();
+    return XFA_ByteStringToDouble(bsOutput.AsStringC());
   }
-  return dRet;
+  if (arg->IsUndefined())
+    return 0;
+  return arg->ToDouble();
 }
 
 // static.
@@ -6480,37 +6492,36 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
                                         CFXJSE_Value* src,
                                         bool* ret) {
   ASSERT(ret);
-
-  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   *ret = true;
 
   if (!src)
     return 0;
 
-  if (src->IsArray()) {
-    std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
-    src->GetObjectProperty("length", lengthValue.get());
-    int32_t iLength = lengthValue->ToInteger();
-    if (iLength <= 2) {
-      *ret = false;
-      return 0.0;
-    }
+  if (!src->IsArray())
+    return ValueToDouble(pThis, src);
 
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-    src->GetObjectPropertyByIdx(1, propertyValue.get());
-    src->GetObjectPropertyByIdx(2, jsObjectValue.get());
-    if (propertyValue->IsNull())
-      return ValueToDouble(pThis, jsObjectValue.get());
-
-    CFX_ByteString propertyStr;
-    propertyValue->ToString(propertyStr);
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
-    jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
-                                     newPropertyValue.get());
-    return ValueToDouble(pThis, newPropertyValue.get());
+  v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
+  std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+  src->GetObjectProperty("length", lengthValue.get());
+  int32_t iLength = lengthValue->ToInteger();
+  if (iLength <= 2) {
+    *ret = false;
+    return 0.0;
   }
-  return ValueToDouble(pThis, src);
+
+  std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+  std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+  src->GetObjectPropertyByIdx(1, propertyValue.get());
+  src->GetObjectPropertyByIdx(2, jsObjectValue.get());
+  if (propertyValue->IsNull())
+    return ValueToDouble(pThis, jsObjectValue.get());
+
+  CFX_ByteString propertyStr;
+  propertyValue->ToString(propertyStr);
+  std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+  jsObjectValue->GetObjectProperty(propertyStr.AsStringC(),
+                                   newPropertyValue.get());
+  return ValueToDouble(pThis, newPropertyValue.get());
 }
 
 // static
