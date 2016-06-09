@@ -211,8 +211,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     const CFX_WideString& wsType,
     FX_BOOL bOnPageArea,
     CXFA_NodeArray& retArray) {
-  CXFA_ContainerLayoutItem* pLayoutPage =
-      (CXFA_ContainerLayoutItem*)pDocLayout->GetPage(iPageNo);
+  CXFA_ContainerLayoutItem* pLayoutPage = pDocLayout->GetPage(iPageNo);
   if (!pLayoutPage) {
     return;
   }

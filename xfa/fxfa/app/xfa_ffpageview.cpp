@@ -134,9 +134,9 @@ CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
   m_pPageView = pPageView;
   m_dwFilter = dwFilter;
   m_sIterator.Init(pPageView);
-  m_bIgnorerelevant = ((CXFA_FFDoc*)m_pPageView->GetDocView()->GetDoc())
-                          ->GetXFADoc()
-                          ->GetCurVersionMode() < XFA_VERSION_205;
+  m_bIgnorerelevant =
+      m_pPageView->GetDocView()->GetDoc()->GetXFADoc()->GetCurVersionMode() <
+      XFA_VERSION_205;
 }
 CXFA_FFPageWidgetIterator::~CXFA_FFPageWidgetIterator() {}
 void CXFA_FFPageWidgetIterator::Reset() {
@@ -200,9 +200,9 @@ CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     CXFA_FFPageView* pPageView,
     uint32_t dwFilter)
     : m_pPageView(pPageView), m_dwFilter(dwFilter), m_iCurWidget(-1) {
-  m_bIgnorerelevant = ((CXFA_FFDoc*)m_pPageView->GetDocView()->GetDoc())
-                          ->GetXFADoc()
-                          ->GetCurVersionMode() < XFA_VERSION_205;
+  m_bIgnorerelevant =
+      m_pPageView->GetDocView()->GetDoc()->GetXFADoc()->GetCurVersionMode() <
+      XFA_VERSION_205;
   Reset();
 }
 

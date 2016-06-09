@@ -581,7 +581,8 @@ void CXFA_FFDocView::RunSubformIndexChange() {
   int32_t iSubforms = m_IndexChangedSubforms.GetSize();
   for (int32_t i = 0; i < iSubforms; i++) {
     CXFA_Node* pSubformNode = m_IndexChangedSubforms[i];
-    CXFA_WidgetAcc* pWidgetAcc = (CXFA_WidgetAcc*)pSubformNode->GetWidgetData();
+    CXFA_WidgetAcc* pWidgetAcc =
+        static_cast<CXFA_WidgetAcc*>(pSubformNode->GetWidgetData());
     if (!pWidgetAcc) {
       continue;
     }
@@ -726,7 +727,8 @@ void CXFA_FFDocView::RunBindItems() {
       continue;
 
     CXFA_Node* pWidgetNode = m_BindItems[i]->GetNodeItem(XFA_NODEITEM_Parent);
-    CXFA_WidgetAcc* pAcc = (CXFA_WidgetAcc*)pWidgetNode->GetWidgetData();
+    CXFA_WidgetAcc* pAcc =
+        static_cast<CXFA_WidgetAcc*>(pWidgetNode->GetWidgetData());
     if (!pAcc)
       continue;
 
@@ -824,7 +826,7 @@ CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
   CXFA_Node* pItem = m_pCurWidgetAcc ? m_ContentIterator.MoveToNext()
                                      : m_ContentIterator.GetCurrent();
   while (pItem) {
-    m_pCurWidgetAcc = (CXFA_WidgetAcc*)pItem->GetWidgetData();
+    m_pCurWidgetAcc = static_cast<CXFA_WidgetAcc*>(pItem->GetWidgetData());
     if (m_pCurWidgetAcc)
       return m_pCurWidgetAcc;
     pItem = m_ContentIterator.MoveToNext();

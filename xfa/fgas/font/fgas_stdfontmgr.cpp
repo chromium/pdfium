@@ -530,7 +530,7 @@ IFX_FileAccess* CFX_FontSourceEnum_File::GetNext(FX_POSITION& pos) {
   IFX_FileAccess* pAccess = FX_CreateDefaultFileAccess(m_wsNext.AsStringC());
   m_wsNext = GetNextFile().UTF8Decode();
   pos = 0 != m_wsNext.GetLength() ? pAccess : NULL;
-  return (IFX_FileAccess*)pAccess;
+  return pAccess;
 }
 
 IFGAS_FontMgr* IFGAS_FontMgr::Create(CFX_FontSourceEnum_File* pFontEnum) {

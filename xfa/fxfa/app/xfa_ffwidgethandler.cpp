@@ -47,9 +47,8 @@ FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
   hWidget->Rotate2Normal(fx, fy);
   FX_BOOL bRet = hWidget->OnLButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
-    ((CXFA_FFDoc*)m_pDocView->GetDoc())
-        ->GetDocProvider()
-        ->SetFocusWidget(m_pDocView->GetDoc(), (CXFA_FFWidget*)hWidget);
+    m_pDocView->GetDoc()->GetDocProvider()->SetFocusWidget(m_pDocView->GetDoc(),
+                                                           hWidget);
   }
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
@@ -107,9 +106,8 @@ FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
   hWidget->Rotate2Normal(fx, fy);
   FX_BOOL bRet = hWidget->OnRButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
-    ((CXFA_FFDoc*)m_pDocView->GetDoc())
-        ->GetDocProvider()
-        ->SetFocusWidget(m_pDocView->GetDoc(), (CXFA_FFWidget*)hWidget);
+    m_pDocView->GetDoc()->GetDocProvider()->SetFocusWidget(m_pDocView->GetDoc(),
+                                                           hWidget);
   }
   m_pDocView->RunInvalidate();
   return bRet;
@@ -228,9 +226,8 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
     case XFA_EVENT_Calculate:
       return pWidgetAcc->ProcessCalculate();
     case XFA_EVENT_Validate:
-      if (((CXFA_FFDoc*)m_pDocView->GetDoc())
-              ->GetDocProvider()
-              ->IsValidationsEnabled(m_pDocView->GetDoc())) {
+      if (m_pDocView->GetDoc()->GetDocProvider()->IsValidationsEnabled(
+              m_pDocView->GetDoc())) {
         return pWidgetAcc->ProcessValidate();
       }
       return XFA_EVENTERROR_Disabled;
@@ -269,7 +266,7 @@ CXFA_FFWidget* CXFA_FFWidgetHandler::CreateWidget(CXFA_FFWidget* hParent,
   m_pDocView->RunLayout();
   CXFA_LayoutItem* pLayout =
       m_pDocView->GetXFALayout()->GetLayoutItem(pNewFormItem);
-  return (CXFA_FFWidget*)pLayout;
+  return static_cast<CXFA_FFWidget*>(pLayout);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateWidgetFormItem(
@@ -550,6 +547,6 @@ CXFA_Document* CXFA_FFWidgetHandler::GetObjFactory() const {
 }
 
 CXFA_Document* CXFA_FFWidgetHandler::GetXFADoc() const {
-  return ((CXFA_FFDoc*)(m_pDocView->GetDoc()))->GetXFADoc();
+  return m_pDocView->GetDoc()->GetXFADoc();
 }
 

@@ -1840,7 +1840,7 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
   if (!pFontSetDict) {
     return NULL;
   }
-  pFontSetDict = (CPDF_Dictionary*)pFontSetDict->GetDictBy("Font");
+  pFontSetDict = pFontSetDict->GetDictBy("Font");
   if (!pFontSetDict) {
     return NULL;
   }
@@ -1853,12 +1853,8 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
                                bStrictMatch)) {
       continue;
     }
-    CPDF_Object* pDirect = pObj->GetDirect();
-    if (!pDirect || !pDirect->IsDictionary()) {
-      return NULL;
-    }
-    CPDF_Dictionary* pFontDict = (CPDF_Dictionary*)pDirect;
-    if (pFontDict->GetStringBy("Type") != "Font") {
+    CPDF_Dictionary* pFontDict = ToDictionary(pObj->GetDirect());
+    if (!pFontDict || pFontDict->GetStringBy("Type") != "Font") {
       return NULL;
     }
     CPDF_Font* pPDFFont = pDoc->LoadFont(pFontDict);

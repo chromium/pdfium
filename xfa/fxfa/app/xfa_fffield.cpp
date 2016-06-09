@@ -692,7 +692,7 @@ int32_t CXFA_FFField::CalculateOverride() {
   }
   CXFA_WidgetAcc* pWidgetAcc = NULL;
   while (pNode) {
-    pWidgetAcc = (CXFA_WidgetAcc*)pNode->GetWidgetData();
+    pWidgetAcc = static_cast<CXFA_WidgetAcc*>(pNode->GetWidgetData());
     if (!pWidgetAcc) {
       return 1;
     }

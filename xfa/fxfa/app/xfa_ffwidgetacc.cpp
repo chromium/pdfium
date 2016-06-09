@@ -216,7 +216,8 @@ void CXFA_WidgetAcc::ResetData() {
           XFA_NODEITEM_FirstChild, XFA_OBJECTTYPE_ContainerNode);
       while (pNextChild) {
         CXFA_Node* pChild = pNextChild;
-        CXFA_WidgetAcc* pAcc = (CXFA_WidgetAcc*)pChild->GetWidgetData();
+        CXFA_WidgetAcc* pAcc =
+            static_cast<CXFA_WidgetAcc*>(pChild->GetWidgetData());
         if (!pAcc) {
           continue;
         }
@@ -282,13 +283,13 @@ CXFA_WidgetAcc* CXFA_WidgetAcc::GetExclGroup() {
   if (!pExcl || pExcl->GetClassID() != XFA_ELEMENT_ExclGroup) {
     return NULL;
   }
-  return (CXFA_WidgetAcc*)pExcl->GetWidgetData();
+  return static_cast<CXFA_WidgetAcc*>(pExcl->GetWidgetData());
 }
 CXFA_FFDocView* CXFA_WidgetAcc::GetDocView() {
   return m_pDocView;
 }
 CXFA_FFDoc* CXFA_WidgetAcc::GetDoc() {
-  return (CXFA_FFDoc*)m_pDocView->GetDoc();
+  return m_pDocView->GetDoc();
 }
 CXFA_FFApp* CXFA_WidgetAcc::GetApp() {
   return GetDoc()->GetApp();
@@ -677,7 +678,8 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
       }
       int32_t iRefs = refNodes.GetSize();
       for (int32_t r = 0; r < iRefs; r++) {
-        CXFA_WidgetAcc* pRefAcc = (CXFA_WidgetAcc*)refNodes[r]->GetWidgetData();
+        CXFA_WidgetAcc* pRefAcc =
+            static_cast<CXFA_WidgetAcc*>(refNodes[r]->GetWidgetData());
         if (pRefAcc && pRefAcc == this) {
           continue;
         }
@@ -1688,7 +1690,7 @@ FX_BOOL CXFA_TextProvider::GetEmbbedObj(FX_BOOL bURI,
           wsAttr.AsStringC());
     }
     if (pIDNode) {
-      pEmbAcc = (CXFA_WidgetAcc*)pIDNode->GetWidgetData();
+      pEmbAcc = static_cast<CXFA_WidgetAcc*>(pIDNode->GetWidgetData());
     }
     if (pEmbAcc) {
       pEmbAcc->GetValue(wsValue, XFA_VALUEPICTURE_Display);

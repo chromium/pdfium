@@ -345,7 +345,7 @@ CXFA_FFWidget* CXFA_FFWidget::GetParent() {
       m_pDataAcc->GetNode()->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParentNode) {
     CXFA_WidgetAcc* pParentWidgetAcc =
-        (CXFA_WidgetAcc*)pParentNode->GetWidgetData();
+        static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetData());
     if (pParentWidgetAcc) {
       return pParentWidgetAcc->GetNextWidget(NULL);
     }
@@ -378,7 +378,7 @@ CXFA_FFDocView* CXFA_FFWidget::GetDocView() {
   return m_pDocView;
 }
 CXFA_FFDoc* CXFA_FFWidget::GetDoc() {
-  return (CXFA_FFDoc*)m_pDocView->GetDoc();
+  return m_pDocView->GetDoc();
 }
 CXFA_FFApp* CXFA_FFWidget::GetApp() {
   return GetDoc()->GetApp();
