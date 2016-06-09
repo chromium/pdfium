@@ -14,7 +14,11 @@
 class CFXJSE_Arguments;
 class CFXJSE_Value;
 
-class CFXJSE_HostObject {};  // C++ object which can be wrapped by CFXJSE_value.
+// C++ object which can be wrapped by CFXJSE_value.
+class CFXJSE_HostObject {
+ public:
+  virtual ~CFXJSE_HostObject() {}
+};
 
 typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,
                                    const CFX_ByteStringC& szFuncName,

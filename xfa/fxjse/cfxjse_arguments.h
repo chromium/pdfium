@@ -26,7 +26,8 @@ class CFXJSE_Arguments {
   int32_t GetInt32(int32_t index) const;
   FX_FLOAT GetFloat(int32_t index) const;
   CFX_ByteString GetUTF8String(int32_t index) const;
-  void* GetObject(int32_t index, CFXJSE_Class* pClass = nullptr) const;
+  CFXJSE_HostObject* GetObject(int32_t index,
+                               CFXJSE_Class* pClass = nullptr) const;
   CFXJSE_Value* GetReturnValue();
 
  private:

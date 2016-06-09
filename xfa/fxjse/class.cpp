@@ -147,7 +147,8 @@ CFX_ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   return CFX_ByteString(*szStringVal);
 }
 
-void* CFXJSE_Arguments::GetObject(int32_t index, CFXJSE_Class* pClass) const {
+CFXJSE_HostObject* CFXJSE_Arguments::GetObject(int32_t index,
+                                               CFXJSE_Class* pClass) const {
   v8::Local<v8::Value> hValue = (*m_pInfo)[index];
   ASSERT(!hValue.IsEmpty());
   if (!hValue->IsObject())
