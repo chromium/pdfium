@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxjse/runtime.h"
+#include "fxjse/runtime.h"
 
 #include <algorithm>
 
 #include "fpdfsdk/jsapi/include/fxjs_v8.h"
-#include "xfa/fxjse/scope_inline.h"
+#include "fxjse/scope_inline.h"
 
 // Duplicates fpdfsdk's cjs_runtime.h, but keeps XFA from depending on it.
 // TODO(tsepez): make a single version of this.

@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXJSE_CLASS_H_
-#define XFA_FXJSE_CLASS_H_
+#ifndef FXJSE_INCLUDE_CFXJSE_CLASS_H_
+#define FXJSE_INCLUDE_CFXJSE_CLASS_H_
 
+#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjse/include/fxjse.h"
 #include "v8/include/v8.h"
-#include "xfa/fxjse/cfxjse_arguments.h"
-#include "xfa/fxjse/include/fxjse.h"
 
 class CFXJSE_Context;
 class CFXJSE_Value;
@@ -41,4 +41,4 @@ class CFXJSE_Class {
   friend class CFXJSE_Value;
 };
 
-#endif  // XFA_FXJSE_CLASS_H_
+#endif  // FXJSE_INCLUDE_CFXJSE_CLASS_H_

@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
 
+#include "fxjse/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxjse/cfxjse_arguments.h"
 
 enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_H,

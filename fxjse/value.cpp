@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxjse/value.h"
+#include "fxjse/include/cfxjse_value.h"
 
 #include <math.h>
 
-#include "xfa/fxjse/class.h"
-#include "xfa/fxjse/context.h"
+#include "fxjse/context.h"
+#include "fxjse/include/cfxjse_class.h"
 
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Message) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();

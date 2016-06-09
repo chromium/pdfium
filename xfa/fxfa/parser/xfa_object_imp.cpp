@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "fxjse/include/cfxjse_arguments.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
@@ -25,7 +26,6 @@
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
-#include "xfa/fxjse/cfxjse_arguments.h"
 
 namespace {
 

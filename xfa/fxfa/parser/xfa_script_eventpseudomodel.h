@@ -7,8 +7,8 @@
 #ifndef XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
 
+#include "fxjse/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxjse/cfxjse_arguments.h"
 
 enum class XFA_Event {
   Change = 0,

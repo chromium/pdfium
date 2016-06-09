@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXJSE_RUNTIME_H_
-#define XFA_FXJSE_RUNTIME_H_
+#ifndef FXJSE_RUNTIME_H_
+#define FXJSE_RUNTIME_H_
 
 #include <vector>
 
@@ -43,4 +43,4 @@ class CFXJSE_IsolateTracker {
   std::vector<v8::Isolate*> m_OwnedIsolates;
 };
 
-#endif  // XFA_FXJSE_RUNTIME_H_
+#endif  // FXJSE_RUNTIME_H_

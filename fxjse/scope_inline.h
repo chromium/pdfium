@@ -4,18 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXJSE_SCOPE_INLINE_H_
-#define XFA_FXJSE_SCOPE_INLINE_H_
+#ifndef FXJSE_SCOPE_INLINE_H_
+#define FXJSE_SCOPE_INLINE_H_
 
-#include "xfa/fxjse/context.h"
-#include "xfa/fxjse/runtime.h"
+#include "fxjse/context.h"
+#include "fxjse/runtime.h"
 
 class CFXJSE_ScopeUtil_IsolateHandle {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandle(v8::Isolate* pIsolate)
-      : m_isolate(pIsolate),
-        m_iscope(pIsolate),
-        m_hscope(pIsolate) {}
+      : m_isolate(pIsolate), m_iscope(pIsolate), m_hscope(pIsolate) {}
   v8::Isolate* GetIsolate() { return m_isolate; }
 
  private:
@@ -74,4 +72,4 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
   v8::Context::Scope m_cscope;
 };
 
-#endif  // XFA_FXJSE_SCOPE_INLINE_H_
+#endif  // FXJSE_SCOPE_INLINE_H_

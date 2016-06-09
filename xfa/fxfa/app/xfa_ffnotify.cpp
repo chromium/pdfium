@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 
+#include "fxjse/include/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
@@ -29,7 +30,6 @@
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"
-#include "xfa/fxjse/value.h"
 
 static void XFA_FFDeleteWidgetAcc(void* pData) {
   delete static_cast<CXFA_WidgetAcc*>(pData);

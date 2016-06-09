@@ -34,8 +34,8 @@ config("pdfium_common_config") {
 
 config("pdfium_core_config") {
   cflags = []
-  configs = [":pdfium_common_config"]
-  defines = ["V8_DEPRECATION_WARNINGS"]
+  configs = [ ":pdfium_common_config" ]
+  defines = [ "V8_DEPRECATION_WARNINGS" ]
   if (is_linux) {
     if (current_cpu == "x64") {
       defines += [ "_FX_CPU_=_FX_X64_" ]
@@ -893,6 +893,18 @@ if (pdf_enable_xfa) {
 
   static_library("xfa") {
     sources = [
+      "fxjse/class.cpp",
+      "fxjse/context.cpp",
+      "fxjse/context.h",
+      "fxjse/dynprop.cpp",
+      "fxjse/include/cfxjse_arguments.h",
+      "fxjse/include/cfxjse_class.h",
+      "fxjse/include/cfxjse_value.h",
+      "fxjse/include/fxjse.h",
+      "fxjse/runtime.cpp",
+      "fxjse/runtime.h",
+      "fxjse/scope_inline.h",
+      "fxjse/value.cpp",
       "xfa/fde/cfde_path.cpp",
       "xfa/fde/cfde_path.h",
       "xfa/fde/cfde_txtedtbuf.cpp",
@@ -1560,34 +1572,18 @@ if (pdf_enable_xfa) {
       "xfa/fxgraphics/cfx_shading.cpp",
       "xfa/fxgraphics/cfx_shading.h",
       "xfa/fxgraphics/include/cfx_graphics.h",
-      "xfa/fxjse/include/fxjse.h",
     ]
-    include_dirs = [ "." ]
-    if (pdf_enable_v8) {
-      sources += [
-        "xfa/fxjse/cfxjse_arguments.h",
-        "xfa/fxjse/class.cpp",
-        "xfa/fxjse/class.h",
-        "xfa/fxjse/context.cpp",
-        "xfa/fxjse/context.h",
-        "xfa/fxjse/dynprop.cpp",
-        "xfa/fxjse/runtime.cpp",
-        "xfa/fxjse/runtime.h",
-        "xfa/fxjse/scope_inline.h",
-        "xfa/fxjse/value.cpp",
-        "xfa/fxjse/value.h",
-      ]
-      include_dirs += [
-        "//v8",
-        "//v8/include",
-      ]
-      public_deps = [
-        "//v8",
-      ]
-      deps = [
-        "//v8:v8_libplatform",
-      ]
-    }
+    include_dirs = [
+      ".",
+      "//v8",
+      "//v8/include",
+    ]
+    public_deps = [
+      "//v8",
+    ]
+    deps = [
+      "//v8:v8_libplatform",
+    ]
     configs += [
       ":pdfium_core_config",
       ":xfa_warnings",

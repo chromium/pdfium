@@ -21,11 +21,31 @@
         '.',
         'third_party/freetype/include',
         'third_party/freetype/include/freetype',
+        '<(DEPTH)/v8',
+        '<(DEPTH)/v8/include',
       ],
       'defines' : [
         'FT2_BUILD_LIBRARY',
       ],
+      'dependencies': [
+        '<(DEPTH)/v8/src/v8.gyp:v8',
+      ],
+      'export_dependent_settings': [
+        '<(DEPTH)/v8/src/v8.gyp:v8',
+      ],
       "sources":[
+        "fxjse/class.cpp",
+        "fxjse/context.cpp",
+        "fxjse/context.h",
+        "fxjse/dynprop.cpp",
+        "fxjse/include/cfxjse_arguments.h",
+        "fxjse/include/cfxjse_class.h",
+        "fxjse/include/cfxjse_value.h"
+        "fxjse/include/fxjse.h",
+        "fxjse/runtime.cpp",
+        "fxjse/runtime.h",
+        "fxjse/scope_inline.h",
+        "fxjse/value.cpp",
         "xfa/fxfa/include/fxfa.h",
         "xfa/fxfa/include/fxfa_basic.h",
         "xfa/fxfa/include/fxfa_widget.h",
@@ -693,38 +713,10 @@
         "xfa/fxgraphics/cfx_shading.cpp",
         "xfa/fxgraphics/cfx_shading.h",
         "xfa/fxgraphics/include/cfx_graphics.h",
-        "xfa/fxjse/include/fxjse.h",
       ],
       "conditions": [
-        ["clang==1" , {
-        }],
         ["os_posix==1 and clang==0", { # When GCC
           'cflags': [ '-Wno-strict-overflow' ],
-        }],
-        ["pdf_enable_v8==1", {
-          'dependencies': [
-            '<(DEPTH)/v8/src/v8.gyp:v8',
-          ],
-          'export_dependent_settings': [
-            '<(DEPTH)/v8/src/v8.gyp:v8',
-          ],
-          'include_dirs': [
-            '<(DEPTH)/v8',
-            '<(DEPTH)/v8/include',
-          ],
-          'sources': [
-            "xfa/fxjse/cfxjse_arguments.h",
-            "xfa/fxjse/class.cpp",
-            "xfa/fxjse/class.h",
-            "xfa/fxjse/context.cpp",
-            "xfa/fxjse/context.h",
-            "xfa/fxjse/dynprop.cpp",
-            "xfa/fxjse/runtime.cpp",
-            "xfa/fxjse/runtime.h",
-            "xfa/fxjse/scope_inline.h",
-            "xfa/fxjse/value.cpp",
-            "xfa/fxjse/value.h"
-          ],
         }],
         ["OS == 'win'", {
           "configurations": {

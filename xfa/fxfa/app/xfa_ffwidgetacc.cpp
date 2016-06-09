@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "fxjse/include/cfxjse_value.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
@@ -26,7 +27,6 @@
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
-#include "xfa/fxjse/value.h"
 
 static void XFA_FFDeleteCalcData(void* pData) {
   if (pData) {

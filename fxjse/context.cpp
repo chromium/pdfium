@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxjse/context.h"
+#include "fxjse/context.h"
 
-#include "xfa/fxjse/class.h"
-#include "xfa/fxjse/scope_inline.h"
-#include "xfa/fxjse/value.h"
+#include "fxjse/include/cfxjse_class.h"
+#include "fxjse/include/cfxjse_value.h"
+#include "fxjse/scope_inline.h"
 
 namespace {
 

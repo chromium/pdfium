@@ -9,6 +9,9 @@
 #include <time.h>
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjse/include/cfxjse_class.h"
+#include "fxjse/include/cfxjse_value.h"
 #include "xfa/fgas/localization/fgas_locale.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_program.h"
@@ -17,9 +20,6 @@
 #include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
-#include "xfa/fxjse/cfxjse_arguments.h"
-#include "xfa/fxjse/class.h"
-#include "xfa/fxjse/value.h"
 
 namespace {
 

@@ -7,6 +7,9 @@
 #include "xfa/fxfa/parser/xfa_script_imp.h"
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjse/include/cfxjse_class.h"
+#include "fxjse/include/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
@@ -17,9 +20,6 @@
 #include "xfa/fxfa/parser/xfa_script_nodehelper.h"
 #include "xfa/fxfa/parser/xfa_script_resolveprocessor.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
-#include "xfa/fxjse/cfxjse_arguments.h"
-#include "xfa/fxjse/class.h"
-#include "xfa/fxjse/value.h"
 
 namespace {
 

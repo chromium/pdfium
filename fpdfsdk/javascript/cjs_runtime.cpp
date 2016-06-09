@@ -31,7 +31,7 @@
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
-#include "xfa/fxjse/value.h"
+#include "fxjse/include/cfxjse_value.h"
 #endif  // PDF_ENABLE_XFA
 
 // static

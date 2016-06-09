@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_script_hostpseudomodel.h"
 
+#include "fxjse/include/cfxjse_arguments.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
@@ -17,7 +18,6 @@
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
-#include "xfa/fxjse/cfxjse_arguments.h"
 
 namespace {
 

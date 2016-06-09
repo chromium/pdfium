@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXJSE_VALUE_H_
-#define XFA_FXJSE_VALUE_H_
+#ifndef FXJSE_INCLUDE_CFXJSE_VALUE_H_
+#define FXJSE_INCLUDE_CFXJSE_VALUE_H_
 
-#include "xfa/fxjse/scope_inline.h"
+#include "fxjse/scope_inline.h"
 
 V8_INLINE static double FXJSE_ftod(FX_FLOAT fNumber) {
   if (sizeof(FX_FLOAT) != 4) {
@@ -281,4 +281,4 @@ class CFXJSE_Value {
   v8::Global<v8::Value> m_hValue;
 };
 
-#endif  // XFA_FXJSE_VALUE_H_
+#endif  // FXJSE_INCLUDE_CFXJSE_VALUE_H_

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXJSE_CONTEXT_H_
-#define XFA_FXJSE_CONTEXT_H_
+#ifndef FXJSE_CONTEXT_H_
+#define FXJSE_CONTEXT_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/include/fx_basic.h"
+#include "fxjse/include/fxjse.h"
 #include "v8/include/v8.h"
-#include "xfa/fxjse/include/fxjse.h"
 
 class CFXJSE_Class;
 class CFXJSE_Value;
@@ -60,4 +60,4 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
     const v8::Local<v8::Object>& hJSObject,
     CFXJSE_Class* lpClass = nullptr);
 
-#endif  // XFA_FXJSE_CONTEXT_H_
+#endif  // FXJSE_CONTEXT_H_

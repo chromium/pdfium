@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxjse/class.h"
+#include "fxjse/include/cfxjse_class.h"
 
-#include "xfa/fxjse/cfxjse_arguments.h"
-#include "xfa/fxjse/context.h"
-#include "xfa/fxjse/scope_inline.h"
-#include "xfa/fxjse/value.h"
+#include "fxjse/context.h"
+#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjse/include/cfxjse_value.h"
+#include "fxjse/scope_inline.h"
 
 static void FXJSE_V8ConstructorCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info);
