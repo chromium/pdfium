@@ -97,7 +97,7 @@ void CPDFSDK_AnnotHandlerMgr::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
     pAnnotHandler->OnRelease(pAnnot);
     pAnnotHandler->ReleaseAnnot(pAnnot);
   } else {
-    delete (CPDFSDK_Annot*)pAnnot;
+    delete pAnnot;
   }
 }
 
@@ -402,7 +402,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   if (pAnnot->GetSubType() == BFFT_SIGNATURE)
     return FALSE;
 
-  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+  CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
   if (!pWidget->IsVisible())
     return FALSE;
 
@@ -451,12 +451,10 @@ void CPDFSDK_BFAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   if (m_pFormFiller)
     m_pFormFiller->OnDelete(pAnnot);
 
-  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+  std::unique_ptr<CPDFSDK_Widget> pWidget(static_cast<CPDFSDK_Widget*>(pAnnot));
   CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
-  CPDF_FormControl* pCtrol = pWidget->GetFormControl();
-  pInterForm->RemoveMap(pCtrol);
-
-  delete pWidget;
+  CPDF_FormControl* pControl = pWidget->GetFormControl();
+  pInterForm->RemoveMap(pControl);
 }
 
 void CPDFSDK_BFAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
@@ -651,7 +649,7 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
   if (pAnnot->GetSubType() == BFFT_SIGNATURE)
     return;
 
-  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+  CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
   if (!pWidget->IsAppearanceValid())
     pWidget->ResetAppearance(nullptr, FALSE);
 

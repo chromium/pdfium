@@ -677,8 +677,8 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
         continue;
       if (!pPDFObj->IsReference())
         continue;
-      CPDF_Object* pDirectObj = pPDFObj->GetDirect();
-      if (!pDirectObj->IsStream())
+      CPDF_Stream* pStream = ToStream(pPDFObj->GetDirect());
+      if (!pStream)
         continue;
       if (pPrePDFObj->GetString() == "form") {
         m_pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, &fileWrite,
@@ -698,13 +698,10 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
           fileWrite.WriteBlock(content.c_str(), fileWrite.GetSize(),
                                content.GetLength());
         }
-
-        CPDF_Stream* pStream = (CPDF_Stream*)pDirectObj;
-        CPDF_StreamAcc* pAcc = new CPDF_StreamAcc;
+        std::unique_ptr<CPDF_StreamAcc> pAcc(new CPDF_StreamAcc);
         pAcc->LoadAllData(pStream);
         fileWrite.WriteBlock(pAcc->GetData(), fileWrite.GetSize(),
                              pAcc->GetSize());
-        delete pAcc;
       }
     }
   }

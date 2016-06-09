@@ -242,7 +242,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
         if (!bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItem*)pItem->m_pFirstChild);
+          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem->m_pFirstChild));
           for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem()) {
@@ -266,7 +266,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
         if (bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItem*)pItem);
+          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem));
           for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem()) {
@@ -306,7 +306,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
         if (!bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItem*)pItem->m_pFirstChild);
+          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem->m_pFirstChild));
           for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem())
@@ -323,7 +323,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
         if (bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItem*)pItem);
+          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem));
           for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem())
@@ -375,8 +375,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageContent(
   CXFA_ArrayNodeList* pArrayNodeList = new CXFA_ArrayNodeList(m_pDocument);
   pArrayNodeList->SetArrayNodeList(retArray);
   pArguments->GetReturnValue()->SetObject(
-      (CXFA_Object*)pArrayNodeList,
-      m_pDocument->GetScriptContext()->GetJseNormalClass());
+      pArrayNodeList, m_pDocument->GetScriptContext()->GetJseNormalClass());
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageCount(
     CFXJSE_Arguments* pArguments) {

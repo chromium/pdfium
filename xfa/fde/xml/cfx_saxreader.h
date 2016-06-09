@@ -9,6 +9,8 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 
+class CXFA_SAXContext;
+
 class CFX_SAXItem {
  public:
   enum class Type {
@@ -29,7 +31,7 @@ class CFX_SAXItem {
         m_pPrev(nullptr),
         m_pNext(nullptr) {}
 
-  void* m_pNode;
+  CXFA_SAXContext* m_pNode;
   Type m_eNode;
   uint32_t m_dwID;
   FX_BOOL m_bSkip;

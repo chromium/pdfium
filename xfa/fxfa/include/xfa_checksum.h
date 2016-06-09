@@ -27,23 +27,23 @@ class CXFA_SAXReaderHandler {
   CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext);
   ~CXFA_SAXReaderHandler();
 
-  void* OnTagEnter(const CFX_ByteStringC& bsTagName,
-                   CFX_SAXItem::Type eType,
-                   uint32_t dwStartPos);
-  void OnTagAttribute(void* pTag,
+  CXFA_SAXContext* OnTagEnter(const CFX_ByteStringC& bsTagName,
+                              CFX_SAXItem::Type eType,
+                              uint32_t dwStartPos);
+  void OnTagAttribute(CXFA_SAXContext* pTag,
                       const CFX_ByteStringC& bsAttri,
                       const CFX_ByteStringC& bsValue);
-  void OnTagBreak(void* pTag);
-  void OnTagData(void* pTag,
+  void OnTagBreak(CXFA_SAXContext* pTag);
+  void OnTagData(CXFA_SAXContext* pTag,
                  CFX_SAXItem::Type eType,
                  const CFX_ByteStringC& bsData,
                  uint32_t dwStartPos);
-  void OnTagClose(void* pTag, uint32_t dwEndPos);
-  void OnTagEnd(void* pTag,
+  void OnTagClose(CXFA_SAXContext* pTag, uint32_t dwEndPos);
+  void OnTagEnd(CXFA_SAXContext* pTag,
                 const CFX_ByteStringC& bsTagName,
                 uint32_t dwEndPos);
 
-  void OnTargetData(void* pTag,
+  void OnTargetData(CXFA_SAXContext* pTag,
                     CFX_SAXItem::Type eType,
                     const CFX_ByteStringC& bsData,
                     uint32_t dwStartPos);
