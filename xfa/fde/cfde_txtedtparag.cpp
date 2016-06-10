@@ -17,7 +17,7 @@ CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
     : m_nCharStart(0),
       m_nCharCount(0),
       m_nLineCount(0),
-      m_lpData(NULL),
+      m_lpData(nullptr),
       m_pEngine(pEngine) {
   ASSERT(m_pEngine);
 }
@@ -28,7 +28,7 @@ CFDE_TxtEdtParag::~CFDE_TxtEdtParag() {
 }
 
 void CFDE_TxtEdtParag::LoadParag() {
-  if (m_lpData != NULL) {
+  if (m_lpData) {
     ((int32_t*)m_lpData)[0]++;
     return;
   }
@@ -77,11 +77,11 @@ void CFDE_TxtEdtParag::LoadParag() {
   pTxtBreak->ClearBreakPieces();
   int32_t nLineCount = LineBaseArr.GetSize();
   m_nLineCount = nLineCount;
-  if (m_lpData == NULL) {
-    m_lpData = FX_Alloc(int32_t, nLineCount + 1);
-  } else {
+  if (m_lpData)
     m_lpData = FX_Realloc(int32_t, m_lpData, (nLineCount + 1));
-  }
+  else
+    m_lpData = FX_Alloc(int32_t, nLineCount + 1);
+
   int32_t* pIntArr = (int32_t*)m_lpData;
   pIntArr[0] = 1;
   m_nLineCount = nLineCount;
@@ -93,12 +93,11 @@ void CFDE_TxtEdtParag::LoadParag() {
 }
 
 void CFDE_TxtEdtParag::UnloadParag() {
-  ASSERT(m_lpData != NULL);
   ((int32_t*)m_lpData)[0]--;
   ASSERT(((int32_t*)m_lpData)[0] >= 0);
   if (((int32_t*)m_lpData)[0] == 0) {
     FX_Free(m_lpData);
-    m_lpData = NULL;
+    m_lpData = nullptr;
   }
 }
 

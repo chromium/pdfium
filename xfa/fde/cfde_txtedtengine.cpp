@@ -51,7 +51,7 @@ CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
   delete m_pTextBreak;
   RemoveAllParags();
   RemoveAllPages();
-  m_Param.pEventSink = NULL;
+  m_Param.pEventSink = nullptr;
   ClearSelection();
 }
 
@@ -78,7 +78,7 @@ int32_t CFDE_TxtEdtEngine::CountPages() const {
 
 IFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
   if (m_PagePtrArray.GetSize() <= nIndex) {
-    return NULL;
+    return nullptr;
   }
   return m_PagePtrArray[nIndex];
 }
@@ -86,7 +86,7 @@ IFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
 void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
   ResetEngine();
   int32_t nIndex = 0;
-  if (pStream != NULL && pStream->GetLength()) {
+  if (pStream && pStream->GetLength()) {
     int32_t nStreamLength = pStream->GetLength();
     FX_BOOL bValid = TRUE;
     if (m_nLimit > 0 && nStreamLength > m_nLimit) {
@@ -668,14 +668,13 @@ int32_t CFDE_TxtEdtEngine::StartLayout() {
 
 int32_t CFDE_TxtEdtEngine::DoLayout(IFX_Pause* pPause) {
   int32_t nCount = m_ParagPtrArray.GetSize();
-  CFDE_TxtEdtParag* pParag = NULL;
+  CFDE_TxtEdtParag* pParag = nullptr;
   int32_t nLineCount = 0;
   for (; m_nLayoutPos < nCount; m_nLayoutPos++) {
     pParag = m_ParagPtrArray[m_nLayoutPos];
     pParag->CalcLines();
     nLineCount += pParag->GetLineCount();
-    if ((pPause != NULL) && (nLineCount > m_nPageLineCount) &&
-        pPause->NeedToPauseNow()) {
+    if (nLineCount > m_nPageLineCount && pPause && pPause->NeedToPauseNow()) {
       m_nLineCount += nLineCount;
       return (++m_nLayoutPos * 100) / nCount;
     }
@@ -732,7 +731,7 @@ CFDE_TxtEdtParag* CFDE_TxtEdtEngine::GetParag(int32_t nParagIndex) const {
 
 IFX_CharIter* CFDE_TxtEdtEngine::CreateCharIter() {
   if (!m_pTxtBuf) {
-    return NULL;
+    return nullptr;
   }
   return new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(m_pTxtBuf));
 }
@@ -743,7 +742,7 @@ int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
                                       int32_t& nStartLine) const {
   int32_t nLineTotal = nStartLineofParag;
   int32_t nCount = m_ParagPtrArray.GetSize();
-  CFDE_TxtEdtParag* pParag = NULL;
+  CFDE_TxtEdtParag* pParag = nullptr;
   int32_t i = nStartParag;
   for (; i < nCount; i++) {
     pParag = m_ParagPtrArray[i];
@@ -996,7 +995,7 @@ void CFDE_TxtEdtEngine::UpdateParags() {
   if (nCount == 0) {
     return;
   }
-  CFDE_TxtEdtParag* pParag = NULL;
+  CFDE_TxtEdtParag* pParag = nullptr;
   int32_t nLineCount = 0;
   int32_t i = 0;
   for (i = 0; i < nCount; i++) {
@@ -1230,7 +1229,7 @@ int32_t CFDE_TxtEdtEngine::MovePage2Char(int32_t nIndex) {
     }
     m_Param.pEventSink->On_PageUnload(this, m_nCaretPage, 0);
   }
-  CFDE_TxtEdtParag* pParag = NULL;
+  CFDE_TxtEdtParag* pParag = nullptr;
   int32_t nLineCount = 0;
   int32_t nParagCount = m_ParagPtrArray.GetSize();
   int32_t i = 0;

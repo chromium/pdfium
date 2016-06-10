@@ -48,7 +48,7 @@ typedef CFX_ArrayTemplate<CFDE_CSSSelector*> CFDE_CSSSelectorArray;
 
 class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
  public:
-  CFDE_CSSStyleRule() : m_ppSelector(NULL), m_iSelectors(0) {}
+  CFDE_CSSStyleRule() : m_ppSelector(nullptr), m_iSelectors(0) {}
   int32_t CountSelectorLists() const override { return m_iSelectors; }
   CFDE_CSSSelector* GetSelectorList(int32_t index) const override {
     return m_ppSelector[index];

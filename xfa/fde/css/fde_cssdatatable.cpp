@@ -37,13 +37,12 @@ CFX_FloatRect FDE_CSSBoundaryToRect(IFDE_CSSBoundaryStyle* pBoundStyle,
                                     FX_BOOL bPadding,
                                     FX_BOOL bBorder,
                                     FX_BOOL bMargin) {
-  ASSERT(pBoundStyle != NULL);
   FX_FLOAT fResult;
   const FDE_CSSRECT* pRect;
   CFX_FloatRect rect(0, 0, 0, 0);
   if (bPadding) {
     pRect = pBoundStyle->GetPaddingWidth();
-    if (pRect != NULL) {
+    if (pRect) {
       if (FDE_CSSLengthToFloat(pRect->left, fContainerWidth, fResult)) {
         rect.left += fResult;
       }
@@ -60,7 +59,7 @@ CFX_FloatRect FDE_CSSBoundaryToRect(IFDE_CSSBoundaryStyle* pBoundStyle,
   }
   if (bBorder) {
     pRect = pBoundStyle->GetBorderWidth();
-    if (pRect != NULL) {
+    if (pRect) {
       if (FDE_CSSLengthToFloat(pRect->left, fContainerWidth, fResult)) {
         rect.left += fResult;
       }
@@ -77,7 +76,7 @@ CFX_FloatRect FDE_CSSBoundaryToRect(IFDE_CSSBoundaryStyle* pBoundStyle,
   }
   if (bMargin) {
     pRect = pBoundStyle->GetMarginWidth();
-    if (pRect != NULL) {
+    if (pRect) {
       if (FDE_CSSLengthToFloat(pRect->left, fContainerWidth, fResult)) {
         rect.left += fResult;
       }
@@ -95,7 +94,6 @@ CFX_FloatRect FDE_CSSBoundaryToRect(IFDE_CSSBoundaryStyle* pBoundStyle,
   return rect;
 }
 uint32_t FDE_CSSFontStyleToFDE(IFDE_CSSFontStyle* pFontStyle) {
-  ASSERT(pFontStyle != NULL);
   uint32_t dwFontStyle = FX_FONTSTYLE_Normal;
   if (pFontStyle->GetFontStyle() == FDE_CSSFONTSTYLE_Italic) {
     dwFontStyle |= FX_FONTSTYLE_Italic;
@@ -562,7 +560,7 @@ static const FDE_CSSPERSUDOTABLE g_FDE_CSSPersudoType[] = {
 };
 FDE_LPCCSSPERSUDOTABLE FDE_GetCSSPersudoByEnum(FDE_CSSPERSUDO ePersudo) {
   return (ePersudo < FDE_CSSPERSUDO_NONE) ? (g_FDE_CSSPersudoType + ePersudo)
-                                          : NULL;
+                                          : nullptr;
 }
 const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByName(
     const CFX_WideStringC& wsName) {
@@ -582,10 +580,11 @@ const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByName(
       iEnd = iMid - 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName) {
-  return (eName < FDE_CSSPROPERTY_MAX) ? (g_FDE_CSSProperties + eName) : NULL;
+  return (eName < FDE_CSSPROPERTY_MAX) ? (g_FDE_CSSProperties + eName)
+                                       : nullptr;
 }
 const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByName(
     const CFX_WideStringC& wsName) {
@@ -605,12 +604,12 @@ const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByName(
       iEnd = iMid - 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByEnum(
     FDE_CSSPROPERTYVALUE eName) {
   return (eName < FDE_CSSPROPERTYVALUE_MAX) ? (g_FDE_CSSPropertyValues + eName)
-                                            : NULL;
+                                            : nullptr;
 }
 FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(
     const CFX_WideStringC& wsName) {
@@ -631,7 +630,7 @@ FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(
       iEnd = iMid - 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(
     const CFX_WideStringC& wsName) {
@@ -652,7 +651,7 @@ FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(
       iEnd = iMid - 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const CFX_WideStringC& wsName) {
   ASSERT(!wsName.IsEmpty());
@@ -671,7 +670,7 @@ FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const CFX_WideStringC& wsName) {
       iEnd = iMid - 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 
 FX_BOOL FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
@@ -702,7 +701,7 @@ FX_BOOL FDE_ParseCSSString(const FX_WCHAR* pszValue,
                            int32_t iValueLen,
                            int32_t& iOffset,
                            int32_t& iLength) {
-  ASSERT(pszValue != NULL && iValueLen > 0);
+  ASSERT(pszValue && iValueLen > 0);
   iOffset = 0;
   iLength = iValueLen;
   if (iValueLen >= 2) {
@@ -718,7 +717,7 @@ FX_BOOL FDE_ParseCSSURI(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
                         int32_t& iOffset,
                         int32_t& iLength) {
-  ASSERT(pszValue != NULL && iValueLen > 0);
+  ASSERT(pszValue && iValueLen > 0);
   if (iValueLen < 6 || pszValue[iValueLen - 1] != ')' ||
       FX_wcsnicmp(L"url(", pszValue, 4)) {
     return FALSE;

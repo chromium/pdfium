@@ -43,8 +43,6 @@ struct FDE_XMLNODE {
 typedef CFX_StackTemplate<FDE_XMLNODE> CFDE_XMLNodeStack;
 
 FX_BOOL FDE_IsXMLValidChar(FX_WCHAR ch);
-FX_BOOL FDE_IsXMLWhiteSpace(FX_WCHAR ch);
-FX_BOOL FDE_IsXMLNameChar(FX_WCHAR ch, FX_BOOL bFirstChar);
 
 struct FDE_XMLREADERHANDLER {
   void* pData;

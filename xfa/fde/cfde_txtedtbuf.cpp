@@ -19,7 +19,7 @@ CFDE_TxtEdtBuf::CFDE_TxtEdtBuf()
     : m_nChunkSize(kDefaultChunkSize),
       m_nTotal(0),
       m_bChanged(FALSE),
-      m_pAllocator(NULL) {
+      m_pAllocator(nullptr) {
   ASSERT(m_nChunkSize);
   ResetChunkBuffer(kDefaultChunkCount, m_nChunkSize);
 }
@@ -196,7 +196,7 @@ void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
     if (lpChunk->nUsed == 0) {
       m_pAllocator->Free(lpChunk);
       m_Chunks.RemoveAt(cpEnd.nChunkIndex);
-      lpChunk = NULL;
+      lpChunk = nullptr;
     }
     nLength -= nDeleted;
     cpEnd.nChunkIndex--;
@@ -260,9 +260,8 @@ FX_BOOL CFDE_TxtEdtBuf::Optimize(IFX_Pause* pPause) {
     } else {
       lpPreChunk = lpCurChunk;
     }
-    if (pPause != NULL && pPause->NeedToPauseNow()) {
+    if (pPause && pPause->NeedToPauseNow())
       return FALSE;
-    }
   }
   m_bChanged = FALSE;
   return TRUE;

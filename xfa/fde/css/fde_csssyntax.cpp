@@ -9,21 +9,17 @@
 #include "xfa/fde/css/fde_cssdatatable.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
-#ifdef _cplusplus
-extern "C" {
-#endif
+namespace {
 
-inline FX_BOOL FDE_IsSelectorStart(FX_WCHAR wch) {
+bool FDE_IsSelectorStart(FX_WCHAR wch) {
   return wch == '.' || wch == '#' || wch == '*' || (wch >= 'a' && wch <= 'z') ||
          (wch >= 'A' && wch <= 'Z');
 }
 
-#ifdef _cplusplus
-};
-#endif
+}  // namespace
 
 CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
-    : m_pStream(NULL),
+    : m_pStream(nullptr),
       m_iStreamPos(0),
       m_iPlaneSize(0),
       m_iTextDatLen(0),
@@ -38,7 +34,7 @@ FX_BOOL CFDE_CSSSyntaxParser::Init(IFX_Stream* pStream,
                                    int32_t iCSSPlaneSize,
                                    int32_t iTextDataSize,
                                    FX_BOOL bOnlyDeclaration) {
-  ASSERT(pStream != NULL && iCSSPlaneSize > 0 && iTextDataSize > 0);
+  ASSERT(pStream && iCSSPlaneSize > 0 && iTextDataSize > 0);
   Reset(bOnlyDeclaration);
   if (!m_TextData.EstimateSize(iTextDataSize)) {
     return FALSE;
@@ -53,7 +49,7 @@ FX_BOOL CFDE_CSSSyntaxParser::Init(const FX_WCHAR* pBuffer,
                                    int32_t iBufferSize,
                                    int32_t iTextDatSize,
                                    FX_BOOL bOnlyDeclaration) {
-  ASSERT(pBuffer != NULL && iBufferSize > 0 && iTextDatSize > 0);
+  ASSERT(pBuffer && iBufferSize > 0 && iTextDatSize > 0);
   Reset(bOnlyDeclaration);
   if (!m_TextData.EstimateSize(iTextDatSize)) {
     return FALSE;
@@ -63,7 +59,7 @@ FX_BOOL CFDE_CSSSyntaxParser::Init(const FX_WCHAR* pBuffer,
 void CFDE_CSSSyntaxParser::Reset(FX_BOOL bOnlyDeclaration) {
   m_TextPlane.Reset();
   m_TextData.Reset();
-  m_pStream = NULL;
+  m_pStream = nullptr;
   m_iStreamPos = 0;
   m_iTextDatLen = 0;
   m_dwCheck = (uint32_t)-1;
@@ -74,7 +70,7 @@ void CFDE_CSSSyntaxParser::Reset(FX_BOOL bOnlyDeclaration) {
 FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
   while (m_eStatus >= FDE_CSSSYNTAXSTATUS_None) {
     if (m_TextPlane.IsEOF()) {
-      if (m_pStream == NULL) {
+      if (!m_pStream) {
         if (m_eMode == FDE_CSSSYNTAXMODE_PropertyValue &&
             m_TextData.GetLength() > 0) {
           SaveTextData();
@@ -228,9 +224,9 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
               break;
             case '{': {
               FDE_CSSSYNTAXMODE* pMode = m_ModeStack.GetTopElement();
-              if (pMode == NULL || *pMode != FDE_CSSSYNTAXMODE_MediaRule) {
+              if (!pMode || *pMode != FDE_CSSSYNTAXMODE_MediaRule)
                 return m_eStatus = FDE_CSSSYNTAXSTATUS_Error;
-              }
+
               if (m_TextData.GetLength() > 0) {
                 SaveTextData();
                 return FDE_CSSSYNTAXSTATUS_MediaType;
@@ -243,9 +239,9 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
             } break;
             case ';': {
               FDE_CSSSYNTAXMODE* pMode = m_ModeStack.GetTopElement();
-              if (pMode == NULL || *pMode != FDE_CSSSYNTAXMODE_Import) {
+              if (!pMode || *pMode != FDE_CSSSYNTAXMODE_Import)
                 return m_eStatus = FDE_CSSSYNTAXSTATUS_Error;
-              }
+
               if (m_TextData.GetLength() > 0) {
                 SaveTextData();
                 if (IsImportEnabled()) {
@@ -276,9 +272,9 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
           break;
         case FDE_CSSSYNTAXMODE_URI: {
           FDE_CSSSYNTAXMODE* pMode = m_ModeStack.GetTopElement();
-          if (pMode == NULL || *pMode != FDE_CSSSYNTAXMODE_Import) {
+          if (!pMode || *pMode != FDE_CSSSYNTAXMODE_Import)
             return m_eStatus = FDE_CSSSYNTAXSTATUS_Error;
-          }
+
           if (wch <= ' ' || wch == ';') {
             int32_t iURIStart, iURILength = m_TextData.GetLength();
             if (iURILength > 0 &&
@@ -333,7 +329,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
             if (IsCharsetEnabled()) {
               DisableCharset();
               if (m_iTextDatLen > 0) {
-                if (m_pStream != NULL) {
+                if (m_pStream) {
                   uint16_t wCodePage = FX_GetCodePageFromStringW(
                       m_TextData.GetBuffer(), m_iTextDatLen);
                   if (wCodePage < 0xFFFF &&
@@ -371,7 +367,7 @@ FX_BOOL CFDE_CSSSyntaxParser::IsImportEnabled() const {
   }
   return TRUE;
 }
-inline FX_BOOL CFDE_CSSSyntaxParser::AppendChar(FX_WCHAR wch) {
+FX_BOOL CFDE_CSSSyntaxParser::AppendChar(FX_WCHAR wch) {
   m_TextPlane.MoveNext();
   if (m_TextData.GetLength() > 0 || wch > ' ') {
     m_TextData.AppendChar(wch);
@@ -379,26 +375,26 @@ inline FX_BOOL CFDE_CSSSyntaxParser::AppendChar(FX_WCHAR wch) {
   }
   return FALSE;
 }
-inline int32_t CFDE_CSSSyntaxParser::SaveTextData() {
+int32_t CFDE_CSSSyntaxParser::SaveTextData() {
   m_iTextDatLen = m_TextData.TrimEnd();
   m_TextData.Clear();
   return m_iTextDatLen;
 }
-inline void CFDE_CSSSyntaxParser::SwitchMode(FDE_CSSSYNTAXMODE eMode) {
+void CFDE_CSSSyntaxParser::SwitchMode(FDE_CSSSYNTAXMODE eMode) {
   m_eMode = eMode;
   SaveTextData();
 }
-inline int32_t CFDE_CSSSyntaxParser::SwitchToComment() {
+int32_t CFDE_CSSSyntaxParser::SwitchToComment() {
   int32_t iLength = m_TextData.GetLength();
   m_ModeStack.Push(m_eMode);
   SwitchMode(FDE_CSSSYNTAXMODE_Comment);
   return iLength;
 }
-inline FX_BOOL CFDE_CSSSyntaxParser::RestoreMode() {
+FX_BOOL CFDE_CSSSyntaxParser::RestoreMode() {
   FDE_CSSSYNTAXMODE* pMode = m_ModeStack.GetTopElement();
-  if (pMode == NULL) {
+  if (!pMode)
     return FALSE;
-  }
+
   SwitchMode(*pMode);
   m_ModeStack.Pop();
   return TRUE;
@@ -409,7 +405,7 @@ const FX_WCHAR* CFDE_CSSSyntaxParser::GetCurrentString(int32_t& iLength) const {
 }
 CFDE_CSSTextBuf::CFDE_CSSTextBuf()
     : m_bExtBuf(FALSE),
-      m_pBuffer(NULL),
+      m_pBuffer(nullptr),
       m_iBufLen(0),
       m_iDatLen(0),
       m_iDatPos(0) {}
@@ -419,7 +415,7 @@ CFDE_CSSTextBuf::~CFDE_CSSTextBuf() {
 void CFDE_CSSTextBuf::Reset() {
   if (!m_bExtBuf) {
     FX_Free(m_pBuffer);
-    m_pBuffer = NULL;
+    m_pBuffer = nullptr;
   }
   m_iDatPos = m_iDatLen = m_iBufLen;
 }

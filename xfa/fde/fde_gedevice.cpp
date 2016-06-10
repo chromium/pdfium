@@ -60,7 +60,7 @@ FX_BOOL CFDE_RenderDevice::SetClipPath(const CFDE_Path* pClip) {
   return FALSE;
 }
 CFDE_Path* CFDE_RenderDevice::GetClipPath() const {
-  return NULL;
+  return nullptr;
 }
 FX_FLOAT CFDE_RenderDevice::GetDpiX() const {
   return 96;
@@ -73,7 +73,6 @@ FX_BOOL CFDE_RenderDevice::DrawImage(CFX_DIBSource* pDib,
                                      const CFX_RectF& dstRect,
                                      const CFX_Matrix* pImgMatrix,
                                      const CFX_Matrix* pDevMatrix) {
-  ASSERT(pDib != NULL);
   CFX_RectF srcRect;
   if (pSrcRect) {
     srcRect = *pSrcRect;
@@ -96,13 +95,13 @@ FX_BOOL CFDE_RenderDevice::DrawImage(CFX_DIBSource* pDib,
   if (pDevMatrix) {
     dib2fxdev.Concat(*pDevMatrix);
   }
-  void* handle = NULL;
+  void* handle = nullptr;
   m_pDevice->StartDIBits(pDib, 255, 0, (const CFX_Matrix*)&dib2fxdev, 0,
                          handle);
-  while (m_pDevice->ContinueDIBits(handle, NULL)) {
+  while (m_pDevice->ContinueDIBits(handle, nullptr)) {
   }
   m_pDevice->CancelDIBits(handle);
-  return handle != NULL;
+  return !!handle;
 }
 FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
                                       CFGAS_GEFont* pFont,
@@ -250,9 +249,9 @@ FX_BOOL CFDE_RenderDevice::DrawPath(CFDE_Pen* pPen,
                                     const CFDE_Path* pPath,
                                     const CFX_Matrix* pMatrix) {
   CFDE_Path* pGePath = (CFDE_Path*)pPath;
-  if (pGePath == NULL) {
+  if (!pGePath)
     return FALSE;
-  }
+
   CFX_GraphStateData graphState;
   if (!CreatePen(pPen, fPenWidth, graphState)) {
     return FALSE;

@@ -15,7 +15,7 @@ class CFDE_CSSFunction : public CFX_Target {
  public:
   CFDE_CSSFunction(const FX_WCHAR* pszFuncName, IFDE_CSSValueList* pArgList)
       : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
-    ASSERT(pArgList != NULL);
+    ASSERT(pArgList);
   }
   int32_t CountArgs() const { return m_pArgList->CountValues(); }
   IFDE_CSSValue* GetArgs(int32_t index) const {
@@ -39,7 +39,7 @@ class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue,
       : m_eType(eType), m_fNumber(fValue) {}
   CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType, const FX_WCHAR* pValue)
       : m_eType(eType), m_pString(pValue) {
-    ASSERT(m_pString != NULL);
+    ASSERT(m_pString);
   }
   CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction)
       : m_eType(FDE_CSSPRIMITIVETYPE_Function), m_pFunction(pFunction) {}
@@ -106,7 +106,7 @@ class CFDE_CSSValueListParser : public CFX_Target {
  public:
   CFDE_CSSValueListParser(const FX_WCHAR* psz, int32_t iLen, FX_WCHAR separator)
       : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {
-    ASSERT(psz != NULL && iLen > 0);
+    ASSERT(psz && iLen > 0);
   }
   FX_BOOL NextValue(FDE_CSSPRIMITIVETYPE& eType,
                     const FX_WCHAR*& pStart,

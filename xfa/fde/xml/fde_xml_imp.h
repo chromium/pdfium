@@ -84,7 +84,7 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
   virtual FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
   virtual void GetString(const FX_WCHAR* pwsAttriName,
                          CFX_WideString& wsAttriValue,
-                         const FX_WCHAR* pwsDefValue = NULL) const;
+                         const FX_WCHAR* pwsDefValue = nullptr) const;
   virtual void SetString(const CFX_WideString& wsAttriName,
                          const CFX_WideString& wsAttriValue);
   virtual int32_t GetInteger(const FX_WCHAR* pwsAttriName,
@@ -122,7 +122,7 @@ class CFDE_XMLElement : public CFDE_XMLNode {
   virtual FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
   virtual void GetString(const FX_WCHAR* pwsAttriName,
                          CFX_WideString& wsAttriValue,
-                         const FX_WCHAR* pwsDefValue = NULL) const;
+                         const FX_WCHAR* pwsDefValue = nullptr) const;
   virtual void SetString(const CFX_WideString& wsAttriName,
                          const CFX_WideString& wsAttriValue);
   virtual int32_t GetInteger(const FX_WCHAR* pwsAttriName,
@@ -184,12 +184,13 @@ class CFDE_XMLDoc : public CFX_Target {
   virtual FX_BOOL LoadXML(IFX_Stream* pXMLStream,
                           int32_t iXMLPlaneSize = 8192,
                           int32_t iTextDataSize = 256,
-                          FDE_XMLREADERHANDLER* pHandler = NULL);
+                          FDE_XMLREADERHANDLER* pHandler = nullptr);
   virtual FX_BOOL LoadXML(CFDE_XMLParser* pXMLParser);
-  virtual int32_t DoLoad(IFX_Pause* pPause = NULL);
+  virtual int32_t DoLoad(IFX_Pause* pPause = nullptr);
   virtual void CloseXML();
   virtual CFDE_XMLNode* GetRoot() const { return m_pRoot; }
-  virtual void SaveXML(IFX_Stream* pXMLStream = NULL, FX_BOOL bSaveBOM = TRUE);
+  virtual void SaveXML(IFX_Stream* pXMLStream = nullptr,
+                       FX_BOOL bSaveBOM = TRUE);
   virtual void SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pNode);
 
  protected:

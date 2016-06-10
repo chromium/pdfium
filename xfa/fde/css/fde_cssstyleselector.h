@@ -51,19 +51,19 @@ class CFDE_CSSRuleCollection : public CFX_Target {
     void* pData;
     return m_IDRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
                ? (FDE_CSSRuleData*)pData
-               : NULL;
+               : nullptr;
   }
   FDE_CSSRuleData* GetTagRuleData(uint32_t dwTagHasn) {
     void* pData;
     return m_TagRules.Lookup((void*)(uintptr_t)dwTagHasn, pData)
                ? (FDE_CSSRuleData*)pData
-               : NULL;
+               : nullptr;
   }
   FDE_CSSRuleData* GetClassRuleData(uint32_t dwIDHash) {
     void* pData;
     return m_ClassRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
                ? (FDE_CSSRuleData*)pData
-               : NULL;
+               : nullptr;
   }
   FDE_CSSRuleData* GetUniversalRuleData() { return m_pUniversalRules; }
   FDE_CSSRuleData* GetPersudoRuleData() { return m_pPersudoRules; }
