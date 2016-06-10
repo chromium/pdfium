@@ -20,15 +20,14 @@ class CCodec_TiffModule {
 
   CCodec_TiffContext* CreateDecoder(IFX_FileRead* file_ptr);
 
-  void GetFrames(CCodec_TiffContext* ctx, int32_t& frames);
-  FX_BOOL LoadFrameInfo(CCodec_TiffContext* ctx,
-                        int32_t frame,
-                        uint32_t& width,
-                        uint32_t& height,
-                        uint32_t& comps,
-                        uint32_t& bpc,
-                        CFX_DIBAttribute* pAttribute);
-  FX_BOOL Decode(CCodec_TiffContext* ctx, class CFX_DIBitmap* pDIBitmap);
+  bool LoadFrameInfo(CCodec_TiffContext* ctx,
+                     int32_t frame,
+                     int32_t* width,
+                     int32_t* height,
+                     int32_t* comps,
+                     int32_t* bpc,
+                     CFX_DIBAttribute* pAttribute);
+  bool Decode(CCodec_TiffContext* ctx, class CFX_DIBitmap* pDIBitmap);
   void DestroyDecoder(CCodec_TiffContext* ctx);
 };
 
