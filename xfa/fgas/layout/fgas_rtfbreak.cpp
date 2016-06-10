@@ -990,27 +990,23 @@ int32_t CFX_RTFBreak::GetBreakPos(CFX_RTFCharArray& tca,
       if (nNext == FX_CBP_SP) {
         eType = bSpaceBreak ? FX_LBT_DIRECT_BRK : FX_LBT_PROHIBITED_BRK;
       } else {
-        eType = *((const FX_LINEBREAKTYPE*)gs_FX_LineBreak_PairTable +
-                  (nCur << 5) + nNext);
+        eType = gs_FX_LineBreak_PairTable[nCur][nNext];
       }
     } else if (nCur == FX_CBP_TB) {
       bNeedBreak = !bTabBreak;
       if (nNext == FX_CBP_TB) {
         eType = bTabBreak ? FX_LBT_DIRECT_BRK : FX_LBT_PROHIBITED_BRK;
       } else {
-        eType = *((const FX_LINEBREAKTYPE*)gs_FX_LineBreak_PairTable +
-                  (nCur << 5) + nNext);
+        eType = gs_FX_LineBreak_PairTable[nCur][nNext];
       }
-    } else if (bNumberBreak && nCur == FX_CBP_NU && nNext == FX_CBP_NU) {
-      eType = FX_LBT_DIRECT_BRK;
-    } else if (bInfixBreak && nCur == FX_CBP_IS && nNext == FX_CBP_IS) {
+    } else if ((bNumberBreak && nCur == FX_CBP_NU && nNext == FX_CBP_NU) ||
+               (bInfixBreak && nCur == FX_CBP_IS && nNext == FX_CBP_IS)) {
       eType = FX_LBT_DIRECT_BRK;
     } else {
       if (nNext == FX_CBP_SP) {
         eType = FX_LBT_PROHIBITED_BRK;
       } else {
-        eType = *((const FX_LINEBREAKTYPE*)gs_FX_LineBreak_PairTable +
-                  (nCur << 5) + nNext);
+        eType = gs_FX_LineBreak_PairTable[nCur][nNext];
       }
     }
     if (bAllChars) {

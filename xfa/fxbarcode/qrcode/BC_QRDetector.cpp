@@ -91,7 +91,7 @@ CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
   }
   CBC_CommonBitMatrix* bits =
       SampleGrid(m_image, topLeft.get(), topRight.get(), bottomLeft.get(),
-                 (CBC_ResultPoint*)(alignmentPattern), dimension, e);
+                 alignmentPattern, dimension, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
 
   CFX_ArrayTemplate<CBC_ResultPoint*>* points =
