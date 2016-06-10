@@ -91,9 +91,8 @@ CFX_ByteString CBC_DetectionResult::toString() {
         continue;
       }
       CBC_Codeword* codeword =
-          (CBC_Codeword*)m_detectionResultColumns[barcodeColumn]
-              ->getCodewords()
-              ->GetAt(codewordsRow);
+          m_detectionResultColumns[barcodeColumn]->getCodewords()->GetAt(
+              codewordsRow);
       if (!codeword) {
         result += "    |   ";
         continue;
@@ -107,7 +106,7 @@ CFX_ByteString CBC_DetectionResult::toString() {
 void CBC_DetectionResult::adjustIndicatorColumnRowNumbers(
     CBC_DetectionResultColumn* detectionResultColumn) {
   if (detectionResultColumn) {
-    ((CBC_DetectionResultRowIndicatorColumn*)detectionResultColumn)
+    static_cast<CBC_DetectionResultRowIndicatorColumn*>(detectionResultColumn)
         ->adjustCompleteIndicatorColumnRowNumbers(*m_barcodeMetadata);
   }
 }

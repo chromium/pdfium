@@ -48,8 +48,8 @@ CBC_DataMatrixDataBlock::GetDataBlocks(CFX_ByteArray* rawCodewords,
   result->SetSize(totalBlocks);
   int32_t numResultBlocks = 0;
   for (int32_t j = 0; j < ecBlockArray.GetSize(); j++) {
-    for (int32_t i = 0; i < ((ECB*)ecBlockArray[j])->GetCount(); i++) {
-      int32_t numDataCodewords = ((ECB*)ecBlockArray[j])->GetDataCodewords();
+    for (int32_t i = 0; i < ecBlockArray[j]->GetCount(); i++) {
+      int32_t numDataCodewords = ecBlockArray[j]->GetDataCodewords();
       int32_t numBlockCodewords = ecBlocks->GetECCodewords() + numDataCodewords;
       CFX_ByteArray codewords;
       codewords.SetSize(numBlockCodewords);

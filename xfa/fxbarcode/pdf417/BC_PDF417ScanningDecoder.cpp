@@ -465,8 +465,7 @@ CBC_BarcodeValueArrayArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
   for (int32_t i = 0;
        i < detectionResult->getDetectionResultColumns().GetSize(); i++) {
     CBC_DetectionResultColumn* detectionResultColumn =
-        (CBC_DetectionResultColumn*)detectionResult->getDetectionResultColumns()
-            .GetAt(i);
+        detectionResult->getDetectionResultColumns().GetAt(i);
     if (!detectionResultColumn)
       continue;
 
@@ -525,8 +524,7 @@ int32_t CBC_PDF417ScanningDecoder::getStartColumn(
                  ->GetSize();
          i++) {
       CBC_Codeword* previousRowCodeword =
-          (CBC_Codeword*)detectionResult->getDetectionResultColumn(
-                                            barcodeColumn)
+          detectionResult->getDetectionResultColumn(barcodeColumn)
               ->getCodewords()
               ->GetAt(i);
       if (previousRowCodeword) {

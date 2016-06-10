@@ -70,14 +70,12 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
   delete buildmonomial;
   delete syndrome;
   BC_EXCEPTION_CHECK_ReturnValue(e, -1);
-  CBC_PDF417ECModulusPoly* sigma =
-      (CBC_PDF417ECModulusPoly*)sigmaOmega->GetAt(0);
-  CBC_PDF417ECModulusPoly* omega =
-      (CBC_PDF417ECModulusPoly*)sigmaOmega->GetAt(1);
+  CBC_PDF417ECModulusPoly* sigma = sigmaOmega->GetAt(0);
+  CBC_PDF417ECModulusPoly* omega = sigmaOmega->GetAt(1);
   CFX_Int32Array* errorLocations = findErrorLocations(sigma, e);
   if (e != BCExceptionNO) {
     for (int32_t i = 0; i < sigmaOmega->GetSize(); i++) {
-      delete (CBC_PDF417ECModulusPoly*)sigmaOmega->GetAt(i);
+      delete sigmaOmega->GetAt(i);
     }
     sigmaOmega->RemoveAll();
     delete sigmaOmega;
@@ -88,7 +86,7 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
   if (e != BCExceptionNO) {
     delete errorLocations;
     for (int32_t i = 0; i < sigmaOmega->GetSize(); i++) {
-      delete (CBC_PDF417ECModulusPoly*)sigmaOmega->GetAt(i);
+      delete sigmaOmega->GetAt(i);
     }
     sigmaOmega->RemoveAll();
     delete sigmaOmega;
@@ -104,7 +102,7 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
       delete errorLocations;
       delete errorMagnitudes;
       for (int32_t j = 0; j < sigmaOmega->GetSize(); j++) {
-        delete (CBC_PDF417ECModulusPoly*)sigmaOmega->GetAt(j);
+        delete sigmaOmega->GetAt(j);
       }
       sigmaOmega->RemoveAll();
       delete sigmaOmega;
@@ -117,7 +115,7 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
   delete errorLocations;
   delete errorMagnitudes;
   for (int32_t k = 0; k < sigmaOmega->GetSize(); k++) {
-    delete (CBC_PDF417ECModulusPoly*)sigmaOmega->GetAt(k);
+    delete sigmaOmega->GetAt(k);
   }
   sigmaOmega->RemoveAll();
   delete sigmaOmega;

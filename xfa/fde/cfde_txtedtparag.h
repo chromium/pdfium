@@ -36,7 +36,7 @@ class CFDE_TxtEdtParag {
   int32_t m_nCharStart;
   int32_t m_nCharCount;
   int32_t m_nLineCount;
-  void* m_lpData;
+  int32_t* m_lpData;
   CFDE_TxtEdtEngine* m_pEngine;
 };
 
