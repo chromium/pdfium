@@ -10,26 +10,32 @@
 #include "core/fxcrt/include/fx_string.h"
 
 class CBC_QRCoderErrorCorrectionLevel {
- private:
-  int32_t m_ordinal;
-  int32_t m_bits;
-  CFX_ByteString m_name;
-  CBC_QRCoderErrorCorrectionLevel(int32_t ordinal, int32_t bits, FX_CHAR* name);
-  CBC_QRCoderErrorCorrectionLevel();
-
  public:
   static CBC_QRCoderErrorCorrectionLevel* L;
   static CBC_QRCoderErrorCorrectionLevel* M;
   static CBC_QRCoderErrorCorrectionLevel* Q;
   static CBC_QRCoderErrorCorrectionLevel* H;
-  virtual ~CBC_QRCoderErrorCorrectionLevel();
+
   static void Initialize();
   static void Finalize();
-  int32_t Ordinal();
-  int32_t GetBits();
-  CFX_ByteString GetName();
   static void Destroy();
   static CBC_QRCoderErrorCorrectionLevel* ForBits(int32_t bits);
+
+  ~CBC_QRCoderErrorCorrectionLevel();
+
+  int32_t Ordinal() const { return m_ordinal; }
+  int32_t GetBits() const { return m_bits; }
+  CFX_ByteString GetName() const { return m_name; }
+
+ private:
+  CBC_QRCoderErrorCorrectionLevel(int32_t ordinal,
+                                  int32_t bits,
+                                  const FX_CHAR* name);
+  CBC_QRCoderErrorCorrectionLevel();
+
+  int32_t m_ordinal;
+  int32_t m_bits;
+  CFX_ByteString m_name;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_
