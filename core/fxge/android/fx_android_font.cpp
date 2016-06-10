@@ -13,6 +13,7 @@
 #include "core/fxge/android/fx_android_font.h"
 
 CFX_AndroidFontInfo::CFX_AndroidFontInfo() : m_pFontMgr(nullptr) {}
+CFX_AndroidFontInfo::~CFX_AndroidFontInfo() {}
 FX_BOOL CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr) {
   if (!pFontMgr)
     return FALSE;

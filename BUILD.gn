@@ -1641,6 +1641,10 @@ test("pdfium_unittests") {
     ]
   }
   configs += [ ":pdfium_core_config" ]
+  if (is_android) {
+    ignore_all_data_deps = true
+    use_raw_android_executable = true
+  }
 }
 
 test("pdfium_embeddertests") {
@@ -1694,6 +1698,10 @@ test("pdfium_embeddertests") {
     configs += [ "//v8:external_startup_data" ]
   }
   configs += [ ":pdfium_core_config" ]
+  if (is_android) {
+    ignore_all_data_deps = true
+    use_raw_android_executable = true
+  }
 }
 
 if (pdf_is_standalone) {

@@ -6,14 +6,69 @@
 # TEST SETUP
 # ==============================================================================
 
+template("_gen_isolate") {
+  testonly = true
+  _runtime_deps_file = "$target_gen_dir/$target_name.runtime_deps"
+  group("${target_name}__write_deps") {
+    forward_variables_from(invoker,
+                           [
+                             "data",
+                             "data_deps",
+                             "deps",
+                             "public_deps",
+                           ])
+    write_runtime_deps = _runtime_deps_file
+  }
+
+  action(target_name) {
+    script = "//testing/generate_isolate.py"
+    inputs = [
+      _runtime_deps_file,
+    ]
+    outputs = [
+      invoker.output,
+    ]
+    args = [
+      "--output-directory=.",
+      "--out-file",
+      rebase_path(invoker.output, root_build_dir),
+      "--runtime-deps-file",
+      rebase_path(_runtime_deps_file, root_build_dir),
+    ]
+    if (is_android) {
+      args += [ "--apply-android-filters" ]
+    }
+    if (defined(invoker.apply_device_filters) && invoker.apply_device_filters) {
+      args += [ "--apply-device-filters" ]
+    }
+    _assert_no_odd_data =
+        defined(invoker.assert_no_odd_data) && invoker.assert_no_odd_data
+    if (_assert_no_odd_data) {
+      args += [ "--assert-no-odd-data" ]
+    }
+    if (defined(invoker.command)) {
+      _isolate_dir = get_path_info(invoker.output, "dir")
+      args += [
+        "--command",
+        rebase_path(invoker.command, _isolate_dir),
+      ]
+    }
+    deps = [
+      ":${invoker.target_name}__write_deps",
+    ]
+  }
+}
+
 # Define a test as an executable (or apk on Android) with the "testonly" flag
 # set.
 # Variable:
 #   use_raw_android_executable: Use executable() rather than android_apk().
+#   use_native_activity: Test implements ANativeActivity_onCreate().
 template("test") {
   if (is_android) {
     import("//build/config/android/config.gni")
     import("//build/config/android/rules.gni")
+    import("//build/config/sanitizers/sanitizers.gni")
 
     _use_raw_android_executable = defined(invoker.use_raw_android_executable) &&
                                   invoker.use_raw_android_executable
@@ -25,6 +80,40 @@ template("test") {
       _output_name = invoker.output_name
     }
 
+    _test_runner_target = "${_output_name}__test_runner_script"
+    _wrapper_script_vars = [ "shard_timeout" ]
+    _gen_isolate_vars = [
+      "allow_odd_runtime_deps",
+      "ignore_all_data_deps",
+    ]
+    _generate_device_isolate =
+        !defined(invoker.ignore_all_data_deps) || !invoker.ignore_all_data_deps
+
+    if (_generate_device_isolate) {
+      _allow_odd_runtime_deps = defined(invoker.allow_odd_runtime_deps) &&
+                                invoker.allow_odd_runtime_deps
+
+      # The device isolate is needed at runtime, so it cannot go in
+      # target_gen_dir, as builder/tester configurations do not include it.
+      _target_dir_name = get_label_info(":$target_name", "dir")
+      _device_isolate_path = "$root_out_dir/gen.runtime/$_target_dir_name/$target_name.device.isolate"
+      _gen_isolate_target_name = "${target_name}__isolate"
+      _gen_isolate(_gen_isolate_target_name) {
+        forward_variables_from(invoker,
+                               [
+                                 "data",
+                                 "data_deps",
+                                 "deps",
+                                 "public_deps",
+                               ])
+        assert_no_odd_data = !_allow_odd_runtime_deps
+        output = _device_isolate_path
+        apply_device_filters = true
+      }
+    }
+
+    assert(_use_raw_android_executable || enable_java_templates)
+
     if (_use_raw_android_executable) {
       _exec_target = "${target_name}__exec"
       _dist_target = "${target_name}__dist"
@@ -35,7 +124,10 @@ template("test") {
         # Configs will always be defined since we set_defaults in BUILDCONFIG.gn.
         configs = []
         data_deps = []
-        forward_variables_from(invoker, "*", [ "extra_dist_files" ])
+        forward_variables_from(
+            invoker,
+            "*",
+            _wrapper_script_vars + _gen_isolate_vars + [ "extra_dist_files" ])
         testonly = true
 
         # Thanks to the set_defaults() for test(), configs are initialized with
@@ -70,8 +162,11 @@ template("test") {
       _apk_specific_vars = [
         "android_manifest",
         "enable_multidex",
+        "proguard_configs",
+        "proguard_enabled",
         "use_default_launcher",
         "write_asset_list",
+        "use_native_activity",
       ]
       shared_library(_library_target) {
         # Configs will always be defined since we set_defaults in BUILDCONFIG.gn.
@@ -82,10 +177,8 @@ template("test") {
         deps = []
         forward_variables_from(invoker,
                                "*",
-                               _apk_specific_vars + [
-                                     "isolate_file",
-                                     "visibility",
-                                   ])
+                               _apk_specific_vars + _wrapper_script_vars +
+                                   _gen_isolate_vars + [ "visibility" ])
 
         if (!defined(invoker.use_default_launcher) ||
             invoker.use_default_launcher) {
@@ -102,13 +195,29 @@ template("test") {
           install_script_name = "install_${invoker.output_name}"
         }
         deps += [ ":$_library_target" ]
+
+        # TODO(agrieve): Remove this data_dep once bots don't build the _apk
+        #     target (post-GYP).
+        # It's a bit backwards for the apk to depend on the runner script, since
+        # the apk is conceptually a runtime_dep of the script. However, it is
+        # currently necessary because the bots build this _apk target directly
+        # rather than the group() below.
+        data_deps = [
+          ":$_test_runner_target",
+        ]
       }
 
       # Incremental test targets work only for .apks.
       _incremental_test_runner_target =
           "${_output_name}_incremental__test_runner_script"
       test_runner_script(_incremental_test_runner_target) {
-        forward_variables_from(invoker, [ "isolate_file" ])
+        forward_variables_from(invoker, _wrapper_script_vars)
+        if (_generate_device_isolate) {
+          isolate_file = _device_isolate_path
+          deps = [
+            ":$_gen_isolate_target_name",
+          ]
+        }
         apk_target = ":$_apk_target"
         test_name = "${_output_name}_incremental"
         test_type = "gtest"
@@ -128,7 +237,14 @@ template("test") {
 
     _test_runner_target = "${_output_name}__test_runner_script"
     test_runner_script(_test_runner_target) {
-      forward_variables_from(invoker, [ "isolate_file" ])
+      forward_variables_from(invoker, _wrapper_script_vars)
+      if (_generate_device_isolate) {
+        isolate_file = _device_isolate_path
+        deps = [
+          ":$_gen_isolate_target_name",
+        ]
+      }
+
       if (_use_raw_android_executable) {
         executable_dist_dir = "$root_out_dir/$_dist_target"
       } else {
@@ -151,7 +267,7 @@ template("test") {
       }
     }
 
-    # TODO(GYP): Delete this after we've converted everything to GN.
+    # TODO(GYP_GONE): Delete this after we've converted everything to GN.
     # The _run targets exist only for compatibility w/ GYP.
     group("${target_name}_apk_run") {
       testonly = true
@@ -178,20 +294,37 @@ template("test") {
       ]
     }
 
-    app(_test_target) {
-      # TODO(GYP): Make this configurable and only provide a default
-      # that can be overridden.
-      info_plist = "//testing/gtest_ios/unittest-Info.plist"
-      app_name = target_name
-      entitlements_path = "//testing/gtest_ios"
-      code_signing_identity = ""
+    ios_app_bundle(_test_target) {
       testonly = true
-      extra_substitutions = [ "BUNDLE_ID_TEST_NAME=$app_name" ]
 
       # See above call.
       set_sources_assignment_filter([])
+      forward_variables_from(invoker, "*", [ "testonly" ])
 
-      forward_variables_from(invoker, "*")
+      # Provide sensible defaults in case invoker did not define any of those
+      # required variables.
+      if (!defined(info_plist) && !defined(info_plist_target)) {
+        info_plist = "//testing/gtest_ios/unittest-Info.plist"
+      }
+      if (!defined(entitlements_path)) {
+        entitlements_path = "//testing/gtest_ios"
+      }
+      if (!defined(code_signing_identity)) {
+        code_signing_identity = ""
+      }
+
+      # TODO(crbug.com/603102): remove this once gyp support is dropped and all
+      # application uses the target name as value for BUNDLE_ID_TEST_NAME.
+      if (defined(invoker.app_name)) {
+        app_name = invoker.app_name
+      } else {
+        app_name = target_name
+      }
+
+      if (!defined(extra_substitutions)) {
+        extra_substitutions = []
+      }
+      extra_substitutions += [ "BUNDLE_ID_TEST_NAME=$app_name" ]
 
       if (!defined(deps)) {
         deps = []
@@ -220,13 +353,22 @@ template("test") {
       ]
     }
 
-    # TODO(GYP): Delete this after we've converted everything to GN.
+    # TODO(GYP_GONE): Delete this after we've converted everything to GN.
     # The _run targets exist only for compatibility with GYP.
     group("${target_name}_run") {
       testonly = true
       deps = [
         ":${invoker.target_name}",
       ]
+    }
+
+    if (defined(invoker.output_name) && target_name != invoker.output_name) {
+      group("${invoker.output_name}_run") {
+        testonly = true
+        deps = [
+          ":${invoker.target_name}",
+        ]
+      }
     }
   }
 }

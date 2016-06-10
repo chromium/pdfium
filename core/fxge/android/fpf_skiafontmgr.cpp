@@ -30,8 +30,7 @@ static unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
     return 0;
   }
   if (count > 0) {
-    if (pFileRead->ReadBlock(buffer, (FX_FILESIZE)offset, (size_t)count) !=
-        count) {
+    if (!pFileRead->ReadBlock(buffer, (FX_FILESIZE)offset, (size_t)count)) {
       return 0;
     }
   }
@@ -209,12 +208,12 @@ static FX_BOOL FPF_SkiaIsCJK(uint8_t uCharset) {
          (uCharset == FXFONT_SHIFTJIS_CHARSET);
 }
 static FX_BOOL FPF_SkiaMaybeSymbol(const CFX_ByteStringC& bsFacename) {
-  CFX_ByteString bsName = bsFacename;
+  CFX_ByteString bsName(bsFacename);
   bsName.MakeLower();
   return bsName.Find("symbol") > -1;
 }
 static FX_BOOL FPF_SkiaMaybeArabic(const CFX_ByteStringC& bsFacename) {
-  CFX_ByteString bsName = bsFacename;
+  CFX_ByteString bsName(bsFacename);
   bsName.MakeLower();
   return bsName.Find("arabic") > -1;
 }
@@ -371,7 +370,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const CFX_ByteStringC& bsFile,
   }
   FXFT_Open_Args args;
   args.flags = FT_OPEN_PATHNAME;
-  args.pathname = static_cast<FT_String*>(bsFile.c_str());
+  args.pathname = const_cast<FT_String*>(bsFile.c_str());
   FXFT_Face face;
   if (FXFT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face)) {
     return FALSE;
@@ -399,7 +398,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const uint8_t* pBuffer,
   FXFT_Set_Pixel_Sizes(face, 0, 64);
   return face;
 }
-void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteStringC& path) {
+void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteString& path) {
   void* handle = FX_OpenFolder(path.c_str());
   if (!handle) {
     return;
@@ -418,7 +417,7 @@ void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteStringC& path) {
         continue;
       }
     }
-    CFX_ByteString fullpath = path;
+    CFX_ByteString fullpath(path);
     fullpath += "/";
     fullpath += filename;
     if (bFolder) {
@@ -429,8 +428,8 @@ void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteStringC& path) {
   }
   FX_CloseFolder(handle);
 }
-void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteStringC& file) {
-  FXFT_Face face = GetFontFace(file);
+void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteString& file) {
+  FXFT_Face face = GetFontFace(file.AsStringC());
   if (face) {
     CFPF_SkiaPathFont* pFontDesc = new CFPF_SkiaPathFont;
     pFontDesc->SetPath(file.c_str());

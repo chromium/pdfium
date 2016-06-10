@@ -4,6 +4,8 @@
 /testing/corpus
 /testing/gmock
 /testing/gtest
+/third_party/android_ndk
+/third_party/catapult
 /third_party/icu
 /third_party/llvm
 /third_party/llvm-build

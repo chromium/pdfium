@@ -31,7 +31,7 @@ void CFX_GEModule::InitPlatform() {
 
 void CFX_GEModule::DestroyPlatform() {
   if (m_pPlatformData)
-    static_cast<IFPF_DeviceModule*>(m_pPlatformData)->Destroy();
+    static_cast<CFPF_SkiaDeviceModule*>(m_pPlatformData)->Destroy();
 }
 
 #endif  // _FX_OS_ == _FX_ANDROID_

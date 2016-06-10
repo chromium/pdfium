@@ -4,8 +4,10 @@ vars = {
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
 
-  'build_revision': '4842479bd8da7b9e5eb027f8c15bee533f9c328f',
+  'android_ndk_revision': '5022f40f12953c02b2614c5f7beb981ec5d0e833',
+  'build_revision': '9bbfcd5cce0290376e46f3aeaca3475e96a67fdb',
   'buildtools_revision': '099f1da55bfe8caa12266371a7eb983698fb1d87',
+  'catapult_revision': '8ff23141e1df724317e9f558644ce2a7d8afde54',
   'clang_revision': 'b6f620b311665e2d96d0921833f54295b9bbf925',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'gen_library_loader_revision': '916d4acd8b2cde67a390737dfba90b3c37de23a1',
@@ -64,6 +66,12 @@ deps = {
 }
 
 deps_os = {
+  "android": {
+    "third_party/android_ndk":
+      Var('chromium_git') + "/android_ndk.git@" + Var('android_ndk_revision'),
+    "third_party/catapult":
+      Var('chromium_git') + "/external/github.com/catapult-project/catapult.git@" + Var('catapult_revision'),
+  },
   "win": {
     "v8/third_party/cygwin":
       Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),

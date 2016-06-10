@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_ANDROID_FPF_SKIAMODULE_H_
 #define CORE_FXGE_ANDROID_FPF_SKIAMODULE_H_
 
-#include "core/fxcrt/include/fx_system.h'"
+#include "core/fxcrt/include/fx_system.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 

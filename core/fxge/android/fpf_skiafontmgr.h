@@ -111,8 +111,8 @@ class CFPF_SkiaFontMgr {
                         int32_t iFaceIndex = 0);
 
  protected:
-  void ScanPath(const CFX_ByteStringC& path);
-  void ScanFile(const CFX_ByteStringC& file);
+  void ScanPath(const CFX_ByteString& path);
+  void ScanFile(const CFX_ByteString& file);
   void ReportFace(FXFT_Face face, CFPF_SkiaFontDescriptor* pFontDesc);
   void OutputSystemFonts();
 
