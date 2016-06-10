@@ -59,7 +59,7 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
     encoder.setDimensions(30, 1, row, row);
   }
   encoder.generateBarcodeLogic(contents, m_iCorrectLevel, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t lineThickness = 2;
   int32_t aspectRatio = 4;
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();

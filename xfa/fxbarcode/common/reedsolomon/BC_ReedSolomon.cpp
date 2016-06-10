@@ -44,10 +44,10 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree,
       temp.Add(m_field->Exp(d - 1));
       CBC_ReedSolomonGF256Poly temp_poly;
       temp_poly.Init(m_field, &temp, e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       CBC_ReedSolomonGF256Poly* nextGenerator =
           lastGenerator->Multiply(&temp_poly, e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       m_cachedGenerators.Add(nextGenerator);
       lastGenerator = nextGenerator;
     }

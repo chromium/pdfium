@@ -34,7 +34,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual uint8_t* Encode(const CFX_ByteString& contents,
                           int32_t& outLength,
                           int32_t& e) {
-    return NULL;
+    return nullptr;
   }
 
   virtual void RenderResult(const CFX_WideStringC& contents,

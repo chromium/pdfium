@@ -46,10 +46,10 @@ CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString msg,
   m_shape = FORCE_NONE;
   m_newEncoding = -1;
   m_pos = 0;
-  m_symbolInfo = NULL;
+  m_symbolInfo = nullptr;
   m_skipAtEnd = 0;
-  m_maxSize = NULL;
-  m_minSize = NULL;
+  m_maxSize = nullptr;
+  m_minSize = nullptr;
 }
 CBC_EncoderContext::~CBC_EncoderContext() {}
 void CBC_EncoderContext::setSymbolShape(SymbolShapeHint shape) {
@@ -97,7 +97,7 @@ void CBC_EncoderContext::updateSymbolInfo(int32_t& e) {
   updateSymbolInfo(getCodewordCount(), e);
 }
 void CBC_EncoderContext::updateSymbolInfo(int32_t len, int32_t& e) {
-  if (m_symbolInfo == NULL || len > m_symbolInfo->m_dataCapacity) {
+  if (!m_symbolInfo || len > m_symbolInfo->m_dataCapacity) {
     m_symbolInfo =
         CBC_SymbolInfo::lookup(len, m_shape, m_minSize, m_maxSize, true, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);

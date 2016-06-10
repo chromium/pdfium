@@ -48,7 +48,7 @@ CFX_ArrayTemplate<CBC_QRDataBlock*>* CBC_QRDataBlock::GetDataBlocks(
     int32_t& e) {
   if (rawCodewords->GetSize() != version->GetTotalCodeWords()) {
     e = BCExceptionIllegalArgument;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   CBC_QRCoderECBlocks* ecBlocks = version->GetECBlocksForLevel(ecLevel);
   int32_t totalBlocks = 0;

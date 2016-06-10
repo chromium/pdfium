@@ -141,7 +141,7 @@ CFX_Int32Array* CBC_OnedCode39Reader::FindAsteriskPattern(
           FX_BOOL bT1 =
               row->IsRange(std::max(0, patternStart - (i - patternStart) / 2),
                            patternStart, FALSE, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
           if (bT1) {
             CFX_Int32Array* result = new CFX_Int32Array;
             result->SetSize(2);
@@ -165,7 +165,7 @@ CFX_Int32Array* CBC_OnedCode39Reader::FindAsteriskPattern(
     }
   }
   e = BCExceptionNotFound;
-  return NULL;
+  return nullptr;
 }
 int32_t CBC_OnedCode39Reader::ToNarrowWidePattern(CFX_Int32Array* counters) {
   int32_t numCounters = counters->GetSize();

@@ -29,7 +29,7 @@
 #include "xfa/fxbarcode/utils.h"
 
 CBC_OnedUPCAReader::CBC_OnedUPCAReader() {
-  m_ean13Reader = NULL;
+  m_ean13Reader = nullptr;
 }
 void CBC_OnedUPCAReader::Init() {
   m_ean13Reader = new CBC_OnedEAN13Reader;

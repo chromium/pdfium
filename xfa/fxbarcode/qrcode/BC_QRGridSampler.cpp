@@ -128,7 +128,7 @@ CBC_CommonBitMatrix* CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix* image,
     }
     transform->TransformPoints(&points);
     CheckAndNudgePoints(image, &points, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     for (x = 0; x < max; x += 2) {
       if (image->Get((int32_t)points[x], (int32_t)points[x + 1])) {
         bits->Set(x >> 1, y);

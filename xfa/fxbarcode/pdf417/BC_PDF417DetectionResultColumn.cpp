@@ -60,7 +60,7 @@ CBC_Codeword* CBC_DetectionResultColumn::getCodewordNearby(int32_t imageRow) {
       }
     }
   }
-  return NULL;
+  return nullptr;
 }
 int32_t CBC_DetectionResultColumn::imageRowToCodewordIndex(int32_t imageRow) {
   return imageRow - m_boundingBox->getMinY();
@@ -88,7 +88,7 @@ CFX_ByteString CBC_DetectionResultColumn::toString() {
   int32_t row = 0;
   for (int32_t i = 0; i < m_codewords->GetSize(); i++) {
     CBC_Codeword* codeword = (CBC_Codeword*)m_codewords->GetAt(i);
-    if (codeword == NULL) {
+    if (!codeword) {
       result += (FX_CHAR)row;
       row++;
       continue;

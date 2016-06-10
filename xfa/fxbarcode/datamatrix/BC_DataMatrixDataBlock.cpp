@@ -90,7 +90,7 @@ CBC_DataMatrixDataBlock::GetDataBlocks(CFX_ByteArray* rawCodewords,
   }
   if (rawCodewordsOffset != rawCodewords->GetSize()) {
     e = BCExceptionIllegalArgument;
-    return NULL;
+    return nullptr;
   }
   return result.release();
 }

@@ -27,8 +27,8 @@
 #include "xfa/fxbarcode/utils.h"
 
 CBC_QRCoder::CBC_QRCoder() {
-  m_mode = NULL;
-  m_ecLevel = NULL;
+  m_mode = nullptr;
+  m_ecLevel = nullptr;
   m_version = -1;
   m_matrixWidth = -1;
   m_maskPattern = -1;
@@ -36,7 +36,7 @@ CBC_QRCoder::CBC_QRCoder() {
   m_numDataBytes = -1;
   m_numECBytes = -1;
   m_numRSBlocks = -1;
-  m_matrix = NULL;
+  m_matrix = nullptr;
 }
 CBC_QRCoder::~CBC_QRCoder() {
   delete m_matrix;

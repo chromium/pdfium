@@ -44,21 +44,21 @@ CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(
     int32_t& e) {
   CBC_CommonBitSource bits(bytes);
   CFX_ByteString result;
-  CBC_CommonCharacterSetECI* currentCharacterSetECI = NULL;
+  CBC_CommonCharacterSetECI* currentCharacterSetECI = nullptr;
   FX_BOOL fc1Infact = FALSE;
   CFX_Int32Array byteSegments;
-  CBC_QRCoderMode* mode = NULL;
+  CBC_QRCoderMode* mode = nullptr;
   do {
     if (bits.Available() < 4) {
       mode = CBC_QRCoderMode::sTERMINATOR;
     } else {
       int32_t iTemp1 = bits.ReadBits(4, e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       mode = CBC_QRCoderMode::ForBits(iTemp1, e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-      if (mode == NULL) {
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+      if (!mode) {
         e = BCExceptionUnSupportMode;
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+        BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       }
     }
     if (!(mode == CBC_QRCoderMode::sTERMINATOR)) {
@@ -67,47 +67,47 @@ CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(
         fc1Infact = TRUE;
       } else if (mode == CBC_QRCoderMode::sSTRUCTURED_APPEND) {
         bits.ReadBits(16, e);
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+        BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       } else if (mode == CBC_QRCoderMode::sECI) {
         int32_t value = ParseECIValue(&bits, e);
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+        BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         currentCharacterSetECI =
             CBC_CommonCharacterSetECI::GetCharacterSetECIByValue(value);
       } else {
         if (mode == CBC_QRCoderMode::sGBK) {
           bits.ReadBits(4, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         }
         int32_t numBits = mode->GetCharacterCountBits(version, e);
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+        BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         int32_t count = bits.ReadBits(numBits, e);
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+        BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         if (mode == CBC_QRCoderMode::sNUMERIC) {
           DecodeNumericSegment(&bits, result, count, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         } else if (mode == CBC_QRCoderMode::sALPHANUMERIC) {
           DecodeAlphanumericSegment(&bits, result, count, fc1Infact, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         } else if (mode == CBC_QRCoderMode::sBYTE) {
           DecodeByteSegment(&bits, result, count, currentCharacterSetECI,
                             &byteSegments, byteModeDecode, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         } else if (mode == CBC_QRCoderMode::sGBK) {
           DecodeGBKSegment(&bits, result, count, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         } else if (mode == CBC_QRCoderMode::sKANJI) {
           DecodeKanjiSegment(&bits, result, count, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         } else {
           e = BCExceptionUnSupportMode;
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         }
       }
     }
   } while (!(mode == CBC_QRCoderMode::sTERMINATOR));
   CBC_CommonDecoderResult* tempCd = new CBC_CommonDecoderResult();
   tempCd->Init(*bytes, result, byteSegments, ecLevel, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return tempCd;
 }
 void CBC_QRDecodedBitStreamParser::DecodeGBKSegment(CBC_CommonBitSource* bits,

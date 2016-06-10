@@ -25,7 +25,7 @@
 #include "xfa/fxbarcode/common/BC_CommonByteArray.h"
 
 CBC_CommonByteArray::CBC_CommonByteArray() {
-  m_bytes = NULL;
+  m_bytes = nullptr;
   m_size = 0;
   m_index = 0;
 }
@@ -65,7 +65,7 @@ void CBC_CommonByteArray::AppendByte(int32_t value) {
   m_index++;
 }
 void CBC_CommonByteArray::Reserve(int32_t capacity) {
-  if (m_bytes == NULL || m_size < capacity) {
+  if (!m_bytes || m_size < capacity) {
     uint8_t* newArray = FX_Alloc(uint8_t, capacity);
     if (m_bytes) {
       FXSYS_memcpy(newArray, m_bytes, m_size);

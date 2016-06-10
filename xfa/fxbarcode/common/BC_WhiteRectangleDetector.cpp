@@ -197,7 +197,7 @@ CBC_ResultPoint* CBC_WhiteRectangleDetector::GetBlackPointOnSegment(
       return new CBC_ResultPoint((FX_FLOAT)x, (FX_FLOAT)y);
     }
   }
-  return NULL;
+  return nullptr;
 }
 int32_t CBC_WhiteRectangleDetector::DistanceL2(FX_FLOAT aX,
                                                FX_FLOAT aY,

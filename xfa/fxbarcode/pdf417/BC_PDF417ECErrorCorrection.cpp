@@ -26,7 +26,7 @@
 #include "xfa/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
 #include "xfa/fxbarcode/utils.h"
 
-CBC_PDF417ECModulusGF* CBC_PDF417ECErrorCorrection::m_field = NULL;
+CBC_PDF417ECModulusGF* CBC_PDF417ECErrorCorrection::m_field = nullptr;
 
 void CBC_PDF417ECErrorCorrection::Initialize(int32_t& e) {
   m_field =
@@ -137,9 +137,9 @@ CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(CBC_PDF417ECModulusPoly* a,
   CBC_PDF417ECModulusPoly* r = b;
   CBC_PDF417ECModulusPoly* tLast = m_field->getZero();
   CBC_PDF417ECModulusPoly* t = m_field->getOne();
-  CBC_PDF417ECModulusPoly* qtemp = NULL;
-  CBC_PDF417ECModulusPoly* rtemp = NULL;
-  CBC_PDF417ECModulusPoly* ttemp = NULL;
+  CBC_PDF417ECModulusPoly* qtemp = nullptr;
+  CBC_PDF417ECModulusPoly* rtemp = nullptr;
+  CBC_PDF417ECModulusPoly* ttemp = nullptr;
   int32_t i = 0;
   int32_t j = 0;
   int32_t m = 0;
@@ -261,7 +261,7 @@ CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(CBC_PDF417ECModulusPoly* a,
   }
   CBC_PDF417ECModulusPoly* omega = r->multiply(inverse, e);
   delete rtemp;
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>* modulusPoly =
       new CFX_ArrayTemplate<CBC_PDF417ECModulusPoly*>();
   modulusPoly->Add(sigma);
@@ -280,7 +280,7 @@ CFX_Int32Array* CBC_PDF417ECErrorCorrection::findErrorLocations(
       result->SetAt(ee, m_field->inverse(i, e));
       if (e != BCExceptionNO) {
         delete result;
-        return NULL;
+        return nullptr;
       }
       ee++;
     }
@@ -288,7 +288,7 @@ CFX_Int32Array* CBC_PDF417ECErrorCorrection::findErrorLocations(
   if (ee != numErrors) {
     e = BCExceptionChecksumException;
     delete result;
-    return NULL;
+    return nullptr;
   }
   return result;
 }
@@ -306,7 +306,7 @@ CFX_Int32Array* CBC_PDF417ECErrorCorrection::findErrorMagnitudes(
   }
   CBC_PDF417ECModulusPoly formalDerivative(m_field,
                                            formalDerivativeCoefficients, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t s = errorLocations.GetSize();
   CFX_Int32Array* result = new CFX_Int32Array;
   result->SetSize(s);
@@ -314,7 +314,7 @@ CFX_Int32Array* CBC_PDF417ECErrorCorrection::findErrorMagnitudes(
     int32_t xiInverse = m_field->inverse(errorLocations[i], e);
     if (e != BCExceptionNO) {
       delete result;
-      return NULL;
+      return nullptr;
     }
     int32_t numerator =
         m_field->subtract(0, errorEvaluator->evaluateAt(xiInverse));
@@ -322,7 +322,7 @@ CFX_Int32Array* CBC_PDF417ECErrorCorrection::findErrorMagnitudes(
         m_field->inverse(formalDerivative.evaluateAt(xiInverse), e);
     if (e != BCExceptionNO) {
       delete result;
-      return NULL;
+      return nullptr;
     }
     result->SetAt(i, m_field->multiply(numerator, denominator));
   }

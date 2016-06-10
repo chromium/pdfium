@@ -33,14 +33,14 @@ CBC_OneDimWriter::CBC_OneDimWriter() {
   m_bPrintChecksum = TRUE;
   m_iDataLenth = 0;
   m_bCalcChecksum = FALSE;
-  m_pFont = NULL;
+  m_pFont = nullptr;
   m_fFontSize = 10;
   m_iFontStyle = 0;
   m_fontColor = 0xff000000;
   m_iContentLen = 0;
   m_bLeftPadding = FALSE;
   m_bRightPadding = FALSE;
-  m_output = NULL;
+  m_output = nullptr;
 }
 CBC_OneDimWriter::~CBC_OneDimWriter() {
   delete m_output;
@@ -55,9 +55,9 @@ void CBC_OneDimWriter::SetCalcChecksum(int32_t state) {
   m_bCalcChecksum = state;
 }
 FX_BOOL CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
-  if (cFont == NULL) {
+  if (!cFont)
     return FALSE;
-  }
+
   m_pFont = cFont;
   return TRUE;
 }
@@ -82,14 +82,14 @@ uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
                                   int32_t& outHeight,
                                   int32_t hints,
                                   int32_t& e) {
-  uint8_t* ret = NULL;
+  uint8_t* ret = nullptr;
   outHeight = 1;
   if (m_Width >= 20) {
     ret = Encode(contents, outWidth, e);
   } else {
     ret = Encode(contents, outWidth, e);
   }
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
 uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
@@ -98,7 +98,7 @@ uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
                                   int32_t& outHeight,
                                   int32_t& e) {
   uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
 int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
@@ -296,9 +296,9 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
 void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
                                           const CFX_WideStringC& contents,
                                           int32_t& e) {
-  if (m_output == NULL) {
+  if (!m_output)
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-  }
+
   pOutBitmap = CreateDIBitmap(m_output->GetWidth(), m_output->GetHeight());
   pOutBitmap->Clear(m_backgroundColor);
   if (!pOutBitmap) {
@@ -318,7 +318,8 @@ void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
       break;
     }
   if (m_locTextLoc != BC_TEXT_LOC_NONE && i < contents.GetLength()) {
-    ShowChars(contents, pOutBitmap, NULL, NULL, m_barWidth, m_multiple, e);
+    ShowChars(contents, pOutBitmap, nullptr, nullptr, m_barWidth, m_multiple,
+              e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
   CFX_DIBitmap* pStretchBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
@@ -330,9 +331,9 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix,
                                           const CFX_WideStringC& contents,
                                           int32_t& e) {
-  if (m_output == NULL) {
+  if (!m_output)
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-  }
+
   CFX_GraphStateData stateData;
   CFX_PathData path;
   path.AppendRect(0, 0, (FX_FLOAT)m_Width, (FX_FLOAT)m_Height);
@@ -357,7 +358,7 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
       break;
     }
   if (m_locTextLoc != BC_TEXT_LOC_NONE && i < contents.GetLength()) {
-    ShowChars(contents, NULL, device, matrix, m_barWidth, m_multiple, e);
+    ShowChars(contents, nullptr, device, matrix, m_barWidth, m_multiple, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
 }

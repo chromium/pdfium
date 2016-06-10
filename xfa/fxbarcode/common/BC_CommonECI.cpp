@@ -32,11 +32,7 @@ int32_t CBC_CommonECI::GetValue() {
   return m_value;
 }
 CBC_CommonECI* CBC_CommonECI::GetEICByValue(int32_t value, int32_t& e) {
-  if (value < 0 || value > 999999) {
+  if (value < 0 || value > 999999)
     e = BCExceptionBadECI;
-    return NULL;
-  }
-  if (value < 900) {
-  }
-  return NULL;
+  return nullptr;
 }

@@ -79,7 +79,7 @@ CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(
         break;
       case NUMERIC_COMPACTION_MODE_LATCH:
         codeIndex = numericCompaction(codewords, codeIndex, result, e);
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+        BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
         break;
       case MODE_SHIFT_TO_BYTE_COMPACTION_MODE:
         codeIndex = byteCompaction(code, codewords, codeIndex, result);
@@ -91,7 +91,7 @@ CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(
         codeIndex = decodeMacroBlock(codewords, codeIndex, resultMetadata, e);
         if (e != BCExceptionNO) {
           delete resultMetadata;
-          return NULL;
+          return nullptr;
         }
         break;
       default:
@@ -104,20 +104,20 @@ CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(
     } else {
       e = BCExceptionFormatInstance;
       delete resultMetadata;
-      return NULL;
+      return nullptr;
     }
   }
   if (result.GetLength() == 0) {
     e = BCExceptionFormatInstance;
     delete resultMetadata;
-    return NULL;
+    return nullptr;
   }
   CFX_ByteArray rawBytes;
   CBC_CommonDecoderResult* tempCd = new CBC_CommonDecoderResult();
   tempCd->Init(rawBytes, result, ecLevel, e);
   if (e != BCExceptionNO) {
     delete resultMetadata;
-    return NULL;
+    return nullptr;
   }
   tempCd->setOther(resultMetadata);
   return tempCd;

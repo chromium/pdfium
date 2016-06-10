@@ -94,16 +94,16 @@ int32_t CBC_PDF417ECModulusPoly::evaluateAt(int32_t a) {
 CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::add(
     CBC_PDF417ECModulusPoly* other,
     int32_t& e) {
-  CBC_PDF417ECModulusPoly* modulusPoly = NULL;
+  CBC_PDF417ECModulusPoly* modulusPoly = nullptr;
   if (isZero()) {
     modulusPoly = new CBC_PDF417ECModulusPoly(other->getField(),
                                               other->getCoefficients(), e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   if (other->isZero()) {
     modulusPoly = new CBC_PDF417ECModulusPoly(m_field, m_coefficients, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   CFX_Int32Array smallerCoefficients;
@@ -128,34 +128,34 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::add(
                               largerCoefficients[i]);
   }
   modulusPoly = new CBC_PDF417ECModulusPoly(m_field, sumDiff, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return modulusPoly;
 }
 CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::subtract(
     CBC_PDF417ECModulusPoly* other,
     int32_t& e) {
-  CBC_PDF417ECModulusPoly* modulusPoly = NULL;
+  CBC_PDF417ECModulusPoly* modulusPoly = nullptr;
   if (other->isZero()) {
     modulusPoly = new CBC_PDF417ECModulusPoly(m_field, m_coefficients, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   CBC_PDF417ECModulusPoly* poly = other->negative(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   modulusPoly = add(poly, e);
   delete poly;
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return modulusPoly;
 }
 CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(
     CBC_PDF417ECModulusPoly* other,
     int32_t& e) {
-  CBC_PDF417ECModulusPoly* modulusPoly = NULL;
+  CBC_PDF417ECModulusPoly* modulusPoly = nullptr;
   if (isZero() || other->isZero()) {
     modulusPoly =
         new CBC_PDF417ECModulusPoly(m_field->getZero()->getField(),
                                     m_field->getZero()->getCoefficients(), e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   CFX_Int32Array aCoefficients;
@@ -174,7 +174,7 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(
     }
   }
   modulusPoly = new CBC_PDF417ECModulusPoly(m_field, product, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return modulusPoly;
 }
 CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::negative(int32_t& e) {
@@ -186,22 +186,22 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::negative(int32_t& e) {
   }
   CBC_PDF417ECModulusPoly* modulusPoly =
       new CBC_PDF417ECModulusPoly(m_field, negativeCoefficients, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return modulusPoly;
 }
 CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(int32_t scalar,
                                                            int32_t& e) {
-  CBC_PDF417ECModulusPoly* modulusPoly = NULL;
+  CBC_PDF417ECModulusPoly* modulusPoly = nullptr;
   if (scalar == 0) {
     modulusPoly =
         new CBC_PDF417ECModulusPoly(m_field->getZero()->getField(),
                                     m_field->getZero()->getCoefficients(), e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   if (scalar == 1) {
     modulusPoly = new CBC_PDF417ECModulusPoly(m_field, m_coefficients, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   int32_t size = m_coefficients.GetSize();
@@ -211,7 +211,7 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(int32_t scalar,
     product[i] = m_field->multiply(m_coefficients[i], scalar);
   }
   modulusPoly = new CBC_PDF417ECModulusPoly(m_field, product, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return modulusPoly;
 }
 

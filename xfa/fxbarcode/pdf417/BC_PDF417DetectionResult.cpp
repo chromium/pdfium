@@ -122,9 +122,9 @@ int32_t CBC_DetectionResult::adjustRowNumbers() {
         m_detectionResultColumns[barcodeColumn]->getCodewords();
     for (int32_t codewordsRow = 0; codewordsRow < codewords->GetSize();
          codewordsRow++) {
-      if (codewords->GetAt(codewordsRow) == NULL) {
+      if (!codewords->GetAt(codewordsRow))
         continue;
-      }
+
       if (!codewords->GetAt(codewordsRow)->hasValidRowNumber()) {
         adjustRowNumbers(barcodeColumn, codewordsRow, codewords);
       }
@@ -180,9 +180,9 @@ int32_t CBC_DetectionResult::adjustRowNumbersFromRRI() {
       m_detectionResultColumns.GetAt(m_barcodeColumnCount + 1)->getCodewords();
   for (int32_t codewordsRow = 0; codewordsRow < codewords->GetSize();
        codewordsRow++) {
-    if (codewords->GetAt(codewordsRow) == NULL) {
+    if (!codewords->GetAt(codewordsRow))
       continue;
-    }
+
     int32_t rowIndicatorRowNumber =
         codewords->GetAt(codewordsRow)->getRowNumber();
     int32_t invalidRowCounts = 0;
@@ -204,17 +204,17 @@ int32_t CBC_DetectionResult::adjustRowNumbersFromRRI() {
   return unadjustedCount;
 }
 int32_t CBC_DetectionResult::adjustRowNumbersFromLRI() {
-  if (m_detectionResultColumns[0] == NULL) {
+  if (!m_detectionResultColumns[0])
     return 0;
-  }
+
   int32_t unadjustedCount = 0;
   CFX_ArrayTemplate<CBC_Codeword*>* codewords =
       m_detectionResultColumns.GetAt(0)->getCodewords();
   for (int32_t codewordsRow = 0; codewordsRow < codewords->GetSize();
        codewordsRow++) {
-    if (codewords->GetAt(codewordsRow) == NULL) {
+    if (!codewords->GetAt(codewordsRow))
       continue;
-    }
+
     int32_t rowIndicatorRowNumber =
         codewords->GetAt(codewordsRow)->getRowNumber();
     int32_t invalidRowCounts = 0;
@@ -239,9 +239,9 @@ int32_t CBC_DetectionResult::adjustRowNumberIfValid(
     int32_t rowIndicatorRowNumber,
     int32_t invalidRowCounts,
     CBC_Codeword* codeword) {
-  if (codeword == NULL) {
+  if (!codeword)
     return invalidRowCounts;
-  }
+
   if (!codeword->hasValidRowNumber()) {
     if (codeword->isValidRowNumber(rowIndicatorRowNumber)) {
       codeword->setRowNumber(rowIndicatorRowNumber);
@@ -298,9 +298,9 @@ void CBC_DetectionResult::adjustRowNumbers(
 }
 FX_BOOL CBC_DetectionResult::adjustRowNumber(CBC_Codeword* codeword,
                                              CBC_Codeword* otherCodeword) {
-  if (otherCodeword == NULL) {
+  if (!otherCodeword)
     return FALSE;
-  }
+
   if (otherCodeword->hasValidRowNumber() &&
       otherCodeword->getBucket() == codeword->getBucket()) {
     codeword->setRowNumber(otherCodeword->getRowNumber());

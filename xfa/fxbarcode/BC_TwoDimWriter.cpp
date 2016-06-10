@@ -15,7 +15,7 @@
 CBC_TwoDimWriter::CBC_TwoDimWriter() {
   m_iCorrectLevel = 1;
   m_bFixedSize = TRUE;
-  m_output = NULL;
+  m_output = nullptr;
 }
 CBC_TwoDimWriter::~CBC_TwoDimWriter() {
   delete m_output;

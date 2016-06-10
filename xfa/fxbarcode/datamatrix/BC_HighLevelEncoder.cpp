@@ -69,7 +69,7 @@ CFX_ByteArray& CBC_HighLevelEncoder::getBytesForMessage(CFX_WideString msg) {
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
                                                      CFX_WideString ecLevel,
                                                      int32_t& e) {
-  return encodeHighLevel(msg, ecLevel, FORCE_NONE, NULL, NULL, e);
+  return encodeHighLevel(msg, ecLevel, FORCE_NONE, nullptr, nullptr, e);
 }
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
                                                      CFX_WideString ecLevel,

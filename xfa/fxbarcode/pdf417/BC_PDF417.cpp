@@ -390,7 +390,7 @@ CBC_PDF417::CBC_PDF417() {
   m_maxCols = 30;
   m_maxRows = 90;
   m_minRows = 3;
-  m_barcodeMatrix = NULL;
+  m_barcodeMatrix = nullptr;
 }
 CBC_PDF417::CBC_PDF417(FX_BOOL compact) {
   m_compact = compact;
@@ -399,7 +399,7 @@ CBC_PDF417::CBC_PDF417(FX_BOOL compact) {
   m_maxCols = 30;
   m_maxRows = 90;
   m_minRows = 3;
-  m_barcodeMatrix = NULL;
+  m_barcodeMatrix = nullptr;
 }
 
 CBC_PDF417::~CBC_PDF417() {
@@ -539,7 +539,7 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
     int32_t errorCorrectionCodeWords,
     int32_t& e) {
   FX_FLOAT ratio = 0.0f;
-  CFX_Int32Array* dimension = NULL;
+  CFX_Int32Array* dimension = nullptr;
   for (int32_t cols = m_minCols; cols <= m_maxCols; cols++) {
     int32_t rows =
         calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, cols);
@@ -561,7 +561,7 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
     dimension->Add(cols);
     dimension->Add(rows);
   }
-  if (dimension == NULL) {
+  if (!dimension) {
     int32_t rows = calculateNumberOfRows(sourceCodeWords,
                                          errorCorrectionCodeWords, m_minCols);
     if (rows < m_minRows) {
@@ -574,9 +574,9 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
       dimension->Add(rows);
     }
   }
-  if (dimension == NULL) {
+  if (!dimension) {
     e = BCExceptionUnableToFitMessageInColumns;
-    return NULL;
+    return nullptr;
   }
   return dimension;
 }

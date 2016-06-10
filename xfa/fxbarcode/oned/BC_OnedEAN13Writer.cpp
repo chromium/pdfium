@@ -82,7 +82,7 @@ uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
                                      int32_t& outHeight,
                                      int32_t& e) {
   uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
 uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
@@ -96,7 +96,7 @@ uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
   }
   uint8_t* ret =
       CBC_OneDimWriter::Encode(contents, format, outWidth, outHeight, hints, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
 uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
@@ -104,7 +104,7 @@ uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
                                      int32_t& e) {
   if (contents.GetLength() != 13) {
     e = BCExceptionDigitLengthShould13;
-    return NULL;
+    return nullptr;
   }
   m_iDataLenth = 13;
   int32_t firstDigit = FXSYS_atoi(contents.Mid(0, 1).c_str());
@@ -116,7 +116,7 @@ uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
       AppendPattern(result, pos, CBC_OneDimReader::START_END_PATTERN, 3, 1, e);
   if (e != BCExceptionNO) {
     FX_Free(result);
-    return NULL;
+    return nullptr;
   }
   int32_t i = 0;
   for (i = 1; i <= 6; i++) {
@@ -128,13 +128,13 @@ uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
                          4, 0, e);
     if (e != BCExceptionNO) {
       FX_Free(result);
-      return NULL;
+      return nullptr;
     }
   }
   pos += AppendPattern(result, pos, CBC_OneDimReader::MIDDLE_PATTERN, 5, 0, e);
   if (e != BCExceptionNO) {
     FX_Free(result);
-    return NULL;
+    return nullptr;
   }
   for (i = 7; i <= 12; i++) {
     int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
@@ -142,14 +142,14 @@ uint8_t* CBC_OnedEAN13Writer::Encode(const CFX_ByteString& contents,
                          e);
     if (e != BCExceptionNO) {
       FX_Free(result);
-      return NULL;
+      return nullptr;
     }
   }
   pos +=
       AppendPattern(result, pos, CBC_OneDimReader::START_END_PATTERN, 3, 1, e);
   if (e != BCExceptionNO) {
     FX_Free(result);
-    return NULL;
+    return nullptr;
   }
   return result;
 }

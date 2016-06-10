@@ -26,7 +26,7 @@
 #include "xfa/fxbarcode/oned/BC_OnedUPCAWriter.h"
 
 CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
-  m_subWriter = NULL;
+  m_subWriter = nullptr;
   m_bLeftPadding = TRUE;
   m_bRightPadding = TRUE;
 }
@@ -84,7 +84,7 @@ uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
                                     int32_t& outHeight,
                                     int32_t& e) {
   uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
 uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
@@ -95,13 +95,13 @@ uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
                                     int32_t& e) {
   if (format != BCFORMAT_UPC_A) {
     e = BCExceptionOnlyEncodeUPC_A;
-    return NULL;
+    return nullptr;
   }
   CFX_ByteString toEAN13String = '0' + contents;
   m_iDataLenth = 13;
   uint8_t* ret = m_subWriter->Encode(toEAN13String, BCFORMAT_EAN_13, outWidth,
                                      outHeight, hints, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
 
@@ -171,9 +171,9 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
     re = rect3.GetOutterRect();
     device->FillRect(&re, m_backgroundColor);
   }
-  if (pOutBitmap == NULL) {
+  if (!pOutBitmap)
     strWidth = strWidth * m_outputHScale;
-  }
+
   CalcTextInfo(tempStr, pCharPos + 1, m_pFont, strWidth, iFontSize, blank);
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
   CFX_FxgeDevice ge;
@@ -225,9 +225,9 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
   tempStr = str.Mid(0, 1);
   iLen = tempStr.GetLength();
   strWidth = (FX_FLOAT)multiple * 7;
-  if (pOutBitmap == NULL) {
+  if (!pOutBitmap)
     strWidth = strWidth * m_outputHScale;
-  }
+
   CalcTextInfo(tempStr, pCharPos, m_pFont, strWidth, iFontSize, blank);
   if (pOutBitmap) {
     delete ge.GetBitmap();

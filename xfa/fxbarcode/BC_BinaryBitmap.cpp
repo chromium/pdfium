@@ -28,7 +28,7 @@
 #include "xfa/fxbarcode/utils.h"
 
 CBC_BinaryBitmap::CBC_BinaryBitmap(CBC_Binarizer* binarizer)
-    : m_binarizer(binarizer), m_matrix(NULL) {}
+    : m_binarizer(binarizer), m_matrix(nullptr) {}
 CBC_BinaryBitmap::~CBC_BinaryBitmap() {
   delete m_matrix;
 }
@@ -39,9 +39,9 @@ int32_t CBC_BinaryBitmap::GetWidth() {
   return m_binarizer->GetLuminanceSource()->GetWidth();
 }
 CBC_CommonBitMatrix* CBC_BinaryBitmap::GetMatrix(int32_t& e) {
-  if (m_matrix == NULL) {
+  if (!m_matrix) {
     m_matrix = m_binarizer->GetBlackMatrix(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   return m_matrix;
 }
@@ -49,13 +49,13 @@ CBC_CommonBitArray* CBC_BinaryBitmap::GetBlackRow(int32_t y,
                                                   CBC_CommonBitArray* row,
                                                   int32_t& e) {
   CBC_CommonBitArray* temp = m_binarizer->GetBlackRow(y, row, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return temp;
 }
 CBC_CommonBitMatrix* CBC_BinaryBitmap::GetBlackMatrix(int32_t& e) {
-  if (m_matrix == NULL) {
+  if (!m_matrix) {
     m_matrix = m_binarizer->GetBlackMatrix(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   return m_matrix;
 }

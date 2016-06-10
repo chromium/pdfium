@@ -105,8 +105,8 @@ CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::Find(int32_t& e) {
     return m_possibleCenters[0]->Clone();
   }
   e = BCExceptionRead;
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  return NULL;
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  return nullptr;
 }
 FX_FLOAT CBC_QRAlignmentPatternFinder::CenterFromEnd(
     const CFX_Int32Array& stateCount,
@@ -195,5 +195,5 @@ CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::HandlePossibleCenter(
     m_possibleCenters.Add(
         new CBC_QRAlignmentPattern(centerJ, centerI, estimatedModuleSize));
   }
-  return NULL;
+  return nullptr;
 }

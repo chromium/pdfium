@@ -166,7 +166,7 @@ CBC_QRFinderPatternInfo* CBC_QRFinderPatternFinder::Find(int32_t hint,
   }
   std::unique_ptr<CFX_ArrayTemplate<CBC_QRFinderPattern*>> patternInfo(
       SelectBestpatterns(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   OrderBestPatterns(patternInfo.get());
   return new CBC_QRFinderPatternInfo(patternInfo.get());
 }
@@ -400,18 +400,17 @@ int32_t CBC_QRFinderPatternFinder::FindRowSkip() {
   if (max <= 1) {
     return 0;
   }
-  FinderPattern* firstConfirmedCenter = NULL;
+  FinderPattern* firstConfirmedCenter = nullptr;
   for (int32_t i = 0; i < max; i++) {
     CBC_QRFinderPattern* center = m_possibleCenters[i];
     if (center->GetCount() >= CENTER_QUORUM) {
-      if (firstConfirmedCenter == NULL) {
-        firstConfirmedCenter = center;
-      } else {
+      if (firstConfirmedCenter) {
         m_hasSkipped = TRUE;
         return (int32_t)((fabs(firstConfirmedCenter->GetX() - center->GetX()) -
                           fabs(firstConfirmedCenter->GetY() - center->GetY())) /
                          2);
       }
+      firstConfirmedCenter = center;
     }
   }
   return 0;
@@ -445,7 +444,7 @@ CBC_QRFinderPatternFinder::SelectBestpatterns(int32_t& e) {
   int32_t startSize = m_possibleCenters.GetSize();
   if (m_possibleCenters.GetSize() < 3) {
     e = BCExceptionRead;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   FX_FLOAT average = 0.0f;
   if (startSize > 3) {

@@ -148,7 +148,7 @@ CFX_Int32Array* CBC_OnedCodaBarReader::FindAsteriskPattern(
           FX_BOOL btemp3 =
               row->IsRange(std::max(0, patternStart - (i - patternStart) / 2),
                            patternStart, FALSE, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
           if (btemp3) {
             CFX_Int32Array* result = new CFX_Int32Array();
             result->SetSize(2);
@@ -172,7 +172,7 @@ CFX_Int32Array* CBC_OnedCodaBarReader::FindAsteriskPattern(
     }
   }
   e = BCExceptionNotFound;
-  return NULL;
+  return nullptr;
 }
 FX_BOOL CBC_OnedCodaBarReader::ArrayContains(const FX_CHAR array[],
                                              FX_CHAR key) {

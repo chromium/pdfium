@@ -40,7 +40,7 @@ void CBC_CommonDecoderResult::Init(const CFX_ByteArray& rawBytes,
   m_text = text;
   m_byteSegments.Copy(byteSegments);
   m_ecLevel = ecLevel;
-  m_other = NULL;
+  m_other = nullptr;
 }
 void CBC_CommonDecoderResult::Init(const CFX_ByteArray& rawBytes,
                                    const CFX_ByteString& text,
@@ -53,7 +53,7 @@ void CBC_CommonDecoderResult::Init(const CFX_ByteArray& rawBytes,
   m_rawBytes.Copy(rawBytes);
   m_text = text;
   m_pdf417ecLevel = ecLevel;
-  m_other = NULL;
+  m_other = nullptr;
 }
 void CBC_CommonDecoderResult::setOther(CBC_PDF417ResultMetadata* other) {
   m_other = other;

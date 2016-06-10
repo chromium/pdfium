@@ -31,9 +31,8 @@ CBC_BoundingBox::CBC_BoundingBox(CBC_CommonBitMatrix* image,
                                  CBC_ResultPoint* topRight,
                                  CBC_ResultPoint* bottomRight,
                                  int32_t& e) {
-  if ((topLeft == NULL && topRight == NULL) ||
-      (bottomLeft == NULL && bottomRight == NULL) ||
-      (topLeft && bottomLeft == NULL) || (topRight && bottomRight == NULL)) {
+  if ((!topLeft && !topRight) || (!bottomLeft && !bottomRight) ||
+      (topLeft && !bottomLeft) || (topRight && !bottomRight)) {
     e = BCExceptionNotFoundInstance;
   }
   init(image, topLeft, bottomLeft, topRight, bottomRight);
@@ -53,19 +52,19 @@ CBC_BoundingBox::~CBC_BoundingBox() {
 CBC_BoundingBox* CBC_BoundingBox::merge(CBC_BoundingBox* leftBox,
                                         CBC_BoundingBox* rightBox,
                                         int32_t& e) {
-  CBC_BoundingBox* boundingBox = NULL;
-  if (leftBox == NULL) {
+  CBC_BoundingBox* boundingBox = nullptr;
+  if (!leftBox) {
     boundingBox = new CBC_BoundingBox(rightBox);
     return boundingBox;
   }
-  if (rightBox == NULL) {
+  if (!rightBox) {
     boundingBox = new CBC_BoundingBox(leftBox);
     return boundingBox;
   }
   boundingBox = new CBC_BoundingBox(leftBox->m_image, leftBox->m_topLeft,
                                     leftBox->m_bottomLeft, rightBox->m_topRight,
                                     rightBox->m_bottomRight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return boundingBox;
 }
 CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows,
@@ -76,8 +75,8 @@ CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows,
   CBC_ResultPoint* newBottomLeft = m_bottomLeft;
   CBC_ResultPoint* newTopRight = m_topRight;
   CBC_ResultPoint* newBottomRight = m_bottomRight;
-  CBC_ResultPoint* newTop = NULL;
-  CBC_ResultPoint* newBottom = NULL;
+  CBC_ResultPoint* newTop = nullptr;
+  CBC_ResultPoint* newBottom = nullptr;
   if (missingStartRows > 0) {
     CBC_ResultPoint* top = isLeft ? m_topLeft : m_topRight;
     int32_t newMinY = (int32_t)top->GetY() - missingStartRows;
@@ -110,7 +109,7 @@ CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows,
       m_image, newTopLeft, newBottomLeft, newTopRight, newBottomRight, e);
   delete newTop;
   delete newBottom;
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return boundingBox;
 }
 void CBC_BoundingBox::setTopRight(CBC_ResultPoint topRight) {
@@ -156,10 +155,10 @@ void CBC_BoundingBox::init(CBC_CommonBitMatrix* image,
                            CBC_ResultPoint* bottomLeft,
                            CBC_ResultPoint* topRight,
                            CBC_ResultPoint* bottomRight) {
-  m_topLeft = NULL;
-  m_bottomLeft = NULL;
-  m_topRight = NULL;
-  m_bottomRight = NULL;
+  m_topLeft = nullptr;
+  m_bottomLeft = nullptr;
+  m_topRight = nullptr;
+  m_bottomRight = nullptr;
   m_image = image;
   if (topLeft) {
     m_topLeft = new CBC_ResultPoint(topLeft->GetX(), topLeft->GetY());
@@ -177,10 +176,10 @@ void CBC_BoundingBox::init(CBC_CommonBitMatrix* image,
   calculateMinMaxValues();
 }
 void CBC_BoundingBox::calculateMinMaxValues() {
-  if (m_topLeft == NULL) {
+  if (!m_topLeft) {
     m_topLeft = new CBC_ResultPoint(0, m_topRight->GetY());
     m_bottomLeft = new CBC_ResultPoint(0, m_bottomRight->GetY());
-  } else if (m_topRight == NULL) {
+  } else if (!m_topRight) {
     m_topRight = new CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
                                      (FX_FLOAT)m_topLeft->GetY());
     m_bottomRight = new CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,

@@ -87,7 +87,7 @@ CBC_CommonBitMatrix* CBC_GlobalHistogramBinarizer::GetBlackMatrix(int32_t& e) {
   for (y = 1; y < 5; y++) {
     int32_t row = height * y / 5;
     CFX_ByteArray* localLuminances = source->GetRow(row, m_luminance, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     int32_t right = (width << 2) / 5;
     int32_t x;
     for (x = width / 5; x < right; x++) {
@@ -96,7 +96,7 @@ CBC_CommonBitMatrix* CBC_GlobalHistogramBinarizer::GetBlackMatrix(int32_t& e) {
     }
   }
   int32_t blackPoint = EstimateBlackPoint(localBuckets, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   std::unique_ptr<CFX_ByteArray> localLuminances(source->GetMatrix());
   for (y = 0; y < height; y++) {
     int32_t offset = y * width;

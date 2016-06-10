@@ -33,7 +33,7 @@
 #include "xfa/fxbarcode/utils.h"
 
 CBC_DataMatrixReader::CBC_DataMatrixReader() {
-  m_decoder = NULL;
+  m_decoder = nullptr;
 }
 void CBC_DataMatrixReader::Init() {
   m_decoder = new CBC_DataMatrixDecoder;

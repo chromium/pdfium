@@ -22,10 +22,10 @@
 
 #include "xfa/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::L = NULL;
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::M = NULL;
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::Q = NULL;
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::H = NULL;
+CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::L = nullptr;
+CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::M = nullptr;
+CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::Q = nullptr;
+CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::H = nullptr;
 
 CBC_QRCoderErrorCorrectionLevel::CBC_QRCoderErrorCorrectionLevel(
     int32_t ordinal,
@@ -69,24 +69,24 @@ CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::ForBits(
     case 0x03:
       return Q;
     default:
-      return NULL;
+      return nullptr;
   }
 }
 void CBC_QRCoderErrorCorrectionLevel::Destroy() {
   if (L) {
     delete CBC_QRCoderErrorCorrectionLevel::L;
-    L = NULL;
+    L = nullptr;
   }
   if (M) {
     delete CBC_QRCoderErrorCorrectionLevel::M;
-    M = NULL;
+    M = nullptr;
   }
   if (H) {
     delete CBC_QRCoderErrorCorrectionLevel::H;
-    H = NULL;
+    H = nullptr;
   }
   if (Q) {
     delete CBC_QRCoderErrorCorrectionLevel::Q;
-    Q = NULL;
+    Q = nullptr;
   }
 }

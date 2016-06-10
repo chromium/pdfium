@@ -77,7 +77,7 @@ const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_MASK_PATTERN = 0x5412;
 
 void CBC_QRCoderMatrixUtil::ClearMatrix(CBC_CommonByteMatrix* matrix,
                                         int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -90,7 +90,7 @@ void CBC_QRCoderMatrixUtil::BuildMatrix(
     int32_t maskPattern,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -108,7 +108,7 @@ void CBC_QRCoderMatrixUtil::BuildMatrix(
 void CBC_QRCoderMatrixUtil::EmbedBasicPatterns(int32_t version,
                                                CBC_CommonByteMatrix* matrix,
                                                int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -126,7 +126,7 @@ void CBC_QRCoderMatrixUtil::EmbedTypeInfo(
     int32_t maskPattern,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -154,7 +154,7 @@ void CBC_QRCoderMatrixUtil::EmbedTypeInfo(
 void CBC_QRCoderMatrixUtil::MaybeEmbedVersionInfo(int32_t version,
                                                   CBC_CommonByteMatrix* matrix,
                                                   int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -180,7 +180,7 @@ void CBC_QRCoderMatrixUtil::EmbedDataBits(CBC_QRCoderBitVector* dataBits,
                                           int32_t maskPattern,
                                           CBC_CommonByteMatrix* matrix,
                                           int32_t& e) {
-  if (matrix == NULL || dataBits == NULL) {
+  if (!matrix || !dataBits) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -243,7 +243,7 @@ void CBC_QRCoderMatrixUtil::MakeTypeInfoBits(
     int32_t maskPattern,
     CBC_QRCoderBitVector* bits,
     int32_t& e) {
-  if (bits == NULL) {
+  if (!bits) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -271,7 +271,7 @@ void CBC_QRCoderMatrixUtil::MakeTypeInfoBits(
 void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(int32_t version,
                                                 CBC_QRCoderBitVector* bits,
                                                 int32_t& e) {
-  if (bits == NULL) {
+  if (!bits) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -294,7 +294,7 @@ FX_BOOL CBC_QRCoderMatrixUtil::IsValidValue(int32_t value) {
 }
 void CBC_QRCoderMatrixUtil::EmbedTimingPatterns(CBC_CommonByteMatrix* matrix,
                                                 int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -319,7 +319,7 @@ void CBC_QRCoderMatrixUtil::EmbedTimingPatterns(CBC_CommonByteMatrix* matrix,
 void CBC_QRCoderMatrixUtil::EmbedDarkDotAtLeftBottomCorner(
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -334,7 +334,7 @@ void CBC_QRCoderMatrixUtil::EmbedHorizontalSeparationPattern(
     int32_t yStart,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -351,7 +351,7 @@ void CBC_QRCoderMatrixUtil::EmbedVerticalSeparationPattern(
     int32_t yStart,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -368,7 +368,7 @@ void CBC_QRCoderMatrixUtil::EmbedPositionAdjustmentPattern(
     int32_t yStart,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -387,7 +387,7 @@ void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPattern(
     int32_t yStart,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -404,7 +404,7 @@ void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPattern(
 void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPatternsAndSeparators(
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -437,7 +437,7 @@ void CBC_QRCoderMatrixUtil::MaybeEmbedPositionAdjustmentPatterns(
     int32_t version,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
-  if (matrix == NULL) {
+  if (!matrix) {
     e = BCExceptionNullPointer;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }

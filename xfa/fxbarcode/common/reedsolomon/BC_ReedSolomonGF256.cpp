@@ -23,8 +23,8 @@
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
 
-CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::QRCodeFild = NULL;
-CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::DataMatrixField = NULL;
+CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::QRCodeFild = nullptr;
+CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::DataMatrixField = nullptr;
 void CBC_ReedSolomonGF256::Initialize() {
   QRCodeFild = new CBC_ReedSolomonGF256(0x011D);
   QRCodeFild->Init();
@@ -73,11 +73,11 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(
     int32_t& e) {
   if (degree < 0) {
     e = BCExceptionDegreeIsNegative;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   if (coefficient == 0) {
     CBC_ReedSolomonGF256Poly* temp = m_zero->Clone(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return temp;
   }
   CFX_Int32Array coefficients;
@@ -85,7 +85,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(
   coefficients[0] = coefficient;
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(this, &coefficients, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return temp;
 }
 int32_t CBC_ReedSolomonGF256::AddOrSubtract(int32_t a, int32_t b) {

@@ -33,7 +33,7 @@
 #include "xfa/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
 
 CBC_DataMatrixDecoder::CBC_DataMatrixDecoder() {
-  m_rsDecoder = NULL;
+  m_rsDecoder = nullptr;
 }
 void CBC_DataMatrixDecoder::Init() {
   m_rsDecoder =

@@ -41,9 +41,9 @@ CBC_QRDetector::~CBC_QRDetector() {}
 CBC_QRDetectorResult* CBC_QRDetector::Detect(int32_t hints, int32_t& e) {
   CBC_QRFinderPatternFinder finder(m_image);
   std::unique_ptr<CBC_QRFinderPatternInfo> info(finder.Find(hints, e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_QRDetectorResult* qdr = ProcessFinderPatternInfo(info.get(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return qdr;
 }
 CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
@@ -92,7 +92,7 @@ CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
   CBC_CommonBitMatrix* bits =
       SampleGrid(m_image, topLeft.get(), topRight.get(), bottomLeft.get(),
                  (CBC_ResultPoint*)(alignmentPattern), dimension, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
 
   CFX_ArrayTemplate<CBC_ResultPoint*>* points =
       new CFX_ArrayTemplate<CBC_ResultPoint*>();
@@ -131,7 +131,7 @@ CBC_CommonBitMatrix* CBC_QRDetector::SampleGrid(
       sourceBottomRightX, sourceBottomRightY, 3.5f, dimMinusThree,
       topLeft->GetX(), topLeft->GetY(), topRight->GetX(), topRight->GetY(),
       bottomRightX, bottomRightY, bottomLeft->GetX(), bottomLeft->GetY(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return cbm;
 }
 int32_t CBC_QRDetector::ComputeDimension(CBC_ResultPoint* topLeft,
@@ -263,7 +263,7 @@ CBC_QRAlignmentPattern* CBC_QRDetector::FindAlignmentInRegion(
       std::min(m_image->GetWidth() - 1, estAlignmentX + allowance);
   if (alignmentAreaRightX - alignmentAreaLeftX < overallEstModuleSize * 3) {
     e = BCExceptionRead;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   int32_t alignmentAreaTopY = std::max(0, estAlignmentY - allowance);
   int32_t alignmentAreaBottomY =
@@ -273,6 +273,6 @@ CBC_QRAlignmentPattern* CBC_QRDetector::FindAlignmentInRegion(
       alignmentAreaRightX - alignmentAreaLeftX,
       alignmentAreaBottomY - alignmentAreaTopY, overallEstModuleSize);
   CBC_QRAlignmentPattern* qap = alignmentFinder.Find(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return qap;
 }

@@ -25,7 +25,7 @@
 #include "xfa/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
 #include "xfa/fxbarcode/utils.h"
 
-CBC_PDF417ECModulusGF* CBC_PDF417ECModulusGF::PDF417_GF = NULL;
+CBC_PDF417ECModulusGF* CBC_PDF417ECModulusGF::PDF417_GF = nullptr;
 void CBC_PDF417ECModulusGF::Initialize(int32_t& e) {
   PDF417_GF =
       new CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);
@@ -70,20 +70,20 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::buildMonomial(
     int32_t& e) {
   if (degree < 0) {
     e = BCExceptionIllegalArgument;
-    return NULL;
+    return nullptr;
   }
-  CBC_PDF417ECModulusPoly* modulusPoly = NULL;
+  CBC_PDF417ECModulusPoly* modulusPoly = nullptr;
   if (coefficient == 0) {
     modulusPoly = new CBC_PDF417ECModulusPoly(m_zero->getField(),
                                               m_zero->getCoefficients(), e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return modulusPoly;
   }
   CFX_Int32Array coefficients;
   coefficients.SetSize(degree + 1);
   coefficients[0] = coefficient;
   modulusPoly = new CBC_PDF417ECModulusPoly(this, coefficients, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return modulusPoly;
 }
 int32_t CBC_PDF417ECModulusGF::add(int32_t a, int32_t b) {

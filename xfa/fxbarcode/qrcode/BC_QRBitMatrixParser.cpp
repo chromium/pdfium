@@ -40,8 +40,8 @@ void CBC_QRBitMatrixParser::Init(CBC_CommonBitMatrix* bitMatrix, int32_t& e) {
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
   m_bitMatrix = m_tempBitMatrix;
-  m_parsedFormatInfo = NULL;
-  m_version = NULL;
+  m_parsedFormatInfo = nullptr;
+  m_version = nullptr;
 }
 CBC_QRBitMatrixParser::~CBC_QRBitMatrixParser() {
   delete m_parsedFormatInfo;
@@ -68,7 +68,7 @@ CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(
     return m_parsedFormatInfo;
   }
   int32_t dimension = m_bitMatrix->GetDimension(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   formatInfoBits = 0;
   int32_t iMin = dimension - 8;
   for (j = dimension - 1; j >= iMin; j--) {
@@ -83,20 +83,20 @@ CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(
     return m_parsedFormatInfo;
   }
   e = BCExceptionRead;
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  return NULL;
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  return nullptr;
 }
 CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(int32_t& e) {
   if (m_version) {
     return m_version;
   }
   int32_t dimension = m_bitMatrix->GetDimension(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t provisionVersion = (dimension - 17) >> 2;
   if (provisionVersion <= 6) {
     CBC_QRCoderVersion* qrv =
         CBC_QRCoderVersion::GetVersionForNumber(provisionVersion, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return qrv;
   }
   int32_t versionBits = 0;
@@ -107,7 +107,7 @@ CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(int32_t& e) {
     }
   }
   m_version = CBC_QRCoderVersion::DecodeVersionInformation(versionBits, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   if (m_version && m_version->GetDimensionForVersion() == dimension) {
     return m_version;
   }
@@ -119,13 +119,13 @@ CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(int32_t& e) {
     }
   }
   m_version = CBC_QRCoderVersion::DecodeVersionInformation(versionBits, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   if (m_version && m_version->GetDimensionForVersion() == dimension) {
     return m_version;
   }
   e = BCExceptionRead;
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  return NULL;
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  return nullptr;
 }
 int32_t CBC_QRBitMatrixParser::CopyBit(int32_t i,
                                        int32_t j,
@@ -134,18 +134,18 @@ int32_t CBC_QRBitMatrixParser::CopyBit(int32_t i,
 }
 CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(int32_t& e) {
   CBC_QRCoderFormatInformation* formatInfo = ReadFormatInformation(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL) CBC_QRCoderVersion* version =
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr) CBC_QRCoderVersion* version =
       ReadVersion(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_QRDataMask* dataMask =
       CBC_QRDataMask::ForReference((int32_t)(formatInfo->GetDataMask()), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t dimension = m_bitMatrix->GetDimension(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   dataMask->UnmaskBitMatrix(m_bitMatrix, dimension);
   std::unique_ptr<CBC_CommonBitMatrix> functionPattern(
       version->BuildFunctionPattern(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   FX_BOOL readingUp = TRUE;
   std::unique_ptr<CFX_ByteArray> result(new CFX_ByteArray);
   result->SetSize(version->GetTotalCodeWords());
@@ -177,7 +177,7 @@ CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(int32_t& e) {
   }
   if (resultOffset != version->GetTotalCodeWords()) {
     e = BCExceptionRead;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   return result.release();
 }

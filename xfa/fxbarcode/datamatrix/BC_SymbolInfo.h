@@ -54,19 +54,12 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
   int32_t getDataLengthForInterleavedBlock(int32_t index);
   int32_t getErrorLengthForInterleavedBlock(int32_t index);
 
- public:
   int32_t m_dataCapacity;
   int32_t m_errorCodewords;
   int32_t m_matrixWidth;
   int32_t m_matrixHeight;
   int32_t m_rsBlockData;
   int32_t m_rsBlockError;
-  static CBC_SymbolInfo* m_PROD_SYMBOLS[30];
-
- private:
-  static CBC_SymbolInfo* m_symbols[30];
-  FX_BOOL m_rectangular;
-  int32_t m_dataRegions;
 
  private:
   CBC_SymbolInfo(FX_BOOL rectangular,
@@ -77,6 +70,9 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
                  int32_t dataRegions,
                  int32_t rsBlockData,
                  int32_t rsBlockError);
+
+  FX_BOOL m_rectangular;
+  int32_t m_dataRegions;
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_

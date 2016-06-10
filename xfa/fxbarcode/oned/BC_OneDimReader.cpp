@@ -45,7 +45,7 @@ CBC_OneDimReader::~CBC_OneDimReader() {}
 CFX_Int32Array* CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray* row,
                                                         int32_t& e) {
   FX_BOOL foundStart = FALSE;
-  CFX_Int32Array* startRange = NULL;
+  CFX_Int32Array* startRange = nullptr;
   CFX_Int32Array startEndPattern;
   startEndPattern.SetSize(3);
   startEndPattern[0] = START_END_PATTERN[0];
@@ -55,7 +55,7 @@ CFX_Int32Array* CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray* row,
   while (!foundStart) {
     delete startRange;
     startRange = FindGuardPattern(row, nextStart, FALSE, &startEndPattern, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     int32_t start = (*startRange)[0];
     nextStart = (*startRange)[1];
     if (start <= 1) {
@@ -64,7 +64,7 @@ CFX_Int32Array* CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray* row,
     int32_t quietStart = start - (nextStart - start);
     if (quietStart >= 0) {
       FX_BOOL booT = row->IsRange(quietStart, start, FALSE, e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       foundStart = booT;
     }
   }
@@ -136,7 +136,7 @@ CFX_Int32Array* CBC_OneDimReader::DecodeEnd(CBC_CommonBitArray* row,
   startEndPattern.Add(START_END_PATTERN[2]);
   CFX_Int32Array* FindGuard =
       FindGuardPattern(row, endStart, FALSE, &startEndPattern, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return FindGuard;
 }
 CFX_Int32Array* CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray* row,
@@ -187,8 +187,8 @@ CFX_Int32Array* CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray* row,
     }
   }
   e = BCExceptionNotFound;
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  return NULL;
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  return nullptr;
 }
 int32_t CBC_OneDimReader::DecodeDigit(CBC_CommonBitArray* row,
                                       CFX_Int32Array* counters,

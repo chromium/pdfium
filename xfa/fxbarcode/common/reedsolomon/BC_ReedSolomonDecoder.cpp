@@ -181,13 +181,13 @@ CFX_Int32Array* CBC_ReedSolomonDecoder::FindErrorLocations(
   for (int32_t i = 1; i < 256 && ie < numErrors; i++) {
     if (errorLocator->EvaluateAt(i) == 0) {
       (*result)[ie] = m_field->Inverse(i, ie);
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       ie++;
     }
   }
   if (ie != numErrors) {
     e = BCExceptionDegreeNotMatchRoots;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   return result.release();
 }
@@ -202,7 +202,7 @@ CFX_Int32Array* CBC_ReedSolomonDecoder::FindErrorMagnitudes(
   std::unique_ptr<CFX_Int32Array> result(tempArray);
   for (int32_t i = 0; i < s; i++) {
     int32_t xiInverse = m_field->Inverse(errorLocations->operator[](i), e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     int32_t denominator = 1;
     for (int32_t j = 0; j < s; j++) {
       if (i != j) {
@@ -213,7 +213,7 @@ CFX_Int32Array* CBC_ReedSolomonDecoder::FindErrorMagnitudes(
       }
     }
     int32_t temp = m_field->Inverse(denominator, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     (*result)[i] =
         m_field->Multiply(errorEvaluator->EvaluateAt(xiInverse), temp);
   }

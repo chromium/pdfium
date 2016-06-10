@@ -256,8 +256,8 @@ int32_t CBC_QRCoderEncoder::GetSpanByVersion(CBC_QRCoderMode* modeFirst,
 void CBC_QRCoderEncoder::MergeString(CFX_ArrayTemplate<Make_Pair*>* result,
                                      int32_t versionNum,
                                      int32_t& e) {
-  Make_Pair* first = NULL;
-  Make_Pair* second = NULL;
+  Make_Pair* first = nullptr;
+  Make_Pair* second = nullptr;
   size_t mergeNum = 0;
   int32_t i;
   for (i = 0; ((i < result->GetSize()) && (i + 1 < result->GetSize())); i++) {
@@ -358,7 +358,7 @@ void CBC_QRCoderEncoder::EncodeWithSpecifyVersion(
   dataBits.Init();
   SplitString(content, &splitResult);
   MergeString(&splitResult, versionSpecify, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e) CBC_QRCoderMode* tempMode = NULL;
+  BC_EXCEPTION_CHECK_ReturnVoid(e) CBC_QRCoderMode* tempMode = nullptr;
   for (int32_t i = 0; i < splitResult.GetSize(); i++) {
     AppendBytes(splitResult[i]->m_string, splitResult[i]->m_mode, &dataBits,
                 encoding, e);
@@ -428,7 +428,7 @@ void CBC_QRCoderEncoder::EncodeWithAutoVersion(
   SplitString(content, &splitResult);
   MergeString(&splitResult, 8, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_QRCoderMode* tempMode = NULL;
+  CBC_QRCoderMode* tempMode = nullptr;
   for (int32_t i = 0; i < splitResult.GetSize(); i++) {
     AppendBytes(splitResult[i]->m_string, splitResult[i]->m_mode, &dataBits,
                 encoding, e);
@@ -442,7 +442,7 @@ void CBC_QRCoderEncoder::EncodeWithAutoVersion(
   InitQRCode(numInputBytes, ecLevel, mode, qrCode, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e) CBC_QRCoderBitVector headerAndDataBits;
   headerAndDataBits.Init();
-  tempMode = NULL;
+  tempMode = nullptr;
   int32_t versionNum = qrCode->GetVersion();
 sign:
   AppendDataModeLenghInfo(splitResult, headerAndDataBits, tempMode, qrCode,
@@ -934,7 +934,7 @@ CBC_CommonByteArray* CBC_QRCoderEncoder::GenerateECBytes(
   CBC_ReedSolomonEncoder encode(CBC_ReedSolomonGF256::QRCodeFild);
   encode.Init();
   encode.Encode(&toEncode, numEcBytesInBlock, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_CommonByteArray* ecBytes = new CBC_CommonByteArray(numEcBytesInBlock);
   for (int32_t j = 0; j < numEcBytesInBlock; j++) {
     ecBytes->Set(j, toEncode[numDataBytes + j]);

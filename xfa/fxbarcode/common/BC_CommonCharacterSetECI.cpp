@@ -36,9 +36,9 @@ void CBC_CommonCharacterSetECI::AddCharacterSet(int32_t value,
                                                 CFX_ByteString encodingName) {}
 CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByValue(
     int32_t value) {
-  return NULL;
+  return nullptr;
 }
 CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByName(
     const CFX_ByteString& name) {
-  return NULL;
+  return nullptr;
 }

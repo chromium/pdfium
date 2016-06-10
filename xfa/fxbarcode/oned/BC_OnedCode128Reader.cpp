@@ -105,7 +105,7 @@ CFX_Int32Array* CBC_OnedCode128Reader::FindStartPattern(CBC_CommonBitArray* row,
           FX_BOOL btemp2 =
               row->IsRange(std::max(0, patternStart - (i - patternStart) / 2),
                            patternStart, FALSE, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+          BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
           if (btemp2) {
             CFX_Int32Array* result = new CFX_Int32Array;
             result->SetSize(3);
@@ -130,7 +130,7 @@ CFX_Int32Array* CBC_OnedCode128Reader::FindStartPattern(CBC_CommonBitArray* row,
     }
   }
   e = BCExceptionNotFound;
-  return NULL;
+  return nullptr;
 }
 int32_t CBC_OnedCode128Reader::DecodeCode(CBC_CommonBitArray* row,
                                           CFX_Int32Array* counters,
@@ -176,7 +176,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber,
       if (startPatternInfo) {
         startPatternInfo->RemoveAll();
         delete startPatternInfo;
-        startPatternInfo = NULL;
+        startPatternInfo = nullptr;
       }
       e = BCExceptionFormatException;
       return "";
@@ -189,7 +189,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber,
   if (startPatternInfo) {
     startPatternInfo->RemoveAll();
     delete startPatternInfo;
-    startPatternInfo = NULL;
+    startPatternInfo = nullptr;
   }
   CFX_Int32Array counters;
   counters.SetSize(6);

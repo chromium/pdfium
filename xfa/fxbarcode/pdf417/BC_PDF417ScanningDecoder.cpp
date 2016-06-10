@@ -46,7 +46,8 @@
 int32_t CBC_PDF417ScanningDecoder::CODEWORD_SKEW_SIZE = 2;
 int32_t CBC_PDF417ScanningDecoder::MAX_ERRORS = 3;
 int32_t CBC_PDF417ScanningDecoder::MAX_EC_CODEWORDS = 512;
-CBC_PDF417ECErrorCorrection* CBC_PDF417ScanningDecoder::errorCorrection = NULL;
+CBC_PDF417ECErrorCorrection* CBC_PDF417ScanningDecoder::errorCorrection =
+    nullptr;
 
 CBC_PDF417ScanningDecoder::CBC_PDF417ScanningDecoder() {}
 CBC_PDF417ScanningDecoder::~CBC_PDF417ScanningDecoder() {}
@@ -67,10 +68,10 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
     int32_t& e) {
   CBC_BoundingBox* boundingBox = new CBC_BoundingBox(
       image, imageTopLeft, imageBottomLeft, imageTopRight, imageBottomRight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn = NULL;
-  CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn = NULL;
-  CBC_DetectionResult* detectionResult = NULL;
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn = nullptr;
+  CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn = nullptr;
+  CBC_DetectionResult* detectionResult = nullptr;
   for (int32_t i = 0; i < 2; i++) {
     if (imageTopLeft) {
       leftRowIndicatorColumn =
@@ -88,7 +89,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
       delete leftRowIndicatorColumn;
       delete rightRowIndicatorColumn;
       delete boundingBox;
-      return NULL;
+      return nullptr;
     }
     if (i == 0 && (detectionResult->getBoundingBox()->getMinY() <
                        boundingBox->getMinY() ||
@@ -105,7 +106,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
   detectionResult->setDetectionResultColumn(0, leftRowIndicatorColumn);
   detectionResult->setDetectionResultColumn(maxBarcodeColumn,
                                             rightRowIndicatorColumn);
-  FX_BOOL leftToRight = leftRowIndicatorColumn != NULL;
+  FX_BOOL leftToRight = !!leftRowIndicatorColumn;
   for (int32_t barcodeColumnCount = 1; barcodeColumnCount <= maxBarcodeColumn;
        barcodeColumnCount++) {
     int32_t barcodeColumn = leftToRight ? barcodeColumnCount
@@ -113,7 +114,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
     if (detectionResult->getDetectionResultColumn(barcodeColumn)) {
       continue;
     }
-    CBC_DetectionResultColumn* detectionResultColumn = NULL;
+    CBC_DetectionResultColumn* detectionResultColumn = nullptr;
     if (barcodeColumn == 0 || barcodeColumn == maxBarcodeColumn) {
       detectionResultColumn = new CBC_DetectionResultRowIndicatorColumn(
           boundingBox, barcodeColumn == 0);
@@ -153,7 +154,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
       createDecoderResult(detectionResult, e);
   if (e != BCExceptionNO) {
     delete detectionResult;
-    return NULL;
+    return nullptr;
   }
   return decoderresult;
 }
@@ -181,33 +182,33 @@ CBC_DetectionResult* CBC_PDF417ScanningDecoder::merge(
     CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn,
     CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn,
     int32_t& e) {
-  if (leftRowIndicatorColumn == NULL && rightRowIndicatorColumn == NULL) {
+  if (!leftRowIndicatorColumn && !rightRowIndicatorColumn) {
     e = BCExceptionIllegalArgument;
-    return NULL;
+    return nullptr;
   }
   CBC_BarcodeMetadata* barcodeMetadata =
       getBarcodeMetadata(leftRowIndicatorColumn, rightRowIndicatorColumn);
-  if (barcodeMetadata == NULL) {
+  if (!barcodeMetadata) {
     e = BCExceptionCannotMetadata;
-    return NULL;
+    return nullptr;
   }
   CBC_BoundingBox* leftboundingBox =
       adjustBoundingBox(leftRowIndicatorColumn, e);
   if (e != BCExceptionNO) {
     delete barcodeMetadata;
-    return NULL;
+    return nullptr;
   }
   CBC_BoundingBox* rightboundingBox =
       adjustBoundingBox(rightRowIndicatorColumn, e);
   if (e != BCExceptionNO) {
     delete barcodeMetadata;
-    return NULL;
+    return nullptr;
   }
   CBC_BoundingBox* boundingBox =
       CBC_BoundingBox::merge(leftboundingBox, rightboundingBox, e);
   if (e != BCExceptionNO) {
     delete barcodeMetadata;
-    return NULL;
+    return nullptr;
   }
   CBC_DetectionResult* detectionresult =
       new CBC_DetectionResult(barcodeMetadata, boundingBox);
@@ -216,11 +217,11 @@ CBC_DetectionResult* CBC_PDF417ScanningDecoder::merge(
 CBC_BoundingBox* CBC_PDF417ScanningDecoder::adjustBoundingBox(
     CBC_DetectionResultRowIndicatorColumn* rowIndicatorColumn,
     int32_t& e) {
-  if (rowIndicatorColumn == NULL) {
-    return NULL;
-  }
+  if (!rowIndicatorColumn)
+    return nullptr;
+
   CFX_Int32Array* rowHeights = rowIndicatorColumn->getRowHeights(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t maxRowHeight = getMax(*rowHeights);
   int32_t missingStartRows = 0;
   for (int32_t i = 0; i < rowHeights->GetSize(); i++) {
@@ -232,8 +233,7 @@ CBC_BoundingBox* CBC_PDF417ScanningDecoder::adjustBoundingBox(
   }
   CFX_ArrayTemplate<CBC_Codeword*>* codewords =
       rowIndicatorColumn->getCodewords();
-  for (int32_t row = 0; missingStartRows > 0 && codewords->GetAt(row) == NULL;
-       row++) {
+  for (int32_t row = 0; missingStartRows > 0 && !codewords->GetAt(row); row++) {
     missingStartRows--;
   }
   int32_t missingEndRows = 0;
@@ -244,13 +244,13 @@ CBC_BoundingBox* CBC_PDF417ScanningDecoder::adjustBoundingBox(
     }
   }
   for (int32_t row2 = codewords->GetSize() - 1;
-       missingEndRows > 0 && codewords->GetAt(row2) == NULL; row2--) {
+       missingEndRows > 0 && !codewords->GetAt(row2); row2--) {
     missingEndRows--;
   }
   CBC_BoundingBox* boundingBox =
       rowIndicatorColumn->getBoundingBox()->addMissingRows(
           missingStartRows, missingEndRows, rowIndicatorColumn->isLeft(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return boundingBox;
 }
 int32_t CBC_PDF417ScanningDecoder::getMax(CFX_Int32Array& values) {
@@ -264,22 +264,23 @@ int32_t CBC_PDF417ScanningDecoder::getMax(CFX_Int32Array& values) {
 CBC_BarcodeMetadata* CBC_PDF417ScanningDecoder::getBarcodeMetadata(
     CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn,
     CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn) {
-  CBC_BarcodeMetadata* leftBarcodeMetadata = NULL;
-  CBC_BarcodeMetadata* rightBarcodeMetadata = NULL;
-  if (leftRowIndicatorColumn == NULL ||
-      (leftBarcodeMetadata = leftRowIndicatorColumn->getBarcodeMetadata()) ==
-          NULL) {
-    return rightRowIndicatorColumn == NULL
-               ? NULL
-               : rightRowIndicatorColumn->getBarcodeMetadata();
+  CBC_BarcodeMetadata* leftBarcodeMetadata =
+      leftRowIndicatorColumn ? leftRowIndicatorColumn->getBarcodeMetadata()
+                             : nullptr;
+  if (!leftBarcodeMetadata) {
+    return rightRowIndicatorColumn
+               ? rightRowIndicatorColumn->getBarcodeMetadata()
+               : nullptr;
   }
-  if (rightRowIndicatorColumn == NULL ||
-      (rightBarcodeMetadata = rightRowIndicatorColumn->getBarcodeMetadata()) ==
-          NULL) {
-    return leftRowIndicatorColumn == NULL
-               ? NULL
-               : leftRowIndicatorColumn->getBarcodeMetadata();
+
+  CBC_BarcodeMetadata* rightBarcodeMetadata =
+      rightRowIndicatorColumn ? rightRowIndicatorColumn->getBarcodeMetadata()
+                              : nullptr;
+  if (!rightBarcodeMetadata) {
+    return leftRowIndicatorColumn ? leftRowIndicatorColumn->getBarcodeMetadata()
+                                  : nullptr;
   }
+
   if (leftBarcodeMetadata->getColumnCount() !=
           rightBarcodeMetadata->getColumnCount() &&
       leftBarcodeMetadata->getErrorCorrectionLevel() !=
@@ -288,7 +289,7 @@ CBC_BarcodeMetadata* CBC_PDF417ScanningDecoder::getBarcodeMetadata(
           rightBarcodeMetadata->getRowCount()) {
     delete leftBarcodeMetadata;
     delete rightBarcodeMetadata;
-    return NULL;
+    return nullptr;
   }
   delete rightBarcodeMetadata;
   return leftBarcodeMetadata;
@@ -446,7 +447,7 @@ CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
     }
   }
   e = BCExceptionChecksumInstance;
-  return NULL;
+  return nullptr;
 }
 CBC_BarcodeValueArrayArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
     CBC_DetectionResult* detectionResult) {
@@ -466,16 +467,16 @@ CBC_BarcodeValueArrayArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
     CBC_DetectionResultColumn* detectionResultColumn =
         (CBC_DetectionResultColumn*)detectionResult->getDetectionResultColumns()
             .GetAt(i);
-    if (detectionResultColumn == NULL) {
+    if (!detectionResultColumn)
       continue;
-    }
+
     CFX_ArrayTemplate<CBC_Codeword*>* temp =
         detectionResultColumn->getCodewords();
     for (int32_t l = 0; l < temp->GetSize(); l++) {
       CBC_Codeword* codeword = temp->GetAt(l);
-      if (codeword == NULL || codeword->getRowNumber() == -1) {
+      if (!codeword || codeword->getRowNumber() == -1)
         continue;
-      }
+
       barcodeMatrix->GetAt(codeword->getRowNumber())
           ->GetAt(i)
           ->setValue(codeword->getValue());
@@ -495,7 +496,7 @@ int32_t CBC_PDF417ScanningDecoder::getStartColumn(
     int32_t imageRow,
     FX_BOOL leftToRight) {
   int32_t offset = leftToRight ? 1 : -1;
-  CBC_Codeword* codeword = NULL;
+  CBC_Codeword* codeword = nullptr;
   if (isValidBarcodeColumn(detectionResult, barcodeColumn - offset)) {
     codeword = detectionResult->getDetectionResultColumn(barcodeColumn - offset)
                    ->getCodeword(imageRow);
@@ -553,9 +554,9 @@ CBC_Codeword* CBC_PDF417ScanningDecoder::detectCodeword(
                                           leftToRight, startColumn, imageRow);
   CFX_Int32Array* moduleBitCount = getModuleBitCount(
       image, minColumn, maxColumn, leftToRight, startColumn, imageRow);
-  if (moduleBitCount == NULL) {
-    return NULL;
-  }
+  if (!moduleBitCount)
+    return nullptr;
+
   int32_t endColumn;
   int32_t codewordBitCount = CBC_PDF417Common::getBitCountSum(*moduleBitCount);
   if (leftToRight) {
@@ -575,7 +576,7 @@ CBC_Codeword* CBC_PDF417ScanningDecoder::detectCodeword(
   int32_t codeword = CBC_PDF417Common::getCodeword(decodedValue);
   delete moduleBitCount;
   if (codeword == -1) {
-    return NULL;
+    return nullptr;
   }
   return new CBC_Codeword(startColumn, endColumn,
                           getCodewordBucketNumber(decodedValue), codeword);
@@ -612,7 +613,7 @@ CFX_Int32Array* CBC_PDF417ScanningDecoder::getModuleBitCount(
     return moduleBitCount;
   }
   delete moduleBitCount;
-  return NULL;
+  return nullptr;
 }
 int32_t CBC_PDF417ScanningDecoder::getNumberOfECCodeWords(
     int32_t barcodeECLevel) {
@@ -655,17 +656,17 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decodeCodewords(
     int32_t& e) {
   if (codewords.GetSize() == 0) {
     e = BCExceptionFormatInstance;
-    return NULL;
+    return nullptr;
   }
   int32_t numECCodewords = 1 << (ecLevel + 1);
   correctErrors(codewords, erasures, numECCodewords, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   verifyCodewordCount(codewords, numECCodewords, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CFX_ByteString bytestring;
   CBC_CommonDecoderResult* decoderResult = CBC_DecodedBitStreamPaser::decode(
       codewords, bytestring.FormatInteger(ecLevel), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return decoderResult;
 }
 int32_t CBC_PDF417ScanningDecoder::correctErrors(CFX_Int32Array& codewords,

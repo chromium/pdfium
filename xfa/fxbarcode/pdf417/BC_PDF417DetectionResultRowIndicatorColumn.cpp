@@ -67,9 +67,9 @@ CBC_DetectionResultRowIndicatorColumn::adjustCompleteIndicatorColumnRowNumbers(
   int32_t currentRowHeight = 0;
   for (int32_t codewordsRow = firstRow; codewordsRow < lastRow;
        codewordsRow++) {
-    if (codewords->GetAt(codewordsRow) == NULL) {
+    if (!codewords->GetAt(codewordsRow))
       continue;
-    }
+
     CBC_Codeword* codeword = codewords->GetAt(codewordsRow);
     int32_t rowDifference = codeword->getRowNumber() - barcodeRow;
     if (rowDifference == 0) {
@@ -80,11 +80,11 @@ CBC_DetectionResultRowIndicatorColumn::adjustCompleteIndicatorColumnRowNumbers(
       currentRowHeight = 1;
       barcodeRow = codeword->getRowNumber();
     } else if (rowDifference < 0) {
-      codewords->SetAt(codewordsRow, NULL);
+      codewords->SetAt(codewordsRow, nullptr);
     } else if (codeword->getRowNumber() >= barcodeMetadata.getRowCount()) {
-      codewords->SetAt(codewordsRow, NULL);
+      codewords->SetAt(codewordsRow, nullptr);
     } else if (rowDifference > codewordsRow) {
-      codewords->SetAt(codewordsRow, NULL);
+      codewords->SetAt(codewordsRow, nullptr);
     } else {
       int32_t checkedRows;
       if (maxRowHeight > 2) {
@@ -95,10 +95,10 @@ CBC_DetectionResultRowIndicatorColumn::adjustCompleteIndicatorColumnRowNumbers(
       FX_BOOL closePreviousCodewordFound = checkedRows >= codewordsRow;
       for (int32_t i = 1; i <= checkedRows && !closePreviousCodewordFound;
            i++) {
-        closePreviousCodewordFound = codewords->GetAt(codewordsRow - i) != NULL;
+        closePreviousCodewordFound = !!codewords->GetAt(codewordsRow - i);
       }
       if (closePreviousCodewordFound) {
-        codewords->SetAt(codewordsRow, NULL);
+        codewords->SetAt(codewordsRow, nullptr);
       } else {
         barcodeRow = codeword->getRowNumber();
         currentRowHeight = 1;
@@ -110,9 +110,9 @@ CBC_DetectionResultRowIndicatorColumn::adjustCompleteIndicatorColumnRowNumbers(
 CFX_Int32Array* CBC_DetectionResultRowIndicatorColumn::getRowHeights(
     int32_t& e) {
   CBC_BarcodeMetadata* barcodeMetadata = getBarcodeMetadata();
-  if (barcodeMetadata == NULL) {
+  if (!barcodeMetadata) {
     e = BCExceptionCannotMetadata;
-    return NULL;
+    return nullptr;
   }
   adjustIncompleteIndicatorColumnRowNumbers(*barcodeMetadata);
   CFX_Int32Array* result = new CFX_Int32Array;
@@ -144,9 +144,9 @@ int32_t CBC_DetectionResultRowIndicatorColumn::
   int32_t currentRowHeight = 0;
   for (int32_t codewordsRow = firstRow; codewordsRow < lastRow;
        codewordsRow++) {
-    if (codewords->GetAt(codewordsRow) == NULL) {
+    if (!codewords->GetAt(codewordsRow))
       continue;
-    }
+
     CBC_Codeword* codeword = codewords->GetAt(codewordsRow);
     codeword->setRowNumberAsRowIndicatorColumn();
     int32_t rowDifference = codeword->getRowNumber() - barcodeRow;
@@ -158,7 +158,7 @@ int32_t CBC_DetectionResultRowIndicatorColumn::
       currentRowHeight = 1;
       barcodeRow = codeword->getRowNumber();
     } else if (codeword->getRowNumber() >= barcodeMetadata.getRowCount()) {
-      codewords->SetAt(codewordsRow, NULL);
+      codewords->SetAt(codewordsRow, nullptr);
     } else {
       barcodeRow = codeword->getRowNumber();
       currentRowHeight = 1;
@@ -175,9 +175,9 @@ CBC_DetectionResultRowIndicatorColumn::getBarcodeMetadata() {
   CBC_BarcodeValue barcodeECLevel;
   for (int32_t i = 0; i < codewords->GetSize(); i++) {
     CBC_Codeword* codeword = codewords->GetAt(i);
-    if (codeword == NULL) {
+    if (!codeword)
       continue;
-    }
+
     codeword->setRowNumberAsRowIndicatorColumn();
     int32_t rowIndicatorValue = codeword->getValue() % 30;
     int32_t codewordRowNumber = codeword->getRowNumber();
@@ -208,7 +208,7 @@ CBC_DetectionResultRowIndicatorColumn::getBarcodeMetadata() {
       barcodeRowCountUpperPart.getValue()->GetAt(0) +
               barcodeRowCountLowerPart.getValue()->GetAt(0) >
           CBC_PDF417Common::MAX_ROWS_IN_BARCODE) {
-    return NULL;
+    return nullptr;
   }
   CBC_BarcodeMetadata* barcodeMetadata =
       new CBC_BarcodeMetadata(barcodeColumnCount.getValue()->GetAt(0),
@@ -231,13 +231,13 @@ void CBC_DetectionResultRowIndicatorColumn::removeIncorrectCodewords(
   for (int32_t codewordRow = 0; codewordRow < codewords->GetSize();
        codewordRow++) {
     CBC_Codeword* codeword = codewords->GetAt(codewordRow);
-    if (codeword == NULL) {
+    if (!codeword)
       continue;
-    }
+
     int32_t rowIndicatorValue = codeword->getValue() % 30;
     int32_t codewordRowNumber = codeword->getRowNumber();
     if (codewordRowNumber > barcodeMetadata.getRowCount()) {
-      codewords->SetAt(codewordRow, NULL);
+      codewords->SetAt(codewordRow, nullptr);
       continue;
     }
     if (!m_isLeft) {
@@ -247,19 +247,19 @@ void CBC_DetectionResultRowIndicatorColumn::removeIncorrectCodewords(
       case 0:
         if (rowIndicatorValue * 3 + 1 !=
             barcodeMetadata.getRowCountUpperPart()) {
-          codewords->SetAt(codewordRow, NULL);
+          codewords->SetAt(codewordRow, nullptr);
         }
         break;
       case 1:
         if (rowIndicatorValue / 3 !=
                 barcodeMetadata.getErrorCorrectionLevel() ||
             rowIndicatorValue % 3 != barcodeMetadata.getRowCountLowerPart()) {
-          codewords->SetAt(codewordRow, NULL);
+          codewords->SetAt(codewordRow, nullptr);
         }
         break;
       case 2:
         if (rowIndicatorValue + 1 != barcodeMetadata.getColumnCount()) {
-          codewords->SetAt(codewordRow, NULL);
+          codewords->SetAt(codewordRow, nullptr);
         }
         break;
     }

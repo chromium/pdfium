@@ -94,9 +94,8 @@ CFX_ByteString CBC_PDF417Reader::Decode(CBC_BinaryBitmap* image,
 }
 int32_t CBC_PDF417Reader::getMaxWidth(CBC_ResultPoint* p1,
                                       CBC_ResultPoint* p2) {
-  if (p1 == NULL || p2 == NULL) {
+  if (!p1 || !p2)
     return 0;
-  }
   return (int32_t)FXSYS_fabs(p1->GetX() - p2->GetX());
 }
 int32_t CBC_PDF417Reader::getMinWidth(CBC_ResultPoint* p1,

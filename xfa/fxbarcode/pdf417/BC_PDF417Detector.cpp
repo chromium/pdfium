@@ -57,7 +57,7 @@ CBC_PDF417DetectorResult* CBC_Detector::detect(CBC_BinaryBitmap* image,
                                                FX_BOOL multiple,
                                                int32_t& e) {
   CBC_CommonBitMatrix* bitMatrix = image->GetBlackMatrix(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_ResultPointArrayArray* barcodeCoordinates = detect(multiple, bitMatrix);
   if (barcodeCoordinates->GetSize() == 0) {
     rotate180(bitMatrix);
@@ -65,7 +65,7 @@ CBC_PDF417DetectorResult* CBC_Detector::detect(CBC_BinaryBitmap* image,
   }
   if (barcodeCoordinates->GetSize() == 0) {
     e = BCExceptionUnSupportedBarcode;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   }
   return new CBC_PDF417DetectorResult(bitMatrix, barcodeCoordinates);
 }
@@ -115,7 +115,7 @@ CBC_ResultPointArrayArray* CBC_Detector::detect(
   FX_BOOL foundBarcodeInRow = FALSE;
   while (row < bitMatrix->GetHeight()) {
     CBC_ResultPointArray* vertices = findVertices(bitMatrix, row, column);
-    if (vertices->GetAt(0) == NULL && vertices->GetAt(3) == NULL) {
+    if (!vertices->GetAt(0) && !vertices->GetAt(3)) {
       if (!foundBarcodeInRow) {
         delete vertices;
         break;
@@ -255,7 +255,7 @@ CBC_ResultPointArray* CBC_Detector::findRowsWithPattern(
   }
   if (stopRow - startRow < BARCODE_MIN_HEIGHT) {
     for (int32_t i = 0; i < result->GetSize(); i++) {
-      result->SetAt(i, NULL);
+      result->SetAt(i, nullptr);
     }
   }
   return result;
@@ -316,7 +316,7 @@ CFX_Int32Array* CBC_Detector::findGuardPattern(CBC_CommonBitMatrix* matrix,
     }
   }
   delete intarray;
-  return NULL;
+  return nullptr;
 }
 int32_t CBC_Detector::patternMatchVariance(CFX_Int32Array& counters,
                                            int32_t* pattern,

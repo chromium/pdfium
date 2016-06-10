@@ -29,9 +29,9 @@
 #include "xfa/fxbarcode/utils.h"
 
 CBC_DataMatrixBitMatrixParser::CBC_DataMatrixBitMatrixParser() {
-  m_mappingBitMatrix = NULL;
-  m_version = NULL;
-  m_readMappingMatrix = NULL;
+  m_mappingBitMatrix = nullptr;
+  m_version = nullptr;
+  m_readMappingMatrix = nullptr;
 }
 void CBC_DataMatrixBitMatrixParser::Init(CBC_CommonBitMatrix* bitMatrix,
                                          int32_t& e) {
@@ -62,7 +62,7 @@ CBC_DataMatrixVersion* CBC_DataMatrixBitMatrixParser::ReadVersion(
   int32_t columns = bitMatrix->GetWidth();
   CBC_DataMatrixVersion* temp =
       CBC_DataMatrixVersion::GetVersionForDimensions(rows, columns, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return temp;
 }
 CFX_ByteArray* CBC_DataMatrixBitMatrixParser::ReadCodewords(int32_t& e) {
@@ -132,7 +132,7 @@ CFX_ByteArray* CBC_DataMatrixBitMatrixParser::ReadCodewords(int32_t& e) {
   } while ((row < numRows) || (column < numColumns));
   if (resultOffset != m_version->GetTotalCodewords()) {
     e = BCExceptionFormatException;
-    return NULL;
+    return nullptr;
   }
   return result.release();
 }
@@ -340,7 +340,7 @@ CBC_CommonBitMatrix* CBC_DataMatrixBitMatrixParser::ExtractDataRegion(
   int32_t symbolSizeColumns = m_version->GetSymbolSizeColumns();
   if (bitMatrix->GetHeight() != symbolSizeRows) {
     e = BCExceptionCanNotCallGetDimensionOnNonSquareMatrix;
-    return NULL;
+    return nullptr;
   }
   int32_t dataRegionSizeRows = m_version->GetDataRegionSizeRows();
   int32_t dataRegionSizeColumns = m_version->GetDataRegionSizeColumns();

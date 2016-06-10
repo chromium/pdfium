@@ -24,16 +24,16 @@
 #include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/fxbarcode/utils.h"
 
-CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sNUMERIC = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sALPHANUMERIC = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sKANJI = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sECI = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sGBK = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sTERMINATOR = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_FIRST_POSITION = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_SECOND_POSITION = NULL;
-CBC_QRCoderMode* CBC_QRCoderMode::sSTRUCTURED_APPEND = NULL;
+CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sNUMERIC = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sALPHANUMERIC = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sKANJI = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sECI = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sGBK = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sTERMINATOR = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_FIRST_POSITION = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_SECOND_POSITION = nullptr;
+CBC_QRCoderMode* CBC_QRCoderMode::sSTRUCTURED_APPEND = nullptr;
 
 CBC_QRCoderMode::CBC_QRCoderMode(int32_t* characterCountBitsForVersions,
                                  int32_t x1,
@@ -57,7 +57,7 @@ void CBC_QRCoderMode::Initialize() {
   sBYTE = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 16, 16, 0x4, "BYTE");
   sALPHANUMERIC =
       new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 9, 11, 13, 0x2, "ALPHANUMERIC");
-  sECI = new CBC_QRCoderMode(NULL, 0, 0, 0, 0x7, "ECI");
+  sECI = new CBC_QRCoderMode(nullptr, 0, 0, 0, 0x7, "ECI");
   sKANJI = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x8, "KANJI");
   sNUMERIC =
       new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 10, 12, 14, 0x1, "NUMERIC");
@@ -65,9 +65,9 @@ void CBC_QRCoderMode::Initialize() {
   sTERMINATOR =
       new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0, 0x00, "TERMINATOR");
   sFNC1_FIRST_POSITION =
-      new CBC_QRCoderMode(NULL, 0, 0, 0, 0x05, "FNC1_FIRST_POSITION");
+      new CBC_QRCoderMode(nullptr, 0, 0, 0, 0x05, "FNC1_FIRST_POSITION");
   sFNC1_SECOND_POSITION =
-      new CBC_QRCoderMode(NULL, 0, 0, 0, 0x09, "FNC1_SECOND_POSITION");
+      new CBC_QRCoderMode(nullptr, 0, 0, 0, 0x09, "FNC1_SECOND_POSITION");
   sSTRUCTURED_APPEND = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0, 0x03,
                                            "STRUCTURED_APPEND");
 }
@@ -107,10 +107,10 @@ CBC_QRCoderMode* CBC_QRCoderMode::ForBits(int32_t bits, int32_t& e) {
       return sGBK;
     default: {
       e = BCExceptionUnsupportedMode;
-      BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     }
   }
-  return NULL;
+  return nullptr;
 }
 int32_t CBC_QRCoderMode::GetBits() {
   return m_bits;
@@ -120,7 +120,7 @@ CFX_ByteString CBC_QRCoderMode::GetName() {
 }
 int32_t CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version,
                                                int32_t& e) {
-  if (m_characterCountBitsForVersions == NULL) {
+  if (!m_characterCountBitsForVersions) {
     e = BCExceptionCharacterNotThisMode;
     BC_EXCEPTION_CHECK_ReturnValue(e, 0);
   }
@@ -138,42 +138,42 @@ int32_t CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version,
 void CBC_QRCoderMode::Destroy() {
   if (sBYTE) {
     delete CBC_QRCoderMode::sBYTE;
-    sBYTE = NULL;
+    sBYTE = nullptr;
   }
   if (sNUMERIC) {
     delete CBC_QRCoderMode::sNUMERIC;
-    sNUMERIC = NULL;
+    sNUMERIC = nullptr;
   }
   if (sALPHANUMERIC) {
     delete CBC_QRCoderMode::sALPHANUMERIC;
-    sALPHANUMERIC = NULL;
+    sALPHANUMERIC = nullptr;
   }
   if (sKANJI) {
     delete CBC_QRCoderMode::sKANJI;
-    sKANJI = NULL;
+    sKANJI = nullptr;
   }
   if (sECI) {
     delete CBC_QRCoderMode::sECI;
-    sECI = NULL;
+    sECI = nullptr;
   }
   if (sGBK) {
     delete CBC_QRCoderMode::sGBK;
-    sGBK = NULL;
+    sGBK = nullptr;
   }
   if (sTERMINATOR) {
     delete CBC_QRCoderMode::sTERMINATOR;
-    sTERMINATOR = NULL;
+    sTERMINATOR = nullptr;
   }
   if (sFNC1_FIRST_POSITION) {
     delete CBC_QRCoderMode::sFNC1_FIRST_POSITION;
-    sFNC1_FIRST_POSITION = NULL;
+    sFNC1_FIRST_POSITION = nullptr;
   }
   if (sFNC1_SECOND_POSITION) {
     delete CBC_QRCoderMode::sFNC1_SECOND_POSITION;
-    sFNC1_SECOND_POSITION = NULL;
+    sFNC1_SECOND_POSITION = nullptr;
   }
   if (sSTRUCTURED_APPEND) {
     delete CBC_QRCoderMode::sSTRUCTURED_APPEND;
-    sSTRUCTURED_APPEND = NULL;
+    sSTRUCTURED_APPEND = nullptr;
   }
 }

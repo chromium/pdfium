@@ -35,7 +35,7 @@
 #include "xfa/fxbarcode/qrcode/BC_QRDecodedBitStreamParser.h"
 
 CBC_QRCoderDecoder::CBC_QRCoderDecoder() {
-  m_rsDecoder = NULL;
+  m_rsDecoder = nullptr;
 }
 
 void CBC_QRCoderDecoder::Init() {
@@ -58,7 +58,7 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(FX_BOOL* image,
     }
   }
   CBC_CommonDecoderResult* cdr = Decode(&bits, height, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return cdr;
 }
 CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits,
@@ -66,17 +66,17 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits,
                                                     int32_t& e) {
   CBC_QRBitMatrixParser parser;
   parser.Init(bits, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_QRCoderVersion* version = parser.ReadVersion(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_QRCoderFormatInformation* temp = parser.ReadFormatInformation(e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_QRCoderErrorCorrectionLevel* ecLevel = temp->GetErrorCorrectionLevel();
   std::unique_ptr<CFX_ByteArray> codewords(parser.ReadCodewords(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CFX_ArrayTemplate<CBC_QRDataBlock*>* dataBlocks =
       CBC_QRDataBlock::GetDataBlocks(codewords.get(), version, ecLevel, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   int32_t totalBytes = 0;
   for (int32_t i = 0; i < dataBlocks->GetSize(); i++) {
     totalBytes += (*dataBlocks)[i]->GetNumDataCodewords();
@@ -92,7 +92,7 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits,
         delete (*dataBlocks)[k];
       }
       delete dataBlocks;
-      return NULL;
+      return nullptr;
     }
     for (int32_t i = 0; i < numDataCodewords; i++) {
       resultBytes.Add((*codewordBytes)[i]);
@@ -104,7 +104,7 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits,
   delete dataBlocks;
   CBC_CommonDecoderResult* cdr = CBC_QRDecodedBitStreamParser::Decode(
       &resultBytes, version, ecLevel, byteModeDecode, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return cdr;
 }
 void CBC_QRCoderDecoder::CorrectErrors(CFX_ByteArray* codewordBytes,

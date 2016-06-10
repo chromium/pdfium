@@ -41,7 +41,7 @@
 #include "xfa/fxbarcode/qrcode/BC_QRDetector.h"
 #include "xfa/fxbarcode/qrcode/BC_QRDetectorResult.h"
 
-CBC_QRCodeReader::CBC_QRCodeReader() : m_decoder(NULL) {}
+CBC_QRCodeReader::CBC_QRCodeReader() : m_decoder(nullptr) {}
 void CBC_QRCodeReader::Init() {
   m_decoder = new CBC_QRCoderDecoder;
   m_decoder->Init();
