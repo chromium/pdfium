@@ -95,20 +95,19 @@ void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
     CFX_ByteString& encoding,
     int32_t& e) {
   for (int32_t i = 0; i < splitResult.GetSize(); i++) {
-    tempMode = ((Make_Pair*)splitResult[i])->m_mode;
+    tempMode = splitResult[i]->m_mode;
     if (tempMode == CBC_QRCoderMode::sGBK) {
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendLengthInfo(((Make_Pair*)splitResult[i])->m_string.GetLength(),
+      AppendLengthInfo(splitResult[i]->m_string.GetLength(),
                        qrCode->GetVersion(), tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendBytes(((Make_Pair*)splitResult[i])->m_string, tempMode,
-                  &headerAndDataBits, encoding, e);
+      AppendBytes(splitResult[i]->m_string, tempMode, &headerAndDataBits,
+                  encoding, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     } else if (tempMode == CBC_QRCoderMode::sBYTE) {
       CFX_ByteArray bytes;
-      CBC_UtilCodingConvert::LocaleToUtf8(
-          ((Make_Pair*)splitResult[i])->m_string, bytes);
+      CBC_UtilCodingConvert::LocaleToUtf8(splitResult[i]->m_string, bytes);
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
       AppendLengthInfo(bytes.GetSize(), qrCode->GetVersion(), tempMode,
@@ -119,20 +118,20 @@ void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
     } else if (tempMode == CBC_QRCoderMode::sALPHANUMERIC) {
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendLengthInfo(((Make_Pair*)splitResult[i])->m_string.GetLength(),
+      AppendLengthInfo(splitResult[i]->m_string.GetLength(),
                        qrCode->GetVersion(), tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendBytes(((Make_Pair*)splitResult[i])->m_string, tempMode,
-                  &headerAndDataBits, encoding, e);
+      AppendBytes(splitResult[i]->m_string, tempMode, &headerAndDataBits,
+                  encoding, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     } else if (tempMode == CBC_QRCoderMode::sNUMERIC) {
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendLengthInfo(((Make_Pair*)splitResult[i])->m_string.GetLength(),
+      AppendLengthInfo(splitResult[i]->m_string.GetLength(),
                        qrCode->GetVersion(), tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendBytes(((Make_Pair*)splitResult[i])->m_string, tempMode,
-                  &headerAndDataBits, encoding, e);
+      AppendBytes(splitResult[i]->m_string, tempMode, &headerAndDataBits,
+                  encoding, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     } else {
       e = BCExceptionUnknown;
