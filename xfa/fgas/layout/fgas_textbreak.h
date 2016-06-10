@@ -262,12 +262,12 @@ class CFX_TxtBreak {
   int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
                        CFX_RectFArray& rtArray,
                        FX_BOOL bCharBBox = FALSE) const;
-  void AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps);
-  uint32_t AppendChar_Combination(CFX_Char* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Tab(CFX_Char* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Control(CFX_Char* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Arabic(CFX_Char* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Others(CFX_Char* pCurChar, int32_t iRotation);
+  void AppendChar_PageLoad(CFX_TxtChar* pCurChar, uint32_t dwProps);
+  uint32_t AppendChar_Combination(CFX_TxtChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Tab(CFX_TxtChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Control(CFX_TxtChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Arabic(CFX_TxtChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Others(CFX_TxtChar* pCurChar, int32_t iRotation);
 
  private:
   void SetBreakStatus();

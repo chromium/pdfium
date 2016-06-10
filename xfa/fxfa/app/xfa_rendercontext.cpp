@@ -51,7 +51,7 @@ int32_t CXFA_RenderContext::StartRender(CXFA_FFPageView* pPageView,
 int32_t CXFA_RenderContext::DoRender(IFX_Pause* pPause) {
   int32_t iCount = 0;
   while (m_pWidget) {
-    CXFA_FFWidget* pWidget = (CXFA_FFWidget*)m_pWidget;
+    CXFA_FFWidget* pWidget = m_pWidget;
     CFX_RectF rtWidgetBox;
     pWidget->GetBBox(rtWidgetBox, XFA_WidgetStatus_Visible);
     rtWidgetBox.width += 1;
