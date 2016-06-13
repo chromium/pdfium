@@ -108,7 +108,7 @@ class CWin32Platform {
 class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
  protected:
   CGdiDeviceDriver(HDC hDC, int device_class);
-  ~CGdiDeviceDriver() override {}
+  ~CGdiDeviceDriver() override;
 
   // IFX_RenderDeviceDriver
   int GetDeviceCaps(int caps_id) override;
@@ -126,21 +126,15 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
                    uint32_t fill_color,
                    uint32_t stroke_color,
                    int fill_mode,
-                   int alpha_flag,
-                   void* pIccTransform,
                    int blend_type) override;
-  FX_BOOL FillRect(const FX_RECT* pRect,
-                   uint32_t fill_color,
-                   int alpha_flag,
-                   void* pIccTransform,
-                   int blend_type) override;
+  FX_BOOL FillRectWithBlend(const FX_RECT* pRect,
+                            uint32_t fill_color,
+                            int blend_type) override;
   FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
                            FX_FLOAT y1,
                            FX_FLOAT x2,
                            FX_FLOAT y2,
                            uint32_t color,
-                           int alpha_flag,
-                           void* pIccTransform,
                            int blend_type) override;
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
   void* GetPlatformSurface() const override { return (void*)m_hDC; }
@@ -183,22 +177,17 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
 
 class CGdiDisplayDriver : public CGdiDeviceDriver {
  public:
-  CGdiDisplayDriver(HDC hDC);
+  explicit CGdiDisplayDriver(HDC hDC);
+  ~CGdiDisplayDriver() override;
 
  protected:
-  FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
-                    int left,
-                    int top,
-                    void* pIccTransform = nullptr,
-                    FX_BOOL bDEdge = FALSE) override;
+  FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) override;
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
                     const FX_RECT* pSrcRect,
                     int left,
                     int top,
-                    int blend_type,
-                    int alpha_flag,
-                    void* pIccTransform) override;
+                    int blend_type) override;
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                         uint32_t color,
                         int dest_left,
@@ -207,8 +196,6 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                         int dest_height,
                         const FX_RECT* pClipRect,
                         uint32_t flags,
-                        int alpha_flag,
-                        void* pIccTransform,
                         int blend_type) override;
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
@@ -216,8 +203,6 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                       const CFX_Matrix* pMatrix,
                       uint32_t render_flags,
                       void*& handle,
-                      int alpha_flag,
-                      void* pIccTransform,
                       int blend_type) override {
     return FALSE;
   }
@@ -228,10 +213,7 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                                 int dest_width,
                                 int dest_height,
                                 const FX_RECT* pClipRect,
-                                int render_flags,
-                                int alpha_flag = 0,
-                                void* pIccTransform = nullptr,
-                                int blend_type = FXDIB_BLEND_NORMAL);
+                                int render_flags);
 };
 
 class CGdiPrinterDriver : public CGdiDeviceDriver {
@@ -246,9 +228,7 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                     const FX_RECT* pSrcRect,
                     int left,
                     int top,
-                    int blend_type,
-                    int alpha_flag,
-                    void* pIccTransform) override;
+                    int blend_type) override;
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                         uint32_t color,
                         int dest_left,
@@ -257,8 +237,6 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                         int dest_height,
                         const FX_RECT* pClipRect,
                         uint32_t flags,
-                        int alpha_flag,
-                        void* pIccTransform,
                         int blend_type) override;
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
@@ -266,8 +244,6 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                       const CFX_Matrix* pMatrix,
                       uint32_t render_flags,
                       void*& handle,
-                      int alpha_flag,
-                      void* pIccTransform,
                       int blend_type) override;
 
   const int m_HorzSize;

@@ -435,46 +435,34 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
   int FillType = pPathObj->m_FillType;
   FX_BOOL bStroke = pPathObj->m_bStroke;
   ProcessPathPattern(pPathObj, pObj2Device, FillType, bStroke);
-  if (FillType == 0 && !bStroke) {
+  if (FillType == 0 && !bStroke)
     return TRUE;
-  }
-  uint32_t fill_argb = 0;
-  if (FillType) {
-    fill_argb = GetFillArgb(pPathObj);
-  }
-  uint32_t stroke_argb = 0;
-  if (bStroke) {
-    stroke_argb = GetStrokeArgb(pPathObj);
-  }
+
+  uint32_t fill_argb = FillType ? GetFillArgb(pPathObj) : 0;
+  uint32_t stroke_argb = bStroke ? GetStrokeArgb(pPathObj) : 0;
   CFX_Matrix path_matrix = pPathObj->m_Matrix;
   path_matrix.Concat(*pObj2Device);
-  if (!IsAvailableMatrix(path_matrix)) {
+  if (!IsAvailableMatrix(path_matrix))
     return TRUE;
-  }
-  if (FillType && (m_Options.m_Flags & RENDER_RECT_AA)) {
+
+  if (FillType && (m_Options.m_Flags & RENDER_RECT_AA))
     FillType |= FXFILL_RECT_AA;
-  }
-  if (m_Options.m_Flags & RENDER_FILL_FULLCOVER) {
+  if (m_Options.m_Flags & RENDER_FILL_FULLCOVER)
     FillType |= FXFILL_FULLCOVER;
-  }
-  if (m_Options.m_Flags & RENDER_NOPATHSMOOTH) {
+  if (m_Options.m_Flags & RENDER_NOPATHSMOOTH)
     FillType |= FXFILL_NOPATHSMOOTH;
-  }
-  if (bStroke) {
+  if (bStroke)
     FillType |= FX_FILL_STROKE;
-  }
   const CPDF_GeneralStateData* pGeneralData =
       static_cast<const CPDF_PageObject*>(pPathObj)->m_GeneralState.GetObject();
-  if (pGeneralData && pGeneralData->m_StrokeAdjust) {
+  if (pGeneralData && pGeneralData->m_StrokeAdjust)
     FillType |= FX_STROKE_ADJUST;
-  }
-  if (m_pType3Char) {
+  if (m_pType3Char)
     FillType |= FX_FILL_TEXT_MODE;
-  }
+
   CFX_GraphStateData graphState(*pPathObj->m_GraphState.GetObject());
-  if (m_Options.m_Flags & RENDER_THINLINE) {
+  if (m_Options.m_Flags & RENDER_THINLINE)
     graphState.m_LineWidth = 0;
-  }
   return m_pDevice->DrawPathWithBlend(pPathObj->m_Path.GetObject(),
                                       &path_matrix, &graphState, fill_argb,
                                       stroke_argb, FillType, m_curBlend);

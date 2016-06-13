@@ -340,14 +340,13 @@ static CGBlendMode GetCGBlendMode(int blend_type) {
   }
   return mode;
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData* pathData,
                                          const CFX_Matrix* matrix,
                                          const CFX_GraphStateData* graphState,
                                          uint32_t fillArgb,
                                          uint32_t strokeArgb,
                                          int fillMode,
-                                         int alpha_flag,
-                                         void* pIccTransform,
                                          int blend_type) {
   SaveState();
   CGBlendMode mode = GetCGBlendMode(blend_type);
@@ -394,11 +393,10 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData* pathData,
   RestoreState(false);
   return TRUE;
 }
-FX_BOOL CFX_QuartzDeviceDriver::FillRect(const FX_RECT* rect,
-                                         FX_ARGB fillArgb,
-                                         int alphaFlag,
-                                         void* iccTransform,
-                                         int blend_type) {
+
+FX_BOOL CFX_QuartzDeviceDriver::FillRectWithBlend(const FX_RECT* rect,
+                                                  FX_ARGB fillArgb,
+                                                  int blend_type) {
   CGBlendMode mode = GetCGBlendMode(blend_type);
   if (mode != kCGBlendModeNormal) {
     CGContextSetBlendMode(m_context, mode);
@@ -416,13 +414,12 @@ FX_BOOL CFX_QuartzDeviceDriver::FillRect(const FX_RECT* rect,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
                                                  FX_FLOAT y1,
                                                  FX_FLOAT x2,
                                                  FX_FLOAT y2,
                                                  uint32_t argb,
-                                                 int alphaFlag,
-                                                 void* iccTransform,
                                                  int blend_type) {
   CGBlendMode mode = GetCGBlendMode(blend_type);
   if (mode != kCGBlendModeNormal) {
@@ -447,6 +444,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::GetClipBox(FX_RECT* rect) {
   CGRect r = CGContextGetClipBoundingBox(m_context);
   r = CGRectApplyAffineTransform(r, m_user2FoxitDevice);
@@ -456,20 +454,15 @@ FX_BOOL CFX_QuartzDeviceDriver::GetClipBox(FX_RECT* rect) {
   rect->bottom = FXSYS_ceil(r.origin.y + r.size.height);
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap* bitmap,
                                           int32_t left,
-                                          int32_t top,
-                                          void* pIccTransform,
-                                          FX_BOOL bDEdge) {
-  if (FXDC_PRINTER == m_deviceClass) {
+                                          int32_t top) {
+  if (FXDC_PRINTER == m_deviceClass || bitmap->GetBPP() < 32 ||
+      !(m_renderCaps | FXRC_GET_BITS)) {
     return FALSE;
   }
-  if (bitmap->GetBPP() < 32) {
-    return FALSE;
-  }
-  if (!(m_renderCaps | FXRC_GET_BITS)) {
-    return FALSE;
-  }
+
   CGPoint pt = CGPointMake(left, top);
   pt = CGPointApplyAffineTransform(pt, m_foxitDevice2User);
   CGAffineTransform ctm = CGContextGetCTM(m_context);
@@ -481,12 +474,11 @@ FX_BOOL CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap* bitmap,
 
   CGFloat width = (CGFloat)bitmap->GetWidth();
   CGFloat height = (CGFloat)bitmap->GetHeight();
-  if (width + pt.x > m_width) {
+  if (width + pt.x > m_width)
     width -= (width + pt.x - m_width);
-  }
-  if (height + pt.y > m_height) {
+  if (height + pt.y > m_height)
     height -= (height + pt.y - m_height);
-  }
+
   CGImageRef subImage = CGImageCreateWithImageInRect(
       image, CGRectMake(pt.x, pt.y, width, height));
   CGContextRef context = createContextWithBitmap(bitmap);
@@ -496,29 +488,29 @@ FX_BOOL CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap* bitmap,
   CGContextRelease(context);
   CGImageRelease(subImage);
   CGImageRelease(image);
-  if (bitmap->HasAlpha()) {
-    for (int row = 0; row < bitmap->GetHeight(); row++) {
-      uint8_t* pScanline = (uint8_t*)bitmap->GetScanline(row);
-      for (int col = 0; col < bitmap->GetWidth(); col++) {
-        if (pScanline[3] > 0) {
-          pScanline[0] = (pScanline[0] * 255.f / pScanline[3] + .5f);
-          pScanline[1] = (pScanline[1] * 255.f / pScanline[3] + .5f);
-          pScanline[2] = (pScanline[2] * 255.f / pScanline[3] + .5f);
-        }
-        pScanline += 4;
+  if (!bitmap->HasAlpha())
+    return TRUE;
+
+  for (int row = 0; row < bitmap->GetHeight(); row++) {
+    uint8_t* pScanline = (uint8_t*)bitmap->GetScanline(row);
+    for (int col = 0; col < bitmap->GetWidth(); col++) {
+      if (pScanline[3] > 0) {
+        pScanline[0] = (pScanline[0] * 255.f / pScanline[3] + .5f);
+        pScanline[1] = (pScanline[1] * 255.f / pScanline[3] + .5f);
+        pScanline[2] = (pScanline[2] * 255.f / pScanline[3] + .5f);
       }
+      pScanline += 4;
     }
   }
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
                                           FX_ARGB argb,
                                           const FX_RECT* srcRect,
                                           int dest_left,
                                           int dest_top,
-                                          int blendType,
-                                          int alphaFlag,
-                                          void* iccTransform) {
+                                          int blendType) {
   SaveState();
   CGFloat src_left, src_top, src_width, src_height;
   if (srcRect) {
@@ -635,6 +627,7 @@ FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
   RestoreState(false);
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
                                               FX_ARGB argb,
                                               int dest_left,
@@ -643,8 +636,6 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
                                               int dest_height,
                                               const FX_RECT* clipRect,
                                               uint32_t flags,
-                                              int alphaFlag,
-                                              void* iccTransform,
                                               int blend_type) {
   SaveState();
   if (clipRect) {
@@ -657,21 +648,20 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
   }
   CGRect rect = CGRectMake(dest_left, dest_top, dest_width, dest_height);
   rect = CGRectApplyAffineTransform(rect, m_foxitDevice2User);
-  if (FXDIB_BICUBIC_INTERPOL == flags) {
+  if (FXDIB_BICUBIC_INTERPOL == flags)
     CGContextSetInterpolationQuality(m_context, kCGInterpolationHigh);
-  } else if (FXDIB_DOWNSAMPLE == flags) {
+  else if (FXDIB_DOWNSAMPLE == flags)
     CGContextSetInterpolationQuality(m_context, kCGInterpolationNone);
-  } else {
+  else
     CGContextSetInterpolationQuality(m_context, kCGInterpolationMedium);
-  }
-  CG_SetImageTransform(dest_left, dest_top, dest_width, dest_height);
+
+  CG_SetImageTransform(dest_left, dest_top, dest_width, dest_height, nullptr);
   CFX_DIBitmap* pBitmap1 = nullptr;
   if (pBitmap->IsAlphaMask()) {
-    if (pBitmap->GetBuffer()) {
+    if (pBitmap->GetBuffer())
       pBitmap1 = (CFX_DIBitmap*)pBitmap;
-    } else {
+    else
       pBitmap1 = pBitmap->Clone();
-    }
     if (!pBitmap1) {
       RestoreState(false);
       return FALSE;
@@ -693,20 +683,19 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
     CGImageRelease(pImage);
     CGColorSpaceRelease(pColorSpace);
     CGDataProviderRelease(pBitmapProvider);
-    if (pBitmap1 != pBitmap) {
+    if (pBitmap1 != pBitmap)
       delete pBitmap1;
-    }
+
     RestoreState(false);
     return TRUE;
   }
   if (pBitmap->GetBPP() < 32) {
     pBitmap1 = pBitmap->CloneConvert(FXDIB_Rgb32);
   } else {
-    if (pBitmap->GetBuffer()) {
+    if (pBitmap->GetBuffer())
       pBitmap1 = (CFX_DIBitmap*)pBitmap;
-    } else {
+    else
       pBitmap1 = pBitmap->Clone();
-    }
   }
   if (!pBitmap1) {
     RestoreState(false);
@@ -735,25 +724,25 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
   CGContextDrawImage(m_context, rect, image);
   CGImageRelease(image);
   CGContextRelease(ctx);
-  if (pBitmap1 != pBitmap) {
+  if (pBitmap1 != pBitmap)
     delete pBitmap1;
-  }
+
   RestoreState(false);
   return TRUE;
 }
-FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
-                                               const FXTEXT_CHARPOS* pCharPos,
-                                               CFX_Font* pFont,
-                                               CFX_FontCache* pCache,
-                                               const CFX_Matrix* pGlyphMatrix,
-                                               const CFX_Matrix* pObject2Device,
-                                               FX_FLOAT font_size,
-                                               uint32_t argb,
-                                               int alpha_flag,
-                                               void* pIccTransform) {
-  if (nChars == 0) {
+
+FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlyphRun(
+    int nChars,
+    const FXTEXT_CHARPOS* pCharPos,
+    CFX_Font* pFont,
+    CFX_FontCache* pCache,
+    const CFX_Matrix* pGlyphMatrix,
+    const CFX_Matrix* pObject2Device,
+    FX_FLOAT font_size,
+    uint32_t argb) {
+  if (nChars == 0)
     return TRUE;
-  }
+
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
           ->m_quartz2d;
@@ -775,9 +764,9 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
     glyph_positions[i].y = pCharPos[i].m_OriginY;
   }
   CFX_Matrix text_matrix;
-  if (pObject2Device) {
+  if (pObject2Device)
     text_matrix.Concat(*pObject2Device);
-  }
+
   CGAffineTransform matrix_cg =
       CGAffineTransformMake(text_matrix.a, text_matrix.b, text_matrix.c,
                             text_matrix.d, text_matrix.e, text_matrix.f);
@@ -797,9 +786,9 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
     CGAffineTransform glyph_matrix = CGAffineTransformMake(
         pGlyphMatrix->a, pGlyphMatrix->b, pGlyphMatrix->c, pGlyphMatrix->d,
         pGlyphMatrix->e, pGlyphMatrix->f);
-    if (m_foxitDevice2User.d < 0) {
+    if (m_foxitDevice2User.d < 0)
       glyph_matrix = CGAffineTransformInvert(glyph_matrix);
-    }
+
     CGContextConcatCTM(m_context, glyph_matrix);
     CGContextTranslateCTM(m_context, -origin.x, -origin.y);
   }
@@ -808,17 +797,17 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
   RestoreState(false);
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
                                                const FXTEXT_CHARPOS* pCharPos,
                                                CFX_Font* pFont,
                                                CFX_FontCache* pCache,
                                                const CFX_Matrix* pObject2Device,
                                                FX_FLOAT font_size,
-                                               uint32_t color,
-                                               int alpha_flag,
-                                               void* pIccTransform) {
+                                               uint32_t color) {
   if (!pFont || !m_context)
     return FALSE;
+
   FX_BOOL bBold = pFont->IsBold();
   if (!bBold && pFont->GetSubstFont() &&
       pFont->GetSubstFont()->m_Weight >= 500 &&
@@ -832,9 +821,8 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
   while (i < nChars) {
     if (pCharPos[i].m_bGlyphAdjust || font_size < 0) {
       if (i > 0) {
-        ret =
-            CG_DrawGlypRun(i, pCharPos, pFont, pCache, nullptr, pObject2Device,
-                           font_size, color, alpha_flag, pIccTransform);
+        ret = CG_DrawGlyphRun(i, pCharPos, pFont, pCache, nullptr,
+                              pObject2Device, font_size, color);
         if (!ret) {
           RestoreState(false);
           return ret;
@@ -850,9 +838,8 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
             char_pos->m_AdjustMatrix[0], char_pos->m_AdjustMatrix[1],
             char_pos->m_AdjustMatrix[2], char_pos->m_AdjustMatrix[3], 0, 0);
       }
-      ret = CG_DrawGlypRun(1, char_pos, pFont, pCache, &glphy_matrix,
-                           pObject2Device, font_size, color, alpha_flag,
-                           pIccTransform);
+      ret = CG_DrawGlyphRun(1, char_pos, pFont, pCache, &glphy_matrix,
+                            pObject2Device, font_size, color);
       if (!ret) {
         RestoreState(false);
         return ret;
@@ -866,12 +853,13 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
     }
   }
   if (i > 0) {
-    ret = CG_DrawGlypRun(i, pCharPos, pFont, pCache, nullptr, pObject2Device,
-                         font_size, color, alpha_flag, pIccTransform);
+    ret = CG_DrawGlyphRun(i, pCharPos, pFont, pCache, nullptr, pObject2Device,
+                          font_size, color);
   }
   RestoreState(false);
   return ret;
 }
+
 void CFX_QuartzDeviceDriver::setStrokeInfo(const CFX_GraphStateData* graphState,
                                            FX_ARGB argb,
                                            FX_FLOAT lineWidth) {
@@ -959,6 +947,7 @@ void CFX_QuartzDeviceDriver::setPathToContext(const CFX_PathData* pathData) {
     }
   }
 }
+
 void CFX_QuartzDeviceDriver::CG_SetImageTransform(int dest_left,
                                                   int dest_top,
                                                   int dest_width,
@@ -966,29 +955,30 @@ void CFX_QuartzDeviceDriver::CG_SetImageTransform(int dest_left,
                                                   CGRect* rect) {
   int flip_y = m_foxitDevice2User.d * dest_height < 0 ? 1 : -1;
   int flip_x = m_foxitDevice2User.a * dest_width > 0 ? 1 : -1;
-  if (flip_y < 0 || flip_x < 0) {
-    if (dest_height < 0) {
-      dest_height = -dest_height;
-      dest_top -= dest_height;
-    }
-    CGRect rt = CGRectApplyAffineTransform(
-        CGRectMake(dest_left, dest_top, dest_width, dest_height),
-        m_foxitDevice2User);
-    CGFloat offset_x = (rt.origin.x) + rt.size.width / 2.f,
-            offset_y = (rt.origin.y) + rt.size.height / 2.f;
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    transform = CGAffineTransformConcat(
-        transform, CGAffineTransformMake(1, 0, 0, 1, -offset_x, -offset_y));
-    transform = CGAffineTransformConcat(
-        transform, CGAffineTransformMake(flip_x, 0, 0, flip_y, 0, 0));
-    transform = CGAffineTransformConcat(
-        transform, CGAffineTransformMake(1, 0, 0, 1, offset_x, offset_y));
-    CGContextConcatCTM(m_context, transform);
-    if (rect) {
-      *rect = CGRectApplyAffineTransform(*rect, transform);
-    }
+  if (flip_y >= 0 && flip_x >= 0)
+    return;
+
+  if (dest_height < 0) {
+    dest_height = -dest_height;
+    dest_top -= dest_height;
   }
+  CGRect rt = CGRectApplyAffineTransform(
+      CGRectMake(dest_left, dest_top, dest_width, dest_height),
+      m_foxitDevice2User);
+  CGFloat offset_x = (rt.origin.x) + rt.size.width / 2.f,
+          offset_y = (rt.origin.y) + rt.size.height / 2.f;
+  CGAffineTransform transform = CGAffineTransformIdentity;
+  transform = CGAffineTransformConcat(
+      transform, CGAffineTransformMake(1, 0, 0, 1, -offset_x, -offset_y));
+  transform = CGAffineTransformConcat(
+      transform, CGAffineTransformMake(flip_x, 0, 0, flip_y, 0, 0));
+  transform = CGAffineTransformConcat(
+      transform, CGAffineTransformMake(1, 0, 0, 1, offset_x, offset_y));
+  CGContextConcatCTM(m_context, transform);
+  if (rect)
+    *rect = CGRectApplyAffineTransform(*rect, transform);
 }
+
 void CFX_QuartzDeviceDriver::ClearDriver() {
   if (!m_context)
     return;

@@ -5,6 +5,9 @@
 #include "core/fxge/include/fx_ge.h"
 
 #if defined(_SKIA_SUPPORT_)
+#include <algorithm>
+#include <vector>
+
 #include "core/fxcodec/include/fx_codec.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
@@ -591,9 +594,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              CFX_FontCache* pCache,
                                              const CFX_Matrix* pObject2Device,
                                              FX_FLOAT font_size,
-                                             uint32_t color,
-                                             int alpha_flag,
-                                             void* pIccTransform) {
+                                             uint32_t color) {
   sk_sp<SkTypeface> typeface(SkSafeRef(pCache->GetDeviceCache(pFont)));
   SkPaint paint;
   paint.setAntiAlias(true);
@@ -709,8 +710,6 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
     uint32_t fill_color,                    // fill color
     uint32_t stroke_color,                  // stroke color
     int fill_mode,  // fill mode, WINDING or ALTERNATE. 0 for not filled
-    int alpha_flag,
-    void* pIccTransform,
     int blend_type) {
   SkIRect rect;
   rect.set(0, 0, GetDeviceCaps(FXDC_PIXEL_WIDTH),
@@ -722,9 +721,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
     skMatrix.setIdentity();
   SkPaint skPaint;
   skPaint.setAntiAlias(true);
-  int stroke_alpha = FXGETFLAG_COLORTYPE(alpha_flag)
-                         ? FXGETFLAG_ALPHA_STROKE(alpha_flag)
-                         : FXARGB_A(stroke_color);
+  int stroke_alpha = FXARGB_A(stroke_color);
   if (pGraphState && stroke_alpha)
     PaintStroke(&skPaint, pGraphState, skMatrix);
   SkPath skPath = BuildPath(pPathData);
@@ -762,11 +759,9 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
   return TRUE;
 }
 
-FX_BOOL CFX_SkiaDeviceDriver::FillRect(const FX_RECT* pRect,
-                                       uint32_t fill_color,
-                                       int alpha_flag,
-                                       void* pIccTransform,
-                                       int blend_type) {
+FX_BOOL CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
+                                                uint32_t fill_color,
+                                                int blend_type) {
   SkPaint spaint;
   spaint.setAntiAlias(true);
   spaint.setColor(fill_color);
@@ -924,22 +919,10 @@ FX_BOOL CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
 
 FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
                                         int left,
-                                        int top,
-                                        void* pIccTransform,
-                                        FX_BOOL bDEdge) {
+                                        int top) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return TRUE;
-  if (bDEdge) {
-    if (m_bRgbByteOrder) {
-      RgbByteOrderTransferBitmap(pBitmap, 0, 0, pBitmap->GetWidth(),
-                                 pBitmap->GetHeight(), m_pBitmap, left, top);
-    } else {
-      return pBitmap->TransferBitmap(0, 0, pBitmap->GetWidth(),
-                                     pBitmap->GetHeight(), m_pBitmap, left, top,
-                                     pIccTransform);
-    }
-    return TRUE;
-  }
+
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
   CFX_DIBitmap* pBack;
@@ -947,6 +930,7 @@ FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
     pBack = m_pOriDevice->Clone(&rect);
     if (!pBack)
       return TRUE;
+
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
                            m_pBitmap, 0, 0);
   } else {
@@ -954,15 +938,16 @@ FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
     if (!pBack)
       return TRUE;
   }
+
   FX_BOOL bRet = TRUE;
-  left = left >= 0 ? 0 : left;
-  top = top >= 0 ? 0 : top;
+  left = std::min(left, 0);
+  top = std::min(top, 0);
   if (m_bRgbByteOrder) {
     RgbByteOrderTransferBitmap(pBitmap, 0, 0, rect.Width(), rect.Height(),
                                pBack, left, top);
   } else {
     bRet = pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack,
-                                   left, top, pIccTransform);
+                                   left, top, nullptr);
   }
   delete pBack;
   return bRet;
@@ -973,17 +958,14 @@ FX_BOOL CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
                                         const FX_RECT* pSrcRect,
                                         int left,
                                         int top,
-                                        int blend_type,
-                                        int alpha_flag,
-                                        void* pIccTransform) {
+                                        int blend_type) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return TRUE;
 
   CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), left,
                top + pBitmap->GetHeight());
   void* dummy;
-  return this->StartDIBits(pBitmap, 0xFF, argb, &m, 0, dummy, alpha_flag,
-                           pIccTransform, blend_type);
+  return StartDIBits(pBitmap, 0xFF, argb, &m, 0, dummy, blend_type);
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
@@ -994,8 +976,6 @@ FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
                                             int dest_height,
                                             const FX_RECT* pClipRect,
                                             uint32_t flags,
-                                            int alpha_flag,
-                                            void* pIccTransform,
                                             int blend_type) {
   if (!m_pBitmap->GetBuffer())
     return TRUE;
@@ -1007,8 +987,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
                                        pClipRect->right, pClipRect->top);
   m_pCanvas->clipRect(skClipRect);
   void* dummy;
-  FX_BOOL result = this->StartDIBits(pSource, 0xFF, argb, &m, 0, dummy,
-                                     alpha_flag, pIccTransform, blend_type);
+  FX_BOOL result = StartDIBits(pSource, 0xFF, argb, &m, 0, dummy, blend_type);
   m_pCanvas->restore();
 
   return result;
@@ -1020,8 +999,6 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
                                           const CFX_Matrix* pMatrix,
                                           uint32_t render_flags,
                                           void*& handle,
-                                          int alpha_flag,
-                                          void* pIccTransform,
                                           int blend_type) {
   DebugValidate(m_pBitmap, m_pOriDevice);
   SkColorType colorType = pSource->IsAlphaMask()
@@ -1181,7 +1158,7 @@ CFX_FxgeDevice::~CFX_FxgeDevice() {
 }
 
 void CFX_FxgeDevice::PreMultiply() {
-  (static_cast<CFX_SkiaDeviceDriver*>(this->GetDeviceDriver()))->PreMultiply();
+  (static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver()))->PreMultiply();
 }
 
 #endif

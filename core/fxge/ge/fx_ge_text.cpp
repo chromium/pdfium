@@ -448,8 +448,8 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
     if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
       if (ShouldDrawDeviceText(pFont, text_flags) &&
           m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
-                                          pText2Device, font_size, fill_color,
-                                          0, nullptr)) {
+                                          pText2Device, font_size,
+                                          fill_color)) {
         return TRUE;
       }
     }
@@ -458,8 +458,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
     if (ShouldDrawDeviceText(pFont, text_flags) &&
         m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
-                                        pText2Device, font_size, fill_color, 0,
-                                        nullptr)) {
+                                        pText2Device, font_size, fill_color)) {
       return TRUE;
     }
   }

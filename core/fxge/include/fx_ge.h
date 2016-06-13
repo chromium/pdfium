@@ -421,11 +421,10 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
 
 class IFX_RenderDeviceDriver {
  public:
-  static IFX_RenderDeviceDriver* CreateFxgeDriver(
-      CFX_DIBitmap* pBitmap,
-      FX_BOOL bRgbByteOrder = FALSE,
-      CFX_DIBitmap* pOriDevice = nullptr,
-      FX_BOOL bGroupKnockout = FALSE);
+  static IFX_RenderDeviceDriver* CreateFxgeDriver(CFX_DIBitmap* pBitmap,
+                                                  FX_BOOL bRgbByteOrder,
+                                                  CFX_DIBitmap* pOriDevice,
+                                                  FX_BOOL bGroupKnockout);
 
   virtual ~IFX_RenderDeviceDriver() {}
 
@@ -457,23 +456,13 @@ class IFX_RenderDeviceDriver {
                            uint32_t fill_color,
                            uint32_t stroke_color,
                            int fill_mode,
-                           int alpha_flag = 0,
-                           void* pIccTransform = nullptr,
-                           int blend_type = FXDIB_BLEND_NORMAL) = 0;
+                           int blend_type) = 0;
 
-  virtual FX_BOOL SetPixel(int x,
-                           int y,
-                           uint32_t color,
-                           int alpha_flag = 0,
-                           void* pIccTransform = nullptr) {
-    return FALSE;
-  }
+  virtual FX_BOOL SetPixel(int x, int y, uint32_t color) { return FALSE; }
 
-  virtual FX_BOOL FillRect(const FX_RECT* pRect,
-                           uint32_t fill_color,
-                           int alpha_flag = 0,
-                           void* pIccTransform = nullptr,
-                           int blend_type = FXDIB_BLEND_NORMAL) {
+  virtual FX_BOOL FillRectWithBlend(const FX_RECT* pRect,
+                                    uint32_t fill_color,
+                                    int blend_type) {
     return FALSE;
   }
 
@@ -482,19 +471,13 @@ class IFX_RenderDeviceDriver {
                                    FX_FLOAT x2,
                                    FX_FLOAT y2,
                                    uint32_t color,
-                                   int alpha_flag = 0,
-                                   void* pIccTransform = nullptr,
-                                   int blend_type = FXDIB_BLEND_NORMAL) {
+                                   int blend_type) {
     return FALSE;
   }
 
   virtual FX_BOOL GetClipBox(FX_RECT* pRect) = 0;
 
-  virtual FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
-                            int left,
-                            int top,
-                            void* pIccTransform = nullptr,
-                            FX_BOOL bDEdge = FALSE) {
+  virtual FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) {
     return FALSE;
   }
   virtual CFX_DIBitmap* GetBackDrop() { return nullptr; }
@@ -504,9 +487,7 @@ class IFX_RenderDeviceDriver {
                             const FX_RECT* pSrcRect,
                             int dest_left,
                             int dest_top,
-                            int blend_type,
-                            int alpha_flag = 0,
-                            void* pIccTransform = nullptr) = 0;
+                            int blend_type) = 0;
 
   virtual FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                                 uint32_t color,
@@ -516,9 +497,7 @@ class IFX_RenderDeviceDriver {
                                 int dest_height,
                                 const FX_RECT* pClipRect,
                                 uint32_t flags,
-                                int alpha_flag = 0,
-                                void* pIccTransform = nullptr,
-                                int blend_type = FXDIB_BLEND_NORMAL) = 0;
+                                int blend_type) = 0;
 
   virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                               int bitmap_alpha,
@@ -526,9 +505,7 @@ class IFX_RenderDeviceDriver {
                               const CFX_Matrix* pMatrix,
                               uint32_t flags,
                               void*& handle,
-                              int alpha_flag = 0,
-                              void* pIccTransform = nullptr,
-                              int blend_type = FXDIB_BLEND_NORMAL) = 0;
+                              int blend_type) = 0;
 
   virtual FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) {
     return FALSE;
@@ -542,9 +519,7 @@ class IFX_RenderDeviceDriver {
                                  CFX_FontCache* pCache,
                                  const CFX_Matrix* pObject2Device,
                                  FX_FLOAT font_size,
-                                 uint32_t color,
-                                 int alpha_flag = 0,
-                                 void* pIccTransform = nullptr) {
+                                 uint32_t color) {
     return FALSE;
   }
 

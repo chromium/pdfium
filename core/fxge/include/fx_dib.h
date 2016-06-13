@@ -154,7 +154,6 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
 #define FXGETFLAG_COLORTYPE(flag) (uint8_t)((flag) >> 8)
 #define FXGETFLAG_ALPHA_FILL(flag) (uint8_t)(flag)
 #define FXGETFLAG_ALPHA_STROKE(flag) (uint8_t)((flag) >> 16)
-#define FXSETFLAG_ALPHA_FILL(flag, val) flag = ((val) | (flag & 0xffffff00))
 
 class CFX_DIBSource {
  public:

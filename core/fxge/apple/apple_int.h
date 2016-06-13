@@ -101,36 +101,24 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                    uint32_t fill_color,
                    uint32_t stroke_color,
                    int fill_mode,
-                   int alpha_flag = 0,
-                   void* pIccTransform = nullptr,
-                   int blend_type = FXDIB_BLEND_NORMAL) override;
-  FX_BOOL FillRect(const FX_RECT* pRect,
-                   uint32_t fill_color,
-                   int alpha_flag = 0,
-                   void* pIccTransform = nullptr,
-                   int blend_type = FXDIB_BLEND_NORMAL) override;
+                   int blend_type) override;
+  FX_BOOL FillRectWithBlend(const FX_RECT* pRect,
+                            uint32_t fill_color,
+                            int blend_type) override;
   FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
                            FX_FLOAT y1,
                            FX_FLOAT x2,
                            FX_FLOAT y2,
                            uint32_t color,
-                           int alpha_flag = 0,
-                           void* pIccTransform = nullptr,
-                           int blend_type = FXDIB_BLEND_NORMAL) override;
+                           int blend_type) override;
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
-  FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
-                    int left,
-                    int top,
-                    void* pIccTransform = nullptr,
-                    FX_BOOL bDEdge = FALSE) override;
+  FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) override;
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
                     const FX_RECT* pSrcRect,
                     int dest_left,
                     int dest_top,
-                    int blend_type,
-                    int alpha_flag = 0,
-                    void* pIccTransform = nullptr) override;
+                    int blend_type) override;
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                         uint32_t color,
                         int dest_left,
@@ -139,18 +127,14 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                         int dest_height,
                         const FX_RECT* pClipRect,
                         uint32_t flags,
-                        int alpha_flag = 0,
-                        void* pIccTransform = nullptr,
-                        int blend_type = FXDIB_BLEND_NORMAL) override;
+                        int blend_type) override;
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
                       uint32_t color,
                       const CFX_Matrix* pMatrix,
                       uint32_t flags,
                       void*& handle,
-                      int alpha_flag = 0,
-                      void* pIccTransform = nullptr,
-                      int blend_type = FXDIB_BLEND_NORMAL) override {
+                      int blend_type) override {
     return FALSE;
   }
   FX_BOOL DrawDeviceText(int nChars,
@@ -159,9 +143,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          CFX_FontCache* pCache,
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
-                         uint32_t color,
-                         int alpha_flag = 0,
-                         void* pIccTransform = nullptr) override;
+                         uint32_t color) override;
   void ClearDriver() override;
 
  protected:
@@ -172,21 +154,19 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   void setPathToContext(const CFX_PathData* pathData);
   FX_FLOAT getLineWidth(const CFX_GraphStateData* graphState,
                         CGAffineTransform ctm);
-  FX_BOOL CG_DrawGlypRun(int nChars,
-                         const FXTEXT_CHARPOS* pCharPos,
-                         CFX_Font* pFont,
-                         CFX_FontCache* pCache,
-                         const CFX_Matrix* pGlyphMatrix,
-                         const CFX_Matrix* pObject2Device,
-                         FX_FLOAT font_size,
-                         uint32_t argb,
-                         int alpha_flag,
-                         void* pIccTransform);
+  FX_BOOL CG_DrawGlyphRun(int nChars,
+                          const FXTEXT_CHARPOS* pCharPos,
+                          CFX_Font* pFont,
+                          CFX_FontCache* pCache,
+                          const CFX_Matrix* pGlyphMatrix,
+                          const CFX_Matrix* pObject2Device,
+                          FX_FLOAT font_size,
+                          uint32_t argb);
   void CG_SetImageTransform(int dest_left,
                             int dest_top,
                             int dest_width,
                             int dest_height,
-                            CGRect* rect = nullptr);
+                            CGRect* rect);
 
   CGContextRef m_context;
   CGAffineTransform m_foxitDevice2User;
