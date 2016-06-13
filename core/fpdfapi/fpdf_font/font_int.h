@@ -28,6 +28,7 @@ class CPDF_CMapManager {
  public:
   CPDF_CMapManager();
   ~CPDF_CMapManager();
+
   void* GetPackage(FX_BOOL bPrompt);
   CPDF_CMap* GetPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPromptCJK);
   CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, FX_BOOL bPromptCJK);
@@ -89,7 +90,7 @@ struct CMap_CodeRange {
 class CPDF_CMapParser {
  public:
   CPDF_CMapParser();
-  ~CPDF_CMapParser() {}
+  ~CPDF_CMapParser();
   FX_BOOL Initialize(CPDF_CMap* pMap);
   void ParseWord(const CFX_ByteStringC& str);
   CFX_BinaryBuf m_AddMaps;
@@ -108,7 +109,9 @@ class CPDF_CMapParser {
   int m_CodeSeq;
   uint32_t m_CodePoints[4];
   CFX_ArrayTemplate<CMap_CodeRange> m_CodeRanges;
-  CFX_ByteString m_Registry, m_Ordering, m_Supplement;
+  CFX_ByteString m_Registry;
+  CFX_ByteString m_Ordering;
+  CFX_ByteString m_Supplement;
   CFX_ByteString m_LastWord;
 };
 
@@ -140,8 +143,9 @@ class CPDF_CMap {
                          FX_BOOL bPromptCJK);
   FX_BOOL LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
   void Release();
-  FX_BOOL IsLoaded() const { return m_bLoaded; }
-  FX_BOOL IsVertWriting() const { return m_bVertical; }
+
+  FX_BOOL IsLoaded() const;
+  FX_BOOL IsVertWriting() const;
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   uint32_t CharCodeFromCID(uint16_t CID) const;
   int GetCharSize(uint32_t charcode) const;
@@ -172,6 +176,7 @@ class CPDF_CID2UnicodeMap {
  public:
   CPDF_CID2UnicodeMap();
   ~CPDF_CID2UnicodeMap();
+
   FX_BOOL Initialize();
   FX_BOOL IsLoaded();
   void Load(CPDF_CMapManager* pMgr, CIDSet charset, FX_BOOL bPromptCJK);
@@ -185,9 +190,13 @@ class CPDF_CID2UnicodeMap {
 
 class CPDF_ToUnicodeMap {
  public:
+  CPDF_ToUnicodeMap();
+  ~CPDF_ToUnicodeMap();
+
   void Load(CPDF_Stream* pStream);
-  CFX_WideString Lookup(uint32_t charcode);
-  uint32_t ReverseLookup(FX_WCHAR unicode);
+
+  CFX_WideString Lookup(uint32_t charcode) const;
+  uint32_t ReverseLookup(FX_WCHAR unicode) const;
 
  protected:
   std::map<uint32_t, uint32_t> m_Map;

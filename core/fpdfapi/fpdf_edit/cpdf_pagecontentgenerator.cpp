@@ -31,6 +31,8 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
     InsertPageObject(pObj.get());
 }
 
+CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
+
 FX_BOOL CPDF_PageContentGenerator::InsertPageObject(
     CPDF_PageObject* pPageObject) {
   return pPageObject && m_pageObjects.Add(pPageObject);

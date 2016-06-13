@@ -18,7 +18,7 @@ class CPDF_StreamContentParser;
 class CPDF_AllStates : public CPDF_GraphicStates {
  public:
   CPDF_AllStates();
-  ~CPDF_AllStates();
+  ~CPDF_AllStates() override;
 
   void Copy(const CPDF_AllStates& src);
   void ProcessExtGS(CPDF_Dictionary* pGS, CPDF_StreamContentParser* pParser);

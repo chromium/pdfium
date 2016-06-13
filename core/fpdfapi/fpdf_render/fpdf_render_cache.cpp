@@ -24,6 +24,13 @@ static int compare(const void* data1, const void* data2) {
 }
 }  // extern "C"
 
+CPDF_PageRenderCache::CPDF_PageRenderCache(CPDF_Page* pPage)
+    : m_pPage(pPage),
+      m_pCurImageCacheEntry(nullptr),
+      m_nTimeCount(0),
+      m_nCacheSize(0),
+      m_bCurFindCache(FALSE) {}
+
 CPDF_PageRenderCache::~CPDF_PageRenderCache() {
   for (const auto& it : m_ImageCache)
     delete it.second;

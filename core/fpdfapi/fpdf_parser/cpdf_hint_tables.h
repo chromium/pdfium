@@ -20,11 +20,7 @@ class CPDF_Stream;
 
 class CPDF_HintTables {
  public:
-  CPDF_HintTables(CPDF_DataAvail* pDataAvail, CPDF_Dictionary* pLinearized)
-      : m_pDataAvail(pDataAvail),
-        m_pLinearizedDict(pLinearized),
-        m_nFirstPageSharedObjs(0),
-        m_szFirstPageObjOffset(0) {}
+  CPDF_HintTables(CPDF_DataAvail* pDataAvail, CPDF_Dictionary* pLinearized);
   ~CPDF_HintTables();
 
   FX_BOOL GetPagePos(int index,

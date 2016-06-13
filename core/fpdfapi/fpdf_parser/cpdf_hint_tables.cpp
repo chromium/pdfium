@@ -23,6 +23,13 @@ bool CanReadFromBitStream(const CFX_BitStream* hStream,
 
 }  // namespace
 
+CPDF_HintTables::CPDF_HintTables(CPDF_DataAvail* pDataAvail,
+                                 CPDF_Dictionary* pLinearized)
+    : m_pDataAvail(pDataAvail),
+      m_pLinearizedDict(pLinearized),
+      m_nFirstPageSharedObjs(0),
+      m_szFirstPageObjOffset(0) {}
+
 CPDF_HintTables::~CPDF_HintTables() {
   m_dwDeltaNObjsArray.RemoveAll();
   m_dwNSharedObjsArray.RemoveAll();

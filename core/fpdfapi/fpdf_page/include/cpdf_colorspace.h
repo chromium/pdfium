@@ -37,16 +37,12 @@ class CPDF_ColorSpace {
   int GetBufSize() const;
   FX_FLOAT* CreateBuf();
   void GetDefaultColor(FX_FLOAT* buf) const;
-  uint32_t CountComponents() const { return m_nComponents; }
+  uint32_t CountComponents() const;
   int GetFamily() const { return m_Family; }
   virtual void GetDefaultValue(int iComponent,
                                FX_FLOAT& value,
                                FX_FLOAT& min,
-                               FX_FLOAT& max) const {
-    value = 0;
-    min = 0;
-    max = 1.0f;
-  }
+                               FX_FLOAT& max) const;
 
   FX_BOOL sRGB() const;
   virtual FX_BOOL GetRGB(FX_FLOAT* pBuf,
@@ -56,9 +52,7 @@ class CPDF_ColorSpace {
   virtual FX_BOOL SetRGB(FX_FLOAT* pBuf,
                          FX_FLOAT R,
                          FX_FLOAT G,
-                         FX_FLOAT B) const {
-    return FALSE;
-  }
+                         FX_FLOAT B) const;
 
   FX_BOOL GetCMYK(FX_FLOAT* pBuf,
                   FX_FLOAT& c,
@@ -79,38 +73,27 @@ class CPDF_ColorSpace {
                                   FX_BOOL bTransMask = FALSE) const;
 
   CPDF_Array*& GetArray() { return m_pArray; }
-  virtual CPDF_ColorSpace* GetBaseCS() const { return nullptr; }
+  virtual CPDF_ColorSpace* GetBaseCS() const;
 
   virtual void EnableStdConversion(FX_BOOL bEnabled);
 
   CPDF_Document* const m_pDocument;
 
  protected:
-  CPDF_ColorSpace(CPDF_Document* pDoc, int family, uint32_t nComponents)
-      : m_pDocument(pDoc),
-        m_Family(family),
-        m_nComponents(nComponents),
-        m_pArray(nullptr),
-        m_dwStdConversion(0) {}
-  virtual ~CPDF_ColorSpace() {}
+  CPDF_ColorSpace(CPDF_Document* pDoc, int family, uint32_t nComponents);
+  virtual ~CPDF_ColorSpace();
 
-  virtual FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-    return TRUE;
-  }
+  virtual FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
   virtual FX_BOOL v_GetCMYK(FX_FLOAT* pBuf,
                             FX_FLOAT& c,
                             FX_FLOAT& m,
                             FX_FLOAT& y,
-                            FX_FLOAT& k) const {
-    return FALSE;
-  }
+                            FX_FLOAT& k) const;
   virtual FX_BOOL v_SetCMYK(FX_FLOAT* pBuf,
                             FX_FLOAT c,
                             FX_FLOAT m,
                             FX_FLOAT y,
-                            FX_FLOAT k) const {
-    return FALSE;
-  }
+                            FX_FLOAT k) const;
 
   int m_Family;
   uint32_t m_nComponents;

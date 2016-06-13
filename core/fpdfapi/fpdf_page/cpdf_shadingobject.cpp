@@ -30,6 +30,10 @@ CPDF_ShadingObject* CPDF_ShadingObject::Clone() const {
   return obj;
 }
 
+CPDF_PageObject::Type CPDF_ShadingObject::GetType() const {
+  return SHADING;
+}
+
 void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
   if (!m_ClipPath.IsNull()) {
     m_ClipPath.GetModify();
@@ -41,6 +45,18 @@ void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
   } else {
     matrix.TransformRect(m_Left, m_Right, m_Top, m_Bottom);
   }
+}
+
+bool CPDF_ShadingObject::IsShading() const {
+  return true;
+}
+
+CPDF_ShadingObject* CPDF_ShadingObject::AsShading() {
+  return this;
+}
+
+const CPDF_ShadingObject* CPDF_ShadingObject::AsShading() const {
+  return this;
 }
 
 void CPDF_ShadingObject::CalcBoundingBox() {

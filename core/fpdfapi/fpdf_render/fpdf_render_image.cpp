@@ -179,6 +179,11 @@ FXDIB_Format CPDF_DIBTransferFunc::GetDestFormat() {
   return (m_pSrc->HasAlpha()) ? FXDIB_Argb : FXDIB_Rgb;
 #endif
 }
+
+FX_ARGB* CPDF_DIBTransferFunc::GetDestPalette() {
+  return nullptr;
+}
+
 CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
     const CPDF_TransferFunc* pTransferFunc) {
   m_RampR = pTransferFunc->m_Samples;

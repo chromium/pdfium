@@ -9,11 +9,23 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "third_party/base/stl_util.h"
 
+CPDF_ContentMarkData::CPDF_ContentMarkData() {}
+
 CPDF_ContentMarkData::CPDF_ContentMarkData(const CPDF_ContentMarkData& src)
     : m_Marks(src.m_Marks) {}
 
+CPDF_ContentMarkData::~CPDF_ContentMarkData() {}
+
 int CPDF_ContentMarkData::CountItems() const {
   return pdfium::CollectionSize<int>(m_Marks);
+}
+
+CPDF_ContentMarkItem& CPDF_ContentMarkData::GetItem(int index) {
+  return m_Marks[index];
+}
+
+const CPDF_ContentMarkItem& CPDF_ContentMarkData::GetItem(int index) const {
+  return m_Marks[index];
 }
 
 int CPDF_ContentMarkData::GetMCID() const {

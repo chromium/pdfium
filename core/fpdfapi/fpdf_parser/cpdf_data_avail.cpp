@@ -835,6 +835,10 @@ IPDF_DataAvail::DocLinearizationStatus CPDF_DataAvail::IsLinearizedPDF() {
   return NotLinearized;
 }
 
+FX_BOOL CPDF_DataAvail::IsLinearized() {
+  return m_bLinearized;
+}
+
 FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
   if (m_pLinearized)
     return m_bLinearized;
@@ -969,7 +973,7 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(
   return 0;
 }
 
-inline void CPDF_DataAvail::SetStartOffset(FX_FILESIZE dwOffset) {
+void CPDF_DataAvail::SetStartOffset(FX_FILESIZE dwOffset) {
   m_Pos = dwOffset;
 }
 

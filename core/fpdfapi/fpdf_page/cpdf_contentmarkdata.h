@@ -16,14 +16,13 @@ class CPDF_Dictionary;
 
 class CPDF_ContentMarkData {
  public:
-  CPDF_ContentMarkData() {}
+  CPDF_ContentMarkData();
   CPDF_ContentMarkData(const CPDF_ContentMarkData& src);
+  ~CPDF_ContentMarkData();
 
   int CountItems() const;
-  CPDF_ContentMarkItem& GetItem(int index) { return m_Marks[index]; }
-  const CPDF_ContentMarkItem& GetItem(int index) const {
-    return m_Marks[index];
-  }
+  CPDF_ContentMarkItem& GetItem(int index);
+  const CPDF_ContentMarkItem& GetItem(int index) const;
 
   int GetMCID() const;
   void AddMark(const CFX_ByteString& name,

@@ -517,6 +517,8 @@ CPDF_Encryptor::~CPDF_Encryptor() {
 
 CPDF_ObjectStream::CPDF_ObjectStream() : m_dwObjNum(0), m_index(0) {}
 
+CPDF_ObjectStream::~CPDF_ObjectStream() {}
+
 void CPDF_ObjectStream::Start() {
   m_Items.clear();
   m_Buffer.Clear();
@@ -603,8 +605,12 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
   offset += len;
   return ObjOffset;
 }
+
 CPDF_XRefStream::CPDF_XRefStream()
     : m_PrevOffset(0), m_dwTempObjNum(0), m_iSeg(0) {}
+
+CPDF_XRefStream::~CPDF_XRefStream() {}
+
 FX_BOOL CPDF_XRefStream::Start() {
   m_IndexArray.clear();
   m_Buffer.Clear();

@@ -6,6 +6,10 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
 
+CPDF_GraphicStates::CPDF_GraphicStates() {}
+
+CPDF_GraphicStates::~CPDF_GraphicStates() {}
+
 void CPDF_GraphicStates::DefaultStates() {
   m_ColorState.New()->Default();
 }

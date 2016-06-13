@@ -21,6 +21,8 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder()
       m_bHasImageMask(FALSE),
       m_ParseState(CONTENT_NOT_PARSED) {}
 
+CPDF_PageObjectHolder::~CPDF_PageObjectHolder() {}
+
 void CPDF_PageObjectHolder::ContinueParse(IFX_Pause* pPause) {
   if (!m_pParser) {
     return;

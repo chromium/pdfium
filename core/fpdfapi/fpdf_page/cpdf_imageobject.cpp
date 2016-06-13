@@ -33,9 +33,25 @@ CPDF_ImageObject* CPDF_ImageObject::Clone() const {
   return obj;
 }
 
+CPDF_PageObject::Type CPDF_ImageObject::GetType() const {
+  return IMAGE;
+}
+
 void CPDF_ImageObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();
+}
+
+bool CPDF_ImageObject::IsImage() const {
+  return true;
+}
+
+CPDF_ImageObject* CPDF_ImageObject::AsImage() {
+  return this;
+}
+
+const CPDF_ImageObject* CPDF_ImageObject::AsImage() const {
+  return this;
 }
 
 void CPDF_ImageObject::CalcBoundingBox() {

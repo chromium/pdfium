@@ -26,7 +26,7 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   CPDF_Page(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageDict,
             bool bPageCache);
-  ~CPDF_Page();
+  ~CPDF_Page() override;
 
   void ParseContent();
 

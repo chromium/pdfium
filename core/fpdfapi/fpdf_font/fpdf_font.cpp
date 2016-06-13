@@ -93,7 +93,7 @@ short TT2PDF(int m, FXFT_Face face) {
   return (m * 1000 + upm / 2) / upm;
 }
 
-CFX_WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) {
+CFX_WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   auto it = m_Map.find(charcode);
   if (it != m_Map.end()) {
     uint32_t value = it->second;
@@ -122,7 +122,7 @@ CFX_WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) {
   return CFX_WideString();
 }
 
-uint32_t CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) {
+uint32_t CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) const {
   for (const auto& pair : m_Map) {
     if (pair.second == static_cast<uint32_t>(unicode))
       return pair.first;
@@ -192,6 +192,10 @@ CFX_WideString CPDF_ToUnicodeMap::StringToWideString(
   }
   return result;
 }
+
+CPDF_ToUnicodeMap::CPDF_ToUnicodeMap() : m_pBaseMap(nullptr) {}
+
+CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() {}
 
 void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
   CIDSet cid_set = CIDSET_UNKNOWN;

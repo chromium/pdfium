@@ -341,11 +341,12 @@ CPDF_CID2UnicodeMap* CPDF_CMapManager::LoadCID2UnicodeMap(CIDSet charset,
   pMap->Load(this, charset, bPromptCJK);
   return pMap;
 }
-CPDF_CMapParser::CPDF_CMapParser() {
-  m_pCMap = nullptr;
-  m_Status = 0;
-  m_CodeSeq = 0;
-}
+
+CPDF_CMapParser::CPDF_CMapParser()
+    : m_pCMap(nullptr), m_Status(0), m_CodeSeq(0) {}
+
+CPDF_CMapParser::~CPDF_CMapParser() {}
+
 FX_BOOL CPDF_CMapParser::Initialize(CPDF_CMap* pCMap) {
   m_pCMap = pCMap;
   m_Status = 0;
@@ -523,6 +524,14 @@ void CPDF_CMap::Release() {
   if (m_PredefinedCMap.IsEmpty()) {
     delete this;
   }
+}
+
+FX_BOOL CPDF_CMap::IsLoaded() const {
+  return m_bLoaded;
+}
+
+FX_BOOL CPDF_CMap::IsVertWriting() const {
+  return m_bVertical;
 }
 
 FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,

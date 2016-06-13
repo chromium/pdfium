@@ -15,9 +15,9 @@
 class CPDF_SimpleFont : public CPDF_Font {
  public:
   CPDF_SimpleFont();
-  virtual ~CPDF_SimpleFont();
+  ~CPDF_SimpleFont() override;
 
-  // CPDF_Font:
+  // CPDF_Font
   int GetCharWidthF(uint32_t charcode, int level = 0) override;
   FX_RECT GetCharBBox(uint32_t charcode, int level = 0) override;
   int GlyphFromCharCode(uint32_t charcode,
@@ -33,7 +33,6 @@ class CPDF_SimpleFont : public CPDF_Font {
 
   FX_BOOL LoadCommon();
   void LoadSubstFont();
-  void LoadFaceMetrics();
   void LoadCharMetrics(int charcode);
 
   CPDF_FontEncoding m_Encoding;

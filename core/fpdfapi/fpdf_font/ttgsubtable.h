@@ -19,6 +19,7 @@ class CFX_GlyphMap {
  public:
   CFX_GlyphMap();
   ~CFX_GlyphMap();
+
   void SetAt(int key, int value);
   FX_BOOL Lookup(int key, int& value);
 
@@ -28,12 +29,11 @@ class CFX_GlyphMap {
 
 class CFX_CTTGSUBTable {
  public:
-  CFX_CTTGSUBTable(void) : m_bFeautureMapLoad(FALSE), loaded(false) {}
-  CFX_CTTGSUBTable(FT_Bytes gsub) : m_bFeautureMapLoad(FALSE), loaded(false) {
-    LoadGSUBTable(gsub);
-  }
-  virtual ~CFX_CTTGSUBTable() {}
-  bool IsOk(void) const { return loaded; }
+  CFX_CTTGSUBTable();
+  explicit CFX_CTTGSUBTable(FT_Bytes gsub);
+  virtual ~CFX_CTTGSUBTable();
+
+  bool IsOk(void) const;
   bool LoadGSUBTable(FT_Bytes gsub);
   bool GetVerticalGlyph(uint32_t glyphnum, uint32_t* vglyphnum);
 
@@ -45,10 +45,6 @@ class CFX_CTTGSUBTable {
     uint16_t LookupList;
   };
   struct TLangSys {
-    uint16_t LookupOrder;
-    uint16_t ReqFeatureIndex;
-    uint16_t FeatureCount;
-    uint16_t* FeatureIndex;
     TLangSys()
         : LookupOrder(0),
           ReqFeatureIndex(0),
@@ -56,74 +52,87 @@ class CFX_CTTGSUBTable {
           FeatureIndex(nullptr) {}
     ~TLangSys() { delete[] FeatureIndex; }
 
+    uint16_t LookupOrder;
+    uint16_t ReqFeatureIndex;
+    uint16_t FeatureCount;
+    uint16_t* FeatureIndex;
+
    private:
     TLangSys(const TLangSys&);
     TLangSys& operator=(const TLangSys&);
   };
   struct TLangSysRecord {
+    TLangSysRecord() : LangSysTag(0) {}
+
     uint32_t LangSysTag;
     struct TLangSys LangSys;
-    TLangSysRecord() : LangSysTag(0) {}
 
    private:
     TLangSysRecord(const TLangSysRecord&);
     TLangSysRecord& operator=(const TLangSysRecord&);
   };
   struct TScript {
-    uint16_t DefaultLangSys;
-    uint16_t LangSysCount;
-    struct TLangSysRecord* LangSysRecord;
     TScript() : DefaultLangSys(0), LangSysCount(0), LangSysRecord(nullptr) {}
     ~TScript() { delete[] LangSysRecord; }
+
+    uint16_t DefaultLangSys;
+    uint16_t LangSysCount;
+    // TODO(weili): Replace with a smart pointer type, pdfium:518.
+    struct TLangSysRecord* LangSysRecord;
 
    private:
     TScript(const TScript&);
     TScript& operator=(const TScript&);
   };
   struct TScriptRecord {
+    TScriptRecord() : ScriptTag(0) {}
+
     uint32_t ScriptTag;
     struct TScript Script;
-    TScriptRecord() : ScriptTag(0) {}
 
    private:
     TScriptRecord(const TScriptRecord&);
     TScriptRecord& operator=(const TScriptRecord&);
   };
   struct TScriptList {
-    uint16_t ScriptCount;
-    struct TScriptRecord* ScriptRecord;
     TScriptList() : ScriptCount(0), ScriptRecord(nullptr) {}
     ~TScriptList() { delete[] ScriptRecord; }
+
+    uint16_t ScriptCount;
+    struct TScriptRecord* ScriptRecord;
 
    private:
     TScriptList(const TScriptList&);
     TScriptList& operator=(const TScriptList&);
   };
   struct TFeature {
+    TFeature() : FeatureParams(0), LookupCount(0), LookupListIndex(nullptr) {}
+    ~TFeature() { delete[] LookupListIndex; }
+
     uint16_t FeatureParams;
     int LookupCount;
     uint16_t* LookupListIndex;
-    TFeature() : FeatureParams(0), LookupCount(0), LookupListIndex(nullptr) {}
-    ~TFeature() { delete[] LookupListIndex; }
 
    private:
     TFeature(const TFeature&);
     TFeature& operator=(const TFeature&);
   };
   struct TFeatureRecord {
+    TFeatureRecord() : FeatureTag(0) {}
+
     uint32_t FeatureTag;
     struct TFeature Feature;
-    TFeatureRecord() : FeatureTag(0) {}
 
    private:
     TFeatureRecord(const TFeatureRecord&);
     TFeatureRecord& operator=(const TFeatureRecord&);
   };
   struct TFeatureList {
-    int FeatureCount;
-    struct TFeatureRecord* FeatureRecord;
     TFeatureList() : FeatureCount(0), FeatureRecord(nullptr) {}
     ~TFeatureList() { delete[] FeatureRecord; }
+
+    int FeatureCount;
+    struct TFeatureRecord* FeatureRecord;
 
    private:
     TFeatureList(const TFeatureList&);
@@ -138,173 +147,165 @@ class CFX_CTTGSUBTable {
     LOOKUPFLAG_MarkAttachmentType = 0xFF00,
   };
   struct TCoverageFormatBase {
-    uint16_t CoverageFormat;
-    CFX_GlyphMap m_glyphMap;
     TCoverageFormatBase() : CoverageFormat(0) {}
     virtual ~TCoverageFormatBase() {}
+
+    uint16_t CoverageFormat;
+    CFX_GlyphMap m_glyphMap;
 
    private:
     TCoverageFormatBase(const TCoverageFormatBase&);
     TCoverageFormatBase& operator=(const TCoverageFormatBase&);
   };
   struct TCoverageFormat1 : public TCoverageFormatBase {
+    TCoverageFormat1();
+    ~TCoverageFormat1() override;
+
     uint16_t GlyphCount;
     uint16_t* GlyphArray;
-    TCoverageFormat1() : GlyphCount(0), GlyphArray(nullptr) {
-      CoverageFormat = 1;
-    }
-    ~TCoverageFormat1() override { delete[] GlyphArray; }
 
    private:
     TCoverageFormat1(const TCoverageFormat1&);
     TCoverageFormat1& operator=(const TCoverageFormat1&);
   };
   struct TRangeRecord {
-    uint16_t Start;
-    uint16_t End;
-    uint16_t StartCoverageIndex;
-    TRangeRecord() : Start(0), End(0), StartCoverageIndex(0) {}
+    TRangeRecord();
+
     friend bool operator>(const TRangeRecord& r1, const TRangeRecord& r2) {
       return r1.Start > r2.Start;
     }
+
+    uint16_t Start;
+    uint16_t End;
+    uint16_t StartCoverageIndex;
 
    private:
     TRangeRecord(const TRangeRecord&);
   };
   struct TCoverageFormat2 : public TCoverageFormatBase {
+    TCoverageFormat2();
+    ~TCoverageFormat2() override;
+
     uint16_t RangeCount;
     struct TRangeRecord* RangeRecord;
-    TCoverageFormat2() : RangeCount(0), RangeRecord(nullptr) {
-      CoverageFormat = 2;
-    }
-    ~TCoverageFormat2() override { delete[] RangeRecord; }
 
    private:
     TCoverageFormat2(const TCoverageFormat2&);
     TCoverageFormat2& operator=(const TCoverageFormat2&);
   };
   struct TClassDefFormatBase {
-    uint16_t ClassFormat;
     TClassDefFormatBase() : ClassFormat(0) {}
     virtual ~TClassDefFormatBase() {}
+
+    uint16_t ClassFormat;
 
    private:
     TClassDefFormatBase(const TClassDefFormatBase&);
     TClassDefFormatBase& operator=(const TClassDefFormatBase&);
   };
   struct TClassDefFormat1 : public TClassDefFormatBase {
+    TClassDefFormat1();
+    ~TClassDefFormat1() override;
+
     uint16_t StartGlyph;
     uint16_t GlyphCount;
     uint16_t* ClassValueArray;
-    TClassDefFormat1()
-        : StartGlyph(0), GlyphCount(0), ClassValueArray(nullptr) {
-      ClassFormat = 1;
-    }
-    ~TClassDefFormat1() override { delete[] ClassValueArray; }
 
    private:
     TClassDefFormat1(const TClassDefFormat1&);
     TClassDefFormat1& operator=(const TClassDefFormat1&);
   };
   struct TClassRangeRecord {
+    TClassRangeRecord() : Start(0), End(0), Class(0) {}
+
     uint16_t Start;
     uint16_t End;
     uint16_t Class;
-    TClassRangeRecord() : Start(0), End(0), Class(0) {}
 
    private:
     TClassRangeRecord(const TClassRangeRecord&);
     TClassRangeRecord& operator=(const TClassRangeRecord&);
   };
   struct TClassDefFormat2 : public TClassDefFormatBase {
+    TClassDefFormat2();
+    ~TClassDefFormat2() override;
+
     uint16_t ClassRangeCount;
     struct TClassRangeRecord* ClassRangeRecord;
-    TClassDefFormat2() : ClassRangeCount(0), ClassRangeRecord(nullptr) {
-      ClassFormat = 2;
-    }
-    ~TClassDefFormat2() override { delete[] ClassRangeRecord; }
 
    private:
     TClassDefFormat2(const TClassDefFormat2&);
     TClassDefFormat2& operator=(const TClassDefFormat2&);
   };
   struct TDevice {
+    TDevice() : StartSize(0), EndSize(0), DeltaFormat(0) {}
+
     uint16_t StartSize;
     uint16_t EndSize;
     uint16_t DeltaFormat;
-    TDevice() : StartSize(0), EndSize(0), DeltaFormat(0) {}
 
    private:
     TDevice(const TDevice&);
     TDevice& operator=(const TDevice&);
   };
   struct TSubTableBase {
-    uint16_t SubstFormat;
     TSubTableBase() : SubstFormat(0) {}
     virtual ~TSubTableBase() {}
+
+    uint16_t SubstFormat;
 
    private:
     TSubTableBase(const TSubTableBase&);
     TSubTableBase& operator=(const TSubTableBase&);
   };
   struct TSingleSubstFormat1 : public TSubTableBase {
+    TSingleSubstFormat1();
+    ~TSingleSubstFormat1() override;
+
     TCoverageFormatBase* Coverage;
     int16_t DeltaGlyphID;
-    TSingleSubstFormat1() : Coverage(nullptr), DeltaGlyphID(0) {
-      SubstFormat = 1;
-    }
-    ~TSingleSubstFormat1() override { delete Coverage; }
 
    private:
     TSingleSubstFormat1(const TSingleSubstFormat1&);
     TSingleSubstFormat1& operator=(const TSingleSubstFormat1&);
   };
   struct TSingleSubstFormat2 : public TSubTableBase {
+    TSingleSubstFormat2();
+    ~TSingleSubstFormat2() override;
+
     TCoverageFormatBase* Coverage;
     uint16_t GlyphCount;
     uint16_t* Substitute;
-    TSingleSubstFormat2()
-        : Coverage(nullptr), GlyphCount(0), Substitute(nullptr) {
-      SubstFormat = 2;
-    }
-    ~TSingleSubstFormat2() override {
-      delete Coverage;
-      delete[] Substitute;
-    }
 
    private:
     TSingleSubstFormat2(const TSingleSubstFormat2&);
     TSingleSubstFormat2& operator=(const TSingleSubstFormat2&);
   };
   struct TLookup {
+    TLookup();
+    ~TLookup();
+
     uint16_t LookupType;
     uint16_t LookupFlag;
     uint16_t SubTableCount;
     struct TSubTableBase** SubTable;
-    TLookup()
-        : LookupType(0), LookupFlag(0), SubTableCount(0), SubTable(nullptr) {}
-    ~TLookup() {
-      if (SubTable) {
-        for (int i = 0; i < SubTableCount; ++i)
-          delete SubTable[i];
-        delete[] SubTable;
-      }
-    }
 
    private:
     TLookup(const TLookup&);
     TLookup& operator=(const TLookup&);
   };
   struct TLookupList {
-    int LookupCount;
-    struct TLookup* Lookup;
     TLookupList() : LookupCount(0), Lookup(nullptr) {}
     ~TLookupList() { delete[] Lookup; }
+
+    int LookupCount;
+    struct TLookup* Lookup;
 
    private:
     TLookupList(const TLookupList&);
     TLookupList& operator=(const TLookupList&);
   };
+
   bool Parse(FT_Bytes scriptlist, FT_Bytes featurelist, FT_Bytes lookuplist);
   void ParseScriptList(FT_Bytes raw, TScriptList* rec);
   void ParseScript(FT_Bytes raw, TScript* rec);
@@ -319,38 +320,21 @@ class CFX_CTTGSUBTable {
   void ParseSingleSubst(FT_Bytes raw, TSubTableBase** rec);
   void ParseSingleSubstFormat1(FT_Bytes raw, TSingleSubstFormat1* rec);
   void ParseSingleSubstFormat2(FT_Bytes raw, TSingleSubstFormat2* rec);
+
   bool GetVerticalGlyphSub(uint32_t glyphnum,
                            uint32_t* vglyphnum,
-                           struct TFeature* Feature);
+                           struct TFeature* Feature) const;
   bool GetVerticalGlyphSub2(uint32_t glyphnum,
                             uint32_t* vglyphnum,
-                            struct TLookup* Lookup);
-  int GetCoverageIndex(struct TCoverageFormatBase* Coverage, uint32_t g);
-  uint8_t GetUInt8(FT_Bytes& p) const {
-    uint8_t ret = p[0];
-    p += 1;
-    return ret;
-  }
-  int16_t GetInt16(FT_Bytes& p) const {
-    uint16_t ret = p[0] << 8 | p[1];
-    p += 2;
-    return *(int16_t*)&ret;
-  }
-  uint16_t GetUInt16(FT_Bytes& p) const {
-    uint16_t ret = p[0] << 8 | p[1];
-    p += 2;
-    return ret;
-  }
-  int32_t GetInt32(FT_Bytes& p) const {
-    uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
-    p += 4;
-    return *(int32_t*)&ret;
-  }
-  uint32_t GetUInt32(FT_Bytes& p) const {
-    uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
-    p += 4;
-    return ret;
-  }
+                            struct TLookup* Lookup) const;
+  int GetCoverageIndex(struct TCoverageFormatBase* Coverage, uint32_t g) const;
+
+  uint8_t GetUInt8(FT_Bytes& p) const;
+  int16_t GetInt16(FT_Bytes& p) const;
+  uint16_t GetUInt16(FT_Bytes& p) const;
+  int32_t GetInt32(FT_Bytes& p) const;
+  uint32_t GetUInt32(FT_Bytes& p) const;
+
   std::map<uint32_t, uint32_t> m_featureMap;
   FX_BOOL m_bFeautureMapLoad;
   bool loaded;

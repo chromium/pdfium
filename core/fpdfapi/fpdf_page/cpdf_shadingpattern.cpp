@@ -50,6 +50,14 @@ CPDF_ShadingPattern::~CPDF_ShadingPattern() {
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
 }
 
+CPDF_TilingPattern* CPDF_ShadingPattern::AsTilingPattern() {
+  return nullptr;
+}
+
+CPDF_ShadingPattern* CPDF_ShadingPattern::AsShadingPattern() {
+  return this;
+}
+
 bool CPDF_ShadingPattern::Load() {
   if (m_ShadingType != kInvalidShading)
     return TRUE;

@@ -19,6 +19,18 @@ void CPDF_FormObject::Transform(const CFX_Matrix& matrix) {
   CalcBoundingBox();
 }
 
+bool CPDF_FormObject::IsForm() const {
+  return true;
+}
+
+CPDF_FormObject* CPDF_FormObject::AsForm() {
+  return this;
+}
+
+const CPDF_FormObject* CPDF_FormObject::AsForm() const {
+  return this;
+}
+
 CPDF_FormObject* CPDF_FormObject::Clone() const {
   CPDF_FormObject* obj = new CPDF_FormObject;
   obj->CopyData(this);
@@ -26,6 +38,10 @@ CPDF_FormObject* CPDF_FormObject::Clone() const {
   obj->m_pForm = m_pForm->Clone();
   obj->m_FormMatrix = m_FormMatrix;
   return obj;
+}
+
+CPDF_PageObject::Type CPDF_FormObject::GetType() const {
+  return FORM;
 }
 
 void CPDF_FormObject::CalcBoundingBox() {

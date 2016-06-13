@@ -24,6 +24,14 @@ CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
 CPDF_TilingPattern::~CPDF_TilingPattern() {
 }
 
+CPDF_TilingPattern* CPDF_TilingPattern::AsTilingPattern() {
+  return this;
+}
+
+CPDF_ShadingPattern* CPDF_TilingPattern::AsShadingPattern() {
+  return nullptr;
+}
+
 FX_BOOL CPDF_TilingPattern::Load() {
   if (m_pForm)
     return TRUE;

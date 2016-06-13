@@ -23,6 +23,10 @@ CPDF_TextObject::~CPDF_TextObject() {
   FX_Free(m_pCharPos);
 }
 
+int CPDF_TextObject::CountItems() const {
+  return m_nChars;
+}
+
 void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   pInfo->m_CharCode =
       m_nChars == 1 ? (uint32_t)(uintptr_t)m_pCharCodes : m_pCharCodes[index];
@@ -124,6 +128,37 @@ CPDF_TextObject* CPDF_TextObject::Clone() const {
   return obj;
 }
 
+CPDF_PageObject::Type CPDF_TextObject::GetType() const {
+  return TEXT;
+}
+
+void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
+  m_TextState.GetModify();
+  CFX_Matrix text_matrix;
+  GetTextMatrix(&text_matrix);
+  text_matrix.Concat(matrix);
+  FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
+  pTextMatrix[0] = text_matrix.GetA();
+  pTextMatrix[1] = text_matrix.GetC();
+  pTextMatrix[2] = text_matrix.GetB();
+  pTextMatrix[3] = text_matrix.GetD();
+  m_PosX = text_matrix.GetE();
+  m_PosY = text_matrix.GetF();
+  CalcPositionData(nullptr, nullptr, 0);
+}
+
+bool CPDF_TextObject::IsText() const {
+  return true;
+}
+
+CPDF_TextObject* CPDF_TextObject::AsText() {
+  return this;
+}
+
+const CPDF_TextObject* CPDF_TextObject::AsText() const {
+  return this;
+}
+
 void CPDF_TextObject::GetTextMatrix(CFX_Matrix* pMatrix) const {
   FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
   pMatrix->Set(pTextMatrix[0], pTextMatrix[2], pTextMatrix[1], pTextMatrix[3],
@@ -186,6 +221,22 @@ FX_FLOAT CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
 
   uint16_t CID = pCIDFont->CIDFromCharCode(charcode);
   return pCIDFont->GetVertWidth(CID) * fontsize;
+}
+
+FX_FLOAT CPDF_TextObject::GetPosX() const {
+  return m_PosX;
+}
+
+FX_FLOAT CPDF_TextObject::GetPosY() const {
+  return m_PosY;
+}
+
+CPDF_Font* CPDF_TextObject::GetFont() const {
+  return m_TextState.GetFont();
+}
+
+FX_FLOAT CPDF_TextObject::GetFontSize() const {
+  return m_TextState.GetFontSize();
 }
 
 void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
@@ -322,21 +373,6 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   }
 }
 
-void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
-  m_TextState.GetModify();
-  CFX_Matrix text_matrix;
-  GetTextMatrix(&text_matrix);
-  text_matrix.Concat(matrix);
-  FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
-  pTextMatrix[0] = text_matrix.GetA();
-  pTextMatrix[1] = text_matrix.GetC();
-  pTextMatrix[2] = text_matrix.GetB();
-  pTextMatrix[3] = text_matrix.GetD();
-  m_PosX = text_matrix.GetE();
-  m_PosY = text_matrix.GetF();
-  CalcPositionData(nullptr, nullptr, 0);
-}
-
 void CPDF_TextObject::SetPosition(FX_FLOAT x, FX_FLOAT y) {
   FX_FLOAT dx = x - m_PosX;
   FX_FLOAT dy = y - m_PosY;
@@ -346,4 +382,8 @@ void CPDF_TextObject::SetPosition(FX_FLOAT x, FX_FLOAT y) {
   m_Right += dx;
   m_Top += dy;
   m_Bottom += dy;
+}
+
+void CPDF_TextObject::RecalcPositionData() {
+  CalcPositionData(nullptr, nullptr, 1);
 }

@@ -21,9 +21,25 @@ CPDF_PathObject* CPDF_PathObject::Clone() const {
   return obj;
 }
 
+CPDF_PageObject::Type CPDF_PathObject::GetType() const {
+  return PATH;
+}
+
 void CPDF_PathObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();
+}
+
+bool CPDF_PathObject::IsPath() const {
+  return true;
+}
+
+CPDF_PathObject* CPDF_PathObject::AsPath() {
+  return this;
+}
+
+const CPDF_PathObject* CPDF_PathObject::AsPath() const {
+  return this;
 }
 
 void CPDF_PathObject::CalcBoundingBox() {

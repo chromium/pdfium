@@ -17,13 +17,13 @@ class CPDF_ImageObject : public CPDF_PageObject {
   CPDF_ImageObject();
   ~CPDF_ImageObject() override;
 
-  // CPDF_PageObject:
+  // CPDF_PageObject
   CPDF_ImageObject* Clone() const override;
-  Type GetType() const override { return IMAGE; };
+  Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
-  bool IsImage() const override { return true; };
-  CPDF_ImageObject* AsImage() override { return this; };
-  const CPDF_ImageObject* AsImage() const override { return this; };
+  bool IsImage() const override;
+  CPDF_ImageObject* AsImage() override;
+  const CPDF_ImageObject* AsImage() const override;
 
   void CalcBoundingBox();
 

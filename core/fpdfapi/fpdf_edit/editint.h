@@ -24,6 +24,7 @@ class CPDF_ObjectStream {
   };
 
   CPDF_ObjectStream();
+  ~CPDF_ObjectStream();
 
   void Start();
   FX_FILESIZE End(CPDF_Creator* pCreator);
@@ -46,6 +47,7 @@ class CPDF_XRefStream {
   };
 
   CPDF_XRefStream();
+  ~CPDF_XRefStream();
 
   FX_BOOL Start();
   int32_t CompressIndirectObject(uint32_t dwObjNum,
@@ -66,6 +68,7 @@ class CPDF_XRefStream {
  protected:
   int32_t EndObjectStream(CPDF_Creator* pCreator, FX_BOOL bEOF = TRUE);
   FX_BOOL GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF);
+
   size_t m_iSeg;
   CPDF_ObjectStream m_ObjStream;
   CFX_ByteTextBuf m_Buffer;

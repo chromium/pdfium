@@ -436,6 +436,13 @@ FX_BOOL CPDF_ColorSpace::sRGB() const {
   return pCS->m_pProfile->m_bsRGB;
 }
 
+FX_BOOL CPDF_ColorSpace::SetRGB(FX_FLOAT* pBuf,
+                                FX_FLOAT R,
+                                FX_FLOAT G,
+                                FX_FLOAT B) const {
+  return FALSE;
+}
+
 FX_BOOL CPDF_ColorSpace::GetCMYK(FX_FLOAT* pBuf,
                                  FX_FLOAT& c,
                                  FX_FLOAT& m,
@@ -475,6 +482,19 @@ void CPDF_ColorSpace::GetDefaultColor(FX_FLOAT* buf) const {
   }
 }
 
+uint32_t CPDF_ColorSpace::CountComponents() const {
+  return m_nComponents;
+}
+
+void CPDF_ColorSpace::GetDefaultValue(int iComponent,
+                                      FX_FLOAT& value,
+                                      FX_FLOAT& min,
+                                      FX_FLOAT& max) const {
+  value = 0;
+  min = 0;
+  max = 1.0f;
+}
+
 void CPDF_ColorSpace::TranslateImageLine(uint8_t* dest_buf,
                                          const uint8_t* src_buf,
                                          int pixels,
@@ -498,11 +518,46 @@ void CPDF_ColorSpace::TranslateImageLine(uint8_t* dest_buf,
   }
 }
 
+CPDF_ColorSpace* CPDF_ColorSpace::GetBaseCS() const {
+  return nullptr;
+}
+
 void CPDF_ColorSpace::EnableStdConversion(FX_BOOL bEnabled) {
   if (bEnabled)
     m_dwStdConversion++;
   else if (m_dwStdConversion)
     m_dwStdConversion--;
+}
+
+CPDF_ColorSpace::CPDF_ColorSpace(CPDF_Document* pDoc,
+                                 int family,
+                                 uint32_t nComponents)
+    : m_pDocument(pDoc),
+      m_Family(family),
+      m_nComponents(nComponents),
+      m_pArray(nullptr),
+      m_dwStdConversion(0) {}
+
+CPDF_ColorSpace::~CPDF_ColorSpace() {}
+
+FX_BOOL CPDF_ColorSpace::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
+  return TRUE;
+}
+
+FX_BOOL CPDF_ColorSpace::v_GetCMYK(FX_FLOAT* pBuf,
+                                   FX_FLOAT& c,
+                                   FX_FLOAT& m,
+                                   FX_FLOAT& y,
+                                   FX_FLOAT& k) const {
+  return FALSE;
+}
+
+FX_BOOL CPDF_ColorSpace::v_SetCMYK(FX_FLOAT* pBuf,
+                                   FX_FLOAT c,
+                                   FX_FLOAT m,
+                                   FX_FLOAT y,
+                                   FX_FLOAT k) const {
+  return FALSE;
 }
 
 CPDF_CalGray::CPDF_CalGray(CPDF_Document* pDoc)

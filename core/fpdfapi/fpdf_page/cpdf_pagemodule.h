@@ -15,16 +15,12 @@ class CPDF_Document;
 
 class CPDF_PageModule {
  public:
-  CPDF_PageModule()
-      : m_StockGrayCS(nullptr, PDFCS_DEVICEGRAY),
-        m_StockRGBCS(nullptr, PDFCS_DEVICERGB),
-        m_StockCMYKCS(nullptr, PDFCS_DEVICECMYK),
-        m_StockPatternCS(nullptr) {}
-  ~CPDF_PageModule() {}
+  CPDF_PageModule();
+  ~CPDF_PageModule();
 
-  CPDF_FontGlobals* GetFontGlobals() { return &m_FontGlobals; }
+  CPDF_FontGlobals* GetFontGlobals();
   CPDF_ColorSpace* GetStockCS(int family);
-  void ClearStockFont(CPDF_Document* pDoc) { m_FontGlobals.Clear(pDoc); }
+  void ClearStockFont(CPDF_Document* pDoc);
 
  private:
   CPDF_FontGlobals m_FontGlobals;

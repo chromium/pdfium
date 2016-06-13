@@ -40,8 +40,8 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
                       const CFX_Matrix& parentMatrix);
   ~CPDF_ShadingPattern() override;
 
-  CPDF_TilingPattern* AsTilingPattern() override { return nullptr; }
-  CPDF_ShadingPattern* AsShadingPattern() override { return this; }
+  CPDF_TilingPattern* AsTilingPattern() override;
+  CPDF_ShadingPattern* AsShadingPattern() override;
 
   bool IsMeshShading() const {
     return m_ShadingType == kFreeFormGouraudTriangleMeshShading ||

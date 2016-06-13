@@ -22,30 +22,30 @@ class CPDF_TextObject : public CPDF_PageObject {
   CPDF_TextObject();
   ~CPDF_TextObject() override;
 
-  // CPDF_PageObject:
+  // CPDF_PageObject
   CPDF_TextObject* Clone() const override;
-  Type GetType() const override { return TEXT; };
+  Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
-  bool IsText() const override { return true; };
-  CPDF_TextObject* AsText() override { return this; };
-  const CPDF_TextObject* AsText() const override { return this; };
+  bool IsText() const override;
+  CPDF_TextObject* AsText() override;
+  const CPDF_TextObject* AsText() const override;
 
-  int CountItems() const { return m_nChars; }
+  int CountItems() const;
   void GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const;
   int CountChars() const;
   void GetCharInfo(int index, uint32_t& charcode, FX_FLOAT& kerning) const;
   void GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const;
   FX_FLOAT GetCharWidth(uint32_t charcode) const;
-  FX_FLOAT GetPosX() const { return m_PosX; }
-  FX_FLOAT GetPosY() const { return m_PosY; }
+  FX_FLOAT GetPosX() const;
+  FX_FLOAT GetPosY() const;
   void GetTextMatrix(CFX_Matrix* pMatrix) const;
-  CPDF_Font* GetFont() const { return m_TextState.GetFont(); }
-  FX_FLOAT GetFontSize() const { return m_TextState.GetFontSize(); }
+  CPDF_Font* GetFont() const;
+  FX_FLOAT GetFontSize() const;
 
   void SetText(const CFX_ByteString& text);
   void SetPosition(FX_FLOAT x, FX_FLOAT y);
 
-  void RecalcPositionData() { CalcPositionData(nullptr, nullptr, 1); }
+  void RecalcPositionData();
 
  protected:
   friend class CPDF_RenderStatus;

@@ -45,12 +45,15 @@ void CPDF_UniqueKeyGen::Generate(int count, ...) {
 
 }  // namespace
 
+CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
+
 CPDF_Type3Cache::~CPDF_Type3Cache() {
   for (const auto& pair : m_SizeMap) {
     delete pair.second;
   }
   m_SizeMap.clear();
 }
+
 CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                             const CFX_Matrix* pMatrix,
                                             FX_FLOAT retinaScaleX,
@@ -77,10 +80,15 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
   pSizeCache->m_GlyphMap[charcode] = pGlyphBitmap;
   return pGlyphBitmap;
 }
+
+CPDF_Type3Glyphs::CPDF_Type3Glyphs()
+    : m_TopBlueCount(0), m_BottomBlueCount(0) {}
+
 CPDF_Type3Glyphs::~CPDF_Type3Glyphs() {
   for (const auto& pair : m_GlyphMap)
     delete pair.second;
 }
+
 static int _AdjustBlue(FX_FLOAT pos, int& count, int blues[]) {
   FX_FLOAT min_distance = 1000000.0f * 1.0f;
   int closest_pos = -1;

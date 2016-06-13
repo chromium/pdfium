@@ -50,8 +50,9 @@ FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix);
 
 class CPDF_Type3Glyphs {
  public:
-  CPDF_Type3Glyphs() : m_TopBlueCount(0), m_BottomBlueCount(0) {}
+  CPDF_Type3Glyphs();
   ~CPDF_Type3Glyphs();
+
   void AdjustBlue(FX_FLOAT top,
                   FX_FLOAT bottom,
                   int& top_line,
@@ -63,9 +64,10 @@ class CPDF_Type3Glyphs {
   int m_TopBlueCount;
   int m_BottomBlueCount;
 };
+
 class CPDF_Type3Cache {
  public:
-  explicit CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
+  explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);
   ~CPDF_Type3Cache();
 
   CFX_GlyphBitmap* LoadGlyph(uint32_t charcode,
@@ -605,12 +607,12 @@ class CPDF_DIBSource : public CFX_DIBSource {
 #define FPDF_HUGE_IMAGE_SIZE 60000000
 class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
  public:
-  CPDF_DIBTransferFunc(const CPDF_TransferFunc* pTransferFunc);
+  explicit CPDF_DIBTransferFunc(const CPDF_TransferFunc* pTransferFunc);
   ~CPDF_DIBTransferFunc() override;
 
   // CFX_FilteredDIB
   FXDIB_Format GetDestFormat() override;
-  FX_ARGB* GetDestPalette() override { return nullptr; }
+  FX_ARGB* GetDestPalette() override;
   void TranslateScanline(uint8_t* dest_buf,
                          const uint8_t* src_buf) const override;
   void TranslateDownSamples(uint8_t* dest_buf,

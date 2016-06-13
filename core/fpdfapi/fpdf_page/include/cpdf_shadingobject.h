@@ -17,13 +17,13 @@ class CPDF_ShadingObject : public CPDF_PageObject {
   CPDF_ShadingObject();
   ~CPDF_ShadingObject() override;
 
-  // CPDF_PageObject:
+  // CPDF_PageObject
   CPDF_ShadingObject* Clone() const override;
-  Type GetType() const override { return SHADING; };
+  Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
-  bool IsShading() const override { return true; };
-  CPDF_ShadingObject* AsShading() override { return this; };
-  const CPDF_ShadingObject* AsShading() const override { return this; };
+  bool IsShading() const override;
+  CPDF_ShadingObject* AsShading() override;
+  const CPDF_ShadingObject* AsShading() const override;
 
   void CalcBoundingBox();
 

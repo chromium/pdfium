@@ -56,13 +56,13 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
                  FX_BOOL bSupportHintTable);
   ~CPDF_DataAvail() override;
 
-  // IPDF_DataAvail:
+  // IPDF_DataAvail
   DocAvailStatus IsDocAvail(DownloadHints* pHints) override;
   void SetDocument(CPDF_Document* pDoc) override;
   DocAvailStatus IsPageAvail(int iPage, DownloadHints* pHints) override;
   DocFormStatus IsFormAvail(DownloadHints* pHints) override;
   DocLinearizationStatus IsLinearizedPDF() override;
-  FX_BOOL IsLinearized() override { return m_bLinearized; }
+  FX_BOOL IsLinearized() override;
   void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, uint32_t* pSize) override;
 
   int GetPageCount() const;

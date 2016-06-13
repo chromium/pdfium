@@ -29,26 +29,26 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   };
 
   CPDF_PageObject();
-  virtual ~CPDF_PageObject();
+  ~CPDF_PageObject() override;
 
   virtual CPDF_PageObject* Clone() const = 0;
   virtual Type GetType() const = 0;
   virtual void Transform(const CFX_Matrix& matrix) = 0;
-  virtual bool IsText() const { return false; }
-  virtual bool IsPath() const { return false; }
-  virtual bool IsImage() const { return false; }
-  virtual bool IsShading() const { return false; }
-  virtual bool IsForm() const { return false; }
-  virtual CPDF_TextObject* AsText() { return nullptr; }
-  virtual const CPDF_TextObject* AsText() const { return nullptr; }
-  virtual CPDF_PathObject* AsPath() { return nullptr; }
-  virtual const CPDF_PathObject* AsPath() const { return nullptr; }
-  virtual CPDF_ImageObject* AsImage() { return nullptr; }
-  virtual const CPDF_ImageObject* AsImage() const { return nullptr; }
-  virtual CPDF_ShadingObject* AsShading() { return nullptr; }
-  virtual const CPDF_ShadingObject* AsShading() const { return nullptr; }
-  virtual CPDF_FormObject* AsForm() { return nullptr; }
-  virtual const CPDF_FormObject* AsForm() const { return nullptr; }
+  virtual bool IsText() const;
+  virtual bool IsPath() const;
+  virtual bool IsImage() const;
+  virtual bool IsShading() const;
+  virtual bool IsForm() const;
+  virtual CPDF_TextObject* AsText();
+  virtual const CPDF_TextObject* AsText() const;
+  virtual CPDF_PathObject* AsPath();
+  virtual const CPDF_PathObject* AsPath() const;
+  virtual CPDF_ImageObject* AsImage();
+  virtual const CPDF_ImageObject* AsImage() const;
+  virtual CPDF_ShadingObject* AsShading();
+  virtual const CPDF_ShadingObject* AsShading() const;
+  virtual CPDF_FormObject* AsForm();
+  virtual const CPDF_FormObject* AsForm() const;
 
   void TransformClipPath(CFX_Matrix& matrix);
   void TransformGeneralState(CFX_Matrix& matrix);

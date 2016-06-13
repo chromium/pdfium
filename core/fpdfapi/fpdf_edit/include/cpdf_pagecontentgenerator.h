@@ -20,6 +20,7 @@ class CPDF_ImageObject;
 class CPDF_PageContentGenerator {
  public:
   explicit CPDF_PageContentGenerator(CPDF_Page* pPage);
+  ~CPDF_PageContentGenerator();
 
   FX_BOOL InsertPageObject(CPDF_PageObject* pPageObject);
   void GenerateContent();

@@ -19,11 +19,11 @@ class CPDF_FormObject : public CPDF_PageObject {
 
   // CPDF_PageObject:
   CPDF_FormObject* Clone() const override;
-  Type GetType() const override { return FORM; };
+  Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
-  bool IsForm() const override { return true; };
-  CPDF_FormObject* AsForm() override { return this; };
-  const CPDF_FormObject* AsForm() const override { return this; };
+  bool IsForm() const override;
+  CPDF_FormObject* AsForm() override;
+  const CPDF_FormObject* AsForm() const override;
 
   void CalcBoundingBox();
 

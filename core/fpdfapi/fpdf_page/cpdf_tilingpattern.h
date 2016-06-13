@@ -24,8 +24,8 @@ class CPDF_TilingPattern : public CPDF_Pattern {
                      const CFX_Matrix& parentMatrix);
   ~CPDF_TilingPattern() override;
 
-  CPDF_TilingPattern* AsTilingPattern() override { return this; }
-  CPDF_ShadingPattern* AsShadingPattern() override { return nullptr; }
+  CPDF_TilingPattern* AsTilingPattern() override;
+  CPDF_ShadingPattern* AsShadingPattern() override;
 
   FX_BOOL Load();
 

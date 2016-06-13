@@ -24,6 +24,7 @@ class CPDF_ContentParser;
 class CPDF_PageObjectHolder {
  public:
   CPDF_PageObjectHolder();
+  virtual ~CPDF_PageObjectHolder();
 
   void ContinueParse(IFX_Pause* pPause);
   bool IsParsed() const { return m_ParseState == CONTENT_PARSED; }
