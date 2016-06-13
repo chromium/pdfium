@@ -1286,7 +1286,8 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
     IFX_FileRead* pFile,
     FXCODEC_IMAGE_TYPE imageType,
-    CFX_DIBAttribute* pAttribute) {
+    CFX_DIBAttribute* pAttribute,
+    bool bSkipImageTypeCheck) {
   switch (m_status) {
     case FXCODEC_STATUS_FRAME_READY:
     case FXCODEC_STATUS_FRAME_TOBECONTINUE:
@@ -1309,8 +1310,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
   m_startX = m_startY = 0;
   m_sizeX = m_sizeY = 0;
   m_SrcPassNumber = 0;
-  if (imageType != FXCODEC_IMAGE_UNKNOWN &&
-      DetectImageType(imageType, pAttribute)) {
+  if (bSkipImageTypeCheck || (imageType != FXCODEC_IMAGE_UNKNOWN &&
+                              DetectImageType(imageType, pAttribute))) {
     m_imagType = imageType;
     m_status = FXCODEC_STATUS_FRAME_READY;
     return m_status;

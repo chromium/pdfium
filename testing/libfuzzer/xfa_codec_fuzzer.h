@@ -19,7 +19,8 @@ class XFACodecFuzzer {
         mgr->CreateProgressiveDecoder());
     Reader source(data, size);
 
-    FXCODEC_STATUS status = decoder->LoadImageInfo(&source, type, nullptr);
+    FXCODEC_STATUS status =
+        decoder->LoadImageInfo(&source, type, nullptr, true);
     if (status != FXCODEC_STATUS_FRAME_READY)
       return 0;
 

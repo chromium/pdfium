@@ -47,7 +47,8 @@ class CCodec_ProgressiveDecoder {
 
   FXCODEC_STATUS LoadImageInfo(IFX_FileRead* pFile,
                                FXCODEC_IMAGE_TYPE imageType,
-                               CFX_DIBAttribute* pAttribute);
+                               CFX_DIBAttribute* pAttribute,
+                               bool bSkipImageTypeCheck);
 
   FXCODEC_IMAGE_TYPE GetType() const { return m_imagType; }
   int32_t GetWidth() const { return m_SrcWidth; }

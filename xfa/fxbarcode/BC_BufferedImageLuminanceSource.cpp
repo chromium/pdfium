@@ -38,7 +38,8 @@ static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread) {
   std::unique_ptr<CCodec_ProgressiveDecoder> pImageCodec(
       pCodecMgr->CreateProgressiveDecoder());
   FXCODEC_STATUS status = FXCODEC_STATUS_DECODE_FINISH;
-  status = pImageCodec->LoadImageInfo(fileread, FXCODEC_IMAGE_UNKNOWN, nullptr);
+  status = pImageCodec->LoadImageInfo(fileread, FXCODEC_IMAGE_UNKNOWN, nullptr,
+                                      false);
   if (status != FXCODEC_STATUS_FRAME_READY)
     return nullptr;
 
