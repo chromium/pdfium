@@ -138,7 +138,6 @@ class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
 using FXJS_CONSTRUCTOR = void (*)(IJS_Runtime* cc, v8::Local<v8::Object> obj);
 using FXJS_DESTRUCTOR = void (*)(v8::Local<v8::Object> obj);
 
-// Call before making FXJS_PrepareIsolate call.
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
 void FXJS_Release();
 
@@ -149,14 +148,6 @@ bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
 
 // Get the global isolate's ref count.
 size_t FXJS_GlobalIsolateRefCount();
-
-// Call before making FXJS_Define* calls. Resources allocated here are cleared
-// as part of FXJS_ReleaseRuntime().
-void FXJS_PrepareIsolate(v8::Isolate* pIsolate);
-
-// Call before making JS_Define* calls. Resources allocated here are cleared
-// as part of JS_ReleaseRuntime().
-void JS_PrepareIsolate(v8::Isolate* pIsolate);
 
 // Always returns a valid, newly-created objDefnID.
 int FXJS_DefineObj(v8::Isolate* pIsolate,
