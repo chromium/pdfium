@@ -605,11 +605,16 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   m_pCanvas->save();
   SkMatrix skMatrix = ToFlippedSkMatrix(*pObject2Device);
   m_pCanvas->concat(skMatrix);
+  SkTDArray<SkPoint> positions;
+  positions.setCount(nChars);
+  SkTDArray<uint16_t> glyphs;
+  glyphs.setCount(nChars);
   for (int index = 0; index < nChars; ++index) {
     const FXTEXT_CHARPOS& cp = pCharPos[index];
-    uint16_t glyph = (uint16_t)cp.m_GlyphIndex;
-    m_pCanvas->drawText(&glyph, 2, cp.m_OriginX, cp.m_OriginY, paint);
+    positions[index] = {cp.m_OriginX, cp.m_OriginY};
+    glyphs[index] = (uint16_t)cp.m_GlyphIndex;
   }
+  m_pCanvas->drawPosText(glyphs.begin(), nChars * 2, positions.begin(), paint);
   m_pCanvas->restore();
   return TRUE;
 }
