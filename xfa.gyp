@@ -40,7 +40,7 @@
         "fxjse/dynprop.cpp",
         "fxjse/include/cfxjse_arguments.h",
         "fxjse/include/cfxjse_class.h",
-        "fxjse/include/cfxjse_value.h"
+        "fxjse/include/cfxjse_value.h",
         "fxjse/include/fxjse.h",
         "fxjse/runtime.cpp",
         "fxjse/runtime.h",

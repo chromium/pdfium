@@ -260,7 +260,6 @@
       ],
     },{ # not 'OS == "win"'
       'sources!': [
-        '../third_party/skia/src/ports/SkFontMgr_win_dw.cpp',
         '../third_party/skia/src/ports/SkRemotableFontMgr_win_dw.cpp',
         '../third_party/skia/src/ports/SkScalerContext_win_dw.cpp',
         '../third_party/skia/src/ports/SkTypeface_win_dw.cpp',

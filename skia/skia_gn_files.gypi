@@ -14,8 +14,6 @@
     '<(skia_src_path)/ports/SkFontMgr_android.cpp',
     '<(skia_src_path)/ports/SkFontMgr_android_factory.cpp',
     '<(skia_src_path)/ports/SkFontMgr_android_parser.cpp',
-    '<(skia_src_path)/ports/SkFontMgr_win_dw.cpp',
-    '<(skia_src_path)/ports/SkFontMgr_win_dw_factory.cpp',
     '<(skia_src_path)/ports/SkGlobalInitialization_default.cpp',
     '<(skia_src_path)/ports/SkImageEncoder_none.cpp',
     '<(skia_src_path)/ports/SkOSFile_posix.cpp',

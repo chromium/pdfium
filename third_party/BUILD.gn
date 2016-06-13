@@ -13,7 +13,7 @@ group("third_party") {
 }
 
 config("pdfium_third_party_config") {
-  configs = ["..:pdfium_common_config"]
+  configs = [ "..:pdfium_common_config" ]
 }
 
 source_set("bigint") {
@@ -88,6 +88,13 @@ static_library("fx_freetype") {
     "freetype/src/truetype/truetype.c",
     "freetype/src/type1/type1.c",
   ]
+  if (pdf_use_skia) {
+    sources += [
+      "freetype/src/base/ftfntfmt.c",
+      "freetype/src/base/ftfstype.c",
+      "freetype/src/base/fttype1.c",
+    ]
+  }
 }
 
 if (!pdf_use_skia) {

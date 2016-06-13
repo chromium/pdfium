@@ -112,6 +112,7 @@ config("skia_config") {
     "//third_party/skia/include/pipe",
     "//third_party/skia/include/ports",
     "//third_party/skia/include/utils",
+
     # TODO(dsinclair): Right way to use //third_party/freetype?
     "//third_party/freetype/include",
   ]
@@ -311,14 +312,10 @@ component("skia") {
     sources -= [
       "//third_party/skia/src/ports/SkOSFile_posix.cpp",
       "//third_party/skia/src/ports/SkTLS_pthread.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom_empty_factory.cpp",
     ]
   } else {
     sources -= [
       "//third_party/skia/src/ports/SkFontHost_win.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_win_dw.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_win_dw_factory.cpp",
       "//third_party/skia/src/ports/SkOSFile_win.cpp",
       "//third_party/skia/src/ports/SkRemotableFontMgr_win_dw.cpp",
       "//third_party/skia/src/ports/SkScalerContext_win_dw.cpp",
@@ -337,7 +334,7 @@ component("skia") {
     sources -= [ "//third_party/skia/src/ports/SkFontHost_mac.cpp" ]
   }
 
-  if (!is_linux && !is_android) {
+  if (!is_linux && !is_android && !is_win) {
     sources -= [
       "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
       "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
@@ -365,9 +362,7 @@ component("skia") {
   ]
 
   if (is_linux) {
-    deps += [
-      "//third_party/icu:icuuc",
-    ]
+    deps += [ "//third_party/icu:icuuc" ]
   }
 
   if (is_android) {
