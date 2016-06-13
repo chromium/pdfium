@@ -145,10 +145,11 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
   void* GetPlatformSurface() const override { return (void*)m_hDC; }
 
-  virtual void* GetClipRgn();
-  virtual FX_BOOL SetClipRgn(void* pRgn);
-  virtual FX_BOOL DeleteDeviceRgn(void* pRgn);
-  virtual void DrawLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
+  void DrawLine(FX_FLOAT x1,
+                FX_FLOAT y1,
+                FX_FLOAT x2,
+                FX_FLOAT y2,
+                const CFX_Matrix* pMatrix);
 
   FX_BOOL GDI_SetDIBits(CFX_DIBitmap* pBitmap,
                         const FX_RECT* pSrcRect,

@@ -779,15 +779,6 @@ void CGdiDeviceDriver::RestoreState(bool bKeepSaved) {
     SaveDC(m_hDC);
 }
 
-void* CGdiDeviceDriver::GetClipRgn() {
-  HRGN hClipRgn = CreateRectRgn(0, 0, 1, 1);
-  if (::GetClipRgn(m_hDC, hClipRgn) == 0) {
-    DeleteObject(hClipRgn);
-    hClipRgn = nullptr;
-  }
-  return (void*)hClipRgn;
-}
-
 FX_BOOL CGdiDeviceDriver::GDI_SetDIBits(CFX_DIBitmap* pBitmap1,
                                         const FX_RECT* pSrcRect,
                                         int left,
@@ -946,24 +937,19 @@ FX_BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return ::GetClipBox(m_hDC, (RECT*)pRect);
 }
 
-FX_BOOL CGdiDeviceDriver::SetClipRgn(void* hRgn) {
-  ::SelectClipRgn(m_hDC, (HRGN)hRgn);
-  return TRUE;
-}
-
 void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
                                 FX_FLOAT y1,
                                 FX_FLOAT x2,
-                                FX_FLOAT y2) {
-  int flag1 = (x1 < 0) | ((x1 > m_Width) << 1) | ((y1 < 0) << 2) |
-              ((y1 > m_Height) << 3);
-  int flag2 = (x2 < 0) | ((x2 > m_Width) << 1) | ((y2 < 0) << 2) |
-              ((y2 > m_Height) << 3);
-  if (flag1 & flag2) {
+                                FX_FLOAT y2,
+                                const CFX_Matrix* pMatrix) {
+  bool bStartOutOfBounds = x1 < 0 || x1 > m_Width || y1 < 0 || y1 > m_Height;
+  bool bEndOutOfBounds = x2 < 0 || x2 > m_Width || y2 < 0 || y2 > m_Height;
+  if (bStartOutOfBounds & bEndOutOfBounds)
     return;
-  }
-  if (flag1 || flag2) {
-    FX_FLOAT x[2], y[2];
+
+  if (bStartOutOfBounds || bEndOutOfBounds) {
+    FX_FLOAT x[2];
+    FX_FLOAT y[2];
     int np;
 #ifdef _SKIA_SUPPORT_
     // TODO(caryclark) temporary replacement of antigrain in line function
@@ -975,18 +961,23 @@ void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
                                   (FX_FLOAT)(m_Height));
     np = agg::clip_liang_barsky<FX_FLOAT>(x1, y1, x2, y2, rect, x, y);
 #endif
-    if (np == 0) {
+    if (np == 0)
       return;
-    }
+
     if (np == 1) {
       x2 = x[0];
       y2 = y[0];
     } else {
+      ASSERT(np == 2);
       x1 = x[0];
       y1 = y[0];
-      x2 = x[np - 1];
-      y2 = y[np - 1];
+      x2 = x[1];
+      y2 = y[1];
     }
+  }
+  if (pMatrix) {
+    pMatrix->Transform(x1, y1);
+    pMatrix->Transform(x2, y2);
   }
   MoveToEx(m_hDC, FXSYS_round(x1), FXSYS_round(y1), nullptr);
   LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
@@ -1067,15 +1058,11 @@ FX_BOOL CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   }
   if (pPathData->GetPointCount() == 2 && pGraphState &&
       pGraphState->m_DashCount) {
-    FX_FLOAT x1 = pPathData->GetPointX(0), y1 = pPathData->GetPointY(0);
-    if (pMatrix) {
-      pMatrix->Transform(x1, y1);
-    }
-    FX_FLOAT x2 = pPathData->GetPointX(1), y2 = pPathData->GetPointY(1);
-    if (pMatrix) {
-      pMatrix->Transform(x2, y2);
-    }
-    DrawLine(x1, y1, x2, y2);
+    FX_FLOAT x1 = pPathData->GetPointX(0);
+    FX_FLOAT y1 = pPathData->GetPointY(0);
+    FX_FLOAT x2 = pPathData->GetPointX(1);
+    FX_FLOAT y2 = pPathData->GetPointY(1);
+    DrawLine(x1, y1, x2, y2, pMatrix);
   } else {
     SetPathToDC(m_hDC, pPathData, pMatrix);
     if (pGraphState && stroke_alpha) {
@@ -1185,11 +1172,6 @@ FX_BOOL CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
   LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
   hPen = (HPEN)SelectObject(m_hDC, hPen);
   DeleteObject(hPen);
-  return TRUE;
-}
-
-FX_BOOL CGdiDeviceDriver::DeleteDeviceRgn(void* pRgn) {
-  DeleteObject((HGDIOBJ)pRgn);
   return TRUE;
 }
 
