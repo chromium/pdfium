@@ -5086,7 +5086,8 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
 }
 CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
     : CXFA_Object(pDocument, XFA_OBJECTTYPE_NodeList) {
-  m_pDocument->GetScriptContext()->CacheList(this);
+  m_pDocument->GetScriptContext()->AddToCacheList(
+      std::unique_ptr<CXFA_NodeList>(this));
 }
 CXFA_Node* CXFA_NodeList::NamedItem(const CFX_WideStringC& wsName) {
   uint32_t dwHashCode = FX_HashCode_GetW(wsName, false);

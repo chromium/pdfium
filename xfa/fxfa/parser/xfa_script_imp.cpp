@@ -81,42 +81,33 @@ CXFA_Object* CXFA_ScriptContext::ToObject(CFXJSE_Value* pValue,
 
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
-      m_pJsContext(nullptr),
       m_pIsolate(nullptr),
       m_pJsClass(nullptr),
       m_eScriptType(XFA_SCRIPTLANGTYPE_Unkown),
       m_pScriptNodeArray(nullptr),
-      m_pResolveProcessor(nullptr),
-      m_hFM2JSContext(nullptr),
       m_pThisObject(nullptr),
       m_dwBuiltInInFlags(0),
-      m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {
-}
+      m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {}
 
 CXFA_ScriptContext::~CXFA_ScriptContext() {
-  FX_POSITION ps = m_mapXFAToValue.GetStartPosition();
+  FX_POSITION ps = m_mapVariableToContext.GetStartPosition();
   while (ps) {
-    CXFA_Object* pXFAObj;
-    CFXJSE_Value* pValue;
-    m_mapXFAToValue.GetNextAssoc(ps, pXFAObj, pValue);
-    delete pValue;
+    CXFA_Object* pScriptNode;
+    CFXJSE_Context* pVariableContext = nullptr;
+    m_mapVariableToContext.GetNextAssoc(ps, pScriptNode, pVariableContext);
+
+    delete ToThisProxy(pVariableContext->GetGlobalObject().get(), nullptr);
+    delete pVariableContext;
   }
-  m_mapXFAToValue.RemoveAll();
-  ReleaseVariablesMap();
+  m_mapVariableToContext.RemoveAll();
 
-  delete m_hFM2JSContext;
-  delete m_pJsContext;
-
-  delete m_pResolveProcessor;
   m_upObjectArray.RemoveAll();
-  for (int32_t i = 0; i < m_CacheListArray.GetSize(); i++)
-    delete m_CacheListArray[i];
 }
 void CXFA_ScriptContext::Initialize(v8::Isolate* pIsolate) {
   m_pIsolate = pIsolate;
   DefineJsContext();
   DefineJsClass();
-  m_pResolveProcessor = new CXFA_ResolveProcessor;
+  m_ResolveProcessor.reset(new CXFA_ResolveProcessor);
 }
 FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
                                       const CFX_WideStringC& wsScript,
@@ -126,9 +117,9 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   XFA_SCRIPTLANGTYPE eSaveType = m_eScriptType;
   m_eScriptType = eScriptType;
   if (eScriptType == XFA_SCRIPTLANGTYPE_Formcalc) {
-    if (!m_hFM2JSContext) {
-      m_hFM2JSContext =
-          new CXFA_FM2JSContext(m_pIsolate, m_pJsContext, m_pDocument);
+    if (!m_FM2JSContext) {
+      m_FM2JSContext.reset(
+          new CXFA_FM2JSContext(m_pIsolate, m_JsContext.get(), m_pDocument));
     }
     CFX_WideTextBuf wsJavaScript;
     CFX_WideString wsErrorInfo;
@@ -145,9 +136,9 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   }
   CXFA_Object* pOriginalObject = m_pThisObject;
   m_pThisObject = pThisObject;
-  CFXJSE_Value* pValue = pThisObject ? GetJSValueFromMap(pThisObject) : NULL;
+  CFXJSE_Value* pValue = pThisObject ? GetJSValueFromMap(pThisObject) : nullptr;
   FX_BOOL bRet =
-      m_pJsContext->ExecuteScript(btScript.c_str(), hRetValue, pValue);
+      m_JsContext->ExecuteScript(btScript.c_str(), hRetValue, pValue);
   m_pThisObject = pOriginalObject;
   m_eScriptType = eSaveType;
   return bRet;
@@ -217,7 +208,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(CFXJSE_Value* pObject,
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   if (lpScriptContext->GetType() == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (szPropName == kFormCalcRuntime) {
-      lpScriptContext->m_hFM2JSContext->GlobalPropertyGetter(pValue);
+      lpScriptContext->m_FM2JSContext->GlobalPropertyGetter(pValue);
       return;
     }
     XFA_HashCode uHashCode = static_cast<XFA_HashCode>(
@@ -327,7 +318,7 @@ void CXFA_ScriptContext::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
         wsPropName = wsPropName.Right(wsPropName.GetLength() - 1);
       }
       CXFA_Node* pNode = ToNode(pObject);
-      CXFA_Node* pPropOrChild = NULL;
+      CXFA_Node* pPropOrChild = nullptr;
       const XFA_ELEMENTINFO* lpElementInfo =
           XFA_GetElementByName(wsPropName.AsStringC());
       if (lpElementInfo) {
@@ -420,10 +411,10 @@ XFA_SCRIPTLANGTYPE CXFA_ScriptContext::GetType() {
   return m_eScriptType;
 }
 void CXFA_ScriptContext::DefineJsContext() {
-  m_pJsContext = CFXJSE_Context::Create(m_pIsolate, &GlobalClassDescriptor,
-                                        m_pDocument->GetRoot());
-  RemoveBuiltInObjs(m_pJsContext);
-  m_pJsContext->EnableCompatibleMode();
+  m_JsContext.reset(CFXJSE_Context::Create(m_pIsolate, &GlobalClassDescriptor,
+                                           m_pDocument->GetRoot()));
+  RemoveBuiltInObjs(m_JsContext.get());
+  m_JsContext->EnableCompatibleMode();
 }
 CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
     CXFA_Node* pScriptNode,
@@ -520,21 +511,8 @@ FX_BOOL CXFA_ScriptContext::QueryVariableValue(
   return bRes;
 }
 
-void CXFA_ScriptContext::ReleaseVariablesMap() {
-  FX_POSITION ps = m_mapVariableToContext.GetStartPosition();
-  while (ps) {
-    CXFA_Object* pScriptNode;
-    CFXJSE_Context* pVariableContext = nullptr;
-    m_mapVariableToContext.GetNextAssoc(ps, pScriptNode, pVariableContext);
-
-    delete ToThisProxy(pVariableContext->GetGlobalObject().get(), nullptr);
-    delete pVariableContext;
-  }
-  m_mapVariableToContext.RemoveAll();
-}
-
 void CXFA_ScriptContext::DefineJsClass() {
-  m_pJsClass = CFXJSE_Class::Create(m_pJsContext, &NormalClassDescriptor);
+  m_pJsClass = CFXJSE_Class::Create(m_JsContext.get(), &NormalClassDescriptor);
 }
 
 void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
@@ -567,10 +545,10 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
   }
   FX_BOOL bNextCreate = FALSE;
   if (dwStyles & XFA_RESOLVENODE_CreateNode) {
-    m_pResolveProcessor->GetNodeHelper()->XFA_SetCreateNodeType(bindNode);
+    m_ResolveProcessor->GetNodeHelper()->XFA_SetCreateNodeType(bindNode);
   }
-  m_pResolveProcessor->GetNodeHelper()->m_pCreateParent = NULL;
-  m_pResolveProcessor->GetNodeHelper()->m_iCurAllStart = -1;
+  m_ResolveProcessor->GetNodeHelper()->m_pCreateParent = nullptr;
+  m_ResolveProcessor->GetNodeHelper()->m_iCurAllStart = -1;
   CXFA_ResolveNodesData rndFind;
   int32_t nStart = 0;
   int32_t nLevel = 0;
@@ -583,13 +561,13 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
     nNodes = findNodes.GetSize();
     int32_t i = 0;
     rndFind.m_dwStyles = dwStyles;
-    m_pResolveProcessor->m_iCurStart = nStart;
-    nStart = m_pResolveProcessor->XFA_ResolveNodes_GetFilter(wsExpression,
-                                                             nStart, rndFind);
+    m_ResolveProcessor->m_iCurStart = nStart;
+    nStart = m_ResolveProcessor->XFA_ResolveNodes_GetFilter(wsExpression,
+                                                            nStart, rndFind);
     if (nStart < 1) {
       if ((dwStyles & XFA_RESOLVENODE_CreateNode) && !bNextCreate) {
-        CXFA_Node* pDataNode = NULL;
-        nStart = m_pResolveProcessor->GetNodeHelper()->m_iCurAllStart;
+        CXFA_Node* pDataNode = nullptr;
+        nStart = m_ResolveProcessor->GetNodeHelper()->m_iCurAllStart;
         if (nStart != -1) {
           pDataNode = m_pDocument->GetNotBindNode(findNodes);
           if (pDataNode) {
@@ -605,7 +583,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
         }
         dwStyles |= XFA_RESOLVENODE_Bind;
         findNodes.RemoveAll();
-        findNodes.Add(m_pResolveProcessor->GetNodeHelper()->m_pAllStartParent);
+        findNodes.Add(m_ResolveProcessor->GetNodeHelper()->m_pAllStartParent);
         continue;
       } else {
         break;
@@ -613,7 +591,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
     }
     if (bNextCreate) {
       FX_BOOL bCreate =
-          m_pResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
+          m_ResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
               rndFind.m_wsName, rndFind.m_wsCondition,
               nStart == wsExpression.GetLength(), this);
       if (bCreate) {
@@ -629,16 +607,16 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
            (dwStyles & XFA_RESOLVENODE_CreateNode)) &&
           nNodes > 1) {
         CXFA_ResolveNodesData rndBind;
-        m_pResolveProcessor->XFA_ResolveNodes_GetFilter(wsExpression, nStart,
-                                                        rndBind);
-        m_pResolveProcessor->XFA_ResolveNode_SetIndexDataBind(
+        m_ResolveProcessor->XFA_ResolveNodes_GetFilter(wsExpression, nStart,
+                                                       rndBind);
+        m_ResolveProcessor->XFA_ResolveNode_SetIndexDataBind(
             rndBind.m_wsCondition, i, nNodes);
         bDataBind = TRUE;
       }
       rndFind.m_CurNode = findNodes[i++];
       rndFind.m_nLevel = nLevel;
       rndFind.m_dwFlag = XFA_RESOVENODE_RSTYPE_Nodes;
-      nRet = m_pResolveProcessor->XFA_ResolveNodes(rndFind);
+      nRet = m_ResolveProcessor->XFA_ResolveNodes(rndFind);
       if (nRet < 1) {
         continue;
       }
@@ -665,13 +643,13 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
     if (nNodes < 1) {
       if (dwStyles & XFA_RESOLVENODE_CreateNode) {
         bNextCreate = TRUE;
-        if (m_pResolveProcessor->GetNodeHelper()->m_pCreateParent == NULL) {
-          m_pResolveProcessor->GetNodeHelper()->m_pCreateParent =
+        if (m_ResolveProcessor->GetNodeHelper()->m_pCreateParent == nullptr) {
+          m_ResolveProcessor->GetNodeHelper()->m_pCreateParent =
               ToNode(rndFind.m_CurNode);
-          m_pResolveProcessor->GetNodeHelper()->m_iCreateCount = 1;
+          m_ResolveProcessor->GetNodeHelper()->m_iCreateCount = 1;
         }
         FX_BOOL bCreate =
-            m_pResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
+            m_ResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
                 rndFind.m_wsName, rndFind.m_wsCondition,
                 nStart == wsExpression.GetLength(), this);
         if (bCreate) {
@@ -702,7 +680,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
   }
   if (dwStyles & (XFA_RESOLVENODE_CreateNode | XFA_RESOLVENODE_Bind |
                   XFA_RESOLVENODE_BindNew)) {
-    m_pResolveProcessor->XFA_ResolveNode_SetResultCreateNode(
+    m_ResolveProcessor->XFA_ResolveNode_SetResultCreateNode(
         resolveNodeRS, rndFind.m_wsCondition);
     if (!bNextCreate && (dwStyles & XFA_RESOLVENODE_CreateNode)) {
       resolveNodeRS.dwFlags = XFA_RESOVENODE_RSTYPE_ExistNodes;
@@ -711,36 +689,42 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
   }
   return nNodes;
 }
+
+void CXFA_ScriptContext::AddToCacheList(std::unique_ptr<CXFA_NodeList> pList) {
+  m_CacheList.push_back(std::move(pList));
+}
+
 CFXJSE_Value* CXFA_ScriptContext::GetJSValueFromMap(CXFA_Object* pObject) {
   if (!pObject)
     return nullptr;
   if (pObject->IsNode())
     RunVariablesScript(pObject->AsNode());
 
-  void* pValue = m_mapXFAToValue.GetValueAt(pObject);
-  if (!pValue) {
-    CFXJSE_Value* jsValue = new CFXJSE_Value(m_pIsolate);
-    jsValue->SetObject(pObject, m_pJsClass);
-    m_mapXFAToValue.SetAt(pObject, jsValue);
-    pValue = jsValue;
-  }
-  return static_cast<CFXJSE_Value*>(pValue);
+  auto iter = m_mapObjectToValue.find(pObject);
+  if (iter != m_mapObjectToValue.end())
+    return iter->second.get();
+
+  std::unique_ptr<CFXJSE_Value> jsValue(new CFXJSE_Value(m_pIsolate));
+  jsValue->SetObject(pObject, m_pJsClass);
+  CFXJSE_Value* pValue = jsValue.get();
+  m_mapObjectToValue.insert(std::make_pair(pObject, std::move(jsValue)));
+  return pValue;
 }
 int32_t CXFA_ScriptContext::GetIndexByName(CXFA_Node* refNode) {
-  CXFA_NodeHelper* lpNodeHelper = m_pResolveProcessor->GetNodeHelper();
+  CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
   return lpNodeHelper->XFA_GetIndex(refNode, XFA_LOGIC_Transparent,
                                     lpNodeHelper->XFA_NodeIsProperty(refNode),
                                     FALSE);
 }
 int32_t CXFA_ScriptContext::GetIndexByClassName(CXFA_Node* refNode) {
-  CXFA_NodeHelper* lpNodeHelper = m_pResolveProcessor->GetNodeHelper();
+  CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
   return lpNodeHelper->XFA_GetIndex(refNode, XFA_LOGIC_Transparent,
                                     lpNodeHelper->XFA_NodeIsProperty(refNode),
                                     TRUE);
 }
 void CXFA_ScriptContext::GetSomExpression(CXFA_Node* refNode,
                                           CFX_WideString& wsExpression) {
-  CXFA_NodeHelper* lpNodeHelper = m_pResolveProcessor->GetNodeHelper();
+  CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
   lpNodeHelper->XFA_GetNameExpression(refNode, wsExpression, TRUE,
                                       XFA_LOGIC_Transparent);
 }
@@ -748,18 +732,14 @@ void CXFA_ScriptContext::SetNodesOfRunScript(CXFA_NodeArray* pArray) {
   m_pScriptNodeArray = pArray;
 }
 void CXFA_ScriptContext::AddNodesOfRunScript(const CXFA_NodeArray& nodes) {
-  if (!m_pScriptNodeArray) {
+  if (!m_pScriptNodeArray)
     return;
-  }
-  if (nodes.GetSize() > 0) {
+  if (nodes.GetSize() > 0)
     m_pScriptNodeArray->Copy(nodes);
-  }
 }
 void CXFA_ScriptContext::AddNodesOfRunScript(CXFA_Node* pNode) {
-  if (!m_pScriptNodeArray) {
+  if (!m_pScriptNodeArray)
     return;
-  }
-  if (m_pScriptNodeArray->Find(pNode) == -1) {
+  if (m_pScriptNodeArray->Find(pNode) == -1)
     m_pScriptNodeArray->Add(pNode);
-  }
 }

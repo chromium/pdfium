@@ -8,6 +8,8 @@
 #define XFA_FXFA_PARSER_XFA_SCRIPT_IMP_H_
 
 #include <map>
+#include <memory>
+#include <vector>
 
 #include "fxjse/include/cfxjse_arguments.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jscontext.h"
@@ -37,7 +39,7 @@ class CXFA_ScriptContext {
                          uint32_t dwStyles = XFA_RESOLVENODE_Children,
                          CXFA_Node* bindNode = NULL);
   CFXJSE_Value* GetJSValueFromMap(CXFA_Object* pObject);
-  void CacheList(CXFA_NodeList* pList) { m_CacheListArray.Add(pList); }
+  void AddToCacheList(std::unique_ptr<CXFA_NodeList> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
   v8::Isolate* GetRuntime() const { return m_pIsolate; }
 
@@ -87,7 +89,6 @@ class CXFA_ScriptContext {
   FX_BOOL RunVariablesScript(CXFA_Node* pScriptNode);
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject,
                                 FX_BOOL bScriptNode = FALSE);
-  void ReleaseVariablesMap();
   FX_BOOL IsStrictScopeInJavaScript();
   XFA_SCRIPTLANGTYPE GetType();
   CXFA_NodeArray& GetUpObjectArray() { return m_upObjectArray; }
@@ -103,18 +104,19 @@ class CXFA_ScriptContext {
   void RemoveBuiltInObjs(CFXJSE_Context* pContext) const;
 
   CXFA_Document* m_pDocument;
-  CFXJSE_Context* m_pJsContext;
+  std::unique_ptr<CFXJSE_Context> m_JsContext;
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pJsClass;
   XFA_SCRIPTLANGTYPE m_eScriptType;
-  CFX_MapPtrTemplate<CXFA_Object*, CFXJSE_Value*> m_mapXFAToValue;
+  std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;
   CFX_MapPtrTemplate<CXFA_Object*, CFXJSE_Context*> m_mapVariableToContext;
   CXFA_EventParam m_eventParam;
   CXFA_NodeArray m_upObjectArray;
-  CFX_ArrayTemplate<CXFA_NodeList*> m_CacheListArray;
+  // CacheList holds the NodeList items so we can clean them up when we're done.
+  std::vector<std::unique_ptr<CXFA_NodeList>> m_CacheList;
   CXFA_NodeArray* m_pScriptNodeArray;
-  CXFA_ResolveProcessor* m_pResolveProcessor;
-  CXFA_FM2JSContext* m_hFM2JSContext;
+  std::unique_ptr<CXFA_ResolveProcessor> m_ResolveProcessor;
+  std::unique_ptr<CXFA_FM2JSContext> m_FM2JSContext;
   CXFA_Object* m_pThisObject;
   uint32_t m_dwBuiltInInFlags;
   XFA_ATTRIBUTEENUM m_eRunAtType;
