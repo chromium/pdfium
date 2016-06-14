@@ -557,9 +557,10 @@ int32_t CXFA_WideTextRead::ReadString(FX_WCHAR* pStr,
                                       int32_t iMaxLength,
                                       FX_BOOL& bEOS,
                                       int32_t const* pByteSize) {
-  if (iMaxLength > m_wsBuffer.GetLength() - m_iPosition) {
-    iMaxLength = m_wsBuffer.GetLength() - m_iPosition;
-  }
+  iMaxLength = std::min(iMaxLength, m_wsBuffer.GetLength() - m_iPosition);
+  if (iMaxLength == 0)
+    return 0;
+
   FXSYS_wcsncpy(pStr, m_wsBuffer.c_str() + m_iPosition, iMaxLength);
   m_iPosition += iMaxLength;
   bEOS = IsEOF();

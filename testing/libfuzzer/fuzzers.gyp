@@ -15,6 +15,8 @@
     'include_dirs': [
       # This is implicit in GN.
       '<(DEPTH)',
+      '../../third_party/freetype/include',
+      '../../third_party/freetype/include/freetype',
     ],
     'conditions': [
       ['pdf_enable_v8==1', {
@@ -117,6 +119,17 @@
             'pdf_codec_tiff_fuzzer.cc',
             'unittest_main.cc',
             'xfa_codec_fuzzer.h',
+          ],
+        },
+        {
+          'target_name': 'pdf_css_fuzzer',
+          'type': 'executable',
+          'dependencies': [
+            '../../pdfium.gyp:pdfium',
+          ],
+          'sources': [
+            'pdf_css_fuzzer.cc',
+            'unittest_main.cc',
           ],
         },
       ],

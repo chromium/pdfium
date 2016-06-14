@@ -5,6 +5,8 @@
 import("../../pdfium.gni")
 
 config("libfuzzer_config") {
+  configs = [ "//third_party/pdfium:pdfium_core_config" ]
+
   defines = [
     "PNG_PREFIX",
     "PNG_USE_READ_MACROS",
@@ -112,6 +114,20 @@ if (pdf_enable_xfa) {
     sources = [
       "pdf_codec_tiff_fuzzer.cc",
       "xfa_codec_fuzzer.h",
+    ]
+    deps = [
+      "//third_party/pdfium:pdfium",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
+  source_set("pdf_css_fuzzer") {
+    testonly = true
+    sources = [
+      "pdf_css_fuzzer.cc",
     ]
     deps = [
       "//third_party/pdfium:pdfium",

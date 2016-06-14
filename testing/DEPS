@@ -6,6 +6,8 @@ include_rules = [
   '+fpdfsdk/jsapi/include',
   '+public',
   '+v8',
+  '+xfa/fde',
+  '+xfa/fgas',
   '+xfa/fxfa/parser',
   '+xfa/fxfa/fm2js',
 ]
