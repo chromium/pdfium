@@ -99,6 +99,19 @@ class CPDF_TextPage {
                            FX_BOOL bContains = FALSE);
 
  private:
+  enum class TextOrientation {
+    Unknown,
+    Horizontal,
+    Vertical,
+  };
+
+  enum class GenerateCharacter {
+    None,
+    Space,
+    LineBreak,
+    Hyphen,
+  };
+
   FX_BOOL IsHyphen(FX_WCHAR curChar);
   bool IsControlChar(const PAGECHAR_INFO& charInfo);
   void ProcessObject();
@@ -109,8 +122,8 @@ class CPDF_TextPage {
                          const CFX_Matrix& formMatrix,
                          const CPDF_PageObjectList* pObjList,
                          CPDF_PageObjectList::const_iterator ObjPos);
-  int ProcessInsertObject(const CPDF_TextObject* pObj,
-                          const CFX_Matrix& formMatrix);
+  GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
+                                        const CFX_Matrix& formMatrix);
   FX_BOOL GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
   FX_BOOL IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                                 const CPDF_PageObjectList* pObjList,
@@ -122,11 +135,13 @@ class CPDF_TextPage {
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void CheckMarkedContentObject(int32_t& start, int32_t& nCount) const;
-  void FindPreviousTextObject(void);
+  void FindPreviousTextObject();
   void AddCharInfoByLRDirection(FX_WCHAR wChar, PAGECHAR_INFO info);
   void AddCharInfoByRLDirection(FX_WCHAR wChar, PAGECHAR_INFO info);
-  int32_t GetTextObjectWritingMode(const CPDF_TextObject* pTextObj);
-  int32_t FindTextlineFlowDirection();
+  TextOrientation GetTextObjectWritingMode(
+      const CPDF_TextObject* pTextObj) const;
+  TextOrientation FindTextlineFlowOrientation() const;
+  void AppendGeneratedCharacter(FX_WCHAR unicode, const CFX_Matrix& formMatrix);
 
   void SwapTempTextBuf(int32_t iCharListStartAppend, int32_t iBufStartAppend);
   FX_BOOL IsRightToLeft(const CPDF_TextObject* pTextObj,
@@ -147,7 +162,7 @@ class CPDF_TextPage {
   CFX_ArrayTemplate<FPDF_SEGMENT> m_Segments;
   std::vector<CFX_FloatRect> m_SelRects;
   CFX_ArrayTemplate<PDFTEXT_Obj> m_LineObj;
-  int32_t m_TextlineDir;
+  TextOrientation m_TextlineDir;
   CFX_FloatRect m_CurlineRect;
 };
 
