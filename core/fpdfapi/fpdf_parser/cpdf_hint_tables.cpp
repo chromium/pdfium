@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_data_avail.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
@@ -362,24 +362,24 @@ FX_BOOL CPDF_HintTables::GetPagePos(int index,
   return TRUE;
 }
 
-IPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
+CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
     int index,
-    IPDF_DataAvail::DownloadHints* pHints) {
+    CPDF_DataAvail::DownloadHints* pHints) {
   if (!m_pLinearizedDict || !pHints)
-    return IPDF_DataAvail::DataError;
+    return CPDF_DataAvail::DataError;
 
   CPDF_Object* pFirstAvailPage = m_pLinearizedDict->GetDirectObjectBy("P");
   int nFirstAvailPage = pFirstAvailPage ? pFirstAvailPage->GetInteger() : 0;
   if (index == nFirstAvailPage)
-    return IPDF_DataAvail::DataAvailable;
+    return CPDF_DataAvail::DataAvailable;
 
   uint32_t dwLength = GetItemLength(index, m_szPageOffsetArray);
   // If two pages have the same offset, it should be treated as an error.
   if (!dwLength)
-    return IPDF_DataAvail::DataError;
+    return CPDF_DataAvail::DataError;
 
   if (!m_pDataAvail->IsDataAvail(m_szPageOffsetArray[index], dwLength, pHints))
-    return IPDF_DataAvail::DataNotAvailable;
+    return CPDF_DataAvail::DataNotAvailable;
 
   // Download data of shared objects in the page.
   uint32_t offset = 0;
@@ -389,14 +389,14 @@ IPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
   CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetDirectObjectBy("O");
   int nFirstPageObjNum = pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
   if (nFirstPageObjNum < 0)
-    return IPDF_DataAvail::DataError;
+    return CPDF_DataAvail::DataError;
 
   uint32_t dwIndex = 0;
   uint32_t dwObjNum = 0;
   for (uint32_t j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
     dwIndex = m_dwIdentifierArray[offset + j];
     if (dwIndex >= static_cast<uint32_t>(m_dwSharedObjNumArray.GetSize()))
-      return IPDF_DataAvail::DataNotAvailable;
+      return CPDF_DataAvail::DataNotAvailable;
 
     dwObjNum = m_dwSharedObjNumArray[dwIndex];
     if (dwObjNum >= static_cast<uint32_t>(nFirstPageObjNum) &&
@@ -408,14 +408,14 @@ IPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
     dwLength = GetItemLength(dwIndex, m_szSharedObjOffsetArray);
     // If two objects have the same offset, it should be treated as an error.
     if (!dwLength)
-      return IPDF_DataAvail::DataError;
+      return CPDF_DataAvail::DataError;
 
     if (!m_pDataAvail->IsDataAvail(m_szSharedObjOffsetArray[dwIndex], dwLength,
                                    pHints)) {
-      return IPDF_DataAvail::DataNotAvailable;
+      return CPDF_DataAvail::DataNotAvailable;
     }
   }
-  return IPDF_DataAvail::DataAvailable;
+  return CPDF_DataAvail::DataAvailable;
 }
 
 FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {

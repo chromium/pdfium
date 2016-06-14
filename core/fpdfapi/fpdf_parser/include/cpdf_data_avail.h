@@ -4,16 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_DATA_AVAIL_H_
-#define CORE_FPDFAPI_FPDF_PARSER_CPDF_DATA_AVAIL_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DATA_AVAIL_H_
+#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DATA_AVAIL_H_
 
-#include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
-#include "core/fpdfapi/fpdf_parser/include/ipdf_data_avail.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Dictionary;
+class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
 class CPDF_Parser;
 
@@ -49,22 +48,61 @@ enum PDF_PAGENODE_TYPE {
   PDF_PAGENODE_ARRAY,
 };
 
-class CPDF_DataAvail final : public IPDF_DataAvail {
+class CPDF_DataAvail final {
  public:
+  // Must match PDF_DATA_* definitions in public/fpdf_dataavail.h, but cannot
+  // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
+  // to make sure the two sets of values match.
+  enum DocAvailStatus {
+    DataError = -1,        // PDF_DATA_ERROR
+    DataNotAvailable = 0,  // PDF_DATA_NOTAVAIL
+    DataAvailable = 1,     // PDF_DATA_AVAIL
+  };
+
+  // Must match PDF_*LINEAR* definitions in public/fpdf_dataavail.h, but cannot
+  // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
+  // to make sure the two sets of values match.
+  enum DocLinearizationStatus {
+    LinearizationUnknown = -1,  // PDF_LINEARIZATION_UNKNOWN
+    NotLinearized = 0,          // PDF_NOT_LINEARIZED
+    Linearized = 1,             // PDF_LINEARIZED
+  };
+
+  // Must match PDF_FORM_* definitions in public/fpdf_dataavail.h, but cannot
+  // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
+  // to make sure the two sets of values match.
+  enum DocFormStatus {
+    FormError = -1,        // PDF_FORM_ERROR
+    FormNotAvailable = 0,  // PDF_FORM_NOTAVAIL
+    FormAvailable = 1,     // PDF_FORM_AVAIL
+    FormNotExist = 2,      // PDF_FORM_NOTEXIST
+  };
+
+  class FileAvail {
+   public:
+    virtual ~FileAvail();
+    virtual FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size) = 0;
+  };
+
+  class DownloadHints {
+   public:
+    virtual ~DownloadHints();
+    virtual void AddSegment(FX_FILESIZE offset, uint32_t size) = 0;
+  };
+
   CPDF_DataAvail(FileAvail* pFileAvail,
                  IFX_FileRead* pFileRead,
                  FX_BOOL bSupportHintTable);
-  ~CPDF_DataAvail() override;
+  ~CPDF_DataAvail();
 
-  // IPDF_DataAvail
-  DocAvailStatus IsDocAvail(DownloadHints* pHints) override;
-  void SetDocument(CPDF_Document* pDoc) override;
-  DocAvailStatus IsPageAvail(int iPage, DownloadHints* pHints) override;
-  DocFormStatus IsFormAvail(DownloadHints* pHints) override;
-  DocLinearizationStatus IsLinearizedPDF() override;
-  FX_BOOL IsLinearized() override;
-  void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, uint32_t* pSize) override;
-
+  DocAvailStatus IsDocAvail(DownloadHints* pHints);
+  void SetDocument(CPDF_Document* pDoc);
+  DocAvailStatus IsPageAvail(int iPage, DownloadHints* pHints);
+  DocFormStatus IsFormAvail(DownloadHints* pHints);
+  DocLinearizationStatus IsLinearizedPDF();
+  FX_BOOL IsLinearized();
+  void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, uint32_t* pSize);
+  IFX_FileRead* GetFileRead() const { return m_pFileRead; }
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
 
@@ -88,30 +126,29 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   uint32_t GetObjectSize(uint32_t objnum, FX_FILESIZE& offset);
   FX_BOOL IsObjectsAvail(CFX_ArrayTemplate<CPDF_Object*>& obj_array,
                          FX_BOOL bParsePage,
-                         IPDF_DataAvail::DownloadHints* pHints,
+                         DownloadHints* pHints,
                          CFX_ArrayTemplate<CPDF_Object*>& ret_array);
-  FX_BOOL CheckDocStatus(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckHeader(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckFirstPage(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckHintTables(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckEnd(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckCrossRef(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckCrossRefItem(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckTrailer(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckRoot(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckInfo(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckPages(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckPage(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckResources(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckAnnots(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckAcroForm(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckAcroFormSubObject(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckTrailerAppend(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckPageStatus(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckAllCrossRefStream(IPDF_DataAvail::DownloadHints* pHints);
+  FX_BOOL CheckDocStatus(DownloadHints* pHints);
+  FX_BOOL CheckHeader(DownloadHints* pHints);
+  FX_BOOL CheckFirstPage(DownloadHints* pHints);
+  FX_BOOL CheckHintTables(DownloadHints* pHints);
+  FX_BOOL CheckEnd(DownloadHints* pHints);
+  FX_BOOL CheckCrossRef(DownloadHints* pHints);
+  FX_BOOL CheckCrossRefItem(DownloadHints* pHints);
+  FX_BOOL CheckTrailer(DownloadHints* pHints);
+  FX_BOOL CheckRoot(DownloadHints* pHints);
+  FX_BOOL CheckInfo(DownloadHints* pHints);
+  FX_BOOL CheckPages(DownloadHints* pHints);
+  FX_BOOL CheckPage(DownloadHints* pHints);
+  FX_BOOL CheckResources(DownloadHints* pHints);
+  FX_BOOL CheckAnnots(DownloadHints* pHints);
+  FX_BOOL CheckAcroForm(DownloadHints* pHints);
+  FX_BOOL CheckAcroFormSubObject(DownloadHints* pHints);
+  FX_BOOL CheckTrailerAppend(DownloadHints* pHints);
+  FX_BOOL CheckPageStatus(DownloadHints* pHints);
+  FX_BOOL CheckAllCrossRefStream(DownloadHints* pHints);
 
-  int32_t CheckCrossRefStream(IPDF_DataAvail::DownloadHints* pHints,
-                              FX_FILESIZE& xref_offset);
+  int32_t CheckCrossRefStream(DownloadHints* pHints, FX_FILESIZE& xref_offset);
   FX_BOOL IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
   void SetStartOffset(FX_FILESIZE dwOffset);
   FX_BOOL GetNextToken(CFX_ByteString& token);
@@ -121,41 +158,39 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
       uint32_t objnum,
       CPDF_IndirectObjectHolder* pObjList = nullptr);
   CPDF_Object* GetObject(uint32_t objnum,
-                         IPDF_DataAvail::DownloadHints* pHints,
+                         DownloadHints* pHints,
                          FX_BOOL* pExistInFile);
   FX_BOOL GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
   FX_BOOL PreparePageItem();
-  FX_BOOL LoadPages(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL LoadAllXref(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL LoadAllFile(IPDF_DataAvail::DownloadHints* pHints);
-  DocAvailStatus CheckLinearizedData(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckPageAnnots(int iPage, IPDF_DataAvail::DownloadHints* pHints);
+  FX_BOOL LoadPages(DownloadHints* pHints);
+  FX_BOOL LoadAllXref(DownloadHints* pHints);
+  FX_BOOL LoadAllFile(DownloadHints* pHints);
+  DocAvailStatus CheckLinearizedData(DownloadHints* pHints);
+  FX_BOOL CheckPageAnnots(int iPage, DownloadHints* pHints);
 
-  DocAvailStatus CheckLinearizedFirstPage(
-      int iPage,
-      IPDF_DataAvail::DownloadHints* pHints);
+  DocAvailStatus CheckLinearizedFirstPage(int iPage, DownloadHints* pHints);
   FX_BOOL HaveResourceAncestor(CPDF_Dictionary* pDict);
-  FX_BOOL CheckPage(int32_t iPage, IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL LoadDocPages(IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL LoadDocPage(int32_t iPage, IPDF_DataAvail::DownloadHints* pHints);
+  FX_BOOL CheckPage(int32_t iPage, DownloadHints* pHints);
+  FX_BOOL LoadDocPages(DownloadHints* pHints);
+  FX_BOOL LoadDocPage(int32_t iPage, DownloadHints* pHints);
   FX_BOOL CheckPageNode(PageNode& pageNodes,
                         int32_t iPage,
                         int32_t& iCount,
-                        IPDF_DataAvail::DownloadHints* pHints,
+                        DownloadHints* pHints,
                         int level);
   FX_BOOL CheckUnkownPageNode(uint32_t dwPageNo,
                               PageNode* pPageNode,
-                              IPDF_DataAvail::DownloadHints* pHints);
+                              DownloadHints* pHints);
   FX_BOOL CheckArrayPageNode(uint32_t dwPageNo,
                              PageNode* pPageNode,
-                             IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckPageCount(IPDF_DataAvail::DownloadHints* pHints);
+                             DownloadHints* pHints);
+  FX_BOOL CheckPageCount(DownloadHints* pHints);
   bool IsFirstCheck(int iPage);
   void ResetFirstCheck(int iPage);
-  FX_BOOL IsDataAvail(FX_FILESIZE offset,
-                      uint32_t size,
-                      IPDF_DataAvail::DownloadHints* pHints);
+  FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
 
+  FileAvail* const m_pFileAvail;
+  IFX_FileRead* const m_pFileRead;
   CPDF_Parser m_parser;
   CPDF_SyntaxParser m_syntaxParser;
   CPDF_Object* m_pRoot;
@@ -214,4 +249,4 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_BOOL m_bSupportHintTable;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_DATA_AVAIL_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DATA_AVAIL_H_

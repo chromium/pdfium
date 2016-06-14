@@ -9,12 +9,11 @@
 
 #include <vector>
 
-#include "core/fpdfapi/fpdf_parser/include/ipdf_data_avail.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_stream.h"
 
 class CFX_BitStream;
-class CPDF_DataAvail;
 class CPDF_Dictionary;
 class CPDF_Stream;
 
@@ -28,9 +27,9 @@ class CPDF_HintTables {
                      FX_FILESIZE& szPageLength,
                      uint32_t& dwObjNum);
 
-  IPDF_DataAvail::DocAvailStatus CheckPage(
+  CPDF_DataAvail::DocAvailStatus CheckPage(
       int index,
-      IPDF_DataAvail::DownloadHints* pHints);
+      CPDF_DataAvail::DownloadHints* pHints);
 
   FX_BOOL LoadHintStream(CPDF_Stream* pHintStream);
 

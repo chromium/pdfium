@@ -6,43 +6,45 @@
 
 #include "public/fpdf_dataavail.h"
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/include/ipdf_data_avail.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
-static_assert(IPDF_DataAvail::DataError == PDF_DATA_ERROR,
-              "IPDF_DataAvail::DataError value mismatch");
-static_assert(IPDF_DataAvail::DataNotAvailable == PDF_DATA_NOTAVAIL,
-              "IPDF_DataAvail::DataNotAvailable value mismatch");
-static_assert(IPDF_DataAvail::DataAvailable == PDF_DATA_AVAIL,
-              "IPDF_DataAvail::DataAvailable value mismatch");
+static_assert(CPDF_DataAvail::DataError == PDF_DATA_ERROR,
+              "CPDF_DataAvail::DataError value mismatch");
+static_assert(CPDF_DataAvail::DataNotAvailable == PDF_DATA_NOTAVAIL,
+              "CPDF_DataAvail::DataNotAvailable value mismatch");
+static_assert(CPDF_DataAvail::DataAvailable == PDF_DATA_AVAIL,
+              "CPDF_DataAvail::DataAvailable value mismatch");
 
-static_assert(IPDF_DataAvail::LinearizationUnknown == PDF_LINEARIZATION_UNKNOWN,
-              "IPDF_DataAvail::LinearizationUnknown value mismatch");
-static_assert(IPDF_DataAvail::NotLinearized == PDF_NOT_LINEARIZED,
-              "IPDF_DataAvail::NotLinearized value mismatch");
-static_assert(IPDF_DataAvail::Linearized == PDF_LINEARIZED,
-              "IPDF_DataAvail::Linearized value mismatch");
+static_assert(CPDF_DataAvail::LinearizationUnknown == PDF_LINEARIZATION_UNKNOWN,
+              "CPDF_DataAvail::LinearizationUnknown value mismatch");
+static_assert(CPDF_DataAvail::NotLinearized == PDF_NOT_LINEARIZED,
+              "CPDF_DataAvail::NotLinearized value mismatch");
+static_assert(CPDF_DataAvail::Linearized == PDF_LINEARIZED,
+              "CPDF_DataAvail::Linearized value mismatch");
 
-static_assert(IPDF_DataAvail::FormError == PDF_FORM_ERROR,
-              "IPDF_DataAvail::FormError value mismatch");
-static_assert(IPDF_DataAvail::FormNotAvailable == PDF_FORM_NOTAVAIL,
-              "IPDF_DataAvail::FormNotAvailable value mismatch");
-static_assert(IPDF_DataAvail::FormAvailable == PDF_FORM_AVAIL,
-              "IPDF_DataAvail::FormAvailable value mismatch");
-static_assert(IPDF_DataAvail::FormNotExist == PDF_FORM_NOTEXIST,
-              "IPDF_DataAvail::FormNotExist value mismatch");
+static_assert(CPDF_DataAvail::FormError == PDF_FORM_ERROR,
+              "CPDF_DataAvail::FormError value mismatch");
+static_assert(CPDF_DataAvail::FormNotAvailable == PDF_FORM_NOTAVAIL,
+              "CPDF_DataAvail::FormNotAvailable value mismatch");
+static_assert(CPDF_DataAvail::FormAvailable == PDF_FORM_AVAIL,
+              "CPDF_DataAvail::FormAvailable value mismatch");
+static_assert(CPDF_DataAvail::FormNotExist == PDF_FORM_NOTEXIST,
+              "CPDF_DataAvail::FormNotExist value mismatch");
 
-class CFPDF_FileAvailWrap : public IPDF_DataAvail::FileAvail {
+namespace {
+
+class CFPDF_FileAvailWrap : public CPDF_DataAvail::FileAvail {
  public:
   CFPDF_FileAvailWrap() { m_pfileAvail = nullptr; }
   ~CFPDF_FileAvailWrap() override {}
 
   void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
 
-  // IPDF_DataAvail::FileAvail:
+  // CPDF_DataAvail::FileAvail:
   FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size) override {
     return m_pfileAvail->IsDataAvail(m_pfileAvail, offset, size);
   }
@@ -72,7 +74,7 @@ class CFPDF_FileAccessWrap : public IFX_FileRead {
   FPDF_FILEACCESS* m_pFileAccess;
 };
 
-class CFPDF_DownloadHintsWrap : public IPDF_DataAvail::DownloadHints {
+class CFPDF_DownloadHintsWrap : public CPDF_DataAvail::DownloadHints {
  public:
   explicit CFPDF_DownloadHintsWrap(FX_DOWNLOADHINTS* pDownloadHints) {
     m_pDownloadHints = pDownloadHints;
@@ -91,22 +93,27 @@ class CFPDF_DownloadHintsWrap : public IPDF_DataAvail::DownloadHints {
 
 class CFPDF_DataAvail {
  public:
-  CFPDF_DataAvail() { m_pDataAvail = nullptr; }
+  CFPDF_DataAvail() {}
+  ~CFPDF_DataAvail() {}
 
-  ~CFPDF_DataAvail() { delete m_pDataAvail; }
-
-  IPDF_DataAvail* m_pDataAvail;
+  std::unique_ptr<CPDF_DataAvail> m_pDataAvail;
   CFPDF_FileAvailWrap m_FileAvail;
   CFPDF_FileAccessWrap m_FileRead;
 };
+
+CFPDF_DataAvail* CFPDFDataAvailFromFPDFAvail(FPDF_AVAIL avail) {
+  return static_cast<CFPDF_DataAvail*>(avail);
+}
+
+}  // namespace
 
 DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                               FPDF_FILEACCESS* file) {
   CFPDF_DataAvail* pAvail = new CFPDF_DataAvail;
   pAvail->m_FileAvail.Set(file_avail);
   pAvail->m_FileRead.Set(file);
-  pAvail->m_pDataAvail =
-      IPDF_DataAvail::Create(&pAvail->m_FileAvail, &pAvail->m_FileRead);
+  pAvail->m_pDataAvail.reset(
+      new CPDF_DataAvail(&pAvail->m_FileAvail, &pAvail->m_FileRead, TRUE));
   return pAvail;
 }
 
@@ -119,7 +126,8 @@ DLLEXPORT int STDCALL FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
   if (!avail || !hints)
     return PDF_DATA_ERROR;
   CFPDF_DownloadHintsWrap hints_wrap(hints);
-  return ((CFPDF_DataAvail*)avail)->m_pDataAvail->IsDocAvail(&hints_wrap);
+  return CFPDFDataAvailFromFPDFAvail(avail)->m_pDataAvail->IsDocAvail(
+      &hints_wrap);
 }
 
 DLLEXPORT FPDF_DOCUMENT STDCALL
@@ -153,8 +161,8 @@ DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
   if (!avail || !hints)
     return PDF_DATA_ERROR;
   CFPDF_DownloadHintsWrap hints_wrap(hints);
-  return ((CFPDF_DataAvail*)avail)
-      ->m_pDataAvail->IsPageAvail(page_index, &hints_wrap);
+  return CFPDFDataAvailFromFPDFAvail(avail)->m_pDataAvail->IsPageAvail(
+      page_index, &hints_wrap);
 }
 
 DLLEXPORT int STDCALL FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
@@ -162,11 +170,12 @@ DLLEXPORT int STDCALL FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
   if (!avail || !hints)
     return PDF_FORM_ERROR;
   CFPDF_DownloadHintsWrap hints_wrap(hints);
-  return ((CFPDF_DataAvail*)avail)->m_pDataAvail->IsFormAvail(&hints_wrap);
+  return CFPDFDataAvailFromFPDFAvail(avail)->m_pDataAvail->IsFormAvail(
+      &hints_wrap);
 }
 
 DLLEXPORT int STDCALL FPDFAvail_IsLinearized(FPDF_AVAIL avail) {
   if (!avail)
     return PDF_LINEARIZATION_UNKNOWN;
-  return ((CFPDF_DataAvail*)avail)->m_pDataAvail->IsLinearizedPDF();
+  return CFPDFDataAvailFromFPDFAvail(avail)->m_pDataAvail->IsLinearizedPDF();
 }
