@@ -19,7 +19,8 @@
 class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
  public:
   CBC_HighLevelEncoder();
-  virtual ~CBC_HighLevelEncoder();
+  ~CBC_HighLevelEncoder() override;
+
   CFX_ByteArray& getBytesForMessage(CFX_WideString msg);
   static CFX_WideString encodeHighLevel(CFX_WideString msg,
                                         CFX_WideString ecLevel,

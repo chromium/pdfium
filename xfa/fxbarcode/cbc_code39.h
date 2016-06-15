@@ -32,7 +32,7 @@ class CBC_Code39 : public CBC_OneCode {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_CODE39; }
+  BC_TYPE GetType() override;
 
   FX_BOOL SetTextLocation(BC_TEXT_LOC location);
   FX_BOOL SetWideNarrowRatio(int32_t ratio);

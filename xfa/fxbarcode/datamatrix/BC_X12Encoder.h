@@ -12,13 +12,15 @@ class CBC_X12Encoder;
 class CBC_X12Encoder : public CBC_C40Encoder {
  public:
   CBC_X12Encoder();
-  virtual ~CBC_X12Encoder();
-  int32_t getEncodingMode();
-  void Encode(CBC_EncoderContext& context, int32_t& e);
+  ~CBC_X12Encoder() override;
+
+  // CBC_C40Encoder
+  int32_t getEncodingMode() override;
+  void Encode(CBC_EncoderContext& context, int32_t& e) override;
   void handleEOD(CBC_EncoderContext& context,
                  CFX_WideString& buffer,
-                 int32_t& e);
-  int32_t encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e);
+                 int32_t& e) override;
+  int32_t encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e) override;
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_X12ENCODER_H_

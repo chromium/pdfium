@@ -54,6 +54,10 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   }
 }
 
+int32_t CBC_TwoDimWriter::GetErrorCorrectionLevel() {
+  return m_iCorrectLevel;
+}
+
 void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
                                           int32_t& e) {
   if (m_bFixedSize) {

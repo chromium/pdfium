@@ -13,7 +13,8 @@
 class CBC_CommonBitSource {
  public:
   CBC_CommonBitSource(CFX_ByteArray* bytes);
-  virtual ~CBC_CommonBitSource();
+  ~CBC_CommonBitSource();
+
   int32_t ReadBits(int32_t numBits, int32_t& e);
   int32_t Available();
   int32_t getByteOffset();

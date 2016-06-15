@@ -15,6 +15,7 @@ class CBC_PDF417ErrorCorrection {
  public:
   CBC_PDF417ErrorCorrection();
   virtual ~CBC_PDF417ErrorCorrection();
+
   static int32_t getErrorCorrectionCodewordCount(int32_t errorCorrectionLevel,
                                                  int32_t& e);
   static int32_t getRecommendedMinimumErrorCorrectionLevel(int32_t n,

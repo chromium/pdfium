@@ -16,6 +16,7 @@ class CBC_DataMatrixBitMatrixParser {
  public:
   CBC_DataMatrixBitMatrixParser();
   virtual ~CBC_DataMatrixBitMatrixParser();
+
   CBC_DataMatrixVersion* GetVersion();
   CFX_ByteArray* ReadCodewords(int32_t& e);
   FX_BOOL ReadModule(int32_t row,

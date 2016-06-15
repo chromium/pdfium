@@ -105,6 +105,12 @@ uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
   return ret;
 }
 
+uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
+                                    int32_t& outLength,
+                                    int32_t& e) {
+  return nullptr;
+}
+
 void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
                                    CFX_DIBitmap* pOutBitmap,
                                    CFX_RenderDevice* device,

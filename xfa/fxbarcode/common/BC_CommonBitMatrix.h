@@ -15,6 +15,10 @@ class CBC_CommonBitMatrix {
  public:
   CBC_CommonBitMatrix();
   virtual ~CBC_CommonBitMatrix();
+
+  virtual void Init(int32_t dimension);
+  virtual void Init(int32_t width, int32_t height);
+
   FX_BOOL Get(int32_t x, int32_t y);
   void Set(int32_t x, int32_t y);
   void Flip(int32_t x, int32_t y);
@@ -32,8 +36,6 @@ class CBC_CommonBitMatrix {
   int32_t GetHeight();
   int32_t GetRowSize();
   int32_t GetDimension(int32_t& e);
-  virtual void Init(int32_t dimension);
-  virtual void Init(int32_t width, int32_t height);
   int32_t* GetBits();
 
  private:

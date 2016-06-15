@@ -6,12 +6,15 @@
 
 #ifndef XFA_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_
 #define XFA_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_
+
 class CBC_CommonDecoderResult;
 class CBC_CommonBitSource;
+
 class CBC_DataMatrixDecodedBitStreamParser {
  public:
   CBC_DataMatrixDecodedBitStreamParser();
   virtual ~CBC_DataMatrixDecodedBitStreamParser();
+
   static CBC_CommonDecoderResult* Decode(CFX_ByteArray& bytes, int32_t& e);
 
  private:

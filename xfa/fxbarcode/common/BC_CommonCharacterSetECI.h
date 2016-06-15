@@ -13,10 +13,10 @@
 class CBC_CommonCharacterSetECI : public CBC_CommonECI {
  public:
   CBC_CommonCharacterSetECI(int32_t value, CFX_ByteString encodingName);
-  virtual ~CBC_CommonCharacterSetECI();
+  ~CBC_CommonCharacterSetECI() override;
+
   CFX_ByteString GetEncodingName();
   static void AddCharacterSet(int32_t value, CFX_ByteString encodingName);
-  int32_t GetValue();
   static CBC_CommonCharacterSetECI* GetCharacterSetECIByValue(int32_t value);
   static CBC_CommonCharacterSetECI* GetCharacterSetECIByName(
       const CFX_ByteString& name);

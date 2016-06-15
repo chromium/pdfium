@@ -14,12 +14,16 @@
 class CBC_PDF417Writer : public CBC_TwoDimWriter {
  public:
   CBC_PDF417Writer();
-  virtual ~CBC_PDF417Writer();
+  ~CBC_PDF417Writer() override;
+
   uint8_t* Encode(const CFX_WideString& contents,
                   int32_t& outWidth,
                   int32_t& outHeight,
                   int32_t& e);
-  FX_BOOL SetErrorCorrectionLevel(int32_t level);
+
+  // CBC_TwoDimWriter
+  FX_BOOL SetErrorCorrectionLevel(int32_t level) override;
+
   void SetTruncated(FX_BOOL truncated);
 
  private:

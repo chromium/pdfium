@@ -15,6 +15,7 @@ class CBC_DecoderResult {
                     CFX_ByteString text,
                     CFX_ByteString ecLevel);
   virtual ~CBC_DecoderResult();
+
   CFX_ByteArray* getRawBytes();
   CFX_ByteString getText();
   CFX_ByteString getECLevel();

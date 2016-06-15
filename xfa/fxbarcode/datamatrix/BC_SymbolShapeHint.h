@@ -11,6 +11,7 @@ class CBC_SymbolShapeHint {
  public:
   CBC_SymbolShapeHint();
   virtual ~CBC_SymbolShapeHint();
+
   enum SymbolShapeHint {
     FORCE_NONE,
     FORCE_SQUARE,

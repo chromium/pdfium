@@ -18,24 +18,22 @@ class CFX_RenderDevice;
 class CBC_OneDimWriter : public CBC_Writer {
  public:
   CBC_OneDimWriter();
-  virtual ~CBC_OneDimWriter();
+  ~CBC_OneDimWriter() override;
 
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t& e);
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t hints,
-                  int32_t& e);
+  virtual uint8_t* Encode(const CFX_ByteString& contents,
+                          BCFORMAT format,
+                          int32_t& outWidth,
+                          int32_t& outHeight,
+                          int32_t& e);
+  virtual uint8_t* Encode(const CFX_ByteString& contents,
+                          BCFORMAT format,
+                          int32_t& outWidth,
+                          int32_t& outHeight,
+                          int32_t hints,
+                          int32_t& e);
   virtual uint8_t* Encode(const CFX_ByteString& contents,
                           int32_t& outLength,
-                          int32_t& e) {
-    return nullptr;
-  }
+                          int32_t& e);
 
   virtual void RenderResult(const CFX_WideStringC& contents,
                             uint8_t* code,
@@ -49,30 +47,24 @@ class CBC_OneDimWriter : public CBC_Writer {
                                   const CFX_Matrix* matrix,
                                   const CFX_WideStringC& contents,
                                   int32_t& e);
-  virtual FX_BOOL CheckContentValidity(const CFX_WideStringC& contents) {
-    return TRUE;
-  }
-  virtual CFX_WideString FilterContents(const CFX_WideStringC& contents) {
-    return CFX_WideString();
-  }
-  virtual CFX_WideString RenderTextContents(const CFX_WideStringC& contents) {
-    return CFX_WideString();
-  }
+  virtual FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
+  virtual CFX_WideString FilterContents(const CFX_WideStringC& contents);
+  virtual CFX_WideString RenderTextContents(const CFX_WideStringC& contents);
   virtual void SetPrintChecksum(FX_BOOL checksum);
   virtual void SetDataLength(int32_t length);
   virtual void SetCalcChecksum(int32_t state);
   virtual void SetFontSize(FX_FLOAT size);
   virtual void SetFontStyle(int32_t style);
   virtual void SetFontColor(FX_ARGB color);
-  virtual FX_BOOL SetFont(CFX_Font* cFont);
+  FX_BOOL SetFont(CFX_Font* cFont);
 
  protected:
-  void CalcTextInfo(const CFX_ByteString& text,
-                    FXTEXT_CHARPOS* charPos,
-                    CFX_Font* cFont,
-                    FX_FLOAT geWidth,
-                    int32_t fontSize,
-                    FX_FLOAT& charsLen);
+  virtual void CalcTextInfo(const CFX_ByteString& text,
+                            FXTEXT_CHARPOS* charPos,
+                            CFX_Font* cFont,
+                            FX_FLOAT geWidth,
+                            int32_t fontSize,
+                            FX_FLOAT& charsLen);
   virtual void ShowChars(const CFX_WideStringC& contents,
                          CFX_DIBitmap* pOutBitmap,
                          CFX_RenderDevice* device,
@@ -95,12 +87,13 @@ class CBC_OneDimWriter : public CBC_Writer {
                                FX_FLOAT locX,
                                FX_FLOAT locY,
                                int32_t barWidth);
-  int32_t AppendPattern(uint8_t* target,
-                        int32_t pos,
-                        const int32_t* pattern,
-                        int32_t patternLength,
-                        int32_t startColor,
-                        int32_t& e);
+  virtual int32_t AppendPattern(uint8_t* target,
+                                int32_t pos,
+                                const int32_t* pattern,
+                                int32_t patternLength,
+                                int32_t startColor,
+                                int32_t& e);
+
   FX_WCHAR Upper(FX_WCHAR ch);
 
   FX_BOOL m_bPrintChecksum;

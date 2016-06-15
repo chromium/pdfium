@@ -81,6 +81,10 @@ FX_BOOL CBC_QRCode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   return TRUE;
 }
 
+BC_TYPE CBC_QRCode::GetType() {
+  return BC_QR_CODE;
+}
+
 CFX_WideString CBC_QRCode::Decode(uint8_t* buf,
                                   int32_t width,
                                   int32_t height,

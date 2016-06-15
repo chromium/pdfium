@@ -22,12 +22,13 @@ class CBC_OnedCode39Reader : public CBC_OneDReader {
   CBC_OnedCode39Reader();
   explicit CBC_OnedCode39Reader(FX_BOOL usingCheckDigit);
   CBC_OnedCode39Reader(FX_BOOL usingCheckDigit, FX_BOOL extendedMode);
-  virtual ~CBC_OnedCode39Reader();
+  ~CBC_OnedCode39Reader() override;
 
+  // CBC_OneDReader
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            int32_t hints,
-                           int32_t& e);
+                           int32_t& e) override;
 
  private:
   CFX_Int32Array* FindAsteriskPattern(CBC_CommonBitArray* row, int32_t& e);

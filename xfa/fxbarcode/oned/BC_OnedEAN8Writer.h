@@ -16,36 +16,35 @@ class CFX_DIBitmap;
 class CFX_RenderDevice;
 
 class CBC_OnedEAN8Writer : public CBC_OneDimWriter {
- private:
-  int32_t m_codeWidth;
-
  public:
   CBC_OnedEAN8Writer();
-  virtual ~CBC_OnedEAN8Writer();
+  ~CBC_OnedEAN8Writer() override;
 
+  // CBC_OneDimWriter
   uint8_t* Encode(const CFX_ByteString& contents,
                   BCFORMAT format,
                   int32_t& outWidth,
                   int32_t& outHeight,
-                  int32_t& e);
+                  int32_t& e) override;
   uint8_t* Encode(const CFX_ByteString& contents,
                   BCFORMAT format,
                   int32_t& outWidth,
                   int32_t& outHeight,
                   int32_t hints,
-                  int32_t& e);
+                  int32_t& e) override;
   uint8_t* Encode(const CFX_ByteString& contents,
                   int32_t& outLength,
-                  int32_t& e);
+                  int32_t& e) override;
 
   void RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
                     int32_t codeLength,
                     FX_BOOL isDevice,
-                    int32_t& e);
-  FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
-  CFX_WideString FilterContents(const CFX_WideStringC& contents);
-  void SetDataLength(int32_t length);
+                    int32_t& e) override;
+  FX_BOOL CheckContentValidity(const CFX_WideStringC& contents) override;
+  CFX_WideString FilterContents(const CFX_WideStringC& contents) override;
+  void SetDataLength(int32_t length) override;
+
   FX_BOOL SetTextLocation(BC_TEXT_LOC location);
   int32_t CalcChecksum(const CFX_ByteString& contents);
 
@@ -56,7 +55,10 @@ class CBC_OnedEAN8Writer : public CBC_OneDimWriter {
                  const CFX_Matrix* matrix,
                  int32_t barWidth,
                  int32_t multiple,
-                 int32_t& e);
+                 int32_t& e) override;
+
+ private:
+  int32_t m_codeWidth;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDEAN8WRITER_H_

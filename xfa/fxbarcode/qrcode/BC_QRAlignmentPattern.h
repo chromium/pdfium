@@ -15,10 +15,14 @@ class CBC_QRAlignmentPattern : public CBC_ResultPoint {
   CBC_QRAlignmentPattern(FX_FLOAT posX,
                          FX_FLOAT posY,
                          FX_FLOAT estimateModuleSize);
-  virtual ~CBC_QRAlignmentPattern();
+  ~CBC_QRAlignmentPattern() override;
+
+  // CBC_ResultPoint
+  FX_FLOAT GetX() override;
+  FX_FLOAT GetY() override;
+
   FX_BOOL AboutEquals(FX_FLOAT moduleSize, FX_FLOAT i, FX_FLOAT j);
-  FX_FLOAT GetX();
-  FX_FLOAT GetY();
+
   CBC_QRAlignmentPattern* Clone();
 };
 

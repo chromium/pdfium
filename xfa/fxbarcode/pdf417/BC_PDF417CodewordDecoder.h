@@ -13,6 +13,7 @@ class CBC_PDF417CodewordDecoder {
  public:
   CBC_PDF417CodewordDecoder();
   virtual ~CBC_PDF417CodewordDecoder();
+
   static void Initialize();
   static void Finalize();
   static int32_t getDecodedValue(CFX_Int32Array& moduleBitCount);

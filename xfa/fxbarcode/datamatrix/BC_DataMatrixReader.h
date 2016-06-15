@@ -15,9 +15,13 @@ class CBC_DataMatrixDecoder;
 class CBC_DataMatrixReader : public CBC_Reader {
  public:
   CBC_DataMatrixReader();
-  virtual ~CBC_DataMatrixReader();
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int hints, int32_t& e);
+  ~CBC_DataMatrixReader() override;
+
+  // CBC_Reader
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e) override;
+  CFX_ByteString Decode(CBC_BinaryBitmap* image,
+                        int hints,
+                        int32_t& e) override;
 
   virtual void Init();
 

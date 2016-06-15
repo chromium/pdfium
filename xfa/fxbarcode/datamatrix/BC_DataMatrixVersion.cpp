@@ -170,3 +170,22 @@ CBC_DataMatrixVersion* CBC_DataMatrixVersion::GetVersionForDimensions(
   e = BCExceptionNotFound;
   return nullptr;
 }
+
+ECB::ECB(int32_t count, int32_t dataCodewords)
+    : m_count(count), m_dataCodewords(dataCodewords) {}
+
+ECBlocks::ECBlocks(int32_t ecCodewords, ECB* ecBlocks)
+    : m_ecCodewords(ecCodewords) {
+  m_ecBlocksArray.Add(ecBlocks);
+}
+
+ECBlocks::ECBlocks(int32_t ecCodewords, ECB* ecBlocks1, ECB* ecBlocks2)
+    : m_ecCodewords(ecCodewords) {
+  m_ecBlocksArray.Add(ecBlocks1);
+  m_ecBlocksArray.Add(ecBlocks2);
+}
+
+ECBlocks::~ECBlocks() {
+  for (int32_t i = 0; i < m_ecBlocksArray.GetSize(); i++)
+    delete m_ecBlocksArray[i];
+}

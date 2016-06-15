@@ -16,15 +16,10 @@ class CBC_OnedUPCAReader;
 
 class CBC_OnedEAN13Reader : public CBC_OneDimReader {
  public:
-  static const int32_t FIRST_DIGIT_ENCODINGS[10];
-
   CBC_OnedEAN13Reader();
-  virtual ~CBC_OnedEAN13Reader();
+  ~CBC_OnedEAN13Reader() override;
 
- private:
-  void DetermineFirstDigit(CFX_ByteString& result,
-                           int32_t lgPatternFound,
-                           int32_t& e);
+  static const int32_t FIRST_DIGIT_ENCODINGS[10];
 
  protected:
   friend class CBC_OnedUPCAReader;
@@ -32,7 +27,12 @@ class CBC_OnedEAN13Reader : public CBC_OneDimReader {
   int32_t DecodeMiddle(CBC_CommonBitArray* row,
                        CFX_Int32Array* startRange,
                        CFX_ByteString& resultString,
-                       int32_t& e);
+                       int32_t& e) override;
+
+ private:
+  void DetermineFirstDigit(CFX_ByteString& result,
+                           int32_t lgPatternFound,
+                           int32_t& e);
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDEAN13READER_H_

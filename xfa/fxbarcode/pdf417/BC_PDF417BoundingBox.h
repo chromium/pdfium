@@ -22,6 +22,7 @@ class CBC_BoundingBox {
                   int32_t& e);
   CBC_BoundingBox(CBC_BoundingBox* boundingBox);
   virtual ~CBC_BoundingBox();
+
   static CBC_BoundingBox* merge(CBC_BoundingBox* leftBox,
                                 CBC_BoundingBox* rightBox,
                                 int32_t& e);

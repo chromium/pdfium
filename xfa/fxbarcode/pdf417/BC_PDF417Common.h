@@ -13,6 +13,7 @@ class CBC_PDF417Common {
  public:
   CBC_PDF417Common();
   virtual ~CBC_PDF417Common();
+
   static int32_t getBitCountSum(CFX_Int32Array& moduleBitCount);
   static int32_t getCodeword(uint32_t symbol);
   static const int32_t NUMBER_OF_CODEWORDS = 929;

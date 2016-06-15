@@ -12,11 +12,15 @@
 class CBC_C40Encoder : public CBC_Encoder {
  public:
   CBC_C40Encoder();
-  virtual ~CBC_C40Encoder();
-  virtual int32_t getEncodingMode();
-  virtual void Encode(CBC_EncoderContext& context, int32_t& e);
+  ~CBC_C40Encoder() override;
+
+  // CBC_Encoder
+  int32_t getEncodingMode() override;
+  void Encode(CBC_EncoderContext& context, int32_t& e) override;
+
   static void writeNextTriplet(CBC_EncoderContext& context,
                                CFX_WideString& buffer);
+
   virtual void handleEOD(CBC_EncoderContext& context,
                          CFX_WideString& buffer,
                          int32_t& e);

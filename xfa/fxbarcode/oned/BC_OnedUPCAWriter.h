@@ -19,34 +19,33 @@ class CFX_RenderDevice;
 class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
  public:
   CBC_OnedUPCAWriter();
-  virtual ~CBC_OnedUPCAWriter();
+  ~CBC_OnedUPCAWriter() override;
 
   virtual void Init();
 
+  // CBC_OneDimWriter
   uint8_t* Encode(const CFX_ByteString& contents,
                   BCFORMAT format,
                   int32_t& outWidth,
                   int32_t& outHeight,
-                  int32_t& e);
+                  int32_t& e) override;
   uint8_t* Encode(const CFX_ByteString& contents,
                   BCFORMAT format,
                   int32_t& outWidth,
                   int32_t& outHeight,
                   int32_t hints,
-                  int32_t& e);
+                  int32_t& e) override;
   uint8_t* Encode(const CFX_ByteString& contents,
                   int32_t& outLength,
-                  int32_t& e) {
-    return nullptr;
-  }
+                  int32_t& e) override;
 
   void RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
                     int32_t codeLength,
                     FX_BOOL isDevice,
-                    int32_t& e);
-  FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
-  CFX_WideString FilterContents(const CFX_WideStringC& contents);
+                    int32_t& e) override;
+  FX_BOOL CheckContentValidity(const CFX_WideStringC& contents) override;
+  CFX_WideString FilterContents(const CFX_WideStringC& contents) override;
   int32_t CalcChecksum(const CFX_ByteString& contents);
 
  protected:
@@ -56,7 +55,7 @@ class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
                  const CFX_Matrix* matrix,
                  int32_t barWidth,
                  int32_t multiple,
-                 int32_t& e);
+                 int32_t& e) override;
 
  private:
   CBC_OnedEAN13Writer* m_subWriter;

@@ -14,13 +14,13 @@ class CBC_CommonBitArray;
 class CBC_OnedEAN8Reader : public CBC_OneDimReader {
  public:
   CBC_OnedEAN8Reader();
-  virtual ~CBC_OnedEAN8Reader();
+  ~CBC_OnedEAN8Reader() override;
 
  protected:
   int32_t DecodeMiddle(CBC_CommonBitArray*,
                        CFX_Int32Array* startRange,
                        CFX_ByteString& result,
-                       int32_t& e);
+                       int32_t& e) override;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDEAN8READER_H_

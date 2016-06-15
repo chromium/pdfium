@@ -16,12 +16,15 @@ class CBC_SymbolInfo;
 class CBC_DataMatrixWriter : public CBC_TwoDimWriter {
  public:
   CBC_DataMatrixWriter();
-  virtual ~CBC_DataMatrixWriter();
-  uint8_t* Encode(const CFX_WideString& contents,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t& e);
-  FX_BOOL SetErrorCorrectionLevel(int32_t level);
+  ~CBC_DataMatrixWriter() override;
+
+  virtual uint8_t* Encode(const CFX_WideString& contents,
+                          int32_t& outWidth,
+                          int32_t& outHeight,
+                          int32_t& e);
+
+  // CBC_TwoDimWriter
+  FX_BOOL SetErrorCorrectionLevel(int32_t level) override;
 
  private:
   static CBC_CommonByteMatrix* encodeLowLevel(CBC_DefaultPlacement* placement,

@@ -57,6 +57,7 @@ CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap* image,
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
   return decodeResult->GetText();
 }
+
 CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap* image,
                                             int32_t& e) {
   CFX_ByteString bs = Decode(image, 0, e);

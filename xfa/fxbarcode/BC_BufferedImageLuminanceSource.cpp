@@ -30,7 +30,8 @@
 
 class CBC_Pause : public IFX_Pause {
  public:
-  virtual FX_BOOL NeedToPauseNow() { return TRUE; }
+  // IFX_Pause
+  FX_BOOL NeedToPauseNow() override;
 };
 
 static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread) {
@@ -153,4 +154,8 @@ CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetMatrix() {
     }
   }
   return matrix;
+}
+
+FX_BOOL CBC_Pause::NeedToPauseNow() {
+  return TRUE;
 }

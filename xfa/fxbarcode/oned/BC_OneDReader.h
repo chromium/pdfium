@@ -15,17 +15,18 @@ class CBC_CommonBitArray;
 class CBC_OneDReader : public CBC_Reader {
  public:
   CBC_OneDReader();
-  virtual ~CBC_OneDReader();
-  virtual CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
-  virtual CFX_ByteString Decode(CBC_BinaryBitmap* image,
-                                int32_t hints,
-                                int32_t& e);
+  ~CBC_OneDReader() override;
+
+  // CBC_Reader
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e) override;
+  CFX_ByteString Decode(CBC_BinaryBitmap* image,
+                        int32_t hints,
+                        int32_t& e) override;
+
   virtual CFX_ByteString DecodeRow(int32_t rowNumber,
                                    CBC_CommonBitArray* row,
                                    int32_t hints,
-                                   int32_t& e) {
-    return "";
-  }
+                                   int32_t& e);
 
  private:
   CFX_ByteString DeDecode(CBC_BinaryBitmap* image, int32_t hints, int32_t& e);

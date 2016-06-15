@@ -91,6 +91,10 @@ FX_BOOL CBC_EAN8::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   return TRUE;
 }
 
+BC_TYPE CBC_EAN8::GetType() {
+  return BC_EAN8;
+}
+
 CFX_WideString CBC_EAN8::Decode(uint8_t* buf,
                                 int32_t width,
                                 int32_t height,

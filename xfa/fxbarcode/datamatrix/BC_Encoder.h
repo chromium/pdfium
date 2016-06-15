@@ -10,10 +10,12 @@
 #include "xfa/fxbarcode/utils.h"
 
 class CBC_EncoderContext;
+
 class CBC_Encoder {
  public:
   CBC_Encoder();
   virtual ~CBC_Encoder();
+
   virtual int32_t getEncodingMode() = 0;
   virtual void Encode(CBC_EncoderContext& context, int32_t& e) = 0;
 };

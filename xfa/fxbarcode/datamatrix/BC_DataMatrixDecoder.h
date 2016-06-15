@@ -17,7 +17,9 @@ class CBC_DataMatrixDecoder {
  public:
   CBC_DataMatrixDecoder();
   virtual ~CBC_DataMatrixDecoder();
+
   CBC_CommonDecoderResult* Decode(CBC_CommonBitMatrix* bits, int32_t& e);
+
   virtual void Init();
 
  private:

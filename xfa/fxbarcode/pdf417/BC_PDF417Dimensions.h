@@ -16,6 +16,7 @@ class CBC_Dimensions {
                  int32_t minRows,
                  int32_t maxRows);
   virtual ~CBC_Dimensions();
+
   int32_t getMinCols();
   int32_t getMaxCols();
   int32_t getMinRows();

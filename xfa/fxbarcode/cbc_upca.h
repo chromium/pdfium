@@ -17,7 +17,7 @@ class CBC_UPCA : public CBC_OneCode {
   CBC_UPCA();
   ~CBC_UPCA() override;
 
-  // CBC_OneCode:
+  // CBC_CodeBase
   FX_BOOL Encode(const CFX_WideStringC& contents,
                  FX_BOOL isDevice,
                  int32_t& e) override;
@@ -30,7 +30,7 @@ class CBC_UPCA : public CBC_OneCode {
                         int32_t height,
                         int32_t& e) override;
   CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_UPCA; }
+  BC_TYPE GetType() override;
 
  private:
   CFX_WideString Preprocess(const CFX_WideStringC& contents);

@@ -18,6 +18,7 @@ class CBC_PDF417 {
   CBC_PDF417();
   CBC_PDF417(FX_BOOL compact);
   virtual ~CBC_PDF417();
+
   CBC_BarcodeMatrix* getBarcodeMatrix();
   void generateBarcodeLogic(CFX_WideString msg,
                             int32_t errorCorrectionLevel,

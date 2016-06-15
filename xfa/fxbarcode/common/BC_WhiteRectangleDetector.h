@@ -14,18 +14,19 @@ class CBC_ResultPoint;
 
 class CBC_WhiteRectangleDetector {
  public:
-  CBC_WhiteRectangleDetector(CBC_CommonBitMatrix* image);
+  explicit CBC_WhiteRectangleDetector(CBC_CommonBitMatrix* image);
   CBC_WhiteRectangleDetector(CBC_CommonBitMatrix* image,
                              int32_t initSize,
                              int32_t x,
                              int32_t y);
   virtual ~CBC_WhiteRectangleDetector();
+
   virtual void Init(int32_t& e);
 
   CFX_ArrayTemplate<CBC_ResultPoint*>* Detect(int32_t& e);
 
  private:
-  int32_t Round(float d);
+  int32_t Round(FX_FLOAT d);
   CBC_ResultPoint* GetBlackPointOnSegment(FX_FLOAT aX,
                                           FX_FLOAT aY,
                                           FX_FLOAT bX,

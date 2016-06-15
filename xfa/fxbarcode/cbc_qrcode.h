@@ -30,7 +30,7 @@ class CBC_QRCode : public CBC_CodeBase {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_QR_CODE; }
+  BC_TYPE GetType() override;
 
   FX_BOOL SetVersion(int32_t version);
   FX_BOOL SetErrorCorrectionLevel(int32_t level);

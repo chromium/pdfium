@@ -15,6 +15,7 @@ class CBC_CommonByteMatrix {
  public:
   CBC_CommonByteMatrix(int32_t width, int32_t height);
   virtual ~CBC_CommonByteMatrix();
+
   int32_t GetHeight();
   int32_t GetWidth();
   uint8_t Get(int32_t x, int32_t y);

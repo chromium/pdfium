@@ -16,10 +16,12 @@ class CBC_BufferedImageLuminanceSource : public CBC_LuminanceSource {
  public:
   explicit CBC_BufferedImageLuminanceSource(const CFX_WideString& filename);
   explicit CBC_BufferedImageLuminanceSource(CFX_DIBitmap* pBitmap);
-  virtual ~CBC_BufferedImageLuminanceSource();
+  ~CBC_BufferedImageLuminanceSource() override;
 
-  CFX_ByteArray* GetRow(int32_t y, CFX_ByteArray& row, int32_t& e);
-  CFX_ByteArray* GetMatrix();
+  // CBC_LuminanceSource
+  CFX_ByteArray* GetRow(int32_t y, CFX_ByteArray& row, int32_t& e) override;
+  CFX_ByteArray* GetMatrix() override;
+
   virtual void Init(int32_t& e);
 
  private:

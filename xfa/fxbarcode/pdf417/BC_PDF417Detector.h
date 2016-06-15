@@ -17,6 +17,7 @@ class CBC_Detector {
  public:
   CBC_Detector();
   virtual ~CBC_Detector();
+
   static CBC_PDF417DetectorResult* detect(CBC_BinaryBitmap* image,
                                           int32_t hints,
                                           FX_BOOL multiple,

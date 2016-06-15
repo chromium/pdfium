@@ -30,7 +30,7 @@ class CBC_DataMatrix : public CBC_CodeBase {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_DATAMATRIX; }
+  BC_TYPE GetType() override;
 };
 
 #endif  // XFA_FXBARCODE_CBC_DATAMATRIX_H_

@@ -12,6 +12,7 @@ class CBC_PDF417ECModulusGF {
  public:
   CBC_PDF417ECModulusGF(int32_t modulus, int32_t generator, int32_t& e);
   virtual ~CBC_PDF417ECModulusGF();
+
   static void Initialize(int32_t& e);
   static void Finalize();
   CBC_PDF417ECModulusPoly* getZero();

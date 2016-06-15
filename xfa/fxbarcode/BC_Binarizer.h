@@ -17,6 +17,7 @@ class CBC_Binarizer {
  public:
   CBC_Binarizer(CBC_LuminanceSource* source);
   virtual ~CBC_Binarizer();
+
   CBC_LuminanceSource* GetLuminanceSource();
   virtual CBC_CommonBitMatrix* GetBlackMatrix(int32_t& e) = 0;
   virtual CBC_CommonBitArray* GetBlackRow(int32_t y,

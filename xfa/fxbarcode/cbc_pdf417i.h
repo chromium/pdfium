@@ -30,7 +30,7 @@ class CBC_PDF417I : public CBC_CodeBase {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_PDF417; }
+  BC_TYPE GetType() override;
 
   FX_BOOL SetErrorCorrectionLevel(int32_t level);
   void SetTruncated(FX_BOOL truncated);

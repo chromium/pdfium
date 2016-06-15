@@ -17,13 +17,16 @@ class CBC_LuminanceSource;
 class CBC_GlobalHistogramBinarizer : public CBC_Binarizer {
  public:
   CBC_GlobalHistogramBinarizer(CBC_LuminanceSource* source);
-  virtual ~CBC_GlobalHistogramBinarizer();
+  ~CBC_GlobalHistogramBinarizer() override;
 
   void InitArrays(int32_t luminanceSize);
-  CBC_CommonBitMatrix* GetBlackMatrix(int32_t& e);
+
+  // CBC_Binarizer
+  CBC_CommonBitMatrix* GetBlackMatrix(int32_t& e) override;
   CBC_CommonBitArray* GetBlackRow(int32_t y,
                                   CBC_CommonBitArray* row,
-                                  int32_t& e);
+                                  int32_t& e) override;
+
   static int32_t EstimateBlackPoint(CFX_Int32Array& buckets, int32_t& e);
 
  private:

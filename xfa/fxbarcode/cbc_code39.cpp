@@ -90,6 +90,10 @@ FX_BOOL CBC_Code39::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   return TRUE;
 }
 
+BC_TYPE CBC_Code39::GetType() {
+  return BC_CODE39;
+}
+
 CFX_WideString CBC_Code39::Decode(uint8_t* buf,
                                   int32_t width,
                                   int32_t height,

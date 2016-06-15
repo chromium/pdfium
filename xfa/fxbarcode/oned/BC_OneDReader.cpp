@@ -43,6 +43,12 @@ CFX_ByteString CBC_OneDReader::Decode(CBC_BinaryBitmap* image,
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
   return strtemp;
 }
+CFX_ByteString CBC_OneDReader::DecodeRow(int32_t rowNumber,
+                                         CBC_CommonBitArray* row,
+                                         int32_t hints,
+                                         int32_t& e) {
+  return "";
+}
 CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap* image,
                                         int32_t hints,
                                         int32_t& e) {

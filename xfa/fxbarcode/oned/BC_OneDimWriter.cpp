@@ -101,6 +101,13 @@ uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
+
+uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
+                                  int32_t& outLength,
+                                  int32_t& e) {
+  return nullptr;
+}
+
 int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
                                         int32_t pos,
                                         const int32_t* pattern,
@@ -123,6 +130,7 @@ int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
   }
   return numAdded;
 }
+
 void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
                                     FXTEXT_CHARPOS* charPos,
                                     CFX_Font* cFont,
@@ -361,6 +369,7 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
 }
+
 void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
                                     uint8_t* code,
                                     int32_t codeLength,
@@ -435,4 +444,19 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
     }
     outputX += m_multiple;
   }
+}
+
+FX_BOOL CBC_OneDimWriter::CheckContentValidity(
+    const CFX_WideStringC& contents) {
+  return TRUE;
+}
+
+CFX_WideString CBC_OneDimWriter::FilterContents(
+    const CFX_WideStringC& contents) {
+  return CFX_WideString();
+}
+
+CFX_WideString CBC_OneDimWriter::RenderTextContents(
+    const CFX_WideStringC& contents) {
+  return CFX_WideString();
 }

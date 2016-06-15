@@ -16,11 +16,13 @@ class CBC_QRFinderPattern : public CBC_ResultPoint {
 
  public:
   CBC_QRFinderPattern(FX_FLOAT x, FX_FLOAT posY, FX_FLOAT estimatedModuleSize);
-  virtual ~CBC_QRFinderPattern();
+  ~CBC_QRFinderPattern() override;
+
+  // CBC_ResultPoint
+  FX_FLOAT GetX() override;
+  FX_FLOAT GetY() override;
 
   int32_t GetCount() const;
-  FX_FLOAT GetX();
-  FX_FLOAT GetY();
   FX_FLOAT GetEstimatedModuleSize();
   void IncrementCount();
   FX_BOOL AboutEquals(FX_FLOAT moduleSize, FX_FLOAT i, FX_FLOAT j);

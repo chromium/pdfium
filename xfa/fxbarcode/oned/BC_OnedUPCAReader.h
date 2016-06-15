@@ -18,27 +18,32 @@ class CBC_OnedEAN13Reader;
 class CBC_OnedUPCAReader : public CBC_OneDimReader {
  public:
   CBC_OnedUPCAReader();
-  virtual ~CBC_OnedUPCAReader();
+  ~CBC_OnedUPCAReader() override;
 
   virtual void Init();
 
+  // CBC_OneDimReader
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            int32_t hints,
-                           int32_t& e);
+                           int32_t& e) override;
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            CFX_Int32Array* startGuardRange,
                            int32_t hints,
-                           int32_t& e);
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t hints, int32_t& e);
+                           int32_t& e) override;
+
+  // CBC_OneDReader
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e) override;
+  CFX_ByteString Decode(CBC_BinaryBitmap* image,
+                        int32_t hints,
+                        int32_t& e) override;
 
  protected:
   int32_t DecodeMiddle(CBC_CommonBitArray* row,
                        CFX_Int32Array* startRange,
                        CFX_ByteString& resultString,
-                       int32_t& e);
+                       int32_t& e) override;
   CFX_ByteString MaybeReturnResult(CFX_ByteString& result, int32_t& e);
 
  private:

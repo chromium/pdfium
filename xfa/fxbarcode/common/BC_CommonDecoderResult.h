@@ -16,6 +16,7 @@ class CBC_CommonDecoderResult {
  public:
   CBC_CommonDecoderResult();
   virtual ~CBC_CommonDecoderResult();
+
   const CFX_ByteArray& GetRawBytes();
   const CFX_ByteString& GetText();
   const CFX_Int32Array& GetByteSegments();

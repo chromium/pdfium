@@ -21,7 +21,8 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
                  int32_t matrixWidth,
                  int32_t matrixHeight,
                  int32_t dataRegions);
-  virtual ~CBC_SymbolInfo();
+  ~CBC_SymbolInfo() override;
+
   static void Initialize();
   static void Finalize();
   static void overrideSymbolSet(CBC_SymbolInfo* override);

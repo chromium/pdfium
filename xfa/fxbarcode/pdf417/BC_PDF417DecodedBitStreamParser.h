@@ -17,6 +17,7 @@ class CBC_DecodedBitStreamPaser {
  public:
   CBC_DecodedBitStreamPaser();
   virtual ~CBC_DecodedBitStreamPaser();
+
   static void Initialize();
   static void Finalize();
   static CBC_CommonDecoderResult* decode(CFX_Int32Array& codewords,

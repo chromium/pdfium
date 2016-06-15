@@ -16,6 +16,7 @@ class CBC_BarcodeMetadata {
                       int32_t rowCountLowerPart,
                       int32_t errorCorrectionLevel);
   virtual ~CBC_BarcodeMetadata();
+
   int32_t getColumnCount();
   int32_t getErrorCorrectionLevel();
   int32_t getRowCount();

@@ -14,11 +14,13 @@ class CBC_CommonBitArray;
 class CBC_OnedCode128Reader : public CBC_OneDReader {
  public:
   CBC_OnedCode128Reader();
-  virtual ~CBC_OnedCode128Reader();
-  virtual CFX_ByteString DecodeRow(int32_t rowNumber,
-                                   CBC_CommonBitArray* row,
-                                   int32_t hints,
-                                   int32_t& e);
+  ~CBC_OnedCode128Reader() override;
+
+  // CBC_OneDReader
+  CFX_ByteString DecodeRow(int32_t rowNumber,
+                           CBC_CommonBitArray* row,
+                           int32_t hints,
+                           int32_t& e) override;
 
   static const int32_t CODE_PATTERNS[107][7];
 

@@ -105,6 +105,10 @@ FX_BOOL CBC_Codabar::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   return TRUE;
 }
 
+BC_TYPE CBC_Codabar::GetType() {
+  return BC_CODABAR;
+}
+
 CFX_WideString CBC_Codabar::Decode(uint8_t* buf,
                                    int32_t width,
                                    int32_t height,

@@ -13,6 +13,7 @@ class CBC_Codeword {
  public:
   CBC_Codeword(int32_t startX, int32_t endX, int32_t bucket, int32_t value);
   virtual ~CBC_Codeword();
+
   FX_BOOL hasValidRowNumber();
   FX_BOOL isValidRowNumber(int32_t rowNumber);
   void setRowNumberAsRowIndicatorColumn();

@@ -16,11 +16,14 @@ class CBC_OneDReader;
 class CBC_OnedCodaBarReader : public CBC_OneDReader {
  public:
   CBC_OnedCodaBarReader();
-  virtual ~CBC_OnedCodaBarReader();
+  ~CBC_OnedCodaBarReader() override;
+
+  // CBC_OneDReader
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            int32_t hints,
-                           int32_t& e);
+                           int32_t& e) override;
+
   CFX_Int32Array* FindAsteriskPattern(CBC_CommonBitArray* row, int32_t& e);
   FX_BOOL ArrayContains(const FX_CHAR array[], FX_CHAR key);
   FX_CHAR ToNarrowWidePattern(CFX_Int32Array* counter);

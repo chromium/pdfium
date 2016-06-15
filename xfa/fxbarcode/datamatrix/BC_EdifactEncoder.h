@@ -12,9 +12,11 @@
 class CBC_EdifactEncoder : public CBC_Encoder {
  public:
   CBC_EdifactEncoder();
-  virtual ~CBC_EdifactEncoder();
-  int32_t getEncodingMode();
-  void Encode(CBC_EncoderContext& context, int32_t& e);
+  ~CBC_EdifactEncoder() override;
+
+  // CBC_Encoder
+  int32_t getEncodingMode() override;
+  void Encode(CBC_EncoderContext& context, int32_t& e) override;
 
  private:
   static void handleEOD(CBC_EncoderContext& context,

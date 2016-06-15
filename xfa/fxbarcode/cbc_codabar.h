@@ -30,7 +30,7 @@ class CBC_Codabar : public CBC_OneCode {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_CODABAR; }
+  BC_TYPE GetType() override;
 
   FX_BOOL SetStartChar(FX_CHAR start);
   FX_BOOL SetEndChar(FX_CHAR end);

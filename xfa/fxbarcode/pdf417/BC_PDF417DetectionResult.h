@@ -16,6 +16,7 @@ class CBC_DetectionResult {
   CBC_DetectionResult(CBC_BarcodeMetadata* barcodeMetadata,
                       CBC_BoundingBox* boundingBox);
   virtual ~CBC_DetectionResult();
+
   CFX_ArrayTemplate<CBC_DetectionResultColumn*>& getDetectionResultColumns();
   void setBoundingBox(CBC_BoundingBox* boundingBox);
   CBC_BoundingBox* getBoundingBox();

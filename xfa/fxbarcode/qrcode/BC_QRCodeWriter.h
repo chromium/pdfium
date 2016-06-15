@@ -13,7 +13,8 @@ class CBC_TwoDimWriter;
 class CBC_QRCodeWriter : public CBC_TwoDimWriter {
  public:
   CBC_QRCodeWriter();
-  virtual ~CBC_QRCodeWriter();
+  ~CBC_QRCodeWriter() override;
+
   uint8_t* Encode(const CFX_WideString& contents,
                   int32_t ecLevel,
                   int32_t& outWidth,
@@ -31,7 +32,10 @@ class CBC_QRCodeWriter : public CBC_TwoDimWriter {
                   int32_t& outHeight,
                   int32_t& e);
   FX_BOOL SetVersion(int32_t version);
-  FX_BOOL SetErrorCorrectionLevel(int32_t level);
+
+  // CBC_TwoDimWriter
+  FX_BOOL SetErrorCorrectionLevel(int32_t level) override;
+
   static void ReleaseAll();
 
  private:

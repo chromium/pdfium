@@ -11,10 +11,11 @@
 
 class CBC_CommonBitArray {
  public:
-  CBC_CommonBitArray(CBC_CommonBitArray* array);
-  CBC_CommonBitArray(int32_t size);
+  explicit CBC_CommonBitArray(CBC_CommonBitArray* array);
+  explicit CBC_CommonBitArray(int32_t size);
   CBC_CommonBitArray();
   virtual ~CBC_CommonBitArray();
+
   int32_t GetSize();
   CFX_Int32Array& GetBits();
   int32_t GetSizeInBytes();

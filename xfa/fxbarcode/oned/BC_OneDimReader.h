@@ -26,17 +26,19 @@ class CBC_OneDimReader : public CBC_OneDReader {
   static const int32_t L_AND_G_PATTERNS[20][4];
 
   CBC_OneDimReader();
-  virtual ~CBC_OneDimReader();
+  ~CBC_OneDimReader() override;
 
+  // CBC_OneDReader
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            int32_t hints,
-                           int32_t& e);
-  CFX_ByteString DecodeRow(int32_t rowNumber,
-                           CBC_CommonBitArray* row,
-                           CFX_Int32Array* startGuardRange,
-                           int32_t hints,
-                           int32_t& e);
+                           int32_t& e) override;
+
+  virtual CFX_ByteString DecodeRow(int32_t rowNumber,
+                                   CBC_CommonBitArray* row,
+                                   CFX_Int32Array* startGuardRange,
+                                   int32_t hints,
+                                   int32_t& e);
 
  protected:
   CFX_Int32Array* FindStartGuardPattern(CBC_CommonBitArray* row, int32_t& e);
@@ -55,9 +57,7 @@ class CBC_OneDimReader : public CBC_OneDReader {
   virtual int32_t DecodeMiddle(CBC_CommonBitArray* row,
                                CFX_Int32Array* startRange,
                                CFX_ByteString& resultResult,
-                               int32_t& e) {
-    return 0;
-  }
+                               int32_t& e) = 0;
   virtual CFX_Int32Array* DecodeEnd(CBC_CommonBitArray* row,
                                     int32_t endStart,
                                     int32_t& e);

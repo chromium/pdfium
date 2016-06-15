@@ -17,7 +17,8 @@ class CBC_EncoderContext : public CBC_SymbolShapeHint {
   CBC_EncoderContext(const CFX_WideString msg,
                      CFX_WideString ecLevel,
                      int32_t& e);
-  virtual ~CBC_EncoderContext();
+  ~CBC_EncoderContext() override;
+
   void setSymbolShape(SymbolShapeHint shape);
   void setSizeConstraints(CBC_Dimension* minSize, CBC_Dimension* maxSize);
   CFX_WideString getMessage();

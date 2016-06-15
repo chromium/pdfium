@@ -8,10 +8,12 @@
 #define XFA_FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_
 
 class CBC_SymbolInfo;
+
 class CBC_ErrorCorrection {
  public:
   CBC_ErrorCorrection();
   virtual ~CBC_ErrorCorrection();
+
   static void Initialize();
   static void Finalize();
   static CFX_WideString encodeECC200(CFX_WideString codewords,

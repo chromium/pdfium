@@ -22,7 +22,8 @@ class CBC_QRCodeReader : public CBC_Reader {
 
  public:
   CBC_QRCodeReader();
-  virtual ~CBC_QRCodeReader();
+  ~CBC_QRCodeReader() override;
+
   CFX_ByteString Decode(CFX_DIBitmap* pBitmap,
                         int32_t hints,
                         int32_t byteModeDecode,
@@ -32,8 +33,12 @@ class CBC_QRCodeReader : public CBC_Reader {
                         int32_t byteModeDecode,
                         int32_t& e);
   static void ReleaseAll();
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t hints, int32_t& e);
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
+
+  // CBC_Reader
+  CFX_ByteString Decode(CBC_BinaryBitmap* image,
+                        int32_t hints,
+                        int32_t& e) override;
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e) override;
   virtual void Init();
 };
 

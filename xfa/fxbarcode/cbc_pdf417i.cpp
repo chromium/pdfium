@@ -73,6 +73,10 @@ FX_BOOL CBC_PDF417I::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   return TRUE;
 }
 
+BC_TYPE CBC_PDF417I::GetType() {
+  return BC_PDF417;
+}
+
 CFX_WideString CBC_PDF417I::Decode(uint8_t* buf,
                                    int32_t width,
                                    int32_t height,

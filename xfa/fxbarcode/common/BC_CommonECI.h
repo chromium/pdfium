@@ -14,7 +14,8 @@ class CBC_CommonECI {
   CBC_CommonECI(int32_t value);
   virtual ~CBC_CommonECI();
 
-  int32_t GetValue();
+  virtual int32_t GetValue();
+
   static CBC_CommonECI* GetEICByValue(int32_t value, int32_t& e);
 
  private:

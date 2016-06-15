@@ -113,3 +113,7 @@ CFX_WideString CBC_UPCA::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   BC_EXCEPTION_CHECK_ReturnValue(e, L"");
   return CFX_WideString::FromUTF8(str.AsStringC());
 }
+
+BC_TYPE CBC_UPCA::GetType() {
+  return BC_UPCA;
+}

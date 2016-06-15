@@ -13,6 +13,7 @@ class CBC_PDF417ResultMetadata {
  public:
   CBC_PDF417ResultMetadata();
   virtual ~CBC_PDF417ResultMetadata();
+
   int32_t getSegmentIndex();
   void setSegmentIndex(int32_t segmentIndex);
   CFX_ByteString getFileId();

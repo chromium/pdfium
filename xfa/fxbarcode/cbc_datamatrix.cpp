@@ -65,6 +65,10 @@ FX_BOOL CBC_DataMatrix::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   return TRUE;
 }
 
+BC_TYPE CBC_DataMatrix::GetType() {
+  return BC_DATAMATRIX;
+}
+
 CFX_WideString CBC_DataMatrix::Decode(uint8_t* buf,
                                       int32_t width,
                                       int32_t height,

@@ -13,6 +13,7 @@ class CBC_PDF417ECErrorCorrection {
  public:
   CBC_PDF417ECErrorCorrection();
   virtual ~CBC_PDF417ECErrorCorrection();
+
   static void Initialize(int32_t& e);
   static void Finalize();
   static int32_t decode(CFX_Int32Array& received,

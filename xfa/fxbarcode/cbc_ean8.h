@@ -30,7 +30,7 @@ class CBC_EAN8 : public CBC_OneCode {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_EAN8; }
+  BC_TYPE GetType() override;
 
  private:
   CFX_WideString Preprocess(const CFX_WideStringC& contents);

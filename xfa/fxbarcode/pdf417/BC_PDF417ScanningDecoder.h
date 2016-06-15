@@ -22,6 +22,7 @@ class CBC_PDF417ScanningDecoder {
  public:
   CBC_PDF417ScanningDecoder();
   virtual ~CBC_PDF417ScanningDecoder();
+
   static void Initialize();
   static void Finalize();
   static CBC_CommonDecoderResult* decode(CBC_CommonBitMatrix* image,

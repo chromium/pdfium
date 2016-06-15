@@ -405,3 +405,11 @@ void CBC_DataMatrixDetector::OrderBestPatterns(
   (*patterns)[1] = topLeft;
   (*patterns)[2] = topRight;
 }
+
+CBC_ResultPointsAndTransitions::CBC_ResultPointsAndTransitions(
+    CBC_ResultPoint* from,
+    CBC_ResultPoint* to,
+    int32_t transitions)
+    : m_from(from), m_to(to), m_transitions(transitions) {}
+
+CBC_ResultPointsAndTransitions::~CBC_ResultPointsAndTransitions() {}

@@ -19,12 +19,9 @@ class CBC_ResultPointsAndTransitions {
  public:
   CBC_ResultPointsAndTransitions(CBC_ResultPoint* from,
                                  CBC_ResultPoint* to,
-                                 int32_t transitions) {
-    m_from = from;
-    m_to = to;
-    m_transitions = transitions;
-  }
-  ~CBC_ResultPointsAndTransitions() {}
+                                 int32_t transitions);
+  ~CBC_ResultPointsAndTransitions();
+
   CBC_ResultPoint* GetFrom() const { return m_from; }
   CBC_ResultPoint* GetTo() const { return m_to; }
   int32_t GetTransitions() const { return m_transitions; }
@@ -39,6 +36,7 @@ class CBC_DataMatrixDetector {
  public:
   CBC_DataMatrixDetector(CBC_CommonBitMatrix* image);
   virtual ~CBC_DataMatrixDetector();
+
   CBC_QRDetectorResult* Detect(int32_t& e);
   CBC_ResultPoint* CorrectTopRightRectangular(CBC_ResultPoint* bottomLeft,
                                               CBC_ResultPoint* bottomRight,
@@ -67,6 +65,7 @@ class CBC_DataMatrixDetector {
                  CBC_ResultPoint* key);
   int32_t Round(FX_FLOAT d);
   void OrderBestPatterns(CFX_ArrayTemplate<CBC_ResultPoint*>* patterns);
+
   virtual void Init(int32_t& e);
 
  private:

@@ -13,8 +13,7 @@ class CBC_DataMatrixVersion;
 
 class ECB {
  public:
-  ECB(int32_t count, int32_t dataCodewords)
-      : m_count(count), m_dataCodewords(dataCodewords) {}
+  ECB(int32_t count, int32_t dataCodewords);
 
   int32_t GetCount() const { return m_count; }
   int32_t GetDataCodewords() const { return m_dataCodewords; }
@@ -26,20 +25,9 @@ class ECB {
 
 class ECBlocks {
  public:
-  ECBlocks(int32_t ecCodewords, ECB* ecBlocks) : m_ecCodewords(ecCodewords) {
-    m_ecBlocksArray.Add(ecBlocks);
-  }
-
-  ECBlocks(int32_t ecCodewords, ECB* ecBlocks1, ECB* ecBlocks2)
-      : m_ecCodewords(ecCodewords) {
-    m_ecBlocksArray.Add(ecBlocks1);
-    m_ecBlocksArray.Add(ecBlocks2);
-  }
-
-  ~ECBlocks() {
-    for (int32_t i = 0; i < m_ecBlocksArray.GetSize(); i++)
-      delete m_ecBlocksArray[i];
-  }
+  ECBlocks(int32_t ecCodewords, ECB* ecBlocks);
+  ECBlocks(int32_t ecCodewords, ECB* ecBlocks1, ECB* ecBlocks2);
+  ~ECBlocks();
 
   int32_t GetECCodewords() { return m_ecCodewords; }
   const CFX_ArrayTemplate<ECB*>& GetECBlocks() { return m_ecBlocksArray; }
@@ -58,6 +46,7 @@ class CBC_DataMatrixVersion {
                         int32_t dataRegionSizeColumns,
                         ECBlocks* ecBlocks);
   virtual ~CBC_DataMatrixVersion();
+
   static void Initialize();
   static void Finalize();
   int32_t GetVersionNumber();

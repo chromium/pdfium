@@ -17,13 +17,18 @@ class CBC_ResultPoint;
 class CBC_PDF417Reader : public CBC_Reader {
  public:
   CBC_PDF417Reader();
-  virtual ~CBC_PDF417Reader();
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
+  ~CBC_PDF417Reader() override;
+
+  // CBC_Reader
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e) override;
+  CFX_ByteString Decode(CBC_BinaryBitmap* image,
+                        int32_t hints,
+                        int32_t& e) override;
+
   CFX_ByteString Decode(CBC_BinaryBitmap* image,
                         FX_BOOL multiple,
                         int32_t hints,
                         int32_t& e);
-  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t hints, int32_t& e);
 
  private:
   static int32_t getMaxWidth(CBC_ResultPoint* p1, CBC_ResultPoint* p2);

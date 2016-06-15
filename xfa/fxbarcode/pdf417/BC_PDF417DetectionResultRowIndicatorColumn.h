@@ -14,7 +14,8 @@ class CBC_DetectionResultRowIndicatorColumn : public CBC_DetectionResultColumn {
  public:
   CBC_DetectionResultRowIndicatorColumn(CBC_BoundingBox* boundingBox,
                                         FX_BOOL isLeft);
-  virtual ~CBC_DetectionResultRowIndicatorColumn();
+  ~CBC_DetectionResultRowIndicatorColumn() override;
+
   void setRowNumbers();
   int32_t adjustCompleteIndicatorColumnRowNumbers(
       CBC_BarcodeMetadata barcodeMetadata);

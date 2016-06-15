@@ -92,6 +92,10 @@ FX_BOOL CBC_EAN13::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   return TRUE;
 }
 
+BC_TYPE CBC_EAN13::GetType() {
+  return BC_EAN13;
+}
+
 CFX_WideString CBC_EAN13::Decode(uint8_t* buf,
                                  int32_t width,
                                  int32_t height,

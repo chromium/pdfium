@@ -17,6 +17,7 @@ class CBC_BinaryBitmap {
  public:
   CBC_BinaryBitmap(CBC_Binarizer* binarizer);
   virtual ~CBC_BinaryBitmap();
+
   int32_t GetWidth();
   int32_t GetHeight();
   CBC_CommonBitMatrix* GetMatrix(int32_t& e);

@@ -21,6 +21,7 @@ class CBC_CommonPerspectiveTransform {
                                  FX_FLOAT a23,
                                  FX_FLOAT a33);
   virtual ~CBC_CommonPerspectiveTransform();
+
   static CBC_CommonPerspectiveTransform* QuadrilateralToQuadrilateral(
       FX_FLOAT x0,
       FX_FLOAT y0,

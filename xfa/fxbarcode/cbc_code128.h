@@ -30,7 +30,7 @@ class CBC_Code128 : public CBC_OneCode {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  BC_TYPE GetType() override { return BC_CODE128; }
+  BC_TYPE GetType() override;
 
   FX_BOOL SetTextLocation(BC_TEXT_LOC loction);
 
