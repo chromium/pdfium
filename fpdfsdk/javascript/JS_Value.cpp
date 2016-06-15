@@ -82,6 +82,8 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array)
 
 CJS_Value::~CJS_Value() {}
 
+CJS_Value::CJS_Value(const CJS_Value& other) = default;
+
 void CJS_Value::Attach(v8::Local<v8::Value> pValue, Type t) {
   m_pValue = pValue;
   m_eType = t;
@@ -409,6 +411,8 @@ CJS_PropValue::operator v8::Local<v8::Value>() const {
 CJS_Array::CJS_Array(CJS_Runtime* pRuntime) : m_pJSRuntime(pRuntime) {}
 
 CJS_Array::~CJS_Array() {}
+
+CJS_Array::CJS_Array(const CJS_Array& other) = default;
 
 void CJS_Array::Attach(v8::Local<v8::Array> pArray) {
   m_pArray = pArray;

@@ -453,3 +453,7 @@ void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
       break;
   }
 }
+
+CJS_KeyValue::CJS_KeyValue() {}
+
+CJS_KeyValue::~CJS_KeyValue() {}

@@ -17,16 +17,9 @@ class CJS_GlobalVariableArray;
 class CJS_KeyValue;
 
 struct JSGlobalData {
-  JSGlobalData() {
-    nType = 0;
-    dData = 0;
-    bData = FALSE;
-    sData = "";
-    bPersistent = FALSE;
-    bDeleted = FALSE;
-  }
+  JSGlobalData();
+  ~JSGlobalData();
 
-  ~JSGlobalData() { pData.Reset(); }
   int nType;  // 0:int 1:bool 2:string 3:obj
   double dData;
   bool bData;

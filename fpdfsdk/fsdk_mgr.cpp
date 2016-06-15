@@ -24,6 +24,9 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
+#include "xfa/fxfa/include/xfa_ffdocview.h"
+#include "xfa/fxfa/include/xfa_ffpageview.h"
+#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 #include "xfa/fxfa/include/xfa_rendercontext.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 #endif  // PDF_ENABLE_XFA

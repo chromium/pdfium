@@ -13,6 +13,7 @@
 
 #include "fxjse/include/cfxjse_arguments.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jscontext.h"
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 

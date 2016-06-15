@@ -73,76 +73,33 @@ struct CFX_Edit_LineRect {
 
 class CFX_Edit_LineRectArray {
  public:
-  CFX_Edit_LineRectArray() {}
+  CFX_Edit_LineRectArray();
+  virtual ~CFX_Edit_LineRectArray();
 
-  virtual ~CFX_Edit_LineRectArray() { Empty(); }
+  void Empty();
+  void RemoveAll();
+  void operator=(CFX_Edit_LineRectArray& rects);
+  void Add(const CPVT_WordRange& wrLine, const CFX_FloatRect& rcLine);
 
-  void Empty() {
-    for (int32_t i = 0, sz = m_LineRects.GetSize(); i < sz; i++)
-      delete m_LineRects.GetAt(i);
+  int32_t GetSize() const;
+  CFX_Edit_LineRect* GetAt(int32_t nIndex) const;
 
-    m_LineRects.RemoveAll();
-  }
-
-  void RemoveAll() { m_LineRects.RemoveAll(); }
-
-  void operator=(CFX_Edit_LineRectArray& rects) {
-    Empty();
-    for (int32_t i = 0, sz = rects.GetSize(); i < sz; i++)
-      m_LineRects.Add(rects.GetAt(i));
-
-    rects.RemoveAll();
-  }
-
-  void Add(const CPVT_WordRange& wrLine, const CFX_FloatRect& rcLine) {
-    m_LineRects.Add(new CFX_Edit_LineRect(wrLine, rcLine));
-  }
-
-  int32_t GetSize() const { return m_LineRects.GetSize(); }
-
-  CFX_Edit_LineRect* GetAt(int32_t nIndex) const {
-    if (nIndex < 0 || nIndex >= m_LineRects.GetSize())
-      return nullptr;
-
-    return m_LineRects.GetAt(nIndex);
-  }
-
+ private:
   CFX_ArrayTemplate<CFX_Edit_LineRect*> m_LineRects;
 };
 
 class CFX_Edit_RectArray {
  public:
-  CFX_Edit_RectArray() {}
+  CFX_Edit_RectArray();
+  virtual ~CFX_Edit_RectArray();
 
-  virtual ~CFX_Edit_RectArray() { Empty(); }
+  void Empty();
+  void Add(const CFX_FloatRect& rect);
 
-  void Empty() {
-    for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++)
-      delete m_Rects.GetAt(i);
+  int32_t GetSize() const;
+  CFX_FloatRect* GetAt(int32_t nIndex) const;
 
-    m_Rects.RemoveAll();
-  }
-
-  void Add(const CFX_FloatRect& rect) {
-    // check for overlapped area
-    for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++) {
-      CFX_FloatRect* pRect = m_Rects.GetAt(i);
-      if (pRect && pRect->Contains(rect))
-        return;
-    }
-
-    m_Rects.Add(new CFX_FloatRect(rect));
-  }
-
-  int32_t GetSize() const { return m_Rects.GetSize(); }
-
-  CFX_FloatRect* GetAt(int32_t nIndex) const {
-    if (nIndex < 0 || nIndex >= m_Rects.GetSize())
-      return nullptr;
-
-    return m_Rects.GetAt(nIndex);
-  }
-
+ private:
   CFX_ArrayTemplate<CFX_FloatRect*> m_Rects;
 };
 
@@ -167,39 +124,18 @@ class CFX_Edit_Refresh {
 
 class CFX_Edit_Select {
  public:
-  CFX_Edit_Select() {}
+  CFX_Edit_Select();
+  CFX_Edit_Select(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
+  explicit CFX_Edit_Select(const CPVT_WordRange& range);
 
-  CFX_Edit_Select(const CPVT_WordPlace& begin, const CPVT_WordPlace& end) {
-    Set(begin, end);
-  }
+  void Default();
+  void Set(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
+  void SetBeginPos(const CPVT_WordPlace& begin);
+  void SetEndPos(const CPVT_WordPlace& end);
 
-  explicit CFX_Edit_Select(const CPVT_WordRange& range) {
-    Set(range.BeginPos, range.EndPos);
-  }
-
-  CPVT_WordRange ConvertToWordRange() const {
-    return CPVT_WordRange(BeginPos, EndPos);
-  }
-
-  void Default() {
-    BeginPos.Default();
-    EndPos.Default();
-  }
-
-  void Set(const CPVT_WordPlace& begin, const CPVT_WordPlace& end) {
-    BeginPos = begin;
-    EndPos = end;
-  }
-
-  void SetBeginPos(const CPVT_WordPlace& begin) { BeginPos = begin; }
-
-  void SetEndPos(const CPVT_WordPlace& end) { EndPos = end; }
-
-  FX_BOOL IsExist() const { return BeginPos != EndPos; }
-
-  FX_BOOL operator!=(const CPVT_WordRange& wr) const {
-    return wr.BeginPos != BeginPos || wr.EndPos != EndPos;
-  }
+  CPVT_WordRange ConvertToWordRange() const;
+  FX_BOOL IsExist() const;
+  FX_BOOL operator!=(const CPVT_WordRange& wr) const;
 
   CPVT_WordPlace BeginPos, EndPos;
 };
@@ -244,15 +180,15 @@ class CFX_Edit_Undo {
 
 class CFX_Edit_UndoItem : public IFX_Edit_UndoItem {
  public:
-  CFX_Edit_UndoItem() : m_bFirst(TRUE), m_bLast(TRUE) {}
-  ~CFX_Edit_UndoItem() override {}
+  CFX_Edit_UndoItem();
+  ~CFX_Edit_UndoItem() override;
 
-  CFX_WideString GetUndoTitle() override { return L""; }
+  CFX_WideString GetUndoTitle() override;
 
-  void SetFirst(FX_BOOL bFirst) { m_bFirst = bFirst; }
-  FX_BOOL IsFirst() { return m_bFirst; }
-  void SetLast(FX_BOOL bLast) { m_bLast = bLast; }
-  FX_BOOL IsLast() { return m_bLast; }
+  void SetFirst(FX_BOOL bFirst);
+  FX_BOOL IsFirst();
+  void SetLast(FX_BOOL bLast);
+  FX_BOOL IsLast();
 
  private:
   FX_BOOL m_bFirst;
@@ -264,6 +200,7 @@ class CFX_Edit_GroupUndoItem : public IFX_Edit_UndoItem {
   explicit CFX_Edit_GroupUndoItem(const CFX_WideString& sTitle);
   ~CFX_Edit_GroupUndoItem() override;
 
+  // IFX_Edit_UndoItem
   void Undo() override;
   void Redo() override;
   CFX_WideString GetUndoTitle() override;

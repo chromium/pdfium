@@ -22,7 +22,6 @@
 
 #include <memory>
 
-#include "xfa/fxbarcode/BC_DecoderResult.h"
 #include "xfa/fxbarcode/BC_ResultPoint.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417BarcodeMetadata.h"

@@ -33,6 +33,7 @@ class CPDFSDK_FormActionHandler {
 class CPDFSDK_ActionHandler {
  public:
   CPDFSDK_ActionHandler();
+  ~CPDFSDK_ActionHandler();
 
   FX_BOOL DoAction_DocOpen(const CPDF_Action& action,
                            CPDFSDK_Document* pDocument);

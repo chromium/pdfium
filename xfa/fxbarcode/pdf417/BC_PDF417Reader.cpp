@@ -26,7 +26,6 @@
 
 #include "xfa/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/fxbarcode/BC_BinaryBitmap.h"
-#include "xfa/fxbarcode/BC_DecoderResult.h"
 #include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/BC_ResultPoint.h"
 #include "xfa/fxbarcode/common/BC_CommonBitArray.h"

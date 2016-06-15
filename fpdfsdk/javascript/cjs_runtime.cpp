@@ -210,6 +210,10 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
   }
 }
 
+CPDFSDK_Document* CJS_Runtime::GetReaderDocument() {
+  return m_pDocument;
+}
+
 int CJS_Runtime::Execute(const CFX_WideString& script, CFX_WideString* info) {
   FXJSErr error = {};
   int nRet = FXJS_Execute(m_isolate, script, &error);

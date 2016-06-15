@@ -46,11 +46,11 @@ class CJS_Object {
   void MakeWeak();
   void Dispose();
 
-  virtual FX_BOOL IsType(const FX_CHAR* sClassName) { return TRUE; }
-  virtual CFX_ByteString GetClassName() { return ""; }
+  virtual FX_BOOL IsType(const FX_CHAR* sClassName);
+  virtual CFX_ByteString GetClassName();
 
-  virtual void InitInstance(IJS_Runtime* pIRuntime) {}
-  virtual void ExitInstance() {}
+  virtual void InitInstance(IJS_Runtime* pIRuntime);
+  virtual void ExitInstance();
 
   v8::Local<v8::Object> ToV8Object() { return m_pV8Object.Get(m_pIsolate); }
 

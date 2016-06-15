@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
 class CXFA_FFWidgetHandler;

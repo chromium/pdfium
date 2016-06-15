@@ -11,6 +11,7 @@
 #include "fxjse/include/cfxjse_class.h"
 #include "fxjse/include/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"

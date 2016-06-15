@@ -190,6 +190,17 @@ size_t FXJS_GlobalIsolateRefCount() {
   return g_isolate_ref_count;
 }
 
+V8TemplateMap::V8TemplateMap(v8::Isolate* isolate) : m_map(isolate) {}
+
+V8TemplateMap::~V8TemplateMap() {}
+
+void V8TemplateMap::set(void* key, v8::Local<v8::Object> handle) {
+  ASSERT(!m_map.Contains(key));
+  m_map.Set(key, handle);
+}
+
+FXJS_PerIsolateData::~FXJS_PerIsolateData() {}
+
 // static
 void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
   if (!pIsolate->GetData(g_embedderDataSlot))
@@ -201,6 +212,13 @@ FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
   return static_cast<FXJS_PerIsolateData*>(
       pIsolate->GetData(g_embedderDataSlot));
 }
+
+#ifndef PDF_ENABLE_XFA
+FXJS_PerIsolateData::FXJS_PerIsolateData() : m_pDynamicObjsMap(nullptr) {}
+#else   // PDF_ENABLE_XFA
+FXJS_PerIsolateData::FXJS_PerIsolateData()
+    : m_pFXJSERuntimeData(nullptr), m_pDynamicObjsMap(nullptr) {}
+#endif  // PDF_ENABLE_XFA
 
 int FXJS_DefineObj(v8::Isolate* pIsolate,
                    const wchar_t* sObjName,

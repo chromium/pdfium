@@ -364,6 +364,30 @@ void CFX_Edit_Undo::Reset() {
   m_UndoItemStack.RemoveAll();
 }
 
+CFX_Edit_UndoItem::CFX_Edit_UndoItem() : m_bFirst(TRUE), m_bLast(TRUE) {}
+
+CFX_Edit_UndoItem::~CFX_Edit_UndoItem() {}
+
+CFX_WideString CFX_Edit_UndoItem::GetUndoTitle() {
+  return L"";
+}
+
+void CFX_Edit_UndoItem::SetFirst(FX_BOOL bFirst) {
+  m_bFirst = bFirst;
+}
+
+FX_BOOL CFX_Edit_UndoItem::IsFirst() {
+  return m_bFirst;
+}
+
+void CFX_Edit_UndoItem::SetLast(FX_BOOL bLast) {
+  m_bLast = bLast;
+}
+
+FX_BOOL CFX_Edit_UndoItem::IsLast() {
+  return m_bLast;
+}
+
 CFX_Edit_GroupUndoItem::CFX_Edit_GroupUndoItem(const CFX_WideString& sTitle)
     : m_sTitle(sTitle) {}
 
@@ -2978,4 +3002,122 @@ void CFX_Edit::AddUndoItem(IFX_Edit_UndoItem* pUndoItem) {
   m_Undo.AddItem(pUndoItem);
   if (m_bOprNotify && m_pOprNotify)
     m_pOprNotify->OnAddUndo(pUndoItem);
+}
+
+CFX_Edit_LineRectArray::CFX_Edit_LineRectArray() {}
+
+CFX_Edit_LineRectArray::~CFX_Edit_LineRectArray() {
+  Empty();
+}
+
+void CFX_Edit_LineRectArray::Empty() {
+  for (int32_t i = 0, sz = m_LineRects.GetSize(); i < sz; i++)
+    delete m_LineRects.GetAt(i);
+
+  m_LineRects.RemoveAll();
+}
+
+void CFX_Edit_LineRectArray::RemoveAll() {
+  m_LineRects.RemoveAll();
+}
+
+void CFX_Edit_LineRectArray::operator=(CFX_Edit_LineRectArray& rects) {
+  Empty();
+  for (int32_t i = 0, sz = rects.GetSize(); i < sz; i++)
+    m_LineRects.Add(rects.GetAt(i));
+
+  rects.RemoveAll();
+}
+
+void CFX_Edit_LineRectArray::Add(const CPVT_WordRange& wrLine,
+                                 const CFX_FloatRect& rcLine) {
+  m_LineRects.Add(new CFX_Edit_LineRect(wrLine, rcLine));
+}
+
+int32_t CFX_Edit_LineRectArray::GetSize() const {
+  return m_LineRects.GetSize();
+}
+
+CFX_Edit_LineRect* CFX_Edit_LineRectArray::GetAt(int32_t nIndex) const {
+  if (nIndex < 0 || nIndex >= m_LineRects.GetSize())
+    return nullptr;
+
+  return m_LineRects.GetAt(nIndex);
+}
+
+CFX_Edit_Select::CFX_Edit_Select() {}
+
+CFX_Edit_Select::CFX_Edit_Select(const CPVT_WordPlace& begin,
+                                 const CPVT_WordPlace& end) {
+  Set(begin, end);
+}
+
+CFX_Edit_Select::CFX_Edit_Select(const CPVT_WordRange& range) {
+  Set(range.BeginPos, range.EndPos);
+}
+
+CPVT_WordRange CFX_Edit_Select::ConvertToWordRange() const {
+  return CPVT_WordRange(BeginPos, EndPos);
+}
+
+void CFX_Edit_Select::Default() {
+  BeginPos.Default();
+  EndPos.Default();
+}
+
+void CFX_Edit_Select::Set(const CPVT_WordPlace& begin,
+                          const CPVT_WordPlace& end) {
+  BeginPos = begin;
+  EndPos = end;
+}
+
+void CFX_Edit_Select::SetBeginPos(const CPVT_WordPlace& begin) {
+  BeginPos = begin;
+}
+
+void CFX_Edit_Select::SetEndPos(const CPVT_WordPlace& end) {
+  EndPos = end;
+}
+
+FX_BOOL CFX_Edit_Select::IsExist() const {
+  return BeginPos != EndPos;
+}
+
+FX_BOOL CFX_Edit_Select::operator!=(const CPVT_WordRange& wr) const {
+  return wr.BeginPos != BeginPos || wr.EndPos != EndPos;
+}
+
+CFX_Edit_RectArray::CFX_Edit_RectArray() {}
+
+CFX_Edit_RectArray::~CFX_Edit_RectArray() {
+  Empty();
+}
+
+void CFX_Edit_RectArray::Empty() {
+  for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++)
+    delete m_Rects.GetAt(i);
+
+  m_Rects.RemoveAll();
+}
+
+void CFX_Edit_RectArray::Add(const CFX_FloatRect& rect) {
+  // check for overlapped area
+  for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++) {
+    CFX_FloatRect* pRect = m_Rects.GetAt(i);
+    if (pRect && pRect->Contains(rect))
+      return;
+  }
+
+  m_Rects.Add(new CFX_FloatRect(rect));
+}
+
+int32_t CFX_Edit_RectArray::GetSize() const {
+  return m_Rects.GetSize();
+}
+
+CFX_FloatRect* CFX_Edit_RectArray::GetAt(int32_t nIndex) const {
+  if (nIndex < 0 || nIndex >= m_Rects.GetSize())
+    return nullptr;
+
+  return m_Rects.GetAt(nIndex);
 }

@@ -29,9 +29,9 @@ class CFX_RenderDevice;
 class CPDFSDK_DateTime {
  public:
   CPDFSDK_DateTime();
-  CPDFSDK_DateTime(const CFX_ByteString& dtStr);
+  explicit CPDFSDK_DateTime(const CFX_ByteString& dtStr);
+  explicit CPDFSDK_DateTime(const FX_SYSTEMTIME& st);
   CPDFSDK_DateTime(const CPDFSDK_DateTime& datetime);
-  CPDFSDK_DateTime(const FX_SYSTEMTIME& st);
 
   CPDFSDK_DateTime& operator=(const CPDFSDK_DateTime& datetime);
   CPDFSDK_DateTime& operator=(const FX_SYSTEMTIME& st);
@@ -64,32 +64,26 @@ class CPDFSDK_DateTime {
 class CPDFSDK_Annot {
  public:
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
-  virtual ~CPDFSDK_Annot() {}
+  virtual ~CPDFSDK_Annot();
 
 #ifdef PDF_ENABLE_XFA
-  virtual FX_BOOL IsXFAField() { return FALSE; }
+  virtual FX_BOOL IsXFAField();
+  virtual CXFA_FFWidget* GetXFAWidget() const;
 #endif  // PDF_ENABLE_XFA
 
   virtual FX_FLOAT GetMinWidth() const;
   virtual FX_FLOAT GetMinHeight() const;
   // define layout order to 5.
-  virtual int GetLayoutOrder() const { return 5; }
+  virtual int GetLayoutOrder() const;
+  virtual CPDF_Annot* GetPDFAnnot() const;
+  virtual CFX_ByteString GetType() const;
+  virtual CFX_ByteString GetSubType() const;
+  virtual CFX_FloatRect GetRect() const;
 
-  virtual CPDF_Annot* GetPDFAnnot() const { return nullptr; }
-
-#ifdef PDF_ENABLE_XFA
-  virtual CXFA_FFWidget* GetXFAWidget() const { return nullptr; }
-#endif  // PDF_ENABLE_XFA
-
-  virtual CFX_ByteString GetType() const { return ""; }
-  virtual CFX_ByteString GetSubType() const { return ""; }
-
-  virtual void SetRect(const CFX_FloatRect& rect) {}
-  virtual CFX_FloatRect GetRect() const { return CFX_FloatRect(); }
-
+  virtual void SetRect(const CFX_FloatRect& rect);
   virtual void Annot_OnDraw(CFX_RenderDevice* pDevice,
                             CFX_Matrix* pUser2Device,
-                            CPDF_RenderOptions* pOptions) {}
+                            CPDF_RenderOptions* pOptions);
 
   UnderlyingPageType* GetUnderlyingPage();
   CPDF_Page* GetPDFPage();
@@ -97,7 +91,7 @@ class CPDFSDK_Annot {
   CPDFXFA_Page* GetPDFXFAPage();
 #endif  // PDF_ENABLE_XFA
 
-  void SetPage(CPDFSDK_PageView* pPageView) { m_pPageView = pPageView; }
+  void SetPage(CPDFSDK_PageView* pPageView);
   CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
 
   // Tab Order
@@ -117,12 +111,9 @@ class CPDFSDK_Annot {
 class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
  public:
   CPDFSDK_BAAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
-  ~CPDFSDK_BAAnnot() override {}
+  ~CPDFSDK_BAAnnot() override;
 
-#ifdef PDF_ENABLE_XFA
-  FX_BOOL IsXFAField() override;
-#endif  // PDF_ENABLE_XFA
-
+  // CPDFSDK_Annot
   CFX_ByteString GetType() const override;
   CFX_ByteString GetSubType() const override;
   void SetRect(const CFX_FloatRect& rect) override;
@@ -173,13 +164,13 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void RemoveAAction();
 
   virtual CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT);
-
   virtual FX_BOOL IsAppearanceValid();
   virtual FX_BOOL IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
   virtual void DrawAppearance(CFX_RenderDevice* pDevice,
                               const CFX_Matrix* pUser2Device,
                               CPDF_Annot::AppearanceMode mode,
                               const CPDF_RenderOptions* pOptions);
+
   void DrawBorder(CFX_RenderDevice* pDevice,
                   const CFX_Matrix* pUser2Device,
                   const CPDF_RenderOptions* pOptions);

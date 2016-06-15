@@ -104,6 +104,10 @@ FX_BOOL CFPDF_FileStream::IsEOF() {
   return m_nCurPos >= GetSize();
 }
 
+FX_FILESIZE CFPDF_FileStream::GetPosition() {
+  return m_nCurPos;
+}
+
 FX_BOOL CFPDF_FileStream::ReadBlock(void* buffer,
                                     FX_FILESIZE offset,
                                     size_t size) {
@@ -167,6 +171,10 @@ CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
 }
 
 #ifdef PDF_ENABLE_XFA
+CFX_ByteString CPDF_CustomAccess::GetFullPath() {
+  return "";
+}
+
 FX_BOOL CPDF_CustomAccess::GetByte(uint32_t pos, uint8_t& ch) {
   if (pos >= m_FileAccess.m_FileLen)
     return FALSE;
@@ -193,6 +201,14 @@ FX_BOOL CPDF_CustomAccess::GetBlock(uint32_t pos,
   return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, pos, pBuf, size);
 }
 #endif  // PDF_ENABLE_XFA
+
+FX_FILESIZE CPDF_CustomAccess::GetSize() {
+  return m_FileAccess.m_FileLen;
+}
+
+void CPDF_CustomAccess::Release() {
+  delete this;
+}
 
 FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer,
                                      FX_FILESIZE offset,

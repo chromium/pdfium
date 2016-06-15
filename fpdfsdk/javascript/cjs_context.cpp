@@ -268,6 +268,10 @@ void CJS_Context::OnExternal_Exec() {
   m_pEventHandler->OnExternal_Exec();
 }
 
+void CJS_Context::EnableMessageBox(FX_BOOL bEnable) {
+  m_bMsgBoxEnable = bEnable;
+}
+
 void CJS_Context::OnBatchExec(CPDFSDK_Document* pTarget) {
   m_pEventHandler->OnBatchExec(pTarget);
 }

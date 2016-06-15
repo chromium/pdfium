@@ -46,6 +46,7 @@ class CJS_Value {
   CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array);
 
   ~CJS_Value();
+  CJS_Value(const CJS_Value& other);
 
   void SetNull();
   void Attach(v8::Local<v8::Value> pValue, Type t);
@@ -137,6 +138,7 @@ class CJS_Array {
  public:
   CJS_Array(CJS_Runtime* pRuntime);
   virtual ~CJS_Array();
+  CJS_Array(const CJS_Array& other);
 
   void Attach(v8::Local<v8::Array> pArray);
   void GetElement(unsigned index, CJS_Value& value);

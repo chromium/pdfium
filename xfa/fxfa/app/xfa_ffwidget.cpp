@@ -13,6 +13,8 @@
 #include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxfa/include/fxfa_widget.h"
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/include/xfa_ffdocview.h"

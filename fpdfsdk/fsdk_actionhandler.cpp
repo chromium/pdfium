@@ -18,6 +18,8 @@
 CPDFSDK_ActionHandler::CPDFSDK_ActionHandler()
     : m_pFormActionHandler(new CPDFSDK_FormActionHandler) {}
 
+CPDFSDK_ActionHandler::~CPDFSDK_ActionHandler() {}
+
 FX_BOOL CPDFSDK_ActionHandler::DoAction_DocOpen(const CPDF_Action& action,
                                                 CPDFSDK_Document* pDocument) {
   std::set<CPDF_Dictionary*> visited;

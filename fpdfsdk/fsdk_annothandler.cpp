@@ -21,6 +21,9 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
 #include "xfa/fwl/core/include/fwl_widgethit.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
+#include "xfa/fxfa/include/xfa_ffdocview.h"
+#include "xfa/fxfa/include/xfa_ffpageview.h"
+#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 #endif  // PDF_ENABLE_XFA
 
@@ -397,6 +400,19 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
 #endif  // PDF_ENABLE_XFA
 }
 
+CPDFSDK_BFAnnotHandler::CPDFSDK_BFAnnotHandler(CPDFDoc_Environment* pApp)
+    : m_pApp(pApp), m_pFormFiller(nullptr) {}
+
+CPDFSDK_BFAnnotHandler::~CPDFSDK_BFAnnotHandler() {}
+
+CFX_ByteString CPDFSDK_BFAnnotHandler::GetType() {
+  return CFX_ByteString("Widget");
+}
+
+CFX_ByteString CPDFSDK_BFAnnotHandler::GetName() {
+  return CFX_ByteString("WidgetHandler");
+}
+
 FX_BOOL CPDFSDK_BFAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot->GetType() == "Widget");
   if (pAnnot->GetSubType() == BFFT_SIGNATURE)
@@ -457,6 +473,8 @@ void CPDFSDK_BFAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   pInterForm->RemoveMap(pControl);
 }
 
+void CPDFSDK_BFAnnotHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
+
 void CPDFSDK_BFAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     CFX_RenderDevice* pDevice,
@@ -473,6 +491,17 @@ void CPDFSDK_BFAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
     }
   }
 }
+
+void CPDFSDK_BFAnnotHandler::OnDrawSleep(CPDFSDK_PageView* pPageView,
+                                         CPDFSDK_Annot* pAnnot,
+                                         CFX_RenderDevice* pDevice,
+                                         CFX_Matrix* pUser2Device,
+                                         const CFX_FloatRect& rcWindow,
+                                         uint32_t dwFlags) {}
+
+void CPDFSDK_BFAnnotHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}
+
+void CPDFSDK_BFAnnotHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_BFAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                           CPDFSDK_Annot* pAnnot,
@@ -602,6 +631,13 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
   return FALSE;
 }
 
+FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
+                                                CPDFSDK_Annot* pAnnot,
+                                                uint32_t nFlags,
+                                                const CFX_FloatPoint& point) {
+  return FALSE;
+}
+
 FX_BOOL CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
                                        uint32_t nChar,
                                        uint32_t nFlags) {
@@ -700,6 +736,15 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot,
   return TRUE;
 }
 
+#ifdef PDF_ENABLE_XFA
+
+FX_BOOL CPDFSDK_BFAnnotHandler::OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
+                                                  CPDFSDK_Annot* pNewAnnot) {
+  return TRUE;
+}
+
+#endif  // PDF_ENABLE_XFA
+
 CFX_FloatRect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                   CPDFSDK_Annot* pAnnot) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -724,6 +769,25 @@ FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
 CPDFSDK_XFAAnnotHandler::CPDFSDK_XFAAnnotHandler(CPDFDoc_Environment* pApp)
     : m_pApp(pApp) {}
 
+CPDFSDK_XFAAnnotHandler::~CPDFSDK_XFAAnnotHandler() {}
+
+CFX_ByteString CPDFSDK_XFAAnnotHandler::GetType() {
+  return FSDK_XFAWIDGET_TYPENAME;
+}
+
+CFX_ByteString CPDFSDK_XFAAnnotHandler::GetName() {
+  return "XFAWidgetHandler";
+}
+
+FX_BOOL CPDFSDK_XFAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
+  return !!pAnnot->GetXFAWidget();
+}
+
+CPDFSDK_Annot* CPDFSDK_XFAAnnotHandler::NewAnnot(CPDF_Annot* pAnnot,
+                                                 CPDFSDK_PageView* pPage) {
+  return nullptr;
+}
+
 CPDFSDK_Annot* CPDFSDK_XFAAnnotHandler::NewAnnot(CXFA_FFWidget* pAnnot,
                                                  CPDFSDK_PageView* pPage) {
   CPDFSDK_Document* pSDKDoc = m_pApp->GetSDKDocument();
@@ -731,10 +795,6 @@ CPDFSDK_Annot* CPDFSDK_XFAAnnotHandler::NewAnnot(CXFA_FFWidget* pAnnot,
   CPDFSDK_XFAWidget* pWidget = new CPDFSDK_XFAWidget(pAnnot, pPage, pInterForm);
   pInterForm->AddXFAMap(pAnnot, pWidget);
   return pWidget;
-}
-
-FX_BOOL CPDFSDK_XFAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  return !!pAnnot->GetXFAWidget();
 }
 
 void CPDFSDK_XFAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
@@ -763,6 +823,21 @@ void CPDFSDK_XFAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
   // to do highlight and shadow
 }
 
+void CPDFSDK_XFAAnnotHandler::OnDrawSleep(CPDFSDK_PageView* pPageView,
+                                          CPDFSDK_Annot* pAnnot,
+                                          CFX_RenderDevice* pDevice,
+                                          CFX_Matrix* pUser2Device,
+                                          const CFX_FloatRect& rcWindow,
+                                          uint32_t dwFlags) {}
+
+void CPDFSDK_XFAAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot) {}
+
+void CPDFSDK_XFAAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
+
+void CPDFSDK_XFAAnnotHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}
+
+void CPDFSDK_XFAAnnotHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}
+
 void CPDFSDK_XFAAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_XFAWidget* pWidget = (CPDFSDK_XFAWidget*)pAnnot;
   CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
@@ -770,6 +845,8 @@ void CPDFSDK_XFAAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
 
   delete pWidget;
 }
+
+void CPDFSDK_XFAAnnotHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
 
 CFX_FloatRect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                    CPDFSDK_Annot* pAnnot) {
@@ -967,6 +1044,10 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
   return pWidgetHandler->OnKeyUp(pAnnot->GetXFAWidget(), nKeyCode,
                                  GetFWLFlags(nFlag));
 }
+
+void CPDFSDK_XFAAnnotHandler::OnDeSelected(CPDFSDK_Annot* pAnnot) {}
+
+void CPDFSDK_XFAAnnotHandler::OnSelected(CPDFSDK_Annot* pAnnot) {}
 
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot,
                                             uint32_t nFlag) {

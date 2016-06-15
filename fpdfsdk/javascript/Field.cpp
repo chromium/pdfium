@@ -114,6 +114,13 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Field, Field)
 
+CJS_DelayData::CJS_DelayData(FIELD_PROP prop,
+                             int idx,
+                             const CFX_WideString& name)
+    : eProp(prop), nControlIndex(idx), sFieldName(name) {}
+
+CJS_DelayData::~CJS_DelayData() {}
+
 void CJS_Field::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
   Field* pField = static_cast<Field*>(GetEmbedObject());

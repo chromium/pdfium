@@ -9,12 +9,11 @@
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 
+class CFX_Matrix;
 class CPDFXFA_Document;
+class CPDF_Dictionary;
 class CPDF_Page;
 class CXFA_FFPageView;
 

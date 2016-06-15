@@ -93,6 +93,18 @@ void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
   pGlobal->Initial(pRuntime->GetReaderApp());
 }
 
+JSGlobalData::JSGlobalData()
+    : nType(0),
+      dData(0),
+      bData(FALSE),
+      sData(""),
+      bPersistent(FALSE),
+      bDeleted(FALSE) {}
+
+JSGlobalData::~JSGlobalData() {
+  pData.Reset();
+}
+
 JSGlobalAlternate::JSGlobalAlternate(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_pApp(nullptr) {}
 

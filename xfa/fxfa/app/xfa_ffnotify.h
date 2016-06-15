@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_APP_XFA_FFNOTIFY_H_
 #define XFA_FXFA_APP_XFA_FFNOTIFY_H_
 
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 
 class CXFA_FFWidgetHandler;

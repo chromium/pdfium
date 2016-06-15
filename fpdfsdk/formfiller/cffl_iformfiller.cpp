@@ -662,7 +662,6 @@ void CFFL_IFormFiller::OnKeyStrokeCommit(CPDFSDK_Widget* pWidget,
       pFormFiller->GetActionData(pPageView, CPDF_AAction::KeyStroke, fa);
       pFormFiller->SaveState(pPageView);
 
-      PDFSDK_FieldAction faOld = fa;
       pWidget->OnAAction(CPDF_AAction::KeyStroke, fa, pPageView);
 
       bRC = fa.bRC;
@@ -693,7 +692,6 @@ void CFFL_IFormFiller::OnValidate(CPDFSDK_Widget* pWidget,
       pFormFiller->GetActionData(pPageView, CPDF_AAction::Validate, fa);
       pFormFiller->SaveState(pPageView);
 
-      PDFSDK_FieldAction faOld = fa;
       pWidget->OnAAction(CPDF_AAction::Validate, fa, pPageView);
 
       bRC = fa.bRC;

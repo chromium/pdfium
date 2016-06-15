@@ -37,6 +37,10 @@ void RGB2BGR(uint8_t* buffer, int width = 1) {
 
 }  // namespace
 
+CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::CFXCODEC_WeightTable() {}
+
+CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::~CFXCODEC_WeightTable() {}
+
 void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
                                                            int dest_min,
                                                            int dest_max,
@@ -136,6 +140,10 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
   }
 }
 
+CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::CFXCODEC_HorzTable() {}
+
+CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::~CFXCODEC_HorzTable() {}
+
 void CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len,
                                                          int src_len,
                                                          FX_BOOL bInterpol) {
@@ -188,6 +196,10 @@ void CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len,
     pWeight->m_Weights[1] = 0;
   }
 }
+
+CCodec_ProgressiveDecoder::CFXCODEC_VertTable::CFXCODEC_VertTable() {}
+
+CCodec_ProgressiveDecoder::CFXCODEC_VertTable::~CFXCODEC_VertTable() {}
 
 void CCodec_ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len,
                                                          int src_len) {

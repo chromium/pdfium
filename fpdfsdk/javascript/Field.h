@@ -54,8 +54,8 @@ enum FIELD_PROP {
 };
 
 struct CJS_DelayData {
-  CJS_DelayData(FIELD_PROP prop, int idx, const CFX_WideString& name)
-      : eProp(prop), nControlIndex(idx), sFieldName(name) {}
+  CJS_DelayData(FIELD_PROP prop, int idx, const CFX_WideString& name);
+  ~CJS_DelayData();
 
   FIELD_PROP eProp;
   int nControlIndex;

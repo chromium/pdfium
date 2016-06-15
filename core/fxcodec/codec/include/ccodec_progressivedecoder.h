@@ -76,8 +76,8 @@ class CCodec_ProgressiveDecoder {
 
   class CFXCODEC_WeightTable {
    public:
-    CFXCODEC_WeightTable() {}
-    ~CFXCODEC_WeightTable() {}
+    CFXCODEC_WeightTable();
+    ~CFXCODEC_WeightTable();
 
     void Calc(int dest_len,
               int dest_min,
@@ -98,8 +98,8 @@ class CCodec_ProgressiveDecoder {
 
   class CFXCODEC_HorzTable {
    public:
-    CFXCODEC_HorzTable() {}
-    ~CFXCODEC_HorzTable() {}
+    CFXCODEC_HorzTable();
+    ~CFXCODEC_HorzTable();
 
     void Calc(int dest_len, int src_len, FX_BOOL bInterpol);
     PixelWeight* GetPixelWeight(int pixel) {
@@ -113,8 +113,9 @@ class CCodec_ProgressiveDecoder {
 
   class CFXCODEC_VertTable {
    public:
-    CFXCODEC_VertTable() {}
-    ~CFXCODEC_VertTable() {}
+    CFXCODEC_VertTable();
+    ~CFXCODEC_VertTable();
+
     void Calc(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +

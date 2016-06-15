@@ -29,8 +29,22 @@
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
+#include "xfa/fxfa/include/cxfa_eventparam.h"
+#include "xfa/fxfa/include/xfa_ffdocview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
+#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 #endif  // PDF_ENABLE_XFA
+
+PDFSDK_FieldAction::PDFSDK_FieldAction()
+    : bModifier(FALSE),
+      bShift(FALSE),
+      nCommitKey(0),
+      bKeyDown(FALSE),
+      nSelEnd(0),
+      nSelStart(0),
+      bWillCommit(FALSE),
+      bFieldFull(FALSE),
+      bRC(TRUE) {}
 
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_PageView* pPageView,
@@ -483,6 +497,10 @@ FX_BOOL CPDFSDK_Widget::IsAppearanceValid() {
     return TRUE;
 #endif  // PDF_ENABLE_XFA
   return CPDFSDK_BAAnnot::IsAppearanceValid();
+}
+
+int CPDFSDK_Widget::GetLayoutOrder() const {
+  return 2;
 }
 
 int CPDFSDK_Widget::GetFieldFlags() const {
@@ -1954,8 +1972,16 @@ FX_BOOL CPDFSDK_XFAWidget::IsXFAField() {
   return TRUE;
 }
 
+CXFA_FFWidget* CPDFSDK_XFAWidget::GetXFAWidget() const {
+  return m_hXFAWidget;
+}
+
 CFX_ByteString CPDFSDK_XFAWidget::GetType() const {
   return FSDK_XFAWIDGET_TYPENAME;
+}
+
+CFX_ByteString CPDFSDK_XFAWidget::GetSubType() const {
+  return "";
 }
 
 CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {

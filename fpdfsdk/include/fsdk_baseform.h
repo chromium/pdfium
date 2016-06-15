@@ -15,10 +15,6 @@
 #include "core/fxge/include/fx_dib.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
-#endif  // PDF_ENABLE_XFA
-
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
 #else
@@ -34,6 +30,8 @@ class CPDF_FormField;
 struct CPWL_Color;
 
 #ifdef PDF_ENABLE_XFA
+class CXFA_FFWidgetHandler;
+
 typedef enum _PDFSDK_XFAAActionType {
   PDFSDK_XFA_Click = 0,
   PDFSDK_XFA_Full,
@@ -43,16 +41,8 @@ typedef enum _PDFSDK_XFAAActionType {
 #endif  // PDF_ENABLE_XFA
 
 struct PDFSDK_FieldAction {
-  PDFSDK_FieldAction() {
-    bModifier = FALSE;
-    bShift = FALSE;
-    nCommitKey = 0;
-    bKeyDown = FALSE;
-    nSelEnd = nSelStart = 0;
-    bWillCommit = FALSE;
-    bFieldFull = FALSE;
-    bRC = TRUE;
-  }
+  PDFSDK_FieldAction();
+  PDFSDK_FieldAction(const PDFSDK_FieldAction& other) = delete;
 
   FX_BOOL bModifier;         // in
   FX_BOOL bShift;            // in
@@ -104,7 +94,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
   FX_BOOL IsAppearanceValid() override;
 
-  int GetLayoutOrder() const override { return 2; }
+  int GetLayoutOrder() const override;
 
   int GetFieldType() const;
 
@@ -232,9 +222,9 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
   ~CPDFSDK_XFAWidget() override {}
 
   FX_BOOL IsXFAField() override;
-  CXFA_FFWidget* GetXFAWidget() const override { return m_hXFAWidget; }
+  CXFA_FFWidget* GetXFAWidget() const override;
   CFX_ByteString GetType() const override;
-  CFX_ByteString GetSubType() const override { return ""; }
+  CFX_ByteString GetSubType() const override;
   CFX_FloatRect GetRect() const override;
 
   CPDFSDK_InterForm* GetInterForm() { return m_pInterForm; }

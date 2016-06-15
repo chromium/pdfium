@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_SPINBUTTON_H_
 #define XFA_FWL_BASEWIDGET_IFWL_SPINBUTTON_H_
 
-#include "xfa/fwl/core/fwl_widgetimp.h"
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 
 #define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)

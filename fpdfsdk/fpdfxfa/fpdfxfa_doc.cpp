@@ -17,11 +17,13 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/include/xfa_ffdocview.h"
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
+#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 
 #define IDS_XFA_Validate_Input                                          \
   "At least one required field was empty. Please fill in the required " \
@@ -238,12 +240,6 @@ void CPDFXFA_Document::SetChangeMark(CXFA_FFDoc* hDoc) {
   }
 }
 
-FX_BOOL CPDFXFA_Document::GetChangeMark(CXFA_FFDoc* hDoc) {
-  if (hDoc == m_pXFADoc && m_pSDKDoc)
-    return m_pSDKDoc->GetChangeMark();
-  return FALSE;
-}
-
 void CPDFXFA_Document::InvalidateRect(CXFA_FFPageView* pPageView,
                                       const CFX_RectF& rt,
                                       uint32_t dwFlags /* = 0 */) {
@@ -266,30 +262,6 @@ void CPDFXFA_Document::InvalidateRect(CXFA_FFPageView* pPageView,
 
   pEnv->FFI_Invalidate((FPDF_PAGE)pPage, rcPage.left, rcPage.bottom,
                        rcPage.right, rcPage.top);
-}
-
-void CPDFXFA_Document::InvalidateRect(CXFA_FFWidget* hWidget,
-                                      uint32_t dwFlags /* = 0 */) {
-  if (!hWidget)
-    return;
-
-  if (!m_pXFADoc || !m_pSDKDoc || !m_pXFADocView)
-    return;
-
-  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
-    return;
-
-  CXFA_FFWidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
-  if (!pWidgetHandler)
-    return;
-
-  CXFA_FFPageView* pPageView = hWidget->GetPageView();
-  if (!pPageView)
-    return;
-
-  CFX_RectF rect;
-  hWidget->GetRect(rect);
-  InvalidateRect(pPageView, rect, dwFlags);
 }
 
 void CPDFXFA_Document::DisplayCaret(CXFA_FFWidget* hWidget,
@@ -552,6 +524,13 @@ void CPDFXFA_Document::WidgetPreRemove(CXFA_FFWidget* hWidget,
     pSdkPageView->DeleteAnnot(pAnnot);
 }
 
+FX_BOOL CPDFXFA_Document::RenderCustomWidget(CXFA_FFWidget* hWidget,
+                                             CFX_Graphics* pGS,
+                                             CFX_Matrix* pMatrix,
+                                             const CFX_RectF& rtUI) {
+  return FALSE;
+}
+
 int32_t CPDFXFA_Document::CountPages(CXFA_FFDoc* hDoc) {
   if (hDoc == m_pXFADoc && m_pSDKDoc)
     return GetPageCount();
@@ -789,6 +768,49 @@ void CPDFXFA_Document::Print(CXFA_FFDoc* hDoc,
       dwOptions & XFA_PRINTOPT_PrintAnnot);
 }
 
+int32_t CPDFXFA_Document::AbsPageCountInBatch(CXFA_FFDoc* hDoc) {
+  return 0;
+}
+
+int32_t CPDFXFA_Document::AbsPageInBatch(CXFA_FFDoc* hDoc,
+                                         CXFA_FFWidget* hWidget) {
+  return 0;
+}
+
+int32_t CPDFXFA_Document::SheetCountInBatch(CXFA_FFDoc* hDoc) {
+  return 0;
+}
+
+int32_t CPDFXFA_Document::SheetInBatch(CXFA_FFDoc* hDoc,
+                                       CXFA_FFWidget* hWidget) {
+  return 0;
+}
+
+int32_t CPDFXFA_Document::Verify(CXFA_FFDoc* hDoc,
+                                 CXFA_Node* pSigNode,
+                                 FX_BOOL bUsed) {
+  return 0;
+}
+
+FX_BOOL CPDFXFA_Document::Sign(CXFA_FFDoc* hDoc,
+                               CXFA_NodeList* pNodeList,
+                               const CFX_WideStringC& wsExpression,
+                               const CFX_WideStringC& wsXMLIdent,
+                               const CFX_WideStringC& wsValue,
+                               FX_BOOL bUsed) {
+  return 0;
+}
+
+CXFA_NodeList* CPDFXFA_Document::Enumerate(CXFA_FFDoc* hDoc) {
+  return 0;
+}
+
+FX_BOOL CPDFXFA_Document::Clear(CXFA_FFDoc* hDoc,
+                                CXFA_Node* pSigNode,
+                                FX_BOOL bCleared) {
+  return 0;
+}
+
 void CPDFXFA_Document::GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) {
   if (hDoc != m_pXFADoc)
     return;
@@ -903,6 +925,18 @@ FX_BOOL CPDFXFA_Document::SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
   FX_BOOL ret = _SubmitData(hDoc, submit);
   _NotifySubmit(FALSE);
   return ret;
+}
+
+FX_BOOL CPDFXFA_Document::CheckWord(CXFA_FFDoc* hDoc,
+                                    const CFX_ByteStringC& sWord) {
+  return FALSE;
+}
+
+FX_BOOL CPDFXFA_Document::GetSuggestWords(
+    CXFA_FFDoc* hDoc,
+    const CFX_ByteStringC& sWord,
+    std::vector<CFX_ByteString>& sSuggest) {
+  return FALSE;
 }
 
 IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(CXFA_FFDoc* hDoc,
@@ -1241,4 +1275,10 @@ FX_BOOL CPDFXFA_Document::GetGlobalProperty(CXFA_FFDoc* hDoc,
 
   return m_pSDKDoc->GetEnv()->GetJSRuntime()->GetValueByName(szPropName,
                                                              pValue);
+}
+
+CPDF_Document* CPDFXFA_Document::OpenPDF(CXFA_FFDoc* hDoc,
+                                         IFX_FileRead* pFile,
+                                         FX_BOOL bTakeOverFile) {
+  return nullptr;
 }

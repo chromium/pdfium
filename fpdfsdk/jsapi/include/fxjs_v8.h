@@ -81,11 +81,11 @@ class V8TemplateMap {
  public:
   typedef v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits> MapType;
 
-  void set(void* key, v8::Local<v8::Object> handle) {
-    ASSERT(!m_map.Contains(key));
-    m_map.Set(key, handle);
-  }
-  explicit V8TemplateMap(v8::Isolate* isolate) : m_map(isolate) {}
+  explicit V8TemplateMap(v8::Isolate* isolate);
+  ~V8TemplateMap();
+
+  void set(void* key, v8::Local<v8::Object> handle);
+
   friend class V8TemplateMapTraits;
 
  private:
@@ -94,8 +94,11 @@ class V8TemplateMap {
 
 class FXJS_PerIsolateData {
  public:
+  ~FXJS_PerIsolateData();
+
   static void SetUp(v8::Isolate* pIsolate);
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
+
   void CreateDynamicObjsMap(v8::Isolate* pIsolate) {
     if (!m_pDynamicObjsMap)
       m_pDynamicObjsMap = new V8TemplateMap(pIsolate);
@@ -112,12 +115,7 @@ class FXJS_PerIsolateData {
   V8TemplateMap* m_pDynamicObjsMap;
 
  protected:
-#ifndef PDF_ENABLE_XFA
-  FXJS_PerIsolateData() : m_pDynamicObjsMap(nullptr) {}
-#else   // PDF_ENABLE_XFA
-  FXJS_PerIsolateData()
-      : m_pFXJSERuntimeData(nullptr), m_pDynamicObjsMap(nullptr) {}
-#endif  // PDF_ENABLE_XFA
+  FXJS_PerIsolateData();
 };
 
 extern const wchar_t kFXJSValueNameString[];

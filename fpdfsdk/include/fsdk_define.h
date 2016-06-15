@@ -40,12 +40,12 @@ class CPDF_CustomAccess final : public IFX_FileRead {
   ~CPDF_CustomAccess() override {}
 
   // IFX_FileRead
-  FX_FILESIZE GetSize() override { return m_FileAccess.m_FileLen; }
-  void Release() override { delete this; }
+  FX_FILESIZE GetSize() override;
+  void Release() override;
   FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
 #ifdef PDF_ENABLE_XFA
-  virtual CFX_ByteString GetFullPath() { return ""; }
+  virtual CFX_ByteString GetFullPath();
   virtual FX_BOOL GetByte(uint32_t pos, uint8_t& ch);
   virtual FX_BOOL GetBlock(uint32_t pos, uint8_t* pBuf, uint32_t size);
 #endif  // PDF_ENABLE_XFA
@@ -69,7 +69,7 @@ class CFPDF_FileStream : public IFX_FileStream {
   void Release() override;
   FX_FILESIZE GetSize() override;
   FX_BOOL IsEOF() override;
-  FX_FILESIZE GetPosition() override { return m_nCurPos; }
+  FX_FILESIZE GetPosition() override;
   FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
   size_t ReadBlock(void* buffer, size_t size) override;
   FX_BOOL WriteBlock(const void* buffer,

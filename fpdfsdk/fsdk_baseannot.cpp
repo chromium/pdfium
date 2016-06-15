@@ -430,9 +430,59 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddSeconds(int seconds) {
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
     : m_pPageView(pPageView), m_bSelected(FALSE), m_nTabOrder(-1) {}
 
+CPDFSDK_Annot::~CPDFSDK_Annot() {}
+
+#ifdef PDF_ENABLE_XFA
+
+FX_BOOL CPDFSDK_Annot::IsXFAField() {
+  return FALSE;
+}
+
+CXFA_FFWidget* CPDFSDK_Annot::GetXFAWidget() const {
+  return nullptr;
+}
+
+#endif  // PDF_ENABLE_XFA
+
+FX_FLOAT CPDFSDK_Annot::GetMinWidth() const {
+  return kMinWidth;
+}
+
+FX_FLOAT CPDFSDK_Annot::GetMinHeight() const {
+  return kMinHeight;
+}
+
+int CPDFSDK_Annot::GetLayoutOrder() const {
+  return 5;
+}
+
+CPDF_Annot* CPDFSDK_Annot::GetPDFAnnot() const {
+  return nullptr;
+}
+
+CFX_ByteString CPDFSDK_Annot::GetType() const {
+  return "";
+}
+
+CFX_ByteString CPDFSDK_Annot::GetSubType() const {
+  return "";
+}
+
+void CPDFSDK_Annot::SetRect(const CFX_FloatRect& rect) {}
+
+CFX_FloatRect CPDFSDK_Annot::GetRect() const {
+  return CFX_FloatRect();
+}
+
+void CPDFSDK_Annot::Annot_OnDraw(CFX_RenderDevice* pDevice,
+                                 CFX_Matrix* pUser2Device,
+                                 CPDF_RenderOptions* pOptions) {}
+
 CPDFSDK_BAAnnot::CPDFSDK_BAAnnot(CPDF_Annot* pAnnot,
                                  CPDFSDK_PageView* pPageView)
     : CPDFSDK_Annot(pPageView), m_pAnnot(pAnnot) {}
+
+CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot() {}
 
 CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() const {
   return m_pAnnot;
@@ -446,7 +496,6 @@ void CPDFSDK_Annot::SetSelected(FX_BOOL bSelected) {
   m_bSelected = bSelected;
 }
 
-// Tab Order
 int CPDFSDK_Annot::GetTabOrder() {
   return m_nTabOrder;
 }
@@ -776,14 +825,6 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
                    FALSE);
 }
 
-FX_FLOAT CPDFSDK_Annot::GetMinWidth() const {
-  return kMinWidth;
-}
-
-FX_FLOAT CPDFSDK_Annot::GetMinHeight() const {
-  return kMinHeight;
-}
-
 FX_BOOL CPDFSDK_BAAnnot::CreateFormFiller() {
   return TRUE;
 }
@@ -838,12 +879,6 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
   return CPDF_Action();
 }
 
-#ifdef PDF_ENABLE_XFA
-FX_BOOL CPDFSDK_BAAnnot::IsXFAField() {
-  return FALSE;
-}
-#endif  // PDF_ENABLE_XFA
-
 void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
                                    CFX_Matrix* pUser2Device,
                                    CPDF_RenderOptions* pOptions) {
@@ -865,7 +900,9 @@ CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
 }
 
 #ifdef PDF_ENABLE_XFA
+
 CPDFXFA_Page* CPDFSDK_Annot::GetPDFXFAPage() {
   return m_pPageView ? m_pPageView->GetPDFXFAPage() : nullptr;
 }
+
 #endif  // PDF_ENABLE_XFA

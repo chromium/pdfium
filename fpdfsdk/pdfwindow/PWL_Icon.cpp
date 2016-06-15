@@ -112,6 +112,10 @@ CPWL_Icon::CPWL_Icon() : m_pIconFit(nullptr) {}
 
 CPWL_Icon::~CPWL_Icon() {}
 
+CPDF_IconFit* CPWL_Icon::GetIconFit() {
+  return m_pIconFit;
+}
+
 int32_t CPWL_Icon::GetScaleMethod() {
   if (m_pIconFit)
     return m_pIconFit->GetScaleMethod();

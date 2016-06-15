@@ -16,6 +16,31 @@ static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
   return *timeMap;
 }
 
+PWL_CREATEPARAM::PWL_CREATEPARAM()
+    : rcRectWnd(0, 0, 0, 0),
+      pSystemHandler(nullptr),
+      pFontMap(nullptr),
+      pProvider(nullptr),
+      pFocusHandler(nullptr),
+      dwFlags(0),
+      sBackgroundColor(),
+      hAttachedWnd(nullptr),
+      nBorderStyle(BorderStyle::SOLID),
+      dwBorderWidth(1),
+      sBorderColor(),
+      sTextColor(),
+      sTextStrokeColor(),
+      nTransparency(255),
+      fFontSize(PWL_DEFAULT_FONTSIZE),
+      sDash(3, 0, 0),
+      pAttachedData(nullptr),
+      pParentWnd(nullptr),
+      pMsgControl(nullptr),
+      eCursorType(FXCT_ARROW),
+      mtChild(1, 0, 0, 1, 0, 0) {}
+
+PWL_CREATEPARAM::PWL_CREATEPARAM(const PWL_CREATEPARAM& other) = default;
+
 CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached,
                        CFX_SystemHandler* pSystemHandler)
     : m_nTimerID(0), m_pAttached(pAttached), m_pSystemHandler(pSystemHandler) {
@@ -928,6 +953,18 @@ CFX_FloatRect CPWL_Wnd::ParentToChild(const CFX_FloatRect& rect) const {
   CFX_FloatRect rc = rect;
   mt.TransformRect(rc);
   return rc;
+}
+
+FX_FLOAT CPWL_Wnd::GetItemHeight(FX_FLOAT fLimitWidth) {
+  return 0;
+}
+
+FX_FLOAT CPWL_Wnd::GetItemLeftMargin() {
+  return 0;
+}
+
+FX_FLOAT CPWL_Wnd::GetItemRightMargin() {
+  return 0;
 }
 
 CFX_Matrix CPWL_Wnd::GetChildToRoot() const {

@@ -142,11 +142,10 @@ class CFX_ListItem final {
 
 class CFX_ListContainer {
  public:
-  CFX_ListContainer()
-      : m_rcPlate(0.0f, 0.0f, 0.0f, 0.0f),
-        m_rcContent(0.0f, 0.0f, 0.0f, 0.0f) {}
-  virtual ~CFX_ListContainer() {}
-  virtual void SetPlateRect(const CFX_FloatRect& rect) { m_rcPlate = rect; }
+  CFX_ListContainer();
+  virtual ~CFX_ListContainer();
+  virtual void SetPlateRect(const CFX_FloatRect& rect);
+
   CFX_FloatRect GetPlateRect() const { return m_rcPlate; }
   void SetContentRect(const CLST_Rect& rect) { m_rcContent = rect; }
   CLST_Rect GetContentRect() const { return m_rcContent; }
@@ -297,8 +296,8 @@ class CFX_ListCtrl : public CFX_List {
   void SetScrollPos(const CFX_FloatPoint& point) override;
   void ScrollToListItem(int32_t nItemIndex) override;
   CFX_FloatRect GetItemRect(int32_t nIndex) const override;
-  int32_t GetCaret() const override { return m_nCaretIndex; }
-  int32_t GetSelect() const override { return m_nSelItem; }
+  int32_t GetCaret() const override;
+  int32_t GetSelect() const override;
   int32_t GetTopItem() const override;
   CFX_FloatRect GetContentRect() const override;
   int32_t GetItemIndex(const CFX_FloatPoint& point) const override;

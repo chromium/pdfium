@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 
