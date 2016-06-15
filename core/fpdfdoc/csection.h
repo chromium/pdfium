@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFDOC_CSECTION_H_
 #define CORE_FPDFDOC_CSECTION_H_
 
+#include "core/fpdfdoc/clines.h"
 #include "core/fpdfdoc/cpvt_sectioninfo.h"
 #include "core/fpdfdoc/ctypeset.h"
 #include "core/fxcrt/include/fx_coordinates.h"

@@ -59,6 +59,7 @@ class CFX_DIBAttribute {
 class CCodec_ModuleMgr {
  public:
   CCodec_ModuleMgr();
+  ~CCodec_ModuleMgr();
 
   CCodec_BasicModule* GetBasicModule() const { return m_pBasicModule.get(); }
   CCodec_FaxModule* GetFaxModule() const { return m_pFaxModule.get(); }

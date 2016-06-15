@@ -18,7 +18,7 @@ class CPDF_TextPage;
 class CPDF_TextPageFind {
  public:
   explicit CPDF_TextPageFind(const CPDF_TextPage* pTextPage);
-  ~CPDF_TextPageFind() {}
+  ~CPDF_TextPageFind();
 
   FX_BOOL FindFirst(const CFX_WideString& findwhat,
                     int flags,
@@ -38,10 +38,6 @@ class CPDF_TextPageFind {
                            int iSubString,
                            FX_WCHAR chSep);
   CFX_WideString MakeReverse(const CFX_WideString& str);
-  int ReverseFind(const CFX_WideString& csPageText,
-                  const CFX_WideString& csWord,
-                  int nStartPos,
-                  int& WordLength);
   int GetCharIndex(int index) const;
 
  private:

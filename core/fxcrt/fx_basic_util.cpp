@@ -117,14 +117,16 @@ class CFindFileData {
   HANDLE m_Handle;
   FX_BOOL m_bEnd;
 };
+
 class CFindFileDataA : public CFindFileData {
  public:
-  virtual ~CFindFileDataA() {}
+  ~CFindFileDataA() override {}
   WIN32_FIND_DATAA m_FindData;
 };
+
 class CFindFileDataW : public CFindFileData {
  public:
-  virtual ~CFindFileDataW() {}
+  ~CFindFileDataW() override {}
   WIN32_FIND_DATAW m_FindData;
 };
 #endif

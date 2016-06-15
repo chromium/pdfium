@@ -152,8 +152,7 @@ typedef CFX_ArrayTemplate<CFX_Char> CFX_CharArray;
 class CFX_TxtChar : public CFX_Char {
  public:
   CFX_TxtChar()
-      : CFX_Char(),
-        m_dwStatus(0),
+      : m_dwStatus(0),
         m_iBidiClass(0),
         m_iBidiLevel(0),
         m_iBidiPos(0),
@@ -169,17 +168,9 @@ class CFX_TxtChar : public CFX_Char {
 typedef CFX_ArrayTemplate<CFX_TxtChar> CFX_TxtCharArray;
 class CFX_RTFChar : public CFX_Char {
  public:
-  CFX_RTFChar()
-      : CFX_Char(),
-        m_dwStatus(0),
-        m_iFontSize(0),
-        m_iFontHeight(0),
-        m_iBidiClass(0),
-        m_iBidiLevel(0),
-        m_iBidiPos(0),
-        m_dwLayoutStyles(0),
-        m_dwIdentity(0),
-        m_pUserData(nullptr) {}
+  CFX_RTFChar();
+  CFX_RTFChar(const CFX_RTFChar& other);
+
   uint32_t m_dwStatus;
   int32_t m_iFontSize;
   int32_t m_iFontHeight;
@@ -191,6 +182,20 @@ class CFX_RTFChar : public CFX_Char {
   uint32_t m_dwIdentity;
   IFX_Retainable* m_pUserData;
 };
+
+inline CFX_RTFChar::CFX_RTFChar()
+    : m_dwStatus(0),
+      m_iFontSize(0),
+      m_iFontHeight(0),
+      m_iBidiClass(0),
+      m_iBidiLevel(0),
+      m_iBidiPos(0),
+      m_dwLayoutStyles(0),
+      m_dwIdentity(0),
+      m_pUserData(nullptr) {}
+
+inline CFX_RTFChar::CFX_RTFChar(const CFX_RTFChar& other) = default;
+
 typedef CFX_ArrayTemplate<CFX_RTFChar> CFX_RTFCharArray;
 #endif  // PDF_ENABLE_XFA
 

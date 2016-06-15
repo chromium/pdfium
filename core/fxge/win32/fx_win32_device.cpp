@@ -939,6 +939,10 @@ FX_BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return ::GetClipBox(m_hDC, (RECT*)pRect);
 }
 
+void* CGdiDeviceDriver::GetPlatformSurface() const {
+  return (void*)m_hDC;
+}
+
 void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
                                 FX_FLOAT y1,
                                 FX_FLOAT x2,
@@ -1361,6 +1365,16 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource,
     return FALSE;
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
                            dest_height, flags, nullptr);
+}
+
+FX_BOOL CGdiDisplayDriver::StartDIBits(const CFX_DIBSource* pBitmap,
+                                       int bitmap_alpha,
+                                       uint32_t color,
+                                       const CFX_Matrix* pMatrix,
+                                       uint32_t render_flags,
+                                       void*& handle,
+                                       int blend_type) {
+  return FALSE;
 }
 
 CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC) {

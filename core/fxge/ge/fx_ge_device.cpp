@@ -6,18 +6,25 @@
 
 #include "core/fxge/include/fx_ge.h"
 
-CFX_RenderDevice::CFX_RenderDevice() {
-  m_pDeviceDriver = nullptr;
-  m_pBitmap = nullptr;
-}
+CFX_RenderDevice::CFX_RenderDevice()
+    : m_pBitmap(nullptr),
+      m_Width(0),
+      m_Height(0),
+      m_bpp(0),
+      m_RenderCaps(0),
+      m_DeviceClass(0),
+      m_pDeviceDriver(nullptr) {}
+
 CFX_RenderDevice::~CFX_RenderDevice() {
   delete m_pDeviceDriver;
 }
+
 void CFX_RenderDevice::SetDeviceDriver(IFX_RenderDeviceDriver* pDriver) {
   delete m_pDeviceDriver;
   m_pDeviceDriver = pDriver;
   InitDeviceInfo();
 }
+
 void CFX_RenderDevice::InitDeviceInfo() {
   m_Width = m_pDeviceDriver->GetDeviceCaps(FXDC_PIXEL_WIDTH);
   m_Height = m_pDeviceDriver->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
@@ -31,12 +38,15 @@ void CFX_RenderDevice::InitDeviceInfo() {
     m_ClipBox.bottom = m_Height;
   }
 }
+
 FX_BOOL CFX_RenderDevice::StartRendering() {
   return m_pDeviceDriver->StartRendering();
 }
+
 void CFX_RenderDevice::EndRendering() {
   m_pDeviceDriver->EndRendering();
 }
+
 void CFX_RenderDevice::SaveState() {
   m_pDeviceDriver->SaveState();
 }
@@ -52,6 +62,7 @@ int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
 CFX_Matrix CFX_RenderDevice::GetCTM() const {
   return m_pDeviceDriver->GetCTM();
 }
+
 FX_BOOL CFX_RenderDevice::CreateCompatibleBitmap(CFX_DIBitmap* pDIB,
                                                  int width,
                                                  int height) const {
@@ -72,6 +83,7 @@ FX_BOOL CFX_RenderDevice::CreateCompatibleBitmap(CFX_DIBitmap* pDIB,
       width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb);
 #endif
 }
+
 FX_BOOL CFX_RenderDevice::SetClip_PathFill(const CFX_PathData* pPathData,
                                            const CFX_Matrix* pObject2Device,
                                            int fill_mode) {
@@ -82,6 +94,7 @@ FX_BOOL CFX_RenderDevice::SetClip_PathFill(const CFX_PathData* pPathData,
   UpdateClipBox();
   return TRUE;
 }
+
 FX_BOOL CFX_RenderDevice::SetClip_PathStroke(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pObject2Device,
@@ -93,6 +106,7 @@ FX_BOOL CFX_RenderDevice::SetClip_PathStroke(
   UpdateClipBox();
   return TRUE;
 }
+
 FX_BOOL CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
   CFX_PathData path;
   path.AppendRect(rect.left, rect.bottom, rect.right, rect.top);
@@ -102,6 +116,7 @@ FX_BOOL CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
   UpdateClipBox();
   return TRUE;
 }
+
 void CFX_RenderDevice::UpdateClipBox() {
   if (m_pDeviceDriver->GetClipBox(&m_ClipBox)) {
     return;
@@ -419,6 +434,16 @@ FX_BOOL CFX_RenderDevice::SetBitMask(const CFX_DIBSource* pBitmap,
   FX_RECT src_rect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
   return m_pDeviceDriver->SetDIBits(pBitmap, argb, &src_rect, left, top,
                                     FXDIB_BLEND_NORMAL);
+}
+
+FX_BOOL CFX_RenderDevice::StretchBitMask(const CFX_DIBSource* pBitmap,
+                                         int left,
+                                         int top,
+                                         int dest_width,
+                                         int dest_height,
+                                         uint32_t color) {
+  return StretchBitMaskWithFlags(pBitmap, left, top, dest_width, dest_height,
+                                 color, 0);
 }
 
 FX_BOOL CFX_RenderDevice::StretchBitMaskWithFlags(const CFX_DIBSource* pBitmap,

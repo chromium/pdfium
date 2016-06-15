@@ -63,6 +63,15 @@ const FX_WCHAR* FX_wcsstr(const FX_WCHAR* haystack,
 static_assert(sizeof(CFX_WideString) <= sizeof(FX_WCHAR*),
               "Strings must not require more space than pointers");
 
+CFX_WideString::CFX_WideString() {}
+
+CFX_WideString::CFX_WideString(const CFX_WideString& other)
+    : m_pData(other.m_pData) {}
+
+CFX_WideString::CFX_WideString(CFX_WideString&& other) {
+  m_pData.Swap(other.m_pData);
+}
+
 CFX_WideString::CFX_WideString(const FX_WCHAR* pStr, FX_STRSIZE nLen) {
   if (nLen < 0)
     nLen = pStr ? FXSYS_wcslen(pStr) : 0;
@@ -75,6 +84,9 @@ CFX_WideString::CFX_WideString(FX_WCHAR ch) {
   m_pData.Reset(StringData::Create(1));
   m_pData->m_String[0] = ch;
 }
+
+CFX_WideString::CFX_WideString(const FX_WCHAR* ptr)
+    : CFX_WideString(ptr, ptr ? FXSYS_wcslen(ptr) : 0) {}
 
 CFX_WideString::CFX_WideString(const CFX_WideStringC& stringSrc) {
   if (!stringSrc.IsEmpty()) {

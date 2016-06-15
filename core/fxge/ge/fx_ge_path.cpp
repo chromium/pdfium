@@ -8,27 +8,25 @@
 #include "core/fxge/include/fx_ge.h"
 #include "third_party/base/numerics/safe_math.h"
 
-CFX_ClipRgn::CFX_ClipRgn(int width, int height) {
-  m_Type = RectI;
-  m_Box.left = m_Box.top = 0;
-  m_Box.right = width;
-  m_Box.bottom = height;
-}
-CFX_ClipRgn::CFX_ClipRgn(const FX_RECT& rect) {
-  m_Type = RectI;
-  m_Box = rect;
-}
+CFX_ClipRgn::CFX_ClipRgn(int width, int height)
+    : m_Type(RectI), m_Box(0, 0, width, height) {}
+
+CFX_ClipRgn::CFX_ClipRgn(const FX_RECT& rect) : m_Type(RectI), m_Box(rect) {}
+
 CFX_ClipRgn::CFX_ClipRgn(const CFX_ClipRgn& src) {
   m_Type = src.m_Type;
   m_Box = src.m_Box;
   m_Mask = src.m_Mask;
 }
+
 CFX_ClipRgn::~CFX_ClipRgn() {}
+
 void CFX_ClipRgn::Reset(const FX_RECT& rect) {
   m_Type = RectI;
   m_Box = rect;
   m_Mask.SetNull();
 }
+
 void CFX_ClipRgn::IntersectRect(const FX_RECT& rect) {
   if (m_Type == RectI) {
     m_Box.Intersect(rect);
@@ -39,6 +37,7 @@ void CFX_ClipRgn::IntersectRect(const FX_RECT& rect) {
     return;
   }
 }
+
 void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
                                     FX_RECT mask_rect,
                                     CFX_DIBitmapRef Mask) {
@@ -69,6 +68,7 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
     }
   }
 }
+
 void CFX_ClipRgn::IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask) {
   const CFX_DIBitmap* mask_dib = Mask.GetObject();
   ASSERT(mask_dib->GetFormat() == FXDIB_8bppMask);
@@ -112,13 +112,14 @@ void CFX_ClipRgn::IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask) {
   }
   ASSERT(FALSE);
 }
-CFX_PathData::CFX_PathData() {
-  m_PointCount = m_AllocCount = 0;
-  m_pPoints = nullptr;
-}
+
+CFX_PathData::CFX_PathData()
+    : m_PointCount(0), m_pPoints(nullptr), m_AllocCount(0) {}
+
 CFX_PathData::~CFX_PathData() {
   FX_Free(m_pPoints);
 }
+
 void CFX_PathData::SetPointCount(int nPoints) {
   m_PointCount = nPoints;
   if (m_AllocCount < nPoints) {
@@ -127,6 +128,7 @@ void CFX_PathData::SetPointCount(int nPoints) {
     m_AllocCount = nPoints;
   }
 }
+
 void CFX_PathData::AllocPointCount(int nPoints) {
   if (m_AllocCount < nPoints) {
     FX_PATHPOINT* pNewBuf = FX_Alloc(FX_PATHPOINT, nPoints);
@@ -138,17 +140,20 @@ void CFX_PathData::AllocPointCount(int nPoints) {
     m_AllocCount = nPoints;
   }
 }
+
 CFX_PathData::CFX_PathData(const CFX_PathData& src) {
   m_PointCount = m_AllocCount = src.m_PointCount;
   m_pPoints = FX_Alloc(FX_PATHPOINT, src.m_PointCount);
   FXSYS_memcpy(m_pPoints, src.m_pPoints, sizeof(FX_PATHPOINT) * m_PointCount);
 }
+
 void CFX_PathData::TrimPoints(int nPoints) {
   if (m_PointCount <= nPoints) {
     return;
   }
   SetPointCount(nPoints);
 }
+
 void CFX_PathData::AddPointCount(int addPoints) {
   pdfium::base::CheckedNumeric<int> safe_new_count = m_PointCount;
   safe_new_count += addPoints;
@@ -156,6 +161,7 @@ void CFX_PathData::AddPointCount(int addPoints) {
   AllocPointCount(new_count);
   m_PointCount = new_count;
 }
+
 void CFX_PathData::Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix) {
   int old_count = m_PointCount;
   AddPointCount(pSrc->m_PointCount);
@@ -168,12 +174,14 @@ void CFX_PathData::Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix) {
     }
   }
 }
+
 void CFX_PathData::SetPoint(int index, FX_FLOAT x, FX_FLOAT y, int flag) {
   ASSERT(index < m_PointCount);
   m_pPoints[index].m_PointX = x;
   m_pPoints[index].m_PointY = y;
   m_pPoints[index].m_Flag = flag;
 }
+
 void CFX_PathData::AppendRect(FX_FLOAT left,
                               FX_FLOAT bottom,
                               FX_FLOAT right,
@@ -189,6 +197,7 @@ void CFX_PathData::AppendRect(FX_FLOAT left,
   pPoints[1].m_Flag = pPoints[2].m_Flag = pPoints[3].m_Flag = FXPT_LINETO;
   pPoints[4].m_Flag = FXPT_LINETO | FXPT_CLOSEFIGURE;
 }
+
 CFX_FloatRect CFX_PathData::GetBoundingBox() const {
   CFX_FloatRect rect;
   if (m_PointCount) {
@@ -199,6 +208,7 @@ CFX_FloatRect CFX_PathData::GetBoundingBox() const {
   }
   return rect;
 }
+
 static void _UpdateLineEndPoints(CFX_FloatRect& rect,
                                  FX_FLOAT start_x,
                                  FX_FLOAT start_y,
@@ -242,6 +252,7 @@ static void _UpdateLineEndPoints(CFX_FloatRect& rect,
   rect.UpdateRect(mx - dx1, my + dy1);
   rect.UpdateRect(mx + dx1, my - dy1);
 }
+
 static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
                                   FX_FLOAT start_x,
                                   FX_FLOAT start_y,
@@ -334,6 +345,7 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
   FX_FLOAT join_y = (start_k * join_x) + start_outside_c;
   rect.UpdateRect(join_x, join_y);
 }
+
 CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width,
                                            FX_FLOAT miter_limit) const {
   CFX_FloatRect rect(100000 * 1.0f, 100000 * 1.0f, -100000 * 1.0f,
@@ -384,6 +396,7 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width,
   }
   return rect;
 }
+
 void CFX_PathData::Transform(const CFX_Matrix* pMatrix) {
   if (!pMatrix) {
     return;
@@ -392,6 +405,7 @@ void CFX_PathData::Transform(const CFX_Matrix* pMatrix) {
     pMatrix->Transform(m_pPoints[i].m_PointX, m_pPoints[i].m_PointY);
   }
 }
+
 FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath,
                                       CFX_Matrix* pMatrix,
                                       FX_BOOL& bThin,
@@ -536,6 +550,7 @@ FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_PathData::IsRect() const {
   if (m_PointCount != 5 && m_PointCount != 4) {
     return FALSE;
@@ -563,6 +578,7 @@ FX_BOOL CFX_PathData::IsRect() const {
   }
   return m_PointCount == 5 || (m_pPoints[3].m_Flag & FXPT_CLOSEFIGURE);
 }
+
 FX_BOOL CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
                              CFX_FloatRect* pRect) const {
   if (!pMatrix) {
@@ -613,23 +629,26 @@ FX_BOOL CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
   }
   return TRUE;
 }
+
 void CFX_PathData::Copy(const CFX_PathData& src) {
   SetPointCount(src.m_PointCount);
   FXSYS_memcpy(m_pPoints, src.m_pPoints, sizeof(FX_PATHPOINT) * m_PointCount);
 }
-CFX_GraphStateData::CFX_GraphStateData() {
-  m_LineCap = LineCapButt;
-  m_DashCount = 0;
-  m_DashArray = nullptr;
-  m_DashPhase = 0;
-  m_LineJoin = LineJoinMiter;
-  m_MiterLimit = 10 * 1.0f;
-  m_LineWidth = 1.0f;
-}
+
+CFX_GraphStateData::CFX_GraphStateData()
+    : m_LineCap(LineCapButt),
+      m_DashCount(0),
+      m_DashArray(nullptr),
+      m_DashPhase(0),
+      m_LineJoin(LineJoinMiter),
+      m_MiterLimit(10 * 1.0f),
+      m_LineWidth(1.0f) {}
+
 CFX_GraphStateData::CFX_GraphStateData(const CFX_GraphStateData& src) {
   m_DashArray = nullptr;
   Copy(src);
 }
+
 void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
   m_LineCap = src.m_LineCap;
   m_DashCount = src.m_DashCount;
@@ -644,9 +663,11 @@ void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
     FXSYS_memcpy(m_DashArray, src.m_DashArray, m_DashCount * sizeof(FX_FLOAT));
   }
 }
+
 CFX_GraphStateData::~CFX_GraphStateData() {
   FX_Free(m_DashArray);
 }
+
 void CFX_GraphStateData::SetDashCount(int count) {
   FX_Free(m_DashArray);
   m_DashArray = nullptr;

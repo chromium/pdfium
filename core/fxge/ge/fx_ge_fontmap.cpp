@@ -9,8 +9,9 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxge/include/fx_font.h"
+
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
-#include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "core/fxge/include/fx_ge.h"
 #include "third_party/base/stl_util.h"
@@ -1358,7 +1359,21 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
 }
 #endif
 
+CFX_FontFaceInfo::CFX_FontFaceInfo(CFX_ByteString filePath,
+                                   CFX_ByteString faceName,
+                                   CFX_ByteString fontTables,
+                                   uint32_t fontOffset,
+                                   uint32_t fileSize)
+    : m_FilePath(filePath),
+      m_FaceName(faceName),
+      m_FontTables(fontTables),
+      m_FontOffset(fontOffset),
+      m_FileSize(fileSize),
+      m_Styles(0),
+      m_Charsets(0) {}
+
 CFX_FolderFontInfo::CFX_FolderFontInfo() {}
+
 CFX_FolderFontInfo::~CFX_FolderFontInfo() {
   for (const auto& pair : m_FontList) {
     delete pair.second;

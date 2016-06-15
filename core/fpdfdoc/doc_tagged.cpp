@@ -208,6 +208,30 @@ CPDF_StructElementImpl::CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree,
   LoadKids(pDict);
 }
 
+IPDF_StructTree* CPDF_StructElementImpl::GetTree() const {
+  return m_pTree;
+}
+
+const CFX_ByteString& CPDF_StructElementImpl::GetType() const {
+  return m_Type;
+}
+
+IPDF_StructElement* CPDF_StructElementImpl::GetParent() const {
+  return m_pParent;
+}
+
+CPDF_Dictionary* CPDF_StructElementImpl::GetDict() const {
+  return m_pDict;
+}
+
+int CPDF_StructElementImpl::CountKids() const {
+  return pdfium::CollectionSize<int>(m_Kids);
+}
+
+const CPDF_StructKid& CPDF_StructElementImpl::GetKid(int index) const {
+  return m_Kids[index];
+}
+
 CPDF_StructElementImpl::~CPDF_StructElementImpl() {
   for (CPDF_StructKid& kid : m_Kids) {
     if (kid.m_Type == CPDF_StructKid::Element && kid.m_Element.m_pElement)

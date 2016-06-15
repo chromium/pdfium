@@ -107,22 +107,25 @@ typedef struct tagGifImage {
   uint8_t* image_row_buf;
   int32_t image_row_num;
 } GifImage;
+
 typedef struct tagGifPlainText {
   GifGCE* gce_ptr;
   GifPTE* pte_ptr;
   CFX_ByteString* string_ptr;
 } GifPlainText;
+
 class CGifLZWDecoder {
  public:
   struct tag_Table {
     uint16_t prefix;
     uint8_t suffix;
   };
-  CGifLZWDecoder(FX_CHAR* error_ptr = nullptr) { err_msg_ptr = error_ptr; }
+
+  explicit CGifLZWDecoder(FX_CHAR* error_ptr);
+  ~CGifLZWDecoder();
+
   void InitTable(uint8_t code_len);
-
   int32_t Decode(uint8_t* des_buf, uint32_t& des_size);
-
   void Input(uint8_t* src_buf, uint32_t src_size);
   uint32_t GetAvailInput();
 
@@ -130,6 +133,7 @@ class CGifLZWDecoder {
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
   void DecodeString(uint16_t code);
+
   uint8_t code_size;
   uint8_t code_size_cur;
   uint16_t code_clear;
@@ -149,14 +153,17 @@ class CGifLZWDecoder {
 
   FX_CHAR* err_msg_ptr;
 };
+
 class CGifLZWEncoder {
  public:
   struct tag_Table {
     uint16_t prefix;
     uint8_t suffix;
   };
+
   CGifLZWEncoder();
   ~CGifLZWEncoder();
+
   void Start(uint8_t code_len,
              const uint8_t* src_buf,
              uint8_t*& dst_buf,
@@ -178,6 +185,7 @@ class CGifLZWEncoder {
                     uint32_t& dst_len,
                     uint32_t& offset);
   void WriteBlock(uint8_t*& dst_buf, uint32_t& dst_len, uint32_t& offset);
+
   jmp_buf jmp;
   uint32_t src_offset;
   uint8_t src_bit_offset;
@@ -194,6 +202,7 @@ class CGifLZWEncoder {
   tag_Table code_table[GIF_MAX_LZW_CODE];
   uint16_t table_cur;
 };
+
 typedef struct tag_gif_decompress_struct gif_decompress_struct;
 typedef gif_decompress_struct* gif_decompress_struct_p;
 typedef gif_decompress_struct_p* gif_decompress_struct_pp;

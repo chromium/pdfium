@@ -933,12 +933,16 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
                            bFontStyle, dest_width, anti_alias);
 #endif
 }
+
+CFX_SizeGlyphCache::CFX_SizeGlyphCache() {}
+
 CFX_SizeGlyphCache::~CFX_SizeGlyphCache() {
   for (const auto& pair : m_GlyphMap) {
     delete pair.second;
   }
   m_GlyphMap.clear();
 }
+
 #define CONTRAST_RAMP_STEP 1
 void CFX_Font::AdjustMMParams(int glyph_index, int dest_width, int weight) {
   FXFT_MM_Var pMasters = nullptr;

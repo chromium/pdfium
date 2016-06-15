@@ -36,8 +36,9 @@ class CFX_GEModule {
     m_pCodecModule = pCodecModule;
   }
   CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
-  FXFT_Library m_FTLibrary;
   void* GetPlatformData() { return m_pPlatformData; }
+
+  FXFT_Library m_FTLibrary;
 
  protected:
   explicit CFX_GEModule(const char** pUserFontPaths);
@@ -71,16 +72,18 @@ struct FX_PATHPOINT {
 
 class CFX_ClipRgn {
  public:
+  enum ClipType { RectI, MaskF };
+
   CFX_ClipRgn(int device_width, int device_height);
   explicit CFX_ClipRgn(const FX_RECT& rect);
   CFX_ClipRgn(const CFX_ClipRgn& src);
   ~CFX_ClipRgn();
 
-  enum ClipType { RectI, MaskF };
-  void Reset(const FX_RECT& rect);
   ClipType GetType() const { return m_Type; }
   const FX_RECT& GetBox() const { return m_Box; }
   CFX_DIBitmapRef GetMask() const { return m_Mask; }
+
+  void Reset(const FX_RECT& rect);
   void IntersectRect(const FX_RECT& rect);
   void IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask);
 
@@ -103,6 +106,7 @@ class CFX_PathData {
   FX_FLOAT GetPointX(int index) const { return m_pPoints[index].m_PointX; }
   FX_FLOAT GetPointY(int index) const { return m_pPoints[index].m_PointY; }
   FX_PATHPOINT* GetPoints() const { return m_pPoints; }
+
   void SetPointCount(int nPoints);
   void AllocPointCount(int nPoints);
   void AddPointCount(int addPoints);
@@ -131,6 +135,8 @@ class CFX_PathData {
 
 class CFX_GraphStateData {
  public:
+  enum LineCap { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 };
+
   CFX_GraphStateData();
   CFX_GraphStateData(const CFX_GraphStateData& src);
   ~CFX_GraphStateData();
@@ -138,7 +144,6 @@ class CFX_GraphStateData {
   void Copy(const CFX_GraphStateData& src);
   void SetDashCount(int count);
 
-  enum LineCap { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 };
   LineCap m_LineCap;
   int m_DashCount;
   FX_FLOAT* m_DashArray;
@@ -216,6 +221,7 @@ class CFX_RenderDevice {
   void EndRendering();
   void SaveState();
   void RestoreState(bool bKeepSaved);
+
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
   int GetDeviceClass() const { return m_DeviceClass; }
@@ -308,10 +314,7 @@ class CFX_RenderDevice {
                          int top,
                          int dest_width,
                          int dest_height,
-                         uint32_t color) {
-    return StretchBitMaskWithFlags(pBitmap, left, top, dest_width, dest_height,
-                                   color, 0);
-  }
+                         uint32_t color);
   FX_BOOL StretchBitMaskWithFlags(const CFX_DIBSource* pBitmap,
                                   int left,
                                   int top,
@@ -421,35 +424,29 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
 
 class IFX_RenderDeviceDriver {
  public:
+  virtual ~IFX_RenderDeviceDriver();
+
   static IFX_RenderDeviceDriver* CreateFxgeDriver(CFX_DIBitmap* pBitmap,
                                                   FX_BOOL bRgbByteOrder,
                                                   CFX_DIBitmap* pOriDevice,
                                                   FX_BOOL bGroupKnockout);
 
-  virtual ~IFX_RenderDeviceDriver() {}
 
   virtual int GetDeviceCaps(int caps_id) = 0;
 
-  virtual CFX_Matrix GetCTM() const { return CFX_Matrix(); }
+  virtual CFX_Matrix GetCTM() const;
 
-  virtual FX_BOOL StartRendering() { return TRUE; }
-
-  virtual void EndRendering() {}
-
+  virtual FX_BOOL StartRendering();
+  virtual void EndRendering();
   virtual void SaveState() = 0;
-
   virtual void RestoreState(bool bKeepSaved) = 0;
 
   virtual FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                                    const CFX_Matrix* pObject2Device,
                                    int fill_mode) = 0;
-
   virtual FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
                                      const CFX_Matrix* pObject2Device,
-                                     const CFX_GraphStateData* pGraphState) {
-    return FALSE;
-  }
-
+                                     const CFX_GraphStateData* pGraphState);
   virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,
                            const CFX_Matrix* pObject2Device,
                            const CFX_GraphStateData* pGraphState,
@@ -457,38 +454,26 @@ class IFX_RenderDeviceDriver {
                            uint32_t stroke_color,
                            int fill_mode,
                            int blend_type) = 0;
-
-  virtual FX_BOOL SetPixel(int x, int y, uint32_t color) { return FALSE; }
-
+  virtual FX_BOOL SetPixel(int x, int y, uint32_t color);
   virtual FX_BOOL FillRectWithBlend(const FX_RECT* pRect,
                                     uint32_t fill_color,
-                                    int blend_type) {
-    return FALSE;
-  }
-
+                                    int blend_type);
   virtual FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
                                    FX_FLOAT y1,
                                    FX_FLOAT x2,
                                    FX_FLOAT y2,
                                    uint32_t color,
-                                   int blend_type) {
-    return FALSE;
-  }
+                                   int blend_type);
 
   virtual FX_BOOL GetClipBox(FX_RECT* pRect) = 0;
-
-  virtual FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) {
-    return FALSE;
-  }
-  virtual CFX_DIBitmap* GetBackDrop() { return nullptr; }
-
+  virtual FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top);
+  virtual CFX_DIBitmap* GetBackDrop();
   virtual FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                             uint32_t color,
                             const FX_RECT* pSrcRect,
                             int dest_left,
                             int dest_top,
                             int blend_type) = 0;
-
   virtual FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                                 uint32_t color,
                                 int dest_left,
@@ -498,7 +483,6 @@ class IFX_RenderDeviceDriver {
                                 const FX_RECT* pClipRect,
                                 uint32_t flags,
                                 int blend_type) = 0;
-
   virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                               int bitmap_alpha,
                               uint32_t color,
@@ -506,34 +490,23 @@ class IFX_RenderDeviceDriver {
                               uint32_t flags,
                               void*& handle,
                               int blend_type) = 0;
-
-  virtual FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) {
-    return FALSE;
-  }
-
-  virtual void CancelDIBits(void* handle) {}
-
+  virtual FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause);
+  virtual void CancelDIBits(void* handle);
   virtual FX_BOOL DrawDeviceText(int nChars,
                                  const FXTEXT_CHARPOS* pCharPos,
                                  CFX_Font* pFont,
                                  CFX_FontCache* pCache,
                                  const CFX_Matrix* pObject2Device,
                                  FX_FLOAT font_size,
-                                 uint32_t color) {
-    return FALSE;
-  }
-
-  virtual void* GetPlatformSurface() const { return nullptr; }
-  virtual int GetDriverType() const { return 0; }
-  virtual void ClearDriver() {}
-
+                                 uint32_t color);
+  virtual void* GetPlatformSurface() const;
+  virtual int GetDriverType() const;
+  virtual void ClearDriver();
   virtual FX_BOOL DrawShading(const CPDF_ShadingPattern* pPattern,
                               const CFX_Matrix* pMatrix,
                               const FX_RECT& clip_rect,
                               int alpha,
-                              FX_BOOL bAlphaMode) {
-    return false;
-  }
+                              FX_BOOL bAlphaMode);
 };
 
 #endif  // CORE_FXGE_INCLUDE_FX_GE_H_

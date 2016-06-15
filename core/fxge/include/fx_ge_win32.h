@@ -25,42 +25,29 @@ typedef struct WINDIB_Open_Args_ {
 
 class CFX_WindowsDIB : public CFX_DIBitmap {
  public:
+  CFX_WindowsDIB(HDC hDC, int width, int height);
+  ~CFX_WindowsDIB() override;
+
   static CFX_ByteString GetBitmapInfo(const CFX_DIBitmap* pBitmap);
-
   static CFX_DIBitmap* LoadFromBuf(BITMAPINFO* pbmi, void* pData);
-
   static HBITMAP GetDDBitmap(const CFX_DIBitmap* pBitmap, HDC hDC);
-
   static CFX_DIBitmap* LoadFromDDB(HDC hDC,
                                    HBITMAP hBitmap,
                                    uint32_t* pPalette = nullptr,
                                    uint32_t size = 256);
-
   static CFX_DIBitmap* LoadFromFile(const FX_WCHAR* filename);
-
-  static CFX_DIBitmap* LoadFromFile(const FX_CHAR* filename) {
-    return LoadFromFile(CFX_WideString::FromLocal(filename).c_str());
-  }
-
+  static CFX_DIBitmap* LoadFromFile(const FX_CHAR* filename);
   static CFX_DIBitmap* LoadDIBitmap(WINDIB_Open_Args_ args);
 
-  CFX_WindowsDIB(HDC hDC, int width, int height);
-
-  ~CFX_WindowsDIB();
-
   HDC GetDC() const { return m_hMemDC; }
-
   HBITMAP GetWindowsBitmap() const { return m_hBitmap; }
 
   void LoadFromDevice(HDC hDC, int left, int top);
-
   void SetToDevice(HDC hDC, int left, int top);
 
  protected:
   HDC m_hMemDC;
-
   HBITMAP m_hBitmap;
-
   HBITMAP m_hOldBitmap;
 };
 
@@ -69,7 +56,7 @@ class CFX_WindowsDevice : public CFX_RenderDevice {
   static IFX_RenderDeviceDriver* CreateDriver(HDC hDC);
 
   explicit CFX_WindowsDevice(HDC hDC);
-  ~CFX_WindowsDevice();
+  ~CFX_WindowsDevice() override;
 
   HDC GetDC() const;
 };
@@ -77,7 +64,7 @@ class CFX_WindowsDevice : public CFX_RenderDevice {
 class CFX_WinBitmapDevice : public CFX_RenderDevice {
  public:
   CFX_WinBitmapDevice(int width, int height, FXDIB_Format format);
-  ~CFX_WinBitmapDevice();
+  ~CFX_WinBitmapDevice() override;
 
   HDC GetDC() { return m_hDC; }
 

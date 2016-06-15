@@ -1258,18 +1258,14 @@ FX_BOOL CGdiplusExt::DrawPath(HDC hDC,
   CallFunc(GdipDeleteGraphics)(pGraphics);
   return TRUE;
 }
-class GpStream final : public IStream {
-  LONG m_RefCount;
-  int m_ReadPos;
-  CFX_ByteTextBuf m_InterStream;
 
+class GpStream final : public IStream {
  public:
-  GpStream() {
-    m_RefCount = 1;
-    m_ReadPos = 0;
-  }
-  virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid,
-                                                   void** ppvObject) {
+  GpStream() : m_RefCount(1), m_ReadPos(0) {}
+
+  // IUnknown
+  HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid,
+                                           void** ppvObject) override {
     if (iid == __uuidof(IUnknown) || iid == __uuidof(IStream) ||
         iid == __uuidof(ISequentialStream)) {
       *ppvObject = static_cast<IStream*>(this);
@@ -1278,10 +1274,10 @@ class GpStream final : public IStream {
     }
     return E_NOINTERFACE;
   }
-  virtual ULONG STDMETHODCALLTYPE AddRef(void) {
+  ULONG STDMETHODCALLTYPE AddRef(void) override {
     return (ULONG)InterlockedIncrement(&m_RefCount);
   }
-  virtual ULONG STDMETHODCALLTYPE Release(void) {
+  ULONG STDMETHODCALLTYPE Release(void) override {
     ULONG res = (ULONG)InterlockedDecrement(&m_RefCount);
     if (res == 0) {
       delete this;
@@ -1289,10 +1285,10 @@ class GpStream final : public IStream {
     return res;
   }
 
- public:
-  virtual HRESULT STDMETHODCALLTYPE Read(void* Output,
-                                         ULONG cb,
-                                         ULONG* pcbRead) {
+  // ISequentialStream
+  HRESULT STDMETHODCALLTYPE Read(void* Output,
+                                 ULONG cb,
+                                 ULONG* pcbRead) override {
     size_t bytes_left;
     size_t bytes_out;
     if (pcbRead) {
@@ -1310,9 +1306,9 @@ class GpStream final : public IStream {
     }
     return S_OK;
   }
-  virtual HRESULT STDMETHODCALLTYPE Write(void const* Input,
-                                          ULONG cb,
-                                          ULONG* pcbWritten) {
+  HRESULT STDMETHODCALLTYPE Write(void const* Input,
+                                  ULONG cb,
+                                  ULONG* pcbWritten) override {
     if (cb <= 0) {
       if (pcbWritten) {
         *pcbWritten = 0;
@@ -1326,34 +1322,34 @@ class GpStream final : public IStream {
     return S_OK;
   }
 
- public:
-  virtual HRESULT STDMETHODCALLTYPE SetSize(ULARGE_INTEGER) {
+  // IStream
+  HRESULT STDMETHODCALLTYPE SetSize(ULARGE_INTEGER) override {
     return E_NOTIMPL;
   }
-  virtual HRESULT STDMETHODCALLTYPE CopyTo(IStream*,
-                                           ULARGE_INTEGER,
-                                           ULARGE_INTEGER*,
-                                           ULARGE_INTEGER*) {
+  HRESULT STDMETHODCALLTYPE CopyTo(IStream*,
+                                   ULARGE_INTEGER,
+                                   ULARGE_INTEGER*,
+                                   ULARGE_INTEGER*) override {
     return E_NOTIMPL;
   }
-  virtual HRESULT STDMETHODCALLTYPE Commit(DWORD) { return E_NOTIMPL; }
-  virtual HRESULT STDMETHODCALLTYPE Revert(void) { return E_NOTIMPL; }
-  virtual HRESULT STDMETHODCALLTYPE LockRegion(ULARGE_INTEGER,
-                                               ULARGE_INTEGER,
-                                               DWORD) {
+  HRESULT STDMETHODCALLTYPE Commit(DWORD) override { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE Revert(void) override { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE LockRegion(ULARGE_INTEGER,
+                                       ULARGE_INTEGER,
+                                       DWORD) override {
     return E_NOTIMPL;
   }
-  virtual HRESULT STDMETHODCALLTYPE UnlockRegion(ULARGE_INTEGER,
-                                                 ULARGE_INTEGER,
-                                                 DWORD) {
+  HRESULT STDMETHODCALLTYPE UnlockRegion(ULARGE_INTEGER,
+                                         ULARGE_INTEGER,
+                                         DWORD) override {
     return E_NOTIMPL;
   }
-  virtual HRESULT STDMETHODCALLTYPE Clone(IStream** stream) {
+  HRESULT STDMETHODCALLTYPE Clone(IStream** stream) override {
     return E_NOTIMPL;
   }
-  virtual HRESULT STDMETHODCALLTYPE Seek(LARGE_INTEGER liDistanceToMove,
-                                         DWORD dwOrigin,
-                                         ULARGE_INTEGER* lpNewFilePointer) {
+  HRESULT STDMETHODCALLTYPE Seek(LARGE_INTEGER liDistanceToMove,
+                                 DWORD dwOrigin,
+                                 ULARGE_INTEGER* lpNewFilePointer) override {
     long start = 0;
     long new_read_position;
     switch (dwOrigin) {
@@ -1381,7 +1377,8 @@ class GpStream final : public IStream {
     }
     return S_OK;
   }
-  virtual HRESULT STDMETHODCALLTYPE Stat(STATSTG* pStatstg, DWORD grfStatFlag) {
+  HRESULT STDMETHODCALLTYPE Stat(STATSTG* pStatstg,
+                                 DWORD grfStatFlag) override {
     if (!pStatstg) {
       return STG_E_INVALIDFUNCTION;
     }
@@ -1389,7 +1386,13 @@ class GpStream final : public IStream {
     pStatstg->cbSize.QuadPart = m_InterStream.GetLength();
     return S_OK;
   }
+
+ private:
+  LONG m_RefCount;
+  int m_ReadPos;
+  CFX_ByteTextBuf m_InterStream;
 };
+
 typedef struct {
   BITMAPINFO* pbmi;
   int Stride;
@@ -1398,6 +1401,7 @@ typedef struct {
   BitmapData* pBitmapData;
   GpStream* pStream;
 } PREVIEW3_DIBITMAP;
+
 static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   GpBitmap* pBitmap;
   GpStream* pStream = nullptr;
@@ -1477,6 +1481,7 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   pInfo->pStream = pStream;
   return pInfo;
 }
+
 static void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
@@ -1489,6 +1494,7 @@ static void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
   }
   FX_Free(pInfo);
 }
+
 CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
                                          LPVOID pData,
                                          FX_BOOL bAlpha);

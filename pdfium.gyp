@@ -212,6 +212,8 @@
       'target_name': 'fpdfdoc',
       'type': 'static_library',
       'sources': [
+        'core/fpdfdoc/clines.cpp',
+        'core/fpdfdoc/clines.h',
         'core/fpdfdoc/include/fpdf_doc.h',
         'core/fpdfdoc/include/fpdf_tagged.h',
         'core/fpdfdoc/cpdf_variabletext.cpp',

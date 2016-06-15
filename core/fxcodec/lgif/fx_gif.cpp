@@ -12,9 +12,28 @@ void CGifLZWDecoder::Input(uint8_t* src_buf, uint32_t src_size) {
   next_in = src_buf;
   avail_in = src_size;
 }
+
 uint32_t CGifLZWDecoder::GetAvailInput() {
   return avail_in;
 }
+
+CGifLZWDecoder::CGifLZWDecoder(FX_CHAR* error_ptr)
+    : code_size(0),
+      code_size_cur(0),
+      code_clear(0),
+      code_end(0),
+      code_next(0),
+      code_first(0),
+      stack_size(0),
+      code_old(0),
+      next_in(nullptr),
+      avail_in(0),
+      bits_left(0),
+      code_store(0),
+      err_msg_ptr(error_ptr) {}
+
+CGifLZWDecoder::~CGifLZWDecoder() {}
+
 void CGifLZWDecoder::InitTable(uint8_t code_len) {
   code_size = code_len;
   code_clear = 1 << code_size;

@@ -195,6 +195,8 @@ static_library("fdrm") {
 
 static_library("fpdfdoc") {
   sources = [
+    "core/fpdfdoc/clines.cpp",
+    "core/fpdfdoc/clines.h",
     "core/fpdfdoc/cpdf_variabletext.cpp",
     "core/fpdfdoc/cpvt_color.cpp",
     "core/fpdfdoc/cpvt_color.h",

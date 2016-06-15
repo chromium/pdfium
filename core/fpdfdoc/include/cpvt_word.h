@@ -12,15 +12,7 @@
 #include "core/fxcrt/include/fx_system.h"
 
 struct CPVT_Word {
-  CPVT_Word()
-      : Word(0),
-        nCharset(0),
-        ptWord(0, 0),
-        fAscent(0.0f),
-        fDescent(0.0f),
-        fWidth(0.0f),
-        fFontSize(0),
-        WordProps() {}
+  CPVT_Word();
 
   uint16_t Word;
   int32_t nCharset;
@@ -33,5 +25,15 @@ struct CPVT_Word {
   FX_FLOAT fFontSize;
   CPVT_WordProps WordProps;
 };
+
+inline CPVT_Word::CPVT_Word()
+    : Word(0),
+      nCharset(0),
+      ptWord(0.0f, 0.0f),
+      fAscent(0.0f),
+      fDescent(0.0f),
+      fWidth(0.0f),
+      nFontIndex(-1),
+      fFontSize(0.0f) {}
 
 #endif  // CORE_FPDFDOC_INCLUDE_CPVT_WORD_H_

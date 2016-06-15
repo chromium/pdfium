@@ -50,15 +50,13 @@ class CPDF_StructElementImpl final : public IPDF_StructElement {
                          CPDF_StructElementImpl* pParent,
                          CPDF_Dictionary* pDict);
 
-  // IPDF_StructElement:
-  IPDF_StructTree* GetTree() const override { return m_pTree; }
-  const CFX_ByteString& GetType() const override { return m_Type; }
-  IPDF_StructElement* GetParent() const override { return m_pParent; }
-  CPDF_Dictionary* GetDict() const override { return m_pDict; }
-  int CountKids() const override { return pdfium::CollectionSize<int>(m_Kids); }
-  const CPDF_StructKid& GetKid(int index) const override {
-    return m_Kids[index];
-  }
+  // IPDF_StructElement
+  IPDF_StructTree* GetTree() const override;
+  const CFX_ByteString& GetType() const override;
+  IPDF_StructElement* GetParent() const override;
+  CPDF_Dictionary* GetDict() const override;
+  int CountKids() const override;
+  const CPDF_StructKid& GetKid(int index) const override;
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
                        FX_BOOL bInheritable = FALSE,

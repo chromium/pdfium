@@ -30,22 +30,29 @@ inline InterfaceType* SafeAcquire(InterfaceType* newObject) {
   }
   return newObject;
 }
+
 class CDwFontFileStream final : public IDWriteFontFileStream {
  public:
   explicit CDwFontFileStream(void const* fontFileReferenceKey,
                              UINT32 fontFileReferenceKeySize);
-  virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid,
-                                                   void** ppvObject);
-  virtual ULONG STDMETHODCALLTYPE AddRef();
-  virtual ULONG STDMETHODCALLTYPE Release();
-  virtual HRESULT STDMETHODCALLTYPE
+
+  // IUnknown.
+  HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid,
+                                           void** ppvObject) override;
+  ULONG STDMETHODCALLTYPE AddRef() override;
+  ULONG STDMETHODCALLTYPE Release() override;
+
+  // IDWriteFontFileStream.
+  HRESULT STDMETHODCALLTYPE
   ReadFileFragment(void const** fragmentStart,
                    UINT64 fileOffset,
                    UINT64 fragmentSize,
-                   OUT void** fragmentContext);
-  virtual void STDMETHODCALLTYPE ReleaseFileFragment(void* fragmentContext);
-  virtual HRESULT STDMETHODCALLTYPE GetFileSize(OUT UINT64* fileSize);
-  virtual HRESULT STDMETHODCALLTYPE GetLastWriteTime(OUT UINT64* lastWriteTime);
+                   OUT void** fragmentContext) override;
+  void STDMETHODCALLTYPE ReleaseFileFragment(void* fragmentContext) override;
+  HRESULT STDMETHODCALLTYPE GetFileSize(OUT UINT64* fileSize) override;
+  HRESULT STDMETHODCALLTYPE
+  GetLastWriteTime(OUT UINT64* lastWriteTime) override;
+
   bool IsInitialized() { return !!resourcePtr_; }
 
  private:
@@ -53,16 +60,20 @@ class CDwFontFileStream final : public IDWriteFontFileStream {
   void const* resourcePtr_;
   DWORD resourceSize_;
 };
+
 class CDwFontFileLoader final : public IDWriteFontFileLoader {
  public:
-  virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid,
-                                                   void** ppvObject);
-  virtual ULONG STDMETHODCALLTYPE AddRef();
-  virtual ULONG STDMETHODCALLTYPE Release();
-  virtual HRESULT STDMETHODCALLTYPE
+  // IUnknown.
+  HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid,
+                                           void** ppvObject) override;
+  ULONG STDMETHODCALLTYPE AddRef() override;
+  ULONG STDMETHODCALLTYPE Release() override;
+
+  // IDWriteFontFileLoader.
+  HRESULT STDMETHODCALLTYPE
   CreateStreamFromKey(void const* fontFileReferenceKey,
                       UINT32 fontFileReferenceKeySize,
-                      OUT IDWriteFontFileStream** fontFileStream);
+                      OUT IDWriteFontFileStream** fontFileStream) override;
 
   static IDWriteFontFileLoader* GetLoader() {
     if (!instance_) {
@@ -77,10 +88,12 @@ class CDwFontFileLoader final : public IDWriteFontFileLoader {
   ULONG refCount_;
   static IDWriteFontFileLoader* instance_;
 };
+
 class CDwFontContext {
  public:
   CDwFontContext(IDWriteFactory* dwriteFactory);
   ~CDwFontContext();
+
   HRESULT Initialize();
 
  private:
@@ -89,12 +102,14 @@ class CDwFontContext {
   HRESULT hr_;
   IDWriteFactory* dwriteFactory_;
 };
+
 class CDwGdiTextRenderer {
  public:
   CDwGdiTextRenderer(CFX_DIBitmap* pBitmap,
                      IDWriteBitmapRenderTarget* bitmapRenderTarget,
                      IDWriteRenderingParams* renderingParams);
   ~CDwGdiTextRenderer();
+
   HRESULT STDMETHODCALLTYPE DrawGlyphRun(const FX_RECT& text_bbox,
                                          __in_opt CFX_ClipRgn* pClipRgn,
                                          __in_opt DWRITE_MATRIX const* pMatrix,
@@ -109,13 +124,15 @@ class CDwGdiTextRenderer {
   IDWriteBitmapRenderTarget* pRenderTarget_;
   IDWriteRenderingParams* pRenderingParams_;
 };
-CDWriteExt::CDWriteExt() {
-  m_hModule = nullptr;
-  m_pDWriteFactory = nullptr;
-  m_pDwFontContext = nullptr;
-  m_pDwTextRenderer = nullptr;
-}
+
+CDWriteExt::CDWriteExt()
+    : m_hModule(nullptr),
+      m_pDWriteFactory(nullptr),
+      m_pDwFontContext(nullptr),
+      m_pDwTextRenderer(nullptr) {}
+
 void CDWriteExt::Load() {}
+
 void CDWriteExt::Unload() {
   if (m_pDwFontContext) {
     delete (CDwFontContext*)m_pDwFontContext;
@@ -123,9 +140,11 @@ void CDWriteExt::Unload() {
   }
   SafeRelease((IDWriteFactory**)&m_pDWriteFactory);
 }
+
 CDWriteExt::~CDWriteExt() {
   Unload();
 }
+
 LPVOID CDWriteExt::DwCreateFontFaceFromStream(uint8_t* pData,
                                               uint32_t size,
                                               int simulation_style) {
@@ -162,6 +181,7 @@ failed:
   SafeRelease(&pDwFontFile);
   return nullptr;
 }
+
 FX_BOOL CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap,
                                             void** renderTarget) {
   if (pBitmap->GetFormat() > FXDIB_Argb) {
@@ -203,6 +223,7 @@ failed:
   SafeRelease(&pRenderingParams);
   return FALSE;
 }
+
 FX_BOOL CDWriteExt::DwRendingString(void* renderTarget,
                                     CFX_ClipRgn* pClipRgn,
                                     FX_RECT& stringRect,
@@ -245,20 +266,24 @@ FX_BOOL CDWriteExt::DwRendingString(void* renderTarget,
       RGB(FXARGB_R(text_color), FXARGB_G(text_color), FXARGB_B(text_color)));
   return SUCCEEDED(hr);
 }
+
 void CDWriteExt::DwDeleteRenderingTarget(void* renderTarget) {
   delete (CDwGdiTextRenderer*)renderTarget;
 }
+
 void CDWriteExt::DwDeleteFont(void* pFont) {
   if (pFont) {
     SafeRelease((IDWriteFontFace**)&pFont);
   }
 }
+
 CDwFontFileStream::CDwFontFileStream(void const* fontFileReferenceKey,
                                      UINT32 fontFileReferenceKeySize) {
   refCount_ = 0;
   resourcePtr_ = fontFileReferenceKey;
   resourceSize_ = fontFileReferenceKeySize;
 }
+
 HRESULT STDMETHODCALLTYPE CDwFontFileStream::QueryInterface(REFIID iid,
                                                             void** ppvObject) {
   if (iid == IID_IUnknown || iid == __uuidof(IDWriteFontFileStream)) {
@@ -269,9 +294,11 @@ HRESULT STDMETHODCALLTYPE CDwFontFileStream::QueryInterface(REFIID iid,
   *ppvObject = nullptr;
   return E_NOINTERFACE;
 }
+
 ULONG STDMETHODCALLTYPE CDwFontFileStream::AddRef() {
   return InterlockedIncrement((long*)(&refCount_));
 }
+
 ULONG STDMETHODCALLTYPE CDwFontFileStream::Release() {
   ULONG newCount = InterlockedDecrement((long*)(&refCount_));
   if (newCount == 0) {
@@ -279,6 +306,7 @@ ULONG STDMETHODCALLTYPE CDwFontFileStream::Release() {
   }
   return newCount;
 }
+
 HRESULT STDMETHODCALLTYPE
 CDwFontFileStream::ReadFileFragment(void const** fragmentStart,
                                     UINT64 fileOffset,
@@ -295,17 +323,20 @@ CDwFontFileStream::ReadFileFragment(void const** fragmentStart,
   *fragmentContext = nullptr;
   return E_FAIL;
 }
+
 void STDMETHODCALLTYPE
 CDwFontFileStream::ReleaseFileFragment(void* fragmentContext) {}
 HRESULT STDMETHODCALLTYPE CDwFontFileStream::GetFileSize(OUT UINT64* fileSize) {
   *fileSize = resourceSize_;
   return S_OK;
 }
+
 HRESULT STDMETHODCALLTYPE
 CDwFontFileStream::GetLastWriteTime(OUT UINT64* lastWriteTime) {
   *lastWriteTime = 0;
   return E_NOTIMPL;
 }
+
 IDWriteFontFileLoader* CDwFontFileLoader::instance_ = nullptr;
 CDwFontFileLoader::CDwFontFileLoader() : refCount_(0) {}
 HRESULT STDMETHODCALLTYPE CDwFontFileLoader::QueryInterface(REFIID iid,
@@ -318,9 +349,11 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::QueryInterface(REFIID iid,
   *ppvObject = nullptr;
   return E_NOINTERFACE;
 }
+
 ULONG STDMETHODCALLTYPE CDwFontFileLoader::AddRef() {
   return InterlockedIncrement((long*)(&refCount_));
 }
+
 ULONG STDMETHODCALLTYPE CDwFontFileLoader::Release() {
   ULONG newCount = InterlockedDecrement((long*)(&refCount_));
   if (newCount == 0) {
@@ -329,6 +362,7 @@ ULONG STDMETHODCALLTYPE CDwFontFileLoader::Release() {
   }
   return newCount;
 }
+
 HRESULT STDMETHODCALLTYPE CDwFontFileLoader::CreateStreamFromKey(
     void const* fontFileReferenceKey,
     UINT32 fontFileReferenceKeySize,
@@ -343,14 +377,17 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::CreateStreamFromKey(
   *fontFileStream = SafeAcquire(stream);
   return S_OK;
 }
+
 CDwFontContext::CDwFontContext(IDWriteFactory* dwriteFactory)
     : hr_(S_FALSE), dwriteFactory_(SafeAcquire(dwriteFactory)) {}
+
 CDwFontContext::~CDwFontContext() {
   if (dwriteFactory_ && hr_ == S_OK) {
     dwriteFactory_->UnregisterFontFileLoader(CDwFontFileLoader::GetLoader());
   }
   SafeRelease(&dwriteFactory_);
 }
+
 HRESULT CDwFontContext::Initialize() {
   if (hr_ == S_FALSE) {
     return hr_ = dwriteFactory_->RegisterFontFileLoader(
@@ -358,6 +395,7 @@ HRESULT CDwFontContext::Initialize() {
   }
   return hr_;
 }
+
 CDwGdiTextRenderer::CDwGdiTextRenderer(
     CFX_DIBitmap* pBitmap,
     IDWriteBitmapRenderTarget* bitmapRenderTarget,
@@ -369,6 +407,7 @@ CDwGdiTextRenderer::~CDwGdiTextRenderer() {
   SafeRelease(&pRenderTarget_);
   SafeRelease(&pRenderingParams_);
 }
+
 STDMETHODIMP CDwGdiTextRenderer::DrawGlyphRun(
     const FX_RECT& text_bbox,
     __in_opt CFX_ClipRgn* pClipRgn,

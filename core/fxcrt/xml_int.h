@@ -16,28 +16,18 @@ class CXML_Element;
 
 class CXML_DataBufAcc : public IFX_BufferRead {
  public:
-  CXML_DataBufAcc(const uint8_t* pBuffer, size_t size)
-      : m_pBuffer(pBuffer), m_dwSize(size), m_dwCurPos(0) {}
-  ~CXML_DataBufAcc() override {}
+  CXML_DataBufAcc(const uint8_t* pBuffer, size_t size);
+  ~CXML_DataBufAcc() override;
 
   // IFX_BufferRead
-  void Release() override { delete this; }
-  FX_BOOL IsEOF() override { return m_dwCurPos >= m_dwSize; }
-  FX_FILESIZE GetPosition() override { return (FX_FILESIZE)m_dwCurPos; }
-  size_t ReadBlock(void* buffer, size_t size) override { return 0; }
-  FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) override {
-    if (bRestart) {
-      m_dwCurPos = 0;
-    }
-    if (m_dwCurPos < m_dwSize) {
-      m_dwCurPos = m_dwSize;
-      return TRUE;
-    }
-    return FALSE;
-  }
-  const uint8_t* GetBlockBuffer() override { return m_pBuffer; }
-  size_t GetBlockSize() override { return m_dwSize; }
-  FX_FILESIZE GetBlockOffset() override { return 0; }
+  void Release() override;
+  FX_BOOL IsEOF() override;
+  FX_FILESIZE GetPosition() override;
+  size_t ReadBlock(void* buffer, size_t size) override;
+  FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) override;
+  const uint8_t* GetBlockBuffer() override;
+  size_t GetBlockSize() override;
+  FX_FILESIZE GetBlockOffset() override;
 
  protected:
   const uint8_t* m_pBuffer;
@@ -47,40 +37,18 @@ class CXML_DataBufAcc : public IFX_BufferRead {
 
 class CXML_DataStmAcc : public IFX_BufferRead {
  public:
-  explicit CXML_DataStmAcc(IFX_FileRead* pFileRead)
-      : m_pFileRead(pFileRead), m_pBuffer(nullptr), m_nStart(0), m_dwSize(0) {
-    ASSERT(m_pFileRead);
-  }
-  ~CXML_DataStmAcc() override { FX_Free(m_pBuffer); }
+  explicit CXML_DataStmAcc(IFX_FileRead* pFileRead);
+  ~CXML_DataStmAcc() override;
 
-  void Release() override { delete this; }
-  FX_BOOL IsEOF() override {
-    return m_nStart + (FX_FILESIZE)m_dwSize >= m_pFileRead->GetSize();
-  }
-  FX_FILESIZE GetPosition() override {
-    return m_nStart + (FX_FILESIZE)m_dwSize;
-  }
-  size_t ReadBlock(void* buffer, size_t size) override { return 0; }
-  FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) override {
-    if (bRestart) {
-      m_nStart = 0;
-    }
-    FX_FILESIZE nLength = m_pFileRead->GetSize();
-    m_nStart += (FX_FILESIZE)m_dwSize;
-    if (m_nStart >= nLength) {
-      return FALSE;
-    }
-    static const FX_FILESIZE FX_XMLDATASTREAM_BufferSize = 32 * 1024;
-    m_dwSize = static_cast<size_t>(
-        std::min(FX_XMLDATASTREAM_BufferSize, nLength - m_nStart));
-    if (!m_pBuffer) {
-      m_pBuffer = FX_Alloc(uint8_t, m_dwSize);
-    }
-    return m_pFileRead->ReadBlock(m_pBuffer, m_nStart, m_dwSize);
-  }
-  const uint8_t* GetBlockBuffer() override { return (const uint8_t*)m_pBuffer; }
-  size_t GetBlockSize() override { return m_dwSize; }
-  FX_FILESIZE GetBlockOffset() override { return m_nStart; }
+  // IFX_BufferRead
+  void Release() override;
+  FX_BOOL IsEOF() override;
+  FX_FILESIZE GetPosition() override;
+  size_t ReadBlock(void* buffer, size_t size) override;
+  FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) override;
+  const uint8_t* GetBlockBuffer() override;
+  size_t GetBlockSize() override;
+  FX_FILESIZE GetBlockOffset() override;
 
  protected:
   IFX_FileRead* m_pFileRead;
@@ -91,15 +59,9 @@ class CXML_DataStmAcc : public IFX_BufferRead {
 
 class CXML_Parser {
  public:
+  CXML_Parser();
   ~CXML_Parser();
-  IFX_BufferRead* m_pDataAcc;
-  FX_BOOL m_bOwnedStream;
-  FX_FILESIZE m_nOffset;
-  FX_BOOL m_bSaveSpaceChars;
-  const uint8_t* m_pBuffer;
-  size_t m_dwBufferSize;
-  FX_FILESIZE m_nBufferOffset;
-  size_t m_dwIndex;
+
   FX_BOOL Init(uint8_t* pBuffer, size_t size);
   FX_BOOL Init(IFX_FileRead* pFileRead);
   FX_BOOL Init(IFX_BufferRead* pBuffer);
@@ -121,6 +83,15 @@ class CXML_Parser {
                             const CFX_WideStringC& content,
                             CXML_Element* pElement);
   void InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
+
+  IFX_BufferRead* m_pDataAcc;
+  FX_BOOL m_bOwnedStream;
+  FX_FILESIZE m_nOffset;
+  FX_BOOL m_bSaveSpaceChars;
+  const uint8_t* m_pBuffer;
+  size_t m_dwBufferSize;
+  FX_FILESIZE m_nBufferOffset;
+  size_t m_dwIndex;
 };
 
 void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,

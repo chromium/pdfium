@@ -27,10 +27,6 @@ CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
       m_pWidgetDict(pWidgetDict),
       m_pForm(m_pField->m_pForm) {}
 
-CFX_FloatRect CPDF_FormControl::GetRect() const {
-  return m_pWidgetDict->GetRectBy("Rect");
-}
-
 CFX_ByteString CPDF_FormControl::GetOnStateName() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);

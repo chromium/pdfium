@@ -59,7 +59,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
                             int blend_type) override;
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
   FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) override;
-  CFX_DIBitmap* GetBackDrop() override { return m_pOriDevice; }
+  CFX_DIBitmap* GetBackDrop() override;
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
                     const FX_RECT* pSrcRect,
@@ -91,7 +91,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
                          uint32_t color) override;
-  int GetDriverType() const override { return 1; }
+  int GetDriverType() const override;
 
   FX_BOOL RenderRasterizer(agg::rasterizer_scanline_aa& rasterizer,
                            uint32_t color,
@@ -103,7 +103,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
 
   virtual uint8_t* GetBuffer() const;
-  const CFX_DIBitmap* GetBitmap() const { return m_pBitmap; }
+  const CFX_DIBitmap* GetBitmap() const;
 
  private:
   CFX_DIBitmap* m_pBitmap;

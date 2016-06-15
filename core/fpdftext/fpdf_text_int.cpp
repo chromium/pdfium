@@ -150,12 +150,13 @@ CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags)
       m_parserflag(flags),
       m_pPreTextObj(nullptr),
       m_bIsParsed(false),
-      m_TextlineDir(TextOrientation::Unknown),
-      m_CurlineRect(0, 0, 0, 0) {
+      m_TextlineDir(TextOrientation::Unknown) {
   m_TextBuf.EstimateSize(0, 10240);
   pPage->GetDisplayMatrix(m_DisplayMatrix, 0, 0, (int)pPage->GetPageWidth(),
                           (int)pPage->GetPageHeight(), 0);
 }
+
+CPDF_TextPage::~CPDF_TextPage() {}
 
 bool CPDF_TextPage::IsControlChar(const PAGECHAR_INFO& charInfo) {
   switch (charInfo.m_Unicode) {
@@ -1828,6 +1829,8 @@ CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage)
     m_CharIndex.erase(m_CharIndex.begin() + indexSize - 1);
   }
 }
+
+CPDF_TextPageFind::~CPDF_TextPageFind() {}
 
 int CPDF_TextPageFind::GetCharIndex(int index) const {
   return m_pTextPage->CharIndexFromTextIndex(index);

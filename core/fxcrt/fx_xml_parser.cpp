@@ -12,11 +12,121 @@
 #include "core/fxcrt/include/fx_xml.h"
 #include "third_party/base/stl_util.h"
 
+CXML_DataBufAcc::CXML_DataBufAcc(const uint8_t* pBuffer, size_t size)
+    : m_pBuffer(pBuffer), m_dwSize(size), m_dwCurPos(0) {}
+
+CXML_DataBufAcc::~CXML_DataBufAcc() {}
+
+void CXML_DataBufAcc::Release() {
+  delete this;
+}
+
+FX_BOOL CXML_DataBufAcc::IsEOF() {
+  return m_dwCurPos >= m_dwSize;
+}
+
+FX_FILESIZE CXML_DataBufAcc::GetPosition() {
+  return (FX_FILESIZE)m_dwCurPos;
+}
+
+size_t CXML_DataBufAcc::ReadBlock(void* buffer, size_t size) {
+  return 0;
+}
+
+FX_BOOL CXML_DataBufAcc::ReadNextBlock(FX_BOOL bRestart) {
+  if (bRestart) {
+    m_dwCurPos = 0;
+  }
+  if (m_dwCurPos < m_dwSize) {
+    m_dwCurPos = m_dwSize;
+    return TRUE;
+  }
+  return FALSE;
+}
+
+const uint8_t* CXML_DataBufAcc::GetBlockBuffer() {
+  return m_pBuffer;
+}
+
+size_t CXML_DataBufAcc::GetBlockSize() {
+  return m_dwSize;
+}
+
+FX_FILESIZE CXML_DataBufAcc::GetBlockOffset() {
+  return 0;
+}
+
+CXML_DataStmAcc::CXML_DataStmAcc(IFX_FileRead* pFileRead)
+    : m_pFileRead(pFileRead), m_pBuffer(nullptr), m_nStart(0), m_dwSize(0) {
+  ASSERT(m_pFileRead);
+}
+
+CXML_DataStmAcc::~CXML_DataStmAcc() {
+  FX_Free(m_pBuffer);
+}
+
+void CXML_DataStmAcc::Release() {
+  delete this;
+}
+
+FX_BOOL CXML_DataStmAcc::IsEOF() {
+  return m_nStart + (FX_FILESIZE)m_dwSize >= m_pFileRead->GetSize();
+}
+
+FX_FILESIZE CXML_DataStmAcc::GetPosition() {
+  return m_nStart + (FX_FILESIZE)m_dwSize;
+}
+
+size_t CXML_DataStmAcc::ReadBlock(void* buffer, size_t size) {
+  return 0;
+}
+
+FX_BOOL CXML_DataStmAcc::ReadNextBlock(FX_BOOL bRestart) {
+  if (bRestart) {
+    m_nStart = 0;
+  }
+  FX_FILESIZE nLength = m_pFileRead->GetSize();
+  m_nStart += (FX_FILESIZE)m_dwSize;
+  if (m_nStart >= nLength) {
+    return FALSE;
+  }
+  static const FX_FILESIZE FX_XMLDATASTREAM_BufferSize = 32 * 1024;
+  m_dwSize = static_cast<size_t>(
+      std::min(FX_XMLDATASTREAM_BufferSize, nLength - m_nStart));
+  if (!m_pBuffer) {
+    m_pBuffer = FX_Alloc(uint8_t, m_dwSize);
+  }
+  return m_pFileRead->ReadBlock(m_pBuffer, m_nStart, m_dwSize);
+}
+
+const uint8_t* CXML_DataStmAcc::GetBlockBuffer() {
+  return (const uint8_t*)m_pBuffer;
+}
+
+size_t CXML_DataStmAcc::GetBlockSize() {
+  return m_dwSize;
+}
+
+FX_FILESIZE CXML_DataStmAcc::GetBlockOffset() {
+  return m_nStart;
+}
+
+CXML_Parser::CXML_Parser()
+    : m_pDataAcc(nullptr),
+      m_bOwnedStream(FALSE),
+      m_nOffset(0),
+      m_bSaveSpaceChars(FALSE),
+      m_pBuffer(nullptr),
+      m_dwBufferSize(0),
+      m_nBufferOffset(0),
+      m_dwIndex(0) {}
+
 CXML_Parser::~CXML_Parser() {
   if (m_bOwnedStream) {
     m_pDataAcc->Release();
   }
 }
+
 FX_BOOL CXML_Parser::Init(uint8_t* pBuffer, size_t size) {
   m_pDataAcc = new CXML_DataBufAcc(pBuffer, size);
   return Init(TRUE);
@@ -763,6 +873,10 @@ bool CXML_AttrItem::Matches(const CFX_ByteString& space,
                             const CFX_ByteString& name) const {
   return (space.IsEmpty() || m_QSpaceName == space) && m_AttrName == name;
 }
+
+CXML_AttrMap::CXML_AttrMap() {}
+
+CXML_AttrMap::~CXML_AttrMap() {}
 
 const CFX_WideString* CXML_AttrMap::Lookup(const CFX_ByteString& space,
                                            const CFX_ByteString& name) const {

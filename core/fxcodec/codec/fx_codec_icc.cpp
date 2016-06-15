@@ -526,6 +526,9 @@ void* CCodec_IccModule::CreateTransform(
   }
   return pTransformCache->m_pCmm;
 }
+
+CCodec_IccModule::CCodec_IccModule() : m_nComponents(0) {}
+
 CCodec_IccModule::~CCodec_IccModule() {
   for (const auto& pair : m_MapProfile) {
     delete pair.second;

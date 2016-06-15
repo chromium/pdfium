@@ -31,6 +31,7 @@ int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
     return 0;
   return pDoc->GetPageIndex(pPage->GetObjNum());
 }
+
 uint32_t CPDF_Dest::GetPageObjNum() {
   CPDF_Array* pArray = ToArray(m_pObj);
   if (!pArray)
@@ -68,6 +69,7 @@ FX_FLOAT CPDF_Dest::GetParam(int index) {
   CPDF_Array* pArray = ToArray(m_pObj);
   return pArray ? pArray->GetNumberAt(2 + index) : 0;
 }
+
 CFX_ByteString CPDF_Dest::GetRemoteName() {
   return m_pObj ? m_pObj->GetString() : CFX_ByteString();
 }
@@ -224,6 +226,7 @@ int CPDF_NameTree::GetIndex(const CFX_ByteString& csName) const {
   }
   return nIndex;
 }
+
 CPDF_Object* CPDF_NameTree::LookupValue(int nIndex,
                                         CFX_ByteString& csName) const {
   if (!m_pRoot) {
@@ -232,6 +235,7 @@ CPDF_Object* CPDF_NameTree::LookupValue(int nIndex,
   size_t nCurIndex = 0;
   return SearchNameNode(m_pRoot, nIndex, nCurIndex, csName, nullptr);
 }
+
 CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const {
   if (!m_pRoot) {
     return nullptr;
@@ -239,6 +243,7 @@ CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const {
   size_t nIndex = 0;
   return SearchNameNode(m_pRoot, csName, nIndex, nullptr);
 }
+
 CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
                                            const CFX_ByteString& sName) {
   CPDF_Object* pValue = LookupValue(sName);
@@ -442,6 +447,7 @@ static CFX_WideString _MakeLetters(int num) {
   }
   return wsLetters;
 }
+
 static CFX_WideString _GetLabelNumPortion(int num,
                                           const CFX_ByteString& bsStyle) {
   CFX_WideString wsNumPortion;
@@ -463,6 +469,40 @@ static CFX_WideString _GetLabelNumPortion(int num,
   }
   return wsNumPortion;
 }
+
+IPDF_FormNotify::~IPDF_FormNotify() {}
+
+int IPDF_FormNotify::BeforeValueChange(CPDF_FormField* pField,
+                                       const CFX_WideString& csValue) {
+  return 0;
+}
+
+void IPDF_FormNotify::AfterValueChange(CPDF_FormField* pField) {}
+
+int IPDF_FormNotify::BeforeSelectionChange(CPDF_FormField* pField,
+                                           const CFX_WideString& csValue) {
+  return 0;
+}
+
+void IPDF_FormNotify::AfterSelectionChange(CPDF_FormField* pField) {}
+
+void IPDF_FormNotify::AfterCheckedStatusChange(CPDF_FormField* pField) {}
+
+int IPDF_FormNotify::BeforeFormReset(CPDF_InterForm* pForm) {
+  return 0;
+}
+
+void IPDF_FormNotify::AfterFormReset(CPDF_InterForm* pForm) {}
+
+int IPDF_FormNotify::BeforeFormImportData(CPDF_InterForm* pForm) {
+  return 0;
+}
+
+void IPDF_FormNotify::AfterFormImportData(CPDF_InterForm* pForm) {}
+
+CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
+    : m_pDocument(pDocument) {}
+
 CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
   CFX_WideString wsLabel;
   if (!m_pDocument) {

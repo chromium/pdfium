@@ -87,13 +87,9 @@ class CPDF_VariableText : private CPDF_EditContainer {
   CPDF_VariableText::Iterator* GetIterator();
 
   // CPDF_EditContainer.
-  void SetPlateRect(const CFX_FloatRect& rect) override {
-    CPDF_EditContainer::SetPlateRect(rect);
-  }
+  void SetPlateRect(const CFX_FloatRect& rect) override;
   CFX_FloatRect GetContentRect() const override;
-  const CFX_FloatRect& GetPlateRect() const override {
-    return CPDF_EditContainer::GetPlateRect();
-  }
+  const CFX_FloatRect& GetPlateRect() const override;
 
   void SetAlignment(int32_t nFormat = 0) { m_nAlignment = nFormat; }
   void SetPasswordChar(uint16_t wSubWord = '*') { m_wSubWord = wSubWord; }
@@ -108,8 +104,10 @@ class CPDF_VariableText : private CPDF_EditContainer {
   void SetRichText(FX_BOOL bRichText) { m_bRichText = bRichText; }
   void SetLineLeading(FX_FLOAT fLineLeading) { m_fLineLeading = fLineLeading; }
   void Initialize();
+
   FX_BOOL IsValid() const { return m_bInitial; }
   FX_BOOL IsRichText() const { return m_bRichText; }
+
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
   void ResetAll();

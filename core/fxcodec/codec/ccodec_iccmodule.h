@@ -43,6 +43,7 @@ class CCodec_IccModule {
     double Gamma;
   };
 
+  CCodec_IccModule();
   ~CCodec_IccModule();
 
   IccCS GetProfileCS(const uint8_t* pProfileData, unsigned int dwProfileSize);

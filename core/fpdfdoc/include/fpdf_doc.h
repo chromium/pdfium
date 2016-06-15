@@ -738,7 +738,7 @@ class CPDF_FormControl {
   CPDF_InterForm* GetInterForm() const { return m_pForm; }
   CPDF_FormField* GetField() const { return m_pField; }
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict; }
-  CFX_FloatRect GetRect() const;
+  CFX_FloatRect GetRect() const { return m_pWidgetDict->GetRectBy("Rect"); }
 
   void DrawControl(CFX_RenderDevice* pDevice,
                    CFX_Matrix* pMatrix,
@@ -756,9 +756,7 @@ class CPDF_FormControl {
   bool HasMKEntry(const CFX_ByteString& csEntry) const;
   int GetRotation();
 
-  inline FX_ARGB GetBorderColor(int& iColorType) {
-    return GetColor(iColorType, "BC");
-  }
+  FX_ARGB GetBorderColor(int& iColorType) { return GetColor(iColorType, "BC"); }
 
   FX_FLOAT GetOriginalBorderColor(int index) {
     return GetOriginalColor(index, "BC");
@@ -823,28 +821,24 @@ class CPDF_FormControl {
 
 class IPDF_FormNotify {
  public:
-  virtual ~IPDF_FormNotify() {}
+  virtual ~IPDF_FormNotify();
 
   virtual int BeforeValueChange(CPDF_FormField* pField,
-                                const CFX_WideString& csValue) {
-    return 0;
-  }
-  virtual void AfterValueChange(CPDF_FormField* pField) {}
+                                const CFX_WideString& csValue);
+  virtual void AfterValueChange(CPDF_FormField* pField);
   virtual int BeforeSelectionChange(CPDF_FormField* pField,
-                                    const CFX_WideString& csValue) {
-    return 0;
-  }
-  virtual void AfterSelectionChange(CPDF_FormField* pField) {}
-  virtual void AfterCheckedStatusChange(CPDF_FormField* pField) {}
-  virtual int BeforeFormReset(CPDF_InterForm* pForm) { return 0; }
-  virtual void AfterFormReset(CPDF_InterForm* pForm) {}
-  virtual int BeforeFormImportData(CPDF_InterForm* pForm) { return 0; }
-  virtual void AfterFormImportData(CPDF_InterForm* pForm) {}
+                                    const CFX_WideString& csValue);
+  virtual void AfterSelectionChange(CPDF_FormField* pField);
+  virtual void AfterCheckedStatusChange(CPDF_FormField* pField);
+  virtual int BeforeFormReset(CPDF_InterForm* pForm);
+  virtual void AfterFormReset(CPDF_InterForm* pForm);
+  virtual int BeforeFormImportData(CPDF_InterForm* pForm);
+  virtual void AfterFormImportData(CPDF_InterForm* pForm);
 };
 
 class CPDF_PageLabel {
  public:
-  explicit CPDF_PageLabel(CPDF_Document* pDocument) : m_pDocument(pDocument) {}
+  explicit CPDF_PageLabel(CPDF_Document* pDocument);
 
   CFX_WideString GetLabel(int nPage) const;
   int32_t GetPageByLabel(const CFX_ByteStringC& bsLabel) const;

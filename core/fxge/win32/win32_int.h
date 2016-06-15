@@ -137,7 +137,7 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
                            uint32_t color,
                            int blend_type) override;
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
-  void* GetPlatformSurface() const override { return (void*)m_hDC; }
+  void* GetPlatformSurface() const override;
 
   void DrawLine(FX_FLOAT x1,
                 FX_FLOAT y1,
@@ -203,9 +203,7 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                       const CFX_Matrix* pMatrix,
                       uint32_t render_flags,
                       void*& handle,
-                      int blend_type) override {
-    return FALSE;
-  }
+                      int blend_type) override;
   FX_BOOL UseFoxitStretchEngine(const CFX_DIBSource* pSource,
                                 uint32_t color,
                                 int dest_left,

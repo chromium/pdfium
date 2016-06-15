@@ -73,6 +73,8 @@ CFX_BidiString::CFX_BidiString(const CFX_WideString& str)
     SetOverallDirectionRight();
 }
 
+CFX_BidiString::~CFX_BidiString() {}
+
 void CFX_BidiString::SetOverallDirectionRight() {
   if (m_eOverallDirection != CFX_BidiChar::RIGHT) {
     std::reverse(m_Order.begin(), m_Order.end());

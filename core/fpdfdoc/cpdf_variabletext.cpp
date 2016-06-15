@@ -787,8 +787,16 @@ FX_BOOL CPDF_VariableText::GetSectionInfo(const CPVT_WordPlace& place,
   return FALSE;
 }
 
+void CPDF_VariableText::SetPlateRect(const CFX_FloatRect& rect) {
+  CPDF_EditContainer::SetPlateRect(rect);
+}
+
 CFX_FloatRect CPDF_VariableText::GetContentRect() const {
   return InToOut(CPVT_FloatRect(CPDF_EditContainer::GetContentRect()));
+}
+
+const CFX_FloatRect& CPDF_VariableText::GetPlateRect() const {
+  return CPDF_EditContainer::GetPlateRect();
 }
 
 FX_FLOAT CPDF_VariableText::GetWordFontSize(const CPVT_WordInfo& WordInfo,

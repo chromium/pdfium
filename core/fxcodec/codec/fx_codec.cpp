@@ -31,6 +31,8 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
       m_pFlateModule(new CCodec_FlateModule) {
 }
 
+CCodec_ModuleMgr::~CCodec_ModuleMgr() {}
+
 CCodec_ScanlineDecoder::CCodec_ScanlineDecoder()
     : m_NextLine(-1), m_pLastScanline(nullptr) {}
 

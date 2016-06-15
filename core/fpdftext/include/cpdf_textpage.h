@@ -61,11 +61,8 @@ struct PDFTEXT_Obj {
 
 class CPDF_TextPage {
  public:
-  static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
-                                 const CFX_FloatRect& rect2);
-
   CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags);
-  ~CPDF_TextPage() {}
+  ~CPDF_TextPage();
 
   // IPDF_TextPage:
   void ParseTextPage();
@@ -97,6 +94,9 @@ class CPDF_TextPage {
                            FX_FLOAT right,
                            FX_FLOAT bottom,
                            FX_BOOL bContains = FALSE);
+
+  static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
+                                 const CFX_FloatRect& rect2);
 
  private:
   enum class TextOrientation {

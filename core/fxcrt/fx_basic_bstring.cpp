@@ -94,10 +94,22 @@ CFX_ByteString::CFX_ByteString(const uint8_t* pStr, FX_STRSIZE nLen) {
   }
 }
 
+CFX_ByteString::CFX_ByteString() {}
+
+CFX_ByteString::CFX_ByteString(const CFX_ByteString& other)
+    : m_pData(other.m_pData) {}
+
+CFX_ByteString::CFX_ByteString(CFX_ByteString&& other) {
+  m_pData.Swap(other.m_pData);
+}
+
 CFX_ByteString::CFX_ByteString(char ch) {
   m_pData.Reset(StringData::Create(1));
   m_pData->m_String[0] = ch;
 }
+
+CFX_ByteString::CFX_ByteString(const FX_CHAR* ptr)
+    : CFX_ByteString(ptr, ptr ? FXSYS_strlen(ptr) : 0) {}
 
 CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& stringSrc) {
   if (!stringSrc.IsEmpty())
