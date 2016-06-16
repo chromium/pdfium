@@ -48,10 +48,7 @@ void GetContentsRect(CPDF_Document* pDoc,
   std::unique_ptr<CPDF_Page> pPDFPage(new CPDF_Page(pDoc, pDict, false));
   pPDFPage->ParseContent();
 
-  for (auto& pPageObject : *pPDFPage->GetPageObjectList()) {
-    if (!pPageObject)
-      continue;
-
+  for (const auto& pPageObject : *pPDFPage->GetPageObjectList()) {
     CFX_FloatRect rc;
     rc.left = pPageObject->m_Left;
     rc.right = pPageObject->m_Right;

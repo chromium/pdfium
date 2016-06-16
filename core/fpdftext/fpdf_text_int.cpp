@@ -143,6 +143,16 @@ FX_STRSIZE Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst) {
   return (FX_STRSIZE)wFind;
 }
 
+float MaskPercentFilled(const std::vector<bool>& mask,
+                        int32_t start,
+                        int32_t end) {
+  if (start >= end)
+    return 0;
+  float count = std::count_if(mask.begin() + start, mask.begin() + end,
+                              [](bool r) { return r; });
+  return count / (end - start);
+}
+
 }  // namespace
 
 CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags)
@@ -678,81 +688,54 @@ int CPDF_TextPage::CountBoundedSegments(FX_FLOAT left,
 
 CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
     const {
-  const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
-  const int32_t nPageHeight = static_cast<int32_t>(m_pPage->GetPageHeight());
-  std::vector<uint8_t> nHorizontalMask(nPageWidth);
-  std::vector<uint8_t> nVerticalMask(nPageHeight);
-  uint8_t* pDataH = nHorizontalMask.data();
-  uint8_t* pDataV = nVerticalMask.data();
-  int32_t index = 0;
-  FX_FLOAT fLineHeight = 0.0f;
   if (m_pPage->GetPageObjectList()->empty())
     return TextOrientation::Unknown;
 
-  for (auto& pPageObj : *m_pPage->GetPageObjectList()) {
-    if (!pPageObj || !pPageObj->IsText())
+  const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
+  const int32_t nPageHeight = static_cast<int32_t>(m_pPage->GetPageHeight());
+  std::vector<bool> nHorizontalMask(nPageWidth);
+  std::vector<bool> nVerticalMask(nPageHeight);
+  FX_FLOAT fLineHeight = 0.0f;
+  int32_t nStartH = nPageWidth;
+  int32_t nEndH = 0;
+  int32_t nStartV = nPageHeight;
+  int32_t nEndV = 0;
+  for (const auto& pPageObj : *m_pPage->GetPageObjectList()) {
+    if (!pPageObj->IsText())
       continue;
 
-    int32_t minH =
-        (int32_t)pPageObj->m_Left < 0 ? 0 : (int32_t)pPageObj->m_Left;
-    int32_t maxH = (int32_t)pPageObj->m_Right > nPageWidth
-                       ? nPageWidth
-                       : (int32_t)pPageObj->m_Right;
-    int32_t minV =
-        (int32_t)pPageObj->m_Bottom < 0 ? 0 : (int32_t)pPageObj->m_Bottom;
-    int32_t maxV = (int32_t)pPageObj->m_Top > nPageHeight
-                       ? nPageHeight
-                       : (int32_t)pPageObj->m_Top;
+    int32_t minH = std::max(static_cast<int32_t>(pPageObj->m_Left), 0);
+    int32_t maxH =
+        std::min(static_cast<int32_t>(pPageObj->m_Right), nPageWidth);
+    int32_t minV = std::max(static_cast<int32_t>(pPageObj->m_Bottom), 0);
+    int32_t maxV = std::min(static_cast<int32_t>(pPageObj->m_Top), nPageHeight);
     if (minH >= maxH || minV >= maxV)
       continue;
 
-    FXSYS_memset(pDataH + minH, 1, maxH - minH);
-    FXSYS_memset(pDataV + minV, 1, maxV - minV);
+    for (int32_t i = minH; i < maxH; ++i)
+      nHorizontalMask[i] = true;
+    for (int32_t i = minV; i < maxV; ++i)
+      nVerticalMask[i] = true;
+
+    nStartH = std::min(nStartH, minH);
+    nEndH = std::max(nEndH, maxH);
+    nStartV = std::min(nStartV, minV);
+    nEndV = std::max(nEndV, maxV);
+
     if (fLineHeight <= 0.0f)
       fLineHeight = pPageObj->m_Top - pPageObj->m_Bottom;
   }
-  int32_t nStartH = 0;
-  int32_t nEndH = 0;
-  FX_FLOAT nSumH = 0.0f;
-  for (index = 0; index < nPageWidth; index++) {
-    if (1 == nHorizontalMask[index])
-      break;
-  }
-  nStartH = index;
-  for (index = nPageWidth; index > 0; index--) {
-    if (1 == nHorizontalMask[index - 1])
-      break;
-  }
-  nEndH = index;
-  for (index = nStartH; index < nEndH; index++) {
-    nSumH += nHorizontalMask[index];
-  }
-  nSumH /= nEndH - nStartH;
-  int32_t nStartV = 0;
-  int32_t nEndV = 0;
-  FX_FLOAT nSumV = 0.0f;
-  for (index = 0; index < nPageHeight; index++) {
-    if (1 == nVerticalMask[index])
-      break;
-  }
-  nStartV = index;
-  for (index = nPageHeight; index > 0; index--) {
-    if (1 == nVerticalMask[index - 1])
-      break;
-  }
-  nEndV = index;
-  for (index = nStartV; index < nEndV; index++)
-    nSumV += nVerticalMask[index];
-  nSumV /= nEndV - nStartV;
-
-  if ((nEndV - nStartV) < (int32_t)(2 * fLineHeight))
+  const int32_t nDoubleLineHeight = 2 * fLineHeight;
+  if ((nEndV - nStartV) < nDoubleLineHeight)
     return TextOrientation::Horizontal;
-  if ((nEndH - nStartH) < (int32_t)(2 * fLineHeight))
+  if ((nEndH - nStartH) < nDoubleLineHeight)
     return TextOrientation::Vertical;
 
+  const FX_FLOAT nSumH = MaskPercentFilled(nHorizontalMask, nStartH, nEndH);
   if (nSumH > 0.8f)
     return TextOrientation::Horizontal;
 
+  const FX_FLOAT nSumV = MaskPercentFilled(nVerticalMask, nStartV, nEndV);
   if (nSumH > nSumV)
     return TextOrientation::Horizontal;
   if (nSumH < nSumV)
