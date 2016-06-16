@@ -41,12 +41,6 @@ class CBC_OnedCode128Writer : public CBC_OneDimWriter {
   BC_TYPE GetType();
 
  private:
-  static const int32_t CODE_CODE_B = 100;
-  static const int32_t CODE_CODE_C = 99;
-  static const int32_t CODE_START_B = 104;
-  static const int32_t CODE_START_C = 105;
-  static const int32_t CODE_STOP = 106;
-
   FX_BOOL IsDigits(const CFX_ByteString& contents,
                    int32_t start,
                    int32_t length);

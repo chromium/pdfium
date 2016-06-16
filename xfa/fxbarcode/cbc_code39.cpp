@@ -21,22 +21,9 @@
 
 #include "xfa/fxbarcode/cbc_code39.h"
 
-#include "xfa/fxbarcode/BC_BinaryBitmap.h"
-#include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
-#include "xfa/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
-#include "xfa/fxbarcode/oned/BC_OnedCode39Reader.h"
 #include "xfa/fxbarcode/oned/BC_OnedCode39Writer.h"
 
-CBC_Code39::CBC_Code39()
-    : CBC_OneCode(new CBC_OnedCode39Reader, new CBC_OnedCode39Writer) {}
-
-CBC_Code39::CBC_Code39(FX_BOOL usingCheckDigit)
-    : CBC_OneCode(new CBC_OnedCode39Reader(usingCheckDigit),
-                  new CBC_OnedCode39Writer) {}
-
-CBC_Code39::CBC_Code39(FX_BOOL usingCheckDigit, FX_BOOL extendedMode)
-    : CBC_OneCode(new CBC_OnedCode39Reader(usingCheckDigit, extendedMode),
-                  new CBC_OnedCode39Writer(extendedMode)) {}
+CBC_Code39::CBC_Code39() : CBC_OneCode(new CBC_OnedCode39Writer) {}
 
 CBC_Code39::~CBC_Code39() {}
 
@@ -92,23 +79,6 @@ FX_BOOL CBC_Code39::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 BC_TYPE CBC_Code39::GetType() {
   return BC_CODE39;
-}
-
-CFX_WideString CBC_Code39::Decode(uint8_t* buf,
-                                  int32_t width,
-                                  int32_t height,
-                                  int32_t& e) {
-  CFX_WideString str;
-  return str;
-}
-
-CFX_WideString CBC_Code39::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
-  CBC_BufferedImageLuminanceSource source(pBitmap);
-  CBC_GlobalHistogramBinarizer binarizer(&source);
-  CBC_BinaryBitmap bitmap(&binarizer);
-  CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
-  return CFX_WideString::FromUTF8(str.AsStringC());
 }
 
 FX_BOOL CBC_Code39::SetTextLocation(BC_TEXT_LOC location) {

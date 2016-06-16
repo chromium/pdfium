@@ -18,7 +18,9 @@
 #include "xfa/fxbarcode/cbc_upca.h"
 #include "xfa/fxbarcode/utils.h"
 
-static CBC_CodeBase* FX_Barcode_CreateBarCodeEngineObject(BC_TYPE type) {
+namespace {
+
+CBC_CodeBase* CreateBarCodeEngineObject(BC_TYPE type) {
   switch (type) {
     case BC_CODE39:
       return new CBC_Code39();
@@ -48,6 +50,8 @@ static CBC_CodeBase* FX_Barcode_CreateBarCodeEngineObject(BC_TYPE type) {
   }
 }
 
+}  // namespace
+
 CFX_Barcode::CFX_Barcode() {}
 
 CFX_Barcode::~CFX_Barcode() {
@@ -55,7 +59,7 @@ CFX_Barcode::~CFX_Barcode() {
 }
 
 FX_BOOL CFX_Barcode::Create(BC_TYPE type) {
-  m_pBCEngine = FX_Barcode_CreateBarCodeEngineObject(type);
+  m_pBCEngine = CreateBarCodeEngineObject(type);
   return m_pBCEngine != NULL;
 }
 BC_TYPE CFX_Barcode::GetType() {
@@ -340,38 +344,4 @@ FX_BOOL CFX_Barcode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
     return FALSE;
   }
   return m_pBCEngine->RenderBitmap(pOutBitmap, e);
-}
-
-CFX_WideString CFX_Barcode::Decode(uint8_t* buf,
-                                   int32_t width,
-                                   int32_t height,
-                                   int32_t& errorCode) {
-  for (BC_TYPE t = BC_CODE39; t <= BC_DATAMATRIX;
-       t = (BC_TYPE)((int32_t)t + 1)) {
-    CBC_CodeBase* pTmpEngine = FX_Barcode_CreateBarCodeEngineObject(t);
-    if (!pTmpEngine) {
-      continue;
-    }
-    CFX_WideString ret = pTmpEngine->Decode(buf, width, height, errorCode);
-    if (errorCode == BCExceptionNO) {
-      return ret;
-    }
-  }
-  errorCode = BCExceptionUnSupportedBarcode;
-  return CFX_WideString();
-}
-CFX_WideString CFX_Barcode::Decode(CFX_DIBitmap* pBitmap, int32_t& errorCode) {
-  for (BC_TYPE t = BC_CODE39; t <= BC_DATAMATRIX;
-       t = (BC_TYPE)((int32_t)t + 1)) {
-    CBC_CodeBase* pTmpEngine = FX_Barcode_CreateBarCodeEngineObject(t);
-    if (!pTmpEngine) {
-      continue;
-    }
-    CFX_WideString ret = pTmpEngine->Decode(pBitmap, errorCode);
-    if (errorCode == BCExceptionNO) {
-      return ret;
-    }
-  }
-  errorCode = BCExceptionUnSupportedBarcode;
-  return CFX_WideString();
 }

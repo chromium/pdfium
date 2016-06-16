@@ -21,16 +21,9 @@
 
 #include "xfa/fxbarcode/cbc_upca.h"
 
-#include "xfa/fxbarcode/BC_BinaryBitmap.h"
-#include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
-#include "xfa/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
-#include "xfa/fxbarcode/oned/BC_OnedUPCAReader.h"
 #include "xfa/fxbarcode/oned/BC_OnedUPCAWriter.h"
 
-CBC_UPCA::CBC_UPCA()
-    : CBC_OneCode(new CBC_OnedUPCAReader, new CBC_OnedUPCAWriter) {
-  static_cast<CBC_OnedUPCAReader*>(m_pBCReader.get())->Init();
-}
+CBC_UPCA::CBC_UPCA() : CBC_OneCode(new CBC_OnedUPCAWriter) {}
 
 CBC_UPCA::~CBC_UPCA() {}
 
@@ -95,23 +88,6 @@ FX_BOOL CBC_UPCA::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
-}
-
-CFX_WideString CBC_UPCA::Decode(uint8_t* buf,
-                                int32_t width,
-                                int32_t height,
-                                int32_t& e) {
-  CFX_WideString str;
-  return str;
-}
-
-CFX_WideString CBC_UPCA::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
-  CBC_BufferedImageLuminanceSource source(pBitmap);
-  CBC_GlobalHistogramBinarizer binarizer(&source);
-  CBC_BinaryBitmap bitmap(&binarizer);
-  CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, L"");
-  return CFX_WideString::FromUTF8(str.AsStringC());
 }
 
 BC_TYPE CBC_UPCA::GetType() {

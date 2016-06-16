@@ -21,11 +21,6 @@ class CBC_Codabar : public CBC_OneCode {
   FX_BOOL Encode(const CFX_WideStringC& contents,
                  FX_BOOL isDevice,
                  int32_t& e) override;
-  CFX_WideString Decode(uint8_t* buf,
-                        int32_t width,
-                        int32_t height,
-                        int32_t& e) override;
-  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) override;
   FX_BOOL RenderDevice(CFX_RenderDevice* device,
                        const CFX_Matrix* matrix,
                        int32_t& e) override;

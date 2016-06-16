@@ -44,9 +44,6 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
   virtual FX_BOOL FindChar(FX_WCHAR ch, FX_BOOL isContent);
 
  private:
-  static const FX_CHAR START_END_CHARS[];
-  static const FX_CHAR CONTENT_CHARS[];
-
   void RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
                     int32_t codeLength,

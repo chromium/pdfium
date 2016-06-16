@@ -20,20 +20,27 @@
  * limitations under the License.
  */
 
-#include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "xfa/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
-#include "xfa/fxbarcode/oned/BC_OnedCodaBarReader.h"
 #include "xfa/fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
-const FX_CHAR CBC_OnedCodaBarWriter::START_END_CHARS[] = {
-    'A', 'B', 'C', 'D', 'T', 'N', '*', 'E', 'a', 'b', 'c', 'd', 't', 'n', 'e'};
-const FX_CHAR CBC_OnedCodaBarWriter::CONTENT_CHARS[] = {
-    '0', '1', '2', '3', '4', '5', '6', '7',
-    '8', '9', '-', '$', '/', ':', '+', '.'};
+namespace {
+
+const FX_CHAR ALPHABET_STRING[] = "0123456789-$:/.+ABCDTN";
+
+const int32_t CHARACTER_ENCODINGS[22] = {
+    0x003, 0x006, 0x009, 0x060, 0x012, 0x042, 0x021, 0x024,
+    0x030, 0x048, 0x00c, 0x018, 0x045, 0x051, 0x054, 0x015,
+    0x01A, 0x029, 0x00B, 0x00E, 0x01A, 0x029};
+
+const FX_CHAR START_END_CHARS[] = {'A', 'B', 'C', 'D', 'T', 'N', '*', 'E',
+                                   'a', 'b', 'c', 'd', 't', 'n', 'e'};
+const FX_CHAR CONTENT_CHARS[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                                 '8', '9', '-', '$', '/', ':', '+', '.'};
+
+}  // namespace
 
 CBC_OnedCodaBarWriter::CBC_OnedCodaBarWriter() {
   m_chStart = 'A';
@@ -158,7 +165,6 @@ uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
 uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
                                        int32_t& outLength,
                                        int32_t& e) {
-  CBC_OnedCodaBarReader CodaBarR;
   CFX_ByteString data = m_chStart + contents + m_chEnd;
   m_iContentLen = data.GetLength();
   uint8_t* result = FX_Alloc2D(uint8_t, m_iWideNarrRatio * 7, data.GetLength());
@@ -186,10 +192,10 @@ uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
         break;
     }
     int32_t code = 0;
-    int32_t len = (int32_t)strlen(CodaBarR.ALPHABET_STRING);
+    int32_t len = (int32_t)strlen(ALPHABET_STRING);
     for (int32_t i = 0; i < len; i++) {
-      if (ch == CodaBarR.ALPHABET_STRING[i]) {
-        code = CodaBarR.CHARACTER_ENCODINGS[i];
+      if (ch == ALPHABET_STRING[i]) {
+        code = CHARACTER_ENCODINGS[i];
         break;
       }
     }

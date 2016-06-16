@@ -13,7 +13,6 @@
 class CBC_OnedCode39Writer : public CBC_OneDimWriter {
  public:
   CBC_OnedCode39Writer();
-  explicit CBC_OnedCode39Writer(FX_BOOL extendedMode);
   ~CBC_OnedCode39Writer() override;
 
   // CBC_OneDimWriter
@@ -42,11 +41,6 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
 
   virtual CFX_WideString encodedContents(const CFX_WideStringC& contents,
                                          int32_t& e);
-  virtual FX_BOOL CheckExtendedContentValidity(const CFX_WideStringC& contents);
-  virtual CFX_WideString FilterExtendedContents(
-      const CFX_WideStringC& contents);
-  virtual CFX_WideString RenderExtendedTextContents(
-      const CFX_WideStringC& contents);
   virtual FX_BOOL SetTextLocation(BC_TEXT_LOC loction);
   virtual FX_BOOL SetWideNarrowRatio(int32_t ratio);
 
@@ -55,7 +49,6 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
   FX_CHAR CalcCheckSum(const CFX_ByteString& contents, int32_t& e);
 
   int32_t m_iWideNarrRatio;
-  FX_BOOL m_extendedMode;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_

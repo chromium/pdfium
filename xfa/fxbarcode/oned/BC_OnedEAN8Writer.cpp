@@ -20,13 +20,20 @@
  * limitations under the License.
  */
 
-#include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "xfa/fxbarcode/oned/BC_OneDReader.h"
-#include "xfa/fxbarcode/oned/BC_OneDimReader.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 #include "xfa/fxbarcode/oned/BC_OnedEAN8Writer.h"
+
+namespace {
+
+const int32_t START_END_PATTERN[3] = {1, 1, 1};
+const int32_t MIDDLE_PATTERN[5] = {1, 1, 1, 1, 1};
+const int32_t L_PATTERNS[10][4] = {
+    {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
+    {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2}};
+
+}  // namespace
 
 CBC_OnedEAN8Writer::CBC_OnedEAN8Writer() {
   m_iDataLenth = 8;
@@ -120,8 +127,7 @@ uint8_t* CBC_OnedEAN8Writer::Encode(const CFX_ByteString& contents,
   outLength = m_codeWidth;
   uint8_t* result = FX_Alloc(uint8_t, m_codeWidth);
   int32_t pos = 0;
-  pos +=
-      AppendPattern(result, pos, CBC_OneDimReader::START_END_PATTERN, 3, 1, e);
+  pos += AppendPattern(result, pos, START_END_PATTERN, 3, 1, e);
   if (e != BCExceptionNO) {
     FX_Free(result);
     return nullptr;
@@ -129,29 +135,26 @@ uint8_t* CBC_OnedEAN8Writer::Encode(const CFX_ByteString& contents,
   int32_t i = 0;
   for (i = 0; i <= 3; i++) {
     int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
-    pos += AppendPattern(result, pos, CBC_OneDimReader::L_PATTERNS[digit], 4, 0,
-                         e);
+    pos += AppendPattern(result, pos, L_PATTERNS[digit], 4, 0, e);
     if (e != BCExceptionNO) {
       FX_Free(result);
       return nullptr;
     }
   }
-  pos += AppendPattern(result, pos, CBC_OneDimReader::MIDDLE_PATTERN, 5, 0, e);
+  pos += AppendPattern(result, pos, MIDDLE_PATTERN, 5, 0, e);
   if (e != BCExceptionNO) {
     FX_Free(result);
     return nullptr;
   }
   for (i = 4; i <= 7; i++) {
     int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
-    pos += AppendPattern(result, pos, CBC_OneDimReader::L_PATTERNS[digit], 4, 1,
-                         e);
+    pos += AppendPattern(result, pos, L_PATTERNS[digit], 4, 1, e);
     if (e != BCExceptionNO) {
       FX_Free(result);
       return nullptr;
     }
   }
-  pos +=
-      AppendPattern(result, pos, CBC_OneDimReader::START_END_PATTERN, 3, 1, e);
+  pos += AppendPattern(result, pos, START_END_PATTERN, 3, 1, e);
   if (e != BCExceptionNO) {
     FX_Free(result);
     return nullptr;

@@ -25,11 +25,6 @@ class CBC_UPCA : public CBC_OneCode {
                        const CFX_Matrix* matrix,
                        int32_t& e) override;
   FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
-  CFX_WideString Decode(uint8_t* buf,
-                        int32_t width,
-                        int32_t height,
-                        int32_t& e) override;
-  CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) override;
   BC_TYPE GetType() override;
 
  private:

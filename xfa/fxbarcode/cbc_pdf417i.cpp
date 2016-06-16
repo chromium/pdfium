@@ -21,14 +21,9 @@
 
 #include "xfa/fxbarcode/cbc_pdf417i.h"
 
-#include "xfa/fxbarcode/BC_BinaryBitmap.h"
-#include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
-#include "xfa/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
-#include "xfa/fxbarcode/pdf417/BC_PDF417Reader.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417Writer.h"
 
-CBC_PDF417I::CBC_PDF417I()
-    : CBC_CodeBase(new CBC_PDF417Reader, new CBC_PDF417Writer) {}
+CBC_PDF417I::CBC_PDF417I() : CBC_CodeBase(new CBC_PDF417Writer) {}
 
 CBC_PDF417I::~CBC_PDF417I() {}
 
@@ -75,21 +70,4 @@ FX_BOOL CBC_PDF417I::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 BC_TYPE CBC_PDF417I::GetType() {
   return BC_PDF417;
-}
-
-CFX_WideString CBC_PDF417I::Decode(uint8_t* buf,
-                                   int32_t width,
-                                   int32_t height,
-                                   int32_t& e) {
-  CFX_WideString str;
-  return str;
-}
-
-CFX_WideString CBC_PDF417I::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
-  CBC_BufferedImageLuminanceSource source(pBitmap);
-  CBC_GlobalHistogramBinarizer binarizer(&source);
-  CBC_BinaryBitmap bitmap(&binarizer);
-  CFX_ByteString bytestring = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
-  return CFX_WideString::FromUTF8(bytestring.AsStringC());
 }

@@ -21,14 +21,9 @@
 
 #include "xfa/fxbarcode/cbc_codabar.h"
 
-#include "xfa/fxbarcode/BC_BinaryBitmap.h"
-#include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
-#include "xfa/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
-#include "xfa/fxbarcode/oned/BC_OnedCodaBarReader.h"
 #include "xfa/fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
-CBC_Codabar::CBC_Codabar()
-    : CBC_OneCode(new CBC_OnedCodaBarReader, new CBC_OnedCodaBarWriter) {}
+CBC_Codabar::CBC_Codabar() : CBC_OneCode(new CBC_OnedCodaBarWriter) {}
 
 CBC_Codabar::~CBC_Codabar() {}
 
@@ -107,21 +102,4 @@ FX_BOOL CBC_Codabar::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 BC_TYPE CBC_Codabar::GetType() {
   return BC_CODABAR;
-}
-
-CFX_WideString CBC_Codabar::Decode(uint8_t* buf,
-                                   int32_t width,
-                                   int32_t height,
-                                   int32_t& e) {
-  CFX_WideString str;
-  return str;
-}
-
-CFX_WideString CBC_Codabar::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
-  CBC_BufferedImageLuminanceSource source(pBitmap);
-  CBC_GlobalHistogramBinarizer binarizer(&source);
-  CBC_BinaryBitmap bitmap(&binarizer);
-  CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
-  return CFX_WideString::FromUTF8(str.AsStringC());
 }

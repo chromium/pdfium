@@ -21,14 +21,9 @@
 
 #include "xfa/fxbarcode/cbc_ean8.h"
 
-#include "xfa/fxbarcode/BC_BinaryBitmap.h"
-#include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
-#include "xfa/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
-#include "xfa/fxbarcode/oned/BC_OnedEAN8Reader.h"
 #include "xfa/fxbarcode/oned/BC_OnedEAN8Writer.h"
 
-CBC_EAN8::CBC_EAN8()
-    : CBC_OneCode(new CBC_OnedEAN8Reader, new CBC_OnedEAN8Writer) {}
+CBC_EAN8::CBC_EAN8() : CBC_OneCode(new CBC_OnedEAN8Writer) {}
 
 CBC_EAN8::~CBC_EAN8() {}
 
@@ -93,21 +88,4 @@ FX_BOOL CBC_EAN8::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 BC_TYPE CBC_EAN8::GetType() {
   return BC_EAN8;
-}
-
-CFX_WideString CBC_EAN8::Decode(uint8_t* buf,
-                                int32_t width,
-                                int32_t height,
-                                int32_t& e) {
-  CFX_WideString str;
-  return str;
-}
-
-CFX_WideString CBC_EAN8::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
-  CBC_BufferedImageLuminanceSource source(pBitmap);
-  CBC_GlobalHistogramBinarizer binarizer(&source);
-  CBC_BinaryBitmap bitmap(&binarizer);
-  CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
-  return CFX_WideString::FromUTF8(str.AsStringC());
 }

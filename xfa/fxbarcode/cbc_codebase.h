@@ -20,7 +20,7 @@ class CFX_RenderDevice;
 
 class CBC_CodeBase {
  public:
-  CBC_CodeBase(CBC_Reader* pReader, CBC_Writer* pWriter);
+  explicit CBC_CodeBase(CBC_Writer* pWriter);
   virtual ~CBC_CodeBase();
 
   virtual BC_TYPE GetType() = 0;
@@ -31,11 +31,6 @@ class CBC_CodeBase {
                                const CFX_Matrix* matrix,
                                int32_t& e) = 0;
   virtual FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) = 0;
-  virtual CFX_WideString Decode(uint8_t* buf,
-                                int32_t width,
-                                int32_t height,
-                                int32_t& e) = 0;
-  virtual CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e) = 0;
 
   FX_BOOL SetCharEncoding(int32_t encoding);
   FX_BOOL SetModuleHeight(int32_t moduleHeight);
@@ -46,7 +41,6 @@ class CBC_CodeBase {
   void SetBarcodeColor(FX_ARGB foregroundColor);
 
  protected:
-  std::unique_ptr<CBC_Reader> m_pBCReader;
   std::unique_ptr<CBC_Writer> m_pBCWriter;
 };
 

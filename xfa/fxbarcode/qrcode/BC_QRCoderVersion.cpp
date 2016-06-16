@@ -25,9 +25,27 @@
 #include "xfa/fxbarcode/qrcode/BC_QRCoderECB.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
-#include "xfa/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/fxbarcode/utils.h"
+
+namespace {
+
+const uint8_t BITS_SET_IN_HALF_BYTE[] = {0, 1, 1, 2, 1, 2, 2, 3,
+                                         1, 2, 2, 3, 2, 3, 3, 4};
+
+int32_t NumBitsDiffering(int32_t a, int32_t b) {
+  a ^= b;
+  return BITS_SET_IN_HALF_BYTE[a & 0x0F] +
+         BITS_SET_IN_HALF_BYTE[(a >> 4) & 0x0F] +
+         BITS_SET_IN_HALF_BYTE[(a >> 8) & 0x0F] +
+         BITS_SET_IN_HALF_BYTE[(a >> 12) & 0x0F] +
+         BITS_SET_IN_HALF_BYTE[(a >> 16) & 0x0F] +
+         BITS_SET_IN_HALF_BYTE[(a >> 20) & 0x0F] +
+         BITS_SET_IN_HALF_BYTE[(a >> 24) & 0x0F] +
+         BITS_SET_IN_HALF_BYTE[(a >> 28) & 0x0F];
+}
+
+}  // namespace
 
 const int32_t CBC_QRCoderVersion::VERSION_DECODE_INFO[] = {
     0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6, 0x0C762, 0x0D847,
@@ -372,8 +390,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::DecodeVersionInformation(
       BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
       return qcv;
     }
-    int32_t bitsDifference = CBC_QRCoderFormatInformation::NumBitsDiffering(
-        versionBits, targetVersion);
+    int32_t bitsDifference = NumBitsDiffering(versionBits, targetVersion);
     if (bitsDifference < bestDifference) {
       bestVersion = i + 7;
       bestDifference = bitsDifference;

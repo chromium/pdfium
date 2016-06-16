@@ -20,7 +20,6 @@
  * limitations under the License.
  */
 
-#include "xfa/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/fxbarcode/BC_Dimension.h"
 #include "xfa/fxbarcode/BC_TwoDimWriter.h"
 #include "xfa/fxbarcode/BC_UtilCodingConvert.h"

@@ -21,16 +21,9 @@
 
 #include "xfa/fxbarcode/cbc_datamatrix.h"
 
-#include "xfa/fxbarcode/BC_BinaryBitmap.h"
-#include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
-#include "xfa/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
-#include "xfa/fxbarcode/datamatrix/BC_DataMatrixReader.h"
 #include "xfa/fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 
-CBC_DataMatrix::CBC_DataMatrix()
-    : CBC_CodeBase(new CBC_DataMatrixReader, new CBC_DataMatrixWriter) {
-  static_cast<CBC_DataMatrixReader*>(m_pBCReader.get())->Init();
-}
+CBC_DataMatrix::CBC_DataMatrix() : CBC_CodeBase(new CBC_DataMatrixWriter) {}
 
 CBC_DataMatrix::~CBC_DataMatrix() {}
 
@@ -67,21 +60,4 @@ FX_BOOL CBC_DataMatrix::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
 
 BC_TYPE CBC_DataMatrix::GetType() {
   return BC_DATAMATRIX;
-}
-
-CFX_WideString CBC_DataMatrix::Decode(uint8_t* buf,
-                                      int32_t width,
-                                      int32_t height,
-                                      int32_t& e) {
-  CFX_WideString str;
-  return str;
-}
-
-CFX_WideString CBC_DataMatrix::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
-  CBC_BufferedImageLuminanceSource source(pBitmap);
-  CBC_GlobalHistogramBinarizer binarizer(&source);
-  CBC_BinaryBitmap bitmap(&binarizer);
-  CFX_ByteString retStr = m_pBCReader->Decode(&bitmap, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
-  return CFX_WideString::FromUTF8(retStr.AsStringC());
 }

@@ -23,8 +23,7 @@
 
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 
-CBC_OneCode::CBC_OneCode(CBC_Reader* pReader, CBC_Writer* pWriter)
-    : CBC_CodeBase(pReader, pWriter) {}
+CBC_OneCode::CBC_OneCode(CBC_Writer* pWriter) : CBC_CodeBase(pWriter) {}
 
 CBC_OneCode::~CBC_OneCode() {}
 

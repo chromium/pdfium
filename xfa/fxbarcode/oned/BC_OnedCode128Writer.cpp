@@ -20,12 +20,55 @@
  * limitations under the License.
  */
 
-#include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/BC_Writer.h"
-#include "xfa/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
-#include "xfa/fxbarcode/oned/BC_OnedCode128Reader.h"
 #include "xfa/fxbarcode/oned/BC_OnedCode128Writer.h"
+
+namespace {
+
+const int32_t CODE_PATTERNS[107][7] = {
+    {2, 1, 2, 2, 2, 2, 0}, {2, 2, 2, 1, 2, 2, 0}, {2, 2, 2, 2, 2, 1, 0},
+    {1, 2, 1, 2, 2, 3, 0}, {1, 2, 1, 3, 2, 2, 0}, {1, 3, 1, 2, 2, 2, 0},
+    {1, 2, 2, 2, 1, 3, 0}, {1, 2, 2, 3, 1, 2, 0}, {1, 3, 2, 2, 1, 2, 0},
+    {2, 2, 1, 2, 1, 3, 0}, {2, 2, 1, 3, 1, 2, 0}, {2, 3, 1, 2, 1, 2, 0},
+    {1, 1, 2, 2, 3, 2, 0}, {1, 2, 2, 1, 3, 2, 0}, {1, 2, 2, 2, 3, 1, 0},
+    {1, 1, 3, 2, 2, 2, 0}, {1, 2, 3, 1, 2, 2, 0}, {1, 2, 3, 2, 2, 1, 0},
+    {2, 2, 3, 2, 1, 1, 0}, {2, 2, 1, 1, 3, 2, 0}, {2, 2, 1, 2, 3, 1, 0},
+    {2, 1, 3, 2, 1, 2, 0}, {2, 2, 3, 1, 1, 2, 0}, {3, 1, 2, 1, 3, 1, 0},
+    {3, 1, 1, 2, 2, 2, 0}, {3, 2, 1, 1, 2, 2, 0}, {3, 2, 1, 2, 2, 1, 0},
+    {3, 1, 2, 2, 1, 2, 0}, {3, 2, 2, 1, 1, 2, 0}, {3, 2, 2, 2, 1, 1, 0},
+    {2, 1, 2, 1, 2, 3, 0}, {2, 1, 2, 3, 2, 1, 0}, {2, 3, 2, 1, 2, 1, 0},
+    {1, 1, 1, 3, 2, 3, 0}, {1, 3, 1, 1, 2, 3, 0}, {1, 3, 1, 3, 2, 1, 0},
+    {1, 1, 2, 3, 1, 3, 0}, {1, 3, 2, 1, 1, 3, 0}, {1, 3, 2, 3, 1, 1, 0},
+    {2, 1, 1, 3, 1, 3, 0}, {2, 3, 1, 1, 1, 3, 0}, {2, 3, 1, 3, 1, 1, 0},
+    {1, 1, 2, 1, 3, 3, 0}, {1, 1, 2, 3, 3, 1, 0}, {1, 3, 2, 1, 3, 1, 0},
+    {1, 1, 3, 1, 2, 3, 0}, {1, 1, 3, 3, 2, 1, 0}, {1, 3, 3, 1, 2, 1, 0},
+    {3, 1, 3, 1, 2, 1, 0}, {2, 1, 1, 3, 3, 1, 0}, {2, 3, 1, 1, 3, 1, 0},
+    {2, 1, 3, 1, 1, 3, 0}, {2, 1, 3, 3, 1, 1, 0}, {2, 1, 3, 1, 3, 1, 0},
+    {3, 1, 1, 1, 2, 3, 0}, {3, 1, 1, 3, 2, 1, 0}, {3, 3, 1, 1, 2, 1, 0},
+    {3, 1, 2, 1, 1, 3, 0}, {3, 1, 2, 3, 1, 1, 0}, {3, 3, 2, 1, 1, 1, 0},
+    {3, 1, 4, 1, 1, 1, 0}, {2, 2, 1, 4, 1, 1, 0}, {4, 3, 1, 1, 1, 1, 0},
+    {1, 1, 1, 2, 2, 4, 0}, {1, 1, 1, 4, 2, 2, 0}, {1, 2, 1, 1, 2, 4, 0},
+    {1, 2, 1, 4, 2, 1, 0}, {1, 4, 1, 1, 2, 2, 0}, {1, 4, 1, 2, 2, 1, 0},
+    {1, 1, 2, 2, 1, 4, 0}, {1, 1, 2, 4, 1, 2, 0}, {1, 2, 2, 1, 1, 4, 0},
+    {1, 2, 2, 4, 1, 1, 0}, {1, 4, 2, 1, 1, 2, 0}, {1, 4, 2, 2, 1, 1, 0},
+    {2, 4, 1, 2, 1, 1, 0}, {2, 2, 1, 1, 1, 4, 0}, {4, 1, 3, 1, 1, 1, 0},
+    {2, 4, 1, 1, 1, 2, 0}, {1, 3, 4, 1, 1, 1, 0}, {1, 1, 1, 2, 4, 2, 0},
+    {1, 2, 1, 1, 4, 2, 0}, {1, 2, 1, 2, 4, 1, 0}, {1, 1, 4, 2, 1, 2, 0},
+    {1, 2, 4, 1, 1, 2, 0}, {1, 2, 4, 2, 1, 1, 0}, {4, 1, 1, 2, 1, 2, 0},
+    {4, 2, 1, 1, 1, 2, 0}, {4, 2, 1, 2, 1, 1, 0}, {2, 1, 2, 1, 4, 1, 0},
+    {2, 1, 4, 1, 2, 1, 0}, {4, 1, 2, 1, 2, 1, 0}, {1, 1, 1, 1, 4, 3, 0},
+    {1, 1, 1, 3, 4, 1, 0}, {1, 3, 1, 1, 4, 1, 0}, {1, 1, 4, 1, 1, 3, 0},
+    {1, 1, 4, 3, 1, 1, 0}, {4, 1, 1, 1, 1, 3, 0}, {4, 1, 1, 3, 1, 1, 0},
+    {1, 1, 3, 1, 4, 1, 0}, {1, 1, 4, 1, 3, 1, 0}, {3, 1, 1, 1, 4, 1, 0},
+    {4, 1, 1, 1, 3, 1, 0}, {2, 1, 1, 4, 1, 2, 0}, {2, 1, 1, 2, 1, 4, 0},
+    {2, 1, 1, 2, 3, 2, 0}, {2, 3, 3, 1, 1, 1, 2}};
+
+const int32_t CODE_START_B = 104;
+const int32_t CODE_START_C = 105;
+const int32_t CODE_STOP = 106;
+
+}  // namespace
 
 CBC_OnedCode128Writer::CBC_OnedCode128Writer() {
   m_codeFormat = BC_CODE128_B;
@@ -153,8 +196,8 @@ uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,
     return nullptr;
   }
   checkSum %= 103;
-  patterns.Add(CBC_OnedCode128Reader::CODE_PATTERNS[checkSum]);
-  patterns.Add(CBC_OnedCode128Reader::CODE_PATTERNS[CODE_STOP]);
+  patterns.Add(CODE_PATTERNS[checkSum]);
+  patterns.Add(CODE_PATTERNS[CODE_STOP]);
   m_iContentLen = contents.GetLength() + 3;
   int32_t codeWidth = 0;
   for (int32_t k = 0; k < patterns.GetSize(); k++) {
@@ -183,13 +226,13 @@ int32_t CBC_OnedCode128Writer::Encode128B(
   int32_t checkSum = 0;
   int32_t checkWeight = 1;
   int32_t position = 0;
-  patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[CODE_START_B]);
+  patterns->Add(CODE_PATTERNS[CODE_START_B]);
   checkSum += CODE_START_B * checkWeight;
   while (position < contents.GetLength()) {
     int32_t patternIndex = 0;
     patternIndex = contents[position] - ' ';
     position += 1;
-    patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[patternIndex]);
+    patterns->Add(CODE_PATTERNS[patternIndex]);
     checkSum += patternIndex * checkWeight;
     if (position != 0) {
       checkWeight++;
@@ -204,7 +247,7 @@ int32_t CBC_OnedCode128Writer::Encode128C(
   int32_t checkSum = 0;
   int32_t checkWeight = 1;
   int32_t position = 0;
-  patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[CODE_START_C]);
+  patterns->Add(CODE_PATTERNS[CODE_START_C]);
   checkSum += CODE_START_C * checkWeight;
   while (position < contents.GetLength()) {
     int32_t patternIndex = 0;
@@ -221,7 +264,7 @@ int32_t CBC_OnedCode128Writer::Encode128C(
         position += 2;
       }
     }
-    patterns->Add(CBC_OnedCode128Reader::CODE_PATTERNS[patternIndex]);
+    patterns->Add(CODE_PATTERNS[patternIndex]);
     checkSum += patternIndex * checkWeight;
     if (position != 0) {
       checkWeight++;

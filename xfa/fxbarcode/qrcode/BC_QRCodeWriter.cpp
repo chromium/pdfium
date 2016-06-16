@@ -20,14 +20,15 @@
  * limitations under the License.
  */
 
-#include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/BC_TwoDimWriter.h"
 #include "xfa/fxbarcode/common/BC_CommonByteMatrix.h"
-#include "xfa/fxbarcode/qrcode/BC_QRCodeReader.h"
-#include "xfa/fxbarcode/qrcode/BC_QRCodeWriter.h"
+#include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoder.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderEncoder.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
+#include "xfa/fxbarcode/qrcode/BC_QRCoderMode.h"
+#include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "xfa/fxbarcode/qrcode/BC_QRCodeWriter.h"
 
 CBC_QRCodeWriter::CBC_QRCodeWriter() {
   m_bFixedSize = TRUE;
@@ -36,7 +37,13 @@ CBC_QRCodeWriter::CBC_QRCodeWriter() {
 }
 CBC_QRCodeWriter::~CBC_QRCodeWriter() {}
 void CBC_QRCodeWriter::ReleaseAll() {
-  CBC_QRCodeReader::ReleaseAll();
+  delete CBC_ReedSolomonGF256::QRCodeFild;
+  CBC_ReedSolomonGF256::QRCodeFild = nullptr;
+  delete CBC_ReedSolomonGF256::DataMatrixField;
+  CBC_ReedSolomonGF256::DataMatrixField = nullptr;
+  CBC_QRCoderMode::Destroy();
+  CBC_QRCoderErrorCorrectionLevel::Destroy();
+  CBC_QRCoderVersion::Destroy();
 }
 FX_BOOL CBC_QRCodeWriter::SetVersion(int32_t version) {
   if (version < 0 || version > 40) {
