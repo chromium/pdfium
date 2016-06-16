@@ -42,6 +42,7 @@
 
 enum OutputFormat {
   OUTPUT_NONE,
+  OUTPUT_TEXT,
   OUTPUT_PPM,
   OUTPUT_PNG,
 #ifdef _WIN32
@@ -110,6 +111,37 @@ static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
   fwrite(result, out_len, 1, fp);
   delete[] result;
   fclose(fp);
+}
+
+void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
+  char filename[256];
+  int chars_formatted =
+      snprintf(filename, sizeof(filename), "%s.%d.txt", pdf_name, num);
+  if (chars_formatted < 0 ||
+      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
+    fprintf(stderr, "Filename %s is too long\n", filename);
+    return;
+  }
+
+  FILE* fp = fopen(filename, "w");
+  if (!fp) {
+    fprintf(stderr, "Failed to open %s for output\n", filename);
+    return;
+  }
+
+  // Output in UTF32-LE.
+  uint32_t bom = 0x0000FEFF;
+  fwrite(&bom, sizeof(bom), 1, fp);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  for (int i = 0; i < FPDFText_CountChars(textpage); i++) {
+    uint32_t c = FPDFText_GetUnicode(textpage, i);
+    fwrite(&c, sizeof(c), 1, fp);
+  }
+
+  FPDFText_ClosePage(textpage);
+
+  (void)fclose(fp);
 }
 
 static void WritePng(const char* pdf_name, int num, const void* buffer_void,
@@ -354,6 +386,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_PNG;
+    } else if (cur_arg == "--txt") {
+      if (options->output_format != OUTPUT_NONE) {
+        fprintf(stderr, "Duplicate or conflicting --txt argument\n");
+        return false;
+      }
+      options->output_format = OUTPUT_TEXT;
 #ifdef PDF_ENABLE_SKIA
     } else if (cur_arg == "--skp") {
       if (options->output_format != OUTPUT_NONE) {
@@ -528,6 +566,10 @@ bool RenderPage(const std::string& name,
         WriteEmf(page, name.c_str(), page_index);
         break;
 #endif
+      case OUTPUT_TEXT:
+        WriteText(page, name.c_str(), page_index);
+        break;
+
       case OUTPUT_PNG:
         WritePng(name.c_str(), page_index, buffer, stride, width, height);
         break;
@@ -746,6 +788,7 @@ static const char usage_string[] =
     "  --bin-dir=<path>  - override path to v8 external data\n"
     "  --font-dir=<path> - override path to external fonts\n"
     "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
+    "  --txt - write page text in UTF32-LE <pdf-name>.<page-number>.txt\n"
 #ifdef _WIN32
     "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
     "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
