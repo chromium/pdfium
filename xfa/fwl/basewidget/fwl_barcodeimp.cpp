@@ -7,8 +7,8 @@
 #include "xfa/fwl/basewidget/fwl_barcodeimp.h"
 
 #include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fwl/basewidget/cfx_barcode.h"
 #include "xfa/fwl/basewidget/fwl_editimp.h"
-#include "xfa/fwl/basewidget/fxmath_barcodeimp.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"

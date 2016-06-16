@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/basewidget/fxmath_barcodeimp.h"
+#include "xfa/fwl/basewidget/cfx_barcode.h"
 
 #include "xfa/fxbarcode/cbc_codabar.h"
 #include "xfa/fxbarcode/cbc_code128.h"
