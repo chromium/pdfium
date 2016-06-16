@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxcodec/include/fx_codec.h"
-#include "core/fxcodec/include/fx_codec_flate.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "third_party/zlib_v128/zlib.h"
 
