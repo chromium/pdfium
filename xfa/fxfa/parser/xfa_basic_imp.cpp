@@ -197,14 +197,7 @@ const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_ELEMENT eName) {
   return (eName < g_iXFAElementCount) ? (g_XFAElementData + eName) : NULL;
 }
-const uint16_t* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount) {
-  if (eElement >= g_iXFAElementCount) {
-    return NULL;
-  }
-  const XFA_ELEMENTHIERARCHY* pElement = g_XFAElementChildrenIndex + eElement;
-  iCount = pElement->wCount;
-  return g_XFAElementChildrenData + pElement->wStart;
-}
+
 const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount) {
   if (eElement >= g_iXFAElementCount) {
     return NULL;

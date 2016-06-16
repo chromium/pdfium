@@ -987,7 +987,6 @@ struct XFA_SCRIPTHIERARCHY {
   int16_t wParentIndex;
 };
 
-const uint16_t* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount);
 const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount);
 
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
