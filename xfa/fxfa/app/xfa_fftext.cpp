@@ -20,8 +20,7 @@ CXFA_FFText::CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFText::~CXFA_FFText() {}
 void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
                                CFX_Matrix* pMatrix,
-                               uint32_t dwStatus,
-                               int32_t iRotate) {
+                               uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }

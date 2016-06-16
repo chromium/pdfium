@@ -16,9 +16,8 @@ class CXFA_FFLine : public CXFA_FFDraw {
 
   // CXFA_FFWidget
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
 
  private:
   void GetRectFromHand(CFX_RectF& rect, int32_t iHand, FX_FLOAT fLineWidth);
@@ -30,9 +29,8 @@ class CXFA_FFArc : public CXFA_FFDraw {
 
   // CXFA_FFWidget
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
 };
 
 class CXFA_FFRectangle : public CXFA_FFDraw {
@@ -42,9 +40,8 @@ class CXFA_FFRectangle : public CXFA_FFDraw {
 
   // CXFA_FFWidget
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFPATH_H_

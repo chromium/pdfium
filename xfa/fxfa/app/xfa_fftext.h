@@ -20,9 +20,8 @@ class CXFA_FFText : public CXFA_FFDraw {
   FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
   FX_BOOL IsLoaded() override;
   FX_BOOL PerformLayout() override;
 

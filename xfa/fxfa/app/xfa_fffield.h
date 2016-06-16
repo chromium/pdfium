@@ -25,9 +25,8 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                   uint32_t dwStatus,
                   FX_BOOL bDrawFocus = FALSE) override;
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
   FX_BOOL IsLoaded() override;
   FX_BOOL LoadWidget() override;
   void UnloadWidget() override;

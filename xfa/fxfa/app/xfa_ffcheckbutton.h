@@ -17,9 +17,8 @@ class CXFA_FFCheckButton : public CXFA_FFField {
 
   // CXFA_FFField
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
 
   FX_BOOL LoadWidget() override;
   FX_BOOL PerformLayout() override;

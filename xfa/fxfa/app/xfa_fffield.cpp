@@ -51,8 +51,7 @@ FX_BOOL CXFA_FFField::GetBBox(CFX_RectF& rtBox,
 
 void CXFA_FFField::RenderWidget(CFX_Graphics* pGS,
                                 CFX_Matrix* pMatrix,
-                                uint32_t dwStatus,
-                                int32_t iRotate) {
+                                uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }

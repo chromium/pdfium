@@ -16,9 +16,8 @@ class CXFA_FFImageEdit : public CXFA_FFField {
 
   // CXFA_FFField
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
   FX_BOOL LoadWidget() override;
   void UnloadWidget() override;
   FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;

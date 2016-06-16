@@ -106,8 +106,7 @@ FX_BOOL CXFA_FFWidget::GetToolTip(CFX_WideString& wsToolTip) {
 }
 void CXFA_FFWidget::RenderWidget(CFX_Graphics* pGS,
                                  CFX_Matrix* pMatrix,
-                                 uint32_t dwStatus,
-                                 int32_t iRotate) {
+                                 uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }

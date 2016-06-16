@@ -19,9 +19,8 @@ class CXFA_FFBarcode : public CXFA_FFTextEdit {
   // CXFA_FFTextEdit
   FX_BOOL LoadWidget() override;
   void RenderWidget(CFX_Graphics* pGS,
-                    CFX_Matrix* pMatrix = NULL,
-                    uint32_t dwStatus = 0,
-                    int32_t iRotate = 0) override;
+                    CFX_Matrix* pMatrix,
+                    uint32_t dwStatus) override;
   void UpdateWidgetProperty() override;
   FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
   FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;

@@ -31,8 +31,7 @@ CXFA_FFPushButton::~CXFA_FFPushButton() {
 }
 void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,
-                                     uint32_t dwStatus,
-                                     int32_t iRotate) {
+                                     uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }

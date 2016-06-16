@@ -20,8 +20,7 @@ FX_BOOL CXFA_FFSignature::LoadWidget() {
 }
 void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
-                                    uint32_t dwStatus,
-                                    int32_t iRotate) {
+                                    uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }

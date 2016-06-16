@@ -180,7 +180,7 @@ void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
                                         CFX_Matrix* pMatrix,
                                         FX_BOOL bHighlight) {
   hWidget->RenderWidget(pGS, pMatrix,
-                        bHighlight ? XFA_WidgetStatus_Highlight : 0, 0);
+                        bHighlight ? XFA_WidgetStatus_Highlight : 0);
 }
 
 FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,

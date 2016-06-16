@@ -32,8 +32,7 @@ void CXFA_FFImage::UnloadWidget() {
 }
 void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS,
                                 CFX_Matrix* pMatrix,
-                                uint32_t dwStatus,
-                                int32_t iRotate) {
+                                uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }

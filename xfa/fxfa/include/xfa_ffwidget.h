@@ -49,9 +49,8 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
                           uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE);
   virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
+                            CFX_Matrix* pMatrix,
+                            uint32_t dwStatus);
   virtual FX_BOOL IsLoaded();
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();

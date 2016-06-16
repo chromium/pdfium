@@ -51,8 +51,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
 }
 void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
                                CFX_Matrix* pMatrix,
-                               uint32_t dwStatus,
-                               int32_t iRotate) {
+                               uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }
@@ -108,8 +107,7 @@ CXFA_FFArc::CXFA_FFArc(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFArc::~CXFA_FFArc() {}
 void CXFA_FFArc::RenderWidget(CFX_Graphics* pGS,
                               CFX_Matrix* pMatrix,
-                              uint32_t dwStatus,
-                              int32_t iRotate) {
+                              uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }
@@ -136,8 +134,7 @@ CXFA_FFRectangle::CXFA_FFRectangle(CXFA_FFPageView* pPageView,
 CXFA_FFRectangle::~CXFA_FFRectangle() {}
 void CXFA_FFRectangle::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
-                                    uint32_t dwStatus,
-                                    int32_t iRotate) {
+                                    uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }

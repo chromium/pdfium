@@ -141,8 +141,7 @@ FX_BOOL CXFA_FFBarcode::LoadWidget() {
 }
 void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS,
                                   CFX_Matrix* pMatrix,
-                                  uint32_t dwStatus,
-                                  int32_t iRotate) {
+                                  uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
   }
