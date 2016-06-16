@@ -95,6 +95,7 @@ FX_BOOL CXFA_FFWidget::GetBBox(CFX_RectF& rtBox,
 CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
   return m_pDataAcc;
 }
+
 FX_BOOL CXFA_FFWidget::GetToolTip(CFX_WideString& wsToolTip) {
   if (CXFA_Assist assist = m_pDataAcc->GetAssist()) {
     if (CXFA_ToolTip toolTip = assist.GetToolTip()) {
@@ -260,6 +261,62 @@ FWL_WidgetHit CXFA_FFWidget::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
 FX_BOOL CXFA_FFWidget::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
+FX_BOOL CXFA_FFWidget::CanUndo() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::CanRedo() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::Undo() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::Redo() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::CanCopy() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::CanCut() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::CanPaste() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::CanSelectAll() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::CanDelete() {
+  return CanCut();
+}
+FX_BOOL CXFA_FFWidget::CanDeSelect() {
+  return CanCopy();
+}
+FX_BOOL CXFA_FFWidget::Copy(CFX_WideString& wsCopy) {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::Cut(CFX_WideString& wsCut) {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::Paste(const CFX_WideString& wsPaste) {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::SelectAll() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::Delete() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::DeSelect() {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::GetSuggestWords(CFX_PointF pointf,
+                                       std::vector<CFX_ByteString>& sSuggest) {
+  return FALSE;
+}
+FX_BOOL CXFA_FFWidget::ReplaceSpellCheckWord(CFX_PointF pointf,
+                                             const CFX_ByteStringC& bsReplace) {
+  return FALSE;
+}
 void CXFA_FFWidget::Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy) {
   CFX_Matrix mt;
   GetRotateMatrix(mt);
@@ -378,6 +435,9 @@ FX_BOOL CXFA_FFWidget::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
 }
 CXFA_FFDocView* CXFA_FFWidget::GetDocView() {
   return m_pDocView;
+}
+void CXFA_FFWidget::SetDocView(CXFA_FFDocView* pDocView) {
+  m_pDocView = pDocView;
 }
 CXFA_FFDoc* CXFA_FFWidget::GetDoc() {
   return m_pDocView->GetDoc();
@@ -1985,4 +2045,10 @@ void XFA_DrawBox(CXFA_Box box,
   }
   XFA_BOX_Fill(box, strokes, pGS, rtWidget, pMatrix, dwFlags);
   XFA_BOX_Stroke(box, strokes, pGS, rtWidget, pMatrix, dwFlags);
+}
+
+CXFA_CalcData::CXFA_CalcData() : m_iRefCount(0) {}
+
+CXFA_CalcData::~CXFA_CalcData() {
+  m_Globals.RemoveAll();
 }

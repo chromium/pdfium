@@ -137,6 +137,8 @@ CXFA_FMNumberExpression::CXFA_FMNumberExpression(uint32_t line,
                                                  CFX_WideStringC wsNumber)
     : CXFA_FMSimpleExpression(line, TOKnumber), m_wsNumber(wsNumber) {}
 
+CXFA_FMNumberExpression::~CXFA_FMNumberExpression() {}
+
 void CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << m_wsNumber;
 }
@@ -144,6 +146,8 @@ void CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 CXFA_FMStringExpression::CXFA_FMStringExpression(uint32_t line,
                                                  CFX_WideStringC wsString)
     : CXFA_FMSimpleExpression(line, TOKstring), m_wsString(wsString) {}
+
+CXFA_FMStringExpression::~CXFA_FMStringExpression() {}
 
 void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr(m_wsString);
@@ -177,6 +181,8 @@ CXFA_FMIdentifierExpressionn::CXFA_FMIdentifierExpressionn(
     : CXFA_FMSimpleExpression(line, TOKidentifier),
       m_wsIdentifier(wsIdentifier) {}
 
+CXFA_FMIdentifierExpressionn::~CXFA_FMIdentifierExpressionn() {}
+
 void CXFA_FMIdentifierExpressionn::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr(m_wsIdentifier);
   if (tempStr == FX_WSTRC(L"$")) {
@@ -206,6 +212,8 @@ CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(uint32_t line,
                                                CXFA_FMSimpleExpression* pExp)
     : CXFA_FMSimpleExpression(line, op), m_pExp(pExp) {}
 
+CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() {}
+
 void CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 
 CXFA_FMBinExpression::CXFA_FMBinExpression(uint32_t line,
@@ -213,6 +221,8 @@ CXFA_FMBinExpression::CXFA_FMBinExpression(uint32_t line,
                                            CXFA_FMSimpleExpression* pExp1,
                                            CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMSimpleExpression(line, op), m_pExp1(pExp1), m_pExp2(pExp2) {}
+
+CXFA_FMBinExpression::~CXFA_FMBinExpression() {}
 
 void CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 
@@ -616,6 +626,8 @@ CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
     : CXFA_FMBinExpression(line, op, pAccessor, pIndexExp),
       m_wsIdentifier(wsIdentifier) {}
 
+CXFA_FMDotAccessorExpression::~CXFA_FMDotAccessorExpression() {}
+
 void CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[DOT];
   javascript << FX_WSTRC(L"(");
@@ -691,6 +703,8 @@ CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
     CXFA_FMSimpleExpression* pIndexExp)
     : CXFA_FMBinExpression(line, op, pAccessor, pIndexExp),
       m_wsIdentifier(wsIdentifier) {}
+
+CXFA_FMDotDotAccessorExpression::~CXFA_FMDotDotAccessorExpression() {}
 
 void CXFA_FMDotDotAccessorExpression::ToJavaScript(
     CFX_WideTextBuf& javascript) {

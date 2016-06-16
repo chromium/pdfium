@@ -15,18 +15,9 @@ class CXFA_ScriptContext;
 
 class CXFA_ResolveNodesData {
  public:
-  CXFA_ResolveNodesData(CXFA_ScriptContext* pSC = NULL)
-      : m_pSC(pSC),
-        m_CurNode(NULL),
-        m_wsName(),
-        m_uHashName(XFA_HASHCODE_None),
-        m_wsCondition(),
-        m_nLevel(0),
-        m_Nodes(),
-        m_dwStyles(XFA_RESOLVENODE_Children),
-        m_pScriptAttribute(NULL),
-        m_dwFlag(XFA_RESOVENODE_RSTYPE_Nodes) {}
-  ~CXFA_ResolveNodesData() { m_Nodes.RemoveAll(); }
+  CXFA_ResolveNodesData(CXFA_ScriptContext* pSC = NULL);
+  ~CXFA_ResolveNodesData();
+
   CXFA_ScriptContext* m_pSC;
   CXFA_Object* m_CurNode;
   CFX_WideString m_wsName;

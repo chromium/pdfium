@@ -66,7 +66,7 @@ class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
   CXFA_ContentLayoutItem(CXFA_Node* pNode);
-  virtual ~CXFA_ContentLayoutItem();
+  ~CXFA_ContentLayoutItem() override;
 
   CXFA_ContentLayoutItem* m_pPrev;
   CXFA_ContentLayoutItem* m_pNext;

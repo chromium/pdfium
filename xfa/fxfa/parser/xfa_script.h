@@ -38,10 +38,8 @@ enum XFA_RESOVENODE_RSTYPE {
 };
 
 struct XFA_RESOLVENODE_RS {
-  XFA_RESOLVENODE_RS()
-      : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(NULL) {}
-
-  ~XFA_RESOLVENODE_RS() { nodes.RemoveAll(); }
+  XFA_RESOLVENODE_RS();
+  ~XFA_RESOLVENODE_RS();
 
   int32_t GetAttributeResult(CXFA_ValueArray& valueArray) const {
     if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
@@ -61,4 +59,10 @@ struct XFA_RESOLVENODE_RS {
   const XFA_SCRIPTATTRIBUTEINFO* pScriptAttribute;
 };
 
+inline XFA_RESOLVENODE_RS::XFA_RESOLVENODE_RS()
+    : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(NULL) {}
+
+inline XFA_RESOLVENODE_RS::~XFA_RESOLVENODE_RS() {
+  nodes.RemoveAll();
+}
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_H_

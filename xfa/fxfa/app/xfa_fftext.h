@@ -12,20 +12,22 @@
 class CXFA_FFText : public CXFA_FFDraw {
  public:
   CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFText();
-  virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
-  virtual FX_BOOL IsLoaded();
-  virtual FX_BOOL PerformLayout();
+  ~CXFA_FFText() override;
+
+  // CXFA_FFWidget
+  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  void RenderWidget(CFX_Graphics* pGS,
+                    CFX_Matrix* pMatrix = NULL,
+                    uint32_t dwStatus = 0,
+                    int32_t iRotate = 0) override;
+  FX_BOOL IsLoaded() override;
+  FX_BOOL PerformLayout() override;
 
  private:
-  virtual const FX_WCHAR* GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy);
+  const FX_WCHAR* GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy);
   void FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy);
 };
 

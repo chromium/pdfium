@@ -33,7 +33,7 @@ enum class XFA_Event {
 class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
  public:
   explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
-  virtual ~CScript_EventPseudoModel();
+  ~CScript_EventPseudoModel() override;
 
   void Script_EventPseudoModel_Change(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,

@@ -21,6 +21,31 @@
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 
+CXFA_CSSTagProvider::CXFA_CSSTagProvider()
+    : m_bTagAvailable(FALSE), m_bContent(FALSE) {}
+
+CXFA_CSSTagProvider::~CXFA_CSSTagProvider() {}
+
+XFA_TextPiece::XFA_TextPiece()
+    : pszText(nullptr), pFont(nullptr), pLinkData(nullptr) {}
+
+XFA_TextPiece::~XFA_TextPiece() {
+  if (pLinkData)
+    pLinkData->Release();
+}
+
+CXFA_TextParseContext::CXFA_TextParseContext()
+    : m_pParentStyle(nullptr),
+      m_ppMatchedDecls(nullptr),
+      m_dwMatchedDecls(0),
+      m_eDisplay(FDE_CSSDISPLAY_None) {}
+
+CXFA_TextParseContext::~CXFA_TextParseContext() {
+  if (m_pParentStyle)
+    m_pParentStyle->Release();
+  FX_Free(m_ppMatchedDecls);
+}
+
 void CXFA_TextParseContext::SetDecls(const CFDE_CSSDeclaration** ppDeclArray,
                                      int32_t iDeclCount) {
   if (iDeclCount <= 0 || !ppDeclArray)
@@ -85,6 +110,22 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     m_pSelector->UpdateStyleIndex(FDE_CSSMEDIATYPE_ALL);
   }
 }
+
+CXFA_LoaderContext::CXFA_LoaderContext()
+    : m_bSaveLineHeight(FALSE),
+      m_fWidth(0),
+      m_fHeight(0),
+      m_fLastPos(0),
+      m_fStartLineOffset(0),
+      m_iChar(0),
+      m_iTotalLines(-1),
+      m_pXMLNode(NULL),
+      m_pNode(NULL),
+      m_pParentStyle(NULL),
+      m_dwFlags(0) {}
+
+CXFA_LoaderContext::~CXFA_LoaderContext() {}
+
 IFDE_CSSStyleSheet* CXFA_TextParser::LoadDefaultSheetStyle() {
   static const FX_WCHAR s_pStyle[] =
       L"html,body,ol,p,ul{display:block}"
@@ -1944,4 +1985,107 @@ FX_BOOL CXFA_TextLayout::ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ& tr) {
   tr.dwLayoutStyles = FX_RTFLAYOUTSTYLE_ExpandTab;
   tr.iHorizontalScale = pPiece->iHorScale;
   return TRUE;
+}
+
+CXFA_LinkUserData::CXFA_LinkUserData(IFX_MemoryAllocator* pAllocator,
+                                     FX_WCHAR* pszText)
+    : m_pAllocator(pAllocator), m_dwRefCount(1), m_wsURLContent(pszText) {}
+
+CXFA_LinkUserData::~CXFA_LinkUserData() {}
+
+uint32_t CXFA_LinkUserData::Retain() {
+  return ++m_dwRefCount;
+}
+
+uint32_t CXFA_LinkUserData::Release() {
+  uint32_t dwRefCount = --m_dwRefCount;
+  if (dwRefCount <= 0)
+    FXTARGET_DeleteWith(CXFA_LinkUserData, m_pAllocator, this);
+  return dwRefCount;
+}
+
+const FX_WCHAR* CXFA_LinkUserData::GetLinkURL() {
+  return m_wsURLContent.c_str();
+}
+
+CXFA_TextUserData::CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
+                                     IFDE_CSSComputedStyle* pStyle)
+    : m_pStyle(pStyle),
+      m_pLinkData(nullptr),
+      m_pAllocator(pAllocator),
+      m_dwRefCount(0) {
+  ASSERT(m_pAllocator);
+  if (m_pStyle)
+    m_pStyle->Retain();
+}
+
+CXFA_TextUserData::CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
+                                     IFDE_CSSComputedStyle* pStyle,
+                                     CXFA_LinkUserData* pLinkData)
+    : m_pStyle(pStyle),
+      m_pLinkData(pLinkData),
+      m_pAllocator(pAllocator),
+      m_dwRefCount(0) {
+  ASSERT(m_pAllocator);
+  if (m_pStyle)
+    m_pStyle->Retain();
+}
+
+CXFA_TextUserData::~CXFA_TextUserData() {
+  if (m_pStyle)
+    m_pStyle->Release();
+  if (m_pLinkData)
+    m_pLinkData->Release();
+}
+
+uint32_t CXFA_TextUserData::Retain() {
+  return ++m_dwRefCount;
+}
+
+uint32_t CXFA_TextUserData::Release() {
+  uint32_t dwRefCount = --m_dwRefCount;
+  if (dwRefCount == 0)
+    FXTARGET_DeleteWith(CXFA_TextUserData, m_pAllocator, this);
+  return dwRefCount;
+}
+
+CXFA_PieceLine::CXFA_PieceLine() {}
+
+CXFA_PieceLine::~CXFA_PieceLine() {}
+
+CXFA_TextTabstopsContext::CXFA_TextTabstopsContext()
+    : m_iTabCount(0),
+      m_iTabIndex(-1),
+      m_bTabstops(FALSE),
+      m_fTabWidth(0),
+      m_fLeft(0) {}
+
+CXFA_TextTabstopsContext::~CXFA_TextTabstopsContext() {}
+
+void CXFA_TextTabstopsContext::Append(uint32_t dwAlign, FX_FLOAT fTabstops) {
+  int32_t i = 0;
+  for (i = 0; i < m_iTabCount; i++) {
+    XFA_TABSTOPS* pTabstop = m_tabstops.GetDataPtr(i);
+    if (fTabstops < pTabstop->fTabstops) {
+      break;
+    }
+  }
+  m_tabstops.InsertSpaceAt(i, 1);
+  XFA_TABSTOPS tabstop;
+  tabstop.dwAlign = dwAlign;
+  tabstop.fTabstops = fTabstops;
+  m_tabstops.SetAt(i, tabstop);
+  m_iTabCount++;
+}
+
+void CXFA_TextTabstopsContext::RemoveAll() {
+  m_tabstops.RemoveAll();
+  m_iTabCount = 0;
+}
+
+void CXFA_TextTabstopsContext::Reset() {
+  m_iTabIndex = -1;
+  m_bTabstops = FALSE;
+  m_fTabWidth = 0;
+  m_fLeft = 0;
 }

@@ -13,32 +13,35 @@
 class CXFA_XMLLocale : public IFX_Locale {
  public:
   CXFA_XMLLocale(CXML_Element* pLocaleData);
-  virtual void Release();
-  virtual CFX_WideString GetName();
-  virtual void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
-                                 CFX_WideString& wsNumSymbol) const;
 
-  virtual void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const;
-  virtual void GetMonthName(int32_t nMonth,
-                            CFX_WideString& wsMonthName,
-                            FX_BOOL bAbbr = TRUE) const;
-  virtual void GetDayName(int32_t nWeek,
-                          CFX_WideString& wsDayName,
-                          FX_BOOL bAbbr = TRUE) const;
-  virtual void GetMeridiemName(CFX_WideString& wsMeridiemName,
-                               FX_BOOL bAM = TRUE) const;
-  virtual void GetTimeZone(FX_TIMEZONE& tz) const;
-  virtual void GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const;
+  // IFX_Locale
+  void Release() override;
+  CFX_WideString GetName() override;
+  void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
+                         CFX_WideString& wsNumSymbol) const override;
 
-  virtual void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                              CFX_WideString& wsPattern) const;
-  virtual void GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                              CFX_WideString& wsPattern) const;
-  virtual void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
-                             CFX_WideString& wsPattern) const;
+  void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const override;
+  void GetMonthName(int32_t nMonth,
+                    CFX_WideString& wsMonthName,
+                    FX_BOOL bAbbr = TRUE) const override;
+  void GetDayName(int32_t nWeek,
+                  CFX_WideString& wsDayName,
+                  FX_BOOL bAbbr = TRUE) const override;
+  void GetMeridiemName(CFX_WideString& wsMeridiemName,
+                       FX_BOOL bAM = TRUE) const override;
+  void GetTimeZone(FX_TIMEZONE& tz) const override;
+  void GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const override;
+
+  void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
+                      CFX_WideString& wsPattern) const override;
+  void GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
+                      CFX_WideString& wsPattern) const override;
+  void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
+                     CFX_WideString& wsPattern) const override;
 
  protected:
-  ~CXFA_XMLLocale();
+  ~CXFA_XMLLocale() override;
+
   void GetPattern(CXML_Element* pElement,
                   const CFX_ByteStringC& bsTag,
                   const CFX_WideStringC& wsName,
@@ -50,35 +53,39 @@ class CXFA_XMLLocale : public IFX_Locale {
  private:
   CXML_Element* m_pLocaleData;
 };
+
 class CXFA_NodeLocale : public IFX_Locale {
  public:
   CXFA_NodeLocale(CXFA_Node* pLocale);
-  virtual void Release();
-  virtual CFX_WideString GetName();
-  virtual void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
-                                 CFX_WideString& wsNumSymbol) const;
 
-  virtual void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const;
-  virtual void GetMonthName(int32_t nMonth,
-                            CFX_WideString& wsMonthName,
-                            FX_BOOL bAbbr = TRUE) const;
-  virtual void GetDayName(int32_t nWeek,
-                          CFX_WideString& wsDayName,
-                          FX_BOOL bAbbr = TRUE) const;
-  virtual void GetMeridiemName(CFX_WideString& wsMeridiemName,
-                               FX_BOOL bAM = TRUE) const;
-  virtual void GetTimeZone(FX_TIMEZONE& tz) const;
-  virtual void GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const;
+  // IFX_Locale
+  void Release() override;
+  CFX_WideString GetName() override;
+  void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
+                         CFX_WideString& wsNumSymbol) const override;
 
-  virtual void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                              CFX_WideString& wsPattern) const;
-  virtual void GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                              CFX_WideString& wsPattern) const;
-  virtual void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
-                             CFX_WideString& wsPattern) const;
+  void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const override;
+  void GetMonthName(int32_t nMonth,
+                    CFX_WideString& wsMonthName,
+                    FX_BOOL bAbbr = TRUE) const override;
+  void GetDayName(int32_t nWeek,
+                  CFX_WideString& wsDayName,
+                  FX_BOOL bAbbr = TRUE) const override;
+  void GetMeridiemName(CFX_WideString& wsMeridiemName,
+                       FX_BOOL bAM = TRUE) const override;
+  void GetTimeZone(FX_TIMEZONE& tz) const override;
+  void GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const override;
+
+  void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
+                      CFX_WideString& wsPattern) const override;
+  void GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
+                      CFX_WideString& wsPattern) const override;
+  void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
+                     CFX_WideString& wsPattern) const override;
 
  protected:
-  ~CXFA_NodeLocale();
+  ~CXFA_NodeLocale() override;
+
   CXFA_Node* GetNodeByName(CXFA_Node* pParent,
                            const CFX_WideStringC& wsName) const;
   CFX_WideString GetSymbol(XFA_ELEMENT eElement,

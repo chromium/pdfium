@@ -63,6 +63,7 @@ class CXFA_LayoutContext {
 class CXFA_ItemLayoutProcessor {
  public:
   CXFA_ItemLayoutProcessor(CXFA_Node* pNode, CXFA_LayoutPageMgr* pPageMgr);
+  ~CXFA_ItemLayoutProcessor();
 
   XFA_ItemLayoutProcessorResult DoLayout(
       FX_BOOL bUseBreakControl,

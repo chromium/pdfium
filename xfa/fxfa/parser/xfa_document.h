@@ -57,10 +57,12 @@ class CScript_HostPseudoModel;
 class CScript_LogPseudoModel;
 class CScript_LayoutPseudoModel;
 class CScript_SignaturePseudoModel;
+
 class CXFA_Document {
  public:
   CXFA_Document(CXFA_DocumentParser* pParser);
   ~CXFA_Document();
+
   CXFA_Node* GetRoot() const { return m_pRootNode; }
   CXFA_DocumentParser* GetParser() const { return m_pParser; }
   CXFA_FFNotify* GetNotify() const;

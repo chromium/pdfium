@@ -432,3 +432,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetWidget(
   }
   return NULL;
 }
+
+CXFA_TabParam::CXFA_TabParam() : m_pWidget(NULL) {}
+
+CXFA_TabParam::~CXFA_TabParam() {}

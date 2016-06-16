@@ -17,8 +17,8 @@ class CXFA_SimpleParser : public IXFA_Parser {
   CXFA_SimpleParser(CXFA_Document* pFactory, FX_BOOL bDocumentParser = FALSE);
   ~CXFA_SimpleParser() override;
 
-  void Release() override { delete this; }
-
+  // IXFA_Parser
+  void Release() override;
   int32_t StartParse(IFX_FileRead* pStream,
                      XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) override;
   int32_t DoParse(IFX_Pause* pPause = NULL) override;
@@ -26,9 +26,9 @@ class CXFA_SimpleParser : public IXFA_Parser {
                        CFDE_XMLNode*& pXMLNode,
                        IFX_Pause* pPause = NULL) override;
   void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode) override;
-  CXFA_Document* GetFactory() const override { return m_pFactory; }
-  CXFA_Node* GetRootNode() const override { return m_pRootNode; }
-  CFDE_XMLDoc* GetXMLDoc() const override { return m_pXMLDoc; }
+  CXFA_Document* GetFactory() const override;
+  CXFA_Node* GetRootNode() const override;
+  CFDE_XMLDoc* GetXMLDoc() const override;
   void CloseParser() override;
 
  protected:
@@ -87,7 +87,8 @@ class CXFA_DocumentParser : public IXFA_Parser {
   CXFA_DocumentParser(CXFA_FFNotify* pNotify);
   ~CXFA_DocumentParser() override;
 
-  void Release() override { delete this; }
+  // IXFA_Parser
+  void Release() override;
   int32_t StartParse(IFX_FileRead* pStream,
                      XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) override;
   int32_t DoParse(IFX_Pause* pPause = NULL) override;
@@ -95,13 +96,11 @@ class CXFA_DocumentParser : public IXFA_Parser {
                        CFDE_XMLNode*& pXMLNode,
                        IFX_Pause* pPause = NULL) override;
   void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode) override;
-  CXFA_Document* GetFactory() const override {
-    return m_nodeParser.GetFactory();
-  }
-  CXFA_Node* GetRootNode() const override { return m_nodeParser.GetRootNode(); }
-  CFDE_XMLDoc* GetXMLDoc() const override { return m_nodeParser.GetXMLDoc(); }
-  CXFA_FFNotify* GetNotify() const { return m_pNotify; }
-  CXFA_Document* GetDocument() const { return m_pDocument; }
+  CXFA_Document* GetFactory() const override;
+  CXFA_Node* GetRootNode() const override;
+  CFDE_XMLDoc* GetXMLDoc() const override;
+  CXFA_FFNotify* GetNotify() const;
+  CXFA_Document* GetDocument() const;
   void CloseParser() override;
 
  protected:
@@ -113,10 +112,11 @@ class CXFA_DocumentParser : public IXFA_Parser {
 class CXFA_XMLParser : public CFDE_XMLParser {
  public:
   CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream);
-  ~CXFA_XMLParser();
+  ~CXFA_XMLParser() override;
 
-  virtual void Release() { delete this; }
-  virtual int32_t DoParser(IFX_Pause* pPause);
+  // CFDE_XMLParser
+  void Release() override;
+  int32_t DoParser(IFX_Pause* pPause) override;
 
   FX_FILESIZE m_nStart[2];
   size_t m_nSize[2];

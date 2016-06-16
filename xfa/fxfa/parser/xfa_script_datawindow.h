@@ -13,7 +13,8 @@
 class CScript_DataWindow : public CXFA_OrdinaryObject {
  public:
   CScript_DataWindow(CXFA_Document* pDocument);
-  virtual ~CScript_DataWindow();
+  ~CScript_DataWindow() override;
+
   void Script_DataWindow_MoveCurrentRecord(CFXJSE_Arguments* pArguments);
   void Script_DataWindow_Record(CFXJSE_Arguments* pArguments);
   void Script_DataWindow_GotoRecord(CFXJSE_Arguments* pArguments);

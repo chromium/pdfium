@@ -13,26 +13,30 @@
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:
   CXFA_FFCheckButton(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFCheckButton();
-  virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
+  ~CXFA_FFCheckButton() override;
 
-  virtual FX_BOOL LoadWidget();
-  virtual FX_BOOL PerformLayout();
-  virtual FX_BOOL UpdateFWLData();
-  virtual void UpdateWidgetProperty();
-  virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  // CXFA_FFField
+  void RenderWidget(CFX_Graphics* pGS,
+                    CFX_Matrix* pMatrix = NULL,
+                    uint32_t dwStatus = 0,
+                    int32_t iRotate = 0) override;
+
+  FX_BOOL LoadWidget() override;
+  FX_BOOL PerformLayout() override;
+  FX_BOOL UpdateFWLData() override;
+  void UpdateWidgetProperty() override;
+  FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
+
   void SetFWLCheckState(XFA_CHECKSTATE eCheckState);
-  virtual void OnProcessMessage(CFWL_Message* pMessage);
-  virtual void OnProcessEvent(CFWL_Event* pEvent);
-  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
-                            const CFX_Matrix* pMatrix = NULL);
 
  protected:
-  virtual FX_BOOL CommitData();
-  virtual FX_BOOL IsDataChanged();
+  FX_BOOL CommitData() override;
+  FX_BOOL IsDataChanged() override;
+
   void CapLeftRightPlacement(CXFA_Margin mgCap);
   void AddUIMargin(int32_t iCapPlacement);
   XFA_CHECKSTATE FWLState2XFAState();

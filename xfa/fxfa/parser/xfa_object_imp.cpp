@@ -59,6 +59,8 @@ XFA_MAPDATABLOCKCALLBACKINFO deleteBindItemCallBack = {
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags)
     : m_pDocument(pDocument), m_uFlags(uFlags) {}
 
+CXFA_Object::~CXFA_Object() {}
+
 void CXFA_Object::GetClassName(CFX_WideStringC& wsName) const {
   wsName = XFA_GetElementByID(GetClassID())->pName;
 }
@@ -106,6 +108,10 @@ void CXFA_Object::ThrowException(int32_t iStringID, ...) {
   FXJSE_ThrowMessage(
       FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());
 }
+
+XFA_MAPMODULEDATA::XFA_MAPMODULEDATA() {}
+
+XFA_MAPMODULEDATA::~XFA_MAPMODULEDATA() {}
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      uint16_t ePacket,
@@ -5084,10 +5090,49 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
   }
   pSrcModule->MoveBufferMapData(pDstModule, pKey);
 }
+
+CXFA_OrdinaryObject::CXFA_OrdinaryObject(CXFA_Document* pDocument,
+                                         XFA_ELEMENT eElement)
+    : CXFA_Object(pDocument, XFA_OBJECTTYPE_OrdinaryObject), m_uScriptHash(0) {
+  m_eNodeClass = eElement;
+}
+
+CXFA_OrdinaryObject::~CXFA_OrdinaryObject() {}
+
+XFA_ELEMENT CXFA_OrdinaryObject::GetClassID() const {
+  return m_eNodeClass;
+}
+
+uint32_t CXFA_OrdinaryObject::GetScriptObjHash() const {
+  return m_uScriptHash;
+}
+
+CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
+    : CXFA_Object(pThisNode->GetDocument(), XFA_OBJECTTYPE_VariablesThis),
+      m_pThisNode(NULL),
+      m_pScriptNode(NULL) {
+  m_pThisNode = pThisNode;
+  m_pScriptNode = pScriptNode;
+}
+
+CXFA_ThisProxy::~CXFA_ThisProxy() {}
+
+CXFA_Node* CXFA_ThisProxy::GetThisNode() const {
+  return m_pThisNode;
+}
+
+CXFA_Node* CXFA_ThisProxy::GetScriptNode() const {
+  return m_pScriptNode;
+}
+
 CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
     : CXFA_Object(pDocument, XFA_OBJECTTYPE_NodeList) {
   m_pDocument->GetScriptContext()->AddToCacheList(
       std::unique_ptr<CXFA_NodeList>(this));
+}
+CXFA_NodeList::~CXFA_NodeList() {}
+XFA_ELEMENT CXFA_NodeList::GetClassID() const {
+  return XFA_ELEMENT_NodeList;
 }
 CXFA_Node* CXFA_NodeList::NamedItem(const CFX_WideStringC& wsName) {
   uint32_t dwHashCode = FX_HashCode_GetW(wsName, false);
@@ -5180,6 +5225,9 @@ void CXFA_NodeList::Script_ListClass_Length(CFXJSE_Value* pValue,
 }
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
     : CXFA_NodeList(pDocument) {}
+
+CXFA_ArrayNodeList::~CXFA_ArrayNodeList() {}
+
 void CXFA_ArrayNodeList::SetArrayNodeList(const CXFA_NodeArray& srcArray) {
   if (srcArray.GetSize() > 0) {
     m_array.Copy(srcArray);

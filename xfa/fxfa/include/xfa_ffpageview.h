@@ -58,14 +58,16 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
   CXFA_LayoutItemIterator m_sIterator;
 };
 typedef CFX_ArrayTemplate<CXFA_FFWidget*> CXFA_WidgetArray;
+
 class CXFA_TabParam {
  public:
-  CXFA_TabParam() : m_pWidget(NULL) {}
-  ~CXFA_TabParam() {}
+  CXFA_TabParam();
+  ~CXFA_TabParam();
 
   CXFA_FFWidget* m_pWidget;
   CXFA_WidgetArray m_Children;
 };
+
 class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
  public:
   CXFA_FFTabOrderPageWidgetIterator(CXFA_FFPageView* pPageView,

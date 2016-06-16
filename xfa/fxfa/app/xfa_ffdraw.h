@@ -13,7 +13,7 @@
 class CXFA_FFDraw : public CXFA_FFWidget {
  public:
   CXFA_FFDraw(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFDraw();
+  ~CXFA_FFDraw() override;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFDRAW_H_

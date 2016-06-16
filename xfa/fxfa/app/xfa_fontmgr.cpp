@@ -1738,6 +1738,8 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
   return pFontInfo;
 }
 
+CXFA_DefFontMgr::CXFA_DefFontMgr() {}
+
 CXFA_DefFontMgr::~CXFA_DefFontMgr() {
   for (int32_t i = 0; i < m_CacheFonts.GetSize(); i++)
     m_CacheFonts[i]->Release();

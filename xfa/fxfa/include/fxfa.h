@@ -182,10 +182,8 @@ class IXFA_AppProvider {
    */
   virtual void SetAppType(const CFX_WideStringC& wsAppType) = 0;
   virtual void GetAppType(CFX_WideString& wsAppType) = 0;
-  virtual void SetFoxitAppType(const CFX_WideStringC& wsFoxitAppType) {}
-  virtual void GetFoxitAppType(CFX_WideString& wsFoxitAppType) {
-    wsFoxitAppType.clear();
-  }
+  virtual void SetFoxitAppType(const CFX_WideStringC& wsFoxitAppType) = 0;
+  virtual void GetFoxitAppType(CFX_WideString& wsFoxitAppType) = 0;
 
   /**
    * Returns the language of the running host application. Such as zh_CN
@@ -207,17 +205,13 @@ class IXFA_AppProvider {
    * Indicates the version number of the current application. Such as 9
    */
   virtual void GetVersion(CFX_WideString& wsVersion) = 0;
-  virtual void GetFoxitVersion(CFX_WideString& wsFoxitVersion) {
-    wsFoxitVersion.clear();
-  }
+  virtual void GetFoxitVersion(CFX_WideString& wsFoxitVersion) = 0;
 
   /**
    * Get application name, such as Phantom.
    */
   virtual void GetAppName(CFX_WideString& wsName) = 0;
-  virtual void GetFoxitAppName(CFX_WideString& wsFoxitName) {
-    wsFoxitName.clear();
-  }
+  virtual void GetFoxitAppName(CFX_WideString& wsFoxitName) = 0;
 
   /**
    * Causes the system to play a sound.
@@ -328,9 +322,8 @@ class IXFA_DocProvider {
   virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
                                      CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,
-                                     const CFX_RectF& rtUI) {
-    return FALSE;
-  }
+                                     const CFX_RectF& rtUI) = 0;
+
   virtual int32_t CountPages(CXFA_FFDoc* hDoc) = 0;
   virtual int32_t GetCurrentPage(CXFA_FFDoc* hDoc) = 0;
   virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) = 0;
@@ -359,23 +352,17 @@ class IXFA_DocProvider {
   virtual int32_t SheetInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
   virtual int32_t Verify(CXFA_FFDoc* hDoc,
                          CXFA_Node* pSigNode,
-                         FX_BOOL bUsed = TRUE) {
-    return 0;
-  }
+                         FX_BOOL bUsed = TRUE) = 0;
   virtual FX_BOOL Sign(CXFA_FFDoc* hDoc,
                        CXFA_NodeList* pNodeList,
                        const CFX_WideStringC& wsExpression,
                        const CFX_WideStringC& wsXMLIdent,
                        const CFX_WideStringC& wsValue = FX_WSTRC(L"open"),
-                       FX_BOOL bUsed = TRUE) {
-    return 0;
-  }
-  virtual CXFA_NodeList* Enumerate(CXFA_FFDoc* hDoc) { return 0; }
+                       FX_BOOL bUsed = TRUE) = 0;
+  virtual CXFA_NodeList* Enumerate(CXFA_FFDoc* hDoc) = 0;
   virtual FX_BOOL Clear(CXFA_FFDoc* hDoc,
                         CXFA_Node* pSigNode,
-                        FX_BOOL bCleared = TRUE) {
-    return 0;
-  }
+                        FX_BOOL bCleared = TRUE) = 0;
   virtual void GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) = 0;
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
@@ -398,13 +385,6 @@ class IXFA_DocProvider {
                                  FX_BOOL bTakeOverFile) = 0;
   virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
                                        const CFX_WideString& wsLink) = 0;
-};
-
-class CXFA_RenderOptions {
- public:
-  CXFA_RenderOptions() : m_bPrint(FALSE), m_bHighlight(TRUE) {}
-  FX_BOOL m_bPrint;
-  FX_BOOL m_bHighlight;
 };
 
 class IXFA_WidgetIterator {

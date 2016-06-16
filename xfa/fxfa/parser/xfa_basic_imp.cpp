@@ -553,6 +553,9 @@ int32_t CXFA_WideTextRead::GetPosition() {
 FX_BOOL CXFA_WideTextRead::IsEOF() const {
   return m_iPosition >= m_wsBuffer.GetLength();
 }
+int32_t CXFA_WideTextRead::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
+  return 0;
+}
 int32_t CXFA_WideTextRead::ReadString(FX_WCHAR* pStr,
                                       int32_t iMaxLength,
                                       FX_BOOL& bEOS,
@@ -566,9 +569,36 @@ int32_t CXFA_WideTextRead::ReadString(FX_WCHAR* pStr,
   bEOS = IsEOF();
   return iMaxLength;
 }
+int32_t CXFA_WideTextRead::WriteData(const uint8_t* pBuffer,
+                                     int32_t iBufferSize) {
+  return 0;
+}
+int32_t CXFA_WideTextRead::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
+  return 0;
+}
+FX_BOOL CXFA_WideTextRead::SetLength(int32_t iLength) {
+  return FALSE;
+}
+int32_t CXFA_WideTextRead::GetBOM(uint8_t bom[4]) const {
+  return 0;
+}
 uint16_t CXFA_WideTextRead::GetCodePage() const {
   return (sizeof(FX_WCHAR) == 2) ? FX_CODEPAGE_UTF16LE : FX_CODEPAGE_UTF32LE;
 }
 uint16_t CXFA_WideTextRead::SetCodePage(uint16_t wCodePage) {
   return GetCodePage();
+}
+
+IFX_Stream* CXFA_WideTextRead::CreateSharedStream(uint32_t dwAccess,
+                                                  int32_t iOffset,
+                                                  int32_t iLength) {
+  return NULL;
+}
+
+void CXFA_WideTextRead::Lock() {}
+
+void CXFA_WideTextRead::Unlock() {}
+
+CFX_WideString CXFA_WideTextRead::GetSrcText() const {
+  return m_wsBuffer;
 }

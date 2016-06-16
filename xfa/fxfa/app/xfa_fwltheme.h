@@ -42,22 +42,15 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   uint32_t SetThemeID(IFWL_Widget* pWidget,
                       uint32_t dwThemeID,
                       FX_BOOL bChildren = TRUE) override;
-  FWL_Error GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override {
-    return FWL_Error::Succeeded;
-  }
+  FWL_Error GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override;
   FWL_Error SetThemeMatrix(IFWL_Widget* pWidget,
-                           const CFX_Matrix& matrix) override {
-    return FWL_Error::Succeeded;
-  }
+                           const CFX_Matrix& matrix) override;
   FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
   FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
   void* GetCapacity(CFWL_ThemePart* pThemePart,
                     CFWL_WidgetCapacity dwCapacity) override;
   FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget) override;
-  FWL_Error GetPartRect(CFWL_ThemePart* pThemePart,
-                        CFX_RectF& rtPart) override {
-    return FWL_Error::Succeeded;
-  }
+  FWL_Error GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart) override;
   FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,
                    FX_FLOAT fx,
                    FX_FLOAT fy) override;
@@ -90,7 +83,9 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
 class CXFA_FWLCheckBoxTP : public CFWL_CheckBoxTP {
  public:
   CXFA_FWLCheckBoxTP();
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
+
+  // CFWL_CheckBoxTP
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
 
  protected:
   void DrawCheckSign(IFWL_Widget* pWidget,
@@ -102,10 +97,10 @@ class CXFA_FWLCheckBoxTP : public CFWL_CheckBoxTP {
 class CXFA_FWLEditTP : public CFWL_EditTP {
  public:
   CXFA_FWLEditTP();
-  virtual ~CXFA_FWLEditTP();
+  ~CXFA_FWLEditTP() override;
 
- public:
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
+  // CFWL_EditTP
+  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FWLTHEME_H_

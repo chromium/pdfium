@@ -27,6 +27,7 @@ class CXFA_TraverseStrategy_PageAreaContainerLayoutItem {
     return static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem->m_pParent);
   }
 };
+
 class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
  public:
   static inline CXFA_ContainerLayoutItem* GetFirstChild(
@@ -56,6 +57,7 @@ class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
     return static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem->m_pParent);
   }
 };
+
 class CXFA_TraverseStrategy_ContentLayoutItem {
  public:
   static inline CXFA_ContentLayoutItem* GetFirstChild(

@@ -22,10 +22,12 @@ class CXFA_ContainerRecord {
   CXFA_ContainerLayoutItem* pCurPageArea;
   CXFA_ContainerLayoutItem* pCurContentArea;
 };
+
 class CXFA_LayoutPageMgr {
  public:
   CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor);
   ~CXFA_LayoutPageMgr();
+
   FX_BOOL InitLayoutPage(CXFA_Node* pFormNode);
   FX_BOOL PrepareFirstPage(CXFA_Node* pRootSubform);
   FX_FLOAT GetAvailHeight();

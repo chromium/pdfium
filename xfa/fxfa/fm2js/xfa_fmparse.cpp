@@ -10,6 +10,8 @@
 
 CXFA_FMParse::CXFA_FMParse() : m_pToken(nullptr), m_pErrorInfo(0) {}
 
+CXFA_FMParse::~CXFA_FMParse() {}
+
 int32_t CXFA_FMParse::Init(const CFX_WideStringC& wsFormcalc,
                            CXFA_FMErrorInfo* pErrorInfo) {
   m_pErrorInfo = pErrorInfo;

@@ -77,6 +77,9 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
   m_pOldLayoutItem =
       (CXFA_ContentLayoutItem*)m_pFormNode->GetUserData(XFA_LAYOUTITEMKEY);
 }
+
+CXFA_ItemLayoutProcessor::~CXFA_ItemLayoutProcessor() {}
+
 CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     CXFA_Node* pFormNode) {
   if (!pFormNode) {

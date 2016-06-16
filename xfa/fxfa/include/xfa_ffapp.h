@@ -24,11 +24,12 @@ class IFWL_AdapterTimerMgr;
 class CXFA_FileRead : public IFX_FileRead {
  public:
   explicit CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams);
+  ~CXFA_FileRead() override;
 
-  virtual FX_FILESIZE GetSize();
-  virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size);
-
-  virtual void Release() { delete this; }
+  // IFX_FileRead
+  FX_FILESIZE GetSize() override;
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  void Release() override;
 
  protected:
   CFX_ObjectArray<CPDF_StreamAcc> m_Data;

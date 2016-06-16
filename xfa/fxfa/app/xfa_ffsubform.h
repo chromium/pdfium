@@ -13,7 +13,7 @@
 class CXFA_FFSubForm : public CXFA_FFWidget {
  public:
   CXFA_FFSubForm(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFSubForm();
+  ~CXFA_FFSubForm() override;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFSUBFORM_H_

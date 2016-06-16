@@ -13,7 +13,7 @@
 class CScript_LogPseudoModel : public CXFA_OrdinaryObject {
  public:
   explicit CScript_LogPseudoModel(CXFA_Document* pDocument);
-  virtual ~CScript_LogPseudoModel();
+  ~CScript_LogPseudoModel() override;
 
   void Script_LogPseudoModel_Message(CFXJSE_Arguments* pArguments);
   void Script_LogPseudoModel_TraceEnabled(CFXJSE_Arguments* pArguments);

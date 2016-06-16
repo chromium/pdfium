@@ -14,15 +14,17 @@
 class CXFA_FFBarcode : public CXFA_FFTextEdit {
  public:
   CXFA_FFBarcode(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFBarcode();
-  virtual FX_BOOL LoadWidget();
-  virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
-  virtual void UpdateWidgetProperty();
-  virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  ~CXFA_FFBarcode() override;
+
+  // CXFA_FFTextEdit
+  FX_BOOL LoadWidget() override;
+  void RenderWidget(CFX_Graphics* pGS,
+                    CFX_Matrix* pMatrix = NULL,
+                    uint32_t dwStatus = 0,
+                    int32_t iRotate = 0) override;
+  void UpdateWidgetProperty() override;
+  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
 };
 
 enum XFA_BARCODETYPEENUM {

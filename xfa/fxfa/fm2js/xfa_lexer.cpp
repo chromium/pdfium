@@ -167,6 +167,8 @@ CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc,
                            CXFA_FMErrorInfo* pErrorInfo)
     : m_ptr(wsFormCalc.c_str()), m_uCurrentLine(1), m_pErrorInfo(pErrorInfo) {}
 
+CXFA_FMLexer::~CXFA_FMLexer() {}
+
 CXFA_FMToken* CXFA_FMLexer::NextToken() {
   m_pToken.reset(Scan());
   return m_pToken.get();

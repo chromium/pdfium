@@ -12,32 +12,33 @@
 class CXFA_FFSignature final : public CXFA_FFField {
  public:
   CXFA_FFSignature(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFSignature();
+  ~CXFA_FFSignature() override;
 
-  virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
-  virtual FX_BOOL LoadWidget();
-  virtual FX_BOOL OnMouseEnter();
-  virtual FX_BOOL OnMouseExit();
-  virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseWheel(uint32_t dwFlags,
-                               int16_t zDelta,
-                               FX_FLOAT fx,
-                               FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  // CXFA_FFField
+  void RenderWidget(CFX_Graphics* pGS,
+                    CFX_Matrix* pMatrix = NULL,
+                    uint32_t dwStatus = 0,
+                    int32_t iRotate = 0) override;
+  FX_BOOL LoadWidget() override;
+  FX_BOOL OnMouseEnter() override;
+  FX_BOOL OnMouseExit() override;
+  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnMouseWheel(uint32_t dwFlags,
+                       int16_t zDelta,
+                       FX_FLOAT fx,
+                       FX_FLOAT fy) override;
+  FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
 
-  virtual FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
-  virtual FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
-  virtual FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags);
-  virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
+  FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) override;
+  FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) override;
+  FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags) override;
+  FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) override;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFSIGNATURE_H_

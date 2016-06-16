@@ -37,6 +37,9 @@ CXFA_SimpleParser::CXFA_SimpleParser(CXFA_Document* pFactory,
 CXFA_SimpleParser::~CXFA_SimpleParser() {
   CloseParser();
 }
+void CXFA_SimpleParser::Release() {
+  delete this;
+}
 void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
   m_pFactory = pFactory;
 }
@@ -189,6 +192,18 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
   } else {
     m_pRootNode = NormalLoader(pXFANode, pXMLNode, ePacketID);
   }
+}
+
+CXFA_Document* CXFA_SimpleParser::GetFactory() const {
+  return m_pFactory;
+}
+
+CXFA_Node* CXFA_SimpleParser::GetRootNode() const {
+  return m_pRootNode;
+}
+
+CFDE_XMLDoc* CXFA_SimpleParser::GetXMLDoc() const {
+  return m_pXMLDoc;
 }
 
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
@@ -1347,6 +1362,10 @@ CXFA_DocumentParser::CXFA_DocumentParser(CXFA_FFNotify* pNotify)
 CXFA_DocumentParser::~CXFA_DocumentParser() {
   CloseParser();
 }
+
+void CXFA_DocumentParser::Release() {
+  delete this;
+}
 int32_t CXFA_DocumentParser::StartParse(IFX_FileRead* pStream,
                                         XFA_XDPPACKET ePacketID) {
   CloseParser();
@@ -1388,6 +1407,26 @@ void CXFA_DocumentParser::ConstructXFANode(CXFA_Node* pXFANode,
   }
 }
 
+CXFA_Document* CXFA_DocumentParser::GetFactory() const {
+  return m_nodeParser.GetFactory();
+}
+
+CXFA_Node* CXFA_DocumentParser::GetRootNode() const {
+  return m_nodeParser.GetRootNode();
+}
+
+CFDE_XMLDoc* CXFA_DocumentParser::GetXMLDoc() const {
+  return m_nodeParser.GetXMLDoc();
+}
+
+CXFA_FFNotify* CXFA_DocumentParser::GetNotify() const {
+  return m_pNotify;
+}
+
+CXFA_Document* CXFA_DocumentParser::GetDocument() const {
+  return m_pDocument;
+}
+
 void CXFA_DocumentParser::CloseParser() {
   delete m_pDocument;
   m_pDocument = nullptr;
@@ -1410,6 +1449,7 @@ CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream)
   m_pParser = new CFDE_XMLSyntaxParser;
   m_pParser->Init(m_pStream, 32 * 1024, 1024 * 1024);
 }
+
 CXFA_XMLParser::~CXFA_XMLParser() {
   if (m_pParser) {
     m_pParser->Release();
@@ -1418,6 +1458,11 @@ CXFA_XMLParser::~CXFA_XMLParser() {
   m_ws1.clear();
   m_ws2.clear();
 }
+
+void CXFA_XMLParser::Release() {
+  delete this;
+}
+
 int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
   if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error)
     return -1;

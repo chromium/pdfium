@@ -27,7 +27,7 @@ struct XFA_FONTINFO {
 
 class CXFA_DefFontMgr {
  public:
-  CXFA_DefFontMgr() {}
+  CXFA_DefFontMgr();
   ~CXFA_DefFontMgr();
 
   CFGAS_GEFont* GetFont(CXFA_FFDoc* hDoc,

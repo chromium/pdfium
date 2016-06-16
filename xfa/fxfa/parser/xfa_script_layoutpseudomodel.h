@@ -21,7 +21,7 @@ enum XFA_LAYOUTMODEL_HWXY {
 class CScript_LayoutPseudoModel : public CXFA_OrdinaryObject {
  public:
   explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
-  ~CScript_LayoutPseudoModel();
+  ~CScript_LayoutPseudoModel() override;
 
   void Script_LayoutPseudoModel_Ready(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,

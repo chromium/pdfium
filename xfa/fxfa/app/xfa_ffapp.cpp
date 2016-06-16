@@ -25,6 +25,9 @@ CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
     acc.LoadAllData(streams[i]);
   }
 }
+
+CXFA_FileRead::~CXFA_FileRead() {}
+
 FX_FILESIZE CXFA_FileRead::GetSize() {
   uint32_t dwSize = 0;
   int32_t iCount = m_Data.GetSize();
@@ -62,6 +65,10 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
     index++;
   }
   return FALSE;
+}
+
+void CXFA_FileRead::Release() {
+  delete this;
 }
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)

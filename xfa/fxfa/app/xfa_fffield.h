@@ -18,45 +18,54 @@
 class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
  public:
   CXFA_FFField(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFField();
+  ~CXFA_FFField() override;
 
-  virtual FX_BOOL GetBBox(CFX_RectF& rtBox,
-                          uint32_t dwStatus,
-                          FX_BOOL bDrawFocus = FALSE);
-  virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
-  virtual FX_BOOL IsLoaded();
-  virtual FX_BOOL LoadWidget();
-  virtual void UnloadWidget();
-  virtual FX_BOOL PerformLayout();
-  virtual void UpdateFWL();
+  // CXFA_FFWidget
+  FX_BOOL GetBBox(CFX_RectF& rtBox,
+                  uint32_t dwStatus,
+                  FX_BOOL bDrawFocus = FALSE) override;
+  void RenderWidget(CFX_Graphics* pGS,
+                    CFX_Matrix* pMatrix = NULL,
+                    uint32_t dwStatus = 0,
+                    int32_t iRotate = 0) override;
+  FX_BOOL IsLoaded() override;
+  FX_BOOL LoadWidget() override;
+  void UnloadWidget() override;
+  FX_BOOL PerformLayout() override;
+  FX_BOOL OnMouseEnter() override;
+  FX_BOOL OnMouseExit() override;
+  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnMouseWheel(uint32_t dwFlags,
+                       int16_t zDelta,
+                       FX_FLOAT fx,
+                       FX_FLOAT fy) override;
+  FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+
+  FX_BOOL OnSetFocus(CXFA_FFWidget* pOldWidget) override;
+  FX_BOOL OnKillFocus(CXFA_FFWidget* pNewWidget) override;
+  FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) override;
+  FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) override;
+  FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags) override;
+  FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) override;
+
+  // IFWL_WidgetDelegate
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
+
+  void UpdateFWL();
   uint32_t UpdateUIProperty();
-  virtual FX_BOOL OnMouseEnter();
-  virtual FX_BOOL OnMouseExit();
-  virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseWheel(uint32_t dwFlags,
-                               int16_t zDelta,
-                               FX_FLOAT fx,
-                               FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-
-  virtual FX_BOOL OnSetFocus(CXFA_FFWidget* pOldWidget);
-  virtual FX_BOOL OnKillFocus(CXFA_FFWidget* pNewWidget);
-  virtual FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
-  virtual FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
-  virtual FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags);
-  virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
 
  protected:
-  virtual FX_BOOL PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy);
+  FX_BOOL PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) override;
+
   virtual void SetFWLRect();
   void SetFWLThemeProvider();
   CFWL_Widget* GetNormalWidget() { return m_pNormalWidget; }
@@ -84,13 +93,6 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                              int32_t iCapPlacement);
   void SetEditScrollOffset();
 
- public:
-  virtual void OnProcessMessage(CFWL_Message* pMessage);
-  virtual void OnProcessEvent(CFWL_Event* pEvent);
-  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
-                            const CFX_Matrix* pMatrix = NULL);
-
- protected:
   CFWL_Widget* m_pNormalWidget;
   CFX_RectF m_rtUI;
   CFX_RectF m_rtCaption;

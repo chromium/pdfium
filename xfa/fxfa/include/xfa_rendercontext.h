@@ -11,6 +11,14 @@
 
 #include "xfa/fxfa/include/fxfa.h"
 
+class CXFA_RenderOptions {
+ public:
+  CXFA_RenderOptions() : m_bPrint(FALSE), m_bHighlight(TRUE) {}
+
+  FX_BOOL m_bPrint;
+  FX_BOOL m_bHighlight;
+};
+
 class CXFA_RenderContext {
  public:
   CXFA_RenderContext();

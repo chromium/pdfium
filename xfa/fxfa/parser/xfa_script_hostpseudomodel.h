@@ -14,7 +14,7 @@
 class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
  public:
   CScript_HostPseudoModel(CXFA_Document* pDocument);
-  virtual ~CScript_HostPseudoModel();
+  ~CScript_HostPseudoModel() override;
 
   void Script_HostPseudoModel_AppType(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,

@@ -12,6 +12,11 @@
 
 class CXFA_FM2JSContext : public CFXJSE_HostObject {
  public:
+  CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
+                    CFXJSE_Context* pScriptContext,
+                    CXFA_Document* pDoc);
+  ~CXFA_FM2JSContext() override;
+
   static void Abs(CFXJSE_Value* pThis,
                   const CFX_ByteStringC& szFuncName,
                   CFXJSE_Arguments& args);
@@ -438,11 +443,6 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static int32_t Translate(const CFX_WideStringC& wsFormcalc,
                            CFX_WideTextBuf& wsJavascript,
                            CFX_WideString& wsError);
-
-  CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
-                    CFXJSE_Context* pScriptContext,
-                    CXFA_Document* pDoc);
-  ~CXFA_FM2JSContext();
 
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 

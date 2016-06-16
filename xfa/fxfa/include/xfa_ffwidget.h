@@ -33,8 +33,8 @@ enum XFA_WIDGETITEM {
 
 class CXFA_CalcData {
  public:
-  CXFA_CalcData() : m_iRefCount(0) {}
-  ~CXFA_CalcData() { m_Globals.RemoveAll(); }
+  CXFA_CalcData();
+  ~CXFA_CalcData();
 
   CFX_ArrayTemplate<CXFA_WidgetAcc*> m_Globals;
   int32_t m_iRefCount;
@@ -43,23 +43,15 @@ class CXFA_CalcData {
 class CXFA_FFWidget : public CXFA_ContentLayoutItem {
  public:
   CXFA_FFWidget(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFWidget();
-  CXFA_FFPageView* GetPageView();
-  void SetPageView(CXFA_FFPageView* pPageView);
-  void GetWidgetRect(CFX_RectF& rtWidget);
-  CFX_RectF ReCacheWidgetRect();
-  uint32_t GetStatus();
-  void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
+  ~CXFA_FFWidget() override;
+
   virtual FX_BOOL GetBBox(CFX_RectF& rtBox,
                           uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE);
-  CXFA_WidgetAcc* GetDataAcc();
-  FX_BOOL GetToolTip(CFX_WideString& wsToolTip);
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
                             uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
-
   virtual FX_BOOL IsLoaded();
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();
@@ -87,32 +79,39 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags);
   virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL CanUndo() { return FALSE; }
-  virtual FX_BOOL CanRedo() { return FALSE; }
-  virtual FX_BOOL Undo() { return FALSE; }
-  virtual FX_BOOL Redo() { return FALSE; }
-  virtual FX_BOOL CanCopy() { return FALSE; }
-  virtual FX_BOOL CanCut() { return FALSE; }
-  virtual FX_BOOL CanPaste() { return FALSE; }
-  virtual FX_BOOL CanSelectAll() { return FALSE; }
-  virtual FX_BOOL CanDelete() { return CanCut(); }
-  virtual FX_BOOL CanDeSelect() { return CanCopy(); }
-  virtual FX_BOOL Copy(CFX_WideString& wsCopy) { return FALSE; }
-  virtual FX_BOOL Cut(CFX_WideString& wsCut) { return FALSE; }
-  virtual FX_BOOL Paste(const CFX_WideString& wsPaste) { return FALSE; }
-  virtual FX_BOOL SelectAll() { return FALSE; }
-  virtual FX_BOOL Delete() { return FALSE; }
-  virtual FX_BOOL DeSelect() { return FALSE; }
+  virtual FX_BOOL CanUndo();
+  virtual FX_BOOL CanRedo();
+  virtual FX_BOOL Undo();
+  virtual FX_BOOL Redo();
+  virtual FX_BOOL CanCopy();
+  virtual FX_BOOL CanCut();
+  virtual FX_BOOL CanPaste();
+  virtual FX_BOOL CanSelectAll();
+  virtual FX_BOOL CanDelete();
+  virtual FX_BOOL CanDeSelect();
+  virtual FX_BOOL Copy(CFX_WideString& wsCopy);
+  virtual FX_BOOL Cut(CFX_WideString& wsCut);
+  virtual FX_BOOL Paste(const CFX_WideString& wsPaste);
+  virtual FX_BOOL SelectAll();
+  virtual FX_BOOL Delete();
+  virtual FX_BOOL DeSelect();
   virtual FX_BOOL GetSuggestWords(CFX_PointF pointf,
-                                  std::vector<CFX_ByteString>& sSuggest) {
-    return FALSE;
-  }
+                                  std::vector<CFX_ByteString>& sSuggest);
   virtual FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
-                                        const CFX_ByteStringC& bsReplace) {
-    return FALSE;
-  }
+                                        const CFX_ByteStringC& bsReplace);
+
+  CXFA_FFPageView* GetPageView();
+  void SetPageView(CXFA_FFPageView* pPageView);
+  void GetWidgetRect(CFX_RectF& rtWidget);
+  CFX_RectF ReCacheWidgetRect();
+  uint32_t GetStatus();
+  void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
+
+  CXFA_WidgetAcc* GetDataAcc();
+  FX_BOOL GetToolTip(CFX_WideString& wsToolTip);
+
   CXFA_FFDocView* GetDocView();
-  void SetDocView(CXFA_FFDocView* pDocView) { m_pDocView = pDocView; }
+  void SetDocView(CXFA_FFDocView* pDocView);
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();
   IXFA_AppProvider* GetAppProvider();
@@ -128,6 +127,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
 
  protected:
   virtual FX_BOOL PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy);
+
   void DrawBorder(CFX_Graphics* pGS,
                   CXFA_Box box,
                   const CFX_RectF& rtBorder,
@@ -137,15 +137,16 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   void GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight);
   void GetRectWithoutRotate(CFX_RectF& rtWidget);
   bool IsMatchVisibleStatus(uint32_t dwStatus);
-
   void EventKillFocus();
   FX_BOOL IsButtonDown();
   void SetButtonDown(FX_BOOL bSet);
+
   CXFA_FFDocView* m_pDocView;
   CXFA_FFPageView* m_pPageView;
   CXFA_WidgetAcc* m_pDataAcc;
   CFX_RectF m_rtWidget;
 };
+
 int32_t XFA_StrokeTypeSetLineDash(CFX_Graphics* pGraphics,
                                   int32_t iStrokeType,
                                   int32_t iCapType);

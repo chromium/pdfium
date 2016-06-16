@@ -120,6 +120,16 @@ uint32_t CXFA_FWLTheme::SetThemeID(IFWL_Widget* pWidget,
   return 0;
 }
 
+FWL_Error CXFA_FWLTheme::GetThemeMatrix(IFWL_Widget* pWidget,
+                                        CFX_Matrix& matrix) {
+  return FWL_Error::Succeeded;
+}
+
+FWL_Error CXFA_FWLTheme::SetThemeMatrix(IFWL_Widget* pWidget,
+                                        const CFX_Matrix& matrix) {
+  return FWL_Error::Succeeded;
+}
+
 FX_BOOL CXFA_FWLTheme::DrawBackground(CFWL_ThemeBackground* pParams) {
   return GetTheme(pParams->m_pWidget)->DrawBackground(pParams);
 }
@@ -344,6 +354,11 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
 }
 FX_BOOL CXFA_FWLTheme::IsCustomizedLayout(IFWL_Widget* pWidget) {
   return GetTheme(pWidget)->IsCustomizedLayout(pWidget);
+}
+
+FWL_Error CXFA_FWLTheme::GetPartRect(CFWL_ThemePart* pThemePart,
+                                     CFX_RectF& rtPart) {
+  return FWL_Error::Succeeded;
 }
 FWL_Error CXFA_FWLTheme::GetPartRect(CFWL_ThemePart* pThemePart) {
   CFX_RectF rect;

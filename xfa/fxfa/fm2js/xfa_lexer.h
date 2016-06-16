@@ -104,6 +104,8 @@ class CXFA_FMToken {
 class CXFA_FMLexer {
  public:
   CXFA_FMLexer(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo* pErrorInfo);
+  ~CXFA_FMLexer();
+
   CXFA_FMToken* NextToken();
   uint32_t Number(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);
   uint32_t String(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);

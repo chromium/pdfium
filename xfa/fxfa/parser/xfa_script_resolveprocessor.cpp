@@ -822,3 +822,19 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_SetIndexDataBind(
     iIndex = iCount - 1;
   }
 }
+
+CXFA_ResolveNodesData::CXFA_ResolveNodesData(CXFA_ScriptContext* pSC)
+    : m_pSC(pSC),
+      m_CurNode(NULL),
+      m_wsName(),
+      m_uHashName(XFA_HASHCODE_None),
+      m_wsCondition(),
+      m_nLevel(0),
+      m_Nodes(),
+      m_dwStyles(XFA_RESOLVENODE_Children),
+      m_pScriptAttribute(NULL),
+      m_dwFlag(XFA_RESOVENODE_RSTYPE_Nodes) {}
+
+CXFA_ResolveNodesData::~CXFA_ResolveNodesData() {
+  m_Nodes.RemoveAll();
+}

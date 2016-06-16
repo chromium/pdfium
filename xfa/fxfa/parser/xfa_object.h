@@ -45,7 +45,7 @@ enum XFA_OBJECTTYPE {
 class CXFA_Object : public CFXJSE_HostObject {
  public:
   CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags);
-  virtual ~CXFA_Object() {}
+  ~CXFA_Object() override;
 
   CXFA_Document* GetDocument() const { return m_pDocument; }
   uint32_t GetFlag() const { return m_uFlags; }
@@ -127,6 +127,9 @@ struct XFA_MAPDATABLOCK {
 };
 
 struct XFA_MAPMODULEDATA {
+  XFA_MAPMODULEDATA();
+  ~XFA_MAPMODULEDATA();
+
   CFX_MapPtrToPtr m_ValueMap;
   CFX_MapPtrTemplate<void*, XFA_MAPDATABLOCK*> m_BufferMap;
 };
@@ -134,6 +137,7 @@ struct XFA_MAPMODULEDATA {
 #define XFA_CalcRefCount (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'R')
 #define XFA_CalcData (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'C')
 #define XFA_LAYOUTITEMKEY (void*)(uintptr_t) FXBSTR_ID('L', 'Y', 'I', 'M')
+
 class CXFA_Node : public CXFA_Object {
  public:
   XFA_ELEMENT GetClassID() const { return (XFA_ELEMENT)m_eNodeClass; }
@@ -649,42 +653,39 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pAuxNode;
   XFA_MAPMODULEDATA* m_pMapModuleData;
 };
+
 class CXFA_OrdinaryObject : public CXFA_Object {
  public:
-  CXFA_OrdinaryObject(CXFA_Document* pDocument, XFA_ELEMENT eElement)
-      : CXFA_Object(pDocument, XFA_OBJECTTYPE_OrdinaryObject),
-        m_uScriptHash(0) {
-    m_eNodeClass = eElement;
-  }
-  XFA_ELEMENT GetClassID() const { return (XFA_ELEMENT)m_eNodeClass; }
-  uint32_t GetScriptObjHash() { return m_uScriptHash; }
+  CXFA_OrdinaryObject(CXFA_Document* pDocument, XFA_ELEMENT eElement);
+  ~CXFA_OrdinaryObject() override;
+
+  XFA_ELEMENT GetClassID() const;
+  uint32_t GetScriptObjHash() const;
 
  protected:
   XFA_ELEMENT m_eNodeClass;
   uint32_t m_uScriptHash;
 };
+
 class CXFA_ThisProxy : public CXFA_Object {
  public:
-  CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
-      : CXFA_Object(pThisNode->GetDocument(), XFA_OBJECTTYPE_VariablesThis),
-        m_pThisNode(NULL),
-        m_pScriptNode(NULL) {
-    m_pThisNode = pThisNode;
-    m_pScriptNode = pScriptNode;
-  }
-  ~CXFA_ThisProxy() override {}
-  CXFA_Node* GetThisNode() { return m_pThisNode; }
-  CXFA_Node* GetScriptNode() { return m_pScriptNode; }
+  CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode);
+  ~CXFA_ThisProxy() override;
+
+  CXFA_Node* GetThisNode() const;
+  CXFA_Node* GetScriptNode() const;
 
  private:
   CXFA_Node* m_pThisNode;
   CXFA_Node* m_pScriptNode;
 };
+
 class CXFA_NodeList : public CXFA_Object {
  public:
   explicit CXFA_NodeList(CXFA_Document* pDocument);
-  virtual ~CXFA_NodeList() {}
-  XFA_ELEMENT GetClassID() const { return XFA_ELEMENT_NodeList; }
+  ~CXFA_NodeList() override;
+
+  XFA_ELEMENT GetClassID() const;
   CXFA_Node* NamedItem(const CFX_WideStringC& wsName);
   virtual int32_t GetLength() = 0;
   virtual FX_BOOL Append(CXFA_Node* pNode) = 0;
@@ -702,28 +703,35 @@ class CXFA_NodeList : public CXFA_Object {
                                FX_BOOL bSetting,
                                XFA_ATTRIBUTE eAttribute);
 };
+
 class CXFA_ArrayNodeList : public CXFA_NodeList {
  public:
   explicit CXFA_ArrayNodeList(CXFA_Document* pDocument);
+  ~CXFA_ArrayNodeList() override;
+
+  // From CXFA_NodeList.
+  int32_t GetLength() override;
+  FX_BOOL Append(CXFA_Node* pNode) override;
+  FX_BOOL Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
+  FX_BOOL Remove(CXFA_Node* pNode) override;
+  CXFA_Node* Item(int32_t iIndex) override;
+
   void SetArrayNodeList(const CXFA_NodeArray& srcArray);
-  virtual int32_t GetLength();
-  virtual FX_BOOL Append(CXFA_Node* pNode);
-  virtual FX_BOOL Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode);
-  virtual FX_BOOL Remove(CXFA_Node* pNode);
-  virtual CXFA_Node* Item(int32_t iIndex);
 
  protected:
   CXFA_NodeArray m_array;
 };
+
 class CXFA_AttachNodeList : public CXFA_NodeList {
  public:
   CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
 
-  virtual int32_t GetLength();
-  virtual FX_BOOL Append(CXFA_Node* pNode);
-  virtual FX_BOOL Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode);
-  virtual FX_BOOL Remove(CXFA_Node* pNode);
-  virtual CXFA_Node* Item(int32_t iIndex);
+  // From CXFA_NodeList.
+  int32_t GetLength() override;
+  FX_BOOL Append(CXFA_Node* pNode) override;
+  FX_BOOL Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
+  FX_BOOL Remove(CXFA_Node* pNode) override;
+  CXFA_Node* Item(int32_t iIndex) override;
 
  protected:
   CXFA_Node* m_pAttachNode;

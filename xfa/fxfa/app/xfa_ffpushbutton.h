@@ -19,19 +19,21 @@ class CXFA_TextProvider;
 class CXFA_FFPushButton : public CXFA_FFField {
  public:
   CXFA_FFPushButton(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFPushButton();
-  virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
-  virtual FX_BOOL LoadWidget();
-  virtual void UnloadWidget();
-  virtual FX_BOOL PerformLayout();
-  virtual void UpdateWidgetProperty();
-  virtual void OnProcessMessage(CFWL_Message* pMessage);
-  virtual void OnProcessEvent(CFWL_Event* pEvent);
-  virtual void OnDrawWidget(CFX_Graphics* pGraphics,
-                            const CFX_Matrix* pMatrix = NULL);
+  ~CXFA_FFPushButton() override;
+
+  // CXFA_FFField
+  void RenderWidget(CFX_Graphics* pGS,
+                    CFX_Matrix* pMatrix = NULL,
+                    uint32_t dwStatus = 0,
+                    int32_t iRotate = 0) override;
+  FX_BOOL LoadWidget() override;
+  void UnloadWidget() override;
+  FX_BOOL PerformLayout() override;
+  void UpdateWidgetProperty() override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void LoadHighlightCaption();
@@ -40,6 +42,7 @@ class CXFA_FFPushButton : public CXFA_FFField {
   FX_FLOAT GetLineWidth();
   FX_ARGB GetLineColor();
   FX_ARGB GetFillColor();
+
   CXFA_TextLayout* m_pRolloverTextLayout;
   CXFA_TextLayout* m_pDownTextLayout;
   CXFA_TextProvider* m_pDownProvider;

@@ -15,6 +15,8 @@
 class CXFA_FMParse {
  public:
   CXFA_FMParse();
+  ~CXFA_FMParse();
+
   int32_t Init(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo* pErrorInfo);
   void NextToken();
   void Check(XFA_FM_TOKEN op);

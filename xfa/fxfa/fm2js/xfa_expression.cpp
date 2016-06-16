@@ -120,6 +120,8 @@ CXFA_FMVarExpression::CXFA_FMVarExpression(uint32_t line,
       m_wsName(wsName),
       m_pInit(pInit) {}
 
+CXFA_FMVarExpression::~CXFA_FMVarExpression() {}
+
 void CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"var ");
   CFX_WideString tempName(m_wsName);
@@ -169,6 +171,8 @@ void CXFA_FMVarExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 CXFA_FMExpExpression::CXFA_FMExpExpression(uint32_t line,
                                            CXFA_FMSimpleExpression* pExpression)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_EXP), m_pExpression(pExpression) {}
+
+CXFA_FMExpExpression::~CXFA_FMExpExpression() {}
 
 void CXFA_FMExpExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   if (m_pExpression->GetOperatorToken() == TOKassign) {
@@ -246,6 +250,8 @@ CXFA_FMDoExpression::CXFA_FMDoExpression(uint32_t line,
                                          CXFA_FMExpression* pList)
     : CXFA_FMExpression(line), m_pList(pList) {}
 
+CXFA_FMDoExpression::~CXFA_FMDoExpression() {}
+
 void CXFA_FMDoExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pList->ToJavaScript(javascript);
 }
@@ -262,6 +268,8 @@ CXFA_FMIfExpression::CXFA_FMIfExpression(uint32_t line,
       m_pExpression(pExpression),
       m_pIfExpression(pIfExpression),
       m_pElseExpression(pElseExpression) {}
+
+CXFA_FMIfExpression::~CXFA_FMIfExpression() {}
 
 void CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"if (");
@@ -329,6 +337,8 @@ CXFA_FMWhileExpression::CXFA_FMWhileExpression(
       m_pCondition(pCondition),
       m_pExpression(pExpression) {}
 
+CXFA_FMWhileExpression::~CXFA_FMWhileExpression() {}
+
 void CXFA_FMWhileExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"while (");
   m_pCondition->ToJavaScript(javascript);
@@ -393,6 +403,8 @@ CXFA_FMForExpression::CXFA_FMForExpression(uint32_t line,
       m_iDirection(iDirection),
       m_pStep(pStep),
       m_pList(pList) {}
+
+CXFA_FMForExpression::~CXFA_FMForExpression() {}
 
 void CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"{\nvar ");

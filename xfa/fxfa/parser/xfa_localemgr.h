@@ -33,14 +33,15 @@ class IFX_Locale;
 class CXFA_LocaleMgr : public IFX_LocaleMgr {
  public:
   CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid);
+  ~CXFA_LocaleMgr() override;
 
+  // IFX_LocaleMgr
   void Release() override;
   uint16_t GetDefLocaleID() override;
   IFX_Locale* GetDefLocale() override;
   IFX_Locale* GetLocale(uint16_t lcid) override;
   IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) override;
 
-  ~CXFA_LocaleMgr();
   void SetDefLocale(IFX_Locale* pLocale);
   CFX_WideStringC GetConfigLocaleName(CXFA_Node* pConfig);
 

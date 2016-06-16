@@ -13,7 +13,8 @@
 class CScript_SignaturePseudoModel : public CXFA_OrdinaryObject {
  public:
   CScript_SignaturePseudoModel(CXFA_Document* pDocument);
-  ~CScript_SignaturePseudoModel();
+  ~CScript_SignaturePseudoModel() override;
+
   void Script_SignaturePseudoModel_Verify(CFXJSE_Arguments* pArguments);
   void Script_SignaturePseudoModel_Sign(CFXJSE_Arguments* pArguments);
   void Script_SignaturePseudoModel_Enumerate(CFXJSE_Arguments* pArguments);

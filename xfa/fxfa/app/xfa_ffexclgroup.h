@@ -13,12 +13,13 @@
 class CXFA_FFExclGroup : public CXFA_FFWidget {
  public:
   CXFA_FFExclGroup(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-  virtual ~CXFA_FFExclGroup();
+  ~CXFA_FFExclGroup() override;
 
-  virtual void RenderWidget(CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            uint32_t dwStatus = 0,
-                            int32_t iRotate = 0);
+  // CXFA_FFWidget
+  void RenderWidget(CFX_Graphics* pGS,
+                    CFX_Matrix* pMatrix = NULL,
+                    uint32_t dwStatus = 0,
+                    int32_t iRotate = 0) override;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFEXCLGROUP_H_
