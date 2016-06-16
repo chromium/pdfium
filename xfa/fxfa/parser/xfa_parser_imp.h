@@ -109,7 +109,6 @@ class CXFA_DocumentParser : public IXFA_Parser {
   CXFA_FFNotify* m_pNotify;
   CXFA_Document* m_pDocument;
 };
-typedef CFX_StackTemplate<CFDE_XMLNode*> CXFA_XMLNodeStack;
 
 class CXFA_XMLParser : public CFDE_XMLParser {
  public:
@@ -131,7 +130,7 @@ class CXFA_XMLParser : public CFDE_XMLParser {
   CFDE_XMLSyntaxParser* m_pParser;
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;
-  CXFA_XMLNodeStack m_NodeStack;
+  CFX_StackTemplate<CFDE_XMLNode*> m_NodeStack;
   CFX_WideString m_ws1;
   CFX_WideString m_ws2;
   FDE_XmlSyntaxResult m_syntaxParserResult;

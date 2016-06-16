@@ -8,6 +8,8 @@
 #define XFA_FXFA_PARSER_XFA_UTILS_H_
 
 #include "xfa/fde/xml/fde_xml.h"
+#include "xfa/fgas/crt/fgas_stream.h"
+#include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fxfa/include/fxfa_basic.h"
 
 class CFDE_XMLElement;

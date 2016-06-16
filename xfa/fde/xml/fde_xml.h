@@ -7,8 +7,7 @@
 #ifndef XFA_FDE_XML_FDE_XML_H_
 #define XFA_FDE_XML_FDE_XML_H_
 
-#include "xfa/fgas/crt/fgas_stream.h"
-#include "xfa/fgas/crt/fgas_utils.h"
+#include "core/fxcrt/include/fx_system.h"
 
 enum class FDE_XmlSyntaxResult {
   None,
@@ -40,25 +39,7 @@ struct FDE_XMLNODE {
   int32_t iNodeNum;
   FDE_XMLNODETYPE eNodeType;
 };
-typedef CFX_StackTemplate<FDE_XMLNODE> CFDE_XMLNodeStack;
 
 FX_BOOL FDE_IsXMLValidChar(FX_WCHAR ch);
-
-struct FDE_XMLREADERHANDLER {
-  void* pData;
-  void (*OnTagEnter)(FDE_XMLREADERHANDLER* pThis,
-                     FDE_XMLNODETYPE eType,
-                     const CFX_WideString& wsTagName);
-  void (*OnTagBreak)(FDE_XMLREADERHANDLER* pThis,
-                     const CFX_WideString& wsTagName);
-  void (*OnTagClose)(FDE_XMLREADERHANDLER* pThis,
-                     const CFX_WideString& wsTagName);
-  void (*OnAttribute)(FDE_XMLREADERHANDLER* pThis,
-                      const CFX_WideString& wsName,
-                      const CFX_WideString& wsValue);
-  void (*OnData)(FDE_XMLREADERHANDLER* pThis,
-                 FDE_XMLNODETYPE eType,
-                 const CFX_WideString& wsValue);
-};
 
 #endif  // XFA_FDE_XML_FDE_XML_H_

@@ -11,6 +11,7 @@
 #include "xfa/fde/xml/fde_xml.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_stream.h"
+#include "xfa/fgas/crt/fgas_utils.h"
 
 class CFDE_BlockBuffer;
 class CFDE_XMLInstruction;
@@ -19,7 +20,6 @@ class CFDE_XMLText;
 class CFDE_XMLDoc;
 class CFDE_XMLDOMParser;
 class CFDE_XMLParser;
-class CFDE_XMLSAXParser;
 class CFDE_XMLSyntaxParser;
 
 class CFDE_XMLNode : public CFX_Target {
@@ -40,169 +40,177 @@ class CFDE_XMLNode : public CFX_Target {
   };
 
   CFDE_XMLNode();
+  virtual ~CFDE_XMLNode();
 
   virtual void Release() { delete this; }
   virtual FDE_XMLNODETYPE GetType() const { return FDE_XMLNODE_Unknown; }
-  virtual int32_t CountChildNodes() const;
-  virtual CFDE_XMLNode* GetChildNode(int32_t index) const;
-  virtual int32_t GetChildNodeIndex(CFDE_XMLNode* pNode) const;
-  virtual CFDE_XMLNode* GetPath(const FX_WCHAR* pPath,
-                                int32_t iLength = -1,
-                                FX_BOOL bQualifiedName = TRUE) const;
-  virtual int32_t InsertChildNode(CFDE_XMLNode* pNode, int32_t index = -1);
-  virtual void RemoveChildNode(CFDE_XMLNode* pNode);
-  virtual void DeleteChildren();
-  virtual CFDE_XMLNode* GetNodeItem(CFDE_XMLNode::NodeItem eItem) const;
-  virtual int32_t GetNodeLevel() const;
-  virtual FX_BOOL InsertNodeItem(CFDE_XMLNode::NodeItem eItem,
-                                 CFDE_XMLNode* pNode);
-  virtual CFDE_XMLNode* RemoveNodeItem(CFDE_XMLNode::NodeItem eItem);
   virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
-  virtual void SaveXMLNode(IFX_Stream* pXMLStream);
 
- public:
-  ~CFDE_XMLNode();
+  int32_t CountChildNodes() const;
+  CFDE_XMLNode* GetChildNode(int32_t index) const;
+  int32_t GetChildNodeIndex(CFDE_XMLNode* pNode) const;
+  int32_t InsertChildNode(CFDE_XMLNode* pNode, int32_t index = -1);
+  void RemoveChildNode(CFDE_XMLNode* pNode);
+  void DeleteChildren();
   void CloneChildren(CFDE_XMLNode* pClone);
+
+  CFDE_XMLNode* GetPath(const FX_WCHAR* pPath,
+                        int32_t iLength = -1,
+                        FX_BOOL bQualifiedName = TRUE) const;
+
+  int32_t GetNodeLevel() const;
+  CFDE_XMLNode* GetNodeItem(CFDE_XMLNode::NodeItem eItem) const;
+  FX_BOOL InsertNodeItem(CFDE_XMLNode::NodeItem eItem, CFDE_XMLNode* pNode);
+  CFDE_XMLNode* RemoveNodeItem(CFDE_XMLNode::NodeItem eItem);
+
+  void SaveXMLNode(IFX_Stream* pXMLStream);
+
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;
   CFDE_XMLNode* m_pPrior;
   CFDE_XMLNode* m_pNext;
 };
+
 class CFDE_XMLInstruction : public CFDE_XMLNode {
  public:
   CFDE_XMLInstruction(const CFX_WideString& wsTarget);
-  virtual void Release() { delete this; }
-  virtual FDE_XMLNODETYPE GetType() const { return FDE_XMLNODE_Instruction; }
-  virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
-  virtual void GetTargetName(CFX_WideString& wsTarget) const {
-    wsTarget = m_wsTarget;
-  }
-  virtual int32_t CountAttributes() const;
-  virtual FX_BOOL GetAttribute(int32_t index,
-                               CFX_WideString& wsAttriName,
-                               CFX_WideString& wsAttriValue) const;
-  virtual FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
-  virtual void GetString(const FX_WCHAR* pwsAttriName,
-                         CFX_WideString& wsAttriValue,
-                         const FX_WCHAR* pwsDefValue = nullptr) const;
-  virtual void SetString(const CFX_WideString& wsAttriName,
-                         const CFX_WideString& wsAttriValue);
-  virtual int32_t GetInteger(const FX_WCHAR* pwsAttriName,
-                             int32_t iDefValue = 0) const;
-  virtual void SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
-  virtual FX_FLOAT GetFloat(const FX_WCHAR* pwsAttriName,
-                            FX_FLOAT fDefValue = 0) const;
-  virtual void SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
-  virtual void RemoveAttribute(const FX_WCHAR* pwsAttriName);
-  virtual int32_t CountData() const;
-  virtual FX_BOOL GetData(int32_t index, CFX_WideString& wsData) const;
-  virtual void AppendData(const CFX_WideString& wsData);
-  virtual void RemoveData(int32_t index);
+  ~CFDE_XMLInstruction() override {}
 
- public:
-  ~CFDE_XMLInstruction() {}
+  // CFDE_XMLNode
+  void Release() override { delete this; }
+  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_Instruction; }
+  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+
+  void GetTargetName(CFX_WideString& wsTarget) const { wsTarget = m_wsTarget; }
+  int32_t CountAttributes() const;
+  FX_BOOL GetAttribute(int32_t index,
+                       CFX_WideString& wsAttriName,
+                       CFX_WideString& wsAttriValue) const;
+  FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
+  void GetString(const FX_WCHAR* pwsAttriName,
+                 CFX_WideString& wsAttriValue,
+                 const FX_WCHAR* pwsDefValue = nullptr) const;
+  void SetString(const CFX_WideString& wsAttriName,
+                 const CFX_WideString& wsAttriValue);
+  int32_t GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const;
+  void SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
+  FX_FLOAT GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const;
+  void SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
+  void RemoveAttribute(const FX_WCHAR* pwsAttriName);
+  int32_t CountData() const;
+  FX_BOOL GetData(int32_t index, CFX_WideString& wsData) const;
+  void AppendData(const CFX_WideString& wsData);
+  void RemoveData(int32_t index);
+
   CFX_WideString m_wsTarget;
   CFX_WideStringArray m_Attributes;
   CFX_WideStringArray m_TargetData;
 };
+
 class CFDE_XMLElement : public CFDE_XMLNode {
  public:
   CFDE_XMLElement(const CFX_WideString& wsTag);
-  virtual void Release() { delete this; }
-  virtual FDE_XMLNODETYPE GetType() const { return FDE_XMLNODE_Element; }
-  virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
-  virtual void GetTagName(CFX_WideString& wsTag) const;
-  virtual void GetLocalTagName(CFX_WideString& wsTag) const;
-  virtual void GetNamespacePrefix(CFX_WideString& wsPrefix) const;
-  virtual void GetNamespaceURI(CFX_WideString& wsNamespace) const;
-  virtual int32_t CountAttributes() const;
-  virtual FX_BOOL GetAttribute(int32_t index,
-                               CFX_WideString& wsAttriName,
-                               CFX_WideString& wsAttriValue) const;
-  virtual FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
-  virtual void GetString(const FX_WCHAR* pwsAttriName,
-                         CFX_WideString& wsAttriValue,
-                         const FX_WCHAR* pwsDefValue = nullptr) const;
-  virtual void SetString(const CFX_WideString& wsAttriName,
-                         const CFX_WideString& wsAttriValue);
-  virtual int32_t GetInteger(const FX_WCHAR* pwsAttriName,
-                             int32_t iDefValue = 0) const;
-  virtual void SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
-  virtual FX_FLOAT GetFloat(const FX_WCHAR* pwsAttriName,
-                            FX_FLOAT fDefValue = 0) const;
-  virtual void SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
-  virtual void RemoveAttribute(const FX_WCHAR* pwsAttriName);
-  virtual void GetTextData(CFX_WideString& wsText) const;
-  virtual void SetTextData(const CFX_WideString& wsText);
+  ~CFDE_XMLElement() override;
 
- public:
-  ~CFDE_XMLElement();
+  // CFDE_XMLNode
+  void Release() override { delete this; }
+  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_Element; }
+  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+
+  void GetTagName(CFX_WideString& wsTag) const;
+  void GetLocalTagName(CFX_WideString& wsTag) const;
+
+  void GetNamespacePrefix(CFX_WideString& wsPrefix) const;
+  void GetNamespaceURI(CFX_WideString& wsNamespace) const;
+
+  int32_t CountAttributes() const;
+  FX_BOOL GetAttribute(int32_t index,
+                       CFX_WideString& wsAttriName,
+                       CFX_WideString& wsAttriValue) const;
+  FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
+  void RemoveAttribute(const FX_WCHAR* pwsAttriName);
+
+  void GetString(const FX_WCHAR* pwsAttriName,
+                 CFX_WideString& wsAttriValue,
+                 const FX_WCHAR* pwsDefValue = nullptr) const;
+  void SetString(const CFX_WideString& wsAttriName,
+                 const CFX_WideString& wsAttriValue);
+
+  int32_t GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const;
+  void SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
+
+  FX_FLOAT GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const;
+  void SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
+
+  void GetTextData(CFX_WideString& wsText) const;
+  void SetTextData(const CFX_WideString& wsText);
+
   CFX_WideString m_wsTag;
   CFX_WideStringArray m_Attributes;
 };
+
 class CFDE_XMLText : public CFDE_XMLNode {
  public:
   CFDE_XMLText(const CFX_WideString& wsText);
-  virtual void Release() { delete this; }
-  virtual FDE_XMLNODETYPE GetType() const { return FDE_XMLNODE_Text; }
-  virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
-  virtual void GetText(CFX_WideString& wsText) const { wsText = m_wsText; }
-  virtual void SetText(const CFX_WideString& wsText) { m_wsText = wsText; }
+  ~CFDE_XMLText() override {}
 
- public:
-  ~CFDE_XMLText() {}
+  // CFDE_XMLNode
+  void Release() override { delete this; }
+  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_Text; }
+  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+
+  void GetText(CFX_WideString& wsText) const { wsText = m_wsText; }
+  void SetText(const CFX_WideString& wsText) { m_wsText = wsText; }
+
   CFX_WideString m_wsText;
 };
+
 class CFDE_XMLDeclaration : public CFDE_XMLNode {
  public:
   CFDE_XMLDeclaration() : CFDE_XMLNode() {}
+  ~CFDE_XMLDeclaration() override {}
 };
+
 class CFDE_XMLCharData : public CFDE_XMLDeclaration {
  public:
   CFDE_XMLCharData(const CFX_WideString& wsCData);
+  ~CFDE_XMLCharData() override {}
 
-  virtual void Release() { delete this; }
-  virtual FDE_XMLNODETYPE GetType() const { return FDE_XMLNODE_CharData; }
-  virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
-  virtual void GetCharData(CFX_WideString& wsCharData) const {
+  void Release() override { delete this; }
+  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_CharData; }
+  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+
+  void GetCharData(CFX_WideString& wsCharData) const {
     wsCharData = m_wsCharData;
   }
-  virtual void SetCharData(const CFX_WideString& wsCData) {
-    m_wsCharData = wsCData;
-  }
-
- public:
-  ~CFDE_XMLCharData() {}
+  void SetCharData(const CFX_WideString& wsCData) { m_wsCharData = wsCData; }
 
   CFX_WideString m_wsCharData;
 };
+
 class CFDE_XMLDoc : public CFX_Target {
  public:
   CFDE_XMLDoc();
-  ~CFDE_XMLDoc();
-  virtual void Release() { delete this; }
-  virtual FX_BOOL LoadXML(IFX_Stream* pXMLStream,
-                          int32_t iXMLPlaneSize = 8192,
-                          int32_t iTextDataSize = 256,
-                          FDE_XMLREADERHANDLER* pHandler = nullptr);
-  virtual FX_BOOL LoadXML(CFDE_XMLParser* pXMLParser);
-  virtual int32_t DoLoad(IFX_Pause* pPause = nullptr);
-  virtual void CloseXML();
-  virtual CFDE_XMLNode* GetRoot() const { return m_pRoot; }
-  virtual void SaveXML(IFX_Stream* pXMLStream = nullptr,
-                       FX_BOOL bSaveBOM = TRUE);
-  virtual void SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pNode);
+  ~CFDE_XMLDoc() override;
+
+  void Release() { delete this; }
+  FX_BOOL LoadXML(CFDE_XMLParser* pXMLParser);
+  int32_t DoLoad(IFX_Pause* pPause = nullptr);
+  void CloseXML();
+  CFDE_XMLNode* GetRoot() const { return m_pRoot; }
+  void SaveXML(IFX_Stream* pXMLStream = nullptr, FX_BOOL bSaveBOM = TRUE);
+  void SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pNode);
 
  protected:
+  void Reset(FX_BOOL bInitRoot);
+  void ReleaseParser();
+
   IFX_Stream* m_pStream;
   int32_t m_iStatus;
   CFDE_XMLNode* m_pRoot;
   CFDE_XMLSyntaxParser* m_pSyntaxParser;
   CFDE_XMLParser* m_pXMLParser;
-  void Reset(FX_BOOL bInitRoot);
-  void ReleaseParser();
 };
-typedef CFX_StackTemplate<CFDE_XMLNode*> CFDE_XMLDOMNodeStack;
 
 class CFDE_XMLParser {
  public:
@@ -210,51 +218,6 @@ class CFDE_XMLParser {
 
   virtual void Release() = 0;
   virtual int32_t DoParser(IFX_Pause* pPause) = 0;
-};
-
-class CFDE_XMLDOMParser : public CFDE_XMLParser, public CFX_Target {
- public:
-  CFDE_XMLDOMParser(CFDE_XMLNode* pRoot, CFDE_XMLSyntaxParser* pParser);
-  ~CFDE_XMLDOMParser();
-
-  virtual void Release() { delete this; }
-  virtual int32_t DoParser(IFX_Pause* pPause);
-
- private:
-  CFDE_XMLSyntaxParser* m_pParser;
-  CFDE_XMLNode* m_pParent;
-  CFDE_XMLNode* m_pChild;
-  CFDE_XMLDOMNodeStack m_NodeStack;
-  CFX_WideString m_ws1;
-  CFX_WideString m_ws2;
-};
-class CFDE_XMLTAG : public CFX_Target {
- public:
-  CFDE_XMLTAG() : eType(FDE_XMLNODE_Unknown) {}
-  CFDE_XMLTAG(const CFDE_XMLTAG& src)
-      : wsTagName(src.wsTagName), eType(src.eType) {}
-  CFX_WideString wsTagName;
-  FDE_XMLNODETYPE eType;
-};
-typedef CFX_ObjectStackTemplate<CFDE_XMLTAG> CFDE_XMLTagStack;
-class CFDE_XMLSAXParser : public CFDE_XMLParser, public CFX_Target {
- public:
-  CFDE_XMLSAXParser(FDE_XMLREADERHANDLER* pHandler,
-                    CFDE_XMLSyntaxParser* pParser);
-  ~CFDE_XMLSAXParser();
-
-  virtual void Release() { delete this; }
-  virtual int32_t DoParser(IFX_Pause* pPause);
-
- private:
-  void Push(const CFDE_XMLTAG& xmlTag);
-  void Pop();
-  FDE_XMLREADERHANDLER* m_pHandler;
-  CFDE_XMLSyntaxParser* m_pParser;
-  CFDE_XMLTagStack m_TagStack;
-  CFDE_XMLTAG* m_pTagTop;
-  CFX_WideString m_ws1;
-  CFX_WideString m_ws2;
 };
 
 class CFDE_BlockBuffer : public CFX_Target {
@@ -285,6 +248,7 @@ class CFDE_BlockBuffer : public CFX_Target {
                                      int32_t& iBlockIndex,
                                      int32_t& iInnerIndex) const;
   void ClearBuffer();
+
   CFX_ArrayTemplate<FX_WCHAR*> m_BlockArray;
   int32_t m_iDataLength;
   int32_t m_iBufferSize;
@@ -296,11 +260,14 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
  public:
   CFDE_XMLSyntaxParser();
   ~CFDE_XMLSyntaxParser();
+
   void Release() { delete this; }
   void Init(IFX_Stream* pStream,
             int32_t iXMLPlaneSize,
             int32_t iTextDataSize = 256);
+
   FDE_XmlSyntaxResult DoSyntaxParse();
+
   int32_t GetStatus() const;
   int32_t GetCurrentPos() const {
     return m_iParsedChars + (m_pStart - m_pBuffer);
@@ -352,6 +319,8 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
     TargetData
   };
 
+  void ParseTextChar(FX_WCHAR ch);
+
   IFX_Stream* m_pStream;
   int32_t m_iXMLPlaneSize;
   int32_t m_iCurrentPos;
@@ -365,7 +334,7 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   FX_WCHAR* m_pStart;
   FX_WCHAR* m_pEnd;
   FDE_XMLNODE m_CurNode;
-  CFDE_XMLNodeStack m_XMLNodeStack;
+  CFX_StackTemplate<FDE_XMLNODE> m_XMLNodeStack;
   CFDE_BlockBuffer m_BlockBuffer;
   int32_t m_iAllocStep;
   int32_t& m_iDataLength;
@@ -378,7 +347,6 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   int32_t m_iEntityStart;
   CFX_DWordStack m_SkipStack;
   FX_WCHAR m_SkipChar;
-  inline void ParseTextChar(FX_WCHAR ch);
 };
 
 #endif  // XFA_FDE_XML_FDE_XML_IMP_H_
