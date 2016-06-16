@@ -49,6 +49,20 @@ if (pdf_enable_xfa) {
       ":libfuzzer_config",
     ]
   }
+  source_set("pdf_cfx_saxreader_fuzzer") {
+    testonly = true
+    sources = [
+      "pdf_cfx_saxreader_fuzzer.cc",
+    ]
+    deps = [
+      "//third_party/pdfium:pdfium",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
   source_set("pdf_codec_png_fuzzer") {
     testonly = true
     sources = [

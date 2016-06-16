@@ -62,6 +62,17 @@
           ],
         },
         {
+          'target_name': 'pdf_cfx_saxreader_fuzzer',
+          'type': 'executable',
+          'dependencies': [
+            '../../pdfium.gyp:pdfium',
+          ],
+          'sources': [
+            'pdf_cfx_saxreader_fuzzer.cc',
+            'unittest_main.cc',
+          ],
+        },
+        {
           'target_name': 'pdf_codec_png_fuzzer',
           'type': 'executable',
           'dependencies': [
