@@ -58,33 +58,40 @@ class CFWL_DateTimeEdit : public CFWL_EditImp {
  public:
   CFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
+
+  // CFWL_EditImp
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
 
  protected:
   friend class CFWL_DateTimeEditImpDelegate;
 };
+
 class CFWL_DateTimeEditImpDelegate : public CFWL_EditImpDelegate {
  public:
   CFWL_DateTimeEditImpDelegate(CFWL_DateTimeEdit* pOwner);
   void OnProcessMessage(CFWL_Message* pMessage) override;
 
- private:
-  void DisForm_OnProcessMessage(CFWL_Message* pMessage);
-
  protected:
   CFWL_DateTimeEdit* m_pOwner;
+
+ private:
+  void DisForm_OnProcessMessage(CFWL_Message* pMessage);
 };
+
 class CFWL_DateTimeCalendar : public CFWL_MonthCalendarImp {
  public:
   CFWL_DateTimeCalendar(const CFWL_WidgetImpProperties& properties,
                         IFWL_Widget* pOuter);
-  virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
+
+  // CFWL_MonthCalendarImp
+  FWL_Error Initialize() override;
+  FWL_Error Finalize() override;
 
  protected:
   friend class CFWL_DateTimeCalendarImpDelegate;
 };
+
 class CFWL_DateTimeCalendarImpDelegate : public CFWL_MonthCalendarImpDelegate {
  public:
   CFWL_DateTimeCalendarImpDelegate(CFWL_DateTimeCalendar* pOwner);
@@ -94,14 +101,15 @@ class CFWL_DateTimeCalendarImpDelegate : public CFWL_MonthCalendarImpDelegate {
   void OnLButtonUpEx(CFWL_MsgMouse* pMsg);
   void OnMouseMoveEx(CFWL_MsgMouse* pMsg);
 
- private:
-  void DisForm_OnProcessMessage(CFWL_Message* pMessage);
-  void DisForm_OnLButtonUpEx(CFWL_MsgMouse* pMsg);
-
  protected:
   CFWL_DateTimeCalendar* m_pOwner;
   FX_BOOL m_bFlag;
+
+ private:
+  void DisForm_OnProcessMessage(CFWL_Message* pMessage);
+  void DisForm_OnLButtonUpEx(CFWL_MsgMouse* pMsg);
 };
+
 class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
  public:
   CFWL_DateTimePickerImp(const CFWL_WidgetImpProperties& properties,
@@ -127,7 +135,6 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
                         int32_t nStart = 0,
                         int32_t nCount = -1) const;
 
- public:
   FX_BOOL CanUndo();
   FX_BOOL CanRedo();
   FX_BOOL Undo();
@@ -145,11 +152,32 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   FWL_Error SetEditLimit(int32_t nLimit);
   FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
                                uint32_t dwStylesExRemoved);
-
- public:
   IFWL_DateTimeEdit* GetDataTimeEdit();
 
  protected:
+  friend class CFWL_DateTimeEditImpDelegate;
+  friend class CFWL_DateTimeCalendar;
+  friend class CFWL_DateTimeCalendarImpDelegate;
+  friend class CFWL_DateTimePickerImpDelegate;
+
+  class CFWL_MonthCalendarImpDP : public IFWL_MonthCalendarDP {
+   public:
+    CFWL_MonthCalendarImpDP();
+
+    // IFWL_DataProvider
+    FWL_Error GetCaption(IFWL_Widget* pWidget,
+                         CFX_WideString& wsCaption) override;
+
+    // IFWL_MonthCalendarDP
+    int32_t GetCurDay(IFWL_Widget* pWidget) override;
+    int32_t GetCurMonth(IFWL_Widget* pWidget) override;
+    int32_t GetCurYear(IFWL_Widget* pWidget) override;
+
+    int32_t m_iCurDay;
+    int32_t m_iCurYear;
+    int32_t m_iCurMonth;
+  };
+
   void DrawDropDownButton(CFX_Graphics* pGraphics,
                           IFWL_ThemeProvider* pTheme,
                           const CFX_Matrix* pMatrix);
@@ -162,6 +190,19 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   void ReSetEditAlignment();
   void InitProxyForm();
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
+
+  CFX_RectF m_rtBtn;
+  CFX_RectF m_rtClient;
+  int32_t m_iBtnState;
+  int32_t m_iYear;
+  int32_t m_iMonth;
+  int32_t m_iDay;
+  FX_BOOL m_bLBtnDown;
+  std::unique_ptr<IFWL_DateTimeEdit> m_pEdit;
+  std::unique_ptr<IFWL_DateTimeCalender> m_pMonthCal;
+  std::unique_ptr<IFWL_DateTimeForm> m_pForm;
+  FX_FLOAT m_fBtn;
+  CFWL_MonthCalendarImpDP m_MonthCalendarDP;
 
  private:
   FWL_Error DisForm_Initialize();
@@ -176,47 +217,13 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   FWL_Error DisForm_GetBBox(CFX_RectF& rect);
   FWL_Error DisForm_DrawWidget(CFX_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix = NULL);
-
- protected:
-  CFX_RectF m_rtBtn;
-  CFX_RectF m_rtClient;
-  int32_t m_iBtnState;
-  int32_t m_iYear;
-  int32_t m_iMonth;
-  int32_t m_iDay;
-  FX_BOOL m_bLBtnDown;
-  std::unique_ptr<IFWL_DateTimeEdit> m_pEdit;
-  std::unique_ptr<IFWL_DateTimeCalender> m_pMonthCal;
-  std::unique_ptr<IFWL_DateTimeForm> m_pForm;
-  FX_FLOAT m_fBtn;
-  class CFWL_MonthCalendarImpDP : public IFWL_MonthCalendarDP {
-   public:
-    CFWL_MonthCalendarImpDP() {
-      m_iCurYear = 2010;
-      m_iCurMonth = 3;
-      m_iCurDay = 29;
-    }
-    virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
-                                 CFX_WideString& wsCaption) {
-      return FWL_Error::Succeeded;
-    }
-    virtual int32_t GetCurDay(IFWL_Widget* pWidget) { return m_iCurDay; }
-    virtual int32_t GetCurMonth(IFWL_Widget* pWidget) { return m_iCurMonth; }
-    virtual int32_t GetCurYear(IFWL_Widget* pWidget) { return m_iCurYear; }
-    int32_t m_iCurDay;
-    int32_t m_iCurYear;
-    int32_t m_iCurMonth;
-  };
-
-  CFWL_MonthCalendarImpDP m_MonthCalendarDP;
-  friend class CFWL_DateTimeEditImpDelegate;
-  friend class CFWL_DateTimeCalendar;
-  friend class CFWL_DateTimeCalendarImpDelegate;
-  friend class CFWL_DateTimePickerImpDelegate;
 };
+
 class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_DateTimePickerImpDelegate(CFWL_DateTimePickerImp* pOwner);
+
+  // CFWL_WidgetImpDelegate
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = NULL) override;

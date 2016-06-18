@@ -10,7 +10,6 @@
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/basewidget/ifwl_combobox.h"
-#include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
@@ -21,6 +20,7 @@
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
 
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)

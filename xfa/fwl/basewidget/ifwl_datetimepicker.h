@@ -30,25 +30,23 @@
 #define FWL_STYLEEXT_DTP_EditVAlignMask (3L << 6)
 #define FWL_STYLEEXT_DTP_EditHAlignModeMask (3L << 8)
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpDropDown, CFWL_EventType::DropDown)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_Event_DtpDropDown, CFWL_EventType::DropDown)
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpCloseUp, CFWL_EventType::CloseUp)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_Event_DtpCloseUp, CFWL_EventType::CloseUp)
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpEditChanged, CFWL_EventType::EditChanged)
-CFX_WideString m_wsText;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_Event_DtpEditChanged,
+              CFWL_EventType::EditChanged,
+              CFX_WideString m_wsText;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpHoverChanged, CFWL_EventType::HoverChanged)
-int32_t hoverday;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_Event_DtpHoverChanged,
+              CFWL_EventType::HoverChanged,
+              int32_t hoverday;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged, CFWL_EventType::SelectChanged)
-int32_t iYear;
-int32_t iMonth;
-int32_t iDay;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged,
+              CFWL_EventType::SelectChanged,
+              int32_t iYear;
+              int32_t iMonth;
+              int32_t iDay;)
 
 class IFWL_DateTimePickerDP : public IFWL_DataProvider {
  public:

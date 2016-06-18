@@ -668,11 +668,14 @@ void CFWL_NoteDriver::ClearInvalidEventTargets(FX_BOOL bRemoveAll) {
 
 class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
  public:
-  FWL_Error GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
-  int32_t GetInitialDelay(IFWL_Widget* pWidget);
-  int32_t GetAutoPopDelay(IFWL_Widget* pWidget);
-  CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget);
-  CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget);
+  // IFWL_ToolTipDP
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
+  int32_t GetInitialDelay(IFWL_Widget* pWidget) override;
+  int32_t GetAutoPopDelay(IFWL_Widget* pWidget) override;
+  CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget) override;
+  CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget) override;
+
   CFX_RectF GetAnchor();
   CFWL_CoreToolTipDP();
 
@@ -681,34 +684,46 @@ class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
   int32_t m_nAutoPopDelayTime;
   CFX_RectF m_fAnchor;
 };
+
 CFWL_CoreToolTipDP::CFWL_CoreToolTipDP() {
   m_nInitDelayTime = 500;
   m_nAutoPopDelayTime = 50000;
   m_fAnchor.Set(0.0, 0.0, 0.0, 0.0);
 }
+
 FWL_Error CFWL_CoreToolTipDP::GetCaption(IFWL_Widget* pWidget,
                                          CFX_WideString& wsCaption) {
   wsCaption = m_wsCaption;
   return FWL_Error::Succeeded;
 }
+
 int32_t CFWL_CoreToolTipDP::GetInitialDelay(IFWL_Widget* pWidget) {
   return m_nInitDelayTime;
 }
+
 int32_t CFWL_CoreToolTipDP::GetAutoPopDelay(IFWL_Widget* pWidget) {
   return m_nAutoPopDelayTime;
 }
+
 CFX_DIBitmap* CFWL_CoreToolTipDP::GetToolTipIcon(IFWL_Widget* pWidget) {
   return NULL;
 }
+
 CFX_SizeF CFWL_CoreToolTipDP::GetToolTipIconSize(IFWL_Widget* pWidget) {
   return CFX_SizeF();
 }
+
 CFX_RectF CFWL_CoreToolTipDP::GetAnchor() {
   return m_fAnchor;
 }
+
+CFWL_EventTarget::CFWL_EventTarget(CFWL_NoteDriver* pNoteDriver,
+                                   IFWL_Widget* pListener)
+    : m_pListener(pListener), m_pNoteDriver(pNoteDriver), m_bInvalid(FALSE) {}
 CFWL_EventTarget::~CFWL_EventTarget() {
   m_eventSources.RemoveAll();
 }
+
 int32_t CFWL_EventTarget::SetEventSource(IFWL_Widget* pSource,
                                          uint32_t dwFilter) {
   if (pSource) {

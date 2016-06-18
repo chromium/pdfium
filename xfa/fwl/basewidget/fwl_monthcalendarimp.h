@@ -216,12 +216,9 @@ struct FWL_DATEINFO {
                int32_t dayofweek,
                uint32_t dwSt,
                CFX_RectF rc,
-               CFX_WideString& wsday)
-      : iDay(day),
-        iDayOfWeek(dayofweek),
-        dwStates(dwSt),
-        rect(rc),
-        wsDay(wsday) {}
+               CFX_WideString& wsday);
+  ~FWL_DATEINFO();
+
   int32_t iDay;
   int32_t iDayOfWeek;
   uint32_t dwStates;

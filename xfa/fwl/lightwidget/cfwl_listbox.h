@@ -19,6 +19,9 @@ class CFWL_ListItem;
 
 class CFWL_ListBox : public CFWL_Widget {
  public:
+  CFWL_ListBox();
+  ~CFWL_ListBox() override;
+
   static CFWL_ListBox* Create();
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   FWL_Error AddDIBitmap(CFX_DIBitmap* pDIB, IFWL_ListItem* pItem);
@@ -43,14 +46,12 @@ class CFWL_ListBox : public CFWL_Widget {
   void* GetItemData(IFWL_ListItem* pItem);
   IFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
   uint32_t GetItemStates(IFWL_ListItem* pItem);
-  CFWL_ListBox();
-  virtual ~CFWL_ListBox();
 
  protected:
   class CFWL_ListBoxDP : public IFWL_ListBoxDP {
    public:
     CFWL_ListBoxDP();
-    ~CFWL_ListBoxDP();
+    ~CFWL_ListBoxDP() override;
 
     // IFWL_DataProvider:
     FWL_Error GetCaption(IFWL_Widget* pWidget,
@@ -105,15 +106,9 @@ class CFWL_ListBox : public CFWL_Widget {
 
 class CFWL_ListItem : public IFWL_ListItem {
  public:
-  CFWL_ListItem() {
-    m_rtItem.Reset();
-    m_dwStates = 0;
-    m_wsText = L"";
-    m_pDIB = NULL;
-    m_pData = NULL;
-    m_dwCheckState = 0;
-    m_rtCheckBox.Reset();
-  }
+  CFWL_ListItem();
+  ~CFWL_ListItem();
+
   CFX_RectF m_rtItem;
   uint32_t m_dwStates;
   CFX_WideString m_wsText;

@@ -64,6 +64,10 @@ FWL_Error IFWL_Form::SetBorderRegion(CFX_Path* pPath) {
   return static_cast<CFWL_FormImp*>(GetImpl())->SetBorderRegion(pPath);
 }
 
+RestoreResizeInfo::RestoreResizeInfo() {}
+
+RestoreResizeInfo::~RestoreResizeInfo() {}
+
 CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
@@ -1127,4 +1131,42 @@ void CFWL_FormImpDelegate::OnClose(CFWL_MsgClose* pMsg) {
   CFWL_EvtClose eClose;
   eClose.m_pSrcTarget = m_pOwner->m_pInterface;
   m_pOwner->DispatchEvent(&eClose);
+}
+
+CFWL_SysBtn::CFWL_SysBtn() {
+  m_rtBtn.Set(0, 0, 0, 0);
+  m_dwState = 0;
+}
+
+bool CFWL_SysBtn::IsDisabled() const {
+  return !!(m_dwState & FWL_SYSBUTTONSTATE_Disabled);
+}
+
+void CFWL_SysBtn::SetNormal() {
+  m_dwState &= 0xFFF0;
+}
+
+void CFWL_SysBtn::SetPressed() {
+  SetNormal();
+  m_dwState |= FWL_SYSBUTTONSTATE_Pressed;
+}
+
+void CFWL_SysBtn::SetHover() {
+  SetNormal();
+  m_dwState |= FWL_SYSBUTTONSTATE_Hover;
+}
+
+void CFWL_SysBtn::SetDisabled(FX_BOOL bDisabled) {
+  bDisabled ? m_dwState |= FWL_SYSBUTTONSTATE_Disabled
+            : m_dwState &= ~FWL_SYSBUTTONSTATE_Disabled;
+}
+
+uint32_t CFWL_SysBtn::GetPartState() const {
+  if (IsDisabled())
+    return CFWL_PartState_Disabled;
+  if (m_dwState & FWL_SYSBUTTONSTATE_Pressed)
+    return CFWL_PartState_Pressed;
+  if (m_dwState & FWL_SYSBUTTONSTATE_Hover)
+    return CFWL_PartState_Hovered;
+  return CFWL_PartState_Normal;
 }

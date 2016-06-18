@@ -18,6 +18,10 @@ IFWL_App* IFWL_App::Create(CXFA_FFApp* pAdapter) {
   return pApp;
 }
 
+IFWL_App::IFWL_App() {}
+
+IFWL_App::~IFWL_App() {}
+
 void IFWL_App::Release() {}
 
 FWL_Error IFWL_App::Initialize() {

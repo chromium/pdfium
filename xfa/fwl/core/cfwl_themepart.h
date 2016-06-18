@@ -81,16 +81,7 @@ class IFWL_Widget;
 
 class CFWL_ThemePart {
  public:
-  CFWL_ThemePart()
-      : m_pWidget(nullptr),
-        m_iPart(CFWL_Part::None),
-        m_dwStates(CFWL_PartState_Normal),
-        m_bMaximize(false),
-        m_bStaticBackground(false),
-        m_pData(nullptr) {
-    m_rtPart.Reset();
-    m_matrix.SetIdentity();
-  }
+  CFWL_ThemePart();
 
   CFX_Matrix m_matrix;
   CFX_RectF m_rtPart;
@@ -101,5 +92,16 @@ class CFWL_ThemePart {
   bool m_bStaticBackground;
   void* m_pData;
 };
+
+inline CFWL_ThemePart::CFWL_ThemePart()
+    : m_pWidget(nullptr),
+      m_iPart(CFWL_Part::None),
+      m_dwStates(CFWL_PartState_Normal),
+      m_bMaximize(false),
+      m_bStaticBackground(false),
+      m_pData(nullptr) {
+  m_rtPart.Reset();
+  m_matrix.SetIdentity();
+}
 
 #endif  // XFA_FWL_CORE_CFWL_THEMEPART_H_

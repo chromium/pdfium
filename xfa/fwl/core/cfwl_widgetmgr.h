@@ -27,22 +27,9 @@ class IFWL_Widget;
 
 class CFWL_WidgetMgrItem {
  public:
-  CFWL_WidgetMgrItem() : CFWL_WidgetMgrItem(nullptr) {}
-  explicit CFWL_WidgetMgrItem(IFWL_Widget* widget)
-      : pParent(nullptr),
-        pOwner(nullptr),
-        pChild(nullptr),
-        pPrevious(nullptr),
-        pNext(nullptr),
-        pWidget(widget),
-        iRedrawCounter(0)
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
-        ,
-        bOutsideChanged(FALSE)
-#endif
-  {
-  }
-  ~CFWL_WidgetMgrItem() {}
+  CFWL_WidgetMgrItem();
+  explicit CFWL_WidgetMgrItem(IFWL_Widget* widget);
+  ~CFWL_WidgetMgrItem();
 
   CFWL_WidgetMgrItem* pParent;
   CFWL_WidgetMgrItem* pOwner;

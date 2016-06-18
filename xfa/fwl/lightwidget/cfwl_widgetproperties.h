@@ -17,14 +17,9 @@ class IFWL_DataProvider;
 
 class CFWL_WidgetProperties {
  public:
-  CFWL_WidgetProperties()
-      : m_dwStyles(FWL_WGTSTYLE_Child),
-        m_dwStyleExes(0),
-        m_dwStates(0),
-        m_pParent(nullptr),
-        m_pOwner(nullptr) {
-    m_rtWidget.Set(0, 0, 0, 0);
-  }
+  CFWL_WidgetProperties();
+  ~CFWL_WidgetProperties();
+  CFWL_WidgetProperties(const CFWL_WidgetProperties& other);
 
   CFWL_WidgetImpProperties MakeWidgetImpProperties(
       IFWL_DataProvider* pDataProvider) const;

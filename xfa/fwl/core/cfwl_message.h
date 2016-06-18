@@ -53,31 +53,15 @@ class IFWL_Widget;
 
 class CFWL_Message {
  public:
-  CFWL_Message()
-      : m_pSrcTarget(nullptr),
-        m_pDstTarget(nullptr),
-        m_dwExtend(0),
-        m_dwRefCount(1) {}
-  virtual ~CFWL_Message() {}
+  CFWL_Message();
+  virtual ~CFWL_Message();
 
-  virtual CFWL_Message* Clone() { return nullptr; }
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const {
-    return FWL_Error::Succeeded;
-  }
-  virtual CFWL_MessageType GetClassID() const { return CFWL_MessageType::None; }
+  virtual CFWL_Message* Clone();
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
+  virtual CFWL_MessageType GetClassID() const;
 
-  uint32_t Release() {
-    m_dwRefCount--;
-    uint32_t dwRefCount = m_dwRefCount;
-    if (!m_dwRefCount)
-      delete this;
-    return dwRefCount;
-  }
-
-  CFWL_Message* Retain() {
-    m_dwRefCount++;
-    return this;
-  }
+  uint32_t Release();
+  CFWL_Message* Retain();
 
   IFWL_Widget* m_pSrcTarget;
   IFWL_Widget* m_pDstTarget;
@@ -87,91 +71,124 @@ class CFWL_Message {
   uint32_t m_dwRefCount;
 };
 
-#define BEGIN_FWL_MESSAGE_DEF(classname, msgType)                    \
-  class classname : public CFWL_Message {                            \
-   public:                                                           \
-    classname() : CFWL_Message() {}                                  \
-    CFWL_Message* Clone() override { return new classname(*this); }  \
-    FWL_Error GetClassName(CFX_WideString& wsClass) const override { \
-      wsClass = L## #classname;                                      \
-      return FWL_Error::Succeeded;                                   \
-    }                                                                \
-    CFWL_MessageType GetClassID() const override { return msgType; }
+inline CFWL_Message::CFWL_Message()
+    : m_pSrcTarget(nullptr),
+      m_pDstTarget(nullptr),
+      m_dwExtend(0),
+      m_dwRefCount(1) {}
 
-#define END_FWL_MESSAGE_DEF \
-  }                         \
-  ;  // NOLINT
+inline CFWL_Message::~CFWL_Message() {}
 
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgActivate, CFWL_MessageType::Activate)
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgDeactivate, CFWL_MessageType::Deactivate)
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgMouse, CFWL_MessageType::Mouse)
-FX_FLOAT m_fx;
-FX_FLOAT m_fy;
-uint32_t m_dwFlags;
-FWL_MouseCommand m_dwCmd;
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgMouseWheel, CFWL_MessageType::MouseWheel)
-FX_FLOAT m_fx;
-FX_FLOAT m_fy;
-FX_FLOAT m_fDeltaX;
-FX_FLOAT m_fDeltaY;
-uint32_t m_dwFlags;
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgSetFocus, CFWL_MessageType::SetFocus)
-IFWL_Widget* m_pKillFocus;
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgKillFocus, CFWL_MessageType::KillFocus)
-IFWL_Widget* m_pSetFocus;
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgKey, CFWL_MessageType::Key)
-uint32_t m_dwKeyCode;
-uint32_t m_dwFlags;
-FWL_KeyCommand m_dwCmd;
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgCursor, CFWL_MessageType::Cursor)
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgSize, CFWL_MessageType::Size)
-int32_t m_iWidth;
-int32_t m_iHeight;
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgWindowMove, CFWL_MessageType::WindowMove)
-FX_FLOAT m_fx;
-FX_FLOAT m_fy;
-END_FWL_MESSAGE_DEF
-
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgDropFiles, CFWL_MessageType::DropFiles)
-CFWL_MsgDropFiles(const CFWL_MsgDropFiles& copy) {
-  m_pDstTarget = copy.m_pDstTarget;
-  m_pSrcTarget = copy.m_pSrcTarget;
-  m_fx = copy.m_fx;
-  m_fy = copy.m_fy;
-  m_files.Append(copy.m_files);
+inline CFWL_Message* CFWL_Message::Clone() {
+  return nullptr;
 }
-FX_FLOAT m_fx;
-FX_FLOAT m_fy;
-CFX_WideStringArray m_files;
-END_FWL_MESSAGE_DEF
 
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgTaskClicked, CFWL_MessageType::TaskClicked)
-FX_FLOAT m_fx;
-FX_FLOAT m_fy;
-END_FWL_MESSAGE_DEF
+inline FWL_Error CFWL_Message::GetClassName(CFX_WideString& wsClass) const {
+  return FWL_Error::Succeeded;
+}
 
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgClose, CFWL_MessageType::Close)
-END_FWL_MESSAGE_DEF
+inline CFWL_MessageType CFWL_Message::GetClassID() const {
+  return CFWL_MessageType::None;
+}
 
-BEGIN_FWL_MESSAGE_DEF(CFWL_MsgWindowWillMove, CFWL_MessageType::WindowWillMove)
-END_FWL_MESSAGE_DEF
+inline uint32_t CFWL_Message::Release() {
+  m_dwRefCount--;
+  uint32_t dwRefCount = m_dwRefCount;
+  if (!m_dwRefCount)
+    delete this;
+  return dwRefCount;
+}
+
+inline CFWL_Message* CFWL_Message::Retain() {
+  m_dwRefCount++;
+  return this;
+}
+
+#define FWL_MESSAGE_CLASS_DEF(classname, msgType, ...)              \
+  class classname : public CFWL_Message {                           \
+   public:                                                          \
+    classname();                                                    \
+    ~classname() override;                                          \
+    CFWL_Message* Clone() override;                                 \
+    FWL_Error GetClassName(CFX_WideString& wsClass) const override; \
+    CFWL_MessageType GetClassID() const override;                   \
+    __VA_ARGS__                                                     \
+  };
+
+#define FWL_MESSAGE_FUNCTION_DEF(classname, msgType, ...)                   \
+  inline classname::classname() {}                                          \
+  inline classname::~classname() {}                                         \
+  inline CFWL_Message* classname::Clone() { return new classname(*this); }  \
+  inline FWL_Error classname::GetClassName(CFX_WideString& wsClass) const { \
+    wsClass = L## #classname;                                               \
+    return FWL_Error::Succeeded;                                            \
+  }                                                                         \
+  inline CFWL_MessageType classname::GetClassID() const { return msgType; } \
+  __VA_ARGS__
+
+#define FWL_MESSAGE_DEF(classname, msgType, ...)         \
+  FWL_MESSAGE_CLASS_DEF(classname, msgType, __VA_ARGS__) \
+  FWL_MESSAGE_FUNCTION_DEF(classname, msgType)
+
+FWL_MESSAGE_DEF(CFWL_MsgActivate, CFWL_MessageType::Activate)
+
+FWL_MESSAGE_DEF(CFWL_MsgDeactivate, CFWL_MessageType::Deactivate)
+
+FWL_MESSAGE_DEF(CFWL_MsgMouse, CFWL_MessageType::Mouse, FX_FLOAT m_fx;
+                FX_FLOAT m_fy;
+                uint32_t m_dwFlags;
+                FWL_MouseCommand m_dwCmd;)
+
+FWL_MESSAGE_DEF(CFWL_MsgMouseWheel, CFWL_MessageType::MouseWheel, FX_FLOAT m_fx;
+                FX_FLOAT m_fy;
+                FX_FLOAT m_fDeltaX;
+                FX_FLOAT m_fDeltaY;
+                uint32_t m_dwFlags;)
+
+FWL_MESSAGE_DEF(CFWL_MsgSetFocus,
+                CFWL_MessageType::SetFocus,
+                IFWL_Widget* m_pKillFocus;)
+
+FWL_MESSAGE_DEF(CFWL_MsgKillFocus,
+                CFWL_MessageType::KillFocus,
+                IFWL_Widget* m_pSetFocus;)
+
+FWL_MESSAGE_DEF(CFWL_MsgKey, CFWL_MessageType::Key, uint32_t m_dwKeyCode;
+                uint32_t m_dwFlags;
+                FWL_KeyCommand m_dwCmd;)
+
+FWL_MESSAGE_DEF(CFWL_MsgCursor, CFWL_MessageType::Cursor)
+
+FWL_MESSAGE_DEF(CFWL_MsgSize, CFWL_MessageType::Size, int32_t m_iWidth;
+                int32_t m_iHeight;)
+
+FWL_MESSAGE_DEF(CFWL_MsgWindowMove, CFWL_MessageType::WindowMove, FX_FLOAT m_fx;
+                FX_FLOAT m_fy;)
+
+FWL_MESSAGE_CLASS_DEF(CFWL_MsgDropFiles,
+                      CFWL_MessageType::DropFiles,
+                      CFWL_MsgDropFiles(const CFWL_MsgDropFiles& copy);
+                      FX_FLOAT m_fx;
+                      FX_FLOAT m_fy;
+                      CFX_WideStringArray m_files;)
+FWL_MESSAGE_FUNCTION_DEF(
+    CFWL_MsgDropFiles,
+    CFWL_MessageType::DropFiles,
+    inline CFWL_MsgDropFiles::CFWL_MsgDropFiles(const CFWL_MsgDropFiles& copy) {
+      m_pDstTarget = copy.m_pDstTarget;
+      m_pSrcTarget = copy.m_pSrcTarget;
+      m_fx = copy.m_fx;
+      m_fy = copy.m_fy;
+      m_files.Append(copy.m_files);
+    })
+
+FWL_MESSAGE_DEF(CFWL_MsgTaskClicked,
+                CFWL_MessageType::TaskClicked,
+                FX_FLOAT m_fx;
+                FX_FLOAT m_fy;)
+
+FWL_MESSAGE_DEF(CFWL_MsgClose, CFWL_MessageType::Close)
+
+FWL_MESSAGE_DEF(CFWL_MsgWindowWillMove, CFWL_MessageType::WindowWillMove)
 
 #endif  // XFA_FWL_CORE_CFWL_MESSAGE_H_

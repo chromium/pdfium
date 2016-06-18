@@ -1181,3 +1181,30 @@ void CFWL_DateTimePickerImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
   rtInvalidate.Inflate(2, 2);
   m_pOwner->Repaint(&rtInvalidate);
 }
+
+CFWL_DateTimePickerImp::CFWL_MonthCalendarImpDP::CFWL_MonthCalendarImpDP() {
+  m_iCurYear = 2010;
+  m_iCurMonth = 3;
+  m_iCurDay = 29;
+}
+
+FWL_Error CFWL_DateTimePickerImp::CFWL_MonthCalendarImpDP::GetCaption(
+    IFWL_Widget* pWidget,
+    CFX_WideString& wsCaption) {
+  return FWL_Error::Succeeded;
+}
+
+int32_t CFWL_DateTimePickerImp::CFWL_MonthCalendarImpDP::GetCurDay(
+    IFWL_Widget* pWidget) {
+  return m_iCurDay;
+}
+
+int32_t CFWL_DateTimePickerImp::CFWL_MonthCalendarImpDP::GetCurMonth(
+    IFWL_Widget* pWidget) {
+  return m_iCurMonth;
+}
+
+int32_t CFWL_DateTimePickerImp::CFWL_MonthCalendarImpDP::GetCurYear(
+    IFWL_Widget* pWidget) {
+  return m_iCurYear;
+}

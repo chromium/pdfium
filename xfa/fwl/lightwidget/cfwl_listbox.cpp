@@ -341,3 +341,15 @@ FWL_Error CFWL_ListBox::CFWL_ListBoxDP::SetItemCheckState(
   static_cast<CFWL_ListItem*>(pItem)->m_dwCheckState = dwCheckState;
   return FWL_Error::Succeeded;
 }
+
+CFWL_ListItem::CFWL_ListItem() {
+  m_rtItem.Reset();
+  m_dwStates = 0;
+  m_wsText = L"";
+  m_pDIB = NULL;
+  m_pData = NULL;
+  m_dwCheckState = 0;
+  m_rtCheckBox.Reset();
+}
+
+CFWL_ListItem::~CFWL_ListItem() {}

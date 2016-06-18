@@ -16,6 +16,9 @@ class IFDE_TxtEdtDoRecord;
 
 class CFWL_Edit : public CFWL_Widget {
  public:
+  CFWL_Edit();
+  ~CFWL_Edit() override;
+
   static CFWL_Edit* Create();
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   FWL_Error SetText(const CFX_WideString& wsText);
@@ -60,8 +63,6 @@ class CFWL_Edit : public CFWL_Widget {
                           std::vector<CFX_ByteString>& sSuggest);
   FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
                                 const CFX_ByteStringC& bsReplace);
-  CFWL_Edit();
-  virtual ~CFWL_Edit();
 };
 
 #endif  // XFA_FWL_LIGHTWIDGET_CFWL_EDIT_H_

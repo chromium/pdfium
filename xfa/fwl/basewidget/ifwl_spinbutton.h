@@ -7,14 +7,13 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_SPINBUTTON_H_
 #define XFA_FWL_BASEWIDGET_IFWL_SPINBUTTON_H_
 
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 
 #define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click)
-FX_BOOL m_bUp;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, FX_BOOL m_bUp;)
 
 class IFWL_SpinButton : public IFWL_Widget {
  public:

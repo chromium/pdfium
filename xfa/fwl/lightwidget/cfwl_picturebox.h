@@ -13,7 +13,11 @@
 
 class CFWL_PictureBox : public CFWL_Widget {
  public:
+  CFWL_PictureBox();
+  ~CFWL_PictureBox() override;
+
   static CFWL_PictureBox* Create();
+
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   CFX_DIBitmap* GetPicture();
   FWL_Error SetPicture(CFX_DIBitmap* pBitmap);
@@ -27,28 +31,24 @@ class CFWL_PictureBox : public CFWL_Widget {
   FWL_Error SetScale(FX_FLOAT fScaleX, FX_FLOAT fScaleY);
   FWL_Error GetOffset(FX_FLOAT& fx, FX_FLOAT& fy);
   FWL_Error SetOffset(FX_FLOAT fx, FX_FLOAT fy);
-  CFWL_PictureBox();
-  virtual ~CFWL_PictureBox();
 
  protected:
   class CFWL_PictureBoxDP : public IFWL_PictureBoxDP {
    public:
-    CFWL_PictureBoxDP() {
-      m_fRotation = 0.0f;
-      m_fScaleX = 1.0f;
-      m_fScaleY = 1.0f;
-      m_fOffSetX = 0.0f;
-      m_fOffSetY = 0.0f;
-      m_pBitmap = NULL;
-    }
-    virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
-                                 CFX_WideString& wsCaption);
-    virtual CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget);
-    virtual CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget);
-    virtual CFX_DIBitmap* GetInitialPicture(IFWL_Widget* pWidget);
-    virtual int32_t GetOpacity(IFWL_Widget* pWidget);
-    virtual int32_t GetFlipMode(IFWL_Widget* pWidget);
-    virtual FWL_Error GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix);
+    CFWL_PictureBoxDP();
+
+    // IFWL_DataProvider
+    FWL_Error GetCaption(IFWL_Widget* pWidget,
+                         CFX_WideString& wsCaption) override;
+
+    // IFWL_PictureBoxDP
+    CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
+    CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget) override;
+    CFX_DIBitmap* GetInitialPicture(IFWL_Widget* pWidget) override;
+    int32_t GetOpacity(IFWL_Widget* pWidget) override;
+    int32_t GetFlipMode(IFWL_Widget* pWidget) override;
+    FWL_Error GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override;
+
     CFX_DIBitmap* m_pBitmap;
     int32_t m_iOpacity;
     int32_t m_iFlipMode;
@@ -59,6 +59,7 @@ class CFWL_PictureBox : public CFWL_Widget {
     FX_FLOAT m_fOffSetY;
     CFX_WideString m_wsData;
   };
+
   CFWL_PictureBoxDP m_PictureBoxDP;
 };
 

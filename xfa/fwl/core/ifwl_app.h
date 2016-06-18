@@ -32,7 +32,7 @@ class IFWL_App {
  public:
   static IFWL_App* Create(CXFA_FFApp* pAdapter);
 
-  virtual ~IFWL_App() {}
+  virtual ~IFWL_App();
 
   FWL_Error Initialize();
   FWL_Error Finalize();
@@ -53,7 +53,7 @@ class IFWL_App {
   CFWL_NoteDriver* GetNoteDriver() const;
 
  private:
-  IFWL_App() {}
+  IFWL_App();
 
   std::unique_ptr<CFWL_AppImp> m_pImpl;
 };

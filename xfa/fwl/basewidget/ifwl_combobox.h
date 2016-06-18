@@ -39,36 +39,33 @@ class IFWL_ComboBox;
 #define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, CFWL_EventType::PreDropDown)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, CFWL_EventType::PreDropDown)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPostDropDown, CFWL_EventType::PostDropDown)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCmbPostDropDown, CFWL_EventType::PostDropDown)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbCloseUp, CFWL_EventType::CloseUp)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCmbCloseUp, CFWL_EventType::CloseUp)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbEditChanged, CFWL_EventType::EditChanged)
-int32_t nChangeType;
-CFX_WideString wsInsert;
-CFX_WideString wsDelete;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCmbEditChanged,
+              CFWL_EventType::EditChanged,
+              int32_t nChangeType;
+              CFX_WideString wsInsert;
+              CFX_WideString wsDelete;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbSelChanged, CFWL_EventType::SelectChanged)
-CFX_Int32Array iArraySels;
-FX_BOOL bLButtonUp;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCmbSelChanged,
+              CFWL_EventType::SelectChanged,
+              CFX_Int32Array iArraySels;
+              FX_BOOL bLButtonUp;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbHoverChanged, CFWL_EventType::HoverChanged)
-int32_t m_iCurHover;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCmbHoverChanged,
+              CFWL_EventType::HoverChanged,
+              int32_t m_iCurHover;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbDrawItem, CFWL_EventType::DrawItem)
-CFX_Graphics* m_pGraphics;
-CFX_Matrix m_matrix;
-int32_t m_index;
-CFX_RectF m_rtItem;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCmbDrawItem,
+              CFWL_EventType::DrawItem,
+              CFX_Graphics* m_pGraphics;
+              CFX_Matrix m_matrix;
+              int32_t m_index;
+              CFX_RectF m_rtItem;)
 
 class IFWL_ComboBoxDP : public IFWL_ListBoxDP {
  public:

@@ -31,16 +31,16 @@
 
 class CFX_DIBitmap;
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbSelChanged, CFWL_EventType::SelectChanged)
-CFX_Int32Array iarraySels;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtLtbSelChanged,
+              CFWL_EventType::SelectChanged,
+              CFX_Int32Array iarraySels;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbDrawItem, CFWL_EventType::DrawItem)
-CFX_Graphics* m_pGraphics;
-CFX_Matrix m_matrix;
-int32_t m_index;
-CFX_RectF m_rect;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtLtbDrawItem,
+              CFWL_EventType::DrawItem,
+              CFX_Graphics* m_pGraphics;
+              CFX_Matrix m_matrix;
+              int32_t m_index;
+              CFX_RectF m_rect;)
 
 class IFWL_ListItem {};
 

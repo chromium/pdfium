@@ -17,17 +17,9 @@ class IFWL_Widget;
 
 class CFWL_WidgetImpProperties {
  public:
-  CFWL_WidgetImpProperties()
-      : m_dwStyles(FWL_WGTSTYLE_Child),
-        m_dwStyleExes(0),
-        m_dwStates(0),
-        m_pThemeProvider(nullptr),
-        m_pDataProvider(nullptr),
-        m_pParent(nullptr),
-        m_pOwner(nullptr) {
-    m_ctmOnParent.SetIdentity();
-    m_rtWidget.Set(0, 0, 0, 0);
-  }
+  CFWL_WidgetImpProperties();
+  ~CFWL_WidgetImpProperties();
+  CFWL_WidgetImpProperties(const CFWL_WidgetImpProperties& other);
 
   CFX_Matrix m_ctmOnParent;
   CFX_RectF m_rtWidget;
@@ -39,5 +31,22 @@ class CFWL_WidgetImpProperties {
   IFWL_Widget* m_pParent;
   IFWL_Widget* m_pOwner;
 };
+
+inline CFWL_WidgetImpProperties::CFWL_WidgetImpProperties()
+    : m_dwStyles(FWL_WGTSTYLE_Child),
+      m_dwStyleExes(0),
+      m_dwStates(0),
+      m_pThemeProvider(nullptr),
+      m_pDataProvider(nullptr),
+      m_pParent(nullptr),
+      m_pOwner(nullptr) {
+  m_ctmOnParent.SetIdentity();
+  m_rtWidget.Set(0, 0, 0, 0);
+}
+
+inline CFWL_WidgetImpProperties::~CFWL_WidgetImpProperties() {}
+
+inline CFWL_WidgetImpProperties::CFWL_WidgetImpProperties(
+    const CFWL_WidgetImpProperties& other) = default;
 
 #endif  // XFA_FWL_CORE_CFWL_WIDGETIMPPROPERTIES_H_

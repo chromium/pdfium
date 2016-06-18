@@ -12,24 +12,33 @@
 
 class CFWL_PushButton : public CFWL_Widget {
  public:
+  CFWL_PushButton();
+  ~CFWL_PushButton() override;
+
   static CFWL_PushButton* Create();
+
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   FWL_Error GetCaption(CFX_WideString& wsCaption);
   FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
   CFX_DIBitmap* GetPicture();
   FWL_Error SetPicture(CFX_DIBitmap* pBitmap);
-  CFWL_PushButton();
-  virtual ~CFWL_PushButton();
 
  protected:
   class CFWL_PushButtonDP : public IFWL_PushButtonDP {
    public:
     CFWL_PushButtonDP() : m_pBitmap(NULL) {}
-    FWL_Error GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
-    virtual CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget);
+
+    // IFWL_DataProvider
+    FWL_Error GetCaption(IFWL_Widget* pWidget,
+                         CFX_WideString& wsCaption) override;
+
+    // IFWL_PushButtonDP
+    CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
+
     CFX_WideString m_wsCaption;
     CFX_DIBitmap* m_pBitmap;
   };
+
   CFWL_PushButtonDP m_buttonData;
 };
 

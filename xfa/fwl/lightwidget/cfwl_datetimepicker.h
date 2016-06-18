@@ -13,6 +13,7 @@
 class CFWL_DateTimePicker : public CFWL_Widget {
  public:
   static CFWL_DateTimePicker* Create();
+
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   FWL_Error SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
   FWL_Error GetEditText(CFX_WideString& wsText);
@@ -40,22 +41,28 @@ class CFWL_DateTimePicker : public CFWL_Widget {
                                uint32_t dwStylesExRemoved);
 
  protected:
-  CFWL_DateTimePicker();
-  virtual ~CFWL_DateTimePicker();
   class CFWL_DateTimePickerDP : public IFWL_DateTimePickerDP {
    public:
     CFWL_DateTimePickerDP();
-    virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
-                                 CFX_WideString& wsCaption);
-    virtual FWL_Error GetToday(IFWL_Widget* pWidget,
-                               int32_t& iYear,
-                               int32_t& iMonth,
-                               int32_t& iDay);
+
+    // IFWL_DataProvider
+    FWL_Error GetCaption(IFWL_Widget* pWidget,
+                         CFX_WideString& wsCaption) override;
+
+    // IFWL_DateTimePickerDP
+    FWL_Error GetToday(IFWL_Widget* pWidget,
+                       int32_t& iYear,
+                       int32_t& iMonth,
+                       int32_t& iDay) override;
     int32_t m_iYear;
     int32_t m_iMonth;
     int32_t m_iDay;
     CFX_WideString m_wsData;
   };
+
+  CFWL_DateTimePicker();
+  ~CFWL_DateTimePicker() override;
+
   CFWL_DateTimePickerDP m_DateTimePickerDP;
 };
 

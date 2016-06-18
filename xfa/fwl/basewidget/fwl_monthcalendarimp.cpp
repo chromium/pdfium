@@ -1197,3 +1197,16 @@ void CFWL_MonthCalendarImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
     }
   }
 }
+
+FWL_DATEINFO::FWL_DATEINFO(int32_t day,
+                           int32_t dayofweek,
+                           uint32_t dwSt,
+                           CFX_RectF rc,
+                           CFX_WideString& wsday)
+    : iDay(day),
+      iDayOfWeek(dayofweek),
+      dwStates(dwSt),
+      rect(rc),
+      wsDay(wsday) {}
+
+FWL_DATEINFO::~FWL_DATEINFO() {}

@@ -27,35 +27,15 @@ class CFWL_FormImpDelegate;
 
 class CFWL_SysBtn {
  public:
-  CFWL_SysBtn() {
-    m_rtBtn.Set(0, 0, 0, 0);
-    m_dwState = 0;
-  }
+  CFWL_SysBtn();
 
-  bool IsDisabled() { return !!(m_dwState & FWL_SYSBUTTONSTATE_Disabled); }
+  bool IsDisabled() const;
+  uint32_t GetPartState() const;
 
-  void SetNormal() { m_dwState &= 0xFFF0; }
-  void SetPressed() {
-    SetNormal();
-    m_dwState |= FWL_SYSBUTTONSTATE_Pressed;
-  }
-  void SetHover() {
-    SetNormal();
-    m_dwState |= FWL_SYSBUTTONSTATE_Hover;
-  }
-  void SetDisabled(FX_BOOL bDisabled) {
-    bDisabled ? m_dwState |= FWL_SYSBUTTONSTATE_Disabled
-              : m_dwState &= ~FWL_SYSBUTTONSTATE_Disabled;
-  }
-  uint32_t GetPartState() {
-    if (IsDisabled())
-      return CFWL_PartState_Disabled;
-    if (m_dwState & FWL_SYSBUTTONSTATE_Pressed)
-      return CFWL_PartState_Pressed;
-    if (m_dwState & FWL_SYSBUTTONSTATE_Hover)
-      return CFWL_PartState_Hovered;
-    return CFWL_PartState_Normal;
-  }
+  void SetNormal();
+  void SetPressed();
+  void SetHover();
+  void SetDisabled(FX_BOOL bDisabled);
 
   CFX_RectF m_rtBtn;
   uint32_t m_dwState;
@@ -67,6 +47,9 @@ enum FORM_RESIZETYPE {
 };
 
 typedef struct RestoreResizeInfo {
+  RestoreResizeInfo();
+  ~RestoreResizeInfo();
+
   CFX_PointF m_ptStart;
   CFX_SizeF m_szStart;
 } RestoreInfo;

@@ -22,17 +22,17 @@
 #define FWL_ITEMSTATE_MCD_Selected (1L << 1)
 #define FWL_ITEMSTATE_MCD_Focused (1L << 2)
 
-BEGIN_FWL_EVENT_DEF(CFWL_Event_McdDateSelected, CFWL_EventType::DataSelected)
-int32_t m_iStartDay;
-int32_t m_iEndDay;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_Event_McdDateSelected,
+              CFWL_EventType::DataSelected,
+              int32_t m_iStartDay;
+              int32_t m_iEndDay;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EventMcdDateChanged, CFWL_EventType::DateChanged)
-int32_t m_iOldYear;
-int32_t m_iOldMonth;
-int32_t m_iStartDay;
-int32_t m_iEndDay;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EventMcdDateChanged,
+              CFWL_EventType::DateChanged,
+              int32_t m_iOldYear;
+              int32_t m_iOldMonth;
+              int32_t m_iStartDay;
+              int32_t m_iEndDay;)
 
 class IFWL_MonthCalendarDP : public IFWL_DataProvider {
  public:

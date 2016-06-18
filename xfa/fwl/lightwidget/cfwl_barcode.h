@@ -80,28 +80,31 @@ class CFWL_Barcode : public CFWL_Edit {
 
  protected:
   CFWL_Barcode();
-  virtual ~CFWL_Barcode();
+  ~CFWL_Barcode() override;
 
   class CFWL_BarcodeDP : public IFWL_BarcodeDP {
    public:
-    CFWL_BarcodeDP() : m_dwAttributeMask(FWL_BCDATTRIBUTE_NONE) {}
+    CFWL_BarcodeDP();
 
+    // IFWL_DataProvider
     FWL_Error GetCaption(IFWL_Widget* pWidget,
                          CFX_WideString& wsCaption) override;
-    BC_CHAR_ENCODING GetCharEncoding() override { return m_eCharEncoding; }
-    int32_t GetModuleHeight() override { return m_nModuleHeight; }
-    int32_t GetModuleWidth() override { return m_nModuleWidth; }
-    int32_t GetDataLength() override { return m_nDataLength; }
-    int32_t GetCalChecksum() override { return m_nCalChecksum; }
-    FX_BOOL GetPrintChecksum() override { return m_bPrintChecksum; }
-    BC_TEXT_LOC GetTextLocation() override { return m_eTextLocation; }
-    int32_t GetWideNarrowRatio() override { return m_nWideNarrowRatio; }
-    FX_CHAR GetStartChar() override { return m_cStartChar; }
-    FX_CHAR GetEndChar() override { return m_cEndChar; }
-    int32_t GetVersion() override { return m_nVersion; }
-    int32_t GetErrorCorrectionLevel() override { return m_nECLevel; }
-    FX_BOOL GetTruncated() override { return m_bTruncated; }
-    uint32_t GetBarcodeAttributeMask() override { return m_dwAttributeMask; }
+
+    // IFWL_BarcodeDP
+    BC_CHAR_ENCODING GetCharEncoding() override;
+    int32_t GetModuleHeight() override;
+    int32_t GetModuleWidth() override;
+    int32_t GetDataLength() override;
+    int32_t GetCalChecksum() override;
+    FX_BOOL GetPrintChecksum() override;
+    BC_TEXT_LOC GetTextLocation() override;
+    int32_t GetWideNarrowRatio() override;
+    FX_CHAR GetStartChar() override;
+    FX_CHAR GetEndChar() override;
+    int32_t GetVersion() override;
+    int32_t GetErrorCorrectionLevel() override;
+    FX_BOOL GetTruncated() override;
+    uint32_t GetBarcodeAttributeMask() override;
 
     BC_CHAR_ENCODING m_eCharEncoding;
     int32_t m_nModuleHeight, m_nModuleWidth;

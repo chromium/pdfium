@@ -8,6 +8,20 @@
 
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 
+CFWL_WidgetProperties::CFWL_WidgetProperties()
+    : m_dwStyles(FWL_WGTSTYLE_Child),
+      m_dwStyleExes(0),
+      m_dwStates(0),
+      m_pParent(nullptr),
+      m_pOwner(nullptr) {
+  m_rtWidget.Set(0, 0, 0, 0);
+}
+
+CFWL_WidgetProperties::~CFWL_WidgetProperties() {}
+
+CFWL_WidgetProperties::CFWL_WidgetProperties(
+    const CFWL_WidgetProperties& other) = default;
+
 CFWL_WidgetImpProperties CFWL_WidgetProperties::MakeWidgetImpProperties(
     IFWL_DataProvider* pDataProvider) const {
   CFWL_WidgetImpProperties result;

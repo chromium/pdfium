@@ -859,3 +859,22 @@ FX_BOOL CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget* pWidget) {
 
   return pItem->iRedrawCounter == 0;
 }
+
+CFWL_WidgetMgrItem::CFWL_WidgetMgrItem() : CFWL_WidgetMgrItem(nullptr) {}
+
+CFWL_WidgetMgrItem::CFWL_WidgetMgrItem(IFWL_Widget* widget)
+    : pParent(nullptr),
+      pOwner(nullptr),
+      pChild(nullptr),
+      pPrevious(nullptr),
+      pNext(nullptr),
+      pWidget(widget),
+      iRedrawCounter(0)
+#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
+      ,
+      bOutsideChanged(FALSE)
+#endif
+{
+}
+
+CFWL_WidgetMgrItem::~CFWL_WidgetMgrItem() {}

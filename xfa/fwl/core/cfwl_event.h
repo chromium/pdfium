@@ -66,22 +66,13 @@ class IFWL_Widget;
 
 class CFWL_Event {
  public:
-  CFWL_Event()
-      : m_pSrcTarget(nullptr), m_pDstTarget(nullptr), m_dwRefCount(1) {}
-  virtual ~CFWL_Event() {}
+  CFWL_Event();
+  virtual ~CFWL_Event();
 
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const {
-    return FWL_Error::Succeeded;
-  }
-  virtual CFWL_EventType GetClassID() const { return CFWL_EventType::None; }
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
+  virtual CFWL_EventType GetClassID() const;
 
-  uint32_t Release() {
-    m_dwRefCount--;
-    uint32_t dwRefCount = m_dwRefCount;
-    if (!m_dwRefCount)
-      delete this;
-    return dwRefCount;
-  }
+  uint32_t Release();
 
   IFWL_Widget* m_pSrcTarget;
   IFWL_Widget* m_pDstTarget;
@@ -90,84 +81,95 @@ class CFWL_Event {
   uint32_t m_dwRefCount;
 };
 
-#define BEGIN_FWL_EVENT_DEF(classname, eventType)                   \
-  class classname : public CFWL_Event {                             \
-   public:                                                          \
-    classname() : CFWL_Event() {}                                   \
-    virtual FWL_Error GetClassName(CFX_WideString& wsClass) const { \
-      wsClass = L## #classname;                                     \
-      return FWL_Error::Succeeded;                                  \
-    }                                                               \
-    virtual CFWL_EventType GetClassID() const { return eventType; }
+inline CFWL_Event::CFWL_Event()
+    : m_pSrcTarget(nullptr), m_pDstTarget(nullptr), m_dwRefCount(1) {}
 
-#define END_FWL_EVENT_DEF \
-  }                       \
-  ;  // NOLINT
+inline CFWL_Event::~CFWL_Event() {}
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtMouse, CFWL_EventType::Mouse)
-FX_FLOAT m_fx;
-FX_FLOAT m_fy;
-uint32_t m_dwFlags;
-FWL_MouseCommand m_dwCmd;
-END_FWL_EVENT_DEF
+inline FWL_Error CFWL_Event::GetClassName(CFX_WideString& wsClass) const {
+  return FWL_Error::Succeeded;
+}
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtMouseWheel, CFWL_EventType::MouseWheel)
-FX_FLOAT m_fx;
-FX_FLOAT m_fy;
-FX_FLOAT m_fDeltaX;
-FX_FLOAT m_fDeltaY;
-uint32_t m_dwFlags;
-END_FWL_EVENT_DEF
+inline CFWL_EventType CFWL_Event::GetClassID() const {
+  return CFWL_EventType::None;
+}
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtKey, CFWL_EventType::Key)
-uint32_t m_dwKeyCode;
-uint32_t m_dwFlags;
-FWL_KeyCommand m_dwCmd;
-END_FWL_EVENT_DEF
+inline uint32_t CFWL_Event::Release() {
+  m_dwRefCount--;
+  uint32_t dwRefCount = m_dwRefCount;
+  if (!m_dwRefCount)
+    delete this;
+  return dwRefCount;
+}
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtSetFocus, CFWL_EventType::SetFocus)
-IFWL_Widget* m_pSetFocus;
-END_FWL_EVENT_DEF
+#define FWL_EVENT_DEF(classname, eventType, ...)                            \
+  class classname : public CFWL_Event {                                     \
+   public:                                                                  \
+    classname();                                                            \
+    ~classname() override;                                                  \
+    FWL_Error GetClassName(CFX_WideString& wsClass) const override;         \
+    CFWL_EventType GetClassID() const override;                             \
+    __VA_ARGS__                                                             \
+  };                                                                        \
+  inline classname::classname() {}                                          \
+  inline classname::~classname() {}                                         \
+  inline FWL_Error classname::GetClassName(CFX_WideString& wsClass) const { \
+    wsClass = L## #classname;                                               \
+    return FWL_Error::Succeeded;                                            \
+  }                                                                         \
+  inline CFWL_EventType classname::GetClassID() const { return eventType; }
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtKillFocus, CFWL_EventType::KillFocus)
-IFWL_Widget* m_pKillFocus;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtMouse, CFWL_EventType::Mouse, FX_FLOAT m_fx;
+              FX_FLOAT m_fy;
+              uint32_t m_dwFlags;
+              FWL_MouseCommand m_dwCmd;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtDraw, CFWL_EventType::Draw)
-CFX_Graphics* m_pGraphics;
-IFWL_Widget* m_pWidget;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtMouseWheel, CFWL_EventType::MouseWheel, FX_FLOAT m_fx;
+              FX_FLOAT m_fy;
+              FX_FLOAT m_fDeltaX;
+              FX_FLOAT m_fDeltaY;
+              uint32_t m_dwFlags;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtClick, CFWL_EventType::Click)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtKey, CFWL_EventType::Key, uint32_t m_dwKeyCode;
+              uint32_t m_dwFlags;
+              FWL_KeyCommand m_dwCmd;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll)
-uint32_t m_iScrollCode;
-FX_FLOAT m_fPos;
-FX_BOOL* m_pRet;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtSetFocus,
+              CFWL_EventType::SetFocus,
+              IFWL_Widget* m_pSetFocus;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtClose, CFWL_EventType::Close)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtKillFocus,
+              CFWL_EventType::KillFocus,
+              IFWL_Widget* m_pKillFocus;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtContextMenu, CFWL_EventType::ContextMenu)
-FX_FLOAT m_fPosX;
-FX_FLOAT m_fPosY;
-IFWL_Widget* m_pOwner;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtDraw, CFWL_EventType::Draw, CFX_Graphics* m_pGraphics;
+              IFWL_Widget * m_pWidget;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtMenuCommand, CFWL_EventType::MenuCommand)
-int32_t m_iCommand;
-void* m_pData;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtClick, CFWL_EventType::Click)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtSizeChanged, CFWL_EventType::SizeChanged)
-IFWL_Widget* m_pWidget;
-CFX_RectF m_rtOld;
-CFX_RectF m_rtNew;
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll, uint32_t m_iScrollCode;
+              FX_FLOAT m_fPos;
+              FX_BOOL * m_pRet;)
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtIdle, CFWL_EventType::Idle)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtClose, CFWL_EventType::Close)
+
+FWL_EVENT_DEF(CFWL_EvtContextMenu,
+              CFWL_EventType::ContextMenu,
+              FX_FLOAT m_fPosX;
+              FX_FLOAT m_fPosY;
+              IFWL_Widget * m_pOwner;)
+
+FWL_EVENT_DEF(CFWL_EvtMenuCommand,
+              CFWL_EventType::MenuCommand,
+              int32_t m_iCommand;
+              void* m_pData;)
+
+FWL_EVENT_DEF(CFWL_EvtSizeChanged,
+              CFWL_EventType::SizeChanged,
+              IFWL_Widget* m_pWidget;
+              CFX_RectF m_rtOld;
+              CFX_RectF m_rtNew;)
+
+FWL_EVENT_DEF(CFWL_EvtIdle, CFWL_EventType::Idle)
 
 #endif  // XFA_FWL_CORE_CFWL_EVENT_H_

@@ -290,6 +290,12 @@ CFWL_ComboBox::CFWL_ComboBoxDP::CFWL_ComboBoxDP() {
 
 CFWL_ComboBox::CFWL_ComboBoxDP::~CFWL_ComboBoxDP() {}
 
+FWL_Error CFWL_ComboBox::CFWL_ComboBoxDP::GetCaption(
+    IFWL_Widget* pWidget,
+    CFX_WideString& wsCaption) {
+  return FWL_Error::Succeeded;
+}
+
 int32_t CFWL_ComboBox::CFWL_ComboBoxDP::CountItems(IFWL_Widget* pWidget) {
   return m_ItemArray.size();
 }
@@ -427,3 +433,7 @@ FWL_Error CFWL_ComboBox::CFWL_ComboBoxDP::SetItemCheckState(
 FX_FLOAT CFWL_ComboBox::CFWL_ComboBoxDP::GetListHeight(IFWL_Widget* pWidget) {
   return m_fMaxListHeight;
 }
+
+CFWL_ComboBoxItem::CFWL_ComboBoxItem() : m_pDIB(nullptr), m_pData(nullptr) {}
+
+CFWL_ComboBoxItem::~CFWL_ComboBoxItem() {}

@@ -26,9 +26,11 @@ class IFWL_ToolTipTarget {
   virtual FX_BOOL UseDefaultTheme() = 0;
   virtual FWL_Error GetCaption(CFX_WideString& wsCaption) = 0;
   virtual FWL_Error GetToolTipSize(CFX_SizeF& sz) = 0;
-  virtual FWL_Error GetToolTipPos(CFX_PointF& pt) {
-    return FWL_Error::Indefinite;
-  }
+  virtual FWL_Error GetToolTipPos(CFX_PointF& pt);
 };
+
+inline FWL_Error GetToolTipPos(CFX_PointF& pt) {
+  return FWL_Error::Indefinite;
+}
 
 #endif  // XFA_FWL_CORE_IFWL_TOOLTIPTARGET_H_

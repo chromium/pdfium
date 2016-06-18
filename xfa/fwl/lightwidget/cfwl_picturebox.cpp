@@ -97,6 +97,16 @@ CFWL_PictureBox::CFWL_PictureBox() {}
 
 CFWL_PictureBox::~CFWL_PictureBox() {}
 
+CFWL_PictureBox::CFWL_PictureBoxDP::CFWL_PictureBoxDP()
+    : m_pBitmap(nullptr),
+      m_iOpacity(0),
+      m_iFlipMode(0),
+      m_fRotation(0.0f),
+      m_fScaleX(1.0f),
+      m_fScaleY(1.0f),
+      m_fOffSetX(0.0f),
+      m_fOffSetY(0.0f) {}
+
 FWL_Error CFWL_PictureBox::CFWL_PictureBoxDP::GetCaption(
     IFWL_Widget* pWidget,
     CFX_WideString& wsCaption) {

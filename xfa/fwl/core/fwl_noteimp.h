@@ -121,9 +121,9 @@ class CFWL_NoteDriver {
 
 class CFWL_EventTarget {
  public:
-  CFWL_EventTarget(CFWL_NoteDriver* pNoteDriver, IFWL_Widget* pListener)
-      : m_pListener(pListener), m_pNoteDriver(pNoteDriver), m_bInvalid(FALSE) {}
+  CFWL_EventTarget(CFWL_NoteDriver* pNoteDriver, IFWL_Widget* pListener);
   ~CFWL_EventTarget();
+
   int32_t SetEventSource(IFWL_Widget* pSource,
                          uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   FX_BOOL ProcessEvent(CFWL_Event* pEvent);

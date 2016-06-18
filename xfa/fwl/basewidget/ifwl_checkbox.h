@@ -44,9 +44,7 @@
 #define FWL_STATE_CKB_Neutral (2 << (FWL_WGTSTATE_MAX + 2))
 #define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
 
-BEGIN_FWL_EVENT_DEF(CFWL_EvtCkbCheckStateChanged,
-                    CFWL_EventType::CheckStateChanged)
-END_FWL_EVENT_DEF
+FWL_EVENT_DEF(CFWL_EvtCkbCheckStateChanged, CFWL_EventType::CheckStateChanged)
 
 class IFWL_CheckBoxDP : public IFWL_DataProvider {
  public:
