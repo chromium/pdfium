@@ -69,6 +69,11 @@ void FXJSE_Runtime_Release(v8::Isolate* pIsolate) {
                                              FXJSE_Runtime_DisposeCallback);
 }
 
+CFXJSE_RuntimeData::CFXJSE_RuntimeData(v8::Isolate* pIsolate)
+    : m_pIsolate(pIsolate) {}
+
+CFXJSE_RuntimeData::~CFXJSE_RuntimeData() {}
+
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
   CFXJSE_RuntimeData* pRuntimeData = new CFXJSE_RuntimeData(pIsolate);
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
@@ -91,6 +96,10 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
 }
 
 CFXJSE_IsolateTracker* CFXJSE_IsolateTracker::g_pInstance = nullptr;
+
+CFXJSE_IsolateTracker::CFXJSE_IsolateTracker() {}
+
+CFXJSE_IsolateTracker::~CFXJSE_IsolateTracker() {}
 
 void CFXJSE_IsolateTracker::Append(v8::Isolate* pIsolate) {
   m_OwnedIsolates.push_back(pIsolate);

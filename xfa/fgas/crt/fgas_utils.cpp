@@ -12,14 +12,8 @@
 
 class FX_BASEARRAYDATA : public CFX_Target {
  public:
-  FX_BASEARRAYDATA(int32_t growsize, int32_t blocksize)
-      : iGrowSize(growsize),
-        iBlockSize(blocksize),
-        iTotalCount(0),
-        iBlockCount(0),
-        pBuffer(nullptr) {}
-
-  ~FX_BASEARRAYDATA() { FX_Free(pBuffer); }
+  FX_BASEARRAYDATA(int32_t growsize, int32_t blocksize);
+  ~FX_BASEARRAYDATA() override;
 
   int32_t iGrowSize;
   int32_t iBlockSize;
@@ -27,6 +21,18 @@ class FX_BASEARRAYDATA : public CFX_Target {
   int32_t iBlockCount;
   uint8_t* pBuffer;
 };
+
+FX_BASEARRAYDATA::FX_BASEARRAYDATA(int32_t growsize, int32_t blocksize)
+    : iGrowSize(growsize),
+      iBlockSize(blocksize),
+      iTotalCount(0),
+      iBlockCount(0),
+      pBuffer(nullptr) {}
+
+FX_BASEARRAYDATA::~FX_BASEARRAYDATA() {
+  FX_Free(pBuffer);
+}
+
 CFX_BaseArray::CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize) {
   ASSERT(iGrowSize > 0 && iBlockSize > 0);
   m_pData = new FX_BASEARRAYDATA(iGrowSize, iBlockSize);

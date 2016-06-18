@@ -42,6 +42,10 @@ CFGAS_StdFontMgrImp::~CFGAS_StdFontMgrImp() {
     m_Fonts[i]->Release();
 }
 
+void CFGAS_StdFontMgrImp::Release() {
+  delete this;
+}
+
 CFGAS_GEFont* CFGAS_StdFontMgrImp::GetDefFontByCodePage(
     uint16_t wCodePage,
     uint32_t dwFontStyles,

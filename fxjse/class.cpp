@@ -272,6 +272,11 @@ CFXJSE_Class* CFXJSE_Class::Create(
   return pClass;
 }
 
+CFXJSE_Class::CFXJSE_Class(CFXJSE_Context* lpContext)
+    : m_lpClassDefinition(nullptr), m_pContext(lpContext) {}
+
+CFXJSE_Class::~CFXJSE_Class() {}
+
 CFXJSE_Class* CFXJSE_Class::GetClassFromContext(CFXJSE_Context* pContext,
                                                 const CFX_ByteStringC& szName) {
   for (const auto& pClass : pContext->m_rgClasses) {

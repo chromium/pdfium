@@ -74,6 +74,12 @@ void CFDE_CSSCounterStyle::DoUpdateIndex(IFDE_CSSValueList* pList) {
     }
   }
 }
+
+CFDE_CSSCounterStyle::CFDE_CSSCounterStyle()
+    : m_pCounterInc(nullptr), m_pCounterReset(nullptr), m_bIndexDirty(FALSE) {}
+
+CFDE_CSSCounterStyle::~CFDE_CSSCounterStyle() {}
+
 void CFDE_CSSCounterStyle::UpdateIndex() {
   if (!m_bIndexDirty) {
     return;
@@ -98,6 +104,7 @@ FDE_CSSRuleData::FDE_CSSRuleData(CFDE_CSSSelector* pSel,
     }
   }
 }
+
 void CFDE_CSSRuleCollection::Clear() {
   m_IDRules.RemoveAll();
   m_TagRules.RemoveAll();
@@ -106,6 +113,17 @@ void CFDE_CSSRuleCollection::Clear() {
   m_pStaticStore = nullptr;
   m_iSelectors = 0;
 }
+
+CFDE_CSSRuleCollection::CFDE_CSSRuleCollection()
+    : m_pStaticStore(nullptr),
+      m_pUniversalRules(nullptr),
+      m_pPersudoRules(nullptr),
+      m_iSelectors(0) {}
+
+CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
+  Clear();
+}
+
 void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
                                           uint32_t dwMediaList,
                                           IFGAS_FontMgr* pFontMgr) {
@@ -120,6 +138,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
     }
   }
 }
+
 void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                                           IFDE_CSSRule* pRule,
                                           uint32_t dwMediaList,
@@ -179,6 +198,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
       break;
   }
 }
+
 void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr& map,
                                        uint32_t dwKey,
                                        CFDE_CSSSelector* pSel,
@@ -1782,4 +1802,234 @@ FDE_CSSFONTVARIANT CFDE_CSSStyleSelector::ToFontVariant(
     FDE_CSSPROPERTYVALUE eValue) {
   return eValue == FDE_CSSPROPERTYVALUE_SmallCaps ? FDE_CSSFONTVARIANT_SmallCaps
                                                   : FDE_CSSFONTVARIANT_Normal;
+}
+
+CFDE_CSSComputedStyle::CFDE_CSSComputedStyle(IFX_MemoryAllocator* pAlloc)
+    : m_dwRefCount(1), m_pAllocator(pAlloc) {}
+
+CFDE_CSSComputedStyle::~CFDE_CSSComputedStyle() {}
+
+uint32_t CFDE_CSSComputedStyle::Retain() {
+  return ++m_dwRefCount;
+}
+
+uint32_t CFDE_CSSComputedStyle::Release() {
+  uint32_t dwRefCount = --m_dwRefCount;
+  if (dwRefCount == 0) {
+    delete m_NonInheritedData.m_pCounterStyle;
+    FXTARGET_DeleteWith(CFDE_CSSComputedStyle, m_pAllocator, this);
+  }
+  return dwRefCount;
+}
+
+void CFDE_CSSComputedStyle::Reset() {
+  m_InheritedData.Reset();
+  m_NonInheritedData.Reset();
+}
+
+IFDE_CSSFontStyle* CFDE_CSSComputedStyle::GetFontStyles() {
+  return static_cast<IFDE_CSSFontStyle*>(this);
+}
+
+IFDE_CSSBoundaryStyle* CFDE_CSSComputedStyle::GetBoundaryStyles() {
+  return static_cast<IFDE_CSSBoundaryStyle*>(this);
+}
+
+IFDE_CSSPositionStyle* CFDE_CSSComputedStyle::GetPositionStyles() {
+  return static_cast<IFDE_CSSPositionStyle*>(this);
+}
+
+IFDE_CSSParagraphStyle* CFDE_CSSComputedStyle::GetParagraphStyles() {
+  return static_cast<IFDE_CSSParagraphStyle*>(this);
+}
+
+FX_BOOL CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideStringC& wsName,
+                                              CFX_WideString& wsValue) const {
+  for (int32_t i = m_CustomProperties.GetSize() - 2; i > -1; i -= 2) {
+    if (wsName == m_CustomProperties[i]) {
+      wsValue = m_CustomProperties[i + 1];
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+int32_t CFDE_CSSComputedStyle::CountFontFamilies() const {
+  return m_InheritedData.m_pFontFamily
+             ? m_InheritedData.m_pFontFamily->CountValues()
+             : 0;
+}
+
+const FX_WCHAR* CFDE_CSSComputedStyle::GetFontFamily(int32_t index) const {
+  return (static_cast<IFDE_CSSPrimitiveValue*>(
+              m_InheritedData.m_pFontFamily->GetValue(index)))
+      ->GetString(index);
+}
+
+uint16_t CFDE_CSSComputedStyle::GetFontWeight() const {
+  return m_InheritedData.m_wFontWeight;
+}
+
+FDE_CSSFONTVARIANT CFDE_CSSComputedStyle::GetFontVariant() const {
+  return static_cast<FDE_CSSFONTVARIANT>(m_InheritedData.m_eFontVariant);
+}
+
+FDE_CSSFONTSTYLE CFDE_CSSComputedStyle::GetFontStyle() const {
+  return static_cast<FDE_CSSFONTSTYLE>(m_InheritedData.m_eFontStyle);
+}
+
+FX_FLOAT CFDE_CSSComputedStyle::GetFontSize() const {
+  return m_InheritedData.m_fFontSize;
+}
+
+FX_ARGB CFDE_CSSComputedStyle::GetColor() const {
+  return m_InheritedData.m_dwFontColor;
+}
+
+void CFDE_CSSComputedStyle::SetFontWeight(uint16_t wFontWeight) {
+  m_InheritedData.m_wFontWeight = wFontWeight;
+}
+
+void CFDE_CSSComputedStyle::SetFontVariant(FDE_CSSFONTVARIANT eFontVariant) {
+  m_InheritedData.m_eFontVariant = eFontVariant;
+}
+
+void CFDE_CSSComputedStyle::SetFontStyle(FDE_CSSFONTSTYLE eFontStyle) {
+  m_InheritedData.m_eFontStyle = eFontStyle;
+}
+
+void CFDE_CSSComputedStyle::SetFontSize(FX_FLOAT fFontSize) {
+  m_InheritedData.m_fFontSize = fFontSize;
+}
+
+void CFDE_CSSComputedStyle::SetColor(FX_ARGB dwFontColor) {
+  m_InheritedData.m_dwFontColor = dwFontColor;
+}
+
+const FDE_CSSRECT* CFDE_CSSComputedStyle::GetBorderWidth() const {
+  return m_NonInheritedData.m_bHasBorder ? &(m_NonInheritedData.m_BorderWidth)
+                                         : nullptr;
+}
+
+const FDE_CSSRECT* CFDE_CSSComputedStyle::GetMarginWidth() const {
+  return m_NonInheritedData.m_bHasMargin ? &(m_NonInheritedData.m_MarginWidth)
+                                         : nullptr;
+}
+
+const FDE_CSSRECT* CFDE_CSSComputedStyle::GetPaddingWidth() const {
+  return m_NonInheritedData.m_bHasPadding ? &(m_NonInheritedData.m_PaddingWidth)
+                                          : nullptr;
+}
+
+void CFDE_CSSComputedStyle::SetMarginWidth(const FDE_CSSRECT& rect) {
+  m_NonInheritedData.m_MarginWidth = rect;
+  m_NonInheritedData.m_bHasMargin = TRUE;
+}
+
+void CFDE_CSSComputedStyle::SetPaddingWidth(const FDE_CSSRECT& rect) {
+  m_NonInheritedData.m_PaddingWidth = rect;
+  m_NonInheritedData.m_bHasPadding = TRUE;
+}
+
+FDE_CSSDISPLAY CFDE_CSSComputedStyle::GetDisplay() const {
+  return static_cast<FDE_CSSDISPLAY>(m_NonInheritedData.m_eDisplay);
+}
+
+FX_FLOAT CFDE_CSSComputedStyle::GetLineHeight() const {
+  return m_InheritedData.m_fLineHeight;
+}
+
+const FDE_CSSLENGTH& CFDE_CSSComputedStyle::GetTextIndent() const {
+  return m_InheritedData.m_TextIndent;
+}
+
+FDE_CSSTEXTALIGN CFDE_CSSComputedStyle::GetTextAlign() const {
+  return static_cast<FDE_CSSTEXTALIGN>(m_InheritedData.m_eTextAligh);
+}
+
+FDE_CSSVERTICALALIGN CFDE_CSSComputedStyle::GetVerticalAlign() const {
+  return static_cast<FDE_CSSVERTICALALIGN>(m_NonInheritedData.m_eVerticalAlign);
+}
+
+FX_FLOAT CFDE_CSSComputedStyle::GetNumberVerticalAlign() const {
+  return m_NonInheritedData.m_fVerticalAlign;
+}
+
+uint32_t CFDE_CSSComputedStyle::GetTextDecoration() const {
+  return m_NonInheritedData.m_dwTextDecoration;
+}
+
+const FDE_CSSLENGTH& CFDE_CSSComputedStyle::GetLetterSpacing() const {
+  return m_InheritedData.m_LetterSpacing;
+}
+
+void CFDE_CSSComputedStyle::SetLineHeight(FX_FLOAT fLineHeight) {
+  m_InheritedData.m_fLineHeight = fLineHeight;
+}
+
+void CFDE_CSSComputedStyle::SetTextIndent(const FDE_CSSLENGTH& textIndent) {
+  m_InheritedData.m_TextIndent = textIndent;
+}
+
+void CFDE_CSSComputedStyle::SetTextAlign(FDE_CSSTEXTALIGN eTextAlign) {
+  m_InheritedData.m_eTextAligh = eTextAlign;
+}
+
+void CFDE_CSSComputedStyle::SetNumberVerticalAlign(FX_FLOAT fAlign) {
+  m_NonInheritedData.m_eVerticalAlign = FDE_CSSVERTICALALIGN_Number,
+  m_NonInheritedData.m_fVerticalAlign = fAlign;
+}
+
+void CFDE_CSSComputedStyle::SetTextDecoration(uint32_t dwTextDecoration) {
+  m_NonInheritedData.m_dwTextDecoration = dwTextDecoration;
+}
+
+void CFDE_CSSComputedStyle::SetLetterSpacing(
+    const FDE_CSSLENGTH& letterSpacing) {
+  m_InheritedData.m_LetterSpacing = letterSpacing;
+}
+
+void CFDE_CSSComputedStyle::AddCustomStyle(const CFX_WideString& wsName,
+                                           const CFX_WideString& wsValue) {
+  m_CustomProperties.Add(wsName);
+  m_CustomProperties.Add(wsValue);
+}
+
+CFDE_CSSInheritedData::CFDE_CSSInheritedData() {
+  Reset();
+}
+
+void CFDE_CSSInheritedData::Reset() {
+  FXSYS_memset(this, 0, sizeof(CFDE_CSSInheritedData));
+  m_LetterSpacing.Set(FDE_CSSLENGTHUNIT_Normal);
+  m_WordSpacing.Set(FDE_CSSLENGTHUNIT_Normal);
+  m_TextIndent.Set(FDE_CSSLENGTHUNIT_Point, 0);
+  m_fFontSize = 12.0f;
+  m_fLineHeight = 14.0f;
+  m_wFontWeight = 400;
+  m_dwFontColor = 0xFF000000;
+  m_iWidows = 2;
+  m_bTextEmphasisColorCurrent = TRUE;
+  m_iOrphans = 2;
+}
+
+CFDE_CSSNonInheritedData::CFDE_CSSNonInheritedData() {
+  Reset();
+}
+
+void CFDE_CSSNonInheritedData::Reset() {
+  FXSYS_memset(this, 0, sizeof(CFDE_CSSNonInheritedData));
+  m_PaddingWidth.Set(FDE_CSSLENGTHUNIT_Point, 0);
+  m_MarginWidth = m_PaddingWidth;
+  m_BorderWidth = m_PaddingWidth;
+  m_MinBoxSize.Set(FDE_CSSLENGTHUNIT_Point, 0);
+  m_MaxBoxSize.Set(FDE_CSSLENGTHUNIT_None);
+  m_eDisplay = FDE_CSSDISPLAY_Inline;
+  m_fVerticalAlign = 0.0f;
+  m_ColumnCount.Set(FDE_CSSLENGTHUNIT_Auto);
+  m_ColumnGap.Set(FDE_CSSLENGTHUNIT_Normal);
+  m_bColumnRuleColorSame = TRUE;
+  m_ColumnWidth.Set(FDE_CSSLENGTHUNIT_Auto);
+  m_ColumnRuleWidth.Set(FDE_CSSLENGTHUNIT_Auto);
+  m_eTextCombine = FDE_CSSTEXTCOMBINE_None;
 }

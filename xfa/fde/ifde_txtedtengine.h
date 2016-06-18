@@ -82,26 +82,7 @@ enum FDE_TXTEDIT_LINEEND {
 };
 
 struct FDE_TXTEDTPARAMS {
-  FDE_TXTEDTPARAMS()
-      : fPlateWidth(0),
-        fPlateHeight(0),
-        nLineCount(0),
-        dwLayoutStyles(0),
-        dwAlignment(0),
-        dwMode(0),
-        pFont(nullptr),
-        fFontSize(10.0f),
-        dwFontColor(0xff000000),
-        fLineSpace(10.0f),
-        fTabWidth(36),
-        bTabEquidistant(FALSE),
-        wDefChar(0xFEFF),
-        wLineBreakChar('\n'),
-        nCharRotation(0),
-        nLineEnd(0),
-        nHorzScale(100),
-        fCharSpace(0),
-        pEventSink(nullptr) {}
+  FDE_TXTEDTPARAMS();
 
   FX_FLOAT fPlateWidth;
   FX_FLOAT fPlateHeight;
@@ -131,6 +112,9 @@ enum FDE_TXTEDT_TEXTCHANGE_TYPE {
 };
 
 struct FDE_TXTEDT_TEXTCHANGE_INFO {
+  FDE_TXTEDT_TEXTCHANGE_INFO();
+  ~FDE_TXTEDT_TEXTCHANGE_INFO();
+
   int32_t nChangeType;
   CFX_WideString wsInsert;
   CFX_WideString wsDelete;

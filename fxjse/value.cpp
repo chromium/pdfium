@@ -64,6 +64,10 @@ void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Message) {
   pIsolate->ThrowException(hError);
 }
 
+CFXJSE_Value::CFXJSE_Value(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
+
+CFXJSE_Value::~CFXJSE_Value() {}
+
 CFXJSE_HostObject* CFXJSE_Value::ToHostObject(CFXJSE_Class* lpClass) const {
   ASSERT(!m_hValue.IsEmpty());
 

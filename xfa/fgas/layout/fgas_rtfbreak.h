@@ -64,20 +64,7 @@ class CFGAS_GEFont;
 #define FX_RTFLINEALIGNMENT_HigherMask 0x0C
 
 struct FX_RTFTEXTOBJ {
-  FX_RTFTEXTOBJ() {
-    pStr = NULL;
-    pWidths = NULL;
-    iLength = 0;
-    pFont = NULL;
-    fFontSize = 12.0f;
-    dwLayoutStyles = 0;
-    iCharRotation = 0;
-    iBidiLevel = 0;
-    pRect = NULL;
-    wLineBreakChar = L'\n';
-    iHorizontalScale = 100;
-    iVerticalScale = 100;
-  }
+  FX_RTFTEXTOBJ();
 
   const FX_WCHAR* pStr;
   int32_t* pWidths;
@@ -95,23 +82,9 @@ struct FX_RTFTEXTOBJ {
 
 class CFX_RTFPiece : public CFX_Target {
  public:
-  CFX_RTFPiece()
-      : m_dwStatus(FX_RTFBREAK_PieceBreak),
-        m_iStartPos(0),
-        m_iWidth(-1),
-        m_iStartChar(0),
-        m_iChars(0),
-        m_iBidiLevel(0),
-        m_iBidiPos(0),
-        m_iFontSize(0),
-        m_iFontHeight(0),
-        m_iHorizontalScale(100),
-        m_iVerticalScale(100),
-        m_dwLayoutStyles(0),
-        m_dwIdentity(0),
-        m_pChars(NULL),
-        m_pUserData(NULL) {}
-  ~CFX_RTFPiece() { Reset(); }
+  CFX_RTFPiece();
+  ~CFX_RTFPiece() override;
+
   void AppendChar(const CFX_RTFChar& tc) {
     ASSERT(m_pChars != NULL);
     m_pChars->Add(tc);
@@ -171,6 +144,7 @@ class CFX_RTFPiece : public CFX_Target {
     m_iHorizontalScale = 100;
     m_iVerticalScale = 100;
   }
+
   uint32_t m_dwStatus;
   int32_t m_iStartPos;
   int32_t m_iWidth;
@@ -187,17 +161,14 @@ class CFX_RTFPiece : public CFX_Target {
   CFX_RTFCharArray* m_pChars;
   IFX_Retainable* m_pUserData;
 };
+
 typedef CFX_BaseArrayTemplate<CFX_RTFPiece> CFX_RTFPieceArray;
 
 class CFX_RTFLine {
  public:
-  CFX_RTFLine()
-      : m_LinePieces(16),
-        m_iStart(0),
-        m_iWidth(0),
-        m_iArabicChars(0),
-        m_iMBCSChars(0) {}
-  ~CFX_RTFLine() { RemoveAll(); }
+  CFX_RTFLine();
+  ~CFX_RTFLine();
+
   int32_t CountChars() const { return m_LineChars.GetSize(); }
   CFX_RTFChar& GetChar(int32_t index) {
     ASSERT(index > -1 && index < m_LineChars.GetSize());
@@ -233,6 +204,7 @@ class CFX_RTFLine {
     m_iArabicChars = 0;
     m_iMBCSChars = 0;
   }
+
   CFX_RTFCharArray m_LineChars;
   CFX_RTFPieceArray m_LinePieces;
   int32_t m_iStart;
@@ -290,6 +262,30 @@ class CFX_RTFBreak {
   uint32_t AppendChar_Others(CFX_RTFChar* pCurChar, int32_t iRotation);
 
  protected:
+  int32_t GetLineRotation(uint32_t dwStyles) const;
+  void SetBreakStatus();
+  CFX_RTFChar* GetLastChar(int32_t index) const;
+  CFX_RTFLine* GetRTFLine(FX_BOOL bReady) const;
+  CFX_RTFPieceArray* GetRTFPieces(FX_BOOL bReady) const;
+  FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE chartype) const;
+  int32_t GetLastPositionedTab() const;
+  FX_BOOL GetPositionedTab(int32_t& iTabPos) const;
+
+  int32_t GetBreakPos(CFX_RTFCharArray& tca,
+                      int32_t& iEndPos,
+                      FX_BOOL bAllChars = FALSE,
+                      FX_BOOL bOnlyBrk = FALSE);
+  void SplitTextLine(CFX_RTFLine* pCurLine,
+                     CFX_RTFLine* pNextLine,
+                     FX_BOOL bAllChars = FALSE);
+  FX_BOOL EndBreak_SplitLine(CFX_RTFLine* pNextLine,
+                             FX_BOOL bAllChars,
+                             uint32_t dwStatus);
+  void EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus);
+  void EndBreak_Alignment(CFX_TPOArray& tpos,
+                          FX_BOOL bAllChars,
+                          uint32_t dwStatus);
+
   uint32_t m_dwPolicies;
   int32_t m_iBoundaryStart;
   int32_t m_iBoundaryEnd;
@@ -325,28 +321,6 @@ class CFX_RTFBreak {
   CFX_RTFLine* m_pCurLine;
   int32_t m_iReady;
   int32_t m_iTolerance;
-  int32_t GetLineRotation(uint32_t dwStyles) const;
-  void SetBreakStatus();
-  CFX_RTFChar* GetLastChar(int32_t index) const;
-  CFX_RTFLine* GetRTFLine(FX_BOOL bReady) const;
-  CFX_RTFPieceArray* GetRTFPieces(FX_BOOL bReady) const;
-  FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE chartype) const;
-  int32_t GetLastPositionedTab() const;
-  FX_BOOL GetPositionedTab(int32_t& iTabPos) const;
-  int32_t GetBreakPos(CFX_RTFCharArray& tca,
-                      int32_t& iEndPos,
-                      FX_BOOL bAllChars = FALSE,
-                      FX_BOOL bOnlyBrk = FALSE);
-  void SplitTextLine(CFX_RTFLine* pCurLine,
-                     CFX_RTFLine* pNextLine,
-                     FX_BOOL bAllChars = FALSE);
-  FX_BOOL EndBreak_SplitLine(CFX_RTFLine* pNextLine,
-                             FX_BOOL bAllChars,
-                             uint32_t dwStatus);
-  void EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus);
-  void EndBreak_Alignment(CFX_TPOArray& tpos,
-                          FX_BOOL bAllChars,
-                          uint32_t dwStatus);
 };
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_

@@ -15,7 +15,7 @@
 class FDE_CSSCacheItem : public CFX_Target {
  public:
   explicit FDE_CSSCacheItem(IFDE_CSSStyleSheet* p);
-  ~FDE_CSSCacheItem();
+  ~FDE_CSSCacheItem() override;
 
   IFDE_CSSStyleSheet* pStylesheet;
   uint32_t dwActivity;
@@ -25,6 +25,7 @@ class FDE_CSSTagCache : public CFX_Target {
  public:
   FDE_CSSTagCache(FDE_CSSTagCache* parent, CXFA_CSSTagProvider* tag);
   FDE_CSSTagCache(const FDE_CSSTagCache& it);
+  ~FDE_CSSTagCache() override;
 
   FDE_CSSTagCache* GetParent() const { return pParent; }
   CXFA_CSSTagProvider* GetTag() const { return pTag; }
@@ -52,6 +53,9 @@ typedef CFX_ObjectStackTemplate<FDE_CSSTagCache> CFDE_CSSTagStack;
 
 class CFDE_CSSAccelerator : public CFX_Target {
  public:
+  CFDE_CSSAccelerator();
+  ~CFDE_CSSAccelerator() override;
+
   void OnEnterTag(CXFA_CSSTagProvider* pTag);
   void OnLeaveTag(CXFA_CSSTagProvider* pTag);
 

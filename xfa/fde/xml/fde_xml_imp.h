@@ -40,10 +40,10 @@ class CFDE_XMLNode : public CFX_Target {
   };
 
   CFDE_XMLNode();
-  virtual ~CFDE_XMLNode();
+  ~CFDE_XMLNode() override;
 
-  virtual void Release() { delete this; }
-  virtual FDE_XMLNODETYPE GetType() const { return FDE_XMLNODE_Unknown; }
+  virtual void Release();
+  virtual FDE_XMLNODETYPE GetType() const;
   virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
 
   int32_t CountChildNodes() const;
@@ -73,12 +73,12 @@ class CFDE_XMLNode : public CFX_Target {
 
 class CFDE_XMLInstruction : public CFDE_XMLNode {
  public:
-  CFDE_XMLInstruction(const CFX_WideString& wsTarget);
-  ~CFDE_XMLInstruction() override {}
+  explicit CFDE_XMLInstruction(const CFX_WideString& wsTarget);
+  ~CFDE_XMLInstruction() override;
 
   // CFDE_XMLNode
-  void Release() override { delete this; }
-  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_Instruction; }
+  void Release() override;
+  FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
 
   void GetTargetName(CFX_WideString& wsTarget) const { wsTarget = m_wsTarget; }
@@ -109,12 +109,12 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
 
 class CFDE_XMLElement : public CFDE_XMLNode {
  public:
-  CFDE_XMLElement(const CFX_WideString& wsTag);
+  explicit CFDE_XMLElement(const CFX_WideString& wsTag);
   ~CFDE_XMLElement() override;
 
   // CFDE_XMLNode
-  void Release() override { delete this; }
-  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_Element; }
+  void Release() override;
+  FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
 
   void GetTagName(CFX_WideString& wsTag) const;
@@ -151,12 +151,12 @@ class CFDE_XMLElement : public CFDE_XMLNode {
 
 class CFDE_XMLText : public CFDE_XMLNode {
  public:
-  CFDE_XMLText(const CFX_WideString& wsText);
-  ~CFDE_XMLText() override {}
+  explicit CFDE_XMLText(const CFX_WideString& wsText);
+  ~CFDE_XMLText() override;
 
   // CFDE_XMLNode
-  void Release() override { delete this; }
-  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_Text; }
+  void Release() override;
+  FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
 
   void GetText(CFX_WideString& wsText) const { wsText = m_wsText; }
@@ -167,17 +167,17 @@ class CFDE_XMLText : public CFDE_XMLNode {
 
 class CFDE_XMLDeclaration : public CFDE_XMLNode {
  public:
-  CFDE_XMLDeclaration() : CFDE_XMLNode() {}
+  CFDE_XMLDeclaration() {}
   ~CFDE_XMLDeclaration() override {}
 };
 
 class CFDE_XMLCharData : public CFDE_XMLDeclaration {
  public:
-  CFDE_XMLCharData(const CFX_WideString& wsCData);
-  ~CFDE_XMLCharData() override {}
+  explicit CFDE_XMLCharData(const CFX_WideString& wsCData);
+  ~CFDE_XMLCharData() override;
 
-  void Release() override { delete this; }
-  FDE_XMLNODETYPE GetType() const override { return FDE_XMLNODE_CharData; }
+  void Release() override;
+  FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
 
   void GetCharData(CFX_WideString& wsCharData) const {
@@ -222,8 +222,8 @@ class CFDE_XMLParser {
 
 class CFDE_BlockBuffer : public CFX_Target {
  public:
-  CFDE_BlockBuffer(int32_t iAllocStep = 1024 * 1024);
-  ~CFDE_BlockBuffer();
+  explicit CFDE_BlockBuffer(int32_t iAllocStep = 1024 * 1024);
+  ~CFDE_BlockBuffer() override;
 
   FX_BOOL InitBuffer(int32_t iBufferSize = 1024 * 1024);
   FX_BOOL IsInitialized() { return m_iBufferSize / m_iAllocStep >= 1; }
@@ -259,7 +259,7 @@ class CFDE_BlockBuffer : public CFX_Target {
 class CFDE_XMLSyntaxParser : public CFX_Target {
  public:
   CFDE_XMLSyntaxParser();
-  ~CFDE_XMLSyntaxParser();
+  ~CFDE_XMLSyntaxParser() override;
 
   void Release() { delete this; }
   void Init(IFX_Stream* pStream,

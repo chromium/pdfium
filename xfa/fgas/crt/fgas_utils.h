@@ -15,7 +15,8 @@ class FX_BASEARRAYDATA;
 class CFX_BaseArray : public CFX_Target {
  protected:
   CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize);
-  ~CFX_BaseArray();
+  ~CFX_BaseArray() override;
+
   int32_t GetSize() const;
   int32_t GetBlockSize() const;
   uint8_t* AddSpaceTo(int32_t index);
@@ -184,7 +185,8 @@ class CFX_ObjectBaseArrayTemplate : public CFX_BaseArray {
 class CFX_BaseMassArrayImp : public CFX_Target {
  public:
   CFX_BaseMassArrayImp(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseMassArrayImp();
+  ~CFX_BaseMassArrayImp() override;
+
   uint8_t* AddSpace() { return AddSpaceTo(m_iBlockCount); }
   uint8_t* AddSpaceTo(int32_t index);
   uint8_t* GetAt(int32_t index) const;
@@ -213,7 +215,8 @@ class CFX_BaseMassArrayImp : public CFX_Target {
 class CFX_BaseMassArray : public CFX_Target {
  protected:
   CFX_BaseMassArray(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseMassArray();
+  ~CFX_BaseMassArray() override;
+
   int32_t GetSize() const;
   uint8_t* AddSpaceTo(int32_t index);
   uint8_t* GetAt(int32_t index) const;
@@ -360,7 +363,8 @@ class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
 class CFX_BaseDiscreteArray : public CFX_Target {
  protected:
   CFX_BaseDiscreteArray(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseDiscreteArray();
+  ~CFX_BaseDiscreteArray() override;
+
   uint8_t* AddSpaceTo(int32_t index);
   uint8_t* GetAt(int32_t index) const;
   void RemoveAll();
@@ -391,7 +395,8 @@ typedef CFX_DiscreteArrayTemplate<uint16_t> CFX_WordDiscreteArray;
 class CFX_BaseStack : public CFX_Target {
  protected:
   CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseStack();
+  ~CFX_BaseStack() override;
+
   uint8_t* Push();
   void Pop();
   uint8_t* GetTopElement() const;

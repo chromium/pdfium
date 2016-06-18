@@ -205,7 +205,8 @@ enum FX_STREAMTYPE {
 class CFX_Stream : public IFX_Stream {
  public:
   CFX_Stream();
-  ~CFX_Stream();
+  ~CFX_Stream() override;
+
   FX_BOOL LoadFile(const FX_WCHAR* pszSrcFileName, uint32_t dwAccess);
   FX_BOOL LoadBuffer(uint8_t* pData, int32_t iTotalSize, uint32_t dwAccess);
   FX_BOOL LoadFileRead(IFX_FileRead* pFileRead, uint32_t dwAccess);
@@ -214,28 +215,30 @@ class CFX_Stream : public IFX_Stream {
                          int32_t iFileSize,
                          uint32_t dwAccess,
                          FX_BOOL bReleaseBufferRead);
-  virtual void Release();
-  virtual IFX_Stream* Retain();
-  virtual uint32_t GetAccessModes() const { return m_dwAccess; }
-  virtual int32_t GetLength() const;
-  virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
-  virtual int32_t GetPosition();
-  virtual FX_BOOL IsEOF() const;
-  virtual int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize);
-  virtual int32_t ReadString(FX_WCHAR* pStr,
-                             int32_t iMaxLength,
-                             FX_BOOL& bEOS,
-                             int32_t const* pByteSize = NULL);
-  virtual int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize);
-  virtual int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength);
-  virtual void Flush();
-  virtual FX_BOOL SetLength(int32_t iLength);
-  virtual int32_t GetBOM(uint8_t bom[4]) const;
-  virtual uint16_t GetCodePage() const;
-  virtual uint16_t SetCodePage(uint16_t wCodePage);
-  virtual IFX_Stream* CreateSharedStream(uint32_t dwAccess,
-                                         int32_t iOffset,
-                                         int32_t iLength);
+
+  // IFX_Stream
+  void Release() override;
+  IFX_Stream* Retain() override;
+  uint32_t GetAccessModes() const override;
+  int32_t GetLength() const override;
+  int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) override;
+  int32_t GetPosition() override;
+  FX_BOOL IsEOF() const override;
+  int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
+  int32_t ReadString(FX_WCHAR* pStr,
+                     int32_t iMaxLength,
+                     FX_BOOL& bEOS,
+                     int32_t const* pByteSize = NULL) override;
+  int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
+  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  void Flush() override;
+  FX_BOOL SetLength(int32_t iLength) override;
+  int32_t GetBOM(uint8_t bom[4]) const override;
+  uint16_t GetCodePage() const override;
+  uint16_t SetCodePage(uint16_t wCodePage) override;
+  IFX_Stream* CreateSharedStream(uint32_t dwAccess,
+                                 int32_t iOffset,
+                                 int32_t iLength) override;
 
  protected:
   FX_STREAMTYPE m_eStreamType;
@@ -251,33 +254,31 @@ class CFX_Stream : public IFX_Stream {
 class CFX_TextStream : public IFX_Stream {
  public:
   CFX_TextStream(IFX_Stream* pStream, FX_BOOL bDelStream);
-  ~CFX_TextStream();
-  virtual void Release();
-  virtual IFX_Stream* Retain();
+  ~CFX_TextStream() override;
 
-  virtual uint32_t GetAccessModes() const;
-  virtual int32_t GetLength() const;
-  virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
-  virtual int32_t GetPosition();
-  virtual FX_BOOL IsEOF() const;
-
-  virtual int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize);
-  virtual int32_t ReadString(FX_WCHAR* pStr,
-                             int32_t iMaxLength,
-                             FX_BOOL& bEOS,
-                             int32_t const* pByteSize = NULL);
-  virtual int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize);
-  virtual int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength);
-  virtual void Flush();
-  virtual FX_BOOL SetLength(int32_t iLength);
-
-  virtual int32_t GetBOM(uint8_t bom[4]) const;
-  virtual uint16_t GetCodePage() const;
-  virtual uint16_t SetCodePage(uint16_t wCodePage);
-
-  virtual IFX_Stream* CreateSharedStream(uint32_t dwAccess,
-                                         int32_t iOffset,
-                                         int32_t iLength);
+  // IFX_Stream
+  void Release() override;
+  IFX_Stream* Retain() override;
+  uint32_t GetAccessModes() const override;
+  int32_t GetLength() const override;
+  int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) override;
+  int32_t GetPosition() override;
+  FX_BOOL IsEOF() const override;
+  int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
+  int32_t ReadString(FX_WCHAR* pStr,
+                     int32_t iMaxLength,
+                     FX_BOOL& bEOS,
+                     int32_t const* pByteSize = NULL) override;
+  int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
+  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  void Flush() override;
+  FX_BOOL SetLength(int32_t iLength) override;
+  int32_t GetBOM(uint8_t bom[4]) const override;
+  uint16_t GetCodePage() const override;
+  uint16_t SetCodePage(uint16_t wCodePage) override;
+  IFX_Stream* CreateSharedStream(uint32_t dwAccess,
+                                 int32_t iOffset,
+                                 int32_t iLength) override;
 
  protected:
   uint16_t m_wCodePage;
@@ -294,10 +295,12 @@ class CFX_TextStream : public IFX_Stream {
 class CFGAS_FileRead : public IFX_FileRead {
  public:
   CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream);
-  virtual ~CFGAS_FileRead();
-  virtual void Release() { delete this; }
-  virtual FX_FILESIZE GetSize();
-  virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size);
+  ~CFGAS_FileRead() override;
+
+  // IFX_FileRead
+  void Release() override;
+  FX_FILESIZE GetSize() override;
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  protected:
   FX_BOOL m_bReleaseStream;
@@ -1260,6 +1263,11 @@ IFX_Stream* CFX_Stream::Retain() {
   m_iRefCount++;
   return this;
 }
+
+uint32_t CFX_Stream::GetAccessModes() const {
+  return m_dwAccess;
+}
+
 int32_t CFX_Stream::GetLength() const {
   if (m_pStreamImp == NULL) {
     return -1;
@@ -1509,4 +1517,8 @@ FX_BOOL CFGAS_FileRead::ReadBlock(void* buffer,
   m_pStream->Seek(FX_STREAMSEEK_Begin, (int32_t)offset);
   int32_t iLen = m_pStream->ReadData((uint8_t*)buffer, (int32_t)size);
   return iLen == (int32_t)size;
+}
+
+void CFGAS_FileRead::Release() {
+  delete this;
 }

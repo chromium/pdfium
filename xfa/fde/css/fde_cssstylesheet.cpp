@@ -59,6 +59,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
   }
   return pStyleSheet;
 }
+
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
     const CFX_WideString& szUrl,
     const FX_WCHAR* pBuffer,
@@ -72,6 +73,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
   }
   return pStyleSheet;
 }
+
 CFDE_CSSStyleSheet::CFDE_CSSStyleSheet(uint32_t dwMediaList)
     : m_wCodePage(FX_CODEPAGE_UTF8),
       m_wRefCount(1),
@@ -79,9 +81,11 @@ CFDE_CSSStyleSheet::CFDE_CSSStyleSheet(uint32_t dwMediaList)
       m_pAllocator(nullptr) {
   ASSERT(m_dwMediaList > 0);
 }
+
 CFDE_CSSStyleSheet::~CFDE_CSSStyleSheet() {
   Reset();
 }
+
 void CFDE_CSSStyleSheet::Reset() {
   for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
     IFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
@@ -106,9 +110,11 @@ void CFDE_CSSStyleSheet::Reset() {
   delete m_pAllocator;
   m_pAllocator = nullptr;
 }
+
 uint32_t CFDE_CSSStyleSheet::Retain() {
   return ++m_wRefCount;
 }
+
 uint32_t CFDE_CSSStyleSheet::Release() {
   uint32_t dwRefCount = --m_wRefCount;
   if (dwRefCount == 0) {
@@ -116,9 +122,24 @@ uint32_t CFDE_CSSStyleSheet::Release() {
   }
   return dwRefCount;
 }
+
+FX_BOOL CFDE_CSSStyleSheet::GetUrl(CFX_WideString& szUrl) {
+  szUrl = m_szUrl;
+  return szUrl.GetLength() > 0;
+}
+
+uint32_t CFDE_CSSStyleSheet::GetMediaList() const {
+  return m_dwMediaList;
+}
+
+uint16_t CFDE_CSSStyleSheet::GetCodePage() const {
+  return m_wCodePage;
+}
+
 int32_t CFDE_CSSStyleSheet::CountRules() const {
   return m_RuleArray.GetSize();
 }
+
 IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
@@ -178,6 +199,7 @@ FX_BOOL CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
   m_StringCache.clear();
   return eStatus != FDE_CSSSYNTAXSTATUS_Error;
 }
+
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(
     CFDE_CSSSyntaxParser* pSyntax) {
   uint32_t dwMediaList = 0;
@@ -216,6 +238,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(
     }
   }
 }
+
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(
     CFDE_CSSSyntaxParser* pSyntax,
     CFDE_CSSRuleArray& ruleArray) {
@@ -280,6 +303,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(
     }
   }
 }
+
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadFontFaceRule(
     CFDE_CSSSyntaxParser* pSyntax,
     CFDE_CSSRuleArray& ruleArray) {
@@ -318,6 +342,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadFontFaceRule(
     }
   }
 }
+
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadImportRule(
     CFDE_CSSSyntaxParser* pSyntax) {
   for (;;) {
@@ -330,10 +355,12 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadImportRule(
     }
   }
 }
+
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadPageRule(
     CFDE_CSSSyntaxParser* pSyntax) {
   return SkipRuleSet(pSyntax);
 }
+
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::SkipRuleSet(
     CFDE_CSSSyntaxParser* pSyntax) {
   for (;;) {
@@ -349,6 +376,21 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::SkipRuleSet(
     }
   }
 }
+
+CFDE_CSSStyleRule::CFDE_CSSStyleRule() : m_ppSelector(NULL), m_iSelectors(0) {}
+
+int32_t CFDE_CSSStyleRule::CountSelectorLists() const {
+  return m_iSelectors;
+}
+
+CFDE_CSSSelector* CFDE_CSSStyleRule::GetSelectorList(int32_t index) const {
+  return m_ppSelector[index];
+}
+
+CFDE_CSSDeclaration* CFDE_CSSStyleRule::GetDeclaration() {
+  return &m_Declaration;
+}
+
 void CFDE_CSSStyleRule::SetSelector(IFX_MemoryAllocator* pStaticStore,
                                     const CFDE_CSSSelectorArray& list) {
   ASSERT(!m_ppSelector);
@@ -359,6 +401,10 @@ void CFDE_CSSStyleRule::SetSelector(IFX_MemoryAllocator* pStaticStore,
     m_ppSelector[i] = list.GetAt(i);
   }
 }
+
+CFDE_CSSMediaRule::CFDE_CSSMediaRule(uint32_t dwMediaList)
+    : m_dwMediaList(dwMediaList) {}
+
 CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
   for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
     IFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
@@ -372,9 +418,23 @@ CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
     }
   }
 }
-inline FX_BOOL FDE_IsCSSChar(FX_WCHAR wch) {
+
+uint32_t CFDE_CSSMediaRule::GetMediaList() const {
+  return m_dwMediaList;
+}
+
+int32_t CFDE_CSSMediaRule::CountRules() const {
+  return m_RuleArray.GetSize();
+}
+
+IFDE_CSSRule* CFDE_CSSMediaRule::GetRule(int32_t index) {
+  return m_RuleArray.GetAt(index);
+}
+
+FX_BOOL FDE_IsCSSChar(FX_WCHAR wch) {
   return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
 }
+
 int32_t FDE_GetCSSPersudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
   ASSERT(*psz == ':');
   const FX_WCHAR* pStart = psz;
@@ -388,6 +448,7 @@ int32_t FDE_GetCSSPersudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
   }
   return psz - pStart;
 }
+
 int32_t FDE_GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
   const FX_WCHAR* pStart = psz;
   while (psz < pEnd) {
@@ -401,11 +462,33 @@ int32_t FDE_GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
   }
   return psz - pStart;
 }
+
+CFDE_CSSSelector::CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType,
+                                   const FX_WCHAR* psz,
+                                   int32_t iLen,
+                                   bool bIgnoreCase)
+    : m_eType(eType),
+      m_dwHash(FX_HashCode_GetW(CFX_WideStringC(psz, iLen), bIgnoreCase)),
+      m_pNext(nullptr) {}
+
+FDE_CSSSELECTORTYPE CFDE_CSSSelector::GetType() const {
+  return m_eType;
+}
+
+uint32_t CFDE_CSSSelector::GetNameHash() const {
+  return m_dwHash;
+}
+
+CFDE_CSSSelector* CFDE_CSSSelector::GetNextSelector() const {
+  return m_pNext;
+}
+
 CFDE_CSSSelector* CFDE_CSSSelector::FromString(
     IFX_MemoryAllocator* pStaticStore,
     const FX_WCHAR* psz,
     int32_t iLen) {
   ASSERT(pStaticStore && psz && iLen > 0);
+
   const FX_WCHAR* pStart = psz;
   const FX_WCHAR* pEnd = psz + iLen;
   for (; psz < pEnd; ++psz) {
@@ -495,4 +578,8 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
 
   pPersudoLast->SetNext(pFirst);
   return pPersudoFirst;
+}
+
+CFDE_CSSDeclaration* CFDE_CSSFontFaceRule::GetDeclaration() {
+  return &m_Declaration;
 }

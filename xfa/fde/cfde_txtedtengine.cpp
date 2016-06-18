@@ -24,6 +24,31 @@ const uint32_t kUnicodeParagraphSeparator = 0x2029;
 
 }  // namespace
 
+FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
+    : fPlateWidth(0),
+      fPlateHeight(0),
+      nLineCount(0),
+      dwLayoutStyles(0),
+      dwAlignment(0),
+      dwMode(0),
+      pFont(nullptr),
+      fFontSize(10.0f),
+      dwFontColor(0xff000000),
+      fLineSpace(10.0f),
+      fTabWidth(36),
+      bTabEquidistant(FALSE),
+      wDefChar(0xFEFF),
+      wLineBreakChar('\n'),
+      nCharRotation(0),
+      nLineEnd(0),
+      nHorzScale(100),
+      fCharSpace(0),
+      pEventSink(nullptr) {}
+
+FDE_TXTEDT_TEXTCHANGE_INFO::FDE_TXTEDT_TEXTCHANGE_INFO() {}
+
+FDE_TXTEDT_TEXTCHANGE_INFO::~FDE_TXTEDT_TEXTCHANGE_INFO() {}
+
 CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
     : m_pTextBreak(nullptr),
       m_nPageLineCount(20),

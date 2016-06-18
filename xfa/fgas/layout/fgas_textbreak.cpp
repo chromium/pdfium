@@ -1662,3 +1662,49 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   }
   return iLength;
 }
+
+FX_TXTRUN::FX_TXTRUN()
+    : pAccess(nullptr),
+      pIdentity(nullptr),
+      pWidths(nullptr),
+      iLength(0),
+      pFont(nullptr),
+      fFontSize(12),
+      dwStyles(0),
+      iHorizontalScale(100),
+      iVerticalScale(100),
+      iCharRotation(0),
+      dwCharStyles(0),
+      pRect(nullptr),
+      wLineBreakChar(L'\n'),
+      bSkipSpace(TRUE) {}
+
+FX_TXTRUN::~FX_TXTRUN() {}
+
+FX_TXTRUN::FX_TXTRUN(const FX_TXTRUN& other) = default;
+
+CFX_TxtPiece::CFX_TxtPiece()
+    : m_dwStatus(FX_TXTBREAK_PieceBreak),
+      m_iStartPos(0),
+      m_iWidth(-1),
+      m_iStartChar(0),
+      m_iChars(0),
+      m_iBidiLevel(0),
+      m_iBidiPos(0),
+      m_iHorizontalScale(100),
+      m_iVerticalScale(100),
+      m_dwCharStyles(0),
+      m_pChars(NULL),
+      m_pUserData(NULL) {}
+
+CFX_TxtLine::CFX_TxtLine(int32_t iBlockSize)
+    : m_iStart(0), m_iWidth(0), m_iArabicChars(0) {
+  m_pLineChars = new CFX_TxtCharArray;
+  m_pLinePieces = new CFX_TxtPieceArray(16);
+}
+
+CFX_TxtLine::~CFX_TxtLine() {
+  RemoveAll();
+  delete m_pLineChars;
+  delete m_pLinePieces;
+}

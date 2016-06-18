@@ -26,7 +26,7 @@ class CFDE_Brush : public CFX_Target {
 class CFDE_Pen : public CFX_Target {
  public:
   CFDE_Pen() : m_Color(0) {}
-  ~CFDE_Pen() {}
+  ~CFDE_Pen() override {}
 
   FX_ARGB GetColor() const { return m_Color; }
   void SetColor(FX_ARGB color) { m_Color = color; }

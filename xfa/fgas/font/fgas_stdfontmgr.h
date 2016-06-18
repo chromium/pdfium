@@ -24,7 +24,7 @@ class CFGAS_StdFontMgrImp : public IFGAS_FontMgr {
   ~CFGAS_StdFontMgrImp() override;
 
   // IFGAS_FontMgr:
-  void Release() override { delete this; }
+  void Release() override;
   CFGAS_GEFont* GetDefFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
@@ -65,7 +65,6 @@ class CFGAS_StdFontMgrImp : public IFGAS_FontMgr {
                                     uint16_t wCodePage,
                                     uint32_t dwUSB = 999,
                                     FX_WCHAR wUnicode = 0);
-  CFGAS_GEFont* GetFont(FX_FONTDESCRIPTOR const* pFD, uint32_t dwFontStyles);
 
   FX_LPEnumAllFonts m_pEnumerator;
   CFX_FontDescriptors m_FontFaces;

@@ -180,16 +180,7 @@ class CFX_Graphics {
 
  private:
   struct TInfo {
-    TInfo()
-        : isAntialiasing(TRUE),
-          strokeAlignment(FX_STROKEALIGNMENT_Center),
-          isActOnDash(FALSE),
-          strokeColor(nullptr),
-          fillColor(nullptr),
-          font(nullptr),
-          fontSize(40.0),
-          fontHScale(1.0),
-          fontSpacing(0.0) {}
+    TInfo();
     explicit TInfo(const TInfo& info);
     TInfo& operator=(const TInfo& other);
 

@@ -82,21 +82,9 @@ class IFX_TxtAccess {
 };
 
 struct FX_TXTRUN {
-  FX_TXTRUN()
-      : pAccess(nullptr),
-        pIdentity(nullptr),
-        pWidths(nullptr),
-        iLength(0),
-        pFont(nullptr),
-        fFontSize(12),
-        dwStyles(0),
-        iHorizontalScale(100),
-        iVerticalScale(100),
-        iCharRotation(0),
-        dwCharStyles(0),
-        pRect(nullptr),
-        wLineBreakChar(L'\n'),
-        bSkipSpace(TRUE) {}
+  FX_TXTRUN();
+  FX_TXTRUN(const FX_TXTRUN& other);
+  ~FX_TXTRUN();
 
   IFX_TxtAccess* pAccess;
   const FDE_TEXTEDITPIECE* pIdentity;
@@ -117,19 +105,8 @@ struct FX_TXTRUN {
 
 class CFX_TxtPiece : public CFX_Target {
  public:
-  CFX_TxtPiece()
-      : m_dwStatus(FX_TXTBREAK_PieceBreak),
-        m_iStartPos(0),
-        m_iWidth(-1),
-        m_iStartChar(0),
-        m_iChars(0),
-        m_iBidiLevel(0),
-        m_iBidiPos(0),
-        m_iHorizontalScale(100),
-        m_iVerticalScale(100),
-        m_dwCharStyles(0),
-        m_pChars(NULL),
-        m_pUserData(NULL) {}
+  CFX_TxtPiece();
+
   int32_t GetEndPos() const {
     return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
   }
@@ -148,7 +125,6 @@ class CFX_TxtPiece : public CFX_Target {
       *pText++ = (FX_WCHAR)pChar->m_wCharCode;
     }
   }
-
   void GetString(CFX_WideString& wsText) const {
     FX_WCHAR* pText = wsText.GetBuffer(m_iChars);
     GetString(pText);
@@ -163,6 +139,7 @@ class CFX_TxtPiece : public CFX_Target {
       *pWidths++ = pChar->m_iCharWidth;
     }
   }
+
   uint32_t m_dwStatus;
   int32_t m_iStartPos;
   int32_t m_iWidth;
@@ -176,20 +153,14 @@ class CFX_TxtPiece : public CFX_Target {
   CFX_TxtCharArray* m_pChars;
   void* m_pUserData;
 };
+
 typedef CFX_BaseArrayTemplate<CFX_TxtPiece> CFX_TxtPieceArray;
 
 class CFX_TxtLine {
  public:
-  CFX_TxtLine(int32_t iBlockSize)
-      : m_iStart(0), m_iWidth(0), m_iArabicChars(0) {
-    m_pLineChars = new CFX_TxtCharArray;
-    m_pLinePieces = new CFX_TxtPieceArray(16);
-  }
-  ~CFX_TxtLine() {
-    RemoveAll();
-    delete m_pLineChars;
-    delete m_pLinePieces;
-  }
+  CFX_TxtLine(int32_t iBlockSize);
+  ~CFX_TxtLine();
+
   int32_t CountChars() const { return m_pLineChars->GetSize(); }
   CFX_TxtChar* GetCharPtr(int32_t index) const {
     ASSERT(index > -1 && index < m_pLineChars->GetSize());
@@ -216,6 +187,7 @@ class CFX_TxtLine {
     m_iWidth = 0;
     m_iArabicChars = 0;
   }
+
   CFX_TxtCharArray* m_pLineChars;
   CFX_TxtPieceArray* m_pLinePieces;
   int32_t m_iStart;

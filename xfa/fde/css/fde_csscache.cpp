@@ -56,6 +56,12 @@ FDE_CSSTagCache::FDE_CSSTagCache(const FDE_CSSTagCache& it)
     dwClassHashs.Copy(it.dwClassHashs);
 }
 
+FDE_CSSTagCache::~FDE_CSSTagCache() {}
+
+CFDE_CSSAccelerator::CFDE_CSSAccelerator() {}
+
+CFDE_CSSAccelerator::~CFDE_CSSAccelerator() {}
+
 void CFDE_CSSAccelerator::OnEnterTag(CXFA_CSSTagProvider* pTag) {
   FDE_CSSTagCache* pTop = GetTopElement();
   FDE_CSSTagCache item(pTop, pTag);

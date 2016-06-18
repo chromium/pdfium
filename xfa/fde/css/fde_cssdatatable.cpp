@@ -795,6 +795,14 @@ CFDE_CSSValueList::CFDE_CSSValueList(IFX_MemoryAllocator* pStaticStore,
   m_ppList = (IFDE_CSSValue**)pStaticStore->Alloc(iByteCount);
   FXSYS_memcpy(m_ppList, list.GetData(), iByteCount);
 }
+
+int32_t CFDE_CSSValueList::CountValues() const {
+  return m_iCount;
+}
+
+IFDE_CSSValue* CFDE_CSSValueList::GetValue(int32_t index) const {
+  return m_ppList[index];
+}
 FX_BOOL CFDE_CSSValueListParser::NextValue(FDE_CSSPRIMITIVETYPE& eType,
                                            const FX_WCHAR*& pStart,
                                            int32_t& iLength) {
@@ -895,4 +903,68 @@ int32_t CFDE_CSSValueListParser::SkipTo(FX_WCHAR wch,
     }
   }
   return m_pCur - pStart;
+}
+
+CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(
+    const CFDE_CSSPrimitiveValue& src) = default;
+
+CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FX_ARGB color)
+    : m_eType(FDE_CSSPRIMITIVETYPE_RGB), m_dwColor(color) {}
+
+CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPROPERTYVALUE eValue)
+    : m_eType(FDE_CSSPRIMITIVETYPE_Enum), m_eEnum(eValue) {}
+
+CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType,
+                                               FX_FLOAT fValue)
+    : m_eType(eType), m_fNumber(fValue) {}
+
+CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType,
+                                               const FX_WCHAR* pValue)
+    : m_eType(eType), m_pString(pValue) {
+  ASSERT(m_pString != nullptr);
+}
+
+CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction)
+    : m_eType(FDE_CSSPRIMITIVETYPE_Function), m_pFunction(pFunction) {}
+
+FDE_CSSPRIMITIVETYPE CFDE_CSSPrimitiveValue::GetPrimitiveType() const {
+  return m_eType;
+}
+
+FX_ARGB CFDE_CSSPrimitiveValue::GetRGBColor() const {
+  ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_RGB);
+  return m_dwColor;
+}
+
+FX_FLOAT CFDE_CSSPrimitiveValue::GetFloat() const {
+  ASSERT(m_eType >= FDE_CSSPRIMITIVETYPE_Number &&
+         m_eType <= FDE_CSSPRIMITIVETYPE_PC);
+  return m_fNumber;
+}
+
+const FX_WCHAR* CFDE_CSSPrimitiveValue::GetString(int32_t& iLength) const {
+  ASSERT(m_eType >= FDE_CSSPRIMITIVETYPE_String &&
+         m_eType <= FDE_CSSPRIMITIVETYPE_URI);
+  iLength = FXSYS_wcslen(m_pString);
+  return m_pString;
+}
+
+FDE_CSSPROPERTYVALUE CFDE_CSSPrimitiveValue::GetEnum() const {
+  ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Enum);
+  return m_eEnum;
+}
+
+const FX_WCHAR* CFDE_CSSPrimitiveValue::GetFuncName() const {
+  ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Function);
+  return m_pFunction->GetFuncName();
+}
+
+int32_t CFDE_CSSPrimitiveValue::CountArgs() const {
+  ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Function);
+  return m_pFunction->CountArgs();
+}
+
+IFDE_CSSValue* CFDE_CSSPrimitiveValue::GetArgs(int32_t index) const {
+  ASSERT(m_eType == FDE_CSSPRIMITIVETYPE_Function);
+  return m_pFunction->GetArgs(index);
 }

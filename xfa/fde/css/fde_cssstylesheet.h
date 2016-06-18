@@ -19,42 +19,37 @@ class CFDE_CSSSelector : public CFX_Target {
   CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType,
                    const FX_WCHAR* psz,
                    int32_t iLen,
-                   bool bIgnoreCase)
-      : m_eType(eType),
-        m_dwHash(FX_HashCode_GetW(CFX_WideStringC(psz, iLen), bIgnoreCase)),
-        m_pNext(nullptr) {}
-  virtual FDE_CSSSELECTORTYPE GetType() const { return m_eType; }
+                   bool bIgnoreCase);
 
-  virtual uint32_t GetNameHash() const { return m_dwHash; }
+  virtual FDE_CSSSELECTORTYPE GetType() const;
+  virtual uint32_t GetNameHash() const;
+  virtual CFDE_CSSSelector* GetNextSelector() const;
 
-  virtual CFDE_CSSSelector* GetNextSelector() const { return m_pNext; }
   static CFDE_CSSSelector* FromString(IFX_MemoryAllocator* pStaticStore,
                                       const FX_WCHAR* psz,
                                       int32_t iLen);
+
   void SetNext(CFDE_CSSSelector* pNext) { m_pNext = pNext; }
 
  protected:
-  static CFDE_CSSSelector* ParseSelector(IFX_MemoryAllocator* pStaticStore,
-                                         const FX_WCHAR* psz,
-                                         int32_t& iOff,
-                                         int32_t iLen,
-                                         FDE_CSSSELECTORTYPE eType);
   void SetType(FDE_CSSSELECTORTYPE eType) { m_eType = eType; }
+
   FDE_CSSSELECTORTYPE m_eType;
   uint32_t m_dwHash;
   CFDE_CSSSelector* m_pNext;
 };
+
 typedef CFX_ArrayTemplate<CFDE_CSSSelector*> CFDE_CSSSelectorArray;
 
 class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
  public:
-  CFDE_CSSStyleRule() : m_ppSelector(nullptr), m_iSelectors(0) {}
-  int32_t CountSelectorLists() const override { return m_iSelectors; }
-  CFDE_CSSSelector* GetSelectorList(int32_t index) const override {
-    return m_ppSelector[index];
-  }
+  CFDE_CSSStyleRule();
 
-  CFDE_CSSDeclaration* GetDeclaration() override { return &m_Declaration; }
+  // IFDE_CSSStyleRule
+  int32_t CountSelectorLists() const override;
+  CFDE_CSSSelector* GetSelectorList(int32_t index) const override;
+  CFDE_CSSDeclaration* GetDeclaration() override;
+
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
   void SetSelector(IFX_MemoryAllocator* pStaticStore,
                    const CFDE_CSSSelectorArray& list);
@@ -64,37 +59,42 @@ class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
   CFDE_CSSSelector** m_ppSelector;
   int32_t m_iSelectors;
 };
+
 class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target {
  public:
-  CFDE_CSSMediaRule(uint32_t dwMediaList) : m_dwMediaList(dwMediaList) {}
-  ~CFDE_CSSMediaRule();
+  explicit CFDE_CSSMediaRule(uint32_t dwMediaList);
+  ~CFDE_CSSMediaRule() override;
 
-  virtual uint32_t GetMediaList() const { return m_dwMediaList; }
+  // IFDE_CSSMediaRule
+  uint32_t GetMediaList() const override;
+  int32_t CountRules() const override;
+  IFDE_CSSRule* GetRule(int32_t index) override;
 
-  virtual int32_t CountRules() const { return m_RuleArray.GetSize(); }
-  virtual IFDE_CSSRule* GetRule(int32_t index) {
-    return m_RuleArray.GetAt(index);
-  }
   CFDE_CSSRuleArray& GetArray() { return m_RuleArray; }
 
  protected:
   uint32_t m_dwMediaList;
   CFDE_CSSRuleArray m_RuleArray;
 };
+
 class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
  public:
-  CFDE_CSSDeclaration* GetDeclaration() override { return &m_Declaration; }
+  // IFDE_CSSFontFaceRule
+  CFDE_CSSDeclaration* GetDeclaration() override;
+
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
 
  protected:
   CFDE_CSSDeclaration m_Declaration;
 };
+
 #define FDE_CSSSWITCHDEFAULTS()     \
   case FDE_CSSSYNTAXSTATUS_EOS:     \
     return FDE_CSSSYNTAXSTATUS_EOS; \
   case FDE_CSSSYNTAXSTATUS_Error:   \
   default:                          \
     return FDE_CSSSYNTAXSTATUS_Error;
+
 class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
  public:
   CFDE_CSSStyleSheet(uint32_t dwMediaList);
@@ -105,12 +105,9 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   uint32_t Release() override;
 
   // IFDE_CSSStyleSheet:
-  FX_BOOL GetUrl(CFX_WideString& szUrl) override {
-    szUrl = m_szUrl;
-    return szUrl.GetLength() > 0;
-  }
-  uint32_t GetMediaList() const override { return m_dwMediaList; }
-  uint16_t GetCodePage() const override { return m_wCodePage; }
+  FX_BOOL GetUrl(CFX_WideString& szUrl) override;
+  uint32_t GetMediaList() const override;
+  uint16_t GetCodePage() const override;
   int32_t CountRules() const override;
   IFDE_CSSRule* GetRule(int32_t index) override;
 

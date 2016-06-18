@@ -14,7 +14,8 @@
 class CFDE_CSSTextBuf : public CFX_Target {
  public:
   CFDE_CSSTextBuf();
-  ~CFDE_CSSTextBuf();
+  ~CFDE_CSSTextBuf() override;
+
   FX_BOOL AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen);
   FX_BOOL EstimateSize(int32_t iAllocSize);
   int32_t LoadFromStream(IFX_Stream* pTxtStream,

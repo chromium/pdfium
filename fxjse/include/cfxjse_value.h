@@ -11,7 +11,8 @@
 
 class CFXJSE_Value {
  public:
-  CFXJSE_Value(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
+  explicit CFXJSE_Value(v8::Isolate* pIsolate);
+  ~CFXJSE_Value();
 
   FX_BOOL IsUndefined() const {
     if (m_hValue.IsEmpty()) {

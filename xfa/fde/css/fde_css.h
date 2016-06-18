@@ -690,9 +690,9 @@ class IFDE_CSSValue {
 
 class IFDE_CSSPrimitiveValue : public IFDE_CSSValue {
  public:
-  virtual FDE_CSSVALUETYPE GetType() const {
-    return FDE_CSSVALUETYPE_Primitive;
-  }
+  // IFDE_CSSValue
+  FDE_CSSVALUETYPE GetType() const override;
+
   virtual FDE_CSSPRIMITIVETYPE GetPrimitiveType() const = 0;
   virtual FX_ARGB GetRGBColor() const = 0;
   virtual FX_FLOAT GetFloat() const = 0;
@@ -705,7 +705,9 @@ class IFDE_CSSPrimitiveValue : public IFDE_CSSValue {
 
 class IFDE_CSSValueList : public IFDE_CSSValue {
  public:
-  virtual FDE_CSSVALUETYPE GetType() const { return FDE_CSSVALUETYPE_List; }
+  // IFDE_CSSValue
+  FDE_CSSVALUETYPE GetType() const override;
+
   virtual int32_t CountValues() const = 0;
   virtual IFDE_CSSValue* GetValue(int32_t index) const = 0;
 };
@@ -715,11 +717,14 @@ class IFDE_CSSRule {
   virtual ~IFDE_CSSRule() {}
   virtual FDE_CSSRULETYPE GetType() const = 0;
 };
+
 typedef CFX_MassArrayTemplate<IFDE_CSSRule*> CFDE_CSSRuleArray;
 
 class IFDE_CSSStyleRule : public IFDE_CSSRule {
  public:
-  virtual FDE_CSSRULETYPE GetType() const { return FDE_CSSRULETYPE_Style; }
+  // IFDE_CSSValue
+  FDE_CSSRULETYPE GetType() const override;
+
   virtual int32_t CountSelectorLists() const = 0;
   virtual CFDE_CSSSelector* GetSelectorList(int32_t index) const = 0;
   virtual CFDE_CSSDeclaration* GetDeclaration() = 0;
@@ -727,7 +732,9 @@ class IFDE_CSSStyleRule : public IFDE_CSSRule {
 
 class IFDE_CSSMediaRule : public IFDE_CSSRule {
  public:
-  virtual FDE_CSSRULETYPE GetType() const { return FDE_CSSRULETYPE_Media; }
+  // IFDE_CSSValue
+  FDE_CSSRULETYPE GetType() const override;
+
   virtual uint32_t GetMediaList() const = 0;
   virtual int32_t CountRules() const = 0;
   virtual IFDE_CSSRule* GetRule(int32_t index) = 0;
@@ -735,7 +742,9 @@ class IFDE_CSSMediaRule : public IFDE_CSSRule {
 
 class IFDE_CSSFontFaceRule : public IFDE_CSSRule {
  public:
-  virtual FDE_CSSRULETYPE GetType() const { return FDE_CSSRULETYPE_FontFace; }
+  // IFDE_CSSValue
+  FDE_CSSRULETYPE GetType() const override;
+
   virtual CFDE_CSSDeclaration* GetDeclaration() = 0;
 };
 
@@ -760,6 +769,7 @@ class IFDE_CSSStyleSheet : public IFX_Retainable {
   virtual int32_t CountRules() const = 0;
   virtual IFDE_CSSRule* GetRule(int32_t index) = 0;
 };
+
 typedef CFX_ArrayTemplate<IFDE_CSSStyleSheet*> CFDE_CSSStyleSheetArray;
 
 struct FDE_CSSLENGTH {

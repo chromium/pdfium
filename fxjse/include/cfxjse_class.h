@@ -16,6 +16,8 @@ class CFXJSE_Value;
 
 class CFXJSE_Class {
  public:
+  ~CFXJSE_Class();
+
   static CFXJSE_Class* Create(CFXJSE_Context* pContext,
                               const FXJSE_CLASS_DESCRIPTOR* lpClassDefintion,
                               FX_BOOL bIsJSGlobal = FALSE);
@@ -30,8 +32,7 @@ class CFXJSE_Class {
   v8::Global<v8::FunctionTemplate>& GetTemplate() { return m_hTemplate; }
 
  protected:
-  explicit CFXJSE_Class(CFXJSE_Context* lpContext)
-      : m_lpClassDefinition(nullptr), m_pContext(lpContext) {}
+  explicit CFXJSE_Class(CFXJSE_Context* lpContext);
 
   CFX_ByteString m_szClassName;
   const FXJSE_CLASS_DESCRIPTOR* m_lpClassDefinition;

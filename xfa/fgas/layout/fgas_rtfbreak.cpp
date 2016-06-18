@@ -1516,3 +1516,49 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
   }
   return iLength;
 }
+
+CFX_RTFPiece::CFX_RTFPiece()
+    : m_dwStatus(FX_RTFBREAK_PieceBreak),
+      m_iStartPos(0),
+      m_iWidth(-1),
+      m_iStartChar(0),
+      m_iChars(0),
+      m_iBidiLevel(0),
+      m_iBidiPos(0),
+      m_iFontSize(0),
+      m_iFontHeight(0),
+      m_iHorizontalScale(100),
+      m_iVerticalScale(100),
+      m_dwLayoutStyles(0),
+      m_dwIdentity(0),
+      m_pChars(NULL),
+      m_pUserData(NULL) {}
+
+CFX_RTFPiece::~CFX_RTFPiece() {
+  Reset();
+}
+
+CFX_RTFLine::CFX_RTFLine()
+    : m_LinePieces(16),
+      m_iStart(0),
+      m_iWidth(0),
+      m_iArabicChars(0),
+      m_iMBCSChars(0) {}
+
+CFX_RTFLine::~CFX_RTFLine() {
+  RemoveAll();
+}
+
+FX_RTFTEXTOBJ::FX_RTFTEXTOBJ()
+    : pStr(nullptr),
+      pWidths(nullptr),
+      iLength(0),
+      pFont(nullptr),
+      fFontSize(12.0f),
+      dwLayoutStyles(0),
+      iCharRotation(0),
+      iBidiLevel(0),
+      pRect(nullptr),
+      wLineBreakChar(L'\n'),
+      iHorizontalScale(100),
+      iVerticalScale(100) {}

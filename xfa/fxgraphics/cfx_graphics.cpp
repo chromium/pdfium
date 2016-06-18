@@ -1540,6 +1540,17 @@ FWL_Error CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
   return FWL_Error::Succeeded;
 }
 
+CFX_Graphics::TInfo::TInfo()
+    : isAntialiasing(TRUE),
+      strokeAlignment(FX_STROKEALIGNMENT_Center),
+      isActOnDash(FALSE),
+      strokeColor(nullptr),
+      fillColor(nullptr),
+      font(nullptr),
+      fontSize(40.0),
+      fontHScale(1.0),
+      fontSpacing(0.0) {}
+
 CFX_Graphics::TInfo::TInfo(const TInfo& info)
     : graphState(info.graphState),
       isAntialiasing(info.isAntialiasing),
