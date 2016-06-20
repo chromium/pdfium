@@ -11,6 +11,7 @@
 #include "fxjse/include/fxjse.h"
 
 class CXFA_Measurement;
+enum class XFA_ObjectType;
 
 enum XFA_HashCode : uint32_t {
   XFA_HASHCODE_None = 0,
@@ -932,7 +933,7 @@ struct XFA_ELEMENTINFO {
   const FX_WCHAR* pName;
   XFA_ELEMENT eName;
   uint32_t dwPackets;
-  uint32_t eObjectType;
+  XFA_ObjectType eObjectType;
 };
 
 const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName);

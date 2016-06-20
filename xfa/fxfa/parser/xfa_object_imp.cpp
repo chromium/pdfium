@@ -43,8 +43,8 @@ void XFA_CopyWideString(void*& pData) {
 XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {XFA_DeleteWideString,
                                                          XFA_CopyWideString};
 
-XFA_OBJECTTYPE XFA_GetElementObjectType(XFA_ELEMENT eElement) {
-  return static_cast<XFA_OBJECTTYPE>(XFA_GetElementByID(eElement)->eObjectType);
+XFA_ObjectType XFA_GetElementObjectType(XFA_ELEMENT eElement) {
+  return XFA_GetElementByID(eElement)->eObjectType;
 }
 
 void XFA_DataNodeDeleteBindItem(void* pData) {
@@ -56,8 +56,8 @@ XFA_MAPDATABLOCKCALLBACKINFO deleteBindItemCallBack = {
 
 }  // namespace
 
-CXFA_Object::CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags)
-    : m_pDocument(pDocument), m_uFlags(uFlags) {}
+CXFA_Object::CXFA_Object(CXFA_Document* pDocument, XFA_ObjectType type)
+    : m_pDocument(pDocument), m_objectType(type) {}
 
 CXFA_Object::~CXFA_Object() {}
 
@@ -124,6 +124,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
       m_pXMLNode(nullptr),
       m_eNodeClass(eElement),
       m_ePacket(ePacket),
+      m_uNodeFlags(XFA_NodeFlag_None),
       m_dwNameHash(0),
       m_pAuxNode(nullptr),
       m_pMapModuleData(nullptr) {
@@ -140,7 +141,7 @@ CXFA_Node::~CXFA_Node() {
     delete pNode;
     pNode = pNext;
   }
-  if (m_pXMLNode && HasFlag(XFA_NODEFLAG_OwnXMLNode))
+  if (m_pXMLNode && IsOwnXMLNode())
     m_pXMLNode->Release();
 }
 
@@ -169,7 +170,7 @@ CXFA_Node* CXFA_Node::Clone(FX_BOOL bRecursive) {
       pCloneXML = m_pXMLNode->Clone(FALSE);
     }
     pClone->SetXMLMappingNode(pCloneXML);
-    pClone->SetFlag(XFA_NODEFLAG_OwnXMLNode, false);
+    pClone->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
   if (bRecursive) {
     for (CXFA_Node* pChild = GetNodeItem(XFA_NODEITEM_FirstChild); pChild;
@@ -177,7 +178,7 @@ CXFA_Node* CXFA_Node::Clone(FX_BOOL bRecursive) {
       pClone->InsertChild(pChild->Clone(bRecursive));
     }
   }
-  pClone->SetFlag(XFA_NODEFLAG_Initialized, true);
+  pClone->SetFlag(XFA_NodeFlag_Initialized, true);
   pClone->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
   return pClone;
 }
@@ -208,38 +209,31 @@ CXFA_Node* CXFA_Node::GetNodeItem(XFA_NODEITEM eItem) const {
 }
 
 CXFA_Node* CXFA_Node::GetNodeItem(XFA_NODEITEM eItem,
-                                  XFA_OBJECTTYPE eType) const {
+                                  XFA_ObjectType eType) const {
   CXFA_Node* pNode = nullptr;
   switch (eItem) {
     case XFA_NODEITEM_NextSibling:
       pNode = m_pNext;
-      if (eType != XFA_OBJECTTYPEMASK) {
-        while (pNode && pNode->GetObjectType() != eType)
-          pNode = pNode->m_pNext;
-      }
+      while (pNode && pNode->GetObjectType() != eType)
+        pNode = pNode->m_pNext;
       break;
     case XFA_NODEITEM_FirstChild:
       pNode = m_pChild;
-      if (eType != XFA_OBJECTTYPEMASK) {
-        while (pNode && pNode->GetObjectType() != eType)
-          pNode = pNode->m_pNext;
-      }
+      while (pNode && pNode->GetObjectType() != eType)
+        pNode = pNode->m_pNext;
       break;
     case XFA_NODEITEM_Parent:
       pNode = m_pParent;
-      if (eType != XFA_OBJECTTYPEMASK) {
-        while (pNode && pNode->GetObjectType() != eType)
-          pNode = pNode->m_pParent;
-      }
+      while (pNode && pNode->GetObjectType() != eType)
+        pNode = pNode->m_pParent;
       break;
     case XFA_NODEITEM_PrevSibling:
       if (m_pParent) {
         CXFA_Node* pSibling = m_pParent->m_pChild;
         while (pSibling && pSibling != this) {
-          if (eType == XFA_OBJECTTYPEMASK ||
-              eType == pSibling->GetObjectType()) {
+          if (eType == pSibling->GetObjectType())
             pNode = pSibling;
-          }
+
           pSibling = pSibling->m_pNext;
         }
       }
@@ -318,7 +312,7 @@ int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
           if (!pNewNode)
             break;
           InsertChild(pNewNode, nullptr);
-          pNewNode->SetFlag(XFA_NODEFLAG_Initialized, true);
+          pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);
           nodes.Add(pNewNode);
           break;
         }
@@ -352,7 +346,7 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(FX_BOOL bRecursive) {
       pClone->InsertChild(pChild->CloneTemplateToForm(bRecursive));
     }
   }
-  pClone->SetFlag(XFA_NODEFLAG_Initialized, true);
+  pClone->SetFlag(XFA_NodeFlag_Initialized, true);
   return pClone;
 }
 
@@ -370,7 +364,7 @@ CXFA_Node* CXFA_Node::GetBindData() {
 }
 
 int32_t CXFA_Node::GetBindItems(CXFA_NodeArray& formItems) {
-  if (m_uFlags & XFA_NODEFLAG_BindFormItems) {
+  if (BindsFormItems()) {
     CXFA_NodeArray* pItems = nullptr;
     TryObject(XFA_ATTRIBUTE_BindingNode, (void*&)pItems);
     formItems.Copy(*pItems);
@@ -385,7 +379,7 @@ int32_t CXFA_Node::GetBindItems(CXFA_NodeArray& formItems) {
 
 int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
-  if (m_uFlags & XFA_NODEFLAG_BindFormItems) {
+  if (BindsFormItems()) {
     CXFA_NodeArray* pItems = nullptr;
     TryObject(XFA_ATTRIBUTE_BindingNode, (void*&)pItems);
     ASSERT(pItems);
@@ -406,12 +400,12 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   SetObject(XFA_ATTRIBUTE_BindingNode, pItems, &deleteBindItemCallBack);
   pItems->Add(pOldFormItem);
   pItems->Add(pFormNode);
-  m_uFlags |= XFA_NODEFLAG_BindFormItems;
+  m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
   return 2;
 }
 
 int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
-  if (m_uFlags & XFA_NODEFLAG_BindFormItems) {
+  if (BindsFormItems()) {
     CXFA_NodeArray* pItems = nullptr;
     TryObject(XFA_ATTRIBUTE_BindingNode, (void*&)pItems);
     ASSERT(pItems);
@@ -424,7 +418,7 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
       if (iCount == 2) {
         CXFA_Node* pLastFormNode = pItems->GetAt(0);
         SetObject(XFA_ATTRIBUTE_BindingNode, pLastFormNode);
-        m_uFlags &= ~XFA_NODEFLAG_BindFormItems;
+        m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
       }
       iCount--;
     }
@@ -480,7 +474,7 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
       pDataNode->GetBindItems(formNodes);
       for (int32_t i = 0; i < formNodes.GetSize(); i++) {
         CXFA_Node* pFormNode = formNodes.GetAt(i);
-        if (!pFormNode || pFormNode->HasFlag(XFA_NODEFLAG_HasRemoved))
+        if (!pFormNode || pFormNode->HasRemovedChildren())
           continue;
         pFieldWidgetData = pFormNode->GetWidgetData();
         if (pFieldWidgetData) {
@@ -551,8 +545,8 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
       if (eIntact == XFA_ATTRIBUTEENUM_None &&
           eLayoutType == XFA_ATTRIBUTEENUM_Row &&
           m_pDocument->GetCurVersionMode() < XFA_VERSION_208) {
-        CXFA_Node* pPreviewRow =
-            GetNodeItem(XFA_NODEITEM_PrevSibling, XFA_OBJECTTYPE_ContainerNode);
+        CXFA_Node* pPreviewRow = GetNodeItem(XFA_NODEITEM_PrevSibling,
+                                             XFA_ObjectType::ContainerNode);
         if (pPreviewRow &&
             pPreviewRow->GetEnum(XFA_ATTRIBUTE_Layout) ==
                 XFA_ATTRIBUTEENUM_Row) {
@@ -1013,7 +1007,7 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
         CXFA_Node* pItem = pNewChild->GetNodeItem(XFA_NODEITEM_NextSibling);
         pFakeRoot->RemoveChild(pNewChild);
         InsertChild(index++, pNewChild);
-        pNewChild->SetFlag(XFA_NODEFLAG_Initialized, true);
+        pNewChild->SetFlag(XFA_NodeFlag_Initialized, true);
         pNewChild = pItem;
       }
       while (pChild) {
@@ -1026,7 +1020,7 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
           GetClassID() == XFA_ELEMENT_ExData) {
         CFDE_XMLNode* pTempXMLNode = GetXMLMappingNode();
         SetXMLMappingNode(pFakeXMLRoot);
-        SetFlag(XFA_NODEFLAG_OwnXMLNode, false);
+        SetFlag(XFA_NodeFlag_OwnXMLNode, false);
         if (pTempXMLNode && !pTempXMLNode->GetNodeItem(CFDE_XMLNode::Parent)) {
           pFakeXMLRoot = pTempXMLNode;
         } else {
@@ -1040,15 +1034,15 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
         CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
         pFakeRoot->RemoveChild(pChild);
         InsertChild(pChild);
-        pChild->SetFlag(XFA_NODEFLAG_Initialized, true);
+        pChild->SetFlag(XFA_NodeFlag_Initialized, true);
         pChild = pItem;
       }
     }
     if (pFakeXMLRoot) {
       pFakeRoot->SetXMLMappingNode(pFakeXMLRoot);
-      pFakeRoot->SetFlag(XFA_NODEFLAG_OwnXMLNode, false);
+      pFakeRoot->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
     }
-    pFakeRoot->SetFlag(XFA_NODEFLAG_HasRemoved, false);
+    pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren, false);
   } else {
     if (pFakeXMLRoot) {
       pFakeXMLRoot->Release();
@@ -1631,7 +1625,7 @@ void CXFA_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
       CFX_WideString wsPicture;
       for (int32_t i = 0; i < formNodes.GetSize(); i++) {
         CXFA_Node* pFormNode = formNodes.GetAt(i);
-        if (!pFormNode || pFormNode->HasFlag(XFA_NODEFLAG_HasRemoved)) {
+        if (!pFormNode || pFormNode->HasRemovedChildren()) {
           continue;
         }
         pContainerWidgetData = pFormNode->GetContainerWidgetData();
@@ -2985,8 +2979,7 @@ static CXFA_Node* XFA_ScriptInstanceManager_CreateInstance(
   CXFA_Node* pFormParent = pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent);
   CXFA_Node* pDataScope = nullptr;
   for (CXFA_Node* pRootBoundNode = pFormParent;
-       pRootBoundNode &&
-       pRootBoundNode->GetObjectType() == XFA_OBJECTTYPE_ContainerNode;
+       pRootBoundNode && pRootBoundNode->IsContainerNode();
        pRootBoundNode = pRootBoundNode->GetNodeItem(XFA_NODEITEM_Parent)) {
     pDataScope = pRootBoundNode->GetBindData();
     if (pDataScope) {
@@ -4065,7 +4058,7 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
   CXFA_Node* pNode = nullptr;
   CXFA_Node* pBindNode = nullptr;
   switch (GetObjectType()) {
-    case XFA_OBJECTTYPE_ContainerNode: {
+    case XFA_ObjectType::ContainerNode: {
       if (XFA_FieldIsMultiListBox(this)) {
         CXFA_Node* pValue = GetProperty(0, XFA_ELEMENT_Value);
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -4166,7 +4159,7 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       pBindNode = nullptr;
       break;
     }
-    case XFA_OBJECTTYPE_ContentNode: {
+    case XFA_ObjectType::ContentNode: {
       CFX_WideString wsContentType;
       if (GetClassID() == XFA_ELEMENT_ExData) {
         GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
@@ -4185,11 +4178,11 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       return pContentRawDataNode->SetScriptContent(
           wsContent, wsXMLValue, bNotify, bScriptModify, bSyncData);
     } break;
-    case XFA_OBJECTTYPE_NodeC:
-    case XFA_OBJECTTYPE_TextNode:
+    case XFA_ObjectType::NodeC:
+    case XFA_ObjectType::TextNode:
       pNode = this;
       break;
-    case XFA_OBJECTTYPE_NodeV:
+    case XFA_ObjectType::NodeV:
       pNode = this;
       if (bSyncData && GetPacketID() == XFA_XDPPACKET_Form) {
         CXFA_Node* pParent = GetNodeItem(XFA_NODEITEM_Parent);
@@ -4249,7 +4242,7 @@ FX_BOOL CXFA_Node::TryContent(CFX_WideString& wsContent,
                               FX_BOOL bProto) {
   CXFA_Node* pNode = nullptr;
   switch (GetObjectType()) {
-    case XFA_OBJECTTYPE_ContainerNode:
+    case XFA_ObjectType::ContainerNode:
       if (GetClassID() == XFA_ELEMENT_ExclGroup) {
         pNode = this;
       } else {
@@ -4267,7 +4260,7 @@ FX_BOOL CXFA_Node::TryContent(CFX_WideString& wsContent,
                    : FALSE;
       }
       break;
-    case XFA_OBJECTTYPE_ContentNode: {
+    case XFA_ObjectType::ContentNode: {
       CXFA_Node* pContentRawDataNode = GetNodeItem(XFA_NODEITEM_FirstChild);
       if (!pContentRawDataNode) {
         XFA_ELEMENT element = XFA_ELEMENT_Sharptext;
@@ -4285,9 +4278,9 @@ FX_BOOL CXFA_Node::TryContent(CFX_WideString& wsContent,
       }
       return pContentRawDataNode->TryContent(wsContent, bScriptModify, bProto);
     }
-    case XFA_OBJECTTYPE_NodeC:
-    case XFA_OBJECTTYPE_NodeV:
-    case XFA_OBJECTTYPE_TextNode:
+    case XFA_ObjectType::NodeC:
+    case XFA_ObjectType::NodeV:
+    case XFA_ObjectType::TextNode:
       pNode = this;
     default:
       if (GetClassID() == XFA_ELEMENT_DataValue) {
@@ -4332,8 +4325,7 @@ CXFA_Node* CXFA_Node::GetModelNode() {
 }
 FX_BOOL CXFA_Node::TryNamespace(CFX_WideString& wsNamespace) {
   wsNamespace.clear();
-  if (GetObjectType() == XFA_OBJECTTYPE_ModelNode ||
-      GetClassID() == XFA_ELEMENT_Packet) {
+  if (IsModelNode() || GetClassID() == XFA_ELEMENT_Packet) {
     CFDE_XMLNode* pXMLNode = GetXMLMappingNode();
     if (!pXMLNode || pXMLNode->GetType() != FDE_XMLNODE_Element) {
       return FALSE;
@@ -4401,7 +4393,7 @@ CXFA_Node* CXFA_Node::GetProperty(int32_t index,
     if (!pNewNode)
       return nullptr;
     InsertChild(pNewNode, nullptr);
-    pNewNode->SetFlag(XFA_NODEFLAG_Initialized, true);
+    pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);
   }
   return pNewNode;
 }
@@ -4479,7 +4471,7 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   }
   ASSERT(m_pLastChild);
   ASSERT(!m_pLastChild->m_pNext);
-  pNode->ClearFlag(XFA_NODEFLAG_HasRemoved);
+  pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
   CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (pNotify)
     pNotify->OnChildAdded(this);
@@ -4487,7 +4479,7 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   if (IsNeedSavingXMLNode() && pNode->m_pXMLNode) {
     ASSERT(!pNode->m_pXMLNode->GetNodeItem(CFDE_XMLNode::Parent));
     m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, index);
-    pNode->ClearFlag(XFA_NODEFLAG_OwnXMLNode);
+    pNode->ClearFlag(XFA_NodeFlag_OwnXMLNode);
   }
   return index;
 }
@@ -4526,7 +4518,7 @@ FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   }
   ASSERT(m_pLastChild);
   ASSERT(!m_pLastChild->m_pNext);
-  pNode->ClearFlag(XFA_NODEFLAG_HasRemoved);
+  pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
   CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (pNotify)
     pNotify->OnChildAdded(this);
@@ -4534,7 +4526,7 @@ FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   if (IsNeedSavingXMLNode() && pNode->m_pXMLNode) {
     ASSERT(!pNode->m_pXMLNode->GetNodeItem(CFDE_XMLNode::Parent));
     m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, nIndex);
-    pNode->ClearFlag(XFA_NODEFLAG_OwnXMLNode);
+    pNode->ClearFlag(XFA_NodeFlag_OwnXMLNode);
   }
   return TRUE;
 }
@@ -4573,7 +4565,7 @@ FX_BOOL CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   }
   ASSERT(!m_pLastChild || !m_pLastChild->m_pNext);
   OnRemoved(bNotify);
-  pNode->SetFlag(XFA_NODEFLAG_HasRemoved, true);
+  pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren, true);
   m_pDocument->AddPurgeNode(pNode);
   if (IsNeedSavingXMLNode() && pNode->m_pXMLNode) {
     if (pNode->IsAttributeInXML()) {
@@ -4598,7 +4590,7 @@ FX_BOOL CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
     } else {
       m_pXMLNode->RemoveChildNode(pNode->m_pXMLNode);
     }
-    pNode->SetFlag(XFA_NODEFLAG_OwnXMLNode, false);
+    pNode->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
   return TRUE;
 }
@@ -4696,32 +4688,26 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
 CXFA_Node* CXFA_Node::GetOccurNode() {
   return GetFirstChildByClass(XFA_ELEMENT_Occur);
 }
-FX_BOOL CXFA_Node::HasFlag(uint32_t dwFlag) const {
-  if (m_uFlags & dwFlag) {
-    return TRUE;
-  }
-  switch (dwFlag) {
-    case XFA_NODEFLAG_HasRemoved:
-      return m_pParent && m_pParent->HasFlag(dwFlag);
-    default:
-      break;
-  }
-  return FALSE;
+bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {
+  if (m_uNodeFlags & dwFlag)
+    return true;
+  if (dwFlag == XFA_NodeFlag_HasRemovedChildren)
+    return m_pParent && m_pParent->HasFlag(dwFlag);
+  return false;
 }
 
 void CXFA_Node::SetFlag(uint32_t dwFlag, bool bNotify) {
-  if (dwFlag == XFA_NODEFLAG_Initialized && bNotify &&
-      !HasFlag(XFA_NODEFLAG_Initialized)) {
+  if (dwFlag == XFA_NodeFlag_Initialized && bNotify && !IsInitialized()) {
     CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (pNotify) {
       pNotify->OnNodeReady(this);
     }
   }
-  m_uFlags |= dwFlag;
+  m_uNodeFlags |= dwFlag;
 }
 
 void CXFA_Node::ClearFlag(uint32_t dwFlag) {
-  m_uFlags &= ~dwFlag;
+  m_uNodeFlags &= ~dwFlag;
 }
 
 FX_BOOL CXFA_Node::IsAttributeInXML() {
@@ -4738,7 +4724,7 @@ void CXFA_Node::OnRemoved(bool bNotify) {
 }
 
 void CXFA_Node::OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify) {
-  if (bNotify && HasFlag(XFA_NODEFLAG_Initialized)) {
+  if (bNotify && IsInitialized()) {
     CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (pNotify) {
       pNotify->OnValueChanging(this, eAttr);
@@ -4749,7 +4735,7 @@ void CXFA_Node::OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify) {
 void CXFA_Node::OnChanged(XFA_ATTRIBUTE eAttr,
                           bool bNotify,
                           FX_BOOL bScriptModify) {
-  if (bNotify && HasFlag(XFA_NODEFLAG_Initialized)) {
+  if (bNotify && IsInitialized()) {
     Script_Attribute_SendAttributeChangeMessage(eAttr, bScriptModify);
   }
 }
@@ -4830,7 +4816,7 @@ CFDE_XMLNode* CXFA_Node::CreateXMLMappingNode() {
   if (!m_pXMLNode) {
     CFX_WideString wsTag(GetCData(XFA_ATTRIBUTE_Name));
     m_pXMLNode = new CFDE_XMLElement(wsTag);
-    SetFlag(XFA_NODEFLAG_OwnXMLNode, false);
+    SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
   return m_pXMLNode;
 }
@@ -5062,7 +5048,7 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
                                         (XFA_MAPDATABLOCK*)pBufferBlockData);
     }
   }
-  if (pDstModule->GetObjectType() == XFA_OBJECTTYPE_NodeV) {
+  if (pDstModule->IsNodeV()) {
     CFX_WideString wsValue = pDstModule->GetScriptContent(FALSE);
     CFX_WideString wsFormatValue(wsValue);
     CXFA_WidgetData* pWidgetData = pDstModule->GetContainerWidgetData();
@@ -5093,7 +5079,7 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
 
 CXFA_OrdinaryObject::CXFA_OrdinaryObject(CXFA_Document* pDocument,
                                          XFA_ELEMENT eElement)
-    : CXFA_Object(pDocument, XFA_OBJECTTYPE_OrdinaryObject), m_uScriptHash(0) {
+    : CXFA_Object(pDocument, XFA_ObjectType::OrdinaryObject), m_uScriptHash(0) {
   m_eNodeClass = eElement;
 }
 
@@ -5108,7 +5094,7 @@ uint32_t CXFA_OrdinaryObject::GetScriptObjHash() const {
 }
 
 CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
-    : CXFA_Object(pThisNode->GetDocument(), XFA_OBJECTTYPE_VariablesThis),
+    : CXFA_Object(pThisNode->GetDocument(), XFA_ObjectType::VariablesThis),
       m_pThisNode(NULL),
       m_pScriptNode(NULL) {
   m_pThisNode = pThisNode;
@@ -5126,7 +5112,7 @@ CXFA_Node* CXFA_ThisProxy::GetScriptNode() const {
 }
 
 CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
-    : CXFA_Object(pDocument, XFA_OBJECTTYPE_NodeList) {
+    : CXFA_Object(pDocument, XFA_ObjectType::NodeList) {
   m_pDocument->GetScriptContext()->AddToCacheList(
       std::unique_ptr<CXFA_NodeList>(this));
 }

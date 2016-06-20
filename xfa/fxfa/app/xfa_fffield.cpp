@@ -740,9 +740,9 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
             return 1;
           }
         }
-        if (pAcc->GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
+        if (pAcc->GetNode()->IsUserInteractive())
           return 1;
-        }
+
         IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
         if (pAppProvider) {
           CFX_WideString wsMessage;
@@ -757,7 +757,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
           pAppProvider->LoadString(XFA_IDS_CalcOverride, wsTitle);
           if (pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Warning,
                                    XFA_MB_YesNo) == XFA_IDYes) {
-            pAcc->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
+            pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
             return 1;
           }
         }
@@ -766,7 +766,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
       case XFA_ATTRIBUTEENUM_Ignore:
         return 0;
       case XFA_ATTRIBUTEENUM_Disabled:
-        pAcc->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
+        pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
       default:
         return 1;
     }

@@ -217,7 +217,7 @@ FX_BOOL CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
   pWidgetAcc->UpdateUIDisplay();
   if (CXFA_Validate validate = pWidgetAcc->GetValidate()) {
     AddValidateWidget(pWidgetAcc);
-    validate.GetNode()->SetFlag(XFA_NODEFLAG_NeedsInitApp, false);
+    validate.GetNode()->SetFlag(XFA_NodeFlag_NeedsInitApp, false);
   }
   return TRUE;
 }
@@ -417,9 +417,9 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       if (!calc) {
         return XFA_EVENTERROR_NotExist;
       }
-      if (pWidgetAcc->GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
+      if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
-      }
+
       CXFA_Script script = calc.GetScript();
       return pWidgetAcc->ExecuteScript(script, pParam);
     }
@@ -456,9 +456,9 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
   }
   if (bRecursive) {
     for (CXFA_Node* pNode = pFormNode->GetNodeItem(
-             XFA_NODEITEM_FirstChild, XFA_OBJECTTYPE_ContainerNode);
+             XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
          pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                           XFA_OBJECTTYPE_ContainerNode)) {
+                                           XFA_ObjectType::ContainerNode)) {
       elementType = pNode->GetClassID();
       if (elementType != XFA_ELEMENT_Variables &&
           elementType != XFA_ELEMENT_Draw) {
@@ -634,9 +634,9 @@ void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
   int32_t iCount = pGlobalData ? pGlobalData->m_Globals.GetSize() : 0;
   for (int32_t i = 0; i < iCount; i++) {
     CXFA_WidgetAcc* pResultAcc = pGlobalData->m_Globals[i];
-    if (pResultAcc->GetNode()->HasFlag(XFA_NODEFLAG_HasRemoved)) {
+    if (pResultAcc->GetNode()->HasRemovedChildren())
       continue;
-    }
+
     int32_t iAccs = m_CalculateAccs.GetSize();
     CXFA_WidgetAcc* pCurrentAcc =
         iAccs > 0 ? m_CalculateAccs[iAccs - 1] : nullptr;
@@ -703,9 +703,9 @@ FX_BOOL CXFA_FFDocView::RunValidate() {
   int32_t iCounts = m_ValidateAccs.GetSize();
   for (int32_t i = 0; i < iCounts; i++) {
     CXFA_WidgetAcc* pAcc = m_ValidateAccs[i];
-    if (pAcc->GetNode()->HasFlag(XFA_NODEFLAG_HasRemoved)) {
+    if (pAcc->GetNode()->HasRemovedChildren())
       continue;
-    }
+
     pAcc->ProcessValidate();
   }
   m_ValidateAccs.RemoveAll();
@@ -723,7 +723,7 @@ FX_BOOL CXFA_FFDocView::RunEventLayoutReady() {
 }
 void CXFA_FFDocView::RunBindItems() {
   for (int32_t i = 0; i < m_BindItems.GetSize(); i++) {
-    if (m_BindItems[i]->HasFlag(XFA_NODEFLAG_HasRemoved))
+    if (m_BindItems[i]->HasRemovedChildren())
       continue;
 
     CXFA_Node* pWidgetNode = m_BindItems[i]->GetNodeItem(XFA_NODEITEM_Parent);

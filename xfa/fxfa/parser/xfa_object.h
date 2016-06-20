@@ -18,58 +18,68 @@ class CXFA_Node;
 class CXFA_NodeList;
 class CXFA_OrdinaryObject;
 
-enum XFA_OBJECTTYPE {
-  XFA_OBJECTTYPE_OrdinaryObject = 0x0,
-  XFA_OBJECTTYPE_OrdinaryList = 0x1,
-  XFA_OBJECTTYPE_NodeList = 0x2,
-  XFA_OBJECTTYPE_Node = 0x4,
-  XFA_OBJECTTYPE_NodeC = 0x5,
-  XFA_OBJECTTYPE_NodeV = 0x6,
-  XFA_OBJECTTYPE_ModelNode = 0x8,
-  XFA_OBJECTTYPE_TextNode = 0x9,
-  XFA_OBJECTTYPE_ContainerNode = 0xA,
-  XFA_OBJECTTYPE_ContentNode = 0xB,
-  XFA_OBJECTTYPE_VariablesThis = 0xC,
-  XFA_OBJECTTYPEMASK = 0xF,
-  XFA_NODEFLAG_Initialized = 0x00020,
-  XFA_NODEFLAG_HasRemoved = 0x00200,
-  XFA_NODEFLAG_NeedsInitApp = 0x00400,
-  XFA_NODEFLAG_BindFormItems = 0x00800,
-  XFA_NODEFLAG_UserInteractive = 0x01000,
-  XFA_NODEFLAG_SkipDataBinding = 0x02000,
-  XFA_NODEFLAG_OwnXMLNode = 0x04000,
-  XFA_NODEFLAG_UnusedNode = 0x08000,
-  XFA_NODEFLAG_LayoutGeneratedNode = 0x10000,
+enum class XFA_ObjectType {
+  OrdinaryObject,
+  OrdinaryList,
+  NodeList,
+  Node,
+  NodeC,
+  NodeV,
+  ModelNode,
+  TextNode,
+  ContainerNode,
+  ContentNode,
+  VariablesThis
+};
+
+enum XFA_NodeFlag {
+  XFA_NodeFlag_None = 0,
+  XFA_NodeFlag_Initialized = 1 << 0,
+  XFA_NodeFlag_HasRemovedChildren = 1 << 1,
+  XFA_NodeFlag_NeedsInitApp = 1 << 2,
+  XFA_NodeFlag_BindFormItems = 1 << 3,
+  XFA_NodeFlag_UserInteractive = 1 << 4,
+  XFA_NodeFlag_SkipDataBinding = 1 << 5,
+  XFA_NodeFlag_OwnXMLNode = 1 << 6,
+  XFA_NodeFlag_UnusedNode = 1 << 7,
+  XFA_NodeFlag_LayoutGeneratedNode = 1 << 8
 };
 
 class CXFA_Object : public CFXJSE_HostObject {
  public:
-  CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags);
+  CXFA_Object(CXFA_Document* pDocument, XFA_ObjectType type);
   ~CXFA_Object() override;
 
   CXFA_Document* GetDocument() const { return m_pDocument; }
-  uint32_t GetFlag() const { return m_uFlags; }
-  XFA_OBJECTTYPE GetObjectType() const {
-    return (XFA_OBJECTTYPE)(m_uFlags & XFA_OBJECTTYPEMASK);
-  }
+  XFA_ObjectType GetObjectType() const { return m_objectType; }
 
   bool IsNode() const {
-    return (m_uFlags & XFA_OBJECTTYPEMASK) >= XFA_OBJECTTYPE_Node;
+    return m_objectType == XFA_ObjectType::Node ||
+           m_objectType == XFA_ObjectType::NodeC ||
+           m_objectType == XFA_ObjectType::NodeV ||
+           m_objectType == XFA_ObjectType::ModelNode ||
+           m_objectType == XFA_ObjectType::TextNode ||
+           m_objectType == XFA_ObjectType::ContainerNode ||
+           m_objectType == XFA_ObjectType::ContentNode ||
+           m_objectType == XFA_ObjectType::VariablesThis;
   }
   bool IsOrdinaryObject() const {
-    return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_OrdinaryObject;
+    return m_objectType == XFA_ObjectType::OrdinaryObject;
   }
-  bool IsNodeList() const {
-    return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_NodeList;
-  }
+  bool IsNodeList() const { return m_objectType == XFA_ObjectType::NodeList; }
   bool IsOrdinaryList() const {
-    return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_OrdinaryList;
+    return m_objectType == XFA_ObjectType::OrdinaryList;
   }
   bool IsContentNode() const {
-    return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_ContentNode;
+    return m_objectType == XFA_ObjectType::ContentNode;
   }
   bool IsContainerNode() const {
-    return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_ContainerNode;
+    return m_objectType == XFA_ObjectType::ContainerNode;
+  }
+  bool IsModelNode() const { return m_objectType == XFA_ObjectType::ModelNode; }
+  bool IsNodeV() const { return m_objectType == XFA_ObjectType::NodeV; }
+  bool IsVariablesThis() const {
+    return m_objectType == XFA_ObjectType::VariablesThis;
   }
 
   CXFA_Node* AsNode();
@@ -90,7 +100,7 @@ class CXFA_Object : public CFXJSE_HostObject {
 
  protected:
   CXFA_Document* const m_pDocument;
-  uint32_t m_uFlags;
+  XFA_ObjectType m_objectType;
 };
 using CXFA_ObjArray = CFX_ArrayTemplate<CXFA_Object*>;
 
@@ -140,11 +150,26 @@ struct XFA_MAPMODULEDATA {
 
 class CXFA_Node : public CXFA_Object {
  public:
-  XFA_ELEMENT GetClassID() const { return (XFA_ELEMENT)m_eNodeClass; }
+  XFA_ELEMENT GetClassID() const { return m_eNodeClass; }
   uint32_t GetPacketID() const { return m_ePacket; }
-  FX_BOOL HasFlag(uint32_t dwFlag) const;
+
   void SetFlag(uint32_t dwFlag, bool bNotify);
   void ClearFlag(uint32_t dwFlag);
+
+  bool IsInitialized() const { return HasFlag(XFA_NodeFlag_Initialized); }
+  bool IsOwnXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }
+  bool IsUserInteractive() const {
+    return HasFlag(XFA_NodeFlag_UserInteractive);
+  }
+  bool IsUnusedNode() const { return HasFlag(XFA_NodeFlag_UnusedNode); }
+  bool IsLayoutGeneratedNode() const {
+    return HasFlag(XFA_NodeFlag_LayoutGeneratedNode);
+  }
+  bool BindsFormItems() const { return HasFlag(XFA_NodeFlag_BindFormItems); }
+  bool HasRemovedChildren() const {
+    return HasFlag(XFA_NodeFlag_HasRemovedChildren);
+  }
+  bool NeedsInitApp() const { return HasFlag(XFA_NodeFlag_NeedsInitApp); }
 
   FX_BOOL IsAttributeInXML();
   bool IsFormContainer() const {
@@ -278,14 +303,14 @@ class CXFA_Node : public CXFA_Object {
   FX_BOOL RemoveChild(CXFA_Node* pNode, bool bNotify = true);
   CXFA_Node* Clone(FX_BOOL bRecursive);
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
-  CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_OBJECTTYPE eType) const;
+  CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_ObjectType eType) const;
   int32_t GetNodeList(CXFA_NodeArray& nodes,
                       uint32_t dwTypeFilter = XFA_NODEFILTER_Children |
                                               XFA_NODEFILTER_Properties,
                       XFA_ELEMENT eElementFilter = XFA_ELEMENT_UNKNOWN,
                       int32_t iLevel = 1);
   CXFA_Node* CreateSamePacketNode(XFA_ELEMENT eElement,
-                                  uint32_t dwFlags = XFA_NODEFLAG_Initialized);
+                                  uint32_t dwFlags = XFA_NodeFlag_Initialized);
   CXFA_Node* CloneTemplateToForm(FX_BOOL bRecursive);
   CXFA_Node* GetTemplateNode() const;
   void SetTemplateNode(CXFA_Node* pTemplateNode);
@@ -596,9 +621,12 @@ class CXFA_Node : public CXFA_Object {
                                XFA_ATTRIBUTE eAttribute);
 
  protected:
+  friend class CXFA_Document;
+
   CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_ELEMENT eElement);
   ~CXFA_Node() override;
-  friend class CXFA_Document;
+
+  bool HasFlag(XFA_NodeFlag dwFlag) const;
   CXFA_Node* Deprecated_GetPrevSibling();
   FX_BOOL SetValue(XFA_ATTRIBUTE eAttr,
                    XFA_ATTRIBUTETYPE eType,
@@ -649,6 +677,7 @@ class CXFA_Node : public CXFA_Object {
   CFDE_XMLNode* m_pXMLNode;
   XFA_ELEMENT m_eNodeClass;
   uint16_t m_ePacket;
+  uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;
   XFA_MAPMODULEDATA* m_pMapModuleData;
@@ -741,17 +770,17 @@ class CXFA_TraverseStrategy_XFAContainerNode {
   static CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode,
                                   void* pUserData = NULL) {
     return pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild,
-                                      XFA_OBJECTTYPE_ContainerNode);
+                                      XFA_ObjectType::ContainerNode);
   }
   static CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode,
                                    void* pUserData = NULL) {
     return pTemplateNode->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                      XFA_OBJECTTYPE_ContainerNode);
+                                      XFA_ObjectType::ContainerNode);
   }
   static CXFA_Node* GetParent(CXFA_Node* pTemplateNode,
                               void* pUserData = NULL) {
     return pTemplateNode->GetNodeItem(XFA_NODEITEM_Parent,
-                                      XFA_OBJECTTYPE_ContainerNode);
+                                      XFA_ObjectType::ContainerNode);
   }
 };
 typedef CXFA_NodeIteratorTemplate<CXFA_Node,

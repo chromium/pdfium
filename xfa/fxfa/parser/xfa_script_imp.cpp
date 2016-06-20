@@ -156,14 +156,13 @@ void CXFA_ScriptContext::GlobalPropertySetter(CFXJSE_Value* pObject,
                     XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
-  if (lpOrginalNode->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
+  if (lpOrginalNode->IsVariablesThis())
     pRefNode = ToNode(lpCurNode);
-  }
   if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName.AsStringC(), pValue,
                                        dwFlag, TRUE)) {
     return;
   }
-  if (lpOrginalNode->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
+  if (lpOrginalNode->IsVariablesThis()) {
     if (pValue && pValue->IsUndefined()) {
       pObject->SetObjectOwnProperty(szPropName, pValue);
       return;
@@ -226,7 +225,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(CFXJSE_Value* pObject,
   uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
-  if (pOriginalObject->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
+  if (pOriginalObject->IsVariablesThis()) {
     pRefNode = ToNode(lpCurNode);
   }
   if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName.AsStringC(), pValue,
@@ -433,7 +432,7 @@ CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
 }
 CXFA_Object* CXFA_ScriptContext::GetVariablesThis(CXFA_Object* pObject,
                                                   FX_BOOL bScriptNode) {
-  if (pObject->GetObjectType() != XFA_OBJECTTYPE_VariablesThis)
+  if (!pObject->IsVariablesThis())
     return pObject;
 
   CXFA_ThisProxy* pProxy = static_cast<CXFA_ThisProxy*>(pObject);

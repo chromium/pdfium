@@ -178,7 +178,7 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
 
           pXFANode->InsertChild(pXFAChild);
           pXFAChild->SetXMLMappingNode(pXMLChild);
-          pXFAChild->SetFlag(XFA_NODEFLAG_Initialized, false);
+          pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
           break;
         }
       }
@@ -186,7 +186,7 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
     } else {
       m_pRootNode = DataLoader(pXFANode, pXMLNode, TRUE);
     }
-  } else if (pXFANode->GetObjectType() == XFA_OBJECTTYPE_ContentNode) {
+  } else if (pXFANode->IsContentNode()) {
     ParseContentNode(pXFANode, pXMLNode, ePacketID);
     m_pRootNode = pXFANode;
   } else {
@@ -705,7 +705,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(
     }
     pNode->SetXMLMappingNode(pDataXMLNode);
     if (pDataXMLNode != pXMLDocumentNode) {
-      pNode->SetFlag(XFA_NODEFLAG_OwnXMLNode, false);
+      pNode->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
     }
     return pNode;
   }
@@ -891,10 +891,10 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
           break;
         }
         switch (pXFAChild->GetObjectType()) {
-          case XFA_OBJECTTYPE_ContentNode:
-          case XFA_OBJECTTYPE_TextNode:
-          case XFA_OBJECTTYPE_NodeC:
-          case XFA_OBJECTTYPE_NodeV:
+          case XFA_ObjectType::ContentNode:
+          case XFA_ObjectType::TextNode:
+          case XFA_ObjectType::NodeC:
+          case XFA_ObjectType::NodeV:
             if (IsNeedValue) {
               ParseContentNode(pXFAChild, pXMLElement, ePacketID);
             }
@@ -1023,7 +1023,7 @@ void CXFA_SimpleParser::ParseContentNode(CXFA_Node* pXFANode,
     break;
   }
   if (!wsValue.IsEmpty()) {
-    if (pXFANode->GetObjectType() == XFA_OBJECTTYPE_ContentNode) {
+    if (pXFANode->IsContentNode()) {
       CXFA_Node* pContentRawDataNode =
           m_pFactory->CreateNode(ePacketID, element);
       ASSERT(pContentRawDataNode);
@@ -1156,7 +1156,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
                                   XFA_ATTRIBUTEENUM_MetaData);
             pXFAChild->InsertChild(pXFAMetaData);
             pXFAMetaData->SetXMLMappingNode(pXMLElement);
-            pXFAMetaData->SetFlag(XFA_NODEFLAG_Initialized, false);
+            pXFAMetaData->SetFlag(XFA_NodeFlag_Initialized, false);
           }
           if (!bNeedValue) {
             CFX_WideString wsNilName(L"xsi:nil");
@@ -1172,7 +1172,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
           }
         }
         pXFAChild->SetXMLMappingNode(pXMLElement);
-        pXFAChild->SetFlag(XFA_NODEFLAG_Initialized, false);
+        pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
       }
         continue;
       case FDE_XMLNODE_CharData: {
@@ -1191,7 +1191,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
         pXFAChild->SetCData(XFA_ATTRIBUTE_Value, wsCharData);
         pXFANode->InsertChild(pXFAChild);
         pXFAChild->SetXMLMappingNode(pXMLCharData);
-        pXFAChild->SetFlag(XFA_NODEFLAG_Initialized, false);
+        pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
       }
         continue;
       case FDE_XMLNODE_Text: {
@@ -1209,7 +1209,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
         pXFAChild->SetCData(XFA_ATTRIBUTE_Value, wsText);
         pXFANode->InsertChild(pXFAChild);
         pXFAChild->SetXMLMappingNode(pXMLText);
-        pXFAChild->SetFlag(XFA_NODEFLAG_Initialized, false);
+        pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
       }
         continue;
       case FDE_XMLNODE_Instruction:
@@ -1270,7 +1270,7 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
           pXFAChild->SetCData(XFA_ATTRIBUTE_Value, wsCurValue);
           pXFANode->InsertChild(pXFAChild);
           pXFAChild->SetXMLMappingNode(pXMLCurValueNode);
-          pXFAChild->SetFlag(XFA_NODEFLAG_Initialized, false);
+          pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
           wsValueTextBuf << wsCurValue;
           wsCurValueTextBuf.Clear();
         }
@@ -1287,7 +1287,7 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
       ParseDataValue(pXFAChild, pXMLChild, ePacketID);
       pXFANode->InsertChild(pXFAChild);
       pXFAChild->SetXMLMappingNode(pXMLChild);
-      pXFAChild->SetFlag(XFA_NODEFLAG_Initialized, false);
+      pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
       CFX_WideStringC wsCurValue = pXFAChild->GetCData(XFA_ATTRIBUTE_Value);
       wsValueTextBuf << wsCurValue;
     }
@@ -1305,7 +1305,7 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
         pXFAChild->SetCData(XFA_ATTRIBUTE_Value, wsCurValue);
         pXFANode->InsertChild(pXFAChild);
         pXFAChild->SetXMLMappingNode(pXMLCurValueNode);
-        pXFAChild->SetFlag(XFA_NODEFLAG_Initialized, false);
+        pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
       }
       wsValueTextBuf << wsCurValue;
       wsCurValueTextBuf.Clear();

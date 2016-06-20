@@ -235,7 +235,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
       CXFA_Calculate calc = pWidgetAcc->GetCalculate();
       if (!calc)
         return XFA_EVENTERROR_NotExist;
-      if (pWidgetAcc->GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive))
+      if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
 
       CXFA_Script script = calc.GetScript();
@@ -261,8 +261,8 @@ CXFA_FFWidget* CXFA_FFWidgetHandler::CreateWidget(CXFA_FFWidget* hParent,
   if (!pNewFormItem)
     return nullptr;
 
-  pNewFormItem->GetTemplateNode()->SetFlag(XFA_NODEFLAG_Initialized, true);
-  pNewFormItem->SetFlag(XFA_NODEFLAG_Initialized, true);
+  pNewFormItem->GetTemplateNode()->SetFlag(XFA_NodeFlag_Initialized, true);
+  pNewFormItem->SetFlag(XFA_NodeFlag_Initialized, true);
   m_pDocView->RunLayout();
   CXFA_LayoutItem* pLayout =
       m_pDocView->GetXFALayout()->GetLayoutItem(pNewFormItem);

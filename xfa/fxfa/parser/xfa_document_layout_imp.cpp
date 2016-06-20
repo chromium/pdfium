@@ -115,7 +115,7 @@ FX_BOOL CXFA_LayoutProcessor::IncrementLayout() {
   for (int32_t i = 0, c = m_rgChangedContainers.GetSize(); i < c; i++) {
     CXFA_Node* pNode = m_rgChangedContainers[i];
     CXFA_Node* pParentNode =
-        pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_OBJECTTYPE_ContainerNode);
+        pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
     if (!pParentNode) {
       return FALSE;
     }

@@ -109,7 +109,7 @@ int32_t CXFA_WidgetData::GetAccess(FX_BOOL bTemplate) {
       return iAcc;
 
     pNode =
-        pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_OBJECTTYPE_ContainerNode);
+        pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
   }
   return XFA_ATTRIBUTEENUM_Open;
 }

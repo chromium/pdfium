@@ -161,22 +161,20 @@ static FX_BOOL XFA_DataExporter_AttributeSaveInDataModel(
 }
 FX_BOOL XFA_DataExporter_ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   CFX_WideString wsContent;
-  if (!pContentNode->TryContent(wsContent, FALSE, FALSE)) {
+  if (!pContentNode->TryContent(wsContent, FALSE, FALSE))
     return FALSE;
-  }
-  ASSERT(pContentNode->GetObjectType() == XFA_OBJECTTYPE_ContentNode);
+
+  ASSERT(pContentNode->IsContentNode());
   CXFA_Node* pParentNode = pContentNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!pParentNode || pParentNode->GetClassID() != XFA_ELEMENT_Value) {
+  if (!pParentNode || pParentNode->GetClassID() != XFA_ELEMENT_Value)
     return TRUE;
-  }
+
   CXFA_Node* pGrandParentNode = pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!pGrandParentNode ||
-      pGrandParentNode->GetObjectType() != XFA_OBJECTTYPE_ContainerNode) {
+  if (!pGrandParentNode || !pGrandParentNode->IsContainerNode())
     return TRUE;
-  }
-  if (pGrandParentNode->GetBindData()) {
+  if (pGrandParentNode->GetBindData())
     return FALSE;
-  }
+
   CXFA_WidgetData* pWidgetData = pGrandParentNode->GetWidgetData();
   XFA_ELEMENT eUIType = pWidgetData->GetUIType();
   if (eUIType == XFA_ELEMENT_PasswordEdit) {
@@ -223,7 +221,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
   }
   CFX_WideString wsChildren;
   switch (pNode->GetObjectType()) {
-    case XFA_OBJECTTYPE_ContentNode: {
+    case XFA_ObjectType::ContentNode: {
       if (!bSaveXML && !XFA_DataExporter_ContentNodeNeedtoExport(pNode)) {
         break;
       }
@@ -308,9 +306,9 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
         wsChildren += XFA_ExportEncodeContent(wsValue);
       }
     } break;
-    case XFA_OBJECTTYPE_TextNode:
-    case XFA_OBJECTTYPE_NodeC:
-    case XFA_OBJECTTYPE_NodeV: {
+    case XFA_ObjectType::TextNode:
+    case XFA_ObjectType::NodeC:
+    case XFA_ObjectType::NodeV: {
       CFX_WideStringC wsValue = pNode->GetCData(XFA_ATTRIBUTE_Value);
       wsChildren += XFA_ExportEncodeContent(wsValue);
     } break;
@@ -425,7 +423,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
                                          IFX_Stream* pStream,
                                          const FX_CHAR* pChecksum,
                                          FX_BOOL bSaveXML) {
-  if (pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {
+  if (pNode->IsModelNode()) {
     static const FX_WCHAR s_pwsTagName[] = L"<form";
     static const FX_WCHAR s_pwsClose[] = L"</form\n>";
     pStream->WriteString(s_pwsTagName, FXSYS_wcslen(s_pwsTagName));
@@ -490,7 +488,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
                                   uint32_t dwFlag,
                                   const FX_CHAR* pChecksum) {
   CFDE_XMLDoc* pXMLDoc = m_pDocument->GetParser()->GetXMLDoc();
-  if (pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {
+  if (pNode->IsModelNode()) {
     switch (pNode->GetPacketID()) {
       case XFA_XDPPACKET_XDP: {
         static const FX_WCHAR s_pwsPreamble[] =

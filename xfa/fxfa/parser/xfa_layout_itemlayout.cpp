@@ -215,7 +215,7 @@ static FX_BOOL XFA_ExistContainerKeep(CXFA_Node* pCurNode, FX_BOOL bPreFind) {
     eItemType = XFA_NODEITEM_NextSibling;
   }
   CXFA_Node* pPreContainer =
-      pCurNode->GetNodeItem(eItemType, XFA_OBJECTTYPE_ContainerNode);
+      pCurNode->GetNodeItem(eItemType, XFA_ObjectType::ContainerNode);
   if (pPreContainer == NULL) {
     return FALSE;
   }
@@ -767,17 +767,16 @@ void CXFA_ItemLayoutProcessor::XFA_ItemLayoutProcessor_GotoNextContainerNode(
       CXFA_Node* pNextChildContainer =
           pChildContainer == XFA_LAYOUT_INVALIDNODE
               ? pEntireContainer->GetNodeItem(XFA_NODEITEM_FirstChild,
-                                              XFA_OBJECTTYPE_ContainerNode)
+                                              XFA_ObjectType::ContainerNode)
               : pChildContainer->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                             XFA_OBJECTTYPE_ContainerNode);
+                                             XFA_ObjectType::ContainerNode);
       while (pNextChildContainer &&
-             pNextChildContainer->HasFlag(XFA_NODEFLAG_LayoutGeneratedNode)) {
+             pNextChildContainer->IsLayoutGeneratedNode()) {
         CXFA_Node* pSaveNode = pNextChildContainer;
         pNextChildContainer = pNextChildContainer->GetNodeItem(
-            XFA_NODEITEM_NextSibling, XFA_OBJECTTYPE_ContainerNode);
-        if (pSaveNode->HasFlag(XFA_NODEFLAG_UnusedNode)) {
+            XFA_NODEITEM_NextSibling, XFA_ObjectType::ContainerNode);
+        if (pSaveNode->IsUnusedNode())
           XFA_DeleteLayoutGeneratedNode(pSaveNode);
-        }
       }
       if (!pNextChildContainer) {
         goto NoMoreChildContainer;
@@ -1896,7 +1895,7 @@ void CXFA_ItemLayoutProcessor::ProcessUnUseBinds(CXFA_Node* pFormNode) {
         pNode->SetObject(XFA_ATTRIBUTE_BindingNode, NULL);
       }
     }
-    pNode->SetFlag(XFA_NODEFLAG_UnusedNode, true);
+    pNode->SetFlag(XFA_NodeFlag_UnusedNode, true);
   }
 }
 void CXFA_ItemLayoutProcessor::ProcessUnUseOverFlow(
@@ -2167,11 +2166,10 @@ static XFA_ItemLayoutProcessorResult XFA_ItemLayoutProcessor_InsertFlowedItem(
                                            pTrailerLayoutItem, pFormNode);
           pThis->m_bUseInheriated = TRUE;
         } else {
-          if (pProcessor->m_pLayoutItem->m_pFirstChild &&
-              pProcessor->m_pLayoutItem->m_pFirstChild->m_pNextSibling ==
-                  NULL &&
-              pProcessor->m_pLayoutItem->m_pFirstChild->m_pFormNode->HasFlag(
-                  XFA_NODEFLAG_LayoutGeneratedNode)) {
+          CXFA_LayoutItem* firstChild =
+              pProcessor->m_pLayoutItem->m_pFirstChild;
+          if (firstChild && !firstChild->m_pNextSibling &&
+              firstChild->m_pFormNode->IsLayoutGeneratedNode()) {
             pProcessor->ProcessUnUseOverFlow(pOverflowLeaderNode,
                                              pOverflowTrailerNode,
                                              pTrailerLayoutItem, pFormNode);
@@ -2304,10 +2302,10 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
         XFA_ItemLayoutProcessor_GetLayout(pParentNode, bFocrTb) ==
             XFA_ATTRIBUTEENUM_Row) {
       CXFA_Node* pChildContainer = m_pFormNode->GetNodeItem(
-          XFA_NODEITEM_FirstChild, XFA_OBJECTTYPE_ContainerNode);
+          XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
       if (pChildContainer &&
           pChildContainer->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                       XFA_OBJECTTYPE_ContainerNode)) {
+                                       XFA_ObjectType::ContainerNode)) {
         fContainerHeight = 0;
         bContainerHeightAutoSize = TRUE;
       }

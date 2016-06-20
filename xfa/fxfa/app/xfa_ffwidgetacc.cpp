@@ -214,7 +214,7 @@ void CXFA_WidgetAcc::ResetData() {
     } break;
     case XFA_ELEMENT_ExclGroup: {
       CXFA_Node* pNextChild = m_pNode->GetNodeItem(
-          XFA_NODEITEM_FirstChild, XFA_OBJECTTYPE_ContainerNode);
+          XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
       while (pNextChild) {
         CXFA_Node* pChild = pNextChild;
         CXFA_WidgetAcc* pAcc =
@@ -239,7 +239,7 @@ void CXFA_WidgetAcc::ResetData() {
           pAcc->SetValue(itemText, XFA_VALUEPICTURE_Raw);
         }
         pNextChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                         XFA_OBJECTTYPE_ContainerNode);
+                                         XFA_ObjectType::ContainerNode);
       }
     } break;
     case XFA_ELEMENT_ChoiceList:
@@ -343,16 +343,15 @@ int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_Event& event,
 }
 
 int32_t CXFA_WidgetAcc::ProcessCalculate() {
-  if (GetClassID() == XFA_ELEMENT_Draw) {
+  if (GetClassID() == XFA_ELEMENT_Draw)
     return XFA_EVENTERROR_NotExist;
-  }
+
   CXFA_Calculate calc = GetCalculate();
-  if (!calc) {
+  if (!calc)
     return XFA_EVENTERROR_NotExist;
-  }
-  if (GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
+  if (GetNode()->IsUserInteractive())
     return XFA_EVENTERROR_Disabled;
-  }
+
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Calculate;
   CXFA_Script script = calc.GetScript();
@@ -383,12 +382,11 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
       validate.GetScriptMessageText(wsScriptMsg);
       int32_t eScriptTest = validate.GetScriptTest();
       if (eScriptTest == XFA_ATTRIBUTEENUM_Warning) {
-        if (GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
+        if (GetNode()->IsUserInteractive())
           return;
-        }
-        if (wsScriptMsg.IsEmpty()) {
+        if (wsScriptMsg.IsEmpty())
           GetValidateMessage(pAppProvider, wsScriptMsg, FALSE, bVersionFlag);
-        }
+
         if (bVersionFlag) {
           pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
                                XFA_MB_OK);
@@ -396,7 +394,7 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
         }
         if (pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
                                  XFA_MB_YesNo) == XFA_IDYes) {
-          GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
+          GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
         }
       } else {
         if (wsScriptMsg.IsEmpty()) {
@@ -438,12 +436,11 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
         return XFA_EVENTERROR_Success;
       }
-      if (GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
+      if (GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_NotExist;
-      }
-      if (wsFormatMsg.IsEmpty()) {
+      if (wsFormatMsg.IsEmpty())
         GetValidateMessage(pAppProvider, wsFormatMsg, FALSE, bVersionFlag);
-      }
+
       if (bVersionFlag) {
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
                              XFA_MB_OK);
@@ -451,7 +448,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
       }
       if (pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
                                XFA_MB_YesNo) == XFA_IDYes) {
-        GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
+        GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
       }
       return XFA_EVENTERROR_Success;
     }
@@ -509,9 +506,9 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
       return XFA_EVENTERROR_Error;
     }
     case XFA_ATTRIBUTEENUM_Warning: {
-      if (GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
+      if (GetNode()->IsUserInteractive())
         return TRUE;
-      }
+
       if (wsNullMsg.IsEmpty()) {
         GetValidateCaptionName(wsCaptionName, bVersionFlag);
         CFX_WideString wsWarning;
@@ -521,7 +518,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
       }
       if (pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Warning,
                                XFA_MB_YesNo) == XFA_IDYes) {
-        GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, false);
+        GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
       }
       return XFA_EVENTERROR_Error;
     }
@@ -579,7 +576,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (!validate) {
     return XFA_EVENTERROR_NotExist;
   }
-  FX_BOOL bInitDoc = validate.GetNode()->HasFlag(XFA_NODEFLAG_NeedsInitApp);
+  FX_BOOL bInitDoc = validate.GetNode()->NeedsInitApp();
   FX_BOOL bStatus =
       m_pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
@@ -601,7 +598,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
     bVersionFlag = TRUE;
   }
   if (bInitDoc) {
-    validate.GetNode()->ClearFlag(XFA_NODEFLAG_NeedsInitApp);
+    validate.GetNode()->ClearFlag(XFA_NodeFlag_NeedsInitApp);
   } else {
     iFormat = ProcessFormatTestValidate(validate, bVersionFlag);
     if (!bVersionFlag) {
