@@ -478,7 +478,7 @@ class Field : public CJS_EmbedObj {
 class CJS_Field : public CJS_Object {
  public:
   explicit CJS_Field(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Field(void) override {}
+  ~CJS_Field() override {}
 
   void InitInstance(IJS_Runtime* pIRuntime) override;
 

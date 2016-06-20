@@ -26,7 +26,7 @@ class CFXJSE_Context {
       CFXJSE_HostObject* lpGlobalObject = nullptr);
   ~CFXJSE_Context();
 
-  v8::Isolate* GetRuntime(void) { return m_pIsolate; }
+  v8::Isolate* GetRuntime() { return m_pIsolate; }
   std::unique_ptr<CFXJSE_Value> GetGlobalObject();
   void EnableCompatibleMode();
   FX_BOOL ExecuteScript(const FX_CHAR* szScript,

@@ -1274,10 +1274,10 @@ class GpStream final : public IStream {
     }
     return E_NOINTERFACE;
   }
-  ULONG STDMETHODCALLTYPE AddRef(void) override {
+  ULONG STDMETHODCALLTYPE AddRef() override {
     return (ULONG)InterlockedIncrement(&m_RefCount);
   }
-  ULONG STDMETHODCALLTYPE Release(void) override {
+  ULONG STDMETHODCALLTYPE Release() override {
     ULONG res = (ULONG)InterlockedDecrement(&m_RefCount);
     if (res == 0) {
       delete this;
@@ -1333,7 +1333,7 @@ class GpStream final : public IStream {
     return E_NOTIMPL;
   }
   HRESULT STDMETHODCALLTYPE Commit(DWORD) override { return E_NOTIMPL; }
-  HRESULT STDMETHODCALLTYPE Revert(void) override { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE Revert() override { return E_NOTIMPL; }
   HRESULT STDMETHODCALLTYPE LockRegion(ULARGE_INTEGER,
                                        ULARGE_INTEGER,
                                        DWORD) override {

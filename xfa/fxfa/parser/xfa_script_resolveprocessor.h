@@ -29,10 +29,12 @@ class CXFA_ResolveNodesData {
   const XFA_SCRIPTATTRIBUTEINFO* m_pScriptAttribute;
   XFA_RESOVENODE_RSTYPE m_dwFlag;
 };
+
 class CXFA_ResolveProcessor {
  public:
-  CXFA_ResolveProcessor(void);
-  ~CXFA_ResolveProcessor(void);
+  CXFA_ResolveProcessor();
+  ~CXFA_ResolveProcessor();
+
   int32_t XFA_ResolveNodes(CXFA_ResolveNodesData& rnd);
   int32_t XFA_ResolveNodes_AnyChild(CXFA_ResolveNodesData& rnd);
   int32_t XFA_ResolveNodes_Dollar(CXFA_ResolveNodesData& rnd);

@@ -19,8 +19,9 @@ enum XFA_LOGIC_TYPE {
 
 class CXFA_NodeHelper {
  public:
-  CXFA_NodeHelper(void);
-  ~CXFA_NodeHelper(void);
+  CXFA_NodeHelper();
+  ~CXFA_NodeHelper();
+
   CXFA_Node* XFA_ResolveNodes_GetOneChild(CXFA_Node* parent,
                                           const FX_WCHAR* pwsName,
                                           FX_BOOL bIsClassName = FALSE);

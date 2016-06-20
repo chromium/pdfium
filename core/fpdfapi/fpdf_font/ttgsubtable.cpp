@@ -61,7 +61,7 @@ FX_BOOL CFX_GlyphMap::Lookup(int key, int& value) {
   return TRUE;
 }
 
-CFX_CTTGSUBTable::CFX_CTTGSUBTable(void)
+CFX_CTTGSUBTable::CFX_CTTGSUBTable()
     : m_bFeautureMapLoad(FALSE), loaded(false) {}
 
 CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub)
@@ -71,7 +71,7 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub)
 
 CFX_CTTGSUBTable::~CFX_CTTGSUBTable() {}
 
-bool CFX_CTTGSUBTable::IsOk(void) const {
+bool CFX_CTTGSUBTable::IsOk() const {
   return loaded;
 }
 

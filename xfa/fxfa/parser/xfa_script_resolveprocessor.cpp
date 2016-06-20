@@ -17,10 +17,10 @@
 #include "xfa/fxfa/parser/xfa_script_nodehelper.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_ResolveProcessor::CXFA_ResolveProcessor(void)
+CXFA_ResolveProcessor::CXFA_ResolveProcessor()
     : m_pNodeHelper(new CXFA_NodeHelper), m_iCurStart(0) {}
 
-CXFA_ResolveProcessor::~CXFA_ResolveProcessor(void) {
+CXFA_ResolveProcessor::~CXFA_ResolveProcessor() {
   delete m_pNodeHelper;
 }
 

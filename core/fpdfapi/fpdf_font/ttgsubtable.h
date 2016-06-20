@@ -33,7 +33,7 @@ class CFX_CTTGSUBTable {
   explicit CFX_CTTGSUBTable(FT_Bytes gsub);
   virtual ~CFX_CTTGSUBTable();
 
-  bool IsOk(void) const;
+  bool IsOk() const;
   bool LoadGSUBTable(FT_Bytes gsub);
   bool GetVerticalGlyph(uint32_t glyphnum, uint32_t* vglyphnum);
 

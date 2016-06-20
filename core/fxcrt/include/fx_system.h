@@ -228,7 +228,7 @@ extern "C" {
 #define FXSYS_GetFullPathName GetFullPathName
 #define FXSYS_GetModuleFileName GetModuleFileName
 #else
-int FXSYS_GetACP(void);
+int FXSYS_GetACP();
 char* FXSYS_itoa(int value, char* str, int radix);
 int FXSYS_WideCharToMultiByte(uint32_t codepage,
                               uint32_t dwFlags,
