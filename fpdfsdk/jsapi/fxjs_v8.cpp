@@ -331,11 +331,15 @@ void FXJS_InitializeRuntime(
 
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
+
+  // This has to happen before we call GetGlobalObjectTemplate because that
+  // method gets the PerIsolateData from pIsolate.
+  FXJS_PerIsolateData::SetUp(pIsolate);
+
   v8::Local<v8::Context> v8Context =
       v8::Context::New(pIsolate, nullptr, GetGlobalObjectTemplate(pIsolate));
   v8::Context::Scope context_scope(v8Context);
 
-  FXJS_PerIsolateData::SetUp(pIsolate);
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
   if (!pData)
     return;
