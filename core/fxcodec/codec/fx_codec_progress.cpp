@@ -1322,12 +1322,18 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
   m_startX = m_startY = 0;
   m_sizeX = m_sizeY = 0;
   m_SrcPassNumber = 0;
-  if (bSkipImageTypeCheck || (imageType != FXCODEC_IMAGE_UNKNOWN &&
-                              DetectImageType(imageType, pAttribute))) {
+  if (imageType != FXCODEC_IMAGE_UNKNOWN &&
+      DetectImageType(imageType, pAttribute)) {
     m_imagType = imageType;
     m_status = FXCODEC_STATUS_FRAME_READY;
     return m_status;
   }
+  // If we got here then the image data does not match the requested decoder.
+  // If we're skipping the type check then bail out at this point and return
+  // the failed status.
+  if (bSkipImageTypeCheck)
+    return m_status;
+
   for (int type = FXCODEC_IMAGE_BMP; type < FXCODEC_IMAGE_MAX; type++) {
     if (DetectImageType((FXCODEC_IMAGE_TYPE)type, pAttribute)) {
       m_imagType = (FXCODEC_IMAGE_TYPE)type;
