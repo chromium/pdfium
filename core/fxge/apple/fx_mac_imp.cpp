@@ -25,15 +25,18 @@ static const struct {
     {"Times-BoldItalic", "Times New Roman Bold Italic"},
     {"Times-Italic", "Times New Roman Italic"},
 };
+
 class CFX_MacFontInfo : public CFX_FolderFontInfo {
  public:
-  virtual void* MapFont(int weight,
-                        FX_BOOL bItalic,
-                        int charset,
-                        int pitch_family,
-                        const FX_CHAR* family,
-                        int& iExact);
+  // CFX_FolderFontInfo
+  void* MapFont(int weight,
+                FX_BOOL bItalic,
+                int charset,
+                int pitch_family,
+                const FX_CHAR* family,
+                int& iExact) override;
 };
+
 #define JAPAN_GOTHIC "Hiragino Kaku Gothic Pro W6"
 #define JAPAN_MINCHO "Hiragino Mincho Pro W6"
 static void GetJapanesePreference(CFX_ByteString& face,

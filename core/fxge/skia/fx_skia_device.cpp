@@ -759,6 +759,15 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
   return TRUE;
 }
 
+FX_BOOL CFX_SkiaDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
+                                               FX_FLOAT y1,
+                                               FX_FLOAT x2,
+                                               FX_FLOAT y2,
+                                               uint32_t color,
+                                               int blend_type) {
+  return FALSE;
+}
+
 FX_BOOL CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
                                                 uint32_t fill_color,
                                                 int blend_type) {
@@ -907,6 +916,10 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   return true;
 }
 
+uint8_t* CFX_SkiaDeviceDriver::GetBuffer() const {
+  return m_pBitmap->GetBuffer();
+}
+
 FX_BOOL CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
   // TODO(caryclark) call m_canvas->getClipDeviceBounds() instead
   pRect->left = 0;
@@ -951,6 +964,10 @@ FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
   }
   delete pBack;
   return bRet;
+}
+
+CFX_DIBitmap* CFX_SkiaDeviceDriver::GetBackDrop() {
+  return m_pOriDevice;
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
@@ -1084,6 +1101,10 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
     ct->unref();
   DebugValidate(m_pBitmap, m_pOriDevice);
   return TRUE;
+}
+
+FX_BOOL CFX_SkiaDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
+  return FALSE;
 }
 
 void CFX_SkiaDeviceDriver::PreMultiply() {

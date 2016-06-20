@@ -731,6 +731,16 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
   return TRUE;
 }
 
+FX_BOOL CFX_QuartzDeviceDriver::StartDIBits(const CFX_DIBSource* pBitmap,
+                                            int bitmap_alpha,
+                                            uint32_t color,
+                                            const CFX_Matrix* pMatrix,
+                                            uint32_t flags,
+                                            void*& handle,
+                                            int blend_type) {
+  return FALSE;
+}
+
 FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlyphRun(
     int nChars,
     const FXTEXT_CHARPOS* pCharPos,

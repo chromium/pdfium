@@ -64,16 +64,14 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                            FX_FLOAT x2,
                            FX_FLOAT y2,
                            uint32_t color,
-                           int blend_type) override {
-    return FALSE;
-  }
+                           int blend_type) override;
 
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
 
   /** Load device buffer into a DIB */
   FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) override;
 
-  CFX_DIBitmap* GetBackDrop() override { return m_pOriDevice; }
+  CFX_DIBitmap* GetBackDrop() override;
 
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
@@ -99,9 +97,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       void*& handle,
                       int blend_type) override;
 
-  FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) override {
-    return FALSE;
-  }
+  FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) override;
 
   void CancelDIBits(void* handle) override {}
 
@@ -119,7 +115,8 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       int alpha,
                       FX_BOOL bAlphaMode) override;
 
-  virtual uint8_t* GetBuffer() const { return m_pBitmap->GetBuffer(); }
+  virtual uint8_t* GetBuffer() const;
+
   void PaintStroke(SkPaint* spaint,
                    const CFX_GraphStateData* pGraphState,
                    const SkMatrix& matrix);

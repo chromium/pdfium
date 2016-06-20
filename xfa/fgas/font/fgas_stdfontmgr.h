@@ -82,11 +82,8 @@ uint32_t FX_GetGdiFontStyles(const LOGFONTW& lf);
 
 class CFX_FontDescriptor {
  public:
-  CFX_FontDescriptor() : m_nFaceIndex(0), m_dwFontStyles(0) {
-    m_dwUsb[0] = m_dwUsb[1] = m_dwUsb[2] = m_dwUsb[3] = 0;
-    m_dwCsb[0] = m_dwCsb[1] = 0;
-  }
-  ~CFX_FontDescriptor() {}
+  CFX_FontDescriptor();
+  ~CFX_FontDescriptor();
 
   int32_t m_nFaceIndex;
   CFX_WideString m_wsFaceName;
@@ -95,6 +92,7 @@ class CFX_FontDescriptor {
   uint32_t m_dwUsb[4];
   uint32_t m_dwCsb[2];
 };
+
 typedef CFX_ArrayTemplate<CFX_FontDescriptor*> CFX_FontDescriptors;
 
 struct FX_FontDescriptorInfo {
@@ -112,6 +110,7 @@ struct FX_FontDescriptorInfo {
     return nPenalty == other.nPenalty;
   }
 };
+
 typedef CFX_ArrayTemplate<FX_FontDescriptorInfo> CFX_FontDescriptorInfos;
 
 struct FX_HandleParentPath {
@@ -127,6 +126,7 @@ struct FX_HandleParentPath {
 class CFX_FontSourceEnum_File {
  public:
   CFX_FontSourceEnum_File();
+  ~CFX_FontSourceEnum_File();
 
   void Release() { delete this; }
   FX_POSITION GetStartPosition();

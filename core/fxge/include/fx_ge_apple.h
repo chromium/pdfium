@@ -8,10 +8,14 @@
 #define CORE_FXGE_INCLUDE_FX_GE_APPLE_H_
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+
+#include "core/fxge/include/fx_ge.h"
+
 class CFX_QuartzDevice : public CFX_RenderDevice {
  public:
   CFX_QuartzDevice();
-  ~CFX_QuartzDevice();
+  ~CFX_QuartzDevice() override;
+
   FX_BOOL Attach(CGContextRef context, int32_t nDeviceClass = FXDC_DISPLAY);
   FX_BOOL Attach(CFX_DIBitmap* pBitmap);
   FX_BOOL Create(int32_t width, int32_t height, FXDIB_Format format);

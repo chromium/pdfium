@@ -134,9 +134,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                       const CFX_Matrix* pMatrix,
                       uint32_t flags,
                       void*& handle,
-                      int blend_type) override {
-    return FALSE;
-  }
+                      int blend_type) override;
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
