@@ -61,7 +61,6 @@ class CPDF_CIDFont : public CPDF_Font {
   const uint8_t* GetCIDTransform(uint16_t CID) const;
   short GetVertWidth(uint16_t CID) const;
   void GetVertOrigin(uint16_t CID, short& vx, short& vy) const;
-  virtual FX_BOOL IsFontStyleFromCharCode(uint32_t charcode) const;
 
  protected:
   int GetGlyphIndex(uint32_t unicodeb, FX_BOOL* pVertGlyph);

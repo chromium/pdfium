@@ -262,9 +262,7 @@ DLLEXPORT void STDCALL
 FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   g_pCodecModule = new CCodec_ModuleMgr();
 
-  CFX_GEModule::Create(cfg ? cfg->m_pUserFontPaths : nullptr);
-  CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
-
+  CFX_GEModule::Create(cfg ? cfg->m_pUserFontPaths : nullptr, g_pCodecModule);
   CPDF_ModuleMgr::Create();
   CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
   pModuleMgr->SetCodecModule(g_pCodecModule);

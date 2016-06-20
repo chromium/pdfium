@@ -1395,7 +1395,9 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
         pCharPos->m_GlyphIndex =
             bCharCode ? wch : pFont->GetGlyphIndex(wForm, FALSE);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
         pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
+#endif
         pCharPos->m_FontCharWidth = iCharWidth;
         if (pWSForms) {
           *pWSForms += wForm;

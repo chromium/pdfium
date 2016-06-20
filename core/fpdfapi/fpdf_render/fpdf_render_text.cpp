@@ -562,7 +562,7 @@ void CPDF_CharPosList::Load(int nChars,
     FX_BOOL bVert = FALSE;
     FXTEXT_CHARPOS& charpos = m_pCharPos[m_nChars++];
     if (pCIDFont) {
-      charpos.m_bFontStyle = pCIDFont->IsFontStyleFromCharCode(CharCode);
+      charpos.m_bFontStyle = true;
     }
     charpos.m_GlyphIndex = pFont->GlyphFromCharCode(CharCode, &bVert);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

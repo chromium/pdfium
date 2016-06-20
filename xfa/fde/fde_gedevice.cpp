@@ -145,7 +145,7 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
   for (int32_t i = 0; i < iCount; ++i) {
     pSTFont = pFont->GetSubstFont((int32_t)pCP->m_GlyphIndex);
     pCP->m_GlyphIndex &= 0x00FFFFFF;
-    pCP->m_bFontStyle = FALSE;
+    pCP->m_bFontStyle = false;
     if (pCurFont != pSTFont) {
       if (pCurFont) {
         pFxFont = pCurFont->GetDevFont();

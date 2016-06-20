@@ -775,34 +775,36 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph) {
   const uint8_t* pdata = m_pStreamAcc->GetData() + byte_pos;
   return pdata[0] * 256 + pdata[1];
 }
+
 uint32_t CPDF_CIDFont::GetNextChar(const FX_CHAR* pString,
                                    int nStrLen,
                                    int& offset) const {
   return m_pCMap->GetNextChar(pString, nStrLen, offset);
 }
+
 int CPDF_CIDFont::GetCharSize(uint32_t charcode) const {
   return m_pCMap->GetCharSize(charcode);
 }
+
 int CPDF_CIDFont::CountChar(const FX_CHAR* pString, int size) const {
   return m_pCMap->CountChar(pString, size);
 }
+
 int CPDF_CIDFont::AppendChar(FX_CHAR* str, uint32_t charcode) const {
   return m_pCMap->AppendChar(str, charcode);
 }
+
 FX_BOOL CPDF_CIDFont::IsUnicodeCompatible() const {
-  if (!m_pCMap->IsLoaded() || !m_pCID2UnicodeMap ||
-      !m_pCID2UnicodeMap->IsLoaded()) {
-    return m_pCMap->m_Coding != CIDCODING_UNKNOWN;
-  }
-  return TRUE;
+  if (m_pCID2UnicodeMap && m_pCID2UnicodeMap->IsLoaded() && m_pCMap->IsLoaded())
+    return TRUE;
+  return m_pCMap->m_Coding != CIDCODING_UNKNOWN;
 }
-FX_BOOL CPDF_CIDFont::IsFontStyleFromCharCode(uint32_t charcode) const {
-  return TRUE;
-}
+
 void CPDF_CIDFont::LoadSubstFont() {
   m_Font.LoadSubst(m_BaseFont, !m_bType1, m_Flags, m_StemV * 5, m_ItalicAngle,
                    g_CharsetCPs[m_Charset], IsVertWriting());
 }
+
 void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
                                     CFX_ArrayTemplate<uint32_t>& result,
                                     int nElements) {

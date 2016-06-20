@@ -1285,7 +1285,9 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
               pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wch, bMBCSCode);
             }
           }
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
           pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
+#endif
           pCharPos->m_FontCharWidth = iCharWidth;
           if (pWSForms) {
             *pWSForms += wForm;

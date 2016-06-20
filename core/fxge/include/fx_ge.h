@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_INCLUDE_FX_GE_H_
 #define CORE_FXGE_INCLUDE_FX_GE_H_
 
+#include <memory>
+
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_font.h"
 
@@ -16,42 +18,37 @@ class CFX_Font;
 class CFX_FontCache;
 class CFX_FontMgr;
 class CPDF_ShadingPattern;
-class CPSFont;
 class IFX_RenderDeviceDriver;
 class SkPictureRecorder;
 
 class CFX_GEModule {
  public:
-  static void Create(const char** pUserFontPaths);
-  static void Use(CFX_GEModule* pMgr);
+  static void Create(const char** pUserFontPaths,
+                     CCodec_ModuleMgr* pCodecModule);
   static CFX_GEModule* Get();
   static void Destroy();
 
   CFX_FontCache* GetFontCache();
-  CFX_FontMgr* GetFontMgr() { return m_pFontMgr; }
+  CFX_FontMgr* GetFontMgr() { return m_pFontMgr.get(); }
   void SetTextGamma(FX_FLOAT gammaValue);
-  const uint8_t* GetTextGammaTable();
+  const uint8_t* GetTextGammaTable() const;
 
-  void SetCodecModule(CCodec_ModuleMgr* pCodecModule) {
-    m_pCodecModule = pCodecModule;
-  }
   CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
   void* GetPlatformData() { return m_pPlatformData; }
 
   FXFT_Library m_FTLibrary;
 
- protected:
-  explicit CFX_GEModule(const char** pUserFontPaths);
+ private:
+  CFX_GEModule(const char** pUserFontPaths, CCodec_ModuleMgr* pCodecModule);
   ~CFX_GEModule();
 
   void InitPlatform();
   void DestroyPlatform();
 
- private:
   uint8_t m_GammaValue[256];
   CFX_FontCache* m_pFontCache;
-  CFX_FontMgr* m_pFontMgr;
-  CCodec_ModuleMgr* m_pCodecModule;
+  std::unique_ptr<CFX_FontMgr> m_pFontMgr;
+  CCodec_ModuleMgr* const m_pCodecModule;
   void* m_pPlatformData;
   const char** m_pUserFontPaths;
 };
@@ -61,14 +58,6 @@ struct FX_PATHPOINT {
   FX_FLOAT m_PointY;
   int m_Flag;
 };
-
-#define FXPT_CLOSEFIGURE 0x01
-#define FXPT_LINETO 0x02
-#define FXPT_BEZIERTO 0x04
-#define FXPT_MOVETO 0x06
-#define FXPT_TYPE 0x06
-#define FXFILL_ALTERNATE 1
-#define FXFILL_WINDING 2
 
 class CFX_ClipRgn {
  public:
@@ -168,6 +157,13 @@ class CFX_GraphStateData {
 #define FXDC_RENDER_CAPS 7
 #define FXDC_DISPLAY 1
 #define FXDC_PRINTER 2
+
+#define FXPT_CLOSEFIGURE 0x01
+#define FXPT_LINETO 0x02
+#define FXPT_BEZIERTO 0x04
+#define FXPT_MOVETO 0x06
+#define FXPT_TYPE 0x06
+
 #define FXRC_GET_BITS 0x01
 #define FXRC_BIT_MASK 0x02
 #define FXRC_ALPHA_MASK 0x04
@@ -182,6 +178,7 @@ class CFX_GraphStateData {
 #define FXRENDER_IMAGE_LOSSY 0x1000
 #define FXRC_FILLSTROKE_PATH 0x2000
 #define FXRC_SHADING 0x4000
+
 #define FXFILL_ALTERNATE 1
 #define FXFILL_WINDING 2
 #define FXFILL_FULLCOVER 4
@@ -192,6 +189,7 @@ class CFX_GraphStateData {
 #define FX_FILL_TEXT_MODE 128
 #define FX_ZEROAREA_FILL 256
 #define FXFILL_NOPATHSMOOTH 512
+
 #define FXTEXT_CLEARTYPE 0x01
 #define FXTEXT_BGR_STRIPE 0x02
 #define FXTEXT_PRINTGRAPHICTEXT 0x04
@@ -201,12 +199,15 @@ class CFX_GraphStateData {
 
 struct FXTEXT_CHARPOS {
   uint32_t m_GlyphIndex;
-  FX_FLOAT m_OriginX, m_OriginY;
+  FX_FLOAT m_OriginX;
+  FX_FLOAT m_OriginY;
   int m_FontCharWidth;
   FX_BOOL m_bGlyphAdjust;
   FX_FLOAT m_AdjustMatrix[4];
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   uint32_t m_ExtGID;
-  FX_BOOL m_bFontStyle;
+#endif
+  bool m_bFontStyle;
 };
 
 class CFX_RenderDevice {
