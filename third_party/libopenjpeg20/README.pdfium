@@ -25,4 +25,5 @@ Local Modifications:
 0013-attrib_fix.patch: Don't needlessly redefine __attribute__, https://github.com/uclouvain/openjpeg/issues/727
 0014-opj_jp2_read_ihdr_leak.patch: Memory leak in opj_jp2_read_ihdr().
 0015-read_SPCod_SPCoc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SPCod_SPCoc.
+0016-read_SQcd_SQcc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SQcd_SQcc.
 TODO(thestig): List all the other patches.
