@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxge/include/fx_font.h"
+
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_freetype.h"
@@ -38,24 +40,24 @@ FXFT_Face FT_LoadFont(const uint8_t* pData, int size) {
 
 }  // namespace
 
-CFX_Font::CFX_Font() {
-  m_pSubstFont = nullptr;
-  m_Face = nullptr;
-  m_bEmbedded = FALSE;
-  m_bVertical = FALSE;
-  m_pFontData = nullptr;
-  m_pFontDataAllocation = nullptr;
-  m_dwSize = 0;
-  m_pGsubData = nullptr;
-  m_pPlatformFont = nullptr;
-  m_pPlatformFontCollection = nullptr;
-  m_pDwFont = nullptr;
-  m_hHandle = nullptr;
-  m_bDwLoaded = FALSE;
+CFX_Font::CFX_Font()
 #ifdef PDF_ENABLE_XFA
-  m_bLogic = FALSE;
-  m_pOwnedStream = nullptr;
+    : m_bLogic(FALSE),
+      m_pOwnedStream(nullptr),
+      m_Face(nullptr),
+#else
+    : m_Face(nullptr),
 #endif  // PDF_ENABLE_XFA
+      m_pSubstFont(nullptr),
+      m_pFontDataAllocation(nullptr),
+      m_pFontData(nullptr),
+      m_pGsubData(nullptr),
+      m_dwSize(0),
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+      m_pPlatformFont(nullptr),
+#endif
+      m_bEmbedded(FALSE),
+      m_bVertical(FALSE) {
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -83,11 +85,9 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   m_dwSize = pFont->m_dwSize;
   m_pFontData = pFont->m_pFontData;
   m_pGsubData = pFont->m_pGsubData;
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   m_pPlatformFont = pFont->m_pPlatformFont;
-  m_pPlatformFontCollection = pFont->m_pPlatformFontCollection;
-  m_pDwFont = pFont->m_pDwFont;
-  m_hHandle = pFont->m_hHandle;
-  m_bDwLoaded = pFont->m_bDwLoaded;
+#endif
   m_pOwnedStream = pFont->m_pOwnedStream;
   return TRUE;
 }

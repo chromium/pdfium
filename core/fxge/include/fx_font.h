@@ -119,11 +119,20 @@ class CFX_Font {
   FX_BOOL IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData; }
   void SetSubData(uint8_t* data) { m_pGsubData = data; }
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   void* GetPlatformFont() const { return m_pPlatformFont; }
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }
+#endif
   uint8_t* GetFontData() const { return m_pFontData; }
   uint32_t GetSize() const { return m_dwSize; }
   void AdjustMMParams(int glyph_index, int width, int weight);
+
+#ifdef PDF_ENABLE_XFA
+ protected:
+  CFX_BinaryBuf m_OtfFontData;
+  FX_BOOL m_bLogic;
+  void* m_pOwnedStream;
+#endif  // PDF_ENABLE_XFA
 
  private:
   void ReleasePlatformResource();
@@ -135,22 +144,11 @@ class CFX_Font {
   uint8_t* m_pFontData;
   uint8_t* m_pGsubData;
   uint32_t m_dwSize;
-  CFX_BinaryBuf m_OtfFontData;
-  void* m_hHandle;
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   void* m_pPlatformFont;
-  void* m_pPlatformFontCollection;
-  void* m_pDwFont;
-  FX_BOOL m_bDwLoaded;
+#endif
   FX_BOOL m_bEmbedded;
   FX_BOOL m_bVertical;
-
-#ifdef PDF_ENABLE_XFA
-
- protected:
-  FX_BOOL m_bLogic;
-  void* m_pOwnedStream;
-
-#endif  // PDF_ENABLE_XFA
 };
 
 #define ENCODING_INTERNAL 0
