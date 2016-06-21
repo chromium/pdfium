@@ -16,7 +16,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_DataWindow) {
+    : CXFA_OrdinaryObject(pDocument, XFA_Element::DataWindow) {
   m_uScriptHash = XFA_HASHCODE_DataWindow;
 }
 CScript_DataWindow::~CScript_DataWindow() {}

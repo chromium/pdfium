@@ -73,7 +73,7 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
       m_ePreProcessRs(XFA_ItemLayoutProcessorResult_Done),
       m_bHasAvailHeight(TRUE) {
   ASSERT(m_pFormNode && (m_pFormNode->IsContainerNode() ||
-                         m_pFormNode->GetClassID() == XFA_ELEMENT_Form));
+                         m_pFormNode->GetClassID() == XFA_Element::Form));
   m_pOldLayoutItem =
       (CXFA_ContentLayoutItem*)m_pFormNode->GetUserData(XFA_LAYOUTITEMKEY);
 }
@@ -125,7 +125,7 @@ FX_BOOL CXFA_ItemLayoutProcessor::FindLayoutItemSplitPos(
         CXFA_FFNotify* pNotify = pDocument->GetParser()->GetNotify();
         FX_FLOAT fCurTopMargin = 0, fCurBottomMargin = 0;
         CXFA_Node* pMarginNode =
-            pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+            pFormNode->GetFirstChildByClass(XFA_Element::Margin);
         if (pMarginNode && bCalculateMargin) {
           fCurTopMargin = pMarginNode->GetMeasure(XFA_ATTRIBUTE_TopInset)
                               .ToUnit(XFA_UNIT_Pt);
@@ -200,7 +200,7 @@ static XFA_ATTRIBUTEENUM XFA_ItemLayoutProcessor_GetLayout(
     return eLayoutMode;
   }
   CXFA_Node* pParentNode = pFormNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (pParentNode && pParentNode->GetClassID() == XFA_ELEMENT_Form) {
+  if (pParentNode && pParentNode->GetClassID() == XFA_Element::Form) {
     bRootForceTb = TRUE;
     return XFA_ATTRIBUTEENUM_Tb;
   }
@@ -219,7 +219,7 @@ static FX_BOOL XFA_ExistContainerKeep(CXFA_Node* pCurNode, FX_BOOL bPreFind) {
   if (pPreContainer == NULL) {
     return FALSE;
   }
-  CXFA_Node* pKeep = pCurNode->GetFirstChildByClass(XFA_ELEMENT_Keep);
+  CXFA_Node* pKeep = pCurNode->GetFirstChildByClass(XFA_Element::Keep);
   if (pKeep) {
     XFA_ATTRIBUTEENUM ePrevious;
     XFA_ATTRIBUTE eKeepType = XFA_ATTRIBUTE_Previous;
@@ -233,7 +233,7 @@ static FX_BOOL XFA_ExistContainerKeep(CXFA_Node* pCurNode, FX_BOOL bPreFind) {
       }
     }
   }
-  pKeep = pPreContainer->GetFirstChildByClass(XFA_ELEMENT_Keep);
+  pKeep = pPreContainer->GetFirstChildByClass(XFA_Element::Keep);
   if (!pKeep) {
     return FALSE;
   }
@@ -278,7 +278,7 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
     bCalculateMargin = FALSE;
   }
   CXFA_Node* pMarginNode =
-      pLayoutItem->m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+      pLayoutItem->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   if (pMarginNode && bCalculateMargin) {
     fCurTopMargin =
         pMarginNode->GetMeasure(XFA_ATTRIBUTE_TopInset).ToUnit(XFA_UNIT_Pt);
@@ -387,7 +387,7 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(FX_FLOAT fSplitPos) {
 CXFA_ContainerLayoutItem* CXFA_LayoutItem::GetPage() const {
   for (CXFA_LayoutItem* pCurNode = const_cast<CXFA_LayoutItem*>(this); pCurNode;
        pCurNode = pCurNode->m_pParent) {
-    if (pCurNode->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea)
+    if (pCurNode->m_pFormNode->GetClassID() == XFA_Element::PageArea)
       return static_cast<CXFA_ContainerLayoutItem*>(pCurNode);
   }
   return nullptr;
@@ -411,14 +411,15 @@ void CXFA_LayoutItem::GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative) const {
         sPos += pContent->m_sPos;
         if (CXFA_Node* pMarginNode =
                 pLayoutItem->m_pFormNode->GetFirstChildByClass(
-                    XFA_ELEMENT_Margin)) {
+                    XFA_Element::Margin)) {
           sPos += CFX_PointF(pMarginNode->GetMeasure(XFA_ATTRIBUTE_LeftInset)
                                  .ToUnit(XFA_UNIT_Pt),
                              pMarginNode->GetMeasure(XFA_ATTRIBUTE_TopInset)
                                  .ToUnit(XFA_UNIT_Pt));
         }
       } else {
-        if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
+        if (pLayoutItem->m_pFormNode->GetClassID() ==
+            XFA_Element::ContentArea) {
           sPos +=
               CFX_PointF(pLayoutItem->m_pFormNode->GetMeasure(XFA_ATTRIBUTE_X)
                              .ToUnit(XFA_UNIT_Pt),
@@ -426,7 +427,7 @@ void CXFA_LayoutItem::GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative) const {
                              .ToUnit(XFA_UNIT_Pt));
           break;
         } else if (pLayoutItem->m_pFormNode->GetClassID() ==
-                   XFA_ELEMENT_PageArea) {
+                   XFA_Element::PageArea) {
           break;
         }
       }
@@ -612,21 +613,21 @@ static FX_BOOL XFA_ItemLayoutProcessor_FindBreakNode(
       eAttributeType = XFA_ATTRIBUTE_After;
     }
     switch (pBreakNode->GetClassID()) {
-      case XFA_ELEMENT_BreakBefore: {
+      case XFA_Element::BreakBefore: {
         if (bBreakBefore) {
           pCurActionNode = pBreakNode;
           nCurStage = XFA_ItemLayoutProcessorStages_BreakBefore;
           bFindRs = TRUE;
         }
       } break;
-      case XFA_ELEMENT_BreakAfter: {
+      case XFA_Element::BreakAfter: {
         if (!bBreakBefore) {
           pCurActionNode = pBreakNode;
           nCurStage = XFA_ItemLayoutProcessorStages_BreakAfter;
           bFindRs = TRUE;
         }
       } break;
-      case XFA_ELEMENT_Break:
+      case XFA_Element::Break:
         if (pBreakNode->GetEnum(eAttributeType) != XFA_ATTRIBUTEENUM_Auto) {
           pCurActionNode = pBreakNode;
           nCurStage = XFA_ItemLayoutProcessorStages_BreakBefore;
@@ -707,8 +708,8 @@ void CXFA_ItemLayoutProcessor::XFA_ItemLayoutProcessor_GotoNextContainerNode(
              pBookendNode; pBookendNode = pBookendNode->GetNodeItem(
                                XFA_NODEITEM_NextSibling)) {
           switch (pBookendNode->GetClassID()) {
-            case XFA_ELEMENT_Bookend:
-            case XFA_ELEMENT_Break:
+            case XFA_Element::Bookend:
+            case XFA_Element::Break:
               pCurActionNode = pBookendNode;
               nCurStage = XFA_ItemLayoutProcessorStages_BookendLeader;
               return;
@@ -810,8 +811,8 @@ void CXFA_ItemLayoutProcessor::XFA_ItemLayoutProcessor_GotoNextContainerNode(
              pBookendNode; pBookendNode = pBookendNode->GetNodeItem(
                                XFA_NODEITEM_NextSibling)) {
           switch (pBookendNode->GetClassID()) {
-            case XFA_ELEMENT_Bookend:
-            case XFA_ELEMENT_Break:
+            case XFA_Element::Bookend:
+            case XFA_Element::Break:
               pCurActionNode = pBookendNode;
               nCurStage = XFA_ItemLayoutProcessorStages_BookendTrailer;
               return;
@@ -900,29 +901,29 @@ static inline void XFA_ItemLayoutProcessor_CalculateContainerSpecfiedSize(
   fContainerHeight = 0;
   bContainerWidthAutoSize = TRUE;
   bContainerHeightAutoSize = TRUE;
-  XFA_ELEMENT eClassID = pFormNode->GetClassID();
+  XFA_Element eClassID = pFormNode->GetClassID();
   CXFA_Measurement mTmpValue;
-  if (bContainerWidthAutoSize &&
-      (eClassID == XFA_ELEMENT_Subform || eClassID == XFA_ELEMENT_ExclGroup) &&
+  if (bContainerWidthAutoSize && (eClassID == XFA_Element::Subform ||
+                                  eClassID == XFA_Element::ExclGroup) &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_W, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerWidth = mTmpValue.ToUnit(XFA_UNIT_Pt);
     bContainerWidthAutoSize = FALSE;
   }
-  if (bContainerHeightAutoSize &&
-      (eClassID == XFA_ELEMENT_Subform || eClassID == XFA_ELEMENT_ExclGroup) &&
+  if (bContainerHeightAutoSize && (eClassID == XFA_Element::Subform ||
+                                   eClassID == XFA_Element::ExclGroup) &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_H, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerHeight = mTmpValue.ToUnit(XFA_UNIT_Pt);
     bContainerHeightAutoSize = FALSE;
   }
-  if (bContainerWidthAutoSize && eClassID == XFA_ELEMENT_Subform &&
+  if (bContainerWidthAutoSize && eClassID == XFA_Element::Subform &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_MaxW, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerWidth = mTmpValue.ToUnit(XFA_UNIT_Pt);
     bContainerWidthAutoSize = FALSE;
   }
-  if (bContainerHeightAutoSize && eClassID == XFA_ELEMENT_Subform &&
+  if (bContainerHeightAutoSize && eClassID == XFA_Element::Subform &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_MaxH, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerHeight = mTmpValue.ToUnit(XFA_UNIT_Pt);
@@ -938,7 +939,7 @@ XFA_ItemLayoutProcessor_CalculateContainerComponentSizeFromContentSize(
     FX_BOOL bContainerHeightAutoSize,
     FX_FLOAT fContentCalculatedHeight,
     FX_FLOAT& fContainerHeight) {
-  CXFA_Node* pMarginNode = pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+  CXFA_Node* pMarginNode = pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   CXFA_Measurement mTmpValue;
   if (bContainerWidthAutoSize) {
     fContainerWidth = fContentCalculatedWidth;
@@ -1057,7 +1058,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
     if (nCurChildNodeStage != XFA_ItemLayoutProcessorStages_Container) {
       continue;
     }
-    if (pCurChildNode->GetClassID() == XFA_ELEMENT_Variables) {
+    if (pCurChildNode->GetClassID() == XFA_Element::Variables) {
       continue;
     }
     CXFA_ItemLayoutProcessor* pProcessor =
@@ -1086,11 +1087,11 @@ void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
   CXFA_LayoutItem* pLayoutItem = pPageAreaLayoutItem->m_pFirstChild;
   while (pLayoutItem) {
     if (!pLayoutItem->IsContentLayoutItem() ||
-        pLayoutItem->m_pFormNode->GetClassID() != XFA_ELEMENT_Draw) {
+        pLayoutItem->m_pFormNode->GetClassID() != XFA_Element::Draw) {
       pLayoutItem = pLayoutItem->m_pNextSibling;
       continue;
     }
-    if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_Draw) {
+    if (pLayoutItem->m_pFormNode->GetClassID() == XFA_Element::Draw) {
       CXFA_LayoutItem* pNextLayoutItem = pLayoutItem->m_pNextSibling;
       pPageAreaLayoutItem->RemoveChild(pLayoutItem);
       if (pBeforeItem == NULL) {
@@ -1129,7 +1130,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
     if (m_nCurChildNodeStage != XFA_ItemLayoutProcessorStages_Container) {
       continue;
     }
-    if (m_pCurChildNode->GetClassID() == XFA_ELEMENT_Variables) {
+    if (m_pCurChildNode->GetClassID() == XFA_Element::Variables) {
       continue;
     }
     CXFA_ItemLayoutProcessor* pProcessor =
@@ -1177,7 +1178,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
         }
       } else {
         if (fHiddenContentCalculatedWidth < fChildSuppliedWidth &&
-            m_pCurChildNode->GetClassID() != XFA_ELEMENT_Subform) {
+            m_pCurChildNode->GetClassID() != XFA_Element::Subform) {
           fHiddenContentCalculatedWidth = fChildSuppliedWidth;
         }
       }
@@ -1190,7 +1191,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
         }
       } else {
         if (fHiddenContentCalculatedHeight < fChildSuppliedHeight &&
-            m_pCurChildNode->GetClassID() != XFA_ELEMENT_Subform) {
+            m_pCurChildNode->GetClassID() != XFA_Element::Subform) {
           fHiddenContentCalculatedHeight = fChildSuppliedHeight;
         }
       }
@@ -1217,12 +1218,12 @@ static inline void XFA_ItemLayoutProcessor_UpdateWidgetSize(
     FX_FLOAT& fHeight) {
   CXFA_Node* pNode = pLayoutItem->m_pFormNode;
   ASSERT(pNode);
-  XFA_ELEMENT eClassID = pNode->GetClassID();
+  XFA_Element eClassID = pNode->GetClassID();
   switch (eClassID) {
-    case XFA_ELEMENT_Subform:
-    case XFA_ELEMENT_Area:
-    case XFA_ELEMENT_ExclGroup:
-    case XFA_ELEMENT_SubformSet: {
+    case XFA_Element::Subform:
+    case XFA_Element::Area:
+    case XFA_Element::ExclGroup:
+    case XFA_Element::SubformSet: {
       if (fWidth < -XFA_LAYOUT_FLOAT_PERCISION) {
         fWidth = pLayoutItem->m_sSize.x;
       }
@@ -1231,8 +1232,8 @@ static inline void XFA_ItemLayoutProcessor_UpdateWidgetSize(
       }
       break;
     }
-    case XFA_ELEMENT_Draw:
-    case XFA_ELEMENT_Field: {
+    case XFA_Element::Draw:
+    case XFA_Element::Field: {
       pNode->GetDocument()->GetParser()->GetNotify()->StartFieldDrawLayout(
           pNode, fWidth, fHeight);
       break;
@@ -1251,7 +1252,7 @@ static inline void XFA_ItemLayoutProcessor_RelocateTableRowCells(
       pLayoutRow->m_pFormNode, fContainerWidth, fContainerHeight,
       bContainerWidthAutoSize, bContainerHeightAutoSize);
   CXFA_Node* pMarginNode =
-      pLayoutRow->m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+      pLayoutRow->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   FX_FLOAT fLeftInset = 0, fTopInset = 0, fRightInset = 0, fBottomInset = 0;
   if (pMarginNode) {
     fLeftInset =
@@ -1322,7 +1323,7 @@ static inline void XFA_ItemLayoutProcessor_RelocateTableRowCells(
       FX_FLOAT fOldChildHeight = pLayoutChild->m_sSize.y;
       pLayoutChild->m_sSize.y = fContentCalculatedHeight;
       CXFA_Node* pParaNode =
-          pLayoutChild->m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Para);
+          pLayoutChild->m_pFormNode->GetFirstChildByClass(XFA_Element::Para);
       if (pParaNode && pLayoutChild->m_pFirstChild) {
         FX_FLOAT fOffHeight = fContentCalculatedHeight - fOldChildHeight;
         XFA_ATTRIBUTEENUM eVType = pParaNode->GetEnum(XFA_ATTRIBUTE_VAlign);
@@ -1393,7 +1394,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
       bContainerHeightAutoSize);
   FX_FLOAT fContentCalculatedWidth = 0, fContentCalculatedHeight = 0;
   CXFA_Node* pMarginNode =
-      m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+      m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   FX_FLOAT fLeftInset = 0;
   FX_FLOAT fRightInset = 0;
   if (pMarginNode) {
@@ -1458,7 +1459,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
              (CXFA_ContentLayoutItem*)m_pLayoutItem->m_pFirstChild;
          pLayoutChild;
          pLayoutChild = (CXFA_ContentLayoutItem*)pLayoutChild->m_pNextSibling) {
-      if (pLayoutChild->m_pFormNode->GetClassID() != XFA_ELEMENT_Subform) {
+      if (pLayoutChild->m_pFormNode->GetClassID() != XFA_Element::Subform) {
         continue;
       }
       if (!XFA_ItemLayoutProcessor_IsTakingSpace(pLayoutChild->m_pFormNode)) {
@@ -1547,7 +1548,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
     if (!XFA_ItemLayoutProcessor_IsTakingSpace(pLayoutChild->m_pFormNode)) {
       continue;
     }
-    if (pLayoutChild->m_pFormNode->GetClassID() == XFA_ELEMENT_Subform) {
+    if (pLayoutChild->m_pFormNode->GetClassID() == XFA_Element::Subform) {
       XFA_ATTRIBUTEENUM eSubformLayout =
           pLayoutChild->m_pFormNode->GetEnum(XFA_ATTRIBUTE_Layout);
       if (eSubformLayout == XFA_ATTRIBUTEENUM_Row ||
@@ -1660,7 +1661,7 @@ static void XFA_ItemLayoutProcessor_AddTrailerBeforeSplit(
   XFA_ItemLayoutProcessor_UpdatePendedItemLayout(pProcessor,
                                                  pTrailerLayoutItem);
   CXFA_Node* pMarginNode =
-      pProcessor->m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+      pProcessor->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   FX_FLOAT fLeftInset = 0, fTopInset = 0, fRightInset = 0, fBottomInset = 0;
   if (pMarginNode) {
     fLeftInset =
@@ -1714,7 +1715,7 @@ static void XFA_ItemLayoutProcessor_AddLeaderAfterSplit(
     CXFA_ContentLayoutItem* pLeaderLayoutItem) {
   XFA_ItemLayoutProcessor_UpdatePendedItemLayout(pProcessor, pLeaderLayoutItem);
   CXFA_Node* pMarginNode =
-      pProcessor->m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+      pProcessor->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   FX_FLOAT fLeftInset = 0;
   FX_FLOAT fRightInset = 0;
   if (pMarginNode) {
@@ -1908,8 +1909,8 @@ void CXFA_ItemLayoutProcessor::ProcessUnUseOverFlow(
   if (pFormNode == NULL) {
     return;
   }
-  if (pFormNode->GetClassID() == XFA_ELEMENT_Overflow ||
-      pFormNode->GetClassID() == XFA_ELEMENT_Break) {
+  if (pFormNode->GetClassID() == XFA_Element::Overflow ||
+      pFormNode->GetClassID() == XFA_Element::Break) {
     pFormNode = pFormNode->GetNodeItem(XFA_NODEITEM_Parent);
   }
   if (pLeaderNode && pFormNode) {
@@ -2312,7 +2313,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
     }
   }
   CXFA_Node* pMarginNode =
-      m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
+      m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   FX_FLOAT fLeftInset = 0, fTopInset = 0, fRightInset = 0, fBottomInset = 0;
   if (pMarginNode) {
     fLeftInset =
@@ -2468,13 +2469,13 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
               m_pPageMgr->ProcessBreakBeforeOrAfter(m_pCurChildNode, TRUE,
                                                     pLeaderNode, pTrailerNode,
                                                     bCreatePage) &&
-              m_pFormNode->GetClassID() != XFA_ELEMENT_Form && bCreatePage) {
+              m_pFormNode->GetClassID() != XFA_Element::Form && bCreatePage) {
             if (JudgeLeaderOrTrailerForOccur(pLeaderNode)) {
               XFA_ItemLayoutProcessor_AddPendingNode(this, pLeaderNode, TRUE);
             }
             if (JudgeLeaderOrTrailerForOccur(pTrailerNode)) {
               if (m_pFormNode->GetNodeItem(XFA_NODEITEM_Parent)->GetClassID() ==
-                      XFA_ELEMENT_Form &&
+                      XFA_Element::Form &&
                   m_pLayoutItem == NULL) {
                 XFA_ItemLayoutProcessor_AddPendingNode(this, pTrailerNode,
                                                        TRUE);
@@ -2505,7 +2506,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
               m_pPageMgr->ProcessBreakBeforeOrAfter(m_pCurChildNode, FALSE,
                                                     pLeaderNode, pTrailerNode,
                                                     bCreatePage) &&
-              m_pFormNode->GetClassID() != XFA_ELEMENT_Form) {
+              m_pFormNode->GetClassID() != XFA_Element::Form) {
             if (JudgeLeaderOrTrailerForOccur(pTrailerNode)) {
               std::unique_ptr<CXFA_ItemLayoutProcessor> pTempProcessor(
                   new CXFA_ItemLayoutProcessor(pTrailerNode, nullptr));
@@ -2608,7 +2609,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
         } break;
         case XFA_ItemLayoutProcessorStages_Container:
           ASSERT(m_pCurChildNode->IsContainerNode());
-          if (m_pCurChildNode->GetClassID() == XFA_ELEMENT_Variables) {
+          if (m_pCurChildNode->GetClassID() == XFA_Element::Variables) {
             break;
           }
           if (fContentCurRowY >= fHeightLimit + XFA_LAYOUT_FLOAT_PERCISION &&
@@ -2869,10 +2870,10 @@ FX_BOOL CXFA_ItemLayoutProcessor::CalculateRowChildPosition(
 }
 CXFA_Node* CXFA_ItemLayoutProcessor::GetSubformSetParent(
     CXFA_Node* pSubformSet) {
-  if (pSubformSet && pSubformSet->GetClassID() == XFA_ELEMENT_SubformSet) {
+  if (pSubformSet && pSubformSet->GetClassID() == XFA_Element::SubformSet) {
     CXFA_Node* pParent = pSubformSet->GetNodeItem(XFA_NODEITEM_Parent);
     while (pParent) {
-      if (pParent->GetClassID() != XFA_ELEMENT_SubformSet) {
+      if (pParent->GetClassID() != XFA_Element::SubformSet) {
         return pParent;
       }
       pParent = pParent->GetNodeItem(XFA_NODEITEM_Parent);
@@ -2909,12 +2910,12 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayout(
     FX_FLOAT fHeightLimit,
     FX_FLOAT fRealHeight,
     CXFA_LayoutContext* pContext) {
-  XFA_ELEMENT eClassID = m_pFormNode->GetClassID();
+  XFA_Element eClassID = m_pFormNode->GetClassID();
   switch (eClassID) {
-    case XFA_ELEMENT_Subform:
-    case XFA_ELEMENT_Area:
-    case XFA_ELEMENT_ExclGroup:
-    case XFA_ELEMENT_SubformSet: {
+    case XFA_Element::Subform:
+    case XFA_Element::Area:
+    case XFA_Element::ExclGroup:
+    case XFA_Element::SubformSet: {
       FX_BOOL bRootForceTb = FALSE;
       CXFA_Node* pLayoutNode = GetSubformSetParent(m_pFormNode);
       XFA_ATTRIBUTEENUM eLayoutStrategy =
@@ -2939,12 +2940,12 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayout(
           return XFA_ItemLayoutProcessorResult_Done;
       }
     }
-    case XFA_ELEMENT_Draw:
-    case XFA_ELEMENT_Field:
+    case XFA_Element::Draw:
+    case XFA_Element::Field:
       DoLayoutField();
       m_nCurChildNodeStage = XFA_ItemLayoutProcessorStages_Done;
       return XFA_ItemLayoutProcessorResult_Done;
-    case XFA_ELEMENT_ContentArea:
+    case XFA_Element::ContentArea:
       return XFA_ItemLayoutProcessorResult_Done;
     default:
       return XFA_ItemLayoutProcessorResult_Done;
@@ -2980,7 +2981,7 @@ FX_BOOL CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(
   if (!pTemplate)
     pTemplate = pFormNode;
 
-  CXFA_Occur NodeOccur(pTemplate->GetFirstChildByClass(XFA_ELEMENT_Occur));
+  CXFA_Occur NodeOccur(pTemplate->GetFirstChildByClass(XFA_Element::Occur));
   int32_t iMax = NodeOccur.GetMax();
   if (iMax < 0)
     return TRUE;

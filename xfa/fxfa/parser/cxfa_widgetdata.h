@@ -42,7 +42,7 @@ class CXFA_WidgetData : public CXFA_Data {
   explicit CXFA_WidgetData(CXFA_Node* pNode);
 
   CXFA_Node* GetUIChild();
-  XFA_ELEMENT GetUIType();
+  XFA_Element GetUIType();
   CFX_WideString GetRawValue();
   int32_t GetAccess(FX_BOOL bTemplate = FALSE);
   int32_t GetRotate();
@@ -152,7 +152,7 @@ class CXFA_WidgetData : public CXFA_Data {
   void GetPasswordChar(CFX_WideString& wsPassWord);
   FX_BOOL IsMultiLine();
   int32_t GetVerticalScrollPolicy();
-  int32_t GetMaxChars(XFA_ELEMENT& eType);
+  int32_t GetMaxChars(XFA_Element& eType);
   FX_BOOL GetFracDigits(int32_t& iFracDigits);
   FX_BOOL GetLeadDigits(int32_t& iLeadDigits);
 
@@ -173,7 +173,7 @@ class CXFA_WidgetData : public CXFA_Data {
                     CFX_WideString& wsOutput);
 
   CXFA_Node* m_pUiChildNode;
-  XFA_ELEMENT m_eUIType;
+  XFA_Element m_eUIType;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_WIDGETDATA_H_

@@ -88,9 +88,9 @@ class CXFA_NodeLocale : public IFX_Locale {
 
   CXFA_Node* GetNodeByName(CXFA_Node* pParent,
                            const CFX_WideStringC& wsName) const;
-  CFX_WideString GetSymbol(XFA_ELEMENT eElement,
+  CFX_WideString GetSymbol(XFA_Element eElement,
                            const CFX_WideStringC& symbol_type) const;
-  CFX_WideString GetCalendarSymbol(XFA_ELEMENT eElement,
+  CFX_WideString GetCalendarSymbol(XFA_Element eElement,
                                    int index,
                                    FX_BOOL bAbbr) const;
 

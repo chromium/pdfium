@@ -23,8 +23,8 @@ class CXFA_Stroke : public CXFA_Data {
  public:
   explicit CXFA_Stroke(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-  bool IsCorner() const { return GetClassID() == XFA_ELEMENT_Corner; }
-  bool IsEdge() const { return GetClassID() == XFA_ELEMENT_Edge; }
+  bool IsCorner() const { return GetClassID() == XFA_Element::Corner; }
+  bool IsEdge() const { return GetClassID() == XFA_Element::Edge; }
   bool IsVisible() const { return GetPresence() == XFA_ATTRIBUTEENUM_Visible; }
   int32_t GetPresence() const;
   int32_t GetCapType() const;

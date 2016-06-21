@@ -19,9 +19,9 @@ class CXFA_Box : public CXFA_Data {
  public:
   explicit CXFA_Box(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-  bool IsArc() const { return GetClassID() == XFA_ELEMENT_Arc; }
-  bool IsBorder() const { return GetClassID() == XFA_ELEMENT_Border; }
-  bool IsRectangle() const { return GetClassID() == XFA_ELEMENT_Rectangle; }
+  bool IsArc() const { return GetClassID() == XFA_Element::Arc; }
+  bool IsBorder() const { return GetClassID() == XFA_Element::Border; }
+  bool IsRectangle() const { return GetClassID() == XFA_Element::Rectangle; }
   int32_t GetHand() const;
   int32_t GetPresence() const;
   int32_t CountEdges() const;

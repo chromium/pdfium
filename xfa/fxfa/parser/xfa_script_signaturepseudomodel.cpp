@@ -20,7 +20,7 @@
 
 CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_SignaturePseudoModel) {
+    : CXFA_OrdinaryObject(pDocument, XFA_Element::SignaturePseudoModel) {
   m_uScriptHash = XFA_HASHCODE_Signature;
 }
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}

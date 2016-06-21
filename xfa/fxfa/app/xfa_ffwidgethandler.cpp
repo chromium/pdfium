@@ -187,7 +187,7 @@ FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
                                        XFA_EVENTTYPE eEventType) {
   if (!pWidgetAcc || eEventType == XFA_EVENT_Unknown)
     return FALSE;
-  if (pWidgetAcc->GetClassID() == XFA_ELEMENT_Draw)
+  if (pWidgetAcc->GetClassID() == XFA_Element::Draw)
     return FALSE;
 
   switch (eEventType) {
@@ -219,7 +219,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
                                            CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
     return XFA_EVENTERROR_NotExist;
-  if (!pWidgetAcc || pWidgetAcc->GetClassID() == XFA_ELEMENT_Draw)
+  if (!pWidgetAcc || pWidgetAcc->GetClassID() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   switch (pParam->m_eType) {
@@ -321,28 +321,28 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateWidgetFormItem(
 
 CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
                                                   CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateField(XFA_ELEMENT_Button, pParent, pBefore);
-  CXFA_Node* pCaption = CreateCopyNode(XFA_ELEMENT_Caption, pField);
-  CXFA_Node* pValue = CreateCopyNode(XFA_ELEMENT_Value, pCaption);
-  CXFA_Node* pText = CreateCopyNode(XFA_ELEMENT_Text, pValue);
+  CXFA_Node* pField = CreateField(XFA_Element::Button, pParent, pBefore);
+  CXFA_Node* pCaption = CreateCopyNode(XFA_Element::Caption, pField);
+  CXFA_Node* pValue = CreateCopyNode(XFA_Element::Value, pCaption);
+  CXFA_Node* pText = CreateCopyNode(XFA_Element::Text, pValue);
   pText->SetContent(L"Button", L"Button", FALSE);
 
-  CXFA_Node* pPara = CreateCopyNode(XFA_ELEMENT_Para, pCaption);
+  CXFA_Node* pPara = CreateCopyNode(XFA_Element::Para, pCaption);
   pPara->SetEnum(XFA_ATTRIBUTE_VAlign, XFA_ATTRIBUTEENUM_Middle, FALSE);
   pPara->SetEnum(XFA_ATTRIBUTE_HAlign, XFA_ATTRIBUTEENUM_Center, FALSE);
   CreateFontNode(pCaption);
 
-  CXFA_Node* pBorder = CreateCopyNode(XFA_ELEMENT_Border, pField);
+  CXFA_Node* pBorder = CreateCopyNode(XFA_Element::Border, pField);
   pBorder->SetEnum(XFA_ATTRIBUTE_Hand, XFA_ATTRIBUTEENUM_Right, FALSE);
 
-  CXFA_Node* pEdge = CreateCopyNode(XFA_ELEMENT_Edge, pBorder);
+  CXFA_Node* pEdge = CreateCopyNode(XFA_Element::Edge, pBorder);
   pEdge->SetEnum(XFA_ATTRIBUTE_Stroke, XFA_ATTRIBUTEENUM_Raised, FALSE);
 
-  CXFA_Node* pFill = CreateCopyNode(XFA_ELEMENT_Fill, pBorder);
-  CXFA_Node* pColor = CreateCopyNode(XFA_ELEMENT_Color, pFill);
+  CXFA_Node* pFill = CreateCopyNode(XFA_Element::Fill, pBorder);
+  CXFA_Node* pColor = CreateCopyNode(XFA_Element::Color, pFill);
   pColor->SetCData(XFA_ATTRIBUTE_Value, L"212, 208, 200", FALSE);
 
-  CXFA_Node* pBind = CreateCopyNode(XFA_ELEMENT_Bind, pField);
+  CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
   pBind->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None);
 
   return pField;
@@ -350,55 +350,55 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateCheckButton(CXFA_Node* pParent,
                                                    CXFA_Node* pBefore) const {
-  return CreateField(XFA_ELEMENT_CheckButton, pParent, pBefore);
+  return CreateField(XFA_Element::CheckButton, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateExclGroup(CXFA_Node* pParent,
                                                  CXFA_Node* pBefore) const {
-  return CreateFormItem(XFA_ELEMENT_ExclGroup, pParent, pBefore);
+  return CreateFormItem(XFA_Element::ExclGroup, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateRadioButton(CXFA_Node* pParent,
                                                    CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateField(XFA_ELEMENT_CheckButton, pParent, pBefore);
-  CXFA_Node* pUi = pField->GetFirstChildByClass(XFA_ELEMENT_Ui);
-  CXFA_Node* pWidget = pUi->GetFirstChildByClass(XFA_ELEMENT_CheckButton);
+  CXFA_Node* pField = CreateField(XFA_Element::CheckButton, pParent, pBefore);
+  CXFA_Node* pUi = pField->GetFirstChildByClass(XFA_Element::Ui);
+  CXFA_Node* pWidget = pUi->GetFirstChildByClass(XFA_Element::CheckButton);
   pWidget->SetEnum(XFA_ATTRIBUTE_Shape, XFA_ATTRIBUTEENUM_Round);
   return pField;
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateDatetimeEdit(CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateField(XFA_ELEMENT_DateTimeEdit, pParent, pBefore);
-  CreateValueNode(XFA_ELEMENT_Date, pField);
+  CXFA_Node* pField = CreateField(XFA_Element::DateTimeEdit, pParent, pBefore);
+  CreateValueNode(XFA_Element::Date, pField);
   return pField;
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateDecimalField(CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateNumericField(pParent, pBefore);
-  CreateValueNode(XFA_ELEMENT_Decimal, pField);
+  CreateValueNode(XFA_Element::Decimal, pField);
   return pField;
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateNumericField(CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
-  return CreateField(XFA_ELEMENT_NumericEdit, pParent, pBefore);
+  return CreateField(XFA_Element::NumericEdit, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateSignature(CXFA_Node* pParent,
                                                  CXFA_Node* pBefore) const {
-  return CreateField(XFA_ELEMENT_Signature, pParent, pBefore);
+  return CreateField(XFA_Element::Signature, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateTextEdit(CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
-  return CreateField(XFA_ELEMENT_TextEdit, pParent, pBefore);
+  return CreateField(XFA_Element::TextEdit, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateDropdownList(CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
-  return CreateField(XFA_ELEMENT_ChoiceList, pParent, pBefore);
+  return CreateField(XFA_Element::ChoiceList, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateListBox(CXFA_Node* pParent,
@@ -413,70 +413,72 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateListBox(CXFA_Node* pParent,
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateImageField(CXFA_Node* pParent,
                                                   CXFA_Node* pBefore) const {
-  return CreateField(XFA_ELEMENT_ImageEdit, pParent, pBefore);
+  return CreateField(XFA_Element::ImageEdit, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreatePasswordEdit(CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateField(XFA_ELEMENT_PasswordEdit, pParent, pBefore);
-  CXFA_Node* pBind = CreateCopyNode(XFA_ELEMENT_Bind, pField);
+  CXFA_Node* pField = CreateField(XFA_Element::PasswordEdit, pParent, pBefore);
+  CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
   pBind->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None, FALSE);
   return pField;
 }
 
-CXFA_Node* CXFA_FFWidgetHandler::CreateField(XFA_ELEMENT eElement,
+CXFA_Node* CXFA_FFWidgetHandler::CreateField(XFA_Element eElement,
                                              CXFA_Node* pParent,
                                              CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateFormItem(XFA_ELEMENT_Field, pParent, pBefore);
-  CreateCopyNode(eElement, CreateCopyNode(XFA_ELEMENT_Ui, pField));
+  CXFA_Node* pField = CreateFormItem(XFA_Element::Field, pParent, pBefore);
+  CreateCopyNode(eElement, CreateCopyNode(XFA_Element::Ui, pField));
   CreateFontNode(pField);
   return pField;
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateArc(CXFA_Node* pParent,
                                            CXFA_Node* pBefore) const {
-  return CreateDraw(XFA_ELEMENT_Arc, pParent, pBefore);
+  return CreateDraw(XFA_Element::Arc, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateRectangle(CXFA_Node* pParent,
                                                  CXFA_Node* pBefore) const {
-  return CreateDraw(XFA_ELEMENT_Rectangle, pParent, pBefore);
+  return CreateDraw(XFA_Element::Rectangle, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateImage(CXFA_Node* pParent,
                                              CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateDraw(XFA_ELEMENT_Image, pParent, pBefore);
-  CreateCopyNode(XFA_ELEMENT_ImageEdit, CreateCopyNode(XFA_ELEMENT_Ui, pField));
+  CXFA_Node* pField = CreateDraw(XFA_Element::Image, pParent, pBefore);
+  CreateCopyNode(XFA_Element::ImageEdit,
+                 CreateCopyNode(XFA_Element::Ui, pField));
   return pField;
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateLine(CXFA_Node* pParent,
                                             CXFA_Node* pBefore) const {
-  return CreateDraw(XFA_ELEMENT_Line, pParent, pBefore);
+  return CreateDraw(XFA_Element::Line, pParent, pBefore);
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateText(CXFA_Node* pParent,
                                             CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateDraw(XFA_ELEMENT_Text, pParent, pBefore);
-  CreateCopyNode(XFA_ELEMENT_TextEdit, CreateCopyNode(XFA_ELEMENT_Ui, pField));
+  CXFA_Node* pField = CreateDraw(XFA_Element::Text, pParent, pBefore);
+  CreateCopyNode(XFA_Element::TextEdit,
+                 CreateCopyNode(XFA_Element::Ui, pField));
   CreateFontNode(pField);
   return pField;
 }
 
-CXFA_Node* CXFA_FFWidgetHandler::CreateDraw(XFA_ELEMENT eElement,
+CXFA_Node* CXFA_FFWidgetHandler::CreateDraw(XFA_Element eElement,
                                             CXFA_Node* pParent,
                                             CXFA_Node* pBefore) const {
-  CXFA_Node* pDraw = CreateFormItem(XFA_ELEMENT_Draw, pParent, pBefore);
+  CXFA_Node* pDraw = CreateFormItem(XFA_Element::Draw, pParent, pBefore);
   CreateValueNode(eElement, pDraw);
   return pDraw;
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateSubform(CXFA_Node* pParent,
                                                CXFA_Node* pBefore) const {
-  return CreateFormItem(XFA_ELEMENT_Subform, pParent, pBefore);
+  return CreateFormItem(XFA_Element::Subform, pParent, pBefore);
 }
 
-CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_ELEMENT eElement,
+CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_Element eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
   CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : NULL;
@@ -486,7 +488,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_ELEMENT eElement,
   return pNewFormItem;
 }
 
-CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_ELEMENT eElement,
+CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_Element eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
   CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : NULL;
@@ -499,7 +501,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_ELEMENT eElement,
   return pNewNode;
 }
 
-CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_ELEMENT eElement,
+CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_Element eElement,
                                                     CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
   CXFA_Document* pXFADoc = GetXFADoc();
@@ -511,7 +513,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_ELEMENT eElement,
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {
-  CXFA_Node* pFont = CreateCopyNode(XFA_ELEMENT_Font, pParent);
+  CXFA_Node* pFont = CreateCopyNode(XFA_Element::Font, pParent);
   pFont->SetCData(XFA_ATTRIBUTE_Typeface, L"Myriad Pro", FALSE);
   return pFont;
 }
@@ -519,7 +521,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {
 CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
                                                   uint32_t dwFlags,
                                                   FX_FLOAT fInsets[4]) const {
-  CXFA_Node* pMargin = CreateCopyNode(XFA_ELEMENT_Margin, pParent);
+  CXFA_Node* pMargin = CreateCopyNode(XFA_Element::Margin, pParent);
   if (dwFlags & 0x01)
     pMargin->SetMeasure(XFA_ATTRIBUTE_LeftInset,
                         CXFA_Measurement(fInsets[0], XFA_UNIT_Pt), FALSE);
@@ -535,9 +537,9 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
   return pMargin;
 }
 
-CXFA_Node* CXFA_FFWidgetHandler::CreateValueNode(XFA_ELEMENT eValue,
+CXFA_Node* CXFA_FFWidgetHandler::CreateValueNode(XFA_Element eValue,
                                                  CXFA_Node* pParent) const {
-  CXFA_Node* pValue = CreateCopyNode(XFA_ELEMENT_Value, pParent);
+  CXFA_Node* pValue = CreateCopyNode(XFA_Element::Value, pParent);
   CreateCopyNode(eValue, pValue);
   return pValue;
 }

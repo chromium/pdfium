@@ -8,12 +8,12 @@
 
 #include "xfa/fxfa/parser/xfa_object.h"
 
-XFA_ELEMENT CXFA_Value::GetChildValueClassID() {
+XFA_Element CXFA_Value::GetChildValueClassID() {
   if (!m_pNode)
-    return XFA_ELEMENT_UNKNOWN;
+    return XFA_Element::Unknown;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
     return pNode->GetClassID();
-  return XFA_ELEMENT_UNKNOWN;
+  return XFA_Element::Unknown;
 }
 
 FX_BOOL CXFA_Value::GetChildValueContent(CFX_WideString& wsContent) {

@@ -31,7 +31,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
        pDataChild;
        pDataChild = pDataChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     uint32_t dwNameHash = pDataChild->GetNameHash();
-    XFA_ELEMENT eType = pDataChild->GetClassID();
+    XFA_Element eType = pDataChild->GetClassID();
     if (!dwNameHash) {
       continue;
     }
@@ -40,7 +40,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
     for (CXFA_Node* pDDGroupNode = sIterator.GetCurrent(); pDDGroupNode;
          pDDGroupNode = sIterator.MoveToNext()) {
       if (pDDGroupNode != pDataDescriptionNode) {
-        if (pDDGroupNode->GetClassID() != XFA_ELEMENT_DataGroup) {
+        if (pDDGroupNode->GetClassID() != XFA_Element::DataGroup) {
           continue;
         }
         CFX_WideString wsNamespace;
@@ -65,7 +65,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
 CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     CXFA_Document* pDocument,
     CXFA_Node* pDataParent,
-    XFA_ELEMENT eNodeType,
+    XFA_Element eNodeType,
     const CFX_WideString& wsName) {
   if (!pDataParent) {
     return NULL;
@@ -86,7 +86,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     for (CXFA_Node* pDDGroupNode = sIterator.GetCurrent(); pDDGroupNode;
          pDDGroupNode = sIterator.MoveToNext()) {
       if (pDDGroupNode != pParentDDNode) {
-        if (pDDGroupNode->GetClassID() != XFA_ELEMENT_DataGroup) {
+        if (pDDGroupNode->GetClassID() != XFA_Element::DataGroup) {
           continue;
         }
         CFX_WideString wsNamespace;
@@ -108,7 +108,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
       ASSERT(pDataNode);
       pDataNode->SetCData(XFA_ATTRIBUTE_Name, wsName);
       pDataNode->CreateXMLMappingNode();
-      if (eNodeType == XFA_ELEMENT_DataValue &&
+      if (eNodeType == XFA_Element::DataValue &&
           pDDNode->GetEnum(XFA_ATTRIBUTE_Contains) ==
               XFA_ATTRIBUTEENUM_MetaData) {
         pDataNode->SetEnum(XFA_ATTRIBUTE_Contains, XFA_ATTRIBUTEENUM_MetaData);

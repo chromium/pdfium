@@ -34,7 +34,7 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
     pNode = pNext;
   }
   pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
-  if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea) {
+  if (pLayoutItem->m_pFormNode->GetClassID() == XFA_Element::PageArea) {
     pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
                          XFA_PAGEVIEWEVENT_PostRemoved);
   }

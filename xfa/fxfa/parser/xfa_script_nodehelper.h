@@ -62,7 +62,7 @@ class CXFA_NodeHelper {
   FX_BOOL XFA_NodeIsProperty(CXFA_Node* refNode);
 
  public:
-  XFA_ELEMENT m_eLastCreateType;
+  XFA_Element m_eLastCreateType;
   CXFA_Node* m_pCreateParent;
   int32_t m_iCreateCount;
   XFA_RESOVENODE_RSTYPE m_iCreateFlag;

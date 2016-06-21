@@ -12,7 +12,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
 CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     CXFA_Document* pDocument,
     CXFA_Node* pDataParent,
-    XFA_ELEMENT eNodeType,
+    XFA_Element eNodeType,
     const CFX_WideString& wsName);
 
 #endif  // XFA_FXFA_PARSER_XFA_DOCUMENT_DATADESCRIPTION_IMP_H_

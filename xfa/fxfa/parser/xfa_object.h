@@ -90,7 +90,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   const CXFA_OrdinaryObject* AsOrdinaryObject() const;
   const CXFA_NodeList* AsNodeList() const;
 
-  XFA_ELEMENT GetClassID() const;
+  XFA_Element GetClassID() const;
   void GetClassName(CFX_WideStringC& wsName) const;
   uint32_t GetClassHashCode() const;
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
@@ -150,7 +150,7 @@ struct XFA_MAPMODULEDATA {
 
 class CXFA_Node : public CXFA_Object {
  public:
-  XFA_ELEMENT GetClassID() const { return m_eNodeClass; }
+  XFA_Element GetClassID() const { return m_eNodeClass; }
   uint32_t GetPacketID() const { return m_ePacket; }
 
   void SetFlag(uint32_t dwFlag, bool bNotify);
@@ -292,11 +292,11 @@ class CXFA_Node : public CXFA_Object {
     return TryUserData(pKey, pData, bProtoAlso) ? pData : NULL;
   }
   CXFA_Node* GetProperty(int32_t index,
-                         XFA_ELEMENT eProperty,
+                         XFA_Element eProperty,
                          FX_BOOL bCreateProperty = TRUE);
-  int32_t CountChildren(XFA_ELEMENT eElement, FX_BOOL bOnlyChild = FALSE);
+  int32_t CountChildren(XFA_Element eElement, FX_BOOL bOnlyChild = FALSE);
   CXFA_Node* GetChild(int32_t index,
-                      XFA_ELEMENT eElement,
+                      XFA_Element eElement,
                       FX_BOOL bOnlyChild = FALSE);
   int32_t InsertChild(int32_t index, CXFA_Node* pNode);
   FX_BOOL InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = NULL);
@@ -307,9 +307,9 @@ class CXFA_Node : public CXFA_Object {
   int32_t GetNodeList(CXFA_NodeArray& nodes,
                       uint32_t dwTypeFilter = XFA_NODEFILTER_Children |
                                               XFA_NODEFILTER_Properties,
-                      XFA_ELEMENT eElementFilter = XFA_ELEMENT_UNKNOWN,
+                      XFA_Element eElementFilter = XFA_Element::Unknown,
                       int32_t iLevel = 1);
-  CXFA_Node* CreateSamePacketNode(XFA_ELEMENT eElement,
+  CXFA_Node* CreateSamePacketNode(XFA_Element eElement,
                                   uint32_t dwFlags = XFA_NodeFlag_Initialized);
   CXFA_Node* CloneTemplateToForm(FX_BOOL bRecursive);
   CXFA_Node* GetTemplateNode() const;
@@ -327,10 +327,10 @@ class CXFA_Node : public CXFA_Object {
   XFA_ATTRIBUTEENUM GetIntact();
   CXFA_Node* GetFirstChildByName(const CFX_WideStringC& wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
-  CXFA_Node* GetFirstChildByClass(XFA_ELEMENT eNodeClass) const;
+  CXFA_Node* GetFirstChildByClass(XFA_Element eNodeClass) const;
   CXFA_Node* GetNextSameNameSibling(uint32_t dwNodeNameHash) const;
   CXFA_Node* GetNextSameNameSibling(const CFX_WideStringC& wsNodeName) const;
-  CXFA_Node* GetNextSameClassSibling(XFA_ELEMENT eNodeClass) const;
+  CXFA_Node* GetNextSameClassSibling(XFA_Element eNodeClass) const;
   int32_t GetNodeSameNameIndex() const;
   int32_t GetNodeSameClassIndex() const;
   void GetSOMExpression(CFX_WideString& wsSOMExpression);
@@ -623,7 +623,7 @@ class CXFA_Node : public CXFA_Object {
  protected:
   friend class CXFA_Document;
 
-  CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_ELEMENT eElement);
+  CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_Element eElement);
   ~CXFA_Node() override;
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;
@@ -640,7 +640,7 @@ class CXFA_Node : public CXFA_Object {
   void OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify);
   void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, FX_BOOL bScriptModify);
   int32_t execSingleEventByName(const CFX_WideStringC& wsEventName,
-                                XFA_ELEMENT eElementType);
+                                XFA_Element eElementType);
   FX_BOOL SetScriptContent(const CFX_WideString& wsContent,
                            const CFX_WideString& wsXMLValue,
                            bool bNotify = true,
@@ -675,7 +675,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pLastChild;
   CXFA_Node* m_pParent;
   CFDE_XMLNode* m_pXMLNode;
-  XFA_ELEMENT m_eNodeClass;
+  XFA_Element m_eNodeClass;
   uint16_t m_ePacket;
   uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;
@@ -685,14 +685,14 @@ class CXFA_Node : public CXFA_Object {
 
 class CXFA_OrdinaryObject : public CXFA_Object {
  public:
-  CXFA_OrdinaryObject(CXFA_Document* pDocument, XFA_ELEMENT eElement);
+  CXFA_OrdinaryObject(CXFA_Document* pDocument, XFA_Element eElement);
   ~CXFA_OrdinaryObject() override;
 
-  XFA_ELEMENT GetClassID() const;
+  XFA_Element GetClassID() const;
   uint32_t GetScriptObjHash() const;
 
  protected:
-  XFA_ELEMENT m_eNodeClass;
+  XFA_Element m_eNodeClass;
   uint32_t m_uScriptHash;
 };
 
@@ -714,7 +714,7 @@ class CXFA_NodeList : public CXFA_Object {
   explicit CXFA_NodeList(CXFA_Document* pDocument);
   ~CXFA_NodeList() override;
 
-  XFA_ELEMENT GetClassID() const;
+  XFA_Element GetClassID() const;
   CXFA_Node* NamedItem(const CFX_WideStringC& wsName);
   virtual int32_t GetLength() = 0;
   virtual FX_BOOL Append(CXFA_Node* pNode) = 0;

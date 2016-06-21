@@ -36,10 +36,10 @@ FX_BOOL CXFA_FFField::GetBBox(CFX_RectF& rtBox,
   if (!bDrawFocus)
     return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
 
-  XFA_ELEMENT type = (XFA_ELEMENT)m_pDataAcc->GetUIType();
-  if (type == XFA_ELEMENT_Button || type == XFA_ELEMENT_CheckButton ||
-      type == XFA_ELEMENT_ImageEdit || type == XFA_ELEMENT_Signature ||
-      type == XFA_ELEMENT_ChoiceList) {
+  XFA_Element type = m_pDataAcc->GetUIType();
+  if (type == XFA_Element::Button || type == XFA_Element::CheckButton ||
+      type == XFA_Element::ImageEdit || type == XFA_Element::Signature ||
+      type == XFA_Element::ChoiceList) {
     rtBox = m_rtUI;
     CFX_Matrix mt;
     GetRotateMatrix(mt);
@@ -127,9 +127,9 @@ void CXFA_FFField::UnloadWidget() {
   m_pNormalWidget = nullptr;
 }
 void CXFA_FFField::SetEditScrollOffset() {
-  XFA_ELEMENT eType = m_pDataAcc->GetUIType();
-  if (eType == XFA_ELEMENT_TextEdit || eType == XFA_ELEMENT_NumericEdit ||
-      eType == XFA_ELEMENT_PasswordEdit) {
+  XFA_Element eType = m_pDataAcc->GetUIType();
+  if (eType == XFA_Element::TextEdit || eType == XFA_Element::NumericEdit ||
+      eType == XFA_Element::PasswordEdit) {
     FX_FLOAT fScrollOffset = 0;
     CXFA_FFField* pPrev = static_cast<CXFA_FFField*>(GetPrev());
     if (pPrev) {
@@ -323,7 +323,7 @@ void CXFA_FFField::UpdateFWL() {
 uint32_t CXFA_FFField::UpdateUIProperty() {
   CXFA_Node* pUiNode = m_pDataAcc->GetUIChild();
   uint32_t dwStyle = 0;
-  if (pUiNode && pUiNode->GetClassID() == XFA_ELEMENT_DefaultUi) {
+  if (pUiNode && pUiNode->GetClassID() == XFA_Element::DefaultUi) {
     dwStyle = FWL_STYLEEXT_EDT_ReadOnly;
   }
   return dwStyle;

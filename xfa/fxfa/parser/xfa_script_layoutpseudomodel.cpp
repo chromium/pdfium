@@ -24,7 +24,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_LayoutPseudoModel) {
+    : CXFA_OrdinaryObject(pDocument, XFA_Element::LayoutPseudoModel) {
   m_uScriptHash = XFA_HASHCODE_Layout;
 }
 CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
@@ -224,7 +224,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
   if (wsType == FX_WSTRC(L"contentArea")) {
     for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
-      if (pItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
+      if (pItem->m_pFormNode->GetClassID() == XFA_Element::ContentArea) {
         retArray.Add(pItem->m_pFormNode);
       }
     }
@@ -237,7 +237,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     }
     for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
-      if (pItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
+      if (pItem->m_pFormNode->GetClassID() == XFA_Element::ContentArea) {
         retArray.Add(pItem->m_pFormNode);
         if (!bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
@@ -248,11 +248,11 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
             }
-            XFA_ELEMENT eElementType = pItemChild->m_pFormNode->GetClassID();
-            if (eElementType != XFA_ELEMENT_Field &&
-                eElementType != XFA_ELEMENT_Draw &&
-                eElementType != XFA_ELEMENT_Subform &&
-                eElementType != XFA_ELEMENT_Area) {
+            XFA_Element eElementType = pItemChild->m_pFormNode->GetClassID();
+            if (eElementType != XFA_Element::Field &&
+                eElementType != XFA_Element::Draw &&
+                eElementType != XFA_Element::Subform &&
+                eElementType != XFA_Element::Area) {
               continue;
             }
             if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
@@ -272,11 +272,11 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
             }
-            XFA_ELEMENT eElementType = pItemChild->m_pFormNode->GetClassID();
-            if (eElementType != XFA_ELEMENT_Field &&
-                eElementType != XFA_ELEMENT_Draw &&
-                eElementType != XFA_ELEMENT_Subform &&
-                eElementType != XFA_ELEMENT_Area) {
+            XFA_Element eElementType = pItemChild->m_pFormNode->GetClassID();
+            if (eElementType != XFA_Element::Field &&
+                eElementType != XFA_Element::Draw &&
+                eElementType != XFA_Element::Subform &&
+                eElementType != XFA_Element::Area) {
               continue;
             }
             if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
@@ -289,20 +289,20 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     }
     return;
   }
-  XFA_ELEMENT eType = XFA_ELEMENT_UNKNOWN;
+  XFA_Element eType = XFA_Element::Unknown;
   if (wsType == FX_WSTRC(L"field")) {
-    eType = XFA_ELEMENT_Field;
+    eType = XFA_Element::Field;
   } else if (wsType == FX_WSTRC(L"draw")) {
-    eType = XFA_ELEMENT_Draw;
+    eType = XFA_Element::Draw;
   } else if (wsType == FX_WSTRC(L"subform")) {
-    eType = XFA_ELEMENT_Subform;
+    eType = XFA_Element::Subform;
   } else if (wsType == FX_WSTRC(L"area")) {
-    eType = XFA_ELEMENT_Area;
+    eType = XFA_Element::Area;
   }
-  if (eType != XFA_ELEMENT_UNKNOWN) {
+  if (eType != XFA_Element::Unknown) {
     for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
-      if (pItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
+      if (pItem->m_pFormNode->GetClassID() == XFA_Element::ContentArea) {
         if (!bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
@@ -408,7 +408,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetCountInBatch(
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Relayout(
     CFXJSE_Arguments* pArguments) {
   CXFA_Node* pRootNode = m_pDocument->GetRoot();
-  CXFA_Node* pFormRoot = pRootNode->GetFirstChildByClass(XFA_ELEMENT_Form);
+  CXFA_Node* pFormRoot = pRootNode->GetFirstChildByClass(XFA_Element::Form);
   ASSERT(pFormRoot);
   CXFA_Node* pContentRootNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
   CXFA_LayoutProcessor* pLayoutProcessor = m_pDocument->GetLayoutProcessor();

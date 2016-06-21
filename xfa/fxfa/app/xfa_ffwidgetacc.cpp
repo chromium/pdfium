@@ -199,9 +199,9 @@ FX_BOOL CXFA_WidgetAcc::ProcessValueChanged() {
 }
 void CXFA_WidgetAcc::ResetData() {
   CFX_WideString wsValue;
-  XFA_ELEMENT eUIType = (XFA_ELEMENT)GetUIType();
+  XFA_Element eUIType = GetUIType();
   switch (eUIType) {
-    case XFA_ELEMENT_ImageEdit: {
+    case XFA_Element::ImageEdit: {
       CXFA_Value imageValue = GetDefaultValue();
       CXFA_Image image = imageValue.GetImage();
       CFX_WideString wsContentType, wsHref;
@@ -212,7 +212,7 @@ void CXFA_WidgetAcc::ResetData() {
       }
       SetImageEdit(wsContentType, wsHref, wsValue);
     } break;
-    case XFA_ELEMENT_ExclGroup: {
+    case XFA_Element::ExclGroup: {
       CXFA_Node* pNextChild = m_pNode->GetNodeItem(
           XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
       while (pNextChild) {
@@ -228,13 +228,13 @@ void CXFA_WidgetAcc::ResetData() {
           SetValue(wsValue, XFA_VALUEPICTURE_Raw);
           pAcc->SetValue(wsValue, XFA_VALUEPICTURE_Raw);
         } else {
-          CXFA_Node* pItems = pChild->GetChild(0, XFA_ELEMENT_Items);
+          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items);
           if (!pItems) {
             continue;
           }
           CFX_WideString itemText;
-          if (pItems->CountChildren(XFA_ELEMENT_UNKNOWN) > 1) {
-            itemText = pItems->GetChild(1, XFA_ELEMENT_UNKNOWN)->GetContent();
+          if (pItems->CountChildren(XFA_Element::Unknown) > 1) {
+            itemText = pItems->GetChild(1, XFA_Element::Unknown)->GetContent();
           }
           pAcc->SetValue(itemText, XFA_VALUEPICTURE_Raw);
         }
@@ -242,7 +242,7 @@ void CXFA_WidgetAcc::ResetData() {
                                          XFA_ObjectType::ContainerNode);
       }
     } break;
-    case XFA_ELEMENT_ChoiceList:
+    case XFA_Element::ChoiceList:
       ClearAllSelections();
     default:
       if (CXFA_Value defValue = GetDefaultValue()) {
@@ -281,7 +281,7 @@ void CXFA_WidgetAcc::SetImageEdit(const CFX_WideString& wsContentType,
 
 CXFA_WidgetAcc* CXFA_WidgetAcc::GetExclGroup() {
   CXFA_Node* pExcl = m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!pExcl || pExcl->GetClassID() != XFA_ELEMENT_ExclGroup) {
+  if (!pExcl || pExcl->GetClassID() != XFA_Element::ExclGroup) {
     return NULL;
   }
   return static_cast<CXFA_WidgetAcc*>(pExcl->GetWidgetData());
@@ -300,7 +300,7 @@ IXFA_AppProvider* CXFA_WidgetAcc::GetAppProvider() {
 }
 int32_t CXFA_WidgetAcc::ProcessEvent(int32_t iActivity,
                                      CXFA_EventParam* pEventParam) {
-  if (GetClassID() == XFA_ELEMENT_Draw) {
+  if (GetClassID() == XFA_Element::Draw) {
     return XFA_EVENTERROR_NotExist;
   }
   int32_t iRet = XFA_EVENTERROR_NotExist;
@@ -320,19 +320,19 @@ int32_t CXFA_WidgetAcc::ProcessEvent(int32_t iActivity,
 }
 int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_Event& event,
                                      CXFA_EventParam* pEventParam) {
-  if (!event) {
+  if (!event)
     return XFA_EVENTERROR_NotExist;
-  }
+
   switch (event.GetEventType()) {
-    case XFA_ELEMENT_Execute:
+    case XFA_Element::Execute:
       break;
-    case XFA_ELEMENT_Script: {
+    case XFA_Element::Script: {
       CXFA_Script script = event.GetScript();
       return ExecuteScript(script, pEventParam);
     } break;
-    case XFA_ELEMENT_SignData:
+    case XFA_Element::SignData:
       break;
-    case XFA_ELEMENT_Submit: {
+    case XFA_Element::Submit: {
       CXFA_Submit submit = event.GetSubmit();
       return GetDoc()->GetDocProvider()->SubmitData(GetDoc(), submit);
     }
@@ -343,7 +343,7 @@ int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_Event& event,
 }
 
 int32_t CXFA_WidgetAcc::ProcessCalculate() {
-  if (GetClassID() == XFA_ELEMENT_Draw)
+  if (GetClassID() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   CXFA_Calculate calc = GetCalculate();
@@ -569,7 +569,7 @@ void CXFA_WidgetAcc::GetValidateMessage(IXFA_AppProvider* pAppProvider,
                    wsCaptionName.c_str());
 }
 int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
-  if (GetClassID() == XFA_ELEMENT_Draw) {
+  if (GetClassID() == XFA_Element::Draw) {
     return XFA_EVENTERROR_NotExist;
   }
   CXFA_Validate validate = GetValidate();
@@ -711,7 +711,7 @@ void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
   CXFA_FFWidget* pWidget = NULL;
   while ((pWidget = GetNextWidget(pWidget)) != nullptr) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
-        (GetUIType() != XFA_ELEMENT_CheckButton && pWidget->IsFocused())) {
+        (GetUIType() != XFA_Element::CheckButton && pWidget->IsFocused())) {
       continue;
     }
     pWidget->UpdateFWLData();
@@ -725,7 +725,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
     return;
   }
   LoadCaption();
-  XFA_ELEMENT eUIType = (XFA_ELEMENT)GetUIType();
+  XFA_Element eUIType = GetUIType();
   int32_t iCapPlacement = caption.GetPlacementType();
   FX_FLOAT fCapReserve = caption.GetReserve();
   const bool bVert = iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
@@ -735,7 +735,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       static_cast<CXFA_FieldLayoutData*>(m_pLayoutData.get())
           ->m_pCapTextLayout.get();
   if (pCapTextLayout) {
-    if (!bVert && eUIType != XFA_ELEMENT_Button) {
+    if (!bVert && eUIType != XFA_Element::Button) {
       szCap.x = fCapReserve;
     }
     CFX_SizeF minSize;
@@ -863,7 +863,7 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
     pTextOut->SetLineBreakTolerance(fFontSize * 0.2f);
     pTextOut->SetLineSpace(GetLineHeight());
     uint32_t dwStyles = FDE_TTOSTYLE_LastLineHeight;
-    if (GetUIType() == XFA_ELEMENT_TextEdit && IsMultiLine()) {
+    if (GetUIType() == XFA_Element::TextEdit && IsMultiLine()) {
       dwStyles |= FDE_TTOSTYLE_LineWrap;
     }
     pTextOut->SetStyles(dwStyles);
@@ -1087,8 +1087,8 @@ FX_FLOAT CXFA_WidgetAcc::GetHeightWithoutMargin(FX_FLOAT fHeightCalc) {
 void CXFA_WidgetAcc::StartWidgetLayout(FX_FLOAT& fCalcWidth,
                                        FX_FLOAT& fCalcHeight) {
   InitLayoutData();
-  XFA_ELEMENT eUIType = GetUIType();
-  if (eUIType == XFA_ELEMENT_Text) {
+  XFA_Element eUIType = GetUIType();
+  if (eUIType == XFA_Element::Text) {
     m_pLayoutData->m_fWidgetHeight = -1;
     GetHeight(m_pLayoutData->m_fWidgetHeight);
     StartTextLayout(fCalcWidth, fCalcHeight);
@@ -1114,39 +1114,39 @@ void CXFA_WidgetAcc::StartWidgetLayout(FX_FLOAT& fCalcWidth,
   }
   m_pLayoutData->m_fWidgetHeight = fCalcHeight;
 }
-void CXFA_WidgetAcc::CalculateAccWidthAndHeight(XFA_ELEMENT eUIType,
+void CXFA_WidgetAcc::CalculateAccWidthAndHeight(XFA_Element eUIType,
                                                 FX_FLOAT& fWidth,
                                                 FX_FLOAT& fCalcHeight) {
   CFX_SizeF sz(fWidth, m_pLayoutData->m_fWidgetHeight);
   switch (eUIType) {
-    case XFA_ELEMENT_Barcode:
-    case XFA_ELEMENT_ChoiceList:
-    case XFA_ELEMENT_Signature:
+    case XFA_Element::Barcode:
+    case XFA_Element::ChoiceList:
+    case XFA_Element::Signature:
       CalculateFieldAutoSize(sz);
       break;
-    case XFA_ELEMENT_ImageEdit:
+    case XFA_Element::ImageEdit:
       CalculateImageEditAutoSize(sz);
       break;
-    case XFA_ELEMENT_Button:
+    case XFA_Element::Button:
       CalculatePushButtonAutoSize(sz);
       break;
-    case XFA_ELEMENT_CheckButton:
+    case XFA_Element::CheckButton:
       CalculateCheckButtonAutoSize(sz);
       break;
-    case XFA_ELEMENT_DateTimeEdit:
-    case XFA_ELEMENT_NumericEdit:
-    case XFA_ELEMENT_PasswordEdit:
-    case XFA_ELEMENT_TextEdit:
+    case XFA_Element::DateTimeEdit:
+    case XFA_Element::NumericEdit:
+    case XFA_Element::PasswordEdit:
+    case XFA_Element::TextEdit:
       CalculateTextEditAutoSize(sz);
       break;
-    case XFA_ELEMENT_Image:
+    case XFA_Element::Image:
       CalculateImageAutoSize(sz);
       break;
-    case XFA_ELEMENT_Arc:
-    case XFA_ELEMENT_Line:
-    case XFA_ELEMENT_Rectangle:
-    case XFA_ELEMENT_Subform:
-    case XFA_ELEMENT_ExclGroup:
+    case XFA_Element::Arc:
+    case XFA_Element::Line:
+    case XFA_Element::Rectangle:
+    case XFA_Element::Subform:
+    case XFA_Element::ExclGroup:
       CalculateWidgetAutoSize(sz);
       break;
     default:
@@ -1158,13 +1158,13 @@ void CXFA_WidgetAcc::CalculateAccWidthAndHeight(XFA_ELEMENT eUIType,
 }
 FX_BOOL CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex,
                                      FX_FLOAT& fCalcHeight) {
-  XFA_ELEMENT eUIType = (XFA_ELEMENT)GetUIType();
-  if (eUIType == XFA_ELEMENT_Subform) {
+  XFA_Element eUIType = GetUIType();
+  if (eUIType == XFA_Element::Subform) {
     return FALSE;
   }
-  if (eUIType != XFA_ELEMENT_Text && eUIType != XFA_ELEMENT_TextEdit &&
-      eUIType != XFA_ELEMENT_NumericEdit &&
-      eUIType != XFA_ELEMENT_PasswordEdit) {
+  if (eUIType != XFA_Element::Text && eUIType != XFA_Element::TextEdit &&
+      eUIType != XFA_Element::NumericEdit &&
+      eUIType != XFA_Element::PasswordEdit) {
     fCalcHeight = 0;
     return TRUE;
   }
@@ -1181,7 +1181,7 @@ FX_BOOL CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex,
     fTopInset += rtUIMargin.top;
     fBottomInset += rtUIMargin.width;
   }
-  if (eUIType == XFA_ELEMENT_Text) {
+  if (eUIType == XFA_Element::Text) {
     FX_FLOAT fHeight = fCalcHeight;
     if (iBlockIndex == 0) {
       fCalcHeight = fCalcHeight - fTopInset;
@@ -1392,22 +1392,22 @@ void CXFA_WidgetAcc::InitLayoutData() {
     return;
   }
   switch (GetUIType()) {
-    case XFA_ELEMENT_Text:
+    case XFA_Element::Text:
       m_pLayoutData.reset(new CXFA_TextLayoutData);
       return;
-    case XFA_ELEMENT_TextEdit:
+    case XFA_Element::TextEdit:
       m_pLayoutData.reset(new CXFA_TextEditData);
       return;
-    case XFA_ELEMENT_Image:
+    case XFA_Element::Image:
       m_pLayoutData.reset(new CXFA_ImageLayoutData);
       return;
-    case XFA_ELEMENT_ImageEdit:
+    case XFA_Element::ImageEdit:
       m_pLayoutData.reset(new CXFA_ImageEditData);
       return;
     default:
       break;
   }
-  if (GetClassID() == XFA_ELEMENT_Field) {
+  if (GetClassID() == XFA_Element::Field) {
     m_pLayoutData.reset(new CXFA_FieldLayoutData);
     return;
   }
@@ -1556,7 +1556,7 @@ FX_ARGB CXFA_WidgetAcc::GetTextColor() {
 CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
   bRichText = FALSE;
   if (m_pTextNode) {
-    if (m_pTextNode->GetClassID() == XFA_ELEMENT_ExData) {
+    if (m_pTextNode->GetClassID() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       m_pTextNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
                                 FALSE);
@@ -1568,12 +1568,12 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
   }
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
     CXFA_Node* pElementNode = m_pWidgetAcc->GetNode();
-    CXFA_Node* pValueNode = pElementNode->GetChild(0, XFA_ELEMENT_Value);
+    CXFA_Node* pValueNode = pElementNode->GetChild(0, XFA_Element::Value);
     if (!pValueNode) {
       return NULL;
     }
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-    if (pChildNode && pChildNode->GetClassID() == XFA_ELEMENT_ExData) {
+    if (pChildNode && pChildNode->GetClassID() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
       if (wsContentType == FX_WSTRC(L"text/html")) {
@@ -1599,16 +1599,16 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
     return pBind;
   } else if (m_eType == XFA_TEXTPROVIDERTYPE_Caption) {
     CXFA_Node* pCaptionNode =
-        m_pWidgetAcc->GetNode()->GetChild(0, XFA_ELEMENT_Caption);
+        m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
     if (pCaptionNode == NULL) {
       return NULL;
     }
-    CXFA_Node* pValueNode = pCaptionNode->GetChild(0, XFA_ELEMENT_Value);
+    CXFA_Node* pValueNode = pCaptionNode->GetChild(0, XFA_Element::Value);
     if (pValueNode == NULL) {
       return NULL;
     }
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-    if (pChildNode && pChildNode->GetClassID() == XFA_ELEMENT_ExData) {
+    if (pChildNode && pChildNode->GetClassID() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
       if (wsContentType == FX_WSTRC(L"text/html")) {
@@ -1618,7 +1618,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
     return pChildNode;
   }
   CXFA_Node* pItemNode =
-      m_pWidgetAcc->GetNode()->GetChild(0, XFA_ELEMENT_Items);
+      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Items);
   if (pItemNode == NULL) {
     return NULL;
   }
@@ -1641,23 +1641,23 @@ CXFA_Para CXFA_TextProvider::GetParaNode() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
     return m_pWidgetAcc->GetPara();
   }
-  CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_ELEMENT_Caption);
-  return CXFA_Para(pNode->GetChild(0, XFA_ELEMENT_Para));
+  CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
+  return CXFA_Para(pNode->GetChild(0, XFA_Element::Para));
 }
 CXFA_Font CXFA_TextProvider::GetFontNode() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
     return m_pWidgetAcc->GetFont();
   }
-  CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_ELEMENT_Caption);
-  pNode = pNode->GetChild(0, XFA_ELEMENT_Font);
+  CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
+  pNode = pNode->GetChild(0, XFA_Element::Font);
   if (pNode) {
     return CXFA_Font(pNode);
   }
   return m_pWidgetAcc->GetFont();
 }
 FX_BOOL CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
-  XFA_ELEMENT eType = m_pWidgetAcc->GetUIType();
-  if (eType == XFA_ELEMENT_CheckButton) {
+  XFA_Element eType = m_pWidgetAcc->GetUIType();
+  if (eType == XFA_Element::CheckButton) {
     FX_FLOAT fWidth = 0;
     return !m_pWidgetAcc->GetWidth(fWidth);
   }

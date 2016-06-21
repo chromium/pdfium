@@ -11,13 +11,13 @@
 #include "xfa/fxfa/include/fxfa_basic.h"
 
 struct XFA_NOTSUREATTRIBUTE {
-  XFA_ELEMENT eElement;
+  XFA_Element eElement;
   XFA_ATTRIBUTE eAttribute;
   XFA_ATTRIBUTETYPE eType;
   void* pValue;
 };
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
-    XFA_ELEMENT eElement,
+    XFA_Element eElement,
     XFA_ATTRIBUTE eAttribute,
     XFA_ATTRIBUTETYPE eType = XFA_ATTRIBUTETYPE_NOTSURE);
 

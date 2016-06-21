@@ -17,7 +17,7 @@ int32_t CXFA_Fill::GetPresence() {
 }
 
 void CXFA_Fill::SetColor(FX_ARGB color) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Color);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Color);
   CFX_WideString wsColor;
   int a, r, g, b;
   ArgbDecode(color, a, r, g, b);
@@ -26,7 +26,7 @@ void CXFA_Fill::SetColor(FX_ARGB color) {
 }
 
 FX_ARGB CXFA_Fill::GetColor(FX_BOOL bText) {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_ELEMENT_Color)) {
+  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
     if (pNode->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE))
       return CXFA_Data::ToColor(wsColor);
@@ -36,21 +36,21 @@ FX_ARGB CXFA_Fill::GetColor(FX_BOOL bText) {
   return 0xFFFFFFFF;
 }
 
-int32_t CXFA_Fill::GetFillType() {
+XFA_Element CXFA_Fill::GetFillType() {
   CXFA_Node* pChild = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
-    int32_t eType = pChild->GetClassID();
-    if (eType != XFA_ELEMENT_Color && eType != XFA_ELEMENT_Extras)
+    XFA_Element eType = pChild->GetClassID();
+    if (eType != XFA_Element::Color && eType != XFA_Element::Extras)
       return eType;
 
     pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
-  return XFA_ELEMENT_Solid;
+  return XFA_Element::Solid;
 }
 
 int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Pattern);
-  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_ELEMENT_Color)) {
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Pattern);
+  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
     foreColor = CXFA_Data::ToColor(wsColor);
@@ -61,10 +61,10 @@ int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
 }
 
 int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Stipple);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Stipple);
   int32_t eAttr = 50;
   pNode->TryInteger(XFA_ATTRIBUTE_Rate, eAttr);
-  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_ELEMENT_Color)) {
+  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
     stippleColor = CXFA_Data::ToColor(wsColor);
@@ -75,10 +75,10 @@ int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
 }
 
 int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Linear);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Linear);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToRight;
   pNode->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
-  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_ELEMENT_Color)) {
+  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
     endColor = CXFA_Data::ToColor(wsColor);
@@ -89,10 +89,10 @@ int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
 }
 
 int32_t CXFA_Fill::GetRadial(FX_ARGB& endColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Radial);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Radial);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToEdge;
   pNode->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
-  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_ELEMENT_Color)) {
+  if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
     endColor = CXFA_Data::ToColor(wsColor);

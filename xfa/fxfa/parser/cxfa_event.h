@@ -21,7 +21,7 @@ class CXFA_Event : public CXFA_Data {
   explicit CXFA_Event(CXFA_Node* pNode);
 
   int32_t GetActivity();
-  int32_t GetEventType();
+  XFA_Element GetEventType();
   void GetRef(CFX_WideStringC& wsRef);
 
   CXFA_Script GetScript();

@@ -109,7 +109,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   FX_FLOAT GetWidthWithoutMargin(FX_FLOAT fWidthCalc);
   FX_FLOAT GetHeightWithoutMargin(FX_FLOAT fHeightCalc);
   void CalculateTextContentSize(CFX_SizeF& size);
-  void CalculateAccWidthAndHeight(XFA_ELEMENT eUIType,
+  void CalculateAccWidthAndHeight(XFA_Element eUIType,
                                   FX_FLOAT& fWidth,
                                   FX_FLOAT& fCalcHeight);
   void InitLayoutData();

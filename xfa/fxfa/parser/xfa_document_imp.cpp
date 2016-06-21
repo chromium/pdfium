@@ -86,10 +86,10 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
         return NULL;
       }
       for (CXFA_Node* pDatasetsChild =
-               pDatasetsNode->GetFirstChildByClass(XFA_ELEMENT_DataGroup);
+               pDatasetsNode->GetFirstChildByClass(XFA_Element::DataGroup);
            pDatasetsChild;
-           pDatasetsChild =
-               pDatasetsChild->GetNextSameClassSibling(XFA_ELEMENT_DataGroup)) {
+           pDatasetsChild = pDatasetsChild->GetNextSameClassSibling(
+               XFA_Element::DataGroup)) {
         if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data) {
           continue;
         }
@@ -109,7 +109,7 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
       return NULL;
     case XFA_HASHCODE_Record: {
       CXFA_Node* pData = ToNode(GetXFAObject(XFA_HASHCODE_Data));
-      return pData ? pData->GetFirstChildByClass(XFA_ELEMENT_DataGroup) : NULL;
+      return pData ? pData->GetFirstChildByClass(XFA_Element::DataGroup) : NULL;
     }
     case XFA_HASHCODE_DataWindow: {
       if (m_pScriptDataWindow == NULL) {
@@ -151,12 +151,12 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
       return m_pRootNode->GetFirstChildByName(dwNodeNameHash);
   }
 }
-CXFA_Node* CXFA_Document::CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement) {
+CXFA_Node* CXFA_Document::CreateNode(uint32_t dwPacket, XFA_Element eElement) {
   return CreateNode(XFA_GetPacketByID(dwPacket), eElement);
 }
 
 CXFA_Node* CXFA_Document::CreateNode(const XFA_PACKETINFO* pPacket,
-                                     XFA_ELEMENT eElement) {
+                                     XFA_Element eElement) {
   if (!pPacket)
     return nullptr;
 
@@ -201,15 +201,15 @@ FX_BOOL CXFA_Document::IsInteractive() {
     return FALSE;
   }
   CFX_WideString wsInteractive;
-  CXFA_Node* pPresent = pConfig->GetFirstChildByClass(XFA_ELEMENT_Present);
+  CXFA_Node* pPresent = pConfig->GetFirstChildByClass(XFA_Element::Present);
   if (!pPresent) {
     return FALSE;
   }
-  CXFA_Node* pPDF = pPresent->GetFirstChildByClass(XFA_ELEMENT_Pdf);
+  CXFA_Node* pPDF = pPresent->GetFirstChildByClass(XFA_Element::Pdf);
   if (!pPDF) {
     return FALSE;
   }
-  CXFA_Node* pInteractive = pPDF->GetChild(0, XFA_ELEMENT_Interactive);
+  CXFA_Node* pInteractive = pPDF->GetChild(0, XFA_Element::Interactive);
   if (pInteractive) {
     m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
     if (pInteractive->TryContent(wsInteractive) &&

@@ -1249,16 +1249,16 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
     m_wsConfigLocale.clear();
     if (pConfig) {
       CXFA_Node* pChildfConfig =
-          pConfig->GetFirstChildByClass(XFA_ELEMENT_Acrobat);
+          pConfig->GetFirstChildByClass(XFA_Element::Acrobat);
       if (!pChildfConfig) {
-        pChildfConfig = pConfig->GetFirstChildByClass(XFA_ELEMENT_Present);
+        pChildfConfig = pConfig->GetFirstChildByClass(XFA_Element::Present);
       }
       CXFA_Node* pCommon =
           pChildfConfig
-              ? pChildfConfig->GetFirstChildByClass(XFA_ELEMENT_Common)
+              ? pChildfConfig->GetFirstChildByClass(XFA_Element::Common)
               : NULL;
       CXFA_Node* pLocale =
-          pCommon ? pCommon->GetFirstChildByClass(XFA_ELEMENT_Locale) : NULL;
+          pCommon ? pCommon->GetFirstChildByClass(XFA_Element::Locale) : NULL;
       if (pLocale) {
         pLocale->TryCData(XFA_ATTRIBUTE_Value, m_wsConfigLocale, FALSE);
       }

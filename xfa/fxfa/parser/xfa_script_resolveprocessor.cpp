@@ -57,7 +57,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
   if (rnd.m_uHashName == XFA_HASHCODE_This && rnd.m_nLevel == 0) {
     rnd.m_Nodes.Add(rnd.m_pSC->GetThisObject());
     return 1;
-  } else if (rnd.m_CurNode->GetClassID() == XFA_ELEMENT_Xfa) {
+  } else if (rnd.m_CurNode->GetClassID() == XFA_Element::Xfa) {
     CXFA_Object* pObjNode =
         rnd.m_pSC->GetDocument()->GetXFAObject(rnd.m_uHashName);
     if (pObjNode) {
@@ -230,11 +230,11 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
   CXFA_Node* pPageSetNode = NULL;
   CXFA_Node* pChild = curNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
-    if (pChild->GetClassID() == XFA_ELEMENT_Variables) {
+    if (pChild->GetClassID() == XFA_Element::Variables) {
       pVariablesNode = pChild;
       pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
       continue;
-    } else if (pChild->GetClassID() == XFA_ELEMENT_PageSet) {
+    } else if (pChild->GetClassID() == XFA_Element::PageSet) {
       pPageSetNode = pChild;
       pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
       continue;
@@ -288,7 +288,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         nodes.Add(child);
       }
       if (m_pNodeHelper->XFA_NodeIsTransparent(child) &&
-          child->GetClassID() != XFA_ELEMENT_PageSet) {
+          child->GetClassID() != XFA_Element::PageSet) {
         if (!bSetFlag) {
           XFA_ResolveNodes_SetStylesForChild(dwStyles, rndFind);
           bSetFlag = TRUE;
@@ -340,8 +340,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
           nodes.Add(childProperty);
         }
       } else if (childProperty->GetNameHash() == uNameHash &&
-                 childProperty->GetClassID() != XFA_ELEMENT_Extras &&
-                 childProperty->GetClassID() != XFA_ELEMENT_Items) {
+                 childProperty->GetClassID() != XFA_Element::Extras &&
+                 childProperty->GetClassID() != XFA_Element::Items) {
         nodes.Add(childProperty);
       }
     }
@@ -353,19 +353,19 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       return 0;
     }
     CXFA_Node* pProp = NULL;
-    if (XFA_ELEMENT_Subform == curNode->GetClassID() &&
+    if (XFA_Element::Subform == curNode->GetClassID() &&
         XFA_HASHCODE_Occur == uNameHash) {
       CXFA_Node* pInstanceManager =
           curNode->AsNode()->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
-        pProp = pInstanceManager->GetProperty(0, XFA_ELEMENT_Occur, TRUE);
+        pProp = pInstanceManager->GetProperty(0, XFA_Element::Occur, TRUE);
       }
     } else {
       const XFA_ELEMENTINFO* pElement =
           XFA_GetElementByName(wsName.AsStringC());
       if (pElement) {
         pProp = curNode->AsNode()->GetProperty(
-            0, pElement->eName, pElement->eName != XFA_ELEMENT_PageSet);
+            0, pElement->eName, pElement->eName != XFA_Element::PageSet);
       }
     }
     if (pProp) {
@@ -427,8 +427,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
           parentNode->GetClassID(), child->GetClassID(), XFA_XDPPACKET_UNKNOWN);
       FX_BOOL bInnerSearch = FALSE;
       if (pPropert) {
-        if ((child->GetClassID() == XFA_ELEMENT_Variables ||
-             child->GetClassID() == XFA_ELEMENT_PageSet)) {
+        if ((child->GetClassID() == XFA_Element::Variables ||
+             child->GetClassID() == XFA_Element::PageSet)) {
           bInnerSearch = TRUE;
         }
       } else {
@@ -728,7 +728,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_FilterCondition(
     CXFA_Node* curNode = array[iSize - 1];
     FX_BOOL bIsProperty = m_pNodeHelper->XFA_NodeIsProperty(curNode);
     if (curNode->IsUnnamed() ||
-        (bIsProperty && curNode->GetClassID() != XFA_ELEMENT_PageSet)) {
+        (bIsProperty && curNode->GetClassID() != XFA_Element::PageSet)) {
       iCurrIndex = m_pNodeHelper->XFA_GetIndex(curNode, XFA_LOGIC_Transparent,
                                                bIsProperty, TRUE);
     } else {
@@ -813,7 +813,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_SetIndexDataBind(
     int32_t& iIndex,
     int32_t iCount) {
   if (m_pNodeHelper->XFA_CreateNode_ForCondition(wsNextCondition)) {
-    if (m_pNodeHelper->m_eLastCreateType == XFA_ELEMENT_DataGroup) {
+    if (m_pNodeHelper->m_eLastCreateType == XFA_Element::DataGroup) {
       iIndex = 0;
     } else {
       iIndex = iCount - 1;

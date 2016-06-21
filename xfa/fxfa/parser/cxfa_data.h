@@ -21,7 +21,7 @@ class CXFA_Data {
 
   operator bool() const { return !!m_pNode; }
   CXFA_Node* GetNode() const { return m_pNode; }
-  XFA_ELEMENT GetClassID() const;
+  XFA_Element GetClassID() const;
 
  protected:
   FX_BOOL TryMeasure(XFA_ATTRIBUTE eAttr,

@@ -17,7 +17,7 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
     CXFA_NodeArray* pSubformArray = NULL);
 CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode);
 CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
-                                             XFA_ELEMENT eClassID,
+                                             XFA_Element eClassID,
                                              uint32_t dwNameHash,
                                              CXFA_Node* pFormParent);
 

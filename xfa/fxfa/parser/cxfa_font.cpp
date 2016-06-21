@@ -82,11 +82,11 @@ FX_BOOL CXFA_Font::IsItalic() {
 }
 
 void CXFA_Font::SetColor(FX_ARGB color) {
-  CXFA_Fill fill(m_pNode->GetProperty(0, XFA_ELEMENT_Fill));
+  CXFA_Fill fill(m_pNode->GetProperty(0, XFA_Element::Fill));
   fill.SetColor(color);
 }
 
 FX_ARGB CXFA_Font::GetColor() {
-  CXFA_Fill fill(m_pNode->GetChild(0, XFA_ELEMENT_Fill));
+  CXFA_Fill fill(m_pNode->GetChild(0, XFA_Element::Fill));
   return fill ? fill.GetColor(TRUE) : 0xFF000000;
 }

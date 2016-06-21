@@ -55,7 +55,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart) {
     return -1;
   }
   CXFA_Node* pFormRoot =
-      pFormPacketNode->GetFirstChildByClass(XFA_ELEMENT_Subform);
+      pFormPacketNode->GetFirstChildByClass(XFA_Element::Subform);
   if (!pFormRoot) {
     return -1;
   }
@@ -178,7 +178,7 @@ int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
 
 void CXFA_ContainerLayoutItem::GetPageSize(CFX_SizeF& size) const {
   size.clear();
-  CXFA_Node* pMedium = m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Medium);
+  CXFA_Node* pMedium = m_pFormNode->GetFirstChildByClass(XFA_Element::Medium);
   if (!pMedium)
     return;
 

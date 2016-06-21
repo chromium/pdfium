@@ -108,7 +108,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName) {
   return (eName < g_iXFAAttributeCount) ? (g_XFAAttributeData + eName) : NULL;
 }
 FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
-                                     XFA_ELEMENT eElement,
+                                     XFA_Element eElement,
                                      XFA_ATTRIBUTE eAttribute,
                                      XFA_ATTRIBUTETYPE eType,
                                      uint32_t dwPacket) {
@@ -132,7 +132,7 @@ FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
   }
   return FALSE;
 }
-XFA_ATTRIBUTEENUM XFA_GetAttributeDefaultValue_Enum(XFA_ELEMENT eElement,
+XFA_ATTRIBUTEENUM XFA_GetAttributeDefaultValue_Enum(XFA_Element eElement,
                                                     XFA_ATTRIBUTE eAttribute,
                                                     uint32_t dwPacket) {
   void* pValue;
@@ -142,7 +142,7 @@ XFA_ATTRIBUTEENUM XFA_GetAttributeDefaultValue_Enum(XFA_ELEMENT eElement,
   }
   return XFA_ATTRIBUTEENUM_Unknown;
 }
-CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_ELEMENT eElement,
+CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_Element eElement,
                                                    XFA_ATTRIBUTE eAttribute,
                                                    uint32_t dwPacket) {
   void* pValue;
@@ -152,7 +152,7 @@ CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_ELEMENT eElement,
   }
   return NULL;
 }
-FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_ELEMENT eElement,
+FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_Element eElement,
                                              XFA_ATTRIBUTE eAttribute,
                                              uint32_t dwPacket) {
   void* pValue;
@@ -163,7 +163,7 @@ FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_ELEMENT eElement,
   return FALSE;
 }
 
-CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
+CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
                                                       XFA_ATTRIBUTE eAttribute,
                                                       uint32_t dwPacket) {
   void* pValue;
@@ -192,22 +192,25 @@ const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
-const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_ELEMENT eName) {
-  return (eName < g_iXFAElementCount) ? (g_XFAElementData + eName) : NULL;
+const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName) {
+  return eName == XFA_Element::Unknown
+             ? nullptr
+             : g_XFAElementData + static_cast<int32_t>(eName);
 }
 
-const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount) {
-  if (eElement >= g_iXFAElementCount) {
-    return NULL;
-  }
-  const XFA_ELEMENTHIERARCHY* pElement = g_XFAElementAttributeIndex + eElement;
+const uint8_t* XFA_GetElementAttributes(XFA_Element eElement, int32_t& iCount) {
+  if (eElement == XFA_Element::Unknown)
+    return nullptr;
+
+  const XFA_ELEMENTHIERARCHY* pElement =
+      g_XFAElementAttributeIndex + static_cast<int32_t>(eElement);
   iCount = pElement->wCount;
   return g_XFAElementAttributeData + pElement->wStart;
 }
 
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
+const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_Element eElement,
                                                    XFA_ATTRIBUTE eAttribute,
                                                    uint32_t dwPacket) {
   int32_t iCount = 0;
@@ -225,17 +228,18 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
   return (dwPacket & pInfo->dwPackets) ? pInfo : nullptr;
 }
 
-const XFA_PROPERTY* XFA_GetElementProperties(XFA_ELEMENT eElement,
+const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
                                              int32_t& iCount) {
-  if (eElement >= g_iXFAElementCount) {
+  if (eElement == XFA_Element::Unknown)
     return NULL;
-  }
-  const XFA_ELEMENTHIERARCHY* pElement = g_XFAElementPropertyIndex + eElement;
+
+  const XFA_ELEMENTHIERARCHY* pElement =
+      g_XFAElementPropertyIndex + static_cast<int32_t>(eElement);
   iCount = pElement->wCount;
   return g_XFAElementPropertyData + pElement->wStart;
 }
-const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_ELEMENT eElement,
-                                             XFA_ELEMENT eProperty,
+const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
+                                             XFA_Element eProperty,
                                              uint32_t dwPacket) {
   int32_t iCount = 0;
   const XFA_PROPERTY* pProperty = XFA_GetElementProperties(eElement, iCount);
@@ -245,7 +249,7 @@ const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_ELEMENT eElement,
   int32_t iStart = 0, iEnd = iCount - 1, iMid;
   do {
     iMid = (iStart + iEnd) / 2;
-    XFA_ELEMENT eName = (XFA_ELEMENT)pProperty[iMid].eName;
+    XFA_Element eName = pProperty[iMid].eName;
     if (eProperty == eName) {
       break;
     } else if (eProperty < eName) {
@@ -263,7 +267,7 @@ const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_ELEMENT eElement,
     return pProperty + iMid;
   return (dwPacket & pInfo->dwPackets) ? (pProperty + iMid) : NULL;
 }
-const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_ELEMENT eElement,
+const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
                                                     XFA_ATTRIBUTE eAttribute,
                                                     XFA_ATTRIBUTETYPE eType) {
   int32_t iStart = 0, iEnd = g_iXFANotsureCount - 1;
@@ -322,12 +326,12 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_ELEMENT eElement,
   return NULL;
 }
 
-const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
+const XFA_METHODINFO* XFA_GetMethodByName(XFA_Element eElement,
                                           const CFX_WideStringC& wsMethodName) {
   if (wsMethodName.IsEmpty())
     return nullptr;
 
-  int32_t iElementIndex = eElement;
+  int32_t iElementIndex = static_cast<int32_t>(eElement);
   while (iElementIndex != -1) {
     const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
     int32_t icount = scriptIndex->wMethodCount;
@@ -354,12 +358,12 @@ const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
   return NULL;
 }
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
-    XFA_ELEMENT eElement,
+    XFA_Element eElement,
     const CFX_WideStringC& wsAttributeName) {
   if (wsAttributeName.IsEmpty())
     return nullptr;
 
-  int32_t iElementIndex = eElement;
+  int32_t iElementIndex = static_cast<int32_t>(eElement);
   while (iElementIndex != -1) {
     const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
     int32_t icount = scriptIndex->wAttributeCount;

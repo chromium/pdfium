@@ -30,7 +30,7 @@ FX_FLOAT CXFA_Stroke::GetThickness() const {
 
 CXFA_Measurement CXFA_Stroke::GetMSThickness() const {
   return m_pNode ? m_pNode->GetMeasure(XFA_ATTRIBUTE_Thickness)
-                 : XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT_Edge,
+                 : XFA_GetAttributeDefaultValue_Measure(XFA_Element::Edge,
                                                         XFA_ATTRIBUTE_Thickness,
                                                         XFA_XDPPACKET_Form);
 }
@@ -46,7 +46,7 @@ FX_ARGB CXFA_Stroke::GetColor() const {
   if (!m_pNode)
     return 0xFF000000;
 
-  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_ELEMENT_Color);
+  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color);
   if (!pNode)
     return 0xFF000000;
 
@@ -59,7 +59,7 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
   if (!m_pNode)
     return;
 
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Color);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Color);
   CFX_WideString wsColor;
   int a;
   int r;

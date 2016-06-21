@@ -167,7 +167,7 @@ class CXFA_NodeIteratorTemplate {
   CFX_StackTemplate<NodeType*> m_NodeStack;
 };
 
-CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType);
+CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType);
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
 FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal);
 FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
@@ -178,7 +178,7 @@ void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText);
 FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 IFX_Stream* XFA_CreateWideTextRead(const CFX_WideString& wsBuffer);
-FX_BOOL XFA_IsLayoutElement(XFA_ELEMENT eElement,
+FX_BOOL XFA_IsLayoutElement(XFA_Element eElement,
                             FX_BOOL bLayoutContainer = FALSE);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);

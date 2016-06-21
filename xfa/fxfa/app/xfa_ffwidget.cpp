@@ -1179,15 +1179,15 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt, const CXFA_Margin& mg, FX_BOOL bUI) {
   rt.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  XFA_ELEMENT iType = pLayoutItem->GetFormNode()->GetClassID();
+  XFA_Element iType = pLayoutItem->GetFormNode()->GetClassID();
   if (XFA_IsCreateWidget(iType)) {
     return static_cast<CXFA_FFWidget*>(pLayoutItem);
   }
   return nullptr;
 }
-FX_BOOL XFA_IsCreateWidget(XFA_ELEMENT iType) {
-  return iType == XFA_ELEMENT_Field || iType == XFA_ELEMENT_Draw ||
-         iType == XFA_ELEMENT_Subform || iType == XFA_ELEMENT_ExclGroup;
+FX_BOOL XFA_IsCreateWidget(XFA_Element iType) {
+  return iType == XFA_Element::Field || iType == XFA_Element::Draw ||
+         iType == XFA_Element::Subform || iType == XFA_Element::ExclGroup;
 }
 static void XFA_BOX_GetPath_Arc(CXFA_Box box,
                                 CFX_RectF rtDraw,
@@ -1646,20 +1646,20 @@ static void XFA_BOX_Fill(CXFA_Box box,
   XFA_BOX_GetFillPath(box, strokes, rtWidget, fillPath,
                       (dwFlags & XFA_DRAWBOX_ForceRound) != 0);
   fillPath.Close();
-  int32_t eType = fill.GetFillType();
+  XFA_Element eType = fill.GetFillType();
   switch (eType) {
-    case XFA_ELEMENT_Radial:
+    case XFA_Element::Radial:
       XFA_BOX_Fill_Radial(box, pGS, fillPath, rtWidget, pMatrix);
       break;
-    case XFA_ELEMENT_Pattern:
+    case XFA_Element::Pattern:
       XFA_BOX_Fill_Pattern(box, pGS, fillPath, rtWidget, pMatrix);
       break;
-    case XFA_ELEMENT_Linear:
+    case XFA_Element::Linear:
       XFA_BOX_Fill_Linear(box, pGS, fillPath, rtWidget, pMatrix);
       break;
     default: {
       FX_ARGB cr;
-      if (eType == XFA_ELEMENT_Stipple) {
+      if (eType == XFA_Element::Stipple) {
         int32_t iRate = fill.GetStipple(cr);
         if (iRate == 0) {
           iRate = 100;
@@ -2030,16 +2030,16 @@ void XFA_DrawBox(CXFA_Box box,
                  const CFX_RectF& rtWidget,
                  CFX_Matrix* pMatrix,
                  uint32_t dwFlags) {
-  if (!box || box.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+  if (!box || box.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
-  }
-  int32_t iType = box.GetClassID();
-  if (iType != XFA_ELEMENT_Arc && iType != XFA_ELEMENT_Border &&
-      iType != XFA_ELEMENT_Rectangle) {
+
+  XFA_Element iType = box.GetClassID();
+  if (iType != XFA_Element::Arc && iType != XFA_Element::Border &&
+      iType != XFA_Element::Rectangle) {
     return;
   }
   CXFA_StrokeArray strokes;
-  if (!(dwFlags & XFA_DRAWBOX_ForceRound) && iType != XFA_ELEMENT_Arc) {
+  if (!(dwFlags & XFA_DRAWBOX_ForceRound) && iType != XFA_Element::Arc) {
     box.GetStrokes(strokes);
   }
   XFA_BOX_Fill(box, strokes, pGS, rtWidget, pMatrix, dwFlags);

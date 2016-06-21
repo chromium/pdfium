@@ -78,7 +78,7 @@ class CXFA_LayoutPageMgr {
                              CXFA_Node* pNewPageArea);
   void AddContentAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
                                 CXFA_Node* pContentArea);
-  FX_BOOL RunBreak(XFA_ELEMENT eBreakType,
+  FX_BOOL RunBreak(XFA_Element eBreakType,
                    XFA_ATTRIBUTEENUM eTargetType,
                    CXFA_Node* pTarget,
                    FX_BOOL bStartNew);

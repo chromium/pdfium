@@ -35,7 +35,7 @@ XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(CXFA_FFDoc* hDoc) {
   if (!pForm)
     return XFA_ATTRIBUTEENUM_Unknown;
 
-  CXFA_Node* pSubForm = pForm->GetFirstChildByClass(XFA_ELEMENT_Subform);
+  CXFA_Node* pSubForm = pForm->GetFirstChildByClass(XFA_Element::Subform);
   if (!pSubForm)
     return XFA_ATTRIBUTEENUM_Unknown;
   return pSubForm->GetEnum(XFA_ATTRIBUTE_RestoreState);

@@ -16,7 +16,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_LogPseudoModel) {
+    : CXFA_OrdinaryObject(pDocument, XFA_Element::LogPseudoModel) {
   m_uScriptHash = XFA_HASHCODE_Log;
 }
 CScript_LogPseudoModel::~CScript_LogPseudoModel() {}

@@ -14,16 +14,16 @@ int32_t CXFA_Event::GetActivity() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_Activity);
 }
 
-int32_t CXFA_Event::GetEventType() {
+XFA_Element CXFA_Event::GetEventType() {
   CXFA_Node* pChild = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
-    int32_t eType = pChild->GetClassID();
-    if (eType != XFA_ELEMENT_Extras)
+    XFA_Element eType = pChild->GetClassID();
+    if (eType != XFA_Element::Extras)
       return eType;
 
     pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
-  return XFA_ELEMENT_UNKNOWN;
+  return XFA_Element::Unknown;
 }
 
 void CXFA_Event::GetRef(CFX_WideStringC& wsRef) {
@@ -31,15 +31,15 @@ void CXFA_Event::GetRef(CFX_WideStringC& wsRef) {
 }
 
 CXFA_Script CXFA_Event::GetScript() {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_ELEMENT_Script));
+  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script));
 }
 
 CXFA_Submit CXFA_Event::GetSubmit() {
-  return CXFA_Submit(m_pNode->GetChild(0, XFA_ELEMENT_Submit));
+  return CXFA_Submit(m_pNode->GetChild(0, XFA_Element::Submit));
 }
 
 void CXFA_Event::GetSignDataTarget(CFX_WideString& wsTarget) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_SignData);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::SignData);
   if (!pNode)
     return;
 

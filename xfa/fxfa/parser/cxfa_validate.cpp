@@ -41,14 +41,14 @@ int32_t CXFA_Validate::GetScriptTest() {
 
 void CXFA_Validate::GetMessageText(CFX_WideString& wsMessage,
                                    const CFX_WideString& wsMessageType) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Message, FALSE);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, FALSE);
   if (!pNode)
     return;
 
   CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItemNode;
        pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItemNode->GetClassID() != XFA_ELEMENT_Text)
+    if (pItemNode->GetClassID() != XFA_Element::Text)
       continue;
 
     CFX_WideStringC wsName;
@@ -78,14 +78,14 @@ void CXFA_Validate::GetNullMessageText(CFX_WideString& wsMessage) {
 
 void CXFA_Validate::SetMessageText(CFX_WideString& wsMessage,
                                    const CFX_WideString& wsMessageType) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Message, TRUE);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, TRUE);
   if (!pNode)
     return;
 
   CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItemNode;
        pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItemNode->GetClassID() != XFA_ELEMENT_Text)
+    if (pItemNode->GetClassID() != XFA_Element::Text)
       continue;
 
     CFX_WideStringC wsName;
@@ -95,7 +95,7 @@ void CXFA_Validate::SetMessageText(CFX_WideString& wsMessage,
       return;
     }
   }
-  CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_ELEMENT_Text);
+  CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_Element::Text);
   pNode->InsertChild(pTextNode);
   pTextNode->SetCData(XFA_ATTRIBUTE_Name, wsMessageType, FALSE);
   pTextNode->SetContent(wsMessage, wsMessage, FALSE);
@@ -110,10 +110,10 @@ void CXFA_Validate::SetScriptMessageText(CFX_WideString wsMessage) {
 }
 
 void CXFA_Validate::GetPicture(CFX_WideString& wsPicture) {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_ELEMENT_Picture))
+  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Picture))
     pNode->TryContent(wsPicture);
 }
 
 CXFA_Script CXFA_Validate::GetScript() {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_ELEMENT_Script));
+  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script));
 }

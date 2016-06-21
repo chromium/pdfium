@@ -76,7 +76,7 @@ bool PageWidgetFilter(CXFA_FFWidget* pWidget,
   CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
 
   if (!!(dwFilter & XFA_WidgetStatus_Focused) &&
-      pWidgetAcc->GetClassID() != XFA_ELEMENT_Field) {
+      pWidgetAcc->GetClassID() != XFA_Element::Field) {
     return false;
   }
 
@@ -276,9 +276,9 @@ FX_BOOL CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
     CXFA_FFWidget* pWidget) {
   CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
-  CXFA_Node* pTraversal = pAcc->GetNode()->GetChild(0, XFA_ELEMENT_Traversal);
+  CXFA_Node* pTraversal = pAcc->GetNode()->GetChild(0, XFA_Element::Traversal);
   if (pTraversal) {
-    CXFA_Node* pTraverse = pTraversal->GetChild(0, XFA_ELEMENT_Traverse);
+    CXFA_Node* pTraverse = pTraversal->GetChild(0, XFA_Element::Traverse);
     if (pTraverse) {
       CFX_WideString wsTraverseWidgetName;
       if (pTraverse->GetAttribute(XFA_ATTRIBUTE_Ref, wsTraverseWidgetName)) {
@@ -306,7 +306,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
     if (m_TabOrderWidgetArray.Find(hWidget) < 0) {
       m_TabOrderWidgetArray.Add(hWidget);
       CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc();
-      if (pWidgetAcc->GetUIType() == XFA_ELEMENT_ExclGroup) {
+      if (pWidgetAcc->GetUIType() == XFA_Element::ExclGroup) {
         int32_t iWidgetIndex = SpaceOrderWidgetArray.Find(hWidget) + 1;
         while (TRUE) {
           CXFA_FFWidget* pRadio =

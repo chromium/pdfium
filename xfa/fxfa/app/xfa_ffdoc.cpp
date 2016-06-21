@@ -292,16 +292,16 @@ void CXFA_FFDoc::StopLoad() {
   if (!pConfig) {
     return;
   }
-  CXFA_Node* pAcrobat = pConfig->GetFirstChildByClass(XFA_ELEMENT_Acrobat);
+  CXFA_Node* pAcrobat = pConfig->GetFirstChildByClass(XFA_Element::Acrobat);
   if (!pAcrobat) {
     return;
   }
-  CXFA_Node* pAcrobat7 = pAcrobat->GetFirstChildByClass(XFA_ELEMENT_Acrobat7);
+  CXFA_Node* pAcrobat7 = pAcrobat->GetFirstChildByClass(XFA_Element::Acrobat7);
   if (!pAcrobat7) {
     return;
   }
   CXFA_Node* pDynamicRender =
-      pAcrobat7->GetFirstChildByClass(XFA_ELEMENT_DynamicRender);
+      pAcrobat7->GetFirstChildByClass(XFA_Element::DynamicRender);
   if (!pDynamicRender) {
     return;
   }

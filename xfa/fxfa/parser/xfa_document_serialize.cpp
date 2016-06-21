@@ -50,7 +50,7 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
   if (pDataNode) {
     pDataModel->RemoveChild(pDataNode);
   }
-  if (pImportDataRoot->GetClassID() == XFA_ELEMENT_DataModel) {
+  if (pImportDataRoot->GetClassID() == XFA_Element::DataModel) {
     while (CXFA_Node* pChildNode =
                pImportDataRoot->GetNodeItem(XFA_NODEITEM_FirstChild)) {
       pImportDataRoot->RemoveChild(pChildNode);
@@ -145,11 +145,11 @@ static FX_BOOL XFA_DataExporter_AttributeSaveInDataModel(
     CXFA_Node* pNode,
     XFA_ATTRIBUTE eAttribute) {
   FX_BOOL bSaveInDataModel = FALSE;
-  if (pNode->GetClassID() != XFA_ELEMENT_Image) {
+  if (pNode->GetClassID() != XFA_Element::Image) {
     return bSaveInDataModel;
   }
   CXFA_Node* pValueNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!pValueNode || pValueNode->GetClassID() != XFA_ELEMENT_Value) {
+  if (!pValueNode || pValueNode->GetClassID() != XFA_Element::Value) {
     return bSaveInDataModel;
   }
   CXFA_Node* pFieldNode = pValueNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -166,7 +166,7 @@ FX_BOOL XFA_DataExporter_ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
 
   ASSERT(pContentNode->IsContentNode());
   CXFA_Node* pParentNode = pContentNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!pParentNode || pParentNode->GetClassID() != XFA_ELEMENT_Value)
+  if (!pParentNode || pParentNode->GetClassID() != XFA_Element::Value)
     return TRUE;
 
   CXFA_Node* pGrandParentNode = pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -176,8 +176,8 @@ FX_BOOL XFA_DataExporter_ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
     return FALSE;
 
   CXFA_WidgetData* pWidgetData = pGrandParentNode->GetWidgetData();
-  XFA_ELEMENT eUIType = pWidgetData->GetUIType();
-  if (eUIType == XFA_ELEMENT_PasswordEdit) {
+  XFA_Element eUIType = pWidgetData->GetUIType();
+  if (eUIType == XFA_Element::PasswordEdit) {
     return FALSE;
   }
   return TRUE;
@@ -227,9 +227,9 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
       }
       CXFA_Node* pRawValueNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
       while (pRawValueNode &&
-             pRawValueNode->GetClassID() != XFA_ELEMENT_SharpxHTML &&
-             pRawValueNode->GetClassID() != XFA_ELEMENT_Sharptext &&
-             pRawValueNode->GetClassID() != XFA_ELEMENT_Sharpxml) {
+             pRawValueNode->GetClassID() != XFA_Element::SharpxHTML &&
+             pRawValueNode->GetClassID() != XFA_Element::Sharptext &&
+             pRawValueNode->GetClassID() != XFA_Element::Sharpxml) {
         pRawValueNode = pRawValueNode->GetNodeItem(XFA_NODEITEM_NextSibling);
       }
       if (!pRawValueNode) {
@@ -237,7 +237,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
       }
       CFX_WideString wsContentType;
       pNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
-      if (pRawValueNode->GetClassID() == XFA_ELEMENT_SharpxHTML &&
+      if (pRawValueNode->GetClassID() == XFA_Element::SharpxHTML &&
           wsContentType == FX_WSTRC(L"text/html")) {
         CFDE_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
         if (!pExDataXML) {
@@ -259,7 +259,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
             CFX_ByteStringC(pMemStream->GetBuffer(), pMemStream->GetSize()));
         pTempStream->Release();
         pMemStream->Release();
-      } else if (pRawValueNode->GetClassID() == XFA_ELEMENT_Sharpxml &&
+      } else if (pRawValueNode->GetClassID() == XFA_Element::Sharpxml &&
                  wsContentType == FX_WSTRC(L"text/xml")) {
         CFX_WideString wsRawValue;
         pRawValueNode->GetAttribute(XFA_ATTRIBUTE_Value, wsRawValue, FALSE);
@@ -313,11 +313,11 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
       wsChildren += XFA_ExportEncodeContent(wsValue);
     } break;
     default:
-      if (pNode->GetClassID() == XFA_ELEMENT_Items) {
+      if (pNode->GetClassID() == XFA_Element::Items) {
         CXFA_Node* pTemplateNode = pNode->GetTemplateNode();
         if (!pTemplateNode ||
-            pTemplateNode->CountChildren(XFA_ELEMENT_UNKNOWN) !=
-                pNode->CountChildren(XFA_ELEMENT_UNKNOWN)) {
+            pTemplateNode->CountChildren(XFA_Element::Unknown) !=
+                pNode->CountChildren(XFA_Element::Unknown)) {
           bSaveXML = TRUE;
         }
       }
@@ -331,7 +331,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
         pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
       }
       if (!bSaveXML && !wsChildren.IsEmpty() &&
-          pNode->GetClassID() == XFA_ELEMENT_Items) {
+          pNode->GetClassID() == XFA_Element::Items) {
         wsChildren.clear();
         bSaveXML = TRUE;
         CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -370,8 +370,8 @@ static void XFA_DataExporter_RegenerateFormFile_Container(
     CXFA_Node* pNode,
     IFX_Stream* pStream,
     FX_BOOL bSaveXML = FALSE) {
-  XFA_ELEMENT eElement = pNode->GetClassID();
-  if (eElement == XFA_ELEMENT_Field || eElement == XFA_ELEMENT_Draw ||
+  XFA_Element eElement = pNode->GetClassID();
+  if (eElement == XFA_Element::Field || eElement == XFA_Element::Draw ||
       !pNode->IsContainerNode()) {
     CFX_WideTextBuf buf;
     XFA_DataExporter_RegenerateFormFile_Changed(pNode, buf, bSaveXML);
@@ -551,7 +551,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
   return TRUE;
 }
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
-  if (!pDataNode || pDataNode->GetClassID() == XFA_ELEMENT_DataValue) {
+  if (!pDataNode || pDataNode->GetClassID() == XFA_Element::DataValue) {
     return;
   }
   int32_t iChildNum = 0;
@@ -561,7 +561,7 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
     iChildNum++;
     XFA_DataExporter_DealWithDataGroupNode(pChildNode);
   }
-  if (pDataNode->GetClassID() == XFA_ELEMENT_DataGroup) {
+  if (pDataNode->GetClassID() == XFA_Element::DataGroup) {
     if (iChildNum > 0) {
       CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
       ASSERT(pXMLNode->GetType() == FDE_XMLNODE_Element);

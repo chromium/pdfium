@@ -18,5 +18,5 @@ FX_BOOL CXFA_Line::GetSlop() {
 }
 
 CXFA_Edge CXFA_Line::GetEdge() {
-  return CXFA_Edge(m_pNode->GetChild(0, XFA_ELEMENT_Edge));
+  return CXFA_Edge(m_pNode->GetChild(0, XFA_Element::Edge));
 }

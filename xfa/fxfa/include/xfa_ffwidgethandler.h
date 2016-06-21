@@ -93,7 +93,7 @@ class CXFA_FFWidgetHandler {
   CXFA_Node* CreateListBox(CXFA_Node* pParent, CXFA_Node* pBefore) const;
   CXFA_Node* CreateImageField(CXFA_Node* pParent, CXFA_Node* pBefore) const;
   CXFA_Node* CreatePasswordEdit(CXFA_Node* pParent, CXFA_Node* pBefore) const;
-  CXFA_Node* CreateField(XFA_ELEMENT eElement,
+  CXFA_Node* CreateField(XFA_Element eElement,
                          CXFA_Node* pParent,
                          CXFA_Node* pBefore) const;
   CXFA_Node* CreateArc(CXFA_Node* pParent, CXFA_Node* pBefore) const;
@@ -101,25 +101,25 @@ class CXFA_FFWidgetHandler {
   CXFA_Node* CreateImage(CXFA_Node* pParent, CXFA_Node* pBefore) const;
   CXFA_Node* CreateLine(CXFA_Node* pParent, CXFA_Node* pBefore) const;
   CXFA_Node* CreateText(CXFA_Node* pParent, CXFA_Node* pBefore) const;
-  CXFA_Node* CreateDraw(XFA_ELEMENT eElement,
+  CXFA_Node* CreateDraw(XFA_Element eElement,
                         CXFA_Node* pParent,
                         CXFA_Node* pBefore) const;
 
   CXFA_Node* CreateSubform(CXFA_Node* pParent, CXFA_Node* pBefore) const;
-  CXFA_Node* CreateFormItem(XFA_ELEMENT eElement,
+  CXFA_Node* CreateFormItem(XFA_Element eElement,
                             CXFA_Node* pParent,
                             CXFA_Node* pBefore) const;
-  CXFA_Node* CreateCopyNode(XFA_ELEMENT eElement,
+  CXFA_Node* CreateCopyNode(XFA_Element eElement,
                             CXFA_Node* pParent,
                             CXFA_Node* pBefore = NULL) const;
-  CXFA_Node* CreateTemplateNode(XFA_ELEMENT eElement,
+  CXFA_Node* CreateTemplateNode(XFA_Element eElement,
                                 CXFA_Node* pParent,
                                 CXFA_Node* pBefore) const;
   CXFA_Node* CreateFontNode(CXFA_Node* pParent) const;
   CXFA_Node* CreateMarginNode(CXFA_Node* pParent,
                               uint32_t dwFlags,
                               FX_FLOAT fInsets[4]) const;
-  CXFA_Node* CreateValueNode(XFA_ELEMENT eValue, CXFA_Node* pParent) const;
+  CXFA_Node* CreateValueNode(XFA_Element eValue, CXFA_Node* pParent) const;
   CXFA_Document* GetObjFactory() const;
   CXFA_Document* GetXFADoc() const;
 

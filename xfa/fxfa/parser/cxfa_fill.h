@@ -20,7 +20,7 @@ class CXFA_Fill : public CXFA_Data {
 
   int32_t GetPresence();
   FX_ARGB GetColor(FX_BOOL bText = FALSE);
-  int32_t GetFillType();
+  XFA_Element GetFillType();
   int32_t GetPattern(FX_ARGB& foreColor);
   int32_t GetStipple(FX_ARGB& stippleColor);
   int32_t GetLinear(FX_ARGB& endColor);

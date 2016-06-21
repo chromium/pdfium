@@ -357,7 +357,7 @@ int32_t CXFA_ScriptContext::NormalPropTypeGetter(
   CXFA_ScriptContext* lpScriptContext =
       pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject);
-  XFA_ELEMENT objElement = pObject->GetClassID();
+  XFA_Element objElement = pObject->GetClassID();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   if (XFA_GetMethodByName(objElement, wsPropName.AsStringC())) {
     return FXJSE_ClassPropType_Method;
@@ -379,7 +379,7 @@ int32_t CXFA_ScriptContext::GlobalPropTypeGetter(
   CXFA_ScriptContext* lpScriptContext =
       pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject);
-  XFA_ELEMENT objElement = pObject->GetClassID();
+  XFA_Element objElement = pObject->GetClassID();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   if (XFA_GetMethodByName(objElement, wsPropName.AsStringC())) {
     return FXJSE_ClassPropType_Method;
@@ -443,11 +443,11 @@ FX_BOOL CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (!pScriptNode)
     return FALSE;
 
-  if (pScriptNode->GetClassID() != XFA_ELEMENT_Script)
+  if (pScriptNode->GetClassID() != XFA_Element::Script)
     return TRUE;
 
   CXFA_Node* pParent = pScriptNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!pParent || pParent->GetClassID() != XFA_ELEMENT_Variables)
+  if (!pParent || pParent->GetClassID() != XFA_Element::Variables)
     return FALSE;
 
   if (m_mapVariableToContext.GetValueAt(pScriptNode))
@@ -480,11 +480,11 @@ FX_BOOL CXFA_ScriptContext::QueryVariableValue(
     const CFX_ByteStringC& szPropName,
     CFXJSE_Value* pValue,
     FX_BOOL bGetter) {
-  if (!pScriptNode || pScriptNode->GetClassID() != XFA_ELEMENT_Script)
+  if (!pScriptNode || pScriptNode->GetClassID() != XFA_Element::Script)
     return FALSE;
 
   CXFA_Node* variablesNode = pScriptNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!variablesNode || variablesNode->GetClassID() != XFA_ELEMENT_Variables)
+  if (!variablesNode || variablesNode->GetClassID() != XFA_Element::Variables)
     return FALSE;
 
   void* lpVariables = m_mapVariableToContext.GetValueAt(pScriptNode);

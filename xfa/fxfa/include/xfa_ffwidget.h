@@ -174,7 +174,7 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt,
                             const CXFA_Margin& mg,
                             FX_BOOL bUI = FALSE);
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
-FX_BOOL XFA_IsCreateWidget(XFA_ELEMENT iType);
+FX_BOOL XFA_IsCreateWidget(XFA_Element iType);
 #define XFA_DRAWBOX_ForceRound 1
 #define XFA_DRAWBOX_Lowered3D 2
 void XFA_DrawBox(CXFA_Box box,
