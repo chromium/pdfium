@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/ifx_renderdevicedriver.h"
 
 CFX_RenderDevice::CFX_RenderDevice()
     : m_pBitmap(nullptr),

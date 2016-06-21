@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_WIN32_WIN32_INT_H_
 #define CORE_FXGE_WIN32_WIN32_INT_H_
 
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/ifx_renderdevicedriver.h"
 #include "core/fxge/win32/dwrite_int.h"
 
 struct WINDIB_Open_Args_;
@@ -111,7 +111,7 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   ~CGdiDeviceDriver() override;
 
   // IFX_RenderDeviceDriver
-  int GetDeviceCaps(int caps_id) override;
+  int GetDeviceCaps(int caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
@@ -220,7 +220,7 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
   ~CGdiPrinterDriver() override;
 
  protected:
-  int GetDeviceCaps(int caps_id) override;
+  int GetDeviceCaps(int caps_id) const override;
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
                     const FX_RECT* pSrcRect,

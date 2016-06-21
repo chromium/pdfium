@@ -190,24 +190,20 @@ CFX_QuartzDeviceDriver::~CFX_QuartzDeviceDriver() {
     CGContextRelease(m_context);
   }
 }
-int CFX_QuartzDeviceDriver::GetDeviceCaps(int capsID) {
+int CFX_QuartzDeviceDriver::GetDeviceCaps(int capsID) const {
   switch (capsID) {
-    case FXDC_DEVICE_CLASS: {
+    case FXDC_DEVICE_CLASS:
       return m_deviceClass;
-    }
-    case FXDC_PIXEL_WIDTH: {
+    case FXDC_PIXEL_WIDTH:
       return m_width;
-    }
-    case FXDC_PIXEL_HEIGHT: {
+    case FXDC_PIXEL_HEIGHT:
       return m_height;
-    }
-    case FXDC_BITS_PIXEL: {
+    case FXDC_BITS_PIXEL:
       return 32;
-    }
-    case FXDC_RENDER_CAPS: {
+    case FXDC_RENDER_CAPS:
       return m_renderCaps;
-    }
-    default: { return 0; }
+    default:
+      return 0;
   }
 }
 CFX_Matrix CFX_QuartzDeviceDriver::GetCTM() const {

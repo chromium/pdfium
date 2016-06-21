@@ -23,7 +23,7 @@ CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
 
 CGdiPrinterDriver::~CGdiPrinterDriver() {}
 
-int CGdiPrinterDriver::GetDeviceCaps(int caps_id) {
+int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
   if (caps_id == FXDC_HORZ_SIZE)
     return m_HorzSize;
   if (caps_id == FXDC_VERT_SIZE)

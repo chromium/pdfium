@@ -7,6 +7,8 @@
 
 #if defined(_SKIA_SUPPORT_)
 
+#include "core/fxge/include/ifx_renderdevicedriver.h"
+
 class SkCanvas;
 class SkMatrix;
 class SkPaint;
@@ -25,7 +27,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   ~CFX_SkiaDeviceDriver() override;
 
   /** Options */
-  int GetDeviceCaps(int caps_id) override;
+  int GetDeviceCaps(int caps_id) const override;
 
   /** Save and restore all graphic states */
   void SaveState() override;

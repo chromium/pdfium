@@ -13,6 +13,9 @@
 #endif
 #define WINDIB_OPEN_MEMORY 0x1
 #define WINDIB_OPEN_PATHNAME 0x2
+
+class IFX_RenderDeviceDriver;
+
 typedef struct WINDIB_Open_Args_ {
   int flags;
 

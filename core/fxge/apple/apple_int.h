@@ -11,7 +11,8 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/include/ifx_renderdevicedriver.h"
 
 #if _FX_OS_ == _FX_MACOSX_
 #include <Carbon/Carbon.h>
@@ -85,7 +86,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   ~CFX_QuartzDeviceDriver() override;
 
   // IFX_RenderDeviceDriver
-  int GetDeviceCaps(int caps_id) override;
+  int GetDeviceCaps(int caps_id) const override;
   CFX_Matrix GetCTM() const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;

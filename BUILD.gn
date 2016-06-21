@@ -692,12 +692,14 @@ static_library("fxge") {
     "core/fxge/ge/fx_ge_path.cpp",
     "core/fxge/ge/fx_ge_text.cpp",
     "core/fxge/ge/fx_text_int.h",
+    "core/fxge/ifx_renderdevicedriver.cpp",
     "core/fxge/include/fx_dib.h",
     "core/fxge/include/fx_font.h",
     "core/fxge/include/fx_freetype.h",
     "core/fxge/include/fx_ge.h",
     "core/fxge/include/fx_ge_apple.h",
     "core/fxge/include/fx_ge_win32.h",
+    "core/fxge/include/ifx_renderdevicedriver.h",
   ]
 
   configs += [

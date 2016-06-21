@@ -755,7 +755,7 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class) {
 
 CGdiDeviceDriver::~CGdiDeviceDriver() {}
 
-int CGdiDeviceDriver::GetDeviceCaps(int caps_id) {
+int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_DEVICE_CLASS:
       return m_DeviceClass;
