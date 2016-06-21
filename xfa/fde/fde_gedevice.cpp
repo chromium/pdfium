@@ -137,9 +137,9 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
   CFX_SubstFont SubstFxFont;
   FxFont.SetSubstFont(&SubstFxFont);
   SubstFxFont.m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
-  SubstFxFont.m_WeightCJK = SubstFxFont.m_Weight;
   SubstFxFont.m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
-  SubstFxFont.m_bItlicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
+  SubstFxFont.m_WeightCJK = SubstFxFont.m_Weight;
+  SubstFxFont.m_bItalicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
   for (int32_t i = 0; i < iCount; ++i) {

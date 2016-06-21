@@ -269,7 +269,7 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
   ASSERT(m_pApp);
   if (pWnd->GetClassName() == PWL_CLASSNAME_EDIT) {
     CPWL_Edit* pEdit = (CPWL_Edit*)pWnd;
-    pEdit->SetCharSet(134);
+    pEdit->SetCharSet(FXFONT_GB2312_CHARSET);
     pEdit->SetCodePage(936);
 
     pEdit->SetReadyToInput();

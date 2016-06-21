@@ -83,8 +83,7 @@ CFGAS_GEFont::CFGAS_GEFont(IFGAS_FontMgr* pFontMgr)
       m_pCharWidthMap(NULL),
       m_pRectArray(NULL),
       m_pBBoxMap(NULL),
-      m_pProvider(NULL),
-      m_wCharSet(0xFFFF) {
+      m_pProvider(NULL) {
 }
 
 CFGAS_GEFont::CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles)
@@ -103,8 +102,7 @@ CFGAS_GEFont::CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles)
       m_pCharWidthMap(NULL),
       m_pRectArray(NULL),
       m_pBBoxMap(NULL),
-      m_pProvider(NULL),
-      m_wCharSet(0xFFFF) {
+      m_pProvider(NULL) {
   ASSERT(src.m_pFont);
   m_pFont = new CFX_Font;
   m_pFont->LoadClone(src.m_pFont);
@@ -189,11 +187,6 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(const FX_WCHAR* pszFontFamily,
   }
   int32_t iWeight =
       (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  uint16_t wCharSet = FX_GetCharsetFromCodePage(wCodePage);
-  if (wCharSet == 0xFFFF) {
-    wCharSet = FXSYS_GetACP();
-  }
-  m_wCharSet = wCharSet;
   m_pFont = new CFX_Font;
   if ((dwFlags & FXFONT_ITALIC) && (dwFlags & FXFONT_BOLD)) {
     csFontFamily += ",BoldItalic";
@@ -203,24 +196,19 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(const FX_WCHAR* pszFontFamily,
     csFontFamily += ",Italic";
   }
   m_pFont->LoadSubst(csFontFamily, TRUE, dwFlags, iWeight, 0, wCodePage);
-  FX_BOOL bRet = m_pFont->GetFace() != nullptr;
-  if (bRet) {
-    bRet = InitFont();
-  }
-  return bRet;
+  if (!m_pFont->GetFace())
+    return false;
+  return InitFont();
 }
 
 FX_BOOL CFGAS_GEFont::LoadFontInternal(const uint8_t* pBuffer, int32_t length) {
-  if (m_pFont) {
+  if (m_pFont)
     return FALSE;
-  }
+
   m_pFont = new CFX_Font;
-  FX_BOOL bRet = m_pFont->LoadEmbedded(pBuffer, length);
-  if (bRet) {
-    bRet = InitFont();
-  }
-  m_wCharSet = 0xFFFF;
-  return bRet;
+  if (!m_pFont->LoadEmbedded(pBuffer, length))
+    return FALSE;
+  return InitFont();
 }
 
 FX_BOOL CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream,
@@ -240,7 +228,6 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream,
     m_pFileRead->Release();
     m_pFileRead = nullptr;
   }
-  m_wCharSet = 0xFFFF;
   return bRet;
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -251,7 +238,6 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(CFX_Font* pExtFont) {
   }
   m_pFont = pExtFont;
   m_bExtFont = TRUE;
-  m_wCharSet = 0xFFFF;
   return InitFont();
 }
 
@@ -272,21 +258,13 @@ FX_BOOL CFGAS_GEFont::InitFont() {
 
   return TRUE;
 }
+
 CFGAS_GEFont* CFGAS_GEFont::Derive(uint32_t dwFontStyles, uint16_t wCodePage) {
-  if (GetFontStyles() == dwFontStyles) {
+  if (GetFontStyles() == dwFontStyles)
     return Retain();
-  }
   return new CFGAS_GEFont(*this, dwFontStyles);
 }
-uint8_t CFGAS_GEFont::GetCharSet() const {
-  if (m_wCharSet != 0xFFFF) {
-    return (uint8_t)m_wCharSet;
-  }
-  if (!m_pFont->GetSubstFont()) {
-    return FX_CHARSET_Default;
-  }
-  return m_pFont->GetSubstFont()->m_Charset;
-}
+
 void CFGAS_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {
   if (!m_pFont->GetSubstFont() ||
       m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {

@@ -1163,32 +1163,26 @@ void CFGAS_FontMgrImp::RegisterFace(FXFT_Face pFace,
   if ((pFace->face_flags & FT_FACE_FLAG_SCALABLE) == 0)
     return;
 
-  CFX_FontDescriptor* pFont = new CFX_FontDescriptor;
+  std::unique_ptr<CFX_FontDescriptor> pFont(new CFX_FontDescriptor);
   pFont->m_dwFontStyles |= FXFT_Is_Face_Bold(pFace) ? FX_FONTSTYLE_Bold : 0;
   pFont->m_dwFontStyles |= FXFT_Is_Face_Italic(pFace) ? FX_FONTSTYLE_Italic : 0;
   pFont->m_dwFontStyles |= GetFlags(pFace);
 
-  CFX_ArrayTemplate<uint16_t> Charsets;
-  GetCharsets(pFace, Charsets);
+  std::vector<uint16_t> charsets = GetCharsets(pFace);
   GetUSBCSB(pFace, pFont->m_dwUsb, pFont->m_dwCsb);
 
   FT_ULong dwTag;
-  uint8_t* pTable = nullptr;
   FT_ENC_TAG(dwTag, 'n', 'a', 'm', 'e');
 
+  std::vector<uint8_t> table;
   unsigned long nLength = 0;
   unsigned int error = FXFT_Load_Sfnt_Table(pFace, dwTag, 0, nullptr, &nLength);
   if (error == 0 && nLength != 0) {
-    pTable = FX_Alloc(uint8_t, nLength);
-    error = FXFT_Load_Sfnt_Table(pFace, dwTag, 0, pTable, nullptr);
-    if (0 != error) {
-      FX_Free(pTable);
-      pTable = nullptr;
-    }
+    table.resize(nLength);
+    if (FXFT_Load_Sfnt_Table(pFace, dwTag, 0, table.data(), nullptr))
+      table.clear();
   }
-  GetNames(pTable, pFont->m_wsFamilyNames);
-  if (pTable)
-    FX_Free(pTable);
+  GetNames(table.empty() ? nullptr : table.data(), pFont->m_wsFamilyNames);
 
   pFont->m_wsFamilyNames.Add(CFX_ByteString(pFace->family_name).UTF8Decode());
   pFont->m_wsFaceName =
@@ -1196,7 +1190,7 @@ void CFGAS_FontMgrImp::RegisterFace(FXFT_Face pFace,
                 : CFX_WideString::FromLocal(FXFT_Get_Postscript_Name(pFace));
   pFont->m_nFaceIndex = pFace->face_index;
 
-  Fonts.Add(pFont);
+  Fonts.Add(pFont.release());
 }
 
 void CFGAS_FontMgrImp::RegisterFaces(IFX_FileRead* pFontStream,
@@ -1346,30 +1340,28 @@ FX_BIT2CHARSET g_FX_Bit2Charset4[16] = {
     {1 << 14, FX_CHARSET_Default}, {1 << 15, FX_CHARSET_US},
 };
 
-#define CODEPAGERANGE_IMPLEMENT(n)                   \
-  for (int32_t i = 0; i < 16; i++) {                 \
-    if ((a##n & g_FX_Bit2Charset##n[i].wBit) != 0) { \
-      Charsets.Add(g_FX_Bit2Charset##n[i].wCharset); \
-    }                                                \
+#define CODEPAGERANGE_IMPLEMENT(n)                         \
+  for (int32_t i = 0; i < 16; i++) {                       \
+    if ((a##n & g_FX_Bit2Charset##n[i].wBit) != 0)         \
+      charsets.push_back(g_FX_Bit2Charset##n[i].wCharset); \
   }
 
-void CFGAS_FontMgrImp::GetCharsets(FXFT_Face pFace,
-                                   CFX_ArrayTemplate<uint16_t>& Charsets) {
-  Charsets.RemoveAll();
+std::vector<uint16_t> CFGAS_FontMgrImp::GetCharsets(FXFT_Face pFace) const {
+  std::vector<uint16_t> charsets;
   TT_OS2* pOS2 = (TT_OS2*)FT_Get_Sfnt_Table(pFace, ft_sfnt_os2);
-  if (NULL != pOS2) {
-    uint16_t a1, a2, a3, a4;
-    a1 = pOS2->ulCodePageRange1 & 0x0000ffff;
+  if (pOS2) {
+    uint16_t a1 = pOS2->ulCodePageRange1 & 0xffff;
     CODEPAGERANGE_IMPLEMENT(1);
-    a2 = (pOS2->ulCodePageRange1 >> 16) & 0x0000ffff;
+    uint16_t a2 = (pOS2->ulCodePageRange1 >> 16) & 0xffff;
     CODEPAGERANGE_IMPLEMENT(2);
-    a3 = pOS2->ulCodePageRange2 & 0x0000ffff;
+    uint16_t a3 = pOS2->ulCodePageRange2 & 0xffff;
     CODEPAGERANGE_IMPLEMENT(3);
-    a4 = (pOS2->ulCodePageRange2 >> 16) & 0x0000ffff;
+    uint16_t a4 = (pOS2->ulCodePageRange2 >> 16) & 0xffff;
     CODEPAGERANGE_IMPLEMENT(4);
   } else {
-    Charsets.Add(FX_CHARSET_Default);
+    charsets.push_back(FX_CHARSET_Default);
   }
+  return charsets;
 }
 
 #undef CODEPAGERANGE_IMPLEMENT

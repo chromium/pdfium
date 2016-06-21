@@ -13,7 +13,7 @@
 struct CPVT_WordInfo {
   CPVT_WordInfo()
       : Word(0),
-        nCharset(0),
+        nCharset(FXFONT_ANSI_CHARSET),
         fWordX(0.0f),
         fWordY(0.0f),
         fWordTail(0.0f),
@@ -34,7 +34,7 @@ struct CPVT_WordInfo {
 
   CPVT_WordInfo(const CPVT_WordInfo& word)
       : Word(0),
-        nCharset(0),
+        nCharset(FXFONT_ANSI_CHARSET),
         fWordX(0.0f),
         fWordY(0.0f),
         fWordTail(0.0f),

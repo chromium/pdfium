@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
 #define XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
 
+#include <vector>
+
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "third_party/freetype/include/freetype/fttypes.h"
@@ -194,7 +196,7 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
   void RegisterFaces(IFX_FileRead* pFontStream,
                      const CFX_WideString* pFaceName);
   void GetNames(const uint8_t* name_table, CFX_WideStringArray& Names);
-  void GetCharsets(FXFT_Face pFace, CFX_ArrayTemplate<uint16_t>& Charsets);
+  std::vector<uint16_t> GetCharsets(FXFT_Face pFace) const;
   void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB);
   uint32_t GetFlags(FXFT_Face pFace);
   CFX_FontDescriptors m_InstalledFonts;

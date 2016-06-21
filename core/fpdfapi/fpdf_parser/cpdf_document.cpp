@@ -261,7 +261,7 @@ uint8_t FX_GetCsFromLangCode(uint32_t uCode) {
     else
       iStart = iMid + 1;
   }
-  return 0;
+  return FXFONT_ANSI_CHARSET;
 }
 
 uint8_t FX_GetCharsetFromLang(const FX_CHAR* pLang, int32_t iLength) {

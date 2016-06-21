@@ -1092,10 +1092,10 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
   FX_BOOL bUseCJKSubFont = FALSE;
   const CFX_SubstFont* pSubstFont = pFont->GetSubstFont();
   if (pSubstFont) {
-    bUseCJKSubFont = pSubstFont->m_bSubstOfCJK && bFontStyle;
+    bUseCJKSubFont = pSubstFont->m_bSubstCJK && bFontStyle;
     int skew = 0;
     if (bUseCJKSubFont) {
-      skew = pSubstFont->m_bItlicCJK ? -15 : 0;
+      skew = pSubstFont->m_bItalicCJK ? -15 : 0;
     } else {
       skew = pSubstFont->m_ItalicAngle;
     }

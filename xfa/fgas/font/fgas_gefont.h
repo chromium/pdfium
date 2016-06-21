@@ -39,7 +39,6 @@ class CFGAS_GEFont {
   CFGAS_GEFont* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   void GetFamilyName(CFX_WideString& wsFamily) const;
   uint32_t GetFontStyles() const;
-  uint8_t GetCharSet() const;
   FX_BOOL GetCharWidth(FX_WCHAR wUnicode,
                        int32_t& iWidth,
                        FX_BOOL bCharCode = FALSE);
@@ -103,7 +102,6 @@ class CFGAS_GEFont {
   CFX_MassArrayTemplate<CFX_Rect>* m_pRectArray;
   CFX_MapPtrToPtr* m_pBBoxMap;
   CXFA_PDFFontMgr* m_pProvider;
-  uint16_t m_wCharSet;
   CFX_ArrayTemplate<CFGAS_GEFont*> m_SubstFonts;
   std::map<FX_WCHAR, CFGAS_GEFont*> m_FontMapper;
 };

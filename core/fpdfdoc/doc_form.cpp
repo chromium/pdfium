@@ -416,12 +416,11 @@ CFX_ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
   CFX_ByteString csFontName;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   LOGFONTA lf = {};
-  FX_BOOL bRet;
   if (charSet == ANSI_CHARSET) {
     csFontName = "Helvetica";
     return csFontName;
   }
-  bRet = FALSE;
+  FX_BOOL bRet = FALSE;
   if (charSet == SHIFTJIS_CHARSET) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
                                 "MS Mincho", lf);
@@ -454,14 +453,16 @@ CFX_ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
 #endif
   return csFontName;
 }
+
 CFX_ByteString CPDF_InterForm::GetNativeFont(void* pLogFont) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  uint8_t charSet = GetNativeCharSet();
-  return GetNativeFont(charSet, pLogFont);
+  return GetNativeFont(GetNativeCharSet(), pLogFont);
 #else
   return CFX_ByteString();
 #endif
 }
+
+// static
 uint8_t CPDF_InterForm::GetNativeCharSet() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   uint8_t charSet = ANSI_CHARSET;

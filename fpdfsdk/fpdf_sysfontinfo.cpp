@@ -33,25 +33,25 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
                 int pitch_family,
                 const FX_CHAR* family,
                 int& iExact) override {
-    if (m_pInfo->MapFont)
-      return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family,
-                              family, &iExact);
-    return nullptr;
+    if (!m_pInfo->MapFont)
+      return nullptr;
+    return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family,
+                            family, &iExact);
   }
 
   void* GetFont(const FX_CHAR* family) override {
-    if (m_pInfo->GetFont)
-      return m_pInfo->GetFont(m_pInfo, family);
-    return nullptr;
+    if (!m_pInfo->GetFont)
+      return nullptr;
+    return m_pInfo->GetFont(m_pInfo, family);
   }
 
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
                        uint8_t* buffer,
                        uint32_t size) override {
-    if (m_pInfo->GetFontData)
-      return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);
-    return 0;
+    if (!m_pInfo->GetFontData)
+      return 0;
+    return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);
   }
 
   FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override {
@@ -68,11 +68,11 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
   }
 
   FX_BOOL GetFontCharset(void* hFont, int& charset) override {
-    if (m_pInfo->GetFontCharset) {
-      charset = m_pInfo->GetFontCharset(m_pInfo, hFont);
-      return TRUE;
-    }
-    return FALSE;
+    if (!m_pInfo->GetFontCharset)
+      return FALSE;
+
+    charset = m_pInfo->GetFontCharset(m_pInfo, hFont);
+    return TRUE;
   }
 
   void DeleteFont(void* hFont) override {
@@ -87,7 +87,8 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
 DLLEXPORT void STDCALL FPDF_AddInstalledFont(void* mapper,
                                              const char* name,
                                              int charset) {
-  ((CFX_FontMapper*)mapper)->AddInstalledFont(name, charset);
+  CFX_FontMapper* pMapper = reinterpret_cast<CFX_FontMapper*>(mapper);
+  pMapper->AddInstalledFont(name, charset);
 }
 
 DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
@@ -114,8 +115,8 @@ static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {
 }
 
 static void DefaultEnumFonts(struct _FPDF_SYSFONTINFO* pThis, void* pMapper) {
-  ((FPDF_SYSFONTINFO_DEFAULT*)pThis)
-      ->m_pFontInfo->EnumFontList((CFX_FontMapper*)pMapper);
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  pDefault->m_pFontInfo->EnumFontList((CFX_FontMapper*)pMapper);
 }
 
 static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,
@@ -125,13 +126,14 @@ static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,
                             int pitch_family,
                             const char* family,
                             int* bExact) {
-  return ((FPDF_SYSFONTINFO_DEFAULT*)pThis)
-      ->m_pFontInfo->MapFont(weight, bItalic, charset, pitch_family, family,
-                             *bExact);
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  return pDefault->m_pFontInfo->MapFont(weight, bItalic, charset, pitch_family,
+                                        family, *bExact);
 }
 
 void* DefaultGetFont(struct _FPDF_SYSFONTINFO* pThis, const char* family) {
-  return ((FPDF_SYSFONTINFO_DEFAULT*)pThis)->m_pFontInfo->GetFont(family);
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  return pDefault->m_pFontInfo->GetFont(family);
 }
 
 static unsigned long DefaultGetFontData(struct _FPDF_SYSFONTINFO* pThis,
@@ -139,8 +141,8 @@ static unsigned long DefaultGetFontData(struct _FPDF_SYSFONTINFO* pThis,
                                         unsigned int table,
                                         unsigned char* buffer,
                                         unsigned long buf_size) {
-  return ((FPDF_SYSFONTINFO_DEFAULT*)pThis)
-      ->m_pFontInfo->GetFontData(hFont, table, buffer, buf_size);
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  return pDefault->m_pFontInfo->GetFontData(hFont, table, buffer, buf_size);
 }
 
 static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,
@@ -148,8 +150,8 @@ static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,
                                         char* buffer,
                                         unsigned long buf_size) {
   CFX_ByteString name;
-  if (!((FPDF_SYSFONTINFO_DEFAULT*)pThis)
-           ->m_pFontInfo->GetFaceName(hFont, name))
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  if (!pDefault->m_pFontInfo->GetFaceName(hFont, name))
     return 0;
   if (name.GetLength() >= (long)buf_size)
     return name.GetLength() + 1;
@@ -159,14 +161,15 @@ static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,
 
 static int DefaultGetFontCharset(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
   int charset;
-  if (!((FPDF_SYSFONTINFO_DEFAULT*)pThis)
-           ->m_pFontInfo->GetFontCharset(hFont, charset))
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  if (!pDefault->m_pFontInfo->GetFontCharset(hFont, charset))
     return 0;
   return charset;
 }
 
 static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
-  ((FPDF_SYSFONTINFO_DEFAULT*)pThis)->m_pFontInfo->DeleteFont(hFont);
+  auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
+  pDefault->m_pFontInfo->DeleteFont(hFont);
 }
 
 DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {

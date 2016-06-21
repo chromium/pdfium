@@ -218,23 +218,16 @@ class CFX_SubstFont {
   CFX_SubstFont();
 
   void* m_ExtHandle;
-
   CFX_ByteString m_Family;
-
   int m_Charset;
-
   uint32_t m_SubstFlags;
-
   int m_Weight;
-
   int m_ItalicAngle;
-
-  FX_BOOL m_bSubstOfCJK;
-
+  bool m_bSubstCJK;
   int m_WeightCJK;
-
-  FX_BOOL m_bItlicCJK;
+  bool m_bItalicCJK;
 };
+
 #define FX_FONT_FLAG_SERIF 0x01
 #define FX_FONT_FLAG_FIXEDPITCH 0x02
 #define FX_FONT_FLAG_ITALIC 0x04

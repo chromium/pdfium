@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/cfx_systemhandler.h"
 
+#include <memory>
+
 #include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
@@ -13,13 +15,13 @@
 namespace {
 
 int CharSet2CP(int charset) {
-  if (charset == 128)
+  if (charset == FXFONT_SHIFTJIS_CHARSET)
     return 932;
-  if (charset == 134)
+  if (charset == FXFONT_GB2312_CHARSET)
     return 936;
-  if (charset == 129)
+  if (charset == FXFONT_HANGEUL_CHARSET)
     return 949;
-  if (charset == 136)
+  if (charset == FXFONT_CHINESEBIG5_CHARSET)
     return 950;
   return 0;
 }
@@ -78,8 +80,7 @@ bool CFX_SystemHandler::IsSelectionImplemented() const {
   return false;
 }
 
-bool CFX_SystemHandler::FindNativeTrueTypeFont(int32_t nCharset,
-                                               CFX_ByteString sFontFaceName) {
+bool CFX_SystemHandler::FindNativeTrueTypeFont(CFX_ByteString sFontFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   if (!pFontMgr)
     return false;
@@ -106,11 +107,9 @@ CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(
   if (!pDoc)
     return nullptr;
 
-  CFX_Font* pFXFont = new CFX_Font();
+  std::unique_ptr<CFX_Font> pFXFont(new CFX_Font);
   pFXFont->LoadSubst(sFontFaceName, TRUE, 0, 0, 0, CharSet2CP(nCharset), FALSE);
-  CPDF_Font* pFont = pDoc->AddFont(pFXFont, nCharset, FALSE);
-  delete pFXFont;
-  return pFont;
+  return pDoc->AddFont(pFXFont.get(), nCharset, FALSE);
 }
 
 int32_t CFX_SystemHandler::SetTimer(int32_t uElapse,

@@ -293,7 +293,7 @@ uint8_t GetCharsetFromCodePage(uint16_t codepage) {
                        });
   if (pCharmap < pEnd && codepage == pCharmap->codepage)
     return pCharmap->charset;
-  return 1;
+  return FXFONT_DEFAULT_CHARSET;
 }
 
 CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
@@ -412,14 +412,15 @@ int32_t GetSimilarValue(int weight,
 
 CFX_SubstFont::CFX_SubstFont() {
   m_ExtHandle = nullptr;
-  m_Charset = 0;
+  m_Charset = FXFONT_ANSI_CHARSET;
   m_SubstFlags = 0;
   m_Weight = 0;
   m_ItalicAngle = 0;
-  m_bSubstOfCJK = FALSE;
+  m_bSubstCJK = false;
   m_WeightCJK = 0;
-  m_bItlicCJK = FALSE;
+  m_bItalicCJK = false;
 }
+
 CTTFontDesc::~CTTFontDesc() {
   if (m_Type == 1) {
     if (m_SingleFace.m_pFace) {
@@ -1057,14 +1058,14 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
         weight = old_weight;
       }
     } else {
-      pSubstFont->m_bSubstOfCJK = TRUE;
+      pSubstFont->m_bSubstCJK = true;
       if (nStyle) {
         pSubstFont->m_WeightCJK = weight;
       } else {
         pSubstFont->m_WeightCJK = FXFONT_FW_NORMAL;
       }
       if (nStyle & FX_FONT_STYLE_Italic) {
-        pSubstFont->m_bItlicCJK = TRUE;
+        pSubstFont->m_bItalicCJK = true;
       }
     }
   } else {

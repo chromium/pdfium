@@ -49,8 +49,7 @@ class CPDFDoc_Environment;
 
 class CFX_SystemHandler {
  public:
-  explicit CFX_SystemHandler(CPDFDoc_Environment* pEnv)
-      : m_pEnv(pEnv), m_nCharSet(-1) {}
+  explicit CFX_SystemHandler(CPDFDoc_Environment* pEnv) : m_pEnv(pEnv) {}
   ~CFX_SystemHandler() {}
 
   void InvalidateRect(FX_HWND hWnd, FX_RECT rect);
@@ -59,7 +58,7 @@ class CFX_SystemHandler {
 
   void SetCursor(int32_t nCursorType);
 
-  bool FindNativeTrueTypeFont(int32_t nCharset, CFX_ByteString sFontFaceName);
+  bool FindNativeTrueTypeFont(CFX_ByteString sFontFaceName);
   CPDF_Font* AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
                                         CFX_ByteString sFontFaceName,
                                         uint8_t nCharset);
@@ -71,12 +70,8 @@ class CFX_SystemHandler {
 
   FX_SYSTEMTIME GetLocalTime();
 
-  int32_t GetCharSet() const { return m_nCharSet; }
-  void SetCharSet(int32_t nCharSet) { m_nCharSet = nCharSet; }
-
  private:
   CPDFDoc_Environment* const m_pEnv;
-  int m_nCharSet;
 };
 
 #endif  // FPDFSDK_CFX_SYSTEMHANDLER_H_

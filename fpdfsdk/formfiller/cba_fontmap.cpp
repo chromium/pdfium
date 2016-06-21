@@ -79,24 +79,23 @@ void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
 
 CPDF_Font* CBA_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias,
                                             int32_t nCharset) {
-  if (m_pAnnotDict->GetStringBy("Subtype") == "Widget") {
-    CPDF_Document* pDocument = GetDocument();
-    CPDF_Dictionary* pRootDict = pDocument->GetRoot();
-    if (!pRootDict)
-      return nullptr;
+  if (m_pAnnotDict->GetStringBy("Subtype") != "Widget")
+    return nullptr;
 
-    CPDF_Dictionary* pAcroFormDict = pRootDict->GetDictBy("AcroForm");
-    if (!pAcroFormDict)
-      return nullptr;
+  CPDF_Document* pDocument = GetDocument();
+  CPDF_Dictionary* pRootDict = pDocument->GetRoot();
+  if (!pRootDict)
+    return nullptr;
 
-    CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictBy("DR");
-    if (!pDRDict)
-      return nullptr;
+  CPDF_Dictionary* pAcroFormDict = pRootDict->GetDictBy("AcroForm");
+  if (!pAcroFormDict)
+    return nullptr;
 
-    return FindResFontSameCharset(pDRDict, sFontAlias, nCharset);
-  }
+  CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictBy("DR");
+  if (!pDRDict)
+    return nullptr;
 
-  return nullptr;
+  return FindResFontSameCharset(pDRDict, sFontAlias, nCharset);
 }
 
 CPDF_Document* CBA_FontMap::GetDocument() {

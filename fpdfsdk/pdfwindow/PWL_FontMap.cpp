@@ -281,10 +281,10 @@ CFX_ByteString CPWL_FontMap::GetNativeFont(int32_t nCharset) {
 
   CFX_ByteString sFontName = GetDefaultFontByCharset(nCharset);
   if (m_pSystemHandler) {
-    if (m_pSystemHandler->FindNativeTrueTypeFont(nCharset, sFontName))
+    if (m_pSystemHandler->FindNativeTrueTypeFont(sFontName))
       return sFontName;
 
-    sFontName = "";
+    sFontName.clear();
   }
   return sFontName;
 }
@@ -437,8 +437,6 @@ CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(int32_t nCharset) {
 }
 
 int32_t CPWL_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
-  if (m_pSystemHandler && (-1 != m_pSystemHandler->GetCharSet()))
-    return m_pSystemHandler->GetCharSet();
   // to avoid CJK Font to show ASCII
   if (word < 0x7F)
     return ANSI_CHARSET;

@@ -18,6 +18,7 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "core/fxge/include/fx_font.h"
 
 class CSection;
 class IPVT_FontMap;
@@ -112,19 +113,19 @@ class CPDF_VariableText : private CPDF_EditContainer {
   void RearrangePart(const CPVT_WordRange& PlaceRange);
   void ResetAll();
   void SetText(const FX_WCHAR* text,
-               int32_t charset = 1,
+               int32_t charset = FXFONT_DEFAULT_CHARSET,
                const CPVT_SecProps* pSecProps = nullptr,
                const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace InsertWord(const CPVT_WordPlace& place,
                             uint16_t word,
-                            int32_t charset = 1,
+                            int32_t charset = FXFONT_DEFAULT_CHARSET,
                             const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace InsertSection(const CPVT_WordPlace& place,
                                const CPVT_SecProps* pSecProps = nullptr,
                                const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace InsertText(const CPVT_WordPlace& place,
                             const FX_WCHAR* text,
-                            int32_t charset = 1,
+                            int32_t charset = FXFONT_DEFAULT_CHARSET,
                             const CPVT_SecProps* pSecProps = nullptr,
                             const CPVT_WordProps* pWordProps = nullptr);
   CPVT_WordPlace DeleteWords(const CPVT_WordRange& PlaceRange);

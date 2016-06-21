@@ -464,7 +464,7 @@ void CPWL_Edit::OnKillFocus() {
   m_pEdit->SelectNone();
   SetCaret(FALSE, CFX_FloatPoint(0.0f, 0.0f), CFX_FloatPoint(0.0f, 0.0f));
 
-  SetCharSet(0);
+  SetCharSet(FXFONT_ANSI_CHARSET);
 
   if (!IsReadOnly()) {
     if (IPWL_FocusHandler* pFocusHandler = GetFocusHandler())
