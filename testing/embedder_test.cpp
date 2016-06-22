@@ -120,6 +120,7 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
   if (!file_contents_)
     return false;
 
+  EXPECT_TRUE(!loader_);
   loader_ = new TestLoader(file_contents_.get(), file_length_);
   file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
   file_access_.m_GetBlock = TestLoader::GetBlock;
