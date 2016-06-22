@@ -365,41 +365,6 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
 
 }  // namespace
 
-void Color2Argb(FX_ARGB& argb,
-                uint32_t color,
-                int alpha_flag,
-                void* pIccTransform) {
-  if (!pIccTransform && !FXGETFLAG_COLORTYPE(alpha_flag)) {
-    argb = color;
-    return;
-  }
-  if (!CFX_GEModule::Get()->GetCodecModule() ||
-      !CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) {
-    pIccTransform = nullptr;
-  }
-  uint8_t bgra[4];
-  if (pIccTransform) {
-    CCodec_IccModule* pIccModule =
-        CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
-    color = FXGETFLAG_COLORTYPE(alpha_flag) ? FXCMYK_TODIB(color)
-                                            : FXARGB_TODIB(color);
-    pIccModule->TranslateScanline(pIccTransform, bgra, (const uint8_t*)&color,
-                                  1);
-    bgra[3] = FXGETFLAG_COLORTYPE(alpha_flag)
-                  ? (alpha_flag >> 24) ? FXGETFLAG_ALPHA_FILL(alpha_flag)
-                                       : FXGETFLAG_ALPHA_STROKE(alpha_flag)
-                  : FXARGB_A(color);
-    argb = FXARGB_MAKE(bgra[3], bgra[2], bgra[1], bgra[0]);
-    return;
-  }
-  AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
-                     FXSYS_GetYValue(color), FXSYS_GetKValue(color), bgra[2],
-                     bgra[1], bgra[0]);
-  bgra[3] = (alpha_flag >> 24) ? FXGETFLAG_ALPHA_FILL(alpha_flag)
-                               : FXGETFLAG_ALPHA_STROKE(alpha_flag);
-  argb = FXARGB_MAKE(bgra[3], bgra[2], bgra[1], bgra[0]);
-}
-
 FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
                            int anti_alias,
                            FX_FLOAT retinaScaleX,
@@ -613,10 +578,9 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   int r = 0;
   int g = 0;
   int b = 0;
-  if (anti_alias == FXFT_RENDER_MODE_LCD) {
-    Color2Argb(fill_color, fill_color, (1 << 24), nullptr);
+  if (anti_alias == FXFT_RENDER_MODE_LCD)
     ArgbDecode(fill_color, a, r, g, b);
-  }
+
   for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
     if (!glyph.m_pGlyph)
       continue;

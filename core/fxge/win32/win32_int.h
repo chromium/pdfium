@@ -148,24 +148,20 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL GDI_SetDIBits(CFX_DIBitmap* pBitmap,
                         const FX_RECT* pSrcRect,
                         int left,
-                        int top,
-                        void* pIccTransform);
+                        int top);
   FX_BOOL GDI_StretchDIBits(CFX_DIBitmap* pBitmap,
                             int dest_left,
                             int dest_top,
                             int dest_width,
                             int dest_height,
-                            uint32_t flags,
-                            void* pIccTransform);
+                            uint32_t flags);
   FX_BOOL GDI_StretchBitMask(CFX_DIBitmap* pBitmap,
                              int dest_left,
                              int dest_top,
                              int dest_width,
                              int dest_height,
                              uint32_t bitmap_color,
-                             uint32_t flags,
-                             int alpha_flag,
-                             void* pIccTransform);
+                             uint32_t flags);
 
   HDC m_hDC;
   int m_Width;

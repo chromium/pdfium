@@ -567,11 +567,6 @@ struct FXTEXT_GLYPHPOS {
   FX_FLOAT m_fOriginY;
 };
 
-void Color2Argb(FX_ARGB& argb,
-                uint32_t color,
-                int alpha_flag,
-                void* pIccTransform);
-
 FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
                            int anti_alias,
                            FX_FLOAT retinaScaleX = 1.0f,

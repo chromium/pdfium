@@ -29,6 +29,7 @@ enum FXDIB_Format {
   FXDIB_Cmyk = 0x420,
   FXDIB_Cmyka = 0x620,
 };
+
 enum FXDIB_Channel {
   FXDIB_Red = 1,
   FXDIB_Green,
@@ -39,6 +40,7 @@ enum FXDIB_Channel {
   FXDIB_Black,
   FXDIB_Alpha
 };
+
 #define FXDIB_DOWNSAMPLE 0x04
 #define FXDIB_INTERPOL 0x20
 #define FXDIB_BICUBIC_INTERPOL 0x80
@@ -153,7 +155,16 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
    ((uint8_t)(argb)) << 16 | ((uint8_t)(argb >> 24) << 24))
 #define FXGETFLAG_COLORTYPE(flag) (uint8_t)((flag) >> 8)
 #define FXGETFLAG_ALPHA_FILL(flag) (uint8_t)(flag)
-#define FXGETFLAG_ALPHA_STROKE(flag) (uint8_t)((flag) >> 16)
+
+FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
+                      uint8_t* dest_buf,
+                      int dest_pitch,
+                      int width,
+                      int height,
+                      const CFX_DIBSource* pSrcBitmap,
+                      int src_left,
+                      int src_top,
+                      uint32_t*& pal);
 
 class CFX_DIBSource {
  public:
@@ -204,9 +215,7 @@ class CFX_DIBSource {
   void CopyPalette(const uint32_t* pSrcPal, uint32_t size = 256);
 
   CFX_DIBitmap* Clone(const FX_RECT* pClip = nullptr) const;
-  CFX_DIBitmap* CloneConvert(FXDIB_Format format,
-                             const FX_RECT* pClip = nullptr,
-                             void* pIccTransform = nullptr) const;
+  CFX_DIBitmap* CloneConvert(FXDIB_Format format) const;
 
   CFX_DIBitmap* StretchTo(int dest_width,
                           int dest_height,
@@ -283,7 +292,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
 
   void TakeOver(CFX_DIBitmap* pSrcBitmap);
 
-  FX_BOOL ConvertFormat(FXDIB_Format format, void* pIccTransform = nullptr);
+  FX_BOOL ConvertFormat(FXDIB_Format format);
 
   void Clear(uint32_t color);
 
@@ -307,8 +316,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
                          int height,
                          const CFX_DIBSource* pSrcBitmap,
                          int src_left,
-                         int src_top,
-                         void* pIccTransform = nullptr);
+                         int src_top);
 
   FX_BOOL CompositeBitmap(int dest_left,
                           int dest_top,
@@ -366,8 +374,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
 
 class CFX_DIBExtractor {
  public:
-  CFX_DIBExtractor(const CFX_DIBSource* pSrc);
-
+  explicit CFX_DIBExtractor(const CFX_DIBSource* pSrc);
   ~CFX_DIBExtractor();
 
   operator CFX_DIBitmap*() { return m_pBitmap; }

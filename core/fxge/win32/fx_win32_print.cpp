@@ -55,7 +55,7 @@ FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
   if (!pBitmap)
     return FALSE;
 
-  return GDI_SetDIBits(pBitmap, pSrcRect, left, top, nullptr);
+  return GDI_SetDIBits(pBitmap, pSrcRect, left, top);
 }
 
 FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
@@ -84,8 +84,8 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
         dest_top += dest_height;
 
       return GDI_StretchBitMask(pFlipped.get(), dest_left, dest_top,
-                                abs(dest_width), abs(dest_height), color, flags,
-                                0, nullptr);
+                                abs(dest_width), abs(dest_height), color,
+                                flags);
     }
 
     CFX_DIBExtractor temp(pSource);
@@ -93,7 +93,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     if (!pBitmap)
       return FALSE;
     return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
-                              dest_height, color, flags, 0, nullptr);
+                              dest_height, color, flags);
   }
 
   if (pSource->HasAlpha())
@@ -111,7 +111,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
       dest_top += dest_height;
 
     return GDI_StretchDIBits(pFlipped.get(), dest_left, dest_top,
-                             abs(dest_width), abs(dest_height), flags, nullptr);
+                             abs(dest_width), abs(dest_height), flags);
   }
 
   CFX_DIBExtractor temp(pSource);
@@ -119,7 +119,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
   if (!pBitmap)
     return FALSE;
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
-                           dest_height, flags, nullptr);
+                           dest_height, flags);
 }
 
 FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,

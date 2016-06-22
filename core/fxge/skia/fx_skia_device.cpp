@@ -938,32 +938,30 @@ FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
 
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
-  CFX_DIBitmap* pBack;
+  std::unique_ptr<CFX_DIBitmap> pBack;
   if (m_pOriDevice) {
-    pBack = m_pOriDevice->Clone(&rect);
+    pBack.reset(m_pOriDevice->Clone(&rect));
     if (!pBack)
       return TRUE;
 
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
                            m_pBitmap, 0, 0);
   } else {
-    pBack = m_pBitmap->Clone(&rect);
+    pBack.reset(m_pBitmap->Clone(&rect));
     if (!pBack)
       return TRUE;
   }
 
-  FX_BOOL bRet = TRUE;
   left = std::min(left, 0);
   top = std::min(top, 0);
   if (m_bRgbByteOrder) {
     RgbByteOrderTransferBitmap(pBitmap, 0, 0, rect.Width(), rect.Height(),
-                               pBack, left, top);
-  } else {
-    bRet = pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack,
-                                   left, top, nullptr);
+                               pBack.get(), left, top);
+    return TRUE;
   }
-  delete pBack;
-  return bRet;
+
+  return pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack.get(),
+                                 left, top);
 }
 
 CFX_DIBitmap* CFX_SkiaDeviceDriver::GetBackDrop() {

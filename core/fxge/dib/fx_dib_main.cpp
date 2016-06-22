@@ -12,16 +12,6 @@
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/include/fx_ge.h"
 
-FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
-                      uint8_t* dest_buf,
-                      int dest_pitch,
-                      int width,
-                      int height,
-                      const CFX_DIBSource* pSrcBitmap,
-                      int src_left,
-                      int src_top,
-                      uint32_t*& pal,
-                      void* pIccTransform);
 void CmykDecode(uint32_t cmyk, int& c, int& m, int& y, int& k) {
   c = FXSYS_GetCValue(cmyk);
   m = FXSYS_GetMValue(cmyk);
@@ -398,25 +388,25 @@ void CFX_DIBSource::GetOverlapRect(int& dest_left,
   width = dest_rect.right - dest_rect.left;
   height = dest_rect.bottom - dest_rect.top;
 }
+
 FX_BOOL CFX_DIBitmap::TransferBitmap(int dest_left,
                                      int dest_top,
                                      int width,
                                      int height,
                                      const CFX_DIBSource* pSrcBitmap,
                                      int src_left,
-                                     int src_top,
-                                     void* pIccTransform) {
-  if (!m_pBuffer) {
+                                     int src_top) {
+  if (!m_pBuffer)
     return FALSE;
-  }
+
   GetOverlapRect(dest_left, dest_top, width, height, pSrcBitmap->GetWidth(),
                  pSrcBitmap->GetHeight(), src_left, src_top, nullptr);
-  if (width == 0 || height == 0) {
+  if (width == 0 || height == 0)
     return TRUE;
-  }
+
   FXDIB_Format dest_format = GetFormat();
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
-  if (dest_format == src_format && !pIccTransform) {
+  if (dest_format == src_format) {
     if (GetBPP() == 1) {
       for (int row = 0; row < height; row++) {
         uint8_t* dest_scan = m_pBuffer + (dest_top + row) * m_Pitch;
@@ -443,22 +433,23 @@ FX_BOOL CFX_DIBitmap::TransferBitmap(int dest_left,
       }
     }
   } else {
-    if (m_pPalette) {
+    if (m_pPalette)
       return FALSE;
-    }
-    if (m_bpp == 8) {
+
+    if (m_bpp == 8)
       dest_format = FXDIB_8bppMask;
-    }
+
     uint8_t* dest_buf =
         m_pBuffer + dest_top * m_Pitch + dest_left * GetBPP() / 8;
     uint32_t* d_plt = nullptr;
     if (!ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height,
-                       pSrcBitmap, src_left, src_top, d_plt, pIccTransform)) {
+                       pSrcBitmap, src_left, src_top, d_plt)) {
       return FALSE;
     }
   }
   return TRUE;
 }
+
 FX_BOOL CFX_DIBitmap::TransferMask(int dest_left,
                                    int dest_top,
                                    int width,

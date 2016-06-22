@@ -1639,7 +1639,7 @@ FX_BOOL CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
                                pBack, left, top);
   } else {
     bRet = pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack,
-                                   left, top, nullptr);
+                                   left, top);
   }
   delete pBack;
   return bRet;
