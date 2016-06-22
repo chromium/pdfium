@@ -19,6 +19,8 @@
 #include "core/fxge/include/fx_freetype.h"
 #include "core/fxge/include/fx_ge_apple.h"
 
+#ifndef _SKIA_SUPPORT_
+
 namespace {
 
 void DoNothing(void* info, const void* data, size_t size) {}
@@ -86,6 +88,7 @@ void CFX_AggDeviceDriver::InitPlatform() {
           ->m_quartz2d;
   m_pPlatformGraphics = quartz2d.createGraphics(m_pBitmap);
 }
+
 void CFX_AggDeviceDriver::DestroyPlatform() {
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
@@ -94,16 +97,6 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
     quartz2d.destroyGraphics(m_pPlatformGraphics);
     m_pPlatformGraphics = nullptr;
   }
-}
-void CFX_FaceCache::InitPlatform() {}
-void CFX_FaceCache::DestroyPlatform() {}
-CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph_Nativetext(
-    CFX_Font* pFont,
-    uint32_t glyph_index,
-    const CFX_Matrix* pMatrix,
-    int dest_width,
-    int anti_alias) {
-  return nullptr;
 }
 
 FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
@@ -164,6 +157,21 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
     CGImageRelease(pImageCG);
   CGContextRestoreGState(ctx);
   return ret;
+}
+
+#endif  // _SKIA_SUPPORT_
+
+void CFX_FaceCache::InitPlatform() {}
+
+void CFX_FaceCache::DestroyPlatform() {}
+
+CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph_Nativetext(
+    CFX_Font* pFont,
+    uint32_t glyph_index,
+    const CFX_Matrix* pMatrix,
+    int dest_width,
+    int anti_alias) {
+  return nullptr;
 }
 
 void CFX_Font::ReleasePlatformResource() {
