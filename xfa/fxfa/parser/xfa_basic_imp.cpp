@@ -174,9 +174,9 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
   return CXFA_Measurement();
 }
 
-const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
+XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName) {
   if (wsName.IsEmpty())
-    return nullptr;
+    return XFA_Element::Unknown;
 
   uint32_t uHash = FX_HashCode_GetW(wsName, false);
   int32_t iStart = 0;
@@ -184,15 +184,14 @@ const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     const XFA_ELEMENTINFO* pInfo = g_XFAElementData + iMid;
-    if (uHash == pInfo->uHash) {
-      return pInfo;
-    } else if (uHash < pInfo->uHash) {
+    if (uHash == pInfo->uHash)
+      return pInfo->eName;
+    if (uHash < pInfo->uHash)
       iEnd = iMid - 1;
-    } else {
+    else
       iStart = iMid + 1;
-    }
   } while (iStart <= iEnd);
-  return nullptr;
+  return XFA_Element::Unknown;
 }
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName) {
   return eName == XFA_Element::Unknown

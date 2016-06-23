@@ -938,7 +938,7 @@ struct XFA_ELEMENTINFO {
   XFA_ObjectType eObjectType;
 };
 
-const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName);
+XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName);
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName);
 
 enum XFA_ATTRIBUTETYPE {

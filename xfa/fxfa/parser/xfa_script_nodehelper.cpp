@@ -376,13 +376,12 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
     XFA_CreateNode_ForCondition(wsCondition);
   }
   if (bIsClassName) {
-    const XFA_ELEMENTINFO* lpElement = XFA_GetElementByName(wsName.AsStringC());
-    if (lpElement == NULL) {
+    XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringC());
+    if (eType == XFA_Element::Unknown)
       return FALSE;
-    }
+
     for (int32_t iIndex = 0; iIndex < m_iCreateCount; iIndex++) {
-      CXFA_Node* pNewNode =
-          m_pCreateParent->CreateSamePacketNode(lpElement->eName);
+      CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eType);
       if (pNewNode) {
         m_pCreateParent->InsertChild(pNewNode);
         if (iIndex == m_iCreateCount - 1) {

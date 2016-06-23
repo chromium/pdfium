@@ -833,13 +833,12 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
         CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLChild);
         CFX_WideString wsTagName;
         pXMLElement->GetLocalTagName(wsTagName);
-        const XFA_ELEMENTINFO* pElemInfo =
-            XFA_GetElementByName(wsTagName.AsStringC());
-        if (!pElemInfo) {
+        XFA_Element eType = XFA_GetElementTypeForName(wsTagName.AsStringC());
+        if (eType == XFA_Element::Unknown)
           continue;
-        }
+
         const XFA_PROPERTY* pPropertyInfo = XFA_GetPropertyOfElement(
-            pXFANode->GetElementType(), pElemInfo->eName, ePacketID);
+            pXFANode->GetElementType(), eType, ePacketID);
         if (pPropertyInfo &&
             ((pPropertyInfo->uFlags &
               (XFA_PROPERTYFLAG_OneOf | XFA_PROPERTYFLAG_DefaultOneOf)) != 0)) {
@@ -848,8 +847,7 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
           }
           bOneOfPropertyFound = TRUE;
         }
-        CXFA_Node* pXFAChild =
-            m_pFactory->CreateNode(ePacketID, pElemInfo->eName);
+        CXFA_Node* pXFAChild = m_pFactory->CreateNode(ePacketID, eType);
         if (pXFAChild == NULL) {
           return NULL;
         }
@@ -881,8 +879,7 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
           pXFAChild->SetAttribute(lpAttrInfo->eName, wsAttrValue.AsStringC());
         }
         pXFANode->InsertChild(pXFAChild);
-        if (pElemInfo->eName == XFA_Element::Validate ||
-            pElemInfo->eName == XFA_Element::Locale) {
+        if (eType == XFA_Element::Validate || eType == XFA_Element::Locale) {
           if (ePacketID == XFA_XDPPACKET_Config) {
             ParseContentNode(pXFAChild, pXMLElement, ePacketID);
           } else {

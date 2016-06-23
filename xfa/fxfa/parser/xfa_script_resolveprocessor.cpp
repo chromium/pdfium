@@ -362,11 +362,10 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         pProp = pInstanceManager->GetProperty(0, XFA_Element::Occur, TRUE);
       }
     } else {
-      const XFA_ELEMENTINFO* pElement =
-          XFA_GetElementByName(wsName.AsStringC());
-      if (pElement) {
-        pProp = curNode->AsNode()->GetProperty(
-            0, pElement->eName, pElement->eName != XFA_Element::PageSet);
+      XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringC());
+      if (eType != XFA_Element::Unknown) {
+        pProp = curNode->AsNode()->GetProperty(0, eType,
+                                               eType != XFA_Element::PageSet);
       }
     }
     if (pProp) {

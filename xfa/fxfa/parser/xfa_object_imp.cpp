@@ -881,9 +881,8 @@ void CXFA_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments) {
       CFX_WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringC());
   if (iLength >= 2)
     iValue = pArguments->GetInt32(1);
-  const XFA_ELEMENTINFO* pElementInfo =
-      XFA_GetElementByName(wsExpression.AsStringC());
-  CXFA_Node* pNode = GetProperty(iValue, pElementInfo->eName);
+  CXFA_Node* pNode =
+      GetProperty(iValue, XFA_GetElementTypeForName(wsExpression.AsStringC()));
   pArguments->GetReturnValue()->Assign(
       m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
 }
@@ -911,14 +910,13 @@ void CXFA_Node::Script_NodeClass_IsPropertySpecified(
   if (pAttributeInfo)
     bHas = HasAttribute(pAttributeInfo->eName);
   if (!bHas) {
-    const XFA_ELEMENTINFO* pElementInfo =
-        XFA_GetElementByName(wsExpression.AsStringC());
-    bHas = !!GetProperty(iIndex, pElementInfo->eName);
+    XFA_Element eType = XFA_GetElementTypeForName(wsExpression.AsStringC());
+    bHas = !!GetProperty(iIndex, eType);
     if (!bHas && bParent && m_pParent) {
       // Also check on the parent.
       bHas = m_pParent->HasAttribute(pAttributeInfo->eName);
       if (!bHas)
-        bHas = !!m_pParent->GetProperty(iIndex, pElementInfo->eName);
+        bHas = !!m_pParent->GetProperty(iIndex, eType);
     }
   }
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
@@ -2628,14 +2626,13 @@ void CXFA_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
         strNameSpace = CFX_WideString::FromUTF8(bsNameSpace.AsStringC());
       }
     }
-    const XFA_ELEMENTINFO* pElement =
-        XFA_GetElementByName(strTagName.AsStringC());
-    CXFA_Node* pNewNode = CreateSamePacketNode(pElement->eName);
+    XFA_Element eType = XFA_GetElementTypeForName(strTagName.AsStringC());
+    CXFA_Node* pNewNode = CreateSamePacketNode(eType);
     if (!pNewNode) {
       pArguments->GetReturnValue()->SetNull();
     } else {
       if (!strName.IsEmpty()) {
-        if (XFA_GetAttributeOfElement(pElement->eName, XFA_ATTRIBUTE_Name,
+        if (XFA_GetAttributeOfElement(eType, XFA_ATTRIBUTE_Name,
                                       XFA_XDPPACKET_UNKNOWN)) {
           pNewNode->SetAttribute(XFA_ATTRIBUTE_Name, strName.AsStringC(), true);
           if (pNewNode->GetPacketID() == XFA_XDPPACKET_Datasets) {

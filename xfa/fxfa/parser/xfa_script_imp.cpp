@@ -319,13 +319,12 @@ void CXFA_ScriptContext::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
       }
       CXFA_Node* pNode = ToNode(pObject);
       CXFA_Node* pPropOrChild = nullptr;
-      const XFA_ELEMENTINFO* lpElementInfo =
-          XFA_GetElementByName(wsPropName.AsStringC());
-      if (lpElementInfo) {
-        pPropOrChild = pNode->GetProperty(0, lpElementInfo->eName);
-      } else {
+      XFA_Element eType = XFA_GetElementTypeForName(wsPropName.AsStringC());
+      if (eType != XFA_Element::Unknown)
+        pPropOrChild = pNode->GetProperty(0, eType);
+      else
         pPropOrChild = pNode->GetFirstChildByName(wsPropName.AsStringC());
-      }
+
       if (pPropOrChild) {
         CFX_WideString wsDefaultName(L"{default}");
         const XFA_SCRIPTATTRIBUTEINFO* lpAttrInfo =
