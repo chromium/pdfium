@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/fpdf_cmaps/cmap_int.h"
 #include "core/fpdfapi/fpdf_font/ttgsubtable.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
@@ -794,7 +795,11 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
                                CIDSet charset,
                                FX_BOOL bPromptCJK) {
   m_Charset = charset;
-  FPDFAPI_LoadCID2UnicodeMap(charset, m_pEmbeddedMap, m_EmbeddedCount);
+
+  CPDF_FontGlobals* pFontGlobals =
+      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
+  m_pEmbeddedMap = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;
+  m_EmbeddedCount = pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count;
 }
 
 CIDSet CharsetFromOrdering(const CFX_ByteStringC& ordering) {

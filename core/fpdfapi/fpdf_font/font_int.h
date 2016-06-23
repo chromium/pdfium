@@ -211,8 +211,4 @@ class CPDF_ToUnicodeMap {
   static CFX_WideString StringToWideString(const CFX_ByteStringC& str);
 };
 
-void FPDFAPI_LoadCID2UnicodeMap(CIDSet charset,
-                                const uint16_t*& pMap,
-                                uint32_t& count);
-
 #endif  // CORE_FPDFAPI_FPDF_FONT_FONT_INT_H_

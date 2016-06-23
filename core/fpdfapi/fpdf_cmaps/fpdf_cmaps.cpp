@@ -180,12 +180,3 @@ uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
   }
   return 0;
 }
-
-void FPDFAPI_LoadCID2UnicodeMap(CIDSet charset,
-                                const uint16_t*& pMap,
-                                uint32_t& count) {
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  pMap = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;
-  count = pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count;
-}
