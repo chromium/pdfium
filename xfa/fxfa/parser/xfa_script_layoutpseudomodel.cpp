@@ -24,8 +24,9 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_Element::LayoutPseudoModel) {
-}
+    : CXFA_Object(pDocument,
+                  XFA_ObjectType::Object,
+                  XFA_Element::LayoutPseudoModel) {}
 CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Ready(
     CFXJSE_Value* pValue,

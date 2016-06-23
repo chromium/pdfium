@@ -16,8 +16,9 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_Element::LogPseudoModel) {
-}
+    : CXFA_Object(pDocument,
+                  XFA_ObjectType::Object,
+                  XFA_Element::LogPseudoModel) {}
 CScript_LogPseudoModel::~CScript_LogPseudoModel() {}
 void CScript_LogPseudoModel::Script_LogPseudoModel_Message(
     CFXJSE_Arguments* pArguments) {}

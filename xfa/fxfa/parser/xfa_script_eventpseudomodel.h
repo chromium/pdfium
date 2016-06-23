@@ -30,7 +30,7 @@ enum class XFA_Event {
   CancelAction
 };
 
-class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
+class CScript_EventPseudoModel : public CXFA_Object {
  public:
   explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
   ~CScript_EventPseudoModel() override;

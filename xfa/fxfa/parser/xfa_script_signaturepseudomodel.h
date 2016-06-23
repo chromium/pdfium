@@ -10,7 +10,7 @@
 #include "fxjse/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
-class CScript_SignaturePseudoModel : public CXFA_OrdinaryObject {
+class CScript_SignaturePseudoModel : public CXFA_Object {
  public:
   CScript_SignaturePseudoModel(CXFA_Document* pDocument);
   ~CScript_SignaturePseudoModel() override;

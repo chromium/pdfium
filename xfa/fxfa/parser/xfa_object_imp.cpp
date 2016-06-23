@@ -5082,12 +5082,6 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
   pSrcModule->MoveBufferMapData(pDstModule, pKey);
 }
 
-CXFA_OrdinaryObject::CXFA_OrdinaryObject(CXFA_Document* pDocument,
-                                         XFA_Element eElement)
-    : CXFA_Object(pDocument, XFA_ObjectType::OrdinaryObject, eElement) {}
-
-CXFA_OrdinaryObject::~CXFA_OrdinaryObject() {}
-
 CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
     : CXFA_Object(pThisNode->GetDocument(),
                   XFA_ObjectType::VariablesThis,

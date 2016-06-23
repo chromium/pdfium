@@ -10,7 +10,7 @@
 #include "fxjse/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
-class CScript_LogPseudoModel : public CXFA_OrdinaryObject {
+class CScript_LogPseudoModel : public CXFA_Object {
  public:
   explicit CScript_LogPseudoModel(CXFA_Document* pDocument);
   ~CScript_LogPseudoModel() override;

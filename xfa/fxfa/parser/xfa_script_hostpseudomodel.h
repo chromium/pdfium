@@ -11,7 +11,7 @@
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
-class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
+class CScript_HostPseudoModel : public CXFA_Object {
  public:
   CScript_HostPseudoModel(CXFA_Document* pDocument);
   ~CScript_HostPseudoModel() override;

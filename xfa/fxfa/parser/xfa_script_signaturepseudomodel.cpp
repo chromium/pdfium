@@ -20,8 +20,9 @@
 
 CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_Element::SignaturePseudoModel) {
-}
+    : CXFA_Object(pDocument,
+                  XFA_ObjectType::Object,
+                  XFA_Element::SignaturePseudoModel) {}
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(
     CFXJSE_Arguments* pArguments) {

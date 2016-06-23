@@ -16,10 +16,9 @@
 class CXFA_Document;
 class CXFA_Node;
 class CXFA_NodeList;
-class CXFA_OrdinaryObject;
 
 enum class XFA_ObjectType {
-  OrdinaryObject,
+  Object,
   OrdinaryList,
   NodeList,
   Node,
@@ -65,9 +64,6 @@ class CXFA_Object : public CFXJSE_HostObject {
            m_objectType == XFA_ObjectType::ContentNode ||
            m_objectType == XFA_ObjectType::VariablesThis;
   }
-  bool IsOrdinaryObject() const {
-    return m_objectType == XFA_ObjectType::OrdinaryObject;
-  }
   bool IsNodeList() const { return m_objectType == XFA_ObjectType::NodeList; }
   bool IsOrdinaryList() const {
     return m_objectType == XFA_ObjectType::OrdinaryList;
@@ -85,11 +81,9 @@ class CXFA_Object : public CFXJSE_HostObject {
   }
 
   CXFA_Node* AsNode();
-  CXFA_OrdinaryObject* AsOrdinaryObject();
   CXFA_NodeList* AsNodeList();
 
   const CXFA_Node* AsNode() const;
-  const CXFA_OrdinaryObject* AsOrdinaryObject() const;
   const CXFA_NodeList* AsNodeList() const;
 
   XFA_Element GetElementType() const;
@@ -684,12 +678,6 @@ class CXFA_Node : public CXFA_Object {
   XFA_MAPMODULEDATA* m_pMapModuleData;
 };
 
-class CXFA_OrdinaryObject : public CXFA_Object {
- public:
-  CXFA_OrdinaryObject(CXFA_Document* pDocument, XFA_Element eElement);
-  ~CXFA_OrdinaryObject() override;
-};
-
 class CXFA_ThisProxy : public CXFA_Object {
  public:
   CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode);
@@ -797,9 +785,7 @@ typedef CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>
 inline CXFA_Node* CXFA_Object::AsNode() {
   return IsNode() ? static_cast<CXFA_Node*>(this) : nullptr;
 }
-inline CXFA_OrdinaryObject* CXFA_Object::AsOrdinaryObject() {
-  return IsOrdinaryObject() ? static_cast<CXFA_OrdinaryObject*>(this) : nullptr;
-}
+
 inline CXFA_NodeList* CXFA_Object::AsNodeList() {
   return IsNodeList() ? static_cast<CXFA_NodeList*>(this) : nullptr;
 }
@@ -807,10 +793,7 @@ inline CXFA_NodeList* CXFA_Object::AsNodeList() {
 inline const CXFA_Node* CXFA_Object::AsNode() const {
   return IsNode() ? static_cast<const CXFA_Node*>(this) : nullptr;
 }
-inline const CXFA_OrdinaryObject* CXFA_Object::AsOrdinaryObject() const {
-  return IsOrdinaryObject() ? static_cast<const CXFA_OrdinaryObject*>(this)
-                            : nullptr;
-}
+
 inline const CXFA_NodeList* CXFA_Object::AsNodeList() const {
   return IsNodeList() ? static_cast<const CXFA_NodeList*>(this) : nullptr;
 }

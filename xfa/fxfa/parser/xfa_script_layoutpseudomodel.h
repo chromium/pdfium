@@ -18,7 +18,7 @@ enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_Y
 };
 
-class CScript_LayoutPseudoModel : public CXFA_OrdinaryObject {
+class CScript_LayoutPseudoModel : public CXFA_Object {
  public:
   explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
   ~CScript_LayoutPseudoModel() override;

@@ -21,8 +21,9 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_Element::EventPseudoModel) {
-}
+    : CXFA_Object(pDocument,
+                  XFA_ObjectType::Object,
+                  XFA_Element::EventPseudoModel) {}
 CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
 void Script_EventPseudoModel_StringProperty(CFXJSE_Value* pValue,
                                             CFX_WideString& wsValue,

@@ -16,29 +16,37 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
-    : CXFA_OrdinaryObject(pDocument, XFA_Element::DataWindow) {
-}
+    : CXFA_Object(pDocument, XFA_ObjectType::Object, XFA_Element::DataWindow) {}
+
 CScript_DataWindow::~CScript_DataWindow() {}
+
 void CScript_DataWindow::Script_DataWindow_MoveCurrentRecord(
     CFXJSE_Arguments* pArguments) {}
+
 void CScript_DataWindow::Script_DataWindow_Record(
     CFXJSE_Arguments* pArguments) {}
+
 void CScript_DataWindow::Script_DataWindow_GotoRecord(
     CFXJSE_Arguments* pArguments) {}
+
 void CScript_DataWindow::Script_DataWindow_IsRecordGroup(
     CFXJSE_Arguments* pArguments) {}
+
 void CScript_DataWindow::Script_DataWindow_RecordsBefore(
     CFXJSE_Value* pValue,
     FX_BOOL bSetting,
     XFA_ATTRIBUTE eAttribute) {}
+
 void CScript_DataWindow::Script_DataWindow_CurrentRecordNumber(
     CFXJSE_Value* pValue,
     FX_BOOL bSetting,
     XFA_ATTRIBUTE eAttribute) {}
+
 void CScript_DataWindow::Script_DataWindow_RecordsAfter(
     CFXJSE_Value* pValue,
     FX_BOOL bSetting,
     XFA_ATTRIBUTE eAttribute) {}
+
 void CScript_DataWindow::Script_DataWindow_IsDefined(CFXJSE_Value* pValue,
                                                      FX_BOOL bSetting,
                                                      XFA_ATTRIBUTE eAttribute) {
