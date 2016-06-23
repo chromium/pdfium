@@ -16,7 +16,7 @@ class CXFA_TraverseStrategy_PageAreaContainerLayoutItem {
     if (pLayoutItem->m_pFormNode->GetElementType() == XFA_Element::PageSet) {
       return static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem->m_pFirstChild);
     }
-    return NULL;
+    return nullptr;
   }
   static inline CXFA_ContainerLayoutItem* GetNextSibling(
       CXFA_ContainerLayoutItem* pLayoutItem) {

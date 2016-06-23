@@ -113,11 +113,11 @@ class CFX_TxtPiece : public CFX_Target {
   int32_t GetLength() const { return m_iChars; }
   int32_t GetEndChar() const { return m_iStartChar + m_iChars; }
   CFX_TxtChar* GetCharPtr(int32_t index) const {
-    ASSERT(index > -1 && index < m_iChars && m_pChars != NULL);
+    ASSERT(index > -1 && index < m_iChars && m_pChars);
     return m_pChars->GetDataPtr(m_iStartChar + index);
   }
   void GetString(FX_WCHAR* pText) const {
-    ASSERT(pText != NULL);
+    ASSERT(pText);
     int32_t iEndChar = m_iStartChar + m_iChars;
     CFX_Char* pChar;
     for (int32_t i = m_iStartChar; i < iEndChar; i++) {
@@ -131,7 +131,7 @@ class CFX_TxtPiece : public CFX_Target {
     wsText.ReleaseBuffer(m_iChars);
   }
   void GetWidths(int32_t* pWidths) const {
-    ASSERT(pWidths != NULL);
+    ASSERT(pWidths);
     int32_t iEndChar = m_iStartChar + m_iChars;
     CFX_Char* pChar;
     for (int32_t i = m_iStartChar; i < iEndChar; i++) {
@@ -229,8 +229,8 @@ class CFX_TxtBreak {
   int32_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
                         FXTEXT_CHARPOS* pCharPos,
                         FX_BOOL bCharCode = FALSE,
-                        CFX_WideString* pWSForms = NULL,
-                        FX_AdjustCharDisplayPos pAdjustPos = NULL) const;
+                        CFX_WideString* pWSForms = nullptr,
+                        FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
   int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
                        CFX_RectFArray& rtArray,
                        FX_BOOL bCharBBox = FALSE) const;

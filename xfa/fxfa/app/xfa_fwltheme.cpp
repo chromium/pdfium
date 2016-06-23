@@ -46,7 +46,7 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp) : m_pApp(pApp) {
   m_dwCapacity = 0;
   m_fCapacity = 0;
-  m_pCalendarFont = NULL;
+  m_pCalendarFont = nullptr;
   m_Rect.Set(0, 0, 0, 0);
   m_pCheckBoxTP = new CXFA_FWLCheckBoxTP;
   m_pListBoxTP = new CFWL_ListBoxTP;
@@ -85,14 +85,14 @@ FWL_Error CXFA_FWLTheme::Initialize() {
   if (!m_pCalendarFont) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     m_pCalendarFont = m_pApp->GetFDEFontMgr()->GetDefFontByCodePage(
-        FX_CODEPAGE_MSWin_WesternEuropean, 0, NULL);
+        FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
 #else
     m_pCalendarFont = m_pApp->GetFDEFontMgr()->GetFontByCodePage(
-        FX_CODEPAGE_MSWin_WesternEuropean, 0, NULL);
+        FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
 #endif
   }
 
-  ASSERT(NULL != m_pCalendarFont);
+  ASSERT(m_pCalendarFont);
   FWLTHEME_Init();
   return FWL_Error::Succeeded;
 }
@@ -246,11 +246,11 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
             m_Rect.width += para.GetMarginRight();
           }
         }
-        if (pItem->GetPrev() == NULL) {
+        if (!pItem->GetPrev()) {
           if (pItem->GetNext()) {
             m_Rect.height = 0;
           }
-        } else if (pItem->GetNext() == NULL) {
+        } else if (!pItem->GetNext()) {
           m_Rect.top = 0;
         } else {
           m_Rect.top = 0;

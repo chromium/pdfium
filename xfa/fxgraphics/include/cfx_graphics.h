@@ -142,28 +142,28 @@ class CFX_Graphics {
   FWL_Error SetCharSpacing(const FX_FLOAT spacing);
   FWL_Error SetTextDrawingMode(const int32_t mode);
 
-  FWL_Error StrokePath(CFX_Path* path, CFX_Matrix* matrix = NULL);
+  FWL_Error StrokePath(CFX_Path* path, CFX_Matrix* matrix = nullptr);
   FWL_Error FillPath(CFX_Path* path,
                      FX_FillMode fillMode = FXFILL_WINDING,
-                     CFX_Matrix* matrix = NULL);
+                     CFX_Matrix* matrix = nullptr);
   FWL_Error ClipPath(CFX_Path* path,
                      FX_FillMode fillMode = FXFILL_WINDING,
-                     CFX_Matrix* matrix = NULL);
+                     CFX_Matrix* matrix = nullptr);
   FWL_Error DrawImage(CFX_DIBSource* source,
                       const CFX_PointF& point,
-                      CFX_Matrix* matrix = NULL);
+                      CFX_Matrix* matrix = nullptr);
   FWL_Error StretchImage(CFX_DIBSource* source,
                          const CFX_RectF& rect,
-                         CFX_Matrix* matrix = NULL);
+                         CFX_Matrix* matrix = nullptr);
   FWL_Error ConcatMatrix(const CFX_Matrix* matrix);
   FWL_Error ClearClip();
   FWL_Error ShowText(const CFX_PointF& point,
                      const CFX_WideString& text,
-                     CFX_Matrix* matrix = NULL);
+                     CFX_Matrix* matrix = nullptr);
   FWL_Error CalcTextRect(CFX_RectF& rect,
                          const CFX_WideString& text,
                          FX_BOOL isMultiline = FALSE,
-                         CFX_Matrix* matrix = NULL);
+                         CFX_Matrix* matrix = nullptr);
   FWL_Error Transfer(CFX_Graphics* graphics, const CFX_Matrix* matrix);
   FWL_Error Transfer(CFX_Graphics* graphics,
                      FX_FLOAT srcLeft,

@@ -170,7 +170,7 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   FWL_Error DisForm_Update();
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
   FWL_Error DisForm_DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+                               const CFX_Matrix* pMatrix = nullptr);
   FWL_Error DisForm_GetBBox(CFX_RectF& rect);
   void DisForm_Layout();
 
@@ -199,7 +199,7 @@ class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
@@ -226,7 +226,7 @@ class CFWL_ComboProxyImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_ComboProxyImpDelegate(IFWL_Form* pForm, CFWL_ComboBoxImp* pComboBox);
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
   void Reset() { m_bLButtonUpSelf = FALSE; }
 
  protected:

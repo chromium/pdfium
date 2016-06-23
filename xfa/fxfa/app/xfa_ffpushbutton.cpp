@@ -21,11 +21,11 @@
 CXFA_FFPushButton::CXFA_FFPushButton(CXFA_FFPageView* pPageView,
                                      CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pPageView, pDataAcc),
-      m_pRolloverTextLayout(NULL),
-      m_pDownTextLayout(NULL),
-      m_pDownProvider(NULL),
-      m_pRollProvider(NULL),
-      m_pOldDelegate(NULL) {}
+      m_pRolloverTextLayout(nullptr),
+      m_pDownTextLayout(nullptr),
+      m_pDownProvider(nullptr),
+      m_pRollProvider(nullptr),
+      m_pOldDelegate(nullptr) {}
 CXFA_FFPushButton::~CXFA_FFPushButton() {
   CXFA_FFPushButton::UnloadWidget();
 }
@@ -139,7 +139,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
       CFX_WideString wsRollover;
       FX_BOOL bRichText;
       if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
-        if (m_pRollProvider == NULL) {
+        if (!m_pRollProvider) {
           m_pRollProvider =
               new CXFA_TextProvider(m_pDataAcc, XFA_TEXTPROVIDERTYPE_Rollover);
         }
@@ -147,7 +147,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
       }
       CFX_WideString wsDown;
       if (m_pDataAcc->GetButtonDown(wsDown, bRichText)) {
-        if (m_pDownProvider == NULL) {
+        if (!m_pDownProvider) {
           m_pDownProvider =
               new CXFA_TextProvider(m_pDataAcc, XFA_TEXTPROVIDERTYPE_Down);
         }

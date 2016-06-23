@@ -24,7 +24,7 @@ class CXFA_FFImageEdit : public CXFA_FFField {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void SetFWLRect() override;

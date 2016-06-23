@@ -270,19 +270,19 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Measurement GetMeasure(XFA_ATTRIBUTE eAttr) const;
   FX_BOOL SetObject(XFA_ATTRIBUTE eAttr,
                     void* pData,
-                    XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
+                    XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
   FX_BOOL TryObject(XFA_ATTRIBUTE eAttr, void*& pData);
   void* GetObject(XFA_ATTRIBUTE eAttr) {
     void* pData;
-    return TryObject(eAttr, pData) ? pData : NULL;
+    return TryObject(eAttr, pData) ? pData : nullptr;
   }
   FX_BOOL SetUserData(void* pKey,
                       void* pData,
-                      XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
+                      XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
   FX_BOOL TryUserData(void* pKey, void*& pData, FX_BOOL bProtoAlso = FALSE);
   void* GetUserData(void* pKey, FX_BOOL bProtoAlso = FALSE) {
     void* pData;
-    return TryUserData(pKey, pData, bProtoAlso) ? pData : NULL;
+    return TryUserData(pKey, pData, bProtoAlso) ? pData : nullptr;
   }
   CXFA_Node* GetProperty(int32_t index,
                          XFA_Element eType,
@@ -292,7 +292,7 @@ class CXFA_Node : public CXFA_Object {
                       XFA_Element eType,
                       FX_BOOL bOnlyChild = FALSE);
   int32_t InsertChild(int32_t index, CXFA_Node* pNode);
-  FX_BOOL InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = NULL);
+  FX_BOOL InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = nullptr);
   FX_BOOL RemoveChild(CXFA_Node* pNode, bool bNotify = true);
   CXFA_Node* Clone(FX_BOOL bRecursive);
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
@@ -335,7 +335,7 @@ class CXFA_Node : public CXFA_Object {
   void Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
                                   CFX_WideString wsExpression,
                                   uint32_t dwFlag,
-                                  CXFA_Node* refNode = NULL);
+                                  CXFA_Node* refNode = nullptr);
   void Script_TreeClass_All(CFXJSE_Value* pValue,
                             FX_BOOL bSetting,
                             XFA_ATTRIBUTE eAttribute);
@@ -646,16 +646,17 @@ class CXFA_Node : public CXFA_Object {
   FX_BOOL GetMapModuleValue(void* pKey, void*& pValue);
   void SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue);
   FX_BOOL GetMapModuleString(void* pKey, CFX_WideStringC& wsValue);
-  void SetMapModuleBuffer(void* pKey,
-                          void* pValue,
-                          int32_t iBytes,
-                          XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
+  void SetMapModuleBuffer(
+      void* pKey,
+      void* pValue,
+      int32_t iBytes,
+      XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
   FX_BOOL GetMapModuleBuffer(void* pKey,
                              void*& pValue,
                              int32_t& iBytes,
                              FX_BOOL bProtoAlso = TRUE) const;
   FX_BOOL HasMapModuleKey(void* pKey, FX_BOOL bProtoAlso = FALSE);
-  void RemoveMapModuleKey(void* pKey = NULL);
+  void RemoveMapModuleKey(void* pKey = nullptr);
   void MergeAllData(void* pDstModule, FX_BOOL bUseSrcAttr = TRUE);
   void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
   void MoveBufferMapData(CXFA_Node* pSrcModule,
@@ -746,17 +747,17 @@ class CXFA_AttachNodeList : public CXFA_NodeList {
 class CXFA_TraverseStrategy_XFAContainerNode {
  public:
   static CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode,
-                                  void* pUserData = NULL) {
+                                  void* pUserData = nullptr) {
     return pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild,
                                       XFA_ObjectType::ContainerNode);
   }
   static CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode,
-                                   void* pUserData = NULL) {
+                                   void* pUserData = nullptr) {
     return pTemplateNode->GetNodeItem(XFA_NODEITEM_NextSibling,
                                       XFA_ObjectType::ContainerNode);
   }
   static CXFA_Node* GetParent(CXFA_Node* pTemplateNode,
-                              void* pUserData = NULL) {
+                              void* pUserData = nullptr) {
     return pTemplateNode->GetNodeItem(XFA_NODEITEM_Parent,
                                       XFA_ObjectType::ContainerNode);
   }

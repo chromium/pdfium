@@ -272,7 +272,7 @@ const FX_STR2CPHASH g_FXCPHashTable[] = {
 };
 
 uint16_t GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
-  ASSERT(pStr != NULL);
+  ASSERT(pStr);
   if (iLength < 0) {
     iLength = FXSYS_strlen(pStr);
   }
@@ -370,7 +370,7 @@ uint16_t FX_GetCodePageFromStringW(const FX_WCHAR* pStr, int32_t iLength) {
 }
 
 void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
-  ASSERT(pStr != NULL);
+  ASSERT(pStr);
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pStr);
   }
@@ -392,7 +392,7 @@ void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
 }
 
 void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
-  ASSERT(pBuffer != NULL && iLength > 0);
+  ASSERT(pBuffer && iLength > 0);
   if (sizeof(FX_WCHAR) == 2) {
     return;
   }
@@ -404,7 +404,7 @@ void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
 }
 
 void FX_WCharToUTF16(void* pBuffer, int32_t iLength) {
-  ASSERT(pBuffer != NULL && iLength > 0);
+  ASSERT(pBuffer && iLength > 0);
   if (sizeof(FX_WCHAR) == 2) {
     return;
   }
@@ -430,7 +430,7 @@ int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
                       int32_t* pSrcLen,
                       FX_WCHAR* pDst,
                       int32_t* pDstLen) {
-  if (pSrcLen == NULL || pDstLen == NULL) {
+  if (!pSrcLen || !pDstLen) {
     return -1;
   }
   int32_t iSrcLen = *pSrcLen;
@@ -439,7 +439,7 @@ int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
     return 1;
   }
   int32_t iDstLen = *pDstLen;
-  FX_BOOL bValidDst = (pDst != NULL && iDstLen > 0);
+  FX_BOOL bValidDst = (pDst && iDstLen > 0);
   uint32_t dwCode = 0;
   int32_t iPending = 0;
   int32_t iSrcNum = 0, iDstNum = 0;

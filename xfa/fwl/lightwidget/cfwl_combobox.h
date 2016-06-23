@@ -24,7 +24,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   ~CFWL_ComboBox() override;
 
   static CFWL_ComboBox* Create();
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   int32_t AddString(const CFX_WideStringC& wsText);
   int32_t AddString(const CFX_WideStringC& wsText, CFX_DIBitmap* pIcon);
   bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.

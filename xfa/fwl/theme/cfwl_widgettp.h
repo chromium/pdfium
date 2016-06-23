@@ -147,7 +147,7 @@ class CFWL_WidgetTP {
   void DrawEdge(CFX_Graphics* pGraphics,
                 uint32_t dwStyles,
                 const CFX_RectF* pRect,
-                CFX_Matrix* pMatrix = NULL);
+                CFX_Matrix* pMatrix = nullptr);
   void Draw3DRect(CFX_Graphics* pGraphics,
                   FWLTHEME_EDGE eType,
                   FX_FLOAT fWidth,
@@ -156,7 +156,7 @@ class CFWL_WidgetTP {
                   FX_ARGB cr2,
                   FX_ARGB cr3,
                   FX_ARGB cr4,
-                  CFX_Matrix* pMatrix = NULL);
+                  CFX_Matrix* pMatrix = nullptr);
   void Draw3DCircle(CFX_Graphics* pGraphics,
                     FWLTHEME_EDGE eType,
                     FX_FLOAT fWidth,
@@ -165,17 +165,17 @@ class CFWL_WidgetTP {
                     FX_ARGB cr2,
                     FX_ARGB cr3,
                     FX_ARGB cr4,
-                    CFX_Matrix* pMatrix = NULL);
+                    CFX_Matrix* pMatrix = nullptr);
   void DrawBorder(CFX_Graphics* pGraphics,
                   const CFX_RectF* pRect,
-                  CFX_Matrix* pMatrix = NULL);
+                  CFX_Matrix* pMatrix = nullptr);
   void FillBackground(CFX_Graphics* pGraphics,
                       const CFX_RectF* pRect,
-                      CFX_Matrix* pMatrix = NULL);
+                      CFX_Matrix* pMatrix = nullptr);
   void FillSoildRect(CFX_Graphics* pGraphics,
                      FX_ARGB fillColor,
                      const CFX_RectF* pRect,
-                     CFX_Matrix* pMatrix = NULL);
+                     CFX_Matrix* pMatrix = nullptr);
   void DrawAxialShading(CFX_Graphics* pGraphics,
                         FX_FLOAT fx1,
                         FX_FLOAT fy1,
@@ -185,40 +185,40 @@ class CFWL_WidgetTP {
                         FX_ARGB endColor,
                         CFX_Path* path,
                         int32_t fillMode = FXFILL_WINDING,
-                        CFX_Matrix* pMatrix = NULL);
+                        CFX_Matrix* pMatrix = nullptr);
   void DrawAnnulusRect(CFX_Graphics* pGraphics,
                        FX_ARGB fillColor,
                        const CFX_RectF* pRect,
                        FX_FLOAT fRingWidth = 1,
-                       CFX_Matrix* pMatrix = NULL);
+                       CFX_Matrix* pMatrix = nullptr);
   void DrawAnnulusCircle(CFX_Graphics* pGraphics,
                          FX_ARGB fillColor,
                          const CFX_RectF* pRect,
                          FX_FLOAT fWidth = 1,
-                         CFX_Matrix* pMatrix = NULL);
+                         CFX_Matrix* pMatrix = nullptr);
   void DrawFocus(CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
-                 CFX_Matrix* pMatrix = NULL);
+                 CFX_Matrix* pMatrix = nullptr);
   void DrawArrow(CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  FWLTHEME_DIRECTION eDict,
                  FX_ARGB argbFill,
                  FX_BOOL bPressed,
-                 CFX_Matrix* pMatrix = NULL);
+                 CFX_Matrix* pMatrix = nullptr);
   void DrawArrow(CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  FWLTHEME_DIRECTION eDict,
                  FX_ARGB argSign,
-                 CFX_Matrix* pMatrix = NULL);
+                 CFX_Matrix* pMatrix = nullptr);
   void DrawBtn(CFX_Graphics* pGraphics,
                const CFX_RectF* pRect,
                FWLTHEME_STATE eState,
-               CFX_Matrix* pMatrix = NULL);
+               CFX_Matrix* pMatrix = nullptr);
   void DrawArrowBtn(CFX_Graphics* pGraphics,
                     const CFX_RectF* pRect,
                     FWLTHEME_DIRECTION eDict,
                     FWLTHEME_STATE eState,
-                    CFX_Matrix* pMatrix = NULL);
+                    CFX_Matrix* pMatrix = nullptr);
   uint32_t m_dwRefCount;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   CFGAS_GEFont* m_pFDEFont;

@@ -86,7 +86,7 @@ class CFX_RTFPiece : public CFX_Target {
   ~CFX_RTFPiece() override;
 
   void AppendChar(const CFX_RTFChar& tc) {
-    ASSERT(m_pChars != NULL);
+    ASSERT(m_pChars);
     m_pChars->Add(tc);
     if (m_iWidth < 0) {
       m_iWidth = tc.m_iCharWidth;
@@ -101,15 +101,15 @@ class CFX_RTFPiece : public CFX_Target {
   int32_t GetLength() const { return m_iChars; }
   int32_t GetEndChar() const { return m_iStartChar + m_iChars; }
   CFX_RTFChar& GetChar(int32_t index) {
-    ASSERT(index > -1 && index < m_iChars && m_pChars != NULL);
+    ASSERT(index > -1 && index < m_iChars && m_pChars);
     return *m_pChars->GetDataPtr(m_iStartChar + index);
   }
   CFX_RTFChar* GetCharPtr(int32_t index) const {
-    ASSERT(index > -1 && index < m_iChars && m_pChars != NULL);
+    ASSERT(index > -1 && index < m_iChars && m_pChars);
     return m_pChars->GetDataPtr(m_iStartChar + index);
   }
   void GetString(FX_WCHAR* pText) const {
-    ASSERT(pText != NULL);
+    ASSERT(pText);
     int32_t iEndChar = m_iStartChar + m_iChars;
     CFX_RTFChar* pChar;
     for (int32_t i = m_iStartChar; i < iEndChar; i++) {
@@ -123,7 +123,7 @@ class CFX_RTFPiece : public CFX_Target {
     wsText.ReleaseBuffer(m_iChars);
   }
   void GetWidths(int32_t* pWidths) const {
-    ASSERT(pWidths != NULL);
+    ASSERT(pWidths);
     int32_t iEndChar = m_iStartChar + m_iChars;
     CFX_RTFChar* pChar;
     for (int32_t i = m_iStartChar; i < iEndChar; i++) {
@@ -190,13 +190,11 @@ class CFX_RTFLine {
   int32_t GetLineEnd() const { return m_iStart + m_iWidth; }
   void RemoveAll(FX_BOOL bLeaveMemory = FALSE) {
     CFX_RTFChar* pChar;
-    IFX_Retainable* pUnknown;
     int32_t iCount = m_LineChars.GetSize();
     for (int32_t i = 0; i < iCount; i++) {
       pChar = m_LineChars.GetDataPtr(i);
-      if ((pUnknown = pChar->m_pUserData) != NULL) {
-        pUnknown->Release();
-      }
+      if (pChar->m_pUserData)
+        pChar->m_pUserData->Release();
     }
     m_LineChars.RemoveAll();
     m_LinePieces.RemoveAll(bLeaveMemory);
@@ -249,8 +247,8 @@ class CFX_RTFBreak {
   int32_t GetDisplayPos(const FX_RTFTEXTOBJ* pText,
                         FXTEXT_CHARPOS* pCharPos,
                         FX_BOOL bCharCode = FALSE,
-                        CFX_WideString* pWSForms = NULL,
-                        FX_AdjustCharDisplayPos pAdjustPos = NULL) const;
+                        CFX_WideString* pWSForms = nullptr,
+                        FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
   int32_t GetCharRects(const FX_RTFTEXTOBJ* pText,
                        CFX_RectFArray& rtArray,
                        FX_BOOL bCharBBox = FALSE) const;

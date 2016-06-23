@@ -35,7 +35,7 @@ class CFWL_PictureBoxImp : public CFWL_WidgetImp {
 
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
-                    const CFX_Matrix* pMatrix = NULL);
+                    const CFX_Matrix* pMatrix = nullptr);
 
   FX_BOOL VStyle(FX_BOOL dwStyle);
   CFX_RectF m_rtClient;
@@ -50,7 +50,7 @@ class CFWL_PictureBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_PictureBoxImpDelegate(CFWL_PictureBoxImp* pOwner);
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   CFWL_PictureBoxImp* m_pOwner;

@@ -54,11 +54,11 @@ void Base64EncodePiece(const FX_BASE64DATA& src,
 }
 
 int32_t Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, FX_CHAR* pDst) {
-  ASSERT(pSrc != NULL);
+  ASSERT(pSrc);
   if (iSrcLen < 1) {
     return 0;
   }
-  if (pDst == NULL) {
+  if (!pDst) {
     int32_t iDstLen = iSrcLen / 3 * 4;
     if ((iSrcLen % 3) != 0) {
       iDstLen += 4;
@@ -103,7 +103,7 @@ CXFA_SAXContext* CXFA_SAXReaderHandler::OnTagEnter(
   UpdateChecksum(TRUE);
   if (eType != CFX_SAXItem::Type::Tag &&
       eType != CFX_SAXItem::Type::Instruction) {
-    return NULL;
+    return nullptr;
   }
   m_SAXContext.m_eNode = eType;
   CFX_ByteTextBuf& textBuf = m_SAXContext.m_TextBuf;
@@ -242,7 +242,7 @@ FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_FileRead* pSrcFile,
               CFX_SaxParseMode_NotConvert_sharp) < 0) {
     return FALSE;
   }
-  return m_pSAXReader->ContinueParse(NULL) > 99;
+  return m_pSAXReader->ContinueParse(nullptr) > 99;
 }
 
 void CXFA_ChecksumContext::FinishChecksum() {
@@ -252,12 +252,12 @@ void CXFA_ChecksumContext::FinishChecksum() {
     uint8_t digest[20];
     FXSYS_memset(digest, 0, 20);
     CRYPT_SHA1Finish(m_pByteContext, digest);
-    int32_t nLen = Base64EncodeA(digest, 20, NULL);
+    int32_t nLen = Base64EncodeA(digest, 20, nullptr);
     FX_CHAR* pBuffer = m_bsChecksum.GetBuffer(nLen);
     Base64EncodeA(digest, 20, pBuffer);
     m_bsChecksum.ReleaseBuffer(nLen);
     FX_Free(m_pByteContext);
-    m_pByteContext = NULL;
+    m_pByteContext = nullptr;
   }
 }
 

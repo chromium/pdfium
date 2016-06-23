@@ -17,7 +17,7 @@ class CFWL_CheckBox : public CFWL_Widget {
 
   static CFWL_CheckBox* Create();
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
   FWL_Error SetBoxSize(FX_FLOAT fHeight);
   int32_t GetCheckState();

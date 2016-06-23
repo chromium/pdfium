@@ -397,8 +397,8 @@ IFWL_Widget* CFWL_FormImp::DoModal() {
   pDriver->PopNoteLoop();
 #endif
   delete m_pNoteLoop;
-  m_pNoteLoop = NULL;
-  return NULL;
+  m_pNoteLoop = nullptr;
+  return nullptr;
 }
 IFWL_Widget* CFWL_FormImp::DoModal(uint32_t& dwCommandID) {
   return DoModal();
@@ -499,7 +499,7 @@ CFWL_SysBtn* CFWL_FormImp::GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pCaptionBox && m_pCaptionBox->m_rtBtn.Contains(fx, fy)) {
     return m_pCaptionBox;
   }
-  return NULL;
+  return nullptr;
 }
 CFWL_SysBtn* CFWL_FormImp::GetSysBtnByState(uint32_t dwState) {
   if (m_pCloseBox && (m_pCloseBox->m_dwState & dwState)) {
@@ -514,7 +514,7 @@ CFWL_SysBtn* CFWL_FormImp::GetSysBtnByState(uint32_t dwState) {
   if (m_pCaptionBox && (m_pCaptionBox->m_dwState & dwState)) {
     return m_pCaptionBox;
   }
-  return NULL;
+  return nullptr;
 }
 CFWL_SysBtn* CFWL_FormImp::GetSysBtnByIndex(int32_t nIndex) {
   if (nIndex < 0)
@@ -801,7 +801,7 @@ void CFWL_FormImp::DoWidthLimit(FX_FLOAT& fLeft,
                                 FX_BOOL bLeft) {
   FX_FLOAT fx = fCurX;
   FX_FLOAT fy = 0;
-  TransformTo(NULL, fx, fy);
+  TransformTo(nullptr, fx, fy);
   FX_FLOAT fTemp =
       bLeft ? (fWidth - fx + fLeft + fSpace) : (fx - fLeft + fSpace);
   if (fTemp >= fLimitMin && fTemp <= fLimitMax) {
@@ -826,7 +826,7 @@ void CFWL_FormImp::DoHeightLimit(FX_FLOAT& fTop,
                                  FX_BOOL bTop) {
   FX_FLOAT fx = 0;
   FX_FLOAT fy = fCurY;
-  TransformTo(NULL, fx, fy);
+  TransformTo(nullptr, fx, fy);
   FX_FLOAT fTemp = bTop ? (fHeight - fy + fTop + fSpace) : (fy - fTop + fSpace);
   if (fTemp >= fLimitMin && fTemp <= fLimitMax) {
     fHeight = fTemp;

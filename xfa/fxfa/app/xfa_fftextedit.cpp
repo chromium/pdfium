@@ -26,7 +26,7 @@
 
 CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_FFPageView* pPageView,
                                  CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(NULL) {}
+    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
 CXFA_FFTextEdit::~CXFA_FFTextEdit() {
   if (m_pNormalWidget) {
     IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
@@ -159,14 +159,14 @@ FX_BOOL CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   CXFA_FFWidget::OnSetFocus(pOldWidget);
   CFWL_MsgSetFocus ms;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   return TRUE;
 }
 FX_BOOL CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   CFWL_MsgKillFocus ms;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
   SetEditScrollOffset();
@@ -782,7 +782,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
   CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)m_pNormalWidget;
   pDateTime->SetEditText(wsDate);
   pDateTime->Update();
-  GetDoc()->GetDocProvider()->SetFocusWidget(GetDoc(), NULL);
+  GetDoc()->GetDocProvider()->SetFocusWidget(GetDoc(), nullptr);
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pDataAcc;

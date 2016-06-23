@@ -94,10 +94,10 @@ class CFWL_FormImp : public CFWL_WidgetImp {
   FX_FLOAT GetCaptionHeight();
   void DrawCaptionText(CFX_Graphics* pGs,
                        IFWL_ThemeProvider* pTheme,
-                       const CFX_Matrix* pMatrix = NULL);
+                       const CFX_Matrix* pMatrix = nullptr);
   void DrawIconImage(CFX_Graphics* pGs,
                      IFWL_ThemeProvider* pTheme,
-                     const CFX_Matrix* pMatrix = NULL);
+                     const CFX_Matrix* pMatrix = nullptr);
   void GetEdgeRect(CFX_RectF& rtEdge);
   void SetWorkAreaRect();
   void SetCursor(FX_FLOAT fx, FX_FLOAT fy);
@@ -162,7 +162,7 @@ class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void OnLButtonDown(CFWL_MsgMouse* pMsg);

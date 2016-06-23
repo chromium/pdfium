@@ -20,7 +20,7 @@ class CFWL_Edit : public CFWL_Widget {
   ~CFWL_Edit() override;
 
   static CFWL_Edit* Create();
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   FWL_Error SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;
   FWL_Error GetText(CFX_WideString& wsText,

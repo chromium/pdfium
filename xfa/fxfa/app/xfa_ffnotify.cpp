@@ -221,7 +221,7 @@ int32_t CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,
   }
   return pDocView->ExecEventActivityByDeepFirst(
       pFormNode, eEventType, bIsFormReady, bRecursive,
-      pExclude ? pExclude->GetNode() : NULL);
+      pExclude ? pExclude->GetNode() : nullptr);
 }
 void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
@@ -247,7 +247,7 @@ IXFA_AppProvider* CXFA_FFNotify::GetAppProvider() {
 }
 CXFA_FFWidgetHandler* CXFA_FFNotify::GetWidgetHandler() {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
-  return pDocView ? pDocView->GetWidgetHandler() : NULL;
+  return pDocView ? pDocView->GetWidgetHandler() : nullptr;
 }
 CXFA_FFWidget* CXFA_FFNotify::GetHWidget(CXFA_LayoutItem* pLayoutItem) {
   return XFA_GetWidgetFromLayoutItem(pLayoutItem);
@@ -299,10 +299,10 @@ void CXFA_FFNotify::RunSubformIndexChange(CXFA_Node* pSubformNode) {
 CXFA_Node* CXFA_FFNotify::GetFocusWidgetNode() {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView) {
-    return NULL;
+    return nullptr;
   }
   CXFA_WidgetAcc* pAcc = pDocView->GetFocusWidgetAcc();
-  return pAcc ? pAcc->GetNode() : NULL;
+  return pAcc ? pAcc->GetNode() : nullptr;
 }
 void CXFA_FFNotify::SetFocusWidgetNode(CXFA_Node* pNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();

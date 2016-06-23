@@ -48,7 +48,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
     XFA_LAYOUTMODEL_HWXY layoutModel) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 3) {
-    const FX_WCHAR* methodName = NULL;
+    const FX_WCHAR* methodName = nullptr;
     switch (layoutModel) {
       case XFA_LAYOUTMODEL_H:
         methodName = L"h";
@@ -66,7 +66,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, methodName);
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   CFX_WideString wsUnit(L"pt");
   int32_t iIndex = 0;
   if (iLength >= 1) {
@@ -178,7 +178,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageSpan(
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"pageSpan");
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
   }
@@ -424,7 +424,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageInBatch(
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"absPageInBatch");
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
   }
@@ -457,7 +457,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetInBatch(
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sheetInBatch");
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
   }
@@ -511,7 +511,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageImp(
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, methodName);
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
   }

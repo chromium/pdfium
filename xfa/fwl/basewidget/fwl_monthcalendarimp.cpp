@@ -235,7 +235,7 @@ FWL_Error CFWL_MonthCalendarImp::DrawWidget(CFX_Graphics* pGraphics,
                                             const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return FWL_Error::Indefinite;
-  if (m_pProperties->m_pThemeProvider == NULL) {
+  if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;

@@ -57,14 +57,14 @@ class CFWL_Widget {
   FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
   FWL_Error SetMatrix(const CFX_Matrix& matrix);
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL);
+                       const CFX_Matrix* pMatrix = nullptr);
   IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
-  FWL_Error Repaint(const CFX_RectF* pRect = NULL);
+  FWL_Error Repaint(const CFX_RectF* pRect = nullptr);
   FWL_Error SetFocus(FX_BOOL bFocus);
   FWL_Error SetGrab(FX_BOOL bSet);
   CFWL_Widget();
 
-  void RegisterEventTarget(CFWL_Widget* pEventSource = NULL,
+  void RegisterEventTarget(CFWL_Widget* pEventSource = nullptr,
                            uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   void DispatchEvent(CFWL_Event* pEvent);
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
@@ -76,7 +76,7 @@ class CFWL_Widget {
   CFWL_WidgetProperties* m_pProperties;
 
  protected:
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
 };
 
 #endif  // XFA_FWL_LIGHTWIDGET_CFWL_WIDGET_H_

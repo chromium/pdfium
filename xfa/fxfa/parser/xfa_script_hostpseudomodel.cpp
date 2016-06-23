@@ -305,7 +305,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
   if (!pNotify) {
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   if (iLength >= 1) {
     std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
     if (pValue->IsObject()) {
@@ -435,7 +435,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(
   }
   int32_t iStart = 0;
   CFX_WideString wsName;
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   int32_t iExpLength = wsExpression.GetLength();
   while (iStart < iExpLength) {
     iStart = XFA_FilterName(wsExpression.AsStringC(), iStart, wsName);
@@ -496,7 +496,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
   if (!pNotify) {
     return;
   }
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   if (iLength >= 1) {
     std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
     if (pValue->IsObject()) {
@@ -586,7 +586,7 @@ FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(
     CFXJSE_Arguments* pArguments,
     int32_t iArgIndex,
     CFX_WideString& wsValue) {
-  if (pArguments == NULL || iArgIndex < 0) {
+  if (!pArguments || iArgIndex < 0) {
     return FALSE;
   }
   FX_BOOL bIsJsType = FALSE;

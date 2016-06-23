@@ -478,7 +478,7 @@ CFX_WideString CFX_FormatString::GetLocaleName(
 IFX_Locale* CFX_FormatString::GetTextFormat(const CFX_WideString& wsPattern,
                                             const CFX_WideStringC& wsCategory,
                                             CFX_WideString& wsPurgePattern) {
-  IFX_Locale* pLocale = NULL;
+  IFX_Locale* pLocale = nullptr;
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
   const FX_WCHAR* pStr = wsPattern.c_str();
@@ -535,7 +535,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
                                                uint32_t& dwStyle,
                                                CFX_WideString& wsPurgePattern) {
   dwStyle = 0;
-  IFX_Locale* pLocale = NULL;
+  IFX_Locale* pLocale = nullptr;
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
   const FX_WCHAR* pStr = wsPattern.c_str();
@@ -591,7 +591,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
           if (!pLocale) {
             pLocale = m_pLocaleMgr->GetDefLocale();
           }
-          ASSERT(pLocale != NULL);
+          ASSERT(pLocale);
           pLocale->GetNumPattern(eSubCategory, wsSubCategory);
           iDotIndex = wsSubCategory.Find('.');
           if (iDotIndex > 0) {
@@ -1922,7 +1922,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
     IFX_Locale*& pLocale,
     CFX_WideString& wsDatePattern,
     CFX_WideString& wsTimePattern) {
-  pLocale = NULL;
+  pLocale = nullptr;
   CFX_WideString wsTempPattern;
   FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
   int32_t ccf = 0;
@@ -2001,7 +2001,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
           if (!pLocale) {
             pLocale = m_pLocaleMgr->GetDefLocale();
           }
-          ASSERT(pLocale != NULL);
+          ASSERT(pLocale);
           switch (eCategory) {
             case FX_LOCALECATEGORY_Date:
               pLocale->GetDatePattern(eSubCategory, wsDatePattern);
@@ -2476,7 +2476,7 @@ FX_BOOL CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
     return FALSE;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
-  IFX_Locale* pLocale = NULL;
+  IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
   if (!pLocale) {
@@ -3991,10 +3991,10 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
     return FALSE;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
-  IFX_Locale* pLocale = NULL;
+  IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
-  if (pLocale == NULL || eCategory == FX_DATETIMETYPE_Unknown) {
+  if (!pLocale || eCategory == FX_DATETIMETYPE_Unknown) {
     return FALSE;
   }
   CFX_Unitime dt(0);
@@ -4023,7 +4023,7 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
     return FALSE;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
-  IFX_Locale* pLocale = NULL;
+  IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
   if (!pLocale) {
@@ -4074,7 +4074,7 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_Unitime& dt,
     return FALSE;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
-  IFX_Locale* pLocale = NULL;
+  IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
   if (!pLocale) {

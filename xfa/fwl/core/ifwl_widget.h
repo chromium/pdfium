@@ -93,7 +93,7 @@ class IFWL_Widget {
   FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
   FWL_Error SetMatrix(const CFX_Matrix& matrix);
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL);
+                       const CFX_Matrix* pMatrix = nullptr);
   IFWL_ThemeProvider* GetThemeProvider();
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   FWL_Error SetDataProvider(IFWL_DataProvider* pDataProvider);

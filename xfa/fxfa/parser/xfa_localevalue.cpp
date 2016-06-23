@@ -34,12 +34,12 @@ static const FX_DOUBLE fraction_scales[] = {0.1,
 CXFA_LocaleValue::CXFA_LocaleValue() {
   m_dwType = XFA_VT_NULL;
   m_bValid = TRUE;
-  m_pLocaleMgr = NULL;
+  m_pLocaleMgr = nullptr;
 }
 CXFA_LocaleValue::CXFA_LocaleValue(const CXFA_LocaleValue& value) {
   m_dwType = XFA_VT_NULL;
   m_bValid = TRUE;
-  m_pLocaleMgr = NULL;
+  m_pLocaleMgr = nullptr;
   *this = value;
 }
 CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,

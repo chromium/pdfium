@@ -76,7 +76,7 @@ CXFA_WidgetData::CXFA_WidgetData(CXFA_Node* pNode)
     : CXFA_Data(pNode),
       m_bIsNull(TRUE),
       m_bPreNull(TRUE),
-      m_pUiChildNode(NULL),
+      m_pUiChildNode(nullptr),
       m_eUIType(XFA_Element::Unknown) {}
 
 CXFA_Node* CXFA_WidgetData::GetUIChild() {
@@ -441,12 +441,12 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
 CXFA_Node* CXFA_WidgetData::GetExclGroupNode() {
   CXFA_Node* pExcl = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_Parent));
   if (!pExcl || pExcl->GetElementType() != XFA_Element::ExclGroup)
-    return NULL;
+    return nullptr;
   return pExcl;
 }
 
 CXFA_Node* CXFA_WidgetData::GetSelectedMember() {
-  CXFA_Node* pSelectedMember = NULL;
+  CXFA_Node* pSelectedMember = nullptr;
   CFX_WideString wsState = GetRawValue();
   if (wsState.IsEmpty())
     return pSelectedMember;
@@ -516,7 +516,7 @@ void CXFA_WidgetData::SetSelectedMemberByValue(const CFX_WideStringC& wsValue,
 CXFA_Node* CXFA_WidgetData::GetExclGroupFirstMember() {
   CXFA_Node* pExcl = GetNode();
   if (!pExcl)
-    return NULL;
+    return nullptr;
 
   CXFA_Node* pNode = pExcl->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pNode) {
@@ -525,11 +525,11 @@ CXFA_Node* CXFA_WidgetData::GetExclGroupFirstMember() {
 
     pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
-  return NULL;
+  return nullptr;
 }
 CXFA_Node* CXFA_WidgetData::GetExclGroupNextMember(CXFA_Node* pNode) {
   if (!pNode)
-    return NULL;
+    return nullptr;
 
   CXFA_Node* pNodeField = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
   while (pNodeField) {
@@ -538,7 +538,7 @@ CXFA_Node* CXFA_WidgetData::GetExclGroupNextMember(CXFA_Node* pNode) {
 
     pNodeField = pNodeField->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
-  return NULL;
+  return nullptr;
 }
 
 int32_t CXFA_WidgetData::GetChoiceListCommitOn() {
@@ -573,7 +573,7 @@ FX_BOOL CXFA_WidgetData::IsListBox() {
 
 int32_t CXFA_WidgetData::CountChoiceListItems(FX_BOOL bSaveValue) {
   CXFA_NodeArray pItems;
-  CXFA_Node* pItem = NULL;
+  CXFA_Node* pItem = nullptr;
   int32_t iCount = 0;
   CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -639,7 +639,7 @@ FX_BOOL CXFA_WidgetData::GetChoiceListItem(CFX_WideString& wsText,
 void CXFA_WidgetData::GetChoiceListItems(CFX_WideStringArray& wsTextArray,
                                          FX_BOOL bSaveValue) {
   CXFA_NodeArray pItems;
-  CXFA_Node* pItem = NULL;
+  CXFA_Node* pItem = nullptr;
   int32_t iCount = 0;
   CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -943,7 +943,7 @@ void CXFA_WidgetData::GetItemLabel(const CFX_WideStringC& wsValue,
   } else {
     CXFA_Node* pLabelItems = listitems[0];
     FX_BOOL bSave = pLabelItems->GetBoolean(XFA_ATTRIBUTE_Save);
-    CXFA_Node* pSaveItems = NULL;
+    CXFA_Node* pSaveItems = nullptr;
     if (bSave) {
       pSaveItems = pLabelItems;
       pLabelItems = listitems[1];
@@ -989,7 +989,7 @@ void CXFA_WidgetData::GetItemValue(const CFX_WideStringC& wsLabel,
   } else {
     CXFA_Node* pLabelItems = listitems[0];
     FX_BOOL bSave = pLabelItems->GetBoolean(XFA_ATTRIBUTE_Save);
-    CXFA_Node* pSaveItems = NULL;
+    CXFA_Node* pSaveItems = nullptr;
     if (bSave) {
       pSaveItems = pLabelItems;
       pLabelItems = listitems[1];
@@ -1462,22 +1462,15 @@ FX_BOOL CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
 }
 
 IFX_Locale* CXFA_WidgetData::GetLocal() {
-  IFX_Locale* pLocale = NULL;
   if (!m_pNode)
-    return pLocale;
+    return nullptr;
 
-  FX_BOOL bLocale = FALSE;
   CFX_WideString wsLocaleName;
-  bLocale = m_pNode->GetLocaleName(wsLocaleName);
-  if (bLocale) {
-    if (wsLocaleName == FX_WSTRC(L"ambient")) {
-      pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
-    } else {
-      pLocale =
-          m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
-    }
-  }
-  return pLocale;
+  if (!m_pNode->GetLocaleName(wsLocaleName))
+    return nullptr;
+  if (wsLocaleName == FX_WSTRC(L"ambient"))
+    return m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
+  return m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
 }
 
 FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,

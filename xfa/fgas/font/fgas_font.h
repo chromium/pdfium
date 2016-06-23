@@ -88,25 +88,25 @@ class IFGAS_FontMgr {
   virtual CFGAS_GEFont* GetDefFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetDefFontByCharset(
       uint8_t nCharset,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetDefFontByUnicode(
       FX_WCHAR wUnicode,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetDefFontByLanguage(
       uint16_t wLanguage,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
                                  uint32_t dwFontStyles,
                                  uint16_t wCodePage = 0xFFFF) = 0;
   virtual CFGAS_GEFont* LoadFont(const uint8_t* pBuffer, int32_t iLength) = 0;
   virtual CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
-                                 const FX_WCHAR* pszFontAlias = NULL,
+                                 const FX_WCHAR* pszFontAlias = nullptr,
                                  uint32_t dwFontStyles = 0,
                                  uint16_t wCodePage = 0,
                                  FX_BOOL bSaveStream = FALSE) = 0;
@@ -127,23 +127,23 @@ class IFGAS_FontMgr {
   virtual CFGAS_GEFont* GetDefFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetDefFontByCharset(
       uint8_t nCharset,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetDefFontByUnicode(
       FX_WCHAR wUnicode,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetDefFontByLanguage(
       uint16_t wLanguage,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   inline CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage) {
@@ -152,15 +152,15 @@ class IFGAS_FontMgr {
   virtual CFGAS_GEFont* GetFontByCharset(
       uint8_t nCharset,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetFontByUnicode(
       FX_WCHAR wUnicode,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual CFGAS_GEFont* GetFontByLanguage(
       uint16_t wLanguage,
       uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
+      const FX_WCHAR* pszFontFamily = nullptr) = 0;
   virtual void ClearFontCache() = 0;
   virtual void RemoveFont(CFGAS_GEFont* pFont) = 0;
 };

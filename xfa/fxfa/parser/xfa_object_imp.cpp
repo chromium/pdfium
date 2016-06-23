@@ -3977,7 +3977,7 @@ FX_BOOL CXFA_Node::SetObject(XFA_ATTRIBUTE eAttr,
 FX_BOOL CXFA_Node::TryObject(XFA_ATTRIBUTE eAttr, void*& pData) {
   void* pKey = XFA_GetMapKey_Element(GetElementType(), eAttr);
   pData = GetUserData(pKey);
-  return pData != nullptr;
+  return !!pData;
 }
 FX_BOOL CXFA_Node::SetValue(XFA_ATTRIBUTE eAttr,
                             XFA_ATTRIBUTETYPE eType,
@@ -5076,8 +5076,8 @@ CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
     : CXFA_Object(pThisNode->GetDocument(),
                   XFA_ObjectType::VariablesThis,
                   XFA_Element::Unknown),
-      m_pThisNode(NULL),
-      m_pScriptNode(NULL) {
+      m_pThisNode(nullptr),
+      m_pScriptNode(nullptr) {
   m_pThisNode = pThisNode;
   m_pScriptNode = pScriptNode;
 }

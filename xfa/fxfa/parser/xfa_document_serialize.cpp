@@ -31,7 +31,7 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
     pDataDocumentParser->Release();
     return FALSE;
   }
-  if (pDataDocumentParser->DoParse(NULL) < XFA_PARSESTATUS_Done) {
+  if (pDataDocumentParser->DoParse(nullptr) < XFA_PARSESTATUS_Done) {
     pDataDocumentParser->Release();
     return FALSE;
   }
@@ -477,7 +477,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite,
   IFX_Stream* pStream = IFX_Stream::CreateStream(
       pWrite,
       FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
-  if (pStream == NULL) {
+  if (!pStream) {
     return FALSE;
   }
   pStream->SetCodePage(FX_CODEPAGE_UTF8);

@@ -11,7 +11,7 @@
 
 FX_FLOAT FX_wcstof(const FX_WCHAR* pwsStr,
                    int32_t iLength = -1,
-                   int32_t* pUsedLen = NULL);
+                   int32_t* pUsedLen = nullptr);
 int32_t FX_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count);
 
 #endif  // XFA_FGAS_CRT_FGAS_SYSTEM_H_

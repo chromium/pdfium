@@ -199,7 +199,7 @@ void CFWL_ComboEditImp::SetComboBoxFocus(FX_BOOL bSet) {
 CFWL_ComboListImp::CFWL_ComboListImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_ListBoxImp(properties, pOuter), m_bNotifyOwner(TRUE) {
-  ASSERT(pOuter != NULL);
+  ASSERT(pOuter);
 }
 FWL_Error CFWL_ComboListImp::Initialize() {
   if (CFWL_ListBoxImp::Initialize() != FWL_Error::Succeeded)
@@ -303,7 +303,7 @@ void CFWL_ComboListImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         pMsg->m_fx -= rect.left;
         pMsg->m_fy -= rect.top;
         IFWL_WidgetDelegate* pDelegate =
-            m_pOwner->m_pVertScrollBar->SetDelegate(NULL);
+            m_pOwner->m_pVertScrollBar->SetDelegate(nullptr);
         pDelegate->OnProcessMessage(pMsg);
         return;
       }
@@ -472,7 +472,7 @@ void CFWL_ComboListImpDelegate::OnDropListKeyDown(CFWL_MsgKey* pKey) {
 CFWL_ComboBoxImp::CFWL_ComboBoxImp(const CFWL_WidgetImpProperties& properties,
                                    IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
-      m_pForm(NULL),
+      m_pForm(nullptr),
       m_bLButtonDown(FALSE),
       m_iCurSel(-1),
       m_iBtnState(CFWL_PartState_Normal),
@@ -587,7 +587,7 @@ FWL_Error CFWL_ComboBoxImp::Update() {
   if (bDropDown && m_pEdit) {
     ReSetEditAlignment();
   }
-  if (m_pProperties->m_pThemeProvider == NULL) {
+  if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   Layout();
@@ -638,7 +638,7 @@ FWL_Error CFWL_ComboBoxImp::DrawWidget(CFX_Graphics* pGraphics,
               ->m_pProperties->m_pDataProvider);
       void* p = pData->GetItemData(m_pListBox.get(),
                                    pData->GetItem(m_pListBox.get(), m_iCurSel));
-      if (p != NULL) {
+      if (p) {
         param.m_pData = p;
       }
     }
@@ -871,14 +871,14 @@ FWL_Error CFWL_ComboBoxImp::GetBBox(CFX_RectF& rect) {
   }
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_ComboBoxImp::EditModifyStylesEx(uint32_t dwStylesExAdded,
                                                uint32_t dwStylesExRemoved) {
-  if (m_pEdit != NULL) {
-    return m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
-  } else {
+  if (!m_pEdit)
     return FWL_Error::ParameterInvalid;
-  }
+  return m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
+
 FX_FLOAT CFWL_ComboBoxImp::GetListHeight() {
   return static_cast<IFWL_ComboBoxDP*>(m_pProperties->m_pDataProvider)
       ->GetListHeight(m_pInterface);
@@ -938,7 +938,7 @@ void CFWL_ComboBoxImp::ShowDropList(FX_BOOL bActivate) {
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListDrag) {
       FX_FLOAT fx = 0;
       FX_FLOAT fy = m_rtClient.top + m_rtClient.height / 2;
-      TransformTo(NULL, fx, fy);
+      TransformTo(nullptr, fx, fy);
       m_bUpFormHandler = fy > m_rtProxy.top;
       if (m_bUpFormHandler) {
         m_rtHandler.Set(0, 0, m_rtList.width, m_fComboFormHandler);
@@ -1598,7 +1598,7 @@ void CFWL_ComboBoxImpDelegate::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
   }
   FX_BOOL bDropDown = m_pOwner->IsDropDownStyle();
   if (bDropDown) {
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
     pDelegate->OnProcessMessage(pMsg);
   }
 }
@@ -1649,7 +1649,7 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
                            pKey->m_dwKeyCode == FWL_VKEY_Escape;
         if (bListKey) {
           IFWL_WidgetDelegate* pDelegate =
-              m_pOwner->m_pListBox->SetDelegate(NULL);
+              m_pOwner->m_pListBox->SetDelegate(nullptr);
           pDelegate->OnProcessMessage(pMessage);
           break;
         }
@@ -1688,17 +1688,17 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
     if ((m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
       CFWL_MsgSetFocus msg;
       msg.m_pDstTarget = m_pOwner->m_pEdit.get();
-      msg.m_pSrcTarget = NULL;
-      IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+      msg.m_pSrcTarget = nullptr;
+      IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
       pDelegate->OnProcessMessage(&msg);
     }
   } else {
     m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
     m_pOwner->DisForm_ShowDropList(FALSE);
     CFWL_MsgKillFocus msg;
-    msg.m_pDstTarget = NULL;
+    msg.m_pDstTarget = nullptr;
     msg.m_pSrcTarget = m_pOwner->m_pEdit.get();
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
     pDelegate->OnProcessMessage(&msg);
   }
 }
@@ -1743,7 +1743,7 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnKey(CFWL_MsgKey* pMsg) {
     return;
   }
   if (m_pOwner->m_pEdit) {
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
     pDelegate->OnProcessMessage(pMsg);
   }
 }
@@ -1852,7 +1852,7 @@ void CFWL_ComboProxyImpDelegate::OnDeactive(CFWL_MsgDeactivate* pMsg) {
 void CFWL_ComboProxyImpDelegate::OnFocusChanged(CFWL_MsgKillFocus* pMsg,
                                                 FX_BOOL bSet) {
   if (!bSet) {
-    if (pMsg->m_pSetFocus == NULL) {
+    if (!pMsg->m_pSetFocus) {
       m_pComboBox->ShowDropList(FALSE);
     }
   }

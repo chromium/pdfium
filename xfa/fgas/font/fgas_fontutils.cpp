@@ -149,5 +149,5 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(FX_WCHAR wUnicode) {
       return &usb;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }

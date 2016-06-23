@@ -54,14 +54,14 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
   void DrawTrack(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  FX_BOOL bLower = TRUE,
-                 const CFX_Matrix* pMatrix = NULL);
+                 const CFX_Matrix* pMatrix = nullptr);
   void DrawArrowBtn(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     FX_BOOL bMinBtn = TRUE,
-                    const CFX_Matrix* pMatrix = NULL);
+                    const CFX_Matrix* pMatrix = nullptr);
   void DrawThumb(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
-                 const CFX_Matrix* pMatrix = NULL);
+                 const CFX_Matrix* pMatrix = nullptr);
   void Layout();
   void CalcButtonLen();
   void CalcMinButtonRect(CFX_RectF& rect);
@@ -111,7 +111,7 @@ class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp* pOwner);
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);

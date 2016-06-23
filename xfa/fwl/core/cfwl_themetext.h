@@ -13,7 +13,7 @@
 
 class CFWL_ThemeText : public CFWL_ThemePart {
  public:
-  CFWL_ThemeText() : m_pGraphics(NULL) {}
+  CFWL_ThemeText() : m_pGraphics(nullptr) {}
   CFX_WideString m_wsText;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;

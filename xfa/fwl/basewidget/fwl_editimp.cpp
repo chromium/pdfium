@@ -203,7 +203,7 @@ CFWL_EditImp::CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
       m_fVAlignOffset(0.0f),
       m_fScrollOffsetX(0.0f),
       m_fScrollOffsetY(0.0f),
-      m_pEdtEngine(NULL),
+      m_pEdtEngine(nullptr),
       m_bLButtonDown(FALSE),
       m_nSelStart(0),
       m_nLimit(-1),
@@ -489,7 +489,7 @@ void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,
     pGraphics->SetClipRect(rtClip);
     pGraphics->SetStrokeColor(&crLine);
     pGraphics->SetLineWidth(0);
-    pGraphics->StrokePath(&pathSpell, NULL);
+    pGraphics->StrokePath(&pathSpell, nullptr);
   }
   pGraphics->RestoreGraphState();
 }
@@ -1364,13 +1364,13 @@ IFWL_ScrollBar* CFWL_EditImp::UpdateScroll() {
       m_pVertScrollBar &&
       ((m_pVertScrollBar->GetStates() & FWL_WGTSTATE_Invisible) == 0);
   if (!bShowHorz && !bShowVert) {
-    return NULL;
+    return nullptr;
   }
   IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
   if (!pPage)
-    return NULL;
+    return nullptr;
   const CFX_RectF& rtFDE = pPage->GetContentsBox();
-  IFWL_ScrollBar* pRepaint = NULL;
+  IFWL_ScrollBar* pRepaint = nullptr;
   if (bShowHorz) {
     CFX_RectF rtScroll;
     m_pHorzScrollBar->GetWidgetRect(rtScroll);
@@ -1551,7 +1551,7 @@ void CFWL_EditImp::LayoutScrollBar() {
       0) {
     return;
   }
-  FX_FLOAT* pfWidth = NULL;
+  FX_FLOAT* pfWidth = nullptr;
   FX_BOOL bShowVertScrollbar = IsShowScrollBar(TRUE);
   FX_BOOL bShowHorzScrollbar = IsShowScrollBar(FALSE);
   if (bShowVertScrollbar) {

@@ -126,9 +126,9 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
     }
   }
   FXTEXT_CHARPOS* pCP = (FXTEXT_CHARPOS*)pCharPos;
-  CFGAS_GEFont* pCurFont = NULL;
-  CFGAS_GEFont* pSTFont = NULL;
-  FXTEXT_CHARPOS* pCurCP = NULL;
+  CFGAS_GEFont* pCurFont = nullptr;
+  CFGAS_GEFont* pSTFont = nullptr;
+  FXTEXT_CHARPOS* pCurCP = nullptr;
   int32_t iCurCount = 0;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_

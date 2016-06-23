@@ -32,13 +32,13 @@ class CXFA_ScriptContext {
   FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
                     const CFX_WideStringC& wsScript,
                     CFXJSE_Value* pRetValue,
-                    CXFA_Object* pThisObject = NULL);
+                    CXFA_Object* pThisObject = nullptr);
 
   int32_t ResolveObjects(CXFA_Object* refNode,
                          const CFX_WideStringC& wsExpression,
                          XFA_RESOLVENODE_RS& resolveNodeRS,
                          uint32_t dwStyles = XFA_RESOLVENODE_Children,
-                         CXFA_Node* bindNode = NULL);
+                         CXFA_Node* bindNode = nullptr);
   CFXJSE_Value* GetJSValueFromMap(CXFA_Object* pObject);
   void AddToCacheList(std::unique_ptr<CXFA_NodeList> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject; }

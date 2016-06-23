@@ -643,7 +643,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
     if (nNodes < 1) {
       if (dwStyles & XFA_RESOLVENODE_CreateNode) {
         bNextCreate = TRUE;
-        if (m_ResolveProcessor->GetNodeHelper()->m_pCreateParent == nullptr) {
+        if (!m_ResolveProcessor->GetNodeHelper()->m_pCreateParent) {
           m_ResolveProcessor->GetNodeHelper()->m_pCreateParent =
               ToNode(rndFind.m_CurNode);
           m_ResolveProcessor->GetNodeHelper()->m_iCreateCount = 1;

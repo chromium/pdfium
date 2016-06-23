@@ -138,7 +138,7 @@ CFX_WideString CXFA_XMLLocale::GetCalendarSymbol(const CFX_ByteStringC& symbol,
 void CXFA_XMLLocale::GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                     CFX_WideString& wsPattern) const {
   CXML_Element* pElement = m_pLocaleData->GetElement("", "datePatterns");
-  if (pElement == NULL) {
+  if (!pElement) {
     return;
   }
   CFX_WideString wsName;
@@ -162,7 +162,7 @@ void CXFA_XMLLocale::GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
 void CXFA_XMLLocale::GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                     CFX_WideString& wsPattern) const {
   CXML_Element* pElement = m_pLocaleData->GetElement("", "timePatterns");
-  if (pElement == NULL) {
+  if (!pElement) {
     return;
   }
   CFX_WideString wsName;
@@ -186,7 +186,7 @@ void CXFA_XMLLocale::GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
 void CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
                                    CFX_WideString& wsPattern) const {
   CXML_Element* pElement = m_pLocaleData->GetElement("", "numberPatterns");
-  if (pElement == NULL) {
+  if (!pElement) {
     return;
   }
   switch (eType) {
@@ -340,7 +340,7 @@ void CXFA_NodeLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
 CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
                                           const CFX_WideStringC& wsName) const {
   CXFA_Node* pChild =
-      pParent ? pParent->GetNodeItem(XFA_NODEITEM_FirstChild) : NULL;
+      pParent ? pParent->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr;
   while (pChild) {
     CFX_WideString wsChild;
     if (pChild->GetAttribute(XFA_ATTRIBUTE_Name, wsChild)) {
@@ -350,7 +350,7 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
     }
     pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
-  return NULL;
+  return nullptr;
 }
 CFX_WideString CXFA_NodeLocale::GetSymbol(
     XFA_Element eElement,

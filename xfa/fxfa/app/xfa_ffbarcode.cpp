@@ -111,7 +111,7 @@ XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 
 }  // namespace.

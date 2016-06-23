@@ -15,7 +15,7 @@ class CXFA_ScriptContext;
 
 class CXFA_ResolveNodesData {
  public:
-  CXFA_ResolveNodesData(CXFA_ScriptContext* pSC = NULL);
+  CXFA_ResolveNodesData(CXFA_ScriptContext* pSC = nullptr);
   ~CXFA_ResolveNodesData();
 
   CXFA_ScriptContext* m_pSC;

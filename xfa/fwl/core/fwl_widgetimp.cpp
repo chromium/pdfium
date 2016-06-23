@@ -245,7 +245,7 @@ FWL_Error CFWL_WidgetImp::SetWidgetRect(const CFX_RectF& rect) {
       ev.m_pSrcTarget = m_pInterface;
       ev.m_rtOld = rtOld;
       ev.m_rtNew = rect;
-      IFWL_WidgetDelegate* pDelegate = SetDelegate(NULL);
+      IFWL_WidgetDelegate* pDelegate = SetDelegate(nullptr);
       if (pDelegate) {
         pDelegate->OnProcessEvent(&ev);
       }
@@ -625,7 +625,7 @@ void CFWL_WidgetImp::GetRelativeRect(CFX_RectF& rect) {
 void* CFWL_WidgetImp::GetThemeCapacity(CFWL_WidgetCapacity dwCapacity) {
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (!pTheme)
-    return NULL;
+    return nullptr;
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   return pTheme->GetCapacity(&part, dwCapacity);
@@ -710,7 +710,7 @@ void CFWL_WidgetImp::SetFocus(FX_BOOL bFocus) {
   if (bFocus && curFocus != m_pInterface) {
     pDriver->SetFocus(m_pInterface);
   } else if (!bFocus && curFocus == m_pInterface) {
-    pDriver->SetFocus(NULL);
+    pDriver->SetFocus(nullptr);
   }
 }
 void CFWL_WidgetImp::SetGrab(FX_BOOL bSet) {
@@ -753,7 +753,7 @@ FX_BOOL CFWL_WidgetImp::GetPopupPosMenu(FX_FLOAT fMinHeight,
   if (GetStylesEx() & FWL_STYLEEXT_MNU_Vert) {
     FX_BOOL bLeft = m_pProperties->m_rtWidget.left < 0;
     FX_FLOAT fRight = rtAnchor.right() + rtPopup.width;
-    TransformTo(NULL, fx, fy);
+    TransformTo(nullptr, fx, fy);
     if (fRight + fx > fScreenWidth || bLeft) {
       rtPopup.Set(rtAnchor.left - rtPopup.width, rtAnchor.top, rtPopup.width,
                   rtPopup.height);
@@ -763,7 +763,7 @@ FX_BOOL CFWL_WidgetImp::GetPopupPosMenu(FX_FLOAT fMinHeight,
     }
   } else {
     FX_FLOAT fBottom = rtAnchor.bottom() + rtPopup.height;
-    TransformTo(NULL, fx, fy);
+    TransformTo(nullptr, fx, fy);
     if (fBottom + fy > fScreenHeight) {
       rtPopup.Set(rtAnchor.left, rtAnchor.top - rtPopup.height, rtPopup.width,
                   rtPopup.height);
@@ -792,7 +792,7 @@ FX_BOOL CFWL_WidgetImp::GetPopupPosComboBox(FX_FLOAT fMinHeight,
   }
   FX_FLOAT fWidth = std::max(rtAnchor.width, rtPopup.width);
   FX_FLOAT fBottom = rtAnchor.bottom() + fPopHeight;
-  TransformTo(NULL, fx, fy);
+  TransformTo(nullptr, fx, fy);
   if (fBottom + fy > fScreenHeight) {
     rtPopup.Set(rtAnchor.left, rtAnchor.top - fPopHeight, fWidth, fPopHeight);
   } else {
@@ -810,7 +810,7 @@ FX_BOOL CFWL_WidgetImp::GetPopupPosGeneral(FX_FLOAT fMinHeight,
   FX_FLOAT fScreenWidth = 0;
   FX_FLOAT fScreenHeight = 0;
   GetScreenSize(fScreenWidth, fScreenHeight);
-  TransformTo(NULL, fx, fy);
+  TransformTo(nullptr, fx, fy);
   if (rtAnchor.bottom() + fy > fScreenHeight) {
     rtPopup.Set(rtAnchor.left, rtAnchor.top - rtPopup.height, rtPopup.width,
                 rtPopup.height);
@@ -860,7 +860,7 @@ void CFWL_WidgetImp::DispatchKeyEvent(CFWL_MsgKey* pNote) {
 }
 void CFWL_WidgetImp::DispatchEvent(CFWL_Event* pEvent) {
   if (m_pOuter) {
-    IFWL_WidgetDelegate* pDelegate = m_pOuter->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = m_pOuter->SetDelegate(nullptr);
     pDelegate->OnProcessEvent(pEvent);
     return;
   }

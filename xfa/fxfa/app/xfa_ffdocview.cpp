@@ -199,7 +199,7 @@ int32_t CXFA_FFDocView::CountPageViews() {
 }
 CXFA_FFPageView* CXFA_FFDocView::GetPageView(int32_t nIndex) {
   if (!m_pXFADocLayout) {
-    return NULL;
+    return nullptr;
   }
   return static_cast<CXFA_FFPageView*>(m_pXFADocLayout->GetPage(nIndex));
 }
@@ -224,7 +224,7 @@ FX_BOOL CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
 void CXFA_FFDocView::ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc) {
   m_bLayoutEvent = TRUE;
   FX_BOOL bChanged = FALSE;
-  CXFA_Node* pFormNode = NULL;
+  CXFA_Node* pFormNode = nullptr;
   if (pWidgetAcc) {
     bChanged = ResetSingleWidgetAccData(pWidgetAcc);
     pFormNode = pWidgetAcc->GetNode();
@@ -315,10 +315,7 @@ CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
 CXFA_WidgetAccIterator* CXFA_FFDocView::CreateWidgetAccIterator(
     XFA_WIDGETORDER eOrder) {
   CXFA_Node* pFormRoot = GetRootSubform();
-  if (!pFormRoot) {
-    return NULL;
-  }
-  return new CXFA_WidgetAccIterator(this, pFormRoot);
+  return pFormRoot ? new CXFA_WidgetAccIterator(this, pFormRoot) : nullptr;
 }
 CXFA_FFWidget* CXFA_FFDocView::GetFocusWidget() {
   return m_pFocusWidget;
@@ -326,11 +323,11 @@ CXFA_FFWidget* CXFA_FFDocView::GetFocusWidget() {
 void CXFA_FFDocView::KillFocus() {
   if (m_pFocusWidget &&
       (m_pFocusWidget->GetStatus() & XFA_WidgetStatus_Focused)) {
-    (m_pFocusWidget)->OnKillFocus(NULL);
+    (m_pFocusWidget)->OnKillFocus(nullptr);
   }
-  m_pFocusAcc = NULL;
-  m_pFocusWidget = NULL;
-  m_pOldFocusWidget = NULL;
+  m_pFocusAcc = nullptr;
+  m_pFocusWidget = nullptr;
+  m_pOldFocusWidget = nullptr;
 }
 FX_BOOL CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
   CXFA_FFWidget* pNewFocus = hWidget;
@@ -358,10 +355,10 @@ FX_BOOL CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
   }
   pNewFocus = m_pOldFocusWidget;
   if (m_pListFocusWidget && pNewFocus == m_pListFocusWidget) {
-    m_pFocusAcc = NULL;
-    m_pFocusWidget = NULL;
-    m_pListFocusWidget = NULL;
-    m_pOldFocusWidget = NULL;
+    m_pFocusAcc = nullptr;
+    m_pFocusWidget = nullptr;
+    m_pListFocusWidget = nullptr;
+    m_pOldFocusWidget = nullptr;
     return FALSE;
   }
   if (pNewFocus && (pNewFocus->GetStatus() & XFA_WidgetStatus_Visible)) {
@@ -370,7 +367,7 @@ FX_BOOL CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
     }
     pNewFocus->OnSetFocus(m_pFocusWidget);
   }
-  m_pFocusAcc = pNewFocus ? pNewFocus->GetDataAcc() : NULL;
+  m_pFocusAcc = pNewFocus ? pNewFocus->GetDataAcc() : nullptr;
   m_pFocusWidget = pNewFocus;
   m_pOldFocusWidget = m_pFocusWidget;
   return TRUE;
@@ -380,7 +377,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetFocusWidgetAcc() {
 }
 void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
   CXFA_FFWidget* pNewFocus =
-      pWidgetAcc ? pWidgetAcc->GetNextWidget(NULL) : NULL;
+      pWidgetAcc ? pWidgetAcc->GetNextWidget(nullptr) : nullptr;
   if (SetFocus(pNewFocus)) {
     m_pFocusAcc = pWidgetAcc;
     if (m_iStatus == XFA_DOCVIEW_LAYOUTSTATUS_End) {
@@ -390,9 +387,9 @@ void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 }
 void CXFA_FFDocView::DeleteLayoutItem(CXFA_FFWidget* pWidget) {
   if (m_pFocusAcc == pWidget->GetDataAcc()) {
-    m_pFocusAcc = NULL;
-    m_pFocusWidget = NULL;
-    m_pOldFocusWidget = NULL;
+    m_pFocusAcc = nullptr;
+    m_pFocusWidget = nullptr;
+    m_pOldFocusWidget = nullptr;
   }
 }
 static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
@@ -447,7 +444,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
       return iRet;
     }
     CXFA_WidgetAcc* pWidgetAcc = (CXFA_WidgetAcc*)pFormNode->GetWidgetData();
-    if (pWidgetAcc == NULL) {
+    if (!pWidgetAcc) {
       return iRet;
     }
     CXFA_EventParam eParam;
@@ -470,7 +467,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
     }
   }
   CXFA_WidgetAcc* pWidgetAcc = (CXFA_WidgetAcc*)pFormNode->GetWidgetData();
-  if (pWidgetAcc == NULL) {
+  if (!pWidgetAcc) {
     return iRet;
   }
   CXFA_EventParam eParam;
@@ -770,11 +767,7 @@ void CXFA_FFDocView::RunBindItems() {
         wsValue = refNode->GetContent();
       } else {
         CXFA_Node* nodeValue = refNode->GetFirstChildByName(uValueHash);
-        if (nodeValue == NULL) {
-          wsValue = refNode->GetContent();
-        } else {
-          wsValue = nodeValue->GetContent();
-        }
+        wsValue = nodeValue ? nodeValue->GetContent() : refNode->GetContent();
       }
       if (!bUseValue) {
         if (bLabelUseContent) {
@@ -802,7 +795,7 @@ CXFA_Node* CXFA_FFDocView::GetRootSubform() {
   CXFA_Node* pFormPacketNode =
       ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form));
   if (!pFormPacketNode) {
-    return NULL;
+    return nullptr;
   }
   return pFormPacketNode->GetFirstChildByClass(XFA_Element::Subform);
 }
@@ -811,18 +804,18 @@ CXFA_WidgetAccIterator::CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView,
                                                CXFA_Node* pTravelRoot)
     : m_ContentIterator(pTravelRoot) {
   m_pDocView = pDocView;
-  m_pCurWidgetAcc = NULL;
+  m_pCurWidgetAcc = nullptr;
 }
 CXFA_WidgetAccIterator::~CXFA_WidgetAccIterator() {}
 void CXFA_WidgetAccIterator::Reset() {
-  m_pCurWidgetAcc = NULL;
+  m_pCurWidgetAcc = nullptr;
   m_ContentIterator.Reset();
 }
 CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToFirst() {
-  return NULL;
+  return nullptr;
 }
 CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToLast() {
-  return NULL;
+  return nullptr;
 }
 CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
   CXFA_Node* pItem = m_pCurWidgetAcc ? m_ContentIterator.MoveToNext()
@@ -833,18 +826,18 @@ CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
       return m_pCurWidgetAcc;
     pItem = m_ContentIterator.MoveToNext();
   }
-  return NULL;
+  return nullptr;
 }
 CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToPrevious() {
-  return NULL;
+  return nullptr;
 }
 CXFA_WidgetAcc* CXFA_WidgetAccIterator::GetCurrentWidgetAcc() {
-  return NULL;
+  return nullptr;
 }
 FX_BOOL CXFA_WidgetAccIterator::SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget) {
   return FALSE;
 }
 void CXFA_WidgetAccIterator::SkipTree() {
   m_ContentIterator.SkipChildrenAndMoveToNext();
-  m_pCurWidgetAcc = NULL;
+  m_pCurWidgetAcc = nullptr;
 }

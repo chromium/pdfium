@@ -68,10 +68,10 @@ CFWL_ListBoxImp::CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
     : CFWL_WidgetImp(properties, pOuter),
       m_dwTTOStyles(0),
       m_iTTOAligns(0),
-      m_hAnchor(NULL),
+      m_hAnchor(nullptr),
       m_fScorllBarWidth(0),
       m_bLButtonDown(FALSE),
-      m_pScrollBarTP(NULL) {
+      m_pScrollBarTP(nullptr) {
   m_rtClient.Reset();
   m_rtConent.Reset();
   m_rtStatic.Reset();
@@ -230,7 +230,7 @@ int32_t CFWL_ListBoxImp::CountSelItems() {
 }
 IFWL_ListItem* CFWL_ListBoxImp::GetSelItem(int32_t nIndexSel) {
   if (!m_pProperties->m_pDataProvider)
-    return NULL;
+    return nullptr;
   int32_t index = 0;
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
@@ -238,7 +238,7 @@ IFWL_ListItem* CFWL_ListBoxImp::GetSelItem(int32_t nIndexSel) {
   for (int32_t i = 0; i < iCount; i++) {
     IFWL_ListItem* pItem = pData->GetItem(m_pInterface, i);
     if (!pItem) {
-      return NULL;
+      return nullptr;
     }
     uint32_t dwStyle = pData->GetItemStyles(m_pInterface, pItem);
     if (dwStyle & FWL_ITEMSTATE_LTB_Selected) {
@@ -249,7 +249,7 @@ IFWL_ListItem* CFWL_ListBoxImp::GetSelItem(int32_t nIndexSel) {
       }
     }
   }
-  return NULL;
+  return nullptr;
 }
 int32_t CFWL_ListBoxImp::GetSelIndex(int32_t nIndex) {
   if (!m_pProperties->m_pDataProvider)
@@ -282,7 +282,7 @@ FWL_Error CFWL_ListBoxImp::SetSelItem(IFWL_ListItem* pItem, FX_BOOL bSelect) {
       SelectAll();
     } else {
       ClearSelection();
-      SetFocusItem(NULL);
+      SetFocusItem(nullptr);
     }
     return FWL_Error::Indefinite;
   }
@@ -317,7 +317,7 @@ FWL_Error CFWL_ListBoxImp::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
 
 IFWL_ListItem* CFWL_ListBoxImp::GetItem(IFWL_ListItem* pItem,
                                         uint32_t dwKeyCode) {
-  IFWL_ListItem* hRet = NULL;
+  IFWL_ListItem* hRet = nullptr;
   switch (dwKeyCode) {
     case FWL_VKEY_Up:
     case FWL_VKEY_Down:
@@ -422,12 +422,12 @@ IFWL_ListItem* CFWL_ListBoxImp::GetFocusedItem() {
   for (int32_t i = 0; i < iCount; i++) {
     IFWL_ListItem* pItem = pData->GetItem(m_pInterface, i);
     if (!pItem)
-      return NULL;
+      return nullptr;
     if (pData->GetItemStyles(m_pInterface, pItem) & FWL_ITEMSTATE_LTB_Focused) {
       return pItem;
     }
   }
-  return NULL;
+  return nullptr;
 }
 void CFWL_ListBoxImp::SetFocusItem(IFWL_ListItem* pItem) {
   IFWL_ListBoxDP* pData =
@@ -471,7 +471,7 @@ IFWL_ListItem* CFWL_ListBoxImp::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
       return pItem;
     }
   }
-  return NULL;
+  return nullptr;
 }
 FX_BOOL CFWL_ListBoxImp::GetItemCheckRect(IFWL_ListItem* pItem,
                                           CFX_RectF& rtCheck) {
@@ -958,7 +958,7 @@ void CFWL_ListBoxImp::ProcessSelChanged() {
   int32_t iCount = CountSelItems();
   for (int32_t i = 0; i < iCount; i++) {
     IFWL_ListItem* item = GetSelItem(i);
-    if (item == NULL) {
+    if (!item) {
       continue;
     }
     selEvent.iarraySels.Add(i);
@@ -1117,7 +1117,7 @@ void CFWL_ListBoxImpDelegate::OnMouseWheel(CFWL_MsgMouseWheel* pMsg) {
     return;
   }
   IFWL_WidgetDelegate* pDelegate =
-      m_pOwner->m_pVertScrollBar->SetDelegate(NULL);
+      m_pOwner->m_pVertScrollBar->SetDelegate(nullptr);
   pDelegate->OnProcessMessage(pMsg);
 }
 void CFWL_ListBoxImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {

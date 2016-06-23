@@ -46,7 +46,7 @@ CBC_CodeBase* CreateBarCodeEngineObject(BC_TYPE type) {
       return new CBC_DataMatrix();
     case BC_UNKNOWN:
     default:
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -60,7 +60,7 @@ CFX_Barcode::~CFX_Barcode() {
 
 FX_BOOL CFX_Barcode::Create(BC_TYPE type) {
   m_pBCEngine = CreateBarCodeEngineObject(type);
-  return m_pBCEngine != NULL;
+  return !!m_pBCEngine;
 }
 BC_TYPE CFX_Barcode::GetType() {
   return m_pBCEngine ? m_pBCEngine->GetType() : BC_UNKNOWN;
@@ -225,7 +225,7 @@ FX_BOOL CFX_Barcode::SetFontColor(FX_ARGB color) {
 }
 FX_BOOL CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(BC_TEXT_LOC);
-  memptrtype memptr = NULL;
+  memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_CODE39:
       memptr = (memptrtype)&CBC_Code39::SetTextLocation;
@@ -245,7 +245,7 @@ FX_BOOL CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
 }
 FX_BOOL CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(int32_t);
-  memptrtype memptr = NULL;
+  memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_CODE39:
       memptr = (memptrtype)&CBC_Code39::SetWideNarrowRatio;
@@ -260,7 +260,7 @@ FX_BOOL CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
 }
 FX_BOOL CFX_Barcode::SetStartChar(FX_CHAR start) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(FX_CHAR);
-  memptrtype memptr = NULL;
+  memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_CODABAR:
       memptr = (memptrtype)&CBC_Codabar::SetStartChar;
@@ -272,7 +272,7 @@ FX_BOOL CFX_Barcode::SetStartChar(FX_CHAR start) {
 }
 FX_BOOL CFX_Barcode::SetEndChar(FX_CHAR end) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(FX_CHAR);
-  memptrtype memptr = NULL;
+  memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_CODABAR:
       memptr = (memptrtype)&CBC_Codabar::SetEndChar;
@@ -284,7 +284,7 @@ FX_BOOL CFX_Barcode::SetEndChar(FX_CHAR end) {
 }
 FX_BOOL CFX_Barcode::SetVersion(int32_t version) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(int32_t);
-  memptrtype memptr = NULL;
+  memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_QR_CODE:
       memptr = (memptrtype)&CBC_QRCode::SetVersion;
@@ -296,7 +296,7 @@ FX_BOOL CFX_Barcode::SetVersion(int32_t version) {
 }
 FX_BOOL CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(int32_t);
-  memptrtype memptr = NULL;
+  memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_QR_CODE:
       memptr = (memptrtype)&CBC_QRCode::SetErrorCorrectionLevel;
@@ -311,7 +311,7 @@ FX_BOOL CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
 }
 FX_BOOL CFX_Barcode::SetTruncated(FX_BOOL truncated) {
   typedef void (CBC_CodeBase::*memptrtype)(FX_BOOL);
-  memptrtype memptr = NULL;
+  memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_PDF417:
       memptr = (memptrtype)&CBC_PDF417I::SetTruncated;

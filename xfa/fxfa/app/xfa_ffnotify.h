@@ -54,7 +54,7 @@ class CXFA_FFNotify {
                                XFA_EVENTTYPE eEventType,
                                FX_BOOL bIsFormReady = FALSE,
                                FX_BOOL bRecursive = TRUE,
-                               CXFA_WidgetAcc* pExclude = NULL);
+                               CXFA_WidgetAcc* pExclude = nullptr);
   void AddCalcValidate(CXFA_Node* pNode);
   CXFA_FFDoc* GetHDOC();
   IXFA_DocProvider* GetDocProvider();
@@ -63,7 +63,7 @@ class CXFA_FFNotify {
   CXFA_FFWidget* GetHWidget(CXFA_LayoutItem* pLayoutItem);
   void OpenDropDownList(CXFA_FFWidget* hWidget);
   CFX_WideString GetCurrentDateTime();
-  void ResetData(CXFA_WidgetData* pWidgetData = NULL);
+  void ResetData(CXFA_WidgetData* pWidgetData = nullptr);
   int32_t GetLayoutStatus();
   void RunNodeInitialize(CXFA_Node* pNode);
   void RunSubformIndexChange(CXFA_Node* pSubformNode);

@@ -18,7 +18,7 @@ class CFWL_PictureBox : public CFWL_Widget {
 
   static CFWL_PictureBox* Create();
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   CFX_DIBitmap* GetPicture();
   FWL_Error SetPicture(CFX_DIBitmap* pBitmap);
   FX_FLOAT GetRotation();

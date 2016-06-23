@@ -45,7 +45,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
   void OnTextChanged(IFWL_Widget* pWidget,
                      const CFX_WideString& wsChanged,

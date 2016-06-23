@@ -20,7 +20,7 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   XFA_Element eType = pNode->GetElementType();
   eWidgetType = eType;
   if (eType != XFA_Element::Field && eType != XFA_Element::Draw) {
-    return NULL;
+    return nullptr;
   }
   eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
@@ -58,7 +58,7 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
     default:
       break;
   }
-  CXFA_Node* pUIChild = NULL;
+  CXFA_Node* pUIChild = nullptr;
   CXFA_Node* pUI = pNode->GetProperty(0, XFA_Element::Ui, TRUE);
   CXFA_Node* pChild = pUI->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -188,7 +188,7 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
 }
 void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText) {
-  if (pXMLNode == NULL) {
+  if (!pXMLNode) {
     return;
   }
   switch (pXMLNode->GetType()) {

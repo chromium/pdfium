@@ -142,7 +142,7 @@ void CFX_Unitime::Now() {
 #elif _FX_OS_ != _FX_EMBEDDED_
 #if 1
   timeval curTime;
-  gettimeofday(&curTime, NULL);
+  gettimeofday(&curTime, nullptr);
 #else
   struct timespec curTime;
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &curTime);
@@ -170,7 +170,7 @@ void CFX_Unitime::SetGMTime() {
 #elif _FX_OS_ != _FX_EMBEDDED_
 #if 1
   timeval curTime;
-  gettimeofday(&curTime, NULL);
+  gettimeofday(&curTime, nullptr);
 #else
   struct timespec curTime;
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &curTime);

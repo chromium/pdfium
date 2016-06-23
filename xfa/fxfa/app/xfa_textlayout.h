@@ -266,7 +266,7 @@ class CXFA_TextLayout {
   FX_BOOL CalcSize(const CFX_SizeF& minSize,
                    const CFX_SizeF& maxSize,
                    CFX_SizeF& defaultSize);
-  FX_BOOL Layout(const CFX_SizeF& size, FX_FLOAT* fHeight = NULL);
+  FX_BOOL Layout(const CFX_SizeF& size, FX_FLOAT* fHeight = nullptr);
   void ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex);
   FX_BOOL DrawString(CFX_RenderDevice* pFxDevice,
                      const CFX_Matrix& tmDoc2Device,
@@ -288,7 +288,7 @@ class CXFA_TextLayout {
                  FDE_CSSDISPLAY eDisplay,
                  FX_FLOAT fLineWidth,
                  CFDE_XMLNode* pXMLNode,
-                 IFDE_CSSComputedStyle* pParentStyle = NULL);
+                 IFDE_CSSComputedStyle* pParentStyle = nullptr);
   FX_BOOL Loader(const CFX_SizeF& szText,
                  FX_FLOAT& fLinePos,
                  FX_BOOL bSavePieces = TRUE);
@@ -301,7 +301,7 @@ class CXFA_TextLayout {
                        FX_FLOAT& fLinePos,
                        IFDE_CSSComputedStyle* pParentStyle,
                        FX_BOOL bSavePieces,
-                       CXFA_LinkUserData* pLinkData = NULL,
+                       CXFA_LinkUserData* pLinkData = nullptr,
                        FX_BOOL bEndBreak = TRUE,
                        FX_BOOL bIsOl = FALSE,
                        int32_t iLiCount = 0);

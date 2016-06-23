@@ -169,9 +169,7 @@ FWL_Error CFWL_ComboBox::SetItemData(int32_t iIndex, void* pData) {
 void* CFWL_ComboBox::GetItemData(int32_t iIndex) {
   CFWL_ComboBoxItem* pItem =
       static_cast<CFWL_ComboBoxItem*>(m_comboBoxData.GetItem(m_pIface, iIndex));
-  if (!pItem)
-    return NULL;
-  return pItem->m_pData;
+  return pItem ? pItem->m_pData : nullptr;
 }
 
 FWL_Error CFWL_ComboBox::SetListTheme(IFWL_ThemeProvider* pTheme) {
@@ -357,9 +355,7 @@ FWL_Error CFWL_ComboBox::CFWL_ComboBoxDP::GetItemRect(IFWL_Widget* pWidget,
 
 void* CFWL_ComboBox::CFWL_ComboBoxDP::GetItemData(IFWL_Widget* pWidget,
                                                   IFWL_ListItem* pItem) {
-  if (!pItem)
-    return NULL;
-  return static_cast<CFWL_ComboBoxItem*>(pItem)->m_pData;
+  return pItem ? static_cast<CFWL_ComboBoxItem*>(pItem)->m_pData : nullptr;
 }
 
 FWL_Error CFWL_ComboBox::CFWL_ComboBoxDP::SetItemStyles(IFWL_Widget* pWidget,
@@ -396,9 +392,7 @@ FX_FLOAT CFWL_ComboBox::CFWL_ComboBoxDP::GetItemHeight(IFWL_Widget* pWidget) {
 CFX_DIBitmap* CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIcon(
     IFWL_Widget* pWidget,
     IFWL_ListItem* pItem) {
-  if (!pItem)
-    return NULL;
-  return static_cast<CFWL_ComboBoxItem*>(pItem)->m_pDIB;
+  return pItem ? static_cast<CFWL_ComboBoxItem*>(pItem)->m_pDIB : nullptr;
 }
 
 FWL_Error CFWL_ComboBox::CFWL_ComboBoxDP::GetItemCheckRect(IFWL_Widget* pWidget,

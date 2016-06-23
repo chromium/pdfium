@@ -37,7 +37,7 @@ class CXFA_WideTextRead : public IFX_Stream {
   int32_t ReadString(FX_WCHAR* pStr,
                      int32_t iMaxLength,
                      FX_BOOL& bEOS,
-                     int32_t const* pByteSize = NULL) override;
+                     int32_t const* pByteSize = nullptr) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
   int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
   void Flush() override {}

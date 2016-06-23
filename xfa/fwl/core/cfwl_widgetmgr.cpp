@@ -139,8 +139,8 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
       if (pItem->pParent->pChild == pItem) {
         pItem->pParent->pChild = pItem->pNext;
       }
-      pItem->pNext = NULL;
-      pItem->pPrevious = NULL;
+      pItem->pNext = nullptr;
+      pItem->pPrevious = nullptr;
       break;
     }
     if (!pChild->pNext) {
@@ -157,7 +157,7 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
       }
       pChild->pNext = pItem;
       pItem->pPrevious = pChild;
-      pItem->pNext = NULL;
+      pItem->pNext = nullptr;
       return TRUE;
     }
     i = 0;
@@ -168,7 +168,7 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
     if (!pChild->pNext) {
       pChild->pNext = pItem;
       pItem->pPrevious = pChild;
-      pItem->pNext = NULL;
+      pItem->pNext = nullptr;
       return TRUE;
     }
     if (pChild->pPrevious) {
@@ -182,8 +182,8 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
     }
   } else {
     pItem->pParent->pChild = pItem;
-    pItem->pPrevious = NULL;
-    pItem->pNext = NULL;
+    pItem->pPrevious = nullptr;
+    pItem->pNext = nullptr;
   }
   return TRUE;
 }
@@ -213,7 +213,7 @@ FWL_Error CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
   return m_pAdapter->RepaintWidget(pNative, &rect);
 }
 void CFWL_WidgetMgr::AddWidget(IFWL_Widget* pWidget) {
-  CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(NULL);
+  CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(nullptr);
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem) {
     pItem = new CFWL_WidgetMgrItem(pWidget);
@@ -314,8 +314,8 @@ void CFWL_WidgetMgr::SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild) {
     if (pItem->pParent->pChild == pItem) {
       pItem->pParent->pChild = pItem->pNext;
     }
-    pItem->pNext = NULL;
-    pItem->pPrevious = NULL;
+    pItem->pNext = nullptr;
+    pItem->pPrevious = nullptr;
   }
   pItem->pParent = pParentItem;
   SetWidgetIndex(pChild, -1);
@@ -357,7 +357,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
                                               FX_FLOAT x,
                                               FX_FLOAT y) {
   if (!parent)
-    return NULL;
+    return nullptr;
   FX_FLOAT x1;
   FX_FLOAT y1;
   IFWL_Widget* child = GetLastChildWidget(parent);
@@ -453,7 +453,7 @@ void CFWL_WidgetMgr::GetSameGroupRadioButton(
   int32_t iGroup = CountRadioButtonGroup(pFirst);
   if (iGroup < 2) {
     IFWL_Widget* pNext = pFirst;
-    while ((pNext = GetSiblingRadioButton(pNext, TRUE)) != NULL) {
+    while ((pNext = GetSiblingRadioButton(pNext, TRUE)) != nullptr) {
       group.Add(pNext);
     }
     return;
@@ -484,7 +484,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(IFWL_Widget* pParent) {
     }
     child = CFWL_WidgetMgr::GetInstance()->GetNextSiblingWidget(child);
   }
-  return NULL;
+  return nullptr;
 }
 void CFWL_WidgetMgr::AddRedrawCounts(IFWL_Widget* pWidget) {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
@@ -621,20 +621,20 @@ void CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_ || \
     _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_
-  IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
+  IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(nullptr);
   pDelegate->OnDrawWidget(pTemp, pMatrix);
   pGraphics->GetClipRect(clipBounds);
   clipCopy = clipBounds;
 #elif _FX_OS_ == _FX_MACOSX_
   if (m_pWidgetMgr->IsFormDisabled()) {
-    IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(nullptr);
     pDelegate->OnDrawWidget(pTemp, pMatrix);
     pGraphics->GetClipRect(clipBounds);
     clipCopy = clipBounds;
   } else {
     clipBounds.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d);
     const_cast<CFX_Matrix*>(pMatrix)->SetIdentity();  // FIXME: const cast.
-    IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(nullptr);
     pDelegate->OnDrawWidget(pTemp, pMatrix);
   }
 #endif  // _FX_OS_ == _FX_MACOSX_
@@ -688,7 +688,7 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
       pGraphics->SetClipRect(clipBounds);
     }
     widgetMatrix.Translate(rtWidget.left, rtWidget.top, TRUE);
-    IFWL_WidgetDelegate* pDelegate = child->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = child->SetDelegate(nullptr);
     if (pDelegate) {
       if (m_pWidgetMgr->IsFormDisabled() ||
           IsNeedRepaint(child, &widgetMatrix, rtClip)) {

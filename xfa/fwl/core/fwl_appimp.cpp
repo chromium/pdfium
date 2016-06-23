@@ -103,7 +103,7 @@ IFWL_ThemeProvider* CFWL_AppImp::GetThemeProvider() const {
 CXFA_FFApp* FWL_GetAdapterNative() {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
-    return NULL;
+    return nullptr;
   return pApp->GetAdapterNative();
 }
 

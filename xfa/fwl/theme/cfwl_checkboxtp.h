@@ -30,44 +30,44 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
                  CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  uint32_t dwStates,
-                 CFX_Matrix* pMatrix = NULL);
+                 CFX_Matrix* pMatrix = nullptr);
   void DrawSign(IFWL_Widget* pWidget,
                 CFX_Graphics* pGraphics,
                 const CFX_RectF* pRtBox,
                 uint32_t dwStates,
-                CFX_Matrix* pMatrix = NULL);
+                CFX_Matrix* pMatrix = nullptr);
   void DrawSignNeutral(CFX_Graphics* pGraphics,
                        const CFX_RectF* pRtSign,
-                       CFX_Matrix* pMatrix = NULL);
+                       CFX_Matrix* pMatrix = nullptr);
   void DrawSignCheck(CFX_Graphics* pGraphics,
                      const CFX_RectF* pRtSign,
                      FX_ARGB argbFill,
-                     CFX_Matrix* pMatrix = NULL);
+                     CFX_Matrix* pMatrix = nullptr);
   void DrawSignCircle(CFX_Graphics* pGraphics,
                       const CFX_RectF* pRtSign,
                       FX_ARGB argbFill,
-                      CFX_Matrix* pMatrix = NULL);
+                      CFX_Matrix* pMatrix = nullptr);
   void DrawSignCross(CFX_Graphics* pGraphics,
                      const CFX_RectF* pRtSign,
                      FX_ARGB argbFill,
-                     CFX_Matrix* pMatrix = NULL);
+                     CFX_Matrix* pMatrix = nullptr);
   void DrawSignDiamond(CFX_Graphics* pGraphics,
                        const CFX_RectF* pRtSign,
                        FX_ARGB argbFill,
-                       CFX_Matrix* pMatrix = NULL);
+                       CFX_Matrix* pMatrix = nullptr);
   void DrawSignSquare(CFX_Graphics* pGraphics,
                       const CFX_RectF* pRtSign,
                       FX_ARGB argbFill,
-                      CFX_Matrix* pMatrix = NULL);
+                      CFX_Matrix* pMatrix = nullptr);
   void DrawSignStar(CFX_Graphics* pGraphics,
                     const CFX_RectF* pRtSign,
                     FX_ARGB argbFill,
-                    CFX_Matrix* pMatrix = NULL);
+                    CFX_Matrix* pMatrix = nullptr);
   void DrawSignBorder(IFWL_Widget* pWidget,
                       CFX_Graphics* pGraphics,
                       const CFX_RectF* pRtBox,
                       FX_BOOL bDisable = FALSE,
-                      CFX_Matrix* pMatrix = NULL);
+                      CFX_Matrix* pMatrix = nullptr);
   void SetThemeData(uint32_t dwID);
   void initCheckPath(FX_FLOAT fCheckLen);
   struct CKBThemeData {

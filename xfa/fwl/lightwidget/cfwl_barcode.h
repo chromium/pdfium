@@ -17,7 +17,7 @@ class CFWL_WidgetProperties;
 class CFWL_Barcode : public CFWL_Edit {
  public:
   static CFWL_Barcode* Create();
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 

@@ -62,7 +62,8 @@ class CFWL_WidgetMgr {
   IFWL_Widget* GetSystemFormWidget(IFWL_Widget* pWidget) const;
 
   FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
-  FWL_Error RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect = NULL);
+  FWL_Error RepaintWidget(IFWL_Widget* pWidget,
+                          const CFX_RectF* pRect = nullptr);
 
   void AddWidget(IFWL_Widget* pWidget);
   void InsertWidget(IFWL_Widget* pParent,
@@ -99,7 +100,7 @@ class CFWL_WidgetMgr {
   int32_t TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
                           int32_t* pIndex,
                           CFWL_WidgetMgrItem* pItem,
-                          IFWL_Widget** pWidget = NULL);
+                          IFWL_Widget** pWidget = nullptr);
   FX_BOOL IsAbleNative(IFWL_Widget* pWidget) const;
 
   uint32_t m_dwCapability;

@@ -17,7 +17,7 @@ class CFWL_PushButton : public CFWL_Widget {
 
   static CFWL_PushButton* Create();
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   FWL_Error GetCaption(CFX_WideString& wsCaption);
   FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
   CFX_DIBitmap* GetPicture();
@@ -26,7 +26,7 @@ class CFWL_PushButton : public CFWL_Widget {
  protected:
   class CFWL_PushButtonDP : public IFWL_PushButtonDP {
    public:
-    CFWL_PushButtonDP() : m_pBitmap(NULL) {}
+    CFWL_PushButtonDP() : m_pBitmap(nullptr) {}
 
     // IFWL_DataProvider
     FWL_Error GetCaption(IFWL_Widget* pWidget,

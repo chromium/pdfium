@@ -81,7 +81,7 @@ int32_t CFWL_ListBox::CountSelItems() {
 
 IFWL_ListItem* CFWL_ListBox::GetSelItem(int32_t nIndexSel) {
   if (!m_pIface)
-    return NULL;
+    return nullptr;
   return static_cast<IFWL_ListBox*>(m_pIface)->GetSelItem(nIndexSel);
 }
 
@@ -164,9 +164,7 @@ FWL_Error CFWL_ListBox::SetItemData(IFWL_ListItem* pItem, void* pData) {
 }
 
 void* CFWL_ListBox::GetItemData(IFWL_ListItem* pItem) {
-  if (!pItem)
-    return NULL;
-  return static_cast<CFWL_ListItem*>(pItem)->m_pData;
+  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_pData : nullptr;
 }
 
 IFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
@@ -178,20 +176,20 @@ IFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   FX_FLOAT fPosY = 0;
   static_cast<IFWL_ListBox*>(m_pIface)->GetScrollPos(fx);
   static_cast<IFWL_ListBox*>(m_pIface)->GetScrollPos(fy, FALSE);
-  int32_t nCount = m_ListBoxDP.CountItems(NULL);
+  int32_t nCount = m_ListBoxDP.CountItems(nullptr);
   for (int32_t i = 0; i < nCount; i++) {
-    IFWL_ListItem* pItem = m_ListBoxDP.GetItem(NULL, i);
+    IFWL_ListItem* pItem = m_ListBoxDP.GetItem(nullptr, i);
     if (!pItem) {
       continue;
     }
     CFX_RectF rtItem;
-    m_ListBoxDP.GetItemRect(NULL, pItem, rtItem);
+    m_ListBoxDP.GetItemRect(nullptr, pItem, rtItem);
     rtItem.Offset(-fPosX, -fPosY);
     if (rtItem.Contains(fx, fy)) {
       return pItem;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 uint32_t CFWL_ListBox::GetItemStates(IFWL_ListItem* pItem) {
@@ -273,9 +271,7 @@ FWL_Error CFWL_ListBox::CFWL_ListBoxDP::GetItemRect(IFWL_Widget* pWidget,
 
 void* CFWL_ListBox::CFWL_ListBoxDP::GetItemData(IFWL_Widget* pWidget,
                                                 IFWL_ListItem* pItem) {
-  if (!pItem)
-    return NULL;
-  return static_cast<CFWL_ListItem*>(pItem)->m_pData;
+  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_pData : nullptr;
 }
 
 FWL_Error CFWL_ListBox::CFWL_ListBoxDP::SetItemStyles(IFWL_Widget* pWidget,
@@ -346,8 +342,8 @@ CFWL_ListItem::CFWL_ListItem() {
   m_rtItem.Reset();
   m_dwStates = 0;
   m_wsText = L"";
-  m_pDIB = NULL;
-  m_pData = NULL;
+  m_pDIB = nullptr;
+  m_pData = nullptr;
   m_dwCheckState = 0;
   m_rtCheckBox.Reset();
 }

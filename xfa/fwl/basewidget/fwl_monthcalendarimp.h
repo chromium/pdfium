@@ -231,7 +231,7 @@ class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_MonthCalendarImpDelegate(CFWL_MonthCalendarImp* pOwner);
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void OnActivate(CFWL_Message* pMsg);

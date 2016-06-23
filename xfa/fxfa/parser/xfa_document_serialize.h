@@ -33,7 +33,7 @@ class CXFA_DataExporter {
   FX_BOOL Export(IFX_FileWrite* pWrite,
                  CXFA_Node* pNode,
                  uint32_t dwFlag = 0,
-                 const FX_CHAR* pChecksum = NULL);
+                 const FX_CHAR* pChecksum = nullptr);
 
  protected:
   FX_BOOL Export(IFX_Stream* pStream,

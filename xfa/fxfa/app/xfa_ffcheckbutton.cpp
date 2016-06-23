@@ -20,7 +20,7 @@
 
 CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_FFPageView* pPageView,
                                        CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(NULL) {
+    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {
   m_rtCheckBox.Set(0, 0, 0, 0);
 }
 CXFA_FFCheckButton::~CXFA_FFCheckButton() {}

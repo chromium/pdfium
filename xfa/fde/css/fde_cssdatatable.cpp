@@ -921,7 +921,7 @@ CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType,
 CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType,
                                                const FX_WCHAR* pValue)
     : m_eType(eType), m_pString(pValue) {
-  ASSERT(m_pString != nullptr);
+  ASSERT(m_pString);
 }
 
 CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction)

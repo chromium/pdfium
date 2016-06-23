@@ -109,34 +109,26 @@ CXFA_FFApp::~CXFA_FFApp() {
 }
 
 CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
-  if (!m_pDocHandler) {
+  if (!m_pDocHandler)
     m_pDocHandler = new CXFA_FFDocHandler;
-  }
   return m_pDocHandler;
 }
 CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
                                   IFX_FileRead* pStream,
                                   FX_BOOL bTakeOverFile) {
-  CXFA_FFDoc* pDoc = new CXFA_FFDoc(this, pProvider);
+  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pProvider));
   FX_BOOL bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);
-  if (!bSuccess) {
-    delete pDoc;
-    pDoc = NULL;
-  }
-  return pDoc;
+  return bSuccess ? pDoc.release() : nullptr;
 }
+
 CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
                                   CPDF_Document* pPDFDoc) {
-  if (pPDFDoc == NULL) {
-    return NULL;
-  }
-  CXFA_FFDoc* pDoc = new CXFA_FFDoc(this, pProvider);
+  if (!pPDFDoc)
+    return nullptr;
+
+  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pProvider));
   FX_BOOL bSuccess = pDoc->OpenDoc(pPDFDoc);
-  if (!bSuccess) {
-    delete pDoc;
-    pDoc = NULL;
-  }
-  return pDoc;
+  return bSuccess ? pDoc.release() : nullptr;
 }
 
 void CXFA_FFApp::SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr) {

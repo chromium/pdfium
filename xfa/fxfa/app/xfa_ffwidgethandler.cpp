@@ -481,7 +481,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateSubform(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_Element eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
-  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : NULL;
+  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : nullptr;
   CXFA_Node* pNewFormItem = pTemplateParent->CloneTemplateToForm(FALSE);
   if (pParent)
     pParent->InsertChild(pNewFormItem, pBefore);
@@ -491,10 +491,10 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_Element eElement,
 CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_Element eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
-  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : NULL;
+  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : nullptr;
   CXFA_Node* pNewNode =
       CreateTemplateNode(eElement, pTemplateParent,
-                         pBefore ? pBefore->GetTemplateNode() : NULL)
+                         pBefore ? pBefore->GetTemplateNode() : nullptr)
           ->Clone(FALSE);
   if (pParent)
     pParent->InsertChild(pNewNode, pBefore);

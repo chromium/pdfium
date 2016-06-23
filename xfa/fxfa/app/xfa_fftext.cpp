@@ -38,15 +38,15 @@ void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
       GetRectWithoutRotate(rtText);
       if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
         CXFA_LayoutItem* pItem = this;
-        if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
+        if (!pItem->GetPrev() && !pItem->GetNext()) {
           XFA_RectWidthoutMargin(rtText, mgWidget);
         } else {
           FX_FLOAT fLeftInset, fRightInset, fTopInset = 0, fBottomInset = 0;
           mgWidget.GetLeftInset(fLeftInset);
           mgWidget.GetRightInset(fRightInset);
-          if (pItem->GetPrev() == NULL) {
+          if (!pItem->GetPrev()) {
             mgWidget.GetTopInset(fTopInset);
-          } else if (pItem->GetNext() == NULL) {
+          } else if (!pItem->GetNext()) {
             mgWidget.GetBottomInset(fBottomInset);
           }
           rtText.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
@@ -76,7 +76,7 @@ FX_BOOL CXFA_FFText::PerformLayout() {
   }
   pTextLayout->m_Blocks.RemoveAll();
   CXFA_LayoutItem* pItem = this;
-  if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
+  if (!pItem->GetPrev() && !pItem->GetNext()) {
     return TRUE;
   }
   pItem = pItem->GetFirst();
@@ -84,11 +84,11 @@ FX_BOOL CXFA_FFText::PerformLayout() {
     CFX_RectF rtText;
     pItem->GetRect(rtText);
     if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
-      if (pItem->GetPrev() == NULL) {
+      if (!pItem->GetPrev()) {
         FX_FLOAT fTopInset;
         mgWidget.GetTopInset(fTopInset);
         rtText.height -= fTopInset;
-      } else if (pItem->GetNext() == NULL) {
+      } else if (!pItem->GetNext()) {
         FX_FLOAT fBottomInset;
         mgWidget.GetBottomInset(fBottomInset);
         rtText.height -= fBottomInset;
@@ -107,7 +107,7 @@ FX_BOOL CXFA_FFText::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
     return FALSE;
   }
   const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
-  if (NULL == wsURLContent) {
+  if (!wsURLContent) {
     return FALSE;
   }
   SetButtonDown(TRUE);
@@ -120,7 +120,7 @@ FX_BOOL CXFA_FFText::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
     return FALSE;
   }
   const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
-  if (NULL == wsURLContent) {
+  if (!wsURLContent) {
     return FALSE;
   }
   return TRUE;
@@ -131,7 +131,7 @@ FX_BOOL CXFA_FFText::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   }
   SetButtonDown(FALSE);
   const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
-  if (NULL == wsURLContent) {
+  if (!wsURLContent) {
     return FALSE;
   }
   CXFA_FFDoc* pDoc = GetDoc();
@@ -149,8 +149,8 @@ FWL_WidgetHit CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
 }
 const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
-  if (NULL == pTextLayout) {
-    return NULL;
+  if (!pTextLayout) {
+    return nullptr;
   }
   FX_FLOAT x(fx), y(fy);
   FWLToClient(x, y);
@@ -166,7 +166,7 @@ const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
       }
     }
   }
-  return NULL;
+  return nullptr;
 }
 void CXFA_FFText::FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy) {
   CFX_RectF rtWidget;

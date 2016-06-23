@@ -114,8 +114,8 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();
   IXFA_AppProvider* GetAppProvider();
-  void InvalidateWidget(const CFX_RectF* pRect = NULL);
-  void AddInvalidateRect(const CFX_RectF* pRect = NULL);
+  void InvalidateWidget(const CFX_RectF* pRect = nullptr);
+  void AddInvalidateRect(const CFX_RectF* pRect = nullptr);
   FX_BOOL GetCaptionText(CFX_WideString& wsCap);
   bool IsFocused();
   void Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy);

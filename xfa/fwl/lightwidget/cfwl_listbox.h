@@ -23,7 +23,7 @@ class CFWL_ListBox : public CFWL_Widget {
   ~CFWL_ListBox() override;
 
   static CFWL_ListBox* Create();
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = NULL);
+  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   FWL_Error AddDIBitmap(CFX_DIBitmap* pDIB, IFWL_ListItem* pItem);
   IFWL_ListItem* AddString(const CFX_WideStringC& wsAdd,
                            FX_BOOL bSelect = FALSE);

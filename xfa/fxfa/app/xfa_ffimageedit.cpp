@@ -18,7 +18,7 @@
 
 CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_FFPageView* pPageView,
                                    CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(NULL) {}
+    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
 CXFA_FFImageEdit::~CXFA_FFImageEdit() {
   CXFA_FFImageEdit::UnloadWidget();
 }
@@ -41,7 +41,7 @@ FX_BOOL CXFA_FFImageEdit::LoadWidget() {
   return TRUE;
 }
 void CXFA_FFImageEdit::UnloadWidget() {
-  m_pDataAcc->SetImageEditImage(NULL);
+  m_pDataAcc->SetImageEditImage(nullptr);
   CXFA_FFField::UnloadWidget();
 }
 void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
@@ -118,7 +118,7 @@ FX_BOOL CXFA_FFImageEdit::CommitData() {
   return TRUE;
 }
 FX_BOOL CXFA_FFImageEdit::UpdateFWLData() {
-  m_pDataAcc->SetImageEditImage(NULL);
+  m_pDataAcc->SetImageEditImage(nullptr);
   m_pDataAcc->LoadImageEditImage();
   return TRUE;
 }

@@ -44,7 +44,7 @@ class CXFA_LocaleValue {
   FX_BOOL ValidateValue(const CFX_WideString& wsValue,
                         const CFX_WideString& wsPattern,
                         IFX_Locale* pLocale,
-                        CFX_WideString* pMatchFormat = NULL);
+                        CFX_WideString* pMatchFormat = nullptr);
   FX_BOOL FormatPatterns(CFX_WideString& wsResult,
                          const CFX_WideString& wsFormat,
                          IFX_Locale* pLocale,
@@ -65,8 +65,8 @@ class CXFA_LocaleValue {
                          FX_BOOL bSign = TRUE);
   FX_BOOL ValidateNumericTemp(CFX_WideString& wsNumeric,
                               CFX_WideString& wsFormat,
-                              IFX_Locale* pLocale = NULL,
-                              int32_t* pos = NULL);
+                              IFX_Locale* pLocale = nullptr,
+                              int32_t* pos = nullptr);
 
   CFX_WideString GetValue() const;
   uint32_t GetType() const;

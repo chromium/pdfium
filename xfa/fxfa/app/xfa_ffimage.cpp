@@ -18,7 +18,7 @@ CXFA_FFImage::~CXFA_FFImage() {
   CXFA_FFImage::UnloadWidget();
 }
 FX_BOOL CXFA_FFImage::IsLoaded() {
-  return GetDataAcc()->GetImageImage() != NULL;
+  return !!GetDataAcc()->GetImageImage();
 }
 FX_BOOL CXFA_FFImage::LoadWidget() {
   if (GetDataAcc()->GetImageImage()) {
@@ -28,7 +28,7 @@ FX_BOOL CXFA_FFImage::LoadWidget() {
   return CXFA_FFDraw::LoadWidget();
 }
 void CXFA_FFImage::UnloadWidget() {
-  GetDataAcc()->SetImageImage(NULL);
+  GetDataAcc()->SetImageImage(nullptr);
 }
 void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS,
                                 CFX_Matrix* pMatrix,

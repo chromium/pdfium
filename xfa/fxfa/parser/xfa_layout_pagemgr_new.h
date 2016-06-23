@@ -12,9 +12,9 @@
 
 class CXFA_ContainerRecord {
  public:
-  CXFA_ContainerRecord(CXFA_ContainerLayoutItem* pPageSet = NULL,
-                       CXFA_ContainerLayoutItem* pPageArea = NULL,
-                       CXFA_ContainerLayoutItem* pContentArea = NULL)
+  CXFA_ContainerRecord(CXFA_ContainerLayoutItem* pPageSet = nullptr,
+                       CXFA_ContainerLayoutItem* pPageArea = nullptr,
+                       CXFA_ContainerLayoutItem* pContentArea = nullptr)
       : pCurPageSet(pPageSet),
         pCurPageArea(pPageArea),
         pCurContentArea(pContentArea) {}
@@ -53,7 +53,7 @@ class CXFA_LayoutPageMgr {
                           FX_BOOL bDataMerge = FALSE,
                           FX_BOOL bCreatePage = TRUE);
   CXFA_Node* QueryOverflow(CXFA_Node* pFormNode,
-                           CXFA_LayoutContext* pLayoutContext = NULL);
+                           CXFA_LayoutContext* pLayoutContext = nullptr);
   FX_BOOL ProcessBookendLeaderOrTrailer(CXFA_Node* pBookendNode,
                                         FX_BOOL bLeader,
                                         CXFA_Node*& pBookendAppendNode);
@@ -72,7 +72,7 @@ class CXFA_LayoutPageMgr {
     ASSERT(result);
     return result;
   }
-  CXFA_ContainerRecord* CreateContainerRecord(CXFA_Node* pPageNode = NULL,
+  CXFA_ContainerRecord* CreateContainerRecord(CXFA_Node* pPageNode = nullptr,
                                               FX_BOOL bCreateNew = FALSE);
   void AddPageAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
                              CXFA_Node* pNewPageArea);
@@ -101,27 +101,28 @@ class CXFA_LayoutPageMgr {
   void CreateNextMinRecord(CXFA_Node* pRecordNode);
   FX_BOOL FindPageAreaFromPageSet(CXFA_Node* pPageSet,
                                   CXFA_Node* pStartChild,
-                                  CXFA_Node* pTargetPageArea = NULL,
-                                  CXFA_Node* pTargetContentArea = NULL,
+                                  CXFA_Node* pTargetPageArea = nullptr,
+                                  CXFA_Node* pTargetContentArea = nullptr,
                                   FX_BOOL bNewPage = FALSE,
                                   FX_BOOL bQuery = FALSE);
-  FX_BOOL FindPageAreaFromPageSet_Ordered(CXFA_Node* pPageSet,
-                                          CXFA_Node* pStartChild,
-                                          CXFA_Node* pTargetPageArea = NULL,
-                                          CXFA_Node* pTargetContentArea = NULL,
-                                          FX_BOOL bNewPage = FALSE,
-                                          FX_BOOL bQuery = FALSE);
+  FX_BOOL FindPageAreaFromPageSet_Ordered(
+      CXFA_Node* pPageSet,
+      CXFA_Node* pStartChild,
+      CXFA_Node* pTargetPageArea = nullptr,
+      CXFA_Node* pTargetContentArea = nullptr,
+      FX_BOOL bNewPage = FALSE,
+      FX_BOOL bQuery = FALSE);
   FX_BOOL FindPageAreaFromPageSet_SimplexDuplex(
       CXFA_Node* pPageSet,
       CXFA_Node* pStartChild,
-      CXFA_Node* pTargetPageArea = NULL,
-      CXFA_Node* pTargetContentArea = NULL,
+      CXFA_Node* pTargetPageArea = nullptr,
+      CXFA_Node* pTargetContentArea = nullptr,
       FX_BOOL bNewPage = FALSE,
       FX_BOOL bQuery = FALSE,
       XFA_ATTRIBUTEENUM ePreferredPosition = XFA_ATTRIBUTEENUM_First);
   FX_BOOL MatchPageAreaOddOrEven(CXFA_Node* pPageArea, FX_BOOL bLastMatch);
   CXFA_Node* GetNextAvailPageArea(CXFA_Node* pTargetPageArea,
-                                  CXFA_Node* pTargetContentArea = NULL,
+                                  CXFA_Node* pTargetContentArea = nullptr,
                                   FX_BOOL bNewPage = FALSE,
                                   FX_BOOL bQuery = FALSE);
   FX_BOOL GetNextContentArea(CXFA_Node* pTargetContentArea);

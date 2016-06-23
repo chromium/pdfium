@@ -22,7 +22,7 @@
 #include "xfa/fxgraphics/cfx_path.h"
 
 CXFA_FFField::CXFA_FFField(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pPageView, pDataAcc), m_pNormalWidget(NULL) {
+    : CXFA_FFWidget(pPageView, pDataAcc), m_pNormalWidget(nullptr) {
   m_rtUI.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
 }
@@ -166,12 +166,12 @@ void CXFA_FFField::CapPlacement() {
     mgWidget.GetRightInset(fRightInset);
     mgWidget.GetTopInset(fTopInset);
     mgWidget.GetBottomInset(fBottomInset);
-    if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
+    if (!pItem->GetPrev() && !pItem->GetNext()) {
       rtWidget.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
     } else {
-      if (pItem->GetPrev() == NULL) {
+      if (!pItem->GetPrev()) {
         rtWidget.Deflate(fLeftInset, fTopInset, fRightInset, 0);
-      } else if (pItem->GetNext() == NULL) {
+      } else if (!pItem->GetNext()) {
         rtWidget.Deflate(fLeftInset, 0, fRightInset, fBottomInset);
       } else {
         rtWidget.Deflate(fLeftInset, 0, fRightInset, 0);
@@ -190,7 +190,7 @@ void CXFA_FFField::CapPlacement() {
     } else {
       fCapReserve = caption.GetReserve();
       CXFA_LayoutItem* pItem = this;
-      if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
+      if (!pItem->GetPrev() && !pItem->GetNext()) {
         m_rtCaption.Set(rtWidget.left, rtWidget.top, rtWidget.width,
                         rtWidget.height);
       } else {
@@ -350,7 +350,7 @@ FX_BOOL CXFA_FFField::OnMouseEnter() {
   CFWL_MsgMouse ms;
   ms.m_dwCmd = FWL_MouseCommand::Enter;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   return TRUE;
 }
@@ -529,7 +529,7 @@ FX_BOOL CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   }
   CFWL_MsgSetFocus ms;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   m_dwStatus |= XFA_WidgetStatus_Focused;
   AddInvalidateRect();
@@ -541,7 +541,7 @@ FX_BOOL CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   }
   CFWL_MsgKillFocus ms;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
   AddInvalidateRect();
@@ -557,7 +557,7 @@ FX_BOOL CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwKeyCode;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   return TRUE;
 }
@@ -570,7 +570,7 @@ FX_BOOL CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwKeyCode;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   return TRUE;
 }
@@ -592,7 +592,7 @@ FX_BOOL CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwChar;
   ms.m_pDstTarget = m_pNormalWidget->m_pIface;
-  ms.m_pSrcTarget = NULL;
+  ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   return TRUE;
 }
@@ -689,7 +689,7 @@ int32_t CXFA_FFField::CalculateOverride() {
   if (!pNode) {
     return 1;
   }
-  CXFA_WidgetAcc* pWidgetAcc = NULL;
+  CXFA_WidgetAcc* pWidgetAcc = nullptr;
   while (pNode) {
     pWidgetAcc = static_cast<CXFA_WidgetAcc*>(pNode->GetWidgetData());
     if (!pWidgetAcc) {

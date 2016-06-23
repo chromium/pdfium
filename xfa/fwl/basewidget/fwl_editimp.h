@@ -42,7 +42,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = NULL) override;
+                       const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
 
   virtual FWL_Error SetText(const CFX_WideString& wsText);
@@ -111,10 +111,10 @@ class CFWL_EditImp : public CFWL_WidgetImp {
 
   void DrawTextBk(CFX_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
-                  const CFX_Matrix* pMatrix = NULL);
+                  const CFX_Matrix* pMatrix = nullptr);
   void DrawContent(CFX_Graphics* pGraphics,
                    IFWL_ThemeProvider* pTheme,
-                   const CFX_Matrix* pMatrix = NULL);
+                   const CFX_Matrix* pMatrix = nullptr);
   void UpdateEditEngine();
   void UpdateEditParams();
   void UpdateEditLayout();
@@ -128,7 +128,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   void DeviceToEngine(CFX_PointF& pt);
   void InitScrollBar(FX_BOOL bVert = TRUE);
   void InitEngine();
-  virtual void ShowCaret(FX_BOOL bVisible, CFX_RectF* pRect = NULL);
+  virtual void ShowCaret(FX_BOOL bVisible, CFX_RectF* pRect = nullptr);
   FX_BOOL ValidateNumberChar(FX_WCHAR cNum);
   void InitCaret();
   void ClearRecord();
@@ -138,7 +138,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   void ProcessInsertError(int32_t iError);
 
   void DrawSpellCheck(CFX_Graphics* pGraphics,
-                      const CFX_Matrix* pMatrix = NULL);
+                      const CFX_Matrix* pMatrix = nullptr);
   void AddSpellCheckObj(CFX_Path& PathData,
                         int32_t nStart,
                         int32_t nCount,
@@ -181,7 +181,7 @@ class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void DoActivate(CFWL_MsgActivate* pMsg);

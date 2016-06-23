@@ -60,7 +60,7 @@ struct XFA_RESOLVENODE_RS {
 };
 
 inline XFA_RESOLVENODE_RS::XFA_RESOLVENODE_RS()
-    : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(NULL) {}
+    : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(nullptr) {}
 
 inline XFA_RESOLVENODE_RS::~XFA_RESOLVENODE_RS() {
   nodes.RemoveAll();

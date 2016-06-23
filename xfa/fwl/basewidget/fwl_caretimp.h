@@ -63,7 +63,7 @@ class CFWL_CaretImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_CaretImpDelegate(CFWL_CaretImp* pOwner);
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   CFWL_CaretImp* m_pOwner;

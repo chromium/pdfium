@@ -183,7 +183,7 @@ void CFWL_DateTimeEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (dwHashCode == CFWL_MessageType::SetFocus ||
       dwHashCode == CFWL_MessageType::KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
-    IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(nullptr);
     pDelegate->OnProcessMessage(pMessage);
   }
 }
@@ -243,7 +243,7 @@ void CFWL_DateTimeCalendarImpDelegate::OnProcessMessage(
   if (dwCode == CFWL_MessageType::SetFocus ||
       dwCode == CFWL_MessageType::KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
-    IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(nullptr);
     pDelegate->OnProcessMessage(pMessage);
     return;
   }
@@ -900,7 +900,7 @@ void CFWL_DateTimePickerImp::DisForm_ShowMonthCalendar(FX_BOOL bActivate) {
     CFWL_MsgSetFocus msg;
     msg.m_pDstTarget = m_pMonthCal.get();
     msg.m_pSrcTarget = m_pEdit.get();
-    IFWL_WidgetDelegate* pDelegate = m_pEdit->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = m_pEdit->SetDelegate(nullptr);
     pDelegate->OnProcessMessage(&msg);
   }
   CFX_RectF rtInvalidate, rtCal;
@@ -1065,7 +1065,8 @@ void CFWL_DateTimePickerImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Key: {
       if (m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
-        IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+        IFWL_WidgetDelegate* pDelegate =
+            m_pOwner->m_pEdit->SetDelegate(nullptr);
         pDelegate->OnProcessMessage(pMessage);
         return;
       }
@@ -1164,7 +1165,7 @@ void CFWL_DateTimePickerImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
     }
     rtInvalidate = m_pOwner->m_rtBtn;
     pMsg->m_pDstTarget = m_pOwner->m_pEdit.get();
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
     pDelegate->OnProcessMessage(pMsg);
   } else {
     m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
@@ -1174,7 +1175,7 @@ void CFWL_DateTimePickerImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
     }
     if (m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
       pMsg->m_pSrcTarget = m_pOwner->m_pEdit.get();
-      IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(NULL);
+      IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
       pDelegate->OnProcessMessage(pMsg);
     }
   }

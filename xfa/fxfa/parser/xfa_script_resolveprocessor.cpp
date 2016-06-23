@@ -25,7 +25,7 @@ CXFA_ResolveProcessor::~CXFA_ResolveProcessor() {
 }
 
 int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
-  if (rnd.m_CurNode == NULL) {
+  if (!rnd.m_CurNode) {
     return -1;
   }
   if (!rnd.m_CurNode->IsNode()) {
@@ -84,7 +84,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(
     CXFA_ResolveNodesData& rnd) {
   CFX_WideString wsName = rnd.m_wsName;
   CFX_WideString wsCondition = rnd.m_wsCondition;
-  CXFA_Node* findNode = NULL;
+  CXFA_Node* findNode = nullptr;
   CXFA_NodeArray siblings;
   FX_BOOL bClassName = FALSE;
   if (wsName.GetAt(0) == '#') {
@@ -93,7 +93,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(
   }
   findNode = m_pNodeHelper->XFA_ResolveNodes_GetOneChild(
       ToNode(rnd.m_CurNode), wsName.c_str(), bClassName);
-  if (findNode == NULL) {
+  if (!findNode) {
     return 0;
   }
   if (wsCondition.IsEmpty()) {
@@ -226,8 +226,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
   rndFind.m_uHashName = uNameHash;
   CXFA_NodeArray children;
   CXFA_NodeArray properties;
-  CXFA_Node* pVariablesNode = NULL;
-  CXFA_Node* pPageSetNode = NULL;
+  CXFA_Node* pVariablesNode = nullptr;
+  CXFA_Node* pPageSetNode = nullptr;
   CXFA_Node* pChild = curNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
     if (pChild->GetElementType() == XFA_Element::Variables) {
@@ -353,7 +353,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       }
       return 0;
     }
-    CXFA_Node* pProp = NULL;
+    CXFA_Node* pProp = nullptr;
     if (XFA_Element::Subform == curNode->GetElementType() &&
         XFA_HASHCODE_Occur == uNameHash) {
       CXFA_Node* pInstanceManager =
@@ -650,7 +650,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(
         m_pNodeHelper->m_iCreateCount = 1;
         findNodes.RemoveAll();
         m_pNodeHelper->m_iCurAllStart = -1;
-        m_pNodeHelper->m_pAllStartParent = NULL;
+        m_pNodeHelper->m_pAllStartParent = nullptr;
       } else {
         if (m_pNodeHelper->m_iCurAllStart == -1) {
           m_pNodeHelper->m_iCurAllStart = m_iCurStart;
@@ -826,14 +826,14 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_SetIndexDataBind(
 
 CXFA_ResolveNodesData::CXFA_ResolveNodesData(CXFA_ScriptContext* pSC)
     : m_pSC(pSC),
-      m_CurNode(NULL),
+      m_CurNode(nullptr),
       m_wsName(),
       m_uHashName(XFA_HASHCODE_None),
       m_wsCondition(),
       m_nLevel(0),
       m_Nodes(),
       m_dwStyles(XFA_RESOLVENODE_Children),
-      m_pScriptAttribute(NULL),
+      m_pScriptAttribute(nullptr),
       m_dwFlag(XFA_RESOVENODE_RSTYPE_Nodes) {}
 
 CXFA_ResolveNodesData::~CXFA_ResolveNodesData() {

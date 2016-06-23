@@ -57,7 +57,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
   void UpdateFWL();
   uint32_t UpdateUIProperty();
@@ -70,7 +70,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   CFWL_Widget* GetNormalWidget() { return m_pNormalWidget; }
   void FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy);
   void LayoutCaption();
-  void RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL);
+  void RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = nullptr);
 
   int32_t CalculateOverride();
   int32_t CalculateWidgetAcc(CXFA_WidgetAcc* pAcc);

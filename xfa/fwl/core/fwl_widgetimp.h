@@ -63,7 +63,7 @@ class CFWL_WidgetImp {
   virtual FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
   virtual FWL_Error SetMatrix(const CFX_Matrix& matrix);
   virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+                               const CFX_Matrix* pMatrix = nullptr);
   virtual IFWL_ThemeProvider* GetThemeProvider();
   virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   virtual FWL_Error SetDataProvider(IFWL_DataProvider* pDataProvider);
@@ -132,24 +132,24 @@ class CFWL_WidgetImp {
                              const CFX_RectF& rtAnchor,
                              CFX_RectF& rtPopup);
   FX_BOOL GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy);
-  void RegisterEventTarget(IFWL_Widget* pEventSource = NULL,
+  void RegisterEventTarget(IFWL_Widget* pEventSource = nullptr,
                            uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   void UnregisterEventTarget();
   void DispatchKeyEvent(CFWL_MsgKey* pNote);
   void DispatchEvent(CFWL_Event* pEvent);
-  void Repaint(const CFX_RectF* pRect = NULL);
+  void Repaint(const CFX_RectF* pRect = nullptr);
   void DrawBackground(CFX_Graphics* pGraphics,
                       CFWL_Part iPartBk,
                       IFWL_ThemeProvider* pTheme,
-                      const CFX_Matrix* pMatrix = NULL);
+                      const CFX_Matrix* pMatrix = nullptr);
   void DrawBorder(CFX_Graphics* pGraphics,
                   CFWL_Part iPartBorder,
                   IFWL_ThemeProvider* pTheme,
-                  const CFX_Matrix* pMatrix = NULL);
+                  const CFX_Matrix* pMatrix = nullptr);
   void DrawEdge(CFX_Graphics* pGraphics,
                 CFWL_Part iPartEdge,
                 IFWL_ThemeProvider* pTheme,
-                const CFX_Matrix* pMatrix = NULL);
+                const CFX_Matrix* pMatrix = nullptr);
   void NotifyDriver();
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
@@ -174,7 +174,7 @@ class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 };
 
 #endif  // XFA_FWL_CORE_FWL_WIDGETIMP_H_

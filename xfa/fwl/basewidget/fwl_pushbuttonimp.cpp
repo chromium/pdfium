@@ -67,7 +67,7 @@ FWL_Error CFWL_PushButtonImp::GetWidgetRect(CFX_RectF& rect,
                                             FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
-    if (m_pProperties->m_pThemeProvider == NULL) {
+    if (!m_pProperties->m_pThemeProvider) {
       m_pProperties->m_pThemeProvider = GetAvailableTheme();
     }
     CFX_WideString wsCaption;
@@ -122,7 +122,7 @@ FWL_Error CFWL_PushButtonImp::DrawWidget(CFX_Graphics* pGraphics,
     return FWL_Error::Indefinite;
   IFWL_PushButtonDP* pData =
       static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
-  CFX_DIBitmap* pPicture = NULL;
+  CFX_DIBitmap* pPicture = nullptr;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,

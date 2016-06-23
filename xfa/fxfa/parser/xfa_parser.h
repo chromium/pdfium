@@ -20,10 +20,10 @@ class IXFA_Parser {
   virtual void Release() = 0;
   virtual int32_t StartParse(IFX_FileRead* pStream,
                              XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) = 0;
-  virtual int32_t DoParse(IFX_Pause* pPause = NULL) = 0;
+  virtual int32_t DoParse(IFX_Pause* pPause = nullptr) = 0;
   virtual int32_t ParseXMLData(const CFX_WideString& wsXML,
                                CFDE_XMLNode*& pXMLNode,
-                               IFX_Pause* pPause = NULL) = 0;
+                               IFX_Pause* pPause = nullptr) = 0;
   virtual void ConstructXFANode(CXFA_Node* pXFANode,
                                 CFDE_XMLNode* pXMLNode) = 0;
   virtual CXFA_Document* GetFactory() const = 0;

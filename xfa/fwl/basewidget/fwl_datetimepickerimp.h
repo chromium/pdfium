@@ -216,7 +216,7 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   FWL_Error DisForm_GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   FWL_Error DisForm_GetBBox(CFX_RectF& rect);
   FWL_Error DisForm_DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+                               const CFX_Matrix* pMatrix = nullptr);
 };
 
 class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {
@@ -226,7 +226,7 @@ class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {
   // CFWL_WidgetImpDelegate
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

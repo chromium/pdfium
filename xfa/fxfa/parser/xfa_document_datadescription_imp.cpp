@@ -66,7 +66,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     XFA_Element eNodeType,
     const CFX_WideString& wsName) {
   if (!pDataParent) {
-    return NULL;
+    return nullptr;
   }
   CXFA_Node* pParentDDNode = pDataParent->GetDataDescriptionNode();
   if (!pParentDDNode) {
@@ -116,6 +116,6 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
       pDataNode->SetFlag(XFA_NodeFlag_Initialized, false);
       return pDataNode;
     }
-    return NULL;
+    return nullptr;
   }
 }

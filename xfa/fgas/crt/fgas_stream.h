@@ -58,7 +58,7 @@ class IFX_Stream {
   virtual int32_t ReadString(FX_WCHAR* pStr,
                              int32_t iMaxLength,
                              FX_BOOL& bEOS,
-                             int32_t const* pByteSize = NULL) = 0;
+                             int32_t const* pByteSize = nullptr) = 0;
   virtual int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) = 0;
   virtual int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) = 0;
   virtual void Flush() = 0;

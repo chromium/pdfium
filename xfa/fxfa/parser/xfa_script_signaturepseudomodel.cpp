@@ -36,7 +36,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(
     return;
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
   }
@@ -57,7 +57,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
     return;
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  CXFA_NodeList* pNodeList = NULL;
+  CXFA_NodeList* pNodeList = nullptr;
   CFX_WideString wsExpression;
   CFX_WideString wsXMLIdent;
   if (iLength >= 1) {
@@ -107,7 +107,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(
     return;
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  CXFA_Node* pNode = NULL;
+  CXFA_Node* pNode = nullptr;
   FX_BOOL bClear = TRUE;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));

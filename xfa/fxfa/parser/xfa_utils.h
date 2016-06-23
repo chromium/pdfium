@@ -32,7 +32,8 @@ FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {
  public:
-  CXFA_NodeIteratorTemplate(NodeType* pRootNode = NULL) : m_pRoot(pRootNode) {
+  CXFA_NodeIteratorTemplate(NodeType* pRootNode = nullptr)
+      : m_pRoot(pRootNode) {
     if (pRootNode) {
       m_NodeStack.Push(pRootNode);
     }
@@ -74,13 +75,13 @@ class CXFA_NodeIteratorTemplate {
     return TRUE;
   }
   NodeType* GetCurrent() const {
-    return m_NodeStack.GetSize() ? *m_NodeStack.GetTopElement() : NULL;
+    return m_NodeStack.GetSize() ? *m_NodeStack.GetTopElement() : nullptr;
   }
   NodeType* GetRoot() const { return m_pRoot; }
   NodeType* MoveToPrev() {
     int32_t nStackLength = m_NodeStack.GetSize();
     if (nStackLength == 1) {
-      return NULL;
+      return nullptr;
     } else if (nStackLength > 1) {
       NodeType* pCurItem = *m_NodeStack.GetTopElement();
       m_NodeStack.Pop();
@@ -90,7 +91,7 @@ class CXFA_NodeIteratorTemplate {
       if (pCurItem == pParentFirstChildItem) {
         return pParentItem;
       }
-      NodeType *pPrevItem = pParentFirstChildItem, *pPrevItemNext = NULL;
+      NodeType *pPrevItem = pParentFirstChildItem, *pPrevItemNext = nullptr;
       for (; pPrevItem; pPrevItem = pPrevItemNext) {
         pPrevItemNext = TraverseStrategy::GetNextSibling(pPrevItem);
         if (!pPrevItemNext || pPrevItemNext == pCurItem) {
@@ -107,7 +108,7 @@ class CXFA_NodeIteratorTemplate {
     if (m_NodeStack.GetSize() > 0) {
       NodeType* pChildItem = *m_NodeStack.GetTopElement();
       while ((pChildItem = TraverseStrategy::GetFirstChild(pChildItem)) !=
-             NULL) {
+             nullptr) {
         while (NodeType* pNextItem =
                    TraverseStrategy::GetNextSibling(pChildItem)) {
           pChildItem = pNextItem;
@@ -116,10 +117,10 @@ class CXFA_NodeIteratorTemplate {
       }
       return *m_NodeStack.GetTopElement();
     }
-    return NULL;
+    return nullptr;
   }
   NodeType* MoveToNext() {
-    NodeType** ppNode = NULL;
+    NodeType** ppNode = nullptr;
     NodeType* pCurrent = GetCurrent();
     while (m_NodeStack.GetSize() > 0) {
       while ((ppNode = m_NodeStack.GetTopElement()) != nullptr) {
@@ -127,7 +128,7 @@ class CXFA_NodeIteratorTemplate {
           return *ppNode;
         }
         NodeType* pChild = TraverseStrategy::GetFirstChild(*ppNode);
-        if (pChild == NULL) {
+        if (!pChild) {
           break;
         }
         m_NodeStack.Push(pChild);
@@ -144,7 +145,7 @@ class CXFA_NodeIteratorTemplate {
         }
       }
     }
-    return NULL;
+    return nullptr;
   }
   NodeType* SkipChildrenAndMoveToNext() {
     NodeType** ppNode = nullptr;
@@ -184,7 +185,7 @@ FX_BOOL XFA_IsLayoutElement(XFA_Element eElement,
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
                                          IFX_Stream* pStream,
-                                         const FX_CHAR* pChecksum = NULL,
+                                         const FX_CHAR* pChecksum = nullptr,
                                          FX_BOOL bSaveXML = FALSE);
 
 #endif  // XFA_FXFA_PARSER_XFA_UTILS_H_

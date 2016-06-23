@@ -36,7 +36,7 @@ static void XFA_FFDeleteCalcData(void* pData) {
 }
 
 static XFA_MAPDATABLOCKCALLBACKINFO gs_XFADeleteCalcData = {
-    XFA_FFDeleteCalcData, NULL};
+    XFA_FFDeleteCalcData, nullptr};
 
 class CXFA_WidgetLayoutData {
  public:
@@ -135,7 +135,7 @@ class CXFA_TextEditData : public CXFA_FieldLayoutData {
 class CXFA_ImageEditData : public CXFA_FieldLayoutData {
  public:
   CXFA_ImageEditData()
-      : m_pDIBitmap(NULL),
+      : m_pDIBitmap(nullptr),
         m_bNamedImage(FALSE),
         m_iImageXDpi(0),
         m_iImageYDpi(0) {}
@@ -222,7 +222,7 @@ void CXFA_WidgetAcc::ResetData() {
         if (!pAcc) {
           continue;
         }
-        CXFA_Value defValue(NULL);
+        CXFA_Value defValue(nullptr);
         if (wsValue.IsEmpty() && (defValue = pAcc->GetDefaultValue())) {
           defValue.GetChildValueContent(wsValue);
           SetValue(wsValue, XFA_VALUEPICTURE_Raw);
@@ -282,7 +282,7 @@ void CXFA_WidgetAcc::SetImageEdit(const CFX_WideString& wsContentType,
 CXFA_WidgetAcc* CXFA_WidgetAcc::GetExclGroup() {
   CXFA_Node* pExcl = m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (!pExcl || pExcl->GetElementType() != XFA_Element::ExclGroup) {
-    return NULL;
+    return nullptr;
   }
   return static_cast<CXFA_WidgetAcc*>(pExcl->GetWidgetData());
 }
@@ -695,7 +695,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   if (pRetValue)
     *pRetValue = pTmpRetValue.release();
 
-  pContext->SetNodesOfRunScript(NULL);
+  pContext->SetNodesOfRunScript(nullptr);
   return iRet;
 }
 CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
@@ -708,7 +708,7 @@ CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
   return static_cast<CXFA_FFWidget*>(pLayout);
 }
 void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
-  CXFA_FFWidget* pWidget = NULL;
+  CXFA_FFWidget* pWidget = nullptr;
   while ((pWidget = GetNextWidget(pWidget)) != nullptr) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
         (GetUIType() != XFA_Element::CheckButton && pWidget->IsFocused())) {
@@ -1471,19 +1471,19 @@ CXFA_TextLayout* CXFA_WidgetAcc::GetTextLayout() {
   return m_pLayoutData
              ? static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())
                    ->GetTextLayout()
-             : NULL;
+             : nullptr;
 }
 CFX_DIBitmap* CXFA_WidgetAcc::GetImageImage() {
   return m_pLayoutData
              ? static_cast<CXFA_ImageLayoutData*>(m_pLayoutData.get())
                    ->m_pDIBitmap
-             : NULL;
+             : nullptr;
 }
 CFX_DIBitmap* CXFA_WidgetAcc::GetImageEditImage() {
   return m_pLayoutData
              ? static_cast<CXFA_ImageEditData*>(m_pLayoutData.get())
                    ->m_pDIBitmap
-             : NULL;
+             : nullptr;
 }
 
 void CXFA_WidgetAcc::SetImageImage(CFX_DIBitmap* newImage) {
@@ -1570,7 +1570,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
     CXFA_Node* pElementNode = m_pWidgetAcc->GetNode();
     CXFA_Node* pValueNode = pElementNode->GetChild(0, XFA_Element::Value);
     if (!pValueNode) {
-      return NULL;
+      return nullptr;
     }
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
@@ -1600,12 +1600,12 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
   } else if (m_eType == XFA_TEXTPROVIDERTYPE_Caption) {
     CXFA_Node* pCaptionNode =
         m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
-    if (pCaptionNode == NULL) {
-      return NULL;
+    if (!pCaptionNode) {
+      return nullptr;
     }
     CXFA_Node* pValueNode = pCaptionNode->GetChild(0, XFA_Element::Value);
-    if (pValueNode == NULL) {
-      return NULL;
+    if (!pValueNode) {
+      return nullptr;
     }
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
@@ -1619,8 +1619,8 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
   }
   CXFA_Node* pItemNode =
       m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Items);
-  if (pItemNode == NULL) {
-    return NULL;
+  if (!pItemNode) {
+    return nullptr;
   }
   CXFA_Node* pNode = pItemNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pNode) {
@@ -1635,7 +1635,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
     }
     pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
-  return NULL;
+  return nullptr;
 }
 CXFA_Para CXFA_TextProvider::GetParaNode() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
@@ -1674,8 +1674,8 @@ FX_BOOL CXFA_TextProvider::GetEmbbedObj(FX_BOOL bURI,
     CXFA_Node* pWidgetNode = m_pWidgetAcc->GetNode();
     CXFA_Node* pParent = pWidgetNode->GetNodeItem(XFA_NODEITEM_Parent);
     CXFA_Document* pDocument = pWidgetNode->GetDocument();
-    CXFA_Node* pIDNode = NULL;
-    CXFA_WidgetAcc* pEmbAcc = NULL;
+    CXFA_Node* pIDNode = nullptr;
+    CXFA_WidgetAcc* pEmbAcc = nullptr;
     if (pParent) {
       pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsStringC());
     }

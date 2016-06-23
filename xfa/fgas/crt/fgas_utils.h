@@ -378,7 +378,7 @@ class CFX_DiscreteArrayTemplate : public CFX_BaseDiscreteArray {
       : CFX_BaseDiscreteArray(iChunkSize, sizeof(baseType)) {}
   baseType& GetAt(int32_t index, const baseType& defValue) const {
     baseType* p = (baseType*)CFX_BaseDiscreteArray::GetAt(index);
-    return p == NULL ? (baseType&)defValue : *p;
+    return p ? *p : (baseType&)defValue;
   }
   baseType* GetPtrAt(int32_t index) const {
     return (baseType*)CFX_BaseDiscreteArray::GetAt(index);
@@ -447,7 +447,7 @@ class CFX_ObjectStackTemplate : public CFX_BaseStack {
   }
   void Pop() {
     baseType* p = (baseType*)CFX_BaseStack::GetTopElement();
-    if (p != NULL) {
+    if (p) {
       p->~baseType();
     }
     CFX_BaseStack::Pop();

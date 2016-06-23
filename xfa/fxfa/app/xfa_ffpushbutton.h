@@ -32,12 +32,12 @@ class CXFA_FFPushButton : public CXFA_FFField {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void LoadHighlightCaption();
   void LayoutHighlightCaption();
-  void RenderHighlightCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL);
+  void RenderHighlightCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = nullptr);
   FX_FLOAT GetLineWidth();
   FX_ARGB GetLineColor();
   FX_ARGB GetFillColor();

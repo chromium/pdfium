@@ -21,7 +21,7 @@
 
 CXFA_FFListBox::CXFA_FFListBox(CXFA_FFPageView* pPageView,
                                CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(NULL) {}
+    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
 CXFA_FFListBox::~CXFA_FFListBox() {
   if (m_pNormalWidget) {
     IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
@@ -203,7 +203,7 @@ void CXFA_FFListBox::OnDrawWidget(CFX_Graphics* pGraphics,
 
 CXFA_FFComboBox::CXFA_FFComboBox(CXFA_FFPageView* pPageView,
                                  CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(NULL) {}
+    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
 
 CXFA_FFComboBox::~CXFA_FFComboBox() {}
 
@@ -479,7 +479,7 @@ void CXFA_FFComboBox::OnSelectChanged(IFWL_Widget* pWidget,
   FWLEventSelChange(&eParam);
   if (m_pDataAcc->GetChoiceListCommitOn() == XFA_ATTRIBUTEENUM_Select &&
       bLButtonUp) {
-    m_pDocView->SetFocusWidgetAcc(NULL);
+    m_pDocView->SetFocusWidgetAcc(nullptr);
   }
 }
 void CXFA_FFComboBox::OnPreOpen(IFWL_Widget* pWidget) {

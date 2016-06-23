@@ -13,7 +13,7 @@ namespace {
 
 void GetStrokesInternal(CXFA_Node* pNode,
                         CXFA_StrokeArray& strokes,
-                        FX_BOOL bNULL) {
+                        FX_BOOL bNull) {
   strokes.RemoveAll();
   if (!pNode)
     return;
@@ -25,7 +25,7 @@ void GetStrokesInternal(CXFA_Node* pNode,
         CXFA_Corner(pNode->GetProperty(i, XFA_Element::Corner, i == 0));
     if (corner || i == 0)
       strokes.SetAt(j, corner);
-    else if (bNULL)
+    else if (bNull)
       strokes.SetAt(j, CXFA_Stroke(nullptr));
     else if (i == 1)
       strokes.SetAt(j, strokes[0]);
@@ -39,7 +39,7 @@ void GetStrokesInternal(CXFA_Node* pNode,
         CXFA_Edge(pNode->GetProperty(i, XFA_Element::Edge, i == 0));
     if (edge || i == 0)
       strokes.SetAt(j, edge);
-    else if (bNULL)
+    else if (bNull)
       strokes.SetAt(j, CXFA_Stroke(nullptr));
     else if (i == 1)
       strokes.SetAt(j, strokes[1]);
@@ -159,7 +159,7 @@ int32_t CXFA_Box::Get3DStyle(FX_BOOL& bVisible, FX_FLOAT& fThickness) const {
 
   CXFA_StrokeArray strokes;
   GetStrokesInternal(m_pNode, strokes, TRUE);
-  CXFA_Stroke stroke(NULL);
+  CXFA_Stroke stroke(nullptr);
   int32_t iType = Style3D(strokes, stroke);
   if (iType) {
     bVisible = stroke.IsVisible();

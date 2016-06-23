@@ -514,7 +514,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
       if (m_pToken->m_type == TOKlbracket) {
         CXFA_FMSimpleExpression* s = ParseIndexExpression();
         if (s) {
-          e.reset(new CXFA_FMDotAccessorExpression(line, NULL, TOKdot,
+          e.reset(new CXFA_FMDotAccessorExpression(line, nullptr, TOKdot,
                                                    wsIdentifier, s));
         }
         NextToken();
@@ -661,7 +661,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                                                  s.release());
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
-                tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
+                tempLine, ACCESSOR_NO_INDEX, nullptr, FALSE);
             e = new CXFA_FMDotAccessorExpression(line, e, TOKdot, tempStr, s);
             continue;
           }
@@ -688,7 +688,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                                                     tempStr, s.release());
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
-                tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
+                tempLine, ACCESSOR_NO_INDEX, nullptr, FALSE);
             e = new CXFA_FMDotDotAccessorExpression(line, e, TOKdotdot, tempStr,
                                                     s);
             continue;
@@ -716,7 +716,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                                                  tempStr, s.release());
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
-                tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
+                tempLine, ACCESSOR_NO_INDEX, nullptr, FALSE);
             e = new CXFA_FMDotAccessorExpression(line, e, TOKdotscream, tempStr,
                                                  s);
             continue;
@@ -730,7 +730,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
         break;
       case TOKdotstar: {
         CXFA_FMSimpleExpression* s =
-            new CXFA_FMIndexExpression(line, ACCESSOR_NO_INDEX, NULL, FALSE);
+            new CXFA_FMIndexExpression(line, ACCESSOR_NO_INDEX, nullptr, FALSE);
         e = new CXFA_FMDotAccessorExpression(line, e, TOKdotstar,
                                              FX_WSTRC(L"*"), s);
       } break;

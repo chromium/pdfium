@@ -1722,7 +1722,7 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
   int32_t iStart = 0;
   int32_t iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
   int32_t iMid = 0;
-  const XFA_FONTINFO* pFontInfo = NULL;
+  const XFA_FONTINFO* pFontInfo = nullptr;
   do {
     iMid = (iStart + iEnd) / 2;
     uint32_t dwFontNameHash = g_XFAFontsMap[iMid].dwFontNameHash;
@@ -1798,9 +1798,11 @@ CFGAS_GEFont* CXFA_DefFontMgr::GetDefaultFont(
   IFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   CFGAS_GEFont* pFont =
       pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
-  if (!pFont)
-    pFont =
-        pFDEFontMgr->LoadFont((const FX_WCHAR*)NULL, dwFontStyles, wCodePage);
+  if (!pFont) {
+    pFont = pFDEFontMgr->LoadFont((const FX_WCHAR*)nullptr, dwFontStyles,
+                                  wCodePage);
+  }
+
   ASSERT(pFont);
   if (pFont) {
     m_CacheFonts.Add(pFont);
@@ -1834,17 +1836,17 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
                                         CPDF_Font** pDstPDFFont,
                                         FX_BOOL bStrictMatch) {
   CPDF_Document* pDoc = m_pDoc->GetPDFDoc();
-  if (pDoc == NULL) {
-    return NULL;
+  if (!pDoc) {
+    return nullptr;
   }
   CPDF_Dictionary* pFontSetDict =
       pDoc->GetRoot()->GetDictBy("AcroForm")->GetDictBy("DR");
   if (!pFontSetDict) {
-    return NULL;
+    return nullptr;
   }
   pFontSetDict = pFontSetDict->GetDictBy("Font");
   if (!pFontSetDict) {
-    return NULL;
+    return nullptr;
   }
   strPsName.Remove(' ');
   IFGAS_FontMgr* pFDEFontMgr = m_pDoc->GetApp()->GetFDEFontMgr();
@@ -1857,19 +1859,19 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
     }
     CPDF_Dictionary* pFontDict = ToDictionary(pObj->GetDirect());
     if (!pFontDict || pFontDict->GetStringBy("Type") != "Font") {
-      return NULL;
+      return nullptr;
     }
     CPDF_Font* pPDFFont = pDoc->LoadFont(pFontDict);
     if (!pPDFFont) {
-      return NULL;
+      return nullptr;
     }
     if (!pPDFFont->IsEmbedded()) {
       *pDstPDFFont = pPDFFont;
-      return NULL;
+      return nullptr;
     }
     return CFGAS_GEFont::LoadFont(&pPDFFont->m_Font, pFDEFontMgr);
   }
-  return NULL;
+  return nullptr;
 }
 
 CFGAS_GEFont* CXFA_PDFFontMgr::GetFont(const CFX_WideStringC& wsFontFamily,

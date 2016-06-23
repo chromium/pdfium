@@ -313,7 +313,7 @@ class IXFA_DocProvider {
                               CFX_RectF& rtPopup) = 0;
   virtual FX_BOOL PopupMenu(CXFA_FFWidget* hWidget,
                             CFX_PointF ptPopup,
-                            const CFX_RectF* pRectExclude = NULL) = 0;
+                            const CFX_RectF* pRectExclude = nullptr) = 0;
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
   virtual void WidgetPostAdd(CXFA_FFWidget* hWidget,
                              CXFA_WidgetAcc* pWidgetData) = 0;

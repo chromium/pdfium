@@ -18,11 +18,11 @@
 
 CXFA_NodeHelper::CXFA_NodeHelper()
     : m_eLastCreateType(XFA_Element::DataValue),
-      m_pCreateParent(NULL),
+      m_pCreateParent(nullptr),
       m_iCreateCount(0),
       m_iCreateFlag(XFA_RESOLVENODE_RSTYPE_CreateNodeOne),
       m_iCurAllStart(-1),
-      m_pAllStartParent(NULL) {}
+      m_pAllStartParent(nullptr) {}
 
 CXFA_NodeHelper::~CXFA_NodeHelper() {}
 
@@ -30,14 +30,14 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetOneChild(
     CXFA_Node* parent,
     const FX_WCHAR* pwsName,
     FX_BOOL bIsClassName) {
-  if (parent == NULL) {
-    return NULL;
+  if (!parent) {
+    return nullptr;
   }
   CXFA_NodeArray siblings;
   uint32_t uNameHash = FX_HashCode_GetW(CFX_WideStringC(pwsName), false);
   XFA_NodeAcc_TraverseAnySiblings(parent, uNameHash, &siblings, bIsClassName);
   if (siblings.GetSize() == 0) {
-    return NULL;
+    return nullptr;
   }
   return siblings[0];
 }
@@ -56,7 +56,7 @@ int32_t CXFA_NodeHelper::XFA_CountSiblings(CXFA_Node* pNode,
       parent->GetElementType(), pNode->GetElementType(), XFA_XDPPACKET_UNKNOWN);
   if (!pProperty && eLogicType == XFA_LOGIC_Transparent) {
     parent = XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
-    if (parent == NULL) {
+    if (!parent) {
       return 0;
     }
   }
@@ -74,7 +74,7 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseAnySiblings(
     uint32_t dNameHash,
     CXFA_NodeArray* pSiblings,
     FX_BOOL bIsClassName) {
-  if (parent == NULL || pSiblings == NULL) {
+  if (!parent || !pSiblings) {
     return 0;
   }
   int32_t nCount = 0;
@@ -136,7 +136,7 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
                                                       XFA_LOGIC_TYPE eLogicType,
                                                       FX_BOOL bIsClassName,
                                                       FX_BOOL bIsFindProperty) {
-  if (parent == NULL || pSiblings == NULL) {
+  if (!parent || !pSiblings) {
     return 0;
   }
   int32_t nCount = 0;
@@ -211,7 +211,7 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetParent(
     CXFA_Node* pNode,
     XFA_LOGIC_TYPE eLogicType) {
   if (!pNode) {
-    return NULL;
+    return nullptr;
   }
   if (eLogicType == XFA_LOGIC_NoTransparent) {
     return pNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -220,7 +220,7 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetParent(
   CXFA_Node* node = pNode;
   while (TRUE) {
     parent = XFA_ResolveNodes_GetParent(node);
-    if (parent == NULL) {
+    if (!parent) {
       break;
     }
     XFA_Element parentType = parent->GetElementType();
@@ -239,12 +239,12 @@ int32_t CXFA_NodeHelper::XFA_GetIndex(CXFA_Node* pNode,
                                       FX_BOOL bIsClassIndex) {
   CXFA_Node* parent =
       XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
-  if (parent == NULL) {
+  if (!parent) {
     return 0;
   }
   if (!bIsProperty && eLogicType == XFA_LOGIC_Transparent) {
     parent = XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
-    if (parent == NULL) {
+    if (!parent) {
       return 0;
     }
   }
@@ -302,7 +302,7 @@ void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode,
 }
 
 FX_BOOL CXFA_NodeHelper::XFA_NodeIsTransparent(CXFA_Node* refNode) {
-  if (refNode == NULL) {
+  if (!refNode) {
     return FALSE;
   }
   XFA_Element refNodeType = refNode->GetElementType();
@@ -358,7 +358,7 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
     CFX_WideString wsCondition,
     FX_BOOL bLastNode,
     CXFA_ScriptContext* pScriptContext) {
-  if (m_pCreateParent == NULL) {
+  if (!m_pCreateParent) {
     return FALSE;
   }
   FX_BOOL bIsClassName = FALSE;
@@ -409,13 +409,13 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
     }
   }
   if (!bResult) {
-    m_pCreateParent = NULL;
+    m_pCreateParent = nullptr;
   }
   return bResult;
 }
 
 void CXFA_NodeHelper::XFA_SetCreateNodeType(CXFA_Node* refNode) {
-  if (refNode == NULL) {
+  if (!refNode) {
     return;
   }
   if (refNode->GetElementType() == XFA_Element::Subform) {

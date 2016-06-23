@@ -56,7 +56,7 @@ class CFWL_CheckBoxImpDelegate : public CFWL_WidgetImpDelegate {
 
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void OnActivate(CFWL_Message* pMsg);

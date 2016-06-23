@@ -66,16 +66,16 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   FX_BOOL ScrollToVisible(IFWL_ListItem* hItem);
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
-                    const CFX_Matrix* pMatrix = NULL);
+                    const CFX_Matrix* pMatrix = nullptr);
   void DrawItems(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
-                 const CFX_Matrix* pMatrix = NULL);
+                 const CFX_Matrix* pMatrix = nullptr);
   void DrawItem(CFX_Graphics* pGraphics,
                 IFWL_ThemeProvider* pTheme,
                 IFWL_ListItem* hItem,
                 int32_t Index,
                 const CFX_RectF& rtItem,
-                const CFX_Matrix* pMatrix = NULL);
+                const CFX_Matrix* pMatrix = nullptr);
   void DrawStatic(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
   CFX_SizeF CalcSize(FX_BOOL bAutoSize = FALSE);
   void GetItemSize(CFX_SizeF& size,
@@ -109,7 +109,7 @@ class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = NULL) override;
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

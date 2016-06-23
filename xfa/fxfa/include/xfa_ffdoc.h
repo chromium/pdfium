@@ -31,7 +31,7 @@ class CXFA_FFDoc {
   IXFA_DocProvider* GetDocProvider() { return m_pDocProvider; }
   uint32_t GetDocType();
   int32_t StartLoad();
-  int32_t DoLoad(IFX_Pause* pPause = NULL);
+  int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void StopLoad();
   CXFA_FFDocView* CreateDocView(uint32_t dwView = 0);
   FX_BOOL OpenDoc(IFX_FileRead* pStream, FX_BOOL bTakeOverFile);

@@ -123,7 +123,7 @@ void CXFA_FFWidget::RenderWidget(CFX_Graphics* pGS,
   }
 }
 FX_BOOL CXFA_FFWidget::IsLoaded() {
-  return m_pPageView != NULL;
+  return !!m_pPageView;
 }
 FX_BOOL CXFA_FFWidget::LoadWidget() {
   PerformLayout();
@@ -405,10 +405,10 @@ CXFA_FFWidget* CXFA_FFWidget::GetParent() {
     CXFA_WidgetAcc* pParentWidgetAcc =
         static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetData());
     if (pParentWidgetAcc) {
-      return pParentWidgetAcc->GetNextWidget(NULL);
+      return pParentWidgetAcc->GetNextWidget(nullptr);
     }
   }
-  return NULL;
+  return nullptr;
 }
 FX_BOOL CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {
   if (!pWidget) {
@@ -584,14 +584,14 @@ class CXFA_ImageRenderer {
                          int Transparency);
 };
 CXFA_ImageRenderer::CXFA_ImageRenderer() {
-  m_pDevice = NULL;
+  m_pDevice = nullptr;
   m_Status = 0;
-  m_pDIBSource = NULL;
-  m_pCloneConvert = NULL;
+  m_pDIBSource = nullptr;
+  m_pCloneConvert = nullptr;
   m_BitmapAlpha = 255;
   m_FillArgb = 0;
   m_Flags = 0;
-  m_DeviceHandle = NULL;
+  m_DeviceHandle = nullptr;
   m_BlendType = FXDIB_BLEND_NORMAL;
   m_Result = TRUE;
   m_bPrint = FALSE;
@@ -741,7 +741,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
                                            int bitmap_alpha,
                                            int blend_mode,
                                            int Transparency) {
-  if (pDIBitmap == NULL) {
+  if (!pDIBitmap) {
     return;
   }
   bool bIsolated = !!(Transparency & PDFTRANS_ISOLATED);
@@ -780,7 +780,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
       rect.Intersect(m_pDevice->GetClipBox());
-      CFX_DIBitmap* pClone = NULL;
+      CFX_DIBitmap* pClone = nullptr;
       FX_BOOL bClone = FALSE;
       if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
         bClone = TRUE;
@@ -823,7 +823,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
     FX_BOOL bRet = imageRender.Start(m_pDevice, pCloneConvert, m_FillArgb,
                                      m_BitmapAlpha, &m_ImageMatrix, m_Flags);
     while (bRet) {
-      bRet = imageRender.Continue(NULL);
+      bRet = imageRender.Continue(nullptr);
     }
     delete pCloneConvert;
     return;
@@ -897,7 +897,7 @@ void XFA_DrawImage(CFX_Graphics* pGS,
   FX_BOOL bRet = imageRender.Start(pRenderDevice, pDIBitmap, 0, 255, &mtImage,
                                    FXDIB_INTERPOL);
   while (bRet) {
-    bRet = imageRender.Continue(NULL);
+    bRet = imageRender.Continue(nullptr);
   }
   pRenderDevice->RestoreState(false);
 }
@@ -932,12 +932,12 @@ static uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
   return pCP;
 }
 static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer) {
-  if (pStr == NULL) {
+  if (!pStr) {
     return 0;
   }
   uint8_t* pBuffer =
       XFA_RemoveBase64Whitespace((uint8_t*)pStr, FXSYS_strlen((FX_CHAR*)pStr));
-  if (pBuffer == NULL) {
+  if (!pBuffer) {
     return 0;
   }
   int32_t iLen = FXSYS_strlen((FX_CHAR*)pBuffer);
@@ -981,7 +981,7 @@ static const FX_CHAR g_base64_chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
-  FX_CHAR* out = NULL;
+  FX_CHAR* out = nullptr;
   int i, j;
   uint32_t limb;
   out = FX_Alloc(FX_CHAR, ((buf_len * 8 + 5) / 6) + 5);
@@ -1046,14 +1046,14 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
   CFX_WideString wsImage;
   pImage->GetContent(wsImage);
   if (wsHref.IsEmpty() && wsImage.IsEmpty()) {
-    return NULL;
+    return nullptr;
   }
   CFX_WideString wsContentType;
   pImage->GetContentType(wsContentType);
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
   CFX_ByteString bsContent;
-  uint8_t* pImageBuffer = NULL;
-  IFX_FileRead* pImageFileRead = NULL;
+  uint8_t* pImageBuffer = nullptr;
+  IFX_FileRead* pImageFileRead = nullptr;
   if (wsImage.GetLength() > 0) {
     XFA_ATTRIBUTEENUM iEncoding =
         (XFA_ATTRIBUTEENUM)pImage->GetTransferEncoding();
@@ -1085,7 +1085,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
   }
   if (!pImageFileRead) {
     FX_Free(pImageBuffer);
-    return NULL;
+    return nullptr;
   }
   bNameImage = FALSE;
   CFX_DIBitmap* pBitmap =
@@ -1120,14 +1120,14 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
                                       int32_t& iImageYDpi) {
   CFX_GEModule* pGeModule = CFX_GEModule::Get();
   if (!pGeModule) {
-    return NULL;
+    return nullptr;
   }
   CCodec_ModuleMgr* pCodecMgr = pGeModule->GetCodecModule();
   if (!pCodecMgr) {
-    return NULL;
+    return nullptr;
   }
   CFX_DIBAttribute dibAttr;
-  CFX_DIBitmap* pBitmap = NULL;
+  CFX_DIBitmap* pBitmap = nullptr;
   CCodec_ProgressiveDecoder* pProgressiveDecoder =
       pCodecMgr->CreateProgressiveDecoder();
   pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr, false);

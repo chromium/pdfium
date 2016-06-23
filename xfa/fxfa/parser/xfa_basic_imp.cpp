@@ -36,7 +36,7 @@ const XFA_PACKETINFO* XFA_GetPacketByName(const CFX_WideStringC& wsName) {
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 
 const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket) {
@@ -52,7 +52,7 @@ const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket) {
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 
 const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket) {
@@ -78,7 +78,7 @@ const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName) {
   return g_XFAEnumData + eName;
@@ -105,7 +105,8 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {
   return nullptr;
 }
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName) {
-  return (eName < g_iXFAAttributeCount) ? (g_XFAAttributeData + eName) : NULL;
+  return (eName < g_iXFAAttributeCount) ? (g_XFAAttributeData + eName)
+                                        : nullptr;
 }
 FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
                                      XFA_Element eElement,
@@ -113,7 +114,7 @@ FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
                                      XFA_ATTRIBUTETYPE eType,
                                      uint32_t dwPacket) {
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
-  if (pInfo == NULL) {
+  if (!pInfo) {
     return FALSE;
   }
   if (dwPacket && (dwPacket & pInfo->dwPackets) == 0) {
@@ -150,7 +151,7 @@ CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_Element eElement,
                                    XFA_ATTRIBUTETYPE_Cdata, dwPacket)) {
     return (const FX_WCHAR*)pValue;
   }
-  return NULL;
+  return nullptr;
 }
 FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_Element eElement,
                                              XFA_ATTRIBUTE eAttribute,
@@ -230,7 +231,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_Element eElement,
 const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
                                              int32_t& iCount) {
   if (eElement == XFA_Element::Unknown)
-    return NULL;
+    return nullptr;
 
   const XFA_ELEMENTHIERARCHY* pElement =
       g_XFAElementPropertyIndex + static_cast<int32_t>(eElement);
@@ -242,8 +243,8 @@ const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
                                              uint32_t dwPacket) {
   int32_t iCount = 0;
   const XFA_PROPERTY* pProperty = XFA_GetElementProperties(eElement, iCount);
-  if (pProperty == NULL || iCount < 1) {
-    return NULL;
+  if (!pProperty || iCount < 1) {
+    return nullptr;
   }
   int32_t iStart = 0, iEnd = iCount - 1, iMid;
   do {
@@ -258,13 +259,13 @@ const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
     }
   } while (iStart <= iEnd);
   if (iStart > iEnd) {
-    return NULL;
+    return nullptr;
   }
   const XFA_ELEMENTINFO* pInfo = XFA_GetElementByID(eProperty);
   ASSERT(pInfo);
   if (dwPacket == XFA_XDPPACKET_UNKNOWN)
     return pProperty + iMid;
-  return (dwPacket & pInfo->dwPackets) ? (pProperty + iMid) : NULL;
+  return (dwPacket & pInfo->dwPackets) ? (pProperty + iMid) : nullptr;
 }
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
                                                     XFA_ATTRIBUTE eAttribute,
@@ -278,7 +279,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
         if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType) {
           return pAttr;
         }
-        return NULL;
+        return nullptr;
       } else {
         int32_t iBefore = iMid - 1;
         if (iBefore >= 0) {
@@ -288,7 +289,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
               if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType) {
                 return pAttr;
               }
-              return NULL;
+              return nullptr;
             }
             iBefore--;
             if (iBefore < 0) {
@@ -305,7 +306,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
               if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType) {
                 return pAttr;
               }
-              return NULL;
+              return nullptr;
             }
             iAfter++;
             if (iAfter > g_iXFANotsureCount - 1) {
@@ -314,7 +315,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
             pAttr = g_XFANotsureAttributes + iAfter;
           }
         }
-        return NULL;
+        return nullptr;
       }
     } else if (eElement < pAttr->eElement) {
       iEnd = iMid - 1;
@@ -322,7 +323,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
       iStart = iMid + 1;
     }
   } while (iStart <= iEnd);
-  return NULL;
+  return nullptr;
 }
 
 const XFA_METHODINFO* XFA_GetMethodByName(XFA_Element eElement,
@@ -354,7 +355,7 @@ const XFA_METHODINFO* XFA_GetMethodByName(XFA_Element eElement,
     } while (iStart <= iEnd);
     iElementIndex = scriptIndex->wParentIndex;
   }
-  return NULL;
+  return nullptr;
 }
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
@@ -385,7 +386,7 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     } while (iStart <= iEnd);
     iElementIndex = scriptIndex->wParentIndex;
   }
-  return NULL;
+  return nullptr;
 }
 void CXFA_Measurement::Set(const CFX_WideStringC& wsMeasure) {
   if (wsMeasure.IsEmpty()) {
@@ -588,7 +589,7 @@ uint16_t CXFA_WideTextRead::SetCodePage(uint16_t wCodePage) {
 IFX_Stream* CXFA_WideTextRead::CreateSharedStream(uint32_t dwAccess,
                                                   int32_t iOffset,
                                                   int32_t iLength) {
-  return NULL;
+  return nullptr;
 }
 
 void CXFA_WideTextRead::Lock() {}

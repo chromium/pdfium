@@ -377,7 +377,8 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::SkipRuleSet(
   }
 }
 
-CFDE_CSSStyleRule::CFDE_CSSStyleRule() : m_ppSelector(NULL), m_iSelectors(0) {}
+CFDE_CSSStyleRule::CFDE_CSSStyleRule()
+    : m_ppSelector(nullptr), m_iSelectors(0) {}
 
 int32_t CFDE_CSSStyleRule::CountSelectorLists() const {
   return m_iSelectors;
