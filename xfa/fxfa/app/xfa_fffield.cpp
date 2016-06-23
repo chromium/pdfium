@@ -323,7 +323,7 @@ void CXFA_FFField::UpdateFWL() {
 uint32_t CXFA_FFField::UpdateUIProperty() {
   CXFA_Node* pUiNode = m_pDataAcc->GetUIChild();
   uint32_t dwStyle = 0;
-  if (pUiNode && pUiNode->GetClassID() == XFA_Element::DefaultUi) {
+  if (pUiNode && pUiNode->GetElementType() == XFA_Element::DefaultUi) {
     dwStyle = FWL_STYLEEXT_EDT_ReadOnly;
   }
   return dwStyle;

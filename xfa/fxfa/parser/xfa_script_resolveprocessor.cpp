@@ -57,7 +57,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
   if (rnd.m_uHashName == XFA_HASHCODE_This && rnd.m_nLevel == 0) {
     rnd.m_Nodes.Add(rnd.m_pSC->GetThisObject());
     return 1;
-  } else if (rnd.m_CurNode->GetClassID() == XFA_Element::Xfa) {
+  } else if (rnd.m_CurNode->GetElementType() == XFA_Element::Xfa) {
     CXFA_Object* pObjNode =
         rnd.m_pSC->GetDocument()->GetXFAObject(rnd.m_uHashName);
     if (pObjNode) {
@@ -194,7 +194,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_ForAttributeRs(
     CXFA_ResolveNodesData& rnd,
     const CFX_WideStringC& strAttr) {
   const XFA_SCRIPTATTRIBUTEINFO* lpScriptAttribute =
-      XFA_GetScriptAttributeByName(curNode->GetClassID(), strAttr);
+      XFA_GetScriptAttributeByName(curNode->GetElementType(), strAttr);
   if (lpScriptAttribute) {
     rnd.m_pScriptAttribute = lpScriptAttribute;
     rnd.m_Nodes.Add(curNode);
@@ -230,17 +230,18 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
   CXFA_Node* pPageSetNode = NULL;
   CXFA_Node* pChild = curNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
-    if (pChild->GetClassID() == XFA_Element::Variables) {
+    if (pChild->GetElementType() == XFA_Element::Variables) {
       pVariablesNode = pChild;
       pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
       continue;
-    } else if (pChild->GetClassID() == XFA_Element::PageSet) {
+    } else if (pChild->GetElementType() == XFA_Element::PageSet) {
       pPageSetNode = pChild;
       pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
       continue;
     } else {
       const XFA_PROPERTY* pPropert = XFA_GetPropertyOfElement(
-          curNode->GetClassID(), pChild->GetClassID(), XFA_XDPPACKET_UNKNOWN);
+          curNode->GetElementType(), pChild->GetElementType(),
+          XFA_XDPPACKET_UNKNOWN);
       if (pPropert) {
         properties.Add(pChild);
       } else {
@@ -288,7 +289,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         nodes.Add(child);
       }
       if (m_pNodeHelper->XFA_NodeIsTransparent(child) &&
-          child->GetClassID() != XFA_Element::PageSet) {
+          child->GetElementType() != XFA_Element::PageSet) {
         if (!bSetFlag) {
           XFA_ResolveNodes_SetStylesForChild(dwStyles, rndFind);
           bSetFlag = TRUE;
@@ -340,8 +341,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
           nodes.Add(childProperty);
         }
       } else if (childProperty->GetNameHash() == uNameHash &&
-                 childProperty->GetClassID() != XFA_Element::Extras &&
-                 childProperty->GetClassID() != XFA_Element::Items) {
+                 childProperty->GetElementType() != XFA_Element::Extras &&
+                 childProperty->GetElementType() != XFA_Element::Items) {
         nodes.Add(childProperty);
       }
     }
@@ -353,7 +354,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       return 0;
     }
     CXFA_Node* pProp = NULL;
-    if (XFA_Element::Subform == curNode->GetClassID() &&
+    if (XFA_Element::Subform == curNode->GetElementType() &&
         XFA_HASHCODE_Occur == uNameHash) {
       CXFA_Node* pInstanceManager =
           curNode->AsNode()->GetInstanceMgrOfSubform();
@@ -424,11 +425,12 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         nodes.Add(child);
       }
       const XFA_PROPERTY* pPropert = XFA_GetPropertyOfElement(
-          parentNode->GetClassID(), child->GetClassID(), XFA_XDPPACKET_UNKNOWN);
+          parentNode->GetElementType(), child->GetElementType(),
+          XFA_XDPPACKET_UNKNOWN);
       FX_BOOL bInnerSearch = FALSE;
       if (pPropert) {
-        if ((child->GetClassID() == XFA_Element::Variables ||
-             child->GetClassID() == XFA_Element::PageSet)) {
+        if ((child->GetElementType() == XFA_Element::Variables ||
+             child->GetElementType() == XFA_Element::PageSet)) {
           bInnerSearch = TRUE;
         }
       } else {
@@ -728,7 +730,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_FilterCondition(
     CXFA_Node* curNode = array[iSize - 1];
     FX_BOOL bIsProperty = m_pNodeHelper->XFA_NodeIsProperty(curNode);
     if (curNode->IsUnnamed() ||
-        (bIsProperty && curNode->GetClassID() != XFA_Element::PageSet)) {
+        (bIsProperty && curNode->GetElementType() != XFA_Element::PageSet)) {
       iCurrIndex = m_pNodeHelper->XFA_GetIndex(curNode, XFA_LOGIC_Transparent,
                                                bIsProperty, TRUE);
     } else {

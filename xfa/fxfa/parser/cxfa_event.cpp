@@ -17,7 +17,7 @@ int32_t CXFA_Event::GetActivity() {
 XFA_Element CXFA_Event::GetEventType() {
   CXFA_Node* pChild = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
-    XFA_Element eType = pChild->GetClassID();
+    XFA_Element eType = pChild->GetElementType();
     if (eType != XFA_Element::Extras)
       return eType;
 

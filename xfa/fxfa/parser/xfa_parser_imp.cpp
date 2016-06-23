@@ -152,7 +152,7 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
                                          CFDE_XMLNode* pXMLNode) {
   XFA_XDPPACKET ePacketID = (XFA_XDPPACKET)pXFANode->GetPacketID();
   if (ePacketID == XFA_XDPPACKET_Datasets) {
-    if (pXFANode->GetClassID() == XFA_Element::DataValue) {
+    if (pXFANode->GetElementType() == XFA_Element::DataValue) {
       for (CFDE_XMLNode* pXMLChild =
                pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
            pXMLChild;
@@ -839,7 +839,7 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
           continue;
         }
         const XFA_PROPERTY* pPropertyInfo = XFA_GetPropertyOfElement(
-            pXFANode->GetClassID(), pElemInfo->eName, ePacketID);
+            pXFANode->GetElementType(), pElemInfo->eName, ePacketID);
         if (pPropertyInfo &&
             ((pPropertyInfo->uFlags &
               (XFA_PROPERTYFLAG_OneOf | XFA_PROPERTYFLAG_DefaultOneOf)) != 0)) {
@@ -980,7 +980,7 @@ void CXFA_SimpleParser::ParseContentNode(CXFA_Node* pXFANode,
                                          CFDE_XMLNode* pXMLNode,
                                          XFA_XDPPACKET ePacketID) {
   XFA_Element element = XFA_Element::Sharptext;
-  if (pXFANode->GetClassID() == XFA_Element::ExData) {
+  if (pXFANode->GetElementType() == XFA_Element::ExData) {
     CFX_WideStringC wsContentType =
         pXFANode->GetCData(XFA_ATTRIBUTE_ContentType);
     if (wsContentType == FX_WSTRC(L"text/html"))

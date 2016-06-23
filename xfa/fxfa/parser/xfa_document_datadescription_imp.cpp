@@ -31,7 +31,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
        pDataChild;
        pDataChild = pDataChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     uint32_t dwNameHash = pDataChild->GetNameHash();
-    XFA_Element eType = pDataChild->GetClassID();
+    XFA_Element eType = pDataChild->GetElementType();
     if (!dwNameHash) {
       continue;
     }
@@ -40,7 +40,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
     for (CXFA_Node* pDDGroupNode = sIterator.GetCurrent(); pDDGroupNode;
          pDDGroupNode = sIterator.MoveToNext()) {
       if (pDDGroupNode != pDataDescriptionNode) {
-        if (pDDGroupNode->GetClassID() != XFA_Element::DataGroup) {
+        if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup) {
           continue;
         }
         CFX_WideString wsNamespace;
@@ -53,7 +53,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
       if (!pDDNode) {
         continue;
       }
-      if (pDDNode->GetClassID() != eType) {
+      if (pDDNode->GetElementType() != eType) {
         break;
       }
       pDataChild->SetDataDescriptionNode(pDDNode);
@@ -86,7 +86,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     for (CXFA_Node* pDDGroupNode = sIterator.GetCurrent(); pDDGroupNode;
          pDDGroupNode = sIterator.MoveToNext()) {
       if (pDDGroupNode != pParentDDNode) {
-        if (pDDGroupNode->GetClassID() != XFA_Element::DataGroup) {
+        if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup) {
           continue;
         }
         CFX_WideString wsNamespace;
@@ -100,7 +100,7 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
       if (!pDDNode) {
         continue;
       }
-      if (pDDNode->GetClassID() != eNodeType) {
+      if (pDDNode->GetElementType() != eNodeType) {
         break;
       }
       CXFA_Node* pDataNode =

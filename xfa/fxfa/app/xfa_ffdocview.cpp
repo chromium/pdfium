@@ -209,7 +209,7 @@ CXFA_LayoutProcessor* CXFA_FFDocView::GetXFALayout() const {
 }
 FX_BOOL CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
   CXFA_Node* pNode = pWidgetAcc->GetNode();
-  XFA_Element eType = pNode->GetClassID();
+  XFA_Element eType = pNode->GetElementType();
   if (eType != XFA_Element::Field && eType != XFA_Element::ExclGroup) {
     return FALSE;
   }
@@ -234,12 +234,12 @@ void CXFA_FFDocView::ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc) {
   if (!pFormNode) {
     return;
   }
-  if (pFormNode->GetClassID() != XFA_Element::Field &&
-      pFormNode->GetClassID() != XFA_Element::ExclGroup) {
+  if (pFormNode->GetElementType() != XFA_Element::Field &&
+      pFormNode->GetElementType() != XFA_Element::ExclGroup) {
     CXFA_WidgetAccIterator Iterator(this, pFormNode);
     while (CXFA_WidgetAcc* pAcc = Iterator.MoveToNext()) {
       bChanged |= ResetSingleWidgetAccData(pAcc);
-      if (pAcc->GetNode()->GetClassID() == XFA_Element::ExclGroup) {
+      if (pAcc->GetNode()->GetElementType() == XFA_Element::ExclGroup) {
         Iterator.SkipTree();
       }
     }
@@ -401,7 +401,7 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown) {
     return XFA_EVENTERROR_NotExist;
   }
-  if (!pWidgetAcc || pWidgetAcc->GetClassID() == XFA_Element::Draw) {
+  if (!pWidgetAcc || pWidgetAcc->GetElementType() == XFA_Element::Draw) {
     return XFA_EVENTERROR_NotExist;
   }
   switch (pParam->m_eType) {
@@ -441,7 +441,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
   if (pFormNode == pExclude) {
     return iRet;
   }
-  XFA_Element elementType = pFormNode->GetClassID();
+  XFA_Element elementType = pFormNode->GetElementType();
   if (elementType == XFA_Element::Field) {
     if (eEventType == XFA_EVENT_IndexChange) {
       return iRet;
@@ -461,7 +461,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
              XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
          pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling,
                                            XFA_ObjectType::ContainerNode)) {
-      elementType = pNode->GetClassID();
+      elementType = pNode->GetElementType();
       if (elementType != XFA_Element::Variables &&
           elementType != XFA_Element::Draw) {
         iRet |= ExecEventActivityByDeepFirst(pNode, eEventType, bIsFormReady,
@@ -600,7 +600,7 @@ void CXFA_FFDocView::AddNewFormNode(CXFA_Node* pNode) {
   InitLayout(pNode);
 }
 void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Node* pNode) {
-  ASSERT(pNode->GetClassID() == XFA_Element::Subform);
+  ASSERT(pNode->GetElementType() == XFA_Element::Subform);
   m_IndexChangedSubforms.Add(pNode);
 }
 void CXFA_FFDocView::RunDocClose() {

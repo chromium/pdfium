@@ -187,7 +187,7 @@ FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
                                        XFA_EVENTTYPE eEventType) {
   if (!pWidgetAcc || eEventType == XFA_EVENT_Unknown)
     return FALSE;
-  if (pWidgetAcc->GetClassID() == XFA_Element::Draw)
+  if (pWidgetAcc->GetElementType() == XFA_Element::Draw)
     return FALSE;
 
   switch (eEventType) {
@@ -219,7 +219,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
                                            CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
     return XFA_EVENTERROR_NotExist;
-  if (!pWidgetAcc || pWidgetAcc->GetClassID() == XFA_Element::Draw)
+  if (!pWidgetAcc || pWidgetAcc->GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   switch (pParam->m_eType) {

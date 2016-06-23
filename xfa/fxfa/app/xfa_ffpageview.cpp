@@ -76,7 +76,7 @@ bool PageWidgetFilter(CXFA_FFWidget* pWidget,
   CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
 
   if (!!(dwFilter & XFA_WidgetStatus_Focused) &&
-      pWidgetAcc->GetClassID() != XFA_Element::Field) {
+      pWidgetAcc->GetElementType() != XFA_Element::Field) {
     return false;
   }
 
@@ -373,7 +373,8 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
       CXFA_TabParam* pParam = new CXFA_TabParam;
       pParam->m_pWidget = hWidget;
       tabParams.Add(pParam);
-      if (XFA_IsLayoutElement(pSearchItem->GetFormNode()->GetClassID(), TRUE)) {
+      if (XFA_IsLayoutElement(pSearchItem->GetFormNode()->GetElementType(),
+                              TRUE)) {
         OrderContainer(sIterator, pSearchItem, pParam, bCurrentItem,
                        bContentArea, bMarsterPage);
       }

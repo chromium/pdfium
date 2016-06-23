@@ -290,7 +290,7 @@ static void XFA_ProtoMerge_MergeNodeRecurse(CXFA_Document* pDocument,
            pDestNodeParent->GetNodeItem(XFA_NODEITEM_FirstChild);
        pFormChild;
        pFormChild = pFormChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pFormChild->GetClassID() == pProtoNode->GetClassID() &&
+    if (pFormChild->GetElementType() == pProtoNode->GetElementType() &&
         pFormChild->GetNameHash() == pProtoNode->GetNameHash() &&
         pFormChild->IsUnusedNode()) {
       pFormChild->ClearFlag(XFA_NodeFlag_UnusedNode);

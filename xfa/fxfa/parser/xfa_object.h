@@ -47,7 +47,9 @@ enum XFA_NodeFlag {
 
 class CXFA_Object : public CFXJSE_HostObject {
  public:
-  CXFA_Object(CXFA_Document* pDocument, XFA_ObjectType type);
+  CXFA_Object(CXFA_Document* pDocument,
+              XFA_ObjectType objectType,
+              XFA_Element elementType);
   ~CXFA_Object() override;
 
   CXFA_Document* GetDocument() const { return m_pDocument; }
@@ -90,7 +92,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   const CXFA_OrdinaryObject* AsOrdinaryObject() const;
   const CXFA_NodeList* AsNodeList() const;
 
-  XFA_Element GetClassID() const;
+  XFA_Element GetElementType() const;
   void GetClassName(CFX_WideStringC& wsName) const;
   uint32_t GetClassHashCode() const;
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
@@ -101,6 +103,7 @@ class CXFA_Object : public CFXJSE_HostObject {
  protected:
   CXFA_Document* const m_pDocument;
   XFA_ObjectType m_objectType;
+  XFA_Element m_elementType;
 };
 using CXFA_ObjArray = CFX_ArrayTemplate<CXFA_Object*>;
 
@@ -150,7 +153,6 @@ struct XFA_MAPMODULEDATA {
 
 class CXFA_Node : public CXFA_Object {
  public:
-  XFA_Element GetClassID() const { return m_eNodeClass; }
   uint32_t GetPacketID() const { return m_ePacket; }
 
   void SetFlag(uint32_t dwFlag, bool bNotify);
@@ -675,7 +677,6 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pLastChild;
   CXFA_Node* m_pParent;
   CFDE_XMLNode* m_pXMLNode;
-  XFA_Element m_eNodeClass;
   uint16_t m_ePacket;
   uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;
@@ -687,11 +688,6 @@ class CXFA_OrdinaryObject : public CXFA_Object {
  public:
   CXFA_OrdinaryObject(CXFA_Document* pDocument, XFA_Element eElement);
   ~CXFA_OrdinaryObject() override;
-
-  XFA_Element GetClassID() const;
-
- protected:
-  XFA_Element m_eNodeClass;
 };
 
 class CXFA_ThisProxy : public CXFA_Object {
@@ -712,7 +708,6 @@ class CXFA_NodeList : public CXFA_Object {
   explicit CXFA_NodeList(CXFA_Document* pDocument);
   ~CXFA_NodeList() override;
 
-  XFA_Element GetClassID() const;
   CXFA_Node* NamedItem(const CFX_WideStringC& wsName);
   virtual int32_t GetLength() = 0;
   virtual FX_BOOL Append(CXFA_Node* pNode) = 0;

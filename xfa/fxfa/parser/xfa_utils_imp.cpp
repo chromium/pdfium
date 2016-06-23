@@ -17,7 +17,7 @@
 #include "xfa/fxfa/parser/xfa_script.h"
 
 CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
-  XFA_Element eType = pNode->GetClassID();
+  XFA_Element eType = pNode->GetElementType();
   eWidgetType = eType;
   if (eType != XFA_Element::Field && eType != XFA_Element::Draw) {
     return NULL;
@@ -62,7 +62,7 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   CXFA_Node* pUI = pNode->GetProperty(0, XFA_Element::Ui, TRUE);
   CXFA_Node* pChild = pUI->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    XFA_Element eChild = pChild->GetClassID();
+    XFA_Element eChild = pChild->GetElementType();
     if (eChild == XFA_Element::Extras || eChild == XFA_Element::Picture) {
       continue;
     }
@@ -75,7 +75,7 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   }
   if (eType == XFA_Element::Draw) {
     XFA_Element eDraw =
-        pUIChild ? pUIChild->GetClassID() : XFA_Element::Unknown;
+        pUIChild ? pUIChild->GetElementType() : XFA_Element::Unknown;
     switch (eDraw) {
       case XFA_Element::TextEdit:
         eWidgetType = XFA_Element::Text;
@@ -89,11 +89,11 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
         break;
     }
   } else {
-    if (pUIChild && pUIChild->GetClassID() == XFA_Element::DefaultUi) {
+    if (pUIChild && pUIChild->GetElementType() == XFA_Element::DefaultUi) {
       eWidgetType = XFA_Element::TextEdit;
     } else {
       eWidgetType =
-          pUIChild ? pUIChild->GetClassID()
+          pUIChild ? pUIChild->GetElementType()
                    : (eUIType == XFA_Element::Unknown ? XFA_Element::TextEdit
                                                       : eUIType);
     }
@@ -105,12 +105,12 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
     }
     pUIChild = pUI->GetProperty(0, eUIType, TRUE);
   } else if (eUIType == XFA_Element::Unknown) {
-    switch (pUIChild->GetClassID()) {
+    switch (pUIChild->GetElementType()) {
       case XFA_Element::CheckButton: {
         eValueType = XFA_Element::Text;
         if (CXFA_Node* pItems = pNode->GetChild(0, XFA_Element::Items)) {
           if (CXFA_Node* pItem = pItems->GetChild(0, XFA_Element::Unknown)) {
-            eValueType = pItem->GetClassID();
+            eValueType = pItem->GetElementType();
           }
         }
       } break;
@@ -153,7 +153,7 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
     return CXFA_LocaleValue();
   }
   int32_t iVTType = XFA_VT_NULL;
-  XFA_Element eType = pValueChild->GetClassID();
+  XFA_Element eType = pValueChild->GetElementType();
   switch (eType) {
     case XFA_Element::Decimal:
       iVTType = XFA_VT_DECIMAL;
@@ -238,7 +238,8 @@ FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
   CXFA_Node* pUIChild = pFieldNode->GetChild(0, XFA_Element::Ui);
   if (pUIChild) {
     CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
-    if (pFirstChild && pFirstChild->GetClassID() == XFA_Element::ChoiceList) {
+    if (pFirstChild &&
+        pFirstChild->GetElementType() == XFA_Element::ChoiceList) {
       bRet = pFirstChild->GetEnum(XFA_ATTRIBUTE_Open) ==
              XFA_ATTRIBUTEENUM_MultiSelect;
     }

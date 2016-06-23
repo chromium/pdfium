@@ -223,7 +223,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
   if (wsType == FX_WSTRC(L"contentArea")) {
     for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
-      if (pItem->m_pFormNode->GetClassID() == XFA_Element::ContentArea) {
+      if (pItem->m_pFormNode->GetElementType() == XFA_Element::ContentArea) {
         retArray.Add(pItem->m_pFormNode);
       }
     }
@@ -236,7 +236,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     }
     for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
-      if (pItem->m_pFormNode->GetClassID() == XFA_Element::ContentArea) {
+      if (pItem->m_pFormNode->GetElementType() == XFA_Element::ContentArea) {
         retArray.Add(pItem->m_pFormNode);
         if (!bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
@@ -247,7 +247,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
             }
-            XFA_Element eElementType = pItemChild->m_pFormNode->GetClassID();
+            XFA_Element eElementType =
+                pItemChild->m_pFormNode->GetElementType();
             if (eElementType != XFA_Element::Field &&
                 eElementType != XFA_Element::Draw &&
                 eElementType != XFA_Element::Subform &&
@@ -271,7 +272,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
             }
-            XFA_Element eElementType = pItemChild->m_pFormNode->GetClassID();
+            XFA_Element eElementType =
+                pItemChild->m_pFormNode->GetElementType();
             if (eElementType != XFA_Element::Field &&
                 eElementType != XFA_Element::Draw &&
                 eElementType != XFA_Element::Subform &&
@@ -301,7 +303,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
   if (eType != XFA_Element::Unknown) {
     for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
-      if (pItem->m_pFormNode->GetClassID() == XFA_Element::ContentArea) {
+      if (pItem->m_pFormNode->GetElementType() == XFA_Element::ContentArea) {
         if (!bOnPageArea) {
           CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
@@ -310,7 +312,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem())
               continue;
-            if (pItemChild->m_pFormNode->GetClassID() != eType)
+            if (pItemChild->m_pFormNode->GetElementType() != eType)
               continue;
             if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
               continue;
@@ -327,7 +329,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem())
               continue;
-            if (pItemChild->m_pFormNode->GetClassID() != eType)
+            if (pItemChild->m_pFormNode->GetElementType() != eType)
               continue;
             if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
               continue;

@@ -12,7 +12,7 @@ XFA_Element CXFA_Value::GetChildValueClassID() {
   if (!m_pNode)
     return XFA_Element::Unknown;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
-    return pNode->GetClassID();
+    return pNode->GetElementType();
   return XFA_Element::Unknown;
 }
 

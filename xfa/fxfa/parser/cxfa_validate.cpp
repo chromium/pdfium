@@ -48,7 +48,7 @@ void CXFA_Validate::GetMessageText(CFX_WideString& wsMessage,
   CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItemNode;
        pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItemNode->GetClassID() != XFA_Element::Text)
+    if (pItemNode->GetElementType() != XFA_Element::Text)
       continue;
 
     CFX_WideStringC wsName;
@@ -85,7 +85,7 @@ void CXFA_Validate::SetMessageText(CFX_WideString& wsMessage,
   CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItemNode;
        pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItemNode->GetClassID() != XFA_Element::Text)
+    if (pItemNode->GetElementType() != XFA_Element::Text)
       continue;
 
     CFX_WideStringC wsName;

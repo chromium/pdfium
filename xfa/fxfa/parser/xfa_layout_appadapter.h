@@ -13,7 +13,7 @@ class CXFA_TraverseStrategy_PageAreaContainerLayoutItem {
  public:
   static inline CXFA_ContainerLayoutItem* GetFirstChild(
       CXFA_ContainerLayoutItem* pLayoutItem) {
-    if (pLayoutItem->m_pFormNode->GetClassID() == XFA_Element::PageSet) {
+    if (pLayoutItem->m_pFormNode->GetElementType() == XFA_Element::PageSet) {
       return static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem->m_pFirstChild);
     }
     return NULL;

@@ -39,7 +39,7 @@ FX_ARGB CXFA_Fill::GetColor(FX_BOOL bText) {
 XFA_Element CXFA_Fill::GetFillType() {
   CXFA_Node* pChild = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
-    XFA_Element eType = pChild->GetClassID();
+    XFA_Element eType = pChild->GetElementType();
     if (eType != XFA_Element::Color && eType != XFA_Element::Extras)
       return eType;
 

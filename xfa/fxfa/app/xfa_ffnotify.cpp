@@ -89,7 +89,7 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_WidgetData* pSender,
 CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
   CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView(pLayout);
-  XFA_Element eType = pNode->GetClassID();
+  XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::PageArea)
     return new CXFA_FFPageView(pDocView, pNode);
 
@@ -320,7 +320,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   if (!pDocView)
     return;
 
-  XFA_Element iType = pNode->GetClassID();
+  XFA_Element iType = pNode->GetElementType();
   if (XFA_IsCreateWidget(iType)) {
     CXFA_WidgetAcc* pAcc = new CXFA_WidgetAcc(pDocView, pNode);
     pNode->SetObject(XFA_ATTRIBUTE_WidgetData, pAcc, &gs_XFADeleteWidgetAcc);
@@ -381,7 +381,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     return;
   }
 
-  XFA_Element ePType = pParentNode->GetClassID();
+  XFA_Element ePType = pParentNode->GetElementType();
   FX_BOOL bIsContainerNode = pParentNode->IsContainerNode();
   CXFA_WidgetAcc* pWidgetAcc =
       static_cast<CXFA_WidgetAcc*>(pWidgetNode->GetWidgetData());
@@ -415,8 +415,8 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
         pWidgetAcc->UpdateUIDisplay();
         pDocView->AddCalculateWidgetAcc(pWidgetAcc);
         pDocView->AddValidateWidget(pWidgetAcc);
-      } else if (pWidgetNode->GetNodeItem(XFA_NODEITEM_Parent)->GetClassID() ==
-                 XFA_Element::ExclGroup) {
+      } else if (pWidgetNode->GetNodeItem(XFA_NODEITEM_Parent)
+                     ->GetElementType() == XFA_Element::ExclGroup) {
         pWidgetAcc->UpdateUIDisplay();
       }
       return;

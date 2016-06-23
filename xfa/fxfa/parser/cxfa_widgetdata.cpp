@@ -294,7 +294,7 @@ FX_BOOL CXFA_WidgetData::GetButtonRollover(CFX_WideString& wsRollover,
       pText->TryCData(XFA_ATTRIBUTE_Name, wsName);
       if (wsName == FX_WSTRC(L"rollover")) {
         pText->TryContent(wsRollover);
-        bRichText = pText->GetClassID() == XFA_Element::ExData;
+        bRichText = pText->GetElementType() == XFA_Element::ExData;
         return !wsRollover.IsEmpty();
       }
       pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling);
@@ -312,7 +312,7 @@ FX_BOOL CXFA_WidgetData::GetButtonDown(CFX_WideString& wsDown,
       pText->TryCData(XFA_ATTRIBUTE_Name, wsName);
       if (wsName == FX_WSTRC(L"down")) {
         pText->TryContent(wsDown);
-        bRichText = pText->GetClassID() == XFA_Element::ExData;
+        bRichText = pText->GetElementType() == XFA_Element::ExData;
         return !wsDown.IsEmpty();
       }
       pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling);
@@ -339,7 +339,7 @@ int32_t CXFA_WidgetData::GetCheckButtonMark() {
 
 FX_BOOL CXFA_WidgetData::IsRadioButton() {
   if (CXFA_Node* pParent = m_pNode->GetNodeItem(XFA_NODEITEM_Parent))
-    return pParent->GetClassID() == XFA_Element::ExclGroup;
+    return pParent->GetElementType() == XFA_Element::ExclGroup;
   return FALSE;
 }
 
@@ -394,7 +394,7 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
     CXFA_Node* pChild =
         exclGroup.GetNode()->GetNodeItem(XFA_NODEITEM_FirstChild);
     for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      if (pChild->GetClassID() != XFA_Element::Field)
+      if (pChild->GetElementType() != XFA_Element::Field)
         continue;
 
       CXFA_Node* pItem = pChild->GetChild(0, XFA_Element::Items);
@@ -440,7 +440,7 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
 
 CXFA_Node* CXFA_WidgetData::GetExclGroupNode() {
   CXFA_Node* pExcl = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_Parent));
-  if (!pExcl || pExcl->GetClassID() != XFA_Element::ExclGroup)
+  if (!pExcl || pExcl->GetElementType() != XFA_Element::ExclGroup)
     return NULL;
   return pExcl;
 }
@@ -483,7 +483,7 @@ void CXFA_WidgetData::SetSelectedMemberByValue(const CFX_WideStringC& wsValue,
   CFX_WideString wsExclGroup;
   for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pNode->GetClassID() != XFA_Element::Field)
+    if (pNode->GetElementType() != XFA_Element::Field)
       continue;
 
     CXFA_Node* pItem = pNode->GetChild(0, XFA_Element::Items);
@@ -520,7 +520,7 @@ CXFA_Node* CXFA_WidgetData::GetExclGroupFirstMember() {
 
   CXFA_Node* pNode = pExcl->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pNode) {
-    if (pNode->GetClassID() == XFA_Element::Field)
+    if (pNode->GetElementType() == XFA_Element::Field)
       return pNode;
 
     pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
@@ -533,7 +533,7 @@ CXFA_Node* CXFA_WidgetData::GetExclGroupNextMember(CXFA_Node* pNode) {
 
   CXFA_Node* pNodeField = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
   while (pNodeField) {
-    if (pNodeField->GetClassID() == XFA_Element::Field)
+    if (pNodeField->GetElementType() == XFA_Element::Field)
       return pNodeField;
 
     pNodeField = pNodeField->GetNodeItem(XFA_NODEITEM_NextSibling);
@@ -577,7 +577,7 @@ int32_t CXFA_WidgetData::CountChoiceListItems(FX_BOOL bSaveValue) {
   int32_t iCount = 0;
   CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pNode->GetClassID() != XFA_Element::Items)
+    if (pNode->GetElementType() != XFA_Element::Items)
       continue;
 
     iCount++;
@@ -608,7 +608,7 @@ FX_BOOL CXFA_WidgetData::GetChoiceListItem(CFX_WideString& wsText,
   int32_t iCount = 0;
   CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pNode->GetClassID() != XFA_Element::Items)
+    if (pNode->GetElementType() != XFA_Element::Items)
       continue;
 
     iCount++;
@@ -643,7 +643,7 @@ void CXFA_WidgetData::GetChoiceListItems(CFX_WideStringArray& wsTextArray,
   int32_t iCount = 0;
   CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pNode->GetClassID() != XFA_Element::Items)
+    if (pNode->GetElementType() != XFA_Element::Items)
       continue;
 
     iCount++;
@@ -875,7 +875,7 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
   CXFA_Node* pItemNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItemNode;
        pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItemNode->GetClassID() != XFA_Element::Items)
+    if (pItemNode->GetElementType() != XFA_Element::Items)
       continue;
 
     listitems.Add(pItemNode);
@@ -932,7 +932,7 @@ void CXFA_WidgetData::GetItemLabel(const CFX_WideStringC& wsValue,
   CXFA_NodeArray listitems;
   CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItems->GetClassID() != XFA_Element::Items)
+    if (pItems->GetElementType() != XFA_Element::Items)
       continue;
 
     iCount++;
@@ -978,7 +978,7 @@ void CXFA_WidgetData::GetItemValue(const CFX_WideStringC& wsLabel,
   CXFA_NodeArray listitems;
   CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItems->GetClassID() != XFA_Element::Items)
+    if (pItems->GetElementType() != XFA_Element::Items)
       continue;
 
     iCount++;
@@ -1023,7 +1023,7 @@ FX_BOOL CXFA_WidgetData::DeleteItem(int32_t nIndex,
   FX_BOOL bSetValue = FALSE;
   CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItems->GetClassID() != XFA_Element::Items)
+    if (pItems->GetElementType() != XFA_Element::Items)
       continue;
 
     if (nIndex < 0) {
@@ -1276,7 +1276,7 @@ int32_t CXFA_WidgetData::GetVerticalScrollPolicy() {
 int32_t CXFA_WidgetData::GetMaxChars(XFA_Element& eType) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value)) {
     if (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild)) {
-      switch (pChild->GetClassID()) {
+      switch (pChild->GetElementType()) {
         case XFA_Element::Text:
           eType = XFA_Element::Text;
           return pChild->GetInteger(XFA_ATTRIBUTE_MaxChars);
@@ -1328,7 +1328,7 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
   if (!pNode)
     return TRUE;
 
-  XFA_Element uiType = pNode->GetClassID();
+  XFA_Element uiType = pNode->GetElementType();
   if (!wsPicture.IsEmpty()) {
     CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
     IFX_Locale* pLocale = GetLocal();
@@ -1493,7 +1493,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
   if (!pNode)
     return TRUE;
 
-  XFA_Element uiType = GetUIChild()->GetClassID();
+  XFA_Element uiType = GetUIChild()->GetElementType();
   switch (uiType) {
     case XFA_Element::ChoiceList: {
       if (eValueType == XFA_VALUEPICTURE_Display) {
@@ -1598,7 +1598,7 @@ FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
       return FALSE;
 
     int32_t iVTType = XFA_VT_NULL;
-    XFA_Element eType = pValueChild->GetClassID();
+    XFA_Element eType = pValueChild->GetElementType();
     switch (eType) {
       case XFA_Element::Decimal:
         iVTType = XFA_VT_DECIMAL;

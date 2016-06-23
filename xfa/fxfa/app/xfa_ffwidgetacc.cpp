@@ -281,7 +281,7 @@ void CXFA_WidgetAcc::SetImageEdit(const CFX_WideString& wsContentType,
 
 CXFA_WidgetAcc* CXFA_WidgetAcc::GetExclGroup() {
   CXFA_Node* pExcl = m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (!pExcl || pExcl->GetClassID() != XFA_Element::ExclGroup) {
+  if (!pExcl || pExcl->GetElementType() != XFA_Element::ExclGroup) {
     return NULL;
   }
   return static_cast<CXFA_WidgetAcc*>(pExcl->GetWidgetData());
@@ -300,7 +300,7 @@ IXFA_AppProvider* CXFA_WidgetAcc::GetAppProvider() {
 }
 int32_t CXFA_WidgetAcc::ProcessEvent(int32_t iActivity,
                                      CXFA_EventParam* pEventParam) {
-  if (GetClassID() == XFA_Element::Draw) {
+  if (GetElementType() == XFA_Element::Draw) {
     return XFA_EVENTERROR_NotExist;
   }
   int32_t iRet = XFA_EVENTERROR_NotExist;
@@ -343,7 +343,7 @@ int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_Event& event,
 }
 
 int32_t CXFA_WidgetAcc::ProcessCalculate() {
-  if (GetClassID() == XFA_Element::Draw)
+  if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   CXFA_Calculate calc = GetCalculate();
@@ -569,7 +569,7 @@ void CXFA_WidgetAcc::GetValidateMessage(IXFA_AppProvider* pAppProvider,
                    wsCaptionName.c_str());
 }
 int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
-  if (GetClassID() == XFA_Element::Draw) {
+  if (GetElementType() == XFA_Element::Draw) {
     return XFA_EVENTERROR_NotExist;
   }
   CXFA_Validate validate = GetValidate();
@@ -1407,7 +1407,7 @@ void CXFA_WidgetAcc::InitLayoutData() {
     default:
       break;
   }
-  if (GetClassID() == XFA_Element::Field) {
+  if (GetElementType() == XFA_Element::Field) {
     m_pLayoutData.reset(new CXFA_FieldLayoutData);
     return;
   }
@@ -1556,7 +1556,7 @@ FX_ARGB CXFA_WidgetAcc::GetTextColor() {
 CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
   bRichText = FALSE;
   if (m_pTextNode) {
-    if (m_pTextNode->GetClassID() == XFA_Element::ExData) {
+    if (m_pTextNode->GetElementType() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       m_pTextNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
                                 FALSE);
@@ -1573,7 +1573,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
       return NULL;
     }
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-    if (pChildNode && pChildNode->GetClassID() == XFA_Element::ExData) {
+    if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
       if (wsContentType == FX_WSTRC(L"text/html")) {
@@ -1608,7 +1608,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
       return NULL;
     }
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-    if (pChildNode && pChildNode->GetClassID() == XFA_Element::ExData) {
+    if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
       if (wsContentType == FX_WSTRC(L"text/html")) {

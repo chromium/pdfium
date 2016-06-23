@@ -1179,7 +1179,7 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt, const CXFA_Margin& mg, FX_BOOL bUI) {
   rt.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  XFA_Element iType = pLayoutItem->GetFormNode()->GetClassID();
+  XFA_Element iType = pLayoutItem->GetFormNode()->GetElementType();
   if (XFA_IsCreateWidget(iType)) {
     return static_cast<CXFA_FFWidget*>(pLayoutItem);
   }
@@ -2033,7 +2033,7 @@ void XFA_DrawBox(CXFA_Box box,
   if (!box || box.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
 
-  XFA_Element iType = box.GetClassID();
+  XFA_Element iType = box.GetElementType();
   if (iType != XFA_Element::Arc && iType != XFA_Element::Border &&
       iType != XFA_Element::Rectangle) {
     return;

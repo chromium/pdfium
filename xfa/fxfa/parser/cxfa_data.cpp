@@ -59,8 +59,8 @@ FX_ARGB CXFA_Data::ToColor(const CFX_WideStringC& wsValue) {
   return (0xff << 24) | (r << 16) | (g << 8) | b;
 }
 
-XFA_Element CXFA_Data::GetClassID() const {
-  return m_pNode ? m_pNode->GetClassID() : XFA_Element::Unknown;
+XFA_Element CXFA_Data::GetElementType() const {
+  return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
 }
 
 FX_BOOL CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,

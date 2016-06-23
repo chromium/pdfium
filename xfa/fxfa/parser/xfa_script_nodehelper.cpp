@@ -53,7 +53,7 @@ int32_t CXFA_NodeHelper::XFA_CountSiblings(CXFA_Node* pNode,
   if (!parent)
     return 0;
   const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
-      parent->GetClassID(), pNode->GetClassID(), XFA_XDPPACKET_UNKNOWN);
+      parent->GetElementType(), pNode->GetElementType(), XFA_XDPPACKET_UNKNOWN);
   if (!pProperty && eLogicType == XFA_LOGIC_Transparent) {
     parent = XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
     if (parent == NULL) {
@@ -154,15 +154,16 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
         }
       } else {
         if (child->GetNameHash() == dNameHash) {
-          if (child->GetClassID() != XFA_Element::PageSet &&
-              child->GetClassID() != XFA_Element::Extras &&
-              child->GetClassID() != XFA_Element::Items) {
+          if (child->GetElementType() != XFA_Element::PageSet &&
+              child->GetElementType() != XFA_Element::Extras &&
+              child->GetElementType() != XFA_Element::Items) {
             pSiblings->Add(child);
             nCount++;
           }
         }
       }
-      if (child->IsUnnamed() && child->GetClassID() == XFA_Element::PageSet) {
+      if (child->IsUnnamed() &&
+          child->GetElementType() == XFA_Element::PageSet) {
         nCount += XFA_NodeAcc_TraverseSiblings(child, dNameHash, pSiblings,
                                                eLogicType, bIsClassName, FALSE);
       }
@@ -176,7 +177,7 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
   int32_t nChildren = children.GetSize();
   for (i = 0; i < nChildren; i++) {
     CXFA_Node* child = children[i];
-    if (child->GetClassID() == XFA_Element::Variables) {
+    if (child->GetElementType() == XFA_Element::Variables) {
       continue;
     }
     if (bIsClassName) {
@@ -198,7 +199,7 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
       continue;
     }
     if (XFA_NodeIsTransparent(child) &&
-        child->GetClassID() != XFA_Element::PageSet) {
+        child->GetElementType() != XFA_Element::PageSet) {
       nCount += XFA_NodeAcc_TraverseSiblings(child, dNameHash, pSiblings,
                                              eLogicType, bIsClassName, FALSE);
     }
@@ -222,7 +223,7 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetParent(
     if (parent == NULL) {
       break;
     }
-    XFA_Element parentElement = parent->GetClassID();
+    XFA_Element parentElement = parent->GetElementType();
     if ((!parent->IsUnnamed() && parentElement != XFA_Element::SubformSet) ||
         parentElement == XFA_Element::Variables) {
       break;
@@ -287,7 +288,7 @@ void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode,
   CFX_WideString ws;
   FX_BOOL bIsProperty = XFA_NodeIsProperty(refNode);
   if (refNode->IsUnnamed() ||
-      (bIsProperty && refNode->GetClassID() != XFA_Element::PageSet)) {
+      (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
     refNode->GetClassName(wsTagName);
     ws = wsTagName;
     wsName.Format(L"#%s[%d]", ws.c_str(),
@@ -304,7 +305,7 @@ FX_BOOL CXFA_NodeHelper::XFA_NodeIsTransparent(CXFA_Node* refNode) {
   if (refNode == NULL) {
     return FALSE;
   }
-  XFA_Element eRefNode = refNode->GetClassID();
+  XFA_Element eRefNode = refNode->GetElementType();
   if ((refNode->IsUnnamed() && refNode->IsContainerNode()) ||
       eRefNode == XFA_Element::SubformSet || eRefNode == XFA_Element::Area ||
       eRefNode == XFA_Element::Proto) {
@@ -418,13 +419,13 @@ void CXFA_NodeHelper::XFA_SetCreateNodeType(CXFA_Node* refNode) {
   if (refNode == NULL) {
     return;
   }
-  if (refNode->GetClassID() == XFA_Element::Subform) {
+  if (refNode->GetElementType() == XFA_Element::Subform) {
     m_eLastCreateType = XFA_Element::DataGroup;
-  } else if (refNode->GetClassID() == XFA_Element::Field) {
+  } else if (refNode->GetElementType() == XFA_Element::Field) {
     m_eLastCreateType = XFA_FieldIsMultiListBox(refNode)
                             ? XFA_Element::DataGroup
                             : XFA_Element::DataValue;
-  } else if (refNode->GetClassID() == XFA_Element::ExclGroup) {
+  } else if (refNode->GetElementType() == XFA_Element::ExclGroup) {
     m_eLastCreateType = XFA_Element::DataValue;
   }
 }
@@ -433,6 +434,7 @@ FX_BOOL CXFA_NodeHelper::XFA_NodeIsProperty(CXFA_Node* refNode) {
   CXFA_Node* parent =
       XFA_ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
   return parent && refNode &&
-         XFA_GetPropertyOfElement(parent->GetClassID(), refNode->GetClassID(),
+         XFA_GetPropertyOfElement(parent->GetElementType(),
+                                  refNode->GetElementType(),
                                   XFA_XDPPACKET_UNKNOWN);
 }
