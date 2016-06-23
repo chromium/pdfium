@@ -616,7 +616,10 @@ class CXFA_Node : public CXFA_Object {
  protected:
   friend class CXFA_Document;
 
-  CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_Element eType);
+  CXFA_Node(CXFA_Document* pDoc,
+            uint16_t ePacket,
+            XFA_ObjectType oType,
+            XFA_Element eType);
   ~CXFA_Node() override;
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;

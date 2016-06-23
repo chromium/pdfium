@@ -43,10 +43,6 @@ void XFA_CopyWideString(void*& pData) {
 XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {XFA_DeleteWideString,
                                                          XFA_CopyWideString};
 
-XFA_ObjectType XFA_GetElementObjectType(XFA_Element eType) {
-  return XFA_GetElementByID(eType)->eObjectType;
-}
-
 void XFA_DataNodeDeleteBindItem(void* pData) {
   delete static_cast<CXFA_NodeArray*>(pData);
 }
@@ -108,8 +104,11 @@ XFA_MAPMODULEDATA::XFA_MAPMODULEDATA() {}
 
 XFA_MAPMODULEDATA::~XFA_MAPMODULEDATA() {}
 
-CXFA_Node::CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_Element eType)
-    : CXFA_Object(pDoc, XFA_GetElementObjectType(eType), eType),
+CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
+                     uint16_t ePacket,
+                     XFA_ObjectType oType,
+                     XFA_Element eType)
+    : CXFA_Object(pDoc, oType, eType),
       m_pNext(nullptr),
       m_pChild(nullptr),
       m_pLastChild(nullptr),
