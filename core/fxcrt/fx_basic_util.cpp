@@ -47,6 +47,18 @@ void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
   }
 }
 
+static const FX_FLOAT fraction_scales[] = {
+    0.1f,         0.01f,         0.001f,        0.0001f,
+    0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
+    0.000000001f, 0.0000000001f, 0.00000000001f};
+int FXSYS_FractionalScaleCount() {
+  return FX_ArraySize(fraction_scales);
+}
+
+FX_FLOAT FXSYS_FractionalScale(size_t scale_factor, int value) {
+  return fraction_scales[scale_factor] * value;
+}
+
 FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
   if (strc.IsEmpty())
     return 0.0;
@@ -74,17 +86,14 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
     value = value * 10 + FXSYS_toDecimalDigit(strc.CharAt(cc));
     cc++;
   }
-  static const FX_FLOAT fraction_scales[] = {
-      0.1f,         0.01f,         0.001f,        0.0001f,
-      0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
-      0.000000001f, 0.0000000001f, 0.00000000001f};
   int scale = 0;
   if (cc < len && strc[cc] == '.') {
     cc++;
     while (cc < len) {
-      value += fraction_scales[scale] * FXSYS_toDecimalDigit(strc.CharAt(cc));
+      value +=
+          FXSYS_FractionalScale(scale, FXSYS_toDecimalDigit(strc.CharAt(cc)));
       scale++;
-      if (scale == FX_ArraySize(fraction_scales))
+      if (scale == FXSYS_FractionalScaleCount())
         break;
       cc++;
     }

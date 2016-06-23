@@ -86,22 +86,6 @@ static int32_t FX_ParseTimeZone(const FX_WCHAR* pStr,
   return iStart;
 }
 
-static FX_BOOL FX_IsDigit(FX_WCHAR c) {
-  return c >= '0' && c <= '9';
-}
-static FX_BOOL FX_IsAlpha(FX_WCHAR c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-static FX_BOOL FX_IsSpace(FX_WCHAR c) {
-  return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
-}
-static const FX_FLOAT gs_fraction_scales[] = {
-    0.1f,         0.01f,         0.001f,        0.0001f,
-    0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
-    0.000000001f, 0.0000000001f, 0.00000000001f};
-static const int32_t gs_fraction_count =
-    sizeof(gs_fraction_scales) / sizeof(FX_FLOAT);
-
 class CFX_LCNumeric {
  public:
   CFX_LCNumeric();
@@ -137,7 +121,7 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
   bool bExpSign = false;
   const FX_WCHAR* str = wsValue.c_str();
   int32_t len = wsValue.GetLength();
-  while (cc < len && FX_IsSpace(str[cc]))
+  while (cc < len && FXSYS_iswspace(str[cc]))
     cc++;
 
   if (cc >= len)
@@ -154,11 +138,10 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
     if (str[cc] == '.')
       break;
 
-    if (!FX_IsDigit(str[cc])) {
+    if (!FXSYS_isDecimalDigit(str[cc])) {
       if ((str[cc] == 'E' || str[cc] == 'e'))
         break;
-      else
-        return FALSE;
+      return FALSE;
     }
     if (nIntegralLen < nIntegralMaxLen) {
       lcnum.m_Integral = lcnum.m_Integral * 10 + str[cc] - '0';
@@ -173,20 +156,19 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
     double fraction = 0.0;
     cc++;
     while (cc < len) {
-      if (scale >= gs_fraction_count) {
+      if (scale >= FXSYS_FractionalScaleCount()) {
         while (cc < len) {
-          if (!FX_IsDigit(str[cc]))
+          if (!FXSYS_isDecimalDigit(str[cc]))
             break;
           cc++;
         }
       }
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         if ((str[cc] == 'E' || str[cc] == 'e'))
           break;
-        else
-          return FALSE;
+        return FALSE;
       }
-      fraction += gs_fraction_scales[scale] * (str[cc] - '0');
+      fraction += FXSYS_FractionalScale(scale, FXSYS_toDecimalDigit(str[cc]));
       scale++;
       cc++;
     }
@@ -203,7 +185,7 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
       }
     }
     while (cc < len) {
-      if (FX_IsDigit(str[cc]))
+      if (FXSYS_isDecimalDigit(str[cc]))
         return FALSE;
       lcnum.m_Exponent = lcnum.m_Exponent * 10 + str[cc] - '0';
       cc++;
@@ -291,7 +273,8 @@ void CFX_FormatString::SplitFormatString(const CFX_WideString& wsFormatString,
       CFX_WideString sub(pToken, pStr - pToken);
       wsPatterns.Add(sub);
       return;
-    } else if (*pStr == '\'') {
+    }
+    if (*pStr == '\'') {
       iQuote = !iQuote;
     } else if (*pStr == L'|' && !iQuote) {
       CFX_WideString sub(pToken, pStr - pToken);
@@ -358,9 +341,8 @@ static CFX_WideString FX_GetLiteralTextReverse(const FX_WCHAR* pStrPattern,
       if (iPattern - 1 >= 0 ||
           ((pStrPattern[iPattern - 1] != '\'') && (iQuote % 2 == 0))) {
         break;
-      } else {
-        iQuote++;
       }
+      iQuote++;
       iPattern--;
     } else if (pStrPattern[iPattern] == '\\' &&
                pStrPattern[iPattern + 1] == 'u') {
@@ -690,7 +672,7 @@ FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
         break;
       }
       case 'A':
-        if (FX_IsAlpha(pStrText[iText])) {
+        if (FXSYS_iswalpha(pStrText[iText])) {
           wsValue += pStrText[iText];
           iText++;
         }
@@ -703,14 +685,15 @@ FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
         break;
       case 'O':
       case '0':
-        if (FX_IsDigit(pStrText[iText]) || FX_IsAlpha(pStrText[iText])) {
+        if (FXSYS_isDecimalDigit(pStrText[iText]) ||
+            FXSYS_iswalpha(pStrText[iText])) {
           wsValue += pStrText[iText];
           iText++;
         }
         iPattern++;
         break;
       case '9':
-        if (FX_IsDigit(pStrText[iText])) {
+        if (FXSYS_isDecimalDigit(pStrText[iText])) {
           wsValue += pStrText[iText];
           iText++;
         }
@@ -786,7 +769,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           break;
         }
         case '9':
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           dbRetValue = dbRetValue * coeff + (str[cc] - '0') * 0.1;
@@ -845,7 +828,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (str[cc] == 'E' || str[cc] == 'e') {
               break;
             }
-            if (FX_IsDigit(str[cc])) {
+            if (FXSYS_isDecimalDigit(str[cc])) {
               iExponent = iExponent + (str[cc] - '0') * 10;
               cc--;
               continue;
@@ -946,7 +929,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           while (ccf < lenf && strf[ccf] == '8') {
             ccf++;
           }
-          while (cc < len && FX_IsDigit(str[cc])) {
+          while (cc < len && FXSYS_isDecimalDigit(str[cc])) {
             dbRetValue = (str[cc] - '0') * coeff + dbRetValue;
             coeff *= 0.1;
             cc++;
@@ -1010,7 +993,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         break;
       }
       case '9':
-        if (!FX_IsDigit(str[cc])) {
+        if (!FXSYS_isDecimalDigit(str[cc])) {
           return FALSE;
         }
         dbRetValue = dbRetValue + (str[cc] - '0') * coeff;
@@ -1019,7 +1002,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         ccf--;
         break;
       case 'z':
-        if (FX_IsDigit(str[cc])) {
+        if (FXSYS_isDecimalDigit(str[cc])) {
           dbRetValue = dbRetValue + (str[cc] - '0') * coeff;
           coeff *= 10;
           cc--;
@@ -1028,7 +1011,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         break;
       case 'Z':
         if (str[cc] != ' ') {
-          if (FX_IsDigit(str[cc])) {
+          if (FXSYS_isDecimalDigit(str[cc])) {
             dbRetValue = dbRetValue + (str[cc] - '0') * coeff;
             coeff *= 10;
             cc--;
@@ -1073,7 +1056,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           if (str[cc] == 'E' || str[cc] == 'e') {
             break;
           }
-          if (FX_IsDigit(str[cc])) {
+          if (FXSYS_isDecimalDigit(str[cc])) {
             iExponent = iExponent + (str[cc] - '0') * 10;
             cc--;
             continue;
@@ -1229,7 +1212,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           break;
         }
         case '9':
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           {
@@ -1240,7 +1223,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           ccf++;
           break;
         case 'z':
-          if (FX_IsDigit(str[cc])) {
+          if (FXSYS_isDecimalDigit(str[cc])) {
             dbRetValue = dbRetValue + (str[cc] - '0') * coeff;
             coeff *= 0.1;
             cc++;
@@ -1249,7 +1232,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           break;
         case 'Z':
           if (str[cc] != ' ') {
-            if (FX_IsDigit(str[cc])) {
+            if (FXSYS_isDecimalDigit(str[cc])) {
               dbRetValue = dbRetValue + (str[cc] - '0') * coeff;
               coeff *= 0.1;
               cc++;
@@ -1300,7 +1283,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             }
           }
           while (cc < len) {
-            if (!FX_IsDigit(str[cc])) {
+            if (!FXSYS_isDecimalDigit(str[cc])) {
               break;
             }
             iExponent = iExponent * 10 + str[cc] - '0';
@@ -1380,7 +1363,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           while (ccf < lenf && strf[ccf] == '8') {
             ccf++;
           }
-          while (cc < len && FX_IsDigit(str[cc])) {
+          while (cc < len && FXSYS_isDecimalDigit(str[cc])) {
             dbRetValue = (str[cc] - '0') * coeff + dbRetValue;
             coeff *= 0.1;
             cc++;
@@ -1490,7 +1473,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         break;
       }
       case '9':
-        if (!FX_IsDigit(str[cc])) {
+        if (!FXSYS_isDecimalDigit(str[cc])) {
           return FALSE;
         }
         wsValue = str[cc] + wsValue;
@@ -1498,7 +1481,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         ccf--;
         break;
       case 'z':
-        if (FX_IsDigit(str[cc])) {
+        if (FXSYS_isDecimalDigit(str[cc])) {
           wsValue = str[cc] + wsValue;
           cc--;
         }
@@ -1506,7 +1489,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         break;
       case 'Z':
         if (str[cc] != ' ') {
-          if (FX_IsDigit(str[cc])) {
+          if (FXSYS_isDecimalDigit(str[cc])) {
             wsValue = str[cc] + wsValue;
             cc--;
           }
@@ -1550,7 +1533,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           if (str[cc] == 'E' || str[cc] == 'e') {
             break;
           }
-          if (FX_IsDigit(str[cc])) {
+          if (FXSYS_isDecimalDigit(str[cc])) {
             iExponent = iExponent + (str[cc] - '0') * 10;
             cc--;
             continue;
@@ -1714,7 +1697,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           break;
         }
         case '9':
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           { wsValue += str[cc]; }
@@ -1722,7 +1705,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           ccf++;
           break;
         case 'z':
-          if (FX_IsDigit(str[cc])) {
+          if (FXSYS_isDecimalDigit(str[cc])) {
             wsValue += str[cc];
             cc++;
           }
@@ -1730,7 +1713,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           break;
         case 'Z':
           if (str[cc] != ' ') {
-            if (FX_IsDigit(str[cc])) {
+            if (FXSYS_isDecimalDigit(str[cc])) {
               wsValue += str[cc];
               cc++;
             }
@@ -1780,7 +1763,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             }
           }
           while (cc < len) {
-            if (!FX_IsDigit(str[cc])) {
+            if (!FXSYS_isDecimalDigit(str[cc])) {
               break;
             }
             iExponent = iExponent * 10 + str[cc] - '0';
@@ -1860,7 +1843,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           while (ccf < lenf && strf[ccf] == '8') {
             ccf++;
           }
-          while (cc < len && FX_IsDigit(str[cc])) {
+          while (cc < len && FXSYS_isDecimalDigit(str[cc])) {
             wsValue += str[cc];
             cc++;
           }
@@ -2095,15 +2078,15 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
     }
     uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
     if (dwSymbol == FXBSTR_ID(0, 0, 'D', '1')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       day = str[cc++] - '0';
-      if (cc < len && FX_IsDigit(str[cc])) {
+      if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
         day = day * 10 + str[cc++] - '0';
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'D', '2')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       day = str[cc++] - '0';
@@ -2112,22 +2095,22 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '1')) {
       int i = 0;
-      while (cc < len && i < 3 && FX_IsDigit(str[cc])) {
+      while (cc < len && i < 3 && FXSYS_isDecimalDigit(str[cc])) {
         cc++;
         i++;
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '3')) {
       cc += 3;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       month = str[cc++] - '0';
-      if (cc < len && FX_IsDigit(str[cc])) {
+      if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
         month = month * 10 + str[cc++] - '0';
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       month = str[cc++] - '0';
@@ -2210,11 +2193,11 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       if (cc + 2 > len) {
         return FALSE;
       }
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       year = str[cc++] - '0';
-      if (cc >= len || !FX_IsDigit(str[cc])) {
+      if (cc >= len || !FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       year = year * 10 + str[cc++] - '0';
@@ -2230,7 +2213,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
         return FALSE;
       }
       while (i < 4) {
-        if (!FX_IsDigit(str[cc])) {
+        if (!FXSYS_isDecimalDigit(str[cc])) {
           return FALSE;
         }
         year = year * 10 + str[cc] - '0';
@@ -2317,11 +2300,11 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
         dwSymbol == FXBSTR_ID(0, 0, 'H', '1') ||
         dwSymbol == FXBSTR_ID(0, 0, 'h', '1') ||
         dwSymbol == FXBSTR_ID(0, 0, 'K', '1')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       hour = str[cc++] - '0';
-      if (cc < len && FX_IsDigit(str[cc])) {
+      if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
         hour = hour * 10 + str[cc++] - '0';
       }
       if (dwSymbol == FXBSTR_ID(0, 0, 'K', '1') && hour == 24) {
@@ -2331,14 +2314,14 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
                dwSymbol == FXBSTR_ID(0, 0, 'H', '2') ||
                dwSymbol == FXBSTR_ID(0, 0, 'h', '2') ||
                dwSymbol == FXBSTR_ID(0, 0, 'K', '2')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       hour = str[cc++] - '0';
       if (cc >= len) {
         return FALSE;
       }
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       hour = hour * 10 + str[cc++] - '0';
@@ -2346,42 +2329,42 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
         hour = 0;
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       minute = str[cc++] - '0';
-      if (cc < len && FX_IsDigit(str[cc])) {
+      if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
         minute = minute * 10 + str[cc++] - '0';
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       minute = str[cc++] - '0';
       if (cc >= len) {
         return FALSE;
       }
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       minute = minute * 10 + str[cc++] - '0';
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '1')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       second = str[cc++] - '0';
-      if (cc < len && FX_IsDigit(str[cc])) {
+      if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
         second = second * 10 + str[cc++] - '0';
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '2')) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       second = str[cc++] - '0';
       if (cc >= len) {
         return FALSE;
       }
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       second = second * 10 + str[cc++] - '0';
@@ -2391,7 +2374,7 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       }
       int i = 0;
       while (i < 3) {
-        if (!FX_IsDigit(str[cc])) {
+        if (!FXSYS_isDecimalDigit(str[cc])) {
           return FALSE;
         }
         millisecond = millisecond * 10 + str[cc++] - '0';
@@ -2597,7 +2580,7 @@ FX_BOOL CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
         break;
       }
       case 'A':
-        if (iText >= iLenText || !FX_IsAlpha(pStrText[iText])) {
+        if (iText >= iLenText || !FXSYS_iswalpha(pStrText[iText])) {
           return FALSE;
         }
         wsOutput += pStrText[iText++];
@@ -2612,15 +2595,15 @@ FX_BOOL CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
         break;
       case 'O':
       case '0':
-        if (iText >= iLenText ||
-            (!FX_IsDigit(pStrText[iText]) && !FX_IsAlpha(pStrText[iText]))) {
+        if (iText >= iLenText || (!FXSYS_isDecimalDigit(pStrText[iText]) &&
+                                  !FXSYS_iswalpha(pStrText[iText]))) {
           return FALSE;
         }
         wsOutput += pStrText[iText++];
         iPattern++;
         break;
       case '9':
-        if (iText >= iLenText || !FX_IsDigit(pStrText[iText])) {
+        if (iText >= iLenText || !FXSYS_isDecimalDigit(pStrText[iText])) {
           return FALSE;
         }
         wsOutput += pStrText[iText++];
@@ -2747,7 +2730,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
     switch (strf[ccf]) {
       case '9':
         if (cc >= 0) {
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           wsOutput = str[cc] + wsOutput;
@@ -2759,7 +2742,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         break;
       case 'z':
         if (cc >= 0) {
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           if (str[0] != '0') {
@@ -2771,7 +2754,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         break;
       case 'Z':
         if (cc >= 0) {
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           if (str[0] == '0') {
@@ -2951,7 +2934,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         break;
       case '9':
         if (cc < len) {
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           wsOutput += str[cc];
@@ -2963,7 +2946,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         break;
       case 'z':
         if (cc < len) {
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           wsOutput += str[cc];
@@ -2973,7 +2956,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         break;
       case 'Z':
         if (cc < len) {
-          if (!FX_IsDigit(str[cc])) {
+          if (!FXSYS_isDecimalDigit(str[cc])) {
             return FALSE;
           }
           wsOutput += str[cc];
@@ -3048,7 +3031,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         while (ccf < lenf && strf[ccf] == '8') {
           ccf++;
         }
-        while (cc < len && FX_IsDigit(str[cc])) {
+        while (cc < len && FXSYS_isDecimalDigit(str[cc])) {
           wsOutput += str[cc];
           cc++;
         }
@@ -3456,7 +3439,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
         while (ccf < lenf && strf[ccf] == '8') {
           ccf++;
         }
-        while (cc < len && FX_IsDigit(str[cc])) {
+        while (cc < len && FXSYS_isDecimalDigit(str[cc])) {
           wsOutput += str[cc];
           cc++;
         }
@@ -3524,7 +3507,7 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
     return FALSE;
   }
   while (cc < len && cc < 4) {
-    if (!FX_IsDigit(str[cc])) {
+    if (!FXSYS_isDecimalDigit(str[cc])) {
       return FALSE;
     }
     wYear = wYear * 10 + str[cc++] - '0';
@@ -3540,7 +3523,7 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
     cc_start = cc;
     uint8_t tmpM = 0;
     while (cc < len && cc < cc_start + 2) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       tmpM = tmpM * 10 + str[cc++] - '0';
@@ -3556,7 +3539,7 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
       uint8_t tmpD = 0;
       cc_start = cc;
       while (cc < len && cc < cc_start + 2) {
-        if (!FX_IsDigit(str[cc])) {
+        if (!FXSYS_isDecimalDigit(str[cc])) {
           return FALSE;
         }
         tmpD = tmpD * 10 + str[cc++] - '0';
@@ -3604,7 +3587,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   const FX_WCHAR* str = wsTime.c_str();
   int len = wsTime.GetLength();
   while (cc < len && cc < 2) {
-    if (!FX_IsDigit(str[cc])) {
+    if (!FXSYS_isDecimalDigit(str[cc])) {
       return FALSE;
     }
     hour = hour * 10 + str[cc++] - '0';
@@ -3618,7 +3601,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
     }
     cc_start = cc;
     while (cc < len && cc < cc_start + 2) {
-      if (!FX_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return FALSE;
       }
       minute = minute * 10 + str[cc++] - '0';
@@ -3632,7 +3615,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
       }
       cc_start = cc;
       while (cc < len && cc < cc_start + 2) {
-        if (!FX_IsDigit(str[cc])) {
+        if (!FXSYS_isDecimalDigit(str[cc])) {
           return FALSE;
         }
         second = second * 10 + str[cc++] - '0';
@@ -3645,7 +3628,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
           cc++;
           cc_start = cc;
           while (cc < len && cc < cc_start + 3) {
-            if (!FX_IsDigit(str[cc])) {
+            if (!FXSYS_isDecimalDigit(str[cc])) {
               return FALSE;
             }
             millisecond = millisecond * 10 + str[cc++] - '0';

@@ -1753,7 +1753,7 @@ CFX_WideString CXFA_WidgetData::NumericLimit(const CFX_WideString& wsValue,
   }
   for (; i < iCount; i++) {
     FX_WCHAR wc = wsValue[i];
-    if (XFA_IsDigit(wc)) {
+    if (FXSYS_isDecimalDigit(wc)) {
       if (iLead >= 0) {
         iLead_++;
         if (iLead_ > iLead)

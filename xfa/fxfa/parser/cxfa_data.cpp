@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_data.h"
 
+#include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 // Static.
@@ -17,14 +18,14 @@ FX_ARGB CXFA_Data::ToColor(const CFX_WideStringC& wsValue) {
   int cc = 0;
   const FX_WCHAR* str = wsValue.c_str();
   int len = wsValue.GetLength();
-  while (XFA_IsSpace(str[cc]) && cc < len)
+  while (FXSYS_iswspace(str[cc]) && cc < len)
     cc++;
 
   if (cc >= len)
     return 0xff000000;
 
   while (cc < len) {
-    if (str[cc] == ',' || !XFA_IsDigit(str[cc]))
+    if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
       break;
 
     r = r * 10 + str[cc] - '0';
@@ -32,11 +33,11 @@ FX_ARGB CXFA_Data::ToColor(const CFX_WideStringC& wsValue) {
   }
   if (cc < len && str[cc] == ',') {
     cc++;
-    while (XFA_IsSpace(str[cc]) && cc < len)
+    while (FXSYS_iswspace(str[cc]) && cc < len)
       cc++;
 
     while (cc < len) {
-      if (str[cc] == ',' || !XFA_IsDigit(str[cc]))
+      if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
         break;
 
       g = g * 10 + str[cc] - '0';
@@ -44,11 +45,11 @@ FX_ARGB CXFA_Data::ToColor(const CFX_WideStringC& wsValue) {
     }
     if (cc < len && str[cc] == ',') {
       cc++;
-      while (XFA_IsSpace(str[cc]) && cc < len)
+      while (FXSYS_iswspace(str[cc]) && cc < len)
         cc++;
 
       while (cc < len) {
-        if (str[cc] == ',' || !XFA_IsDigit(str[cc]))
+        if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
           break;
 
         b = b * 10 + str[cc] - '0';

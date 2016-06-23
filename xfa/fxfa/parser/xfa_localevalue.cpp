@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 
+#include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fgas/localization/fgas_localeimp.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
@@ -219,7 +220,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
     const FX_WCHAR* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
-    while (XFA_IsSpace(str[cc]) && cc < len) {
+    while (FXSYS_iswspace(str[cc]) && cc < len) {
       cc++;
     }
     if (cc >= len) {
@@ -233,7 +234,8 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
     }
     int nIntegralLen = 0;
     while (cc < len) {
-      if (str[cc] == '.' || !XFA_IsDigit(str[cc]) || nIntegralLen > 17) {
+      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]) ||
+          nIntegralLen > 17) {
         break;
       }
       nIntegral = nIntegral * 10 + str[cc] - '0';
@@ -250,7 +252,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
         scale++;
         cc++;
         if (scale == sizeof fraction_scales / sizeof(double) ||
-            !XFA_IsDigit(str[cc])) {
+            !FXSYS_isDecimalDigit(str[cc])) {
           break;
         }
       }
@@ -267,7 +269,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
         }
       }
       while (cc < len) {
-        if (str[cc] == '.' || !XFA_IsDigit(str[cc])) {
+        if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc])) {
           break;
         }
         nExponent = nExponent * 10 + str[cc] - '0';
@@ -294,7 +296,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
     const FX_WCHAR* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
-    while (XFA_IsSpace(str[cc]) && cc < len) {
+    while (FXSYS_iswspace(str[cc]) && cc < len) {
       cc++;
     }
     if (cc >= len) {
@@ -308,7 +310,8 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
     }
     int32_t nIntegralLen = 0;
     while (cc < len) {
-      if (str[cc] == '.' || !XFA_IsDigit(str[cc]) || nIntegralLen > 17) {
+      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]) ||
+          nIntegralLen > 17) {
         break;
       }
       nIntegral = nIntegral * 10 + str[cc] - '0';
@@ -325,7 +328,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
         scale++;
         cc++;
         if (scale == sizeof fraction_scales / sizeof(FX_DOUBLE) ||
-            !XFA_IsDigit(str[cc])) {
+            !FXSYS_isDecimalDigit(str[cc])) {
           break;
         }
       }
@@ -342,7 +345,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
         }
       }
       while (cc < len) {
-        if (str[cc] == '.' || !XFA_IsDigit(str[cc])) {
+        if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc])) {
           break;
         }
         nExponent = nExponent * 10 + str[cc] - '0';
@@ -616,7 +619,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
   const FX_WCHAR* pDate = wsDate.c_str();
   int nIndex = 0, nStart = 0;
   while (pDate[nIndex] != '\0' && nIndex < wCountY) {
-    if (!XFA_IsDigit(pDate[nIndex])) {
+    if (!FXSYS_isDecimalDigit(pDate[nIndex])) {
       return FALSE;
     }
     wYear = (pDate[nIndex] - '0') + wYear * 10;
@@ -630,7 +633,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
   }
   nStart = nIndex;
   while (pDate[nIndex] != '\0' && nIndex - nStart < wCountM && nIndex < nLen) {
-    if (!XFA_IsDigit(pDate[nIndex])) {
+    if (!FXSYS_isDecimalDigit(pDate[nIndex])) {
       return FALSE;
     }
     wMonth = (pDate[nIndex] - '0') + wMonth * 10;
@@ -644,7 +647,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
   }
   nStart = nIndex;
   while (pDate[nIndex] != '\0' && nIndex - nStart < wCountD && nIndex < nLen) {
-    if (!XFA_IsDigit(pDate[nIndex])) {
+    if (!FXSYS_isDecimalDigit(pDate[nIndex])) {
       return FALSE;
     }
     wDay = (pDate[nIndex] - '0') + wDay * 10;
@@ -703,7 +706,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   int nIndex = 0;
   int nStart = 0;
   while (nIndex - nStart < wCountH && pTime[nIndex]) {
-    if (!XFA_IsDigit(pTime[nIndex]))
+    if (!FXSYS_isDecimalDigit(pTime[nIndex]))
       return FALSE;
     wHour = pTime[nIndex] - '0' + wHour * 10;
     nIndex++;
@@ -715,7 +718,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   }
   nStart = nIndex;
   while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
-    if (!XFA_IsDigit(pTime[nIndex]))
+    if (!FXSYS_isDecimalDigit(pTime[nIndex]))
       return FALSE;
     wMinute = pTime[nIndex] - '0' + wMinute * 10;
     nIndex++;
@@ -727,7 +730,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   }
   nStart = nIndex;
   while (nIndex - nStart < wCountS && nIndex < nLen && pTime[nIndex]) {
-    if (!XFA_IsDigit(pTime[nIndex]))
+    if (!FXSYS_isDecimalDigit(pTime[nIndex]))
       return FALSE;
     wSecond = pTime[nIndex] - '0' + wSecond * 10;
     nIndex++;
@@ -738,7 +741,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
     nIndex++;
     nStart = nIndex;
     while (nIndex - nStart < wCountF && nIndex < nLen && pTime[nIndex]) {
-      if (!XFA_IsDigit(pTime[nIndex]))
+      if (!FXSYS_isDecimalDigit(pTime[nIndex]))
         return FALSE;
       wFraction = pTime[nIndex] - '0' + wFraction * 10;
       nIndex++;
@@ -753,7 +756,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
       nIndex++;
       nStart = nIndex;
       while (nIndex - nStart < wCountH && nIndex < nLen && pTime[nIndex]) {
-        if (!XFA_IsDigit(pTime[nIndex]))
+        if (!FXSYS_isDecimalDigit(pTime[nIndex]))
           return FALSE;
         nOffsetH = pTime[nIndex] - '0' + nOffsetH * 10;
         nIndex++;
@@ -765,7 +768,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
       }
       nStart = nIndex;
       while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
-        if (!XFA_IsDigit(pTime[nIndex]))
+        if (!FXSYS_isDecimalDigit(pTime[nIndex]))
           return FALSE;
         nOffsetM = pTime[nIndex] - '0' + nOffsetM * 10;
         nIndex++;
@@ -943,7 +946,7 @@ FX_BOOL CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric,
   int32_t nCount = wsNumeric.GetLength();
   int32_t nCountFmt = wsFormat.GetLength();
   while (n < nCount && (bLimit ? nf < nCountFmt : TRUE) &&
-         XFA_IsDigit(c = pNum[n])) {
+         FXSYS_isDecimalDigit(c = pNum[n])) {
     if (bLimit == TRUE) {
       if ((cf = pFmt[nf]) == L'*') {
         bLimit = FALSE;
@@ -981,7 +984,7 @@ FX_BOOL CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric,
   ++n;
   bLimit = TRUE;
   while (n < nCount && (bLimit ? nf < nCountFmt : TRUE) &&
-         XFA_IsDigit(c = pNum[n])) {
+         FXSYS_isDecimalDigit(c = pNum[n])) {
     if (bLimit == TRUE) {
       if ((cf = pFmt[nf]) == L'*') {
         bLimit = FALSE;

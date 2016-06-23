@@ -303,7 +303,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal) {
         nIntegralLen > 17) {
       break;
     }
-    if (!XFA_IsDigit(str[cc])) {
+    if (!FXSYS_isDecimalDigit(str[cc])) {
       return 0;
     }
     nIntegral = nIntegral * 10 + str[cc] - '0';
@@ -326,7 +326,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal) {
           str[cc] == 'E' || str[cc] == 'e') {
         break;
       }
-      if (!XFA_IsDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc])) {
         return 0;
       }
     }
@@ -343,7 +343,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal) {
       }
     }
     while (cc < len) {
-      if (str[cc] == '.' || !XFA_IsDigit(str[cc])) {
+      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc])) {
         return 0;
       }
       nExponent = nExponent * 10 + str[cc] - '0';

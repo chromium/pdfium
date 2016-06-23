@@ -18,17 +18,11 @@ class CXFA_LocaleValue;
 class CXFA_Node;
 class CXFA_WidgetData;
 
-inline FX_BOOL XFA_IsSpace(FX_WCHAR c) {
-  return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
-}
-inline FX_BOOL XFA_IsDigit(FX_WCHAR c) {
-  return c >= '0' && c <= '9';
-}
-
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
     CFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,
     CFX_WideString& wsNamespaceURI);
+
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {
  public:
