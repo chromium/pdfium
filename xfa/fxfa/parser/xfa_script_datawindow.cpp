@@ -17,7 +17,6 @@
 
 CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_Element::DataWindow) {
-  m_uScriptHash = XFA_HASHCODE_DataWindow;
 }
 CScript_DataWindow::~CScript_DataWindow() {}
 void CScript_DataWindow::Script_DataWindow_MoveCurrentRecord(

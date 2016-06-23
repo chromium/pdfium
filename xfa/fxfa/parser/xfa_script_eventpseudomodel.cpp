@@ -22,7 +22,6 @@
 
 CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_Element::EventPseudoModel) {
-  m_uScriptHash = XFA_HASHCODE_Event;
 }
 CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
 void Script_EventPseudoModel_StringProperty(CFXJSE_Value* pValue,

@@ -5082,7 +5082,7 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
 
 CXFA_OrdinaryObject::CXFA_OrdinaryObject(CXFA_Document* pDocument,
                                          XFA_Element eElement)
-    : CXFA_Object(pDocument, XFA_ObjectType::OrdinaryObject), m_uScriptHash(0) {
+    : CXFA_Object(pDocument, XFA_ObjectType::OrdinaryObject) {
   m_eNodeClass = eElement;
 }
 
@@ -5090,10 +5090,6 @@ CXFA_OrdinaryObject::~CXFA_OrdinaryObject() {}
 
 XFA_Element CXFA_OrdinaryObject::GetClassID() const {
   return m_eNodeClass;
-}
-
-uint32_t CXFA_OrdinaryObject::GetScriptObjHash() const {
-  return m_uScriptHash;
 }
 
 CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)

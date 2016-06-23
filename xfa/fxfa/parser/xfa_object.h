@@ -689,11 +689,9 @@ class CXFA_OrdinaryObject : public CXFA_Object {
   ~CXFA_OrdinaryObject() override;
 
   XFA_Element GetClassID() const;
-  uint32_t GetScriptObjHash() const;
 
  protected:
   XFA_Element m_eNodeClass;
-  uint32_t m_uScriptHash;
 };
 
 class CXFA_ThisProxy : public CXFA_Object {

@@ -25,7 +25,6 @@
 
 CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_Element::LayoutPseudoModel) {
-  m_uScriptHash = XFA_HASHCODE_Layout;
 }
 CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Ready(

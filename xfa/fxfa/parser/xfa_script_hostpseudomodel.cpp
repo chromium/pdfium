@@ -29,7 +29,6 @@ CXFA_Node* ToNode(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
 
 CScript_HostPseudoModel::CScript_HostPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_Element::HostPseudoModel) {
-  m_uScriptHash = XFA_HASHCODE_Host;
 }
 CScript_HostPseudoModel::~CScript_HostPseudoModel() {}
 void CScript_HostPseudoModel::Script_HostPseudoModel_LoadString(
