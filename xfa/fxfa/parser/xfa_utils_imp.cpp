@@ -62,12 +62,13 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   CXFA_Node* pUI = pNode->GetProperty(0, XFA_Element::Ui, TRUE);
   CXFA_Node* pChild = pUI->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    XFA_Element eChild = pChild->GetElementType();
-    if (eChild == XFA_Element::Extras || eChild == XFA_Element::Picture) {
+    XFA_Element eChildType = pChild->GetElementType();
+    if (eChildType == XFA_Element::Extras ||
+        eChildType == XFA_Element::Picture) {
       continue;
     }
-    const XFA_PROPERTY* pProperty =
-        XFA_GetPropertyOfElement(XFA_Element::Ui, eChild, XFA_XDPPACKET_Form);
+    const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
+        XFA_Element::Ui, eChildType, XFA_XDPPACKET_Form);
     if (pProperty && (pProperty->uFlags & XFA_PROPERTYFLAG_OneOf)) {
       pUIChild = pChild;
       break;
@@ -153,8 +154,7 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
     return CXFA_LocaleValue();
   }
   int32_t iVTType = XFA_VT_NULL;
-  XFA_Element eType = pValueChild->GetElementType();
-  switch (eType) {
+  switch (pValueChild->GetElementType()) {
     case XFA_Element::Decimal:
       iVTType = XFA_VT_DECIMAL;
       break;

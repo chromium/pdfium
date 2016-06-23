@@ -371,8 +371,8 @@ static void XFA_DataExporter_RegenerateFormFile_Container(
     CXFA_Node* pNode,
     IFX_Stream* pStream,
     FX_BOOL bSaveXML = FALSE) {
-  XFA_Element eElement = pNode->GetElementType();
-  if (eElement == XFA_Element::Field || eElement == XFA_Element::Draw ||
+  XFA_Element eType = pNode->GetElementType();
+  if (eType == XFA_Element::Field || eType == XFA_Element::Draw ||
       !pNode->IsContainerNode()) {
     CFX_WideTextBuf buf;
     XFA_DataExporter_RegenerateFormFile_Changed(pNode, buf, bSaveXML);

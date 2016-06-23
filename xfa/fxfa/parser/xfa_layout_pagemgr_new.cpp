@@ -1782,9 +1782,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
     while (pNode) {
       if (pNode->IsUnusedNode()) {
         if (pNode->IsContainerNode()) {
-          XFA_Element eCurId = pNode->GetElementType();
-          if (eCurId == XFA_Element::PageArea ||
-              eCurId == XFA_Element::PageSet) {
+          XFA_Element eType = pNode->GetElementType();
+          if (eType == XFA_Element::PageArea || eType == XFA_Element::PageSet) {
             CXFA_ContainerIterator iteChild(pNode);
             CXFA_Node* pChildNode = iteChild.MoveToNext();
             for (; pChildNode; pChildNode = iteChild.MoveToNext()) {
@@ -1795,7 +1794,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
                 delete pLayoutItem;
               }
             }
-          } else if (eCurId != XFA_Element::ContentArea) {
+          } else if (eType != XFA_Element::ContentArea) {
             CXFA_LayoutItem* pLayoutItem = static_cast<CXFA_LayoutItem*>(
                 pNode->GetUserData(XFA_LAYOUTITEMKEY));
             if (pLayoutItem) {

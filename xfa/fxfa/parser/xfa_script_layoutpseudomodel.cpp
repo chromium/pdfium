@@ -248,12 +248,9 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
             }
-            XFA_Element eElementType =
-                pItemChild->m_pFormNode->GetElementType();
-            if (eElementType != XFA_Element::Field &&
-                eElementType != XFA_Element::Draw &&
-                eElementType != XFA_Element::Subform &&
-                eElementType != XFA_Element::Area) {
+            XFA_Element eType = pItemChild->m_pFormNode->GetElementType();
+            if (eType != XFA_Element::Field && eType != XFA_Element::Draw &&
+                eType != XFA_Element::Subform && eType != XFA_Element::Area) {
               continue;
             }
             if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))
@@ -273,12 +270,9 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
             }
-            XFA_Element eElementType =
-                pItemChild->m_pFormNode->GetElementType();
-            if (eElementType != XFA_Element::Field &&
-                eElementType != XFA_Element::Draw &&
-                eElementType != XFA_Element::Subform &&
-                eElementType != XFA_Element::Area) {
+            XFA_Element eType = pItemChild->m_pFormNode->GetElementType();
+            if (eType != XFA_Element::Field && eType != XFA_Element::Draw &&
+                eType != XFA_Element::Subform && eType != XFA_Element::Area) {
               continue;
             }
             if (pdfium::ContainsValue(formItems, pItemChild->m_pFormNode))

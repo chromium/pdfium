@@ -357,13 +357,13 @@ int32_t CXFA_ScriptContext::NormalPropTypeGetter(
   CXFA_ScriptContext* lpScriptContext =
       pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject);
-  XFA_Element objElement = pObject->GetElementType();
+  XFA_Element eType = pObject->GetElementType();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
-  if (XFA_GetMethodByName(objElement, wsPropName.AsStringC())) {
+  if (XFA_GetMethodByName(eType, wsPropName.AsStringC())) {
     return FXJSE_ClassPropType_Method;
   }
   if (bQueryIn &&
-      !XFA_GetScriptAttributeByName(objElement, wsPropName.AsStringC())) {
+      !XFA_GetScriptAttributeByName(eType, wsPropName.AsStringC())) {
     return FXJSE_ClassPropType_None;
   }
   return FXJSE_ClassPropType_Property;
@@ -379,9 +379,9 @@ int32_t CXFA_ScriptContext::GlobalPropTypeGetter(
   CXFA_ScriptContext* lpScriptContext =
       pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject);
-  XFA_Element objElement = pObject->GetElementType();
+  XFA_Element eType = pObject->GetElementType();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
-  if (XFA_GetMethodByName(objElement, wsPropName.AsStringC())) {
+  if (XFA_GetMethodByName(eType, wsPropName.AsStringC())) {
     return FXJSE_ClassPropType_Method;
   }
   return FXJSE_ClassPropType_Property;

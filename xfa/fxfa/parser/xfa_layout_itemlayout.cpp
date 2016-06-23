@@ -901,29 +901,29 @@ static inline void XFA_ItemLayoutProcessor_CalculateContainerSpecfiedSize(
   fContainerHeight = 0;
   bContainerWidthAutoSize = TRUE;
   bContainerHeightAutoSize = TRUE;
-  XFA_Element eClassID = pFormNode->GetElementType();
+  XFA_Element eType = pFormNode->GetElementType();
   CXFA_Measurement mTmpValue;
-  if (bContainerWidthAutoSize && (eClassID == XFA_Element::Subform ||
-                                  eClassID == XFA_Element::ExclGroup) &&
+  if (bContainerWidthAutoSize &&
+      (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_W, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerWidth = mTmpValue.ToUnit(XFA_UNIT_Pt);
     bContainerWidthAutoSize = FALSE;
   }
-  if (bContainerHeightAutoSize && (eClassID == XFA_Element::Subform ||
-                                   eClassID == XFA_Element::ExclGroup) &&
+  if (bContainerHeightAutoSize &&
+      (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_H, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerHeight = mTmpValue.ToUnit(XFA_UNIT_Pt);
     bContainerHeightAutoSize = FALSE;
   }
-  if (bContainerWidthAutoSize && eClassID == XFA_Element::Subform &&
+  if (bContainerWidthAutoSize && eType == XFA_Element::Subform &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_MaxW, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerWidth = mTmpValue.ToUnit(XFA_UNIT_Pt);
     bContainerWidthAutoSize = FALSE;
   }
-  if (bContainerHeightAutoSize && eClassID == XFA_Element::Subform &&
+  if (bContainerHeightAutoSize && eType == XFA_Element::Subform &&
       pFormNode->TryMeasure(XFA_ATTRIBUTE_MaxH, mTmpValue, FALSE) &&
       mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
     fContainerHeight = mTmpValue.ToUnit(XFA_UNIT_Pt);
@@ -1218,8 +1218,7 @@ static inline void XFA_ItemLayoutProcessor_UpdateWidgetSize(
     FX_FLOAT& fHeight) {
   CXFA_Node* pNode = pLayoutItem->m_pFormNode;
   ASSERT(pNode);
-  XFA_Element eClassID = pNode->GetElementType();
-  switch (eClassID) {
+  switch (pNode->GetElementType()) {
     case XFA_Element::Subform:
     case XFA_Element::Area:
     case XFA_Element::ExclGroup:
@@ -2911,8 +2910,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayout(
     FX_FLOAT fHeightLimit,
     FX_FLOAT fRealHeight,
     CXFA_LayoutContext* pContext) {
-  XFA_Element eClassID = m_pFormNode->GetElementType();
-  switch (eClassID) {
+  switch (m_pFormNode->GetElementType()) {
     case XFA_Element::Subform:
     case XFA_Element::Area:
     case XFA_Element::ExclGroup:

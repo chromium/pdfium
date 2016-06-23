@@ -48,7 +48,7 @@ class CXFA_Object : public CFXJSE_HostObject {
  public:
   CXFA_Object(CXFA_Document* pDocument,
               XFA_ObjectType objectType,
-              XFA_Element elementType);
+              XFA_Element eType);
   ~CXFA_Object() override;
 
   CXFA_Document* GetDocument() const { return m_pDocument; }
@@ -93,8 +93,8 @@ class CXFA_Object : public CFXJSE_HostObject {
 
  protected:
   CXFA_Document* const m_pDocument;
-  XFA_ObjectType m_objectType;
-  XFA_Element m_elementType;
+  const XFA_ObjectType m_objectType;
+  const XFA_Element m_elementType;
 };
 using CXFA_ObjArray = CFX_ArrayTemplate<CXFA_Object*>;
 
@@ -285,11 +285,11 @@ class CXFA_Node : public CXFA_Object {
     return TryUserData(pKey, pData, bProtoAlso) ? pData : NULL;
   }
   CXFA_Node* GetProperty(int32_t index,
-                         XFA_Element eProperty,
+                         XFA_Element eType,
                          FX_BOOL bCreateProperty = TRUE);
-  int32_t CountChildren(XFA_Element eElement, FX_BOOL bOnlyChild = FALSE);
+  int32_t CountChildren(XFA_Element eType, FX_BOOL bOnlyChild = FALSE);
   CXFA_Node* GetChild(int32_t index,
-                      XFA_Element eElement,
+                      XFA_Element eType,
                       FX_BOOL bOnlyChild = FALSE);
   int32_t InsertChild(int32_t index, CXFA_Node* pNode);
   FX_BOOL InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = NULL);
@@ -300,9 +300,9 @@ class CXFA_Node : public CXFA_Object {
   int32_t GetNodeList(CXFA_NodeArray& nodes,
                       uint32_t dwTypeFilter = XFA_NODEFILTER_Children |
                                               XFA_NODEFILTER_Properties,
-                      XFA_Element eElementFilter = XFA_Element::Unknown,
+                      XFA_Element eTypeFilter = XFA_Element::Unknown,
                       int32_t iLevel = 1);
-  CXFA_Node* CreateSamePacketNode(XFA_Element eElement,
+  CXFA_Node* CreateSamePacketNode(XFA_Element eType,
                                   uint32_t dwFlags = XFA_NodeFlag_Initialized);
   CXFA_Node* CloneTemplateToForm(FX_BOOL bRecursive);
   CXFA_Node* GetTemplateNode() const;
@@ -320,10 +320,10 @@ class CXFA_Node : public CXFA_Object {
   XFA_ATTRIBUTEENUM GetIntact();
   CXFA_Node* GetFirstChildByName(const CFX_WideStringC& wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
-  CXFA_Node* GetFirstChildByClass(XFA_Element eNodeClass) const;
+  CXFA_Node* GetFirstChildByClass(XFA_Element eType) const;
   CXFA_Node* GetNextSameNameSibling(uint32_t dwNodeNameHash) const;
   CXFA_Node* GetNextSameNameSibling(const CFX_WideStringC& wsNodeName) const;
-  CXFA_Node* GetNextSameClassSibling(XFA_Element eNodeClass) const;
+  CXFA_Node* GetNextSameClassSibling(XFA_Element eType) const;
   int32_t GetNodeSameNameIndex() const;
   int32_t GetNodeSameClassIndex() const;
   void GetSOMExpression(CFX_WideString& wsSOMExpression);
@@ -616,7 +616,7 @@ class CXFA_Node : public CXFA_Object {
  protected:
   friend class CXFA_Document;
 
-  CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_Element eElement);
+  CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_Element eType);
   ~CXFA_Node() override;
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;
@@ -633,7 +633,7 @@ class CXFA_Node : public CXFA_Object {
   void OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify);
   void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, FX_BOOL bScriptModify);
   int32_t execSingleEventByName(const CFX_WideStringC& wsEventName,
-                                XFA_Element eElementType);
+                                XFA_Element eType);
   FX_BOOL SetScriptContent(const CFX_WideString& wsContent,
                            const CFX_WideString& wsXMLValue,
                            bool bNotify = true,

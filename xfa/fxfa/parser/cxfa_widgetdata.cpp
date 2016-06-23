@@ -1328,7 +1328,7 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
   if (!pNode)
     return TRUE;
 
-  XFA_Element uiType = pNode->GetElementType();
+  XFA_Element eType = pNode->GetElementType();
   if (!wsPicture.IsEmpty()) {
     CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
     IFX_Locale* pLocale = GetLocal();
@@ -1339,7 +1339,7 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
       widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsNewText,
                                      wsPicture, pLocale, pLocalMgr);
       wsNewText = widgetValue.GetValue();
-      if (uiType == XFA_Element::NumericEdit) {
+      if (eType == XFA_Element::NumericEdit) {
         int32_t iLeadDigits = 0;
         int32_t iFracDigits = 0;
         GetLeadDigits(iLeadDigits);
@@ -1349,7 +1349,7 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
       bSyncData = TRUE;
     }
   } else {
-    if (uiType == XFA_Element::NumericEdit) {
+    if (eType == XFA_Element::NumericEdit) {
       if (wsNewText != FX_WSTRC(L"0")) {
         int32_t iLeadDigits = 0;
         int32_t iFracDigits = 0;
@@ -1360,7 +1360,7 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
       bSyncData = TRUE;
     }
   }
-  if (uiType != XFA_Element::NumericEdit || bSyncData)
+  if (eType != XFA_Element::NumericEdit || bSyncData)
     SyncValue(wsNewText, true);
 
   return bValidate;
@@ -1493,8 +1493,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
   if (!pNode)
     return TRUE;
 
-  XFA_Element uiType = GetUIChild()->GetElementType();
-  switch (uiType) {
+  switch (GetUIChild()->GetElementType()) {
     case XFA_Element::ChoiceList: {
       if (eValueType == XFA_VALUEPICTURE_Display) {
         int32_t iSelItemIndex = GetSelectedItem(0);
@@ -1598,8 +1597,7 @@ FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
       return FALSE;
 
     int32_t iVTType = XFA_VT_NULL;
-    XFA_Element eType = pValueChild->GetElementType();
-    switch (eType) {
+    switch (pValueChild->GetElementType()) {
       case XFA_Element::Decimal:
         iVTType = XFA_VT_DECIMAL;
         break;

@@ -92,7 +92,6 @@ CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
   XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::PageArea)
     return new CXFA_FFPageView(pDocView, pNode);
-
   if (eType == XFA_Element::ContentArea)
     return new CXFA_ContainerLayoutItem(pNode);
 
@@ -320,13 +319,13 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   if (!pDocView)
     return;
 
-  XFA_Element iType = pNode->GetElementType();
-  if (XFA_IsCreateWidget(iType)) {
+  XFA_Element eType = pNode->GetElementType();
+  if (XFA_IsCreateWidget(eType)) {
     CXFA_WidgetAcc* pAcc = new CXFA_WidgetAcc(pDocView, pNode);
     pNode->SetObject(XFA_ATTRIBUTE_WidgetData, pAcc, &gs_XFADeleteWidgetAcc);
     return;
   }
-  switch (iType) {
+  switch (eType) {
     case XFA_Element::BindItems:
       pDocView->m_BindItems.Add(pNode);
       break;
@@ -381,7 +380,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     return;
   }
 
-  XFA_Element ePType = pParentNode->GetElementType();
+  XFA_Element eType = pParentNode->GetElementType();
   FX_BOOL bIsContainerNode = pParentNode->IsContainerNode();
   CXFA_WidgetAcc* pWidgetAcc =
       static_cast<CXFA_WidgetAcc*>(pWidgetNode->GetWidgetData());
@@ -390,7 +389,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
 
   bool bUpdateProperty = false;
   pDocView->SetChangeMark();
-  switch (ePType) {
+  switch (eType) {
     case XFA_Element::Caption: {
       CXFA_TextLayout* pCapOut = pWidgetAcc->GetCaptionTextLayout();
       if (!pCapOut)
@@ -410,7 +409,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
 
   if (eAttr == XFA_ATTRIBUTE_Value) {
     pDocView->AddCalculateNodeNotify(pSender);
-    if (ePType == XFA_Element::Value || bIsContainerNode) {
+    if (eType == XFA_Element::Value || bIsContainerNode) {
       if (bIsContainerNode) {
         pWidgetAcc->UpdateUIDisplay();
         pDocView->AddCalculateWidgetAcc(pWidgetAcc);

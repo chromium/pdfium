@@ -1179,15 +1179,13 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt, const CXFA_Margin& mg, FX_BOOL bUI) {
   rt.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  XFA_Element iType = pLayoutItem->GetFormNode()->GetElementType();
-  if (XFA_IsCreateWidget(iType)) {
+  if (XFA_IsCreateWidget(pLayoutItem->GetFormNode()->GetElementType()))
     return static_cast<CXFA_FFWidget*>(pLayoutItem);
-  }
   return nullptr;
 }
-FX_BOOL XFA_IsCreateWidget(XFA_Element iType) {
-  return iType == XFA_Element::Field || iType == XFA_Element::Draw ||
-         iType == XFA_Element::Subform || iType == XFA_Element::ExclGroup;
+FX_BOOL XFA_IsCreateWidget(XFA_Element eType) {
+  return eType == XFA_Element::Field || eType == XFA_Element::Draw ||
+         eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup;
 }
 static void XFA_BOX_GetPath_Arc(CXFA_Box box,
                                 CFX_RectF rtDraw,
@@ -2033,13 +2031,13 @@ void XFA_DrawBox(CXFA_Box box,
   if (!box || box.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
 
-  XFA_Element iType = box.GetElementType();
-  if (iType != XFA_Element::Arc && iType != XFA_Element::Border &&
-      iType != XFA_Element::Rectangle) {
+  XFA_Element eType = box.GetElementType();
+  if (eType != XFA_Element::Arc && eType != XFA_Element::Border &&
+      eType != XFA_Element::Rectangle) {
     return;
   }
   CXFA_StrokeArray strokes;
-  if (!(dwFlags & XFA_DRAWBOX_ForceRound) && iType != XFA_Element::Arc) {
+  if (!(dwFlags & XFA_DRAWBOX_ForceRound) && eType != XFA_Element::Arc) {
     box.GetStrokes(strokes);
   }
   XFA_BOX_Fill(box, strokes, pGS, rtWidget, pMatrix, dwFlags);

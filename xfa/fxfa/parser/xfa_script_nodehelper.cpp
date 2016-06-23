@@ -223,9 +223,9 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetParent(
     if (parent == NULL) {
       break;
     }
-    XFA_Element parentElement = parent->GetElementType();
-    if ((!parent->IsUnnamed() && parentElement != XFA_Element::SubformSet) ||
-        parentElement == XFA_Element::Variables) {
+    XFA_Element parentType = parent->GetElementType();
+    if ((!parent->IsUnnamed() && parentType != XFA_Element::SubformSet) ||
+        parentType == XFA_Element::Variables) {
       break;
     }
     node = parent;
@@ -305,10 +305,10 @@ FX_BOOL CXFA_NodeHelper::XFA_NodeIsTransparent(CXFA_Node* refNode) {
   if (refNode == NULL) {
     return FALSE;
   }
-  XFA_Element eRefNode = refNode->GetElementType();
+  XFA_Element refNodeType = refNode->GetElementType();
   if ((refNode->IsUnnamed() && refNode->IsContainerNode()) ||
-      eRefNode == XFA_Element::SubformSet || eRefNode == XFA_Element::Area ||
-      eRefNode == XFA_Element::Proto) {
+      refNodeType == XFA_Element::SubformSet ||
+      refNodeType == XFA_Element::Area || refNodeType == XFA_Element::Proto) {
     return TRUE;
   }
   return FALSE;

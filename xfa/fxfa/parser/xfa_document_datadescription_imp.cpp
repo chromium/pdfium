@@ -31,18 +31,17 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
        pDataChild;
        pDataChild = pDataChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     uint32_t dwNameHash = pDataChild->GetNameHash();
-    XFA_Element eType = pDataChild->GetElementType();
-    if (!dwNameHash) {
+    if (!dwNameHash)
       continue;
-    }
+
     CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_DDGroup>
         sIterator(pDataDescriptionNode);
     for (CXFA_Node* pDDGroupNode = sIterator.GetCurrent(); pDDGroupNode;
          pDDGroupNode = sIterator.MoveToNext()) {
       if (pDDGroupNode != pDataDescriptionNode) {
-        if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup) {
+        if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
           continue;
-        }
+
         CFX_WideString wsNamespace;
         if (!pDDGroupNode->TryNamespace(wsNamespace) ||
             wsNamespace != FX_WSTRC(L"http://ns.adobe.com/data-description/")) {
@@ -50,12 +49,11 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
         }
       }
       CXFA_Node* pDDNode = pDDGroupNode->GetFirstChildByName(dwNameHash);
-      if (!pDDNode) {
+      if (!pDDNode)
         continue;
-      }
-      if (pDDNode->GetElementType() != eType) {
+      if (pDDNode->GetElementType() != pDataChild->GetElementType())
         break;
-      }
+
       pDataChild->SetDataDescriptionNode(pDDNode);
       XFA_DataDescription_UpdateDataRelation(pDataChild, pDDNode);
       break;
