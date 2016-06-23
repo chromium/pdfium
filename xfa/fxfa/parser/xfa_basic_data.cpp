@@ -1708,7 +1708,7 @@ const XFA_ELEMENTINFO g_XFAElementData[] = {
     {0xf616da28, L"line", XFA_Element::Line,
      XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, XFA_ObjectType::Node},
     {0xf616f3dc, L"list", XFA_Element::List, XFA_XDPPACKET_XDP,
-     XFA_ObjectType::OrdinaryList},
+     XFA_ObjectType::List},
     {0xf7055fb1, L"source", XFA_Element::Source, XFA_XDPPACKET_SourceSet,
      XFA_ObjectType::Node},
     {0xf7eebe1c, L"occur", XFA_Element::Occur,

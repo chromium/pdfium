@@ -19,7 +19,7 @@ class CXFA_NodeList;
 
 enum class XFA_ObjectType {
   Object,
-  OrdinaryList,
+  List,
   NodeList,
   Node,
   NodeC,
@@ -65,9 +65,6 @@ class CXFA_Object : public CFXJSE_HostObject {
            m_objectType == XFA_ObjectType::VariablesThis;
   }
   bool IsNodeList() const { return m_objectType == XFA_ObjectType::NodeList; }
-  bool IsOrdinaryList() const {
-    return m_objectType == XFA_ObjectType::OrdinaryList;
-  }
   bool IsContentNode() const {
     return m_objectType == XFA_ObjectType::ContentNode;
   }
