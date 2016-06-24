@@ -7,7 +7,7 @@
     'chromium_code': 1,
 
     'variables': {
-      'clang_use_pdfium_plugins%': 1,
+      'clang_use_pdfium_plugins%': 0,
     },
     'clang_use_pdfium_plugins%': '<(clang_use_pdfium_plugins)',
 
