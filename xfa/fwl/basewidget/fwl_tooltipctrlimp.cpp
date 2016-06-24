@@ -15,7 +15,6 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_tooltiptarget.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 // static
@@ -142,22 +141,18 @@ FWL_Error CFWL_ToolTipImp::GetClientRect(CFX_RectF& rect) {
   rect.Deflate(x, t, x, y);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_ToolTipImp::DrawWidget(CFX_Graphics* pGraphics,
                                       const CFX_Matrix* pMatrix) {
-  IFWL_ToolTipTarget* toolTipTarget =
-      CFWL_ToolTipContainer::getInstance()->GetCurrentToolTipTarget();
-  if (toolTipTarget && !toolTipTarget->UseDefaultTheme()) {
-    return toolTipTarget->DrawToolTip(pGraphics, pMatrix, m_pInterface);
-  }
-  if (!pGraphics)
+  if (!pGraphics || !m_pProperties->m_pThemeProvider)
     return FWL_Error::Indefinite;
-  if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   DrawBkground(pGraphics, pTheme, pMatrix);
   DrawText(pGraphics, pTheme, pMatrix);
   return FWL_Error::Succeeded;
 }
+
 void CFWL_ToolTipImp::DrawBkground(CFX_Graphics* pGraphics,
                                    IFWL_ThemeProvider* pTheme,
                                    const CFX_Matrix* pMatrix) {

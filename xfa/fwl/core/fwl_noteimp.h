@@ -40,7 +40,6 @@ class CFWL_MsgWindowMove;
 class CFWL_TargetImp;
 class CFWL_ToolTipImp;
 class CFWL_WidgetImp;
-class IFWL_ToolTipTarget;
 
 class CFWL_NoteLoop {
  public:
@@ -138,28 +137,17 @@ class CFWL_EventTarget {
   FX_BOOL m_bInvalid;
 };
 
-class CFWL_ToolTipContainer {
+class CFWL_ToolTipContainer final {
  public:
   static CFWL_ToolTipContainer* getInstance();
   static void DeleteInstance();
 
-  FWL_Error AddToolTipTarget(IFWL_ToolTipTarget* pTarget);
-  FWL_Error RemoveToolTipTarget(IFWL_ToolTipTarget* pTarget);
-  IFWL_ToolTipTarget* GetCurrentToolTipTarget();
-
-  FX_BOOL HasToolTip(IFWL_Widget* pWidget);
-
-  FX_BOOL ProcessEnter(CFWL_EvtMouse* pEvt, IFWL_Widget* pOwner);
-  FX_BOOL ProcessLeave(CFWL_EvtMouse* pEvt);
-
  protected:
   CFWL_ToolTipContainer();
-  virtual ~CFWL_ToolTipContainer();
+  ~CFWL_ToolTipContainer();
 
-  IFWL_ToolTipTarget* pCurTarget;
   CFWL_ToolTipImp* m_pToolTipImp;
   CFWL_CoreToolTipDP* m_ToolTipDp;
-  CFX_ArrayTemplate<IFWL_ToolTipTarget*> m_arrWidget;
 
  private:
   static CFWL_ToolTipContainer* s_pInstance;

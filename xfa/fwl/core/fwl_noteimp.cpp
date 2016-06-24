@@ -16,7 +16,6 @@
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_tooltiptarget.h"
 
 CFWL_NoteLoop::CFWL_NoteLoop(CFWL_WidgetImp* pForm)
     : m_pForm(pForm), m_bContinueModal(TRUE) {}
@@ -81,20 +80,7 @@ CFWL_NoteDriver::~CFWL_NoteDriver() {
 void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
   if (m_eventTargets.empty())
     return;
-  if (CFWL_EventType::Mouse == pNote->GetClassID()) {
-    CFWL_EvtMouse* pMouse = static_cast<CFWL_EvtMouse*>(pNote);
-    if (FWL_MouseCommand::Hover == pMouse->m_dwCmd) {
-      if (m_pNoteLoop->GetForm()) {
-        CFWL_ToolTipContainer::getInstance()->ProcessEnter(
-            pMouse, m_pNoteLoop->GetForm()->GetInterface());
-      }
-    } else if (FWL_MouseCommand::Leave == pMouse->m_dwCmd) {
-      CFWL_ToolTipContainer::getInstance()->ProcessLeave(pMouse);
-    } else if ((FWL_MouseCommand::LeftButtonDown <= pMouse->m_dwCmd) &&
-               (FWL_MouseCommand::MiddleButtonDblClk >= pMouse->m_dwCmd)) {
-      CFWL_ToolTipContainer::getInstance()->ProcessLeave(pMouse);
-    }
-  }
+
   for (const auto& pair : m_eventTargets) {
     CFWL_EventTarget* pEventTarget = pair.second;
     if (pEventTarget && !pEventTarget->IsInvalid())
@@ -787,8 +773,7 @@ FX_BOOL CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) {
 
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = nullptr;
 
-CFWL_ToolTipContainer::CFWL_ToolTipContainer()
-    : pCurTarget(nullptr), m_pToolTipImp(nullptr) {
+CFWL_ToolTipContainer::CFWL_ToolTipContainer() : m_pToolTipImp(nullptr) {
   m_ToolTipDp = new CFWL_CoreToolTipDP;
   m_ToolTipDp->m_nInitDelayTime = 0;
   m_ToolTipDp->m_nAutoPopDelayTime = 2000;
@@ -814,98 +799,4 @@ CFWL_ToolTipContainer* CFWL_ToolTipContainer::getInstance() {
 void CFWL_ToolTipContainer::DeleteInstance() {
   delete s_pInstance;
   s_pInstance = nullptr;
-}
-
-FWL_Error CFWL_ToolTipContainer::AddToolTipTarget(IFWL_ToolTipTarget* pTarget) {
-  if (m_arrWidget.Find(pTarget) < 0) {
-    m_arrWidget.Add(pTarget);
-    return FWL_Error::Succeeded;
-  }
-  return FWL_Error::Indefinite;
-}
-FWL_Error CFWL_ToolTipContainer::RemoveToolTipTarget(
-    IFWL_ToolTipTarget* pTarget) {
-  int index = m_arrWidget.Find(pTarget);
-  if (index >= 0) {
-    m_arrWidget.RemoveAt(index);
-    return FWL_Error::Succeeded;
-  }
-  return FWL_Error::Indefinite;
-}
-FX_BOOL CFWL_ToolTipContainer::HasToolTip(IFWL_Widget* pWedget) {
-  int32_t iCount = m_arrWidget.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ToolTipTarget* p = m_arrWidget[i];
-    if (p->GetWidget() == pWedget) {
-      pCurTarget = p;
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
-FX_BOOL CFWL_ToolTipContainer::ProcessEnter(CFWL_EvtMouse* pEvt,
-                                            IFWL_Widget* pOwner) {
-  if (HasToolTip(pEvt->m_pDstTarget)) {
-    if (!m_pToolTipImp) {
-      CFWL_WidgetImpProperties prop;
-      prop.m_pDataProvider = m_ToolTipDp;
-      prop.m_pOwner = pOwner;
-      CFX_RectF rtTooltip;
-      rtTooltip.Set(150, 150, 100, 50);
-      prop.m_rtWidget = rtTooltip;
-      IFWL_ToolTip* pToolTip = IFWL_ToolTip::Create(prop, nullptr);
-      pToolTip->Initialize();
-      m_pToolTipImp = static_cast<CFWL_ToolTipImp*>(pToolTip->GetImpl());
-      m_pToolTipImp->ModifyStylesEx(FWL_STYLEEXT_TTP_Multiline, 0);
-      m_pToolTipImp->SetStates(FWL_WGTSTATE_Invisible, TRUE);
-    }
-    if (pCurTarget->IsShowed()) {
-      CFX_WideString wsCaption;
-      pCurTarget->GetCaption(wsCaption);
-      if (!wsCaption.IsEmpty()) {
-        m_ToolTipDp->m_wsCaption = wsCaption;
-      }
-      CFX_RectF rt;
-      CFX_SizeF sz;
-      pCurTarget->GetToolTipSize(sz);
-      if (sz.x > 0 && sz.y > 0) {
-        rt.width = sz.x;
-        rt.height = sz.y;
-      } else {
-        CFX_RectF r;
-        m_pToolTipImp->GetWidgetRect(r, TRUE);
-        rt.width = r.width;
-        rt.height = r.height;
-      }
-      CFX_PointF pt(pEvt->m_fx, pEvt->m_fy);
-      if (pCurTarget->GetToolTipPos(pt) == FWL_Error::Succeeded) {
-        rt.left = pt.x;
-        rt.top = pt.y;
-        m_pToolTipImp->ModifyStylesEx(FWL_STYLEEXT_TTP_NoAnchor, 0);
-      } else {
-        CFX_RectF rtAnchor;
-        pCurTarget->GetWidget()->GetClientRect(rtAnchor);
-        pCurTarget->GetWidget()->TransformTo(nullptr, rtAnchor.left,
-                                             rtAnchor.top);
-        m_pToolTipImp->SetAnchor(rtAnchor);
-        m_pToolTipImp->ModifyStylesEx(0, FWL_STYLEEXT_TTP_NoAnchor);
-      }
-      m_pToolTipImp->SetWidgetRect(rt);
-      m_pToolTipImp->Update();
-      m_pToolTipImp->Show();
-    }
-    return TRUE;
-  }
-  return FALSE;
-}
-FX_BOOL CFWL_ToolTipContainer::ProcessLeave(CFWL_EvtMouse* pEvt) {
-  if (HasToolTip(pEvt->m_pDstTarget) && m_pToolTipImp) {
-    m_pToolTipImp->Hide();
-    pCurTarget = nullptr;
-    return TRUE;
-  }
-  return FALSE;
-}
-IFWL_ToolTipTarget* CFWL_ToolTipContainer::GetCurrentToolTipTarget() {
-  return pCurTarget;
 }

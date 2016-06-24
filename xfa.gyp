@@ -198,7 +198,6 @@
         "xfa/fwl/core/ifwl_form.h",
         "xfa/fwl/core/ifwl_themeprovider.h",
         "xfa/fwl/core/ifwl_timer.h",
-        "xfa/fwl/core/ifwl_tooltiptarget.h",
         "xfa/fwl/core/ifwl_widget.h",
         "xfa/fwl/core/ifwl_widgetdelegate.h",
         "xfa/fwl/core/include/fwl_widgethit.h",
