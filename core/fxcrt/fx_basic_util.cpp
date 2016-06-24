@@ -18,33 +18,34 @@
 #include <cctype>
 #include <memory>
 
-void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
-  if (strc.Find('.') == -1) {
-    bInteger = TRUE;
-    int cc = 0;
-    pdfium::base::CheckedNumeric<int> integer = 0;
-    FX_STRSIZE len = strc.GetLength();
-    bool bNegative = false;
-    if (strc[0] == '+') {
-      cc++;
-    } else if (strc[0] == '-') {
-      bNegative = true;
-      cc++;
-    }
-    while (cc < len && std::isdigit(strc[cc])) {
-      integer = integer * 10 + FXSYS_toDecimalDigit(strc.CharAt(cc));
-      if (!integer.IsValid())
-        break;
-      cc++;
-    }
-    if (bNegative) {
-      integer = -integer;
-    }
-    *(int*)pData = integer.ValueOrDefault(0);
-  } else {
-    bInteger = FALSE;
-    *(FX_FLOAT*)pData = FX_atof(strc);
+bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
+  if (strc.Find('.') != -1) {
+    FX_FLOAT* pFloat = static_cast<FX_FLOAT*>(pData);
+    *pFloat = FX_atof(strc);
+    return false;
   }
+
+  int cc = 0;
+  pdfium::base::CheckedNumeric<int> integer = 0;
+  bool bNegative = false;
+  if (strc[0] == '+') {
+    cc++;
+  } else if (strc[0] == '-') {
+    bNegative = true;
+    cc++;
+  }
+  while (cc < strc.GetLength() && std::isdigit(strc[cc])) {
+    integer = integer * 10 + FXSYS_toDecimalDigit(strc.CharAt(cc));
+    if (!integer.IsValid())
+      break;
+    cc++;
+  }
+  if (bNegative)
+    integer = -integer;
+
+  int* pInt = static_cast<int*>(pData);
+  *pInt = integer.ValueOrDefault(0);
+  return true;
 }
 
 static const FX_FLOAT fraction_scales[] = {

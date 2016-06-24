@@ -29,12 +29,12 @@ class CPDF_Number : public CPDF_Object {
   CPDF_Number* AsNumber() override;
   const CPDF_Number* AsNumber() const override;
 
-  FX_BOOL IsInteger() { return m_bInteger; }
+  bool IsInteger() const { return m_bInteger; }
 
  protected:
   ~CPDF_Number() override;
 
-  FX_BOOL m_bInteger;
+  bool m_bInteger;
   union {
     int m_Integer;
     FX_FLOAT m_Float;

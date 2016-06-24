@@ -87,7 +87,7 @@ struct ContentParam {
   Type m_Type;
   union {
     struct {
-      FX_BOOL m_bInteger;
+      bool m_bInteger;
       union {
         int m_Integer;
         FX_FLOAT m_Float;

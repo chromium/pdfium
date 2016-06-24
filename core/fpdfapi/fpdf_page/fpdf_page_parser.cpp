@@ -274,35 +274,36 @@ int CPDF_StreamContentParser::GetNextParamPos() {
 
 void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
   CFX_ByteStringC bsName(name, len);
-  int index = GetNextParamPos();
+  ContentParam& param = m_ParamBuf[GetNextParamPos()];
   if (len > 32) {
-    m_ParamBuf[index].m_Type = ContentParam::OBJECT;
-    m_ParamBuf[index].m_pObject = new CPDF_Name(PDF_NameDecode(bsName));
+    param.m_Type = ContentParam::OBJECT;
+    param.m_pObject = new CPDF_Name(PDF_NameDecode(bsName));
   } else {
-    m_ParamBuf[index].m_Type = ContentParam::NAME;
+    param.m_Type = ContentParam::NAME;
     if (bsName.Find('#') == -1) {
-      FXSYS_memcpy(m_ParamBuf[index].m_Name.m_Buffer, name, len);
-      m_ParamBuf[index].m_Name.m_Len = len;
+      FXSYS_memcpy(param.m_Name.m_Buffer, name, len);
+      param.m_Name.m_Len = len;
     } else {
       CFX_ByteString str = PDF_NameDecode(bsName);
-      FXSYS_memcpy(m_ParamBuf[index].m_Name.m_Buffer, str.c_str(),
-                   str.GetLength());
-      m_ParamBuf[index].m_Name.m_Len = str.GetLength();
+      FXSYS_memcpy(param.m_Name.m_Buffer, str.c_str(), str.GetLength());
+      param.m_Name.m_Len = str.GetLength();
     }
   }
 }
 
 void CPDF_StreamContentParser::AddNumberParam(const FX_CHAR* str, int len) {
-  int index = GetNextParamPos();
-  m_ParamBuf[index].m_Type = ContentParam::NUMBER;
-  FX_atonum(CFX_ByteStringC(str, len), m_ParamBuf[index].m_Number.m_bInteger,
-            &m_ParamBuf[index].m_Number.m_Integer);
+  ContentParam& param = m_ParamBuf[GetNextParamPos()];
+  param.m_Type = ContentParam::NUMBER;
+  param.m_Number.m_bInteger =
+      FX_atonum(CFX_ByteStringC(str, len), &param.m_Number.m_Integer);
 }
+
 void CPDF_StreamContentParser::AddObjectParam(CPDF_Object* pObj) {
-  int index = GetNextParamPos();
-  m_ParamBuf[index].m_Type = ContentParam::OBJECT;
-  m_ParamBuf[index].m_pObject = pObj;
+  ContentParam& param = m_ParamBuf[GetNextParamPos()];
+  param.m_Type = ContentParam::OBJECT;
+  param.m_pObject = pObj;
 }
+
 void CPDF_StreamContentParser::ClearAllParams() {
   uint32_t index = m_ParamStartPos;
   for (uint32_t i = 0; i < m_ParamCount; i++) {
@@ -1601,14 +1602,13 @@ void CPDF_StreamContentParser::ParsePathObject() {
         break;
       }
       case CPDF_StreamParser::Number: {
-        if (nParams == 6) {
+        if (nParams == 6)
           break;
-        }
-        FX_BOOL bInteger;
+
         int value;
-        FX_atonum(
+        bool bInteger = FX_atonum(
             CFX_ByteStringC(m_pSyntax->GetWordBuf(), m_pSyntax->GetWordSize()),
-            bInteger, &value);
+            &value);
         params[nParams++] = bInteger ? (FX_FLOAT)value : *(FX_FLOAT*)&value;
         break;
       }

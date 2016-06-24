@@ -437,7 +437,7 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& str);
 inline FX_FLOAT FX_atof(const CFX_WideStringC& wsStr) {
   return FX_atof(FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength()).c_str());
 }
-void FX_atonum(const CFX_ByteStringC& str, FX_BOOL& bInteger, void* pData);
+bool FX_atonum(const CFX_ByteStringC& str, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
 
 #endif  // CORE_FXCRT_INCLUDE_FX_STRING_H_

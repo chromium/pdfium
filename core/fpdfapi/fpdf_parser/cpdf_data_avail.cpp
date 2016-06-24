@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
@@ -723,37 +725,48 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(DownloadHints* pHints) {
     return FALSE;
   }
 
-  if (!pDict->KeyExist("H") || !pDict->KeyExist("O") || !pDict->KeyExist("N")) {
+  // The actual value is not required here, but validate its existence and type.
+  CPDF_Number* pFirstPage = ToNumber(pDict->GetDirectObjectBy("O"));
+  if (!pFirstPage || !pFirstPage->IsInteger()) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
 
-  int nPageCount = pDict->GetDirectObjectBy("N")->GetInteger();
+  CPDF_Number* pPageCount = ToNumber(pDict->GetDirectObjectBy("N"));
+  if (!pPageCount || !pPageCount->IsInteger()) {
+    m_docStatus = PDF_DATAAVAIL_ERROR;
+    return FALSE;
+  }
+
+  int nPageCount = pPageCount->GetInteger();
   if (nPageCount <= 1) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return TRUE;
   }
 
   CPDF_Array* pHintStreamRange = pDict->GetArrayBy("H");
-  if (!pHintStreamRange) {
+  size_t nHintStreamSize = pHintStreamRange ? pHintStreamRange->GetCount() : 0;
+  if (nHintStreamSize != 2 && nHintStreamSize != 4) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
 
-  FX_FILESIZE szHSStart =
-      pHintStreamRange->GetDirectObjectAt(0)
-          ? pHintStreamRange->GetDirectObjectAt(0)->GetInteger()
-          : 0;
-  FX_FILESIZE szHSLength =
-      pHintStreamRange->GetDirectObjectAt(1)
-          ? pHintStreamRange->GetDirectObjectAt(1)->GetInteger()
-          : 0;
-  if (szHSStart < 0 || szHSLength <= 0) {
+  for (const CPDF_Object* pArrayObject : *pHintStreamRange) {
+    const CPDF_Number* pNumber = ToNumber(pArrayObject->GetDirect());
+    if (!pNumber || !pNumber->IsInteger()) {
+      m_docStatus = PDF_DATAAVAIL_ERROR;
+      return FALSE;
+    }
+  }
+
+  FX_FILESIZE szHintStart = pHintStreamRange->GetIntegerAt(0);
+  FX_FILESIZE szHintLength = pHintStreamRange->GetIntegerAt(1);
+  if (szHintStart < 0 || szHintLength <= 0) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
 
-  if (!IsDataAvail(szHSStart, szHSLength, pHints))
+  if (!IsDataAvail(szHintStart, szHintLength, pHints))
     return FALSE;
 
   m_syntaxParser.InitParser(m_pFileRead, m_dwHeaderOffset);
@@ -761,7 +774,7 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(DownloadHints* pHints) {
   std::unique_ptr<CPDF_HintTables> pHintTables(
       new CPDF_HintTables(this, pDict));
   std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pHintStream(
-      ParseIndirectObjectAt(szHSStart, 0));
+      ParseIndirectObjectAt(szHintStart, 0));
   CPDF_Stream* pStream = ToStream(pHintStream.get());
   if (pStream && pHintTables->LoadHintStream(pStream))
     m_pHintTables = std::move(pHintTables);
