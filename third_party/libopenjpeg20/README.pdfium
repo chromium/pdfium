@@ -24,4 +24,5 @@ Local Modifications:
 0012-mct_sse.patch: Don't use SSE intrinsics in 32-bit builds.
 0013-attrib_fix.patch: Don't needlessly redefine __attribute__, https://github.com/uclouvain/openjpeg/issues/727
 0015-read_SPCod_SPCoc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SPCod_SPCoc.
+0016-read_SQcd_SQcc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SQcd_SQcc.
 TODO(thestig): List all the other patches.
