@@ -640,29 +640,34 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        FX_ARGB stroke_argb,
                                        const CFX_GraphStateData* pGraphState,
                                        const CPDF_RenderOptions* pOptions) {
-  int nChars = pFont->CountChar(str.c_str(), str.GetLength());
-  if (nChars == 0) {
+  if (pFont->IsType3Font())
     return;
-  }
-  uint32_t charcode;
+
+  int nChars = pFont->CountChar(str.c_str(), str.GetLength());
+  if (nChars <= 0)
+    return;
+
   int offset = 0;
   uint32_t* pCharCodes;
   FX_FLOAT* pCharPos;
+  std::vector<uint32_t> codes;
+  std::vector<FX_FLOAT> positions;
   if (nChars == 1) {
-    charcode = pFont->GetNextChar(str.c_str(), str.GetLength(), offset);
-    pCharCodes = (uint32_t*)(uintptr_t)charcode;
+    pCharCodes = reinterpret_cast<uint32_t*>(
+        pFont->GetNextChar(str.c_str(), str.GetLength(), offset));
     pCharPos = nullptr;
   } else {
-    pCharCodes = FX_Alloc(uint32_t, nChars);
-    pCharPos = FX_Alloc(FX_FLOAT, nChars - 1);
+    codes.resize(nChars);
+    positions.resize(nChars - 1);
     FX_FLOAT cur_pos = 0;
     for (int i = 0; i < nChars; i++) {
-      pCharCodes[i] = pFont->GetNextChar(str.c_str(), str.GetLength(), offset);
-      if (i) {
-        pCharPos[i - 1] = cur_pos;
-      }
-      cur_pos += pFont->GetCharWidthF(pCharCodes[i]) * font_size / 1000;
+      codes[i] = pFont->GetNextChar(str.c_str(), str.GetLength(), offset);
+      if (i)
+        positions[i - 1] = cur_pos;
+      cur_pos += pFont->GetCharWidthF(codes[i]) * font_size / 1000;
     }
+    pCharCodes = codes.data();
+    pCharPos = positions.data();
   }
   CFX_Matrix matrix;
   if (pMatrix)
@@ -671,20 +676,13 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   matrix.e = origin_x;
   matrix.f = origin_y;
 
-  if (!pFont->IsType3Font()) {
-    if (stroke_argb == 0) {
-      DrawNormalText(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
-                     &matrix, fill_argb, pOptions);
-    } else {
-      DrawTextPath(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
-                   &matrix, nullptr, pGraphState, fill_argb, stroke_argb,
-                   nullptr, 0);
-    }
-  }
-
-  if (nChars > 1) {
-    FX_Free(pCharCodes);
-    FX_Free(pCharPos);
+  if (stroke_argb == 0) {
+    DrawNormalText(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
+                   &matrix, fill_argb, pOptions);
+  } else {
+    DrawTextPath(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
+                 &matrix, nullptr, pGraphState, fill_argb, stroke_argb, nullptr,
+                 0);
   }
 }
 
