@@ -40,8 +40,7 @@ class CPDF_CIDFont : public CPDF_Font {
   bool IsCIDFont() const override;
   const CPDF_CIDFont* AsCIDFont() const override;
   CPDF_CIDFont* AsCIDFont() override;
-  int GlyphFromCharCode(uint32_t charcode,
-                        FX_BOOL* pVertGlyph = nullptr) override;
+  int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
   int GetCharWidthF(uint32_t charcode, int level = 0) override;
   FX_RECT GetCharBBox(uint32_t charcode, int level = 0) override;
   uint32_t GetNextChar(const FX_CHAR* pString,
@@ -63,7 +62,8 @@ class CPDF_CIDFont : public CPDF_Font {
   void GetVertOrigin(uint16_t CID, short& vx, short& vy) const;
 
  protected:
-  int GetGlyphIndex(uint32_t unicodeb, FX_BOOL* pVertGlyph);
+  int GetGlyphIndex(uint32_t unicodeb, bool* pVertGlyph);
+  int GetVerticalGlyph(int index, bool* pVertGlyph);
   void LoadMetricsArray(CPDF_Array* pArray,
                         CFX_ArrayTemplate<uint32_t>& result,
                         int nElements);

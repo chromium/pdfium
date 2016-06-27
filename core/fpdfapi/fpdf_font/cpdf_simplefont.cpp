@@ -13,27 +13,24 @@
 
 CPDF_SimpleFont::CPDF_SimpleFont()
     : m_pCharNames(nullptr), m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
-  FXSYS_memset(m_CharWidth, 0xff, sizeof m_CharWidth);
-  FXSYS_memset(m_GlyphIndex, 0xff, sizeof m_GlyphIndex);
-  FXSYS_memset(m_ExtGID, 0xff, sizeof m_ExtGID);
+  FXSYS_memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
+  FXSYS_memset(m_GlyphIndex, 0xff, sizeof(m_GlyphIndex));
+  FXSYS_memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
 }
 
 CPDF_SimpleFont::~CPDF_SimpleFont() {
   delete[] m_pCharNames;
 }
 
-int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph) {
-  if (pVertGlyph) {
-    *pVertGlyph = FALSE;
-  }
-  if (charcode > 0xff) {
+int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
+  if (pVertGlyph)
+    *pVertGlyph = false;
+
+  if (charcode > 0xff)
     return -1;
-  }
+
   int index = m_GlyphIndex[(uint8_t)charcode];
-  if (index == 0xffff) {
-    return -1;
-  }
-  return index;
+  return index != 0xffff ? index : -1;
 }
 
 void CPDF_SimpleFont::LoadCharMetrics(int charcode) {

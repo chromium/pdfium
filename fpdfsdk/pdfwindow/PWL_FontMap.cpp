@@ -122,18 +122,17 @@ int32_t CPWL_FontMap::GetWordFontIndex(uint16_t word,
 }
 
 int32_t CPWL_FontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
-  if (CPWL_FontMap_Data* pData = m_aData.GetAt(nFontIndex)) {
-    if (pData->pFont) {
-      if (pData->pFont->IsUnicodeCompatible()) {
-        int nCharCode = pData->pFont->CharCodeFromUnicode(word);
-        pData->pFont->GlyphFromCharCode(nCharCode);
-        return nCharCode;
-      }
-      if (word < 0xFF)
-        return word;
-    }
-  }
-  return -1;
+  CPWL_FontMap_Data* pData = m_aData.GetAt(nFontIndex);
+  if (!pData)
+    return -1;
+
+  if (!pData->pFont)
+    return -1;
+
+  if (pData->pFont->IsUnicodeCompatible())
+    return pData->pFont->CharCodeFromUnicode(word);
+
+  return word < 0xFF ? word : -1;
 }
 
 CFX_ByteString CPWL_FontMap::GetNativeFontName(int32_t nCharset) {

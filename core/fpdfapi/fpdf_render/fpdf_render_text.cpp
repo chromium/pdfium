@@ -559,7 +559,7 @@ void CPDF_CharPosList::Load(int nChars,
     if (CharCode == (uint32_t)-1) {
       continue;
     }
-    FX_BOOL bVert = FALSE;
+    bool bVert = false;
     FXTEXT_CHARPOS& charpos = m_pCharPos[m_nChars++];
     if (pCIDFont) {
       charpos.m_bFontStyle = true;

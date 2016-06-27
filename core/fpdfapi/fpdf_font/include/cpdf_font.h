@@ -64,8 +64,7 @@ class CPDF_Font {
   virtual int CountChar(const FX_CHAR* pString, int size) const;
   virtual int AppendChar(FX_CHAR* buf, uint32_t charcode) const;
   virtual int GetCharSize(uint32_t charcode) const;
-  virtual int GlyphFromCharCode(uint32_t charcode,
-                                FX_BOOL* pVertGlyph = nullptr);
+  virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;
   virtual int GlyphFromCharCodeExt(uint32_t charcode);
   virtual CFX_WideString UnicodeFromCharCode(uint32_t charcode) const;
   virtual uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const;
