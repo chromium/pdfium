@@ -1977,13 +1977,31 @@ void AdobeCMYK_to_sRGB(FX_FLOAT c,
                        FX_FLOAT& R,
                        FX_FLOAT& G,
                        FX_FLOAT& B) {
-  uint8_t c1 = FXSYS_round(c * 255);
-  uint8_t m1 = FXSYS_round(m * 255);
-  uint8_t y1 = FXSYS_round(y * 255);
-  uint8_t k1 = FXSYS_round(k * 255);
+  // Convert to uint8_t with round-to-nearest. Avoid using FXSYS_round because
+  // it is incredibly expensive with VC++ (tested on VC++ 2015) because round()
+  // is very expensive.
+  // Adding 0.5f and truncating can round the wrong direction in some edge
+  // cases but these do not matter in this context. For instance, the float that
+  // is one ULP (unit in the last place) before 0.5 should round to zero but
+  // this will round it to one. These edge cases are never hit in this function
+  // due to the very limited precision of the input integers.
+  // This method also doesn't handle negative or extremely large numbers, but
+  // those are not needed here.
+  uint8_t c1 = int(c * 255.f + 0.5f);
+  uint8_t m1 = int(m * 255.f + 0.5f);
+  uint8_t y1 = int(y * 255.f + 0.5f);
+  uint8_t k1 = int(k * 255.f + 0.5f);
+
+  ASSERT(c1 == FXSYS_round(c * 255));
+  ASSERT(m1 == FXSYS_round(m * 255));
+  ASSERT(y1 == FXSYS_round(y * 255));
+  ASSERT(k1 == FXSYS_round(k * 255));
+
   uint8_t r, g, b;
   AdobeCMYK_to_sRGB1(c1, m1, y1, k1, r, g, b);
-  R = 1.0f * r / 255;
-  G = 1.0f * g / 255;
-  B = 1.0f * b / 255;
+  // Multiply by a constant rather than dividing because division is much
+  // more expensive.
+  R = r * (1.0f / 255);
+  G = g * (1.0f / 255);
+  B = b * (1.0f / 255);
 }
