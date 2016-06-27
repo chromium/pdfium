@@ -125,8 +125,6 @@ class EmbedderTest : public ::testing::Test,
   FX_FILEAVAIL file_avail_;
 #ifdef PDF_ENABLE_V8
   v8::Platform* platform_;
-  v8::StartupData natives_;
-  v8::StartupData snapshot_;
 #endif  // PDF_ENABLE_V8
   void* external_isolate_;
   TestLoader* loader_;

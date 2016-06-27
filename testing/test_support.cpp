@@ -157,12 +157,14 @@ bool InitializeV8ForPDFium(const std::string& exe_path,
                            v8::StartupData* snapshot_blob,
                            v8::Platform** platform) {
   InitializeV8Common(exe_path.c_str(), platform);
-  if (!GetExternalData(exe_path, bin_dir, "natives_blob.bin", natives_blob))
-    return false;
-  if (!GetExternalData(exe_path, bin_dir, "snapshot_blob.bin", snapshot_blob))
-    return false;
-  v8::V8::SetNativesDataBlob(natives_blob);
-  v8::V8::SetSnapshotDataBlob(snapshot_blob);
+  if (natives_blob && snapshot_blob) {
+    if (!GetExternalData(exe_path, bin_dir, "natives_blob.bin", natives_blob))
+      return false;
+    if (!GetExternalData(exe_path, bin_dir, "snapshot_blob.bin", snapshot_blob))
+      return false;
+    v8::V8::SetNativesDataBlob(natives_blob);
+    v8::V8::SetSnapshotDataBlob(snapshot_blob);
+  }
   return true;
 }
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
