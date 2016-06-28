@@ -40,6 +40,11 @@ void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
 }
 
 // static
+void IJS_Runtime::Destroy() {
+  FXJS_Release();
+}
+
+// static
 IJS_Runtime* IJS_Runtime::Create(CPDFDoc_Environment* pEnv) {
   return new CJS_Runtime(pEnv);
 }

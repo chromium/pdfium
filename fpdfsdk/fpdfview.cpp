@@ -291,6 +291,8 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
 
   delete g_pCodecModule;
   g_pCodecModule = nullptr;
+
+  IJS_Runtime::Destroy();
 }
 
 #ifndef _WIN32

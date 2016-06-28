@@ -28,7 +28,6 @@ void JSEmbedderTest::SetUp() {
 void JSEmbedderTest::TearDown() {
   FXJS_ReleaseRuntime(m_pIsolate, &m_pPersistentContext, &m_StaticObjects);
   m_pPersistentContext.Reset();
-  FXJS_Release();
   EmbedderTest::TearDown();
   m_pIsolate->Dispose();
   m_pIsolate = nullptr;
