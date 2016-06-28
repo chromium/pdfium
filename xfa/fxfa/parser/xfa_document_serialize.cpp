@@ -347,8 +347,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
   }
   if (!wsChildren.IsEmpty() || !wsAttrs.IsEmpty() ||
       pNode->HasAttribute(XFA_ATTRIBUTE_Name)) {
-    CFX_WideStringC wsElement;
-    pNode->GetClassName(wsElement);
+    CFX_WideStringC wsElement = pNode->GetClassName();
     CFX_WideString wsName;
     XFA_SaveAttribute(pNode, XFA_ATTRIBUTE_Name, FX_WSTRC(L"name"), TRUE,
                       wsName);
@@ -382,8 +381,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(
     }
     return;
   }
-  CFX_WideStringC wsElement;
-  pNode->GetClassName(wsElement);
+  CFX_WideStringC wsElement = pNode->GetClassName();
   pStream->WriteString(L"<", 1);
   pStream->WriteString(wsElement.c_str(), wsElement.GetLength());
   CFX_WideString wsOutput;

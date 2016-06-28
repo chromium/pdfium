@@ -284,13 +284,11 @@ void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode,
     return;
   }
 
-  CFX_WideStringC wsTagName;
   CFX_WideString ws;
   FX_BOOL bIsProperty = XFA_NodeIsProperty(refNode);
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
-    refNode->GetClassName(wsTagName);
-    ws = wsTagName;
+    ws = refNode->GetClassName();
     wsName.Format(L"#%s[%d]", ws.c_str(),
                   XFA_GetIndex(refNode, eLogicType, bIsProperty, TRUE));
     return;

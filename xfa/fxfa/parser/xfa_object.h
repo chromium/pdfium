@@ -84,7 +84,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   const CXFA_NodeList* AsNodeList() const;
 
   XFA_Element GetElementType() const;
-  void GetClassName(CFX_WideStringC& wsName) const;
+  CFX_WideStringC GetClassName() const;
   uint32_t GetClassHashCode() const;
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                     FX_BOOL bSetting,

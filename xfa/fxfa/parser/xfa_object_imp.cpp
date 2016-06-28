@@ -61,8 +61,8 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
 
 CXFA_Object::~CXFA_Object() {}
 
-void CXFA_Object::GetClassName(CFX_WideStringC& wsName) const {
-  wsName = XFA_GetElementByID(GetElementType())->pName;
+CFX_WideStringC CXFA_Object::GetClassName() const {
+  return XFA_GetElementByID(GetElementType())->pName;
 }
 
 uint32_t CXFA_Object::GetClassHashCode() const {
@@ -77,8 +77,7 @@ void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                                FX_BOOL bSetting,
                                                XFA_ATTRIBUTE eAttribute) {
   if (!bSetting) {
-    CFX_WideStringC className;
-    GetClassName(className);
+    CFX_WideStringC className = GetClassName();
     pValue->SetString(
         FX_UTF8Encode(className.c_str(), className.GetLength()).AsStringC());
   } else {
@@ -751,9 +750,8 @@ void CXFA_Node::Script_TreeClass_ClassAll(CFXJSE_Value* pValue,
     ThrowException(XFA_IDS_INVAlID_PROP_SET);
   } else {
     uint32_t dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
-    CFX_WideStringC wsName;
-    GetClassName(wsName);
-    CFX_WideString wsExpression = FX_WSTRC(L"#") + wsName + FX_WSTRC(L"[*]");
+    CFX_WideString wsExpression =
+        FX_WSTRC(L"#") + GetClassName() + FX_WSTRC(L"[*]");
     Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag);
   }
 }
@@ -965,11 +963,9 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     CFDE_XMLNode* pThisXMLRoot = GetXMLMappingNode();
     pFakeXMLRoot = pThisXMLRoot ? pThisXMLRoot->Clone(FALSE) : nullptr;
   }
-  if (!pFakeXMLRoot) {
-    CFX_WideStringC wsClassName;
-    GetClassName(wsClassName);
-    pFakeXMLRoot = new CFDE_XMLElement(CFX_WideString(wsClassName));
-  }
+  if (!pFakeXMLRoot)
+    pFakeXMLRoot = new CFDE_XMLElement(CFX_WideString(GetClassName()));
+
   if (bIgnoreRoot) {
     CFDE_XMLNode* pXMLChild = pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
     while (pXMLChild) {

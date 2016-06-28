@@ -6258,12 +6258,9 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
         CFX_WideString wsName;
         if (CXFA_Node* pXFANode = pNode->AsNode())
           pXFANode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, FALSE);
+        if (wsName.IsEmpty())
+          wsName = FX_WSTRC(L"#") + pNode->GetClassName();
 
-        if (wsName.IsEmpty()) {
-          CFX_WideStringC className;
-          pNode->GetClassName(className);
-          wsName = FX_WSTRC(L"#") + className;
-        }
         wsSomExpression = wsName + wsSomExpression;
         dFlags = XFA_RESOLVENODE_Siblings;
       } else {
