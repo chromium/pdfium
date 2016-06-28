@@ -248,6 +248,7 @@ void CFPF_SkiaFontMgr::LoadSystemFonts() {
 void CFPF_SkiaFontMgr::LoadPrivateFont(IFX_FileRead* pFontFile) {}
 void CFPF_SkiaFontMgr::LoadPrivateFont(const CFX_ByteStringC& bsFileName) {}
 void CFPF_SkiaFontMgr::LoadPrivateFont(void* pBuffer, size_t szBuffer) {}
+
 CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
                                             uint8_t uCharset,
                                             uint32_t dwStyle,
@@ -269,7 +270,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
   }
   int32_t nExpectVal = FPF_SKIAMATCHWEIGHT_NAME1 + FPF_SKIAMATCHWEIGHT_1 * 3 +
                        FPF_SKIAMATCHWEIGHT_2 * 2;
-  int32_t nItem = -1;
+  CFPF_SkiaFontDescriptor* pBestFontDes = nullptr;
   int32_t nMax = -1;
   int32_t nGlyphNum = 0;
   for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.rend(); ++it) {
@@ -306,26 +307,25 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
     if (uCharset == FXFONT_DEFAULT_CHARSET || bMaybeSymbol) {
       if (nFind > nMax && bMatchedName) {
         nMax = nFind;
-        nItem = it - m_FontFaces.rbegin();
+        pBestFontDes = *it;
       }
     } else if (FPF_SkiaIsCJK(uCharset)) {
       if (bMatchedName || pFontDes->m_iGlyphNum > nGlyphNum) {
-        nItem = it - m_FontFaces.rbegin();
+        pBestFontDes = *it;
         nGlyphNum = pFontDes->m_iGlyphNum;
       }
     } else if (nFind > nMax) {
       nMax = nFind;
-      nItem = it - m_FontFaces.rbegin();
+      pBestFontDes = *it;
     }
     if (nExpectVal <= nFind) {
-      nItem = it - m_FontFaces.rbegin();
+      pBestFontDes = *it;
       break;
     }
   }
-  if (nItem > -1) {
-    CFPF_SkiaFontDescriptor* pFontDes = m_FontFaces[nItem];
+  if (pBestFontDes) {
     CFPF_SkiaFont* pFont = new CFPF_SkiaFont;
-    if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
+    if (pFont->InitFont(this, pBestFontDes, bsFamilyname, dwStyle, uCharset)) {
       m_FamilyFonts[dwHash] = pFont;
       return pFont->Retain();
     }
@@ -333,6 +333,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
   }
   return nullptr;
 }
+
 FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_FileRead* pFileRead,
                                         int32_t iFaceIndex) {
   if (!pFileRead) {
