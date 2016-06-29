@@ -27,6 +27,10 @@
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/fx_ge.h"
 
+#ifdef _SKIA_SUPPORT_
+#include "core/fxge/skia/fx_skia_device.h"
+#endif
+
 FX_BOOL CPDF_RenderStatus::ProcessImage(const CPDF_ImageObject* pImageObj,
                                         const CFX_Matrix* pObj2Device) {
   CPDF_ImageRenderer render;
@@ -58,6 +62,10 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
         pDIBitmap->MultiplyAlpha(bitmap_alpha);
 #endif
       }
+#ifdef _SKIA_SUPPORT_
+      static_cast<CFX_SkiaDeviceDriver*>(m_pDevice->GetDeviceDriver())
+          ->PreMultiply(pDIBitmap);
+#endif
       if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
         return;
       }
@@ -920,7 +928,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
   FXDIB_Format format;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_
   format = bLuminosity ? FXDIB_Rgb32 : FXDIB_8bppMask;
 #else
   format = bLuminosity ? FXDIB_Rgb : FXDIB_8bppMask;

@@ -7,12 +7,7 @@
 
 class FPDFRenderLoadImageEmbeddertest : public EmbedderTest {};
 
-#if defined(_SKIA_SUPPORT_)
-#define MAYBE_Bug_554151 DISABLED_Bug_554151
-#else
-#define MAYBE_Bug_554151 Bug_554151
-#endif
-TEST_F(FPDFRenderLoadImageEmbeddertest, MAYBE_Bug_554151) {
+TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_554151) {
   // Test scanline downsampling with a BitsPerComponent of 4.
   // Should not crash.
   EXPECT_TRUE(OpenDocument("bug_554151.pdf"));

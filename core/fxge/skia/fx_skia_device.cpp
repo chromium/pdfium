@@ -626,7 +626,7 @@ class SkiaState {
     SkPaint skPaint;
     skPaint.setAntiAlias(true);
     skPaint.setColor(m_fillColor);
-    if (m_pFont->GetFace()) {  // exclude placeholder test fonts
+    if (m_pFont->GetFace() && m_pCache) {  // exclude placeholder test fonts
       sk_sp<SkTypeface> typeface(SkSafeRef(m_pCache->GetDeviceCache(m_pFont)));
       skPaint.setTypeface(typeface);
     }
@@ -1005,7 +1005,8 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                          font_size, color, this)) {
     return TRUE;
   }
-  sk_sp<SkTypeface> typeface(SkSafeRef(pCache->GetDeviceCache(pFont)));
+  sk_sp<SkTypeface> typeface(
+      SkSafeRef(pCache ? pCache->GetDeviceCache(pFont) : nullptr));
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setColor(color);
@@ -1443,6 +1444,8 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
       pSource->IsAlphaMask() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
   SkColorTable* ct = nullptr;
   void* buffer = pSource->GetBuffer();
+  if (!buffer)
+    return FALSE;
   std::unique_ptr<uint8_t, FxFreeDeleter> dst8Storage;
   std::unique_ptr<uint32_t, FxFreeDeleter> dst32Storage;
   int width = pSource->GetWidth();
@@ -1526,15 +1529,19 @@ FX_BOOL CFX_SkiaDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
 }
 
 void CFX_SkiaDeviceDriver::PreMultiply() {
-  void* buffer = m_pBitmap->GetBuffer();
+  PreMultiply(m_pBitmap);
+}
+
+void CFX_SkiaDeviceDriver::PreMultiply(CFX_DIBitmap* pDIBitmap) {
+  void* buffer = pDIBitmap->GetBuffer();
   if (!buffer)
     return;
-  if (m_pBitmap->GetBPP() != 32) {
+  if (pDIBitmap->GetBPP() != 32) {
     return;
   }
-  int height = m_pBitmap->GetHeight();
-  int width = m_pBitmap->GetWidth();
-  int rowBytes = m_pBitmap->GetPitch();
+  int height = pDIBitmap->GetHeight();
+  int width = pDIBitmap->GetWidth();
+  int rowBytes = pDIBitmap->GetPitch();
   SkImageInfo unpremultipliedInfo =
       SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
   SkPixmap unpremultiplied(unpremultipliedInfo, buffer, rowBytes);

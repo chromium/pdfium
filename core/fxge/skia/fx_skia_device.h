@@ -126,6 +126,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void Flush();
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
   void PreMultiply();
+  static void PreMultiply(CFX_DIBitmap* pDIBitmap);
   SkCanvas* SkiaCanvas() { return m_pCanvas; }
   void Dump() const;
 

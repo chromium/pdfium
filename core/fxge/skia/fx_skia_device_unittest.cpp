@@ -32,7 +32,7 @@ void EmptyTest(CFX_SkiaDeviceDriver* driver, const State&) {
 }
 
 void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
-  FXTEXT_CHARPOS charPos[] = {1, 0, 1, 4, false, {0, 0, 0, 0}, false};
+  FXTEXT_CHARPOS charPos[] = {{1, 0, 1, 4, false, {0, 0, 0, 0}, false}};
   CFX_Font font;
   FX_FLOAT fontSize = 1;
   CFX_FontCache cache;
