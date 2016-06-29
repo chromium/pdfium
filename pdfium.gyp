@@ -944,6 +944,11 @@
             'xfa/fxfa/parser/xfa_utils_imp_unittest.cpp',
           ],
         }],
+        ['pdf_use_skia==1', {
+          'sources': [
+            'core/fxge/skia/fx_skia_device_unittest.cpp',
+          ],
+        }],
         ['pdf_enable_v8==1', {
           'include_dirs': [
             '<(DEPTH)/v8',

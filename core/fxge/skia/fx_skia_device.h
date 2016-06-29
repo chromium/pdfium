@@ -14,6 +14,7 @@ class SkMatrix;
 class SkPaint;
 class SkPath;
 class SkPictureRecorder;
+class SkiaState;
 struct SkIRect;
 
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
@@ -122,14 +123,20 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void PaintStroke(SkPaint* spaint,
                    const CFX_GraphStateData* pGraphState,
                    const SkMatrix& matrix);
+  void Flush();
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
   void PreMultiply();
+  SkCanvas* SkiaCanvas() { return m_pCanvas; }
+  void Dump() const;
 
  private:
+  friend class SkiaState;
+
   CFX_DIBitmap* m_pBitmap;
   CFX_DIBitmap* m_pOriDevice;
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
+  std::unique_ptr<SkiaState> m_pCache;
   FX_BOOL m_bRgbByteOrder;
   FX_BOOL m_bGroupKnockout;
 };

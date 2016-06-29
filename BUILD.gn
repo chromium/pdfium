@@ -1490,6 +1490,10 @@ test("pdfium_unittests") {
       "xfa/fxfa/parser/xfa_utils_imp_unittest.cpp",
     ]
   }
+  if (pdf_use_skia) {
+    sources += [ "core/fxge/skia/fx_skia_device_unittest.cpp" ]
+    deps += [ "//skia" ]
+  }
   if (pdf_enable_v8) {
     sources += [ "fpdfsdk/javascript/public_methods_unittest.cpp" ]
     include_dirs += [
