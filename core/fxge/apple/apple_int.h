@@ -18,40 +18,6 @@
 #include <Carbon/Carbon.h>
 #endif
 
-typedef enum eFXIOSFONTCHARSET {
-  eFXFontCharsetDEFAULT = 0,
-  eFXFontCharsetANSI = 1,
-  eFXFontCharsetSYMBOL = 1 << 1,
-  eFXFontCharsetSHIFTJIS = 1 << 2,
-  eFXFontCharsetHANGEUL = 1 << 3,
-  eFXFontCharsetGB2312 = 1 << 4,
-  eFXFontCharsetCHINESEBIG5 = 1 << 5,
-  eFXFontCharsetTHAI = 1 << 6,
-  eFXFontCharsetEASTEUROPE = 1 << 7,
-  eFXFontCharsetRUSSIAN = 1 << 8,
-  eFXFontCharsetGREEK = 1 << 9,
-  eFXFontCharsetTURKISH = 1 << 10,
-  eFXFontCharsetHEBREW = 1 << 11,
-  eFXFontCharsetARABIC = 1 << 12,
-  eFXFontCharsetBALTIC = 1 << 13,
-} FX_IOSCHARSET;
-
-FX_IOSCHARSET FX_GetiOSCharset(int charset);
-typedef enum eFXIOSFONTFLAG {
-  eFXFontFlagBold = 1,
-  eFXFontFlagItalic = 1 << 1,
-  eFXFontFlagFixedPitch = 1 << 2,
-  eFXFontFlagSerif = 1 << 3,
-  eFXFontFlagScript = 1 << 4,
-} FX_IOSFONTFLAG;
-
-typedef struct IOS_FONTDATA_ {
-  uint32_t nHashCode;
-  const char* psName;
-  uint32_t charsets;
-  uint32_t styles;
-} IOS_FONTDATA;
-
 class CQuartz2D {
  public:
   void* createGraphics(CFX_DIBitmap* bitmap);
@@ -180,11 +146,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   int32_t m_horzSize;
   int32_t m_vertSize;
 };
-
-uint32_t FX_GetHashCode(const FX_CHAR* pStr);
-uint32_t FX_IOSGetMatchFamilyNameHashcode(const FX_CHAR* pFontName);
-uint32_t FX_IOSGetFamilyNamesCount();
-const FX_CHAR* FX_IOSGetFamilyName(uint32_t uIndex);
-#endif
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
 #endif  // CORE_FXGE_APPLE_APPLE_INT_H_
