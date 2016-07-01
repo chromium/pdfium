@@ -67,8 +67,25 @@ void* CFX_MacFontInfo::MapFont(int weight,
       face = g_Base14Substs[i].m_pSubstName;
       iExact = TRUE;
       return GetFont(face.c_str());
-      break;
     }
+  }
+
+  // The request may not ask for the bold and/or italic version of a font by
+  // name. So try to construct the appropriate name. This is not 100% foolproof
+  // as there are fonts that have "Oblique" or "BoldOblique" or "Heavy" in their
+  // names instead. But this at least works for common fonts like Arial and
+  // Times New Roman. A more sophisticated approach would be to find all the
+  // fonts in |m_FontList| with |face| in the name, and examine the fonts to
+  // see which best matches the requested characteristics.
+  if (face.Find("Bold") == -1 && face.Find("Italic") == -1) {
+    CFX_ByteString new_face = face;
+    if (weight > 400)
+      new_face += " Bold";
+    if (bItalic)
+      new_face += " Italic";
+    auto it = m_FontList.find(new_face);
+    if (it != m_FontList.end())
+      return it->second;
   }
 
   auto it = m_FontList.find(face);
