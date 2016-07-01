@@ -180,20 +180,16 @@ XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName) {
     return XFA_Element::Unknown;
 
   uint32_t uHash = FX_HashCode_GetW(wsName, false);
-  int32_t iStart = 0;
-  int32_t iEnd = g_iXFAElementCount - 1;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    const XFA_ELEMENTINFO* pInfo = g_XFAElementData + iMid;
-    if (uHash == pInfo->uHash)
-      return pInfo->eName;
-    if (uHash < pInfo->uHash)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
+  const XFA_ELEMENTINFO* pEnd = g_XFAElementData + g_iXFAElementCount;
+  auto pInfo = std::lower_bound(g_XFAElementData, pEnd, uHash,
+                                [](const XFA_ELEMENTINFO& info, uint32_t hash) {
+                                  return info.uHash < hash;
+                                });
+  if (pInfo < pEnd && pInfo->uHash == uHash)
+    return pInfo->eName;
   return XFA_Element::Unknown;
 }
+
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName) {
   return eName == XFA_Element::Unknown
              ? nullptr
@@ -238,35 +234,29 @@ const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
   iCount = pElement->wCount;
   return g_XFAElementPropertyData + pElement->wStart;
 }
+
 const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
                                              XFA_Element eProperty,
                                              uint32_t dwPacket) {
   int32_t iCount = 0;
-  const XFA_PROPERTY* pProperty = XFA_GetElementProperties(eElement, iCount);
-  if (!pProperty || iCount < 1) {
+  const XFA_PROPERTY* pProperties = XFA_GetElementProperties(eElement, iCount);
+  if (!pProperties || iCount < 1)
     return nullptr;
-  }
-  int32_t iStart = 0, iEnd = iCount - 1, iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    XFA_Element eName = pProperty[iMid].eName;
-    if (eProperty == eName) {
-      break;
-    } else if (eProperty < eName) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  if (iStart > iEnd) {
+
+  auto it = std::find_if(pProperties, pProperties + iCount,
+                         [eProperty](const XFA_PROPERTY& prop) {
+                           return prop.eName == eProperty;
+                         });
+  if (it == pProperties + iCount)
     return nullptr;
-  }
+
   const XFA_ELEMENTINFO* pInfo = XFA_GetElementByID(eProperty);
   ASSERT(pInfo);
-  if (dwPacket == XFA_XDPPACKET_UNKNOWN)
-    return pProperty + iMid;
-  return (dwPacket & pInfo->dwPackets) ? (pProperty + iMid) : nullptr;
+  if (dwPacket != XFA_XDPPACKET_UNKNOWN && !(dwPacket & pInfo->dwPackets))
+    return nullptr;
+  return it;
 }
+
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
                                                     XFA_ATTRIBUTE eAttribute,
                                                     XFA_ATTRIBUTETYPE eType) {
