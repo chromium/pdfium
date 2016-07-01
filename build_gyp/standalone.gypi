@@ -42,8 +42,10 @@
       },
       'host_arch%': '<(host_arch)',
       'target_arch%': '<(target_arch)',
+      'clang_use_chrome_plugins%': 0,
     },
     'clang_dir%': 'third_party/llvm-build/Release+Asserts',
+    'clang_use_chrome_plugins%': '<(clang_use_chrome_plugins)',
     # These two are needed by V8.
     'host_arch%': '<(host_arch)',
     'target_arch%': '<(target_arch)',
@@ -70,6 +72,40 @@
         'gomadir%': 'c:\\goma\\goma-win64',
       }, {
         'gomadir%': '<!(/bin/echo -n ${HOME}/goma)',
+      }],
+      ['clang_use_chrome_plugins==1', {
+        # Share the same settings as chromium in build/common.gypi.
+        'variables': {
+          'conditions': [
+            ['OS!="win"', {
+              'variables': {
+                'conditions': [
+                  ['OS=="mac" or OS=="ios"', {
+                    'clang_lib_path%': '<!(cd <(DEPTH) && pwd -P)/third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib',
+                  }, { # OS != "mac" and OS != "ios"
+                    'clang_lib_path%': '<!(cd <(DEPTH) && pwd -P)/third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.so',
+                  }],
+                ],
+              },
+              'clang_dynlib_flags%': '-Xclang -load -Xclang <(clang_lib_path) ',
+            }, { # OS == "win"
+              # On Windows, the plugin is built directly into clang, so there's
+              # no need to load it dynamically.
+              'clang_dynlib_flags%': '',
+            }],
+            ['OS=="android" or OS=="linux"', {
+              'clang_plugin_check_ipc_arg': '-Xclang -plugin-arg-find-bad-constructs -Xclang check-ipc',
+            }, {
+              'clang_plugin_check_ipc_arg': '',
+            }],
+          ],
+          'clang_plugin_args%': '-Xclang -plugin-arg-find-bad-constructs -Xclang check-templates '
+          '-Xclang -plugin-arg-find-bad-constructs -Xclang follow-macro-expansion '
+          '-Xclang -plugin-arg-find-bad-constructs -Xclang check-implicit-copy-ctors ',
+        },
+        'clang_chrome_plugins_flags%':
+          '<(clang_dynlib_flags)'
+          '-Xclang -add-plugin -Xclang find-bad-constructs <(clang_plugin_args) <(clang_plugin_check_ipc_arg)',
       }],
     ],
   },
@@ -326,6 +362,11 @@
               '-Wno-microsoft-cast',  # http://crbug.com/550065
             ],
           }],
+          ['clang==1 and clang_use_chrome_plugins==1', {
+            'AdditionalOptions': [
+              '<@(clang_chrome_plugins_flags)',
+            ],
+          }],
           ['OS=="win" and clang==1 and MSVS_VERSION == "2013"', {
             'AdditionalOptions': [
               '-fmsc-version=1800',
@@ -378,6 +419,13 @@
         '-Wextra',
         '-Wno-unused-parameter',
       ],
+      'conditions': [
+        ['clang==1 and clang_use_chrome_plugins==1', {
+          'OTHER_CFLAGS': [
+            '<@(clang_chrome_plugins_flags)',
+          ],
+        }],
+      ],
     },
     'variables': {
       'chromium_code%': '<(chromium_code)',
@@ -388,6 +436,11 @@
     },
     'includes': [ 'set_clang_warning_flags.gypi', ],
     'conditions': [
+      ['clang==1 and clang_use_chrome_plugins==1', {
+        'cflags': [
+          '<@(clang_chrome_plugins_flags)',
+        ],
+      }],
       ['component=="shared_library"', {
         'cflags': [
           '-fPIC',

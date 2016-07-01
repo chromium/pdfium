@@ -5,48 +5,18 @@
 {
   'variables': {
     'chromium_code': 1,
-
-    'variables': {
-      'clang_use_pdfium_plugins%': 0,
-    },
-    'clang_use_pdfium_plugins%': '<(clang_use_pdfium_plugins)',
-
     'pdf_use_skia%': 0,
     'pdf_enable_v8%': 1,
     'pdf_enable_xfa%': 0, # Set to 1 by standalone.gypi in a standalone build.
+    'variables': {
+      'clang_use_chrome_plugins': 1,
+    },
     'conditions': [
       ['OS=="linux"', {
         'bundle_freetype%': 0,
       }, {  # On Android there's no system FreeType. On Windows and Mac, only a
             # few methods are used from it.
         'bundle_freetype%': 1,
-      }],
-      ['clang_use_pdfium_plugins==1', {
-        'variables': {
-          'conditions': [
-            ['OS!="win"', {
-              'variables': {
-                'conditions': [
-                  ['OS=="mac" or OS=="ios"', {
-                    'clang_lib_path%': '<!(cd <(DEPTH) && pwd -P)/third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib',
-                  }, { # OS != "mac" or OS != "ios"
-                    'clang_lib_path%': '<!(cd <(DEPTH) && pwd -P)/third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.so',
-                  }],
-                ],
-              },
-              'clang_dynlib_flags%': '-Xclang -load -Xclang <(clang_lib_path) ',
-            }, { # OS == "win"
-              # On Windows, the plugin is built directly into clang, so there's
-              # no need to load it dynamically.
-              'clang_dynlib_flags%': '',
-            }],
-          ],
-          'clang_plugin_args%': '-Xclang -plugin-arg-find-bad-constructs -Xclang check-templates '
-          '-Xclang -plugin-arg-find-bad-constructs -Xclang follow-macro-expansion ',
-        },
-        'clang_pdfium_plugins_flags%':
-          '<(clang_dynlib_flags)'
-          '-Xclang -add-plugin -Xclang find-bad-constructs <(clang_plugin_args)',
       }],
     ],
   },
@@ -83,11 +53,6 @@
           ['target_arch=="ia32"', {
             'defines' : [ '_FX_CPU_=_FX_X86_', ],
           }],
-        ],
-      }],
-      ['clang==1 and clang_use_pdfium_plugins==1', {
-        'cflags': [
-          '<@(clang_pdfium_plugins_flags)',
         ],
       }],
     ],

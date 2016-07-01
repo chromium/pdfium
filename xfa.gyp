@@ -2,6 +2,9 @@
   "variables": {
     "chromium_code": 1,
     "pdf_enable_v8%": 1,
+     "variables": {
+      'clang_use_chrome_plugins': 1,
+    },
   },
   "target_defaults": {
     "defines": [
