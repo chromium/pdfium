@@ -6,8 +6,8 @@ vars = {
 
   'android_ndk_revision': '5022f40f12953c02b2614c5f7beb981ec5d0e833',
   'build_revision': '76d9f8b4fcae07fb82f28295468cf92bade935bd',
-  'buildtools_revision': '099f1da55bfe8caa12266371a7eb983698fb1d87',
-  'catapult_revision': '8ff23141e1df724317e9f558644ce2a7d8afde54',
+  'buildtools_revision': 'db6179b29f90d28026b0cb23ef71d56ec31b8bd6',
+  'catapult_revision': '327256cb1c387e62a2c7e6960e2398867665fb51',
   'clang_revision': '775e2f874b9f53f0e82c4e7c61dc29f3cdcb3379',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'gen_library_loader_revision': '916d4acd8b2cde67a390737dfba90b3c37de23a1',
@@ -51,7 +51,7 @@ deps = {
         Var('gen_library_loader_revision'),
 
   "tools/gyp":
-    Var('chromium_git') + "/external/gyp",
+    Var('chromium_git') + '/external/gyp.git' + '@' + 'c61b0b35c8396bfd59efc6cfc11401d912b0f510',
 
   "tools/memory":
     Var('chromium_git') + "/chromium/src/tools/memory@" +
