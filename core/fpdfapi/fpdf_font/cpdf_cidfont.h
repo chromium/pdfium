@@ -55,13 +55,13 @@ class CPDF_CIDFont : public CPDF_Font {
   CFX_WideString UnicodeFromCharCode(uint32_t charcode) const override;
   uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const override;
 
-  FX_BOOL LoadGB2312();
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   const uint8_t* GetCIDTransform(uint16_t CID) const;
   short GetVertWidth(uint16_t CID) const;
   void GetVertOrigin(uint16_t CID, short& vx, short& vy) const;
 
  protected:
+  void LoadGB2312();
   int GetGlyphIndex(uint32_t unicodeb, bool* pVertGlyph);
   int GetVerticalGlyph(int index, bool* pVertGlyph);
   void LoadMetricsArray(CPDF_Array* pArray,

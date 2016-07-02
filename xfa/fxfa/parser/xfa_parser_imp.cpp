@@ -1053,9 +1053,6 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
                   FX_WSTRC(L"http://www.w3.org/2001/XMLSchema-instance")) {
             continue;
           }
-          if (0) {
-            continue;
-          }
         }
         XFA_Element eNodeType = XFA_Element::DataModel;
         if (eNodeType == XFA_Element::DataModel) {
@@ -1107,70 +1104,55 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
         CFX_WideString wsNodeName;
         pXMLElement->GetLocalTagName(wsNodeName);
         pXFAChild->SetCData(XFA_ATTRIBUTE_Name, wsNodeName);
-        FX_BOOL bNeedValue = TRUE;
-        if (1) {
-          for (int32_t i = 0, count = pXMLElement->CountAttributes(); i < count;
-               i++) {
-            CFX_WideString wsAttrQualifiedName;
-            CFX_WideString wsAttrValue;
-            CFX_WideString wsAttrName;
-            CFX_WideString wsAttrNamespaceURI;
-            pXMLElement->GetAttribute(i, wsAttrQualifiedName, wsAttrValue);
-            if (!XFA_FDEExtension_ResolveAttribute(
-                    pXMLElement, wsAttrQualifiedName.AsStringC(), wsAttrName,
-                    wsAttrNamespaceURI)) {
-              continue;
-            }
-            if (wsAttrName == FX_WSTRC(L"nil") &&
-                wsAttrValue == FX_WSTRC(L"true")) {
-              bNeedValue = FALSE;
-              continue;
-            }
-            if (wsAttrNamespaceURI ==
-                    FX_WSTRC(L"http://www.xfa.com/schema/xfa-package/") ||
-                wsAttrNamespaceURI ==
-                    FX_WSTRC(L"http://www.xfa.org/schema/xfa-package/") ||
-                wsAttrNamespaceURI ==
-                    FX_WSTRC(L"http://www.w3.org/2001/XMLSchema-instance") ||
-                wsAttrNamespaceURI ==
-                    FX_WSTRC(L"http://www.xfa.org/schema/xfa-data/1.0/")) {
-              continue;
-            }
-            if (0) {
-              continue;
-            }
-            CXFA_Node* pXFAMetaData = m_pFactory->CreateNode(
-                XFA_XDPPACKET_Datasets, XFA_Element::DataValue);
-            if (!pXFAMetaData) {
-              return;
-            }
-            pXFAMetaData->SetCData(XFA_ATTRIBUTE_Name, wsAttrName);
-            pXFAMetaData->SetCData(XFA_ATTRIBUTE_QualifiedName,
-                                   wsAttrQualifiedName);
-            pXFAMetaData->SetCData(XFA_ATTRIBUTE_Value, wsAttrValue);
-            pXFAMetaData->SetEnum(XFA_ATTRIBUTE_Contains,
-                                  XFA_ATTRIBUTEENUM_MetaData);
-            pXFAChild->InsertChild(pXFAMetaData);
-            pXFAMetaData->SetXMLMappingNode(pXMLElement);
-            pXFAMetaData->SetFlag(XFA_NodeFlag_Initialized, false);
+        bool bNeedValue = true;
+        for (int32_t i = 0; i < pXMLElement->CountAttributes(); ++i) {
+          CFX_WideString wsQualifiedName;
+          CFX_WideString wsValue;
+          CFX_WideString wsName;
+          CFX_WideString wsNS;
+          pXMLElement->GetAttribute(i, wsQualifiedName, wsValue);
+          if (!XFA_FDEExtension_ResolveAttribute(
+                  pXMLElement, wsQualifiedName.AsStringC(), wsName, wsNS)) {
+            continue;
           }
-          if (!bNeedValue) {
-            CFX_WideString wsNilName(L"xsi:nil");
-            pXMLElement->RemoveAttribute(wsNilName.c_str());
+          if (wsName == FX_WSTRC(L"nil") && wsValue == FX_WSTRC(L"true")) {
+            bNeedValue = false;
+            continue;
           }
+          if (wsNS == FX_WSTRC(L"http://www.xfa.com/schema/xfa-package/") ||
+              wsNS == FX_WSTRC(L"http://www.xfa.org/schema/xfa-package/") ||
+              wsNS == FX_WSTRC(L"http://www.w3.org/2001/XMLSchema-instance") ||
+              wsNS == FX_WSTRC(L"http://www.xfa.org/schema/xfa-data/1.0/")) {
+            continue;
+          }
+          CXFA_Node* pXFAMetaData = m_pFactory->CreateNode(
+              XFA_XDPPACKET_Datasets, XFA_Element::DataValue);
+          if (!pXFAMetaData) {
+            return;
+          }
+          pXFAMetaData->SetCData(XFA_ATTRIBUTE_Name, wsName);
+          pXFAMetaData->SetCData(XFA_ATTRIBUTE_QualifiedName, wsQualifiedName);
+          pXFAMetaData->SetCData(XFA_ATTRIBUTE_Value, wsValue);
+          pXFAMetaData->SetEnum(XFA_ATTRIBUTE_Contains,
+                                XFA_ATTRIBUTEENUM_MetaData);
+          pXFAChild->InsertChild(pXFAMetaData);
+          pXFAMetaData->SetXMLMappingNode(pXMLElement);
+          pXFAMetaData->SetFlag(XFA_NodeFlag_Initialized, false);
+        }
+        if (!bNeedValue) {
+          CFX_WideString wsNilName(L"xsi:nil");
+          pXMLElement->RemoveAttribute(wsNilName.c_str());
         }
         pXFANode->InsertChild(pXFAChild);
         if (eNodeType == XFA_Element::DataGroup) {
           ParseDataGroup(pXFAChild, pXMLElement, ePacketID);
-        } else {
-          if (bNeedValue) {
-            ParseDataValue(pXFAChild, pXMLChild, XFA_XDPPACKET_Datasets);
-          }
+        } else if (bNeedValue) {
+          ParseDataValue(pXFAChild, pXMLChild, XFA_XDPPACKET_Datasets);
         }
         pXFAChild->SetXMLMappingNode(pXMLElement);
         pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
-      }
         continue;
+      }
       case FDE_XMLNODE_CharData: {
         CFDE_XMLCharData* pXMLCharData =
             static_cast<CFDE_XMLCharData*>(pXMLChild);
@@ -1188,8 +1170,8 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
         pXFANode->InsertChild(pXFAChild);
         pXFAChild->SetXMLMappingNode(pXMLCharData);
         pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
-      }
         continue;
+      }
       case FDE_XMLNODE_Text: {
         CFDE_XMLText* pXMLText = static_cast<CFDE_XMLText*>(pXMLChild);
         CFX_WideString wsText;
@@ -1206,10 +1188,8 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
         pXFANode->InsertChild(pXFAChild);
         pXFAChild->SetXMLMappingNode(pXMLText);
         pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
+        continue;
       }
-        continue;
-      case FDE_XMLNODE_Instruction:
-        continue;
       default:
         continue;
     }
