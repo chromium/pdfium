@@ -65,6 +65,12 @@ class CFXJS_ObjDefinition {
 
     v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(isolate);
     fun->InstanceTemplate()->SetInternalFieldCount(2);
+    if (eObjType == FXJSOBJTYPE_GLOBAL) {
+      fun->InstanceTemplate()->Set(
+          v8::Symbol::GetToStringTag(isolate),
+          v8::String::NewFromUtf8(isolate, "global", v8::NewStringType::kNormal)
+              .ToLocalChecked());
+    }
     m_FunctionTemplate.Reset(isolate, fun);
 
     v8::Local<v8::Signature> sig = v8::Signature::New(isolate, fun);
@@ -108,9 +114,14 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
       return pObjDef->GetInstanceTemplate();
   }
   if (!g_DefaultGlobalObjectTemplate) {
-    g_DefaultGlobalObjectTemplate = new v8::Global<v8::ObjectTemplate>;
-    g_DefaultGlobalObjectTemplate->Reset(pIsolate,
-                                         v8::ObjectTemplate::New(pIsolate));
+    v8::Local<v8::ObjectTemplate> hGlobalTemplate =
+        v8::ObjectTemplate::New(pIsolate);
+    hGlobalTemplate->Set(
+        v8::Symbol::GetToStringTag(pIsolate),
+        v8::String::NewFromUtf8(pIsolate, "global", v8::NewStringType::kNormal)
+            .ToLocalChecked());
+    g_DefaultGlobalObjectTemplate =
+        new v8::Global<v8::ObjectTemplate>(pIsolate, hGlobalTemplate);
   }
   return g_DefaultGlobalObjectTemplate->Get(pIsolate);
 }

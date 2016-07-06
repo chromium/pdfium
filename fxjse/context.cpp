@@ -141,6 +141,10 @@ CFXJSE_Context* CFXJSE_Context::Create(
     hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
     hObjectTemplate->SetInternalFieldCount(1);
   }
+  hObjectTemplate->Set(
+      v8::Symbol::GetToStringTag(pIsolate),
+      v8::String::NewFromUtf8(pIsolate, "global", v8::NewStringType::kNormal)
+          .ToLocalChecked());
   v8::Local<v8::Context> hNewContext =
       v8::Context::New(pIsolate, NULL, hObjectTemplate);
   v8::Local<v8::Context> hRootContext = v8::Local<v8::Context>::New(
