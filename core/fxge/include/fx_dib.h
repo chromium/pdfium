@@ -247,6 +247,10 @@ class CFX_DIBSource {
                       int& src_top,
                       const CFX_ClipRgn* pClipRgn);
 
+#if defined _SKIA_SUPPORT_
+  void DebugVerifyBitmapIsPreMultiplied(void* buffer = nullptr) const;
+#endif
+
   CFX_DIBitmap* m_pAlphaMask;
 
  protected:

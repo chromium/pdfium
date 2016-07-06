@@ -213,6 +213,9 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
 void CPDF_RenderStatus::RenderObjectList(
     const CPDF_PageObjectHolder* pObjectHolder,
     const CFX_Matrix* pObj2Device) {
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
   CFX_FloatRect clip_rect(m_pDevice->GetClipBox());
   CFX_Matrix device2object;
   device2object.SetReverse(*pObj2Device);
@@ -236,9 +239,16 @@ void CPDF_RenderStatus::RenderObjectList(
     if (m_bStopped)
       return;
   }
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
 }
+
 void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
                                            const CFX_Matrix* pObj2Device) {
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kRenderMaxRecursionDepth) {
     return;
@@ -254,6 +264,9 @@ void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
     return;
   }
   ProcessObjectNoClip(pObj, pObj2Device);
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
 }
 
 FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
@@ -319,6 +332,9 @@ FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,
 
 void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
                                             const CFX_Matrix* pObj2Device) {
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
   FX_BOOL bRet = FALSE;
   switch (pObj->GetType()) {
     case CPDF_PageObject::TEXT:
@@ -339,6 +355,9 @@ void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
   }
   if (!bRet)
     DrawObjWithBackground(pObj, pObj2Device);
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
 }
 
 FX_BOOL CPDF_RenderStatus::DrawObjWithBlend(const CPDF_PageObject* pObj,
@@ -396,8 +415,12 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
   status.RenderSingleObject(pObj, &matrix);
   buffer.OutputToDevice();
 }
+
 FX_BOOL CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
                                        const CFX_Matrix* pObj2Device) {
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
   CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDictBy("OC");
   if (pOC && m_Options.m_pOCContext &&
       !m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
@@ -418,8 +441,12 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   status.RenderObjectList(pFormObj->m_pForm, &matrix);
   m_bStopped = status.m_bStopped;
   m_pDevice->RestoreState(false);
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
   return TRUE;
 }
+
 FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix) {
   if (matrix.a == 0 || matrix.d == 0) {
     return matrix.b != 0 && matrix.c != 0;
@@ -645,6 +672,9 @@ FX_BOOL CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
 }
 FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
                                                const CFX_Matrix* pObj2Device) {
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
   const CPDF_GeneralStateData* pGeneralState =
       pPageObj->m_GeneralState.GetObject();
   int blend_type =
@@ -745,12 +775,10 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     oriDevice.reset(new CFX_DIBitmap);
     if (!m_pDevice->CreateCompatibleBitmap(oriDevice.get(), width, height))
       return TRUE;
-
     m_pDevice->GetDIBits(oriDevice.get(), rect.left, rect.top);
   }
   if (!bitmap_device.Create(width, height, FXDIB_Argb, oriDevice.get()))
     return TRUE;
-
   CFX_DIBitmap* bitmap = bitmap_device.GetBitmap();
   bitmap->Clear(0);
   CFX_Matrix new_matrix = *pObj2Device;
@@ -813,6 +841,9 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   }
   CompositeDIBitmap(bitmap, rect.left, rect.top, 0, blitAlpha, blend_type,
                     Transparency);
+#if defined _SKIA_SUPPORT_
+  DebugVerifyDeviceIsPreMultiplied();
+#endif
   return TRUE;
 }
 
@@ -1263,3 +1294,9 @@ void CPDF_ScaledRenderBuffer::OutputToDevice() {
                              m_Rect.top, m_Rect.Width(), m_Rect.Height());
   }
 }
+
+#if defined _SKIA_SUPPORT_
+void CPDF_RenderStatus::DebugVerifyDeviceIsPreMultiplied() const {
+  m_pDevice->DebugVerifyBitmapIsPreMultiplied();
+}
+#endif

@@ -150,6 +150,10 @@ class CPDF_RenderStatus {
                                IFX_Pause* pPause);
   CPDF_RenderContext* GetContext() { return m_pContext; }
 
+#if defined _SKIA_SUPPORT_
+  void DebugVerifyDeviceIsPreMultiplied() const;
+#endif
+
   CPDF_RenderOptions m_Options;
   CPDF_Dictionary* m_pFormResource;
   CPDF_Dictionary* m_pPageResource;

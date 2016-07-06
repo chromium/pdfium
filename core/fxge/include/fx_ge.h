@@ -215,6 +215,7 @@ class CFX_RenderDevice {
   CFX_RenderDevice();
   virtual ~CFX_RenderDevice();
 
+  void Flush();
   void SetDeviceDriver(IFX_RenderDeviceDriver* pDriver);
   IFX_RenderDeviceDriver* GetDeviceDriver() const { return m_pDeviceDriver; }
 
@@ -378,6 +379,10 @@ class CFX_RenderDevice {
                                 CFX_PathData* pClippingPath,
                                 int nFlag);
 
+#ifdef _SKIA_SUPPORT_
+  virtual void DebugVerifyBitmapIsPreMultiplied() const;
+#endif
+
  private:
   void InitDeviceInfo();
   void UpdateClipBox();
@@ -416,7 +421,7 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
 #ifdef _SKIA_SUPPORT_
   bool AttachRecorder(SkPictureRecorder* recorder);
   SkPictureRecorder* CreateRecorder(int size_x, int size_y);
-  void PreMultiply();
+  void DebugVerifyBitmapIsPreMultiplied() const override;
 #endif
 
  protected:

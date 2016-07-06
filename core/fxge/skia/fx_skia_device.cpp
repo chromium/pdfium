@@ -86,41 +86,18 @@ void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {}
 #undef SHOW_SKIA_PATH
 #undef DRAW_SKIA_CLIP
 
-static void DebugVerifyBitmapIsPreMultiplied(void* buffer,
-                                             int width,
-                                             int height) {
-#ifdef SK_DEBUG
-  // verify that input is really premultiplied
-  for (int y = 0; y < height; ++y) {
-    const uint32_t* srcRow = static_cast<const uint32_t*>(buffer) + y * width;
-    for (int x = 0; x < width; ++x) {
-      uint8_t a = SkGetPackedA32(srcRow[x]);
-      uint8_t r = SkGetPackedR32(srcRow[x]);
-      uint8_t g = SkGetPackedG32(srcRow[x]);
-      uint8_t b = SkGetPackedB32(srcRow[x]);
-      SkA32Assert(a);
-      SkASSERT(r <= a);
-      SkASSERT(g <= a);
-      SkASSERT(b <= a);
-    }
-  }
-#endif
-}
-
 static void DebugValidate(const CFX_DIBitmap* bitmap,
                           const CFX_DIBitmap* device) {
   if (bitmap) {
     SkASSERT(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
     if (bitmap->GetBPP() == 32) {
-      DebugVerifyBitmapIsPreMultiplied(bitmap->GetBuffer(), bitmap->GetWidth(),
-                                       bitmap->GetHeight());
+      bitmap->DebugVerifyBitmapIsPreMultiplied();
     }
   }
   if (device) {
     SkASSERT(device->GetBPP() == 8 || device->GetBPP() == 32);
     if (device->GetBPP() == 32) {
-      DebugVerifyBitmapIsPreMultiplied(device->GetBuffer(), device->GetWidth(),
-                                       device->GetHeight());
+      device->DebugVerifyBitmapIsPreMultiplied();
     }
   }
 }
@@ -291,98 +268,6 @@ bool AddStitching(const CPDF_StitchFunc* pFunc,
   return true;
 }
 
-void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
-                                int dest_left,
-                                int dest_top,
-                                int width,
-                                int height,
-                                const CFX_DIBSource* pSrcBitmap,
-                                int src_left,
-                                int src_top) {
-  if (!pBitmap)
-    return;
-  pBitmap->GetOverlapRect(dest_left, dest_top, width, height,
-                          pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(),
-                          src_left, src_top, nullptr);
-  if (width == 0 || height == 0)
-    return;
-  int Bpp = pBitmap->GetBPP() / 8;
-  FXDIB_Format dest_format = pBitmap->GetFormat();
-  FXDIB_Format src_format = pSrcBitmap->GetFormat();
-  int pitch = pBitmap->GetPitch();
-  uint8_t* buffer = pBitmap->GetBuffer();
-  if (dest_format == src_format) {
-    for (int row = 0; row < height; row++) {
-      uint8_t* dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
-      uint8_t* src_scan =
-          (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
-      if (Bpp == 4) {
-        for (int col = 0; col < width; col++) {
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(src_scan[3], src_scan[0],
-                                               src_scan[1], src_scan[2]));
-          dest_scan += 4;
-          src_scan += 4;
-        }
-      } else {
-        for (int col = 0; col < width; col++) {
-          *dest_scan++ = src_scan[2];
-          *dest_scan++ = src_scan[1];
-          *dest_scan++ = src_scan[0];
-          src_scan += 3;
-        }
-      }
-    }
-    return;
-  }
-  uint8_t* dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
-  if (dest_format == FXDIB_Rgb) {
-    if (src_format == FXDIB_Rgb32) {
-      for (int row = 0; row < height; row++) {
-        uint8_t* dest_scan = dest_buf + row * pitch;
-        uint8_t* src_scan =
-            (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
-        for (int col = 0; col < width; col++) {
-          *dest_scan++ = src_scan[2];
-          *dest_scan++ = src_scan[1];
-          *dest_scan++ = src_scan[0];
-          src_scan += 4;
-        }
-      }
-    } else {
-      ASSERT(FALSE);
-    }
-  } else if (dest_format == FXDIB_Argb || dest_format == FXDIB_Rgb32) {
-    if (src_format == FXDIB_Rgb) {
-      for (int row = 0; row < height; row++) {
-        uint8_t* dest_scan = (uint8_t*)(dest_buf + row * pitch);
-        uint8_t* src_scan =
-            (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
-        for (int col = 0; col < width; col++) {
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
-                                               src_scan[2]));
-          dest_scan += 4;
-          src_scan += 3;
-        }
-      }
-    } else if (src_format == FXDIB_Rgb32) {
-      ASSERT(dest_format == FXDIB_Argb);
-      for (int row = 0; row < height; row++) {
-        uint8_t* dest_scan = dest_buf + row * pitch;
-        uint8_t* src_scan =
-            (uint8_t*)(pSrcBitmap->GetScanline(src_top + row) + src_left * 4);
-        for (int col = 0; col < width; col++) {
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
-                                               src_scan[2]));
-          src_scan += 4;
-          dest_scan += 4;
-        }
-      }
-    }
-  } else {
-    ASSERT(FALSE);
-  }
-}
-
 // see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
 SkScalar LineSide(const SkPoint line[2], const SkPoint& pt) {
   return (line[1].fY - line[0].fY) * pt.fX - (line[1].fX - line[0].fX) * pt.fY +
@@ -525,11 +410,13 @@ class SkiaState {
       m_skPath.setFillType((fill_mode & 3) == FXFILL_ALTERNATE
                                ? SkPath::kEvenOdd_FillType
                                : SkPath::kWinding_FillType);
-      m_drawState = *pDrawState;
+      if (pDrawState)
+        m_drawState.Copy(*pDrawState);
       m_fillColor = fill_color;
       m_strokeColor = stroke_color;
       m_blendType = blend_type;
-      m_drawMatrix = *pMatrix;
+      if (pMatrix)
+        m_drawMatrix = *pMatrix;
     }
     SkPath skPath = BuildPath(pPathData);
     SkPoint delta;
@@ -633,6 +520,7 @@ class SkiaState {
     skPaint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
     skPaint.setTextSize(m_fontSize);
     skPaint.setSubpixelText(true);
+    skPaint.setHinting(SkPaint::kNo_Hinting);
     SkCanvas* skCanvas = pDriver->SkiaCanvas();
     skCanvas->save();
     skCanvas->concat(skMatrix);
@@ -690,6 +578,9 @@ class SkiaState {
   }
 
   bool MatrixOffset(const CFX_Matrix* pMatrix, SkPoint* delta) {
+    CFX_Matrix identityMatrix;
+    if (!pMatrix)
+      pMatrix = &identityMatrix;
     delta->set(pMatrix->e - m_drawMatrix.e, pMatrix->f - m_drawMatrix.f);
     if (!delta->fX && !delta->fY)
       return true;
@@ -789,12 +680,18 @@ class SkiaState {
   }
 
   bool MatrixChanged(const CFX_Matrix* pMatrix, const CFX_Matrix& refMatrix) {
+    CFX_Matrix identityMatrix;
+    if (!pMatrix)
+      pMatrix = &identityMatrix;
     return pMatrix->a != refMatrix.a || pMatrix->b != refMatrix.b ||
            pMatrix->c != refMatrix.c || pMatrix->d != refMatrix.d;
   }
 
   bool StateChanged(const CFX_GraphStateData* pState,
                     const CFX_GraphStateData& refState) {
+    CFX_GraphStateData identityState;
+    if (!pState)
+      pState = &identityState;
     return pState->m_LineWidth != refState.m_LineWidth ||
            pState->m_LineCap != refState.m_LineCap ||
            pState->m_LineJoin != refState.m_LineJoin ||
@@ -804,9 +701,10 @@ class SkiaState {
 
   bool DashChanged(const CFX_GraphStateData* pState,
                    const CFX_GraphStateData& refState) {
-    if (!pState->m_DashArray && !refState.m_DashArray)
+    bool dashArray = pState && pState->m_DashArray;
+    if (!dashArray && !refState.m_DashArray)
       return false;
-    if (!pState->m_DashArray || !refState.m_DashArray)
+    if (!dashArray || !refState.m_DashArray)
       return true;
     if (pState->m_DashPhase != refState.m_DashPhase ||
         pState->m_DashCount != refState.m_DashCount) {
@@ -946,7 +844,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
       m_pOriDevice(pOriDevice),
       m_pRecorder(nullptr),
       m_pCache(new SkiaState),
-      m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
   SkBitmap skBitmap;
   SkASSERT(pBitmap->GetBPP() == 8 || pBitmap->GetBPP() == 32);
@@ -967,7 +864,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(int size_x, int size_y)
       m_pOriDevice(nullptr),
       m_pRecorder(new SkPictureRecorder),
       m_pCache(new SkiaState),
-      m_bRgbByteOrder(FALSE),
       m_bGroupKnockout(FALSE) {
   m_pRecorder->beginRecording(SkIntToScalar(size_x), SkIntToScalar(size_y));
   m_pCanvas = m_pRecorder->getRecordingCanvas();
@@ -978,7 +874,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
       m_pOriDevice(nullptr),
       m_pRecorder(recorder),
       m_pCache(new SkiaState),
-      m_bRgbByteOrder(FALSE),
       m_bGroupKnockout(FALSE) {
   m_pCanvas = m_pRecorder->getRecordingCanvas();
 }
@@ -1012,6 +907,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   paint.setColor(color);
   paint.setTypeface(typeface);
   paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+  paint.setHinting(SkPaint::kNo_Hinting);
   paint.setTextSize(font_size);
   paint.setSubpixelText(true);
   m_pCanvas->save();
@@ -1354,35 +1250,33 @@ FX_BOOL CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
 FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
                                         int left,
                                         int top) {
-  if (!m_pBitmap || !m_pBitmap->GetBuffer())
+  if (!m_pBitmap)
     return TRUE;
-
-  FX_RECT rect(left, top, left + pBitmap->GetWidth(),
-               top + pBitmap->GetHeight());
-  std::unique_ptr<CFX_DIBitmap> pBack;
-  if (m_pOriDevice) {
-    pBack.reset(m_pOriDevice->Clone(&rect));
-    if (!pBack)
-      return TRUE;
-
-    pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
-                           m_pBitmap, 0, 0);
-  } else {
-    pBack.reset(m_pBitmap->Clone(&rect));
-    if (!pBack)
-      return TRUE;
-  }
-
-  left = std::min(left, 0);
-  top = std::min(top, 0);
-  if (m_bRgbByteOrder) {
-    RgbByteOrderTransferBitmap(pBitmap, 0, 0, rect.Width(), rect.Height(),
-                               pBack.get(), left, top);
+  uint8_t* srcBuffer = m_pBitmap->GetBuffer();
+  if (!srcBuffer)
     return TRUE;
-  }
-
-  return pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack.get(),
-                                 left, top);
+  int srcWidth = m_pBitmap->GetWidth();
+  int srcHeight = m_pBitmap->GetHeight();
+  int srcRowBytes = srcWidth * sizeof(uint32_t);
+  SkImageInfo srcImageInfo = SkImageInfo::Make(
+      srcWidth, srcHeight, SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
+  SkBitmap skSrcBitmap;
+  skSrcBitmap.installPixels(srcImageInfo, srcBuffer, srcRowBytes, nullptr,
+                            nullptr, nullptr);
+  SkASSERT(pBitmap);
+  uint8_t* dstBuffer = pBitmap->GetBuffer();
+  SkASSERT(dstBuffer);
+  int dstWidth = pBitmap->GetWidth();
+  int dstHeight = pBitmap->GetHeight();
+  int dstRowBytes = dstWidth * sizeof(uint32_t);
+  SkImageInfo dstImageInfo = SkImageInfo::Make(
+      dstWidth, dstHeight, SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
+  SkBitmap skDstBitmap;
+  skDstBitmap.installPixels(dstImageInfo, dstBuffer, dstRowBytes, nullptr,
+                            nullptr, nullptr);
+  SkCanvas canvas(skDstBitmap);
+  canvas.drawBitmap(skSrcBitmap, left, top, nullptr);
+  return TRUE;
 }
 
 CFX_DIBitmap* CFX_SkiaDeviceDriver::GetBackDrop() {
@@ -1491,7 +1385,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
     case 32:
       colorType = SkColorType::kN32_SkColorType;
       alphaType = kPremul_SkAlphaType;
-      DebugVerifyBitmapIsPreMultiplied(buffer, width, height);
+      pSource->DebugVerifyBitmapIsPreMultiplied(buffer);
       break;
     default:
       SkASSERT(0);  // TODO(caryclark) ensure that all cases are covered
@@ -1528,10 +1422,6 @@ FX_BOOL CFX_SkiaDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
   return FALSE;
 }
 
-void CFX_SkiaDeviceDriver::PreMultiply() {
-  PreMultiply(m_pBitmap);
-}
-
 void CFX_SkiaDeviceDriver::PreMultiply(CFX_DIBitmap* pDIBitmap) {
   void* buffer = pDIBitmap->GetBuffer();
   if (!buffer)
@@ -1549,7 +1439,7 @@ void CFX_SkiaDeviceDriver::PreMultiply(CFX_DIBitmap* pDIBitmap) {
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
   SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
   unpremultiplied.readPixels(premultiplied);
-  DebugVerifyBitmapIsPreMultiplied(buffer, width, height);
+  pDIBitmap->DebugVerifyBitmapIsPreMultiplied();
 }
 
 void CFX_SkiaDeviceDriver::Dump() const {
@@ -1557,6 +1447,11 @@ void CFX_SkiaDeviceDriver::Dump() const {
   if (m_pCache)
     m_pCache->Dump(this);
 #endif
+}
+
+void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
+  if (m_pOriDevice)
+    m_pOriDevice->DebugVerifyBitmapIsPreMultiplied();
 }
 
 CFX_FxgeDevice::CFX_FxgeDevice() {
@@ -1606,12 +1501,42 @@ bool CFX_FxgeDevice::Create(int width,
 }
 
 CFX_FxgeDevice::~CFX_FxgeDevice() {
+  Flush();
+  // call destructor of CFX_RenderDevice / CFX_SkiaDeviceDriver immediately
   if (m_bOwnedBitmap && GetBitmap())
     delete GetBitmap();
 }
 
-void CFX_FxgeDevice::PreMultiply() {
-  (static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver()))->PreMultiply();
+void CFX_FxgeDevice::DebugVerifyBitmapIsPreMultiplied() const {
+#ifdef SK_DEBUG
+  CFX_SkiaDeviceDriver* skDriver =
+      static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver());
+  if (skDriver)
+    skDriver->DebugVerifyBitmapIsPreMultiplied();
+#endif
+}
+
+void CFX_DIBSource::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
+#ifdef SK_DEBUG
+  SkASSERT(32 == GetBPP());
+  const uint32_t* buffer = (const uint32_t*)(opt ? opt : GetBuffer());
+  int width = GetWidth();
+  int height = GetHeight();
+  // verify that input is really premultiplied
+  for (int y = 0; y < height; ++y) {
+    const uint32_t* srcRow = buffer + y * width;
+    for (int x = 0; x < width; ++x) {
+      uint8_t a = SkGetPackedA32(srcRow[x]);
+      uint8_t r = SkGetPackedR32(srcRow[x]);
+      uint8_t g = SkGetPackedG32(srcRow[x]);
+      uint8_t b = SkGetPackedB32(srcRow[x]);
+      SkA32Assert(a);
+      SkASSERT(r <= a);
+      SkASSERT(g <= a);
+      SkASSERT(b <= a);
+    }
+  }
+#endif
 }
 
 #endif

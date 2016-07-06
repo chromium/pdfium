@@ -7,6 +7,10 @@
 #include "core/fxge/include/fx_ge.h"
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 
+#if defined _SKIA_SUPPORT_
+#include "third_party/skia/include/core/SkTypes.h"
+#endif
+
 CFX_RenderDevice::CFX_RenderDevice()
     : m_pBitmap(nullptr),
       m_Width(0),
@@ -18,6 +22,11 @@ CFX_RenderDevice::CFX_RenderDevice()
 
 CFX_RenderDevice::~CFX_RenderDevice() {
   delete m_pDeviceDriver;
+}
+
+void CFX_RenderDevice::Flush() {
+  delete m_pDeviceDriver;
+  m_pDeviceDriver = nullptr;
 }
 
 void CFX_RenderDevice::SetDeviceDriver(IFX_RenderDeviceDriver* pDriver) {
@@ -480,3 +489,10 @@ FX_BOOL CFX_RenderDevice::ContinueDIBits(void* handle, IFX_Pause* pPause) {
 void CFX_RenderDevice::CancelDIBits(void* handle) {
   m_pDeviceDriver->CancelDIBits(handle);
 }
+
+#ifdef _SKIA_SUPPORT_
+
+void CFX_RenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
+  SkASSERT(0);
+}
+#endif
