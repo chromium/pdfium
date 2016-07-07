@@ -1698,7 +1698,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
         case XFA_Element::PageSet: {
           CXFA_Node* pParentNode = pContainerItem->m_pParent->m_pFormNode;
           pContainerItem->m_pFormNode = XFA_NodeMerge_CloneOrMergeContainer(
-              pDocument, pParentNode, pContainerItem->m_pFormNode, TRUE);
+              pDocument, pParentNode, pContainerItem->m_pFormNode, TRUE,
+              nullptr);
         } break;
         case XFA_Element::PageArea: {
           CXFA_ContainerLayoutItem* pFormLayout = pContainerItem;

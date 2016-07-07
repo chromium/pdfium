@@ -524,8 +524,6 @@
         "xfa/fxfa/parser/xfa_basic_imp.h",
         "xfa/fxfa/parser/xfa_doclayout.h",
         "xfa/fxfa/parser/xfa_document.h",
-        "xfa/fxfa/parser/xfa_document_datadescription_imp.cpp",
-        "xfa/fxfa/parser/xfa_document_datadescription_imp.h",
         "xfa/fxfa/parser/xfa_document_datamerger_imp.cpp",
         "xfa/fxfa/parser/xfa_document_datamerger_imp.h",
         "xfa/fxfa/parser/xfa_document_imp.cpp",

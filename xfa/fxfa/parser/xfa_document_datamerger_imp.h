@@ -9,12 +9,11 @@
 
 #include "xfa/fxfa/parser/xfa_object.h"
 
-CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
-    CXFA_Document* pDocument,
-    CXFA_Node* pFormParent,
-    CXFA_Node* pTemplateNode,
-    FX_BOOL bRecursive,
-    CXFA_NodeArray* pSubformArray = nullptr);
+CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(CXFA_Document* pDocument,
+                                               CXFA_Node* pFormParent,
+                                               CXFA_Node* pTemplateNode,
+                                               FX_BOOL bRecursive,
+                                               CXFA_NodeArray* pSubformArray);
 CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode);
 CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
                                              XFA_Element eType,
