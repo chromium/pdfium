@@ -289,7 +289,7 @@ CFX_ByteString CPDFSDK_DateTime::ToCommonDateTimeString() {
   else
     str1 += "+";
   CFX_ByteString str2;
-  str2.Format("%02d:%02u", abs(dt.tzHour), dt.tzMinute);
+  str2.Format("%02d:%02u", std::abs(static_cast<int>(dt.tzHour)), dt.tzMinute);
   return str1 + str2;
 }
 
@@ -305,8 +305,8 @@ CFX_ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {
   else
     dtStr += CFX_ByteString("+");
   memset(tempStr, 0, sizeof(tempStr));
-  FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "%02d'%02u'", abs(dt.tzHour),
-                 dt.tzMinute);
+  FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "%02d'%02u'",
+                 std::abs(static_cast<int>(dt.tzHour)), dt.tzMinute);
   dtStr += CFX_ByteString(tempStr);
   return dtStr;
 }
