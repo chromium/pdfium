@@ -512,14 +512,12 @@ CPDF_CMap::CPDF_CMap() {
   m_pLeadingBytes = nullptr;
   m_pAddMapping = nullptr;
   m_pEmbedMap = nullptr;
-  m_pUseMap = nullptr;
   m_nCodeRanges = 0;
 }
 CPDF_CMap::~CPDF_CMap() {
   FX_Free(m_pMapping);
   FX_Free(m_pAddMapping);
   FX_Free(m_pLeadingBytes);
-  delete m_pUseMap;
 }
 void CPDF_CMap::Release() {
   if (m_PredefinedCMap.IsEmpty()) {
@@ -616,23 +614,14 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
     if (m_pAddMapping) {
       void* found = FXSYS_bsearch(&charcode, m_pAddMapping + 4,
                                   *(uint32_t*)m_pAddMapping, 8, CompareCID);
-      if (!found) {
-        if (m_pUseMap) {
-          return m_pUseMap->CIDFromCharCode(charcode);
-        }
+      if (!found)
         return 0;
-      }
       return (uint16_t)(((uint32_t*)found)[1] % 65536 + charcode -
                         *(uint32_t*)found);
     }
-    if (m_pUseMap)
-      return m_pUseMap->CIDFromCharCode(charcode);
     return 0;
   }
-  uint32_t CID = m_pMapping[charcode];
-  if (!CID && m_pUseMap)
-    return m_pUseMap->CIDFromCharCode(charcode);
-  return (uint16_t)CID;
+  return m_pMapping[charcode];
 }
 
 uint32_t CPDF_CMap::GetNextChar(const FX_CHAR* pString,

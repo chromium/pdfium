@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <map>
+#include <memory>
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxge/include/fx_font.h"
@@ -45,17 +46,13 @@ class CFX_CTTGSUBTable {
     uint16_t LookupList;
   };
   struct TLangSys {
-    TLangSys()
-        : LookupOrder(0),
-          ReqFeatureIndex(0),
-          FeatureCount(0),
-          FeatureIndex(nullptr) {}
-    ~TLangSys() { delete[] FeatureIndex; }
+    TLangSys();
+    ~TLangSys();
 
     uint16_t LookupOrder;
     uint16_t ReqFeatureIndex;
     uint16_t FeatureCount;
-    uint16_t* FeatureIndex;
+    std::unique_ptr<uint16_t[]> FeatureIndex;
 
    private:
     TLangSys(const TLangSys&);
@@ -65,20 +62,19 @@ class CFX_CTTGSUBTable {
     TLangSysRecord() : LangSysTag(0) {}
 
     uint32_t LangSysTag;
-    struct TLangSys LangSys;
+    TLangSys LangSys;
 
    private:
     TLangSysRecord(const TLangSysRecord&);
     TLangSysRecord& operator=(const TLangSysRecord&);
   };
   struct TScript {
-    TScript() : DefaultLangSys(0), LangSysCount(0), LangSysRecord(nullptr) {}
-    ~TScript() { delete[] LangSysRecord; }
+    TScript();
+    ~TScript();
 
     uint16_t DefaultLangSys;
     uint16_t LangSysCount;
-    // TODO(weili): Replace with a smart pointer type, pdfium:518.
-    struct TLangSysRecord* LangSysRecord;
+    std::unique_ptr<TLangSysRecord[]> LangSysRecord;
 
    private:
     TScript(const TScript&);
@@ -88,30 +84,30 @@ class CFX_CTTGSUBTable {
     TScriptRecord() : ScriptTag(0) {}
 
     uint32_t ScriptTag;
-    struct TScript Script;
+    TScript Script;
 
    private:
     TScriptRecord(const TScriptRecord&);
     TScriptRecord& operator=(const TScriptRecord&);
   };
   struct TScriptList {
-    TScriptList() : ScriptCount(0), ScriptRecord(nullptr) {}
-    ~TScriptList() { delete[] ScriptRecord; }
+    TScriptList();
+    ~TScriptList();
 
     uint16_t ScriptCount;
-    struct TScriptRecord* ScriptRecord;
+    std::unique_ptr<TScriptRecord[]> ScriptRecord;
 
    private:
     TScriptList(const TScriptList&);
     TScriptList& operator=(const TScriptList&);
   };
   struct TFeature {
-    TFeature() : FeatureParams(0), LookupCount(0), LookupListIndex(nullptr) {}
-    ~TFeature() { delete[] LookupListIndex; }
+    TFeature();
+    ~TFeature();
 
     uint16_t FeatureParams;
     int LookupCount;
-    uint16_t* LookupListIndex;
+    std::unique_ptr<uint16_t[]> LookupListIndex;
 
    private:
     TFeature(const TFeature&);
@@ -121,18 +117,18 @@ class CFX_CTTGSUBTable {
     TFeatureRecord() : FeatureTag(0) {}
 
     uint32_t FeatureTag;
-    struct TFeature Feature;
+    TFeature Feature;
 
    private:
     TFeatureRecord(const TFeatureRecord&);
     TFeatureRecord& operator=(const TFeatureRecord&);
   };
   struct TFeatureList {
-    TFeatureList() : FeatureCount(0), FeatureRecord(nullptr) {}
-    ~TFeatureList() { delete[] FeatureRecord; }
+    TFeatureList();
+    ~TFeatureList();
 
     int FeatureCount;
-    struct TFeatureRecord* FeatureRecord;
+    std::unique_ptr<TFeatureRecord[]> FeatureRecord;
 
    private:
     TFeatureList(const TFeatureList&);
@@ -148,6 +144,7 @@ class CFX_CTTGSUBTable {
   };
   struct TCoverageFormatBase {
     TCoverageFormatBase() : CoverageFormat(0) {}
+    explicit TCoverageFormatBase(uint16_t format) : CoverageFormat(format) {}
     virtual ~TCoverageFormatBase() {}
 
     uint16_t CoverageFormat;
@@ -162,7 +159,7 @@ class CFX_CTTGSUBTable {
     ~TCoverageFormat1() override;
 
     uint16_t GlyphCount;
-    uint16_t* GlyphArray;
+    std::unique_ptr<uint16_t[]> GlyphArray;
 
    private:
     TCoverageFormat1(const TCoverageFormat1&);
@@ -187,55 +184,11 @@ class CFX_CTTGSUBTable {
     ~TCoverageFormat2() override;
 
     uint16_t RangeCount;
-    struct TRangeRecord* RangeRecord;
+    std::unique_ptr<TRangeRecord[]> RangeRecord;
 
    private:
     TCoverageFormat2(const TCoverageFormat2&);
     TCoverageFormat2& operator=(const TCoverageFormat2&);
-  };
-  struct TClassDefFormatBase {
-    TClassDefFormatBase() : ClassFormat(0) {}
-    virtual ~TClassDefFormatBase() {}
-
-    uint16_t ClassFormat;
-
-   private:
-    TClassDefFormatBase(const TClassDefFormatBase&);
-    TClassDefFormatBase& operator=(const TClassDefFormatBase&);
-  };
-  struct TClassDefFormat1 : public TClassDefFormatBase {
-    TClassDefFormat1();
-    ~TClassDefFormat1() override;
-
-    uint16_t StartGlyph;
-    uint16_t GlyphCount;
-    uint16_t* ClassValueArray;
-
-   private:
-    TClassDefFormat1(const TClassDefFormat1&);
-    TClassDefFormat1& operator=(const TClassDefFormat1&);
-  };
-  struct TClassRangeRecord {
-    TClassRangeRecord() : Start(0), End(0), Class(0) {}
-
-    uint16_t Start;
-    uint16_t End;
-    uint16_t Class;
-
-   private:
-    TClassRangeRecord(const TClassRangeRecord&);
-    TClassRangeRecord& operator=(const TClassRangeRecord&);
-  };
-  struct TClassDefFormat2 : public TClassDefFormatBase {
-    TClassDefFormat2();
-    ~TClassDefFormat2() override;
-
-    uint16_t ClassRangeCount;
-    struct TClassRangeRecord* ClassRangeRecord;
-
-   private:
-    TClassDefFormat2(const TClassDefFormat2&);
-    TClassDefFormat2& operator=(const TClassDefFormat2&);
   };
   struct TDevice {
     TDevice() : StartSize(0), EndSize(0), DeltaFormat(0) {}
@@ -250,6 +203,7 @@ class CFX_CTTGSUBTable {
   };
   struct TSubTableBase {
     TSubTableBase() : SubstFormat(0) {}
+    explicit TSubTableBase(uint16_t format) : SubstFormat(format) {}
     virtual ~TSubTableBase() {}
 
     uint16_t SubstFormat;
@@ -262,7 +216,7 @@ class CFX_CTTGSUBTable {
     TSingleSubstFormat1();
     ~TSingleSubstFormat1() override;
 
-    TCoverageFormatBase* Coverage;
+    std::unique_ptr<TCoverageFormatBase> Coverage;
     int16_t DeltaGlyphID;
 
    private:
@@ -273,9 +227,9 @@ class CFX_CTTGSUBTable {
     TSingleSubstFormat2();
     ~TSingleSubstFormat2() override;
 
-    TCoverageFormatBase* Coverage;
+    std::unique_ptr<TCoverageFormatBase> Coverage;
     uint16_t GlyphCount;
-    uint16_t* Substitute;
+    std::unique_ptr<uint16_t[]> Substitute;
 
    private:
     TSingleSubstFormat2(const TSingleSubstFormat2&);
@@ -288,18 +242,18 @@ class CFX_CTTGSUBTable {
     uint16_t LookupType;
     uint16_t LookupFlag;
     uint16_t SubTableCount;
-    struct TSubTableBase** SubTable;
+    std::unique_ptr<TSubTableBase* []> SubTable;
 
    private:
     TLookup(const TLookup&);
     TLookup& operator=(const TLookup&);
   };
   struct TLookupList {
-    TLookupList() : LookupCount(0), Lookup(nullptr) {}
-    ~TLookupList() { delete[] Lookup; }
+    TLookupList();
+    ~TLookupList();
 
     int LookupCount;
-    struct TLookup* Lookup;
+    std::unique_ptr<TLookup[]> Lookup;
 
    private:
     TLookupList(const TLookupList&);
@@ -314,7 +268,7 @@ class CFX_CTTGSUBTable {
   void ParseFeature(FT_Bytes raw, TFeature* rec);
   void ParseLookupList(FT_Bytes raw, TLookupList* rec);
   void ParseLookup(FT_Bytes raw, TLookup* rec);
-  void ParseCoverage(FT_Bytes raw, TCoverageFormatBase** rec);
+  TCoverageFormatBase* ParseCoverage(FT_Bytes raw);
   void ParseCoverageFormat1(FT_Bytes raw, TCoverageFormat1* rec);
   void ParseCoverageFormat2(FT_Bytes raw, TCoverageFormat2* rec);
   void ParseSingleSubst(FT_Bytes raw, TSubTableBase** rec);
@@ -323,11 +277,11 @@ class CFX_CTTGSUBTable {
 
   bool GetVerticalGlyphSub(uint32_t glyphnum,
                            uint32_t* vglyphnum,
-                           struct TFeature* Feature) const;
+                           TFeature* Feature) const;
   bool GetVerticalGlyphSub2(uint32_t glyphnum,
                             uint32_t* vglyphnum,
-                            struct TLookup* Lookup) const;
-  int GetCoverageIndex(struct TCoverageFormatBase* Coverage, uint32_t g) const;
+                            TLookup* Lookup) const;
+  int GetCoverageIndex(TCoverageFormatBase* Coverage, uint32_t g) const;
 
   uint8_t GetUInt8(FT_Bytes& p) const;
   int16_t GetInt16(FT_Bytes& p) const;
@@ -338,10 +292,10 @@ class CFX_CTTGSUBTable {
   std::map<uint32_t, uint32_t> m_featureMap;
   FX_BOOL m_bFeautureMapLoad;
   bool loaded;
-  struct tt_gsub_header header;
-  struct TScriptList ScriptList;
-  struct TFeatureList FeatureList;
-  struct TLookupList LookupList;
+  tt_gsub_header header;
+  TScriptList ScriptList;
+  TFeatureList FeatureList;
+  TLookupList LookupList;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_

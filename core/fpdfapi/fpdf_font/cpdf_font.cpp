@@ -6,8 +6,6 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 
-#include <memory>
-
 #include "core/fpdfapi/fpdf_font/cpdf_truetypefont.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
@@ -50,7 +48,6 @@ FX_BOOL GetPredefinedEncoding(int& basemap, const CFX_ByteString& value) {
 CPDF_Font::CPDF_Font()
     : m_pFontFile(nullptr),
       m_pFontDict(nullptr),
-      m_pToUnicodeMap(nullptr),
       m_bToUnicodeLoaded(FALSE),
       m_Flags(0),
       m_StemV(0),
@@ -59,9 +56,6 @@ CPDF_Font::CPDF_Font()
       m_ItalicAngle(0) {}
 
 CPDF_Font::~CPDF_Font() {
-  delete m_pToUnicodeMap;
-  m_pToUnicodeMap = nullptr;
-
   if (m_pFontFile) {
     m_pDocument->GetPageData()->ReleaseFontFileStreamAcc(
         const_cast<CPDF_Stream*>(m_pFontFile->GetStream()->AsStream()));
@@ -285,7 +279,7 @@ void CPDF_Font::LoadUnicodeMap() const {
   if (!pStream) {
     return;
   }
-  m_pToUnicodeMap = new CPDF_ToUnicodeMap;
+  m_pToUnicodeMap.reset(new CPDF_ToUnicodeMap);
   m_pToUnicodeMap->Load(pStream);
 }
 

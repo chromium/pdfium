@@ -8,11 +8,9 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 
-CPDF_FormObject::CPDF_FormObject() : m_pForm(nullptr) {}
+CPDF_FormObject::CPDF_FormObject() {}
 
-CPDF_FormObject::~CPDF_FormObject() {
-  delete m_pForm;
-}
+CPDF_FormObject::~CPDF_FormObject() {}
 
 void CPDF_FormObject::Transform(const CFX_Matrix& matrix) {
   m_FormMatrix.Concat(matrix);
@@ -35,7 +33,7 @@ CPDF_FormObject* CPDF_FormObject::Clone() const {
   CPDF_FormObject* obj = new CPDF_FormObject;
   obj->CopyData(this);
 
-  obj->m_pForm = m_pForm->Clone();
+  obj->m_pForm.reset(m_pForm->Clone());
   obj->m_FormMatrix = m_FormMatrix;
   return obj;
 }

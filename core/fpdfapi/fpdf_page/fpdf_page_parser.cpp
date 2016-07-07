@@ -751,8 +751,8 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 
 void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   std::unique_ptr<CPDF_FormObject> pFormObj(new CPDF_FormObject);
-  pFormObj->m_pForm =
-      new CPDF_Form(m_pDocument, m_pPageResources, pStream, m_pResources);
+  pFormObj->m_pForm.reset(
+      new CPDF_Form(m_pDocument, m_pPageResources, pStream, m_pResources));
   pFormObj->m_FormMatrix = m_pCurStates->m_CTM;
   pFormObj->m_FormMatrix.Concat(m_mtContentToUser);
   CPDF_AllStates status;

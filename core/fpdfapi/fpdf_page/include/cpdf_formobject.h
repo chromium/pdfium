@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORMOBJECT_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORMOBJECT_H_
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
@@ -27,7 +29,7 @@ class CPDF_FormObject : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
-  CPDF_Form* m_pForm;
+  std::unique_ptr<CPDF_Form> m_pForm;
   CFX_Matrix m_FormMatrix;
 };
 

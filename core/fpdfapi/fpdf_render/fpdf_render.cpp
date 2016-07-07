@@ -438,7 +438,7 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
                     FALSE);
   status.m_curBlend = m_curBlend;
   m_pDevice->SaveState();
-  status.RenderObjectList(pFormObj->m_pForm, &matrix);
+  status.RenderObjectList(pFormObj->m_pForm.get(), &matrix);
   m_bStopped = status.m_bStopped;
   m_pDevice->RestoreState(false);
 #if defined _SKIA_SUPPORT_

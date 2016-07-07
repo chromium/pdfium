@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONT_H_
 #define CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONT_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_font.h"
@@ -114,7 +116,7 @@ class CPDF_Font {
   CFX_ByteString m_BaseFont;
   CPDF_StreamAcc* m_pFontFile;
   CPDF_Dictionary* m_pFontDict;
-  mutable CPDF_ToUnicodeMap* m_pToUnicodeMap;
+  mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
   mutable FX_BOOL m_bToUnicodeLoaded;
   int m_Flags;
   FX_RECT m_FontBBox;

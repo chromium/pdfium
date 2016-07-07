@@ -169,7 +169,6 @@ class CPDF_CMap {
   uint8_t* m_pAddMapping;
   FX_BOOL m_bLoaded;
   const FXCMAP_CMap* m_pEmbedMap;
-  CPDF_CMap* m_pUseMap;
 };
 
 class CPDF_CID2UnicodeMap {
