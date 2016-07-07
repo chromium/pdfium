@@ -896,6 +896,8 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              const CFX_Matrix* pObject2Device,
                                              FX_FLOAT font_size,
                                              uint32_t color) {
+  if (!pCache)
+    pCache = CFX_GEModule::Get()->GetFontCache();
   if (m_pCache->DrawText(nChars, pCharPos, pFont, pCache, pObject2Device,
                          font_size, color, this)) {
     return TRUE;
