@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
 #define XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
 
+#include <memory>
+
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/include/fxfa_basic.h"
 
@@ -73,8 +75,8 @@ class CXFA_SimpleParser {
   void SetFactory(CXFA_Document* pFactory);
 
   CXFA_XMLParser* m_pXMLParser;
-  CFDE_XMLDoc* m_pXMLDoc;
-  IFX_Stream* m_pStream;
+  std::unique_ptr<CFDE_XMLDoc> m_pXMLDoc;
+  std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> m_pStream;
   IFX_FileRead* m_pFileRead;
   CXFA_Document* m_pFactory;
   CXFA_Node* m_pRootNode;

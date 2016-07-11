@@ -193,7 +193,6 @@ class CFDE_XMLDoc : public CFX_Target {
   CFDE_XMLDoc();
   ~CFDE_XMLDoc() override;
 
-  void Release() { delete this; }
   FX_BOOL LoadXML(CFDE_XMLParser* pXMLParser);
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void CloseXML();

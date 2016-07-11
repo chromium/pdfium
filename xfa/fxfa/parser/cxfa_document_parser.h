@@ -29,7 +29,6 @@ class CXFA_DocumentParser {
   CFDE_XMLDoc* GetXMLDoc() const;
   CXFA_FFNotify* GetNotify() const;
   CXFA_Document* GetDocument() const;
-  void CloseParser();
 
  protected:
   CXFA_SimpleParser m_nodeParser;

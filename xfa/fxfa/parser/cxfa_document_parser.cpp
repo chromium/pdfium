@@ -13,12 +13,13 @@ CXFA_DocumentParser::CXFA_DocumentParser(CXFA_FFNotify* pNotify)
     : m_nodeParser(nullptr, TRUE), m_pNotify(pNotify) {}
 
 CXFA_DocumentParser::~CXFA_DocumentParser() {
-  CloseParser();
 }
 
 int32_t CXFA_DocumentParser::StartParse(IFX_FileRead* pStream,
                                         XFA_XDPPACKET ePacketID) {
-  CloseParser();
+  m_pDocument.reset();
+  m_nodeParser.CloseParser();
+
   int32_t nRetStatus = m_nodeParser.StartParse(pStream, ePacketID);
   if (nRetStatus == XFA_PARSESTATUS_Ready) {
     m_pDocument.reset(new CXFA_Document(this));
@@ -46,9 +47,4 @@ CXFA_FFNotify* CXFA_DocumentParser::GetNotify() const {
 
 CXFA_Document* CXFA_DocumentParser::GetDocument() const {
   return m_pDocument.get();
-}
-
-void CXFA_DocumentParser::CloseParser() {
-  m_pDocument.reset();
-  m_nodeParser.CloseParser();
 }
