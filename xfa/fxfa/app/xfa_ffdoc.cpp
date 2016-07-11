@@ -23,8 +23,6 @@
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_document_serialize.h"
-#include "xfa/fxfa/parser/xfa_parser_imp.h"
-#include "xfa/fxfa/parser/xfa_parser_imp.h"
 
 namespace {
 
@@ -168,7 +166,7 @@ uint32_t CXFA_FFDoc::GetDocType() {
 int32_t CXFA_FFDoc::StartLoad() {
   m_pNotify.reset(new CXFA_FFNotify(this));
   m_pDocumentParser.reset(new CXFA_DocumentParser(m_pNotify.get()));
-  int32_t iStatus = m_pDocumentParser->StartParse(m_pStream);
+  int32_t iStatus = m_pDocumentParser->StartParse(m_pStream, XFA_XDPPACKET_XDP);
   return iStatus;
 }
 
@@ -275,7 +273,8 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
       return XFA_PARSESTATUS_SyntaxErr;
 
     CXFA_Node* pRootNode = nullptr;
-    if (pParser->StartParse(m_pStream) == XFA_PARSESTATUS_Ready &&
+    if (pParser->StartParse(m_pStream, XFA_XDPPACKET_XDP) ==
+            XFA_PARSESTATUS_Ready &&
         pParser->DoParse(nullptr) == XFA_PARSESTATUS_Done) {
       pRootNode = pParser->GetRootNode();
     }

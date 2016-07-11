@@ -10,8 +10,8 @@
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser_imp.h"
 
+class CFDE_XMLDoc;
 class CXFA_Document;
 class CXFA_LayoutItem;
 class CXFA_LayoutProcessor;

@@ -9,7 +9,8 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "xfa/fxfa/parser/xfa_parser_imp.h"
+#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fxfa/parser/cxfa_xml_parser.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {

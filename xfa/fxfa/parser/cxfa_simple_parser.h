@@ -4,24 +4,25 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
-#define XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
+#ifndef XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
+#define XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
 
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/include/fxfa_basic.h"
 
 class CXFA_Document;
-class CXFA_FFNotify;
 class CXFA_Node;
 class CXFA_XMLParser;
+class IFX_FileRead;
+class IFX_Pause;
+class IFX_Stream;
 
 class CXFA_SimpleParser {
  public:
   CXFA_SimpleParser(CXFA_Document* pFactory, bool bDocumentParser);
   ~CXFA_SimpleParser();
 
-  int32_t StartParse(IFX_FileRead* pStream,
-                     XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
+  int32_t StartParse(IFX_FileRead* pStream, XFA_XDPPACKET ePacketID);
   int32_t DoParse(IFX_Pause* pPause = nullptr);
   int32_t ParseXMLData(const CFX_WideString& wsXML,
                        CFDE_XMLNode*& pXMLNode,
@@ -82,51 +83,4 @@ class CXFA_SimpleParser {
   friend class CXFA_DocumentParser;
 };
 
-class CXFA_DocumentParser {
- public:
-  explicit CXFA_DocumentParser(CXFA_FFNotify* pNotify);
-  ~CXFA_DocumentParser();
-
-  int32_t StartParse(IFX_FileRead* pStream,
-                     XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
-  int32_t DoParse(IFX_Pause* pPause = nullptr);
-
-  CFDE_XMLDoc* GetXMLDoc() const;
-  CXFA_FFNotify* GetNotify() const;
-  CXFA_Document* GetDocument() const;
-  void CloseParser();
-
- protected:
-  CXFA_SimpleParser m_nodeParser;
-  CXFA_FFNotify* m_pNotify;
-  std::unique_ptr<CXFA_Document> m_pDocument;
-};
-
-class CXFA_XMLParser : public CFDE_XMLParser {
- public:
-  CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream);
-  ~CXFA_XMLParser() override;
-
-  // CFDE_XMLParser
-  void Release() override;
-  int32_t DoParser(IFX_Pause* pPause) override;
-
-  FX_FILESIZE m_nStart[2];
-  size_t m_nSize[2];
-  FX_FILESIZE m_nElementStart;
-  uint16_t m_dwCheckStatus;
-  uint16_t m_dwCurrentCheckStatus;
-
- protected:
-  CFDE_XMLNode* m_pRoot;
-  IFX_Stream* m_pStream;
-  CFDE_XMLSyntaxParser* m_pParser;
-  CFDE_XMLNode* m_pParent;
-  CFDE_XMLNode* m_pChild;
-  CFX_StackTemplate<CFDE_XMLNode*> m_NodeStack;
-  CFX_WideString m_ws1;
-  CFX_WideString m_ws2;
-  FDE_XmlSyntaxResult m_syntaxParserResult;
-};
-
-#endif  // XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
+#endif  // XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_

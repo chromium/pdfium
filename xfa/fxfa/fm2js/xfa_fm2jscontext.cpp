@@ -17,7 +17,6 @@
 #include "xfa/fxfa/fm2js/xfa_program.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
-#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
 
 namespace {

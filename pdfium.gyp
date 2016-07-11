@@ -961,7 +961,7 @@
       'conditions': [
         ['pdf_enable_xfa==1', {
           'sources': [
-            'xfa/fxfa/parser/xfa_parser_imp_embeddertest.cpp',
+            'xfa/fxfa/parser/cxfa_simple_parser_embeddertest.cpp',
           ],
         }],
         ['pdf_enable_v8==1', {
