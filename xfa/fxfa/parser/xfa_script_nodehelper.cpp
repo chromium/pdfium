@@ -26,54 +26,51 @@ CXFA_NodeHelper::CXFA_NodeHelper()
 
 CXFA_NodeHelper::~CXFA_NodeHelper() {}
 
-CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetOneChild(
-    CXFA_Node* parent,
-    const FX_WCHAR* pwsName,
-    FX_BOOL bIsClassName) {
+CXFA_Node* CXFA_NodeHelper::ResolveNodes_GetOneChild(CXFA_Node* parent,
+                                                     const FX_WCHAR* pwsName,
+                                                     FX_BOOL bIsClassName) {
   if (!parent) {
     return nullptr;
   }
   CXFA_NodeArray siblings;
   uint32_t uNameHash = FX_HashCode_GetW(CFX_WideStringC(pwsName), false);
-  XFA_NodeAcc_TraverseAnySiblings(parent, uNameHash, &siblings, bIsClassName);
+  NodeAcc_TraverseAnySiblings(parent, uNameHash, &siblings, bIsClassName);
   if (siblings.GetSize() == 0) {
     return nullptr;
   }
   return siblings[0];
 }
 
-int32_t CXFA_NodeHelper::XFA_CountSiblings(CXFA_Node* pNode,
-                                           XFA_LOGIC_TYPE eLogicType,
-                                           CXFA_NodeArray* pSiblings,
-                                           FX_BOOL bIsClassName) {
+int32_t CXFA_NodeHelper::CountSiblings(CXFA_Node* pNode,
+                                       XFA_LOGIC_TYPE eLogicType,
+                                       CXFA_NodeArray* pSiblings,
+                                       FX_BOOL bIsClassName) {
   if (!pNode)
     return 0;
-  CXFA_Node* parent =
-      XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
+  CXFA_Node* parent = ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
   if (!parent)
     return 0;
   const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
       parent->GetElementType(), pNode->GetElementType(), XFA_XDPPACKET_UNKNOWN);
   if (!pProperty && eLogicType == XFA_LOGIC_Transparent) {
-    parent = XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
+    parent = ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
     if (!parent) {
       return 0;
     }
   }
   if (bIsClassName) {
-    return XFA_NodeAcc_TraverseSiblings(parent, pNode->GetClassHashCode(),
-                                        pSiblings, eLogicType, bIsClassName);
+    return NodeAcc_TraverseSiblings(parent, pNode->GetClassHashCode(),
+                                    pSiblings, eLogicType, bIsClassName);
   } else {
-    return XFA_NodeAcc_TraverseSiblings(parent, pNode->GetNameHash(), pSiblings,
-                                        eLogicType, bIsClassName);
+    return NodeAcc_TraverseSiblings(parent, pNode->GetNameHash(), pSiblings,
+                                    eLogicType, bIsClassName);
   }
 }
 
-int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseAnySiblings(
-    CXFA_Node* parent,
-    uint32_t dNameHash,
-    CXFA_NodeArray* pSiblings,
-    FX_BOOL bIsClassName) {
+int32_t CXFA_NodeHelper::NodeAcc_TraverseAnySiblings(CXFA_Node* parent,
+                                                     uint32_t dNameHash,
+                                                     CXFA_NodeArray* pSiblings,
+                                                     FX_BOOL bIsClassName) {
   if (!parent || !pSiblings) {
     return 0;
   }
@@ -98,8 +95,8 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseAnySiblings(
     if (nCount > 0) {
       return nCount;
     }
-    nCount += XFA_NodeAcc_TraverseAnySiblings(child, dNameHash, pSiblings,
-                                              bIsClassName);
+    nCount +=
+        NodeAcc_TraverseAnySiblings(child, dNameHash, pSiblings, bIsClassName);
   }
   CXFA_NodeArray children;
   parent->GetNodeList(children, XFA_NODEFILTER_Children);
@@ -124,18 +121,18 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseAnySiblings(
     if (nCount > 0) {
       return nCount;
     }
-    nCount += XFA_NodeAcc_TraverseAnySiblings(child, dNameHash, pSiblings,
-                                              bIsClassName);
+    nCount +=
+        NodeAcc_TraverseAnySiblings(child, dNameHash, pSiblings, bIsClassName);
   }
   return nCount;
 }
 
-int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
-                                                      uint32_t dNameHash,
-                                                      CXFA_NodeArray* pSiblings,
-                                                      XFA_LOGIC_TYPE eLogicType,
-                                                      FX_BOOL bIsClassName,
-                                                      FX_BOOL bIsFindProperty) {
+int32_t CXFA_NodeHelper::NodeAcc_TraverseSiblings(CXFA_Node* parent,
+                                                  uint32_t dNameHash,
+                                                  CXFA_NodeArray* pSiblings,
+                                                  XFA_LOGIC_TYPE eLogicType,
+                                                  FX_BOOL bIsClassName,
+                                                  FX_BOOL bIsFindProperty) {
   if (!parent || !pSiblings) {
     return 0;
   }
@@ -164,8 +161,8 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
       }
       if (child->IsUnnamed() &&
           child->GetElementType() == XFA_Element::PageSet) {
-        nCount += XFA_NodeAcc_TraverseSiblings(child, dNameHash, pSiblings,
-                                               eLogicType, bIsClassName, FALSE);
+        nCount += NodeAcc_TraverseSiblings(child, dNameHash, pSiblings,
+                                           eLogicType, bIsClassName, FALSE);
       }
     }
     if (nCount > 0) {
@@ -198,18 +195,17 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
     if (eLogicType == XFA_LOGIC_NoTransparent) {
       continue;
     }
-    if (XFA_NodeIsTransparent(child) &&
+    if (NodeIsTransparent(child) &&
         child->GetElementType() != XFA_Element::PageSet) {
-      nCount += XFA_NodeAcc_TraverseSiblings(child, dNameHash, pSiblings,
-                                             eLogicType, bIsClassName, FALSE);
+      nCount += NodeAcc_TraverseSiblings(child, dNameHash, pSiblings,
+                                         eLogicType, bIsClassName, FALSE);
     }
   }
   return nCount;
 }
 
-CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetParent(
-    CXFA_Node* pNode,
-    XFA_LOGIC_TYPE eLogicType) {
+CXFA_Node* CXFA_NodeHelper::ResolveNodes_GetParent(CXFA_Node* pNode,
+                                                   XFA_LOGIC_TYPE eLogicType) {
   if (!pNode) {
     return nullptr;
   }
@@ -219,7 +215,7 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetParent(
   CXFA_Node* parent;
   CXFA_Node* node = pNode;
   while (TRUE) {
-    parent = XFA_ResolveNodes_GetParent(node);
+    parent = ResolveNodes_GetParent(node);
     if (!parent) {
       break;
     }
@@ -233,17 +229,16 @@ CXFA_Node* CXFA_NodeHelper::XFA_ResolveNodes_GetParent(
   return parent;
 }
 
-int32_t CXFA_NodeHelper::XFA_GetIndex(CXFA_Node* pNode,
-                                      XFA_LOGIC_TYPE eLogicType,
-                                      FX_BOOL bIsProperty,
-                                      FX_BOOL bIsClassIndex) {
-  CXFA_Node* parent =
-      XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
+int32_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
+                                  XFA_LOGIC_TYPE eLogicType,
+                                  FX_BOOL bIsProperty,
+                                  FX_BOOL bIsClassIndex) {
+  CXFA_Node* parent = ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
   if (!parent) {
     return 0;
   }
   if (!bIsProperty && eLogicType == XFA_LOGIC_Transparent) {
-    parent = XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
+    parent = ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
     if (!parent) {
       return 0;
     }
@@ -253,8 +248,8 @@ int32_t CXFA_NodeHelper::XFA_GetIndex(CXFA_Node* pNode,
     dwHashName = pNode->GetClassHashCode();
   }
   CXFA_NodeArray siblings;
-  int32_t iSize = XFA_NodeAcc_TraverseSiblings(parent, dwHashName, &siblings,
-                                               eLogicType, bIsClassIndex);
+  int32_t iSize = NodeAcc_TraverseSiblings(parent, dwHashName, &siblings,
+                                           eLogicType, bIsClassIndex);
   for (int32_t i = 0; i < iSize; ++i) {
     CXFA_Node* child = siblings[i];
     if (child == pNode) {
@@ -264,42 +259,42 @@ int32_t CXFA_NodeHelper::XFA_GetIndex(CXFA_Node* pNode,
   return 0;
 }
 
-void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode,
-                                            CFX_WideString& wsName,
-                                            FX_BOOL bIsAllPath,
-                                            XFA_LOGIC_TYPE eLogicType) {
+void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
+                                        CFX_WideString& wsName,
+                                        FX_BOOL bIsAllPath,
+                                        XFA_LOGIC_TYPE eLogicType) {
   wsName.clear();
   if (bIsAllPath) {
-    XFA_GetNameExpression(refNode, wsName, FALSE, eLogicType);
+    GetNameExpression(refNode, wsName, FALSE, eLogicType);
     CFX_WideString wsParent;
     CXFA_Node* parent =
-        XFA_ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
+        ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
     while (parent) {
-      XFA_GetNameExpression(parent, wsParent, FALSE, eLogicType);
+      GetNameExpression(parent, wsParent, FALSE, eLogicType);
       wsParent += L".";
       wsParent += wsName;
       wsName = wsParent;
-      parent = XFA_ResolveNodes_GetParent(parent, XFA_LOGIC_NoTransparent);
+      parent = ResolveNodes_GetParent(parent, XFA_LOGIC_NoTransparent);
     }
     return;
   }
 
   CFX_WideString ws;
-  FX_BOOL bIsProperty = XFA_NodeIsProperty(refNode);
+  FX_BOOL bIsProperty = NodeIsProperty(refNode);
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
     ws = refNode->GetClassName();
     wsName.Format(L"#%s[%d]", ws.c_str(),
-                  XFA_GetIndex(refNode, eLogicType, bIsProperty, TRUE));
+                  GetIndex(refNode, eLogicType, bIsProperty, TRUE));
     return;
   }
   ws = refNode->GetCData(XFA_ATTRIBUTE_Name);
   ws.Replace(L".", L"\\.");
   wsName.Format(L"%s[%d]", ws.c_str(),
-                XFA_GetIndex(refNode, eLogicType, bIsProperty, FALSE));
+                GetIndex(refNode, eLogicType, bIsProperty, FALSE));
 }
 
-FX_BOOL CXFA_NodeHelper::XFA_NodeIsTransparent(CXFA_Node* refNode) {
+FX_BOOL CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {
   if (!refNode) {
     return FALSE;
   }
@@ -312,8 +307,7 @@ FX_BOOL CXFA_NodeHelper::XFA_NodeIsTransparent(CXFA_Node* refNode) {
   return FALSE;
 }
 
-FX_BOOL CXFA_NodeHelper::XFA_CreateNode_ForCondition(
-    CFX_WideString& wsCondition) {
+FX_BOOL CXFA_NodeHelper::CreateNode_ForCondition(CFX_WideString& wsCondition) {
   int32_t iLen = wsCondition.GetLength();
   CFX_WideString wsIndex(L"0");
   FX_BOOL bAll = FALSE;
@@ -351,7 +345,7 @@ FX_BOOL CXFA_NodeHelper::XFA_CreateNode_ForCondition(
   return FALSE;
 }
 
-FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
+FX_BOOL CXFA_NodeHelper::ResolveNodes_CreateNode(
     CFX_WideString wsName,
     CFX_WideString wsCondition,
     FX_BOOL bLastNode,
@@ -371,7 +365,7 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
     wsName = wsName.Right(wsName.GetLength() - 1);
   }
   if (m_iCreateCount == 0) {
-    XFA_CreateNode_ForCondition(wsCondition);
+    CreateNode_ForCondition(wsCondition);
   }
   if (bIsClassName) {
     XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringC());
@@ -412,7 +406,7 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
   return bResult;
 }
 
-void CXFA_NodeHelper::XFA_SetCreateNodeType(CXFA_Node* refNode) {
+void CXFA_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
   if (!refNode) {
     return;
   }
@@ -427,9 +421,8 @@ void CXFA_NodeHelper::XFA_SetCreateNodeType(CXFA_Node* refNode) {
   }
 }
 
-FX_BOOL CXFA_NodeHelper::XFA_NodeIsProperty(CXFA_Node* refNode) {
-  CXFA_Node* parent =
-      XFA_ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
+FX_BOOL CXFA_NodeHelper::NodeIsProperty(CXFA_Node* refNode) {
+  CXFA_Node* parent = ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
   return parent && refNode &&
          XFA_GetPropertyOfElement(parent->GetElementType(),
                                   refNode->GetElementType(),

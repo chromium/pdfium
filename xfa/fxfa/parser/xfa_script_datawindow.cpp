@@ -20,34 +20,26 @@ CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
 
 CScript_DataWindow::~CScript_DataWindow() {}
 
-void CScript_DataWindow::Script_DataWindow_MoveCurrentRecord(
-    CFXJSE_Arguments* pArguments) {}
+void CScript_DataWindow::MoveCurrentRecord(CFXJSE_Arguments* pArguments) {}
 
-void CScript_DataWindow::Script_DataWindow_Record(
-    CFXJSE_Arguments* pArguments) {}
+void CScript_DataWindow::Record(CFXJSE_Arguments* pArguments) {}
 
-void CScript_DataWindow::Script_DataWindow_GotoRecord(
-    CFXJSE_Arguments* pArguments) {}
+void CScript_DataWindow::GotoRecord(CFXJSE_Arguments* pArguments) {}
 
-void CScript_DataWindow::Script_DataWindow_IsRecordGroup(
-    CFXJSE_Arguments* pArguments) {}
+void CScript_DataWindow::IsRecordGroup(CFXJSE_Arguments* pArguments) {}
 
-void CScript_DataWindow::Script_DataWindow_RecordsBefore(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {}
+void CScript_DataWindow::RecordsBefore(CFXJSE_Value* pValue,
+                                       FX_BOOL bSetting,
+                                       XFA_ATTRIBUTE eAttribute) {}
 
-void CScript_DataWindow::Script_DataWindow_CurrentRecordNumber(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {}
+void CScript_DataWindow::CurrentRecordNumber(CFXJSE_Value* pValue,
+                                             FX_BOOL bSetting,
+                                             XFA_ATTRIBUTE eAttribute) {}
 
-void CScript_DataWindow::Script_DataWindow_RecordsAfter(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {}
+void CScript_DataWindow::RecordsAfter(CFXJSE_Value* pValue,
+                                      FX_BOOL bSetting,
+                                      XFA_ATTRIBUTE eAttribute) {}
 
-void CScript_DataWindow::Script_DataWindow_IsDefined(CFXJSE_Value* pValue,
-                                                     FX_BOOL bSetting,
-                                                     XFA_ATTRIBUTE eAttribute) {
-}
+void CScript_DataWindow::IsDefined(CFXJSE_Value* pValue,
+                                   FX_BOOL bSetting,
+                                   XFA_ATTRIBUTE eAttribute) {}

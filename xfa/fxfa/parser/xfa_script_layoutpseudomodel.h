@@ -23,43 +23,37 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
   explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
   ~CScript_LayoutPseudoModel() override;
 
-  void Script_LayoutPseudoModel_Ready(CFXJSE_Value* pValue,
-                                      FX_BOOL bSetting,
-                                      XFA_ATTRIBUTE eAttribute);
+  void Ready(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
 
-  void Script_LayoutPseudoModel_HWXY(CFXJSE_Arguments* pArguments,
-                                     XFA_LAYOUTMODEL_HWXY layoutModel);
-  void Script_LayoutPseudoModel_H(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_W(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_X(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_Y(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_NumberedPageCount(CFXJSE_Arguments* pArguments,
-                                                  FX_BOOL bNumbered);
-  void Script_LayoutPseudoModel_PageCount(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_PageSpan(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_Page(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_PageContent(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_AbsPageCount(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_AbsPageCountInBatch(
-      CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_SheetCountInBatch(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_Relayout(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_AbsPageSpan(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_AbsPageInBatch(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_SheetInBatch(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_Sheet(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_RelayoutPageArea(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_SheetCount(CFXJSE_Arguments* pArguments);
-  void Script_LayoutPseudoModel_AbsPage(CFXJSE_Arguments* pArguments);
+  void HWXY(CFXJSE_Arguments* pArguments, XFA_LAYOUTMODEL_HWXY layoutModel);
+  void H(CFXJSE_Arguments* pArguments);
+  void W(CFXJSE_Arguments* pArguments);
+  void X(CFXJSE_Arguments* pArguments);
+  void Y(CFXJSE_Arguments* pArguments);
+  void NumberedPageCount(CFXJSE_Arguments* pArguments, FX_BOOL bNumbered);
+  void PageCount(CFXJSE_Arguments* pArguments);
+  void PageSpan(CFXJSE_Arguments* pArguments);
+  void Page(CFXJSE_Arguments* pArguments);
+  void PageContent(CFXJSE_Arguments* pArguments);
+  void AbsPageCount(CFXJSE_Arguments* pArguments);
+  void AbsPageCountInBatch(CFXJSE_Arguments* pArguments);
+  void SheetCountInBatch(CFXJSE_Arguments* pArguments);
+  void Relayout(CFXJSE_Arguments* pArguments);
+  void AbsPageSpan(CFXJSE_Arguments* pArguments);
+  void AbsPageInBatch(CFXJSE_Arguments* pArguments);
+  void SheetInBatch(CFXJSE_Arguments* pArguments);
+  void Sheet(CFXJSE_Arguments* pArguments);
+  void RelayoutPageArea(CFXJSE_Arguments* pArguments);
+  void SheetCount(CFXJSE_Arguments* pArguments);
+  void AbsPage(CFXJSE_Arguments* pArguments);
 
  protected:
-  void Script_LayoutPseudoModel_GetObjArray(CXFA_LayoutProcessor* pDocLayout,
-                                            int32_t iPageNo,
-                                            const CFX_WideString& wsType,
-                                            FX_BOOL bOnPageArea,
-                                            CXFA_NodeArray& retArray);
-  void Script_LayoutPseudoModel_PageImp(CFXJSE_Arguments* pArguments,
-                                        FX_BOOL bAbsPage);
+  void GetObjArray(CXFA_LayoutProcessor* pDocLayout,
+                   int32_t iPageNo,
+                   const CFX_WideString& wsType,
+                   FX_BOOL bOnPageArea,
+                   CXFA_NodeArray& retArray);
+  void PageImp(CFXJSE_Arguments* pArguments, FX_BOOL bAbsPage);
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_

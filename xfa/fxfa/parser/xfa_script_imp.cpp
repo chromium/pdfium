@@ -545,7 +545,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
   }
   FX_BOOL bNextCreate = FALSE;
   if (dwStyles & XFA_RESOLVENODE_CreateNode) {
-    m_ResolveProcessor->GetNodeHelper()->XFA_SetCreateNodeType(bindNode);
+    m_ResolveProcessor->GetNodeHelper()->SetCreateNodeType(bindNode);
   }
   m_ResolveProcessor->GetNodeHelper()->m_pCreateParent = nullptr;
   m_ResolveProcessor->GetNodeHelper()->m_iCurAllStart = -1;
@@ -561,9 +561,8 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
     nNodes = findNodes.GetSize();
     int32_t i = 0;
     rndFind.m_dwStyles = dwStyles;
-    m_ResolveProcessor->m_iCurStart = nStart;
-    nStart = m_ResolveProcessor->XFA_ResolveNodes_GetFilter(wsExpression,
-                                                            nStart, rndFind);
+    m_ResolveProcessor->SetCurStart(nStart);
+    nStart = m_ResolveProcessor->GetFilter(wsExpression, nStart, rndFind);
     if (nStart < 1) {
       if ((dwStyles & XFA_RESOLVENODE_CreateNode) && !bNextCreate) {
         CXFA_Node* pDataNode = nullptr;
@@ -591,7 +590,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
     }
     if (bNextCreate) {
       FX_BOOL bCreate =
-          m_ResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
+          m_ResolveProcessor->GetNodeHelper()->ResolveNodes_CreateNode(
               rndFind.m_wsName, rndFind.m_wsCondition,
               nStart == wsExpression.GetLength(), this);
       if (bCreate) {
@@ -607,16 +606,14 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
            (dwStyles & XFA_RESOLVENODE_CreateNode)) &&
           nNodes > 1) {
         CXFA_ResolveNodesData rndBind;
-        m_ResolveProcessor->XFA_ResolveNodes_GetFilter(wsExpression, nStart,
-                                                       rndBind);
-        m_ResolveProcessor->XFA_ResolveNode_SetIndexDataBind(
-            rndBind.m_wsCondition, i, nNodes);
+        m_ResolveProcessor->GetFilter(wsExpression, nStart, rndBind);
+        m_ResolveProcessor->SetIndexDataBind(rndBind.m_wsCondition, i, nNodes);
         bDataBind = TRUE;
       }
       rndFind.m_CurNode = findNodes[i++];
       rndFind.m_nLevel = nLevel;
       rndFind.m_dwFlag = XFA_RESOVENODE_RSTYPE_Nodes;
-      nRet = m_ResolveProcessor->XFA_ResolveNodes(rndFind);
+      nRet = m_ResolveProcessor->Resolve(rndFind);
       if (nRet < 1) {
         continue;
       }
@@ -649,7 +646,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
           m_ResolveProcessor->GetNodeHelper()->m_iCreateCount = 1;
         }
         FX_BOOL bCreate =
-            m_ResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
+            m_ResolveProcessor->GetNodeHelper()->ResolveNodes_CreateNode(
                 rndFind.m_wsName, rndFind.m_wsCondition,
                 nStart == wsExpression.GetLength(), this);
         if (bCreate) {
@@ -680,8 +677,8 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
   }
   if (dwStyles & (XFA_RESOLVENODE_CreateNode | XFA_RESOLVENODE_Bind |
                   XFA_RESOLVENODE_BindNew)) {
-    m_ResolveProcessor->XFA_ResolveNode_SetResultCreateNode(
-        resolveNodeRS, rndFind.m_wsCondition);
+    m_ResolveProcessor->SetResultCreateNode(resolveNodeRS,
+                                            rndFind.m_wsCondition);
     if (!bNextCreate && (dwStyles & XFA_RESOLVENODE_CreateNode)) {
       resolveNodeRS.dwFlags = XFA_RESOVENODE_RSTYPE_ExistNodes;
     }
@@ -712,21 +709,19 @@ CFXJSE_Value* CXFA_ScriptContext::GetJSValueFromMap(CXFA_Object* pObject) {
 }
 int32_t CXFA_ScriptContext::GetIndexByName(CXFA_Node* refNode) {
   CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  return lpNodeHelper->XFA_GetIndex(refNode, XFA_LOGIC_Transparent,
-                                    lpNodeHelper->XFA_NodeIsProperty(refNode),
-                                    FALSE);
+  return lpNodeHelper->GetIndex(refNode, XFA_LOGIC_Transparent,
+                                lpNodeHelper->NodeIsProperty(refNode), FALSE);
 }
 int32_t CXFA_ScriptContext::GetIndexByClassName(CXFA_Node* refNode) {
   CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  return lpNodeHelper->XFA_GetIndex(refNode, XFA_LOGIC_Transparent,
-                                    lpNodeHelper->XFA_NodeIsProperty(refNode),
-                                    TRUE);
+  return lpNodeHelper->GetIndex(refNode, XFA_LOGIC_Transparent,
+                                lpNodeHelper->NodeIsProperty(refNode), TRUE);
 }
 void CXFA_ScriptContext::GetSomExpression(CXFA_Node* refNode,
                                           CFX_WideString& wsExpression) {
   CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  lpNodeHelper->XFA_GetNameExpression(refNode, wsExpression, TRUE,
-                                      XFA_LOGIC_Transparent);
+  lpNodeHelper->GetNameExpression(refNode, wsExpression, TRUE,
+                                  XFA_LOGIC_Transparent);
 }
 void CXFA_ScriptContext::SetNodesOfRunScript(CXFA_NodeArray* pArray) {
   m_pScriptNodeArray = pArray;

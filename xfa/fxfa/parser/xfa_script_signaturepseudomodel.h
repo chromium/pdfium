@@ -12,13 +12,13 @@
 
 class CScript_SignaturePseudoModel : public CXFA_Object {
  public:
-  CScript_SignaturePseudoModel(CXFA_Document* pDocument);
+  explicit CScript_SignaturePseudoModel(CXFA_Document* pDocument);
   ~CScript_SignaturePseudoModel() override;
 
-  void Script_SignaturePseudoModel_Verify(CFXJSE_Arguments* pArguments);
-  void Script_SignaturePseudoModel_Sign(CFXJSE_Arguments* pArguments);
-  void Script_SignaturePseudoModel_Enumerate(CFXJSE_Arguments* pArguments);
-  void Script_SignaturePseudoModel_Clear(CFXJSE_Arguments* pArguments);
+  void Verify(CFXJSE_Arguments* pArguments);
+  void Sign(CFXJSE_Arguments* pArguments);
+  void Enumerate(CFXJSE_Arguments* pArguments);
+  void Clear(CFXJSE_Arguments* pArguments);
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_SIGNATUREPSEUDOMODEL_H_

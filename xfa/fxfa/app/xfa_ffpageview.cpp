@@ -91,6 +91,24 @@ bool PageWidgetFilter(CXFA_FFWidget* pWidget,
   return (dwFilter & dwStatus) == dwFilter;
 }
 
+bool IsLayoutElement(XFA_Element eElement, bool bLayoutContainer) {
+  switch (eElement) {
+    case XFA_Element::Draw:
+    case XFA_Element::Field:
+    case XFA_Element::InstanceManager:
+      return !bLayoutContainer;
+    case XFA_Element::Area:
+    case XFA_Element::Subform:
+    case XFA_Element::ExclGroup:
+    case XFA_Element::SubformSet:
+    case XFA_Element::PageArea:
+    case XFA_Element::Form:
+      return true;
+    default:
+      return false;
+  }
+}
+
 }  // namespace
 
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
@@ -373,8 +391,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
       CXFA_TabParam* pParam = new CXFA_TabParam;
       pParam->m_pWidget = hWidget;
       tabParams.Add(pParam);
-      if (XFA_IsLayoutElement(pSearchItem->GetFormNode()->GetElementType(),
-                              TRUE)) {
+      if (IsLayoutElement(pSearchItem->GetFormNode()->GetElementType(), true)) {
         OrderContainer(sIterator, pSearchItem, pParam, bCurrentItem,
                        bContentArea, bMarsterPage);
       }

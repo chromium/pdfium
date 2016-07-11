@@ -20,13 +20,8 @@ CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
                   XFA_ObjectType::Object,
                   XFA_Element::LogPseudoModel) {}
 CScript_LogPseudoModel::~CScript_LogPseudoModel() {}
-void CScript_LogPseudoModel::Script_LogPseudoModel_Message(
-    CFXJSE_Arguments* pArguments) {}
-void CScript_LogPseudoModel::Script_LogPseudoModel_TraceEnabled(
-    CFXJSE_Arguments* pArguments) {}
-void CScript_LogPseudoModel::Script_LogPseudoModel_TraceActivate(
-    CFXJSE_Arguments* pArguments) {}
-void CScript_LogPseudoModel::Script_LogPseudoModel_TraceDeactivate(
-    CFXJSE_Arguments* pArguments) {}
-void CScript_LogPseudoModel::Script_LogPseudoModel_Trace(
-    CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::Message(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::TraceEnabled(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::TraceActivate(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::TraceDeactivate(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::Trace(CFXJSE_Arguments* pArguments) {}

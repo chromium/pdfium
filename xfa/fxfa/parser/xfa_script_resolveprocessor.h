@@ -35,44 +35,44 @@ class CXFA_ResolveProcessor {
   CXFA_ResolveProcessor();
   ~CXFA_ResolveProcessor();
 
-  int32_t XFA_ResolveNodes(CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_AnyChild(CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_Dollar(CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_Excalmatory(CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_NumberSign(CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_Asterisk(CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_Normal(CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_ForAttributeRs(CXFA_Object* curNode,
-                                          CXFA_ResolveNodesData& rnd,
-                                          const CFX_WideStringC& strAttr);
-  void XFA_ResolveNode_ConditionArray(int32_t iCurIndex,
-                                      CFX_WideString wsCondition,
-                                      int32_t iFoundCount,
-                                      CXFA_ResolveNodesData& rnd);
-  void XFA_ResolveNode_DoPredicateFilter(int32_t iCurIndex,
-                                         CFX_WideString wsCondition,
-                                         int32_t iFoundCount,
-                                         CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNodes_GetFilter(const CFX_WideStringC& wsExpression,
-                                     int32_t nStart,
-                                     CXFA_ResolveNodesData& rnd);
-  void XFA_ResolveNode_FilterCondition(CXFA_ResolveNodesData& rnd,
-                                       CFX_WideString wsCondition);
-  int32_t XFA_ResolveNodes_PopStack(CFX_Int32Array& stack);
-  void XFA_ResolveNodes_SetStylesForChild(uint32_t dwParentStyles,
-                                          CXFA_ResolveNodesData& rnd);
-  int32_t XFA_ResolveNode_SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS,
-                                              CFX_WideString& wsLastCondition);
-  void XFA_ResolveNode_SetIndexDataBind(CFX_WideString& wsNextCondition,
-                                        int32_t& iIndex,
-                                        int32_t iCount);
+  int32_t Resolve(CXFA_ResolveNodesData& rnd);
+  int32_t GetFilter(const CFX_WideStringC& wsExpression,
+                    int32_t nStart,
+                    CXFA_ResolveNodesData& rnd);
+  int32_t SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS,
+                              CFX_WideString& wsLastCondition);
+  void SetIndexDataBind(CFX_WideString& wsNextCondition,
+                        int32_t& iIndex,
+                        int32_t iCount);
+  void SetCurStart(int32_t start) { m_iCurStart = start; }
+
   CXFA_NodeHelper* GetNodeHelper() { return m_pNodeHelper; }
 
  private:
-  CXFA_NodeHelper* m_pNodeHelper;
+  int32_t ResolveForAttributeRs(CXFA_Object* curNode,
+                                CXFA_ResolveNodesData& rnd,
+                                const CFX_WideStringC& strAttr);
+  int32_t ResolveAnyChild(CXFA_ResolveNodesData& rnd);
+  int32_t ResolveDollar(CXFA_ResolveNodesData& rnd);
+  int32_t ResolveExcalmatory(CXFA_ResolveNodesData& rnd);
+  int32_t ResolveNumberSign(CXFA_ResolveNodesData& rnd);
+  int32_t ResolveAsterisk(CXFA_ResolveNodesData& rnd);
+  int32_t ResolveNormal(CXFA_ResolveNodesData& rnd);
+  int32_t ResolvePopStack(CFX_Int32Array& stack);
+  void SetStylesForChild(uint32_t dwParentStyles, CXFA_ResolveNodesData& rnd);
 
- public:
+  void ConditionArray(int32_t iCurIndex,
+                      CFX_WideString wsCondition,
+                      int32_t iFoundCount,
+                      CXFA_ResolveNodesData& rnd);
+  void DoPredicateFilter(int32_t iCurIndex,
+                         CFX_WideString wsCondition,
+                         int32_t iFoundCount,
+                         CXFA_ResolveNodesData& rnd);
+  void FilterCondition(CXFA_ResolveNodesData& rnd, CFX_WideString wsCondition);
+
   int32_t m_iCurStart;
+  CXFA_NodeHelper* m_pNodeHelper;
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_

@@ -24,8 +24,7 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
                   XFA_ObjectType::Object,
                   XFA_Element::SignaturePseudoModel) {}
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
-void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(
-    CFXJSE_Arguments* pArguments) {
+void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 4) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"verify");
@@ -45,8 +44,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(
   if (pValue)
     pValue->SetInteger(bVerify);
 }
-void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
-    CFXJSE_Arguments* pArguments) {
+void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 3 || iLength > 7) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sign");
@@ -77,8 +75,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
   if (pValue)
     pValue->SetBoolean(bSign);
 }
-void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(
-    CFXJSE_Arguments* pArguments) {
+void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 0) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"enumerate");
@@ -95,8 +92,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(
   pArguments->GetReturnValue()->Assign(
       m_pDocument->GetScriptContext()->GetJSValueFromMap(pList));
 }
-void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(
-    CFXJSE_Arguments* pArguments) {
+void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 2) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clear");

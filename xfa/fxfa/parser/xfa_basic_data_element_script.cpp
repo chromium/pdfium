@@ -126,15 +126,14 @@ const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
 };
 
 const XFA_METHODINFO g_SomMethodData[] = {
-    {0x3c752495, L"verify", (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::
-                                Script_SignaturePseudoModel_Verify},
-    {0xa68635f1, L"sign", (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::
-                              Script_SignaturePseudoModel_Sign},
+    {0x3c752495, L"verify",
+     (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::Verify},
+    {0xa68635f1, L"sign",
+     (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::Sign},
     {0xa7f2c5e6, L"enumerate",
-     (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::
-         Script_SignaturePseudoModel_Enumerate},
-    {0xd8ed1467, L"clear", (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::
-                               Script_SignaturePseudoModel_Clear},
+     (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::Enumerate},
+    {0xd8ed1467, L"clear",
+     (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::Clear},
     {0x4bdcce13, L"execute",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_WsdlConnection_Execute},
     {0x1c296ba4, L"restore",
@@ -165,10 +164,9 @@ const XFA_METHODINFO g_SomMethodData[] = {
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Field_AddItem},
     {0xef8ce48f, L"execValidate",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Field_ExecValidate},
-    {0x461079ef, L"emit", (XFA_METHOD_CALLBACK)&CScript_EventPseudoModel::
-                              Script_EventPseudoModel_Emit},
-    {0xfec90c63, L"reset", (XFA_METHOD_CALLBACK)&CScript_EventPseudoModel::
-                               Script_EventPseudoModel_Reset},
+    {0x461079ef, L"emit", (XFA_METHOD_CALLBACK)&CScript_EventPseudoModel::Emit},
+    {0xfec90c63, L"reset",
+     (XFA_METHOD_CALLBACK)&CScript_EventPseudoModel::Reset},
     {0xfb0b007, L"execEvent",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_ExclGroup_ExecEvent},
     {0x3d832221, L"selectedMember",
@@ -189,88 +187,71 @@ const XFA_METHODINFO g_SomMethodData[] = {
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Subform_GetInvalidObjects},
     {0xef8ce48f, L"execValidate",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Subform_ExecValidate},
-    {0xa366b7c, L"exportData", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                   Script_HostPseudoModel_ExportData},
-    {0x16cc226c, L"gotoURL", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                 Script_HostPseudoModel_GotoURL},
-    {0x1e0722f5, L"pageDown", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_PageDown},
-    {0x3e66cb2c, L"setFocus", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_SetFocus},
-    {0x4ac9faae, L"openList", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_OpenList},
-    {0x7b89714f, L"response", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_Response},
+    {0xa366b7c, L"exportData",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::ExportData},
+    {0x16cc226c, L"gotoURL",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::GotoURL},
+    {0x1e0722f5, L"pageDown",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::PageDown},
+    {0x3e66cb2c, L"setFocus",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::SetFocus},
+    {0x4ac9faae, L"openList",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::OpenList},
+    {0x7b89714f, L"response",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::Response},
     {0x7fd9fd58, L"documentInBatch",
-     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_DocumentInBatch},
-    {0xaf1d019d, L"resetData", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                   Script_HostPseudoModel_ResetData},
-    {0xb07be13c, L"beep", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                              Script_HostPseudoModel_Beep},
-    {0xb1882ca0, L"getFocus", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_GetFocus},
-    {0xbf4ba9ee, L"messageBox", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                    Script_HostPseudoModel_MessageBox},
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::DocumentInBatch},
+    {0xaf1d019d, L"resetData",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::ResetData},
+    {0xb07be13c, L"beep", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::Beep},
+    {0xb1882ca0, L"getFocus",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::GetFocus},
+    {0xbf4ba9ee, L"messageBox",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::MessageBox},
     {0xd6d4dbc1, L"documentCountInBatch",
-     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_DocumentCountInBatch},
-    {0xdd7676ed, L"print", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                               Script_HostPseudoModel_Print},
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::DocumentCountInBatch},
+    {0xdd7676ed, L"print",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::Print},
     {0xe2f863d0, L"currentDateTime",
-     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_CurrentDateTime},
-    {0xf995d0f5, L"importData", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                    Script_HostPseudoModel_ImportData},
-    {0xfeb96b62, L"pageUp", (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::
-                                Script_HostPseudoModel_PageUp},
-    {0x68, L"h", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                     Script_LayoutPseudoModel_H},
-    {0x77, L"w", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                     Script_LayoutPseudoModel_W},
-    {0x78, L"x", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                     Script_LayoutPseudoModel_X},
-    {0x79, L"y", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                     Script_LayoutPseudoModel_Y},
-    {0x5460206, L"pageCount", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                                  Script_LayoutPseudoModel_PageCount},
-    {0x5eb5b0f, L"pageSpan", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                                 Script_LayoutPseudoModel_PageSpan},
-    {0x10f1b1bd, L"page", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                              Script_LayoutPseudoModel_Page},
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::CurrentDateTime},
+    {0xf995d0f5, L"importData",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::ImportData},
+    {0xfeb96b62, L"pageUp",
+     (XFA_METHOD_CALLBACK)&CScript_HostPseudoModel::PageUp},
+    {0x68, L"h", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::H},
+    {0x77, L"w", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::W},
+    {0x78, L"x", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::X},
+    {0x79, L"y", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::Y},
+    {0x5460206, L"pageCount",
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::PageCount},
+    {0x5eb5b0f, L"pageSpan",
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::PageSpan},
+    {0x10f1b1bd, L"page",
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::Page},
     {0x1c1e6318, L"pageContent",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_PageContent},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::PageContent},
     {0x1c1f4a5c, L"absPageCount",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_AbsPageCount},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::AbsPageCount},
     {0x1ec47db5, L"absPageCountInBatch",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_AbsPageCountInBatch},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::AbsPageCountInBatch},
     {0x2e4ecbdb, L"sheetCountInBatch",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_SheetCountInBatch},
-    {0x2fcff4b5, L"relayout", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                                  Script_LayoutPseudoModel_Relayout},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::SheetCountInBatch},
+    {0x2fcff4b5, L"relayout",
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::Relayout},
     {0x3bf1c2a5, L"absPageSpan",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_AbsPageSpan},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::AbsPageSpan},
     {0x5775c2cc, L"absPageInBatch",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_AbsPageInBatch},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::AbsPageInBatch},
     {0x8c5feb32, L"sheetInBatch",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_SheetInBatch},
-    {0x8f3a8379, L"sheet", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                               Script_LayoutPseudoModel_Sheet},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::SheetInBatch},
+    {0x8f3a8379, L"sheet",
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::Sheet},
     {0x96f3c4cb, L"relayoutPageArea",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_RelayoutPageArea},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::RelayoutPageArea},
     {0xd2a4a542, L"sheetCount",
-     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-         Script_LayoutPseudoModel_SheetCount},
-    {0xe74f0653, L"absPage", (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::
-                                 Script_LayoutPseudoModel_AbsPage},
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::SheetCount},
+    {0xe74f0653, L"absPage",
+     (XFA_METHOD_CALLBACK)&CScript_LayoutPseudoModel::AbsPage},
     {0x44c352ad, L"formNodes",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Template_FormNodes},
     {0x45efb847, L"remerge",
@@ -286,14 +267,12 @@ const XFA_METHODINFO g_SomMethodData[] = {
     {0xef8ce48f, L"execValidate",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Template_ExecValidate},
     {0x4cc1c0f9, L"moveCurrentRecord",
-     (XFA_METHOD_CALLBACK)&CScript_DataWindow::
-         Script_DataWindow_MoveCurrentRecord},
-    {0x5779d65f, L"record",
-     (XFA_METHOD_CALLBACK)&CScript_DataWindow::Script_DataWindow_Record},
+     (XFA_METHOD_CALLBACK)&CScript_DataWindow::MoveCurrentRecord},
+    {0x5779d65f, L"record", (XFA_METHOD_CALLBACK)&CScript_DataWindow::Record},
     {0x8a476498, L"gotoRecord",
-     (XFA_METHOD_CALLBACK)&CScript_DataWindow::Script_DataWindow_GotoRecord},
+     (XFA_METHOD_CALLBACK)&CScript_DataWindow::GotoRecord},
     {0xaac241c8, L"isRecordGroup",
-     (XFA_METHOD_CALLBACK)&CScript_DataWindow::Script_DataWindow_IsRecordGroup},
+     (XFA_METHOD_CALLBACK)&CScript_DataWindow::IsRecordGroup},
     {0x1c6f4277, L"evaluate",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Manifest_Evaluate},
     {0x2afec2cc, L"moveInstance",
@@ -320,18 +299,15 @@ const XFA_METHODINFO g_SomMethodData[] = {
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Form_ExecCalculate},
     {0xef8ce48f, L"execValidate",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Form_ExecValidate},
-    {0x60490a85, L"message", (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::
-                                 Script_LogPseudoModel_Message},
+    {0x60490a85, L"message",
+     (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::Message},
     {0x60ecfcc9, L"traceDeactivate",
-     (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::
-         Script_LogPseudoModel_TraceDeactivate},
+     (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::TraceDeactivate},
     {0x86a0f4c0, L"traceActivate",
-     (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::
-         Script_LogPseudoModel_TraceActivate},
-    {0x93eac39a, L"traceEnabled", (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::
-                                      Script_LogPseudoModel_TraceEnabled},
-    {0xd1227e6f, L"trace",
-     (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::Script_LogPseudoModel_Trace},
+     (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::TraceActivate},
+    {0x93eac39a, L"traceEnabled",
+     (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::TraceEnabled},
+    {0xd1227e6f, L"trace", (XFA_METHOD_CALLBACK)&CScript_LogPseudoModel::Trace},
     {0x36c0ee14, L"getAttribute",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_Packet_GetAttribute},
     {0x5468e2a0, L"setAttribute",
@@ -1483,62 +1459,54 @@ const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     {0xbc254332, L"usehref",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Usehref, XFA_SCRIPT_Basic},
-    {0xd843798, L"fullText", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                                 Script_EventPseudoModel_FullText,
-     -1, XFA_SCRIPT_Basic},
-    {0x1b6d1cf5, L"reenter", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                                 Script_EventPseudoModel_Reenter,
-     -1, XFA_SCRIPT_Basic},
+    {0xd843798, L"fullText",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::FullText, -1,
+     XFA_SCRIPT_Basic},
+    {0x1b6d1cf5, L"reenter",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::Reenter, -1,
+     XFA_SCRIPT_Basic},
     {0x1e6ffa9a, L"prevContentType",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_PrevContentType,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::PrevContentType, -1,
+     XFA_SCRIPT_Basic},
     {0x25a3c206, L"soapFaultString",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_SoapFaultString,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::SoapFaultString, -1,
+     XFA_SCRIPT_Basic},
     {0x2e00c007, L"newContentType",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_NewContentType,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::NewContentType, -1,
+     XFA_SCRIPT_Basic},
     {0x4570500f, L"modifier",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_Modifier,
-     -1, XFA_SCRIPT_Basic},
-    {0x50e2e33b, L"selEnd", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                                Script_EventPseudoModel_SelEnd,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::Modifier, -1,
+     XFA_SCRIPT_Basic},
+    {0x50e2e33b, L"selEnd",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::SelEnd, -1,
+     XFA_SCRIPT_Basic},
     {0x57de87c2, L"prevText",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_PrevText,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::PrevText, -1,
+     XFA_SCRIPT_Basic},
     {0x6ea04e0a, L"soapFaultCode",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_SoapFaultCode,
-     -1, XFA_SCRIPT_Basic},
-    {0x6f6556cf, L"newText", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                                 Script_EventPseudoModel_NewText,
-     -1, XFA_SCRIPT_Basic},
-    {0x891f4606, L"change", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                                Script_EventPseudoModel_Change,
-     -1, XFA_SCRIPT_Basic},
-    {0x8fa3c19e, L"shift", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                               Script_EventPseudoModel_Shift,
-     -1, XFA_SCRIPT_Basic},
-    {0xa9d9b2e1, L"keyDown", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                                 Script_EventPseudoModel_KeyDown,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::SoapFaultCode, -1,
+     XFA_SCRIPT_Basic},
+    {0x6f6556cf, L"newText",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::NewText, -1,
+     XFA_SCRIPT_Basic},
+    {0x891f4606, L"change",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::Change, -1,
+     XFA_SCRIPT_Basic},
+    {0x8fa3c19e, L"shift",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::Shift, -1,
+     XFA_SCRIPT_Basic},
+    {0xa9d9b2e1, L"keyDown",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::KeyDown, -1,
+     XFA_SCRIPT_Basic},
     {0xbfc89db2, L"selStart",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_SelStart,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::SelStart, -1,
+     XFA_SCRIPT_Basic},
     {0xc32a5812, L"commitKey",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-         Script_EventPseudoModel_CommitKey,
-     -1, XFA_SCRIPT_Basic},
-    {0xc8da4da7, L"target", (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::
-                                Script_EventPseudoModel_Target,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::CommitKey, -1,
+     XFA_SCRIPT_Basic},
+    {0xc8da4da7, L"target",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_EventPseudoModel::Target, -1,
+     XFA_SCRIPT_Basic},
     {0xc0811ed, L"use",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Use, XFA_SCRIPT_Basic},
@@ -1946,54 +1914,46 @@ const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Usehref, XFA_SCRIPT_Basic},
     {0x4107ed, L"foxitAppType",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_FoxitAppType,
-     -1, XFA_SCRIPT_Basic},
-    {0x31b19c1, L"name", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-                             Script_HostPseudoModel_Name,
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::FoxitAppType, -1,
+     XFA_SCRIPT_Basic},
+    {0x31b19c1, L"name", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::Name,
      -1, XFA_SCRIPT_Basic},
     {0x66c1ae9, L"validationsEnabled",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_ValidationsEnabled,
-     -1, XFA_SCRIPT_Basic},
-    {0x14d04502, L"title", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-                               Script_HostPseudoModel_Title,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::ValidationsEnabled, -1,
+     XFA_SCRIPT_Basic},
+    {0x14d04502, L"title",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::Title, -1,
+     XFA_SCRIPT_Basic},
     {0x193afe8b, L"foxitName",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_FoxitName,
-     -1, XFA_SCRIPT_Basic},
-    {0x392ae445, L"platform", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_Platform,
-     -1, XFA_SCRIPT_Basic},
-    {0x5a50e9e6, L"version", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-                                 Script_HostPseudoModel_Version,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::FoxitName, -1,
+     XFA_SCRIPT_Basic},
+    {0x392ae445, L"platform",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::Platform, -1,
+     XFA_SCRIPT_Basic},
+    {0x5a50e9e6, L"version",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::Version, -1,
+     XFA_SCRIPT_Basic},
     {0x66cb1eed, L"variation",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_Variation,
-     -1, XFA_SCRIPT_Basic},
-    {0x7717cbc4, L"language", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_Language,
-     -1, XFA_SCRIPT_Basic},
-    {0x86698963, L"appType", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-                                 Script_HostPseudoModel_AppType,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::Variation, -1,
+     XFA_SCRIPT_Basic},
+    {0x7717cbc4, L"language",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::Language, -1,
+     XFA_SCRIPT_Basic},
+    {0x86698963, L"appType",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::AppType, -1,
+     XFA_SCRIPT_Basic},
     {0x94ff9e8d, L"calculationsEnabled",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_CalculationsEnabled,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::CalculationsEnabled, -1,
+     XFA_SCRIPT_Basic},
     {0xbcd44940, L"currentPage",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_CurrentPage,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::CurrentPage, -1,
+     XFA_SCRIPT_Basic},
     {0xd4286870, L"foxitVersion",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-         Script_HostPseudoModel_FoxitVersion,
-     -1, XFA_SCRIPT_Basic},
-    {0xd592b920, L"numPages", (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::
-                                  Script_HostPseudoModel_NumPages,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::FoxitVersion, -1,
+     XFA_SCRIPT_Basic},
+    {0xd592b920, L"numPages",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_HostPseudoModel::NumPages, -1,
+     XFA_SCRIPT_Basic},
     {0xbe52dfbf, L"desc",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Desc, XFA_SCRIPT_Basic},
@@ -2135,9 +2095,9 @@ const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     {0xf6b47749, L"lock",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_BOOL,
      XFA_ATTRIBUTE_Lock, XFA_SCRIPT_Basic},
-    {0xfcef86b5, L"ready", (XFA_ATTRIBUTE_CALLBACK)&CScript_LayoutPseudoModel::
-                               Script_LayoutPseudoModel_Ready,
-     -1, XFA_SCRIPT_Basic},
+    {0xfcef86b5, L"ready",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_LayoutPseudoModel::Ready, -1,
+     XFA_SCRIPT_Basic},
     {0xbe52dfbf, L"desc",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Desc, XFA_SCRIPT_Basic},
@@ -2396,19 +2356,18 @@ const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     {0xbc254332, L"usehref",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Usehref, XFA_SCRIPT_Basic},
-    {0xfb67185, L"recordsBefore", (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::
-                                      Script_DataWindow_RecordsBefore,
-     -1, XFA_SCRIPT_Basic},
+    {0xfb67185, L"recordsBefore",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::RecordsBefore, -1,
+     XFA_SCRIPT_Basic},
     {0x21d5dfcb, L"currentRecordNumber",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::
-         Script_DataWindow_CurrentRecordNumber,
-     -1, XFA_SCRIPT_Basic},
-    {0x312af044, L"recordsAfter", (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::
-                                      Script_DataWindow_RecordsAfter,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::CurrentRecordNumber, -1,
+     XFA_SCRIPT_Basic},
+    {0x312af044, L"recordsAfter",
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::RecordsAfter, -1,
+     XFA_SCRIPT_Basic},
     {0x6aab37cb, L"isDefined",
-     (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::Script_DataWindow_IsDefined,
-     -1, XFA_SCRIPT_Basic},
+     (XFA_ATTRIBUTE_CALLBACK)&CScript_DataWindow::IsDefined, -1,
+     XFA_SCRIPT_Basic},
     {0xc0811ed, L"use",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Use, XFA_SCRIPT_Basic},

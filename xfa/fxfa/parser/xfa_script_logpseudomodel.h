@@ -15,11 +15,11 @@ class CScript_LogPseudoModel : public CXFA_Object {
   explicit CScript_LogPseudoModel(CXFA_Document* pDocument);
   ~CScript_LogPseudoModel() override;
 
-  void Script_LogPseudoModel_Message(CFXJSE_Arguments* pArguments);
-  void Script_LogPseudoModel_TraceEnabled(CFXJSE_Arguments* pArguments);
-  void Script_LogPseudoModel_TraceActivate(CFXJSE_Arguments* pArguments);
-  void Script_LogPseudoModel_TraceDeactivate(CFXJSE_Arguments* pArguments);
-  void Script_LogPseudoModel_Trace(CFXJSE_Arguments* pArguments);
+  void Message(CFXJSE_Arguments* pArguments);
+  void TraceEnabled(CFXJSE_Arguments* pArguments);
+  void TraceActivate(CFXJSE_Arguments* pArguments);
+  void TraceDeactivate(CFXJSE_Arguments* pArguments);
+  void Trace(CFXJSE_Arguments* pArguments);
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_

@@ -20,42 +20,46 @@
 #include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+namespace {
+
+void StringProperty(CFXJSE_Value* pValue,
+                    CFX_WideString& wsValue,
+                    FX_BOOL bSetting) {
+  if (bSetting) {
+    wsValue = pValue->ToWideString();
+    return;
+  }
+  pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
+}
+
+void InterProperty(CFXJSE_Value* pValue, int32_t& iValue, FX_BOOL bSetting) {
+  if (bSetting) {
+    iValue = pValue->ToInteger();
+    return;
+  }
+  pValue->SetInteger(iValue);
+}
+
+void BooleanProperty(CFXJSE_Value* pValue, FX_BOOL& bValue, FX_BOOL bSetting) {
+  if (bSetting) {
+    bValue = pValue->ToBoolean();
+    return;
+  }
+  pValue->SetBoolean(bValue);
+}
+
+}  // namespace
+
 CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::EventPseudoModel) {}
-CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
-void Script_EventPseudoModel_StringProperty(CFXJSE_Value* pValue,
-                                            CFX_WideString& wsValue,
-                                            FX_BOOL bSetting) {
-  if (bSetting) {
-    wsValue = pValue->ToWideString();
-  } else {
-    pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
-  }
-}
-void Script_EventPseudoModel_InterProperty(CFXJSE_Value* pValue,
-                                           int32_t& iValue,
-                                           FX_BOOL bSetting) {
-  if (bSetting) {
-    iValue = pValue->ToInteger();
-  } else {
-    pValue->SetInteger(iValue);
-  }
-}
-void Script_EventPseudoModel_BooleanProperty(CFXJSE_Value* pValue,
-                                             FX_BOOL& bValue,
-                                             FX_BOOL bSetting) {
-  if (bSetting)
-    bValue = pValue->ToBoolean();
-  else
-    pValue->SetBoolean(bValue);
-}
 
-void CScript_EventPseudoModel::Script_EventPseudoModel_Property(
-    CFXJSE_Value* pValue,
-    XFA_Event dwFlag,
-    FX_BOOL bSetting) {
+CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
+
+void CScript_EventPseudoModel::Property(CFXJSE_Value* pValue,
+                                        XFA_Event dwFlag,
+                                        FX_BOOL bSetting) {
   CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext)
     return;
@@ -66,68 +70,52 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Property(
 
   switch (dwFlag) {
     case XFA_Event::CancelAction:
-      Script_EventPseudoModel_BooleanProperty(
-          pValue, pEventParam->m_bCancelAction, bSetting);
+      BooleanProperty(pValue, pEventParam->m_bCancelAction, bSetting);
       break;
     case XFA_Event::Change:
-      Script_EventPseudoModel_StringProperty(pValue, pEventParam->m_wsChange,
-                                             bSetting);
+      StringProperty(pValue, pEventParam->m_wsChange, bSetting);
       break;
     case XFA_Event::CommitKey:
-      Script_EventPseudoModel_InterProperty(pValue, pEventParam->m_iCommitKey,
-                                            bSetting);
+      InterProperty(pValue, pEventParam->m_iCommitKey, bSetting);
       break;
     case XFA_Event::FullText:
-      Script_EventPseudoModel_StringProperty(pValue, pEventParam->m_wsFullText,
-                                             bSetting);
+      StringProperty(pValue, pEventParam->m_wsFullText, bSetting);
       break;
     case XFA_Event::Keydown:
-      Script_EventPseudoModel_BooleanProperty(pValue, pEventParam->m_bKeyDown,
-                                              bSetting);
+      BooleanProperty(pValue, pEventParam->m_bKeyDown, bSetting);
       break;
     case XFA_Event::Modifier:
-      Script_EventPseudoModel_BooleanProperty(pValue, pEventParam->m_bModifier,
-                                              bSetting);
+      BooleanProperty(pValue, pEventParam->m_bModifier, bSetting);
       break;
     case XFA_Event::NewContentType:
-      Script_EventPseudoModel_StringProperty(
-          pValue, pEventParam->m_wsNewContentType, bSetting);
+      StringProperty(pValue, pEventParam->m_wsNewContentType, bSetting);
       break;
     case XFA_Event::NewText:
-      Script_EventPseudoModel_StringProperty(pValue, pEventParam->m_wsNewText,
-                                             bSetting);
+      StringProperty(pValue, pEventParam->m_wsNewText, bSetting);
       break;
     case XFA_Event::PreviousContentType:
-      Script_EventPseudoModel_StringProperty(
-          pValue, pEventParam->m_wsPrevContentType, bSetting);
+      StringProperty(pValue, pEventParam->m_wsPrevContentType, bSetting);
       break;
     case XFA_Event::PreviousText:
-      Script_EventPseudoModel_StringProperty(pValue, pEventParam->m_wsPrevText,
-                                             bSetting);
+      StringProperty(pValue, pEventParam->m_wsPrevText, bSetting);
       break;
     case XFA_Event::Reenter:
-      Script_EventPseudoModel_BooleanProperty(pValue, pEventParam->m_bReenter,
-                                              bSetting);
+      BooleanProperty(pValue, pEventParam->m_bReenter, bSetting);
       break;
     case XFA_Event::SelectionEnd:
-      Script_EventPseudoModel_InterProperty(pValue, pEventParam->m_iSelEnd,
-                                            bSetting);
+      InterProperty(pValue, pEventParam->m_iSelEnd, bSetting);
       break;
     case XFA_Event::SelectionStart:
-      Script_EventPseudoModel_InterProperty(pValue, pEventParam->m_iSelStart,
-                                            bSetting);
+      InterProperty(pValue, pEventParam->m_iSelStart, bSetting);
       break;
     case XFA_Event::Shift:
-      Script_EventPseudoModel_BooleanProperty(pValue, pEventParam->m_bShift,
-                                              bSetting);
+      BooleanProperty(pValue, pEventParam->m_bShift, bSetting);
       break;
     case XFA_Event::SoapFaultCode:
-      Script_EventPseudoModel_StringProperty(
-          pValue, pEventParam->m_wsSoapFaultCode, bSetting);
+      StringProperty(pValue, pEventParam->m_wsSoapFaultCode, bSetting);
       break;
     case XFA_Event::SoapFaultString:
-      Script_EventPseudoModel_StringProperty(
-          pValue, pEventParam->m_wsSoapFaultString, bSetting);
+      StringProperty(pValue, pEventParam->m_wsSoapFaultString, bSetting);
       break;
     case XFA_Event::Target:
       break;
@@ -135,106 +123,87 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Property(
       break;
   }
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_Change(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::Change, bSetting);
+void CScript_EventPseudoModel::Change(CFXJSE_Value* pValue,
+                                      FX_BOOL bSetting,
+                                      XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::Change, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_CommitKey(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::CommitKey, bSetting);
+void CScript_EventPseudoModel::CommitKey(CFXJSE_Value* pValue,
+                                         FX_BOOL bSetting,
+                                         XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::CommitKey, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_FullText(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::FullText, bSetting);
+void CScript_EventPseudoModel::FullText(CFXJSE_Value* pValue,
+                                        FX_BOOL bSetting,
+                                        XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::FullText, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_KeyDown(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::Keydown, bSetting);
+void CScript_EventPseudoModel::KeyDown(CFXJSE_Value* pValue,
+                                       FX_BOOL bSetting,
+                                       XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::Keydown, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_Modifier(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::Modifier, bSetting);
+void CScript_EventPseudoModel::Modifier(CFXJSE_Value* pValue,
+                                        FX_BOOL bSetting,
+                                        XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::Modifier, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_NewContentType(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::NewContentType, bSetting);
+void CScript_EventPseudoModel::NewContentType(CFXJSE_Value* pValue,
+                                              FX_BOOL bSetting,
+                                              XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::NewContentType, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_NewText(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::NewText, bSetting);
+void CScript_EventPseudoModel::NewText(CFXJSE_Value* pValue,
+                                       FX_BOOL bSetting,
+                                       XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::NewText, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_PrevContentType(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::PreviousContentType,
-                                   bSetting);
+void CScript_EventPseudoModel::PrevContentType(CFXJSE_Value* pValue,
+                                               FX_BOOL bSetting,
+                                               XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::PreviousContentType, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_PrevText(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::PreviousText, bSetting);
+void CScript_EventPseudoModel::PrevText(CFXJSE_Value* pValue,
+                                        FX_BOOL bSetting,
+                                        XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::PreviousText, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_Reenter(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::Reenter, bSetting);
+void CScript_EventPseudoModel::Reenter(CFXJSE_Value* pValue,
+                                       FX_BOOL bSetting,
+                                       XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::Reenter, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_SelEnd(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::SelectionEnd, bSetting);
+void CScript_EventPseudoModel::SelEnd(CFXJSE_Value* pValue,
+                                      FX_BOOL bSetting,
+                                      XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::SelectionEnd, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_SelStart(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::SelectionStart, bSetting);
+void CScript_EventPseudoModel::SelStart(CFXJSE_Value* pValue,
+                                        FX_BOOL bSetting,
+                                        XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::SelectionStart, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_Shift(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::Shift, bSetting);
+void CScript_EventPseudoModel::Shift(CFXJSE_Value* pValue,
+                                     FX_BOOL bSetting,
+                                     XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::Shift, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_SoapFaultCode(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::SoapFaultCode, bSetting);
+void CScript_EventPseudoModel::SoapFaultCode(CFXJSE_Value* pValue,
+                                             FX_BOOL bSetting,
+                                             XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::SoapFaultCode, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_SoapFaultString(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::SoapFaultString,
-                                   bSetting);
+void CScript_EventPseudoModel::SoapFaultString(CFXJSE_Value* pValue,
+                                               FX_BOOL bSetting,
+                                               XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::SoapFaultString, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_Target(
-    CFXJSE_Value* pValue,
-    FX_BOOL bSetting,
-    XFA_ATTRIBUTE eAttribute) {
-  Script_EventPseudoModel_Property(pValue, XFA_Event::Target, bSetting);
+void CScript_EventPseudoModel::Target(CFXJSE_Value* pValue,
+                                      FX_BOOL bSetting,
+                                      XFA_ATTRIBUTE eAttribute) {
+  Property(pValue, XFA_Event::Target, bSetting);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_Emit(
-    CFXJSE_Arguments* pArguments) {
+void CScript_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
   CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
@@ -253,8 +222,7 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Emit(
   }
   pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
 }
-void CScript_EventPseudoModel::Script_EventPseudoModel_Reset(
-    CFXJSE_Arguments* pArguments) {
+void CScript_EventPseudoModel::Reset(CFXJSE_Arguments* pArguments) {
   CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;

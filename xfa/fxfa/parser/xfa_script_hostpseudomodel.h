@@ -13,78 +13,72 @@
 
 class CScript_HostPseudoModel : public CXFA_Object {
  public:
-  CScript_HostPseudoModel(CXFA_Document* pDocument);
+  explicit CScript_HostPseudoModel(CXFA_Document* pDocument);
   ~CScript_HostPseudoModel() override;
 
-  void Script_HostPseudoModel_AppType(CFXJSE_Value* pValue,
-                                      FX_BOOL bSetting,
-                                      XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_FoxitAppType(CFXJSE_Value* pValue,
-                                           FX_BOOL bSetting,
-                                           XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_CalculationsEnabled(CFXJSE_Value* pValue,
-                                                  FX_BOOL bSetting,
-                                                  XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_CurrentPage(CFXJSE_Value* pValue,
-                                          FX_BOOL bSetting,
-                                          XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Language(CFXJSE_Value* pValue,
-                                       FX_BOOL bSetting,
-                                       XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_NumPages(CFXJSE_Value* pValue,
-                                       FX_BOOL bSetting,
-                                       XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Platform(CFXJSE_Value* pValue,
-                                       FX_BOOL bSetting,
-                                       XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Title(CFXJSE_Value* pValue,
-                                    FX_BOOL bSetting,
-                                    XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_ValidationsEnabled(CFXJSE_Value* pValue,
-                                                 FX_BOOL bSetting,
-                                                 XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Variation(CFXJSE_Value* pValue,
-                                        FX_BOOL bSetting,
-                                        XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Version(CFXJSE_Value* pValue,
-                                      FX_BOOL bSetting,
-                                      XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_FoxitVersion(CFXJSE_Value* pValue,
-                                           FX_BOOL bSetting,
-                                           XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_Name(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
-                                   XFA_ATTRIBUTE eAttribute);
-  void Script_HostPseudoModel_FoxitName(CFXJSE_Value* pValue,
-                                        FX_BOOL bSetting,
-                                        XFA_ATTRIBUTE eAttribute);
+  void AppType(CFXJSE_Value* pValue,
+               FX_BOOL bSetting,
+               XFA_ATTRIBUTE eAttribute);
+  void FoxitAppType(CFXJSE_Value* pValue,
+                    FX_BOOL bSetting,
+                    XFA_ATTRIBUTE eAttribute);
+  void CalculationsEnabled(CFXJSE_Value* pValue,
+                           FX_BOOL bSetting,
+                           XFA_ATTRIBUTE eAttribute);
+  void CurrentPage(CFXJSE_Value* pValue,
+                   FX_BOOL bSetting,
+                   XFA_ATTRIBUTE eAttribute);
+  void Language(CFXJSE_Value* pValue,
+                FX_BOOL bSetting,
+                XFA_ATTRIBUTE eAttribute);
+  void NumPages(CFXJSE_Value* pValue,
+                FX_BOOL bSetting,
+                XFA_ATTRIBUTE eAttribute);
+  void Platform(CFXJSE_Value* pValue,
+                FX_BOOL bSetting,
+                XFA_ATTRIBUTE eAttribute);
+  void Title(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
+  void ValidationsEnabled(CFXJSE_Value* pValue,
+                          FX_BOOL bSetting,
+                          XFA_ATTRIBUTE eAttribute);
+  void Variation(CFXJSE_Value* pValue,
+                 FX_BOOL bSetting,
+                 XFA_ATTRIBUTE eAttribute);
+  void Version(CFXJSE_Value* pValue,
+               FX_BOOL bSetting,
+               XFA_ATTRIBUTE eAttribute);
+  void FoxitVersion(CFXJSE_Value* pValue,
+                    FX_BOOL bSetting,
+                    XFA_ATTRIBUTE eAttribute);
+  void Name(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
+  void FoxitName(CFXJSE_Value* pValue,
+                 FX_BOOL bSetting,
+                 XFA_ATTRIBUTE eAttribute);
 
-  void Script_HostPseudoModel_GotoURL(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_OpenList(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_Response(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_DocumentInBatch(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_ResetData(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_Beep(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_SetFocus(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_GetFocus(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_MessageBox(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_DocumentCountInBatch(
-      CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_Print(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_ImportData(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_ExportData(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_PageUp(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_PageDown(CFXJSE_Arguments* pArguments);
-  void Script_HostPseudoModel_CurrentDateTime(CFXJSE_Arguments* pArguments);
+  void GotoURL(CFXJSE_Arguments* pArguments);
+  void OpenList(CFXJSE_Arguments* pArguments);
+  void Response(CFXJSE_Arguments* pArguments);
+  void DocumentInBatch(CFXJSE_Arguments* pArguments);
+  void ResetData(CFXJSE_Arguments* pArguments);
+  void Beep(CFXJSE_Arguments* pArguments);
+  void SetFocus(CFXJSE_Arguments* pArguments);
+  void GetFocus(CFXJSE_Arguments* pArguments);
+  void MessageBox(CFXJSE_Arguments* pArguments);
+  void DocumentCountInBatch(CFXJSE_Arguments* pArguments);
+  void Print(CFXJSE_Arguments* pArguments);
+  void ImportData(CFXJSE_Arguments* pArguments);
+  void ExportData(CFXJSE_Arguments* pArguments);
+  void PageUp(CFXJSE_Arguments* pArguments);
+  void PageDown(CFXJSE_Arguments* pArguments);
+  void CurrentDateTime(CFXJSE_Arguments* pArguments);
 
  protected:
-  void Script_HostPseudoModel_LoadString(CFXJSE_Value* pValue,
-                                         CXFA_FFNotify* pNotify,
-                                         uint32_t dwFlag);
-  FX_BOOL Script_HostPseudoModel_ValidateArgsForMsg(
-      CFXJSE_Arguments* pArguments,
-      int32_t iArgIndex,
-      CFX_WideString& wsValue);
+  void LoadString(CFXJSE_Value* pValue,
+                  CXFA_FFNotify* pNotify,
+                  uint32_t dwFlag);
+  FX_BOOL ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
+                             int32_t iArgIndex,
+                             CFX_WideString& wsValue);
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
