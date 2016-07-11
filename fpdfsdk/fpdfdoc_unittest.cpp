@@ -68,6 +68,13 @@ class PDFDocTest : public testing::Test {
     m_pDoc->SetRoot(m_pRootObj.get());
   }
 
+  void TearDown() override {
+    m_pRootObj.reset();
+    m_pIndirectObjs = nullptr;
+    m_pDoc.reset();
+    CPDF_ModuleMgr::Destroy();
+  }
+
   std::vector<DictObjInfo> CreateDictObjs(int num) {
     std::vector<DictObjInfo> info;
     for (int i = 0; i < num; ++i) {
