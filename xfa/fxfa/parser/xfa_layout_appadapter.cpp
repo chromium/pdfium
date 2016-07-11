@@ -14,15 +14,13 @@
 #include "xfa/fxfa/parser/xfa_layout_pagemgr_new.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
-  CXFA_FFNotify* pNotify =
-      pLayoutItem->m_pFormNode->GetDocument()->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = pLayoutItem->m_pFormNode->GetDocument()->GetNotify();
   CXFA_LayoutProcessor* pDocLayout =
       pLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
   while (pNode) {

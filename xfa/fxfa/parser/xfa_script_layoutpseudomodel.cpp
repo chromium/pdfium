@@ -17,7 +17,6 @@
 #include "xfa/fxfa/parser/xfa_layout_appadapter.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
@@ -31,7 +30,7 @@ CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
 void CScript_LayoutPseudoModel::Ready(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -345,7 +344,7 @@ void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
   if (iLength >= 3) {
     bOnPageArea = pArguments->GetInt32(2) == 0 ? FALSE : TRUE;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -365,7 +364,7 @@ void CScript_LayoutPseudoModel::AbsPageCount(CFXJSE_Arguments* pArguments) {
 }
 void CScript_LayoutPseudoModel::AbsPageCountInBatch(
     CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -377,7 +376,7 @@ void CScript_LayoutPseudoModel::AbsPageCountInBatch(
 }
 void CScript_LayoutPseudoModel::SheetCountInBatch(
     CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -414,7 +413,7 @@ void CScript_LayoutPseudoModel::AbsPageInBatch(CFXJSE_Arguments* pArguments) {
   if (!pNode) {
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -446,7 +445,7 @@ void CScript_LayoutPseudoModel::SheetInBatch(CFXJSE_Arguments* pArguments) {
   if (!pNode) {
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }

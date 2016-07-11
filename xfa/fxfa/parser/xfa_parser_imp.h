@@ -8,28 +8,28 @@
 #define XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
 
 #include "xfa/fde/xml/fde_xml_imp.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/include/fxfa_basic.h"
 
+class CXFA_Document;
+class CXFA_FFNotify;
+class CXFA_Node;
 class CXFA_XMLParser;
 
-class CXFA_SimpleParser : public IXFA_Parser {
+class CXFA_SimpleParser {
  public:
-  CXFA_SimpleParser(CXFA_Document* pFactory, FX_BOOL bDocumentParser = FALSE);
-  ~CXFA_SimpleParser() override;
+  CXFA_SimpleParser(CXFA_Document* pFactory, bool bDocumentParser);
+  ~CXFA_SimpleParser();
 
-  // IXFA_Parser
-  void Release() override;
   int32_t StartParse(IFX_FileRead* pStream,
-                     XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) override;
-  int32_t DoParse(IFX_Pause* pPause = nullptr) override;
+                     XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
+  int32_t DoParse(IFX_Pause* pPause = nullptr);
   int32_t ParseXMLData(const CFX_WideString& wsXML,
                        CFDE_XMLNode*& pXMLNode,
-                       IFX_Pause* pPause = nullptr) override;
-  void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode) override;
-  CXFA_Document* GetFactory() const override;
-  CXFA_Node* GetRootNode() const override;
-  CFDE_XMLDoc* GetXMLDoc() const override;
-  void CloseParser() override;
+                       IFX_Pause* pPause = nullptr);
+  void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode);
+  CXFA_Node* GetRootNode() const;
+  CFDE_XMLDoc* GetXMLDoc() const;
+  void CloseParser();
 
  protected:
   CXFA_Node* ParseAsXDPPacket(CFDE_XMLNode* pXMLDocumentNode,
@@ -82,31 +82,24 @@ class CXFA_SimpleParser : public IXFA_Parser {
   friend class CXFA_DocumentParser;
 };
 
-class CXFA_DocumentParser : public IXFA_Parser {
+class CXFA_DocumentParser {
  public:
-  CXFA_DocumentParser(CXFA_FFNotify* pNotify);
-  ~CXFA_DocumentParser() override;
+  explicit CXFA_DocumentParser(CXFA_FFNotify* pNotify);
+  ~CXFA_DocumentParser();
 
-  // IXFA_Parser
-  void Release() override;
   int32_t StartParse(IFX_FileRead* pStream,
-                     XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) override;
-  int32_t DoParse(IFX_Pause* pPause = nullptr) override;
-  int32_t ParseXMLData(const CFX_WideString& wsXML,
-                       CFDE_XMLNode*& pXMLNode,
-                       IFX_Pause* pPause = nullptr) override;
-  void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode) override;
-  CXFA_Document* GetFactory() const override;
-  CXFA_Node* GetRootNode() const override;
-  CFDE_XMLDoc* GetXMLDoc() const override;
+                     XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
+  int32_t DoParse(IFX_Pause* pPause = nullptr);
+
+  CFDE_XMLDoc* GetXMLDoc() const;
   CXFA_FFNotify* GetNotify() const;
   CXFA_Document* GetDocument() const;
-  void CloseParser() override;
+  void CloseParser();
 
  protected:
   CXFA_SimpleParser m_nodeParser;
   CXFA_FFNotify* m_pNotify;
-  CXFA_Document* m_pDocument;
+  std::unique_ptr<CXFA_Document> m_pDocument;
 };
 
 class CXFA_XMLParser : public CFDE_XMLParser {

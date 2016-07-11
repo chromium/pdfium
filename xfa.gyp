@@ -545,7 +545,6 @@
         "xfa/fxfa/parser/xfa_localevalue.h",
         "xfa/fxfa/parser/xfa_object.h",
         "xfa/fxfa/parser/xfa_object_imp.cpp",
-        "xfa/fxfa/parser/xfa_parser.h",
         "xfa/fxfa/parser/xfa_parser_imp.cpp",
         "xfa/fxfa/parser/xfa_parser_imp.h",
         "xfa/fxfa/parser/xfa_script.h",

@@ -16,16 +16,11 @@
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-IXFA_Parser* IXFA_Parser::Create(CXFA_Document* pFactory,
-                                 FX_BOOL bDocumentParser) {
-  return new CXFA_SimpleParser(pFactory, bDocumentParser);
-}
 CXFA_SimpleParser::CXFA_SimpleParser(CXFA_Document* pFactory,
-                                     FX_BOOL bDocumentParser)
+                                     bool bDocumentParser)
     : m_pXMLParser(nullptr),
       m_pXMLDoc(nullptr),
       m_pStream(nullptr),
@@ -34,15 +29,15 @@ CXFA_SimpleParser::CXFA_SimpleParser(CXFA_Document* pFactory,
       m_pRootNode(nullptr),
       m_ePacketID(XFA_XDPPACKET_UNKNOWN),
       m_bDocumentParser(bDocumentParser) {}
+
 CXFA_SimpleParser::~CXFA_SimpleParser() {
   CloseParser();
 }
-void CXFA_SimpleParser::Release() {
-  delete this;
-}
+
 void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
   m_pFactory = pFactory;
 }
+
 static CFDE_XMLNode* XFA_FDEExtension_GetDocumentNode(
     CFDE_XMLDoc* pXMLDoc,
     FX_BOOL bVerifyWellFormness = FALSE) {
@@ -192,10 +187,6 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
   } else {
     m_pRootNode = NormalLoader(pXFANode, pXMLNode, ePacketID);
   }
-}
-
-CXFA_Document* CXFA_SimpleParser::GetFactory() const {
-  return m_pFactory;
 }
 
 CXFA_Node* CXFA_SimpleParser::GetRootNode() const {
@@ -1335,23 +1326,22 @@ void CXFA_SimpleParser::CloseParser() {
 
 CXFA_DocumentParser::CXFA_DocumentParser(CXFA_FFNotify* pNotify)
     : m_nodeParser(nullptr, TRUE), m_pNotify(pNotify), m_pDocument(nullptr) {}
+
 CXFA_DocumentParser::~CXFA_DocumentParser() {
   CloseParser();
 }
 
-void CXFA_DocumentParser::Release() {
-  delete this;
-}
 int32_t CXFA_DocumentParser::StartParse(IFX_FileRead* pStream,
                                         XFA_XDPPACKET ePacketID) {
   CloseParser();
   int32_t nRetStatus = m_nodeParser.StartParse(pStream, ePacketID);
   if (nRetStatus == XFA_PARSESTATUS_Ready) {
-    m_pDocument = new CXFA_Document(this);
-    m_nodeParser.SetFactory(m_pDocument);
+    m_pDocument.reset(new CXFA_Document(this));
+    m_nodeParser.SetFactory(m_pDocument.get());
   }
   return nRetStatus;
 }
+
 int32_t CXFA_DocumentParser::DoParse(IFX_Pause* pPause) {
   int32_t nRetStatus = m_nodeParser.DoParse(pPause);
   if (nRetStatus >= XFA_PARSESTATUS_Done) {
@@ -1359,36 +1349,6 @@ int32_t CXFA_DocumentParser::DoParse(IFX_Pause* pPause) {
     m_pDocument->SetRoot(m_nodeParser.GetRootNode());
   }
   return nRetStatus;
-}
-int32_t CXFA_DocumentParser::ParseXMLData(const CFX_WideString& wsXML,
-                                          CFDE_XMLNode*& pXMLNode,
-                                          IFX_Pause* pPause) {
-  CloseParser();
-  int32_t nRetStatus = m_nodeParser.ParseXMLData(wsXML, pXMLNode, nullptr);
-  if (nRetStatus == XFA_PARSESTATUS_Done && pXMLNode) {
-    m_pDocument = new CXFA_Document(this);
-    m_nodeParser.SetFactory(m_pDocument);
-  }
-  return nRetStatus;
-}
-void CXFA_DocumentParser::ConstructXFANode(CXFA_Node* pXFANode,
-                                           CFDE_XMLNode* pXMLNode) {
-  if (!pXFANode || !pXMLNode) {
-    return;
-  }
-  m_nodeParser.ConstructXFANode(pXFANode, pXMLNode);
-  CXFA_Node* pRootNode = m_nodeParser.GetRootNode();
-  if (m_pDocument && pRootNode) {
-    m_pDocument->SetRoot(pRootNode);
-  }
-}
-
-CXFA_Document* CXFA_DocumentParser::GetFactory() const {
-  return m_nodeParser.GetFactory();
-}
-
-CXFA_Node* CXFA_DocumentParser::GetRootNode() const {
-  return m_nodeParser.GetRootNode();
 }
 
 CFDE_XMLDoc* CXFA_DocumentParser::GetXMLDoc() const {
@@ -1400,12 +1360,11 @@ CXFA_FFNotify* CXFA_DocumentParser::GetNotify() const {
 }
 
 CXFA_Document* CXFA_DocumentParser::GetDocument() const {
-  return m_pDocument;
+  return m_pDocument.get();
 }
 
 void CXFA_DocumentParser::CloseParser() {
-  delete m_pDocument;
-  m_pDocument = nullptr;
+  m_pDocument.reset();
   m_nodeParser.CloseParser();
 }
 

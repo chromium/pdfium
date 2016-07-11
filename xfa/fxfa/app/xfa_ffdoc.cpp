@@ -23,7 +23,6 @@
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_document_serialize.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 
@@ -150,26 +149,29 @@ int32_t Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
 
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)
     : m_pDocProvider(pDocProvider),
-      m_pDocument(nullptr),
+      m_pDocumentParser(nullptr),
       m_pStream(nullptr),
       m_pApp(pApp),
       m_pNotify(nullptr),
       m_pPDFDoc(nullptr),
       m_dwDocType(XFA_DOCTYPE_Static),
       m_bOwnStream(TRUE) {}
+
 CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
 }
+
 uint32_t CXFA_FFDoc::GetDocType() {
   return m_dwDocType;
 }
+
 int32_t CXFA_FFDoc::StartLoad() {
-  m_pNotify = new CXFA_FFNotify(this);
-  CXFA_DocumentParser* pDocParser = new CXFA_DocumentParser(m_pNotify);
-  int32_t iStatus = pDocParser->StartParse(m_pStream);
-  m_pDocument = pDocParser->GetDocument();
+  m_pNotify.reset(new CXFA_FFNotify(this));
+  m_pDocumentParser.reset(new CXFA_DocumentParser(m_pNotify.get()));
+  int32_t iStatus = m_pDocumentParser->StartParse(m_pStream);
   return iStatus;
 }
+
 FX_BOOL XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
                                      uint8_t*& pByteBuffer,
                                      int32_t& iBufferSize) {
@@ -234,9 +236,10 @@ void XFA_XPDPacket_MergeRootNode(CXFA_Node* pOriginRoot, CXFA_Node* pNewRoot) {
   }
 }
 int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
-  int32_t iStatus = m_pDocument->GetParser()->DoParse(pPause);
+  int32_t iStatus = m_pDocumentParser->DoParse(pPause);
   if (iStatus == XFA_PARSESTATUS_Done && !m_pPDFDoc) {
-    CXFA_Node* pPDFNode = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Pdf));
+    CXFA_Node* pPDFNode = ToNode(
+        m_pDocumentParser->GetDocument()->GetXFAObject(XFA_HASHCODE_Pdf));
     if (!pPDFNode) {
       return XFA_PARSESTATUS_SyntaxErr;
     }
@@ -256,39 +259,40 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
         pXFAReader = GetDocProvider()->OpenLinkedFile(this, wsHref);
       }
     }
-    if (!pXFAReader) {
+    if (!pXFAReader)
       return XFA_PARSESTATUS_SyntaxErr;
-    }
+
     CPDF_Document* pPDFDocument =
         GetDocProvider()->OpenPDF(this, pXFAReader, TRUE);
     ASSERT(!m_pPDFDoc);
-    if (!OpenDoc(pPDFDocument)) {
+    if (!OpenDoc(pPDFDocument))
       return XFA_PARSESTATUS_SyntaxErr;
-    }
-    IXFA_Parser* pParser = IXFA_Parser::Create(m_pDocument, TRUE);
-    if (!pParser) {
+
+    CXFA_Document* doc = m_pDocumentParser->GetDocument();
+    std::unique_ptr<CXFA_SimpleParser> pParser(
+        new CXFA_SimpleParser(doc, true));
+    if (!pParser)
       return XFA_PARSESTATUS_SyntaxErr;
-    }
+
     CXFA_Node* pRootNode = nullptr;
     if (pParser->StartParse(m_pStream) == XFA_PARSESTATUS_Ready &&
         pParser->DoParse(nullptr) == XFA_PARSESTATUS_Done) {
       pRootNode = pParser->GetRootNode();
     }
-    if (pRootNode && m_pDocument->GetRoot()) {
-      XFA_XPDPacket_MergeRootNode(m_pDocument->GetRoot(), pRootNode);
+    if (pRootNode && doc->GetRoot()) {
+      XFA_XPDPacket_MergeRootNode(doc->GetRoot(), pRootNode);
       iStatus = XFA_PARSESTATUS_Done;
     } else {
       iStatus = XFA_PARSESTATUS_StatusErr;
     }
-    pParser->Release();
-    pParser = nullptr;
   }
   return iStatus;
 }
 void CXFA_FFDoc::StopLoad() {
   m_pApp->GetXFAFontMgr()->LoadDocFonts(this);
   m_dwDocType = XFA_DOCTYPE_Static;
-  CXFA_Node* pConfig = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
+  CXFA_Node* pConfig = ToNode(
+      m_pDocumentParser->GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig) {
     return;
   }
@@ -375,23 +379,19 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   m_bOwnStream = TRUE;
   return TRUE;
 }
+
 FX_BOOL CXFA_FFDoc::CloseDoc() {
   for (const auto& pair : m_TypeToDocViewMap)
     pair.second->RunDocClose();
 
-  if (m_pDocument)
-    m_pDocument->ClearLayoutData();
+  CXFA_Document* doc =
+      m_pDocumentParser ? m_pDocumentParser->GetDocument() : nullptr;
+  if (doc)
+    doc->ClearLayoutData();
 
   m_TypeToDocViewMap.clear();
 
-  if (m_pDocument) {
-    m_pDocument->GetParser()->Release();
-    m_pDocument = nullptr;
-  }
-
-  delete m_pNotify;
-  m_pNotify = nullptr;
-
+  m_pNotify.reset(nullptr);
   m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
 
   if (m_dwDocType != XFA_DOCTYPE_XDP && m_pStream && m_bOwnStream) {
@@ -474,11 +474,11 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
 bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
                              IFX_FileWrite* pFile,
                              CXFA_ChecksumContext* pCSContext) {
-  std::unique_ptr<CXFA_DataExporter> pExport(
-      new CXFA_DataExporter(m_pDocument));
-  CXFA_Node* pNode = code == XFA_HASHCODE_Xfa
-                         ? m_pDocument->GetRoot()
-                         : ToNode(m_pDocument->GetXFAObject(code));
+  CXFA_Document* doc = m_pDocumentParser->GetDocument();
+
+  std::unique_ptr<CXFA_DataExporter> pExport(new CXFA_DataExporter(doc));
+  CXFA_Node* pNode = code == XFA_HASHCODE_Xfa ? doc->GetRoot()
+                                              : ToNode(doc->GetXFAObject(code));
   if (!pNode)
     return !!pExport->Export(pFile);
 
@@ -492,6 +492,6 @@ bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
 
 FX_BOOL CXFA_FFDoc::ImportData(IFX_FileRead* pStream, FX_BOOL bXDP) {
   std::unique_ptr<CXFA_DataImporter> importer(
-      new CXFA_DataImporter(m_pDocument));
+      new CXFA_DataImporter(m_pDocumentParser->GetDocument()));
   return importer->ImportData(pStream);
 }

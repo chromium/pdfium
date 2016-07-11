@@ -38,7 +38,7 @@ class CXFA_FFDoc {
   FX_BOOL OpenDoc(CPDF_Document* pPDFDoc);
   FX_BOOL CloseDoc();
   void SetDocType(uint32_t dwType);
-  CXFA_Document* GetXFADoc() { return m_pDocument; }
+  CXFA_Document* GetXFADoc() { return m_pDocumentParser->GetDocument(); }
   CXFA_FFApp* GetApp() { return m_pApp; }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();
@@ -54,10 +54,10 @@ class CXFA_FFDoc {
 
  protected:
   IXFA_DocProvider* m_pDocProvider;
-  CXFA_Document* m_pDocument;
+  std::unique_ptr<CXFA_DocumentParser> m_pDocumentParser;
   IFX_FileRead* m_pStream;
   CXFA_FFApp* m_pApp;
-  CXFA_FFNotify* m_pNotify;
+  std::unique_ptr<CXFA_FFNotify> m_pNotify;
   CPDF_Document* m_pPDFDoc;
   std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
   std::map<uint32_t, std::unique_ptr<CXFA_FFDocView>> m_TypeToDocViewMap;

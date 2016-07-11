@@ -12,7 +12,6 @@
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
@@ -30,7 +29,7 @@ void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"verify");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -50,7 +49,7 @@ void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sign");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -81,7 +80,7 @@ void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"enumerate");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -98,7 +97,7 @@ void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clear");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }

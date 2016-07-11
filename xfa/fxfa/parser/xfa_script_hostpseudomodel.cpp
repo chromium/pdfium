@@ -13,7 +13,6 @@
 #include "xfa/fxfa/parser/xfa_document_layout_imp.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
@@ -39,10 +38,11 @@ void CScript_HostPseudoModel::LoadString(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->LoadString(dwFlag, wsValue);
   pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
 }
+
 void CScript_HostPseudoModel::AppType(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -54,10 +54,11 @@ void CScript_HostPseudoModel::AppType(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->GetAppType(wsAppType);
   pValue->SetString(FX_UTF8Encode(wsAppType).AsStringC());
 }
+
 void CScript_HostPseudoModel::FoxitAppType(CFXJSE_Value* pValue,
                                            FX_BOOL bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -69,10 +70,11 @@ void CScript_HostPseudoModel::FoxitAppType(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->GetFoxitAppType(wsAppType);
   pValue->SetString(FX_UTF8Encode(wsAppType).AsStringC());
 }
+
 void CScript_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
                                                   FX_BOOL bSetting,
                                                   XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -84,10 +86,11 @@ void CScript_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
   }
   pValue->SetBoolean(pNotify->GetDocProvider()->IsCalculationsEnabled(hDoc));
 }
+
 void CScript_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
                                           FX_BOOL bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -98,10 +101,11 @@ void CScript_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
   }
   pValue->SetInteger(pNotify->GetDocProvider()->GetCurrentPage(hDoc));
 }
+
 void CScript_HostPseudoModel::Language(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -113,10 +117,11 @@ void CScript_HostPseudoModel::Language(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->GetLanguage(wsLanguage);
   pValue->SetString(FX_UTF8Encode(wsLanguage).AsStringC());
 }
+
 void CScript_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -127,10 +132,11 @@ void CScript_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
   }
   pValue->SetInteger(pNotify->GetDocProvider()->CountPages(hDoc));
 }
+
 void CScript_HostPseudoModel::Platform(CFXJSE_Value* pValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -148,7 +154,7 @@ void CScript_HostPseudoModel::Title(CFXJSE_Value* pValue,
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -161,10 +167,11 @@ void CScript_HostPseudoModel::Title(CFXJSE_Value* pValue,
   pNotify->GetDocProvider()->GetTitle(hDoc, wsTitle);
   pValue->SetString(FX_UTF8Encode(wsTitle).AsStringC());
 }
+
 void CScript_HostPseudoModel::ValidationsEnabled(CFXJSE_Value* pValue,
                                                  FX_BOOL bSetting,
                                                  XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -182,7 +189,7 @@ void CScript_HostPseudoModel::Variation(CFXJSE_Value* pValue,
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -194,10 +201,11 @@ void CScript_HostPseudoModel::Variation(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->GetVariation(wsVariation);
   pValue->SetString(FX_UTF8Encode(wsVariation).AsStringC());
 }
+
 void CScript_HostPseudoModel::Version(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -209,10 +217,11 @@ void CScript_HostPseudoModel::Version(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->GetVersion(wsVersion);
   pValue->SetString(FX_UTF8Encode(wsVersion).AsStringC());
 }
+
 void CScript_HostPseudoModel::FoxitVersion(CFXJSE_Value* pValue,
                                            FX_BOOL bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -224,10 +233,11 @@ void CScript_HostPseudoModel::FoxitVersion(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->GetFoxitVersion(wsVersion);
   pValue->SetString(FX_UTF8Encode(wsVersion).AsStringC());
 }
+
 void CScript_HostPseudoModel::Name(CFXJSE_Value* pValue,
                                    FX_BOOL bSetting,
                                    XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -239,10 +249,11 @@ void CScript_HostPseudoModel::Name(CFXJSE_Value* pValue,
   pNotify->GetAppProvider()->GetAppName(wsAppName);
   pValue->SetString(FX_UTF8Encode(wsAppName).AsStringC());
 }
+
 void CScript_HostPseudoModel::FoxitName(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -263,7 +274,7 @@ void CScript_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"gotoURL");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -284,7 +295,7 @@ void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"openList");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -331,7 +342,7 @@ void CScript_HostPseudoModel::Response(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"response");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -360,8 +371,9 @@ void CScript_HostPseudoModel::Response(CFXJSE_Arguments* pArguments) {
   if (pValue)
     pValue->SetString(FX_UTF8Encode(wsAnswer).AsStringC());
 }
+
 void CScript_HostPseudoModel::DocumentInBatch(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -400,7 +412,7 @@ void CScript_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"resetData");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -451,7 +463,7 @@ void CScript_HostPseudoModel::Beep(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"beep");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -470,7 +482,7 @@ void CScript_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setFocus");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -501,8 +513,9 @@ void CScript_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
   }
   pNotify->SetFocusWidgetNode(pNode);
 }
+
 void CScript_HostPseudoModel::GetFocus(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -522,7 +535,7 @@ void CScript_HostPseudoModel::MessageBox(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"messageBox");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -584,7 +597,7 @@ FX_BOOL CScript_HostPseudoModel::ValidateArgsForMsg(
 }
 void CScript_HostPseudoModel::DocumentCountInBatch(
     CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -602,7 +615,7 @@ void CScript_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"print");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -667,7 +680,7 @@ void CScript_HostPseudoModel::ImportData(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"importData");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -685,7 +698,7 @@ void CScript_HostPseudoModel::ExportData(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"exportData");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -701,8 +714,9 @@ void CScript_HostPseudoModel::ExportData(CFXJSE_Arguments* pArguments) {
   }
   pNotify->GetDocProvider()->ExportData(hDoc, wsFilePath, bXDP);
 }
+
 void CScript_HostPseudoModel::PageUp(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -715,8 +729,9 @@ void CScript_HostPseudoModel::PageUp(CFXJSE_Arguments* pArguments) {
   nNewPage = nCurPage - 1;
   pNotify->GetDocProvider()->SetCurrentPage(hDoc, nNewPage);
 }
+
 void CScript_HostPseudoModel::PageDown(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -734,8 +749,9 @@ void CScript_HostPseudoModel::PageDown(CFXJSE_Arguments* pArguments) {
   }
   pNotify->GetDocProvider()->SetCurrentPage(hDoc, nNewPage);
 }
+
 void CScript_HostPseudoModel::CurrentDateTime(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
     return;
   }

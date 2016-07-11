@@ -17,7 +17,6 @@
 #include "xfa/fxfa/fm2js/xfa_program.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
 
@@ -4915,8 +4914,7 @@ void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
   if (!pDoc)
     return;
 
-  IXFA_AppProvider* pAppProvider =
-      pDoc->GetParser()->GetNotify()->GetAppProvider();
+  IXFA_AppProvider* pAppProvider = pDoc->GetNotify()->GetAppProvider();
   if (!pAppProvider)
     return;
 
@@ -4950,8 +4948,7 @@ void CXFA_FM2JSContext::Post(CFXJSE_Value* pThis,
   if (!pDoc)
     return;
 
-  IXFA_AppProvider* pAppProvider =
-      pDoc->GetParser()->GetNotify()->GetAppProvider();
+  IXFA_AppProvider* pAppProvider = pDoc->GetNotify()->GetAppProvider();
   if (!pAppProvider)
     return;
 
@@ -5012,8 +5009,7 @@ void CXFA_FM2JSContext::Put(CFXJSE_Value* pThis,
   if (!pDoc)
     return;
 
-  IXFA_AppProvider* pAppProvider =
-      pDoc->GetParser()->GetNotify()->GetAppProvider();
+  IXFA_AppProvider* pAppProvider = pDoc->GetNotify()->GetAppProvider();
   if (!pAppProvider)
     return;
 

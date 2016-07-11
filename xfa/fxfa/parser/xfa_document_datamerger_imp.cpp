@@ -15,7 +15,6 @@
 #include "xfa/fxfa/parser/xfa_document_layout_imp.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
@@ -531,9 +530,8 @@ CXFA_Node* CloneOrMergeInstanceManager(CXFA_Document* pDocument,
     return pExistingNode;
   }
 
-  CXFA_Node* pNewNode = pDocument->GetParser()->GetFactory()->CreateNode(
-      XFA_XDPPACKET_Form, XFA_Element::InstanceManager);
-  ASSERT(pNewNode);
+  CXFA_Node* pNewNode =
+      pDocument->CreateNode(XFA_XDPPACKET_Form, XFA_Element::InstanceManager);
   wsInstMgrNodeName =
       FX_WSTRC(L"_") + pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
   pNewNode->SetCData(XFA_ATTRIBUTE_Name, wsInstMgrNodeName);

@@ -10,6 +10,7 @@
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 
 class CXFA_Document;
 class CXFA_LayoutItem;
@@ -64,7 +65,8 @@ class CXFA_Document {
   ~CXFA_Document();
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
-  CXFA_DocumentParser* GetParser() const { return m_pParser; }
+
+  CFDE_XMLDoc* GetXMLDoc() const;
   CXFA_FFNotify* GetNotify() const;
   void SetRoot(CXFA_Node* pNewRoot);
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);

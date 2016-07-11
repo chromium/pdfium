@@ -12,7 +12,6 @@
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -22,34 +21,31 @@ CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
   ASSERT(m_pDocument);
 }
 FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
-  IXFA_Parser* pDataDocumentParser = IXFA_Parser::Create(m_pDocument);
-  if (!pDataDocumentParser) {
+  std::unique_ptr<CXFA_SimpleParser> pDataDocumentParser(
+      new CXFA_SimpleParser(m_pDocument, false));
+  if (!pDataDocumentParser)
     return FALSE;
-  }
+
   if (pDataDocumentParser->StartParse(pDataDocument, XFA_XDPPACKET_Datasets) !=
       XFA_PARSESTATUS_Ready) {
-    pDataDocumentParser->Release();
     return FALSE;
   }
-  if (pDataDocumentParser->DoParse(nullptr) < XFA_PARSESTATUS_Done) {
-    pDataDocumentParser->Release();
+  if (pDataDocumentParser->DoParse(nullptr) < XFA_PARSESTATUS_Done)
     return FALSE;
-  }
+
   CXFA_Node* pImportDataRoot = pDataDocumentParser->GetRootNode();
-  if (!pImportDataRoot) {
-    pDataDocumentParser->Release();
+  if (!pImportDataRoot)
     return FALSE;
-  }
+
   CXFA_Node* pDataModel =
       ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Datasets));
-  if (!pDataModel) {
-    pDataDocumentParser->Release();
+  if (!pDataModel)
     return FALSE;
-  }
+
   CXFA_Node* pDataNode = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Data));
-  if (pDataNode) {
+  if (pDataNode)
     pDataModel->RemoveChild(pDataNode);
-  }
+
   if (pImportDataRoot->GetElementType() == XFA_Element::DataModel) {
     while (CXFA_Node* pChildNode =
                pImportDataRoot->GetNodeItem(XFA_NODEITEM_FirstChild)) {
@@ -59,15 +55,14 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
   } else {
     CFDE_XMLNode* pXMLNode = pImportDataRoot->GetXMLMappingNode();
     CFDE_XMLNode* pParentXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
-    if (pParentXMLNode) {
+    if (pParentXMLNode)
       pParentXMLNode->RemoveChildNode(pXMLNode);
-    }
     pDataModel->InsertChild(pImportDataRoot);
   }
   m_pDocument->DoDataRemerge(FALSE);
-  pDataDocumentParser->Release();
   return TRUE;
 }
+
 CFX_WideString XFA_ExportEncodeAttribute(const CFX_WideString& str) {
   CFX_WideTextBuf textBuf;
   int32_t iLen = str.GetLength();
@@ -487,7 +482,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
                                   CXFA_Node* pNode,
                                   uint32_t dwFlag,
                                   const FX_CHAR* pChecksum) {
-  CFDE_XMLDoc* pXMLDoc = m_pDocument->GetParser()->GetXMLDoc();
+  CFDE_XMLDoc* pXMLDoc = m_pDocument->GetXMLDoc();
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketID()) {
       case XFA_XDPPACKET_XDP: {

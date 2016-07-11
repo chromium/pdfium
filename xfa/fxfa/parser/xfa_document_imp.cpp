@@ -12,7 +12,6 @@
 #include "xfa/fxfa/parser/xfa_document_layout_imp.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_datawindow.h"
@@ -72,6 +71,10 @@ void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
   }
   m_pRootNode = pNewRoot;
   RemovePurgeNode(pNewRoot);
+}
+
+CFDE_XMLDoc* CXFA_Document::GetXMLDoc() const {
+  return m_pParser->GetXMLDoc();
 }
 
 CXFA_FFNotify* CXFA_Document::GetNotify() const {
@@ -219,7 +222,7 @@ FX_BOOL CXFA_Document::IsInteractive() {
 CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   if (!m_pLocalMgr) {
     CFX_WideString wsLanguage;
-    GetParser()->GetNotify()->GetAppProvider()->GetLanguage(wsLanguage);
+    GetNotify()->GetAppProvider()->GetLanguage(wsLanguage);
     m_pLocalMgr = new CXFA_LocaleMgr(
         ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)), wsLanguage);
   }

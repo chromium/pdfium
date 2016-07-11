@@ -15,7 +15,6 @@
 #include "xfa/fxfa/include/xfa_ffdocview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #include "xfa/fxfa/parser/xfa_document_layout_imp.h"
-#include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_parser_imp.h"
 
 CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
@@ -505,8 +504,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_Element eElement,
                                                     CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
   CXFA_Document* pXFADoc = GetXFADoc();
-  CXFA_Node* pNewTemplateNode = pXFADoc->GetParser()->GetFactory()->CreateNode(
-      XFA_XDPPACKET_Template, eElement);
+  CXFA_Node* pNewTemplateNode =
+      pXFADoc->CreateNode(XFA_XDPPACKET_Template, eElement);
   if (pParent)
     pParent->InsertChild(pNewTemplateNode, pBefore);
   return pNewTemplateNode;
@@ -545,7 +544,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateValueNode(XFA_Element eValue,
 }
 
 CXFA_Document* CXFA_FFWidgetHandler::GetObjFactory() const {
-  return GetXFADoc()->GetParser()->GetFactory();
+  return GetXFADoc();
 }
 
 CXFA_Document* CXFA_FFWidgetHandler::GetXFADoc() const {
