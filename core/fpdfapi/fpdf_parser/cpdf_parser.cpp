@@ -51,8 +51,7 @@ int32_t GetStreamFirst(CPDF_StreamAcc* pObjStream) {
 }  // namespace
 
 CPDF_Parser::CPDF_Parser()
-    : m_pDocument(nullptr),
-      m_bOwnFileRead(true),
+    : m_bOwnFileRead(true),
       m_FileVersion(0),
       m_pTrailer(nullptr),
       m_pEncryptDict(nullptr),
@@ -127,8 +126,7 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
 
 void CPDF_Parser::CloseParser() {
   m_bVersionUpdated = false;
-  delete m_pDocument;
-  m_pDocument = nullptr;
+  m_pDocument.reset();
 
   if (m_pTrailer) {
     m_pTrailer->Release();
@@ -190,7 +188,7 @@ CPDF_Parser::Error CPDF_Parser::StartParse(IFX_FileRead* pFileAccess) {
     return FORMAT_ERROR;
 
   m_pSyntax->RestorePos(m_pSyntax->m_FileLen - m_pSyntax->m_HeaderOffset - 9);
-  m_pDocument = new CPDF_Document(this);
+  m_pDocument.reset(new CPDF_Document(this));
 
   FX_BOOL bXRefRebuilt = FALSE;
   if (m_pSyntax->SearchWord("startxref", TRUE, FALSE, 4096)) {
@@ -765,7 +763,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                 last_obj = start_pos;
                 FX_FILESIZE obj_end = 0;
                 CPDF_Object* pObject = ParseIndirectObjectAtByStrict(
-                    m_pDocument, obj_pos, objnum, &obj_end);
+                    m_pDocument.get(), obj_pos, objnum, &obj_end);
                 if (CPDF_Stream* pStream = ToStream(pObject)) {
                   if (CPDF_Dictionary* pDict = pStream->GetDict()) {
                     if ((pDict->KeyExist("Type")) &&
@@ -828,7 +826,8 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
               last_trailer = pos + i - 7;
               m_pSyntax->RestorePos(pos + i - m_pSyntax->m_HeaderOffset);
 
-              CPDF_Object* pObj = m_pSyntax->GetObject(m_pDocument, 0, 0, true);
+              CPDF_Object* pObj =
+                  m_pSyntax->GetObject(m_pDocument.get(), 0, 0, true);
               if (pObj) {
                 if (!pObj->IsDictionary() && !pObj->AsStream()) {
                   pObj->Release();
@@ -850,7 +849,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                           uint32_t dwObjNum =
                               pElement ? pElement->GetObjNum() : 0;
                           if (dwObjNum) {
-                            m_pTrailer->SetAtReference(key, m_pDocument,
+                            m_pTrailer->SetAtReference(key, m_pDocument.get(),
                                                        dwObjNum);
                           } else {
                             m_pTrailer->SetAt(key, pElement->Clone());
@@ -974,7 +973,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
 }
 
 FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
-  CPDF_Object* pObject = ParseIndirectObjectAt(m_pDocument, *pos, 0);
+  CPDF_Object* pObject = ParseIndirectObjectAt(m_pDocument.get(), *pos, 0);
   if (!pObject)
     return FALSE;
 
@@ -1472,7 +1471,7 @@ CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
     return nullptr;
 
   std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
-      m_pSyntax->GetObject(m_pDocument, 0, 0, true));
+      m_pSyntax->GetObject(m_pDocument.get(), 0, 0, true));
   if (!ToDictionary(pObj.get()))
     return nullptr;
   return pObj.release()->AsDictionary();
@@ -1559,7 +1558,7 @@ CPDF_Parser::Error CPDF_Parser::StartAsyncParse(IFX_FileRead* pFileAccess) {
     return StartParse(pFileAccess);
   }
 
-  m_pDocument = new CPDF_Document(this);
+  m_pDocument.reset(new CPDF_Document(this));
   FX_FILESIZE dwFirstXRefOffset = m_pSyntax->SavePos();
 
   FX_BOOL bXRefRebuilt = FALSE;

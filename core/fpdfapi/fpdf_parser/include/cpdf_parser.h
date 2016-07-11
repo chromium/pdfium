@@ -44,7 +44,7 @@ class CPDF_Parser {
   CFX_ByteString GetPassword() { return m_Password; }
   CPDF_Dictionary* GetTrailer() const { return m_pTrailer; }
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
-  CPDF_Document* GetDocument() const { return m_pDocument; }
+  CPDF_Document* GetDocument() const { return m_pDocument.get(); }
 
   uint32_t GetRootObjNum();
   uint32_t GetInfoObjNum();
@@ -118,7 +118,7 @@ class CPDF_Parser {
   // the objects.
   bool VerifyCrossRefV4();
 
-  CPDF_Document* m_pDocument;
+  std::unique_ptr<CPDF_Document> m_pDocument;
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
   bool m_bOwnFileRead;
   int m_FileVersion;

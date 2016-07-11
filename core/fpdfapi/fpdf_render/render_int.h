@@ -293,7 +293,7 @@ class CPDF_ImageLoader {
 
   FX_BOOL Start(const CPDF_ImageObject* pImage,
                 CPDF_PageRenderCache* pCache,
-                CPDF_ImageLoaderHandle*& LoadHandle,
+                std::unique_ptr<CPDF_ImageLoaderHandle>* pLoadHandle,
                 FX_BOOL bStdCS = FALSE,
                 uint32_t GroupFamily = 0,
                 FX_BOOL bLoadMask = FALSE,
@@ -373,15 +373,15 @@ class CPDF_ImageRenderer {
   CFX_Matrix m_ImageMatrix;
   CPDF_ImageLoader m_Loader;
   const CFX_DIBSource* m_pDIBSource;
-  CFX_DIBitmap* m_pClone;
+  std::unique_ptr<CFX_DIBitmap> m_pClone;
   int m_BitmapAlpha;
   FX_BOOL m_bPatternColor;
   CPDF_Pattern* m_pPattern;
   FX_ARGB m_FillArgb;
   uint32_t m_Flags;
-  CFX_ImageTransformer* m_pTransformer;
+  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   void* m_DeviceHandle;
-  CPDF_ImageLoaderHandle* m_LoadHandle;
+  std::unique_ptr<CPDF_ImageLoaderHandle> m_LoadHandle;
   FX_BOOL m_bStdCS;
   int m_BlendType;
 };

@@ -264,9 +264,9 @@ void CPDF_VariableText::Initialize() {
   if (!m_bInitial) {
     CPVT_SectionInfo secinfo;
     if (m_bRichText) {
-      secinfo.pSecProps = new CPVT_SecProps(0.0f, 0.0f, 0);
-      secinfo.pWordProps = new CPVT_WordProps(
-          GetDefaultFontIndex(), kDefaultFontSize, 0, ScriptType::Normal, 0);
+      secinfo.pSecProps.reset(new CPVT_SecProps(0.0f, 0.0f, 0));
+      secinfo.pWordProps.reset(new CPVT_WordProps(
+          GetDefaultFontIndex(), kDefaultFontSize, 0, ScriptType::Normal, 0));
     }
     CPVT_WordPlace place;
     place.nSecIndex = 0;
@@ -333,9 +333,9 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(
     CPVT_SectionInfo secinfo;
     if (m_bRichText) {
       if (pSecProps)
-        secinfo.pSecProps = new CPVT_SecProps(*pSecProps);
+        secinfo.pSecProps.reset(new CPVT_SecProps(*pSecProps));
       if (pWordProps)
-        secinfo.pWordProps = new CPVT_WordProps(*pWordProps);
+        secinfo.pWordProps.reset(new CPVT_WordProps(*pWordProps));
     }
     AddSection(NewPlace, secinfo);
     newplace = NewPlace;
@@ -426,9 +426,9 @@ void CPDF_VariableText::SetText(const FX_WCHAR* text,
   CPVT_SectionInfo secinfo;
   if (m_bRichText) {
     if (pSecProps)
-      secinfo.pSecProps = new CPVT_SecProps(*pSecProps);
+      secinfo.pSecProps.reset(new CPVT_SecProps(*pSecProps));
     if (pWordProps)
-      secinfo.pWordProps = new CPVT_WordProps(*pWordProps);
+      secinfo.pWordProps.reset(new CPVT_WordProps(*pWordProps));
   }
   if (CSection* pSection = m_SectionArray.GetAt(0))
     pSection->m_SecInfo = secinfo;

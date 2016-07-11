@@ -564,23 +564,23 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
 const CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
                                                        FX_FLOAT pageY) {
-  for (const CPDF_Annot* pAnnot : m_pAnnotList->All()) {
+  for (const auto& pAnnot : m_pAnnotList->All()) {
     CFX_FloatRect annotRect;
     pAnnot->GetRect(annotRect);
     if (annotRect.Contains(pageX, pageY))
-      return pAnnot;
+      return pAnnot.get();
   }
   return nullptr;
 }
 
 const CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
                                                         FX_FLOAT pageY) {
-  for (const CPDF_Annot* pAnnot : m_pAnnotList->All()) {
+  for (const auto& pAnnot : m_pAnnotList->All()) {
     if (pAnnot->GetSubType() == "Widget") {
       CFX_FloatRect annotRect;
       pAnnot->GetRect(annotRect);
       if (annotRect.Contains(pageX, pageY))
-        return pAnnot;
+        return pAnnot.get();
     }
   }
   return nullptr;
@@ -1024,7 +1024,8 @@ bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
     return false;
 
   const auto& annots = m_pAnnotList->All();
-  return pdfium::ContainsValue(annots, p);
+  std::unique_ptr<const CPDF_Annot> annot(p);
+  return pdfium::ContainsValue(annots, annot);
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {

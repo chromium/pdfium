@@ -374,8 +374,10 @@ class CPDF_AnnotList {
                      CPDF_RenderOptions* pOptions,
                      FX_RECT* pClipRect);
   size_t Count() const { return m_AnnotList.size(); }
-  CPDF_Annot* GetAt(size_t index) const { return m_AnnotList[index]; }
-  const std::vector<CPDF_Annot*>& All() const { return m_AnnotList; }
+  CPDF_Annot* GetAt(size_t index) const { return m_AnnotList[index].get(); }
+  const std::vector<std::unique_ptr<CPDF_Annot>>& All() const {
+    return m_AnnotList;
+  }
   CPDF_Document* GetDocument() const { return m_pDocument; }
 
  protected:
@@ -389,7 +391,7 @@ class CPDF_AnnotList {
                    FX_RECT* clip_rect);
 
   CPDF_Document* const m_pDocument;
-  std::vector<CPDF_Annot*> m_AnnotList;
+  std::vector<std::unique_ptr<CPDF_Annot>> m_AnnotList;
 };
 
 #define COLORTYPE_TRANSPARENT 0

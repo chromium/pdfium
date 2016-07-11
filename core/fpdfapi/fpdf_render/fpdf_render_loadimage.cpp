@@ -1548,21 +1548,22 @@ FX_BOOL CPDF_ImageLoaderHandle::Continue(IFX_Pause* pPause) {
   return ret;
 }
 
-FX_BOOL CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
-                                CPDF_PageRenderCache* pCache,
-                                CPDF_ImageLoaderHandle*& LoadHandle,
-                                FX_BOOL bStdCS,
-                                uint32_t GroupFamily,
-                                FX_BOOL bLoadMask,
-                                CPDF_RenderStatus* pRenderStatus,
-                                int32_t nDownsampleWidth,
-                                int32_t nDownsampleHeight) {
+FX_BOOL CPDF_ImageLoader::Start(
+    const CPDF_ImageObject* pImage,
+    CPDF_PageRenderCache* pCache,
+    std::unique_ptr<CPDF_ImageLoaderHandle>* pLoadHandle,
+    FX_BOOL bStdCS,
+    uint32_t GroupFamily,
+    FX_BOOL bLoadMask,
+    CPDF_RenderStatus* pRenderStatus,
+    int32_t nDownsampleWidth,
+    int32_t nDownsampleHeight) {
   m_nDownsampleWidth = nDownsampleWidth;
   m_nDownsampleHeight = nDownsampleHeight;
-  LoadHandle = new CPDF_ImageLoaderHandle;
-  return LoadHandle->Start(this, pImage, pCache, bStdCS, GroupFamily, bLoadMask,
-                           pRenderStatus, m_nDownsampleWidth,
-                           m_nDownsampleHeight);
+  pLoadHandle->reset(new CPDF_ImageLoaderHandle);
+  return (*pLoadHandle)
+      ->Start(this, pImage, pCache, bStdCS, GroupFamily, bLoadMask,
+              pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
 }
 
 FX_BOOL CPDF_ImageLoader::Continue(CPDF_ImageLoaderHandle* LoadHandle,

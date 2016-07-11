@@ -41,7 +41,8 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       pAnnots->RemoveAt(i + 1);
       pDict = pAnnots->GetDictAt(i);
     }
-    m_AnnotList.push_back(new CPDF_Annot(pDict, this));
+    m_AnnotList.push_back(
+        std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, this)));
     if (bRegenerateAP && pDict->GetStringBy("Subtype") == "Widget" &&
         CPDF_InterForm::UpdatingAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
@@ -49,10 +50,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   }
 }
 
-CPDF_AnnotList::~CPDF_AnnotList() {
-  for (CPDF_Annot* annot : m_AnnotList)
-    delete annot;
-}
+CPDF_AnnotList::~CPDF_AnnotList() {}
 
 void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CFX_RenderDevice* pDevice,
@@ -62,7 +60,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  FX_BOOL bWidgetPass,
                                  CPDF_RenderOptions* pOptions,
                                  FX_RECT* clip_rect) {
-  for (CPDF_Annot* pAnnot : m_AnnotList) {
+  for (const auto& pAnnot : m_AnnotList) {
     bool bWidget = pAnnot->GetSubType() == "Widget";
     if ((bWidgetPass && !bWidget) || (!bWidgetPass && bWidget))
       continue;

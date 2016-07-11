@@ -326,29 +326,26 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
 #endif
   }
 }
+
 CPDF_ImageRenderer::CPDF_ImageRenderer() {
   m_pRenderStatus = nullptr;
   m_pImageObject = nullptr;
   m_Result = TRUE;
   m_Status = 0;
-  m_pTransformer = nullptr;
   m_DeviceHandle = nullptr;
-  m_LoadHandle = nullptr;
-  m_pClone = nullptr;
   m_bStdCS = FALSE;
   m_bPatternColor = FALSE;
   m_BlendType = FXDIB_BLEND_NORMAL;
   m_pPattern = nullptr;
   m_pObj2Device = nullptr;
 }
+
 CPDF_ImageRenderer::~CPDF_ImageRenderer() {
-  delete m_pTransformer;
   if (m_DeviceHandle) {
     m_pRenderStatus->m_pDevice->CancelDIBits(m_DeviceHandle);
   }
-  delete m_LoadHandle;
-  delete m_pClone;
 }
+
 FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
   FX_RECT image_rect = image_rect_f.GetOutterRect();
@@ -361,7 +358,7 @@ FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
     dest_height = -dest_height;
   }
   if (m_Loader.Start(m_pImageObject,
-                     m_pRenderStatus->m_pContext->GetPageCache(), m_LoadHandle,
+                     m_pRenderStatus->m_pContext->GetPageCache(), &m_LoadHandle,
                      m_bStdCS, m_pRenderStatus->m_GroupFamily,
                      m_pRenderStatus->m_bLoadMask, m_pRenderStatus, dest_width,
                      dest_height)) {
@@ -372,6 +369,7 @@ FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
   }
   return FALSE;
 }
+
 FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   if (!m_Loader.m_pBitmap) {
     return FALSE;
@@ -416,10 +414,10 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
     }
     m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject);
   } else if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
-    m_pClone = m_pDIBSource->Clone();
+    m_pClone.reset(m_pDIBSource->Clone());
     m_pClone->ConvertColorScale(m_pRenderStatus->m_Options.m_BackColor,
                                 m_pRenderStatus->m_Options.m_ForeColor);
-    m_pDIBSource = m_pClone;
+    m_pDIBSource = m_pClone.get();
   }
   m_Flags = 0;
   if (m_pRenderStatus->m_Options.m_Flags & RENDER_FORCE_DOWNSAMPLE) {
@@ -488,6 +486,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   }
   return StartDIBSource();
 }
+
 FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                   const CPDF_PageObject* pObj,
                                   const CFX_Matrix* pObj2Device,
@@ -510,6 +509,7 @@ FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
   }
   return StartRenderDIBSource();
 }
+
 FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                   const CFX_DIBSource* pDIBSource,
                                   FX_ARGB bitmap_argb,
@@ -528,6 +528,7 @@ FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
   m_BlendType = blendType;
   return StartDIBSource();
 }
+
 FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
   if (m_pRenderStatus->m_bPrint &&
       !(m_pRenderStatus->m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE)) {
@@ -773,8 +774,8 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
     FX_RECT clip_box = m_pRenderStatus->m_pDevice->GetClipBox();
     clip_box.Intersect(image_rect);
     m_Status = 2;
-    m_pTransformer = new CFX_ImageTransformer(m_pDIBSource, &m_ImageMatrix,
-                                              m_Flags, &clip_box);
+    m_pTransformer.reset(new CFX_ImageTransformer(m_pDIBSource, &m_ImageMatrix,
+                                                  m_Flags, &clip_box));
     m_pTransformer->Start();
     return TRUE;
   }
@@ -896,7 +897,7 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
     return m_pRenderStatus->m_pDevice->ContinueDIBits(m_DeviceHandle, pPause);
 
   if (m_Status == 4) {
-    if (m_Loader.Continue(m_LoadHandle, pPause))
+    if (m_Loader.Continue(m_LoadHandle.get(), pPause))
       return TRUE;
 
     if (StartRenderDIBSource())
