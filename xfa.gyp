@@ -16,19 +16,14 @@
   },
   "targets":[
     {
-      "target_name":"xfa",
-      "type":"static_library",
+      "target_name": "fxjs",
+      "type": "static_library",
       'include_dirs': [
         # This is implicit in GN.
         '<(DEPTH)',
         '.',
-        'third_party/freetype/include',
-        'third_party/freetype/include/freetype',
         '<(DEPTH)/v8',
         '<(DEPTH)/v8/include',
-      ],
-      'defines' : [
-        'FT2_BUILD_LIBRARY',
       ],
       'dependencies': [
         '<(DEPTH)/v8/src/v8.gyp:v8',
@@ -36,7 +31,7 @@
       'export_dependent_settings': [
         '<(DEPTH)/v8/src/v8.gyp:v8',
       ],
-      "sources":[
+      "sources": [
         "fxjs/cfxjse_arguments.cpp",
         "fxjs/cfxjse_class.cpp",
         "fxjs/cfxjse_context.cpp",
@@ -50,6 +45,25 @@
         "fxjs/include/cfxjse_context.h",
         "fxjs/include/cfxjse_value.h",
         "fxjs/include/fxjse.h",
+      ]
+    },
+    {
+      "target_name":"xfa",
+      "type":"static_library",
+      'include_dirs': [
+        # This is implicit in GN.
+        '<(DEPTH)',
+        '.',
+        'third_party/freetype/include',
+        'third_party/freetype/include/freetype',
+      ],
+      'defines' : [
+        'FT2_BUILD_LIBRARY',
+      ],
+      'dependencies': [
+        ':fxjs',
+      ],
+      "sources":[
         "xfa/fde/cfde_path.cpp",
         "xfa/fde/cfde_path.h",
         "xfa/fde/cfde_txtedtbuf.cpp",
