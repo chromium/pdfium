@@ -779,15 +779,8 @@
       ],
       'conditions': [
         ['pdf_enable_v8==1', {
-          'include_dirs': [
-            '<(DEPTH)/v8',
-            '<(DEPTH)/v8/include',
-          ],
           'dependencies': [
-            '<(DEPTH)/v8/src/v8.gyp:v8',
-          ],
-          'export_dependent_settings': [
-            '<(DEPTH)/v8/src/v8.gyp:v8',
+            ':fxjs'
           ],
           'sources!': [
             'fpdfsdk/javascript/JS_Runtime_Stub.cpp',
@@ -835,8 +828,6 @@
             'fpdfsdk/javascript/resource.h',
             'fpdfsdk/javascript/util.cpp',
             'fpdfsdk/javascript/util.h',
-            'fpdfsdk/jsapi/include/fxjs_v8.h',
-            'fpdfsdk/jsapi/fxjs_v8.cpp',
           ],
         }],
       ],
@@ -977,7 +968,7 @@
           ],
           'sources': [
             'fpdfsdk/javascript/public_methods_embeddertest.cpp',
-            'fpdfsdk/jsapi/fxjs_v8_embeddertest.cpp',
+            'fxjs/fxjs_v8_embeddertest.cpp',
             'testing/js_embedder_test.cpp',
             'testing/js_embedder_test.h',
           ],
@@ -1013,12 +1004,57 @@
     },
   ],
   'conditions': [
+    ['pdf_enable_v8==1', {
+      'targets': [
+        {
+          "target_name": "fxjs",
+          "type": "static_library",
+          'include_dirs': [
+            # This is implicit in GN.
+            '<(DEPTH)',
+            '.',
+            '<(DEPTH)/v8',
+            '<(DEPTH)/v8/include',
+          ],
+          'dependencies': [
+            '<(DEPTH)/v8/src/v8.gyp:v8',
+          ],
+          'export_dependent_settings': [
+            '<(DEPTH)/v8/src/v8.gyp:v8',
+          ],
+          "sources": [
+            "fxjs/fxjs_v8.cpp",
+            "fxjs/include/fxjs_v8.h",
+          ],
+          "conditions": [
+            ['pdf_enable_xfa==1', {
+              'sources': [
+                "fxjs/cfxjse_arguments.cpp",
+                "fxjs/cfxjse_class.cpp",
+                "fxjs/cfxjse_context.cpp",
+                "fxjs/cfxjse_isolatetracker.cpp",
+                "fxjs/cfxjse_isolatetracker.h",
+                "fxjs/cfxjse_runtimedata.cpp",
+                "fxjs/cfxjse_runtimedata.h",
+                "fxjs/cfxjse_value.cpp",
+                "fxjs/include/cfxjse_arguments.h",
+                "fxjs/include/cfxjse_class.h",
+                "fxjs/include/cfxjse_context.h",
+                "fxjs/include/cfxjse_value.h",
+                "fxjs/include/fxjse.h",
+              ]
+            }],
+          ],
+        },
+      ]
+    }],
     ['pdf_enable_xfa==1', {
       'targets': [
         {
           'target_name': 'fpdfxfa',
           'type': 'static_library',
           'dependencies': [
+            'fxjs',
             'javascript',
             'xfa.gyp:xfa',
           ],

@@ -828,15 +828,9 @@ static_library("javascript") {
       "fpdfsdk/javascript/resource.h",
       "fpdfsdk/javascript/util.cpp",
       "fpdfsdk/javascript/util.h",
-      "fpdfsdk/jsapi/fxjs_v8.cpp",
-      "fpdfsdk/jsapi/include/fxjs_v8.h",
     ]
-    include_dirs = [
-      "//v8",
-      "//v8/include",
-    ]
-    public_deps = [
-      "//v8",
+    deps = [
+      ":fxjs",
     ]
     configs += [ "//v8:external_startup_data" ]
   } else {
@@ -869,25 +863,32 @@ static_library("formfiller") {
   configs += [ ":pdfium_core_config" ]
 }
 
-if (pdf_enable_xfa) {
+if (pdf_enable_v8) {
   static_library("fxjs") {
     sources = [
-      "fxjs/cfxjse_arguments.cpp",
-      "fxjs/cfxjse_class.cpp",
-      "fxjs/cfxjse_context.cpp",
-      "fxjs/cfxjse_isolatetracker.cpp",
-      "fxjs/cfxjse_isolatetracker.h",
-      "fxjs/cfxjse_runtimedata.cpp",
-      "fxjs/cfxjse_runtimedata.h",
-      "fxjs/cfxjse_value.cpp",
-      "fxjs/include/cfxjse_arguments.h",
-      "fxjs/include/cfxjse_class.h",
-      "fxjs/include/cfxjse_context.h",
-      "fxjs/include/cfxjse_value.h",
-      "fxjs/include/fxjse.h",
+      "fxjs/fxjs_v8.cpp",
+      "fxjs/include/fxjs_v8.h",
     ]
+    if (pdf_enable_xfa) {
+      sources += [
+        "fxjs/cfxjse_arguments.cpp",
+        "fxjs/cfxjse_class.cpp",
+        "fxjs/cfxjse_context.cpp",
+        "fxjs/cfxjse_isolatetracker.cpp",
+        "fxjs/cfxjse_isolatetracker.h",
+        "fxjs/cfxjse_runtimedata.cpp",
+        "fxjs/cfxjse_runtimedata.h",
+        "fxjs/cfxjse_value.cpp",
+        "fxjs/include/cfxjse_arguments.h",
+        "fxjs/include/cfxjse_class.h",
+        "fxjs/include/cfxjse_context.h",
+        "fxjs/include/cfxjse_value.h",
+        "fxjs/include/fxjse.h",
+      ]
+    }
     deps = [
-        "//v8:v8_libplatform",
+      "//v8",
+      "//v8:v8_libplatform",
     ]
     configs += [ ":pdfium_core_config" ]
     include_dirs = [
@@ -898,7 +899,9 @@ if (pdf_enable_xfa) {
       "//v8",
     ]
   }
+}
 
+if (pdf_enable_xfa) {
   static_library("fpdfxfa") {
     sources = [
       "fpdfsdk/fpdfxfa/fpdfxfa_app.cpp",
@@ -1456,9 +1459,7 @@ if (pdf_enable_xfa) {
       "xfa/fxgraphics/cfx_shading.h",
       "xfa/fxgraphics/include/cfx_graphics.h",
     ]
-    include_dirs = [
-      ".",
-    ]
+    include_dirs = [ "." ]
     deps = [
       ":fxjs",
     ]
@@ -1565,18 +1566,11 @@ test("pdfium_embeddertests") {
   if (pdf_enable_v8) {
     sources += [
       "fpdfsdk/javascript/public_methods_embeddertest.cpp",
-      "fpdfsdk/jsapi/fxjs_v8_embeddertest.cpp",
+      "fxjs/fxjs_v8_embeddertest.cpp",
       "testing/js_embedder_test.cpp",
       "testing/js_embedder_test.h",
     ]
-    deps += [
-      "//v8",
-      "//v8:v8_libplatform",
-    ]
-    include_dirs += [
-      "//v8",
-      "//v8/include",
-    ]
+    deps += [ ":fxjs" ]
     configs += [ "//v8:external_startup_data" ]
   }
   configs += [ ":pdfium_core_config" ]

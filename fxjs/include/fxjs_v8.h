@@ -11,8 +11,8 @@
 // PDFium code should include this file rather than including V8 headers
 // directly.
 
-#ifndef FPDFSDK_JSAPI_INCLUDE_FXJS_V8_H_
-#define FPDFSDK_JSAPI_INCLUDE_FXJS_V8_H_
+#ifndef FXJS_INCLUDE_FXJS_V8_H_
+#define FXJS_INCLUDE_FXJS_V8_H_
 
 #include <v8-util.h>
 #include <v8.h>
@@ -287,4 +287,4 @@ v8::Local<v8::Array> FXJS_ToArray(v8::Isolate* pIsolate,
                                   v8::Local<v8::Value> pValue);
 void FXJS_ValueCopy(v8::Local<v8::Value>& pTo, v8::Local<v8::Value> pFrom);
 
-#endif  // FPDFSDK_JSAPI_INCLUDE_FXJS_V8_H_
+#endif  // FXJS_INCLUDE_FXJS_V8_H_

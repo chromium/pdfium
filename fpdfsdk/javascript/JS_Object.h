@@ -12,7 +12,7 @@
 
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
-#include "fpdfsdk/jsapi/include/fxjs_v8.h"
+#include "fxjs/include/fxjs_v8.h"
 
 class CJS_Context;
 class CJS_Object;

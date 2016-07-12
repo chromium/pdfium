@@ -6,8 +6,8 @@
 
 #include "fxjs/cfxjse_runtimedata.h"
 
-#include "fpdfsdk/jsapi/include/fxjs_v8.h"
 #include "fxjs/cfxjse_isolatetracker.h"
+#include "fxjs/include/fxjs_v8.h"
 
 namespace {
 

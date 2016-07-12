@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/jsapi/include/fxjs_v8.h"
+#include "fxjs/include/fxjs_v8.h"
 
 #include <vector>
 
@@ -514,8 +514,8 @@ v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
     pObjDef->m_pConstructor(pIRuntime, obj);
 
   if (!bStatic && FXJS_PerIsolateData::Get(pIsolate)->m_pDynamicObjsMap) {
-    FXJS_PerIsolateData::Get(pIsolate)
-        ->m_pDynamicObjsMap->set(pPerObjData, obj);
+    FXJS_PerIsolateData::Get(pIsolate)->m_pDynamicObjsMap->set(pPerObjData,
+                                                               obj);
   }
   return obj;
 }

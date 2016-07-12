@@ -16,38 +16,6 @@
   },
   "targets":[
     {
-      "target_name": "fxjs",
-      "type": "static_library",
-      'include_dirs': [
-        # This is implicit in GN.
-        '<(DEPTH)',
-        '.',
-        '<(DEPTH)/v8',
-        '<(DEPTH)/v8/include',
-      ],
-      'dependencies': [
-        '<(DEPTH)/v8/src/v8.gyp:v8',
-      ],
-      'export_dependent_settings': [
-        '<(DEPTH)/v8/src/v8.gyp:v8',
-      ],
-      "sources": [
-        "fxjs/cfxjse_arguments.cpp",
-        "fxjs/cfxjse_class.cpp",
-        "fxjs/cfxjse_context.cpp",
-        "fxjs/cfxjse_isolatetracker.cpp",
-        "fxjs/cfxjse_isolatetracker.h",
-        "fxjs/cfxjse_runtimedata.cpp",
-        "fxjs/cfxjse_runtimedata.h",
-        "fxjs/cfxjse_value.cpp",
-        "fxjs/include/cfxjse_arguments.h",
-        "fxjs/include/cfxjse_class.h",
-        "fxjs/include/cfxjse_context.h",
-        "fxjs/include/cfxjse_value.h",
-        "fxjs/include/fxjse.h",
-      ]
-    },
-    {
       "target_name":"xfa",
       "type":"static_library",
       'include_dirs': [
@@ -59,9 +27,6 @@
       ],
       'defines' : [
         'FT2_BUILD_LIBRARY',
-      ],
-      'dependencies': [
-        ':fxjs',
       ],
       "sources":[
         "xfa/fde/cfde_path.cpp",

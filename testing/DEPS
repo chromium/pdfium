@@ -3,7 +3,7 @@ include_rules = [
   '+core/fxcodec',
   '+core/fxcrt/include',
   '+core/fxge/include',
-  '+fpdfsdk/jsapi/include',
+  '+fxjs/include',
   '+public',
   '+v8',
   '+xfa/fde',
