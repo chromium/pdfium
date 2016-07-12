@@ -1,14 +1,13 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjse/context.h"
+#include "fxjs/include/cfxjse_context.h"
 
-#include "fxjse/include/cfxjse_class.h"
-#include "fxjse/include/cfxjse_value.h"
-#include "fxjse/scope_inline.h"
+#include "fxjs/include/cfxjse_class.h"
+#include "fxjs/include/cfxjse_value.h"
 
 namespace {
 
@@ -41,6 +40,34 @@ const FX_CHAR szCompatibleModeScript[] =
 
 }  // namespace
 
+// Note, not in the anonymous namespace due to the friend call
+// in cfxjse_context.h
+// TODO(dsinclair): Remove the friending, use public methods.
+class CFXJSE_ScopeUtil_IsolateHandleContext {
+ public:
+  explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext)
+      : m_context(pContext),
+        m_parent(pContext->m_pIsolate),
+        m_cscope(v8::Local<v8::Context>::New(pContext->m_pIsolate,
+                                             pContext->m_hContext)) {}
+  v8::Isolate* GetIsolate() { return m_context->m_pIsolate; }
+  v8::Local<v8::Context> GetLocalContext() {
+    return v8::Local<v8::Context>::New(m_context->m_pIsolate,
+                                       m_context->m_hContext);
+  }
+
+ private:
+  CFXJSE_ScopeUtil_IsolateHandleContext(
+      const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
+  void operator=(const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
+  void* operator new(size_t size) = delete;
+  void operator delete(void*, size_t) = delete;
+
+  CFXJSE_Context* m_context;
+  CFXJSE_ScopeUtil_IsolateHandle m_parent;
+  v8::Context::Scope m_cscope;
+};
+
 v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
     const v8::Local<v8::Context>& hContext) {
   return hContext->Global()->GetPrototype().As<v8::Object>();
@@ -58,27 +85,25 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
     const v8::Local<v8::Object>& hJSObject,
     CFXJSE_Class* lpClass) {
   ASSERT(!hJSObject.IsEmpty());
-  if (!hJSObject->IsObject()) {
+  if (!hJSObject->IsObject())
     return nullptr;
-  }
+
   v8::Local<v8::Object> hObject = hJSObject;
   if (hObject->InternalFieldCount() == 0) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
-    if (hProtoObject.IsEmpty() || !hProtoObject->IsObject()) {
+    if (hProtoObject.IsEmpty() || !hProtoObject->IsObject())
       return nullptr;
-    }
+
     hObject = hProtoObject.As<v8::Object>();
-    if (hObject->InternalFieldCount() == 0) {
+    if (hObject->InternalFieldCount() == 0)
       return nullptr;
-    }
   }
   if (lpClass) {
     v8::Local<v8::FunctionTemplate> hClass =
         v8::Local<v8::FunctionTemplate>::New(
             lpClass->GetContext()->GetRuntime(), lpClass->GetTemplate());
-    if (!hClass->HasInstance(hObject)) {
+    if (!hClass->HasInstance(hObject))
       return nullptr;
-    }
   }
   return static_cast<CFXJSE_HostObject*>(
       hObject->GetAlignedPointerFromInternalField(0));
@@ -94,18 +119,17 @@ v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
       v8::Local<v8::Value> hValue;
       hValue = hException.As<v8::Object>()->Get(
           v8::String::NewFromUtf8(pIsolate, "name"));
-      if (hValue->IsString() || hValue->IsStringObject()) {
+      if (hValue->IsString() || hValue->IsStringObject())
         hReturnValue->Set(0, hValue);
-      } else {
+      else
         hReturnValue->Set(0, v8::String::NewFromUtf8(pIsolate, "Error"));
-      }
+
       hValue = hException.As<v8::Object>()->Get(
           v8::String::NewFromUtf8(pIsolate, "message"));
-      if (hValue->IsString() || hValue->IsStringObject()) {
+      if (hValue->IsString() || hValue->IsStringObject())
         hReturnValue->Set(1, hValue);
-      } else {
+      else
         hReturnValue->Set(1, hMessage->Get());
-      }
     } else {
       hReturnValue->Set(0, v8::String::NewFromUtf8(pIsolate, "Error"));
       hReturnValue->Set(1, hMessage->Get());
@@ -122,13 +146,14 @@ v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
   return hReturnValue;
 }
 
+// static
 CFXJSE_Context* CFXJSE_Context::Create(
     v8::Isolate* pIsolate,
     const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
     CFXJSE_HostObject* lpGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   CFXJSE_Context* pContext = new CFXJSE_Context(pIsolate);
-  CFXJSE_Class* lpGlobalClassObj = NULL;
+  CFXJSE_Class* lpGlobalClassObj = nullptr;
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (lpGlobalClass) {
     lpGlobalClassObj = CFXJSE_Class::Create(pContext, lpGlobalClass, TRUE);
@@ -146,7 +171,7 @@ CFXJSE_Context* CFXJSE_Context::Create(
       v8::String::NewFromUtf8(pIsolate, "global", v8::NewStringType::kNormal)
           .ToLocalChecked());
   v8::Local<v8::Context> hNewContext =
-      v8::Context::New(pIsolate, NULL, hObjectTemplate);
+      v8::Context::New(pIsolate, nullptr, hObjectTemplate);
   v8::Local<v8::Context> hRootContext = v8::Local<v8::Context>::New(
       pIsolate, CFXJSE_RuntimeData::Get(pIsolate)->m_hRootContext);
   hNewContext->SetSecurityToken(hRootContext->GetSecurityToken());
@@ -184,7 +209,7 @@ FX_BOOL CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
   v8::TryCatch trycatch(m_pIsolate);
   v8::Local<v8::String> hScriptString =
       v8::String::NewFromUtf8(m_pIsolate, szScript);
-  if (lpNewThisObject == NULL) {
+  if (!lpNewThisObject) {
     v8::Local<v8::Script> hScript = v8::Script::Compile(hScriptString);
     if (!trycatch.HasCaught()) {
       v8::Local<v8::Value> hValue = hScript->Run();

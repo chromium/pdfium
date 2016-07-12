@@ -1,14 +1,17 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJSE_SCOPE_INLINE_H_
-#define FXJSE_SCOPE_INLINE_H_
+#ifndef FXJS_CFXJSE_ISOLATETRACKER_H_
+#define FXJS_CFXJSE_ISOLATETRACKER_H_
 
-#include "fxjse/context.h"
-#include "fxjse/runtime.h"
+#include <vector>
+
+#include "v8/include/v8.h"
+
+#include "fxjs/cfxjse_runtimedata.h"
 
 class CFXJSE_ScopeUtil_IsolateHandle {
  public:
@@ -47,29 +50,21 @@ class CFXJSE_ScopeUtil_IsolateHandleRootContext {
   v8::Context::Scope m_cscope;
 };
 
-class CFXJSE_ScopeUtil_IsolateHandleContext {
+class CFXJSE_IsolateTracker {
  public:
-  explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext)
-      : m_context(pContext),
-        m_parent(pContext->m_pIsolate),
-        m_cscope(v8::Local<v8::Context>::New(pContext->m_pIsolate,
-                                             pContext->m_hContext)) {}
-  v8::Isolate* GetIsolate() { return m_context->m_pIsolate; }
-  v8::Local<v8::Context> GetLocalContext() {
-    return v8::Local<v8::Context>::New(m_context->m_pIsolate,
-                                       m_context->m_hContext);
-  }
+  typedef void (*DisposeCallback)(v8::Isolate*, bool bOwnedIsolate);
 
- private:
-  CFXJSE_ScopeUtil_IsolateHandleContext(
-      const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
-  void operator=(const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
-  void* operator new(size_t size) = delete;
-  void operator delete(void*, size_t) = delete;
+  CFXJSE_IsolateTracker();
+  ~CFXJSE_IsolateTracker();
 
-  CFXJSE_Context* m_context;
-  CFXJSE_ScopeUtil_IsolateHandle m_parent;
-  v8::Context::Scope m_cscope;
+  void Append(v8::Isolate* pIsolate);
+  void Remove(v8::Isolate* pIsolate, DisposeCallback lpfnDisposeCallback);
+  void RemoveAll(DisposeCallback lpfnDisposeCallback);
+
+  static CFXJSE_IsolateTracker* g_pInstance;
+
+ protected:
+  std::vector<v8::Isolate*> m_OwnedIsolates;
 };
 
-#endif  // FXJSE_SCOPE_INLINE_H_
+#endif  // FXJS_CFXJSE_ISOLATETRACKER_H_

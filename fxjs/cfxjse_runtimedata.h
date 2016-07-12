@@ -1,15 +1,12 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJSE_RUNTIME_H_
-#define FXJSE_RUNTIME_H_
+#ifndef FXJS_CFXJSE_RUNTIMEDATA_H_
+#define FXJS_CFXJSE_RUNTIMEDATA_H_
 
-#include <vector>
-
-#include "core/fxcrt/include/fx_basic.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_RuntimeList;
@@ -34,21 +31,4 @@ class CFXJSE_RuntimeData {
   CFXJSE_RuntimeData& operator=(const CFXJSE_RuntimeData&) = delete;
 };
 
-class CFXJSE_IsolateTracker {
- public:
-  typedef void (*DisposeCallback)(v8::Isolate*, bool bOwnedIsolate);
-
-  CFXJSE_IsolateTracker();
-  ~CFXJSE_IsolateTracker();
-
-  void Append(v8::Isolate* pIsolate);
-  void Remove(v8::Isolate* pIsolate, DisposeCallback lpfnDisposeCallback);
-  void RemoveAll(DisposeCallback lpfnDisposeCallback);
-
-  static CFXJSE_IsolateTracker* g_pInstance;
-
- protected:
-  std::vector<v8::Isolate*> m_OwnedIsolates;
-};
-
-#endif  // FXJSE_RUNTIME_H_
+#endif  // FXJS_CFXJSE_RUNTIMEDATA_H_

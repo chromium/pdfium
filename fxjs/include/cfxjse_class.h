@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJSE_INCLUDE_CFXJSE_CLASS_H_
-#define FXJSE_INCLUDE_CFXJSE_CLASS_H_
+#ifndef FXJS_INCLUDE_CFXJSE_CLASS_H_
+#define FXJS_INCLUDE_CFXJSE_CLASS_H_
 
-#include "fxjse/include/cfxjse_arguments.h"
-#include "fxjse/include/fxjse.h"
+#include "fxjs/include/cfxjse_arguments.h"
+#include "fxjs/include/fxjse.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_Context;
@@ -16,8 +16,6 @@ class CFXJSE_Value;
 
 class CFXJSE_Class {
  public:
-  ~CFXJSE_Class();
-
   static CFXJSE_Class* Create(CFXJSE_Context* pContext,
                               const FXJSE_CLASS_DESCRIPTOR* lpClassDefintion,
                               FX_BOOL bIsJSGlobal = FALSE);
@@ -27,6 +25,8 @@ class CFXJSE_Class {
       v8::Isolate* pIsolate,
       v8::Local<v8::ObjectTemplate>& hObjectTemplate,
       const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition);
+
+  ~CFXJSE_Class();
 
   CFXJSE_Context* GetContext() { return m_pContext; }
   v8::Global<v8::FunctionTemplate>& GetTemplate() { return m_hTemplate; }
@@ -42,4 +42,4 @@ class CFXJSE_Class {
   friend class CFXJSE_Value;
 };
 
-#endif  // FXJSE_INCLUDE_CFXJSE_CLASS_H_
+#endif  // FXJS_INCLUDE_CFXJSE_CLASS_H_

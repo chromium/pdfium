@@ -7,7 +7,8 @@
 #ifndef XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
 #define XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
 
-#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjs/include/cfxjse_arguments.h"
+#include "fxjs/include/cfxjse_context.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 
 class CXFA_FM2JSContext : public CFXJSE_HostObject {

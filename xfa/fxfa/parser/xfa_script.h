@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_XFA_SCRIPT_H_
 #define XFA_FXFA_PARSER_XFA_SCRIPT_H_
 
-#include "fxjse/include/cfxjse_value.h"
+#include "fxjs/include/cfxjse_value.h"
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_valuearray.h"
 

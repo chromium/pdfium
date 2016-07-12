@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
 
-#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 enum class XFA_Event {

@@ -8,7 +8,7 @@
 
 #include <set>
 
-#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjs/include/cfxjse_arguments.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"

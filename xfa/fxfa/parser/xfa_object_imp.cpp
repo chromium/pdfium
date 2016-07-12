@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "core/fxcrt/include/fx_ext.h"
-#include "fxjse/include/cfxjse_arguments.h"
+#include "fxjs/include/cfxjse_arguments.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
