@@ -16,6 +16,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 
+class CCodec_Jbig2Context;
 class CCodec_ScanlineDecoder;
 class CFX_FontCache;
 class CFX_GlyphBitmap;
@@ -601,7 +602,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   uint8_t* m_pMaskedLine;
   std::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
-  void* m_pJbig2Context;
+  CCodec_Jbig2Context* m_pJbig2Context;
   CPDF_DIBSource* m_pMask;
   std::unique_ptr<CPDF_StreamAcc> m_pGlobalStream;
   CPDF_Stream* m_pMaskStream;
