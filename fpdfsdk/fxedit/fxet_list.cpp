@@ -8,9 +8,10 @@
 
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
+#include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 
 CFX_ListItem::CFX_ListItem()
-    : m_pEdit(IFX_Edit::NewEdit()),
+    : m_pEdit(new CFX_Edit),
       m_bSelected(FALSE),
       m_rcListItem(0.0f, 0.0f, 0.0f, 0.0f) {
   m_pEdit->SetAlignmentV(1);
@@ -18,18 +19,17 @@ CFX_ListItem::CFX_ListItem()
 }
 
 CFX_ListItem::~CFX_ListItem() {
-  IFX_Edit::DelEdit(m_pEdit);
 }
 
 void CFX_ListItem::SetFontMap(IPVT_FontMap* pFontMap) {
   m_pEdit->SetFontMap(pFontMap);
 }
 
-IFX_Edit* CFX_ListItem::GetEdit() const {
-  return m_pEdit;
+CFX_Edit* CFX_ListItem::GetEdit() const {
+  return m_pEdit.get();
 }
 
-IFX_Edit_Iterator* CFX_ListItem::GetIterator() const {
+CFX_Edit_Iterator* CFX_ListItem::GetIterator() const {
   return m_pEdit->GetIterator();
 }
 
@@ -63,7 +63,7 @@ FX_FLOAT CFX_ListItem::GetItemHeight() const {
 
 uint16_t CFX_ListItem::GetFirstChar() const {
   CPVT_Word word;
-  IFX_Edit_Iterator* pIterator = GetIterator();
+  CFX_Edit_Iterator* pIterator = GetIterator();
   pIterator->SetAt(1);
   pIterator->GetWord(word);
   return word.Word;
@@ -79,203 +79,6 @@ CFX_ListContainer::~CFX_ListContainer() {}
 
 void CFX_ListContainer::SetPlateRect(const CFX_FloatRect& rect) {
   m_rcPlate = rect;
-}
-
-CFX_List::CFX_List()
-    : m_fFontSize(0.0f), m_pFontMap(nullptr), m_bMultiple(FALSE) {}
-
-CFX_List::~CFX_List() {
-  Empty();
-}
-
-void CFX_List::Empty() {
-  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++)
-    delete m_aListItems.GetAt(i);
-
-  m_aListItems.RemoveAll();
-}
-
-void CFX_List::SetFontMap(IPVT_FontMap* pFontMap) {
-  m_pFontMap = pFontMap;
-}
-
-void CFX_List::SetFontSize(FX_FLOAT fFontSize) {
-  m_fFontSize = fFontSize;
-}
-
-void CFX_List::AddItem(const FX_WCHAR* str) {
-  CFX_ListItem* pListItem = new CFX_ListItem();
-  pListItem->SetFontMap(m_pFontMap);
-  pListItem->SetFontSize(m_fFontSize);
-  pListItem->SetText(str);
-  m_aListItems.Add(pListItem);
-}
-
-void CFX_List::ReArrange(int32_t nItemIndex) {
-  FX_FLOAT fPosY = 0.0f;
-
-  if (CFX_ListItem* pPrevItem = m_aListItems.GetAt(nItemIndex - 1))
-    fPosY = pPrevItem->GetRect().bottom;
-
-  for (int32_t i = nItemIndex, sz = m_aListItems.GetSize(); i < sz; i++) {
-    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
-      FX_FLOAT fListItemHeight = pListItem->GetItemHeight();
-      pListItem->SetRect(CLST_Rect(0.0f, fPosY, 0.0f, fPosY + fListItemHeight));
-      fPosY += fListItemHeight;
-    }
-  }
-
-  SetContentRect(CLST_Rect(0.0f, 0.0f, 0.0f, fPosY));
-}
-
-IFX_Edit* CFX_List::GetItemEdit(int32_t nIndex) const {
-  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex)) {
-    return pListItem->GetEdit();
-  }
-
-  return nullptr;
-}
-
-int32_t CFX_List::GetCount() const {
-  return m_aListItems.GetSize();
-}
-
-CFX_FloatRect CFX_List::GetPlateRect() const {
-  return CFX_ListContainer::GetPlateRect();
-}
-
-CFX_FloatRect CFX_List::GetContentRect() const {
-  return InnerToOuter(CFX_ListContainer::GetContentRect());
-}
-
-FX_FLOAT CFX_List::GetFontSize() const {
-  return m_fFontSize;
-}
-
-int32_t CFX_List::GetItemIndex(const CFX_FloatPoint& point) const {
-  CFX_FloatPoint pt = OuterToInner(point);
-
-  FX_BOOL bFirst = TRUE;
-  FX_BOOL bLast = TRUE;
-
-  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++) {
-    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
-      CLST_Rect rcListItem = pListItem->GetRect();
-
-      if (FX_EDIT_IsFloatBigger(pt.y, rcListItem.top)) {
-        bFirst = FALSE;
-      }
-
-      if (FX_EDIT_IsFloatSmaller(pt.y, rcListItem.bottom)) {
-        bLast = FALSE;
-      }
-
-      if (pt.y >= rcListItem.top && pt.y < rcListItem.bottom) {
-        return i;
-      }
-    }
-  }
-
-  if (bFirst)
-    return 0;
-  if (bLast)
-    return m_aListItems.GetSize() - 1;
-
-  return -1;
-}
-
-FX_FLOAT CFX_List::GetFirstHeight() const {
-  if (CFX_ListItem* pListItem = m_aListItems.GetAt(0)) {
-    return pListItem->GetItemHeight();
-  }
-
-  return 1.0f;
-}
-
-int32_t CFX_List::GetFirstSelected() const {
-  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++) {
-    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
-      if (pListItem->IsSelected())
-        return i;
-    }
-  }
-  return -1;
-}
-
-int32_t CFX_List::GetLastSelected() const {
-  for (int32_t i = m_aListItems.GetSize() - 1; i >= 0; i--) {
-    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
-      if (pListItem->IsSelected())
-        return i;
-    }
-  }
-  return -1;
-}
-
-FX_WCHAR CFX_List::Toupper(FX_WCHAR c) const {
-  if ((c >= 'a') && (c <= 'z'))
-    c = c - ('a' - 'A');
-  return c;
-}
-
-int32_t CFX_List::FindNext(int32_t nIndex, FX_WCHAR nChar) const {
-  int32_t nCircleIndex = nIndex;
-
-  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++) {
-    nCircleIndex++;
-    if (nCircleIndex >= sz)
-      nCircleIndex = 0;
-
-    if (CFX_ListItem* pListItem = m_aListItems.GetAt(nCircleIndex)) {
-      if (Toupper(pListItem->GetFirstChar()) == Toupper(nChar))
-        return nCircleIndex;
-    }
-  }
-
-  return nCircleIndex;
-}
-
-CFX_FloatRect CFX_List::GetItemRect(int32_t nIndex) const {
-  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex)) {
-    CFX_FloatRect rcItem = pListItem->GetRect();
-    rcItem.left = 0.0f;
-    rcItem.right = GetPlateRect().Width();
-    return InnerToOuter(CLST_Rect(rcItem));
-  }
-
-  return CFX_FloatRect();
-}
-
-FX_BOOL CFX_List::IsItemSelected(int32_t nIndex) const {
-  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex))
-    return pListItem->IsSelected();
-  return FALSE;
-}
-
-void CFX_List::SetItemSelect(int32_t nItemIndex, FX_BOOL bSelected) {
-  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nItemIndex)) {
-    pListItem->SetSelect(bSelected);
-  }
-}
-
-void CFX_List::SetMultipleSel(FX_BOOL bMultiple) {
-  m_bMultiple = bMultiple;
-}
-
-FX_BOOL CFX_List::IsMultipleSel() const {
-  return m_bMultiple;
-}
-
-FX_BOOL CFX_List::IsValid(int32_t nItemIndex) const {
-  return nItemIndex >= 0 && nItemIndex < m_aListItems.GetSize();
-}
-
-CFX_WideString CFX_List::GetItemText(int32_t nIndex) const {
-  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex)) {
-    return pListItem->GetText();
-  }
-
-  return L"";
 }
 
 CPLST_Select::CPLST_Select() {}
@@ -392,11 +195,16 @@ CFX_ListCtrl::CFX_ListCtrl()
       m_nSelItem(-1),
       m_nFootIndex(-1),
       m_bCtrlSel(FALSE),
-      m_nCaretIndex(-1) {}
+      m_nCaretIndex(-1),
+      m_fFontSize(0.0f),
+      m_pFontMap(nullptr),
+      m_bMultiple(FALSE) {}
 
-CFX_ListCtrl::~CFX_ListCtrl() {}
+CFX_ListCtrl::~CFX_ListCtrl() {
+  Empty();
+}
 
-void CFX_ListCtrl::SetNotify(IFX_List_Notify* pNotify) {
+void CFX_ListCtrl::SetNotify(CPWL_List_Notify* pNotify) {
   m_pNotify = pNotify;
 }
 
@@ -566,7 +374,18 @@ void CFX_ListCtrl::SetPlateRect(const CFX_FloatRect& rect) {
 }
 
 CFX_FloatRect CFX_ListCtrl::GetItemRect(int32_t nIndex) const {
-  return InToOut(CFX_List::GetItemRect(nIndex));
+  return InToOut(GetItemRectInternal(nIndex));
+}
+
+CFX_FloatRect CFX_ListCtrl::GetItemRectInternal(int32_t nIndex) const {
+  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex)) {
+    CFX_FloatRect rcItem = pListItem->GetRect();
+    rcItem.left = 0.0f;
+    rcItem.right = GetPlateRect().Width();
+    return InnerToOuter(CLST_Rect(rcItem));
+  }
+
+  return CFX_FloatRect();
 }
 
 int32_t CFX_ListCtrl::GetCaret() const {
@@ -695,7 +514,7 @@ void CFX_ListCtrl::ScrollToListItem(int32_t nItemIndex) {
     return;
 
   CFX_FloatRect rcPlate = GetPlateRect();
-  CFX_FloatRect rcItem = CFX_List::GetItemRect(nItemIndex);
+  CFX_FloatRect rcItem = GetItemRectInternal(nItemIndex);
   CFX_FloatRect rcItemCtrl = GetItemRect(nItemIndex);
 
   if (FX_EDIT_IsFloatSmaller(rcItemCtrl.bottom, rcPlate.bottom)) {
@@ -712,7 +531,7 @@ void CFX_ListCtrl::ScrollToListItem(int32_t nItemIndex) {
 void CFX_ListCtrl::SetScrollInfo() {
   if (m_pNotify) {
     CFX_FloatRect rcPlate = GetPlateRect();
-    CFX_FloatRect rcContent = CFX_List::GetContentRect();
+    CFX_FloatRect rcContent = GetContentRectInternal();
 
     if (!m_bNotifyFlag) {
       m_bNotifyFlag = TRUE;
@@ -731,7 +550,7 @@ void CFX_ListCtrl::SetScrollPos(const CFX_FloatPoint& point) {
 void CFX_ListCtrl::SetScrollPosY(FX_FLOAT fy) {
   if (!FX_EDIT_IsFloatEqual(m_ptScrollPos.y, fy)) {
     CFX_FloatRect rcPlate = GetPlateRect();
-    CFX_FloatRect rcContent = CFX_List::GetContentRect();
+    CFX_FloatRect rcContent = GetContentRectInternal();
 
     if (rcPlate.Height() > rcContent.Height()) {
       fy = rcPlate.top;
@@ -756,19 +575,36 @@ void CFX_ListCtrl::SetScrollPosY(FX_FLOAT fy) {
   }
 }
 
+CFX_FloatRect CFX_ListCtrl::GetContentRectInternal() const {
+  return InnerToOuter(CFX_ListContainer::GetContentRect());
+}
+
 CFX_FloatRect CFX_ListCtrl::GetContentRect() const {
-  return InToOut(CFX_List::GetContentRect());
+  return InToOut(GetContentRectInternal());
 }
 
 void CFX_ListCtrl::ReArrange(int32_t nItemIndex) {
-  CFX_List::ReArrange(nItemIndex);
+  FX_FLOAT fPosY = 0.0f;
+
+  if (CFX_ListItem* pPrevItem = m_aListItems.GetAt(nItemIndex - 1))
+    fPosY = pPrevItem->GetRect().bottom;
+
+  for (int32_t i = nItemIndex, sz = m_aListItems.GetSize(); i < sz; i++) {
+    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
+      FX_FLOAT fListItemHeight = pListItem->GetItemHeight();
+      pListItem->SetRect(CLST_Rect(0.0f, fPosY, 0.0f, fPosY + fListItemHeight));
+      fPosY += fListItemHeight;
+    }
+  }
+
+  SetContentRect(CLST_Rect(0.0f, 0.0f, 0.0f, fPosY));
   SetScrollInfo();
 }
 
 void CFX_ListCtrl::SetTopItem(int32_t nIndex) {
   if (IsValid(nIndex)) {
     GetPlateRect();
-    CFX_FloatRect rcItem = CFX_List::GetItemRect(nIndex);
+    CFX_FloatRect rcItem = GetItemRectInternal(nIndex);
     SetScrollPosY(rcItem.top);
   }
 }
@@ -783,7 +619,11 @@ int32_t CFX_ListCtrl::GetTopItem() const {
 }
 
 void CFX_ListCtrl::Empty() {
-  CFX_List::Empty();
+  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++)
+    delete m_aListItems.GetAt(i);
+
+  m_aListItems.RemoveAll();
+
   InvalidateItem(-1);
 }
 
@@ -792,11 +632,158 @@ void CFX_ListCtrl::Cancel() {
 }
 
 int32_t CFX_ListCtrl::GetItemIndex(const CFX_FloatPoint& point) const {
-  return CFX_List::GetItemIndex(OutToIn(point));
+  CFX_FloatPoint pt = OuterToInner(OutToIn(point));
+
+  FX_BOOL bFirst = TRUE;
+  FX_BOOL bLast = TRUE;
+
+  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++) {
+    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
+      CLST_Rect rcListItem = pListItem->GetRect();
+
+      if (FX_EDIT_IsFloatBigger(pt.y, rcListItem.top)) {
+        bFirst = FALSE;
+      }
+
+      if (FX_EDIT_IsFloatSmaller(pt.y, rcListItem.bottom)) {
+        bLast = FALSE;
+      }
+
+      if (pt.y >= rcListItem.top && pt.y < rcListItem.bottom) {
+        return i;
+      }
+    }
+  }
+
+  if (bFirst)
+    return 0;
+  if (bLast)
+    return m_aListItems.GetSize() - 1;
+
+  return -1;
 }
 
 CFX_WideString CFX_ListCtrl::GetText() const {
   if (IsMultipleSel())
     return GetItemText(m_nCaretIndex);
   return GetItemText(m_nSelItem);
+}
+
+void CFX_ListCtrl::SetFontMap(IPVT_FontMap* pFontMap) {
+  m_pFontMap = pFontMap;
+}
+
+void CFX_ListCtrl::SetFontSize(FX_FLOAT fFontSize) {
+  m_fFontSize = fFontSize;
+}
+
+void CFX_ListCtrl::AddItem(const FX_WCHAR* str) {
+  CFX_ListItem* pListItem = new CFX_ListItem();
+  pListItem->SetFontMap(m_pFontMap);
+  pListItem->SetFontSize(m_fFontSize);
+  pListItem->SetText(str);
+  m_aListItems.Add(pListItem);
+}
+
+CFX_Edit* CFX_ListCtrl::GetItemEdit(int32_t nIndex) const {
+  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex)) {
+    return pListItem->GetEdit();
+  }
+
+  return nullptr;
+}
+
+int32_t CFX_ListCtrl::GetCount() const {
+  return m_aListItems.GetSize();
+}
+
+CFX_FloatRect CFX_ListCtrl::GetPlateRect() const {
+  return CFX_ListContainer::GetPlateRect();
+}
+
+FX_FLOAT CFX_ListCtrl::GetFontSize() const {
+  return m_fFontSize;
+}
+
+FX_FLOAT CFX_ListCtrl::GetFirstHeight() const {
+  if (CFX_ListItem* pListItem = m_aListItems.GetAt(0)) {
+    return pListItem->GetItemHeight();
+  }
+
+  return 1.0f;
+}
+
+int32_t CFX_ListCtrl::GetFirstSelected() const {
+  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++) {
+    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
+      if (pListItem->IsSelected())
+        return i;
+    }
+  }
+  return -1;
+}
+
+int32_t CFX_ListCtrl::GetLastSelected() const {
+  for (int32_t i = m_aListItems.GetSize() - 1; i >= 0; i--) {
+    if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
+      if (pListItem->IsSelected())
+        return i;
+    }
+  }
+  return -1;
+}
+
+FX_WCHAR CFX_ListCtrl::Toupper(FX_WCHAR c) const {
+  if ((c >= 'a') && (c <= 'z'))
+    c = c - ('a' - 'A');
+  return c;
+}
+
+int32_t CFX_ListCtrl::FindNext(int32_t nIndex, FX_WCHAR nChar) const {
+  int32_t nCircleIndex = nIndex;
+
+  for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++) {
+    nCircleIndex++;
+    if (nCircleIndex >= sz)
+      nCircleIndex = 0;
+
+    if (CFX_ListItem* pListItem = m_aListItems.GetAt(nCircleIndex)) {
+      if (Toupper(pListItem->GetFirstChar()) == Toupper(nChar))
+        return nCircleIndex;
+    }
+  }
+
+  return nCircleIndex;
+}
+
+FX_BOOL CFX_ListCtrl::IsItemSelected(int32_t nIndex) const {
+  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex))
+    return pListItem->IsSelected();
+  return FALSE;
+}
+
+void CFX_ListCtrl::SetItemSelect(int32_t nItemIndex, FX_BOOL bSelected) {
+  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nItemIndex)) {
+    pListItem->SetSelect(bSelected);
+  }
+}
+
+void CFX_ListCtrl::SetMultipleSel(FX_BOOL bMultiple) {
+  m_bMultiple = bMultiple;
+}
+
+FX_BOOL CFX_ListCtrl::IsMultipleSel() const {
+  return m_bMultiple;
+}
+
+FX_BOOL CFX_ListCtrl::IsValid(int32_t nItemIndex) const {
+  return nItemIndex >= 0 && nItemIndex < m_aListItems.GetSize();
+}
+
+CFX_WideString CFX_ListCtrl::GetItemText(int32_t nIndex) const {
+  if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex)) {
+    return pListItem->GetText();
+  }
+
+  return L"";
 }

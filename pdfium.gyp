@@ -735,8 +735,6 @@
         'fpdfsdk/fxedit/fxet_ap.cpp',
         'fpdfsdk/fxedit/fxet_edit.cpp',
         'fpdfsdk/fxedit/fxet_list.cpp',
-        'fpdfsdk/fxedit/fxet_module.cpp',
-        'fpdfsdk/fxedit/fxet_pageobjs.cpp',
       ],
     },
     {

@@ -13,6 +13,7 @@
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "core/fxge/include/fx_ge.h"
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
@@ -258,7 +259,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   CPVT_WordRange wrTemp =
       CPWL_Utils::OverlapWordRange(GetSelectWordRange(), wrVisible);
   CFX_ByteString sEditSel =
-      CPWL_Utils::GetEditSelAppStream(m_pEdit, ptOffset, &wrTemp);
+      CPWL_Utils::GetEditSelAppStream(m_pEdit.get(), ptOffset, &wrTemp);
 
   if (sEditSel.GetLength() > 0)
     sText << CPWL_Utils::GetColorAppStream(PWL_DEFAULT_SELBACKCOLOR).AsStringC()
@@ -266,7 +267,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
   wrTemp = CPWL_Utils::OverlapWordRange(wrVisible, wrSelBefore);
   CFX_ByteString sEditBefore = CPWL_Utils::GetEditAppStream(
-      m_pEdit, ptOffset, &wrTemp, !HasFlag(PES_CHARARRAY),
+      m_pEdit.get(), ptOffset, &wrTemp, !HasFlag(PES_CHARARRAY),
       m_pEdit->GetPasswordChar());
 
   if (sEditBefore.GetLength() > 0)
@@ -275,7 +276,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
   wrTemp = CPWL_Utils::OverlapWordRange(wrVisible, wrSelect);
   CFX_ByteString sEditMid = CPWL_Utils::GetEditAppStream(
-      m_pEdit, ptOffset, &wrTemp, !HasFlag(PES_CHARARRAY),
+      m_pEdit.get(), ptOffset, &wrTemp, !HasFlag(PES_CHARARRAY),
       m_pEdit->GetPasswordChar());
 
   if (sEditMid.GetLength() > 0)
@@ -286,7 +287,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
   wrTemp = CPWL_Utils::OverlapWordRange(wrVisible, wrSelAfter);
   CFX_ByteString sEditAfter = CPWL_Utils::GetEditAppStream(
-      m_pEdit, ptOffset, &wrTemp, !HasFlag(PES_CHARARRAY),
+      m_pEdit.get(), ptOffset, &wrTemp, !HasFlag(PES_CHARARRAY),
       m_pEdit->GetPasswordChar());
 
   if (sEditAfter.GetLength() > 0)
@@ -395,8 +396,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     pRange = &wrRange;
   }
   CFX_SystemHandler* pSysHandler = GetSystemHandler();
-  IFX_Edit::DrawEdit(
-      pDevice, pUser2Device, m_pEdit,
+  CFX_Edit::DrawEdit(
+      pDevice, pUser2Device, m_pEdit.get(),
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor(), GetTransparency()),
       rcClip, CFX_FloatPoint(0.0f, 0.0f), pRange, pSysHandler, m_pFormFiller);
@@ -490,7 +491,7 @@ void CPWL_Edit::SetLineLeading(FX_FLOAT fLineLeading,
 CFX_ByteString CPWL_Edit::GetSelectAppearanceStream(
     const CFX_FloatPoint& ptOffset) const {
   CPVT_WordRange wr = GetSelectWordRange();
-  return CPWL_Utils::GetEditSelAppStream(m_pEdit, ptOffset, &wr);
+  return CPWL_Utils::GetEditSelAppStream(m_pEdit.get(), ptOffset, &wr);
 }
 
 CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
@@ -512,7 +513,7 @@ CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
 CFX_ByteString CPWL_Edit::GetTextAppearanceStream(
     const CFX_FloatPoint& ptOffset) const {
   CFX_ByteTextBuf sRet;
-  CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit, ptOffset);
+  CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit.get(), ptOffset);
   if (sEdit.GetLength() > 0) {
     sRet << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
          << sEdit.AsStringC() << "ET\n";
@@ -532,7 +533,7 @@ CFX_FloatPoint CPWL_Edit::GetWordRightBottomPoint(
     const CPVT_WordPlace& wpWord) {
   CFX_FloatPoint pt(0.0f, 0.0f);
 
-  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   CPVT_WordPlace wpOld = pIterator->GetAt();
   pIterator->SetAt(wpWord);
   CPVT_Word word;
@@ -823,9 +824,6 @@ void CPWL_Edit::OnInsertWord(const CPVT_WordPlace& place,
   }
 }
 
-void CPWL_Edit::OnSetText(const CPVT_WordPlace& place,
-                          const CPVT_WordPlace& oldplace) {}
-
 void CPWL_Edit::OnInsertText(const CPVT_WordPlace& place,
                              const CPVT_WordPlace& oldplace) {
   if (HasFlag(PES_SPELLCHECK)) {
@@ -886,7 +884,7 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
                                             FX_BOOL bArabic) const {
   CPVT_WordRange range;
 
-  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   CPVT_Word wordinfo;
   CPVT_WordPlace wpStart(place), wpEnd(place);
   pIterator->SetAt(place);
@@ -937,8 +935,8 @@ void CPWL_Edit::GeneratePageObjects(
     CPDF_PageObjectHolder* pObjectHolder,
     const CFX_FloatPoint& ptOffset,
     CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
-  IFX_Edit::GeneratePageObjects(
-      pObjectHolder, m_pEdit, ptOffset, nullptr,
+  CFX_Edit::GeneratePageObjects(
+      pObjectHolder, m_pEdit.get(), ptOffset, nullptr,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       ObjArray);
 }
@@ -946,8 +944,8 @@ void CPWL_Edit::GeneratePageObjects(
 void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                     const CFX_FloatPoint& ptOffset) {
   CFX_ArrayTemplate<CPDF_TextObject*> ObjArray;
-  IFX_Edit::GeneratePageObjects(
-      pObjectHolder, m_pEdit, ptOffset, nullptr,
+  CFX_Edit::GeneratePageObjects(
+      pObjectHolder, m_pEdit.get(), ptOffset, nullptr,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       ObjArray);
 }

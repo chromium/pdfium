@@ -10,7 +10,7 @@
 
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fxge/include/fx_ge.h"
-#include "fpdfsdk/fxedit/include/fx_edit.h"
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
@@ -412,19 +412,19 @@ CFX_FloatRect CPWL_Utils::GetCenterSquare(const CFX_FloatRect& rect) {
                        fCenterX + fRadius, fCenterY + fRadius);
 }
 
-CFX_ByteString CPWL_Utils::GetEditAppStream(IFX_Edit* pEdit,
+CFX_ByteString CPWL_Utils::GetEditAppStream(CFX_Edit* pEdit,
                                             const CFX_FloatPoint& ptOffset,
                                             const CPVT_WordRange* pRange,
                                             FX_BOOL bContinuous,
                                             uint16_t SubWord) {
-  return IFX_Edit::GetEditAppearanceStream(pEdit, ptOffset, pRange, bContinuous,
+  return CFX_Edit::GetEditAppearanceStream(pEdit, ptOffset, pRange, bContinuous,
                                            SubWord);
 }
 
-CFX_ByteString CPWL_Utils::GetEditSelAppStream(IFX_Edit* pEdit,
+CFX_ByteString CPWL_Utils::GetEditSelAppStream(CFX_Edit* pEdit,
                                                const CFX_FloatPoint& ptOffset,
                                                const CPVT_WordRange* pRange) {
-  return IFX_Edit::GetSelectAppearanceStream(pEdit, ptOffset, pRange);
+  return CFX_Edit::GetSelectAppearanceStream(pEdit, ptOffset, pRange);
 }
 
 CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
@@ -438,7 +438,7 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
                                             const CPWL_Color& crText) {
   CFX_ByteTextBuf sRet;
 
-  IFX_Edit* pEdit = IFX_Edit::NewEdit();
+  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->SetFontMap(pFontMap);
   pEdit->SetPlateRect(rcBBox);
   pEdit->SetAlignmentH(nAlignmentH);
@@ -454,10 +454,9 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
   pEdit->SetText(sText.c_str());
 
   CFX_ByteString sEdit =
-      CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
+      CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_FloatPoint(0.0f, 0.0f));
   if (sEdit.GetLength() > 0)
     sRet << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n";
-  IFX_Edit::DelEdit(pEdit);
 
   return sRet.MakeString();
 }
@@ -472,7 +471,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                                   int32_t nLayOut) {
   const FX_FLOAT fAutoFontScale = 1.0f / 3.0f;
 
-  IFX_Edit* pEdit = IFX_Edit::NewEdit();
+  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->SetFontMap(pFontMap);
   pEdit->SetAlignmentH(1);
   pEdit->SetAlignmentV(1);
@@ -667,14 +666,13 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   if (!rcLabel.IsEmpty()) {
     pEdit->SetPlateRect(rcLabel);
     CFX_ByteString sEdit =
-        CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
+        CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_FloatPoint(0.0f, 0.0f));
     if (sEdit.GetLength() > 0) {
       sTemp << "BT\n"
             << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n";
     }
   }
 
-  IFX_Edit::DelEdit(pEdit);
   if (sTemp.GetSize() > 0) {
     sAppStream << "q\n"
                << rcBBox.left << " " << rcBBox.bottom << " "

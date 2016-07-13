@@ -12,6 +12,10 @@
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
+class CPDF_PageObjectHolder;
+class CPDF_TextObject;
+class IFX_Edit_UndoItem;
+
 class IPWL_Filler_Notify {
  public:
   virtual ~IPWL_Filler_Notify() {}
@@ -40,7 +44,7 @@ class IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
 };
 
-class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
+class CPWL_Edit : public CPWL_EditCtrl {
  public:
   CPWL_Edit();
   ~CPWL_Edit() override;
@@ -113,23 +117,16 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
   void AttachFFLData(void* pData) { m_pFormFiller = pData; }
 
- protected:
-  // IFX_Edit_OprNotify
   void OnInsertWord(const CPVT_WordPlace& place,
-                    const CPVT_WordPlace& oldplace) override;
+                    const CPVT_WordPlace& oldplace);
   void OnInsertReturn(const CPVT_WordPlace& place,
-                      const CPVT_WordPlace& oldplace) override;
-  void OnBackSpace(const CPVT_WordPlace& place,
-                   const CPVT_WordPlace& oldplace) override;
-  void OnDelete(const CPVT_WordPlace& place,
-                const CPVT_WordPlace& oldplace) override;
-  void OnClear(const CPVT_WordPlace& place,
-               const CPVT_WordPlace& oldplace) override;
-  void OnSetText(const CPVT_WordPlace& place,
-                 const CPVT_WordPlace& oldplace) override;
+                      const CPVT_WordPlace& oldplace);
+  void OnBackSpace(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
+  void OnDelete(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
+  void OnClear(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
   void OnInsertText(const CPVT_WordPlace& place,
-                    const CPVT_WordPlace& oldplace) override;
-  void OnAddUndo(IFX_Edit_UndoItem* pUndoItem) override;
+                    const CPVT_WordPlace& oldplace);
+  void OnAddUndo(IFX_Edit_UndoItem* pUndoItem);
 
  private:
   CPVT_WordRange GetSelectWordRange() const;

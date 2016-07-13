@@ -18,6 +18,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -1362,7 +1363,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
   rcButton.left = rcButton.right - 13;
   rcButton.Normalize();
 
-  IFX_Edit* pEdit = IFX_Edit::NewEdit();
+  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->EnableRefresh(FALSE);
 
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
@@ -1399,7 +1400,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
   CFX_FloatRect rcContent = pEdit->GetContentRect();
 
   CFX_ByteString sEdit =
-      CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
+      CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_FloatPoint(0.0f, 0.0f));
   if (sEdit.GetLength() > 0) {
     sBody << "/Tx BMC\n"
           << "q\n";
@@ -1415,8 +1416,6 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
           << "Q\nEMC\n";
   }
 
-  IFX_Edit::DelEdit(pEdit);
-
   sBody << CPWL_Utils::GetDropButtonAppStream(rcButton);
 
   CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
@@ -1431,7 +1430,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   CFX_FloatRect rcClient = GetClientRect();
   CFX_ByteTextBuf sBody, sLines;
 
-  IFX_Edit* pEdit = IFX_Edit::NewEdit();
+  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->EnableRefresh(FALSE);
 
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
@@ -1484,13 +1483,15 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
       sList << "BT\n"
             << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY, 1),
                                              TRUE)
-            << CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, fy))
+            << CPWL_Utils::GetEditAppStream(pEdit.get(),
+                                            CFX_FloatPoint(0.0f, fy))
             << "ET\n";
     } else {
       CPWL_Color crText = GetTextPWLColor();
       sList << "BT\n"
             << CPWL_Utils::GetColorAppStream(crText, TRUE)
-            << CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, fy))
+            << CPWL_Utils::GetEditAppStream(pEdit.get(),
+                                            CFX_FloatPoint(0.0f, fy))
             << "ET\n";
     }
 
@@ -1505,8 +1506,6 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
     sBody << sList << "Q\nEMC\n";
   }
 
-  IFX_Edit::DelEdit(pEdit);
-
   CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
                        sLines.AsStringC() + sBody.AsStringC();
 
@@ -1518,7 +1517,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   CPDF_FormField* pField = pControl->GetField();
   CFX_ByteTextBuf sBody, sLines;
 
-  IFX_Edit* pEdit = IFX_Edit::NewEdit();
+  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->EnableRefresh(FALSE);
 
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
@@ -1589,7 +1588,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   CFX_FloatRect rcContent = pEdit->GetContentRect();
 
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(
-      pEdit, CFX_FloatPoint(0.0f, 0.0f), nullptr, !bCharArray, subWord);
+      pEdit.get(), CFX_FloatPoint(0.0f, 0.0f), nullptr, !bCharArray, subWord);
 
   if (sEdit.GetLength() > 0) {
     sBody << "/Tx BMC\n"
@@ -1658,8 +1657,6 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
         break;
     }
   }
-
-  IFX_Edit::DelEdit(pEdit);
 
   CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
                        sLines.AsStringC() + sBody.AsStringC();

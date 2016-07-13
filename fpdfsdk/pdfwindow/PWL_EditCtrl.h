@@ -11,12 +11,15 @@
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
+class CFX_Edit;
 class CPWL_Caret;
 class CPWL_Edit;
 class CPWL_EditCtrl;
-class IFX_Edit;
 class IPWL_Edit_Notify;
+struct CPVT_SecProps;
 struct CPVT_WordPlace;
+struct CPVT_WordProps;
+struct CPVT_WordRange;
 
 enum PWL_EDIT_ALIGNFORMAT_H { PEAH_LEFT = 0, PEAH_MIDDLE, PEAH_RIGHT };
 
@@ -52,7 +55,7 @@ class IPWL_Edit_Notify {
   virtual void OnAddUndo(CPWL_Edit* pEdit) {}
 };
 
-class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
+class CPWL_EditCtrl : public CPWL_Wnd {
   friend class CPWL_Edit_Notify;
 
  public:
@@ -118,29 +121,23 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   FX_FLOAT GetFontSize() const override;
   void SetCursor() override;
 
- protected:
-  // IFX_Edit_Notify
-  void IOnSetScrollInfoX(FX_FLOAT fPlateMin,
-                         FX_FLOAT fPlateMax,
-                         FX_FLOAT fContentMin,
-                         FX_FLOAT fContentMax,
-                         FX_FLOAT fSmallStep,
-                         FX_FLOAT fBigStep) override {}
   void IOnSetScrollInfoY(FX_FLOAT fPlateMin,
                          FX_FLOAT fPlateMax,
                          FX_FLOAT fContentMin,
                          FX_FLOAT fContentMax,
                          FX_FLOAT fSmallStep,
-                         FX_FLOAT fBigStep) override;
-  void IOnSetScrollPosX(FX_FLOAT fx) override {}
-  void IOnSetScrollPosY(FX_FLOAT fy) override;
+                         FX_FLOAT fBigStep);
+  void IOnSetScrollPosY(FX_FLOAT fy);
   void IOnSetCaret(FX_BOOL bVisible,
                    const CFX_FloatPoint& ptHead,
                    const CFX_FloatPoint& ptFoot,
-                   const CPVT_WordPlace& place) override;
-  void IOnContentChange(const CFX_FloatRect& rcContent) override;
-  void IOnInvalidateRect(CFX_FloatRect* pRect) override;
+                   const CPVT_WordPlace& place);
+  void IOnCaretChange(const CPVT_SecProps& secProps,
+                      const CPVT_WordProps& wordProps);
+  void IOnContentChange(const CFX_FloatRect& rcContent);
+  void IOnInvalidateRect(CFX_FloatRect* pRect);
 
+ protected:
   void InsertText(const FX_WCHAR* csText);
   void SetText(const FX_WCHAR* csText);
   void CopyText();
@@ -162,16 +159,14 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
 
   void SetEditCaret(FX_BOOL bVisible);
 
- private:
-  void CreateEditCaret(const PWL_CREATEPARAM& cp);
-
- protected:
-  IFX_Edit* m_pEdit;
+  std::unique_ptr<CFX_Edit> m_pEdit;
   CPWL_Caret* m_pEditCaret;
   FX_BOOL m_bMouseDown;
   IPWL_Edit_Notify* m_pEditNotify;
 
  private:
+  void CreateEditCaret(const PWL_CREATEPARAM& cp);
+
   int32_t m_nCharSet;
   int32_t m_nCodePage;
 };

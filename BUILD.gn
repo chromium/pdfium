@@ -743,8 +743,6 @@ static_library("fxedit") {
     "fpdfsdk/fxedit/fxet_ap.cpp",
     "fpdfsdk/fxedit/fxet_edit.cpp",
     "fpdfsdk/fxedit/fxet_list.cpp",
-    "fpdfsdk/fxedit/fxet_module.cpp",
-    "fpdfsdk/fxedit/fxet_pageobjs.cpp",
     "fpdfsdk/fxedit/include/fx_edit.h",
     "fpdfsdk/fxedit/include/fxet_edit.h",
     "fpdfsdk/fxedit/include/fxet_list.h",

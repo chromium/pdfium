@@ -10,8 +10,8 @@
 #include "core/fpdfdoc/include/cpvt_wordrange.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
+class CFX_Edit;
 class CFX_PathData;
-class IFX_Edit;
 
 struct CPWL_Color;
 
@@ -166,13 +166,13 @@ class CPWL_Utils {
                                                 int32_t nStyle,
                                                 const CPWL_Color& crText);
 
-  static CFX_ByteString GetEditAppStream(IFX_Edit* pEdit,
+  static CFX_ByteString GetEditAppStream(CFX_Edit* pEdit,
                                          const CFX_FloatPoint& ptOffset,
                                          const CPVT_WordRange* pRange = nullptr,
                                          FX_BOOL bContinuous = TRUE,
                                          uint16_t SubWord = 0);
   static CFX_ByteString GetEditSelAppStream(
-      IFX_Edit* pEdit,
+      CFX_Edit* pEdit,
       const CFX_FloatPoint& ptOffset,
       const CPVT_WordRange* pRange = nullptr);
   static CFX_ByteString GetTextAppStream(const CFX_FloatRect& rcBBox,

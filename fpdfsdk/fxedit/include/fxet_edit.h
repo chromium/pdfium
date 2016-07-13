@@ -13,9 +13,16 @@
 #include "core/fpdfdoc/include/cpvt_wordprops.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 
+class CPDF_PageObjectHolder;
+class CPDF_TextObject;
+class CPWL_Edit;
+class CPWL_EditCtrl;
 class CFX_Edit;
 class CFX_Edit_Iterator;
 class CFX_Edit_Provider;
+class CFX_RenderDevice;
+class CFX_SystemHandler;
+class IFX_Edit_UndoItem;
 
 #define FX_EDIT_IsFloatZero(f) (f < 0.0001 && f > -0.0001)
 #define FX_EDIT_IsFloatEqual(fa, fb) FX_EDIT_IsFloatZero(fa - fb)
@@ -176,6 +183,15 @@ class CFX_Edit_Undo {
   FX_BOOL m_bModified;
   FX_BOOL m_bVirgin;
   FX_BOOL m_bWorking;
+};
+
+class IFX_Edit_UndoItem {
+ public:
+  virtual ~IFX_Edit_UndoItem() {}
+
+  virtual void Undo() = 0;
+  virtual void Redo() = 0;
+  virtual CFX_WideString GetUndoTitle() = 0;
 };
 
 class CFX_Edit_UndoItem : public IFX_Edit_UndoItem {
@@ -357,116 +373,180 @@ class CFXEU_InsertText : public CFX_Edit_UndoItem {
   CPVT_WordProps m_WordProps;
 };
 
-class CFX_Edit : public IFX_Edit {
-  friend class CFX_Edit_Iterator;
-  friend class CFXEU_InsertWord;
-  friend class CFXEU_InsertReturn;
-  friend class CFXEU_Backspace;
-  friend class CFXEU_Delete;
-  friend class CFXEU_Clear;
-  friend class CFXEU_InsertText;
-
+class CFX_Edit {
  public:
-  explicit CFX_Edit(CPDF_VariableText* pVT);
-  ~CFX_Edit() override;
+  static CFX_ByteString GetEditAppearanceStream(
+      CFX_Edit* pEdit,
+      const CFX_FloatPoint& ptOffset,
+      const CPVT_WordRange* pRange = nullptr,
+      FX_BOOL bContinuous = TRUE,
+      uint16_t SubWord = 0);
+  static CFX_ByteString GetSelectAppearanceStream(
+      CFX_Edit* pEdit,
+      const CFX_FloatPoint& ptOffset,
+      const CPVT_WordRange* pRange = nullptr);
+  static void DrawEdit(CFX_RenderDevice* pDevice,
+                       CFX_Matrix* pUser2Device,
+                       CFX_Edit* pEdit,
+                       FX_COLORREF crTextFill,
+                       FX_COLORREF crTextStroke,
+                       const CFX_FloatRect& rcClip,
+                       const CFX_FloatPoint& ptOffset,
+                       const CPVT_WordRange* pRange,
+                       CFX_SystemHandler* pSystemHandler,
+                       void* pFFLData);
+  static void DrawUnderline(CFX_RenderDevice* pDevice,
+                            CFX_Matrix* pUser2Device,
+                            CFX_Edit* pEdit,
+                            FX_COLORREF color,
+                            const CFX_FloatRect& rcClip,
+                            const CFX_FloatPoint& ptOffset,
+                            const CPVT_WordRange* pRange);
+  static void DrawRichEdit(CFX_RenderDevice* pDevice,
+                           CFX_Matrix* pUser2Device,
+                           CFX_Edit* pEdit,
+                           const CFX_FloatRect& rcClip,
+                           const CFX_FloatPoint& ptOffset,
+                           const CPVT_WordRange* pRange);
+  static void GeneratePageObjects(
+      CPDF_PageObjectHolder* pObjectHolder,
+      CFX_Edit* pEdit,
+      const CFX_FloatPoint& ptOffset,
+      const CPVT_WordRange* pRange,
+      FX_COLORREF crText,
+      CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
+  static void GenerateRichPageObjects(
+      CPDF_PageObjectHolder* pObjectHolder,
+      CFX_Edit* pEdit,
+      const CFX_FloatPoint& ptOffset,
+      const CPVT_WordRange* pRange,
+      CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
+  static void GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
+                                       CFX_Edit* pEdit,
+                                       const CFX_FloatPoint& ptOffset,
+                                       const CPVT_WordRange* pRange,
+                                       FX_COLORREF color);
 
-  // IFX_Edit
-  void SetFontMap(IPVT_FontMap* pFontMap) override;
-  void SetNotify(IFX_Edit_Notify* pNotify) override;
-  void SetOprNotify(IFX_Edit_OprNotify* pOprNotify) override;
-  IFX_Edit_Iterator* GetIterator() override;
-  CPDF_VariableText* GetVariableText() override;
-  IPVT_FontMap* GetFontMap() override;
-  void Initialize() override;
-  void SetPlateRect(const CFX_FloatRect& rect, FX_BOOL bPaint = TRUE) override;
-  void SetScrollPos(const CFX_FloatPoint& point) override;
-  void SetAlignmentH(int32_t nFormat = 0, FX_BOOL bPaint = TRUE) override;
-  void SetAlignmentV(int32_t nFormat = 0, FX_BOOL bPaint = TRUE) override;
-  void SetPasswordChar(uint16_t wSubWord = '*', FX_BOOL bPaint = TRUE) override;
-  void SetLimitChar(int32_t nLimitChar = 0, FX_BOOL bPaint = TRUE) override;
-  void SetCharArray(int32_t nCharArray = 0, FX_BOOL bPaint = TRUE) override;
-  void SetCharSpace(FX_FLOAT fCharSpace = 0.0f, FX_BOOL bPaint = TRUE) override;
-  void SetHorzScale(int32_t nHorzScale = 100, FX_BOOL bPaint = TRUE) override;
-  void SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE) override;
-  void SetMultiLine(FX_BOOL bMultiLine = TRUE, FX_BOOL bPaint = TRUE) override;
-  void SetAutoReturn(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE) override;
-  void SetAutoFontSize(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE) override;
-  void SetAutoScroll(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE) override;
-  void SetFontSize(FX_FLOAT fFontSize, FX_BOOL bPaint = TRUE) override;
-  void SetTextOverflow(FX_BOOL bAllowed = FALSE,
-                       FX_BOOL bPaint = TRUE) override;
-  void OnMouseDown(const CFX_FloatPoint& point,
-                   FX_BOOL bShift,
-                   FX_BOOL bCtrl) override;
-  void OnMouseMove(const CFX_FloatPoint& point,
-                   FX_BOOL bShift,
-                   FX_BOOL bCtrl) override;
-  void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl) override;
-  void OnVK_DOWN(FX_BOOL bShift, FX_BOOL bCtrl) override;
-  void OnVK_LEFT(FX_BOOL bShift, FX_BOOL bCtrl) override;
-  void OnVK_RIGHT(FX_BOOL bShift, FX_BOOL bCtrl) override;
-  void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl) override;
-  void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl) override;
+  CFX_Edit();
+  ~CFX_Edit();
+
+  void SetFontMap(IPVT_FontMap* pFontMap);
+  void SetNotify(CPWL_EditCtrl* pNotify);
+  void SetOprNotify(CPWL_Edit* pOprNotify);
+
+  // Returns an iterator for the contents. Should not be released.
+  CFX_Edit_Iterator* GetIterator();
+  CPDF_VariableText* GetVariableText();
+  IPVT_FontMap* GetFontMap();
+  void Initialize();
+
+  // Set the bounding box of the text area.
+  void SetPlateRect(const CFX_FloatRect& rect, FX_BOOL bPaint = TRUE);
+  void SetScrollPos(const CFX_FloatPoint& point);
+
+  // Set the horizontal text alignment. (nFormat [0:left, 1:middle, 2:right])
+  void SetAlignmentH(int32_t nFormat = 0, FX_BOOL bPaint = TRUE);
+  // Set the vertical text alignment. (nFormat [0:left, 1:middle, 2:right])
+  void SetAlignmentV(int32_t nFormat = 0, FX_BOOL bPaint = TRUE);
+
+  // Set the substitution character for hidden text.
+  void SetPasswordChar(uint16_t wSubWord = '*', FX_BOOL bPaint = TRUE);
+
+  // Set the maximum number of words in the text.
+  void SetLimitChar(int32_t nLimitChar = 0, FX_BOOL bPaint = TRUE);
+  void SetCharArray(int32_t nCharArray = 0, FX_BOOL bPaint = TRUE);
+  void SetCharSpace(FX_FLOAT fCharSpace = 0.0f, FX_BOOL bPaint = TRUE);
+  void SetHorzScale(int32_t nHorzScale = 100, FX_BOOL bPaint = TRUE);
+  void SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE);
+  void SetMultiLine(FX_BOOL bMultiLine = TRUE, FX_BOOL bPaint = TRUE);
+  void SetAutoReturn(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
+  void SetAutoFontSize(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
+  void SetAutoScroll(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
+  void SetFontSize(FX_FLOAT fFontSize, FX_BOOL bPaint = TRUE);
+  void SetTextOverflow(FX_BOOL bAllowed = FALSE, FX_BOOL bPaint = TRUE);
+  FX_BOOL IsRichText() const;
+  void SetRichText(FX_BOOL bRichText = TRUE, FX_BOOL bPaint = TRUE);
+  FX_BOOL SetRichFontSize(FX_FLOAT fFontSize);
+  FX_BOOL SetRichFontIndex(int32_t nFontIndex);
+  FX_BOOL SetRichTextColor(FX_COLORREF dwColor);
+  FX_BOOL SetRichTextScript(CPDF_VariableText::ScriptType nScriptType);
+  FX_BOOL SetRichTextBold(FX_BOOL bBold = TRUE);
+  FX_BOOL SetRichTextItalic(FX_BOOL bItalic = TRUE);
+  FX_BOOL SetRichTextUnderline(FX_BOOL bUnderline = TRUE);
+  FX_BOOL SetRichTextCrossout(FX_BOOL bCrossout = TRUE);
+  FX_BOOL SetRichTextCharSpace(FX_FLOAT fCharSpace);
+  FX_BOOL SetRichTextHorzScale(int32_t nHorzScale = 100);
+  FX_BOOL SetRichTextLineLeading(FX_FLOAT fLineLeading);
+  FX_BOOL SetRichTextLineIndent(FX_FLOAT fLineIndent);
+  FX_BOOL SetRichTextAlignment(int32_t nAlignment);
+  void OnMouseDown(const CFX_FloatPoint& point, FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnMouseMove(const CFX_FloatPoint& point, FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnVK_DOWN(FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnVK_LEFT(FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnVK_RIGHT(FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl);
   void SetText(const FX_WCHAR* text,
                int32_t charset = DEFAULT_CHARSET,
                const CPVT_SecProps* pSecProps = nullptr,
-               const CPVT_WordProps* pWordProps = nullptr) override;
+               const CPVT_WordProps* pWordProps = nullptr);
   FX_BOOL InsertWord(uint16_t word,
                      int32_t charset = DEFAULT_CHARSET,
-                     const CPVT_WordProps* pWordProps = nullptr) override;
+                     const CPVT_WordProps* pWordProps = nullptr);
   FX_BOOL InsertReturn(const CPVT_SecProps* pSecProps = nullptr,
-                       const CPVT_WordProps* pWordProps = nullptr) override;
-  FX_BOOL Backspace() override;
-  FX_BOOL Delete() override;
-  FX_BOOL Clear() override;
+                       const CPVT_WordProps* pWordProps = nullptr);
+  FX_BOOL Backspace();
+  FX_BOOL Delete();
+  FX_BOOL Clear();
   FX_BOOL InsertText(const FX_WCHAR* text,
                      int32_t charset = DEFAULT_CHARSET,
                      const CPVT_SecProps* pSecProps = nullptr,
-                     const CPVT_WordProps* pWordProps = nullptr) override;
-  FX_BOOL Redo() override;
-  FX_BOOL Undo() override;
-  int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const override;
-  CPVT_WordPlace WordIndexToWordPlace(int32_t index) const override;
-  CPVT_WordPlace GetLineBeginPlace(const CPVT_WordPlace& place) const override;
-  CPVT_WordPlace GetLineEndPlace(const CPVT_WordPlace& place) const override;
-  CPVT_WordPlace GetSectionBeginPlace(
-      const CPVT_WordPlace& place) const override;
-  CPVT_WordPlace GetSectionEndPlace(const CPVT_WordPlace& place) const override;
-  CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const override;
-  int32_t GetCaret() const override;
-  CPVT_WordPlace GetCaretWordPlace() const override;
-  CFX_WideString GetSelText() const override;
-  CFX_WideString GetText() const override;
-  FX_FLOAT GetFontSize() const override;
-  uint16_t GetPasswordChar() const override;
-  CFX_FloatPoint GetScrollPos() const override;
-  int32_t GetCharArray() const override;
-  CFX_FloatRect GetPlateRect() const override;
-  CFX_FloatRect GetContentRect() const override;
-  CFX_WideString GetRangeText(const CPVT_WordRange& range) const override;
-  int32_t GetHorzScale() const override;
-  FX_FLOAT GetCharSpace() const override;
-  int32_t GetTotalWords() const override;
-  void SetSel(int32_t nStartChar, int32_t nEndChar) override;
-  void GetSel(int32_t& nStartChar, int32_t& nEndChar) const override;
-  void SelectAll() override;
-  void SelectNone() override;
-  FX_BOOL IsSelected() const override;
-  void Paint() override;
-  void EnableRefresh(FX_BOOL bRefresh) override;
-  void RefreshWordRange(const CPVT_WordRange& wr) override;
-  void SetCaret(int32_t nPos) override;
-  CPVT_WordRange GetWholeWordRange() const override;
-  CPVT_WordRange GetSelectWordRange() const override;
-  void EnableUndo(FX_BOOL bUndo) override;
-  void EnableOprNotify(FX_BOOL bNotify) override;
-  FX_BOOL IsTextFull() const override;
+                     const CPVT_WordProps* pWordProps = nullptr);
+  FX_BOOL Redo();
+  FX_BOOL Undo();
+  int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
+  CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
+  CPVT_WordPlace GetLineBeginPlace(const CPVT_WordPlace& place) const;
+  CPVT_WordPlace GetLineEndPlace(const CPVT_WordPlace& place) const;
+  CPVT_WordPlace GetSectionBeginPlace(const CPVT_WordPlace& place) const;
+  CPVT_WordPlace GetSectionEndPlace(const CPVT_WordPlace& place) const;
+  CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const;
+  int32_t GetCaret() const;
+  CPVT_WordPlace GetCaretWordPlace() const;
+  CFX_WideString GetSelText() const;
+  CFX_WideString GetText() const;
+  FX_FLOAT GetFontSize() const;
+  uint16_t GetPasswordChar() const;
+  CFX_FloatPoint GetScrollPos() const;
+  int32_t GetCharArray() const;
+  CFX_FloatRect GetPlateRect() const;
+  CFX_FloatRect GetContentRect() const;
+  CFX_WideString GetRangeText(const CPVT_WordRange& range) const;
+  int32_t GetHorzScale() const;
+  FX_FLOAT GetCharSpace() const;
+  int32_t GetTotalWords() const;
+  void SetSel(int32_t nStartChar, int32_t nEndChar);
+  void GetSel(int32_t& nStartChar, int32_t& nEndChar) const;
+  void SelectAll();
+  void SelectNone();
+  FX_BOOL IsSelected() const;
+  void Paint();
+  void EnableNotify(FX_BOOL bNotify);
+  void EnableRefresh(FX_BOOL bRefresh);
+  void RefreshWordRange(const CPVT_WordRange& wr);
+  void SetCaret(int32_t nPos);
+  CPVT_WordRange GetWholeWordRange() const;
+  CPVT_WordRange GetSelectWordRange() const;
+  void EnableUndo(FX_BOOL bUndo);
+  void EnableOprNotify(FX_BOOL bNotify);
+  FX_BOOL IsTextFull() const;
   FX_BOOL IsTextOverflow() const;
-  FX_BOOL CanUndo() const override;
-  FX_BOOL CanRedo() const override;
-  FX_BOOL IsModified() const override;
-  CPVT_WordRange GetVisibleWordRange() const override;
-  void AddUndoItem(IFX_Edit_UndoItem* pUndoItem) override;
+  FX_BOOL CanUndo() const;
+  FX_BOOL CanRedo() const;
+  FX_BOOL IsModified() const;
+  CPVT_WordRange GetVisibleWordRange() const;
+  void AddUndoItem(IFX_Edit_UndoItem* pUndoItem);
 
   FX_BOOL Empty();
 
@@ -480,6 +560,15 @@ class CFX_Edit : public IFX_Edit {
   int32_t GetTotalLines() const;
 
  private:
+  friend class CFX_Edit_Iterator;
+  friend class CFXEU_InsertWord;
+  friend class CFXEU_InsertReturn;
+  friend class CFXEU_Backspace;
+  friend class CFXEU_Delete;
+  friend class CFXEU_Clear;
+  friend class CFXEU_ClearRich;
+  friend class CFXEU_InsertText;
+
   void SetSel(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
 
   void RearrangeAll();
@@ -548,9 +637,9 @@ class CFX_Edit : public IFX_Edit {
   FX_FLOAT GetLineBottom(const CPVT_WordPlace& place) const;
 
  private:
-  CPDF_VariableText* m_pVT;
-  IFX_Edit_Notify* m_pNotify;
-  IFX_Edit_OprNotify* m_pOprNotify;
+  std::unique_ptr<CPDF_VariableText> m_pVT;
+  CPWL_EditCtrl* m_pNotify;
+  CPWL_Edit* m_pOprNotify;
   std::unique_ptr<CFX_Edit_Provider> m_pVTProvider;
 
   CPVT_WordPlace m_wpCaret;
@@ -560,7 +649,7 @@ class CFX_Edit : public IFX_Edit {
   CFX_FloatPoint m_ptScrollPos;
   CFX_FloatPoint m_ptRefreshScrollPos;
   FX_BOOL m_bEnableScroll;
-  std::unique_ptr<IFX_Edit_Iterator> m_pIterator;
+  std::unique_ptr<CFX_Edit_Iterator> m_pIterator;
   CFX_Edit_Refresh m_Refresh;
   CFX_FloatPoint m_ptCaret;
   CFX_Edit_Undo m_Undo;
@@ -574,25 +663,24 @@ class CFX_Edit : public IFX_Edit {
   CFX_Edit_GroupUndoItem* m_pGroupUndoItem;
 };
 
-class CFX_Edit_Iterator : public IFX_Edit_Iterator {
+class CFX_Edit_Iterator {
  public:
   CFX_Edit_Iterator(CFX_Edit* pEdit, CPDF_VariableText::Iterator* pVTIterator);
-  ~CFX_Edit_Iterator() override;
+  ~CFX_Edit_Iterator();
 
-  // IFX_Edit_Iterator
-  FX_BOOL NextWord() override;
-  FX_BOOL NextLine() override;
-  FX_BOOL NextSection() override;
-  FX_BOOL PrevWord() override;
-  FX_BOOL PrevLine() override;
-  FX_BOOL PrevSection() override;
-  FX_BOOL GetWord(CPVT_Word& word) const override;
-  FX_BOOL GetLine(CPVT_Line& line) const override;
-  FX_BOOL GetSection(CPVT_Section& section) const override;
-  void SetAt(int32_t nWordIndex) override;
-  void SetAt(const CPVT_WordPlace& place) override;
-  const CPVT_WordPlace& GetAt() const override;
-  IFX_Edit* GetEdit() const override;
+  FX_BOOL NextWord();
+  FX_BOOL NextLine();
+  FX_BOOL NextSection();
+  FX_BOOL PrevWord();
+  FX_BOOL PrevLine();
+  FX_BOOL PrevSection();
+  FX_BOOL GetWord(CPVT_Word& word) const;
+  FX_BOOL GetLine(CPVT_Line& line) const;
+  FX_BOOL GetSection(CPVT_Section& section) const;
+  void SetAt(int32_t nWordIndex);
+  void SetAt(const CPVT_WordPlace& place);
+  const CPVT_WordPlace& GetAt() const;
+  CFX_Edit* GetEdit() const;
 
  private:
   CFX_Edit* m_pEdit;

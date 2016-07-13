@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
+#include "fpdfsdk/fxedit/include/fxet_list.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
@@ -65,18 +67,12 @@ void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {
 }
 
 CPWL_ListBox::CPWL_ListBox()
-    : m_pList(nullptr),
-      m_pListNotify(nullptr),
+    : m_pList(new CFX_ListCtrl),
       m_bMouseDown(FALSE),
       m_bHoverSel(FALSE),
-      m_pFillerNotify(nullptr) {
-  m_pList = IFX_List::NewList();
-}
+      m_pFillerNotify(nullptr) {}
 
 CPWL_ListBox::~CPWL_ListBox() {
-  IFX_List::DelList(m_pList);
-  delete m_pListNotify;
-  m_pListNotify = nullptr;
 }
 
 CFX_ByteString CPWL_ListBox::GetClassName() const {
@@ -85,10 +81,9 @@ CFX_ByteString CPWL_ListBox::GetClassName() const {
 
 void CPWL_ListBox::OnCreated() {
   if (m_pList) {
-    delete m_pListNotify;
-
     m_pList->SetFontMap(GetFontMap());
-    m_pList->SetNotify(m_pListNotify = new CPWL_List_Notify(this));
+    m_pListNotify.reset(new CPWL_List_Notify(this));
+    m_pList->SetNotify(m_pListNotify.get());
 
     SetHoverSel(HasFlag(PLBS_HOVERSEL));
     m_pList->SetMultipleSel(HasFlag(PLBS_MULTIPLESEL));
@@ -99,8 +94,7 @@ void CPWL_ListBox::OnCreated() {
 }
 
 void CPWL_ListBox::OnDestroy() {
-  delete m_pListNotify;
-  m_pListNotify = nullptr;
+  m_pListNotify.reset();
 }
 
 void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
@@ -172,7 +166,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
         continue;
 
       CFX_FloatPoint ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
-      if (IFX_Edit* pEdit = m_pList->GetItemEdit(i)) {
+      if (CFX_Edit* pEdit = m_pList->GetItemEdit(i)) {
         CFX_FloatRect rcContent = pEdit->GetContentRect();
         if (rcContent.Width() > rcClient.Width())
           rcItem.Intersect(rcList);
@@ -183,7 +177,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
       if (m_pList->IsItemSelected(i)) {
         CFX_SystemHandler* pSysHandler = GetSystemHandler();
         if (pSysHandler && pSysHandler->IsSelectionImplemented()) {
-          IFX_Edit::DrawEdit(
+          CFX_Edit::DrawEdit(
               pDevice, pUser2Device, m_pList->GetItemEdit(i),
               CPWL_Utils::PWLColorToFXColor(GetTextColor()),
               CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor()), rcList,
@@ -192,13 +186,13 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
         } else {
           CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcItem,
                                    ArgbEncode(255, 0, 51, 113));
-          IFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+          CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
                              ArgbEncode(255, 255, 255, 255), 0, rcList,
                              ptOffset, nullptr, pSysHandler, m_pFormFiller);
         }
       } else {
         CFX_SystemHandler* pSysHandler = GetSystemHandler();
-        IFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+        CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
                            CPWL_Utils::PWLColorToFXColor(GetTextColor()),
                            CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor()),
                            rcList, ptOffset, nullptr, pSysHandler, nullptr);

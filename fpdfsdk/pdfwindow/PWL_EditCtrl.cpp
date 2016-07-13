@@ -8,6 +8,7 @@
 
 #include "core/fpdfdoc/include/cpvt_section.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 #include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
@@ -21,7 +22,7 @@
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
 CPWL_EditCtrl::CPWL_EditCtrl()
-    : m_pEdit(IFX_Edit::NewEdit()),
+    : m_pEdit(new CFX_Edit),
       m_pEditCaret(nullptr),
       m_bMouseDown(FALSE),
       m_pEditNotify(nullptr),
@@ -29,7 +30,6 @@ CPWL_EditCtrl::CPWL_EditCtrl()
       m_nCodePage(0) {}
 
 CPWL_EditCtrl::~CPWL_EditCtrl() {
-  IFX_Edit::DelEdit(m_pEdit);
 }
 
 void CPWL_EditCtrl::OnCreate(PWL_CREATEPARAM& cp) {
@@ -347,7 +347,7 @@ void CPWL_EditCtrl::SetEditCaret(FX_BOOL bVisible) {
 
 void CPWL_EditCtrl::GetCaretInfo(CFX_FloatPoint& ptHead,
                                  CFX_FloatPoint& ptFoot) const {
-  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(m_pEdit->GetCaret());
   CPVT_Word word;
   CPVT_Line line;
@@ -435,7 +435,7 @@ CFX_FloatPoint CPWL_EditCtrl::GetScrollPos() const {
 CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
   int32_t nFontIndex = 0;
 
-  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(m_pEdit->GetCaret());
   CPVT_Word word;
   CPVT_Section section;
@@ -456,7 +456,7 @@ CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
 FX_FLOAT CPWL_EditCtrl::GetCaretFontSize() const {
   FX_FLOAT fFontSize = GetFontSize();
 
-  IFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(m_pEdit->GetCaret());
   CPVT_Word word;
   CPVT_Section section;
