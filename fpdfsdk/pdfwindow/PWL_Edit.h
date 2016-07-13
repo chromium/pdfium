@@ -70,8 +70,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void OnSetFocus() override;
   void OnKillFocus() override;
 
-  void SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat = PEAH_LEFT,
-                       FX_BOOL bPaint = TRUE);  // 0:left 1:right 2:middle
   void SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat = PEAV_TOP,
                        FX_BOOL bPaint = TRUE);  // 0:top 1:bottom 2:center
 
@@ -126,7 +124,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void OnClear(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
   void OnInsertText(const CPVT_WordPlace& place,
                     const CPVT_WordPlace& oldplace);
-  void OnAddUndo(IFX_Edit_UndoItem* pUndoItem);
 
  private:
   CPVT_WordRange GetSelectWordRange() const;

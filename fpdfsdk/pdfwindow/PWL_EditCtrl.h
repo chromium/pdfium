@@ -15,7 +15,6 @@ class CFX_Edit;
 class CPWL_Caret;
 class CPWL_Edit;
 class CPWL_EditCtrl;
-class IPWL_Edit_Notify;
 struct CPVT_SecProps;
 struct CPVT_WordPlace;
 struct CPVT_WordProps;
@@ -24,36 +23,6 @@ struct CPVT_WordRange;
 enum PWL_EDIT_ALIGNFORMAT_H { PEAH_LEFT = 0, PEAH_MIDDLE, PEAH_RIGHT };
 
 enum PWL_EDIT_ALIGNFORMAT_V { PEAV_TOP = 0, PEAV_CENTER, PEAV_BOTTOM };
-
-class IPWL_Edit_Notify {
- public:
-  virtual ~IPWL_Edit_Notify() {}
-  // when the position of caret is changed in edit
-  virtual void OnCaretMove(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {}
-  virtual void OnContentChange(const CFX_FloatRect& rcContent) {}
-  // OprType: 0 InsertWord
-  // 1 InsertReturn
-  // 2 BackSpace
-  // 3 Delete
-  // 4 Clear
-  // 5 InsertText
-  // 6 SetText
-  virtual void OnInsertWord(const CPVT_WordPlace& place,
-                            const CPVT_WordPlace& oldplace) {}
-  virtual void OnInsertReturn(const CPVT_WordPlace& place,
-                              const CPVT_WordPlace& oldplace) {}
-  virtual void OnBackSpace(const CPVT_WordPlace& place,
-                           const CPVT_WordPlace& oldplace) {}
-  virtual void OnDelete(const CPVT_WordPlace& place,
-                        const CPVT_WordPlace& oldplace) {}
-  virtual void OnClear(const CPVT_WordPlace& place,
-                       const CPVT_WordPlace& oldplace) {}
-  virtual void OnInsertText(const CPVT_WordPlace& place,
-                            const CPVT_WordPlace& oldplace) {}
-  virtual void OnSetText(const CPVT_WordPlace& place,
-                         const CPVT_WordPlace& oldplace) {}
-  virtual void OnAddUndo(CPWL_Edit* pEdit) {}
-};
 
 class CPWL_EditCtrl : public CPWL_Wnd {
   friend class CPWL_Edit_Notify;
@@ -84,8 +53,6 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void EnableRefresh(FX_BOOL bRefresh);
   CFX_FloatPoint GetScrollPos() const;
   void SetScrollPos(const CFX_FloatPoint& point);
-
-  void SetEditNotify(IPWL_Edit_Notify* pNotify) { m_pEditNotify = pNotify; }
 
   void SetCharSet(uint8_t nCharSet) { m_nCharSet = nCharSet; }
   int32_t GetCharSet() const;
@@ -162,7 +129,6 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   std::unique_ptr<CFX_Edit> m_pEdit;
   CPWL_Caret* m_pEditCaret;
   FX_BOOL m_bMouseDown;
-  IPWL_Edit_Notify* m_pEditNotify;
 
  private:
   void CreateEditCaret(const PWL_CREATEPARAM& cp);

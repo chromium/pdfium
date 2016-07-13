@@ -182,7 +182,6 @@ class IPWL_FocusHandler {
  public:
   virtual ~IPWL_FocusHandler() {}
   virtual void OnSetFocus(CPWL_Wnd* pWnd) = 0;
-  virtual void OnKillFocus(CPWL_Wnd* pWnd) = 0;
 };
 
 struct PWL_CREATEPARAM {

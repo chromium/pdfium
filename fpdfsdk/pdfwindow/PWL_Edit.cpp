@@ -104,11 +104,6 @@ CFX_FloatRect CPWL_Edit::GetClientRect() const {
   return rcClient;
 }
 
-void CPWL_Edit::SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat,
-                                FX_BOOL bPaint) {
-  m_pEdit->SetAlignmentH((int32_t)nFormat, bPaint);
-}
-
 void CPWL_Edit::SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat,
                                 FX_BOOL bPaint) {
   m_pEdit->SetAlignmentV((int32_t)nFormat, bPaint);
@@ -464,14 +459,7 @@ void CPWL_Edit::OnKillFocus() {
 
   m_pEdit->SelectNone();
   SetCaret(FALSE, CFX_FloatPoint(0.0f, 0.0f), CFX_FloatPoint(0.0f, 0.0f));
-
   SetCharSet(FXFONT_ANSI_CHARSET);
-
-  if (!IsReadOnly()) {
-    if (IPWL_FocusHandler* pFocusHandler = GetFocusHandler())
-      pFocusHandler->OnKillFocus(this);
-  }
-
   m_bFocus = FALSE;
 }
 
@@ -770,10 +758,6 @@ void CPWL_Edit::OnInsertReturn(const CPVT_WordPlace& place,
     m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
                                                GetLatinWordsRange(place)));
   }
-
-  if (m_pEditNotify) {
-    m_pEditNotify->OnInsertReturn(place, oldplace);
-  }
 }
 
 void CPWL_Edit::OnBackSpace(const CPVT_WordPlace& place,
@@ -781,10 +765,6 @@ void CPWL_Edit::OnBackSpace(const CPVT_WordPlace& place,
   if (HasFlag(PES_SPELLCHECK)) {
     m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
                                                GetLatinWordsRange(place)));
-  }
-
-  if (m_pEditNotify) {
-    m_pEditNotify->OnBackSpace(place, oldplace);
   }
 }
 
@@ -794,10 +774,6 @@ void CPWL_Edit::OnDelete(const CPVT_WordPlace& place,
     m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
                                                GetLatinWordsRange(place)));
   }
-
-  if (m_pEditNotify) {
-    m_pEditNotify->OnDelete(place, oldplace);
-  }
 }
 
 void CPWL_Edit::OnClear(const CPVT_WordPlace& place,
@@ -805,10 +781,6 @@ void CPWL_Edit::OnClear(const CPVT_WordPlace& place,
   if (HasFlag(PES_SPELLCHECK)) {
     m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
                                                GetLatinWordsRange(place)));
-  }
-
-  if (m_pEditNotify) {
-    m_pEditNotify->OnClear(place, oldplace);
   }
 }
 
@@ -818,10 +790,6 @@ void CPWL_Edit::OnInsertWord(const CPVT_WordPlace& place,
     m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
                                                GetLatinWordsRange(place)));
   }
-
-  if (m_pEditNotify) {
-    m_pEditNotify->OnInsertWord(place, oldplace);
-  }
 }
 
 void CPWL_Edit::OnInsertText(const CPVT_WordPlace& place,
@@ -829,16 +797,6 @@ void CPWL_Edit::OnInsertText(const CPVT_WordPlace& place,
   if (HasFlag(PES_SPELLCHECK)) {
     m_pEdit->RefreshWordRange(CombineWordRange(GetLatinWordsRange(oldplace),
                                                GetLatinWordsRange(place)));
-  }
-
-  if (m_pEditNotify) {
-    m_pEditNotify->OnInsertText(place, oldplace);
-  }
-}
-
-void CPWL_Edit::OnAddUndo(IFX_Edit_UndoItem* pUndoItem) {
-  if (m_pEditNotify) {
-    m_pEditNotify->OnAddUndo(this);
   }
 }
 

@@ -279,11 +279,5 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
     unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
     m_pApp->FFI_OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
                                      nCharacters, TRUE);
-
-    pEdit->SetEditNotify(this);
   }
 }
-
-void CFFL_TextField::OnKillFocus(CPWL_Wnd* pWnd) {}
-
-void CFFL_TextField::OnAddUndo(CPWL_Edit* pEdit) {}

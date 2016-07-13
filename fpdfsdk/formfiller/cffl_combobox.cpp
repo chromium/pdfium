@@ -267,17 +267,7 @@ void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
     unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
     m_pApp->FFI_OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
                                      nCharacters, TRUE);
-
-    pEdit->SetEditNotify(this);
   }
-}
-
-void CFFL_ComboBox::OnKillFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pApp);
-}
-
-void CFFL_ComboBox::OnAddUndo(CPWL_Edit* pEdit) {
-  ASSERT(pEdit);
 }
 
 CFX_WideString CFFL_ComboBox::GetSelectExportText() {

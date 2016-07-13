@@ -566,7 +566,6 @@ class CFX_Edit {
   friend class CFXEU_Backspace;
   friend class CFXEU_Delete;
   friend class CFXEU_Clear;
-  friend class CFXEU_ClearRich;
   friend class CFXEU_InsertText;
 
   void SetSel(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);

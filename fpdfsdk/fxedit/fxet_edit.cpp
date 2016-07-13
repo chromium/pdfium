@@ -3094,8 +3094,6 @@ void CFX_Edit::BeginGroupUndo(const CFX_WideString& sTitle) {
 void CFX_Edit::EndGroupUndo() {
   m_pGroupUndoItem->UpdateItems();
   m_Undo.AddItem(m_pGroupUndoItem);
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnAddUndo(m_pGroupUndoItem);
   m_pGroupUndoItem = nullptr;
 }
 
@@ -3104,15 +3102,11 @@ void CFX_Edit::AddEditUndoItem(CFX_Edit_UndoItem* pEditUndoItem) {
     m_pGroupUndoItem->AddUndoItem(pEditUndoItem);
   } else {
     m_Undo.AddItem(pEditUndoItem);
-    if (m_bOprNotify && m_pOprNotify)
-      m_pOprNotify->OnAddUndo(pEditUndoItem);
   }
 }
 
 void CFX_Edit::AddUndoItem(IFX_Edit_UndoItem* pUndoItem) {
   m_Undo.AddItem(pUndoItem);
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnAddUndo(pUndoItem);
 }
 
 CFX_Edit_LineRectArray::CFX_Edit_LineRectArray() {}

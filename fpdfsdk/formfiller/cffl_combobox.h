@@ -19,9 +19,7 @@ struct FFL_ComboBoxState {
   CFX_WideString sValue;
 };
 
-class CFFL_ComboBox : public CFFL_FormFiller,
-                      public IPWL_FocusHandler,
-                      public IPWL_Edit_Notify {
+class CFFL_ComboBox : public CFFL_FormFiller, public IPWL_FocusHandler {
  public:
   CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget);
   ~CFFL_ComboBox() override;
@@ -49,10 +47,6 @@ class CFFL_ComboBox : public CFFL_FormFiller,
 
   // IPWL_FocusHandler:
   void OnSetFocus(CPWL_Wnd* pWnd) override;
-  void OnKillFocus(CPWL_Wnd* pWnd) override;
-
-  // IPWL_Edit_Notify:
-  void OnAddUndo(CPWL_Edit* pEdit) override;
 
 #ifdef PDF_ENABLE_XFA
   // CFFL_FormFiller:

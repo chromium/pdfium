@@ -25,12 +25,10 @@ CPWL_EditCtrl::CPWL_EditCtrl()
     : m_pEdit(new CFX_Edit),
       m_pEditCaret(nullptr),
       m_bMouseDown(FALSE),
-      m_pEditNotify(nullptr),
       m_nCharSet(DEFAULT_CHARSET),
       m_nCodePage(0) {}
 
-CPWL_EditCtrl::~CPWL_EditCtrl() {
-}
+CPWL_EditCtrl::~CPWL_EditCtrl() {}
 
 void CPWL_EditCtrl::OnCreate(PWL_CREATEPARAM& cp) {
   cp.eCursorType = FXCT_VBEAM;
@@ -566,13 +564,10 @@ void CPWL_EditCtrl::IOnSetCaret(FX_BOOL bVisible,
   OnNotify(this, PNM_SETCARETINFO, (intptr_t)&cInfo, (intptr_t) nullptr);
 }
 
-void CPWL_EditCtrl::IOnContentChange(const CFX_FloatRect& rcContent) {
-  if (IsValid()) {
-    if (m_pEditNotify) {
-      m_pEditNotify->OnContentChange(rcContent);
-    }
-  }
-}
+void CPWL_EditCtrl::IOnCaretChange(const CPVT_SecProps& secProps,
+                                   const CPVT_WordProps& wordProps) {}
+
+void CPWL_EditCtrl::IOnContentChange(const CFX_FloatRect& rcContent) {}
 
 void CPWL_EditCtrl::IOnInvalidateRect(CFX_FloatRect* pRect) {
   InvalidateRect(pRect);
