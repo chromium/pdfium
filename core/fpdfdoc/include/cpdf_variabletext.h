@@ -102,12 +102,10 @@ class CPDF_VariableText : private CPDF_EditContainer {
   void SetFontSize(FX_FLOAT fFontSize) { m_fFontSize = fFontSize; }
   void SetCharArray(int32_t nCharArray = 0) { m_nCharArray = nCharArray; }
   void SetAutoFontSize(FX_BOOL bAuto = TRUE) { m_bAutoFontSize = bAuto; }
-  void SetRichText(FX_BOOL bRichText) { m_bRichText = bRichText; }
   void SetLineLeading(FX_FLOAT fLineLeading) { m_fLineLeading = fLineLeading; }
   void Initialize();
 
   FX_BOOL IsValid() const { return m_bInitial; }
-  FX_BOOL IsRichText() const { return m_bRichText; }
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
@@ -245,7 +243,6 @@ class CPDF_VariableText : private CPDF_EditContainer {
   uint16_t m_wSubWord;
   FX_FLOAT m_fFontSize;
   FX_BOOL m_bInitial;
-  FX_BOOL m_bRichText;
   CPDF_VariableText::Provider* m_pVTProvider;
   std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
 };

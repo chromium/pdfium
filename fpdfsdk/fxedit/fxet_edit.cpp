@@ -606,49 +606,6 @@ void CFXEU_Clear::Undo() {
   }
 }
 
-CFXEU_ClearRich::CFXEU_ClearRich(CFX_Edit* pEdit,
-                                 const CPVT_WordPlace& wpOldPlace,
-                                 const CPVT_WordPlace& wpNewPlace,
-                                 const CPVT_WordRange& wrSel,
-                                 uint16_t word,
-                                 int32_t charset,
-                                 const CPVT_SecProps& SecProps,
-                                 const CPVT_WordProps& WordProps)
-    : m_pEdit(pEdit),
-      m_wpOld(wpOldPlace),
-      m_wpNew(wpNewPlace),
-      m_wrSel(wrSel),
-      m_Word(word),
-      m_nCharset(charset),
-      m_SecProps(SecProps),
-      m_WordProps(WordProps) {}
-
-CFXEU_ClearRich::~CFXEU_ClearRich() {}
-
-void CFXEU_ClearRich::Redo() {
-  if (m_pEdit && IsLast()) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetSel(m_wrSel.BeginPos, m_wrSel.EndPos);
-    m_pEdit->Clear(FALSE, TRUE);
-  }
-}
-
-void CFXEU_ClearRich::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpOld);
-    if (m_wpNew.SecCmp(m_wpOld) != 0) {
-      m_pEdit->InsertReturn(&m_SecProps, &m_WordProps, FALSE, FALSE);
-    } else {
-      m_pEdit->InsertWord(m_Word, m_nCharset, &m_WordProps, FALSE, FALSE);
-    }
-
-    if (IsFirst()) {
-      m_pEdit->PaintInsertText(m_wrSel.BeginPos, m_wrSel.EndPos);
-      m_pEdit->SetSel(m_wrSel.BeginPos, m_wrSel.EndPos);
-    }
-  }
-}
 CFXEU_InsertText::CFXEU_InsertText(CFX_Edit* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
@@ -688,88 +645,6 @@ void CFXEU_InsertText::Undo() {
   }
 }
 
-CFXEU_SetSecProps::CFXEU_SetSecProps(CFX_Edit* pEdit,
-                                     const CPVT_WordPlace& place,
-                                     EDIT_PROPS_E ep,
-                                     const CPVT_SecProps& oldsecprops,
-                                     const CPVT_WordProps& oldwordprops,
-                                     const CPVT_SecProps& newsecprops,
-                                     const CPVT_WordProps& newwordprops,
-                                     const CPVT_WordRange& range)
-    : m_pEdit(pEdit),
-      m_wpPlace(place),
-      m_wrPlace(range),
-      m_eProps(ep),
-      m_OldSecProps(oldsecprops),
-      m_NewSecProps(newsecprops),
-      m_OldWordProps(oldwordprops),
-      m_NewWordProps(newwordprops) {}
-
-CFXEU_SetSecProps::~CFXEU_SetSecProps() {}
-
-void CFXEU_SetSecProps::Redo() {
-  if (m_pEdit) {
-    m_pEdit->SetSecProps(m_eProps, m_wpPlace, &m_NewSecProps, &m_NewWordProps,
-                         m_wrPlace, FALSE);
-    if (IsLast()) {
-      m_pEdit->SelectNone();
-      m_pEdit->PaintSetProps(m_eProps, m_wrPlace);
-      m_pEdit->SetSel(m_wrPlace.BeginPos, m_wrPlace.EndPos);
-    }
-  }
-}
-
-void CFXEU_SetSecProps::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SetSecProps(m_eProps, m_wpPlace, &m_OldSecProps, &m_OldWordProps,
-                         m_wrPlace, FALSE);
-    if (IsFirst()) {
-      m_pEdit->SelectNone();
-      m_pEdit->PaintSetProps(m_eProps, m_wrPlace);
-      m_pEdit->SetSel(m_wrPlace.BeginPos, m_wrPlace.EndPos);
-    }
-  }
-}
-
-CFXEU_SetWordProps::CFXEU_SetWordProps(CFX_Edit* pEdit,
-                                       const CPVT_WordPlace& place,
-                                       EDIT_PROPS_E ep,
-                                       const CPVT_WordProps& oldprops,
-                                       const CPVT_WordProps& newprops,
-                                       const CPVT_WordRange& range)
-    : m_pEdit(pEdit),
-      m_wpPlace(place),
-      m_wrPlace(range),
-      m_eProps(ep),
-      m_OldWordProps(oldprops),
-      m_NewWordProps(newprops) {}
-
-CFXEU_SetWordProps::~CFXEU_SetWordProps() {}
-
-void CFXEU_SetWordProps::Redo() {
-  if (m_pEdit) {
-    m_pEdit->SetWordProps(m_eProps, m_wpPlace, &m_NewWordProps, m_wrPlace,
-                          FALSE);
-    if (IsLast()) {
-      m_pEdit->SelectNone();
-      m_pEdit->PaintSetProps(m_eProps, m_wrPlace);
-      m_pEdit->SetSel(m_wrPlace.BeginPos, m_wrPlace.EndPos);
-    }
-  }
-}
-
-void CFXEU_SetWordProps::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SetWordProps(m_eProps, m_wpPlace, &m_OldWordProps, m_wrPlace,
-                          FALSE);
-    if (IsFirst()) {
-      m_pEdit->SelectNone();
-      m_pEdit->PaintSetProps(m_eProps, m_wrPlace);
-      m_pEdit->SetSel(m_wrPlace.BeginPos, m_wrPlace.EndPos);
-    }
-  }
-}
-
 CFX_Edit::CFX_Edit(CPDF_VariableText* pVT)
     : m_pVT(pVT),
       m_pNotify(nullptr),
@@ -788,7 +663,6 @@ CFX_Edit::CFX_Edit(CPDF_VariableText* pVT)
       m_bEnableRefresh(TRUE),
       m_rcOldContent(0.0f, 0.0f, 0.0f, 0.0f),
       m_bEnableUndo(TRUE),
-      m_bNotify(TRUE),
       m_bOprNotify(FALSE),
       m_pGroupUndoItem(nullptr) {
   ASSERT(pVT);
@@ -1090,481 +964,6 @@ CPVT_WordRange CFX_Edit::CombineWordRange(const CPVT_WordRange& wr1,
   return wrRet;
 }
 
-FX_BOOL CFX_Edit::IsRichText() const {
-  return m_pVT->IsRichText();
-}
-
-void CFX_Edit::SetRichText(FX_BOOL bRichText, FX_BOOL bPaint) {
-  m_pVT->SetRichText(bRichText);
-  if (bPaint)
-    Paint();
-}
-
-FX_BOOL CFX_Edit::SetRichFontIndex(int32_t nFontIndex) {
-  CPVT_WordProps WordProps;
-  WordProps.nFontIndex = nFontIndex;
-  return SetRichTextProps(EP_FONTINDEX, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichFontSize(FX_FLOAT fFontSize) {
-  CPVT_WordProps WordProps;
-  WordProps.fFontSize = fFontSize;
-  return SetRichTextProps(EP_FONTSIZE, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextColor(FX_COLORREF dwColor) {
-  CPVT_WordProps WordProps;
-  WordProps.dwWordColor = dwColor;
-  return SetRichTextProps(EP_WORDCOLOR, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextScript(CPDF_VariableText::ScriptType nScriptType) {
-  CPVT_WordProps WordProps;
-  WordProps.nScriptType = nScriptType;
-  return SetRichTextProps(EP_SCRIPTTYPE, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextBold(FX_BOOL bBold) {
-  CPVT_WordProps WordProps;
-  if (bBold)
-    WordProps.nWordStyle |= PVTWORD_STYLE_BOLD;
-  return SetRichTextProps(EP_BOLD, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextItalic(FX_BOOL bItalic) {
-  CPVT_WordProps WordProps;
-  if (bItalic)
-    WordProps.nWordStyle |= PVTWORD_STYLE_ITALIC;
-  return SetRichTextProps(EP_ITALIC, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextUnderline(FX_BOOL bUnderline) {
-  CPVT_WordProps WordProps;
-  if (bUnderline)
-    WordProps.nWordStyle |= PVTWORD_STYLE_UNDERLINE;
-  return SetRichTextProps(EP_UNDERLINE, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextCrossout(FX_BOOL bCrossout) {
-  CPVT_WordProps WordProps;
-  if (bCrossout)
-    WordProps.nWordStyle |= PVTWORD_STYLE_CROSSOUT;
-  return SetRichTextProps(EP_CROSSOUT, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextCharSpace(FX_FLOAT fCharSpace) {
-  CPVT_WordProps WordProps;
-  WordProps.fCharSpace = fCharSpace;
-  return SetRichTextProps(EP_CHARSPACE, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextHorzScale(int32_t nHorzScale) {
-  CPVT_WordProps WordProps;
-  WordProps.nHorzScale = nHorzScale;
-  return SetRichTextProps(EP_HORZSCALE, nullptr, &WordProps);
-}
-
-FX_BOOL CFX_Edit::SetRichTextLineLeading(FX_FLOAT fLineLeading) {
-  CPVT_SecProps SecProps;
-  SecProps.fLineLeading = fLineLeading;
-  return SetRichTextProps(EP_LINELEADING, &SecProps, nullptr);
-}
-
-FX_BOOL CFX_Edit::SetRichTextLineIndent(FX_FLOAT fLineIndent) {
-  CPVT_SecProps SecProps;
-  SecProps.fLineIndent = fLineIndent;
-  return SetRichTextProps(EP_LINEINDENT, &SecProps, nullptr);
-}
-
-FX_BOOL CFX_Edit::SetRichTextAlignment(int32_t nAlignment) {
-  CPVT_SecProps SecProps;
-  SecProps.nAlignment = nAlignment;
-  return SetRichTextProps(EP_ALIGNMENT, &SecProps, nullptr);
-}
-
-FX_BOOL CFX_Edit::SetRichTextProps(EDIT_PROPS_E eProps,
-                                   const CPVT_SecProps* pSecProps,
-                                   const CPVT_WordProps* pWordProps) {
-  if (!m_pVT->IsValid() || !m_pVT->IsRichText())
-    return FALSE;
-
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-  CPVT_WordRange wrTemp = m_SelState.ConvertToWordRange();
-
-  m_pVT->UpdateWordPlace(wrTemp.BeginPos);
-  m_pVT->UpdateWordPlace(wrTemp.EndPos);
-  pIterator->SetAt(wrTemp.BeginPos);
-
-  BeginGroupUndo(L"");
-  FX_BOOL bSet =
-      SetSecProps(eProps, wrTemp.BeginPos, pSecProps, pWordProps, wrTemp, TRUE);
-
-  while (pIterator->NextWord()) {
-    CPVT_WordPlace place = pIterator->GetAt();
-    if (place.WordCmp(wrTemp.EndPos) > 0)
-      break;
-    FX_BOOL bSet1 =
-        SetSecProps(eProps, place, pSecProps, pWordProps, wrTemp, TRUE);
-    FX_BOOL bSet2 = SetWordProps(eProps, place, pWordProps, wrTemp, TRUE);
-
-    if (!bSet)
-      bSet = (bSet1 || bSet2);
-  }
-
-  EndGroupUndo();
-
-  if (bSet)
-    PaintSetProps(eProps, wrTemp);
-
-  return bSet;
-}
-
-void CFX_Edit::PaintSetProps(EDIT_PROPS_E eProps, const CPVT_WordRange& wr) {
-  switch (eProps) {
-    case EP_LINELEADING:
-    case EP_LINEINDENT:
-    case EP_ALIGNMENT:
-      RearrangePart(wr);
-      ScrollToCaret();
-      Refresh(RP_ANALYSE);
-      SetCaretOrigin();
-      SetCaretInfo();
-      break;
-    case EP_WORDCOLOR:
-    case EP_UNDERLINE:
-    case EP_CROSSOUT:
-      Refresh(RP_OPTIONAL, &wr);
-      break;
-    case EP_FONTINDEX:
-    case EP_FONTSIZE:
-    case EP_SCRIPTTYPE:
-    case EP_CHARSPACE:
-    case EP_HORZSCALE:
-    case EP_BOLD:
-    case EP_ITALIC:
-      RearrangePart(wr);
-      ScrollToCaret();
-
-      CPVT_WordRange wrRefresh(m_pVT->GetSectionBeginPlace(wr.BeginPos),
-                               m_pVT->GetSectionEndPlace(wr.EndPos));
-      Refresh(RP_ANALYSE, &wrRefresh);
-
-      SetCaretOrigin();
-      SetCaretInfo();
-      break;
-  }
-}
-
-FX_BOOL CFX_Edit::SetSecProps(EDIT_PROPS_E eProps,
-                              const CPVT_WordPlace& place,
-                              const CPVT_SecProps* pSecProps,
-                              const CPVT_WordProps* pWordProps,
-                              const CPVT_WordRange& wr,
-                              FX_BOOL bAddUndo) {
-  if (!m_pVT->IsValid() || !m_pVT->IsRichText())
-    return FALSE;
-
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-  FX_BOOL bSet = FALSE;
-  CPVT_Section secinfo;
-  CPVT_Section OldSecinfo;
-
-  CPVT_WordPlace oldplace = pIterator->GetAt();
-
-  if (eProps == EP_LINELEADING || eProps == EP_LINEINDENT ||
-      eProps == EP_ALIGNMENT) {
-    if (pSecProps) {
-      pIterator->SetAt(place);
-      if (pIterator->GetSection(secinfo)) {
-        if (bAddUndo)
-          OldSecinfo = secinfo;
-
-        switch (eProps) {
-          case EP_LINELEADING:
-            if (!FX_EDIT_IsFloatEqual(secinfo.SecProps.fLineLeading,
-                                      pSecProps->fLineLeading)) {
-              secinfo.SecProps.fLineLeading = pSecProps->fLineLeading;
-              bSet = TRUE;
-            }
-            break;
-          case EP_LINEINDENT:
-            if (!FX_EDIT_IsFloatEqual(secinfo.SecProps.fLineIndent,
-                                      pSecProps->fLineIndent)) {
-              secinfo.SecProps.fLineIndent = pSecProps->fLineIndent;
-              bSet = TRUE;
-            }
-            break;
-          case EP_ALIGNMENT:
-            if (secinfo.SecProps.nAlignment != pSecProps->nAlignment) {
-              secinfo.SecProps.nAlignment = pSecProps->nAlignment;
-              bSet = TRUE;
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  } else {
-    if (pWordProps && place == m_pVT->GetSectionBeginPlace(place)) {
-      pIterator->SetAt(place);
-      if (pIterator->GetSection(secinfo)) {
-        if (bAddUndo)
-          OldSecinfo = secinfo;
-
-        switch (eProps) {
-          case EP_FONTINDEX:
-            if (secinfo.WordProps.nFontIndex != pWordProps->nFontIndex) {
-              secinfo.WordProps.nFontIndex = pWordProps->nFontIndex;
-              bSet = TRUE;
-            }
-            break;
-          case EP_FONTSIZE:
-            if (!FX_EDIT_IsFloatEqual(secinfo.WordProps.fFontSize,
-                                      pWordProps->fFontSize)) {
-              secinfo.WordProps.fFontSize = pWordProps->fFontSize;
-              bSet = TRUE;
-            }
-            break;
-          case EP_WORDCOLOR:
-            if (secinfo.WordProps.dwWordColor != pWordProps->dwWordColor) {
-              secinfo.WordProps.dwWordColor = pWordProps->dwWordColor;
-              bSet = TRUE;
-            }
-            break;
-          case EP_SCRIPTTYPE:
-            if (secinfo.WordProps.nScriptType != pWordProps->nScriptType) {
-              secinfo.WordProps.nScriptType = pWordProps->nScriptType;
-              bSet = TRUE;
-            }
-            break;
-          case EP_CHARSPACE:
-            if (!FX_EDIT_IsFloatEqual(secinfo.WordProps.fCharSpace,
-                                      pWordProps->fCharSpace)) {
-              secinfo.WordProps.fCharSpace = pWordProps->fCharSpace;
-              bSet = TRUE;
-            }
-            break;
-          case EP_HORZSCALE:
-            if (secinfo.WordProps.nHorzScale != pWordProps->nHorzScale) {
-              secinfo.WordProps.nHorzScale = pWordProps->nHorzScale;
-              bSet = TRUE;
-            }
-            break;
-          case EP_UNDERLINE:
-            if (pWordProps->nWordStyle & PVTWORD_STYLE_UNDERLINE) {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) ==
-                  0) {
-                secinfo.WordProps.nWordStyle |= PVTWORD_STYLE_UNDERLINE;
-                bSet = TRUE;
-              }
-            } else {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) !=
-                  0) {
-                secinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_UNDERLINE;
-                bSet = TRUE;
-              }
-            }
-            break;
-          case EP_CROSSOUT:
-            if (pWordProps->nWordStyle & PVTWORD_STYLE_CROSSOUT) {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) ==
-                  0) {
-                secinfo.WordProps.nWordStyle |= PVTWORD_STYLE_CROSSOUT;
-                bSet = TRUE;
-              }
-            } else {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) !=
-                  0) {
-                secinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_CROSSOUT;
-                bSet = TRUE;
-              }
-            }
-            break;
-          case EP_BOLD:
-            if (pWordProps->nWordStyle & PVTWORD_STYLE_BOLD) {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_BOLD) == 0) {
-                secinfo.WordProps.nWordStyle |= PVTWORD_STYLE_BOLD;
-                bSet = TRUE;
-              }
-            } else {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_BOLD) != 0) {
-                secinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_BOLD;
-                bSet = TRUE;
-              }
-            }
-            break;
-          case EP_ITALIC:
-            if (pWordProps->nWordStyle & PVTWORD_STYLE_ITALIC) {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_ITALIC) == 0) {
-                secinfo.WordProps.nWordStyle |= PVTWORD_STYLE_ITALIC;
-                bSet = TRUE;
-              }
-            } else {
-              if ((secinfo.WordProps.nWordStyle & PVTWORD_STYLE_ITALIC) != 0) {
-                secinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_ITALIC;
-                bSet = TRUE;
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
-
-  if (bSet) {
-    pIterator->SetSection(secinfo);
-
-    if (bAddUndo && m_bEnableUndo) {
-      AddEditUndoItem(new CFXEU_SetSecProps(
-          this, place, eProps, OldSecinfo.SecProps, OldSecinfo.WordProps,
-          secinfo.SecProps, secinfo.WordProps, wr));
-    }
-  }
-
-  pIterator->SetAt(oldplace);
-
-  return bSet;
-}
-
-FX_BOOL CFX_Edit::SetWordProps(EDIT_PROPS_E eProps,
-                               const CPVT_WordPlace& place,
-                               const CPVT_WordProps* pWordProps,
-                               const CPVT_WordRange& wr,
-                               FX_BOOL bAddUndo) {
-  if (!m_pVT->IsValid() || !m_pVT->IsRichText())
-    return FALSE;
-
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-  FX_BOOL bSet = FALSE;
-  CPVT_Word wordinfo;
-  CPVT_Word OldWordinfo;
-
-  CPVT_WordPlace oldplace = pIterator->GetAt();
-
-  if (pWordProps) {
-    pIterator->SetAt(place);
-    if (pIterator->GetWord(wordinfo)) {
-      if (bAddUndo)
-        OldWordinfo = wordinfo;
-
-      switch (eProps) {
-        case EP_FONTINDEX:
-          if (wordinfo.WordProps.nFontIndex != pWordProps->nFontIndex) {
-            if (IPVT_FontMap* pFontMap = GetFontMap()) {
-              wordinfo.WordProps.nFontIndex = pFontMap->GetWordFontIndex(
-                  wordinfo.Word, wordinfo.nCharset, pWordProps->nFontIndex);
-            }
-            bSet = TRUE;
-          }
-          break;
-        case EP_FONTSIZE:
-          if (!FX_EDIT_IsFloatEqual(wordinfo.WordProps.fFontSize,
-                                    pWordProps->fFontSize)) {
-            wordinfo.WordProps.fFontSize = pWordProps->fFontSize;
-            bSet = TRUE;
-          }
-          break;
-        case EP_WORDCOLOR:
-          if (wordinfo.WordProps.dwWordColor != pWordProps->dwWordColor) {
-            wordinfo.WordProps.dwWordColor = pWordProps->dwWordColor;
-            bSet = TRUE;
-          }
-          break;
-        case EP_SCRIPTTYPE:
-          if (wordinfo.WordProps.nScriptType != pWordProps->nScriptType) {
-            wordinfo.WordProps.nScriptType = pWordProps->nScriptType;
-            bSet = TRUE;
-          }
-          break;
-        case EP_CHARSPACE:
-          if (!FX_EDIT_IsFloatEqual(wordinfo.WordProps.fCharSpace,
-                                    pWordProps->fCharSpace)) {
-            wordinfo.WordProps.fCharSpace = pWordProps->fCharSpace;
-            bSet = TRUE;
-          }
-          break;
-        case EP_HORZSCALE:
-          if (wordinfo.WordProps.nHorzScale != pWordProps->nHorzScale) {
-            wordinfo.WordProps.nHorzScale = pWordProps->nHorzScale;
-            bSet = TRUE;
-          }
-          break;
-        case EP_UNDERLINE:
-          if (pWordProps->nWordStyle & PVTWORD_STYLE_UNDERLINE) {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) ==
-                0) {
-              wordinfo.WordProps.nWordStyle |= PVTWORD_STYLE_UNDERLINE;
-              bSet = TRUE;
-            }
-          } else {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) !=
-                0) {
-              wordinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_UNDERLINE;
-              bSet = TRUE;
-            }
-          }
-          break;
-        case EP_CROSSOUT:
-          if (pWordProps->nWordStyle & PVTWORD_STYLE_CROSSOUT) {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) == 0) {
-              wordinfo.WordProps.nWordStyle |= PVTWORD_STYLE_CROSSOUT;
-              bSet = TRUE;
-            }
-          } else {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) != 0) {
-              wordinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_CROSSOUT;
-              bSet = TRUE;
-            }
-          }
-          break;
-        case EP_BOLD:
-          if (pWordProps->nWordStyle & PVTWORD_STYLE_BOLD) {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_BOLD) == 0) {
-              wordinfo.WordProps.nWordStyle |= PVTWORD_STYLE_BOLD;
-              bSet = TRUE;
-            }
-          } else {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_BOLD) != 0) {
-              wordinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_BOLD;
-              bSet = TRUE;
-            }
-          }
-          break;
-        case EP_ITALIC:
-          if (pWordProps->nWordStyle & PVTWORD_STYLE_ITALIC) {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_ITALIC) == 0) {
-              wordinfo.WordProps.nWordStyle |= PVTWORD_STYLE_ITALIC;
-              bSet = TRUE;
-            }
-          } else {
-            if ((wordinfo.WordProps.nWordStyle & PVTWORD_STYLE_ITALIC) != 0) {
-              wordinfo.WordProps.nWordStyle &= ~PVTWORD_STYLE_ITALIC;
-              bSet = TRUE;
-            }
-          }
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  if (bSet) {
-    pIterator->SetWord(wordinfo);
-
-    if (bAddUndo && m_bEnableUndo) {
-      AddEditUndoItem(new CFXEU_SetWordProps(
-          this, place, eProps, OldWordinfo.WordProps, wordinfo.WordProps, wr));
-    }
-  }
-
-  pIterator->SetAt(oldplace);
-  return bSet;
-}
-
 void CFX_Edit::SetText(const FX_WCHAR* text,
                        int32_t charset,
                        const CPVT_SecProps* pSecProps,
@@ -1694,7 +1093,7 @@ void CFX_Edit::RearrangePart(const CPVT_WordRange& range) {
 }
 
 void CFX_Edit::SetContentChanged() {
-  if (m_bNotify && m_pNotify) {
+  if (m_pNotify) {
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
     if (rcContent.Width() != m_rcOldContent.Width() ||
         rcContent.Height() != m_rcOldContent.Height()) {
@@ -1797,7 +1196,7 @@ CFX_FloatRect CFX_Edit::EditToVT(const CFX_FloatRect& rect) const {
 }
 
 void CFX_Edit::SetScrollInfo() {
-  if (m_bNotify && m_pNotify) {
+  if (m_pNotify) {
     CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
 
@@ -1824,7 +1223,7 @@ void CFX_Edit::SetScrollPosX(FX_FLOAT fx) {
       m_ptScrollPos.x = fx;
       Refresh(RP_NOANALYSE);
 
-      if (m_bNotify && m_pNotify) {
+      if (m_pNotify) {
         if (!m_bNotifyFlag) {
           m_bNotifyFlag = TRUE;
           m_pNotify->IOnSetScrollPosX(fx);
@@ -1844,7 +1243,7 @@ void CFX_Edit::SetScrollPosY(FX_FLOAT fy) {
       m_ptScrollPos.y = fy;
       Refresh(RP_NOANALYSE);
 
-      if (m_bNotify && m_pNotify) {
+      if (m_pNotify) {
         if (!m_bNotifyFlag) {
           m_bNotifyFlag = TRUE;
           m_pNotify->IOnSetScrollPosY(fy);
@@ -1959,7 +1358,7 @@ void CFX_Edit::Refresh(REFRESH_PLAN_E ePlan,
     m_Refresh.NoAnalyse();
     m_ptRefreshScrollPos = m_ptScrollPos;
 
-    if (m_bNotify && m_pNotify) {
+    if (m_pNotify) {
       if (!m_bNotifyFlag) {
         m_bNotifyFlag = TRUE;
         if (const CFX_Edit_RectArray* pRects = m_Refresh.GetRefreshRects()) {
@@ -2073,7 +1472,7 @@ void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
                            wordinfo.ptWord.x + wordinfo.fWidth,
                            lineinfo.ptLine.y + lineinfo.fLineAscent);
 
-      if (m_bNotify && m_pNotify) {
+      if (m_pNotify) {
         if (!m_bNotifyFlag) {
           m_bNotifyFlag = TRUE;
           CFX_FloatRect rcRefresh = VTToEdit(rcWord);
@@ -2087,7 +1486,7 @@ void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
                            lineinfo.ptLine.x + lineinfo.fLineWidth,
                            lineinfo.ptLine.y + lineinfo.fLineAscent);
 
-      if (m_bNotify && m_pNotify) {
+      if (m_pNotify) {
         if (!m_bNotifyFlag) {
           m_bNotifyFlag = TRUE;
           CFX_FloatRect rcRefresh = VTToEdit(rcLine);
@@ -2107,7 +1506,7 @@ void CFX_Edit::SetCaret(const CPVT_WordPlace& place) {
 }
 
 void CFX_Edit::SetCaretInfo() {
-  if (m_bNotify && m_pNotify) {
+  if (m_pNotify) {
     if (!m_bNotifyFlag) {
       CFX_FloatPoint ptHead(0.0f, 0.0f), ptFoot(0.0f, 0.0f);
 
@@ -2132,38 +1531,6 @@ void CFX_Edit::SetCaretInfo() {
                              VTToEdit(ptFoot), m_wpCaret);
       m_bNotifyFlag = FALSE;
     }
-  }
-
-  SetCaretChange();
-}
-
-void CFX_Edit::SetCaretChange() {
-  if (m_wpCaret == m_wpOldCaret)
-    return;
-
-  if (!m_bNotify || !m_pVT->IsRichText() || !m_pNotify)
-    return;
-
-  CPVT_SecProps SecProps;
-  CPVT_WordProps WordProps;
-
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-  pIterator->SetAt(m_wpCaret);
-  CPVT_Word word;
-  CPVT_Section section;
-
-  if (pIterator->GetSection(section)) {
-    SecProps = section.SecProps;
-    WordProps = section.WordProps;
-  }
-
-  if (pIterator->GetWord(word))
-    WordProps = word.WordProps;
-
-  if (!m_bNotifyFlag) {
-    m_bNotifyFlag = TRUE;
-    m_pNotify->IOnCaretChange(SecProps, WordProps);
-    m_bNotifyFlag = FALSE;
   }
 }
 
@@ -2662,44 +2029,8 @@ FX_BOOL CFX_Edit::Clear(FX_BOOL bAddUndo, FX_BOOL bPaint) {
 
   CPVT_WordRange range = m_SelState.ConvertToWordRange();
 
-  if (bAddUndo && m_bEnableUndo) {
-    if (m_pVT->IsRichText()) {
-      BeginGroupUndo(L"");
-
-      CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-      pIterator->SetAt(range.EndPos);
-
-      CPVT_Word wordinfo;
-      CPVT_Section secinfo;
-      do {
-        CPVT_WordPlace place = pIterator->GetAt();
-        if (place.WordCmp(range.BeginPos) <= 0)
-          break;
-
-        CPVT_WordPlace oldplace = m_pVT->GetPrevWordPlace(place);
-
-        if (oldplace.SecCmp(place) != 0) {
-          if (pIterator->GetSection(secinfo)) {
-            AddEditUndoItem(new CFXEU_ClearRich(
-                this, oldplace, place, range, wordinfo.Word, wordinfo.nCharset,
-                secinfo.SecProps, secinfo.WordProps));
-          }
-        } else {
-          if (pIterator->GetWord(wordinfo)) {
-            oldplace = m_pVT->AdjustLineHeader(oldplace, TRUE);
-            place = m_pVT->AdjustLineHeader(place, TRUE);
-
-            AddEditUndoItem(new CFXEU_ClearRich(
-                this, oldplace, place, range, wordinfo.Word, wordinfo.nCharset,
-                secinfo.SecProps, wordinfo.WordProps));
-          }
-        }
-      } while (pIterator->PrevWord());
-      EndGroupUndo();
-    } else {
-      AddEditUndoItem(new CFXEU_Clear(this, range, GetSelText()));
-    }
-  }
+  if (bAddUndo && m_bEnableUndo)
+    AddEditUndoItem(new CFXEU_Clear(this, range, GetSelText()));
 
   SelectNone();
   SetCaret(m_pVT->DeleteWords(range));
@@ -2896,10 +2227,6 @@ void CFX_Edit::EnableRefresh(FX_BOOL bRefresh) {
 
 void CFX_Edit::EnableUndo(FX_BOOL bUndo) {
   m_bEnableUndo = bUndo;
-}
-
-void CFX_Edit::EnableNotify(FX_BOOL bNotify) {
-  m_bNotify = bNotify;
 }
 
 void CFX_Edit::EnableOprNotify(FX_BOOL bNotify) {

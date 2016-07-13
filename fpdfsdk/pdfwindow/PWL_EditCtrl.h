@@ -138,8 +138,6 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
                    const CFX_FloatPoint& ptHead,
                    const CFX_FloatPoint& ptFoot,
                    const CPVT_WordPlace& place) override;
-  void IOnCaretChange(const CPVT_SecProps& secProps,
-                      const CPVT_WordProps& wordProps) override;
   void IOnContentChange(const CFX_FloatRect& rcContent) override;
   void IOnInvalidateRect(CFX_FloatRect* pRect) override;
 

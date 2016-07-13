@@ -77,10 +77,6 @@ class IFX_Edit_Notify {
                            const CFX_FloatPoint& ptHead,
                            const CFX_FloatPoint& ptFoot,
                            const CPVT_WordPlace& place) = 0;
-  // if the caret position is changed ,send the information of current postion
-  // to user.
-  virtual void IOnCaretChange(const CPVT_SecProps& secProps,
-                              const CPVT_WordProps& wordProps) = 0;
   // if the text area is changed, send the information to user.
   virtual void IOnContentChange(const CFX_FloatRect& rcContent) = 0;
   // Invalidate the rectangle relative to the bounding box of edit.
@@ -242,54 +238,6 @@ class IFX_Edit {
   virtual void SetTextOverflow(FX_BOOL bAllowed = FALSE,
                                FX_BOOL bPaint = TRUE) = 0;
 
-  // query if the edit is richedit.
-  virtual FX_BOOL IsRichText() const = 0;
-
-  // set the edit is richedit.
-  virtual void SetRichText(FX_BOOL bRichText = TRUE, FX_BOOL bPaint = TRUE) = 0;
-
-  // set the fontsize of selected text.
-  virtual FX_BOOL SetRichFontSize(FX_FLOAT fFontSize) = 0;
-
-  // set the fontindex of selected text, user can change the font of selected
-  // text.
-  virtual FX_BOOL SetRichFontIndex(int32_t nFontIndex) = 0;
-
-  // set the textcolor of selected text.
-  virtual FX_BOOL SetRichTextColor(FX_COLORREF dwColor) = 0;
-
-  // set the text script type of selected text. (0:normal 1:superscript
-  // 2:subscript)
-  virtual FX_BOOL SetRichTextScript(
-      CPDF_VariableText::ScriptType nScriptType) = 0;
-
-  // set the bold font style of selected text.
-  virtual FX_BOOL SetRichTextBold(FX_BOOL bBold = TRUE) = 0;
-
-  // set the italic font style of selected text.
-  virtual FX_BOOL SetRichTextItalic(FX_BOOL bItalic = TRUE) = 0;
-
-  // set the underline style of selected text.
-  virtual FX_BOOL SetRichTextUnderline(FX_BOOL bUnderline = TRUE) = 0;
-
-  // set the crossout style of selected text.
-  virtual FX_BOOL SetRichTextCrossout(FX_BOOL bCrossout = TRUE) = 0;
-
-  // set the charspace of selected text, in user coordinate.
-  virtual FX_BOOL SetRichTextCharSpace(FX_FLOAT fCharSpace) = 0;
-
-  // set the horizontal scale of selected text, default value is 100.
-  virtual FX_BOOL SetRichTextHorzScale(int32_t nHorzScale = 100) = 0;
-
-  // set the leading of selected section, in user coordinate.
-  virtual FX_BOOL SetRichTextLineLeading(FX_FLOAT fLineLeading) = 0;
-
-  // set the indent of selected section, in user coordinate.
-  virtual FX_BOOL SetRichTextLineIndent(FX_FLOAT fLineIndent) = 0;
-
-  // set the alignment of selected section, nAlignment(0:left 1:middle 2:right)
-  virtual FX_BOOL SetRichTextAlignment(int32_t nAlignment) = 0;
-
   // set the selected range of text.
   // if nStartChar == 0 and nEndChar == -1, select all the text.
   virtual void SetSel(int32_t nStartChar, int32_t nEndChar) = 0;
@@ -413,9 +361,6 @@ class IFX_Edit {
   // allow undo/redo?
   virtual void EnableUndo(FX_BOOL bUndo) = 0;
 
-  // allow notify?
-  virtual void EnableNotify(FX_BOOL bNotify) = 0;
-
   // allow opr notify?
   virtual void EnableOprNotify(FX_BOOL bNotify) = 0;
 
@@ -493,19 +438,6 @@ class IFX_Edit {
                        const CPVT_WordRange* pRange,
                        CFX_SystemHandler* pSystemHandler,
                        void* pFFLData);
-  static void DrawUnderline(CFX_RenderDevice* pDevice,
-                            CFX_Matrix* pUser2Device,
-                            IFX_Edit* pEdit,
-                            FX_COLORREF color,
-                            const CFX_FloatRect& rcClip,
-                            const CFX_FloatPoint& ptOffset,
-                            const CPVT_WordRange* pRange);
-  static void DrawRichEdit(CFX_RenderDevice* pDevice,
-                           CFX_Matrix* pUser2Device,
-                           IFX_Edit* pEdit,
-                           const CFX_FloatRect& rcClip,
-                           const CFX_FloatPoint& ptOffset,
-                           const CPVT_WordRange* pRange);
   static void GeneratePageObjects(
       CPDF_PageObjectHolder* pObjectHolder,
       IFX_Edit* pEdit,
@@ -513,17 +445,6 @@ class IFX_Edit {
       const CPVT_WordRange* pRange,
       FX_COLORREF crText,
       CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
-  static void GenerateRichPageObjects(
-      CPDF_PageObjectHolder* pObjectHolder,
-      IFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange,
-      CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
-  static void GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                       IFX_Edit* pEdit,
-                                       const CFX_FloatPoint& ptOffset,
-                                       const CPVT_WordRange* pRange,
-                                       FX_COLORREF color);
 
  protected:
   virtual ~IFX_Edit() {}

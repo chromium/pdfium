@@ -566,9 +566,6 @@ void CPWL_EditCtrl::IOnSetCaret(FX_BOOL bVisible,
   OnNotify(this, PNM_SETCARETINFO, (intptr_t)&cInfo, (intptr_t) nullptr);
 }
 
-void CPWL_EditCtrl::IOnCaretChange(const CPVT_SecProps& secProps,
-                                   const CPVT_WordProps& wordProps) {}
-
 void CPWL_EditCtrl::IOnContentChange(const CFX_FloatRect& rcContent) {
   if (IsValid()) {
     if (m_pEditNotify) {

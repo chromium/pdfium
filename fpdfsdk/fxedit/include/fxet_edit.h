@@ -331,34 +331,6 @@ class CFXEU_Clear : public CFX_Edit_UndoItem {
   CFX_WideString m_swText;
 };
 
-class CFXEU_ClearRich : public CFX_Edit_UndoItem {
- public:
-  CFXEU_ClearRich(CFX_Edit* pEdit,
-                  const CPVT_WordPlace& wpOldPlace,
-                  const CPVT_WordPlace& wpNewPlace,
-                  const CPVT_WordRange& wrSel,
-                  uint16_t word,
-                  int32_t charset,
-                  const CPVT_SecProps& SecProps,
-                  const CPVT_WordProps& WordProps);
-  ~CFXEU_ClearRich() override;
-
-  // CFX_Edit_UndoItem
-  void Redo() override;
-  void Undo() override;
-
- private:
-  CFX_Edit* m_pEdit;
-
-  CPVT_WordPlace m_wpOld;
-  CPVT_WordPlace m_wpNew;
-  CPVT_WordRange m_wrSel;
-  uint16_t m_Word;
-  int32_t m_nCharset;
-  CPVT_SecProps m_SecProps;
-  CPVT_WordProps m_WordProps;
-};
-
 class CFXEU_InsertText : public CFX_Edit_UndoItem {
  public:
   CFXEU_InsertText(CFX_Edit* pEdit,
@@ -385,58 +357,6 @@ class CFXEU_InsertText : public CFX_Edit_UndoItem {
   CPVT_WordProps m_WordProps;
 };
 
-class CFXEU_SetSecProps : public CFX_Edit_UndoItem {
- public:
-  CFXEU_SetSecProps(CFX_Edit* pEdit,
-                    const CPVT_WordPlace& place,
-                    EDIT_PROPS_E ep,
-                    const CPVT_SecProps& oldsecprops,
-                    const CPVT_WordProps& oldwordprops,
-                    const CPVT_SecProps& newsecprops,
-                    const CPVT_WordProps& newwordprops,
-                    const CPVT_WordRange& range);
-  ~CFXEU_SetSecProps() override;
-
-  // CFX_Edit_UndoItem
-  void Redo() override;
-  void Undo() override;
-
- private:
-  CFX_Edit* m_pEdit;
-  CPVT_WordPlace m_wpPlace;
-  CPVT_WordRange m_wrPlace;
-  EDIT_PROPS_E m_eProps;
-
-  CPVT_SecProps m_OldSecProps;
-  CPVT_SecProps m_NewSecProps;
-  CPVT_WordProps m_OldWordProps;
-  CPVT_WordProps m_NewWordProps;
-};
-
-class CFXEU_SetWordProps : public CFX_Edit_UndoItem {
- public:
-  CFXEU_SetWordProps(CFX_Edit* pEdit,
-                     const CPVT_WordPlace& place,
-                     EDIT_PROPS_E ep,
-                     const CPVT_WordProps& oldprops,
-                     const CPVT_WordProps& newprops,
-                     const CPVT_WordRange& range);
-  ~CFXEU_SetWordProps() override;
-
-  // CFX_Edit_UndoItem
-  void Redo() override;
-  void Undo() override;
-
- private:
-  CFX_Edit* m_pEdit;
-  CPVT_WordPlace m_wpPlace;
-  CPVT_WordRange m_wrPlace;
-  EDIT_PROPS_E m_eProps;
-
-  CPVT_WordProps m_OldWordProps;
-  CPVT_WordProps m_NewWordProps;
-};
-
 class CFX_Edit : public IFX_Edit {
   friend class CFX_Edit_Iterator;
   friend class CFXEU_InsertWord;
@@ -444,9 +364,6 @@ class CFX_Edit : public IFX_Edit {
   friend class CFXEU_Backspace;
   friend class CFXEU_Delete;
   friend class CFXEU_Clear;
-  friend class CFXEU_ClearRich;
-  friend class CFXEU_SetSecProps;
-  friend class CFXEU_SetWordProps;
   friend class CFXEU_InsertText;
 
  public:
@@ -478,21 +395,6 @@ class CFX_Edit : public IFX_Edit {
   void SetFontSize(FX_FLOAT fFontSize, FX_BOOL bPaint = TRUE) override;
   void SetTextOverflow(FX_BOOL bAllowed = FALSE,
                        FX_BOOL bPaint = TRUE) override;
-  FX_BOOL IsRichText() const override;
-  void SetRichText(FX_BOOL bRichText = TRUE, FX_BOOL bPaint = TRUE) override;
-  FX_BOOL SetRichFontSize(FX_FLOAT fFontSize) override;
-  FX_BOOL SetRichFontIndex(int32_t nFontIndex) override;
-  FX_BOOL SetRichTextColor(FX_COLORREF dwColor) override;
-  FX_BOOL SetRichTextScript(CPDF_VariableText::ScriptType nScriptType) override;
-  FX_BOOL SetRichTextBold(FX_BOOL bBold = TRUE) override;
-  FX_BOOL SetRichTextItalic(FX_BOOL bItalic = TRUE) override;
-  FX_BOOL SetRichTextUnderline(FX_BOOL bUnderline = TRUE) override;
-  FX_BOOL SetRichTextCrossout(FX_BOOL bCrossout = TRUE) override;
-  FX_BOOL SetRichTextCharSpace(FX_FLOAT fCharSpace) override;
-  FX_BOOL SetRichTextHorzScale(int32_t nHorzScale = 100) override;
-  FX_BOOL SetRichTextLineLeading(FX_FLOAT fLineLeading) override;
-  FX_BOOL SetRichTextLineIndent(FX_FLOAT fLineIndent) override;
-  FX_BOOL SetRichTextAlignment(int32_t nAlignment) override;
   void OnMouseDown(const CFX_FloatPoint& point,
                    FX_BOOL bShift,
                    FX_BOOL bCtrl) override;
@@ -551,7 +453,6 @@ class CFX_Edit : public IFX_Edit {
   void SelectNone() override;
   FX_BOOL IsSelected() const override;
   void Paint() override;
-  void EnableNotify(FX_BOOL bNotify) override;
   void EnableRefresh(FX_BOOL bRefresh) override;
   void RefreshWordRange(const CPVT_WordRange& wr) override;
   void SetCaret(int32_t nPos) override;
@@ -614,21 +515,6 @@ class CFX_Edit : public IFX_Edit {
                      const CPVT_WordProps* pWordProps,
                      FX_BOOL bAddUndo,
                      FX_BOOL bPaint);
-  FX_BOOL SetRichTextProps(EDIT_PROPS_E eProps,
-                           const CPVT_SecProps* pSecProps,
-                           const CPVT_WordProps* pWordProps);
-  FX_BOOL SetSecProps(EDIT_PROPS_E eProps,
-                      const CPVT_WordPlace& place,
-                      const CPVT_SecProps* pSecProps,
-                      const CPVT_WordProps* pWordProps,
-                      const CPVT_WordRange& wr,
-                      FX_BOOL bAddUndo);
-  FX_BOOL SetWordProps(EDIT_PROPS_E eProps,
-                       const CPVT_WordPlace& place,
-                       const CPVT_WordProps* pWordProps,
-                       const CPVT_WordRange& wr,
-                       FX_BOOL bAddUndo);
-  void PaintSetProps(EDIT_PROPS_E eProps, const CPVT_WordRange& wr);
   void PaintInsertText(const CPVT_WordPlace& wpOld,
                        const CPVT_WordPlace& wpNew);
 
@@ -646,7 +532,6 @@ class CFX_Edit : public IFX_Edit {
   void SetCaret(const CPVT_WordPlace& place);
   void SetCaretInfo();
   void SetCaretOrigin();
-  void SetCaretChange();
 
   CPVT_WordRange GetLatinWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange CombineWordRange(const CPVT_WordRange& wr1,
@@ -685,7 +570,6 @@ class CFX_Edit : public IFX_Edit {
   FX_BOOL m_bEnableRefresh;
   CFX_FloatRect m_rcOldContent;
   FX_BOOL m_bEnableUndo;
-  FX_BOOL m_bNotify;
   FX_BOOL m_bOprNotify;
   CFX_Edit_GroupUndoItem* m_pGroupUndoItem;
 };

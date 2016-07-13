@@ -2225,8 +2225,6 @@ FX_BOOL Field::richText(IJS_Context* cc,
 
     if (m_bDelay) {
       AddDelay_Bool(FP_RICHTEXT, bVP);
-    } else {
-      Field::SetRichText(m_pDocument, m_FieldName, m_nFormControlIndex, bVP);
     }
   } else {
     std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -2246,23 +2244,10 @@ FX_BOOL Field::richText(IJS_Context* cc,
   return TRUE;
 }
 
-void Field::SetRichText(CPDFSDK_Document* pDocument,
-                        const CFX_WideString& swFieldName,
-                        int nControlIndex,
-                        bool b) {
-  // Not supported.
-}
-
 FX_BOOL Field::richValue(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   return TRUE;
-}
-
-void Field::SetRichValue(CPDFSDK_Document* pDocument,
-                         const CFX_WideString& swFieldName,
-                         int nControlIndex) {
-  // Not supported.
 }
 
 FX_BOOL Field::rotation(IJS_Context* cc,
@@ -3506,8 +3491,7 @@ void Field::DoDelay(CPDFSDK_Document* pDocument, CJS_DelayData* pData) {
                      pData->rect);
       break;
     case FP_RICHTEXT:
-      Field::SetRichText(pDocument, pData->sFieldName, pData->nControlIndex,
-                         pData->b);
+      // Not supported.
       break;
     case FP_RICHVALUE:
       break;

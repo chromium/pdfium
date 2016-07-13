@@ -374,13 +374,6 @@ class Field : public CJS_EmbedObj {
                       const CFX_WideString& swFieldName,
                       int nControlIndex,
                       const CFX_FloatRect& rect);
-  static void SetRichText(CPDFSDK_Document* pDocument,
-                          const CFX_WideString& swFieldName,
-                          int nControlIndex,
-                          bool b);
-  static void SetRichValue(CPDFSDK_Document* pDocument,
-                           const CFX_WideString& swFieldName,
-                           int nControlIndex);
   static void SetRotation(CPDFSDK_Document* pDocument,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,

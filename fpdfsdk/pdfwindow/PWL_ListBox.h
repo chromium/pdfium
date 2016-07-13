@@ -40,8 +40,6 @@ class CPWL_List_Notify : public IFX_List_Notify {
                    const CFX_FloatPoint& ptHead,
                    const CFX_FloatPoint& ptFoot,
                    const CPVT_WordPlace& place);
-  void IOnCaretChange(const CPVT_SecProps& secProps,
-                      const CPVT_WordProps& wordProps);
 
  private:
   CPWL_ListBox* m_pList;
