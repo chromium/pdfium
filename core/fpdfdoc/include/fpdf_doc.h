@@ -441,8 +441,8 @@ class CPDF_InterForm {
   explicit CPDF_InterForm(CPDF_Document* pDocument);
   ~CPDF_InterForm();
 
-  static void EnableUpdateAP(FX_BOOL bUpdateAP);
-  static FX_BOOL UpdatingAPEnabled();
+  static void SetUpdateAP(FX_BOOL bUpdateAP);
+  static FX_BOOL IsUpdateAPEnabled();
   static CFX_ByteString GenerateNewResourceName(const CPDF_Dictionary* pResDict,
                                                 const FX_CHAR* csType,
                                                 int iMinLen = 2,

@@ -904,11 +904,11 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
 #else
-  FX_BOOL enableAPUpdate = CPDF_InterForm::UpdatingAPEnabled();
+  FX_BOOL bUpdateAP = CPDF_InterForm::IsUpdateAPEnabled();
   // Disable the default AP construction.
-  CPDF_InterForm::EnableUpdateAP(FALSE);
+  CPDF_InterForm::SetUpdateAP(FALSE);
   m_pAnnotList.reset(new CPDF_AnnotList(m_page));
-  CPDF_InterForm::EnableUpdateAP(enableAPUpdate);
+  CPDF_InterForm::SetUpdateAP(bUpdateAP);
   const size_t nCount = m_pAnnotList->Count();
 #endif  // PDF_ENABLE_XFA
 
@@ -937,11 +937,11 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   } else {
     CPDF_Page* pPage = m_page->GetPDFPage();
     ASSERT(pPage);
-    FX_BOOL enableAPUpdate = CPDF_InterForm::UpdatingAPEnabled();
+    FX_BOOL bUpdateAP = CPDF_InterForm::IsUpdateAPEnabled();
     // Disable the default AP construction.
-    CPDF_InterForm::EnableUpdateAP(FALSE);
+    CPDF_InterForm::SetUpdateAP(FALSE);
     m_pAnnotList.reset(new CPDF_AnnotList(pPage));
-    CPDF_InterForm::EnableUpdateAP(enableAPUpdate);
+    CPDF_InterForm::SetUpdateAP(bUpdateAP);
 
     const size_t nCount = m_pAnnotList->Count();
     for (size_t i = 0; i < nCount; ++i) {

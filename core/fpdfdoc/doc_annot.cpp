@@ -44,7 +44,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     m_AnnotList.push_back(
         std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, this)));
     if (bRegenerateAP && pDict->GetStringBy("Subtype") == "Widget" &&
-        CPDF_InterForm::UpdatingAPEnabled()) {
+        CPDF_InterForm::IsUpdateAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
     }
   }
