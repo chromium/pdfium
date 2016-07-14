@@ -779,25 +779,11 @@ v8::Local<v8::Value> FXJS_NewBoolean(v8::Isolate* pIsolate, bool b) {
   return v8::Boolean::New(pIsolate, b);
 }
 
-v8::Local<v8::Value> FXJS_NewObject(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Object> pObj) {
-  if (pObj.IsEmpty())
-    return v8::Local<v8::Value>();
-  return pObj->Clone();
-}
-
-v8::Local<v8::Value> FXJS_NewObject2(v8::Isolate* pIsolate,
-                                     v8::Local<v8::Array> pObj) {
-  if (pObj.IsEmpty())
-    return v8::Local<v8::Value>();
-  return pObj->Clone();
-}
-
 v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate, const wchar_t* str) {
   return FXJS_WSToJSString(pIsolate, str);
 }
 
-v8::Local<v8::Value> FXJS_NewNull() {
+v8::Local<v8::Value> FXJS_NewNull(v8::Isolate* pIsolate) {
   return v8::Local<v8::Value>();
 }
 

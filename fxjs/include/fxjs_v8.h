@@ -263,17 +263,13 @@ unsigned FXJS_PutArrayElement(v8::Isolate* pIsolate,
                               unsigned index,
                               v8::Local<v8::Value> pValue);
 
+v8::Local<v8::Value> FXJS_NewNull(v8::Isolate* pIsolate);
 v8::Local<v8::Array> FXJS_NewArray(v8::Isolate* pIsolate);
 v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, int number);
 v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, double number);
 v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, float number);
 v8::Local<v8::Value> FXJS_NewBoolean(v8::Isolate* pIsolate, bool b);
-v8::Local<v8::Value> FXJS_NewObject(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Object> pObj);
-v8::Local<v8::Value> FXJS_NewObject2(v8::Isolate* pIsolate,
-                                     v8::Local<v8::Array> pObj);
 v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate, const wchar_t* str);
-v8::Local<v8::Value> FXJS_NewNull();
 v8::Local<v8::Value> FXJS_NewDate(v8::Isolate* pIsolate, double d);
 
 int FXJS_ToInt32(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue);

@@ -186,7 +186,7 @@ void CJS_Value::operator=(float fValue) {
 }
 
 void CJS_Value::operator=(v8::Local<v8::Object> pObj) {
-  m_pValue = FXJS_NewObject(m_pJSRuntime->GetIsolate(), pObj);
+  m_pValue = pObj;
   m_eType = VT_fxobject;
 }
 
@@ -208,7 +208,7 @@ void CJS_Value::operator=(const FX_WCHAR* pWstr) {
 }
 
 void CJS_Value::SetNull() {
-  m_pValue = FXJS_NewNull();
+  m_pValue = FXJS_NewNull(m_pJSRuntime->GetIsolate());
   m_eType = VT_null;
 }
 
@@ -217,8 +217,7 @@ void CJS_Value::operator=(const FX_CHAR* pStr) {
 }
 
 void CJS_Value::operator=(CJS_Array& array) {
-  m_pValue =
-      FXJS_NewObject2(m_pJSRuntime->GetIsolate(), (v8::Local<v8::Array>)array);
+  m_pValue = static_cast<v8::Local<v8::Array>>(array);
   m_eType = VT_object;
 }
 
