@@ -18,7 +18,7 @@ vars = {
   'skia_revision': '7942f22c607caf826a6a609b89338a569d0a30e7',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '54b8455be9505c2cb0cf5c26bb86739c236471aa',
-  'v8_revision': 'cec0ed0f77e91bfd49bbd298ab58f77375eecead',
+  'v8_revision': '453b746d88e3d047d3f6c4363f0fe42b6bd13638',
 }
 
 deps = {
