@@ -25,4 +25,5 @@ Local Modifications:
 0013-attrib_fix.patch: Don't needlessly redefine __attribute__, https://github.com/uclouvain/openjpeg/issues/727
 0015-read_SPCod_SPCoc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SPCod_SPCoc.
 0016-read_SQcd_SQcc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SQcd_SQcc.
+0017-tcd_init_tile.patch: Prevent integer overflows during calculation of |l_nb_precinct_size|.
 TODO(thestig): List all the other patches.
