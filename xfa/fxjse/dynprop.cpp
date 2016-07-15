@@ -63,9 +63,11 @@ static void FXJSE_DynPropGetterAdapter(const FXJSE_CLASS* lpClass,
           1, v8::String::NewFromUtf8(
                  pIsolate, reinterpret_cast<const char*>(szPropName.raw_str()),
                  v8::String::kNormalString, szPropName.GetLength()));
-      lpValue->ForceSetValue(v8::Function::New(
-          lpValue->GetIsolate(), FXJSE_DynPropGetterAdapter_MethodCallback,
-          hCallBackInfo));
+      lpValue->ForceSetValue(
+          v8::Function::New(lpValue->GetIsolate()->GetCurrentContext(),
+                            FXJSE_DynPropGetterAdapter_MethodCallback,
+                            hCallBackInfo, 0, v8::ConstructorBehavior::kThrow)
+              .ToLocalChecked());
     }
   }
 }

@@ -14,8 +14,8 @@ vars = {
   'icu_revision': 'c291cde264469b20ca969ce8832088acb21e0c48',
   'pdfium_tests_revision': '6c769320872e6ca82da4adaec1a497237f71b543',
   'skia_revision': '6f47dbaff54a7705ef3e98f1f65c765e56fd9bd0',
-  'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
-  'v8_revision': '5cd0d8f27e3f740179a8a3de7b9d2c0cfae7afb9',
+  'trace_event_revision': '54b8455be9505c2cb0cf5c26bb86739c236471aa',
+  'v8_revision': '453b746d88e3d047d3f6c4363f0fe42b6bd13638',
 }
 
 deps = {
