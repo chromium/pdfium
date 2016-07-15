@@ -225,13 +225,14 @@ void FXJS_DefineObjMethod(v8::Isolate* pIsolate,
   CFX_ByteString bsMethodName = CFX_WideString(sMethodName).UTF8Encode();
   CFXJS_ObjDefinition* pObjDef =
       CFXJS_ObjDefinition::ForID(pIsolate, nObjDefnID);
+  v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
+      pIsolate, pMethodCall, v8::Local<v8::Value>(), pObjDef->GetSignature());
+  fun->RemovePrototype();
   pObjDef->GetInstanceTemplate()->Set(
       v8::String::NewFromUtf8(pIsolate, bsMethodName.c_str(),
                               v8::NewStringType::kNormal)
           .ToLocalChecked(),
-      v8::FunctionTemplate::New(pIsolate, pMethodCall, v8::Local<v8::Value>(),
-                                pObjDef->GetSignature()),
-      v8::ReadOnly);
+      fun, v8::ReadOnly);
 }
 
 void FXJS_DefineObjProperty(v8::Isolate* pIsolate,
@@ -283,11 +284,14 @@ void FXJS_DefineGlobalMethod(v8::Isolate* pIsolate,
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
   CFX_ByteString bsMethodName = CFX_WideString(sMethodName).UTF8Encode();
-  GetGlobalObjectTemplate(pIsolate)
-      ->Set(v8::String::NewFromUtf8(pIsolate, bsMethodName.c_str(),
-                                    v8::NewStringType::kNormal)
-                .ToLocalChecked(),
-            v8::FunctionTemplate::New(pIsolate, pMethodCall), v8::ReadOnly);
+  v8::Local<v8::FunctionTemplate> fun =
+      v8::FunctionTemplate::New(pIsolate, pMethodCall);
+  fun->RemovePrototype();
+  GetGlobalObjectTemplate(pIsolate)->Set(
+      v8::String::NewFromUtf8(pIsolate, bsMethodName.c_str(),
+                              v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      fun, v8::ReadOnly);
 }
 
 void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
@@ -296,11 +300,14 @@ void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
   CFX_ByteString bsConst = CFX_WideString(sConstName).UTF8Encode();
-  GetGlobalObjectTemplate(pIsolate)
-      ->SetAccessorProperty(v8::String::NewFromUtf8(pIsolate, bsConst.c_str(),
-                                                    v8::NewStringType::kNormal)
-                                .ToLocalChecked(),
-                            v8::FunctionTemplate::New(pIsolate, pConstGetter));
+  v8::Local<v8::FunctionTemplate> fun =
+      v8::FunctionTemplate::New(pIsolate, pConstGetter);
+  fun->RemovePrototype();
+  GetGlobalObjectTemplate(pIsolate)->SetAccessorProperty(
+      v8::String::NewFromUtf8(pIsolate, bsConst.c_str(),
+                              v8::NewStringType::kNormal)
+          .ToLocalChecked(),
+      fun);
 }
 
 void FXJS_InitializeRuntime(

@@ -127,6 +127,9 @@ static void FXJSE_V8SetterCallback_Wrapper(
 
 static void FXJSE_V8ConstructorCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
+  if (!info.IsConstructCall()) {
+    return;
+  }
   const FXJSE_CLASS* lpClassDefinition =
       static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
   if (!lpClassDefinition) {
@@ -267,12 +270,14 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
   }
   if (lpClassDefinition->methNum) {
     for (int32_t i = 0; i < lpClassDefinition->methNum; i++) {
+      v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
+          pIsolate, FXJSE_V8FunctionCallback_Wrapper,
+          v8::External::New(pIsolate, const_cast<FXJSE_FUNCTION*>(
+                                          lpClassDefinition->methods + i)));
+      fun->RemovePrototype();
       hObjectTemplate->Set(
           v8::String::NewFromUtf8(pIsolate, lpClassDefinition->methods[i].name),
-          v8::FunctionTemplate::New(
-              pIsolate, FXJSE_V8FunctionCallback_Wrapper,
-              v8::External::New(pIsolate, const_cast<FXJSE_FUNCTION*>(
-                                              lpClassDefinition->methods + i))),
+          fun,
           static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
     }
   }
@@ -297,12 +302,12 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
     }
   }
   if (bIsJSGlobal) {
-    hObjectTemplate->Set(
-        v8::String::NewFromUtf8(pIsolate, "toString"),
-        v8::FunctionTemplate::New(
-            pIsolate, FXJSE_Context_GlobalObjToString,
-            v8::External::New(pIsolate,
-                              const_cast<FXJSE_CLASS*>(lpClassDefinition))));
+    v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
+        pIsolate, FXJSE_Context_GlobalObjToString,
+        v8::External::New(pIsolate,
+                          const_cast<FXJSE_CLASS*>(lpClassDefinition)));
+    fun->RemovePrototype();
+    hObjectTemplate->Set(v8::String::NewFromUtf8(pIsolate, "toString"), fun);
   }
   pClass->m_hTemplate.Reset(lpContext->m_pIsolate, hFunctionTemplate);
   lpContext->m_rgClasses.Add(pClass);
