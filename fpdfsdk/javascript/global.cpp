@@ -17,63 +17,6 @@
 #include "fpdfsdk/javascript/cjs_context.h"
 #include "fpdfsdk/javascript/resource.h"
 
-// Helper class for compile-time calculation of hash values in order to
-// avoid having global object initializers.
-template <unsigned ACC, wchar_t... Ns>
-struct CHash;
-
-// Only needed to hash single-character strings.
-template <wchar_t N>
-struct CHash<N> {
-  static const unsigned value = N;
-};
-
-template <unsigned ACC, wchar_t N>
-struct CHash<ACC, N> {
-  static const unsigned value = (ACC * 1313LLU + N) & 0xFFFFFFFF;
-};
-
-template <unsigned ACC, wchar_t N, wchar_t... Ns>
-struct CHash<ACC, N, Ns...> {
-  static const unsigned value = CHash<CHash<ACC, N>::value, Ns...>::value;
-};
-
-const unsigned int JSCONST_nStringHash =
-    CHash<'s', 't', 'r', 'i', 'n', 'g'>::value;
-const unsigned int JSCONST_nNumberHash =
-    CHash<'n', 'u', 'm', 'b', 'e', 'r'>::value;
-const unsigned int JSCONST_nBoolHash =
-    CHash<'b', 'o', 'o', 'l', 'e', 'a', 'n'>::value;
-const unsigned int JSCONST_nDateHash = CHash<'d', 'a', 't', 'e'>::value;
-const unsigned int JSCONST_nObjectHash =
-    CHash<'o', 'b', 'j', 'e', 'c', 't'>::value;
-const unsigned int JSCONST_nFXobjHash = CHash<'f', 'x', 'o', 'b', 'j'>::value;
-const unsigned int JSCONST_nNullHash = CHash<'n', 'u', 'l', 'l'>::value;
-const unsigned int JSCONST_nUndefHash =
-    CHash<'u', 'n', 'd', 'e', 'f', 'i', 'n', 'e', 'd'>::value;
-
-static unsigned JS_CalcHash(const wchar_t* main) {
-  return (unsigned)FX_HashCode_GetW(CFX_WideStringC(main), false);
-}
-
-#ifndef NDEBUG
-class HashVerify {
- public:
-  HashVerify();
-} g_hashVerify;
-
-HashVerify::HashVerify() {
-  ASSERT(JSCONST_nStringHash == JS_CalcHash(kFXJSValueNameString));
-  ASSERT(JSCONST_nNumberHash == JS_CalcHash(kFXJSValueNameNumber));
-  ASSERT(JSCONST_nBoolHash == JS_CalcHash(kFXJSValueNameBoolean));
-  ASSERT(JSCONST_nDateHash == JS_CalcHash(kFXJSValueNameDate));
-  ASSERT(JSCONST_nObjectHash == JS_CalcHash(kFXJSValueNameObject));
-  ASSERT(JSCONST_nFXobjHash == JS_CalcHash(kFXJSValueNameFxobj));
-  ASSERT(JSCONST_nNullHash == JS_CalcHash(kFXJSValueNameNull));
-  ASSERT(JSCONST_nUndefHash == JS_CalcHash(kFXJSValueNameUndefined));
-}
-#endif
-
 BEGIN_JS_STATIC_CONST(CJS_Global)
 END_JS_STATIC_CONST()
 
@@ -335,9 +278,8 @@ void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
     CFX_WideString ws =
         FXJS_ToString(isolate, FXJS_GetArrayElement(isolate, pKeyList, i));
     CFX_ByteString sKey = ws.UTF8Encode();
-
     v8::Local<v8::Value> v = FXJS_GetObjectElement(isolate, pObj, ws);
-    switch (GET_VALUE_TYPE(v)) {
+    switch (CJS_Value::GetValueType(v)) {
       case CJS_Value::VT_number: {
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GLOBALDATA_TYPE_NUMBER;
@@ -353,8 +295,7 @@ void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
         array.Add(pObjElement);
       } break;
       case CJS_Value::VT_string: {
-        CFX_ByteString sValue =
-            CJS_Value(pRuntime, v, CJS_Value::VT_string).ToCFXByteString();
+        CFX_ByteString sValue = CJS_Value(pRuntime, v).ToCFXByteString();
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GLOBALDATA_TYPE_STRING;
         pObjElement->sKey = sKey;
@@ -499,27 +440,4 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
 
   m_mapGlobal[propname] = pNewData;
   return TRUE;
-}
-
-CJS_Value::Type GET_VALUE_TYPE(v8::Local<v8::Value> p) {
-  const unsigned int nHash = JS_CalcHash(FXJS_GetTypeof(p));
-
-  if (nHash == JSCONST_nUndefHash)
-    return CJS_Value::VT_undefined;
-  if (nHash == JSCONST_nNullHash)
-    return CJS_Value::VT_null;
-  if (nHash == JSCONST_nStringHash)
-    return CJS_Value::VT_string;
-  if (nHash == JSCONST_nNumberHash)
-    return CJS_Value::VT_number;
-  if (nHash == JSCONST_nBoolHash)
-    return CJS_Value::VT_boolean;
-  if (nHash == JSCONST_nDateHash)
-    return CJS_Value::VT_date;
-  if (nHash == JSCONST_nObjectHash)
-    return CJS_Value::VT_object;
-  if (nHash == JSCONST_nFXobjHash)
-    return CJS_Value::VT_fxobject;
-
-  return CJS_Value::VT_unknown;
 }

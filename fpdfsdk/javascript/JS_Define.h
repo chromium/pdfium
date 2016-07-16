@@ -111,7 +111,7 @@ void JSPropSetter(const char* prop_name_string,
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
-  CJS_PropValue propValue(CJS_Value(pRuntime, value, CJS_Value::VT_unknown));
+  CJS_PropValue propValue(CJS_Value(pRuntime, value));
   propValue.StartSetting();
   if (!(pObj->*M)(pContext, propValue, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name_string, prop_name_string,
@@ -149,7 +149,7 @@ void JSMethod(const char* method_name_string,
   IJS_Context* pContext = pRuntime->GetCurrentContext();
   std::vector<CJS_Value> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
-    parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
+    parameters.push_back(CJS_Value(pRuntime, info[i]));
   }
   CJS_Value valueRes(pRuntime);
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
@@ -404,7 +404,7 @@ void JSSpecialPropPut(const char* class_name,
   CFX_WideString propname = CFX_WideString::FromUTF8(
       CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CFX_WideString sError;
-  CJS_PropValue PropValue(CJS_Value(pRuntime, value, CJS_Value::VT_unknown));
+  CJS_PropValue PropValue(CJS_Value(pRuntime, value));
   PropValue.StartSetting();
   if (!pObj->DoProperty(pContext, propname.c_str(), PropValue, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name, "PutProperty", sError));
@@ -447,7 +447,7 @@ void JSGlobalFunc(const char* func_name_string,
   IJS_Context* pContext = pRuntime->GetCurrentContext();
   std::vector<CJS_Value> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
-    parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
+    parameters.push_back(CJS_Value(pRuntime, info[i]));
   }
   CJS_Value valueRes(pRuntime);
   CFX_WideString sError;
@@ -484,7 +484,5 @@ void JSGlobalFunc(const char* func_name_string,
                               js_class_name::global_methods[i].pMethodCall); \
     }                                                                        \
   }
-
-CJS_Value::Type GET_VALUE_TYPE(v8::Local<v8::Value> p);
 
 #endif  // FPDFSDK_JAVASCRIPT_JS_DEFINE_H_

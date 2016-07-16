@@ -10,15 +10,6 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 
-const wchar_t kFXJSValueNameString[] = L"string";
-const wchar_t kFXJSValueNameNumber[] = L"number";
-const wchar_t kFXJSValueNameBoolean[] = L"boolean";
-const wchar_t kFXJSValueNameDate[] = L"date";
-const wchar_t kFXJSValueNameObject[] = L"object";
-const wchar_t kFXJSValueNameFxobj[] = L"fxobj";
-const wchar_t kFXJSValueNameNull[] = L"null";
-const wchar_t kFXJSValueNameUndefined[] = L"undefined";
-
 // Keep this consistent with the values defined in gin/public/context_holder.h
 // (without actually requiring a dependency on gin itself for the standalone
 // embedders of PDFIum). The value we want to use is:
@@ -549,26 +540,6 @@ void FXJS_Error(v8::Isolate* pIsolate, const CFX_WideString& message) {
                                                    utf8_message.c_str(),
                                                    v8::NewStringType::kNormal)
                                .ToLocalChecked());
-}
-
-const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj) {
-  if (pObj.IsEmpty())
-    return nullptr;
-  if (pObj->IsString())
-    return kFXJSValueNameString;
-  if (pObj->IsNumber())
-    return kFXJSValueNameNumber;
-  if (pObj->IsBoolean())
-    return kFXJSValueNameBoolean;
-  if (pObj->IsDate())
-    return kFXJSValueNameDate;
-  if (pObj->IsObject())
-    return kFXJSValueNameObject;
-  if (pObj->IsNull())
-    return kFXJSValueNameNull;
-  if (pObj->IsUndefined())
-    return kFXJSValueNameUndefined;
-  return nullptr;
 }
 
 void FXJS_SetPrivate(v8::Isolate* pIsolate,

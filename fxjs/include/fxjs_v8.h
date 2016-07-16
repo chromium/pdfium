@@ -118,15 +118,6 @@ class FXJS_PerIsolateData {
   FXJS_PerIsolateData();
 };
 
-extern const wchar_t kFXJSValueNameString[];
-extern const wchar_t kFXJSValueNameNumber[];
-extern const wchar_t kFXJSValueNameBoolean[];
-extern const wchar_t kFXJSValueNameDate[];
-extern const wchar_t kFXJSValueNameObject[];
-extern const wchar_t kFXJSValueNameFxobj[];
-extern const wchar_t kFXJSValueNameNull[];
-extern const wchar_t kFXJSValueNameUndefined[];
-
 class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void* Allocate(size_t length) override;
   void* AllocateUninitialized(size_t length) override;
@@ -209,7 +200,6 @@ v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
                                            bool bStatic = false);
 v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate);
 int FXJS_GetObjDefnID(v8::Local<v8::Object> pObj);
-const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj);
 
 void FXJS_SetPrivate(v8::Isolate* pIsolate,
                      v8::Local<v8::Object> pObj,

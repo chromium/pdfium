@@ -458,7 +458,7 @@ FX_BOOL app::clearInterval(IJS_Context* cc,
 }
 
 void app::ClearTimerCommon(const CJS_Value& param) {
-  if (param.GetType() != CJS_Value::VT_fxobject)
+  if (param.GetType() != CJS_Value::VT_object)
     return;
 
   v8::Local<v8::Object> pObj = param.ToV8Object();

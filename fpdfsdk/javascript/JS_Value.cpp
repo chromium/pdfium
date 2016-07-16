@@ -22,11 +22,10 @@ static double GetNan() {
   return *(double*)g_nan;
 }
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime)
-    : m_eType(VT_unknown), m_pJSRuntime(pRuntime) {}
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime) : m_pJSRuntime(pRuntime) {}
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue, Type t)
-    : m_eType(t), m_pValue(pValue), m_pJSRuntime(pRuntime) {}
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue)
+    : m_pValue(pValue), m_pJSRuntime(pRuntime) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const int& iValue)
     : m_pJSRuntime(pRuntime) {
@@ -48,21 +47,9 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const double& dValue)
   operator=(dValue);
 }
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Object> pJsObj)
-    : m_pJSRuntime(pRuntime) {
-  operator=(pJsObj);
-}
-
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pJsObj)
     : m_pJSRuntime(pRuntime) {
   operator=(pJsObj);
-}
-
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Document* pJsDoc)
-    : m_pJSRuntime(pRuntime) {
-  m_eType = VT_object;
-  if (pJsDoc)
-    m_pValue = pJsDoc->ToV8Object();
 }
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr)
@@ -84,19 +71,17 @@ CJS_Value::~CJS_Value() {}
 
 CJS_Value::CJS_Value(const CJS_Value& other) = default;
 
-void CJS_Value::Attach(v8::Local<v8::Value> pValue, Type t) {
+void CJS_Value::Attach(v8::Local<v8::Value> pValue) {
   m_pValue = pValue;
-  m_eType = t;
 }
 
 void CJS_Value::Attach(CJS_Value* pValue) {
   if (pValue)
-    Attach(pValue->ToV8Value(), pValue->GetType());
+    Attach(pValue->ToV8Value());
 }
 
 void CJS_Value::Detach() {
   m_pValue = v8::Local<v8::Value>();
-  m_eType = VT_unknown;
 }
 
 int CJS_Value::ToInt() const {
@@ -146,7 +131,7 @@ v8::Local<v8::Array> CJS_Value::ToV8Array() const {
 
 void CJS_Value::MaybeCoerceToNumber() {
   bool bAllowNaN = false;
-  if (m_eType == VT_string) {
+  if (GetType() == VT_string) {
     CFX_ByteString bstr = ToCFXByteString();
     if (bstr.GetLength() == 0)
       return;
@@ -162,32 +147,26 @@ void CJS_Value::MaybeCoerceToNumber() {
   if (std::isnan(num->Value()) && !bAllowNaN)
     return;
   m_pValue = num;
-  m_eType = VT_number;
 }
 
 void CJS_Value::operator=(int iValue) {
   m_pValue = FXJS_NewNumber(m_pJSRuntime->GetIsolate(), iValue);
-  m_eType = VT_number;
 }
 
 void CJS_Value::operator=(bool bValue) {
   m_pValue = FXJS_NewBoolean(m_pJSRuntime->GetIsolate(), bValue);
-  m_eType = VT_boolean;
 }
 
 void CJS_Value::operator=(double dValue) {
   m_pValue = FXJS_NewNumber(m_pJSRuntime->GetIsolate(), dValue);
-  m_eType = VT_number;
 }
 
 void CJS_Value::operator=(float fValue) {
   m_pValue = FXJS_NewNumber(m_pJSRuntime->GetIsolate(), fValue);
-  m_eType = VT_number;
 }
 
 void CJS_Value::operator=(v8::Local<v8::Object> pObj) {
   m_pValue = pObj;
-  m_eType = VT_fxobject;
 }
 
 void CJS_Value::operator=(CJS_Object* pObj) {
@@ -195,21 +174,12 @@ void CJS_Value::operator=(CJS_Object* pObj) {
     operator=(pObj->ToV8Object());
 }
 
-void CJS_Value::operator=(CJS_Document* pJsDoc) {
-  m_eType = VT_object;
-  if (pJsDoc) {
-    m_pValue = pJsDoc->ToV8Object();
-  }
-}
-
 void CJS_Value::operator=(const FX_WCHAR* pWstr) {
   m_pValue = FXJS_NewString(m_pJSRuntime->GetIsolate(), (wchar_t*)pWstr);
-  m_eType = VT_string;
 }
 
 void CJS_Value::SetNull() {
   m_pValue = FXJS_NewNull(m_pJSRuntime->GetIsolate());
-  m_eType = VT_null;
 }
 
 void CJS_Value::operator=(const FX_CHAR* pStr) {
@@ -218,36 +188,34 @@ void CJS_Value::operator=(const FX_CHAR* pStr) {
 
 void CJS_Value::operator=(CJS_Array& array) {
   m_pValue = static_cast<v8::Local<v8::Array>>(array);
-  m_eType = VT_object;
 }
 
 void CJS_Value::operator=(CJS_Date& date) {
   m_pValue = FXJS_NewDate(m_pJSRuntime->GetIsolate(), (double)date);
-  m_eType = VT_date;
 }
 
 void CJS_Value::operator=(CJS_Value value) {
   m_pValue = value.ToV8Value();
-  m_eType = value.m_eType;
   m_pJSRuntime = value.m_pJSRuntime;
 }
 
-CJS_Value::Type CJS_Value::GetType() const {
-  if (m_pValue.IsEmpty())
+// static
+CJS_Value::Type CJS_Value::GetValueType(v8::Local<v8::Value> value) {
+  if (value.IsEmpty())
     return VT_unknown;
-  if (m_pValue->IsString())
+  if (value->IsString())
     return VT_string;
-  if (m_pValue->IsNumber())
+  if (value->IsNumber())
     return VT_number;
-  if (m_pValue->IsBoolean())
+  if (value->IsBoolean())
     return VT_boolean;
-  if (m_pValue->IsDate())
+  if (value->IsDate())
     return VT_date;
-  if (m_pValue->IsObject())
+  if (value->IsObject())
     return VT_object;
-  if (m_pValue->IsNull())
+  if (value->IsNull())
     return VT_null;
-  if (m_pValue->IsUndefined())
+  if (value->IsUndefined())
     return VT_undefined;
   return VT_unknown;
 }
@@ -426,7 +394,7 @@ void CJS_Array::GetElement(unsigned index, CJS_Value& value) {
     return;
   v8::Local<v8::Value> p =
       FXJS_GetArrayElement(m_pJSRuntime->GetIsolate(), m_pArray, index);
-  value.Attach(p, CJS_Value::VT_object);
+  value.Attach(p);
 }
 
 void CJS_Array::SetElement(unsigned index, CJS_Value value) {
@@ -898,7 +866,7 @@ std::vector<CJS_Value> JS_ExpandKeywordParams(
     v8::Local<v8::Value> v8Value =
         FXJS_GetObjectElement(pRuntime->GetIsolate(), pObj, property);
     if (!v8Value->IsUndefined())
-      result[i] = CJS_Value(pRuntime, v8Value, CJS_Value::VT_unknown);
+      result[i] = CJS_Value(pRuntime, v8Value);
   }
   va_end(ap);
   return result;

@@ -27,20 +27,17 @@ class CJS_Value {
     VT_boolean,
     VT_date,
     VT_object,
-    VT_fxobject,
     VT_null,
     VT_undefined
   };
 
   CJS_Value(CJS_Runtime* pRuntime);
-  CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue, Type t);
+  CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue);
   CJS_Value(CJS_Runtime* pRuntime, const int& iValue);
   CJS_Value(CJS_Runtime* pRuntime, const double& dValue);
   CJS_Value(CJS_Runtime* pRuntime, const float& fValue);
   CJS_Value(CJS_Runtime* pRuntime, const bool& bValue);
-  CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Object>);
-  CJS_Value(CJS_Runtime* pRuntime, CJS_Object*);
-  CJS_Value(CJS_Runtime* pRuntime, CJS_Document*);
+  CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj);
   CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr);
   CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr);
   CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array);
@@ -49,11 +46,12 @@ class CJS_Value {
   CJS_Value(const CJS_Value& other);
 
   void SetNull();
-  void Attach(v8::Local<v8::Value> pValue, Type t);
+  void Attach(v8::Local<v8::Value> pValue);
   void Attach(CJS_Value* pValue);
   void Detach();
 
-  Type GetType() const;
+  static Type GetValueType(v8::Local<v8::Value> value);
+  Type GetType() const { return GetValueType(m_pValue); }
   int ToInt() const;
   bool ToBool() const;
   double ToDouble() const;
@@ -66,8 +64,7 @@ class CJS_Value {
   v8::Local<v8::Value> ToV8Value() const;
 
   // Replace the current |m_pValue| with a v8::Number if possible
-  // to make one from the current |m_pValue|, updating |m_eType|
-  // as appropriate to indicate the result.
+  // to make one from the current |m_pValue|.
   void MaybeCoerceToNumber();
 
   void operator=(int iValue);
@@ -75,7 +72,6 @@ class CJS_Value {
   void operator=(double val);
   void operator=(float val);
   void operator=(CJS_Object* val);
-  void operator=(CJS_Document* val);
   void operator=(v8::Local<v8::Object> val);
   void operator=(CJS_Array& val);
   void operator=(CJS_Date& val);
@@ -91,7 +87,6 @@ class CJS_Value {
   CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
 
  protected:
-  Type m_eType;
   v8::Local<v8::Value> m_pValue;
   CJS_Runtime* m_pJSRuntime;
 };

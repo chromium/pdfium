@@ -411,22 +411,20 @@ FX_BOOL Document::print(IJS_Context* cc,
 
   int nlength = params.size();
   if (nlength == 9) {
-    if (params[8].GetType() == CJS_Value::VT_fxobject) {
+    if (params[8].GetType() == CJS_Value::VT_object) {
       v8::Local<v8::Object> pObj = params[8].ToV8Object();
-      {
-        if (FXJS_GetObjDefnID(pObj) == CJS_PrintParamsObj::g_nObjDefnID) {
-          if (CJS_Object* pJSObj = params[8].ToCJSObject()) {
-            if (PrintParamsObj* pprintparamsObj =
-                    (PrintParamsObj*)pJSObj->GetEmbedObject()) {
-              bUI = pprintparamsObj->bUI;
-              nStart = pprintparamsObj->nStart;
-              nEnd = pprintparamsObj->nEnd;
-              bSilent = pprintparamsObj->bSilent;
-              bShrinkToFit = pprintparamsObj->bShrinkToFit;
-              bPrintAsImage = pprintparamsObj->bPrintAsImage;
-              bReverse = pprintparamsObj->bReverse;
-              bAnnotations = pprintparamsObj->bAnnotations;
-            }
+      if (FXJS_GetObjDefnID(pObj) == CJS_PrintParamsObj::g_nObjDefnID) {
+        if (CJS_Object* pJSObj = params[8].ToCJSObject()) {
+          if (PrintParamsObj* pprintparamsObj =
+                  static_cast<PrintParamsObj*>(pJSObj->GetEmbedObject())) {
+            bUI = pprintparamsObj->bUI;
+            nStart = pprintparamsObj->nStart;
+            nEnd = pprintparamsObj->nEnd;
+            bSilent = pprintparamsObj->bSilent;
+            bShrinkToFit = pprintparamsObj->bShrinkToFit;
+            bPrintAsImage = pprintparamsObj->bPrintAsImage;
+            bReverse = pprintparamsObj->bReverse;
+            bAnnotations = pprintparamsObj->bAnnotations;
           }
         }
       }
@@ -592,18 +590,16 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
     v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"cURL");
     if (!pValue.IsEmpty())
-      strURL =
-          CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+      strURL = CJS_Value(pRuntime, pValue).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"bFDF");
-    bFDF = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+    bFDF = CJS_Value(pRuntime, pValue).ToBool();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"bEmpty");
-    bEmpty = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+    bEmpty = CJS_Value(pRuntime, pValue).ToBool();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"aFields");
-    aFields.Attach(
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToV8Array());
+    aFields.Attach(CJS_Value(pRuntime, pValue).ToV8Array());
   }
 
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
@@ -686,25 +682,22 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
 
     v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"bUI");
-    bUI = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToInt();
+    bUI = CJS_Value(pRuntime, pValue).ToInt();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cTo");
-    cTo = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cTo = CJS_Value(pRuntime, pValue).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cCc");
-    cCc = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cCc = CJS_Value(pRuntime, pValue).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cBcc");
-    cBcc =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cBcc = CJS_Value(pRuntime, pValue).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cSubject");
-    cSubject =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cSubject = CJS_Value(pRuntime, pValue).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cMsg");
-    cMsg =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cMsg = CJS_Value(pRuntime, pValue).ToCFXWideString();
   }
 
   pRuntime->BeginBlock();
