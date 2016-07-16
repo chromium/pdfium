@@ -71,10 +71,6 @@ class CPDF_Dictionary : public CPDF_Object {
   void SetAtMatrix(const CFX_ByteString& key, const CFX_Matrix& matrix);
   void SetAtBoolean(const CFX_ByteString& key, bool bValue);
 
-  void AddReference(const CFX_ByteString& key,
-                    CPDF_IndirectObjectHolder* pDoc,
-                    uint32_t objnum);
-
   // Invalidates iterators for the element with the key |key|.
   void RemoveAt(const CFX_ByteString& key);
 

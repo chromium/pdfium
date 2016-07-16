@@ -214,12 +214,6 @@ void CPDF_Dictionary::SetAtReference(const CFX_ByteString& key,
   SetAt(key, new CPDF_Reference(pDoc, objnum));
 }
 
-void CPDF_Dictionary::AddReference(const CFX_ByteString& key,
-                                   CPDF_IndirectObjectHolder* pDoc,
-                                   uint32_t objnum) {
-  SetAt(key, new CPDF_Reference(pDoc, objnum));
-}
-
 void CPDF_Dictionary::SetAtNumber(const CFX_ByteString& key, FX_FLOAT f) {
   SetAt(key, new CPDF_Number(f));
 }

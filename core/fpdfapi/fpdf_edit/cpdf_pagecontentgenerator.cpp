@@ -81,7 +81,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     }
     idnum++;
   }
-  pResList->AddReference(name, m_pDocument, pResourceObj->GetObjNum());
+  pResList->SetAtReference(name, m_pDocument, pResourceObj->GetObjNum());
   return name;
 }
 void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
