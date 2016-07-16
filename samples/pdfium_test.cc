@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <list>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -95,10 +94,10 @@ static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
   fprintf(fp, "P6\n# PDF test render\n%d %d\n255\n", width, height);
   // Source data is B, G, R, unused.
   // Dest data is R, G, B.
-  char* result = new char[out_len];
+  std::vector<char> result(out_len);
   for (int h = 0; h < height; ++h) {
     const char* src_line = buffer + (stride * h);
-    char* dest_line = result + (width * h * 3);
+    char* dest_line = result.data() + (width * h * 3);
     for (int w = 0; w < width; ++w) {
       // R
       dest_line[w * 3] = src_line[(w * 4) + 2];
@@ -108,8 +107,7 @@ static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
       dest_line[(w * 3) + 2] = src_line[w * 4];
     }
   }
-  fwrite(result, out_len, 1, fp);
-  delete[] result;
+  fwrite(result.data(), out_len, 1, fp);
   fclose(fp);
 }
 
@@ -362,10 +360,11 @@ void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
 }
 
 bool ParseCommandLine(const std::vector<std::string>& args,
-                      Options* options, std::list<std::string>* files) {
-  if (args.empty()) {
+                      Options* options,
+                      std::vector<std::string>* files) {
+  if (args.empty())
     return false;
-  }
+
   options->exe_path = args[0];
   size_t cur_idx = 1;
   for (; cur_idx < args.size(); ++cur_idx) {
@@ -447,9 +446,9 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       break;
     }
   }
-  for (size_t i = cur_idx; i < args.size(); i++) {
+  for (size_t i = cur_idx; i < args.size(); i++)
     files->push_back(args[i]);
-  }
+
   return true;
 }
 
@@ -528,9 +527,9 @@ bool RenderPage(const std::string& name,
                 const Options& options,
                 const std::string& events) {
   FPDF_PAGE page = FPDF_LoadPage(doc, page_index);
-  if (!page) {
+  if (!page)
     return false;
-  }
+
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
   FORM_OnAfterLoadPage(page, form);
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
@@ -539,9 +538,9 @@ bool RenderPage(const std::string& name,
     SendPageEvents(form, page, events);
 
   double scale = 1.0;
-  if (!options.scale_factor_as_string.empty()) {
+  if (!options.scale_factor_as_string.empty())
     std::stringstream(options.scale_factor_as_string) >> scale;
-  }
+
   int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
   int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
@@ -648,9 +647,9 @@ void RenderPdf(const std::string& name,
   if (FPDFAvail_IsLinearized(pdf_avail) == PDF_LINEARIZED) {
     doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
     if (doc) {
-      while (nRet == PDF_DATA_NOTAVAIL) {
+      while (nRet == PDF_DATA_NOTAVAIL)
         nRet = FPDFAvail_IsDocAvail(pdf_avail, &hints);
-      }
+
       if (nRet == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if doc was available.\n");
         return;
@@ -724,20 +723,19 @@ void RenderPdf(const std::string& name,
   for (int i = 0; i < page_count; ++i) {
     if (bIsLinearized) {
       nRet = PDF_DATA_NOTAVAIL;
-      while (nRet == PDF_DATA_NOTAVAIL) {
+      while (nRet == PDF_DATA_NOTAVAIL)
         nRet = FPDFAvail_IsPageAvail(pdf_avail, i, &hints);
-      }
+
       if (nRet == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if page %d is available.\n",
                 i);
         return;
       }
     }
-    if (RenderPage(name, doc, form, i, options, events)) {
+    if (RenderPage(name, doc, form, i, options, events))
       ++rendered_pages;
-    } else {
+    else
       ++bad_pages;
-    }
   }
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
@@ -781,19 +779,20 @@ static void ShowConfig() {
   printf("%s\n", config.c_str());
 }
 
-static const char usage_string[] =
+static const char kUsageString[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
     "  --show-config     - print build options and exit\n"
     "  --send-events     - send input described by .evt file\n"
     "  --bin-dir=<path>  - override path to v8 external data\n"
     "  --font-dir=<path> - override path to external fonts\n"
     "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
-    "  --txt - write page text in UTF32-LE <pdf-name>.<page-number>.txt\n"
 #ifdef _WIN32
     "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
     "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
 #endif  // _WIN32
+    "  --txt - write page text in UTF32-LE <pdf-name>.<page-number>.txt\n"
     "  --png - write page images <pdf-name>.<page-number>.png\n"
+    "  --ppm - write page images <pdf-name>.<page-number>.ppm\n"
 #ifdef PDF_ENABLE_SKIA
     "  --skp - write page images <pdf-name>.<page-number>.skp\n"
 #endif
@@ -802,9 +801,9 @@ static const char usage_string[] =
 int main(int argc, const char* argv[]) {
   std::vector<std::string> args(argv, argv + argc);
   Options options;
-  std::list<std::string> files;
+  std::vector<std::string> files;
   if (!ParseCommandLine(args, &options, &files)) {
-    fprintf(stderr, "%s", usage_string);
+    fprintf(stderr, "%s", kUsageString);
     return 1;
   }
 
@@ -851,9 +850,7 @@ int main(int argc, const char* argv[]) {
 
   FSDK_SetUnSpObjProcessHandler(&unsuppored_info);
 
-  while (!files.empty()) {
-    std::string filename = files.front();
-    files.pop_front();
+  for (const std::string& filename : files) {
     size_t file_length = 0;
     std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
         GetFileContents(filename.c_str(), &file_length);
