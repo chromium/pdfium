@@ -54,22 +54,6 @@ void CScript_HostPseudoModel::AppType(CFXJSE_Value* pValue,
   pValue->SetString(FX_UTF8Encode(wsAppType).AsStringC());
 }
 
-void CScript_HostPseudoModel::FoxitAppType(CFXJSE_Value* pValue,
-                                           FX_BOOL bSetting,
-                                           XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  if (bSetting) {
-    ThrowException(XFA_IDS_INVAlID_PROP_SET);
-    return;
-  }
-  CFX_WideString wsAppType;
-  pNotify->GetAppProvider()->GetFoxitAppType(wsAppType);
-  pValue->SetString(FX_UTF8Encode(wsAppType).AsStringC());
-}
-
 void CScript_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
                                                   FX_BOOL bSetting,
                                                   XFA_ATTRIBUTE eAttribute) {
@@ -217,22 +201,6 @@ void CScript_HostPseudoModel::Version(CFXJSE_Value* pValue,
   pValue->SetString(FX_UTF8Encode(wsVersion).AsStringC());
 }
 
-void CScript_HostPseudoModel::FoxitVersion(CFXJSE_Value* pValue,
-                                           FX_BOOL bSetting,
-                                           XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  if (bSetting) {
-    ThrowException(XFA_IDS_UNABLE_SET_VERSION);
-    return;
-  }
-  CFX_WideString wsVersion;
-  pNotify->GetAppProvider()->GetFoxitVersion(wsVersion);
-  pValue->SetString(FX_UTF8Encode(wsVersion).AsStringC());
-}
-
 void CScript_HostPseudoModel::Name(CFXJSE_Value* pValue,
                                    FX_BOOL bSetting,
                                    XFA_ATTRIBUTE eAttribute) {
@@ -249,21 +217,6 @@ void CScript_HostPseudoModel::Name(CFXJSE_Value* pValue,
   pValue->SetString(FX_UTF8Encode(wsAppName).AsStringC());
 }
 
-void CScript_HostPseudoModel::FoxitName(CFXJSE_Value* pValue,
-                                        FX_BOOL bSetting,
-                                        XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  if (bSetting) {
-    ThrowException(XFA_IDS_INVAlID_PROP_SET);
-    return;
-  }
-  CFX_WideString wsFoxitAppName;
-  pNotify->GetAppProvider()->GetFoxitAppName(wsFoxitAppName);
-  pValue->SetString(FX_UTF8Encode(wsFoxitAppName).AsStringC());
-}
 void CScript_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
     return;

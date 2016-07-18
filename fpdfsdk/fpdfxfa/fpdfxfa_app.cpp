@@ -93,18 +93,8 @@ void CPDFXFA_App::GetAppName(CFX_WideString& wsName) {
   }
 }
 
-void CPDFXFA_App::GetFoxitAppName(CFX_WideString& wsFoxitName) {
-  wsFoxitName = L"Foxit";
-}
-
 void CPDFXFA_App::SetAppType(const CFX_WideStringC& wsAppType) {
   m_csAppType = wsAppType;
-}
-
-void CPDFXFA_App::SetFoxitAppType(const CFX_WideStringC& wsFoxitAppType) {}
-
-void CPDFXFA_App::GetFoxitAppType(CFX_WideString& wsFoxitAppType) {
-  wsFoxitAppType.clear();
 }
 
 void CPDFXFA_App::GetLanguage(CFX_WideString& wsLanguage) {
@@ -127,10 +117,6 @@ void CPDFXFA_App::GetVariation(CFX_WideString& wsVariation) {
 
 void CPDFXFA_App::GetVersion(CFX_WideString& wsVersion) {
   wsVersion = JS_STR_VIEWERVERSION_XFA;
-}
-
-void CPDFXFA_App::GetFoxitVersion(CFX_WideString& wsFoxitVersion) {
-  wsFoxitVersion = L"7.0";
 }
 
 void CPDFXFA_App::Beep(uint32_t dwType) {

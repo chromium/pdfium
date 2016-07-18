@@ -182,8 +182,6 @@ class IXFA_AppProvider {
    */
   virtual void SetAppType(const CFX_WideStringC& wsAppType) = 0;
   virtual void GetAppType(CFX_WideString& wsAppType) = 0;
-  virtual void SetFoxitAppType(const CFX_WideStringC& wsFoxitAppType) = 0;
-  virtual void GetFoxitAppType(CFX_WideString& wsFoxitAppType) = 0;
 
   /**
    * Returns the language of the running host application. Such as zh_CN
@@ -205,13 +203,11 @@ class IXFA_AppProvider {
    * Indicates the version number of the current application. Such as 9
    */
   virtual void GetVersion(CFX_WideString& wsVersion) = 0;
-  virtual void GetFoxitVersion(CFX_WideString& wsFoxitVersion) = 0;
 
   /**
    * Get application name, such as Phantom.
    */
   virtual void GetAppName(CFX_WideString& wsName) = 0;
-  virtual void GetFoxitAppName(CFX_WideString& wsFoxitName) = 0;
 
   /**
    * Causes the system to play a sound.

@@ -19,9 +19,6 @@ class CScript_HostPseudoModel : public CXFA_Object {
   void AppType(CFXJSE_Value* pValue,
                FX_BOOL bSetting,
                XFA_ATTRIBUTE eAttribute);
-  void FoxitAppType(CFXJSE_Value* pValue,
-                    FX_BOOL bSetting,
-                    XFA_ATTRIBUTE eAttribute);
   void CalculationsEnabled(CFXJSE_Value* pValue,
                            FX_BOOL bSetting,
                            XFA_ATTRIBUTE eAttribute);
@@ -47,14 +44,7 @@ class CScript_HostPseudoModel : public CXFA_Object {
   void Version(CFXJSE_Value* pValue,
                FX_BOOL bSetting,
                XFA_ATTRIBUTE eAttribute);
-  void FoxitVersion(CFXJSE_Value* pValue,
-                    FX_BOOL bSetting,
-                    XFA_ATTRIBUTE eAttribute);
   void Name(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
-  void FoxitName(CFXJSE_Value* pValue,
-                 FX_BOOL bSetting,
-                 XFA_ATTRIBUTE eAttribute);
-
   void GotoURL(CFXJSE_Arguments* pArguments);
   void OpenList(CFXJSE_Arguments* pArguments);
   void Response(CFXJSE_Arguments* pArguments);

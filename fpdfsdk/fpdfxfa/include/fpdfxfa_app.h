@@ -36,17 +36,12 @@ class CPDFXFA_App : public IXFA_AppProvider {
   // IFXA_AppProvider:
   void GetAppType(CFX_WideString& wsAppType) override;
   void SetAppType(const CFX_WideStringC& wsAppType) override;
-  void SetFoxitAppType(const CFX_WideStringC& wsFoxitAppType) override;
-  void GetFoxitAppType(CFX_WideString& wsFoxitAppType) override;
 
   void GetLanguage(CFX_WideString& wsLanguage) override;
   void GetPlatform(CFX_WideString& wsPlatform) override;
   void GetVariation(CFX_WideString& wsVariation) override;
   void GetVersion(CFX_WideString& wsVersion) override;
-  void GetFoxitVersion(CFX_WideString& wsFoxitVersion) override;
-
   void GetAppName(CFX_WideString& wsName) override;
-  void GetFoxitAppName(CFX_WideString& wsFoxitName) override;
 
   void Beep(uint32_t dwType) override;
   int32_t MsgBox(const CFX_WideString& wsMessage,
