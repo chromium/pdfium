@@ -118,7 +118,6 @@ class CFX_Edit_Refresh {
   void BeginRefresh();
   void Push(const CPVT_WordRange& linerange, const CFX_FloatRect& rect);
   void NoAnalyse();
-  void Analyse(int32_t nAlignment);
   void AddRefresh(const CFX_FloatRect& rect);
   const CFX_Edit_RectArray* GetRefreshRects() const;
   void EndRefresh();
