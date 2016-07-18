@@ -3625,7 +3625,7 @@ FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
     case XFA_ATTRIBUTETYPE_Integer:
       return SetInteger(
           pAttr->eName,
-          FXSYS_round(FX_wcstof(wsValue.c_str(), wsValue.GetLength())),
+          FXSYS_round(FX_wcstof(wsValue.c_str(), wsValue.GetLength(), nullptr)),
           bNotify);
     case XFA_ATTRIBUTETYPE_Measure:
       return SetMeasure(pAttr->eName, CXFA_Measurement(wsValue), bNotify);

@@ -219,7 +219,7 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream,
   if (bSaveStream) {
     m_pStream = pFontStream;
   }
-  m_pFileRead = FX_CreateFileRead(pFontStream);
+  m_pFileRead = FX_CreateFileRead(pFontStream, FALSE);
   m_pFont = new CFX_Font;
   FX_BOOL bRet = m_pFont->LoadFile(m_pFileRead);
   if (bRet) {
@@ -250,7 +250,7 @@ FX_BOOL CFGAS_GEFont::InitFont() {
       return FALSE;
   }
   if (!m_pCharWidthMap)
-    m_pCharWidthMap = new CFX_WordDiscreteArray(1024);
+    m_pCharWidthMap = new CFX_DiscreteArrayTemplate<uint16_t>(1024);
   if (!m_pRectArray)
     m_pRectArray = new CFX_MassArrayTemplate<CFX_Rect>(16);
   if (!m_pBBoxMap)
@@ -473,7 +473,7 @@ void CFGAS_GEFont::Reset() {
     m_pBBoxMap->RemoveAll();
   }
   if (m_pRectArray) {
-    m_pRectArray->RemoveAll();
+    m_pRectArray->RemoveAll(FALSE);
   }
 }
 CFGAS_GEFont* CFGAS_GEFont::GetSubstFont(int32_t iGlyphIndex) const {

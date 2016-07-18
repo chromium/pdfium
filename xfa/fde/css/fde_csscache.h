@@ -49,7 +49,6 @@ class FDE_CSSTagCache : public CFX_Target {
   int32_t iClassIndex;
   CFX_BaseArrayTemplate<uint32_t> dwClassHashs;
 };
-typedef CFX_ObjectStackTemplate<FDE_CSSTagCache> CFDE_CSSTagStack;
 
 class CFDE_CSSAccelerator : public CFX_Target {
  public:
@@ -59,12 +58,12 @@ class CFDE_CSSAccelerator : public CFX_Target {
   void OnEnterTag(CXFA_CSSTagProvider* pTag);
   void OnLeaveTag(CXFA_CSSTagProvider* pTag);
 
-  void Clear() { m_Stack.RemoveAll(); }
+  void Clear() { m_Stack.RemoveAll(FALSE); }
 
   FDE_CSSTagCache* GetTopElement() const { return m_Stack.GetTopElement(); }
 
  protected:
-  CFDE_CSSTagStack m_Stack;
+  CFX_ObjectStackTemplate<FDE_CSSTagCache> m_Stack;
 };
 
 #endif  // XFA_FDE_CSS_FDE_CSSCACHE_H_

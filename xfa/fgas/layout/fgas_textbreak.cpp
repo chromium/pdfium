@@ -951,7 +951,7 @@ uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
   CFX_TxtLine* pNextLine =
       (m_pCurLine == m_pTxtLine1) ? m_pTxtLine2 : m_pTxtLine1;
   FX_BOOL bAllChars = (m_iCurAlignment > FX_TXTLINEALIGNMENT_Right);
-  CFX_TPOArray tpos;
+  CFX_TPOArray tpos(100);
   CFX_Char* pTC;
   if (m_bArabicShapes) {
     EndBreak_UpdateArabicShapes();

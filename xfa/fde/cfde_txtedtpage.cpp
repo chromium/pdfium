@@ -30,6 +30,7 @@ IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(CFDE_TxtEdtEngine* pEngine,
 
 CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
     : m_pTextSet(nullptr),
+      m_PieceMassArr(100),
       m_pBgnParag(nullptr),
       m_pEndParag(nullptr),
       m_nRefCount(0),
@@ -446,7 +447,7 @@ void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
   if (m_nRefCount != 0)
     return;
 
-  m_PieceMassArr.RemoveAll();
+  m_PieceMassArr.RemoveAll(FALSE);
   delete m_pTextSet;
   m_pTextSet = nullptr;
   delete[] m_pCharWidth;

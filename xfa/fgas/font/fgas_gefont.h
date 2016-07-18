@@ -98,7 +98,7 @@ class CFGAS_GEFont {
   IFX_Stream* m_pStream;
   IFX_FileRead* m_pFileRead;
   CFX_UnicodeEncoding* m_pFontEncoding;
-  CFX_WordDiscreteArray* m_pCharWidthMap;
+  CFX_DiscreteArrayTemplate<uint16_t>* m_pCharWidthMap;
   CFX_MassArrayTemplate<CFX_Rect>* m_pRectArray;
   CFX_MapPtrToPtr* m_pBBoxMap;
   CXFA_PDFFontMgr* m_pProvider;

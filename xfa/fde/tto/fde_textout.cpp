@@ -51,7 +51,7 @@ CFDE_TextOut::~CFDE_TextOut() {
   FX_Free(m_pCharWidths);
   FX_Free(m_pEllCharWidths);
   FX_Free(m_pCharPos);
-  m_ttoLines.RemoveAll();
+  m_ttoLines.RemoveAll(FALSE);
 }
 void CFDE_TextOut::SetFont(CFGAS_GEFont* pFont) {
   ASSERT(pFont);
@@ -907,7 +907,7 @@ CFDE_TTOLine::CFDE_TTOLine()
 CFDE_TTOLine::CFDE_TTOLine(const CFDE_TTOLine& ttoLine) : m_pieces(5) {
   m_bNewReload = ttoLine.m_bNewReload;
   m_iPieceCount = ttoLine.m_iPieceCount;
-  m_pieces.Copy(ttoLine.m_pieces);
+  m_pieces.Copy(ttoLine.m_pieces, 0, -1);
 }
 
 CFDE_TTOLine::~CFDE_TTOLine() {}

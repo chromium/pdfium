@@ -718,8 +718,6 @@ class IFDE_CSSRule {
   virtual FDE_CSSRULETYPE GetType() const = 0;
 };
 
-typedef CFX_MassArrayTemplate<IFDE_CSSRule*> CFDE_CSSRuleArray;
-
 class IFDE_CSSStyleRule : public IFDE_CSSRule {
  public:
   // IFDE_CSSValue

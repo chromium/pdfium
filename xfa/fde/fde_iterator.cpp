@@ -8,16 +8,17 @@
 
 #include "xfa/fgas/crt/fgas_utils.h"
 
-CFDE_VisualSetIterator::CFDE_VisualSetIterator() : m_dwFilter(0) {}
+CFDE_VisualSetIterator::CFDE_VisualSetIterator()
+    : m_dwFilter(0), m_CanvasStack(100) {}
 
 CFDE_VisualSetIterator::~CFDE_VisualSetIterator() {
-  m_CanvasStack.RemoveAll();
+  m_CanvasStack.RemoveAll(FALSE);
 }
 
 FX_BOOL CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
   ASSERT(pCanvas);
 
-  m_CanvasStack.RemoveAll();
+  m_CanvasStack.RemoveAll(FALSE);
   FDE_CANVASITEM canvas;
   canvas.hCanvas = nullptr;
   canvas.pCanvas = pCanvas;

@@ -544,8 +544,7 @@ int32_t CXFA_WideTextRead::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
 }
 int32_t CXFA_WideTextRead::ReadString(FX_WCHAR* pStr,
                                       int32_t iMaxLength,
-                                      FX_BOOL& bEOS,
-                                      int32_t const* pByteSize) {
+                                      FX_BOOL& bEOS) {
   iMaxLength = std::min(iMaxLength, m_wsBuffer.GetLength() - m_iPosition);
   if (iMaxLength == 0)
     return 0;

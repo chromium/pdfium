@@ -35,16 +35,6 @@ const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {255, 850},
 };
 
-const FX_CHARSET_MAP g_FXCodepage2CharsetTable[] = {
-    {1, 0},      {2, 42},     {254, 437},  {255, 850},  {222, 874},
-    {128, 932},  {134, 936},  {129, 949},  {136, 950},  {238, 1250},
-    {204, 1251}, {0, 1252},   {161, 1253}, {162, 1254}, {177, 1255},
-    {178, 1256}, {186, 1257}, {163, 1258}, {130, 1361}, {77, 10000},
-    {78, 10001}, {79, 10003}, {80, 10008}, {81, 10002}, {83, 10005},
-    {84, 10004}, {85, 10006}, {86, 10081}, {87, 10021}, {88, 10029},
-    {89, 10007},
-};
-
 const FX_LANG2CPMAP g_FXLang2CodepageTable[] = {
     {FX_LANG_Arabic_SaudiArabia, FX_CODEPAGE_MSWin_Arabic},
     {FX_LANG_Bulgarian_Bulgaria, FX_CODEPAGE_MSWin_Cyrillic},
@@ -317,24 +307,6 @@ uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
   return 0xFFFF;
 }
 
-uint16_t FX_GetCharsetFromCodePage(uint16_t codepage) {
-  int32_t iEnd = sizeof(g_FXCodepage2CharsetTable) / sizeof(FX_CHARSET_MAP) - 1;
-  ASSERT(iEnd >= 0);
-  int32_t iStart = 0, iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    const FX_CHARSET_MAP& cp = g_FXCodepage2CharsetTable[iMid];
-    if (codepage == cp.codepage) {
-      return cp.charset;
-    } else if (codepage < cp.codepage) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  return 0xFFFF;
-}
-
 uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage) {
   int32_t iEnd = sizeof(g_FXLang2CodepageTable) / sizeof(FX_LANG2CPMAP) - 1;
   ASSERT(iEnd >= 0);
@@ -400,18 +372,6 @@ void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
   FX_WCHAR* pDst = (FX_WCHAR*)pBuffer;
   while (--iLength >= 0) {
     pDst[iLength] = (FX_WCHAR)pSrc[iLength];
-  }
-}
-
-void FX_WCharToUTF16(void* pBuffer, int32_t iLength) {
-  ASSERT(pBuffer && iLength > 0);
-  if (sizeof(FX_WCHAR) == 2) {
-    return;
-  }
-  const FX_WCHAR* pSrc = (const FX_WCHAR*)pBuffer;
-  uint16_t* pDst = (uint16_t*)pBuffer;
-  while (--iLength >= 0) {
-    *pDst++ = (uint16_t)*pSrc++;
   }
 }
 

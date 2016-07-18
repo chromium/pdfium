@@ -646,7 +646,7 @@ uint32_t CFX_RTFBreak::EndBreak(uint32_t dwStatus) {
   CFX_RTFLine* pNextLine =
       (m_pCurLine == &m_RTFLine1) ? &m_RTFLine2 : &m_RTFLine1;
   FX_BOOL bAllChars = (m_iAlignment > FX_RTFLINEALIGNMENT_Right);
-  CFX_TPOArray tpos;
+  CFX_TPOArray tpos(100);
   if (EndBreak_SplitLine(pNextLine, bAllChars, dwStatus)) {
     goto EndBreak_Ret;
   }

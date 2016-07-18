@@ -227,8 +227,7 @@ class CFX_Stream : public IFX_Stream {
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
   int32_t ReadString(FX_WCHAR* pStr,
                      int32_t iMaxLength,
-                     FX_BOOL& bEOS,
-                     int32_t const* pByteSize = nullptr) override;
+                     FX_BOOL& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
   int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
   void Flush() override;
@@ -267,8 +266,7 @@ class CFX_TextStream : public IFX_Stream {
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
   int32_t ReadString(FX_WCHAR* pStr,
                      int32_t iMaxLength,
-                     FX_BOOL& bEOS,
-                     int32_t const* pByteSize = nullptr) override;
+                     FX_BOOL& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
   int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
   void Flush() override;
@@ -338,21 +336,7 @@ FX_BOOL FileSetSize(FXSYS_FILE* file, int32_t size) {
 
 }  // namespace
 
-IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
-                                     uint32_t dwAccess,
-                                     int32_t iFileSize,
-                                     FX_BOOL bReleaseBufferRead) {
-  CFX_Stream* pSR = new CFX_Stream;
-  if (!pSR->LoadBufferRead(pBufferRead, iFileSize, dwAccess,
-                           bReleaseBufferRead)) {
-    pSR->Release();
-    return nullptr;
-  }
-  if (dwAccess & FX_STREAMACCESS_Text) {
-    return new CFX_TextStream(pSR, TRUE);
-  }
-  return pSR;
-}
+// static
 IFX_Stream* IFX_Stream::CreateStream(IFX_FileRead* pFileRead,
                                      uint32_t dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
@@ -365,6 +349,8 @@ IFX_Stream* IFX_Stream::CreateStream(IFX_FileRead* pFileRead,
   }
   return pSR;
 }
+
+// static
 IFX_Stream* IFX_Stream::CreateStream(IFX_FileWrite* pFileWrite,
                                      uint32_t dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
@@ -377,18 +363,8 @@ IFX_Stream* IFX_Stream::CreateStream(IFX_FileWrite* pFileWrite,
   }
   return pSR;
 }
-IFX_Stream* IFX_Stream::CreateStream(const FX_WCHAR* pszFileName,
-                                     uint32_t dwAccess) {
-  CFX_Stream* pSR = new CFX_Stream;
-  if (!pSR->LoadFile(pszFileName, dwAccess)) {
-    pSR->Release();
-    return nullptr;
-  }
-  if (dwAccess & FX_STREAMACCESS_Text) {
-    return new CFX_TextStream(pSR, TRUE);
-  }
-  return pSR;
-}
+
+// static
 IFX_Stream* IFX_Stream::CreateStream(uint8_t* pData,
                                      int32_t length,
                                      uint32_t dwAccess) {
@@ -932,11 +908,14 @@ int32_t CFX_BufferStreamImp::WriteString(const FX_WCHAR* pStr,
   }
   return iLen;
 }
+
+// static
 IFX_Stream* IFX_Stream::CreateTextStream(IFX_Stream* pBaseStream,
                                          FX_BOOL bDeleteOnRelease) {
   ASSERT(pBaseStream);
   return new CFX_TextStream(pBaseStream, bDeleteOnRelease);
 }
+
 CFX_TextStream::CFX_TextStream(IFX_Stream* pStream, FX_BOOL bDelStream)
     : m_wCodePage(FX_CODEPAGE_DefANSI),
       m_wBOMLength(0),
@@ -1073,8 +1052,7 @@ uint16_t CFX_TextStream::SetCodePage(uint16_t wCodePage) {
 }
 int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
                                    int32_t iMaxLength,
-                                   FX_BOOL& bEOS,
-                                   int32_t const* pByteSize) {
+                                   FX_BOOL& bEOS) {
   ASSERT(pStr && iMaxLength > 0);
   if (!m_pStreamImp) {
     return -1;
@@ -1082,7 +1060,7 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
   int32_t iLen;
   if (m_wCodePage == FX_CODEPAGE_UTF16LE ||
       m_wCodePage == FX_CODEPAGE_UTF16BE) {
-    int32_t iBytes = pByteSize ? *pByteSize : iMaxLength * 2;
+    int32_t iBytes = iMaxLength * 2;
     iLen = m_pStreamImp->ReadData((uint8_t*)pStr, iBytes);
     iMaxLength = iLen / 2;
     if (sizeof(FX_WCHAR) > 2) {
@@ -1099,7 +1077,7 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
 #endif
   } else {
     int32_t pos = m_pStreamImp->GetPosition();
-    int32_t iBytes = pByteSize ? *pByteSize : iMaxLength;
+    int32_t iBytes = iMaxLength;
     iBytes = std::min(iBytes, m_pStreamImp->GetLength() - pos);
     if (iBytes > 0) {
       if (!m_pBuf) {
@@ -1341,17 +1319,13 @@ int32_t CFX_Stream::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
 }
 int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
                                int32_t iMaxLength,
-                               FX_BOOL& bEOS,
-                               int32_t const* pByteSize) {
+                               FX_BOOL& bEOS) {
   ASSERT(pStr && iMaxLength > 0);
   if (!m_pStreamImp) {
     return -1;
   }
   int32_t iEnd = m_iStart + m_iLength;
   int32_t iLen = iEnd - m_iPosition;
-  if (pByteSize) {
-    iLen = std::min(iLen, *pByteSize);
-  }
   iLen = std::min(iEnd / 2, iMaxLength);
   if (iLen <= 0) {
     return 0;

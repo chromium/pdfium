@@ -38,7 +38,7 @@ CFX_BaseArray::CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize) {
   m_pData = new FX_BASEARRAYDATA(iGrowSize, iBlockSize);
 }
 CFX_BaseArray::~CFX_BaseArray() {
-  RemoveAll();
+  RemoveAll(FALSE);
   delete m_pData;
 }
 int32_t CFX_BaseArray::GetSize() const {
@@ -153,7 +153,7 @@ CFX_BaseMassArrayImp::CFX_BaseMassArrayImp(int32_t iChunkSize,
   m_pData->SetSize(16);
 }
 CFX_BaseMassArrayImp::~CFX_BaseMassArrayImp() {
-  RemoveAll();
+  RemoveAll(FALSE);
   delete m_pData;
 }
 uint8_t* CFX_BaseMassArrayImp::AddSpaceTo(int32_t index) {

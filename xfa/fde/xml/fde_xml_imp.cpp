@@ -625,7 +625,7 @@ FX_FLOAT CFDE_XMLInstruction::GetFloat(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FX_wcstof(m_Attributes[i + 1].c_str());
+      return FX_wcstof(m_Attributes[i + 1].c_str(), -1, nullptr);
     }
   }
   return fDefValue;
@@ -841,7 +841,7 @@ FX_FLOAT CFDE_XMLElement::GetFloat(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FX_wcstof(m_Attributes[i + 1].c_str());
+      return FX_wcstof(m_Attributes[i + 1].c_str(), -1, nullptr);
     }
   }
   return fDefValue;

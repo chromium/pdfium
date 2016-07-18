@@ -25,11 +25,14 @@ CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
       m_iTextDatLen(0),
       m_dwCheck((uint32_t)-1),
       m_eMode(FDE_CSSSYNTAXMODE_RuleSet),
-      m_eStatus(FDE_CSSSYNTAXSTATUS_None) {}
+      m_eStatus(FDE_CSSSYNTAXSTATUS_None),
+      m_ModeStack(100) {}
+
 CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser() {
   m_TextData.Reset();
   m_TextPlane.Reset();
 }
+
 FX_BOOL CFDE_CSSSyntaxParser::Init(IFX_Stream* pStream,
                                    int32_t iCSSPlaneSize,
                                    int32_t iTextDataSize,

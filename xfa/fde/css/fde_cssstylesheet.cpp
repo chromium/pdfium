@@ -78,7 +78,8 @@ CFDE_CSSStyleSheet::CFDE_CSSStyleSheet(uint32_t dwMediaList)
     : m_wCodePage(FX_CODEPAGE_UTF8),
       m_wRefCount(1),
       m_dwMediaList(dwMediaList),
-      m_pAllocator(nullptr) {
+      m_pAllocator(nullptr),
+      m_RuleArray(100) {
   ASSERT(m_dwMediaList > 0);
 }
 
@@ -104,7 +105,7 @@ void CFDE_CSSStyleSheet::Reset() {
         break;
     }
   }
-  m_RuleArray.RemoveAll();
+  m_RuleArray.RemoveAll(FALSE);
   m_Selectors.RemoveAll();
   m_StringCache.clear();
   delete m_pAllocator;
@@ -241,7 +242,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(
 
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(
     CFDE_CSSSyntaxParser* pSyntax,
-    CFDE_CSSRuleArray& ruleArray) {
+    CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray) {
   m_Selectors.RemoveAt(0, m_Selectors.GetSize());
   CFDE_CSSStyleRule* pStyleRule = nullptr;
   const FX_WCHAR* pszValue = nullptr;
@@ -306,7 +307,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(
 
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadFontFaceRule(
     CFDE_CSSSyntaxParser* pSyntax,
-    CFDE_CSSRuleArray& ruleArray) {
+    CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray) {
   CFDE_CSSFontFaceRule* pFontFaceRule = nullptr;
   const FX_WCHAR* pszValue = nullptr;
   int32_t iValueLen = 0;
@@ -392,8 +393,9 @@ CFDE_CSSDeclaration* CFDE_CSSStyleRule::GetDeclaration() {
   return &m_Declaration;
 }
 
-void CFDE_CSSStyleRule::SetSelector(IFX_MemoryAllocator* pStaticStore,
-                                    const CFDE_CSSSelectorArray& list) {
+void CFDE_CSSStyleRule::SetSelector(
+    IFX_MemoryAllocator* pStaticStore,
+    const CFX_ArrayTemplate<CFDE_CSSSelector*>& list) {
   ASSERT(!m_ppSelector);
   m_iSelectors = list.GetSize();
   m_ppSelector = static_cast<CFDE_CSSSelector**>(
@@ -404,7 +406,7 @@ void CFDE_CSSStyleRule::SetSelector(IFX_MemoryAllocator* pStaticStore,
 }
 
 CFDE_CSSMediaRule::CFDE_CSSMediaRule(uint32_t dwMediaList)
-    : m_dwMediaList(dwMediaList) {}
+    : m_dwMediaList(dwMediaList), m_RuleArray(100) {}
 
 CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
   for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {

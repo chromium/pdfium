@@ -27,7 +27,7 @@ template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {
  public:
   CXFA_NodeIteratorTemplate(NodeType* pRootNode = nullptr)
-      : m_pRoot(pRootNode) {
+      : m_pRoot(pRootNode), m_NodeStack(100) {
     if (pRootNode) {
       m_NodeStack.Push(pRootNode);
     }
@@ -37,11 +37,11 @@ class CXFA_NodeIteratorTemplate {
       return FALSE;
     }
     m_pRoot = pRootNode;
-    m_NodeStack.RemoveAll();
+    m_NodeStack.RemoveAll(FALSE);
     m_NodeStack.Push(pRootNode);
     return TRUE;
   }
-  void Clear() { m_NodeStack.RemoveAll(); }
+  void Clear() { m_NodeStack.RemoveAll(FALSE); }
   void Reset() {
     Clear();
     if (m_pRoot) {
@@ -49,9 +49,9 @@ class CXFA_NodeIteratorTemplate {
     }
   }
   FX_BOOL SetCurrent(NodeType* pCurNode) {
-    m_NodeStack.RemoveAll();
+    m_NodeStack.RemoveAll(FALSE);
     if (pCurNode) {
-      CFX_StackTemplate<NodeType*> revStack;
+      CFX_StackTemplate<NodeType*> revStack(100);
       NodeType* pNode;
       for (pNode = pCurNode; pNode && pNode != m_pRoot;
            pNode = TraverseStrategy::GetParent(pNode)) {
@@ -94,7 +94,7 @@ class CXFA_NodeIteratorTemplate {
       }
       m_NodeStack.Push(pPrevItem);
     } else {
-      m_NodeStack.RemoveAll();
+      m_NodeStack.RemoveAll(FALSE);
       if (m_pRoot) {
         m_NodeStack.Push(m_pRoot);
       }

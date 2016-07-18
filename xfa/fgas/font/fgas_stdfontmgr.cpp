@@ -20,7 +20,7 @@ IFGAS_FontMgr* IFGAS_FontMgr::Create(FX_LPEnumAllFonts pEnumerator) {
 
 CFGAS_StdFontMgrImp::CFGAS_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator)
     : m_pEnumerator(pEnumerator),
-      m_FontFaces(),
+      m_FontFaces(100),
       m_CPFonts(8),
       m_FamilyFonts(16),
       m_UnicodeFonts(16),
@@ -33,7 +33,7 @@ CFGAS_StdFontMgrImp::CFGAS_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator)
 }
 
 CFGAS_StdFontMgrImp::~CFGAS_StdFontMgrImp() {
-  m_FontFaces.RemoveAll();
+  m_FontFaces.RemoveAll(FALSE);
   m_CPFonts.RemoveAll();
   m_FamilyFonts.RemoveAll();
   m_UnicodeFonts.RemoveAll();
@@ -298,7 +298,7 @@ FX_FONTDESCRIPTOR const* CFGAS_StdFontMgrImp::FindFont(
     return pDesc;
   }
   if (pszFontFamily && m_pEnumerator) {
-    CFX_FontDescriptors namedFonts;
+    CFX_FontDescriptors namedFonts(100);
     m_pEnumerator(namedFonts, pszFontFamily, wUnicode);
     params.pwsFamily = nullptr;
     pDesc = FX_DefFontMatcher(&params, namedFonts);

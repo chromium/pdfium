@@ -23,7 +23,7 @@ CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream)
 }
 
 CXFA_XMLParser::~CXFA_XMLParser() {
-  m_NodeStack.RemoveAll();
+  m_NodeStack.RemoveAll(FALSE);
   m_ws1.clear();
   m_ws2.clear();
 }

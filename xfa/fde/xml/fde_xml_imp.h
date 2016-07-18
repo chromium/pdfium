@@ -344,7 +344,7 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   FDE_XmlSyntaxState m_syntaxParserState;
   FX_WCHAR m_wQuotationMark;
   int32_t m_iEntityStart;
-  CFX_DWordStack m_SkipStack;
+  CFX_StackTemplate<uint32_t> m_SkipStack;
   FX_WCHAR m_SkipChar;
 };
 
