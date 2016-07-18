@@ -24,8 +24,11 @@
 CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
-                  XFA_Element::LayoutPseudoModel) {}
+                  XFA_Element::LayoutPseudoModel,
+                  CFX_WideStringC(L"layoutPseudoModel")) {}
+
 CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
+
 void CScript_LayoutPseudoModel::Ready(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute) {

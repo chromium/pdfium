@@ -28,8 +28,11 @@ CXFA_Node* ToNode(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
 CScript_HostPseudoModel::CScript_HostPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
-                  XFA_Element::HostPseudoModel) {}
+                  XFA_Element::HostPseudoModel,
+                  CFX_WideStringC(L"hostPseudoModel")) {}
+
 CScript_HostPseudoModel::~CScript_HostPseudoModel() {}
+
 void CScript_HostPseudoModel::LoadString(CFXJSE_Value* pValue,
                                          CXFA_FFNotify* pNotify,
                                          uint32_t dwFlag) {

@@ -53,19 +53,22 @@ XFA_MAPDATABLOCKCALLBACKINFO deleteBindItemCallBack = {
 
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,
-                         XFA_Element elementType)
+                         XFA_Element elementType,
+                         const CFX_WideStringC& elementName)
     : m_pDocument(pDocument),
       m_objectType(objectType),
-      m_elementType(elementType) {}
+      m_elementType(elementType),
+      m_elementNameHash(FX_HashCode_GetW(elementName, false)),
+      m_elementName(elementName) {}
 
 CXFA_Object::~CXFA_Object() {}
 
 CFX_WideStringC CXFA_Object::GetClassName() const {
-  return XFA_GetElementByID(GetElementType())->pName;
+  return m_elementName;
 }
 
 uint32_t CXFA_Object::GetClassHashCode() const {
-  return XFA_GetElementByID(GetElementType())->uHash;
+  return m_elementNameHash;
 }
 
 XFA_Element CXFA_Object::GetElementType() const {
@@ -105,8 +108,9 @@ XFA_MAPMODULEDATA::~XFA_MAPMODULEDATA() {}
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      uint16_t ePacket,
                      XFA_ObjectType oType,
-                     XFA_Element eType)
-    : CXFA_Object(pDoc, oType, eType),
+                     XFA_Element eType,
+                     const CFX_WideStringC& elementName)
+    : CXFA_Object(pDoc, oType, eType, elementName),
       m_pNext(nullptr),
       m_pChild(nullptr),
       m_pLastChild(nullptr),
@@ -5066,7 +5070,8 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
 CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
     : CXFA_Object(pThisNode->GetDocument(),
                   XFA_ObjectType::VariablesThis,
-                  XFA_Element::Unknown),
+                  XFA_Element::Unknown,
+                  CFX_WideStringC()),
       m_pThisNode(nullptr),
       m_pScriptNode(nullptr) {
   m_pThisNode = pThisNode;
@@ -5084,7 +5089,10 @@ CXFA_Node* CXFA_ThisProxy::GetScriptNode() const {
 }
 
 CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
-    : CXFA_Object(pDocument, XFA_ObjectType::NodeList, XFA_Element::NodeList) {
+    : CXFA_Object(pDocument,
+                  XFA_ObjectType::NodeList,
+                  XFA_Element::NodeList,
+                  CFX_WideStringC(L"nodeList")) {
   m_pDocument->GetScriptContext()->AddToCacheList(
       std::unique_ptr<CXFA_NodeList>(this));
 }

@@ -51,7 +51,8 @@ void BooleanProperty(CFXJSE_Value* pValue, FX_BOOL& bValue, FX_BOOL bSetting) {
 CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
-                  XFA_Element::EventPseudoModel) {}
+                  XFA_Element::EventPseudoModel,
+                  CFX_WideStringC(L"eventPseudoModel")) {}
 
 CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
 

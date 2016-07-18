@@ -20,8 +20,11 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
-                  XFA_Element::SignaturePseudoModel) {}
+                  XFA_Element::SignaturePseudoModel,
+                  CFX_WideStringC(L"signaturePseudoModel")) {}
+
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
+
 void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 4) {
@@ -42,6 +45,7 @@ void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
   if (pValue)
     pValue->SetInteger(bVerify);
 }
+
 void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 3 || iLength > 7) {
@@ -73,6 +77,7 @@ void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
   if (pValue)
     pValue->SetBoolean(bSign);
 }
+
 void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 0) {
@@ -90,6 +95,7 @@ void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
   pArguments->GetReturnValue()->Assign(
       m_pDocument->GetScriptContext()->GetJSValueFromMap(pList));
 }
+
 void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 2) {

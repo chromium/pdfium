@@ -48,7 +48,8 @@ class CXFA_Object : public CFXJSE_HostObject {
  public:
   CXFA_Object(CXFA_Document* pDocument,
               XFA_ObjectType objectType,
-              XFA_Element eType);
+              XFA_Element eType,
+              const CFX_WideStringC& elementName);
   ~CXFA_Object() override;
 
   CXFA_Document* GetDocument() const { return m_pDocument; }
@@ -95,6 +96,9 @@ class CXFA_Object : public CFXJSE_HostObject {
   CXFA_Document* const m_pDocument;
   const XFA_ObjectType m_objectType;
   const XFA_Element m_elementType;
+
+  const uint32_t m_elementNameHash;
+  const CFX_WideStringC m_elementName;
 };
 using CXFA_ObjArray = CFX_ArrayTemplate<CXFA_Object*>;
 
@@ -619,7 +623,8 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node(CXFA_Document* pDoc,
             uint16_t ePacket,
             XFA_ObjectType oType,
-            XFA_Element eType);
+            XFA_Element eType,
+            const CFX_WideStringC& elementName);
   ~CXFA_Node() override;
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;
