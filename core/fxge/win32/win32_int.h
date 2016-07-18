@@ -239,6 +239,13 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                       uint32_t render_flags,
                       void*& handle,
                       int blend_type) override;
+  FX_BOOL DrawDeviceText(int nChars,
+                         const FXTEXT_CHARPOS* pCharPos,
+                         CFX_Font* pFont,
+                         CFX_FontCache* pCache,
+                         const CFX_Matrix* pObject2Device,
+                         FX_FLOAT font_size,
+                         uint32_t color) override;
 
   const int m_HorzSize;
   const int m_VertSize;

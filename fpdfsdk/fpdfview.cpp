@@ -334,6 +334,17 @@ DLLEXPORT void STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
   return FSDK_SetSandBoxPolicy(policy, enable);
 }
 
+#if defined(_WIN32) && defined(PDFIUM_PRINT_TEXT_WITH_GDI)
+DLLEXPORT void STDCALL
+FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func) {
+  g_pdfium_typeface_accessible_func = func;
+}
+
+DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
+  g_pdfium_print_text_with_gdi = !!use_gdi;
+}
+#endif
+
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password) {
   // NOTE: the creation of the file needs to be by the embedder on the

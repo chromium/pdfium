@@ -211,6 +211,34 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary();
 DLLEXPORT void STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
                                              FPDF_BOOL enable);
 
+#if defined(_WIN32) && defined(PDFIUM_PRINT_TEXT_WITH_GDI)
+// Pointer to a helper function to make |font| with |text| of |text_length|
+// accessible when printing text with GDI. This is useful in sandboxed
+// environments where PDFium's access to GDI may be restricted.
+typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
+                                                         const wchar_t* text,
+                                                         size_t text_length);
+
+// Function: FPDF_SetTypefaceAccessibleFunc
+//          Set the function pointer that makes GDI fonts available in sandboxed
+//          environments. Experimental API.
+// Parameters:
+//          func -   A function pointer. See description above.
+// Return value:
+//          None.
+DLLEXPORT void STDCALL
+FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func);
+
+// Function: FPDF_SetPrintTextWithGDI
+//          Set whether to use GDI to draw fonts when printing on Windows.
+//          Experimental API.
+// Parameters:
+//          use_gdi -   Set to true to enable printing text with GDI.
+// Return value:
+//          None.
+DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
+#endif
+
 // Function: FPDF_LoadDocument
 //          Open and load a PDF document.
 // Parameters:
