@@ -300,10 +300,8 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
       }
       if (pWord) {
         if (bTypeset) {
-          fLineAscent =
-              std::max(fLineAscent, m_pVT->GetWordAscent(*pWord, TRUE));
-          fLineDescent =
-              std::min(fLineDescent, m_pVT->GetWordDescent(*pWord, TRUE));
+          fLineAscent = std::max(fLineAscent, m_pVT->GetWordAscent(*pWord));
+          fLineDescent = std::min(fLineDescent, m_pVT->GetWordDescent(*pWord));
           fWordWidth = m_pVT->GetWordWidth(*pWord);
         } else {
           fLineAscent =

@@ -92,15 +92,15 @@ class CPDF_VariableText : private CPDF_EditContainer {
   CFX_FloatRect GetContentRect() const override;
   const CFX_FloatRect& GetPlateRect() const override;
 
-  void SetAlignment(int32_t nFormat = 0) { m_nAlignment = nFormat; }
-  void SetPasswordChar(uint16_t wSubWord = '*') { m_wSubWord = wSubWord; }
-  void SetLimitChar(int32_t nLimitChar = 0) { m_nLimitChar = nLimitChar; }
-  void SetCharSpace(FX_FLOAT fCharSpace = 0.0f) { m_fCharSpace = fCharSpace; }
-  void SetMultiLine(FX_BOOL bMultiLine = TRUE) { m_bMultiLine = bMultiLine; }
-  void SetAutoReturn(FX_BOOL bAuto = TRUE) { m_bLimitWidth = bAuto; }
+  void SetAlignment(int32_t nFormat) { m_nAlignment = nFormat; }
+  void SetPasswordChar(uint16_t wSubWord) { m_wSubWord = wSubWord; }
+  void SetLimitChar(int32_t nLimitChar) { m_nLimitChar = nLimitChar; }
+  void SetCharSpace(FX_FLOAT fCharSpace) { m_fCharSpace = fCharSpace; }
+  void SetMultiLine(FX_BOOL bMultiLine) { m_bMultiLine = bMultiLine; }
+  void SetAutoReturn(FX_BOOL bAuto) { m_bLimitWidth = bAuto; }
   void SetFontSize(FX_FLOAT fFontSize) { m_fFontSize = fFontSize; }
-  void SetCharArray(int32_t nCharArray = 0) { m_nCharArray = nCharArray; }
-  void SetAutoFontSize(FX_BOOL bAuto = TRUE) { m_bAutoFontSize = bAuto; }
+  void SetCharArray(int32_t nCharArray) { m_nCharArray = nCharArray; }
+  void SetAutoFontSize(FX_BOOL bAuto) { m_bAutoFontSize = bAuto; }
   void Initialize();
 
   FX_BOOL IsValid() const { return m_bInitial; }
@@ -108,22 +108,15 @@ class CPDF_VariableText : private CPDF_EditContainer {
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
   void ResetAll();
-  void SetText(const FX_WCHAR* text,
-               int32_t charset = FXFONT_DEFAULT_CHARSET,
-               const CPVT_SecProps* pSecProps = nullptr,
-               const CPVT_WordProps* pWordProps = nullptr);
+  void SetText(const FX_WCHAR* text);
   CPVT_WordPlace InsertWord(const CPVT_WordPlace& place,
                             uint16_t word,
-                            int32_t charset = FXFONT_DEFAULT_CHARSET,
-                            const CPVT_WordProps* pWordProps = nullptr);
+                            int32_t charset,
+                            const CPVT_WordProps* pWordProps);
   CPVT_WordPlace InsertSection(const CPVT_WordPlace& place,
-                               const CPVT_SecProps* pSecProps = nullptr,
-                               const CPVT_WordProps* pWordProps = nullptr);
-  CPVT_WordPlace InsertText(const CPVT_WordPlace& place,
-                            const FX_WCHAR* text,
-                            int32_t charset = FXFONT_DEFAULT_CHARSET,
-                            const CPVT_SecProps* pSecProps = nullptr,
-                            const CPVT_WordProps* pWordProps = nullptr);
+                               const CPVT_SecProps* pSecProps,
+                               const CPVT_WordProps* pWordProps);
+  CPVT_WordPlace InsertText(const CPVT_WordPlace& place, const FX_WCHAR* text);
   CPVT_WordPlace DeleteWords(const CPVT_WordRange& PlaceRange);
   CPVT_WordPlace DeleteWord(const CPVT_WordPlace& place);
   CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place);
@@ -184,8 +177,7 @@ class CPDF_VariableText : private CPDF_EditContainer {
   FX_BOOL GetLineInfo(const CPVT_WordPlace& place, CPVT_LineInfo& lineinfo);
   FX_BOOL GetSectionInfo(const CPVT_WordPlace& place,
                          CPVT_SectionInfo& secinfo);
-  FX_FLOAT GetWordFontSize(const CPVT_WordInfo& WordInfo,
-                           FX_BOOL bFactFontSize = FALSE);
+  FX_FLOAT GetWordFontSize(const CPVT_WordInfo& WordInfo);
   FX_FLOAT GetWordWidth(int32_t nFontIndex,
                         uint16_t Word,
                         uint16_t SubWord,
@@ -197,10 +189,8 @@ class CPDF_VariableText : private CPDF_EditContainer {
   FX_FLOAT GetWordWidth(const CPVT_WordInfo& WordInfo);
   FX_FLOAT GetWordAscent(const CPVT_WordInfo& WordInfo, FX_FLOAT fFontSize);
   FX_FLOAT GetWordDescent(const CPVT_WordInfo& WordInfo, FX_FLOAT fFontSize);
-  FX_FLOAT GetWordAscent(const CPVT_WordInfo& WordInfo,
-                         FX_BOOL bFactFontSize = FALSE);
-  FX_FLOAT GetWordDescent(const CPVT_WordInfo& WordInfo,
-                          FX_BOOL bFactFontSize = FALSE);
+  FX_FLOAT GetWordAscent(const CPVT_WordInfo& WordInfo);
+  FX_FLOAT GetWordDescent(const CPVT_WordInfo& WordInfo);
   FX_FLOAT GetLineAscent(const CPVT_SectionInfo& SecInfo);
   FX_FLOAT GetLineDescent(const CPVT_SectionInfo& SecInfo);
   FX_FLOAT GetFontAscent(int32_t nFontIndex, FX_FLOAT fFontSize);

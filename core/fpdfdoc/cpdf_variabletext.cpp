@@ -335,10 +335,7 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(
 }
 
 CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
-                                             const FX_WCHAR* text,
-                                             int32_t charset,
-                                             const CPVT_SecProps* pSecProps,
-                                             const CPVT_WordProps* pProps) {
+                                             const FX_WCHAR* text) {
   CFX_WideString swText = text;
   CPVT_WordPlace wp = place;
   for (int32_t i = 0, sz = swText.GetLength(); i < sz; i++) {
@@ -350,7 +347,7 @@ CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
           if (swText.GetAt(i + 1) == 0x0A)
             i += 1;
 
-          wp = InsertSection(wp, pSecProps, pProps);
+          wp = InsertSection(wp, nullptr, nullptr);
         }
         break;
       case 0x0A:
@@ -358,13 +355,13 @@ CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
           if (swText.GetAt(i + 1) == 0x0D)
             i += 1;
 
-          wp = InsertSection(wp, pSecProps, pProps);
+          wp = InsertSection(wp, nullptr, nullptr);
         }
         break;
       case 0x09:
         word = 0x20;
       default:
-        wp = InsertWord(wp, word, charset, pProps);
+        wp = InsertWord(wp, word, FXFONT_DEFAULT_CHARSET, nullptr);
         break;
     }
     if (wp == oldwp)
@@ -396,10 +393,7 @@ CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
   return ClearLeftWord(AdjustLineHeader(place, TRUE));
 }
 
-void CPDF_VariableText::SetText(const FX_WCHAR* text,
-                                int32_t charset,
-                                const CPVT_SecProps* pSecProps,
-                                const CPVT_WordProps* pWordProps) {
+void CPDF_VariableText::SetText(const FX_WCHAR* text) {
   DeleteWords(CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));
   CFX_WideString swText = text;
   CPVT_WordPlace wp(0, 0, -1);
@@ -441,7 +435,7 @@ void CPDF_VariableText::SetText(const FX_WCHAR* text,
       case 0x09:
         word = 0x20;
       default:
-        wp = InsertWord(wp, word, charset, pWordProps);
+        wp = InsertWord(wp, word, FXFONT_DEFAULT_CHARSET, nullptr);
         break;
     }
     nCharCount++;
@@ -773,8 +767,7 @@ const CFX_FloatRect& CPDF_VariableText::GetPlateRect() const {
   return CPDF_EditContainer::GetPlateRect();
 }
 
-FX_FLOAT CPDF_VariableText::GetWordFontSize(const CPVT_WordInfo& WordInfo,
-                                            FX_BOOL bFactFontSize) {
+FX_FLOAT CPDF_VariableText::GetWordFontSize(const CPVT_WordInfo& WordInfo) {
   return GetFontSize();
 }
 
@@ -833,16 +826,12 @@ FX_FLOAT CPDF_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo,
   return GetFontDescent(GetWordFontIndex(WordInfo), fFontSize);
 }
 
-FX_FLOAT CPDF_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo,
-                                          FX_BOOL bFactFontSize) {
-  return GetFontAscent(GetWordFontIndex(WordInfo),
-                       GetWordFontSize(WordInfo, bFactFontSize));
+FX_FLOAT CPDF_VariableText::GetWordAscent(const CPVT_WordInfo& WordInfo) {
+  return GetFontAscent(GetWordFontIndex(WordInfo), GetWordFontSize(WordInfo));
 }
 
-FX_FLOAT CPDF_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo,
-                                           FX_BOOL bFactFontSize) {
-  return GetFontDescent(GetWordFontIndex(WordInfo),
-                        GetWordFontSize(WordInfo, bFactFontSize));
+FX_FLOAT CPDF_VariableText::GetWordDescent(const CPVT_WordInfo& WordInfo) {
+  return GetFontDescent(GetWordFontIndex(WordInfo), GetWordFontSize(WordInfo));
 }
 
 FX_FLOAT CPDF_VariableText::GetLineLeading(const CPVT_SectionInfo& SecInfo) {
