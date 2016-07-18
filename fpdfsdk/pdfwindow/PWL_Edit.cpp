@@ -463,17 +463,8 @@ void CPWL_Edit::OnKillFocus() {
   m_bFocus = FALSE;
 }
 
-void CPWL_Edit::SetHorzScale(int32_t nHorzScale, FX_BOOL bPaint /* = TRUE*/) {
-  m_pEdit->SetHorzScale(nHorzScale, bPaint);
-}
-
-void CPWL_Edit::SetCharSpace(FX_FLOAT fCharSpace, FX_BOOL bPaint /* = TRUE*/) {
-  m_pEdit->SetCharSpace(fCharSpace, bPaint);
-}
-
-void CPWL_Edit::SetLineLeading(FX_FLOAT fLineLeading,
-                               FX_BOOL bPaint /* = TRUE*/) {
-  m_pEdit->SetLineLeading(fLineLeading, bPaint);
+void CPWL_Edit::SetCharSpace(FX_FLOAT fCharSpace) {
+  m_pEdit->SetCharSpace(fCharSpace);
 }
 
 CFX_ByteString CPWL_Edit::GetSelectAppearanceStream(
@@ -559,14 +550,14 @@ FX_FLOAT CPWL_Edit::GetCharArrayAutoFontSize(CPDF_Font* pFont,
 void CPWL_Edit::SetCharArray(int32_t nCharArray) {
   if (HasFlag(PES_CHARARRAY) && nCharArray > 0) {
     m_pEdit->SetCharArray(nCharArray);
-    m_pEdit->SetTextOverflow(TRUE);
+    m_pEdit->SetTextOverflow(TRUE, TRUE);
 
     if (HasFlag(PWS_AUTOFONTSIZE)) {
       if (IPVT_FontMap* pFontMap = GetFontMap()) {
         FX_FLOAT fFontSize = GetCharArrayAutoFontSize(
             pFontMap->GetPDFFont(0), GetClientRect(), nCharArray);
         if (fFontSize > 0.0f) {
-          m_pEdit->SetAutoFontSize(FALSE);
+          m_pEdit->SetAutoFontSize(FALSE, TRUE);
           m_pEdit->SetFontSize(fFontSize);
         }
       }
@@ -580,7 +571,7 @@ void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
 
 void CPWL_Edit::ReplaceSel(const FX_WCHAR* csText) {
   m_pEdit->Clear();
-  m_pEdit->InsertText(csText);
+  m_pEdit->InsertText(csText, DEFAULT_CHARSET);
 }
 
 CFX_FloatRect CPWL_Edit::GetFocusRect() const {

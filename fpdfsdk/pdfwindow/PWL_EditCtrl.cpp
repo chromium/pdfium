@@ -483,7 +483,7 @@ void CPWL_EditCtrl::ShowVScrollBar(FX_BOOL bShow) {}
 
 void CPWL_EditCtrl::InsertText(const FX_WCHAR* csText) {
   if (!IsReadOnly())
-    m_pEdit->InsertText(csText);
+    m_pEdit->InsertText(csText, DEFAULT_CHARSET);
 }
 
 void CPWL_EditCtrl::InsertWord(uint16_t word, int32_t nCharset) {

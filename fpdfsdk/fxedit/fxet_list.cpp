@@ -14,7 +14,7 @@ CFX_ListItem::CFX_ListItem()
     : m_pEdit(new CFX_Edit),
       m_bSelected(FALSE),
       m_rcListItem(0.0f, 0.0f, 0.0f, 0.0f) {
-  m_pEdit->SetAlignmentV(1);
+  m_pEdit->SetAlignmentV(1, TRUE);
   m_pEdit->Initialize();
 }
 

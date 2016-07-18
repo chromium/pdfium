@@ -76,10 +76,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void SetCharArray(int32_t nCharArray);
   void SetLimitChar(int32_t nLimitChar);
 
-  void SetHorzScale(int32_t nHorzScale, FX_BOOL bPaint = TRUE);
-  void SetCharSpace(FX_FLOAT fCharSpace, FX_BOOL bPaint = TRUE);
-
-  void SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE);
+  void SetCharSpace(FX_FLOAT fCharSpace);
 
   FX_BOOL CanSelectAll() const;
   FX_BOOL CanClear() const;

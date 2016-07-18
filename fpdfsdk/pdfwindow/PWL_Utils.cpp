@@ -441,12 +441,12 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
   std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->SetFontMap(pFontMap);
   pEdit->SetPlateRect(rcBBox);
-  pEdit->SetAlignmentH(nAlignmentH);
-  pEdit->SetAlignmentV(nAlignmentV);
-  pEdit->SetMultiLine(bMultiLine);
-  pEdit->SetAutoReturn(bAutoReturn);
+  pEdit->SetAlignmentH(nAlignmentH, TRUE);
+  pEdit->SetAlignmentV(nAlignmentV, TRUE);
+  pEdit->SetMultiLine(bMultiLine, TRUE);
+  pEdit->SetAutoReturn(bAutoReturn, TRUE);
   if (IsFloatZero(fFontSize))
-    pEdit->SetAutoFontSize(TRUE);
+    pEdit->SetAutoFontSize(TRUE, TRUE);
   else
     pEdit->SetFontSize(fFontSize);
 
@@ -473,12 +473,12 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
 
   std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->SetFontMap(pFontMap);
-  pEdit->SetAlignmentH(1);
-  pEdit->SetAlignmentV(1);
-  pEdit->SetMultiLine(FALSE);
-  pEdit->SetAutoReturn(FALSE);
+  pEdit->SetAlignmentH(1, TRUE);
+  pEdit->SetAlignmentV(1, TRUE);
+  pEdit->SetMultiLine(FALSE, TRUE);
+  pEdit->SetAutoReturn(FALSE, TRUE);
   if (IsFloatZero(fFontSize))
-    pEdit->SetAutoFontSize(TRUE);
+    pEdit->SetAutoFontSize(TRUE, TRUE);
   else
     pEdit->SetFontSize(fFontSize);
 

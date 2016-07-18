@@ -30,8 +30,6 @@ class IFX_Edit_UndoItem;
 #define FX_EDIT_IsFloatSmaller(fa, fb) \
   (fa < fb && !FX_EDIT_IsFloatEqual(fa, fb))
 
-enum REFRESH_PLAN_E { RP_ANALYSE, RP_NOANALYSE, RP_OPTIONAL };
-
 enum EDIT_PROPS_E {
   EP_LINELEADING,
   EP_LINEINDENT,
@@ -352,9 +350,7 @@ class CFXEU_InsertText : public CFX_Edit_UndoItem {
                    const CPVT_WordPlace& wpOldPlace,
                    const CPVT_WordPlace& wpNewPlace,
                    const CFX_WideString& swText,
-                   int32_t charset,
-                   const CPVT_SecProps* pSecProps,
-                   const CPVT_WordProps* pWordProps);
+                   int32_t charset);
   ~CFXEU_InsertText() override;
 
   // CFX_Edit_UndoItem
@@ -368,22 +364,19 @@ class CFXEU_InsertText : public CFX_Edit_UndoItem {
   CPVT_WordPlace m_wpNew;
   CFX_WideString m_swText;
   int32_t m_nCharset;
-  CPVT_SecProps m_SecProps;
-  CPVT_WordProps m_WordProps;
 };
 
 class CFX_Edit {
  public:
-  static CFX_ByteString GetEditAppearanceStream(
-      CFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange = nullptr,
-      FX_BOOL bContinuous = TRUE,
-      uint16_t SubWord = 0);
+  static CFX_ByteString GetEditAppearanceStream(CFX_Edit* pEdit,
+                                                const CFX_FloatPoint& ptOffset,
+                                                const CPVT_WordRange* pRange,
+                                                FX_BOOL bContinuous,
+                                                uint16_t SubWord);
   static CFX_ByteString GetSelectAppearanceStream(
       CFX_Edit* pEdit,
       const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange = nullptr);
+      const CPVT_WordRange* pRange);
   static void DrawEdit(CFX_RenderDevice* pDevice,
                        CFX_Matrix* pUser2Device,
                        CFX_Edit* pEdit,
@@ -440,29 +433,27 @@ class CFX_Edit {
   void Initialize();
 
   // Set the bounding box of the text area.
-  void SetPlateRect(const CFX_FloatRect& rect, FX_BOOL bPaint = TRUE);
+  void SetPlateRect(const CFX_FloatRect& rect);
   void SetScrollPos(const CFX_FloatPoint& point);
 
   // Set the horizontal text alignment. (nFormat [0:left, 1:middle, 2:right])
-  void SetAlignmentH(int32_t nFormat = 0, FX_BOOL bPaint = TRUE);
+  void SetAlignmentH(int32_t nFormat, FX_BOOL bPaint);
   // Set the vertical text alignment. (nFormat [0:left, 1:middle, 2:right])
-  void SetAlignmentV(int32_t nFormat = 0, FX_BOOL bPaint = TRUE);
+  void SetAlignmentV(int32_t nFormat, FX_BOOL bPaint);
 
   // Set the substitution character for hidden text.
-  void SetPasswordChar(uint16_t wSubWord = '*', FX_BOOL bPaint = TRUE);
+  void SetPasswordChar(uint16_t wSubWord, FX_BOOL bPaint);
 
   // Set the maximum number of words in the text.
-  void SetLimitChar(int32_t nLimitChar = 0, FX_BOOL bPaint = TRUE);
-  void SetCharArray(int32_t nCharArray = 0, FX_BOOL bPaint = TRUE);
-  void SetCharSpace(FX_FLOAT fCharSpace = 0.0f, FX_BOOL bPaint = TRUE);
-  void SetHorzScale(int32_t nHorzScale = 100, FX_BOOL bPaint = TRUE);
-  void SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE);
-  void SetMultiLine(FX_BOOL bMultiLine = TRUE, FX_BOOL bPaint = TRUE);
-  void SetAutoReturn(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
-  void SetAutoFontSize(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
-  void SetAutoScroll(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
-  void SetFontSize(FX_FLOAT fFontSize, FX_BOOL bPaint = TRUE);
-  void SetTextOverflow(FX_BOOL bAllowed = FALSE, FX_BOOL bPaint = TRUE);
+  void SetLimitChar(int32_t nLimitChar);
+  void SetCharArray(int32_t nCharArray);
+  void SetCharSpace(FX_FLOAT fCharSpace);
+  void SetMultiLine(FX_BOOL bMultiLine, FX_BOOL bPaint);
+  void SetAutoReturn(FX_BOOL bAuto, FX_BOOL bPaint);
+  void SetAutoFontSize(FX_BOOL bAuto, FX_BOOL bPaint);
+  void SetAutoScroll(FX_BOOL bAuto, FX_BOOL bPaint);
+  void SetFontSize(FX_FLOAT fFontSize);
+  void SetTextOverflow(FX_BOOL bAllowed, FX_BOOL bPaint);
   FX_BOOL IsRichText() const;
   void SetRichText(FX_BOOL bRichText = TRUE, FX_BOOL bPaint = TRUE);
   FX_BOOL SetRichFontSize(FX_FLOAT fFontSize);
@@ -486,22 +477,13 @@ class CFX_Edit {
   void OnVK_RIGHT(FX_BOOL bShift, FX_BOOL bCtrl);
   void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl);
   void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl);
-  void SetText(const FX_WCHAR* text,
-               int32_t charset = DEFAULT_CHARSET,
-               const CPVT_SecProps* pSecProps = nullptr,
-               const CPVT_WordProps* pWordProps = nullptr);
-  FX_BOOL InsertWord(uint16_t word,
-                     int32_t charset = DEFAULT_CHARSET,
-                     const CPVT_WordProps* pWordProps = nullptr);
-  FX_BOOL InsertReturn(const CPVT_SecProps* pSecProps = nullptr,
-                       const CPVT_WordProps* pWordProps = nullptr);
+  void SetText(const FX_WCHAR* text);
+  FX_BOOL InsertWord(uint16_t word, int32_t charset);
+  FX_BOOL InsertReturn();
   FX_BOOL Backspace();
   FX_BOOL Delete();
   FX_BOOL Clear();
-  FX_BOOL InsertText(const FX_WCHAR* text,
-                     int32_t charset = DEFAULT_CHARSET,
-                     const CPVT_SecProps* pSecProps = nullptr,
-                     const CPVT_WordProps* pWordProps = nullptr);
+  FX_BOOL InsertText(const FX_WCHAR* text, int32_t charset);
   FX_BOOL Redo();
   FX_BOOL Undo();
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
@@ -551,9 +533,7 @@ class CFX_Edit {
 
   CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
                               const FX_WCHAR* text,
-                              int32_t charset,
-                              const CPVT_SecProps* pSecProps,
-                              const CPVT_WordProps* pWordProps);
+                              int32_t charset);
   int32_t GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset);
 
   int32_t GetTotalLines() const;
@@ -578,12 +558,6 @@ class CFX_Edit {
   void SetScrollLimit();
   void SetContentChanged();
 
-  void SetText(const FX_WCHAR* text,
-               int32_t charset,
-               const CPVT_SecProps* pSecProps,
-               const CPVT_WordProps* pWordProps,
-               FX_BOOL bAddUndo,
-               FX_BOOL bPaint);
   FX_BOOL InsertWord(uint16_t word,
                      int32_t charset,
                      const CPVT_WordProps* pWordProps,
@@ -598,8 +572,6 @@ class CFX_Edit {
   FX_BOOL Clear(FX_BOOL bAddUndo, FX_BOOL bPaint);
   FX_BOOL InsertText(const FX_WCHAR* text,
                      int32_t charset,
-                     const CPVT_SecProps* pSecProps,
-                     const CPVT_WordProps* pWordProps,
                      FX_BOOL bAddUndo,
                      FX_BOOL bPaint);
   void PaintInsertText(const CPVT_WordPlace& wpOld,
@@ -610,9 +582,7 @@ class CFX_Edit {
   inline CFX_FloatRect VTToEdit(const CFX_FloatRect& rect) const;
   inline CFX_FloatRect EditToVT(const CFX_FloatRect& rect) const;
 
-  void Refresh(REFRESH_PLAN_E ePlan,
-               const CPVT_WordRange* pRange1 = nullptr,
-               const CPVT_WordRange* pRange2 = nullptr);
+  void Refresh();
   void RefreshPushLineRects(const CPVT_WordRange& wr);
   void RefreshPushRandomRects(const CPVT_WordRange& wr);
 

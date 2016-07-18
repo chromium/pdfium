@@ -1376,11 +1376,11 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
   rcEdit.Normalize();
 
   pEdit->SetPlateRect(rcEdit);
-  pEdit->SetAlignmentV(1);
+  pEdit->SetAlignmentV(1, TRUE);
 
   FX_FLOAT fFontSize = GetFontSize();
   if (IsFloatZero(fFontSize))
-    pEdit->SetAutoFontSize(TRUE);
+    pEdit->SetAutoFontSize(TRUE, TRUE);
   else
     pEdit->SetFontSize(fFontSize);
 
@@ -1528,22 +1528,22 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
 
   CFX_FloatRect rcClient = GetClientRect();
   pEdit->SetPlateRect(rcClient);
-  pEdit->SetAlignmentH(pControl->GetControlAlignment());
+  pEdit->SetAlignmentH(pControl->GetControlAlignment(), TRUE);
 
   uint32_t dwFieldFlags = pField->GetFieldFlags();
   FX_BOOL bMultiLine = (dwFieldFlags >> 12) & 1;
 
   if (bMultiLine) {
-    pEdit->SetMultiLine(TRUE);
-    pEdit->SetAutoReturn(TRUE);
+    pEdit->SetMultiLine(TRUE, TRUE);
+    pEdit->SetAutoReturn(TRUE, TRUE);
   } else {
-    pEdit->SetAlignmentV(1);
+    pEdit->SetAlignmentV(1, TRUE);
   }
 
   uint16_t subWord = 0;
   if ((dwFieldFlags >> 13) & 1) {
     subWord = '*';
-    pEdit->SetPasswordChar(subWord);
+    pEdit->SetPasswordChar(subWord, TRUE);
   }
 
   int nMaxLen = pField->GetMaxLen();
@@ -1574,7 +1574,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   }
 
   if (IsFloatZero(fFontSize))
-    pEdit->SetAutoFontSize(TRUE);
+    pEdit->SetAutoFontSize(TRUE, TRUE);
   else
     pEdit->SetFontSize(fFontSize);
 

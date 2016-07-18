@@ -96,13 +96,11 @@ class CPDF_VariableText : private CPDF_EditContainer {
   void SetPasswordChar(uint16_t wSubWord = '*') { m_wSubWord = wSubWord; }
   void SetLimitChar(int32_t nLimitChar = 0) { m_nLimitChar = nLimitChar; }
   void SetCharSpace(FX_FLOAT fCharSpace = 0.0f) { m_fCharSpace = fCharSpace; }
-  void SetHorzScale(int32_t nHorzScale = 100) { m_nHorzScale = nHorzScale; }
   void SetMultiLine(FX_BOOL bMultiLine = TRUE) { m_bMultiLine = bMultiLine; }
   void SetAutoReturn(FX_BOOL bAuto = TRUE) { m_bLimitWidth = bAuto; }
   void SetFontSize(FX_FLOAT fFontSize) { m_fFontSize = fFontSize; }
   void SetCharArray(int32_t nCharArray = 0) { m_nCharArray = nCharArray; }
   void SetAutoFontSize(FX_BOOL bAuto = TRUE) { m_bAutoFontSize = bAuto; }
-  void SetLineLeading(FX_FLOAT fLineLeading) { m_fLineLeading = fLineLeading; }
   void Initialize();
 
   FX_BOOL IsValid() const { return m_bInitial; }
