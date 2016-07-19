@@ -174,20 +174,19 @@ void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node* pItem,
                                          FX_FLOAT& fCalcWidth,
                                          FX_FLOAT& fCalcHeight) {
   CXFA_WidgetAcc* pAcc = static_cast<CXFA_WidgetAcc*>(pItem->GetWidgetData());
-  if (!pAcc) {
+  if (!pAcc)
     return;
-  }
+
   pAcc->StartWidgetLayout(fCalcWidth, fCalcHeight);
 }
+
 FX_BOOL CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
                                     int32_t iBlockIndex,
                                     FX_FLOAT& fCalcHeightPos) {
   CXFA_WidgetAcc* pAcc = static_cast<CXFA_WidgetAcc*>(pItem->GetWidgetData());
-  if (!pAcc) {
-    return FALSE;
-  }
-  return (XFA_LAYOUTRESULT)pAcc->FindSplitPos(iBlockIndex, fCalcHeightPos);
+  return pAcc && pAcc->FindSplitPos(iBlockIndex, fCalcHeightPos);
 }
+
 FX_BOOL CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
   FX_BOOL bRet = FALSE;
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();

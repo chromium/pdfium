@@ -2979,7 +2979,7 @@ static CXFA_Node* XFA_ScriptInstanceManager_CreateInstance(
     ASSERT(pDataScope);
   }
   CXFA_Node* pInstance = pDocument->DataMerge_CopyContainer(
-      pTemplateNode, pFormParent, pDataScope, TRUE, bDataMerge);
+      pTemplateNode, pFormParent, pDataScope, TRUE, bDataMerge, TRUE);
   if (pInstance) {
     pDocument->DataMerge_UpdateBindingRelations(pInstance);
     pFormParent->RemoveChild(pInstance);

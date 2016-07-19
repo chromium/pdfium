@@ -849,7 +849,7 @@ FX_BOOL CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
         pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
       }
       pBreakLeaderNode = pDocument->DataMerge_CopyContainer(
-          pLeaderTemplate, pFormNode, pDataScope, TRUE);
+          pLeaderTemplate, pFormNode, pDataScope, TRUE, TRUE, TRUE);
       pDocument->DataMerge_UpdateBindingRelations(pBreakLeaderNode);
       SetLayoutGeneratedNodeFlag(pBreakLeaderNode);
     }
@@ -858,7 +858,7 @@ FX_BOOL CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
         pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
       }
       pBreakTrailerNode = pDocument->DataMerge_CopyContainer(
-          pTrailerTemplate, pFormNode, pDataScope, TRUE);
+          pTrailerTemplate, pFormNode, pDataScope, TRUE, TRUE, TRUE);
       pDocument->DataMerge_UpdateBindingRelations(pBreakTrailerNode);
       SetLayoutGeneratedNodeFlag(pBreakTrailerNode);
     }
@@ -881,7 +881,7 @@ FX_BOOL CXFA_LayoutPageMgr::ProcessBookendLeaderOrTrailer(
         pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
       }
       pBookendAppendNode = pDocument->DataMerge_CopyContainer(
-          pLeaderTemplate, pFormNode, pDataScope, TRUE);
+          pLeaderTemplate, pFormNode, pDataScope, TRUE, TRUE, TRUE);
       pDocument->DataMerge_UpdateBindingRelations(pBookendAppendNode);
       SetLayoutGeneratedNodeFlag(pBookendAppendNode);
       return TRUE;
@@ -1003,7 +1003,7 @@ FX_BOOL CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
           pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
         }
         pLeaderNode = pDocument->DataMerge_CopyContainer(
-            pLeaderTemplate, pFormNode, pDataScope, TRUE);
+            pLeaderTemplate, pFormNode, pDataScope, TRUE, TRUE, TRUE);
         pDocument->DataMerge_UpdateBindingRelations(pLeaderNode);
         SetLayoutGeneratedNodeFlag(pLeaderNode);
       }
@@ -1012,7 +1012,7 @@ FX_BOOL CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
           pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
         }
         pTrailerNode = pDocument->DataMerge_CopyContainer(
-            pTrailerTemplate, pFormNode, pDataScope, TRUE);
+            pTrailerTemplate, pFormNode, pDataScope, TRUE, TRUE, TRUE);
         pDocument->DataMerge_UpdateBindingRelations(pTrailerNode);
         SetLayoutGeneratedNodeFlag(pTrailerNode);
       }
@@ -1742,7 +1742,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           }
           pContainerItem->m_pFormNode = pDocument->DataMerge_CopyContainer(
               pContainerItem->m_pFormNode, pParentNode,
-              ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record)), TRUE);
+              ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record)), TRUE, TRUE,
+              TRUE);
         } break;
         case XFA_Element::ContentArea: {
           CXFA_Node* pParentNode = pContainerItem->m_pParent->m_pFormNode;

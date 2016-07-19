@@ -855,7 +855,8 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
             ASSERT(rgItemMatchList.GetSize());
             SortRecurseRecord(rgItemMatchList, pDataScope, TRUE);
             pDocument->DataMerge_CopyContainer(
-                rgItemMatchList[0].pTemplateChild, pSubformSetNode, pDataScope);
+                rgItemMatchList[0].pTemplateChild, pSubformSetNode, pDataScope,
+                FALSE, TRUE, TRUE);
             break;
           }
           case XFA_ATTRIBUTEENUM_Unordered: {
@@ -865,13 +866,14 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
                    i++) {
                 pDocument->DataMerge_CopyContainer(
                     rgItemMatchList[i].pTemplateChild, pSubformSetNode,
-                    pDataScope);
+                    pDataScope, FALSE, TRUE, TRUE);
               }
             }
             for (int32_t i = 0, count = rgItemUnmatchList.GetSize(); i < count;
                  i++) {
               pDocument->DataMerge_CopyContainer(rgItemUnmatchList[i],
-                                                 pSubformSetNode, pDataScope);
+                                                 pSubformSetNode, pDataScope,
+                                                 FALSE, TRUE, TRUE);
             }
             break;
           }
@@ -894,7 +896,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
                                                 pTemplateChild, TRUE, nullptr);
           } else if (pTemplateChild->IsContainerNode()) {
             pDocument->DataMerge_CopyContainer(pTemplateChild, pSubformSetNode,
-                                               pDataScope);
+                                               pDataScope, FALSE, TRUE, TRUE);
           }
         }
       }
@@ -935,7 +937,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
                                                 pTemplateChild, TRUE, nullptr);
           } else if (pTemplateChild->IsContainerNode()) {
             pDocument->DataMerge_CopyContainer(pTemplateChild, pSubformNode,
-                                               pDataScope);
+                                               pDataScope, FALSE, TRUE, TRUE);
           }
         }
       }
@@ -963,7 +965,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
           continue;
 
         pDocument->DataMerge_CopyContainer(pTemplateChild, pSubformSetNode,
-                                           pDataScope, FALSE, bDataMerge);
+                                           pDataScope, FALSE, bDataMerge, TRUE);
         bFound = TRUE;
       }
     }
@@ -1470,7 +1472,8 @@ void CXFA_Document::DoDataMerge() {
       XFA_NodeMerge_CloneOrMergeContainer(this, pSubformSetNode, pTemplateChild,
                                           TRUE, nullptr);
     } else if (pTemplateChild->IsContainerNode()) {
-      DataMerge_CopyContainer(pTemplateChild, pSubformSetNode, pDataTopLevel);
+      DataMerge_CopyContainer(pTemplateChild, pSubformSetNode, pDataTopLevel,
+                              FALSE, TRUE, TRUE);
     }
   }
   if (pDDRoot)
