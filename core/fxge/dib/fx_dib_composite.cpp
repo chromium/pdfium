@@ -4693,7 +4693,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
     int index = 0;
     if (m_pPalette) {
       for (int i = 0; i < 2; i++) {
-        if (m_pPalette[i] == color) {
+        if (m_pPalette.get()[i] == color) {
           index = i;
         }
       }

@@ -45,19 +45,6 @@ size_t GetRefAggContextSize(FX_BOOL val) {
 // difference for typical JBIG2 documents.
 static const int kSymbolDictCacheMaxSize = 2;
 
-CJBig2_Context* CJBig2_Context::CreateContext(
-    CPDF_StreamAcc* pGlobalStream,
-    CPDF_StreamAcc* pSrcStream,
-    std::list<CJBig2_CachePair>* pSymbolDictCache,
-    IFX_Pause* pPause) {
-  return new CJBig2_Context(pGlobalStream, pSrcStream, pSymbolDictCache, pPause,
-                            false);
-}
-
-void CJBig2_Context::DestroyContext(CJBig2_Context* pContext) {
-  delete pContext;
-}
-
 CJBig2_Context::CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
                                CPDF_StreamAcc* pSrcStream,
                                std::list<CJBig2_CachePair>* pSymbolDictCache,
@@ -69,26 +56,17 @@ CJBig2_Context::CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
       m_PauseStep(10),
       m_pPause(pPause),
       m_ProcessingStatus(FXCODEC_STATUS_FRAME_READY),
-      m_gbContext(nullptr),
       m_dwOffset(0),
       m_pSymbolDictCache(pSymbolDictCache),
       m_bIsGlobal(bIsGlobal) {
   if (pGlobalStream && (pGlobalStream->GetSize() > 0)) {
-    m_pGlobalContext = new CJBig2_Context(nullptr, pGlobalStream,
-                                          pSymbolDictCache, pPause, true);
-  } else {
-    m_pGlobalContext = nullptr;
+    m_pGlobalContext.reset(new CJBig2_Context(nullptr, pGlobalStream,
+                                              pSymbolDictCache, pPause, true));
   }
-
   m_pStream.reset(new CJBig2_BitStream(pSrcStream));
 }
 
-CJBig2_Context::~CJBig2_Context() {
-  FX_Free(m_gbContext);
-  m_gbContext = nullptr;
-  delete m_pGlobalContext;
-  m_pGlobalContext = nullptr;
-}
+CJBig2_Context::~CJBig2_Context() {}
 
 int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
   int32_t nRet;
@@ -135,9 +113,11 @@ int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
   }
   return JBIG2_SUCCESS;
 }
+
 int32_t CJBig2_Context::decode_EmbedOrgnazation(IFX_Pause* pPause) {
   return decode_SquentialOrgnazation(pPause);
 }
+
 int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
   int32_t nRet;
   while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
@@ -158,6 +138,7 @@ int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
   m_nSegmentDecoded = 0;
   return decode_RandomOrgnazation(pPause);
 }
+
 int32_t CJBig2_Context::decode_RandomOrgnazation(IFX_Pause* pPause) {
   for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
     int32_t nRet =
@@ -176,6 +157,7 @@ int32_t CJBig2_Context::decode_RandomOrgnazation(IFX_Pause* pPause) {
   }
   return JBIG2_SUCCESS;
 }
+
 int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
                                      int32_t width,
                                      int32_t height,
@@ -199,6 +181,7 @@ int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
   }
   return Continue(pPause);
 }
+
 int32_t CJBig2_Context::Continue(IFX_Pause* pPause) {
   m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
   int32_t nRet = 0;
@@ -245,6 +228,7 @@ CJBig2_Segment* CJBig2_Context::findSegmentByNumber(uint32_t dwNumber) {
   }
   return nullptr;
 }
+
 CJBig2_Segment* CJBig2_Context::findReferredSegmentByTypeAndIndex(
     CJBig2_Segment* pSegment,
     uint8_t cType,
@@ -261,6 +245,7 @@ CJBig2_Segment* CJBig2_Context::findReferredSegmentByTypeAndIndex(
   }
   return nullptr;
 }
+
 int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
   if (m_pStream->readInteger(&pSegment->m_dwNumber) != 0 ||
       m_pStream->read1Byte(&pSegment->m_cFlags.c) != 0) {
@@ -1106,15 +1091,15 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
   }
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   if (m_pGRD->MMR == 0) {
-    if (!m_gbContext) {
+    if (m_gbContext.empty()) {
       const size_t size = GetHuffContextSize(m_pGRD->GBTEMPLATE);
-      m_gbContext = FX_Alloc(JBig2ArithCtx, size);
-      JBIG2_memset(m_gbContext, 0, sizeof(JBig2ArithCtx) * size);
+      m_gbContext.resize(size);
     }
     if (!m_pArithDecoder) {
       m_pArithDecoder.reset(new CJBig2_ArithDecoder(m_pStream.get()));
-      m_ProcessingStatus = m_pGRD->Start_decode_Arith(
-          &pSegment->m_Result.im, m_pArithDecoder.get(), m_gbContext, pPause);
+      m_ProcessingStatus = m_pGRD->Start_decode_Arith(&pSegment->m_Result.im,
+                                                      m_pArithDecoder.get(),
+                                                      &m_gbContext[0], pPause);
     } else {
       m_ProcessingStatus = m_pGRD->Continue_decode(pPause);
     }
@@ -1136,8 +1121,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       return JBIG2_SUCCESS;
     } else {
       m_pArithDecoder.reset();
-      FX_Free(m_gbContext);
-      m_gbContext = nullptr;
+      m_gbContext.clear();
       if (!pSegment->m_Result.im) {
         m_ProcessingStatus = FXCODEC_STATUS_ERROR;
         m_pGRD.reset();
@@ -1373,6 +1357,7 @@ void CJBig2_Context::huffman_assign_code(int* CODES, int* PREFLEN, int NTEMP) {
   FX_Free(LENCOUNT);
   FX_Free(FIRSTCODE);
 }
+
 void CJBig2_Context::huffman_assign_code(JBig2HuffmanCode* SBSYMCODES,
                                          int NTEMP) {
   int CURLEN, LENMAX, CURCODE, CURTEMP, i;

@@ -10,6 +10,7 @@
 #include <list>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fxcodec/include/fx_codec_def.h"
@@ -40,13 +41,12 @@ using CJBig2_CachePair = std::pair<CJBig2_CacheKey, CJBig2_SymbolDict*>;
 
 class CJBig2_Context {
  public:
-  static CJBig2_Context* CreateContext(
-      CPDF_StreamAcc* pGlobalStream,
-      CPDF_StreamAcc* pSrcStream,
-      std::list<CJBig2_CachePair>* pSymbolDictCache,
-      IFX_Pause* pPause = nullptr);
-
-  static void DestroyContext(CJBig2_Context* pContext);
+  CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
+                 CPDF_StreamAcc* pSrcStream,
+                 std::list<CJBig2_CachePair>* pSymbolDictCache,
+                 IFX_Pause* pPause,
+                 bool bIsGlobal);
+  ~CJBig2_Context();
 
   int32_t getFirstPage(uint8_t* pBuf,
                        int32_t width,
@@ -58,59 +58,36 @@ class CJBig2_Context {
   FXCODEC_STATUS GetProcessingStatus() { return m_ProcessingStatus; }
 
  private:
-  CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
-                 CPDF_StreamAcc* pSrcStream,
-                 std::list<CJBig2_CachePair>* pSymbolDictCache,
-                 IFX_Pause* pPause,
-                 bool bIsGlobal);
-
-  ~CJBig2_Context();
-
   int32_t decode_SquentialOrgnazation(IFX_Pause* pPause);
-
   int32_t decode_EmbedOrgnazation(IFX_Pause* pPause);
-
   int32_t decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause);
-
   int32_t decode_RandomOrgnazation(IFX_Pause* pPause);
 
   CJBig2_Segment* findSegmentByNumber(uint32_t dwNumber);
-
   CJBig2_Segment* findReferredSegmentByTypeAndIndex(CJBig2_Segment* pSegment,
                                                     uint8_t cType,
                                                     int32_t nIndex);
 
   int32_t parseSegmentHeader(CJBig2_Segment* pSegment);
-
   int32_t parseSegmentData(CJBig2_Segment* pSegment, IFX_Pause* pPause);
   int32_t ProcessingParseSegmentData(CJBig2_Segment* pSegment,
                                      IFX_Pause* pPause);
-
   int32_t parseSymbolDict(CJBig2_Segment* pSegment, IFX_Pause* pPause);
-
   int32_t parseTextRegion(CJBig2_Segment* pSegment);
-
   int32_t parsePatternDict(CJBig2_Segment* pSegment, IFX_Pause* pPause);
-
   int32_t parseHalftoneRegion(CJBig2_Segment* pSegment, IFX_Pause* pPause);
-
   int32_t parseGenericRegion(CJBig2_Segment* pSegment, IFX_Pause* pPause);
-
   int32_t parseGenericRefinementRegion(CJBig2_Segment* pSegment);
-
   int32_t parseTable(CJBig2_Segment* pSegment);
-
   int32_t parseRegionInfo(JBig2RegionInfo* pRI);
 
   JBig2HuffmanCode* decodeSymbolIDHuffmanTable(CJBig2_BitStream* pStream,
                                                uint32_t SBNUMSYMS);
 
   void huffman_assign_code(int* CODES, int* PREFLEN, int NTEMP);
-
   void huffman_assign_code(JBig2HuffmanCode* SBSYMCODES, int NTEMP);
 
- private:
-  CJBig2_Context* m_pGlobalContext;
+  std::unique_ptr<CJBig2_Context> m_pGlobalContext;
   std::unique_ptr<CJBig2_BitStream> m_pStream;
   CJBig2_List<CJBig2_Segment> m_SegmentList;
   CJBig2_List<JBig2PageInfo> m_PageInfoList;
@@ -119,11 +96,11 @@ class CJBig2_Context {
   bool m_bInPage;
   bool m_bBufSpecified;
   int32_t m_PauseStep;
-  IFX_Pause* m_pPause;
+  IFX_Pause* const m_pPause;
   FXCODEC_STATUS m_ProcessingStatus;
+  std::vector<JBig2ArithCtx> m_gbContext;
   std::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
   std::unique_ptr<CJBig2_GRDProc> m_pGRD;
-  JBig2ArithCtx* m_gbContext;
   std::unique_ptr<CJBig2_Segment> m_pSegment;
   uint32_t m_dwOffset;
   JBig2RegionInfo m_ri;

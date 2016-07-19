@@ -37,24 +37,18 @@ JBig2DocumentContext* GetJBig2DocumentContext(
   return static_cast<JBig2DocumentContext*>(pContextHolder->get());
 }
 
-CCodec_Jbig2Context::CCodec_Jbig2Context() {
-  FXSYS_memset(this, 0, sizeof(CCodec_Jbig2Context));
-}
+CCodec_Jbig2Context::CCodec_Jbig2Context()
+    : m_width(0),
+      m_height(0),
+      m_pGlobalStream(nullptr),
+      m_pSrcStream(nullptr),
+      m_dest_buf(0),
+      m_dest_pitch(0),
+      m_pPause(nullptr) {}
+
+CCodec_Jbig2Context::~CCodec_Jbig2Context() {}
 
 CCodec_Jbig2Module::~CCodec_Jbig2Module() {}
-
-CCodec_Jbig2Context* CCodec_Jbig2Module::CreateJbig2Context() {
-  return new CCodec_Jbig2Context();
-}
-
-void CCodec_Jbig2Module::DestroyJbig2Context(
-    CCodec_Jbig2Context* pJbig2Context) {
-  if (pJbig2Context) {
-    CJBig2_Context::DestroyContext(pJbig2Context->m_pContext);
-    delete pJbig2Context;
-  }
-  pJbig2Context = nullptr;
-}
 
 FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
     CCodec_Jbig2Context* pJbig2Context,
@@ -79,9 +73,9 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
   pJbig2Context->m_dest_pitch = dest_pitch;
   pJbig2Context->m_pPause = pPause;
   FXSYS_memset(dest_buf, 0, height * dest_pitch);
-  pJbig2Context->m_pContext = CJBig2_Context::CreateContext(
+  pJbig2Context->m_pContext.reset(new CJBig2_Context(
       global_stream, src_stream, pJBig2DocumentContext->GetSymbolDictCache(),
-      pPause);
+      pPause, false));
   if (!pJbig2Context->m_pContext)
     return FXCODEC_STATUS_ERROR;
 
@@ -89,8 +83,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
                                                     dest_pitch, pPause);
   if (pJbig2Context->m_pContext->GetProcessingStatus() ==
       FXCODEC_STATUS_DECODE_FINISH) {
-    CJBig2_Context::DestroyContext(pJbig2Context->m_pContext);
-    pJbig2Context->m_pContext = nullptr;
+    pJbig2Context->m_pContext.reset();
     if (ret != JBIG2_SUCCESS)
       return FXCODEC_STATUS_ERROR;
 
@@ -111,8 +104,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::ContinueDecode(
       FXCODEC_STATUS_DECODE_FINISH) {
     return pJbig2Context->m_pContext->GetProcessingStatus();
   }
-  CJBig2_Context::DestroyContext(pJbig2Context->m_pContext);
-  pJbig2Context->m_pContext = nullptr;
+  pJbig2Context->m_pContext.reset();
   if (ret != JBIG2_SUCCESS)
     return FXCODEC_STATUS_ERROR;
 

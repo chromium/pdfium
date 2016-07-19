@@ -602,9 +602,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
   uint8_t* m_pMaskedLine;
   std::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
-  CCodec_Jbig2Context* m_pJbig2Context;
   CPDF_DIBSource* m_pMask;
   std::unique_ptr<CPDF_StreamAcc> m_pGlobalStream;
+  std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
   CPDF_Stream* m_pMaskStream;
   int m_Status;
 };

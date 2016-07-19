@@ -48,6 +48,7 @@ int _Partition(uint32_t* alut, uint32_t* clut, int l, int r) {
   clut[l] = p_c;
   return l;
 }
+
 void _Qsort(uint32_t* alut, uint32_t* clut, int l, int r) {
   if (l < r) {
     int pI = _Partition(alut, clut, l, r);
@@ -55,11 +56,13 @@ void _Qsort(uint32_t* alut, uint32_t* clut, int l, int r) {
     _Qsort(alut, clut, pI + 1, r);
   }
 }
+
 void _ColorDecode(uint32_t pal_v, uint8_t& r, uint8_t& g, uint8_t& b) {
   r = (uint8_t)((pal_v & 0xf00) >> 4);
   g = (uint8_t)(pal_v & 0x0f0);
   b = (uint8_t)((pal_v & 0x00f) << 4);
 }
+
 void _Obtain_Pal(uint32_t* aLut,
                  uint32_t* cLut,
                  uint32_t* dest_pal,
@@ -86,12 +89,14 @@ CFX_Palette::CFX_Palette() {
   m_aLut = nullptr;
   m_lut = 0;
 }
+
 CFX_Palette::~CFX_Palette() {
   FX_Free(m_pPalette);
   FX_Free(m_cLut);
   FX_Free(m_aLut);
   m_lut = 0;
 }
+
 FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap) {
   if (!pBitmap) {
     return FALSE;
@@ -131,6 +136,7 @@ FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap) {
   _Obtain_Pal(m_aLut, m_cLut, m_pPalette, m_lut);
   return TRUE;
 }
+
 FX_BOOL ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf,
                                     int dest_pitch,
                                     int width,
@@ -154,6 +160,7 @@ FX_BOOL ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf,
   }
   return TRUE;
 }
+
 FX_BOOL ConvertBuffer_8bppMask2Gray(uint8_t* dest_buf,
                                     int dest_pitch,
                                     int width,
@@ -168,6 +175,7 @@ FX_BOOL ConvertBuffer_8bppMask2Gray(uint8_t* dest_buf,
   }
   return TRUE;
 }
+
 FX_BOOL ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
                                    int dest_pitch,
                                    int width,
@@ -649,7 +657,7 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
                       const CFX_DIBSource* pSrcBitmap,
                       int src_left,
                       int src_top,
-                      uint32_t*& d_pal) {
+                      std::unique_ptr<uint32_t, FxFreeDeleter>* p_pal) {
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   switch (dest_format) {
     case FXDIB_Invalid:
@@ -685,17 +693,19 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
     case FXDIB_8bppRgba: {
       if ((src_format & 0xff) == 8 && !pSrcBitmap->GetPalette()) {
         return ConvertBuffer(FXDIB_8bppMask, dest_buf, dest_pitch, width,
-                             height, pSrcBitmap, src_left, src_top, d_pal);
+                             height, pSrcBitmap, src_left, src_top, p_pal);
       }
-      d_pal = FX_Alloc(uint32_t, 256);
+      p_pal->reset(FX_Alloc(uint32_t, 256));
       if (((src_format & 0xff) == 1 || (src_format & 0xff) == 8) &&
           pSrcBitmap->GetPalette()) {
         return ConvertBuffer_Plt2PltRgb8(dest_buf, dest_pitch, width, height,
-                                         pSrcBitmap, src_left, src_top, d_pal);
+                                         pSrcBitmap, src_left, src_top,
+                                         p_pal->get());
       }
       if ((src_format & 0xff) >= 24) {
         return ConvertBuffer_Rgb2PltRgb8(dest_buf, dest_pitch, width, height,
-                                         pSrcBitmap, src_left, src_top, d_pal);
+                                         pSrcBitmap, src_left, src_top,
+                                         p_pal->get());
       }
       return FALSE;
     }
@@ -800,16 +810,13 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format) const {
   if (!ret)
     return nullptr;
 
-  uint32_t* pal_8bpp = nullptr;
+  std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
   if (!ConvertBuffer(dest_format, pClone->GetBuffer(), pClone->GetPitch(),
-                     m_Width, m_Height, this, 0, 0, pal_8bpp)) {
-    FX_Free(pal_8bpp);
+                     m_Width, m_Height, this, 0, 0, &pal_8bpp)) {
     return nullptr;
   }
-  if (pal_8bpp) {
-    pClone->CopyPalette(pal_8bpp);
-    FX_Free(pal_8bpp);
-  }
+  if (pal_8bpp)
+    pClone->CopyPalette(pal_8bpp.get());
   return pClone.release();
 }
 
@@ -874,26 +881,21 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     }
   }
   FX_BOOL ret = FALSE;
-  uint32_t* pal_8bpp = nullptr;
+  std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
   ret = ConvertBuffer(dest_format, dest_buf, dest_pitch, m_Width, m_Height,
-                      this, 0, 0, pal_8bpp);
+                      this, 0, 0, &pal_8bpp);
   if (!ret) {
-    FX_Free(pal_8bpp);
-    if (pAlphaMask != m_pAlphaMask) {
+    if (pAlphaMask != m_pAlphaMask)
       delete pAlphaMask;
-    }
     FX_Free(dest_buf);
     return FALSE;
   }
-  if (m_pAlphaMask && pAlphaMask != m_pAlphaMask) {
+  if (m_pAlphaMask && pAlphaMask != m_pAlphaMask)
     delete m_pAlphaMask;
-  }
   m_pAlphaMask = pAlphaMask;
-  FX_Free(m_pPalette);
-  m_pPalette = pal_8bpp;
-  if (!m_bExtBuf) {
+  m_pPalette = std::move(pal_8bpp);
+  if (!m_bExtBuf)
     FX_Free(m_pBuffer);
-  }
   m_bExtBuf = FALSE;
   m_pBuffer = dest_buf;
   m_bpp = (uint8_t)dest_format;

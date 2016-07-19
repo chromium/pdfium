@@ -20,7 +20,7 @@ class IFX_Pause;
 class CCodec_Jbig2Context {
  public:
   CCodec_Jbig2Context();
-  ~CCodec_Jbig2Context() {}
+  ~CCodec_Jbig2Context();
 
   uint32_t m_width;
   uint32_t m_height;
@@ -29,8 +29,7 @@ class CCodec_Jbig2Context {
   uint8_t* m_dest_buf;
   uint32_t m_dest_pitch;
   IFX_Pause* m_pPause;
-  CJBig2_Context* m_pContext;
-  CJBig2_Image* m_dest_image;
+  std::unique_ptr<CJBig2_Context> m_pContext;
 };
 
 class CCodec_Jbig2Module {
@@ -38,7 +37,6 @@ class CCodec_Jbig2Module {
   CCodec_Jbig2Module() {}
   ~CCodec_Jbig2Module();
 
-  CCodec_Jbig2Context* CreateJbig2Context();
   FXCODEC_STATUS StartDecode(CCodec_Jbig2Context* pJbig2Context,
                              std::unique_ptr<CFX_Deletable>* pContextHolder,
                              uint32_t width,
@@ -50,7 +48,6 @@ class CCodec_Jbig2Module {
                              IFX_Pause* pPause);
   FXCODEC_STATUS ContinueDecode(CCodec_Jbig2Context* pJbig2Context,
                                 IFX_Pause* pPause);
-  void DestroyJbig2Context(CCodec_Jbig2Context* pJbig2Context);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_

@@ -164,20 +164,11 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
                       const CFX_DIBSource* pSrcBitmap,
                       int src_left,
                       int src_top,
-                      uint32_t*& pal);
+                      std::unique_ptr<uint32_t, FxFreeDeleter>* pal);
 
 class CFX_DIBSource {
  public:
   virtual ~CFX_DIBSource();
-
-  int GetWidth() const { return m_Width; }
-  int GetHeight() const { return m_Height; }
-
-  FXDIB_Format GetFormat() const {
-    return (FXDIB_Format)(m_AlphaFlag * 0x100 + m_bpp);
-  }
-  uint32_t GetPitch() const { return m_Pitch; }
-  uint32_t* GetPalette() const { return m_pPalette; }
 
   virtual uint8_t* GetBuffer() const;
   virtual const uint8_t* GetScanline(int line) const = 0;
@@ -190,6 +181,14 @@ class CFX_DIBSource {
                                   int clip_left,
                                   int clip_width) const = 0;
 
+  int GetWidth() const { return m_Width; }
+  int GetHeight() const { return m_Height; }
+
+  FXDIB_Format GetFormat() const {
+    return (FXDIB_Format)(m_AlphaFlag * 0x100 + m_bpp);
+  }
+  uint32_t GetPitch() const { return m_Pitch; }
+  uint32_t* GetPalette() const { return m_pPalette.get(); }
   int GetBPP() const { return m_bpp; }
 
   // TODO(thestig): Investigate this. Given the possible values of FXDIB_Format,
@@ -212,7 +211,7 @@ class CFX_DIBSource {
     SetPaletteEntry(index, color);
   }
 
-  void CopyPalette(const uint32_t* pSrcPal, uint32_t size = 256);
+  void CopyPalette(const uint32_t* pSrcPal);
 
   CFX_DIBitmap* Clone(const FX_RECT* pClip = nullptr) const;
   CFX_DIBitmap* CloneConvert(FXDIB_Format format) const;
@@ -256,17 +255,18 @@ class CFX_DIBSource {
  protected:
   CFX_DIBSource();
 
+  void BuildPalette();
+  FX_BOOL BuildAlphaMask();
+  int FindPalette(uint32_t color) const;
+  void GetPalette(uint32_t* pal, int alpha) const;
+
   int m_Width;
   int m_Height;
   int m_bpp;
   uint32_t m_AlphaFlag;
   uint32_t m_Pitch;
-  uint32_t* m_pPalette;
-
-  void BuildPalette();
-  FX_BOOL BuildAlphaMask();
-  int FindPalette(uint32_t color) const;
-  void GetPalette(uint32_t* pal, int alpha) const;
+  // TODO(weili): Use std::vector for this.
+  std::unique_ptr<uint32_t, FxFreeDeleter> m_pPalette;
 };
 
 class CFX_DIBitmap : public CFX_DIBSource {

@@ -44,10 +44,6 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
   static CFX_ByteString GetBitmapInfo(const CFX_DIBitmap* pBitmap);
   static CFX_DIBitmap* LoadFromBuf(BITMAPINFO* pbmi, void* pData);
   static HBITMAP GetDDBitmap(const CFX_DIBitmap* pBitmap, HDC hDC);
-  static CFX_DIBitmap* LoadFromDDB(HDC hDC,
-                                   HBITMAP hBitmap,
-                                   uint32_t* pPalette = nullptr,
-                                   uint32_t size = 256);
   static CFX_DIBitmap* LoadFromFile(const FX_WCHAR* filename);
   static CFX_DIBitmap* LoadFromFile(const FX_CHAR* filename);
   static CFX_DIBitmap* LoadDIBitmap(WINDIB_Open_Args_ args);
