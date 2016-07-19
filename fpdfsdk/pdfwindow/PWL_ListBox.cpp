@@ -94,6 +94,10 @@ void CPWL_ListBox::OnCreated() {
 }
 
 void CPWL_ListBox::OnDestroy() {
+  // Make sure the notifier is removed from the list as we are about to
+  // destroy the notifier and don't want to leave a dangling pointer.
+  if (m_pList)
+    m_pList->SetNotify(nullptr);
   m_pListNotify.reset();
 }
 
