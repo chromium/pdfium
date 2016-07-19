@@ -26,35 +26,27 @@ FX_BOOL CPWL_CBListBox::OnLButtonUp(const CFX_FloatPoint& point,
                                     uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
-  if (m_bMouseDown) {
-    ReleaseCapture();
-    m_bMouseDown = FALSE;
+  if (!m_bMouseDown)
+    return TRUE;
 
-    if (ClientHitTest(point)) {
-      if (CPWL_Wnd* pParent = GetParentWindow()) {
-        pParent->OnNotify(this, PNM_LBUTTONUP, 0,
-                          PWL_MAKEDWORD(point.x, point.y));
-      }
+  ReleaseCapture();
+  m_bMouseDown = FALSE;
 
-      FX_BOOL bExit = FALSE;
-      OnNotifySelChanged(FALSE, bExit, nFlag);
-      if (bExit)
-        return FALSE;
-    }
-  }
+  if (!ClientHitTest(point))
+    return TRUE;
+  if (CPWL_Wnd* pParent = GetParentWindow())
+    pParent->OnNotify(this, PNM_LBUTTONUP, 0, PWL_MAKEDWORD(point.x, point.y));
 
-  return TRUE;
+  FX_BOOL bExit = FALSE;
+  OnNotifySelChanged(FALSE, bExit, nFlag);
+
+  return !bExit;
 }
 
 FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
                                           FX_BOOL& bExit,
                                           uint32_t nFlag) {
-  if (!m_pList)
-    return FALSE;
-
   switch (nChar) {
-    default:
-      return FALSE;
     case FWL_VKEY_Up:
     case FWL_VKEY_Down:
     case FWL_VKEY_Home:
@@ -62,6 +54,8 @@ FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
     case FWL_VKEY_End:
     case FWL_VKEY_Right:
       break;
+    default:
+      return FALSE;
   }
 
   switch (nChar) {
@@ -95,15 +89,10 @@ FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
 FX_BOOL CPWL_CBListBox::OnCharWithExit(uint16_t nChar,
                                        FX_BOOL& bExit,
                                        uint32_t nFlag) {
-  if (!m_pList)
-    return FALSE;
-
   if (!m_pList->OnChar(nChar, IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag)))
     return FALSE;
-
-  if (CPWL_ComboBox* pComboBox = (CPWL_ComboBox*)GetParentWindow()) {
+  if (CPWL_ComboBox* pComboBox = (CPWL_ComboBox*)GetParentWindow())
     pComboBox->SetSelectText();
-  }
 
   OnNotifySelChanged(TRUE, bExit, nFlag);
 
