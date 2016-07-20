@@ -51,6 +51,7 @@
         "xfa/fde/cfx_chariter.h",
         "xfa/fde/cfx_wordbreak.cpp",
         "xfa/fde/cfx_wordbreak.h",
+        "xfa/fde/css/cfde_cssrulecollection.cpp",
         "xfa/fde/css/fde_css.cpp",
         "xfa/fde/css/fde_css.h",
         "xfa/fde/css/fde_csscache.cpp",
