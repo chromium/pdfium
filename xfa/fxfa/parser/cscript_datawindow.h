@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_DATAWINDOW_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_DATAWINDOW_H_
+#ifndef XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
+#define XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
 
 #include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
@@ -33,4 +33,4 @@ class CScript_DataWindow : public CXFA_Object {
                  XFA_ATTRIBUTE eAttribute);
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_DATAWINDOW_H_
+#endif  // XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_

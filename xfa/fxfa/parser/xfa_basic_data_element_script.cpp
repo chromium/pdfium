@@ -7,13 +7,13 @@
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
 #include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/parser/cscript_datawindow.h"
+#include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_layoutpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_logpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/xfa_script.h"
-#include "xfa/fxfa/parser/xfa_script_datawindow.h"
-#include "xfa/fxfa/parser/xfa_script_eventpseudomodel.h"
-#include "xfa/fxfa/parser/xfa_script_hostpseudomodel.h"
-#include "xfa/fxfa/parser/xfa_script_layoutpseudomodel.h"
-#include "xfa/fxfa/parser/xfa_script_logpseudomodel.h"
-#include "xfa/fxfa/parser/xfa_script_signaturepseudomodel.h"
 
 const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
     {0, 0, 0, 2, 316},      {0, 0, 2, 2, 316},       {0, 0, 4, 2, 316},

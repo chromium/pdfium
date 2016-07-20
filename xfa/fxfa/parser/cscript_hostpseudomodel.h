@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
+#ifndef XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_
+#define XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_
 
 #include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_document.h"
@@ -71,4 +71,4 @@ class CScript_HostPseudoModel : public CXFA_Object {
                              CFX_WideString& wsValue);
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
+#endif  // XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_

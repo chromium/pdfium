@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_
+#ifndef XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
+#define XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
 
 #include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
@@ -22,4 +22,4 @@ class CScript_LogPseudoModel : public CXFA_Object {
   void Trace(CFXJSE_Arguments* pArguments);
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_
+#endif  // XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_

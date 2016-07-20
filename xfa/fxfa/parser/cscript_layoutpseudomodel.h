@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
+#ifndef XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
+#define XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
 
 #include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -56,4 +56,4 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
   void PageImp(CFXJSE_Arguments* pArguments, FX_BOOL bAbsPage);
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
+#endif  // XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_

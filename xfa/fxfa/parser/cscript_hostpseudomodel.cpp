@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_script_hostpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
 
 #include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"

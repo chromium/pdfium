@@ -6,6 +6,12 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
+#include "xfa/fxfa/parser/cscript_datawindow.h"
+#include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_layoutpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_logpseudomodel.h"
+#include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/xfa_basic_imp.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -14,13 +20,7 @@
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_script.h"
-#include "xfa/fxfa/parser/xfa_script_datawindow.h"
-#include "xfa/fxfa/parser/xfa_script_eventpseudomodel.h"
-#include "xfa/fxfa/parser/xfa_script_hostpseudomodel.h"
 #include "xfa/fxfa/parser/xfa_script_imp.h"
-#include "xfa/fxfa/parser/xfa_script_layoutpseudomodel.h"
-#include "xfa/fxfa/parser/xfa_script_logpseudomodel.h"
-#include "xfa/fxfa/parser/xfa_script_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
+#ifndef XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
+#define XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
 
 #include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
@@ -83,4 +83,4 @@ class CScript_EventPseudoModel : public CXFA_Object {
   void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, FX_BOOL bSetting);
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
+#endif  // XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
