@@ -13,7 +13,11 @@
 #include "xfa/fxfa/include/xfa_ffapp.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 
-CPDFXFA_App* CPDFXFA_App::g_pApp = nullptr;
+namespace {
+
+CPDFXFA_App* g_pApp = nullptr;
+
+}  // namespace
 
 CPDFXFA_App* CPDFXFA_App::GetInstance() {
   if (!g_pApp) {

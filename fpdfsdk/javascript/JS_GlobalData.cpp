@@ -11,78 +11,13 @@
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
 
-CJS_GlobalVariableArray::CJS_GlobalVariableArray() {}
-
-CJS_GlobalVariableArray::~CJS_GlobalVariableArray() {
-  Empty();
-}
-
-void CJS_GlobalVariableArray::Copy(const CJS_GlobalVariableArray& array) {
-  Empty();
-  for (int i = 0, sz = array.Count(); i < sz; i++) {
-    CJS_KeyValue* pOldObjData = array.GetAt(i);
-    switch (pOldObjData->nType) {
-      case JS_GLOBALDATA_TYPE_NUMBER: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->dData = pOldObjData->dData;
-        Add(pNewObjData);
-      } break;
-      case JS_GLOBALDATA_TYPE_BOOLEAN: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->bData = pOldObjData->bData;
-        Add(pNewObjData);
-      } break;
-      case JS_GLOBALDATA_TYPE_STRING: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->sData = pOldObjData->sData;
-        Add(pNewObjData);
-      } break;
-      case JS_GLOBALDATA_TYPE_OBJECT: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->objData.Copy(pOldObjData->objData);
-        Add(pNewObjData);
-      } break;
-      case JS_GLOBALDATA_TYPE_NULL: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        Add(pNewObjData);
-      } break;
-    }
-  }
-}
-
-void CJS_GlobalVariableArray::Add(CJS_KeyValue* p) {
-  m_Array.Add(p);
-}
-
-int CJS_GlobalVariableArray::Count() const {
-  return m_Array.GetSize();
-}
-
-CJS_KeyValue* CJS_GlobalVariableArray::GetAt(int index) const {
-  return m_Array.GetAt(index);
-}
-
-void CJS_GlobalVariableArray::Empty() {
-  for (int i = 0, sz = m_Array.GetSize(); i < sz; i++)
-    delete m_Array.GetAt(i);
-  m_Array.RemoveAll();
-}
-
 #define READER_JS_GLOBALDATA_FILENAME L"Reader_JsGlobal.Data"
 #define PHANTOM_JS_GLOBALDATA_FILENAME L"Phantom_JsGlobal.Data"
 #define SDK_JS_GLOBALDATA_FILENAME L"SDK_JsGlobal.Data"
 
-static const uint8_t JS_RC4KEY[] = {
+namespace {
+
+const uint8_t JS_RC4KEY[] = {
     0x19, 0xa8, 0xe8, 0x01, 0xf6, 0xa8, 0xb6, 0x4d, 0x82, 0x04, 0x45, 0x6d,
     0xb4, 0xcf, 0xd7, 0x77, 0x67, 0xf9, 0x75, 0x9f, 0xf0, 0xe0, 0x1e, 0x51,
     0xee, 0x46, 0xfd, 0x0b, 0xc9, 0x93, 0x25, 0x55, 0x4a, 0xee, 0xe0, 0x16,
@@ -94,27 +29,29 @@ static const uint8_t JS_RC4KEY[] = {
     0xf8, 0x77, 0xd5, 0xa3};
 
 // Returns true if non-empty, setting sPropName
-static bool TrimPropName(CFX_ByteString* sPropName) {
+bool TrimPropName(CFX_ByteString* sPropName) {
   sPropName->TrimLeft();
   sPropName->TrimRight();
   return sPropName->GetLength() != 0;
 }
 
-CJS_GlobalData* CJS_GlobalData::g_Instance = nullptr;
+CJS_GlobalData* g_pInstance = nullptr;
+
+}  // namespace
 
 // static
 CJS_GlobalData* CJS_GlobalData::GetRetainedInstance(CPDFDoc_Environment* pApp) {
-  if (!g_Instance) {
-    g_Instance = new CJS_GlobalData();
+  if (!g_pInstance) {
+    g_pInstance = new CJS_GlobalData();
   }
-  ++g_Instance->m_RefCount;
-  return g_Instance;
+  ++g_pInstance->m_RefCount;
+  return g_pInstance;
 }
 
 void CJS_GlobalData::Release() {
   if (!--m_RefCount) {
-    delete g_Instance;
-    g_Instance = nullptr;
+    delete g_pInstance;
+    g_pInstance = nullptr;
   }
 }
 
@@ -160,13 +97,13 @@ void CJS_GlobalData::SetGlobalVariableNumber(const CFX_ByteString& propname,
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
-    pData->data.nType = JS_GLOBALDATA_TYPE_NUMBER;
+    pData->data.nType = JS_GlobalDataType::NUMBER;
     pData->data.dData = dData;
     return;
   }
   std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
   pNewData->data.sKey = sPropName;
-  pNewData->data.nType = JS_GLOBALDATA_TYPE_NUMBER;
+  pNewData->data.nType = JS_GlobalDataType::NUMBER;
   pNewData->data.dData = dData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -178,13 +115,13 @@ void CJS_GlobalData::SetGlobalVariableBoolean(const CFX_ByteString& propname,
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
-    pData->data.nType = JS_GLOBALDATA_TYPE_BOOLEAN;
+    pData->data.nType = JS_GlobalDataType::BOOLEAN;
     pData->data.bData = bData;
     return;
   }
   std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
   pNewData->data.sKey = sPropName;
-  pNewData->data.nType = JS_GLOBALDATA_TYPE_BOOLEAN;
+  pNewData->data.nType = JS_GlobalDataType::BOOLEAN;
   pNewData->data.bData = bData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -196,13 +133,13 @@ void CJS_GlobalData::SetGlobalVariableString(const CFX_ByteString& propname,
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
-    pData->data.nType = JS_GLOBALDATA_TYPE_STRING;
+    pData->data.nType = JS_GlobalDataType::STRING;
     pData->data.sData = sData;
     return;
   }
   std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
   pNewData->data.sKey = sPropName;
-  pNewData->data.nType = JS_GLOBALDATA_TYPE_STRING;
+  pNewData->data.nType = JS_GlobalDataType::STRING;
   pNewData->data.sData = sData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -215,13 +152,13 @@ void CJS_GlobalData::SetGlobalVariableObject(
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
-    pData->data.nType = JS_GLOBALDATA_TYPE_OBJECT;
+    pData->data.nType = JS_GlobalDataType::OBJECT;
     pData->data.objData.Copy(array);
     return;
   }
   std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
   pNewData->data.sKey = sPropName;
-  pNewData->data.nType = JS_GLOBALDATA_TYPE_OBJECT;
+  pNewData->data.nType = JS_GlobalDataType::OBJECT;
   pNewData->data.objData.Copy(array);
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -232,12 +169,12 @@ void CJS_GlobalData::SetGlobalVariableNull(const CFX_ByteString& propname) {
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
-    pData->data.nType = JS_GLOBALDATA_TYPE_NULL;
+    pData->data.nType = JS_GlobalDataType::NULLOBJ;
     return;
   }
   std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
   pNewData->data.sKey = sPropName;
-  pNewData->data.nType = JS_GLOBALDATA_TYPE_NULL;
+  pNewData->data.nType = JS_GlobalDataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
@@ -317,11 +254,12 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
           CFX_ByteString sEntry = CFX_ByteString(p, dwNameLen);
           p += sizeof(char) * dwNameLen;
 
-          uint16_t wDataType = *((uint16_t*)p);
+          JS_GlobalDataType wDataType =
+              static_cast<JS_GlobalDataType>(*((uint16_t*)p));
           p += sizeof(uint16_t);
 
           switch (wDataType) {
-            case JS_GLOBALDATA_TYPE_NUMBER: {
+            case JS_GlobalDataType::NUMBER: {
               double dData = 0;
               switch (wVersion) {
                 case 1: {
@@ -337,13 +275,13 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
               SetGlobalVariableNumber(sEntry, dData);
               SetGlobalVariablePersistent(sEntry, TRUE);
             } break;
-            case JS_GLOBALDATA_TYPE_BOOLEAN: {
+            case JS_GlobalDataType::BOOLEAN: {
               uint16_t wData = *((uint16_t*)p);
               p += sizeof(uint16_t);
               SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
               SetGlobalVariablePersistent(sEntry, TRUE);
             } break;
-            case JS_GLOBALDATA_TYPE_STRING: {
+            case JS_GlobalDataType::STRING: {
               uint32_t dwLength = *((uint32_t*)p);
               p += sizeof(uint32_t);
 
@@ -354,10 +292,12 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
               SetGlobalVariablePersistent(sEntry, TRUE);
               p += sizeof(char) * dwLength;
             } break;
-            case JS_GLOBALDATA_TYPE_NULL: {
+            case JS_GlobalDataType::NULLOBJ: {
               SetGlobalVariableNull(sEntry);
               SetGlobalVariablePersistent(sEntry, TRUE);
             }
+            case JS_GlobalDataType::OBJECT:
+              break;
           }
         }
       }
@@ -413,47 +353,42 @@ void CJS_GlobalData::WriteFileBuffer(const FX_WCHAR* sFilePath,
 void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
                                     CJS_KeyValue* pData,
                                     CFX_BinaryBuf& sData) {
-  uint16_t wType = (uint16_t)pData->nType;
-  switch (wType) {
-    case JS_GLOBALDATA_TYPE_NUMBER: {
+  switch (pData->nType) {
+    case JS_GlobalDataType::NUMBER: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(uint16_t));
+      sData.AppendBlock(&pData->nType, sizeof(uint16_t));
 
       double dData = pData->dData;
       sData.AppendBlock(&dData, sizeof(double));
     } break;
-    case JS_GLOBALDATA_TYPE_BOOLEAN: {
+    case JS_GlobalDataType::BOOLEAN: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(uint16_t));
+      sData.AppendBlock(&pData->nType, sizeof(uint16_t));
 
       uint16_t wData = (uint16_t)pData->bData;
       sData.AppendBlock(&wData, sizeof(uint16_t));
     } break;
-    case JS_GLOBALDATA_TYPE_STRING: {
+    case JS_GlobalDataType::STRING: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(uint16_t));
+      sData.AppendBlock(&pData->nType, sizeof(uint16_t));
 
       uint32_t dwDataLen = (uint32_t)pData->sData.GetLength();
       sData.AppendBlock(&dwDataLen, sizeof(uint32_t));
       sData.AppendString(pData->sData);
     } break;
-    case JS_GLOBALDATA_TYPE_NULL: {
+    case JS_GlobalDataType::NULLOBJ: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(uint32_t));
+      sData.AppendBlock(&pData->nType, sizeof(uint32_t));
     } break;
     default:
       break;
   }
 }
-
-CJS_KeyValue::CJS_KeyValue() {}
-
-CJS_KeyValue::~CJS_KeyValue() {}

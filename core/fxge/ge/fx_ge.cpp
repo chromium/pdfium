@@ -8,19 +8,19 @@
 
 #include "core/fxge/ge/fx_text_int.h"
 
-static CFX_GEModule* g_pGEModule = nullptr;
+namespace {
 
-CFX_GEModule::CFX_GEModule(const char** pUserFontPaths,
-                           CCodec_ModuleMgr* pCodecModule)
+CFX_GEModule* g_pGEModule = nullptr;
+
+}  // namespace
+
+CFX_GEModule::CFX_GEModule()
     : m_FTLibrary(nullptr),
       m_pFontCache(nullptr),
       m_pFontMgr(new CFX_FontMgr),
-      m_pCodecModule(pCodecModule),
+      m_pCodecModule(nullptr),
       m_pPlatformData(nullptr),
-      m_pUserFontPaths(pUserFontPaths) {
-  InitPlatform();
-  SetTextGamma(2.2f);
-}
+      m_pUserFontPaths(nullptr) {}
 
 CFX_GEModule::~CFX_GEModule() {
   delete m_pFontCache;
@@ -28,14 +28,9 @@ CFX_GEModule::~CFX_GEModule() {
 }
 
 // static
-void CFX_GEModule::Create(const char** userFontPaths,
-                          CCodec_ModuleMgr* pCodecModule) {
-  ASSERT(!g_pGEModule);
-  g_pGEModule = new CFX_GEModule(userFontPaths, pCodecModule);
-}
-
-// static
 CFX_GEModule* CFX_GEModule::Get() {
+  if (!g_pGEModule)
+    g_pGEModule = new CFX_GEModule();
   return g_pGEModule;
 }
 
@@ -44,6 +39,15 @@ void CFX_GEModule::Destroy() {
   ASSERT(g_pGEModule);
   delete g_pGEModule;
   g_pGEModule = nullptr;
+}
+
+void CFX_GEModule::Init(const char** userFontPaths,
+                        CCodec_ModuleMgr* pCodecModule) {
+  ASSERT(g_pGEModule);
+  m_pCodecModule = pCodecModule;
+  m_pUserFontPaths = userFontPaths;
+  InitPlatform();
+  SetTextGamma(2.2f);
 }
 
 CFX_FontCache* CFX_GEModule::GetFontCache() {

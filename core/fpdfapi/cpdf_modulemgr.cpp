@@ -11,25 +11,21 @@
 
 namespace {
 
-CPDF_ModuleMgr* g_FPDFAPI_pDefaultMgr = nullptr;
+CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
 
 }  // namespace
 
 // static
 CPDF_ModuleMgr* CPDF_ModuleMgr::Get() {
-  return g_FPDFAPI_pDefaultMgr;
-}
-
-// static
-void CPDF_ModuleMgr::Create() {
-  ASSERT(!g_FPDFAPI_pDefaultMgr);
-  g_FPDFAPI_pDefaultMgr = new CPDF_ModuleMgr;
+  if (!g_pDefaultMgr)
+    g_pDefaultMgr = new CPDF_ModuleMgr;
+  return g_pDefaultMgr;
 }
 
 // static
 void CPDF_ModuleMgr::Destroy() {
-  delete g_FPDFAPI_pDefaultMgr;
-  g_FPDFAPI_pDefaultMgr = nullptr;
+  delete g_pDefaultMgr;
+  g_pDefaultMgr = nullptr;
 }
 
 CPDF_ModuleMgr::CPDF_ModuleMgr() : m_pCodecModule(nullptr) {}

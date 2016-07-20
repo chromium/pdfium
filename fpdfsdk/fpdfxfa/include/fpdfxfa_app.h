@@ -73,8 +73,6 @@ class CPDFXFA_App : public IXFA_AppProvider {
   CFX_ArrayTemplate<CPDFDoc_Environment*> m_pEnvList;
 
  protected:
-  static CPDFXFA_App* g_pApp;
-
   FX_BOOL m_bJavaScriptInitialized;
   CXFA_FFApp* m_pXFAApp;
   v8::Isolate* m_pIsolate;

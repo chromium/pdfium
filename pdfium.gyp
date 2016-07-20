@@ -797,6 +797,8 @@
             'fpdfsdk/javascript/JS_EventHandler.h',
             'fpdfsdk/javascript/JS_GlobalData.cpp',
             'fpdfsdk/javascript/JS_GlobalData.h',
+            'fpdfsdk/javascript/JS_KeyValue.cpp',
+            'fpdfsdk/javascript/JS_KeyValue.h',
             'fpdfsdk/javascript/JS_Object.cpp',
             'fpdfsdk/javascript/JS_Object.h',
             'fpdfsdk/javascript/JS_Value.cpp',

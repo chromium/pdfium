@@ -93,7 +93,6 @@ enum class CFWL_WidgetCapacity {
 
 class CFDE_TextOut;
 class CFGAS_GEFont;
-class CFWL_ArrowData;
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
 class CFWL_ThemeText;
@@ -232,27 +231,6 @@ FX_BOOL FWLTHEME_Init();
 void FWLTHEME_Release();
 uint32_t FWL_GetThemeLayout(uint32_t dwThemeID);
 uint32_t FWL_GetThemeColor(uint32_t dwThemeID);
-
-class CFWL_ArrowData {
- public:
-  static CFWL_ArrowData* GetInstance();
-  static FX_BOOL IsInstance();
-  static void DestroyInstance();
-  virtual ~CFWL_ArrowData();
-  void SetColorData(uint32_t dwID);
-
-  class CColorData {
-   public:
-    FX_ARGB clrBorder[4];
-    FX_ARGB clrStart[4];
-    FX_ARGB clrEnd[4];
-    FX_ARGB clrSign[4];
-  } * m_pColorData;
-
- protected:
-  CFWL_ArrowData();
-  static CFWL_ArrowData* m_pInstance;
-};
 
 class CFWL_FontData {
  public:

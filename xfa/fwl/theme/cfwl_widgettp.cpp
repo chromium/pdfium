@@ -17,6 +17,7 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/theme/cfwl_arrowdata.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_shading.h"
@@ -61,7 +62,7 @@ uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget,
                                    FX_BOOL bChildren) {
   uint32_t dwOld = m_dwThemeID;
   m_dwThemeID = dwThemeID;
-  if (CFWL_ArrowData::IsInstance()) {
+  if (CFWL_ArrowData::HasInstance()) {
     CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(dwThemeID));
   }
   if (bChildren) {
@@ -69,19 +70,23 @@ uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget,
   }
   return dwOld;
 }
+
 FWL_Error CFWL_WidgetTP::GetThemeMatrix(IFWL_Widget* pWidget,
                                         CFX_Matrix& matrix) {
   matrix.Set(_ctm.a, _ctm.b, _ctm.c, _ctm.d, _ctm.e, _ctm.f);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_WidgetTP::SetThemeMatrix(IFWL_Widget* pWidget,
                                         const CFX_Matrix& matrix) {
   _ctm.Set(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
   return FWL_Error::Succeeded;
 }
+
 FX_BOOL CFWL_WidgetTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
 }
+
 FX_BOOL CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   if (!m_pTextOut)
     InitTTO();
@@ -99,6 +104,7 @@ FX_BOOL CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(), iLen, pParams->m_rtPart);
   return TRUE;
 }
+
 void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
                                  CFWL_WidgetCapacity dwCapacity) {
   switch (dwCapacity) {
@@ -154,18 +160,22 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
   }
   return &m_fValue;
 }
+
 FX_BOOL CFWL_WidgetTP::IsCustomizedLayout(IFWL_Widget* pWidget) {
   return FWL_GetThemeLayout(m_dwThemeID);
 }
+
 FWL_Error CFWL_WidgetTP::GetPartRect(CFWL_ThemePart* pThemePart,
                                      CFX_RectF& rect) {
   return FWL_Error::Succeeded;
 }
+
 FX_BOOL CFWL_WidgetTP::IsInPart(CFWL_ThemePart* pThemePart,
                                 FX_FLOAT fx,
                                 FX_FLOAT fy) {
   return TRUE;
 }
+
 FX_BOOL CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   if (!pParams)
     return FALSE;
@@ -177,17 +187,21 @@ FX_BOOL CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
                             pParams->m_wsText.GetLength(), rect);
   return TRUE;
 }
+
 FWL_Error CFWL_WidgetTP::Initialize() {
   m_dwThemeID = 0;
   _ctm.SetIdentity();
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_WidgetTP::Finalize() {
   if (!m_pTextOut)
     FinalizeTTO();
   return FWL_Error::Succeeded;
 }
+
 CFWL_WidgetTP::~CFWL_WidgetTP() {}
+
 FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
                                  const FX_WCHAR* strFont,
                                  FX_FLOAT fFontSize,
@@ -201,6 +215,7 @@ FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
   m_pTextOut->SetTextColor(rgbFont);
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
                                  CFGAS_GEFont* pFont,
                                  FX_FLOAT fFontSize,
@@ -213,6 +228,7 @@ FWL_Error CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
   m_pTextOut->SetTextColor(rgbFont);
   return FWL_Error::Succeeded;
 }
+
 CFGAS_GEFont* CFWL_WidgetTP::GetFont(IFWL_Widget* pWidget) {
   return m_pFDEFont;
 }
@@ -352,6 +368,7 @@ void CFWL_WidgetTP::Draw3DRect(CFX_Graphics* pGraphics,
   }
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
                                  FWLTHEME_EDGE eType,
                                  FX_FLOAT fWidth,
@@ -394,6 +411,7 @@ void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
   pGraphics->StrokePath(&path, pMatrix);
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::DrawBorder(CFX_Graphics* pGraphics,
                                const CFX_RectF* pRect,
                                CFX_Matrix* pMatrix) {
@@ -412,11 +430,13 @@ void CFWL_WidgetTP::DrawBorder(CFX_Graphics* pGraphics,
   pGraphics->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::FillBackground(CFX_Graphics* pGraphics,
                                    const CFX_RectF* pRect,
                                    CFX_Matrix* pMatrix) {
   FillSoildRect(pGraphics, FWLTHEME_COLOR_Background, pRect, pMatrix);
 }
+
 void CFWL_WidgetTP::FillSoildRect(CFX_Graphics* pGraphics,
                                   FX_ARGB fillColor,
                                   const CFX_RectF* pRect,
@@ -434,6 +454,7 @@ void CFWL_WidgetTP::FillSoildRect(CFX_Graphics* pGraphics,
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
                                      FX_FLOAT fx1,
                                      FX_FLOAT fy1,
@@ -456,6 +477,7 @@ void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
   pGraphics->FillPath(path, fillMode, pMatrix);
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::DrawAnnulusRect(CFX_Graphics* pGraphics,
                                     FX_ARGB fillColor,
                                     const CFX_RectF* pRect,
@@ -477,6 +499,7 @@ void CFWL_WidgetTP::DrawAnnulusRect(CFX_Graphics* pGraphics,
   pGraphics->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::DrawAnnulusCircle(CFX_Graphics* pGraphics,
                                       FX_ARGB fillColor,
                                       const CFX_RectF* pRect,
@@ -501,6 +524,7 @@ void CFWL_WidgetTP::DrawAnnulusCircle(CFX_Graphics* pGraphics,
   pGraphics->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::DrawFocus(CFX_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               CFX_Matrix* pMatrix) {
@@ -574,6 +598,7 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   pGraphics->RestoreGraphState();
 }
+
 void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               FWLTHEME_DIRECTION eDict,
@@ -629,17 +654,18 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
   pGraphics->SetFillColor(&cr);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
 }
+
 void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
                             const CFX_RectF* pRect,
                             FWLTHEME_STATE eState,
                             CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  if (!CFWL_ArrowData::IsInstance()) {
+  if (!CFWL_ArrowData::HasInstance()) {
     CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(m_dwThemeID));
   }
   CFWL_ArrowData::CColorData* pColorData =
-      CFWL_ArrowData::GetInstance()->m_pColorData;
+      CFWL_ArrowData::GetInstance()->m_pColorData.get();
   FX_FLOAT fRight = pRect->right();
   FX_FLOAT fBottom = pRect->bottom();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
@@ -652,22 +678,25 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
   pGraphics->SetStrokeColor(&rcStroke);
   pGraphics->StrokePath(&path, pMatrix);
 }
+
 void CFWL_WidgetTP::DrawArrowBtn(CFX_Graphics* pGraphics,
                                  const CFX_RectF* pRect,
                                  FWLTHEME_DIRECTION eDict,
                                  FWLTHEME_STATE eState,
                                  CFX_Matrix* pMatrix) {
   DrawBtn(pGraphics, pRect, eState, pMatrix);
-  if (!CFWL_ArrowData::IsInstance()) {
+  if (!CFWL_ArrowData::HasInstance()) {
     CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(m_dwThemeID));
   }
   CFWL_ArrowData::CColorData* pColorData =
-      CFWL_ArrowData::GetInstance()->m_pColorData;
+      CFWL_ArrowData::GetInstance()->m_pColorData.get();
   DrawArrow(pGraphics, pRect, eDict, pColorData->clrSign[eState - 1], pMatrix);
 }
+
 CFWL_ArrowData::CFWL_ArrowData() : m_pColorData(nullptr) {
   SetColorData(0);
 }
+
 CFWL_FontData::CFWL_FontData()
     : m_dwStyles(0),
       m_dwCodePage(0),
@@ -679,6 +708,7 @@ CFWL_FontData::CFWL_FontData()
 #endif
 {
 }
+
 CFWL_FontData::~CFWL_FontData() {
   if (m_pFont) {
     m_pFont->Release();
@@ -692,12 +722,14 @@ CFWL_FontData::~CFWL_FontData() {
   }
 #endif
 }
+
 FX_BOOL CFWL_FontData::Equal(const CFX_WideStringC& wsFontFamily,
                              uint32_t dwFontStyles,
                              uint16_t wCodePage) {
   return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
          m_dwCodePage == wCodePage;
 }
+
 FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t dwCodePage) {
@@ -723,12 +755,16 @@ CFWL_FontManager* CFWL_FontManager::GetInstance() {
     s_FontManager = new CFWL_FontManager;
   return s_FontManager;
 }
+
 void CFWL_FontManager::DestroyInstance() {
   delete s_FontManager;
   s_FontManager = nullptr;
 }
+
 CFWL_FontManager::CFWL_FontManager() {}
+
 CFWL_FontManager::~CFWL_FontManager() {}
+
 CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
                                          uint32_t dwFontStyles,
                                          uint16_t wCodePage) {
@@ -742,78 +778,20 @@ CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
   m_FontsArray.push_back(std::move(pFontData));
   return m_FontsArray.back()->GetFont();
 }
+
 FX_BOOL FWLTHEME_Init() {
   return TRUE;
 }
+
 void FWLTHEME_Release() {
   CFWL_ArrowData::DestroyInstance();
   CFWL_FontManager::DestroyInstance();
 }
+
 uint32_t FWL_GetThemeLayout(uint32_t dwThemeID) {
   return 0xffff0000 & dwThemeID;
 }
+
 uint32_t FWL_GetThemeColor(uint32_t dwThemeID) {
   return 0x0000ffff & dwThemeID;
-}
-
-CFWL_ArrowData* CFWL_ArrowData::m_pInstance = nullptr;
-
-CFWL_ArrowData* CFWL_ArrowData::GetInstance() {
-  if (!m_pInstance)
-    m_pInstance = new CFWL_ArrowData;
-  return m_pInstance;
-}
-
-FX_BOOL CFWL_ArrowData::IsInstance() {
-  return !!m_pInstance;
-}
-
-void CFWL_ArrowData::DestroyInstance() {
-  delete m_pInstance;
-  m_pInstance = nullptr;
-}
-
-CFWL_ArrowData::~CFWL_ArrowData() {
-  delete m_pColorData;
-}
-
-void CFWL_ArrowData::SetColorData(uint32_t dwID) {
-  if (!m_pColorData) {
-    m_pColorData = new CColorData;
-  }
-  if (dwID) {
-    m_pColorData->clrBorder[0] = ArgbEncode(255, 142, 153, 125);
-    m_pColorData->clrBorder[1] = ArgbEncode(255, 157, 171, 119);
-    m_pColorData->clrBorder[2] = ArgbEncode(255, 118, 131, 97);
-    m_pColorData->clrBorder[3] = ArgbEncode(255, 172, 168, 153);
-    m_pColorData->clrStart[0] = ArgbEncode(255, 203, 215, 186);
-    m_pColorData->clrStart[1] = ArgbEncode(255, 218, 232, 185);
-    m_pColorData->clrStart[2] = ArgbEncode(255, 203, 215, 186);
-    m_pColorData->clrStart[3] = ArgbEncode(255, 254, 254, 251);
-    m_pColorData->clrEnd[0] = ArgbEncode(255, 149, 167, 117);
-    m_pColorData->clrEnd[1] = ArgbEncode(255, 198, 211, 155);
-    m_pColorData->clrEnd[2] = ArgbEncode(255, 149, 167, 117);
-    m_pColorData->clrEnd[3] = ArgbEncode(255, 243, 241, 236);
-    m_pColorData->clrSign[0] = ArgbEncode(255, 255, 255, 255);
-    m_pColorData->clrSign[1] = ArgbEncode(255, 255, 255, 255);
-    m_pColorData->clrSign[2] = ArgbEncode(255, 255, 255, 255);
-    m_pColorData->clrSign[3] = ArgbEncode(255, 128, 128, 128);
-  } else {
-    m_pColorData->clrBorder[0] = ArgbEncode(255, 202, 216, 249);
-    m_pColorData->clrBorder[1] = ArgbEncode(255, 171, 190, 233);
-    m_pColorData->clrBorder[2] = ArgbEncode(255, 135, 147, 219);
-    m_pColorData->clrBorder[3] = ArgbEncode(255, 172, 168, 153);
-    m_pColorData->clrStart[0] = ArgbEncode(255, 225, 234, 254);
-    m_pColorData->clrStart[1] = ArgbEncode(255, 253, 255, 255);
-    m_pColorData->clrStart[2] = ArgbEncode(255, 110, 142, 241);
-    m_pColorData->clrStart[3] = ArgbEncode(255, 254, 254, 251);
-    m_pColorData->clrEnd[0] = ArgbEncode(255, 175, 204, 251);
-    m_pColorData->clrEnd[1] = ArgbEncode(255, 185, 218, 251);
-    m_pColorData->clrEnd[2] = ArgbEncode(255, 210, 222, 235);
-    m_pColorData->clrEnd[3] = ArgbEncode(255, 243, 241, 236);
-    m_pColorData->clrSign[0] = ArgbEncode(255, 77, 97, 133);
-    m_pColorData->clrSign[1] = ArgbEncode(255, 77, 97, 133);
-    m_pColorData->clrSign[2] = ArgbEncode(255, 77, 97, 133);
-    m_pColorData->clrSign[3] = ArgbEncode(255, 128, 128, 128);
-  }
 }

@@ -205,6 +205,8 @@
         "xfa/fwl/lightwidget/cfwl_widget.h",
         "xfa/fwl/lightwidget/cfwl_widgetproperties.cpp",
         "xfa/fwl/lightwidget/cfwl_widgetproperties.h",
+        "xfa/fwl/theme/cfwl_arrowdata.cpp",
+        "xfa/fwl/theme/cfwl_arrowdata.h",
         "xfa/fwl/theme/cfwl_barcodetp.cpp",
         "xfa/fwl/theme/cfwl_barcodetp.h",
         "xfa/fwl/theme/cfwl_carettp.cpp",

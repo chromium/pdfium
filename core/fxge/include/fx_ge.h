@@ -23,11 +23,10 @@ class SkPictureRecorder;
 
 class CFX_GEModule {
  public:
-  static void Create(const char** pUserFontPaths,
-                     CCodec_ModuleMgr* pCodecModule);
   static CFX_GEModule* Get();
   static void Destroy();
 
+  void Init(const char** pUserFontPaths, CCodec_ModuleMgr* pCodecModule);
   CFX_FontCache* GetFontCache();
   CFX_FontMgr* GetFontMgr() { return m_pFontMgr.get(); }
   void SetTextGamma(FX_FLOAT gammaValue);
@@ -39,7 +38,7 @@ class CFX_GEModule {
   FXFT_Library m_FTLibrary;
 
  private:
-  CFX_GEModule(const char** pUserFontPaths, CCodec_ModuleMgr* pCodecModule);
+  CFX_GEModule();
   ~CFX_GEModule();
 
   void InitPlatform();
@@ -48,7 +47,7 @@ class CFX_GEModule {
   uint8_t m_GammaValue[256];
   CFX_FontCache* m_pFontCache;
   std::unique_ptr<CFX_FontMgr> m_pFontMgr;
-  CCodec_ModuleMgr* const m_pCodecModule;
+  CCodec_ModuleMgr* m_pCodecModule;
   void* m_pPlatformData;
   const char** m_pUserFontPaths;
 };
