@@ -11,7 +11,6 @@
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 static const FX_WCHAR g_FX_Percent[] = L"z,zzz,zzz,zzz,zzz,zzz%";

@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_
+#ifndef XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
+#define XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
 
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CXFA_NodeHelper;
 class CXFA_ScriptContext;
@@ -75,4 +75,4 @@ class CXFA_ResolveProcessor {
   CXFA_NodeHelper* m_pNodeHelper;
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_
+#endif  // XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_

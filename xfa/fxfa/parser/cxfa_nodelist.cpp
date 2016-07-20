@@ -7,8 +7,8 @@
 #include "xfa/fxfa/parser/xfa_object.h"
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_document.h"
-#include "xfa/fxfa/parser/xfa_script_imp.h"
 
 CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,

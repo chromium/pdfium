@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_IMP_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_IMP_H_
+#ifndef XFA_FXFA_PARSER_CXFA_SCRIPTCONTEXT_H_
+#define XFA_FXFA_PARSER_CXFA_SCRIPTCONTEXT_H_
 
 #include <map>
 #include <memory>
@@ -15,7 +15,7 @@
 #include "xfa/fxfa/fm2js/xfa_fm2jscontext.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/xfa_document.h"
-#include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 #define XFA_RESOLVENODE_TagName 0x0002
 
@@ -123,4 +123,4 @@ class CXFA_ScriptContext {
   XFA_ATTRIBUTEENUM m_eRunAtType;
 };
 
-#endif  //  XFA_FXFA_PARSER_XFA_SCRIPT_IMP_H_
+#endif  //  XFA_FXFA_PARSER_CXFA_SCRIPTCONTEXT_H_

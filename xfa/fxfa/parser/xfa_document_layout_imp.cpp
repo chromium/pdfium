@@ -15,7 +15,6 @@
 #include "xfa/fxfa/parser/xfa_layout_pagemgr_new.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {

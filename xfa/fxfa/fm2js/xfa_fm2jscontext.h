@@ -9,7 +9,7 @@
 
 #include "fxjs/include/cfxjse_arguments.h"
 #include "fxjs/include/cfxjse_context.h"
-#include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CXFA_FM2JSContext : public CFXJSE_HostObject {
  public:

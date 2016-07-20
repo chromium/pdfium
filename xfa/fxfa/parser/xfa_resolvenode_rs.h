@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_H_
+#ifndef XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_
+#define XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_
 
 #include "fxjs/include/cfxjse_value.h"
 #include "xfa/fxfa/include/fxfa.h"
@@ -65,4 +65,4 @@ inline XFA_RESOLVENODE_RS::XFA_RESOLVENODE_RS()
 inline XFA_RESOLVENODE_RS::~XFA_RESOLVENODE_RS() {
   nodes.RemoveAll();
 }
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_H_
+#endif  // XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_

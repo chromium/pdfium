@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_valuearray.h"
 
-#include "xfa/fxfa/parser/xfa_script_imp.h"
+#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
 CXFA_ValueArray::CXFA_ValueArray(v8::Isolate* pIsolate)
     : m_pIsolate(pIsolate) {}

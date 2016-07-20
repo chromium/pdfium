@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_script_imp.h"
+#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "fxjs/include/cfxjse_arguments.h"
@@ -12,13 +12,13 @@
 #include "fxjs/include/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
+#include "xfa/fxfa/parser/cxfa_nodehelper.h"
+#include "xfa/fxfa/parser/cxfa_resolveprocessor.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_script.h"
-#include "xfa/fxfa/parser/xfa_script_nodehelper.h"
-#include "xfa/fxfa/parser/xfa_script_resolveprocessor.h"
+#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {

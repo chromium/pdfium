@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_SCRIPT_NODEHELPER_H_
-#define XFA_FXFA_PARSER_XFA_SCRIPT_NODEHELPER_H_
+#ifndef XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
+#define XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
 
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CXFA_ScriptContext;
 
@@ -69,4 +69,4 @@ class CXFA_NodeHelper {
   CXFA_Node* m_pAllStartParent;
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_SCRIPT_NODEHELPER_H_
+#endif  // XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
