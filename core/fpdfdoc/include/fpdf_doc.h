@@ -14,6 +14,8 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fxge/include/fx_dib.h"
 
 class CFDF_Document;
@@ -22,8 +24,6 @@ class CFX_RenderDevice;
 class CPDF_AAction;
 class CPDF_Action;
 class CPDF_ActionFields;
-class CPDF_Annot;
-class CPDF_AnnotList;
 class CPDF_ApSettings;
 class CPDF_Bookmark;
 class CPDF_BookmarkTree;
@@ -304,93 +304,6 @@ class CPDF_Link {
 
  protected:
   CPDF_Dictionary* m_pDict;
-};
-
-#define ANNOTFLAG_INVISIBLE 0x0001
-#define ANNOTFLAG_HIDDEN 0x0002
-#define ANNOTFLAG_PRINT 0x0004
-#define ANNOTFLAG_NOZOOM 0x0008
-#define ANNOTFLAG_NOROTATE 0x0010
-#define ANNOTFLAG_NOVIEW 0x0020
-#define ANNOTFLAG_READONLY 0x0040
-#define ANNOTFLAG_LOCKED 0x0080
-#define ANNOTFLAG_TOGGLENOVIEW 0x0100
-
-class CPDF_Annot {
- public:
-  enum AppearanceMode { Normal, Rollover, Down };
-
-  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
-  ~CPDF_Annot();
-
-  CFX_ByteString GetSubType() const;
-  uint32_t GetFlags() const;
-  void GetRect(CFX_FloatRect& rect) const;
-  const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
-  CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
-  FX_BOOL DrawAppearance(CPDF_Page* pPage,
-                         CFX_RenderDevice* pDevice,
-                         const CFX_Matrix* pUser2Device,
-                         AppearanceMode mode,
-                         const CPDF_RenderOptions* pOptions);
-  FX_BOOL DrawInContext(const CPDF_Page* pPage,
-                        CPDF_RenderContext* pContext,
-                        const CFX_Matrix* pUser2Device,
-                        AppearanceMode mode);
-  void ClearCachedAP();
-  void DrawBorder(CFX_RenderDevice* pDevice,
-                  const CFX_Matrix* pUser2Device,
-                  const CPDF_RenderOptions* pOptions);
-  CPDF_Form* GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
-
- private:
-  CPDF_Dictionary* const m_pAnnotDict;
-  CPDF_Document* const m_pDocument;
-  const CFX_ByteString m_sSubtype;
-  std::map<CPDF_Stream*, CPDF_Form*> m_APMap;
-};
-
-class CPDF_AnnotList {
- public:
-  explicit CPDF_AnnotList(CPDF_Page* pPage);
-  ~CPDF_AnnotList();
-
-  void DisplayAnnots(CPDF_Page* pPage,
-                     CPDF_RenderContext* pContext,
-                     FX_BOOL bPrinting,
-                     CFX_Matrix* pMatrix,
-                     FX_BOOL bShowWidget,
-                     CPDF_RenderOptions* pOptions) {
-    DisplayAnnots(pPage, nullptr, pContext, bPrinting, pMatrix,
-                  bShowWidget ? 3 : 1, pOptions, nullptr);
-  }
-
-  void DisplayAnnots(CPDF_Page* pPage,
-                     CFX_RenderDevice* pDevice,
-                     CPDF_RenderContext* pContext,
-                     FX_BOOL bPrinting,
-                     CFX_Matrix* pMatrix,
-                     uint32_t dwAnnotFlags,
-                     CPDF_RenderOptions* pOptions,
-                     FX_RECT* pClipRect);
-  size_t Count() const { return m_AnnotList.size(); }
-  CPDF_Annot* GetAt(size_t index) const { return m_AnnotList[index].get(); }
-  const std::vector<std::unique_ptr<CPDF_Annot>>& All() const {
-    return m_AnnotList;
-  }
-
- protected:
-  void DisplayPass(CPDF_Page* pPage,
-                   CFX_RenderDevice* pDevice,
-                   CPDF_RenderContext* pContext,
-                   FX_BOOL bPrinting,
-                   CFX_Matrix* pMatrix,
-                   FX_BOOL bWidget,
-                   CPDF_RenderOptions* pOptions,
-                   FX_RECT* clip_rect);
-
-  CPDF_Document* const m_pDocument;
-  std::vector<std::unique_ptr<CPDF_Annot>> m_AnnotList;
 };
 
 #define COLORTYPE_TRANSPARENT 0

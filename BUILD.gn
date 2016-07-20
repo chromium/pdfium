@@ -197,6 +197,10 @@ static_library("fpdfdoc") {
   sources = [
     "core/fpdfdoc/clines.cpp",
     "core/fpdfdoc/clines.h",
+    "core/fpdfdoc/cpdf_annot.cpp",
+    "core/fpdfdoc/cpdf_annot.h",
+    "core/fpdfdoc/cpdf_annotlist.cpp",
+    "core/fpdfdoc/cpdf_annotlist.h",
     "core/fpdfdoc/cpdf_variabletext.cpp",
     "core/fpdfdoc/cpvt_color.cpp",
     "core/fpdfdoc/cpvt_color.h",
@@ -216,7 +220,6 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/ctypeset.cpp",
     "core/fpdfdoc/ctypeset.h",
     "core/fpdfdoc/doc_action.cpp",
-    "core/fpdfdoc/doc_annot.cpp",
     "core/fpdfdoc/doc_basic.cpp",
     "core/fpdfdoc/doc_bookmark.cpp",
     "core/fpdfdoc/doc_form.cpp",
