@@ -320,7 +320,7 @@ class CPDF_Annot {
  public:
   enum AppearanceMode { Normal, Rollover, Down };
 
-  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_AnnotList* pList);
+  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
 
   CFX_ByteString GetSubType() const;
@@ -345,7 +345,7 @@ class CPDF_Annot {
 
  private:
   CPDF_Dictionary* const m_pAnnotDict;
-  CPDF_AnnotList* const m_pList;
+  CPDF_Document* const m_pDocument;
   const CFX_ByteString m_sSubtype;
   std::map<CPDF_Stream*, CPDF_Form*> m_APMap;
 };
@@ -378,7 +378,6 @@ class CPDF_AnnotList {
   const std::vector<std::unique_ptr<CPDF_Annot>>& All() const {
     return m_AnnotList;
   }
-  CPDF_Document* GetDocument() const { return m_pDocument; }
 
  protected:
   void DisplayPass(CPDF_Page* pPage,

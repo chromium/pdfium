@@ -42,7 +42,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       pDict = pAnnots->GetDictAt(i);
     }
     m_AnnotList.push_back(
-        std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, this)));
+        std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument)));
     if (bRegenerateAP && pDict->GetStringBy("Subtype") == "Widget" &&
         CPDF_InterForm::IsUpdateAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
@@ -121,9 +121,9 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
   }
 }
 
-CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_AnnotList* pList)
+CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),
-      m_pList(pList),
+      m_pDocument(pDocument),
       m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {}
 
 CPDF_Annot::~CPDF_Annot() {
@@ -200,7 +200,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
     return it->second;
 
   CPDF_Form* pNewForm =
-      new CPDF_Form(m_pList->GetDocument(), pPage->m_pResources, pStream);
+      new CPDF_Form(m_pDocument, pPage->m_pResources, pStream);
   pNewForm->ParseContent(nullptr, nullptr, nullptr);
   m_APMap[pStream] = pNewForm;
   return pNewForm;
