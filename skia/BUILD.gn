@@ -330,11 +330,7 @@ component("skia") {
       "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
     ]
   }
-  if (!is_mac) {
-    sources -= [ "//third_party/skia/src/ports/SkFontHost_mac.cpp" ]
-  }
-
-  if (!is_linux && !is_android && !is_win) {
+  if (!is_linux && !is_android && !is_win && !is_mac) {
     sources -= [
       "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
       "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",

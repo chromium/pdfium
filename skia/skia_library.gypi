@@ -41,7 +41,6 @@
 
     '../third_party/skia/src/ports/SkFontHost_FreeType.cpp',
     '../third_party/skia/src/ports/SkFontHost_FreeType_common.cpp',
-    '../third_party/skia/src/ports/SkFontHost_mac.cpp',
     '../third_party/skia/src/ports/SkFontHost_win.cpp',
     "../third_party/skia/src/ports/SkFontMgr_android.cpp",
     "../third_party/skia/src/ports/SkFontMgr_android_factory.cpp",

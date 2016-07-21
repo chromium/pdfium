@@ -662,7 +662,6 @@ static_library("fxge") {
     "core/fxge/android/fx_android_font.h",
     "core/fxge/android/fx_android_imp.cpp",
     "core/fxge/apple/apple_int.h",
-    "core/fxge/apple/fx_apple_platform.cpp",
     "core/fxge/apple/fx_mac_imp.cpp",
     "core/fxge/apple/fx_quartz_device.cpp",
     "core/fxge/dib/dib_int.h",
@@ -721,6 +720,7 @@ static_library("fxge") {
     sources += [
       "core/fxge/agg/fx_agg_driver.cpp",
       "core/fxge/agg/fx_agg_driver.h",
+      "core/fxge/apple/fx_apple_platform.cpp",
     ]
     deps = [
       "third_party:fx_agg",

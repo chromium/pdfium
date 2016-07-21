@@ -118,7 +118,7 @@ CFX_Font::~CFX_Font() {
   FX_Free(m_pOwnedStream);
 #endif  // PDF_ENABLE_XFA
   FX_Free(m_pGsubData);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ && !defined _SKIA_SUPPORT_
   ReleasePlatformResource();
 #endif
 }

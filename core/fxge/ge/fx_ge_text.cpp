@@ -851,7 +851,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
   }
 #endif
   CFX_ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
                            bFontStyle, dest_width, anti_alias);
 #else

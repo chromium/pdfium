@@ -9,7 +9,6 @@
     '<(skia_src_path)/fonts/SkRemotableFontMgr.cpp',
     '<(skia_src_path)/ports/SkFontHost_FreeType_common.cpp',
     '<(skia_src_path)/ports/SkFontHost_FreeType.cpp',
-    '<(skia_src_path)/ports/SkFontHost_mac.cpp',
     '<(skia_src_path)/ports/SkFontHost_win.cpp',
     '<(skia_src_path)/ports/SkFontMgr_android.cpp',
     '<(skia_src_path)/ports/SkFontMgr_android_factory.cpp',
