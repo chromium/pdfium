@@ -105,8 +105,6 @@ class CXFA_Document {
   CXFA_NodeArray m_pPendingPageSet;
 
  protected:
-  friend class CXFA_SimpleParser;
-
   CXFA_DocumentParser* m_pParser;
   CXFA_ScriptContext* m_pScriptContext;
   CXFA_LayoutProcessor* m_pLayoutProcessor;
