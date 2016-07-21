@@ -21,8 +21,9 @@
 #include "xfa/fxfa/include/xfa_ffdocview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
+#include "xfa/fxfa/parser/cxfa_dataexporter.h"
+#include "xfa/fxfa/parser/cxfa_dataimporter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/xfa_document_serialize.h"
 
 namespace {
 
