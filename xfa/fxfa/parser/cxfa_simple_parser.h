@@ -25,10 +25,10 @@ class CXFA_SimpleParser {
   ~CXFA_SimpleParser();
 
   int32_t StartParse(IFX_FileRead* pStream, XFA_XDPPACKET ePacketID);
-  int32_t DoParse(IFX_Pause* pPause = nullptr);
+  int32_t DoParse(IFX_Pause* pPause);
   int32_t ParseXMLData(const CFX_WideString& wsXML,
                        CFDE_XMLNode*& pXMLNode,
-                       IFX_Pause* pPause = nullptr);
+                       IFX_Pause* pPause);
   void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode);
   CXFA_Node* GetRootNode() const;
   CFDE_XMLDoc* GetXMLDoc() const;
@@ -57,7 +57,7 @@ class CXFA_SimpleParser {
   CXFA_Node* NormalLoader(CXFA_Node* pXFANode,
                           CFDE_XMLNode* pXMLDoc,
                           XFA_XDPPACKET ePacketID,
-                          FX_BOOL bUseAttribute = TRUE);
+                          FX_BOOL bUseAttribute);
   CXFA_Node* DataLoader(CXFA_Node* pXFANode,
                         CFDE_XMLNode* pXMLDoc,
                         FX_BOOL bDoTransform);

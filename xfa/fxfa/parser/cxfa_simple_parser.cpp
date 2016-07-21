@@ -387,7 +387,7 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
     ParseContentNode(pXFANode, pXMLNode, ePacketID);
     m_pRootNode = pXFANode;
   } else {
-    m_pRootNode = NormalLoader(pXFANode, pXMLNode, ePacketID);
+    m_pRootNode = NormalLoader(pXFANode, pXMLNode, ePacketID, TRUE);
   }
 }
 
@@ -606,7 +606,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Config(
 
   pNode->SetCData(XFA_ATTRIBUTE_Name,
                   XFA_GetPacketByIndex(XFA_PACKET_Config)->pName);
-  if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID))
+  if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID, TRUE))
     return nullptr;
 
   pNode->SetXMLMappingNode(pXMLDocumentNode);
@@ -639,7 +639,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
 
         pNode->GetDocument()->RecognizeXFAVersionNumber(wsNamespaceURI);
       }
-      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID))
+      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID, TRUE))
         return nullptr;
     }
   } else if (ePacketID == XFA_XDPPACKET_Form) {
@@ -775,7 +775,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_LocaleConnectionSourceSet(
 
       pNode->SetCData(XFA_ATTRIBUTE_Name,
                       XFA_GetPacketByIndex(XFA_PACKET_LocaleSet)->pName);
-      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID))
+      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID, TRUE))
         return nullptr;
     }
   } else if (ePacketID == XFA_XDPPACKET_ConnectionSet) {
@@ -790,7 +790,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_LocaleConnectionSourceSet(
 
       pNode->SetCData(XFA_ATTRIBUTE_Name,
                       XFA_GetPacketByIndex(XFA_PACKET_ConnectionSet)->pName);
-      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID))
+      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID, TRUE))
         return nullptr;
     }
   } else if (ePacketID == XFA_XDPPACKET_SourceSet) {
@@ -805,7 +805,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_LocaleConnectionSourceSet(
 
       pNode->SetCData(XFA_ATTRIBUTE_Name,
                       XFA_GetPacketByIndex(XFA_PACKET_SourceSet)->pName);
-      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID))
+      if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID, TRUE))
         return nullptr;
     }
   }
