@@ -8,7 +8,6 @@
 #define XFA_FXFA_PARSER_XFA_BASIC_DATA_H_
 
 #include "xfa/fxfa/include/fxfa_basic.h"
-#include "xfa/fxfa/parser/xfa_basic_imp.h"
 
 extern const XFA_PACKETINFO g_XFAPacketData[];
 extern const int32_t g_iXFAPacketCount;
@@ -35,6 +34,7 @@ extern const XFA_ELEMENTHIERARCHY g_XFAElementPropertyIndex[];
 extern const XFA_PROPERTY g_XFAElementPropertyData[];
 
 extern const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[];
+extern const int32_t g_iScriptIndexCount;
 
 extern const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[];
 extern const int32_t g_iXFANotsureCount;

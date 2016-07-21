@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_document_layout_imp.h"
 
-#include "xfa/fxfa/parser/xfa_basic_imp.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"

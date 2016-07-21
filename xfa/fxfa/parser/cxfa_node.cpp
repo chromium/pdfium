@@ -17,6 +17,7 @@
 #include "xfa/fgas/crt/fgas_system.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
@@ -443,6 +444,28 @@ void* GetMapKey_Custom(const CFX_WideStringC& wsKey) {
 void* GetMapKey_Element(XFA_Element eType, XFA_ATTRIBUTE eAttribute) {
   return (void*)(uintptr_t)((static_cast<int32_t>(eType) << 16) |
                             (eAttribute << 8) | XFA_KEYTYPE_Element);
+}
+
+const XFA_ATTRIBUTEINFO* GetAttributeOfElement(XFA_Element eElement,
+                                               XFA_ATTRIBUTE eAttribute,
+                                               uint32_t dwPacket) {
+  int32_t iCount = 0;
+  const uint8_t* pAttr = XFA_GetElementAttributes(eElement, iCount);
+  if (!pAttr || iCount < 1)
+    return nullptr;
+
+  if (!std::binary_search(pAttr, pAttr + iCount, eAttribute))
+    return nullptr;
+
+  const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
+  ASSERT(pInfo);
+  if (dwPacket == XFA_XDPPACKET_UNKNOWN)
+    return pInfo;
+  return (dwPacket & pInfo->dwPackets) ? pInfo : nullptr;
+}
+
+const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName) {
+  return g_XFAEnumData + eName;
 }
 
 }  // namespace
@@ -2335,7 +2358,7 @@ void CXFA_Node::Script_Som_Mandatory(CFXJSE_Value* pValue,
   } else {
     int32_t iValue = validate.GetNullTest();
     const XFA_ATTRIBUTEENUMINFO* pInfo =
-        XFA_GetAttributeEnumByID((XFA_ATTRIBUTEENUM)iValue);
+        GetAttributeEnumByID((XFA_ATTRIBUTEENUM)iValue);
     CFX_WideString wsValue;
     if (pInfo)
       wsValue = pInfo->pName;
@@ -2920,8 +2943,8 @@ void CXFA_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
       pArguments->GetReturnValue()->SetNull();
     } else {
       if (!strName.IsEmpty()) {
-        if (XFA_GetAttributeOfElement(eType, XFA_ATTRIBUTE_Name,
-                                      XFA_XDPPACKET_UNKNOWN)) {
+        if (GetAttributeOfElement(eType, XFA_ATTRIBUTE_Name,
+                                  XFA_XDPPACKET_UNKNOWN)) {
           pNewNode->SetAttribute(XFA_ATTRIBUTE_Name, strName.AsStringC(), true);
           if (pNewNode->GetPacketID() == XFA_XDPPACKET_Datasets) {
             pNewNode->CreateXMLMappingNode();
@@ -3709,7 +3732,7 @@ FX_BOOL CXFA_Node::GetAttribute(XFA_ATTRIBUTE eAttr,
       if (!TryEnum(pAttr->eName, eValue, bUseDefault)) {
         return FALSE;
       }
-      wsValue = XFA_GetAttributeEnumByID(eValue)->pName;
+      wsValue = GetAttributeEnumByID(eValue)->pName;
       return TRUE;
     } break;
     case XFA_ATTRIBUTETYPE_Cdata: {
@@ -4058,7 +4081,7 @@ FX_BOOL CXFA_Node::SetValue(XFA_ATTRIBUTE eAttr,
           static_cast<CFDE_XMLElement*>(m_pXMLNode)
               ->SetString(
                   pInfo->pName,
-                  XFA_GetAttributeEnumByID((XFA_ATTRIBUTEENUM)(uintptr_t)pValue)
+                  GetAttributeEnumByID((XFA_ATTRIBUTEENUM)(uintptr_t)pValue)
                       ->pName);
           break;
         case XFA_ATTRIBUTETYPE_Boolean:
@@ -4891,7 +4914,7 @@ void CXFA_Node::UpdateNameHash() {
     wsName = GetCData(XFA_ATTRIBUTE_Name);
     m_dwNameHash = FX_HashCode_GetW(wsName, false);
   } else if (pNotsure->eType == XFA_ATTRIBUTETYPE_Enum) {
-    wsName = XFA_GetAttributeEnumByID(GetEnum(XFA_ATTRIBUTE_Name))->pName;
+    wsName = GetAttributeEnumByID(GetEnum(XFA_ATTRIBUTE_Name))->pName;
     m_dwNameHash = FX_HashCode_GetW(wsName, false);
   }
 }

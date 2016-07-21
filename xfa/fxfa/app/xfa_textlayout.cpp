@@ -20,6 +20,7 @@
 #include "xfa/fxfa/include/xfa_ffapp.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 
 CXFA_CSSTagProvider::CXFA_CSSTagProvider()
     : m_bTagAvailable(FALSE), m_bContent(FALSE) {}

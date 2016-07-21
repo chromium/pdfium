@@ -170,12 +170,43 @@ FX_BOOL XFA_RecognizeRichText(CFDE_XMLElement* pRichTextXMLNode);
 void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText);
 FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
-IFX_Stream* XFA_CreateWideTextRead(const CFX_WideString& wsBuffer);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
                                          IFX_Stream* pStream,
                                          const FX_CHAR* pChecksum = nullptr,
                                          FX_BOOL bSaveXML = FALSE);
+
+const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
+    XFA_Element eElement,
+    XFA_ATTRIBUTE eAttribute,
+    XFA_ATTRIBUTETYPE eType = XFA_ATTRIBUTETYPE_NOTSURE);
+
+const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
+    XFA_Element eElement,
+    const CFX_WideStringC& wsAttributeName);
+
+const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
+                                             XFA_Element eProperty,
+                                             uint32_t dwPacket);
+const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
+                                             int32_t& iCount);
+const uint8_t* XFA_GetElementAttributes(XFA_Element eElement, int32_t& iCount);
+const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName);
+XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName);
+CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
+                                                      XFA_ATTRIBUTE eAttribute,
+                                                      uint32_t dwPacket);
+FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
+                                     XFA_Element eElement,
+                                     XFA_ATTRIBUTE eAttribute,
+                                     XFA_ATTRIBUTETYPE eType,
+                                     uint32_t dwPacket);
+const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName);
+const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName);
+const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
+    const CFX_WideStringC& wsName);
+const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket);
+const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket);
 
 #endif  // XFA_FXFA_PARSER_XFA_UTILS_H_

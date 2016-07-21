@@ -96,10 +96,6 @@ struct XFA_PACKETINFO {
   uint32_t eFlags;
 };
 
-const XFA_PACKETINFO* XFA_GetPacketByName(const CFX_WideStringC& wsName);
-const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket);
-const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket);
-
 enum XFA_ATTRIBUTEENUM {
   XFA_ATTRIBUTEENUM_Asterisk,
   XFA_ATTRIBUTEENUM_Slash,
@@ -938,9 +934,6 @@ struct XFA_ELEMENTINFO {
   XFA_ObjectType eObjectType;
 };
 
-XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName);
-const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName);
-
 enum XFA_ATTRIBUTETYPE {
   XFA_ATTRIBUTETYPE_NOTSURE,
   XFA_ATTRIBUTETYPE_Enum,
@@ -958,25 +951,6 @@ struct XFA_ATTRIBUTEINFO {
   void* pDefValue;
 };
 
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName);
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName);
-FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
-                                     XFA_Element eElement,
-                                     XFA_ATTRIBUTE eAttribute,
-                                     XFA_ATTRIBUTETYPE eType,
-                                     uint32_t dwPacket);
-XFA_ATTRIBUTEENUM XFA_GetAttributeDefaultValue_Enum(XFA_Element eElement,
-                                                    XFA_ATTRIBUTE eAttribute,
-                                                    uint32_t dwPacket);
-CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_Element eElement,
-                                                   XFA_ATTRIBUTE eAttribute,
-                                                   uint32_t dwPacket);
-FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_Element eElement,
-                                             XFA_ATTRIBUTE eAttribute,
-                                             uint32_t dwPacket);
-CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
-                                                      XFA_ATTRIBUTE eAttribute,
-                                                      uint32_t dwPacket);
 struct XFA_ELEMENTHIERARCHY {
   uint16_t wStart;
   uint16_t wCount;
@@ -990,11 +964,6 @@ struct XFA_SCRIPTHIERARCHY {
   int16_t wParentIndex;
 };
 
-const uint8_t* XFA_GetElementAttributes(XFA_Element eElement, int32_t& iCount);
-
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_Element eElement,
-                                                   XFA_ATTRIBUTE eAttribute,
-                                                   uint32_t dwPacket);
 #define XFA_PROPERTYFLAG_OneOf 0x01
 #define XFA_PROPERTYFLAG_DefaultOneOf 0x02
 struct XFA_PROPERTY {
@@ -1002,19 +971,13 @@ struct XFA_PROPERTY {
   uint8_t uOccur;
   uint8_t uFlags;
 };
-const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
-                                             int32_t& iCount);
-const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
-                                             XFA_Element eProperty,
-                                             uint32_t dwPacket);
+
 struct XFA_ATTRIBUTEENUMINFO {
   uint32_t uHash;
   const FX_WCHAR* pName;
   XFA_ATTRIBUTEENUM eName;
 };
-const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
-    const CFX_WideStringC& wsName);
-const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName);
+
 enum XFA_UNIT {
   XFA_UNIT_Unknown,
   XFA_UNIT_Percent,
@@ -1027,30 +990,12 @@ enum XFA_UNIT {
   XFA_UNIT_Mm,
   XFA_UNIT_Mp,
 };
-class CXFA_Measurement {
- public:
-  void Set(const CFX_WideStringC& wsMeasure);
-  void Set(FX_FLOAT fValue, XFA_UNIT eUnit) {
-    m_fValue = fValue;
-    m_eUnit = eUnit;
-  }
 
-  XFA_UNIT GetUnit() const { return m_eUnit; }
-  FX_FLOAT GetValue() const { return m_fValue; }
-  FX_BOOL ToString(CFX_WideString& wsMeasure) const;
-  FX_BOOL ToUnit(XFA_UNIT eUnit, FX_FLOAT& fValue) const;
-  FX_FLOAT ToUnit(XFA_UNIT eUnit) const {
-    FX_FLOAT f;
-    return ToUnit(eUnit, f) ? f : 0;
-  }
-  CXFA_Measurement() { Set(-1, XFA_UNIT_Unknown); }
-  CXFA_Measurement(const CFX_WideStringC& wsMeasure) { Set(wsMeasure); }
-  CXFA_Measurement(FX_FLOAT fValue, XFA_UNIT eUnit) { Set(fValue, eUnit); }
-  static XFA_UNIT GetUnit(const CFX_WideStringC& wsUnit);
-
- protected:
-  FX_FLOAT m_fValue;
-  XFA_UNIT m_eUnit;
+struct XFA_NOTSUREATTRIBUTE {
+  XFA_Element eElement;
+  XFA_ATTRIBUTE eAttribute;
+  XFA_ATTRIBUTETYPE eType;
+  void* pValue;
 };
 
 class CFXJSE_Arguments;
@@ -1063,8 +1008,6 @@ struct XFA_METHODINFO {
   XFA_METHOD_CALLBACK lpfnCallback;
 };
 
-const XFA_METHODINFO* XFA_GetMethodByName(XFA_Element eElement,
-                                          const CFX_WideStringC& wsMethodName);
 typedef void (CXFA_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
                                                     FX_BOOL bSetting,
                                                     XFA_ATTRIBUTE eAttribute);
@@ -1079,8 +1022,5 @@ struct XFA_SCRIPTATTRIBUTEINFO {
   int32_t eAttribute;
   uint16_t eValueType;
 };
-const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
-    XFA_Element eElement,
-    const CFX_WideStringC& wsAttributeName);
 
 #endif  // XFA_FXFA_INCLUDE_FXFA_BASIC_H_

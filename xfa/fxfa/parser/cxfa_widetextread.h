@@ -1,25 +1,13 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_BASIC_IMP_H_
-#define XFA_FXFA_PARSER_XFA_BASIC_IMP_H_
+#ifndef XFA_FXFA_PARSER_CXFA_WIDETEXTREAD_H_
+#define XFA_FXFA_PARSER_CXFA_WIDETEXTREAD_H_
 
 #include "xfa/fgas/crt/fgas_stream.h"
-#include "xfa/fxfa/include/fxfa_basic.h"
-
-struct XFA_NOTSUREATTRIBUTE {
-  XFA_Element eElement;
-  XFA_ATTRIBUTE eAttribute;
-  XFA_ATTRIBUTETYPE eType;
-  void* pValue;
-};
-const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
-    XFA_Element eElement,
-    XFA_ATTRIBUTE eAttribute,
-    XFA_ATTRIBUTETYPE eType = XFA_ATTRIBUTETYPE_NOTSURE);
 
 class CXFA_WideTextRead : public IFX_Stream {
  public:
@@ -48,9 +36,6 @@ class CXFA_WideTextRead : public IFX_Stream {
                                  int32_t iOffset,
                                  int32_t iLength) override;
 
-  virtual void Lock();
-  virtual void Unlock();
-
   CFX_WideString GetSrcText() const;
 
  protected:
@@ -59,4 +44,4 @@ class CXFA_WideTextRead : public IFX_Stream {
   int32_t m_iRefCount;
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_BASIC_IMP_H_
+#endif  // XFA_FXFA_PARSER_CXFA_WIDETEXTREAD_H_

@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
 #include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 
 static const CXFA_Measurement g_XFAMeasurementData[] = {
     CXFA_Measurement(0, XFA_UNIT_In),

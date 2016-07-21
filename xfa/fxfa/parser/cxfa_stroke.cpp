@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_stroke.h"
 
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 int32_t CXFA_Stroke::GetPresence() const {

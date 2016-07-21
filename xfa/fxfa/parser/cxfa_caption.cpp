@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_caption.h"
 
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 CXFA_Caption::CXFA_Caption(CXFA_Node* pNode) : CXFA_Data(pNode) {}

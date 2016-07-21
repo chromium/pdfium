@@ -123,6 +123,8 @@ const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
     {120, 2, 1057, 8, 312}, {122, 11, 1065, 6, 315}, {133, 2, 1071, 0, 316},
     {135, 0, 1071, 0, 316}, {135, 3, 1071, 2, 316},  {138, 0, 1073, 2, 316},
 };
+const int32_t g_iScriptIndexCount =
+    sizeof(g_XFAScriptIndex) / sizeof(XFA_SCRIPTHIERARCHY);
 
 const XFA_METHODINFO g_SomMethodData[] = {
     {0x3c752495, L"verify",

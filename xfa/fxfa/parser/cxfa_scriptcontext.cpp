@@ -14,6 +14,7 @@
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_resolveprocessor.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -69,6 +70,38 @@ const char kFormCalcRuntime[] = "foxit_xfa_formcalc_runtime";
 
 CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
   return static_cast<CXFA_ThisProxy*>(pValue->ToHostObject(pClass));
+}
+
+const XFA_METHODINFO* GetMethodByName(XFA_Element eElement,
+                                      const CFX_WideStringC& wsMethodName) {
+  if (wsMethodName.IsEmpty())
+    return nullptr;
+
+  int32_t iElementIndex = static_cast<int32_t>(eElement);
+  while (iElementIndex >= 0 && iElementIndex < g_iScriptIndexCount) {
+    const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
+    int32_t icount = scriptIndex->wMethodCount;
+    if (icount == 0) {
+      iElementIndex = scriptIndex->wParentIndex;
+      continue;
+    }
+    uint32_t uHash = FX_HashCode_GetW(wsMethodName, false);
+    int32_t iStart = scriptIndex->wMethodStart;
+    // TODO(dsinclair): Switch to std::lower_bound.
+    int32_t iEnd = iStart + icount - 1;
+    do {
+      int32_t iMid = (iStart + iEnd) / 2;
+      const XFA_METHODINFO* pInfo = g_SomMethodData + iMid;
+      if (uHash == pInfo->uHash)
+        return pInfo;
+      if (uHash < pInfo->uHash)
+        iEnd = iMid - 1;
+      else
+        iStart = iMid + 1;
+    } while (iStart <= iEnd);
+    iElementIndex = scriptIndex->wParentIndex;
+  }
+  return nullptr;
 }
 
 }  // namespace
@@ -357,7 +390,7 @@ int32_t CXFA_ScriptContext::NormalPropTypeGetter(
   pObject = lpScriptContext->GetVariablesThis(pObject);
   XFA_Element eType = pObject->GetElementType();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
-  if (XFA_GetMethodByName(eType, wsPropName.AsStringC())) {
+  if (GetMethodByName(eType, wsPropName.AsStringC())) {
     return FXJSE_ClassPropType_Method;
   }
   if (bQueryIn &&
@@ -379,7 +412,7 @@ int32_t CXFA_ScriptContext::GlobalPropTypeGetter(
   pObject = lpScriptContext->GetVariablesThis(pObject);
   XFA_Element eType = pObject->GetElementType();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
-  if (XFA_GetMethodByName(eType, wsPropName.AsStringC())) {
+  if (GetMethodByName(eType, wsPropName.AsStringC())) {
     return FXJSE_ClassPropType_Method;
   }
   return FXJSE_ClassPropType_Property;
@@ -396,7 +429,7 @@ void CXFA_ScriptContext::NormalMethodCall(CFXJSE_Value* pThis,
   pObject = lpScriptContext->GetVariablesThis(pObject);
   CFX_WideString wsFunName = CFX_WideString::FromUTF8(szFuncName);
   const XFA_METHODINFO* lpMethodInfo =
-      XFA_GetMethodByName(pObject->GetElementType(), wsFunName.AsStringC());
+      GetMethodByName(pObject->GetElementType(), wsFunName.AsStringC());
   if (!lpMethodInfo)
     return;
 

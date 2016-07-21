@@ -8,6 +8,7 @@
 
 #include "core/fxge/include/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_fill.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 CXFA_Font::CXFA_Font(CXFA_Node* pNode) : CXFA_Data(pNode) {}

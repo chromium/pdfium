@@ -10,6 +10,7 @@
 #include "xfa/fxbarcode/include/BC_Library.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_event.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 #include "xfa/fxfa/parser/xfa_object.h"
@@ -204,6 +205,39 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   defValue.GetNode()->GetProperty(0, eValueType, TRUE);
 
   return pUIChild;
+}
+
+XFA_ATTRIBUTEENUM GetAttributeDefaultValue_Enum(XFA_Element eElement,
+                                                XFA_ATTRIBUTE eAttribute,
+                                                uint32_t dwPacket) {
+  void* pValue;
+  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
+                                   XFA_ATTRIBUTETYPE_Enum, dwPacket)) {
+    return (XFA_ATTRIBUTEENUM)(uintptr_t)pValue;
+  }
+  return XFA_ATTRIBUTEENUM_Unknown;
+}
+
+CFX_WideStringC GetAttributeDefaultValue_Cdata(XFA_Element eElement,
+                                               XFA_ATTRIBUTE eAttribute,
+                                               uint32_t dwPacket) {
+  void* pValue;
+  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
+                                   XFA_ATTRIBUTETYPE_Cdata, dwPacket)) {
+    return (const FX_WCHAR*)pValue;
+  }
+  return nullptr;
+}
+
+FX_BOOL GetAttributeDefaultValue_Boolean(XFA_Element eElement,
+                                         XFA_ATTRIBUTE eAttribute,
+                                         uint32_t dwPacket) {
+  void* pValue;
+  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
+                                   XFA_ATTRIBUTETYPE_Boolean, dwPacket)) {
+    return (FX_BOOL)(uintptr_t)pValue;
+  }
+  return FALSE;
 }
 
 }  // namespace
@@ -417,7 +451,7 @@ int32_t CXFA_WidgetData::GetButtonHighlight() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetEnum(XFA_ATTRIBUTE_Highlight);
-  return XFA_GetAttributeDefaultValue_Enum(
+  return GetAttributeDefaultValue_Enum(
       XFA_Element::Button, XFA_ATTRIBUTE_Highlight, XFA_XDPPACKET_Form);
 }
 
@@ -461,16 +495,16 @@ int32_t CXFA_WidgetData::GetCheckButtonShape() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetEnum(XFA_ATTRIBUTE_Shape);
-  return XFA_GetAttributeDefaultValue_Enum(
-      XFA_Element::CheckButton, XFA_ATTRIBUTE_Shape, XFA_XDPPACKET_Form);
+  return GetAttributeDefaultValue_Enum(XFA_Element::CheckButton,
+                                       XFA_ATTRIBUTE_Shape, XFA_XDPPACKET_Form);
 }
 
 int32_t CXFA_WidgetData::GetCheckButtonMark() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetEnum(XFA_ATTRIBUTE_Mark);
-  return XFA_GetAttributeDefaultValue_Enum(
-      XFA_Element::CheckButton, XFA_ATTRIBUTE_Mark, XFA_XDPPACKET_Form);
+  return GetAttributeDefaultValue_Enum(XFA_Element::CheckButton,
+                                       XFA_ATTRIBUTE_Mark, XFA_XDPPACKET_Form);
 }
 
 FX_BOOL CXFA_WidgetData::IsRadioButton() {
@@ -492,7 +526,7 @@ FX_BOOL CXFA_WidgetData::IsAllowNeutral() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetBoolean(XFA_ATTRIBUTE_AllowNeutral);
-  return XFA_GetAttributeDefaultValue_Boolean(
+  return GetAttributeDefaultValue_Boolean(
       XFA_Element::CheckButton, XFA_ATTRIBUTE_AllowNeutral, XFA_XDPPACKET_Form);
 }
 
@@ -681,7 +715,7 @@ int32_t CXFA_WidgetData::GetChoiceListCommitOn() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetEnum(XFA_ATTRIBUTE_CommitOn);
-  return XFA_GetAttributeDefaultValue_Enum(
+  return GetAttributeDefaultValue_Enum(
       XFA_Element::ChoiceList, XFA_ATTRIBUTE_CommitOn, XFA_XDPPACKET_Form);
 }
 
@@ -689,7 +723,7 @@ FX_BOOL CXFA_WidgetData::IsChoiceListAllowTextEntry() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetBoolean(XFA_ATTRIBUTE_TextEntry);
-  return XFA_GetAttributeDefaultValue_Boolean(
+  return GetAttributeDefaultValue_Boolean(
       XFA_Element::ChoiceList, XFA_ATTRIBUTE_TextEntry, XFA_XDPPACKET_Form);
 }
 
@@ -697,8 +731,8 @@ int32_t CXFA_WidgetData::GetChoiceListOpen() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetEnum(XFA_ATTRIBUTE_Open);
-  return XFA_GetAttributeDefaultValue_Enum(
-      XFA_Element::ChoiceList, XFA_ATTRIBUTE_Open, XFA_XDPPACKET_Form);
+  return GetAttributeDefaultValue_Enum(XFA_Element::ChoiceList,
+                                       XFA_ATTRIBUTE_Open, XFA_XDPPACKET_Form);
 }
 
 FX_BOOL CXFA_WidgetData::IsListBox() {
@@ -1387,9 +1421,9 @@ void CXFA_WidgetData::GetPasswordChar(CFX_WideString& wsPassWord) {
   if (pUIChild) {
     pUIChild->TryCData(XFA_ATTRIBUTE_PasswordChar, wsPassWord);
   } else {
-    wsPassWord = XFA_GetAttributeDefaultValue_Cdata(XFA_Element::PasswordEdit,
-                                                    XFA_ATTRIBUTE_PasswordChar,
-                                                    XFA_XDPPACKET_Form);
+    wsPassWord = GetAttributeDefaultValue_Cdata(XFA_Element::PasswordEdit,
+                                                XFA_ATTRIBUTE_PasswordChar,
+                                                XFA_XDPPACKET_Form);
   }
 }
 
@@ -1397,7 +1431,7 @@ FX_BOOL CXFA_WidgetData::IsMultiLine() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetBoolean(XFA_ATTRIBUTE_MultiLine);
-  return XFA_GetAttributeDefaultValue_Boolean(
+  return GetAttributeDefaultValue_Boolean(
       XFA_Element::TextEdit, XFA_ATTRIBUTE_MultiLine, XFA_XDPPACKET_Form);
 }
 
@@ -1405,7 +1439,7 @@ int32_t CXFA_WidgetData::GetVerticalScrollPolicy() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetEnum(XFA_ATTRIBUTE_VScrollPolicy);
-  return XFA_GetAttributeDefaultValue_Enum(
+  return GetAttributeDefaultValue_Enum(
       XFA_Element::TextEdit, XFA_ATTRIBUTE_VScrollPolicy, XFA_XDPPACKET_Form);
 }
 
