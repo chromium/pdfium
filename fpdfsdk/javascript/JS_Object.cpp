@@ -75,25 +75,9 @@ void CJS_Object::Dispose() {
   m_pV8Object.Reset();
 }
 
-FX_BOOL CJS_Object::IsType(const FX_CHAR* sClassName) {
-  return TRUE;
-}
-
-CFX_ByteString CJS_Object::GetClassName() {
-  return "";
-}
-
 void CJS_Object::InitInstance(IJS_Runtime* pIRuntime) {}
 
 void CJS_Object::ExitInstance() {}
-
-int CJS_Object::MsgBox(CPDFDoc_Environment* pApp,
-                       const FX_WCHAR* swMsg,
-                       const FX_WCHAR* swTitle,
-                       FX_UINT nType,
-                       FX_UINT nIcon) {
-  return FXJS_MsgBox(pApp, swMsg, swTitle, nType, nIcon);
-}
 
 void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
   if (pContext->IsMsgBoxEnabled()) {

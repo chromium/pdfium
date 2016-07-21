@@ -46,9 +46,6 @@ class CJS_Object {
   void MakeWeak();
   void Dispose();
 
-  virtual FX_BOOL IsType(const FX_CHAR* sClassName);
-  virtual CFX_ByteString GetClassName();
-
   virtual void InitInstance(IJS_Runtime* pIRuntime);
   virtual void ExitInstance();
 
@@ -58,11 +55,6 @@ class CJS_Object {
   void SetEmbedObject(CJS_EmbedObj* pObj) { m_pEmbedObj.reset(pObj); }
   CJS_EmbedObj* GetEmbedObject() const { return m_pEmbedObj.get(); }
 
-  static int MsgBox(CPDFDoc_Environment* pApp,
-                    const FX_WCHAR* swMsg,
-                    const FX_WCHAR* swTitle,
-                    FX_UINT nType,
-                    FX_UINT nIcon);
   static void Alert(CJS_Context* pContext, const FX_WCHAR* swMsg);
 
   v8::Isolate* GetIsolate() { return m_pIsolate; }
