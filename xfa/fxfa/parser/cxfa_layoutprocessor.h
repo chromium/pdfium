@@ -1,17 +1,22 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_
-#define XFA_FXFA_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_
+#ifndef XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_
+#define XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_
 
-#include "xfa/fxfa/parser/xfa_doclayout.h"
+#include "core/fxcrt/include/fx_system.h"
+#include "xfa/fxfa/parser/xfa_object.h"
 
-class CXFA_ItemLayoutProcessor;
-class CXFA_LayoutPageMgr;
 class CXFA_ContainerLayoutItem;
+class CXFA_Document;
+class CXFA_ItemLayoutProcessor;
+class CXFA_LayoutItem;
+class CXFA_LayoutPageMgr;
+class CXFA_Node;
+class IFX_Pause;
 
 class CXFA_LayoutProcessor {
  public:
@@ -34,7 +39,7 @@ class CXFA_LayoutProcessor {
   }
   CXFA_LayoutPageMgr* GetLayoutPageMgr() { return m_pLayoutPageMgr; }
 
- protected:
+ private:
   void ClearLayoutData();
 
   FX_BOOL IsNeedLayout();
@@ -47,4 +52,4 @@ class CXFA_LayoutProcessor {
   FX_BOOL m_bNeeLayout;
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_
+#endif  // XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_

@@ -1,0 +1,54 @@
+// Copyright 2016 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+#ifndef XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
+#define XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
+
+#include "xfa/fxfa/parser/xfa_document.h"
+
+class CXFA_ContainerLayoutItem;
+class CXFA_ContentLayoutItem;
+class CXFA_LayoutProcessor;
+
+class CXFA_LayoutItem {
+ public:
+  virtual ~CXFA_LayoutItem();
+
+  FX_BOOL IsContainerLayoutItem() const { return !m_bIsContentLayoutItem; }
+  FX_BOOL IsContentLayoutItem() const { return m_bIsContentLayoutItem; }
+  CXFA_ContainerLayoutItem* AsContainerLayoutItem();
+  CXFA_ContentLayoutItem* AsContentLayoutItem();
+
+  CXFA_ContainerLayoutItem* GetPage() const;
+  CXFA_Node* GetFormNode() const;
+  void GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative = FALSE) const;
+  int32_t GetIndex() const;
+  int32_t GetCount() const;
+  CXFA_LayoutItem* GetParent() const;
+  const CXFA_LayoutItem* GetFirst() const;
+  CXFA_LayoutItem* GetFirst();
+  const CXFA_LayoutItem* GetLast() const;
+  CXFA_LayoutItem* GetLast();
+  CXFA_LayoutItem* GetPrev() const;
+  CXFA_LayoutItem* GetNext() const;
+
+  void AddChild(CXFA_LayoutItem* pChildItem);
+  void AddHeadChild(CXFA_LayoutItem* pChildItem);
+  void RemoveChild(CXFA_LayoutItem* pChildItem);
+  void InsertChild(CXFA_LayoutItem* pBeforeItem, CXFA_LayoutItem* pChildItem);
+
+  CXFA_Node* m_pFormNode;
+  CXFA_LayoutItem* m_pParent;
+  CXFA_LayoutItem* m_pNextSibling;
+  CXFA_LayoutItem* m_pFirstChild;
+
+ protected:
+  CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
+
+  FX_BOOL m_bIsContentLayoutItem;
+};
+
+#endif  // XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_

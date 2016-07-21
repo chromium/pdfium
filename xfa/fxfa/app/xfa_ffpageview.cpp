@@ -121,15 +121,13 @@ CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
 }
 
 void CXFA_FFPageView::GetPageViewRect(CFX_RectF& rtPage) const {
-  CFX_SizeF sz;
-  GetPageSize(sz);
-  rtPage.Set(0, 0, sz);
+  rtPage.Set(0, 0, GetPageSize());
 }
+
 void CXFA_FFPageView::GetDisplayMatrix(CFX_Matrix& mt,
                                        const CFX_Rect& rtDisp,
                                        int32_t iRotate) const {
-  CFX_SizeF sz;
-  GetPageSize(sz);
+  CFX_SizeF sz = GetPageSize();
   CFX_RectF fdePage;
   fdePage.Set(0, 0, sz.x, sz.y);
   GetPageMatrix(mt, fdePage, rtDisp, iRotate, 0);

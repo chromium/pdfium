@@ -8,7 +8,6 @@
 #define XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
 
 #include "fxjs/include/cfxjse_arguments.h"
-#include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 enum XFA_LAYOUTMODEL_HWXY {
@@ -17,6 +16,8 @@ enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_X,
   XFA_LAYOUTMODEL_Y
 };
+
+class CXFA_LayoutProcessor;
 
 class CScript_LayoutPseudoModel : public CXFA_Object {
  public:

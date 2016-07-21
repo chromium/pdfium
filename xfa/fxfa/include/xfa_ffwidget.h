@@ -12,7 +12,7 @@
 #include "core/fxcodec/include/fx_codec_def.h"
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fxfa/include/fxfa.h"
-#include "xfa/fxfa/parser/xfa_doclayout.h"
+#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 
 class CXFA_FFPageView;
 class CXFA_FFDocView;

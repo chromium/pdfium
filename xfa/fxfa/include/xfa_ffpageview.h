@@ -7,7 +7,9 @@
 #ifndef XFA_FXFA_INCLUDE_XFA_FFPAGEVIEW_H_
 #define XFA_FXFA_INCLUDE_XFA_FFPAGEVIEW_H_
 
-#include "xfa/fxfa/parser/xfa_doclayout.h"
+#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h"
 
 class CXFA_FFWidget;
 class CXFA_FFDocView;

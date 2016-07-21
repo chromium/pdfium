@@ -7,9 +7,7 @@
 #include "xfa/fxfa/parser/xfa_layout_appadapter.h"
 
 #include "xfa/fxfa/app/xfa_ffnotify.h"
-#include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
-#include "xfa/fxfa/parser/xfa_document_layout_imp.h"
 #include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
 #include "xfa/fxfa/parser/xfa_layout_pagemgr_new.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"

@@ -7,7 +7,6 @@
 #include "xfa/fxfa/parser/xfa_locale.h"
 
 #include "core/fxcrt/include/fx_xml.h"
-#include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"

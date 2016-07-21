@@ -7,7 +7,9 @@
 #ifndef XFA_FXFA_PARSER_XFA_LAYOUT_APPADAPTER_H_
 #define XFA_FXFA_PARSER_XFA_LAYOUT_APPADAPTER_H_
 
-#include "xfa/fxfa/parser/xfa_doclayout.h"
+#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_layoutitem.h"
 
 class CXFA_TraverseStrategy_PageAreaContainerLayoutItem {
  public:

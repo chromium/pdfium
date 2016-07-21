@@ -7,8 +7,9 @@
 #ifndef XFA_FXFA_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_
 #define XFA_FXFA_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_
 
-#include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
+
+class CXFA_LayoutItem;
 
 class CXFA_ContainerRecord {
  public:

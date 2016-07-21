@@ -13,8 +13,7 @@
 #include <map>
 
 #include "core/fxcrt/include/fx_basic.h"
-#include "xfa/fxfa/parser/xfa_doclayout.h"
-#include "xfa/fxfa/parser/xfa_document_layout_imp.h"
+#include "xfa/fxfa/include/fxfa_basic.h"
 
 #define XFA_LAYOUT_INVALIDNODE ((CXFA_Node*)(intptr_t)-1)
 #define XFA_LAYOUT_FLOAT_PERCISION (0.0005f)
@@ -24,6 +23,7 @@ class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
 class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
+class CXFA_LayoutProcessor;
 class CXFA_Node;
 
 enum XFA_ItemLayoutProcessorResult {
