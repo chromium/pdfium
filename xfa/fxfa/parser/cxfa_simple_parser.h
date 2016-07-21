@@ -34,7 +34,9 @@ class CXFA_SimpleParser {
   CFDE_XMLDoc* GetXMLDoc() const;
   void CloseParser();
 
- protected:
+  void SetFactory(CXFA_Document* pFactory);
+
+ private:
   CXFA_Node* ParseAsXDPPacket(CFDE_XMLNode* pXMLDocumentNode,
                               XFA_XDPPACKET ePacketID);
   CXFA_Node* ParseAsXDPPacket_XDP(CFDE_XMLNode* pXMLDocumentNode,
@@ -72,7 +74,6 @@ class CXFA_SimpleParser {
   void ParseInstruction(CXFA_Node* pXFANode,
                         CFDE_XMLInstruction* pXMLInstruction,
                         XFA_XDPPACKET ePacketID);
-  void SetFactory(CXFA_Document* pFactory);
 
   CXFA_XMLParser* m_pXMLParser;
   std::unique_ptr<CFDE_XMLDoc> m_pXMLDoc;
@@ -82,7 +83,6 @@ class CXFA_SimpleParser {
   CXFA_Node* m_pRootNode;
   XFA_XDPPACKET m_ePacketID;
   FX_BOOL m_bDocumentParser;
-  friend class CXFA_DocumentParser;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
