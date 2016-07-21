@@ -147,7 +147,7 @@ static_library("pdfium") {
   }
 }
 
-source_set("test_support") {
+static_library("test_support") {
   testonly = true
   sources = [
     "testing/fx_string_testhelpers.cpp",

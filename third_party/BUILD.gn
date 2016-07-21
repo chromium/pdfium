@@ -16,7 +16,7 @@ config("pdfium_third_party_config") {
   configs = [ "..:pdfium_common_config" ]
 }
 
-source_set("bigint") {
+static_library("bigint") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -106,7 +106,7 @@ if (!pdf_use_skia) {
     }
   }
 
-  source_set("fx_agg") {
+  static_library("fx_agg") {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
@@ -149,7 +149,7 @@ config("fx_lcms2_warnings") {
   }
 }
 
-source_set("fx_lcms2") {
+static_library("fx_lcms2") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -197,7 +197,7 @@ config("jpeg_warnings") {
   }
 }
 
-source_set("jpeg") {
+static_library("jpeg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -275,7 +275,7 @@ config("fx_libopenjpeg_warnings") {
   }
 }
 
-source_set("fx_libopenjpeg") {
+static_library("fx_libopenjpeg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -307,7 +307,7 @@ source_set("fx_libopenjpeg") {
   ]
 }
 
-source_set("fx_lpng") {
+static_library("fx_lpng") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -341,7 +341,7 @@ source_set("fx_lpng") {
 }
 
 if (pdf_enable_xfa) {
-  source_set("fx_tiff") {
+  static_library("fx_tiff") {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
@@ -405,7 +405,7 @@ config("fx_zlib_warnings") {
   }
 }
 
-source_set("fx_zlib") {
+static_library("fx_zlib") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -433,6 +433,7 @@ source_set("fx_zlib") {
   ]
 }
 
+# Can not be a static library due to lack of .cc files.
 source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
