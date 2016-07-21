@@ -1463,8 +1463,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/xfa_localevalue.h",
       "xfa/fxfa/parser/xfa_object.h",
       "xfa/fxfa/parser/xfa_resolvenode_rs.h",
+      "xfa/fxfa/parser/xfa_utils.cpp",
       "xfa/fxfa/parser/xfa_utils.h",
-      "xfa/fxfa/parser/xfa_utils_imp.cpp",
       "xfa/fxgraphics/cagg_graphics.cpp",
       "xfa/fxgraphics/cagg_graphics.h",
       "xfa/fxgraphics/cfx_color.cpp",
@@ -1530,7 +1530,7 @@ test("pdfium_unittests") {
       "xfa/fde/xml/fde_xml_imp_unittest.cpp",
       "xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
       "xfa/fxfa/app/xfa_textlayout_unittest.cpp",
-      "xfa/fxfa/parser/xfa_utils_imp_unittest.cpp",
+      "xfa/fxfa/parser/xfa_utils_unittest.cpp",
     ]
   }
   if (pdf_use_skia) {

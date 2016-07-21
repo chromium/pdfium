@@ -902,7 +902,7 @@
             'xfa/fde/xml/fde_xml_imp_unittest.cpp',
             'xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
             'xfa/fxfa/app/xfa_textlayout_unittest.cpp',
-            'xfa/fxfa/parser/xfa_utils_imp_unittest.cpp',
+            'xfa/fxfa/parser/xfa_utils_unittest.cpp',
           ],
         }],
         ['pdf_use_skia==1', {
