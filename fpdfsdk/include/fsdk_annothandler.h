@@ -8,6 +8,7 @@
 #define FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/include/fx_basic.h"
@@ -314,7 +315,6 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
 };
 #endif  // PDF_ENABLE_XFA
 
-#define CBA_AnnotHandlerArray CFX_ArrayTemplate<IPDFSDK_AnnotHandler*>
 class CPDFSDK_AnnotHandlerMgr {
  public:
   // Destroy the handler
@@ -409,8 +409,8 @@ class CPDFSDK_AnnotHandlerMgr {
   CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, FX_BOOL bNext);
 
  private:
-  CBA_AnnotHandlerArray m_Handlers;
-  std::map<CFX_ByteString, IPDFSDK_AnnotHandler*> m_mapType2Handler;
+  std::map<CFX_ByteString, std::unique_ptr<IPDFSDK_AnnotHandler>>
+      m_mapType2Handler;
   CPDFDoc_Environment* m_pApp;
 };
 

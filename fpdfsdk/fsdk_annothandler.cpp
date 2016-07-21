@@ -40,32 +40,18 @@ CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFDoc_Environment* pApp) {
 #endif  // PDF_ENABLE_XFA
 }
 
-CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() {
-  for (int i = 0; i < m_Handlers.GetSize(); i++) {
-    IPDFSDK_AnnotHandler* pHandler = m_Handlers.GetAt(i);
-    delete pHandler;
-  }
-  m_Handlers.RemoveAll();
-  m_mapType2Handler.clear();
-}
+CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() {}
 
 void CPDFSDK_AnnotHandlerMgr::RegisterAnnotHandler(
     IPDFSDK_AnnotHandler* pAnnotHandler) {
   ASSERT(!GetAnnotHandler(pAnnotHandler->GetType()));
 
-  m_Handlers.Add(pAnnotHandler);
-  m_mapType2Handler[pAnnotHandler->GetType()] = pAnnotHandler;
+  m_mapType2Handler[pAnnotHandler->GetType()].reset(pAnnotHandler);
 }
 
 void CPDFSDK_AnnotHandlerMgr::UnRegisterAnnotHandler(
     IPDFSDK_AnnotHandler* pAnnotHandler) {
   m_mapType2Handler.erase(pAnnotHandler->GetType());
-  for (int i = 0, sz = m_Handlers.GetSize(); i < sz; i++) {
-    if (m_Handlers.GetAt(i) == pAnnotHandler) {
-      m_Handlers.RemoveAt(i);
-      break;
-    }
-  }
 }
 
 CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot* pAnnot,
@@ -139,7 +125,7 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
     const CFX_ByteString& sType) const {
   auto it = m_mapType2Handler.find(sType);
-  return it != m_mapType2Handler.end() ? it->second : nullptr;
+  return it != m_mapType2Handler.end() ? it->second.get() : nullptr;
 }
 
 void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_PageView* pPageView,
