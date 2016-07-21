@@ -116,7 +116,6 @@ class CJS_ContextStub final : public IJS_Context {
   void OnBatchExec(CPDFSDK_Document* pTarget) override {}
   void OnConsole_Exec() override {}
   void OnExternal_Exec() override {}
-  void EnableMessageBox(FX_BOOL bEnable) override {}
 };
 
 class CJS_RuntimeStub final : public IJS_Runtime {

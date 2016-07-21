@@ -11,7 +11,7 @@
 #include "fpdfsdk/javascript/resource.h"
 
 CJS_Context::CJS_Context(CJS_Runtime* pRuntime)
-    : m_pRuntime(pRuntime), m_bBusy(FALSE), m_bMsgBoxEnable(TRUE) {
+    : m_pRuntime(pRuntime), m_bBusy(FALSE) {
   m_pEventHandler = new CJS_EventHandler(this);
 }
 
@@ -266,10 +266,6 @@ void CJS_Context::OnConsole_Exec() {
 
 void CJS_Context::OnExternal_Exec() {
   m_pEventHandler->OnExternal_Exec();
-}
-
-void CJS_Context::EnableMessageBox(FX_BOOL bEnable) {
-  m_bMsgBoxEnable = bEnable;
 }
 
 void CJS_Context::OnBatchExec(CPDFSDK_Document* pTarget) {

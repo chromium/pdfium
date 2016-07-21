@@ -125,8 +125,6 @@ class IJS_Context {
   virtual void OnConsole_Exec() = 0;
   virtual void OnExternal_Exec() = 0;
 
-  virtual void EnableMessageBox(FX_BOOL bEnable) = 0;
-
  protected:
   virtual ~IJS_Context() {}
 };

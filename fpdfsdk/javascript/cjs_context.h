@@ -119,9 +119,7 @@ class CJS_Context : public IJS_Context {
   void OnBatchExec(CPDFSDK_Document* pTarget) override;
   void OnConsole_Exec() override;
   void OnExternal_Exec() override;
-  void EnableMessageBox(FX_BOOL bEnable) override;
 
-  FX_BOOL IsMsgBoxEnabled() const { return m_bMsgBoxEnable; }
   CJS_Runtime* GetJSRuntime() const { return m_pRuntime; }
   CJS_EventHandler* GetEventHandler() const { return m_pEventHandler; }
 
@@ -132,7 +130,6 @@ class CJS_Context : public IJS_Context {
   CJS_Runtime* m_pRuntime;
   CJS_EventHandler* m_pEventHandler;
   FX_BOOL m_bBusy;
-  FX_BOOL m_bMsgBoxEnable;
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_CONTEXT_H_

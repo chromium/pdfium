@@ -10,24 +10,6 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/cjs_context.h"
 
-namespace {
-
-int FXJS_MsgBox(CPDFDoc_Environment* pApp,
-                const FX_WCHAR* swMsg,
-                const FX_WCHAR* swTitle,
-                FX_UINT nType,
-                FX_UINT nIcon) {
-  if (!pApp)
-    return 0;
-
-  if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
-    pDoc->KillFocusAnnot();
-
-  return pApp->JS_appAlert(swMsg, swTitle, nType, nIcon);
-}
-
-}  // namespace
-
 CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
 
 CJS_EmbedObj::~CJS_EmbedObj() {
@@ -39,7 +21,13 @@ int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp,
                          const FX_WCHAR* swTitle,
                          FX_UINT nType,
                          FX_UINT nIcon) {
-  return FXJS_MsgBox(pApp, swMsg, swTitle, nType, nIcon);
+  if (!pApp)
+    return 0;
+
+  if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
+    pDoc->KillFocusAnnot();
+
+  return pApp->JS_appAlert(swMsg, swTitle, nType, nIcon);
 }
 
 void CJS_EmbedObj::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
@@ -80,11 +68,9 @@ void CJS_Object::InitInstance(IJS_Runtime* pIRuntime) {}
 void CJS_Object::ExitInstance() {}
 
 void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  if (pContext->IsMsgBoxEnabled()) {
-    CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-    if (pApp)
-      pApp->JS_appAlert(swMsg, nullptr, 0, 3);
-  }
+  CPDFDoc_Environment* pApp = pContext->GetReaderApp();
+  if (pApp)
+    pApp->JS_appAlert(swMsg, nullptr, 0, 3);
 }
 
 CJS_Timer::CJS_Timer(CJS_EmbedObj* pObj,
