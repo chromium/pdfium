@@ -10,6 +10,7 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_freetype.h"
@@ -1018,34 +1019,32 @@ FX_BOOL CFX_QuartzDevice::Attach(CGContextRef context, int32_t nDeviceClass) {
   }
   m_pContext = context;
   CGContextRetain(m_pContext);
-  IFX_RenderDeviceDriver* pDriver =
-      new CFX_QuartzDeviceDriver(m_pContext, nDeviceClass);
-  SetDeviceDriver(pDriver);
+  SetDeviceDriver(
+      WrapUnique(new CFX_QuartzDeviceDriver(m_pContext, nDeviceClass)));
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDevice::Attach(CFX_DIBitmap* pBitmap) {
   SetBitmap(pBitmap);
   m_pContext = createContextWithBitmap(pBitmap);
   if (!m_pContext)
     return FALSE;
 
-  IFX_RenderDeviceDriver* pDriver =
-      new CFX_QuartzDeviceDriver(m_pContext, FXDC_DISPLAY);
-  SetDeviceDriver(pDriver);
+  SetDeviceDriver(
+      WrapUnique(new CFX_QuartzDeviceDriver(m_pContext, FXDC_DISPLAY)));
   return TRUE;
 }
+
 FX_BOOL CFX_QuartzDevice::Create(int32_t width,
                                  int32_t height,
                                  FXDIB_Format format) {
   if ((uint8_t)format < 32) {
     return FALSE;
   }
-  CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
-  if (!pBitmap->Create(width, height, format)) {
-    delete pBitmap;
+  std::unique_ptr<CFX_DIBitmap> pBitmap(new CFX_DIBitmap);
+  if (!pBitmap->Create(width, height, format))
     return FALSE;
-  }
   m_bOwnedBitmap = TRUE;
-  return Attach(pBitmap);
+  return Attach(pBitmap.release());
 }
 #endif  // _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_

@@ -86,7 +86,7 @@ FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
     return FALSE;
 
   CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp;
+  CFX_DIBitmap* pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return FALSE;
 
@@ -124,7 +124,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     }
 
     CFX_DIBExtractor temp(pSource);
-    CFX_DIBitmap* pBitmap = temp;
+    CFX_DIBitmap* pBitmap = temp.GetBitmap();
     if (!pBitmap)
       return FALSE;
     return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
@@ -150,7 +150,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
   }
 
   CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp;
+  CFX_DIBitmap* pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return FALSE;
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,

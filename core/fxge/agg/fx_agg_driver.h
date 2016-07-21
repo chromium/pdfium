@@ -7,6 +7,9 @@
 #ifndef CORE_FXGE_AGG_FX_AGG_DRIVER_H_
 #define CORE_FXGE_AGG_FX_AGG_DRIVER_H_
 
+#include <memory>
+#include <vector>
+
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 #include "third_party/agg23/agg_clip_liang_barsky.h"
 #include "third_party/agg23/agg_path_storage.h"
@@ -108,11 +111,11 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
 
  private:
   CFX_DIBitmap* m_pBitmap;
-  CFX_ClipRgn* m_pClipRgn;
-  CFX_ArrayTemplate<CFX_ClipRgn*> m_StateStack;
+  std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
+  std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   void* m_pPlatformGraphics;
-  void* m_pPlatformBitmap;
-  void* m_pDwRenderTartget;
+#endif
   int m_FillFlags;
   FX_BOOL m_bRgbByteOrder;
   CFX_DIBitmap* m_pOriDevice;

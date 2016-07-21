@@ -8,6 +8,7 @@
 #define CORE_FXGE_INCLUDE_FX_DIB_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -381,10 +382,10 @@ class CFX_DIBExtractor {
   explicit CFX_DIBExtractor(const CFX_DIBSource* pSrc);
   ~CFX_DIBExtractor();
 
-  operator CFX_DIBitmap*() { return m_pBitmap; }
+  CFX_DIBitmap* GetBitmap() { return m_pBitmap.get(); }
 
  private:
-  CFX_DIBitmap* m_pBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
 };
 
 typedef CFX_CountRef<CFX_DIBitmap> CFX_DIBitmapRef;
@@ -399,8 +400,8 @@ class CFX_FilteredDIB : public CFX_DIBSource {
 
   virtual uint32_t* GetDestPalette() = 0;
 
-  virtual void TranslateScanline(uint8_t* dest_buf,
-                                 const uint8_t* src_buf) const = 0;
+  virtual void TranslateScanline(const uint8_t* src_buf,
+                                 std::vector<uint8_t>* dest_buf) const = 0;
 
   virtual void TranslateDownSamples(uint8_t* dest_buf,
                                     const uint8_t* src_buf,
@@ -419,10 +420,8 @@ class CFX_FilteredDIB : public CFX_DIBSource {
                           int clip_width) const override;
 
   const CFX_DIBSource* m_pSrc;
-
   FX_BOOL m_bAutoDropSrc;
-
-  uint8_t* m_pScanline;
+  mutable std::vector<uint8_t> m_Scanline;
 };
 
 class IFX_ScanlineComposer {
@@ -438,6 +437,7 @@ class IFX_ScanlineComposer {
                           FXDIB_Format src_format,
                           uint32_t* pSrcPalette) = 0;
 };
+
 class CFX_ScanlineCompositor {
  public:
   CFX_ScanlineCompositor();
@@ -663,7 +663,7 @@ class CFX_ImageRenderer {
   int m_BitmapAlpha;
   uint32_t m_MaskColor;
   CFX_Matrix m_Matrix;
-  CFX_ImageTransformer* m_pTransformer;
+  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapComposer m_Composer;
   int m_Status;

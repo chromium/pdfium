@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
@@ -618,8 +619,8 @@ class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
   // CFX_FilteredDIB
   FXDIB_Format GetDestFormat() override;
   FX_ARGB* GetDestPalette() override;
-  void TranslateScanline(uint8_t* dest_buf,
-                         const uint8_t* src_buf) const override;
+  void TranslateScanline(const uint8_t* src_buf,
+                         std::vector<uint8_t>* dest_buf) const override;
   void TranslateDownSamples(uint8_t* dest_buf,
                             const uint8_t* src_buf,
                             int pixels,

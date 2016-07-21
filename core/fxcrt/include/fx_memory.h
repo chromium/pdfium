@@ -23,6 +23,7 @@ void FXMEM_DefaultFree(void* pointer, int flags);
 
 #include <stdlib.h>
 #include <limits>
+#include <memory>
 #include <new>
 
 NEVER_INLINE void FX_OutOfMemoryTerminate();
@@ -99,6 +100,12 @@ template <class T>
 struct ReleaseDeleter {
   inline void operator()(T* ptr) const { ptr->Release(); }
 };
+
+// Used to help transfer ownership of a raw pointer to std::unique_ptr.
+template <typename T>
+std::unique_ptr<T> WrapUnique(T* ptr) {
+  return std::unique_ptr<T>(ptr);
+}
 
 class CFX_Deletable {
  public:

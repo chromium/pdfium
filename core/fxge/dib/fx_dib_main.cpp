@@ -6,8 +6,8 @@
 
 #include "core/fxge/include/fx_dib.h"
 
-#include <algorithm>
 #include <limits.h>
+#include <algorithm>
 
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/dib/dib_int.h"
@@ -1459,36 +1459,28 @@ CFX_DIBitmap* CFX_DIBSource::FlipImage(FX_BOOL bXFlip, FX_BOOL bYFlip) const {
 }
 
 CFX_DIBExtractor::CFX_DIBExtractor(const CFX_DIBSource* pSrc) {
-  m_pBitmap = nullptr;
   if (pSrc->GetBuffer()) {
-    m_pBitmap = new CFX_DIBitmap;
+    m_pBitmap.reset(new CFX_DIBitmap);
     if (!m_pBitmap->Create(pSrc->GetWidth(), pSrc->GetHeight(),
                            pSrc->GetFormat(), pSrc->GetBuffer())) {
-      delete m_pBitmap;
-      m_pBitmap = nullptr;
+      m_pBitmap.reset();
       return;
     }
     m_pBitmap->CopyPalette(pSrc->GetPalette());
     m_pBitmap->CopyAlphaMask(pSrc->m_pAlphaMask);
   } else {
-    m_pBitmap = pSrc->Clone();
+    m_pBitmap.reset(pSrc->Clone());
   }
 }
 
-CFX_DIBExtractor::~CFX_DIBExtractor() {
-  delete m_pBitmap;
-}
+CFX_DIBExtractor::~CFX_DIBExtractor() {}
 
-CFX_FilteredDIB::CFX_FilteredDIB() {
-  m_pScanline = nullptr;
-  m_pSrc = nullptr;
-}
+CFX_FilteredDIB::CFX_FilteredDIB() : m_pSrc(nullptr) {}
 
 CFX_FilteredDIB::~CFX_FilteredDIB() {
   if (m_bAutoDropSrc) {
     delete m_pSrc;
   }
-  FX_Free(m_pScanline);
 }
 
 void CFX_FilteredDIB::LoadSrc(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc) {
@@ -1501,12 +1493,12 @@ void CFX_FilteredDIB::LoadSrc(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc) {
   m_AlphaFlag = (uint8_t)(format >> 8);
   m_Pitch = (m_Width * (format & 0xff) + 31) / 32 * 4;
   m_pPalette.reset(GetDestPalette());
-  m_pScanline = FX_Alloc(uint8_t, m_Pitch);
+  m_Scanline.resize(m_Pitch);
 }
 
 const uint8_t* CFX_FilteredDIB::GetScanline(int line) const {
-  TranslateScanline(m_pScanline, m_pSrc->GetScanline(line));
-  return m_pScanline;
+  TranslateScanline(m_pSrc->GetScanline(line), &m_Scanline);
+  return m_Scanline.data();
 }
 
 void CFX_FilteredDIB::DownSampleScanline(int line,
@@ -1523,14 +1515,11 @@ void CFX_FilteredDIB::DownSampleScanline(int line,
 
 CFX_ImageRenderer::CFX_ImageRenderer() {
   m_Status = 0;
-  m_pTransformer = nullptr;
   m_bRgbByteOrder = FALSE;
   m_BlendType = FXDIB_BLEND_NORMAL;
 }
 
-CFX_ImageRenderer::~CFX_ImageRenderer() {
-  delete m_pTransformer;
-}
+CFX_ImageRenderer::~CFX_ImageRenderer() {}
 
 FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
                                  const CFX_ClipRgn* pClipRgn,
@@ -1587,8 +1576,8 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
       return TRUE;
     }
     m_Status = 2;
-    m_pTransformer =
-        new CFX_ImageTransformer(pSource, &m_Matrix, dib_flags, &m_ClipBox);
+    m_pTransformer.reset(
+        new CFX_ImageTransformer(pSource, &m_Matrix, dib_flags, &m_ClipBox));
     m_pTransformer->Start();
     return TRUE;
   }

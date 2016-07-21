@@ -14,6 +14,7 @@
 #include <crtdbg.h>
 
 #include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcrt/include/fx_memory.h"
 
 #ifndef _SKIA_SUPPORT_
 #include "core/fxge/agg/fx_agg_driver.h"
@@ -1253,7 +1254,7 @@ FX_BOOL CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource,
     return SetDIBits(&bitmap, 0, &src_rect, left, top, FXDIB_BLEND_NORMAL);
   }
   CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp;
+  CFX_DIBitmap* pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return FALSE;
   return GDI_SetDIBits(pBitmap, pSrcRect, left, top);
@@ -1335,7 +1336,7 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource,
         (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
     if (pPlatform->m_GdiplusExt.IsAvailable() && !pSource->IsCmykImage()) {
       CFX_DIBExtractor temp(pSource);
-      CFX_DIBitmap* pBitmap = temp;
+      CFX_DIBitmap* pBitmap = temp.GetBitmap();
       if (!pBitmap)
         return FALSE;
       return pPlatform->m_GdiplusExt.StretchDIBits(
@@ -1346,7 +1347,7 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource,
                                  dest_width, dest_height, pClipRect, flags);
   }
   CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp;
+  CFX_DIBitmap* pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return FALSE;
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
@@ -1364,7 +1365,7 @@ FX_BOOL CGdiDisplayDriver::StartDIBits(const CFX_DIBSource* pBitmap,
 }
 
 CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC) {
-  SetDeviceDriver(CreateDriver(hDC));
+  SetDeviceDriver(WrapUnique(CreateDriver(hDC)));
 }
 
 CFX_WindowsDevice::~CFX_WindowsDevice() {}
@@ -1407,8 +1408,7 @@ CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width,
   SetBitmap(pBitmap);
   m_hDC = ::CreateCompatibleDC(nullptr);
   m_hOldBitmap = (HBITMAP)SelectObject(m_hDC, m_hBitmap);
-  IFX_RenderDeviceDriver* pDriver = new CGdiDisplayDriver(m_hDC);
-  SetDeviceDriver(pDriver);
+  SetDeviceDriver(WrapUnique(new CGdiDisplayDriver(m_hDC)));
 }
 
 CFX_WinBitmapDevice::~CFX_WinBitmapDevice() {

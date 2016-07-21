@@ -197,98 +197,113 @@ CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
   m_RampG = &pTransferFunc->m_Samples[256];
   m_RampB = &pTransferFunc->m_Samples[512];
 }
-void CPDF_DIBTransferFunc::TranslateScanline(uint8_t* dest_buf,
-                                             const uint8_t* src_buf) const {
-  int i;
+
+void CPDF_DIBTransferFunc::TranslateScanline(
+    const uint8_t* src_buf,
+    std::vector<uint8_t>* dest_buf) const {
   FX_BOOL bSkip = FALSE;
   switch (m_pSrc->GetFormat()) {
     case FXDIB_1bppRgb: {
-      int r0 = m_RampR[0], g0 = m_RampG[0], b0 = m_RampB[0];
-      int r1 = m_RampR[255], g1 = m_RampG[255], b1 = m_RampB[255];
-      for (i = 0; i < m_Width; i++) {
+      int r0 = m_RampR[0];
+      int g0 = m_RampG[0];
+      int b0 = m_RampB[0];
+      int r1 = m_RampR[255];
+      int g1 = m_RampG[255];
+      int b1 = m_RampB[255];
+      int index = 0;
+      for (int i = 0; i < m_Width; i++) {
         if (src_buf[i / 8] & (1 << (7 - i % 8))) {
-          *dest_buf++ = b1;
-          *dest_buf++ = g1;
-          *dest_buf++ = r1;
+          (*dest_buf)[index++] = b1;
+          (*dest_buf)[index++] = g1;
+          (*dest_buf)[index++] = r1;
         } else {
-          *dest_buf++ = b0;
-          *dest_buf++ = g0;
-          *dest_buf++ = r0;
+          (*dest_buf)[index++] = b0;
+          (*dest_buf)[index++] = g0;
+          (*dest_buf)[index++] = r0;
         }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        dest_buf++;
+        index++;
 #endif
       }
       break;
     }
     case FXDIB_1bppMask: {
-      int m0 = m_RampR[0], m1 = m_RampR[255];
-      for (i = 0; i < m_Width; i++) {
-        if (src_buf[i / 8] & (1 << (7 - i % 8))) {
-          *dest_buf++ = m1;
-        } else {
-          *dest_buf++ = m0;
-        }
+      int m0 = m_RampR[0];
+      int m1 = m_RampR[255];
+      int index = 0;
+      for (int i = 0; i < m_Width; i++) {
+        if (src_buf[i / 8] & (1 << (7 - i % 8)))
+          (*dest_buf)[index++] = m1;
+        else
+          (*dest_buf)[index++] = m0;
       }
       break;
     }
     case FXDIB_8bppRgb: {
       FX_ARGB* pPal = m_pSrc->GetPalette();
-      for (i = 0; i < m_Width; i++) {
+      int index = 0;
+      for (int i = 0; i < m_Width; i++) {
         if (pPal) {
           FX_ARGB src_argb = pPal[*src_buf];
-          *dest_buf++ = m_RampB[FXARGB_R(src_argb)];
-          *dest_buf++ = m_RampG[FXARGB_G(src_argb)];
-          *dest_buf++ = m_RampR[FXARGB_B(src_argb)];
+          (*dest_buf)[index++] = m_RampB[FXARGB_R(src_argb)];
+          (*dest_buf)[index++] = m_RampG[FXARGB_G(src_argb)];
+          (*dest_buf)[index++] = m_RampR[FXARGB_B(src_argb)];
         } else {
           uint32_t src_byte = *src_buf;
-          *dest_buf++ = m_RampB[src_byte];
-          *dest_buf++ = m_RampG[src_byte];
-          *dest_buf++ = m_RampR[src_byte];
+          (*dest_buf)[index++] = m_RampB[src_byte];
+          (*dest_buf)[index++] = m_RampG[src_byte];
+          (*dest_buf)[index++] = m_RampR[src_byte];
         }
         src_buf++;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        dest_buf++;
+        index++;
 #endif
       }
       break;
     }
-    case FXDIB_8bppMask:
-      for (i = 0; i < m_Width; i++) {
-        *dest_buf++ = m_RampR[*(src_buf++)];
+    case FXDIB_8bppMask: {
+      int index = 0;
+      for (int i = 0; i < m_Width; i++) {
+        (*dest_buf)[index++] = m_RampR[*(src_buf++)];
       }
       break;
-    case FXDIB_Rgb:
-      for (i = 0; i < m_Width; i++) {
-        *dest_buf++ = m_RampB[*(src_buf++)];
-        *dest_buf++ = m_RampG[*(src_buf++)];
-        *dest_buf++ = m_RampR[*(src_buf++)];
+    }
+    case FXDIB_Rgb: {
+      int index = 0;
+      for (int i = 0; i < m_Width; i++) {
+        (*dest_buf)[index++] = m_RampB[*(src_buf++)];
+        (*dest_buf)[index++] = m_RampG[*(src_buf++)];
+        (*dest_buf)[index++] = m_RampR[*(src_buf++)];
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        dest_buf++;
+        index++;
 #endif
       }
       break;
+    }
     case FXDIB_Rgb32:
       bSkip = TRUE;
-    case FXDIB_Argb:
-      for (i = 0; i < m_Width; i++) {
-        *dest_buf++ = m_RampB[*(src_buf++)];
-        *dest_buf++ = m_RampG[*(src_buf++)];
-        *dest_buf++ = m_RampR[*(src_buf++)];
+    case FXDIB_Argb: {
+      int index = 0;
+      for (int i = 0; i < m_Width; i++) {
+        (*dest_buf)[index++] = m_RampB[*(src_buf++)];
+        (*dest_buf)[index++] = m_RampG[*(src_buf++)];
+        (*dest_buf)[index++] = m_RampR[*(src_buf++)];
         if (!bSkip) {
-          *dest_buf++ = *src_buf;
+          (*dest_buf)[index++] = *src_buf;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
         } else {
-          dest_buf++;
+          index++;
 #endif
         }
         src_buf++;
       }
       break;
+    }
     default:
       break;
   }
 }
+
 void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
                                                 const uint8_t* src_buf,
                                                 int pixels,
