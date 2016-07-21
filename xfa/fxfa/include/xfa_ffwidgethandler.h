@@ -11,7 +11,7 @@
 
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/fxfa.h"
-#include "xfa/fxfa/parser/xfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_FFDocView;
 enum class FWL_WidgetHit;

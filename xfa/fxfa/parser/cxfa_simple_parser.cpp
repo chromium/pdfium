@@ -10,10 +10,10 @@
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/include/xfa_checksum.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
 #include "xfa/fxfa/parser/cxfa_xml_parser.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
-#include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {

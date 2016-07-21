@@ -9,7 +9,7 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "fxjs/include/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
-#include "xfa/fxfa/parser/xfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,

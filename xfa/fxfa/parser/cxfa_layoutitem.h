@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
 #define XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
 
-#include "xfa/fxfa/parser/xfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;

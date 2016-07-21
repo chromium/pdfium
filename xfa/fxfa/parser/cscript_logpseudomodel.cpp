@@ -7,7 +7,7 @@
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 
 #include "fxjs/include/cfxjse_arguments.h"
-#include "xfa/fxfa/parser/xfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"

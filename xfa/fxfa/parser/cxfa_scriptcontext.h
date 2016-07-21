@@ -14,7 +14,7 @@
 #include "fxjs/include/cfxjse_arguments.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jscontext.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
-#include "xfa/fxfa/parser/xfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 #define XFA_RESOLVENODE_TagName 0x0002

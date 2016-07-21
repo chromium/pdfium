@@ -12,14 +12,76 @@
 #include "xfa/fxfa/parser/cscript_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
-#include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+
+namespace {
+
+void MergeNodeRecurse(CXFA_Document* pDocument,
+                      CXFA_Node* pDestNodeParent,
+                      CXFA_Node* pProtoNode) {
+  CXFA_Node* pExistingNode = nullptr;
+  for (CXFA_Node* pFormChild =
+           pDestNodeParent->GetNodeItem(XFA_NODEITEM_FirstChild);
+       pFormChild;
+       pFormChild = pFormChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    if (pFormChild->GetElementType() == pProtoNode->GetElementType() &&
+        pFormChild->GetNameHash() == pProtoNode->GetNameHash() &&
+        pFormChild->IsUnusedNode()) {
+      pFormChild->ClearFlag(XFA_NodeFlag_UnusedNode);
+      pExistingNode = pFormChild;
+      break;
+    }
+  }
+
+  if (pExistingNode) {
+    pExistingNode->SetTemplateNode(pProtoNode);
+    for (CXFA_Node* pTemplateChild =
+             pProtoNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+         pTemplateChild; pTemplateChild = pTemplateChild->GetNodeItem(
+                             XFA_NODEITEM_NextSibling)) {
+      MergeNodeRecurse(pDocument, pExistingNode, pTemplateChild);
+    }
+    return;
+  }
+  CXFA_Node* pNewNode = pProtoNode->Clone(TRUE);
+  pNewNode->SetTemplateNode(pProtoNode);
+  pDestNodeParent->InsertChild(pNewNode, nullptr);
+}
+
+void MergeNode(CXFA_Document* pDocument,
+               CXFA_Node* pDestNode,
+               CXFA_Node* pProtoNode) {
+  {
+    CXFA_NodeIterator sIterator(pDestNode);
+    for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
+         pNode = sIterator.MoveToNext()) {
+      pNode->SetFlag(XFA_NodeFlag_UnusedNode, true);
+    }
+  }
+  pDestNode->SetTemplateNode(pProtoNode);
+  for (CXFA_Node* pTemplateChild =
+           pProtoNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+       pTemplateChild;
+       pTemplateChild = pTemplateChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    MergeNodeRecurse(pDocument, pDestNode, pTemplateChild);
+  }
+  {
+    CXFA_NodeIterator sIterator(pDestNode);
+    for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
+         pNode = sIterator.MoveToNext()) {
+      pNode->ClearFlag(XFA_NodeFlag_UnusedNode);
+    }
+  }
+}
+
+}  // namespace
 
 CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)
     : m_pParser(pParser),
@@ -37,6 +99,7 @@ CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)
       m_dwDocFlags(0) {
   ASSERT(m_pParser);
 }
+
 CXFA_Document::~CXFA_Document() {
   delete m_pRootNode;
   PurgeNodes();
@@ -64,9 +127,9 @@ void CXFA_Document::ClearLayoutData() {
 }
 
 void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
-  if (m_pRootNode) {
+  if (m_pRootNode)
     AddPurgeNode(m_pRootNode);
-  }
+
   m_pRootNode = pNewRoot;
   RemovePurgeNode(pNewRoot);
 }
@@ -83,28 +146,26 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
   switch (dwNodeNameHash) {
     case XFA_HASHCODE_Data: {
       CXFA_Node* pDatasetsNode = ToNode(GetXFAObject(XFA_HASHCODE_Datasets));
-      if (!pDatasetsNode) {
+      if (!pDatasetsNode)
         return nullptr;
-      }
+
       for (CXFA_Node* pDatasetsChild =
                pDatasetsNode->GetFirstChildByClass(XFA_Element::DataGroup);
            pDatasetsChild;
            pDatasetsChild = pDatasetsChild->GetNextSameClassSibling(
                XFA_Element::DataGroup)) {
-        if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data) {
+        if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data)
           continue;
-        }
+
         CFX_WideString wsNamespaceURI;
-        if (!pDatasetsChild->TryNamespace(wsNamespaceURI)) {
+        if (!pDatasetsChild->TryNamespace(wsNamespaceURI))
           continue;
-        }
+
         CFX_WideString wsDatasetsURI;
-        if (!pDatasetsNode->TryNamespace(wsDatasetsURI)) {
+        if (!pDatasetsNode->TryNamespace(wsDatasetsURI))
           continue;
-        }
-        if (wsNamespaceURI == wsDatasetsURI) {
+        if (wsNamespaceURI == wsDatasetsURI)
           return pDatasetsChild;
-        }
       }
       return nullptr;
     }
@@ -147,6 +208,7 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
       return m_pRootNode->GetFirstChildByName(dwNodeNameHash);
   }
 }
+
 CXFA_Node* CXFA_Document::CreateNode(uint32_t dwPacket, XFA_Element eElement) {
   return CreateNode(XFA_GetPacketByID(dwPacket), eElement);
 }
@@ -184,29 +246,29 @@ void CXFA_Document::PurgeNodes() {
 }
 
 void CXFA_Document::SetFlag(uint32_t dwFlag, FX_BOOL bOn) {
-  if (bOn) {
+  if (bOn)
     m_dwDocFlags |= dwFlag;
-  } else {
+  else
     m_dwDocFlags &= ~dwFlag;
-  }
 }
+
 FX_BOOL CXFA_Document::IsInteractive() {
-  if (m_dwDocFlags & XFA_DOCFLAG_HasInteractive) {
+  if (m_dwDocFlags & XFA_DOCFLAG_HasInteractive)
     return !!(m_dwDocFlags & XFA_DOCFLAG_Interactive);
-  }
+
   CXFA_Node* pConfig = ToNode(GetXFAObject(XFA_HASHCODE_Config));
-  if (!pConfig) {
+  if (!pConfig)
     return FALSE;
-  }
+
   CFX_WideString wsInteractive;
   CXFA_Node* pPresent = pConfig->GetFirstChildByClass(XFA_Element::Present);
-  if (!pPresent) {
+  if (!pPresent)
     return FALSE;
-  }
+
   CXFA_Node* pPDF = pPresent->GetFirstChildByClass(XFA_Element::Pdf);
-  if (!pPDF) {
+  if (!pPDF)
     return FALSE;
-  }
+
   CXFA_Node* pInteractive = pPDF->GetChild(0, XFA_Element::Interactive);
   if (pInteractive) {
     m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
@@ -218,6 +280,7 @@ FX_BOOL CXFA_Document::IsInteractive() {
   }
   return FALSE;
 }
+
 CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   if (!m_pLocalMgr) {
     CFX_WideString wsLanguage;
@@ -227,17 +290,20 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   }
   return m_pLocalMgr;
 }
+
 CXFA_ScriptContext* CXFA_Document::InitScriptContext(v8::Isolate* pIsolate) {
   if (!m_pScriptContext)
     m_pScriptContext = new CXFA_ScriptContext(this);
   m_pScriptContext->Initialize(pIsolate);
   return m_pScriptContext;
 }
+
 CXFA_ScriptContext* CXFA_Document::GetScriptContext() {
   if (!m_pScriptContext)
     m_pScriptContext = new CXFA_ScriptContext(this);
   return m_pScriptContext;
 }
+
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     CFX_WideString& wsTemplateNS) {
   CFX_WideStringC wsTemplateURIPrefix =
@@ -248,98 +314,44 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     return XFA_VERSION_UNKNOWN;
   }
   FX_STRSIZE nDotPos = wsTemplateNS.Find('.', nPrefixLength);
-  if (nDotPos == (FX_STRSIZE)-1) {
+  if (nDotPos == (FX_STRSIZE)-1)
     return XFA_VERSION_UNKNOWN;
-  }
+
   int8_t iMajor = FXSYS_wtoi(
       wsTemplateNS.Mid(nPrefixLength, nDotPos - nPrefixLength).c_str());
   int8_t iMinor = FXSYS_wtoi(
       wsTemplateNS.Mid(nDotPos + 1, wsTemplateNS.GetLength() - nDotPos - 2)
           .c_str());
   XFA_VERSION eVersion = (XFA_VERSION)((int32_t)iMajor * 100 + iMinor);
-  if (eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX) {
+  if (eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX)
     return XFA_VERSION_UNKNOWN;
-  }
+
   m_eCurVersionMode = eVersion;
   return eVersion;
 }
+
 CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
                                       const CFX_WideStringC& wsID) {
-  if (!pRoot || wsID.IsEmpty()) {
+  if (!pRoot || wsID.IsEmpty())
     return nullptr;
-  }
+
   CXFA_NodeIterator sIterator(pRoot);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     CFX_WideStringC wsIDVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) && !wsIDVal.IsEmpty()) {
-      if (wsIDVal == wsID) {
+      if (wsIDVal == wsID)
         return pNode;
-      }
     }
   }
   return nullptr;
 }
-static void XFA_ProtoMerge_MergeNodeRecurse(CXFA_Document* pDocument,
-                                            CXFA_Node* pDestNodeParent,
-                                            CXFA_Node* pProtoNode) {
-  CXFA_Node* pExistingNode = nullptr;
-  for (CXFA_Node* pFormChild =
-           pDestNodeParent->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pFormChild;
-       pFormChild = pFormChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pFormChild->GetElementType() == pProtoNode->GetElementType() &&
-        pFormChild->GetNameHash() == pProtoNode->GetNameHash() &&
-        pFormChild->IsUnusedNode()) {
-      pFormChild->ClearFlag(XFA_NodeFlag_UnusedNode);
-      pExistingNode = pFormChild;
-      break;
-    }
-  }
-  if (pExistingNode) {
-    pExistingNode->SetTemplateNode(pProtoNode);
-    for (CXFA_Node* pTemplateChild =
-             pProtoNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-         pTemplateChild; pTemplateChild = pTemplateChild->GetNodeItem(
-                             XFA_NODEITEM_NextSibling)) {
-      XFA_ProtoMerge_MergeNodeRecurse(pDocument, pExistingNode, pTemplateChild);
-    }
-    return;
-  }
-  CXFA_Node* pNewNode = pProtoNode->Clone(TRUE);
-  pNewNode->SetTemplateNode(pProtoNode);
-  pDestNodeParent->InsertChild(pNewNode, nullptr);
-}
-static void XFA_ProtoMerge_MergeNode(CXFA_Document* pDocument,
-                                     CXFA_Node* pDestNode,
-                                     CXFA_Node* pProtoNode) {
-  {
-    CXFA_NodeIterator sIterator(pDestNode);
-    for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
-         pNode = sIterator.MoveToNext()) {
-      pNode->SetFlag(XFA_NodeFlag_UnusedNode, true);
-    }
-  }
-  pDestNode->SetTemplateNode(pProtoNode);
-  for (CXFA_Node* pTemplateChild =
-           pProtoNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pTemplateChild;
-       pTemplateChild = pTemplateChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    XFA_ProtoMerge_MergeNodeRecurse(pDocument, pDestNode, pTemplateChild);
-  }
-  {
-    CXFA_NodeIterator sIterator(pDestNode);
-    for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
-         pNode = sIterator.MoveToNext()) {
-      pNode->ClearFlag(XFA_NodeFlag_UnusedNode);
-    }
-  }
-}
+
 void CXFA_Document::DoProtoMerge() {
   CXFA_Node* pTemplateRoot = ToNode(GetXFAObject(XFA_HASHCODE_Template));
-  if (!pTemplateRoot) {
+  if (!pTemplateRoot)
     return;
-  }
+
   CFX_MapPtrTemplate<uint32_t, CXFA_Node*> mIDMap;
   CXFA_NodeSet sUseNodes;
   CXFA_NodeIterator sIterator(pTemplateRoot);
@@ -357,6 +369,7 @@ void CXFA_Document::DoProtoMerge() {
       sUseNodes.insert(pNode);
     }
   }
+
   for (CXFA_Node* pUseHrefNode : sUseNodes) {
     CFX_WideString wsUseVal;
     CFX_WideStringC wsURI, wsID, wsSOM;
@@ -381,15 +394,15 @@ void CXFA_Document::DoProtoMerge() {
       }
     } else if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) &&
                !wsUseVal.IsEmpty()) {
-      if (wsUseVal[0] == '#') {
+      if (wsUseVal[0] == '#')
         wsID = CFX_WideStringC(wsUseVal.c_str() + 1, wsUseVal.GetLength() - 1);
-      } else {
+      else
         wsSOM = CFX_WideStringC(wsUseVal.c_str(), wsUseVal.GetLength());
-      }
     }
-    if (!wsURI.IsEmpty() && wsURI != FX_WSTRC(L".")) {
+
+    if (!wsURI.IsEmpty() && wsURI != FX_WSTRC(L"."))
       continue;
-    }
+
     CXFA_Node* pProtoNode = nullptr;
     if (!wsSOM.IsEmpty()) {
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
@@ -406,9 +419,9 @@ void CXFA_Document::DoProtoMerge() {
         continue;
       }
     }
-    if (!pProtoNode) {
+    if (!pProtoNode)
       continue;
-    }
-    XFA_ProtoMerge_MergeNode(this, pUseHrefNode, pProtoNode);
+
+    MergeNode(this, pUseHrefNode, pProtoNode);
   }
 }

@@ -11,8 +11,8 @@
 #include <memory>
 
 #include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
-#include "xfa/fxfa/parser/xfa_document.h"
 
 class CXFA_ChecksumContext;
 class CXFA_FFApp;
