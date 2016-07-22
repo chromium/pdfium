@@ -382,6 +382,7 @@ class CFX_RenderDevice {
 
 #ifdef _SKIA_SUPPORT_
   virtual void DebugVerifyBitmapIsPreMultiplied() const;
+  void Flush();
 #endif
 
  private:

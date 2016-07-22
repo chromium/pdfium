@@ -21,6 +21,12 @@ CFX_RenderDevice::CFX_RenderDevice()
 
 CFX_RenderDevice::~CFX_RenderDevice() {}
 
+#ifdef _SKIA_SUPPORT_
+void CFX_RenderDevice::Flush() {
+  m_pDeviceDriver.reset();
+}
+#endif
+
 void CFX_RenderDevice::SetDeviceDriver(
     std::unique_ptr<IFX_RenderDeviceDriver> pDriver) {
   m_pDeviceDriver = std::move(pDriver);
