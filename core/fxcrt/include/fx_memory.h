@@ -107,11 +107,6 @@ std::unique_ptr<T> WrapUnique(T* ptr) {
   return std::unique_ptr<T>(ptr);
 }
 
-class CFX_Deletable {
- public:
-  virtual ~CFX_Deletable() {}
-};
-
 #endif  // __cplusplus
 
 #endif  // CORE_FXCRT_INCLUDE_FX_MEMORY_H_

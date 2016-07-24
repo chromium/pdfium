@@ -591,7 +591,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       if (it->first == key) {
         std::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
         pSegment->m_Result.sd = copy.release();
-        m_pSymbolDictCache->push_front(*it);
+        m_pSymbolDictCache->push_front(
+            CJBig2_CachePair(key, std::move(it->second)));
         m_pSymbolDictCache->erase(it);
         cache_hit = true;
         break;
@@ -621,11 +622,10 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
           pSegment->m_Result.sd->DeepCopy();
       int size = pdfium::CollectionSize<int>(*m_pSymbolDictCache);
       while (size >= kSymbolDictCacheMaxSize) {
-        delete m_pSymbolDictCache->back().second;
         m_pSymbolDictCache->pop_back();
         --size;
       }
-      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
+      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, std::move(value)));
     }
   }
   if (wFlags & 0x0200) {

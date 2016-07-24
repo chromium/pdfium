@@ -25,6 +25,7 @@ class CPDF_IccProfile;
 class CPDF_Image;
 class CPDF_Pattern;
 class CPDF_StreamAcc;
+class JBig2_DocumentContext;
 
 #define FPDFPERM_PRINT 0x0004
 #define FPDFPERM_MODIFY 0x0008
@@ -58,7 +59,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   void ClearPageData();
   void RemoveColorSpaceFromPageData(CPDF_Object* pObject);
 
-  std::unique_ptr<CFX_Deletable>* CodecContext() { return &m_pCodecContext; }
+  std::unique_ptr<JBig2_DocumentContext>* CodecContext() {
+    return &m_pCodecContext;
+  }
   std::unique_ptr<CPDF_LinkList>* LinksContext() { return &m_pLinksContext; }
 
   CPDF_DocRenderData* GetRenderData() const { return m_pDocRender.get(); }
@@ -134,7 +137,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   // TODO(thestig): Figure out why this cannot be a std::unique_ptr.
   CPDF_DocPageData* m_pDocPage;
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
-  std::unique_ptr<CFX_Deletable> m_pCodecContext;
+  std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
 };
 

@@ -25,8 +25,8 @@ class IFX_Pause;
 
 // Cache is keyed by the ObjNum of a stream and an index within the stream.
 using CJBig2_CacheKey = std::pair<uint32_t, uint32_t>;
-// NB: CJBig2_SymbolDict* is owned.
-using CJBig2_CachePair = std::pair<CJBig2_CacheKey, CJBig2_SymbolDict*>;
+using CJBig2_CachePair =
+    std::pair<CJBig2_CacheKey, std::unique_ptr<CJBig2_SymbolDict>>;
 
 #define JBIG2_SUCCESS 0
 #define JBIG2_FAILED -1

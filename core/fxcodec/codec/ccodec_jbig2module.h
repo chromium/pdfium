@@ -16,6 +16,7 @@ class CJBig2_Context;
 class CJBig2_Image;
 class CPDF_StreamAcc;
 class IFX_Pause;
+class JBig2_DocumentContext;
 
 class CCodec_Jbig2Context {
  public:
@@ -37,15 +38,16 @@ class CCodec_Jbig2Module {
   CCodec_Jbig2Module() {}
   ~CCodec_Jbig2Module();
 
-  FXCODEC_STATUS StartDecode(CCodec_Jbig2Context* pJbig2Context,
-                             std::unique_ptr<CFX_Deletable>* pContextHolder,
-                             uint32_t width,
-                             uint32_t height,
-                             CPDF_StreamAcc* src_stream,
-                             CPDF_StreamAcc* global_stream,
-                             uint8_t* dest_buf,
-                             uint32_t dest_pitch,
-                             IFX_Pause* pPause);
+  FXCODEC_STATUS StartDecode(
+      CCodec_Jbig2Context* pJbig2Context,
+      std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
+      uint32_t width,
+      uint32_t height,
+      CPDF_StreamAcc* src_stream,
+      CPDF_StreamAcc* global_stream,
+      uint8_t* dest_buf,
+      uint32_t dest_pitch,
+      IFX_Pause* pPause);
   FXCODEC_STATUS ContinueDecode(CCodec_Jbig2Context* pJbig2Context,
                                 IFX_Pause* pPause);
 };

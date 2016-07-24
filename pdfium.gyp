@@ -480,8 +480,6 @@
         'third_party/third_party.gyp:fx_zlib',
       ],
       'sources': [
-        'core/fxcodec/include/fx_codec.h',
-        'core/fxcodec/include/fx_codec_def.h',
         'core/fxcodec/codec/ccodec_basicmodule.h',
         'core/fxcodec/codec/ccodec_faxmodule.h',
         'core/fxcodec/codec/ccodec_flatemodule.h',
@@ -498,6 +496,9 @@
         'core/fxcodec/codec/fx_codec_jbig.cpp',
         'core/fxcodec/codec/fx_codec_jpeg.cpp',
         'core/fxcodec/codec/fx_codec_jpx_opj.cpp',
+        'core/fxcodec/include/JBig2_DocumentContext.h',
+        'core/fxcodec/include/fx_codec.h',
+        'core/fxcodec/include/fx_codec_def.h',
         'core/fxcodec/jbig2/JBig2_ArithDecoder.cpp',
         'core/fxcodec/jbig2/JBig2_ArithDecoder.h',
         'core/fxcodec/jbig2/JBig2_ArithIntDecoder.cpp',
