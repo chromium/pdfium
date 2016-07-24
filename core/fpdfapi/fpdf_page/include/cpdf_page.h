@@ -18,6 +18,7 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Object;
 class CPDF_PageRenderCache;
+class CPDF_PageRenderContext;
 
 class CPDF_Page : public CPDF_PageObjectHolder {
  public:
@@ -44,10 +45,10 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   CPDF_Object* GetPageAttr(const CFX_ByteString& name) const;
   CPDF_PageRenderCache* GetRenderCache() const { return m_pPageRender.get(); }
 
-  CFX_Deletable* GetRenderContext() const { return m_pRenderContext.get(); }
-  void SetRenderContext(std::unique_ptr<CFX_Deletable> pContext) {
-    m_pRenderContext = std::move(pContext);
+  CPDF_PageRenderContext* GetRenderContext() const {
+    return m_pRenderContext.get();
   }
+  void SetRenderContext(std::unique_ptr<CPDF_PageRenderContext> pContext);
 
   View* GetView() const { return m_pView; }
   void SetView(View* pView) { m_pView = pView; }
@@ -62,7 +63,7 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   CFX_Matrix m_PageMatrix;
   View* m_pView;
   std::unique_ptr<CPDF_PageRenderCache> m_pPageRender;
-  std::unique_ptr<CFX_Deletable> m_pRenderContext;
+  std::unique_ptr<CPDF_PageRenderContext> m_pRenderContext;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGE_H_

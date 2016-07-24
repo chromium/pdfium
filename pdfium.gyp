@@ -86,6 +86,7 @@
         'fpdfsdk/include/fsdk_annothandler.h',
         'fpdfsdk/include/fsdk_baseannot.h',
         'fpdfsdk/include/fsdk_baseform.h',
+        'fpdfsdk/include/fsdk_pauseadapter.h',
         'fpdfsdk/fpdfdoc.cpp',
         'fpdfsdk/fpdfeditimg.cpp',
         'fpdfsdk/fpdfeditpage.cpp',
@@ -106,7 +107,7 @@
         'fpdfsdk/fsdk_baseannot.cpp',
         'fpdfsdk/fsdk_baseform.cpp',
         'fpdfsdk/fsdk_mgr.cpp',
-        'fpdfsdk/fsdk_rendercontext.cpp',
+        'fpdfsdk/fsdk_pauseadapter.cpp',
         'public/fpdf_dataavail.h',
         'public/fpdf_doc.h',
         'public/fpdf_edit.h',
@@ -235,6 +236,7 @@
       'type': 'static_library',
       'sources': [
         'core/fpdfapi/cpdf_modulemgr.cpp',
+        'core/fpdfapi/cpdf_pagerendercontext.cpp',
         'core/fpdfapi/fpdf_cmaps/CNS1/Adobe-CNS1-UCS2_5.cpp',
         'core/fpdfapi/fpdf_cmaps/CNS1/B5pc-H_0.cpp',
         'core/fpdfapi/fpdf_cmaps/CNS1/B5pc-V_0.cpp',
@@ -453,6 +455,7 @@
         'core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h',
         'core/fpdfapi/fpdf_render/render_int.h',
         'core/fpdfapi/include/cpdf_modulemgr.h',
+        'core/fpdfapi/include/cpdf_pagerendercontext.h',
       ],
     },
     {

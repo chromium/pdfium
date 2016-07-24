@@ -11,14 +11,17 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fpdfapi/include/cpdf_pagerendercontext.h"
 #include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/fsdk_rendercontext.h"
+#include "fpdfsdk/include/fsdk_pauseadapter.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_progressive.h"
@@ -562,8 +565,8 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   if (!pPage)
     return;
 
-  CRenderContext* pContext = new CRenderContext;
-  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
+  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
+  pPage->SetRenderContext(WrapUnique(pContext));
 
   CFX_DIBitmap* pBitmap = nullptr;
   FX_BOOL bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
@@ -573,10 +576,10 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     pBitmap->Create(size_x, size_y, FXDIB_Argb);
     pBitmap->Clear(0x00ffffff);
     CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
-    pContext->m_pDevice = pDevice;
+    pContext->m_pDevice.reset(pDevice);
     pDevice->Attach(pBitmap, false, nullptr, false);
   } else {
-    pContext->m_pDevice = new CFX_WindowsDevice(dc);
+    pContext->m_pDevice.reset(new CFX_WindowsDevice(dc));
   }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
@@ -603,7 +606,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   if (bBackgroundAlphaNeeded || bHasImageMask)
     delete pBitmap;
 
-  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
+  pPage->SetRenderContext(std::unique_ptr<CPDF_PageRenderContext>());
 }
 #endif  // defined(_WIN32)
 
@@ -622,17 +625,17 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   if (!pPage)
     return;
 
-  CRenderContext* pContext = new CRenderContext;
-  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
+  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
+  pPage->SetRenderContext(WrapUnique(pContext));
   CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
-  pContext->m_pDevice = pDevice;
+  pContext->m_pDevice.reset(pDevice);
   CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, TRUE, nullptr);
 
-  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
+  pPage->SetRenderContext(std::unique_ptr<CPDF_PageRenderContext>());
 }
 
 #ifdef _SKIA_SUPPORT_
@@ -643,14 +646,14 @@ DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
   if (!pPage)
     return nullptr;
 
-  CRenderContext* pContext = new CRenderContext;
-  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>(pContext));
+  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
+  pPage->SetRenderContext(WrapUnique(pContext));
   CFX_FxgeDevice* skDevice = new CFX_FxgeDevice;
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
-  pContext->m_pDevice = skDevice;
+  pContext->m_pDevice.reset(skDevice);
   FPDF_RenderPage_Retail(pContext, page, 0, 0, size_x, size_y, 0, 0, TRUE,
                          nullptr);
-  pPage->SetRenderContext(std::unique_ptr<CFX_Deletable>());
+  pPage->SetRenderContext(std::unique_ptr<CPDF_PageRenderContext>());
   return recorder;
 }
 #endif
@@ -827,7 +830,7 @@ DLLEXPORT void STDCALL FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {
   delete CFXBitmapFromFPDFBitmap(bitmap);
 }
 
-void FPDF_RenderPage_Retail(CRenderContext* pContext,
+void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             FPDF_PAGE page,
                             int start_x,
                             int start_y,
@@ -842,7 +845,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
     return;
 
   if (!pContext->m_pOptions)
-    pContext->m_pOptions = new CPDF_RenderOptions;
+    pContext->m_pOptions.reset(new CPDF_RenderOptions);
 
   if (flags & FPDF_LCD_TEXT)
     pContext->m_pOptions->m_Flags |= RENDER_CLEARTYPE;
@@ -881,18 +884,19 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
   pContext->m_pDevice->SetClip_Rect(
       FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y));
 
-  pContext->m_pContext = new CPDF_RenderContext(pPage);
+  pContext->m_pContext.reset(new CPDF_RenderContext(pPage));
   pContext->m_pContext->AppendLayer(pPage, &matrix);
 
   if (flags & FPDF_ANNOT) {
-    pContext->m_pAnnots = new CPDF_AnnotList(pPage);
+    pContext->m_pAnnots.reset(new CPDF_AnnotList(pPage));
     FX_BOOL bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
-    pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext, bPrinting,
-                                       &matrix, TRUE, nullptr);
+    pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
+                                       bPrinting, &matrix, TRUE, nullptr);
   }
 
-  pContext->m_pRenderer = new CPDF_ProgressiveRenderer(
-      pContext->m_pContext, pContext->m_pDevice, pContext->m_pOptions);
+  pContext->m_pRenderer.reset(new CPDF_ProgressiveRenderer(
+      pContext->m_pContext.get(), pContext->m_pDevice.get(),
+      pContext->m_pOptions.get()));
   pContext->m_pRenderer->Start(pause);
   if (bNeedToRestore)
     pContext->m_pDevice->RestoreState(false);

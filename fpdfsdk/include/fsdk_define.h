@@ -31,7 +31,7 @@
    ((uint32_t)rgb & 0x0000FF00) | (((uint32_t)rgb & 0x00FF0000) >> 16))
 
 typedef unsigned int FX_UINT;
-class CRenderContext;
+class CPDF_PageRenderContext;
 class IFSDK_PAUSE_Adapter;
 
 class CPDF_CustomAccess final : public IFX_FileRead {
@@ -112,7 +112,7 @@ CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
-void FPDF_RenderPage_Retail(CRenderContext* pContext,
+void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             FPDF_PAGE page,
                             int start_x,
                             int start_y,

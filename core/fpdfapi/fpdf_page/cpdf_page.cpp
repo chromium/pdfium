@@ -14,6 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/include/cpdf_pagerendercontext.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
@@ -93,6 +94,11 @@ void CPDF_Page::StartParse() {
 void CPDF_Page::ParseContent() {
   StartParse();
   ContinueParse(nullptr);
+}
+
+void CPDF_Page::SetRenderContext(
+    std::unique_ptr<CPDF_PageRenderContext> pContext) {
+  m_pRenderContext = std::move(pContext);
 }
 
 CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteString& name) const {

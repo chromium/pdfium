@@ -20,6 +20,17 @@ class CCodec_JpxModule;
 class CCodec_ModuleMgr;
 class CPDF_PageModule;
 
+class CFSDK_UnsupportInfo_Adapter {
+ public:
+  explicit CFSDK_UnsupportInfo_Adapter(void* unsp_info)
+      : m_unsp_info(unsp_info) {}
+
+  void* GetUnspInfo() const { return m_unsp_info; }
+
+ private:
+  void* const m_unsp_info;
+};
+
 class CPDF_ModuleMgr {
  public:
   static CPDF_ModuleMgr* Get();
@@ -33,10 +44,11 @@ class CPDF_ModuleMgr {
   void InitPageModule();
   CPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
 
-  void SetUnsupportInfoAdapter(std::unique_ptr<CFX_Deletable> pAdapter) {
+  void SetUnsupportInfoAdapter(
+      std::unique_ptr<CFSDK_UnsupportInfo_Adapter> pAdapter) {
     m_pUnsupportInfoAdapter = std::move(pAdapter);
   }
-  CFX_Deletable* GetUnsupportInfoAdapter() const {
+  CFSDK_UnsupportInfo_Adapter* GetUnsupportInfoAdapter() const {
     return m_pUnsupportInfoAdapter.get();
   }
 
@@ -58,7 +70,7 @@ class CPDF_ModuleMgr {
 
   CCodec_ModuleMgr* m_pCodecModule;
   std::unique_ptr<CPDF_PageModule> m_pPageModule;
-  std::unique_ptr<CFX_Deletable> m_pUnsupportInfoAdapter;
+  std::unique_ptr<CFSDK_UnsupportInfo_Adapter> m_pUnsupportInfoAdapter;
 };
 
 #endif  // CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_

@@ -12,6 +12,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
@@ -19,33 +20,15 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
-#define FPDFSDK_UNSUPPORT_CALL 100
-
-class CFSDK_UnsupportInfo_Adapter : public CFX_Deletable {
- public:
-  explicit CFSDK_UnsupportInfo_Adapter(UNSUPPORT_INFO* unsp_info)
-      : m_unsp_info(unsp_info) {}
-
-  void ReportError(int nErrorType);
-
- private:
-  UNSUPPORT_INFO* const m_unsp_info;
-};
-
-void CFSDK_UnsupportInfo_Adapter::ReportError(int nErrorType) {
-  if (m_unsp_info && m_unsp_info->FSDK_UnSupport_Handler) {
-    m_unsp_info->FSDK_UnSupport_Handler(m_unsp_info, nErrorType);
-  }
-}
-
 FX_BOOL FPDF_UnSupportError(int nError) {
   CFSDK_UnsupportInfo_Adapter* pAdapter =
-      static_cast<CFSDK_UnsupportInfo_Adapter*>(
-          CPDF_ModuleMgr::Get()->GetUnsupportInfoAdapter());
+      CPDF_ModuleMgr::Get()->GetUnsupportInfoAdapter();
   if (!pAdapter)
     return FALSE;
 
-  pAdapter->ReportError(nError);
+  UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(pAdapter->GetUnspInfo());
+  if (info && info->FSDK_UnSupport_Handler)
+    info->FSDK_UnSupport_Handler(info, nError);
   return TRUE;
 }
 
@@ -54,8 +37,8 @@ FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
   if (!unsp_info || unsp_info->version != 1)
     return FALSE;
 
-  CPDF_ModuleMgr::Get()->SetUnsupportInfoAdapter(std::unique_ptr<CFX_Deletable>(
-      new CFSDK_UnsupportInfo_Adapter(unsp_info)));
+  CPDF_ModuleMgr::Get()->SetUnsupportInfoAdapter(
+      WrapUnique(new CFSDK_UnsupportInfo_Adapter(unsp_info)));
   return TRUE;
 }
 
