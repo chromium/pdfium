@@ -31,7 +31,7 @@ class CJS_Value {
     VT_undefined
   };
 
-  CJS_Value(CJS_Runtime* pRuntime);
+  explicit CJS_Value(CJS_Runtime* pRuntime);
   CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue);
   CJS_Value(CJS_Runtime* pRuntime, const int& iValue);
   CJS_Value(CJS_Runtime* pRuntime, const double& dValue);
@@ -41,13 +41,12 @@ class CJS_Value {
   CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr);
   CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr);
   CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array);
+  CJS_Value(const CJS_Value& other);
 
   ~CJS_Value();
-  CJS_Value(const CJS_Value& other);
 
   void SetNull();
   void Attach(v8::Local<v8::Value> pValue);
-  void Attach(CJS_Value* pValue);
   void Detach();
 
   static Type GetValueType(v8::Local<v8::Value> value);

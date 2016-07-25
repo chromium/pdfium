@@ -75,11 +75,6 @@ void CJS_Value::Attach(v8::Local<v8::Value> pValue) {
   m_pValue = pValue;
 }
 
-void CJS_Value::Attach(CJS_Value* pValue) {
-  if (pValue)
-    Attach(pValue->ToV8Value());
-}
-
 void CJS_Value::Detach() {
   m_pValue = v8::Local<v8::Value>();
 }
