@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3FONT_H_
 
 #include <map>
+#include <memory>
 
 #include "core/fpdfapi/fpdf_font/cpdf_simplefont.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -50,7 +51,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   CPDF_Dictionary* m_pCharProcs;
   CPDF_Dictionary* m_pPageResources;
   CPDF_Dictionary* m_pFontResources;
-  std::map<uint32_t, CPDF_Type3Char*> m_CacheMap;
+  std::map<uint32_t, std::unique_ptr<CPDF_Type3Char>> m_CacheMap;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3FONT_H_

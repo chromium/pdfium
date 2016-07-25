@@ -21,10 +21,7 @@ CPDF_Type3Font::CPDF_Type3Font()
   FXSYS_memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
 
-CPDF_Type3Font::~CPDF_Type3Font() {
-  for (auto it : m_CacheMap)
-    delete it.second;
-}
+CPDF_Type3Font::~CPDF_Type3Font() {}
 
 bool CPDF_Type3Font::IsType3Font() const {
   return true;
@@ -94,7 +91,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
 
   auto it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())
-    return it->second;
+    return it->second.get();
 
   const FX_CHAR* name =
       GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
@@ -116,7 +113,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   pNewChar->m_pForm->ParseContent(nullptr, nullptr, pNewChar.get(), level + 1);
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())
-    return it->second;
+    return it->second.get();
 
   FX_FLOAT scale = m_FontMatrix.GetXUnit();
   pNewChar->m_Width = (int32_t)(pNewChar->m_Width * scale + 0.5f);
@@ -134,8 +131,8 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   rcBBox.bottom = FXSYS_round(char_rect.bottom * 1000);
 
   ASSERT(!pdfium::ContainsKey(m_CacheMap, charcode));
-  CPDF_Type3Char* pCachedChar = pNewChar.release();
-  m_CacheMap[charcode] = pCachedChar;
+  m_CacheMap[charcode] = std::move(pNewChar);
+  CPDF_Type3Char* pCachedChar = m_CacheMap[charcode].get();
   if (pCachedChar->m_pForm->GetPageObjectList()->empty())
     pCachedChar->m_pForm.reset();
   return pCachedChar;

@@ -109,7 +109,7 @@ CFGAS_GEFont::CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles)
   CFX_SubstFont* pSubst = m_pFont->GetSubstFont();
   if (!pSubst) {
     pSubst = new CFX_SubstFont;
-    m_pFont->SetSubstFont(pSubst);
+    m_pFont->SetSubstFont(std::unique_ptr<CFX_SubstFont>(pSubst));
   }
   pSubst->m_Weight =
       (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;

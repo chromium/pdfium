@@ -86,7 +86,7 @@ class CFX_Font {
 
   FX_BOOL LoadEmbedded(const uint8_t* data, uint32_t size);
   FXFT_Face GetFace() const { return m_Face; }
-  CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
+  CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
 
 #ifdef PDF_ENABLE_XFA
   FX_BOOL LoadFile(IFX_FileRead* pFile,
@@ -95,7 +95,9 @@ class CFX_Font {
 
   FX_BOOL LoadClone(const CFX_Font* pFont);
   void SetFace(FXFT_Face face) { m_Face = face; }
-  void SetSubstFont(CFX_SubstFont* subst) { m_pSubstFont = subst; }
+  void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
+    m_pSubstFont = std::move(subst);
+  }
 #endif  // PDF_ENABLE_XFA
 
   CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width = 0);
@@ -139,8 +141,8 @@ class CFX_Font {
   void DeleteFace();
 
   FXFT_Face m_Face;
-  CFX_SubstFont* m_pSubstFont;
-  uint8_t* m_pFontDataAllocation;
+  std::unique_ptr<CFX_SubstFont> m_pSubstFont;
+  std::vector<uint8_t> m_pFontDataAllocation;
   uint8_t* m_pFontData;
   uint8_t* m_pGsubData;
   uint32_t m_dwSize;
@@ -501,6 +503,7 @@ class CFX_AutoFontCache {
   CFX_FontCache* m_pFontCache;
   CFX_Font* m_pFont;
 };
+
 #define FX_FONTCACHE_DEFINE(pFontCache, pFont) \
   CFX_AutoFontCache autoFontCache((pFontCache), (pFont))
 class CFX_GlyphBitmap {
@@ -509,6 +512,7 @@ class CFX_GlyphBitmap {
   int m_Left;
   CFX_DIBitmap m_Bitmap;
 };
+
 class CFX_FaceCache {
  public:
   explicit CFX_FaceCache(FXFT_Face face);

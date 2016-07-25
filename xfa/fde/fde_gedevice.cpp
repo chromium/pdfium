@@ -134,12 +134,12 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
-  CFX_SubstFont SubstFxFont;
-  FxFont.SetSubstFont(&SubstFxFont);
-  SubstFxFont.m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
-  SubstFxFont.m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
-  SubstFxFont.m_WeightCJK = SubstFxFont.m_Weight;
-  SubstFxFont.m_bItalicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
+  CFX_SubstFont* SubstFxFont = new CFX_SubstFont();
+  FxFont.SetSubstFont(std::unique_ptr<CFX_SubstFont>(SubstFxFont));
+  SubstFxFont->m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
+  SubstFxFont->m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
+  SubstFxFont->m_WeightCJK = SubstFxFont->m_Weight;
+  SubstFxFont->m_bItalicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
   for (int32_t i = 0; i < iCount; ++i) {
@@ -175,7 +175,6 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
     FX_BOOL bRet = m_pDevice->DrawNormalText(
         iCurCount, pCurCP, &FxFont, pCache, -fFontSize,
         (const CFX_Matrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
-    FxFont.SetSubstFont(nullptr);
     FxFont.SetFace(nullptr);
     return bRet;
 #else
@@ -186,7 +185,6 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
   }
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  FxFont.SetSubstFont(nullptr);
   FxFont.SetFace(nullptr);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 

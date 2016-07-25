@@ -32,6 +32,41 @@ CFX_UnicodeEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
     return nullptr;
   return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
 }
+
+unsigned long FTStreamRead(FXFT_Stream stream,
+                           unsigned long offset,
+                           unsigned char* buffer,
+                           unsigned long count) {
+  if (count == 0)
+    return 0;
+
+  IFX_FileRead* pFile = static_cast<IFX_FileRead*>(stream->descriptor.pointer);
+  return pFile->ReadBlock(buffer, offset, count) ? count : 0;
+}
+
+void FTStreamClose(FXFT_Stream stream) {}
+
+FX_BOOL LoadFileImp(FXFT_Library library,
+                    FXFT_Face* Face,
+                    IFX_FileRead* pFile,
+                    int32_t faceIndex,
+                    std::unique_ptr<FXFT_StreamRec>* stream) {
+  std::unique_ptr<FXFT_StreamRec> stream1(new FXFT_StreamRec());
+  stream1->base = nullptr;
+  stream1->size = static_cast<unsigned long>(pFile->GetSize());
+  stream1->pos = 0;
+  stream1->descriptor.pointer = pFile;
+  stream1->close = FTStreamClose;
+  stream1->read = FTStreamRead;
+  FXFT_Open_Args args;
+  args.flags = FT_OPEN_STREAM;
+  args.stream = stream1.get();
+  if (FXFT_Open_Face(library, &args, faceIndex, Face))
+    return FALSE;
+  if (stream)
+    *stream = std::move(stream1);
+  return TRUE;
+}
 #endif  // PDF_ENABLE_XFA
 
 FXFT_Face FT_LoadFont(const uint8_t* pData, int size) {
@@ -48,8 +83,6 @@ CFX_Font::CFX_Font()
 #else
     : m_Face(nullptr),
 #endif  // PDF_ENABLE_XFA
-      m_pSubstFont(nullptr),
-      m_pFontDataAllocation(nullptr),
       m_pFontData(nullptr),
       m_pGsubData(nullptr),
       m_dwSize(0),
@@ -67,7 +100,7 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
 
   m_bLogic = TRUE;
   if (pFont->m_pSubstFont) {
-    m_pSubstFont = new CFX_SubstFont;
+    m_pSubstFont.reset(new CFX_SubstFont);
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
     m_pSubstFont->m_ExtHandle = pFont->m_pSubstFont->m_ExtHandle;
     m_pSubstFont->m_SubstFlags = pFont->m_pSubstFont->m_SubstFlags;
@@ -94,8 +127,6 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
 #endif  // PDF_ENABLE_XFA
 
 CFX_Font::~CFX_Font() {
-  delete m_pSubstFont;
-  FX_Free(m_pFontDataAllocation);
 #ifdef PDF_ENABLE_XFA
   if (m_bLogic) {
     m_OtfFontData.DetachBuffer();
@@ -122,10 +153,12 @@ CFX_Font::~CFX_Font() {
   ReleasePlatformResource();
 #endif
 }
+
 void CFX_Font::DeleteFace() {
   FXFT_Done_Face(m_Face);
   m_Face = nullptr;
 }
+
 void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                          FX_BOOL bTrueType,
                          uint32_t flags,
@@ -135,10 +168,10 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                          FX_BOOL bVertical) {
   m_bEmbedded = FALSE;
   m_bVertical = bVertical;
-  m_pSubstFont = new CFX_SubstFont;
+  m_pSubstFont.reset(new CFX_SubstFont);
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, CharsetCP,
-      m_pSubstFont);
+      m_pSubstFont.get());
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (m_pSubstFont->m_ExtHandle) {
     m_pPlatformFont = m_pSubstFont->m_ExtHandle;
@@ -150,49 +183,8 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
     m_dwSize = FXFT_Get_Face_Stream_Size(m_Face);
   }
 }
-#ifdef PDF_ENABLE_XFA
-extern "C" {
-unsigned long _FTStreamRead(FXFT_Stream stream,
-                            unsigned long offset,
-                            unsigned char* buffer,
-                            unsigned long count) {
-  if (count == 0) {
-    return 0;
-  }
-  IFX_FileRead* pFile = (IFX_FileRead*)stream->descriptor.pointer;
-  int res = pFile->ReadBlock(buffer, offset, count);
-  if (res) {
-    return count;
-  }
-  return 0;
-}
-void _FTStreamClose(FXFT_Stream stream) {}
-};
-FX_BOOL _LoadFile(FXFT_Library library,
-                  FXFT_Face* Face,
-                  IFX_FileRead* pFile,
-                  FXFT_Stream* stream,
-                  int32_t faceIndex = 0) {
-  FXFT_Stream stream1 = (FXFT_Stream)FX_Alloc(uint8_t, sizeof(FXFT_StreamRec));
-  stream1->base = nullptr;
-  stream1->size = (unsigned long)pFile->GetSize();
-  stream1->pos = 0;
-  stream1->descriptor.pointer = pFile;
-  stream1->close = _FTStreamClose;
-  stream1->read = _FTStreamRead;
-  FXFT_Open_Args args;
-  args.flags = FT_OPEN_STREAM;
-  args.stream = stream1;
-  if (FXFT_Open_Face(library, &args, faceIndex, Face)) {
-    FX_Free(stream1);
-    return FALSE;
-  }
-  if (stream) {
-    *stream = stream1;
-  }
-  return TRUE;
-}
 
+#ifdef PDF_ENABLE_XFA
 FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile,
                            int nFaceIndex,
                            int* pFaceCount) {
@@ -202,13 +194,13 @@ FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile,
   pFontMgr->InitFTLibrary();
   FXFT_Library library = pFontMgr->GetFTLibrary();
 
-  FXFT_Stream stream = nullptr;
-  if (!_LoadFile(library, &m_Face, pFile, &stream, nFaceIndex))
+  std::unique_ptr<FXFT_StreamRec> stream;
+  if (!LoadFileImp(library, &m_Face, pFile, nFaceIndex, &stream))
     return FALSE;
 
   if (pFaceCount)
     *pFaceCount = (int)m_Face->num_faces;
-  m_pOwnedStream = stream;
+  m_pOwnedStream = stream.release();
   FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
   return TRUE;
 }
@@ -233,10 +225,10 @@ int CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
 }
 
 FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, uint32_t size) {
-  m_pFontDataAllocation = FX_Alloc(uint8_t, size);
-  FXSYS_memcpy(m_pFontDataAllocation, data, size);
-  m_Face = FT_LoadFont(m_pFontDataAllocation, size);
-  m_pFontData = m_pFontDataAllocation;
+  std::vector<uint8_t> temp(data, data + size);
+  m_pFontDataAllocation.swap(temp);
+  m_Face = FT_LoadFont(m_pFontDataAllocation.data(), size);
+  m_pFontData = m_pFontDataAllocation.data();
   m_bEmbedded = TRUE;
   m_dwSize = size;
   return !!m_Face;
