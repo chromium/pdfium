@@ -764,7 +764,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     pCache = CFX_GEModule::Get()->GetFontCache();
   }
   CFX_FaceCache* pFaceCache = pCache->GetCachedFace(&pFont->m_Font);
-  FX_FONTCACHE_DEFINE(pCache, &pFont->m_Font);
+  CFX_AutoFontCache autoFontCache(pCache, &pFont->m_Font);
   CPDF_CharPosList CharPosList;
   CharPosList.Load(textobj->m_nChars, textobj->m_pCharCodes,
                    textobj->m_pCharPos, pFont, font_size);

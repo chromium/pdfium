@@ -479,7 +479,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
     pCache = CFX_GEModule::Get()->GetFontCache();
 
   CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
-  FX_FONTCACHE_DEFINE(pCache, pFont);
+  CFX_AutoFontCache autoFontCache(pCache, pFont);
   std::vector<FXTEXT_GLYPHPOS> glyphs(nChars);
   CFX_Matrix matrixCTM = GetCTM();
   FX_FLOAT scale_x = FXSYS_fabs(matrixCTM.a);
@@ -634,7 +634,7 @@ FX_BOOL CFX_RenderDevice::DrawTextPathWithFlags(
     pCache = CFX_GEModule::Get()->GetFontCache();
 
   CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
-  FX_FONTCACHE_DEFINE(pCache, pFont);
+  CFX_AutoFontCache autoFontCache(pCache, pFont);
   for (int iChar = 0; iChar < nChars; iChar++) {
     const FXTEXT_CHARPOS& charpos = pCharPos[iChar];
     CFX_Matrix matrix;

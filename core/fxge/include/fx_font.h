@@ -504,8 +504,6 @@ class CFX_AutoFontCache {
   CFX_Font* m_pFont;
 };
 
-#define FX_FONTCACHE_DEFINE(pFontCache, pFont) \
-  CFX_AutoFontCache autoFontCache((pFontCache), (pFont))
 class CFX_GlyphBitmap {
  public:
   int m_Top;
