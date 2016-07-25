@@ -137,7 +137,7 @@ SkMatrix ToSkMatrix(const CFX_Matrix& m) {
 // use when pdf's y-axis points up insead of down
 SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m) {
   SkMatrix skMatrix;
-  skMatrix.setAll(m.a, m.b, m.e, -m.c, -m.d, m.f, 0, 0, 1);
+  skMatrix.setAll(m.a, -m.b, m.e, m.c, -m.d, m.f, 0, 0, 1);
   return skMatrix;
 }
 
