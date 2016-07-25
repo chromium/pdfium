@@ -92,7 +92,7 @@ void JSPropGetter(const char* prop_name_string,
                                             sError));
     return;
   }
-  info.GetReturnValue().Set((v8::Local<v8::Value>)value);
+  info.GetReturnValue().Set(value.ToV8Value());
 }
 
 template <class C,
@@ -383,7 +383,7 @@ void JSSpecialPropGet(const char* class_name,
     FXJS_Error(isolate, JSFormatErrorString(class_name, "GetProperty", sError));
     return;
   }
-  info.GetReturnValue().Set((v8::Local<v8::Value>)value);
+  info.GetReturnValue().Set(value.ToV8Value());
 }
 
 template <class Alt>

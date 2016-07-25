@@ -17,10 +17,21 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 
-static const uint32_t g_nan[2] = {0, 0x7FF80000};
-static double GetNan() {
+namespace {
+
+const uint32_t g_nan[2] = {0, 0x7FF80000};
+
+double GetNan() {
   return *(double*)g_nan;
 }
+
+double
+MakeDate(int year, int mon, int day, int hour, int min, int sec, int ms) {
+  return JS_MakeDate(JS_MakeDay(year, mon, day),
+                     JS_MakeTime(hour, min, sec, ms));
+}
+
+}  // namespace
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime) : m_pJSRuntime(pRuntime) {}
 
@@ -181,17 +192,19 @@ void CJS_Value::operator=(const FX_CHAR* pStr) {
   operator=(CFX_WideString::FromLocal(pStr).c_str());
 }
 
-void CJS_Value::operator=(CJS_Array& array) {
-  m_pValue = static_cast<v8::Local<v8::Array>>(array);
+void CJS_Value::operator=(const CJS_Array& array) {
+  ASSERT(m_pJSRuntime == array.GetJSRuntime());
+  m_pValue = array.ToV8Array();
 }
 
-void CJS_Value::operator=(CJS_Date& date) {
-  m_pValue = FXJS_NewDate(m_pJSRuntime->GetIsolate(), (double)date);
+void CJS_Value::operator=(const CJS_Date& date) {
+  ASSERT(m_pJSRuntime == date.GetJSRuntime());
+  m_pValue = FXJS_NewDate(m_pJSRuntime->GetIsolate(), date.ToDouble());
 }
 
-void CJS_Value::operator=(CJS_Value value) {
+void CJS_Value::operator=(const CJS_Value& value) {
+  ASSERT(m_pJSRuntime == value.m_pJSRuntime);
   m_pValue = value.ToV8Value();
-  m_pJSRuntime = value.m_pJSRuntime;
 }
 
 // static
@@ -314,13 +327,6 @@ void CJS_PropValue::operator>>(v8::Local<v8::Object>& ppObj) const {
   ppObj = CJS_Value::ToV8Object();
 }
 
-void CJS_PropValue::StartSetting() {
-  m_bIsSetting = 1;
-}
-
-void CJS_PropValue::StartGetting() {
-  m_bIsSetting = 0;
-}
 void CJS_PropValue::operator<<(CFX_ByteString str) {
   ASSERT(!m_bIsSetting);
   CJS_Value::operator=(str.c_str());
@@ -366,10 +372,6 @@ void CJS_PropValue::operator<<(CJS_Date& date) {
   CJS_Value::operator=(date);
 }
 
-CJS_PropValue::operator v8::Local<v8::Value>() const {
-  return m_pValue;
-}
-
 CJS_Array::CJS_Array(CJS_Runtime* pRuntime) : m_pJSRuntime(pRuntime) {}
 
 CJS_Array::~CJS_Array() {}
@@ -380,11 +382,7 @@ void CJS_Array::Attach(v8::Local<v8::Array> pArray) {
   m_pArray = pArray;
 }
 
-FX_BOOL CJS_Array::IsAttached() {
-  return FALSE;
-}
-
-void CJS_Array::GetElement(unsigned index, CJS_Value& value) {
+void CJS_Array::GetElement(unsigned index, CJS_Value& value) const {
   if (m_pArray.IsEmpty())
     return;
   v8::Local<v8::Value> p =
@@ -400,13 +398,13 @@ void CJS_Array::SetElement(unsigned index, CJS_Value value) {
                        value.ToV8Value());
 }
 
-int CJS_Array::GetLength() {
+int CJS_Array::GetLength() const {
   if (m_pArray.IsEmpty())
     return 0;
   return FXJS_GetArrayLength(m_pArray);
 }
 
-CJS_Array::operator v8::Local<v8::Array>() {
+v8::Local<v8::Array> CJS_Array::ToV8Array() const {
   if (m_pArray.IsEmpty())
     m_pArray = FXJS_NewArray(m_pJSRuntime->GetIsolate());
 
@@ -432,35 +430,23 @@ CJS_Date::CJS_Date(CJS_Runtime* pRuntime,
                          MakeDate(year, mon, day, hour, min, sec, 0));
 }
 
-double CJS_Date::MakeDate(int year,
-                          int mon,
-                          int day,
-                          int hour,
-                          int min,
-                          int sec,
-                          int ms) {
-  return JS_MakeDate(JS_MakeDay(year, mon, day),
-                     JS_MakeTime(hour, min, sec, ms));
-}
-
 CJS_Date::~CJS_Date() {}
 
-FX_BOOL CJS_Date::IsValidDate() {
-  if (m_pDate.IsEmpty())
-    return FALSE;
-  return !JS_PortIsNan(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate));
+bool CJS_Date::IsValidDate() const {
+  return !m_pDate.IsEmpty() &&
+         !JS_PortIsNan(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate));
 }
 
 void CJS_Date::Attach(v8::Local<v8::Value> pDate) {
   m_pDate = pDate;
 }
 
-int CJS_Date::GetYear() {
-  if (IsValidDate())
-    return JS_GetYearFromTime(
-        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
+int CJS_Date::GetYear() const {
+  if (!IsValidDate())
+    return 0;
 
-  return 0;
+  return JS_GetYearFromTime(
+      JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 }
 
 void CJS_Date::SetYear(int iYear) {
@@ -469,12 +455,12 @@ void CJS_Date::SetYear(int iYear) {
   FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
-int CJS_Date::GetMonth() {
-  if (IsValidDate())
-    return JS_GetMonthFromTime(
-        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
+int CJS_Date::GetMonth() const {
+  if (!IsValidDate())
+    return 0;
 
-  return 0;
+  return JS_GetMonthFromTime(
+      JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 }
 
 void CJS_Date::SetMonth(int iMonth) {
@@ -483,12 +469,12 @@ void CJS_Date::SetMonth(int iMonth) {
   FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
-int CJS_Date::GetDay() {
-  if (IsValidDate())
-    return JS_GetDayFromTime(
-        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
+int CJS_Date::GetDay() const {
+  if (!IsValidDate())
+    return 0;
 
-  return 0;
+  return JS_GetDayFromTime(
+      JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 }
 
 void CJS_Date::SetDay(int iDay) {
@@ -497,12 +483,12 @@ void CJS_Date::SetDay(int iDay) {
   FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
-int CJS_Date::GetHours() {
-  if (IsValidDate())
-    return JS_GetHourFromTime(
-        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
+int CJS_Date::GetHours() const {
+  if (!IsValidDate())
+    return 0;
 
-  return 0;
+  return JS_GetHourFromTime(
+      JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 }
 
 void CJS_Date::SetHours(int iHours) {
@@ -511,12 +497,12 @@ void CJS_Date::SetHours(int iHours) {
   FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
-int CJS_Date::GetMinutes() {
-  if (IsValidDate())
-    return JS_GetMinFromTime(
-        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
+int CJS_Date::GetMinutes() const {
+  if (!IsValidDate())
+    return 0;
 
-  return 0;
+  return JS_GetMinFromTime(
+      JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 }
 
 void CJS_Date::SetMinutes(int minutes) {
@@ -525,12 +511,12 @@ void CJS_Date::SetMinutes(int minutes) {
   FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
-int CJS_Date::GetSeconds() {
-  if (IsValidDate())
-    return JS_GetSecFromTime(
-        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
+int CJS_Date::GetSeconds() const {
+  if (!IsValidDate())
+    return 0;
 
-  return 0;
+  return JS_GetSecFromTime(
+      JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 }
 
 void CJS_Date::SetSeconds(int seconds) {
@@ -539,19 +525,17 @@ void CJS_Date::SetSeconds(int seconds) {
   FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
-CJS_Date::operator v8::Local<v8::Value>() {
-  return m_pDate;
-}
-
-CJS_Date::operator double() const {
+double CJS_Date::ToDouble() const {
   if (m_pDate.IsEmpty())
     return 0.0;
+
   return FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate);
 }
 
 CFX_WideString CJS_Date::ToString() const {
   if (m_pDate.IsEmpty())
     return L"";
+
   return FXJS_ToString(m_pJSRuntime->GetIsolate(), m_pDate);
 }
 
