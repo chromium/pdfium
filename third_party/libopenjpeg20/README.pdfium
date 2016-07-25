@@ -27,4 +27,5 @@ Local Modifications:
 0015-read_SPCod_SPCoc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SPCod_SPCoc.
 0016-read_SQcd_SQcc_overflow.patch: Prevent a buffer overflow in opj_j2k_read_SQcd_SQcc.
 0017-tcd_init_tile.patch: Prevent integer overflows during calculation of |l_nb_precinct_size|.
+0018-tcd_get_decoded_tile_size.patch: Fix an integer overflow in opj_tcd_get_decoded_tile_size.
 TODO(thestig): List all the other patches.
