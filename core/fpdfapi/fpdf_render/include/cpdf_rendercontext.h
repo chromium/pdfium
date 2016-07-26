@@ -61,7 +61,6 @@ class CPDF_RenderContext {
   CPDF_Document* const m_pDocument;
   CPDF_Dictionary* m_pPageResources;
   CPDF_PageRenderCache* m_pPageCache;
-  FX_BOOL m_bFirstLayer;
   CFX_ArrayTemplate<Layer> m_Layers;
 };
 

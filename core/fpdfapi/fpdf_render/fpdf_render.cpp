@@ -925,15 +925,11 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Page* pPage)
     : m_pDocument(pPage->m_pDocument),
       m_pPageResources(pPage->m_pPageResources),
-      m_pPageCache(pPage->GetRenderCache()),
-      m_bFirstLayer(TRUE) {}
+      m_pPageCache(pPage->GetRenderCache()) {}
 
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
                                        CPDF_PageRenderCache* pPageCache)
-    : m_pDocument(pDoc),
-      m_pPageResources(nullptr),
-      m_pPageCache(pPageCache),
-      m_bFirstLayer(TRUE) {}
+    : m_pDocument(pDoc), m_pPageResources(nullptr), m_pPageCache(pPageCache) {}
 
 CPDF_RenderContext::~CPDF_RenderContext() {}
 
