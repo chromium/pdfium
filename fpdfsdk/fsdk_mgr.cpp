@@ -353,9 +353,12 @@ void CPDFSDK_Document::RemovePageView(UnderlyingPageType* pUnderlyingPage) {
   if (pPageView->IsLocked())
     return;
 
+  // Remove the page from the map to make sure we don't accidentally attempt
+  // to use the |pPageView| while we're cleaning it up.
+  m_pageMap.erase(it);
+
   pPageView->KillFocusAnnotIfNeeded();
   delete pPageView;
-  m_pageMap.erase(it);
 }
 
 UnderlyingPageType* CPDFSDK_Document::GetPage(int nIndex) {
