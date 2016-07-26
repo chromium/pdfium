@@ -34,7 +34,7 @@
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
-extern const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
+const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
     XFA_ATTRIBUTEENUM_Click,      XFA_ATTRIBUTEENUM_Change,
     XFA_ATTRIBUTEENUM_DocClose,   XFA_ATTRIBUTEENUM_DocReady,
     XFA_ATTRIBUTEENUM_Enter,      XFA_ATTRIBUTEENUM_Exit,
@@ -50,6 +50,7 @@ extern const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
     XFA_ATTRIBUTEENUM_PreSubmit,  XFA_ATTRIBUTEENUM_Ready,
     XFA_ATTRIBUTEENUM_Unknown,
 };
+
 CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc)
     : m_bLayoutEvent(FALSE),
       m_pListFocusWidget(nullptr),
