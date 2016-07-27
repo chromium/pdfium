@@ -19,12 +19,10 @@ typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
 
 class CFX_FaceCache;
-class CFX_FontMapper;
 class CFX_PathData;
 class CFX_SizeGlyphCache;
 class CFX_SubstFont;
 class CTTFontDesc;
-class IFX_SystemFontInfo;
 
 #ifdef _SKIA_SUPPORT_
 class SkTypeface;
@@ -70,6 +68,10 @@ using CFX_TypeFace = SkTypeface;
 #define CHARSET_FLAG_BIG5 8
 #define CHARSET_FLAG_GB 16
 #define CHARSET_FLAG_KOREAN 32
+
+#define GET_TT_SHORT(w) (uint16_t)(((w)[0] << 8) | (w)[1])
+#define GET_TT_LONG(w) \
+  (uint32_t)(((w)[0] << 24) | ((w)[1] << 16) | ((w)[2] << 8) | (w)[3])
 
 class CFX_Font {
  public:
@@ -238,146 +240,6 @@ class CFX_SubstFont {
 #define FX_FONT_FLAG_SYMBOLIC_DINGBATS 0x20
 #define FX_FONT_FLAG_MULTIPLEMASTER 0x40
 
-class CFX_FontMgr {
- public:
-  CFX_FontMgr();
-  ~CFX_FontMgr();
-
-  void InitFTLibrary();
-
-  FXFT_Face GetCachedFace(const CFX_ByteString& face_name,
-                          int weight,
-                          FX_BOOL bItalic,
-                          uint8_t*& pFontData);
-  FXFT_Face AddCachedFace(const CFX_ByteString& face_name,
-                          int weight,
-                          FX_BOOL bItalic,
-                          uint8_t* pData,
-                          uint32_t size,
-                          int face_index);
-  FXFT_Face GetCachedTTCFace(int ttc_size,
-                             uint32_t checksum,
-                             int font_offset,
-                             uint8_t*& pFontData);
-  FXFT_Face AddCachedTTCFace(int ttc_size,
-                             uint32_t checksum,
-                             uint8_t* pData,
-                             uint32_t size,
-                             int font_offset);
-  FXFT_Face GetFileFace(const FX_CHAR* filename, int face_index);
-  FXFT_Face GetFixedFace(const uint8_t* pData, uint32_t size, int face_index);
-  void ReleaseFace(FXFT_Face face);
-  void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
-  FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
-                          FX_BOOL bTrueType,
-                          uint32_t flags,
-                          int weight,
-                          int italic_angle,
-                          int CharsetCP,
-                          CFX_SubstFont* pSubstFont);
-  bool GetBuiltinFont(size_t index, const uint8_t** pFontData, uint32_t* size);
-  CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
-  FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
-  bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }
-
- private:
-  std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
-  std::map<CFX_ByteString, CTTFontDesc*> m_FaceMap;
-  FXFT_Library m_FTLibrary;
-  bool m_FTLibrarySupportsHinting;
-};
-
-class CFX_FontMapper {
- public:
-  explicit CFX_FontMapper(CFX_FontMgr* mgr);
-  ~CFX_FontMapper();
-
-  void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
-  IFX_SystemFontInfo* GetSystemFontInfo() { return m_pFontInfo.get(); }
-  void AddInstalledFont(const CFX_ByteString& name, int charset);
-  void LoadInstalledFonts();
-
-  FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
-                          FX_BOOL bTrueType,
-                          uint32_t flags,
-                          int weight,
-                          int italic_angle,
-                          int CharsetCP,
-                          CFX_SubstFont* pSubstFont);
-#ifdef PDF_ENABLE_XFA
-  FXFT_Face FindSubstFontByUnicode(uint32_t dwUnicode,
-                                   uint32_t flags,
-                                   int weight,
-                                   int italic_angle);
-#endif  // PDF_ENABLE_XFA
-  FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
-  int GetFaceSize() const;
-  CFX_ByteString GetFaceName(int index) const {
-    return m_FaceArray[index].name;
-  }
-
-  std::vector<CFX_ByteString> m_InstalledTTFonts;
-
- private:
-  static const size_t MM_FACE_COUNT = 2;
-  static const size_t FOXIT_FACE_COUNT = 14;
-
-  CFX_ByteString GetPSNameFromTT(void* hFont);
-  CFX_ByteString MatchInstalledFonts(const CFX_ByteString& norm_name);
-  FXFT_Face UseInternalSubst(CFX_SubstFont* pSubstFont,
-                             int iBaseFont,
-                             int italic_angle,
-                             int weight,
-                             int picthfamily);
-
-  struct FaceData {
-    CFX_ByteString name;
-    uint32_t charset;
-  };
-
-  FX_BOOL m_bListLoaded;
-  FXFT_Face m_MMFaces[MM_FACE_COUNT];
-  CFX_ByteString m_LastFamily;
-  std::vector<FaceData> m_FaceArray;
-  std::unique_ptr<IFX_SystemFontInfo> m_pFontInfo;
-  FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
-  CFX_FontMgr* const m_pFontMgr;
-};
-
-class IFX_SystemFontInfo {
- public:
-  static std::unique_ptr<IFX_SystemFontInfo> CreateDefault(
-      const char** pUserPaths);
-
-  virtual ~IFX_SystemFontInfo() {}
-
-  virtual FX_BOOL EnumFontList(CFX_FontMapper* pMapper) = 0;
-  virtual void* MapFont(int weight,
-                        FX_BOOL bItalic,
-                        int charset,
-                        int pitch_family,
-                        const FX_CHAR* face,
-                        int& iExact) = 0;
-
-#ifdef PDF_ENABLE_XFA
-  virtual void* MapFontByUnicode(uint32_t dwUnicode,
-                                 int weight,
-                                 FX_BOOL bItalic,
-                                 int pitch_family);
-#endif  // PDF_ENABLE_XFA
-
-  virtual void* GetFont(const FX_CHAR* face) = 0;
-  virtual uint32_t GetFontData(void* hFont,
-                               uint32_t table,
-                               uint8_t* buffer,
-                               uint32_t size) = 0;
-  virtual FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) = 0;
-  virtual FX_BOOL GetFontCharset(void* hFont, int& charset) = 0;
-  virtual int GetFaceIndex(void* hFont);
-  virtual void DeleteFont(void* hFont) = 0;
-  virtual void* RetainFont(void* hFont);
-};
-
 class CTTFontDesc {
  public:
   CTTFontDesc() {
@@ -420,56 +282,6 @@ class CFX_FontFaceInfo {
   const uint32_t m_FileSize;
   uint32_t m_Styles;
   uint32_t m_Charsets;
-};
-
-class CFX_FolderFontInfo : public IFX_SystemFontInfo {
- public:
-  CFX_FolderFontInfo();
-  ~CFX_FolderFontInfo() override;
-
-  void AddPath(const CFX_ByteStringC& path);
-
-  // IFX_SytemFontInfo:
-  FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override;
-  void* MapFont(int weight,
-                FX_BOOL bItalic,
-                int charset,
-                int pitch_family,
-                const FX_CHAR* face,
-                int& bExact) override;
-#ifdef PDF_ENABLE_XFA
-  void* MapFontByUnicode(uint32_t dwUnicode,
-                         int weight,
-                         FX_BOOL bItalic,
-                         int pitch_family) override;
-#endif  // PDF_ENABLE_XFA
-  void* GetFont(const FX_CHAR* face) override;
-  uint32_t GetFontData(void* hFont,
-                       uint32_t table,
-                       uint8_t* buffer,
-                       uint32_t size) override;
-  void DeleteFont(void* hFont) override;
-  FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override;
-  FX_BOOL GetFontCharset(void* hFont, int& charset) override;
-
- protected:
-  void ScanPath(const CFX_ByteString& path);
-  void ScanFile(const CFX_ByteString& path);
-  void ReportFace(const CFX_ByteString& path,
-                  FXSYS_FILE* pFile,
-                  uint32_t filesize,
-                  uint32_t offset);
-  void* GetSubstFont(const CFX_ByteString& face);
-  void* FindFont(int weight,
-                 FX_BOOL bItalic,
-                 int charset,
-                 int pitch_family,
-                 const FX_CHAR* family,
-                 FX_BOOL bMatchName);
-
-  std::map<CFX_ByteString, CFX_FontFaceInfo*> m_FontList;
-  std::vector<CFX_ByteString> m_PathList;
-  CFX_FontMapper* m_pMapper;
 };
 
 class CFX_CountedFaceCache {

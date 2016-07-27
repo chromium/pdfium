@@ -8,8 +8,10 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 
+#include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/ifx_systemfontinfo.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
 class CFX_LinuxFontInfo : public CFX_FolderFontInfo {

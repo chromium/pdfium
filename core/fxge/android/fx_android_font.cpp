@@ -11,6 +11,7 @@
 #include "core/fxge/android/fpf_skiafont.h"
 #include "core/fxge/android/fpf_skiafontmgr.h"
 #include "core/fxge/android/fx_android_font.h"
+#include "core/fxge/include/cfx_fontmapper.h"
 
 CFX_AndroidFontInfo::CFX_AndroidFontInfo() : m_pFontMgr(nullptr) {}
 CFX_AndroidFontInfo::~CFX_AndroidFontInfo() {}

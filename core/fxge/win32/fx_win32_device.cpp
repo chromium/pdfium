@@ -21,7 +21,10 @@
 #endif
 
 #include "core/fxge/dib/dib_int.h"
+#include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/include/cfx_fontmapper.h"
+#include "core/fxge/include/ifx_systemfontinfo.h"
 #include "core/fxge/include/fx_font.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "core/fxge/include/fx_ge_win32.h"
