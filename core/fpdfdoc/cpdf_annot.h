@@ -64,7 +64,7 @@ class CPDF_Annot {
   CPDF_Dictionary* const m_pAnnotDict;
   CPDF_Document* const m_pDocument;
   const CFX_ByteString m_sSubtype;
-  std::map<CPDF_Stream*, CPDF_Form*> m_APMap;
+  std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ANNOT_H_

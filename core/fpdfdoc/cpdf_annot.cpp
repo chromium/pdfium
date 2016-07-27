@@ -12,6 +12,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/include/fx_ge.h"
 
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
@@ -24,9 +25,6 @@ CPDF_Annot::~CPDF_Annot() {
 }
 
 void CPDF_Annot::ClearCachedAP() {
-  for (const auto& pair : m_APMap) {
-    delete pair.second;
-  }
   m_APMap.clear();
 }
 CFX_ByteString CPDF_Annot::GetSubType() const {
@@ -90,12 +88,12 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
 
   auto it = m_APMap.find(pStream);
   if (it != m_APMap.end())
-    return it->second;
+    return it->second.get();
 
   CPDF_Form* pNewForm =
       new CPDF_Form(m_pDocument, pPage->m_pResources, pStream);
   pNewForm->ParseContent(nullptr, nullptr, nullptr);
-  m_APMap[pStream] = pNewForm;
+  m_APMap[pStream] = WrapUnique(pNewForm);
   return pNewForm;
 }
 
