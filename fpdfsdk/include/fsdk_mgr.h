@@ -479,8 +479,7 @@ class CPDFSDK_Document {
   int GetPageViewCount() const { return m_pageMap.size(); }
 #endif  // PDF_ENABLE_XFA
 
-  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage,
-                                FX_BOOL ReNew = TRUE);
+  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage, bool ReNew);
   CPDFSDK_PageView* GetPageView(int nIndex);
   CPDFSDK_PageView* GetCurrentView();
   void RemovePageView(UnderlyingPageType* pPage);

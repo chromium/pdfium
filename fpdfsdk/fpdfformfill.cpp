@@ -41,7 +41,7 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
     return nullptr;
 
   CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  return pSDKDoc ? pSDKDoc->GetPageView(pPage, TRUE) : nullptr;
+  return pSDKDoc ? pSDKDoc->GetPageView(pPage, true) : nullptr;
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -131,7 +131,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   options.m_AddFlags = flags >> 8;
   options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);
 
-  if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView(pPage))
+  if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView(pPage, true))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 #endif  // PDF_ENABLE_XFA
 
@@ -655,7 +655,7 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
+  CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, false);
   if (pPageView) {
     pPageView->SetValid(FALSE);
     // RemovePageView() takes care of the delete for us.
@@ -706,7 +706,7 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
   if (!pPDFPage)
     return;
-  if (pSDKDoc->GetPageView(pPage, FALSE)) {
+  if (pSDKDoc->GetPageView(pPage, false)) {
     CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
     CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
     CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;

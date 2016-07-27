@@ -220,7 +220,7 @@ FX_BOOL CFFL_FormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                    FX_UINT nKeyCode,
                                    FX_UINT nFlags) {
   if (IsValid()) {
-    CPDFSDK_PageView* pPageView = GetCurPageView();
+    CPDFSDK_PageView* pPageView = GetCurPageView(true);
     ASSERT(pPageView);
 
     if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
@@ -235,7 +235,7 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
                                 FX_UINT nChar,
                                 FX_UINT nFlags) {
   if (IsValid()) {
-    CPDFSDK_PageView* pPageView = GetCurPageView();
+    CPDFSDK_PageView* pPageView = GetCurPageView(true);
     ASSERT(pPageView);
 
     if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
@@ -250,7 +250,7 @@ void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
   CPDFSDK_Document* pDoc = m_pApp->GetSDKDocument();
-  CPDFSDK_PageView* pPageView = pDoc->GetPageView(pPage);
+  CPDFSDK_PageView* pPageView = pDoc->GetPageView(pPage, true);
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, TRUE))
     pWnd->SetFocus();
 
@@ -263,7 +263,7 @@ void CFFL_FormFiller::KillFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   if (!IsValid())
     return;
 
-  CPDFSDK_PageView* pPageView = GetCurPageView();
+  CPDFSDK_PageView* pPageView = GetCurPageView(false);
   if (!pPageView)
     return;
 
@@ -456,10 +456,10 @@ CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
   return CFX_FloatRect(0, 0, fWidth, fHeight);
 }
 
-CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView() {
+CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView(bool renew) {
   UnderlyingPageType* pPage = m_pAnnot->GetUnderlyingPage();
   CPDFSDK_Document* pSDKDoc = m_pApp->GetSDKDocument();
-  return pSDKDoc ? pSDKDoc->GetPageView(pPage) : nullptr;
+  return pSDKDoc ? pSDKDoc->GetPageView(pPage, renew) : nullptr;
 }
 
 CFX_FloatRect CFFL_FormFiller::GetFocusBox(CPDFSDK_PageView* pPageView) {

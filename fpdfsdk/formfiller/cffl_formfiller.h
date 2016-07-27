@@ -141,7 +141,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   FX_BOOL IsValid() const;
   CFX_FloatRect GetPDFWindowRect() const;
 
-  CPDFSDK_PageView* GetCurPageView();
+  CPDFSDK_PageView* GetCurPageView(bool renew);
   void SetChangeMark();
 
   virtual void InvalidateRect(double left,

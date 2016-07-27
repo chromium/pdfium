@@ -503,7 +503,7 @@ void CPDFXFA_Document::WidgetPostAdd(CXFA_FFWidget* hWidget,
   if (!pXFAPage)
     return;
 
-  m_pSDKDoc->GetPageView(pXFAPage)->AddAnnot(hWidget);
+  m_pSDKDoc->GetPageView(pXFAPage, true)->AddAnnot(hWidget);
 }
 
 void CPDFXFA_Document::WidgetPreRemove(CXFA_FFWidget* hWidget,
@@ -519,7 +519,7 @@ void CPDFXFA_Document::WidgetPreRemove(CXFA_FFWidget* hWidget,
   if (!pXFAPage)
     return;
 
-  CPDFSDK_PageView* pSdkPageView = m_pSDKDoc->GetPageView(pXFAPage);
+  CPDFSDK_PageView* pSdkPageView = m_pSDKDoc->GetPageView(pXFAPage, true);
   if (CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget))
     pSdkPageView->DeleteAnnot(pAnnot);
 }
