@@ -16,7 +16,14 @@
 
 #include <algorithm>
 #include <cctype>
+#include <limits>
 #include <memory>
+
+namespace {
+
+const int kDefaultIntValue = 0;
+
+}  // namespace
 
 bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   if (strc.Find('.') != -1) {
@@ -25,26 +32,52 @@ bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
     return false;
   }
 
-  int cc = 0;
-  pdfium::base::CheckedNumeric<int> integer = 0;
+  // Note, numbers in PDF are typically of the form 123, -123, etc. But,
+  // for things like the Permissions on the encryption hash the number is
+  // actually an unsigned value. We use a uint32_t so we can deal with the
+  // unsigned and then check for overflow if the user actually signed the value.
+  // The Permissions flag is listed in Table 3.20 PDF 1.7 spec.
+  pdfium::base::CheckedNumeric<uint32_t> integer = 0;
   bool bNegative = false;
+  bool bSigned = false;
+  int cc = 0;
   if (strc[0] == '+') {
     cc++;
+    bSigned = true;
   } else if (strc[0] == '-') {
     bNegative = true;
+    bSigned = true;
     cc++;
   }
+
   while (cc < strc.GetLength() && std::isdigit(strc[cc])) {
     integer = integer * 10 + FXSYS_toDecimalDigit(strc.CharAt(cc));
     if (!integer.IsValid())
       break;
     cc++;
   }
+
+  // We have a sign, and the value was greater then a regular integer
+  // we've overflowed, reset to the default value.
+  if (bSigned) {
+    if (bNegative) {
+      if (integer.ValueOrDefault(kDefaultIntValue) >
+          static_cast<uint32_t>(std::numeric_limits<int>::max()) + 1) {
+        integer = kDefaultIntValue;
+      }
+    } else if (integer.ValueOrDefault(kDefaultIntValue) >
+               static_cast<uint32_t>(std::numeric_limits<int>::max())) {
+      integer = kDefaultIntValue;
+    }
+  }
+
+  // Switch back to the int space so we can flip to a negative if we need.
+  int value = static_cast<int>(integer.ValueOrDefault(kDefaultIntValue));
   if (bNegative)
-    integer = -integer;
+    value = -value;
 
   int* pInt = static_cast<int*>(pData);
-  *pInt = integer.ValueOrDefault(0);
+  *pInt = value;
   return true;
 }
 
