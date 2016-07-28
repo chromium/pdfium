@@ -13,6 +13,7 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pathobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fpdfdoc/include/cpvt_section.h"

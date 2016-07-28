@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/ipdf_formnotify.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxge/include/fx_dib.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
@@ -26,7 +26,9 @@ class CPDFSDK_Document;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class CPDF_Action;
+class CPDF_FormControl;
 class CPDF_FormField;
+class CPDF_InterForm;
 struct CPWL_Color;
 
 #ifdef PDF_ENABLE_XFA

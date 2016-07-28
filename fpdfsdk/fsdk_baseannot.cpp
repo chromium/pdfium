@@ -10,6 +10,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 #include "fpdfsdk/include/fsdk_define.h"

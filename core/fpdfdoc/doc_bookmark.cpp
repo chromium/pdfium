@@ -4,13 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfdoc/include/cpdf_bookmark.h"
+
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_bookmarktree.h"
+#include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "core/fxge/include/fx_dib.h"
 
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {

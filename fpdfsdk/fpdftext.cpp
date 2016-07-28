@@ -7,7 +7,7 @@
 #include "public/fpdf_text.h"
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_viewerpreferences.h"
 #include "core/fpdftext/include/cpdf_linkextract.h"
 #include "core/fpdftext/include/cpdf_textpage.h"
 #include "core/fpdftext/include/cpdf_textpagefind.h"

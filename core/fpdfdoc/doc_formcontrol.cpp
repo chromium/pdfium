@@ -4,14 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfdoc/include/cpdf_formcontrol.h"
+
 #include <algorithm>
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_interform.h"
 
 namespace {
 

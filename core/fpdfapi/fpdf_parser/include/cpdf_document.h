@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_linklist.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CFX_Font;

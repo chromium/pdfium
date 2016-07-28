@@ -684,10 +684,20 @@ typedef struct _FPDF_FORMFILLINFO {
   * Parameters:
   *       pThis           -   Pointer to the interface structure itself.
   *       nPageIndex      -   The index of the PDF page.
-  *       zoomMode        -   The zoom mode for viewing page.See Macros
-  *"PDFZOOM_XXX" defined in "fpdfdoc.h".
+  *       zoomMode        -   The zoom mode for viewing page. See below.
   *       fPosArray       -   The float array which carries the position info.
   *       sizeofArray     -   The size of float array.
+  *
+  * PDFZoom values:
+  *   - XYZ = 1
+  *   - FITPAGE = 2
+  *   - FITHORZ = 3
+  *   - FITVERT = 4
+  *   - FITRECT = 5
+  *   - FITBBOX = 6
+  *   - FITBHORZ = 7
+  *   - FITBVERT = 8
+  *
   * Return value:
   *       None.
   * Comments:

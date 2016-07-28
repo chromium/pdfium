@@ -10,7 +10,8 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfdoc/include/cpdf_nametree.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "xfa/fde/xml/fde_xml_imp.h"

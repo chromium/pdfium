@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CPDF_ANNOTLIST_H_
-#define CORE_FPDFDOC_CPDF_ANNOTLIST_H_
+#ifndef CORE_FPDFDOC_INCLUDE_CPDF_ANNOTLIST_H_
+#define CORE_FPDFDOC_INCLUDE_CPDF_ANNOTLIST_H_
 
 #include <memory>
 #include <vector>
@@ -61,4 +61,4 @@ class CPDF_AnnotList {
   std::vector<std::unique_ptr<CPDF_Annot>> m_AnnotList;
 };
 
-#endif  // CORE_FPDFDOC_CPDF_ANNOTLIST_H_
+#endif  // CORE_FPDFDOC_INCLUDE_CPDF_ANNOTLIST_H_

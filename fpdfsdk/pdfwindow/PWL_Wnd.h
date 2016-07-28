@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_formcontrol.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 

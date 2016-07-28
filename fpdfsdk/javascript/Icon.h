@@ -9,9 +9,11 @@
 
 #include "fpdfsdk/javascript/JS_Define.h"
 
+class CPDF_Stream;
+
 class Icon : public CJS_EmbedObj {
  public:
-  Icon(CJS_Object* pJSObject);
+  explicit Icon(CJS_Object* pJSObject);
   ~Icon() override;
 
   FX_BOOL name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -27,7 +29,7 @@ class Icon : public CJS_EmbedObj {
 
 class CJS_Icon : public CJS_Object {
  public:
-  CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Icon() override {}
 
   DECLARE_JS_CLASS();

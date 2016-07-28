@@ -12,8 +12,10 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfdoc/include/cpdf_filespec.h"
+#include "core/fpdfdoc/include/cpdf_formcontrol.h"
+#include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

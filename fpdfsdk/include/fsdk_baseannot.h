@@ -13,14 +13,15 @@
 #include <ctime>
 #endif
 
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_aaction.h"
+#include "core/fpdfdoc/include/cpdf_annot.h"
+#include "core/fpdfdoc/include/cpdf_defaultappearance.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 class CPDFSDK_PageView;
-class CPDF_Annot;
 class CPDF_Page;
 class CFX_Matrix;
 class CPDF_RenderOptions;

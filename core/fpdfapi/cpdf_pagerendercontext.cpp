@@ -9,8 +9,8 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
-#include "core/fpdfdoc/cpdf_annotlist.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_annotlist.h"
+#include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "core/fxge/include/fx_ge.h"
 
 CPDF_PageRenderContext::CPDF_PageRenderContext() {}

@@ -4,14 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/cpdf_annotlist.h"
+#include "core/fpdfdoc/include/cpdf_annotlist.h"
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
-#include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
+#include "core/fpdfdoc/include/cpdf_annot.h"
+#include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fpdfdoc/include/cpdf_occontext.h"
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     : m_pDocument(pPage->m_pDocument) {

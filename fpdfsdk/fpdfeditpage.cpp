@@ -19,6 +19,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfdoc/include/cpdf_annot.h"
+#include "core/fpdfdoc/include/cpdf_annotlist.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"

@@ -13,6 +13,7 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
+#include "core/fpdfdoc/include/cpdf_interform.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/Icon.h"

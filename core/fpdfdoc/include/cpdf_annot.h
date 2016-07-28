@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CPDF_ANNOT_H_
-#define CORE_FPDFDOC_CPDF_ANNOT_H_
+#ifndef CORE_FPDFDOC_INCLUDE_CPDF_ANNOT_H_
+#define CORE_FPDFDOC_INCLUDE_CPDF_ANNOT_H_
 
 #include <map>
 #include <memory>
@@ -67,4 +67,7 @@ class CPDF_Annot {
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
 };
 
-#endif  // CORE_FPDFDOC_CPDF_ANNOT_H_
+CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
+                                CPDF_Annot::AppearanceMode mode);
+
+#endif  // CORE_FPDFDOC_INCLUDE_CPDF_ANNOT_H_

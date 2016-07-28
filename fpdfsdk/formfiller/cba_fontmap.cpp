@@ -11,6 +11,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfdoc/include/cpdf_formfield.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
 CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,

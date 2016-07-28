@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fpdfdoc/include/fpdf_doc.h"
-
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfdoc/include/cpdf_filespec.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

@@ -4,11 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfdoc/include/cpdf_action.h"
+
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_aaction.h"
+#include "core/fpdfdoc/include/cpdf_actionfields.h"
+#include "core/fpdfdoc/include/cpdf_docjsactions.h"
+#include "core/fpdfdoc/include/cpdf_filespec.h"
+#include "core/fpdfdoc/include/cpdf_nametree.h"
 
 namespace {
 

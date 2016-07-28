@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfdoc/include/cpdf_metadata.h"
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_xml.h"
 
 CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {

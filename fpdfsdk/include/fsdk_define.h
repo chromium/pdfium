@@ -8,7 +8,7 @@
 #define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fxge/include/fx_dib.h"
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -31,6 +31,9 @@
    ((uint32_t)rgb & 0x0000FF00) | (((uint32_t)rgb & 0x00FF0000) >> 16))
 
 typedef unsigned int FX_UINT;
+
+class CPDF_Annot;
+class CPDF_Page;
 class CPDF_PageRenderContext;
 class IFSDK_PAUSE_Adapter;
 

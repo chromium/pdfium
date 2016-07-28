@@ -12,6 +12,8 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfdoc/include/cpdf_docjsactions.h"
+#include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fxcrt/include/cfx_retain_ptr.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_define.h"

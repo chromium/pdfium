@@ -10,7 +10,6 @@
 #include <memory>
 #include <set>
 
-#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "fpdfsdk/include/fsdk_baseform.h"
 

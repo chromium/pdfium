@@ -13,6 +13,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_annothandler.h"
@@ -25,6 +26,7 @@
 
 class CFFL_IFormFiller;
 class CFX_SystemHandler;
+class CPDF_AnnotList;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_Annot;
 class CPDFSDK_InterForm;

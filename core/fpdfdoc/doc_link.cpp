@@ -4,12 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_link.h"
 
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfdoc/include/cpdf_linklist.h"
+#include "core/fpdfdoc/include/cpdf_nametree.h"
 
 CPDF_LinkList::CPDF_LinkList() {}
 

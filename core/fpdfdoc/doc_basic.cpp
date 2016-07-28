@@ -6,8 +6,12 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/cpdf_pagelabel.h"
+#include "core/fpdfdoc/include/cpdf_filespec.h"
+#include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "core/fpdfdoc/include/ipdf_formnotify.h"
 
 namespace {
 

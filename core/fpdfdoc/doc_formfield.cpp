@@ -4,17 +4,37 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfdoc/include/cpdf_formfield.h"
+
 #include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/fpdfdoc/include/fpdf_doc.h"
+#include "core/fpdfdoc/include/cpdf_formcontrol.h"
+#include "core/fpdfdoc/include/cpdf_interform.h"
 
 namespace {
+
+const int kFormListMultiSelect = 0x100;
+
+const int kFormComboEdit = 0x100;
+
+const int kFormFieldReadOnly = 0x01;
+const int kFormFieldRequired = 0x02;
+const int kFormFieldNoExport = 0x04;
+
+const int kFormRadioNoToggleOff = 0x100;
+const int kFormRadioUnison = 0x200;
+
+const int kFormTextMultiLine = 0x100;
+const int kFormTextPassword = 0x200;
+const int kFormTextNoScroll = 0x400;
+const int kFormTextComb = 0x800;
 
 bool PDF_FormField_IsUnison(CPDF_FormField* pField) {
   if (pField->GetType() == CPDF_FormField::CheckBox)
@@ -45,22 +65,22 @@ void CPDF_FormField::SyncFieldFlags() {
                        : 0;
   m_Flags = 0;
   if (flags & 1) {
-    m_Flags |= FORMFIELD_READONLY;
+    m_Flags |= kFormFieldReadOnly;
   }
   if (flags & 2) {
-    m_Flags |= FORMFIELD_REQUIRED;
+    m_Flags |= kFormFieldRequired;
   }
   if (flags & 4) {
-    m_Flags |= FORMFIELD_NOEXPORT;
+    m_Flags |= kFormFieldNoExport;
   }
   if (type_name == "Btn") {
     if (flags & 0x8000) {
       m_Type = RadioButton;
       if (flags & 0x4000) {
-        m_Flags |= FORMRADIO_NOTOGGLEOFF;
+        m_Flags |= kFormRadioNoToggleOff;
       }
       if (flags & 0x2000000) {
-        m_Flags |= FORMRADIO_UNISON;
+        m_Flags |= kFormRadioUnison;
       }
     } else if (flags & 0x10000) {
       m_Type = PushButton;
@@ -75,16 +95,16 @@ void CPDF_FormField::SyncFieldFlags() {
     } else {
       m_Type = Text;
       if (flags & 0x1000) {
-        m_Flags |= FORMTEXT_MULTILINE;
+        m_Flags |= kFormTextMultiLine;
       }
       if (flags & 0x2000) {
-        m_Flags |= FORMTEXT_PASSWORD;
+        m_Flags |= kFormTextPassword;
       }
       if (flags & 0x800000) {
-        m_Flags |= FORMTEXT_NOSCROLL;
+        m_Flags |= kFormTextNoScroll;
       }
       if (flags & 0x100000) {
-        m_Flags |= FORMTEXT_COMB;
+        m_Flags |= kFormTextComb;
       }
     }
     LoadDA();
@@ -92,12 +112,12 @@ void CPDF_FormField::SyncFieldFlags() {
     if (flags & 0x20000) {
       m_Type = ComboBox;
       if (flags & 0x40000) {
-        m_Flags |= FORMCOMBO_EDIT;
+        m_Flags |= kFormComboEdit;
       }
     } else {
       m_Type = ListBox;
       if (flags & 0x200000) {
-        m_Flags |= FORMLIST_MULTISELECT;
+        m_Flags |= kFormListMultiSelect;
       }
     }
     LoadDA();
@@ -511,7 +531,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
   if (bSelected) {
     if (GetType() == ListBox) {
       SelectOption(index, TRUE);
-      if (!(m_Flags & FORMLIST_MULTISELECT)) {
+      if (!(m_Flags & kFormListMultiSelect)) {
         m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
       } else {
         CPDF_Array* pArray = new CPDF_Array;
