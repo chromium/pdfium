@@ -8,6 +8,7 @@
     'pdf_use_skia%': 0,
     'pdf_enable_v8%': 1,
     'pdf_enable_xfa%': 0, # Set to 1 by standalone.gypi in a standalone build.
+    'pdf_use_win32_gdi%': 0,
     'variables': {
       'clang_use_chrome_plugins': 1,
     },
@@ -43,6 +44,9 @@
       }],
       ['pdf_enable_xfa==1', {
         'defines': ['PDF_ENABLE_XFA'],
+      }],
+      ['pdf_use_win32_gdi==1', {
+        'defines': ['PDFIUM_PRINT_TEXT_WITH_GDI'],
       }],
       ['OS=="linux"', {
         'conditions': [

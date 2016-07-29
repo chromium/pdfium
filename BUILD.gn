@@ -30,6 +30,10 @@ config("pdfium_common_config") {
   if (pdf_enable_xfa) {
     defines += [ "PDF_ENABLE_XFA" ]
   }
+
+  if (pdf_use_win32_gdi) {
+    defines += [ "PDFIUM_PRINT_TEXT_WITH_GDI" ]
+  }
 }
 
 config("pdfium_core_config") {

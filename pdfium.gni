@@ -20,6 +20,9 @@ declare_args() {
   # Build PDFium against skia (experimental) rather than agg.
   pdf_use_skia = pdf_use_skia_override
 
+  # Build PDFium with or without experimental win32 GDI APIs.
+  pdf_use_win32_gdi = pdf_use_win32_gdi_override
+
   # Build PDFium standalone
   pdf_is_standalone = false
 }
