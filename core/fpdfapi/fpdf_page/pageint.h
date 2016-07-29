@@ -147,7 +147,7 @@ class CPDF_StreamContentParser {
   void AddPathObject(int FillType, FX_BOOL bStroke);
   CPDF_ImageObject* AddImage(CPDF_Stream* pStream,
                              CPDF_Image* pImage,
-                             FX_BOOL bInline);
+                             bool bInline);
   void AddDuplicateImage();
   void AddForm(CPDF_Stream* pStream);
   void SetGraphicStates(CPDF_PageObject* pObj,
@@ -324,22 +324,21 @@ class CPDF_DocPageData {
   CPDF_Font* GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly);
   CPDF_Font* GetStandardFont(const CFX_ByteString& fontName,
                              CPDF_FontEncoding* pEncoding);
-  void ReleaseFont(CPDF_Dictionary* pFontDict);
+  void ReleaseFont(const CPDF_Dictionary* pFontDict);
   CPDF_ColorSpace* GetColorSpace(CPDF_Object* pCSObj,
                                  const CPDF_Dictionary* pResources);
   CPDF_ColorSpace* GetCopiedColorSpace(CPDF_Object* pCSObj);
-  void ReleaseColorSpace(CPDF_Object* pColorSpace);
+  void ReleaseColorSpace(const CPDF_Object* pColorSpace);
   CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
                            FX_BOOL bShading,
                            const CFX_Matrix& matrix);
-  void ReleasePattern(CPDF_Object* pPatternObj);
+  void ReleasePattern(const CPDF_Object* pPatternObj);
   CPDF_Image* GetImage(CPDF_Object* pImageStream);
-  void ReleaseImage(CPDF_Object* pImageStream);
+  void ReleaseImage(const CPDF_Object* pImageStream);
   CPDF_IccProfile* GetIccProfile(CPDF_Stream* pIccProfileStream);
-  void ReleaseIccProfile(CPDF_IccProfile* pIccProfile);
+  void ReleaseIccProfile(const CPDF_IccProfile* pIccProfile);
   CPDF_StreamAcc* GetFontFileStreamAcc(CPDF_Stream* pFontStream);
-  void ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream,
-                                FX_BOOL bForce = FALSE);
+  void ReleaseFontFileStreamAcc(const CPDF_Stream* pFontStream);
   FX_BOOL IsForceClear() const { return m_bForceClear; }
   CPDF_CountedColorSpace* FindColorSpacePtr(CPDF_Object* pCSObj) const;
   CPDF_CountedPattern* FindPatternPtr(CPDF_Object* pPatternObj) const;
@@ -350,12 +349,14 @@ class CPDF_DocPageData {
   using CPDF_CountedImage = CPDF_CountedObject<CPDF_Image>;
   using CPDF_CountedStreamAcc = CPDF_CountedObject<CPDF_StreamAcc>;
 
-  using CPDF_ColorSpaceMap = std::map<CPDF_Object*, CPDF_CountedColorSpace*>;
-  using CPDF_FontFileMap = std::map<CPDF_Stream*, CPDF_CountedStreamAcc*>;
-  using CPDF_FontMap = std::map<CPDF_Dictionary*, CPDF_CountedFont*>;
-  using CPDF_IccProfileMap = std::map<CPDF_Stream*, CPDF_CountedIccProfile*>;
+  using CPDF_ColorSpaceMap =
+      std::map<const CPDF_Object*, CPDF_CountedColorSpace*>;
+  using CPDF_FontFileMap = std::map<const CPDF_Stream*, CPDF_CountedStreamAcc*>;
+  using CPDF_FontMap = std::map<const CPDF_Dictionary*, CPDF_CountedFont*>;
+  using CPDF_IccProfileMap =
+      std::map<const CPDF_Stream*, CPDF_CountedIccProfile*>;
   using CPDF_ImageMap = std::map<uint32_t, CPDF_CountedImage*>;
-  using CPDF_PatternMap = std::map<CPDF_Object*, CPDF_CountedPattern*>;
+  using CPDF_PatternMap = std::map<const CPDF_Object*, CPDF_CountedPattern*>;
 
   CPDF_ColorSpace* GetColorSpaceImpl(CPDF_Object* pCSObj,
                                      const CPDF_Dictionary* pResources,

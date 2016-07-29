@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_font/cpdf_truetypefont.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
@@ -23,13 +25,13 @@
 
 namespace {
 
-const uint8_t ChineseFontNames[][5] = {{0xCB, 0xCE, 0xCC, 0xE5, 0x00},
-                                       {0xBF, 0xAC, 0xCC, 0xE5, 0x00},
-                                       {0xBA, 0xDA, 0xCC, 0xE5, 0x00},
-                                       {0xB7, 0xC2, 0xCB, 0xCE, 0x00},
-                                       {0xD0, 0xC2, 0xCB, 0xCE, 0x00}};
+const uint8_t kChineseFontNames[][5] = {{0xCB, 0xCE, 0xCC, 0xE5, 0x00},
+                                        {0xBF, 0xAC, 0xCC, 0xE5, 0x00},
+                                        {0xBA, 0xDA, 0xCC, 0xE5, 0x00},
+                                        {0xB7, 0xC2, 0xCB, 0xCE, 0x00},
+                                        {0xD0, 0xC2, 0xCB, 0xCE, 0x00}};
 
-FX_BOOL GetPredefinedEncoding(int& basemap, const CFX_ByteString& value) {
+void GetPredefinedEncoding(int& basemap, const CFX_ByteString& value) {
   if (value == "WinAnsiEncoding")
     basemap = PDFFONT_ENCODING_WINANSI;
   else if (value == "MacRomanEncoding")
@@ -38,9 +40,6 @@ FX_BOOL GetPredefinedEncoding(int& basemap, const CFX_ByteString& value) {
     basemap = PDFFONT_ENCODING_MACEXPERT;
   else if (value == "PDFDocEncoding")
     basemap = PDFFONT_ENCODING_PDFDOC;
-  else
-    return FALSE;
-  return TRUE;
 }
 
 }  // namespace
@@ -58,7 +57,7 @@ CPDF_Font::CPDF_Font()
 CPDF_Font::~CPDF_Font() {
   if (m_pFontFile) {
     m_pDocument->GetPageData()->ReleaseFontFileStreamAcc(
-        const_cast<CPDF_Stream*>(m_pFontFile->GetStream()->AsStream()));
+        m_pFontFile->GetStream()->AsStream());
   }
 }
 
@@ -222,7 +221,7 @@ void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
   uint32_t dwFontSize = m_pFontFile->GetSize();
   if (!m_Font.LoadEmbedded(pFontData, dwFontSize)) {
     m_pDocument->GetPageData()->ReleaseFontFileStreamAcc(
-        const_cast<CPDF_Stream*>(m_pFontFile->GetStream()->AsStream()));
+        m_pFontFile->GetStream()->AsStream());
     m_pFontFile = nullptr;
   }
 }
@@ -322,8 +321,8 @@ CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc,
   std::unique_ptr<CPDF_Font> pFont;
   if (type == "TrueType") {
     CFX_ByteString tag = pFontDict->GetStringBy("BaseFont").Left(4);
-    for (size_t i = 0; i < FX_ArraySize(ChineseFontNames); ++i) {
-      if (tag == CFX_ByteString(ChineseFontNames[i], 4)) {
+    for (size_t i = 0; i < FX_ArraySize(kChineseFontNames); ++i) {
+      if (tag == CFX_ByteString(kChineseFontNames[i], 4)) {
         CPDF_Dictionary* pFontDesc = pFontDict->GetDictBy("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))
           pFont.reset(new CPDF_CIDFont);

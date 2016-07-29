@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
@@ -643,7 +645,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   pDict->SetAtName("Subtype", "Image");
-  CPDF_ImageObject* pImgObj = AddImage(pStream, nullptr, TRUE);
+  CPDF_ImageObject* pImgObj = AddImage(pStream, nullptr, true);
   if (!pImgObj) {
     if (pStream) {
       pStream->Release();
@@ -724,7 +726,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   CFX_ByteString name = GetString(0);
   if (name == m_LastImageName && m_pLastImage && m_pLastImage->GetStream() &&
       m_pLastImage->GetStream()->GetObjNum()) {
-    AddImage(nullptr, m_pLastImage, FALSE);
+    AddImage(nullptr, m_pLastImage, false);
     return;
   }
 
@@ -739,7 +741,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     type = pXObject->GetDict()->GetStringBy("Subtype");
 
   if (type == "Image") {
-    CPDF_ImageObject* pObj = AddImage(pXObject, nullptr, FALSE);
+    CPDF_ImageObject* pObj = AddImage(pXObject, nullptr, false);
     m_LastImageName = name;
     m_pLastImage = pObj->m_pImage;
     if (!m_pObjectHolder->HasImageMask())
@@ -772,10 +774,10 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
                                                      CPDF_Image* pImage,
-                                                     FX_BOOL bInline) {
-  if (!pStream && !pImage) {
+                                                     bool bInline) {
+  if (!pStream && !pImage)
     return nullptr;
-  }
+
   CFX_Matrix ImageMatrix;
   ImageMatrix.Copy(m_pCurStates->m_CTM);
   ImageMatrix.Concat(m_mtContentToUser);

@@ -6,7 +6,9 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 
+#include <memory>
 #include <set>
+#include <vector>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
@@ -779,8 +781,7 @@ CPDF_Image* CPDF_Document::LoadImageF(CPDF_Object* pObj) {
 }
 
 void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj) {
-  if (pCSObj)
-    GetPageData()->ReleaseColorSpace(pCSObj);
+  GetPageData()->ReleaseColorSpace(pCSObj);
 }
 
 void CPDF_Document::ClearPageData() {

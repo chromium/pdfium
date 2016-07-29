@@ -41,7 +41,7 @@ void CPDF_Color::ReleaseBuffer() {
 }
 
 void CPDF_Color::ReleaseColorSpace() {
-  if (m_pCS && m_pCS->m_pDocument && m_pCS->GetArray()) {
+  if (m_pCS && m_pCS->m_pDocument) {
     m_pCS->m_pDocument->GetPageData()->ReleaseColorSpace(m_pCS->GetArray());
     m_pCS = nullptr;
   }

@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
+#include <algorithm>
+#include <set>
+
 #include "core/fdrm/crypto/include/fx_crypt.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
@@ -100,26 +103,26 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
 
   for (auto it = m_FontFileMap.begin(); it != m_FontFileMap.end();) {
     auto curr_it = it++;
-    CPDF_CountedStreamAcc* ftData = curr_it->second;
-    if (!ftData->get())
+    CPDF_CountedStreamAcc* pCountedFont = curr_it->second;
+    if (!pCountedFont->get())
       continue;
 
-    if (bForceRelease || ftData->use_count() < 2) {
-      delete ftData->get();
-      delete ftData;
+    if (bForceRelease || pCountedFont->use_count() < 2) {
+      delete pCountedFont->get();
+      delete pCountedFont;
       m_FontFileMap.erase(curr_it);
     }
   }
 
   for (auto it = m_ImageMap.begin(); it != m_ImageMap.end();) {
     auto curr_it = it++;
-    CPDF_CountedImage* imageData = curr_it->second;
-    if (!imageData->get())
+    CPDF_CountedImage* pCountedImage = curr_it->second;
+    if (!pCountedImage->get())
       continue;
 
-    if (bForceRelease || imageData->use_count() < 2) {
-      delete imageData->get();
-      delete imageData;
+    if (bForceRelease || pCountedImage->use_count() < 2) {
+      delete pCountedImage->get();
+      delete pCountedImage;
       m_ImageMap.erase(curr_it);
     }
   }
@@ -127,37 +130,32 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
 
 CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict,
                                      FX_BOOL findOnly) {
-  if (!pFontDict) {
+  if (!pFontDict)
     return nullptr;
-  }
-  if (findOnly) {
-    auto it = m_FontMap.find(pFontDict);
-    if (it != m_FontMap.end() && it->second->get()) {
-      return it->second->AddRef();
-    }
-    return nullptr;
-  }
 
-  CPDF_CountedFont* fontData = nullptr;
+  CPDF_CountedFont* pFontData = nullptr;
   auto it = m_FontMap.find(pFontDict);
   if (it != m_FontMap.end()) {
-    fontData = it->second;
-    if (fontData->get()) {
-      return fontData->AddRef();
+    pFontData = it->second;
+    if (pFontData->get()) {
+      return pFontData->AddRef();
     }
   }
 
-  CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pFontDict);
-  if (!pFont) {
+  if (findOnly)
     return nullptr;
-  }
-  if (!fontData) {
-    fontData = new CPDF_CountedFont(pFont);
-    m_FontMap[pFontDict] = fontData;
+
+  CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pFontDict);
+  if (!pFont)
+    return nullptr;
+
+  if (pFontData) {
+    pFontData->reset(pFont);
   } else {
-    fontData->reset(pFont);
+    pFontData = new CPDF_CountedFont(pFont);
+    m_FontMap[pFontDict] = pFontData;
   }
-  return fontData->AddRef();
+  return pFontData->AddRef();
 }
 
 CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
@@ -203,7 +201,7 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
   return fontData->AddRef();
 }
 
-void CPDF_DocPageData::ReleaseFont(CPDF_Dictionary* pFontDict) {
+void CPDF_DocPageData::ReleaseFont(const CPDF_Dictionary* pFontDict) {
   if (!pFontDict)
     return;
 
@@ -211,13 +209,15 @@ void CPDF_DocPageData::ReleaseFont(CPDF_Dictionary* pFontDict) {
   if (it == m_FontMap.end())
     return;
 
-  CPDF_CountedFont* fontData = it->second;
-  if (fontData->get()) {
-    fontData->RemoveRef();
-    if (fontData->use_count() == 0) {
-      fontData->clear();
-    }
-  }
+  CPDF_CountedFont* pFontData = it->second;
+  if (!pFontData->get())
+    return;
+
+  pFontData->RemoveRef();
+  if (pFontData->use_count() != 0)
+    return;
+
+  pFontData->clear();
 }
 
 CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
@@ -317,7 +317,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetCopiedColorSpace(CPDF_Object* pCSObj) {
   return nullptr;
 }
 
-void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace) {
+void CPDF_DocPageData::ReleaseColorSpace(const CPDF_Object* pColorSpace) {
   if (!pColorSpace)
     return;
 
@@ -325,14 +325,16 @@ void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace) {
   if (it == m_ColorSpaceMap.end())
     return;
 
-  CPDF_CountedColorSpace* csData = it->second;
-  if (csData->get()) {
-    csData->RemoveRef();
-    if (csData->use_count() == 0) {
-      csData->get()->ReleaseCS();
-      csData->reset(nullptr);
-    }
-  }
+  CPDF_CountedColorSpace* pCountedColorSpace = it->second;
+  if (!pCountedColorSpace->get())
+    return;
+
+  pCountedColorSpace->RemoveRef();
+  if (pCountedColorSpace->use_count() != 0)
+    return;
+
+  pCountedColorSpace->get()->ReleaseCS();
+  pCountedColorSpace->reset(nullptr);
 }
 
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
@@ -376,7 +378,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
   return ptData->AddRef();
 }
 
-void CPDF_DocPageData::ReleasePattern(CPDF_Object* pPatternObj) {
+void CPDF_DocPageData::ReleasePattern(const CPDF_Object* pPatternObj) {
   if (!pPatternObj)
     return;
 
@@ -384,13 +386,15 @@ void CPDF_DocPageData::ReleasePattern(CPDF_Object* pPatternObj) {
   if (it == m_PatternMap.end())
     return;
 
-  CPDF_CountedPattern* ptData = it->second;
-  if (ptData->get()) {
-    ptData->RemoveRef();
-    if (ptData->use_count() == 0) {
-      ptData->clear();
-    }
-  }
+  CPDF_CountedPattern* pPattern = it->second;
+  if (!pPattern->get())
+    return;
+
+  pPattern->RemoveRef();
+  if (pPattern->use_count() != 0)
+    return;
+
+  pPattern->clear();
 }
 
 CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream) {
@@ -399,36 +403,40 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream) {
 
   const uint32_t dwImageObjNum = pImageStream->GetObjNum();
   auto it = m_ImageMap.find(dwImageObjNum);
-  if (it != m_ImageMap.end()) {
+  if (it != m_ImageMap.end())
     return it->second->AddRef();
-  }
 
   CPDF_Image* pImage = new CPDF_Image(m_pPDFDoc);
-  pImage->LoadImageF(pImageStream->AsStream(), FALSE);
+  pImage->LoadImageF(pImageStream->AsStream(), false);
 
-  CPDF_CountedImage* imageData = new CPDF_CountedImage(pImage);
-  m_ImageMap[dwImageObjNum] = imageData;
-  return imageData->AddRef();
+  CPDF_CountedImage* pCountedImage = new CPDF_CountedImage(pImage);
+  m_ImageMap[dwImageObjNum] = pCountedImage;
+  return pCountedImage->AddRef();
 }
 
-void CPDF_DocPageData::ReleaseImage(CPDF_Object* pImageStream) {
-  if (!pImageStream || !pImageStream->GetObjNum())
+void CPDF_DocPageData::ReleaseImage(const CPDF_Object* pImageStream) {
+  if (!pImageStream)
     return;
 
-  auto it = m_ImageMap.find(pImageStream->GetObjNum());
+  uint32_t dwObjNum = pImageStream->GetObjNum();
+  if (!dwObjNum)
+    return;
+
+  auto it = m_ImageMap.find(dwObjNum);
   if (it == m_ImageMap.end())
     return;
 
-  CPDF_CountedImage* image = it->second;
-  if (!image)
+  CPDF_CountedImage* pCountedImage = it->second;
+  if (!pCountedImage)
     return;
 
-  image->RemoveRef();
-  if (image->use_count() == 0) {
-    delete image->get();
-    delete image;
-    m_ImageMap.erase(it);
-  }
+  pCountedImage->RemoveRef();
+  if (pCountedImage->use_count() != 0)
+    return;
+
+  delete pCountedImage->get();
+  delete pCountedImage;
+  m_ImageMap.erase(it);
 }
 
 CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
@@ -437,9 +445,8 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
     return nullptr;
 
   auto it = m_IccProfileMap.find(pIccProfileStream);
-  if (it != m_IccProfileMap.end()) {
+  if (it != m_IccProfileMap.end())
     return it->second->AddRef();
-  }
 
   CPDF_StreamAcc stream;
   stream.LoadAllData(pIccProfileStream, FALSE);
@@ -459,7 +466,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
   return ipData->AddRef();
 }
 
-void CPDF_DocPageData::ReleaseIccProfile(CPDF_IccProfile* pIccProfile) {
+void CPDF_DocPageData::ReleaseIccProfile(const CPDF_IccProfile* pIccProfile) {
   ASSERT(pIccProfile);
 
   for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end(); ++it) {
@@ -489,19 +496,18 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(
   int32_t org_size = pFontDict->GetIntegerBy("Length1") +
                      pFontDict->GetIntegerBy("Length2") +
                      pFontDict->GetIntegerBy("Length3");
-  if (org_size < 0)
-    org_size = 0;
+  org_size = std::max(org_size, 0);
 
   CPDF_StreamAcc* pFontFile = new CPDF_StreamAcc;
   pFontFile->LoadAllData(pFontStream, FALSE, org_size);
 
-  CPDF_CountedStreamAcc* ftData = new CPDF_CountedStreamAcc(pFontFile);
-  m_FontFileMap[pFontStream] = ftData;
-  return ftData->AddRef();
+  CPDF_CountedStreamAcc* pCountedFont = new CPDF_CountedStreamAcc(pFontFile);
+  m_FontFileMap[pFontStream] = pCountedFont;
+  return pCountedFont->AddRef();
 }
 
-void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream,
-                                                FX_BOOL bForce) {
+void CPDF_DocPageData::ReleaseFontFileStreamAcc(
+    const CPDF_Stream* pFontStream) {
   if (!pFontStream)
     return;
 
@@ -509,16 +515,17 @@ void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream,
   if (it == m_FontFileMap.end())
     return;
 
-  CPDF_CountedStreamAcc* findData = it->second;
-  if (!findData)
+  CPDF_CountedStreamAcc* pCountedStream = it->second;
+  if (!pCountedStream)
     return;
 
-  findData->RemoveRef();
-  if (findData->use_count() == 0 || bForce) {
-    delete findData->get();
-    delete findData;
-    m_FontFileMap.erase(it);
-  }
+  pCountedStream->RemoveRef();
+  if (pCountedStream->use_count() != 0)
+    return;
+
+  delete pCountedStream->get();
+  delete pCountedStream;
+  m_FontFileMap.erase(it);
 }
 
 CPDF_CountedColorSpace* CPDF_DocPageData::FindColorSpacePtr(

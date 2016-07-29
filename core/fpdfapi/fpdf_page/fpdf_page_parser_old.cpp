@@ -160,36 +160,36 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     uint32_t bpc = pDict->GetIntegerBy("BitsPerComponent");
     uint32_t nComponents = 1;
     CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj);
-    if (!pCS) {
-      nComponents = 3;
-    } else {
+    if (pCS) {
       nComponents = pCS->CountComponents();
       pDoc->GetPageData()->ReleaseColorSpace(pCSObj);
+    } else {
+      nComponents = 3;
     }
     uint32_t pitch = width;
-    if (bpc && pitch > INT_MAX / bpc) {
+    if (bpc && pitch > INT_MAX / bpc)
       return nullptr;
-    }
+
     pitch *= bpc;
-    if (nComponents && pitch > INT_MAX / nComponents) {
+    if (nComponents && pitch > INT_MAX / nComponents)
       return nullptr;
-    }
+
     pitch *= nComponents;
-    if (pitch > INT_MAX - 7) {
+    if (pitch > INT_MAX - 7)
       return nullptr;
-    }
+
     pitch += 7;
     pitch /= 8;
     OrigSize = pitch;
   } else {
-    if (width > INT_MAX - 7) {
+    if (width > INT_MAX - 7)
       return nullptr;
-    }
+
     OrigSize = ((width + 7) / 8);
   }
-  if (height && OrigSize > INT_MAX / height) {
+  if (height && OrigSize > INT_MAX / height)
     return nullptr;
-  }
+
   OrigSize *= height;
   uint8_t* pData = nullptr;
   uint32_t dwStreamSize;
