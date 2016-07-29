@@ -15,7 +15,7 @@
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/fx_ge_win32.h"
+#include "core/fxge/include/cfx_windowsdevice.h"
 #include "core/fxge/win32/win32_int.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)

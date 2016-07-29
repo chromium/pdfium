@@ -40,7 +40,7 @@
 #endif  // PDF_ENABLE_XFA
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#include "core/fxge/include/fx_ge_win32.h"
+#include "core/fxge/include/cfx_windowsdevice.h"
 #endif
 
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {

@@ -14,10 +14,10 @@
 #endif
 
 #include "core/fxge/apple/apple_int.h"
+#include "core/fxge/apple/cfx_quartzdevice.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/fx_ge_apple.h"
 
 #ifndef _SKIA_SUPPORT_
 

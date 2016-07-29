@@ -17,7 +17,7 @@ using std::max;
 
 #include <gdiplus.h>
 
-#include "core/fxge/include/fx_ge_win32.h"
+#include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
 
 using namespace Gdiplus;              // NOLINT

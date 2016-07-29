@@ -4,27 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_FX_GE_WIN32_H_
-#define CORE_FXGE_INCLUDE_FX_GE_WIN32_H_
-
+#ifndef CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_
+#define CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_
 #ifdef _WIN32
 #ifndef _WINDOWS_
 #include <windows.h>
 #endif
 #define WINDIB_OPEN_MEMORY 0x1
 #define WINDIB_OPEN_PATHNAME 0x2
-
-class IFX_RenderDeviceDriver;
-
-#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
-typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
-                                                         const wchar_t* text,
-                                                         size_t text_length);
-
-extern bool g_pdfium_print_text_with_gdi;
-extern PDFiumEnsureTypefaceCharactersAccessible
-    g_pdfium_typeface_accessible_func;
-#endif
 
 typedef struct WINDIB_Open_Args_ {
   int flags;
@@ -60,30 +47,6 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
   HBITMAP m_hOldBitmap;
 };
 
-class CFX_WindowsDevice : public CFX_RenderDevice {
- public:
-  static IFX_RenderDeviceDriver* CreateDriver(HDC hDC);
+#endif  // _WIN32
 
-  explicit CFX_WindowsDevice(HDC hDC);
-  ~CFX_WindowsDevice() override;
-
-  HDC GetDC() const;
-};
-
-class CFX_WinBitmapDevice : public CFX_RenderDevice {
- public:
-  CFX_WinBitmapDevice(int width, int height, FXDIB_Format format);
-  ~CFX_WinBitmapDevice() override;
-
-  HDC GetDC() { return m_hDC; }
-
- protected:
-  HBITMAP m_hBitmap;
-
-  HBITMAP m_hOldBitmap;
-
-  HDC m_hDC;
-};
-#endif
-
-#endif  // CORE_FXGE_INCLUDE_FX_GE_WIN32_H_
+#endif  // CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_

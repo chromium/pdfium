@@ -24,10 +24,11 @@
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_fontmapper.h"
+#include "core/fxge/include/cfx_windowsdevice.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"
 #include "core/fxge/include/fx_font.h"
 #include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/fx_ge_win32.h"
+#include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/dwrite_int.h"
 #include "core/fxge/win32/win32_int.h"
 #include "third_party/base/stl_util.h"
@@ -1387,41 +1388,6 @@ IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC) {
   if (use_printer)
     return new CGdiPrinterDriver(hDC);
   return new CGdiDisplayDriver(hDC);
-}
-
-CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width,
-                                         int height,
-                                         FXDIB_Format format) {
-  BITMAPINFOHEADER bmih;
-  FXSYS_memset(&bmih, 0, sizeof(BITMAPINFOHEADER));
-  bmih.biSize = sizeof(BITMAPINFOHEADER);
-  bmih.biBitCount = format & 0xff;
-  bmih.biHeight = -height;
-  bmih.biPlanes = 1;
-  bmih.biWidth = width;
-  void* pBufferPtr;
-  m_hBitmap = CreateDIBSection(nullptr, reinterpret_cast<BITMAPINFO*>(&bmih),
-                               DIB_RGB_COLORS, &pBufferPtr, nullptr, 0);
-  if (!m_hBitmap)
-    return;
-
-  uint8_t* pBuffer = static_cast<uint8_t*>(pBufferPtr);
-  CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
-  pBitmap->Create(width, height, format, pBuffer);
-  SetBitmap(pBitmap);
-  m_hDC = ::CreateCompatibleDC(nullptr);
-  m_hOldBitmap = (HBITMAP)SelectObject(m_hDC, m_hBitmap);
-  SetDeviceDriver(WrapUnique(new CGdiDisplayDriver(m_hDC)));
-}
-
-CFX_WinBitmapDevice::~CFX_WinBitmapDevice() {
-  if (m_hDC) {
-    SelectObject(m_hDC, m_hOldBitmap);
-    DeleteDC(m_hDC);
-  }
-  if (m_hBitmap)
-    DeleteObject(m_hBitmap);
-  delete GetBitmap();
 }
 
 #endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_

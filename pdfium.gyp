@@ -668,6 +668,7 @@
         'core/fxge/android/fx_android_font.h',
         'core/fxge/android/fx_android_imp.cpp',
         'core/fxge/apple/apple_int.h',
+        'core/fxge/apple/cfx_quartzdevice.h',
         'core/fxge/apple/fx_apple_platform.cpp',
         'core/fxge/apple/fx_mac_imp.cpp',
         'core/fxge/apple/fx_quartz_device.cpp',
@@ -711,13 +712,13 @@
         'core/fxge/ge/fx_ge_text.cpp',
         'core/fxge/ge/fx_text_int.h',
         'core/fxge/ifx_renderdevicedriver.cpp',
+        "core/fxge/include/cfx_windowsdevice.h",
         'core/fxge/include/fx_dib.h',
         'core/fxge/include/fx_font.h',
         'core/fxge/include/fx_freetype.h',
         'core/fxge/include/fx_ge.h',
-        'core/fxge/include/fx_ge_apple.h',
-        'core/fxge/include/fx_ge_win32.h',
         'core/fxge/include/ifx_renderdevicedriver.h',
+        'core/fxge/win32/cfx_windowsdib.h',
       ],
       'variables': {
         'clang_warning_flags': [

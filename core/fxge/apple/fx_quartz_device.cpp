@@ -18,7 +18,7 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include "core/fxge/apple/apple_int.h"
-#include "core/fxge/include/fx_ge_apple.h"
+#include "core/fxge/apple/cfx_quartzdevice.h"
 #ifndef CGFLOAT_IS_DOUBLE
 #error Expected CGFLOAT_IS_DOUBLE to be defined by CoreGraphics headers
 #endif
