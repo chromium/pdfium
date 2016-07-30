@@ -21,16 +21,16 @@ class IPVT_FontMap;
 
 struct CPVT_WordRange;
 
-FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
+bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 
 class CPVT_GenerateAP {
  public:
-  static FX_BOOL GenerateTextFieldAP(CPDF_Document* pDoc,
-                                     CPDF_Dictionary* pAnnotDict);
-  static FX_BOOL GenerateComboBoxAP(CPDF_Document* pDoc,
-                                    CPDF_Dictionary* pAnnotDict);
-  static FX_BOOL GenerateListBoxAP(CPDF_Document* pDoc,
-                                   CPDF_Dictionary* pAnnotDict);
+  static bool GenerateComboBoxAP(CPDF_Document* pDoc,
+                                 CPDF_Dictionary* pAnnotDict);
+  static bool GenerateListBoxAP(CPDF_Document* pDoc,
+                                CPDF_Dictionary* pAnnotDict);
+  static bool GenerateTextFieldAP(CPDF_Document* pDoc,
+                                  CPDF_Dictionary* pAnnotDict);
   static CFX_ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
                                        CPDF_VariableText::Iterator* pIterator,
                                        const CFX_FloatPoint& ptOffset,

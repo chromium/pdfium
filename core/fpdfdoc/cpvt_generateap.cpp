@@ -20,14 +20,14 @@
 
 namespace {
 
-FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
-                         CPDF_Dictionary* pAnnotDict,
-                         const int32_t& nWidgetType) {
+bool GenerateWidgetAP(CPDF_Document* pDoc,
+                      CPDF_Dictionary* pAnnotDict,
+                      const int32_t& nWidgetType) {
   CPDF_Dictionary* pFormDict = nullptr;
   if (CPDF_Dictionary* pRootDict = pDoc->GetRoot())
     pFormDict = pRootDict->GetDictBy("AcroForm");
   if (!pFormDict)
-    return FALSE;
+    return false;
 
   CFX_ByteString DA;
   if (CPDF_Object* pDAObj = FPDF_GetFieldAttr(pAnnotDict, "DA"))
@@ -35,14 +35,14 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   if (DA.IsEmpty())
     DA = pFormDict->GetStringBy("DA");
   if (DA.IsEmpty())
-    return FALSE;
+    return false;
 
   CPDF_SimpleParser syntax(DA.AsStringC());
   syntax.FindTagParamFromStart("Tf", 2);
   CFX_ByteString sFontName(syntax.GetWord());
   sFontName = PDF_NameDecode(sFontName);
   if (sFontName.IsEmpty())
-    return FALSE;
+    return false;
 
   FX_FLOAT fFontSize = FX_atof(syntax.GetWord());
   CPVT_Color crText = CPVT_Color::ParseColor(DA);
@@ -64,7 +64,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     }
   }
   if (!pDRFontDict)
-    return FALSE;
+    return false;
 
   if (!pFontDict) {
     pFontDict = new CPDF_Dictionary;
@@ -77,7 +77,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   }
   CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
   if (!pDefFont)
-    return FALSE;
+    return false;
 
   CFX_FloatRect rcAnnot = pAnnotDict->GetRectBy("Rect");
   int32_t nRotate = 0;
@@ -440,15 +440,15 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       }
     }
   }
-  return TRUE;
+  return true;
 }
 
 }  // namespace
 
-FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
-  if (!pAnnotDict || pAnnotDict->GetStringBy("Subtype") != "Widget") {
-    return FALSE;
-  }
+bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
+  if (!pAnnotDict || pAnnotDict->GetStringBy("Subtype") != "Widget")
+    return false;
+
   CFX_ByteString field_type = FPDF_GetFieldAttr(pAnnotDict, "FT")->GetString();
   uint32_t flags = FPDF_GetFieldAttr(pAnnotDict, "Ff")
                        ? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger()
@@ -472,25 +472,25 @@ FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
       }
     }
   }
-  return FALSE;
+  return false;
 }
 
 // Static.
-FX_BOOL CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
-                                             CPDF_Dictionary* pAnnotDict) {
-  return GenerateWidgetAP(pDoc, pAnnotDict, 0);
-}
-
-// Static.
-FX_BOOL CPVT_GenerateAP::GenerateComboBoxAP(CPDF_Document* pDoc,
-                                            CPDF_Dictionary* pAnnotDict) {
+bool CPVT_GenerateAP::GenerateComboBoxAP(CPDF_Document* pDoc,
+                                         CPDF_Dictionary* pAnnotDict) {
   return GenerateWidgetAP(pDoc, pAnnotDict, 1);
 }
 
 // Static.
-FX_BOOL CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc,
-                                           CPDF_Dictionary* pAnnotDict) {
+bool CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc,
+                                        CPDF_Dictionary* pAnnotDict) {
   return GenerateWidgetAP(pDoc, pAnnotDict, 2);
+}
+
+// Static.
+bool CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
+                                          CPDF_Dictionary* pAnnotDict) {
+  return GenerateWidgetAP(pDoc, pAnnotDict, 0);
 }
 
 // Static.
