@@ -28,6 +28,7 @@ class CPDF_FormObject : public CPDF_PageObject {
   const CPDF_FormObject* AsForm() const override;
 
   void CalcBoundingBox();
+  const CPDF_Form* form() const { return m_pForm.get(); }
 
   std::unique_ptr<CPDF_Form> m_pForm;
   CFX_Matrix m_FormMatrix;
