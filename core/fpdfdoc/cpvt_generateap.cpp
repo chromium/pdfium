@@ -493,6 +493,66 @@ bool CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
   return GenerateWidgetAP(pDoc, pAnnotDict, 0);
 }
 
+bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
+                                          CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
+
+  CFX_ByteTextBuf sAppStream;
+  sAppStream << "/GS gs ";
+
+  if (pAnnotDict->KeyExist("C")) {
+    CPDF_Array* pColor = pAnnotDict->GetArrayBy("C");
+    CPVT_Color color = CPVT_Color::ParseColor(*pColor);
+    sAppStream << CPVT_GenerateAP::GenerateColorAP(color, TRUE);
+  } else {
+    // Defaults to 0xFFFF00 color for highlight.
+    sAppStream << "1 1 0 rg \n";
+  }
+
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  rect.Normalize();
+
+  sAppStream << rect.left << " " << rect.top << " m " << rect.right << " "
+             << rect.top << " l " << rect.right << " " << rect.bottom << " l "
+             << rect.left << " " << rect.bottom << " l "
+             << "h f\n";
+
+  CPDF_Dictionary* pAPDict = new CPDF_Dictionary;
+  pAnnotDict->SetAt("AP", pAPDict);
+
+  CPDF_Stream* pNormalStream = new CPDF_Stream(nullptr, 0, nullptr);
+  int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
+  pAnnotDict->GetDictBy("AP")->SetAtReference("N", pDoc, objnum);
+
+  pNormalStream->SetData(reinterpret_cast<uint8_t*>(sAppStream.GetBuffer()),
+                         sAppStream.GetSize(), FALSE, FALSE);
+
+  CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
+  pStreamDict->SetAtInteger("FormType", 1);
+  pStreamDict->SetAtString("Subtype", "Form");
+  pStreamDict->SetAtMatrix("Matrix", CFX_Matrix());
+  pStreamDict->SetAtRect("BBox", rect);
+
+  CPDF_Dictionary* pGSDict = new CPDF_Dictionary;
+  pGSDict->SetAtString("Type", "ExtGState");
+  pGSDict->SetAtNumber("ca", 1);
+  pGSDict->SetAtNumber("CA", 1);
+  pGSDict->SetAtBoolean("AIS", false);
+  pGSDict->SetAtString("BM", "Multiply");
+
+  CPDF_Dictionary* pExtGStateDict = new CPDF_Dictionary;
+  pExtGStateDict->SetAt("GS", pGSDict);
+
+  CPDF_Dictionary* pResourceDict = new CPDF_Dictionary;
+  pResourceDict->SetAt("ExtGState", pExtGStateDict);
+
+  pStreamDict->SetAt("Resources", pResourceDict);
+  return true;
+}
+
 // Static.
 CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     IPVT_FontMap* pFontMap,

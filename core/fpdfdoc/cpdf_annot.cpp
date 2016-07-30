@@ -12,13 +12,17 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/include/fx_ge.h"
 
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),
       m_pDocument(pDocument),
-      m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {}
+      m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {
+  if (m_sSubtype == "Highlight")
+    CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
+}
 
 CPDF_Annot::~CPDF_Annot() {
   ClearCachedAP();
