@@ -8,6 +8,7 @@
 #define FPDFSDK_INCLUDE_FSDK_BASEFORM_H_
 
 #include <map>
+#include <set>
 #include <vector>
 
 #include "core/fpdfdoc/include/ipdf_formnotify.h"
@@ -62,6 +63,17 @@ struct PDFSDK_FieldAction {
 
 class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
+  class Observer {
+   public:
+    explicit Observer(CPDFSDK_Widget** pWatchedPtr);
+    ~Observer();
+
+    void OnWidgetDestroyed();
+
+   private:
+    CPDFSDK_Widget** m_pWatchedPtr;
+  };
+
 #ifdef PDF_ENABLE_XFA
   CXFA_FFWidget* GetMixXFAWidget() const;
   CXFA_FFWidget* GetGroupMixXFAWidget();
@@ -90,6 +102,9 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
                  CPDFSDK_PageView* pPageView,
                  CPDFSDK_InterForm* pInterForm);
   ~CPDFSDK_Widget() override;
+
+  void AddObserver(Observer* observer);
+  void RemoveObserver(Observer* observer);
 
   // CPDFSDK_Annot
   CFX_ByteString GetSubType() const override;
@@ -172,6 +187,14 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   int32_t GetAppearanceAge() const;
   int32_t GetValueAge() const;
 
+  FX_BOOL IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode);
+  void DrawAppearance(CFX_RenderDevice* pDevice,
+                      const CFX_Matrix* pUser2Device,
+                      CPDF_Annot::AppearanceMode mode,
+                      const CPDF_RenderOptions* pOptions) override;
+
+  FX_BOOL HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
+
  private:
   void ResetAppearance_PushButton();
   void ResetAppearance_CheckBox();
@@ -194,20 +217,11 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void AddImageToAppearance(const CFX_ByteString& sAPType, CPDF_Stream* pImage);
   void RemoveAppearance(const CFX_ByteString& sAPType);
 
- public:
-  FX_BOOL IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode);
-  void DrawAppearance(CFX_RenderDevice* pDevice,
-                      const CFX_Matrix* pUser2Device,
-                      CPDF_Annot::AppearanceMode mode,
-                      const CPDF_RenderOptions* pOptions) override;
-
-  FX_BOOL HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
-
- private:
   CPDFSDK_InterForm* const m_pInterForm;
   FX_BOOL m_bAppModified;
   int32_t m_nAppAge;
   int32_t m_nValueAge;
+  std::set<Observer*> m_Observers;
 
 #ifdef PDF_ENABLE_XFA
   mutable CXFA_FFWidget* m_hMixXFAWidget;
