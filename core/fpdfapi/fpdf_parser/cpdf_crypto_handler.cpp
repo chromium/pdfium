@@ -28,14 +28,8 @@ void CPDF_CryptoHandler::CryptBlock(FX_BOOL bEncrypt,
   int realkeylen = 16;
   if (m_Cipher != FXCIPHER_AES || m_KeyLen != 32) {
     uint8_t key1[32];
-    FXSYS_memcpy(key1, m_EncryptKey, m_KeyLen);
-    key1[m_KeyLen + 0] = (uint8_t)objnum;
-    key1[m_KeyLen + 1] = (uint8_t)(objnum >> 8);
-    key1[m_KeyLen + 2] = (uint8_t)(objnum >> 16);
-    key1[m_KeyLen + 3] = (uint8_t)gennum;
-    key1[m_KeyLen + 4] = (uint8_t)(gennum >> 8);
-    FXSYS_memcpy(key1 + m_KeyLen, &objnum, 3);
-    FXSYS_memcpy(key1 + m_KeyLen + 3, &gennum, 2);
+    PopulateKey(objnum, gennum, key1);
+
     if (m_Cipher == FXCIPHER_AES) {
       FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
     }
@@ -107,9 +101,8 @@ void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
     return pContext;
   }
   uint8_t key1[48];
-  FXSYS_memcpy(key1, m_EncryptKey, m_KeyLen);
-  FXSYS_memcpy(key1 + m_KeyLen, &objnum, 3);
-  FXSYS_memcpy(key1 + m_KeyLen + 3, &gennum, 2);
+  PopulateKey(objnum, gennum, key1);
+
   if (m_Cipher == FXCIPHER_AES) {
     FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
   }
@@ -137,6 +130,7 @@ void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
   CRYPT_ArcFourSetup(pContext, realkey, realkeylen);
   return pContext;
 }
+
 FX_BOOL CPDF_CryptoHandler::CryptStream(void* context,
                                         const uint8_t* src_buf,
                                         uint32_t src_size,
@@ -334,4 +328,15 @@ CPDF_CryptoHandler::CPDF_CryptoHandler() {
 }
 CPDF_CryptoHandler::~CPDF_CryptoHandler() {
   FX_Free(m_pAESContext);
+}
+
+void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
+                                     uint32_t gennum,
+                                     uint8_t* key) {
+  FXSYS_memcpy(key, m_EncryptKey, m_KeyLen);
+  key[m_KeyLen + 0] = (uint8_t)objnum;
+  key[m_KeyLen + 1] = (uint8_t)(objnum >> 8);
+  key[m_KeyLen + 2] = (uint8_t)(objnum >> 16);
+  key[m_KeyLen + 3] = (uint8_t)gennum;
+  key[m_KeyLen + 4] = (uint8_t)(gennum >> 8);
 }

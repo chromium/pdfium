@@ -62,6 +62,9 @@ class CPDF_CryptoHandler {
   int m_KeyLen;
   int m_Cipher;
   uint8_t* m_pAESContext;
+
+ private:
+  void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key);
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_CRYPTO_HANDLER_H_
