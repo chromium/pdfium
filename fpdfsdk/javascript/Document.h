@@ -272,6 +272,11 @@ class Document : public CJS_EmbedObj {
   int CountWords(CPDF_TextObject* pTextObj);
   CFX_WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
 
+  FX_BOOL getPropertyInternal(IJS_Context* cc,
+                              CJS_PropValue& vp,
+                              const CFX_ByteString& propName,
+                              CFX_WideString& sError);
+
   v8::Isolate* m_isolate;
   std::list<std::unique_ptr<IconElement>> m_IconList;
   CPDFSDK_Document* m_pDocument;

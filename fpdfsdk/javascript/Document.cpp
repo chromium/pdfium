@@ -714,23 +714,7 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
 FX_BOOL Document::author(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
-  if (!pDictionary)
-    return FALSE;
-
-  if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("Author");
-    return TRUE;
-  } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-      return FALSE;
-
-    CFX_WideString csAuthor;
-    vp >> csAuthor;
-    pDictionary->SetAtString("Author", PDF_EncodeText(csAuthor));
-    m_pDocument->SetChangeMark();
-    return TRUE;
-  }
+  return getPropertyInternal(cc, vp, "Author", sError);
 }
 
 FX_BOOL Document::info(IJS_Context* cc,
@@ -785,46 +769,38 @@ FX_BOOL Document::info(IJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL Document::creationDate(IJS_Context* cc,
-                               CJS_PropValue& vp,
-                               CFX_WideString& sError) {
+FX_BOOL Document::getPropertyInternal(IJS_Context* cc,
+                                      CJS_PropValue& vp,
+                                      const CFX_ByteString& propName,
+                                      CFX_WideString& sError) {
   CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("CreationDate");
+    vp << pDictionary->GetUnicodeTextBy(propName);
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;
 
-    CFX_WideString csCreationDate;
-    vp >> csCreationDate;
-    pDictionary->SetAtString("CreationDate", PDF_EncodeText(csCreationDate));
+    CFX_WideString csProperty;
+    vp >> csProperty;
+    pDictionary->SetAtString(propName, PDF_EncodeText(csProperty));
     m_pDocument->SetChangeMark();
   }
   return TRUE;
 }
 
+FX_BOOL Document::creationDate(IJS_Context* cc,
+                               CJS_PropValue& vp,
+                               CFX_WideString& sError) {
+  return getPropertyInternal(cc, vp, "CreationDate", sError);
+}
+
 FX_BOOL Document::creator(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
-  if (!pDictionary)
-    return FALSE;
-
-  if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("Creator");
-  } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-      return FALSE;
-
-    CFX_WideString csCreator;
-    vp >> csCreator;
-    pDictionary->SetAtString("Creator", PDF_EncodeText(csCreator));
-    m_pDocument->SetChangeMark();
-  }
-  return TRUE;
+  return getPropertyInternal(cc, vp, "Creator", sError);
 }
 
 FX_BOOL Document::delay(IJS_Context* cc,
@@ -852,85 +828,25 @@ FX_BOOL Document::delay(IJS_Context* cc,
 FX_BOOL Document::keywords(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
-  if (!pDictionary)
-    return FALSE;
-
-  if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("Keywords");
-  } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-      return FALSE;
-
-    CFX_WideString csKeywords;
-    vp >> csKeywords;
-    pDictionary->SetAtString("Keywords", PDF_EncodeText(csKeywords));
-    m_pDocument->SetChangeMark();
-  }
-  return TRUE;
+  return getPropertyInternal(cc, vp, "Keywords", sError);
 }
 
 FX_BOOL Document::modDate(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
-  if (!pDictionary)
-    return FALSE;
-
-  if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("ModDate");
-  } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-      return FALSE;
-
-    CFX_WideString csmodDate;
-    vp >> csmodDate;
-    pDictionary->SetAtString("ModDate", PDF_EncodeText(csmodDate));
-    m_pDocument->SetChangeMark();
-  }
-  return TRUE;
+  return getPropertyInternal(cc, vp, "ModDate", sError);
 }
 
 FX_BOOL Document::producer(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
-  if (!pDictionary)
-    return FALSE;
-
-  if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("Producer");
-  } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-      return FALSE;
-
-    CFX_WideString csproducer;
-    vp >> csproducer;
-    pDictionary->SetAtString("Producer", PDF_EncodeText(csproducer));
-    m_pDocument->SetChangeMark();
-  }
-  return TRUE;
+  return getPropertyInternal(cc, vp, "Producer", sError);
 }
 
 FX_BOOL Document::subject(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
-  if (!pDictionary)
-    return FALSE;
-
-  if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("Subject");
-  } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-      return FALSE;
-
-    CFX_WideString cssubject;
-    vp >> cssubject;
-    pDictionary->SetAtString("Subject", PDF_EncodeText(cssubject));
-    m_pDocument->SetChangeMark();
-  }
-  return TRUE;
+  return getPropertyInternal(cc, vp, "Subject", sError);
 }
 
 FX_BOOL Document::title(IJS_Context* cc,
@@ -939,22 +855,7 @@ FX_BOOL Document::title(IJS_Context* cc,
   if (!m_pDocument || !m_pDocument->GetUnderlyingDocument())
     return FALSE;
 
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
-  if (!pDictionary)
-    return FALSE;
-
-  if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy("Title");
-  } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-      return FALSE;
-
-    CFX_WideString cstitle;
-    vp >> cstitle;
-    pDictionary->SetAtString("Title", PDF_EncodeText(cstitle));
-    m_pDocument->SetChangeMark();
-  }
-  return TRUE;
+  return getPropertyInternal(cc, vp, "Title", sError);
 }
 
 FX_BOOL Document::numPages(IJS_Context* cc,
