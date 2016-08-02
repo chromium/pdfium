@@ -9,7 +9,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
-#include "core/fpdfdoc/doc_utils.h"
+#include "core/fpdfdoc/cpdf_numbertree.h"
 
 namespace {
 

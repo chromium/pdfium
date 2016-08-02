@@ -27,6 +27,10 @@ class CPDF_Object;
 class CPDF_Page;
 class IPDF_FormNotify;
 
+CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
+                                  CPDF_Document* pDocument,
+                                  CFX_ByteString& csNameTag);
+
 class CPDF_InterForm {
  public:
   explicit CPDF_InterForm(CPDF_Document* pDocument);

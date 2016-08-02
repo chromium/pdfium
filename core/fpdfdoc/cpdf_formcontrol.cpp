@@ -1,4 +1,4 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -53,25 +53,24 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CFX_ByteString csValue = csOn;
-  if (csValue.IsEmpty()) {
+  if (csValue.IsEmpty())
     csValue = "Yes";
-  }
-  if (csValue == "Off") {
+  else if (csValue == "Off")
     csValue = "Yes";
-  }
+
   CFX_ByteString csAS = m_pWidgetDict->GetStringBy("AS", "Off");
-  if (csAS != "Off") {
+  if (csAS != "Off")
     m_pWidgetDict->SetAtName("AS", csValue);
-  }
+
   CPDF_Dictionary* pAP = m_pWidgetDict->GetDictBy("AP");
-  if (!pAP) {
+  if (!pAP)
     return;
-  }
+
   for (const auto& it : *pAP) {
     CPDF_Object* pObj1 = it.second;
-    if (!pObj1) {
+    if (!pObj1)
       continue;
-    }
+
     CPDF_Object* pObjDirect1 = pObj1->GetDirect();
     CPDF_Dictionary* pSubDict = pObjDirect1->AsDictionary();
     if (!pSubDict)
@@ -82,9 +81,8 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
       const CFX_ByteString& csKey2 = subdict_it->first;
       CPDF_Object* pObj2 = subdict_it->second;
       ++subdict_it;
-      if (!pObj2) {
+      if (!pObj2)
         continue;
-      }
       if (csKey2 != "Off") {
         pSubDict->ReplaceKey(csKey2, csValue);
         break;
@@ -92,6 +90,7 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     }
   }
 }
+
 CFX_ByteString CPDF_FormControl::GetCheckedAPState() {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
@@ -137,9 +136,9 @@ bool CPDF_FormControl::IsDefaultChecked() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CPDF_Object* pDV = FPDF_GetFieldAttr(m_pField->m_pDict, "DV");
-  if (!pDV) {
+  if (!pDV)
     return FALSE;
-  }
+
   CFX_ByteString csDV = pDV->GetString();
   CFX_ByteString csOn = GetOnStateName();
   return (csDV == csOn);
@@ -225,6 +224,7 @@ void CPDF_FormControl::GetOriginalColor(int& iColorType,
                                         const CFX_ByteString& csEntry) {
   GetMK().GetOriginalColor(iColorType, fc, csEntry);
 }
+
 CFX_WideString CPDF_FormControl::GetCaption(const CFX_ByteString& csEntry) {
   return GetMK().GetCaption(csEntry);
 }
@@ -292,9 +292,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
       CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag);
       if (pElement) {
         CPDF_Font* pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
-        if (pFont) {
+        if (pFont)
           return pFont;
-        }
       }
     }
   }
@@ -309,9 +308,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
       CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag);
       if (pElement) {
         CPDF_Font* pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
-        if (pFont) {
+        if (pFont)
           return pFont;
-        }
       }
     }
   }
@@ -319,120 +317,13 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
 }
 
 int CPDF_FormControl::GetControlAlignment() {
-  if (!m_pWidgetDict) {
+  if (!m_pWidgetDict)
     return 0;
-  }
-  if (m_pWidgetDict->KeyExist("Q")) {
+  if (m_pWidgetDict->KeyExist("Q"))
     return m_pWidgetDict->GetIntegerBy("Q", 0);
-  }
+
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "Q");
   if (pObj)
     return pObj->GetInteger();
   return m_pField->m_pForm->GetFormAlignment();
-}
-
-CPDF_ApSettings::CPDF_ApSettings(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
-
-bool CPDF_ApSettings::HasMKEntry(const CFX_ByteString& csEntry) const {
-  return m_pDict && m_pDict->KeyExist(csEntry);
-}
-
-int CPDF_ApSettings::GetRotation() const {
-  return m_pDict ? m_pDict->GetIntegerBy("R") : 0;
-}
-
-FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
-                                  const CFX_ByteString& csEntry) const {
-  iColorType = COLORTYPE_TRANSPARENT;
-  if (!m_pDict)
-    return 0;
-
-  CPDF_Array* pEntry = m_pDict->GetArrayBy(csEntry);
-  if (!pEntry)
-    return 0;
-
-  FX_ARGB color = 0;
-  size_t dwCount = pEntry->GetCount();
-  if (dwCount == 1) {
-    iColorType = COLORTYPE_GRAY;
-    FX_FLOAT g = pEntry->GetNumberAt(0) * 255;
-    color = ArgbEncode(255, (int)g, (int)g, (int)g);
-  } else if (dwCount == 3) {
-    iColorType = COLORTYPE_RGB;
-    FX_FLOAT r = pEntry->GetNumberAt(0) * 255;
-    FX_FLOAT g = pEntry->GetNumberAt(1) * 255;
-    FX_FLOAT b = pEntry->GetNumberAt(2) * 255;
-    color = ArgbEncode(255, (int)r, (int)g, (int)b);
-  } else if (dwCount == 4) {
-    iColorType = COLORTYPE_CMYK;
-    FX_FLOAT c = pEntry->GetNumberAt(0);
-    FX_FLOAT m = pEntry->GetNumberAt(1);
-    FX_FLOAT y = pEntry->GetNumberAt(2);
-    FX_FLOAT k = pEntry->GetNumberAt(3);
-    FX_FLOAT r = 1.0f - std::min(1.0f, c + k);
-    FX_FLOAT g = 1.0f - std::min(1.0f, m + k);
-    FX_FLOAT b = 1.0f - std::min(1.0f, y + k);
-    color = ArgbEncode(255, (int)(r * 255), (int)(g * 255), (int)(b * 255));
-  }
-  return color;
-}
-
-FX_FLOAT CPDF_ApSettings::GetOriginalColor(
-    int index,
-    const CFX_ByteString& csEntry) const {
-  if (!m_pDict)
-    return 0;
-
-  CPDF_Array* pEntry = m_pDict->GetArrayBy(csEntry);
-  return pEntry ? pEntry->GetNumberAt(index) : 0;
-}
-
-void CPDF_ApSettings::GetOriginalColor(int& iColorType,
-                                       FX_FLOAT fc[4],
-                                       const CFX_ByteString& csEntry) const {
-  iColorType = COLORTYPE_TRANSPARENT;
-  for (int i = 0; i < 4; i++) {
-    fc[i] = 0;
-  }
-  if (!m_pDict) {
-    return;
-  }
-  CPDF_Array* pEntry = m_pDict->GetArrayBy(csEntry);
-  if (!pEntry) {
-    return;
-  }
-  size_t dwCount = pEntry->GetCount();
-  if (dwCount == 1) {
-    iColorType = COLORTYPE_GRAY;
-    fc[0] = pEntry->GetNumberAt(0);
-  } else if (dwCount == 3) {
-    iColorType = COLORTYPE_RGB;
-    fc[0] = pEntry->GetNumberAt(0);
-    fc[1] = pEntry->GetNumberAt(1);
-    fc[2] = pEntry->GetNumberAt(2);
-  } else if (dwCount == 4) {
-    iColorType = COLORTYPE_CMYK;
-    fc[0] = pEntry->GetNumberAt(0);
-    fc[1] = pEntry->GetNumberAt(1);
-    fc[2] = pEntry->GetNumberAt(2);
-    fc[3] = pEntry->GetNumberAt(3);
-  }
-}
-
-CFX_WideString CPDF_ApSettings::GetCaption(
-    const CFX_ByteString& csEntry) const {
-  return m_pDict ? m_pDict->GetUnicodeTextBy(csEntry) : CFX_WideString();
-}
-
-CPDF_Stream* CPDF_ApSettings::GetIcon(const CFX_ByteString& csEntry) const {
-  return m_pDict ? m_pDict->GetStreamBy(csEntry) : nullptr;
-}
-
-CPDF_IconFit CPDF_ApSettings::GetIconFit() const {
-  return CPDF_IconFit(m_pDict ? m_pDict->GetDictBy("IF") : nullptr);
-}
-
-int CPDF_ApSettings::GetTextPosition() const {
-  return m_pDict ? m_pDict->GetIntegerBy("TP", TEXTPOS_CAPTION)
-                 : TEXTPOS_CAPTION;
 }
