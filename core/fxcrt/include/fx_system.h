@@ -73,6 +73,11 @@ typedef int FX_BOOL;        // Keep, sadly not always 0 or 1.
 typedef char FX_CHAR;       // Keep, questionable signedness.
 typedef wchar_t FX_WCHAR;   // Keep, maybe bad platform wchars.
 
+#define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
+#define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
+#define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
+#define IsFloatEqual(fa, fb) IsFloatZero(fa - fb)
+
 // PDFium string sizes are limited to 2^31-1, and the value is signed to
 // allow -1 as a placeholder for "unknown".
 // TODO(palmer): it should be a |size_t|, or at least unsigned.

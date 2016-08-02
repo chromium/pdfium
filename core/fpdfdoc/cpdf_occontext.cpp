@@ -1,4 +1,4 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,8 +13,7 @@
 
 namespace {
 
-int32_t FPDFDOC_OCG_FindGroup(const CPDF_Array* pArray,
-                              const CPDF_Dictionary* pGroupDict) {
+int32_t FindGroup(const CPDF_Array* pArray, const CPDF_Dictionary* pGroupDict) {
   if (!pArray || !pGroupDict)
     return -1;
 
@@ -25,9 +24,9 @@ int32_t FPDFDOC_OCG_FindGroup(const CPDF_Array* pArray,
   return -1;
 }
 
-bool FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
-                           const CFX_ByteStringC& csElement,
-                           const CFX_ByteStringC& csDef) {
+bool HasIntent(const CPDF_Dictionary* pDict,
+               const CFX_ByteStringC& csElement,
+               const CFX_ByteStringC& csDef) {
   CPDF_Object* pIntent = pDict->GetDirectObjectBy("Intent");
   if (!pIntent)
     return csElement == csDef;
@@ -45,8 +44,8 @@ bool FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
   return bsIntent == "All" || bsIntent == csElement;
 }
 
-CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document* pDoc,
-                                       const CPDF_Dictionary* pOCGDict) {
+CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
+                           const CPDF_Dictionary* pOCGDict) {
   ASSERT(pOCGDict);
   CPDF_Dictionary* pOCProperties = pDoc->GetRoot()->GetDictBy("OCProperties");
   if (!pOCProperties)
@@ -56,7 +55,7 @@ CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document* pDoc,
   if (!pOCGs)
     return nullptr;
 
-  if (FPDFDOC_OCG_FindGroup(pOCGs, pOCGDict) < 0)
+  if (FindGroup(pOCGs, pOCGDict) < 0)
     return nullptr;
 
   CPDF_Dictionary* pConfig = pOCProperties->GetDictBy("D");
@@ -66,13 +65,13 @@ CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document* pDoc,
 
   for (size_t i = 0; i < pConfigs->GetCount(); i++) {
     CPDF_Dictionary* pFind = pConfigs->GetDictAt(i);
-    if (pFind && FPDFDOC_OCG_HasIntent(pFind, "View", "View"))
+    if (pFind && HasIntent(pFind, "View", "View"))
       return pFind;
   }
   return pConfig;
 }
 
-CFX_ByteString FPDFDOC_OCG_GetUsageTypeString(CPDF_OCContext::UsageType eType) {
+CFX_ByteString GetUsageTypeString(CPDF_OCContext::UsageType eType) {
   CFX_ByteString csState;
   switch (eType) {
     case CPDF_OCContext::Design:
@@ -98,25 +97,24 @@ CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType)
   ASSERT(pDoc);
 }
 
-CPDF_OCContext::~CPDF_OCContext() {
-}
+CPDF_OCContext::~CPDF_OCContext() {}
 
 bool CPDF_OCContext::LoadOCGStateFromConfig(
     const CFX_ByteString& csConfig,
     const CPDF_Dictionary* pOCGDict) const {
-  CPDF_Dictionary* pConfig = FPDFDOC_OCG_GetConfig(m_pDocument, pOCGDict);
+  CPDF_Dictionary* pConfig = GetConfig(m_pDocument, pOCGDict);
   if (!pConfig)
     return true;
 
   bool bState = pConfig->GetStringBy("BaseState", "ON") != "OFF";
   CPDF_Array* pArray = pConfig->GetArrayBy("ON");
   if (pArray) {
-    if (FPDFDOC_OCG_FindGroup(pArray, pOCGDict) >= 0)
+    if (FindGroup(pArray, pOCGDict) >= 0)
       bState = true;
   }
   pArray = pConfig->GetArrayBy("OFF");
   if (pArray) {
-    if (FPDFDOC_OCG_FindGroup(pArray, pOCGDict) >= 0)
+    if (FindGroup(pArray, pOCGDict) >= 0)
       bState = false;
   }
   pArray = pConfig->GetArrayBy("AS");
@@ -136,7 +134,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     if (!pOCGs)
       continue;
 
-    if (FPDFDOC_OCG_FindGroup(pOCGs, pOCGDict) < 0)
+    if (FindGroup(pOCGs, pOCGDict) < 0)
       continue;
 
     CPDF_Dictionary* pState = pUsage->GetDictBy(csConfig);
@@ -149,24 +147,22 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
 }
 
 bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
-  if (!FPDFDOC_OCG_HasIntent(pOCGDict, "View", "View"))
+  if (!HasIntent(pOCGDict, "View", "View"))
     return true;
 
-  CFX_ByteString csState = FPDFDOC_OCG_GetUsageTypeString(m_eUsageType);
+  CFX_ByteString csState = GetUsageTypeString(m_eUsageType);
   CPDF_Dictionary* pUsage = pOCGDict->GetDictBy("Usage");
   if (pUsage) {
     CPDF_Dictionary* pState = pUsage->GetDictBy(csState);
     if (pState) {
       CFX_ByteString csFind = csState + "State";
-      if (pState->KeyExist(csFind)) {
+      if (pState->KeyExist(csFind))
         return pState->GetStringBy(csFind) != "OFF";
-      }
     }
     if (csState != "View") {
       pState = pUsage->GetDictBy("View");
-      if (pState && pState->KeyExist("ViewState")) {
+      if (pState && pState->KeyExist("ViewState"))
         return pState->GetStringBy("ViewState") != "OFF";
-      }
     }
   }
   return LoadOCGStateFromConfig(csState, pOCGDict);

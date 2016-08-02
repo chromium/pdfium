@@ -16,7 +16,6 @@
 #include "core/fpdfdoc/cpvt_fontmap.h"
 #include "core/fpdfdoc/include/cpdf_formfield.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
-#include "core/fpdfdoc/pdf_vt.h"
 
 namespace {
 

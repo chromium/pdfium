@@ -15,11 +15,6 @@
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 #include "public/fpdf_fwlevent.h"
 
-#define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
-#define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
 CPWL_List_Notify::CPWL_List_Notify(CPWL_ListBox* pList) : m_pList(pList) {
   ASSERT(m_pList);
 }

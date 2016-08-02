@@ -9,12 +9,12 @@
 
 #include <memory>
 
+#include "core/fpdfdoc/cpvt_arraytemplate.h"
 #include "core/fpdfdoc/cpvt_floatrect.h"
 #include "core/fpdfdoc/cpvt_lineinfo.h"
 #include "core/fpdfdoc/include/cpvt_line.h"
 #include "core/fpdfdoc/include/cpvt_wordplace.h"
 #include "core/fpdfdoc/include/cpvt_wordrange.h"
-#include "core/fpdfdoc/pdf_vt.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -32,7 +32,7 @@ struct CPVT_WordProps;
 
 #define VARIABLETEXT_HALF 0.5f
 
-class CPDF_VariableText : private CPDF_EditContainer {
+class CPDF_VariableText {
  public:
   enum class ScriptType { Normal, Super, Sub };
 
@@ -82,15 +82,15 @@ class CPDF_VariableText : private CPDF_EditContainer {
   };
 
   CPDF_VariableText();
-  ~CPDF_VariableText() override;
+  ~CPDF_VariableText();
 
   void SetProvider(CPDF_VariableText::Provider* pProvider);
   CPDF_VariableText::Iterator* GetIterator();
 
-  // CPDF_EditContainer.
-  void SetPlateRect(const CFX_FloatRect& rect) override;
-  CFX_FloatRect GetContentRect() const override;
-  const CFX_FloatRect& GetPlateRect() const override;
+  void SetContentRect(const CPVT_FloatRect& rect);
+  CFX_FloatRect GetContentRect() const;
+  void SetPlateRect(const CFX_FloatRect& rect);
+  const CFX_FloatRect& GetPlateRect() const;
 
   void SetAlignment(int32_t nFormat) { m_nAlignment = nFormat; }
   void SetPasswordChar(uint16_t wSubWord) { m_wSubWord = wSubWord; }
@@ -150,6 +150,17 @@ class CPDF_VariableText : private CPDF_EditContainer {
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
 
   uint16_t GetSubWord() const { return m_wSubWord; }
+
+  FX_FLOAT GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; }
+  FX_FLOAT GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; }
+  CFX_SizeF GetPlateSize() const;
+  CFX_FloatPoint GetBTPoint() const;
+  CFX_FloatPoint GetETPoint() const;
+
+  CFX_FloatPoint InToOut(const CFX_FloatPoint& point) const;
+  CFX_FloatPoint OutToIn(const CFX_FloatPoint& point) const;
+  CFX_FloatRect InToOut(const CPVT_FloatRect& rect) const;
+  CPVT_FloatRect OutToIn(const CFX_FloatRect& rect) const;
 
  private:
   friend class CTypeset;
@@ -233,6 +244,8 @@ class CPDF_VariableText : private CPDF_EditContainer {
   FX_BOOL m_bInitial;
   CPDF_VariableText::Provider* m_pVTProvider;
   std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
+  CFX_FloatRect m_rcPlate;
+  CPVT_FloatRect m_rcContent;
 };
 
 #endif  // CORE_FPDFDOC_INCLUDE_CPDF_VARIABLETEXT_H_

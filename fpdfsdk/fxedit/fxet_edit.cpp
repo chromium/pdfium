@@ -841,7 +841,7 @@ CFX_ByteString CFX_Edit::GetEditAppearanceStream(CFX_Edit* pEdit,
     }
 
     FX_FLOAT fCharSpace = pEdit->GetCharSpace();
-    if (!FX_EDIT_IsFloatZero(fCharSpace)) {
+    if (!IsFloatZero(fCharSpace)) {
       sAppStream << fCharSpace << " Tc\n";
     }
 
@@ -1909,7 +1909,7 @@ void CFX_Edit::SetScrollPosX(FX_FLOAT fx) {
     return;
 
   if (m_pVT->IsValid()) {
-    if (!FX_EDIT_IsFloatEqual(m_ptScrollPos.x, fx)) {
+    if (!IsFloatEqual(m_ptScrollPos.x, fx)) {
       m_ptScrollPos.x = fx;
       Refresh();
     }
@@ -1921,7 +1921,7 @@ void CFX_Edit::SetScrollPosY(FX_FLOAT fy) {
     return;
 
   if (m_pVT->IsValid()) {
-    if (!FX_EDIT_IsFloatEqual(m_ptScrollPos.y, fy)) {
+    if (!IsFloatEqual(m_ptScrollPos.y, fy)) {
       m_ptScrollPos.y = fy;
       Refresh();
 
@@ -1955,10 +1955,10 @@ void CFX_Edit::SetScrollLimit() {
     if (rcPlate.Width() > rcContent.Width()) {
       SetScrollPosX(rcPlate.left);
     } else {
-      if (FX_EDIT_IsFloatSmaller(m_ptScrollPos.x, rcContent.left)) {
+      if (IsFloatSmaller(m_ptScrollPos.x, rcContent.left)) {
         SetScrollPosX(rcContent.left);
-      } else if (FX_EDIT_IsFloatBigger(m_ptScrollPos.x,
-                                       rcContent.right - rcPlate.Width())) {
+      } else if (IsFloatBigger(m_ptScrollPos.x,
+                               rcContent.right - rcPlate.Width())) {
         SetScrollPosX(rcContent.right - rcPlate.Width());
       }
     }
@@ -1966,10 +1966,10 @@ void CFX_Edit::SetScrollLimit() {
     if (rcPlate.Height() > rcContent.Height()) {
       SetScrollPosY(rcPlate.top);
     } else {
-      if (FX_EDIT_IsFloatSmaller(m_ptScrollPos.y,
-                                 rcContent.bottom + rcPlate.Height())) {
+      if (IsFloatSmaller(m_ptScrollPos.y,
+                         rcContent.bottom + rcPlate.Height())) {
         SetScrollPosY(rcContent.bottom + rcPlate.Height());
-      } else if (FX_EDIT_IsFloatBigger(m_ptScrollPos.y, rcContent.top)) {
+      } else if (IsFloatBigger(m_ptScrollPos.y, rcContent.top)) {
         SetScrollPosY(rcContent.top);
       }
     }
@@ -2007,23 +2007,23 @@ void CFX_Edit::ScrollToCaret() {
 
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
-  if (!FX_EDIT_IsFloatEqual(rcPlate.left, rcPlate.right)) {
-    if (FX_EDIT_IsFloatSmaller(ptHeadEdit.x, rcPlate.left) ||
-        FX_EDIT_IsFloatEqual(ptHeadEdit.x, rcPlate.left)) {
+  if (!IsFloatEqual(rcPlate.left, rcPlate.right)) {
+    if (IsFloatSmaller(ptHeadEdit.x, rcPlate.left) ||
+        IsFloatEqual(ptHeadEdit.x, rcPlate.left)) {
       SetScrollPosX(ptHead.x);
-    } else if (FX_EDIT_IsFloatBigger(ptHeadEdit.x, rcPlate.right)) {
+    } else if (IsFloatBigger(ptHeadEdit.x, rcPlate.right)) {
       SetScrollPosX(ptHead.x - rcPlate.Width());
     }
   }
 
-  if (!FX_EDIT_IsFloatEqual(rcPlate.top, rcPlate.bottom)) {
-    if (FX_EDIT_IsFloatSmaller(ptFootEdit.y, rcPlate.bottom) ||
-        FX_EDIT_IsFloatEqual(ptFootEdit.y, rcPlate.bottom)) {
-      if (FX_EDIT_IsFloatSmaller(ptHeadEdit.y, rcPlate.top)) {
+  if (!IsFloatEqual(rcPlate.top, rcPlate.bottom)) {
+    if (IsFloatSmaller(ptFootEdit.y, rcPlate.bottom) ||
+        IsFloatEqual(ptFootEdit.y, rcPlate.bottom)) {
+      if (IsFloatSmaller(ptHeadEdit.y, rcPlate.top)) {
         SetScrollPosY(ptFoot.y + rcPlate.Height());
       }
-    } else if (FX_EDIT_IsFloatBigger(ptHeadEdit.y, rcPlate.top)) {
-      if (FX_EDIT_IsFloatBigger(ptFootEdit.y, rcPlate.bottom)) {
+    } else if (IsFloatBigger(ptHeadEdit.y, rcPlate.top)) {
+      if (IsFloatBigger(ptFootEdit.y, rcPlate.bottom)) {
         SetScrollPosY(ptHead.y);
       }
     }
@@ -2788,12 +2788,12 @@ FX_BOOL CFX_Edit::IsTextOverflow() const {
     CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
 
-    if (m_pVT->IsMultiLine() && GetTotalLines() > 1) {
-      if (FX_EDIT_IsFloatBigger(rcContent.Height(), rcPlate.Height()))
-        return TRUE;
+    if (m_pVT->IsMultiLine() && GetTotalLines() > 1 &&
+        IsFloatBigger(rcContent.Height(), rcPlate.Height())) {
+      return TRUE;
     }
 
-    if (FX_EDIT_IsFloatBigger(rcContent.Width(), rcPlate.Width()))
+    if (IsFloatBigger(rcContent.Width(), rcPlate.Width()))
       return TRUE;
   }
 

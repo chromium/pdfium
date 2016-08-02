@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/clines.h"
 
+#include "core/fpdfdoc/cline.h"
+
 CLines::CLines() : m_nTotal(0) {}
 
 CLines::~CLines() {

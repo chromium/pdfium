@@ -7,7 +7,12 @@
 #ifndef CORE_FPDFDOC_CLINES_H_
 #define CORE_FPDFDOC_CLINES_H_
 
-#include "core/fpdfdoc/pdf_vt.h"
+#include <stdint.h>
+
+#include "core/fpdfdoc/cpvt_arraytemplate.h"
+#include "core/fpdfdoc/cpvt_lineinfo.h"
+
+class CLine;
 
 class CLines final {
  public:

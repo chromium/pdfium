@@ -16,11 +16,6 @@
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 #include "public/fpdf_fwlevent.h"
 
-#define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
-#define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
 CPWL_EditCtrl::CPWL_EditCtrl()
     : m_pEdit(new CFX_Edit),
       m_pEditCaret(nullptr),

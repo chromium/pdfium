@@ -19,7 +19,7 @@ using ScopedDict =
     std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>;
 }
 
-TEST(doc_basic_filespec, EncodeDecodeFileName) {
+TEST(cpdf_filespec, EncodeDecodeFileName) {
   std::vector<pdfium::NullTermWstrFuncTestData> test_data = {
     // Empty src string.
     {L"", L""},
@@ -59,7 +59,7 @@ TEST(doc_basic_filespec, EncodeDecodeFileName) {
   }
 }
 
-TEST(doc_basic_filespec, GetFileName) {
+TEST(cpdf_filespec, GetFileName) {
   {
     // String object.
     pdfium::NullTermWstrFuncTestData test_data = {
@@ -129,7 +129,7 @@ TEST(doc_basic_filespec, GetFileName) {
   }
 }
 
-TEST(doc_basic_filespec, SetFileName) {
+TEST(cpdf_filespec, SetFileName) {
   pdfium::NullTermWstrFuncTestData test_data = {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     L"C:\\docs\\test.pdf",

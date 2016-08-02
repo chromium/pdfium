@@ -517,12 +517,12 @@ void CFX_ListCtrl::ScrollToListItem(int32_t nItemIndex) {
   CFX_FloatRect rcItem = GetItemRectInternal(nItemIndex);
   CFX_FloatRect rcItemCtrl = GetItemRect(nItemIndex);
 
-  if (FX_EDIT_IsFloatSmaller(rcItemCtrl.bottom, rcPlate.bottom)) {
-    if (FX_EDIT_IsFloatSmaller(rcItemCtrl.top, rcPlate.top)) {
+  if (IsFloatSmaller(rcItemCtrl.bottom, rcPlate.bottom)) {
+    if (IsFloatSmaller(rcItemCtrl.top, rcPlate.top)) {
       SetScrollPosY(rcItem.bottom + rcPlate.Height());
     }
-  } else if (FX_EDIT_IsFloatBigger(rcItemCtrl.top, rcPlate.top)) {
-    if (FX_EDIT_IsFloatBigger(rcItemCtrl.bottom, rcPlate.bottom)) {
+  } else if (IsFloatBigger(rcItemCtrl.top, rcPlate.top)) {
+    if (IsFloatBigger(rcItemCtrl.bottom, rcPlate.bottom)) {
       SetScrollPosY(rcItem.top);
     }
   }
@@ -548,16 +548,16 @@ void CFX_ListCtrl::SetScrollPos(const CFX_FloatPoint& point) {
 }
 
 void CFX_ListCtrl::SetScrollPosY(FX_FLOAT fy) {
-  if (!FX_EDIT_IsFloatEqual(m_ptScrollPos.y, fy)) {
+  if (!IsFloatEqual(m_ptScrollPos.y, fy)) {
     CFX_FloatRect rcPlate = GetPlateRect();
     CFX_FloatRect rcContent = GetContentRectInternal();
 
     if (rcPlate.Height() > rcContent.Height()) {
       fy = rcPlate.top;
     } else {
-      if (FX_EDIT_IsFloatSmaller(fy - rcPlate.Height(), rcContent.bottom)) {
+      if (IsFloatSmaller(fy - rcPlate.Height(), rcContent.bottom)) {
         fy = rcContent.bottom + rcPlate.Height();
-      } else if (FX_EDIT_IsFloatBigger(fy, rcContent.top)) {
+      } else if (IsFloatBigger(fy, rcContent.top)) {
         fy = rcContent.top;
       }
     }
@@ -641,11 +641,11 @@ int32_t CFX_ListCtrl::GetItemIndex(const CFX_FloatPoint& point) const {
     if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
       CLST_Rect rcListItem = pListItem->GetRect();
 
-      if (FX_EDIT_IsFloatBigger(pt.y, rcListItem.top)) {
+      if (IsFloatBigger(pt.y, rcListItem.top)) {
         bFirst = FALSE;
       }
 
-      if (FX_EDIT_IsFloatSmaller(pt.y, rcListItem.bottom)) {
+      if (IsFloatSmaller(pt.y, rcListItem.bottom)) {
         bLast = FALSE;
       }
 

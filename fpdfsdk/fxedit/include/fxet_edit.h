@@ -24,12 +24,6 @@ class CFX_RenderDevice;
 class CFX_SystemHandler;
 class IFX_Edit_UndoItem;
 
-#define FX_EDIT_IsFloatZero(f) (f < 0.0001 && f > -0.0001)
-#define FX_EDIT_IsFloatEqual(fa, fb) FX_EDIT_IsFloatZero(fa - fb)
-#define FX_EDIT_IsFloatBigger(fa, fb) (fa > fb && !FX_EDIT_IsFloatEqual(fa, fb))
-#define FX_EDIT_IsFloatSmaller(fa, fb) \
-  (fa < fb && !FX_EDIT_IsFloatEqual(fa, fb))
-
 enum EDIT_PROPS_E {
   EP_LINELEADING,
   EP_LINEINDENT,
@@ -55,21 +49,20 @@ struct CFX_Edit_LineRect {
   }
 
   FX_BOOL IsSameHeight(const CFX_Edit_LineRect& linerect) const {
-    return FX_EDIT_IsFloatZero(
-        (m_rcLine.top - m_rcLine.bottom) -
-        (linerect.m_rcLine.top - linerect.m_rcLine.bottom));
+    return IsFloatZero((m_rcLine.top - m_rcLine.bottom) -
+                       (linerect.m_rcLine.top - linerect.m_rcLine.bottom));
   }
 
   FX_BOOL IsSameTop(const CFX_Edit_LineRect& linerect) const {
-    return FX_EDIT_IsFloatZero(m_rcLine.top - linerect.m_rcLine.top);
+    return IsFloatZero(m_rcLine.top - linerect.m_rcLine.top);
   }
 
   FX_BOOL IsSameLeft(const CFX_Edit_LineRect& linerect) const {
-    return FX_EDIT_IsFloatZero(m_rcLine.left - linerect.m_rcLine.left);
+    return IsFloatZero(m_rcLine.left - linerect.m_rcLine.left);
   }
 
   FX_BOOL IsSameRight(const CFX_Edit_LineRect& linerect) const {
-    return FX_EDIT_IsFloatZero(m_rcLine.right - linerect.m_rcLine.right);
+    return IsFloatZero(m_rcLine.right - linerect.m_rcLine.right);
   }
 
   CPVT_WordRange m_wrLine;

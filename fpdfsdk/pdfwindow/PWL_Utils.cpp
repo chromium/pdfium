@@ -14,11 +14,6 @@
 #include "fpdfsdk/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-#define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
-#define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
 CFX_ByteString CPWL_Utils::GetAppStreamFromArray(const CPWL_PathData* pPathData,
                                                  int32_t nCount) {
   CFX_ByteTextBuf csAP;

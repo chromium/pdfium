@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 
 CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {}

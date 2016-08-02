@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
+#include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/include/cpvt_section.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
@@ -756,15 +757,19 @@ FX_BOOL CPDF_VariableText::GetSectionInfo(const CPVT_WordPlace& place,
 }
 
 void CPDF_VariableText::SetPlateRect(const CFX_FloatRect& rect) {
-  CPDF_EditContainer::SetPlateRect(rect);
+  m_rcPlate = rect;
+}
+
+void CPDF_VariableText::SetContentRect(const CPVT_FloatRect& rect) {
+  m_rcContent = rect;
 }
 
 CFX_FloatRect CPDF_VariableText::GetContentRect() const {
-  return InToOut(CPVT_FloatRect(CPDF_EditContainer::GetContentRect()));
+  return InToOut(CPVT_FloatRect(m_rcContent));
 }
 
 const CFX_FloatRect& CPDF_VariableText::GetPlateRect() const {
-  return CPDF_EditContainer::GetPlateRect();
+  return m_rcPlate;
 }
 
 FX_FLOAT CPDF_VariableText::GetWordFontSize(const CPVT_WordInfo& WordInfo) {
@@ -1102,4 +1107,40 @@ CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
 
 void CPDF_VariableText::SetProvider(CPDF_VariableText::Provider* pProvider) {
   m_pVTProvider = pProvider;
+}
+
+CFX_SizeF CPDF_VariableText::GetPlateSize() const {
+  return CFX_SizeF(GetPlateWidth(), GetPlateHeight());
+}
+
+CFX_FloatPoint CPDF_VariableText::GetBTPoint() const {
+  return CFX_FloatPoint(m_rcPlate.left, m_rcPlate.top);
+}
+
+CFX_FloatPoint CPDF_VariableText::GetETPoint() const {
+  return CFX_FloatPoint(m_rcPlate.right, m_rcPlate.bottom);
+}
+
+CFX_FloatPoint CPDF_VariableText::InToOut(const CFX_FloatPoint& point) const {
+  return CFX_FloatPoint(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
+}
+
+CFX_FloatPoint CPDF_VariableText::OutToIn(const CFX_FloatPoint& point) const {
+  return CFX_FloatPoint(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
+}
+
+CFX_FloatRect CPDF_VariableText::InToOut(const CPVT_FloatRect& rect) const {
+  CFX_FloatPoint ptLeftTop = InToOut(CFX_FloatPoint(rect.left, rect.top));
+  CFX_FloatPoint ptRightBottom =
+      InToOut(CFX_FloatPoint(rect.right, rect.bottom));
+  return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
+                       ptLeftTop.y);
+}
+
+CPVT_FloatRect CPDF_VariableText::OutToIn(const CFX_FloatRect& rect) const {
+  CFX_FloatPoint ptLeftTop = OutToIn(CFX_FloatPoint(rect.left, rect.top));
+  CFX_FloatPoint ptRightBottom =
+      OutToIn(CFX_FloatPoint(rect.right, rect.bottom));
+  return CPVT_FloatRect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
+                        ptRightBottom.y);
 }

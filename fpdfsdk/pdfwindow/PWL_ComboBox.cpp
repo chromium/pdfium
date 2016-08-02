@@ -17,11 +17,6 @@
 
 #define PWLCB_DEFAULTFONTSIZE 12.0f
 
-#define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
-#define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
 FX_BOOL CPWL_CBListBox::OnLButtonUp(const CFX_FloatPoint& point,
                                     uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);

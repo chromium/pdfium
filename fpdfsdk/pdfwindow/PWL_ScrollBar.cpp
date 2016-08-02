@@ -10,11 +10,6 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-#define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
-#define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
-#define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
 PWL_FLOATRANGE::PWL_FLOATRANGE() {
   Default();
 }
