@@ -20,13 +20,13 @@ CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
   if (GRTEMPLATE == 0) {
     if ((GRAT[0] == -1) && (GRAT[1] == -1) && (GRAT[2] == -1) &&
         (GRAT[3] == -1) && (GRREFERENCEDX == 0) &&
-        (GRW == (uint32_t)GRREFERENCE->m_nWidth)) {
+        (GRW == (uint32_t)GRREFERENCE->width())) {
       return decode_Template0_opt(pArithDecoder, grContext);
     }
     return decode_Template0_unopt(pArithDecoder, grContext);
   }
 
-  if ((GRREFERENCEDX == 0) && (GRW == (uint32_t)GRREFERENCE->m_nWidth))
+  if ((GRREFERENCEDX == 0) && (GRW == (uint32_t)GRREFERENCE->width()))
     return decode_Template1_opt(pArithDecoder, grContext);
   return decode_Template1_unopt(pArithDecoder, grContext);
 }
@@ -162,10 +162,10 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
   FX_BOOL LTP = FALSE;
   uint8_t* pLine = GRREG->m_pData;
   uint8_t* pLineR = GRREFERENCE->m_pData;
-  intptr_t nStride = GRREG->m_nStride;
-  intptr_t nStrideR = GRREFERENCE->m_nStride;
-  int32_t GRWR = GRREFERENCE->m_nWidth;
-  int32_t GRHR = GRREFERENCE->m_nHeight;
+  intptr_t nStride = GRREG->stride();
+  intptr_t nStrideR = GRREFERENCE->stride();
+  int32_t GRWR = GRREFERENCE->width();
+  int32_t GRHR = GRREFERENCE->height();
   if (GRREFERENCEDY < -GRHR + 1 || GRREFERENCEDY > GRHR - 1)
     GRREFERENCEDY = 0;
   intptr_t nOffset = -GRREFERENCEDY * nStrideR;
@@ -396,10 +396,10 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
   FX_BOOL LTP = FALSE;
   uint8_t* pLine = GRREG->m_pData;
   uint8_t* pLineR = GRREFERENCE->m_pData;
-  intptr_t nStride = GRREG->m_nStride;
-  intptr_t nStrideR = GRREFERENCE->m_nStride;
-  int32_t GRWR = GRREFERENCE->m_nWidth;
-  int32_t GRHR = GRREFERENCE->m_nHeight;
+  intptr_t nStride = GRREG->stride();
+  intptr_t nStrideR = GRREFERENCE->stride();
+  int32_t GRWR = GRREFERENCE->width();
+  int32_t GRHR = GRREFERENCE->height();
   if (GRREFERENCEDY < -GRHR + 1 || GRREFERENCEDY > GRHR - 1) {
     GRREFERENCEDY = 0;
   }

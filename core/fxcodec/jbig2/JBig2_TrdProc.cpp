@@ -114,8 +114,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         if (!IBOI)
           return nullptr;
 
-        uint32_t WOI = IBOI->m_nWidth;
-        uint32_t HOI = IBOI->m_nHeight;
+        uint32_t WOI = IBOI->width();
+        uint32_t HOI = IBOI->height();
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0)
           return nullptr;
 
@@ -150,8 +150,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       if (!IBI) {
         continue;
       }
-      uint32_t WI = IBI->m_nWidth;
-      uint32_t HI = IBI->m_nHeight;
+      uint32_t WI = IBI->width();
+      uint32_t HI = IBI->height();
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
         CURS = CURS + WI - 1;
@@ -327,8 +327,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         if (!IBOI)
           return nullptr;
 
-        uint32_t WOI = IBOI->m_nWidth;
-        uint32_t HOI = IBOI->m_nHeight;
+        uint32_t WOI = IBOI->width();
+        uint32_t HOI = IBOI->height();
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0)
           return nullptr;
 
@@ -350,8 +350,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
       if (!pIBI)
         return nullptr;
 
-      uint32_t WI = pIBI->m_nWidth;
-      uint32_t HI = pIBI->m_nHeight;
+      uint32_t WI = pIBI->width();
+      uint32_t HI = pIBI->height();
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
         CURS += WI - 1;

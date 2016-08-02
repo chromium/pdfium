@@ -10,46 +10,65 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 
-CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
+namespace {
+
+const int kMaxImagePixels = INT_MAX - 31;
+const int kMaxImageBytes = kMaxImagePixels / 8;
+
+}  // namespace
+
+CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
+    : m_pData(nullptr),
+      m_nWidth(0),
+      m_nHeight(0),
+      m_nStride(0),
+      m_bOwnsBuffer(true) {
+  if (w < 0 || h < 0 || w > kMaxImagePixels)
+    return;
+
+  int32_t stride_pixels = (w + 31) & ~31;
+  if (h > kMaxImagePixels / stride_pixels)
+    return;
+
   m_nWidth = w;
   m_nHeight = h;
-  if (m_nWidth <= 0 || m_nHeight <= 0 || m_nWidth > INT_MAX - 31) {
-    m_pData = nullptr;
-    m_bNeedFree = FALSE;
-    return;
-  }
-  m_nStride = ((w + 31) >> 5) << 2;
-  if (m_nStride * m_nHeight > 0 && 104857600 / (int)m_nStride > m_nHeight) {
-    m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
-  } else {
-    m_pData = nullptr;
-  }
-  m_bNeedFree = TRUE;
+  m_nStride = stride_pixels / 8;
+  m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
 }
-CJBig2_Image::CJBig2_Image(int32_t w,
-                           int32_t h,
-                           int32_t stride,
-                           uint8_t* pBuf) {
+
+CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t* pBuf)
+    : m_pData(nullptr),
+      m_nWidth(0),
+      m_nHeight(0),
+      m_nStride(0),
+      m_bOwnsBuffer(false) {
+  if (w < 0 || h < 0 || stride < 0 || stride > kMaxImageBytes)
+    return;
+
+  int32_t stride_pixels = 8 * stride;
+  if (stride_pixels < w || h > kMaxImagePixels / stride_pixels)
+    return;
+
   m_nWidth = w;
   m_nHeight = h;
   m_nStride = stride;
   m_pData = pBuf;
-  m_bNeedFree = FALSE;
 }
-CJBig2_Image::CJBig2_Image(const CJBig2_Image& im) {
-  m_nWidth = im.m_nWidth;
-  m_nHeight = im.m_nHeight;
-  m_nStride = im.m_nStride;
-  if (im.m_pData) {
+
+CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
+    : m_pData(nullptr),
+      m_nWidth(other.m_nWidth),
+      m_nHeight(other.m_nHeight),
+      m_nStride(other.m_nStride),
+      m_bOwnsBuffer(true) {
+  if (other.m_pData) {
     m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
-    JBIG2_memcpy(m_pData, im.m_pData, m_nStride * m_nHeight);
-  } else {
-    m_pData = nullptr;
+    JBIG2_memcpy(m_pData, other.m_pData, m_nStride * m_nHeight);
   }
-  m_bNeedFree = TRUE;
 }
+
 CJBig2_Image::~CJBig2_Image() {
-  if (m_bNeedFree) {
+  if (m_bOwnsBuffer) {
     FX_Free(m_pData);
   }
 }
@@ -209,30 +228,24 @@ CJBig2_Image* CJBig2_Image::subImage(int32_t x,
   }
   return pImage;
 }
-void CJBig2_Image::expand(int32_t h, FX_BOOL v) {
-  if (!m_pData || h <= m_nHeight) {
-    return;
-  }
-  uint32_t dwH = pdfium::base::checked_cast<uint32_t>(h);
-  uint32_t dwStride = pdfium::base::checked_cast<uint32_t>(m_nStride);
-  uint32_t dwHeight = pdfium::base::checked_cast<uint32_t>(m_nHeight);
-  FX_SAFE_UINT32 safeMemSize = dwH;
-  safeMemSize *= dwStride;
-  if (!safeMemSize.IsValid()) {
-    return;
-  }
-  // The guaranteed reallocated memory is to be < 4GB (unsigned int).
-  m_pData = FX_Realloc(uint8_t, m_pData, safeMemSize.ValueOrDie());
 
-  // The result of dwHeight * dwStride doesn't overflow after the
-  // checking of safeMemSize.
-  // The same as the result of (dwH - dwHeight) * dwStride) because
-  // dwH - dwHeight is always less than dwH(h) which is checked in
-  // the calculation of dwH * dwStride.
-  JBIG2_memset(m_pData + dwHeight * dwStride, v ? 0xff : 0,
-               (dwH - dwHeight) * dwStride);
+void CJBig2_Image::expand(int32_t h, FX_BOOL v) {
+  if (!m_pData || h <= m_nHeight || h > kMaxImageBytes / m_nStride)
+    return;
+
+  if (m_bOwnsBuffer) {
+    m_pData = FX_Realloc(uint8_t, m_pData, h * m_nStride);
+  } else {
+    uint8_t* pExternalBuffer = m_pData;
+    m_pData = FX_Alloc(uint8_t, h * m_nStride);
+    JBIG2_memcpy(m_pData, pExternalBuffer, m_nHeight * m_nStride);
+    m_bOwnsBuffer = true;
+  }
+  JBIG2_memset(m_pData + m_nHeight * m_nStride, v ? 0xff : 0,
+               (h - m_nHeight) * m_nStride);
   m_nHeight = h;
 }
+
 FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
                                      int32_t x,
                                      int32_t y,
