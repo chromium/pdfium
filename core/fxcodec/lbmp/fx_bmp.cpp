@@ -213,6 +213,12 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         break;
     }
     FX_Free(bmp_ptr->out_row_buffer);
+
+    if (bmp_ptr->out_row_bytes <= 0) {
+      bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+      return 0;
+    }
+
     bmp_ptr->out_row_buffer = FX_Alloc(uint8_t, bmp_ptr->out_row_bytes);
     FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
     bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_PAL);
