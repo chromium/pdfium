@@ -106,7 +106,7 @@ FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
   switch (nChar) {
     case FWL_VKEY_Return:
       if (!(m_pWidget->GetFieldFlags() & FIELDFLAG_MULTILINE)) {
-        CPDFSDK_PageView* pPageView = GetCurPageView();
+        CPDFSDK_PageView* pPageView = GetCurPageView(true);
         ASSERT(pPageView);
         m_bValid = !m_bValid;
         CFX_FloatRect rcAnnot = pAnnot->GetRect();
@@ -126,7 +126,7 @@ FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       }
       break;
     case FWL_VKEY_Escape: {
-      CPDFSDK_PageView* pPageView = GetCurPageView();
+      CPDFSDK_PageView* pPageView = GetCurPageView(true);
       ASSERT(pPageView);
       EscapeFiller(pPageView, TRUE);
       return TRUE;

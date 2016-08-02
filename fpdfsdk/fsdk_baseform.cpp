@@ -2281,7 +2281,7 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
       CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
       CFFL_IFormFiller* pIFormFiller = pEnv->GetIFormFiller();
       UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
-      CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, FALSE);
+      CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, false);
       FX_RECT rcBBox = pIFormFiller->GetViewBBox(pPageView, pWidget);
 
       pEnv->FFI_Invalidate(pPage, rcBBox.left, rcBBox.top, rcBBox.right,

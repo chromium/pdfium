@@ -3262,7 +3262,8 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
         pEnv->FFI_GetCurrentPage(m_pDocument->GetUnderlyingDocument()));
     if (!pPage)
       return FALSE;
-    if (CPDFSDK_PageView* pCurPageView = m_pDocument->GetPageView(pPage)) {
+    if (CPDFSDK_PageView* pCurPageView =
+            m_pDocument->GetPageView(pPage, true)) {
       for (int32_t i = 0; i < nCount; i++) {
         if (CPDFSDK_Widget* pTempWidget =
                 pInterForm->GetWidget(pFormField->GetControl(i))) {

@@ -284,7 +284,7 @@ CFX_WideString CFFL_ComboBox::GetSelectExportText() {
   CFX_WideString swRet;
 
   int nExport = -1;
-  CPDFSDK_PageView* pPageView = GetCurPageView();
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
   if (CPWL_ComboBox* pComboBox =
           (CPWL_ComboBox*)GetPDFWindow(pPageView, FALSE)) {
     nExport = pComboBox->GetSelect();

@@ -494,7 +494,7 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
     ASSERT(pPage);
 
-    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage);
+    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, true);
     pPageView->DeleteAnnot(pWidget);
     pPageView->UpdateRects(aRefresh);
   }

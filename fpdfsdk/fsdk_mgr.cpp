@@ -263,7 +263,7 @@ CPDFSDK_Document::~CPDFSDK_Document() {
 
 CPDFSDK_PageView* CPDFSDK_Document::GetPageView(
     UnderlyingPageType* pUnderlyingPage,
-    FX_BOOL ReNew) {
+    bool ReNew) {
   auto it = m_pageMap.find(pUnderlyingPage);
   if (it != m_pageMap.end())
     return it->second;
@@ -281,7 +281,7 @@ CPDFSDK_PageView* CPDFSDK_Document::GetPageView(
 CPDFSDK_PageView* CPDFSDK_Document::GetCurrentView() {
   UnderlyingPageType* pPage =
       UnderlyingFromFPDFPage(m_pEnv->FFI_GetCurrentPage(m_pDoc));
-  return pPage ? GetPageView(pPage, TRUE) : nullptr;
+  return pPage ? GetPageView(pPage, true) : nullptr;
 }
 
 CPDFSDK_PageView* CPDFSDK_Document::GetPageView(int nIndex) {
@@ -353,9 +353,12 @@ void CPDFSDK_Document::RemovePageView(UnderlyingPageType* pUnderlyingPage) {
   if (pPageView->IsLocked())
     return;
 
+  // Remove the page from the map to make sure we don't accidentally attempt
+  // to use the |pPageView| while we're cleaning it up.
+  m_pageMap.erase(it);
+
   pPageView->KillFocusAnnotIfNeeded();
   delete pPageView;
-  m_pageMap.erase(it);
 }
 
 UnderlyingPageType* CPDFSDK_Document::GetPage(int nIndex) {
