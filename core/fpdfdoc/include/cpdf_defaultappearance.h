@@ -14,6 +14,7 @@
 #include "core/fxge/include/fx_dib.h"
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
+enum class PaintOperation { STROKE, FILL };
 
 class CPDF_DefaultAppearance {
  public:
@@ -30,14 +31,15 @@ class CPDF_DefaultAppearance {
   CFX_ByteString GetFontString();
   void GetFont(CFX_ByteString& csFontNameTag, FX_FLOAT& fFontSize);
 
-  FX_BOOL HasColor(FX_BOOL bStrokingOperation = FALSE);
-  CFX_ByteString GetColorString(FX_BOOL bStrokingOperation = FALSE);
+  FX_BOOL HasColor(PaintOperation nOperation = PaintOperation::FILL);
+  CFX_ByteString GetColorString(
+      PaintOperation nOperation = PaintOperation::FILL);
   void GetColor(int& iColorType,
                 FX_FLOAT fc[4],
-                FX_BOOL bStrokingOperation = FALSE);
+                PaintOperation nOperation = PaintOperation::FILL);
   void GetColor(FX_ARGB& color,
                 int& iColorType,
-                FX_BOOL bStrokingOperation = FALSE);
+                PaintOperation nOperation = PaintOperation::FILL);
 
   FX_BOOL HasTextMatrix();
   CFX_ByteString GetTextMatrixString();

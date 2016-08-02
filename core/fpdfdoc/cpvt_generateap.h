@@ -46,7 +46,7 @@ class CPVT_GenerateAP {
                                          BorderStyle nStyle,
                                          const CPVT_Dash& dash);
   static CFX_ByteString GenerateColorAP(const CPVT_Color& color,
-                                        const FX_BOOL& bFillOrStroke);
+                                        PaintOperation nOperation);
 
   static CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                          int32_t nFontIndex,
