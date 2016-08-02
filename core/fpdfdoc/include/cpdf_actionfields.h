@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_INCLUDE_CPDF_ACTIONFIELDS_H_
 #define CORE_FPDFDOC_INCLUDE_CPDF_ACTIONFIELDS_H_
 
+#include <stddef.h>
+
 #include <vector>
 
 class CPDF_Action;

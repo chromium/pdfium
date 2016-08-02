@@ -1,4 +1,4 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,42 +6,10 @@
 
 #include "core/fpdfdoc/include/cpdf_bookmark.h"
 
-#include <memory>
-#include <vector>
-
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
-#include "core/fpdfdoc/include/cpdf_bookmarktree.h"
 #include "core/fpdfdoc/include/cpdf_nametree.h"
 #include "core/fxge/include/fx_dib.h"
-
-CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
-    const CPDF_Bookmark& parent) const {
-  CPDF_Dictionary* pParentDict = parent.GetDict();
-  if (pParentDict)
-    return CPDF_Bookmark(pParentDict->GetDictBy("First"));
-
-  CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  if (!pRoot)
-    return CPDF_Bookmark();
-
-  CPDF_Dictionary* pOutlines = pRoot->GetDictBy("Outlines");
-  if (!pOutlines)
-    return CPDF_Bookmark();
-
-  return CPDF_Bookmark(pOutlines->GetDictBy("First"));
-}
-
-CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(
-    const CPDF_Bookmark& bookmark) const {
-  CPDF_Dictionary* pDict = bookmark.GetDict();
-  if (!pDict)
-    return CPDF_Bookmark();
-
-  CPDF_Dictionary* pNext = pDict->GetDictBy("Next");
-  return pNext == pDict ? CPDF_Bookmark() : CPDF_Bookmark(pNext);
-}
 
 uint32_t CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict)
@@ -62,18 +30,18 @@ uint32_t CPDF_Bookmark::GetFontStyle() const {
 }
 
 CFX_WideString CPDF_Bookmark::GetTitle() const {
-  if (!m_pDict) {
+  if (!m_pDict)
     return CFX_WideString();
-  }
+
   CPDF_String* pString = ToString(m_pDict->GetDirectObjectBy("Title"));
   if (!pString)
     return CFX_WideString();
 
   CFX_WideString title = pString->GetUnicodeText();
   int len = title.GetLength();
-  if (!len) {
+  if (!len)
     return CFX_WideString();
-  }
+
   std::unique_ptr<FX_WCHAR[]> buf(new FX_WCHAR[len]);
   for (int i = 0; i < len; i++) {
     FX_WCHAR w = title[i];
@@ -81,6 +49,7 @@ CFX_WideString CPDF_Bookmark::GetTitle() const {
   }
   return CFX_WideString(buf.get(), len);
 }
+
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
   if (!m_pDict)
     return CPDF_Dest();
@@ -96,9 +65,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
     return CPDF_Dest(pArray);
   return CPDF_Dest();
 }
+
 CPDF_Action CPDF_Bookmark::GetAction() const {
-  if (!m_pDict) {
-    return CPDF_Action();
-  }
-  return CPDF_Action(m_pDict->GetDictBy("A"));
+  return m_pDict ? CPDF_Action(m_pDict->GetDictBy("A")) : CPDF_Action();
 }
