@@ -33,6 +33,8 @@ class CPVT_GenerateAP {
                                 CPDF_Dictionary* pAnnotDict);
   static bool GenerateTextFieldAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
+  static bool GenerateUnderlineAP(CPDF_Document* pDoc,
+                                  CPDF_Dictionary* pAnnotDict);
   static CFX_ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
                                        CPDF_VariableText::Iterator* pIterator,
                                        const CFX_FloatPoint& ptOffset,

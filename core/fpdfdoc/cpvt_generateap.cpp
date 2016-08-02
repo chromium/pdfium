@@ -452,6 +452,65 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
   return true;
 }
 
+CFX_ByteString GetColorStringWithDefault(CPDF_Dictionary* pAnnotDict,
+                                         const CPVT_Color& crDefaultColor,
+                                         PaintOperation nOperation) {
+  if (CPDF_Array* pColor = pAnnotDict->GetArrayBy("C")) {
+    CPVT_Color color = CPVT_Color::ParseColor(*pColor);
+    return CPVT_GenerateAP::GenerateColorAP(color, nOperation);
+  }
+
+  return CPVT_GenerateAP::GenerateColorAP(crDefaultColor, nOperation);
+}
+
+CPDF_Dictionary* GenerateExtGStateDict(const CPDF_Dictionary& pAnnotDict,
+                                       const CFX_ByteString& sExtGSDictName,
+                                       const CFX_ByteString& sBlendMode) {
+  CPDF_Dictionary* pGSDict = new CPDF_Dictionary;
+  pGSDict->SetAtString("Type", "ExtGState");
+
+  FX_FLOAT fOpacity =
+      pAnnotDict.KeyExist("CA") ? pAnnotDict.GetNumberBy("CA") : 1;
+  pGSDict->SetAtNumber("CA", fOpacity);
+  pGSDict->SetAtNumber("ca", fOpacity);
+  pGSDict->SetAtBoolean("AIS", false);
+  pGSDict->SetAtString("BM", sBlendMode);
+
+  CPDF_Dictionary* pExtGStateDict = new CPDF_Dictionary;
+  pExtGStateDict->SetAt(sExtGSDictName, pGSDict);
+
+  return pExtGStateDict;
+}
+
+// Takes ownership of |pExtGStateDict|.
+void GenerateAndSetAPDict(CPDF_Document* pDoc,
+                          CPDF_Dictionary* pAnnotDict,
+                          const CFX_ByteTextBuf& sAppStream,
+                          CPDF_Dictionary* pExtGStateDict) {
+  CPDF_Dictionary* pAPDict = new CPDF_Dictionary;
+  pAnnotDict->SetAt("AP", pAPDict);
+
+  CPDF_Stream* pNormalStream = new CPDF_Stream(nullptr, 0, nullptr);
+  int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
+  pAnnotDict->GetDictBy("AP")->SetAtReference("N", pDoc, objnum);
+
+  pNormalStream->SetData(reinterpret_cast<uint8_t*>(sAppStream.GetBuffer()),
+                         sAppStream.GetSize(), FALSE, FALSE);
+
+  CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
+  pStreamDict->SetAtInteger("FormType", 1);
+  pStreamDict->SetAtString("Subtype", "Form");
+  pStreamDict->SetAtMatrix("Matrix", CFX_Matrix());
+
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  pStreamDict->SetAtRect("BBox", rect);
+
+  CPDF_Dictionary* pResourceDict = new CPDF_Dictionary;
+  pResourceDict->SetAt("ExtGState", pExtGStateDict);
+
+  pStreamDict->SetAt("Resources", pResourceDict);
+}
+
 }  // namespace
 
 bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
@@ -510,16 +569,11 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
     return false;
 
   CFX_ByteTextBuf sAppStream;
-  sAppStream << "/GS gs ";
+  CFX_ByteString sExtGSDictName = "GS";
+  sAppStream << "/" << sExtGSDictName << " gs ";
 
-  if (pAnnotDict->KeyExist("C")) {
-    CPDF_Array* pColor = pAnnotDict->GetArrayBy("C");
-    CPVT_Color color = CPVT_Color::ParseColor(*pColor);
-    sAppStream << CPVT_GenerateAP::GenerateColorAP(color, PaintOperation::FILL);
-  } else {
-    // Defaults to 0xFFFF00 color for highlight.
-    sAppStream << "1 1 0 rg \n";
-  }
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict, CPVT_Color(CPVT_Color::kRGB, 1, 1, 0), PaintOperation::FILL);
 
   CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
   rect.Normalize();
@@ -529,39 +583,39 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
              << rect.left << " " << rect.bottom << " l "
              << "h f\n";
 
-  CPDF_Dictionary* pAPDict = new CPDF_Dictionary;
-  pAnnotDict->SetAt("AP", pAPDict);
+  CPDF_Dictionary* pExtGStateDict =
+      GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Multiply");
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
 
-  CPDF_Stream* pNormalStream = new CPDF_Stream(nullptr, 0, nullptr);
-  int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
-  pAnnotDict->GetDictBy("AP")->SetAtReference("N", pDoc, objnum);
+  return true;
+}
 
-  pNormalStream->SetData(reinterpret_cast<uint8_t*>(sAppStream.GetBuffer()),
-                         sAppStream.GetSize(), FALSE, FALSE);
+bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
+                                          CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
 
-  CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
-  pStreamDict->SetAtInteger("FormType", 1);
-  pStreamDict->SetAtString("Subtype", "Form");
-  pStreamDict->SetAtMatrix("Matrix", CFX_Matrix());
-  pStreamDict->SetAtRect("BBox", rect);
+  CFX_ByteTextBuf sAppStream;
+  CFX_ByteString sExtGSDictName = "GS";
+  sAppStream << "/" << sExtGSDictName << " gs ";
 
-  CPDF_Dictionary* pGSDict = new CPDF_Dictionary;
-  pGSDict->SetAtString("Type", "ExtGState");
+  sAppStream << GetColorStringWithDefault(pAnnotDict,
+                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          PaintOperation::STROKE);
 
-  FX_FLOAT fOpacity =
-      pAnnotDict->KeyExist("CA") ? pAnnotDict->GetNumberBy("CA") : 1;
-  pGSDict->SetAtNumber("ca", fOpacity);
-  pGSDict->SetAtNumber("CA", fOpacity);
-  pGSDict->SetAtBoolean("AIS", false);
-  pGSDict->SetAtString("BM", "Multiply");
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  rect.Normalize();
 
-  CPDF_Dictionary* pExtGStateDict = new CPDF_Dictionary;
-  pExtGStateDict->SetAt("GS", pGSDict);
+  FX_FLOAT fLineWidth = 1.0;
+  sAppStream << fLineWidth << " w " << rect.left << " "
+             << rect.bottom + fLineWidth << " m " << rect.right << " "
+             << rect.bottom + fLineWidth << " l S\n";
 
-  CPDF_Dictionary* pResourceDict = new CPDF_Dictionary;
-  pResourceDict->SetAt("ExtGState", pExtGStateDict);
-
-  pStreamDict->SetAt("Resources", pResourceDict);
+  CPDF_Dictionary* pExtGStateDict =
+      GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
   return true;
 }
 
