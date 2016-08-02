@@ -538,8 +538,11 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
 
   CPDF_Dictionary* pGSDict = new CPDF_Dictionary;
   pGSDict->SetAtString("Type", "ExtGState");
-  pGSDict->SetAtNumber("ca", 1);
-  pGSDict->SetAtNumber("CA", 1);
+
+  FX_FLOAT fOpacity =
+      pAnnotDict->KeyExist("CA") ? pAnnotDict->GetNumberBy("CA") : 1;
+  pGSDict->SetAtNumber("ca", fOpacity);
+  pGSDict->SetAtNumber("CA", fOpacity);
   pGSDict->SetAtBoolean("AIS", false);
   pGSDict->SetAtString("BM", "Multiply");
 
