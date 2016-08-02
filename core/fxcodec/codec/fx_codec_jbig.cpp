@@ -20,7 +20,7 @@ JBig2_DocumentContext::~JBig2_DocumentContext() {}
 
 JBig2_DocumentContext* GetJBig2DocumentContext(
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder) {
-  if (!pContextHolder)
+  if (!pContextHolder->get())
     pContextHolder->reset(new JBig2_DocumentContext());
   return pContextHolder->get();
 }

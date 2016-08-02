@@ -1598,6 +1598,7 @@ test("pdfium_embeddertests") {
     "core/fpdfapi/fpdf_parser/fpdf_parser_decode_embeddertest.cpp",
     "core/fpdfapi/fpdf_render/fpdf_render_loadimage_embeddertest.cpp",
     "core/fpdfapi/fpdf_render/fpdf_render_pattern_embeddertest.cpp",
+    "core/fxcodec/codec/fx_codec_embeddertest.cpp",
     "core/fxge/ge/fx_ge_text_embeddertest.cpp",
     "fpdfsdk/fpdf_dataavail_embeddertest.cpp",
     "fpdfsdk/fpdfdoc_embeddertest.cpp",
