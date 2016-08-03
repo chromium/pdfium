@@ -22,6 +22,8 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
       m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {
   if (m_sSubtype == "Highlight")
     CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
+  else if (m_sSubtype == "Squiggly")
+    CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "StrikeOut")
     CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Underline")

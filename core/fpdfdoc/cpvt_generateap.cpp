@@ -619,6 +619,57 @@ bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
   return true;
 }
 
+bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
+                                         CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
+
+  CFX_ByteTextBuf sAppStream;
+  CFX_ByteString sExtGSDictName = "GS";
+  sAppStream << "/" << sExtGSDictName << " gs ";
+
+  sAppStream << GetColorStringWithDefault(pAnnotDict,
+                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          PaintOperation::STROKE);
+
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  rect.Normalize();
+
+  FX_FLOAT fLineWidth = 1.0;
+  sAppStream << fLineWidth << " w ";
+
+  const FX_FLOAT fDelta = 2.0;
+  const FX_FLOAT fTop = rect.bottom + fDelta;
+  const FX_FLOAT fBottom = rect.bottom;
+
+  sAppStream << rect.left << " " << fTop << " m ";
+
+  FX_FLOAT fX = rect.left + fDelta;
+  bool isUpwards = false;
+
+  while (fX < rect.right) {
+    sAppStream << fX << " " << (isUpwards ? fTop : fBottom) << " l ";
+
+    fX += fDelta;
+    isUpwards = !isUpwards;
+  }
+
+  FX_FLOAT fRemainder = rect.right - (fX - fDelta);
+  if (isUpwards)
+    sAppStream << rect.right << " " << fBottom + fRemainder << " l ";
+  else
+    sAppStream << rect.right << " " << fTop - fRemainder << " l ";
+
+  sAppStream << "S\n";
+
+  CPDF_Dictionary* pExtGStateDict =
+      GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
+  return true;
+}
+
 bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
   // If AP dictionary exists, we use the appearance defined in the

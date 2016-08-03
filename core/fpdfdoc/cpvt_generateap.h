@@ -31,6 +31,8 @@ class CPVT_GenerateAP {
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateListBoxAP(CPDF_Document* pDoc,
                                 CPDF_Dictionary* pAnnotDict);
+  static bool GenerateSquigglyAP(CPDF_Document* pDoc,
+                                 CPDF_Dictionary* pAnnotDict);
   static bool GenerateStrikeOutAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateTextFieldAP(CPDF_Document* pDoc,
