@@ -541,7 +541,10 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       uint32_t methodPara = IsMethodWithObjParam(funcName.AsStringC());
       if (methodPara > 0) {
         for (int i = 0; i < m_pArguments->GetSize(); ++i) {
-          if ((methodPara & (0x01 << i)) > 0) {
+          // Currently none of our expressions use objects for a parameter over
+          // the 6th. Make sure we don't overflow the shift when doing this
+          // check. If we ever need more the 32 object params we can revisit.
+          if (i < 32 && (methodPara & (0x01 << i)) > 0) {
             javascript << gs_lpStrExpFuncName[GETFMJSOBJ];
           } else {
             javascript << gs_lpStrExpFuncName[GETFMVALUE];
