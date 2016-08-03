@@ -4,25 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_
-#define XFA_FXFA_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_
+#ifndef XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
+#define XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
 
 #include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
 
+class CXFA_ContainerRecord;
 class CXFA_LayoutItem;
-
-class CXFA_ContainerRecord {
- public:
-  CXFA_ContainerRecord(CXFA_ContainerLayoutItem* pPageSet = nullptr,
-                       CXFA_ContainerLayoutItem* pPageArea = nullptr,
-                       CXFA_ContainerLayoutItem* pContentArea = nullptr)
-      : pCurPageSet(pPageSet),
-        pCurPageArea(pPageArea),
-        pCurContentArea(pContentArea) {}
-  CXFA_ContainerLayoutItem* pCurPageSet;
-  CXFA_ContainerLayoutItem* pCurPageArea;
-  CXFA_ContainerLayoutItem* pCurContentArea;
-};
 
 class CXFA_LayoutPageMgr {
  public:
@@ -153,4 +141,4 @@ class CXFA_LayoutPageMgr {
   CFX_ArrayTemplate<CXFA_ContainerLayoutItem*> m_PageArray;
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_
+#endif  // XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
