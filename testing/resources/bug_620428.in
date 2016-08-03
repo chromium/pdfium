@@ -66,13 +66,15 @@ endobj
 >>
 stream
 function fireTimeOut() {
-  app.alert("timer fired");
+  app.alert("hello world");
 }
 function fireInterval() {
-  app.alert("interval fired");
+  app.alert("goodbye world");
 }
-app.setTimeOut("fireTimeOut()", 3000);
-app.setInterval("fireInterval()", 2000);
+var timer = app.setTimeOut("fireTimeOut()", 3000);
+var interval = app.setInterval("fireInterval()", 1000);
+app.clearTimeOut(timer);
+app.clearInterval(interval);
 endstream
 endobj
 {{xref}}

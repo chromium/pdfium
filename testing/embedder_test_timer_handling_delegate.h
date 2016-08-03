@@ -15,40 +15,38 @@
 
 class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
  public:
-  struct ReceivedAlert {
-    ReceivedAlert(FPDF_WIDESTRING message_in,
-                  FPDF_WIDESTRING title_in,
-                  int type_in,
-                  int icon_in)
-        : type(type_in), icon(icon_in) {
-      message = GetPlatformWString(message_in);
-      title = GetPlatformWString(title_in);
-    }
-
+  struct AlertRecord {
     std::wstring message;
     std::wstring title;
     int type;
     int icon;
   };
 
+  struct Timer {
+    int id;
+    int interval;
+    TimerCallback fn;
+  };
+
   int Alert(FPDF_WIDESTRING message,
             FPDF_WIDESTRING title,
             int type,
             int icon) override {
-    alerts_.push_back(ReceivedAlert(message, title, type, icon));
+    alerts_.push_back(
+        {GetPlatformWString(message), GetPlatformWString(title), type, icon});
     return 0;
   }
 
   int SetTimer(int msecs, TimerCallback fn) override {
     expiry_to_timer_map_.insert(std::pair<int, Timer>(
-        msecs + imaginary_elapsed_msecs_, Timer(++next_timer_id_, fn)));
+        msecs + fake_elapsed_msecs_, {++next_timer_id_, msecs, fn}));
     return next_timer_id_;
   }
 
   void KillTimer(int id) override {
     for (auto iter = expiry_to_timer_map_.begin();
          iter != expiry_to_timer_map_.end(); ++iter) {
-      if (iter->second.first == id) {
+      if (iter->second.id == id) {
         expiry_to_timer_map_.erase(iter);
         break;
       }
@@ -56,29 +54,30 @@ class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
   }
 
   void AdvanceTime(int increment_msecs) {
-    imaginary_elapsed_msecs_ += increment_msecs;
+    fake_elapsed_msecs_ += increment_msecs;
     while (1) {
       auto iter = expiry_to_timer_map_.begin();
       if (iter == expiry_to_timer_map_.end()) {
         break;
       }
-      Timer t = iter->second;
-      if (t.first > imaginary_elapsed_msecs_) {
+      if (iter->first > fake_elapsed_msecs_) {
         break;
       }
+      Timer t = iter->second;
       expiry_to_timer_map_.erase(iter);
-      t.second(t.first);  // Fire timer.
+      expiry_to_timer_map_.insert(
+          std::pair<int, Timer>(fake_elapsed_msecs_ + t.interval, t));
+      t.fn(t.id);  // Fire timer.
     }
   }
 
-  const std::vector<ReceivedAlert>& GetAlerts() const { return alerts_; }
+  const std::vector<AlertRecord>& GetAlerts() const { return alerts_; }
 
  protected:
-  using Timer = std::pair<int, TimerCallback>;     // ID, callback pair.
   std::multimap<int, Timer> expiry_to_timer_map_;  // Keyed by timeout.
   int next_timer_id_ = 0;
-  int imaginary_elapsed_msecs_ = 0;
-  std::vector<ReceivedAlert> alerts_;
+  int fake_elapsed_msecs_ = 0;
+  std::vector<AlertRecord> alerts_;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_TIMER_HANDLING_DELEGATE_H_

@@ -316,8 +316,8 @@ typedef struct _IPDF_JsPlatform {
 #define FXCT_HAND 5
 
 /**
- * Declares of a pointer type to the callback function for the FFI_SetTimer
- *method.
+ * Function signature for the callback function passed to the FFI_SetTimer
+ * method.
  * Parameters:
  *          idEvent     -   Identifier of the timer.
  * Return value:
@@ -490,19 +490,18 @@ typedef struct _FPDF_FORMFILLINFO {
 
   /**
   * Method: FFI_SetTimer
-  *           This method installs a system timer. A time-out value is
-  * specified,
-  *           and every time a time-out occurs, the system passes a message to
-  *           the TimerProc callback function.
+  *       This method installs a system timer. An interval value is specified,
+  *       and every time that interval elapses, the system must call into the
+  *       callback function with the timer ID as returned by this function.
   * Interface Version:
-  *           1
+  *       1
   * Implementation Required:
-  *           yes
+  *       yes
   * Parameters:
   *       pThis       -   Pointer to the interface structure itself.
   *       uElapse     -   Specifies the time-out value, in milliseconds.
   *       lpTimerFunc -   A pointer to the callback function-TimerCallback.
-  *   Return value:
+  * Return value:
   *       The timer identifier of the new timer if the function is successful.
   *       An application passes this value to the FFI_KillTimer method to kill
   *       the timer. Nonzero if it is successful; otherwise, it is zero.
@@ -513,16 +512,16 @@ typedef struct _FPDF_FORMFILLINFO {
 
   /**
   * Method: FFI_KillTimer
-  *           This method kills the timer event identified by nIDEvent, set by
-  * an earlier call to FFI_SetTimer.
+  *       This method uninstalls a system timer identified by nIDEvent, as
+  *       set by an earlier call to FFI_SetTimer.
   * Interface Version:
-  *           1
+  *       1
   * Implementation Required:
-  *           yes
+  *       yes
   * Parameters:
   *       pThis       -   Pointer to the interface structure itself.
-  *       nTimerID    -   The timer ID return by FFI_SetTimer function.
-  *   Return value:
+  *       nTimerID    -   The timer ID returned by FFI_SetTimer function.
+  * Return value:
   *       None.
   * */
   void (*FFI_KillTimer)(struct _FPDF_FORMFILLINFO* pThis, int nTimerID);

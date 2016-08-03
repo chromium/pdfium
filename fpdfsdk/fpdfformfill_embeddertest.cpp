@@ -24,7 +24,7 @@ TEST_F(FPDFFormFillEmbeddertest, FirstTest) {
 
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   UnloadPage(page);
 }
 
@@ -34,7 +34,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_487928) {
 
   EXPECT_TRUE(OpenDocument("bug_487928.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(5000);
   UnloadPage(page);
@@ -46,7 +46,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_507316) {
 
   EXPECT_TRUE(OpenDocument("bug_507316.pdf"));
   FPDF_PAGE page = LoadAndCachePage(2);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(4000);
   UnloadPage(page);
@@ -55,7 +55,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_507316) {
 TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   // Test that FORM_OnMouseMove() etc. permit null HANDLES and PAGES.
   FORM_OnMouseMove(nullptr, page, 0, 10.0, 10.0);
@@ -66,22 +66,71 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
 
 #ifdef PDF_ENABLE_V8
 TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
+  // Test that timers fire once and intervals fire repeatedly.
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
   EXPECT_TRUE(OpenDocument("bug_551248.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
+  DoOpenActions();
+
+  const auto& alerts = delegate.GetAlerts();
+  EXPECT_EQ(0U, alerts.size());
+
+  delegate.AdvanceTime(1000);
+  EXPECT_EQ(0U, alerts.size());  // nothing fired.
+  delegate.AdvanceTime(1000);
+  EXPECT_EQ(1U, alerts.size());  // interval fired.
+  delegate.AdvanceTime(1000);
+  EXPECT_EQ(2U, alerts.size());  // timer fired.
+  delegate.AdvanceTime(1000);
+  EXPECT_EQ(3U, alerts.size());  // interval fired again.
+  delegate.AdvanceTime(1000);
+  EXPECT_EQ(3U, alerts.size());  // nothing fired.
+  delegate.AdvanceTime(1000);
+  EXPECT_EQ(4U, alerts.size());  // interval fired again.
+  delegate.AdvanceTime(1000);
+  EXPECT_EQ(4U, alerts.size());  // nothing fired.
+  UnloadPage(page);
+
+  ASSERT_EQ(4U, alerts.size());  // nothing else fired.
+
+  EXPECT_STREQ(L"interval fired", alerts[0].message.c_str());
+  EXPECT_STREQ(L"Alert", alerts[0].title.c_str());
+  EXPECT_EQ(0, alerts[0].type);
+  EXPECT_EQ(0, alerts[0].icon);
+
+  EXPECT_STREQ(L"timer fired", alerts[1].message.c_str());
+  EXPECT_STREQ(L"Alert", alerts[1].title.c_str());
+  EXPECT_EQ(0, alerts[1].type);
+  EXPECT_EQ(0, alerts[1].icon);
+
+  EXPECT_STREQ(L"interval fired", alerts[2].message.c_str());
+  EXPECT_STREQ(L"Alert", alerts[2].title.c_str());
+  EXPECT_EQ(0, alerts[2].type);
+  EXPECT_EQ(0, alerts[2].icon);
+
+  EXPECT_STREQ(L"interval fired", alerts[3].message.c_str());
+  EXPECT_STREQ(L"Alert", alerts[3].title.c_str());
+  EXPECT_EQ(0, alerts[3].type);
+  EXPECT_EQ(0, alerts[3].icon);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, BUG_620428) {
+  // Test that timers and intervals are cancelable.
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("bug_620428.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(5000);
   UnloadPage(page);
 
   const auto& alerts = delegate.GetAlerts();
-  ASSERT_EQ(1U, alerts.size());
-
-  EXPECT_STREQ(L"hello world", alerts[0].message.c_str());
-  EXPECT_STREQ(L"Alert", alerts[0].title.c_str());
-  EXPECT_EQ(0, alerts[0].type);
-  EXPECT_EQ(0, alerts[0].icon);
+  EXPECT_EQ(0U, alerts.size());
 }
+
 #endif  // PDF_ENABLE_V8
