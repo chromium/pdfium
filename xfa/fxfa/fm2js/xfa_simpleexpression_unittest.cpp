@@ -11,8 +11,8 @@
 
 TEST(FMCallExpression, more_than_32_arguments) {
   // Use sign as it has 3 object parameters at positions 0, 5, and 6.
-  std::unique_ptr<CXFA_FMIdentifierExpressionn> exp(
-      new CXFA_FMIdentifierExpressionn(0, CFX_WideStringC(L"sign")));
+  std::unique_ptr<CXFA_FMIdentifierExpression> exp(
+      new CXFA_FMIdentifierExpression(0, CFX_WideStringC(L"sign")));
 
   std::unique_ptr<CFX_ArrayTemplate<CXFA_FMSimpleExpression*>> args(
       new CFX_ArrayTemplate<CXFA_FMSimpleExpression*>());

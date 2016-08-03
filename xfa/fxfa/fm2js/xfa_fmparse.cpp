@@ -519,11 +519,11 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
         }
         NextToken();
       } else {
-        e.reset(new CXFA_FMIdentifierExpressionn(line, wsIdentifier));
+        e.reset(new CXFA_FMIdentifierExpression(line, wsIdentifier));
       }
     } break;
     case TOKif:
-      e.reset(new CXFA_FMIdentifierExpressionn(line, m_pToken->m_wstring));
+      e.reset(new CXFA_FMIdentifierExpression(line, m_pToken->m_wstring));
       NextToken();
       break;
     case TOKnull:
@@ -627,7 +627,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
             }
             if (m_pErrorInfo->message.IsEmpty()) {
               CXFA_FMSimpleExpression* pIdentifier =
-                  new CXFA_FMIdentifierExpressionn(tempLine, tempStr);
+                  new CXFA_FMIdentifierExpression(tempLine, tempStr);
               pExpCall = new CXFA_FMCallExpression(line, pIdentifier,
                                                    pArray.release(), TRUE);
               e = new CXFA_FMMethodCallExpression(line, pExpAccessor, pExpCall);

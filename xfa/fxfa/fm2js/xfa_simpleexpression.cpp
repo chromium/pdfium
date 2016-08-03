@@ -175,15 +175,15 @@ void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   }
 }
 
-CXFA_FMIdentifierExpressionn::CXFA_FMIdentifierExpressionn(
+CXFA_FMIdentifierExpression::CXFA_FMIdentifierExpression(
     uint32_t line,
     CFX_WideStringC wsIdentifier)
     : CXFA_FMSimpleExpression(line, TOKidentifier),
       m_wsIdentifier(wsIdentifier) {}
 
-CXFA_FMIdentifierExpressionn::~CXFA_FMIdentifierExpressionn() {}
+CXFA_FMIdentifierExpression::~CXFA_FMIdentifierExpression() {}
 
-void CXFA_FMIdentifierExpressionn::ToJavaScript(CFX_WideTextBuf& javascript) {
+void CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr(m_wsIdentifier);
   if (tempStr == FX_WSTRC(L"$")) {
     tempStr = FX_WSTRC(L"this");
