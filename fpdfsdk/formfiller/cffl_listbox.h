@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_LISTBOX_H_
 #define FPDFSDK_FORMFILLER_CFFL_LISTBOX_H_
 
+#include <memory>
 #include <set>
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
@@ -37,7 +38,7 @@ class CFFL_ListBox : public CFFL_FormFiller {
                            FX_BOOL bRestoreValue) override;
 
  private:
-  CBA_FontMap* m_pFontMap;
+  std::unique_ptr<CBA_FontMap> m_pFontMap;
   std::set<int> m_OriginSelections;
   CFX_ArrayTemplate<int> m_State;
 };

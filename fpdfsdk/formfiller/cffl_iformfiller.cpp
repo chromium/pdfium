@@ -24,11 +24,7 @@
 CFFL_IFormFiller::CFFL_IFormFiller(CPDFDoc_Environment* pApp)
     : m_pApp(pApp), m_bNotifying(FALSE) {}
 
-CFFL_IFormFiller::~CFFL_IFormFiller() {
-  for (auto& it : m_Maps)
-    delete it.second;
-  m_Maps.clear();
-}
+CFFL_IFormFiller::~CFFL_IFormFiller() {}
 
 FX_BOOL CFFL_IFormFiller::Annot_HitTest(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
@@ -511,7 +507,7 @@ CFFL_FormFiller* CFFL_IFormFiller::GetFormFiller(CPDFSDK_Annot* pAnnot,
                                                  FX_BOOL bRegister) {
   auto it = m_Maps.find(pAnnot);
   if (it != m_Maps.end())
-    return it->second;
+    return it->second.get();
 
   if (!bRegister)
     return nullptr;
@@ -547,7 +543,7 @@ CFFL_FormFiller* CFFL_IFormFiller::GetFormFiller(CPDFSDK_Annot* pAnnot,
   if (!pFormFiller)
     return nullptr;
 
-  m_Maps[pAnnot] = pFormFiller;
+  m_Maps[pAnnot].reset(pFormFiller);
   return pFormFiller;
 }
 
@@ -562,7 +558,6 @@ void CFFL_IFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
   if (it == m_Maps.end())
     return;
 
-  delete it->second;
   m_Maps.erase(it);
 }
 

@@ -16,11 +16,9 @@
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
 
 CFFL_ListBox::CFFL_ListBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget)
-    : CFFL_FormFiller(pApp, pWidget), m_pFontMap(nullptr) {}
+    : CFFL_FormFiller(pApp, pWidget) {}
 
-CFFL_ListBox::~CFFL_ListBox() {
-  delete m_pFontMap;
-}
+CFFL_ListBox::~CFFL_ListBox() {}
 
 PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
   PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
@@ -37,8 +35,8 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
     cp.fFontSize = FFL_DEFAULTLISTBOXFONTSIZE;
 
   if (!m_pFontMap)
-    m_pFontMap = new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler());
-  cp.pFontMap = m_pFontMap;
+    m_pFontMap.reset(new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler()));
+  cp.pFontMap = m_pFontMap.get();
 
   return cp;
 }

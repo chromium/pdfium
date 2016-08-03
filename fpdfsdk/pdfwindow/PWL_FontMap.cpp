@@ -35,14 +35,11 @@ const char* const g_sDEStandardFontName[] = {"Courier",
 }  // namespace
 
 CPWL_FontMap::CPWL_FontMap(CFX_SystemHandler* pSystemHandler)
-    : m_pPDFDoc(nullptr), m_pSystemHandler(pSystemHandler) {
+    : m_pSystemHandler(pSystemHandler) {
   ASSERT(m_pSystemHandler);
 }
 
 CPWL_FontMap::~CPWL_FontMap() {
-  delete m_pPDFDoc;
-  m_pPDFDoc = nullptr;
-
   Empty();
 }
 
@@ -53,12 +50,12 @@ void CPWL_FontMap::SetSystemHandler(CFX_SystemHandler* pSystemHandler) {
 CPDF_Document* CPWL_FontMap::GetDocument() {
   if (!m_pPDFDoc) {
     if (CPDF_ModuleMgr::Get()) {
-      m_pPDFDoc = new CPDF_Document(nullptr);
+      m_pPDFDoc.reset(new CPDF_Document(nullptr));
       m_pPDFDoc->CreateNewDoc();
     }
   }
 
-  return m_pPDFDoc;
+  return m_pPDFDoc.get();
 }
 
 CPDF_Font* CPWL_FontMap::GetPDFFont(int32_t nFontIndex) {
@@ -413,7 +410,7 @@ int32_t CPWL_FontMap::GetNativeCharset() {
   return nCharset;
 }
 
-const CPWL_FontMap::CharsetFontMap CPWL_FontMap::defaultTTFMap[] = {
+const FPDF_CharsetFontMap CPWL_FontMap::defaultTTFMap[] = {
     {ANSI_CHARSET, "Helvetica"},      {GB2312_CHARSET, "SimSun"},
     {CHINESEBIG5_CHARSET, "MingLiU"}, {SHIFTJIS_CHARSET, "MS Gothic"},
     {HANGUL_CHARSET, "Batang"},       {RUSSIAN_CHARSET, "Arial"},

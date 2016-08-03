@@ -9,6 +9,7 @@
 
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
+#include <memory>
 #include <vector>
 
 #include "public/fpdfview.h"
@@ -32,7 +33,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   FX_BOOL LoadXFADoc();
   CPDFXFA_App* GetApp() { return m_pApp; }
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc; }
-  CXFA_FFDoc* GetXFADoc() { return m_pXFADoc; }
+  CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
 
   int GetPageCount();
@@ -193,18 +194,17 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   void CloseXFADoc(CXFA_FFDocHandler* pDoc) {
     if (pDoc) {
       m_pXFADoc->CloseDoc();
-      delete m_pXFADoc;
-      m_pXFADoc = nullptr;
+      m_pXFADoc.reset();
       m_pXFADocView = nullptr;
     }
   }
 
   int m_iDocType;
   CPDF_Document* m_pPDFDoc;
-  CPDFSDK_Document* m_pSDKDoc;
-  CXFA_FFDoc* m_pXFADoc;
-  CXFA_FFDocView* m_pXFADocView;
-  CPDFXFA_App* m_pApp;
+  std::unique_ptr<CPDFSDK_Document> m_pSDKDoc;
+  std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
+  CXFA_FFDocView* m_pXFADocView;  // not owned.
+  CPDFXFA_App* const m_pApp;
   IJS_Context* m_pJSContext;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
   LoadStatus m_nLoadStatus;

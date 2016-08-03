@@ -11,13 +11,11 @@
 #include "fpdfsdk/javascript/resource.h"
 
 CJS_Context::CJS_Context(CJS_Runtime* pRuntime)
-    : m_pRuntime(pRuntime), m_bBusy(FALSE) {
-  m_pEventHandler = new CJS_EventHandler(this);
-}
+    : m_pRuntime(pRuntime),
+      m_pEventHandler(new CJS_EventHandler(this)),
+      m_bBusy(FALSE) {}
 
-CJS_Context::~CJS_Context() {
-  delete m_pEventHandler;
-}
+CJS_Context::~CJS_Context() {}
 
 CPDFSDK_Document* CJS_Context::GetReaderDocument() {
   return m_pRuntime->GetReaderDocument();

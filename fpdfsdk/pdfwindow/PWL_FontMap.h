@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
 #define FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
 
+#include <memory>
+
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
@@ -80,6 +82,8 @@ class CPWL_FontMap : public IPVT_FontMap {
                            CFX_ByteString& sFontName,
                            uint8_t nCharset);
 
+  static const FPDF_CharsetFontMap defaultTTFMap[];
+
  protected:
   virtual void Initialize();
   virtual CPDF_Document* GetDocument();
@@ -102,6 +106,9 @@ class CPWL_FontMap : public IPVT_FontMap {
                                  int32_t nCharset);
   CFX_ByteString EncodeFontAlias(const CFX_ByteString& sFontName);
 
+  CFX_ArrayTemplate<CPWL_FontMap_Data*> m_aData;
+  CFX_ArrayTemplate<CPWL_FontMap_Native*> m_aNativeFont;
+
  private:
   CFX_ByteString GetFontName(int32_t nFontIndex);
   int32_t FindFont(const CFX_ByteString& sFontName,
@@ -109,16 +116,7 @@ class CPWL_FontMap : public IPVT_FontMap {
 
   CFX_ByteString GetNativeFont(int32_t nCharset);
 
- public:
-  using CharsetFontMap = FPDF_CharsetFontMap;
-  static const CharsetFontMap defaultTTFMap[];
-
- protected:
-  CFX_ArrayTemplate<CPWL_FontMap_Data*> m_aData;
-  CFX_ArrayTemplate<CPWL_FontMap_Native*> m_aNativeFont;
-
- private:
-  CPDF_Document* m_pPDFDoc;
+  std::unique_ptr<CPDF_Document> m_pPDFDoc;
   CFX_SystemHandler* m_pSystemHandler;
 };
 

@@ -11,14 +11,11 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 
 CFFL_TextField::CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
-    : CFFL_FormFiller(pApp, pAnnot), m_pFontMap(nullptr) {
-  m_State.nStart = m_State.nEnd = 0;
-}
+    : CFFL_FormFiller(pApp, pAnnot) {}
 
 CFFL_TextField::~CFFL_TextField() {
   for (const auto& it : m_Maps)
     it.second->InvalidateFocusHandler(this);
-  delete m_pFontMap;
 }
 
 PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
@@ -68,8 +65,8 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
   }
 
   if (!m_pFontMap)
-    m_pFontMap = new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler());
-  cp.pFontMap = m_pFontMap;
+    m_pFontMap.reset(new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler()));
+  cp.pFontMap = m_pFontMap.get();
   cp.pFocusHandler = this;
 
   return cp;

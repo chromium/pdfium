@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_WND_H_
 #define FPDFSDK_PDFWINDOW_PWL_WND_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fpdfdoc/include/cpdf_formcontrol.h"
@@ -238,7 +239,7 @@ class CPWL_TimerHandler {
   virtual CFX_SystemHandler* GetSystemHandler() const = 0;
 
  private:
-  CPWL_Timer* m_pTimer;
+  std::unique_ptr<CPWL_Timer> m_pTimer;
 };
 
 class CPWL_Wnd : public CPWL_TimerHandler {

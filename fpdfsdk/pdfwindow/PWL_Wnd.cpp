@@ -80,15 +80,13 @@ void CPWL_Timer::TimerProc(int32_t idEvent) {
     pTimer->m_pAttached->TimerProc();
 }
 
-CPWL_TimerHandler::CPWL_TimerHandler() : m_pTimer(nullptr) {}
+CPWL_TimerHandler::CPWL_TimerHandler() {}
 
-CPWL_TimerHandler::~CPWL_TimerHandler() {
-  delete m_pTimer;
-}
+CPWL_TimerHandler::~CPWL_TimerHandler() {}
 
 void CPWL_TimerHandler::BeginTimer(int32_t nElapse) {
   if (!m_pTimer)
-    m_pTimer = new CPWL_Timer(this, GetSystemHandler());
+    m_pTimer.reset(new CPWL_Timer(this, GetSystemHandler()));
 
   if (m_pTimer)
     m_pTimer->SetPWLTimer(nElapse);

@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_JAVASCRIPT_CJS_CONTEXT_H_
 #define FPDFSDK_JAVASCRIPT_CJS_CONTEXT_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "fpdfsdk/javascript/ijs_context.h"
@@ -121,14 +123,14 @@ class CJS_Context : public IJS_Context {
   void OnExternal_Exec() override;
 
   CJS_Runtime* GetJSRuntime() const { return m_pRuntime; }
-  CJS_EventHandler* GetEventHandler() const { return m_pEventHandler; }
+  CJS_EventHandler* GetEventHandler() const { return m_pEventHandler.get(); }
 
   CPDFDoc_Environment* GetReaderApp();
   CPDFSDK_Document* GetReaderDocument();
 
  private:
-  CJS_Runtime* m_pRuntime;
-  CJS_EventHandler* m_pEventHandler;
+  CJS_Runtime* const m_pRuntime;
+  std::unique_ptr<CJS_EventHandler> m_pEventHandler;
   FX_BOOL m_bBusy;
 };
 

@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_
 #define FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_
 
+#include <memory>
+
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
 #define BF_ALIGN_LEFT 0
@@ -16,6 +18,8 @@
 class CBA_FontMap;
 
 struct FFL_TextFieldState {
+  FFL_TextFieldState() : nStart(0), nEnd(0) {}
+
   int nStart;
   int nEnd;
   CFX_WideString sValue;
@@ -56,7 +60,7 @@ class CFFL_TextField : public CFFL_FormFiller, public IPWL_FocusHandler {
 #endif  // PDF_ENABLE_XFA
 
  private:
-  CBA_FontMap* m_pFontMap;
+  std::unique_ptr<CBA_FontMap> m_pFontMap;
   FFL_TextFieldState m_State;
 };
 

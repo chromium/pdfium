@@ -21,7 +21,7 @@ class CPDFXFA_App : public IXFA_AppProvider {
   ~CPDFXFA_App() override;
 
   FX_BOOL Initialize(v8::Isolate* pIsolate);
-  CXFA_FFApp* GetXFAApp() { return m_pXFAApp; }
+  CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
   FX_BOOL AddFormFillEnv(CPDFDoc_Environment* pEnv);
   FX_BOOL RemoveFormFillEnv(CPDFDoc_Environment* pEnv);
@@ -74,9 +74,8 @@ class CPDFXFA_App : public IXFA_AppProvider {
 
  protected:
   FX_BOOL m_bJavaScriptInitialized;
-  CXFA_FFApp* m_pXFAApp;
+  std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   v8::Isolate* m_pIsolate;
-  IFXJS_Runtime* m_pJSRuntime;
   CFX_WideString m_csAppType;
 };
 

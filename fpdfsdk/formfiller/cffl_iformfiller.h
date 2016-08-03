@@ -8,6 +8,7 @@
 #define FPDFSDK_FORMFILLER_CFFL_IFORMFILLER_H_
 
 #include <map>
+#include <memory>
 
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
@@ -140,7 +141,8 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
 
  private:
-  using CFFL_Widget2Filler = std::map<CPDFSDK_Annot*, CFFL_FormFiller*>;
+  using CFFL_Widget2Filler =
+      std::map<CPDFSDK_Annot*, std::unique_ptr<CFFL_FormFiller>>;
 
   // IPWL_Filler_Notify:
   void QueryWherePopup(void* pPrivateData,
@@ -170,7 +172,7 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
-  CPDFDoc_Environment* m_pApp;
+  CPDFDoc_Environment* const m_pApp;
   CFFL_Widget2Filler m_Maps;
   FX_BOOL m_bNotifying;
 };
