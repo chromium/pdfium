@@ -10,10 +10,11 @@
 #include <memory>
 
 #include "xfa/fxfa/app/xfa_ffnotify.h"
+#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
-#include "xfa/fxfa/parser/xfa_layout_appadapter.h"
 #include "xfa/fxfa/parser/xfa_layout_pagemgr_new.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"

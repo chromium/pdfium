@@ -13,6 +13,8 @@ class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
 class CXFA_LayoutProcessor;
 
+void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
+
 class CXFA_LayoutItem {
  public:
   virtual ~CXFA_LayoutItem();

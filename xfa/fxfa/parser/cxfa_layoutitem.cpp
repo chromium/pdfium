@@ -6,8 +6,31 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
 
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+
+void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
+  CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
+  CXFA_FFNotify* pNotify = pLayoutItem->m_pFormNode->GetDocument()->GetNotify();
+  CXFA_LayoutProcessor* pDocLayout =
+      pLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
+  while (pNode) {
+    CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
+    pNode->m_pParent = nullptr;
+    pNotify->OnLayoutItemRemoving(pDocLayout,
+                                  static_cast<CXFA_LayoutItem*>(pNode));
+    XFA_ReleaseLayoutItem(pNode);
+    pNode = pNext;
+  }
+
+  pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
+  if (pLayoutItem->m_pFormNode->GetElementType() == XFA_Element::PageArea) {
+    pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
+                         XFA_PAGEVIEWEVENT_PostRemoved);
+  }
+  delete pLayoutItem;
+}
 
 CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem)
     : m_pFormNode(pNode),
