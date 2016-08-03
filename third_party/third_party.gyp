@@ -292,6 +292,36 @@
         'libpng16/pngwtran.c',
         'libpng16/pngwutil.c',
       ],
+      'msvs_disabled_warnings': [
+        4146, # Unary minus applied to unsigned type.
+        # Warnings about conversion from 'size_t' to 'long', possible loss of
+        # data.
+        4267,
+      ],
+      'conditions': [
+        # SSE optimizations
+        [ 'target_arch=="ia32" or target_arch=="x64"', {
+          'defines': [
+            'PNG_INTEL_SSE_OPT=1',
+          ],
+          'sources': [
+            'libpng16/contrib/intel/intel_init.c',
+            'libpng16/contrib/intel/filter_sse2_intrinsics.c',
+          ],
+        }],
+
+        # ARM optimizations
+        [ '(target_arch=="arm" or target_arch=="arm64") and OS!="ios" and arm_neon==1', {
+          'defines': [
+            'PNG_ARM_NEON_OPT=2',
+            'PNG_ARM_NEON_IMPLEMENTATION=1',
+          ],
+          'sources': [
+            'libpng16/arm/arm_init.c',
+            'libpng16/arm/filter_neon_intrinsics.c',
+          ],
+        }],
+      ],
     },
     {
       'target_name': 'fx_zlib',

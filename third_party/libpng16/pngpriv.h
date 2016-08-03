@@ -1,8 +1,8 @@
 
 /* pngpriv.h - private declarations for use inside libpng
  *
- * Last changed in libpng 1.6.18 [July 23, 2015]
- * Copyright (c) 1998-2015 Glenn Randers-Pehrson
+ * Last changed in libpng 1.6.22 [May 26, 2016]
+ * Copyright (c) 1998-2002,2004,2006-2016 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -127,7 +127,7 @@
     */
 #  if (defined(__ARM_NEON__) || defined(__ARM_NEON)) && \
    defined(PNG_ALIGNED_MEMORY_SUPPORTED)
-#     define PNG_ARM_NEON_OPT 0
+#     define PNG_ARM_NEON_OPT 2
 #  else
 #     define PNG_ARM_NEON_OPT 0
 #  endif
@@ -181,6 +181,42 @@
 #     define PNG_ARM_NEON_IMPLEMENTATION 1
 #  endif
 #endif /* PNG_ARM_NEON_OPT > 0 */
+
+#ifndef PNG_INTEL_SSE_OPT
+#   ifdef PNG_INTEL_SSE
+      /* Only check for SSE if the build configuration has been modified to
+       * enable SSE optimizations.  This means that these optimizations will
+       * be off by default.  See contrib/intel for more details.
+       */
+#     if defined(__SSE4_1__) || defined(__AVX__) || defined(__SSSE3__) || \
+       defined(__SSE2__) || defined(_M_X64) || defined(_M_AMD64) || \
+       (defined(_M_IX86_FP) && _M_IX86_FP >= 2)
+#         define PNG_INTEL_SSE_OPT 1
+#      endif
+#   endif
+#endif
+
+#if PNG_INTEL_SSE_OPT > 0
+#   ifndef PNG_INTEL_SSE_IMPLEMENTATION
+#      if defined(__SSE4_1__) || defined(__AVX__)
+          /* We are not actually using AVX, but checking for AVX is the best
+             way we can detect SSE4.1 and SSSE3 on MSVC.
+          */
+#         define PNG_INTEL_SSE_IMPLEMENTATION 3
+#      elif defined(__SSSE3__)
+#         define PNG_INTEL_SSE_IMPLEMENTATION 2
+#      elif defined(__SSE2__) || defined(_M_X64) || defined(_M_AMD64) || \
+       (defined(_M_IX86_FP) && _M_IX86_FP >= 2)
+#         define PNG_INTEL_SSE_IMPLEMENTATION 1
+#      else
+#         define PNG_INTEL_SSE_IMPLEMENTATION 0
+#      endif
+#   endif
+
+#   if PNG_INTEL_SSE_IMPLEMENTATION > 0
+#      define PNG_FILTER_OPTIMIZATIONS png_init_filter_functions_sse2
+#   endif
+#endif
 
 /* Is this a build of a DLL where compilation of the object modules requires
  * different preprocessor settings to those required for a simple library?  If
@@ -1189,6 +1225,19 @@ PNG_INTERNAL_FUNCTION(void,png_read_filter_row_paeth3_neon,(png_row_infop
 PNG_INTERNAL_FUNCTION(void,png_read_filter_row_paeth4_neon,(png_row_infop
     row_info, png_bytep row, png_const_bytep prev_row),PNG_EMPTY);
 
+PNG_INTERNAL_FUNCTION(void,png_read_filter_row_sub3_sse2,(png_row_infop
+    row_info, png_bytep row, png_const_bytep prev_row),PNG_EMPTY);
+PNG_INTERNAL_FUNCTION(void,png_read_filter_row_sub4_sse2,(png_row_infop
+    row_info, png_bytep row, png_const_bytep prev_row),PNG_EMPTY);
+PNG_INTERNAL_FUNCTION(void,png_read_filter_row_avg3_sse2,(png_row_infop
+    row_info, png_bytep row, png_const_bytep prev_row),PNG_EMPTY);
+PNG_INTERNAL_FUNCTION(void,png_read_filter_row_avg4_sse2,(png_row_infop
+    row_info, png_bytep row, png_const_bytep prev_row),PNG_EMPTY);
+PNG_INTERNAL_FUNCTION(void,png_read_filter_row_paeth3_sse2,(png_row_infop
+    row_info, png_bytep row, png_const_bytep prev_row),PNG_EMPTY);
+PNG_INTERNAL_FUNCTION(void,png_read_filter_row_paeth4_sse2,(png_row_infop
+    row_info, png_bytep row, png_const_bytep prev_row),PNG_EMPTY);
+
 /* Choose the best filter to use and filter the row data */
 PNG_INTERNAL_FUNCTION(void,png_write_find_filter,(png_structrp png_ptr,
     png_row_infop row_info),PNG_EMPTY);
@@ -1915,7 +1964,12 @@ PNG_INTERNAL_FUNCTION(void, PNG_FILTER_OPTIMIZATIONS, (png_structp png_ptr,
     */
 PNG_INTERNAL_FUNCTION(void, png_init_filter_functions_neon,
    (png_structp png_ptr, unsigned int bpp), PNG_EMPTY);
+PNG_INTERNAL_FUNCTION(void, png_init_filter_functions_sse2,
+   (png_structp png_ptr, unsigned int bpp), PNG_EMPTY);
 #endif
+
+PNG_INTERNAL_FUNCTION(png_uint_32, png_check_keyword, (png_structrp png_ptr,
+   png_const_charp key, png_bytep new_key), PNG_EMPTY);
 
 /* Maintainer: Put new private prototypes here ^ */
 

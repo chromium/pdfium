@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build_overrides/build.gni")
 import("../pdfium.gni")
 
 group("third_party") {
@@ -338,6 +339,31 @@ static_library("fx_lpng") {
     "libpng16/pngwtran.c",
     "libpng16/pngwutil.c",
   ]
+
+  defines = []
+  cflags = []
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    sources += [
+      "libpng16/contrib/intel/filter_sse2_intrinsics.c",
+      "libpng16/contrib/intel/intel_init.c",
+    ]
+    defines += [ "PNG_INTEL_SSE_OPT=1" ]
+  } else if ((current_cpu == "arm" || current_cpu == "arm64") && arm_use_neon) {
+    sources += [
+      "libpng16/arm/arm_init.c",
+      "libpng16/arm/filter_neon_intrinsics.c",
+    ]
+    defines += [
+      "PNG_ARM_NEON_OPT=2",
+      "PNG_ARM_NEON_IMPLEMENTATION=1",
+    ]
+  }
+
+  if (is_win) {
+    # Unary minus applied to unsigned type.
+    cflags += [ "/wd4146" ]
+  }
 }
 
 if (pdf_enable_xfa) {

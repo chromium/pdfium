@@ -1,8 +1,8 @@
 
 /* pngwutil.c - utilities to write a PNG file
  *
- * Last changed in libpng 1.6.19 [November 12, 2015]
- * Copyright (c) 1998-2015 Glenn Randers-Pehrson
+ * Last changed in libpng 1.6.22 [May 26, 2016]
+ * Copyright (c) 1998-2002,2004,2006-2016 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -23,10 +23,10 @@
 void PNGAPI
 png_save_uint_32(png_bytep buf, png_uint_32 i)
 {
-   buf[0] = (png_byte)(i >> 24);
-   buf[1] = (png_byte)(i >> 16);
-   buf[2] = (png_byte)(i >> 8);
-   buf[3] = (png_byte)(i     );
+   buf[0] = (png_byte)((i >> 24) & 0xffU);
+   buf[1] = (png_byte)((i >> 16) & 0xffU);
+   buf[2] = (png_byte)((i >>  8) & 0xffU);
+   buf[3] = (png_byte)( i        & 0xffU);
 }
 
 /* Place a 16-bit number into a buffer in PNG byte order.
@@ -36,8 +36,8 @@ png_save_uint_32(png_bytep buf, png_uint_32 i)
 void PNGAPI
 png_save_uint_16(png_bytep buf, unsigned int i)
 {
-   buf[0] = (png_byte)(i >> 8);
-   buf[1] = (png_byte)(i     );
+   buf[0] = (png_byte)((i >> 8) & 0xffU);
+   buf[1] = (png_byte)( i       & 0xffU);
 }
 #endif
 
@@ -664,90 +664,6 @@ png_write_compressed_data_out(png_structrp png_ptr, compression_state *comp)
       png_error(png_ptr, "error writing ancillary chunked compressed data");
 }
 #endif /* WRITE_COMPRESSED_TEXT */
-
-#if defined(PNG_WRITE_TEXT_SUPPORTED) || defined(PNG_WRITE_pCAL_SUPPORTED) || \
-    defined(PNG_WRITE_iCCP_SUPPORTED) || defined(PNG_WRITE_sPLT_SUPPORTED)
-/* Check that the tEXt or zTXt keyword is valid per PNG 1.0 specification,
- * and if invalid, correct the keyword rather than discarding the entire
- * chunk.  The PNG 1.0 specification requires keywords 1-79 characters in
- * length, forbids leading or trailing whitespace, multiple internal spaces,
- * and the non-break space (0x80) from ISO 8859-1.  Returns keyword length.
- *
- * The 'new_key' buffer must be 80 characters in size (for the keyword plus a
- * trailing '\0').  If this routine returns 0 then there was no keyword, or a
- * valid one could not be generated, and the caller must png_error.
- */
-static png_uint_32
-png_check_keyword(png_structrp png_ptr, png_const_charp key, png_bytep new_key)
-{
-   png_const_charp orig_key = key;
-   png_uint_32 key_len = 0;
-   int bad_character = 0;
-   int space = 1;
-
-   png_debug(1, "in png_check_keyword");
-
-   if (key == NULL)
-   {
-      *new_key = 0;
-      return 0;
-   }
-
-   while (*key && key_len < 79)
-   {
-      png_byte ch = (png_byte)*key++;
-
-      if ((ch > 32 && ch <= 126) || (ch >= 161 /*&& ch <= 255*/))
-         *new_key++ = ch, ++key_len, space = 0;
-
-      else if (space == 0)
-      {
-         /* A space or an invalid character when one wasn't seen immediately
-          * before; output just a space.
-          */
-         *new_key++ = 32, ++key_len, space = 1;
-
-         /* If the character was not a space then it is invalid. */
-         if (ch != 32)
-            bad_character = ch;
-      }
-
-      else if (bad_character == 0)
-         bad_character = ch; /* just skip it, record the first error */
-   }
-
-   if (key_len > 0 && space != 0) /* trailing space */
-   {
-      --key_len, --new_key;
-      if (bad_character == 0)
-         bad_character = 32;
-   }
-
-   /* Terminate the keyword */
-   *new_key = 0;
-
-   if (key_len == 0)
-      return 0;
-
-#ifdef PNG_WARNINGS_SUPPORTED
-   /* Try to only output one warning per keyword: */
-   if (*key != 0) /* keyword too long */
-      png_warning(png_ptr, "keyword truncated");
-
-   else if (bad_character != 0)
-   {
-      PNG_WARNING_PARAMETERS(p)
-
-      png_warning_parameter(p, 1, orig_key);
-      png_warning_parameter_signed(p, 2, PNG_NUMBER_FORMAT_02x, bad_character);
-
-      png_formatted_warning(png_ptr, p, "keyword \"@1\": bad character '0x@2'");
-   }
-#endif /* WARNINGS */
-
-   return key_len;
-}
-#endif /* WRITE_TEXT || WRITE_pCAL || WRITE_iCCP || WRITE_sPLT */
 
 /* Write the IHDR chunk, and update the png_struct with the necessary
  * information.  Note that the rest of this code depends upon this
@@ -2362,6 +2278,28 @@ png_setup_sub_row(png_structrp png_ptr, const png_uint_32 bpp,
    return (sum);
 }
 
+static void /* PRIVATE */
+png_setup_sub_row_only(png_structrp png_ptr, const png_uint_32 bpp,
+    const png_size_t row_bytes)
+{
+   png_bytep rp, dp, lp;
+   png_size_t i;
+
+   png_ptr->try_row[0] = PNG_FILTER_VALUE_SUB;
+
+   for (i = 0, rp = png_ptr->row_buf + 1, dp = png_ptr->try_row + 1; i < bpp;
+        i++, rp++, dp++)
+   {
+      *dp = *rp;
+   }
+
+   for (lp = png_ptr->row_buf + 1; i < row_bytes;
+      i++, rp++, lp++, dp++)
+   {
+      *dp = (png_byte)(((int)*rp - (int)*lp) & 0xff);
+   }
+}
+
 static png_size_t /* PRIVATE */
 png_setup_up_row(png_structrp png_ptr, const png_size_t row_bytes,
     const png_size_t lmins)
@@ -2385,6 +2323,21 @@ png_setup_up_row(png_structrp png_ptr, const png_size_t row_bytes,
    }
 
    return (sum);
+}
+static void /* PRIVATE */
+png_setup_up_row_only(png_structrp png_ptr, const png_size_t row_bytes)
+{
+   png_bytep rp, dp, pp;
+   png_size_t i;
+
+   png_ptr->try_row[0] = PNG_FILTER_VALUE_UP;
+
+   for (i = 0, rp = png_ptr->row_buf + 1, dp = png_ptr->try_row + 1,
+       pp = png_ptr->prev_row + 1; i < row_bytes;
+       i++, rp++, pp++, dp++)
+   {
+      *dp = (png_byte)(((int)*rp - (int)*pp) & 0xff);
+   }
 }
 
 static png_size_t /* PRIVATE */
@@ -2418,6 +2371,27 @@ png_setup_avg_row(png_structrp png_ptr, const png_uint_32 bpp,
    }
 
    return (sum);
+}
+static void /* PRIVATE */
+png_setup_avg_row_only(png_structrp png_ptr, const png_uint_32 bpp,
+      const png_size_t row_bytes)
+{
+   png_bytep rp, dp, pp, lp;
+   png_uint_32 i;
+
+   png_ptr->try_row[0] = PNG_FILTER_VALUE_AVG;
+
+   for (i = 0, rp = png_ptr->row_buf + 1, dp = png_ptr->try_row + 1,
+        pp = png_ptr->prev_row + 1; i < bpp; i++)
+   {
+      *dp++ = (png_byte)(((int)*rp++ - ((int)*pp++ / 2)) & 0xff);
+   }
+
+   for (lp = png_ptr->row_buf + 1; i < row_bytes; i++)
+   {
+      *dp++ = (png_byte)(((int)*rp++ - (((int)*pp++ + (int)*lp++) / 2))
+          & 0xff);
+   }
 }
 
 static png_size_t /* PRIVATE */
@@ -2473,6 +2447,48 @@ png_setup_paeth_row(png_structrp png_ptr, const png_uint_32 bpp,
 
    return (sum);
 }
+static void /* PRIVATE */
+png_setup_paeth_row_only(png_structrp png_ptr, const png_uint_32 bpp,
+    const png_size_t row_bytes)
+{
+   png_bytep rp, dp, pp, cp, lp;
+   png_size_t i;
+
+   png_ptr->try_row[0] = PNG_FILTER_VALUE_PAETH;
+
+   for (i = 0, rp = png_ptr->row_buf + 1, dp = png_ptr->try_row + 1,
+       pp = png_ptr->prev_row + 1; i < bpp; i++)
+   {
+      *dp++ = (png_byte)(((int)*rp++ - (int)*pp++) & 0xff);
+   }
+
+   for (lp = png_ptr->row_buf + 1, cp = png_ptr->prev_row + 1; i < row_bytes;
+        i++)
+   {
+      int a, b, c, pa, pb, pc, p;
+
+      b = *pp++;
+      c = *cp++;
+      a = *lp++;
+
+      p = b - c;
+      pc = a - c;
+
+#ifdef PNG_USE_ABS
+      pa = abs(p);
+      pb = abs(pc);
+      pc = abs(p + pc);
+#else
+      pa = p < 0 ? -p : p;
+      pb = pc < 0 ? -pc : pc;
+      pc = (p + pc) < 0 ? -(p + pc) : p + pc;
+#endif
+
+      p = (pa <= pb && pa <=pc) ? a : (pb <= pc) ? b : c;
+
+      *dp++ = (png_byte)(((int)*rp++ - p) & 0xff);
+   }
+}
 #endif /* WRITE_FILTER */
 
 void /* PRIVATE */
@@ -2481,7 +2497,7 @@ png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
 #ifndef PNG_WRITE_FILTER_SUPPORTED
    png_write_filtered_row(png_ptr, png_ptr->row_buf, row_info->rowbytes+1);
 #else
-   png_byte filter_to_do = png_ptr->do_filter;
+   unsigned int filter_to_do = png_ptr->do_filter;
    png_bytep row_buf;
    png_bytep best_row;
    png_uint_32 bpp;
@@ -2527,27 +2543,24 @@ png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
     */
    best_row = png_ptr->row_buf;
 
-
-   if ((filter_to_do & PNG_FILTER_NONE) != 0 && filter_to_do != PNG_FILTER_NONE)
+   if (PNG_SIZE_MAX/128 <= row_bytes)
    {
+      /* Overflow can occur in the calculation, just select the lowest set
+       * filter.
+       */
+      filter_to_do &= -filter_to_do;
+   }
+   else if ((filter_to_do & PNG_FILTER_NONE) != 0 &&
+         filter_to_do != PNG_FILTER_NONE)
+   {
+      /* Overflow not possible and multiple filters in the list, including the
+       * 'none' filter.
+       */
       png_bytep rp;
       png_size_t sum = 0;
       png_size_t i;
       int v;
 
-      if (PNG_SIZE_MAX/128 <= row_bytes)
-      {
-         for (i = 0, rp = row_buf + 1; i < row_bytes; i++, rp++)
-         {
-            /* Check for overflow */
-            if (sum > PNG_SIZE_MAX/128 - 256)
-               break;
-
-            v = *rp;
-            sum += (v < 128) ? v : 256 - v;
-         }
-      }
-      else /* Overflow is not possible */
       {
          for (i = 0, rp = row_buf + 1; i < row_bytes; i++, rp++)
          {
@@ -2563,7 +2576,7 @@ png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
    if (filter_to_do == PNG_FILTER_SUB)
    /* It's the only filter so no testing is needed */
    {
-      (void) png_setup_sub_row(png_ptr, bpp, row_bytes, mins);
+      png_setup_sub_row_only(png_ptr, bpp, row_bytes);
       best_row = png_ptr->try_row;
    }
 
@@ -2589,7 +2602,7 @@ png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
    /* Up filter */
    if (filter_to_do == PNG_FILTER_UP)
    {
-      (void) png_setup_up_row(png_ptr, row_bytes, mins);
+      png_setup_up_row_only(png_ptr, row_bytes);
       best_row = png_ptr->try_row;
    }
 
@@ -2615,7 +2628,7 @@ png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
    /* Avg filter */
    if (filter_to_do == PNG_FILTER_AVG)
    {
-      (void) png_setup_avg_row(png_ptr, bpp, row_bytes, mins);
+      png_setup_avg_row_only(png_ptr, bpp, row_bytes);
       best_row = png_ptr->try_row;
    }
 
@@ -2641,7 +2654,7 @@ png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
    /* Paeth filter */
    if ((filter_to_do == PNG_FILTER_PAETH) != 0)
    {
-      (void) png_setup_paeth_row(png_ptr, bpp, row_bytes, mins);
+      png_setup_paeth_row_only(png_ptr, bpp, row_bytes);
       best_row = png_ptr->try_row;
    }
 

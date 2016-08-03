@@ -20,3 +20,8 @@ default_android_ndk_version = "r11c"
 
 # Some non-Chromium builds don't support building java targets.
 enable_java_templates = false
+
+# Whether to use the neon FPU instruction set or not.
+if (current_cpu == "arm" ) {
+  arm_use_neon = true
+}
