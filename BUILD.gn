@@ -1158,7 +1158,7 @@ if (pdf_enable_xfa) {
       "xfa/fwl/theme/cfwl_checkboxtp.h",
       "xfa/fwl/theme/cfwl_comboboxtp.cpp",
       "xfa/fwl/theme/cfwl_comboboxtp.h",
-      "xfa/fwl/theme/cfwl_datetimepickedtp.cpp",
+      "xfa/fwl/theme/cfwl_datetimepickertp.cpp",
       "xfa/fwl/theme/cfwl_datetimepickertp.h",
       "xfa/fwl/theme/cfwl_edittp.cpp",
       "xfa/fwl/theme/cfwl_edittp.h",
