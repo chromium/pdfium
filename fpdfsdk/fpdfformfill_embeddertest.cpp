@@ -134,4 +134,27 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_620428) {
   EXPECT_STREQ(L"done", alerts[0].message.c_str());
 }
 
+TEST_F(FPDFFormFillEmbeddertest, BUG_634394) {
+  // Cancel timer inside timer callback.
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("bug_634394.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+  DoOpenActions();
+
+  // Timers fire at most once per AdvanceTime(), allow intervals
+  // to fire several times if possible.
+  delegate.AdvanceTime(1000);
+  delegate.AdvanceTime(1000);
+  delegate.AdvanceTime(1000);
+  delegate.AdvanceTime(1000);
+  delegate.AdvanceTime(1000);
+  UnloadPage(page);
+
+  const auto& alerts = delegate.GetAlerts();
+  EXPECT_EQ(2U, alerts.size());
+}
+
 #endif  // PDF_ENABLE_V8
