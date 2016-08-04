@@ -186,9 +186,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
  protected:
   CPDF_Annot* m_pAnnot;
-
- private:
-  FX_BOOL CreateFormFiller();
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_

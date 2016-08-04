@@ -826,9 +826,6 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
                    FALSE);
 }
 
-FX_BOOL CPDFSDK_BAAnnot::CreateFormFiller() {
-  return TRUE;
-}
 FX_BOOL CPDFSDK_BAAnnot::IsVisible() const {
   uint32_t nFlags = GetFlags();
   return !((nFlags & ANNOTFLAG_INVISIBLE) || (nFlags & ANNOTFLAG_HIDDEN) ||
