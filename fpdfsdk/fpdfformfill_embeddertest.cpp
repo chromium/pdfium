@@ -130,7 +130,8 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_620428) {
   UnloadPage(page);
 
   const auto& alerts = delegate.GetAlerts();
-  EXPECT_EQ(0U, alerts.size());
+  ASSERT_EQ(1U, alerts.size());
+  EXPECT_STREQ(L"done", alerts[0].message.c_str());
 }
 
 #endif  // PDF_ENABLE_V8
