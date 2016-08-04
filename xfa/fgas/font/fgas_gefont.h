@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include "core/fxcrt/include/fx_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/fgas_font.h"
 
@@ -92,16 +93,16 @@ class CFGAS_GEFont {
   uint32_t m_dwLogFontStyle;
 #endif
   CFX_Font* m_pFont;
-  IFGAS_FontMgr* m_pFontMgr;
+  IFGAS_FontMgr* const m_pFontMgr;
   int32_t m_iRefCount;
   FX_BOOL m_bExtFont;
-  IFX_Stream* m_pStream;
-  IFX_FileRead* m_pFileRead;
-  CFX_UnicodeEncoding* m_pFontEncoding;
-  CFX_DiscreteArrayTemplate<uint16_t>* m_pCharWidthMap;
-  CFX_MassArrayTemplate<CFX_Rect>* m_pRectArray;
-  CFX_MapPtrToPtr* m_pBBoxMap;
-  CXFA_PDFFontMgr* m_pProvider;
+  std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> m_pStream;
+  std::unique_ptr<IFX_FileRead, ReleaseDeleter<IFX_FileRead>> m_pFileRead;
+  std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
+  std::unique_ptr<CFX_DiscreteArrayTemplate<uint16_t>> m_pCharWidthMap;
+  std::unique_ptr<CFX_MassArrayTemplate<CFX_Rect>> m_pRectArray;
+  std::unique_ptr<CFX_MapPtrToPtr> m_pBBoxMap;
+  CXFA_PDFFontMgr* m_pProvider;  // not owned.
   CFX_ArrayTemplate<CFGAS_GEFont*> m_SubstFonts;
   std::map<FX_WCHAR, CFGAS_GEFont*> m_FontMapper;
 };

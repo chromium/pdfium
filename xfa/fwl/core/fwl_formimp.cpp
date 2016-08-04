@@ -75,7 +75,6 @@ CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
       m_pMinBox(nullptr),
       m_pMaxBox(nullptr),
       m_pCaptionBox(nullptr),
-      m_pNoteLoop(nullptr),
       m_pSubFocus(nullptr),
       m_fCXBorder(0),
       m_fCYBorder(0),
@@ -100,7 +99,6 @@ CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
 
 CFWL_FormImp::~CFWL_FormImp() {
   RemoveSysButtons();
-  delete m_pNoteLoop;
 }
 
 FWL_Error CFWL_FormImp::GetClassName(CFX_WideString& wsClass) const {
@@ -371,13 +369,16 @@ FWL_Error CFWL_FormImp::DrawWidget(CFX_Graphics* pGraphics,
 #endif
   return FWL_Error::Succeeded;
 }
+
 FWL_FORMSIZE CFWL_FormImp::GetFormSize() {
   return m_eFormSize;
 }
+
 FWL_Error CFWL_FormImp::SetFormSize(FWL_FORMSIZE eFormSize) {
   m_eFormSize = eFormSize;
   return FWL_Error::Succeeded;
 }
+
 IFWL_Widget* CFWL_FormImp::DoModal() {
   IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
@@ -387,8 +388,8 @@ IFWL_Widget* CFWL_FormImp::DoModal() {
   if (!pDriver)
     return nullptr;
 
-  m_pNoteLoop = new CFWL_NoteLoop(this);
-  pDriver->PushNoteLoop(m_pNoteLoop);
+  m_pNoteLoop.reset(new CFWL_NoteLoop(this));
+  pDriver->PushNoteLoop(m_pNoteLoop.get());
   m_bDoModalFlag = TRUE;
   SetStates(FWL_WGTSTATE_Invisible, FALSE);
   pDriver->Run();
@@ -396,13 +397,14 @@ IFWL_Widget* CFWL_FormImp::DoModal() {
 #else
   pDriver->PopNoteLoop();
 #endif
-  delete m_pNoteLoop;
-  m_pNoteLoop = nullptr;
+  m_pNoteLoop.reset();
   return nullptr;
 }
+
 IFWL_Widget* CFWL_FormImp::DoModal(uint32_t& dwCommandID) {
   return DoModal();
 }
+
 FWL_Error CFWL_FormImp::EndDoModal() {
   if (!m_pNoteLoop)
     return FWL_Error::Indefinite;
@@ -426,6 +428,7 @@ FWL_Error CFWL_FormImp::EndDoModal() {
   return m_pNoteLoop->EndModalLoop();
 #endif
 }
+
 FWL_Error CFWL_FormImp::SetBorderRegion(CFX_Path* pPath) {
   return FWL_Error::Succeeded;
 }

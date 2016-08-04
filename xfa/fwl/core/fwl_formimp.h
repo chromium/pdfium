@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_FWL_FORMIMP_H_
 #define XFA_FWL_CORE_FWL_FORMIMP_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_form.h"
 
@@ -134,7 +136,7 @@ class CFWL_FormImp : public CFWL_WidgetImp {
   CFWL_SysBtn* m_pMinBox;
   CFWL_SysBtn* m_pMaxBox;
   CFWL_SysBtn* m_pCaptionBox;
-  CFWL_NoteLoop* m_pNoteLoop;
+  std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
   CFWL_WidgetImp* m_pSubFocus;
   RestoreInfo m_InfoStart;
   FX_FLOAT m_fCXBorder;

@@ -38,16 +38,14 @@ FWL_Error IFWL_Caret::SetColor(CFX_Color crFill) {
 CFWL_CaretImp::CFWL_CaretImp(const CFWL_WidgetImpProperties& properties,
                              IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
+      m_pTimer(new CFWL_CaretTimer(this)),
       m_pTimerInfo(nullptr),
       m_dwElapse(400),
       m_bSetColor(FALSE) {
-  m_pTimer = new CFWL_CaretTimer(this);
   SetStates(FWL_STATE_CAT_HightLight);
 }
 
-CFWL_CaretImp::~CFWL_CaretImp() {
-  delete m_pTimer;
-}
+CFWL_CaretImp::~CFWL_CaretImp() {}
 
 FWL_Error CFWL_CaretImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Caret;

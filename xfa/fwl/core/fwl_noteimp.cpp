@@ -70,10 +70,9 @@ CFWL_NoteDriver::CFWL_NoteDriver()
       m_pFocus(nullptr),
       m_pGrab(nullptr),
       m_pNoteLoop(new CFWL_NoteLoop) {
-  PushNoteLoop(m_pNoteLoop);
+  PushNoteLoop(m_pNoteLoop.get());
 }
 CFWL_NoteDriver::~CFWL_NoteDriver() {
-  delete m_pNoteLoop;
   ClearInvalidEventTargets(TRUE);
 }
 
@@ -655,6 +654,8 @@ void CFWL_NoteDriver::ClearInvalidEventTargets(FX_BOOL bRemoveAll) {
 
 class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
  public:
+  CFWL_CoreToolTipDP(int32_t iInitDelayTime, int32_t iAutoDelayTime);
+
   // IFWL_ToolTipDP
   FWL_Error GetCaption(IFWL_Widget* pWidget,
                        CFX_WideString& wsCaption) override;
@@ -664,7 +665,6 @@ class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
   CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget) override;
 
   CFX_RectF GetAnchor();
-  CFWL_CoreToolTipDP();
 
   CFX_WideString m_wsCaption;
   int32_t m_nInitDelayTime;
@@ -672,9 +672,9 @@ class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
   CFX_RectF m_fAnchor;
 };
 
-CFWL_CoreToolTipDP::CFWL_CoreToolTipDP() {
-  m_nInitDelayTime = 500;
-  m_nAutoPopDelayTime = 50000;
+CFWL_CoreToolTipDP::CFWL_CoreToolTipDP(int32_t iInitDelayTime,
+                                       int32_t iAutoDelayTime)
+    : m_nInitDelayTime(iInitDelayTime), m_nAutoPopDelayTime(iAutoDelayTime) {
   m_fAnchor.Set(0.0, 0.0, 0.0, 0.0);
 }
 
@@ -773,11 +773,9 @@ FX_BOOL CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) {
 
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = nullptr;
 
-CFWL_ToolTipContainer::CFWL_ToolTipContainer() : m_pToolTipImp(nullptr) {
-  m_ToolTipDp = new CFWL_CoreToolTipDP;
-  m_ToolTipDp->m_nInitDelayTime = 0;
-  m_ToolTipDp->m_nAutoPopDelayTime = 2000;
-}
+CFWL_ToolTipContainer::CFWL_ToolTipContainer()
+    : m_pToolTipImp(nullptr), m_pToolTipDp(new CFWL_CoreToolTipDP(0, 2000)) {}
+
 CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {
   if (m_pToolTipImp) {
     IFWL_ToolTip* pToolTip =
@@ -785,7 +783,6 @@ CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {
     pToolTip->Finalize();
     delete pToolTip;
   }
-  delete m_ToolTipDp;
 }
 
 // static

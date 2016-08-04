@@ -531,7 +531,8 @@ void CFWL_WidgetImp::SetAssociateWidget(void* pAssociate) {
 
 CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
-    : m_pProperties(new CFWL_WidgetImpProperties),
+    : m_pWidgetMgr(CFWL_WidgetMgr::GetInstance()),
+      m_pProperties(new CFWL_WidgetImpProperties(properties)),
       m_pDelegate(nullptr),
       m_pCurDelegate(nullptr),
       m_pOuter(pOuter),
@@ -540,14 +541,10 @@ CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
       m_pAssociate(nullptr),
       m_iLock(0),
       m_nEventKey(0) {
-  *m_pProperties = properties;
-  m_pWidgetMgr = CFWL_WidgetMgr::GetInstance();
   ASSERT(m_pWidgetMgr);
 }
 
-CFWL_WidgetImp::~CFWL_WidgetImp() {
-  delete m_pProperties;
-}
+CFWL_WidgetImp::~CFWL_WidgetImp() {}
 
 FX_BOOL CFWL_WidgetImp::IsEnabled() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;

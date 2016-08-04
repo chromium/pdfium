@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_BASEWIDGET_FWL_MONTHCALENDARIMP_H_
 #define XFA_FWL_BASEWIDGET_FWL_MONTHCALENDARIMP_H_
 
+#include <memory>
+
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -164,7 +166,7 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
   CFX_RectF m_rtTemp;
   CFX_WideString m_wsHead;
   CFX_WideString m_wsToday;
-  CFX_DateTime* m_pDateTime;
+  std::unique_ptr<CFX_DateTime> m_pDateTime;
   CFX_ArrayTemplate<FWL_DATEINFO*> m_arrDates;
   int32_t m_iCurYear;
   int32_t m_iCurMonth;

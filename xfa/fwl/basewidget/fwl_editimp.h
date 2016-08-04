@@ -152,7 +152,7 @@ class CFWL_EditImp : public CFWL_WidgetImp {
   FX_FLOAT m_fVAlignOffset;
   FX_FLOAT m_fScrollOffsetX;
   FX_FLOAT m_fScrollOffsetY;
-  CFDE_TxtEdtEngine* m_pEdtEngine;
+  std::unique_ptr<CFDE_TxtEdtEngine> m_pEdtEngine;
   FX_BOOL m_bLButtonDown;
   int32_t m_nSelStart;
   int32_t m_nLimit;

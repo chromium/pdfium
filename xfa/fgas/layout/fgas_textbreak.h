@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
 #define XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_ucd.h"
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_utils.h"
@@ -188,8 +190,8 @@ class CFX_TxtLine {
     m_iArabicChars = 0;
   }
 
-  CFX_TxtCharArray* m_pLineChars;
-  CFX_TxtPieceArray* m_pLinePieces;
+  std::unique_ptr<CFX_TxtCharArray> m_pLineChars;
+  std::unique_ptr<CFX_TxtPieceArray> m_pLinePieces;
   int32_t m_iStart;
   int32_t m_iWidth;
   int32_t m_iArabicChars;
@@ -297,8 +299,8 @@ class CFX_TxtBreak {
   int32_t m_iCurAlignment;
   FX_BOOL m_bArabicNumber;
   FX_BOOL m_bArabicComma;
-  CFX_TxtLine* m_pTxtLine1;
-  CFX_TxtLine* m_pTxtLine2;
+  std::unique_ptr<CFX_TxtLine> m_pTxtLine1;
+  std::unique_ptr<CFX_TxtLine> m_pTxtLine2;
   CFX_TxtLine* m_pCurLine;
   int32_t m_iReady;
   int32_t m_iTolerance;

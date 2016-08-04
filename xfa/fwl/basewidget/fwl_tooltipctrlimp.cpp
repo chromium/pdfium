@@ -48,8 +48,7 @@ CFWL_ToolTipImp::CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
       m_pTimerInfoShow(nullptr),
-      m_pTimerInfoHide(nullptr),
-      m_pTimer(nullptr) {
+      m_pTimerInfoHide(nullptr) {
   m_rtClient.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
   m_rtAnchor.Set(0, 0, 0, 0);
@@ -57,10 +56,7 @@ CFWL_ToolTipImp::CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
   m_TimerHide.m_pToolTip = this;
 }
 
-CFWL_ToolTipImp::~CFWL_ToolTipImp() {
-  delete m_pTimer;
-  m_pTimer = nullptr;
-}
+CFWL_ToolTipImp::~CFWL_ToolTipImp() {}
 
 FWL_Error CFWL_ToolTipImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ToolTip;

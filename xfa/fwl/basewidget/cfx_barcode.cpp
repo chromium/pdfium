@@ -54,12 +54,10 @@ CBC_CodeBase* CreateBarCodeEngineObject(BC_TYPE type) {
 
 CFX_Barcode::CFX_Barcode() {}
 
-CFX_Barcode::~CFX_Barcode() {
-  delete m_pBCEngine;
-}
+CFX_Barcode::~CFX_Barcode() {}
 
 FX_BOOL CFX_Barcode::Create(BC_TYPE type) {
-  m_pBCEngine = CreateBarCodeEngineObject(type);
+  m_pBCEngine.reset(CreateBarCodeEngineObject(type));
   return !!m_pBCEngine;
 }
 BC_TYPE CFX_Barcode::GetType() {
@@ -91,7 +89,7 @@ FX_BOOL CFX_Barcode::CheckContentValidity(const CFX_WideStringC& contents) {
     case BC_EAN13:
     case BC_UPCA:
       return m_pBCEngine
-                 ? static_cast<CBC_OneCode*>(m_pBCEngine)
+                 ? static_cast<CBC_OneCode*>(m_pBCEngine.get())
                        ->CheckContentValidity(contents)
                  : TRUE;
     default:
@@ -108,7 +106,7 @@ FX_BOOL CFX_Barcode::SetPrintChecksum(FX_BOOL checksum) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine)
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine.get())
                                 ->SetPrintChecksum(checksum),
                             TRUE)
                          : FALSE;
@@ -126,7 +124,7 @@ FX_BOOL CFX_Barcode::SetDataLength(int32_t length) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine)
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine.get())
                                 ->SetDataLength(length),
                             TRUE)
                          : FALSE;
@@ -144,7 +142,7 @@ FX_BOOL CFX_Barcode::SetCalChecksum(int32_t state) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine)
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine.get())
                                 ->SetCalChecksum(state),
                             TRUE)
                          : FALSE;
@@ -163,7 +161,7 @@ FX_BOOL CFX_Barcode::SetFont(CFX_Font* pFont) {
     case BC_EAN13:
     case BC_UPCA:
       return m_pBCEngine
-                 ? static_cast<CBC_OneCode*>(m_pBCEngine)->SetFont(pFont)
+                 ? static_cast<CBC_OneCode*>(m_pBCEngine.get())->SetFont(pFont)
                  : FALSE;
     default:
       return FALSE;
@@ -179,10 +177,10 @@ FX_BOOL CFX_Barcode::SetFontSize(FX_FLOAT size) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine
-                 ? (static_cast<CBC_OneCode*>(m_pBCEngine)->SetFontSize(size),
-                    TRUE)
-                 : FALSE;
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine.get())
+                                ->SetFontSize(size),
+                            TRUE)
+                         : FALSE;
     default:
       return FALSE;
   }
@@ -197,10 +195,10 @@ FX_BOOL CFX_Barcode::SetFontStyle(int32_t style) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine
-                 ? (static_cast<CBC_OneCode*>(m_pBCEngine)->SetFontStyle(style),
-                    TRUE)
-                 : FALSE;
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine.get())
+                                ->SetFontStyle(style),
+                            TRUE)
+                         : FALSE;
     default:
       return FALSE;
   }
@@ -215,10 +213,10 @@ FX_BOOL CFX_Barcode::SetFontColor(FX_ARGB color) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine
-                 ? (static_cast<CBC_OneCode*>(m_pBCEngine)->SetFontColor(color),
-                    TRUE)
-                 : FALSE;
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine.get())
+                                ->SetFontColor(color),
+                            TRUE)
+                         : FALSE;
     default:
       return FALSE;
   }
@@ -241,7 +239,7 @@ FX_BOOL CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
     default:
       break;
   }
-  return m_pBCEngine && memptr ? (m_pBCEngine->*memptr)(location) : FALSE;
+  return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(location) : FALSE;
 }
 FX_BOOL CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(int32_t);
@@ -256,7 +254,7 @@ FX_BOOL CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
     default:
       break;
   }
-  return m_pBCEngine && memptr ? (m_pBCEngine->*memptr)(ratio) : FALSE;
+  return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(ratio) : FALSE;
 }
 FX_BOOL CFX_Barcode::SetStartChar(FX_CHAR start) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(FX_CHAR);
@@ -268,7 +266,7 @@ FX_BOOL CFX_Barcode::SetStartChar(FX_CHAR start) {
     default:
       break;
   }
-  return m_pBCEngine && memptr ? (m_pBCEngine->*memptr)(start) : FALSE;
+  return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(start) : FALSE;
 }
 FX_BOOL CFX_Barcode::SetEndChar(FX_CHAR end) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(FX_CHAR);
@@ -280,7 +278,7 @@ FX_BOOL CFX_Barcode::SetEndChar(FX_CHAR end) {
     default:
       break;
   }
-  return m_pBCEngine && memptr ? (m_pBCEngine->*memptr)(end) : FALSE;
+  return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(end) : FALSE;
 }
 FX_BOOL CFX_Barcode::SetVersion(int32_t version) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(int32_t);
@@ -292,7 +290,7 @@ FX_BOOL CFX_Barcode::SetVersion(int32_t version) {
     default:
       break;
   }
-  return m_pBCEngine && memptr ? (m_pBCEngine->*memptr)(version) : FALSE;
+  return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(version) : FALSE;
 }
 FX_BOOL CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
   typedef FX_BOOL (CBC_CodeBase::*memptrtype)(int32_t);
@@ -307,7 +305,7 @@ FX_BOOL CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
     default:
       return FALSE;
   }
-  return m_pBCEngine && memptr ? (m_pBCEngine->*memptr)(level) : FALSE;
+  return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(level) : FALSE;
 }
 FX_BOOL CFX_Barcode::SetTruncated(FX_BOOL truncated) {
   typedef void (CBC_CodeBase::*memptrtype)(FX_BOOL);
@@ -319,29 +317,22 @@ FX_BOOL CFX_Barcode::SetTruncated(FX_BOOL truncated) {
     default:
       break;
   }
-  return m_pBCEngine && memptr ? ((m_pBCEngine->*memptr)(truncated), TRUE)
+  return m_pBCEngine && memptr ? ((m_pBCEngine.get()->*memptr)(truncated), TRUE)
                                : FALSE;
 }
 
 FX_BOOL CFX_Barcode::Encode(const CFX_WideStringC& contents,
                             FX_BOOL isDevice,
                             int32_t& e) {
-  if (!m_pBCEngine) {
-    return FALSE;
-  }
-  return m_pBCEngine->Encode(contents, isDevice, e);
+  return m_pBCEngine && m_pBCEngine->Encode(contents, isDevice, e);
 }
+
 FX_BOOL CFX_Barcode::RenderDevice(CFX_RenderDevice* device,
                                   const CFX_Matrix* matrix,
                                   int32_t& e) {
-  if (!m_pBCEngine) {
-    return FALSE;
-  }
-  return m_pBCEngine->RenderDevice(device, matrix, e);
+  return m_pBCEngine && m_pBCEngine->RenderDevice(device, matrix, e);
 }
+
 FX_BOOL CFX_Barcode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
-  if (!m_pBCEngine) {
-    return FALSE;
-  }
-  return m_pBCEngine->RenderBitmap(pOutBitmap, e);
+  return m_pBCEngine && m_pBCEngine->RenderBitmap(pOutBitmap, e);
 }

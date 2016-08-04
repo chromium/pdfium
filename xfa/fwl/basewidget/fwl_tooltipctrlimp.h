@@ -69,7 +69,6 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   CFX_RectF m_rtAnchor;
   IFWL_TimerInfo* m_pTimerInfoShow;
   IFWL_TimerInfo* m_pTimerInfoHide;
-  CFWL_ToolTipTimer* m_pTimer;
   CFWL_ToolTipTimer m_TimerShow;
   CFWL_ToolTipTimer m_TimerHide;
 };

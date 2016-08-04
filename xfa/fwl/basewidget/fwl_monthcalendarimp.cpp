@@ -151,6 +151,8 @@ CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
+      m_bInit(FALSE),
+      m_pDateTime(new CFX_DateTime),
       m_iCurYear(2011),
       m_iCurMonth(1),
       m_iYear(2011),
@@ -158,7 +160,8 @@ CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
       m_iDay(1),
       m_iHovered(-1),
       m_iLBtnPartStates(CFWL_PartState_Normal),
-      m_iRBtnPartStates(CFWL_PartState_Normal) {
+      m_iRBtnPartStates(CFWL_PartState_Normal),
+      m_iMaxSel(1) {
   m_rtHead.Reset();
   m_rtWeek.Reset();
   m_rtLBtn.Reset();
@@ -171,14 +174,10 @@ CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
   m_rtClient.Reset();
   m_rtWeekNum.Reset();
   m_rtWeekNumSep.Reset();
-  m_pDateTime = new CFX_DateTime;
-  m_bInit = FALSE;
-  m_iMaxSel = 1;
 }
 
 CFWL_MonthCalendarImp::~CFWL_MonthCalendarImp() {
   ClearDateItem();
-  delete m_pDateTime;
   m_arrSelDays.RemoveAll();
 }
 

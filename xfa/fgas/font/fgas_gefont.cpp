@@ -77,12 +77,6 @@ CFGAS_GEFont::CFGAS_GEFont(IFGAS_FontMgr* pFontMgr)
       m_pFontMgr(pFontMgr),
       m_iRefCount(1),
       m_bExtFont(FALSE),
-      m_pStream(nullptr),
-      m_pFileRead(nullptr),
-      m_pFontEncoding(nullptr),
-      m_pCharWidthMap(nullptr),
-      m_pRectArray(nullptr),
-      m_pBBoxMap(nullptr),
       m_pProvider(nullptr) {
 }
 
@@ -96,12 +90,6 @@ CFGAS_GEFont::CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles)
       m_pFontMgr(src.m_pFontMgr),
       m_iRefCount(1),
       m_bExtFont(FALSE),
-      m_pStream(nullptr),
-      m_pFileRead(nullptr),
-      m_pFontEncoding(nullptr),
-      m_pCharWidthMap(nullptr),
-      m_pRectArray(nullptr),
-      m_pBBoxMap(nullptr),
       m_pProvider(nullptr) {
   ASSERT(src.m_pFont);
   m_pFont = new CFX_Font;
@@ -125,16 +113,7 @@ CFGAS_GEFont::~CFGAS_GEFont() {
 
   m_SubstFonts.RemoveAll();
   m_FontMapper.clear();
-  if (m_pFileRead)
-    m_pFileRead->Release();
 
-  if (m_pStream)
-    m_pStream->Release();
-
-  delete m_pFontEncoding;
-  delete m_pCharWidthMap;
-  delete m_pRectArray;
-  delete m_pBBoxMap;
   if (!m_bExtFont)
     delete m_pFont;
 }
@@ -213,22 +192,17 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(const uint8_t* pBuffer, int32_t length) {
 
 FX_BOOL CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream,
                                        FX_BOOL bSaveStream) {
-  if (m_pFont || m_pFileRead || !pFontStream || pFontStream->GetLength() < 1) {
+  if (m_pFont || m_pFileRead || !pFontStream || pFontStream->GetLength() < 1)
     return FALSE;
-  }
-  if (bSaveStream) {
-    m_pStream = pFontStream;
-  }
-  m_pFileRead = FX_CreateFileRead(pFontStream, FALSE);
+  if (bSaveStream)
+    m_pStream.reset(pFontStream);
+
+  m_pFileRead.reset(FX_CreateFileRead(pFontStream, FALSE));
   m_pFont = new CFX_Font;
-  FX_BOOL bRet = m_pFont->LoadFile(m_pFileRead);
-  if (bRet) {
-    bRet = InitFont();
-  } else {
-    m_pFileRead->Release();
-    m_pFileRead = nullptr;
-  }
-  return bRet;
+  if (m_pFont->LoadFile(m_pFileRead.get()))
+    return InitFont();
+  m_pFileRead.reset();
+  return FALSE;
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
@@ -245,16 +219,16 @@ FX_BOOL CFGAS_GEFont::InitFont() {
   if (!m_pFont)
     return FALSE;
   if (!m_pFontEncoding) {
-    m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont);
+    m_pFontEncoding.reset(FX_CreateFontEncodingEx(m_pFont));
     if (!m_pFontEncoding)
       return FALSE;
   }
   if (!m_pCharWidthMap)
-    m_pCharWidthMap = new CFX_DiscreteArrayTemplate<uint16_t>(1024);
+    m_pCharWidthMap.reset(new CFX_DiscreteArrayTemplate<uint16_t>(1024));
   if (!m_pRectArray)
-    m_pRectArray = new CFX_MassArrayTemplate<CFX_Rect>(16);
+    m_pRectArray.reset(new CFX_MassArrayTemplate<CFX_Rect>(16));
   if (!m_pBBoxMap)
-    m_pBBoxMap = new CFX_MapPtrToPtr(16);
+    m_pBBoxMap.reset(new CFX_MapPtrToPtr(16));
 
   return TRUE;
 }

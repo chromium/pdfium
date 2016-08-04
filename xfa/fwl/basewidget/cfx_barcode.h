@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_BASEWIDGET_CFX_BARCODE_H_
 #define XFA_FWL_BASEWIDGET_CFX_BARCODE_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -52,7 +54,7 @@ class CFX_Barcode {
   FX_BOOL SetTruncated(FX_BOOL truncated);
 
  protected:
-  CBC_CodeBase* m_pBCEngine;
+  std::unique_ptr<CBC_CodeBase> m_pBCEngine;
 };
 
 #endif  // XFA_FWL_BASEWIDGET_CFX_BARCODE_H_

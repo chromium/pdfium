@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_FWL_WIDGETIMP_H_
 #define XFA_FWL_CORE_FWL_WIDGETIMP_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/cfwl_event.h"
@@ -154,9 +156,9 @@ class CFWL_WidgetImp {
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
 
-  CFWL_WidgetMgr* m_pWidgetMgr;
+  CFWL_WidgetMgr* const m_pWidgetMgr;
   CFWL_AppImp* m_pOwnerApp;
-  CFWL_WidgetImpProperties* m_pProperties;
+  std::unique_ptr<CFWL_WidgetImpProperties> m_pProperties;
   IFWL_WidgetDelegate* m_pDelegate;
   IFWL_WidgetDelegate* m_pCurDelegate;
   IFWL_Widget* m_pOuter;
