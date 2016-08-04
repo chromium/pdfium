@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_CFDE_TXTEDTENGINE_H_
 #define XFA_FDE_CFDE_TXTEDTENGINE_H_
 
+#include <memory>
+
 #include "xfa/fde/ifde_txtedtengine.h"
 
 class CFDE_TxtEdtBuf;
@@ -150,8 +152,8 @@ class CFDE_TxtEdtEngine {
   FX_BOOL IsSelect();
   void DeleteSelect();
 
-  CFDE_TxtEdtBuf* m_pTxtBuf;
-  CFX_TxtBreak* m_pTextBreak;
+  std::unique_ptr<CFDE_TxtEdtBuf> m_pTxtBuf;
+  std::unique_ptr<CFX_TxtBreak> m_pTextBreak;
   FDE_TXTEDTPARAMS m_Param;
   CFX_ArrayTemplate<IFDE_TxtEdtPage*> m_PagePtrArray;
   CFX_ArrayTemplate<CFDE_TxtEdtParag*> m_ParagPtrArray;

@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_CRT_FGAS_MEMORY_H_
 #define XFA_FGAS_CRT_FGAS_MEMORY_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -21,9 +23,9 @@ class IFX_MemoryAllocator {
   virtual void* Alloc(size_t size) = 0;
   virtual void Free(void* pBlock) = 0;
 
-  static IFX_MemoryAllocator* Create(FX_ALLOCTYPE eType,
-                                     size_t chunkSize,
-                                     size_t blockSize);
+  static std::unique_ptr<IFX_MemoryAllocator> Create(FX_ALLOCTYPE eType,
+                                                     size_t chunkSize,
+                                                     size_t blockSize);
 };
 
 class CFX_Target {

@@ -116,10 +116,9 @@ class CFDE_RenderDevice : public CFX_Target {
                     FX_FLOAT fPenWidth,
                     CFX_GraphStateData& graphState);
 
-  CFX_RenderDevice* m_pDevice;
+  CFX_RenderDevice* const m_pDevice;
   CFX_RectF m_rtClip;
   FX_BOOL m_bOwnerDevice;
-  FXTEXT_CHARPOS* m_pCharPos;
   int32_t m_iCharCount;
 };
 

@@ -29,7 +29,7 @@ IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(CFDE_TxtEdtEngine* pEngine,
 }
 
 CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
-    : m_pTextSet(nullptr),
+    : m_pEditEngine(pEngine),
       m_PieceMassArr(100),
       m_pBgnParag(nullptr),
       m_pEndParag(nullptr),
@@ -37,19 +37,15 @@ CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
       m_nPageStart(-1),
       m_nCharCount(0),
       m_nPageIndex(nPageIndex),
-      m_bLoaded(FALSE),
-      m_pCharWidth(nullptr) {
+      m_bLoaded(FALSE) {
   FXSYS_memset(&m_rtPage, 0, sizeof(CFX_RectF));
   FXSYS_memset(&m_rtPageMargin, 0, sizeof(CFX_RectF));
   FXSYS_memset(&m_rtPageContents, 0, sizeof(CFX_RectF));
   FXSYS_memset(&m_rtPageCanvas, 0, sizeof(CFX_RectF));
-  m_pEditEngine = static_cast<CFDE_TxtEdtEngine*>(pEngine);
 }
 
 CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {
   m_PieceMassArr.RemoveAll(TRUE);
-  delete m_pTextSet;
-  delete[] m_pCharWidth;
 }
 
 CFDE_TxtEdtEngine* CFDE_TxtEdtPage::GetEngine() const {
@@ -308,14 +304,13 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
       (bVertial && bLineReserve) ? (-pParams->fLineSpace) : pParams->fLineSpace;
   FX_FLOAT fLinePos = fLineStart;
   if (!m_pTextSet)
-    m_pTextSet = new CFDE_TxtEdtTextSet(this);
+    m_pTextSet.reset(new CFDE_TxtEdtTextSet(this));
 
   m_PieceMassArr.RemoveAll(TRUE);
   uint32_t dwBreakStatus = FX_TXTBREAK_None;
   int32_t nPieceStart = 0;
-  delete[] m_pCharWidth;
 
-  m_pCharWidth = new int32_t[nPageEnd - nPageStart + 1];
+  m_CharWidths.resize(nPageEnd - nPageStart + 1, 0);
   pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pBreak->ClearBreakPieces();
   m_nPageStart = nPageStart;
@@ -394,7 +389,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
         m_PieceMassArr.Add(TxtEdtPiece);
         for (int32_t k = 0; k < TxtEdtPiece.nCount; k++) {
           CFX_Char* ptc = pPiece->GetCharPtr(k);
-          m_pCharWidth[TxtEdtPiece.nStart + k] = ptc->m_iCharWidth;
+          m_CharWidths[TxtEdtPiece.nStart + k] = ptc->m_iCharWidth;
         }
       }
       fLinePos += fLineStep;
@@ -448,10 +443,8 @@ void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
     return;
 
   m_PieceMassArr.RemoveAll(FALSE);
-  delete m_pTextSet;
-  m_pTextSet = nullptr;
-  delete[] m_pCharWidth;
-  m_pCharWidth = nullptr;
+  m_pTextSet.reset();
+  m_CharWidths.clear();
   if (m_pBgnParag) {
     m_pBgnParag->UnloadParag();
     m_pBgnParag = nullptr;
@@ -480,7 +473,7 @@ FDE_TEXTEDITPIECE* CFDE_TxtEdtPage::GetNext(FX_POSITION& pos,
     return nullptr;
   }
   int32_t nPos = (int32_t)(uintptr_t)pos;
-  pVisualSet = m_pTextSet;
+  pVisualSet = m_pTextSet.get();
   if (nPos + 1 > m_PieceMassArr.GetSize()) {
     pos = nullptr;
   } else {
@@ -502,7 +495,7 @@ FX_WCHAR CFDE_TxtEdtPage::GetChar(const FDE_TEXTEDITPIECE* pIdentity,
 
 int32_t CFDE_TxtEdtPage::GetWidth(const FDE_TEXTEDITPIECE* pIdentity,
                                   int32_t index) const {
-  int32_t nWidth = m_pCharWidth[pIdentity->nStart + index];
+  int32_t nWidth = m_CharWidths[pIdentity->nStart + index];
   return nWidth;
 }
 

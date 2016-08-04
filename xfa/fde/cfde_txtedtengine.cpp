@@ -50,7 +50,7 @@ FDE_TXTEDT_TEXTCHANGE_INFO::FDE_TXTEDT_TEXTCHANGE_INFO() {}
 FDE_TXTEDT_TEXTCHANGE_INFO::~FDE_TXTEDT_TEXTCHANGE_INFO() {}
 
 CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
-    : m_pTextBreak(nullptr),
+    : m_pTxtBuf(new CFDE_TxtEdtBuf()),
       m_nPageLineCount(20),
       m_nLineCount(0),
       m_nAnchorPos(-1),
@@ -67,13 +67,10 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_bAutoLineEnd(TRUE),
       m_wLineEnd(kUnicodeParagraphSeparator) {
   FXSYS_memset(&m_rtCaret, 0, sizeof(CFX_RectF));
-  m_pTxtBuf = new CFDE_TxtEdtBuf();
   m_bAutoLineEnd = (m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto);
 }
 
 CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
-  delete m_pTxtBuf;
-  delete m_pTextBreak;
   RemoveAllParags();
   RemoveAllPages();
   m_Param.pEventSink = nullptr;
@@ -82,7 +79,7 @@ CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
 
 void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
   if (!m_pTextBreak)
-    m_pTextBreak = new CFX_TxtBreak(FX_TXTBREAKPOLICY_None);
+    m_pTextBreak.reset(new CFX_TxtBreak(FX_TXTBREAKPOLICY_None));
 
   FXSYS_memcpy(&m_Param, &params, sizeof(FDE_TXTEDTPARAMS));
   m_wLineEnd = params.wLineBreakChar;
@@ -727,7 +724,7 @@ FX_BOOL CFDE_TxtEdtEngine::Optimize(IFX_Pause* pPause) {
 }
 
 CFDE_TxtEdtBuf* CFDE_TxtEdtEngine::GetTextBuf() const {
-  return m_pTxtBuf;
+  return m_pTxtBuf.get();
 }
 
 int32_t CFDE_TxtEdtEngine::GetTextBufLength() const {
@@ -735,7 +732,7 @@ int32_t CFDE_TxtEdtEngine::GetTextBufLength() const {
 }
 
 CFX_TxtBreak* CFDE_TxtEdtEngine::GetTextBreak() const {
-  return m_pTextBreak;
+  return m_pTextBreak.get();
 }
 
 int32_t CFDE_TxtEdtEngine::GetLineCount() const {
@@ -755,10 +752,9 @@ CFDE_TxtEdtParag* CFDE_TxtEdtEngine::GetParag(int32_t nParagIndex) const {
 }
 
 IFX_CharIter* CFDE_TxtEdtEngine::CreateCharIter() {
-  if (!m_pTxtBuf) {
+  if (!m_pTxtBuf)
     return nullptr;
-  }
-  return new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(m_pTxtBuf));
+  return new CFDE_TxtEdtBufIter(m_pTxtBuf.get());
 }
 
 int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
@@ -986,8 +982,7 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
   FX_WCHAR wChar = L' ';
   int32_t nParagStart = 0;
   int32_t nIndex = 0;
-  std::unique_ptr<IFX_CharIter> pIter(
-      new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(m_pTxtBuf)));
+  std::unique_ptr<IFX_CharIter> pIter(new CFDE_TxtEdtBufIter(m_pTxtBuf.get()));
   pIter->SetAt(0);
   do {
     wChar = pIter->GetChar();

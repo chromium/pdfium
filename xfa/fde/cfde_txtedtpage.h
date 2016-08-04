@@ -7,6 +7,9 @@
 #ifndef XFA_FDE_CFDE_TXTEDTPAGE_H_
 #define XFA_FDE_CFDE_TXTEDTPAGE_H_
 
+#include <memory>
+#include <vector>
+
 #include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fde/ifx_chariter.h"
 
@@ -60,8 +63,8 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
                         FX_FLOAT fTolerance) const;
 
   std::unique_ptr<IFX_CharIter> m_pIter;
-  CFDE_TxtEdtTextSet* m_pTextSet;
-  CFDE_TxtEdtEngine* m_pEditEngine;
+  std::unique_ptr<CFDE_TxtEdtTextSet> m_pTextSet;
+  CFDE_TxtEdtEngine* const m_pEditEngine;
   CFX_MassArrayTemplate<FDE_TEXTEDITPIECE> m_PieceMassArr;
   CFDE_TxtEdtParag* m_pBgnParag;
   CFDE_TxtEdtParag* m_pEndParag;
@@ -74,7 +77,7 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   CFX_RectF m_rtPageMargin;
   CFX_RectF m_rtPageContents;
   CFX_RectF m_rtPageCanvas;
-  int32_t* m_pCharWidth;
+  std::vector<int32_t> m_CharWidths;
 };
 
 #endif  // XFA_FDE_CFDE_TXTEDTPAGE_H_

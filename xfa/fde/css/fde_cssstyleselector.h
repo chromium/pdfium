@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_CSS_FDE_CSSSTYLESELECTOR_H_
 #define XFA_FDE_CSS_FDE_CSSSTYLESELECTOR_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/include/fx_ext.h"
@@ -26,8 +27,8 @@ class FDE_CSSRuleData : public CFX_Target {
                   CFDE_CSSDeclaration* pDecl,
                   uint32_t dwPos);
 
-  CFDE_CSSSelector* pSelector;
-  CFDE_CSSDeclaration* pDeclaration;
+  CFDE_CSSSelector* const pSelector;
+  CFDE_CSSDeclaration* const pDeclaration;
   uint32_t dwPriority;
   FDE_CSSRuleData* pNext;
 };
@@ -88,10 +89,9 @@ class CFDE_CSSRuleCollection : public CFX_Target {
 
 class CFDE_CSSStyleSelector : public CFX_Target {
  public:
-  CFDE_CSSStyleSelector();
+  explicit CFDE_CSSStyleSelector(IFGAS_FontMgr* pFontMgr);
   ~CFDE_CSSStyleSelector() override;
 
-  void SetFontMgr(IFGAS_FontMgr* pFontMgr);
   void SetDefFontSize(FX_FLOAT fFontSize);
 
   FX_BOOL SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
@@ -174,15 +174,15 @@ class CFDE_CSSStyleSelector : public CFX_Target {
   FDE_CSSRUBYPOSITION ToRubyPosition(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSRUBYSPAN ToRubySpan(FDE_CSSPROPERTYVALUE eValue);
 
-  IFGAS_FontMgr* m_pFontMgr;
+  IFGAS_FontMgr* const m_pFontMgr;
   FX_FLOAT m_fDefFontSize;
-  IFX_MemoryAllocator* m_pRuleDataStore;
+  std::unique_ptr<IFX_MemoryAllocator> m_pRuleDataStore;
   CFDE_CSSStyleSheetArray m_SheetGroups[FDE_CSSSTYLESHEETGROUP_MAX];
   CFDE_CSSRuleCollection m_RuleCollection[FDE_CSSSTYLESHEETGROUP_MAX];
   FDE_CSSSTYLESHEETGROUP m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_MAX];
-  IFX_MemoryAllocator* m_pInlineStyleStore;
-  IFX_MemoryAllocator* m_pFixedStyleStore;
-  CFDE_CSSAccelerator* m_pAccelerator;
+  std::unique_ptr<IFX_MemoryAllocator> m_pInlineStyleStore;
+  std::unique_ptr<IFX_MemoryAllocator> m_pFixedStyleStore;
+  std::unique_ptr<CFDE_CSSAccelerator> m_pAccelerator;
   std::vector<FDE_CSSRuleData*> m_MatchedRules;
 };
 
@@ -413,7 +413,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
                       const CFX_WideString& wsValue);
 
   uint32_t m_dwRefCount;
-  IFX_MemoryAllocator* m_pAllocator;
+  IFX_MemoryAllocator* const m_pAllocator;
   CFDE_CSSInheritedData m_InheritedData;
   CFDE_CSSNonInheritedData m_NonInheritedData;
   CFX_WideStringArray m_CustomProperties;

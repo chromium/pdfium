@@ -8,6 +8,7 @@
 #define XFA_FDE_TTO_FDE_TEXTOUT_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
@@ -131,7 +132,7 @@ class CFDE_TextOut : public CFX_Target {
   void LoadText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_RectF& rect);
   void LoadEllipsis();
   void ExpandBuffer(int32_t iSize, int32_t iType);
-  void RetrieveEllPieces(int32_t*& pCharWidths);
+  void RetrieveEllPieces(std::vector<int32_t>* pCharWidths);
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect);
@@ -152,18 +153,16 @@ class CFDE_TextOut : public CFX_Target {
   FX_TXTRUN ToTextRun(const FDE_TTOPIECE* pPiece);
   void DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen*& pPen);
 
-  CFX_TxtBreak* m_pTxtBreak;
-  CFGAS_GEFont* m_pFont;
+  std::unique_ptr<CFX_TxtBreak> m_pTxtBreak;
+  CFGAS_GEFont* m_pFont;  // not owned.
   FX_FLOAT m_fFontSize;
   FX_FLOAT m_fLineSpace;
   FX_FLOAT m_fLinePos;
   FX_FLOAT m_fTolerance;
   int32_t m_iAlignment;
   int32_t m_iTxtBkAlignment;
-  int32_t* m_pCharWidths;
-  int32_t m_iChars;
-  int32_t* m_pEllCharWidths;
-  int32_t m_iEllChars;
+  std::vector<int32_t> m_CharWidths;
+  std::vector<int32_t> m_EllCharWidths;
   FX_WCHAR m_wParagraphBkChar;
   FX_ARGB m_TxtColor;
   uint32_t m_dwStyles;
@@ -179,8 +178,7 @@ class CFDE_TextOut : public CFX_Target {
   int32_t m_iCurLine;
   int32_t m_iCurPiece;
   int32_t m_iTotalLines;
-  FXTEXT_CHARPOS* m_pCharPos;
-  int32_t m_iCharPosSize;
+  std::vector<FXTEXT_CHARPOS> m_CharPos;
   std::unique_ptr<CFDE_RenderDevice> m_pRenderDevice;
   CFX_Int32Array m_hotKeys;
   CFX_RectFArray m_rectArray;

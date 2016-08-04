@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_CSS_FDE_CSSSTYLESHEET_H_
 #define XFA_FDE_CSS_FDE_CSSSTYLESHEET_H_
 
+#include <memory>
 #include <unordered_map>
 
 #include "core/fxcrt/include/fx_ext.h"
@@ -133,7 +134,7 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;
-  IFX_MemoryAllocator* m_pAllocator;
+  std::unique_ptr<IFX_MemoryAllocator> m_pAllocator;
   CFX_MassArrayTemplate<IFDE_CSSRule*> m_RuleArray;
   CFX_WideString m_szUrl;
   CFX_ArrayTemplate<CFDE_CSSSelector*> m_Selectors;

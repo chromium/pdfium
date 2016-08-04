@@ -27,6 +27,7 @@ int32_t CFDE_CSSCounterStyle::FindIndex(const FX_WCHAR* pszIdentifier) {
   }
   return -1;
 }
+
 void CFDE_CSSCounterStyle::DoUpdateIndex(IFDE_CSSValueList* pList) {
   if (!pList)
     return;
@@ -105,13 +106,8 @@ FDE_CSSRuleData::FDE_CSSRuleData(CFDE_CSSSelector* pSel,
   }
 }
 
-CFDE_CSSStyleSelector::CFDE_CSSStyleSelector()
-    : m_pFontMgr(nullptr),
-      m_fDefFontSize(12.0f),
-      m_pRuleDataStore(nullptr),
-      m_pInlineStyleStore(nullptr),
-      m_pFixedStyleStore(nullptr),
-      m_pAccelerator(nullptr) {
+CFDE_CSSStyleSelector::CFDE_CSSStyleSelector(IFGAS_FontMgr* pFontMgr)
+    : m_pFontMgr(pFontMgr), m_fDefFontSize(12.0f) {
   m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_High] = FDE_CSSSTYLESHEETGROUP_Author;
   m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_Mid] = FDE_CSSSTYLESHEETGROUP_User;
   m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_Low] =
@@ -120,14 +116,8 @@ CFDE_CSSStyleSelector::CFDE_CSSStyleSelector()
 
 CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {
   Reset();
-  delete m_pInlineStyleStore;
-  delete m_pFixedStyleStore;
-  delete m_pAccelerator;
 }
 
-void CFDE_CSSStyleSelector::SetFontMgr(IFGAS_FontMgr* pFontMgr) {
-  m_pFontMgr = pFontMgr;
-}
 void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
   ASSERT(fFontSize > 0);
   m_fDefFontSize = fFontSize;
@@ -135,9 +125,9 @@ void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
 
 CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
   if (!m_pAccelerator)
-    m_pAccelerator = new CFDE_CSSAccelerator;
+    m_pAccelerator.reset(new CFDE_CSSAccelerator);
   m_pAccelerator->Clear();
-  return m_pAccelerator;
+  return m_pAccelerator.get();
 }
 
 IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
@@ -146,8 +136,8 @@ IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
     m_pFixedStyleStore = IFX_MemoryAllocator::Create(
         FX_ALLOCTYPE_Fixed, 16, sizeof(CFDE_CSSComputedStyle));
   }
-  CFDE_CSSComputedStyle* pStyle = FXTARGET_NewWith(m_pFixedStyleStore)
-      CFDE_CSSComputedStyle(m_pFixedStyleStore);
+  CFDE_CSSComputedStyle* pStyle = FXTARGET_NewWith(m_pFixedStyleStore.get())
+      CFDE_CSSComputedStyle(m_pFixedStyleStore.get());
   if (pParentStyle) {
     pStyle->m_InheritedData =
         static_cast<CFDE_CSSComputedStyle*>(pParentStyle)->m_InheritedData;
@@ -157,6 +147,7 @@ IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
   pStyle->m_NonInheritedData.Reset();
   return pStyle;
 }
+
 FX_BOOL CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
                                              IFDE_CSSStyleSheet* pSheet) {
   ASSERT(eType < FDE_CSSSTYLESHEETGROUP_MAX);
@@ -166,6 +157,7 @@ FX_BOOL CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
     dest.Add(pSheet);
   return TRUE;
 }
+
 FX_BOOL CFDE_CSSStyleSelector::SetStyleSheets(
     FDE_CSSSTYLESHEETGROUP eType,
     const CFDE_CSSStyleSheetArray* pArray) {
@@ -177,27 +169,30 @@ FX_BOOL CFDE_CSSStyleSelector::SetStyleSheets(
     dest.RemoveAt(0, dest.GetSize());
   return TRUE;
 }
+
 void CFDE_CSSStyleSelector::SetStylePriority(
     FDE_CSSSTYLESHEETGROUP eType,
     FDE_CSSSTYLESHEETPRIORITY ePriority) {
   m_ePriorities[ePriority] = eType;
 }
+
 void CFDE_CSSStyleSelector::UpdateStyleIndex(uint32_t dwMediaList) {
   Reset();
   m_pRuleDataStore = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 1024, 0);
   for (int32_t iGroup = 0; iGroup < FDE_CSSSTYLESHEETGROUP_MAX; ++iGroup) {
     CFDE_CSSRuleCollection& rules = m_RuleCollection[iGroup];
-    rules.m_pStaticStore = m_pRuleDataStore;
+    rules.m_pStaticStore = m_pRuleDataStore.get();
     rules.AddRulesFrom(m_SheetGroups[iGroup], dwMediaList, m_pFontMgr);
   }
 }
+
 void CFDE_CSSStyleSelector::Reset() {
   for (int32_t iGroup = 0; iGroup < FDE_CSSSTYLESHEETGROUP_MAX; ++iGroup) {
     m_RuleCollection[iGroup].Clear();
   }
-  delete m_pRuleDataStore;
-  m_pRuleDataStore = nullptr;
+  m_pRuleDataStore.reset();
 }
+
 int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CXFA_CSSTagProvider* pTag,
     CFDE_CSSDeclarationArray& matchedDecls,
@@ -325,16 +320,18 @@ void CFDE_CSSStyleSelector::ComputeStyle(
       uint32_t dwAttriHash = FX_HashCode_GetW(wsAttri.AsStringC(), true);
       if (dwAttriHash == s_dwStyleHash) {
         if (!pDecl)
-          pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
+          pDecl =
+              FXTARGET_NewWith(m_pInlineStyleStore.get()) CFDE_CSSDeclaration;
 
         AppendInlineStyle(pDecl, wsValue.c_str(), wsValue.GetLength());
       } else if (dwAttriHash == s_dwAlignHash) {
         if (!pDecl)
-          pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
+          pDecl =
+              FXTARGET_NewWith(m_pInlineStyleStore.get()) CFDE_CSSDeclaration;
 
         FDE_CSSPROPERTYARGS args;
         args.pStringCache = nullptr;
-        args.pStaticStore = m_pInlineStyleStore;
+        args.pStaticStore = m_pInlineStyleStore.get();
         args.pProperty = FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY_TextAlign);
         pDecl->AddProperty(&args, wsValue.c_str(), wsValue.GetLength());
       }
@@ -431,6 +428,7 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
     }
   }
 }
+
 void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                                               const FX_WCHAR* psz,
                                               int32_t iLen) {
@@ -443,7 +441,7 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
   const FX_WCHAR* psz2;
   FDE_CSSPROPERTYARGS args;
   args.pStringCache = nullptr;
-  args.pStaticStore = m_pInlineStyleStore;
+  args.pStaticStore = m_pInlineStyleStore.get();
   args.pProperty = nullptr;
   CFX_WideString wsName;
   while (1) {
@@ -1016,6 +1014,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
     ASSERT(FALSE);
   }
 }
+
 FX_FLOAT CFDE_CSSStyleSelector::ApplyNumber(FDE_CSSPRIMITIVETYPE eUnit,
                                             FX_FLOAT fValue,
                                             FX_FLOAT fPercentBase) {
@@ -1042,6 +1041,7 @@ FX_FLOAT CFDE_CSSStyleSelector::ApplyNumber(FDE_CSSPRIMITIVETYPE eUnit,
       return fValue;
   }
 }
+
 FDE_CSSRUBYSPAN CFDE_CSSStyleSelector::ToRubySpan(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_None:
@@ -1049,6 +1049,7 @@ FDE_CSSRUBYSPAN CFDE_CSSStyleSelector::ToRubySpan(FDE_CSSPROPERTYVALUE eValue) {
       return FDE_CSSRUBYSPAN_None;
   }
 }
+
 FDE_CSSRUBYPOSITION CFDE_CSSStyleSelector::ToRubyPosition(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1064,6 +1065,7 @@ FDE_CSSRUBYPOSITION CFDE_CSSStyleSelector::ToRubyPosition(
       return FDE_CSSRUBYPOSITION_Before;
   }
 }
+
 FDE_CSSRUBYOVERHANG CFDE_CSSStyleSelector::ToRubyOverhang(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1078,6 +1080,7 @@ FDE_CSSRUBYOVERHANG CFDE_CSSStyleSelector::ToRubyOverhang(
       return FDE_CSSRUBYOVERHANG_None;
   }
 }
+
 FDE_CSSRUBYALIGN CFDE_CSSStyleSelector::ToRubyAlign(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1103,6 +1106,7 @@ FDE_CSSRUBYALIGN CFDE_CSSStyleSelector::ToRubyAlign(
       return FDE_CSSRUBYALIGN_Auto;
   }
 }
+
 FX_BOOL CFDE_CSSStyleSelector::ToTextEmphasisMark(
     FDE_CSSPROPERTYVALUE eValue,
     FDE_CSSTEXTEMPHASISMARK& eMark) {
@@ -1129,6 +1133,7 @@ FX_BOOL CFDE_CSSStyleSelector::ToTextEmphasisMark(
       return FALSE;
   }
 }
+
 FX_BOOL CFDE_CSSStyleSelector::ToTextEmphasisFill(
     FDE_CSSPROPERTYVALUE eValue,
     FDE_CSSTEXTEMPHASISFILL& eFill) {
@@ -1143,6 +1148,7 @@ FX_BOOL CFDE_CSSStyleSelector::ToTextEmphasisFill(
       return FALSE;
   }
 }
+
 FDE_CSSBKGATTACHMENT CFDE_CSSStyleSelector::ToBKGAttachment(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1154,6 +1160,7 @@ FDE_CSSBKGATTACHMENT CFDE_CSSStyleSelector::ToBKGAttachment(
       return FDE_CSSBKGATTACHMENT_Fixed;
   }
 }
+
 FDE_CSSCAPTIONSIDE CFDE_CSSStyleSelector::ToCaptionSide(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1173,6 +1180,7 @@ FDE_CSSCAPTIONSIDE CFDE_CSSStyleSelector::ToCaptionSide(
       return FDE_CSSCAPTIONSIDE_Top;
   }
 }
+
 FDE_CSSPOSITION CFDE_CSSStyleSelector::ToPosition(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Static:
@@ -1187,6 +1195,7 @@ FDE_CSSPOSITION CFDE_CSSStyleSelector::ToPosition(FDE_CSSPROPERTYVALUE eValue) {
       return FDE_CSSPOSITION_Static;
   }
 }
+
 FDE_CSSCURSOR CFDE_CSSStyleSelector::ToCursor(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Auto:
@@ -1215,6 +1224,7 @@ FDE_CSSCURSOR CFDE_CSSStyleSelector::ToCursor(FDE_CSSPROPERTYVALUE eValue) {
       return FDE_CSSCURSOR_Auto;
   }
 }
+
 FDE_CSSBKGREPEAT CFDE_CSSStyleSelector::ToBKGRepeat(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1230,6 +1240,7 @@ FDE_CSSBKGREPEAT CFDE_CSSStyleSelector::ToBKGRepeat(
       return FDE_CSSBKGREPEAT_Repeat;
   }
 }
+
 FDE_CSSTEXTCOMBINE CFDE_CSSStyleSelector::ToTextCombine(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1240,6 +1251,7 @@ FDE_CSSTEXTCOMBINE CFDE_CSSStyleSelector::ToTextCombine(
       return FDE_CSSTEXTCOMBINE_None;
   }
 }
+
 FDE_CSSLINEBREAK CFDE_CSSStyleSelector::ToLineBreak(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1255,6 +1267,7 @@ FDE_CSSLINEBREAK CFDE_CSSStyleSelector::ToLineBreak(
       return FDE_CSSLINEBREAK_Auto;
   }
 }
+
 FDE_CSSOVERFLOW CFDE_CSSStyleSelector::ToOverflow(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Visible:
@@ -1273,6 +1286,7 @@ FDE_CSSOVERFLOW CFDE_CSSStyleSelector::ToOverflow(FDE_CSSPROPERTYVALUE eValue) {
       return FDE_CSSOVERFLOW_Visible;
   }
 }
+
 FDE_CSSWRITINGMODE CFDE_CSSStyleSelector::ToWritingMode(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1286,6 +1300,7 @@ FDE_CSSWRITINGMODE CFDE_CSSStyleSelector::ToWritingMode(
       return FDE_CSSWRITINGMODE_HorizontalTb;
   }
 }
+
 FDE_CSSWORDBREAK CFDE_CSSStyleSelector::ToWordBreak(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1301,6 +1316,7 @@ FDE_CSSWORDBREAK CFDE_CSSStyleSelector::ToWordBreak(
       return FDE_CSSWORDBREAK_Normal;
   }
 }
+
 FDE_CSSFLOAT CFDE_CSSStyleSelector::ToFloat(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Left:
@@ -1313,6 +1329,7 @@ FDE_CSSFLOAT CFDE_CSSStyleSelector::ToFloat(FDE_CSSPROPERTYVALUE eValue) {
       return FDE_CSSFLOAT_None;
   }
 }
+
 FDE_CSSCLEAR CFDE_CSSStyleSelector::ToClear(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_None:
@@ -1327,6 +1344,7 @@ FDE_CSSCLEAR CFDE_CSSStyleSelector::ToClear(FDE_CSSPROPERTYVALUE eValue) {
       return FDE_CSSCLEAR_None;
   }
 }
+
 FDE_CSSPAGEBREAK CFDE_CSSStyleSelector::ToPageBreak(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1344,6 +1362,7 @@ FDE_CSSPAGEBREAK CFDE_CSSStyleSelector::ToPageBreak(
       return FDE_CSSPAGEBREAK_Auto;
   }
 }
+
 FDE_CSSDISPLAY CFDE_CSSStyleSelector::ToDisplay(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Inline:
@@ -1392,6 +1411,7 @@ FDE_CSSDISPLAY CFDE_CSSStyleSelector::ToDisplay(FDE_CSSPROPERTYVALUE eValue) {
       return FDE_CSSDISPLAY_Inline;
   }
 }
+
 FDE_CSSTEXTALIGN CFDE_CSSStyleSelector::ToTextAlign(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1407,6 +1427,7 @@ FDE_CSSTEXTALIGN CFDE_CSSStyleSelector::ToTextAlign(
       return FDE_CSSTEXTALIGN_Left;
   }
 }
+
 uint16_t CFDE_CSSStyleSelector::ToFontWeight(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Normal:
@@ -1421,6 +1442,7 @@ uint16_t CFDE_CSSStyleSelector::ToFontWeight(FDE_CSSPROPERTYVALUE eValue) {
       return 400;
   }
 }
+
 FDE_CSSFONTSTYLE CFDE_CSSStyleSelector::ToFontStyle(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1431,6 +1453,7 @@ FDE_CSSFONTSTYLE CFDE_CSSStyleSelector::ToFontStyle(
       return FDE_CSSFONTSTYLE_Normal;
   }
 }
+
 FDE_CSSBORDERSTYLE CFDE_CSSStyleSelector::ToBorderStyle(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1458,6 +1481,7 @@ FDE_CSSBORDERSTYLE CFDE_CSSStyleSelector::ToBorderStyle(
       return FDE_CSSBORDERSTYLE_None;
   }
 }
+
 FX_BOOL CFDE_CSSStyleSelector::SetLengthWithPercent(
     FDE_CSSLENGTH& width,
     FDE_CSSPRIMITIVETYPE eType,
@@ -1494,6 +1518,7 @@ FX_BOOL CFDE_CSSStyleSelector::SetLengthWithPercent(
   }
   return FALSE;
 }
+
 FX_FLOAT CFDE_CSSStyleSelector::ToFontSize(FDE_CSSPROPERTYVALUE eValue,
                                            FX_FLOAT fCurFontSize) {
   switch (eValue) {
@@ -1519,6 +1544,7 @@ FX_FLOAT CFDE_CSSStyleSelector::ToFontSize(FDE_CSSPROPERTYVALUE eValue,
       return fCurFontSize;
   }
 }
+
 FDE_CSSVERTICALALIGN CFDE_CSSStyleSelector::ToVerticalAlign(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1542,6 +1568,7 @@ FDE_CSSVERTICALALIGN CFDE_CSSStyleSelector::ToVerticalAlign(
       return FDE_CSSVERTICALALIGN_Baseline;
   }
 }
+
 FDE_CSSLISTSTYLETYPE CFDE_CSSStyleSelector::ToListStyleType(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1591,12 +1618,14 @@ FDE_CSSLISTSTYLETYPE CFDE_CSSStyleSelector::ToListStyleType(
       return FDE_CSSLISTSTYLETYPE_Disc;
   }
 }
+
 FDE_CSSLISTSTYLEPOSITION CFDE_CSSStyleSelector::ToListStylePosition(
     FDE_CSSPROPERTYVALUE eValue) {
   return eValue == FDE_CSSPROPERTYVALUE_Inside
              ? FDE_CSSLISTSTYLEPOSITION_Inside
              : FDE_CSSLISTSTYLEPOSITION_Outside;
 }
+
 FDE_CSSVISIBILITY CFDE_CSSStyleSelector::ToVisibility(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1610,6 +1639,7 @@ FDE_CSSVISIBILITY CFDE_CSSStyleSelector::ToVisibility(
       return FDE_CSSVISIBILITY_Visible;
   }
 }
+
 FDE_CSSWHITESPACE CFDE_CSSStyleSelector::ToWhiteSpace(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1627,6 +1657,7 @@ FDE_CSSWHITESPACE CFDE_CSSStyleSelector::ToWhiteSpace(
       return FDE_CSSWHITESPACE_Normal;
   }
 }
+
 uint32_t CFDE_CSSStyleSelector::ToTextDecoration(IFDE_CSSValueList* pValue) {
   uint32_t dwDecoration = 0;
   for (int32_t i = pValue->CountValues() - 1; i >= 0; --i) {
@@ -1656,6 +1687,7 @@ uint32_t CFDE_CSSStyleSelector::ToTextDecoration(IFDE_CSSValueList* pValue) {
   }
   return dwDecoration;
 }
+
 FDE_CSSTEXTTRANSFORM CFDE_CSSStyleSelector::ToTextTransform(
     FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
@@ -1671,6 +1703,7 @@ FDE_CSSTEXTTRANSFORM CFDE_CSSStyleSelector::ToTextTransform(
       return FDE_CSSTEXTTRANSFORM_None;
   }
 }
+
 FDE_CSSFONTVARIANT CFDE_CSSStyleSelector::ToFontVariant(
     FDE_CSSPROPERTYVALUE eValue) {
   return eValue == FDE_CSSPROPERTYVALUE_SmallCaps ? FDE_CSSFONTVARIANT_SmallCaps

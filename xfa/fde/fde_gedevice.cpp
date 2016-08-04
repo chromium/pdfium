@@ -17,7 +17,6 @@ CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,
                                      FX_BOOL bOwnerDevice)
     : m_pDevice(pDevice),
       m_bOwnerDevice(bOwnerDevice),
-      m_pCharPos(nullptr),
       m_iCharCount(0) {
   ASSERT(pDevice);
 
@@ -27,7 +26,6 @@ CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,
 }
 
 CFDE_RenderDevice::~CFDE_RenderDevice() {
-  FX_Free(m_pCharPos);
   if (m_bOwnerDevice)
     delete m_pDevice;
 }

@@ -16,17 +16,12 @@ const int kDefaultChunkCount = 2;
 }  // namespace
 
 CFDE_TxtEdtBuf::CFDE_TxtEdtBuf()
-    : m_nChunkSize(kDefaultChunkSize),
-      m_nTotal(0),
-      m_bChanged(FALSE),
-      m_pAllocator(nullptr) {
-  ASSERT(m_nChunkSize);
+    : m_nChunkSize(kDefaultChunkSize), m_nTotal(0), m_bChanged(FALSE) {
   ResetChunkBuffer(kDefaultChunkCount, m_nChunkSize);
 }
 
 CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {
   Clear(TRUE);
-  delete m_pAllocator;
   m_Chunks.RemoveAll();
 }
 
@@ -271,8 +266,6 @@ void CFDE_TxtEdtBuf::ResetChunkBuffer(int32_t nDefChunkCount,
                                       int32_t nChunkSize) {
   ASSERT(nChunkSize);
   ASSERT(nDefChunkCount);
-  delete m_pAllocator;
-  m_pAllocator = nullptr;
   m_Chunks.RemoveAll();
   m_nChunkSize = nChunkSize;
   int32_t nChunkLength =

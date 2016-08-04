@@ -8,6 +8,7 @@
 #define XFA_FDE_FDE_RENDER_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "xfa/fde/fde_gedevice.h"
@@ -40,8 +41,7 @@ class CFDE_RenderContext : public CFX_Target {
   FDE_RENDERSTATUS m_eStatus;
   CFDE_RenderDevice* m_pRenderDevice;
   CFX_Matrix m_Transform;
-  FXTEXT_CHARPOS* m_pCharPos;
-  int32_t m_iCharPosCount;
+  std::vector<FXTEXT_CHARPOS> m_CharPos;
   std::unique_ptr<CFDE_Brush> m_pBrush;
   std::unique_ptr<CFDE_VisualSetIterator> m_pIterator;
 };

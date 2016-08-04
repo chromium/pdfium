@@ -16,9 +16,7 @@
 CFDE_RenderContext::CFDE_RenderContext()
     : m_eStatus(FDE_RENDERSTATUS_Reset),
       m_pRenderDevice(nullptr),
-      m_Transform(),
-      m_pCharPos(nullptr),
-      m_iCharPosCount(0) {
+      m_Transform() {
   m_Transform.SetIdentity();
 }
 
@@ -101,9 +99,7 @@ void CFDE_RenderContext::StopRender() {
   m_Transform.SetIdentity();
   m_pIterator.reset();
   m_pBrush.reset();
-  FX_Free(m_pCharPos);
-  m_pCharPos = nullptr;
-  m_iCharPosCount = 0;
+  m_CharPos.clear();
 }
 
 void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
@@ -122,19 +118,14 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   if (!m_pBrush)
     m_pBrush.reset(new CFDE_Brush);
 
-  if (!m_pCharPos)
-    m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, iCount);
-  else if (m_iCharPosCount < iCount)
-    m_pCharPos = FX_Realloc(FXTEXT_CHARPOS, m_pCharPos, iCount);
+  if (m_CharPos.size() < static_cast<size_t>(iCount))
+    m_CharPos.resize(iCount, FXTEXT_CHARPOS());
 
-  if (m_iCharPosCount < iCount)
-    m_iCharPosCount = iCount;
-
-  iCount = pTextSet->GetDisplayPos(pText, m_pCharPos, FALSE);
+  iCount = pTextSet->GetDisplayPos(pText, m_CharPos.data(), FALSE);
   FX_FLOAT fFontSize = pTextSet->GetFontSize();
   FX_ARGB dwColor = pTextSet->GetFontColor();
   m_pBrush->SetColor(dwColor);
-  m_pRenderDevice->DrawString(m_pBrush.get(), pFont, m_pCharPos, iCount,
+  m_pRenderDevice->DrawString(m_pBrush.get(), pFont, m_CharPos.data(), iCount,
                               fFontSize, &m_Transform);
 }
 

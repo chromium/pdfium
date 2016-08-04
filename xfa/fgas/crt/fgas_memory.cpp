@@ -27,10 +27,11 @@ class CFX_DefStore : public IFX_MemoryAllocator, public CFX_Target {
 
 }  // namespace
 
-IFX_MemoryAllocator* IFX_MemoryAllocator::Create(FX_ALLOCTYPE eType,
-                                                 size_t chunkSize,
-                                                 size_t blockSize) {
-  return new CFX_DefStore();
+std::unique_ptr<IFX_MemoryAllocator> IFX_MemoryAllocator::Create(
+    FX_ALLOCTYPE eType,
+    size_t chunkSize,
+    size_t blockSize) {
+  return std::unique_ptr<IFX_MemoryAllocator>(new CFX_DefStore());
 }
 
 #else  // MEMORY_TOOL_REPLACES_ALLOCATOR
@@ -88,17 +89,19 @@ class CFX_FixedStore : public IFX_MemoryAllocator, public CFX_Target {
 
 #define FX_4BYTEALIGN(size) (((size) + 3) & ~3)
 
-IFX_MemoryAllocator* IFX_MemoryAllocator::Create(FX_ALLOCTYPE eType,
-                                                 size_t chunkSize,
-                                                 size_t blockSize) {
+std::unique_ptr<IFX_MemoryAllocator> IFX_MemoryAllocator::Create(
+    FX_ALLOCTYPE eType,
+    size_t chunkSize,
+    size_t blockSize) {
   switch (eType) {
     case FX_ALLOCTYPE_Static:
-      return new CFX_StaticStore(chunkSize);
+      return std::unique_ptr<IFX_MemoryAllocator>(
+          new CFX_StaticStore(chunkSize));
     case FX_ALLOCTYPE_Fixed:
-      return new CFX_FixedStore(blockSize, chunkSize);
+      return std::unique_ptr<IFX_MemoryAllocator>(new CFX_FixedStore(blockSize, chunkSize);
     default:
       ASSERT(0);
-      return nullptr;
+      return std::unique_ptr<IFX_MemoryAllocator>();
   }
 }
 

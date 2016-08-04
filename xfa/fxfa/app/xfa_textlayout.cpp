@@ -96,8 +96,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
     IFGAS_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
     ASSERT(pFontMgr);
-    m_pSelector.reset(new CFDE_CSSStyleSelector);
-    m_pSelector->SetFontMgr(pFontMgr);
+    m_pSelector.reset(new CFDE_CSSStyleSelector(pFontMgr));
     FX_FLOAT fFontSize = 10;
     CXFA_Font font = pTextProvider->GetFontNode();
     if (font) {
@@ -252,8 +251,8 @@ void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
   if (!pXMLContainer || !pTextProvider || m_pAllocator) {
     return;
   }
-  m_pAllocator.reset(IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Fixed, 32,
-                                                 sizeof(CXFA_CSSTagProvider)));
+  m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Fixed, 32,
+                                             sizeof(CXFA_CSSTagProvider));
   InitCSSData(pTextProvider);
   IFDE_CSSComputedStyle* pRootStyle = CreateRootStyle(pTextProvider);
   ParseRichText(pXMLContainer, pRootStyle);
@@ -1294,8 +1293,7 @@ FX_BOOL CXFA_TextLayout::Loader(const CFX_SizeF& szText,
                                 FX_FLOAT& fLinePos,
                                 FX_BOOL bSavePieces) {
   if (!m_pAllocator) {
-    m_pAllocator.reset(
-        IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 256, 0));
+    m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 256, 0);
   }
   GetTextDataNode();
   if (!m_pTextDataNode)
