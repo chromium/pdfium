@@ -8,12 +8,16 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 
+#include <memory>
+
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_ge.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+namespace {
+
 class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
  public:
   void* MapFont(int weight,
@@ -24,10 +28,12 @@ class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
                 int& iExact) override;
   FX_BOOL ParseFontCfg(const char** pUserPaths);
 };
-#define LINUX_GPNAMESIZE 6
-static const struct {
-  const FX_CHAR* NameArr[LINUX_GPNAMESIZE];
-} LinuxGpFontList[] = {
+
+const size_t kLinuxGpNameSize = 6;
+
+const struct {
+  const FX_CHAR* NameArr[kLinuxGpNameSize];
+} g_LinuxGpFontList[] = {
     {{"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic", "Kochi Gothic",
       "VL Gothic regular"}},
     {{"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic", nullptr,
@@ -37,18 +43,22 @@ static const struct {
     {{"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho", nullptr,
       "VL Gothic regular"}},
 };
-static const FX_CHAR* const g_LinuxGbFontList[] = {
+
+const FX_CHAR* const g_LinuxGbFontList[] = {
     "AR PL UMing CN Light", "WenQuanYi Micro Hei", "AR PL UKai CN",
 };
-static const FX_CHAR* const g_LinuxB5FontList[] = {
+
+const FX_CHAR* const g_LinuxB5FontList[] = {
     "AR PL UMing TW Light", "WenQuanYi Micro Hei", "AR PL UKai TW",
 };
-static const FX_CHAR* const g_LinuxHGFontList[] = {
+
+const FX_CHAR* const g_LinuxHGFontList[] = {
     "UnDotum",
 };
-static int32_t GetJapanesePreference(const FX_CHAR* facearr,
-                                     int weight,
-                                     int picth_family) {
+
+size_t GetJapanesePreference(const FX_CHAR* facearr,
+                             int weight,
+                             int pitch_family) {
   CFX_ByteString face = facearr;
   if (face.Find("Gothic") >= 0 ||
       face.Find("\x83\x53\x83\x56\x83\x62\x83\x4e") >= 0) {
@@ -65,11 +75,14 @@ static int32_t GetJapanesePreference(const FX_CHAR* facearr,
     }
     return 3;
   }
-  if (!(picth_family & FXFONT_FF_ROMAN) && weight > 400) {
+  if (!(pitch_family & FXFONT_FF_ROMAN) && weight > 400) {
     return 0;
   }
   return 2;
 }
+
+}  // namespace
+
 void* CFX_LinuxFontInfo::MapFont(int weight,
                                  FX_BOOL bItalic,
                                  int charset,
@@ -84,17 +97,16 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   FX_BOOL bCJK = TRUE;
   switch (charset) {
     case FXFONT_SHIFTJIS_CHARSET: {
-      int32_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
-      if (index < 0) {
-        break;
-      }
-      for (int32_t i = 0; i < LINUX_GPNAMESIZE; i++) {
-        auto it = m_FontList.find(LinuxGpFontList[index].NameArr[i]);
+      size_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
+      ASSERT(index < FX_ArraySize(g_LinuxGpFontList));
+      for (size_t i = 0; i < kLinuxGpNameSize; i++) {
+        auto it = m_FontList.find(g_LinuxGpFontList[index].NameArr[i]);
         if (it != m_FontList.end()) {
           return it->second;
         }
       }
-    } break;
+      break;
+    }
     case FXFONT_GB2312_CHARSET: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
         auto it = m_FontList.find(g_LinuxGbFontList[i]);
@@ -102,7 +114,8 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
           return it->second;
         }
       }
-    } break;
+      break;
+    }
     case FXFONT_CHINESEBIG5_CHARSET: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
         auto it = m_FontList.find(g_LinuxB5FontList[i]);
@@ -110,7 +123,8 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
           return it->second;
         }
       }
-    } break;
+      break;
+    }
     case FXFONT_HANGEUL_CHARSET: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
         auto it = m_FontList.find(g_LinuxHGFontList[i]);
@@ -118,7 +132,8 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
           return it->second;
         }
       }
-    } break;
+      break;
+    }
     default:
       bCJK = FALSE;
       break;
@@ -151,5 +166,6 @@ void CFX_GEModule::InitPlatform() {
   m_pFontMgr->SetSystemFontInfo(
       IFX_SystemFontInfo::CreateDefault(m_pUserFontPaths));
 }
+
 void CFX_GEModule::DestroyPlatform() {}
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
