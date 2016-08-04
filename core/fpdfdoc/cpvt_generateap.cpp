@@ -428,8 +428,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     } break;
   }
   if (pNormalStream) {
-    pNormalStream->SetData((uint8_t*)sAppStream.GetBuffer(),
-                           sAppStream.GetSize(), FALSE, FALSE);
+    pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize(), FALSE,
+                           FALSE);
     pStreamDict = pNormalStream->GetDict();
     if (pStreamDict) {
       pStreamDict->SetAtMatrix("Matrix", matrix);
@@ -494,8 +494,8 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
   pAnnotDict->GetDictBy("AP")->SetAtReference("N", pDoc, objnum);
 
-  pNormalStream->SetData(reinterpret_cast<uint8_t*>(sAppStream.GetBuffer()),
-                         sAppStream.GetSize(), FALSE, FALSE);
+  pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize(), FALSE,
+                         FALSE);
 
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
   pStreamDict->SetAtInteger("FormType", 1);
