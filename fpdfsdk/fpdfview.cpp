@@ -22,6 +22,7 @@
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"

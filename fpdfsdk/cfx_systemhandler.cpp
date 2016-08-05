@@ -10,7 +10,7 @@
 
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/cfx_fontmgr.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_gemodule.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 

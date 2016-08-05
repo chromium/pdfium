@@ -22,37 +22,6 @@ class CPDF_ShadingPattern;
 class IFX_RenderDeviceDriver;
 class SkPictureRecorder;
 
-class CFX_GEModule {
- public:
-  static CFX_GEModule* Get();
-  static void Destroy();
-
-  void Init(const char** pUserFontPaths, CCodec_ModuleMgr* pCodecModule);
-  CFX_FontCache* GetFontCache();
-  CFX_FontMgr* GetFontMgr() { return m_pFontMgr.get(); }
-  void SetTextGamma(FX_FLOAT gammaValue);
-  const uint8_t* GetTextGammaTable() const;
-
-  CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
-  void* GetPlatformData() { return m_pPlatformData; }
-
-  FXFT_Library m_FTLibrary;
-
- private:
-  CFX_GEModule();
-  ~CFX_GEModule();
-
-  void InitPlatform();
-  void DestroyPlatform();
-
-  uint8_t m_GammaValue[256];
-  CFX_FontCache* m_pFontCache;
-  std::unique_ptr<CFX_FontMgr> m_pFontMgr;
-  CCodec_ModuleMgr* m_pCodecModule;
-  void* m_pPlatformData;
-  const char** m_pUserFontPaths;
-};
-
 struct FX_PATHPOINT {
   FX_FLOAT m_PointX;
   FX_FLOAT m_PointY;

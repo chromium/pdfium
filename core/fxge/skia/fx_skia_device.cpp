@@ -14,6 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
+#include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include "third_party/skia/include/core/SkCanvas.h"

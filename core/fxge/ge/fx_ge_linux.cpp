@@ -12,7 +12,7 @@
 
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_

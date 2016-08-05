@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/fpdf_font/font_int.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "core/fxge/include/fx_ge.h"
 

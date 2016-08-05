@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxge/include/cfx_gemodule.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fgas/font/fgas_font.h"
