@@ -576,6 +576,9 @@ static OPJ_BOOL opj_dwt_decode_tile(const opj_tcd_tilecomp_t* tilec, OPJ_UINT32 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
 	h.mem_count = opj_dwt_max_resolution(tr, numres);
+	if (((OPJ_UINT32)-1) / (OPJ_UINT32)sizeof(OPJ_INT32) < (OPJ_UINT32)h.mem_count) {
+		return OPJ_FALSE;
+	}
 	h.mem = (OPJ_INT32*)opj_aligned_malloc(h.mem_count * sizeof(OPJ_INT32));
 	if (! h.mem){
 		/* FIXME event manager error callback */
@@ -850,7 +853,17 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
-	h.wavelet = (opj_v4_t*) opj_aligned_malloc((opj_dwt_max_resolution(res, numres)+5) * sizeof(opj_v4_t));
+	OPJ_UINT32 mr = opj_dwt_max_resolution(res, numres);
+
+	if (mr >= ((OPJ_UINT32)-5)) {
+		return OPJ_FALSE;
+	}
+	mr += 5;
+
+	if (((OPJ_UINT32)-1) / (OPJ_UINT32)sizeof(opj_v4_t) < mr) {
+		return OPJ_FALSE;
+	}
+	h.wavelet = (opj_v4_t*) opj_aligned_malloc(mr * sizeof(opj_v4_t));
 	if (!h.wavelet) {
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
