@@ -252,7 +252,8 @@ FX_BOOL CJS_Value::ConvertToArray(CJS_Array& array) const {
 
 FX_BOOL CJS_Value::ConvertToDate(CJS_Date& date) const {
   if (IsDateObject()) {
-    date.Attach(m_pValue);
+    v8::Local<v8::Value> mutable_value = m_pValue;
+    date.Attach(mutable_value.As<v8::Date>());
     return TRUE;
   }
 
@@ -437,7 +438,7 @@ bool CJS_Date::IsValidDate() const {
          !JS_PortIsNan(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate));
 }
 
-void CJS_Date::Attach(v8::Local<v8::Value> pDate) {
+void CJS_Date::Attach(v8::Local<v8::Date> pDate) {
   m_pDate = pDate;
 }
 
@@ -452,7 +453,7 @@ int CJS_Date::GetYear() const {
 void CJS_Date::SetYear(int iYear) {
   double date = MakeDate(iYear, GetMonth(), GetDay(), GetHours(), GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
+  m_pDate = FXJS_NewDate(m_pJSRuntime->GetIsolate(), date);
 }
 
 int CJS_Date::GetMonth() const {
@@ -466,7 +467,7 @@ int CJS_Date::GetMonth() const {
 void CJS_Date::SetMonth(int iMonth) {
   double date = MakeDate(GetYear(), iMonth, GetDay(), GetHours(), GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
+  m_pDate = FXJS_NewDate(m_pJSRuntime->GetIsolate(), date);
 }
 
 int CJS_Date::GetDay() const {
@@ -480,7 +481,7 @@ int CJS_Date::GetDay() const {
 void CJS_Date::SetDay(int iDay) {
   double date = MakeDate(GetYear(), GetMonth(), iDay, GetHours(), GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
+  m_pDate = FXJS_NewDate(m_pJSRuntime->GetIsolate(), date);
 }
 
 int CJS_Date::GetHours() const {
@@ -494,7 +495,7 @@ int CJS_Date::GetHours() const {
 void CJS_Date::SetHours(int iHours) {
   double date = MakeDate(GetYear(), GetMonth(), GetDay(), iHours, GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
+  m_pDate = FXJS_NewDate(m_pJSRuntime->GetIsolate(), date);
 }
 
 int CJS_Date::GetMinutes() const {
@@ -508,7 +509,7 @@ int CJS_Date::GetMinutes() const {
 void CJS_Date::SetMinutes(int minutes) {
   double date = MakeDate(GetYear(), GetMonth(), GetDay(), GetHours(), minutes,
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
+  m_pDate = FXJS_NewDate(m_pJSRuntime->GetIsolate(), date);
 }
 
 int CJS_Date::GetSeconds() const {
@@ -522,7 +523,7 @@ int CJS_Date::GetSeconds() const {
 void CJS_Date::SetSeconds(int seconds) {
   double date = MakeDate(GetYear(), GetMonth(), GetDay(), GetHours(),
                          GetMinutes(), seconds, 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
+  m_pDate = FXJS_NewDate(m_pJSRuntime->GetIsolate(), date);
 }
 
 double CJS_Date::ToDouble() const {

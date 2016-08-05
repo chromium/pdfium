@@ -758,8 +758,10 @@ v8::Local<v8::Value> FXJS_NewNull(v8::Isolate* pIsolate) {
   return v8::Local<v8::Value>();
 }
 
-v8::Local<v8::Value> FXJS_NewDate(v8::Isolate* pIsolate, double d) {
-  return v8::Date::New(pIsolate->GetCurrentContext(), d).ToLocalChecked();
+v8::Local<v8::Date> FXJS_NewDate(v8::Isolate* pIsolate, double d) {
+  return v8::Date::New(pIsolate->GetCurrentContext(), d)
+      .ToLocalChecked()
+      .As<v8::Date>();
 }
 
 int FXJS_ToInt32(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
@@ -806,8 +808,4 @@ v8::Local<v8::Array> FXJS_ToArray(v8::Isolate* pIsolate,
     return v8::Local<v8::Array>();
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
-}
-
-void FXJS_ValueCopy(v8::Local<v8::Value>& pTo, v8::Local<v8::Value> pFrom) {
-  pTo = pFrom;
 }

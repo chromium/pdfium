@@ -159,7 +159,7 @@ class CJS_Date {
            int sec);
   virtual ~CJS_Date();
 
-  void Attach(v8::Local<v8::Value> pDate);
+  void Attach(v8::Local<v8::Date> pDate);
   bool IsValidDate() const;
 
   int GetYear() const;
@@ -186,7 +186,7 @@ class CJS_Date {
   CFX_WideString ToString() const;
 
  protected:
-  v8::Local<v8::Value> m_pDate;
+  v8::Local<v8::Date> m_pDate;
   CJS_Runtime* const m_pJSRuntime;
 };
 

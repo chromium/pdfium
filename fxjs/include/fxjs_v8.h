@@ -260,7 +260,7 @@ v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, double number);
 v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, float number);
 v8::Local<v8::Value> FXJS_NewBoolean(v8::Isolate* pIsolate, bool b);
 v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate, const wchar_t* str);
-v8::Local<v8::Value> FXJS_NewDate(v8::Isolate* pIsolate, double d);
+v8::Local<v8::Date> FXJS_NewDate(v8::Isolate* pIsolate, double d);
 
 int FXJS_ToInt32(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue);
 bool FXJS_ToBoolean(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue);
@@ -271,6 +271,4 @@ CFX_WideString FXJS_ToString(v8::Isolate* pIsolate,
                              v8::Local<v8::Value> pValue);
 v8::Local<v8::Array> FXJS_ToArray(v8::Isolate* pIsolate,
                                   v8::Local<v8::Value> pValue);
-void FXJS_ValueCopy(v8::Local<v8::Value>& pTo, v8::Local<v8::Value> pFrom);
-
 #endif  // FXJS_INCLUDE_FXJS_V8_H_
