@@ -31,16 +31,12 @@ END_JS_STATIC_METHOD()
 IMPLEMENT_JS_CLASS(CJS_TimerObj, TimerObj)
 
 TimerObj::TimerObj(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pTimer(nullptr) {}
+    : CJS_EmbedObj(pJSObject), m_nTimerID(0) {}
 
 TimerObj::~TimerObj() {}
 
 void TimerObj::SetTimer(CJS_Timer* pTimer) {
-  m_pTimer = pTimer;
-}
-
-CJS_Timer* TimerObj::GetTimer() const {
-  return m_pTimer;
+  m_nTimerID = pTimer->GetTimerID();
 }
 
 #define JS_STR_VIEWERTYPE L"pdfium"
@@ -473,20 +469,7 @@ void app::ClearTimerCommon(const CJS_Value& param) {
   if (!pTimerObj)
     return;
 
-  CJS_Timer* pTimer = pTimerObj->GetTimer();
-  if (!pTimer)
-    return;
-
-  pTimer->KillJSTimer();
-  auto iter = std::find_if(m_Timers.begin(), m_Timers.end(),
-                           [pTimer](const std::unique_ptr<CJS_Timer>& that) {
-                             return pTimer == that.get();
-                           });
-
-  if (iter != m_Timers.end())
-    m_Timers.erase(iter);
-
-  pTimerObj->SetTimer(nullptr);
+  CJS_Timer::Cancel(pTimerObj->GetTimerID());
 }
 
 FX_BOOL app::execMenuItem(IJS_Context* cc,
@@ -498,20 +481,18 @@ FX_BOOL app::execMenuItem(IJS_Context* cc,
 
 void app::TimerProc(CJS_Timer* pTimer) {
   CJS_Runtime* pRuntime = pTimer->GetRuntime();
+  if (pRuntime && (!pTimer->IsOneShot() || pTimer->GetTimeOut() > 0))
+    RunJsScript(pRuntime, pTimer->GetJScript());
+}
 
-  switch (pTimer->GetType()) {
-    case 0:  // interval
-      if (pRuntime)
-        RunJsScript(pRuntime, pTimer->GetJScript());
-      break;
-    case 1:
-      if (pTimer->GetTimeOut() > 0) {
-        if (pRuntime)
-          RunJsScript(pRuntime, pTimer->GetJScript());
-        pTimer->KillJSTimer();
-      }
-      break;
-  }
+void app::CancelProc(CJS_Timer* pTimer) {
+  auto iter = std::find_if(m_Timers.begin(), m_Timers.end(),
+                           [pTimer](const std::unique_ptr<CJS_Timer>& that) {
+                             return pTimer == that.get();
+                           });
+
+  if (iter != m_Timers.end())
+    m_Timers.erase(iter);
 }
 
 void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {

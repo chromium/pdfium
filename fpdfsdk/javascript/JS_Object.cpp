@@ -90,7 +90,7 @@ CJS_Timer::CJS_Timer(CJS_EmbedObj* pObj,
       m_pRuntime(pRuntime),
       m_pApp(pApp) {
   CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
-  m_nTimerID = pHandler->SetTimer(dwElapse, TimerProc);
+  m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
   (*GetGlobalTimerMap())[m_nTimerID] = this;
   m_pRuntime->AddObserver(this);
 }
@@ -99,23 +99,19 @@ CJS_Timer::~CJS_Timer() {
   CJS_Runtime* pRuntime = GetRuntime();
   if (pRuntime)
     pRuntime->RemoveObserver(this);
-  KillJSTimer();
-}
 
-void CJS_Timer::KillJSTimer() {
-  if (m_nTimerID) {
-    if (m_bValid) {
-      CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
-      pHandler->KillTimer(m_nTimerID);
-    }
-    GetGlobalTimerMap()->erase(m_nTimerID);
-    m_nTimerID = 0;
-  }
+  if (!m_nTimerID)
+    return;
+
+  if (m_bValid)
+    m_pApp->GetSysHandler()->KillTimer(m_nTimerID);
+
+  GetGlobalTimerMap()->erase(m_nTimerID);
 }
 
 // static
-void CJS_Timer::TimerProc(int idEvent) {
-  auto it = GetGlobalTimerMap()->find(idEvent);
+void CJS_Timer::Trigger(int nTimerID) {
+  auto it = GetGlobalTimerMap()->find(nTimerID);
   if (it == GetGlobalTimerMap()->end())
     return;
 
@@ -128,12 +124,24 @@ void CJS_Timer::TimerProc(int idEvent) {
     pTimer->m_pEmbedObj->TimerProc(pTimer);
 
   // Timer proc may have destroyed timer, find it again.
-  it = GetGlobalTimerMap()->find(idEvent);
+  it = GetGlobalTimerMap()->find(nTimerID);
   if (it == GetGlobalTimerMap()->end())
     return;
 
   pTimer = it->second;
   pTimer->m_bProcessing = false;
+  if (pTimer->IsOneShot())
+    pTimer->m_pEmbedObj->CancelProc(pTimer);
+}
+
+// static
+void CJS_Timer::Cancel(int nTimerID) {
+  auto it = GetGlobalTimerMap()->find(nTimerID);
+  if (it == GetGlobalTimerMap()->end())
+    return;
+
+  CJS_Timer* pTimer = it->second;
+  pTimer->m_pEmbedObj->CancelProc(pTimer);
 }
 
 // static
