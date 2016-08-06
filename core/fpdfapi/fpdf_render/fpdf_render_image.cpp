@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -442,7 +443,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   }
   if (m_pRenderStatus->m_pDevice->GetDeviceClass() != FXDC_DISPLAY) {
     CPDF_Object* pFilters =
-        m_pImageObject->m_pImage->GetStream()->GetDict()->GetDirectObjectBy(
+        m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectBy(
             "Filter");
     if (pFilters) {
       if (pFilters->IsName()) {
@@ -463,7 +464,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   }
   if (m_pRenderStatus->m_Options.m_Flags & RENDER_NOIMAGESMOOTH) {
     m_Flags |= FXDIB_NOSMOOTH;
-  } else if (m_pImageObject->m_pImage->IsInterpol()) {
+  } else if (m_pImageObject->GetImage()->IsInterpol()) {
     m_Flags |= FXDIB_INTERPOL;
   }
   if (m_Loader.m_pMask) {
@@ -482,11 +483,11 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
       pPage = m_pRenderStatus->m_pContext->GetPageCache()->GetPage();
       pDocument = pPage->m_pDocument;
     } else {
-      pDocument = m_pImageObject->m_pImage->GetDocument();
+      pDocument = m_pImageObject->GetImage()->GetDocument();
     }
     CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : nullptr;
     CPDF_Object* pCSObj =
-        m_pImageObject->m_pImage->GetStream()->GetDict()->GetDirectObjectBy(
+        m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectBy(
             "ColorSpace");
     CPDF_ColorSpace* pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
@@ -512,7 +513,7 @@ FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
   m_pImageObject = pObj->AsImage();
   m_BlendType = blendType;
   m_pObj2Device = pObj2Device;
-  CPDF_Dictionary* pOC = m_pImageObject->m_pImage->GetOC();
+  CPDF_Dictionary* pOC = m_pImageObject->GetImage()->GetOC();
   if (pOC && m_pRenderStatus->m_Options.m_pOCContext &&
       !m_pRenderStatus->m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
     return FALSE;

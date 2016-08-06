@@ -743,7 +743,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   if (type == "Image") {
     CPDF_ImageObject* pObj = AddImage(pXObject, nullptr, false);
     m_LastImageName = name;
-    m_pLastImage = pObj->m_pImage;
+    m_pLastImage = pObj->GetImage();
     if (!m_pObjectHolder->HasImageMask())
       m_pObjectHolder->SetHasImageMask(m_pLastImage->IsMask());
   } else if (type == "Form") {
@@ -792,7 +792,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
     pImageObj->m_pImage = new CPDF_Image(m_pDocument);
     pImageObj->m_pImage->LoadImageF(pStream, bInline);
   }
-  SetGraphicStates(pImageObj.get(), pImageObj->m_pImage->IsMask(), FALSE,
+  SetGraphicStates(pImageObj.get(), pImageObj->GetImage()->IsMask(), FALSE,
                    FALSE);
   pImageObj->m_Matrix = ImageMatrix;
   pImageObj->CalcBoundingBox();

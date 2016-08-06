@@ -58,6 +58,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
   m_pDocument->AddIndirectObject(pStream);
   pPageDict->SetAtReference("Contents", m_pDocument, pStream->GetObjNum());
 }
+
 CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     CPDF_Object* pResourceObj,
     const CFX_ByteString& bsType) {
@@ -84,6 +85,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
   pResList->SetAtReference(name, m_pDocument, pResourceObj->GetObjNum());
   return name;
 }
+
 void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
                                              CPDF_ImageObject* pImageObj) {
   if ((pImageObj->m_Matrix.a == 0 && pImageObj->m_Matrix.b == 0) ||
@@ -91,13 +93,13 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
     return;
   }
   buf << "q " << pImageObj->m_Matrix << " cm ";
-  if (!pImageObj->m_pImage->IsInline()) {
-    CPDF_Stream* pStream = pImageObj->m_pImage->GetStream();
+  CPDF_Image* pImage = pImageObj->GetImage();
+  if (!pImage->IsInline()) {
+    CPDF_Stream* pStream = pImage->GetStream();
     uint32_t dwSavedObjNum = pStream->GetObjNum();
     CFX_ByteString name = RealizeResource(pStream, "XObject");
     if (dwSavedObjNum == 0) {
-      if (pImageObj->m_pImage)
-        pImageObj->m_pImage->Release();
+      pImage->Release();
       pImageObj->m_pImage = m_pDocument->GetPageData()->GetImage(pStream);
     }
     buf << "/" << PDF_NameEncode(name) << " Do Q\n";

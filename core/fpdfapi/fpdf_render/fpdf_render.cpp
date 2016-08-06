@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_colorstatedata.h"
@@ -686,7 +688,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : nullptr;
   if (pSMaskDict) {
     if (pPageObj->IsImage() &&
-        pPageObj->AsImage()->m_pImage->GetDict()->KeyExist("SMask")) {
+        pPageObj->AsImage()->GetImage()->GetDict()->KeyExist("SMask")) {
       pSMaskDict = nullptr;
     }
   }
@@ -721,11 +723,12 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       pPage = m_pContext->GetPageCache()->GetPage();
       pDocument = pPage->m_pDocument;
     } else {
-      pDocument = pPageObj->AsImage()->m_pImage->GetDocument();
+      pDocument = pPageObj->AsImage()->GetImage()->GetDocument();
     }
     CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : nullptr;
     CPDF_Object* pCSObj = pPageObj->AsImage()
-                              ->m_pImage->GetStream()
+                              ->GetImage()
+                              ->GetStream()
                               ->GetDict()
                               ->GetDirectObjectBy("ColorSpace");
     CPDF_ColorSpace* pColorSpace =

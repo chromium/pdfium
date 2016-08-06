@@ -31,7 +31,7 @@ FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
 
   m_ImageMatrix = pPageObj->AsImage()->m_Matrix;
   std::unique_ptr<CFX_DIBSource> pSource(
-      pPageObj->AsImage()->m_pImage->LoadDIBSource());
+      pPageObj->AsImage()->GetImage()->LoadDIBSource());
   if (pSource)
     m_pBitmap.reset(pSource->Clone());
   m_pForm.reset();

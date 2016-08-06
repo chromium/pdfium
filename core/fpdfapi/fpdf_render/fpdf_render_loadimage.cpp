@@ -28,11 +28,11 @@ unsigned int GetBits8(const uint8_t* pData, uint64_t bitpos, size_t nbits) {
   ASSERT(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
   ASSERT((bitpos & (nbits - 1)) == 0);
   unsigned int byte = pData[bitpos / 8];
-  if (nbits == 8) {
+  if (nbits == 8)
     return byte;
-  } else if (nbits == 16) {
+
+  if (nbits == 16)
     return byte * 256 + pData[bitpos / 8 + 1];
-  }
 
   return (byte >> (8 - nbits - (bitpos % 8))) & ((1 << nbits) - 1);
 }
@@ -1492,53 +1492,41 @@ FX_BOOL CPDF_ImageLoaderHandle::Start(CPDF_ImageLoader* pImageLoader,
   m_nDownsampleHeight = nDownsampleHeight;
   FX_BOOL ret;
   if (pCache) {
-    ret = pCache->StartGetCachedBitmap(pImage->m_pImage->GetStream(), bStdCS,
-                                       GroupFamily, bLoadMask, pRenderStatus,
-                                       m_nDownsampleWidth, m_nDownsampleHeight);
-    if (!ret) {
-      m_pImageLoader->m_bCached = TRUE;
-      m_pImageLoader->m_pBitmap =
-          pCache->GetCurImageCacheEntry()->DetachBitmap();
-      m_pImageLoader->m_pMask = pCache->GetCurImageCacheEntry()->DetachMask();
-      m_pImageLoader->m_MatteColor =
-          pCache->GetCurImageCacheEntry()->m_MatteColor;
-    }
+    ret = pCache->StartGetCachedBitmap(
+        m_pImage->GetImage()->GetStream(), bStdCS, GroupFamily, bLoadMask,
+        pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
   } else {
-    ret = pImage->m_pImage->StartLoadDIBSource(pRenderStatus->m_pFormResource,
-                                               pRenderStatus->m_pPageResource,
-                                               bStdCS, GroupFamily, bLoadMask);
-    if (!ret) {
-      m_pImageLoader->m_bCached = FALSE;
-      m_pImageLoader->m_pBitmap = m_pImage->m_pImage->DetachBitmap();
-      m_pImageLoader->m_pMask = m_pImage->m_pImage->DetachMask();
-      m_pImageLoader->m_MatteColor = m_pImage->m_pImage->m_MatteColor;
-    }
+    ret = m_pImage->GetImage()->StartLoadDIBSource(
+        pRenderStatus->m_pFormResource, pRenderStatus->m_pPageResource, bStdCS,
+        GroupFamily, bLoadMask);
   }
+  if (!ret)
+    HandleFailure();
   return ret;
 }
 
 FX_BOOL CPDF_ImageLoaderHandle::Continue(IFX_Pause* pPause) {
-  FX_BOOL ret;
-  if (m_pCache) {
-    ret = m_pCache->Continue(pPause);
-    if (!ret) {
-      m_pImageLoader->m_bCached = TRUE;
-      m_pImageLoader->m_pBitmap =
-          m_pCache->GetCurImageCacheEntry()->DetachBitmap();
-      m_pImageLoader->m_pMask = m_pCache->GetCurImageCacheEntry()->DetachMask();
-      m_pImageLoader->m_MatteColor =
-          m_pCache->GetCurImageCacheEntry()->m_MatteColor;
-    }
-  } else {
-    ret = m_pImage->m_pImage->Continue(pPause);
-    if (!ret) {
-      m_pImageLoader->m_bCached = FALSE;
-      m_pImageLoader->m_pBitmap = m_pImage->m_pImage->DetachBitmap();
-      m_pImageLoader->m_pMask = m_pImage->m_pImage->DetachMask();
-      m_pImageLoader->m_MatteColor = m_pImage->m_pImage->m_MatteColor;
-    }
-  }
+  FX_BOOL ret = m_pCache ? m_pCache->Continue(pPause)
+                         : m_pImage->GetImage()->Continue(pPause);
+  if (!ret)
+    HandleFailure();
   return ret;
+}
+
+void CPDF_ImageLoaderHandle::HandleFailure() {
+  if (m_pCache) {
+    CPDF_ImageCacheEntry* entry = m_pCache->GetCurImageCacheEntry();
+    m_pImageLoader->m_bCached = TRUE;
+    m_pImageLoader->m_pBitmap = entry->DetachBitmap();
+    m_pImageLoader->m_pMask = entry->DetachMask();
+    m_pImageLoader->m_MatteColor = entry->m_MatteColor;
+  } else {
+    CPDF_Image* pImage = m_pImage->GetImage();
+    m_pImageLoader->m_bCached = FALSE;
+    m_pImageLoader->m_pBitmap = pImage->DetachBitmap();
+    m_pImageLoader->m_pMask = pImage->DetachMask();
+    m_pImageLoader->m_MatteColor = pImage->m_MatteColor;
+  }
 }
 
 FX_BOOL CPDF_ImageLoader::Start(

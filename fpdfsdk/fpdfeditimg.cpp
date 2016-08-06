@@ -37,9 +37,9 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
   for (int index = 0; index < nCount; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (pPage)
-      pImgObj->m_pImage->ResetCache(pPage, nullptr);
+      pImgObj->GetImage()->ResetCache(pPage, nullptr);
   }
-  pImgObj->m_pImage->SetJpegImage(pFile);
+  pImgObj->GetImage()->SetJpegImage(pFile);
 
   return TRUE;
 }
@@ -77,9 +77,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   for (int index = 0; index < nCount; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (pPage)
-      pImgObj->m_pImage->ResetCache(pPage, nullptr);
+      pImgObj->GetImage()->ResetCache(pPage, nullptr);
   }
-  pImgObj->m_pImage->SetImage(reinterpret_cast<CFX_DIBitmap*>(bitmap), FALSE);
+  pImgObj->GetImage()->SetImage(reinterpret_cast<CFX_DIBitmap*>(bitmap), FALSE);
   pImgObj->CalcBoundingBox();
   return TRUE;
 }

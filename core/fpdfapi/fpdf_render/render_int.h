@@ -102,7 +102,7 @@ class CPDF_TransferFunc {
 
 class CPDF_DocRenderData {
  public:
-  CPDF_DocRenderData(CPDF_Document* pPDFDoc = nullptr);
+  explicit CPDF_DocRenderData(CPDF_Document* pPDFDoc);
   ~CPDF_DocRenderData();
   CPDF_Type3Cache* GetCachedType3(CPDF_Type3Font* pFont);
   CPDF_TransferFunc* GetTransferFunc(CPDF_Object* pObj);
@@ -313,6 +313,7 @@ class CPDF_ImageLoader {
   int32_t m_nDownsampleWidth;
   int32_t m_nDownsampleHeight;
 };
+
 class CPDF_ImageLoaderHandle {
  public:
   CPDF_ImageLoaderHandle();
@@ -330,6 +331,8 @@ class CPDF_ImageLoaderHandle {
   FX_BOOL Continue(IFX_Pause* pPause);
 
  protected:
+  void HandleFailure();
+
   CPDF_ImageLoader* m_pImageLoader;
   CPDF_PageRenderCache* m_pCache;
   CPDF_ImageObject* m_pImage;

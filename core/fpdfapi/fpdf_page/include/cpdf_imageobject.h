@@ -26,6 +26,7 @@ class CPDF_ImageObject : public CPDF_PageObject {
   const CPDF_ImageObject* AsImage() const override;
 
   void CalcBoundingBox();
+  CPDF_Image* GetImage() const { return m_pImage; }
 
   CPDF_Image* m_pImage;
   CFX_Matrix m_Matrix;
