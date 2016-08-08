@@ -16,16 +16,12 @@
 
 class CJS_Context;
 class CJS_Object;
-class CJS_Timer;
 class CPDFDoc_Environment;
 
 class CJS_EmbedObj {
  public:
   explicit CJS_EmbedObj(CJS_Object* pJSObject);
   virtual ~CJS_EmbedObj();
-
-  virtual void TimerProc(CJS_Timer* pTimer) {}
-  virtual void CancelProc(CJS_Timer* pTimer) {}
 
   CJS_Object* GetJSObject() const { return m_pJSObject; }
 
@@ -67,44 +63,5 @@ class CJS_Object {
   v8::Isolate* m_pIsolate;
 };
 
-class CJS_Timer : public CJS_Runtime::Observer {
- public:
-  CJS_Timer(CJS_EmbedObj* pObj,
-            CPDFDoc_Environment* pApp,
-            CJS_Runtime* pRuntime,
-            int nType,
-            const CFX_WideString& script,
-            uint32_t dwElapse,
-            uint32_t dwTimeOut);
-  ~CJS_Timer() override;
-
-  static void Trigger(int nTimerID);
-  static void Cancel(int nTimerID);
-
-  bool IsOneShot() const { return m_nType == 1; }
-  uint32_t GetTimeOut() const { return m_dwTimeOut; }
-  int GetTimerID() const { return m_nTimerID; }
-  CJS_Runtime* GetRuntime() const { return m_bValid ? m_pRuntime : nullptr; }
-  CFX_WideString GetJScript() const { return m_swJScript; }
-
- private:
-  using TimerMap = std::map<FX_UINT, CJS_Timer*>;
-  static TimerMap* GetGlobalTimerMap();
-
-  // CJS_Runtime::Observer
-  void OnDestroyed() override;
-
-  uint32_t m_nTimerID;
-  CJS_EmbedObj* const m_pEmbedObj;
-  bool m_bProcessing;
-  bool m_bValid;
-
-  // data
-  const int m_nType;  // 0:Interval; 1:TimeOut
-  const uint32_t m_dwTimeOut;
-  const CFX_WideString m_swJScript;
-  CJS_Runtime* const m_pRuntime;
-  CPDFDoc_Environment* const m_pApp;
-};
 
 #endif  // FPDFSDK_JAVASCRIPT_JS_OBJECT_H_

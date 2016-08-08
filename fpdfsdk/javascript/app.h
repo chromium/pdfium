@@ -13,18 +13,18 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 
 class CJS_Runtime;
-class CJS_Timer;
+class GlobalTimer;
 
 class TimerObj : public CJS_EmbedObj {
  public:
   TimerObj(CJS_Object* pJSObject);
   ~TimerObj() override;
 
-  void SetTimer(CJS_Timer* pTimer);
+  void SetTimer(GlobalTimer* pTimer);
   int GetTimerID() const { return m_nTimerID; }
 
  private:
-  int m_nTimerID;  // Weak reference to timer through global map.
+  int m_nTimerID;  // Weak reference to GlobalTimer through global map.
 };
 
 class CJS_TimerObj : public CJS_Object {
@@ -152,19 +152,20 @@ class app : public CJS_EmbedObj {
                      CJS_Value& vRet,
                      CFX_WideString& sError);
 
+  void TimerProc(GlobalTimer* pTimer);
+  void CancelProc(GlobalTimer* pTimer);
+
   static CFX_WideString SysPathToPDFPath(const CFX_WideString& sOldPath);
 
  private:
   // CJS_EmbedObj
-  void TimerProc(CJS_Timer* pTimer) override;
-  void CancelProc(CJS_Timer* pTimer) override;
   void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
 
   void ClearTimerCommon(const CJS_Value& param);
 
   bool m_bCalculate;
   bool m_bRuntimeHighLight;
-  std::vector<std::unique_ptr<CJS_Timer>> m_Timers;
+  std::vector<std::unique_ptr<GlobalTimer>> m_Timers;
 };
 
 class CJS_App : public CJS_Object {

@@ -19,6 +19,128 @@
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
 
+class GlobalTimer : public CJS_Runtime::Observer {
+ public:
+  GlobalTimer(app* pObj,
+              CPDFDoc_Environment* pApp,
+              CJS_Runtime* pRuntime,
+              int nType,
+              const CFX_WideString& script,
+              uint32_t dwElapse,
+              uint32_t dwTimeOut);
+  ~GlobalTimer() override;
+
+  static void Trigger(int nTimerID);
+  static void Cancel(int nTimerID);
+
+  bool IsOneShot() const { return m_nType == 1; }
+  uint32_t GetTimeOut() const { return m_dwTimeOut; }
+  int GetTimerID() const { return m_nTimerID; }
+  CJS_Runtime* GetRuntime() const { return m_bValid ? m_pRuntime : nullptr; }
+  CFX_WideString GetJScript() const { return m_swJScript; }
+
+ private:
+  using TimerMap = std::map<FX_UINT, GlobalTimer*>;
+  static TimerMap* GetGlobalTimerMap();
+
+  // CJS_Runtime::Observer
+  void OnDestroyed() override;
+
+  uint32_t m_nTimerID;
+  app* const m_pEmbedObj;
+  bool m_bProcessing;
+  bool m_bValid;
+
+  // data
+  const int m_nType;  // 0:Interval; 1:TimeOut
+  const uint32_t m_dwTimeOut;
+  const CFX_WideString m_swJScript;
+  CJS_Runtime* const m_pRuntime;
+  CPDFDoc_Environment* const m_pApp;
+};
+
+GlobalTimer::GlobalTimer(app* pObj,
+                         CPDFDoc_Environment* pApp,
+                         CJS_Runtime* pRuntime,
+                         int nType,
+                         const CFX_WideString& script,
+                         uint32_t dwElapse,
+                         uint32_t dwTimeOut)
+    : m_nTimerID(0),
+      m_pEmbedObj(pObj),
+      m_bProcessing(false),
+      m_bValid(true),
+      m_nType(nType),
+      m_dwTimeOut(dwTimeOut),
+      m_swJScript(script),
+      m_pRuntime(pRuntime),
+      m_pApp(pApp) {
+  CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
+  m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
+  (*GetGlobalTimerMap())[m_nTimerID] = this;
+  m_pRuntime->AddObserver(this);
+}
+
+GlobalTimer::~GlobalTimer() {
+  CJS_Runtime* pRuntime = GetRuntime();
+  if (pRuntime)
+    pRuntime->RemoveObserver(this);
+
+  if (!m_nTimerID)
+    return;
+
+  if (m_bValid)
+    m_pApp->GetSysHandler()->KillTimer(m_nTimerID);
+
+  GetGlobalTimerMap()->erase(m_nTimerID);
+}
+
+// static
+void GlobalTimer::Trigger(int nTimerID) {
+  auto it = GetGlobalTimerMap()->find(nTimerID);
+  if (it == GetGlobalTimerMap()->end())
+    return;
+
+  GlobalTimer* pTimer = it->second;
+  if (pTimer->m_bProcessing)
+    return;
+
+  pTimer->m_bProcessing = true;
+  if (pTimer->m_pEmbedObj)
+    pTimer->m_pEmbedObj->TimerProc(pTimer);
+
+  // Timer proc may have destroyed timer, find it again.
+  it = GetGlobalTimerMap()->find(nTimerID);
+  if (it == GetGlobalTimerMap()->end())
+    return;
+
+  pTimer = it->second;
+  pTimer->m_bProcessing = false;
+  if (pTimer->IsOneShot())
+    pTimer->m_pEmbedObj->CancelProc(pTimer);
+}
+
+// static
+void GlobalTimer::Cancel(int nTimerID) {
+  auto it = GetGlobalTimerMap()->find(nTimerID);
+  if (it == GetGlobalTimerMap()->end())
+    return;
+
+  GlobalTimer* pTimer = it->second;
+  pTimer->m_pEmbedObj->CancelProc(pTimer);
+}
+
+// static
+GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
+  // Leak the timer array at shutdown.
+  static auto* s_TimerMap = new TimerMap;
+  return s_TimerMap;
+}
+
+void GlobalTimer::OnDestroyed() {
+  m_bValid = false;
+}
+
 BEGIN_JS_STATIC_CONST(CJS_TimerObj)
 END_JS_STATIC_CONST()
 
@@ -35,7 +157,7 @@ TimerObj::TimerObj(CJS_Object* pJSObject)
 
 TimerObj::~TimerObj() {}
 
-void TimerObj::SetTimer(CJS_Timer* pTimer) {
+void TimerObj::SetTimer(GlobalTimer* pTimer) {
   m_nTimerID = pTimer->GetTimerID();
 }
 
@@ -375,8 +497,8 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   uint32_t dwInterval = params.size() > 1 ? params[1].ToInt() : 1000;
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
-  m_Timers.push_back(std::unique_ptr<CJS_Timer>(
-      new CJS_Timer(this, pApp, pRuntime, 0, script, dwInterval, 0)));
+  m_Timers.push_back(std::unique_ptr<GlobalTimer>(
+      new GlobalTimer(this, pApp, pRuntime, 0, script, dwInterval, 0)));
 
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
       pRuntime->GetIsolate(), pRuntime, CJS_TimerObj::g_nObjDefnID);
@@ -408,8 +530,8 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt() : 1000;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
-  m_Timers.push_back(std::unique_ptr<CJS_Timer>(
-      new CJS_Timer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut)));
+  m_Timers.push_back(std::unique_ptr<GlobalTimer>(
+      new GlobalTimer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut)));
 
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
       pRuntime->GetIsolate(), pRuntime, CJS_TimerObj::g_nObjDefnID);
@@ -468,7 +590,7 @@ void app::ClearTimerCommon(const CJS_Value& param) {
   if (!pTimerObj)
     return;
 
-  CJS_Timer::Cancel(pTimerObj->GetTimerID());
+  GlobalTimer::Cancel(pTimerObj->GetTimerID());
 }
 
 FX_BOOL app::execMenuItem(IJS_Context* cc,
@@ -478,15 +600,15 @@ FX_BOOL app::execMenuItem(IJS_Context* cc,
   return FALSE;
 }
 
-void app::TimerProc(CJS_Timer* pTimer) {
+void app::TimerProc(GlobalTimer* pTimer) {
   CJS_Runtime* pRuntime = pTimer->GetRuntime();
   if (pRuntime && (!pTimer->IsOneShot() || pTimer->GetTimeOut() > 0))
     RunJsScript(pRuntime, pTimer->GetJScript());
 }
 
-void app::CancelProc(CJS_Timer* pTimer) {
+void app::CancelProc(GlobalTimer* pTimer) {
   auto iter = std::find_if(m_Timers.begin(), m_Timers.end(),
-                           [pTimer](const std::unique_ptr<CJS_Timer>& that) {
+                           [pTimer](const std::unique_ptr<GlobalTimer>& that) {
                              return pTimer == that.get();
                            });
 
