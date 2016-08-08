@@ -960,12 +960,12 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
       vp >> iSelecting;
       array.push_back(iSelecting);
     } else if (vp.IsArrayObject()) {
-      CJS_Array SelArray(pRuntime);
+      CJS_Array SelArray;
       CJS_Value SelValue(pRuntime);
       int iSelecting;
       vp >> SelArray;
       for (int i = 0, sz = SelArray.GetLength(); i < sz; i++) {
-        SelArray.GetElement(i, SelValue);
+        SelArray.GetElement(pRuntime->GetIsolate(), i, SelValue);
         iSelecting = SelValue.ToInt();
         array.push_back(iSelecting);
       }
@@ -991,10 +991,11 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
     if (pFormField->CountSelectedItems() == 1) {
       vp << pFormField->GetSelectedIndex(0);
     } else if (pFormField->CountSelectedItems() > 1) {
-      CJS_Array SelArray(pRuntime);
+      CJS_Array SelArray;
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         SelArray.SetElement(
-            i, CJS_Value(pRuntime, pFormField->GetSelectedIndex(i)));
+            pRuntime->GetIsolate(), i,
+            CJS_Value(pRuntime, pFormField->GetSelectedIndex(i)));
       }
       vp << SelArray;
     } else {
@@ -1378,12 +1379,13 @@ FX_BOOL Field::exportValues(IJS_Context* cc,
       return FALSE;
   } else {
     CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-    CJS_Array ExportValusArray(pRuntime);
+    CJS_Array ExportValusArray;
     if (m_nFormControlIndex < 0) {
       for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
         ExportValusArray.SetElement(
-            i, CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
+            pRuntime->GetIsolate(), i,
+            CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
       }
     } else {
       if (m_nFormControlIndex >= pFormField->CountControls())
@@ -1395,7 +1397,8 @@ FX_BOOL Field::exportValues(IJS_Context* cc,
         return FALSE;
 
       ExportValusArray.SetElement(
-          0, CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
+          pRuntime->GetIsolate(), 0,
+          CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
     }
     vp << ExportValusArray;
   }
@@ -1432,7 +1435,7 @@ FX_BOOL Field::fillColor(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Array crArray(pRuntime);
+  CJS_Array crArray;
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return FALSE;
@@ -1447,7 +1450,7 @@ FX_BOOL Field::fillColor(IJS_Context* cc,
     vp >> crArray;
 
     CPWL_Color color;
-    color::ConvertArrayToPWLColor(crArray, color);
+    color::ConvertArrayToPWLColor(pRuntime, crArray, &color);
     if (m_bDelay) {
       AddDelay_Color(FP_FILLCOLOR, color);
     } else {
@@ -1484,7 +1487,7 @@ FX_BOOL Field::fillColor(IJS_Context* cc,
       return FALSE;
     }
 
-    color::ConvertPWLColorToArray(color, crArray);
+    color::ConvertPWLColorToArray(pRuntime, color, &crArray);
     vp << crArray;
   }
 
@@ -1885,14 +1888,15 @@ FX_BOOL Field::page(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Array PageArray(pRuntime);
+  CJS_Array PageArray;
   for (size_t i = 0; i < widgets.size(); ++i) {
     CPDFSDK_PageView* pPageView = widgets[i]->GetPageView();
     if (!pPageView)
       return FALSE;
 
     PageArray.SetElement(
-        i, CJS_Value(pRuntime, (int32_t)pPageView->GetPageIndex()));
+        pRuntime->GetIsolate(), i,
+        CJS_Value(pRuntime, (int32_t)pPageView->GetPageIndex()));
   }
 
   vp << PageArray;
@@ -2083,12 +2087,12 @@ FX_BOOL Field::rect(IJS_Context* cc,
     if (!vp.IsArrayObject())
       return FALSE;
 
-    CJS_Array rcArray(pRuntime);
+    CJS_Array rcArray;
     vp >> rcArray;
-    rcArray.GetElement(0, Upper_Leftx);
-    rcArray.GetElement(1, Upper_Lefty);
-    rcArray.GetElement(2, Lower_Rightx);
-    rcArray.GetElement(3, Lower_Righty);
+    rcArray.GetElement(pRuntime->GetIsolate(), 0, Upper_Leftx);
+    rcArray.GetElement(pRuntime->GetIsolate(), 1, Upper_Lefty);
+    rcArray.GetElement(pRuntime->GetIsolate(), 2, Lower_Rightx);
+    rcArray.GetElement(pRuntime->GetIsolate(), 3, Lower_Righty);
 
     FX_FLOAT pArray[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     pArray[0] = (FX_FLOAT)Upper_Leftx.ToInt();
@@ -2120,11 +2124,11 @@ FX_BOOL Field::rect(IJS_Context* cc,
     Lower_Rightx = (int32_t)crRect.right;
     Lower_Righty = (int32_t)crRect.bottom;
 
-    CJS_Array rcArray(pRuntime);
-    rcArray.SetElement(0, Upper_Leftx);
-    rcArray.SetElement(1, Upper_Lefty);
-    rcArray.SetElement(2, Lower_Rightx);
-    rcArray.SetElement(3, Lower_Righty);
+    CJS_Array rcArray;
+    rcArray.SetElement(pRuntime->GetIsolate(), 0, Upper_Leftx);
+    rcArray.SetElement(pRuntime->GetIsolate(), 1, Upper_Lefty);
+    rcArray.SetElement(pRuntime->GetIsolate(), 2, Lower_Rightx);
+    rcArray.SetElement(pRuntime->GetIsolate(), 3, Lower_Righty);
     vp << rcArray;
   }
   return TRUE;
@@ -2299,7 +2303,7 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Array crArray(pRuntime);
+  CJS_Array crArray;
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
@@ -2311,7 +2315,7 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
     vp >> crArray;
 
     CPWL_Color color;
-    color::ConvertArrayToPWLColor(crArray, color);
+    color::ConvertArrayToPWLColor(pRuntime, crArray, &color);
 
     if (m_bDelay) {
       AddDelay_Color(FP_STROKECOLOR, color);
@@ -2352,7 +2356,7 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
       return FALSE;
     }
 
-    color::ConvertPWLColorToArray(color, crArray);
+    color::ConvertPWLColorToArray(pRuntime, color, &crArray);
     vp << crArray;
   }
   return TRUE;
@@ -2444,7 +2448,7 @@ FX_BOOL Field::textColor(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Array crArray(pRuntime);
+  CJS_Array crArray;
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
@@ -2456,7 +2460,7 @@ FX_BOOL Field::textColor(IJS_Context* cc,
     vp >> crArray;
 
     CPWL_Color color;
-    color::ConvertArrayToPWLColor(crArray, color);
+    color::ConvertArrayToPWLColor(pRuntime, crArray, &color);
 
     if (m_bDelay) {
       AddDelay_Color(FP_TEXTCOLOR, color);
@@ -2487,7 +2491,7 @@ FX_BOOL Field::textColor(IJS_Context* cc,
     if (iColorType == COLORTYPE_TRANSPARENT)
       crRet = CPWL_Color(COLORTYPE_TRANSPARENT);
 
-    color::ConvertPWLColorToArray(crRet, crArray);
+    color::ConvertPWLColorToArray(pRuntime, crRet, &crArray);
     vp << crArray;
   }
   return TRUE;
@@ -2695,11 +2699,11 @@ FX_BOOL Field::value(IJS_Context* cc,
 
     std::vector<CFX_WideString> strArray;
     if (vp.IsArrayObject()) {
-      CJS_Array ValueArray(pRuntime);
+      CJS_Array ValueArray;
       vp.ConvertToArray(ValueArray);
       for (int i = 0, sz = ValueArray.GetLength(); i < sz; i++) {
         CJS_Value ElementValue(pRuntime);
-        ValueArray.GetElement(i, ElementValue);
+        ValueArray.GetElement(pRuntime->GetIsolate(), i, ElementValue);
         strArray.push_back(ElementValue.ToCFXWideString());
       }
     } else {
@@ -2728,7 +2732,7 @@ FX_BOOL Field::value(IJS_Context* cc,
       } break;
       case FIELDTYPE_LISTBOX: {
         if (pFormField->CountSelectedItems() > 1) {
-          CJS_Array ValueArray(pRuntime);
+          CJS_Array ValueArray;
           CJS_Value ElementValue(pRuntime);
           int iIndex;
           for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
@@ -2736,7 +2740,7 @@ FX_BOOL Field::value(IJS_Context* cc,
             ElementValue = pFormField->GetOptionValue(iIndex).c_str();
             if (FXSYS_wcslen(ElementValue.ToCFXWideString().c_str()) == 0)
               ElementValue = pFormField->GetOptionLabel(iIndex).c_str();
-            ValueArray.SetElement(i, ElementValue);
+            ValueArray.SetElement(pRuntime->GetIsolate(), i, ElementValue);
           }
           vp << ValueArray;
         } else {
@@ -3086,7 +3090,7 @@ FX_BOOL Field::getArray(IJS_Context* cc,
 
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  CJS_Array FormFieldArray(pRuntime);
+  CJS_Array FormFieldArray;
 
   int j = 0;
   for (const auto& pStr : swSort) {
@@ -3101,10 +3105,10 @@ FX_BOOL Field::getArray(IJS_Context* cc,
 
     CJS_Value FormFieldValue(pRuntime);
     FormFieldValue = pJSField;
-    FormFieldArray.SetElement(j++, FormFieldValue);
+    FormFieldArray.SetElement(pRuntime->GetIsolate(), j++, FormFieldValue);
   }
 
-  vRet = FormFieldArray;
+  vRet = CJS_Value(pRuntime, FormFieldArray);
   return TRUE;
 }
 

@@ -519,7 +519,7 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Array aName(pRuntime);
+  CJS_Array aName;
 
   if (params.empty()) {
     pPDFForm->ResetForm(TRUE);
@@ -532,14 +532,14 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
       aName.Attach(params[0].ToV8Array());
       break;
     case CJS_Value::VT_string:
-      aName.SetElement(0, params[0]);
+      aName.SetElement(pRuntime->GetIsolate(), 0, params[0]);
       break;
   }
 
   std::vector<CPDF_FormField*> aFields;
   for (int i = 0, isz = aName.GetLength(); i < isz; ++i) {
     CJS_Value valElement(pRuntime);
-    aName.GetElement(i, valElement);
+    aName.GetElement(pRuntime->GetIsolate(), i, valElement);
     CFX_WideString swVal = valElement.ToCFXWideString();
     for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
       aFields.push_back(pPDFForm->GetField(j, swVal));
@@ -574,7 +574,7 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   v8::Isolate* isolate = pRuntime->GetIsolate();
-  CJS_Array aFields(pRuntime);
+  CJS_Array aFields;
   CFX_WideString strURL;
   FX_BOOL bFDF = TRUE;
   FX_BOOL bEmpty = FALSE;
@@ -618,7 +618,7 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   std::vector<CPDF_FormField*> fieldObjects;
   for (int i = 0, sz = aFields.GetLength(); i < sz; ++i) {
     CJS_Value valName(pRuntime);
-    aFields.GetElement(i, valName);
+    aFields.GetElement(pRuntime->GetIsolate(), i, valName);
 
     CFX_WideString sName = valName.ToCFXWideString();
     CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
@@ -1099,7 +1099,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Array Icons(pRuntime);
+  CJS_Array Icons;
 
   int i = 0;
   for (const auto& pIconElement : m_IconList) {
@@ -1118,7 +1118,8 @@ FX_BOOL Document::icons(IJS_Context* cc,
 
     pIcon->SetStream(pIconElement->IconStream->GetStream());
     pIcon->SetIconName(pIconElement->IconName);
-    Icons.SetElement(i++, CJS_Value(pRuntime, pJS_Icon));
+    Icons.SetElement(pRuntime->GetIsolate(), i++,
+                     CJS_Value(pRuntime, pJS_Icon));
   }
 
   vp << Icons;

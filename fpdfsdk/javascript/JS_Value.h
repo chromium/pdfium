@@ -40,7 +40,7 @@ class CJS_Value {
   CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj);
   CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr);
   CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr);
-  CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array);
+  CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array);
   CJS_Value(const CJS_Value& other);
 
   ~CJS_Value();
@@ -129,21 +129,23 @@ class CJS_PropValue : public CJS_Value {
 
 class CJS_Array {
  public:
-  explicit CJS_Array(CJS_Runtime* pRuntime);
+  CJS_Array();
   CJS_Array(const CJS_Array& other);
   virtual ~CJS_Array();
 
   void Attach(v8::Local<v8::Array> pArray);
-  void GetElement(unsigned index, CJS_Value& value) const;
-  void SetElement(unsigned index, CJS_Value value);
+  void GetElement(v8::Isolate* pIsolate,
+                  unsigned index,
+                  CJS_Value& value) const;
+  void SetElement(v8::Isolate* pIsolate,
+                  unsigned index,
+                  const CJS_Value& value);
   int GetLength() const;
 
-  v8::Local<v8::Array> ToV8Array() const;
-  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
+  v8::Local<v8::Array> ToV8Array(v8::Isolate* pIsolate) const;
 
  private:
   mutable v8::Local<v8::Array> m_pArray;
-  CJS_Runtime* const m_pJSRuntime;
 };
 
 class CJS_Date {

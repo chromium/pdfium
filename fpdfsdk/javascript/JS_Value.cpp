@@ -73,10 +73,9 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr)
   operator=(pStr);
 }
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array)
-    : m_pJSRuntime(pRuntime) {
-  operator=(array);
-}
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array)
+    : m_pValue(array.ToV8Array(pRuntime->GetIsolate())),
+      m_pJSRuntime(pRuntime) {}
 
 CJS_Value::~CJS_Value() {}
 
@@ -190,11 +189,6 @@ void CJS_Value::SetNull() {
 
 void CJS_Value::operator=(const FX_CHAR* pStr) {
   operator=(CFX_WideString::FromLocal(pStr).c_str());
-}
-
-void CJS_Value::operator=(const CJS_Array& array) {
-  ASSERT(m_pJSRuntime == array.GetJSRuntime());
-  m_pValue = array.ToV8Array();
 }
 
 void CJS_Value::operator=(const CJS_Date& date) {
@@ -360,7 +354,7 @@ void CJS_PropValue::operator>>(CJS_Array& array) const {
 
 void CJS_PropValue::operator<<(CJS_Array& array) {
   ASSERT(!m_bIsSetting);
-  CJS_Value::operator=(array);
+  m_pValue = array.ToV8Array(m_pJSRuntime->GetIsolate());
 }
 
 void CJS_PropValue::operator>>(CJS_Date& date) const {
@@ -373,30 +367,30 @@ void CJS_PropValue::operator<<(CJS_Date& date) {
   CJS_Value::operator=(date);
 }
 
-CJS_Array::CJS_Array(CJS_Runtime* pRuntime) : m_pJSRuntime(pRuntime) {}
-
-CJS_Array::~CJS_Array() {}
+CJS_Array::CJS_Array() {}
 
 CJS_Array::CJS_Array(const CJS_Array& other) = default;
+
+CJS_Array::~CJS_Array() {}
 
 void CJS_Array::Attach(v8::Local<v8::Array> pArray) {
   m_pArray = pArray;
 }
 
-void CJS_Array::GetElement(unsigned index, CJS_Value& value) const {
-  if (m_pArray.IsEmpty())
-    return;
-  v8::Local<v8::Value> p =
-      FXJS_GetArrayElement(m_pJSRuntime->GetIsolate(), m_pArray, index);
-  value.Attach(p);
+void CJS_Array::GetElement(v8::Isolate* pIsolate,
+                           unsigned index,
+                           CJS_Value& value) const {
+  if (!m_pArray.IsEmpty())
+    value.Attach(FXJS_GetArrayElement(pIsolate, m_pArray, index));
 }
 
-void CJS_Array::SetElement(unsigned index, CJS_Value value) {
+void CJS_Array::SetElement(v8::Isolate* pIsolate,
+                           unsigned index,
+                           const CJS_Value& value) {
   if (m_pArray.IsEmpty())
-    m_pArray = FXJS_NewArray(m_pJSRuntime->GetIsolate());
+    m_pArray = FXJS_NewArray(pIsolate);
 
-  FXJS_PutArrayElement(m_pJSRuntime->GetIsolate(), m_pArray, index,
-                       value.ToV8Value());
+  FXJS_PutArrayElement(pIsolate, m_pArray, index, value.ToV8Value());
 }
 
 int CJS_Array::GetLength() const {
@@ -405,9 +399,9 @@ int CJS_Array::GetLength() const {
   return FXJS_GetArrayLength(m_pArray);
 }
 
-v8::Local<v8::Array> CJS_Array::ToV8Array() const {
+v8::Local<v8::Array> CJS_Array::ToV8Array(v8::Isolate* pIsolate) const {
   if (m_pArray.IsEmpty())
-    m_pArray = FXJS_NewArray(m_pJSRuntime->GetIsolate());
+    m_pArray = FXJS_NewArray(pIsolate);
 
   return m_pArray;
 }

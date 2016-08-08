@@ -155,7 +155,7 @@ double CJS_PublicMethods::AF_Simple(const FX_WCHAR* sFuction,
 
 CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                   CJS_Value val) {
-  CJS_Array StrArray(pRuntime);
+  CJS_Array StrArray;
   if (val.IsArrayObject()) {
     val.ConvertToArray(StrArray);
     return StrArray;
@@ -171,7 +171,8 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     const char* pTemp = strchr(p, ch);
     if (!pTemp) {
       StrArray.SetElement(
-          nIndex, CJS_Value(pRuntime, StrTrim(CFX_ByteString(p)).c_str()));
+          pRuntime->GetIsolate(), nIndex,
+          CJS_Value(pRuntime, StrTrim(CFX_ByteString(p)).c_str()));
       break;
     }
 
@@ -180,7 +181,8 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     *(pSub + (pTemp - p)) = '\0';
 
     StrArray.SetElement(
-        nIndex, CJS_Value(pRuntime, StrTrim(CFX_ByteString(pSub)).c_str()));
+        pRuntime->GetIsolate(), nIndex,
+        CJS_Value(pRuntime, StrTrim(CFX_ByteString(pSub)).c_str()));
     delete[] pSub;
 
     nIndex++;
@@ -827,16 +829,15 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
     }
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
-        CJS_Array arColor(pRuntime);
+        CJS_Array arColor;
         CJS_Value vColElm(pRuntime);
         vColElm = L"RGB";
-        arColor.SetElement(0, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 0, vColElm);
         vColElm = 1;
-        arColor.SetElement(1, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 1, vColElm);
         vColElm = 0;
-        arColor.SetElement(2, vColElm);
-
-        arColor.SetElement(3, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 2, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 3, vColElm);
 
         CJS_PropValue vProp(pRuntime);
         vProp.StartGetting();
@@ -848,26 +849,26 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   } else {
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
-        CJS_Array arColor(pRuntime);
+        CJS_Array arColor;
         CJS_Value vColElm(pRuntime);
         vColElm = L"RGB";
-        arColor.SetElement(0, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 0, vColElm);
         vColElm = 0;
-        arColor.SetElement(1, vColElm);
-        arColor.SetElement(2, vColElm);
-        arColor.SetElement(3, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 1, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 2, vColElm);
+        arColor.SetElement(pRuntime->GetIsolate(), 3, vColElm);
 
         CJS_PropValue vProp(pRuntime);
         vProp.StartGetting();
         fTarget->textColor(cc, vProp, sError);
 
-        CJS_Array aProp(pRuntime);
+        CJS_Array aProp;
         vProp.ConvertToArray(aProp);
 
         CPWL_Color crProp;
         CPWL_Color crColor;
-        color::ConvertArrayToPWLColor(aProp, crProp);
-        color::ConvertArrayToPWLColor(arColor, crColor);
+        color::ConvertArrayToPWLColor(pRuntime, aProp, &crProp);
+        color::ConvertArrayToPWLColor(pRuntime, arColor, &crColor);
 
         if (crColor != crProp) {
           CJS_PropValue vProp2(pRuntime);
@@ -1656,7 +1657,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
 
   for (int i = 0, isz = FieldNameArray.GetLength(); i < isz; i++) {
     CJS_Value jsValue(pRuntime);
-    FieldNameArray.GetElement(i, jsValue);
+    FieldNameArray.GetElement(pRuntime->GetIsolate(), i, jsValue);
     CFX_WideString wsFieldName = jsValue.ToCFXWideString();
 
     for (int j = 0, jsz = pInterForm->CountFields(wsFieldName); j < jsz; j++) {
@@ -1784,7 +1785,7 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Array nums(pRuntime);
+  CJS_Array nums;
 
   CFX_WideString str = params[0].ToCFXWideString();
   CFX_WideString sPart;
@@ -1799,7 +1800,8 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
       sPart += wc;
     } else {
       if (sPart.GetLength() > 0) {
-        nums.SetElement(nIndex, CJS_Value(pRuntime, sPart.c_str()));
+        nums.SetElement(pRuntime->GetIsolate(), nIndex,
+                        CJS_Value(pRuntime, sPart.c_str()));
         sPart = L"";
         nIndex++;
       }
@@ -1807,11 +1809,12 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
   }
 
   if (sPart.GetLength() > 0) {
-    nums.SetElement(nIndex, CJS_Value(pRuntime, sPart.c_str()));
+    nums.SetElement(pRuntime->GetIsolate(), nIndex,
+                    CJS_Value(pRuntime, sPart.c_str()));
   }
 
   if (nums.GetLength() > 0)
-    vRet = nums;
+    vRet = CJS_Value(pRuntime, nums);
   else
     vRet.SetNull();
 

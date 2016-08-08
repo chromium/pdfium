@@ -109,7 +109,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
   CPDFDoc_Environment* pApp = pContext->GetReaderApp();
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
-  CJS_Array aDocs(pRuntime);
+  CJS_Array aDocs;
   if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument()) {
     CJS_Document* pJSDocument = nullptr;
     if (pDoc == pCurDoc) {
@@ -124,7 +124,8 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
           (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
       ASSERT(pJSDocument);
     }
-    aDocs.SetElement(0, CJS_Value(pRuntime, pJSDocument));
+    aDocs.SetElement(pRuntime->GetIsolate(), 0,
+                     CJS_Value(pRuntime, pJSDocument));
   }
   if (aDocs.GetLength() > 0)
     vp << aDocs;
@@ -144,8 +145,6 @@ FX_BOOL app::calculate(IJS_Context* cc,
 
     CJS_Context* pContext = (CJS_Context*)cc;
     CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-    CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-    CJS_Array aDocs(pRuntime);
     if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
       pDoc->GetInterForm()->EnableCalculate((FX_BOOL)m_bCalculate);
   } else {
@@ -284,14 +283,14 @@ FX_BOOL app::alert(IJS_Context* cc,
 
   CFX_WideString swMsg;
   if (newParams[0].GetType() == CJS_Value::VT_object) {
-    CJS_Array carray(pRuntime);
+    CJS_Array carray;
     if (newParams[0].ConvertToArray(carray)) {
       swMsg = L"[";
       CJS_Value element(pRuntime);
       for (int i = 0; i < carray.GetLength(); ++i) {
         if (i)
           swMsg += L", ";
-        carray.GetElement(i, element);
+        carray.GetElement(pRuntime->GetIsolate(), i, element);
         swMsg += element.ToCFXWideString();
       }
       swMsg += L"]";

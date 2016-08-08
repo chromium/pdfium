@@ -41,9 +41,12 @@ class color : public CJS_EmbedObj {
                 CJS_Value& vRet,
                 CFX_WideString& sError);
 
- public:
-  static void ConvertPWLColorToArray(const CPWL_Color& color, CJS_Array& array);
-  static void ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color);
+  static void ConvertPWLColorToArray(CJS_Runtime* pRuntime,
+                                     const CPWL_Color& color,
+                                     CJS_Array* array);
+  static void ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
+                                     const CJS_Array& array,
+                                     CPWL_Color* color);
 
  private:
   CPWL_Color m_crTransparent;
