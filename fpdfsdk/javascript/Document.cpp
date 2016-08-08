@@ -91,6 +91,7 @@ JS_STATIC_PROP_ENTRY(path)
 JS_STATIC_PROP_ENTRY(producer)
 JS_STATIC_PROP_ENTRY(subject)
 JS_STATIC_PROP_ENTRY(title)
+JS_STATIC_PROP_ENTRY(URL)
 JS_STATIC_PROP_ENTRY(zoom)
 JS_STATIC_PROP_ENTRY(zoomType)
 END_JS_STATIC_PROP()
@@ -901,6 +902,18 @@ FX_BOOL Document::mouseX(IJS_Context* cc,
 FX_BOOL Document::mouseY(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
+  return TRUE;
+}
+
+FX_BOOL Document::URL(IJS_Context* cc,
+                      CJS_PropValue& vp,
+                      CFX_WideString& sError) {
+  if (vp.IsSetting()) {
+    CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
+    return FALSE;
+  }
+  vp << m_pDocument->GetPath();
   return TRUE;
 }
 

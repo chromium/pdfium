@@ -100,6 +100,7 @@ var document_props = [
   'producer',
   'subject',
   'title',
+  'URL',
   'zoom',
   'zoomType',
 ];

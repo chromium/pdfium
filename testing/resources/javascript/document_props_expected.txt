@@ -28,6 +28,7 @@ Alert: this.path is string /
 Alert: this.producer is string 
 Alert: this.subject is string 
 Alert: this.title is string 
+Alert: this.URL is string 
 Alert: this.zoom is undefined undefined
 Alert: this.zoomType is undefined undefined
 Alert: *** Setting properties ***
@@ -61,6 +62,7 @@ Alert: ERROR: Document.path: Cannot assign to readonly property.
 Alert: this.producer = 3; yields 3
 Alert: this.subject = 3; yields 3
 Alert: this.title = 3; yields 3
+Alert: ERROR: Document.URL: Cannot assign to readonly property.
 Alert: this.zoom = 3; yields 3
 Alert: this.zoomType = 3; yields 3
 Alert: *** Getting properties ***
@@ -93,5 +95,6 @@ Alert: this.path is string /
 Alert: this.producer is string 3
 Alert: this.subject is string 3
 Alert: this.title is string 3
+Alert: this.URL is string 
 Alert: this.zoom is undefined undefined
 Alert: this.zoomType is undefined undefined

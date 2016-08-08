@@ -259,6 +259,7 @@ class Document : public CJS_EmbedObj {
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
+  FX_BOOL URL(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
   void AttachDoc(CPDFSDK_Document* pDoc);
   CPDFSDK_Document* GetReaderDoc();
@@ -324,6 +325,7 @@ class CJS_Document : public CJS_Object {
   JS_STATIC_PROP(producer, Document);
   JS_STATIC_PROP(subject, Document);
   JS_STATIC_PROP(title, Document);
+  JS_STATIC_PROP(URL, Document);
   JS_STATIC_PROP(zoom, Document);
   JS_STATIC_PROP(zoomType, Document);
 
