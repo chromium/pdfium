@@ -275,7 +275,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceImpl(
   }
 
   CPDF_Array* pArray = pCSObj->AsArray();
-  if (!pArray || pArray->GetCount() == 0)
+  if (!pArray || pArray->IsEmpty())
     return nullptr;
 
   if (pArray->GetCount() == 1) {

@@ -887,7 +887,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
     if (bSelected)
       pArray->AddInteger(iOptIndex);
 
-    if (pArray->GetCount() == 0)
+    if (pArray->IsEmpty())
       m_pDict->RemoveAt("I");
   }
   if (bNotify)

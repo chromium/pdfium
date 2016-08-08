@@ -355,7 +355,7 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
   }
 
   CPDF_Array* pArray = pObj->AsArray();
-  if (!pArray || pArray->GetCount() == 0)
+  if (!pArray || pArray->IsEmpty())
     return nullptr;
 
   CPDF_Object* pFamilyObj = pArray->GetDirectObjectAt(0);

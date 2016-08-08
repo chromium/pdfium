@@ -28,6 +28,7 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Array* AsArray() override;
   const CPDF_Array* AsArray() const override;
 
+  bool IsEmpty() const { return m_Objects.empty(); }
   size_t GetCount() const { return m_Objects.size(); }
   CPDF_Object* GetObjectAt(size_t index) const;
   CPDF_Object* GetDirectObjectAt(size_t index) const;
