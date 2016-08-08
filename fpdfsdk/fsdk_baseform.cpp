@@ -18,6 +18,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfdoc/include/cpdf_actionfields.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"

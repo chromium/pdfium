@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_CFDE_PATH_H_
 #define XFA_FDE_CFDE_PATH_H_
 
+#include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 

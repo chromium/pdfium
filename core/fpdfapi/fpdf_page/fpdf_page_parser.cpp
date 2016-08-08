@@ -34,6 +34,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxge/include/cfx_pathdata.h"
 
 namespace {
 

@@ -25,6 +25,7 @@
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_windowsdevice.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"
 #include "core/fxge/include/fx_font.h"

@@ -6,6 +6,7 @@
 
 #include "xfa/fxgraphics/cfx_path.h"
 
+#include "core/fxge/include/cfx_pathdata.h"
 #include "xfa/fxgraphics/cfx_path_generator.h"
 
 CFX_Path::CFX_Path() {

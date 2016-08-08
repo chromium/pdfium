@@ -26,6 +26,7 @@
 #include <memory>
 
 #include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/include/cfx_pathdata.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 

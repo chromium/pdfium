@@ -16,6 +16,7 @@
 #include "core/fxge/apple/apple_int.h"
 #include "core/fxge/apple/cfx_quartzdevice.h"
 #include "core/fxge/dib/dib_int.h"
+#include "core/fxge/ge/cfx_cliprgn.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/fx_freetype.h"

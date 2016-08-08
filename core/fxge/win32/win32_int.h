@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_WIN32_WIN32_INT_H_
 #define CORE_FXGE_WIN32_WIN32_INT_H_
 
+#include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 #include "core/fxge/win32/dwrite_int.h"
 

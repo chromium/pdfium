@@ -15,6 +15,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fxge/include/cfx_pathdata.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 namespace {

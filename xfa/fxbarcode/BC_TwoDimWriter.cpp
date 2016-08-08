@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/fx_ge.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "xfa/fxbarcode/BC_TwoDimWriter.h"

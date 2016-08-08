@@ -7,6 +7,7 @@
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 
 #include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxge/include/cfx_pathdata.h"
 
 IFX_RenderDeviceDriver::~IFX_RenderDeviceDriver() {}
 

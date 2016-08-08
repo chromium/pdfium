@@ -11,6 +11,7 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
+#include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 

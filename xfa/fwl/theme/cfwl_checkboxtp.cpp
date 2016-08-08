@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/theme/cfwl_checkboxtp.h"
 
+#include "core/fxge/include/cfx_pathdata.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/basewidget/ifwl_checkbox.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"

@@ -12,6 +12,7 @@
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxcrt/include/fx_xml.h"
+#include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Caret.h"

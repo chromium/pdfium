@@ -22,6 +22,7 @@ class CCodec_ScanlineDecoder;
 class CFX_FontCache;
 class CFX_GlyphBitmap;
 class CFX_ImageTransformer;
+class CFX_PathData;
 class CPDF_Color;
 class CPDF_Dictionary;
 class CPDF_Document;
