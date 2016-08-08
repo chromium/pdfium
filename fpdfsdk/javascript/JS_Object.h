@@ -25,13 +25,6 @@ class CJS_EmbedObj {
 
   CJS_Object* GetJSObject() const { return m_pJSObject; }
 
-  int MsgBox(CPDFDoc_Environment* pApp,
-             const FX_WCHAR* swMsg,
-             const FX_WCHAR* swTitle,
-             FX_UINT nType,
-             FX_UINT nIcon);
-  void Alert(CJS_Context* pContext, const FX_WCHAR* swMsg);
-
  protected:
   CJS_Object* m_pJSObject;
 };
@@ -53,9 +46,7 @@ class CJS_Object {
   void SetEmbedObject(CJS_EmbedObj* pObj) { m_pEmbedObj.reset(pObj); }
   CJS_EmbedObj* GetEmbedObject() const { return m_pEmbedObj.get(); }
 
-  static void Alert(CJS_Context* pContext, const FX_WCHAR* swMsg);
-
-  v8::Isolate* GetIsolate() { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return m_pIsolate; }
 
  protected:
   std::unique_ptr<CJS_EmbedObj> m_pEmbedObj;

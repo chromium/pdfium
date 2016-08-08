@@ -77,6 +77,12 @@ CFX_WideString StrTrim(const CFX_WideString& pStr) {
   return result;
 }
 
+void AlertIfPossible(CJS_Context* pContext, const FX_WCHAR* swMsg) {
+  CPDFDoc_Environment* pApp = pContext->GetReaderApp();
+  if (pApp)
+    pApp->JS_appAlert(swMsg, nullptr, 0, 3);
+}
+
 }  // namespace
 
 bool CJS_PublicMethods::IsNumber(const CFX_WideString& str) {
@@ -913,7 +919,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
     if (!IsNumber(swTemp.c_str())) {
       pEvent->Rc() = FALSE;
       sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
-      Alert(pContext, sError.c_str());
+      AlertIfPossible(pContext, sError.c_str());
     }
     return TRUE;  // it happens after the last keystroke and before validating,
   }
@@ -1122,7 +1128,7 @@ FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
     CFX_WideString swMsg;
     swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE).c_str(),
                  sFormat.c_str());
-    Alert(pContext, swMsg.c_str());
+    AlertIfPossible(pContext, swMsg.c_str());
     return FALSE;
   }
 
@@ -1214,7 +1220,7 @@ FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(
       CFX_WideString swMsg;
       swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE).c_str(),
                    sFormat.c_str());
-      Alert(pContext, swMsg.c_str());
+      AlertIfPossible(pContext, swMsg.c_str());
       pEvent->Rc() = FALSE;
       return TRUE;
     }
@@ -1432,7 +1438,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
 
     if (iIndexMask != wstrMask.GetLength() ||
         (iIndexMask != valEvent.GetLength() && wstrMask.GetLength() != 0)) {
-      Alert(
+      AlertIfPossible(
           pContext,
           JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE).c_str());
       pEvent->Rc() = FALSE;
@@ -1449,23 +1455,26 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
   FX_STRSIZE combined_len = valEvent.GetLength() + wChange.GetLength() +
                             pEvent->SelStart() - pEvent->SelEnd();
   if (combined_len > wstrMask.GetLength()) {
-    Alert(pContext,
-          JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
+    AlertIfPossible(
+        pContext,
+        JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
     pEvent->Rc() = FALSE;
     return TRUE;
   }
 
   if (iIndexMask >= wstrMask.GetLength() && !wChange.IsEmpty()) {
-    Alert(pContext,
-          JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
+    AlertIfPossible(
+        pContext,
+        JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
     pEvent->Rc() = FALSE;
     return TRUE;
   }
 
   for (FX_STRSIZE i = 0; i < wChange.GetLength(); ++i) {
     if (iIndexMask >= wstrMask.GetLength()) {
-      Alert(pContext,
-            JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
+      AlertIfPossible(
+          pContext,
+          JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
       pEvent->Rc() = FALSE;
       return TRUE;
     }
@@ -1584,7 +1593,7 @@ FX_BOOL CJS_PublicMethods::AFParseDateEx(IJS_Context* cc,
     CFX_WideString swMsg;
     swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE).c_str(),
                  sFormat.c_str());
-    Alert((CJS_Context*)cc, swMsg.c_str());
+    AlertIfPossible((CJS_Context*)cc, swMsg.c_str());
     return FALSE;
   }
 
@@ -1768,7 +1777,7 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(
   }
 
   if (!swMsg.IsEmpty()) {
-    Alert(pContext, swMsg.c_str());
+    AlertIfPossible(pContext, swMsg.c_str());
     pEvent->Rc() = FALSE;
   }
   return TRUE;

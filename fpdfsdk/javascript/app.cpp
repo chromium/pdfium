@@ -403,6 +403,12 @@ FX_BOOL app::alert(IJS_Context* cc,
     return FALSE;
   }
 
+  CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
+  if (!pApp) {
+    vRet = 0;
+    return TRUE;
+  }
+
   CFX_WideString swMsg;
   if (newParams[0].GetType() == CJS_Value::VT_object) {
     CJS_Array carray;
@@ -438,8 +444,10 @@ FX_BOOL app::alert(IJS_Context* cc,
     swTitle = JSGetStringFromID(pContext, IDS_STRING_JSALERT);
 
   pRuntime->BeginBlock();
-  vRet = MsgBox(pRuntime->GetReaderApp(), swMsg.c_str(), swTitle.c_str(), iType,
-                iIcon);
+  if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
+    pDoc->KillFocusAnnot();
+
+  vRet = pApp->JS_appAlert(swMsg.c_str(), swTitle.c_str(), iType, iIcon);
   pRuntime->EndBlock();
   return TRUE;
 }

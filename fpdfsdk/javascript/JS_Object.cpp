@@ -16,24 +16,6 @@ CJS_EmbedObj::~CJS_EmbedObj() {
   m_pJSObject = nullptr;
 }
 
-int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp,
-                         const FX_WCHAR* swMsg,
-                         const FX_WCHAR* swTitle,
-                         FX_UINT nType,
-                         FX_UINT nIcon) {
-  if (!pApp)
-    return 0;
-
-  if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
-    pDoc->KillFocusAnnot();
-
-  return pApp->JS_appAlert(swMsg, swTitle, nType, nIcon);
-}
-
-void CJS_EmbedObj::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  CJS_Object::Alert(pContext, swMsg);
-}
-
 void FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
   CJS_Object* pJSObj = data.GetParameter();
   pJSObj->ExitInstance();
@@ -66,9 +48,3 @@ void CJS_Object::Dispose() {
 void CJS_Object::InitInstance(IJS_Runtime* pIRuntime) {}
 
 void CJS_Object::ExitInstance() {}
-
-void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-  if (pApp)
-    pApp->JS_appAlert(swMsg, nullptr, 0, 3);
-}
