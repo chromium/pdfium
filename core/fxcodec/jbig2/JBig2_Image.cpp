@@ -23,7 +23,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
       m_nHeight(0),
       m_nStride(0),
       m_bOwnsBuffer(true) {
-  if (w < 0 || h < 0 || w > kMaxImagePixels)
+  if (w <= 0 || h <= 0 || w > kMaxImagePixels)
     return;
 
   int32_t stride_pixels = (w + 31) & ~31;
