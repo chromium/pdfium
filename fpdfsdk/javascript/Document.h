@@ -207,6 +207,10 @@ class Document : public CJS_EmbedObj {
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
+  FX_BOOL gotoNamedDest(IJS_Context* cc,
+                        const std::vector<CJS_Value>& params,
+                        CJS_Value& vRet,
+                        CFX_WideString& sError);
   FX_BOOL importAnFDF(IJS_Context* cc,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
@@ -356,6 +360,7 @@ class CJS_Document : public CJS_Object {
   JS_STATIC_METHOD(getPageNumWords, Document);
   JS_STATIC_METHOD(getPrintParams, Document);
   JS_STATIC_METHOD(getURL, Document);
+  JS_STATIC_METHOD(gotoNamedDest, Document);
   JS_STATIC_METHOD(importAnFDF, Document);
   JS_STATIC_METHOD(importAnXFDF, Document);
   JS_STATIC_METHOD(importTextData, Document);

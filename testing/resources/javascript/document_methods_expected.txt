@@ -97,6 +97,9 @@ Alert: PASS: this.getPageNumWords(0, "clams", [1, 2]) = 2
 Alert: PASS: this.getPageNumWords(-1) threw error Document.getPageNumWords: Incorrect parameter value.
 Alert: PASS: this.getPageNumWords(6) threw error Document.getPageNumWords: Incorrect parameter value.
 Alert: PASS: typeof this.getPrintParams = function
+Alert: PASS: typeof this.gotoNamedDest = function
+Alert: PASS: this.gotoNamedDest() threw error Document.gotoNamedDest: Incorrect number of parameters passed to function.
+Alert: PASS: this.gotoNamedDest(1, 2) threw error Document.gotoNamedDest: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.mailDoc = function
 Alert: PASS: typeof this.mailForm = function
 Alert: PASS: typeof this.print = function

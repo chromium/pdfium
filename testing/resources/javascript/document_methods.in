@@ -214,6 +214,17 @@ function testGetPrintParams() {
   // TODO(tsepez): test success cases.
 }
 
+function testGotoNamedDest() {
+   // Method is present.
+   expect('typeof this.gotoNamedDest', 'function');
+
+   // Method needs exactly one argument.
+   expectError('this.gotoNamedDest()');
+   expectError('this.gotoNamedDest(1, 2)');
+
+   // TODO(tonikitoo): test success cases.
+}
+
 function testMailDoc() {
    // Method is present.
    expect('typeof this.mailDoc', 'function');
@@ -303,6 +314,7 @@ try {
   testGetPageNthWordQuads();
   testGetPageNumWords();
   testGetPrintParams();
+  testGotoNamedDest();
   testMailDoc();
   testMailForm();
   testPrint();

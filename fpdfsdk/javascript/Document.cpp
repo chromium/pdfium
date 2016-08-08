@@ -10,9 +10,11 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fpdfdoc/include/cpdf_nametree.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
@@ -124,6 +126,7 @@ JS_STATIC_METHOD_ENTRY(getPageNthWordQuads)
 JS_STATIC_METHOD_ENTRY(getPageNumWords)
 JS_STATIC_METHOD_ENTRY(getPrintParams)
 JS_STATIC_METHOD_ENTRY(getURL)
+JS_STATIC_METHOD_ENTRY(gotoNamedDest)
 JS_STATIC_METHOD_ENTRY(importAnFDF)
 JS_STATIC_METHOD_ENTRY(importAnXFDF)
 JS_STATIC_METHOD_ENTRY(importTextData)
@@ -1463,6 +1466,52 @@ FX_BOOL Document::getURL(IJS_Context* cc,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   // Unsafe, not supported.
+  return TRUE;
+}
+
+FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
+                                const std::vector<CJS_Value>& params,
+                                CJS_Value& vRet,
+                                CFX_WideString& sError) {
+  CJS_Context* context = (CJS_Context*)cc;
+  if (params.size() != 1) {
+    sError = JSGetStringFromID(context, IDS_STRING_JSPARAMERROR);
+    return FALSE;
+  }
+
+  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
+  if (!pDocument)
+    return FALSE;
+
+  CFX_WideString wideName = params[0].ToCFXWideString();
+  CFX_ByteString utf8Name = wideName.UTF8Encode();
+
+  CPDF_NameTree nameTree(pDocument, "Dests");
+  CPDF_Array* destArray = nameTree.LookupNamedDest(pDocument, utf8Name);
+  if (!destArray)
+    return FALSE;
+
+  CPDF_Dest dest(destArray);
+  const CPDF_Array* arrayObject = ToArray(dest.GetObject());
+
+  std::unique_ptr<float[]> scrollPositionArray;
+  int scrollPositionArraySize = 0;
+
+  if (arrayObject) {
+    scrollPositionArray.reset(new float[arrayObject->GetCount()]);
+    int j = 0;
+    for (size_t i = 2; i < arrayObject->GetCount(); i++)
+      scrollPositionArray[j++] = arrayObject->GetFloatAt(i);
+    scrollPositionArraySize = j;
+  }
+
+  CJS_Runtime* runtime = context->GetJSRuntime();
+  runtime->BeginBlock();
+  CPDFDoc_Environment* pApp = m_pDocument->GetEnv();
+  pApp->FFI_DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
+                         scrollPositionArray.get(), scrollPositionArraySize);
+  runtime->EndBlock();
+
   return TRUE;
 }
 
