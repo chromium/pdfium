@@ -14,3 +14,4 @@ Various changes to use FX_ library functions.
 Possibly more?
 0001-gcc-warning.patch: Fix a GCC warning about both enumeral and
 non-enumeral type in conditional.
+0002-ubsan-error-fixes.path: Fix UBSan errors for overflows.

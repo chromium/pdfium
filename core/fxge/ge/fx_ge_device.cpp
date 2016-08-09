@@ -170,6 +170,13 @@ FX_BOOL CFX_RenderDevice::DrawPathWithBlend(
     if (!(fill_mode & FXFILL_RECT_AA) &&
         pPathData->IsRect(pObject2Device, &rect_f)) {
       FX_RECT rect_i = rect_f.GetOutterRect();
+
+      // Depending on the top/bottom, left/right values of the rect it's
+      // possible to overflow the Width() and Height() calculations. Check that
+      // the rect will have valid dimension before continuing.
+      if (!rect_i.Valid())
+        return FALSE;
+
       int width = (int)FXSYS_ceil(rect_f.right - rect_f.left);
       if (width < 1) {
         width = 1;
