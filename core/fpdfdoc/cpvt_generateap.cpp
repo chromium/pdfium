@@ -452,15 +452,60 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
   return true;
 }
 
-CFX_ByteString GetColorStringWithDefault(CPDF_Dictionary* pAnnotDict,
+CFX_ByteString GetColorStringWithDefault(CPDF_Array* pColor,
                                          const CPVT_Color& crDefaultColor,
                                          PaintOperation nOperation) {
-  if (CPDF_Array* pColor = pAnnotDict->GetArrayBy("C")) {
+  if (pColor) {
     CPVT_Color color = CPVT_Color::ParseColor(*pColor);
     return CPVT_GenerateAP::GenerateColorAP(color, nOperation);
   }
 
   return CPVT_GenerateAP::GenerateColorAP(crDefaultColor, nOperation);
+}
+
+FX_FLOAT GetBorderWidth(const CPDF_Dictionary& pAnnotDict) {
+  if (CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictBy("BS")) {
+    if (pBorderStyleDict->KeyExist("W"))
+      return pBorderStyleDict->GetNumberBy("W");
+  }
+
+  if (CPDF_Array* pBorderArray = pAnnotDict.GetArrayBy("Border")) {
+    if (pBorderArray->GetCount() > 2)
+      return pBorderArray->GetNumberAt(2);
+  }
+
+  return 1;
+}
+
+CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
+  if (CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictBy("BS")) {
+    if (pBorderStyleDict->GetStringBy("S") == "D")
+      return pBorderStyleDict->GetArrayBy("D");
+  }
+
+  if (CPDF_Array* pBorderArray = pAnnotDict.GetArrayBy("Border")) {
+    if (pBorderArray->GetCount() == 4)
+      return pBorderArray->GetArrayAt(3);
+  }
+
+  return nullptr;
+}
+
+CFX_ByteString GetDashPatternString(const CPDF_Dictionary& pAnnotDict) {
+  CPDF_Array* pDashArray = GetDashArray(pAnnotDict);
+  if (!pDashArray || pDashArray->IsEmpty())
+    return CFX_ByteString();
+
+  // Support maximum of ten elements in the dash array.
+  size_t pDashArrayCount = std::min<size_t>(pDashArray->GetCount(), 10);
+  CFX_ByteTextBuf sDashStream;
+
+  sDashStream << "[";
+  for (size_t i = 0; i < pDashArrayCount; ++i)
+    sDashStream << pDashArray->GetNumberAt(i) << " ";
+  sDashStream << "] 0 d\n";
+
+  return sDashStream.MakeString();
 }
 
 CPDF_Dictionary* GenerateExtGStateDict(const CPDF_Dictionary& pAnnotDict,
@@ -509,6 +554,12 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   pResourceDict->SetAt("ExtGState", pExtGStateDict);
 
   pStreamDict->SetAt("Resources", pResourceDict);
+}
+
+CFX_ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
+  if (bIsStrokeRect)
+    return bIsFillRect ? "b" : "s";
+  return bIsFillRect ? "f" : "n";
 }
 
 }  // namespace
@@ -572,8 +623,9 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(
-      pAnnotDict, CPVT_Color(CPVT_Color::kRGB, 1, 1, 0), PaintOperation::FILL);
+  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayBy("C"),
+                                          CPVT_Color(CPVT_Color::kRGB, 1, 1, 0),
+                                          PaintOperation::FILL);
 
   CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
   rect.Normalize();
@@ -601,7 +653,7 @@ bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict,
+  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayBy("C"),
                                           CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
@@ -612,6 +664,56 @@ bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
   sAppStream << fLineWidth << " w " << rect.left << " "
              << rect.bottom + fLineWidth << " m " << rect.right << " "
              << rect.bottom + fLineWidth << " l S\n";
+
+  CPDF_Dictionary* pExtGStateDict =
+      GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
+  return true;
+}
+
+bool CPVT_GenerateAP::GenerateSquareAP(CPDF_Document* pDoc,
+                                       CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
+
+  CFX_ByteTextBuf sAppStream;
+  CFX_ByteString sExtGSDictName = "GS";
+  sAppStream << "/" << sExtGSDictName << " gs ";
+
+  CPDF_Array* pInteriorColor = pAnnotDict->GetArrayBy("IC");
+  sAppStream << GetColorStringWithDefault(pInteriorColor,
+                                          CPVT_Color(CPVT_Color::kTransparent),
+                                          PaintOperation::FILL);
+
+  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayBy("C"),
+                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          PaintOperation::STROKE);
+
+  FX_FLOAT fBorderWidth = GetBorderWidth(*pAnnotDict);
+  bool bIsStrokeRect = fBorderWidth > 0;
+
+  if (bIsStrokeRect) {
+    sAppStream << fBorderWidth << " w ";
+    sAppStream << GetDashPatternString(*pAnnotDict);
+  }
+
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  rect.Normalize();
+
+  if (bIsStrokeRect) {
+    // Deflating rect because stroking a path entails painting all points whose
+    // perpendicular distance from the path in user space is less than or equal
+    // to half the line width.
+    rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
+  }
+
+  bool bIsFillRect = pInteriorColor && (pInteriorColor->GetCount() > 0);
+
+  sAppStream << rect.left << " " << rect.bottom << " " << rect.Width() << " "
+             << rect.Height() << " re "
+             << GetPaintOperatorString(bIsStrokeRect, bIsFillRect) << "\n";
 
   CPDF_Dictionary* pExtGStateDict =
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
@@ -630,7 +732,7 @@ bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict,
+  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayBy("C"),
                                           CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
@@ -681,7 +783,7 @@ bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict,
+  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayBy("C"),
                                           CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
