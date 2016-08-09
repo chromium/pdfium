@@ -186,13 +186,13 @@ FX_BOOL util::printd(IJS_Context* cc,
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Value p1 = params[0];
   CJS_Value p2 = params[1];
-  CJS_Date jsDate(pRuntime);
+  CJS_Date jsDate;
   if (!p2.ConvertToDate(jsDate)) {
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT1);
     return FALSE;
   }
 
-  if (!jsDate.IsValidDate()) {
+  if (!jsDate.IsValidDate(pRuntime->GetIsolate())) {
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT2);
     return FALSE;
   }
@@ -201,22 +201,31 @@ FX_BOOL util::printd(IJS_Context* cc,
     CFX_WideString swResult;
     switch (p1.ToInt()) {
       case 0:
-        swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", jsDate.GetYear(),
-                        jsDate.GetMonth() + 1, jsDate.GetDay(),
-                        jsDate.GetHours(), jsDate.GetMinutes(),
-                        jsDate.GetSeconds());
+        swResult.Format(L"D:%04d%02d%02d%02d%02d%02d",
+                        jsDate.GetYear(pRuntime->GetIsolate()),
+                        jsDate.GetMonth(pRuntime->GetIsolate()) + 1,
+                        jsDate.GetDay(pRuntime->GetIsolate()),
+                        jsDate.GetHours(pRuntime->GetIsolate()),
+                        jsDate.GetMinutes(pRuntime->GetIsolate()),
+                        jsDate.GetSeconds(pRuntime->GetIsolate()));
         break;
       case 1:
-        swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d", jsDate.GetYear(),
-                        jsDate.GetMonth() + 1, jsDate.GetDay(),
-                        jsDate.GetHours(), jsDate.GetMinutes(),
-                        jsDate.GetSeconds());
+        swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d",
+                        jsDate.GetYear(pRuntime->GetIsolate()),
+                        jsDate.GetMonth(pRuntime->GetIsolate()) + 1,
+                        jsDate.GetDay(pRuntime->GetIsolate()),
+                        jsDate.GetHours(pRuntime->GetIsolate()),
+                        jsDate.GetMinutes(pRuntime->GetIsolate()),
+                        jsDate.GetSeconds(pRuntime->GetIsolate()));
         break;
       case 2:
-        swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d", jsDate.GetYear(),
-                        jsDate.GetMonth() + 1, jsDate.GetDay(),
-                        jsDate.GetHours(), jsDate.GetMinutes(),
-                        jsDate.GetSeconds());
+        swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d",
+                        jsDate.GetYear(pRuntime->GetIsolate()),
+                        jsDate.GetMonth(pRuntime->GetIsolate()) + 1,
+                        jsDate.GetDay(pRuntime->GetIsolate()),
+                        jsDate.GetHours(pRuntime->GetIsolate()),
+                        jsDate.GetMinutes(pRuntime->GetIsolate()),
+                        jsDate.GetSeconds(pRuntime->GetIsolate()));
         break;
       default:
         sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSVALUEERROR);
@@ -250,12 +259,12 @@ FX_BOOL util::printd(IJS_Context* cc,
       }
     }
 
-    int iYear = jsDate.GetYear();
-    int iMonth = jsDate.GetMonth();
-    int iDay = jsDate.GetDay();
-    int iHour = jsDate.GetHours();
-    int iMin = jsDate.GetMinutes();
-    int iSec = jsDate.GetSeconds();
+    int iYear = jsDate.GetYear(pRuntime->GetIsolate());
+    int iMonth = jsDate.GetMonth(pRuntime->GetIsolate());
+    int iDay = jsDate.GetDay(pRuntime->GetIsolate());
+    int iHour = jsDate.GetHours(pRuntime->GetIsolate());
+    int iMin = jsDate.GetMinutes(pRuntime->GetIsolate());
+    int iSec = jsDate.GetSeconds(pRuntime->GetIsolate());
 
     TbConvertAdditional cTableAd[] = {
         {L"m", iMonth + 1}, {L"d", iDay},
@@ -434,7 +443,9 @@ FX_BOOL util::scand(IJS_Context* cc,
   }
 
   if (!JS_PortIsNan(dDate)) {
-    vRet = CJS_Date(CJS_Runtime::FromContext(cc), dDate);
+    CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+    vRet = CJS_Value(pRuntime, CJS_Date(pRuntime->GetIsolate(), dDate)
+                                   .ToV8Date(pRuntime->GetIsolate()));
   } else {
     vRet.SetNull();
   }

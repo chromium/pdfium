@@ -41,6 +41,7 @@ class CJS_Value {
   CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr);
   CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr);
   CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array);
+  CJS_Value(CJS_Runtime* pRuntime, const CJS_Date& date);
   CJS_Value(const CJS_Value& other);
 
   ~CJS_Value();
@@ -72,8 +73,6 @@ class CJS_Value {
   void operator=(float val);
   void operator=(CJS_Object* val);
   void operator=(v8::Local<v8::Object> val);
-  void operator=(const CJS_Array& val);
-  void operator=(const CJS_Date& val);
   void operator=(const CJS_Value& value);
   void operator=(const FX_CHAR* pStr);
   void operator=(const FX_WCHAR* pWstr);
@@ -150,9 +149,9 @@ class CJS_Array {
 
 class CJS_Date {
  public:
-  explicit CJS_Date(CJS_Runtime* pRuntime);
-  CJS_Date(CJS_Runtime* pRuntime, double dMsec_time);
-  CJS_Date(CJS_Runtime* pRuntime,
+  CJS_Date();
+  CJS_Date(v8::Isolate* pIsolate, double dMsec_time);
+  CJS_Date(v8::Isolate* pIsolate,
            int year,
            int mon,
            int day,
@@ -162,34 +161,32 @@ class CJS_Date {
   virtual ~CJS_Date();
 
   void Attach(v8::Local<v8::Date> pDate);
-  bool IsValidDate() const;
+  bool IsValidDate(v8::Isolate* pIsolate) const;
 
-  int GetYear() const;
-  void SetYear(int iYear);
+  int GetYear(v8::Isolate* pIsolate) const;
+  void SetYear(v8::Isolate* pIsolate, int iYear);
 
-  int GetMonth() const;
-  void SetMonth(int iMonth);
+  int GetMonth(v8::Isolate* pIsolate) const;
+  void SetMonth(v8::Isolate* pIsolate, int iMonth);
 
-  int GetDay() const;
-  void SetDay(int iDay);
+  int GetDay(v8::Isolate* pIsolate) const;
+  void SetDay(v8::Isolate* pIsolate, int iDay);
 
-  int GetHours() const;
-  void SetHours(int iHours);
+  int GetHours(v8::Isolate* pIsolate) const;
+  void SetHours(v8::Isolate* pIsolate, int iHours);
 
-  int GetMinutes() const;
-  void SetMinutes(int minutes);
+  int GetMinutes(v8::Isolate* pIsolate) const;
+  void SetMinutes(v8::Isolate* pIsolate, int minutes);
 
-  int GetSeconds() const;
-  void SetSeconds(int seconds);
+  int GetSeconds(v8::Isolate* pIsolate) const;
+  void SetSeconds(v8::Isolate* pIsolate, int seconds);
 
-  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
-  v8::Local<v8::Value> ToV8Value() const { return m_pDate; }
-  double ToDouble() const;
-  CFX_WideString ToString() const;
+  v8::Local<v8::Date> ToV8Date(v8::Isolate* pIsolate) const;
+  double ToDouble(v8::Isolate* pIsolate) const;
+  CFX_WideString ToString(v8::Isolate* pIsolate) const;
 
  protected:
   v8::Local<v8::Date> m_pDate;
-  CJS_Runtime* const m_pJSRuntime;
 };
 
 double JS_GetDateTime();
