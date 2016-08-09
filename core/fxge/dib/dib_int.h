@@ -40,25 +40,27 @@ struct PixelWeight {
   int m_SrcEnd;
   int m_Weights[1];
 };
+
 class CWeightTable {
  public:
-  CWeightTable() { m_pWeightTables = nullptr; }
-  ~CWeightTable() {
-    FX_Free(m_pWeightTables);
-    m_pWeightTables = nullptr;
-  }
-  void Calc(int dest_len,
+  CWeightTable();
+  ~CWeightTable();
+
+  bool Calc(int dest_len,
             int dest_min,
             int dest_max,
             int src_len,
             int src_min,
             int src_max,
             int flags);
-  PixelWeight* GetPixelWeight(int pixel) {
-    return (PixelWeight*)(m_pWeightTables + (pixel - m_DestMin) * m_ItemSize);
-  }
-  int m_DestMin, m_ItemSize;
+  PixelWeight* GetPixelWeight(int pixel) const;
+  int* GetValueFromPixelWeight(PixelWeight* pWeight, int index) const;
+
+ private:
+  int m_DestMin;
+  int m_ItemSize;
   uint8_t* m_pWeightTables;
+  size_t m_dwWeightTablesSize;
 };
 class CStretchEngine {
  public:
