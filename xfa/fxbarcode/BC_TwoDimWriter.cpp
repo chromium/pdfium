@@ -13,14 +13,10 @@
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 
-CBC_TwoDimWriter::CBC_TwoDimWriter() {
-  m_iCorrectLevel = 1;
-  m_bFixedSize = TRUE;
-  m_output = nullptr;
-}
-CBC_TwoDimWriter::~CBC_TwoDimWriter() {
-  delete m_output;
-}
+CBC_TwoDimWriter::CBC_TwoDimWriter() : m_iCorrectLevel(1), m_bFixedSize(TRUE) {}
+
+CBC_TwoDimWriter::~CBC_TwoDimWriter() {}
+
 void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix) {
   CFX_GraphStateData stateData;
@@ -55,7 +51,7 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   }
 }
 
-int32_t CBC_TwoDimWriter::GetErrorCorrectionLevel() {
+int32_t CBC_TwoDimWriter::GetErrorCorrectionLevel() const {
   return m_iCorrectLevel;
 }
 
@@ -136,7 +132,7 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
   if (topPadding < 0) {
     topPadding = 0;
   }
-  m_output = new CBC_CommonBitMatrix;
+  m_output.reset(new CBC_CommonBitMatrix);
   m_output->Init(outputWidth, outputHeight);
   for (int32_t inputY = 0, outputY = topPadding;
        (inputY < inputHeight) && (outputY < outputHeight - multiY);

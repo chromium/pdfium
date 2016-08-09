@@ -380,35 +380,23 @@ const int32_t CBC_PDF417::CODEWORD_TABLE[][929] = {
      0x11f1a, 0x13f3a, 0x103ac, 0x103a6, 0x107a8, 0x183d6, 0x107a4, 0x107a2,
      0x10396, 0x107b6, 0x187d4, 0x187d2, 0x10794, 0x10fb4, 0x10792, 0x10fb2,
      0x1c7ea}};
-FX_FLOAT CBC_PDF417::PREFERRED_RATIO = 3.0f;
-FX_FLOAT CBC_PDF417::DEFAULT_MODULE_WIDTH = 0.357f;
-FX_FLOAT CBC_PDF417::HEIGHT = 2.0f;
-CBC_PDF417::CBC_PDF417() {
-  m_compact = FALSE;
-  m_compaction = AUTO;
-  m_minCols = 1;
-  m_maxCols = 30;
-  m_maxRows = 90;
-  m_minRows = 3;
-  m_barcodeMatrix = nullptr;
-}
-CBC_PDF417::CBC_PDF417(FX_BOOL compact) {
-  m_compact = compact;
-  m_compaction = AUTO;
-  m_minCols = 1;
-  m_maxCols = 30;
-  m_maxRows = 90;
-  m_minRows = 3;
-  m_barcodeMatrix = nullptr;
-}
 
-CBC_PDF417::~CBC_PDF417() {
-  delete m_barcodeMatrix;
-}
+CBC_PDF417::CBC_PDF417() : CBC_PDF417(FALSE) {}
+
+CBC_PDF417::CBC_PDF417(FX_BOOL compact)
+    : m_compact(compact),
+      m_compaction(AUTO),
+      m_minCols(1),
+      m_maxCols(30),
+      m_maxRows(90),
+      m_minRows(3) {}
+
+CBC_PDF417::~CBC_PDF417() {}
 
 CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
-  return m_barcodeMatrix;
+  return m_barcodeMatrix.get();
 }
+
 void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
                                       int32_t errorCorrectionLevel,
                                       int32_t& e) {
@@ -444,10 +432,11 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
       dataCodewords, errorCorrectionLevel, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   CFX_WideString fullCodewords = dataCodewords + ec;
-  m_barcodeMatrix = new CBC_BarcodeMatrix(rows, cols);
+  m_barcodeMatrix.reset(new CBC_BarcodeMatrix(rows, cols));
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
-                 m_barcodeMatrix);
+                 m_barcodeMatrix.get());
 }
+
 void CBC_PDF417::setDimensions(int32_t maxCols,
                                int32_t minCols,
                                int32_t maxRows,
@@ -457,12 +446,15 @@ void CBC_PDF417::setDimensions(int32_t maxCols,
   m_maxRows = maxRows;
   m_minRows = minRows;
 }
+
 void CBC_PDF417::setCompaction(Compaction compaction) {
   m_compaction = compaction;
 }
+
 void CBC_PDF417::setCompact(FX_BOOL compact) {
   m_compact = compact;
 }
+
 int32_t CBC_PDF417::calculateNumberOfRows(int32_t m, int32_t k, int32_t c) {
   int32_t r = ((m + 1 + k) / c) + 1;
   if (c * r >= (m + 1 + k + c)) {
@@ -470,6 +462,7 @@ int32_t CBC_PDF417::calculateNumberOfRows(int32_t m, int32_t k, int32_t c) {
   }
   return r;
 }
+
 int32_t CBC_PDF417::getNumberOfPadCodewords(int32_t m,
                                             int32_t k,
                                             int32_t c,
@@ -477,6 +470,7 @@ int32_t CBC_PDF417::getNumberOfPadCodewords(int32_t m,
   int32_t n = c * r - k;
   return n > m + 1 ? n - m - 1 : 0;
 }
+
 void CBC_PDF417::encodeChar(int32_t pattern,
                             int32_t len,
                             CBC_BarcodeRow* logic) {
@@ -496,6 +490,7 @@ void CBC_PDF417::encodeChar(int32_t pattern,
   }
   logic->addBar(last, width);
 }
+
 void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
                                 int32_t c,
                                 int32_t r,
@@ -534,6 +529,7 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
     }
   }
 }
+
 CFX_Int32Array* CBC_PDF417::determineDimensions(
     int32_t sourceCodeWords,
     int32_t errorCorrectionCodeWords,

@@ -21,6 +21,9 @@
  */
 
 #include "xfa/fxbarcode/qrcode/BC_QRCoderMode.h"
+
+#include <utility>
+
 #include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/fxbarcode/utils.h"
 
@@ -35,42 +38,31 @@ CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_FIRST_POSITION = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_SECOND_POSITION = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sSTRUCTURED_APPEND = nullptr;
 
-CBC_QRCoderMode::CBC_QRCoderMode(int32_t* characterCountBitsForVersions,
-                                 int32_t x1,
-                                 int32_t x2,
-                                 int32_t x3,
+CBC_QRCoderMode::CBC_QRCoderMode(std::vector<int32_t> charCountBits,
                                  int32_t bits,
-                                 CFX_ByteString name) {
-  m_characterCountBitsForVersions = characterCountBitsForVersions;
-  if (m_characterCountBitsForVersions) {
-    m_characterCountBitsForVersions[0] = x1;
-    m_characterCountBitsForVersions[1] = x2;
-    m_characterCountBitsForVersions[2] = x3;
-  }
-  m_name += name;
-  m_bits = bits;
-}
-CBC_QRCoderMode::~CBC_QRCoderMode() {
-  FX_Free(m_characterCountBitsForVersions);
-}
+                                 CFX_ByteString name)
+    : m_characterCountBitsForVersions(std::move(charCountBits)),
+      m_bits(bits),
+      m_name(name) {}
+
+CBC_QRCoderMode::~CBC_QRCoderMode() {}
+
 void CBC_QRCoderMode::Initialize() {
-  sBYTE = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 16, 16, 0x4, "BYTE");
-  sALPHANUMERIC =
-      new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 9, 11, 13, 0x2, "ALPHANUMERIC");
-  sECI = new CBC_QRCoderMode(nullptr, 0, 0, 0, 0x7, "ECI");
-  sKANJI = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x8, "KANJI");
-  sNUMERIC =
-      new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 10, 12, 14, 0x1, "NUMERIC");
-  sGBK = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x0D, "GBK");
-  sTERMINATOR =
-      new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0, 0x00, "TERMINATOR");
+  sBYTE = new CBC_QRCoderMode({8, 16, 16}, 0x4, "BYTE");
+  sALPHANUMERIC = new CBC_QRCoderMode({9, 11, 13}, 0x2, "ALPHANUMERIC");
+  sECI = new CBC_QRCoderMode(std::vector<int32_t>(), 0x7, "ECI");
+  sKANJI = new CBC_QRCoderMode({8, 10, 12}, 0x8, "KANJI");
+  sNUMERIC = new CBC_QRCoderMode({10, 12, 14}, 0x1, "NUMERIC");
+  sGBK = new CBC_QRCoderMode({8, 10, 12}, 0x0D, "GBK");
+  sTERMINATOR = new CBC_QRCoderMode(std::vector<int32_t>(), 0x00, "TERMINATOR");
   sFNC1_FIRST_POSITION =
-      new CBC_QRCoderMode(nullptr, 0, 0, 0, 0x05, "FNC1_FIRST_POSITION");
+      new CBC_QRCoderMode(std::vector<int32_t>(), 0x05, "FNC1_FIRST_POSITION");
   sFNC1_SECOND_POSITION =
-      new CBC_QRCoderMode(nullptr, 0, 0, 0, 0x09, "FNC1_SECOND_POSITION");
-  sSTRUCTURED_APPEND = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0, 0x03,
-                                           "STRUCTURED_APPEND");
+      new CBC_QRCoderMode(std::vector<int32_t>(), 0x09, "FNC1_SECOND_POSITION");
+  sSTRUCTURED_APPEND =
+      new CBC_QRCoderMode(std::vector<int32_t>(), 0x03, "STRUCTURED_APPEND");
 }
+
 void CBC_QRCoderMode::Finalize() {
   delete sBYTE;
   delete sALPHANUMERIC;
@@ -83,6 +75,7 @@ void CBC_QRCoderMode::Finalize() {
   delete sFNC1_SECOND_POSITION;
   delete sSTRUCTURED_APPEND;
 }
+
 CBC_QRCoderMode* CBC_QRCoderMode::ForBits(int32_t bits, int32_t& e) {
   switch (bits) {
     case 0x0:
@@ -112,15 +105,18 @@ CBC_QRCoderMode* CBC_QRCoderMode::ForBits(int32_t bits, int32_t& e) {
   }
   return nullptr;
 }
-int32_t CBC_QRCoderMode::GetBits() {
+
+int32_t CBC_QRCoderMode::GetBits() const {
   return m_bits;
 }
-CFX_ByteString CBC_QRCoderMode::GetName() {
+
+CFX_ByteString CBC_QRCoderMode::GetName() const {
   return m_name;
 }
+
 int32_t CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version,
-                                               int32_t& e) {
-  if (!m_characterCountBitsForVersions) {
+                                               int32_t& e) const {
+  if (m_characterCountBitsForVersions.empty()) {
     e = BCExceptionCharacterNotThisMode;
     BC_EXCEPTION_CHECK_ReturnValue(e, 0);
   }
@@ -135,6 +131,7 @@ int32_t CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version,
   }
   return m_characterCountBitsForVersions[offset];
 }
+
 void CBC_QRCoderMode::Destroy() {
   if (sBYTE) {
     delete CBC_QRCoderMode::sBYTE;

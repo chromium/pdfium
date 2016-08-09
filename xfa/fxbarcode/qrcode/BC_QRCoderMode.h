@@ -9,24 +9,25 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include "core/fxcrt/include/fx_string.h"
 
 class CBC_QRCoderVersion;
 
 class CBC_QRCoderMode {
- private:
-  int32_t* m_characterCountBitsForVersions;
-  int32_t m_bits;
-  CFX_ByteString m_name;
-  CBC_QRCoderMode(int32_t* characterCountBitsForVersions,
-                  int32_t x1,
-                  int32_t x2,
-                  int32_t x3,
-                  int32_t bits,
-                  CFX_ByteString name);
-  CBC_QRCoderMode();
-
  public:
+  virtual ~CBC_QRCoderMode();
+
+  static void Initialize();
+  static void Finalize();
+  static CBC_QRCoderMode* ForBits(int32_t bits, int32_t& e);
+  static void Destroy();
+
+  int32_t GetCharacterCountBits(CBC_QRCoderVersion* version, int32_t& e) const;
+  int32_t GetBits() const;
+  CFX_ByteString GetName() const;
+
   static CBC_QRCoderMode* sBYTE;
   static CBC_QRCoderMode* sNUMERIC;
   static CBC_QRCoderMode* sALPHANUMERIC;
@@ -37,15 +38,16 @@ class CBC_QRCoderMode {
   static CBC_QRCoderMode* sFNC1_FIRST_POSITION;
   static CBC_QRCoderMode* sFNC1_SECOND_POSITION;
   static CBC_QRCoderMode* sSTRUCTURED_APPEND;
-  virtual ~CBC_QRCoderMode();
 
-  static void Initialize();
-  static void Finalize();
-  static CBC_QRCoderMode* ForBits(int32_t bits, int32_t& e);
-  int32_t GetCharacterCountBits(CBC_QRCoderVersion* version, int32_t& e);
-  int32_t GetBits();
-  CFX_ByteString GetName();
-  static void Destroy();
+ private:
+  CBC_QRCoderMode();
+  CBC_QRCoderMode(std::vector<int32_t> charCountBits,
+                  int32_t bits,
+                  CFX_ByteString name);
+
+  std::vector<int32_t> m_characterCountBitsForVersions;
+  const int32_t m_bits;
+  const CFX_ByteString m_name;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERMODE_H_

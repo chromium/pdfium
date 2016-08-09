@@ -35,16 +35,19 @@ CBC_QRCodeWriter::CBC_QRCodeWriter() {
   m_iCorrectLevel = 1;
   m_iVersion = 0;
 }
+
 CBC_QRCodeWriter::~CBC_QRCodeWriter() {}
+
 void CBC_QRCodeWriter::ReleaseAll() {
-  delete CBC_ReedSolomonGF256::QRCodeFild;
-  CBC_ReedSolomonGF256::QRCodeFild = nullptr;
+  delete CBC_ReedSolomonGF256::QRCodeField;
+  CBC_ReedSolomonGF256::QRCodeField = nullptr;
   delete CBC_ReedSolomonGF256::DataMatrixField;
   CBC_ReedSolomonGF256::DataMatrixField = nullptr;
   CBC_QRCoderMode::Destroy();
   CBC_QRCoderErrorCorrectionLevel::Destroy();
   CBC_QRCoderVersion::Destroy();
 }
+
 FX_BOOL CBC_QRCodeWriter::SetVersion(int32_t version) {
   if (version < 0 || version > 40) {
     return FALSE;
@@ -52,6 +55,7 @@ FX_BOOL CBC_QRCodeWriter::SetVersion(int32_t version) {
   m_iVersion = version;
   return TRUE;
 }
+
 FX_BOOL CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3) {
     return FALSE;
@@ -59,6 +63,7 @@ FX_BOOL CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   m_iCorrectLevel = level;
   return TRUE;
 }
+
 uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
                                   int32_t ecLevel,
                                   int32_t& outWidth,
@@ -97,6 +102,7 @@ uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
   FXSYS_memcpy(result, qr.GetMatrix()->GetArray(), outWidth * outHeight);
   return result;
 }
+
 uint8_t* CBC_QRCodeWriter::Encode(const CFX_ByteString& contents,
                                   BCFORMAT format,
                                   int32_t& outWidth,
@@ -105,6 +111,7 @@ uint8_t* CBC_QRCodeWriter::Encode(const CFX_ByteString& contents,
                                   int32_t& e) {
   return nullptr;
 }
+
 uint8_t* CBC_QRCodeWriter::Encode(const CFX_ByteString& contents,
                                   BCFORMAT format,
                                   int32_t& outWidth,

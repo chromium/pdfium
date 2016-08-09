@@ -27,16 +27,15 @@
 #include "xfa/fxbarcode/oned/BC_OnedUPCAWriter.h"
 
 CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
-  m_subWriter = nullptr;
   m_bLeftPadding = TRUE;
   m_bRightPadding = TRUE;
 }
+
 void CBC_OnedUPCAWriter::Init() {
-  m_subWriter = new CBC_OnedEAN13Writer;
+  m_subWriter.reset(new CBC_OnedEAN13Writer);
 }
-CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {
-  delete m_subWriter;
-}
+
+CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}
 
 FX_BOOL CBC_OnedUPCAWriter::CheckContentValidity(
     const CFX_WideStringC& contents) {
@@ -63,6 +62,7 @@ CFX_WideString CBC_OnedUPCAWriter::FilterContents(
   }
   return filtercontents;
 }
+
 int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
@@ -79,6 +79,7 @@ int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString& contents) {
   checksum = (10 - checksum) % 10;
   return (checksum);
 }
+
 uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
                                     BCFORMAT format,
                                     int32_t& outWidth,
@@ -88,6 +89,7 @@ uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
+
 uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
                                     BCFORMAT format,
                                     int32_t& outWidth,

@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
@@ -20,8 +22,6 @@ class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
  public:
   CBC_OnedUPCAWriter();
   ~CBC_OnedUPCAWriter() override;
-
-  virtual void Init();
 
   // CBC_OneDimWriter
   uint8_t* Encode(const CFX_ByteString& contents,
@@ -46,6 +46,8 @@ class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
                     int32_t& e) override;
   FX_BOOL CheckContentValidity(const CFX_WideStringC& contents) override;
   CFX_WideString FilterContents(const CFX_WideStringC& contents) override;
+
+  void Init();
   int32_t CalcChecksum(const CFX_ByteString& contents);
 
  protected:
@@ -58,7 +60,7 @@ class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
                  int32_t& e) override;
 
  private:
-  CBC_OnedEAN13Writer* m_subWriter;
+  std::unique_ptr<CBC_OnedEAN13Writer> m_subWriter;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_

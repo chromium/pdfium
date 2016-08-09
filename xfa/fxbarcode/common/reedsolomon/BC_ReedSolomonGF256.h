@@ -7,20 +7,23 @@
 #ifndef XFA_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
 #define XFA_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxbarcode/utils.h"
 
 class CBC_ReedSolomonGF256Poly;
+
 class CBC_ReedSolomonGF256 {
  public:
+  explicit CBC_ReedSolomonGF256(int32_t primitive);
+  virtual ~CBC_ReedSolomonGF256();
+
   static void Initialize();
   static void Finalize();
-  static CBC_ReedSolomonGF256* QRCodeFild;
-  static CBC_ReedSolomonGF256* DataMatrixField;
-  CBC_ReedSolomonGF256(int32_t primitive);
-  virtual ~CBC_ReedSolomonGF256();
-  CBC_ReedSolomonGF256Poly* GetZero();
-  CBC_ReedSolomonGF256Poly* GetOne();
+
+  CBC_ReedSolomonGF256Poly* GetZero() const;
+  CBC_ReedSolomonGF256Poly* GetOne() const;
   CBC_ReedSolomonGF256Poly* BuildMonomial(int32_t degree,
                                           int32_t coefficient,
                                           int32_t& e);
@@ -31,11 +34,14 @@ class CBC_ReedSolomonGF256 {
   int32_t Multiply(int32_t a, int32_t b);
   virtual void Init();
 
+  static CBC_ReedSolomonGF256* QRCodeField;
+  static CBC_ReedSolomonGF256* DataMatrixField;
+
  private:
   int32_t m_expTable[256];
   int32_t m_logTable[256];
-  CBC_ReedSolomonGF256Poly* m_zero;
-  CBC_ReedSolomonGF256Poly* m_one;
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> m_zero;
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> m_one;
 };
 
 #endif  // XFA_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_

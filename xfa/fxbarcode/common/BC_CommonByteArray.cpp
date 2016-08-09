@@ -44,16 +44,16 @@ CBC_CommonByteArray::CBC_CommonByteArray(uint8_t* byteArray, int32_t size) {
 CBC_CommonByteArray::~CBC_CommonByteArray() {
   FX_Free(m_bytes);
 }
-int32_t CBC_CommonByteArray::At(int32_t index) {
+int32_t CBC_CommonByteArray::At(int32_t index) const {
   return m_bytes[index] & 0xff;
 }
 void CBC_CommonByteArray::Set(int32_t index, int32_t value) {
   m_bytes[index] = (uint8_t)value;
 }
-int32_t CBC_CommonByteArray::Size() {
+int32_t CBC_CommonByteArray::Size() const {
   return m_size;
 }
-FX_BOOL CBC_CommonByteArray::IsEmpty() {
+FX_BOOL CBC_CommonByteArray::IsEmpty() const {
   return m_size == 0;
 }
 void CBC_CommonByteArray::AppendByte(int32_t value) {

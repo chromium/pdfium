@@ -42,20 +42,22 @@ CBC_OneDimWriter::CBC_OneDimWriter() {
   m_iContentLen = 0;
   m_bLeftPadding = FALSE;
   m_bRightPadding = FALSE;
-  m_output = nullptr;
 }
-CBC_OneDimWriter::~CBC_OneDimWriter() {
-  delete m_output;
-}
+
+CBC_OneDimWriter::~CBC_OneDimWriter() {}
+
 void CBC_OneDimWriter::SetPrintChecksum(FX_BOOL checksum) {
   m_bPrintChecksum = checksum;
 }
+
 void CBC_OneDimWriter::SetDataLength(int32_t length) {
   m_iDataLenth = length;
 }
+
 void CBC_OneDimWriter::SetCalcChecksum(int32_t state) {
   m_bCalcChecksum = state;
 }
+
 FX_BOOL CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
   if (!cFont)
     return FALSE;
@@ -63,21 +65,26 @@ FX_BOOL CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
   m_pFont = cFont;
   return TRUE;
 }
+
 void CBC_OneDimWriter::SetFontSize(FX_FLOAT size) {
   m_fFontSize = size;
 }
+
 void CBC_OneDimWriter::SetFontStyle(int32_t style) {
   m_iFontStyle = style;
 }
+
 void CBC_OneDimWriter::SetFontColor(FX_ARGB color) {
   m_fontColor = color;
 }
+
 FX_WCHAR CBC_OneDimWriter::Upper(FX_WCHAR ch) {
   if (ch >= 'a' && ch <= 'z') {
     ch = ch - ('a' - 'A');
   }
   return ch;
 }
+
 uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
                                   BCFORMAT format,
                                   int32_t& outWidth,
@@ -94,6 +101,7 @@ uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
+
 uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
                                   BCFORMAT format,
                                   int32_t& outWidth,
@@ -183,6 +191,7 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
   }
   FX_Free(pCharCode);
 }
+
 void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                                        const CFX_Matrix* matrix,
                                        const CFX_ByteString str,
@@ -429,7 +438,7 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   if (!isDevice) {
     m_barWidth = codeLength * m_multiple;
   }
-  m_output = new CBC_CommonBitMatrix;
+  m_output.reset(new CBC_CommonBitMatrix);
   m_output->Init(outputWidth, outputHeight);
   int32_t outputX = leftPadding * m_multiple;
   for (int32_t inputX = 0; inputX < codeOldLength; inputX++) {

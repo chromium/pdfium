@@ -7,37 +7,32 @@
 #ifndef XFA_FXBARCODE_QRCODE_BC_QRCODER_H_
 #define XFA_FXBARCODE_QRCODE_BC_QRCODER_H_
 
+#include <memory>
+
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderMode;
 class CBC_CommonByteMatrix;
 
 class CBC_QRCoder {
- private:
-  CBC_QRCoderMode* m_mode;
-  CBC_QRCoderErrorCorrectionLevel* m_ecLevel;
-  int32_t m_version;
-  int32_t m_matrixWidth;
-  int32_t m_maskPattern;
-  int32_t m_numTotalBytes;
-  int32_t m_numDataBytes;
-  int32_t m_numECBytes;
-  int32_t m_numRSBlocks;
-  CBC_CommonByteMatrix* m_matrix;
-
  public:
-  static const int32_t NUM_MASK_PATTERNS;
+  static constexpr int32_t kNumMaskPatterns = 8;
+
   CBC_QRCoder();
   virtual ~CBC_QRCoder();
-  CBC_QRCoderMode* GetMode();
-  CBC_QRCoderErrorCorrectionLevel* GetECLevel();
-  int32_t GetVersion();
-  int32_t GetMatrixWidth();
-  int32_t GetMaskPattern();
-  int32_t GetNumTotalBytes();
-  int32_t GetNumDataBytes();
-  int32_t GetNumECBytes();
-  int32_t GetNumRSBlocks();
-  CBC_CommonByteMatrix* GetMatrix();
+
+  static bool IsValidMaskPattern(int32_t maskPattern);
+
+  CBC_QRCoderMode* GetMode() const;
+  CBC_QRCoderErrorCorrectionLevel* GetECLevel() const;
+  int32_t GetVersion() const;
+  int32_t GetMatrixWidth() const;
+  int32_t GetMaskPattern() const;
+  int32_t GetNumTotalBytes() const;
+  int32_t GetNumDataBytes() const;
+  int32_t GetNumECBytes() const;
+  int32_t GetNumRSBlocks() const;
+  CBC_CommonByteMatrix* GetMatrix() const;
+
   int32_t At(int32_t x, int32_t y, int32_t& e);
   FX_BOOL IsValid();
 
@@ -50,8 +45,19 @@ class CBC_QRCoder {
   void SetNumTotalBytes(int32_t value);
   void SetNumECBytes(int32_t value);
   void SetNumRSBlocks(int32_t block);
-  void SetMatrix(CBC_CommonByteMatrix* value);
-  static FX_BOOL IsValidMaskPattern(int32_t maskPattern);
+  void SetMatrix(std::unique_ptr<CBC_CommonByteMatrix> pMatrix);
+
+ private:
+  CBC_QRCoderMode* m_mode;
+  CBC_QRCoderErrorCorrectionLevel* m_ecLevel;
+  int32_t m_version;
+  int32_t m_matrixWidth;
+  int32_t m_maskPattern;
+  int32_t m_numTotalBytes;
+  int32_t m_numDataBytes;
+  int32_t m_numECBytes;
+  int32_t m_numRSBlocks;
+  std::unique_ptr<CBC_CommonByteMatrix> m_matrix;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODER_H_

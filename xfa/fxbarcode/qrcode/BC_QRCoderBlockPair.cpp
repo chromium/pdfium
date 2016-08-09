@@ -20,22 +20,25 @@
  * limitations under the License.
  */
 
-#include "xfa/fxbarcode/common/BC_CommonByteArray.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderBlockPair.h"
 
+#include <utility>
+
+#include "xfa/fxbarcode/common/BC_CommonByteArray.h"
+
 CBC_QRCoderBlockPair::CBC_QRCoderBlockPair(
-    CBC_CommonByteArray* data,
-    CBC_CommonByteArray* errorCorrection) {
-  m_dataBytes = data;
-  m_errorCorrectionBytes = errorCorrection;
+    std::unique_ptr<CBC_CommonByteArray> data,
+    std::unique_ptr<CBC_CommonByteArray> errorCorrection)
+    : m_dataBytes(std::move(data)),
+      m_errorCorrectionBytes(std::move(errorCorrection)) {}
+
+CBC_QRCoderBlockPair::~CBC_QRCoderBlockPair() {}
+
+const CBC_CommonByteArray* CBC_QRCoderBlockPair::GetDataBytes() const {
+  return m_dataBytes.get();
 }
-CBC_QRCoderBlockPair::~CBC_QRCoderBlockPair() {
-  delete m_dataBytes;
-  delete m_errorCorrectionBytes;
-}
-CBC_CommonByteArray* CBC_QRCoderBlockPair::GetDataBytes() {
-  return m_dataBytes;
-}
-CBC_CommonByteArray* CBC_QRCoderBlockPair::GetErrorCorrectionBytes() {
-  return m_errorCorrectionBytes;
+
+const CBC_CommonByteArray* CBC_QRCoderBlockPair::GetErrorCorrectionBytes()
+    const {
+  return m_errorCorrectionBytes.get();
 }

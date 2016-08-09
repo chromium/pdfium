@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 
+#include <memory>
+
 #include "core/fxge/include/fx_ge.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
@@ -107,7 +109,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   int32_t m_iContentLen;
   FX_BOOL m_bLeftPadding;
   FX_BOOL m_bRightPadding;
-  CBC_CommonBitMatrix* m_output;
+  std::unique_ptr<CBC_CommonBitMatrix> m_output;
   int32_t m_barWidth;
   int32_t m_multiple;
   FX_FLOAT m_outputHScale;
