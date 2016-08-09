@@ -567,9 +567,7 @@ const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
 }  // namespace
 
 CFX_Graphics::CFX_Graphics()
-    : m_type(FX_CONTEXT_None),
-      m_renderDevice(nullptr),
-      m_aggGraphics(nullptr) {}
+    : m_type(FX_CONTEXT_None), m_renderDevice(nullptr) {}
 
 FWL_Error CFX_Graphics::Create(CFX_RenderDevice* renderDevice,
                                FX_BOOL isAntialiasing) {
@@ -596,13 +594,11 @@ FWL_Error CFX_Graphics::Create(int32_t width,
 
   m_type = FX_CONTEXT_Device;
   m_info.isAntialiasing = isAntialiasing;
-  m_aggGraphics = new CAGG_Graphics;
+  m_aggGraphics.reset(new CAGG_Graphics);
   return m_aggGraphics->Create(this, width, height, format);
 }
 
-CFX_Graphics::~CFX_Graphics() {
-  delete m_aggGraphics;
-}
+CFX_Graphics::~CFX_Graphics() {}
 
 FWL_Error CFX_Graphics::GetDeviceCap(const int32_t capID,
                                      FX_DeviceCap& capVal) {

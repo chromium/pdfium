@@ -6,16 +6,14 @@
 
 #include "xfa/fxfa/fm2js/xfa_program.h"
 
-CXFA_FMProgram::CXFA_FMProgram() : m_globalFunction(0) {}
-CXFA_FMProgram::~CXFA_FMProgram() {
-  if (m_globalFunction != 0) {
-    delete m_globalFunction;
-    m_globalFunction = 0;
-  }
-}
+CXFA_FMProgram::CXFA_FMProgram() {}
+
+CXFA_FMProgram::~CXFA_FMProgram() {}
+
 int32_t CXFA_FMProgram::Init(const CFX_WideStringC& wsFormcalc) {
   return m_parse.Init(wsFormcalc, &m_pErrorInfo);
 }
+
 int32_t CXFA_FMProgram::ParseProgram() {
   CFX_ArrayTemplate<CXFA_FMExpression*>* expressions = nullptr;
   m_parse.NextToken();
@@ -30,10 +28,11 @@ int32_t CXFA_FMProgram::ParseProgram() {
     delete expressions;
     return -1;
   }
-  m_globalFunction =
-      new CXFA_FMFunctionDefinition(1, 1, FX_WSTRC(L""), 0, expressions);
+  m_globalFunction.reset(
+      new CXFA_FMFunctionDefinition(1, 1, FX_WSTRC(L""), nullptr, expressions));
   return 0;
 }
+
 int32_t CXFA_FMProgram::TranslateProgram(CFX_WideTextBuf& wsJavaScript) {
   m_globalFunction->ToJavaScript(wsJavaScript);
   wsJavaScript.AppendChar(0);

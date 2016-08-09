@@ -7,6 +7,8 @@
 #ifndef XFA_FXGRAPHICS_CFX_PATH_GENERATOR_H_
 #define XFA_FXGRAPHICS_CFX_PATH_GENERATOR_H_
 
+#include <memory>
+
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/fx_ge.h"
 
@@ -15,8 +17,7 @@ class CFX_PathGenerator {
   CFX_PathGenerator();
   ~CFX_PathGenerator();
 
-  void Create();
-  CFX_PathData* GetPathData() const { return m_pPathData; }
+  CFX_PathData* GetPathData() const { return m_pPathData.get(); }
 
   void AddPathData(CFX_PathData* path_data);
   void AddPathData(FX_PATHPOINT* points, int count);
@@ -62,7 +63,7 @@ class CFX_PathGenerator {
               FX_FLOAT sweep_angle);
 
  protected:
-  CFX_PathData* m_pPathData;
+  std::unique_ptr<CFX_PathData> m_pPathData;
 };
 
 #endif  // XFA_FXGRAPHICS_CFX_PATH_GENERATOR_H_

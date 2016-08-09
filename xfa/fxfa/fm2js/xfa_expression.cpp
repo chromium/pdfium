@@ -32,16 +32,15 @@ CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     uint32_t line,
     FX_BOOL isGlobal,
     const CFX_WideStringC& wsName,
-    CFX_WideStringCArray* pArguments,
+    std::unique_ptr<CFX_WideStringCArray> pArguments,
     CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressions)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_FUNC),
       m_wsName(wsName),
-      m_pArguments(pArguments),
+      m_pArguments(std::move(pArguments)),
       m_pExpressions(pExpressions),
       m_isGlobal(isGlobal) {}
 
 CXFA_FMFunctionDefinition::~CXFA_FMFunctionDefinition() {
-  delete m_pArguments;
   if (m_pExpressions) {
     for (int i = 0; i < m_pExpressions->GetSize(); ++i)
       delete m_pExpressions->GetAt(i);

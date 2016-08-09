@@ -7,16 +7,18 @@
 #ifndef XFA_FXGRAPHICS_CFX_PATH_H_
 #define XFA_FXGRAPHICS_CFX_PATH_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 
 class CFX_PathData;
 class CFX_PathGenerator;
 
-class CFX_Path {
+class CFX_Path final {
  public:
   CFX_Path();
-  virtual ~CFX_Path();
+  ~CFX_Path();
 
   FWL_Error Create();
   FWL_Error MoveTo(FX_FLOAT x, FX_FLOAT y);
@@ -68,11 +70,11 @@ class CFX_Path {
   FWL_Error AddSubpath(CFX_Path* path);
   FWL_Error Clear();
 
-  FX_BOOL IsEmpty();
-  CFX_PathData* GetPathData();
+  FX_BOOL IsEmpty() const;
+  CFX_PathData* GetPathData() const;
 
  private:
-  CFX_PathGenerator* m_generator;
+  std::unique_ptr<CFX_PathGenerator> m_generator;
 };
 
 #endif  // XFA_FXGRAPHICS_CFX_PATH_H_

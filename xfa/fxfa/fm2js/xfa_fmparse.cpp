@@ -129,7 +129,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
     Check(TOKendfunc);
   }
   if (m_pErrorInfo->message.IsEmpty()) {
-    e.reset(new CXFA_FMFunctionDefinition(line, 0, ident, pArguments.release(),
+    e.reset(new CXFA_FMFunctionDefinition(line, 0, ident, std::move(pArguments),
                                           pExpressions.release()));
   } else {
     if (pArguments)

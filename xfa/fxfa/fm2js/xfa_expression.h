@@ -44,7 +44,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
       uint32_t line,
       FX_BOOL isGlobal,
       const CFX_WideStringC& wsName,
-      CFX_WideStringCArray* pArguments,
+      std::unique_ptr<CFX_WideStringCArray> pArguments,
       CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressions);
   ~CXFA_FMFunctionDefinition() override;
 
@@ -53,7 +53,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
 
  private:
   CFX_WideStringC m_wsName;
-  CFX_WideStringCArray* m_pArguments;
+  std::unique_ptr<CFX_WideStringCArray> m_pArguments;
   CFX_ArrayTemplate<CXFA_FMExpression*>* m_pExpressions;
   FX_BOOL m_isGlobal;
 };

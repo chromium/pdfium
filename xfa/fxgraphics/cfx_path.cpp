@@ -9,22 +9,17 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "xfa/fxgraphics/cfx_path_generator.h"
 
-CFX_Path::CFX_Path() {
-  m_generator = nullptr;
-}
+CFX_Path::CFX_Path() {}
 
 FWL_Error CFX_Path::Create() {
   if (m_generator)
     return FWL_Error::PropertyInvalid;
 
-  m_generator = new CFX_PathGenerator;
-  m_generator->Create();
+  m_generator.reset(new CFX_PathGenerator());
   return FWL_Error::Succeeded;
 }
 
-CFX_Path::~CFX_Path() {
-  delete m_generator;
-}
+CFX_Path::~CFX_Path() {}
 
 FWL_Error CFX_Path::MoveTo(FX_FLOAT x, FX_FLOAT y) {
   if (!m_generator)
@@ -167,7 +162,7 @@ FWL_Error CFX_Path::Clear() {
   return FWL_Error::Succeeded;
 }
 
-FX_BOOL CFX_Path::IsEmpty() {
+FX_BOOL CFX_Path::IsEmpty() const {
   if (!m_generator)
     return FALSE;
   if (m_generator->GetPathData()->GetPointCount() == 0)
@@ -175,7 +170,7 @@ FX_BOOL CFX_Path::IsEmpty() {
   return FALSE;
 }
 
-CFX_PathData* CFX_Path::GetPathData() {
+CFX_PathData* CFX_Path::GetPathData() const {
   if (!m_generator)
     return nullptr;
   return m_generator->GetPathData();

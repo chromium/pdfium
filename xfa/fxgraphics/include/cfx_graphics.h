@@ -7,6 +7,8 @@
 #ifndef XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
 #define XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
@@ -230,7 +232,7 @@ class CFX_Graphics {
 
   CFX_RenderDevice* m_renderDevice;
   CFX_ArrayTemplate<TInfo*> m_infoStack;
-  CAGG_Graphics* m_aggGraphics;
+  std::unique_ptr<CAGG_Graphics> m_aggGraphics;
   friend class CAGG_Graphics;
 };
 
