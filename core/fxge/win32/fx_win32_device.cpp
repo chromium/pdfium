@@ -1118,7 +1118,7 @@ FX_BOOL CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
   if (pPathData->GetPointCount() == 5) {
     CFX_FloatRect rectf;
     if (pPathData->IsRect(pMatrix, &rectf)) {
-      FX_RECT rect = rectf.GetOutterRect();
+      FX_RECT rect = rectf.GetOuterRect();
       IntersectClipRect(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
       return TRUE;
     }

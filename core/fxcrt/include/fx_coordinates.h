@@ -237,7 +237,7 @@ class CFX_FloatRect {
   void Union(const CFX_FloatRect& other_rect);
 
   FX_RECT GetInnerRect() const;
-  FX_RECT GetOutterRect() const;
+  FX_RECT GetOuterRect() const;
   FX_RECT GetClosestRect() const;
 
   int Substract4(CFX_FloatRect& substract_rect, CFX_FloatRect* pRects);

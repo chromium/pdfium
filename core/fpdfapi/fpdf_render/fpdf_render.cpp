@@ -1203,7 +1203,7 @@ FX_BOOL CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   m_Matrix.Concat(fScaleX, 0, 0, fScaleY, 0, 0);
   CFX_FloatRect rect(*pRect);
   m_Matrix.TransformRect(rect);
-  FX_RECT bitmap_rect = rect.GetOutterRect();
+  FX_RECT bitmap_rect = rect.GetOuterRect();
   m_pBitmap.reset(new CFX_DIBitmap);
   m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(), FXDIB_Argb);
   return TRUE;
@@ -1271,7 +1271,7 @@ FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
   while (1) {
     CFX_FloatRect rect(pRect);
     m_Matrix.TransformRect(rect);
-    FX_RECT bitmap_rect = rect.GetOutterRect();
+    FX_RECT bitmap_rect = rect.GetOuterRect();
     int32_t iWidth = bitmap_rect.Width();
     int32_t iHeight = bitmap_rect.Height();
     int32_t iPitch = (iWidth * bpp + 31) / 32 * 4;

@@ -491,7 +491,7 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode, int level) {
                         CIDTransformToFloat(pTransform[5]) * 1000);
       CFX_FloatRect rect_f(rect);
       rect_f.Transform(&matrix);
-      rect = rect_f.GetOutterRect();
+      rect = rect_f.GetOuterRect();
     }
   }
   if (charcode < 256)

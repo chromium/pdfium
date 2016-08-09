@@ -868,7 +868,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   if (pDict->KeyExist("BBox")) {
     CFX_FloatRect rect = pDict->GetRectBy("BBox");
     rect.Transform(pMatrix);
-    clip_rect.Intersect(rect.GetOutterRect());
+    clip_rect.Intersect(rect.GetOuterRect());
   }
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING &&
       m_pDevice->GetDeviceDriver()->DrawShading(pPattern, pMatrix, clip_rect,

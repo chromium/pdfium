@@ -169,7 +169,7 @@ FX_BOOL CFX_RenderDevice::DrawPathWithBlend(
     CFX_FloatRect rect_f;
     if (!(fill_mode & FXFILL_RECT_AA) &&
         pPathData->IsRect(pObject2Device, &rect_f)) {
-      FX_RECT rect_i = rect_f.GetOutterRect();
+      FX_RECT rect_i = rect_f.GetOuterRect();
 
       // Depending on the top/bottom, left/right values of the rect it's
       // possible to overflow the Width() and Height() calculations. Check that
@@ -276,7 +276,7 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
     CFX_Matrix ctm = GetCTM();
     FX_FLOAT fScaleX = FXSYS_fabs(ctm.a);
     FX_FLOAT fScaleY = FXSYS_fabs(ctm.d);
-    FX_RECT rect = bbox.GetOutterRect();
+    FX_RECT rect = bbox.GetOuterRect();
     CFX_DIBitmap bitmap, Backdrop;
     if (!CreateCompatibleBitmap(&bitmap, FXSYS_round(rect.Width() * fScaleX),
                                 FXSYS_round(rect.Height() * fScaleY))) {

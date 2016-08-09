@@ -196,7 +196,7 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
         (FX_FLOAT)(leftPosition + strWidth - 0.5), (FX_FLOAT)m_Height);
     matr.Concat(*matrix);
     matr.TransformRect(rect);
-    FX_RECT re = rect.GetOutterRect();
+    FX_RECT re = rect.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
     CFX_FloatRect rect1(
         (FX_FLOAT)(leftPosition + 47 * multiple),
@@ -206,7 +206,7 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
     CFX_Matrix matr1(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
     matr1.Concat(*matrix);
     matr1.TransformRect(rect1);
-    re = rect1.GetOutterRect();
+    re = rect1.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
     int32_t strWidth1 = multiple * 7;
     CFX_Matrix matr2(m_outputHScale, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
@@ -214,7 +214,7 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
                         (FX_FLOAT)strWidth1 - 0.5f, (FX_FLOAT)m_Height);
     matr2.Concat(*matrix);
     matr2.TransformRect(rect2);
-    re = rect2.GetOutterRect();
+    re = rect2.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
   }
   FX_FLOAT blank = 0.0;

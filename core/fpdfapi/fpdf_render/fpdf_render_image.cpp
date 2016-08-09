@@ -365,7 +365,7 @@ CPDF_ImageRenderer::~CPDF_ImageRenderer() {
 
 FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOutterRect();
+  FX_RECT image_rect = image_rect_f.GetOuterRect();
   int dest_width = image_rect.Width();
   int dest_height = image_rect.Height();
   if (m_ImageMatrix.a < 0) {
@@ -552,7 +552,7 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
     m_Result = FALSE;
     return FALSE;
   }
-  FX_RECT rect = m_ImageMatrix.GetUnitRect().GetOutterRect();
+  FX_RECT rect = m_ImageMatrix.GetUnitRect().GetOuterRect();
   rect.Intersect(m_pRenderStatus->m_pDevice->GetClipBox());
   if (rect.IsEmpty()) {
     return FALSE;
@@ -652,7 +652,7 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
     m_Result = FALSE;
     return FALSE;
   }
-  FX_RECT rect = m_ImageMatrix.GetUnitRect().GetOutterRect();
+  FX_RECT rect = m_ImageMatrix.GetUnitRect().GetOuterRect();
   rect.Intersect(m_pRenderStatus->m_pDevice->GetClipBox());
   if (rect.IsEmpty()) {
     return FALSE;
@@ -778,7 +778,7 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
   }
 #endif
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOutterRect();
+  FX_RECT image_rect = image_rect_f.GetOuterRect();
   int dest_width = image_rect.Width();
   int dest_height = image_rect.Height();
   if ((FXSYS_fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
@@ -868,7 +868,7 @@ FX_BOOL CPDF_ImageRenderer::StartBitmapAlpha() {
           ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
     } else {
       CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-      FX_RECT image_rect = image_rect_f.GetOutterRect();
+      FX_RECT image_rect = image_rect_f.GetOuterRect();
       int dest_width =
           m_ImageMatrix.a > 0 ? image_rect.Width() : -image_rect.Width();
       int dest_height =

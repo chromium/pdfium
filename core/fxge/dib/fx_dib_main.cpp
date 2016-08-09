@@ -1536,7 +1536,7 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
                                  int blend_type) {
   m_Matrix = *pMatrix;
   CFX_FloatRect image_rect_f = m_Matrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOutterRect();
+  FX_RECT image_rect = image_rect_f.GetOuterRect();
   m_ClipBox = pClipRgn ? pClipRgn->GetBox() : FX_RECT(0, 0, pDevice->GetWidth(),
                                                       pDevice->GetHeight());
   m_ClipBox.Intersect(image_rect);

@@ -88,7 +88,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
     CFX_Matrix matrix = *pMatrix;
     if (clip_rect) {
       annot_rect_f.Transform(&matrix);
-      FX_RECT annot_rect = annot_rect_f.GetOutterRect();
+      FX_RECT annot_rect = annot_rect_f.GetOuterRect();
       annot_rect.Intersect(*clip_rect);
       if (annot_rect.IsEmpty()) {
         continue;

@@ -446,7 +446,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
       } else {
         CFX_FloatRect rect_f = pType3Char->m_pForm->CalcBoundingBox();
         rect_f.Transform(&matrix);
-        FX_RECT rect = rect_f.GetOutterRect();
+        FX_RECT rect = rect_f.GetOuterRect();
         CFX_FxgeDevice bitmap_device;
         if (!bitmap_device.Create((int)(rect.Width() * sa),
                                   (int)(rect.Height() * sd), FXDIB_Argb,

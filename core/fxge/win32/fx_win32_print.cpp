@@ -169,7 +169,7 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
     return FALSE;
   }
   CFX_FloatRect unit_rect = pMatrix->GetUnitRect();
-  FX_RECT full_rect = unit_rect.GetOutterRect();
+  FX_RECT full_rect = unit_rect.GetOuterRect();
   if (FXSYS_fabs(pMatrix->b) < 0.5f && pMatrix->a != 0 &&
       FXSYS_fabs(pMatrix->c) < 0.5f && pMatrix->d != 0) {
     FX_BOOL bFlipX = pMatrix->a < 0;

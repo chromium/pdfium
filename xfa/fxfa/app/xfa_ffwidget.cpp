@@ -633,7 +633,7 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
     return FALSE;
   }
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOutterRect();
+  FX_RECT image_rect = image_rect_f.GetOuterRect();
   int dest_width = image_rect.Width();
   int dest_height = image_rect.Height();
   if ((FXSYS_fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||

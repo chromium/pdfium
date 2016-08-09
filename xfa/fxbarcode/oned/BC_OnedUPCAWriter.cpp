@@ -147,7 +147,7 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
         (FX_FLOAT)(leftPosition + strWidth - 0.5), (FX_FLOAT)m_Height);
     matr.Concat(*matrix);
     matr.TransformRect(rect);
-    FX_RECT re = rect.GetOutterRect();
+    FX_RECT re = rect.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
     CFX_Matrix matr1(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
     CFX_FloatRect rect1(
@@ -157,7 +157,7 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
         (FX_FLOAT)m_Height);
     matr1.Concat(*matrix);
     matr1.TransformRect(rect1);
-    re = rect1.GetOutterRect();
+    re = rect1.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
     FX_FLOAT strWidth1 = (FX_FLOAT)multiple * 7;
     CFX_Matrix matr2(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
@@ -165,7 +165,7 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
                         (FX_FLOAT)strWidth1 - 1, (FX_FLOAT)m_Height);
     matr2.Concat(*matrix);
     matr2.TransformRect(rect2);
-    re = rect2.GetOutterRect();
+    re = rect2.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
     CFX_Matrix matr3(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
     CFX_FloatRect rect3(
@@ -175,7 +175,7 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
         (FX_FLOAT)m_Height);
     matr3.Concat(*matrix);
     matr3.TransformRect(rect3);
-    re = rect3.GetOutterRect();
+    re = rect3.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
   }
   if (!pOutBitmap)

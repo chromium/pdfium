@@ -99,5 +99,5 @@ FX_RECT CPDF_PageObject::GetBBox(const CFX_Matrix* pMatrix) const {
   if (pMatrix) {
     pMatrix->TransformRect(rect);
   }
-  return rect.GetOutterRect();
+  return rect.GetOuterRect();
 }

@@ -559,7 +559,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
       rectf.Intersect(
           CFX_FloatRect(0, 0, (FX_FLOAT)GetDeviceCaps(FXDC_PIXEL_WIDTH),
                         (FX_FLOAT)GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
-      FX_RECT rect = rectf.GetOutterRect();
+      FX_RECT rect = rectf.GetOuterRect();
       m_pClipRgn->IntersectRect(rect);
       return TRUE;
     }

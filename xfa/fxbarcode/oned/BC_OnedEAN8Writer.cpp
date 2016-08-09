@@ -197,7 +197,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
         (FX_FLOAT)(leftPosition + strWidth - 0.5), (FX_FLOAT)m_Height);
     matr.Concat(*matrix);
     matr.TransformRect(rect);
-    FX_RECT re = rect.GetOutterRect();
+    FX_RECT re = rect.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
     CFX_Matrix matr1(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
     CFX_FloatRect rect1(
@@ -207,7 +207,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
         (FX_FLOAT)m_Height);
     matr1.Concat(*matrix);
     matr1.TransformRect(rect1);
-    re = rect1.GetOutterRect();
+    re = rect1.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
   }
   if (!pOutBitmap)
