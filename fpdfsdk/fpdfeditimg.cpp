@@ -19,7 +19,7 @@ FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
     return nullptr;
 
   CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
-  pImageObj->m_pImage = new CPDF_Image(pDoc);
+  pImageObj->SetOwnedImage(WrapUnique(new CPDF_Image(pDoc)));
   return pImageObj;
 }
 

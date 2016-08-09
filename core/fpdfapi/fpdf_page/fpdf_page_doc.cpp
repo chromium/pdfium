@@ -406,10 +406,8 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream) {
   if (it != m_ImageMap.end())
     return it->second->AddRef();
 
-  CPDF_Image* pImage = new CPDF_Image(m_pPDFDoc);
-  pImage->LoadImageF(pImageStream->AsStream(), false);
-
-  CPDF_CountedImage* pCountedImage = new CPDF_CountedImage(pImage);
+  CPDF_CountedImage* pCountedImage = new CPDF_CountedImage(
+      new CPDF_Image(m_pPDFDoc, pImageStream->AsStream(), false));
   m_ImageMap[dwImageObjNum] = pCountedImage;
   return pCountedImage->AddRef();
 }

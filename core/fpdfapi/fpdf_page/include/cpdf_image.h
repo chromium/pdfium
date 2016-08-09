@@ -28,11 +28,8 @@ class IFX_Pause;
 class CPDF_Image {
  public:
   explicit CPDF_Image(CPDF_Document* pDoc);
+  CPDF_Image(CPDF_Document* pDoc, CPDF_Stream* pStream, bool bInline);
   ~CPDF_Image();
-
-  FX_BOOL LoadImageF(CPDF_Stream* pImageStream, FX_BOOL bInline);
-
-  void Release();
 
   CPDF_Image* Clone();
 
@@ -47,9 +44,9 @@ class CPDF_Image {
   int32_t GetPixelHeight() const { return m_Height; }
   int32_t GetPixelWidth() const { return m_Width; }
 
-  FX_BOOL IsInline() { return m_bInline; }
-  FX_BOOL IsMask() const { return m_bIsMask; }
-  FX_BOOL IsInterpol() const { return m_bInterpolate; }
+  bool IsInline() const { return m_bInline; }
+  bool IsMask() const { return m_bIsMask; }
+  bool IsInterpol() const { return m_bInterpolate; }
 
   CFX_DIBSource* LoadDIBSource(CFX_DIBSource** ppMask = nullptr,
                                uint32_t* pMatteColor = nullptr,
@@ -59,7 +56,6 @@ class CPDF_Image {
 
   void SetInlineDict(CPDF_Dictionary* pDict) { m_pInlineDict = pDict; }
   void SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress);
-  void SetJpegImage(uint8_t* pImageData, uint32_t size);
   void SetJpegImage(IFX_FileRead* pFile);
 
   void ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);
@@ -81,13 +77,13 @@ class CPDF_Image {
   CPDF_Dictionary* InitJPEG(uint8_t* pData, uint32_t size);
 
   CPDF_Stream* m_pStream;
-  FX_BOOL m_bInline;
+  const bool m_bInline;
   CPDF_Dictionary* m_pInlineDict;
   int32_t m_Height;
   int32_t m_Width;
-  FX_BOOL m_bIsMask;
-  FX_BOOL m_bInterpolate;
-  CPDF_Document* m_pDocument;
+  bool m_bIsMask;
+  bool m_bInterpolate;
+  CPDF_Document* const m_pDocument;
   CPDF_Dictionary* m_pOC;
 };
 

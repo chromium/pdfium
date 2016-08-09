@@ -944,6 +944,7 @@
         'core/fxcrt/fx_extension_unittest.cpp',
         'core/fxcrt/fx_system_unittest.cpp',
         'fpdfsdk/fpdfdoc_unittest.cpp',
+        'fpdfsdk/fpdfeditimg_unittest.cpp',
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',
       ],

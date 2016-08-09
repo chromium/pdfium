@@ -99,12 +99,12 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
     uint32_t dwSavedObjNum = pStream->GetObjNum();
     CFX_ByteString name = RealizeResource(pStream, "XObject");
     if (dwSavedObjNum == 0) {
-      pImage->Release();
-      pImageObj->m_pImage = m_pDocument->GetPageData()->GetImage(pStream);
+      pImageObj->SetUnownedImage(m_pDocument->GetPageData()->GetImage(pStream));
     }
     buf << "/" << PDF_NameEncode(name) << " Do Q\n";
   }
 }
+
 void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
                                             const uint8_t* data,
                                             uint32_t size,

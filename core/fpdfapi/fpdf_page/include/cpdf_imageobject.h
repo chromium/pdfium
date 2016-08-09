@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGEOBJECT_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGEOBJECT_H_
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
@@ -27,9 +29,16 @@ class CPDF_ImageObject : public CPDF_PageObject {
 
   void CalcBoundingBox();
   CPDF_Image* GetImage() const { return m_pImage; }
+  void SetOwnedImage(std::unique_ptr<CPDF_Image> pImage);
+  void SetUnownedImage(CPDF_Image* pImage);
+
+  CFX_Matrix m_Matrix;
+
+ private:
+  void Release();
 
   CPDF_Image* m_pImage;
-  CFX_Matrix m_Matrix;
+  bool m_pImageOwned;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGEOBJECT_H_

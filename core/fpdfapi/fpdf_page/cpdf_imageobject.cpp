@@ -6,22 +6,17 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 
-CPDF_ImageObject::CPDF_ImageObject() : m_pImage(nullptr) {}
+CPDF_ImageObject::CPDF_ImageObject()
+    : m_pImage(nullptr), m_pImageOwned(false) {}
 
 CPDF_ImageObject::~CPDF_ImageObject() {
-  if (!m_pImage) {
-    return;
-  }
-  if (m_pImage->IsInline() ||
-      (m_pImage->GetStream() && m_pImage->GetStream()->GetObjNum() == 0)) {
-    delete m_pImage;
-  } else {
-    m_pImage->GetDocument()->GetPageData()->ReleaseImage(m_pImage->GetStream());
-  }
+  Release();
 }
 
 CPDF_ImageObject* CPDF_ImageObject::Clone() const {
@@ -58,4 +53,32 @@ void CPDF_ImageObject::CalcBoundingBox() {
   m_Left = m_Bottom = 0;
   m_Right = m_Top = 1.0f;
   m_Matrix.TransformRect(m_Left, m_Right, m_Top, m_Bottom);
+}
+
+void CPDF_ImageObject::SetOwnedImage(std::unique_ptr<CPDF_Image> pImage) {
+  Release();
+  m_pImage = pImage.release();
+  m_pImageOwned = true;
+}
+
+void CPDF_ImageObject::SetUnownedImage(CPDF_Image* pImage) {
+  Release();
+  m_pImage = pImage;
+  m_pImageOwned = false;
+}
+
+void CPDF_ImageObject::Release() {
+  if (m_pImageOwned) {
+    delete m_pImage;
+    m_pImage = nullptr;
+    m_pImageOwned = false;
+    return;
+  }
+
+  if (!m_pImage)
+    return;
+
+  CPDF_DocPageData* pPageData = m_pImage->GetDocument()->GetPageData();
+  pPageData->ReleaseImage(m_pImage->GetStream());
+  m_pImage = nullptr;
 }

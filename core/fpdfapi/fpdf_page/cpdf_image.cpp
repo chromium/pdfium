@@ -6,6 +6,10 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
 
+#include <algorithm>
+#include <memory>
+#include <vector>
+
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
@@ -19,14 +23,35 @@
 #include "core/fxge/include/fx_dib.h"
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc)
+    : CPDF_Image(pDoc, nullptr, false) {}
+
+CPDF_Image::CPDF_Image(CPDF_Document* pDoc, CPDF_Stream* pStream, bool bInline)
     : m_pDIBSource(nullptr),
       m_pMask(nullptr),
       m_MatteColor(0),
-      m_pStream(nullptr),
-      m_bInline(FALSE),
+      m_pStream(pStream),
+      m_bInline(bInline),
       m_pInlineDict(nullptr),
+      m_Height(0),
+      m_Width(0),
+      m_bIsMask(false),
+      m_bInterpolate(false),
       m_pDocument(pDoc),
-      m_pOC(nullptr) {}
+      m_pOC(nullptr) {
+  if (!pStream)
+    return;
+
+  CPDF_Dictionary* pDict = pStream->GetDict();
+  if (m_bInline)
+    m_pInlineDict = ToDictionary(pDict->Clone());
+
+  m_pOC = pDict->GetDictBy("OC");
+  m_bIsMask =
+      !pDict->KeyExist("ColorSpace") || pDict->GetIntegerBy("ImageMask");
+  m_bInterpolate = !!pDict->GetIntegerBy("Interpolate");
+  m_Height = pDict->GetIntegerBy("Height");
+  m_Width = pDict->GetIntegerBy("Width");
+}
 
 CPDF_Image::~CPDF_Image() {
   if (m_bInline) {
@@ -37,41 +62,16 @@ CPDF_Image::~CPDF_Image() {
   }
 }
 
-void CPDF_Image::Release() {
-  if (m_bInline || (m_pStream && m_pStream->GetObjNum() == 0))
-    delete this;
-}
-
 CPDF_Image* CPDF_Image::Clone() {
   if (m_pStream->GetObjNum())
     return m_pDocument->GetPageData()->GetImage(m_pStream);
 
-  CPDF_Image* pImage = new CPDF_Image(m_pDocument);
-  pImage->LoadImageF(ToStream(m_pStream->Clone()), m_bInline);
+  CPDF_Image* pImage =
+      new CPDF_Image(m_pDocument, ToStream(m_pStream->Clone()), m_bInline);
   if (m_bInline)
     pImage->SetInlineDict(ToDictionary(m_pInlineDict->Clone(TRUE)));
 
   return pImage;
-}
-
-FX_BOOL CPDF_Image::LoadImageF(CPDF_Stream* pStream, FX_BOOL bInline) {
-  m_pStream = pStream;
-  if (m_bInline && m_pInlineDict) {
-    m_pInlineDict->Release();
-    m_pInlineDict = nullptr;
-  }
-  m_bInline = bInline;
-  CPDF_Dictionary* pDict = pStream->GetDict();
-  if (m_bInline) {
-    m_pInlineDict = ToDictionary(pDict->Clone());
-  }
-  m_pOC = pDict->GetDictBy("OC");
-  m_bIsMask =
-      !pDict->KeyExist("ColorSpace") || pDict->GetIntegerBy("ImageMask");
-  m_bInterpolate = pDict->GetIntegerBy("Interpolate");
-  m_Height = pDict->GetIntegerBy("Height");
-  m_Width = pDict->GetIntegerBy("Width");
-  return TRUE;
 }
 
 CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
@@ -120,36 +120,23 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   return pDict;
 }
 
-void CPDF_Image::SetJpegImage(uint8_t* pData, uint32_t size) {
-  CPDF_Dictionary* pDict = InitJPEG(pData, size);
-  if (!pDict) {
-    return;
-  }
-  m_pStream->InitStream(pData, size, pDict);
-}
-
 void CPDF_Image::SetJpegImage(IFX_FileRead* pFile) {
   uint32_t size = (uint32_t)pFile->GetSize();
-  if (!size) {
+  if (!size)
     return;
-  }
-  uint32_t dwEstimateSize = size;
-  if (dwEstimateSize > 8192) {
-    dwEstimateSize = 8192;
-  }
-  uint8_t* pData = FX_Alloc(uint8_t, dwEstimateSize);
-  pFile->ReadBlock(pData, 0, dwEstimateSize);
-  CPDF_Dictionary* pDict = InitJPEG(pData, dwEstimateSize);
-  FX_Free(pData);
+
+  uint32_t dwEstimateSize = std::min(size, 8192U);
+  std::vector<uint8_t> data(dwEstimateSize);
+  pFile->ReadBlock(data.data(), 0, dwEstimateSize);
+  CPDF_Dictionary* pDict = InitJPEG(data.data(), dwEstimateSize);
   if (!pDict && size > dwEstimateSize) {
-    pData = FX_Alloc(uint8_t, size);
-    pFile->ReadBlock(pData, 0, size);
-    pDict = InitJPEG(pData, size);
-    FX_Free(pData);
+    data.resize(size);
+    pFile->ReadBlock(data.data(), 0, size);
+    pDict = InitJPEG(data.data(), size);
   }
-  if (!pDict) {
+  if (!pDict)
     return;
-  }
+
   m_pStream->InitStreamFromFile(pFile, pDict);
 }
 

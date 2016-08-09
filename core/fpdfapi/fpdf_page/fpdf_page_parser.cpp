@@ -785,13 +785,13 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
 
   std::unique_ptr<CPDF_ImageObject> pImageObj(new CPDF_ImageObject);
   if (pImage) {
-    pImageObj->m_pImage =
-        m_pDocument->GetPageData()->GetImage(pImage->GetStream());
+    pImageObj->SetUnownedImage(
+        m_pDocument->GetPageData()->GetImage(pImage->GetStream()));
   } else if (pStream->GetObjNum()) {
-    pImageObj->m_pImage = m_pDocument->LoadImageF(pStream);
+    pImageObj->SetUnownedImage(m_pDocument->LoadImageF(pStream));
   } else {
-    pImageObj->m_pImage = new CPDF_Image(m_pDocument);
-    pImageObj->m_pImage->LoadImageF(pStream, bInline);
+    pImageObj->SetOwnedImage(
+        WrapUnique(new CPDF_Image(m_pDocument, pStream, bInline)));
   }
   SetGraphicStates(pImageObj.get(), pImageObj->GetImage()->IsMask(), FALSE,
                    FALSE);
