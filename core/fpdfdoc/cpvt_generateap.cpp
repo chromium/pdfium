@@ -612,6 +612,82 @@ bool CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
   return GenerateWidgetAP(pDoc, pAnnotDict, 0);
 }
 
+bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
+                                       CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
+
+  CFX_ByteTextBuf sAppStream;
+  CFX_ByteString sExtGSDictName = "GS";
+  sAppStream << "/" << sExtGSDictName << " gs ";
+
+  CPDF_Array* pInteriorColor = pAnnotDict->GetArrayBy("IC");
+  sAppStream << GetColorStringWithDefault(pInteriorColor,
+                                          CPVT_Color(CPVT_Color::kTransparent),
+                                          PaintOperation::FILL);
+
+  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayBy("C"),
+                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          PaintOperation::STROKE);
+
+  FX_FLOAT fBorderWidth = GetBorderWidth(*pAnnotDict);
+  bool bIsStrokeRect = fBorderWidth > 0;
+
+  if (bIsStrokeRect) {
+    sAppStream << fBorderWidth << " w ";
+    sAppStream << GetDashPatternString(*pAnnotDict);
+  }
+
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  rect.Normalize();
+
+  if (bIsStrokeRect) {
+    // Deflating rect because stroking a path entails painting all points whose
+    // perpendicular distance from the path in user space is less than or equal
+    // to half the line width.
+    rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
+  }
+
+  const FX_FLOAT fMiddleX = (rect.left + rect.right) / 2;
+  const FX_FLOAT fMiddleY = (rect.top + rect.bottom) / 2;
+
+  // |fL| is precalculated approximate value of 4 * tan((3.14 / 2) / 4) / 3,
+  // where |fL| * radius is a good approximation of control points for
+  // arc with 90 degrees.
+  const FX_FLOAT fL = 0.5523f;
+  const FX_FLOAT fDeltaX = fL * rect.Width() / 2.0;
+  const FX_FLOAT fDeltaY = fL * rect.Height() / 2.0;
+
+  // Starting point
+  sAppStream << fMiddleX << " " << rect.top << " m\n";
+  // First Bezier Curve
+  sAppStream << fMiddleX + fDeltaX << " " << rect.top << " " << rect.right
+             << " " << fMiddleY + fDeltaY << " " << rect.right << " "
+             << fMiddleY << " c\n";
+  // Second Bezier Curve
+  sAppStream << rect.right << " " << fMiddleY - fDeltaY << " "
+             << fMiddleX + fDeltaX << " " << rect.bottom << " " << fMiddleX
+             << " " << rect.bottom << " c\n";
+  // Third Bezier Curve
+  sAppStream << fMiddleX - fDeltaX << " " << rect.bottom << " " << rect.left
+             << " " << fMiddleY - fDeltaY << " " << rect.left << " " << fMiddleY
+             << " c\n";
+  // Fourth Bezier Curve
+  sAppStream << rect.left << " " << fMiddleY + fDeltaY << " "
+             << fMiddleX - fDeltaX << " " << rect.top << " " << fMiddleX << " "
+             << rect.top << " c\n";
+
+  bool bIsFillRect = pInteriorColor && !pInteriorColor->IsEmpty();
+  sAppStream << GetPaintOperatorString(bIsStrokeRect, bIsFillRect) << "\n";
+
+  CPDF_Dictionary* pExtGStateDict =
+      GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
+  return true;
+}
+
 bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
   // If AP dictionary exists, we use the appearance defined in the

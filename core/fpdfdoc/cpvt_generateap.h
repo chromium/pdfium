@@ -25,6 +25,8 @@ bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 
 class CPVT_GenerateAP {
  public:
+  static bool GenerateCircleAP(CPDF_Document* pDoc,
+                               CPDF_Dictionary* pAnnotDict);
   static bool GenerateComboBoxAP(CPDF_Document* pDoc,
                                  CPDF_Dictionary* pAnnotDict);
   static bool GenerateHighlightAP(CPDF_Document* pDoc,

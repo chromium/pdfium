@@ -21,7 +21,9 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),
       m_pDocument(pDocument),
       m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {
-  if (m_sSubtype == "Highlight")
+  if (m_sSubtype == "Circle")
+    CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
+  else if (m_sSubtype == "Highlight")
     CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Square")
     CPVT_GenerateAP::GenerateSquareAP(m_pDocument, m_pAnnotDict);
