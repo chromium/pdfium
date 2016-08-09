@@ -23,6 +23,9 @@ class CFWL_ComboBox : public CFWL_Widget {
   CFWL_ComboBox();
   ~CFWL_ComboBox() override;
 
+  IFWL_ComboBox* GetWidget() override;
+  const IFWL_ComboBox* GetWidget() const override;
+
   static CFWL_ComboBox* Create();
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   int32_t AddString(const CFX_WideStringC& wsText);

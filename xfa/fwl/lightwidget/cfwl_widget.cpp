@@ -20,7 +20,11 @@
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
 IFWL_Widget* CFWL_Widget::GetWidget() {
-  return m_pIface;
+  return m_pIface.get();
+}
+
+const IFWL_Widget* CFWL_Widget::GetWidget() const {
+  return m_pIface.get();
 }
 
 FWL_Error CFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
@@ -208,18 +212,15 @@ IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
 }
 
 CFWL_Widget::CFWL_Widget()
-    : m_pIface(nullptr), m_pDelegate(nullptr), m_pProperties(nullptr) {
-  m_pProperties = new CFWL_WidgetProperties;
-  m_pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+    : m_pDelegate(nullptr),
+      m_pWidgetMgr(CFWL_WidgetMgr::GetInstance()),
+      m_pProperties(new CFWL_WidgetProperties) {
   ASSERT(m_pWidgetMgr);
 }
 
 CFWL_Widget::~CFWL_Widget() {
-  delete m_pProperties;
-  if (m_pIface) {
+  if (m_pIface)
     m_pIface->Finalize();
-    delete m_pIface;
-  }
 }
 
 FWL_Error CFWL_Widget::Repaint(const CFX_RectF* pRect) {
@@ -233,7 +234,7 @@ FWL_Error CFWL_Widget::Repaint(const CFX_RectF* pRect) {
     m_pIface->GetWidgetRect(rect);
     rect.left = rect.top = 0;
   }
-  return m_pWidgetMgr->RepaintWidget(m_pIface, &rect);
+  return m_pWidgetMgr->RepaintWidget(m_pIface.get(), &rect);
 }
 
 FWL_Error CFWL_Widget::SetFocus(FX_BOOL bFocus) {
@@ -249,9 +250,9 @@ FWL_Error CFWL_Widget::SetFocus(FX_BOOL bFocus) {
     return FWL_Error::Indefinite;
 
   if (bFocus) {
-    pDriver->SetFocus(m_pIface);
+    pDriver->SetFocus(m_pIface.get());
   } else {
-    if (pDriver->GetFocus() == m_pIface) {
+    if (pDriver->GetFocus() == m_pIface.get()) {
       pDriver->SetFocus(nullptr);
     }
   }
@@ -270,7 +271,7 @@ FWL_Error CFWL_Widget::SetGrab(FX_BOOL bSet) {
   if (!pDriver)
     return FWL_Error::Indefinite;
 
-  pDriver->SetGrab(m_pIface, bSet);
+  pDriver->SetGrab(m_pIface.get(), bSet);
   return FWL_Error::Succeeded;
 }
 
@@ -320,7 +321,7 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
     return CFX_SizeF();
 
   CFWL_ThemeText calPart;
-  calPart.m_pWidget = m_pIface;
+  calPart.m_pWidget = m_pIface.get();
   calPart.m_wsText = wsText;
   calPart.m_dwTTOStyles =
       bMultiLine ? FDE_TTOSTYLE_LineWrap : FDE_TTOSTYLE_SingleLine;

@@ -16,6 +16,9 @@ class CFWL_PictureBox : public CFWL_Widget {
   CFWL_PictureBox();
   ~CFWL_PictureBox() override;
 
+  IFWL_PictureBox* GetWidget() override;
+  const IFWL_PictureBox* GetWidget() const override;
+
   static CFWL_PictureBox* Create();
 
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);

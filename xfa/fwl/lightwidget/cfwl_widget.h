@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_LIGHTWIDGET_CFWL_WIDGET_H_
 #define XFA_FWL_LIGHTWIDGET_CFWL_WIDGET_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/lightwidget/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -21,7 +23,9 @@ class CFWL_Widget {
  public:
   virtual ~CFWL_Widget();
 
-  IFWL_Widget* GetWidget();
+  virtual IFWL_Widget* GetWidget();
+  virtual const IFWL_Widget* GetWidget() const;
+
   FWL_Error GetClassName(CFX_WideString& wsClass) const;
   FWL_Type GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
@@ -70,13 +74,14 @@ class CFWL_Widget {
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          FX_BOOL bMultiLine = FALSE,
                          int32_t iLineWidth = -1);
-  IFWL_Widget* m_pIface;
-  IFWL_WidgetDelegate* m_pDelegate;
-  CFWL_WidgetMgr* m_pWidgetMgr;
-  CFWL_WidgetProperties* m_pProperties;
 
  protected:
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+
+  std::unique_ptr<IFWL_Widget> m_pIface;
+  IFWL_WidgetDelegate* m_pDelegate;
+  CFWL_WidgetMgr* const m_pWidgetMgr;
+  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
 };
 
 #endif  // XFA_FWL_LIGHTWIDGET_CFWL_WIDGET_H_

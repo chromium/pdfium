@@ -10,6 +10,14 @@
 
 #include "third_party/base/stl_util.h"
 
+IFWL_ListBox* CFWL_ListBox::GetWidget() {
+  return static_cast<IFWL_ListBox*>(m_pIface.get());
+}
+
+const IFWL_ListBox* CFWL_ListBox::GetWidget() const {
+  return static_cast<IFWL_ListBox*>(m_pIface.get());
+}
+
 CFWL_ListBox* CFWL_ListBox::Create() {
   return new CFWL_ListBox;
 }
@@ -26,7 +34,7 @@ FWL_Error CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (ret != FWL_Error::Succeeded) {
     return ret;
   }
-  m_pIface = pListBox.release();
+  m_pIface = std::move(pListBox);
   CFWL_Widget::Initialize();
   return FWL_Error::Succeeded;
 }
@@ -52,7 +60,7 @@ FX_BOOL CFWL_ListBox::DeleteString(IFWL_ListItem* pItem) {
       static_cast<size_t>(nIndex) >= m_ListBoxDP.m_ItemArray.size()) {
     return FALSE;
   }
-  int32_t iCount = m_ListBoxDP.CountItems(m_pIface);
+  int32_t iCount = m_ListBoxDP.CountItems(m_pIface.get());
   int32_t iSel = nIndex + 1;
   if (iSel >= iCount) {
     iSel = nIndex - 1;
@@ -62,7 +70,7 @@ FX_BOOL CFWL_ListBox::DeleteString(IFWL_ListItem* pItem) {
   }
   if (iSel >= 0) {
     CFWL_ListItem* pSel =
-        static_cast<CFWL_ListItem*>(m_ListBoxDP.GetItem(m_pIface, iSel));
+        static_cast<CFWL_ListItem*>(m_ListBoxDP.GetItem(m_pIface.get(), iSel));
     pSel->m_dwStates |= FWL_ITEMSTATE_LTB_Selected;
   }
   m_ListBoxDP.m_ItemArray.erase(m_ListBoxDP.m_ItemArray.begin() + nIndex);
@@ -74,40 +82,40 @@ void CFWL_ListBox::DeleteAll() {
 }
 
 int32_t CFWL_ListBox::CountSelItems() {
-  if (!m_pIface)
+  if (!GetWidget())
     return 0;
-  return static_cast<IFWL_ListBox*>(m_pIface)->CountSelItems();
+  return GetWidget()->CountSelItems();
 }
 
 IFWL_ListItem* CFWL_ListBox::GetSelItem(int32_t nIndexSel) {
-  if (!m_pIface)
+  if (!GetWidget())
     return nullptr;
-  return static_cast<IFWL_ListBox*>(m_pIface)->GetSelItem(nIndexSel);
+  return GetWidget()->GetSelItem(nIndexSel);
 }
 
 int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex) {
-  if (!m_pIface)
+  if (!GetWidget())
     return 0;
-  return static_cast<IFWL_ListBox*>(m_pIface)->GetSelIndex(nIndex);
+  return GetWidget()->GetSelIndex(nIndex);
 }
 
 FWL_Error CFWL_ListBox::SetSelItem(IFWL_ListItem* pItem, FX_BOOL bSelect) {
-  if (!m_pIface)
+  if (!GetWidget())
     return FWL_Error::Indefinite;
-  return static_cast<IFWL_ListBox*>(m_pIface)->SetSelItem(pItem, bSelect);
+  return GetWidget()->SetSelItem(pItem, bSelect);
 }
 
 FWL_Error CFWL_ListBox::GetItemText(IFWL_ListItem* pItem,
                                     CFX_WideString& wsText) {
-  if (!m_pIface)
+  if (!GetWidget())
     return FWL_Error::Indefinite;
-  return static_cast<IFWL_ListBox*>(m_pIface)->GetItemText(pItem, wsText);
+  return GetWidget()->GetItemText(pItem, wsText);
 }
 
 FWL_Error CFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
-  if (!m_pIface)
+  if (!GetWidget())
     return FWL_Error::Indefinite;
-  return static_cast<IFWL_ListBox*>(m_pIface)->GetScrollPos(fPos, bVert);
+  return GetWidget()->GetScrollPos(fPos, bVert);
 }
 
 FWL_Error CFWL_ListBox::SetItemHeight(FX_FLOAT fItemHeight) {
@@ -169,13 +177,13 @@ void* CFWL_ListBox::GetItemData(IFWL_ListItem* pItem) {
 
 IFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtClient;
-  m_pIface->GetClientRect(rtClient);
+  GetWidget()->GetClientRect(rtClient);
   fx -= rtClient.left;
   fy -= rtClient.top;
   FX_FLOAT fPosX = 0;
   FX_FLOAT fPosY = 0;
-  static_cast<IFWL_ListBox*>(m_pIface)->GetScrollPos(fx);
-  static_cast<IFWL_ListBox*>(m_pIface)->GetScrollPos(fy, FALSE);
+  GetWidget()->GetScrollPos(fx);
+  GetWidget()->GetScrollPos(fy, FALSE);
   int32_t nCount = m_ListBoxDP.CountItems(nullptr);
   for (int32_t i = 0; i < nCount; i++) {
     IFWL_ListItem* pItem = m_ListBoxDP.GetItem(nullptr, i);

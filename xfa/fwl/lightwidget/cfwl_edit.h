@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "xfa/fwl/basewidget/ifwl_edit.h"
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 class CFWL_WidgetProperties;
@@ -18,6 +19,9 @@ class CFWL_Edit : public CFWL_Widget {
  public:
   CFWL_Edit();
   ~CFWL_Edit() override;
+
+  IFWL_Edit* GetWidget() override;
+  const IFWL_Edit* GetWidget() const override;
 
   static CFWL_Edit* Create();
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);

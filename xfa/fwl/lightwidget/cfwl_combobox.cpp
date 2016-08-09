@@ -11,6 +11,14 @@
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
+IFWL_ComboBox* CFWL_ComboBox::GetWidget() {
+  return static_cast<IFWL_ComboBox*>(m_pIface.get());
+}
+
+const IFWL_ComboBox* CFWL_ComboBox::GetWidget() const {
+  return static_cast<IFWL_ComboBox*>(m_pIface.get());
+}
+
 CFWL_ComboBox* CFWL_ComboBox::Create() {
   return new CFWL_ComboBox;
 }
@@ -27,7 +35,7 @@ FWL_Error CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (ret != FWL_Error::Succeeded) {
     return ret;
   }
-  m_pIface = pComboBox.release();
+  m_pIface = std::move(pComboBox);
   CFWL_Widget::Initialize();
   return FWL_Error::Succeeded;
 }
@@ -69,8 +77,8 @@ int32_t CFWL_ComboBox::CountItems() {
 
 FWL_Error CFWL_ComboBox::GetTextByIndex(int32_t iIndex,
                                         CFX_WideString& wsText) {
-  CFWL_ComboBoxItem* pItem =
-      static_cast<CFWL_ComboBoxItem*>(m_comboBoxData.GetItem(m_pIface, iIndex));
+  CFWL_ComboBoxItem* pItem = static_cast<CFWL_ComboBoxItem*>(
+      m_comboBoxData.GetItem(m_pIface.get(), iIndex));
   if (!pItem)
     return FWL_Error::Indefinite;
   wsText = pItem->m_wsText;
@@ -78,78 +86,57 @@ FWL_Error CFWL_ComboBox::GetTextByIndex(int32_t iIndex,
 }
 
 int32_t CFWL_ComboBox::GetCurSel() {
-  if (!m_pIface)
-    return -1;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->GetCurSel();
+  return GetWidget() ? GetWidget()->GetCurSel() : -1;
 }
 
 FWL_Error CFWL_ComboBox::SetCurSel(int32_t iSel) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->SetCurSel(iSel);
+  return GetWidget() ? GetWidget()->SetCurSel(iSel) : FWL_Error::Indefinite;
 }
 
 FWL_Error CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->SetEditText(wsText);
+  return GetWidget() ? GetWidget()->SetEditText(wsText) : FWL_Error::Indefinite;
 }
 
 int32_t CFWL_ComboBox::GetEditTextLength() const {
-  if (!m_pIface)
-    return 0;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->GetEditTextLength();
+  return GetWidget() ? GetWidget()->GetEditTextLength() : 0;
 }
 
 FWL_Error CFWL_ComboBox::GetEditText(CFX_WideString& wsText,
                                      int32_t nStart,
                                      int32_t nCount) const {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)
-      ->GetEditText(wsText, nStart, nCount);
+  return GetWidget() ? GetWidget()->GetEditText(wsText, nStart, nCount)
+                     : FWL_Error::Indefinite;
 }
 
 FWL_Error CFWL_ComboBox::SetEditSelRange(int32_t nStart, int32_t nCount) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->SetEditSelRange(nStart, nCount);
+  return GetWidget() ? GetWidget()->SetEditSelRange(nStart, nCount)
+                     : FWL_Error::Indefinite;
 }
 
 int32_t CFWL_ComboBox::GetEditSelRange(int32_t nIndex, int32_t& nStart) {
-  if (!m_pIface)
-    return 0;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->GetEditSelRange(nIndex, nStart);
+  return GetWidget() ? GetWidget()->GetEditSelRange(nIndex, nStart) : 0;
 }
 
 int32_t CFWL_ComboBox::GetEditLimit() {
-  if (!m_pIface)
-    return 0;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->GetEditLimit();
+  return GetWidget() ? GetWidget()->GetEditLimit() : 0;
 }
 
 FWL_Error CFWL_ComboBox::SetEditLimit(int32_t nLimit) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->SetEditLimit(nLimit);
+  return GetWidget() ? GetWidget()->SetEditLimit(nLimit)
+                     : FWL_Error::Indefinite;
 }
 
 FWL_Error CFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditDoClipboard(iCmd);
+  return GetWidget() ? GetWidget()->EditDoClipboard(iCmd)
+                     : FWL_Error::Indefinite;
 }
 
 FX_BOOL CFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditRedo(pRecord);
+  return GetWidget() ? GetWidget()->EditRedo(pRecord) : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditUndo(const IFDE_TxtEdtDoRecord* pRecord) {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditUndo(pRecord);
+  return GetWidget() ? GetWidget()->EditUndo(pRecord) : FALSE;
 }
 
 FWL_Error CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight) {
@@ -158,8 +145,8 @@ FWL_Error CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight) {
 }
 
 FWL_Error CFWL_ComboBox::SetItemData(int32_t iIndex, void* pData) {
-  CFWL_ComboBoxItem* pItem =
-      static_cast<CFWL_ComboBoxItem*>(m_comboBoxData.GetItem(m_pIface, iIndex));
+  CFWL_ComboBoxItem* pItem = static_cast<CFWL_ComboBoxItem*>(
+      m_comboBoxData.GetItem(m_pIface.get(), iIndex));
   if (!pItem)
     return FWL_Error::Indefinite;
   pItem->m_pData = pData;
@@ -167,114 +154,85 @@ FWL_Error CFWL_ComboBox::SetItemData(int32_t iIndex, void* pData) {
 }
 
 void* CFWL_ComboBox::GetItemData(int32_t iIndex) {
-  CFWL_ComboBoxItem* pItem =
-      static_cast<CFWL_ComboBoxItem*>(m_comboBoxData.GetItem(m_pIface, iIndex));
+  CFWL_ComboBoxItem* pItem = static_cast<CFWL_ComboBoxItem*>(
+      m_comboBoxData.GetItem(m_pIface.get(), iIndex));
   return pItem ? pItem->m_pData : nullptr;
 }
 
 FWL_Error CFWL_ComboBox::SetListTheme(IFWL_ThemeProvider* pTheme) {
-  return static_cast<IFWL_ComboBox*>(m_pIface)->GetListBoxt()->SetThemeProvider(
-      pTheme);
+  return GetWidget()->GetListBoxt()->SetThemeProvider(pTheme);
 }
 
 FX_BOOL CFWL_ComboBox::AfterFocusShowDropList() {
-  return static_cast<IFWL_ComboBox*>(m_pIface)->AfterFocusShowDropList();
+  return GetWidget()->AfterFocusShowDropList();
 }
 
 FWL_Error CFWL_ComboBox::OpenDropDownList(FX_BOOL bActivate) {
-  return static_cast<IFWL_ComboBox*>(m_pIface)->OpenDropDownList(bActivate);
+  return GetWidget()->OpenDropDownList(bActivate);
 }
 
 FX_BOOL CFWL_ComboBox::EditCanUndo() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditCanUndo();
+  return GetWidget() ? GetWidget()->EditCanUndo() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditCanRedo() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditCanRedo();
+  return GetWidget() ? GetWidget()->EditCanRedo() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditUndo() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditUndo();
+  return GetWidget() ? GetWidget()->EditUndo() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditRedo() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditRedo();
+  return GetWidget() ? GetWidget()->EditRedo() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditCanCopy() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditCanCopy();
+  return GetWidget() ? GetWidget()->EditCanCopy() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditCanCut() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditCanCut();
+  return GetWidget() ? GetWidget()->EditCanCut() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditCanSelectAll() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditCanSelectAll();
+  return GetWidget() ? GetWidget()->EditCanSelectAll() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditCopy(CFX_WideString& wsCopy) {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditCopy(wsCopy);
+  return GetWidget() ? GetWidget()->EditCopy(wsCopy) : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditCut(CFX_WideString& wsCut) {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditCut(wsCut);
+  return GetWidget() ? GetWidget()->EditCut(wsCut) : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditPaste(const CFX_WideString& wsPaste) {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditPaste(wsPaste);
+  return GetWidget() ? GetWidget()->EditPaste(wsPaste) : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditSelectAll() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditSelectAll();
+  return GetWidget() ? GetWidget()->EditSelectAll() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditDelete() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditDelete();
+  return GetWidget() ? GetWidget()->EditDelete() : FALSE;
 }
 
 FX_BOOL CFWL_ComboBox::EditDeSelect() {
-  if (!m_pIface)
-    return FALSE;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->EditDeSelect();
+  return GetWidget() ? GetWidget()->EditDeSelect() : FALSE;
 }
 
 FWL_Error CFWL_ComboBox::GetBBox(CFX_RectF& rect) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)->GetBBox(rect);
+  return GetWidget() ? GetWidget()->GetBBox(rect) : FWL_Error::Indefinite;
 }
 
 FWL_Error CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
                                             uint32_t dwStylesExRemoved) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return static_cast<IFWL_ComboBox*>(m_pIface)
-      ->EditModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
+  return GetWidget()
+             ? GetWidget()->EditModifyStylesEx(dwStylesExAdded,
+                                               dwStylesExRemoved)
+             : FWL_Error::Indefinite;
 }
 
 CFWL_ComboBox::CFWL_ComboBox() {}

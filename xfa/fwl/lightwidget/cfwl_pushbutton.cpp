@@ -8,6 +8,14 @@
 
 #include <memory>
 
+IFWL_PushButton* CFWL_PushButton::GetWidget() {
+  return static_cast<IFWL_PushButton*>(m_pIface.get());
+}
+
+const IFWL_PushButton* CFWL_PushButton::GetWidget() const {
+  return static_cast<IFWL_PushButton*>(m_pIface.get());
+}
+
 CFWL_PushButton* CFWL_PushButton::Create() {
   return new CFWL_PushButton;
 }
@@ -25,7 +33,7 @@ FWL_Error CFWL_PushButton::Initialize(
   if (ret != FWL_Error::Succeeded) {
     return ret;
   }
-  m_pIface = pPushButton.release();
+  m_pIface = std::move(pPushButton);
   CFWL_Widget::Initialize();
   return FWL_Error::Succeeded;
 }

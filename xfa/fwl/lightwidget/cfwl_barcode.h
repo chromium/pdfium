@@ -17,6 +17,10 @@ class CFWL_WidgetProperties;
 class CFWL_Barcode : public CFWL_Edit {
  public:
   static CFWL_Barcode* Create();
+
+  IFWL_Barcode* GetWidget() override;
+  const IFWL_Barcode* GetWidget() const override;
+
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
@@ -36,7 +40,7 @@ class CFWL_Barcode : public CFWL_Edit {
   void SetDataLength(int32_t dataLength) {
     m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_DATALENGTH;
     m_barcodeData.m_nDataLength = dataLength;
-    static_cast<IFWL_Barcode*>(m_pIface)->SetLimit(dataLength);
+    GetWidget()->SetLimit(dataLength);
   }
   void SetCalChecksum(int32_t calChecksum) {
     m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;

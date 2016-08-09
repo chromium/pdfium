@@ -15,6 +15,9 @@ class CFWL_CheckBox : public CFWL_Widget {
   CFWL_CheckBox();
   ~CFWL_CheckBox() override;
 
+  IFWL_CheckBox* GetWidget() override;
+  const IFWL_CheckBox* GetWidget() const override;
+
   static CFWL_CheckBox* Create();
 
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);

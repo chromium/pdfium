@@ -10,6 +10,14 @@
 
 #include "xfa/fwl/core/fwl_error.h"
 
+IFWL_CheckBox* CFWL_CheckBox::GetWidget() {
+  return static_cast<IFWL_CheckBox*>(m_pIface.get());
+}
+
+const IFWL_CheckBox* CFWL_CheckBox::GetWidget() const {
+  return static_cast<IFWL_CheckBox*>(m_pIface.get());
+}
+
 CFWL_CheckBox* CFWL_CheckBox::Create() {
   return new CFWL_CheckBox;
 }
@@ -26,7 +34,7 @@ FWL_Error CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (ret != FWL_Error::Succeeded) {
     return ret;
   }
-  m_pIface = pCheckBox.release();
+  m_pIface = std::move(pCheckBox);
   CFWL_Widget::Initialize();
   return FWL_Error::Succeeded;
 }
@@ -42,11 +50,11 @@ FWL_Error CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
 }
 
 int32_t CFWL_CheckBox::GetCheckState() {
-  return static_cast<IFWL_CheckBox*>(m_pIface)->GetCheckState();
+  return GetWidget()->GetCheckState();
 }
 
 FWL_Error CFWL_CheckBox::SetCheckState(int32_t iCheck) {
-  return static_cast<IFWL_CheckBox*>(m_pIface)->SetCheckState(iCheck);
+  return GetWidget()->SetCheckState(iCheck);
 }
 
 CFWL_CheckBox::CFWL_CheckBox() {}

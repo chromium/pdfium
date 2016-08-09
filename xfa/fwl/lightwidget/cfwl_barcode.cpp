@@ -8,6 +8,14 @@
 
 #include <memory>
 
+IFWL_Barcode* CFWL_Barcode::GetWidget() {
+  return static_cast<IFWL_Barcode*>(m_pIface.get());
+}
+
+const IFWL_Barcode* CFWL_Barcode::GetWidget() const {
+  return static_cast<IFWL_Barcode*>(m_pIface.get());
+}
+
 CFWL_Barcode* CFWL_Barcode::Create() {
   return new CFWL_Barcode;
 }
@@ -24,7 +32,7 @@ FWL_Error CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (ret != FWL_Error::Succeeded) {
     return ret;
   }
-  m_pIface = pBarcode.release();
+  m_pIface = std::move(pBarcode);
   CFWL_Widget::Initialize();
   return FWL_Error::Succeeded;
 }
@@ -34,15 +42,12 @@ CFWL_Barcode::CFWL_Barcode() {}
 CFWL_Barcode::~CFWL_Barcode() {}
 
 void CFWL_Barcode::SetType(BC_TYPE type) {
-  if (!m_pIface)
-    return;
-  static_cast<IFWL_Barcode*>(m_pIface)->SetType(type);
+  if (GetWidget())
+    GetWidget()->SetType(type);
 }
 
 FX_BOOL CFWL_Barcode::IsProtectedType() {
-  if (!m_pIface)
-    return 0;
-  return static_cast<IFWL_Barcode*>(m_pIface)->IsProtectedType();
+  return GetWidget() ? GetWidget()->IsProtectedType() : FALSE;
 }
 
 CFWL_Barcode::CFWL_BarcodeDP::CFWL_BarcodeDP()

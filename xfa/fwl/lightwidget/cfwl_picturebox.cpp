@@ -8,6 +8,14 @@
 
 #include <memory>
 
+IFWL_PictureBox* CFWL_PictureBox::GetWidget() {
+  return static_cast<IFWL_PictureBox*>(m_pIface.get());
+}
+
+const IFWL_PictureBox* CFWL_PictureBox::GetWidget() const {
+  return static_cast<IFWL_PictureBox*>(m_pIface.get());
+}
+
 CFWL_PictureBox* CFWL_PictureBox::Create() {
   return new CFWL_PictureBox;
 }
@@ -25,7 +33,7 @@ FWL_Error CFWL_PictureBox::Initialize(
   if (ret != FWL_Error::Succeeded) {
     return ret;
   }
-  m_pIface = pPictureBox.release();
+  m_pIface = std::move(pPictureBox);
   CFWL_Widget::Initialize();
   return FWL_Error::Succeeded;
 }
@@ -49,7 +57,7 @@ FWL_Error CFWL_PictureBox::SetRotation(FX_FLOAT fRotation) {
 }
 
 int32_t CFWL_PictureBox::GetFlipMode() {
-  return m_PictureBoxDP.GetFlipMode(m_pIface);
+  return m_PictureBoxDP.GetFlipMode(m_pIface.get());
 }
 
 FWL_Error CFWL_PictureBox::SetFlipMode(int32_t iFlipMode) {
@@ -58,7 +66,7 @@ FWL_Error CFWL_PictureBox::SetFlipMode(int32_t iFlipMode) {
 }
 
 int32_t CFWL_PictureBox::GetOpacity() {
-  return m_PictureBoxDP.GetOpacity(m_pIface);
+  return m_PictureBoxDP.GetOpacity(m_pIface.get());
 }
 
 FWL_Error CFWL_PictureBox::SetOpacity(int32_t iOpacity) {
@@ -68,7 +76,7 @@ FWL_Error CFWL_PictureBox::SetOpacity(int32_t iOpacity) {
 
 FWL_Error CFWL_PictureBox::GetScale(FX_FLOAT& fScaleX, FX_FLOAT& fScaleY) {
   CFX_Matrix matrix;
-  m_PictureBoxDP.GetMatrix(m_pIface, matrix);
+  m_PictureBoxDP.GetMatrix(m_pIface.get(), matrix);
   matrix.Scale(fScaleX, fScaleY);
   return FWL_Error::Succeeded;
 }
@@ -81,7 +89,7 @@ FWL_Error CFWL_PictureBox::SetScale(FX_FLOAT fScaleX, FX_FLOAT fScaleY) {
 
 FWL_Error CFWL_PictureBox::GetOffset(FX_FLOAT& fx, FX_FLOAT& fy) {
   CFX_Matrix matrix;
-  m_PictureBoxDP.GetMatrix(m_pIface, matrix);
+  m_PictureBoxDP.GetMatrix(m_pIface.get(), matrix);
   fx = matrix.e;
   fy = matrix.f;
   return FWL_Error::Succeeded;
