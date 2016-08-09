@@ -718,6 +718,62 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
   return true;
 }
 
+bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
+                                    CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
+
+  FX_FLOAT fBorderWidth = GetBorderWidth(*pAnnotDict);
+  bool bIsStroke = fBorderWidth > 0;
+
+  if (!bIsStroke)
+    return false;
+
+  CPDF_Array* pInkList = pAnnotDict->GetArrayBy("InkList");
+  if (!pInkList || pInkList->IsEmpty())
+    return false;
+
+  CFX_ByteTextBuf sAppStream;
+  CFX_ByteString sExtGSDictName = "GS";
+  sAppStream << "/" << sExtGSDictName << " gs ";
+
+  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayBy("C"),
+                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          PaintOperation::STROKE);
+
+  sAppStream << fBorderWidth << " w ";
+  sAppStream << GetDashPatternString(*pAnnotDict);
+
+  // Set inflated rect as a new rect because paths near the border with large
+  // width should not be clipped to the original rect.
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  rect.Inflate(fBorderWidth / 2, fBorderWidth / 2);
+  pAnnotDict->SetAtRect("Rect", rect);
+
+  for (size_t i = 0; i < pInkList->GetCount(); i++) {
+    CPDF_Array* pInkCoordList = pInkList->GetArrayAt(i);
+    if (!pInkCoordList || pInkCoordList->GetCount() < 2)
+      continue;
+
+    sAppStream << pInkCoordList->GetNumberAt(0) << " "
+               << pInkCoordList->GetNumberAt(1) << " m ";
+
+    for (size_t j = 0; j < pInkCoordList->GetCount() - 1; j += 2) {
+      sAppStream << pInkCoordList->GetNumberAt(j) << " "
+                 << pInkCoordList->GetNumberAt(j + 1) << " l ";
+    }
+
+    sAppStream << "S\n";
+  }
+
+  CPDF_Dictionary* pExtGStateDict =
+      GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
+  return true;
+}
+
 bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
   // If AP dictionary exists, we use the appearance defined in the

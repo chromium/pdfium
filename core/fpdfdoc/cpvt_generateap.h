@@ -31,6 +31,7 @@ class CPVT_GenerateAP {
                                  CPDF_Dictionary* pAnnotDict);
   static bool GenerateHighlightAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
+  static bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
   static bool GenerateListBoxAP(CPDF_Document* pDoc,
                                 CPDF_Dictionary* pAnnotDict);
   static bool GenerateSquareAP(CPDF_Document* pDoc,

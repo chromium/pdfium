@@ -25,6 +25,8 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Highlight")
     CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
+  else if (m_sSubtype == "Ink")
+    CPVT_GenerateAP::GenerateInkAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Square")
     CPVT_GenerateAP::GenerateSquareAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Squiggly")
