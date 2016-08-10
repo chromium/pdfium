@@ -11,7 +11,6 @@
 #include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"
-#include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 #include "xfa/fgas/font/fgas_gefont.h"

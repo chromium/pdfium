@@ -16,6 +16,7 @@
 #include "third_party/agg23/agg_rasterizer_scanline_aa.h"
 
 class CFX_ClipRgn;
+class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_PathData;
 

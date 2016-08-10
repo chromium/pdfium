@@ -6,7 +6,6 @@
 
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"
-#include "core/fxge/include/fx_ge.h"
 
 CFX_SubstFont::CFX_SubstFont() {
   m_ExtHandle = nullptr;

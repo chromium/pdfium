@@ -15,6 +15,7 @@
 #include "core/fpdfdoc/include/cpdf_docjsactions.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fxcrt/include/cfx_retain_ptr.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"

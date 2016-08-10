@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_
 
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_graphstatedata.h"
 
 class CPDF_GraphState : public CFX_CountRef<CFX_GraphStateData> {};
 

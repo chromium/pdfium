@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/fx_ge.h"
 
 class CFX_PathGenerator {
  public:

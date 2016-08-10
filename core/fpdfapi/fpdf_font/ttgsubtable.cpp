@@ -7,7 +7,6 @@
 #include "core/fpdfapi/fpdf_font/ttgsubtable.h"
 
 #include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/fx_ge.h"
 #include "third_party/base/stl_util.h"
 
 CFX_GlyphMap::CFX_GlyphMap() {}

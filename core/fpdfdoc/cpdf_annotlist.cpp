@@ -14,6 +14,7 @@
 #include "core/fpdfdoc/include/cpdf_annot.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     : m_pDocument(pPage->m_pDocument) {

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxcrt/include/fx_system.h"
 
 #include <algorithm>
 #include <memory>
@@ -25,6 +25,7 @@
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_windowsdevice.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"

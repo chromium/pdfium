@@ -7,13 +7,14 @@
 #ifndef XFA_FDE_FDE_GEDEVICE_H_
 #define XFA_FDE_FDE_GEDEVICE_H_
 
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
 class CFDE_Brush;
 class CFDE_Path;
 class CFDE_Pen;
 class CFGAS_GEFont;
+class CFX_GraphStateData;
 
 class CFDE_RenderDevice : public CFX_Target {
  public:

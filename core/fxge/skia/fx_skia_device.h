@@ -16,6 +16,7 @@ class SkPaint;
 class SkPath;
 class SkPictureRecorder;
 class SkiaState;
+struct FXTEXT_CHARPOS;
 struct SkIRect;
 
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {

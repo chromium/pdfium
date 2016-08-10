@@ -11,7 +11,9 @@
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 #include "core/fxge/win32/dwrite_int.h"
 
+struct FXTEXT_CHARPOS;
 struct WINDIB_Open_Args_;
+
 class CGdiplusExt {
  public:
   CGdiplusExt();

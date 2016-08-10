@@ -11,7 +11,7 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfdoc/include/cpdf_annotlist.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 
 CPDF_PageRenderContext::CPDF_PageRenderContext() {}
 

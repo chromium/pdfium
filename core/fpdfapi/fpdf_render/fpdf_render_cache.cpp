@@ -11,7 +11,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
-#include "core/fxge/include/fx_ge.h"
 
 struct CACHEINFO {
   uint32_t time;

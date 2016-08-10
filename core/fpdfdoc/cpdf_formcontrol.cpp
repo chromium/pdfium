@@ -15,6 +15,7 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 
 namespace {
 

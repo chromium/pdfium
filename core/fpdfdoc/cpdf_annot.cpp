@@ -14,8 +14,9 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxcrt/include/fx_memory.h"
+#include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),

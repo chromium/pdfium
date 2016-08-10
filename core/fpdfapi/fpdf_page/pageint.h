@@ -17,7 +17,7 @@
 #include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 #include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 
 class CPDF_AllStates;
 class CPDF_ColorSpace;

@@ -20,7 +20,6 @@
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcrt/include/fx_safe_types.h"
-#include "core/fxge/include/fx_ge.h"
 
 namespace {
 

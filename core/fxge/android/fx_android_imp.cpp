@@ -14,7 +14,6 @@
 #include "core/fxge/android/fpf_skiamodule.h"
 #include "core/fxge/android/fx_android_font.h"
 #include "core/fxge/include/cfx_gemodule.h"
-#include "core/fxge/include/fx_ge.h"
 
 void CFX_GEModule::InitPlatform() {
   CFPF_SkiaDeviceModule* pDeviceModule = CFPF_GetSkiaDeviceModule();

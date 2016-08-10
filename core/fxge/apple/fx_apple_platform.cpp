@@ -5,7 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcrt/include/fx_system.h"
-#include "core/fxge/include/fx_ge.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
@@ -19,6 +18,7 @@
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "core/fxge/include/fx_freetype.h"
 
 #ifndef _SKIA_SUPPORT_

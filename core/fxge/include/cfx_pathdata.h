@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 
 struct FX_PATHPOINT {
   FX_FLOAT m_PointX;

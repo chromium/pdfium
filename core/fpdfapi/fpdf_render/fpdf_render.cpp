@@ -30,8 +30,10 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
+#include "core/fxge/include/cfx_fxgedevice.h"
+#include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc), m_pFontCache(new CFX_FontCache) {}

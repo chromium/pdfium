@@ -1,11 +1,13 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxge/include/cfx_graphstatedata.h"
+
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/fxge/include/fx_ge.h"
 
 CFX_GraphStateData::CFX_GraphStateData()
     : m_LineCap(LineCapButt),
@@ -44,8 +46,7 @@ void CFX_GraphStateData::SetDashCount(int count) {
   FX_Free(m_DashArray);
   m_DashArray = nullptr;
   m_DashCount = count;
-  if (count == 0) {
+  if (count == 0)
     return;
-  }
   m_DashArray = FX_Alloc(FX_FLOAT, count);
 }

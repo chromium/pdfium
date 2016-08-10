@@ -26,8 +26,8 @@
 #include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/fx_ge.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "core/fxge/skia/fx_skia_device.h"

@@ -8,7 +8,9 @@
 
 #include <memory>
 
+#include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "xfa/fxgraphics/cagg_graphics.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"

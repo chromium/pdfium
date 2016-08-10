@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcodec/include/fx_codec_def.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_graphstatedata.h"
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 

@@ -15,7 +15,6 @@
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/fx_ge.h"
 
 namespace {
 

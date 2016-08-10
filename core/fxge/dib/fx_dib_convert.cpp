@@ -6,7 +6,6 @@
 
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/fx_ge.h"
 
 class CFX_Palette {
  public:

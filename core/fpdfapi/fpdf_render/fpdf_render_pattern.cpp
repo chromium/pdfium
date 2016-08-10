@@ -21,7 +21,9 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_pathdata.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 
 namespace {

@@ -9,6 +9,7 @@
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fxge/include/cfx_graphstatedata.h"
 
 namespace {
 

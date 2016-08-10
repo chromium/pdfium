@@ -10,7 +10,6 @@
 
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/fx_ge.h"
 
 namespace {
 

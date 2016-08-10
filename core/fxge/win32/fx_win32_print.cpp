@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxcrt/include/fx_system.h"
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 
@@ -15,6 +15,7 @@
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "core/fxge/include/cfx_windowsdevice.h"
 #include "core/fxge/win32/win32_int.h"
 

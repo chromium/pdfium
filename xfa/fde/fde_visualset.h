@@ -15,6 +15,8 @@
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/font/fgas_font.h"
 
+struct FXTEXT_CHARPOS;
+
 enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Canvas = 0x00,
   FDE_VISUALOBJ_Text = 0x01

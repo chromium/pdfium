@@ -10,7 +10,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/fx_ge.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include "core/fxge/apple/apple_int.h"

@@ -1,52 +1,22 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_FX_GE_H_
-#define CORE_FXGE_INCLUDE_FX_GE_H_
+#ifndef CORE_FXGE_INCLUDE_CFX_RENDERDEVICE_H_
+#define CORE_FXGE_INCLUDE_CFX_RENDERDEVICE_H_
 
 #include <memory>
 
-#include "core/fxge/include/cfx_fontmgr.h"
+#include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_font.h"
 
-class CCodec_ModuleMgr;
-class CFX_FaceCache;
 class CFX_Font;
 class CFX_FontCache;
-class CFX_FontMgr;
-class CPDF_ShadingPattern;
+class CFX_GraphStateData;
 class IFX_RenderDeviceDriver;
-class SkPictureRecorder;
-
-class CFX_GraphStateData {
- public:
-  enum LineCap { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 };
-
-  CFX_GraphStateData();
-  CFX_GraphStateData(const CFX_GraphStateData& src);
-  ~CFX_GraphStateData();
-
-  void Copy(const CFX_GraphStateData& src);
-  void SetDashCount(int count);
-
-  LineCap m_LineCap;
-  int m_DashCount;
-  FX_FLOAT* m_DashArray;
-  FX_FLOAT m_DashPhase;
-
-  enum LineJoin {
-    LineJoinMiter = 0,
-    LineJoinRound = 1,
-    LineJoinBevel = 2,
-  };
-  LineJoin m_LineJoin;
-  FX_FLOAT m_MiterLimit;
-  FX_FLOAT m_LineWidth;
-};
 
 #define FXDC_DEVICE_CLASS 1
 #define FXDC_PIXEL_WIDTH 2
@@ -307,28 +277,4 @@ class CFX_RenderDevice {
   std::unique_ptr<IFX_RenderDeviceDriver> m_pDeviceDriver;
 };
 
-class CFX_FxgeDevice : public CFX_RenderDevice {
- public:
-  CFX_FxgeDevice();
-  ~CFX_FxgeDevice() override;
-
-  bool Attach(CFX_DIBitmap* pBitmap,
-              bool bRgbByteOrder,
-              CFX_DIBitmap* pOriDevice,
-              bool bGroupKnockout);
-  bool Create(int width,
-              int height,
-              FXDIB_Format format,
-              CFX_DIBitmap* pOriDevice);
-
-#ifdef _SKIA_SUPPORT_
-  bool AttachRecorder(SkPictureRecorder* recorder);
-  SkPictureRecorder* CreateRecorder(int size_x, int size_y);
-  void DebugVerifyBitmapIsPreMultiplied() const override;
-#endif
-
- protected:
-  bool m_bOwnedBitmap;
-};
-
-#endif  // CORE_FXGE_INCLUDE_FX_GE_H_
+#endif  // CORE_FXGE_INCLUDE_CFX_RENDERDEVICE_H_

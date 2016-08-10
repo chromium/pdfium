@@ -14,6 +14,7 @@
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_pathdata.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxfa/include/fxfa_widget.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"

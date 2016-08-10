@@ -15,7 +15,7 @@
 #include "core/fpdfdoc/include/cpdf_formcontrol.h"
 #include "core/fpdfdoc/include/cpdf_formfield.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_fxgedevice.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "public/fpdfview.h"

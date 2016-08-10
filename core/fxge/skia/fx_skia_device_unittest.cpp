@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fxge/include/cfx_fxgedevice.h"
+#include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/fx_ge.h"
+#include "core/fxge/include/cfx_renderdevice.h"
 #include "core/fxge/skia/fx_skia_device.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdfview.h"
