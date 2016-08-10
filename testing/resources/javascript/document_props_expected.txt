@@ -46,7 +46,7 @@ Alert: ERROR: Document.documentFileName: Cannot assign to readonly property.
 Alert: this.external = 3; yields 3
 Alert: ERROR: Document.filesize: Cannot assign to readonly property.
 Alert: ERROR: Document.icons: Cannot assign to readonly property.
-Alert: this.info = 3; yields 3
+Alert: ERROR: Document.info: Cannot assign to readonly property.
 Alert: this.keywords = 3; yields 3
 Alert: this.layout = 3; yields 3
 Alert: this.media = 3; yields 3
