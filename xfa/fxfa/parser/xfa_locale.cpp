@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/xfa_locale.h"
 
+#include <utility>
+
 #include "core/fxcrt/include/fx_xml.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -17,19 +19,19 @@ static const FX_WCHAR g_FX_Currency[] = L"$z,zzz,zzz,zzz,zzz,zz9.99";
 static const FX_WCHAR g_FX_Decimal[] = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
 static const FX_WCHAR g_FX_Integer[] = L"z,zzz,zzz,zzz,zzz,zzz";
 
-CXFA_XMLLocale::CXFA_XMLLocale(CXML_Element* pLocaleData)
-    : m_pLocaleData(pLocaleData) {}
+CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData)
+    : m_pLocaleData(std::move(pLocaleData)) {}
 
-CXFA_XMLLocale::~CXFA_XMLLocale() {
-  delete m_pLocaleData;
-}
+CXFA_XMLLocale::~CXFA_XMLLocale() {}
 
 void CXFA_XMLLocale::Release() {
   delete this;
 }
+
 CFX_WideString CXFA_XMLLocale::GetName() {
   return m_pLocaleData ? m_pLocaleData->GetAttrValue("name") : CFX_WideString();
 }
+
 void CXFA_XMLLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
                                        CFX_WideString& wsNumSymbol) const {
   CFX_ByteString bsSymbols;
@@ -74,6 +76,7 @@ void CXFA_XMLLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
              CFX_ByteStringC(bsSymbols.c_str(), bsSymbols.GetLength() - 1),
              wsName.AsStringC(), wsNumSymbol);
 }
+
 void CXFA_XMLLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   if (!m_pLocaleData) {
     return;
@@ -86,26 +89,32 @@ void CXFA_XMLLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   }
   wsDtSymbol = pNumberSymbols->GetContent(0);
 }
+
 void CXFA_XMLLocale::GetMonthName(int32_t nMonth,
                                   CFX_WideString& wsMonthName,
                                   FX_BOOL bAbbr) const {
   wsMonthName = GetCalendarSymbol("month", nMonth, bAbbr);
 }
+
 void CXFA_XMLLocale::GetDayName(int32_t nWeek,
                                 CFX_WideString& wsDayName,
                                 FX_BOOL bAbbr) const {
   wsDayName = GetCalendarSymbol("day", nWeek, bAbbr);
 }
+
 void CXFA_XMLLocale::GetMeridiemName(CFX_WideString& wsMeridiemName,
                                      FX_BOOL bAM) const {
   wsMeridiemName = GetCalendarSymbol("meridiem", bAM ? 0 : 1, FALSE);
 }
+
 void CXFA_XMLLocale::GetTimeZone(FX_TIMEZONE& tz) const {
   CXFA_TimeZoneProvider::Get()->GetTimeZone(tz);
 }
+
 void CXFA_XMLLocale::GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD) const {
   wsEraName = GetCalendarSymbol("era", bAD ? 1 : 0, FALSE);
 }
+
 CFX_WideString CXFA_XMLLocale::GetCalendarSymbol(const CFX_ByteStringC& symbol,
                                                  int index,
                                                  FX_BOOL bAbbr) const {
@@ -132,6 +141,7 @@ CFX_WideString CXFA_XMLLocale::GetCalendarSymbol(const CFX_ByteStringC& symbol,
   }
   return wsSymbolName;
 }
+
 void CXFA_XMLLocale::GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                     CFX_WideString& wsPattern) const {
   CXML_Element* pElement = m_pLocaleData->GetElement("", "datePatterns");
@@ -156,6 +166,7 @@ void CXFA_XMLLocale::GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
   }
   GetPattern(pElement, "datePattern", wsName.AsStringC(), wsPattern);
 }
+
 void CXFA_XMLLocale::GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                     CFX_WideString& wsPattern) const {
   CXML_Element* pElement = m_pLocaleData->GetElement("", "timePatterns");
@@ -180,6 +191,7 @@ void CXFA_XMLLocale::GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
   }
   GetPattern(pElement, "timePattern", wsName.AsStringC(), wsPattern);
 }
+
 void CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
                                    CFX_WideString& wsPattern) const {
   CXML_Element* pElement = m_pLocaleData->GetElement("", "numberPatterns");
@@ -201,6 +213,7 @@ void CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
       break;
   }
 }
+
 void CXFA_XMLLocale::GetPattern(CXML_Element* pElement,
                                 const CFX_ByteStringC& bsTag,
                                 const CFX_WideStringC& wsName,
@@ -214,17 +227,20 @@ void CXFA_XMLLocale::GetPattern(CXML_Element* pElement,
     }
   }
 }
-CXFA_NodeLocale::CXFA_NodeLocale(CXFA_Node* pLocale) {
-  m_pLocale = pLocale;
-}
+
+CXFA_NodeLocale::CXFA_NodeLocale(CXFA_Node* pLocale) : m_pLocale(pLocale) {}
+
 CXFA_NodeLocale::~CXFA_NodeLocale() {}
+
 void CXFA_NodeLocale::Release() {
   delete this;
 }
+
 CFX_WideString CXFA_NodeLocale::GetName() {
   return CFX_WideString(m_pLocale ? m_pLocale->GetCData(XFA_ATTRIBUTE_Name)
                                   : nullptr);
 }
+
 void CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
                                         CFX_WideString& wsNumSymbol) const {
   switch (eType) {
@@ -254,33 +270,40 @@ void CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
       break;
   }
 }
+
 void CXFA_NodeLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   CXFA_Node* pSymbols =
       m_pLocale ? m_pLocale->GetChild(0, XFA_Element::DateTimeSymbols)
                 : nullptr;
   wsDtSymbol = pSymbols ? pSymbols->GetContent() : CFX_WideString();
 }
+
 void CXFA_NodeLocale::GetMonthName(int32_t nMonth,
                                    CFX_WideString& wsMonthName,
                                    FX_BOOL bAbbr) const {
   wsMonthName = GetCalendarSymbol(XFA_Element::MonthNames, nMonth, bAbbr);
 }
+
 void CXFA_NodeLocale::GetDayName(int32_t nWeek,
                                  CFX_WideString& wsDayName,
                                  FX_BOOL bAbbr) const {
   wsDayName = GetCalendarSymbol(XFA_Element::DayNames, nWeek, bAbbr);
 }
+
 void CXFA_NodeLocale::GetMeridiemName(CFX_WideString& wsMeridiemName,
                                       FX_BOOL bAM) const {
   wsMeridiemName =
       GetCalendarSymbol(XFA_Element::MeridiemNames, bAM ? 0 : 1, FALSE);
 }
+
 void CXFA_NodeLocale::GetTimeZone(FX_TIMEZONE& tz) const {
   CXFA_TimeZoneProvider::Get()->GetTimeZone(tz);
 }
+
 void CXFA_NodeLocale::GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD) const {
   wsEraName = GetCalendarSymbol(XFA_Element::EraNames, bAD ? 1 : 0, FALSE);
 }
+
 void CXFA_NodeLocale::GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                      CFX_WideString& wsPattern) const {
   switch (eType) {
@@ -299,6 +322,7 @@ void CXFA_NodeLocale::GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
       break;
   }
 }
+
 void CXFA_NodeLocale::GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                      CFX_WideString& wsPattern) const {
   switch (eType) {
@@ -317,6 +341,7 @@ void CXFA_NodeLocale::GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
       break;
   }
 }
+
 void CXFA_NodeLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
                                     CFX_WideString& wsPattern) const {
   switch (eType) {
@@ -334,6 +359,7 @@ void CXFA_NodeLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
       break;
   }
 }
+
 CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
                                           const CFX_WideStringC& wsName) const {
   CXFA_Node* pChild =
@@ -349,6 +375,7 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
   }
   return nullptr;
 }
+
 CFX_WideString CXFA_NodeLocale::GetSymbol(
     XFA_Element eElement,
     const CFX_WideStringC& symbol_type) const {
@@ -356,6 +383,7 @@ CFX_WideString CXFA_NodeLocale::GetSymbol(
   CXFA_Node* pSymbol = GetNodeByName(pSymbols, symbol_type);
   return pSymbol ? pSymbol->GetContent() : CFX_WideString();
 }
+
 CFX_WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
                                                   int index,
                                                   FX_BOOL bAbbr) const {

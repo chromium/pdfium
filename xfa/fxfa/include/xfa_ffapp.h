@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_INCLUDE_XFA_FFAPP_H_
 #define XFA_FXFA_INCLUDE_XFA_FFAPP_H_
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "xfa/fgas/font/fgas_font.h"
@@ -40,36 +42,38 @@ class CXFA_FFApp {
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp();
 
-  CXFA_FFDocHandler* GetDocHandler();
   CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider,
                         IFX_FileRead* pStream,
                         FX_BOOL bTakeOverFile);
   CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);
-  IXFA_AppProvider* GetAppProvider() { return m_pProvider; }
   void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
 
+  CXFA_FFDocHandler* GetDocHandler();
   CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgrDelegate* pDelegate);
-  IFWL_AdapterTimerMgr* GetTimerMgr();
-
-  CXFA_FontMgr* GetXFAFontMgr();
   IFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
-  CFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() {
+
+  IXFA_AppProvider* GetAppProvider() const { return m_pProvider; }
+  IFWL_AdapterTimerMgr* GetTimerMgr() const;
+  CXFA_FontMgr* GetXFAFontMgr() const;
+  CFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() const {
     return m_pWidgetMgrDelegate;
   }
 
  protected:
-  CXFA_FFDocHandler* m_pDocHandler;
-  IFWL_App* m_pFWLApp;
-  CXFA_FWLTheme* m_pFWLTheme;
-  IXFA_AppProvider* m_pProvider;
-  CXFA_FontMgr* m_pFontMgr;
+  std::unique_ptr<CXFA_FFDocHandler> m_pDocHandler;
+  IXFA_AppProvider* const m_pProvider;
+  std::unique_ptr<CXFA_FontMgr> m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  CFX_FontSourceEnum_File* m_pFontSource;
+  std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
 #endif
-  CXFA_FWLAdapterWidgetMgr* m_pAdapterWidgetMgr;
-  CFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;
-  IFGAS_FontMgr* m_pFDEFontMgr;
+  std::unique_ptr<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
+  CFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;  // not owned.
+  std::unique_ptr<IFGAS_FontMgr> m_pFDEFontMgr;
+  // |m_pFWLApp| has to be released first, then |m_pFWLTheme| since the former
+  // may refers to theme manager and the latter refers to font manager.
+  std::unique_ptr<CXFA_FWLTheme> m_pFWLTheme;
+  std::unique_ptr<IFWL_App> m_pFWLApp;
 };
 
 #endif  // XFA_FXFA_INCLUDE_XFA_FFAPP_H_

@@ -29,13 +29,6 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   CXFA_FWLTheme(CXFA_FFApp* pApp);
   ~CXFA_FWLTheme() override;
 
-  FWL_Error GetClassName(CFX_WideString& wsClass) const {
-    return FWL_Error::Succeeded;
-  }
-  uint32_t GetHashCode() const { return 0; }
-  FWL_Error Initialize();
-  FWL_Error Finalize();
-
   // IFWL_ThemeProvider:
   bool IsValidWidget(IFWL_Widget* pWidget) override;
   uint32_t GetThemeID(IFWL_Widget* pWidget) override;
@@ -56,30 +49,37 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
                    FX_FLOAT fy) override;
   FX_BOOL CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) override;
 
+  FWL_Error GetClassName(CFX_WideString& wsClass) const {
+    return FWL_Error::Succeeded;
+  }
+  uint32_t GetHashCode() const { return 0; }
+  FWL_Error Initialize();
+  FWL_Error Finalize();
   FWL_Error GetPartRect(CFWL_ThemePart* pThemePart);
 
  protected:
   CFWL_WidgetTP* GetTheme(IFWL_Widget* pWidget);
-  CFWL_CheckBoxTP* m_pCheckBoxTP;
-  CFWL_ListBoxTP* m_pListBoxTP;
-  CFWL_PictureBoxTP* m_pPictureBoxTP;
-  CFWL_ScrollBarTP* m_pSrollBarTP;
-  CFWL_EditTP* m_pEditTP;
-  CFWL_ComboBoxTP* m_pComboBoxTP;
-  CFWL_MonthCalendarTP* m_pMonthCalendarTP;
-  CFWL_DateTimePickerTP* m_pDateTimePickerTP;
-  CFWL_PushButtonTP* m_pPushButtonTP;
-  CFWL_CaretTP* m_pCaretTP;
-  CFWL_BarcodeTP* m_pBarcodeTP;
+  std::unique_ptr<CFWL_CheckBoxTP> m_pCheckBoxTP;
+  std::unique_ptr<CFWL_ListBoxTP> m_pListBoxTP;
+  std::unique_ptr<CFWL_PictureBoxTP> m_pPictureBoxTP;
+  std::unique_ptr<CFWL_ScrollBarTP> m_pSrollBarTP;
+  std::unique_ptr<CFWL_EditTP> m_pEditTP;
+  std::unique_ptr<CFWL_ComboBoxTP> m_pComboBoxTP;
+  std::unique_ptr<CFWL_MonthCalendarTP> m_pMonthCalendarTP;
+  std::unique_ptr<CFWL_DateTimePickerTP> m_pDateTimePickerTP;
+  std::unique_ptr<CFWL_PushButtonTP> m_pPushButtonTP;
+  std::unique_ptr<CFWL_CaretTP> m_pCaretTP;
+  std::unique_ptr<CFWL_BarcodeTP> m_pBarcodeTP;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   FX_FLOAT m_fCapacity;
   uint32_t m_dwCapacity;
   CFGAS_GEFont* m_pCalendarFont;
   CFX_WideString m_wsResource;
-  CXFA_FFApp* m_pApp;
+  CXFA_FFApp* const m_pApp;
   CFX_RectF m_Rect;
   CFX_SizeF m_SizeAboveBelow;
 };
+
 class CXFA_FWLCheckBoxTP : public CFWL_CheckBoxTP {
  public:
   CXFA_FWLCheckBoxTP();
@@ -94,6 +94,7 @@ class CXFA_FWLCheckBoxTP : public CFWL_CheckBoxTP {
                      int32_t iState,
                      CFX_Matrix* pMatrix);
 };
+
 class CXFA_FWLEditTP : public CFWL_EditTP {
  public:
   CXFA_FWLEditTP();

@@ -80,11 +80,13 @@ typedef FX_FONTDESCRIPTOR const* (*FX_LPMatchFont)(
     FX_LPFONTMATCHPARAMS pParams,
     const CFX_FontDescriptors& fonts);
 FX_LPMatchFont FX_GetDefFontMatchor();
+
 class IFGAS_FontMgr {
  public:
-  static IFGAS_FontMgr* Create(FX_LPEnumAllFonts pEnumerator);
   virtual ~IFGAS_FontMgr() {}
-  virtual void Release() = 0;
+
+  static std::unique_ptr<IFGAS_FontMgr> Create(FX_LPEnumAllFonts pEnumerator);
+
   virtual CFGAS_GEFont* GetDefFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
@@ -121,46 +123,40 @@ class IFGAS_FontMgr {
 
 class IFGAS_FontMgr {
  public:
-  static IFGAS_FontMgr* Create(CFX_FontSourceEnum_File* pFontEnum);
   virtual ~IFGAS_FontMgr() {}
-  virtual void Release() = 0;
-  virtual CFGAS_GEFont* GetDefFontByCodePage(
-      uint16_t wCodePage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
-  virtual CFGAS_GEFont* GetDefFontByCharset(
-      uint8_t nCharset,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
-  virtual CFGAS_GEFont* GetDefFontByUnicode(
-      FX_WCHAR wUnicode,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
-  virtual CFGAS_GEFont* GetDefFontByLanguage(
-      uint16_t wLanguage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
-  virtual CFGAS_GEFont* GetFontByCodePage(
-      uint16_t wCodePage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
+
+  static std::unique_ptr<IFGAS_FontMgr> Create(
+      CFX_FontSourceEnum_File* pFontEnum);
+
+  virtual CFGAS_GEFont* GetDefFontByCodePage(uint16_t wCodePage,
+                                             uint32_t dwFontStyles,
+                                             const FX_WCHAR* pszFontFamily) = 0;
+  virtual CFGAS_GEFont* GetDefFontByCharset(uint8_t nCharset,
+                                            uint32_t dwFontStyles,
+                                            const FX_WCHAR* pszFontFamily) = 0;
+  virtual CFGAS_GEFont* GetDefFontByUnicode(FX_WCHAR wUnicode,
+                                            uint32_t dwFontStyles,
+                                            const FX_WCHAR* pszFontFamily) = 0;
+  virtual CFGAS_GEFont* GetDefFontByLanguage(uint16_t wLanguage,
+                                             uint32_t dwFontStyles,
+                                             const FX_WCHAR* pszFontFamily) = 0;
+  virtual CFGAS_GEFont* GetFontByCodePage(uint16_t wCodePage,
+                                          uint32_t dwFontStyles,
+                                          const FX_WCHAR* pszFontFamily) = 0;
   inline CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage) {
     return GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
   }
-  virtual CFGAS_GEFont* GetFontByCharset(
-      uint8_t nCharset,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
-  virtual CFGAS_GEFont* GetFontByUnicode(
-      FX_WCHAR wUnicode,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
-  virtual CFGAS_GEFont* GetFontByLanguage(
-      uint16_t wLanguage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) = 0;
+  virtual CFGAS_GEFont* GetFontByCharset(uint8_t nCharset,
+                                         uint32_t dwFontStyles,
+                                         const FX_WCHAR* pszFontFamily) = 0;
+  virtual CFGAS_GEFont* GetFontByUnicode(FX_WCHAR wUnicode,
+                                         uint32_t dwFontStyles,
+                                         const FX_WCHAR* pszFontFamily) = 0;
+  virtual CFGAS_GEFont* GetFontByLanguage(uint16_t wLanguage,
+                                          uint32_t dwFontStyles,
+                                          const FX_WCHAR* pszFontFamily) = 0;
   virtual void ClearFontCache() = 0;
   virtual void RemoveFont(CFGAS_GEFont* pFont) = 0;
 };

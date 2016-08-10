@@ -43,38 +43,30 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
                 : nullptr;
 }
 
-CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp) : m_pApp(pApp) {
-  m_dwCapacity = 0;
-  m_fCapacity = 0;
-  m_pCalendarFont = nullptr;
-  m_Rect.Set(0, 0, 0, 0);
-  m_pCheckBoxTP = new CXFA_FWLCheckBoxTP;
-  m_pListBoxTP = new CFWL_ListBoxTP;
-  m_pPictureBoxTP = new CFWL_PictureBoxTP;
-  m_pSrollBarTP = new CFWL_ScrollBarTP;
-  m_pEditTP = new CXFA_FWLEditTP;
-  m_pComboBoxTP = new CFWL_ComboBoxTP;
-  m_pMonthCalendarTP = new CFWL_MonthCalendarTP;
-  m_pDateTimePickerTP = new CFWL_DateTimePickerTP;
-  m_pPushButtonTP = new CFWL_PushButtonTP;
-  m_pCaretTP = new CFWL_CaretTP;
-  m_pBarcodeTP = new CFWL_BarcodeTP;
+CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
+    : m_pCheckBoxTP(new CXFA_FWLCheckBoxTP),
+      m_pListBoxTP(new CFWL_ListBoxTP),
+      m_pPictureBoxTP(new CFWL_PictureBoxTP),
+      m_pSrollBarTP(new CFWL_ScrollBarTP),
+      m_pEditTP(new CXFA_FWLEditTP),
+      m_pComboBoxTP(new CFWL_ComboBoxTP),
+      m_pMonthCalendarTP(new CFWL_MonthCalendarTP),
+      m_pDateTimePickerTP(new CFWL_DateTimePickerTP),
+      m_pPushButtonTP(new CFWL_PushButtonTP),
+      m_pCaretTP(new CFWL_CaretTP),
+      m_pBarcodeTP(new CFWL_BarcodeTP),
+      m_fCapacity(0.0f),
+      m_dwCapacity(0),
+      m_pCalendarFont(nullptr),
+      m_pApp(pApp) {
+  m_Rect.Reset();
   Initialize();
 }
+
 CXFA_FWLTheme::~CXFA_FWLTheme() {
   Finalize();
-  delete m_pCheckBoxTP;
-  delete m_pListBoxTP;
-  delete m_pPictureBoxTP;
-  delete m_pSrollBarTP;
-  delete m_pEditTP;
-  delete m_pComboBoxTP;
-  delete m_pMonthCalendarTP;
-  delete m_pDateTimePickerTP;
-  delete m_pPushButtonTP;
-  delete m_pCaretTP;
-  delete m_pBarcodeTP;
 }
+
 FWL_Error CXFA_FWLTheme::Initialize() {
   m_pTextOut.reset(new CFDE_TextOut);
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
@@ -96,6 +88,7 @@ FWL_Error CXFA_FWLTheme::Initialize() {
   FWLTHEME_Init();
   return FWL_Error::Succeeded;
 }
+
 FWL_Error CXFA_FWLTheme::Finalize() {
   m_pTextOut.reset();
   if (m_pCalendarFont) {
@@ -406,27 +399,27 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(IFWL_Widget* pWidget) {
   switch (pWidget->GetClassID()) {
     case FWL_Type::CheckBox:
-      return m_pCheckBoxTP;
+      return m_pCheckBoxTP.get();
     case FWL_Type::ListBox:
-      return m_pListBoxTP;
+      return m_pListBoxTP.get();
     case FWL_Type::PictureBox:
-      return m_pPictureBoxTP;
+      return m_pPictureBoxTP.get();
     case FWL_Type::ScrollBar:
-      return m_pSrollBarTP;
+      return m_pSrollBarTP.get();
     case FWL_Type::Edit:
-      return m_pEditTP;
+      return m_pEditTP.get();
     case FWL_Type::ComboBox:
-      return m_pComboBoxTP;
+      return m_pComboBoxTP.get();
     case FWL_Type::MonthCalendar:
-      return m_pMonthCalendarTP;
+      return m_pMonthCalendarTP.get();
     case FWL_Type::DateTimePicker:
-      return m_pDateTimePickerTP;
+      return m_pDateTimePickerTP.get();
     case FWL_Type::PushButton:
-      return m_pPushButtonTP;
+      return m_pPushButtonTP.get();
     case FWL_Type::Caret:
-      return m_pCaretTP;
+      return m_pCaretTP.get();
     case FWL_Type::Barcode:
-      return m_pBarcodeTP;
+      return m_pBarcodeTP.get();
     default:
       return nullptr;
   }

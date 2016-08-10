@@ -236,23 +236,24 @@ class CFWL_FontData {
  public:
   CFWL_FontData();
   virtual ~CFWL_FontData();
+
   FX_BOOL Equal(const CFX_WideStringC& wsFontFamily,
                 uint32_t dwFontStyles,
                 uint16_t wCodePage);
   FX_BOOL LoadFont(const CFX_WideStringC& wsFontFamily,
                    uint32_t dwFontStyles,
                    uint16_t wCodePage);
-  CFGAS_GEFont* GetFont() const { return m_pFont; }
+  CFGAS_GEFont* GetFont() const { return m_pFont.get(); }
 
  protected:
   CFX_WideString m_wsFamily;
   uint32_t m_dwStyles;
   uint32_t m_dwCodePage;
-  CFGAS_GEFont* m_pFont;
-  IFGAS_FontMgr* m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  CFX_FontSourceEnum_File* m_pFontSource;
+  std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
 #endif
+  std::unique_ptr<IFGAS_FontMgr> m_pFontMgr;
+  std::unique_ptr<CFGAS_GEFont> m_pFont;
 };
 
 class CFWL_FontManager {

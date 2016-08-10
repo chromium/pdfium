@@ -42,16 +42,16 @@ class CXFA_FFDocView {
 
   CXFA_FFDoc* GetDoc() { return m_pDoc; }
   int32_t StartLayout(int32_t iStartPage = 0);
-  int32_t DoLayout(IFX_Pause* pPause = nullptr);
+  int32_t DoLayout(IFX_Pause* pPause);
   void StopLayout();
   int32_t GetLayoutStatus();
   void UpdateDocView();
   int32_t CountPageViews();
   CXFA_FFPageView* GetPageView(int32_t nIndex);
 
-  void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = nullptr);
+  void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc);
   int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
-                             CXFA_WidgetAcc* pWidgetAcc = nullptr);
+                             CXFA_WidgetAcc* pWidgetAcc);
   CXFA_FFWidgetHandler* GetWidgetHandler();
   CXFA_WidgetAccIterator* CreateWidgetAccIterator(
       XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
@@ -59,9 +59,9 @@ class CXFA_FFDocView {
   void KillFocus();
   FX_BOOL SetFocus(CXFA_FFWidget* hWidget);
   CXFA_FFWidget* GetWidgetByName(const CFX_WideString& wsName,
-                                 CXFA_FFWidget* pRefWidget = nullptr);
+                                 CXFA_FFWidget* pRefWidget);
   CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideString& wsName,
-                                     CXFA_WidgetAcc* pRefWidgetAcc = nullptr);
+                                     CXFA_WidgetAcc* pRefWidgetAcc);
   CXFA_LayoutProcessor* GetXFALayout() const;
   void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);
   void LockUpdate();
@@ -94,9 +94,9 @@ class CXFA_FFDocView {
   void DeleteLayoutItem(CXFA_FFWidget* pWidget);
   int32_t ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
                                        XFA_EVENTTYPE eEventType,
-                                       FX_BOOL bIsFormReady = FALSE,
-                                       FX_BOOL bRecursive = TRUE,
-                                       CXFA_Node* pExclude = nullptr);
+                                       FX_BOOL bIsFormReady,
+                                       FX_BOOL bRecursive,
+                                       CXFA_Node* pExclude);
   FX_BOOL m_bLayoutEvent;
   CFX_WideStringArray m_arrNullTestMsg;
   CXFA_FFWidget* m_pListFocusWidget;
@@ -112,12 +112,12 @@ class CXFA_FFDocView {
   FX_BOOL ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
   CXFA_Node* GetRootSubform();
 
-  CXFA_FFDoc* m_pDoc;
-  CXFA_FFWidgetHandler* m_pWidgetHandler;
-  CXFA_LayoutProcessor* m_pXFADocLayout;
-  CXFA_WidgetAcc* m_pFocusAcc;
-  CXFA_FFWidget* m_pFocusWidget;
-  CXFA_FFWidget* m_pOldFocusWidget;
+  CXFA_FFDoc* const m_pDoc;
+  std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
+  CXFA_LayoutProcessor* m_pXFADocLayout;  // not owned.
+  CXFA_WidgetAcc* m_pFocusAcc;            // not owned.
+  CXFA_FFWidget* m_pFocusWidget;          // not owned.
+  CXFA_FFWidget* m_pOldFocusWidget;       // not owned.
   std::map<CXFA_FFPageView*, std::unique_ptr<CFX_RectF>> m_mapPageInvalidate;
   CFX_ArrayTemplate<CXFA_WidgetAcc*> m_ValidateAccs;
   CFX_ArrayTemplate<CXFA_WidgetAcc*> m_CalculateAccs;
@@ -145,8 +145,8 @@ class CXFA_WidgetAccIterator {
 
  protected:
   CXFA_ContainerIterator m_ContentIterator;
-  CXFA_FFDocView* m_pDocView;
-  CXFA_WidgetAcc* m_pCurWidgetAcc;
+  CXFA_FFDocView* const m_pDocView;
+  CXFA_WidgetAcc* m_pCurWidgetAcc;  // not owned.
 };
 
 #endif  // XFA_FXFA_INCLUDE_XFA_FFDOCVIEW_H_

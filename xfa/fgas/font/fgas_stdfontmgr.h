@@ -28,7 +28,6 @@ class CFGAS_StdFontMgrImp : public IFGAS_FontMgr {
   ~CFGAS_StdFontMgrImp() override;
 
   // IFGAS_FontMgr:
-  void Release() override;
   CFGAS_GEFont* GetDefFontByCodePage(
       uint16_t wCodePage,
       uint32_t dwFontStyles,
@@ -132,7 +131,6 @@ class CFX_FontSourceEnum_File {
   CFX_FontSourceEnum_File();
   ~CFX_FontSourceEnum_File();
 
-  void Release() { delete this; }
   FX_POSITION GetStartPosition();
   IFX_FileAccess* GetNext(FX_POSITION& pos);
 
@@ -150,39 +148,30 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
   ~CFGAS_FontMgrImp() override;
 
   // IFGAS_FontMgr:
-  void Release() override;
-  CFGAS_GEFont* GetDefFontByCodePage(
-      uint16_t wCodePage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetDefFontByCharset(
-      uint8_t nCharset,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetDefFontByUnicode(
-      FX_WCHAR wUnicode,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetDefFontByLanguage(
-      uint16_t wLanguage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetFontByCodePage(
-      uint16_t wCodePage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetFontByCharset(
-      uint8_t nCharset,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetFontByUnicode(
-      FX_WCHAR wUnicode,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetFontByLanguage(
-      uint16_t wLanguage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
+  CFGAS_GEFont* GetDefFontByCodePage(uint16_t wCodePage,
+                                     uint32_t dwFontStyles,
+                                     const FX_WCHAR* pszFontFamily) override;
+  CFGAS_GEFont* GetDefFontByCharset(uint8_t nCharset,
+                                    uint32_t dwFontStyles,
+                                    const FX_WCHAR* pszFontFamily) override;
+  CFGAS_GEFont* GetDefFontByUnicode(FX_WCHAR wUnicode,
+                                    uint32_t dwFontStyles,
+                                    const FX_WCHAR* pszFontFamily) override;
+  CFGAS_GEFont* GetDefFontByLanguage(uint16_t wLanguage,
+                                     uint32_t dwFontStyles,
+                                     const FX_WCHAR* pszFontFamily) override;
+  CFGAS_GEFont* GetFontByCodePage(uint16_t wCodePage,
+                                  uint32_t dwFontStyles,
+                                  const FX_WCHAR* pszFontFamily) override;
+  CFGAS_GEFont* GetFontByCharset(uint8_t nCharset,
+                                 uint32_t dwFontStyles,
+                                 const FX_WCHAR* pszFontFamily) override;
+  CFGAS_GEFont* GetFontByUnicode(FX_WCHAR wUnicode,
+                                 uint32_t dwFontStyles,
+                                 const FX_WCHAR* pszFontFamily) override;
+  CFGAS_GEFont* GetFontByLanguage(uint16_t wLanguage,
+                                  uint32_t dwFontStyles,
+                                  const FX_WCHAR* pszFontFamily) override;
   void ClearFontCache() override;
   void RemoveFont(CFGAS_GEFont* pFont) override;
 

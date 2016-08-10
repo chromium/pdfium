@@ -697,31 +697,9 @@ CFWL_ArrowData::CFWL_ArrowData() : m_pColorData(nullptr) {
   SetColorData(0);
 }
 
-CFWL_FontData::CFWL_FontData()
-    : m_dwStyles(0),
-      m_dwCodePage(0),
-      m_pFont(0),
-      m_pFontMgr(nullptr)
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-      ,
-      m_pFontSource(nullptr)
-#endif
-{
-}
+CFWL_FontData::CFWL_FontData() : m_dwStyles(0), m_dwCodePage(0) {}
 
-CFWL_FontData::~CFWL_FontData() {
-  if (m_pFont) {
-    m_pFont->Release();
-  }
-  if (m_pFontMgr) {
-    m_pFontMgr->Release();
-  }
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  if (m_pFontSource) {
-    m_pFontSource->Release();
-  }
-#endif
-}
+CFWL_FontData::~CFWL_FontData() {}
 
 FX_BOOL CFWL_FontData::Equal(const CFX_WideStringC& wsFontFamily,
                              uint32_t dwFontStyles,
@@ -740,12 +718,12 @@ FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     m_pFontMgr = IFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
-    m_pFontSource = new CFX_FontSourceEnum_File;
-    m_pFontMgr = IFGAS_FontMgr::Create(m_pFontSource);
+    m_pFontSource.reset(new CFX_FontSourceEnum_File);
+    m_pFontMgr = IFGAS_FontMgr::Create(m_pFontSource.get());
 #endif
   }
-  m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.c_str(), dwFontStyles,
-                                   dwCodePage, m_pFontMgr);
+  m_pFont.reset(CFGAS_GEFont::LoadFont(wsFontFamily.c_str(), dwFontStyles,
+                                       dwCodePage, m_pFontMgr.get()));
   return !!m_pFont;
 }
 

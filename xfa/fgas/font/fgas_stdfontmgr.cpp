@@ -17,8 +17,9 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-IFGAS_FontMgr* IFGAS_FontMgr::Create(FX_LPEnumAllFonts pEnumerator) {
-  return new CFGAS_StdFontMgrImp(pEnumerator);
+std::unique_ptr<IFGAS_FontMgr> IFGAS_FontMgr::Create(
+    FX_LPEnumAllFonts pEnumerator) {
+  return std::unique_ptr<IFGAS_FontMgr>(new CFGAS_StdFontMgrImp(pEnumerator));
 }
 
 CFGAS_StdFontMgrImp::CFGAS_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator)
@@ -45,10 +46,6 @@ CFGAS_StdFontMgrImp::~CFGAS_StdFontMgrImp() {
   m_DeriveFonts.RemoveAll();
   for (int32_t i = m_Fonts.GetUpperBound(); i >= 0; i--)
     m_Fonts[i]->Release();
-}
-
-void CFGAS_StdFontMgrImp::Release() {
-  delete this;
 }
 
 CFGAS_GEFont* CFGAS_StdFontMgrImp::GetDefFontByCodePage(
@@ -564,20 +561,47 @@ IFX_FileAccess* CFX_FontSourceEnum_File::GetNext(FX_POSITION& pos) {
   return pAccess;
 }
 
-IFGAS_FontMgr* IFGAS_FontMgr::Create(CFX_FontSourceEnum_File* pFontEnum) {
+std::unique_ptr<IFGAS_FontMgr> IFGAS_FontMgr::Create(
+    CFX_FontSourceEnum_File* pFontEnum) {
   if (!pFontEnum)
     return nullptr;
 
   std::unique_ptr<CFGAS_FontMgrImp> pFontMgr(new CFGAS_FontMgrImp(pFontEnum));
   if (!pFontMgr->EnumFonts())
     return nullptr;
-  return pFontMgr.release();
+  return std::move(pFontMgr);
 }
 
 CFGAS_FontMgrImp::CFGAS_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum)
     : m_pFontSource(pFontEnum) {}
 
-CFGAS_FontMgrImp::~CFGAS_FontMgrImp() {}
+CFGAS_FontMgrImp::~CFGAS_FontMgrImp() {
+  for (int32_t i = 0; i < m_InstalledFonts.GetSize(); i++) {
+    delete m_InstalledFonts[i];
+  }
+  FX_POSITION pos = m_Hash2CandidateList.GetStartPosition();
+  while (pos) {
+    uint32_t dwHash;
+    CFX_FontDescriptorInfos* pDescs;
+    m_Hash2CandidateList.GetNextAssoc(pos, dwHash, pDescs);
+    delete pDescs;
+  }
+  pos = m_Hash2Fonts.GetStartPosition();
+  while (pos) {
+    uint32_t dwHash;
+    CFX_ArrayTemplate<CFGAS_GEFont*>* pFonts;
+    m_Hash2Fonts.GetNextAssoc(pos, dwHash, pFonts);
+    delete pFonts;
+  }
+  m_Hash2Fonts.RemoveAll();
+  pos = m_IFXFont2FileRead.GetStartPosition();
+  while (pos) {
+    CFGAS_GEFont* pFont;
+    IFX_FileRead* pFileRead;
+    m_IFXFont2FileRead.GetNextAssoc(pos, pFont, pFileRead);
+    pFileRead->Release();
+  }
+}
 
 FX_BOOL CFGAS_FontMgrImp::EnumFontsFromFontMapper() {
   CFX_FontMapper* pFontMapper =
@@ -632,35 +656,6 @@ FX_BOOL CFGAS_FontMgrImp::EnumFonts() {
   if (EnumFontsFromFontMapper())
     return TRUE;
   return EnumFontsFromFiles();
-}
-
-void CFGAS_FontMgrImp::Release() {
-  for (int32_t i = 0; i < m_InstalledFonts.GetSize(); i++) {
-    delete m_InstalledFonts[i];
-  }
-  FX_POSITION pos = m_Hash2CandidateList.GetStartPosition();
-  while (pos) {
-    uint32_t dwHash;
-    CFX_FontDescriptorInfos* pDescs;
-    m_Hash2CandidateList.GetNextAssoc(pos, dwHash, pDescs);
-    delete pDescs;
-  }
-  pos = m_Hash2Fonts.GetStartPosition();
-  while (pos) {
-    uint32_t dwHash;
-    CFX_ArrayTemplate<CFGAS_GEFont*>* pFonts;
-    m_Hash2Fonts.GetNextAssoc(pos, dwHash, pFonts);
-    delete pFonts;
-  }
-  m_Hash2Fonts.RemoveAll();
-  pos = m_IFXFont2FileRead.GetStartPosition();
-  while (pos) {
-    CFGAS_GEFont* pFont;
-    IFX_FileRead* pFileRead;
-    m_IFXFont2FileRead.GetNextAssoc(pos, pFont, pFileRead);
-    pFileRead->Release();
-  }
-  delete this;
 }
 
 CFGAS_GEFont* CFGAS_FontMgrImp::GetDefFontByCodePage(

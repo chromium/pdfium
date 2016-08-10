@@ -564,19 +564,6 @@ class CXFA_ImageRenderer {
   FX_BOOL Continue(IFX_Pause* pPause);
 
  protected:
-  CFX_RenderDevice* m_pDevice;
-  int m_Status;
-  CFX_Matrix m_ImageMatrix;
-  CFX_DIBSource* m_pDIBSource;
-  CFX_DIBitmap* m_pCloneConvert;
-  int m_BitmapAlpha;
-  FX_ARGB m_FillArgb;
-  uint32_t m_Flags;
-  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
-  void* m_DeviceHandle;
-  int32_t m_BlendType;
-  FX_BOOL m_Result;
-  FX_BOOL m_bPrint;
   FX_BOOL StartDIBSource();
   void CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
                          int left,
@@ -585,23 +572,35 @@ class CXFA_ImageRenderer {
                          int bitmap_alpha,
                          int blend_mode,
                          int Transparency);
+
+  CFX_RenderDevice* m_pDevice;
+  int m_Status;
+  CFX_Matrix m_ImageMatrix;
+  CFX_DIBSource* m_pDIBSource;
+  std::unique_ptr<CFX_DIBitmap> m_pCloneConvert;
+  int m_BitmapAlpha;
+  FX_ARGB m_FillArgb;
+  uint32_t m_Flags;
+  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
+  void* m_DeviceHandle;
+  int32_t m_BlendType;
+  FX_BOOL m_Result;
+  FX_BOOL m_bPrint;
 };
-CXFA_ImageRenderer::CXFA_ImageRenderer() {
-  m_pDevice = nullptr;
-  m_Status = 0;
-  m_pDIBSource = nullptr;
-  m_pCloneConvert = nullptr;
-  m_BitmapAlpha = 255;
-  m_FillArgb = 0;
-  m_Flags = 0;
-  m_DeviceHandle = nullptr;
-  m_BlendType = FXDIB_BLEND_NORMAL;
-  m_Result = TRUE;
-  m_bPrint = FALSE;
-}
+
+CXFA_ImageRenderer::CXFA_ImageRenderer()
+    : m_pDevice(nullptr),
+      m_Status(0),
+      m_pDIBSource(nullptr),
+      m_BitmapAlpha(255),
+      m_FillArgb(0),
+      m_Flags(0),
+      m_DeviceHandle(nullptr),
+      m_BlendType(FXDIB_BLEND_NORMAL),
+      m_Result(TRUE),
+      m_bPrint(FALSE) {}
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {
-  delete m_pCloneConvert;
   if (m_DeviceHandle)
     m_pDevice->CancelDIBits(m_DeviceHandle);
 }
@@ -647,12 +646,12 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
     if (m_pDIBSource->HasAlpha() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
         !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
-      m_pCloneConvert = m_pDIBSource->CloneConvert(FXDIB_Rgb);
+      m_pCloneConvert.reset(m_pDIBSource->CloneConvert(FXDIB_Rgb));
       if (!m_pCloneConvert) {
         m_Result = FALSE;
         return FALSE;
       }
-      pDib = m_pCloneConvert;
+      pDib = m_pCloneConvert.get();
     }
     FX_RECT clip_box = m_pDevice->GetClipBox();
     clip_box.Intersect(image_rect);

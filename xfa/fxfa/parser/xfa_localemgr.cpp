@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "core/fxge/include/cfx_gemodule.h"
@@ -1029,6 +1032,8 @@ const uint8_t g_ruRU_Locale[] = {
     0x89, 0x26, 0xB5, 0x2C, 0xA3, 0xB6, 0x4E, 0x5C, 0xA6, 0x17, 0xA4, 0x7B,
     0xB3, 0x85, 0xFA, 0x59, 0x2A, 0x7A, 0xFF, 0x3D, 0xC4, 0x3F, 0xDE, 0xCB,
     0x8B, 0xC4};
+
+// TODO(weili): Change this function to return std::unique_ptr type.
 static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen) {
   if (!pBuf || nBufLen <= 0) {
     return nullptr;
@@ -1041,20 +1046,18 @@ static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen) {
   if (!pCodecMgr) {
     return nullptr;
   }
-  CXML_Element* pLocale = nullptr;
+  std::unique_ptr<CXML_Element> pLocale;
   uint8_t* pOut = nullptr;
   uint32_t dwSize;
   pCodecMgr->GetFlateModule()->FlateOrLZWDecode(FALSE, pBuf, nBufLen, TRUE, 0,
                                                 0, 0, 0, 0, pOut, dwSize);
   if (pOut) {
-    pLocale = CXML_Element::Parse(pOut, dwSize);
+    pLocale.reset(CXML_Element::Parse(pOut, dwSize));
     FX_Free(pOut);
   }
-  if (pLocale) {
-    return new CXFA_XMLLocale(pLocale);
-  }
-  return nullptr;
+  return pLocale ? new CXFA_XMLLocale(std::move(pLocale)) : nullptr;
 }
+
 static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
   uint16_t dwLangueID = XFA_LANGID_en_US;
   if (wsLanguage.GetLength() < 2) {

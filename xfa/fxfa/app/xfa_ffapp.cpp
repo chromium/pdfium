@@ -37,6 +37,7 @@ FX_FILESIZE CXFA_FileRead::GetSize() {
   }
   return dwSize;
 }
+
 FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
                                  FX_FILESIZE offset,
                                  size_t size) {
@@ -72,47 +73,29 @@ void CXFA_FileRead::Release() {
 }
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
-    : m_pDocHandler(nullptr),
-      m_pFWLTheme(nullptr),
-      m_pProvider(pProvider),
-      m_pFontMgr(nullptr),
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-      m_pFontSource(nullptr),
-#endif
-      m_pAdapterWidgetMgr(nullptr),
+    : m_pProvider(pProvider),
       m_pWidgetMgrDelegate(nullptr),
-      m_pFDEFontMgr(nullptr) {
-  m_pFWLApp = IFWL_App::Create(this);
-  FWL_SetApp(m_pFWLApp);
+      m_pFWLApp(IFWL_App::Create(this)) {
+  FWL_SetApp(m_pFWLApp.get());
   m_pFWLApp->Initialize();
   CXFA_TimeZoneProvider::Create();
 }
 
 CXFA_FFApp::~CXFA_FFApp() {
-  delete m_pDocHandler;
   if (m_pFWLApp) {
     m_pFWLApp->Finalize();
     m_pFWLApp->Release();
-    delete m_pFWLApp;
   }
-  delete m_pFWLTheme;
-  delete m_pAdapterWidgetMgr;
 
   CXFA_TimeZoneProvider::Destroy();
-  delete m_pFontMgr;
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  if (m_pFontSource)
-    m_pFontSource->Release();
-#endif
-  if (m_pFDEFontMgr)
-    m_pFDEFontMgr->Release();
 }
 
 CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
   if (!m_pDocHandler)
-    m_pDocHandler = new CXFA_FFDocHandler;
-  return m_pDocHandler;
+    m_pDocHandler.reset(new CXFA_FFDocHandler);
+  return m_pDocHandler.get();
 }
+
 CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
                                   IFX_FileRead* pStream,
                                   FX_BOOL bTakeOverFile) {
@@ -133,12 +116,12 @@ CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
 
 void CXFA_FFApp::SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr) {
   if (!m_pFontMgr)
-    m_pFontMgr = new CXFA_FontMgr();
+    m_pFontMgr.reset(new CXFA_FontMgr());
   m_pFontMgr->SetDefFontMgr(std::move(pFontMgr));
 }
 
-CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() {
-  return m_pFontMgr;
+CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() const {
+  return m_pFontMgr.get();
 }
 
 IFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
@@ -146,28 +129,30 @@ IFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     m_pFDEFontMgr = IFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
-    m_pFontSource = new CFX_FontSourceEnum_File;
-    m_pFDEFontMgr = IFGAS_FontMgr::Create(m_pFontSource);
+    m_pFontSource.reset(new CFX_FontSourceEnum_File);
+    m_pFDEFontMgr = IFGAS_FontMgr::Create(m_pFontSource.get());
 #endif
   }
-  return m_pFDEFontMgr;
+  return m_pFDEFontMgr.get();
 }
+
 CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme() {
-  if (!m_pFWLTheme) {
-    m_pFWLTheme = new CXFA_FWLTheme(this);
-  }
-  return m_pFWLTheme;
+  if (!m_pFWLTheme)
+    m_pFWLTheme.reset(new CXFA_FWLTheme(this));
+  return m_pFWLTheme.get();
 }
+
 CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
     CFWL_WidgetMgrDelegate* pDelegate) {
   if (!m_pAdapterWidgetMgr) {
-    m_pAdapterWidgetMgr = new CXFA_FWLAdapterWidgetMgr;
+    m_pAdapterWidgetMgr.reset(new CXFA_FWLAdapterWidgetMgr);
     pDelegate->OnSetCapability(FWL_WGTMGR_DisableThread |
                                FWL_WGTMGR_DisableForm);
     m_pWidgetMgrDelegate = pDelegate;
   }
-  return m_pAdapterWidgetMgr;
+  return m_pAdapterWidgetMgr.get();
 }
-IFWL_AdapterTimerMgr* CXFA_FFApp::GetTimerMgr() {
+
+IFWL_AdapterTimerMgr* CXFA_FFApp::GetTimerMgr() const {
   return m_pProvider->GetTimerMgr();
 }

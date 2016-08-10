@@ -115,7 +115,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
         }
 
         if (!sName.IsEmpty())
-          m_hMixXFAWidget = pDocView->GetWidgetByName(sName);
+          m_hMixXFAWidget = pDocView->GetWidgetByName(sName, nullptr);
       }
     }
     return m_hMixXFAWidget;
@@ -131,7 +131,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
     if (CXFA_FFDocView* pDocView = pDoc->GetXFADocView()) {
       CFX_WideString sName = GetName();
       if (!sName.IsEmpty())
-        return pDocView->GetWidgetByName(sName);
+        return pDocView->GetWidgetByName(sName, nullptr);
     }
   }
 

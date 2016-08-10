@@ -7,12 +7,14 @@
 #ifndef XFA_FXFA_PARSER_XFA_LOCALE_H_
 #define XFA_FXFA_PARSER_XFA_LOCALE_H_
 
+#include <memory>
+
 #include "xfa/fgas/localization/fgas_locale.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 class CXFA_XMLLocale : public IFX_Locale {
  public:
-  CXFA_XMLLocale(CXML_Element* pLocaleData);
+  explicit CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData);
 
   // IFX_Locale
   void Release() override;
@@ -51,7 +53,7 @@ class CXFA_XMLLocale : public IFX_Locale {
                                    FX_BOOL bAbbr) const;
 
  private:
-  CXML_Element* m_pLocaleData;
+  std::unique_ptr<CXML_Element> m_pLocaleData;
 };
 
 class CXFA_NodeLocale : public IFX_Locale {
@@ -94,7 +96,7 @@ class CXFA_NodeLocale : public IFX_Locale {
                                    int index,
                                    FX_BOOL bAbbr) const;
 
-  CXFA_Node* m_pLocale;
+  CXFA_Node* const m_pLocale;
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_LOCALE_H_

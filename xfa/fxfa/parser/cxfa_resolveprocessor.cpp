@@ -18,9 +18,7 @@
 CXFA_ResolveProcessor::CXFA_ResolveProcessor()
     : m_iCurStart(0), m_pNodeHelper(new CXFA_NodeHelper) {}
 
-CXFA_ResolveProcessor::~CXFA_ResolveProcessor() {
-  delete m_pNodeHelper;
-}
+CXFA_ResolveProcessor::~CXFA_ResolveProcessor() {}
 
 int32_t CXFA_ResolveProcessor::Resolve(CXFA_ResolveNodesData& rnd) {
   if (!rnd.m_CurNode) {

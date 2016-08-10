@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
 #define XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
 
+#include <memory>
+
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
@@ -46,7 +48,7 @@ class CXFA_ResolveProcessor {
                         int32_t iCount);
   void SetCurStart(int32_t start) { m_iCurStart = start; }
 
-  CXFA_NodeHelper* GetNodeHelper() { return m_pNodeHelper; }
+  CXFA_NodeHelper* GetNodeHelper() const { return m_pNodeHelper.get(); }
 
  private:
   int32_t ResolveForAttributeRs(CXFA_Object* curNode,
@@ -72,7 +74,7 @@ class CXFA_ResolveProcessor {
   void FilterCondition(CXFA_ResolveNodesData& rnd, CFX_WideString wsCondition);
 
   int32_t m_iCurStart;
-  CXFA_NodeHelper* m_pNodeHelper;
+  std::unique_ptr<CXFA_NodeHelper> m_pNodeHelper;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
