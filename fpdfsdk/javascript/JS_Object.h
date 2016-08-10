@@ -26,7 +26,7 @@ class CJS_EmbedObj {
   CJS_Object* GetJSObject() const { return m_pJSObject; }
 
  protected:
-  CJS_Object* m_pJSObject;
+  CJS_Object* const m_pJSObject;
 };
 
 class CJS_Object {

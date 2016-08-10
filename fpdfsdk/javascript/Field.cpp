@@ -955,18 +955,18 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
       return FALSE;
 
     std::vector<uint32_t> array;
-    if (vp.GetType() == CJS_Value::VT_number) {
+    if (vp.GetJSValue()->GetType() == CJS_Value::VT_number) {
       int iSelecting = 0;
       vp >> iSelecting;
       array.push_back(iSelecting);
-    } else if (vp.IsArrayObject()) {
+    } else if (vp.GetJSValue()->IsArrayObject()) {
       CJS_Array SelArray;
       CJS_Value SelValue(pRuntime);
       int iSelecting;
       vp >> SelArray;
       for (int i = 0, sz = SelArray.GetLength(); i < sz; i++) {
         SelArray.GetElement(pRuntime->GetIsolate(), i, SelValue);
-        iSelecting = SelValue.ToInt();
+        iSelecting = SelValue.ToInt(pRuntime->GetIsolate());
         array.push_back(iSelecting);
       }
     }
@@ -1375,7 +1375,7 @@ FX_BOOL Field::exportValues(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    if (!vp.IsArrayObject())
+    if (!vp.GetJSValue()->IsArrayObject())
       return FALSE;
   } else {
     CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
@@ -1444,7 +1444,7 @@ FX_BOOL Field::fillColor(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    if (!vp.IsArrayObject())
+    if (!vp.GetJSValue()->IsArrayObject())
       return FALSE;
 
     vp >> crArray;
@@ -2084,7 +2084,7 @@ FX_BOOL Field::rect(IJS_Context* cc,
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return FALSE;
-    if (!vp.IsArrayObject())
+    if (!vp.GetJSValue()->IsArrayObject())
       return FALSE;
 
     CJS_Array rcArray;
@@ -2095,10 +2095,14 @@ FX_BOOL Field::rect(IJS_Context* cc,
     rcArray.GetElement(pRuntime->GetIsolate(), 3, Lower_Righty);
 
     FX_FLOAT pArray[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-    pArray[0] = (FX_FLOAT)Upper_Leftx.ToInt();
-    pArray[1] = (FX_FLOAT)Lower_Righty.ToInt();
-    pArray[2] = (FX_FLOAT)Lower_Rightx.ToInt();
-    pArray[3] = (FX_FLOAT)Upper_Lefty.ToInt();
+    pArray[0] =
+        static_cast<FX_FLOAT>(Upper_Leftx.ToInt(pRuntime->GetIsolate()));
+    pArray[1] =
+        static_cast<FX_FLOAT>(Lower_Righty.ToInt(pRuntime->GetIsolate()));
+    pArray[2] =
+        static_cast<FX_FLOAT>(Lower_Rightx.ToInt(pRuntime->GetIsolate()));
+    pArray[3] =
+        static_cast<FX_FLOAT>(Upper_Lefty.ToInt(pRuntime->GetIsolate()));
 
     CFX_FloatRect crRect(pArray);
     if (m_bDelay) {
@@ -2119,10 +2123,10 @@ FX_BOOL Field::rect(IJS_Context* cc,
       return FALSE;
 
     CFX_FloatRect crRect = pWidget->GetRect();
-    Upper_Leftx = (int32_t)crRect.left;
-    Upper_Lefty = (int32_t)crRect.top;
-    Lower_Rightx = (int32_t)crRect.right;
-    Lower_Righty = (int32_t)crRect.bottom;
+    Upper_Leftx = CJS_Value(pRuntime, static_cast<int32_t>(crRect.left));
+    Upper_Lefty = CJS_Value(pRuntime, static_cast<int32_t>(crRect.top));
+    Lower_Rightx = CJS_Value(pRuntime, static_cast<int32_t>(crRect.right));
+    Lower_Righty = CJS_Value(pRuntime, static_cast<int32_t>(crRect.bottom));
 
     CJS_Array rcArray;
     rcArray.SetElement(pRuntime->GetIsolate(), 0, Upper_Leftx);
@@ -2309,7 +2313,7 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    if (!vp.IsArrayObject())
+    if (!vp.GetJSValue()->IsArrayObject())
       return FALSE;
 
     vp >> crArray;
@@ -2454,7 +2458,7 @@ FX_BOOL Field::textColor(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    if (!vp.IsArrayObject())
+    if (!vp.GetJSValue()->IsArrayObject())
       return FALSE;
 
     vp >> crArray;
@@ -2698,13 +2702,14 @@ FX_BOOL Field::value(IJS_Context* cc,
       return FALSE;
 
     std::vector<CFX_WideString> strArray;
-    if (vp.IsArrayObject()) {
+    if (vp.GetJSValue()->IsArrayObject()) {
       CJS_Array ValueArray;
-      vp.ConvertToArray(ValueArray);
+      vp.GetJSValue()->ConvertToArray(pRuntime->GetIsolate(), ValueArray);
       for (int i = 0, sz = ValueArray.GetLength(); i < sz; i++) {
         CJS_Value ElementValue(pRuntime);
         ValueArray.GetElement(pRuntime->GetIsolate(), i, ElementValue);
-        strArray.push_back(ElementValue.ToCFXWideString());
+        strArray.push_back(
+            ElementValue.ToCFXWideString(pRuntime->GetIsolate()));
       }
     } else {
       CFX_WideString swValue;
@@ -2737,9 +2742,14 @@ FX_BOOL Field::value(IJS_Context* cc,
           int iIndex;
           for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
             iIndex = pFormField->GetSelectedIndex(i);
-            ElementValue = pFormField->GetOptionValue(iIndex).c_str();
-            if (FXSYS_wcslen(ElementValue.ToCFXWideString().c_str()) == 0)
-              ElementValue = pFormField->GetOptionLabel(iIndex).c_str();
+            ElementValue =
+                CJS_Value(pRuntime, pFormField->GetOptionValue(iIndex).c_str());
+            if (FXSYS_wcslen(
+                    ElementValue.ToCFXWideString(pRuntime->GetIsolate())
+                        .c_str()) == 0) {
+              ElementValue = CJS_Value(
+                  pRuntime, pFormField->GetOptionLabel(iIndex).c_str());
+            }
             ValueArray.SetElement(pRuntime->GetIsolate(), i, ElementValue);
           }
           vp << ValueArray;
@@ -2765,7 +2775,7 @@ FX_BOOL Field::value(IJS_Context* cc,
         break;
     }
   }
-  vp.MaybeCoerceToNumber();
+  vp.GetJSValue()->MaybeCoerceToNumber(m_isolate);
   return TRUE;
 }
 
@@ -2891,10 +2901,12 @@ FX_BOOL Field::buttonGetCaption(IJS_Context* cc,
                                 const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError) {
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+
   int nface = 0;
   int iSize = params.size();
   if (iSize >= 1)
-    nface = params[0].ToInt();
+    nface = params[0].ToInt(pRuntime->GetIsolate());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2909,11 +2921,11 @@ FX_BOOL Field::buttonGetCaption(IJS_Context* cc,
     return FALSE;
 
   if (nface == 0)
-    vRet = pFormControl->GetNormalCaption().c_str();
+    vRet = CJS_Value(pRuntime, pFormControl->GetNormalCaption().c_str());
   else if (nface == 1)
-    vRet = pFormControl->GetDownCaption().c_str();
+    vRet = CJS_Value(pRuntime, pFormControl->GetDownCaption().c_str());
   else if (nface == 2)
-    vRet = pFormControl->GetRolloverCaption().c_str();
+    vRet = CJS_Value(pRuntime, pFormControl->GetRolloverCaption().c_str());
   else
     return FALSE;
 
@@ -2924,10 +2936,13 @@ FX_BOOL Field::buttonGetIcon(IJS_Context* cc,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+
   int nface = 0;
   int iSize = params.size();
   if (iSize >= 1)
-    nface = params[0].ToInt();
+    nface = params[0].ToInt(pRuntime->GetIsolate());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2941,8 +2956,6 @@ FX_BOOL Field::buttonGetIcon(IJS_Context* cc,
   if (!pFormControl)
     return FALSE;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
       pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
   ASSERT(pObj.IsEmpty() == FALSE);
@@ -2961,8 +2974,7 @@ FX_BOOL Field::buttonGetIcon(IJS_Context* cc,
     return FALSE;
 
   pIcon->SetStream(pIconStream);
-  vRet = pJS_Icon;
-
+  vRet = CJS_Value(pRuntime, pJS_Icon);
   return TRUE;
 }
 
@@ -2991,20 +3003,19 @@ FX_BOOL Field::checkThisBox(IJS_Context* cc,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
-  ASSERT(m_pDocument);
-
-  if (!m_bCanSet)
-    return FALSE;
-
   int iSize = params.size();
   if (iSize < 1)
     return FALSE;
 
-  int nWidget = params[0].ToInt();
+  if (!m_bCanSet)
+    return FALSE;
+
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  int nWidget = params[0].ToInt(pRuntime->GetIsolate());
 
   bool bCheckit = true;
   if (iSize >= 2)
-    bCheckit = params[1].ToBool();
+    bCheckit = params[1].ToBool(pRuntime->GetIsolate());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -3045,19 +3056,20 @@ FX_BOOL Field::defaultIsChecked(IJS_Context* cc,
   if (iSize < 1)
     return FALSE;
 
-  int nWidget = params[0].ToInt();
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  int nWidget = params[0].ToInt(pRuntime->GetIsolate());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return FALSE;
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (nWidget < 0 || nWidget >= pFormField->CountControls()) {
-    vRet = FALSE;
+  if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return FALSE;
-  }
-  vRet = pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
-         pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON;
+
+  vRet = CJS_Value(pRuntime,
+                   pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
+                       pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON);
 
   return TRUE;
 }
@@ -3102,10 +3114,8 @@ FX_BOOL Field::getArray(IJS_Context* cc,
         static_cast<CJS_Field*>(FXJS_GetPrivate(pRuntime->GetIsolate(), pObj));
     Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
     pField->AttachField(m_pJSDoc, *pStr);
-
-    CJS_Value FormFieldValue(pRuntime);
-    FormFieldValue = pJSField;
-    FormFieldArray.SetElement(pRuntime->GetIsolate(), j++, FormFieldValue);
+    FormFieldArray.SetElement(pRuntime->GetIsolate(), j++,
+                              CJS_Value(pRuntime, pJSField));
   }
 
   vRet = CJS_Value(pRuntime, FormFieldArray);
@@ -3116,15 +3126,16 @@ FX_BOOL Field::getItemAt(IJS_Context* cc,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
-  int iSize = params.size();
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
 
+  int iSize = params.size();
   int nIdx = -1;
   if (iSize >= 1)
-    nIdx = params[0].ToInt();
+    nIdx = params[0].ToInt(pRuntime->GetIsolate());
 
   FX_BOOL bExport = TRUE;
   if (iSize >= 2)
-    bExport = params[1].ToBool();
+    bExport = params[1].ToBool(pRuntime->GetIsolate());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -3138,11 +3149,11 @@ FX_BOOL Field::getItemAt(IJS_Context* cc,
     if (bExport) {
       CFX_WideString strval = pFormField->GetOptionValue(nIdx);
       if (strval.IsEmpty())
-        vRet = pFormField->GetOptionLabel(nIdx).c_str();
+        vRet = CJS_Value(pRuntime, pFormField->GetOptionLabel(nIdx).c_str());
       else
-        vRet = strval.c_str();
+        vRet = CJS_Value(pRuntime, strval.c_str());
     } else {
-      vRet = pFormField->GetOptionLabel(nIdx).c_str();
+      vRet = CJS_Value(pRuntime, pFormField->GetOptionLabel(nIdx).c_str());
     }
   } else {
     return FALSE;
@@ -3169,9 +3180,11 @@ FX_BOOL Field::isBoxChecked(IJS_Context* cc,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+
   int nIndex = -1;
   if (params.size() >= 1)
-    nIndex = params[0].ToInt();
+    nIndex = params[0].ToInt(pRuntime->GetIsolate());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -3179,20 +3192,13 @@ FX_BOOL Field::isBoxChecked(IJS_Context* cc,
 
   CPDF_FormField* pFormField = FieldArray[0];
   if (nIndex < 0 || nIndex >= pFormField->CountControls()) {
-    vRet = FALSE;
     return FALSE;
   }
 
-  if ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX) ||
-      (pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON)) {
-    if (pFormField->GetControl(nIndex)->IsChecked() != 0)
-      vRet = TRUE;
-    else
-      vRet = FALSE;
-  } else {
-    vRet = FALSE;
-  }
-
+  vRet = CJS_Value(pRuntime,
+                   ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
+                     pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
+                    pFormField->GetControl(nIndex)->IsChecked() != 0));
   return TRUE;
 }
 
@@ -3200,29 +3206,24 @@ FX_BOOL Field::isDefaultChecked(IJS_Context* cc,
                                 const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError) {
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+
   int nIndex = -1;
   if (params.size() >= 1)
-    nIndex = params[0].ToInt();
+    nIndex = params[0].ToInt(pRuntime->GetIsolate());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return FALSE;
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (nIndex < 0 || nIndex >= pFormField->CountControls()) {
-    vRet = FALSE;
+  if (nIndex < 0 || nIndex >= pFormField->CountControls())
     return FALSE;
-  }
-  if ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX) ||
-      (pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON)) {
-    if (pFormField->GetControl(nIndex)->IsDefaultChecked() != 0)
-      vRet = TRUE;
-    else
-      vRet = FALSE;
-  } else {
-    vRet = FALSE;
-  }
 
+  vRet = CJS_Value(pRuntime,
+                   ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
+                     pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
+                    pFormField->GetControl(nIndex)->IsDefaultChecked() != 0));
   return TRUE;
 }
 

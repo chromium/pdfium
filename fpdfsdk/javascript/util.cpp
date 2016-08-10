@@ -118,10 +118,12 @@ FX_BOOL util::printf(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   int iSize = params.size();
   if (iSize < 1)
     return FALSE;
-  std::wstring c_ConvChar(params[0].ToCFXWideString().c_str());
+  std::wstring c_ConvChar(
+      params[0].ToCFXWideString(pRuntime->GetIsolate()).c_str());
   std::vector<std::wstring> c_strConvers;
   int iOffset = 0;
   int iOffend = 0;
@@ -154,14 +156,17 @@ FX_BOOL util::printf(IJS_Context* cc,
 
     switch (ParseDataType(&c_strFormat)) {
       case UTIL_INT:
-        strSegment.Format(c_strFormat.c_str(), params[iIndex].ToInt());
+        strSegment.Format(c_strFormat.c_str(),
+                          params[iIndex].ToInt(pRuntime->GetIsolate()));
         break;
       case UTIL_DOUBLE:
-        strSegment.Format(c_strFormat.c_str(), params[iIndex].ToDouble());
+        strSegment.Format(c_strFormat.c_str(),
+                          params[iIndex].ToDouble(pRuntime->GetIsolate()));
         break;
       case UTIL_STRING:
-        strSegment.Format(c_strFormat.c_str(),
-                          params[iIndex].ToCFXWideString().c_str());
+        strSegment.Format(
+            c_strFormat.c_str(),
+            params[iIndex].ToCFXWideString(pRuntime->GetIsolate()).c_str());
         break;
       default:
         strSegment.Format(L"%S", c_strFormat.c_str());
@@ -171,7 +176,7 @@ FX_BOOL util::printf(IJS_Context* cc,
   }
 
   c_strResult.erase(c_strResult.begin());
-  vRet = c_strResult.c_str();
+  vRet = CJS_Value(pRuntime, c_strResult.c_str());
   return TRUE;
 }
 
@@ -187,7 +192,7 @@ FX_BOOL util::printd(IJS_Context* cc,
   CJS_Value p1 = params[0];
   CJS_Value p2 = params[1];
   CJS_Date jsDate;
-  if (!p2.ConvertToDate(jsDate)) {
+  if (!p2.ConvertToDate(pRuntime->GetIsolate(), jsDate)) {
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT1);
     return FALSE;
   }
@@ -199,7 +204,7 @@ FX_BOOL util::printd(IJS_Context* cc,
 
   if (p1.GetType() == CJS_Value::VT_number) {
     CFX_WideString swResult;
-    switch (p1.ToInt()) {
+    switch (p1.ToInt(pRuntime->GetIsolate())) {
       case 0:
         swResult.Format(L"D:%04d%02d%02d%02d%02d%02d",
                         jsDate.GetYear(pRuntime->GetIsolate()),
@@ -232,19 +237,20 @@ FX_BOOL util::printd(IJS_Context* cc,
         return FALSE;
     }
 
-    vRet = swResult.c_str();
+    vRet = CJS_Value(pRuntime, swResult.c_str());
     return TRUE;
   }
 
   if (p1.GetType() == CJS_Value::VT_string) {
-    if (iSize > 2 && params[2].ToBool()) {
+    if (iSize > 2 && params[2].ToBool(pRuntime->GetIsolate())) {
       sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_NOTSUPPORT);
       return FALSE;  // currently, it doesn't support XFAPicture.
     }
 
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
-    std::basic_string<wchar_t> cFormat = p1.ToCFXWideString().c_str();
+    std::basic_string<wchar_t> cFormat =
+        p1.ToCFXWideString(pRuntime->GetIsolate()).c_str();
     cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                   cFormat.end());
 
@@ -304,7 +310,7 @@ FX_BOOL util::printd(IJS_Context* cc,
     wchar_t buf[64] = {};
     wcsftime(buf, 64, cFormat.c_str(), &time);
     cFormat = buf;
-    vRet = cFormat.c_str();
+    vRet = CJS_Value(pRuntime, cFormat.c_str());
     return TRUE;
   }
 
@@ -317,12 +323,18 @@ FX_BOOL util::printx(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+
   if (params.size() < 2) {
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  vRet =
-      printx(params[0].ToCFXWideString(), params[1].ToCFXWideString()).c_str();
+
+  vRet = CJS_Value(pRuntime,
+                   printx(params[0].ToCFXWideString(pRuntime->GetIsolate()),
+                          params[1].ToCFXWideString(pRuntime->GetIsolate()))
+                       .c_str());
+
   return TRUE;
 }
 
@@ -431,23 +443,22 @@ FX_BOOL util::scand(IJS_Context* cc,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   int iSize = params.size();
   if (iSize < 2)
     return FALSE;
 
-  CFX_WideString sFormat = params[0].ToCFXWideString();
-  CFX_WideString sDate = params[1].ToCFXWideString();
+  CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString sDate = params[1].ToCFXWideString(pRuntime->GetIsolate());
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0) {
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
   }
 
   if (!JS_PortIsNan(dDate)) {
-    CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-    vRet = CJS_Value(pRuntime, CJS_Date(pRuntime->GetIsolate(), dDate)
-                                   .ToV8Date(pRuntime->GetIsolate()));
+    vRet = CJS_Value(pRuntime, CJS_Date(pRuntime->GetIsolate(), dDate));
   } else {
-    vRet.SetNull();
+    vRet.SetNull(pRuntime);
   }
 
   return TRUE;
@@ -458,16 +469,20 @@ FX_BOOL util::byteToChar(IJS_Context* cc,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+
   if (params.size() < 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  int arg = params[0].ToInt();
+
+  int arg = params[0].ToInt(pRuntime->GetIsolate());
   if (arg < 0 || arg > 255) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
     return FALSE;
   }
+
   CFX_WideString wStr(static_cast<FX_WCHAR>(arg));
-  vRet = wStr.c_str();
+  vRet = CJS_Value(pRuntime, wStr.c_str());
   return TRUE;
 }

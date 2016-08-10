@@ -252,7 +252,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
   if (aDocs.GetLength() > 0)
     vp << aDocs;
   else
-    vp.SetNull();
+    vp.GetJSValue()->SetNull(pRuntime);
 
   return TRUE;
 }
@@ -405,41 +405,41 @@ FX_BOOL app::alert(IJS_Context* cc,
 
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
   if (!pApp) {
-    vRet = 0;
+    vRet = CJS_Value(pRuntime, 0);
     return TRUE;
   }
 
   CFX_WideString swMsg;
   if (newParams[0].GetType() == CJS_Value::VT_object) {
     CJS_Array carray;
-    if (newParams[0].ConvertToArray(carray)) {
+    if (newParams[0].ConvertToArray(pRuntime->GetIsolate(), carray)) {
       swMsg = L"[";
       CJS_Value element(pRuntime);
       for (int i = 0; i < carray.GetLength(); ++i) {
         if (i)
           swMsg += L", ";
         carray.GetElement(pRuntime->GetIsolate(), i, element);
-        swMsg += element.ToCFXWideString();
+        swMsg += element.ToCFXWideString(pRuntime->GetIsolate());
       }
       swMsg += L"]";
     } else {
-      swMsg = newParams[0].ToCFXWideString();
+      swMsg = newParams[0].ToCFXWideString(pRuntime->GetIsolate());
     }
   } else {
-    swMsg = newParams[0].ToCFXWideString();
+    swMsg = newParams[0].ToCFXWideString(pRuntime->GetIsolate());
   }
 
   int iIcon = 0;
   if (newParams[1].GetType() != CJS_Value::VT_unknown)
-    iIcon = newParams[1].ToInt();
+    iIcon = newParams[1].ToInt(pRuntime->GetIsolate());
 
   int iType = 0;
   if (newParams[2].GetType() != CJS_Value::VT_unknown)
-    iType = newParams[2].ToInt();
+    iType = newParams[2].ToInt(pRuntime->GetIsolate());
 
   CFX_WideString swTitle;
   if (newParams[3].GetType() != CJS_Value::VT_unknown)
-    swTitle = newParams[3].ToCFXWideString();
+    swTitle = newParams[3].ToCFXWideString(pRuntime->GetIsolate());
   else
     swTitle = JSGetStringFromID(pContext, IDS_STRING_JSALERT);
 
@@ -447,7 +447,8 @@ FX_BOOL app::alert(IJS_Context* cc,
   if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
     pDoc->KillFocusAnnot();
 
-  vRet = pApp->JS_appAlert(swMsg.c_str(), swTitle.c_str(), iType, iIcon);
+  vRet = CJS_Value(pRuntime, pApp->JS_appAlert(swMsg.c_str(), swTitle.c_str(),
+                                               iType, iIcon));
   pRuntime->EndBlock();
   return TRUE;
 }
@@ -460,7 +461,7 @@ FX_BOOL app::beep(IJS_Context* cc,
     CJS_Context* pContext = (CJS_Context*)cc;
     CJS_Runtime* pRuntime = pContext->GetJSRuntime();
     CPDFDoc_Environment* pEnv = pRuntime->GetReaderApp();
-    pEnv->JS_appBeep(params[0].ToInt());
+    pEnv->JS_appBeep(params[0].ToInt(pRuntime->GetIsolate()));
     return TRUE;
   }
 
@@ -491,19 +492,23 @@ FX_BOOL app::setInterval(IJS_Context* cc,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+
   if (params.size() > 2 || params.size() == 0) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
-  CFX_WideString script = params.size() > 0 ? params[0].ToCFXWideString() : L"";
+  CFX_WideString script =
+      params.size() > 0 ? params[0].ToCFXWideString(pRuntime->GetIsolate())
+                        : L"";
   if (script.IsEmpty()) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
     return TRUE;
   }
 
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  uint32_t dwInterval = params.size() > 1 ? params[1].ToInt() : 1000;
+  uint32_t dwInterval =
+      params.size() > 1 ? params[1].ToInt(pRuntime->GetIsolate()) : 1000;
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
   m_Timers.push_back(std::unique_ptr<GlobalTimer>(
       new GlobalTimer(this, pApp, pRuntime, 0, script, dwInterval, 0)));
@@ -515,7 +520,7 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
   pTimerObj->SetTimer(m_Timers.back().get());
 
-  vRet = pRetObj;
+  vRet = CJS_Value(pRuntime, pRetObj);
   return TRUE;
 }
 
@@ -524,19 +529,21 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+
   if (params.size() > 2 || params.size() == 0) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
-  CFX_WideString script = params[0].ToCFXWideString();
+  CFX_WideString script = params[0].ToCFXWideString(pRuntime->GetIsolate());
   if (script.IsEmpty()) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
     return TRUE;
   }
 
-  uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt() : 1000;
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+  uint32_t dwTimeOut =
+      params.size() > 1 ? params[1].ToInt(pRuntime->GetIsolate()) : 1000;
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
   m_Timers.push_back(std::unique_ptr<GlobalTimer>(
       new GlobalTimer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut)));
@@ -550,7 +557,7 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
   pTimerObj->SetTimer(m_Timers.back().get());
 
-  vRet = pRetObj;
+  vRet = CJS_Value(pRuntime, pRetObj);
   return TRUE;
 }
 
@@ -586,11 +593,11 @@ void app::ClearTimerCommon(const CJS_Value& param) {
   if (param.GetType() != CJS_Value::VT_object)
     return;
 
-  v8::Local<v8::Object> pObj = param.ToV8Object();
+  v8::Local<v8::Object> pObj = param.ToV8Object(GetJSObject()->GetIsolate());
   if (FXJS_GetObjDefnID(pObj) != CJS_TimerObj::g_nObjDefnID)
     return;
 
-  CJS_Object* pJSObj = param.ToCJSObject();
+  CJS_Object* pJSObj = param.ToCJSObject(GetJSObject()->GetIsolate());
   if (!pJSObj)
     return;
 
@@ -664,11 +671,11 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  bool bUI = newParams[0].ToBool();
+  bool bUI = newParams[0].ToBool(pRuntime->GetIsolate());
 
   CFX_WideString cTo;
   if (newParams[1].GetType() != CJS_Value::VT_unknown) {
-    cTo = newParams[1].ToCFXWideString();
+    cTo = newParams[1].ToCFXWideString(pRuntime->GetIsolate());
   } else {
     if (!bUI) {
       // cTo parameter required when UI not invoked.
@@ -679,19 +686,19 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
 
   CFX_WideString cCc;
   if (newParams[2].GetType() != CJS_Value::VT_unknown)
-    cCc = newParams[2].ToCFXWideString();
+    cCc = newParams[2].ToCFXWideString(pRuntime->GetIsolate());
 
   CFX_WideString cBcc;
   if (newParams[3].GetType() != CJS_Value::VT_unknown)
-    cBcc = newParams[3].ToCFXWideString();
+    cBcc = newParams[3].ToCFXWideString(pRuntime->GetIsolate());
 
   CFX_WideString cSubject;
   if (newParams[4].GetType() != CJS_Value::VT_unknown)
-    cSubject = newParams[4].ToCFXWideString();
+    cSubject = newParams[4].ToCFXWideString(pRuntime->GetIsolate());
 
   CFX_WideString cMsg;
   if (newParams[5].GetType() != CJS_Value::VT_unknown)
-    cMsg = newParams[5].ToCFXWideString();
+    cMsg = newParams[5].ToCFXWideString(pRuntime->GetIsolate());
 
   pRuntime->BeginBlock();
   pContext->GetReaderApp()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
@@ -787,23 +794,24 @@ FX_BOOL app::response(IJS_Context* cc,
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  CFX_WideString swQuestion = newParams[0].ToCFXWideString();
+  CFX_WideString swQuestion =
+      newParams[0].ToCFXWideString(pRuntime->GetIsolate());
 
   CFX_WideString swTitle = L"PDF";
   if (newParams[1].GetType() != CJS_Value::VT_unknown)
-    swTitle = newParams[1].ToCFXWideString();
+    swTitle = newParams[1].ToCFXWideString(pRuntime->GetIsolate());
 
   CFX_WideString swDefault;
   if (newParams[2].GetType() != CJS_Value::VT_unknown)
-    swDefault = newParams[2].ToCFXWideString();
+    swDefault = newParams[2].ToCFXWideString(pRuntime->GetIsolate());
 
   bool bPassword = false;
   if (newParams[3].GetType() != CJS_Value::VT_unknown)
-    bPassword = newParams[3].ToBool();
+    bPassword = newParams[3].ToBool(pRuntime->GetIsolate());
 
   CFX_WideString swLabel;
   if (newParams[4].GetType() != CJS_Value::VT_unknown)
-    swLabel = newParams[4].ToCFXWideString();
+    swLabel = newParams[4].ToCFXWideString(pRuntime->GetIsolate());
 
   const int MAX_INPUT_BYTES = 2048;
   std::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
@@ -818,9 +826,11 @@ FX_BOOL app::response(IJS_Context* cc,
     return FALSE;
   }
 
-  vRet = CFX_WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.get()),
-                                     nLengthBytes / sizeof(uint16_t))
-             .c_str();
+  vRet = CJS_Value(pRuntime, CFX_WideString::FromUTF16LE(
+                                 reinterpret_cast<uint16_t*>(pBuff.get()),
+                                 nLengthBytes / sizeof(uint16_t))
+                                 .c_str());
+
   return TRUE;
 }
 

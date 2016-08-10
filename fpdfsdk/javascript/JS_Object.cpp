@@ -13,7 +13,6 @@
 CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
 
 CJS_EmbedObj::~CJS_EmbedObj() {
-  m_pJSObject = nullptr;
 }
 
 void FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {

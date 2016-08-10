@@ -92,7 +92,7 @@ void JSPropGetter(const char* prop_name_string,
                                             sError));
     return;
   }
-  info.GetReturnValue().Set(value.ToV8Value());
+  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(isolate));
 }
 
 template <class C,
@@ -111,7 +111,7 @@ void JSPropSetter(const char* prop_name_string,
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
-  CJS_PropValue propValue(CJS_Value(pRuntime, value));
+  CJS_PropValue propValue(pRuntime, CJS_Value(pRuntime, value));
   propValue.StartSetting();
   if (!(pObj->*M)(pContext, propValue, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name_string, prop_name_string,
@@ -160,7 +160,7 @@ void JSMethod(const char* method_name_string,
                                             method_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToV8Value());
+  info.GetReturnValue().Set(valueRes.ToV8Value(isolate));
 }
 
 #define JS_STATIC_METHOD(method_name, class_name)                             \
@@ -383,7 +383,7 @@ void JSSpecialPropGet(const char* class_name,
     FXJS_Error(isolate, JSFormatErrorString(class_name, "GetProperty", sError));
     return;
   }
-  info.GetReturnValue().Set(value.ToV8Value());
+  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(isolate));
 }
 
 template <class Alt>
@@ -404,7 +404,7 @@ void JSSpecialPropPut(const char* class_name,
   CFX_WideString propname = CFX_WideString::FromUTF8(
       CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CFX_WideString sError;
-  CJS_PropValue PropValue(CJS_Value(pRuntime, value));
+  CJS_PropValue PropValue(pRuntime, CJS_Value(pRuntime, value));
   PropValue.StartSetting();
   if (!pObj->DoProperty(pContext, propname.c_str(), PropValue, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name, "PutProperty", sError));
@@ -456,7 +456,7 @@ void JSGlobalFunc(const char* func_name_string,
                JSFormatErrorString(func_name_string, nullptr, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToV8Value());
+  info.GetReturnValue().Set(valueRes.ToV8Value(pRuntime->GetIsolate()));
 }
 
 #define JS_STATIC_GLOBAL_FUN(fun_name)                   \

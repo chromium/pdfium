@@ -42,63 +42,55 @@ class CJS_Value {
   CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr);
   CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array);
   CJS_Value(CJS_Runtime* pRuntime, const CJS_Date& date);
+  CJS_Value(CJS_Runtime* pRuntime, const CJS_Object* object);
   CJS_Value(const CJS_Value& other);
 
   ~CJS_Value();
 
-  void SetNull();
+  void SetNull(CJS_Runtime* pRuntime);
+  void SetValue(const CJS_Value& other);
   void Attach(v8::Local<v8::Value> pValue);
   void Detach();
 
   static Type GetValueType(v8::Local<v8::Value> value);
   Type GetType() const { return GetValueType(m_pValue); }
-  int ToInt() const;
-  bool ToBool() const;
-  double ToDouble() const;
-  float ToFloat() const;
-  CJS_Object* ToCJSObject() const;
-  CFX_WideString ToCFXWideString() const;
-  CFX_ByteString ToCFXByteString() const;
-  v8::Local<v8::Object> ToV8Object() const;
-  v8::Local<v8::Array> ToV8Array() const;
-  v8::Local<v8::Value> ToV8Value() const;
+
+  int ToInt(v8::Isolate* pIsolate) const;
+  bool ToBool(v8::Isolate* pIsolate) const;
+  double ToDouble(v8::Isolate* pIsolate) const;
+  float ToFloat(v8::Isolate* pIsolate) const;
+  CJS_Object* ToCJSObject(v8::Isolate* pIsolate) const;
+  CFX_WideString ToCFXWideString(v8::Isolate* pIsolate) const;
+  CFX_ByteString ToCFXByteString(v8::Isolate* pIsolate) const;
+  v8::Local<v8::Object> ToV8Object(v8::Isolate* pIsolate) const;
+  v8::Local<v8::Array> ToV8Array(v8::Isolate* pIsolate) const;
+  v8::Local<v8::Value> ToV8Value(v8::Isolate* pIsolate) const;
 
   // Replace the current |m_pValue| with a v8::Number if possible
   // to make one from the current |m_pValue|.
-  void MaybeCoerceToNumber();
+  void MaybeCoerceToNumber(v8::Isolate* pIsolate);
 
-  void operator=(int iValue);
-  void operator=(bool bValue);
-  void operator=(double val);
-  void operator=(float val);
-  void operator=(CJS_Object* val);
-  void operator=(v8::Local<v8::Object> val);
-  void operator=(const CJS_Value& value);
-  void operator=(const FX_CHAR* pStr);
-  void operator=(const FX_WCHAR* pWstr);
-
-  FX_BOOL IsArrayObject() const;
-  FX_BOOL IsDateObject() const;
-  FX_BOOL ConvertToArray(CJS_Array&) const;
-  FX_BOOL ConvertToDate(CJS_Date&) const;
-
-  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
+  bool IsArrayObject() const;
+  bool IsDateObject() const;
+  bool ConvertToArray(v8::Isolate* pIsolate, CJS_Array&) const;
+  bool ConvertToDate(v8::Isolate* pIsolate, CJS_Date&) const;
 
  protected:
   v8::Local<v8::Value> m_pValue;
-  CJS_Runtime* const m_pJSRuntime;
 };
 
-class CJS_PropValue : public CJS_Value {
+class CJS_PropValue {
  public:
   explicit CJS_PropValue(CJS_Runtime* pRuntime);
-  CJS_PropValue(const CJS_Value&);
+  CJS_PropValue(CJS_Runtime* pRuntime, const CJS_Value&);
   ~CJS_PropValue();
 
   void StartSetting() { m_bIsSetting = true; }
   void StartGetting() { m_bIsSetting = false; }
   bool IsSetting() const { return m_bIsSetting; }
   bool IsGetting() const { return !m_bIsSetting; }
+  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
+  CJS_Value* GetJSValue() { return &m_Value; }
 
   void operator<<(int val);
   void operator>>(int&) const;
@@ -124,6 +116,8 @@ class CJS_PropValue : public CJS_Value {
 
  private:
   bool m_bIsSetting;
+  CJS_Value m_Value;
+  CJS_Runtime* const m_pJSRuntime;
 };
 
 class CJS_Array {

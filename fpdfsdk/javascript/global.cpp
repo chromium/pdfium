@@ -81,9 +81,10 @@ FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
                                       const FX_WCHAR* propname,
                                       CJS_PropValue& vp,
                                       CFX_WideString& sError) {
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   if (vp.IsSetting()) {
     CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
-    switch (vp.GetType()) {
+    switch (vp.GetJSValue()->GetType()) {
       case CJS_Value::VT_number: {
         double dData;
         vp >> dData;
@@ -122,12 +123,12 @@ FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
   } else {
     auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
     if (it == m_mapGlobal.end()) {
-      vp.SetNull();
+      vp.GetJSValue()->SetNull(pRuntime);
       return TRUE;
     }
     JSGlobalData* pData = it->second;
     if (pData->bDeleted) {
-      vp.SetNull();
+      vp.GetJSValue()->SetNull(pRuntime);
       return TRUE;
     }
     switch (pData->nType) {
@@ -147,7 +148,7 @@ FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
         return TRUE;
       }
       case JS_GlobalDataType::NULLOBJ:
-        vp.SetNull();
+        vp.GetJSValue()->SetNull(pRuntime);
         return TRUE;
       default:
         break;
@@ -161,16 +162,17 @@ FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   if (params.size() != 2) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
-  auto it = m_mapGlobal.find(params[0].ToCFXByteString());
+  auto it = m_mapGlobal.find(params[0].ToCFXByteString(pRuntime->GetIsolate()));
   if (it != m_mapGlobal.end()) {
     JSGlobalData* pData = it->second;
     if (!pData->bDeleted) {
-      pData->bPersistent = params[1].ToBool();
+      pData->bPersistent = params[1].ToBool(pRuntime->GetIsolate());
       return TRUE;
     }
   }
@@ -271,7 +273,6 @@ void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
                                       CJS_GlobalVariableArray& array) {
   v8::Isolate* isolate = pObj->GetIsolate();
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-
   v8::Local<v8::Array> pKeyList = FXJS_GetObjectElementNames(isolate, pObj);
   int nObjElements = pKeyList->Length();
   for (int i = 0; i < nObjElements; i++) {
@@ -295,7 +296,8 @@ void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
         array.Add(pObjElement);
       } break;
       case CJS_Value::VT_string: {
-        CFX_ByteString sValue = CJS_Value(pRuntime, v).ToCFXByteString();
+        CFX_ByteString sValue =
+            CJS_Value(pRuntime, v).ToCFXByteString(pRuntime->GetIsolate());
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GlobalDataType::STRING;
         pObjElement->sKey = sKey;
