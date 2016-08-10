@@ -35,9 +35,6 @@ TEST_F(PDFEditTest, InsertObjectWithInvalidPage) {
   FPDF_CloseDocument(doc);
 }
 
-// https://bugs.chromium.org/p/pdfium/issues/detail?id=545
-// TODO(thestig): Add another test case that also calls
-// FPDFPage_GenerateContent().
 TEST_F(PDFEditTest, NewImgeObj) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
@@ -47,6 +44,30 @@ TEST_F(PDFEditTest, NewImgeObj) {
   FPDFPage_InsertObject(page, page_image);
   EXPECT_EQ(1, FPDFPage_CountObject(page));
 
+  FPDF_ClosePage(page);
+  FPDF_CloseDocument(doc);
+}
+
+TEST_F(PDFEditTest, NewImgeObjGenerateContent) {
+  FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
+  FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
+  EXPECT_EQ(0, FPDFPage_CountObject(page));
+
+  constexpr int kBitmapSize = 50;
+  FPDF_BITMAP bitmap = FPDFBitmap_Create(kBitmapSize, kBitmapSize, 0);
+  FPDFBitmap_FillRect(bitmap, 0, 0, kBitmapSize, kBitmapSize, 0x00000000);
+  EXPECT_EQ(kBitmapSize, FPDFBitmap_GetWidth(bitmap));
+  EXPECT_EQ(kBitmapSize, FPDFBitmap_GetHeight(bitmap));
+
+  FPDF_PAGEOBJECT page_image = FPDFPageObj_NewImgeObj(doc);
+  ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, page_image, bitmap));
+  ASSERT_TRUE(
+      FPDFImageObj_SetMatrix(page_image, kBitmapSize, 0, 0, kBitmapSize, 0, 0));
+  FPDFPage_InsertObject(page, page_image);
+  EXPECT_EQ(1, FPDFPage_CountObject(page));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+
+  FPDFBitmap_Destroy(bitmap);
   FPDF_ClosePage(page);
   FPDF_CloseDocument(doc);
 }
