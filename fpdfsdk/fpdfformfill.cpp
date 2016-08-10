@@ -704,26 +704,32 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
                                           int aaType) {
   if (!hHandle)
     return;
-  CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetSDKDocument();
+
+  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
+  if (!pSDKDoc)
+    return;
+
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
   if (!pPDFPage)
     return;
-  if (pSDKDoc->GetPageView(pPage, false)) {
-    CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
-    CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
-    CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
-    CPDF_AAction aa(pPageDict->GetDictBy("AA"));
-    if (FPDFPAGE_AACTION_OPEN == aaType) {
-      if (aa.ActionExist(CPDF_AAction::OpenPage)) {
-        CPDF_Action action = aa.GetAction(CPDF_AAction::OpenPage);
-        pActionHandler->DoAction_Page(action, CPDF_AAction::OpenPage, pSDKDoc);
-      }
-    } else {
-      if (aa.ActionExist(CPDF_AAction::ClosePage)) {
-        CPDF_Action action = aa.GetAction(CPDF_AAction::ClosePage);
-        pActionHandler->DoAction_Page(action, CPDF_AAction::ClosePage, pSDKDoc);
-      }
+
+  if (!pSDKDoc->GetPageView(pPage, false))
+    return;
+
+  CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
+  CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
+  CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
+  CPDF_AAction aa(pPageDict->GetDictBy("AA"));
+  if (FPDFPAGE_AACTION_OPEN == aaType) {
+    if (aa.ActionExist(CPDF_AAction::OpenPage)) {
+      CPDF_Action action = aa.GetAction(CPDF_AAction::OpenPage);
+      pActionHandler->DoAction_Page(action, CPDF_AAction::OpenPage, pSDKDoc);
+    }
+  } else {
+    if (aa.ActionExist(CPDF_AAction::ClosePage)) {
+      CPDF_Action action = aa.GetAction(CPDF_AAction::ClosePage);
+      pActionHandler->DoAction_Page(action, CPDF_AAction::ClosePage, pSDKDoc);
     }
   }
 }
