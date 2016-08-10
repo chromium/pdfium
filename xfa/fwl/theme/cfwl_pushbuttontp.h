@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_THEME_CFWL_PUSHBUTTONTP_H_
 #define XFA_FWL_THEME_CFWL_PUSHBUTTONTP_H_
 
+#include <memory>
+
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_PushButtonTP : public CFWL_WidgetTP {
@@ -41,9 +43,10 @@ class CFWL_PushButtonTP : public CFWL_WidgetTP {
   void SetBackgroudColor(uint32_t* pData);
   void SetCaptionColor(uint32_t* pData);
   void SetCornerColor(uint32_t* pData);
-  int32_t GetColorID(uint32_t dwStates);
 
-  struct PBThemeData* m_pThemeData;
+  int32_t GetColorID(uint32_t dwStates) const;
+
+  std::unique_ptr<PBThemeData> m_pThemeData;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_PUSHBUTTONTP_H_

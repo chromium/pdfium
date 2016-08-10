@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_THEME_CFWL_SCROLLBARTP_H_
 #define XFA_FWL_THEME_CFWL_SCROLLBARTP_H_
 
+#include <memory>
+
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_ScrollBarTP : public CFWL_WidgetTP {
@@ -57,7 +59,7 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
                CFX_Matrix* pMatrix = nullptr);
   void SetThemeData(uint32_t dwID);
 
-  struct SBThemeData* m_pThemeData;
+  std::unique_ptr<SBThemeData> m_pThemeData;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_SCROLLBARTP_H_

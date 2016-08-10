@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_THEME_CFWL_MONTHCALENDARTP_H_
 #define XFA_FWL_THEME_CFWL_MONTHCALENDARTP_H_
 
+#include <memory>
+
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
@@ -27,6 +29,16 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   FWL_Error Finalize() override;
 
  protected:
+  struct MCThemeData {
+    FX_ARGB clrCaption;
+    FX_ARGB clrSeperator;
+    FX_ARGB clrDatesHoverBK;
+    FX_ARGB clrDatesSelectedBK;
+    FX_ARGB clrDatesCircle;
+    FX_ARGB clrToday;
+    FX_ARGB clrBK;
+  };
+
   FX_BOOL DrawTotalBK(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
   FX_BOOL DrawHeadBk(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
   FX_BOOL DrawLButton(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
@@ -39,16 +51,7 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   FWLTHEME_STATE GetState(uint32_t dwFWLStates);
   void SetThemeData(uint32_t dwThemeID);
 
-  class MCThemeData {
-   public:
-    FX_ARGB clrCaption;
-    FX_ARGB clrSeperator;
-    FX_ARGB clrDatesHoverBK;
-    FX_ARGB clrDatesSelectedBK;
-    FX_ARGB clrDatesCircle;
-    FX_ARGB clrToday;
-    FX_ARGB clrBK;
-  } * m_pThemeData;
+  std::unique_ptr<MCThemeData> m_pThemeData;
   CFX_WideString wsResource;
 };
 

@@ -23,9 +23,7 @@ CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
   SetThemeData(0);
 }
 
-CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {
-  delete m_pThemeData;
-}
+CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {}
 
 bool CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::ScrollBar;
@@ -41,9 +39,8 @@ void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
 uint32_t CFWL_ScrollBarTP::SetThemeID(IFWL_Widget* pWidget,
                                       uint32_t dwThemeID,
                                       FX_BOOL bChildren) {
-  if (m_pThemeData) {
+  if (m_pThemeData)
     SetThemeData(FWL_GetThemeColor(dwThemeID));
-  }
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
 }
 FX_BOOL CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {

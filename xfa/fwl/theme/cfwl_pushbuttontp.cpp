@@ -19,9 +19,7 @@ CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
   SetThemeData(0);
 }
 
-CFWL_PushButtonTP::~CFWL_PushButtonTP() {
-  delete m_pThemeData;
-}
+CFWL_PushButtonTP::~CFWL_PushButtonTP() {}
 
 bool CFWL_PushButtonTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::PushButton;
@@ -155,7 +153,7 @@ void CFWL_PushButtonTP::SetThemeData(uint32_t dwID) {
     m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
   }
 }
-int32_t CFWL_PushButtonTP::GetColorID(uint32_t dwStates) {
+int32_t CFWL_PushButtonTP::GetColorID(uint32_t dwStates) const {
   int32_t color = 0;
   if (dwStates & CFWL_PartState_Disabled)
     color += 4;

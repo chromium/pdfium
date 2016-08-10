@@ -49,26 +49,25 @@ const int kSeparatorY = kHeaderHeight + kDatesCellHeight + kSeparatorDOffset;
 
 }  // namespace
 
-CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() {
-  m_pThemeData = new MCThemeData;
+CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() : m_pThemeData(new MCThemeData) {
   SetThemeData(0);
 }
 
-CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {
-  delete m_pThemeData;
-}
+CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {}
 
 bool CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::MonthCalendar;
 }
+
 uint32_t CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
                                           uint32_t dwThemeID,
                                           FX_BOOL bChildren) {
-  if (m_pThemeData) {
+  if (m_pThemeData)
     SetThemeData(FWL_GetThemeColor(dwThemeID));
-  }
+
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
 }
+
 FX_BOOL CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return FALSE;

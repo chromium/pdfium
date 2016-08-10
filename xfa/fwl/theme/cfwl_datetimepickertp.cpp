@@ -9,14 +9,9 @@
 #include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 
-CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() {
-  m_pThemeData = new DTPThemeData;
-  initThemeData();
-}
+CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() {}
 
-CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() {
-  delete m_pThemeData;
-}
+CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() {}
 
 bool CFWL_DateTimePickerTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::DateTimePicker;
@@ -72,32 +67,3 @@ void CFWL_DateTimePickerTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
                FWLTHEME_DIRECTION_Down, eState, pMatrix);
 }
 
-void CFWL_DateTimePickerTP::initThemeData() {
-  uint32_t* pData = (uint32_t*)&m_pThemeData->BoxBkColor;
-  *pData++ = 0;
-  *pData++ = 0;
-  *pData++ = ArgbEncode(255, 220, 220, 215),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 240, 207),
-  *pData++ = ArgbEncode(255, 248, 179, 48),
-  *pData++ = ArgbEncode(255, 176, 176, 167),
-  *pData++ = ArgbEncode(255, 241, 239, 239),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 220, 220, 215),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 240, 207),
-  *pData++ = ArgbEncode(255, 248, 179, 48),
-  *pData++ = ArgbEncode(255, 176, 176, 167),
-  *pData++ = ArgbEncode(255, 241, 239, 239),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 220, 220, 215),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 240, 207),
-  *pData++ = ArgbEncode(255, 248, 179, 48),
-  *pData++ = ArgbEncode(255, 176, 176, 167),
-  *pData++ = ArgbEncode(255, 241, 239, 239),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 255, 255);
-}
