@@ -428,6 +428,9 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return FALSE;
 
   int shared_hint_table_offset = pOffset->GetInteger();
+  if (shared_hint_table_offset <= 0)
+    return FALSE;
+
   CPDF_StreamAcc acc;
   acc.LoadAllData(pHintStream);
 
@@ -435,17 +438,20 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
   // The header section of page offset hint table is 36 bytes.
   // The header section of shared object hint table is 24 bytes.
   // Hint table has at least 60 bytes.
-  const uint32_t MIN_STREAM_LEN = 60;
-  if (size < MIN_STREAM_LEN || shared_hint_table_offset <= 0 ||
-      size < static_cast<uint32_t>(shared_hint_table_offset)) {
+  const uint32_t kMinStreamLength = 60;
+  if (size < kMinStreamLength)
+    return FALSE;
+
+  FX_SAFE_UINT32 safe_shared_hint_table_offset = shared_hint_table_offset;
+  if (!safe_shared_hint_table_offset.IsValid() ||
+      size < safe_shared_hint_table_offset.ValueOrDie()) {
     return FALSE;
   }
 
   CFX_BitStream bs;
   bs.Init(acc.GetData(), size);
   return ReadPageHintTable(&bs) &&
-         ReadSharedObjHintTable(&bs, pdfium::base::checked_cast<uint32_t>(
-                                         shared_hint_table_offset));
+         ReadSharedObjHintTable(&bs, shared_hint_table_offset);
 }
 
 int CPDF_HintTables::ReadPrimaryHintStreamOffset() const {
