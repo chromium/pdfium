@@ -18,22 +18,8 @@ class CPDFSDK_Document;
 class CPDF_Bookmark;
 class CPDF_Dictionary;
 
-class CPDFSDK_FormActionHandler {
- public:
-  FX_BOOL DoAction_Hide(const CPDF_Action& action, CPDFSDK_Document* pDocument);
-  FX_BOOL DoAction_SubmitForm(const CPDF_Action& action,
-                              CPDFSDK_Document* pDocument);
-  FX_BOOL DoAction_ResetForm(const CPDF_Action& action,
-                             CPDFSDK_Document* pDocument);
-  FX_BOOL DoAction_ImportData(const CPDF_Action& action,
-                              CPDFSDK_Document* pDocument);
-};
-
 class CPDFSDK_ActionHandler {
  public:
-  CPDFSDK_ActionHandler();
-  ~CPDFSDK_ActionHandler();
-
   FX_BOOL DoAction_DocOpen(const CPDF_Action& action,
                            CPDFSDK_Document* pDocument);
   FX_BOOL DoAction_JavaScript(const CPDF_Action& JsAction,
@@ -117,7 +103,13 @@ class CPDFSDK_ActionHandler {
   void DoAction_SetOCGState(CPDFSDK_Document* pDocument,
                             const CPDF_Action& action);
 
-  std::unique_ptr<CPDFSDK_FormActionHandler> m_pFormActionHandler;
+  FX_BOOL DoAction_Hide(const CPDF_Action& action, CPDFSDK_Document* pDocument);
+  FX_BOOL DoAction_SubmitForm(const CPDF_Action& action,
+                              CPDFSDK_Document* pDocument);
+  FX_BOOL DoAction_ResetForm(const CPDF_Action& action,
+                             CPDFSDK_Document* pDocument);
+  FX_BOOL DoAction_ImportData(const CPDF_Action& action,
+                              CPDFSDK_Document* pDocument);
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
