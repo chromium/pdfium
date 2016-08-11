@@ -4,110 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_
-#define FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_
-
-#if _FX_OS_ == _FX_ANDROID_
-#include "time.h"
-#else
-#include <ctime>
-#endif
+#ifndef FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_
+#define FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_
 
 #include "core/fpdfdoc/include/cpdf_aaction.h"
+#include "core/fpdfdoc/include/cpdf_action.h"
 #include "core/fpdfdoc/include/cpdf_annot.h"
 #include "core/fpdfdoc/include/cpdf_defaultappearance.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_string.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/include/fsdk_common.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/cpdfsdk_annot.h"
 
-class CPDFSDK_PageView;
-class CPDF_Page;
 class CFX_Matrix;
-class CPDF_RenderOptions;
 class CFX_RenderDevice;
-
-class CPDFSDK_DateTime {
- public:
-  CPDFSDK_DateTime();
-  explicit CPDFSDK_DateTime(const CFX_ByteString& dtStr);
-  explicit CPDFSDK_DateTime(const FX_SYSTEMTIME& st);
-  CPDFSDK_DateTime(const CPDFSDK_DateTime& datetime);
-
-  CPDFSDK_DateTime& operator=(const CPDFSDK_DateTime& datetime);
-  CPDFSDK_DateTime& operator=(const FX_SYSTEMTIME& st);
-  bool operator==(const CPDFSDK_DateTime& datetime) const;
-  bool operator!=(const CPDFSDK_DateTime& datetime) const;
-
-  CPDFSDK_DateTime& FromPDFDateTimeString(const CFX_ByteString& dtStr);
-  CFX_ByteString ToCommonDateTimeString();
-  CFX_ByteString ToPDFDateTimeString();
-  void ToSystemTime(FX_SYSTEMTIME& st);
-  time_t ToTime_t() const;
-  CPDFSDK_DateTime ToGMT() const;
-  CPDFSDK_DateTime& AddDays(short days);
-  CPDFSDK_DateTime& AddSeconds(int seconds);
-
-  void ResetDateTime();
-
-  struct FX_DATETIME {
-    int16_t year;
-    uint8_t month;
-    uint8_t day;
-    uint8_t hour;
-    uint8_t minute;
-    uint8_t second;
-    int8_t tzHour;
-    uint8_t tzMinute;
-  } dt;
-};
-
-class CPDFSDK_Annot {
- public:
-  explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
-  virtual ~CPDFSDK_Annot();
-
-#ifdef PDF_ENABLE_XFA
-  virtual FX_BOOL IsXFAField();
-  virtual CXFA_FFWidget* GetXFAWidget() const;
-#endif  // PDF_ENABLE_XFA
-
-  virtual FX_FLOAT GetMinWidth() const;
-  virtual FX_FLOAT GetMinHeight() const;
-  // define layout order to 5.
-  virtual int GetLayoutOrder() const;
-  virtual CPDF_Annot* GetPDFAnnot() const;
-  virtual CFX_ByteString GetType() const;
-  virtual CFX_ByteString GetSubType() const;
-  virtual CFX_FloatRect GetRect() const;
-
-  virtual void SetRect(const CFX_FloatRect& rect);
-  virtual void Annot_OnDraw(CFX_RenderDevice* pDevice,
-                            CFX_Matrix* pUser2Device,
-                            CPDF_RenderOptions* pOptions);
-
-  UnderlyingPageType* GetUnderlyingPage();
-  CPDF_Page* GetPDFPage();
-#ifdef PDF_ENABLE_XFA
-  CPDFXFA_Page* GetPDFXFAPage();
-#endif  // PDF_ENABLE_XFA
-
-  void SetPage(CPDFSDK_PageView* pPageView);
-  CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
-
-  // Tab Order
-  int GetTabOrder();
-  void SetTabOrder(int iTabOrder);
-
-  // Selection
-  FX_BOOL IsSelected();
-  void SetSelected(FX_BOOL bSelected);
-
- protected:
-  CPDFSDK_PageView* m_pPageView;
-  FX_BOOL m_bSelected;
-  int m_nTabOrder;
-};
+class CPDF_Dictionary;
+class CPDF_RenderOptions;
+class CPDFSDK_PageView;
 
 class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
  public:
@@ -188,4 +101,4 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   CPDF_Annot* m_pAnnot;
 };
 
-#endif  // FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_
+#endif  // FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_

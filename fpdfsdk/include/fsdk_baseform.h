@@ -14,7 +14,8 @@
 #include "core/fpdfdoc/include/ipdf_formnotify.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxge/include/fx_dib.h"
-#include "fpdfsdk/include/fsdk_baseannot.h"
+#include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/include/cpdfsdk_baannot.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"

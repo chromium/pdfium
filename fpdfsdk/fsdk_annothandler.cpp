@@ -14,6 +14,7 @@
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/include/cpdfsdk_datetime.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 
