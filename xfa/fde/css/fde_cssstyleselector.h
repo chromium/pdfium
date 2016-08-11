@@ -15,7 +15,6 @@
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
 #include "xfa/fgas/crt/fgas_memory.h"
-#include "xfa/fgas/crt/fgas_system.h"
 
 class CFDE_CSSAccelerator;
 class CFDE_CSSComputedStyle;

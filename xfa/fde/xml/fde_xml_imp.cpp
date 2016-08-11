@@ -8,9 +8,9 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fgas/crt/fgas_system.h"
 
 namespace {
 
@@ -627,7 +627,7 @@ FX_FLOAT CFDE_XMLInstruction::GetFloat(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FX_wcstof(m_Attributes[i + 1].c_str(), -1, nullptr);
+      return FXSYS_wcstof(m_Attributes[i + 1].c_str(), -1, nullptr);
     }
   }
   return fDefValue;
@@ -843,7 +843,7 @@ FX_FLOAT CFDE_XMLElement::GetFloat(const FX_WCHAR* pwsAttriName,
   int32_t iCount = m_Attributes.GetSize();
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
-      return FX_wcstof(m_Attributes[i + 1].c_str(), -1, nullptr);
+      return FXSYS_wcstof(m_Attributes[i + 1].c_str(), -1, nullptr);
     }
   }
   return fDefValue;
@@ -1619,10 +1619,10 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           m_pStart++;
           break;
         case FDE_XmlSyntaxState::SkipCommentOrDecl:
-          if (FX_wcsnicmp(m_pStart, L"--", 2) == 0) {
+          if (FXSYS_wcsnicmp(m_pStart, L"--", 2) == 0) {
             m_pStart += 2;
             m_syntaxParserState = FDE_XmlSyntaxState::SkipComment;
-          } else if (FX_wcsnicmp(m_pStart, L"[CDATA[", 7) == 0) {
+          } else if (FXSYS_wcsnicmp(m_pStart, L"[CDATA[", 7) == 0) {
             m_pStart += 7;
             m_syntaxParserState = FDE_XmlSyntaxState::SkipCData;
           } else {
@@ -1632,7 +1632,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           break;
         case FDE_XmlSyntaxState::SkipCData: {
-          if (FX_wcsnicmp(m_pStart, L"]]>", 3) == 0) {
+          if (FXSYS_wcsnicmp(m_pStart, L"]]>", 3) == 0) {
             m_pStart += 3;
             syntaxParserResult = FDE_XmlSyntaxResult::CData;
             m_iTextDataLength = m_iDataLength;
@@ -1721,7 +1721,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           break;
         case FDE_XmlSyntaxState::SkipComment:
-          if (FX_wcsnicmp(m_pStart, L"-->", 3) == 0) {
+          if (FXSYS_wcsnicmp(m_pStart, L"-->", 3) == 0) {
             m_pStart += 2;
             m_syntaxParserState = FDE_XmlSyntaxState::Text;
           }

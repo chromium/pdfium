@@ -7,7 +7,6 @@
 #include "xfa/fde/css/fde_cssdeclaration.h"
 
 #include "core/fxcrt/include/fx_ext.h"
-#include "xfa/fgas/crt/fgas_system.h"
 
 IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSPROPERTY eProperty,
                                                 FX_BOOL& bImportant) const {
@@ -106,7 +105,7 @@ FX_BOOL CFDE_CSSDeclaration::AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
   ASSERT(iValueLen > 0);
   FX_BOOL bImportant = FALSE;
   if (iValueLen >= 10 && pszValue[iValueLen - 10] == '!' &&
-      FX_wcsnicmp(L"important", pszValue + iValueLen - 9, 9) == 0) {
+      FXSYS_wcsnicmp(L"important", pszValue + iValueLen - 9, 9) == 0) {
     if ((iValueLen -= 10) == 0) {
       return FALSE;
     }

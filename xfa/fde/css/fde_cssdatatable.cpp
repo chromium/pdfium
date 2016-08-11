@@ -8,7 +8,6 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fgas/crt/fgas_system.h"
 
 namespace {
 
@@ -679,7 +678,7 @@ FX_BOOL FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
                            FDE_CSSPRIMITIVETYPE& eUnit) {
   ASSERT(pszValue && iValueLen > 0);
   int32_t iUsedLen = 0;
-  fValue = FX_wcstof(pszValue, iValueLen, &iUsedLen);
+  fValue = FXSYS_wcstof(pszValue, iValueLen, &iUsedLen);
   if (iUsedLen <= 0)
     return FALSE;
 
@@ -719,7 +718,7 @@ FX_BOOL FDE_ParseCSSURI(const FX_WCHAR* pszValue,
                         int32_t& iLength) {
   ASSERT(pszValue && iValueLen > 0);
   if (iValueLen < 6 || pszValue[iValueLen - 1] != ')' ||
-      FX_wcsnicmp(L"url(", pszValue, 4)) {
+      FXSYS_wcsnicmp(L"url(", pszValue, 4)) {
     return FALSE;
   }
   if (FDE_ParseCSSString(pszValue + 4, iValueLen - 5, iOffset, iLength)) {
@@ -756,7 +755,7 @@ FX_BOOL FDE_ParseCSSColor(const FX_WCHAR* pszValue,
   }
 
   if (iValueLen >= 10) {
-    if (pszValue[iValueLen - 1] != ')' || FX_wcsnicmp(L"rgb(", pszValue, 4))
+    if (pszValue[iValueLen - 1] != ')' || FXSYS_wcsnicmp(L"rgb(", pszValue, 4))
       return FALSE;
 
     uint8_t rgb[3] = {0};
@@ -836,7 +835,7 @@ FX_BOOL CFDE_CSSValueListParser::NextValue(FDE_CSSPRIMITIVETYPE& eType,
     m_pCur++;
     eType = FDE_CSSPRIMITIVETYPE_String;
   } else if (m_pEnd - m_pCur > 5 && m_pCur[3] == '(') {
-    if (FX_wcsnicmp(L"url", m_pCur, 3) == 0) {
+    if (FXSYS_wcsnicmp(L"url", m_pCur, 3) == 0) {
       wch = m_pCur[4];
       if (wch == '\"' || wch == '\'') {
         pStart += 5;
@@ -848,7 +847,7 @@ FX_BOOL CFDE_CSSValueListParser::NextValue(FDE_CSSPRIMITIVETYPE& eType,
         m_pCur++;
       }
       eType = FDE_CSSPRIMITIVETYPE_URI;
-    } else if (FX_wcsnicmp(L"rgb", m_pCur, 3) == 0) {
+    } else if (FXSYS_wcsnicmp(L"rgb", m_pCur, 3) == 0) {
       iLength = SkipTo(')') + 1;
       m_pCur++;
       eType = FDE_CSSPRIMITIVETYPE_RGB;

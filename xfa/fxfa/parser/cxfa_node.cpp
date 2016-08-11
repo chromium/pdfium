@@ -14,7 +14,6 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fgas/crt/fgas_system.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -3701,10 +3700,10 @@ FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
     case XFA_ATTRIBUTETYPE_Boolean:
       return SetBoolean(pAttr->eName, wsValue != FX_WSTRC(L"0"), bNotify);
     case XFA_ATTRIBUTETYPE_Integer:
-      return SetInteger(
-          pAttr->eName,
-          FXSYS_round(FX_wcstof(wsValue.c_str(), wsValue.GetLength(), nullptr)),
-          bNotify);
+      return SetInteger(pAttr->eName,
+                        FXSYS_round(FXSYS_wcstof(wsValue.c_str(),
+                                                 wsValue.GetLength(), nullptr)),
+                        bNotify);
     case XFA_ATTRIBUTETYPE_Measure:
       return SetMeasure(pAttr->eName, CXFA_Measurement(wsValue), bNotify);
     default:

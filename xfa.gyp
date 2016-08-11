@@ -91,8 +91,6 @@
         "xfa/fgas/crt/fgas_memory.h",
         "xfa/fgas/crt/fgas_stream.cpp",
         "xfa/fgas/crt/fgas_stream.h",
-        "xfa/fgas/crt/fgas_system.cpp",
-        "xfa/fgas/crt/fgas_system.h",
         "xfa/fgas/crt/fgas_utils.cpp",
         "xfa/fgas/crt/fgas_utils.h",
         "xfa/fgas/font/fgas_font.h",

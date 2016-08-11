@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
-#include "xfa/fgas/crt/fgas_system.h"
+#include "core/fxcrt/include/fx_ext.h"
 
 CXFA_Measurement::CXFA_Measurement(const CFX_WideStringC& wsMeasure) {
   Set(wsMeasure);
@@ -28,8 +28,8 @@ void CXFA_Measurement::Set(const CFX_WideStringC& wsMeasure) {
   }
   int32_t iUsedLen = 0;
   int32_t iOffset = (wsMeasure.GetAt(0) == L'=') ? 1 : 0;
-  FX_FLOAT fValue = FX_wcstof(wsMeasure.c_str() + iOffset,
-                              wsMeasure.GetLength() - iOffset, &iUsedLen);
+  FX_FLOAT fValue = FXSYS_wcstof(wsMeasure.c_str() + iOffset,
+                                 wsMeasure.GetLength() - iOffset, &iUsedLen);
   XFA_UNIT eUnit = GetUnit(wsMeasure.Mid(iOffset + iUsedLen));
   Set(fValue, eUnit);
 }

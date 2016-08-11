@@ -15,7 +15,6 @@
 #include <memory>
 
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fgas/crt/fgas_system.h"
 
 namespace {
 
