@@ -55,6 +55,15 @@ class CFX_FontMapper {
                              int italic_angle,
                              int weight,
                              int picthfamily);
+  FXFT_Face GetCachedTTCFace(void* hFont,
+                             const uint32_t tableTTCF,
+                             uint32_t ttc_size,
+                             uint32_t font_size);
+  FXFT_Face GetCachedFace(void* hFont,
+                          CFX_ByteString SubstName,
+                          int weight,
+                          FX_BOOL bItalic,
+                          uint32_t font_size);
 
   struct FaceData {
     CFX_ByteString name;
