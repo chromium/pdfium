@@ -296,13 +296,16 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
 
       m_dwSharedObjNumArray.Add(safeObjNum.ValueOrDie());
       if (i == m_nFirstPageSharedObjs) {
-        m_szSharedObjOffsetArray.push_back(
-            pdfium::base::checked_cast<int32_t>(dwFirstSharedObjLoc));
+        FX_SAFE_FILESIZE safeLoc = dwFirstSharedObjLoc;
+        if (!safeLoc.IsValid())
+          return FALSE;
+
+        m_szSharedObjOffsetArray.push_back(safeLoc.ValueOrDie());
       }
     }
 
     if (i != 0 && i != m_nFirstPageSharedObjs) {
-      FX_SAFE_INT32 safeLoc = pdfium::base::checked_cast<int32_t>(dwPrevObjLen);
+      FX_SAFE_FILESIZE safeLoc = dwPrevObjLen;
       safeLoc += m_szSharedObjOffsetArray[i - 1];
       if (!safeLoc.IsValid())
         return FALSE;
@@ -312,7 +315,7 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   }
 
   if (dwSharedObjTotal > 0) {
-    FX_SAFE_INT32 safeLoc = pdfium::base::checked_cast<int32_t>(dwCurObjLen);
+    FX_SAFE_FILESIZE safeLoc = dwCurObjLen;
     safeLoc += m_szSharedObjOffsetArray[dwSharedObjTotal - 1];
     if (!safeLoc.IsValid())
       return FALSE;
