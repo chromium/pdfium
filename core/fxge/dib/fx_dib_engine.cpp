@@ -306,8 +306,8 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
     FX_BOOL bInterpol =
         flags & FXDIB_INTERPOL || flags & FXDIB_BICUBIC_INTERPOL;
     if (!bInterpol && FXSYS_abs(dest_width) != 0 &&
-        FXSYS_abs(dest_height) <
-            m_SrcWidth * m_SrcHeight * 8 / FXSYS_abs(dest_width)) {
+        FXSYS_abs(dest_height) / 8 < static_cast<long long>(m_SrcWidth) *
+                                         m_SrcHeight / FXSYS_abs(dest_width)) {
       flags = FXDIB_INTERPOL;
     }
     m_Flags = flags;

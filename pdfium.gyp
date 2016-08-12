@@ -949,6 +949,7 @@
         'core/fxcrt/fx_bidi_unittest.cpp',
         'core/fxcrt/fx_extension_unittest.cpp',
         'core/fxcrt/fx_system_unittest.cpp',
+        'core/fxge/dib/fx_dib_engine_unittest.cpp',
         'fpdfsdk/fpdfdoc_unittest.cpp',
         'fpdfsdk/fpdfeditimg_unittest.cpp',
         'testing/fx_string_testhelpers.h',
