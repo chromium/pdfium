@@ -925,10 +925,7 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
           gif_image_ptr->image_row_buf + gif_ptr->img_row_offset,
           gif_ptr->img_row_avail_size);
       if (ret == 0) {
-        FX_Free(gif_image_ptr->image_row_buf);
-        gif_image_ptr->image_row_buf = nullptr;
-        gif_save_decoding_status(gif_ptr, GIF_D_STATUS_TAIL);
-        gif_error(gif_ptr, "Decode Image Data Error");
+        gif_decoding_failure_at_tail_cleanup(gif_ptr, gif_image_ptr);
         return 0;
       }
       while (ret != 0) {
@@ -970,6 +967,10 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
             if (gif_image_ptr->image_row_num >=
                 (int32_t)gif_image_ptr->image_info_ptr->height) {
               gif_ptr->img_pass_num++;
+              if (gif_ptr->img_pass_num == FX_ArraySize(s_gif_interlace_step)) {
+                gif_decoding_failure_at_tail_cleanup(gif_ptr, gif_image_ptr);
+                return 0;
+              }
               gif_image_ptr->image_row_num =
                   s_gif_interlace_step[gif_ptr->img_pass_num] / 2;
             }
@@ -984,10 +985,7 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
               gif_ptr->img_row_avail_size);
         }
         if (ret == 0) {
-          FX_Free(gif_image_ptr->image_row_buf);
-          gif_image_ptr->image_row_buf = nullptr;
-          gif_save_decoding_status(gif_ptr, GIF_D_STATUS_TAIL);
-          gif_error(gif_ptr, "Decode Image Data Error");
+          gif_decoding_failure_at_tail_cleanup(gif_ptr, gif_image_ptr);
           return 0;
         }
       }
@@ -996,6 +994,13 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
   }
   gif_error(gif_ptr, "Decode Image Data Error");
   return 0;
+}
+void gif_decoding_failure_at_tail_cleanup(gif_decompress_struct_p gif_ptr,
+                                          GifImage* gif_image_ptr) {
+  FX_Free(gif_image_ptr->image_row_buf);
+  gif_image_ptr->image_row_buf = nullptr;
+  gif_save_decoding_status(gif_ptr, GIF_D_STATUS_TAIL);
+  gif_error(gif_ptr, "Decode Image Data Error");
 }
 void gif_save_decoding_status(gif_decompress_struct_p gif_ptr, int32_t status) {
   gif_ptr->decode_status = status;
