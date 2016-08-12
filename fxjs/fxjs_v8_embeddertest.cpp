@@ -26,7 +26,8 @@ class FXJSV8EmbedderTest : public JSEmbedderTest {
   }
   void CheckAssignmentInCurrentContext(double expected) {
     v8::Local<v8::Object> This = FXJS_GetThisObj(isolate());
-    v8::Local<v8::Value> fred = FXJS_GetObjectElement(isolate(), This, L"fred");
+    v8::Local<v8::Value> fred =
+        FXJS_GetObjectProperty(isolate(), This, L"fred");
     EXPECT_TRUE(fred->IsNumber());
     EXPECT_EQ(expected, fred->ToNumber(isolate()->GetCurrentContext())
                             .ToLocalChecked()

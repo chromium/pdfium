@@ -211,16 +211,19 @@ void FXJS_Error(v8::Isolate* isolate, const CFX_WideString& message);
 
 v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,
                                         const CFX_WideString& wsPropertyName);
-v8::Local<v8::Value> FXJS_GetObjectElement(v8::Isolate* pIsolate,
-                                           v8::Local<v8::Object> pObj,
-                                           const CFX_WideString& PropertyName);
-v8::Local<v8::Array> FXJS_GetObjectElementNames(v8::Isolate* pIsolate,
-                                                v8::Local<v8::Object> pObj);
+
+std::vector<CFX_WideString> FXJS_GetObjectPropertyNames(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj);
+v8::Local<v8::Value> FXJS_GetObjectProperty(v8::Isolate* pIsolate,
+                                            v8::Local<v8::Object> pObj,
+                                            const CFX_WideString& PropertyName);
+
+unsigned FXJS_GetArrayLength(v8::Local<v8::Array> pArray);
 v8::Local<v8::Value> FXJS_GetArrayElement(v8::Isolate* pIsolate,
                                           v8::Local<v8::Array> pArray,
                                           unsigned index);
 
-unsigned FXJS_GetArrayLength(v8::Local<v8::Array> pArray);
 void FXJS_PutObjectString(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
                           const CFX_WideString& wsPropertyName,

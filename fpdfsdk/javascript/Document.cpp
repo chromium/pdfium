@@ -615,17 +615,17 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   } else if (v.GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object(pIsolate);
     v8::Local<v8::Value> pValue =
-        FXJS_GetObjectElement(pIsolate, pObj, L"cURL");
+        FXJS_GetObjectProperty(pIsolate, pObj, L"cURL");
     if (!pValue.IsEmpty())
       strURL = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"bFDF");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"bFDF");
     bFDF = CJS_Value(pRuntime, pValue).ToBool(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"bEmpty");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"bEmpty");
     bEmpty = CJS_Value(pRuntime, pValue).ToBool(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"aFields");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"aFields");
     aFields.Attach(CJS_Value(pRuntime, pValue).ToV8Array(pIsolate));
   }
 
@@ -712,22 +712,23 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   if (params.size() >= 1 && params[0].GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object(pIsolate);
 
-    v8::Local<v8::Value> pValue = FXJS_GetObjectElement(pIsolate, pObj, L"bUI");
+    v8::Local<v8::Value> pValue =
+        FXJS_GetObjectProperty(pIsolate, pObj, L"bUI");
     bUI = CJS_Value(pRuntime, pValue).ToInt(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"cTo");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cTo");
     cTo = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"cCc");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cCc");
     cCc = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"cBcc");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cBcc");
     cBcc = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"cSubject");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cSubject");
     cSubject = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
 
-    pValue = FXJS_GetObjectElement(pIsolate, pObj, L"cMsg");
+    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cMsg");
     cMsg = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
   }
 

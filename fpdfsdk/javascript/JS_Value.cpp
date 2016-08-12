@@ -771,7 +771,7 @@ std::vector<CJS_Value> JS_ExpandKeywordParams(
   for (size_t i = 0; i < nKeywords; ++i) {
     const wchar_t* property = va_arg(ap, const wchar_t*);
     v8::Local<v8::Value> v8Value =
-        FXJS_GetObjectElement(pRuntime->GetIsolate(), pObj, property);
+        FXJS_GetObjectProperty(pRuntime->GetIsolate(), pObj, property);
     if (!v8Value->IsUndefined())
       result[i] = CJS_Value(pRuntime, v8Value);
   }

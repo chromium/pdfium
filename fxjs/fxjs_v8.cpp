@@ -596,7 +596,7 @@ v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,
       .ToLocalChecked();
 }
 
-v8::Local<v8::Value> FXJS_GetObjectElement(
+v8::Local<v8::Value> FXJS_GetObjectProperty(
     v8::Isolate* pIsolate,
     v8::Local<v8::Object> pObj,
     const CFX_WideString& wsPropertyName) {
@@ -610,14 +610,23 @@ v8::Local<v8::Value> FXJS_GetObjectElement(
   return val;
 }
 
-v8::Local<v8::Array> FXJS_GetObjectElementNames(v8::Isolate* pIsolate,
-                                                v8::Local<v8::Object> pObj) {
+std::vector<CFX_WideString> FXJS_GetObjectPropertyNames(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
-    return v8::Local<v8::Array>();
+    return std::vector<CFX_WideString>();
+
   v8::Local<v8::Array> val;
   if (!pObj->GetPropertyNames(pIsolate->GetCurrentContext()).ToLocal(&val))
-    return v8::Local<v8::Array>();
-  return val;
+    return std::vector<CFX_WideString>();
+
+  std::vector<CFX_WideString> result;
+  for (uint32_t i = 0; i < val->Length(); ++i) {
+    result.push_back(FXJS_ToString(
+        pIsolate, val->Get(pIsolate->GetCurrentContext(), i).ToLocalChecked()));
+  }
+
+  return result;
 }
 
 void FXJS_PutObjectString(v8::Isolate* pIsolate,

@@ -273,13 +273,11 @@ void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
                                       CJS_GlobalVariableArray& array) {
   v8::Isolate* isolate = pObj->GetIsolate();
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  v8::Local<v8::Array> pKeyList = FXJS_GetObjectElementNames(isolate, pObj);
-  int nObjElements = pKeyList->Length();
-  for (int i = 0; i < nObjElements; i++) {
-    CFX_WideString ws =
-        FXJS_ToString(isolate, FXJS_GetArrayElement(isolate, pKeyList, i));
+  std::vector<CFX_WideString> pKeyList =
+      FXJS_GetObjectPropertyNames(isolate, pObj);
+  for (const auto& ws : pKeyList) {
     CFX_ByteString sKey = ws.UTF8Encode();
-    v8::Local<v8::Value> v = FXJS_GetObjectElement(isolate, pObj, ws);
+    v8::Local<v8::Value> v = FXJS_GetObjectProperty(isolate, pObj, ws);
     switch (CJS_Value::GetValueType(v)) {
       case CJS_Value::VT_number: {
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
