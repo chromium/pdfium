@@ -31,17 +31,15 @@ class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
 
 const size_t kLinuxGpNameSize = 6;
 
-const struct {
-  const FX_CHAR* NameArr[kLinuxGpNameSize];
-} g_LinuxGpFontList[] = {
-    {{"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic", "Kochi Gothic",
-      "VL Gothic regular"}},
-    {{"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic", nullptr,
-      "VL Gothic regular"}},
-    {{"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho", nullptr,
-      "VL Gothic regular"}},
-    {{"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho", nullptr,
-      "VL Gothic regular"}},
+const FX_CHAR* const g_LinuxGpFontList[][kLinuxGpNameSize] = {
+    {"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic", "Kochi Gothic",
+     "VL Gothic regular"},
+    {"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic", nullptr,
+     "VL Gothic regular"},
+    {"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho", nullptr,
+     "VL Gothic regular"},
+    {"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho", nullptr,
+     "VL Gothic regular"},
 };
 
 const FX_CHAR* const g_LinuxGbFontList[] = {
@@ -100,7 +98,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       size_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
       ASSERT(index < FX_ArraySize(g_LinuxGpFontList));
       for (size_t i = 0; i < kLinuxGpNameSize; i++) {
-        auto it = m_FontList.find(g_LinuxGpFontList[index].NameArr[i]);
+        auto it = m_FontList.find(g_LinuxGpFontList[index][i]);
         if (it != m_FontList.end()) {
           return it->second;
         }
