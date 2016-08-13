@@ -109,6 +109,12 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // Item 13: Skip Item 13 which has 16 bits.
   hStream->SkipBits(16);
 
+  // The maximum number of bits allowed to represent the greatest number of
+  // shared object references. 2^39 should be more than enough.
+  constexpr uint32_t kMaxSharedObjBits = 39;
+  if (dwSharedObjBits > kMaxSharedObjBits)
+    return FALSE;
+
   CPDF_Object* pPageNum = m_pLinearizedDict->GetDirectObjectBy("N");
   int nPages = pPageNum ? pPageNum->GetInteger() : 0;
   if (nPages < 1)
