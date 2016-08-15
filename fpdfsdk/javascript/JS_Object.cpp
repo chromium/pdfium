@@ -145,16 +145,25 @@ void CJS_Timer::KillJSTimer() {
 
 // static
 void CJS_Timer::TimerProc(int idEvent) {
-  const auto it = GetGlobalTimerMap()->find(idEvent);
-  if (it != GetGlobalTimerMap()->end()) {
-    CJS_Timer* pTimer = it->second;
-    if (!pTimer->m_bProcessing) {
-      CFX_AutoRestorer<bool> scoped_processing(&pTimer->m_bProcessing);
-      pTimer->m_bProcessing = true;
-      if (pTimer->m_pEmbedObj)
-        pTimer->m_pEmbedObj->TimerProc(pTimer);
-    }
-  }
+  auto it = GetGlobalTimerMap()->find(idEvent);
+  if (it == GetGlobalTimerMap()->end())
+    return;
+
+  CJS_Timer* pTimer = it->second;
+  if (pTimer->m_bProcessing)
+    return;
+
+  pTimer->m_bProcessing = true;
+  if (pTimer->m_pEmbedObj)
+    pTimer->m_pEmbedObj->TimerProc(pTimer);
+
+  // Timer proc may have destroyed timer, find it again.
+  it = GetGlobalTimerMap()->find(idEvent);
+  if (it == GetGlobalTimerMap()->end())
+    return;
+
+  pTimer = it->second;
+  pTimer->m_bProcessing = false;
 }
 
 // static
