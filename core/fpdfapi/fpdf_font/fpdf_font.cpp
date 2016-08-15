@@ -19,13 +19,15 @@
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxge/include/fx_freetype.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/stl_util.h"
 
 int TT2PDF(int m, FXFT_Face face) {
   int upm = FXFT_Get_Face_UnitsPerEM(face);
   if (upm == 0)
     return m;
-  return (m * 1000 + upm / 2) / upm;
+  return pdfium::base::checked_cast<int>(
+      (static_cast<double>(m) * 1000 + upm / 2) / upm);
 }
 
 bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
