@@ -54,12 +54,9 @@ enum FX_DATETIMETYPE {
 
 class IFX_Locale {
  public:
-
   virtual ~IFX_Locale() {}
-  virtual void Release() = 0;
 
-  virtual CFX_WideString GetName() = 0;
-
+  virtual CFX_WideString GetName() const = 0;
   virtual void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
                                  CFX_WideString& wsNumSymbol) const = 0;
   virtual void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const = 0;
@@ -85,11 +82,13 @@ class IFX_Locale {
 class IFX_LocaleMgr {
  public:
   virtual ~IFX_LocaleMgr() {}
-  virtual void Release() = 0;
-  virtual uint16_t GetDefLocaleID() = 0;
+
+  virtual uint16_t GetDefLocaleID() const = 0;
   virtual IFX_Locale* GetDefLocale() = 0;
-  virtual IFX_Locale* GetLocale(uint16_t lcid) = 0;
   virtual IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) = 0;
+
+ protected:
+  virtual std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid) = 0;
 };
 
 FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,

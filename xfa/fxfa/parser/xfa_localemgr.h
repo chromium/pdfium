@@ -7,6 +7,9 @@
 #ifndef XFA_FXFA_PARSER_XFA_LOCALEMGR_H_
 #define XFA_FXFA_PARSER_XFA_LOCALEMGR_H_
 
+#include <memory>
+#include <vector>
+
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fgas/localization/fgas_locale.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -36,19 +39,19 @@ class CXFA_LocaleMgr : public IFX_LocaleMgr {
   ~CXFA_LocaleMgr() override;
 
   // IFX_LocaleMgr
-  void Release() override;
-  uint16_t GetDefLocaleID() override;
+  uint16_t GetDefLocaleID() const override;
   IFX_Locale* GetDefLocale() override;
-  IFX_Locale* GetLocale(uint16_t lcid) override;
   IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) override;
 
   void SetDefLocale(IFX_Locale* pLocale);
   CFX_WideStringC GetConfigLocaleName(CXFA_Node* pConfig);
 
  protected:
-  CFX_ArrayTemplate<IFX_Locale*> m_LocaleArray;
-  CFX_ArrayTemplate<IFX_Locale*> m_XMLLocaleArray;
-  IFX_Locale* m_pDefLocale;
+  std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid) override;
+
+  std::vector<std::unique_ptr<IFX_Locale>> m_LocaleArray;
+  std::vector<std::unique_ptr<IFX_Locale>> m_XMLLocaleArray;
+  IFX_Locale* m_pDefLocale;  // owned by m_LocaleArray or m_XMLLocaleArray.
   CFX_WideString m_wsConfigLocale;
   uint16_t m_dwDeflcid;
   uint16_t m_dwLocaleFlags;

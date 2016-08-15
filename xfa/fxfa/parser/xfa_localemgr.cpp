@@ -1033,19 +1033,18 @@ const uint8_t g_ruRU_Locale[] = {
     0xB3, 0x85, 0xFA, 0x59, 0x2A, 0x7A, 0xFF, 0x3D, 0xC4, 0x3F, 0xDE, 0xCB,
     0x8B, 0xC4};
 
-// TODO(weili): Change this function to return std::unique_ptr type.
-static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen) {
-  if (!pBuf || nBufLen <= 0) {
+static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
+                                                           int nBufLen) {
+  if (!pBuf || nBufLen <= 0)
     return nullptr;
-  }
   CFX_GEModule* pGeModule = CFX_GEModule::Get();
-  if (!pGeModule) {
+  if (!pGeModule)
     return nullptr;
-  }
+
   CCodec_ModuleMgr* pCodecMgr = pGeModule->GetCodecModule();
-  if (!pCodecMgr) {
+  if (!pCodecMgr)
     return nullptr;
-  }
+
   std::unique_ptr<CXML_Element> pLocale;
   uint8_t* pOut = nullptr;
   uint32_t dwSize;
@@ -1055,7 +1054,9 @@ static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen) {
     pLocale.reset(CXML_Element::Parse(pOut, dwSize));
     FX_Free(pOut);
   }
-  return pLocale ? new CXFA_XMLLocale(std::move(pLocale)) : nullptr;
+  return pLocale ? std::unique_ptr<IFX_Locale>(
+                       new CXFA_XMLLocale(std::move(pLocale)))
+                 : nullptr;
 }
 
 static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
@@ -1119,29 +1120,23 @@ static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
   }
   return dwLangueID;
 }
+
 CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
     : m_dwLocaleFlags(0x00) {
   m_dwDeflcid = XFA_GetLanguage(wsDeflcid);
   if (pLocaleSet) {
     CXFA_Node* pNodeLocale = pLocaleSet->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pNodeLocale) {
-      m_LocaleArray.Add(new CXFA_NodeLocale(pNodeLocale));
+      m_LocaleArray.emplace_back(new CXFA_NodeLocale(pNodeLocale));
       pNodeLocale = pNodeLocale->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
   }
   m_pDefLocale = GetLocaleByName(wsDeflcid);
 }
-CXFA_LocaleMgr::~CXFA_LocaleMgr() {
-  for (int32_t i = 0; i < m_LocaleArray.GetSize(); i++)
-    m_LocaleArray[i]->Release();
 
-  for (int32_t j = 0; j < m_XMLLocaleArray.GetSize(); j++)
-    m_XMLLocaleArray[j]->Release();
-}
-void CXFA_LocaleMgr::Release() {
-  delete this;
-}
-uint16_t CXFA_LocaleMgr::GetDefLocaleID() {
+CXFA_LocaleMgr::~CXFA_LocaleMgr() {}
+
+uint16_t CXFA_LocaleMgr::GetDefLocaleID() const {
   return m_dwDeflcid;
 }
 
@@ -1149,101 +1144,82 @@ IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
   if (m_pDefLocale)
     return m_pDefLocale;
 
-  if (m_LocaleArray.GetSize())
-    return m_LocaleArray[0];
+  if (!m_LocaleArray.empty())
+    return m_LocaleArray[0].get();
 
-  if (m_XMLLocaleArray.GetSize())
-    return m_XMLLocaleArray[0];
+  if (!m_XMLLocaleArray.empty())
+    return m_XMLLocaleArray[0].get();
 
-  m_pDefLocale = GetLocale(m_dwDeflcid);
-  if (m_pDefLocale)
-    m_XMLLocaleArray.Add(m_pDefLocale);
+  std::unique_ptr<IFX_Locale> locale(GetLocale(m_dwDeflcid));
+  m_pDefLocale = locale.get();
+  if (locale)
+    m_XMLLocaleArray.push_back(std::move(locale));
 
   return m_pDefLocale;
 }
 
-IFX_Locale* CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
-  IFX_Locale* pLocal = nullptr;
+std::unique_ptr<IFX_Locale> CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   switch (lcid) {
     case XFA_LANGID_zh_CN:
-      pLocal = XFA_GetLocaleFromBuffer(g_zhCN_Locale, sizeof(g_zhCN_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_zhCN_Locale, sizeof(g_zhCN_Locale));
     case XFA_LANGID_zh_TW:
-      pLocal = XFA_GetLocaleFromBuffer(g_zhTW_Locale, sizeof(g_zhTW_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_zhTW_Locale, sizeof(g_zhTW_Locale));
     case XFA_LANGID_zh_HK:
-      pLocal = XFA_GetLocaleFromBuffer(g_zhHK_Locale, sizeof(g_zhHK_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_zhHK_Locale, sizeof(g_zhHK_Locale));
     case XFA_LANGID_ja_JP:
-      pLocal = XFA_GetLocaleFromBuffer(g_jaJP_Locale, sizeof(g_jaJP_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_jaJP_Locale, sizeof(g_jaJP_Locale));
     case XFA_LANGID_ko_KR:
-      pLocal = XFA_GetLocaleFromBuffer(g_koKR_Locale, sizeof(g_koKR_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_koKR_Locale, sizeof(g_koKR_Locale));
     case XFA_LANGID_en_GB:
-      pLocal = XFA_GetLocaleFromBuffer(g_enGB_Locale, sizeof(g_enGB_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_enGB_Locale, sizeof(g_enGB_Locale));
     case XFA_LANGID_es_LA:
-      pLocal = XFA_GetLocaleFromBuffer(g_esLA_Locale, sizeof(g_esLA_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_esLA_Locale, sizeof(g_esLA_Locale));
     case XFA_LANGID_es_ES:
-      pLocal = XFA_GetLocaleFromBuffer(g_esES_Locale, sizeof(g_esES_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_esES_Locale, sizeof(g_esES_Locale));
     case XFA_LANGID_de_DE:
-      pLocal = XFA_GetLocaleFromBuffer(g_deDE_Loacale, sizeof(g_deDE_Loacale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_deDE_Loacale, sizeof(g_deDE_Loacale));
     case XFA_LANGID_fr_FR:
-      pLocal = XFA_GetLocaleFromBuffer(g_frFR_Locale, sizeof(g_frFR_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_frFR_Locale, sizeof(g_frFR_Locale));
     case XFA_LANGID_it_IT:
-      pLocal = XFA_GetLocaleFromBuffer(g_itIT_Locale, sizeof(g_itIT_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_itIT_Locale, sizeof(g_itIT_Locale));
     case XFA_LANGID_pt_BR:
-      pLocal = XFA_GetLocaleFromBuffer(g_ptBR_Locale, sizeof(g_ptBR_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_ptBR_Locale, sizeof(g_ptBR_Locale));
     case XFA_LANGID_nl_NL:
-      pLocal = XFA_GetLocaleFromBuffer(g_nlNL_Locale, sizeof(g_nlNL_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_nlNL_Locale, sizeof(g_nlNL_Locale));
     case XFA_LANGID_ru_RU:
-      pLocal = XFA_GetLocaleFromBuffer(g_ruRU_Locale, sizeof(g_ruRU_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_ruRU_Locale, sizeof(g_ruRU_Locale));
     case XFA_LANGID_en_US:
     default:
-      pLocal = XFA_GetLocaleFromBuffer(g_enUS_Locale, sizeof(g_enUS_Locale));
-      break;
+      return XFA_GetLocaleFromBuffer(g_enUS_Locale, sizeof(g_enUS_Locale));
   }
-  return pLocal;
 }
+
 IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
     const CFX_WideString& wsLocaleName) {
-  int32_t iCount = m_LocaleArray.GetSize();
-  int32_t i = 0;
-  for (i = 0; i < iCount; i++) {
-    IFX_Locale* pLocale = m_LocaleArray[i];
-    if (pLocale->GetName() == wsLocaleName) {
+  for (size_t i = 0; i < m_LocaleArray.size(); i++) {
+    IFX_Locale* pLocale = m_LocaleArray[i].get();
+    if (pLocale->GetName() == wsLocaleName)
       return pLocale;
-    }
   }
-  int32_t iLen = wsLocaleName.GetLength();
-  if (iLen < 2) {
+  if (wsLocaleName.GetLength() < 2)
     return nullptr;
-  }
-  iCount = m_XMLLocaleArray.GetSize();
-  for (i = 0; i < iCount; i++) {
-    IFX_Locale* pLocale = m_XMLLocaleArray[i];
-    if (pLocale->GetName() == wsLocaleName) {
+  for (size_t i = 0; i < m_XMLLocaleArray.size(); i++) {
+    IFX_Locale* pLocale = m_XMLLocaleArray[i].get();
+    if (pLocale->GetName() == wsLocaleName)
       return pLocale;
-    }
   }
   uint16_t dwLangueID = XFA_GetLanguage(wsLocaleName);
-  IFX_Locale* pLocale = GetLocale(dwLangueID);
+  std::unique_ptr<IFX_Locale> pLocale(GetLocale(dwLangueID));
+  IFX_Locale* pRetLocale = pLocale.get();
   if (pLocale)
-    m_XMLLocaleArray.Add(pLocale);
-  return pLocale;
+    m_XMLLocaleArray.push_back(std::move(pLocale));
+  return pRetLocale;
 }
+
 void CXFA_LocaleMgr::SetDefLocale(IFX_Locale* pLocale) {
   m_pDefLocale = pLocale;
 }
+
 CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
   if (!(m_dwLocaleFlags & 0x01)) {
     m_wsConfigLocale.clear();
@@ -1268,6 +1244,7 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
   }
   return m_wsConfigLocale.AsStringC();
 }
+
 static CXFA_TimeZoneProvider* g_pProvider = nullptr;
 
 // Static.
@@ -1303,10 +1280,13 @@ CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
   m_tz.tzMinute = (int8_t)((FXSYS_abs((int)timezone) % 3600) / 60);
 #endif
 }
+
 CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() {}
+
 void CXFA_TimeZoneProvider::SetTimeZone(FX_TIMEZONE& tz) {
   m_tz = tz;
 }
+
 void CXFA_TimeZoneProvider::GetTimeZone(FX_TIMEZONE& tz) {
   tz = m_tz;
 }

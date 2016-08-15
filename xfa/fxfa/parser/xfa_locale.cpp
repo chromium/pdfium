@@ -24,11 +24,7 @@ CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData)
 
 CXFA_XMLLocale::~CXFA_XMLLocale() {}
 
-void CXFA_XMLLocale::Release() {
-  delete this;
-}
-
-CFX_WideString CXFA_XMLLocale::GetName() {
+CFX_WideString CXFA_XMLLocale::GetName() const {
   return m_pLocaleData ? m_pLocaleData->GetAttrValue("name") : CFX_WideString();
 }
 
@@ -232,11 +228,7 @@ CXFA_NodeLocale::CXFA_NodeLocale(CXFA_Node* pLocale) : m_pLocale(pLocale) {}
 
 CXFA_NodeLocale::~CXFA_NodeLocale() {}
 
-void CXFA_NodeLocale::Release() {
-  delete this;
-}
-
-CFX_WideString CXFA_NodeLocale::GetName() {
+CFX_WideString CXFA_NodeLocale::GetName() const {
   return CFX_WideString(m_pLocale ? m_pLocale->GetCData(XFA_ATTRIBUTE_Name)
                                   : nullptr);
 }

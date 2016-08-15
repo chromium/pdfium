@@ -15,10 +15,10 @@
 class CXFA_XMLLocale : public IFX_Locale {
  public:
   explicit CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData);
+  ~CXFA_XMLLocale() override;
 
   // IFX_Locale
-  void Release() override;
-  CFX_WideString GetName() override;
+  CFX_WideString GetName() const override;
   void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
                          CFX_WideString& wsNumSymbol) const override;
 
@@ -42,8 +42,6 @@ class CXFA_XMLLocale : public IFX_Locale {
                      CFX_WideString& wsPattern) const override;
 
  protected:
-  ~CXFA_XMLLocale() override;
-
   void GetPattern(CXML_Element* pElement,
                   const CFX_ByteStringC& bsTag,
                   const CFX_WideStringC& wsName,
@@ -59,10 +57,10 @@ class CXFA_XMLLocale : public IFX_Locale {
 class CXFA_NodeLocale : public IFX_Locale {
  public:
   CXFA_NodeLocale(CXFA_Node* pLocale);
+  ~CXFA_NodeLocale() override;
 
   // IFX_Locale
-  void Release() override;
-  CFX_WideString GetName() override;
+  CFX_WideString GetName() const override;
   void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
                          CFX_WideString& wsNumSymbol) const override;
 
@@ -86,8 +84,6 @@ class CXFA_NodeLocale : public IFX_Locale {
                      CFX_WideString& wsPattern) const override;
 
  protected:
-  ~CXFA_NodeLocale() override;
-
   CXFA_Node* GetNodeByName(CXFA_Node* pParent,
                            const CFX_WideStringC& wsName) const;
   CFX_WideString GetSymbol(XFA_Element eElement,
