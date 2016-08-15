@@ -22,25 +22,32 @@ class CPDF_HintTables {
   CPDF_HintTables(CPDF_DataAvail* pDataAvail, CPDF_Dictionary* pLinearized);
   ~CPDF_HintTables();
 
-  FX_BOOL GetPagePos(int index,
-                     FX_FILESIZE& szPageStartPos,
-                     FX_FILESIZE& szPageLength,
-                     uint32_t& dwObjNum);
+  bool GetPagePos(int index,
+                  FX_FILESIZE* szPageStartPos,
+                  FX_FILESIZE* szPageLength,
+                  uint32_t* dwObjNum);
 
   CPDF_DataAvail::DocAvailStatus CheckPage(
       int index,
       CPDF_DataAvail::DownloadHints* pHints);
 
-  FX_BOOL LoadHintStream(CPDF_Stream* pHintStream);
+  bool LoadHintStream(CPDF_Stream* pHintStream);
 
  protected:
-  FX_BOOL ReadPageHintTable(CFX_BitStream* hStream);
-  FX_BOOL ReadSharedObjHintTable(CFX_BitStream* hStream, uint32_t offset);
+  bool ReadPageHintTable(CFX_BitStream* hStream);
+  bool ReadSharedObjHintTable(CFX_BitStream* hStream, uint32_t offset);
   uint32_t GetItemLength(int index, const std::vector<FX_FILESIZE>& szArray);
 
  private:
+  int GetEndOfFirstPageOffset() const;
+  int GetNumberOfPages() const;
+  int GetFirstPageObjectNumber() const;
+  int GetFirstPageNumber() const;
   int ReadPrimaryHintStreamOffset() const;
   int ReadPrimaryHintStreamLength() const;
+
+  // Helper for the ReadPrimaryHintStream methods above.
+  int ReadPrimaryHintStream(int index) const;
 
   // Owner, outlives this object.
   CPDF_DataAvail* const m_pDataAvail;
@@ -50,10 +57,10 @@ class CPDF_HintTables {
 
   uint32_t m_nFirstPageSharedObjs;
   FX_FILESIZE m_szFirstPageObjOffset;
-  CFX_ArrayTemplate<uint32_t> m_dwDeltaNObjsArray;
-  CFX_ArrayTemplate<uint32_t> m_dwNSharedObjsArray;
-  CFX_ArrayTemplate<uint32_t> m_dwSharedObjNumArray;
-  CFX_ArrayTemplate<uint32_t> m_dwIdentifierArray;
+  std::vector<uint32_t> m_dwDeltaNObjsArray;
+  std::vector<uint32_t> m_dwNSharedObjsArray;
+  std::vector<uint32_t> m_dwSharedObjNumArray;
+  std::vector<uint32_t> m_dwIdentifierArray;
   std::vector<FX_FILESIZE> m_szPageOffsetArray;
   std::vector<FX_FILESIZE> m_szSharedObjOffsetArray;
 };

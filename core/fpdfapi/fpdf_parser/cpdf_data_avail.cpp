@@ -7,6 +7,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
 
 #include <algorithm>
+#include <memory>
+#include <utility>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
@@ -1776,8 +1778,8 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
       FX_FILESIZE szPageStartPos = 0;
       FX_FILESIZE szPageLength = 0;
       uint32_t dwObjNum = 0;
-      FX_BOOL bPagePosGot = m_pHintTables->GetPagePos(index, szPageStartPos,
-                                                      szPageLength, dwObjNum);
+      bool bPagePosGot = m_pHintTables->GetPagePos(index, &szPageStartPos,
+                                                   &szPageLength, &dwObjNum);
       if (!bPagePosGot)
         return nullptr;
 
