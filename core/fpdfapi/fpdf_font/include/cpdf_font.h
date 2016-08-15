@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONT_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -103,14 +104,14 @@ class CPDF_Font {
   void LoadUnicodeMap() const;  // logically const only.
   void LoadPDFEncoding(CPDF_Object* pEncoding,
                        int& iBaseEncoding,
-                       CFX_ByteString*& pCharNames,
+                       std::vector<CFX_ByteString>* pCharNames,
                        FX_BOOL bEmbedded,
                        FX_BOOL bTrueType);
   void LoadFontDescriptor(CPDF_Dictionary* pDict);
   void CheckFontMetrics();
 
   const FX_CHAR* GetAdobeCharName(int iBaseEncoding,
-                                  const CFX_ByteString* pCharNames,
+                                  const std::vector<CFX_ByteString>& charnames,
                                   int charcode);
 
   CFX_ByteString m_BaseFont;

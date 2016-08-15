@@ -18,10 +18,10 @@ class CPDF_CMap;
 class CPDF_Font;
 class CPDF_Stream;
 
-typedef void* FXFT_Library;
+using FXFT_Library = void*;
 
-short TT2PDF(int m, FXFT_Face face);
-FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
+int16_t TT2PDF(int m, FXFT_Face face);
+bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
 CIDSet CharsetFromOrdering(const CFX_ByteStringC& ordering);
 
 class CPDF_CMapManager {

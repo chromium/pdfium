@@ -7,6 +7,7 @@
 #include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "core/fpdfapi/fpdf_cmaps/cmap_int.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
@@ -627,15 +628,16 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         return charcode ? static_cast<int>(charcode) : -1;
 
       charcode += 31;
-      FX_BOOL bMSUnicode = FT_UseTTCharmap(face, 3, 1);
-      FX_BOOL bMacRoman = bMSUnicode ? FALSE : FT_UseTTCharmap(face, 1, 0);
+      bool bMSUnicode = FT_UseTTCharmap(face, 3, 1);
+      bool bMacRoman = !bMSUnicode && FT_UseTTCharmap(face, 1, 0);
       int iBaseEncoding = PDFFONT_ENCODING_STANDARD;
       if (bMSUnicode) {
         iBaseEncoding = PDFFONT_ENCODING_WINANSI;
       } else if (bMacRoman) {
         iBaseEncoding = PDFFONT_ENCODING_MACROMAN;
       }
-      const FX_CHAR* name = GetAdobeCharName(iBaseEncoding, nullptr, charcode);
+      const FX_CHAR* name = GetAdobeCharName(
+          iBaseEncoding, std::vector<CFX_ByteString>(), charcode);
       if (!name)
         return charcode ? static_cast<int>(charcode) : -1;
 

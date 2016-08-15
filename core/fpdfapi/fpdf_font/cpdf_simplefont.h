@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_SIMPLEFONT_H_
 #define CORE_FPDFAPI_FPDF_FONT_CPDF_SIMPLEFONT_H_
 
+#include <vector>
+
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 #include "core/fxcrt/include/fx_string.h"
@@ -37,7 +39,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   CPDF_FontEncoding m_Encoding;
   uint16_t m_GlyphIndex[256];
   uint16_t m_ExtGID[256];
-  CFX_ByteString* m_pCharNames;
+  std::vector<CFX_ByteString> m_CharNames;
   int m_BaseEncoding;
   uint16_t m_CharWidth[256];
   FX_SMALL_RECT m_CharBBox[256];

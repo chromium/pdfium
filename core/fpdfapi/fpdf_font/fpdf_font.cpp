@@ -21,17 +21,23 @@
 #include "core/fxge/include/fx_freetype.h"
 #include "third_party/base/stl_util.h"
 
-FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
+int16_t TT2PDF(int m, FXFT_Face face) {
+  int upm = FXFT_Get_Face_UnitsPerEM(face);
+  if (upm == 0)
+    return static_cast<int16_t>(m);
+  return (m * 1000 + upm / 2) / upm;
+}
+
+bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
+  auto* pCharMap = FXFT_Get_Face_Charmaps(face);
   for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
-    if (FXFT_Get_Charmap_PlatformID(FXFT_Get_Face_Charmaps(face)[i]) ==
-            platform_id &&
-        FXFT_Get_Charmap_EncodingID(FXFT_Get_Face_Charmaps(face)[i]) ==
-            encoding_id) {
-      FXFT_Set_Charmap(face, FXFT_Get_Face_Charmaps(face)[i]);
-      return TRUE;
+    if (FXFT_Get_Charmap_PlatformID(pCharMap[i]) == platform_id &&
+        FXFT_Get_Charmap_EncodingID(pCharMap[i]) == encoding_id) {
+      FXFT_Set_Charmap(face, pCharMap[i]);
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 CFX_StockFontArray::CFX_StockFontArray() {}
@@ -82,15 +88,6 @@ void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
 
 void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {
   m_StockMap.erase(pDoc);
-}
-
-
-
-short TT2PDF(int m, FXFT_Face face) {
-  int upm = FXFT_Get_Face_UnitsPerEM(face);
-  if (upm == 0)
-    return (short)m;
-  return (m * 1000 + upm / 2) / upm;
 }
 
 CFX_WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {

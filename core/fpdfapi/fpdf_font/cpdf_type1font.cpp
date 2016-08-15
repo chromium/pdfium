@@ -173,10 +173,10 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
     for (int charcode = 0; charcode < 256; charcode++) {
       const FX_CHAR* name =
-          GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
-      if (!name) {
+          GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
+      if (!name)
         continue;
-      }
+
       m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
       m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
           m_Font.GetFace(), m_Encoding.m_Unicodes[charcode]);
@@ -225,7 +225,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     if (m_Flags & PDFFONT_SYMBOLIC) {
       for (int charcode = 0; charcode < 256; charcode++) {
         const FX_CHAR* name =
-            GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
+            GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
         if (name) {
           m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
           m_GlyphIndex[charcode] =
@@ -273,7 +273,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
     for (int charcode = 0; charcode < 256; charcode++) {
       const FX_CHAR* name =
-          GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
+          GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
       if (!name) {
         continue;
       }
@@ -331,11 +331,11 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
     return;
   }
-#endif
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (m_Flags & PDFFONT_SYMBOLIC) {
     for (int charcode = 0; charcode < 256; charcode++) {
       const FX_CHAR* name =
-          GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
+          GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
       if (name) {
         m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
         m_GlyphIndex[charcode] =
@@ -373,7 +373,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   }
   for (int charcode = 0; charcode < 256; charcode++) {
     const FX_CHAR* name =
-        GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
+        GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
     if (!name) {
       continue;
     }

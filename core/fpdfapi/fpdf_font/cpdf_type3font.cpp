@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
 
+#include <utility>
+
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
@@ -67,11 +69,11 @@ FX_BOOL CPDF_Type3Font::Load() {
   m_pCharProcs = m_pFontDict->GetDictBy("CharProcs");
   CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
   if (pEncoding) {
-    LoadPDFEncoding(pEncoding, m_BaseEncoding, m_pCharNames, FALSE, FALSE);
-    if (m_pCharNames) {
+    LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, FALSE, FALSE);
+    if (!m_CharNames.empty()) {
       for (int i = 0; i < 256; i++) {
         m_Encoding.m_Unicodes[i] =
-            PDF_UnicodeFromAdobeName(m_pCharNames[i].c_str());
+            PDF_UnicodeFromAdobeName(m_CharNames[i].c_str());
         if (m_Encoding.m_Unicodes[i] == 0) {
           m_Encoding.m_Unicodes[i] = i;
         }
@@ -93,8 +95,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   if (it != m_CacheMap.end())
     return it->second.get();
 
-  const FX_CHAR* name =
-      GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
+  const FX_CHAR* name = GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
   if (!name)
     return nullptr;
 

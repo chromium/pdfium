@@ -11,16 +11,13 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fxge/include/fx_freetype.h"
 
-CPDF_SimpleFont::CPDF_SimpleFont()
-    : m_pCharNames(nullptr), m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
+CPDF_SimpleFont::CPDF_SimpleFont() : m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
   FXSYS_memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
   FXSYS_memset(m_GlyphIndex, 0xff, sizeof(m_GlyphIndex));
   FXSYS_memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
 }
 
-CPDF_SimpleFont::~CPDF_SimpleFont() {
-  delete[] m_pCharNames;
-}
+CPDF_SimpleFont::~CPDF_SimpleFont() {}
 
 int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (pVertGlyph)
@@ -139,25 +136,26 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
     m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
   }
   CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
-  LoadPDFEncoding(pEncoding, m_BaseEncoding, m_pCharNames, !!m_pFontFile,
+  LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, !!m_pFontFile,
                   m_Font.IsTTFont());
   LoadGlyphMap();
-  delete[] m_pCharNames;
-  m_pCharNames = nullptr;
+  m_CharNames.clear();
   if (!m_Font.GetFace())
     return TRUE;
 
   if (m_Flags & PDFFONT_ALLCAP) {
-    unsigned char lowercases[] = {'a', 'z', 0xe0, 0xf6, 0xf8, 0xfd};
-    for (size_t range = 0; range < sizeof lowercases / 2; range++) {
-      for (int i = lowercases[range * 2]; i <= lowercases[range * 2 + 1]; i++) {
-        if (m_GlyphIndex[i] != 0xffff && m_pFontFile) {
+    unsigned char kLowercases[][2] = {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}};
+    for (size_t range = 0; range < FX_ArraySize(kLowercases); ++range) {
+      const auto& lower = kLowercases[range];
+      for (int i = lower[0]; i <= lower[1]; ++i) {
+        if (m_GlyphIndex[i] != 0xffff && m_pFontFile)
           continue;
-        }
-        m_GlyphIndex[i] = m_GlyphIndex[i - 32];
-        if (m_CharWidth[i - 32]) {
-          m_CharWidth[i] = m_CharWidth[i - 32];
-          m_CharBBox[i] = m_CharBBox[i - 32];
+
+        int j = i - 32;
+        m_GlyphIndex[i] = m_GlyphIndex[j];
+        if (m_CharWidth[j]) {
+          m_CharWidth[i] = m_CharWidth[j];
+          m_CharBBox[i] = m_CharBBox[j];
         }
       }
     }

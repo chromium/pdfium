@@ -7,6 +7,7 @@
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/fpdf_font/cpdf_truetypefont.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
@@ -31,15 +32,15 @@ const uint8_t kChineseFontNames[][5] = {{0xCB, 0xCE, 0xCC, 0xE5, 0x00},
                                         {0xB7, 0xC2, 0xCB, 0xCE, 0x00},
                                         {0xD0, 0xC2, 0xCB, 0xCE, 0x00}};
 
-void GetPredefinedEncoding(int& basemap, const CFX_ByteString& value) {
+void GetPredefinedEncoding(const CFX_ByteString& value, int* basemap) {
   if (value == "WinAnsiEncoding")
-    basemap = PDFFONT_ENCODING_WINANSI;
+    *basemap = PDFFONT_ENCODING_WINANSI;
   else if (value == "MacRomanEncoding")
-    basemap = PDFFONT_ENCODING_MACROMAN;
+    *basemap = PDFFONT_ENCODING_MACROMAN;
   else if (value == "MacExpertEncoding")
-    basemap = PDFFONT_ENCODING_MACEXPERT;
+    *basemap = PDFFONT_ENCODING_MACEXPERT;
   else if (value == "PDFDocEncoding")
-    basemap = PDFFONT_ENCODING_PDFDOC;
+    *basemap = PDFFONT_ENCODING_PDFDOC;
 }
 
 }  // namespace
@@ -356,7 +357,7 @@ uint32_t CPDF_Font::GetNextChar(const FX_CHAR* pString,
 
 void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
                                 int& iBaseEncoding,
-                                CFX_ByteString*& pCharNames,
+                                std::vector<CFX_ByteString>* pCharNames,
                                 FX_BOOL bEmbedded,
                                 FX_BOOL bTrueType) {
   if (!pEncoding) {
@@ -383,7 +384,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
     if (bsEncoding.Compare("MacExpertEncoding") == 0) {
       bsEncoding = "WinAnsiEncoding";
     }
-    GetPredefinedEncoding(iBaseEncoding, bsEncoding);
+    GetPredefinedEncoding(bsEncoding, &iBaseEncoding);
     return;
   }
 
@@ -397,16 +398,16 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
     if (bsEncoding.Compare("MacExpertEncoding") == 0 && bTrueType) {
       bsEncoding = "WinAnsiEncoding";
     }
-    GetPredefinedEncoding(iBaseEncoding, bsEncoding);
+    GetPredefinedEncoding(bsEncoding, &iBaseEncoding);
   }
-  if ((!bEmbedded || bTrueType) && iBaseEncoding == PDFFONT_ENCODING_BUILTIN) {
+  if ((!bEmbedded || bTrueType) && iBaseEncoding == PDFFONT_ENCODING_BUILTIN)
     iBaseEncoding = PDFFONT_ENCODING_STANDARD;
-  }
+
   CPDF_Array* pDiffs = pDict->GetArrayBy("Differences");
-  if (!pDiffs) {
+  if (!pDiffs)
     return;
-  }
-  pCharNames = new CFX_ByteString[256];
+
+  pCharNames->resize(256);
   uint32_t cur_code = 0;
   for (uint32_t i = 0; i < pDiffs->GetCount(); i++) {
     CPDF_Object* pElement = pDiffs->GetDirectObjectAt(i);
@@ -415,7 +416,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
 
     if (CPDF_Name* pName = pElement->AsName()) {
       if (cur_code < 256)
-        pCharNames[cur_code] = pName->GetString();
+        (*pCharNames)[cur_code] = pName->GetString();
       cur_code++;
     } else {
       cur_code = pElement->GetInteger();
@@ -433,16 +434,17 @@ FX_BOOL CPDF_Font::IsStandardFont() const {
   return TRUE;
 }
 
-const FX_CHAR* CPDF_Font::GetAdobeCharName(int iBaseEncoding,
-                                           const CFX_ByteString* pCharNames,
-                                           int charcode) {
+const FX_CHAR* CPDF_Font::GetAdobeCharName(
+    int iBaseEncoding,
+    const std::vector<CFX_ByteString>& charnames,
+    int charcode) {
   if (charcode < 0 || charcode >= 256) {
     ASSERT(false);
     return nullptr;
   }
 
-  if (pCharNames && !pCharNames[charcode].IsEmpty())
-    return pCharNames[charcode].c_str();
+  if (!charnames.empty() && !charnames[charcode].IsEmpty())
+    return charnames[charcode].c_str();
 
   const FX_CHAR* name = nullptr;
   if (iBaseEncoding)

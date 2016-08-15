@@ -10,6 +10,12 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fxge/include/fx_font.h"
 
+namespace {
+
+const uint8_t kPrefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
+
+}  // namespace
+
 CPDF_TrueTypeFont::CPDF_TrueTypeFont() {}
 
 bool CPDF_TrueTypeFont::IsTrueTypeFont() const {
@@ -58,7 +64,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   }
   if (((baseEncoding == PDFFONT_ENCODING_MACROMAN ||
         baseEncoding == PDFFONT_ENCODING_WINANSI) &&
-       !m_pCharNames) ||
+       m_CharNames.empty()) ||
       (m_Flags & PDFFONT_NONSYMBOLIC)) {
     if (!FXFT_Has_Glyph_Names(m_Font.GetFace()) &&
         (!m_Font.GetFace()->num_charmaps || !m_Font.GetFace()->charmaps)) {
@@ -76,8 +82,9 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       }
       return;
     }
-    FX_BOOL bMSUnicode = FT_UseTTCharmap(m_Font.GetFace(), 3, 1);
-    FX_BOOL bMacRoman = FALSE, bMSSymbol = FALSE;
+    bool bMSUnicode = FT_UseTTCharmap(m_Font.GetFace(), 3, 1);
+    bool bMacRoman = false;
+    bool bMSSymbol = false;
     if (!bMSUnicode) {
       if (m_Flags & PDFFONT_NONSYMBOLIC) {
         bMacRoman = FT_UseTTCharmap(m_Font.GetFace(), 1, 0);
@@ -90,7 +97,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     FX_BOOL bToUnicode = m_pFontDict->KeyExist("ToUnicode");
     for (int charcode = 0; charcode < 256; charcode++) {
       const FX_CHAR* name =
-          GetAdobeCharName(baseEncoding, m_pCharNames, charcode);
+          GetAdobeCharName(baseEncoding, m_CharNames, charcode);
       if (!name) {
         m_GlyphIndex[charcode] =
             m_pFontFile ? FXFT_Get_Char_Index(m_Font.GetFace(), charcode) : -1;
@@ -98,9 +105,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       }
       m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
       if (bMSSymbol) {
-        const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
-        for (int j = 0; j < 4; j++) {
-          uint16_t unicode = prefix[j] * 256 + charcode;
+        for (size_t j = 0; j < FX_ArraySize(kPrefix); j++) {
+          uint16_t unicode = kPrefix[j] * 256 + charcode;
           m_GlyphIndex[charcode] =
               FXFT_Get_Char_Index(m_Font.GetFace(), unicode);
           if (m_GlyphIndex[charcode]) {
@@ -150,27 +156,24 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     return;
   }
   if (FT_UseTTCharmap(m_Font.GetFace(), 3, 0)) {
-    const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
-    FX_BOOL bGotOne = FALSE;
+    bool bFound = false;
     for (int charcode = 0; charcode < 256; charcode++) {
-      for (int j = 0; j < 4; j++) {
-        uint16_t unicode = prefix[j] * 256 + charcode;
+      for (size_t j = 0; j < FX_ArraySize(kPrefix); j++) {
+        uint16_t unicode = kPrefix[j] * 256 + charcode;
         m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.GetFace(), unicode);
         if (m_GlyphIndex[charcode]) {
-          bGotOne = TRUE;
+          bFound = true;
           break;
         }
       }
     }
-    if (bGotOne) {
+    if (bFound) {
       if (baseEncoding != PDFFONT_ENCODING_BUILTIN) {
         for (int charcode = 0; charcode < 256; charcode++) {
           const FX_CHAR* name =
-              GetAdobeCharName(baseEncoding, m_pCharNames, charcode);
-          if (!name) {
-            continue;
-          }
-          m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
+              GetAdobeCharName(baseEncoding, m_CharNames, charcode);
+          if (name)
+            m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
         }
       } else if (FT_UseTTCharmap(m_Font.GetFace(), 1, 0)) {
         for (int charcode = 0; charcode < 256; charcode++) {
@@ -182,44 +185,39 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     }
   }
   if (FT_UseTTCharmap(m_Font.GetFace(), 1, 0)) {
-    FX_BOOL bGotOne = FALSE;
+    bool bFound = false;
     for (int charcode = 0; charcode < 256; charcode++) {
       m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.GetFace(), charcode);
       m_Encoding.m_Unicodes[charcode] =
           FT_UnicodeFromCharCode(FXFT_ENCODING_APPLE_ROMAN, charcode);
       if (m_GlyphIndex[charcode]) {
-        bGotOne = TRUE;
+        bFound = true;
       }
     }
-    if (m_pFontFile || bGotOne) {
+    if (m_pFontFile || bFound)
       return;
-    }
   }
   if (FXFT_Select_Charmap(m_Font.GetFace(), FXFT_ENCODING_UNICODE) == 0) {
-    FX_BOOL bGotOne = FALSE;
+    bool bFound = false;
     const uint16_t* pUnicodes = PDF_UnicodesForPredefinedCharSet(baseEncoding);
     for (int charcode = 0; charcode < 256; charcode++) {
       if (m_pFontFile) {
         m_Encoding.m_Unicodes[charcode] = charcode;
       } else {
-        const FX_CHAR* name = GetAdobeCharName(0, m_pCharNames, charcode);
-        if (name) {
+        const FX_CHAR* name = GetAdobeCharName(0, m_CharNames, charcode);
+        if (name)
           m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
-        } else if (pUnicodes) {
+        else if (pUnicodes)
           m_Encoding.m_Unicodes[charcode] = pUnicodes[charcode];
-        }
       }
       m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
           m_Font.GetFace(), m_Encoding.m_Unicodes[charcode]);
-      if (m_GlyphIndex[charcode]) {
-        bGotOne = TRUE;
-      }
+      if (m_GlyphIndex[charcode])
+        bFound = true;
     }
-    if (bGotOne) {
+    if (bFound)
       return;
-    }
   }
-  for (int charcode = 0; charcode < 256; charcode++) {
+  for (int charcode = 0; charcode < 256; charcode++)
     m_GlyphIndex[charcode] = charcode;
-  }
 }
