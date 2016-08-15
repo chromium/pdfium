@@ -939,7 +939,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     if (!m_bBufSpecified) {
       JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
-          (ri.y + ri.height > m_pPage->m_nHeight)) {
+          (ri.y + ri.height > m_pPage->height())) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
@@ -1030,8 +1030,8 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
 
   pHRD->HNUMPATS = pPatternDict->NUMPATS;
   pHRD->HPATS = pPatternDict->HDPATS;
-  pHRD->HPW = pPatternDict->HDPATS[0]->m_nWidth;
-  pHRD->HPH = pPatternDict->HDPATS[0]->m_nHeight;
+  pHRD->HPW = pPatternDict->HDPATS[0]->width();
+  pHRD->HPH = pPatternDict->HDPATS[0]->height();
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   if (pHRD->HMMR == 0) {
     const size_t size = GetHuffContextSize(pHRD->HTEMPLATE);
@@ -1057,7 +1057,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     if (!m_bBufSpecified) {
       JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if (pPageInfo->m_bIsStriped == 1 &&
-          ri.y + ri.height > m_pPage->m_nHeight) {
+          ri.y + ri.height > m_pPage->height()) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
@@ -1123,7 +1123,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
         if (!m_bBufSpecified) {
           JBig2PageInfo* pPageInfo = m_PageInfoList.back();
           if ((pPageInfo->m_bIsStriped == 1) &&
-              (m_ri.y + m_ri.height > m_pPage->m_nHeight)) {
+              (m_ri.y + m_ri.height > m_pPage->height())) {
             m_pPage->expand(m_ri.y + m_ri.height,
                             (pPageInfo->m_cFlags & 4) ? 1 : 0);
           }
@@ -1158,7 +1158,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     if (!m_bBufSpecified) {
       JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
-          (m_ri.y + m_ri.height > m_pPage->m_nHeight)) {
+          (m_ri.y + m_ri.height > m_pPage->height())) {
         m_pPage->expand(m_ri.y + m_ri.height,
                         (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
@@ -1231,7 +1231,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
     if (!m_bBufSpecified) {
       JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
-          (ri.y + ri.height > m_pPage->m_nHeight)) {
+          (ri.y + ri.height > m_pPage->height())) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }

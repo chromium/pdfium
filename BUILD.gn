@@ -1463,6 +1463,7 @@ test("pdfium_unittests") {
     "core/fpdfdoc/doc_basic_unittest.cpp",
     "core/fpdftext/fpdf_text_int_unittest.cpp",
     "core/fxcodec/codec/fx_codec_jpx_unittest.cpp",
+    "core/fxcodec/jbig2/JBig2_Image_unittest.cpp",
     "core/fxcrt/cfx_retain_ptr_unittest.cpp",
     "core/fxcrt/fx_basic_bstring_unittest.cpp",
     "core/fxcrt/fx_basic_gcc_unittest.cpp",
