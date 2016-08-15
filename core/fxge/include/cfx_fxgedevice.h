@@ -28,8 +28,15 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
 
 #ifdef _SKIA_SUPPORT_
   bool AttachRecorder(SkPictureRecorder* recorder);
+  void Clear(uint32_t color);
   SkPictureRecorder* CreateRecorder(int size_x, int size_y);
   void DebugVerifyBitmapIsPreMultiplied() const override;
+  bool SetBitsWithMask(const CFX_DIBSource* pBitmap,
+                       const CFX_DIBSource* pMask,
+                       int left,
+                       int top,
+                       int bitmap_alpha,
+                       int blend_type) override;
 #endif
 
  private:

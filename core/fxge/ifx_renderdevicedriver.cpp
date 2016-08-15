@@ -92,3 +92,12 @@ FX_BOOL IFX_RenderDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
                                             FX_BOOL bAlphaMode) {
   return false;
 }
+
+bool IFX_RenderDeviceDriver::SetBitsWithMask(const CFX_DIBSource* pBitmap,
+                                             const CFX_DIBSource* pMask,
+                                             int left,
+                                             int top,
+                                             int bitmap_alpha,
+                                             int blend_type) {
+  return false;
+}

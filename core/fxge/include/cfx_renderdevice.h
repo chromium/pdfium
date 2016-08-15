@@ -253,6 +253,12 @@ class CFX_RenderDevice {
 
 #ifdef _SKIA_SUPPORT_
   virtual void DebugVerifyBitmapIsPreMultiplied() const;
+  virtual bool SetBitsWithMask(const CFX_DIBSource* pBitmap,
+                               const CFX_DIBSource* pMask,
+                               int left,
+                               int top,
+                               int bitmap_alpha,
+                               int blend_type);
   void Flush();
 #endif
 

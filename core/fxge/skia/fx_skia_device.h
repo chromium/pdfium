@@ -84,6 +84,12 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                     int dest_left,
                     int dest_top,
                     int blend_type) override;
+  bool SetBitsWithMask(const CFX_DIBSource* pBitmap,
+                       const CFX_DIBSource* pMask,
+                       int dest_left,
+                       int dest_top,
+                       int bitmap_alpha,
+                       int blend_type) override;
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
                         uint32_t color,
                         int dest_left,
@@ -106,6 +112,12 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
 
   void CancelDIBits(void* handle) override {}
 
+  bool DrawBitsWithMask(const CFX_DIBSource* pBitmap,
+                        const CFX_DIBSource* pMask,
+                        int bitmap_alpha,
+                        const CFX_Matrix* pMatrix,
+                        int blend_type);
+
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
@@ -125,6 +137,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void PaintStroke(SkPaint* spaint,
                    const CFX_GraphStateData* pGraphState,
                    const SkMatrix& matrix);
+  void Clear(uint32_t color);
   void Flush();
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
   static void PreMultiply(CFX_DIBitmap* pDIBitmap);

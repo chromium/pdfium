@@ -811,9 +811,18 @@ void CFX_RenderDevice::CancelDIBits(void* handle) {
 }
 
 #ifdef _SKIA_SUPPORT_
-
 void CFX_RenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
   SkASSERT(0);
+}
+
+bool CFX_RenderDevice::SetBitsWithMask(const CFX_DIBSource* pBitmap,
+                                       const CFX_DIBSource* pMask,
+                                       int left,
+                                       int top,
+                                       int bitmap_alpha,
+                                       int blend_type) {
+  return m_pDeviceDriver->SetBitsWithMask(pBitmap, pMask, left, top,
+                                          bitmap_alpha, blend_type);
 }
 #endif
 

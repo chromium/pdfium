@@ -646,6 +646,7 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
       bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
   return FALSE;
 }
+
 FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
   if (m_pRenderStatus->m_bPrint &&
       !(m_pRenderStatus->m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE)) {
@@ -665,7 +666,11 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
   if (!bitmap_device1.Create(width, height, FXDIB_Rgb32, nullptr))
     return TRUE;
 
+#if defined _SKIA_SUPPORT_
+  bitmap_device1.Clear(0xffffff);
+#else
   bitmap_device1.GetBitmap()->Clear(0xffffff);
+#endif
   {
     CPDF_RenderStatus bitmap_render;
     bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device1,
@@ -682,7 +687,11 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
     if (!bitmap_device2.Create(width, height, FXDIB_8bppRgb, nullptr))
       return TRUE;
 
+#if defined _SKIA_SUPPORT_
+    bitmap_device2.Clear(0);
+#else
     bitmap_device2.GetBitmap()->Clear(0);
+#endif
     CPDF_RenderStatus bitmap_render;
     bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device2,
                              nullptr, nullptr, nullptr, nullptr, nullptr, 0,
@@ -731,17 +740,21 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
         }
       }
     }
+#ifdef _SKIA_SUPPORT_
+    m_pRenderStatus->m_pDevice->SetBitsWithMask(
+        bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
+        rect.top, m_BitmapAlpha, m_BlendType);
+  }
+#else
     bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_8bppMask);
     bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
-#ifdef _SKIA_SUPPORT_
-    CFX_SkiaDeviceDriver::PreMultiply(bitmap_device1.GetBitmap());
-#endif
     if (m_BitmapAlpha < 255) {
       bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);
     }
   }
   m_pRenderStatus->m_pDevice->SetDIBitsWithBlend(
       bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
+#endif  //  _SKIA_SUPPORT_
   return FALSE;
 }
 
@@ -756,7 +769,8 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
   }
 #ifdef _SKIA_SUPPORT_
   CFX_DIBitmap* premultiplied = m_pDIBSource->Clone();
-  CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
+  if (m_pDIBSource->HasAlpha())
+    CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
   if (m_pRenderStatus->m_pDevice->StartDIBitsWithBlend(
           premultiplied, m_BitmapAlpha, m_FillArgb, &m_ImageMatrix, m_Flags,
           m_DeviceHandle, m_BlendType)) {

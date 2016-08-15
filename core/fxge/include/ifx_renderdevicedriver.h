@@ -99,6 +99,12 @@ class IFX_RenderDeviceDriver {
                               const FX_RECT& clip_rect,
                               int alpha,
                               FX_BOOL bAlphaMode);
+  virtual bool SetBitsWithMask(const CFX_DIBSource* pBitmap,
+                               const CFX_DIBSource* pMask,
+                               int left,
+                               int top,
+                               int bitmap_alpha,
+                               int blend_type);
 };
 
 #endif  // CORE_FXGE_INCLUDE_IFX_RENDERDEVICEDRIVER_H_
