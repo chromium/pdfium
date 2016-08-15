@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/cfx_gemodule.h"
@@ -58,27 +59,49 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
     if (!pGlyph)
       continue;
 
-    int char_left = glyph.m_OriginX + pGlyph->m_Left;
-    int char_width = (int)(pGlyph->m_Bitmap.GetWidth() / retinaScaleX);
-    if (anti_alias == FXFT_RENDER_MODE_LCD) {
+    FX_SAFE_INT32 char_left = glyph.m_OriginX;
+    char_left += pGlyph->m_Left;
+    if (!char_left.IsValid())
+      continue;
+
+    FX_SAFE_INT32 char_width = pGlyph->m_Bitmap.GetWidth();
+    char_width /= retinaScaleX;
+    if (anti_alias == FXFT_RENDER_MODE_LCD)
       char_width /= 3;
+    if (!char_width.IsValid())
+      continue;
+
+    FX_SAFE_INT32 char_right = char_left + char_width;
+    if (!char_right.IsValid())
+      continue;
+
+    FX_SAFE_INT32 char_top = glyph.m_OriginY;
+    char_top -= pGlyph->m_Top;
+    if (!char_top.IsValid())
+      continue;
+
+    FX_SAFE_INT32 char_height = pGlyph->m_Bitmap.GetHeight();
+    char_height /= retinaScaleY;
+    if (!char_height.IsValid())
+      continue;
+
+    FX_SAFE_INT32 char_bottom = char_top + char_height;
+    if (!char_bottom.IsValid())
+      continue;
+
+    if (bStarted) {
+      rect.left = std::min(rect.left, char_left.ValueOrDie());
+      rect.right = std::max(rect.right, char_right.ValueOrDie());
+      rect.top = std::min(rect.top, char_top.ValueOrDie());
+      rect.bottom = std::max(rect.bottom, char_bottom.ValueOrDie());
+      continue;
     }
-    int char_right = char_left + char_width;
-    int char_top = glyph.m_OriginY - pGlyph->m_Top;
-    int char_bottom =
-        char_top + (int)(pGlyph->m_Bitmap.GetHeight() / retinaScaleY);
-    if (!bStarted) {
-      rect.left = char_left;
-      rect.right = char_right;
-      rect.top = char_top;
-      rect.bottom = char_bottom;
-      bStarted = true;
-    } else {
-      rect.left = std::min(rect.left, char_left);
-      rect.right = std::max(rect.right, char_right);
-      rect.top = std::min(rect.top, char_top);
-      rect.bottom = std::max(rect.bottom, char_bottom);
-    }
+
+    rect.left = char_left.ValueOrDie();
+    rect.right = char_right.ValueOrDie();
+    rect.top = char_top.ValueOrDie();
+    rect.bottom = char_bottom.ValueOrDie();
+    bStarted = true;
   }
   return rect;
 }

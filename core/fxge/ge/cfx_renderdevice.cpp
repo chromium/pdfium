@@ -6,6 +6,7 @@
 
 #include "core/fxge/include/cfx_renderdevice.h"
 
+#include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
@@ -997,17 +998,30 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   int b = 0;
   if (anti_alias == FXFT_RENDER_MODE_LCD)
     ArgbDecode(fill_color, a, r, g, b);
+
   for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
     if (!glyph.m_pGlyph)
       continue;
+
+    pdfium::base::CheckedNumeric<int> left = glyph.m_OriginX;
+    left += glyph.m_pGlyph->m_Left;
+    left -= pixel_left;
+    if (!left.IsValid())
+      return FALSE;
+
+    pdfium::base::CheckedNumeric<int> top = glyph.m_OriginY;
+    top -= glyph.m_pGlyph->m_Top;
+    top -= pixel_top;
+    if (!top.IsValid())
+      return FALSE;
+
     const CFX_DIBitmap* pGlyph = &glyph.m_pGlyph->m_Bitmap;
-    int left = glyph.m_OriginX + glyph.m_pGlyph->m_Left - pixel_left;
-    int top = glyph.m_OriginY - glyph.m_pGlyph->m_Top - pixel_top;
     int ncols = pGlyph->GetWidth();
     int nrows = pGlyph->GetHeight();
     if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
-      if (!bitmap.CompositeMask(left, top, ncols, nrows, pGlyph, fill_color, 0,
-                                0, FXDIB_BLEND_NORMAL, nullptr, FALSE, 0,
+      if (!bitmap.CompositeMask(left.ValueOrDie(), top.ValueOrDie(), ncols,
+                                nrows, pGlyph, fill_color, 0, 0,
+                                FXDIB_BLEND_NORMAL, nullptr, FALSE, 0,
                                 nullptr)) {
         return FALSE;
       }
@@ -1016,12 +1030,19 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
     bool bBGRStripe = !!(text_flags & FXTEXT_BGR_STRIPE);
     ncols /= 3;
     int x_subpixel = (int)(glyph.m_fOriginX * 3) % 3;
-    int start_col = std::max(left, 0);
-    int end_col = std::min(left + ncols, dest_width);
+    int start_col = std::max(left.ValueOrDie(), 0);
+    pdfium::base::CheckedNumeric<int> end_col_safe = left;
+    end_col_safe += ncols;
+    if (!end_col_safe.IsValid())
+      return FALSE;
+
+    int end_col = std::min(end_col_safe.ValueOrDie(), dest_width);
     if (start_col >= end_col)
       continue;
-    DrawNormalTextHelper(&bitmap, pGlyph, nrows, left, top, start_col, end_col,
-                         bNormal, bBGRStripe, x_subpixel, a, r, g, b);
+
+    DrawNormalTextHelper(&bitmap, pGlyph, nrows, left.ValueOrDie(),
+                         top.ValueOrDie(), start_col, end_col, bNormal,
+                         bBGRStripe, x_subpixel, a, r, g, b);
   }
   if (bitmap.IsAlphaMask())
     SetBitMask(&bitmap, bmp_rect.left, bmp_rect.top, fill_color);
