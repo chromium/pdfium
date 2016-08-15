@@ -27,6 +27,7 @@
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/ipdfsdk_annothandler.h"
 #include "fpdfsdk/javascript/ijs_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"

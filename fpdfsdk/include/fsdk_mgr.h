@@ -17,7 +17,6 @@
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
-#include "fpdfsdk/include/fsdk_annothandler.h"
 #include "fpdfsdk/include/fsdk_baseform.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -29,6 +28,7 @@ class CFX_SystemHandler;
 class CPDF_AnnotList;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_Annot;
+class CPDFSDK_AnnotHandlerMgr;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
