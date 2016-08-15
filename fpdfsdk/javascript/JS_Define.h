@@ -78,7 +78,7 @@ void JSPropGetter(const char* prop_name_string,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
+      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -104,7 +104,7 @@ void JSPropSetter(const char* prop_name_string,
                   const v8::PropertyCallbackInfo<void>& info) {
   v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
+      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -143,7 +143,7 @@ void JSMethod(const char* method_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
+      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -245,7 +245,7 @@ void JSMethod(const char* method_name_string,
   }
 
 #define DECLARE_JS_CLASS_RICH_PART()                                           \
-  static void JSConstructor(IJS_Runtime* pRuntime, v8::Local<v8::Object> obj); \
+  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj); \
   static void JSDestructor(v8::Local<v8::Object> obj);                         \
   static void DefineProps(v8::Isolate* pIsoalte);                              \
   static void DefineMethods(v8::Isolate* pIsoalte);                            \
@@ -254,12 +254,12 @@ void JSMethod(const char* method_name_string,
 
 #define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,          \
                                      class_name)                              \
-  void js_class_name::JSConstructor(IJS_Runtime* pIRuntime,                   \
+  void js_class_name::JSConstructor(CFXJS_Engine* pEngine,                    \
                                     v8::Local<v8::Object> obj) {              \
     CJS_Object* pObj = new js_class_name(obj);                                \
     pObj->SetEmbedObject(new class_alternate(pObj));                          \
     FXJS_SetPrivate(nullptr, obj, (void*)pObj);                               \
-    pObj->InitInstance(pIRuntime);                                            \
+    pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));                   \
   }                                                                           \
   void js_class_name::JSDestructor(v8::Local<v8::Object> obj) {               \
     js_class_name* pObj = (js_class_name*)FXJS_GetPrivate(nullptr, obj);      \
@@ -366,7 +366,7 @@ void JSSpecialPropGet(const char* class_name,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
+      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -393,7 +393,7 @@ void JSSpecialPropPut(const char* class_name,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
+      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -416,7 +416,8 @@ void JSSpecialPropDel(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  CJS_Runtime* pRuntime =
+      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -440,8 +441,8 @@ template <FX_BOOL (*F)(IJS_Context*,
                        CFX_WideString&)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
-  CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(info.GetIsolate()));
+  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(
+      FXJS_GetCurrentEngineFromIsolate(info.GetIsolate()));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();

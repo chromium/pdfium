@@ -148,7 +148,7 @@ void CJS_GlobalConsts::DefineJSObjects(CJS_Runtime* pRuntime) {
         (rt)->GetIsolate(), (name),                                        \
         [](const v8::FunctionCallbackInfo<v8::Value>& info) {              \
           CJS_Runtime* pLocalRuntime = static_cast<CJS_Runtime*>(          \
-              FXJS_GetRuntimeFromIsolate(info.GetIsolate()));              \
+              FXJS_GetCurrentEngineFromIsolate(info.GetIsolate()));        \
           if (pLocalRuntime)                                               \
             info.GetReturnValue().Set(pLocalRuntime->GetConstArray(name)); \
         });                                                                \

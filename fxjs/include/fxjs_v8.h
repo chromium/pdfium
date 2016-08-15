@@ -17,16 +17,17 @@
 #include <v8-util.h>
 #include <v8.h>
 
+#include <map>
 #include <vector>
 
 #include "core/fxcrt/include/fx_string.h"
 
+class CFXJS_Engine;
 class CFXJS_ObjDefinition;
 
-// FXJS_V8 places no restrictions on these two classes; it merely passes them
+// FXJS_V8 places no restrictions on this class; it merely passes it
 // on to caller-provided methods.
 class IJS_Context;  // A description of the event that caused JS execution.
-class IJS_Runtime;  // A native runtime, typically owns the v8::Context.
 
 #ifdef PDF_ENABLE_XFA
 // FXJS_V8 places no interpreation on this calass; it merely passes it
@@ -124,11 +125,24 @@ class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void Free(void* data, size_t length) override;
 };
 
-using FXJS_CONSTRUCTOR = void (*)(IJS_Runtime* cc, v8::Local<v8::Object> obj);
+using FXJS_CONSTRUCTOR = void (*)(CFXJS_Engine* fxjs,
+                                  v8::Local<v8::Object> obj);
 using FXJS_DESTRUCTOR = void (*)(v8::Local<v8::Object> obj);
 
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
 void FXJS_Release();
+
+class CFXJS_Engine {
+ public:
+  CFXJS_Engine();
+  ~CFXJS_Engine();
+
+ protected:
+  v8::Isolate* m_isolate;
+  v8::Global<v8::Context> m_context;
+  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
+  std::map<CFX_WideString, v8::Global<v8::Array>> m_ConstArrays;
+};
 
 // Gets the global isolate set by FXJS_Initialize(), or makes a new one each
 // time if there is no such isolate. Returns true if a new isolate had to be
@@ -172,30 +186,30 @@ void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
                             v8::FunctionCallback pConstGetter);
 
 // Called after FXJS_Define* calls made.
-void FXJS_InitializeRuntime(
+void FXJS_InitializeEngine(
     v8::Isolate* pIsolate,
-    IJS_Runtime* pIRuntime,
+    CFXJS_Engine* pEngine,
     v8::Global<v8::Context>* pV8PersistentContext,
     std::vector<v8::Global<v8::Object>*>* pStaticObjects);
-void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
-                         v8::Global<v8::Context>* pV8PersistentContext,
-                         std::vector<v8::Global<v8::Object>*>* pStaticObjects);
-IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate);
+void FXJS_ReleaseEngine(v8::Isolate* pIsolate,
+                        v8::Global<v8::Context>* pV8PersistentContext,
+                        std::vector<v8::Global<v8::Object>*>* pStaticObjects);
+CFXJS_Engine* FXJS_GetCurrentEngineFromIsolate(v8::Isolate* pIsolate);
 
 #ifdef PDF_ENABLE_XFA
-// Called as part of FXJS_InitializeRuntime, exposed so PDF can make its
+// Called as part of FXJS_InitializeEngine, exposed so PDF can make its
 // own contexts compatible with XFA or vice versa.
-void FXJS_SetRuntimeForV8Context(v8::Local<v8::Context> v8Context,
-                                 IJS_Runtime* pIRuntime);
+void FXJS_SetEngineForV8Context(v8::Local<v8::Context> v8Context,
+                                CFXJS_Engine* pEngine);
 #endif  // PDF_ENABLE_XFA
 
-// Called after FXJS_InitializeRuntime call made.
+// Called after FXJS_InitializeEngine call made.
 int FXJS_Execute(v8::Isolate* pIsolate,
                  const CFX_WideString& script,
                  FXJSErr* perror);
 
 v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
-                                           IJS_Runtime* pJSContext,
+                                           CFXJS_Engine* pEngine,
                                            int nObjDefnID,
                                            bool bStatic = false);
 v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate);

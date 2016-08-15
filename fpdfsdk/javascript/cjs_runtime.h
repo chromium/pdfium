@@ -20,7 +20,7 @@
 
 class CJS_Context;
 
-class CJS_Runtime : public IJS_Runtime {
+class CJS_Runtime : public IJS_Runtime, public CFXJS_Engine {
  public:
   class Observer {
    public:
@@ -77,13 +77,9 @@ class CJS_Runtime : public IJS_Runtime {
   std::vector<std::unique_ptr<CJS_Context>> m_ContextArray;
   CPDFDoc_Environment* const m_pApp;
   CPDFSDK_Document* m_pDocument;
-  FX_BOOL m_bBlocking;
-  std::set<FieldEvent> m_FieldEventSet;
-  v8::Isolate* m_isolate;
+  bool m_bBlocking;
   bool m_isolateManaged;
-  v8::Global<v8::Context> m_context;
-  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
-  std::map<CFX_WideString, v8::Global<v8::Array>> m_ConstArrays;
+  std::set<FieldEvent> m_FieldEventSet;
   std::set<Observer*> m_observers;
 };
 

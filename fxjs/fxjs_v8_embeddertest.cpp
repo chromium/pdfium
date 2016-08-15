@@ -44,19 +44,17 @@ TEST_F(FXJSV8EmbedderTest, Getters) {
   CheckAssignmentInCurrentContext(kExpected1);
 }
 
-TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
+TEST_F(FXJSV8EmbedderTest, MultipleEngines) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
 
   v8::Global<v8::Context> global_context1;
   std::vector<v8::Global<v8::Object>*> static_objects1;
-  FXJS_InitializeRuntime(isolate(), nullptr, &global_context1,
-                         &static_objects1);
+  FXJS_InitializeEngine(isolate(), nullptr, &global_context1, &static_objects1);
 
   v8::Global<v8::Context> global_context2;
   std::vector<v8::Global<v8::Object>*> static_objects2;
-  FXJS_InitializeRuntime(isolate(), nullptr, &global_context2,
-                         &static_objects2);
+  FXJS_InitializeEngine(isolate(), nullptr, &global_context2, &static_objects2);
 
   v8::Context::Scope context_scope(GetV8Context());
   ExecuteInCurrentContext(CFX_WideString(kScript0));
@@ -69,7 +67,7 @@ TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
     ExecuteInCurrentContext(CFX_WideString(kScript1));
     CheckAssignmentInCurrentContext(kExpected1);
   }
-  FXJS_ReleaseRuntime(isolate(), &global_context1, &static_objects1);
+  FXJS_ReleaseEngine(isolate(), &global_context1, &static_objects1);
 
   {
     v8::Local<v8::Context> context2 =
@@ -78,7 +76,7 @@ TEST_F(FXJSV8EmbedderTest, MultipleRutimes) {
     ExecuteInCurrentContext(CFX_WideString(kScript2));
     CheckAssignmentInCurrentContext(kExpected2);
   }
-  FXJS_ReleaseRuntime(isolate(), &global_context2, &static_objects2);
+  FXJS_ReleaseEngine(isolate(), &global_context2, &static_objects2);
 
   CheckAssignmentInCurrentContext(kExpected0);
 }
