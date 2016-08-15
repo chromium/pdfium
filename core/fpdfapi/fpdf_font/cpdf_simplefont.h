@@ -42,8 +42,8 @@ class CPDF_SimpleFont : public CPDF_Font {
   std::vector<CFX_ByteString> m_CharNames;
   int m_BaseEncoding;
   uint16_t m_CharWidth[256];
-  FX_SMALL_RECT m_CharBBox[256];
-  FX_BOOL m_bUseFontWidth;
+  FX_RECT m_CharBBox[256];
+  bool m_bUseFontWidth;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_SIMPLEFONT_H_

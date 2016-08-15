@@ -124,27 +124,10 @@ typedef CFX_VTemplate<FX_FLOAT> CFX_VectorF;
 // TODO(tsepez): Consolidate all these different rectangle classes.
 
 // LTRB rectangles (y-axis runs downwards).
-struct FX_SMALL_RECT {
-  FX_SMALL_RECT() : FX_SMALL_RECT(kInvalid, kInvalid, kInvalid, kInvalid) {}
-
-  FX_SMALL_RECT(int16_t l, int16_t t, int16_t r, int16_t b)
-      : left(l), top(t), right(r), bottom(b) {}
-
-  static const int16_t kInvalid = -1;
-
-  int16_t left;
-  int16_t top;
-  int16_t right;
-  int16_t bottom;
-};
-
 struct FX_RECT {
   FX_RECT() : left(0), top(0), right(0), bottom(0) {}
 
   FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
-
-  explicit FX_RECT(const FX_SMALL_RECT& other)
-      : FX_RECT(other.left, other.top, other.right, other.bottom) {}
 
   int Width() const { return right - left; }
   int Height() const { return bottom - top; }
@@ -178,19 +161,13 @@ struct FX_RECT {
            bottom == src.bottom;
   }
 
-  FX_BOOL Contains(const FX_RECT& other_rect) const {
+  bool Contains(const FX_RECT& other_rect) const {
     return other_rect.left >= left && other_rect.right <= right &&
            other_rect.top >= top && other_rect.bottom <= bottom;
   }
 
-  FX_BOOL Contains(int x, int y) const {
+  bool Contains(int x, int y) const {
     return x >= left && x < right && y >= top && y < bottom;
-  }
-
-  FX_SMALL_RECT ToSmallRect() const {
-    return FX_SMALL_RECT(
-        static_cast<uint16_t>(left), static_cast<uint16_t>(top),
-        static_cast<uint16_t>(right), static_cast<uint16_t>(bottom));
   }
 
   int32_t left;
@@ -433,11 +410,11 @@ class CFX_RTemplate {
     return width <= fEpsilon || height <= fEpsilon;
   }
   void Empty() { width = height = 0; }
-  FX_BOOL Contains(baseType x, baseType y) const {
+  bool Contains(baseType x, baseType y) const {
     return x >= left && x < left + width && y >= top && y < top + height;
   }
-  FX_BOOL Contains(const FXT_POINT& p) const { return Contains(p.x, p.y); }
-  FX_BOOL Contains(const FXT_RECT& rt) const {
+  bool Contains(const FXT_POINT& p) const { return Contains(p.x, p.y); }
+  bool Contains(const FXT_RECT& rt) const {
     return rt.left >= left && rt.right() <= right() && rt.top >= top &&
            rt.bottom() <= bottom();
   }

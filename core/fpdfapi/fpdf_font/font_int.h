@@ -20,7 +20,7 @@ class CPDF_Stream;
 
 using FXFT_Library = void*;
 
-int16_t TT2PDF(int m, FXFT_Face face);
+int TT2PDF(int m, FXFT_Face face);
 bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
 CIDSet CharsetFromOrdering(const CFX_ByteStringC& ordering);
 

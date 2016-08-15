@@ -21,10 +21,10 @@
 #include "core/fxge/include/fx_freetype.h"
 #include "third_party/base/stl_util.h"
 
-int16_t TT2PDF(int m, FXFT_Face face) {
+int TT2PDF(int m, FXFT_Face face) {
   int upm = FXFT_Get_Face_UnitsPerEM(face);
   if (upm == 0)
-    return static_cast<int16_t>(m);
+    return m;
   return (m * 1000 + upm / 2) / upm;
 }
 

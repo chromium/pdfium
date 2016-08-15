@@ -15,6 +15,8 @@ CPDF_SimpleFont::CPDF_SimpleFont() : m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
   FXSYS_memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
   FXSYS_memset(m_GlyphIndex, 0xff, sizeof(m_GlyphIndex));
   FXSYS_memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
+  for (size_t i = 0; i < FX_ArraySize(m_CharBBox); ++i)
+    m_CharBBox[i] = FX_RECT(-1, -1, -1, -1);
 }
 
 CPDF_SimpleFont::~CPDF_SimpleFont() {}
@@ -52,16 +54,15 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   int err = FXFT_Load_Glyph(
       face, glyph_index,
       FXFT_LOAD_NO_SCALE | FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
-  if (err) {
+  if (err)
     return;
-  }
-  m_CharBBox[charcode] = FX_SMALL_RECT(
-      TT2PDF(FXFT_Get_Glyph_HoriBearingX(face), face),
-      TT2PDF(FXFT_Get_Glyph_HoriBearingY(face), face),
-      TT2PDF(FXFT_Get_Glyph_HoriBearingX(face) + FXFT_Get_Glyph_Width(face),
-             face),
-      TT2PDF(FXFT_Get_Glyph_HoriBearingY(face) - FXFT_Get_Glyph_Height(face),
-             face));
+
+  int iHoriBearingX = FXFT_Get_Glyph_HoriBearingX(face);
+  int iHoriBearingY = FXFT_Get_Glyph_HoriBearingY(face);
+  m_CharBBox[charcode] =
+      FX_RECT(TT2PDF(iHoriBearingX, face), TT2PDF(iHoriBearingY, face),
+              TT2PDF(iHoriBearingX + FXFT_Get_Glyph_Width(face), face),
+              TT2PDF(iHoriBearingY - FXFT_Get_Glyph_Height(face), face));
 
   if (m_bUseFontWidth) {
     int TT_Width = TT2PDF(FXFT_Get_Glyph_HoriAdvance(face), face);
@@ -77,26 +78,26 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
 }
 
 int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode, int level) {
-  if (charcode > 0xff) {
+  if (charcode > 0xff)
     charcode = 0;
-  }
+
   if (m_CharWidth[charcode] == 0xffff) {
     LoadCharMetrics(charcode);
     if (m_CharWidth[charcode] == 0xffff) {
       m_CharWidth[charcode] = 0;
     }
   }
-  return (int16_t)m_CharWidth[charcode];
+  return m_CharWidth[charcode];
 }
 
 FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode, int level) {
   if (charcode > 0xff)
     charcode = 0;
 
-  if (m_CharBBox[charcode].left == FX_SMALL_RECT::kInvalid)
+  if (m_CharBBox[charcode].left == -1)
     LoadCharMetrics(charcode);
 
-  return FX_RECT(m_CharBBox[charcode]);
+  return m_CharBBox[charcode];
 }
 
 FX_BOOL CPDF_SimpleFont::LoadCommon() {
@@ -105,9 +106,8 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
     LoadFontDescriptor(pFontDesc);
   }
   CPDF_Array* pWidthArray = m_pFontDict->GetArrayBy("Widths");
-  m_bUseFontWidth = TRUE;
+  m_bUseFontWidth = !pWidthArray;
   if (pWidthArray) {
-    m_bUseFontWidth = FALSE;
     if (pFontDesc && pFontDesc->KeyExist("MissingWidth")) {
       int MissingWidth = pFontDesc->GetIntegerBy("MissingWidth");
       for (int i = 0; i < 256; i++) {
