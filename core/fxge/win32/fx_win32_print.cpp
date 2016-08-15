@@ -209,6 +209,10 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
   if (nChars < 1 || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
     return FALSE;
 
+  // Scale factor used to minimize the kerning problems caused by rounding
+  // errors below. Value choosen based on the title of https://crbug.com/18383
+  const double kScaleFactor = 10;
+
   // Font
   //
   // Note that |pFont| has the actual font to render with embedded within, but
@@ -222,7 +226,7 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
   // In sandboxed environments, font loading may not work at all, so this may be
   // the best possible effort.
   LOGFONT lf = {};
-  lf.lfHeight = -font_size;
+  lf.lfHeight = -font_size * kScaleFactor;
   lf.lfWeight = pFont->IsBold() ? FW_BOLD : FW_NORMAL;
   lf.lfItalic = pFont->IsItalic();
   lf.lfCharSet = DEFAULT_CHARSET;
@@ -266,10 +270,10 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
   // Transforms
   SetGraphicsMode(m_hDC, GM_ADVANCED);
   XFORM xform;
-  xform.eM11 = pObject2Device->GetA();
-  xform.eM12 = pObject2Device->GetB();
-  xform.eM21 = -pObject2Device->GetC();
-  xform.eM22 = -pObject2Device->GetD();
+  xform.eM11 = pObject2Device->GetA() / kScaleFactor;
+  xform.eM12 = pObject2Device->GetB() / kScaleFactor;
+  xform.eM21 = -pObject2Device->GetC() / kScaleFactor;
+  xform.eM22 = -pObject2Device->GetD() / kScaleFactor;
   xform.eDx = pObject2Device->GetE();
   xform.eDy = pObject2Device->GetF();
   ModifyWorldTransform(m_hDC, &xform, MWT_LEFTMULTIPLY);
@@ -283,23 +287,32 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
 
   // Text
   CFX_WideString wsText;
+  std::vector<INT> spacing(nChars);
+  FX_FLOAT fPreviousOriginX = 0;
   for (int i = 0; i < nChars; ++i) {
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
     const FXTEXT_CHARPOS& charpos = pCharPos[i];
-    ASSERT(charpos.m_OriginX == 0);
-    ASSERT(charpos.m_OriginY == 0);
     ASSERT(charpos.m_AdjustMatrix[0] == 0);
     ASSERT(charpos.m_AdjustMatrix[1] == 0);
     ASSERT(charpos.m_AdjustMatrix[2] == 0);
     ASSERT(charpos.m_AdjustMatrix[3] == 0);
+    ASSERT(charpos.m_OriginY == 0);
+
+    // Round the spacing to the nearest integer, but keep track of the rounding
+    // error for calculating the next spacing value.
+    FX_FLOAT fOriginX = charpos.m_OriginX * kScaleFactor;
+    FX_FLOAT fPixelSpacing = fOriginX - fPreviousOriginX;
+    spacing[i] = FXSYS_round(fPixelSpacing);
+    fPreviousOriginX = fOriginX - (fPixelSpacing - spacing[i]);
+
     wsText += charpos.m_GlyphIndex;
   }
 
   // Draw
   SetTextAlign(m_hDC, TA_LEFT | TA_BASELINE);
   if (ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(), nChars,
-                  nullptr)) {
+                  nChars > 1 ? &spacing[1] : nullptr)) {
     return TRUE;
   }
 
@@ -310,7 +323,7 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
   // Try to get the font and draw again.
   g_pdfium_typeface_accessible_func(&lf, wsText.c_str(), nChars);
   return ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(),
-                     nChars, nullptr);
+                     nChars, nChars > 1 ? &spacing[1] : nullptr);
 #else
   return FALSE;
 #endif
