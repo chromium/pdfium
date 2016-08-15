@@ -262,7 +262,7 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
   ASSERT(pFormControl);
 
   CPDFSDK_InterForm* pForm = pDocument->GetInterForm();
-  CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
+  CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl, false);
 
   if (pWidget) {
     if (bResetAP) {
@@ -292,10 +292,12 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
 }
 
 CPDFSDK_Widget* Field::GetWidget(CPDFSDK_Document* pDocument,
-                                 CPDF_FormControl* pFormControl) {
+                                 CPDF_FormControl* pFormControl,
+                                 bool createIfNeeded) {
   CPDFSDK_InterForm* pInterForm =
       static_cast<CPDFSDK_InterForm*>(pDocument->GetInterForm());
-  return pInterForm ? pInterForm->GetWidget(pFormControl) : nullptr;
+  return pInterForm ? pInterForm->GetWidget(pFormControl, createIfNeeded)
+                    : nullptr;
 }
 
 FX_BOOL Field::ValueIsOccur(CPDF_FormField* pFormField,
@@ -403,7 +405,7 @@ FX_BOOL Field::borderStyle(IJS_Context* cc,
       return FALSE;
 
     CPDFSDK_Widget* pWidget =
-        GetWidget(m_pDocument, GetSmartFieldControl(pFormField));
+        GetWidget(m_pDocument, GetSmartFieldControl(pFormField), false);
     if (!pWidget)
       return FALSE;
 
@@ -459,7 +461,7 @@ void Field::SetBorderStyle(CPDFSDK_Document* pDocument,
       FX_BOOL bSet = FALSE;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
         if (CPDFSDK_Widget* pWidget =
-                GetWidget(pDocument, pFormField->GetControl(i))) {
+                GetWidget(pDocument, pFormField->GetControl(i), false)) {
           if (pWidget->GetBorderStyle() != nBorderStyle) {
             pWidget->SetBorderStyle(nBorderStyle);
             bSet = TRUE;
@@ -473,7 +475,8 @@ void Field::SetBorderStyle(CPDFSDK_Document* pDocument,
         return;
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget = GetWidget(pDocument, pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                GetWidget(pDocument, pFormControl, false)) {
           if (pWidget->GetBorderStyle() != nBorderStyle) {
             pWidget->SetBorderStyle(nBorderStyle);
             UpdateFormControl(pDocument, pFormControl, TRUE, TRUE, TRUE);
@@ -1208,7 +1211,7 @@ FX_BOOL Field::display(IJS_Context* cc,
     ASSERT(pFormField);
     CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
     CPDFSDK_Widget* pWidget =
-        pInterForm->GetWidget(GetSmartFieldControl(pFormField));
+        pInterForm->GetWidget(GetSmartFieldControl(pFormField), true);
     if (!pWidget)
       return FALSE;
 
@@ -1246,7 +1249,8 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument,
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
         ASSERT(pFormControl);
 
-        if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                pInterForm->GetWidget(pFormControl, true)) {
           uint32_t dwFlag = pWidget->GetFlags();
           switch (number) {
             case 0:
@@ -1287,7 +1291,8 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument,
         return;
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                pInterForm->GetWidget(pFormControl, true)) {
           uint32_t dwFlag = pWidget->GetFlags();
           switch (number) {
             case 0:
@@ -1525,7 +1530,7 @@ FX_BOOL Field::hidden(IJS_Context* cc,
     ASSERT(pFormField);
     CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
     CPDFSDK_Widget* pWidget =
-        pInterForm->GetWidget(GetSmartFieldControl(pFormField));
+        pInterForm->GetWidget(GetSmartFieldControl(pFormField), false);
     if (!pWidget)
       return FALSE;
 
@@ -1552,7 +1557,7 @@ void Field::SetHidden(CPDFSDK_Document* pDocument,
       FX_BOOL bSet = FALSE;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
         if (CPDFSDK_Widget* pWidget =
-                pInterForm->GetWidget(pFormField->GetControl(i))) {
+                pInterForm->GetWidget(pFormField->GetControl(i), false)) {
           uint32_t dwFlags = pWidget->GetFlags();
 
           if (b) {
@@ -1580,7 +1585,8 @@ void Field::SetHidden(CPDFSDK_Document* pDocument,
         return;
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                pInterForm->GetWidget(pFormControl, false)) {
           uint32_t dwFlags = pWidget->GetFlags();
 
           if (b) {
@@ -1696,7 +1702,8 @@ FX_BOOL Field::lineWidth(IJS_Context* cc,
     if (!pFormField->CountControls())
       return FALSE;
 
-    CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormField->GetControl(0));
+    CPDFSDK_Widget* pWidget =
+        pInterForm->GetWidget(pFormField->GetControl(0), false);
     if (!pWidget)
       return FALSE;
 
@@ -1720,7 +1727,8 @@ void Field::SetLineWidth(CPDFSDK_Document* pDocument,
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
         ASSERT(pFormControl);
 
-        if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                pInterForm->GetWidget(pFormControl, false)) {
           if (number != pWidget->GetBorderWidth()) {
             pWidget->SetBorderWidth(number);
             bSet = TRUE;
@@ -1734,7 +1742,8 @@ void Field::SetLineWidth(CPDFSDK_Document* pDocument,
         return;
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                pInterForm->GetWidget(pFormControl, false)) {
           if (number != pWidget->GetBorderWidth()) {
             pWidget->SetBorderWidth(number);
             UpdateFormControl(pDocument, pFormControl, TRUE, TRUE, TRUE);
@@ -1965,7 +1974,7 @@ FX_BOOL Field::print(IJS_Context* cc,
         FX_BOOL bSet = FALSE;
         for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
           if (CPDFSDK_Widget* pWidget =
-                  pInterForm->GetWidget(pFormField->GetControl(i))) {
+                  pInterForm->GetWidget(pFormField->GetControl(i), false)) {
             uint32_t dwFlags = pWidget->GetFlags();
             if (bVP)
               dwFlags |= ANNOTFLAG_PRINT;
@@ -1986,7 +1995,8 @@ FX_BOOL Field::print(IJS_Context* cc,
           return FALSE;
         if (CPDF_FormControl* pFormControl =
                 pFormField->GetControl(m_nFormControlIndex)) {
-          if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+          if (CPDFSDK_Widget* pWidget =
+                  pInterForm->GetWidget(pFormControl, true)) {
             uint32_t dwFlags = pWidget->GetFlags();
             if (bVP)
               dwFlags |= ANNOTFLAG_PRINT;
@@ -2006,7 +2016,7 @@ FX_BOOL Field::print(IJS_Context* cc,
   } else {
     CPDF_FormField* pFormField = FieldArray[0];
     CPDFSDK_Widget* pWidget =
-        pInterForm->GetWidget(GetSmartFieldControl(pFormField));
+        pInterForm->GetWidget(GetSmartFieldControl(pFormField), true);
     if (!pWidget)
       return FALSE;
 
@@ -2118,7 +2128,7 @@ FX_BOOL Field::rect(IJS_Context* cc,
     CPDF_FormField* pFormField = FieldArray[0];
     CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
     CPDFSDK_Widget* pWidget =
-        pInterForm->GetWidget(GetSmartFieldControl(pFormField));
+        pInterForm->GetWidget(GetSmartFieldControl(pFormField), true);
     if (!pWidget)
       return FALSE;
 
@@ -2152,7 +2162,8 @@ void Field::SetRect(CPDFSDK_Document* pDocument,
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
         ASSERT(pFormControl);
 
-        if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                pInterForm->GetWidget(pFormControl, false)) {
           CFX_FloatRect crRect = rect;
 
           CPDF_Page* pPDFPage = pWidget->GetPDFPage();
@@ -2176,7 +2187,8 @@ void Field::SetRect(CPDFSDK_Document* pDocument,
         return;
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
+        if (CPDFSDK_Widget* pWidget =
+                pInterForm->GetWidget(pFormControl, false)) {
           CFX_FloatRect crRect = rect;
 
           CPDF_Page* pPDFPage = pWidget->GetPDFPage();
@@ -3250,7 +3262,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   CPDFSDK_Widget* pWidget = nullptr;
   if (nCount == 1) {
-    pWidget = pInterForm->GetWidget(pFormField->GetControl(0));
+    pWidget = pInterForm->GetWidget(pFormField->GetControl(0), false);
   } else {
     CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
     UnderlyingPageType* pPage = UnderlyingFromFPDFPage(
@@ -3261,7 +3273,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
             m_pDocument->GetPageView(pPage, true)) {
       for (int32_t i = 0; i < nCount; i++) {
         if (CPDFSDK_Widget* pTempWidget =
-                pInterForm->GetWidget(pFormField->GetControl(i))) {
+                pInterForm->GetWidget(pFormField->GetControl(i), false)) {
           if (pTempWidget->GetPDFPage() == pCurPageView->GetPDFPage()) {
             pWidget = pTempWidget;
             break;

@@ -425,7 +425,8 @@ class Field : public CJS_EmbedObj {
                                 FX_BOOL bRefresh);
 
   static CPDFSDK_Widget* GetWidget(CPDFSDK_Document* pDocument,
-                                   CPDF_FormControl* pFormControl);
+                                   CPDF_FormControl* pFormControl,
+                                   bool createIfNeeded);
   static std::vector<CPDF_FormField*> GetFormFields(
       CPDFSDK_Document* pDocument,
       const CFX_WideString& csFieldName);

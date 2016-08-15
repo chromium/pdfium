@@ -2061,7 +2061,8 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget,
   return (CPDFSDK_Widget*)pIterator->GetPrevAnnot(pWidget);
 }
 
-CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
+CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl,
+                                             bool createIfNeeded) const {
   if (!pControl || !m_pInterForm)
     return nullptr;
 
@@ -2069,9 +2070,10 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
   const auto it = m_Map.find(pControl);
   if (it != m_Map.end())
     pWidget = it->second;
-
   if (pWidget)
     return pWidget;
+  if (!createIfNeeded)
+    return nullptr;
 
   CPDF_Dictionary* pControlDict = pControl->GetWidget();
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
@@ -2093,6 +2095,7 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
 
   if (!pPage)
     return nullptr;
+
   return (CPDFSDK_Widget*)pPage->GetAnnotByDict(pControlDict);
 }
 
@@ -2112,7 +2115,7 @@ void CPDFSDK_InterForm::GetWidgets(
   for (int i = 0, sz = pField->CountControls(); i < sz; ++i) {
     CPDF_FormControl* pFormCtrl = pField->GetControl(i);
     ASSERT(pFormCtrl);
-    CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl);
+    CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl, true);
     if (pWidget)
       widgets->push_back(pWidget);
   }
@@ -2277,7 +2280,6 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
 
         IJS_Context* pContext = pRuntime->NewContext();
         pContext->OnField_Format(pFormField, Value, TRUE);
-
         CFX_WideString sInfo;
         FX_BOOL bRet = pContext->RunScript(script, &sInfo);
         pRuntime->ReleaseContext(pContext);
@@ -2299,7 +2301,7 @@ void CPDFSDK_InterForm::ResetFieldAppearance(CPDF_FormField* pFormField,
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
     ASSERT(pFormCtrl);
-    if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl))
+    if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl, false))
       pWidget->ResetAppearance(sValue, bValueChanged);
   }
 }
@@ -2309,7 +2311,7 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
     ASSERT(pFormCtrl);
 
-    if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl)) {
+    if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl, false)) {
       CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
       CFFL_IFormFiller* pIFormFiller = pEnv->GetIFormFiller();
       UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
@@ -2379,7 +2381,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
       CPDF_FormControl* pControl = pField->GetControl(i);
       ASSERT(pControl);
 
-      if (CPDFSDK_Widget* pWidget = GetWidget(pControl)) {
+      if (CPDFSDK_Widget* pWidget = GetWidget(pControl, false)) {
         uint32_t nFlags = pWidget->GetFlags();
         nFlags &= ~ANNOTFLAG_INVISIBLE;
         nFlags &= ~ANNOTFLAG_NOVIEW;
@@ -2502,7 +2504,7 @@ void CPDFSDK_InterForm::SynchronizeField(CPDF_FormField* pFormField,
                                          FX_BOOL bSynchronizeElse) {
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
-    if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl)) {
+    if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl, false)) {
       pWidget->Synchronize(bSynchronizeElse);
     }
   }
