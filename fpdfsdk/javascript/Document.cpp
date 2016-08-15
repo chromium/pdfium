@@ -28,12 +28,6 @@
 #include "fpdfsdk/javascript/resource.h"
 #include "third_party/base/numerics/safe_math.h"
 
-static v8::Isolate* GetIsolate(IJS_Context* cc) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  return pRuntime->GetIsolate();
-}
-
 BEGIN_JS_STATIC_CONST(CJS_PrintParamsObj)
 END_JS_STATIC_CONST()
 
@@ -148,12 +142,10 @@ void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
   Document* pDoc = static_cast<Document*>(GetEmbedObject());
   pDoc->AttachDoc(pRuntime->GetReaderDocument());
-  pDoc->SetIsolate(pRuntime->GetIsolate());
 }
 
 Document::Document(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject),
-      m_isolate(nullptr),
       m_pDocument(nullptr),
       m_cwBaseURL(L""),
       m_bDelay(FALSE) {}
@@ -289,9 +281,7 @@ FX_BOOL Document::getField(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
-
-  CFX_WideString wideName = params[0].ToCFXWideString(pIsolate);
+  CFX_WideString wideName = params[0].ToCFXWideString(pRuntime);
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (pPDFForm->CountFields(wideName) <= 0) {
@@ -300,10 +290,9 @@ FX_BOOL Document::getField(IJS_Context* cc,
   }
 
   v8::Local<v8::Object> pFieldObj =
-      FXJS_NewFxDynamicObj(pIsolate, pRuntime, CJS_Field::g_nObjDefnID);
-
+      pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
   CJS_Field* pJSField =
-      static_cast<CJS_Field*>(FXJS_GetPrivate(pIsolate, pFieldObj));
+      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
   Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
   pField->AttachField(this, wideName);
 
@@ -317,16 +306,13 @@ FX_BOOL Document::getNthFieldName(IJS_Context* cc,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 
   if (params.size() != 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
-
-  int nIndex = params[0].ToInt(pIsolate);
+  int nIndex = params[0].ToInt(pRuntime);
   if (nIndex < 0) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
     return FALSE;
@@ -378,21 +364,19 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 
   if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return FALSE;
 
   int iLength = params.size();
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
-
-  FX_BOOL bUI = iLength > 0 ? params[0].ToBool(pIsolate) : TRUE;
-  CFX_WideString cTo = iLength > 1 ? params[1].ToCFXWideString(pIsolate) : L"";
-  CFX_WideString cCc = iLength > 2 ? params[2].ToCFXWideString(pIsolate) : L"";
-  CFX_WideString cBcc = iLength > 3 ? params[3].ToCFXWideString(pIsolate) : L"";
+  FX_BOOL bUI = iLength > 0 ? params[0].ToBool(pRuntime) : TRUE;
+  CFX_WideString cTo = iLength > 1 ? params[1].ToCFXWideString(pRuntime) : L"";
+  CFX_WideString cCc = iLength > 2 ? params[2].ToCFXWideString(pRuntime) : L"";
+  CFX_WideString cBcc = iLength > 3 ? params[3].ToCFXWideString(pRuntime) : L"";
   CFX_WideString cSubject =
-      iLength > 4 ? params[4].ToCFXWideString(pIsolate) : L"";
-  CFX_WideString cMsg = iLength > 5 ? params[5].ToCFXWideString(pIsolate) : L"";
+      iLength > 4 ? params[4].ToCFXWideString(pRuntime) : L"";
+  CFX_WideString cMsg = iLength > 5 ? params[5].ToCFXWideString(pRuntime) : L"";
 
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   CFX_ByteTextBuf textBuf;
@@ -414,7 +398,6 @@ FX_BOOL Document::print(IJS_Context* cc,
                         CFX_WideString& sError) {
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
   FX_BOOL bUI = TRUE;
   int nStart = 0;
@@ -428,9 +411,10 @@ FX_BOOL Document::print(IJS_Context* cc,
   int nlength = params.size();
   if (nlength == 9) {
     if (params[8].GetType() == CJS_Value::VT_object) {
-      v8::Local<v8::Object> pObj = params[8].ToV8Object(pIsolate);
-      if (FXJS_GetObjDefnID(pObj) == CJS_PrintParamsObj::g_nObjDefnID) {
-        if (CJS_Object* pJSObj = params[8].ToCJSObject(pIsolate)) {
+      v8::Local<v8::Object> pObj = params[8].ToV8Object(pRuntime);
+      if (CFXJS_Engine::GetObjDefnID(pObj) ==
+          CJS_PrintParamsObj::g_nObjDefnID) {
+        if (CJS_Object* pJSObj = params[8].ToCJSObject(pRuntime)) {
           if (PrintParamsObj* pprintparamsObj =
                   static_cast<PrintParamsObj*>(pJSObj->GetEmbedObject())) {
             bUI = pprintparamsObj->bUI;
@@ -447,21 +431,21 @@ FX_BOOL Document::print(IJS_Context* cc,
     }
   } else {
     if (nlength >= 1)
-      bUI = params[0].ToBool(pIsolate);
+      bUI = params[0].ToBool(pRuntime);
     if (nlength >= 2)
-      nStart = params[1].ToInt(pIsolate);
+      nStart = params[1].ToInt(pRuntime);
     if (nlength >= 3)
-      nEnd = params[2].ToInt(pIsolate);
+      nEnd = params[2].ToInt(pRuntime);
     if (nlength >= 4)
-      bSilent = params[3].ToBool(pIsolate);
+      bSilent = params[3].ToBool(pRuntime);
     if (nlength >= 5)
-      bShrinkToFit = params[4].ToBool(pIsolate);
+      bShrinkToFit = params[4].ToBool(pRuntime);
     if (nlength >= 6)
-      bPrintAsImage = params[5].ToBool(pIsolate);
+      bPrintAsImage = params[5].ToBool(pRuntime);
     if (nlength >= 7)
-      bReverse = params[6].ToBool(pIsolate);
+      bReverse = params[6].ToBool(pRuntime);
     if (nlength >= 8)
-      bAnnotations = params[7].ToBool(pIsolate);
+      bAnnotations = params[7].ToBool(pRuntime);
   }
 
   if (CPDFDoc_Environment* pEnv = m_pDocument->GetEnv()) {
@@ -492,9 +476,8 @@ FX_BOOL Document::removeField(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
-  CFX_WideString sFieldName = params[0].ToCFXWideString(pIsolate);
+  CFX_WideString sFieldName = params[0].ToCFXWideString(pRuntime);
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   std::vector<CPDFSDK_Widget*> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
@@ -547,22 +530,21 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
   switch (params[0].GetType()) {
     default:
-      aName.Attach(params[0].ToV8Array(pIsolate));
+      aName.Attach(params[0].ToV8Array(pRuntime));
       break;
     case CJS_Value::VT_string:
-      aName.SetElement(pRuntime->GetIsolate(), 0, params[0]);
+      aName.SetElement(pRuntime, 0, params[0]);
       break;
   }
 
   std::vector<CPDF_FormField*> aFields;
-  for (int i = 0, isz = aName.GetLength(); i < isz; ++i) {
+  for (int i = 0, isz = aName.GetLength(pRuntime); i < isz; ++i) {
     CJS_Value valElement(pRuntime);
-    aName.GetElement(pRuntime->GetIsolate(), i, valElement);
-    CFX_WideString swVal = valElement.ToCFXWideString(pIsolate);
+    aName.GetElement(pRuntime, i, valElement);
+    CFX_WideString swVal = valElement.ToCFXWideString(pRuntime);
     for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
       aFields.push_back(pPDFForm->GetField(j, swVal));
   }
@@ -601,37 +583,35 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   FX_BOOL bEmpty = FALSE;
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
   CJS_Value v = params[0];
   if (v.GetType() == CJS_Value::VT_string) {
-    strURL = params[0].ToCFXWideString(pIsolate);
+    strURL = params[0].ToCFXWideString(pRuntime);
     if (nSize > 1)
-      bFDF = params[1].ToBool(pIsolate);
+      bFDF = params[1].ToBool(pRuntime);
     if (nSize > 2)
-      bEmpty = params[2].ToBool(pIsolate);
+      bEmpty = params[2].ToBool(pRuntime);
     if (nSize > 3)
-      aFields.Attach(params[3].ToV8Array(pIsolate));
+      aFields.Attach(params[3].ToV8Array(pRuntime));
   } else if (v.GetType() == CJS_Value::VT_object) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object(pIsolate);
-    v8::Local<v8::Value> pValue =
-        FXJS_GetObjectProperty(pIsolate, pObj, L"cURL");
+    v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
+    v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"cURL");
     if (!pValue.IsEmpty())
-      strURL = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
+      strURL = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"bFDF");
-    bFDF = CJS_Value(pRuntime, pValue).ToBool(pIsolate);
+    pValue = pRuntime->GetObjectProperty(pObj, L"bFDF");
+    bFDF = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"bEmpty");
-    bEmpty = CJS_Value(pRuntime, pValue).ToBool(pIsolate);
+    pValue = pRuntime->GetObjectProperty(pObj, L"bEmpty");
+    bEmpty = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"aFields");
-    aFields.Attach(CJS_Value(pRuntime, pValue).ToV8Array(pIsolate));
+    pValue = pRuntime->GetObjectProperty(pObj, L"aFields");
+    aFields.Attach(CJS_Value(pRuntime, pValue).ToV8Array(pRuntime));
   }
 
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  if (aFields.GetLength() == 0 && bEmpty) {
+  if (aFields.GetLength(pRuntime) == 0 && bEmpty) {
     if (pPDFInterForm->CheckRequiredFields(nullptr, true)) {
       pRuntime->BeginBlock();
       pInterForm->SubmitForm(strURL, FALSE);
@@ -641,11 +621,11 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   }
 
   std::vector<CPDF_FormField*> fieldObjects;
-  for (int i = 0, sz = aFields.GetLength(); i < sz; ++i) {
+  for (int i = 0, sz = aFields.GetLength(pRuntime); i < sz; ++i) {
     CJS_Value valName(pRuntime);
-    aFields.GetElement(pRuntime->GetIsolate(), i, valName);
+    aFields.GetElement(pRuntime, i, valName);
 
-    CFX_WideString sName = valName.ToCFXWideString(pIsolate);
+    CFX_WideString sName = valName.ToCFXWideString(pRuntime);
     CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
     for (int j = 0, jsz = pPDFForm->CountFields(sName); j < jsz; ++j) {
       CPDF_FormField* pField = pPDFForm->GetField(j, sName);
@@ -694,42 +674,40 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   CFX_WideString cMsg = L"";
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
   if (params.size() >= 1)
-    bUI = params[0].ToBool(pIsolate);
+    bUI = params[0].ToBool(pRuntime);
   if (params.size() >= 2)
-    cTo = params[1].ToCFXWideString(pIsolate);
+    cTo = params[1].ToCFXWideString(pRuntime);
   if (params.size() >= 3)
-    cCc = params[2].ToCFXWideString(pIsolate);
+    cCc = params[2].ToCFXWideString(pRuntime);
   if (params.size() >= 4)
-    cBcc = params[3].ToCFXWideString(pIsolate);
+    cBcc = params[3].ToCFXWideString(pRuntime);
   if (params.size() >= 5)
-    cSubject = params[4].ToCFXWideString(pIsolate);
+    cSubject = params[4].ToCFXWideString(pRuntime);
   if (params.size() >= 6)
-    cMsg = params[5].ToCFXWideString(pIsolate);
+    cMsg = params[5].ToCFXWideString(pRuntime);
 
   if (params.size() >= 1 && params[0].GetType() == CJS_Value::VT_object) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object(pIsolate);
+    v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
 
-    v8::Local<v8::Value> pValue =
-        FXJS_GetObjectProperty(pIsolate, pObj, L"bUI");
-    bUI = CJS_Value(pRuntime, pValue).ToInt(pIsolate);
+    v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"bUI");
+    bUI = CJS_Value(pRuntime, pValue).ToInt(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cTo");
-    cTo = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
+    pValue = pRuntime->GetObjectProperty(pObj, L"cTo");
+    cTo = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cCc");
-    cCc = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
+    pValue = pRuntime->GetObjectProperty(pObj, L"cCc");
+    cCc = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cBcc");
-    cBcc = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
+    pValue = pRuntime->GetObjectProperty(pObj, L"cBcc");
+    cBcc = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cSubject");
-    cSubject = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
+    pValue = pRuntime->GetObjectProperty(pObj, L"cSubject");
+    cSubject = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
 
-    pValue = FXJS_GetObjectProperty(pIsolate, pObj, L"cMsg");
-    cMsg = CJS_Value(pRuntime, pValue).ToCFXWideString(pIsolate);
+    pValue = pRuntime->GetObjectProperty(pObj, L"cMsg");
+    cMsg = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
   }
 
   pRuntime->BeginBlock();
@@ -772,19 +750,17 @@ FX_BOOL Document::info(IJS_Context* cc,
 
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Local<v8::Object> pObj =
-      FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pRuntime, -1);
 
-  v8::Isolate* isolate = GetIsolate(cc);
-  FXJS_PutObjectString(isolate, pObj, L"Author", cwAuthor);
-  FXJS_PutObjectString(isolate, pObj, L"Title", cwTitle);
-  FXJS_PutObjectString(isolate, pObj, L"Subject", cwSubject);
-  FXJS_PutObjectString(isolate, pObj, L"Keywords", cwKeywords);
-  FXJS_PutObjectString(isolate, pObj, L"Creator", cwCreator);
-  FXJS_PutObjectString(isolate, pObj, L"Producer", cwProducer);
-  FXJS_PutObjectString(isolate, pObj, L"CreationDate", cwCreationDate);
-  FXJS_PutObjectString(isolate, pObj, L"ModDate", cwModDate);
-  FXJS_PutObjectString(isolate, pObj, L"Trapped", cwTrapped);
+  v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
+  pRuntime->PutObjectString(pObj, L"Author", cwAuthor);
+  pRuntime->PutObjectString(pObj, L"Title", cwTitle);
+  pRuntime->PutObjectString(pObj, L"Subject", cwSubject);
+  pRuntime->PutObjectString(pObj, L"Keywords", cwKeywords);
+  pRuntime->PutObjectString(pObj, L"Creator", cwCreator);
+  pRuntime->PutObjectString(pObj, L"Producer", cwProducer);
+  pRuntime->PutObjectString(pObj, L"CreationDate", cwCreationDate);
+  pRuntime->PutObjectString(pObj, L"ModDate", cwModDate);
+  pRuntime->PutObjectString(pObj, L"Trapped", cwTrapped);
 
   // It's to be compatible to non-standard info dictionary.
   for (const auto& it : *pDictionary) {
@@ -792,11 +768,11 @@ FX_BOOL Document::info(IJS_Context* cc,
     CPDF_Object* pValueObj = it.second;
     CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsStringC());
     if (pValueObj->IsString() || pValueObj->IsName()) {
-      FXJS_PutObjectString(isolate, pObj, wsKey, pValueObj->GetUnicodeText());
+      pRuntime->PutObjectString(pObj, wsKey, pValueObj->GetUnicodeText());
     } else if (pValueObj->IsNumber()) {
-      FXJS_PutObjectNumber(isolate, pObj, wsKey, (float)pValueObj->GetNumber());
+      pRuntime->PutObjectNumber(pObj, wsKey, (float)pValueObj->GetNumber());
     } else if (pValueObj->IsBoolean()) {
-      FXJS_PutObjectBoolean(isolate, pObj, wsKey, !!pValueObj->GetInteger());
+      pRuntime->PutObjectBoolean(pObj, wsKey, !!pValueObj->GetInteger());
     }
   }
   vp << pObj;
@@ -1108,22 +1084,21 @@ FX_BOOL Document::addIcon(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
-  CFX_WideString swIconName = params[0].ToCFXWideString(pIsolate);
+  CFX_WideString swIconName = params[0].ToCFXWideString(pRuntime);
 
   if (params[1].GetType() != CJS_Value::VT_object) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
 
-  v8::Local<v8::Object> pJSIcon = params[1].ToV8Object(pIsolate);
-  if (FXJS_GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID) {
+  v8::Local<v8::Object> pJSIcon = params[1].ToV8Object(pRuntime);
+  if (pRuntime->GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
 
-  CJS_EmbedObj* pEmbedObj = params[1].ToCJSObject(pIsolate)->GetEmbedObject();
+  CJS_EmbedObj* pEmbedObj = params[1].ToCJSObject(pRuntime)->GetEmbedObject();
   if (!pEmbedObj) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
@@ -1153,12 +1128,13 @@ FX_BOOL Document::icons(IJS_Context* cc,
 
   int i = 0;
   for (const auto& pIconElement : m_IconList) {
-    v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-        pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
+    v8::Local<v8::Object> pObj =
+        pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
     if (pObj.IsEmpty())
       return FALSE;
 
-    CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(m_isolate, pObj);
+    CJS_Icon* pJS_Icon =
+        static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
     if (!pJS_Icon)
       return FALSE;
 
@@ -1168,8 +1144,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
 
     pIcon->SetStream(pIconElement->IconStream->GetStream());
     pIcon->SetIconName(pIconElement->IconName);
-    Icons.SetElement(pRuntime->GetIsolate(), i++,
-                     CJS_Value(pRuntime, pJS_Icon));
+    Icons.SetElement(pRuntime, i++, CJS_Value(pRuntime, pJS_Icon));
   }
 
   vp << Icons;
@@ -1190,20 +1165,20 @@ FX_BOOL Document::getIcon(IJS_Context* cc,
     return FALSE;
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
-  CFX_WideString swIconName = params[0].ToCFXWideString(pIsolate);
+  CFX_WideString swIconName = params[0].ToCFXWideString(pRuntime);
 
   for (const auto& pIconElement : m_IconList) {
     if (pIconElement->IconName == swIconName) {
       Icon* pRetIcon = pIconElement->IconStream;
 
-      v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-          pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
+      v8::Local<v8::Object> pObj =
+          pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
       if (pObj.IsEmpty())
         return FALSE;
 
-      CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(m_isolate, pObj);
+      CJS_Icon* pJS_Icon =
+          static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
       if (!pJS_Icon)
         return FALSE;
 
@@ -1275,11 +1250,10 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
     return FALSE;
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
-  int nPageNo = params.size() > 0 ? params[0].ToInt(pIsolate) : 0;
-  int nWordNo = params.size() > 1 ? params[1].ToInt(pIsolate) : 0;
-  bool bStrip = params.size() > 2 ? params[2].ToBool(pIsolate) : true;
+  int nPageNo = params.size() > 0 ? params[0].ToInt(pRuntime) : 0;
+  int nWordNo = params.size() > 1 ? params[1].ToInt(pRuntime) : 0;
+  bool bStrip = params.size() > 2 ? params[2].ToBool(pRuntime) : true;
 
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   if (!pDocument)
@@ -1340,9 +1314,8 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
     return FALSE;
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
 
-  int nPageNo = params.size() > 0 ? params[0].ToInt(pIsolate) : 0;
+  int nPageNo = params.size() > 0 ? params[0].ToInt(pRuntime) : 0;
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
@@ -1372,8 +1345,8 @@ FX_BOOL Document::getPrintParams(IJS_Context* cc,
                                  CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pRuntime, CJS_PrintParamsObj::g_nObjDefnID);
+  v8::Local<v8::Object> pRetObj =
+      pRuntime->NewFxDynamicObj(CJS_PrintParamsObj::g_nObjDefnID);
 
   // Not implemented yet.
 
@@ -1526,8 +1499,8 @@ FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
     return FALSE;
   }
 
-  CJS_Runtime* runtime = context->GetJSRuntime();
-  CFX_WideString wideName = params[0].ToCFXWideString(runtime->GetIsolate());
+  CJS_Runtime* pRuntime = context->GetJSRuntime();
+  CFX_WideString wideName = params[0].ToCFXWideString(pRuntime);
   CFX_ByteString utf8Name = wideName.UTF8Encode();
 
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
@@ -1553,11 +1526,11 @@ FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
     scrollPositionArraySize = j;
   }
 
-  runtime->BeginBlock();
+  pRuntime->BeginBlock();
   CPDFDoc_Environment* pApp = m_pDocument->GetEnv();
   pApp->FFI_DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
                          scrollPositionArray.get(), scrollPositionArraySize);
-  runtime->EndBlock();
+  pRuntime->EndBlock();
 
   return TRUE;
 }

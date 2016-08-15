@@ -33,6 +33,7 @@ class CJS_Runtime : public IJS_Runtime, public CFXJS_Engine {
   using FieldEvent = std::pair<CFX_WideString, JS_EVENT_T>;
 
   static CJS_Runtime* FromContext(const IJS_Context* cc);
+  static CJS_Runtime* CurrentRuntimeFromIsolate(v8::Isolate* pIsolate);
 
   explicit CJS_Runtime(CPDFDoc_Environment* pApp);
   ~CJS_Runtime() override;
@@ -43,7 +44,8 @@ class CJS_Runtime : public IJS_Runtime, public CFXJS_Engine {
   IJS_Context* GetCurrentContext() override;
   void SetReaderDocument(CPDFSDK_Document* pReaderDoc) override;
   CPDFSDK_Document* GetReaderDocument() override;
-  int Execute(const CFX_WideString& script, CFX_WideString* info) override;
+  int ExecuteScript(const CFX_WideString& script,
+                    CFX_WideString* info) override;
 
   CPDFDoc_Environment* GetReaderApp() const { return m_pApp; }
 
@@ -54,12 +56,6 @@ class CJS_Runtime : public IJS_Runtime, public CFXJS_Engine {
   void BeginBlock() { m_bBlocking = TRUE; }
   void EndBlock() { m_bBlocking = FALSE; }
   FX_BOOL IsBlocking() const { return m_bBlocking; }
-
-  v8::Isolate* GetIsolate() const { return m_isolate; }
-  v8::Local<v8::Context> NewJSContext();
-
-  void SetConstArray(const CFX_WideString& name, v8::Local<v8::Array> array);
-  v8::Local<v8::Array> GetConstArray(const CFX_WideString& name);
 
 #ifdef PDF_ENABLE_XFA
   FX_BOOL GetValueByName(const CFX_ByteStringC& utf8Name,

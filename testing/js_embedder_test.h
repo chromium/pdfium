@@ -21,12 +21,12 @@ class JSEmbedderTest : public EmbedderTest {
 
   v8::Isolate* isolate();
   v8::Local<v8::Context> GetV8Context();
+  CFXJS_Engine* engine() { return m_Engine.get(); }
 
  private:
   std::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Isolate* m_pIsolate;
-  v8::Global<v8::Context> m_pPersistentContext;
-  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
+  std::unique_ptr<CFXJS_Engine> m_Engine;
 };
 
 #endif  // TESTING_JS_EMBEDDER_TEST_H_

@@ -595,22 +595,22 @@ FX_BOOL CJS_EventHandler::Shift() {
 
 Field* CJS_EventHandler::Source() {
   CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
-  v8::Local<v8::Object> pDocObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pRuntime, CJS_Document::g_nObjDefnID);
+  v8::Local<v8::Object> pDocObj =
+      pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
   ASSERT(!pDocObj.IsEmpty());
 
-  v8::Local<v8::Object> pFieldObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
+  v8::Local<v8::Object> pFieldObj =
+      pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
   ASSERT(!pFieldObj.IsEmpty());
 
   CJS_Document* pJSDocument =
-      (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pDocObj);
+      static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
   pDocument->AttachDoc(m_pTargetDoc ? m_pTargetDoc
                                     : m_pJSContext->GetReaderDocument());
 
   CJS_Field* pJSField =
-      (CJS_Field*)FXJS_GetPrivate(pRuntime->GetIsolate(), pFieldObj);
+      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
   Field* pField = (Field*)pJSField->GetEmbedObject();
   pField->AttachField(pDocument, m_strSourceName);
   return pField;
@@ -618,22 +618,22 @@ Field* CJS_EventHandler::Source() {
 
 Field* CJS_EventHandler::Target_Field() {
   CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
-  v8::Local<v8::Object> pDocObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pRuntime, CJS_Document::g_nObjDefnID);
+  v8::Local<v8::Object> pDocObj =
+      pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
   ASSERT(!pDocObj.IsEmpty());
 
-  v8::Local<v8::Object> pFieldObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
+  v8::Local<v8::Object> pFieldObj =
+      pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
   ASSERT(!pFieldObj.IsEmpty());
 
   CJS_Document* pJSDocument =
-      (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pDocObj);
+      static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
   pDocument->AttachDoc(m_pTargetDoc ? m_pTargetDoc
                                     : m_pJSContext->GetReaderDocument());
 
   CJS_Field* pJSField =
-      (CJS_Field*)FXJS_GetPrivate(pRuntime->GetIsolate(), pFieldObj);
+      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
   Field* pField = (Field*)pJSField->GetEmbedObject();
   pField->AttachField(pDocument, m_strTargetName);
   return pField;

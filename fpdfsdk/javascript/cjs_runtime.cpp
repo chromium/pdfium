@@ -55,11 +55,18 @@ CJS_Runtime* CJS_Runtime::FromContext(const IJS_Context* cc) {
   return pContext->GetJSRuntime();
 }
 
+// static
+CJS_Runtime* CJS_Runtime::CurrentRuntimeFromIsolate(v8::Isolate* pIsolate) {
+  return static_cast<CJS_Runtime*>(
+      CFXJS_Engine::CurrentEngineFromIsolate(pIsolate));
+}
+
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     : m_pApp(pApp),
       m_pDocument(nullptr),
       m_bBlocking(false),
       m_isolateManaged(false) {
+  v8::Isolate* pIsolate = nullptr;
 #ifndef PDF_ENABLE_XFA
   IPDF_JSPLATFORM* pPlatform = m_pApp->GetFormFillInfo()->m_pJsPlatform;
   if (pPlatform->version <= 2) {
@@ -71,11 +78,13 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     }
     FXJS_Initialize(embedderDataSlot, pExternalIsolate);
   }
-  m_isolateManaged = FXJS_GetIsolate(&m_isolate);
+  m_isolateManaged = FXJS_GetIsolate(&pIsolate);
+  SetIsolate(pIsolate);
 #else
   if (CPDFXFA_App::GetInstance()->GetJSERuntime()) {
     // TODO(tsepez): CPDFXFA_App should also use the embedder provided isolate.
-    m_isolate = (v8::Isolate*)CPDFXFA_App::GetInstance()->GetJSERuntime();
+    pIsolate = CPDFXFA_App::GetInstance()->GetJSERuntime();
+    SetIsolate(pIsolate);
   } else {
     IPDF_JSPLATFORM* pPlatform = m_pApp->GetFormFillInfo()->m_pJsPlatform;
     if (pPlatform->version <= 2) {
@@ -87,15 +96,15 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
       }
       FXJS_Initialize(embedderDataSlot, pExternalIsolate);
     }
-    m_isolateManaged = FXJS_GetIsolate(&m_isolate);
+    m_isolateManaged = FXJS_GetIsolate(&pIsolate);
+    SetIsolate(pIsolate);
   }
 
-  v8::Isolate* isolate = m_isolate;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
   if (CPDFXFA_App::GetInstance()->IsJavaScriptInitialized()) {
     CJS_Context* pContext = (CJS_Context*)NewContext();
-    FXJS_InitializeEngine(GetIsolate(), this, &m_context, &m_StaticObjects);
+    InitializeEngine();
     ReleaseContext(pContext);
     return;
   }
@@ -109,7 +118,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
 #endif
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
-  FXJS_InitializeEngine(GetIsolate(), this, &m_context, &m_StaticObjects);
+  InitializeEngine();
   ReleaseContext(pContext);
 }
 
@@ -117,12 +126,11 @@ CJS_Runtime::~CJS_Runtime() {
   for (auto* obs : m_observers)
     obs->OnDestroyed();
 
-  m_ContextArray.clear();
-  m_ConstArrays.clear();
-  FXJS_ReleaseEngine(GetIsolate(), &m_context, &m_StaticObjects);
-  m_context.Reset();
-  if (m_isolateManaged)
-    m_isolate->Dispose();
+  ReleaseEngine();
+  if (m_isolateManaged) {
+    GetIsolate()->Dispose();
+    SetIsolate(nullptr);
+  }
 }
 
 void CJS_Runtime::DefineJSObjects() {
@@ -133,43 +141,43 @@ void CJS_Runtime::DefineJSObjects() {
 
   // The call order determines the "ObjDefID" assigned to each class.
   // ObjDefIDs 0 - 2
-  CJS_Border::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Display::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Font::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
+  CJS_Border::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Display::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Font::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
 
   // ObjDefIDs 3 - 5
-  CJS_Highlight::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Position::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_ScaleHow::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
+  CJS_Highlight::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Position::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_ScaleHow::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
 
   // ObjDefIDs 6 - 8
-  CJS_ScaleWhen::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Style::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Zoomtype::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
+  CJS_ScaleWhen::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Style::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Zoomtype::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
 
   // ObjDefIDs 9 - 11
-  CJS_App::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Color::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Console::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
+  CJS_App::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Color::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Console::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
 
   // ObjDefIDs 12 - 14
-  CJS_Document::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_GLOBAL);
-  CJS_Event::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Field::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_DYNAMIC);
+  CJS_Document::DefineJSObjects(this, FXJSOBJTYPE_GLOBAL);
+  CJS_Event::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Field::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
 
   // ObjDefIDs 15 - 17
-  CJS_Global::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
-  CJS_Icon::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_DYNAMIC);
-  CJS_Util::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_STATIC);
+  CJS_Global::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Icon::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
+  CJS_Util::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
 
   // ObjDefIDs 18 - 20 (these can't fail, return void).
-  CJS_PublicMethods::DefineJSObjects(GetIsolate());
+  CJS_PublicMethods::DefineJSObjects(this);
   CJS_GlobalConsts::DefineJSObjects(this);
   CJS_GlobalArrays::DefineJSObjects(this);
 
   // ObjDefIDs 21 - 22.
-  CJS_TimerObj::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_DYNAMIC);
-  CJS_PrintParamsObj::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_DYNAMIC);
+  CJS_TimerObj::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
+  CJS_PrintParamsObj::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
 }
 
 IJS_Context* CJS_Runtime::NewContext() {
@@ -191,36 +199,45 @@ IJS_Context* CJS_Runtime::GetCurrentContext() {
 }
 
 void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
-  if (m_pDocument != pReaderDoc) {
-    v8::Isolate::Scope isolate_scope(m_isolate);
-    v8::HandleScope handle_scope(m_isolate);
-    v8::Local<v8::Context> context =
-        v8::Local<v8::Context>::New(m_isolate, m_context);
-    v8::Context::Scope context_scope(context);
+  if (m_pDocument == pReaderDoc)
+    return;
 
-    m_pDocument = pReaderDoc;
-    if (pReaderDoc) {
-      v8::Local<v8::Object> pThis = FXJS_GetThisObj(GetIsolate());
-      if (!pThis.IsEmpty()) {
-        if (FXJS_GetObjDefnID(pThis) == CJS_Document::g_nObjDefnID) {
-          if (CJS_Document* pJSDocument =
-                  (CJS_Document*)FXJS_GetPrivate(GetIsolate(), pThis)) {
-            if (Document* pDocument = (Document*)pJSDocument->GetEmbedObject())
-              pDocument->AttachDoc(pReaderDoc);
-          }
-        }
-      }
-    }
-  }
+  v8::Isolate::Scope isolate_scope(GetIsolate());
+  v8::HandleScope handle_scope(GetIsolate());
+  v8::Local<v8::Context> context = NewLocalContext();
+  v8::Context::Scope context_scope(context);
+
+  m_pDocument = pReaderDoc;
+  if (!pReaderDoc)
+    return;
+
+  v8::Local<v8::Object> pThis = GetThisObj();
+  if (pThis.IsEmpty())
+    return;
+
+  if (CFXJS_Engine::GetObjDefnID(pThis) != CJS_Document::g_nObjDefnID)
+    return;
+
+  CJS_Document* pJSDocument =
+      static_cast<CJS_Document*>(GetObjectPrivate(pThis));
+  if (!pJSDocument)
+    return;
+
+  Document* pDocument = static_cast<Document*>(pJSDocument->GetEmbedObject());
+  if (!pDocument)
+    return;
+
+  pDocument->AttachDoc(pReaderDoc);
 }
 
 CPDFSDK_Document* CJS_Runtime::GetReaderDocument() {
   return m_pDocument;
 }
 
-int CJS_Runtime::Execute(const CFX_WideString& script, CFX_WideString* info) {
+int CJS_Runtime::ExecuteScript(const CFX_WideString& script,
+                               CFX_WideString* info) {
   FXJSErr error = {};
-  int nRet = FXJS_Execute(m_isolate, script, &error);
+  int nRet = Execute(script, &error);
   if (nRet < 0) {
     info->Format(L"[ Line: %05d { %s } ] : %s", error.linnum - 1, error.srcline,
                  error.message);
@@ -234,19 +251,6 @@ bool CJS_Runtime::AddEventToSet(const FieldEvent& event) {
 
 void CJS_Runtime::RemoveEventFromSet(const FieldEvent& event) {
   m_FieldEventSet.erase(event);
-}
-
-v8::Local<v8::Context> CJS_Runtime::NewJSContext() {
-  return v8::Local<v8::Context>::New(m_isolate, m_context);
-}
-
-void CJS_Runtime::SetConstArray(const CFX_WideString& name,
-                                v8::Local<v8::Array> array) {
-  m_ConstArrays[name] = v8::Global<v8::Array>(m_isolate, array);
-}
-
-v8::Local<v8::Array> CJS_Runtime::GetConstArray(const CFX_WideString& name) {
-  return v8::Local<v8::Array>::New(m_isolate, m_ConstArrays[name]);
 }
 
 void CJS_Runtime::AddObserver(Observer* observer) {
@@ -272,8 +276,7 @@ FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> old_context = GetIsolate()->GetCurrentContext();
-  v8::Local<v8::Context> context =
-      v8::Local<v8::Context>::New(GetIsolate(), m_context);
+  v8::Local<v8::Context> context = NewLocalContext();
   v8::Context::Scope context_scope(context);
 
   // Caution: We're about to hand to XFA an object that in order to invoke
@@ -283,7 +286,7 @@ FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
   // Do so now.
   // TODO(tsepez): redesign PDF-side objects to not rely on v8::Context's
   // embedder data slots, and/or to always use the right context.
-  FXJS_SetEngineForV8Context(old_context, this);
+  CFXJS_Engine::SetForV8Context(old_context, this);
 
   v8::Local<v8::Value> propvalue =
       context->Global()->Get(v8::String::NewFromUtf8(
@@ -304,8 +307,7 @@ FX_BOOL CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
   v8::Isolate* pIsolate = GetIsolate();
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
-  v8::Local<v8::Context> context =
-      v8::Local<v8::Context>::New(pIsolate, m_context);
+  v8::Local<v8::Context> context = NewLocalContext();
   v8::Context::Scope context_scope(context);
 
   // v8::Local<v8::Context> tmpCotext =

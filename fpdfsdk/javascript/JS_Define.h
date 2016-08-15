@@ -76,23 +76,22 @@ void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
-  IJS_Context* pContext = pRuntime->GetCurrentContext();
-  CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
   CJS_PropValue value(pRuntime);
   value.StartGetting();
-  if (!(pObj->*M)(pContext, value, sError)) {
-    FXJS_Error(isolate, JSFormatErrorString(class_name_string, prop_name_string,
-                                            sError));
+  if (!(pObj->*M)(pRuntime->GetCurrentContext(), value, sError)) {
+    pRuntime->Error(
+        JSFormatErrorString(class_name_string, prop_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(isolate));
+  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(pRuntime));
 }
 
 template <class C,
@@ -102,20 +101,19 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::String> property,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
-  IJS_Context* pContext = pRuntime->GetCurrentContext();
-  CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
   CJS_PropValue propValue(pRuntime, CJS_Value(pRuntime, value));
   propValue.StartSetting();
-  if (!(pObj->*M)(pContext, propValue, sError)) {
-    FXJS_Error(isolate, JSFormatErrorString(class_name_string, prop_name_string,
-                                            sError));
+  if (!(pObj->*M)(pRuntime->GetCurrentContext(), propValue, sError)) {
+    pRuntime->Error(
+        JSFormatErrorString(class_name_string, prop_name_string, sError));
   }
 }
 
@@ -141,26 +139,26 @@ template <class C,
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
-  IJS_Context* pContext = pRuntime->GetCurrentContext();
   std::vector<CJS_Value> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
     parameters.push_back(CJS_Value(pRuntime, info[i]));
   }
-  CJS_Value valueRes(pRuntime);
-  CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
-  if (!(pObj->*M)(pContext, parameters, valueRes, sError)) {
-    FXJS_Error(isolate, JSFormatErrorString(class_name_string,
-                                            method_name_string, sError));
+  CJS_Value valueRes(pRuntime);
+  if (!(pObj->*M)(pRuntime->GetCurrentContext(), parameters, valueRes,
+                  sError)) {
+    pRuntime->Error(
+        JSFormatErrorString(class_name_string, method_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToV8Value(isolate));
+  info.GetReturnValue().Set(valueRes.ToV8Value(pRuntime));
 }
 
 #define JS_STATIC_METHOD(method_name, class_name)                             \
@@ -183,7 +181,7 @@ void JSMethod(const char* method_name_string,
 #define DECLARE_JS_CLASS_BASE_PART()  \
   static const wchar_t* g_pClassName; \
   static int g_nObjDefnID;            \
-  static void DefineJSObjects(v8::Isolate* pIsolate, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
 #define IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)           \
   const wchar_t* js_class_name::g_pClassName = JS_WIDESTRING(class_name); \
@@ -194,28 +192,28 @@ void JSMethod(const char* method_name_string,
   DECLARE_JS_CLASS_BASE_PART()   \
   DECLARE_JS_CLASS_CONST_PART()
 
-#define IMPLEMENT_JS_CLASS_CONST(js_class_name, class_name)              \
-  IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)                \
-  IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)               \
-  void js_class_name::DefineJSObjects(v8::Isolate* pIsolate,             \
-                                      FXJSOBJTYPE eObjType) {            \
-    g_nObjDefnID = FXJS_DefineObj(pIsolate, js_class_name::g_pClassName, \
-                                  eObjType, nullptr, nullptr);           \
-    DefineConsts(pIsolate);                                              \
+#define IMPLEMENT_JS_CLASS_CONST(js_class_name, class_name)                  \
+  IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)                    \
+  IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)                   \
+  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine,                 \
+                                      FXJSOBJTYPE eObjType) {                \
+    g_nObjDefnID = pEngine->DefineObj(js_class_name::g_pClassName, eObjType, \
+                                      nullptr, nullptr);                     \
+    DefineConsts(pEngine);                                                   \
   }
 
 #define DECLARE_JS_CLASS_CONST_PART()   \
   static JSConstSpec JS_Class_Consts[]; \
-  static void DefineConsts(v8::Isolate* pIsolate);
+  static void DefineConsts(CFXJS_Engine* pEngine);
 
 #define IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)     \
-  void js_class_name::DefineConsts(v8::Isolate* pIsolate) {          \
+  void js_class_name::DefineConsts(CFXJS_Engine* pEngine) {          \
     for (size_t i = 0; i < FX_ArraySize(JS_Class_Consts) - 1; ++i) { \
-      FXJS_DefineObjConst(                                           \
-          pIsolate, g_nObjDefnID, JS_Class_Consts[i].pName,          \
+      pEngine->DefineObjConst(                                       \
+          g_nObjDefnID, JS_Class_Consts[i].pName,                    \
           JS_Class_Consts[i].t == 0                                  \
-              ? FXJS_NewNumber(pIsolate, JS_Class_Consts[i].number)  \
-              : FXJS_NewString(pIsolate, JS_Class_Consts[i].str));   \
+              ? pEngine->NewNumber(JS_Class_Consts[i].number)        \
+              : pEngine->NewString(JS_Class_Consts[i].str));         \
     }                                                                \
   }
 
@@ -231,53 +229,55 @@ void JSMethod(const char* method_name_string,
   DECLARE_JS_CLASS_CONST_PART() \
   DECLARE_JS_CLASS_RICH_PART()
 
-#define IMPLEMENT_JS_CLASS_RICH(js_class_name, class_alternate, class_name) \
-  IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)                   \
-  IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)                  \
-  IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate, class_name)  \
-  void js_class_name::DefineJSObjects(v8::Isolate* pIsolate,                \
-                                      FXJSOBJTYPE eObjType) {               \
-    g_nObjDefnID = FXJS_DefineObj(pIsolate, js_class_name::g_pClassName,    \
-                                  eObjType, JSConstructor, JSDestructor);   \
-    DefineConsts(pIsolate);                                                 \
-    DefineProps(pIsolate);                                                  \
-    DefineMethods(pIsolate);                                                \
+#define IMPLEMENT_JS_CLASS_RICH(js_class_name, class_alternate, class_name)  \
+  IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)                    \
+  IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)                   \
+  IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate, class_name)   \
+  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine,                 \
+                                      FXJSOBJTYPE eObjType) {                \
+    g_nObjDefnID = pEngine->DefineObj(js_class_name::g_pClassName, eObjType, \
+                                      JSConstructor, JSDestructor);          \
+    DefineConsts(pEngine);                                                   \
+    DefineProps(pEngine);                                                    \
+    DefineMethods(pEngine);                                                  \
   }
 
 #define DECLARE_JS_CLASS_RICH_PART()                                           \
   static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj); \
-  static void JSDestructor(v8::Local<v8::Object> obj);                         \
-  static void DefineProps(v8::Isolate* pIsoalte);                              \
-  static void DefineMethods(v8::Isolate* pIsoalte);                            \
+  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);  \
+  static void DefineProps(CFXJS_Engine* pEngine);                              \
+  static void DefineMethods(CFXJS_Engine* pEngine);                            \
   static JSPropertySpec JS_Class_Properties[];                                 \
   static JSMethodSpec JS_Class_Methods[];
 
-#define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,          \
-                                     class_name)                              \
-  void js_class_name::JSConstructor(CFXJS_Engine* pEngine,                    \
-                                    v8::Local<v8::Object> obj) {              \
-    CJS_Object* pObj = new js_class_name(obj);                                \
-    pObj->SetEmbedObject(new class_alternate(pObj));                          \
-    FXJS_SetPrivate(nullptr, obj, (void*)pObj);                               \
-    pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));                   \
-  }                                                                           \
-  void js_class_name::JSDestructor(v8::Local<v8::Object> obj) {               \
-    js_class_name* pObj = (js_class_name*)FXJS_GetPrivate(nullptr, obj);      \
-    pObj->ExitInstance();                                                     \
-    delete pObj;                                                              \
-  }                                                                           \
-  void js_class_name::DefineProps(v8::Isolate* pIsolate) {                    \
-    for (size_t i = 0; i < FX_ArraySize(JS_Class_Properties) - 1; ++i) {      \
-      FXJS_DefineObjProperty(                                                 \
-          pIsolate, g_nObjDefnID, JS_Class_Properties[i].pName,               \
-          JS_Class_Properties[i].pPropGet, JS_Class_Properties[i].pPropPut);  \
-    }                                                                         \
-  }                                                                           \
-  void js_class_name::DefineMethods(v8::Isolate* pIsolate) {                  \
-    for (size_t i = 0; i < FX_ArraySize(JS_Class_Methods) - 1; ++i) {         \
-      FXJS_DefineObjMethod(pIsolate, g_nObjDefnID, JS_Class_Methods[i].pName, \
-                           JS_Class_Methods[i].pMethodCall);                  \
-    }                                                                         \
+#define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,         \
+                                     class_name)                             \
+  void js_class_name::JSConstructor(CFXJS_Engine* pEngine,                   \
+                                    v8::Local<v8::Object> obj) {             \
+    CJS_Object* pObj = new js_class_name(obj);                               \
+    pObj->SetEmbedObject(new class_alternate(pObj));                         \
+    pEngine->SetObjectPrivate(obj, (void*)pObj);                             \
+    pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));                  \
+  }                                                                          \
+  void js_class_name::JSDestructor(CFXJS_Engine* pEngine,                    \
+                                   v8::Local<v8::Object> obj) {              \
+    js_class_name* pObj =                                                    \
+        static_cast<js_class_name*>(pEngine->GetObjectPrivate(obj));         \
+    pObj->ExitInstance();                                                    \
+    delete pObj;                                                             \
+  }                                                                          \
+  void js_class_name::DefineProps(CFXJS_Engine* pEngine) {                   \
+    for (size_t i = 0; i < FX_ArraySize(JS_Class_Properties) - 1; ++i) {     \
+      pEngine->DefineObjProperty(g_nObjDefnID, JS_Class_Properties[i].pName, \
+                                 JS_Class_Properties[i].pPropGet,            \
+                                 JS_Class_Properties[i].pPropPut);           \
+    }                                                                        \
+  }                                                                          \
+  void js_class_name::DefineMethods(CFXJS_Engine* pEngine) {                 \
+    for (size_t i = 0; i < FX_ArraySize(JS_Class_Methods) - 1; ++i) {        \
+      pEngine->DefineObjMethod(g_nObjDefnID, JS_Class_Methods[i].pName,      \
+                               JS_Class_Methods[i].pMethodCall);             \
+    }                                                                        \
   }
 
 // Special JS classes implement methods, props, and queries, but not consts.
@@ -292,14 +292,14 @@ void JSMethod(const char* method_name_string,
   IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)                     \
   IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate, class_name)     \
   IMPLEMENT_SPECIAL_JS_CLASS_PART(js_class_name, class_alternate, class_name)  \
-  void js_class_name::DefineJSObjects(v8::Isolate* pIsolate,                   \
+  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine,                   \
                                       FXJSOBJTYPE eObjType) {                  \
-    g_nObjDefnID = FXJS_DefineObj(pIsolate, js_class_name::g_pClassName,       \
-                                  eObjType, JSConstructor, JSDestructor);      \
-    DefineConsts(pIsolate);                                                    \
-    DefineProps(pIsolate);                                                     \
-    DefineMethods(pIsolate);                                                   \
-    DefineAllProperties(pIsolate);                                             \
+    g_nObjDefnID = pEngine->DefineObj(js_class_name::g_pClassName, eObjType,   \
+                                      JSConstructor, JSDestructor);            \
+    DefineConsts(pEngine);                                                     \
+    DefineProps(pEngine);                                                      \
+    DefineMethods(pEngine);                                                    \
+    DefineAllProperties(pEngine);                                              \
   }
 
 #define DECLARE_SPECIAL_JS_CLASS_PART()                                        \
@@ -314,7 +314,7 @@ void JSMethod(const char* method_name_string,
   static void delprop_static(                                                  \
       v8::Local<v8::String> property,                                          \
       const v8::PropertyCallbackInfo<v8::Boolean>& info);                      \
-  static void DefineAllProperties(v8::Isolate* pIsolate);
+  static void DefineAllProperties(CFXJS_Engine* pEngine);
 
 #define IMPLEMENT_SPECIAL_JS_CLASS_PART(js_class_name, class_alternate,    \
                                         class_name)                        \
@@ -338,9 +338,9 @@ void JSMethod(const char* method_name_string,
       const v8::PropertyCallbackInfo<v8::Boolean>& info) {                 \
     JSSpecialPropDel<class_alternate>(#class_name, property, info);        \
   }                                                                        \
-  void js_class_name::DefineAllProperties(v8::Isolate* pIsolate) {         \
-    FXJS_DefineObjAllProperties(                                           \
-        pIsolate, g_nObjDefnID, js_class_name::queryprop_static,           \
+  void js_class_name::DefineAllProperties(CFXJS_Engine* pEngine) {         \
+    pEngine->DefineObjAllProperties(                                       \
+        g_nObjDefnID, js_class_name::queryprop_static,                     \
         js_class_name::getprop_static, js_class_name::putprop_static,      \
         js_class_name::delprop_static);                                    \
   }
@@ -349,12 +349,13 @@ template <class Alt>
 void JSSpecialPropQuery(const char*,
                         v8::Local<v8::String> property,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(
       CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CJS_Object* pJSObj =
-      reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   FX_BOOL bRet = pObj->QueryProperty(propname.c_str());
   info.GetReturnValue().Set(bRet ? 4 : 0);
@@ -364,14 +365,12 @@ template <class Alt>
 void JSSpecialPropGet(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
-  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
-      reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(
@@ -379,11 +378,12 @@ void JSSpecialPropGet(const char* class_name,
   CFX_WideString sError;
   CJS_PropValue value(pRuntime);
   value.StartGetting();
-  if (!pObj->DoProperty(pContext, propname.c_str(), value, sError)) {
-    FXJS_Error(isolate, JSFormatErrorString(class_name, "GetProperty", sError));
+  if (!pObj->DoProperty(pRuntime->GetCurrentContext(), propname.c_str(), value,
+                        sError)) {
+    pRuntime->Error(JSFormatErrorString(class_name, "GetProperty", sError));
     return;
   }
-  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(isolate));
+  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(pRuntime));
 }
 
 template <class Alt>
@@ -391,14 +391,12 @@ void JSSpecialPropPut(const char* class_name,
                       v8::Local<v8::String> property,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
-  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
-      reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(
@@ -406,8 +404,9 @@ void JSSpecialPropPut(const char* class_name,
   CFX_WideString sError;
   CJS_PropValue PropValue(pRuntime, CJS_Value(pRuntime, value));
   PropValue.StartSetting();
-  if (!pObj->DoProperty(pContext, propname.c_str(), PropValue, sError)) {
-    FXJS_Error(isolate, JSFormatErrorString(class_name, "PutProperty", sError));
+  if (!pObj->DoProperty(pRuntime->GetCurrentContext(), propname.c_str(),
+                        PropValue, sError)) {
+    pRuntime->Error(JSFormatErrorString(class_name, "PutProperty", sError));
   }
 }
 
@@ -415,20 +414,19 @@ template <class Alt>
 void JSSpecialPropDel(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(FXJS_GetCurrentEngineFromIsolate(isolate));
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
-  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
-      reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(
       CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CFX_WideString sError;
-  if (!pObj->DelProperty(pContext, propname.c_str(), sError)) {
+  if (!pObj->DelProperty(pRuntime->GetCurrentContext(), propname.c_str(),
+                         sError)) {
     CFX_ByteString cbName;
     cbName.Format("%s.%s", class_name, "DelProperty");
     // Probably a missing call to JSFX_Error().
@@ -441,23 +439,21 @@ template <FX_BOOL (*F)(IJS_Context*,
                        CFX_WideString&)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
-  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(
-      FXJS_GetCurrentEngineFromIsolate(info.GetIsolate()));
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
-  IJS_Context* pContext = pRuntime->GetCurrentContext();
   std::vector<CJS_Value> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
     parameters.push_back(CJS_Value(pRuntime, info[i]));
   }
   CJS_Value valueRes(pRuntime);
   CFX_WideString sError;
-  if (!(*F)(pContext, parameters, valueRes, sError)) {
-    FXJS_Error(pRuntime->GetIsolate(),
-               JSFormatErrorString(func_name_string, nullptr, sError));
+  if (!(*F)(pRuntime->GetCurrentContext(), parameters, valueRes, sError)) {
+    pRuntime->Error(JSFormatErrorString(func_name_string, nullptr, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToV8Value(pRuntime->GetIsolate()));
+  info.GetReturnValue().Set(valueRes.ToV8Value(pRuntime));
 }
 
 #define JS_STATIC_GLOBAL_FUN(fun_name)                   \
@@ -468,7 +464,7 @@ void JSGlobalFunc(const char* func_name_string,
 
 #define JS_STATIC_DECLARE_GLOBAL_FUN()  \
   static JSMethodSpec global_methods[]; \
-  static void DefineJSObjects(v8::Isolate* pIsolate)
+  static void DefineJSObjects(CFXJS_Engine* pEngine)
 
 #define BEGIN_JS_STATIC_GLOBAL_FUN(js_class_name) \
   JSMethodSpec js_class_name::global_methods[] = {
@@ -477,13 +473,13 @@ void JSGlobalFunc(const char* func_name_string,
 
 #define END_JS_STATIC_GLOBAL_FUN() END_JS_STATIC_METHOD()
 
-#define IMPLEMENT_JS_STATIC_GLOBAL_FUN(js_class_name)                        \
-  void js_class_name::DefineJSObjects(v8::Isolate* pIsolate) {               \
-    for (size_t i = 0; i < FX_ArraySize(global_methods) - 1; ++i) {          \
-      FXJS_DefineGlobalMethod(pIsolate,                                      \
-                              js_class_name::global_methods[i].pName,        \
-                              js_class_name::global_methods[i].pMethodCall); \
-    }                                                                        \
+#define IMPLEMENT_JS_STATIC_GLOBAL_FUN(js_class_name)               \
+  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine) {      \
+    for (size_t i = 0; i < FX_ArraySize(global_methods) - 1; ++i) { \
+      pEngine->DefineGlobalMethod(                                  \
+          js_class_name::global_methods[i].pName,                   \
+          js_class_name::global_methods[i].pMethodCall);            \
+    }                                                               \
   }
 
 #endif  // FPDFSDK_JAVASCRIPT_JS_DEFINE_H_

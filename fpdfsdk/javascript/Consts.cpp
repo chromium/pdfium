@@ -99,11 +99,12 @@ JS_STATIC_CONST_ENTRY_STRING(L"refW", L"ReflowWidth")
 END_JS_STATIC_CONST()
 IMPLEMENT_JS_CLASS_CONST(CJS_Zoomtype, zoomtype)
 
-#define GLOBAL_STRING(rt, name, value)                                         \
-  FXJS_DefineGlobalConst(                                                      \
-      (rt)->GetIsolate(), (name),                                              \
-      [](const v8::FunctionCallbackInfo<v8::Value>& info) {                    \
-        info.GetReturnValue().Set(FXJS_NewString(info.GetIsolate(), (value))); \
+#define GLOBAL_STRING(rt, name, value)                                \
+  (rt)->DefineGlobalConst(                                            \
+      (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {   \
+        info.GetReturnValue().Set(                                    \
+            CFXJS_Engine::CurrentEngineFromIsolate(info.GetIsolate()) \
+                ->NewString(value));                                  \
       })
 
 void CJS_GlobalConsts::DefineJSObjects(CJS_Runtime* pRuntime) {
@@ -137,21 +138,20 @@ void CJS_GlobalConsts::DefineJSObjects(CJS_Runtime* pRuntime) {
   GLOBAL_STRING(pRuntime, L"IDS_STARTUP_CONSOLE_MSG", L"** ^ _ ^ **");
 }
 
-#define GLOBAL_ARRAY(rt, name, ...)                                        \
-  {                                                                        \
-    const FX_WCHAR* values[] = {__VA_ARGS__};                              \
-    v8::Local<v8::Array> array = FXJS_NewArray((rt)->GetIsolate());        \
-    for (size_t i = 0; i < FX_ArraySize(values); ++i)                      \
-      array->Set(i, FXJS_NewString((rt)->GetIsolate(), values[i]));        \
-    rt->SetConstArray(name, array);                                        \
-    FXJS_DefineGlobalConst(                                                \
-        (rt)->GetIsolate(), (name),                                        \
-        [](const v8::FunctionCallbackInfo<v8::Value>& info) {              \
-          CJS_Runtime* pLocalRuntime = static_cast<CJS_Runtime*>(          \
-              FXJS_GetCurrentEngineFromIsolate(info.GetIsolate()));        \
-          if (pLocalRuntime)                                               \
-            info.GetReturnValue().Set(pLocalRuntime->GetConstArray(name)); \
-        });                                                                \
+#define GLOBAL_ARRAY(rt, name, ...)                                          \
+  {                                                                          \
+    const FX_WCHAR* values[] = {__VA_ARGS__};                                \
+    v8::Local<v8::Array> array = (rt)->NewArray();                           \
+    for (size_t i = 0; i < FX_ArraySize(values); ++i)                        \
+      array->Set(i, (rt)->NewString(values[i]));                             \
+    (rt)->SetConstArray((name), array);                                      \
+    (rt)->DefineGlobalConst(                                                 \
+        (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {        \
+          CJS_Runtime* pCurrentRuntime =                                     \
+              CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());     \
+          if (pCurrentRuntime)                                               \
+            info.GetReturnValue().Set(pCurrentRuntime->GetConstArray(name)); \
+        });                                                                  \
   }
 
 void CJS_GlobalArrays::DefineJSObjects(CJS_Runtime* pRuntime) {

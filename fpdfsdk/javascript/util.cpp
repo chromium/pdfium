@@ -122,8 +122,7 @@ FX_BOOL util::printf(IJS_Context* cc,
   int iSize = params.size();
   if (iSize < 1)
     return FALSE;
-  std::wstring c_ConvChar(
-      params[0].ToCFXWideString(pRuntime->GetIsolate()).c_str());
+  std::wstring c_ConvChar(params[0].ToCFXWideString(pRuntime).c_str());
   std::vector<std::wstring> c_strConvers;
   int iOffset = 0;
   int iOffend = 0;
@@ -156,17 +155,15 @@ FX_BOOL util::printf(IJS_Context* cc,
 
     switch (ParseDataType(&c_strFormat)) {
       case UTIL_INT:
-        strSegment.Format(c_strFormat.c_str(),
-                          params[iIndex].ToInt(pRuntime->GetIsolate()));
+        strSegment.Format(c_strFormat.c_str(), params[iIndex].ToInt(pRuntime));
         break;
       case UTIL_DOUBLE:
         strSegment.Format(c_strFormat.c_str(),
-                          params[iIndex].ToDouble(pRuntime->GetIsolate()));
+                          params[iIndex].ToDouble(pRuntime));
         break;
       case UTIL_STRING:
-        strSegment.Format(
-            c_strFormat.c_str(),
-            params[iIndex].ToCFXWideString(pRuntime->GetIsolate()).c_str());
+        strSegment.Format(c_strFormat.c_str(),
+                          params[iIndex].ToCFXWideString(pRuntime).c_str());
         break;
       default:
         strSegment.Format(L"%S", c_strFormat.c_str());
@@ -192,45 +189,38 @@ FX_BOOL util::printd(IJS_Context* cc,
   CJS_Value p1 = params[0];
   CJS_Value p2 = params[1];
   CJS_Date jsDate;
-  if (!p2.ConvertToDate(pRuntime->GetIsolate(), jsDate)) {
+  if (!p2.ConvertToDate(pRuntime, jsDate)) {
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT1);
     return FALSE;
   }
 
-  if (!jsDate.IsValidDate(pRuntime->GetIsolate())) {
+  if (!jsDate.IsValidDate(pRuntime)) {
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT2);
     return FALSE;
   }
 
   if (p1.GetType() == CJS_Value::VT_number) {
     CFX_WideString swResult;
-    switch (p1.ToInt(pRuntime->GetIsolate())) {
+    switch (p1.ToInt(pRuntime)) {
       case 0:
-        swResult.Format(L"D:%04d%02d%02d%02d%02d%02d",
-                        jsDate.GetYear(pRuntime->GetIsolate()),
-                        jsDate.GetMonth(pRuntime->GetIsolate()) + 1,
-                        jsDate.GetDay(pRuntime->GetIsolate()),
-                        jsDate.GetHours(pRuntime->GetIsolate()),
-                        jsDate.GetMinutes(pRuntime->GetIsolate()),
-                        jsDate.GetSeconds(pRuntime->GetIsolate()));
+        swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", jsDate.GetYear(pRuntime),
+                        jsDate.GetMonth(pRuntime) + 1, jsDate.GetDay(pRuntime),
+                        jsDate.GetHours(pRuntime), jsDate.GetMinutes(pRuntime),
+                        jsDate.GetSeconds(pRuntime));
         break;
       case 1:
         swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d",
-                        jsDate.GetYear(pRuntime->GetIsolate()),
-                        jsDate.GetMonth(pRuntime->GetIsolate()) + 1,
-                        jsDate.GetDay(pRuntime->GetIsolate()),
-                        jsDate.GetHours(pRuntime->GetIsolate()),
-                        jsDate.GetMinutes(pRuntime->GetIsolate()),
-                        jsDate.GetSeconds(pRuntime->GetIsolate()));
+                        jsDate.GetYear(pRuntime), jsDate.GetMonth(pRuntime) + 1,
+                        jsDate.GetDay(pRuntime), jsDate.GetHours(pRuntime),
+                        jsDate.GetMinutes(pRuntime),
+                        jsDate.GetSeconds(pRuntime));
         break;
       case 2:
         swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d",
-                        jsDate.GetYear(pRuntime->GetIsolate()),
-                        jsDate.GetMonth(pRuntime->GetIsolate()) + 1,
-                        jsDate.GetDay(pRuntime->GetIsolate()),
-                        jsDate.GetHours(pRuntime->GetIsolate()),
-                        jsDate.GetMinutes(pRuntime->GetIsolate()),
-                        jsDate.GetSeconds(pRuntime->GetIsolate()));
+                        jsDate.GetYear(pRuntime), jsDate.GetMonth(pRuntime) + 1,
+                        jsDate.GetDay(pRuntime), jsDate.GetHours(pRuntime),
+                        jsDate.GetMinutes(pRuntime),
+                        jsDate.GetSeconds(pRuntime));
         break;
       default:
         sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSVALUEERROR);
@@ -242,15 +232,14 @@ FX_BOOL util::printd(IJS_Context* cc,
   }
 
   if (p1.GetType() == CJS_Value::VT_string) {
-    if (iSize > 2 && params[2].ToBool(pRuntime->GetIsolate())) {
+    if (iSize > 2 && params[2].ToBool(pRuntime)) {
       sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_NOTSUPPORT);
       return FALSE;  // currently, it doesn't support XFAPicture.
     }
 
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
-    std::basic_string<wchar_t> cFormat =
-        p1.ToCFXWideString(pRuntime->GetIsolate()).c_str();
+    std::basic_string<wchar_t> cFormat = p1.ToCFXWideString(pRuntime).c_str();
     cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                   cFormat.end());
 
@@ -265,12 +254,12 @@ FX_BOOL util::printd(IJS_Context* cc,
       }
     }
 
-    int iYear = jsDate.GetYear(pRuntime->GetIsolate());
-    int iMonth = jsDate.GetMonth(pRuntime->GetIsolate());
-    int iDay = jsDate.GetDay(pRuntime->GetIsolate());
-    int iHour = jsDate.GetHours(pRuntime->GetIsolate());
-    int iMin = jsDate.GetMinutes(pRuntime->GetIsolate());
-    int iSec = jsDate.GetSeconds(pRuntime->GetIsolate());
+    int iYear = jsDate.GetYear(pRuntime);
+    int iMonth = jsDate.GetMonth(pRuntime);
+    int iDay = jsDate.GetDay(pRuntime);
+    int iHour = jsDate.GetHours(pRuntime);
+    int iMin = jsDate.GetMinutes(pRuntime);
+    int iSec = jsDate.GetSeconds(pRuntime);
 
     TbConvertAdditional cTableAd[] = {
         {L"m", iMonth + 1}, {L"d", iDay},
@@ -330,10 +319,9 @@ FX_BOOL util::printx(IJS_Context* cc,
     return FALSE;
   }
 
-  vRet = CJS_Value(pRuntime,
-                   printx(params[0].ToCFXWideString(pRuntime->GetIsolate()),
-                          params[1].ToCFXWideString(pRuntime->GetIsolate()))
-                       .c_str());
+  vRet = CJS_Value(pRuntime, printx(params[0].ToCFXWideString(pRuntime),
+                                    params[1].ToCFXWideString(pRuntime))
+                                 .c_str());
 
   return TRUE;
 }
@@ -448,15 +436,15 @@ FX_BOOL util::scand(IJS_Context* cc,
   if (iSize < 2)
     return FALSE;
 
-  CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime->GetIsolate());
-  CFX_WideString sDate = params[1].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime);
+  CFX_WideString sDate = params[1].ToCFXWideString(pRuntime);
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0) {
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
   }
 
   if (!JS_PortIsNan(dDate)) {
-    vRet = CJS_Value(pRuntime, CJS_Date(pRuntime->GetIsolate(), dDate));
+    vRet = CJS_Value(pRuntime, CJS_Date(pRuntime, dDate));
   } else {
     vRet.SetNull(pRuntime);
   }
@@ -476,7 +464,7 @@ FX_BOOL util::byteToChar(IJS_Context* cc,
     return FALSE;
   }
 
-  int arg = params[0].ToInt(pRuntime->GetIsolate());
+  int arg = params[0].ToInt(pRuntime);
   if (arg < 0 || arg > 255) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
     return FALSE;

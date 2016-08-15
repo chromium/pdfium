@@ -21,17 +21,14 @@ class FXJSV8EmbedderTest : public JSEmbedderTest {
  public:
   void ExecuteInCurrentContext(const CFX_WideString& script) {
     FXJSErr error;
-    int sts = FXJS_Execute(isolate(), script, &error);
+    int sts = engine()->Execute(script, &error);
     EXPECT_EQ(0, sts);
   }
   void CheckAssignmentInCurrentContext(double expected) {
-    v8::Local<v8::Object> This = FXJS_GetThisObj(isolate());
-    v8::Local<v8::Value> fred =
-        FXJS_GetObjectProperty(isolate(), This, L"fred");
+    v8::Local<v8::Object> This = engine()->GetThisObj();
+    v8::Local<v8::Value> fred = engine()->GetObjectProperty(This, L"fred");
     EXPECT_TRUE(fred->IsNumber());
-    EXPECT_EQ(expected, fred->ToNumber(isolate()->GetCurrentContext())
-                            .ToLocalChecked()
-                            ->Value());
+    EXPECT_EQ(expected, engine()->ToNumber(fred));
   }
 };
 
@@ -48,35 +45,34 @@ TEST_F(FXJSV8EmbedderTest, MultipleEngines) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
 
-  v8::Global<v8::Context> global_context1;
-  std::vector<v8::Global<v8::Object>*> static_objects1;
-  FXJS_InitializeEngine(isolate(), nullptr, &global_context1, &static_objects1);
+  CFXJS_Engine engine1;
+  engine1.SetIsolate(isolate());
+  engine1.InitializeEngine();
 
-  v8::Global<v8::Context> global_context2;
-  std::vector<v8::Global<v8::Object>*> static_objects2;
-  FXJS_InitializeEngine(isolate(), nullptr, &global_context2, &static_objects2);
+  CFXJS_Engine engine2;
+  engine2.SetIsolate(isolate());
+  engine2.InitializeEngine();
 
   v8::Context::Scope context_scope(GetV8Context());
   ExecuteInCurrentContext(CFX_WideString(kScript0));
   CheckAssignmentInCurrentContext(kExpected0);
 
   {
-    v8::Local<v8::Context> context1 =
-        v8::Local<v8::Context>::New(isolate(), global_context1);
+    v8::Local<v8::Context> context1 = engine1.NewLocalContext();
     v8::Context::Scope context_scope1(context1);
     ExecuteInCurrentContext(CFX_WideString(kScript1));
     CheckAssignmentInCurrentContext(kExpected1);
   }
-  FXJS_ReleaseEngine(isolate(), &global_context1, &static_objects1);
+
+  engine1.ReleaseEngine();
 
   {
-    v8::Local<v8::Context> context2 =
-        v8::Local<v8::Context>::New(isolate(), global_context2);
+    v8::Local<v8::Context> context2 = engine2.NewLocalContext();
     v8::Context::Scope context_scope2(context2);
     ExecuteInCurrentContext(CFX_WideString(kScript2));
     CheckAssignmentInCurrentContext(kExpected2);
   }
-  FXJS_ReleaseEngine(isolate(), &global_context2, &static_objects2);
 
+  engine2.ReleaseEngine();
   CheckAssignmentInCurrentContext(kExpected0);
 }

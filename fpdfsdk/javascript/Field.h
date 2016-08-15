@@ -435,7 +435,6 @@ class Field : public CJS_EmbedObj {
 
   FX_BOOL AttachField(Document* pDocument, const CFX_WideString& csFieldName);
   void SetDelay(FX_BOOL bDelay);
-  void SetIsolate(v8::Isolate* isolate) { m_isolate = isolate; }
 
  protected:
   void ParseFieldName(const std::wstring& strFieldNameParsed,
@@ -464,9 +463,7 @@ class Field : public CJS_EmbedObj {
   CFX_WideString m_FieldName;
   int m_nFormControlIndex;
   FX_BOOL m_bCanSet;
-
   FX_BOOL m_bDelay;
-  v8::Isolate* m_isolate;
 };
 
 class CJS_Field : public CJS_Object {

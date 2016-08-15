@@ -125,24 +125,8 @@ class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void Free(void* data, size_t length) override;
 };
 
-using FXJS_CONSTRUCTOR = void (*)(CFXJS_Engine* fxjs,
-                                  v8::Local<v8::Object> obj);
-using FXJS_DESTRUCTOR = void (*)(v8::Local<v8::Object> obj);
-
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
 void FXJS_Release();
-
-class CFXJS_Engine {
- public:
-  CFXJS_Engine();
-  ~CFXJS_Engine();
-
- protected:
-  v8::Isolate* m_isolate;
-  v8::Global<v8::Context> m_context;
-  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
-  std::map<CFX_WideString, v8::Global<v8::Array>> m_ConstArrays;
-};
 
 // Gets the global isolate set by FXJS_Initialize(), or makes a new one each
 // time if there is no such isolate. Returns true if a new isolate had to be
@@ -152,140 +136,133 @@ bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
 // Get the global isolate's ref count.
 size_t FXJS_GlobalIsolateRefCount();
 
-// Always returns a valid, newly-created objDefnID.
-int FXJS_DefineObj(v8::Isolate* pIsolate,
-                   const wchar_t* sObjName,
-                   FXJSOBJTYPE eObjType,
-                   FXJS_CONSTRUCTOR pConstructor,
-                   FXJS_DESTRUCTOR pDestructor);
+class CFXJS_Engine {
+ public:
+  CFXJS_Engine();
+  ~CFXJS_Engine();
 
-void FXJS_DefineObjMethod(v8::Isolate* pIsolate,
-                          int nObjDefnID,
-                          const wchar_t* sMethodName,
-                          v8::FunctionCallback pMethodCall);
-void FXJS_DefineObjProperty(v8::Isolate* pIsolate,
-                            int nObjDefnID,
-                            const wchar_t* sPropName,
-                            v8::AccessorGetterCallback pPropGet,
-                            v8::AccessorSetterCallback pPropPut);
-void FXJS_DefineObjAllProperties(v8::Isolate* pIsolate,
-                                 int nObjDefnID,
-                                 v8::NamedPropertyQueryCallback pPropQurey,
-                                 v8::NamedPropertyGetterCallback pPropGet,
-                                 v8::NamedPropertySetterCallback pPropPut,
-                                 v8::NamedPropertyDeleterCallback pPropDel);
-void FXJS_DefineObjConst(v8::Isolate* pIsolate,
-                         int nObjDefnID,
-                         const wchar_t* sConstName,
-                         v8::Local<v8::Value> pDefault);
-void FXJS_DefineGlobalMethod(v8::Isolate* pIsolate,
-                             const wchar_t* sMethodName,
-                             v8::FunctionCallback pMethodCall);
-void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
-                            const wchar_t* sConstName,
-                            v8::FunctionCallback pConstGetter);
+  using Constructor = void (*)(CFXJS_Engine* pEngine,
+                               v8::Local<v8::Object> obj);
+  using Destructor = void (*)(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
 
-// Called after FXJS_Define* calls made.
-void FXJS_InitializeEngine(
-    v8::Isolate* pIsolate,
-    CFXJS_Engine* pEngine,
-    v8::Global<v8::Context>* pV8PersistentContext,
-    std::vector<v8::Global<v8::Object>*>* pStaticObjects);
-void FXJS_ReleaseEngine(v8::Isolate* pIsolate,
-                        v8::Global<v8::Context>* pV8PersistentContext,
-                        std::vector<v8::Global<v8::Object>*>* pStaticObjects);
-CFXJS_Engine* FXJS_GetCurrentEngineFromIsolate(v8::Isolate* pIsolate);
+  static CFXJS_Engine* CurrentEngineFromIsolate(v8::Isolate* pIsolate);
+  static int GetObjDefnID(v8::Local<v8::Object> pObj);
 
 #ifdef PDF_ENABLE_XFA
-// Called as part of FXJS_InitializeEngine, exposed so PDF can make its
-// own contexts compatible with XFA or vice versa.
-void FXJS_SetEngineForV8Context(v8::Local<v8::Context> v8Context,
-                                CFXJS_Engine* pEngine);
+  // Called as part of FXJS_InitializeEngine, exposed so PDF can make its
+  // own contexts compatible with XFA or vice versa.
+  static void SetForV8Context(v8::Local<v8::Context> v8Context,
+                              CFXJS_Engine* pEngine);
 #endif  // PDF_ENABLE_XFA
 
-// Called after FXJS_InitializeEngine call made.
-int FXJS_Execute(v8::Isolate* pIsolate,
-                 const CFX_WideString& script,
-                 FXJSErr* perror);
+  // TODO(tsepez): to constructor.
+  void SetIsolate(v8::Isolate* pIsolate) { m_isolate = pIsolate; }
+  v8::Isolate* GetIsolate() const { return m_isolate; }
 
-v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
-                                           CFXJS_Engine* pEngine,
-                                           int nObjDefnID,
-                                           bool bStatic = false);
-v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate);
-int FXJS_GetObjDefnID(v8::Local<v8::Object> pObj);
+  // Always returns a valid, newly-created objDefnID.
+  int DefineObj(const wchar_t* sObjName,
+                FXJSOBJTYPE eObjType,
+                Constructor pConstructor,
+                Destructor pDestructor);
 
-void FXJS_SetPrivate(v8::Isolate* pIsolate,
-                     v8::Local<v8::Object> pObj,
-                     void* p);
-void* FXJS_GetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj);
-void FXJS_FreePrivate(void* p);
-void FXJS_FreePrivate(v8::Local<v8::Object> pObj);
-void FXJS_Error(v8::Isolate* isolate, const CFX_WideString& message);
+  void DefineObjMethod(int nObjDefnID,
+                       const wchar_t* sMethodName,
+                       v8::FunctionCallback pMethodCall);
+  void DefineObjProperty(int nObjDefnID,
+                         const wchar_t* sPropName,
+                         v8::AccessorGetterCallback pPropGet,
+                         v8::AccessorSetterCallback pPropPut);
+  void DefineObjAllProperties(int nObjDefnID,
+                              v8::NamedPropertyQueryCallback pPropQurey,
+                              v8::NamedPropertyGetterCallback pPropGet,
+                              v8::NamedPropertySetterCallback pPropPut,
+                              v8::NamedPropertyDeleterCallback pPropDel);
+  void DefineObjConst(int nObjDefnID,
+                      const wchar_t* sConstName,
+                      v8::Local<v8::Value> pDefault);
+  void DefineGlobalMethod(const wchar_t* sMethodName,
+                          v8::FunctionCallback pMethodCall);
+  void DefineGlobalConst(const wchar_t* sConstName,
+                         v8::FunctionCallback pConstGetter);
 
-v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,
-                                        const CFX_WideString& wsPropertyName);
+  // Called after FXJS_Define* calls made.
+  void InitializeEngine();
+  void ReleaseEngine();
 
-std::vector<CFX_WideString> FXJS_GetObjectPropertyNames(
-    v8::Isolate* pIsolate,
-    v8::Local<v8::Object> pObj);
-v8::Local<v8::Value> FXJS_GetObjectProperty(v8::Isolate* pIsolate,
-                                            v8::Local<v8::Object> pObj,
-                                            const CFX_WideString& PropertyName);
+  // Called after FXJS_InitializeEngine call made.
+  int Execute(const CFX_WideString& script, FXJSErr* perror);
 
-unsigned FXJS_GetArrayLength(v8::Local<v8::Array> pArray);
-v8::Local<v8::Value> FXJS_GetArrayElement(v8::Isolate* pIsolate,
-                                          v8::Local<v8::Array> pArray,
-                                          unsigned index);
+  v8::Local<v8::Context> NewLocalContext();
+  v8::Local<v8::Context> GetPersistentContext();
 
-void FXJS_PutObjectString(v8::Isolate* pIsolate,
-                          v8::Local<v8::Object> pObj,
-                          const CFX_WideString& wsPropertyName,
-                          const CFX_WideString& wsValue);
-void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
-                          v8::Local<v8::Object> pObj,
-                          const CFX_WideString& PropertyName,
-                          int nValue);
-void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
-                          v8::Local<v8::Object> pObj,
-                          const CFX_WideString& PropertyName,
-                          float fValue);
-void FXJS_PutObjectNumber(v8::Isolate* pIsolate,
-                          v8::Local<v8::Object> pObj,
-                          const CFX_WideString& PropertyName,
-                          double dValue);
-void FXJS_PutObjectBoolean(v8::Isolate* pIsolate,
-                           v8::Local<v8::Object> pObj,
-                           const CFX_WideString& PropertyName,
-                           bool bValue);
-void FXJS_PutObjectObject(v8::Isolate* pIsolate,
-                          v8::Local<v8::Object> pObj,
-                          const CFX_WideString& PropertyName,
-                          v8::Local<v8::Object> pPut);
-void FXJS_PutObjectNull(v8::Isolate* pIsolate,
-                        v8::Local<v8::Object> pObj,
-                        const CFX_WideString& PropertyName);
-unsigned FXJS_PutArrayElement(v8::Isolate* pIsolate,
-                              v8::Local<v8::Array> pArray,
-                              unsigned index,
-                              v8::Local<v8::Value> pValue);
+  v8::Local<v8::Value> NewNull();
+  v8::Local<v8::Array> NewArray();
+  v8::Local<v8::Value> NewNumber(int number);
+  v8::Local<v8::Value> NewNumber(double number);
+  v8::Local<v8::Value> NewNumber(float number);
+  v8::Local<v8::Value> NewBoolean(bool b);
+  v8::Local<v8::Value> NewString(const wchar_t* str);
+  v8::Local<v8::Date> NewDate(double d);
+  v8::Local<v8::Object> NewFxDynamicObj(int nObjDefnID, bool bStatic = false);
 
-v8::Local<v8::Value> FXJS_NewNull(v8::Isolate* pIsolate);
-v8::Local<v8::Array> FXJS_NewArray(v8::Isolate* pIsolate);
-v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, int number);
-v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, double number);
-v8::Local<v8::Value> FXJS_NewNumber(v8::Isolate* pIsolate, float number);
-v8::Local<v8::Value> FXJS_NewBoolean(v8::Isolate* pIsolate, bool b);
-v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate, const wchar_t* str);
-v8::Local<v8::Date> FXJS_NewDate(v8::Isolate* pIsolate, double d);
+  v8::Local<v8::Object> GetThisObj();
+  int ToInt32(v8::Local<v8::Value> pValue);
+  bool ToBoolean(v8::Local<v8::Value> pValue);
+  double ToNumber(v8::Local<v8::Value> pValue);
+  CFX_WideString ToString(v8::Local<v8::Value> pValue);
+  v8::Local<v8::Object> ToObject(v8::Local<v8::Value> pValue);
+  v8::Local<v8::Array> ToArray(v8::Local<v8::Value> pValue);
 
-int FXJS_ToInt32(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue);
-bool FXJS_ToBoolean(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue);
-double FXJS_ToNumber(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue);
-v8::Local<v8::Object> FXJS_ToObject(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Value> pValue);
-CFX_WideString FXJS_ToString(v8::Isolate* pIsolate,
-                             v8::Local<v8::Value> pValue);
-v8::Local<v8::Array> FXJS_ToArray(v8::Isolate* pIsolate,
-                                  v8::Local<v8::Value> pValue);
+  unsigned GetArrayLength(v8::Local<v8::Array> pArray);
+  v8::Local<v8::Value> GetArrayElement(v8::Local<v8::Array> pArray,
+                                       unsigned index);
+  unsigned PutArrayElement(v8::Local<v8::Array> pArray,
+                           unsigned index,
+                           v8::Local<v8::Value> pValue);
+
+  std::vector<CFX_WideString> GetObjectPropertyNames(
+      v8::Local<v8::Object> pObj);
+  v8::Local<v8::Value> GetObjectProperty(v8::Local<v8::Object> pObj,
+                                         const CFX_WideString& PropertyName);
+
+  void PutObjectString(v8::Local<v8::Object> pObj,
+                       const CFX_WideString& wsPropertyName,
+                       const CFX_WideString& wsValue);
+  void PutObjectNumber(v8::Local<v8::Object> pObj,
+                       const CFX_WideString& PropertyName,
+                       int nValue);
+  void PutObjectNumber(v8::Local<v8::Object> pObj,
+                       const CFX_WideString& PropertyName,
+                       float fValue);
+  void PutObjectNumber(v8::Local<v8::Object> pObj,
+                       const CFX_WideString& PropertyName,
+                       double dValue);
+  void PutObjectBoolean(v8::Local<v8::Object> pObj,
+                        const CFX_WideString& PropertyName,
+                        bool bValue);
+  void PutObjectObject(v8::Local<v8::Object> pObj,
+                       const CFX_WideString& PropertyName,
+                       v8::Local<v8::Object> pPut);
+  void PutObjectNull(v8::Local<v8::Object> pObj,
+                     const CFX_WideString& PropertyName);
+
+  // Native object binding.
+  void SetObjectPrivate(v8::Local<v8::Object> pObj, void* p);
+  void* GetObjectPrivate(v8::Local<v8::Object> pObj);
+  static void FreeObjectPrivate(void* p);
+  static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
+
+  void SetConstArray(const CFX_WideString& name, v8::Local<v8::Array> array);
+  v8::Local<v8::Array> GetConstArray(const CFX_WideString& name);
+
+  v8::Local<v8::String> WSToJSString(const CFX_WideString& wsPropertyName);
+  void Error(const CFX_WideString& message);
+
+ private:
+  v8::Isolate* m_isolate;
+  v8::Global<v8::Context> m_V8PersistentContext;
+  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
+  std::map<CFX_WideString, v8::Global<v8::Array>> m_ConstArrays;
+};
+
 #endif  // FXJS_INCLUDE_FXJS_V8_H_

@@ -269,7 +269,6 @@ class Document : public CJS_EmbedObj {
   CPDFSDK_Document* GetReaderDoc();
   void AddDelayData(CJS_DelayData* pData);
   void DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex);
-  void SetIsolate(v8::Isolate* isolate) { m_isolate = isolate; }
   CJS_Document* GetCJSDoc() const;
 
  private:
@@ -282,12 +281,11 @@ class Document : public CJS_EmbedObj {
                               const CFX_ByteString& propName,
                               CFX_WideString& sError);
 
-  v8::Isolate* m_isolate;
-  std::list<std::unique_ptr<IconElement>> m_IconList;
   CPDFSDK_Document* m_pDocument;
   CFX_WideString m_cwBaseURL;
-  bool m_bDelay;
   std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
+  std::list<std::unique_ptr<IconElement>> m_IconList;
+  bool m_bDelay;
 };
 
 class CJS_Document : public CJS_Object {

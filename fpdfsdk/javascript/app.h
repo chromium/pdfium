@@ -161,7 +161,7 @@ class app : public CJS_EmbedObj {
   // CJS_EmbedObj
   void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
 
-  void ClearTimerCommon(const CJS_Value& param);
+  void ClearTimerCommon(CJS_Runtime* pRuntime, const CJS_Value& param);
 
   bool m_bCalculate;
   bool m_bRuntimeHighLight;

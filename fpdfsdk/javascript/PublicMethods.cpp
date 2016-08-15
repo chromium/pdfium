@@ -163,10 +163,10 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                   CJS_Value val) {
   CJS_Array StrArray;
   if (val.IsArrayObject()) {
-    val.ConvertToArray(pRuntime->GetIsolate(), StrArray);
+    val.ConvertToArray(pRuntime, StrArray);
     return StrArray;
   }
-  CFX_WideString wsStr = val.ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString wsStr = val.ToCFXWideString(pRuntime);
   CFX_ByteString t = CFX_ByteString::FromUnicode(wsStr);
   const char* p = t.c_str();
 
@@ -177,7 +177,7 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     const char* pTemp = strchr(p, ch);
     if (!pTemp) {
       StrArray.SetElement(
-          pRuntime->GetIsolate(), nIndex,
+          pRuntime, nIndex,
           CJS_Value(pRuntime, StrTrim(CFX_ByteString(p)).c_str()));
       break;
     }
@@ -187,7 +187,7 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     *(pSub + (pTemp - p)) = '\0';
 
     StrArray.SetElement(
-        pRuntime->GetIsolate(), nIndex,
+        pRuntime, nIndex,
         CJS_Value(pRuntime, StrTrim(CFX_ByteString(pSub)).c_str()));
     delete[] pSub;
 
@@ -743,13 +743,12 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   if (strValue.IsEmpty())
     return TRUE;
 
-  int iDec = params[0].ToInt(pRuntime->GetIsolate());
-  int iSepStyle = params[1].ToInt(pRuntime->GetIsolate());
-  int iNegStyle = params[2].ToInt(pRuntime->GetIsolate());
+  int iDec = params[0].ToInt(pRuntime);
+  int iSepStyle = params[1].ToInt(pRuntime);
+  int iNegStyle = params[2].ToInt(pRuntime);
   // params[3] is iCurrStyle, it's not used.
-  CFX_WideString wstrCurrency =
-      params[4].ToCFXWideString(pRuntime->GetIsolate());
-  FX_BOOL bCurrencyPrepend = params[5].ToBool(pRuntime->GetIsolate());
+  CFX_WideString wstrCurrency = params[4].ToCFXWideString(pRuntime);
+  FX_BOOL bCurrencyPrepend = params[5].ToBool(pRuntime);
 
   if (iDec < 0)
     iDec = -iDec;
@@ -839,12 +838,12 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
         CJS_Array arColor;
         CJS_Value vColElm(pRuntime);
         vColElm = CJS_Value(pRuntime, L"RGB");
-        arColor.SetElement(pRuntime->GetIsolate(), 0, vColElm);
+        arColor.SetElement(pRuntime, 0, vColElm);
         vColElm = CJS_Value(pRuntime, 1);
-        arColor.SetElement(pRuntime->GetIsolate(), 1, vColElm);
+        arColor.SetElement(pRuntime, 1, vColElm);
         vColElm = CJS_Value(pRuntime, 0);
-        arColor.SetElement(pRuntime->GetIsolate(), 2, vColElm);
-        arColor.SetElement(pRuntime->GetIsolate(), 3, vColElm);
+        arColor.SetElement(pRuntime, 2, vColElm);
+        arColor.SetElement(pRuntime, 3, vColElm);
 
         CJS_PropValue vProp(pRuntime);
         vProp.StartGetting();
@@ -859,18 +858,18 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
         CJS_Array arColor;
         CJS_Value vColElm(pRuntime);
         vColElm = CJS_Value(pRuntime, L"RGB");
-        arColor.SetElement(pRuntime->GetIsolate(), 0, vColElm);
+        arColor.SetElement(pRuntime, 0, vColElm);
         vColElm = CJS_Value(pRuntime, 0);
-        arColor.SetElement(pRuntime->GetIsolate(), 1, vColElm);
-        arColor.SetElement(pRuntime->GetIsolate(), 2, vColElm);
-        arColor.SetElement(pRuntime->GetIsolate(), 3, vColElm);
+        arColor.SetElement(pRuntime, 1, vColElm);
+        arColor.SetElement(pRuntime, 2, vColElm);
+        arColor.SetElement(pRuntime, 3, vColElm);
 
         CJS_PropValue vProp(pRuntime);
         vProp.StartGetting();
         fTarget->textColor(cc, vProp, sError);
 
         CJS_Array aProp;
-        vProp.GetJSValue()->ConvertToArray(pRuntime->GetIsolate(), aProp);
+        vProp.GetJSValue()->ConvertToArray(pRuntime, aProp);
 
         CPWL_Color crProp;
         CPWL_Color crColor;
@@ -942,7 +941,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  int iSepStyle = params[1].ToInt(pRuntime->GetIsolate());
+  int iSepStyle = params[1].ToInt(pRuntime);
   if (iSepStyle < 0 || iSepStyle > 3)
     iSepStyle = 0;
   const FX_WCHAR cSep = iSepStyle < 2 ? L'.' : L',';
@@ -1017,11 +1016,11 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
   if (strValue.IsEmpty())
     return TRUE;
 
-  int iDec = params[0].ToInt(pRuntime->GetIsolate());
+  int iDec = params[0].ToInt(pRuntime);
   if (iDec < 0)
     iDec = -iDec;
 
-  int iSepStyle = params[1].ToInt(pRuntime->GetIsolate());
+  int iSepStyle = params[1].ToInt(pRuntime);
   if (iSepStyle < 0 || iSepStyle > 3)
     iSepStyle = 0;
 
@@ -1117,7 +1116,7 @@ FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
   if (strValue.IsEmpty())
     return TRUE;
 
-  CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime);
   double dDate = 0.0f;
 
   if (strValue.Find(L"GMT") != -1) {
@@ -1218,7 +1217,7 @@ FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(
     if (strValue.IsEmpty())
       return TRUE;
 
-    CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime->GetIsolate());
+    CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime);
     bool bWrongFormat = FALSE;
     double dRet = MakeRegularDate(strValue, sFormat, &bWrongFormat);
     if (bWrongFormat || JS_PortIsNan(dRet)) {
@@ -1244,7 +1243,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  int iIndex = params[0].ToInt(pRuntime->GetIsolate());
+  int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"m/d",
                                 L"m/d/yy",
                                 L"mm/dd/yy",
@@ -1282,7 +1281,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  int iIndex = params[0].ToInt(pRuntime->GetIsolate());
+  int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"m/d",
                                 L"m/d/yy",
                                 L"mm/dd/yy",
@@ -1319,7 +1318,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  int iIndex = params[0].ToInt(pRuntime->GetIsolate());
+  int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss",
                                 L"h:MM:ss tt"};
 
@@ -1344,7 +1343,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  int iIndex = params[0].ToInt(pRuntime->GetIsolate());
+  int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss",
                                 L"h:MM:ss tt"};
 
@@ -1391,7 +1390,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CFX_WideString wsSource = pEvent->Value();
   CFX_WideString wsFormat;
-  switch (params[0].ToInt(pRuntime->GetIsolate())) {
+  switch (params[0].ToInt(pRuntime)) {
     case 0:
       wsFormat = L"99999";
       break;
@@ -1432,7 +1431,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
     return FALSE;
   CFX_WideString& valEvent = pEvent->Value();
 
-  CFX_WideString wstrMask = params[0].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString wstrMask = params[0].ToCFXWideString(pRuntime);
   if (wstrMask.IsEmpty())
     return TRUE;
 
@@ -1520,7 +1519,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(
 
   const char* cFormat = "";
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  switch (params[0].ToInt(pRuntime->GetIsolate())) {
+  switch (params[0].ToInt(pRuntime)) {
     case 0:
       cFormat = "99999";
       break;
@@ -1596,8 +1595,8 @@ FX_BOOL CJS_PublicMethods::AFParseDateEx(IJS_Context* cc,
     return FALSE;
   }
 
-  CFX_WideString sValue = params[0].ToCFXWideString(pRuntime->GetIsolate());
-  CFX_WideString sFormat = params[1].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString sValue = params[0].ToCFXWideString(pRuntime);
+  CFX_WideString sFormat = params[1].ToCFXWideString(pRuntime);
 
   double dDate = MakeRegularDate(sValue, sFormat, nullptr);
 
@@ -1625,11 +1624,10 @@ FX_BOOL CJS_PublicMethods::AFSimple(IJS_Context* cc,
     return FALSE;
   }
 
-  vRet = CJS_Value(
-      pRuntime, static_cast<double>(AF_Simple(
-                    params[0].ToCFXWideString(pRuntime->GetIsolate()).c_str(),
-                    params[1].ToDouble(pRuntime->GetIsolate()),
-                    params[2].ToDouble(pRuntime->GetIsolate()))));
+  vRet = CJS_Value(pRuntime, static_cast<double>(AF_Simple(
+                                 params[0].ToCFXWideString(pRuntime).c_str(),
+                                 params[1].ToDouble(pRuntime),
+                                 params[2].ToDouble(pRuntime))));
 
   return TRUE;
 }
@@ -1646,10 +1644,10 @@ FX_BOOL CJS_PublicMethods::AFMakeNumber(IJS_Context* cc,
     return FALSE;
   }
 
-  CFX_WideString ws = params[0].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString ws = params[0].ToCFXWideString(pRuntime);
   ws.Replace(L",", L".");
   vRet = CJS_Value(pRuntime, ws.c_str());
-  vRet.MaybeCoerceToNumber(pRuntime->GetIsolate());
+  vRet.MaybeCoerceToNumber(pRuntime);
   if (vRet.GetType() != CJS_Value::VT_number)
     vRet = CJS_Value(pRuntime, 0);
   return TRUE;
@@ -1678,17 +1676,16 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
   CPDFSDK_InterForm* pReaderInterForm = pReaderDoc->GetInterForm();
   CPDF_InterForm* pInterForm = pReaderInterForm->GetInterForm();
 
-  CFX_WideString sFunction = params[0].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString sFunction = params[0].ToCFXWideString(pRuntime);
   double dValue = wcscmp(sFunction.c_str(), L"PRD") == 0 ? 1.0 : 0.0;
 
   CJS_Array FieldNameArray = AF_MakeArrayFromList(pRuntime, params1);
   int nFieldsCount = 0;
 
-  for (int i = 0, isz = FieldNameArray.GetLength(); i < isz; i++) {
+  for (int i = 0, isz = FieldNameArray.GetLength(pRuntime); i < isz; i++) {
     CJS_Value jsValue(pRuntime);
-    FieldNameArray.GetElement(pRuntime->GetIsolate(), i, jsValue);
-    CFX_WideString wsFieldName =
-        jsValue.ToCFXWideString(pRuntime->GetIsolate());
+    FieldNameArray.GetElement(pRuntime, i, jsValue);
+    CFX_WideString wsFieldName = jsValue.ToCFXWideString(pRuntime);
 
     for (int j = 0, jsz = pInterForm->CountFields(wsFieldName); j < jsz; j++) {
       if (CPDF_FormField* pFormField = pInterForm->GetField(j, wsFieldName)) {
@@ -1749,8 +1746,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
            FXSYS_pow((double)10, (double)6);
   CJS_Value jsValue(pRuntime, dValue);
   if (pContext->GetEventHandler()->m_pValue)
-    pContext->GetEventHandler()->Value() =
-        jsValue.ToCFXWideString(pRuntime->GetIsolate());
+    pContext->GetEventHandler()->Value() = jsValue.ToCFXWideString(pRuntime);
 
   return TRUE;
 }
@@ -1778,25 +1774,25 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(
     return TRUE;
   double dEentValue =
       atof(CFX_ByteString::FromUnicode(pEvent->Value()).c_str());
-  FX_BOOL bGreaterThan = params[0].ToBool(pRuntime->GetIsolate());
-  double dGreaterThan = params[1].ToDouble(pRuntime->GetIsolate());
-  FX_BOOL bLessThan = params[2].ToBool(pRuntime->GetIsolate());
-  double dLessThan = params[3].ToDouble(pRuntime->GetIsolate());
+  FX_BOOL bGreaterThan = params[0].ToBool(pRuntime);
+  double dGreaterThan = params[1].ToDouble(pRuntime);
+  FX_BOOL bLessThan = params[2].ToBool(pRuntime);
+  double dLessThan = params[3].ToDouble(pRuntime);
   CFX_WideString swMsg;
 
   if (bGreaterThan && bLessThan) {
     if (dEentValue < dGreaterThan || dEentValue > dLessThan)
       swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSRANGE1).c_str(),
-                   params[1].ToCFXWideString(pRuntime->GetIsolate()).c_str(),
-                   params[3].ToCFXWideString(pRuntime->GetIsolate()).c_str());
+                   params[1].ToCFXWideString(pRuntime).c_str(),
+                   params[3].ToCFXWideString(pRuntime).c_str());
   } else if (bGreaterThan) {
     if (dEentValue < dGreaterThan)
       swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSRANGE2).c_str(),
-                   params[1].ToCFXWideString(pRuntime->GetIsolate()).c_str());
+                   params[1].ToCFXWideString(pRuntime).c_str());
   } else if (bLessThan) {
     if (dEentValue > dLessThan)
       swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSRANGE3).c_str(),
-                   params[3].ToCFXWideString(pRuntime->GetIsolate()).c_str());
+                   params[3].ToCFXWideString(pRuntime).c_str());
   }
 
   if (!swMsg.IsEmpty()) {
@@ -1819,7 +1815,7 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
   }
 
   CJS_Array nums;
-  CFX_WideString str = params[0].ToCFXWideString(pRuntime->GetIsolate());
+  CFX_WideString str = params[0].ToCFXWideString(pRuntime);
   CFX_WideString sPart;
 
   if (str.GetAt(0) == L'.' || str.GetAt(0) == L',')
@@ -1832,8 +1828,7 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
       sPart += wc;
     } else {
       if (sPart.GetLength() > 0) {
-        nums.SetElement(pRuntime->GetIsolate(), nIndex,
-                        CJS_Value(pRuntime, sPart.c_str()));
+        nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));
         sPart = L"";
         nIndex++;
       }
@@ -1841,11 +1836,10 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
   }
 
   if (sPart.GetLength() > 0) {
-    nums.SetElement(pRuntime->GetIsolate(), nIndex,
-                    CJS_Value(pRuntime, sPart.c_str()));
+    nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));
   }
 
-  if (nums.GetLength() > 0)
+  if (nums.GetLength(pRuntime) > 0)
     vRet = CJS_Value(pRuntime, nums);
   else
     vRet.SetNull(pRuntime);
