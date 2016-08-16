@@ -37,8 +37,11 @@ class CPDF_Parser {
   CPDF_Parser();
   ~CPDF_Parser();
 
-  Error StartParse(IFX_FileRead* pFile);
-  uint32_t GetPermissions() const;
+  Error StartParse(IFX_FileRead* pFile,
+                   std::unique_ptr<CPDF_Document> pDocument);
+
+  Error StartAsyncParse(IFX_FileRead* pFile,
+                        std::unique_ptr<CPDF_Document> pDocument);
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }
@@ -46,6 +49,7 @@ class CPDF_Parser {
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
   CPDF_Document* GetDocument() const { return m_pDocument.get(); }
 
+  uint32_t GetPermissions() const;
   uint32_t GetRootObjNum();
   uint32_t GetInfoObjNum();
   CPDF_Array* GetIDArray();
@@ -82,8 +86,6 @@ class CPDF_Parser {
       FX_FILESIZE pos,
       uint32_t objnum,
       FX_FILESIZE* pResultPos);
-
-  Error StartAsyncParse(IFX_FileRead* pFile);
 
   uint32_t GetFirstPageNo() const { return m_dwFirstPageNo; }
 

@@ -158,7 +158,9 @@ void CPDF_Parser::CloseParser() {
   }
 }
 
-CPDF_Parser::Error CPDF_Parser::StartParse(IFX_FileRead* pFileAccess) {
+CPDF_Parser::Error CPDF_Parser::StartParse(
+    IFX_FileRead* pFileAccess,
+    std::unique_ptr<CPDF_Document> pDocument) {
   CloseParser();
 
   m_bXRefStream = FALSE;
@@ -188,7 +190,7 @@ CPDF_Parser::Error CPDF_Parser::StartParse(IFX_FileRead* pFileAccess) {
     return FORMAT_ERROR;
 
   m_pSyntax->RestorePos(m_pSyntax->m_FileLen - m_pSyntax->m_HeaderOffset - 9);
-  m_pDocument.reset(new CPDF_Document(this));
+  m_pDocument = std::move(pDocument);
 
   FX_BOOL bXRefRebuilt = FALSE;
   if (m_pSyntax->SearchWord("startxref", TRUE, FALSE, 4096)) {
@@ -1543,7 +1545,9 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
   return FALSE;
 }
 
-CPDF_Parser::Error CPDF_Parser::StartAsyncParse(IFX_FileRead* pFileAccess) {
+CPDF_Parser::Error CPDF_Parser::StartAsyncParse(
+    IFX_FileRead* pFileAccess,
+    std::unique_ptr<CPDF_Document> pDocument) {
   CloseParser();
   m_bXRefStream = FALSE;
   m_LastXRefOffset = 0;
@@ -1555,10 +1559,10 @@ CPDF_Parser::Error CPDF_Parser::StartAsyncParse(IFX_FileRead* pFileAccess) {
 
   if (!IsLinearizedFile(pFileAccess, offset)) {
     m_pSyntax->m_pFileAccess = nullptr;
-    return StartParse(pFileAccess);
+    return StartParse(pFileAccess, std::move(pDocument));
   }
 
-  m_pDocument.reset(new CPDF_Document(this));
+  m_pDocument = std::move(pDocument);
   FX_FILESIZE dwFirstXRefOffset = m_pSyntax->SavePos();
 
   FX_BOOL bXRefRebuilt = FALSE;

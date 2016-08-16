@@ -136,18 +136,19 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   if (!pDataAvail)
     return nullptr;
 
-  CPDF_Parser* pParser = new CPDF_Parser;
+  std::unique_ptr<CPDF_Parser> pParser(new CPDF_Parser);
   pParser->SetPassword(password);
-  CPDF_Parser::Error error =
-      pParser->StartAsyncParse(pDataAvail->m_pDataAvail->GetFileRead());
+
+  std::unique_ptr<CPDF_Document> pDocument(new CPDF_Document(pParser.get()));
+  CPDF_Parser::Error error = pParser->StartAsyncParse(
+      pDataAvail->m_pDataAvail->GetFileRead(), std::move(pDocument));
   if (error != CPDF_Parser::SUCCESS) {
-    delete pParser;
     ProcessParseError(error);
     return nullptr;
   }
   pDataAvail->m_pDataAvail->SetDocument(pParser->GetDocument());
   CheckUnSupportError(pParser->GetDocument(), FPDF_ERR_SUCCESS);
-  return FPDFDocumentFromCPDFDocument(pParser->GetDocument());
+  return FPDFDocumentFromCPDFDocument(pParser.release()->GetDocument());
 }
 
 DLLEXPORT int STDCALL FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {
