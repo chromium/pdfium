@@ -133,11 +133,20 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   matrix.Concat(*pUser2Device);
   return pForm;
 }
+
+// static
+bool CPDF_Annot::IsAnnotationHidden(CPDF_Dictionary* pAnnotDict) {
+  return !!(pAnnotDict->GetIntegerBy("F") & ANNOTFLAG_HIDDEN);
+}
+
 FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
                                    const CFX_Matrix* pUser2Device,
                                    AppearanceMode mode,
                                    const CPDF_RenderOptions* pOptions) {
+  if (IsAnnotationHidden(m_pAnnotDict))
+    return FALSE;
+
   CFX_Matrix matrix;
   CPDF_Form* pForm =
       FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);

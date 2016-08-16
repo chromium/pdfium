@@ -37,6 +37,8 @@ class CPDF_Annot {
  public:
   enum AppearanceMode { Normal, Rollover, Down };
 
+  static bool IsAnnotationHidden(CPDF_Dictionary* pAnnotDict);
+
   CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
 

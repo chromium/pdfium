@@ -14,6 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
+#include "core/fpdfdoc/include/cpdf_annot.h"
 #include "core/fpdfdoc/include/cpdf_formfield.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
 
@@ -562,6 +563,15 @@ CFX_ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
   return bIsFillRect ? "f" : "n";
 }
 
+bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
+
+  return !CPDF_Annot::IsAnnotationHidden(pAnnotDict);
+}
+
 }  // namespace
 
 bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
@@ -614,9 +624,7 @@ bool CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
                                        CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
     return false;
 
   CFX_ByteTextBuf sAppStream;
@@ -690,9 +698,7 @@ bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
     return false;
 
   CFX_ByteTextBuf sAppStream;
@@ -720,9 +726,7 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
                                     CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
     return false;
 
   FX_FLOAT fBorderWidth = GetBorderWidth(*pAnnotDict);
@@ -776,9 +780,7 @@ bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
     return false;
 
   CFX_ByteTextBuf sAppStream;
@@ -805,9 +807,7 @@ bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateSquareAP(CPDF_Document* pDoc,
                                        CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
     return false;
 
   CFX_ByteTextBuf sAppStream;
@@ -855,9 +855,7 @@ bool CPVT_GenerateAP::GenerateSquareAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
                                          CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
     return false;
 
   CFX_ByteTextBuf sAppStream;
@@ -906,9 +904,7 @@ bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
     return false;
 
   CFX_ByteTextBuf sAppStream;
