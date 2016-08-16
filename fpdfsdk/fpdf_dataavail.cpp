@@ -140,7 +140,7 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   pParser->SetPassword(password);
 
   std::unique_ptr<CPDF_Document> pDocument(new CPDF_Document(pParser.get()));
-  CPDF_Parser::Error error = pParser->StartAsyncParse(
+  CPDF_Parser::Error error = pParser->StartLinearizedParse(
       pDataAvail->m_pDataAvail->GetFileRead(), std::move(pDocument));
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);

@@ -84,7 +84,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_IccProfile* LoadIccProfile(CPDF_Stream* pStream);
 
   void LoadDoc();
-  void LoadAsynDoc(CPDF_Dictionary* pLinearized);
+  void LoadLinearizedDoc(CPDF_Dictionary* pLinearizationParams);
   void LoadPages();
 
   // Editing methods.
@@ -139,6 +139,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
+
+ private:
+  void LoadDocInternal();
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_

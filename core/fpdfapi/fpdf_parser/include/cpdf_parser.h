@@ -40,8 +40,8 @@ class CPDF_Parser {
   Error StartParse(IFX_FileRead* pFile,
                    std::unique_ptr<CPDF_Document> pDocument);
 
-  Error StartAsyncParse(IFX_FileRead* pFile,
-                        std::unique_ptr<CPDF_Document> pDocument);
+  Error StartLinearizedParse(IFX_FileRead* pFile,
+                             std::unique_ptr<CPDF_Document> pDocument);
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }

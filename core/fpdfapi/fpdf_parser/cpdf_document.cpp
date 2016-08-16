@@ -496,54 +496,46 @@ CPDF_Document::~CPDF_Document() {
   CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
 }
 
-void CPDF_Document::LoadDoc() {
+void CPDF_Document::LoadDocInternal() {
   m_LastObjNum = m_pParser->GetLastObjNum();
+
   CPDF_Object* pRootObj = GetIndirectObject(m_pParser->GetRootObjNum());
-  if (!pRootObj) {
+  if (!pRootObj)
     return;
-  }
+
   m_pRootDict = pRootObj->GetDict();
-  if (!m_pRootDict) {
+  if (!m_pRootDict)
     return;
-  }
+
   CPDF_Object* pInfoObj = GetIndirectObject(m_pParser->GetInfoObjNum());
-  if (pInfoObj) {
+  if (pInfoObj)
     m_pInfoDict = pInfoObj->GetDict();
-  }
-  CPDF_Array* pIDArray = m_pParser->GetIDArray();
-  if (pIDArray) {
+  if (CPDF_Array* pIDArray = m_pParser->GetIDArray()) {
     m_ID1 = pIDArray->GetStringAt(0);
     m_ID2 = pIDArray->GetStringAt(1);
   }
+}
+
+void CPDF_Document::LoadDoc() {
+  LoadDocInternal();
   m_PageList.SetSize(RetrievePageCount());
 }
 
-void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
+void CPDF_Document::LoadLinearizedDoc(CPDF_Dictionary* pLinearizationParams) {
   m_bLinearized = true;
-  m_LastObjNum = m_pParser->GetLastObjNum();
-  CPDF_Object* pIndirectObj = GetIndirectObject(m_pParser->GetRootObjNum());
-  m_pRootDict = pIndirectObj ? pIndirectObj->GetDict() : nullptr;
-  if (!m_pRootDict) {
-    return;
-  }
-  pIndirectObj = GetIndirectObject(m_pParser->GetInfoObjNum());
-  m_pInfoDict = pIndirectObj ? pIndirectObj->GetDict() : nullptr;
-  CPDF_Array* pIDArray = m_pParser->GetIDArray();
-  if (pIDArray) {
-    m_ID1 = pIDArray->GetStringAt(0);
-    m_ID2 = pIDArray->GetStringAt(1);
-  }
+  LoadDocInternal();
+
   uint32_t dwPageCount = 0;
-  CPDF_Object* pCount = pLinearized->GetObjectBy("N");
+  CPDF_Object* pCount = pLinearizationParams->GetObjectBy("N");
   if (ToNumber(pCount))
     dwPageCount = pCount->GetInteger();
-
   m_PageList.SetSize(dwPageCount);
-  CPDF_Object* pNo = pLinearized->GetObjectBy("P");
+
+  CPDF_Object* pNo = pLinearizationParams->GetObjectBy("P");
   if (ToNumber(pNo))
     m_iFirstPageNo = pNo->GetInteger();
 
-  CPDF_Object* pObjNum = pLinearized->GetObjectBy("O");
+  CPDF_Object* pObjNum = pLinearizationParams->GetObjectBy("O");
   if (ToNumber(pObjNum))
     m_dwFirstPageObjNum = pObjNum->GetInteger();
 }

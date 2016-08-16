@@ -1545,7 +1545,7 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
   return FALSE;
 }
 
-CPDF_Parser::Error CPDF_Parser::StartAsyncParse(
+CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     IFX_FileRead* pFileAccess,
     std::unique_ptr<CPDF_Document> pDocument) {
   CloseParser();
@@ -1589,7 +1589,7 @@ CPDF_Parser::Error CPDF_Parser::StartAsyncParse(
   if (eRet != SUCCESS)
     return eRet;
 
-  m_pDocument->LoadAsynDoc(m_pLinearized->GetDict());
+  m_pDocument->LoadLinearizedDoc(m_pLinearized->GetDict());
   if (!m_pDocument->GetRoot() || m_pDocument->GetPageCount() == 0) {
     if (bXRefRebuilt)
       return FORMAT_ERROR;
@@ -1602,7 +1602,7 @@ CPDF_Parser::Error CPDF_Parser::StartAsyncParse(
     if (eRet != SUCCESS)
       return eRet;
 
-    m_pDocument->LoadAsynDoc(m_pLinearized->GetDict());
+    m_pDocument->LoadLinearizedDoc(m_pLinearized->GetDict());
     if (!m_pDocument->GetRoot())
       return FORMAT_ERROR;
   }
