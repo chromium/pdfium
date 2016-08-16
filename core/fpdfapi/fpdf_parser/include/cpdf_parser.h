@@ -129,8 +129,6 @@ class CPDF_Parser {
   FX_FILESIZE m_LastXRefOffset;
   FX_BOOL m_bXRefStream;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
-  CFX_ByteString m_bsRecipient;
-  CFX_ByteString m_FilePath;
   CFX_ByteString m_Password;
   std::map<uint32_t, ObjectInfo> m_ObjectInfo;
   std::set<FX_FILESIZE> m_SortedOffset;
