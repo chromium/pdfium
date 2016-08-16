@@ -8,7 +8,6 @@
 #include "core/fxge/include/ifx_systemfontinfo.h"
 
 CFX_SubstFont::CFX_SubstFont() {
-  m_ExtHandle = nullptr;
   m_Charset = FXFONT_ANSI_CHARSET;
   m_SubstFlags = 0;
   m_Weight = 0;
@@ -107,10 +106,6 @@ void* IFX_SystemFontInfo::MapFontByUnicode(uint32_t dwUnicode,
 
 int IFX_SystemFontInfo::GetFaceIndex(void* hFont) {
   return 0;
-}
-
-void* IFX_SystemFontInfo::RetainFont(void* hFont) {
-  return nullptr;
 }
 
 extern "C" {

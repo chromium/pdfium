@@ -40,7 +40,6 @@ class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
   FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override;
   FX_BOOL GetFontCharset(void* hFont, int& charset) override;
   void DeleteFont(void* hFont) override;
-  void* RetainFont(void* hFont) override;
 
  protected:
   CFPF_SkiaFontMgr* m_pFontMgr;

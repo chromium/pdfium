@@ -88,8 +88,4 @@ void CFX_AndroidFontInfo::DeleteFont(void* hFont) {
   static_cast<CFPF_SkiaFont*>(hFont)->Release();
 }
 
-void* CFX_AndroidFontInfo::RetainFont(void* hFont) {
-  return nullptr;
-}
-
 #endif  // _FX_OS_ == _FX_ANDROID_

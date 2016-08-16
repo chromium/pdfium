@@ -44,7 +44,6 @@ class IFX_SystemFontInfo {
   virtual FX_BOOL GetFontCharset(void* hFont, int& charset) = 0;
   virtual int GetFaceIndex(void* hFont);
   virtual void DeleteFont(void* hFont) = 0;
-  virtual void* RetainFont(void* hFont);
 };
 
 #endif  // CORE_FXGE_INCLUDE_IFX_SYSTEMFONTINFO_H_

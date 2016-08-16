@@ -689,7 +689,6 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
       hFont = m_pFontInfo->GetFont(it->name.c_str());
     }
   }
-  pSubstFont->m_ExtHandle = m_pFontInfo->RetainFont(hFont);
   if (!hFont)
     return nullptr;
 

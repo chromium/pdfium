@@ -221,7 +221,6 @@ class CFX_SubstFont {
  public:
   CFX_SubstFont();
 
-  void* m_ExtHandle;
   CFX_ByteString m_Family;
   int m_Charset;
   uint32_t m_SubstFlags;

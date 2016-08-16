@@ -103,7 +103,6 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   if (pFont->m_pSubstFont) {
     m_pSubstFont.reset(new CFX_SubstFont);
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
-    m_pSubstFont->m_ExtHandle = pFont->m_pSubstFont->m_ExtHandle;
     m_pSubstFont->m_SubstFlags = pFont->m_pSubstFont->m_SubstFlags;
     m_pSubstFont->m_Weight = pFont->m_pSubstFont->m_Weight;
     m_pSubstFont->m_Family = pFont->m_pSubstFont->m_Family;
@@ -173,12 +172,6 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, CharsetCP,
       m_pSubstFont.get());
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  if (m_pSubstFont->m_ExtHandle) {
-    m_pPlatformFont = m_pSubstFont->m_ExtHandle;
-    m_pSubstFont->m_ExtHandle = nullptr;
-  }
-#endif
   if (m_Face) {
     m_pFontData = FXFT_Get_Face_Stream_Base(m_Face);
     m_dwSize = FXFT_Get_Face_Stream_Size(m_Face);
