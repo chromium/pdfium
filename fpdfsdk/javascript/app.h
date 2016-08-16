@@ -20,12 +20,11 @@ class TimerObj : public CJS_EmbedObj {
   TimerObj(CJS_Object* pJSObject);
   ~TimerObj() override;
 
- public:
   void SetTimer(CJS_Timer* pTimer);
-  CJS_Timer* GetTimer() const;
+  int GetTimerID() const { return m_nTimerID; }
 
  private:
-  CJS_Timer* m_pTimer;
+  int m_nTimerID;  // Weak reference to timer through global map.
 };
 
 class CJS_TimerObj : public CJS_Object {
@@ -158,6 +157,7 @@ class app : public CJS_EmbedObj {
  private:
   // CJS_EmbedObj
   void TimerProc(CJS_Timer* pTimer) override;
+  void CancelProc(CJS_Timer* pTimer) override;
   void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
 
   void ClearTimerCommon(const CJS_Value& param);
