@@ -73,7 +73,6 @@ static_library("pdfium") {
     "fpdfsdk/cpdfsdk_datetime.cpp",
     "fpdfsdk/cpdfsdk_interform.cpp",
     "fpdfsdk/cpdfsdk_widget.cpp",
-    "fpdfsdk/cpdfsdk_xfaannothandler.cpp",
     "fpdfsdk/fpdf_dataavail.cpp",
     "fpdfsdk/fpdf_ext.cpp",
     "fpdfsdk/fpdf_flatten.cpp",
@@ -101,7 +100,6 @@ static_library("pdfium") {
     "fpdfsdk/include/cpdfsdk_datetime.h",
     "fpdfsdk/include/cpdfsdk_interform.h",
     "fpdfsdk/include/cpdfsdk_widget.h",
-    "fpdfsdk/include/cpdfsdk_xfaannothandler.h",
     "fpdfsdk/include/fsdk_actionhandler.h",
     "fpdfsdk/include/fsdk_pauseadapter.h",
     "fpdfsdk/include/ifpdfsdk_annothandler.h",
@@ -145,7 +143,9 @@ static_library("pdfium") {
 
   if (pdf_enable_xfa) {
     sources += [
+      "fpdfsdk/cpdfsdk_xfaannothandler.cpp",
       "fpdfsdk/cpdfsdk_xfawidget.cpp",
+      "fpdfsdk/include/cpdfsdk_xfaannothandler.h",
       "fpdfsdk/include/cpdfsdk_xfawidget.h",
     ]
 

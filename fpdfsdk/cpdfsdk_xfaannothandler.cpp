@@ -6,8 +6,6 @@
 
 #include "fpdfsdk/include/cpdfsdk_xfaannothandler.h"
 
-#ifdef PDF_ENABLE_XFA
-
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
@@ -390,5 +388,3 @@ uint32_t CPDFSDK_XFAAnnotHandler::GetFWLFlags(uint32_t dwFlag) {
 
   return dwFWLFlag;
 }
-
-#endif  // PDF_ENABLE_XFA

@@ -7,8 +7,6 @@
 #ifndef FPDFSDK_INCLUDE_CPDFSDK_XFAANNOTHANDLER_H_
 #define FPDFSDK_INCLUDE_CPDFSDK_XFAANNOTHANDLER_H_
 
-#ifdef PDF_ENABLE_XFA
-
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "fpdfsdk/include/ipdfsdk_annothandler.h"
@@ -112,6 +110,5 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
 
   CPDFDoc_Environment* m_pApp;
 };
-#endif  // PDF_ENABLE_XFA
 
 #endif  // FPDFSDK_INCLUDE_CPDFSDK_XFAANNOTHANDLER_H_
