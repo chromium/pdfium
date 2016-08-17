@@ -1033,8 +1033,11 @@ bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
     return false;
 
   const auto& annots = m_pAnnotList->All();
-  std::unique_ptr<const CPDF_Annot> annot(p);
-  return pdfium::ContainsValue(annots, annot);
+  auto it = std::find_if(annots.begin(), annots.end(),
+                         [p](const std::unique_ptr<CPDF_Annot>& annot) {
+                           return annot.get() == p;
+                         });
+  return it != annots.end();
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {
