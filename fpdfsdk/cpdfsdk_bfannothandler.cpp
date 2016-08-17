@@ -14,6 +14,8 @@
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 
 #ifdef PDF_ENABLE_XFA

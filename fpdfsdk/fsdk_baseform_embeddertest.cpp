@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "fpdfsdk/include/fsdk_baseform.h"
+#include "fpdfsdk/include/cba_annotiterator.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "testing/embedder_test.h"

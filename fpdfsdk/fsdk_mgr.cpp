@@ -19,6 +19,8 @@
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
 #include "fpdfsdk/include/cpdfsdk_annotiterator.h"
+#include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/ipdfsdk_annothandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"

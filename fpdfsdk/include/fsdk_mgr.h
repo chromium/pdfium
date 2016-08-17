@@ -17,7 +17,6 @@
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
-#include "fpdfsdk/include/fsdk_baseform.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"

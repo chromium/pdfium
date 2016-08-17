@@ -18,6 +18,8 @@
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
+#include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 

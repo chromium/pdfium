@@ -11,7 +11,7 @@
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_iformfiller.h"
-#include "fpdfsdk/include/fsdk_baseform.h"
+#include "fpdfsdk/include/pdfsdk_fieldaction.h"
 
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;

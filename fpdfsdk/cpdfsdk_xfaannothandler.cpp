@@ -11,6 +11,8 @@
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/include/cpdfsdk_xfawidget.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "xfa/fxfa/include/fxfa_basic.h"
 #include "xfa/fxfa/include/xfa_ffdocview.h"

@@ -10,13 +10,16 @@
 #include <memory>
 #include <set>
 
+#include "core/fpdfdoc/include/cpdf_action.h"
+#include "core/fpdfdoc/include/cpdf_aaction.h"
 #include "core/fxcrt/include/fx_string.h"
-#include "fpdfsdk/include/fsdk_baseform.h"
+#include "fpdfsdk/include/pdfsdk_fieldaction.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_Document;
 class CPDF_Bookmark;
 class CPDF_Dictionary;
+class CPDF_FormField;
 
 class CPDFSDK_ActionHandler {
  public:

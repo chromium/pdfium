@@ -14,6 +14,7 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
 #include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_formfill.h"

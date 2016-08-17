@@ -15,6 +15,8 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"

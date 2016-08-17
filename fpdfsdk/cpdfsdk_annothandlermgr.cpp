@@ -7,6 +7,7 @@
 #include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
 
 #include "core/fpdfdoc/include/cpdf_annot.h"
+#include "fpdfsdk/include/cba_annotiterator.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_baannot.h"
 #include "fpdfsdk/include/cpdfsdk_bfannothandler.h"

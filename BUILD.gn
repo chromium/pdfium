@@ -62,6 +62,7 @@ config("xfa_warnings") {
 
 static_library("pdfium") {
   sources = [
+    "fpdfsdk/cba_annotiterator.cpp",
     "fpdfsdk/cfx_systemhandler.cpp",
     "fpdfsdk/cfx_systemhandler.h",
     "fpdfsdk/cpdfsdk_annot.cpp",
@@ -70,6 +71,8 @@ static_library("pdfium") {
     "fpdfsdk/cpdfsdk_baannot.cpp",
     "fpdfsdk/cpdfsdk_bfannothandler.cpp",
     "fpdfsdk/cpdfsdk_datetime.cpp",
+    "fpdfsdk/cpdfsdk_interform.cpp",
+    "fpdfsdk/cpdfsdk_widget.cpp",
     "fpdfsdk/cpdfsdk_xfaannothandler.cpp",
     "fpdfsdk/fpdf_dataavail.cpp",
     "fpdfsdk/fpdf_ext.cpp",
@@ -87,20 +90,23 @@ static_library("pdfium") {
     "fpdfsdk/fpdftext.cpp",
     "fpdfsdk/fpdfview.cpp",
     "fpdfsdk/fsdk_actionhandler.cpp",
-    "fpdfsdk/fsdk_baseform.cpp",
     "fpdfsdk/fsdk_mgr.cpp",
     "fpdfsdk/fsdk_pauseadapter.cpp",
+    "fpdfsdk/include/cba_annotiterator.h",
     "fpdfsdk/include/cpdfsdk_annot.h",
     "fpdfsdk/include/cpdfsdk_annothandlermgr.h",
     "fpdfsdk/include/cpdfsdk_annotiterator.h",
     "fpdfsdk/include/cpdfsdk_baannot.h",
     "fpdfsdk/include/cpdfsdk_bfannothandler.h",
     "fpdfsdk/include/cpdfsdk_datetime.h",
+    "fpdfsdk/include/cpdfsdk_interform.h",
+    "fpdfsdk/include/cpdfsdk_widget.h",
     "fpdfsdk/include/cpdfsdk_xfaannothandler.h",
     "fpdfsdk/include/fsdk_actionhandler.h",
-    "fpdfsdk/include/fsdk_baseform.h",
     "fpdfsdk/include/fsdk_pauseadapter.h",
     "fpdfsdk/include/ifpdfsdk_annothandler.h",
+    "fpdfsdk/include/pdfsdk_fieldaction.h",
+    "fpdfsdk/pdfsdk_fieldaction.cpp",
     "public/fpdf_dataavail.h",
     "public/fpdf_doc.h",
     "public/fpdf_edit.h",
@@ -138,6 +144,11 @@ static_library("pdfium") {
   ]
 
   if (pdf_enable_xfa) {
+    sources += [
+      "fpdfsdk/cpdfsdk_xfawidget.cpp",
+      "fpdfsdk/include/cpdfsdk_xfawidget.h",
+    ]
+
     deps += [ ":fpdfxfa" ]
   }
 
