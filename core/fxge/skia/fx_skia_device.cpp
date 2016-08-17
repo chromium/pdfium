@@ -1463,7 +1463,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   SetBitmapPaint(pSource->IsAlphaMask(), argb, bitmap_alpha, blend_type,
                  &paint);
   // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
-  if (m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
+  if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
     SkMatrix inv;
     SkAssertResult(skMatrix.invert(&inv));
     for (int y = 0; y < m_pBitmap->GetHeight(); ++y) {
