@@ -26,6 +26,48 @@
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/color.h"
 
+namespace {
+
+bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
+  if (!pWidget)
+    return false;
+
+  uint32_t dwFlag = pWidget->GetFlags();
+  switch (value) {
+    case 0:
+      dwFlag &= ~ANNOTFLAG_INVISIBLE;
+      dwFlag &= ~ANNOTFLAG_HIDDEN;
+      dwFlag &= ~ANNOTFLAG_NOVIEW;
+      dwFlag |= ANNOTFLAG_PRINT;
+      break;
+    case 1:
+      dwFlag &= ~ANNOTFLAG_INVISIBLE;
+      dwFlag &= ~ANNOTFLAG_NOVIEW;
+      dwFlag |= (ANNOTFLAG_HIDDEN | ANNOTFLAG_PRINT);
+      break;
+    case 2:
+      dwFlag &= ~ANNOTFLAG_INVISIBLE;
+      dwFlag &= ~ANNOTFLAG_PRINT;
+      dwFlag &= ~ANNOTFLAG_HIDDEN;
+      dwFlag &= ~ANNOTFLAG_NOVIEW;
+      break;
+    case 3:
+      dwFlag |= ANNOTFLAG_NOVIEW;
+      dwFlag |= ANNOTFLAG_PRINT;
+      dwFlag &= ~ANNOTFLAG_HIDDEN;
+      break;
+  }
+
+  if (dwFlag != pWidget->GetFlags()) {
+    pWidget->SetFlags(dwFlag);
+    return true;
+  }
+
+  return false;
+}
+
+}  // namespace
+
 BEGIN_JS_STATIC_CONST(CJS_Field)
 END_JS_STATIC_CONST()
 
@@ -1239,86 +1281,29 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument,
       GetFormFields(pDocument, swFieldName);
   for (CPDF_FormField* pFormField : FieldArray) {
     if (nControlIndex < 0) {
-      FX_BOOL bSet = FALSE;
+      bool bAnySet = false;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
         ASSERT(pFormControl);
 
-        if (CPDFSDK_Widget* pWidget =
-                pInterForm->GetWidget(pFormControl, true)) {
-          uint32_t dwFlag = pWidget->GetFlags();
-          switch (number) {
-            case 0:
-              dwFlag &= (~ANNOTFLAG_INVISIBLE);
-              dwFlag &= (~ANNOTFLAG_HIDDEN);
-              dwFlag &= (~ANNOTFLAG_NOVIEW);
-              dwFlag |= ANNOTFLAG_PRINT;
-              break;
-            case 1:
-              dwFlag &= (~ANNOTFLAG_INVISIBLE);
-              dwFlag &= (~ANNOTFLAG_NOVIEW);
-              dwFlag |= (ANNOTFLAG_HIDDEN | ANNOTFLAG_PRINT);
-              break;
-            case 2:
-              dwFlag &= (~ANNOTFLAG_INVISIBLE);
-              dwFlag &= (~ANNOTFLAG_PRINT);
-              dwFlag &= (~ANNOTFLAG_HIDDEN);
-              dwFlag &= (~ANNOTFLAG_NOVIEW);
-              break;
-            case 3:
-              dwFlag |= ANNOTFLAG_NOVIEW;
-              dwFlag |= ANNOTFLAG_PRINT;
-              dwFlag &= (~ANNOTFLAG_HIDDEN);
-              break;
-          }
-
-          if (dwFlag != pWidget->GetFlags()) {
-            pWidget->SetFlags(dwFlag);
-            bSet = TRUE;
-          }
-        }
+        CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl, true);
+        if (SetWidgetDisplayStatus(pWidget, number))
+          bAnySet = true;
       }
 
-      if (bSet)
+      if (bAnySet)
         UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
     } else {
       if (nControlIndex >= pFormField->CountControls())
         return;
-      if (CPDF_FormControl* pFormControl =
-              pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget =
-                pInterForm->GetWidget(pFormControl, true)) {
-          uint32_t dwFlag = pWidget->GetFlags();
-          switch (number) {
-            case 0:
-              dwFlag &= (~ANNOTFLAG_INVISIBLE);
-              dwFlag &= (~ANNOTFLAG_HIDDEN);
-              dwFlag &= (~ANNOTFLAG_NOVIEW);
-              dwFlag |= ANNOTFLAG_PRINT;
-              break;
-            case 1:
-              dwFlag &= (~ANNOTFLAG_INVISIBLE);
-              dwFlag &= (~ANNOTFLAG_NOVIEW);
-              dwFlag |= (ANNOTFLAG_HIDDEN | ANNOTFLAG_PRINT);
-              break;
-            case 2:
-              dwFlag &= (~ANNOTFLAG_INVISIBLE);
-              dwFlag &= (~ANNOTFLAG_PRINT);
-              dwFlag &= (~ANNOTFLAG_HIDDEN);
-              dwFlag &= (~ANNOTFLAG_NOVIEW);
-              break;
-            case 3:
-              dwFlag |= ANNOTFLAG_NOVIEW;
-              dwFlag |= ANNOTFLAG_PRINT;
-              dwFlag &= (~ANNOTFLAG_HIDDEN);
-              break;
-          }
-          if (dwFlag != pWidget->GetFlags()) {
-            pWidget->SetFlags(dwFlag);
-            UpdateFormControl(pDocument, pFormControl, TRUE, FALSE, TRUE);
-          }
-        }
-      }
+
+      CPDF_FormControl* pFormControl = pFormField->GetControl(nControlIndex);
+      if (!pFormControl)
+        return;
+
+      CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl, true);
+      if (SetWidgetDisplayStatus(pWidget, number))
+        UpdateFormControl(pDocument, pFormControl, TRUE, FALSE, TRUE);
     }
   }
 }
