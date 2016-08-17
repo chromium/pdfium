@@ -519,7 +519,8 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
 }
 
 int CPDFSDK_Widget::GetFieldType() const {
-  return GetFormField()->GetFieldType();
+  CPDF_FormField* pField = GetFormField();
+  return pField ? pField->GetFieldType() : FIELDTYPE_UNKNOWN;
 }
 
 FX_BOOL CPDFSDK_Widget::IsAppearanceValid() {
@@ -554,7 +555,8 @@ CFX_ByteString CPDFSDK_Widget::GetSubType() const {
 }
 
 CPDF_FormField* CPDFSDK_Widget::GetFormField() const {
-  return GetFormControl()->GetField();
+  CPDF_FormControl* pControl = GetFormControl();
+  return pControl ? pControl->GetField() : nullptr;
 }
 
 CPDF_FormControl* CPDFSDK_Widget::GetFormControl() const {
