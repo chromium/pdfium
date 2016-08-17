@@ -10,16 +10,17 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 
-CFDF_Document::CFDF_Document() : CPDF_IndirectObjectHolder(nullptr) {
-  m_pRootDict = nullptr;
-  m_pFile = nullptr;
-  m_bOwnFile = FALSE;
-}
+CFDF_Document::CFDF_Document()
+    : CPDF_IndirectObjectHolder(),
+      m_pRootDict(nullptr),
+      m_pFile(nullptr),
+      m_bOwnFile(FALSE) {}
+
 CFDF_Document::~CFDF_Document() {
-  if (m_bOwnFile && m_pFile) {
+  if (m_bOwnFile && m_pFile)
     m_pFile->Release();
-  }
 }
+
 CFDF_Document* CFDF_Document::CreateNewDoc() {
   CFDF_Document* pDoc = new CFDF_Document;
   pDoc->m_pRootDict = new CPDF_Dictionary;
@@ -65,7 +66,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
       if (!pObj)
         break;
 
-      InsertIndirectObject(objnum, pObj);
+      ReplaceIndirectObjectIfHigherGeneration(objnum, pObj);
       word = parser.GetNextWord(nullptr);
       if (word != "endobj")
         break;
@@ -88,9 +89,9 @@ FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
     return FALSE;
   }
   buf << "%FDF-1.2\r\n";
-  for (const auto& pair : m_IndirectObjs) {
+  for (const auto& pair : *this)
     buf << pair.first << " 0 obj\r\n" << pair.second << "\r\nendobj\r\n\r\n";
-  }
+
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";
   return TRUE;

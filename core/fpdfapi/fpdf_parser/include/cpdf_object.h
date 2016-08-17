@@ -79,15 +79,16 @@ class CPDF_Object {
   virtual const CPDF_String* AsString() const;
 
  protected:
+  friend class CPDF_Document;
+  friend class CPDF_IndirectObjectHolder;
+  friend class CPDF_Parser;
+
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
   virtual ~CPDF_Object();
   void Destroy() { delete this; }
 
   uint32_t m_ObjNum;
   uint32_t m_GenNum;
-
-  friend class CPDF_IndirectObjectHolder;
-  friend class CPDF_Parser;
 
  private:
   CPDF_Object(const CPDF_Object& src) {}
