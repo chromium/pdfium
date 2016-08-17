@@ -11,6 +11,7 @@
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 #include "core/fxge/win32/dwrite_int.h"
 
+class CFX_FontCache;
 struct FXTEXT_CHARPOS;
 struct WINDIB_Open_Args_;
 

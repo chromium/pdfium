@@ -19,6 +19,7 @@ typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
 
 class CFX_FaceCache;
+class CFX_FontCache;
 class CFX_PathData;
 class CFX_SizeGlyphCache;
 class CFX_SubstFont;
@@ -287,32 +288,6 @@ class CFX_CountedFaceCache {
  public:
   CFX_FaceCache* m_Obj;
   uint32_t m_nCount;
-};
-
-class CFX_FontCache {
- public:
-  CFX_FontCache();
-  ~CFX_FontCache();
-  CFX_FaceCache* GetCachedFace(CFX_Font* pFont);
-  void ReleaseCachedFace(CFX_Font* pFont);
-  void FreeCache(FX_BOOL bRelease = FALSE);
-#ifdef _SKIA_SUPPORT_
-  CFX_TypeFace* GetDeviceCache(CFX_Font* pFont);
-#endif
-
- private:
-  using CFX_FTCacheMap = std::map<FXFT_Face, CFX_CountedFaceCache*>;
-  CFX_FTCacheMap m_FTFaceMap;
-  CFX_FTCacheMap m_ExtFaceMap;
-};
-
-class CFX_AutoFontCache {
- public:
-  CFX_AutoFontCache(CFX_FontCache* pFontCache, CFX_Font* pFont)
-      : m_pFontCache(pFontCache), m_pFont(pFont) {}
-  ~CFX_AutoFontCache() { m_pFontCache->ReleaseCachedFace(m_pFont); }
-  CFX_FontCache* m_pFontCache;
-  CFX_Font* m_pFont;
 };
 
 class CFX_GlyphBitmap {

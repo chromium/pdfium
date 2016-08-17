@@ -10,6 +10,8 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
+class CFX_FontCache;
+
 IFX_RenderDeviceDriver::~IFX_RenderDeviceDriver() {}
 
 CFX_Matrix IFX_RenderDeviceDriver::GetCTM() const {

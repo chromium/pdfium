@@ -17,6 +17,7 @@
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "core/fxge/include/fx_freetype.h"

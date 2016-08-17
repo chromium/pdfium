@@ -8,6 +8,7 @@
 
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fontmgr.h"
 
 namespace {

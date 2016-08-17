@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_renderdevice.h"

@@ -21,6 +21,8 @@
 #include <Carbon/Carbon.h>
 #endif
 
+class CFX_FontCache;
+
 class CQuartz2D {
  public:
   void* createGraphics(CFX_DIBitmap* bitmap);
