@@ -30,6 +30,7 @@
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/include/cfx_unicodeencodingex.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 

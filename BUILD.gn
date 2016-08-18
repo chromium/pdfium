@@ -762,6 +762,7 @@ static_library("fxge") {
     "core/fxge/ge/cfx_graphstatedata.cpp",
     "core/fxge/ge/cfx_pathdata.cpp",
     "core/fxge/ge/cfx_renderdevice.cpp",
+    "core/fxge/ge/cfx_unicodeencoding.cpp",
     "core/fxge/ge/fx_ge_font.cpp",
     "core/fxge/ge/fx_ge_fontmap.cpp",
     "core/fxge/ge/fx_ge_linux.cpp",
@@ -778,6 +779,7 @@ static_library("fxge") {
     "core/fxge/include/cfx_graphstatedata.h",
     "core/fxge/include/cfx_pathdata.h",
     "core/fxge/include/cfx_renderdevice.h",
+    "core/fxge/include/cfx_unicodeencoding.h",
     "core/fxge/include/cfx_windowsdevice.h",
     "core/fxge/include/fx_dib.h",
     "core/fxge/include/fx_font.h",
@@ -790,6 +792,13 @@ static_library("fxge") {
     ":fxge_warnings",
     ":pdfium_core_config",
   ]
+
+  if (pdf_enable_xfa) {
+    sources += [
+      "core/fxge/ge/cfx_unicodeencodingex.cpp",
+      "core/fxge/include/cfx_unicodeencodingex.h",
+    ]
+  }
 
   if (pdf_use_skia) {
     sources += [ "core/fxge/skia/fx_skia_device.cpp" ]

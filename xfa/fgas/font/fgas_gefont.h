@@ -15,6 +15,7 @@
 
 #define FXFONT_SUBST_ITALIC 0x02
 
+class CFX_UnicodeEncoding;
 class CXFA_PDFFontMgr;
 
 class CFGAS_GEFont {

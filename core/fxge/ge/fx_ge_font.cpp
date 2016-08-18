@@ -7,8 +7,8 @@
 #include "core/fxge/include/fx_font.h"
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
-#include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/fx_freetype.h"
 
@@ -17,22 +17,6 @@
 namespace {
 
 #ifdef PDF_ENABLE_XFA
-const uint32_t g_EncodingID[] = {
-    FXFM_ENCODING_MS_SYMBOL,     FXFM_ENCODING_UNICODE,
-    FXFM_ENCODING_MS_SJIS,       FXFM_ENCODING_MS_GB2312,
-    FXFM_ENCODING_MS_BIG5,       FXFM_ENCODING_MS_WANSUNG,
-    FXFM_ENCODING_MS_JOHAB,      FXFM_ENCODING_ADOBE_STANDARD,
-    FXFM_ENCODING_ADOBE_EXPERT,  FXFM_ENCODING_ADOBE_CUSTOM,
-    FXFM_ENCODING_ADOBE_LATIN_1, FXFM_ENCODING_OLD_LATIN_2,
-    FXFM_ENCODING_APPLE_ROMAN,
-};
-
-CFX_UnicodeEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
-                                                uint32_t nEncodingID) {
-  if (FXFT_Select_Charmap(pFont->GetFace(), nEncodingID))
-    return nullptr;
-  return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
-}
 
 unsigned long FTStreamRead(FXFT_Stream stream,
                            unsigned long offset,
@@ -429,98 +413,3 @@ int CFX_Font::GetULthickness() const {
   return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
                    FXFT_Get_Face_UnderLineThickness(m_Face));
 }
-
-CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) : m_pFont(pFont) {}
-
-CFX_UnicodeEncoding::~CFX_UnicodeEncoding() {}
-
-uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
-  FXFT_Face face = m_pFont->GetFace();
-  if (!face)
-    return charcode;
-
-  if (FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE) == 0)
-    return FXFT_Get_Char_Index(face, charcode);
-
-  if (m_pFont->GetSubstFont() &&
-      m_pFont->GetSubstFont()->m_Charset == FXFONT_SYMBOL_CHARSET) {
-    uint32_t index = 0;
-    if (FXFT_Select_Charmap(face, FXFT_ENCODING_MS_SYMBOL) == 0)
-      index = FXFT_Get_Char_Index(face, charcode);
-    if (!index && !FXFT_Select_Charmap(face, FXFT_ENCODING_APPLE_ROMAN))
-      return FXFT_Get_Char_Index(face, charcode);
-  }
-  return charcode;
-}
-
-#ifdef PDF_ENABLE_XFA
-CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
-                                             uint32_t EncodingID)
-    : CFX_UnicodeEncoding(pFont), m_nEncodingID(EncodingID) {}
-
-CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() {}
-
-uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
-  FXFT_Face face = m_pFont->GetFace();
-  FT_UInt nIndex = FXFT_Get_Char_Index(face, charcode);
-  if (nIndex > 0) {
-    return nIndex;
-  }
-  int nmaps = FXFT_Get_Face_CharmapCount(face);
-  int m = 0;
-  while (m < nmaps) {
-    uint32_t nEncodingID =
-        FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[m++]);
-    if (m_nEncodingID == nEncodingID) {
-      continue;
-    }
-    int error = FXFT_Select_Charmap(face, nEncodingID);
-    if (error) {
-      continue;
-    }
-    nIndex = FXFT_Get_Char_Index(face, charcode);
-    if (nIndex > 0) {
-      m_nEncodingID = nEncodingID;
-      return nIndex;
-    }
-  }
-  FXFT_Select_Charmap(face, m_nEncodingID);
-  return 0;
-}
-
-uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
-  if (m_nEncodingID == FXFM_ENCODING_UNICODE ||
-      m_nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
-    return Unicode;
-  }
-  FXFT_Face face = m_pFont->GetFace();
-  int nmaps = FXFT_Get_Face_CharmapCount(face);
-  for (int i = 0; i < nmaps; i++) {
-    int nEncodingID =
-        FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[i]);
-    if (nEncodingID == FXFM_ENCODING_UNICODE ||
-        nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
-      return Unicode;
-    }
-  }
-  return CPDF_Font::kInvalidCharCode;
-}
-
-CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
-                                               uint32_t nEncodingID) {
-  if (!pFont || !pFont->GetFace())
-    return nullptr;
-
-  if (nEncodingID != FXFM_ENCODING_NONE)
-    return _FXFM_CreateFontEncoding(pFont, nEncodingID);
-
-  for (size_t i = 0; i < FX_ArraySize(g_EncodingID); ++i) {
-    CFX_UnicodeEncodingEx* pFontEncoding =
-        _FXFM_CreateFontEncoding(pFont, g_EncodingID[i]);
-    if (pFontEncoding) {
-      return pFontEncoding;
-    }
-  }
-  return nullptr;
-}
-#endif  // PDF_ENABLE_XFA

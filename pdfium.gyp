@@ -746,6 +746,7 @@
         'core/fxge/ge/cfx_graphstatedata.cpp',
         'core/fxge/ge/cfx_pathdata.cpp',
         'core/fxge/ge/cfx_renderdevice.cpp',
+        'core/fxge/ge/cfx_unicodeencoding.cpp',
         'core/fxge/ge/include/cfx_fontmapper.h',
         'core/fxge/ge/include/cfx_fontmgr.h',
         'core/fxge/ge/include/ifx_systemfontinfo.h',
@@ -762,6 +763,7 @@
         'core/fxge/include/cfx_graphstatedata.h',
         'core/fxge/include/cfx_pathdata.h',
         'core/fxge/include/cfx_renderdevice.h',
+        'core/fxge/include/cfx_unicodeencoding.h',
         'core/fxge/include/cfx_windowsdevice.h',
         'core/fxge/include/fx_dib.h',
         'core/fxge/include/fx_font.h',
@@ -776,6 +778,12 @@
         ],
       },
       'conditions': [
+        ['pdf_enable_xfa==1', {
+          'sources': [
+            'core/fxge/ge/cfx_unicodeencodingex.cpp',
+            'core/fxge/include/cfx_unicodeencodingex.h',
+          ]
+        }],
         ['pdf_use_skia==1', {
           'sources': [
             'core/fxge/skia/fx_skia_device.cpp',
