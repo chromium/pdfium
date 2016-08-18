@@ -168,3 +168,18 @@ source_set("pdf_jpx_fuzzer") {
     ":libfuzzer_config",
   ]
 }
+
+source_set("pdf_psengine_fuzzer") {
+  testonly = true
+  sources = [
+    "pdf_psengine_fuzzer.cc",
+  ]
+  deps = [
+    "//third_party/pdfium:pdfium",
+  ]
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":libfuzzer_config",
+  ]
+}

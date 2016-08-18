@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/cpdf_psengine.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
@@ -20,58 +21,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
-
-namespace {
-
-enum PDF_PSOP {
-  PSOP_ADD,
-  PSOP_SUB,
-  PSOP_MUL,
-  PSOP_DIV,
-  PSOP_IDIV,
-  PSOP_MOD,
-  PSOP_NEG,
-  PSOP_ABS,
-  PSOP_CEILING,
-  PSOP_FLOOR,
-  PSOP_ROUND,
-  PSOP_TRUNCATE,
-  PSOP_SQRT,
-  PSOP_SIN,
-  PSOP_COS,
-  PSOP_ATAN,
-  PSOP_EXP,
-  PSOP_LN,
-  PSOP_LOG,
-  PSOP_CVI,
-  PSOP_CVR,
-  PSOP_EQ,
-  PSOP_NE,
-  PSOP_GT,
-  PSOP_GE,
-  PSOP_LT,
-  PSOP_LE,
-  PSOP_AND,
-  PSOP_OR,
-  PSOP_XOR,
-  PSOP_NOT,
-  PSOP_BITSHIFT,
-  PSOP_TRUE,
-  PSOP_FALSE,
-  PSOP_IF,
-  PSOP_IFELSE,
-  PSOP_POP,
-  PSOP_EXCH,
-  PSOP_DUP,
-  PSOP_COPY,
-  PSOP_INDEX,
-  PSOP_ROLL,
-  PSOP_PROC,
-  PSOP_CONST
-};
-
-class CPDF_PSEngine;
-class CPDF_PSProc;
 
 class CPDF_PSOP {
  public:
@@ -105,39 +54,12 @@ class CPDF_PSOP {
   std::unique_ptr<CPDF_PSProc> m_proc;
 };
 
-class CPDF_PSProc {
- public:
-  CPDF_PSProc() {}
-  ~CPDF_PSProc() {}
+FX_BOOL CPDF_PSEngine::Execute() {
+  return m_MainProc.Execute(this);
+}
 
-  FX_BOOL Parse(CPDF_SimpleParser* parser);
-  FX_BOOL Execute(CPDF_PSEngine* pEngine);
-
- private:
-  std::vector<std::unique_ptr<CPDF_PSOP>> m_Operators;
-};
-
-const uint32_t PSENGINE_STACKSIZE = 100;
-
-class CPDF_PSEngine {
- public:
-  CPDF_PSEngine();
-  ~CPDF_PSEngine();
-
-  FX_BOOL Parse(const FX_CHAR* str, int size);
-  FX_BOOL Execute() { return m_MainProc.Execute(this); }
-  FX_BOOL DoOperator(PDF_PSOP op);
-  void Reset() { m_StackCount = 0; }
-  void Push(FX_FLOAT value);
-  void Push(int value) { Push((FX_FLOAT)value); }
-  FX_FLOAT Pop();
-  uint32_t GetStackSize() const { return m_StackCount; }
-
- private:
-  FX_FLOAT m_Stack[PSENGINE_STACKSIZE];
-  uint32_t m_StackCount;
-  CPDF_PSProc m_MainProc;
-};
+CPDF_PSProc::CPDF_PSProc() {}
+CPDF_PSProc::~CPDF_PSProc() {}
 
 FX_BOOL CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
   for (size_t i = 0; i < m_Operators.size(); ++i) {
@@ -280,12 +202,12 @@ FX_BOOL CPDF_PSEngine::DoOperator(PDF_PSOP op) {
     case PSOP_IDIV:
       i2 = (int)Pop();
       i1 = (int)Pop();
-      Push(i1 / i2);
+      Push(i2 ? i1 / i2 : 0);
       break;
     case PSOP_MOD:
       i2 = (int)Pop();
       i1 = (int)Pop();
-      Push(i1 % i2);
+      Push(i2 ? i1 % i2 : 0);
       break;
     case PSOP_NEG:
       d1 = Pop();
@@ -538,7 +460,6 @@ FX_BOOL CPDF_PSFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
   return TRUE;
 }
 
-}  // namespace
 
 CPDF_SampledFunc::CPDF_SampledFunc() : CPDF_Function(Type::kType0Sampled) {}
 
