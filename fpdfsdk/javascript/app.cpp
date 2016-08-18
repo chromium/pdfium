@@ -509,15 +509,18 @@ FX_BOOL app::setInterval(IJS_Context* cc,
 
   uint32_t dwInterval = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
-  m_Timers.push_back(std::unique_ptr<GlobalTimer>(
-      new GlobalTimer(this, pApp, pRuntime, 0, script, dwInterval, 0)));
+
+  std::unique_ptr<GlobalTimer> timer(
+      new GlobalTimer(this, pApp, pRuntime, 0, script, dwInterval, 0));
+  GlobalTimer* timerRef = timer.get();
+  m_Timers[timerRef] = std::move(timer);
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
   CJS_TimerObj* pJS_TimerObj =
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
-  pTimerObj->SetTimer(m_Timers.back().get());
+  pTimerObj->SetTimer(timerRef);
 
   vRet = CJS_Value(pRuntime, pRetObj);
   return TRUE;
@@ -543,8 +546,11 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
 
   uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
-  m_Timers.push_back(std::unique_ptr<GlobalTimer>(
-      new GlobalTimer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut)));
+
+  std::unique_ptr<GlobalTimer> timer(
+      new GlobalTimer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut));
+  GlobalTimer* timerRef = timer.get();
+  m_Timers[timerRef] = std::move(timer);
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
@@ -553,7 +559,7 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
 
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
-  pTimerObj->SetTimer(m_Timers.back().get());
+  pTimerObj->SetTimer(timerRef);
 
   vRet = CJS_Value(pRuntime, pRetObj);
   return TRUE;
@@ -620,13 +626,7 @@ void app::TimerProc(GlobalTimer* pTimer) {
 }
 
 void app::CancelProc(GlobalTimer* pTimer) {
-  auto iter = std::find_if(m_Timers.begin(), m_Timers.end(),
-                           [pTimer](const std::unique_ptr<GlobalTimer>& that) {
-                             return pTimer == that.get();
-                           });
-
-  if (iter != m_Timers.end())
-    m_Timers.erase(iter);
+  m_Timers.erase(pTimer);
 }
 
 void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {

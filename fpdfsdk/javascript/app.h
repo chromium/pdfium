@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_JAVASCRIPT_APP_H_
 #define FPDFSDK_JAVASCRIPT_APP_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -165,7 +166,7 @@ class app : public CJS_EmbedObj {
 
   bool m_bCalculate;
   bool m_bRuntimeHighLight;
-  std::vector<std::unique_ptr<GlobalTimer>> m_Timers;
+  std::map<GlobalTimer*, std::unique_ptr<GlobalTimer>> m_Timers;
 };
 
 class CJS_App : public CJS_Object {
