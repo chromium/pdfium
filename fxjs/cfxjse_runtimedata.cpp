@@ -56,11 +56,13 @@ void FXJSE_Finalize() {
 }
 
 v8::Isolate* FXJSE_Runtime_Create_Own() {
+  std::unique_ptr<v8::ArrayBuffer::Allocator> allocator(
+      new FXJSE_ArrayBufferAllocator());
   v8::Isolate::CreateParams params;
-  params.array_buffer_allocator = new FXJSE_ArrayBufferAllocator();
+  params.array_buffer_allocator = allocator.get();
   v8::Isolate* pIsolate = v8::Isolate::New(params);
   ASSERT(pIsolate && CFXJSE_IsolateTracker::g_pInstance);
-  CFXJSE_IsolateTracker::g_pInstance->Append(pIsolate);
+  CFXJSE_IsolateTracker::g_pInstance->Append(pIsolate, std::move(allocator));
   return pIsolate;
 }
 

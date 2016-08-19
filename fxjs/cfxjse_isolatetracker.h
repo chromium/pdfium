@@ -7,6 +7,8 @@
 #ifndef FXJS_CFXJSE_ISOLATETRACKER_H_
 #define FXJS_CFXJSE_ISOLATETRACKER_H_
 
+#include <map>
+#include <memory>
 #include <vector>
 
 #include "v8/include/v8.h"
@@ -57,7 +59,8 @@ class CFXJSE_IsolateTracker {
   CFXJSE_IsolateTracker();
   ~CFXJSE_IsolateTracker();
 
-  void Append(v8::Isolate* pIsolate);
+  void Append(v8::Isolate* pIsolate,
+              std::unique_ptr<v8::ArrayBuffer::Allocator> alloc);
   void Remove(v8::Isolate* pIsolate, DisposeCallback lpfnDisposeCallback);
   void RemoveAll(DisposeCallback lpfnDisposeCallback);
 
@@ -65,6 +68,8 @@ class CFXJSE_IsolateTracker {
 
  protected:
   std::vector<v8::Isolate*> m_OwnedIsolates;
+  std::map<v8::Isolate*, std::unique_ptr<v8::ArrayBuffer::Allocator>>
+      m_AllocatorMap;
 };
 
 #endif  // FXJS_CFXJSE_ISOLATETRACKER_H_

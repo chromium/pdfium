@@ -12,8 +12,11 @@ CFXJSE_IsolateTracker::CFXJSE_IsolateTracker() {}
 
 CFXJSE_IsolateTracker::~CFXJSE_IsolateTracker() {}
 
-void CFXJSE_IsolateTracker::Append(v8::Isolate* pIsolate) {
+void CFXJSE_IsolateTracker::Append(
+    v8::Isolate* pIsolate,
+    std::unique_ptr<v8::ArrayBuffer::Allocator> alloc) {
   m_OwnedIsolates.push_back(pIsolate);
+  m_AllocatorMap[pIsolate] = std::move(alloc);
 }
 
 void CFXJSE_IsolateTracker::Remove(
@@ -24,6 +27,8 @@ void CFXJSE_IsolateTracker::Remove(
   if (bFound)
     m_OwnedIsolates.erase(it);
   lpfnDisposeCallback(pIsolate, bFound);
+
+  m_AllocatorMap.erase(pIsolate);
 }
 
 void CFXJSE_IsolateTracker::RemoveAll(
@@ -32,4 +37,5 @@ void CFXJSE_IsolateTracker::RemoveAll(
     lpfnDisposeCallback(pIsolate, true);
 
   m_OwnedIsolates.clear();
+  m_AllocatorMap.clear();
 }
