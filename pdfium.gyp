@@ -874,6 +874,8 @@
             'fpdfsdk/javascript/JS_Runtime_Stub.cpp',
           ],
           'sources': [
+            'fpdfsdk/javascript/Annot.cpp',
+            'fpdfsdk/javascript/Annot.h',
             'fpdfsdk/javascript/Consts.cpp',
             'fpdfsdk/javascript/Consts.h',
             'fpdfsdk/javascript/Document.cpp',

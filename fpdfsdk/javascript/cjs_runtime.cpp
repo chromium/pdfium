@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/javascript/Annot.h"
 #include "fpdfsdk/javascript/Consts.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/Field.h"
@@ -175,9 +176,10 @@ void CJS_Runtime::DefineJSObjects() {
   CJS_GlobalConsts::DefineJSObjects(this);
   CJS_GlobalArrays::DefineJSObjects(this);
 
-  // ObjDefIDs 21 - 22.
+  // ObjDefIDs 21 - 23.
   CJS_TimerObj::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
   CJS_PrintParamsObj::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
+  CJS_Annot::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
 }
 
 IJS_Context* CJS_Runtime::NewContext() {

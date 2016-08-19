@@ -135,6 +135,18 @@ function testCalculateNow() {
    // TODO(tsepez): test success cases.
 }
 
+function testGetAnnot() {
+   // Method is present.
+   expect('typeof this.getAnnot', 'function');
+
+   // Method needs two arguments.
+   expectError('this.getAnnot()');
+   expectError('this.getAnnot(0)');
+   expectError('this.getAnnot(0, "test", 0)');
+
+   // TODO(tonikitoo): test success cases.
+}
+
 function testGetField() {
    // Method is present.
    expect('typeof this.getField', 'function');
@@ -289,7 +301,6 @@ try {
   testUnsupported('this.exportAsText');
   testUnsupported('this.exportAsXFDF');
   testUnsupported('this.extractPages');
-  testUnsupported('this.getAnnot');
   testUnsupported('this.getAnnot3D');
   testUnsupported('this.getAnnots');
   testUnsupported('this.getLinks');
@@ -307,6 +318,7 @@ try {
   app.alert('*** Testing Supported Methods ***');
   testAddIcon();
   testCalculateNow();
+  testGetAnnot();
   testGetField();
   testGetIcon();
   testGetNthFieldName();

@@ -879,6 +879,8 @@ static_library("javascript") {
   ]
   if (pdf_enable_v8) {
     sources += [
+      "fpdfsdk/javascript/Annot.cpp",
+      "fpdfsdk/javascript/Annot.h",
       "fpdfsdk/javascript/Consts.cpp",
       "fpdfsdk/javascript/Consts.h",
       "fpdfsdk/javascript/Document.cpp",

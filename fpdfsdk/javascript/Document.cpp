@@ -15,9 +15,11 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "fpdfsdk/include/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/javascript/Annot.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
 #include "fpdfsdk/javascript/JS_Define.h"
@@ -1029,6 +1031,50 @@ FX_BOOL Document::getAnnot(IJS_Context* cc,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  if (params.size() != 2) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    return FALSE;
+  }
+
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+  int nPageNo = params[0].ToInt(pRuntime);
+  CFX_WideString swAnnotName = params[1].ToCFXWideString(pRuntime);
+
+  CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(nPageNo);
+  if (!pPageView)
+    return FALSE;
+
+  CPDFSDK_AnnotIterator annotIterator(pPageView, false);
+  CPDFSDK_BAAnnot* pSDKBAAnnot = nullptr;
+  while (CPDFSDK_Annot* pSDKAnnotCur = annotIterator.Next()) {
+    CPDFSDK_BAAnnot* pBAAnnot = static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur);
+    if (pBAAnnot && pBAAnnot->GetAnnotName() == swAnnotName) {
+      pSDKBAAnnot = pBAAnnot;
+      break;
+    }
+  }
+
+  if (!pSDKBAAnnot)
+    return FALSE;
+
+  v8::Local<v8::Object> pObj =
+      pRuntime->NewFxDynamicObj(CJS_Annot::g_nObjDefnID);
+  if (pObj.IsEmpty())
+    return FALSE;
+
+  CJS_Annot* pJS_Annot =
+      static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
+  if (!pJS_Annot)
+    return FALSE;
+
+  Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
+  if (!pAnnot)
+    return FALSE;
+
+  pAnnot->SetSDKAnnot(pSDKBAAnnot);
+
+  vRet = CJS_Value(pRuntime, pJS_Annot);
   return TRUE;
 }
 
