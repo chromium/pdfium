@@ -135,7 +135,7 @@ uint32_t CPDF_ToUnicodeMap::StringToCode(const CFX_ByteStringC& str) {
   if (len == 0)
     return 0;
 
-  int result = 0;
+  uint32_t result = 0;
   if (str[0] == '<') {
     for (int i = 1; i < len && std::isxdigit(str[i]); ++i)
       result = result * 16 + FXSYS_toHexDigit(str.CharAt(i));
