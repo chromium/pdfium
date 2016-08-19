@@ -68,15 +68,15 @@ class IFX_RenderDeviceDriver;
 #define FXTEXT_NOSMOOTH 0x20
 
 struct FXTEXT_CHARPOS {
-  uint32_t m_GlyphIndex;
+  FX_FLOAT m_AdjustMatrix[4];
   FX_FLOAT m_OriginX;
   FX_FLOAT m_OriginY;
-  int m_FontCharWidth;
-  FX_BOOL m_bGlyphAdjust;
-  FX_FLOAT m_AdjustMatrix[4];
+  uint32_t m_GlyphIndex;
+  int32_t m_FontCharWidth;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   uint32_t m_ExtGID;
 #endif
+  bool m_bGlyphAdjust;
   bool m_bFontStyle;
 };
 
