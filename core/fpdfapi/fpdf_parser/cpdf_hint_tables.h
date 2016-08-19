@@ -20,7 +20,7 @@ class CPDF_Stream;
 class CPDF_HintTables {
  public:
   CPDF_HintTables(CPDF_DataAvail* pDataAvail, CPDF_Dictionary* pLinearized);
-  ~CPDF_HintTables();
+  virtual ~CPDF_HintTables();
 
   bool GetPagePos(int index,
                   FX_FILESIZE* szPageStartPos,
@@ -39,12 +39,13 @@ class CPDF_HintTables {
   uint32_t GetItemLength(int index, const std::vector<FX_FILESIZE>& szArray);
 
  private:
-  int GetEndOfFirstPageOffset() const;
-  int GetNumberOfPages() const;
-  int GetFirstPageObjectNumber() const;
-  int GetFirstPageNumber() const;
-  int ReadPrimaryHintStreamOffset() const;
-  int ReadPrimaryHintStreamLength() const;
+  // Tests can override.
+  virtual int GetEndOfFirstPageOffset() const;
+  virtual int GetNumberOfPages() const;
+  virtual int GetFirstPageObjectNumber() const;
+  virtual int GetFirstPageNumber() const;
+  virtual int ReadPrimaryHintStreamOffset() const;
+  virtual int ReadPrimaryHintStreamLength() const;
 
   // Helper for the ReadPrimaryHintStream methods above.
   int ReadPrimaryHintStream(int index) const;

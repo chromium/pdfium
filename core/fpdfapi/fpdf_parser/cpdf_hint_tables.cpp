@@ -60,6 +60,8 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
 
   // Item 1: The least number of objects in a page.
   uint32_t dwObjLeastNum = hStream->GetBits(32);
+  if (!dwObjLeastNum)
+    return FALSE;
 
   // Item 2: The location of the first page's page object.
   uint32_t dwFirstObjLoc = hStream->GetBits(32);
@@ -78,13 +80,19 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // Item 3: The number of bits needed to represent the difference
   // between the greatest and least number of objects in a page.
   uint32_t dwDeltaObjectsBits = hStream->GetBits(16);
+  if (!dwDeltaObjectsBits)
+    return FALSE;
 
   // Item 4: The least length of a page in bytes.
   uint32_t dwPageLeastLen = hStream->GetBits(32);
+  if (!dwPageLeastLen)
+    return FALSE;
 
   // Item 5: The number of bits needed to represent the difference
   // between the greatest and least length of a page, in bytes.
   uint32_t dwDeltaPageLenBits = hStream->GetBits(16);
+  if (!dwDeltaPageLenBits)
+    return FALSE;
 
   // Skip Item 6, 7, 8, 9 total 96 bits.
   hStream->SkipBits(96);
@@ -96,12 +104,16 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // Item 11: The number of bits needed to represent the numerically
   // greatest shared object identifier used by the pages.
   uint32_t dwSharedIdBits = hStream->GetBits(16);
+  if (!dwSharedObjBits)
+    return FALSE;
 
   // Item 12: The number of bits needed to represent the numerator of
   // the fractional position for each shared object reference. For each
   // shared object referenced from a page, there is an indication of
   // where in the page's content stream the object is first referenced.
   uint32_t dwSharedNumeratorBits = hStream->GetBits(16);
+  if (!dwSharedIdBits)
+    return FALSE;
 
   // Item 13: Skip Item 13 which has 16 bits.
   hStream->SkipBits(16);
@@ -113,7 +125,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     return false;
 
   const int nPages = GetNumberOfPages();
-  if (nPages < 1)
+  if (nPages < 1 || nPages >= FPDF_PAGE_MAX_NUM)
     return false;
 
   const uint32_t dwPages = pdfium::base::checked_cast<uint32_t>(nPages);
@@ -136,13 +148,14 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   if (!CanReadFromBitStream(hStream, required_bits))
     return false;
 
-  CFX_ArrayTemplate<uint32_t> dwPageLenArray;
+  std::vector<uint32_t> dwPageLenArray;
   for (int i = 0; i < nPages; ++i) {
     FX_SAFE_UINT32 safePageLen = hStream->GetBits(dwDeltaPageLenBits);
     safePageLen += dwPageLeastLen;
     if (!safePageLen.IsValid())
       return false;
-    dwPageLenArray.Add(safePageLen.ValueOrDie());
+
+    dwPageLenArray.push_back(safePageLen.ValueOrDie());
   }
 
   int nOffsetE = GetEndOfFirstPageOffset();
