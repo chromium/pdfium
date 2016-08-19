@@ -23,6 +23,7 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fxge/include/cfx_autofontcache.h"
+#include "core/fxge/include/cfx_facecache.h"
 #include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_gemodule.h"

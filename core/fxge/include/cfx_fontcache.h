@@ -13,6 +13,8 @@
 #include "core/fxge/include/fx_font.h"
 #include "core/fxge/include/fx_freetype.h"
 
+class CFX_FaceCache;
+
 class CFX_FontCache {
  public:
   CFX_FontCache();

@@ -74,6 +74,17 @@ using CFX_TypeFace = SkTypeface;
 #define GET_TT_LONG(w) \
   (uint32_t)(((w)[0] << 24) | ((w)[1] << 16) | ((w)[2] << 8) | (w)[3])
 
+// Sets the given transform on the font, and resets it to the identity when it
+// goes out of scope.
+class ScopedFontTransform {
+ public:
+  ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix);
+  ~ScopedFontTransform();
+
+ private:
+  FT_Face m_Face;
+};
+
 class CFX_Font {
  public:
   CFX_Font();
@@ -131,6 +142,13 @@ class CFX_Font {
   uint8_t* GetFontData() const { return m_pFontData; }
   uint32_t GetSize() const { return m_dwSize; }
   void AdjustMMParams(int glyph_index, int width, int weight);
+
+  static const size_t kAngleSkewArraySize = 30;
+  static const char s_AngleSkew[kAngleSkewArraySize];
+  static const size_t kWeightPowArraySize = 100;
+  static const uint8_t s_WeightPow[kWeightPowArraySize];
+  static const uint8_t s_WeightPow_11[kWeightPowArraySize];
+  static const uint8_t s_WeightPow_SHIFTJIS[kWeightPowArraySize];
 
 #ifdef PDF_ENABLE_XFA
  protected:
@@ -241,56 +259,6 @@ class CFX_GlyphBitmap {
   int m_Top;
   int m_Left;
   CFX_DIBitmap m_Bitmap;
-};
-
-class CFX_FaceCache {
- public:
-  explicit CFX_FaceCache(FXFT_Face face);
-  ~CFX_FaceCache();
-  const CFX_GlyphBitmap* LoadGlyphBitmap(CFX_Font* pFont,
-                                         uint32_t glyph_index,
-                                         FX_BOOL bFontStyle,
-                                         const CFX_Matrix* pMatrix,
-                                         int dest_width,
-                                         int anti_alias,
-                                         int& text_flags);
-  const CFX_PathData* LoadGlyphPath(CFX_Font* pFont,
-                                    uint32_t glyph_index,
-                                    int dest_width);
-
-#ifdef _SKIA_SUPPORT_
-  CFX_TypeFace* GetDeviceCache(CFX_Font* pFont);
-#endif
-
- private:
-  CFX_GlyphBitmap* RenderGlyph(CFX_Font* pFont,
-                               uint32_t glyph_index,
-                               FX_BOOL bFontStyle,
-                               const CFX_Matrix* pMatrix,
-                               int dest_width,
-                               int anti_alias);
-  CFX_GlyphBitmap* RenderGlyph_Nativetext(CFX_Font* pFont,
-                                          uint32_t glyph_index,
-                                          const CFX_Matrix* pMatrix,
-                                          int dest_width,
-                                          int anti_alias);
-  CFX_GlyphBitmap* LookUpGlyphBitmap(CFX_Font* pFont,
-                                     const CFX_Matrix* pMatrix,
-                                     const CFX_ByteString& FaceGlyphsKey,
-                                     uint32_t glyph_index,
-                                     FX_BOOL bFontStyle,
-                                     int dest_width,
-                                     int anti_alias);
-  void InitPlatform();
-  void DestroyPlatform();
-
-  FXFT_Face const m_Face;
-  std::map<CFX_ByteString, CFX_SizeGlyphCache*> m_SizeMap;
-  std::map<uint32_t, CFX_PathData*> m_PathMap;
-  CFX_DIBitmap* m_pBitmap;
-#ifdef _SKIA_SUPPORT_
-  CFX_TypeFace* m_pTypeface;
-#endif
 };
 
 struct FXTEXT_GLYPHPOS {
