@@ -19,6 +19,7 @@
 #include "fpdfsdk/javascript/cjs_context.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
+#include "third_party/base/stl_util.h"
 
 class GlobalTimer : public CJS_Runtime::Observer {
  public:
@@ -510,10 +511,9 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   uint32_t dwInterval = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
 
-  std::unique_ptr<GlobalTimer> timer(
-      new GlobalTimer(this, pApp, pRuntime, 0, script, dwInterval, 0));
-  GlobalTimer* timerRef = timer.get();
-  m_Timers[timerRef] = std::move(timer);
+  GlobalTimer* timerRef =
+      new GlobalTimer(this, pApp, pRuntime, 0, script, dwInterval, 0);
+  m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
@@ -547,10 +547,9 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
 
-  std::unique_ptr<GlobalTimer> timer(
-      new GlobalTimer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut));
-  GlobalTimer* timerRef = timer.get();
-  m_Timers[timerRef] = std::move(timer);
+  GlobalTimer* timerRef =
+      new GlobalTimer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut);
+  m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
@@ -626,7 +625,7 @@ void app::TimerProc(GlobalTimer* pTimer) {
 }
 
 void app::CancelProc(GlobalTimer* pTimer) {
-  m_Timers.erase(pTimer);
+  m_Timers.erase(pdfium::FakeUniquePtr<GlobalTimer>(pTimer));
 }
 
 void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {
