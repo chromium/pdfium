@@ -255,6 +255,10 @@ class Document : public CJS_EmbedObj {
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
+  FX_BOOL syncAnnotScan(IJS_Context* cc,
+                        const std::vector<CJS_Value>& params,
+                        CJS_Value& vRet,
+                        CFX_WideString& sError);
   FX_BOOL mailDoc(IJS_Context* cc,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
@@ -371,6 +375,7 @@ class CJS_Document : public CJS_Object {
   JS_STATIC_METHOD(resetForm, Document);
   JS_STATIC_METHOD(saveAs, Document);
   JS_STATIC_METHOD(submitForm, Document);
+  JS_STATIC_METHOD(syncAnnotScan, Document);
   JS_STATIC_METHOD(mailDoc, Document);
 };
 

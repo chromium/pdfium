@@ -137,6 +137,7 @@ JS_STATIC_METHOD_ENTRY(resetForm)
 JS_STATIC_METHOD_ENTRY(removeIcon)
 JS_STATIC_METHOD_ENTRY(saveAs)
 JS_STATIC_METHOD_ENTRY(submitForm)
+JS_STATIC_METHOD_ENTRY(syncAnnotScan)
 JS_STATIC_METHOD_ENTRY(mailDoc)
 END_JS_STATIC_METHOD()
 
@@ -566,6 +567,13 @@ FX_BOOL Document::saveAs(IJS_Context* cc,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   // Unsafe, not supported.
+  return TRUE;
+}
+
+FX_BOOL Document::syncAnnotScan(IJS_Context* cc,
+                                const std::vector<CJS_Value>& params,
+                                CJS_Value& vRet,
+                                CFX_WideString& sError) {
   return TRUE;
 }
 

@@ -314,6 +314,7 @@ try {
   testUnsupported('this.removeIcon');
   testUnsupported('this.replacePages');
   testUnsupported('this.saveAs');
+  testUnsupported('this.syncAnnotScan');
 
   app.alert('*** Testing Supported Methods ***');
   testAddIcon();

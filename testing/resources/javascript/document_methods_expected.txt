@@ -68,6 +68,9 @@ Alert: PASS: this.replacePages(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: PASS: typeof this.saveAs = function
 Alert: PASS: this.saveAs() = undefined
 Alert: PASS: this.saveAs(1, 2, "clams", [1, 2, 3]) = undefined
+Alert: PASS: typeof this.syncAnnotScan = function
+Alert: PASS: this.syncAnnotScan() = undefined
+Alert: PASS: this.syncAnnotScan(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: *** Testing Supported Methods ***
 Alert: PASS: typeof this.addIcon = function
 Alert: PASS: this.addIcon() threw error Document.addIcon: Incorrect number of parameters passed to function.
