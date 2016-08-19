@@ -38,13 +38,16 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument();
 // Create a new PDF page.
 //
 //   document   - handle to document.
-//   page_index - the index of the page to create.
+//   page_index - suggested index of the page to create. If it is larger than
+//                document's current last index(L), the created page index is
+//                the next available index -- L+1.
 //   width      - the page width.
 //   height     - the page height.
 //
 // Returns the handle to the new page.
 //
-// The page should be deleted with |FPDFPage_Delete| when finished.
+// The page should be closed with CPDF_ClosePage() when finished as
+// with any other page in the document.
 DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
                                          int page_index,
                                          double width,

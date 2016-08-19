@@ -55,7 +55,7 @@ const char kExpectedPDF[] =
 
 TEST_F(FPDFEditEmbeddertest, EmptyCreation) {
   EXPECT_TRUE(CreateEmptyDocument());
-  FPDF_PAGE page = FPDFPage_New(document(), 1, 640.0, 480.0);
+  FPDF_PAGE page = FPDFPage_New(document(), 0, 640.0, 480.0);
   EXPECT_NE(nullptr, page);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -66,5 +66,5 @@ TEST_F(FPDFEditEmbeddertest, EmptyCreation) {
   std::replace(result.begin(), result.end(), '\0', '_');
   EXPECT_THAT(result, testing::MatchesRegex(
                           std::string(kExpectedPDF, sizeof(kExpectedPDF))));
-  FPDFPage_Delete(document(), 1);
+  FPDF_ClosePage(page);
 }
