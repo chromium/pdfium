@@ -24,6 +24,11 @@ CFFL_ComboBox::CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
 CFFL_ComboBox::~CFFL_ComboBox() {
   for (const auto& it : m_Maps)
     it.second->InvalidateFocusHandler(this);
+
+  // See comment in cffl_formfiller.h.
+  // The font map should be stored somewhere more appropriate so it will live
+  // until the PWL_Edit is done with it. pdfium:566
+  DestroyWindows();
   delete m_pFontMap;
 }
 

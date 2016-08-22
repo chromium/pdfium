@@ -154,6 +154,14 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
  protected:
   using CFFL_PageView2PDFWindow = std::map<CPDFSDK_PageView*, CPWL_Wnd*>;
 
+  // If the inheriting widget has its own fontmap and a PWL_Edit widget that
+  // access that fontmap then you have to call DestroyWindows before destroying
+  // the font map in order to not get a use-after-free.
+  //
+  // The font map should be stored somewhere more appropriate so it will live
+  // until the PWL_Edit is done with it. pdfium:566
+  void DestroyWindows();
+
   CPDFDoc_Environment* m_pApp;
   CPDFSDK_Widget* m_pWidget;
   CPDFSDK_Annot* m_pAnnot;

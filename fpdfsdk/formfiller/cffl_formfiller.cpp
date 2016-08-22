@@ -27,6 +27,10 @@ CFFL_FormFiller::CFFL_FormFiller(CPDFDoc_Environment* pApp,
 }
 
 CFFL_FormFiller::~CFFL_FormFiller() {
+  DestroyWindows();
+}
+
+void CFFL_FormFiller::DestroyWindows() {
   for (const auto& it : m_Maps) {
     CPWL_Wnd* pWnd = it.second;
     CFFL_PrivateData* pData = (CFFL_PrivateData*)pWnd->GetAttachedData();
