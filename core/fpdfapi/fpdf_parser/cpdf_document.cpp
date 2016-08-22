@@ -484,32 +484,24 @@ int CountPages(CPDF_Dictionary* pPages,
 }  // namespace
 
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
-    : CPDF_IndirectObjectHolder(),
-      m_pParser(pParser),
+    : CPDF_IndirectObjectHolder(pParser),
       m_pRootDict(nullptr),
       m_pInfoDict(nullptr),
       m_bLinearized(false),
       m_iFirstPageNo(0),
       m_dwFirstPageObjNum(0),
       m_pDocPage(new CPDF_DocPageData(this)),
-      m_pDocRender(new CPDF_DocRenderData(this)) {
-  if (pParser)
-    SetLastObjNum(m_pParser->GetLastObjNum());
-}
+      m_pDocRender(new CPDF_DocRenderData(this)) {}
 
 CPDF_Document::~CPDF_Document() {
   delete m_pDocPage;
   CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
 }
 
-CPDF_Object* CPDF_Document::ParseIndirectObject(uint32_t objnum) {
-  return m_pParser ? m_pParser->ParseIndirectObject(this, objnum) : nullptr;
-}
-
 void CPDF_Document::LoadDocInternal() {
-  SetLastObjNum(m_pParser->GetLastObjNum());
+  m_LastObjNum = m_pParser->GetLastObjNum();
 
-  CPDF_Object* pRootObj = GetOrParseIndirectObject(m_pParser->GetRootObjNum());
+  CPDF_Object* pRootObj = GetIndirectObject(m_pParser->GetRootObjNum());
   if (!pRootObj)
     return;
 
@@ -517,7 +509,7 @@ void CPDF_Document::LoadDocInternal() {
   if (!m_pRootDict)
     return;
 
-  CPDF_Object* pInfoObj = GetOrParseIndirectObject(m_pParser->GetInfoObjNum());
+  CPDF_Object* pInfoObj = GetIndirectObject(m_pParser->GetInfoObjNum());
   if (pInfoObj)
     m_pInfoDict = pInfoObj->GetDict();
   if (CPDF_Array* pIDArray = m_pParser->GetIDArray()) {
@@ -597,14 +589,14 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
 
   if (m_bLinearized && (iPage == m_iFirstPageNo)) {
     if (CPDF_Dictionary* pDict =
-            ToDictionary(GetOrParseIndirectObject(m_dwFirstPageObjNum))) {
+            ToDictionary(GetIndirectObject(m_dwFirstPageObjNum))) {
       return pDict;
     }
   }
 
   int objnum = m_PageList.GetAt(iPage);
   if (objnum) {
-    if (CPDF_Dictionary* pDict = ToDictionary(GetOrParseIndirectObject(objnum)))
+    if (CPDF_Dictionary* pDict = ToDictionary(GetIndirectObject(objnum)))
       return pDict;
   }
 
@@ -737,8 +729,9 @@ uint32_t CPDF_Document::GetUserPermissions() const {
 }
 
 FX_BOOL CPDF_Document::IsFormStream(uint32_t objnum, FX_BOOL& bForm) const {
-  if (CPDF_Object* pObj = GetIndirectObject(objnum)) {
-    CPDF_Stream* pStream = pObj->AsStream();
+  auto it = m_IndirectObjs.find(objnum);
+  if (it != m_IndirectObjs.end()) {
+    CPDF_Stream* pStream = it->second->AsStream();
     bForm = pStream && pStream->GetDict()->GetStringBy("Subtype") == "Form";
     return TRUE;
   }

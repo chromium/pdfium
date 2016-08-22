@@ -267,7 +267,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
     if (CPDF_Dictionary* pEncryptDict = pEncryptObj->AsDictionary()) {
       SetEncryptDictionary(pEncryptDict);
     } else if (CPDF_Reference* pRef = pEncryptObj->AsReference()) {
-      pEncryptObj = m_pDocument->GetOrParseIndirectObject(pRef->GetRefObjNum());
+      pEncryptObj = m_pDocument->GetIndirectObject(pRef->GetRefObjNum());
       if (pEncryptObj)
         SetEncryptDictionary(pEncryptObj->GetDict());
     }
@@ -982,16 +982,12 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   if (m_pDocument) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
     if (pRootDict && pRootDict->GetObjNum() == pObject->m_ObjNum) {
-      // If |pObject| has an objnum assigned then this will leak as Release()
-      // will early exit.
       if (pObject->IsStream())
         pObject->Release();
       return FALSE;
     }
-    if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(pObject->m_ObjNum,
-                                                              pObject)) {
+    if (!m_pDocument->InsertIndirectObject(pObject->m_ObjNum, pObject))
       return FALSE;
-    }
   }
 
   CPDF_Stream* pStream = pObject->AsStream();
@@ -1234,8 +1230,7 @@ CPDF_StreamAcc* CPDF_Parser::GetObjectStream(uint32_t objnum) {
   if (!m_pDocument)
     return nullptr;
 
-  const CPDF_Stream* pStream =
-      ToStream(m_pDocument->GetOrParseIndirectObject(objnum));
+  const CPDF_Stream* pStream = ToStream(m_pDocument->GetIndirectObject(objnum));
   if (!pStream)
     return nullptr;
 

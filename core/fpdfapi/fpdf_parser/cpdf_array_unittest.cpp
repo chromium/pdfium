@@ -109,14 +109,14 @@ TEST(cpdf_array, Clone) {
     ScopedArray arr(new CPDF_Array);
     // Indirect references to indirect objects.
     std::unique_ptr<CPDF_IndirectObjectHolder> obj_holder(
-        new CPDF_IndirectObjectHolder());
+        new CPDF_IndirectObjectHolder(nullptr));
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = new CPDF_Array;
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
         CPDF_Number* obj = new CPDF_Number(elems[i][j]);
         // Starts object number from 1.
         int obj_num = i * kNumOfRowElems + j + 1;
-        obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num, obj);
+        obj_holder->InsertIndirectObject(obj_num, obj);
         arr_elem->InsertAt(j, new CPDF_Reference(obj_holder.get(), obj_num),
                            obj_holder.get());
       }
