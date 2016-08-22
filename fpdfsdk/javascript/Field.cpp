@@ -1531,65 +1531,8 @@ void Field::SetHidden(CPDFSDK_Document* pDocument,
                       const CFX_WideString& swFieldName,
                       int nControlIndex,
                       bool b) {
-  CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
-  std::vector<CPDF_FormField*> FieldArray =
-      GetFormFields(pDocument, swFieldName);
-  for (CPDF_FormField* pFormField : FieldArray) {
-    if (nControlIndex < 0) {
-      FX_BOOL bSet = FALSE;
-      for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
-        if (CPDFSDK_Widget* pWidget =
-                pInterForm->GetWidget(pFormField->GetControl(i), false)) {
-          uint32_t dwFlags = pWidget->GetFlags();
-
-          if (b) {
-            dwFlags &= (~ANNOTFLAG_INVISIBLE);
-            dwFlags &= (~ANNOTFLAG_NOVIEW);
-            dwFlags |= (ANNOTFLAG_HIDDEN | ANNOTFLAG_PRINT);
-          } else {
-            dwFlags &= (~ANNOTFLAG_INVISIBLE);
-            dwFlags &= (~ANNOTFLAG_HIDDEN);
-            dwFlags &= (~ANNOTFLAG_NOVIEW);
-            dwFlags |= ANNOTFLAG_PRINT;
-          }
-
-          if (dwFlags != pWidget->GetFlags()) {
-            pWidget->SetFlags(dwFlags);
-            bSet = TRUE;
-          }
-        }
-      }
-
-      if (bSet)
-        UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
-    } else {
-      if (nControlIndex >= pFormField->CountControls())
-        return;
-      if (CPDF_FormControl* pFormControl =
-              pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget =
-                pInterForm->GetWidget(pFormControl, false)) {
-          uint32_t dwFlags = pWidget->GetFlags();
-
-          if (b) {
-            dwFlags &= (~ANNOTFLAG_INVISIBLE);
-            dwFlags &= (~ANNOTFLAG_NOVIEW);
-            dwFlags |= (ANNOTFLAG_HIDDEN | ANNOTFLAG_PRINT);
-          } else {
-            dwFlags &= (~ANNOTFLAG_INVISIBLE);
-            dwFlags &= (~ANNOTFLAG_HIDDEN);
-            dwFlags &= (~ANNOTFLAG_NOVIEW);
-            dwFlags |= ANNOTFLAG_PRINT;
-          }
-
-          if (dwFlags != pWidget->GetFlags()) {
-            pWidget->SetFlags(dwFlags);
-            UpdateFormControl(pDocument, pFormControl, TRUE, FALSE, TRUE);
-          }
-        }
-      }
-    }
-  }
+  int display = b ? 1 /*Hidden*/ : 0 /*Visible*/;
+  SetDisplay(pDocument, swFieldName, nControlIndex, display);
 }
 
 FX_BOOL Field::highlight(IJS_Context* cc,
