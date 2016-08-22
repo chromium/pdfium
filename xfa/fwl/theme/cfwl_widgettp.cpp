@@ -274,7 +274,7 @@ void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
                     pRect->height - 1);
   pGraphics->StrokePath(&path, pMatrix);
   path.Clear();
-  crStroke = ArgbEncode(255, 255, 255, 255);
+  crStroke.Set(ArgbEncode(255, 255, 255, 255));
   pGraphics->SetStrokeColor(&crStroke);
   path.AddRectangle(pRect->left + 1, pRect->top + 1, pRect->width - 3,
                     pRect->height - 3);

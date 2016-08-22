@@ -18,15 +18,13 @@ enum { FX_COLOR_None = 0, FX_COLOR_Solid, FX_COLOR_Pattern, FX_COLOR_Shading };
 class CFX_Color {
  public:
   CFX_Color();
-  // TODO(weili): Remove implicit conversions. Make this explicit.
-  CFX_Color(const FX_ARGB argb);
-
-  explicit CFX_Color(CFX_Pattern* pattern, const FX_ARGB argb = 0x0);
+  explicit CFX_Color(const FX_ARGB argb);
   explicit CFX_Color(CFX_Shading* shading);
+  CFX_Color(CFX_Pattern* pattern, const FX_ARGB argb);
   virtual ~CFX_Color();
 
   FWL_Error Set(const FX_ARGB argb);
-  FWL_Error Set(CFX_Pattern* pattern, const FX_ARGB argb = 0x0);
+  FWL_Error Set(CFX_Pattern* pattern, const FX_ARGB argb);
   FWL_Error Set(CFX_Shading* shading);
 
  private:

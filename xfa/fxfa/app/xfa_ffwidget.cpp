@@ -1590,7 +1590,7 @@ static void XFA_BOX_Fill_Pattern(CXFA_Box box,
   }
 
   CFX_Pattern pattern(iHatch, crEnd, crStart);
-  CFX_Color cr(&pattern);
+  CFX_Color cr(&pattern, 0x0);
   pGS->SetFillColor(&cr);
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
 }

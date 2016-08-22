@@ -47,18 +47,19 @@ FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       path.Create();
       CFX_RectF& rect = pParams->m_rtPart;
       path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-      CFX_Color cr;
+      FX_ARGB argb_color;
       switch (pParams->m_dwStates) {
         case CFWL_PartState_Selected:
-          cr = FWLTHEME_COLOR_BKSelected;
+          argb_color = FWLTHEME_COLOR_BKSelected;
           break;
         case CFWL_PartState_Disabled:
-          cr = FWLTHEME_COLOR_EDGERB1;
+          argb_color = FWLTHEME_COLOR_EDGERB1;
           break;
         default:
-          cr = 0xFFFFFFFF;
+          argb_color = 0xFFFFFFFF;
       }
       pParams->m_pGraphics->SaveGraphState();
+      CFX_Color cr(argb_color);
       pParams->m_pGraphics->SetFillColor(&cr);
       pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams->m_matrix);
       pParams->m_pGraphics->RestoreGraphState();

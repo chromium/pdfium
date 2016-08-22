@@ -44,10 +44,13 @@ void CFWL_CaretTP::DrawCaretBK(CFX_Graphics* pGraphics,
                                CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  CFX_Color crFilltemp;
-  crFill ? crFilltemp = *crFill : crFilltemp = ArgbEncode(255, 0, 0, 0);
   CFX_RectF rect = *pRect;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-  pGraphics->SetFillColor(&crFilltemp);
+  if (crFill) {
+    pGraphics->SetFillColor(crFill);
+  } else {
+    CFX_Color crFilltemp(ArgbEncode(255, 0, 0, 0));
+    pGraphics->SetFillColor(&crFilltemp);
+  }
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
 }
