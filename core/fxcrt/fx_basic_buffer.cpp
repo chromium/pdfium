@@ -187,24 +187,24 @@ void CFX_BitStream::Init(const uint8_t* pData, uint32_t dwSize) {
   m_BitSize = dwSize * 8;
   m_BitPos = 0;
 }
+
 void CFX_BitStream::ByteAlign() {
-  int mod = m_BitPos % 8;
-  if (mod == 0) {
-    return;
-  }
-  m_BitPos += 8 - mod;
+  m_BitPos = (m_BitPos + 7) & ~7;
 }
+
 uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
-  if (nBits > m_BitSize || m_BitPos + nBits > m_BitSize) {
+  if (nBits > m_BitSize || m_BitPos + nBits > m_BitSize)
     return 0;
-  }
+
   if (nBits == 1) {
     int bit = (m_pData[m_BitPos / 8] & (1 << (7 - m_BitPos % 8))) ? 1 : 0;
     m_BitPos++;
     return bit;
   }
+
   uint32_t byte_pos = m_BitPos / 8;
-  uint32_t bit_pos = m_BitPos % 8, bit_left = nBits;
+  uint32_t bit_pos = m_BitPos % 8;
+  uint32_t bit_left = nBits;
   uint32_t result = 0;
   if (bit_pos) {
     if (8 - bit_pos >= bit_left) {
@@ -220,9 +220,8 @@ uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
     bit_left -= 8;
     result |= m_pData[byte_pos++] << bit_left;
   }
-  if (bit_left) {
+  if (bit_left)
     result |= m_pData[byte_pos] >> (8 - bit_left);
-  }
   m_BitPos += nBits;
   return result;
 }
@@ -249,12 +248,12 @@ bool CFX_FileBufferArchive::Flush() {
 }
 
 int32_t CFX_FileBufferArchive::AppendBlock(const void* pBuf, size_t size) {
-  if (!pBuf || size < 1) {
+  if (!pBuf || size < 1)
     return 0;
-  }
-  if (!m_pBuffer) {
+
+  if (!m_pBuffer)
     m_pBuffer.reset(FX_Alloc(uint8_t, kBufSize));
-  }
+
   const uint8_t* buffer = reinterpret_cast<const uint8_t*>(pBuf);
   size_t temp_size = size;
   while (temp_size) {
