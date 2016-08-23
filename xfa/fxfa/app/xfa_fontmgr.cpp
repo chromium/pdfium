@@ -1775,18 +1775,17 @@ CFGAS_GEFont* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
         CFX_WideString wsReplace =
             CFX_WideString(pReplace, pNameText - pReplace);
         pFont = pFDEFontMgr->LoadFont(wsReplace.c_str(), dwStyle, wCodePage);
-        if (pFont) {
+        if (pFont)
           break;
-        }
+
         iLength--;
         pNameText++;
         pReplace = pNameText;
       }
     }
   }
-  if (pFont) {
+  if (pFont)
     m_CacheFonts.Add(pFont);
-  }
   return pFont;
 }
 
@@ -1804,9 +1803,8 @@ CFGAS_GEFont* CXFA_DefFontMgr::GetDefaultFont(
   }
 
   ASSERT(pFont);
-  if (pFont) {
+  if (pFont)
     m_CacheFonts.Add(pFont);
-  }
   return pFont;
 }
 struct XFA_PDFFONTNAME {

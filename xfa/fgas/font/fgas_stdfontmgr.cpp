@@ -1156,7 +1156,6 @@ void CFGAS_FontMgrImp::RemoveFont(CFGAS_GEFont* pEFont) {
 }
 
 void CFGAS_FontMgrImp::RegisterFace(FXFT_Face pFace,
-                                    CFX_FontDescriptors& Fonts,
                                     const CFX_WideString* pFaceName) {
   if ((pFace->face_flags & FT_FACE_FLAG_SCALABLE) == 0)
     return;
@@ -1188,7 +1187,7 @@ void CFGAS_FontMgrImp::RegisterFace(FXFT_Face pFace,
                 : CFX_WideString::FromLocal(FXFT_Get_Postscript_Name(pFace));
   pFont->m_nFaceIndex = pFace->face_index;
 
-  Fonts.Add(pFont.release());
+  m_InstalledFonts.Add(pFont.release());
 }
 
 void CFGAS_FontMgrImp::RegisterFaces(IFX_FileRead* pFontStream,
@@ -1202,7 +1201,7 @@ void CFGAS_FontMgrImp::RegisterFaces(IFX_FileRead* pFontStream,
     // All faces keep number of faces. It can be retrieved from any one face.
     if (num_faces == 0)
       num_faces = pFace->num_faces;
-    RegisterFace(pFace, m_InstalledFonts, pFaceName);
+    RegisterFace(pFace, pFaceName);
     if (FXFT_Get_Face_External_Stream(pFace))
       FXFT_Clear_Face_External_Stream(pFace);
     FXFT_Done_Face(pFace);

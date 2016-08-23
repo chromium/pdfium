@@ -63,13 +63,26 @@ class CXFA_FFApp {
  protected:
   std::unique_ptr<CXFA_FFDocHandler> m_pDocHandler;
   IXFA_AppProvider* const m_pProvider;
+
+  // The fonts stored in the font manager may have been created by the default
+  // font manager. The GEFont::LoadFont call takes the manager as a param and
+  // stores it internally. When you destroy the GEFont it tries to unregister
+  // from the font manager and if the default font manager was destroyed first
+  // get get a use-after-free. The m_pFWLTheme can try to cleanup a GEFont
+  // when it frees, so make sure it gets cleaned up first. That requires
+  // m_pFWLApp to be cleaned up as well.
+  //
+  // TODO(dsinclair): The GEFont should have the FontMgr as the pointer instead
+  // of the DEFFontMgr so this goes away. Bug 561.
+  std::unique_ptr<IFGAS_FontMgr> m_pFDEFontMgr;
   std::unique_ptr<CXFA_FontMgr> m_pFontMgr;
+
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
 #endif
   std::unique_ptr<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
   CFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;  // not owned.
-  std::unique_ptr<IFGAS_FontMgr> m_pFDEFontMgr;
+
   // |m_pFWLApp| has to be released first, then |m_pFWLTheme| since the former
   // may refers to theme manager and the latter refers to font manager.
   std::unique_ptr<CXFA_FWLTheme> m_pFWLTheme;

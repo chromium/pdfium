@@ -184,7 +184,6 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
 
  protected:
   void RegisterFace(FXFT_Face pFace,
-                    CFX_FontDescriptors& Fonts,
                     const CFX_WideString* pFaceName);
   void RegisterFaces(IFX_FileRead* pFontStream,
                      const CFX_WideString* pFaceName);
@@ -192,7 +191,6 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
   std::vector<uint16_t> GetCharsets(FXFT_Face pFace) const;
   void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB);
   uint32_t GetFlags(FXFT_Face pFace);
-  CFX_FontDescriptors m_InstalledFonts;
   FX_BOOL VerifyUnicode(CFX_FontDescriptor* pDesc, FX_WCHAR wcUnicode);
   FX_BOOL VerifyUnicode(CFGAS_GEFont* pFont, FX_WCHAR wcUnicode);
   int32_t IsPartName(const CFX_WideString& Name1, const CFX_WideString& Name2);
@@ -212,6 +210,7 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
                                  uint32_t index);
   IFX_FileRead* CreateFontStream(const CFX_ByteString& bsFaceName);
 
+  CFX_FontDescriptors m_InstalledFonts;
   CFX_MapPtrTemplate<uint32_t, CFX_FontDescriptorInfos*> m_Hash2CandidateList;
   CFX_MapPtrTemplate<uint32_t, CFX_ArrayTemplate<CFGAS_GEFont*>*> m_Hash2Fonts;
   CFX_MapPtrTemplate<CFGAS_GEFont*, IFX_FileRead*> m_IFXFont2FileRead;
