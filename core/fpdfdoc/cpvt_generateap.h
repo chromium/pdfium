@@ -40,6 +40,7 @@ class CPVT_GenerateAP {
                                  CPDF_Dictionary* pAnnotDict);
   static bool GenerateStrikeOutAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
+  static bool GenerateTextAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
   static bool GenerateTextFieldAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateUnderlineAP(CPDF_Document* pDoc,

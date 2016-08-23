@@ -563,6 +563,56 @@ CFX_ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
   return bIsFillRect ? "f" : "n";
 }
 
+CFX_ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
+  CFX_ByteTextBuf sAppStream;
+  sAppStream << CPVT_GenerateAP::GenerateColorAP(
+      CPVT_Color(CPVT_Color::kRGB, 1, 1, 0), PaintOperation::FILL);
+  sAppStream << CPVT_GenerateAP::GenerateColorAP(
+      CPVT_Color(CPVT_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
+
+  const FX_FLOAT fBorderWidth = 1;
+  sAppStream << fBorderWidth << " w\n";
+
+  const FX_FLOAT fHalfWidth = fBorderWidth / 2;
+  const FX_FLOAT fTipDelta = 4;
+
+  CFX_FloatRect outerRect1 = rect;
+  outerRect1.Deflate(fHalfWidth, fHalfWidth);
+  outerRect1.bottom += fTipDelta;
+
+  CFX_FloatRect outerRect2 = outerRect1;
+  outerRect2.left += fTipDelta;
+  outerRect2.right = outerRect2.left + fTipDelta;
+  outerRect2.top = outerRect2.bottom - fTipDelta;
+  FX_FLOAT outerRect2Middle = (outerRect2.left + outerRect2.right) / 2;
+
+  // Draw outer boxes.
+  sAppStream << outerRect1.left << " " << outerRect1.bottom << " m\n"
+             << outerRect1.left << " " << outerRect1.top << " l\n"
+             << outerRect1.right << " " << outerRect1.top << " l\n"
+             << outerRect1.right << " " << outerRect1.bottom << " l\n"
+             << outerRect2.right << " " << outerRect2.bottom << " l\n"
+             << outerRect2Middle << " " << outerRect2.top << " l\n"
+             << outerRect2.left << " " << outerRect2.bottom << " l\n"
+             << outerRect1.left << " " << outerRect1.bottom << " l\n";
+
+  // Draw inner lines.
+  CFX_FloatRect lineRect = outerRect1;
+  const FX_FLOAT fXDelta = 2;
+  const FX_FLOAT fYDelta = (lineRect.top - lineRect.bottom) / 4;
+
+  lineRect.left += fXDelta;
+  lineRect.right -= fXDelta;
+  for (int i = 0; i < 3; ++i) {
+    lineRect.top -= fYDelta;
+    sAppStream << lineRect.left << " " << lineRect.top << " m\n"
+               << lineRect.right << " " << lineRect.top << " l\n";
+  }
+  sAppStream << "B*\n";
+
+  return sAppStream.MakeString();
+}
+
 bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
   // If AP dictionary exists, we use the appearance defined in the
   // existing AP dictionary.
@@ -775,6 +825,30 @@ bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
   CPDF_Dictionary* pExtGStateDict =
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
+  return true;
+}
+
+bool CPVT_GenerateAP::GenerateTextAP(CPDF_Document* pDoc,
+                                     CPDF_Dictionary* pAnnotDict) {
+  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
+    return false;
+
+  CFX_ByteTextBuf sAppStream;
+  CFX_ByteString sExtGSDictName = "GS";
+  sAppStream << "/" << sExtGSDictName << " gs ";
+
+  CFX_FloatRect rect = pAnnotDict->GetRectBy("Rect");
+  const FX_FLOAT fNoteLength = 20;
+  CFX_FloatRect noteRect(rect.left, rect.bottom, rect.left + fNoteLength,
+                         rect.bottom + fNoteLength);
+  pAnnotDict->SetAtRect("Rect", noteRect);
+
+  sAppStream << GenerateTextSymbolAP(noteRect);
+
+  CPDF_Dictionary* pExtGStateDict =
+      GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pExtGStateDict);
+
   return true;
 }
 

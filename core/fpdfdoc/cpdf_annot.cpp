@@ -34,6 +34,8 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "StrikeOut")
     CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, m_pAnnotDict);
+  else if (m_sSubtype == "Text")
+    CPVT_GenerateAP::GenerateTextAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Underline")
     CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
 }
