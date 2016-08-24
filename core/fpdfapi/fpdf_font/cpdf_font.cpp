@@ -22,7 +22,9 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/include/fx_freetype.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -450,4 +452,26 @@ const FX_CHAR* CPDF_Font::GetAdobeCharName(
   if (iBaseEncoding)
     name = PDF_CharNameFromPredefinedCharSet(iBaseEncoding, charcode);
   return name && name[0] ? name : nullptr;
+}
+
+uint32_t CPDF_Font::FallbackFontFromCharcode(uint32_t charcode) {
+  if (m_FontFallbacks.empty()) {
+    m_FontFallbacks.push_back(WrapUnique(new CFX_Font()));
+    m_FontFallbacks[0]->LoadSubst("Arial", IsTrueTypeFont(), m_Flags,
+                                  m_StemV * 5, m_ItalicAngle, 0,
+                                  IsVertWriting());
+  }
+  return 0;
+}
+
+int CPDF_Font::FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode) {
+  if (fallbackFont < 0 ||
+      fallbackFont >= pdfium::CollectionSize<int>(m_FontFallbacks)) {
+    return -1;
+  }
+  int glyph =
+      FXFT_Get_Char_Index(m_FontFallbacks[fallbackFont]->GetFace(), charcode);
+  if (glyph == 0 || glyph == 0xffff)
+    return -1;
+  return glyph;
 }

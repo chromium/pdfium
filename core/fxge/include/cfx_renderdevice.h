@@ -76,6 +76,7 @@ struct FXTEXT_CHARPOS {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   uint32_t m_ExtGID;
 #endif
+  int32_t m_FallbackFontPosition;
   bool m_bGlyphAdjust;
   bool m_bFontStyle;
 };

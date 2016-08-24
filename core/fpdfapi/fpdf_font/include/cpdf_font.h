@@ -88,12 +88,15 @@ class CPDF_Font {
   int GetItalicAngle() const { return m_ItalicAngle; }
   int GetStemV() const { return m_StemV; }
   int GetStringWidth(const FX_CHAR* pString, int size);
+  uint32_t FallbackFontFromCharcode(uint32_t charcode);
+  int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
 
   virtual int GetCharWidthF(uint32_t charcode, int level = 0) = 0;
   virtual FX_RECT GetCharBBox(uint32_t charcode, int level = 0) = 0;
 
   CPDF_Document* m_pDocument;
   CFX_Font m_Font;
+  std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
 
  protected:
   CPDF_Font();

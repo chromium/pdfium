@@ -371,6 +371,7 @@ class CPDF_RefType3Cache {
   CPDF_Type3Font* const m_pType3Font;
 };
 
+// TODO(npm): Font fallback for type 3 fonts? (Completely separate code!!)
 FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
                                             const CFX_Matrix* pObj2Device) {
   CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->AsType3Font();
@@ -572,6 +573,15 @@ void CPDF_CharPosList::Load(int nChars,
       charpos.m_bFontStyle = true;
     }
     charpos.m_GlyphIndex = pFont->GlyphFromCharCode(CharCode, &bVert);
+    if (charpos.m_GlyphIndex != static_cast<uint32_t>(-1)) {
+      charpos.m_FallbackFontPosition = -1;
+    } else {
+      charpos.m_FallbackFontPosition =
+          pFont->FallbackFontFromCharcode(CharCode);
+      charpos.m_GlyphIndex = pFont->FallbackGlyphFromCharcode(
+          charpos.m_FallbackFontPosition, CharCode);
+    }
+// TODO(npm): Figure out how this affects m_ExtGID
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
     charpos.m_ExtGID = pFont->GlyphFromCharCodeExt(CharCode);
 #endif
@@ -629,10 +639,36 @@ FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                          : nullptr;
   CPDF_CharPosList CharPosList;
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
-  return pDevice->DrawTextPath(CharPosList.m_nChars, CharPosList.m_pCharPos,
-                               &pFont->m_Font, pCache, font_size, pText2User,
-                               pUser2Device, pGraphState, fill_argb,
-                               stroke_argb, pClippingPath, nFlag);
+  if (CharPosList.m_nChars == 0)
+    return TRUE;
+  bool bDraw = true;
+  int32_t fontPosition = CharPosList.m_pCharPos[0].m_FallbackFontPosition;
+  uint32_t startIndex = 0;
+  for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
+    int32_t curFontPosition = CharPosList.m_pCharPos[i].m_FallbackFontPosition;
+    if (fontPosition == curFontPosition)
+      continue;
+    auto* font = fontPosition == -1
+                     ? &pFont->m_Font
+                     : pFont->m_FontFallbacks[fontPosition].get();
+    if (!pDevice->DrawTextPath(
+            i - startIndex, CharPosList.m_pCharPos + startIndex, font, pCache,
+            font_size, pText2User, pUser2Device, pGraphState, fill_argb,
+            stroke_argb, pClippingPath, nFlag)) {
+      bDraw = false;
+    }
+    fontPosition = curFontPosition;
+    startIndex = i;
+  }
+  auto* font = fontPosition == -1 ? &pFont->m_Font
+                                  : pFont->m_FontFallbacks[fontPosition].get();
+  if (!pDevice->DrawTextPath(CharPosList.m_nChars - startIndex,
+                             CharPosList.m_pCharPos + startIndex, font, pCache,
+                             font_size, pText2User, pUser2Device, pGraphState,
+                             fill_argb, stroke_argb, pClippingPath, nFlag)) {
+    bDraw = false;
+  }
+  return bDraw;
 }
 
 // static
@@ -708,6 +744,8 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                          : nullptr;
   CPDF_CharPosList CharPosList;
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
+  if (CharPosList.m_nChars == 0)
+    return TRUE;
   int FXGE_flags = 0;
   if (pOptions) {
     uint32_t dwFlags = pOptions->m_Flags;
@@ -735,9 +773,33 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   if (pFont->IsCIDFont()) {
     FXGE_flags |= FXFONT_CIDFONT;
   }
-  return pDevice->DrawNormalText(CharPosList.m_nChars, CharPosList.m_pCharPos,
-                                 &pFont->m_Font, pCache, font_size,
-                                 pText2Device, fill_argb, FXGE_flags);
+  bool bDraw = true;
+  int32_t fontPosition = CharPosList.m_pCharPos[0].m_FallbackFontPosition;
+  uint32_t startIndex = 0;
+  for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
+    int32_t curFontPosition = CharPosList.m_pCharPos[i].m_FallbackFontPosition;
+    if (fontPosition == curFontPosition)
+      continue;
+    auto* font = fontPosition == -1
+                     ? &pFont->m_Font
+                     : pFont->m_FontFallbacks[fontPosition].get();
+    if (!pDevice->DrawNormalText(
+            i - startIndex, CharPosList.m_pCharPos + startIndex, font, pCache,
+            font_size, pText2Device, fill_argb, FXGE_flags)) {
+      bDraw = false;
+    }
+    fontPosition = curFontPosition;
+    startIndex = i;
+  }
+  auto* font = fontPosition == -1 ? &pFont->m_Font
+                                  : pFont->m_FontFallbacks[fontPosition].get();
+  if (!pDevice->DrawNormalText(CharPosList.m_nChars - startIndex,
+                               CharPosList.m_pCharPos + startIndex, font,
+                               pCache, font_size, pText2Device, fill_argb,
+                               FXGE_flags)) {
+    bDraw = false;
+  }
+  return bDraw;
 }
 
 void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
@@ -770,15 +832,26 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   } else {
     pCache = CFX_GEModule::Get()->GetFontCache();
   }
-  CFX_FaceCache* pFaceCache = pCache->GetCachedFace(&pFont->m_Font);
-  CFX_AutoFontCache autoFontCache(pCache, &pFont->m_Font);
   CPDF_CharPosList CharPosList;
   CharPosList.Load(textobj->m_nChars, textobj->m_pCharCodes,
                    textobj->m_pCharPos, pFont, font_size);
+  std::vector<CFX_FaceCache*> faceCaches;
+  std::vector<CFX_AutoFontCache> autoFontCaches;
+  faceCaches.push_back(pCache->GetCachedFace(&pFont->m_Font));
+  autoFontCaches.push_back(CFX_AutoFontCache(pCache, &pFont->m_Font));
+  for (const auto& font : pFont->m_FontFallbacks) {
+    faceCaches.push_back(pCache->GetCachedFace(font.get()));
+    autoFontCaches.push_back(CFX_AutoFontCache(pCache, font.get()));
+  }
   for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
     FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
-    const CFX_PathData* pPath = pFaceCache->LoadGlyphPath(
-        &pFont->m_Font, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
+    auto font =
+        charpos.m_FallbackFontPosition == -1
+            ? &pFont->m_Font
+            : pFont->m_FontFallbacks[charpos.m_FallbackFontPosition].get();
+    const CFX_PathData* pPath =
+        faceCaches[charpos.m_FallbackFontPosition + 1]->LoadGlyphPath(
+            font, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath) {
       continue;
     }
