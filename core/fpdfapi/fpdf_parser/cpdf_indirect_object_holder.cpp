@@ -20,20 +20,25 @@ CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
     pair.second->Destroy();
 }
 
+CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(
+    uint32_t objnum) const {
+  auto it = m_IndirectObjs.find(objnum);
+  return it != m_IndirectObjs.end() ? it->second : nullptr;
+}
+
 CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
     uint32_t objnum) {
   if (objnum == 0)
     return nullptr;
 
-  auto it = m_IndirectObjs.find(objnum);
-  if (it != m_IndirectObjs.end())
-    return it->second->GetObjNum() != CPDF_Object::kInvalidObjNum ? it->second
-                                                                  : nullptr;
+  CPDF_Object* pObj = GetIndirectObject(objnum);
+  if (pObj)
+    return pObj->GetObjNum() != CPDF_Object::kInvalidObjNum ? pObj : nullptr;
 
   if (!m_pParser)
     return nullptr;
 
-  CPDF_Object* pObj = m_pParser->ParseIndirectObject(this, objnum);
+  pObj = m_pParser->ParseIndirectObject(this, objnum);
   if (!pObj)
     return nullptr;
 
@@ -62,13 +67,13 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
   if (!objnum || !pObj)
     return false;
 
-  auto it = m_IndirectObjs.find(objnum);
-  if (it != m_IndirectObjs.end()) {
-    if (pObj->GetGenNum() <= it->second->GetGenNum()) {
+  CPDF_Object* pOldObj = GetIndirectObject(objnum);
+  if (pOldObj) {
+    if (pObj->GetGenNum() <= pOldObj->GetGenNum()) {
       pObj->Destroy();
       return false;
     }
-    it->second->Destroy();
+    pOldObj->Destroy();
   }
   pObj->m_ObjNum = objnum;
   m_IndirectObjs[objnum] = pObj;
@@ -77,11 +82,10 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
 }
 
 void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
-  auto it = m_IndirectObjs.find(objnum);
-  if (it == m_IndirectObjs.end() ||
-      it->second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
+  CPDF_Object* pObj = GetIndirectObject(objnum);
+  if (!pObj || pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)
     return;
-  }
-  it->second->Destroy();
-  m_IndirectObjs.erase(it);
+
+  pObj->Destroy();
+  m_IndirectObjs.erase(objnum);
 }

@@ -1233,8 +1233,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
     return 0;
 
   m_ObjectOffset[objnum] = m_Offset;
-  FX_BOOL bExistInMap =
-      pdfium::ContainsKey(m_pDocument->m_IndirectObjs, objnum);
+  FX_BOOL bExistInMap = !!m_pDocument->GetIndirectObject(objnum);
   const uint8_t object_type = m_pParser->GetObjectType(objnum);
   bool bObjStm = (object_type == 2) && m_pEncryptDict && !m_pXRefStream;
   if (m_pParser->IsVersionUpdated() || m_bSecurityChanged || bExistInMap ||
@@ -1320,15 +1319,15 @@ int32_t CPDF_Creator::WriteNewObjs(FX_BOOL bIncremental, IFX_Pause* pPause) {
   int32_t index = (int32_t)(uintptr_t)m_Pos;
   while (index < iCount) {
     uint32_t objnum = m_NewObjNumArray.ElementAt(index);
-    auto it = m_pDocument->m_IndirectObjs.find(objnum);
-    if (it == m_pDocument->m_IndirectObjs.end()) {
+    CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
+    if (!pObj) {
       ++index;
       continue;
     }
     m_ObjectOffset[objnum] = m_Offset;
-    if (WriteIndirectObj(it->second)) {
+    if (WriteIndirectObj(pObj))
       return -1;
-    }
+
     index++;
     if (pPause && pPause->NeedToPauseNow()) {
       m_Pos = (FX_POSITION)(uintptr_t)index;
@@ -1363,7 +1362,7 @@ void CPDF_Creator::InitOldObjNumOffsets() {
 void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bIncremental = (m_dwFlags & FPDFCREATE_INCREMENTAL) != 0;
   FX_BOOL bNoOriginal = (m_dwFlags & FPDFCREATE_NO_ORIGINAL) != 0;
-  for (const auto& pair : m_pDocument->m_IndirectObjs) {
+  for (const auto& pair : *m_pDocument) {
     const uint32_t objnum = pair.first;
     const CPDF_Object* pObj = pair.second;
     if (bIncremental || pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)

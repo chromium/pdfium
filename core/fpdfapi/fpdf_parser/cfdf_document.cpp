@@ -84,13 +84,13 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
 }
 
 FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
-  if (!m_pRootDict) {
+  if (!m_pRootDict)
     return FALSE;
-  }
+
   buf << "%FDF-1.2\r\n";
-  for (const auto& pair : m_IndirectObjs) {
+  for (const auto& pair : *this)
     buf << pair.first << " 0 obj\r\n" << pair.second << "\r\nendobj\r\n\r\n";
-  }
+
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";
   return TRUE;

@@ -729,9 +729,9 @@ uint32_t CPDF_Document::GetUserPermissions() const {
 }
 
 FX_BOOL CPDF_Document::IsFormStream(uint32_t objnum, FX_BOOL& bForm) const {
-  auto it = m_IndirectObjs.find(objnum);
-  if (it != m_IndirectObjs.end()) {
-    CPDF_Stream* pStream = it->second->AsStream();
+  CPDF_Object* pObj = GetIndirectObject(objnum);
+  if (pObj) {
+    CPDF_Stream* pStream = pObj->AsStream();
     bForm = pStream && pStream->GetDict()->GetStringBy("Subtype") == "Form";
     return TRUE;
   }
