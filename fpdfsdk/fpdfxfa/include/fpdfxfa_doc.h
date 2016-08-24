@@ -27,12 +27,13 @@ class CXFA_FFDocHandler;
 
 class CPDFXFA_Document : public IXFA_DocProvider {
  public:
-  CPDFXFA_Document(CPDF_Document* pPDFDoc, CPDFXFA_App* pProvider);
+  CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
+                   CPDFXFA_App* pProvider);
   ~CPDFXFA_Document() override;
 
   FX_BOOL LoadXFADoc();
   CPDFXFA_App* GetApp() { return m_pApp; }
-  CPDF_Document* GetPDFDoc() { return m_pPDFDoc; }
+  CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
 
@@ -200,7 +201,10 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   }
 
   int m_iDocType;
-  CPDF_Document* m_pPDFDoc;
+
+  // |m_pSDKDoc| has to be released before |m_pPDFDoc| since it needs to access
+  // it to kill focused annotations.
+  std::unique_ptr<CPDF_Document> m_pPDFDoc;
   std::unique_ptr<CPDFSDK_Document> m_pSDKDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   CXFA_FFDocView* m_pXFADocView;  // not owned.

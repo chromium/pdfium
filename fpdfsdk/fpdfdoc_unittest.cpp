@@ -10,6 +10,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
@@ -23,7 +24,7 @@
 
 class CPDF_TestDocument : public CPDF_Document {
  public:
-  CPDF_TestDocument() : CPDF_Document(nullptr) {}
+  CPDF_TestDocument() : CPDF_Document(std::unique_ptr<CPDF_Parser>()) {}
 
   void SetRoot(CPDF_Dictionary* root) { m_pRootDict = root; }
   CPDF_IndirectObjectHolder* GetHolder() { return this; }
@@ -33,7 +34,8 @@ class CPDF_TestDocument : public CPDF_Document {
 class CPDF_TestXFADocument : public CPDFXFA_Document {
  public:
   CPDF_TestXFADocument()
-      : CPDFXFA_Document(new CPDF_TestDocument(), CPDFXFA_App::GetInstance()) {}
+      : CPDFXFA_Document(WrapUnique(new CPDF_TestDocument()),
+                         CPDFXFA_App::GetInstance()) {}
 
   void SetRoot(CPDF_Dictionary* root) {
     reinterpret_cast<CPDF_TestDocument*>(GetPDFDoc())->SetRoot(root);

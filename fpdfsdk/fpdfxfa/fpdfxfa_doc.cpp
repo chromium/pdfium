@@ -45,10 +45,10 @@ extern void SetLastError(int err);
 extern int GetLastError();
 #endif
 
-CPDFXFA_Document::CPDFXFA_Document(CPDF_Document* pPDFDoc,
+CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
                                    CPDFXFA_App* pProvider)
     : m_iDocType(DOCTYPE_PDF),
-      m_pPDFDoc(pPDFDoc),
+      m_pPDFDoc(std::move(pPDFDoc)),
       m_pXFADocView(nullptr),
       m_pApp(pProvider),
       m_pJSContext(nullptr),
@@ -70,16 +70,6 @@ CPDFXFA_Document::~CPDFXFA_Document() {
   }
   if (m_pJSContext && m_pSDKDoc && m_pSDKDoc->GetEnv())
     m_pSDKDoc->GetEnv()->GetJSRuntime()->ReleaseContext(m_pJSContext);
-  // |m_pSDKDoc| has to be released before |pParser| and |m_pPDFDoc| since it
-  // needs to access them to kill focused annotations.
-  m_pSDKDoc.reset();
-  if (m_pPDFDoc) {
-    CPDF_Parser* pParser = m_pPDFDoc->GetParser();
-    if (pParser)
-      delete pParser;
-    else
-      delete m_pPDFDoc;
-  }
 
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSED;
 }
@@ -96,7 +86,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
   if (!pApp)
     return FALSE;
 
-  m_pXFADoc.reset(pApp->CreateDoc(this, m_pPDFDoc));
+  m_pXFADoc.reset(pApp->CreateDoc(this, m_pPDFDoc.get()));
   if (!m_pXFADoc) {
     SetLastError(FPDF_ERR_XFALOAD);
     return FALSE;

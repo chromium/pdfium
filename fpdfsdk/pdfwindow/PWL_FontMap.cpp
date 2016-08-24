@@ -9,6 +9,7 @@
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
@@ -50,7 +51,7 @@ void CPWL_FontMap::SetSystemHandler(CFX_SystemHandler* pSystemHandler) {
 CPDF_Document* CPWL_FontMap::GetDocument() {
   if (!m_pPDFDoc) {
     if (CPDF_ModuleMgr::Get()) {
-      m_pPDFDoc.reset(new CPDF_Document(nullptr));
+      m_pPDFDoc.reset(new CPDF_Document(std::unique_ptr<CPDF_Parser>()));
       m_pPDFDoc->CreateNewDoc();
     }
   }

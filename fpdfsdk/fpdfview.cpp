@@ -66,8 +66,8 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
 
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
 #ifdef PDF_ENABLE_XFA
-  return doc ? FPDFDocumentFromUnderlying(
-                   new CPDFXFA_Document(doc, CPDFXFA_App::GetInstance()))
+  return doc ? FPDFDocumentFromUnderlying(new CPDFXFA_Document(
+                   WrapUnique(doc), CPDFXFA_App::GetInstance()))
              : nullptr;
 #else   // PDF_ENABLE_XFA
   return FPDFDocumentFromUnderlying(doc);
@@ -365,22 +365,17 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
   std::unique_ptr<CPDF_Parser> pParser(new CPDF_Parser);
   pParser->SetPassword(password);
 
-  std::unique_ptr<CPDF_Document> pDocument(new CPDF_Document(pParser.get()));
-  CPDF_Parser::Error error =
-      pParser->StartParse(pFileAccess, std::move(pDocument));
+  std::unique_ptr<CPDF_Document> pDocument(
+      new CPDF_Document(std::move(pParser)));
+  CPDF_Parser::Error error = pParser->StartParse(pFileAccess, pDocument.get());
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;
   }
 #ifdef PDF_ENABLE_XFA
-  CPDF_Document* pPDFDoc = pParser.release()->GetDocument();
-  if (!pPDFDoc)
-    return nullptr;
-
-  CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  return new CPDFXFA_Document(pPDFDoc, pProvider);
+  return new CPDFXFA_Document(std::move(pDocument), CPDFXFA_App::GetInstance());
 #else   // PDF_ENABLE_XFA
-  return pParser.release()->GetDocument();
+  return pDocument.release();
 #endif  // PDF_ENABLE_XFA
 }
 
@@ -451,15 +446,16 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
   std::unique_ptr<CPDF_Parser> pParser(new CPDF_Parser);
   pParser->SetPassword(password);
 
-  std::unique_ptr<CPDF_Document> pDocument(new CPDF_Document(pParser.get()));
+  std::unique_ptr<CPDF_Document> pDocument(
+      new CPDF_Document(std::move(pParser)));
   CPDF_Parser::Error error =
-      pParser->StartParse(pMemFile, std::move(pDocument));
+      pDocument->GetParser()->StartParse(pMemFile, pDocument.get());
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;
   }
-  CheckUnSupportError(pParser->GetDocument(), error);
-  return FPDFDocumentFromCPDFDocument(pParser.release()->GetDocument());
+  CheckUnSupportError(pDocument.get(), error);
+  return FPDFDocumentFromCPDFDocument(pDocument.release());
 }
 
 DLLEXPORT FPDF_DOCUMENT STDCALL
@@ -469,14 +465,16 @@ FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
   std::unique_ptr<CPDF_Parser> pParser(new CPDF_Parser);
   pParser->SetPassword(password);
 
-  std::unique_ptr<CPDF_Document> pDocument(new CPDF_Document(pParser.get()));
-  CPDF_Parser::Error error = pParser->StartParse(pFile, std::move(pDocument));
+  std::unique_ptr<CPDF_Document> pDocument(
+      new CPDF_Document(std::move(pParser)));
+  CPDF_Parser::Error error =
+      pDocument->GetParser()->StartParse(pFile, pDocument.get());
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;
   }
-  CheckUnSupportError(pParser->GetDocument(), error);
-  return FPDFDocumentFromCPDFDocument(pParser.release()->GetDocument());
+  CheckUnSupportError(pDocument.get(), error);
+  return FPDFDocumentFromCPDFDocument(pDocument.release());
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
@@ -683,19 +681,7 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
 }
 
 DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document) {
-#ifdef PDF_ENABLE_XFA
   delete UnderlyingFromFPDFDocument(document);
-#else   // PDF_ENABLE_XFA
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
-    return;
-  CPDF_Parser* pParser = pDoc->GetParser();
-  if (!pParser) {
-    delete pDoc;
-    return;
-  }
-  delete pParser;
-#endif  // PDF_ENABLE_XFA
 }
 
 DLLEXPORT unsigned long STDCALL FPDF_GetLastError() {

@@ -37,17 +37,14 @@ class CPDF_Parser {
   CPDF_Parser();
   ~CPDF_Parser();
 
-  Error StartParse(IFX_FileRead* pFile,
-                   std::unique_ptr<CPDF_Document> pDocument);
-
-  Error StartLinearizedParse(IFX_FileRead* pFile,
-                             std::unique_ptr<CPDF_Document> pDocument);
+  Error StartParse(IFX_FileRead* pFile, CPDF_Document* pDocument);
+  Error StartLinearizedParse(IFX_FileRead* pFile, CPDF_Document* pDocument);
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }
   CPDF_Dictionary* GetTrailer() const { return m_pTrailer; }
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
-  CPDF_Document* GetDocument() const { return m_pDocument.get(); }
+  CPDF_Document* GetDocument() const { return m_pDocument; }
 
   uint32_t GetPermissions() const;
   uint32_t GetRootObjNum();
@@ -120,7 +117,7 @@ class CPDF_Parser {
   // the objects.
   bool VerifyCrossRefV4();
 
-  std::unique_ptr<CPDF_Document> m_pDocument;
+  CPDF_Document* m_pDocument;  // not owned
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
   bool m_bOwnFileRead;
   int m_FileVersion;

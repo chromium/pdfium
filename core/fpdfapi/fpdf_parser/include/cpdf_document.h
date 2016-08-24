@@ -40,10 +40,10 @@ class JBig2_DocumentContext;
 
 class CPDF_Document : public CPDF_IndirectObjectHolder {
  public:
-  explicit CPDF_Document(CPDF_Parser* pParser);
+  explicit CPDF_Document(std::unique_ptr<CPDF_Parser> pParser);
   ~CPDF_Document() override;
 
-  CPDF_Parser* GetParser() const { return m_pParser; }
+  CPDF_Parser* GetParser() const { return m_pParser.get(); }
   CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
   CPDF_Dictionary* GetInfo() const { return m_pInfoDict; }
 
@@ -128,7 +128,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   FX_BOOL CheckOCGVisible(CPDF_Dictionary* pOCG, FX_BOOL bPrinting);
   CPDF_Object* ParseIndirectObject(uint32_t objnum) override;
 
-  CPDF_Parser* m_pParser;
+  std::unique_ptr<CPDF_Parser> m_pParser;
   CPDF_Dictionary* m_pRootDict;
   CPDF_Dictionary* m_pInfoDict;
   CFX_ByteString m_ID1;

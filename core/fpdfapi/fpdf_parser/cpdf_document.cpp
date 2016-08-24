@@ -483,9 +483,9 @@ int CountPages(CPDF_Dictionary* pPages,
 
 }  // namespace
 
-CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
+CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
     : CPDF_IndirectObjectHolder(),
-      m_pParser(pParser),
+      m_pParser(std::move(pParser)),
       m_pRootDict(nullptr),
       m_pInfoDict(nullptr),
       m_bLinearized(false),
