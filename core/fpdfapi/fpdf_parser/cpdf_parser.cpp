@@ -982,6 +982,8 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   if (m_pDocument) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
     if (pRootDict && pRootDict->GetObjNum() == pObject->m_ObjNum) {
+      // If |pObject| has an objnum assigned then this will leak as Release()
+      // will early exit.
       if (pObject->IsStream())
         pObject->Release();
       return FALSE;

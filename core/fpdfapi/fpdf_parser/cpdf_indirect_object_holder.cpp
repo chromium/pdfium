@@ -9,11 +9,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 
-CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder(CPDF_Parser* pParser)
-    : m_pParser(pParser), m_LastObjNum(0) {
-  if (pParser)
-    m_LastObjNum = m_pParser->GetLastObjNum();
-}
+CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder() : m_LastObjNum(0) {}
 
 CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
   for (const auto& pair : m_IndirectObjs)
@@ -35,10 +31,7 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
   if (pObj)
     return pObj->GetObjNum() != CPDF_Object::kInvalidObjNum ? pObj : nullptr;
 
-  if (!m_pParser)
-    return nullptr;
-
-  pObj = m_pParser->ParseIndirectObject(this, objnum);
+  pObj = ParseIndirectObject(objnum);
   if (!pObj)
     return nullptr;
 
@@ -49,6 +42,10 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
 
   m_IndirectObjs[objnum] = pObj;
   return pObj;
+}
+
+CPDF_Object* CPDF_IndirectObjectHolder::ParseIndirectObject(uint32_t objnum) {
+  return nullptr;
 }
 
 uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {

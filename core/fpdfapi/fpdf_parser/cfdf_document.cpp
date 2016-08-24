@@ -10,16 +10,17 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 
-CFDF_Document::CFDF_Document() : CPDF_IndirectObjectHolder(nullptr) {
-  m_pRootDict = nullptr;
-  m_pFile = nullptr;
-  m_bOwnFile = FALSE;
-}
+CFDF_Document::CFDF_Document()
+    : CPDF_IndirectObjectHolder(),
+      m_pRootDict(nullptr),
+      m_pFile(nullptr),
+      m_bOwnFile(FALSE) {}
+
 CFDF_Document::~CFDF_Document() {
-  if (m_bOwnFile && m_pFile) {
+  if (m_bOwnFile && m_pFile)
     m_pFile->Release();
-  }
 }
+
 CFDF_Document* CFDF_Document::CreateNewDoc() {
   CFDF_Document* pDoc = new CFDF_Document;
   pDoc->m_pRootDict = new CPDF_Dictionary;

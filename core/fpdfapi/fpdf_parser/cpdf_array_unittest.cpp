@@ -109,7 +109,7 @@ TEST(cpdf_array, Clone) {
     ScopedArray arr(new CPDF_Array);
     // Indirect references to indirect objects.
     std::unique_ptr<CPDF_IndirectObjectHolder> obj_holder(
-        new CPDF_IndirectObjectHolder(nullptr));
+        new CPDF_IndirectObjectHolder());
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = new CPDF_Array;
       for (size_t j = 0; j < kNumOfRowElems; ++j) {

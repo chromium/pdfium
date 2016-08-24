@@ -484,18 +484,26 @@ int CountPages(CPDF_Dictionary* pPages,
 }  // namespace
 
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
-    : CPDF_IndirectObjectHolder(pParser),
+    : CPDF_IndirectObjectHolder(),
+      m_pParser(pParser),
       m_pRootDict(nullptr),
       m_pInfoDict(nullptr),
       m_bLinearized(false),
       m_iFirstPageNo(0),
       m_dwFirstPageObjNum(0),
       m_pDocPage(new CPDF_DocPageData(this)),
-      m_pDocRender(new CPDF_DocRenderData(this)) {}
+      m_pDocRender(new CPDF_DocRenderData(this)) {
+  if (pParser)
+    SetLastObjNum(m_pParser->GetLastObjNum());
+}
 
 CPDF_Document::~CPDF_Document() {
   delete m_pDocPage;
   CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
+}
+
+CPDF_Object* CPDF_Document::ParseIndirectObject(uint32_t objnum) {
+  return m_pParser ? m_pParser->ParseIndirectObject(this, objnum) : nullptr;
 }
 
 void CPDF_Document::LoadDocInternal() {

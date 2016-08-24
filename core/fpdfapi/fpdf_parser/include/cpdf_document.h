@@ -23,6 +23,7 @@ class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_IccProfile;
 class CPDF_Image;
+class CPDF_Parser;
 class CPDF_Pattern;
 class CPDF_StreamAcc;
 class JBig2_DocumentContext;
@@ -40,7 +41,7 @@ class JBig2_DocumentContext;
 class CPDF_Document : public CPDF_IndirectObjectHolder {
  public:
   explicit CPDF_Document(CPDF_Parser* pParser);
-  ~CPDF_Document();
+  ~CPDF_Document() override;
 
   CPDF_Parser* GetParser() const { return m_pParser; }
   CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
@@ -125,7 +126,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                     int& index,
                     int level = 0);
   FX_BOOL CheckOCGVisible(CPDF_Dictionary* pOCG, FX_BOOL bPrinting);
+  CPDF_Object* ParseIndirectObject(uint32_t objnum) override;
 
+  CPDF_Parser* m_pParser;
   CPDF_Dictionary* m_pRootDict;
   CPDF_Dictionary* m_pInfoDict;
   CFX_ByteString m_ID1;

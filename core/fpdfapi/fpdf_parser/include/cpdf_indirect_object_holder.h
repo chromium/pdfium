@@ -12,15 +12,14 @@
 #include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Object;
-class CPDF_Parser;
 
 class CPDF_IndirectObjectHolder {
  public:
   using iterator = std::map<uint32_t, CPDF_Object*>::iterator;
   using const_iterator = std::map<uint32_t, CPDF_Object*>::const_iterator;
 
-  explicit CPDF_IndirectObjectHolder(CPDF_Parser* pParser);
-  ~CPDF_IndirectObjectHolder();
+  CPDF_IndirectObjectHolder();
+  virtual ~CPDF_IndirectObjectHolder();
 
   CPDF_Object* GetIndirectObject(uint32_t objnum) const;
   CPDF_Object* GetOrParseIndirectObject(uint32_t objnum);
@@ -40,7 +39,7 @@ class CPDF_IndirectObjectHolder {
   const_iterator end() const { return m_IndirectObjs.end(); }
 
  protected:
-  CPDF_Parser* m_pParser;
+  virtual CPDF_Object* ParseIndirectObject(uint32_t objnum);
 
  private:
   uint32_t m_LastObjNum;

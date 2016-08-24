@@ -94,7 +94,7 @@ class PDFObjectsTest : public testing::Test {
       m_DirectObjs.emplace_back(objs[i]);
 
     // Indirect references to indirect objects.
-    m_ObjHolder.reset(new CPDF_IndirectObjectHolder(nullptr));
+    m_ObjHolder.reset(new CPDF_IndirectObjectHolder());
     m_IndirectObjs = {boolean_true_obj, number_int_obj, str_spec_obj, name_obj,
                       m_ArrayObj,       m_DictObj,      stream_obj};
     for (size_t i = 0; i < m_IndirectObjs.size(); ++i) {
@@ -712,7 +712,7 @@ TEST(PDFArrayTest, AddStringAndName) {
 
 TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   std::unique_ptr<CPDF_IndirectObjectHolder> holder(
-      new CPDF_IndirectObjectHolder(nullptr));
+      new CPDF_IndirectObjectHolder());
   CPDF_Boolean* boolean_obj = new CPDF_Boolean(true);
   CPDF_Number* int_obj = new CPDF_Number(-1234);
   CPDF_Number* float_obj = new CPDF_Number(2345.089f);
@@ -769,7 +769,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
   }
   {
     std::unique_ptr<CPDF_IndirectObjectHolder> m_ObjHolder(
-        new CPDF_IndirectObjectHolder(nullptr));
+        new CPDF_IndirectObjectHolder());
     // Create an object with a reference loop.
     CPDF_Dictionary* dict_obj = new CPDF_Dictionary;
     CPDF_Array* arr_obj = new CPDF_Array;
