@@ -95,14 +95,37 @@ class CPDF_Parser {
     uint16_t gennum;
   };
 
-  void CloseParser();
+  std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
+  std::map<uint32_t, ObjectInfo> m_ObjectInfo;
+
+  bool LoadCrossRefV4(FX_FILESIZE pos, FX_FILESIZE streampos, FX_BOOL bSkip);
+  FX_BOOL RebuildCrossRef();
+
+ private:
+  friend class CPDF_DataAvail;
+
+  enum class ParserState {
+    kDefault,
+    kComment,
+    kWhitespace,
+    kString,
+    kHexString,
+    kEscapedString,
+    kXref,
+    kObjNum,
+    kPostObjNum,
+    kGenNum,
+    kPostGenNum,
+    kTrailer,
+    kBeginObj,
+    kEndObj
+  };
+
   CPDF_Object* ParseDirect(CPDF_Object* pObj);
   FX_BOOL LoadAllCrossRefV4(FX_FILESIZE pos);
   FX_BOOL LoadAllCrossRefV5(FX_FILESIZE pos);
-  bool LoadCrossRefV4(FX_FILESIZE pos, FX_FILESIZE streampos, FX_BOOL bSkip);
   FX_BOOL LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef);
   CPDF_Dictionary* LoadTrailerV4();
-  FX_BOOL RebuildCrossRef();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();
   FX_BOOL LoadLinearizedAllCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
@@ -118,7 +141,7 @@ class CPDF_Parser {
   bool VerifyCrossRefV4();
 
   CPDF_Document* m_pDocument;  // not owned
-  std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
+  bool m_bHasParsed;
   bool m_bOwnFileRead;
   int m_FileVersion;
   CPDF_Dictionary* m_pTrailer;
@@ -127,7 +150,6 @@ class CPDF_Parser {
   FX_BOOL m_bXRefStream;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   CFX_ByteString m_Password;
-  std::map<uint32_t, ObjectInfo> m_ObjectInfo;
   std::set<FX_FILESIZE> m_SortedOffset;
   CFX_ArrayTemplate<CPDF_Dictionary*> m_Trailers;
   bool m_bVersionUpdated;
@@ -149,25 +171,7 @@ class CPDF_Parser {
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;
 
-  friend class CPDF_DataAvail;
 
- private:
-  enum class ParserState {
-    kDefault,
-    kComment,
-    kWhitespace,
-    kString,
-    kHexString,
-    kEscapedString,
-    kXref,
-    kObjNum,
-    kPostObjNum,
-    kGenNum,
-    kPostGenNum,
-    kTrailer,
-    kBeginObj,
-    kEndObj
-  };
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_PARSER_H_

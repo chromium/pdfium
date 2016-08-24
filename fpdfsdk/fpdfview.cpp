@@ -367,7 +367,8 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
 
   std::unique_ptr<CPDF_Document> pDocument(
       new CPDF_Document(std::move(pParser)));
-  CPDF_Parser::Error error = pParser->StartParse(pFileAccess, pDocument.get());
+  CPDF_Parser::Error error =
+      pDocument->GetParser()->StartParse(pFileAccess, pDocument.get());
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;

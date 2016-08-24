@@ -51,7 +51,8 @@ int32_t GetStreamFirst(CPDF_StreamAcc* pObjStream) {
 }  // namespace
 
 CPDF_Parser::CPDF_Parser()
-    : m_bOwnFileRead(true),
+    : m_bHasParsed(false),
+      m_bOwnFileRead(true),
       m_FileVersion(0),
       m_pTrailer(nullptr),
       m_pEncryptDict(nullptr),
@@ -63,7 +64,25 @@ CPDF_Parser::CPDF_Parser()
 }
 
 CPDF_Parser::~CPDF_Parser() {
-  CloseParser();
+  if (m_pTrailer)
+    m_pTrailer->Release();
+
+  ReleaseEncryptHandler();
+  SetEncryptDictionary(nullptr);
+
+  if (m_bOwnFileRead && m_pSyntax->m_pFileAccess) {
+    m_pSyntax->m_pFileAccess->Release();
+    m_pSyntax->m_pFileAccess = nullptr;
+  }
+
+  int32_t iLen = m_Trailers.GetSize();
+  for (int32_t i = 0; i < iLen; ++i) {
+    if (CPDF_Dictionary* trailer = m_Trailers.GetAt(i))
+      trailer->Release();
+  }
+
+  if (m_pLinearized)
+    m_pLinearized->Release();
 }
 
 uint32_t CPDF_Parser::GetLastObjNum() const {
@@ -124,43 +143,10 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
     m_ObjectInfo[objnum - 1].pos = 0;
 }
 
-void CPDF_Parser::CloseParser() {
-  m_bVersionUpdated = false;
-  m_pDocument = nullptr;
-
-  if (m_pTrailer) {
-    m_pTrailer->Release();
-    m_pTrailer = nullptr;
-  }
-  ReleaseEncryptHandler();
-  SetEncryptDictionary(nullptr);
-
-  if (m_bOwnFileRead && m_pSyntax->m_pFileAccess) {
-    m_pSyntax->m_pFileAccess->Release();
-    m_pSyntax->m_pFileAccess = nullptr;
-  }
-
-  m_ObjectStreamMap.clear();
-  m_ObjCache.clear();
-  m_SortedOffset.clear();
-  m_ObjectInfo.clear();
-
-  int32_t iLen = m_Trailers.GetSize();
-  for (int32_t i = 0; i < iLen; ++i) {
-    if (CPDF_Dictionary* trailer = m_Trailers.GetAt(i))
-      trailer->Release();
-  }
-  m_Trailers.RemoveAll();
-
-  if (m_pLinearized) {
-    m_pLinearized->Release();
-    m_pLinearized = nullptr;
-  }
-}
-
 CPDF_Parser::Error CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
                                            CPDF_Document* pDocument) {
-  CloseParser();
+  ASSERT(!m_bHasParsed);
+  m_bHasParsed = true;
 
   m_bXRefStream = FALSE;
   m_LastXRefOffset = 0;
@@ -1550,7 +1536,8 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
 
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(IFX_FileRead* pFileAccess,
                                                      CPDF_Document* pDocument) {
-  CloseParser();
+  ASSERT(!m_bHasParsed);
+
   m_bXRefStream = FALSE;
   m_LastXRefOffset = 0;
   m_bOwnFileRead = true;
@@ -1563,8 +1550,9 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(IFX_FileRead* pFileAccess,
     m_pSyntax->m_pFileAccess = nullptr;
     return StartParse(pFileAccess, std::move(pDocument));
   }
-
+  m_bHasParsed = true;
   m_pDocument = pDocument;
+
   FX_FILESIZE dwFirstXRefOffset = m_pSyntax->SavePos();
 
   FX_BOOL bXRefRebuilt = FALSE;
