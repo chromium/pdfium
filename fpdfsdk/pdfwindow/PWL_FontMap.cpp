@@ -44,10 +44,6 @@ CPWL_FontMap::~CPWL_FontMap() {
   Empty();
 }
 
-void CPWL_FontMap::SetSystemHandler(CFX_SystemHandler* pSystemHandler) {
-  m_pSystemHandler = pSystemHandler;
-}
-
 CPDF_Document* CPWL_FontMap::GetDocument() {
   if (!m_pPDFDoc) {
     if (CPDF_ModuleMgr::Get()) {
@@ -277,12 +273,10 @@ CFX_ByteString CPWL_FontMap::GetNativeFont(int32_t nCharset) {
     nCharset = GetNativeCharset();
 
   CFX_ByteString sFontName = GetDefaultFontByCharset(nCharset);
-  if (m_pSystemHandler) {
-    if (m_pSystemHandler->FindNativeTrueTypeFont(sFontName))
-      return sFontName;
+  if (m_pSystemHandler->FindNativeTrueTypeFont(sFontName))
+    return sFontName;
 
-    sFontName.clear();
-  }
+  sFontName.clear();
   return sFontName;
 }
 
@@ -323,11 +317,8 @@ CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc,
   if (nCharset == DEFAULT_CHARSET)
     nCharset = GetNativeCharset();
 
-  if (m_pSystemHandler)
-    return m_pSystemHandler->AddNativeTrueTypeFontToPDF(pDoc, sFontName,
-                                                        nCharset);
-
-  return nullptr;
+  return m_pSystemHandler->AddNativeTrueTypeFontToPDF(pDoc, sFontName,
+                                                      nCharset);
 }
 
 CFX_ByteString CPWL_FontMap::EncodeFontAlias(const CFX_ByteString& sFontName,
@@ -484,14 +475,4 @@ int32_t CPWL_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
     return VIETNAMESE_CHARSET;
 
   return ANSI_CHARSET;
-}
-
-CPWL_DocFontMap::CPWL_DocFontMap(CFX_SystemHandler* pSystemHandler,
-                                 CPDF_Document* pAttachedDoc)
-    : CPWL_FontMap(pSystemHandler), m_pAttachedDoc(pAttachedDoc) {}
-
-CPWL_DocFontMap::~CPWL_DocFontMap() {}
-
-CPDF_Document* CPWL_DocFontMap::GetDocument() {
-  return m_pAttachedDoc;
 }

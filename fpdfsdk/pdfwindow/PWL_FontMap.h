@@ -65,23 +65,12 @@ class CPWL_FontMap : public IPVT_FontMap {
   int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) override;
   int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) override;
 
-  void SetSystemHandler(CFX_SystemHandler* pSystemHandler);
   int32_t GetFontMapCount() const;
   const CPWL_FontMap_Data* GetFontMapData(int32_t nIndex) const;
   static int32_t GetNativeCharset();
   CFX_ByteString GetNativeFontName(int32_t nCharset);
 
   static CFX_ByteString GetDefaultFontByCharset(int32_t nCharset);
-
-  CPDF_Font* AddFontToDocument(CPDF_Document* pDoc,
-                               CFX_ByteString& sFontName,
-                               uint8_t nCharset);
-  static FX_BOOL IsStandardFont(const CFX_ByteString& sFontName);
-  CPDF_Font* AddStandardFont(CPDF_Document* pDoc, CFX_ByteString& sFontName);
-  CPDF_Font* AddSystemFont(CPDF_Document* pDoc,
-                           CFX_ByteString& sFontName,
-                           uint8_t nCharset);
-
   static const FPDF_CharsetFontMap defaultTTFMap[];
 
  protected:
@@ -115,22 +104,17 @@ class CPWL_FontMap : public IPVT_FontMap {
                    int32_t nCharset = DEFAULT_CHARSET);
 
   CFX_ByteString GetNativeFont(int32_t nCharset);
+  CPDF_Font* AddFontToDocument(CPDF_Document* pDoc,
+                               CFX_ByteString& sFontName,
+                               uint8_t nCharset);
+  FX_BOOL IsStandardFont(const CFX_ByteString& sFontName);
+  CPDF_Font* AddStandardFont(CPDF_Document* pDoc, CFX_ByteString& sFontName);
+  CPDF_Font* AddSystemFont(CPDF_Document* pDoc,
+                           CFX_ByteString& sFontName,
+                           uint8_t nCharset);
 
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
-  CFX_SystemHandler* m_pSystemHandler;
-};
-
-class CPWL_DocFontMap : public CPWL_FontMap {
- public:
-  CPWL_DocFontMap(CFX_SystemHandler* pSystemHandler,
-                  CPDF_Document* pAttachedDoc);
-  ~CPWL_DocFontMap() override;
-
- private:
-  // CPWL_FontMap:
-  CPDF_Document* GetDocument() override;
-
-  CPDF_Document* m_pAttachedDoc;
+  CFX_SystemHandler* const m_pSystemHandler;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
