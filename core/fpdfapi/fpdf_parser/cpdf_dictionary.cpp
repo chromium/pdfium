@@ -18,6 +18,7 @@
 CPDF_Dictionary::CPDF_Dictionary() {}
 
 CPDF_Dictionary::~CPDF_Dictionary() {
+  m_ObjNum = kInvalidObjNum;
   for (const auto& it : m_Map)
     it.second->Release();
 }
@@ -44,10 +45,22 @@ const CPDF_Dictionary* CPDF_Dictionary::AsDictionary() const {
   return this;
 }
 
-CPDF_Object* CPDF_Dictionary::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_Dictionary::Clone() const {
+  return CloneObjectNonCyclic(false);
+}
+
+CPDF_Object* CPDF_Dictionary::CloneNonCyclic(
+    bool bDirect,
+    std::set<const CPDF_Object*>* pVisited) const {
+  pVisited->insert(this);
   CPDF_Dictionary* pCopy = new CPDF_Dictionary();
-  for (const auto& it : *this)
-    pCopy->m_Map.insert(std::make_pair(it.first, it.second->Clone(bDirect)));
+  for (const auto& it : *this) {
+    CPDF_Object* value = it.second;
+    if (!pdfium::ContainsKey(*pVisited, value)) {
+      pCopy->m_Map.insert(
+          std::make_pair(it.first, value->CloneNonCyclic(bDirect, pVisited)));
+    }
+  }
   return pCopy;
 }
 

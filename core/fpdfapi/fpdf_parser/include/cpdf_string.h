@@ -19,7 +19,7 @@ class CPDF_String : public CPDF_Object {
 
   // CPDF_Object.
   Type GetType() const override;
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CPDF_Object* Clone() const override;
   CFX_ByteString GetString() const override;
   CFX_WideString GetUnicodeText() const override;
   void SetString(const CFX_ByteString& str) override;

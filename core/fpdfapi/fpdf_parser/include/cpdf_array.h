@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_
 
+#include <set>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
@@ -23,7 +24,7 @@ class CPDF_Array : public CPDF_Object {
 
   // CPDF_Object.
   Type GetType() const override;
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CPDF_Object* Clone() const override;
   bool IsArray() const override;
   CPDF_Array* AsArray() override;
   const CPDF_Array* AsArray() const override;
@@ -67,6 +68,10 @@ class CPDF_Array : public CPDF_Object {
 
  protected:
   ~CPDF_Array() override;
+
+  CPDF_Object* CloneNonCyclic(
+      bool bDirect,
+      std::set<const CPDF_Object*>* pVisited) const override;
 
   std::vector<CPDF_Object*> m_Objects;
 };

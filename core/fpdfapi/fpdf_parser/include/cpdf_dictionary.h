@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DICTIONARY_H_
 
 #include <map>
+#include <set>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -24,7 +25,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
   // CPDF_Object.
   Type GetType() const override;
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CPDF_Object* Clone() const override;
   CPDF_Dictionary* GetDict() const override;
   bool IsDictionary() const override;
   CPDF_Dictionary* AsDictionary() override;
@@ -84,6 +85,10 @@ class CPDF_Dictionary : public CPDF_Object {
 
  protected:
   ~CPDF_Dictionary() override;
+
+  CPDF_Object* CloneNonCyclic(
+      bool bDirect,
+      std::set<const CPDF_Object*>* visited) const override;
 
   std::map<CFX_ByteString, CPDF_Object*> m_Map;
 };

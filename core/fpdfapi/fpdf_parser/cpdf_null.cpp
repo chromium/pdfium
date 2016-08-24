@@ -12,6 +12,6 @@ CPDF_Object::Type CPDF_Null::GetType() const {
   return NULLOBJ;
 }
 
-CPDF_Object* CPDF_Null::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_Null::Clone() const {
   return new CPDF_Null;
 }

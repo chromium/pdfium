@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_OBJECT_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_OBJECT_H_
 
+#include <set>
+
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -39,7 +41,11 @@ class CPDF_Object {
   uint32_t GetObjNum() const { return m_ObjNum; }
   uint32_t GetGenNum() const { return m_GenNum; }
 
-  virtual CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const = 0;
+  // Create a deep copy of the object.
+  virtual CPDF_Object* Clone() const = 0;
+  // Create a deep copy of the object except any reference object be
+  // copied to the object it points to directly.
+  virtual CPDF_Object* CloneDirectObject() const;
   virtual CPDF_Object* GetDirect() const;
 
   void Release();
@@ -79,15 +85,32 @@ class CPDF_Object {
   virtual const CPDF_String* AsString() const;
 
  protected:
+  friend class CPDF_Array;
+  friend class CPDF_Dictionary;
+  friend class CPDF_Document;
+  friend class CPDF_IndirectObjectHolder;
+  friend class CPDF_Parser;
+  friend class CPDF_Reference;
+  friend class CPDF_Stream;
+
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
   virtual ~CPDF_Object();
   void Destroy() { delete this; }
 
+  CPDF_Object* CloneObjectNonCyclic(bool bDirect) const;
+
+  // Create a deep copy of the object with the option to either
+  // copy a reference object or directly copy the object it refers to
+  // when |bDirect| is true.
+  // Also check cyclic reference against |pVisited|, no copy if it is found.
+  // Complex objects should implement their own CloneNonCyclic()
+  // function to properly check for possible loop.
+  virtual CPDF_Object* CloneNonCyclic(
+      bool bDirect,
+      std::set<const CPDF_Object*>* pVisited) const;
+
   uint32_t m_ObjNum;
   uint32_t m_GenNum;
-
-  friend class CPDF_IndirectObjectHolder;
-  friend class CPDF_Parser;
 
  private:
   CPDF_Object(const CPDF_Object& src) {}

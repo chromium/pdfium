@@ -125,10 +125,10 @@ TEST(cpdf_array, Clone) {
     ASSERT_EQ(kNumOfRows, arr->GetCount());
     // Not dereferencing reference objects means just creating new references
     // instead of new copies of direct objects.
-    ScopedArray arr1(arr->Clone(FALSE)->AsArray());
+    ScopedArray arr1(arr->Clone()->AsArray());
     EXPECT_EQ(arr->GetCount(), arr1->GetCount());
     // Dereferencing reference objects creates new copies of direct objects.
-    ScopedArray arr2(arr->Clone(TRUE)->AsArray());
+    ScopedArray arr2(arr->CloneDirectObject()->AsArray());
     EXPECT_EQ(arr->GetCount(), arr2->GetCount());
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = arr->GetObjectAt(i)->AsArray();

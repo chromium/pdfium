@@ -16,7 +16,7 @@ CPDF_Object::Type CPDF_Boolean::GetType() const {
   return BOOLEAN;
 }
 
-CPDF_Object* CPDF_Boolean::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_Boolean::Clone() const {
   return new CPDF_Boolean(m_bValue);
 }
 

@@ -11,10 +11,14 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "third_party/base/stl_util.h"
 
 CPDF_Array::CPDF_Array() {}
 
 CPDF_Array::~CPDF_Array() {
+  // Mark the object as deleted so that it will not be deleted again
+  // in case of cyclic references.
+  m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Objects) {
     if (it)
       it->Release();
@@ -37,11 +41,19 @@ const CPDF_Array* CPDF_Array::AsArray() const {
   return this;
 }
 
-CPDF_Object* CPDF_Array::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_Array::Clone() const {
+  return CloneObjectNonCyclic(false);
+}
+
+CPDF_Object* CPDF_Array::CloneNonCyclic(
+    bool bDirect,
+    std::set<const CPDF_Object*>* pVisited) const {
+  pVisited->insert(this);
   CPDF_Array* pCopy = new CPDF_Array();
   for (size_t i = 0; i < GetCount(); i++) {
     CPDF_Object* value = m_Objects.at(i);
-    pCopy->m_Objects.push_back(value->Clone(bDirect));
+    if (!pdfium::ContainsKey(*pVisited, value))
+      pCopy->m_Objects.push_back(value->CloneNonCyclic(bDirect, pVisited));
   }
   return pCopy;
 }

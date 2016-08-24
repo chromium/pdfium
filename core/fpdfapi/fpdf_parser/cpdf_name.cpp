@@ -16,7 +16,7 @@ CPDF_Object::Type CPDF_Name::GetType() const {
   return NAME;
 }
 
-CPDF_Object* CPDF_Name::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_Name::Clone() const {
   return new CPDF_Name(m_Name);
 }
 

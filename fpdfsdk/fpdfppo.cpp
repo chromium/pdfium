@@ -407,6 +407,6 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
   if (!pDstDict)
     return FALSE;
 
-  pDstDict->SetAt("ViewerPreferences", pSrcDict->Clone(TRUE));
+  pDstDict->SetAt("ViewerPreferences", pSrcDict->CloneDirectObject());
   return TRUE;
 }

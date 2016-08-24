@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_REFERENCE_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_REFERENCE_H_
 
+#include <set>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 
 class CPDF_IndirectObjectHolder;
@@ -17,7 +19,7 @@ class CPDF_Reference : public CPDF_Object {
 
   // CPDF_Object.
   Type GetType() const override;
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CPDF_Object* Clone() const override;
   CPDF_Object* GetDirect() const override;
   CFX_ByteString GetString() const override;
   FX_FLOAT GetNumber() const override;
@@ -36,6 +38,9 @@ class CPDF_Reference : public CPDF_Object {
 
  protected:
   ~CPDF_Reference() override;
+  CPDF_Object* CloneNonCyclic(
+      bool bDirect,
+      std::set<const CPDF_Object*>* pVisited) const override;
   CPDF_Object* SafeGetDirect() const {
     CPDF_Object* obj = GetDirect();
     if (!obj || obj->IsReference())

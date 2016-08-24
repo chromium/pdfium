@@ -23,6 +23,8 @@
 namespace {
 
 using ScopedArray = std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>>;
+using ScopedDict =
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>;
 
 void TestArrayAccessors(const CPDF_Array* arr,
                         size_t index,
@@ -742,5 +744,54 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
     EXPECT_EQ(CPDF_Object::REFERENCE, arr1->GetObjectAt(i)->GetType());
     EXPECT_EQ(indirect_objs[i], arr1->GetObjectAt(i)->GetDirect());
     EXPECT_EQ(indirect_objs[i], arr1->GetDirectObjectAt(i));
+  }
+}
+
+TEST(PDFObjectTest, CloneCheckLoop) {
+  {
+    // Create an object with a reference loop.
+    ScopedArray arr_obj(new CPDF_Array);
+    // Dictionary object.
+    CPDF_Dictionary* dict_obj = new CPDF_Dictionary;
+    dict_obj->SetAt("arr", arr_obj.get());
+    arr_obj->InsertAt(0, dict_obj);
+
+    // Clone this object to see whether stack overflow will be triggered.
+    ScopedArray cloned_array(arr_obj->Clone()->AsArray());
+    // Cloned object should be the same as the original.
+    ASSERT_TRUE(cloned_array);
+    EXPECT_EQ(1u, cloned_array->GetCount());
+    CPDF_Object* cloned_dict = cloned_array->GetObjectAt(0);
+    ASSERT_TRUE(cloned_dict);
+    ASSERT_TRUE(cloned_dict->IsDictionary());
+    // Recursively referenced object is not cloned.
+    EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectBy("arr"));
+  }
+  {
+    std::unique_ptr<CPDF_IndirectObjectHolder> m_ObjHolder(
+        new CPDF_IndirectObjectHolder(nullptr));
+    // Create an object with a reference loop.
+    CPDF_Dictionary* dict_obj = new CPDF_Dictionary;
+    CPDF_Array* arr_obj = new CPDF_Array;
+    m_ObjHolder->AddIndirectObject(dict_obj);
+    EXPECT_EQ(1u, dict_obj->GetObjNum());
+    dict_obj->SetAt("arr", arr_obj);
+    arr_obj->InsertAt(0, dict_obj, m_ObjHolder.get());
+    CPDF_Object* elem0 = arr_obj->GetObjectAt(0);
+    ASSERT_TRUE(elem0);
+    ASSERT_TRUE(elem0->IsReference());
+    EXPECT_EQ(1u, elem0->AsReference()->GetRefObjNum());
+    EXPECT_EQ(dict_obj, elem0->AsReference()->GetDirect());
+
+    // Clone this object to see whether stack overflow will be triggered.
+    ScopedDict cloned_dict(ToDictionary(dict_obj->CloneDirectObject()));
+    // Cloned object should be the same as the original.
+    ASSERT_TRUE(cloned_dict);
+    CPDF_Object* cloned_arr = cloned_dict->GetObjectBy("arr");
+    ASSERT_TRUE(cloned_arr);
+    ASSERT_TRUE(cloned_arr->IsArray());
+    EXPECT_EQ(1u, cloned_arr->AsArray()->GetCount());
+    // Recursively referenced object is not cloned.
+    EXPECT_EQ(nullptr, cloned_arr->AsArray()->GetObjectAt(0));
   }
 }

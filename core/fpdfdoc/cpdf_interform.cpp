@@ -1403,7 +1403,7 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
     pField = new CPDF_FormField(this, pParent);
     CPDF_Object* pTObj = pDict->GetObjectBy("T");
     if (ToReference(pTObj)) {
-      CPDF_Object* pClone = pTObj->Clone(TRUE);
+      CPDF_Object* pClone = pTObj->CloneDirectObject();
       if (pClone)
         pDict->SetAt("T", pClone);
       else
@@ -1535,7 +1535,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
       } else {
         CPDF_Object* pV = FPDF_GetFieldAttr(pField->m_pDict, "V");
         if (pV)
-          pFieldDict->SetAt("V", pV->Clone(TRUE));
+          pFieldDict->SetAt("V", pV->CloneDirectObject());
       }
       pFields->Add(pFieldDict);
     }
@@ -1587,8 +1587,8 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   CPDF_FormField::Type eType = pField->GetType();
   if ((eType == CPDF_FormField::ListBox || eType == CPDF_FormField::ComboBox) &&
       pFieldDict->KeyExist("Opt")) {
-    pField->m_pDict->SetAt("Opt",
-                           pFieldDict->GetDirectObjectBy("Opt")->Clone(TRUE));
+    pField->m_pDict->SetAt(
+        "Opt", pFieldDict->GetDirectObjectBy("Opt")->CloneDirectObject());
   }
 
   if (bNotify && m_pFormNotify) {

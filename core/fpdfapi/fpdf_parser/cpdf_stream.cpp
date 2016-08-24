@@ -9,6 +9,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "third_party/base/stl_util.h"
 
 CPDF_Stream::CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict)
     : m_pDict(pDict),
@@ -17,6 +18,7 @@ CPDF_Stream::CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict)
       m_pDataBuf(pData) {}
 
 CPDF_Stream::~CPDF_Stream() {
+  m_ObjNum = kInvalidObjNum;
   if (IsMemoryBased())
     FX_Free(m_pDataBuf);
 
@@ -71,13 +73,22 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
     m_pDict->SetAtInteger("Length", size);
 }
 
-CPDF_Object* CPDF_Stream::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_Stream::Clone() const {
+  return CloneObjectNonCyclic(false);
+}
+
+CPDF_Object* CPDF_Stream::CloneNonCyclic(
+    bool bDirect,
+    std::set<const CPDF_Object*>* pVisited) const {
+  pVisited->insert(this);
   CPDF_StreamAcc acc;
   acc.LoadAllData(this, TRUE);
   uint32_t streamSize = acc.GetSize();
   CPDF_Dictionary* pDict = GetDict();
-  if (pDict)
-    pDict = ToDictionary(pDict->Clone(bDirect));
+  if (pDict && !pdfium::ContainsKey(*pVisited, pDict)) {
+    pDict = ToDictionary(
+        static_cast<CPDF_Object*>(pDict)->CloneNonCyclic(bDirect, pVisited));
+  }
 
   return new CPDF_Stream(acc.DetachData(), streamSize, pDict);
 }

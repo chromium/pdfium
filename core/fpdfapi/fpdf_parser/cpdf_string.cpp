@@ -23,7 +23,7 @@ CPDF_Object::Type CPDF_String::GetType() const {
   return STRING;
 }
 
-CPDF_Object* CPDF_String::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_String::Clone() const {
   return new CPDF_String(m_String, m_bHex);
 }
 

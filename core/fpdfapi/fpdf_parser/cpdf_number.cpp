@@ -21,7 +21,7 @@ CPDF_Object::Type CPDF_Number::GetType() const {
   return NUMBER;
 }
 
-CPDF_Object* CPDF_Number::Clone(FX_BOOL bDirect) const {
+CPDF_Object* CPDF_Number::Clone() const {
   return m_bInteger ? new CPDF_Number(m_Integer) : new CPDF_Number(m_Float);
 }
 

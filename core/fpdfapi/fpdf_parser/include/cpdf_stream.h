@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_
 
+#include <set>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fxcrt/include/fx_stream.h"
@@ -17,7 +19,7 @@ class CPDF_Stream : public CPDF_Object {
 
   // CPDF_Object.
   Type GetType() const override;
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CPDF_Object* Clone() const override;
   CPDF_Dictionary* GetDict() const override;
   CFX_WideString GetUnicodeText() const override;
   bool IsStream() const override;
@@ -45,6 +47,9 @@ class CPDF_Stream : public CPDF_Object {
   static const uint32_t kMemoryBasedGenNum = (uint32_t)-1;
 
   ~CPDF_Stream() override;
+  CPDF_Object* CloneNonCyclic(
+      bool bDirect,
+      std::set<const CPDF_Object*>* pVisited) const override;
 
   void InitStreamInternal(CPDF_Dictionary* pDict);
 

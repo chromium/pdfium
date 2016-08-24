@@ -69,7 +69,7 @@ CPDF_Image* CPDF_Image::Clone() {
   CPDF_Image* pImage =
       new CPDF_Image(m_pDocument, ToStream(m_pStream->Clone()), m_bInline);
   if (m_bInline)
-    pImage->SetInlineDict(ToDictionary(m_pInlineDict->Clone(TRUE)));
+    pImage->SetInlineDict(ToDictionary(m_pInlineDict->CloneDirectObject()));
 
   return pImage;
 }
