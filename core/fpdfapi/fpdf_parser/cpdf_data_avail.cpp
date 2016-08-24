@@ -176,7 +176,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(
         } else if (!pdfium::ContainsKey(m_ObjectSet, dwNum)) {
           m_ObjectSet.insert(dwNum);
           CPDF_Object* pReferred =
-              m_pDocument->GetIndirectObject(pRef->GetRefObjNum());
+              m_pDocument->GetOrParseIndirectObject(pRef->GetRefObjNum());
           if (pReferred)
             new_obj_array.Add(pReferred);
         }
@@ -1788,8 +1788,10 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
       if (!pPageDict)
         return nullptr;
 
-      if (!m_pDocument->InsertIndirectObject(dwObjNum, pPageDict))
+      if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(dwObjNum,
+                                                                pPageDict)) {
         return nullptr;
+      }
       return pPageDict->GetDict();
     }
   }

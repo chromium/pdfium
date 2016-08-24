@@ -725,13 +725,14 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   // Create two arrays of references by different AddReference() APIs.
   for (size_t i = 0; i < FX_ArraySize(indirect_objs); ++i) {
     // All the indirect objects inserted will be owned by holder.
-    holder->InsertIndirectObject(obj_nums[i], indirect_objs[i]);
+    holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
+                                                    indirect_objs[i]);
     arr->AddReference(holder.get(), obj_nums[i]);
     arr1->AddReference(holder.get(), indirect_objs[i]);
   }
   // Check indirect objects.
   for (size_t i = 0; i < FX_ArraySize(obj_nums); ++i)
-    EXPECT_EQ(indirect_objs[i], holder->GetIndirectObject(obj_nums[i]));
+    EXPECT_EQ(indirect_objs[i], holder->GetOrParseIndirectObject(obj_nums[i]));
   // Check arrays.
   EXPECT_EQ(arr->GetCount(), arr1->GetCount());
   for (size_t i = 0; i < arr->GetCount(); ++i) {

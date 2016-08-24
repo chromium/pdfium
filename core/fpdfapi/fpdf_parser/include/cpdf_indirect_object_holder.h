@@ -22,14 +22,17 @@ class CPDF_IndirectObjectHolder {
   explicit CPDF_IndirectObjectHolder(CPDF_Parser* pParser);
   ~CPDF_IndirectObjectHolder();
 
-  CPDF_Object* GetIndirectObject(uint32_t objnum);
-  uint32_t AddIndirectObject(CPDF_Object* pObj);
+  CPDF_Object* GetOrParseIndirectObject(uint32_t objnum);
   void ReleaseIndirectObject(uint32_t objnum);
 
-  // Takes ownership of |pObj|.
-  bool InsertIndirectObject(uint32_t objnum, CPDF_Object* pObj);
+  // Take ownership of |pObj|.
+  uint32_t AddIndirectObject(CPDF_Object* pObj);
+  bool ReplaceIndirectObjectIfHigherGeneration(uint32_t objnum,
+                                               CPDF_Object* pObj);
 
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
+  void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }
+
   iterator begin() { return m_IndirectObjs.begin(); }
   const_iterator begin() const { return m_IndirectObjs.begin(); }
   iterator end() { return m_IndirectObjs.end(); }
@@ -37,8 +40,10 @@ class CPDF_IndirectObjectHolder {
 
  protected:
   CPDF_Parser* m_pParser;
-  uint32_t m_LastObjNum;
   std::map<uint32_t, CPDF_Object*> m_IndirectObjs;
+
+ private:
+  uint32_t m_LastObjNum;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_INDIRECT_OBJECT_HOLDER_H_

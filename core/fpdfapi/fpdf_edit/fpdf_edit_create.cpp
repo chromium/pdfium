@@ -1239,7 +1239,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
   bool bObjStm = (object_type == 2) && m_pEncryptDict && !m_pXRefStream;
   if (m_pParser->IsVersionUpdated() || m_bSecurityChanged || bExistInMap ||
       bObjStm) {
-    CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
+    CPDF_Object* pObj = m_pDocument->GetOrParseIndirectObject(objnum);
     if (!pObj) {
       m_ObjectOffset[objnum] = 0;
       return 0;
@@ -1703,7 +1703,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
         return -1;
       }
     } else {
-      if (m_File.AppendDWord(m_pDocument->m_LastObjNum + 1) < 0) {
+      if (m_File.AppendDWord(m_pDocument->GetLastObjNum() + 1) < 0) {
         return -1;
       }
       if (m_File.AppendString(" 0 obj <<") < 0) {

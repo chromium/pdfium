@@ -20,7 +20,8 @@ CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
     pair.second->Destroy();
 }
 
-CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(uint32_t objnum) {
+CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
+    uint32_t objnum) {
   if (objnum == 0)
     return nullptr;
 
@@ -55,18 +56,9 @@ uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
   return m_LastObjNum;
 }
 
-void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
-  auto it = m_IndirectObjs.find(objnum);
-  if (it == m_IndirectObjs.end() ||
-      it->second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
-    return;
-  }
-  it->second->Destroy();
-  m_IndirectObjs.erase(it);
-}
-
-bool CPDF_IndirectObjectHolder::InsertIndirectObject(uint32_t objnum,
-                                                     CPDF_Object* pObj) {
+bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
+    uint32_t objnum,
+    CPDF_Object* pObj) {
   if (!objnum || !pObj)
     return false;
 
@@ -82,4 +74,14 @@ bool CPDF_IndirectObjectHolder::InsertIndirectObject(uint32_t objnum,
   m_IndirectObjs[objnum] = pObj;
   m_LastObjNum = std::max(m_LastObjNum, objnum);
   return true;
+}
+
+void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
+  auto it = m_IndirectObjs.find(objnum);
+  if (it == m_IndirectObjs.end() ||
+      it->second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
+    return;
+  }
+  it->second->Destroy();
+  m_IndirectObjs.erase(it);
 }

@@ -65,7 +65,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
       if (!pObj)
         break;
 
-      InsertIndirectObject(objnum, pObj);
+      ReplaceIndirectObjectIfHigherGeneration(objnum, pObj);
       word = parser.GetNextWord(nullptr);
       if (word != "endobj")
         break;

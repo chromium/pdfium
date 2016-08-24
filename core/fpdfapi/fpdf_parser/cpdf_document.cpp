@@ -499,9 +499,9 @@ CPDF_Document::~CPDF_Document() {
 }
 
 void CPDF_Document::LoadDocInternal() {
-  m_LastObjNum = m_pParser->GetLastObjNum();
+  SetLastObjNum(m_pParser->GetLastObjNum());
 
-  CPDF_Object* pRootObj = GetIndirectObject(m_pParser->GetRootObjNum());
+  CPDF_Object* pRootObj = GetOrParseIndirectObject(m_pParser->GetRootObjNum());
   if (!pRootObj)
     return;
 
@@ -509,7 +509,7 @@ void CPDF_Document::LoadDocInternal() {
   if (!m_pRootDict)
     return;
 
-  CPDF_Object* pInfoObj = GetIndirectObject(m_pParser->GetInfoObjNum());
+  CPDF_Object* pInfoObj = GetOrParseIndirectObject(m_pParser->GetInfoObjNum());
   if (pInfoObj)
     m_pInfoDict = pInfoObj->GetDict();
   if (CPDF_Array* pIDArray = m_pParser->GetIDArray()) {
@@ -589,14 +589,14 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
 
   if (m_bLinearized && (iPage == m_iFirstPageNo)) {
     if (CPDF_Dictionary* pDict =
-            ToDictionary(GetIndirectObject(m_dwFirstPageObjNum))) {
+            ToDictionary(GetOrParseIndirectObject(m_dwFirstPageObjNum))) {
       return pDict;
     }
   }
 
   int objnum = m_PageList.GetAt(iPage);
   if (objnum) {
-    if (CPDF_Dictionary* pDict = ToDictionary(GetIndirectObject(objnum)))
+    if (CPDF_Dictionary* pDict = ToDictionary(GetOrParseIndirectObject(objnum)))
       return pDict;
   }
 
