@@ -91,15 +91,12 @@ class CFX_RenderDevice {
     return m_pDeviceDriver.get();
   }
 
-  FX_BOOL StartRendering();
-  void EndRendering();
   void SaveState();
   void RestoreState(bool bKeepSaved);
 
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
   int GetDeviceClass() const { return m_DeviceClass; }
-  int GetBPP() const { return m_bpp; }
   int GetRenderCaps() const { return m_RenderCaps; }
   int GetDeviceCaps(int id) const;
   CFX_Matrix GetCTM() const;
@@ -140,14 +137,6 @@ class CFX_RenderDevice {
                             uint32_t color,
                             int blend_type);
   FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
-                           FX_FLOAT y1,
-                           FX_FLOAT x2,
-                           FX_FLOAT y2,
-                           uint32_t color) {
-    return DrawCosmeticLineWithFillModeAndBlend(x1, y1, x2, y2, color, 0,
-                                                FXDIB_BLEND_NORMAL);
-  }
-  FX_BOOL DrawCosmeticLineWithFillModeAndBlend(FX_FLOAT x1,
                                                FX_FLOAT y1,
                                                FX_FLOAT x2,
                                                FX_FLOAT y2,
@@ -224,21 +213,6 @@ class CFX_RenderDevice {
                          uint32_t fill_color,
                          uint32_t text_flags);
   FX_BOOL DrawTextPath(int nChars,
-                       const FXTEXT_CHARPOS* pCharPos,
-                       CFX_Font* pFont,
-                       CFX_FontCache* pCache,
-                       FX_FLOAT font_size,
-                       const CFX_Matrix* pText2User,
-                       const CFX_Matrix* pUser2Device,
-                       const CFX_GraphStateData* pGraphState,
-                       uint32_t fill_color,
-                       uint32_t stroke_color,
-                       CFX_PathData* pClippingPath) {
-    return DrawTextPathWithFlags(nChars, pCharPos, pFont, pCache, font_size,
-                                 pText2User, pUser2Device, pGraphState,
-                                 fill_color, stroke_color, pClippingPath, 0);
-  }
-  FX_BOOL DrawTextPathWithFlags(int nChars,
                                 const FXTEXT_CHARPOS* pCharPos,
                                 CFX_Font* pFont,
                                 CFX_FontCache* pCache,

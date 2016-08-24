@@ -379,14 +379,6 @@ void CFX_RenderDevice::InitDeviceInfo() {
   }
 }
 
-FX_BOOL CFX_RenderDevice::StartRendering() {
-  return m_pDeviceDriver->StartRendering();
-}
-
-void CFX_RenderDevice::EndRendering() {
-  m_pDeviceDriver->EndRendering();
-}
-
 void CFX_RenderDevice::SaveState() {
   m_pDeviceDriver->SaveState();
 }
@@ -489,8 +481,7 @@ FX_BOOL CFX_RenderDevice::DrawPathWithBlend(
       x2 = pPoints[1].m_PointX;
       y2 = pPoints[1].m_PointY;
     }
-    DrawCosmeticLineWithFillModeAndBlend(x1, y1, x2, y2, fill_color, fill_mode,
-                                         blend_type);
+    DrawCosmeticLine(x1, y1, x2, y2, fill_color, fill_mode, blend_type);
     return TRUE;
   }
   if ((pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) &&
@@ -663,13 +654,13 @@ FX_BOOL CFX_RenderDevice::FillRectWithBlend(const FX_RECT* pRect,
   return TRUE;
 }
 
-FX_BOOL CFX_RenderDevice::DrawCosmeticLineWithFillModeAndBlend(FX_FLOAT x1,
-                                                               FX_FLOAT y1,
-                                                               FX_FLOAT x2,
-                                                               FX_FLOAT y2,
-                                                               uint32_t color,
-                                                               int fill_mode,
-                                                               int blend_type) {
+FX_BOOL CFX_RenderDevice::DrawCosmeticLine(FX_FLOAT x1,
+                                           FX_FLOAT y1,
+                                           FX_FLOAT x2,
+                                           FX_FLOAT y2,
+                                           uint32_t color,
+                                           int fill_mode,
+                                           int blend_type) {
   if ((color >= 0xff000000) &&
       m_pDeviceDriver->DrawCosmeticLine(x1, y1, x2, y2, color, blend_type)) {
     return TRUE;
@@ -871,9 +862,9 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
         (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
-      return DrawTextPathWithFlags(nChars, pCharPos, pFont, pCache, font_size,
-                                   pText2Device, nullptr, nullptr, fill_color,
-                                   0, nullptr, nPathFlags);
+      return DrawTextPath(nChars, pCharPos, pFont, pCache, font_size,
+                          pText2Device, nullptr, nullptr, fill_color, 0,
+                          nullptr, nPathFlags);
     }
   }
   int anti_alias = FXFT_RENDER_MODE_MONO;
@@ -1054,19 +1045,18 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   return TRUE;
 }
 
-FX_BOOL CFX_RenderDevice::DrawTextPathWithFlags(
-    int nChars,
-    const FXTEXT_CHARPOS* pCharPos,
-    CFX_Font* pFont,
-    CFX_FontCache* pCache,
-    FX_FLOAT font_size,
-    const CFX_Matrix* pText2User,
-    const CFX_Matrix* pUser2Device,
-    const CFX_GraphStateData* pGraphState,
-    uint32_t fill_color,
-    FX_ARGB stroke_color,
-    CFX_PathData* pClippingPath,
-    int nFlag) {
+FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
+                                       const FXTEXT_CHARPOS* pCharPos,
+                                       CFX_Font* pFont,
+                                       CFX_FontCache* pCache,
+                                       FX_FLOAT font_size,
+                                       const CFX_Matrix* pText2User,
+                                       const CFX_Matrix* pUser2Device,
+                                       const CFX_GraphStateData* pGraphState,
+                                       uint32_t fill_color,
+                                       FX_ARGB stroke_color,
+                                       CFX_PathData* pClippingPath,
+                                       int nFlag) {
   if (!pCache)
     pCache = CFX_GEModule::Get()->GetFontCache();
   CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
