@@ -51,12 +51,9 @@ class EmbedderTest : public ::testing::Test,
     virtual void KillTimer(int id) {}
 
     // Equivalent to FPDF_FORMFILLINFO::FFI_GetPage().
-    virtual FPDF_PAGE GetPage(FPDF_FORMHANDLE form_handle,
+    virtual FPDF_PAGE GetPage(FPDF_FORMFILLINFO* info,
                               FPDF_DOCUMENT document,
                               int page_index);
-
-   private:
-    std::map<int, FPDF_PAGE> m_pageMap;
   };
 
   EmbedderTest();
@@ -101,10 +98,6 @@ class EmbedderTest : public ::testing::Test,
   // Load a specific page of the open document.
   virtual FPDF_PAGE LoadPage(int page_number);
 
-  // Load a specific page of the open document using delegate_->GetPage.
-  // delegate_->GetPage also caches loaded page.
-  virtual FPDF_PAGE LoadAndCachePage(int page_number);
-
   // Convert a loaded page into a bitmap.
   virtual FPDF_BITMAP RenderPage(FPDF_PAGE page);
 
@@ -130,6 +123,7 @@ class EmbedderTest : public ::testing::Test,
   TestLoader* loader_;
   size_t file_length_;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
+  std::map<int, FPDF_PAGE> page_map_;
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);

@@ -45,7 +45,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_507316) {
   SetDelegate(&delegate);
 
   EXPECT_TRUE(OpenDocument("bug_507316.pdf"));
-  FPDF_PAGE page = LoadAndCachePage(2);
+  FPDF_PAGE page = LoadPage(2);
   EXPECT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(4000);

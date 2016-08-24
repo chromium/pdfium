@@ -26,9 +26,12 @@ class FSDKBaseFormEmbeddertest : public EmbedderTest {};
 
 TEST_F(FSDKBaseFormEmbeddertest, CBA_AnnotIterator) {
   EXPECT_TRUE(OpenDocument("annotiter.pdf"));
-  EXPECT_TRUE(LoadPage(0));
-  EXPECT_TRUE(LoadPage(1));
-  EXPECT_TRUE(LoadPage(2));
+  FPDF_PAGE page0 = LoadPage(0);
+  FPDF_PAGE page1 = LoadPage(1);
+  FPDF_PAGE page2 = LoadPage(2);
+  EXPECT_TRUE(page0);
+  EXPECT_TRUE(page1);
+  EXPECT_TRUE(page2);
 
   CFX_FloatRect LeftBottom(200, 200, 220, 220);
   CFX_FloatRect RightBottom(400, 201, 420, 221);
@@ -112,4 +115,7 @@ TEST_F(FSDKBaseFormEmbeddertest, CBA_AnnotIterator) {
     pAnnot = iter.GetPrevAnnot(pAnnot);
     EXPECT_EQ(iter.GetLastAnnot(), pAnnot);
   }
+  UnloadPage(page2);
+  UnloadPage(page1);
+  UnloadPage(page0);
 }
