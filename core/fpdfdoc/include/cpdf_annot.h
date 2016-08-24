@@ -63,6 +63,8 @@ class CPDF_Annot {
   CPDF_Form* GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
 
  private:
+  void GenerateAPIfNeeded();
+
   CPDF_Dictionary* const m_pAnnotDict;
   CPDF_Document* const m_pDocument;
   const CFX_ByteString m_sSubtype;

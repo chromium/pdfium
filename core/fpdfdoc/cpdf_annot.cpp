@@ -22,6 +22,14 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),
       m_pDocument(pDocument),
       m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {
+  GenerateAPIfNeeded();
+}
+
+CPDF_Annot::~CPDF_Annot() {
+  ClearCachedAP();
+}
+
+void CPDF_Annot::GenerateAPIfNeeded() {
   if (m_sSubtype == "Circle")
     CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Highlight")
@@ -38,10 +46,6 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     CPVT_GenerateAP::GenerateTextAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Underline")
     CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
-}
-
-CPDF_Annot::~CPDF_Annot() {
-  ClearCachedAP();
 }
 
 void CPDF_Annot::ClearCachedAP() {
@@ -148,6 +152,13 @@ FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                    const CPDF_RenderOptions* pOptions) {
   if (IsAnnotationHidden(m_pAnnotDict))
     return FALSE;
+
+  // It might happen that by the time this annotation instance was created,
+  // it was flagged as "hidden" (e.g. /F 2), and hence CPVT_GenerateAP decided
+  // to not "generate" its AP.
+  // If for a reason the object is no longer hidden, but still does not have
+  // its "AP" generated, generate it now.
+  GenerateAPIfNeeded();
 
   CFX_Matrix matrix;
   CPDF_Form* pForm =
