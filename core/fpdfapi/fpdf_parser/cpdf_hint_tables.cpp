@@ -122,7 +122,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // than enough to represent most of the values here.
   constexpr uint32_t kMaxBits = 34;
   if (dwSharedObjBits > kMaxBits || dwDeltaObjectsBits > kMaxBits ||
-      dwSharedIdBits > kMaxBits) {
+      dwDeltaPageLenBits > kMaxBits || dwSharedIdBits > kMaxBits) {
     return false;
   }
 
