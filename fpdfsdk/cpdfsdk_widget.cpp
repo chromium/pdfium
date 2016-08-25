@@ -1975,8 +1975,7 @@ int32_t CPDFSDK_Widget::GetValueAge() const {
 
 FX_BOOL CPDFSDK_Widget::HitTest(FX_FLOAT pageX, FX_FLOAT pageY) {
   CPDF_Annot* pAnnot = GetPDFAnnot();
-  CFX_FloatRect annotRect;
-  pAnnot->GetRect(annotRect);
+  CFX_FloatRect annotRect = pAnnot->GetRect();
   if (!annotRect.Contains(pageX, pageY))
     return FALSE;
 

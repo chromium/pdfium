@@ -45,10 +45,7 @@ FX_RECT CFFL_IFormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
   ASSERT(pPageView);
 
   CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
-  CFX_FloatRect rcAnnot;
-  pPDFAnnot->GetRect(rcAnnot);
-
-  CFX_FloatRect rcWin = CPWL_Utils::InflateRect(rcAnnot, 1);
+  CFX_FloatRect rcWin = CPWL_Utils::InflateRect(pPDFAnnot->GetRect(), 1);
   return rcWin.GetOuterRect();
 }
 

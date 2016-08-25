@@ -35,9 +35,7 @@ void CPDFSDK_BAAnnot::SetRect(const CFX_FloatRect& rect) {
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
-  CFX_FloatRect rect;
-  m_pAnnot->GetRect(rect);
-  return rect;
+  return m_pAnnot->GetRect();
 }
 
 CFX_ByteString CPDFSDK_BAAnnot::GetType() const {

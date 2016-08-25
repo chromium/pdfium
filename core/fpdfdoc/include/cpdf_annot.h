@@ -44,7 +44,7 @@ class CPDF_Annot {
 
   CFX_ByteString GetSubType() const;
   uint32_t GetFlags() const;
-  void GetRect(CFX_FloatRect& rect) const;
+  CFX_FloatRect GetRect() const;
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
   CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
   FX_BOOL DrawAppearance(CPDF_Page* pPage,

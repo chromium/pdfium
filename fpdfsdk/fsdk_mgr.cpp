@@ -576,8 +576,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 const CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
                                                        FX_FLOAT pageY) {
   for (const auto& pAnnot : m_pAnnotList->All()) {
-    CFX_FloatRect annotRect;
-    pAnnot->GetRect(annotRect);
+    CFX_FloatRect annotRect = pAnnot->GetRect();
     if (annotRect.Contains(pageX, pageY))
       return pAnnot.get();
   }
@@ -588,8 +587,7 @@ const CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
                                                         FX_FLOAT pageY) {
   for (const auto& pAnnot : m_pAnnotList->All()) {
     if (pAnnot->GetSubType() == "Widget") {
-      CFX_FloatRect annotRect;
-      pAnnot->GetRect(annotRect);
+      CFX_FloatRect annotRect = pAnnot->GetRect();
       if (annotRect.Contains(pageX, pageY))
         return pAnnot.get();
     }

@@ -55,12 +55,13 @@ CFX_ByteString CPDF_Annot::GetSubType() const {
   return m_sSubtype;
 }
 
-void CPDF_Annot::GetRect(CFX_FloatRect& rect) const {
-  if (!m_pAnnotDict) {
-    return;
-  }
-  rect = m_pAnnotDict->GetRectBy("Rect");
+CFX_FloatRect CPDF_Annot::GetRect() const {
+  if (!m_pAnnotDict)
+    return CFX_FloatRect();
+
+  CFX_FloatRect rect = m_pAnnotDict->GetRectBy("Rect");
   rect.Normalize();
+  return rect;
 }
 
 uint32_t CPDF_Annot::GetFlags() const {
@@ -133,9 +134,7 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectBy("BBox");
   CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixBy("Matrix");
   form_matrix.TransformRect(form_bbox);
-  CFX_FloatRect arect;
-  pAnnot->GetRect(arect);
-  matrix.MatchRect(arect, form_bbox);
+  matrix.MatchRect(pAnnot->GetRect(), form_bbox);
   matrix.Concat(*pUser2Device);
   return pForm;
 }
@@ -272,8 +271,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
       graph_state.m_DashArray[0] = graph_state.m_DashArray[1] = 3 * 1.0f;
     }
   }
-  CFX_FloatRect rect;
-  GetRect(rect);
+  CFX_FloatRect rect = GetRect();
   CFX_PathData path;
   width /= 2;
   path.AppendRect(rect.left + width, rect.bottom + width, rect.right - width,

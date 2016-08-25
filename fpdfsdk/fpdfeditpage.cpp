@@ -295,8 +295,7 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
   for (size_t i = 0; i < AnnotList.Count(); ++i) {
     CPDF_Annot* pAnnot = AnnotList.GetAt(i);
     // transformAnnots Rectangle
-    CFX_FloatRect rect;
-    pAnnot->GetRect(rect);
+    CFX_FloatRect rect = pAnnot->GetRect();
     CFX_Matrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
                       (FX_FLOAT)e, (FX_FLOAT)f);
     rect.Transform(&matrix);

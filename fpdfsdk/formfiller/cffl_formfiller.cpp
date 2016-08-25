@@ -419,8 +419,7 @@ CFX_Matrix CFFL_FormFiller::GetWindowMatrix(void* pAttachedData) {
 CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
   CFX_Matrix mt;
 
-  CFX_FloatRect rcDA;
-  m_pWidget->GetPDFAnnot()->GetRect(rcDA);
+  CFX_FloatRect rcDA = m_pWidget->GetPDFAnnot()->GetRect();
 
   switch (m_pWidget->GetRotate()) {
     default:
@@ -451,8 +450,7 @@ CFX_WideString CFFL_FormFiller::LoadPopupMenuString(int nIndex) {
 }
 
 CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
-  CFX_FloatRect rectAnnot;
-  m_pWidget->GetPDFAnnot()->GetRect(rectAnnot);
+  CFX_FloatRect rectAnnot = m_pWidget->GetPDFAnnot()->GetRect();
 
   FX_FLOAT fWidth = rectAnnot.right - rectAnnot.left;
   FX_FLOAT fHeight = rectAnnot.top - rectAnnot.bottom;

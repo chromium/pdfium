@@ -168,7 +168,5 @@ void CBA_AnnotIterator::GenerateResults() {
 }
 
 CFX_FloatRect CBA_AnnotIterator::GetAnnotRect(const CPDFSDK_Annot* pAnnot) {
-  CFX_FloatRect rcAnnot;
-  pAnnot->GetPDFAnnot()->GetRect(rcAnnot);
-  return rcAnnot;
+  return pAnnot->GetPDFAnnot()->GetRect();
 }

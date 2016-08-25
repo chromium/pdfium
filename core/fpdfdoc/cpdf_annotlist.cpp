@@ -84,8 +84,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
         continue;
       }
     }
-    CFX_FloatRect annot_rect_f;
-    pAnnot->GetRect(annot_rect_f);
+    CFX_FloatRect annot_rect_f = pAnnot->GetRect();
     CFX_Matrix matrix = *pMatrix;
     if (clip_rect) {
       annot_rect_f.Transform(&matrix);
