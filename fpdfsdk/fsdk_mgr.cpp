@@ -640,13 +640,6 @@ void CPDFSDK_PageView::KillFocusAnnotIfNeeded() {
   }
 }
 
-FX_BOOL CPDFSDK_PageView::Annot_HasAppearance(CPDF_Annot* pAnnot) {
-  CPDF_Dictionary* pAnnotDic = pAnnot->GetAnnotDict();
-  if (pAnnotDic)
-    return pAnnotDic->KeyExist("AS");
-  return FALSE;
-}
-
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CPDF_Annot* pPDFAnnot) {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);

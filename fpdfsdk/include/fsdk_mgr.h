@@ -555,7 +555,6 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
     return m_pSDKDoc->KillFocusAnnot(nFlag);
   }
   void KillFocusAnnotIfNeeded();
-  FX_BOOL Annot_HasAppearance(CPDF_Annot* pAnnot);
 
   CPDFSDK_Annot* AddAnnot(CPDF_Dictionary* pDict);
   CPDFSDK_Annot* AddAnnot(const FX_CHAR* lpSubType, CPDF_Dictionary* pDict);
