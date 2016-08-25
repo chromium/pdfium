@@ -31,10 +31,6 @@ CFX_ByteString CPDFSDK_BFAnnotHandler::GetType() {
   return CFX_ByteString("Widget");
 }
 
-CFX_ByteString CPDFSDK_BFAnnotHandler::GetName() {
-  return CFX_ByteString("WidgetHandler");
-}
-
 FX_BOOL CPDFSDK_BFAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot->GetType() == "Widget");
   if (pAnnot->GetSubType() == BFFT_SIGNATURE)

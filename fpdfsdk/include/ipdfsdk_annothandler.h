@@ -29,7 +29,6 @@ class IPDFSDK_AnnotHandler {
   virtual ~IPDFSDK_AnnotHandler() {}
 
   virtual CFX_ByteString GetType() = 0;
-  virtual CFX_ByteString GetName() = 0;
   virtual FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
                                   CPDFSDK_PageView* pPage) = 0;

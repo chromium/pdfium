@@ -29,10 +29,6 @@ CFX_ByteString CPDFSDK_XFAAnnotHandler::GetType() {
   return FSDK_XFAWIDGET_TYPENAME;
 }
 
-CFX_ByteString CPDFSDK_XFAAnnotHandler::GetName() {
-  return "XFAWidgetHandler";
-}
-
 FX_BOOL CPDFSDK_XFAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return !!pAnnot->GetXFAWidget();
 }
