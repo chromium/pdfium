@@ -22,7 +22,7 @@ const float kMinHeight = 1.0f;
 }  // namespace
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
-    : m_pPageView(pPageView), m_bSelected(FALSE), m_nTabOrder(-1) {}
+    : m_pPageView(pPageView), m_bSelected(FALSE) {}
 
 CPDFSDK_Annot::~CPDFSDK_Annot() {}
 
@@ -82,14 +82,6 @@ FX_BOOL CPDFSDK_Annot::IsSelected() {
 
 void CPDFSDK_Annot::SetSelected(FX_BOOL bSelected) {
   m_bSelected = bSelected;
-}
-
-int CPDFSDK_Annot::GetTabOrder() {
-  return m_nTabOrder;
-}
-
-void CPDFSDK_Annot::SetTabOrder(int iTabOrder) {
-  m_nTabOrder = iTabOrder;
 }
 
 UnderlyingPageType* CPDFSDK_Annot::GetUnderlyingPage() {

@@ -53,16 +53,12 @@ class CPDFSDK_Annot {
   void SetPage(CPDFSDK_PageView* pPageView);
   CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
 
-  int GetTabOrder();
-  void SetTabOrder(int iTabOrder);
-
   FX_BOOL IsSelected();
   void SetSelected(FX_BOOL bSelected);
 
  protected:
   CPDFSDK_PageView* m_pPageView;
   FX_BOOL m_bSelected;
-  int m_nTabOrder;
 };
 
 #endif  // FPDFSDK_INCLUDE_CPDFSDK_ANNOT_H_
