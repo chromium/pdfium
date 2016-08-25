@@ -48,11 +48,9 @@ class CFX_PathData {
   void Copy(const CFX_PathData& src);
 
  private:
-  friend class CPDF_Path;
-
   int m_PointCount;
-  FX_PATHPOINT* m_pPoints;
   int m_AllocCount;
+  FX_PATHPOINT* m_pPoints;
 };
 
 #endif  // CORE_FXGE_INCLUDE_CFX_PATHDATA_H_

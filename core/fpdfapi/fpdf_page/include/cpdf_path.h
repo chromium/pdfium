@@ -14,29 +14,19 @@
 
 class CPDF_Path : public CFX_CountRef<CFX_PathData> {
  public:
-  int GetPointCount() const { return m_pObject->m_PointCount; }
-  int GetFlag(int index) const { return m_pObject->m_pPoints[index].m_Flag; }
-
-  FX_FLOAT GetPointX(int index) const {
-    return m_pObject->m_pPoints[index].m_PointX;
-  }
-
-  FX_FLOAT GetPointY(int index) const {
-    return m_pObject->m_pPoints[index].m_PointY;
-  }
-
-  FX_PATHPOINT* GetPoints() const { return m_pObject->m_pPoints; }
+  int GetPointCount() const { return m_pObject->GetPointCount(); }
+  int GetFlag(int index) const { return m_pObject->GetFlag(index); }
+  FX_FLOAT GetPointX(int index) const { return m_pObject->GetPointX(index); }
+  FX_FLOAT GetPointY(int index) const { return m_pObject->GetPointY(index); }
+  FX_PATHPOINT* GetPoints() const { return m_pObject->GetPoints(); }
   CFX_FloatRect GetBoundingBox() const { return m_pObject->GetBoundingBox(); }
-
   CFX_FloatRect GetBoundingBox(FX_FLOAT line_width,
                                FX_FLOAT miter_limit) const {
     return m_pObject->GetBoundingBox(line_width, miter_limit);
   }
 
   FX_BOOL IsRect() const { return m_pObject->IsRect(); }
-
   void Transform(const CFX_Matrix* pMatrix) { GetModify()->Transform(pMatrix); }
-
   void Append(CPDF_Path src, const CFX_Matrix* pMatrix) {
     m_pObject->Append(src.m_pObject, pMatrix);
   }

@@ -10,7 +10,7 @@
 #include "third_party/base/numerics/safe_math.h"
 
 CFX_PathData::CFX_PathData()
-    : m_PointCount(0), m_pPoints(nullptr), m_AllocCount(0) {}
+    : m_PointCount(0), m_AllocCount(0), m_pPoints(nullptr) {}
 
 CFX_PathData::~CFX_PathData() {
   FX_Free(m_pPoints);
