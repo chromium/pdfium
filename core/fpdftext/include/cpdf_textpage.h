@@ -15,7 +15,6 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 
-class CFX_BidiChar;
 class CPDF_Font;
 class CPDF_FormObject;
 class CPDF_Page;
@@ -80,8 +79,6 @@ class CPDF_TextPage {
                     FX_FLOAT xTolerance,
                     FX_FLOAT yTolerance) const;
   CFX_WideString GetTextByRect(const CFX_FloatRect& rect) const;
-  std::vector<CFX_FloatRect> GetRectsArrayByRect(
-      const CFX_FloatRect& rect) const;
   CFX_WideString GetPageText(int start = 0, int nCount = -1) const;
   int CountRects(int start, int nCount);
   void GetRect(int rectIndex,
@@ -89,11 +86,6 @@ class CPDF_TextPage {
                FX_FLOAT& top,
                FX_FLOAT& right,
                FX_FLOAT& bottom) const;
-  int CountBoundedSegments(FX_FLOAT left,
-                           FX_FLOAT top,
-                           FX_FLOAT right,
-                           FX_FLOAT bottom,
-                           FX_BOOL bContains = FALSE);
 
   static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
                                  const CFX_FloatRect& rect2);
