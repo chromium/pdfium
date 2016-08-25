@@ -569,11 +569,9 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CPDFSDK_Annot* AddAnnot(CXFA_FFWidget* pPDFAnnot);
   CPDFSDK_Annot* GetAnnotByXFAWidget(CXFA_FFWidget* hWidget);
   CPDFXFA_Page* GetPDFXFAPage() { return m_page; }
-  CPDF_Page* GetPDFPage();
-#else
-  CPDF_Page* GetPDFPage() { return m_page; }
 #endif  // PDF_ENABLE_XFA
 
+  CPDF_Page* GetPDFPage() const;
   CPDF_Document* GetPDFDocument();
   CPDFSDK_Document* GetSDKDocument() { return m_pSDKDoc; }
   FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_UINT nFlag);
