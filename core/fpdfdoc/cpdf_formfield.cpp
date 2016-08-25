@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/include/cpdf_formfield.h"
 
+#include <set>
+
 #include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
@@ -16,6 +18,7 @@
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fpdfdoc/include/cpdf_formcontrol.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -65,16 +68,20 @@ CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
 
 CFX_WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
   CFX_WideString full_name;
+  std::set<CPDF_Dictionary*> visited;
   CPDF_Dictionary* pLevel = pFieldDict;
   while (pLevel) {
+    visited.insert(pLevel);
     CFX_WideString short_name = pLevel->GetUnicodeTextBy("T");
-    if (short_name != L"") {
-      if (full_name == L"")
+    if (!short_name.IsEmpty()) {
+      if (full_name.IsEmpty())
         full_name = short_name;
       else
         full_name = short_name + L"." + full_name;
     }
     pLevel = pLevel->GetDictBy("Parent");
+    if (pdfium::ContainsKey(visited, pLevel))
+      break;
   }
   return full_name;
 }
@@ -679,8 +686,8 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
     m_pDict->SetAt("Opt", pOpt);
   }
 
-  int iCount = (int)pOpt->GetCount();
-  if (index < 0 || index >= iCount) {
+  int iCount = pdfium::base::checked_cast<int, size_t>(pOpt->GetCount());
+  if (index >= iCount) {
     pOpt->AddString(csStr);
     index = iCount;
   } else {

@@ -1595,6 +1595,7 @@ test("pdfium_unittests") {
     "core/fpdfapi/fpdf_parser/cpdf_syntax_parser_unittest.cpp",
     "core/fpdfapi/fpdf_parser/fpdf_parser_decode_unittest.cpp",
     "core/fpdfdoc/cpdf_filespec_unittest.cpp",
+    "core/fpdfdoc/cpdf_formfield_unittest.cpp",
     "core/fpdftext/fpdf_text_int_unittest.cpp",
     "core/fxcodec/codec/fx_codec_jpx_unittest.cpp",
     "core/fxcodec/jbig2/JBig2_Image_unittest.cpp",
