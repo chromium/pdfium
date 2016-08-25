@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 
+#include <set>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
@@ -51,7 +53,7 @@ CPDF_Object* CPDF_Array::CloneNonCyclic(
   pVisited->insert(this);
   CPDF_Array* pCopy = new CPDF_Array();
   for (size_t i = 0; i < GetCount(); i++) {
-    CPDF_Object* value = m_Objects.at(i);
+    CPDF_Object* value = m_Objects[i];
     if (!pdfium::ContainsKey(*pVisited, value))
       pCopy->m_Objects.push_back(value->CloneNonCyclic(bDirect, pVisited));
   }
@@ -83,31 +85,31 @@ CFX_Matrix CPDF_Array::GetMatrix() {
 CPDF_Object* CPDF_Array::GetObjectAt(size_t i) const {
   if (i >= m_Objects.size())
     return nullptr;
-  return m_Objects.at(i);
+  return m_Objects[i];
 }
 
 CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) const {
   if (i >= m_Objects.size())
     return nullptr;
-  return m_Objects.at(i)->GetDirect();
+  return m_Objects[i]->GetDirect();
 }
 
 CFX_ByteString CPDF_Array::GetStringAt(size_t i) const {
   if (i >= m_Objects.size())
     return CFX_ByteString();
-  return m_Objects.at(i)->GetString();
+  return m_Objects[i]->GetString();
 }
 
 int CPDF_Array::GetIntegerAt(size_t i) const {
   if (i >= m_Objects.size())
     return 0;
-  return m_Objects.at(i)->GetInteger();
+  return m_Objects[i]->GetInteger();
 }
 
 FX_FLOAT CPDF_Array::GetNumberAt(size_t i) const {
   if (i >= m_Objects.size())
     return 0;
-  return m_Objects.at(i)->GetNumber();
+  return m_Objects[i]->GetNumber();
 }
 
 CPDF_Dictionary* CPDF_Array::GetDictAt(size_t i) const {
@@ -137,7 +139,7 @@ void CPDF_Array::RemoveAt(size_t i, size_t nCount) {
     return;
 
   for (size_t j = 0; j < nCount; ++j) {
-    if (CPDF_Object* p = m_Objects.at(i + j))
+    if (CPDF_Object* p = m_Objects[i + j])
       p->Release();
   }
   m_Objects.erase(m_Objects.begin() + i, m_Objects.begin() + i + nCount);
@@ -147,10 +149,11 @@ void CPDF_Array::SetAt(size_t i,
                        CPDF_Object* pObj,
                        CPDF_IndirectObjectHolder* pObjs) {
   ASSERT(IsArray());
-  ASSERT(i < m_Objects.size());
-  if (i >= m_Objects.size())
+  if (i >= m_Objects.size()) {
+    ASSERT(false);
     return;
-  if (CPDF_Object* pOld = m_Objects.at(i))
+  }
+  if (CPDF_Object* pOld = m_Objects[i])
     pOld->Release();
   if (pObj->GetObjNum()) {
     ASSERT(pObjs);

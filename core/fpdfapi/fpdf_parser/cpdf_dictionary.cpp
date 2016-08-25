@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 
+#include <set>
+#include <utility>
+
 #include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
@@ -18,9 +21,13 @@
 CPDF_Dictionary::CPDF_Dictionary() {}
 
 CPDF_Dictionary::~CPDF_Dictionary() {
+  // Mark the object as deleted so that it will not be deleted again
+  // in case of cyclic references.
   m_ObjNum = kInvalidObjNum;
-  for (const auto& it : m_Map)
-    it.second->Release();
+  for (const auto& it : m_Map) {
+    if (it.second)
+      it.second->Release();
+  }
 }
 
 CPDF_Object::Type CPDF_Dictionary::GetType() const {

@@ -747,6 +747,44 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   }
 }
 
+TEST(PDFArrayTest, CloneDirectObject) {
+  CPDF_IndirectObjectHolder objects_holder;
+  ScopedArray array(new CPDF_Array);
+  array->AddReference(&objects_holder, 1234);
+  ASSERT_EQ(1U, array->GetCount());
+  CPDF_Object* obj = array->GetObjectAt(0);
+  ASSERT_TRUE(obj);
+  EXPECT_TRUE(obj->IsReference());
+
+  CPDF_Object* cloned_array_object = array->CloneDirectObject();
+  ASSERT_TRUE(cloned_array_object);
+  ASSERT_TRUE(cloned_array_object->IsArray());
+
+  ScopedArray cloned_array(cloned_array_object->AsArray());
+  ASSERT_EQ(1U, cloned_array->GetCount());
+  CPDF_Object* cloned_obj = cloned_array->GetObjectAt(0);
+  EXPECT_FALSE(cloned_obj);
+}
+
+TEST(PDFDictionaryTest, CloneDirectObject) {
+  CPDF_IndirectObjectHolder objects_holder;
+  ScopedDict dict(new CPDF_Dictionary);
+  dict->SetAtReference("foo", &objects_holder, 1234);
+  ASSERT_EQ(1U, dict->GetCount());
+  CPDF_Object* obj = dict->GetObjectBy("foo");
+  ASSERT_TRUE(obj);
+  EXPECT_TRUE(obj->IsReference());
+
+  CPDF_Object* cloned_dict_object = dict->CloneDirectObject();
+  ASSERT_TRUE(cloned_dict_object);
+  ASSERT_TRUE(cloned_dict_object->IsDictionary());
+
+  ScopedDict cloned_dict(cloned_dict_object->AsDictionary());
+  ASSERT_EQ(1U, cloned_dict->GetCount());
+  CPDF_Object* cloned_obj = cloned_dict->GetObjectBy("foo");
+  EXPECT_FALSE(cloned_obj);
+}
+
 TEST(PDFObjectTest, CloneCheckLoop) {
   {
     // Create an object with a reference loop.
@@ -768,15 +806,14 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectBy("arr"));
   }
   {
-    std::unique_ptr<CPDF_IndirectObjectHolder> m_ObjHolder(
-        new CPDF_IndirectObjectHolder());
+    CPDF_IndirectObjectHolder objects_holder;
     // Create an object with a reference loop.
     CPDF_Dictionary* dict_obj = new CPDF_Dictionary;
     CPDF_Array* arr_obj = new CPDF_Array;
-    m_ObjHolder->AddIndirectObject(dict_obj);
+    objects_holder.AddIndirectObject(dict_obj);
     EXPECT_EQ(1u, dict_obj->GetObjNum());
     dict_obj->SetAt("arr", arr_obj);
-    arr_obj->InsertAt(0, dict_obj, m_ObjHolder.get());
+    arr_obj->InsertAt(0, dict_obj, &objects_holder);
     CPDF_Object* elem0 = arr_obj->GetObjectAt(0);
     ASSERT_TRUE(elem0);
     ASSERT_TRUE(elem0->IsReference());
