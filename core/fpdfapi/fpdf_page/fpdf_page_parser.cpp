@@ -808,7 +808,7 @@ void CPDF_StreamContentParser::Handle_MarkPlace_Dictionary() {}
 void CPDF_StreamContentParser::Handle_EndImage() {}
 
 void CPDF_StreamContentParser::Handle_EndMarkedContent() {
-  if (m_CurContentMark.IsNull())
+  if (!m_CurContentMark)
     return;
 
   int count = m_CurContentMark.GetObject()->CountItems();
@@ -1103,7 +1103,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   pObj->m_Matrix = m_pCurStates->m_CTM;
   pObj->m_Matrix.Concat(m_mtContentToUser);
   CFX_FloatRect bbox =
-      pObj->m_ClipPath.IsNull() ? m_BBox : pObj->m_ClipPath.GetClipBox();
+      pObj->m_ClipPath ? pObj->m_ClipPath.GetClipBox() : m_BBox;
   if (pShading->IsMeshShading())
     bbox.Intersect(GetShadingBBox(pShading, pObj->m_Matrix));
   pObj->m_Left = bbox.left;

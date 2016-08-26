@@ -260,7 +260,7 @@ void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
     return;
   }
   m_pCurObj = pObj;
-  if (m_Options.m_pOCContext && pObj->m_ContentMark.NotNull()) {
+  if (m_Options.m_pOCContext && pObj->m_ContentMark) {
     if (!m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
       return;
     }
@@ -289,7 +289,7 @@ FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
   }
 
   m_pCurObj = pObj;
-  if (m_Options.m_pOCContext && pObj->m_ContentMark.NotNull() &&
+  if (m_Options.m_pOCContext && pObj->m_ContentMark &&
       !m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
     return FALSE;
   }
@@ -574,8 +574,8 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
 }
 void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
                                         const CFX_Matrix* pObj2Device) {
-  if (ClipPath.IsNull()) {
-    if (!m_LastClipPath.IsNull()) {
+  if (!ClipPath) {
+    if (m_LastClipPath) {
       m_pDevice->RestoreState(true);
       m_LastClipPath.SetNull();
     }
@@ -634,9 +634,9 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
 
 void CPDF_RenderStatus::DrawClipPath(CPDF_ClipPath ClipPath,
                                      const CFX_Matrix* pObj2Device) {
-  if (ClipPath.IsNull()) {
+  if (!ClipPath)
     return;
-  }
+
   int fill_mode = 0;
   if (m_Options.m_Flags & RENDER_NOPATHSMOOTH) {
     fill_mode |= FXFILL_NOPATHSMOOTH;
@@ -713,12 +713,10 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
     }
   }
-  FX_BOOL bTextClip = FALSE;
-  if (pPageObj->m_ClipPath.NotNull() && pPageObj->m_ClipPath.GetTextCount() &&
-      m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
-      !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP)) {
-    bTextClip = TRUE;
-  }
+  bool bTextClip =
+      (pPageObj->m_ClipPath && pPageObj->m_ClipPath.GetTextCount() &&
+       m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
+       !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
   if ((m_Options.m_Flags & RENDER_OVERPRINT) && pPageObj->IsImage() &&
       pGeneralState && pGeneralState->m_FillOP && pGeneralState->m_StrokeOP) {
     CPDF_Document* pDocument = nullptr;

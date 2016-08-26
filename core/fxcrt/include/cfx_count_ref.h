@@ -30,9 +30,6 @@ class CFX_CountRef {
   }
 
   void SetNull() { m_pObject.Reset(); }
-  bool IsNull() const { return !m_pObject; }
-  bool NotNull() const { return !IsNull(); }
-
   const ObjClass* GetObject() const { return m_pObject.Get(); }
 
   template <typename... Args>
@@ -48,6 +45,7 @@ class CFX_CountRef {
     return m_pObject == that.m_pObject;
   }
   bool operator!=(const CFX_CountRef& that) const { return !(*this == that); }
+  operator bool() const { return m_pObject; }
 
  protected:
   class CountedObj : public ObjClass {

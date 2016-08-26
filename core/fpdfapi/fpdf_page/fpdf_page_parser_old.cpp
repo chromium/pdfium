@@ -706,7 +706,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
       pParentMatrix, pForm, pResources, &form_bbox, pGraphicStates, level));
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
-  if (ClipPath.NotNull()) {
+  if (ClipPath) {
     m_pParser->GetCurStates()->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING,
                                                      TRUE);
   }
@@ -799,19 +799,15 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
             FXSYS_round(m_pParser->GetType3Data()[5] * 1000);
       }
       for (auto& pObj : *m_pObjectHolder->GetPageObjectList()) {
-        if (pObj->m_ClipPath.IsNull()) {
+        if (!pObj->m_ClipPath)
           continue;
-        }
-        if (pObj->m_ClipPath.GetPathCount() != 1) {
+        if (pObj->m_ClipPath.GetPathCount() != 1)
           continue;
-        }
-        if (pObj->m_ClipPath.GetTextCount()) {
+        if (pObj->m_ClipPath.GetTextCount())
           continue;
-        }
         CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
-        if (!ClipPath.IsRect() || pObj->IsShading()) {
+        if (!ClipPath.IsRect() || pObj->IsShading())
           continue;
-        }
         CFX_FloatRect old_rect(ClipPath.GetPointX(0), ClipPath.GetPointY(0),
                                ClipPath.GetPointX(2), ClipPath.GetPointY(2));
         CFX_FloatRect obj_rect(pObj->m_Left, pObj->m_Bottom, pObj->m_Right,

@@ -43,9 +43,8 @@ const CPDF_PathObject* CPDF_PathObject::AsPath() const {
 }
 
 void CPDF_PathObject::CalcBoundingBox() {
-  if (m_Path.IsNull()) {
+  if (!m_Path)
     return;
-  }
   CFX_FloatRect rect;
   FX_FLOAT width = m_GraphState.GetObject()->m_LineWidth;
   if (m_bStroke && width != 0) {

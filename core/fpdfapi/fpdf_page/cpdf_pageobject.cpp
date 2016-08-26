@@ -79,17 +79,15 @@ void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
 }
 
 void CPDF_PageObject::TransformClipPath(CFX_Matrix& matrix) {
-  if (m_ClipPath.IsNull()) {
+  if (!m_ClipPath)
     return;
-  }
   m_ClipPath.GetModify();
   m_ClipPath.Transform(matrix);
 }
 
 void CPDF_PageObject::TransformGeneralState(CFX_Matrix& matrix) {
-  if (m_GeneralState.IsNull()) {
+  if (!m_GeneralState)
     return;
-  }
   CPDF_GeneralStateData* pGS = m_GeneralState.GetModify();
   pGS->m_Matrix.Concat(matrix);
 }
