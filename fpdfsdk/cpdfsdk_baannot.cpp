@@ -38,12 +38,8 @@ CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
   return m_pAnnot->GetRect();
 }
 
-CFX_ByteString CPDFSDK_BAAnnot::GetType() const {
-  return m_pAnnot->GetSubType();
-}
-
-CFX_ByteString CPDFSDK_BAAnnot::GetSubType() const {
-  return "";
+CFX_ByteString CPDFSDK_BAAnnot::GetAnnotSubtype() const {
+  return m_pAnnot->GetSubtype();
 }
 
 void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,

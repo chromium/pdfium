@@ -23,12 +23,10 @@ bool CBA_AnnotIterator::CompareByTopDescending(const CPDFSDK_Annot* p1,
 }
 
 CBA_AnnotIterator::CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
-                                     const CFX_ByteString& sType,
-                                     const CFX_ByteString& sSubType)
+                                     const CFX_ByteString& sAnnotSubtype)
     : m_eTabOrder(STRUCTURE),
       m_pPageView(pPageView),
-      m_sType(sType),
-      m_sSubType(sSubType) {
+      m_sAnnotSubtype(sAnnotSubtype) {
   CPDF_Page* pPDFPage = m_pPageView->GetPDFPage();
   CFX_ByteString sTabs = pPDFPage->m_pFormDict->GetStringBy("Tabs");
   if (sTabs == "R")
@@ -73,7 +71,8 @@ void CBA_AnnotIterator::GenerateResults() {
     case STRUCTURE: {
       for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
         CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
-        if (pAnnot->GetType() == m_sType && pAnnot->GetSubType() == m_sSubType)
+        if (pAnnot->GetAnnotSubtype() == m_sAnnotSubtype &&
+            !pAnnot->IsSignatureWidget())
           m_Annots.push_back(pAnnot);
       }
       break;
@@ -82,7 +81,8 @@ void CBA_AnnotIterator::GenerateResults() {
       std::vector<CPDFSDK_Annot*> sa;
       for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
         CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
-        if (pAnnot->GetType() == m_sType && pAnnot->GetSubType() == m_sSubType)
+        if (pAnnot->GetAnnotSubtype() == m_sAnnotSubtype &&
+            !pAnnot->IsSignatureWidget())
           sa.push_back(pAnnot);
       }
 
@@ -123,7 +123,8 @@ void CBA_AnnotIterator::GenerateResults() {
       std::vector<CPDFSDK_Annot*> sa;
       for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
         CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
-        if (pAnnot->GetType() == m_sType && pAnnot->GetSubType() == m_sSubType)
+        if (pAnnot->GetAnnotSubtype() == m_sAnnotSubtype &&
+            !pAnnot->IsSignatureWidget())
           sa.push_back(pAnnot);
       }
 

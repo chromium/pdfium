@@ -7,8 +7,6 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_COMMON_H_
 #define FPDFSDK_INCLUDE_FSDK_COMMON_H_
 
-#define BFFT_SIGNATURE "Signature"
-
 // for all fields
 #define FIELDFLAG_READONLY 1
 #define FIELDFLAG_REQUIRED 2

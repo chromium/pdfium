@@ -58,12 +58,12 @@ CPDF_Annot* CPDFSDK_Annot::GetPDFAnnot() const {
   return nullptr;
 }
 
-CFX_ByteString CPDFSDK_Annot::GetType() const {
+CFX_ByteString CPDFSDK_Annot::GetAnnotSubtype() const {
   return "";
 }
 
-CFX_ByteString CPDFSDK_Annot::GetSubType() const {
-  return "";
+bool CPDFSDK_Annot::IsSignatureWidget() const {
+  return false;
 }
 
 void CPDFSDK_Annot::SetRect(const CFX_FloatRect& rect) {}

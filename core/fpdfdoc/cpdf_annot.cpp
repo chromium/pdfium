@@ -51,7 +51,7 @@ void CPDF_Annot::GenerateAPIfNeeded() {
 void CPDF_Annot::ClearCachedAP() {
   m_APMap.clear();
 }
-CFX_ByteString CPDF_Annot::GetSubType() const {
+CFX_ByteString CPDF_Annot::GetSubtype() const {
   return m_sSubtype;
 }
 
@@ -186,9 +186,9 @@ FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
                             const CFX_Matrix* pUser2Device,
                             const CPDF_RenderOptions* pOptions) {
-  if (GetSubType() == "Popup") {
+  if (GetSubtype() == "Popup")
     return;
-  }
+
   uint32_t annot_flags = GetFlags();
   if (annot_flags & ANNOTFLAG_HIDDEN) {
     return;

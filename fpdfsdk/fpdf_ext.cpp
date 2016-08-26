@@ -46,7 +46,7 @@ FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
 }
 
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
-  CFX_ByteString cbSubType = pPDFAnnot->GetSubType();
+  CFX_ByteString cbSubType = pPDFAnnot->GetSubtype();
   if (cbSubType.Compare("3D") == 0) {
     FPDF_UnSupportError(FPDF_UNSP_ANNOT_3DANNOT);
   } else if (cbSubType.Compare("Screen") == 0) {

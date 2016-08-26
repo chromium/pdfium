@@ -35,8 +35,8 @@ class CPDFSDK_Annot {
   virtual FX_FLOAT GetMinHeight() const;
   virtual int GetLayoutOrder() const;
   virtual CPDF_Annot* GetPDFAnnot() const;
-  virtual CFX_ByteString GetType() const;
-  virtual CFX_ByteString GetSubType() const;
+  virtual CFX_ByteString GetAnnotSubtype() const;
+  virtual bool IsSignatureWidget() const;
   virtual CFX_FloatRect GetRect() const;
 
   virtual void SetRect(const CFX_FloatRect& rect);

@@ -20,8 +20,7 @@ class CBA_AnnotIterator {
   enum TabOrder { STRUCTURE = 0, ROW, COLUMN };
 
   CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
-                    const CFX_ByteString& sType,
-                    const CFX_ByteString& sSubType);
+                    const CFX_ByteString& sAnnotSubtype);
   ~CBA_AnnotIterator();
 
   CPDFSDK_Annot* GetFirstAnnot();
@@ -41,8 +40,7 @@ class CBA_AnnotIterator {
 
   TabOrder m_eTabOrder;
   CPDFSDK_PageView* m_pPageView;
-  CFX_ByteString m_sType;
-  CFX_ByteString m_sSubType;
+  CFX_ByteString m_sAnnotSubtype;
   std::vector<CPDFSDK_Annot*> m_Annots;
 };
 

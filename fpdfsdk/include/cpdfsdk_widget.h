@@ -78,7 +78,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void AddObserver(Observer* observer);
   void RemoveObserver(Observer* observer);
 
-  CFX_ByteString GetSubType() const override;
+  bool IsSignatureWidget() const override;
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
   FX_BOOL IsAppearanceValid() override;
 

@@ -42,7 +42,7 @@ class CPDF_Annot {
   CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
 
-  CFX_ByteString GetSubType() const;
+  CFX_ByteString GetSubtype() const;
   uint32_t GetFlags() const;
   CFX_FloatRect GetRect() const;
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }

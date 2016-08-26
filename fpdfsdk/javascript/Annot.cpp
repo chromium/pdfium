@@ -80,7 +80,7 @@ FX_BOOL Annot::type(IJS_Context* cc,
     return FALSE;
   }
 
-  vp << m_BAAnnot->GetType();
+  vp << m_BAAnnot->GetAnnotSubtype();
   return TRUE;
 }
 

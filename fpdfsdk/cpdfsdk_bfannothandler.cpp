@@ -32,8 +32,8 @@ CFX_ByteString CPDFSDK_BFAnnotHandler::GetType() {
 }
 
 FX_BOOL CPDFSDK_BFAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot->GetType() == "Widget");
-  if (pAnnot->GetSubType() == BFFT_SIGNATURE)
+  ASSERT(pAnnot->GetAnnotSubtype() == "Widget");
+  if (pAnnot->IsSignatureWidget())
     return FALSE;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
@@ -98,9 +98,7 @@ void CPDFSDK_BFAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CFX_RenderDevice* pDevice,
                                     CFX_Matrix* pUser2Device,
                                     uint32_t dwFlags) {
-  CFX_ByteString sSubType = pAnnot->GetSubType();
-
-  if (sSubType == BFFT_SIGNATURE) {
+  if (pAnnot->IsSignatureWidget()) {
     static_cast<CPDFSDK_BAAnnot*>(pAnnot)->DrawAppearance(
         pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
   } else {
@@ -123,14 +121,14 @@ void CPDFSDK_BFAnnotHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}
 void CPDFSDK_BFAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                           CPDFSDK_Annot* pAnnot,
                                           uint32_t nFlag) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     m_pFormFiller->OnMouseEnter(pPageView, pAnnot, nFlag);
 }
 
 void CPDFSDK_BFAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
                                          CPDFSDK_Annot* pAnnot,
                                          uint32_t nFlag) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     m_pFormFiller->OnMouseExit(pPageView, pAnnot, nFlag);
 }
 
@@ -138,7 +136,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               uint32_t nFlags,
                                               const CFX_FloatPoint& point) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnLButtonDown(pPageView, pAnnot, nFlags, point);
 
   return FALSE;
@@ -148,7 +146,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             uint32_t nFlags,
                                             const CFX_FloatPoint& point) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnLButtonUp(pPageView, pAnnot, nFlags, point);
 
   return FALSE;
@@ -158,7 +156,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                                 CPDFSDK_Annot* pAnnot,
                                                 uint32_t nFlags,
                                                 const CFX_FloatPoint& point) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnLButtonDblClk(pPageView, pAnnot, nFlags, point);
 
   return FALSE;
@@ -168,7 +166,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             uint32_t nFlags,
                                             const CFX_FloatPoint& point) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnMouseMove(pPageView, pAnnot, nFlags, point);
 
   return FALSE;
@@ -179,7 +177,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                              uint32_t nFlags,
                                              short zDelta,
                                              const CFX_FloatPoint& point) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta,
                                        point);
 
@@ -190,7 +188,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               uint32_t nFlags,
                                               const CFX_FloatPoint& point) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnRButtonDown(pPageView, pAnnot, nFlags, point);
 
   return FALSE;
@@ -200,7 +198,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             uint32_t nFlags,
                                             const CFX_FloatPoint& point) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnRButtonUp(pPageView, pAnnot, nFlags, point);
 
   return FALSE;
@@ -216,7 +214,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
                                        uint32_t nChar,
                                        uint32_t nFlags) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnChar(pAnnot, nChar, nFlags);
 
   return FALSE;
@@ -225,7 +223,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                           int nKeyCode,
                                           int nFlag) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnKeyDown(pAnnot, nKeyCode, nFlag);
 
   return FALSE;
@@ -238,12 +236,12 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
 }
 
 void CPDFSDK_BFAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     m_pFormFiller->OnCreate(pAnnot);
 }
 
 void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
-  if (pAnnot->GetSubType() == BFFT_SIGNATURE)
+  if (pAnnot->IsSignatureWidget())
     return;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
@@ -273,7 +271,7 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
 
 FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot,
                                            uint32_t nFlag) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnSetFocus(pAnnot, nFlag);
 
   return TRUE;
@@ -281,7 +279,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot,
 
 FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot,
                                             uint32_t nFlag) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->OnKillFocus(pAnnot, nFlag);
 
   return TRUE;
@@ -296,7 +294,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
 
 CFX_FloatRect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                   CPDFSDK_Annot* pAnnot) {
-  if (pAnnot->GetSubType() != BFFT_SIGNATURE && m_pFormFiller)
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return CFX_FloatRect(m_pFormFiller->GetViewBBox(pPageView, pAnnot));
 
   return CFX_FloatRect(0, 0, 0, 0);

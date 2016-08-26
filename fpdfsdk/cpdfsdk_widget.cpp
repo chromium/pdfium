@@ -546,12 +546,8 @@ int CPDFSDK_Widget::GetFieldFlags() const {
   return pFormField->GetFieldFlags();
 }
 
-CFX_ByteString CPDFSDK_Widget::GetSubType() const {
-  int nType = GetFieldType();
-
-  if (nType == FIELDTYPE_SIGNATURE)
-    return BFFT_SIGNATURE;
-  return CPDFSDK_Annot::GetSubType();
+bool CPDFSDK_Widget::IsSignatureWidget() const {
+  return GetFieldType() == FIELDTYPE_SIGNATURE;
 }
 
 CPDF_FormField* CPDFSDK_Widget::GetFormField() const {

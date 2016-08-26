@@ -72,7 +72,7 @@ FX_BOOL CPDFSDK_InterForm::HighlightWidgets() {
 CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget,
                                               FX_BOOL bNext) const {
   std::unique_ptr<CBA_AnnotIterator> pIterator(
-      new CBA_AnnotIterator(pWidget->GetPageView(), "Widget", ""));
+      new CBA_AnnotIterator(pWidget->GetPageView(), "Widget"));
 
   if (bNext)
     return static_cast<CPDFSDK_Widget*>(pIterator->GetNextAnnot(pWidget));

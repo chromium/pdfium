@@ -28,8 +28,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   ~CPDFSDK_BAAnnot() override;
 
   // CPDFSDK_Annot
-  CFX_ByteString GetType() const override;
-  CFX_ByteString GetSubType() const override;
+  CFX_ByteString GetAnnotSubtype() const override;
   void SetRect(const CFX_FloatRect& rect) override;
   CFX_FloatRect GetRect() const override;
   CPDF_Annot* GetPDFAnnot() const override;

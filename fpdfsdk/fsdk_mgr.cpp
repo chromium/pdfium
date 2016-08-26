@@ -442,7 +442,7 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(FX_UINT nFlag) {
 #endif  // PDF_ENABLE_XFA
 
     if (pAnnotHandler->Annot_OnKillFocus(pFocusAnnot, nFlag)) {
-      if (pFocusAnnot->GetType() == "Widget") {
+      if (pFocusAnnot->GetAnnotSubtype() == "Widget") {
         CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pFocusAnnot;
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||
@@ -586,7 +586,7 @@ const CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
 const CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
                                                         FX_FLOAT pageY) {
   for (const auto& pAnnot : m_pAnnotList->All()) {
-    if (pAnnot->GetSubType() == "Widget") {
+    if (pAnnot->GetSubtype() == "Widget") {
       CFX_FloatRect annotRect = pAnnot->GetRect();
       if (annotRect.Contains(pageX, pageY))
         return pAnnot.get();
@@ -615,9 +615,10 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotIterator annotIterator(this, false);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
-    bool bHitTest = pSDKAnnot->GetType() == "Widget";
+    bool bHitTest = pSDKAnnot->GetAnnotSubtype() == "Widget";
 #ifdef PDF_ENABLE_XFA
-    bHitTest = bHitTest || pSDKAnnot->GetType() == FSDK_XFAWIDGET_TYPENAME;
+    bHitTest =
+        bHitTest || pSDKAnnot->GetAnnotSubtype() == FSDK_XFAWIDGET_TYPENAME;
 #endif  // PDF_ENABLE_XFA
     if (bHitTest) {
       pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
