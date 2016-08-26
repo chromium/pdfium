@@ -20,6 +20,26 @@ class CPDF_FormObject;
 class CPDF_Page;
 class CPDF_TextObject;
 
+#define FPDFTEXT_MATCHCASE 0x00000001
+#define FPDFTEXT_MATCHWHOLEWORD 0x00000002
+#define FPDFTEXT_CONSECUTIVE 0x00000004
+
+#define FPDFTEXT_CHAR_ERROR -1
+#define FPDFTEXT_CHAR_NORMAL 0
+#define FPDFTEXT_CHAR_GENERATED 1
+#define FPDFTEXT_CHAR_UNUNICODE 2
+#define FPDFTEXT_CHAR_HYPHEN 3
+#define FPDFTEXT_CHAR_PIECE 4
+
+#define TEXT_SPACE_CHAR L' '
+#define TEXT_LINEFEED_CHAR L'\n'
+#define TEXT_RETURN_CHAR L'\r'
+#define TEXT_EMPTY L""
+#define TEXT_SPACE L" "
+#define TEXT_RETURN_LINEFEED L"\r\n"
+#define TEXT_LINEFEED L"\n"
+#define TEXT_CHARRATIO_GAPDELTA 0.070
+
 enum class FPDFText_MarkedContent { Pass = 0, Done, Delay };
 
 enum class FPDFText_Direction { Left = -1, Right = 1 };
