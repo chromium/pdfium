@@ -14,11 +14,13 @@ class CPDF_Font;
 
 class CPDF_TextState : public CFX_CountRef<CPDF_TextStateData> {
  public:
-  CPDF_Font* GetFont() const { return m_pObject->m_pFont; }
+  CPDF_Font* GetFont() const { return GetObject()->m_pFont; }
   void SetFont(CPDF_Font* pFont);
 
-  FX_FLOAT GetFontSize() const { return m_pObject->m_FontSize; }
-  FX_FLOAT* GetMatrix() const { return m_pObject->m_Matrix; }
+  FX_FLOAT GetFontSize() const { return GetObject()->m_FontSize; }
+  FX_FLOAT* GetMatrix() { return GetObject()->m_Matrix; }
+  const FX_FLOAT* GetMatrix() const { return GetObject()->m_Matrix; }
+
   FX_FLOAT GetFontSizeV() const;
   FX_FLOAT GetFontSizeH() const;
   FX_FLOAT GetBaselineAngle() const;

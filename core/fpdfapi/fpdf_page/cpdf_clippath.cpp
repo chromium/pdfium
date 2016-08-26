@@ -14,23 +14,23 @@
 #define FPDF_CLIPPATH_MAX_TEXTS 1024
 
 uint32_t CPDF_ClipPath::GetPathCount() const {
-  return pdfium::CollectionSize<uint32_t>(m_pObject->m_PathAndTypeList);
+  return pdfium::CollectionSize<uint32_t>(GetObject()->m_PathAndTypeList);
 }
 
 CPDF_Path CPDF_ClipPath::GetPath(size_t i) const {
-  return m_pObject->m_PathAndTypeList[i].first;
+  return GetObject()->m_PathAndTypeList[i].first;
 }
 
 uint8_t CPDF_ClipPath::GetClipType(size_t i) const {
-  return m_pObject->m_PathAndTypeList[i].second;
+  return GetObject()->m_PathAndTypeList[i].second;
 }
 
 uint32_t CPDF_ClipPath::GetTextCount() const {
-  return pdfium::CollectionSize<uint32_t>(m_pObject->m_TextList);
+  return pdfium::CollectionSize<uint32_t>(GetObject()->m_TextList);
 }
 
 CPDF_TextObject* CPDF_ClipPath::GetText(size_t i) const {
-  return m_pObject->m_TextList[i].get();
+  return GetObject()->m_TextList[i].get();
 }
 
 CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
@@ -73,7 +73,7 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
 }
 
 void CPDF_ClipPath::AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge) {
-  CPDF_ClipPathData* pData = GetModify();
+  CPDF_ClipPathData* pData = GetPrivateCopy();
   if (!pData->m_PathAndTypeList.empty() && bAutoMerge) {
     const CPDF_Path& old_path = pData->m_PathAndTypeList.back().first;
     if (old_path.IsRect()) {
@@ -89,7 +89,7 @@ void CPDF_ClipPath::AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge) {
 
 void CPDF_ClipPath::AppendTexts(
     std::vector<std::unique_ptr<CPDF_TextObject>>* pTexts) {
-  CPDF_ClipPathData* pData = GetModify();
+  CPDF_ClipPathData* pData = GetPrivateCopy();
   if (pData->m_TextList.size() + pTexts->size() <= FPDF_CLIPPATH_MAX_TEXTS) {
     for (size_t i = 0; i < pTexts->size(); i++)
       pData->m_TextList.push_back(std::move((*pTexts)[i]));
@@ -99,7 +99,7 @@ void CPDF_ClipPath::AppendTexts(
 }
 
 void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
-  CPDF_ClipPathData* pData = GetModify();
+  CPDF_ClipPathData* pData = GetPrivateCopy();
   for (auto& obj : pData->m_PathAndTypeList)
     obj.first.Transform(&matrix);
   for (auto& text : pData->m_TextList) {

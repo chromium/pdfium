@@ -133,7 +133,7 @@ CPDF_PageObject::Type CPDF_TextObject::GetType() const {
 }
 
 void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
-  m_TextState.GetModify();
+  m_TextState.GetPrivateCopy();
   CFX_Matrix text_matrix;
   GetTextMatrix(&text_matrix);
   text_matrix.Concat(matrix);
@@ -160,7 +160,7 @@ const CPDF_TextObject* CPDF_TextObject::AsText() const {
 }
 
 void CPDF_TextObject::GetTextMatrix(CFX_Matrix* pMatrix) const {
-  FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
+  const FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
   pMatrix->Set(pTextMatrix[0], pTextMatrix[2], pTextMatrix[1], pTextMatrix[3],
                m_PosX, m_PosY);
 }

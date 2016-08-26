@@ -137,7 +137,7 @@ void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                           FX_COLORREF crFill,
                           const CFX_FloatRect& rcFill) {
   std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
-  CFX_PathData* pPathData = pPathObj->m_Path.GetModify();
+  CFX_PathData* pPathData = pPathObj->m_Path.GetPrivateCopy();
   pPathData->AppendRect(rcFill.left, rcFill.bottom, rcFill.right, rcFill.top);
 
   FX_FLOAT rgb[3];
@@ -161,7 +161,7 @@ CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                          const CFX_FloatPoint& point,
                                          const CFX_ByteString& text) {
   std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
-  CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetModify();
+  CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetPrivateCopy();
   pTextStateData->m_pFont = pFont;
   pTextStateData->m_FontSize = fFontSize;
   pTextStateData->m_CharSpace = fCharSpace;

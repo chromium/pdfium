@@ -45,7 +45,7 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
 void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
                                  FX_FLOAT phase,
                                  FX_FLOAT scale) {
-  CFX_GraphStateData* pData = m_GraphState.GetModify();
+  CFX_GraphStateData* pData = m_GraphState.GetPrivateCopy();
   pData->m_DashPhase = phase * scale;
   pData->SetDashCount(static_cast<int>(pArray->GetCount()));
   for (size_t i = 0; i < pArray->GetCount(); i++)
@@ -54,7 +54,7 @@ void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
 
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
                                   CPDF_StreamContentParser* pParser) {
-  CPDF_GeneralStateData* pGeneralState = m_GeneralState.GetModify();
+  CPDF_GeneralStateData* pGeneralState = m_GeneralState.GetPrivateCopy();
   for (const auto& it : *pGS) {
     const CFX_ByteString& key_str = it.first;
     CPDF_Object* pElement = it.second;
@@ -65,18 +65,18 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
     uint32_t key = key_str.GetID();
     switch (key) {
       case FXBSTR_ID('L', 'W', 0, 0):
-        m_GraphState.GetModify()->m_LineWidth = pObject->GetNumber();
+        m_GraphState.GetPrivateCopy()->m_LineWidth = pObject->GetNumber();
         break;
       case FXBSTR_ID('L', 'C', 0, 0):
-        m_GraphState.GetModify()->m_LineCap =
+        m_GraphState.GetPrivateCopy()->m_LineCap =
             (CFX_GraphStateData::LineCap)pObject->GetInteger();
         break;
       case FXBSTR_ID('L', 'J', 0, 0):
-        m_GraphState.GetModify()->m_LineJoin =
+        m_GraphState.GetPrivateCopy()->m_LineJoin =
             (CFX_GraphStateData::LineJoin)pObject->GetInteger();
         break;
       case FXBSTR_ID('M', 'L', 0, 0):
-        m_GraphState.GetModify()->m_MiterLimit = pObject->GetNumber();
+        m_GraphState.GetPrivateCopy()->m_MiterLimit = pObject->GetNumber();
         break;
       case FXBSTR_ID('D', 0, 0, 0): {
         CPDF_Array* pDash = pObject->AsArray();
@@ -98,7 +98,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (!pFont)
           break;
 
-        m_TextState.GetModify()->m_FontSize = pFont->GetNumberAt(1);
+        m_TextState.GetPrivateCopy()->m_FontSize = pFont->GetNumberAt(1);
         m_TextState.SetFont(pParser->FindFont(pFont->GetStringAt(0)));
         break;
       }

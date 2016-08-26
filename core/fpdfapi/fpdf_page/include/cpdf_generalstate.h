@@ -15,14 +15,16 @@ class CPDF_GeneralState : public CFX_CountRef<CPDF_GeneralStateData> {
   void SetRenderIntent(const CFX_ByteString& ri);
 
   int GetBlendType() const {
-    return m_pObject ? m_pObject->m_BlendType : FXDIB_BLEND_NORMAL;
+    const CPDF_GeneralStateData* pData = GetObject();
+    return pData ? pData->m_BlendType : FXDIB_BLEND_NORMAL;
   }
 
   int GetAlpha(FX_BOOL bStroke) const {
-    if (!m_pObject)
+    const CPDF_GeneralStateData* pData = GetObject();
+    if (!pData)
       return 255;
-    return FXSYS_round(
-        (bStroke ? m_pObject->m_StrokeAlpha : m_pObject->m_FillAlpha) * 255);
+    return FXSYS_round((bStroke ? pData->m_StrokeAlpha : pData->m_FillAlpha) *
+                       255);
   }
 };
 

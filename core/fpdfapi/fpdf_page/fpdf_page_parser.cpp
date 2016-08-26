@@ -583,7 +583,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     bDirect = FALSE;
   }
   if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    m_CurContentMark.GetModify()->AddMark(tag, pDict, bDirect);
+    m_CurContentMark.GetPrivateCopy()->AddMark(tag, pDict, bDirect);
   }
 }
 
@@ -659,7 +659,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
   CFX_ByteString tag = GetString(0);
-  m_CurContentMark.GetModify()->AddMark(tag, nullptr, FALSE);
+  m_CurContentMark.GetPrivateCopy()->AddMark(tag, nullptr, FALSE);
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
@@ -691,7 +691,7 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Fill() {
   if (!pCS) {
     return;
   }
-  m_pCurStates->m_ColorState.GetModify()->m_FillColor.SetColorSpace(pCS);
+  m_pCurStates->m_ColorState.GetPrivateCopy()->m_FillColor.SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
@@ -700,7 +700,7 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
   if (!pCS) {
     return;
   }
-  m_pCurStates->m_ColorState.GetModify()->m_StrokeColor.SetColorSpace(pCS);
+  m_pCurStates->m_ColorState.GetPrivateCopy()->m_StrokeColor.SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetDash() {
@@ -816,7 +816,7 @@ void CPDF_StreamContentParser::Handle_EndMarkedContent() {
     m_CurContentMark.SetNull();
     return;
   }
-  m_CurContentMark.GetModify()->DeleteLastMark();
+  m_CurContentMark.GetPrivateCopy()->DeleteLastMark();
 }
 
 void CPDF_StreamContentParser::Handle_EndText() {
@@ -876,18 +876,18 @@ void CPDF_StreamContentParser::Handle_ClosePath() {
 }
 
 void CPDF_StreamContentParser::Handle_SetFlat() {
-  m_pCurStates->m_GeneralState.GetModify()->m_Flatness = GetNumber(0);
+  m_pCurStates->m_GeneralState.GetPrivateCopy()->m_Flatness = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_BeginImageData() {}
 
 void CPDF_StreamContentParser::Handle_SetLineJoin() {
-  m_pCurStates->m_GraphState.GetModify()->m_LineJoin =
+  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineJoin =
       (CFX_GraphStateData::LineJoin)GetInteger(0);
 }
 
 void CPDF_StreamContentParser::Handle_SetLineCap() {
-  m_pCurStates->m_GraphState.GetModify()->m_LineCap =
+  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineCap =
       (CFX_GraphStateData::LineCap)GetInteger(0);
 }
 
@@ -931,7 +931,7 @@ void CPDF_StreamContentParser::Handle_MoveTo() {
 }
 
 void CPDF_StreamContentParser::Handle_SetMiterLimit() {
-  m_pCurStates->m_GraphState.GetModify()->m_MiterLimit = GetNumber(0);
+  m_pCurStates->m_GraphState.GetPrivateCopy()->m_MiterLimit = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_MarkPlace() {}
@@ -1114,7 +1114,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
 }
 
 void CPDF_StreamContentParser::Handle_SetCharSpace() {
-  m_pCurStates->m_TextState.GetModify()->m_CharSpace = GetNumber(0);
+  m_pCurStates->m_TextState.GetPrivateCopy()->m_CharSpace = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_MoveTextPoint() {
@@ -1134,7 +1134,7 @@ void CPDF_StreamContentParser::Handle_SetFont() {
   if (fs == 0) {
     fs = m_DefFontSize;
   }
-  m_pCurStates->m_TextState.GetModify()->m_FontSize = fs;
+  m_pCurStates->m_TextState.GetPrivateCopy()->m_FontSize = fs;
   CPDF_Font* pFont = FindFont(GetString(1));
   if (pFont) {
     m_pCurStates->m_TextState.SetFont(pFont);
@@ -1249,7 +1249,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
     m_pLastTextObject = pText.get();
     SetGraphicStates(m_pLastTextObject, TRUE, TRUE, TRUE);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
-      FX_FLOAT* pCTM = pText->m_TextState.GetModify()->m_CTM;
+      FX_FLOAT* pCTM = pText->m_TextState.GetPrivateCopy()->m_CTM;
       pCTM[0] = m_pCurStates->m_CTM.a;
       pCTM[1] = m_pCurStates->m_CTM.c;
       pCTM[2] = m_pCurStates->m_CTM.b;
@@ -1358,7 +1358,7 @@ void CPDF_StreamContentParser::OnChangeTextMatrix() {
   text_matrix.Concat(m_pCurStates->m_TextMatrix);
   text_matrix.Concat(m_pCurStates->m_CTM);
   text_matrix.Concat(m_mtContentToUser);
-  FX_FLOAT* pTextMatrix = m_pCurStates->m_TextState.GetModify()->m_Matrix;
+  FX_FLOAT* pTextMatrix = m_pCurStates->m_TextState.GetPrivateCopy()->m_Matrix;
   pTextMatrix[0] = text_matrix.a;
   pTextMatrix[1] = text_matrix.c;
   pTextMatrix[2] = text_matrix.b;
@@ -1368,7 +1368,7 @@ void CPDF_StreamContentParser::OnChangeTextMatrix() {
 void CPDF_StreamContentParser::Handle_SetTextRenderMode() {
   int mode = GetInteger(0);
   SetTextRenderingModeFromInt(
-      mode, &m_pCurStates->m_TextState.GetModify()->m_TextMode);
+      mode, &m_pCurStates->m_TextState.GetPrivateCopy()->m_TextMode);
 }
 
 void CPDF_StreamContentParser::Handle_SetTextRise() {
@@ -1376,7 +1376,7 @@ void CPDF_StreamContentParser::Handle_SetTextRise() {
 }
 
 void CPDF_StreamContentParser::Handle_SetWordSpace() {
-  m_pCurStates->m_TextState.GetModify()->m_WordSpace = GetNumber(0);
+  m_pCurStates->m_TextState.GetPrivateCopy()->m_WordSpace = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_SetHorzScale() {
@@ -1401,7 +1401,7 @@ void CPDF_StreamContentParser::Handle_CurveTo_23() {
 
 void CPDF_StreamContentParser::Handle_SetLineWidth() {
   FX_FLOAT width = GetNumber(0);
-  m_pCurStates->m_GraphState.GetModify()->m_LineWidth = width;
+  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineWidth = width;
 }
 
 void CPDF_StreamContentParser::Handle_Clip() {
@@ -1424,8 +1424,8 @@ void CPDF_StreamContentParser::Handle_NextLineShowText() {
 }
 
 void CPDF_StreamContentParser::Handle_NextLineShowText_Space() {
-  m_pCurStates->m_TextState.GetModify()->m_WordSpace = GetNumber(2);
-  m_pCurStates->m_TextState.GetModify()->m_CharSpace = GetNumber(1);
+  m_pCurStates->m_TextState.GetPrivateCopy()->m_WordSpace = GetNumber(2);
+  m_pCurStates->m_TextState.GetPrivateCopy()->m_CharSpace = GetNumber(1);
   Handle_NextLineShowText();
 }
 

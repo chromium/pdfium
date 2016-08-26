@@ -13,12 +13,13 @@
 
 class CPDF_ContentMark : public CFX_CountRef<CPDF_ContentMarkData> {
  public:
-  int GetMCID() const { return m_pObject ? m_pObject->GetMCID() : -1; }
+  int GetMCID() const {
+    const CPDF_ContentMarkData* pData = GetObject();
+    return pData ? pData->GetMCID() : -1;
+  }
 
-  FX_BOOL HasMark(const CFX_ByteStringC& mark) const;
-
-  FX_BOOL LookupMark(const CFX_ByteStringC& mark,
-                     CPDF_Dictionary*& pDict) const;
+  bool HasMark(const CFX_ByteStringC& mark) const;
+  bool LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARK_H_

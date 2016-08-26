@@ -199,12 +199,14 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
       const CPDF_ColorStateData* pParentData =
           pParentState->m_InitialStates.m_ColorState.GetObject();
       if (!pColorData || pColorData->m_FillColor.IsNull()) {
-        CPDF_ColorStateData* pData = m_InitialStates.m_ColorState.GetModify();
+        CPDF_ColorStateData* pData =
+            m_InitialStates.m_ColorState.GetPrivateCopy();
         pData->m_FillRGB = pParentData->m_FillRGB;
         pData->m_FillColor.Copy(&pParentData->m_FillColor);
       }
       if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
-        CPDF_ColorStateData* pData = m_InitialStates.m_ColorState.GetModify();
+        CPDF_ColorStateData* pData =
+            m_InitialStates.m_ColorState.GetPrivateCopy();
         pData->m_StrokeRGB = pParentData->m_FillRGB;
         pData->m_StrokeColor.Copy(&pParentData->m_StrokeColor);
       }
@@ -915,10 +917,11 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
   }
   CPDF_GraphicStates* pStates = new CPDF_GraphicStates;
   pStates->CopyStates(*pSrcStates);
-  CPDF_Color* pObjColor = bStroke ? pSrcStates->m_ColorState.GetStrokeColor()
-                                  : pSrcStates->m_ColorState.GetFillColor();
+  const CPDF_Color* pObjColor = bStroke
+                                    ? pSrcStates->m_ColorState.GetStrokeColor()
+                                    : pSrcStates->m_ColorState.GetFillColor();
   if (!pObjColor->IsNull()) {
-    CPDF_ColorStateData* pColorData = pStates->m_ColorState.GetModify();
+    CPDF_ColorStateData* pColorData = pStates->m_ColorState.GetPrivateCopy();
     pColorData->m_FillRGB =
         bStroke ? pSrcStates->m_ColorState.GetObject()->m_StrokeRGB
                 : pSrcStates->m_ColorState.GetObject()->m_FillRGB;

@@ -1169,7 +1169,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
 
 void CPDF_RenderStatus::DrawPathWithPattern(const CPDF_PathObject* pPathObj,
                                             const CFX_Matrix* pObj2Device,
-                                            CPDF_Color* pColor,
+                                            const CPDF_Color* pColor,
                                             FX_BOOL bStroke) {
   CPDF_Pattern* pattern = pColor->GetPattern();
   if (!pattern)
@@ -1186,14 +1186,14 @@ void CPDF_RenderStatus::ProcessPathPattern(const CPDF_PathObject* pPathObj,
                                            int& filltype,
                                            FX_BOOL& bStroke) {
   if (filltype) {
-    CPDF_Color& FillColor = *pPathObj->m_ColorState.GetFillColor();
+    const CPDF_Color& FillColor = *pPathObj->m_ColorState.GetFillColor();
     if (FillColor.IsPattern()) {
       DrawPathWithPattern(pPathObj, pObj2Device, &FillColor, FALSE);
       filltype = 0;
     }
   }
   if (bStroke) {
-    CPDF_Color& StrokeColor = *pPathObj->m_ColorState.GetStrokeColor();
+    const CPDF_Color& StrokeColor = *pPathObj->m_ColorState.GetStrokeColor();
     if (StrokeColor.IsPattern()) {
       DrawPathWithPattern(pPathObj, pObj2Device, &StrokeColor, TRUE);
       bStroke = FALSE;

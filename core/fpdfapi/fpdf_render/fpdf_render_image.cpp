@@ -422,7 +422,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   m_bPatternColor = FALSE;
   m_pPattern = nullptr;
   if (m_pDIBSource->IsAlphaMask()) {
-    CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
+    const CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
     if (pColor && pColor->IsPattern()) {
       m_pPattern = pColor->GetPattern();
       if (m_pPattern) {

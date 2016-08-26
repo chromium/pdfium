@@ -186,7 +186,7 @@ class CPDF_RenderStatus {
                           FX_BOOL& bStroke);
   void DrawPathWithPattern(const CPDF_PathObject* pPathObj,
                            const CFX_Matrix* pObj2Device,
-                           CPDF_Color* pColor,
+                           const CPDF_Color* pColor,
                            FX_BOOL bStroke);
   void DrawTilingPattern(CPDF_TilingPattern* pPattern,
                          const CPDF_PageObject* pPageObj,

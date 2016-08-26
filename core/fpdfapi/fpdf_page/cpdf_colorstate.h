@@ -18,12 +18,14 @@ class CPDF_Pattern;
 
 class CPDF_ColorState : public CFX_CountRef<CPDF_ColorStateData> {
  public:
-  CPDF_Color* GetFillColor() const {
-    return m_pObject ? &m_pObject->m_FillColor : nullptr;
+  const CPDF_Color* GetFillColor() const {
+    const CPDF_ColorStateData* pData = GetObject();
+    return pData ? &pData->m_FillColor : nullptr;
   }
 
-  CPDF_Color* GetStrokeColor() const {
-    return m_pObject ? &m_pObject->m_StrokeColor : nullptr;
+  const CPDF_Color* GetStrokeColor() const {
+    const CPDF_ColorStateData* pData = GetObject();
+    return pData ? &pData->m_StrokeColor : nullptr;
   }
 
   void SetFillColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, uint32_t nValues);

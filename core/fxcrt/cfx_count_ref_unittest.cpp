@@ -109,16 +109,16 @@ TEST(fxcrt, CountRefGetModify) {
   Observer observer;
   {
     CFX_CountRef<Object> ptr;
-    EXPECT_NE(nullptr, ptr.GetModify(&observer, std::string("one")));
+    EXPECT_NE(nullptr, ptr.GetPrivateCopy(&observer, std::string("one")));
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
     EXPECT_EQ(0, observer.GetDestructionCount("one"));
 
-    EXPECT_NE(nullptr, ptr.GetModify(&observer, std::string("one")));
+    EXPECT_NE(nullptr, ptr.GetPrivateCopy(&observer, std::string("one")));
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
     EXPECT_EQ(0, observer.GetDestructionCount("one"));
     {
       CFX_CountRef<Object> other(ptr);
-      EXPECT_NE(nullptr, ptr.GetModify(&observer, std::string("one")));
+      EXPECT_NE(nullptr, ptr.GetPrivateCopy(&observer, std::string("one")));
       EXPECT_EQ(2, observer.GetConstructionCount("one"));
       EXPECT_EQ(0, observer.GetDestructionCount("one"));
     }

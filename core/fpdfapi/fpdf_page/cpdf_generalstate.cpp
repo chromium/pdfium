@@ -25,5 +25,5 @@ int RI_StringToId(const CFX_ByteString& ri) {
 }  // namespace
 
 void CPDF_GeneralState::SetRenderIntent(const CFX_ByteString& ri) {
-  GetModify()->m_RenderIntent = RI_StringToId(ri);
+  GetPrivateCopy()->m_RenderIntent = RI_StringToId(ri);
 }
