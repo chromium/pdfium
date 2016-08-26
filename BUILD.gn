@@ -272,6 +272,7 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/csection.h",
     "core/fpdfdoc/ctypeset.cpp",
     "core/fpdfdoc/ctypeset.h",
+    "core/fpdfdoc/doc_tagged.cpp",
     "core/fpdfdoc/include/cpdf_aaction.h",
     "core/fpdfdoc/include/cpdf_action.h",
     "core/fpdfdoc/include/cpdf_actionfields.h",
@@ -301,9 +302,11 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/include/cpvt_wordplace.h",
     "core/fpdfdoc/include/cpvt_wordprops.h",
     "core/fpdfdoc/include/cpvt_wordrange.h",
+    "core/fpdfdoc/include/fpdf_tagged.h",
     "core/fpdfdoc/include/ipdf_formnotify.h",
     "core/fpdfdoc/ipdf_formnotify.cpp",
     "core/fpdfdoc/ipvt_fontmap.h",
+    "core/fpdfdoc/tagged_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
 }
