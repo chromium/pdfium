@@ -27,8 +27,8 @@ class CPDF_Path : public CFX_CountRef<CFX_PathData> {
 
   FX_BOOL IsRect() const { return m_pObject->IsRect(); }
   void Transform(const CFX_Matrix* pMatrix) { GetModify()->Transform(pMatrix); }
-  void Append(CPDF_Path src, const CFX_Matrix* pMatrix) {
-    m_pObject->Append(src.m_pObject, pMatrix);
+  void Append(const CPDF_Path& other, const CFX_Matrix* pMatrix) {
+    m_pObject->Append(other.GetObject(), pMatrix);
   }
 
   void AppendRect(FX_FLOAT left,

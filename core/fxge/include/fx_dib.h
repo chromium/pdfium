@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
@@ -389,6 +390,7 @@ class CFX_DIBExtractor {
 };
 
 typedef CFX_CountRef<CFX_DIBitmap> CFX_DIBitmapRef;
+
 class CFX_FilteredDIB : public CFX_DIBSource {
  public:
   CFX_FilteredDIB();

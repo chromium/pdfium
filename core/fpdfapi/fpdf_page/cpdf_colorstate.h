@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATE_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_colorstatedata.h"
+#include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_system.h"
 
