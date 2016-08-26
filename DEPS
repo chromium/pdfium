@@ -50,6 +50,7 @@ deps = {
     Var('chromium_git') + "/chromium/src/tools/generate_library_loader@" +
         Var('gen_library_loader_revision'),
 
+  # TODO(GYP): Remove this when no tools rely on GYP anymore.
   "tools/gyp":
     Var('chromium_git') + '/external/gyp.git' + '@' + 'c61b0b35c8396bfd59efc6cfc11401d912b0f510',
 
@@ -137,12 +138,6 @@ hooks = [
                'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
                '--running-as-hook'
     ],
-  },
-  {
-    # A change to a .gyp, .gypi, or to GYP itself should run the generator.
-    'name': 'gyp',
-    'pattern': '.',
-    'action': ['python', 'pdfium/build_gyp/gyp_pdfium'],
   },
   # Pull clang-format binaries using checked-in hashes.
   {
