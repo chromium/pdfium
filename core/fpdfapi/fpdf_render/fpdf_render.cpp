@@ -199,16 +199,16 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
       const CPDF_ColorStateData* pParentData =
           pParentState->m_InitialStates.m_ColorState.GetObject();
       if (!pColorData || pColorData->m_FillColor.IsNull()) {
-        CPDF_ColorStateData* pData =
-            m_InitialStates.m_ColorState.GetPrivateCopy();
-        pData->m_FillRGB = pParentData->m_FillRGB;
-        pData->m_FillColor.Copy(&pParentData->m_FillColor);
+        m_InitialStates.m_ColorState.MakePrivateCopy();
+        m_InitialStates.m_ColorState->m_FillRGB = pParentData->m_FillRGB;
+        m_InitialStates.m_ColorState->m_FillColor.Copy(
+            &pParentData->m_FillColor);
       }
       if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
-        CPDF_ColorStateData* pData =
-            m_InitialStates.m_ColorState.GetPrivateCopy();
-        pData->m_StrokeRGB = pParentData->m_FillRGB;
-        pData->m_StrokeColor.Copy(&pParentData->m_StrokeColor);
+        m_InitialStates.m_ColorState.MakePrivateCopy();
+        m_InitialStates.m_ColorState->m_StrokeRGB = pParentData->m_FillRGB;
+        m_InitialStates.m_ColorState->m_StrokeColor.Copy(
+            &pParentData->m_StrokeColor);
       }
     }
   } else {
@@ -579,7 +579,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
   if (!ClipPath) {
     if (m_LastClipPath) {
       m_pDevice->RestoreState(true);
-      m_LastClipPath.SetNull();
+      m_LastClipPath.Clear();
     }
     return;
   }
@@ -921,11 +921,11 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
                                     ? pSrcStates->m_ColorState.GetStrokeColor()
                                     : pSrcStates->m_ColorState.GetFillColor();
   if (!pObjColor->IsNull()) {
-    CPDF_ColorStateData* pColorData = pStates->m_ColorState.GetPrivateCopy();
-    pColorData->m_FillRGB =
-        bStroke ? pSrcStates->m_ColorState.GetObject()->m_StrokeRGB
-                : pSrcStates->m_ColorState.GetObject()->m_FillRGB;
-    pColorData->m_StrokeRGB = pColorData->m_FillRGB;
+    pStates->m_ColorState.MakePrivateCopy();
+    pStates->m_ColorState->m_FillRGB =
+        bStroke ? pSrcStates->m_ColorState->m_StrokeRGB
+                : pSrcStates->m_ColorState->m_FillRGB;
+    pStates->m_ColorState->m_StrokeRGB = pStates->m_ColorState->m_FillRGB;
   }
   return pStates;
 }

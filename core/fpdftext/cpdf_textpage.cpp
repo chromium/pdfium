@@ -45,10 +45,10 @@ FX_FLOAT CalculateBaseSpace(const CPDF_TextObject* pTextObj,
                             const CFX_Matrix& matrix) {
   FX_FLOAT baseSpace = 0.0;
   const int nItems = pTextObj->CountItems();
-  if (pTextObj->m_TextState.GetObject()->m_CharSpace && nItems >= 3) {
+  if (pTextObj->m_TextState->m_CharSpace && nItems >= 3) {
     bool bAllChar = true;
-    FX_FLOAT spacing = matrix.TransformDistance(
-        pTextObj->m_TextState.GetObject()->m_CharSpace);
+    FX_FLOAT spacing =
+        matrix.TransformDistance(pTextObj->m_TextState->m_CharSpace);
     baseSpace = spacing;
     for (int i = 0; i < nItems; i++) {
       CPDF_TextObjectItem item;
@@ -1088,7 +1088,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       spacing = -fontsize_h * item.m_OriginX / 1000;
       continue;
     }
-    FX_FLOAT charSpace = pTextObj->m_TextState.GetObject()->m_CharSpace;
+    FX_FLOAT charSpace = pTextObj->m_TextState->m_CharSpace;
     if (charSpace > 0.001)
       spacing += matrix.TransformDistance(charSpace);
     else if (charSpace < -0.001)

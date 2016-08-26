@@ -583,7 +583,8 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     bDirect = FALSE;
   }
   if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    m_CurContentMark.GetPrivateCopy()->AddMark(tag, pDict, bDirect);
+    m_CurContentMark.MakePrivateCopy();
+    m_CurContentMark->AddMark(tag, pDict, bDirect);
   }
 }
 
@@ -658,8 +659,8 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
-  CFX_ByteString tag = GetString(0);
-  m_CurContentMark.GetPrivateCopy()->AddMark(tag, nullptr, FALSE);
+  m_CurContentMark.MakePrivateCopy();
+  m_CurContentMark->AddMark(GetString(0), nullptr, FALSE);
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
@@ -686,21 +687,21 @@ void CPDF_StreamContentParser::Handle_ConcatMatrix() {
 }
 
 void CPDF_StreamContentParser::Handle_SetColorSpace_Fill() {
-  CFX_ByteString csname = GetString(0);
-  CPDF_ColorSpace* pCS = FindColorSpace(csname);
-  if (!pCS) {
+  CPDF_ColorSpace* pCS = FindColorSpace(GetString(0));
+  if (!pCS)
     return;
-  }
-  m_pCurStates->m_ColorState.GetPrivateCopy()->m_FillColor.SetColorSpace(pCS);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->m_FillColor.SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
-  CFX_ByteString csname = GetString(0);
-  CPDF_ColorSpace* pCS = FindColorSpace(csname);
-  if (!pCS) {
+  CPDF_ColorSpace* pCS = FindColorSpace(GetString(0));
+  if (!pCS)
     return;
-  }
-  m_pCurStates->m_ColorState.GetPrivateCopy()->m_StrokeColor.SetColorSpace(pCS);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->m_StrokeColor.SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetDash() {
@@ -811,22 +812,22 @@ void CPDF_StreamContentParser::Handle_EndMarkedContent() {
   if (!m_CurContentMark)
     return;
 
-  int count = m_CurContentMark.GetObject()->CountItems();
-  if (count == 1) {
-    m_CurContentMark.SetNull();
+  if (m_CurContentMark->CountItems() == 1) {
+    m_CurContentMark.Clear();
     return;
   }
-  m_CurContentMark.GetPrivateCopy()->DeleteLastMark();
+
+  m_CurContentMark.MakePrivateCopy();
+  m_CurContentMark->DeleteLastMark();
 }
 
 void CPDF_StreamContentParser::Handle_EndText() {
   if (m_ClipTextList.empty())
     return;
 
-  if (TextRenderingModeIsClipMode(
-          m_pCurStates->m_TextState.GetObject()->m_TextMode)) {
+  if (TextRenderingModeIsClipMode(m_pCurStates->m_TextState->m_TextMode))
     m_pCurStates->m_ClipPath.AppendTexts(&m_ClipTextList);
-  }
+
   m_ClipTextList.clear();
 }
 
@@ -876,19 +877,22 @@ void CPDF_StreamContentParser::Handle_ClosePath() {
 }
 
 void CPDF_StreamContentParser::Handle_SetFlat() {
-  m_pCurStates->m_GeneralState.GetPrivateCopy()->m_Flatness = GetNumber(0);
+  m_pCurStates->m_GeneralState.MakePrivateCopy();
+  m_pCurStates->m_GeneralState->m_Flatness = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_BeginImageData() {}
 
 void CPDF_StreamContentParser::Handle_SetLineJoin() {
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineJoin =
-      (CFX_GraphStateData::LineJoin)GetInteger(0);
+  m_pCurStates->m_GraphState.MakePrivateCopy();
+  m_pCurStates->m_GraphState->m_LineJoin =
+      static_cast<CFX_GraphStateData::LineJoin>(GetInteger(0));
 }
 
 void CPDF_StreamContentParser::Handle_SetLineCap() {
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineCap =
-      (CFX_GraphStateData::LineCap)GetInteger(0);
+  m_pCurStates->m_GraphState.MakePrivateCopy();
+  m_pCurStates->m_GraphState->m_LineCap =
+      static_cast<CFX_GraphStateData::LineCap>(GetInteger(0));
 }
 
 void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
@@ -931,7 +935,8 @@ void CPDF_StreamContentParser::Handle_MoveTo() {
 }
 
 void CPDF_StreamContentParser::Handle_SetMiterLimit() {
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_MiterLimit = GetNumber(0);
+  m_pCurStates->m_GraphState.MakePrivateCopy();
+  m_pCurStates->m_GraphState->m_MiterLimit = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_MarkPlace() {}
@@ -1114,7 +1119,8 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
 }
 
 void CPDF_StreamContentParser::Handle_SetCharSpace() {
-  m_pCurStates->m_TextState.GetPrivateCopy()->m_CharSpace = GetNumber(0);
+  m_pCurStates->m_TextState.MakePrivateCopy();
+  m_pCurStates->m_TextState->m_CharSpace = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_MoveTextPoint() {
@@ -1131,14 +1137,14 @@ void CPDF_StreamContentParser::Handle_MoveTextPoint_SetLeading() {
 
 void CPDF_StreamContentParser::Handle_SetFont() {
   FX_FLOAT fs = GetNumber(0);
-  if (fs == 0) {
+  if (fs == 0)
     fs = m_DefFontSize;
-  }
-  m_pCurStates->m_TextState.GetPrivateCopy()->m_FontSize = fs;
+
+  m_pCurStates->m_TextState.MakePrivateCopy();
+  m_pCurStates->m_TextState->m_FontSize = fs;
   CPDF_Font* pFont = FindFont(GetString(1));
-  if (pFont) {
+  if (pFont)
     m_pCurStates->m_TextState.SetFont(pFont);
-  }
 }
 
 CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
@@ -1243,13 +1249,14 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   }
   const TextRenderingMode text_mode =
       pFont->IsType3Font() ? TextRenderingMode::MODE_FILL
-                           : m_pCurStates->m_TextState.GetObject()->m_TextMode;
+                           : m_pCurStates->m_TextState->m_TextMode;
   {
     std::unique_ptr<CPDF_TextObject> pText(new CPDF_TextObject);
     m_pLastTextObject = pText.get();
     SetGraphicStates(m_pLastTextObject, TRUE, TRUE, TRUE);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
-      FX_FLOAT* pCTM = pText->m_TextState.GetPrivateCopy()->m_CTM;
+      pText->m_TextState.MakePrivateCopy();
+      FX_FLOAT* pCTM = pText->m_TextState->m_CTM;
       pCTM[0] = m_pCurStates->m_CTM.a;
       pCTM[1] = m_pCurStates->m_CTM.c;
       pCTM[2] = m_pCurStates->m_CTM.b;
@@ -1358,7 +1365,8 @@ void CPDF_StreamContentParser::OnChangeTextMatrix() {
   text_matrix.Concat(m_pCurStates->m_TextMatrix);
   text_matrix.Concat(m_pCurStates->m_CTM);
   text_matrix.Concat(m_mtContentToUser);
-  FX_FLOAT* pTextMatrix = m_pCurStates->m_TextState.GetPrivateCopy()->m_Matrix;
+  m_pCurStates->m_TextState.MakePrivateCopy();
+  FX_FLOAT* pTextMatrix = m_pCurStates->m_TextState->m_Matrix;
   pTextMatrix[0] = text_matrix.a;
   pTextMatrix[1] = text_matrix.c;
   pTextMatrix[2] = text_matrix.b;
@@ -1366,9 +1374,9 @@ void CPDF_StreamContentParser::OnChangeTextMatrix() {
 }
 
 void CPDF_StreamContentParser::Handle_SetTextRenderMode() {
-  int mode = GetInteger(0);
-  SetTextRenderingModeFromInt(
-      mode, &m_pCurStates->m_TextState.GetPrivateCopy()->m_TextMode);
+  m_pCurStates->m_TextState.MakePrivateCopy();
+  SetTextRenderingModeFromInt(GetInteger(0),
+                              &m_pCurStates->m_TextState->m_TextMode);
 }
 
 void CPDF_StreamContentParser::Handle_SetTextRise() {
@@ -1376,13 +1384,14 @@ void CPDF_StreamContentParser::Handle_SetTextRise() {
 }
 
 void CPDF_StreamContentParser::Handle_SetWordSpace() {
-  m_pCurStates->m_TextState.GetPrivateCopy()->m_WordSpace = GetNumber(0);
+  m_pCurStates->m_TextState.MakePrivateCopy();
+  m_pCurStates->m_TextState->m_WordSpace = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_SetHorzScale() {
-  if (m_ParamCount != 1) {
+  if (m_ParamCount != 1)
     return;
-  }
+
   m_pCurStates->m_TextHorzScale = GetNumber(0) / 100;
   OnChangeTextMatrix();
 }
@@ -1400,8 +1409,8 @@ void CPDF_StreamContentParser::Handle_CurveTo_23() {
 }
 
 void CPDF_StreamContentParser::Handle_SetLineWidth() {
-  FX_FLOAT width = GetNumber(0);
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineWidth = width;
+  m_pCurStates->m_GraphState.MakePrivateCopy();
+  m_pCurStates->m_GraphState->m_LineWidth = GetNumber(0);
 }
 
 void CPDF_StreamContentParser::Handle_Clip() {
@@ -1424,8 +1433,9 @@ void CPDF_StreamContentParser::Handle_NextLineShowText() {
 }
 
 void CPDF_StreamContentParser::Handle_NextLineShowText_Space() {
-  m_pCurStates->m_TextState.GetPrivateCopy()->m_WordSpace = GetNumber(2);
-  m_pCurStates->m_TextState.GetPrivateCopy()->m_CharSpace = GetNumber(1);
+  m_pCurStates->m_TextState.MakePrivateCopy();
+  m_pCurStates->m_TextState->m_WordSpace = GetNumber(2);
+  m_pCurStates->m_TextState->m_CharSpace = GetNumber(1);
   Handle_NextLineShowText();
 }
 

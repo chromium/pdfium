@@ -137,8 +137,9 @@ void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                           FX_COLORREF crFill,
                           const CFX_FloatRect& rcFill) {
   std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
-  CFX_PathData* pPathData = pPathObj->m_Path.GetPrivateCopy();
-  pPathData->AppendRect(rcFill.left, rcFill.bottom, rcFill.right, rcFill.top);
+  pPathObj->m_Path.MakePrivateCopy();
+  pPathObj->m_Path->AppendRect(rcFill.left, rcFill.bottom, rcFill.right,
+                               rcFill.top);
 
   FX_FLOAT rgb[3];
   rgb[0] = FXARGB_R(crFill) / 255.0f;
@@ -161,16 +162,16 @@ CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                          const CFX_FloatPoint& point,
                                          const CFX_ByteString& text) {
   std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
-  CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetPrivateCopy();
-  pTextStateData->m_pFont = pFont;
-  pTextStateData->m_FontSize = fFontSize;
-  pTextStateData->m_CharSpace = fCharSpace;
-  pTextStateData->m_WordSpace = 0;
-  pTextStateData->m_TextMode = TextRenderingMode::MODE_FILL;
-  pTextStateData->m_Matrix[0] = nHorzScale / 100.0f;
-  pTextStateData->m_Matrix[1] = 0;
-  pTextStateData->m_Matrix[2] = 0;
-  pTextStateData->m_Matrix[3] = 1;
+  pTxtObj->m_TextState.MakePrivateCopy();
+  pTxtObj->m_TextState->m_pFont = pFont;
+  pTxtObj->m_TextState->m_FontSize = fFontSize;
+  pTxtObj->m_TextState->m_CharSpace = fCharSpace;
+  pTxtObj->m_TextState->m_WordSpace = 0;
+  pTxtObj->m_TextState->m_TextMode = TextRenderingMode::MODE_FILL;
+  pTxtObj->m_TextState->m_Matrix[0] = nHorzScale / 100.0f;
+  pTxtObj->m_TextState->m_Matrix[1] = 0;
+  pTxtObj->m_TextState->m_Matrix[2] = 0;
+  pTxtObj->m_TextState->m_Matrix[3] = 1;
 
   FX_FLOAT rgb[3];
   rgb[0] = FXARGB_R(crText) / 255.0f;
