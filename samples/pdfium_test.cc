@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <map>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -52,6 +53,14 @@ enum OutputFormat {
   OUTPUT_SKP,
 #endif
 };
+
+// Hold a map of the currently loaded pages in order to avoid them
+// to get loaded twice.
+std::map<int, FPDF_PAGE> g_loadedPages;
+
+// Hold a global pointer of FPDF_FORMHANDLE so that PDFium
+// app hooks can made use of it.
+FPDF_FORMHANDLE g_formHandle;
 
 struct Options {
   Options()
@@ -520,19 +529,35 @@ void SendPageEvents(const FPDF_FORMHANDLE& form,
   }
 }
 
+FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
+                          FPDF_DOCUMENT doc,
+                          int index) {
+  auto iter = g_loadedPages.find(index);
+  if (iter != g_loadedPages.end())
+    return iter->second;
+
+  FPDF_PAGE page = FPDF_LoadPage(doc, index);
+  if (!page)
+    return nullptr;
+
+  FORM_OnAfterLoadPage(page, g_formHandle);
+  FORM_DoPageAAction(page, g_formHandle, FPDFPAGE_AACTION_OPEN);
+
+  g_loadedPages[index] = page;
+  return page;
+}
+
 bool RenderPage(const std::string& name,
-                const FPDF_DOCUMENT& doc,
-                const FPDF_FORMHANDLE& form,
+                FPDF_DOCUMENT doc,
+                FPDF_FORMHANDLE& form,
                 const int page_index,
                 const Options& options,
                 const std::string& events) {
-  FPDF_PAGE page = FPDF_LoadPage(doc, page_index);
+  FPDF_PAGE page = GetPageForIndex(nullptr, doc, page_index);
   if (!page)
     return false;
 
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
-  FORM_OnAfterLoadPage(page, form);
-  FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
 
   if (options.send_events)
     SendPageEvents(form, page, events);
@@ -593,6 +618,8 @@ bool RenderPage(const std::string& name,
   } else {
     fprintf(stderr, "Page was too large to be rendered.\n");
   }
+
+  g_loadedPages.erase(page_index);
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form);
   FPDFText_ClosePage(text_page);
@@ -620,6 +647,7 @@ void RenderPdf(const std::string& name,
 #else   // PDF_ENABLE_XFA
   form_callbacks.version = 1;
 #endif  // PDF_ENABLE_XFA
+  form_callbacks.FFI_GetPage = GetPageForIndex;
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
   TestLoader loader(pBuf, len);
@@ -703,7 +731,8 @@ void RenderPdf(const std::string& name,
 
   (void)FPDF_GetDocPermissions(doc);
 
-  FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
+  FPDF_FORMHANDLE form = g_formHandle =
+      FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
 #ifdef PDF_ENABLE_XFA
   int docType = DOCTYPE_PDF;
   if (FPDF_HasXFAField(doc, &docType) && docType != DOCTYPE_PDF &&
