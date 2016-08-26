@@ -1090,7 +1090,48 @@ FX_BOOL Document::getAnnots(IJS_Context* cc,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
-  vRet.SetNull(CJS_Runtime::FromContext(cc));
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+
+  // TODO(tonikitoo): Add support supported parameters as per
+  // the PDF spec.
+
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+
+  int nPageNo = m_pDocument->GetPageCount();
+  CJS_Array annots;
+
+  for (int i = 0; i < nPageNo; ++i) {
+    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(i);
+    if (!pPageView)
+      return FALSE;
+
+    CPDFSDK_AnnotIterator annotIterator(pPageView, false);
+    while (CPDFSDK_Annot* pSDKAnnotCur = annotIterator.Next()) {
+      CPDFSDK_BAAnnot* pSDKBAAnnot =
+          static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur);
+      if (!pSDKBAAnnot)
+        return FALSE;
+
+      v8::Local<v8::Object> pObj =
+          pRuntime->NewFxDynamicObj(CJS_Annot::g_nObjDefnID);
+      if (pObj.IsEmpty())
+        return FALSE;
+
+      CJS_Annot* pJS_Annot =
+          static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
+      if (!pJS_Annot)
+        return FALSE;
+
+      Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
+      if (!pAnnot)
+        return FALSE;
+
+      pAnnot->SetSDKAnnot(pSDKBAAnnot);
+      annots.SetElement(pRuntime, i, CJS_Value(pRuntime, pJS_Annot));
+    }
+  }
+
+  vRet = CJS_Value(pRuntime, annots);
   return TRUE;
 }
 

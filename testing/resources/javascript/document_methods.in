@@ -147,6 +147,13 @@ function testGetAnnot() {
    // TODO(tonikitoo): test success cases.
 }
 
+function testGetAnnots() {
+   // Method is present.
+   expect('typeof this.getAnnots', 'function');
+
+   // TODO(tonikitoo): test success cases.
+}
+
 function testGetField() {
    // Method is present.
    expect('typeof this.getField', 'function');
@@ -302,7 +309,6 @@ try {
   testUnsupported('this.exportAsXFDF');
   testUnsupported('this.extractPages');
   testUnsupported('this.getAnnot3D');
-  testUnsupported('this.getAnnots');
   testUnsupported('this.getLinks');
   testUnsupported('this.getOCGs');
   testUnsupported('this.getPageBox');
@@ -320,6 +326,7 @@ try {
   testAddIcon();
   testCalculateNow();
   testGetAnnot();
+  testGetAnnots();
   testGetField();
   testGetIcon();
   testGetNthFieldName();
