@@ -689,8 +689,8 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   if (pBBox) {
     form_bbox = pBBox->GetRect();
     ClipPath.New();
-    ClipPath.AppendRect(form_bbox.left, form_bbox.bottom, form_bbox.right,
-                        form_bbox.top);
+    ClipPath->AppendRect(form_bbox.left, form_bbox.bottom, form_bbox.right,
+                         form_bbox.top);
     ClipPath.Transform(&form_matrix);
     if (pParentMatrix) {
       ClipPath.Transform(pParentMatrix);
@@ -808,10 +808,10 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         if (pObj->m_ClipPath.GetTextCount())
           continue;
         CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
-        if (!ClipPath.IsRect() || pObj->IsShading())
+        if (!ClipPath->IsRect() || pObj->IsShading())
           continue;
-        CFX_FloatRect old_rect(ClipPath.GetPointX(0), ClipPath.GetPointY(0),
-                               ClipPath.GetPointX(2), ClipPath.GetPointY(2));
+        CFX_FloatRect old_rect(ClipPath->GetPointX(0), ClipPath->GetPointY(0),
+                               ClipPath->GetPointX(2), ClipPath->GetPointY(2));
         CFX_FloatRect obj_rect(pObj->m_Left, pObj->m_Bottom, pObj->m_Right,
                                pObj->m_Top);
         if (old_rect.Contains(obj_rect))

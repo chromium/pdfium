@@ -809,8 +809,8 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       textobj->GetTextMatrix(&text_matrix);
       CPDF_TextRenderer::DrawTextPath(
           &text_device, textobj->m_nChars, textobj->m_pCharCodes,
-          textobj->m_pCharPos, textobj->m_TextState.GetFont(),
-          textobj->m_TextState.GetFontSize(), &text_matrix, &new_matrix,
+          textobj->m_pCharPos, textobj->m_TextState->GetFont(),
+          textobj->m_TextState->GetFontSize(), &text_matrix, &new_matrix,
           textobj->m_GraphState.GetObject(), (FX_ARGB)-1, 0, nullptr, 0);
     }
   }

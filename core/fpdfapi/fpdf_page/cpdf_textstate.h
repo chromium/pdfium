@@ -10,21 +10,7 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_textstatedata.h"
 #include "core/fxcrt/include/fx_basic.h"
 
-class CPDF_Font;
-
 class CPDF_TextState : public CFX_CountRef<CPDF_TextStateData> {
- public:
-  CPDF_Font* GetFont() const { return GetObject()->m_pFont; }
-  void SetFont(CPDF_Font* pFont);
-
-  FX_FLOAT GetFontSize() const { return GetObject()->m_FontSize; }
-  FX_FLOAT* GetMatrix() { return GetObject()->m_Matrix; }
-  const FX_FLOAT* GetMatrix() const { return GetObject()->m_Matrix; }
-
-  FX_FLOAT GetFontSizeV() const;
-  FX_FLOAT GetFontSizeH() const;
-  FX_FLOAT GetBaselineAngle() const;
-  FX_FLOAT GetShearAngle() const;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_TEXTSTATE_H_

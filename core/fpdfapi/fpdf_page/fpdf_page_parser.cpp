@@ -1144,7 +1144,7 @@ void CPDF_StreamContentParser::Handle_SetFont() {
   m_pCurStates->m_TextState->m_FontSize = fs;
   CPDF_Font* pFont = FindFont(GetString(1));
   if (pFont)
-    m_pCurStates->m_TextState.SetFont(pFont);
+    m_pCurStates->m_TextState->SetFont(pFont);
 }
 
 CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
@@ -1231,17 +1231,17 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
                                              FX_FLOAT fInitKerning,
                                              FX_FLOAT* pKerning,
                                              int nsegs) {
-  CPDF_Font* pFont = m_pCurStates->m_TextState.GetFont();
+  CPDF_Font* pFont = m_pCurStates->m_TextState->GetFont();
   if (!pFont) {
     return;
   }
   if (fInitKerning != 0) {
     if (!pFont->IsVertWriting()) {
       m_pCurStates->m_TextX -=
-          (fInitKerning * m_pCurStates->m_TextState.GetFontSize()) / 1000;
+          (fInitKerning * m_pCurStates->m_TextState->GetFontSize()) / 1000;
     } else {
       m_pCurStates->m_TextY -=
-          (fInitKerning * m_pCurStates->m_TextState.GetFontSize()) / 1000;
+          (fInitKerning * m_pCurStates->m_TextState->GetFontSize()) / 1000;
     }
   }
   if (nsegs == 0) {
@@ -1281,11 +1281,11 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   if (pKerning && pKerning[nsegs - 1] != 0) {
     if (!pFont->IsVertWriting()) {
       m_pCurStates->m_TextX -=
-          (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize()) /
+          (pKerning[nsegs - 1] * m_pCurStates->m_TextState->GetFontSize()) /
           1000;
     } else {
       m_pCurStates->m_TextY -=
-          (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize()) /
+          (pKerning[nsegs - 1] * m_pCurStates->m_TextState->GetFontSize()) /
           1000;
     }
   }
@@ -1313,7 +1313,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   if (nsegs == 0) {
     for (size_t i = 0; i < n; i++) {
       m_pCurStates->m_TextX -=
-          (pArray->GetNumberAt(i) * m_pCurStates->m_TextState.GetFontSize()) /
+          (pArray->GetNumberAt(i) * m_pCurStates->m_TextState->GetFontSize()) /
           1000;
     }
     return;

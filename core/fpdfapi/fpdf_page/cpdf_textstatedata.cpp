@@ -72,3 +72,38 @@ CPDF_TextStateData::~CPDF_TextStateData() {
       pPageData->ReleaseFont(m_pFont->GetFontDict());
   }
 }
+
+void CPDF_TextStateData::SetFont(CPDF_Font* pFont) {
+  CPDF_DocPageData* pPageData =
+      m_pDocument ? m_pDocument->GetPageData() : nullptr;
+  if (pPageData && m_pFont && !pPageData->IsForceClear())
+    pPageData->ReleaseFont(m_pFont->GetFontDict());
+
+  m_pDocument = pFont ? pFont->m_pDocument : nullptr;
+  m_pFont = pFont;
+}
+
+FX_FLOAT CPDF_TextStateData::GetFontSizeV() const {
+  const FX_FLOAT* pMatrix = GetMatrix();
+  FX_FLOAT unit = FXSYS_sqrt2(pMatrix[1], pMatrix[3]);
+  FX_FLOAT size = unit * GetFontSize();
+  return (FX_FLOAT)FXSYS_fabs(size);
+}
+
+FX_FLOAT CPDF_TextStateData::GetFontSizeH() const {
+  const FX_FLOAT* pMatrix = GetMatrix();
+  FX_FLOAT unit = FXSYS_sqrt2(pMatrix[0], pMatrix[2]);
+  FX_FLOAT size = unit * GetFontSize();
+  return (FX_FLOAT)FXSYS_fabs(size);
+}
+
+FX_FLOAT CPDF_TextStateData::GetBaselineAngle() const {
+  const FX_FLOAT* pMatrix = GetMatrix();
+  return FXSYS_atan2(pMatrix[2], pMatrix[0]);
+}
+
+FX_FLOAT CPDF_TextStateData::GetShearAngle() const {
+  const FX_FLOAT* pMatrix = GetMatrix();
+  FX_FLOAT shear_angle = FXSYS_atan2(pMatrix[1], pMatrix[3]);
+  return GetBaselineAngle() + shear_angle;
+}
