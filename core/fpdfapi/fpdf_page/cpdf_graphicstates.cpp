@@ -11,7 +11,7 @@ CPDF_GraphicStates::CPDF_GraphicStates() {}
 CPDF_GraphicStates::~CPDF_GraphicStates() {}
 
 void CPDF_GraphicStates::DefaultStates() {
-  m_ColorState.New()->Default();
+  m_ColorState.New()->SetDefault();
 }
 
 void CPDF_GraphicStates::CopyStates(const CPDF_GraphicStates& src) {

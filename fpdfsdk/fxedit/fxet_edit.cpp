@@ -145,7 +145,8 @@ void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
   rgb[0] = FXARGB_R(crFill) / 255.0f;
   rgb[1] = FXARGB_G(crFill) / 255.0f;
   rgb[2] = FXARGB_B(crFill) / 255.0f;
-  pPathObj->m_ColorState.SetFillColor(
+  pPathObj->m_ColorState.MakePrivateCopy();
+  pPathObj->m_ColorState->SetFillColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
 
   pPathObj->m_FillType = FXFILL_ALTERNATE;
@@ -177,9 +178,11 @@ CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
   rgb[0] = FXARGB_R(crText) / 255.0f;
   rgb[1] = FXARGB_G(crText) / 255.0f;
   rgb[2] = FXARGB_B(crText) / 255.0f;
-  pTxtObj->m_ColorState.SetFillColor(
+
+  pTxtObj->m_ColorState.MakePrivateCopy();
+  pTxtObj->m_ColorState->SetFillColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-  pTxtObj->m_ColorState.SetStrokeColor(
+  pTxtObj->m_ColorState->SetStrokeColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
 
   pTxtObj->SetPosition(point.x, point.y);

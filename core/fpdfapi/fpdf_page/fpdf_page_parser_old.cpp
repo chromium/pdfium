@@ -776,7 +776,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
             nullptr, nullptr, m_pObjectHolder, m_pObjectHolder->m_pResources,
             &m_pObjectHolder->m_BBox, nullptr, 0));
         m_pParser->GetCurStates()->m_ColorState.MakePrivateCopy();
-        m_pParser->GetCurStates()->m_ColorState->Default();
+        m_pParser->GetCurStates()->m_ColorState->SetDefault();
       }
       if (m_CurrentOffset >= m_Size) {
         m_InternalStage = STAGE_CHECKCLIP;

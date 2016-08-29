@@ -279,14 +279,14 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
   FX_ARGB fill_argb = 0;
   bool bPattern = false;
   if (bStroke) {
-    if (textobj->m_ColorState.GetStrokeColor()->IsPattern()) {
+    if (textobj->m_ColorState->GetStrokeColor()->IsPattern()) {
       bPattern = true;
     } else {
       stroke_argb = GetStrokeArgb(textobj);
     }
   }
   if (bFill) {
-    if (textobj->m_ColorState.GetFillColor()->IsPattern()) {
+    if (textobj->m_ColorState->GetFillColor()->IsPattern()) {
       bPattern = true;
     } else {
       fill_argb = GetFillArgb(textobj);

@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
+#include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -692,7 +693,7 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Fill() {
     return;
 
   m_pCurStates->m_ColorState.MakePrivateCopy();
-  m_pCurStates->m_ColorState->m_FillColor.SetColorSpace(pCS);
+  m_pCurStates->m_ColorState->GetFillColor()->SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
@@ -701,7 +702,7 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
     return;
 
   m_pCurStates->m_ColorState.MakePrivateCopy();
-  m_pCurStates->m_ColorState->m_StrokeColor.SetColorSpace(pCS);
+  m_pCurStates->m_ColorState->GetStrokeColor()->SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetDash() {
@@ -845,14 +846,16 @@ void CPDF_StreamContentParser::Handle_EOFillPath() {
 
 void CPDF_StreamContentParser::Handle_SetGray_Fill() {
   FX_FLOAT value = GetNumber(0);
-  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
-  m_pCurStates->m_ColorState.SetFillColor(pCS, &value, 1);
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetFillColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY), &value, 1);
 }
 
 void CPDF_StreamContentParser::Handle_SetGray_Stroke() {
   FX_FLOAT value = GetNumber(0);
-  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
-  m_pCurStates->m_ColorState.SetStrokeColor(pCS, &value, 1);
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetStrokeColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY), &value, 1);
 }
 
 void CPDF_StreamContentParser::Handle_SetExtendGraphState() {
@@ -900,11 +903,12 @@ void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
     return;
 
   FX_FLOAT values[4];
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++)
     values[i] = GetNumber(3 - i);
-  }
-  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-  m_pCurStates->m_ColorState.SetFillColor(pCS, values, 4);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetFillColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK), values, 4);
 }
 
 void CPDF_StreamContentParser::Handle_SetCMYKColor_Stroke() {
@@ -912,11 +916,12 @@ void CPDF_StreamContentParser::Handle_SetCMYKColor_Stroke() {
     return;
 
   FX_FLOAT values[4];
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++)
     values[i] = GetNumber(3 - i);
-  }
-  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-  m_pCurStates->m_ColorState.SetStrokeColor(pCS, values, 4);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetStrokeColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK), values, 4);
 }
 
 void CPDF_StreamContentParser::Handle_LineTo() {
@@ -981,11 +986,12 @@ void CPDF_StreamContentParser::Handle_SetRGBColor_Fill() {
     return;
 
   FX_FLOAT values[3];
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++)
     values[i] = GetNumber(2 - i);
-  }
-  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
-  m_pCurStates->m_ColorState.SetFillColor(pCS, values, 3);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetFillColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), values, 3);
 }
 
 void CPDF_StreamContentParser::Handle_SetRGBColor_Stroke() {
@@ -993,11 +999,12 @@ void CPDF_StreamContentParser::Handle_SetRGBColor_Stroke() {
     return;
 
   FX_FLOAT values[3];
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++)
     values[i] = GetNumber(2 - i);
-  }
-  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
-  m_pCurStates->m_ColorState.SetStrokeColor(pCS, values, 3);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetStrokeColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), values, 3);
 }
 
 void CPDF_StreamContentParser::Handle_SetRenderIntent() {}
@@ -1013,26 +1020,22 @@ void CPDF_StreamContentParser::Handle_StrokePath() {
 
 void CPDF_StreamContentParser::Handle_SetColor_Fill() {
   FX_FLOAT values[4];
-  int nargs = m_ParamCount;
-  if (nargs > 4) {
-    nargs = 4;
-  }
-  for (int i = 0; i < nargs; i++) {
+  uint32_t nargs = std::min(m_ParamCount, 4u);
+  for (uint32_t i = 0; i < nargs; i++)
     values[i] = GetNumber(nargs - i - 1);
-  }
-  m_pCurStates->m_ColorState.SetFillColor(nullptr, values, nargs);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetFillColor(nullptr, values, nargs);
 }
 
 void CPDF_StreamContentParser::Handle_SetColor_Stroke() {
   FX_FLOAT values[4];
-  int nargs = m_ParamCount;
-  if (nargs > 4) {
-    nargs = 4;
-  }
-  for (int i = 0; i < nargs; i++) {
+  uint32_t nargs = std::min(m_ParamCount, 4u);
+  for (uint32_t i = 0; i < nargs; i++)
     values[i] = GetNumber(nargs - i - 1);
-  }
-  m_pCurStates->m_ColorState.SetStrokeColor(nullptr, values, nargs);
+
+  m_pCurStates->m_ColorState.MakePrivateCopy();
+  m_pCurStates->m_ColorState->SetStrokeColor(nullptr, values, nargs);
 }
 
 void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
@@ -1054,10 +1057,12 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
   if (nvalues != nargs) {
     CPDF_Pattern* pPattern = FindPattern(GetString(0), false);
     if (pPattern) {
-      m_pCurStates->m_ColorState.SetFillPattern(pPattern, values, nvalues);
+      m_pCurStates->m_ColorState.MakePrivateCopy();
+      m_pCurStates->m_ColorState->SetFillPattern(pPattern, values, nvalues);
     }
   } else {
-    m_pCurStates->m_ColorState.SetFillColor(nullptr, values, nvalues);
+    m_pCurStates->m_ColorState.MakePrivateCopy();
+    m_pCurStates->m_ColorState->SetFillColor(nullptr, values, nvalues);
   }
   FX_Free(values);
 }
@@ -1082,10 +1087,12 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
   if (nvalues != nargs) {
     CPDF_Pattern* pPattern = FindPattern(GetString(0), false);
     if (pPattern) {
-      m_pCurStates->m_ColorState.SetStrokePattern(pPattern, values, nvalues);
+      m_pCurStates->m_ColorState.MakePrivateCopy();
+      m_pCurStates->m_ColorState->SetStrokePattern(pPattern, values, nvalues);
     }
   } else {
-    m_pCurStates->m_ColorState.SetStrokeColor(nullptr, values, nvalues);
+    m_pCurStates->m_ColorState.MakePrivateCopy();
+    m_pCurStates->m_ColorState->SetStrokeColor(nullptr, values, nvalues);
   }
   FX_Free(values);
 }
