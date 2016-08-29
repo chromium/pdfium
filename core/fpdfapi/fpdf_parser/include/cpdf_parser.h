@@ -34,6 +34,10 @@ class CPDF_Parser {
     HANDLER_ERROR
   };
 
+  // A limit on the maximum object number in the xref table. Theoretical limits
+  // are higher, but this may be large enough in practice.
+  static const uint32_t kMaxObjectNumber = 1048576;
+
   CPDF_Parser();
   ~CPDF_Parser();
 
@@ -170,8 +174,6 @@ class CPDF_Parser {
 
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;
-
-
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_PARSER_H_

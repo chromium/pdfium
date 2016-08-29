@@ -278,6 +278,12 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   // greatest and least length of a shared object group, in bytes.
   uint32_t dwDeltaGroupLen = hStream->GetBits(16);
 
+  if (dwFirstSharedObjNum >= CPDF_Parser::kMaxObjectNumber ||
+      m_nFirstPageSharedObjs >= CPDF_Parser::kMaxObjectNumber ||
+      dwSharedObjTotal >= CPDF_Parser::kMaxObjectNumber) {
+    return false;
+  }
+
   int nFirstPageObjNum = GetFirstPageObjectNumber();
   if (nFirstPageObjNum < 0)
     return false;

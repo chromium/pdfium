@@ -29,10 +29,6 @@ namespace {
 // this may be large enough in practice.
 const int32_t kMaxXRefSize = 1048576;
 
-// A limit on the maximum object number in the xref table. Theoretical limits
-// are higher, but this may be large enough in practice.
-const uint32_t kMaxObjectNumber = 1048576;
-
 uint32_t GetVarInt(const uint8_t* p, int32_t n) {
   uint32_t result = 0;
   for (int32_t i = 0; i < n; ++i)
