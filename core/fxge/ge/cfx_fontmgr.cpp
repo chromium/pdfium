@@ -7,9 +7,11 @@
 #include "core/fxge/include/cfx_fontmgr.h"
 
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
+#include "core/fxge/ge/cttfontdesc.h"
 #include "core/fxge/include/cfx_fontmapper.h"
-#include "core/fxge/include/ifx_systemfontinfo.h"
+#include "core/fxge/include/cfx_substfont.h"
 #include "core/fxge/include/fx_font.h"
+#include "core/fxge/include/ifx_systemfontinfo.h"
 
 namespace {
 

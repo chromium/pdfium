@@ -13,6 +13,8 @@
 #include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/fx_font.h"
 
+class CFX_SubstFont;
+
 class CFX_FontMapper {
  public:
   explicit CFX_FontMapper(CFX_FontMgr* mgr);

@@ -14,6 +14,8 @@
 
 class IFX_SystemFontInfo;
 class CFX_FontMapper;
+class CFX_SubstFont;
+class CTTFontDesc;
 
 class CFX_FontMgr {
  public:

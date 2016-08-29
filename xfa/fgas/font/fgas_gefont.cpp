@@ -6,6 +6,7 @@
 
 #include "xfa/fgas/font/fgas_gefont.h"
 
+#include "core/fxge/include/cfx_substfont.h"
 #include "core/fxge/include/cfx_unicodeencoding.h"
 #include "core/fxge/include/cfx_unicodeencodingex.h"
 #include "xfa/fgas/crt/fgas_codepage.h"

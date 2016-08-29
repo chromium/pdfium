@@ -7,52 +7,6 @@
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"
 
-CFX_SubstFont::CFX_SubstFont() {
-  m_Charset = FXFONT_ANSI_CHARSET;
-  m_SubstFlags = 0;
-  m_Weight = 0;
-  m_ItalicAngle = 0;
-  m_bSubstCJK = false;
-  m_WeightCJK = 0;
-  m_bItalicCJK = false;
-}
-
-CTTFontDesc::~CTTFontDesc() {
-  if (m_Type == 1) {
-    if (m_SingleFace.m_pFace) {
-      FXFT_Done_Face(m_SingleFace.m_pFace);
-    }
-  } else if (m_Type == 2) {
-    for (int i = 0; i < 16; i++)
-      if (m_TTCFace.m_pFaces[i]) {
-        FXFT_Done_Face(m_TTCFace.m_pFaces[i]);
-      }
-  }
-  FX_Free(m_pFontData);
-}
-int CTTFontDesc::ReleaseFace(FXFT_Face face) {
-  if (m_Type == 1) {
-    if (m_SingleFace.m_pFace != face) {
-      return -1;
-    }
-  } else if (m_Type == 2) {
-    int i;
-    for (i = 0; i < 16; i++)
-      if (m_TTCFace.m_pFaces[i] == face) {
-        break;
-      }
-    if (i == 16) {
-      return -1;
-    }
-  }
-  m_RefCount--;
-  if (m_RefCount) {
-    return m_RefCount;
-  }
-  delete this;
-  return 0;
-}
-
 static CFX_ByteString GetStringFromTable(const uint8_t* string_ptr,
                                          uint32_t string_ptr_length,
                                          uint16_t offset,

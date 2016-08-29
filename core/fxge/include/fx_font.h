@@ -7,11 +7,11 @@
 #ifndef CORE_FXGE_INCLUDE_FX_FONT_H_
 #define CORE_FXGE_INCLUDE_FX_FONT_H_
 
-#include <map>
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/include/fx_system.h"
+#include "core/fxge/include/cfx_substfont.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_freetype.h"
 
@@ -22,8 +22,6 @@ class CFX_FaceCache;
 class CFX_FontCache;
 class CFX_PathData;
 class CFX_SizeGlyphCache;
-class CFX_SubstFont;
-class CTTFontDesc;
 
 #ifdef _SKIA_SUPPORT_
 class SkTypeface;
@@ -172,63 +170,6 @@ class CFX_Font {
 #endif
   FX_BOOL m_bEmbedded;
   FX_BOOL m_bVertical;
-};
-
-#define FXFONT_SUBST_MM 0x01
-#define FXFONT_SUBST_GLYPHPATH 0x04
-#define FXFONT_SUBST_CLEARTYPE 0x08
-#define FXFONT_SUBST_TRANSFORM 0x10
-#define FXFONT_SUBST_NONSYMBOL 0x20
-#define FXFONT_SUBST_EXACT 0x40
-#define FXFONT_SUBST_STANDARD 0x80
-
-class CFX_SubstFont {
- public:
-  CFX_SubstFont();
-
-  CFX_ByteString m_Family;
-  int m_Charset;
-  uint32_t m_SubstFlags;
-  int m_Weight;
-  int m_ItalicAngle;
-  bool m_bSubstCJK;
-  int m_WeightCJK;
-  bool m_bItalicCJK;
-};
-
-#define FX_FONT_FLAG_SERIF 0x01
-#define FX_FONT_FLAG_FIXEDPITCH 0x02
-#define FX_FONT_FLAG_ITALIC 0x04
-#define FX_FONT_FLAG_BOLD 0x08
-#define FX_FONT_FLAG_SYMBOLIC_SYMBOL 0x10
-#define FX_FONT_FLAG_SYMBOLIC_DINGBATS 0x20
-#define FX_FONT_FLAG_MULTIPLEMASTER 0x40
-
-class CTTFontDesc {
- public:
-  CTTFontDesc() {
-    m_Type = 0;
-    m_pFontData = nullptr;
-    m_RefCount = 0;
-  }
-  ~CTTFontDesc();
-  // ret < 0, releaseface not appropriate for this object.
-  // ret == 0, object released
-  // ret > 0, object still alive, other referrers.
-  int ReleaseFace(FXFT_Face face);
-  int m_Type;
-  union {
-    struct {
-      FX_BOOL m_bItalic;
-      FX_BOOL m_bBold;
-      FXFT_Face m_pFace;
-    } m_SingleFace;
-    struct {
-      FXFT_Face m_pFaces[16];
-    } m_TTCFace;
-  };
-  uint8_t* m_pFontData;
-  int m_RefCount;
 };
 
 class CFX_FontFaceInfo {

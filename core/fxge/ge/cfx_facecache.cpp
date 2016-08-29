@@ -12,6 +12,7 @@
 #include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_pathdata.h"
+#include "core/fxge/include/cfx_substfont.h"
 #include "core/fxge/include/fx_freetype.h"
 
 #ifdef _SKIA_SUPPORT_
