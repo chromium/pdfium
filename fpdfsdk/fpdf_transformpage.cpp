@@ -220,9 +220,9 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
                                                     float right,
                                                     float top) {
   CPDF_ClipPath* pNewClipPath = new CPDF_ClipPath();
-  pNewClipPath->MakePrivateCopy();
+  pNewClipPath->GetPrivateCopy();
   CPDF_Path Path;
-  Path.MakePrivateCopy();
+  Path.GetPrivateCopy();
   Path.AppendRect(left, bottom, right, top);
   pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, FALSE);
   return pNewClipPath;

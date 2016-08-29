@@ -711,9 +711,8 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
                                                      TRUE);
   }
   if (pForm->m_Transparency & PDFTRANS_GROUP) {
-    m_pParser->GetCurStates()->m_GeneralState.MakePrivateCopy();
     CPDF_GeneralStateData* pData =
-        m_pParser->GetCurStates()->m_GeneralState.GetObject();
+        m_pParser->GetCurStates()->m_GeneralState.GetPrivateCopy();
     pData->m_BlendType = FXDIB_BLEND_NORMAL;
     pData->m_StrokeAlpha = 1.0f;
     pData->m_FillAlpha = 1.0f;
@@ -775,8 +774,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
             m_pObjectHolder->m_pDocument, m_pObjectHolder->m_pPageResources,
             nullptr, nullptr, m_pObjectHolder, m_pObjectHolder->m_pResources,
             &m_pObjectHolder->m_BBox, nullptr, 0));
-        m_pParser->GetCurStates()->m_ColorState.MakePrivateCopy();
-        m_pParser->GetCurStates()->m_ColorState->Default();
+        m_pParser->GetCurStates()->m_ColorState.GetPrivateCopy()->Default();
       }
       if (m_CurrentOffset >= m_Size) {
         m_InternalStage = STAGE_CHECKCLIP;
@@ -814,8 +812,9 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
                                ClipPath.GetPointX(2), ClipPath.GetPointY(2));
         CFX_FloatRect obj_rect(pObj->m_Left, pObj->m_Bottom, pObj->m_Right,
                                pObj->m_Top);
-        if (old_rect.Contains(obj_rect))
-          pObj->m_ClipPath.Clear();
+        if (old_rect.Contains(obj_rect)) {
+          pObj->m_ClipPath.SetNull();
+        }
       }
       m_Status = Done;
       return;

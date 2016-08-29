@@ -29,16 +29,17 @@ class CFX_CountRef {
     return *this;
   }
 
-  void Clear() { m_pObject.Reset(); }
+  void SetNull() { m_pObject.Reset(); }
   ObjClass* GetObject() { return m_pObject.Get(); }
   const ObjClass* GetObject() const { return m_pObject.Get(); }
 
   template <typename... Args>
-  void MakePrivateCopy(Args... params) {
+  ObjClass* GetPrivateCopy(Args... params) {
     if (!m_pObject)
-      m_pObject.Reset(new CountedObj(params...));
-    else if (!m_pObject->HasOneRef())
+      return New(params...);
+    if (!m_pObject->HasOneRef())
       m_pObject.Reset(new CountedObj(*m_pObject));
+    return m_pObject.Get();
   }
 
   bool operator==(const CFX_CountRef& that) const {
@@ -46,8 +47,6 @@ class CFX_CountRef {
   }
   bool operator!=(const CFX_CountRef& that) const { return !(*this == that); }
   operator bool() const { return m_pObject; }
-  ObjClass& operator*() const { return *m_pObject.Get(); }
-  ObjClass* operator->() const { return m_pObject.Get(); }
 
  private:
   class CountedObj : public ObjClass {

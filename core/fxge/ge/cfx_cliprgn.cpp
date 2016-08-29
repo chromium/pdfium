@@ -20,7 +20,7 @@ CFX_ClipRgn::~CFX_ClipRgn() {}
 void CFX_ClipRgn::Reset(const FX_RECT& rect) {
   m_Type = RectI;
   m_Box = rect;
-  m_Mask.Clear();
+  m_Mask.SetNull();
 }
 
 void CFX_ClipRgn::IntersectRect(const FX_RECT& rect) {
@@ -77,7 +77,7 @@ void CFX_ClipRgn::IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask) {
     new_box.Intersect(mask_box);
     if (new_box.IsEmpty()) {
       m_Type = RectI;
-      m_Mask.Clear();
+      m_Mask.SetNull();
       m_Box = new_box;
       return;
     }

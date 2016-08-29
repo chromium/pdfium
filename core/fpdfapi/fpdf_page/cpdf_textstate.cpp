@@ -10,15 +10,16 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 
 void CPDF_TextState::SetFont(CPDF_Font* pFont) {
-  MakePrivateCopy();
-  CPDF_TextStateData* pStateData = GetObject();
-  CPDF_Document* pDoc = pStateData->m_pDocument;
-  CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
-  if (pPageData && pStateData->m_pFont && !pPageData->IsForceClear())
-    pPageData->ReleaseFont(pStateData->m_pFont->GetFontDict());
-
-  pStateData->m_pDocument = pFont ? pFont->m_pDocument : nullptr;
-  pStateData->m_pFont = pFont;
+  CPDF_TextStateData* pStateData = GetPrivateCopy();
+  if (pStateData) {
+    CPDF_Document* pDoc = pStateData->m_pDocument;
+    CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
+    if (pPageData && pStateData->m_pFont && !pPageData->IsForceClear()) {
+      pPageData->ReleaseFont(pStateData->m_pFont->GetFontDict());
+    }
+    pStateData->m_pDocument = pFont ? pFont->m_pDocument : nullptr;
+    pStateData->m_pFont = pFont;
+  }
 }
 
 FX_FLOAT CPDF_TextState::GetFontSizeV() const {

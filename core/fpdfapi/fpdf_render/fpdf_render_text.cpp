@@ -231,7 +231,8 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
   if (textobj->m_nChars == 0)
     return TRUE;
 
-  const TextRenderingMode& text_render_mode = textobj->m_TextState->m_TextMode;
+  const TextRenderingMode& text_render_mode =
+      textobj->m_TextState.GetObject()->m_TextMode;
   if (text_render_mode == TextRenderingMode::MODE_INVISIBLE)
     return TRUE;
 
@@ -307,7 +308,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
     const CFX_Matrix* pDeviceMatrix = pObj2Device;
     CFX_Matrix device_matrix;
     if (bStroke) {
-      const FX_FLOAT* pCTM = textobj->m_TextState->m_CTM;
+      const FX_FLOAT* pCTM = textobj->m_TextState.GetObject()->m_CTM;
       if (pCTM[0] != 1.0f || pCTM[3] != 1.0f) {
         CFX_Matrix ctm(pCTM[0], pCTM[1], pCTM[2], pCTM[3], 0, 0);
         text_matrix.ConcatInverse(ctm);
