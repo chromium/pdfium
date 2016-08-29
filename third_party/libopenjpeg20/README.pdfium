@@ -31,4 +31,5 @@ Local Modifications:
 0019-tcd_init_tile.patch: Prevent integer overflows during calculation of |l_nb_code_blocks_size|.
 0020-opj_aligned_malloc.patch: Prevent overflows when using opj_aligned_malloc().
 0021-tcd_init_tile_negative.patch: Prevent negative x, y values in opj_tcd_init_tile.
+0022-jp2_apply_pclr_overflow.patch: Prevent integer overflow in opj_jp2_apply_pclr.
 TODO(thestig): List all the other patches.
