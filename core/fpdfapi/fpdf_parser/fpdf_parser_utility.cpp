@@ -179,7 +179,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       buf << "[";
       for (size_t i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetObjectAt(i);
-        if (pElement->GetObjNum()) {
+        if (pElement && pElement->GetObjNum()) {
           buf << " " << pElement->GetObjNum() << " 0 R";
         } else {
           buf << pElement;
