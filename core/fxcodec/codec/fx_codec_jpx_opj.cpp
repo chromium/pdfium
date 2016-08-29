@@ -835,6 +835,9 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
         uint8_t* pScanline = pChannel + row * pitch;
         for (int col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * image->numcomps;
+          if (!image->comps[channel].data)
+            continue;
+
           int src = image->comps[channel].data[row * width + col];
           src += image->comps[channel].sgnd
                      ? 1 << (image->comps[channel].prec - 1)
@@ -851,9 +854,9 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
         uint8_t* pScanline = pChannel + row * pitch;
         for (int col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * image->numcomps;
-          if (!image->comps[channel].data) {
+          if (!image->comps[channel].data)
             continue;
-          }
+
           int src = image->comps[channel].data[row * width + col];
           src += image->comps[channel].sgnd
                      ? 1 << (image->comps[channel].prec - 1)
