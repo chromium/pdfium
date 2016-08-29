@@ -69,7 +69,7 @@ _TIFFCheckRealloc(TIFF* tif, void* buffer,
 	/*
 	 * XXX: Check for integer overflow.
 	 */
-	if (nmemb && elem_size && bytes / elem_size == nmemb)
+	if (nmemb && elem_size && !_TIFFIfMultiplicationOverflow(nmemb, elem_size))
 		cp = _TIFFrealloc(buffer, bytes);
 
 	if (cp == NULL) {

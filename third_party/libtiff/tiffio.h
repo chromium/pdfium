@@ -298,6 +298,7 @@ extern void _TIFFmemset(void* p, int v, tmsize_t c);
 extern void _TIFFmemcpy(void* d, const void* s, tmsize_t c);
 extern int _TIFFmemcmp(const void* p1, const void* p2, tmsize_t c);
 extern void _TIFFfree(void* p);
+extern int _TIFFIfMultiplicationOverflow(tmsize_t op1, tmsize_t op2);
 
 /*
 ** Stuff, related to tag handling and creating custom tags.

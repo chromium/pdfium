@@ -15,3 +15,4 @@ Local Modifications:
 0003-CVE-2015-8781-8782-8783.patch: Security fixes
 0004-CVE-2015-8784.patch: Security fixes
 0005-Leak-TIFFFetchStripThing.patch: Fix a memory leak
+0006-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
