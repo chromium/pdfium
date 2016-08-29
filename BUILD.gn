@@ -411,6 +411,7 @@ static_library("fpdfapi") {
     "core/fpdfapi/fpdf_page/cpdf_clippathdata.h",
     "core/fpdfapi/fpdf_page/cpdf_color.cpp",
     "core/fpdfapi/fpdf_page/cpdf_colorspace.cpp",
+    "core/fpdfapi/fpdf_page/cpdf_colorstate.cpp",
     "core/fpdfapi/fpdf_page/cpdf_colorstate.h",
     "core/fpdfapi/fpdf_page/cpdf_colorstatedata.cpp",
     "core/fpdfapi/fpdf_page/cpdf_colorstatedata.h",

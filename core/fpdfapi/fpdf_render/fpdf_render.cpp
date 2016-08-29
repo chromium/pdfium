@@ -198,17 +198,17 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
           m_InitialStates.m_ColorState.GetObject();
       const CPDF_ColorStateData* pParentData =
           pParentState->m_InitialStates.m_ColorState.GetObject();
-      if (!pColorData || pColorData->GetFillColor()->IsNull()) {
+      if (!pColorData || pColorData->m_FillColor.IsNull()) {
         m_InitialStates.m_ColorState.MakePrivateCopy();
-        m_InitialStates.m_ColorState->SetFillRGB(pParentData->GetFillRGB());
-        m_InitialStates.m_ColorState->GetFillColor()->Copy(
-            pParentData->GetFillColor());
+        m_InitialStates.m_ColorState->m_FillRGB = pParentData->m_FillRGB;
+        m_InitialStates.m_ColorState->m_FillColor.Copy(
+            &pParentData->m_FillColor);
       }
-      if (!pColorData || pColorData->GetStrokeColor()->IsNull()) {
+      if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
         m_InitialStates.m_ColorState.MakePrivateCopy();
-        m_InitialStates.m_ColorState->SetStrokeRGB(pParentData->GetFillRGB());
-        m_InitialStates.m_ColorState->GetStrokeColor()->Copy(
-            pParentData->GetStrokeColor());
+        m_InitialStates.m_ColorState->m_StrokeRGB = pParentData->m_FillRGB;
+        m_InitialStates.m_ColorState->m_StrokeColor.Copy(
+            &pParentData->m_StrokeColor);
       }
     }
   } else {
@@ -514,13 +514,13 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
   if (m_pType3Char && !bType3 &&
       (!m_pType3Char->m_bColored ||
        (m_pType3Char->m_bColored &&
-        (!pColorData || pColorData->GetFillColor()->IsNull())))) {
+        (!pColorData || pColorData->m_FillColor.IsNull())))) {
     return m_T3FillColor;
   }
-  if (!pColorData || pColorData->GetFillColor()->IsNull()) {
+  if (!pColorData || pColorData->m_FillColor.IsNull()) {
     pColorData = m_InitialStates.m_ColorState.GetObject();
   }
-  FX_COLORREF rgb = pColorData->GetFillRGB();
+  FX_COLORREF rgb = pColorData->m_FillRGB;
   if (rgb == (uint32_t)-1) {
     return 0;
   }
@@ -544,16 +544,15 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
 }
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
   const CPDF_ColorStateData* pColorData = pObj->m_ColorState.GetObject();
-  if (m_pType3Char &&
-      (!m_pType3Char->m_bColored ||
-       (m_pType3Char->m_bColored &&
-        (!pColorData || pColorData->GetStrokeColor()->IsNull())))) {
+  if (m_pType3Char && (!m_pType3Char->m_bColored ||
+                       (m_pType3Char->m_bColored &&
+                        (!pColorData || pColorData->m_StrokeColor.IsNull())))) {
     return m_T3FillColor;
   }
-  if (!pColorData || pColorData->GetStrokeColor()->IsNull()) {
+  if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
     pColorData = m_InitialStates.m_ColorState.GetObject();
   }
-  FX_COLORREF rgb = pColorData->GetStrokeRGB();
+  FX_COLORREF rgb = pColorData->m_StrokeRGB;
   if (rgb == (uint32_t)-1) {
     return 0;
   }
@@ -919,14 +918,14 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
   CPDF_GraphicStates* pStates = new CPDF_GraphicStates;
   pStates->CopyStates(*pSrcStates);
   const CPDF_Color* pObjColor = bStroke
-                                    ? pSrcStates->m_ColorState->GetStrokeColor()
-                                    : pSrcStates->m_ColorState->GetFillColor();
+                                    ? pSrcStates->m_ColorState.GetStrokeColor()
+                                    : pSrcStates->m_ColorState.GetFillColor();
   if (!pObjColor->IsNull()) {
     pStates->m_ColorState.MakePrivateCopy();
-    pStates->m_ColorState->SetFillRGB(
-        bStroke ? pSrcStates->m_ColorState->GetStrokeRGB()
-                : pSrcStates->m_ColorState->GetFillRGB());
-    pStates->m_ColorState->SetStrokeRGB(pStates->m_ColorState->GetFillRGB());
+    pStates->m_ColorState->m_FillRGB =
+        bStroke ? pSrcStates->m_ColorState->m_StrokeRGB
+                : pSrcStates->m_ColorState->m_FillRGB;
+    pStates->m_ColorState->m_StrokeRGB = pStates->m_ColorState->m_FillRGB;
   }
   return pStates;
 }
