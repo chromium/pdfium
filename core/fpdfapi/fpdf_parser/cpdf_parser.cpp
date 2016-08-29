@@ -47,7 +47,8 @@ int32_t GetStreamFirst(CPDF_StreamAcc* pObjStream) {
 }  // namespace
 
 CPDF_Parser::CPDF_Parser()
-    : m_bHasParsed(false),
+    : m_pDocument(nullptr),
+      m_bHasParsed(false),
       m_bOwnFileRead(true),
       m_FileVersion(0),
       m_pTrailer(nullptr),
