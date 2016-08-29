@@ -104,7 +104,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
 
         m_TextState.MakePrivateCopy();
         m_TextState->m_FontSize = pFont->GetNumberAt(1);
-        m_TextState->SetFont(pParser->FindFont(pFont->GetStringAt(0)));
+        m_TextState.SetFont(pParser->FindFont(pFont->GetStringAt(0)));
         break;
       }
       case FXBSTR_ID('T', 'R', 0, 0):

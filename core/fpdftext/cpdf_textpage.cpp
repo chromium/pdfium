@@ -54,7 +54,7 @@ FX_FLOAT CalculateBaseSpace(const CPDF_TextObject* pTextObj,
       CPDF_TextObjectItem item;
       pTextObj->GetItemInfo(i, &item);
       if (item.m_CharCode == static_cast<uint32_t>(-1)) {
-        FX_FLOAT fontsize_h = pTextObj->m_TextState->GetFontSizeH();
+        FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
         FX_FLOAT kerning = -fontsize_h * item.m_OriginX / 1000;
         baseSpace = std::min(baseSpace, kerning + spacing);
         bAllChar = false;
@@ -1084,7 +1084,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       if (str.IsEmpty() || str.GetAt(str.GetLength() - 1) == TEXT_SPACE_CHAR)
         continue;
 
-      FX_FLOAT fontsize_h = pTextObj->m_TextState->GetFontSizeH();
+      FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
       spacing = -fontsize_h * item.m_OriginX / 1000;
       continue;
     }
@@ -1096,7 +1096,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     spacing -= baseSpace;
     if (spacing && i > 0) {
       int last_width = 0;
-      FX_FLOAT fontsize_h = pTextObj->m_TextState->GetFontSizeH();
+      FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
       uint32_t space_charcode = pFont->CharCodeFromUnicode(' ');
       FX_FLOAT threshold = 0;
       if (space_charcode != CPDF_Font::kInvalidCharCode)

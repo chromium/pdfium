@@ -35,7 +35,7 @@ void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode) {
     return;
   }
-  CPDF_Font* pFont = m_TextState->GetFont();
+  CPDF_Font* pFont = m_TextState.GetFont();
   if (!pFont->IsCIDFont()) {
     return;
   }
@@ -47,7 +47,7 @@ void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   pInfo->m_OriginX = 0;
   short vx, vy;
   pFont->AsCIDFont()->GetVertOrigin(CID, vx, vy);
-  FX_FLOAT fontsize = m_TextState->GetFontSize();
+  FX_FLOAT fontsize = m_TextState.GetFontSize();
   pInfo->m_OriginX -= fontsize * vx / 1000;
   pInfo->m_OriginY -= fontsize * vy / 1000;
 }
@@ -137,7 +137,7 @@ void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
   CFX_Matrix text_matrix;
   GetTextMatrix(&text_matrix);
   text_matrix.Concat(matrix);
-  FX_FLOAT* pTextMatrix = m_TextState->GetMatrix();
+  FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
   pTextMatrix[0] = text_matrix.GetA();
   pTextMatrix[1] = text_matrix.GetC();
   pTextMatrix[2] = text_matrix.GetB();
@@ -160,7 +160,7 @@ const CPDF_TextObject* CPDF_TextObject::AsText() const {
 }
 
 void CPDF_TextObject::GetTextMatrix(CFX_Matrix* pMatrix) const {
-  const FX_FLOAT* pTextMatrix = m_TextState->GetMatrix();
+  const FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
   pMatrix->Set(pTextMatrix[0], pTextMatrix[2], pTextMatrix[1], pTextMatrix[3],
                m_PosX, m_PosY);
 }
@@ -174,7 +174,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
   }
   FX_Free(m_pCharPos);
   m_pCharPos = nullptr;
-  CPDF_Font* pFont = m_TextState->GetFont();
+  CPDF_Font* pFont = m_TextState.GetFont();
   m_nChars = 0;
   for (int i = 0; i < nsegs; ++i) {
     m_nChars += pFont->CountChar(pStrs[i].c_str(), pStrs[i].GetLength());
@@ -209,8 +209,8 @@ void CPDF_TextObject::SetText(const CFX_ByteString& str) {
 }
 
 FX_FLOAT CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
-  FX_FLOAT fontsize = m_TextState->GetFontSize() / 1000;
-  CPDF_Font* pFont = m_TextState->GetFont();
+  FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
+  CPDF_Font* pFont = m_TextState.GetFont();
   FX_BOOL bVertWriting = FALSE;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont) {
@@ -232,11 +232,11 @@ FX_FLOAT CPDF_TextObject::GetPosY() const {
 }
 
 CPDF_Font* CPDF_TextObject::GetFont() const {
-  return m_TextState->GetFont();
+  return m_TextState.GetFont();
 }
 
 FX_FLOAT CPDF_TextObject::GetFontSize() const {
-  return m_TextState->GetFontSize();
+  return m_TextState.GetFontSize();
 }
 
 void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
@@ -248,13 +248,13 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   FX_FLOAT max_x = -10000 * 1.0f;
   FX_FLOAT min_y = 10000 * 1.0f;
   FX_FLOAT max_y = -10000 * 1.0f;
-  CPDF_Font* pFont = m_TextState->GetFont();
+  CPDF_Font* pFont = m_TextState.GetFont();
   FX_BOOL bVertWriting = FALSE;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont) {
     bVertWriting = pCIDFont->IsVertWriting();
   }
-  FX_FLOAT fontsize = m_TextState->GetFontSize();
+  FX_FLOAT fontsize = m_TextState.GetFontSize();
   for (int i = 0; i < m_nChars; ++i) {
     uint32_t charcode =
         m_nChars == 1 ? (uint32_t)(uintptr_t)m_pCharCodes : m_pCharCodes[i];

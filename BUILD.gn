@@ -447,6 +447,7 @@ static_library("fpdfapi") {
     "core/fpdfapi/fpdf_page/cpdf_shadingpattern.cpp",
     "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h",
     "core/fpdfapi/fpdf_page/cpdf_textobject.cpp",
+    "core/fpdfapi/fpdf_page/cpdf_textstate.cpp",
     "core/fpdfapi/fpdf_page/cpdf_textstate.h",
     "core/fpdfapi/fpdf_page/cpdf_textstatedata.cpp",
     "core/fpdfapi/fpdf_page/cpdf_tilingpattern.cpp",

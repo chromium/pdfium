@@ -235,7 +235,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
   if (text_render_mode == TextRenderingMode::MODE_INVISIBLE)
     return TRUE;
 
-  CPDF_Font* pFont = textobj->m_TextState->GetFont();
+  CPDF_Font* pFont = textobj->m_TextState.GetFont();
   if (pFont->IsType3Font())
     return ProcessType3Text(textobj, pObj2Device);
 
@@ -297,7 +297,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
   if (!IsAvailableMatrix(text_matrix))
     return TRUE;
 
-  FX_FLOAT font_size = textobj->m_TextState->GetFontSize();
+  FX_FLOAT font_size = textobj->m_TextState.GetFontSize();
   if (bPattern) {
     DrawTextPathWithPattern(textobj, pObj2Device, pFont, font_size,
                             &text_matrix, bFill, bStroke);
@@ -373,7 +373,7 @@ class CPDF_RefType3Cache {
 // TODO(npm): Font fallback for type 3 fonts? (Completely separate code!!)
 FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
                                             const CFX_Matrix* pObj2Device) {
-  CPDF_Type3Font* pType3Font = textobj->m_TextState->GetFont()->AsType3Font();
+  CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->AsType3Font();
   for (int i = 0; i < m_Type3FontCache.GetSize(); ++i) {
     if (m_Type3FontCache.GetAt(i) == pType3Font)
       return TRUE;
@@ -385,7 +385,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
   CFX_Matrix text_matrix;
   textobj->GetTextMatrix(&text_matrix);
   CFX_Matrix char_matrix = pType3Font->GetFontMatrix();
-  FX_FLOAT font_size = textobj->m_TextState->GetFontSize();
+  FX_FLOAT font_size = textobj->m_TextState.GetFontSize();
   char_matrix.Scale(font_size, font_size);
   FX_ARGB fill_argb = GetFillArgb(textobj, TRUE);
   int fill_alpha = FXARGB_A(fill_argb);

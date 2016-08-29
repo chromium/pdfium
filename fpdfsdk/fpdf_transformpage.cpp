@@ -223,7 +223,7 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
   pNewClipPath->MakePrivateCopy();
   CPDF_Path Path;
   Path.MakePrivateCopy();
-  Path->AppendRect(left, bottom, right, top);
+  Path.AppendRect(left, bottom, right, top);
   pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, FALSE);
   return pNewClipPath;
 }
@@ -239,7 +239,7 @@ void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
 
   FX_PATHPOINT* pPoints = pPathData->GetPoints();
 
-  if (path->IsRect()) {
+  if (path.IsRect()) {
     buf << (pPoints[0].m_PointX) << " " << (pPoints[0].m_PointY) << " "
         << (pPoints[2].m_PointX - pPoints[0].m_PointX) << " "
         << (pPoints[2].m_PointY - pPoints[0].m_PointY) << " re\n";
@@ -290,7 +290,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   for (i = 0; i < pClipPath->GetPathCount(); i++) {
     CPDF_Path path = pClipPath->GetPath(i);
     int iClipType = pClipPath->GetClipType(i);
-    if (path->GetPointCount() == 0) {
+    if (path.GetPointCount() == 0) {
       // Empty clipping (totally clipped out)
       strClip << "0 0 m W n ";
     } else {

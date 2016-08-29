@@ -34,18 +34,6 @@ class CPDF_TextStateData {
   CPDF_TextStateData(const CPDF_TextStateData& src);
   ~CPDF_TextStateData();
 
-  void SetFont(CPDF_Font* pFont);
-
-  CPDF_Font* GetFont() const { return m_pFont; }
-  FX_FLOAT GetFontSize() const { return m_FontSize; }
-  FX_FLOAT* GetMatrix() { return m_Matrix; }
-  const FX_FLOAT* GetMatrix() const { return m_Matrix; }
-
-  FX_FLOAT GetFontSizeV() const;
-  FX_FLOAT GetFontSizeH() const;
-  FX_FLOAT GetBaselineAngle() const;
-  FX_FLOAT GetShearAngle() const;
-
   CPDF_Font* m_pFont;
   CPDF_Document* m_pDocument;
   FX_FLOAT m_FontSize;
