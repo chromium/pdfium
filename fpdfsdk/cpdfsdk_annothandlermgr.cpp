@@ -11,12 +11,12 @@
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_baannot.h"
 #include "fpdfsdk/include/cpdfsdk_baannothandler.h"
-#include "fpdfsdk/include/cpdfsdk_bfannothandler.h"
 #include "fpdfsdk/include/cpdfsdk_datetime.h"
+#include "fpdfsdk/include/cpdfsdk_widgethandler.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/include/cpdfsdk_xfaannothandler.h"
+#include "fpdfsdk/include/cpdfsdk_xfawidgethandler.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
@@ -24,12 +24,12 @@
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFDoc_Environment* pApp)
     : m_pBAAnnotHandler(new CPDFSDK_BAAnnotHandler()),
-      m_pBFAnnotHandler(new CPDFSDK_BFAnnotHandler(pApp)),
+      m_pWidgetHandler(new CPDFSDK_WidgetHandler(pApp)),
 #ifdef PDF_ENABLE_XFA
-      m_pXFAAnnotHandler(new CPDFSDK_XFAAnnotHandler(pApp)),
+      m_pXFAWidgetHandler(new CPDFSDK_XFAWidgetHandler(pApp)),
 #endif  // PDF_ENABLE_XFA
       m_pApp(pApp) {
-  m_pBFAnnotHandler->SetFormFiller(m_pApp->GetIFormFiller());
+  m_pWidgetHandler->SetFormFiller(m_pApp->GetIFormFiller());
 }
 
 CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() {}
@@ -79,11 +79,11 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
     const CFX_ByteString& sType) const {
   if (sType == "Widget")
-    return m_pBFAnnotHandler.get();
+    return m_pWidgetHandler.get();
 
 #ifdef PDF_ENABLE_XFA
   if (sType == FSDK_XFAWIDGET_TYPENAME)
-    return m_pXFAAnnotHandler.get();
+    return m_pXFAWidgetHandler.get();
 #endif  // PDF_ENABLE_XFA
 
   return m_pBAAnnotHandler.get();

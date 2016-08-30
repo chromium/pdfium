@@ -19,12 +19,12 @@ class CPDF_Annot;
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_BAAnnotHandler;
-class CPDFSDK_BFAnnotHandler;
+class CPDFSDK_WidgetHandler;
 class CPDFSDK_PageView;
 class IPDFSDK_AnnotHandler;
 
 #ifdef PDF_ENABLE_XFA
-class CPDFSDK_XFAAnnotHandler;
+class CPDFSDK_XFAWidgetHandler;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
@@ -113,9 +113,9 @@ class CPDFSDK_AnnotHandlerMgr {
   CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, FX_BOOL bNext);
 
   std::unique_ptr<CPDFSDK_BAAnnotHandler> m_pBAAnnotHandler;
-  std::unique_ptr<CPDFSDK_BFAnnotHandler> m_pBFAnnotHandler;
+  std::unique_ptr<CPDFSDK_WidgetHandler> m_pWidgetHandler;
 #ifdef PDF_ENABLE_XFA
-  std::unique_ptr<CPDFSDK_XFAAnnotHandler> m_pXFAAnnotHandler;
+  std::unique_ptr<CPDFSDK_XFAWidgetHandler> m_pXFAWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 
   CPDFDoc_Environment* m_pApp;
