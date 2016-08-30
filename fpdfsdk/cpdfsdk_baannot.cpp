@@ -23,6 +23,10 @@ CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() const {
   return m_pAnnot;
 }
 
+CPDF_Annot* CPDFSDK_BAAnnot::GetPDFPopupAnnot() const {
+  return m_pAnnot->GetPopupAnnot();
+}
+
 CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
   return m_pAnnot->GetAnnotDict();
 }
@@ -395,4 +399,9 @@ void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
   m_pAnnot->GetAPForm(m_pPageView->GetPDFPage(), CPDF_Annot::Normal);
   m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device,
                            CPDF_Annot::Normal, nullptr);
+}
+
+void CPDFSDK_BAAnnot::SetOpenState(bool bOpenState) {
+  if (CPDF_Annot* pAnnot = m_pAnnot->GetPopupAnnot())
+    pAnnot->SetOpenState(bOpenState);
 }

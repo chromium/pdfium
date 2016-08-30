@@ -16,6 +16,40 @@
 #include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
+namespace {
+
+std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
+                                             CPDF_Document* pDocument) {
+  CPDF_Dictionary* pParentDict = pAnnot->GetAnnotDict();
+  if (!pParentDict)
+    return std::unique_ptr<CPDF_Annot>();
+
+  CFX_ByteString sContents = pParentDict->GetStringBy("Contents");
+  if (sContents.IsEmpty())
+    return std::unique_ptr<CPDF_Annot>();
+
+  CPDF_Dictionary* pAnnotDict = new CPDF_Dictionary;
+  pAnnotDict->SetAtName("Type", "Annot");
+  pAnnotDict->SetAtName("Subtype", "Popup");
+  pAnnotDict->SetAtString("T", pParentDict->GetStringBy("T"));
+  pAnnotDict->SetAtString("Contents", sContents);
+
+  CFX_FloatRect rect = pParentDict->GetRectBy("Rect");
+  rect.Normalize();
+  CFX_FloatRect popupRect(0, 0, 200, 200);
+  popupRect.Translate(rect.left, rect.bottom - popupRect.Height());
+
+  pAnnotDict->SetAtRect("Rect", popupRect);
+  pAnnotDict->SetAtInteger("F", 0);
+
+  std::unique_ptr<CPDF_Annot> pPopupAnnot(
+      new CPDF_Annot(pAnnotDict, pDocument));
+  pAnnot->SetPopupAnnot(pPopupAnnot.get());
+  return pPopupAnnot;
+}
+
+}  // namespace
+
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     : m_pDocument(pPage->m_pDocument) {
   if (!pPage->m_pFormDict)
@@ -42,12 +76,26 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       pAnnots->RemoveAt(i + 1);
       pDict = pAnnots->GetDictAt(i);
     }
+
+    // Skip creating Popup annotation in the PDF document since PDFium provides
+    // its own Popup annotations.
+    if (pDict->GetStringBy("Subtype") == "Popup")
+      continue;
+
     m_AnnotList.push_back(
         std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument)));
     if (bRegenerateAP && pDict->GetStringBy("Subtype") == "Widget" &&
         CPDF_InterForm::IsUpdateAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
     }
+  }
+
+  size_t nAnnotListSize = m_AnnotList.size();
+  for (size_t i = 0; i < nAnnotListSize; ++i) {
+    std::unique_ptr<CPDF_Annot> pPopupAnnot(
+        CreatePopupAnnot(m_AnnotList[i].get(), m_pDocument));
+    if (pPopupAnnot)
+      m_AnnotList.push_back(std::move(pPopupAnnot));
   }
 }
 

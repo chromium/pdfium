@@ -61,6 +61,9 @@ class CPDF_Annot {
                   const CFX_Matrix* pUser2Device,
                   const CPDF_RenderOptions* pOptions);
   CPDF_Form* GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
+  void SetOpenState(bool bOpenState) { m_bOpenState = bOpenState; }
+  CPDF_Annot* GetPopupAnnot() const { return m_pPopupAnnot; }
+  void SetPopupAnnot(CPDF_Annot* pAnnot) { m_pPopupAnnot = pAnnot; }
 
  private:
   void GenerateAPIfNeeded();
@@ -69,6 +72,11 @@ class CPDF_Annot {
   CPDF_Document* const m_pDocument;
   const CFX_ByteString m_sSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
+  // |m_bOpenState| is only set for popup annotations.
+  bool m_bOpenState;
+  // Not owned. If there is a valid pointer in |m_pPopupAnnot|,
+  // then this annot is never a popup.
+  CPDF_Annot* m_pPopupAnnot;
 };
 
 CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,

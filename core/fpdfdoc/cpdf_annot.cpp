@@ -21,7 +21,9 @@
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),
       m_pDocument(pDocument),
-      m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {
+      m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")),
+      m_bOpenState(false),
+      m_pPopupAnnot(nullptr) {
   GenerateAPIfNeeded();
 }
 
@@ -36,6 +38,8 @@ void CPDF_Annot::GenerateAPIfNeeded() {
     CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Ink")
     CPVT_GenerateAP::GenerateInkAP(m_pDocument, m_pAnnotDict);
+  else if (m_sSubtype == "Popup")
+    CPVT_GenerateAP::GeneratePopupAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Square")
     CPVT_GenerateAP::GenerateSquareAP(m_pDocument, m_pAnnotDict);
   else if (m_sSubtype == "Squiggly")
@@ -150,6 +154,9 @@ FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                    AppearanceMode mode,
                                    const CPDF_RenderOptions* pOptions) {
   if (IsAnnotationHidden(m_pAnnotDict))
+    return FALSE;
+
+  if (m_sSubtype == "Popup" && !m_bOpenState)
     return FALSE;
 
   // It might happen that by the time this annotation instance was created,

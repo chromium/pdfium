@@ -602,6 +602,8 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(FX_FLOAT pageX,
   CPDFSDK_AnnotIterator annotIterator(this, false);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
     CFX_FloatRect rc = pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
+    if (pSDKAnnot->GetAnnotSubtype() == "Popup")
+      continue;
     if (rc.Contains(pageX, pageY))
       return pSDKAnnot;
   }
@@ -833,13 +835,13 @@ FX_BOOL CPDFSDK_PageView::OnLButtonUp(const CFX_FloatPoint& point,
 FX_BOOL CPDFSDK_PageView::OnMouseMove(const CFX_FloatPoint& point, int nFlag) {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
-  if (CPDFSDK_Annot* pFXAnnot = GetFXWidgetAtPoint(point.x, point.y)) {
+  if (CPDFSDK_Annot* pFXAnnot = GetFXAnnotAtPoint(point.x, point.y)) {
     if (m_CaptureWidget && m_CaptureWidget != pFXAnnot) {
       m_bExitWidget = TRUE;
       m_bEnterWidget = FALSE;
       pAnnotHandlerMgr->Annot_OnMouseExit(this, m_CaptureWidget, nFlag);
     }
-    m_CaptureWidget = (CPDFSDK_Widget*)pFXAnnot;
+    m_CaptureWidget = pFXAnnot;
     m_bOnWidget = TRUE;
     if (!m_bEnterWidget) {
       m_bEnterWidget = TRUE;

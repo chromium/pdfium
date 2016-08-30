@@ -34,6 +34,7 @@ class CPVT_GenerateAP {
   static bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
   static bool GenerateListBoxAP(CPDF_Document* pDoc,
                                 CPDF_Dictionary* pAnnotDict);
+  static bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
   static bool GenerateSquareAP(CPDF_Document* pDoc,
                                CPDF_Dictionary* pAnnotDict);
   static bool GenerateSquigglyAP(CPDF_Document* pDoc,

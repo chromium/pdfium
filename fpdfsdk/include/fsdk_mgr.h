@@ -616,10 +616,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
   CPDFSDK_Document* const m_pSDKDoc;
-#ifdef PDF_ENABLE_XFA
   CPDFSDK_Annot* m_CaptureWidget;
-#else  // PDF_ENABLE_XFA
-  CPDFSDK_Widget* m_CaptureWidget;
+#ifndef PDF_ENABLE_XFA
   FX_BOOL m_bTakeOverPage;
 #endif  // PDF_ENABLE_XFA
   FX_BOOL m_bEnterWidget;
