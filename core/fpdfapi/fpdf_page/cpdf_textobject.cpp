@@ -334,9 +334,9 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
     }
     curpos += charwidth;
     if (charcode == ' ' && (!pCIDFont || pCIDFont->GetCharSize(32) == 1)) {
-      curpos += m_TextState.GetObject()->m_WordSpace;
+      curpos += m_TextState.GetWordSpace();
     }
-    curpos += m_TextState.GetObject()->m_CharSpace;
+    curpos += m_TextState.GetCharSpace();
   }
   if (bVertWriting) {
     if (pTextAdvanceX) {
@@ -364,7 +364,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   m_Bottom = min_y;
   m_Top = max_y;
   matrix.TransformRect(m_Left, m_Right, m_Top, m_Bottom);
-  if (TextRenderingModeIsStrokeMode(m_TextState.GetObject()->m_TextMode)) {
+  if (TextRenderingModeIsStrokeMode(m_TextState.GetTextMode())) {
     FX_FLOAT half_width = m_GraphState.GetObject()->m_LineWidth / 2;
     m_Left -= half_width;
     m_Right += half_width;

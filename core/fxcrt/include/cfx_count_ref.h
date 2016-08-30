@@ -18,7 +18,7 @@ class CFX_CountRef {
   ~CFX_CountRef() {}
 
   template <typename... Args>
-  ObjClass* New(Args... params) {
+  ObjClass* Emplace(Args... params) {
     m_pObject.Reset(new CountedObj(params...));
     return m_pObject.Get();
   }
@@ -35,7 +35,7 @@ class CFX_CountRef {
   template <typename... Args>
   ObjClass* GetPrivateCopy(Args... params) {
     if (!m_pObject)
-      return New(params...);
+      return Emplace(params...);
     if (!m_pObject->HasOneRef())
       m_pObject.Reset(new CountedObj(*m_pObject));
     return m_pObject.Get();

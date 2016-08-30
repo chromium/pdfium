@@ -49,9 +49,7 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
     m_Mask = Mask;
     return;
   }
-  CFX_DIBitmap* new_dib = m_Mask.New();
-  if (!new_dib)
-    return;
+  CFX_DIBitmap* new_dib = m_Mask.Emplace();
   new_dib->Create(m_Box.Width(), m_Box.Height(), FXDIB_8bppMask);
   for (int row = m_Box.top; row < m_Box.bottom; row++) {
     uint8_t* dest_scan =
@@ -82,9 +80,7 @@ void CFX_ClipRgn::IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask) {
       return;
     }
     CFX_DIBitmapRef new_mask;
-    CFX_DIBitmap* new_dib = new_mask.New();
-    if (!new_dib)
-      return;
+    CFX_DIBitmap* new_dib = new_mask.Emplace();
     new_dib->Create(new_box.Width(), new_box.Height(), FXDIB_8bppMask);
     const CFX_DIBitmap* old_dib = m_Mask.GetObject();
     for (int row = new_box.top; row < new_box.bottom; row++) {

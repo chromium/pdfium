@@ -72,3 +72,29 @@ CPDF_TextStateData::~CPDF_TextStateData() {
       pPageData->ReleaseFont(m_pFont->GetFontDict());
   }
 }
+
+void CPDF_TextStateData::SetFont(CPDF_Font* pFont) {
+  CPDF_Document* pDoc = m_pDocument;
+  CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
+  if (pPageData && m_pFont && !pPageData->IsForceClear())
+    pPageData->ReleaseFont(m_pFont->GetFontDict());
+
+  m_pDocument = pFont ? pFont->m_pDocument : nullptr;
+  m_pFont = pFont;
+}
+
+FX_FLOAT CPDF_TextStateData::GetFontSizeV() const {
+  return FXSYS_fabs(FXSYS_sqrt2(m_Matrix[1], m_Matrix[3]) * m_FontSize);
+}
+
+FX_FLOAT CPDF_TextStateData::GetFontSizeH() const {
+  return FXSYS_fabs(FXSYS_sqrt2(m_Matrix[0], m_Matrix[2]) * m_FontSize);
+}
+
+FX_FLOAT CPDF_TextStateData::GetBaselineAngle() const {
+  return FXSYS_atan2(m_Matrix[2], m_Matrix[0]);
+}
+
+FX_FLOAT CPDF_TextStateData::GetShearAngle() const {
+  return GetBaselineAngle() + FXSYS_atan2(m_Matrix[1], m_Matrix[3]);
+}

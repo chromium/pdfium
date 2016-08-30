@@ -58,7 +58,7 @@ TEST(fxcrt, CountRefCopy) {
   Observer observer;
   {
     CFX_CountRef<Object> ptr1;
-    ptr1.New(&observer, std::string("one"));
+    ptr1.Emplace(&observer, std::string("one"));
     {
       CFX_CountRef<Object> ptr2 = ptr1;
       EXPECT_EQ(1, observer.GetConstructionCount("one"));
@@ -79,8 +79,8 @@ TEST(fxcrt, CountRefAssignOverOld) {
   Observer observer;
   {
     CFX_CountRef<Object> ptr1;
-    ptr1.New(&observer, std::string("one"));
-    ptr1.New(&observer, std::string("two"));
+    ptr1.Emplace(&observer, std::string("one"));
+    ptr1.Emplace(&observer, std::string("two"));
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
     EXPECT_EQ(1, observer.GetConstructionCount("two"));
     EXPECT_EQ(1, observer.GetDestructionCount("one"));
@@ -93,9 +93,9 @@ TEST(fxcrt, CountRefAssignOverRetained) {
   Observer observer;
   {
     CFX_CountRef<Object> ptr1;
-    ptr1.New(&observer, std::string("one"));
+    ptr1.Emplace(&observer, std::string("one"));
     CFX_CountRef<Object> ptr2(ptr1);
-    ptr1.New(&observer, std::string("two"));
+    ptr1.Emplace(&observer, std::string("two"));
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
     EXPECT_EQ(1, observer.GetConstructionCount("two"));
     EXPECT_EQ(0, observer.GetDestructionCount("one"));

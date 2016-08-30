@@ -161,16 +161,17 @@ CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                          const CFX_FloatPoint& point,
                                          const CFX_ByteString& text) {
   std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
-  CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetPrivateCopy();
-  pTextStateData->m_pFont = pFont;
-  pTextStateData->m_FontSize = fFontSize;
-  pTextStateData->m_CharSpace = fCharSpace;
-  pTextStateData->m_WordSpace = 0;
-  pTextStateData->m_TextMode = TextRenderingMode::MODE_FILL;
-  pTextStateData->m_Matrix[0] = nHorzScale / 100.0f;
-  pTextStateData->m_Matrix[1] = 0;
-  pTextStateData->m_Matrix[2] = 0;
-  pTextStateData->m_Matrix[3] = 1;
+  pTxtObj->m_TextState.SetFont(pFont);
+  pTxtObj->m_TextState.SetFontSize(fFontSize);
+  pTxtObj->m_TextState.SetCharSpace(fCharSpace);
+  pTxtObj->m_TextState.SetWordSpace(0);
+  pTxtObj->m_TextState.SetTextMode(TextRenderingMode::MODE_FILL);
+
+  FX_FLOAT* matrix = pTxtObj->m_TextState.GetMutableMatrix();
+  matrix[0] = nHorzScale / 100.0f;
+  matrix[1] = 0;
+  matrix[2] = 0;
+  matrix[3] = 1;
 
   FX_FLOAT rgb[3];
   rgb[0] = FXARGB_R(crText) / 255.0f;

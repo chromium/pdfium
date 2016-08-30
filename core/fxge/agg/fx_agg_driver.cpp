@@ -528,10 +528,7 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
                     rasterizer.max_x() + 1, rasterizer.max_y() + 1);
   path_rect.Intersect(m_pClipRgn->GetBox());
   CFX_DIBitmapRef mask;
-  CFX_DIBitmap* pThisLayer = mask.New();
-  if (!pThisLayer) {
-    return;
-  }
+  CFX_DIBitmap* pThisLayer = mask.Emplace();
   pThisLayer->Create(path_rect.Width(), path_rect.Height(), FXDIB_8bppMask);
   pThisLayer->Clear(0);
   agg::rendering_buffer raw_buf(pThisLayer->GetBuffer(), pThisLayer->GetWidth(),

@@ -231,8 +231,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
   if (textobj->m_nChars == 0)
     return TRUE;
 
-  const TextRenderingMode& text_render_mode =
-      textobj->m_TextState.GetObject()->m_TextMode;
+  const TextRenderingMode text_render_mode = textobj->m_TextState.GetTextMode();
   if (text_render_mode == TextRenderingMode::MODE_INVISIBLE)
     return TRUE;
 
@@ -308,7 +307,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
     const CFX_Matrix* pDeviceMatrix = pObj2Device;
     CFX_Matrix device_matrix;
     if (bStroke) {
-      const FX_FLOAT* pCTM = textobj->m_TextState.GetObject()->m_CTM;
+      const FX_FLOAT* pCTM = textobj->m_TextState.GetCTM();
       if (pCTM[0] != 1.0f || pCTM[3] != 1.0f) {
         CFX_Matrix ctm(pCTM[0], pCTM[1], pCTM[2], pCTM[3], 0, 0);
         text_matrix.ConcatInverse(ctm);
@@ -817,8 +816,8 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.m_FillType = FXFILL_WINDING;
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
-    path.m_Path.New()->AppendRect(textobj->m_Left, textobj->m_Bottom,
-                                  textobj->m_Right, textobj->m_Top);
+    path.m_Path.Emplace()->AppendRect(textobj->m_Left, textobj->m_Bottom,
+                                      textobj->m_Right, textobj->m_Top);
     path.m_Left = textobj->m_Left;
     path.m_Bottom = textobj->m_Bottom;
     path.m_Right = textobj->m_Right;
@@ -864,7 +863,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                  charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
     matrix.Concat(font_size, 0, 0, font_size, charpos.m_OriginX,
                   charpos.m_OriginY);
-    path.m_Path.New()->Append(pPath, &matrix);
+    path.m_Path.Emplace()->Append(pPath, &matrix);
     path.m_Matrix = *pTextMatrix;
     path.m_bStroke = bStroke;
     path.m_FillType = bFill ? FXFILL_WINDING : 0;

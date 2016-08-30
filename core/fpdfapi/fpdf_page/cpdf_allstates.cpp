@@ -98,7 +98,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (!pFont)
           break;
 
-        m_TextState.GetPrivateCopy()->m_FontSize = pFont->GetNumberAt(1);
+        m_TextState.SetFontSize(pFont->GetNumberAt(1));
         m_TextState.SetFont(pParser->FindFont(pFont->GetStringAt(0)));
         break;
       }
