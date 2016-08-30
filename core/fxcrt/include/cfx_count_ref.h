@@ -30,7 +30,6 @@ class CFX_CountRef {
   }
 
   void SetNull() { m_pObject.Reset(); }
-  ObjClass* GetObject() { return m_pObject.Get(); }
   const ObjClass* GetObject() const { return m_pObject.Get(); }
 
   template <typename... Args>

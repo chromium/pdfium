@@ -133,11 +133,11 @@ CPDF_PageObject::Type CPDF_TextObject::GetType() const {
 }
 
 void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
-  m_TextState.GetPrivateCopy();
   CFX_Matrix text_matrix;
   GetTextMatrix(&text_matrix);
   text_matrix.Concat(matrix);
-  FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
+
+  FX_FLOAT* pTextMatrix = m_TextState.GetMutableMatrix();
   pTextMatrix[0] = text_matrix.GetA();
   pTextMatrix[1] = text_matrix.GetC();
   pTextMatrix[2] = text_matrix.GetB();

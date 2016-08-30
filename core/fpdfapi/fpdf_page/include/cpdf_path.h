@@ -30,14 +30,14 @@ class CPDF_Path : public CFX_CountRef<CFX_PathData> {
     GetPrivateCopy()->Transform(pMatrix);
   }
   void Append(const CPDF_Path& other, const CFX_Matrix* pMatrix) {
-    GetObject()->Append(other.GetObject(), pMatrix);
+    GetPrivateCopy()->Append(other.GetObject(), pMatrix);
   }
 
   void AppendRect(FX_FLOAT left,
                   FX_FLOAT bottom,
                   FX_FLOAT right,
                   FX_FLOAT top) {
-    GetObject()->AppendRect(left, bottom, right, top);
+    GetPrivateCopy()->AppendRect(left, bottom, right, top);
   }
 };
 

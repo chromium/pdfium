@@ -18,8 +18,8 @@ class CPDF_TextState : public CFX_CountRef<CPDF_TextStateData> {
   void SetFont(CPDF_Font* pFont);
 
   FX_FLOAT GetFontSize() const { return GetObject()->m_FontSize; }
-  FX_FLOAT* GetMatrix() { return GetObject()->m_Matrix; }
   const FX_FLOAT* GetMatrix() const { return GetObject()->m_Matrix; }
+  FX_FLOAT* GetMutableMatrix() { return GetPrivateCopy()->m_Matrix; }
 
   FX_FLOAT GetFontSizeV() const;
   FX_FLOAT GetFontSizeH() const;
