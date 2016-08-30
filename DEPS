@@ -22,6 +22,10 @@ vars = {
 }
 
 deps = {
+  "base/trace_event/common":
+    Var('chromium_git') + "/chromium/src/base/trace_event/common.git@" +
+        Var('trace_event_revision'),
+
   "build":
     Var('chromium_git') + "/chromium/src/build.git@" + Var('build_revision'),
 
@@ -60,10 +64,6 @@ deps = {
 
   "v8":
     Var('chromium_git') + "/v8/v8.git@" + Var('v8_revision'),
-
-  "v8/base/trace_event/common":
-    Var('chromium_git') + "/chromium/src/base/trace_event/common.git@" +
-        Var('trace_event_revision'),
 }
 
 deps_os = {

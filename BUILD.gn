@@ -104,7 +104,6 @@ static_library("pdfium") {
     "fpdfsdk/include/cpdfsdk_widget.h",
     "fpdfsdk/include/fsdk_actionhandler.h",
     "fpdfsdk/include/fsdk_pauseadapter.h",
-    "fpdfsdk/include/ifpdfsdk_annothandler.h",
     "fpdfsdk/include/pdfsdk_fieldaction.h",
     "fpdfsdk/pdfsdk_fieldaction.cpp",
     "public/fpdf_dataavail.h",
@@ -306,8 +305,8 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/include/cpvt_wordrange.h",
     "core/fpdfdoc/include/fpdf_tagged.h",
     "core/fpdfdoc/include/ipdf_formnotify.h",
+    "core/fpdfdoc/include/ipvt_fontmap.h",
     "core/fpdfdoc/ipdf_formnotify.cpp",
-    "core/fpdfdoc/ipvt_fontmap.h",
     "core/fpdfdoc/tagged_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
@@ -549,7 +548,6 @@ static_library("fpdftext") {
     "core/fpdftext/include/cpdf_linkextract.h",
     "core/fpdftext/include/cpdf_textpage.h",
     "core/fpdftext/include/cpdf_textpagefind.h",
-    "core/fpdftext/text_int.h",
     "core/fpdftext/unicodenormalizationdata.cpp",
     "core/fpdftext/unicodenormalizationdata.h",
   ]
@@ -711,8 +709,8 @@ static_library("fxcrt") {
   if (pdf_enable_xfa) {
     sources += [
       "core/fxcrt/fx_arabic.cpp",
-      "core/fxcrt/fx_arabic.h",
       "core/fxcrt/fx_basic_maps.cpp",
+      "core/fxcrt/include/fx_arabic.h",
       "core/fxcrt/include/fx_arb.h",
     ]
   }
@@ -780,13 +778,12 @@ static_library("fxge") {
     "core/fxge/ge/fx_ge_linux.cpp",
     "core/fxge/ge/fx_ge_text.cpp",
     "core/fxge/ge/fx_text_int.h",
-    "core/fxge/ge/include/cfx_fontmapper.h",
-    "core/fxge/ge/include/cfx_fontmgr.h",
-    "core/fxge/ge/include/ifx_systemfontinfo.h",
     "core/fxge/ifx_renderdevicedriver.cpp",
     "core/fxge/include/cfx_autofontcache.h",
     "core/fxge/include/cfx_facecache.h",
     "core/fxge/include/cfx_fontcache.h",
+    "core/fxge/include/cfx_fontmapper.h",
+    "core/fxge/include/cfx_fontmgr.h",
     "core/fxge/include/cfx_fxgedevice.h",
     "core/fxge/include/cfx_gemodule.h",
     "core/fxge/include/cfx_graphstatedata.h",
@@ -799,6 +796,7 @@ static_library("fxge") {
     "core/fxge/include/fx_font.h",
     "core/fxge/include/fx_freetype.h",
     "core/fxge/include/ifx_renderdevicedriver.h",
+    "core/fxge/include/ifx_systemfontinfo.h",
     "core/fxge/win32/cfx_windowsdib.h",
   ]
 
@@ -1067,7 +1065,6 @@ if (pdf_enable_xfa) {
       "xfa/fde/css/fde_csssyntax.cpp",
       "xfa/fde/css/fde_csssyntax.h",
       "xfa/fde/fde_gedevice.cpp",
-      "xfa/fde/fde_geobject.h",
       "xfa/fde/fde_iterator.cpp",
       "xfa/fde/fde_iterator.h",
       "xfa/fde/fde_object.h",
