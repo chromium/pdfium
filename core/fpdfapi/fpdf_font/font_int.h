@@ -142,20 +142,17 @@ class CPDF_CMap {
                          const FX_CHAR* name,
                          FX_BOOL bPromptCJK);
   FX_BOOL LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
-  void Release();
 
   FX_BOOL IsLoaded() const;
   FX_BOOL IsVertWriting() const;
   uint16_t CIDFromCharCode(uint32_t charcode) const;
-  uint32_t CharCodeFromCID(uint16_t CID) const;
   int GetCharSize(uint32_t charcode) const;
   uint32_t GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const;
   int CountChar(const FX_CHAR* pString, int size) const;
   int AppendChar(FX_CHAR* str, uint32_t charcode) const;
 
- protected:
+ private:
   friend class CPDF_CMapParser;
-  friend class CPDF_CMapManager;
   friend class CPDF_CIDFont;
 
   CFX_ByteString m_PredefinedCMap;

@@ -518,11 +518,6 @@ CPDF_CMap::~CPDF_CMap() {
   FX_Free(m_pAddMapping);
   FX_Free(m_pLeadingBytes);
 }
-void CPDF_CMap::Release() {
-  if (m_PredefinedCMap.IsEmpty()) {
-    delete this;
-  }
-}
 
 FX_BOOL CPDF_CMap::IsLoaded() const {
   return m_bLoaded;
