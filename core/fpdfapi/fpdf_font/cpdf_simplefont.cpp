@@ -10,6 +10,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fxge/include/fx_freetype.h"
+#include "third_party/base/numerics/safe_math.h"
 
 CPDF_SimpleFont::CPDF_SimpleFont() : m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
   FXSYS_memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
@@ -181,8 +182,13 @@ void CPDF_SimpleFont::LoadSubstFont() {
       m_Flags |= PDFFONT_FIXEDPITCH;
     }
   }
-  int weight = m_StemV < 140 ? m_StemV * 5 : (m_StemV * 4 + 140);
-  m_Font.LoadSubst(m_BaseFont, IsTrueTypeFont(), m_Flags, weight, m_ItalicAngle,
+  pdfium::base::CheckedNumeric<int> safeStemV(m_StemV);
+  if (m_StemV < 140)
+    safeStemV *= 5;
+  else
+    safeStemV = safeStemV * 4 + 140;
+  m_Font.LoadSubst(m_BaseFont, IsTrueTypeFont(), m_Flags,
+                   safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle,
                    0);
 }
 

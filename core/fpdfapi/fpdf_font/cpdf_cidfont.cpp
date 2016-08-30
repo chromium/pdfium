@@ -18,6 +18,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "third_party/base/numerics/safe_math.h"
 
 namespace {
 
@@ -768,7 +769,10 @@ FX_BOOL CPDF_CIDFont::IsUnicodeCompatible() const {
 }
 
 void CPDF_CIDFont::LoadSubstFont() {
-  m_Font.LoadSubst(m_BaseFont, !m_bType1, m_Flags, m_StemV * 5, m_ItalicAngle,
+  pdfium::base::CheckedNumeric<int> safeStemV(m_StemV);
+  safeStemV *= 5;
+  m_Font.LoadSubst(m_BaseFont, !m_bType1, m_Flags,
+                   safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle,
                    g_CharsetCPs[m_Charset], IsVertWriting());
 }
 
