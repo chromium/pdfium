@@ -29,3 +29,8 @@ if (current_cpu == "arm") {
 
 # PDFium builds don't use Chromium's third_party/binutils.
 linux_use_bundled_binutils_override = false
+
+# PDFium just uses the Chromium suppression files for now.
+asan_suppressions_file = "//build/sanitizers/asan_suppressions.cc"
+lsan_suppressions_file = "//build/sanitizers/lsan_suppressions.cc"
+tsan_suppressions_file = "//build/sanitizers/tsan_suppressions.cc"
