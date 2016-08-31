@@ -14,6 +14,7 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_substfont.h"
 #include "core/fxge/include/fx_freetype.h"
+#include "third_party/base/numerics/safe_math.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "third_party/skia/include/core/SkStream.h"
@@ -154,19 +155,17 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
     uint32_t index = (weight - 400) / 10;
     if (index >= CFX_Font::kWeightPowArraySize)
       return nullptr;
-    int level = 0;
-    if (pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET) {
-      level =
-          CFX_Font::s_WeightPow_SHIFTJIS[index] * 2 *
-          (FXSYS_abs((int)(ft_matrix.xx)) + FXSYS_abs((int)(ft_matrix.xy))) /
-          36655;
-    } else {
-      level =
-          CFX_Font::s_WeightPow_11[index] *
-          (FXSYS_abs((int)(ft_matrix.xx)) + FXSYS_abs((int)(ft_matrix.xy))) /
-          36655;
-    }
-    FXFT_Outline_Embolden(FXFT_Get_Glyph_Outline(m_Face), level);
+    pdfium::base::CheckedNumeric<signed long> level = 0;
+    if (pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET)
+      level = CFX_Font::s_WeightPow_SHIFTJIS[index] * 2;
+    else
+      level = CFX_Font::s_WeightPow_11[index];
+
+    level = level * (FXSYS_abs(static_cast<int>(ft_matrix.xx)) +
+                     FXSYS_abs(static_cast<int>(ft_matrix.xy))) /
+            36655;
+    FXFT_Outline_Embolden(FXFT_Get_Glyph_Outline(m_Face),
+                          level.ValueOrDefault(0));
   }
   FXFT_Library_SetLcdFilter(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
                             FT_LCD_FILTER_DEFAULT);
