@@ -372,3 +372,12 @@ template("test") {
     }
   }
 }
+
+# Test defaults.
+set_defaults("test") {
+  if (is_android) {
+    configs = default_shared_library_configs
+  } else {
+    configs = default_executable_configs
+  }
+}

@@ -5,8 +5,8 @@ vars = {
   'pdfium_git': 'https://pdfium.googlesource.com',
 
   'android_ndk_revision': '5022f40f12953c02b2614c5f7beb981ec5d0e833',
-  'build_revision': '76d9f8b4fcae07fb82f28295468cf92bade935bd',
-  'buildtools_revision': 'db6179b29f90d28026b0cb23ef71d56ec31b8bd6',
+  'build_revision': 'b73bafdd0ff0efc8835de6e646b47eec0a2a38a4',
+  'buildtools_revision': 'adb8bf4e8fc92aa1717bf151b862d58e6f27c4f2',
   'catapult_revision': '327256cb1c387e62a2c7e6960e2398867665fb51',
   'clang_revision': '797371be0a75c9892d6acb486d0430915ea538a6',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
@@ -15,10 +15,10 @@ vars = {
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': '2341038bf72869a5683a893a2b319a48ffec7f62',
   'pdfium_tests_revision': '5867fa68fa3e00016d3e31374e84eb01a3db6ac7',
-  'skia_revision': '3bf7509c3f68aefbe5f8b2ea5888319a71a91d2d',
+  'skia_revision': '3ee255f259541eff1251c8007f9135e8d664346a',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '54b8455be9505c2cb0cf5c26bb86739c236471aa',
-  'v8_revision': '75f10f91b1b0b392d2a29a7a480bf079db6f43fa',
+  'v8_revision': '3d96d7eecdef82d092889703f56e81d897dcf390',
 }
 
 deps = {

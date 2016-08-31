@@ -17,11 +17,15 @@ build_with_chromium = true
 # Support different NDK locations in non-Chromium builds.
 default_android_ndk_root = "//third_party/android_ndk"
 default_android_ndk_version = "r11c"
+default_android_ndk_major_version = "11"
 
-# Some non-Chromium builds don't support building java targets.
+# PDFium builds don't support building java targets.
 enable_java_templates = false
 
 # Whether to use the neon FPU instruction set or not.
-if (current_cpu == "arm" ) {
+if (current_cpu == "arm") {
   arm_use_neon = true
 }
+
+# PDFium builds don't use Chromium's third_party/binutils.
+linux_use_bundled_binutils_override = false

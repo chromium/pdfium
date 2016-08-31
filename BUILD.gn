@@ -706,6 +706,8 @@ static_library("fxcrt") {
     "core/fxcrt/plex.h",
     "core/fxcrt/xml_int.h",
   ]
+  configs += [ ":pdfium_core_config" ]
+
   if (pdf_enable_xfa) {
     sources += [
       "core/fxcrt/fx_arabic.cpp",
@@ -714,7 +716,6 @@ static_library("fxcrt") {
       "core/fxcrt/include/fx_arb.h",
     ]
   }
-  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("fxge") {
@@ -1691,6 +1692,8 @@ test("pdfium_embeddertests") {
     "//testing/gtest",
   ]
   include_dirs = [ "testing/gmock/include" ]
+  configs += [ ":pdfium_core_config" ]
+
   if (pdf_enable_v8) {
     sources += [
       "fpdfsdk/javascript/public_methods_embeddertest.cpp",
@@ -1701,7 +1704,6 @@ test("pdfium_embeddertests") {
     deps += [ ":fxjs" ]
     configs += [ "//v8:external_startup_data" ]
   }
-  configs += [ ":pdfium_core_config" ]
   if (is_android) {
     ignore_all_data_deps = true
     use_raw_android_executable = true
