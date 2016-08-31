@@ -23,6 +23,8 @@
 
 namespace {
 
+constexpr uint32_t kInvalidGlyphIndex = static_cast<uint32_t>(-1);
+
 void GammaAdjust(uint8_t* pData,
                  int nHeight,
                  int src_pitch,
@@ -224,14 +226,22 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
 const CFX_PathData* CFX_FaceCache::LoadGlyphPath(CFX_Font* pFont,
                                                  uint32_t glyph_index,
                                                  int dest_width) {
-  if (!m_Face || glyph_index == (uint32_t)-1)
+  if (!m_Face || glyph_index == kInvalidGlyphIndex || dest_width < 0)
     return nullptr;
 
   uint32_t key = glyph_index;
-  if (pFont->GetSubstFont()) {
-    key += (((pFont->GetSubstFont()->m_Weight / 16) << 15) +
-            ((pFont->GetSubstFont()->m_ItalicAngle / 2) << 21) +
-            ((dest_width / 16) << 25) + (pFont->IsVertical() << 31));
+  auto* pSubstFont = pFont->GetSubstFont();
+  if (pSubstFont) {
+    if (pSubstFont->m_Weight < 0 || pSubstFont->m_ItalicAngle < 0)
+      return nullptr;
+    uint32_t weight = static_cast<uint32_t>(pSubstFont->m_Weight);
+    uint32_t angle = static_cast<uint32_t>(pSubstFont->m_ItalicAngle);
+    uint32_t key_modifier = (weight / 16) << 15;
+    key_modifier += (angle / 2) << 21;
+    key_modifier += (static_cast<uint32_t>(dest_width) / 16) << 25;
+    if (pFont->IsVertical())
+      key_modifier += 1U << 31;
+    key += key_modifier;
   }
   auto it = m_PathMap.find(key);
   if (it != m_PathMap.end())
@@ -249,8 +259,9 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
                                                       int dest_width,
                                                       int anti_alias,
                                                       int& text_flags) {
-  if (glyph_index == (uint32_t)-1)
+  if (glyph_index == kInvalidGlyphIndex)
     return nullptr;
+
   _CFX_UniqueKeyGen keygen;
   int nMatrixA = static_cast<int>(pMatrix->a * 10000);
   int nMatrixB = static_cast<int>(pMatrix->b * 10000);
