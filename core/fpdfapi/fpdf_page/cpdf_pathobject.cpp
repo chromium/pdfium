@@ -46,9 +46,9 @@ void CPDF_PathObject::CalcBoundingBox() {
   if (!m_Path)
     return;
   CFX_FloatRect rect;
-  FX_FLOAT width = m_GraphState.GetObject()->m_LineWidth;
+  FX_FLOAT width = m_GraphState.GetLineWidth();
   if (m_bStroke && width != 0) {
-    rect = m_Path.GetBoundingBox(width, m_GraphState.GetObject()->m_MiterLimit);
+    rect = m_Path.GetBoundingBox(width, m_GraphState.GetMiterLimit());
   } else {
     rect = m_Path.GetBoundingBox();
   }

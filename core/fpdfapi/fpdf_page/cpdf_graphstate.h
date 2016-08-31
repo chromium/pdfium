@@ -7,8 +7,38 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_
 
+#include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 
-class CPDF_GraphState : public CFX_CountRef<CFX_GraphStateData> {};
+class CPDF_Array;
+
+class CPDF_GraphState {
+ public:
+  CPDF_GraphState();
+  CPDF_GraphState(const CPDF_GraphState& that);
+  ~CPDF_GraphState();
+
+  void Emplace();
+
+  void SetLineDash(CPDF_Array* pArray, FX_FLOAT phase, FX_FLOAT scale);
+
+  FX_FLOAT GetLineWidth() const;
+  void SetLineWidth(FX_FLOAT width);
+
+  CFX_GraphStateData::LineCap GetLineCap() const;
+  void SetLineCap(CFX_GraphStateData::LineCap cap);
+
+  CFX_GraphStateData::LineJoin GetLineJoin() const;
+  void SetLineJoin(CFX_GraphStateData::LineJoin join);
+
+  FX_FLOAT GetMiterLimit() const;
+  void SetMiterLimit(FX_FLOAT limit);
+
+  // FIXME(tsepez): remove when all GraphStateData usage gone.
+  const CFX_GraphStateData* GetObject() const { return m_Ref.GetObject(); }
+
+ private:
+  CFX_CountRef<CFX_GraphStateData> m_Ref;
+};
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_

@@ -45,11 +45,7 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
 void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
                                  FX_FLOAT phase,
                                  FX_FLOAT scale) {
-  CFX_GraphStateData* pData = m_GraphState.GetPrivateCopy();
-  pData->m_DashPhase = phase * scale;
-  pData->SetDashCount(static_cast<int>(pArray->GetCount()));
-  for (size_t i = 0; i < pArray->GetCount(); i++)
-    pData->m_DashArray[i] = pArray->GetNumberAt(i) * scale;
+  m_GraphState.SetLineDash(pArray, phase, scale);
 }
 
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
@@ -65,18 +61,18 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
     uint32_t key = key_str.GetID();
     switch (key) {
       case FXBSTR_ID('L', 'W', 0, 0):
-        m_GraphState.GetPrivateCopy()->m_LineWidth = pObject->GetNumber();
+        m_GraphState.SetLineWidth(pObject->GetNumber());
         break;
       case FXBSTR_ID('L', 'C', 0, 0):
-        m_GraphState.GetPrivateCopy()->m_LineCap =
-            (CFX_GraphStateData::LineCap)pObject->GetInteger();
+        m_GraphState.SetLineCap(
+            static_cast<CFX_GraphStateData::LineCap>(pObject->GetInteger()));
         break;
       case FXBSTR_ID('L', 'J', 0, 0):
-        m_GraphState.GetPrivateCopy()->m_LineJoin =
-            (CFX_GraphStateData::LineJoin)pObject->GetInteger();
+        m_GraphState.SetLineJoin(
+            static_cast<CFX_GraphStateData::LineJoin>(pObject->GetInteger()));
         break;
       case FXBSTR_ID('M', 'L', 0, 0):
-        m_GraphState.GetPrivateCopy()->m_MiterLimit = pObject->GetNumber();
+        m_GraphState.SetMiterLimit(pObject->GetNumber());
         break;
       case FXBSTR_ID('D', 0, 0, 0): {
         CPDF_Array* pDash = pObject->AsArray();

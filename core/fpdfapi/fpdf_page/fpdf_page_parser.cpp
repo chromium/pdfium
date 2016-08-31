@@ -881,13 +881,13 @@ void CPDF_StreamContentParser::Handle_SetFlat() {
 void CPDF_StreamContentParser::Handle_BeginImageData() {}
 
 void CPDF_StreamContentParser::Handle_SetLineJoin() {
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineJoin =
-      (CFX_GraphStateData::LineJoin)GetInteger(0);
+  m_pCurStates->m_GraphState.SetLineJoin(
+      static_cast<CFX_GraphStateData::LineJoin>(GetInteger(0)));
 }
 
 void CPDF_StreamContentParser::Handle_SetLineCap() {
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineCap =
-      (CFX_GraphStateData::LineCap)GetInteger(0);
+  m_pCurStates->m_GraphState.SetLineCap(
+      static_cast<CFX_GraphStateData::LineCap>(GetInteger(0)));
 }
 
 void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
@@ -930,7 +930,7 @@ void CPDF_StreamContentParser::Handle_MoveTo() {
 }
 
 void CPDF_StreamContentParser::Handle_SetMiterLimit() {
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_MiterLimit = GetNumber(0);
+  m_pCurStates->m_GraphState.SetMiterLimit(GetNumber(0));
 }
 
 void CPDF_StreamContentParser::Handle_MarkPlace() {}
@@ -1399,8 +1399,7 @@ void CPDF_StreamContentParser::Handle_CurveTo_23() {
 }
 
 void CPDF_StreamContentParser::Handle_SetLineWidth() {
-  FX_FLOAT width = GetNumber(0);
-  m_pCurStates->m_GraphState.GetPrivateCopy()->m_LineWidth = width;
+  m_pCurStates->m_GraphState.SetLineWidth(GetNumber(0));
 }
 
 void CPDF_StreamContentParser::Handle_Clip() {

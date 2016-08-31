@@ -365,7 +365,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   m_Top = max_y;
   matrix.TransformRect(m_Left, m_Right, m_Top, m_Bottom);
   if (TextRenderingModeIsStrokeMode(m_TextState.GetTextMode())) {
-    FX_FLOAT half_width = m_GraphState.GetObject()->m_LineWidth / 2;
+    FX_FLOAT half_width = m_GraphState.GetLineWidth() / 2;
     m_Left -= half_width;
     m_Right += half_width;
     m_Top += half_width;

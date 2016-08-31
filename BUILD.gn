@@ -429,6 +429,7 @@ static_library("fpdfapi") {
     "core/fpdfapi/fpdf_page/cpdf_generalstatedata.cpp",
     "core/fpdfapi/fpdf_page/cpdf_graphicstates.cpp",
     "core/fpdfapi/fpdf_page/cpdf_graphicstates.h",
+    "core/fpdfapi/fpdf_page/cpdf_graphstate.cpp",
     "core/fpdfapi/fpdf_page/cpdf_graphstate.h",
     "core/fpdfapi/fpdf_page/cpdf_image.cpp",
     "core/fpdfapi/fpdf_page/cpdf_imageobject.cpp",

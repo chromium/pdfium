@@ -495,12 +495,12 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
   if (m_pType3Char)
     FillType |= FX_FILL_TEXT_MODE;
 
-  CFX_GraphStateData graphState(*pPathObj->m_GraphState.GetObject());
+  CPDF_GraphState graphState = pPathObj->m_GraphState;
   if (m_Options.m_Flags & RENDER_THINLINE)
-    graphState.m_LineWidth = 0;
-  return m_pDevice->DrawPathWithBlend(pPathObj->m_Path.GetObject(),
-                                      &path_matrix, &graphState, fill_argb,
-                                      stroke_argb, FillType, m_curBlend);
+    graphState.SetLineWidth(0);
+  return m_pDevice->DrawPathWithBlend(
+      pPathObj->m_Path.GetObject(), &path_matrix, graphState.GetObject(),
+      fill_argb, stroke_argb, FillType, m_curBlend);
 }
 
 CPDF_TransferFunc* CPDF_RenderStatus::GetTransferFunc(CPDF_Object* pObj) const {
