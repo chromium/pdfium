@@ -418,6 +418,7 @@ void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr) {
       FX_Free(p->gce_ptr);
       FX_Free(p->pte_ptr);
       delete p->string_ptr;
+      FX_Free(p);
     }
     gif_ptr->pt_ptr_arr_ptr->RemoveAll();
     delete gif_ptr->pt_ptr_arr_ptr;
