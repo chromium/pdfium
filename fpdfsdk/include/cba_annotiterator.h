@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fpdfdoc/include/cpdf_annot.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 
@@ -20,7 +21,7 @@ class CBA_AnnotIterator {
   enum TabOrder { STRUCTURE = 0, ROW, COLUMN };
 
   CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
-                    const CFX_ByteString& sAnnotSubtype);
+                    CPDF_Annot::Subtype nAnnotSubtype);
   ~CBA_AnnotIterator();
 
   CPDFSDK_Annot* GetFirstAnnot();
@@ -40,7 +41,7 @@ class CBA_AnnotIterator {
 
   TabOrder m_eTabOrder;
   CPDFSDK_PageView* m_pPageView;
-  CFX_ByteString m_sAnnotSubtype;
+  CPDF_Annot::Subtype m_nAnnotSubtype;
   std::vector<CPDFSDK_Annot*> m_Annots;
 };
 

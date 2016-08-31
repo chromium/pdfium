@@ -42,7 +42,8 @@ TEST_F(FSDKBaseFormEmbeddertest, CBA_AnnotIterator) {
       CPDFSDK_Document::FromFPDFFormHandle(form_handle());
   {
     // Page 0 specifies "row order".
-    CBA_AnnotIterator iter(pSDKDoc->GetPageView(0), "Widget");
+    CBA_AnnotIterator iter(pSDKDoc->GetPageView(0),
+                           CPDF_Annot::Subtype::WIDGET);
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), RightTop);
     pAnnot = iter.GetNextAnnot(pAnnot);
@@ -67,7 +68,8 @@ TEST_F(FSDKBaseFormEmbeddertest, CBA_AnnotIterator) {
   }
   {
     // Page 1 specifies "column order"
-    CBA_AnnotIterator iter(pSDKDoc->GetPageView(1), "Widget");
+    CBA_AnnotIterator iter(pSDKDoc->GetPageView(1),
+                           CPDF_Annot::Subtype::WIDGET);
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), RightTop);
     pAnnot = iter.GetNextAnnot(pAnnot);
@@ -92,7 +94,8 @@ TEST_F(FSDKBaseFormEmbeddertest, CBA_AnnotIterator) {
   }
   {
     // Page 2 specifies "struct order"
-    CBA_AnnotIterator iter(pSDKDoc->GetPageView(2), "Widget");
+    CBA_AnnotIterator iter(pSDKDoc->GetPageView(2),
+                           CPDF_Annot::Subtype::WIDGET);
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), LeftBottom);
     pAnnot = iter.GetNextAnnot(pAnnot);

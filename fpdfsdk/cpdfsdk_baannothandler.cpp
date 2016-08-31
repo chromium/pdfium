@@ -37,10 +37,6 @@ CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() {}
 
 CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() {}
 
-CFX_ByteString CPDFSDK_BAAnnotHandler::GetType() {
-  return CFX_ByteString("");
-}
-
 FX_BOOL CPDFSDK_BAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return FALSE;
 }

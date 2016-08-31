@@ -24,7 +24,7 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
 
   FX_BOOL IsXFAField() override;
   CXFA_FFWidget* GetXFAWidget() const override;
-  CFX_ByteString GetAnnotSubtype() const override;
+  CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
 
   CPDFSDK_InterForm* GetInterForm() { return m_pInterForm; }

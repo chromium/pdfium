@@ -46,7 +46,8 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CXFA_FFWidget* pAnnot,
   ASSERT(pAnnot);
   ASSERT(pPageView);
 
-  return GetAnnotHandler(FSDK_XFAWIDGET_TYPENAME)->NewAnnot(pAnnot, pPageView);
+  return GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET)
+      ->NewAnnot(pAnnot, pPageView);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -77,12 +78,12 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
 }
 
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
-    const CFX_ByteString& sType) const {
-  if (sType == "Widget")
+    CPDF_Annot::Subtype nAnnotSubtype) const {
+  if (nAnnotSubtype == CPDF_Annot::Subtype::WIDGET)
     return m_pWidgetHandler.get();
 
 #ifdef PDF_ENABLE_XFA
-  if (sType == FSDK_XFAWIDGET_TYPENAME)
+  if (nAnnotSubtype == CPDF_Annot::Subtype::XFAWIDGET)
     return m_pXFAWidgetHandler.get();
 #endif  // PDF_ENABLE_XFA
 
@@ -242,7 +243,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnChangeFocus(
 
   if (bXFA) {
     if (IPDFSDK_AnnotHandler* pXFAAnnotHandler =
-            GetAnnotHandler(FSDK_XFAWIDGET_TYPENAME))
+            GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET))
       return pXFAAnnotHandler->OnXFAChangedFocus(pKillAnnot, pSetAnnot);
   }
 
@@ -299,7 +300,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
 
   return pPageView->GetAnnotByXFAWidget(hNextFocus);
 #else   // PDF_ENABLE_XFA
-  CBA_AnnotIterator ai(pSDKAnnot->GetPageView(), "Widget");
+  CBA_AnnotIterator ai(pSDKAnnot->GetPageView(), CPDF_Annot::Subtype::WIDGET);
   return bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
 #endif  // PDF_ENABLE_XFA
 }

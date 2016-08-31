@@ -10,12 +10,12 @@
 #include <map>
 #include <memory>
 
+#include "core/fpdfdoc/include/cpdf_annot.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
-class CPDF_Annot;
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_BAAnnotHandler;
@@ -109,7 +109,7 @@ class CPDFSDK_AnnotHandlerMgr {
                                   const CFX_FloatPoint& point);
 
  private:
-  IPDFSDK_AnnotHandler* GetAnnotHandler(const CFX_ByteString& sType) const;
+  IPDFSDK_AnnotHandler* GetAnnotHandler(CPDF_Annot::Subtype nSubtype) const;
   CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, FX_BOOL bNext);
 
   std::unique_ptr<CPDFSDK_BAAnnotHandler> m_pBAAnnotHandler;

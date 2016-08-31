@@ -25,10 +25,6 @@ CPDFSDK_XFAWidgetHandler::CPDFSDK_XFAWidgetHandler(CPDFDoc_Environment* pApp)
 
 CPDFSDK_XFAWidgetHandler::~CPDFSDK_XFAWidgetHandler() {}
 
-CFX_ByteString CPDFSDK_XFAWidgetHandler::GetType() {
-  return FSDK_XFAWIDGET_TYPENAME;
-}
-
 FX_BOOL CPDFSDK_XFAWidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return !!pAnnot->GetXFAWidget();
 }

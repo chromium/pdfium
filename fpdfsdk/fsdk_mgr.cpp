@@ -442,7 +442,7 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(FX_UINT nFlag) {
 #endif  // PDF_ENABLE_XFA
 
     if (pAnnotHandler->Annot_OnKillFocus(pFocusAnnot, nFlag)) {
-      if (pFocusAnnot->GetAnnotSubtype() == "Widget") {
+      if (pFocusAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET) {
         CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pFocusAnnot;
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||
@@ -586,7 +586,7 @@ const CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
 const CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
                                                         FX_FLOAT pageY) {
   for (const auto& pAnnot : m_pAnnotList->All()) {
-    if (pAnnot->GetSubtype() == "Widget") {
+    if (pAnnot->GetSubtype() == CPDF_Annot::Subtype::WIDGET) {
       CFX_FloatRect annotRect = pAnnot->GetRect();
       if (annotRect.Contains(pageX, pageY))
         return pAnnot.get();
@@ -602,7 +602,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(FX_FLOAT pageX,
   CPDFSDK_AnnotIterator annotIterator(this, false);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
     CFX_FloatRect rc = pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
-    if (pSDKAnnot->GetAnnotSubtype() == "Popup")
+    if (pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP)
       continue;
     if (rc.Contains(pageX, pageY))
       return pSDKAnnot;
@@ -617,10 +617,10 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotIterator annotIterator(this, false);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
-    bool bHitTest = pSDKAnnot->GetAnnotSubtype() == "Widget";
+    bool bHitTest = pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET;
 #ifdef PDF_ENABLE_XFA
-    bHitTest =
-        bHitTest || pSDKAnnot->GetAnnotSubtype() == FSDK_XFAWIDGET_TYPENAME;
+    bHitTest = bHitTest ||
+               pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::XFAWIDGET;
 #endif  // PDF_ENABLE_XFA
     if (bHitTest) {
       pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);

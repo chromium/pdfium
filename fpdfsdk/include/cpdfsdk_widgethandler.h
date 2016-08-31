@@ -28,7 +28,6 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
   explicit CPDFSDK_WidgetHandler(CPDFDoc_Environment* pApp);
   ~CPDFSDK_WidgetHandler() override;
 
-  CFX_ByteString GetType() override;
   FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) override;
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) override;
 #ifdef PDF_ENABLE_XFA

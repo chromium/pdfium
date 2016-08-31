@@ -27,12 +27,8 @@ CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(CPDFDoc_Environment* pApp)
 
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() {}
 
-CFX_ByteString CPDFSDK_WidgetHandler::GetType() {
-  return CFX_ByteString("Widget");
-}
-
 FX_BOOL CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot->GetAnnotSubtype() == "Widget");
+  ASSERT(pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET);
   if (pAnnot->IsSignatureWidget())
     return FALSE;
 

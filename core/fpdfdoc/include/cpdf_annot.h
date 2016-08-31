@@ -36,13 +36,46 @@ class CPDF_Stream;
 class CPDF_Annot {
  public:
   enum AppearanceMode { Normal, Rollover, Down };
+  enum class Subtype {
+    UNKNOWN = 0,
+    TEXT,
+    LINK,
+    FREETEXT,
+    LINE,
+    SQUARE,
+    CIRCLE,
+    POLYGON,
+    POLYLINE,
+    HIGHLIGHT,
+    UNDERLINE,
+    SQUIGGLY,
+    STRIKEOUT,
+    STAMP,
+    CARET,
+    INK,
+    POPUP,
+    FILEATTACHMENT,
+    SOUND,
+    MOVIE,
+    WIDGET,
+    SCREEN,
+    PRINTERMARK,
+    TRAPNET,
+    WATERMARK,
+    THREED,
+    RICHMEDIA,
+    XFAWIDGET
+  };
 
   static bool IsAnnotationHidden(CPDF_Dictionary* pAnnotDict);
+  static CPDF_Annot::Subtype StringToAnnotSubtype(
+      const CFX_ByteString& sSubtype);
+  static CFX_ByteString AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype);
 
   CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
 
-  CFX_ByteString GetSubtype() const;
+  CPDF_Annot::Subtype GetSubtype() const;
   uint32_t GetFlags() const;
   CFX_FloatRect GetRect() const;
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
@@ -70,7 +103,7 @@ class CPDF_Annot {
 
   CPDF_Dictionary* const m_pAnnotDict;
   CPDF_Document* const m_pDocument;
-  const CFX_ByteString m_sSubtype;
+  CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
   // |m_bOpenState| is only set for popup annotations.
   bool m_bOpenState;

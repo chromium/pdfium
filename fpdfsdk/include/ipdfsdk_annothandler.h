@@ -10,10 +10,6 @@
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
-#ifdef PDF_ENABLE_XFA
-#define FSDK_XFAWIDGET_TYPENAME "XFAWidget"
-#endif  // PDF_ENABLE_XFA
-
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
@@ -28,7 +24,6 @@ class IPDFSDK_AnnotHandler {
  public:
   virtual ~IPDFSDK_AnnotHandler() {}
 
-  virtual CFX_ByteString GetType() = 0;
   virtual FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
                                   CPDFSDK_PageView* pPage) = 0;

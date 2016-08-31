@@ -21,9 +21,9 @@
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),
       m_pDocument(pDocument),
-      m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")),
       m_bOpenState(false),
       m_pPopupAnnot(nullptr) {
+  m_nSubtype = StringToAnnotSubtype(m_pAnnotDict->GetStringBy("Subtype"));
   GenerateAPIfNeeded();
 }
 
@@ -32,31 +32,32 @@ CPDF_Annot::~CPDF_Annot() {
 }
 
 void CPDF_Annot::GenerateAPIfNeeded() {
-  if (m_sSubtype == "Circle")
+  if (m_nSubtype == CPDF_Annot::Subtype::CIRCLE)
     CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "Highlight")
+  else if (m_nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
     CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "Ink")
+  else if (m_nSubtype == CPDF_Annot::Subtype::INK)
     CPVT_GenerateAP::GenerateInkAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "Popup")
+  else if (m_nSubtype == CPDF_Annot::Subtype::POPUP)
     CPVT_GenerateAP::GeneratePopupAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "Square")
+  else if (m_nSubtype == CPDF_Annot::Subtype::SQUARE)
     CPVT_GenerateAP::GenerateSquareAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "Squiggly")
+  else if (m_nSubtype == CPDF_Annot::Subtype::SQUIGGLY)
     CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "StrikeOut")
+  else if (m_nSubtype == CPDF_Annot::Subtype::STRIKEOUT)
     CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "Text")
+  else if (m_nSubtype == CPDF_Annot::Subtype::TEXT)
     CPVT_GenerateAP::GenerateTextAP(m_pDocument, m_pAnnotDict);
-  else if (m_sSubtype == "Underline")
+  else if (m_nSubtype == CPDF_Annot::Subtype::UNDERLINE)
     CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
 }
 
 void CPDF_Annot::ClearCachedAP() {
   m_APMap.clear();
 }
-CFX_ByteString CPDF_Annot::GetSubtype() const {
-  return m_sSubtype;
+
+CPDF_Annot::Subtype CPDF_Annot::GetSubtype() const {
+  return m_nSubtype;
 }
 
 CFX_FloatRect CPDF_Annot::GetRect() const {
@@ -148,6 +149,125 @@ bool CPDF_Annot::IsAnnotationHidden(CPDF_Dictionary* pAnnotDict) {
   return !!(pAnnotDict->GetIntegerBy("F") & ANNOTFLAG_HIDDEN);
 }
 
+// Static.
+CPDF_Annot::Subtype CPDF_Annot::StringToAnnotSubtype(
+    const CFX_ByteString& sSubtype) {
+  if (sSubtype == "Text")
+    return CPDF_Annot::Subtype::TEXT;
+  if (sSubtype == "Link")
+    return CPDF_Annot::Subtype::LINK;
+  if (sSubtype == "FreeText")
+    return CPDF_Annot::Subtype::FREETEXT;
+  if (sSubtype == "Line")
+    return CPDF_Annot::Subtype::LINE;
+  if (sSubtype == "Square")
+    return CPDF_Annot::Subtype::SQUARE;
+  if (sSubtype == "Circle")
+    return CPDF_Annot::Subtype::CIRCLE;
+  if (sSubtype == "Polygon")
+    return CPDF_Annot::Subtype::POLYGON;
+  if (sSubtype == "PolyLine")
+    return CPDF_Annot::Subtype::POLYLINE;
+  if (sSubtype == "Highlight")
+    return CPDF_Annot::Subtype::HIGHLIGHT;
+  if (sSubtype == "Underline")
+    return CPDF_Annot::Subtype::UNDERLINE;
+  if (sSubtype == "Squiggly")
+    return CPDF_Annot::Subtype::SQUIGGLY;
+  if (sSubtype == "StrikeOut")
+    return CPDF_Annot::Subtype::STRIKEOUT;
+  if (sSubtype == "Stamp")
+    return CPDF_Annot::Subtype::STAMP;
+  if (sSubtype == "Caret")
+    return CPDF_Annot::Subtype::CARET;
+  if (sSubtype == "Ink")
+    return CPDF_Annot::Subtype::INK;
+  if (sSubtype == "Popup")
+    return CPDF_Annot::Subtype::POPUP;
+  if (sSubtype == "FileAttachment")
+    return CPDF_Annot::Subtype::FILEATTACHMENT;
+  if (sSubtype == "Sound")
+    return CPDF_Annot::Subtype::SOUND;
+  if (sSubtype == "Movie")
+    return CPDF_Annot::Subtype::MOVIE;
+  if (sSubtype == "Widget")
+    return CPDF_Annot::Subtype::WIDGET;
+  if (sSubtype == "Screen")
+    return CPDF_Annot::Subtype::SCREEN;
+  if (sSubtype == "PrinterMark")
+    return CPDF_Annot::Subtype::PRINTERMARK;
+  if (sSubtype == "TrapNet")
+    return CPDF_Annot::Subtype::TRAPNET;
+  if (sSubtype == "Watermark")
+    return CPDF_Annot::Subtype::WATERMARK;
+  if (sSubtype == "3D")
+    return CPDF_Annot::Subtype::THREED;
+  if (sSubtype == "RichMedia")
+    return CPDF_Annot::Subtype::RICHMEDIA;
+  if (sSubtype == "XFAWidget")
+    return CPDF_Annot::Subtype::XFAWIDGET;
+  return CPDF_Annot::Subtype::UNKNOWN;
+}
+
+// Static.
+CFX_ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
+  if (nSubtype == CPDF_Annot::Subtype::TEXT)
+    return "Text";
+  if (nSubtype == CPDF_Annot::Subtype::LINK)
+    return "Link";
+  if (nSubtype == CPDF_Annot::Subtype::FREETEXT)
+    return "FreeText";
+  if (nSubtype == CPDF_Annot::Subtype::LINE)
+    return "Line";
+  if (nSubtype == CPDF_Annot::Subtype::SQUARE)
+    return "Square";
+  if (nSubtype == CPDF_Annot::Subtype::CIRCLE)
+    return "Circle";
+  if (nSubtype == CPDF_Annot::Subtype::POLYGON)
+    return "Polygon";
+  if (nSubtype == CPDF_Annot::Subtype::POLYLINE)
+    return "PolyLine";
+  if (nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
+    return "Highlight";
+  if (nSubtype == CPDF_Annot::Subtype::UNDERLINE)
+    return "Underline";
+  if (nSubtype == CPDF_Annot::Subtype::SQUIGGLY)
+    return "Squiggly";
+  if (nSubtype == CPDF_Annot::Subtype::STRIKEOUT)
+    return "StrikeOut";
+  if (nSubtype == CPDF_Annot::Subtype::STAMP)
+    return "Stamp";
+  if (nSubtype == CPDF_Annot::Subtype::CARET)
+    return "Caret";
+  if (nSubtype == CPDF_Annot::Subtype::INK)
+    return "Ink";
+  if (nSubtype == CPDF_Annot::Subtype::POPUP)
+    return "Popup";
+  if (nSubtype == CPDF_Annot::Subtype::FILEATTACHMENT)
+    return "FileAttachment";
+  if (nSubtype == CPDF_Annot::Subtype::SOUND)
+    return "Sound";
+  if (nSubtype == CPDF_Annot::Subtype::MOVIE)
+    return "Movie";
+  if (nSubtype == CPDF_Annot::Subtype::WIDGET)
+    return "Widget";
+  if (nSubtype == CPDF_Annot::Subtype::SCREEN)
+    return "Screen";
+  if (nSubtype == CPDF_Annot::Subtype::PRINTERMARK)
+    return "PrinterMark";
+  if (nSubtype == CPDF_Annot::Subtype::TRAPNET)
+    return "TrapNet";
+  if (nSubtype == CPDF_Annot::Subtype::WATERMARK)
+    return "Watermark";
+  if (nSubtype == CPDF_Annot::Subtype::THREED)
+    return "3D";
+  if (nSubtype == CPDF_Annot::Subtype::RICHMEDIA)
+    return "RichMedia";
+  if (nSubtype == CPDF_Annot::Subtype::XFAWIDGET)
+    return "XFAWidget";
+  return "";
+}
+
 FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
                                    const CFX_Matrix* pUser2Device,
@@ -156,7 +276,7 @@ FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
   if (IsAnnotationHidden(m_pAnnotDict))
     return FALSE;
 
-  if (m_sSubtype == "Popup" && !m_bOpenState)
+  if (m_nSubtype == CPDF_Annot::Subtype::POPUP && !m_bOpenState)
     return FALSE;
 
   // It might happen that by the time this annotation instance was created,
@@ -193,7 +313,7 @@ FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
                             const CFX_Matrix* pUser2Device,
                             const CPDF_RenderOptions* pOptions) {
-  if (GetSubtype() == "Popup")
+  if (GetSubtype() == CPDF_Annot::Subtype::POPUP)
     return;
 
   uint32_t annot_flags = GetFlags();

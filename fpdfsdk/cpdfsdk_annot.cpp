@@ -58,8 +58,8 @@ CPDF_Annot* CPDFSDK_Annot::GetPDFAnnot() const {
   return nullptr;
 }
 
-CFX_ByteString CPDFSDK_Annot::GetAnnotSubtype() const {
-  return "";
+CPDF_Annot::Subtype CPDFSDK_Annot::GetAnnotSubtype() const {
+  return CPDF_Annot::Subtype::UNKNOWN;
 }
 
 bool CPDFSDK_Annot::IsSignatureWidget() const {

@@ -85,7 +85,7 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                              CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
                              uint32_t dwFlags) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
     CFX_Matrix mt = GetCurMatrix();

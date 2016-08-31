@@ -110,7 +110,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CPDF_RenderOptions* pOptions,
                                  FX_RECT* clip_rect) {
   for (const auto& pAnnot : m_AnnotList) {
-    bool bWidget = pAnnot->GetSubtype() == "Widget";
+    bool bWidget = pAnnot->GetSubtype() == CPDF_Annot::Subtype::WIDGET;
     if ((bWidgetPass && !bWidget) || (!bWidgetPass && bWidget))
       continue;
 

@@ -24,8 +24,8 @@ CXFA_FFWidget* CPDFSDK_XFAWidget::GetXFAWidget() const {
   return m_hXFAWidget;
 }
 
-CFX_ByteString CPDFSDK_XFAWidget::GetAnnotSubtype() const {
-  return FSDK_XFAWIDGET_TYPENAME;
+CPDF_Annot::Subtype CPDFSDK_XFAWidget::GetAnnotSubtype() const {
+  return CPDF_Annot::Subtype::XFAWIDGET;
 }
 
 CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {

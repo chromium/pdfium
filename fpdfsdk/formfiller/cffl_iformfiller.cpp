@@ -124,7 +124,7 @@ void CFFL_IFormFiller::OnDelete(CPDFSDK_Annot* pAnnot) {
 void CFFL_IFormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     FX_UINT nFlag) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (!m_bNotifying) {
     CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
@@ -160,7 +160,7 @@ void CFFL_IFormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView,
 void CFFL_IFormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
                                    FX_UINT nFlag) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (!m_bNotifying) {
     CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
@@ -197,7 +197,7 @@ FX_BOOL CFFL_IFormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
                                         FX_UINT nFlags,
                                         const CFX_FloatPoint& point) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (!m_bNotifying) {
     CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
@@ -239,7 +239,7 @@ FX_BOOL CFFL_IFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
                                       FX_UINT nFlags,
                                       const CFX_FloatPoint& point) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   CPDFSDK_Document* pDocument = m_pApp->GetSDKDocument();
 
@@ -319,7 +319,7 @@ FX_BOOL CFFL_IFormFiller::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                           CPDFSDK_Annot* pAnnot,
                                           FX_UINT nFlags,
                                           const CFX_FloatPoint& point) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
     return pFormFiller->OnLButtonDblClk(pPageView, pAnnot, nFlags, point);
@@ -332,7 +332,7 @@ FX_BOOL CFFL_IFormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
                                       FX_UINT nFlags,
                                       const CFX_FloatPoint& point) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   // change cursor
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, TRUE)) {
@@ -347,7 +347,7 @@ FX_BOOL CFFL_IFormFiller::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                        FX_UINT nFlags,
                                        short zDelta,
                                        const CFX_FloatPoint& point) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
     return pFormFiller->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta, point);
@@ -360,7 +360,7 @@ FX_BOOL CFFL_IFormFiller::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
                                         FX_UINT nFlags,
                                         const CFX_FloatPoint& point) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
     return pFormFiller->OnRButtonDown(pPageView, pAnnot, nFlags, point);
@@ -373,7 +373,7 @@ FX_BOOL CFFL_IFormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
                                       FX_UINT nFlags,
                                       const CFX_FloatPoint& point) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
     return pFormFiller->OnRButtonUp(pPageView, pAnnot, nFlags, point);
@@ -385,7 +385,7 @@ FX_BOOL CFFL_IFormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
 FX_BOOL CFFL_IFormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                     FX_UINT nKeyCode,
                                     FX_UINT nFlags) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
     return pFormFiller->OnKeyDown(pAnnot, nKeyCode, nFlags);
@@ -397,7 +397,7 @@ FX_BOOL CFFL_IFormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
 FX_BOOL CFFL_IFormFiller::OnChar(CPDFSDK_Annot* pAnnot,
                                  FX_UINT nChar,
                                  FX_UINT nFlags) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   if (nChar == FWL_VKEY_Tab)
     return TRUE;
 
@@ -411,7 +411,7 @@ FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   if (!pAnnot)
     return FALSE;
 
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (!m_bNotifying) {
     CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
@@ -454,7 +454,7 @@ FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
 FX_BOOL CFFL_IFormFiller::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   if (!pAnnot)
     return FALSE;
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == "Widget");
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
     pFormFiller->KillFocusForAnnot(pAnnot, nFlag);

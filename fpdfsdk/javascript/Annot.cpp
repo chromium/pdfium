@@ -80,7 +80,7 @@ FX_BOOL Annot::type(IJS_Context* cc,
     return FALSE;
   }
 
-  vp << m_BAAnnot->GetAnnotSubtype();
+  vp << CPDF_Annot::AnnotSubtypeToString(m_BAAnnot->GetAnnotSubtype());
   return TRUE;
 }
 
