@@ -16,17 +16,28 @@ class CPDF_Color;
 class CPDF_ColorSpace;
 class CPDF_Pattern;
 
-class CPDF_ColorState : public CFX_CountRef<CPDF_ColorStateData> {
+class CPDF_ColorState {
  public:
-  const CPDF_Color* GetFillColor() const {
-    const CPDF_ColorStateData* pData = GetObject();
-    return pData ? &pData->m_FillColor : nullptr;
-  }
+  CPDF_ColorState();
+  CPDF_ColorState(const CPDF_ColorState& that);
+  ~CPDF_ColorState();
 
-  const CPDF_Color* GetStrokeColor() const {
-    const CPDF_ColorStateData* pData = GetObject();
-    return pData ? &pData->m_StrokeColor : nullptr;
-  }
+  void Emplace();
+  void SetDefault();
+
+  uint32_t GetFillRGB() const;
+  void SetFillRGB(uint32_t rgb);
+
+  uint32_t GetStrokeRGB() const;
+  void SetStrokeRGB(uint32_t rgb);
+
+  const CPDF_Color* GetFillColor() const;
+  CPDF_Color* GetMutableFillColor();
+  bool HasFillColor() const;
+
+  const CPDF_Color* GetStrokeColor() const;
+  CPDF_Color* GetMutableStrokeColor();
+  bool HasStrokeColor() const;
 
   void SetFillColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, uint32_t nValues);
   void SetStrokeColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, uint32_t nValues);
@@ -37,12 +48,19 @@ class CPDF_ColorState : public CFX_CountRef<CPDF_ColorStateData> {
                         FX_FLOAT* pValue,
                         uint32_t nValues);
 
+  // TODO(tsepez): Stop leaking ColorStateData outside this class.
+  const CPDF_ColorStateData* GetObject() const { return m_Ref.GetObject(); }
+
+  operator bool() const { return !!m_Ref; }
+
  private:
   void SetColor(CPDF_Color& color,
                 uint32_t& rgb,
                 CPDF_ColorSpace* pCS,
                 FX_FLOAT* pValue,
                 uint32_t nValues);
+
+  CFX_CountRef<CPDF_ColorStateData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATE_H_

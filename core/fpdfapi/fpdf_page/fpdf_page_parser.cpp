@@ -686,21 +686,19 @@ void CPDF_StreamContentParser::Handle_ConcatMatrix() {
 }
 
 void CPDF_StreamContentParser::Handle_SetColorSpace_Fill() {
-  CFX_ByteString csname = GetString(0);
-  CPDF_ColorSpace* pCS = FindColorSpace(csname);
-  if (!pCS) {
+  CPDF_ColorSpace* pCS = FindColorSpace(GetString(0));
+  if (!pCS)
     return;
-  }
-  m_pCurStates->m_ColorState.GetPrivateCopy()->m_FillColor.SetColorSpace(pCS);
+
+  m_pCurStates->m_ColorState.GetMutableFillColor()->SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
-  CFX_ByteString csname = GetString(0);
-  CPDF_ColorSpace* pCS = FindColorSpace(csname);
-  if (!pCS) {
+  CPDF_ColorSpace* pCS = FindColorSpace(GetString(0));
+  if (!pCS)
     return;
-  }
-  m_pCurStates->m_ColorState.GetPrivateCopy()->m_StrokeColor.SetColorSpace(pCS);
+
+  m_pCurStates->m_ColorState.GetMutableStrokeColor()->SetColorSpace(pCS);
 }
 
 void CPDF_StreamContentParser::Handle_SetDash() {
