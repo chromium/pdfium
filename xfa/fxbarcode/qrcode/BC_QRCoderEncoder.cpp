@@ -885,10 +885,10 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     std::unique_ptr<CBC_CommonByteArray> ecBytes(
         GenerateECBytes(dataBytes.get(), numEcBytesInBlosk, e));
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    blocks.Add(
-        new CBC_QRCoderBlockPair(std::move(dataBytes), std::move(ecBytes)));
     maxNumDataBytes = std::max(maxNumDataBytes, dataBytes->Size());
     maxNumEcBytes = std::max(maxNumEcBytes, ecBytes->Size());
+    blocks.Add(
+        new CBC_QRCoderBlockPair(std::move(dataBytes), std::move(ecBytes)));
     dataBytesOffset += numDataBytesInBlock;
   }
   if (numDataBytes != dataBytesOffset) {
