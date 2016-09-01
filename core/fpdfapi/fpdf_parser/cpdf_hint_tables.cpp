@@ -165,6 +165,9 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     return false;
 
   int nFirstPageNum = GetFirstPageNumber();
+  if (nFirstPageNum < 0 || nFirstPageNum > std::numeric_limits<int>::max() - 1)
+    return false;
+
   for (int i = 0; i < nPages; ++i) {
     if (i == nFirstPageNum) {
       m_szPageOffsetArray.push_back(m_szFirstPageObjOffset);
@@ -355,6 +358,9 @@ bool CPDF_HintTables::GetPagePos(int index,
                                  FX_FILESIZE* szPageStartPos,
                                  FX_FILESIZE* szPageLength,
                                  uint32_t* dwObjNum) {
+  if (index < 0)
+    return false;
+
   *szPageStartPos = m_szPageOffsetArray[index];
   *szPageLength = GetItemLength(index, m_szPageOffsetArray);
 
@@ -363,6 +369,9 @@ bool CPDF_HintTables::GetPagePos(int index,
     return false;
 
   int nFirstPageNum = GetFirstPageNumber();
+  if (nFirstPageNum < 0)
+    return false;
+
   if (index == nFirstPageNum) {
     *dwObjNum = nFirstPageObjNum;
     return true;
@@ -381,11 +390,10 @@ bool CPDF_HintTables::GetPagePos(int index,
 CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
     int index,
     CPDF_DataAvail::DownloadHints* pHints) {
-  if (!pHints)
+  if (!pHints || index < 0)
     return CPDF_DataAvail::DataError;
 
-  int nFirstAvailPage = GetFirstPageNumber();
-  if (index == nFirstAvailPage)
+  if (index == GetFirstPageNumber())
     return CPDF_DataAvail::DataAvailable;
 
   uint32_t dwLength = GetItemLength(index, m_szPageOffsetArray);
