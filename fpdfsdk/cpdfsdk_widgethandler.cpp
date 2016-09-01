@@ -92,14 +92,13 @@ void CPDFSDK_WidgetHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
 void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
                                    CFX_RenderDevice* pDevice,
-                                   CFX_Matrix* pUser2Device,
-                                   uint32_t dwFlags) {
+                                   CFX_Matrix* pUser2Device) {
   if (pAnnot->IsSignatureWidget()) {
     static_cast<CPDFSDK_BAAnnot*>(pAnnot)->DrawAppearance(
         pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
   } else {
     if (m_pFormFiller)
-      m_pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
+      m_pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
   }
 }
 

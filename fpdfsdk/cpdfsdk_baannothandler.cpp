@@ -62,8 +62,7 @@ void CPDFSDK_BAAnnotHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
 void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     CFX_RenderDevice* pDevice,
-                                    CFX_Matrix* pUser2Device,
-                                    uint32_t dwFlags) {
+                                    CFX_Matrix* pUser2Device) {
 #ifdef PDF_ENABLE_XFA
   if (pAnnot->IsXFAField())
     return;

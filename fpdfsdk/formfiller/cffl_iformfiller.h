@@ -32,8 +32,7 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
-                      CFX_Matrix* pUser2Device,
-                      uint32_t dwFlags);
+                      CFX_Matrix* pUser2Device);
 
   virtual void OnCreate(CPDFSDK_Annot* pAnnot);
   virtual void OnLoad(CPDFSDK_Annot* pAnnot);

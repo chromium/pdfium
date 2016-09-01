@@ -44,8 +44,7 @@ class CPDFSDK_BAAnnotHandler : public IPDFSDK_AnnotHandler {
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
-              CFX_Matrix* pUser2Device,
-              uint32_t dwFlags) override;
+              CFX_Matrix* pUser2Device) override;
   void OnDrawSleep(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot* pAnnot,
                    CFX_RenderDevice* pDevice,

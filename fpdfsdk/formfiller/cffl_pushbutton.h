@@ -21,8 +21,7 @@ class CFFL_PushButton : public CFFL_Button {
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
-              CFX_Matrix* pUser2Device,
-              uint32_t dwFlags) override;
+              CFX_Matrix* pUser2Device) override;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_

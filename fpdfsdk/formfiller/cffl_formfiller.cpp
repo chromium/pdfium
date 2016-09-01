@@ -83,8 +83,7 @@ FX_RECT CFFL_FormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
 void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              CFX_RenderDevice* pDevice,
-                             CFX_Matrix* pUser2Device,
-                             uint32_t dwFlags) {
+                             CFX_Matrix* pUser2Device) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
@@ -102,8 +101,7 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
 void CFFL_FormFiller::OnDrawDeactive(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot,
                                      CFX_RenderDevice* pDevice,
-                                     CFX_Matrix* pUser2Device,
-                                     uint32_t dwFlags) {
+                                     CFX_Matrix* pUser2Device) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
 }
@@ -687,8 +685,7 @@ FX_BOOL CFFL_Button::OnMouseMove(CPDFSDK_PageView* pPageView,
 void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
                          CPDFSDK_Annot* pAnnot,
                          CFX_RenderDevice* pDevice,
-                         CFX_Matrix* pUser2Device,
-                         uint32_t dwFlags) {
+                         CFX_Matrix* pUser2Device) {
   ASSERT(pPageView);
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
@@ -720,7 +717,6 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
 void CFFL_Button::OnDrawDeactive(CPDFSDK_PageView* pPageView,
                                  CPDFSDK_Annot* pAnnot,
                                  CFX_RenderDevice* pDevice,
-                                 CFX_Matrix* pUser2Device,
-                                 uint32_t dwFlags) {
-  OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
+                                 CFX_Matrix* pUser2Device) {
+  OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
 }

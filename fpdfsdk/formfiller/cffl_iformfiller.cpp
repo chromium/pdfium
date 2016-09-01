@@ -52,8 +52,7 @@ FX_RECT CFFL_IFormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
 void CFFL_IFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               CFX_RenderDevice* pDevice,
-                              CFX_Matrix* pUser2Device,
-                              uint32_t dwFlags) {
+                              CFX_Matrix* pUser2Device) {
   ASSERT(pPageView);
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
 
@@ -62,7 +61,7 @@ void CFFL_IFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
     if (pFormFiller->IsValid()) {
-      pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
+      pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
       pAnnot->GetPDFPage();
 
       CPDFSDK_Document* pDocument = m_pApp->GetSDKDocument();
@@ -91,8 +90,7 @@ void CFFL_IFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
   }
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, pUser2Device,
-                                dwFlags);
+    pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, pUser2Device);
   } else {
     pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
   }

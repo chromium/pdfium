@@ -46,8 +46,7 @@ CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CXFA_FFWidget* pAnnot,
 void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
                                       CFX_RenderDevice* pDevice,
-                                      CFX_Matrix* pUser2Device,
-                                      uint32_t dwFlags) {
+                                      CFX_Matrix* pUser2Device) {
   ASSERT(pPageView);
   ASSERT(pAnnot);
 
