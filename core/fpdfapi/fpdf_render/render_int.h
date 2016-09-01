@@ -46,49 +46,11 @@ class CPDF_Stream;
 class CPDF_TilingPattern;
 class CPDF_TransferFunc;
 class CPDF_Type3Cache;
+class CPDF_Type3Glyphs;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
 
-#define TYPE3_MAX_BLUES 16
-
 FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix);
-
-class CPDF_Type3Glyphs {
- public:
-  CPDF_Type3Glyphs();
-  ~CPDF_Type3Glyphs();
-
-  void AdjustBlue(FX_FLOAT top,
-                  FX_FLOAT bottom,
-                  int& top_line,
-                  int& bottom_line);
-
-  std::map<uint32_t, CFX_GlyphBitmap*> m_GlyphMap;
-  int m_TopBlue[TYPE3_MAX_BLUES];
-  int m_BottomBlue[TYPE3_MAX_BLUES];
-  int m_TopBlueCount;
-  int m_BottomBlueCount;
-};
-
-class CPDF_Type3Cache {
- public:
-  explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);
-  ~CPDF_Type3Cache();
-
-  CFX_GlyphBitmap* LoadGlyph(uint32_t charcode,
-                             const CFX_Matrix* pMatrix,
-                             FX_FLOAT retinaScaleX = 1.0f,
-                             FX_FLOAT retinaScaleY = 1.0f);
-
- protected:
-  CFX_GlyphBitmap* RenderGlyph(CPDF_Type3Glyphs* pSize,
-                               uint32_t charcode,
-                               const CFX_Matrix* pMatrix,
-                               FX_FLOAT retinaScaleX = 1.0f,
-                               FX_FLOAT retinaScaleY = 1.0f);
-  CPDF_Type3Font* const m_pFont;
-  std::map<CFX_ByteString, CPDF_Type3Glyphs*> m_SizeMap;
-};
 
 class CPDF_TransferFunc {
  public:

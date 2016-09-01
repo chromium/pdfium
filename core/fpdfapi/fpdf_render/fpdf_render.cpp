@@ -25,6 +25,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/fpdf_render/cpdf_type3cache.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
