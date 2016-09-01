@@ -72,7 +72,7 @@ class CPDF_Annot {
       const CFX_ByteString& sSubtype);
   static CFX_ByteString AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype);
 
-  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
+  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument, bool bToOwnDict);
   ~CPDF_Annot();
 
   CPDF_Annot::Subtype GetSubtype() const;
@@ -101,7 +101,11 @@ class CPDF_Annot {
  private:
   void GenerateAPIfNeeded();
 
-  CPDF_Dictionary* const m_pAnnotDict;
+  // For regular annotations, |m_pAnnotDict| is not owned. For
+  // our artificially created popup annotations, |m_pAnnotDict|
+  // is owned by this class.
+  bool m_bOwnedAnnotDict;
+  CPDF_Dictionary* m_pAnnotDict;
   CPDF_Document* const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;

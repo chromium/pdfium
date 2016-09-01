@@ -43,7 +43,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
   pAnnotDict->SetAtInteger("F", 0);
 
   std::unique_ptr<CPDF_Annot> pPopupAnnot(
-      new CPDF_Annot(pAnnotDict, pDocument));
+      new CPDF_Annot(pAnnotDict, pDocument, true));
   pAnnot->SetPopupAnnot(pPopupAnnot.get());
   return pPopupAnnot;
 }
@@ -83,7 +83,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       continue;
 
     m_AnnotList.push_back(
-        std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument)));
+        std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument, false)));
     if (bRegenerateAP && pDict->GetStringBy("Subtype") == "Widget" &&
         CPDF_InterForm::IsUpdateAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);

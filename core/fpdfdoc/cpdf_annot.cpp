@@ -18,8 +18,11 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
-CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
-    : m_pAnnotDict(pDict),
+CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict,
+                       CPDF_Document* pDocument,
+                       bool bToOwnDict)
+    : m_bOwnedAnnotDict(bToOwnDict),
+      m_pAnnotDict(pDict),
       m_pDocument(pDocument),
       m_bOpenState(false),
       m_pPopupAnnot(nullptr) {
@@ -28,6 +31,8 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
 }
 
 CPDF_Annot::~CPDF_Annot() {
+  if (m_bOwnedAnnotDict)
+    m_pAnnotDict->Release();
   ClearCachedAP();
 }
 
