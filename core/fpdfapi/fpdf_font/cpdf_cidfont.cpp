@@ -631,8 +631,11 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         unicode = m_pCID2UnicodeMap->UnicodeFromCID(cid);
       if (unicode == 0)
         unicode = GetUnicodeFromCharCode(charcode);
-      if (unicode == 0 && !(m_Flags & PDFFONT_SYMBOLIC))
-        unicode = UnicodeFromCharCode(charcode).GetAt(0);
+      if (unicode == 0) {
+        CFX_WideString unicode_str = UnicodeFromCharCode(charcode);
+        if (!unicode_str.IsEmpty())
+          unicode = unicode_str.GetAt(0);
+      }
     }
     FXFT_Face face = m_Font.GetFace();
     if (unicode == 0) {
