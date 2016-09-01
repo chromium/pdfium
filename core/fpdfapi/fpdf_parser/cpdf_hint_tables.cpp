@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 
+#include <limits>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
@@ -57,9 +59,14 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     return false;
 
   int nStreamOffset = ReadPrimaryHintStreamOffset();
-  int nStreamLen = ReadPrimaryHintStreamLength();
-  if (nStreamOffset < 0 || nStreamLen < 1)
+  if (nStreamOffset < 0)
     return false;
+
+  int nStreamLen = ReadPrimaryHintStreamLength();
+  if (nStreamLen < 1 ||
+      !pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(nStreamLen)) {
+    return false;
+  }
 
   const uint32_t kHeaderSize = 288;
   if (hStream->BitsRemaining() < kHeaderSize)
@@ -68,20 +75,20 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // Item 1: The least number of objects in a page.
   const uint32_t dwObjLeastNum = hStream->GetBits(32);
   if (!dwObjLeastNum)
-    return FALSE;
+    return false;
 
   // Item 2: The location of the first page's page object.
   const uint32_t dwFirstObjLoc = hStream->GetBits(32);
   if (dwFirstObjLoc > static_cast<uint32_t>(nStreamOffset)) {
-    FX_SAFE_UINT32 safeLoc = pdfium::base::checked_cast<uint32_t>(nStreamLen);
+    FX_SAFE_FILESIZE safeLoc = nStreamLen;
     safeLoc += dwFirstObjLoc;
     if (!safeLoc.IsValid())
       return false;
-    m_szFirstPageObjOffset =
-        pdfium::base::checked_cast<FX_FILESIZE>(safeLoc.ValueOrDie());
+    m_szFirstPageObjOffset = safeLoc.ValueOrDie();
   } else {
-    m_szFirstPageObjOffset =
-        pdfium::base::checked_cast<FX_FILESIZE>(dwFirstObjLoc);
+    if (!pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(dwFirstObjLoc))
+      return false;
+    m_szFirstPageObjOffset = dwFirstObjLoc;
   }
 
   // Item 3: The number of bits needed to represent the difference
