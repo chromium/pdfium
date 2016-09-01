@@ -93,11 +93,13 @@ is_debug = true  # Enable debugging features.
 
 pdf_use_skia = false  # Set true to enable experimental skia backend.
 
-pdf_enable_xfa = true # Set false to remove XFA support (implies JS support).
+pdf_enable_xfa = true  # Set false to remove XFA support (implies JS support).
 pdf_enable_v8 = true  # Set false to remove Javascript support.
 pdf_is_standalone = true  # Set for a non-embedded build.
 is_component_build = false # Disable component build (must be false)
 
+clang_use_chrome_plugins = false  # Currently must be false.
+use_sysroot = false  # Currently must be false on Linux.
 ```
 
 Note, you must set `pdf_is_standalone = true` if you want the sample

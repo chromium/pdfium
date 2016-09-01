@@ -127,18 +127,6 @@ hooks = [
                 '-s', 'pdfium/buildtools/linux64/gn.sha1',
     ],
   },
-  {
-    # Downloads the current stable linux sysroot to build/linux/ if needed.
-    # This sysroot updates at about the same rate that the chrome build deps
-    # change. This script is a no-op except for linux users who are doing
-    # official chrome builds or cross compiling.
-    'name': 'sysroot',
-    'pattern': '.',
-    'action': ['python',
-               'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
-               '--running-as-hook'
-    ],
-  },
   # Pull clang-format binaries using checked-in hashes.
   {
     'name': 'clang_format_win',
