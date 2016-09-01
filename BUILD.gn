@@ -142,9 +142,6 @@ static_library("pdfium") {
     "third_party:pdfium_base",
   ]
 
-  public_deps = [
-    ":fxcrt",
-  ]
   if (pdf_enable_xfa) {
     sources += [
       "fpdfsdk/cpdfsdk_xfawidget.cpp",
@@ -222,9 +219,6 @@ static_library("fdrm") {
     "core/fdrm/crypto/include/fx_crypt.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
 }
 
 static_library("fpdfdoc") {
@@ -316,9 +310,6 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/tagged_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
 }
 
 static_library("fpdfapi") {
@@ -548,9 +539,6 @@ static_library("fpdfapi") {
     "core/fpdfapi/include/cpdf_pagerendercontext.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
 }
 
 static_library("fpdftext") {
@@ -565,12 +553,17 @@ static_library("fpdftext") {
     "core/fpdftext/unicodenormalizationdata.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
 }
 
 static_library("fxcodec") {
+  deps = [
+    "third_party:fx_lcms2",
+    "third_party:fx_libopenjpeg",
+    "third_party:fx_zlib",
+
+    # This is a generic JPEG library dependency.
+    "//third_party:jpeg",
+  ]
   sources = [
     "core/fxcodec/codec/ccodec_basicmodule.h",
     "core/fxcodec/codec/ccodec_faxmodule.h",
@@ -631,18 +624,7 @@ static_library("fxcodec") {
     "core/fxcodec/jbig2/JBig2_TrdProc.cpp",
     "core/fxcodec/jbig2/JBig2_TrdProc.h",
   ]
-  configs += [ ":pdfium_core_config" ]
   include_dirs = []
-  deps = [
-    ":fxcrt",
-    "third_party:fx_lcms2",
-    "third_party:fx_libopenjpeg",
-    "third_party:fx_zlib",
-
-    # This is a generic JPEG library dependency.
-    "//third_party:jpeg",
-  ]
-
   if (pdf_enable_xfa) {
     sources += [
       "core/fxcodec/codec/ccodec_bmpmodule.h",
@@ -670,6 +652,7 @@ static_library("fxcodec") {
     # conversion to check that an address is 16-bit aligned (benign).
     cflags_c = [ "-Wno-pointer-to-int-cast" ]
   }
+  configs += [ ":pdfium_core_config" ]
 }
 
 config("fxge_warnings") {
@@ -725,13 +708,6 @@ static_library("fxcrt") {
     "core/fxcrt/xml_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  visibility += [ "//third_party:*" ]
-  deps = [
-    "//third_party:pdfium_base",
-  ]
-  public_deps = [
-    "//third_party:pdfium_base",
-  ]
 
   if (pdf_enable_xfa) {
     sources += [
@@ -831,10 +807,6 @@ static_library("fxge") {
     ":pdfium_core_config",
   ]
 
-  deps = [
-    ":fxcrt",
-  ]
-
   if (pdf_enable_xfa) {
     sources += [
       "core/fxge/ge/cfx_unicodeencodingex.cpp",
@@ -844,14 +816,18 @@ static_library("fxge") {
 
   if (pdf_use_skia) {
     sources += [ "core/fxge/skia/fx_skia_device.cpp" ]
-    deps += [ "//skia" ]
+    deps = [
+      "//skia",
+    ]
   } else {
     sources += [
       "core/fxge/agg/fx_agg_driver.cpp",
       "core/fxge/agg/fx_agg_driver.h",
       "core/fxge/apple/fx_apple_platform.cpp",
     ]
-    deps += [ "third_party:fx_agg" ]
+    deps = [
+      "third_party:fx_agg",
+    ]
   }
 
   if (is_win) {
@@ -878,9 +854,6 @@ static_library("fxedit") {
     "fpdfsdk/fxedit/include/fxet_list.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
 }
 
 static_library("pdfwindow") {
@@ -911,9 +884,6 @@ static_library("pdfwindow") {
     "fpdfsdk/pdfwindow/PWL_Wnd.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
 }
 
 static_library("javascript") {
@@ -921,11 +891,6 @@ static_library("javascript") {
     "fpdfsdk/javascript/ijs_context.h",
     "fpdfsdk/javascript/ijs_runtime.h",
   ]
-  configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
-
   if (pdf_enable_v8) {
     sources += [
       "fpdfsdk/javascript/Annot.cpp",
@@ -972,11 +937,14 @@ static_library("javascript") {
       "fpdfsdk/javascript/util.cpp",
       "fpdfsdk/javascript/util.h",
     ]
-    deps += [ ":fxjs" ]
+    deps = [
+      ":fxjs",
+    ]
     configs += [ "//v8:external_startup_data" ]
   } else {
     sources += [ "fpdfsdk/javascript/JS_Runtime_Stub.cpp" ]
   }
+  configs += [ ":pdfium_core_config" ]
 }
 
 static_library("formfiller") {
@@ -1001,9 +969,6 @@ static_library("formfiller") {
     "fpdfsdk/formfiller/cffl_textfield.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
 }
 
 if (pdf_enable_v8) {
@@ -1012,20 +977,6 @@ if (pdf_enable_v8) {
       "fxjs/fxjs_v8.cpp",
       "fxjs/include/fxjs_v8.h",
     ]
-    configs += [ ":pdfium_core_config" ]
-    deps = [
-      ":fxcrt",
-      "//v8",
-      "//v8:v8_libplatform",
-    ]
-    include_dirs = [
-      "//v8",
-      "//v8/include",
-    ]
-    public_deps = [
-      "//v8",
-    ]
-
     if (pdf_enable_xfa) {
       sources += [
         "fxjs/cfxjse_arguments.cpp",
@@ -1043,6 +994,18 @@ if (pdf_enable_v8) {
         "fxjs/include/fxjse.h",
       ]
     }
+    deps = [
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
+    configs += [ ":pdfium_core_config" ]
+    include_dirs = [
+      "//v8",
+      "//v8/include",
+    ]
+    public_deps = [
+      "//v8",
+    ]
   }
 }
 
@@ -1059,7 +1022,6 @@ if (pdf_enable_xfa) {
       "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h",
     ]
     deps = [
-      ":fxcrt",
       ":xfa",
     ]
     configs += [ ":pdfium_core_config" ]
@@ -1622,7 +1584,6 @@ if (pdf_enable_xfa) {
     ]
     include_dirs = [ "." ]
     deps = [
-      ":fxcrt",
       ":fxjs",
     ]
     configs += [
