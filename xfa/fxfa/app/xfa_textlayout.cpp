@@ -688,6 +688,7 @@ FX_BOOL CXFA_TextParser::GetTabstops(
   }
   return TRUE;
 }
+
 CXFA_TextLayout::CXFA_TextLayout(CXFA_TextProvider* pTextProvider)
     : m_bHasBlock(FALSE),
       m_pTextProvider(pTextProvider),
@@ -698,23 +699,36 @@ CXFA_TextLayout::CXFA_TextLayout(CXFA_TextProvider* pTextProvider)
       m_bBlockContinue(TRUE) {
   ASSERT(m_pTextProvider);
 }
+
 CXFA_TextLayout::~CXFA_TextLayout() {
   m_textParser.Reset();
   Unload();
 }
+
 void CXFA_TextLayout::Unload() {
-  int32_t iCount = m_pieceLines.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
+  for (int32_t i = 0; i < m_pieceLines.GetSize(); i++) {
     CXFA_PieceLine* pLine = m_pieceLines.GetAt(i);
+    for (int32_t i = 0; i < pLine->m_textPieces.GetSize(); i++) {
+      XFA_TextPiece* pPiece = pLine->m_textPieces.GetAt(i);
+      // Release text and widths in a text piece.
+      m_pAllocator->Free(pPiece->pszText);
+      m_pAllocator->Free(pPiece->pWidths);
+      // Release text piece.
+      FXTARGET_DeleteWith(XFA_TextPiece, m_pAllocator.get(), pPiece);
+    }
+    pLine->m_textPieces.RemoveAll();
+    // Release line.
     FXTARGET_DeleteWith(CXFA_PieceLine, m_pAllocator.get(), pLine);
   }
   m_pieceLines.RemoveAll();
   m_pBreak.reset();
   m_pAllocator.reset();
 }
+
 const CXFA_PieceLineArray* CXFA_TextLayout::GetPieceLines() {
   return &m_pieceLines;
 }
+
 void CXFA_TextLayout::GetTextDataNode() {
   if (!m_pTextProvider) {
     return;
