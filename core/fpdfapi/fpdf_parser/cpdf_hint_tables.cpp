@@ -15,6 +15,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fxcrt/include/fx_safe_types.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -44,10 +45,9 @@ CPDF_HintTables::CPDF_HintTables(CPDF_DataAvail* pDataAvail,
 CPDF_HintTables::~CPDF_HintTables() {}
 
 uint32_t CPDF_HintTables::GetItemLength(
-    int index,
+    uint32_t index,
     const std::vector<FX_FILESIZE>& szArray) {
-  if (index < 0 || szArray.size() < 2 ||
-      static_cast<size_t>(index) > szArray.size() - 2 ||
+  if (szArray.size() < 2 || index > szArray.size() - 2 ||
       szArray[index] > szArray[index + 1]) {
     return 0;
   }
@@ -362,13 +362,10 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   return true;
 }
 
-bool CPDF_HintTables::GetPagePos(int index,
+bool CPDF_HintTables::GetPagePos(uint32_t index,
                                  FX_FILESIZE* szPageStartPos,
                                  FX_FILESIZE* szPageLength,
                                  uint32_t* dwObjNum) {
-  if (index < 0)
-    return false;
-
   *szPageStartPos = m_szPageOffsetArray[index];
   *szPageLength = GetItemLength(index, m_szPageOffsetArray);
 
@@ -377,18 +374,19 @@ bool CPDF_HintTables::GetPagePos(int index,
     return false;
 
   int nFirstPageNum = GetFirstPageNumber();
-  if (nFirstPageNum < 0)
+  if (!pdfium::base::IsValueInRangeForNumericType<uint32_t>(nFirstPageNum))
     return false;
 
-  if (index == nFirstPageNum) {
+  uint32_t dwFirstPageNum = static_cast<uint32_t>(nFirstPageNum);
+  if (index == dwFirstPageNum) {
     *dwObjNum = nFirstPageObjNum;
     return true;
   }
 
   // The object number of remaining pages starts from 1.
   *dwObjNum = 1;
-  for (int i = 0; i < index; ++i) {
-    if (i == nFirstPageNum)
+  for (uint32_t i = 0; i < index; ++i) {
+    if (i == dwFirstPageNum)
       continue;
     *dwObjNum += m_dwDeltaNObjsArray[i];
   }
@@ -396,12 +394,16 @@ bool CPDF_HintTables::GetPagePos(int index,
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
-    int index,
+    uint32_t index,
     CPDF_DataAvail::DownloadHints* pHints) {
-  if (!pHints || index < 0)
+  if (!pHints)
     return CPDF_DataAvail::DataError;
 
-  if (index == GetFirstPageNumber())
+  int nFirstPageNum = GetFirstPageNumber();
+  if (!pdfium::base::IsValueInRangeForNumericType<uint32_t>(nFirstPageNum))
+    return CPDF_DataAvail::DataError;
+
+  if (index == static_cast<uint32_t>(nFirstPageNum))
     return CPDF_DataAvail::DataAvailable;
 
   uint32_t dwLength = GetItemLength(index, m_szPageOffsetArray);
@@ -414,7 +416,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
 
   // Download data of shared objects in the page.
   uint32_t offset = 0;
-  for (int i = 0; i < index; ++i)
+  for (uint32_t i = 0; i < index; ++i)
     offset += m_dwNSharedObjsArray[i];
 
   int nFirstPageObjNum = GetFirstPageObjectNumber();

@@ -97,7 +97,7 @@ class CPDF_DataAvail final {
 
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
   void SetDocument(CPDF_Document* pDoc);
-  DocAvailStatus IsPageAvail(int iPage, DownloadHints* pHints);
+  DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
   FX_BOOL IsLinearized();
@@ -166,13 +166,14 @@ class CPDF_DataAvail final {
   FX_BOOL LoadAllXref(DownloadHints* pHints);
   FX_BOOL LoadAllFile(DownloadHints* pHints);
   DocAvailStatus CheckLinearizedData(DownloadHints* pHints);
-  FX_BOOL CheckPageAnnots(int iPage, DownloadHints* pHints);
+  FX_BOOL CheckPageAnnots(uint32_t dwPage, DownloadHints* pHints);
 
-  DocAvailStatus CheckLinearizedFirstPage(int iPage, DownloadHints* pHints);
+  DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage,
+                                          DownloadHints* pHints);
   FX_BOOL HaveResourceAncestor(CPDF_Dictionary* pDict);
-  FX_BOOL CheckPage(int32_t iPage, DownloadHints* pHints);
+  FX_BOOL CheckPage(uint32_t dwPage, DownloadHints* pHints);
   FX_BOOL LoadDocPages(DownloadHints* pHints);
-  FX_BOOL LoadDocPage(int32_t iPage, DownloadHints* pHints);
+  FX_BOOL LoadDocPage(uint32_t dwPage, DownloadHints* pHints);
   FX_BOOL CheckPageNode(PageNode& pageNodes,
                         int32_t iPage,
                         int32_t& iCount,
@@ -185,8 +186,8 @@ class CPDF_DataAvail final {
                              PageNode* pPageNode,
                              DownloadHints* pHints);
   FX_BOOL CheckPageCount(DownloadHints* pHints);
-  bool IsFirstCheck(int iPage);
-  void ResetFirstCheck(int iPage);
+  bool IsFirstCheck(uint32_t dwPage);
+  void ResetFirstCheck(uint32_t dwPage);
   FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
 
   FileAvail* const m_pFileAvail;

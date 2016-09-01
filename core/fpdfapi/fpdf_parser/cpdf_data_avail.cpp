@@ -479,12 +479,12 @@ FX_BOOL CPDF_DataAvail::PreparePageItem() {
   return TRUE;
 }
 
-bool CPDF_DataAvail::IsFirstCheck(int iPage) {
-  return m_pageMapCheckState.insert(iPage).second;
+bool CPDF_DataAvail::IsFirstCheck(uint32_t dwPage) {
+  return m_pageMapCheckState.insert(dwPage).second;
 }
 
-void CPDF_DataAvail::ResetFirstCheck(int iPage) {
-  m_pageMapCheckState.erase(iPage);
+void CPDF_DataAvail::ResetFirstCheck(uint32_t dwPage) {
+  m_pageMapCheckState.erase(dwPage);
 }
 
 FX_BOOL CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
@@ -1235,7 +1235,7 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
   return FALSE;
 }
 
-FX_BOOL CPDF_DataAvail::CheckPage(int32_t iPage, DownloadHints* pHints) {
+FX_BOOL CPDF_DataAvail::CheckPage(uint32_t dwPage, DownloadHints* pHints) {
   while (TRUE) {
     switch (m_docStatus) {
       case PDF_DATAAVAIL_PAGETREE:
@@ -1243,7 +1243,7 @@ FX_BOOL CPDF_DataAvail::CheckPage(int32_t iPage, DownloadHints* pHints) {
           return FALSE;
         break;
       case PDF_DATAAVAIL_PAGE:
-        if (!LoadDocPage(iPage, pHints))
+        if (!LoadDocPage(dwPage, pHints))
           return FALSE;
         break;
       case PDF_DATAAVAIL_ERROR:
@@ -1420,7 +1420,9 @@ FX_BOOL CPDF_DataAvail::CheckPageNode(CPDF_DataAvail::PageNode& pageNodes,
   return TRUE;
 }
 
-FX_BOOL CPDF_DataAvail::LoadDocPage(int32_t iPage, DownloadHints* pHints) {
+FX_BOOL CPDF_DataAvail::LoadDocPage(uint32_t dwPage, DownloadHints* pHints) {
+  FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
+  int32_t iPage = safePage.ValueOrDie();
   if (m_pDocument->GetPageCount() <= iPage ||
       m_pDocument->m_PageList.GetAt(iPage)) {
     m_docStatus = PDF_DATAAVAIL_DONE;
@@ -1531,12 +1533,14 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData(
   return m_bLinearedDataOK ? DataAvailable : DataNotAvailable;
 }
 
-FX_BOOL CPDF_DataAvail::CheckPageAnnots(int32_t iPage, DownloadHints* pHints) {
+FX_BOOL CPDF_DataAvail::CheckPageAnnots(uint32_t dwPage,
+                                        DownloadHints* pHints) {
   if (!m_objs_array.GetSize()) {
     m_objs_array.RemoveAll();
     m_ObjectSet.clear();
 
-    CPDF_Dictionary* pPageDict = m_pDocument->GetPage(iPage);
+    FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
+    CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
     if (!pPageDict)
       return TRUE;
 
@@ -1564,10 +1568,10 @@ FX_BOOL CPDF_DataAvail::CheckPageAnnots(int32_t iPage, DownloadHints* pHints) {
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedFirstPage(
-    int32_t iPage,
+    uint32_t dwPage,
     DownloadHints* pHints) {
   if (!m_bAnnotsLoad) {
-    if (!CheckPageAnnots(iPage, pHints))
+    if (!CheckPageAnnots(dwPage, pHints))
       return DataNotAvailable;
     m_bAnnotsLoad = TRUE;
   }
@@ -1601,12 +1605,12 @@ FX_BOOL CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary* pDict) {
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
-    int32_t iPage,
+    uint32_t dwPage,
     DownloadHints* pHints) {
   if (!m_pDocument)
     return DataError;
 
-  if (IsFirstCheck(iPage)) {
+  if (IsFirstCheck(dwPage)) {
     m_bCurPageDictLoadOK = FALSE;
     m_bPageLoadedOK = FALSE;
     m_bAnnotsLoad = FALSE;
@@ -1615,14 +1619,14 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     m_ObjectSet.clear();
   }
 
-  if (pdfium::ContainsKey(m_pagesLoadState, iPage))
+  if (pdfium::ContainsKey(m_pagesLoadState, dwPage))
     return DataAvailable;
 
   if (m_bLinearized) {
-    if ((uint32_t)iPage == m_dwFirstPageNo) {
-      DocAvailStatus nRet = CheckLinearizedFirstPage(iPage, pHints);
+    if (dwPage == m_dwFirstPageNo) {
+      DocAvailStatus nRet = CheckLinearizedFirstPage(dwPage, pHints);
       if (nRet == DataAvailable)
-        m_pagesLoadState.insert(iPage);
+        m_pagesLoadState.insert(dwPage);
       return nRet;
     }
 
@@ -1631,10 +1635,10 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       return nResult;
 
     if (m_pHintTables) {
-      nResult = m_pHintTables->CheckPage(iPage, pHints);
+      nResult = m_pHintTables->CheckPage(dwPage, pHints);
       if (nResult != DataAvailable)
         return nResult;
-      m_pagesLoadState.insert(iPage);
+      m_pagesLoadState.insert(dwPage);
       return DataAvailable;
     }
 
@@ -1643,19 +1647,19 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
         if (!LoadPages(pHints))
           return DataNotAvailable;
       } else {
-        if (!m_bCurPageDictLoadOK && !CheckPage(iPage, pHints))
+        if (!m_bCurPageDictLoadOK && !CheckPage(dwPage, pHints))
           return DataNotAvailable;
       }
     } else {
       if (!LoadAllFile(pHints))
         return DataNotAvailable;
       m_pDocument->GetParser()->RebuildCrossRef();
-      ResetFirstCheck(iPage);
+      ResetFirstCheck(dwPage);
       return DataAvailable;
     }
   } else {
     if (!m_bTotalLoadPageTree && !m_bCurPageDictLoadOK &&
-        !CheckPage(iPage, pHints)) {
+        !CheckPage(dwPage, pHints)) {
       return DataNotAvailable;
     }
   }
@@ -1671,9 +1675,10 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       m_objs_array.RemoveAll();
       m_ObjectSet.clear();
 
-      m_pPageDict = m_pDocument->GetPage(iPage);
+      FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
+      m_pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
       if (!m_pPageDict) {
-        ResetFirstCheck(iPage);
+        ResetFirstCheck(dwPage);
         return DataAvailable;
       }
 
@@ -1699,22 +1704,19 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   }
 
   if (!m_bAnnotsLoad) {
-    if (!CheckPageAnnots(iPage, pHints))
+    if (!CheckPageAnnots(dwPage, pHints))
       return DataNotAvailable;
     m_bAnnotsLoad = TRUE;
   }
 
   if (m_pPageDict && !m_bNeedDownLoadResource) {
     m_pPageResource = m_pPageDict->GetObjectBy("Resources");
-    if (!m_pPageResource)
-      m_bNeedDownLoadResource = HaveResourceAncestor(m_pPageDict);
-    else
-      m_bNeedDownLoadResource = TRUE;
+    m_bNeedDownLoadResource =
+        m_pPageResource || HaveResourceAncestor(m_pPageDict);
   }
 
   if (m_bNeedDownLoadResource) {
-    FX_BOOL bRet = CheckResources(pHints);
-    if (!bRet)
+    if (!CheckResources(pHints))
       return DataNotAvailable;
     m_bNeedDownLoadResource = FALSE;
   }
@@ -1723,8 +1725,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   m_bAnnotsLoad = FALSE;
   m_bCurPageDictLoadOK = FALSE;
 
-  ResetFirstCheck(iPage);
-  m_pagesLoadState.insert(iPage);
+  ResetFirstCheck(dwPage);
+  m_pagesLoadState.insert(dwPage);
   return DataAvailable;
 }
 

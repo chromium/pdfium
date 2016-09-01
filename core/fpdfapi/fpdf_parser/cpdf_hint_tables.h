@@ -22,13 +22,13 @@ class CPDF_HintTables {
   CPDF_HintTables(CPDF_DataAvail* pDataAvail, CPDF_Dictionary* pLinearized);
   virtual ~CPDF_HintTables();
 
-  bool GetPagePos(int index,
+  bool GetPagePos(uint32_t index,
                   FX_FILESIZE* szPageStartPos,
                   FX_FILESIZE* szPageLength,
                   uint32_t* dwObjNum);
 
   CPDF_DataAvail::DocAvailStatus CheckPage(
-      int index,
+      uint32_t index,
       CPDF_DataAvail::DownloadHints* pHints);
 
   bool LoadHintStream(CPDF_Stream* pHintStream);
@@ -36,7 +36,6 @@ class CPDF_HintTables {
  protected:
   bool ReadPageHintTable(CFX_BitStream* hStream);
   bool ReadSharedObjHintTable(CFX_BitStream* hStream, uint32_t offset);
-  uint32_t GetItemLength(int index, const std::vector<FX_FILESIZE>& szArray);
 
  private:
   // Tests can override.
@@ -49,6 +48,9 @@ class CPDF_HintTables {
 
   // Helper for the ReadPrimaryHintStream methods above.
   int ReadPrimaryHintStream(int index) const;
+
+  uint32_t GetItemLength(uint32_t index,
+                         const std::vector<FX_FILESIZE>& szArray);
 
   // Owner, outlives this object.
   CPDF_DataAvail* const m_pDataAvail;

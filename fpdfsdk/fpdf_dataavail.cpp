@@ -162,6 +162,8 @@ DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
                                             FX_DOWNLOADHINTS* hints) {
   if (!avail || !hints)
     return PDF_DATA_ERROR;
+  if (page_index < 0)
+    return PDF_DATA_NOTAVAIL;
   CFPDF_DownloadHintsWrap hints_wrap(hints);
   return CFPDFDataAvailFromFPDFAvail(avail)->m_pDataAvail->IsPageAvail(
       page_index, &hints_wrap);
