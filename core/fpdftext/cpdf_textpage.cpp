@@ -805,11 +805,10 @@ void CPDF_TextPage::ProcessTextObject(
 
 FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
-  const CPDF_ContentMarkData* pMarkData = pTextObj->m_ContentMark.GetObject();
-  if (!pMarkData)
+  if (!pTextObj->m_ContentMark)
     return FPDFText_MarkedContent::Pass;
 
-  int nContentMark = pMarkData->CountItems();
+  int nContentMark = pTextObj->m_ContentMark.CountItems();
   if (nContentMark < 1)
     return FPDFText_MarkedContent::Pass;
 
@@ -818,7 +817,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_Dictionary* pDict = nullptr;
   int n = 0;
   for (n = 0; n < nContentMark; n++) {
-    const CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
+    const CPDF_ContentMarkItem& item = pTextObj->m_ContentMark.GetItem(n);
     if (item.GetParamType() == CPDF_ContentMarkItem::ParamType::None)
       continue;
     pDict = item.GetParam();
@@ -832,14 +831,12 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   if (!bExist)
     return FPDFText_MarkedContent::Pass;
 
-  if (m_pPreTextObj) {
-    const CPDF_ContentMarkData* pPreMarkData =
-        m_pPreTextObj->m_ContentMark.GetObject();
-    if (pPreMarkData && pPreMarkData->CountItems() == n &&
-        pDict == pPreMarkData->GetItem(n - 1).GetParam()) {
-      return FPDFText_MarkedContent::Done;
-    }
+  if (m_pPreTextObj && m_pPreTextObj->m_ContentMark &&
+      m_pPreTextObj->m_ContentMark.CountItems() == n &&
+      pDict == m_pPreTextObj->m_ContentMark.GetItem(n - 1).GetParam()) {
+    return FPDFText_MarkedContent::Done;
   }
+
   FX_STRSIZE nItems = actText.GetLength();
   if (nItems < 1)
     return FPDFText_MarkedContent::Pass;
@@ -872,17 +869,17 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
 
 void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
-  const CPDF_ContentMarkData* pMarkData = pTextObj->m_ContentMark.GetObject();
-  if (!pMarkData)
+  if (!pTextObj->m_ContentMark)
     return;
 
-  int nContentMark = pMarkData->CountItems();
+  int nContentMark = pTextObj->m_ContentMark.CountItems();
   if (nContentMark < 1)
     return;
+
   CFX_WideString actText;
   CPDF_Dictionary* pDict = nullptr;
   for (int n = 0; n < nContentMark; n++) {
-    const CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
+    const CPDF_ContentMarkItem& item = pTextObj->m_ContentMark.GetItem(n);
     if (item.GetParamType() == CPDF_ContentMarkItem::ParamType::None)
       continue;
     pDict = item.GetParam();

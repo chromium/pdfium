@@ -11,15 +11,29 @@
 #include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_basic.h"
 
-class CPDF_ContentMark : public CFX_CountRef<CPDF_ContentMarkData> {
+class CPDF_ContentMark {
  public:
-  int GetMCID() const {
-    const CPDF_ContentMarkData* pData = GetObject();
-    return pData ? pData->GetMCID() : -1;
-  }
+  CPDF_ContentMark();
+  CPDF_ContentMark(const CPDF_ContentMark& that);
+  ~CPDF_ContentMark();
+
+  void SetNull();
+
+  int GetMCID() const;
+  int CountItems() const;
+  const CPDF_ContentMarkItem& GetItem(int i) const;
 
   bool HasMark(const CFX_ByteStringC& mark) const;
   bool LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const;
+  void AddMark(const CFX_ByteString& name,
+               CPDF_Dictionary* pDict,
+               FX_BOOL bDirect);
+  void DeleteLastMark();
+
+  operator bool() const { return !!m_Ref; }
+
+ private:
+  CFX_CountRef<CPDF_ContentMarkData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARK_H_

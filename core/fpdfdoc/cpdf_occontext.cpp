@@ -182,9 +182,8 @@ bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) {
 }
 
 bool CPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
-  const CPDF_ContentMarkData* pData = pObj->m_ContentMark.GetObject();
-  for (int i = 0; i < pData->CountItems(); i++) {
-    const CPDF_ContentMarkItem& item = pData->GetItem(i);
+  for (int i = 0; i < pObj->m_ContentMark.CountItems(); i++) {
+    const CPDF_ContentMarkItem& item = pObj->m_ContentMark.GetItem(i);
     if (item.GetName() == "OC" &&
         item.GetParamType() == CPDF_ContentMarkItem::PropertiesDict &&
         !CheckOCGVisible(item.GetParam())) {

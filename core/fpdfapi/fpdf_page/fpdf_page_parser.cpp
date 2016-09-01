@@ -583,7 +583,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     bDirect = FALSE;
   }
   if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    m_CurContentMark.GetPrivateCopy()->AddMark(tag, pDict, bDirect);
+    m_CurContentMark.AddMark(tag, pDict, bDirect);
   }
 }
 
@@ -658,8 +658,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
-  CFX_ByteString tag = GetString(0);
-  m_CurContentMark.GetPrivateCopy()->AddMark(tag, nullptr, FALSE);
+  m_CurContentMark.AddMark(GetString(0), nullptr, FALSE);
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
@@ -806,15 +805,8 @@ void CPDF_StreamContentParser::Handle_MarkPlace_Dictionary() {}
 void CPDF_StreamContentParser::Handle_EndImage() {}
 
 void CPDF_StreamContentParser::Handle_EndMarkedContent() {
-  if (!m_CurContentMark)
-    return;
-
-  int count = m_CurContentMark.GetObject()->CountItems();
-  if (count == 1) {
-    m_CurContentMark.SetNull();
-    return;
-  }
-  m_CurContentMark.GetPrivateCopy()->DeleteLastMark();
+  if (m_CurContentMark)
+    m_CurContentMark.DeleteLastMark();
 }
 
 void CPDF_StreamContentParser::Handle_EndText() {
