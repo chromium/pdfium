@@ -249,7 +249,7 @@ void CPDF_RenderStatus::RenderObjectList(
 #endif
 }
 
-void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
+void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
                                            const CFX_Matrix* pObj2Device) {
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
@@ -274,7 +274,7 @@ void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
 #endif
 }
 
-FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
+FX_BOOL CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
                                                 const CFX_Matrix* pObj2Device,
                                                 IFX_Pause* pPause) {
   if (m_pImageRenderer) {
@@ -335,7 +335,7 @@ FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,
   return rect.IsEmpty();
 }
 
-void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
+void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
                                             const CFX_Matrix* pObj2Device) {
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
@@ -365,7 +365,7 @@ void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
 #endif
 }
 
-FX_BOOL CPDF_RenderStatus::DrawObjWithBlend(const CPDF_PageObject* pObj,
+FX_BOOL CPDF_RenderStatus::DrawObjWithBlend(CPDF_PageObject* pObj,
                                             const CFX_Matrix* pObj2Device) {
   FX_BOOL bRet = FALSE;
   switch (pObj->GetType()) {
@@ -388,7 +388,8 @@ void CPDF_RenderStatus::GetScaledMatrix(CFX_Matrix& matrix) const {
   matrix.a *= FXSYS_fabs(dCTM.a);
   matrix.d *= FXSYS_fabs(dCTM.d);
 }
-void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
+
+void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
                                               const CFX_Matrix* pObj2Device) {
   FX_RECT rect;
   if (GetObjectClippedRect(pObj, pObj2Device, FALSE, rect)) {
@@ -462,7 +463,7 @@ FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix) {
   return TRUE;
 }
 
-FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
+FX_BOOL CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
                                        const CFX_Matrix* pObj2Device) {
   int FillType = pPathObj->m_FillType;
   FX_BOOL bStroke = pPathObj->m_bStroke;
@@ -485,9 +486,10 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
     FillType |= FXFILL_NOPATHSMOOTH;
   if (bStroke)
     FillType |= FX_FILL_STROKE;
-  const CPDF_GeneralStateData* pGeneralData =
-      static_cast<const CPDF_PageObject*>(pPathObj)->m_GeneralState.GetObject();
-  if (pGeneralData && pGeneralData->m_StrokeAdjust)
+
+  const CPDF_PageObject* pPageObj =
+      static_cast<const CPDF_PageObject*>(pPathObj);
+  if (pPageObj->m_GeneralState.GetStrokeAdjust())
     FillType |= FX_STROKE_ADJUST;
   if (m_pType3Char)
     FillType |= FX_FILL_TEXT_MODE;
@@ -505,7 +507,8 @@ CPDF_TransferFunc* CPDF_RenderStatus::GetTransferFunc(CPDF_Object* pObj) const {
   CPDF_DocRenderData* pDocCache = m_pContext->GetDocument()->GetRenderData();
   return pDocCache ? pDocCache->GetTransferFunc(pObj) : nullptr;
 }
-FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
+
+FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
                                        FX_BOOL bType3) const {
   const CPDF_ColorStateData* pColorData = pObj->m_ColorState.GetObject();
   if (m_pType3Char && !bType3 &&
@@ -521,25 +524,20 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
   if (rgb == (uint32_t)-1) {
     return 0;
   }
-  const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState.GetObject();
-  int alpha;
-  if (pGeneralData) {
-    alpha = (int32_t)(pGeneralData->m_FillAlpha * 255);
-    if (pGeneralData->m_pTR) {
-      if (!pGeneralData->m_pTransferFunc) {
-        ((CPDF_GeneralStateData*)pGeneralData)->m_pTransferFunc =
-            GetTransferFunc(pGeneralData->m_pTR);
-      }
-      if (pGeneralData->m_pTransferFunc) {
-        rgb = pGeneralData->m_pTransferFunc->TranslateColor(rgb);
-      }
+  int32_t alpha =
+      static_cast<int32_t>((pObj->m_GeneralState.GetFillAlpha() * 255));
+  if (pObj->m_GeneralState.GetTR()) {
+    if (!pObj->m_GeneralState.GetTransferFunc()) {
+      pObj->m_GeneralState.SetTransferFunc(
+          GetTransferFunc(pObj->m_GeneralState.GetTR()));
     }
-  } else {
-    alpha = 255;
+    if (pObj->m_GeneralState.GetTransferFunc())
+      rgb = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(rgb);
   }
   return m_Options.TranslateColor(ArgbEncode(alpha, rgb));
 }
-FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
+
+FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
   const CPDF_ColorStateData* pColorData = pObj->m_ColorState.GetObject();
   if (m_pType3Char && (!m_pType3Char->m_bColored ||
                        (m_pType3Char->m_bColored &&
@@ -553,21 +551,15 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
   if (rgb == (uint32_t)-1) {
     return 0;
   }
-  const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState.GetObject();
-  int alpha;
-  if (pGeneralData) {
-    alpha = (int32_t)(pGeneralData->m_StrokeAlpha * 255);
-    if (pGeneralData->m_pTR) {
-      if (!pGeneralData->m_pTransferFunc) {
-        ((CPDF_GeneralStateData*)pGeneralData)->m_pTransferFunc =
-            GetTransferFunc(pGeneralData->m_pTR);
-      }
-      if (pGeneralData->m_pTransferFunc) {
-        rgb = pGeneralData->m_pTransferFunc->TranslateColor(rgb);
-      }
+  int32_t alpha = static_cast<int32_t>(pObj->m_GeneralState.GetStrokeAlpha() *
+                                       255);  // not rounded.
+  if (pObj->m_GeneralState.GetTR()) {
+    if (!pObj->m_GeneralState.GetTransferFunc()) {
+      pObj->m_GeneralState.SetTransferFunc(
+          GetTransferFunc(pObj->m_GeneralState.GetTR()));
     }
-  } else {
-    alpha = 255;
+    if (pObj->m_GeneralState.GetTransferFunc())
+      rgb = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(rgb);
   }
   return m_Options.TranslateColor(ArgbEncode(alpha, rgb));
 }
@@ -675,20 +667,17 @@ FX_BOOL CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
   return m_pDevice->SetClip_PathFill(pPathObj->m_Path.GetObject(), &path_matrix,
                                      fill_mode);
 }
-FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
+FX_BOOL CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                                                const CFX_Matrix* pObj2Device) {
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  const CPDF_GeneralStateData* pGeneralState =
-      pPageObj->m_GeneralState.GetObject();
-  int blend_type =
-      pGeneralState ? pGeneralState->m_BlendType : FXDIB_BLEND_NORMAL;
-  if (blend_type == FXDIB_BLEND_UNSUPPORTED) {
+  int blend_type = pPageObj->m_GeneralState.GetBlendType();
+  if (blend_type == FXDIB_BLEND_UNSUPPORTED)
     return TRUE;
-  }
+
   CPDF_Dictionary* pSMaskDict =
-      pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : nullptr;
+      ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
   if (pSMaskDict) {
     if (pPageObj->IsImage() &&
         pPageObj->AsImage()->GetImage()->GetDict()->KeyExist("SMask")) {
@@ -701,11 +690,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   FX_BOOL bGroupTransparent = FALSE;
   if (pPageObj->IsForm()) {
     const CPDF_FormObject* pFormObj = pPageObj->AsForm();
-    const CPDF_GeneralStateData* pStateData =
-        pFormObj->m_GeneralState.GetObject();
-    if (pStateData) {
-      group_alpha = pStateData->m_FillAlpha;
-    }
+    group_alpha = pFormObj->m_GeneralState.GetFillAlpha();
     Transparency = pFormObj->m_pForm->m_Transparency;
     bGroupTransparent = !!(Transparency & PDFTRANS_ISOLATED);
     if (pFormObj->m_pForm->m_pFormDict) {
@@ -717,7 +702,8 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
        m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
   if ((m_Options.m_Flags & RENDER_OVERPRINT) && pPageObj->IsImage() &&
-      pGeneralState && pGeneralState->m_FillOP && pGeneralState->m_StrokeOP) {
+      pPageObj->m_GeneralState.GetFillOP() &&
+      pPageObj->m_GeneralState.GetStrokeOP()) {
     CPDF_Document* pDocument = nullptr;
     CPDF_Page* pPage = nullptr;
     if (m_pContext->GetPageCache()) {
@@ -819,7 +805,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
     CFX_Matrix smask_matrix;
-    FXSYS_memcpy(&smask_matrix, pGeneralState->m_SMaskMatrix,
+    FXSYS_memcpy(&smask_matrix, pPageObj->m_GeneralState.GetSMaskMatrix(),
                  sizeof smask_matrix);
     smask_matrix.Concat(*pObj2Device);
     std::unique_ptr<CFX_DIBSource> pSMaskSource(

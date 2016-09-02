@@ -711,12 +711,11 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
                                                      TRUE);
   }
   if (pForm->m_Transparency & PDFTRANS_GROUP) {
-    CPDF_GeneralStateData* pData =
-        m_pParser->GetCurStates()->m_GeneralState.GetPrivateCopy();
-    pData->m_BlendType = FXDIB_BLEND_NORMAL;
-    pData->m_StrokeAlpha = 1.0f;
-    pData->m_FillAlpha = 1.0f;
-    pData->m_pSoftMask = nullptr;
+    CPDF_GeneralState* pState = &m_pParser->GetCurStates()->m_GeneralState;
+    pState->SetBlendType(FXDIB_BLEND_NORMAL);
+    pState->SetStrokeAlpha(1.0f);
+    pState->SetFillAlpha(1.0f);
+    pState->SetSoftMask(nullptr);
   }
   m_nStreams = 0;
   m_pSingleStream.reset(new CPDF_StreamAcc);

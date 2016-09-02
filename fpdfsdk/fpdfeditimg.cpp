@@ -33,7 +33,6 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
 
   IFX_FileRead* pFile = new CPDF_CustomAccess(fileAccess);
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
-  pImgObj->m_GeneralState.GetPrivateCopy();
   for (int index = 0; index < nCount; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (pPage)
@@ -73,7 +72,6 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
     return FALSE;
 
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
-  pImgObj->m_GeneralState.GetPrivateCopy();
   for (int index = 0; index < nCount; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (pPage)

@@ -110,9 +110,8 @@ class CPDF_RenderStatus {
                      FX_BOOL bLoadMask = FALSE);
   void RenderObjectList(const CPDF_PageObjectHolder* pObjectHolder,
                         const CFX_Matrix* pObj2Device);
-  void RenderSingleObject(const CPDF_PageObject* pObj,
-                          const CFX_Matrix* pObj2Device);
-  FX_BOOL ContinueSingleObject(const CPDF_PageObject* pObj,
+  void RenderSingleObject(CPDF_PageObject* pObj, const CFX_Matrix* pObj2Device);
+  FX_BOOL ContinueSingleObject(CPDF_PageObject* pObj,
                                const CFX_Matrix* pObj2Device,
                                IFX_Pause* pPause);
   CPDF_RenderContext* GetContext() { return m_pContext; }
@@ -132,26 +131,25 @@ class CPDF_RenderStatus {
 
   void ProcessClipPath(CPDF_ClipPath ClipPath, const CFX_Matrix* pObj2Device);
   void DrawClipPath(CPDF_ClipPath ClipPath, const CFX_Matrix* pObj2Device);
-  FX_BOOL ProcessTransparency(const CPDF_PageObject* PageObj,
+  FX_BOOL ProcessTransparency(CPDF_PageObject* PageObj,
                               const CFX_Matrix* pObj2Device);
-  void ProcessObjectNoClip(const CPDF_PageObject* PageObj,
+  void ProcessObjectNoClip(CPDF_PageObject* PageObj,
                            const CFX_Matrix* pObj2Device);
-  void DrawObjWithBackground(const CPDF_PageObject* pObj,
+  void DrawObjWithBackground(CPDF_PageObject* pObj,
                              const CFX_Matrix* pObj2Device);
-  FX_BOOL DrawObjWithBlend(const CPDF_PageObject* pObj,
+  FX_BOOL DrawObjWithBlend(CPDF_PageObject* pObj,
                            const CFX_Matrix* pObj2Device);
-  FX_BOOL ProcessPath(const CPDF_PathObject* pPathObj,
-                      const CFX_Matrix* pObj2Device);
-  void ProcessPathPattern(const CPDF_PathObject* pPathObj,
+  FX_BOOL ProcessPath(CPDF_PathObject* pPathObj, const CFX_Matrix* pObj2Device);
+  void ProcessPathPattern(CPDF_PathObject* pPathObj,
                           const CFX_Matrix* pObj2Device,
                           int& filltype,
                           FX_BOOL& bStroke);
-  void DrawPathWithPattern(const CPDF_PathObject* pPathObj,
+  void DrawPathWithPattern(CPDF_PathObject* pPathObj,
                            const CFX_Matrix* pObj2Device,
                            const CPDF_Color* pColor,
                            FX_BOOL bStroke);
   void DrawTilingPattern(CPDF_TilingPattern* pPattern,
-                         const CPDF_PageObject* pPageObj,
+                         CPDF_PageObject* pPageObj,
                          const CFX_Matrix* pObj2Device,
                          FX_BOOL bStroke);
   void DrawShadingPattern(CPDF_ShadingPattern* pPattern,
@@ -161,7 +159,7 @@ class CPDF_RenderStatus {
   FX_BOOL SelectClipPath(const CPDF_PathObject* pPathObj,
                          const CFX_Matrix* pObj2Device,
                          FX_BOOL bStroke);
-  FX_BOOL ProcessImage(const CPDF_ImageObject* pImageObj,
+  FX_BOOL ProcessImage(CPDF_ImageObject* pImageObj,
                        const CFX_Matrix* pObj2Device);
   FX_BOOL OutputBitmapAlpha(CPDF_ImageObject* pImageObj,
                             const CFX_Matrix* pImage2Device);
@@ -187,9 +185,9 @@ class CPDF_RenderStatus {
                    FX_RECT& clip_rect,
                    int alpha,
                    FX_BOOL bAlphaMode);
-  FX_BOOL ProcessType3Text(const CPDF_TextObject* textobj,
+  FX_BOOL ProcessType3Text(CPDF_TextObject* textobj,
                            const CFX_Matrix* pObj2Device);
-  FX_BOOL ProcessText(const CPDF_TextObject* textobj,
+  FX_BOOL ProcessText(CPDF_TextObject* textobj,
                       const CFX_Matrix* pObj2Device,
                       CFX_PathData* pClippingPath);
   void DrawTextPathWithPattern(const CPDF_TextObject* textobj,
@@ -214,9 +212,8 @@ class CPDF_RenderStatus {
   static CPDF_GraphicStates* CloneObjStates(const CPDF_GraphicStates* pPathObj,
                                             FX_BOOL bStroke);
   CPDF_TransferFunc* GetTransferFunc(CPDF_Object* pObject) const;
-  FX_ARGB GetFillArgb(const CPDF_PageObject* pObj,
-                      FX_BOOL bType3 = FALSE) const;
-  FX_ARGB GetStrokeArgb(const CPDF_PageObject* pObj) const;
+  FX_ARGB GetFillArgb(CPDF_PageObject* pObj, FX_BOOL bType3 = FALSE) const;
+  FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   FX_BOOL GetObjectClippedRect(const CPDF_PageObject* pObj,
                                const CFX_Matrix* pObj2Device,
                                FX_BOOL bLogical,
@@ -311,7 +308,7 @@ class CPDF_ImageRenderer {
   ~CPDF_ImageRenderer();
 
   FX_BOOL Start(CPDF_RenderStatus* pStatus,
-                const CPDF_PageObject* pObj,
+                CPDF_PageObject* pObj,
                 const CFX_Matrix* pObj2Device,
                 FX_BOOL bStdCS,
                 int blendType = FXDIB_BLEND_NORMAL);
@@ -337,7 +334,7 @@ class CPDF_ImageRenderer {
   FX_BOOL DrawPatternImage(const CFX_Matrix* pObj2Device);
 
   CPDF_RenderStatus* m_pRenderStatus;
-  const CPDF_ImageObject* m_pImageObject;
+  CPDF_ImageObject* m_pImageObject;
   int m_Status;
   const CFX_Matrix* m_pObj2Device;
   CFX_Matrix m_ImageMatrix;

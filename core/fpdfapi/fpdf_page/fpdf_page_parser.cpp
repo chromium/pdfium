@@ -865,7 +865,7 @@ void CPDF_StreamContentParser::Handle_ClosePath() {
 }
 
 void CPDF_StreamContentParser::Handle_SetFlat() {
-  m_pCurStates->m_GeneralState.GetPrivateCopy()->m_Flatness = GetNumber(0);
+  m_pCurStates->m_GeneralState.SetFlatness(GetNumber(0));
 }
 
 void CPDF_StreamContentParser::Handle_BeginImageData() {}

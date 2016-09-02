@@ -88,8 +88,7 @@ void CPDF_PageObject::TransformClipPath(CFX_Matrix& matrix) {
 void CPDF_PageObject::TransformGeneralState(CFX_Matrix& matrix) {
   if (!m_GeneralState)
     return;
-  CPDF_GeneralStateData* pGS = m_GeneralState.GetPrivateCopy();
-  pGS->m_Matrix.Concat(matrix);
+  m_GeneralState.GetMutableMatrix()->Concat(matrix);
 }
 
 FX_RECT CPDF_PageObject::GetBBox(const CFX_Matrix* pMatrix) const {

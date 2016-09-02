@@ -961,7 +961,9 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   CFX_Matrix matrix = *pattern->pattern_to_form();
   matrix.Concat(*pObj2Device);
   GetScaledMatrix(matrix);
-  int alpha = pPageObj->m_GeneralState.GetAlpha(bStroke);
+  int alpha =
+      FXSYS_round(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
+                                 : pPageObj->m_GeneralState.GetFillAlpha()));
   DrawShading(pattern, &matrix, rect, alpha,
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
   m_pDevice->RestoreState(false);
@@ -978,12 +980,12 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
   CFX_Matrix matrix = pShadingObj->m_Matrix;
   matrix.Concat(*pObj2Device);
   DrawShading(pShadingObj->m_pShading, &matrix, rect,
-              pShadingObj->m_GeneralState.GetAlpha(FALSE),
+              FXSYS_round(255 * pShadingObj->m_GeneralState.GetFillAlpha()),
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
 }
 
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
-                                          const CPDF_PageObject* pPageObj,
+                                          CPDF_PageObject* pPageObj,
                                           const CFX_Matrix* pObj2Device,
                                           FX_BOOL bStroke) {
   if (!pPattern->Load()) {
@@ -1167,7 +1169,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   m_pDevice->RestoreState(false);
 }
 
-void CPDF_RenderStatus::DrawPathWithPattern(const CPDF_PathObject* pPathObj,
+void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
                                             const CFX_Matrix* pObj2Device,
                                             const CPDF_Color* pColor,
                                             FX_BOOL bStroke) {
@@ -1181,7 +1183,7 @@ void CPDF_RenderStatus::DrawPathWithPattern(const CPDF_PathObject* pPathObj,
     DrawShadingPattern(pShadingPattern, pPathObj, pObj2Device, bStroke);
 }
 
-void CPDF_RenderStatus::ProcessPathPattern(const CPDF_PathObject* pPathObj,
+void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj,
                                            const CFX_Matrix* pObj2Device,
                                            int& filltype,
                                            FX_BOOL& bStroke) {

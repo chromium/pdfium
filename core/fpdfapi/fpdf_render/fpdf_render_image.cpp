@@ -33,7 +33,7 @@
 #include "core/fxge/skia/fx_skia_device.h"
 #endif
 
-FX_BOOL CPDF_RenderStatus::ProcessImage(const CPDF_ImageObject* pImageObj,
+FX_BOOL CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
                                         const CFX_Matrix* pObj2Device) {
   CPDF_ImageRenderer render;
   if (render.Start(this, pImageObj, pObj2Device, m_bStdCS, m_curBlend)) {
@@ -388,30 +388,27 @@ FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
 }
 
 FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
-  if (!m_Loader.m_pBitmap) {
+  if (!m_Loader.m_pBitmap)
     return FALSE;
-  }
-  m_BitmapAlpha = 255;
-  const CPDF_GeneralStateData* pGeneralState =
-      m_pImageObject->m_GeneralState.GetObject();
-  if (pGeneralState) {
-    m_BitmapAlpha = FXSYS_round(pGeneralState->m_FillAlpha * 255);
-  }
+
+  m_BitmapAlpha =
+      FXSYS_round(255 * m_pImageObject->m_GeneralState.GetFillAlpha());
   m_pDIBSource = m_Loader.m_pBitmap;
   if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_ALPHA &&
       !m_Loader.m_pMask) {
     return StartBitmapAlpha();
   }
-  if (pGeneralState && pGeneralState->m_pTR) {
-    if (!pGeneralState->m_pTransferFunc) {
-      ((CPDF_GeneralStateData*)pGeneralState)->m_pTransferFunc =
-          m_pRenderStatus->GetTransferFunc(pGeneralState->m_pTR);
+  if (m_pImageObject->m_GeneralState.GetTR()) {
+    if (!m_pImageObject->m_GeneralState.GetTransferFunc()) {
+      m_pImageObject->m_GeneralState.SetTransferFunc(
+          m_pRenderStatus->GetTransferFunc(
+              m_pImageObject->m_GeneralState.GetTR()));
     }
-    if (pGeneralState->m_pTransferFunc &&
-        !pGeneralState->m_pTransferFunc->m_bIdentity) {
+    if (m_pImageObject->m_GeneralState.GetTransferFunc() &&
+        !m_pImageObject->m_GeneralState.GetTransferFunc()->m_bIdentity) {
       m_pDIBSource = m_Loader.m_pBitmap =
-          pGeneralState->m_pTransferFunc->TranslateImage(m_Loader.m_pBitmap,
-                                                         !m_Loader.m_bCached);
+          m_pImageObject->m_GeneralState.GetTransferFunc()->TranslateImage(
+              m_Loader.m_pBitmap, !m_Loader.m_bCached);
       if (m_Loader.m_bCached && m_Loader.m_pMask) {
         m_Loader.m_pMask = m_Loader.m_pMask->Clone();
       }
@@ -474,10 +471,12 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   if (m_bPatternColor) {
     return DrawPatternImage(m_pObj2Device);
   }
-  if (m_BitmapAlpha == 255 && pGeneralState && pGeneralState->m_FillOP &&
-      pGeneralState->m_OPMode == 0 &&
-      pGeneralState->m_BlendType == FXDIB_BLEND_NORMAL &&
-      pGeneralState->m_StrokeAlpha == 1 && pGeneralState->m_FillAlpha == 1) {
+  if (m_BitmapAlpha == 255 && m_pImageObject->m_GeneralState &&
+      m_pImageObject->m_GeneralState.GetFillOP() &&
+      m_pImageObject->m_GeneralState.GetOPMode() == 0 &&
+      m_pImageObject->m_GeneralState.GetBlendType() == FXDIB_BLEND_NORMAL &&
+      m_pImageObject->m_GeneralState.GetStrokeAlpha() == 1.0f &&
+      m_pImageObject->m_GeneralState.GetFillAlpha() == 1.0f) {
     CPDF_Document* pDocument = nullptr;
     CPDF_Page* pPage = nullptr;
     if (m_pRenderStatus->m_pContext->GetPageCache()) {
@@ -505,7 +504,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
 }
 
 FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
-                                  const CPDF_PageObject* pObj,
+                                  CPDF_PageObject* pObj,
                                   const CFX_Matrix* pObj2Device,
                                   FX_BOOL bStdCS,
                                   int blendType) {

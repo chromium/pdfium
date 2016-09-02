@@ -33,11 +33,11 @@ class CPDF_GeneralStateData {
   CPDF_TransferFunc* m_pTransferFunc;
   CFX_Matrix m_Matrix;
   int m_RenderIntent;
-  FX_BOOL m_StrokeAdjust;
-  FX_BOOL m_AlphaSource;
-  FX_BOOL m_TextKnockout;
-  FX_BOOL m_StrokeOP;
-  FX_BOOL m_FillOP;
+  bool m_StrokeAdjust;
+  bool m_AlphaSource;
+  bool m_TextKnockout;
+  bool m_StrokeOP;
+  bool m_FillOP;
   int m_OPMode;
   CPDF_Object* m_pBG;
   CPDF_Object* m_pUCR;

@@ -32,7 +32,7 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
-FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
+FX_BOOL CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                        const CFX_Matrix* pObj2Device,
                                        CFX_PathData* pClippingPath) {
   if (textobj->m_nChars == 0)
@@ -128,15 +128,10 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
       flag |= FX_FILL_STROKE;
       flag |= FX_STROKE_TEXT_MODE;
     }
-    const CPDF_GeneralStateData* pGeneralData =
-        static_cast<const CPDF_PageObject*>(textobj)
-            ->m_GeneralState.GetObject();
-    if (pGeneralData && pGeneralData->m_StrokeAdjust) {
+    if (textobj->m_GeneralState.GetStrokeAdjust())
       flag |= FX_STROKE_ADJUST;
-    }
-    if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH) {
+    if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH)
       flag |= FXFILL_NOPATHSMOOTH;
-    }
     return CPDF_TextRenderer::DrawTextPath(
         m_pDevice, textobj->m_nChars, textobj->m_pCharCodes,
         textobj->m_pCharPos, pFont, font_size, &text_matrix, pDeviceMatrix,
@@ -178,7 +173,7 @@ class CPDF_RefType3Cache {
 };
 
 // TODO(npm): Font fallback for type 3 fonts? (Completely separate code!!)
-FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
+FX_BOOL CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                                             const CFX_Matrix* pObj2Device) {
   CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->AsType3Font();
   for (int i = 0; i < m_Type3FontCache.GetSize(); ++i) {

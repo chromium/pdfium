@@ -222,23 +222,19 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
     return FALSE;
 
   CPDF_PageObject* pPageObj = reinterpret_cast<CPDF_PageObject*>(pageObject);
-  const CPDF_GeneralStateData* pGeneralState =
-      pPageObj->m_GeneralState.GetObject();
-  int blend_type =
-      pGeneralState ? pGeneralState->m_BlendType : FXDIB_BLEND_NORMAL;
+  int blend_type = pPageObj->m_GeneralState.GetBlendType();
   if (blend_type != FXDIB_BLEND_NORMAL)
     return TRUE;
 
   CPDF_Dictionary* pSMaskDict =
-      pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : nullptr;
+      ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
   if (pSMaskDict)
     return TRUE;
 
-  if (pGeneralState && pGeneralState->m_FillAlpha != 1.0f)
+  if (pPageObj->m_GeneralState.GetFillAlpha() != 1.0f)
     return TRUE;
 
-  if (pPageObj->IsPath() && pGeneralState &&
-      pGeneralState->m_StrokeAlpha != 1.0f) {
+  if (pPageObj->IsPath() && pPageObj->m_GeneralState.GetStrokeAlpha() != 1.0f) {
     return TRUE;
   }
 
