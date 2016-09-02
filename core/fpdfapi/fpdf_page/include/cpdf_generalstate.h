@@ -7,8 +7,12 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATE_H_
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_generalstatedata.h"
 #include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxge/include/fx_dib.h"
+
+class CPDF_Object;
+class CPDF_TransferFunc;
 
 class CPDF_GeneralState {
  public:
@@ -39,10 +43,10 @@ class CPDF_GeneralState {
   CPDF_TransferFunc* GetTransferFunc() const;
   void SetTransferFunc(CPDF_TransferFunc* pFunc);
 
-  void SetBlendMode(const CFX_ByteStringC& mode);
+  void SetBlendMode(const CFX_ByteString& mode);
 
-  const FX_FLOAT* GetSMaskMatrix() const;
-  FX_FLOAT* GetMutableSMaskMatrix();
+  const CFX_Matrix* GetSMaskMatrix() const;
+  void SetSMaskMatrix(const CFX_Matrix& matrix);
 
   bool GetFillOP() const;
   void SetFillOP(bool op);
@@ -70,7 +74,36 @@ class CPDF_GeneralState {
   CFX_Matrix* GetMutableMatrix();
 
  private:
-  CFX_CountRef<CPDF_GeneralStateData> m_Ref;
+  class StateData {
+   public:
+    StateData();
+    StateData(const StateData& that);
+    ~StateData();
+
+    CFX_ByteString m_BlendMode;
+    int m_BlendType;
+    CPDF_Object* m_pSoftMask;
+    CFX_Matrix m_SMaskMatrix;
+    FX_FLOAT m_StrokeAlpha;
+    FX_FLOAT m_FillAlpha;
+    CPDF_Object* m_pTR;
+    CPDF_TransferFunc* m_pTransferFunc;
+    CFX_Matrix m_Matrix;
+    int m_RenderIntent;
+    bool m_StrokeAdjust;
+    bool m_AlphaSource;
+    bool m_TextKnockout;
+    bool m_StrokeOP;
+    bool m_FillOP;
+    int m_OPMode;
+    CPDF_Object* m_pBG;
+    CPDF_Object* m_pUCR;
+    CPDF_Object* m_pHT;
+    FX_FLOAT m_Flatness;
+    FX_FLOAT m_Smoothness;
+  };
+
+  CFX_CountRef<StateData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATE_H_

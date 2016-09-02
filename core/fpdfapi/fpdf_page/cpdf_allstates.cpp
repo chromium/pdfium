@@ -106,10 +106,8 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         break;
       case FXBSTR_ID('B', 'M', 0, 0): {
         CPDF_Array* pArray = pObject->AsArray();
-        CFX_ByteString mode =
-            pArray ? pArray->GetStringAt(0) : pObject->GetString();
-
-        m_GeneralState.SetBlendMode(mode.AsStringC());
+        m_GeneralState.SetBlendMode(pArray ? pArray->GetStringAt(0)
+                                           : pObject->GetString());
         if (m_GeneralState.GetBlendType() > FXDIB_BLEND_MULTIPLY)
           pParser->GetPageObjectHolder()->SetBackgroundAlphaNeeded(TRUE);
         break;
@@ -117,8 +115,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
       case FXBSTR_ID('S', 'M', 'a', 's'):
         if (ToDictionary(pObject)) {
           m_GeneralState.SetSoftMask(pObject);
-          FXSYS_memcpy(m_GeneralState.GetMutableSMaskMatrix(),
-                       &pParser->GetCurStates()->m_CTM, sizeof(CFX_Matrix));
+          m_GeneralState.SetSMaskMatrix(pParser->GetCurStates()->m_CTM);
         } else {
           m_GeneralState.SetSoftMask(nullptr);
         }

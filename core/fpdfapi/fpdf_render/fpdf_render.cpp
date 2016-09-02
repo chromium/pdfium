@@ -804,9 +804,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
-    CFX_Matrix smask_matrix;
-    FXSYS_memcpy(&smask_matrix, pPageObj->m_GeneralState.GetSMaskMatrix(),
-                 sizeof smask_matrix);
+    CFX_Matrix smask_matrix = *pPageObj->m_GeneralState.GetSMaskMatrix();
     smask_matrix.Concat(*pObj2Device);
     std::unique_ptr<CFX_DIBSource> pSMaskSource(
         LoadSMask(pSMaskDict, &rect, &smask_matrix));
