@@ -618,8 +618,8 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.m_FillType = FXFILL_WINDING;
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
-    path.m_Path.Emplace()->AppendRect(textobj->m_Left, textobj->m_Bottom,
-                                      textobj->m_Right, textobj->m_Top);
+    path.m_Path.AppendRect(textobj->m_Left, textobj->m_Bottom, textobj->m_Right,
+                           textobj->m_Top);
     path.m_Left = textobj->m_Left;
     path.m_Bottom = textobj->m_Bottom;
     path.m_Right = textobj->m_Right;
@@ -665,7 +665,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                  charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
     matrix.Concat(font_size, 0, 0, font_size, charpos.m_OriginX,
                   charpos.m_OriginY);
-    path.m_Path.Emplace()->Append(pPath, &matrix);
+    path.m_Path.Append(pPath, &matrix);
     path.m_Matrix = *pTextMatrix;
     path.m_bStroke = bStroke;
     path.m_FillType = bFill ? FXFILL_WINDING : 0;

@@ -7,38 +7,44 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PATH_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PATH_H_
 
+#include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
-class CPDF_Path : public CFX_CountRef<CFX_PathData> {
+class CPDF_Path {
  public:
-  int GetPointCount() const { return GetObject()->GetPointCount(); }
-  int GetFlag(int index) const { return GetObject()->GetFlag(index); }
-  FX_FLOAT GetPointX(int index) const { return GetObject()->GetPointX(index); }
-  FX_FLOAT GetPointY(int index) const { return GetObject()->GetPointY(index); }
-  FX_PATHPOINT* GetPoints() const { return GetObject()->GetPoints(); }
-  CFX_FloatRect GetBoundingBox() const { return GetObject()->GetBoundingBox(); }
-  CFX_FloatRect GetBoundingBox(FX_FLOAT line_width,
-                               FX_FLOAT miter_limit) const {
-    return GetObject()->GetBoundingBox(line_width, miter_limit);
-  }
+  CPDF_Path();
+  CPDF_Path(const CPDF_Path& that);
+  ~CPDF_Path();
 
-  FX_BOOL IsRect() const { return GetObject()->IsRect(); }
-  void Transform(const CFX_Matrix* pMatrix) {
-    GetPrivateCopy()->Transform(pMatrix);
-  }
-  void Append(const CPDF_Path& other, const CFX_Matrix* pMatrix) {
-    GetPrivateCopy()->Append(other.GetObject(), pMatrix);
-  }
+  void Emplace() { m_Ref.Emplace(); }
+  operator bool() const { return !!m_Ref; }
 
-  void AppendRect(FX_FLOAT left,
-                  FX_FLOAT bottom,
-                  FX_FLOAT right,
-                  FX_FLOAT top) {
-    GetPrivateCopy()->AppendRect(left, bottom, right, top);
-  }
+  int GetPointCount() const;
+  void SetPointCount(int count);
+  const FX_PATHPOINT* GetPoints() const;
+  FX_PATHPOINT* GetMutablePoints();
+
+  int GetFlag(int index) const;
+  FX_FLOAT GetPointX(int index) const;
+  FX_FLOAT GetPointY(int index) const;
+  CFX_FloatRect GetBoundingBox() const;
+  CFX_FloatRect GetBoundingBox(FX_FLOAT line_width, FX_FLOAT miter_limit) const;
+
+  FX_BOOL IsRect() const;
+  void Transform(const CFX_Matrix* pMatrix);
+
+  void Append(const CPDF_Path& other, const CFX_Matrix* pMatrix);
+  void Append(const CFX_PathData* pData, const CFX_Matrix* pMatrix);
+  void AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
+
+  // TODO(tsepez): Remove when all access thru this class.
+  const CFX_PathData* GetObject() const { return m_Ref.GetObject(); }
+
+ private:
+  CFX_CountRef<CFX_PathData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PATH_H_

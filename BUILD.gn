@@ -442,6 +442,7 @@ static_library("fpdfapi") {
     "core/fpdfapi/fpdf_page/cpdf_pageobjectholder.cpp",
     "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.cpp",
     "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h",
+    "core/fpdfapi/fpdf_page/cpdf_path.cpp",
     "core/fpdfapi/fpdf_page/cpdf_pathobject.cpp",
     "core/fpdfapi/fpdf_page/cpdf_pattern.cpp",
     "core/fpdfapi/fpdf_page/cpdf_pattern.h",

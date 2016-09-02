@@ -1459,7 +1459,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
   if (PathPointCount <= 1) {
     if (PathPointCount && PathClipType) {
       CPDF_Path path;
-      path.Emplace()->AppendRect(0, 0, 0, 0);
+      path.AppendRect(0, 0, 0, 0);
       m_pCurStates->m_ClipPath.AppendPath(path, FXFILL_WINDING, TRUE);
     }
     return;
@@ -1469,9 +1469,8 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
     PathPointCount--;
   }
   CPDF_Path Path;
-  CFX_PathData* pPathData = Path.Emplace();
-  pPathData->SetPointCount(PathPointCount);
-  FXSYS_memcpy(pPathData->GetPoints(), m_pPathPoints,
+  Path.SetPointCount(PathPointCount);
+  FXSYS_memcpy(Path.GetMutablePoints(), m_pPathPoints,
                sizeof(FX_PATHPOINT) * PathPointCount);
   CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
