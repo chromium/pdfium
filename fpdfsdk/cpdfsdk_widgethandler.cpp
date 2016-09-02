@@ -102,13 +102,6 @@ void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CPDFSDK_WidgetHandler::OnDrawSleep(CPDFSDK_PageView* pPageView,
-                                        CPDFSDK_Annot* pAnnot,
-                                        CFX_RenderDevice* pDevice,
-                                        CFX_Matrix* pUser2Device,
-                                        const CFX_FloatRect& rcWindow,
-                                        uint32_t dwFlags) {}
-
 void CPDFSDK_WidgetHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_WidgetHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}

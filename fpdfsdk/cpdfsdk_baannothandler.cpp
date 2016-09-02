@@ -71,13 +71,6 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
       pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
 }
 
-void CPDFSDK_BAAnnotHandler::OnDrawSleep(CPDFSDK_PageView* pPageView,
-                                         CPDFSDK_Annot* pAnnot,
-                                         CFX_RenderDevice* pDevice,
-                                         CFX_Matrix* pUser2Device,
-                                         const CFX_FloatRect& rcWindow,
-                                         uint32_t dwFlags) {}
-
 void CPDFSDK_BAAnnotHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_BAAnnotHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}

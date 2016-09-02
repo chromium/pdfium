@@ -45,12 +45,6 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
               CFX_Matrix* pUser2Device) override;
-  void OnDrawSleep(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Annot* pAnnot,
-                   CFX_RenderDevice* pDevice,
-                   CFX_Matrix* pUser2Device,
-                   const CFX_FloatRect& rcWindow,
-                   uint32_t dwFlags) override;
   void OnCreate(CPDFSDK_Annot* pAnnot) override;
   void OnLoad(CPDFSDK_Annot* pAnnot) override;
   void OnDelete(CPDFSDK_Annot* pAnnot) override;

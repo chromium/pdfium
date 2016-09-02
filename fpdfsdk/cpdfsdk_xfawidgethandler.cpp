@@ -68,13 +68,6 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   // to do highlight and shadow
 }
 
-void CPDFSDK_XFAWidgetHandler::OnDrawSleep(CPDFSDK_PageView* pPageView,
-                                           CPDFSDK_Annot* pAnnot,
-                                           CFX_RenderDevice* pDevice,
-                                           CFX_Matrix* pUser2Device,
-                                           const CFX_FloatRect& rcWindow,
-                                           uint32_t dwFlags) {}
-
 void CPDFSDK_XFAWidgetHandler::OnCreate(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_XFAWidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
