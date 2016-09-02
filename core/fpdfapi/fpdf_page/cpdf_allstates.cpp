@@ -30,9 +30,9 @@ CPDF_AllStates::~CPDF_AllStates() {}
 
 void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   CopyStates(src);
-  m_TextMatrix.Copy(src.m_TextMatrix);
-  m_ParentMatrix.Copy(src.m_ParentMatrix);
-  m_CTM.Copy(src.m_CTM);
+  m_TextMatrix = src.m_TextMatrix;
+  m_ParentMatrix = src.m_ParentMatrix;
+  m_CTM = src.m_CTM;
   m_TextX = src.m_TextX;
   m_TextY = src.m_TextY;
   m_TextLineX = src.m_TextLineX;

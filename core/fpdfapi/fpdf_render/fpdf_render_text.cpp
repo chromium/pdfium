@@ -118,7 +118,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
       if (pCTM[0] != 1.0f || pCTM[3] != 1.0f) {
         CFX_Matrix ctm(pCTM[0], pCTM[1], pCTM[2], pCTM[3], 0, 0);
         text_matrix.ConcatInverse(ctm);
-        device_matrix.Copy(ctm);
+        device_matrix = ctm;
         device_matrix.Concat(*pObj2Device);
         pDeviceMatrix = &device_matrix;
       }

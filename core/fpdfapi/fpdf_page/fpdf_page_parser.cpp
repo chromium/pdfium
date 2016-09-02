@@ -777,8 +777,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
   if (!pStream && !pImage)
     return nullptr;
 
-  CFX_Matrix ImageMatrix;
-  ImageMatrix.Copy(m_pCurStates->m_CTM);
+  CFX_Matrix ImageMatrix = m_pCurStates->m_CTM;
   ImageMatrix.Concat(m_mtContentToUser);
 
   std::unique_ptr<CPDF_ImageObject> pImageObj(new CPDF_ImageObject);

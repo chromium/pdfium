@@ -582,27 +582,21 @@ class CFX_Matrix {
   void Concat(const CFX_Matrix& m, FX_BOOL bPrepended = FALSE);
   void ConcatInverse(const CFX_Matrix& m, FX_BOOL bPrepended = FALSE);
 
-  void Copy(const CFX_Matrix& m) { *this = m; }
-
   FX_BOOL IsIdentity() const {
     return a == 1 && b == 0 && c == 0 && d == 1 && e == 0 && f == 0;
   }
+
   FX_BOOL IsInvertible() const;
-
   FX_BOOL Is90Rotated() const;
-
   FX_BOOL IsScaled() const;
 
   void Translate(FX_FLOAT x, FX_FLOAT y, FX_BOOL bPrepended = FALSE);
-
   void TranslateI(int32_t x, int32_t y, FX_BOOL bPrepended = FALSE) {
     Translate((FX_FLOAT)x, (FX_FLOAT)y, bPrepended);
   }
 
   void Scale(FX_FLOAT sx, FX_FLOAT sy, FX_BOOL bPrepended = FALSE);
-
   void Rotate(FX_FLOAT fRadian, FX_BOOL bPrepended = FALSE);
-
   void RotateAt(FX_FLOAT fRadian,
                 FX_FLOAT x,
                 FX_FLOAT y,
@@ -613,12 +607,9 @@ class CFX_Matrix {
              FX_BOOL bPrepended = FALSE);
 
   void MatchRect(const CFX_FloatRect& dest, const CFX_FloatRect& src);
-
   FX_FLOAT GetXUnit() const;
-
   FX_FLOAT GetYUnit() const;
   void GetUnitRect(CFX_RectF& rect) const;
-
   CFX_FloatRect GetUnitRect() const;
 
   FX_FLOAT GetUnitArea() const;
@@ -643,7 +634,6 @@ class CFX_Matrix {
   void TransformVector(CFX_Vector& v) const;
   void TransformRect(CFX_RectF& rect) const;
   void TransformRect(CFX_Rect& rect) const;
-
   void TransformRect(FX_FLOAT& left,
                      FX_FLOAT& right,
                      FX_FLOAT& top,
