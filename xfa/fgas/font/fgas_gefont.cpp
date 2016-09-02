@@ -34,10 +34,21 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
 }
 
 // static
-CFGAS_GEFont* CFGAS_GEFont::LoadFont(CFX_Font* pExtFont,
+CFGAS_GEFont* CFGAS_GEFont::LoadFont(CFX_Font* pExternalFont,
                                      IFGAS_FontMgr* pFontMgr) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
-  if (!pFont->LoadFontInternal(pExtFont)) {
+  if (!pFont->LoadFontInternal(pExternalFont)) {
+    pFont->Release();
+    return nullptr;
+  }
+  return pFont;
+}
+
+// static
+CFGAS_GEFont* CFGAS_GEFont::LoadFont(std::unique_ptr<CFX_Font> pInternalFont,
+                                     IFGAS_FontMgr* pFontMgr) {
+  CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
+  if (!pFont->LoadFontInternal(std::move(pInternalFont))) {
     pFont->Release();
     return nullptr;
   }
@@ -79,7 +90,7 @@ CFGAS_GEFont::CFGAS_GEFont(IFGAS_FontMgr* pFontMgr)
       m_pFont(nullptr),
       m_pFontMgr(pFontMgr),
       m_iRefCount(1),
-      m_bExtFont(FALSE),
+      m_bExternalFont(false),
       m_pProvider(nullptr) {
 }
 
@@ -92,7 +103,7 @@ CFGAS_GEFont::CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles)
       m_pFont(nullptr),
       m_pFontMgr(src.m_pFontMgr),
       m_iRefCount(1),
-      m_bExtFont(FALSE),
+      m_bExternalFont(false),
       m_pProvider(nullptr) {
   ASSERT(src.m_pFont);
   m_pFont = new CFX_Font;
@@ -117,7 +128,7 @@ CFGAS_GEFont::~CFGAS_GEFont() {
   m_SubstFonts.RemoveAll();
   m_FontMapper.clear();
 
-  if (!m_bExtFont)
+  if (!m_bExternalFont)
     delete m_pFont;
 }
 
@@ -209,12 +220,22 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream,
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-FX_BOOL CFGAS_GEFont::LoadFontInternal(CFX_Font* pExtFont) {
-  if (m_pFont || !pExtFont) {
+FX_BOOL CFGAS_GEFont::LoadFontInternal(CFX_Font* pExternalFont) {
+  if (m_pFont || !pExternalFont)
     return FALSE;
-  }
-  m_pFont = pExtFont;
-  m_bExtFont = TRUE;
+
+  m_pFont = pExternalFont;
+  m_bExternalFont = true;
+  return InitFont();
+}
+
+FX_BOOL CFGAS_GEFont::LoadFontInternal(
+    std::unique_ptr<CFX_Font> pInternalFont) {
+  if (m_pFont || !pInternalFont)
+    return FALSE;
+
+  m_pFont = pInternalFont.release();
+  m_bExternalFont = false;
   return InitFont();
 }
 

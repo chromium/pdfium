@@ -850,13 +850,13 @@ CFGAS_GEFont* CFGAS_FontMgrImp::LoadFont(const CFX_WideString& wsFaceName,
     return nullptr;
   }
 
-  CFX_Font* pInternalFont = new CFX_Font();
+  std::unique_ptr<CFX_Font> pInternalFont(new CFX_Font());
   if (!pInternalFont->LoadFile(pFontStream, iFaceIndex)) {
     pFontStream->Release();
     return nullptr;
   }
 
-  CFGAS_GEFont* pFont = CFGAS_GEFont::LoadFont(pInternalFont, this);
+  CFGAS_GEFont* pFont = CFGAS_GEFont::LoadFont(std::move(pInternalFont), this);
   if (!pFont) {
     pFontStream->Release();
     return nullptr;

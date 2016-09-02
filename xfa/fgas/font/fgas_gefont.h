@@ -24,7 +24,10 @@ class CFGAS_GEFont {
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage,
                                 IFGAS_FontMgr* pFontMgr);
-  static CFGAS_GEFont* LoadFont(CFX_Font* pExtFont, IFGAS_FontMgr* pFontMgr);
+  static CFGAS_GEFont* LoadFont(CFX_Font* pExternalFont,
+                                IFGAS_FontMgr* pFontMgr);
+  static CFGAS_GEFont* LoadFont(std::unique_ptr<CFX_Font> pInternalFont,
+                                IFGAS_FontMgr* pFontMgr);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   static CFGAS_GEFont* LoadFont(const uint8_t* pBuffer,
                                 int32_t iLength,
@@ -74,7 +77,8 @@ class CFGAS_GEFont {
   FX_BOOL LoadFontInternal(const uint8_t* pBuffer, int32_t length);
   FX_BOOL LoadFontInternal(IFX_Stream* pFontStream, FX_BOOL bSaveStream);
 #endif
-  FX_BOOL LoadFontInternal(CFX_Font* pExtFont);
+  FX_BOOL LoadFontInternal(CFX_Font* pExternalFont);
+  FX_BOOL LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
   FX_BOOL InitFont();
   FX_BOOL GetCharBBoxInternal(FX_WCHAR wUnicode,
                               CFX_Rect& bbox,
@@ -96,7 +100,7 @@ class CFGAS_GEFont {
   CFX_Font* m_pFont;
   IFGAS_FontMgr* const m_pFontMgr;
   int32_t m_iRefCount;
-  FX_BOOL m_bExtFont;
+  bool m_bExternalFont;
   std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> m_pStream;
   std::unique_ptr<IFX_FileRead, ReleaseDeleter<IFX_FileRead>> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
