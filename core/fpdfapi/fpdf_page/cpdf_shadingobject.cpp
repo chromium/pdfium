@@ -35,10 +35,9 @@ CPDF_PageObject::Type CPDF_ShadingObject::GetType() const {
 }
 
 void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
-  if (m_ClipPath) {
-    m_ClipPath.GetPrivateCopy();
+  if (m_ClipPath)
     m_ClipPath.Transform(matrix);
-  }
+
   m_Matrix.Concat(matrix);
   if (m_ClipPath) {
     CalcBoundingBox();

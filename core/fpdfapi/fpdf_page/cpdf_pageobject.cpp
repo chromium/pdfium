@@ -81,7 +81,6 @@ void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
 void CPDF_PageObject::TransformClipPath(CFX_Matrix& matrix) {
   if (!m_ClipPath)
     return;
-  m_ClipPath.GetPrivateCopy();
   m_ClipPath.Transform(matrix);
 }
 

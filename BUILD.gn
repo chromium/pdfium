@@ -408,8 +408,6 @@ static_library("fpdfapi") {
     "core/fpdfapi/fpdf_page/cpdf_allstates.cpp",
     "core/fpdfapi/fpdf_page/cpdf_allstates.h",
     "core/fpdfapi/fpdf_page/cpdf_clippath.cpp",
-    "core/fpdfapi/fpdf_page/cpdf_clippathdata.cpp",
-    "core/fpdfapi/fpdf_page/cpdf_clippathdata.h",
     "core/fpdfapi/fpdf_page/cpdf_color.cpp",
     "core/fpdfapi/fpdf_page/cpdf_colorspace.cpp",
     "core/fpdfapi/fpdf_page/cpdf_colorstate.cpp",

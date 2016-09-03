@@ -10,6 +10,8 @@
 #include "core/fxcrt/include/cfx_retain_ptr.h"
 #include "core/fxcrt/include/fx_system.h"
 
+// A shared object with Copy on Write semantics that makes it appear as
+// if each one were independent.
 template <class ObjClass>
 class CFX_CountRef {
  public:

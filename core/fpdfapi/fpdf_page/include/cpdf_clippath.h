@@ -7,16 +7,33 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_CLIPPATH_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_CLIPPATH_H_
 
-#include "core/fpdfapi/fpdf_page/cpdf_clippathdata.h"
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include "core/fpdfapi/fpdf_page/include/cpdf_path.h"
+#include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
 
+class CPDF_Path;
 class CPDF_TextObject;
 
-class CPDF_ClipPath : public CFX_CountRef<CPDF_ClipPathData> {
+class CPDF_ClipPath {
  public:
+  CPDF_ClipPath();
+  CPDF_ClipPath(const CPDF_ClipPath& that);
+  ~CPDF_ClipPath();
+
+  void Emplace() { m_Ref.Emplace(); }
+  void SetNull() { m_Ref.SetNull(); }
+
+  explicit operator bool() const { return !!m_Ref; }
+  bool operator==(const CPDF_ClipPath& that) const {
+    return m_Ref == that.m_Ref;
+  }
+  bool operator!=(const CPDF_ClipPath& that) const { return !(*this == that); }
+
   uint32_t GetPathCount() const;
   CPDF_Path GetPath(size_t i) const;
   uint8_t GetClipType(size_t i) const;
@@ -26,6 +43,21 @@ class CPDF_ClipPath : public CFX_CountRef<CPDF_ClipPathData> {
   void AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge);
   void AppendTexts(std::vector<std::unique_ptr<CPDF_TextObject>>* pTexts);
   void Transform(const CFX_Matrix& matrix);
+
+ private:
+  class PathData {
+   public:
+    using PathAndTypeData = std::pair<CPDF_Path, uint8_t>;
+
+    PathData();
+    PathData(const PathData& that);
+    ~PathData();
+
+    std::vector<PathAndTypeData> m_PathAndTypeList;
+    std::vector<std::unique_ptr<CPDF_TextObject>> m_TextList;
+  };
+
+  CFX_CountRef<PathData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_CLIPPATH_H_
