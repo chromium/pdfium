@@ -75,22 +75,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   if (!pPage)
     return;
 
-#ifndef PDF_ENABLE_XFA
-  CPDF_RenderOptions options;
-  if (flags & FPDF_LCD_TEXT)
-    options.m_Flags |= RENDER_CLEARTYPE;
-  else
-    options.m_Flags &= ~RENDER_CLEARTYPE;
-  // Grayscale output
-  if (flags & FPDF_GRAYSCALE) {
-    options.m_ColorMode = RENDER_COLOR_GRAY;
-    options.m_ForeColor = 0;
-    options.m_BackColor = 0xffffff;
-  }
-  options.m_AddFlags = flags >> 8;
-  options.m_pOCContext =
-      new CPDF_OCContext(pPage->m_pDocument, CPDF_OCContext::View);
-#else   // PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA
   CPDFXFA_Document* pDocument = pPage->GetDocument();
   if (!pDocument)
     return;
@@ -116,10 +101,6 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   pDevice->SaveState();
   pDevice->SetClip_Rect(clip);
 
-#ifndef PDF_ENABLE_XFA
-  if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))
-    pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
-#else   // PDF_ENABLE_XFA
   CPDF_RenderOptions options;
   if (flags & FPDF_LCD_TEXT)
     options.m_Flags |= RENDER_CLEARTYPE;
@@ -133,17 +114,21 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     options.m_BackColor = 0xffffff;
   }
   options.m_AddFlags = flags >> 8;
-  options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);
 
+#ifdef PDF_ENABLE_XFA
+  options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);
   if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView(pPage, true))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
+#else   // PDF_ENABLE_XFA
+  options.m_pOCContext =
+      new CPDF_OCContext(pPage->m_pDocument, CPDF_OCContext::View);
+  if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))
+    pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
 #endif  // PDF_ENABLE_XFA
 
   pDevice->RestoreState(false);
   delete options.m_pOCContext;
-#ifdef PDF_ENABLE_XFA
   options.m_pOCContext = nullptr;
-#endif  // PDF_ENABLE_XFA
 }
 
 }  // namespace
