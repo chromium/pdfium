@@ -20,7 +20,7 @@ class CPDF_Path {
   ~CPDF_Path();
 
   void Emplace() { m_Ref.Emplace(); }
-  operator bool() const { return !!m_Ref; }
+  explicit operator bool() const { return !!m_Ref; }
 
   int GetPointCount() const;
   void SetPointCount(int count);

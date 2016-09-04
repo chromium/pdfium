@@ -30,7 +30,7 @@ class CPDF_ContentMark {
                FX_BOOL bDirect);
   void DeleteLastMark();
 
-  operator bool() const { return !!m_Ref; }
+  explicit operator bool() const { return !!m_Ref; }
 
  private:
   CFX_CountRef<CPDF_ContentMarkData> m_Ref;

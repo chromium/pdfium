@@ -51,7 +51,7 @@ class CPDF_ColorState {
   // TODO(tsepez): Stop leaking ColorStateData outside this class.
   const CPDF_ColorStateData* GetObject() const { return m_Ref.GetObject(); }
 
-  operator bool() const { return !!m_Ref; }
+  explicit operator bool() const { return !!m_Ref; }
 
  private:
   void SetColor(CPDF_Color& color,
