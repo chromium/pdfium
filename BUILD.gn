@@ -414,8 +414,6 @@ static_library("fpdfapi") {
     "core/fpdfapi/fpdf_page/cpdf_colorstate.h",
     "core/fpdfapi/fpdf_page/cpdf_contentmark.cpp",
     "core/fpdfapi/fpdf_page/cpdf_contentmark.h",
-    "core/fpdfapi/fpdf_page/cpdf_contentmarkdata.cpp",
-    "core/fpdfapi/fpdf_page/cpdf_contentmarkdata.h",
     "core/fpdfapi/fpdf_page/cpdf_contentmarkitem.cpp",
     "core/fpdfapi/fpdf_page/cpdf_contentmarkitem.h",
     "core/fpdfapi/fpdf_page/cpdf_countedobject.h",

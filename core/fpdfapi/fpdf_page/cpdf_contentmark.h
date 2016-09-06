@@ -7,9 +7,14 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARK_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARK_H_
 
-#include "core/fpdfapi/fpdf_page/cpdf_contentmarkdata.h"
+#include <vector>
+
+#include "core/fpdfapi/fpdf_page/cpdf_contentmarkitem.h"
 #include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_system.h"
+
+class CPDF_Dictionary;
 
 class CPDF_ContentMark {
  public:
@@ -33,7 +38,27 @@ class CPDF_ContentMark {
   explicit operator bool() const { return !!m_Ref; }
 
  private:
-  CFX_CountRef<CPDF_ContentMarkData> m_Ref;
+  class MarkData {
+   public:
+    MarkData();
+    MarkData(const MarkData& src);
+    ~MarkData();
+
+    int CountItems() const;
+    CPDF_ContentMarkItem& GetItem(int index);
+    const CPDF_ContentMarkItem& GetItem(int index) const;
+
+    int GetMCID() const;
+    void AddMark(const CFX_ByteString& name,
+                 CPDF_Dictionary* pDict,
+                 FX_BOOL bDictNeedClone);
+    void DeleteLastMark();
+
+   private:
+    std::vector<CPDF_ContentMarkItem> m_Marks;
+  };
+
+  CFX_CountRef<MarkData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARK_H_
