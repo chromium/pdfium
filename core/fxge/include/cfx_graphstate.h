@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_
-#define CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_
+#ifndef CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_
+#define CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_
 
 #include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 
 class CPDF_Array;
 
-class CPDF_GraphState {
+class CFX_GraphState {
  public:
-  CPDF_GraphState();
-  CPDF_GraphState(const CPDF_GraphState& that);
-  ~CPDF_GraphState();
+  CFX_GraphState();
+  CFX_GraphState(const CFX_GraphState& that);
+  ~CFX_GraphState();
 
   void Emplace();
 
@@ -41,4 +41,4 @@ class CPDF_GraphState {
   CFX_CountRef<CFX_GraphStateData> m_Ref;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHSTATE_H_
+#endif  // CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_

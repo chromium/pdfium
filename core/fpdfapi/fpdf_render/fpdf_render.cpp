@@ -493,7 +493,7 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
   if (m_pType3Char)
     FillType |= FX_FILL_TEXT_MODE;
 
-  CPDF_GraphState graphState = pPathObj->m_GraphState;
+  CFX_GraphState graphState = pPathObj->m_GraphState;
   if (m_Options.m_Flags & RENDER_THINLINE)
     graphState.SetLineWidth(0);
   return m_pDevice->DrawPathWithBlend(

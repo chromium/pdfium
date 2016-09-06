@@ -8,10 +8,10 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHICSTATES_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_colorstate.h"
-#include "core/fpdfapi/fpdf_page/cpdf_graphstate.h"
 #include "core/fpdfapi/fpdf_page/cpdf_textstate.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_clippath.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_generalstate.h"
+#include "core/fxge/include/cfx_graphstate.h"
 
 class CPDF_GraphicStates {
  public:
@@ -22,7 +22,7 @@ class CPDF_GraphicStates {
   void DefaultStates();
 
   CPDF_ClipPath m_ClipPath;
-  CPDF_GraphState m_GraphState;
+  CFX_GraphState m_GraphState;
   CPDF_ColorState m_ColorState;
   CPDF_TextState m_TextState;
   CPDF_GeneralState m_GeneralState;
