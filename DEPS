@@ -15,7 +15,7 @@ vars = {
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': '2341038bf72869a5683a893a2b319a48ffec7f62',
   'pdfium_tests_revision': 'a7f9103f929c6ab5e2188c629d61797548e9c200',
-  'skia_revision': '3ee255f259541eff1251c8007f9135e8d664346a',
+  'skia_revision': '39f7a10a04a914384944d8bf62621144ac4eeaa3',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '54b8455be9505c2cb0cf5c26bb86739c236471aa',
   'v8_revision': '3d96d7eecdef82d092889703f56e81d897dcf390',
