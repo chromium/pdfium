@@ -10,7 +10,6 @@
 
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
-#include "core/fpdfapi/fpdf_page/cpdf_colorstatedata.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
@@ -510,20 +509,20 @@ CPDF_TransferFunc* CPDF_RenderStatus::GetTransferFunc(CPDF_Object* pObj) const {
 
 FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
                                        FX_BOOL bType3) const {
-  const CPDF_ColorStateData* pColorData = pObj->m_ColorState.GetObject();
+  const CPDF_ColorState* pColorState = &pObj->m_ColorState;
   if (m_pType3Char && !bType3 &&
       (!m_pType3Char->m_bColored ||
        (m_pType3Char->m_bColored &&
-        (!pColorData || pColorData->m_FillColor.IsNull())))) {
+        (!*pColorState || pColorState->GetFillColor()->IsNull())))) {
     return m_T3FillColor;
   }
-  if (!pColorData || pColorData->m_FillColor.IsNull()) {
-    pColorData = m_InitialStates.m_ColorState.GetObject();
-  }
-  FX_COLORREF rgb = pColorData->m_FillRGB;
-  if (rgb == (uint32_t)-1) {
+  if (!*pColorState || pColorState->GetFillColor()->IsNull())
+    pColorState = &m_InitialStates.m_ColorState;
+
+  FX_COLORREF rgb = pColorState->GetFillRGB();
+  if (rgb == (uint32_t)-1)
     return 0;
-  }
+
   int32_t alpha =
       static_cast<int32_t>((pObj->m_GeneralState.GetFillAlpha() * 255));
   if (pObj->m_GeneralState.GetTR()) {
@@ -538,19 +537,20 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
 }
 
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
-  const CPDF_ColorStateData* pColorData = pObj->m_ColorState.GetObject();
-  if (m_pType3Char && (!m_pType3Char->m_bColored ||
-                       (m_pType3Char->m_bColored &&
-                        (!pColorData || pColorData->m_StrokeColor.IsNull())))) {
+  const CPDF_ColorState* pColorState = &pObj->m_ColorState;
+  if (m_pType3Char &&
+      (!m_pType3Char->m_bColored ||
+       (m_pType3Char->m_bColored &&
+        (!*pColorState || pColorState->GetStrokeColor()->IsNull())))) {
     return m_T3FillColor;
   }
-  if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
-    pColorData = m_InitialStates.m_ColorState.GetObject();
-  }
-  FX_COLORREF rgb = pColorData->m_StrokeRGB;
-  if (rgb == (uint32_t)-1) {
+  if (!*pColorState || pColorState->GetStrokeColor()->IsNull())
+    pColorState = &m_InitialStates.m_ColorState;
+
+  FX_COLORREF rgb = pColorState->GetStrokeRGB();
+  if (rgb == (uint32_t)-1)
     return 0;
-  }
+
   int32_t alpha = static_cast<int32_t>(pObj->m_GeneralState.GetStrokeAlpha() *
                                        255);  // not rounded.
   if (pObj->m_GeneralState.GetTR()) {

@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATE_H_
 
-#include "core/fpdfapi/fpdf_page/cpdf_colorstatedata.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_color.h"
 #include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -48,19 +48,30 @@ class CPDF_ColorState {
                         FX_FLOAT* pValue,
                         uint32_t nValues);
 
-  // TODO(tsepez): Stop leaking ColorStateData outside this class.
-  const CPDF_ColorStateData* GetObject() const { return m_Ref.GetObject(); }
-
   explicit operator bool() const { return !!m_Ref; }
 
  private:
+  class ColorData {
+   public:
+    ColorData();
+    ColorData(const ColorData& src);
+    ~ColorData();
+
+    void SetDefault();
+
+    uint32_t m_FillRGB;
+    uint32_t m_StrokeRGB;
+    CPDF_Color m_FillColor;
+    CPDF_Color m_StrokeColor;
+  };
+
   void SetColor(CPDF_Color& color,
                 uint32_t& rgb,
                 CPDF_ColorSpace* pCS,
                 FX_FLOAT* pValue,
                 uint32_t nValues);
 
-  CFX_CountRef<CPDF_ColorStateData> m_Ref;
+  CFX_CountRef<ColorData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATE_H_
