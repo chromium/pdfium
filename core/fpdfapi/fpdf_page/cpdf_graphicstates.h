@@ -8,9 +8,9 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_GRAPHICSTATES_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_colorstate.h"
-#include "core/fpdfapi/fpdf_page/cpdf_textstate.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_clippath.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_generalstate.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_textstate.h"
 #include "core/fxge/include/cfx_graphstate.h"
 
 class CPDF_GraphicStates {
