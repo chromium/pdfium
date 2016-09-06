@@ -463,7 +463,7 @@ FX_BOOL Document::print(IJS_Context* cc,
 
 // removes the specified field from the document.
 // comment:
-// note: if the filed name is not retional, adobe is dumb for it.
+// note: if the filed name is not rational, adobe is dumb for it.
 
 FX_BOOL Document::removeField(IJS_Context* cc,
                               const std::vector<CJS_Value>& params,
@@ -500,9 +500,14 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
     ASSERT(pPage);
 
-    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, true);
-    pPageView->DeleteAnnot(pWidget);
-    pPageView->UpdateRects(aRefresh);
+    // If there is currently no pageview associated with the page being used
+    // do not create one. We may be in the process of tearing down the document
+    // and creating a new pageview at this point will cause bad things.
+    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, false);
+    if (pPageView) {
+      pPageView->DeleteAnnot(pWidget);
+      pPageView->UpdateRects(aRefresh);
+    }
   }
   m_pDocument->SetChangeMark();
 
