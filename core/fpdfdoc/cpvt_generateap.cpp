@@ -674,15 +674,6 @@ CFX_ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
   return sAppStream.MakeString();
 }
 
-bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
-    return false;
-
-  return !CPDF_Annot::IsAnnotationHidden(pAnnotDict);
-}
-
 }  // namespace
 
 bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
@@ -735,9 +726,6 @@ bool CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
                                        CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
@@ -811,9 +799,6 @@ bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
@@ -841,9 +826,6 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
                                     CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   FX_FLOAT fBorderWidth = GetBorderWidth(*pAnnotDict);
   bool bIsStroke = fBorderWidth > 0;
 
@@ -897,9 +879,6 @@ bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateTextAP(CPDF_Document* pDoc,
                                      CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
@@ -922,9 +901,6 @@ bool CPVT_GenerateAP::GenerateTextAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
@@ -989,9 +965,6 @@ bool CPVT_GenerateAP::GeneratePopupAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateSquareAP(CPDF_Document* pDoc,
                                        CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
@@ -1039,9 +1012,6 @@ bool CPVT_GenerateAP::GenerateSquareAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
                                          CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
@@ -1090,9 +1060,6 @@ bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
 
 bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
-  if (!ShouldGenerateAPForAnnotation(pAnnotDict))
-    return false;
-
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";

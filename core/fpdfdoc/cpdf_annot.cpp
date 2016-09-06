@@ -18,6 +18,19 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
+namespace {
+
+bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
+  // If AP dictionary exists, we use the appearance defined in the
+  // existing AP dictionary.
+  if (pAnnotDict->KeyExist("AP"))
+    return false;
+
+  return !CPDF_Annot::IsAnnotationHidden(pAnnotDict);
+}
+
+}  // namespace
+
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict,
                        CPDF_Document* pDocument,
                        bool bToOwnDict)
@@ -37,6 +50,9 @@ CPDF_Annot::~CPDF_Annot() {
 }
 
 void CPDF_Annot::GenerateAPIfNeeded() {
+  if (!ShouldGenerateAPForAnnotation(m_pAnnotDict))
+    return;
+
   if (m_nSubtype == CPDF_Annot::Subtype::CIRCLE)
     CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
@@ -149,7 +165,7 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   return pForm;
 }
 
-// static
+// Static.
 bool CPDF_Annot::IsAnnotationHidden(CPDF_Dictionary* pAnnotDict) {
   return !!(pAnnotDict->GetIntegerBy("F") & ANNOTFLAG_HIDDEN);
 }
