@@ -134,6 +134,9 @@ if (!pdf_use_skia) {
       "agg23/agg_vcgen_dash.cpp",
       "agg23/agg_vcgen_stroke.cpp",
     ]
+    deps = [
+      "..:fxcrt",
+    ]
   }
 }
 
@@ -264,6 +267,9 @@ static_library("jpeg") {
     "libjpeg/jversion.h",
     "libjpeg/makefile",
     "libjpeg/transupp.h",
+  ]
+  deps = [
+    "..:fxcrt",
   ]
 }
 
