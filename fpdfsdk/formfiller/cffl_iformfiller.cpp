@@ -716,14 +716,14 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
     CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
     CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
 
-    FX_BOOL bFormated = FALSE;
+    FX_BOOL bFormatted = FALSE;
     CFX_WideString sValue =
-        pInterForm->OnFormat(pWidget->GetFormField(), bFormated);
+        pInterForm->OnFormat(pWidget->GetFormField(), bFormatted);
 
     if (bExit)
       return;
 
-    if (bFormated) {
+    if (bFormatted) {
       pInterForm->ResetFieldAppearance(pWidget->GetFormField(), sValue.c_str(),
                                        TRUE);
       pInterForm->UpdateField(pWidget->GetFormField());

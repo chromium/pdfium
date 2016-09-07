@@ -317,9 +317,9 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
       int nFieldType = pWidget->GetFieldType();
       if (nFieldType == FIELDTYPE_COMBOBOX ||
           nFieldType == FIELDTYPE_TEXTFIELD) {
-        FX_BOOL bFormated = FALSE;
-        CFX_WideString sValue = pWidget->OnFormat(bFormated);
-        if (bFormated)
+        FX_BOOL bFormatted = FALSE;
+        CFX_WideString sValue = pWidget->OnFormat(bFormatted);
+        if (bFormatted)
           pWidget->ResetAppearance(sValue.c_str(), FALSE);
         else
           pWidget->ResetAppearance(nullptr, FALSE);

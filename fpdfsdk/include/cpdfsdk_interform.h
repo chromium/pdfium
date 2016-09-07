@@ -67,7 +67,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
                             const CFX_WideString& csValue);
   FX_BOOL OnValidate(CPDF_FormField* pFormField, const CFX_WideString& csValue);
   void OnCalculate(CPDF_FormField* pFormField = nullptr);
-  CFX_WideString OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormated);
+  CFX_WideString OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormatted);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,
                             const FX_WCHAR* sValue,

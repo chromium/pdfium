@@ -111,7 +111,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void ResetAppearance(const FX_WCHAR* sValue, FX_BOOL bValueChanged);
   void ResetFieldAppearance(FX_BOOL bValueChanged);
   void UpdateField();
-  CFX_WideString OnFormat(FX_BOOL& bFormated);
+  CFX_WideString OnFormat(FX_BOOL& bFormatted);
 
   FX_BOOL OnAAction(CPDF_AAction::AActionType type,
                     PDFSDK_FieldAction& data,

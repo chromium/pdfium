@@ -1739,8 +1739,8 @@ FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(
 }
 
 FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
-                                            CFX_WideString& wsFormatedValue) {
-  wsFormatedValue = wsValue;
+                                            CFX_WideString& wsFormattedValue) {
+  wsFormattedValue = wsValue;
   if (wsValue.IsEmpty())
     return TRUE;
 
@@ -1796,7 +1796,7 @@ FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
         CFX_WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
           CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocalMgr);
-          if (date.FormatPatterns(wsFormatedValue, wsPicture, pLocale,
+          if (date.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
                                   XFA_VALUEPICTURE_DataBind)) {
             return TRUE;
           }
@@ -1807,7 +1807,7 @@ FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
         CFX_WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
           CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocalMgr);
-          if (time.FormatPatterns(wsFormatedValue, wsPicture, pLocale,
+          if (time.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
                                   XFA_VALUEPICTURE_DataBind)) {
             return TRUE;
           }
@@ -1817,7 +1817,7 @@ FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
       default:
         break;
     }
-    widgetValue.FormatPatterns(wsFormatedValue, wsPicture, pLocale,
+    widgetValue.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
                                XFA_VALUEPICTURE_DataBind);
   }
   return FALSE;

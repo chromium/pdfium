@@ -276,12 +276,12 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
 }
 
 CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
-                                           FX_BOOL& bFormated) {
+                                           FX_BOOL& bFormatted) {
   CFX_WideString sValue = pFormField->GetValue();
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
   ASSERT(pEnv);
   if (!pEnv->IsJSInitiated()) {
-    bFormated = FALSE;
+    bFormatted = FALSE;
     return sValue;
   }
 
@@ -295,7 +295,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
       sValue = pFormField->GetOptionLabel(index);
   }
 
-  bFormated = FALSE;
+  bFormatted = FALSE;
 
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
   if (aAction.GetDict() && aAction.ActionExist(CPDF_AAction::Format)) {
@@ -313,7 +313,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
 
         if (bRet) {
           sValue = Value;
-          bFormated = TRUE;
+          bFormatted = TRUE;
         }
       }
     }
@@ -632,9 +632,9 @@ void CPDFSDK_InterForm::AfterValueChange(CPDF_FormField* pField) {
   int nType = pField->GetFieldType();
   if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD) {
     OnCalculate(pField);
-    FX_BOOL bFormated = FALSE;
-    CFX_WideString sValue = OnFormat(pField, bFormated);
-    ResetFieldAppearance(pField, bFormated ? sValue.c_str() : nullptr, TRUE);
+    FX_BOOL bFormatted = FALSE;
+    CFX_WideString sValue = OnFormat(pField, bFormatted);
+    ResetFieldAppearance(pField, bFormatted ? sValue.c_str() : nullptr, TRUE);
     UpdateField(pField);
   }
 }

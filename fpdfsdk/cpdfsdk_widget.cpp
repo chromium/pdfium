@@ -737,9 +737,9 @@ void CPDFSDK_Widget::ResetAppearance(FX_BOOL bValueChanged) {
   switch (GetFieldType()) {
     case FIELDTYPE_TEXTFIELD:
     case FIELDTYPE_COMBOBOX: {
-      FX_BOOL bFormated = FALSE;
-      CFX_WideString sValue = OnFormat(bFormated);
-      ResetAppearance(bFormated ? sValue.c_str() : nullptr, TRUE);
+      FX_BOOL bFormatted = FALSE;
+      CFX_WideString sValue = OnFormat(bFormatted);
+      ResetAppearance(bFormatted ? sValue.c_str() : nullptr, TRUE);
       break;
     }
     default:
@@ -785,10 +785,10 @@ void CPDFSDK_Widget::ResetAppearance(const FX_WCHAR* sValue,
   m_pAnnot->ClearCachedAP();
 }
 
-CFX_WideString CPDFSDK_Widget::OnFormat(FX_BOOL& bFormated) {
+CFX_WideString CPDFSDK_Widget::OnFormat(FX_BOOL& bFormatted) {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  return m_pInterForm->OnFormat(pFormField, bFormated);
+  return m_pInterForm->OnFormat(pFormField, bFormatted);
 }
 
 void CPDFSDK_Widget::ResetFieldAppearance(FX_BOOL bValueChanged) {
