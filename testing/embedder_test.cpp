@@ -255,6 +255,7 @@ FPDF_PAGE EmbedderTest::LoadPage(int page_number) {
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_OPEN);
   // Cache the page.
   page_map_[page_number] = page;
+  page_reverse_map_[page] = page_number;
   return page;
 }
 
@@ -274,6 +275,13 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form_handle_);
   FPDF_ClosePage(page);
+
+  auto it = page_reverse_map_.find(page);
+  if (it == page_reverse_map_.end())
+    return;
+
+  page_map_.erase(it->second);
+  page_reverse_map_.erase(it);
 }
 
 FPDF_PAGE EmbedderTest::Delegate::GetPage(FPDF_FORMFILLINFO* info,

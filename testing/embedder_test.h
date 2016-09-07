@@ -124,6 +124,7 @@ class EmbedderTest : public ::testing::Test,
   size_t file_length_;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   std::map<int, FPDF_PAGE> page_map_;
+  std::map<FPDF_PAGE, int> page_reverse_map_;
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);
