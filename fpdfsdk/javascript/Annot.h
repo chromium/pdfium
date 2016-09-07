@@ -12,7 +12,7 @@
 #include "fpdfsdk/include/cpdfsdk_baannot.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 
-class Annot : public CJS_EmbedObj {
+class Annot : public CJS_EmbedObj, public CPDFSDK_Annot::Observer {
  public:
   explicit Annot(CJS_Object* pJSObject);
   ~Annot() override;
@@ -25,7 +25,6 @@ class Annot : public CJS_EmbedObj {
 
  private:
   CPDFSDK_Annot* m_pAnnot = nullptr;
-  std::unique_ptr<CPDFSDK_Annot::Observer> m_pObserver;
 };
 
 class CJS_Annot : public CJS_Object {

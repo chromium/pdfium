@@ -106,5 +106,5 @@ FX_BOOL Annot::type(IJS_Context* cc,
 
 void Annot::SetSDKAnnot(CPDFSDK_BAAnnot* annot) {
   m_pAnnot = annot;
-  m_pObserver.reset(new CPDFSDK_Annot::Observer(&m_pAnnot));
+  SetWatchedPtr(&m_pAnnot);
 }

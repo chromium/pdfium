@@ -10,6 +10,7 @@
 #include "core/fpdfdoc/include/cpdf_aaction.h"
 #include "core/fpdfdoc/include/cpdf_annot.h"
 #include "core/fpdfdoc/include/cpdf_defaultappearance.h"
+#include "core/fxcrt/include/cfx_observable.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/fsdk_common.h"
@@ -21,23 +22,10 @@ class CPDF_Page;
 class CPDF_RenderOptions;
 class CPDFSDK_PageView;
 
-class CPDFSDK_Annot {
+class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
  public:
-  class Observer {
-   public:
-    explicit Observer(CPDFSDK_Annot** pWatchedPtr);
-    ~Observer();
-    void OnAnnotDestroyed();
-
-   private:
-    CPDFSDK_Annot** m_pWatchedPtr;
-  };
-
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
   virtual ~CPDFSDK_Annot();
-
-  void AddObserver(Observer* observer);
-  void RemoveObserver(Observer* observer);
 
 #ifdef PDF_ENABLE_XFA
   virtual FX_BOOL IsXFAField();
@@ -70,7 +58,6 @@ class CPDFSDK_Annot {
   void SetSelected(FX_BOOL bSelected);
 
  protected:
-  std::set<Observer*> m_Observers;
   CPDFSDK_PageView* m_pPageView;
   FX_BOOL m_bSelected;
 };
