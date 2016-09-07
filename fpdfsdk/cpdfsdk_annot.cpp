@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "fpdfsdk/include/fsdk_mgr.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
@@ -21,10 +22,39 @@ const float kMinHeight = 1.0f;
 
 }  // namespace
 
+CPDFSDK_Annot::Observer::Observer(CPDFSDK_Annot** pWatchedPtr)
+    : m_pWatchedPtr(pWatchedPtr) {
+  (*m_pWatchedPtr)->AddObserver(this);
+}
+
+CPDFSDK_Annot::Observer::~Observer() {
+  if (m_pWatchedPtr)
+    (*m_pWatchedPtr)->RemoveObserver(this);
+}
+
+void CPDFSDK_Annot::Observer::OnAnnotDestroyed() {
+  ASSERT(m_pWatchedPtr);
+  *m_pWatchedPtr = nullptr;
+  m_pWatchedPtr = nullptr;
+}
+
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
     : m_pPageView(pPageView), m_bSelected(FALSE) {}
 
-CPDFSDK_Annot::~CPDFSDK_Annot() {}
+CPDFSDK_Annot::~CPDFSDK_Annot() {
+  for (auto* pObserver : m_Observers)
+    pObserver->OnAnnotDestroyed();
+}
+
+void CPDFSDK_Annot::AddObserver(Observer* pObserver) {
+  ASSERT(!pdfium::ContainsKey(m_Observers, pObserver));
+  m_Observers.insert(pObserver);
+}
+
+void CPDFSDK_Annot::RemoveObserver(Observer* pObserver) {
+  ASSERT(pdfium::ContainsKey(m_Observers, pObserver));
+  m_Observers.erase(pObserver);
+}
 
 #ifdef PDF_ENABLE_XFA
 

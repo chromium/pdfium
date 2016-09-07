@@ -11,6 +11,14 @@
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/cjs_context.h"
 
+namespace {
+
+CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* annot) {
+  return static_cast<CPDFSDK_BAAnnot*>(annot);
+}
+
+}  // namespace
+
 BEGIN_JS_STATIC_CONST(CJS_Annot)
 END_JS_STATIC_CONST()
 
@@ -32,8 +40,12 @@ Annot::~Annot() {}
 FX_BOOL Annot::hidden(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
+  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot);
+  if (!baAnnot)
+    return FALSE;
+
   if (vp.IsGetting()) {
-    CPDF_Annot* pPDFAnnot = m_BAAnnot->GetPDFAnnot();
+    CPDF_Annot* pPDFAnnot = baAnnot->GetPDFAnnot();
     vp << CPDF_Annot::IsAnnotationHidden(pPDFAnnot->GetAnnotDict());
     return TRUE;
   }
@@ -41,7 +53,7 @@ FX_BOOL Annot::hidden(IJS_Context* cc,
   bool bHidden;
   vp >> bHidden;
 
-  uint32_t flags = m_BAAnnot->GetFlags();
+  uint32_t flags = baAnnot->GetFlags();
   if (bHidden) {
     flags |= ANNOTFLAG_HIDDEN;
     flags |= ANNOTFLAG_INVISIBLE;
@@ -53,21 +65,25 @@ FX_BOOL Annot::hidden(IJS_Context* cc,
     flags &= ~ANNOTFLAG_NOVIEW;
     flags |= ANNOTFLAG_PRINT;
   }
-  m_BAAnnot->SetFlags(flags);
+  baAnnot->SetFlags(flags);
   return TRUE;
 }
 
 FX_BOOL Annot::name(IJS_Context* cc,
                     CJS_PropValue& vp,
                     CFX_WideString& sError) {
+  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot);
+  if (!baAnnot)
+    return FALSE;
+
   if (vp.IsGetting()) {
-    vp << m_BAAnnot->GetAnnotName();
+    vp << baAnnot->GetAnnotName();
     return TRUE;
   }
 
   CFX_WideString annotName;
   vp >> annotName;
-  m_BAAnnot->SetAnnotName(annotName);
+  baAnnot->SetAnnotName(annotName);
   return TRUE;
 }
 
@@ -80,10 +96,15 @@ FX_BOOL Annot::type(IJS_Context* cc,
     return FALSE;
   }
 
-  vp << CPDF_Annot::AnnotSubtypeToString(m_BAAnnot->GetAnnotSubtype());
+  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot);
+  if (!baAnnot)
+    return FALSE;
+
+  vp << CPDF_Annot::AnnotSubtypeToString(baAnnot->GetAnnotSubtype());
   return TRUE;
 }
 
 void Annot::SetSDKAnnot(CPDFSDK_BAAnnot* annot) {
-  m_BAAnnot = annot;
+  m_pAnnot = annot;
+  m_pObserver.reset(new CPDFSDK_Annot::Observer(&m_pAnnot));
 }

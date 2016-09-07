@@ -267,11 +267,12 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument,
   if (bResetAP) {
     int nFieldType = pFormField->GetFieldType();
     if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_TEXTFIELD) {
-      for (CPDFSDK_Widget* pWidget : widgets) {
+      for (CPDFSDK_Annot* pAnnot : widgets) {
         FX_BOOL bFormatted = FALSE;
-        CPDFSDK_Widget::Observer observer(&pWidget);
+        CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
+        CPDFSDK_Widget::Observer observer(&pAnnot);
         CFX_WideString sValue = pWidget->OnFormat(bFormatted);
-        if (pWidget) {
+        if (pAnnot) {
           pWidget->ResetAppearance(bFormatted ? sValue.c_str() : nullptr,
                                    FALSE);
         }

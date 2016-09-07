@@ -26,7 +26,6 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
-#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
@@ -36,22 +35,6 @@
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 #endif  // PDF_ENABLE_XFA
-
-CPDFSDK_Widget::Observer::Observer(CPDFSDK_Widget** pWatchedPtr)
-    : m_pWatchedPtr(pWatchedPtr) {
-  (*m_pWatchedPtr)->AddObserver(this);
-}
-
-CPDFSDK_Widget::Observer::~Observer() {
-  if (m_pWatchedPtr)
-    (*m_pWatchedPtr)->RemoveObserver(this);
-}
-
-void CPDFSDK_Widget::Observer::OnWidgetDestroyed() {
-  ASSERT(m_pWatchedPtr);
-  *m_pWatchedPtr = nullptr;
-  m_pWatchedPtr = nullptr;
-}
 
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_PageView* pPageView,
@@ -68,20 +51,7 @@ CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
 {
 }
 
-CPDFSDK_Widget::~CPDFSDK_Widget() {
-  for (auto* pObserver : m_Observers)
-    pObserver->OnWidgetDestroyed();
-}
-
-void CPDFSDK_Widget::AddObserver(Observer* pObserver) {
-  ASSERT(!pdfium::ContainsKey(m_Observers, pObserver));
-  m_Observers.insert(pObserver);
-}
-
-void CPDFSDK_Widget::RemoveObserver(Observer* pObserver) {
-  ASSERT(pdfium::ContainsKey(m_Observers, pObserver));
-  m_Observers.erase(pObserver);
-}
+CPDFSDK_Widget::~CPDFSDK_Widget() {}
 
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
