@@ -366,6 +366,9 @@ CPDF_ImageRenderer::~CPDF_ImageRenderer() {
 FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
   FX_RECT image_rect = image_rect_f.GetOuterRect();
+  if (!image_rect.Valid())
+    return FALSE;
+
   int dest_width = image_rect.Width();
   int dest_height = image_rect.Height();
   if (m_ImageMatrix.a < 0) {
