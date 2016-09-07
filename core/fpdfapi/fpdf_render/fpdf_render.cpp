@@ -653,12 +653,11 @@ FX_BOOL CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
   CFX_Matrix path_matrix = pPathObj->m_Matrix;
   path_matrix.Concat(*pObj2Device);
   if (bStroke) {
-    CFX_GraphStateData graphState(*pPathObj->m_GraphState.GetObject());
-    if (m_Options.m_Flags & RENDER_THINLINE) {
-      graphState.m_LineWidth = 0;
-    }
+    CFX_GraphState graphState = pPathObj->m_GraphState;
+    if (m_Options.m_Flags & RENDER_THINLINE)
+      graphState.SetLineWidth(0);
     return m_pDevice->SetClip_PathStroke(pPathObj->m_Path.GetObject(),
-                                         &path_matrix, &graphState);
+                                         &path_matrix, graphState.GetObject());
   }
   int fill_mode = pPathObj->m_FillType;
   if (m_Options.m_Flags & RENDER_NOPATHSMOOTH) {
