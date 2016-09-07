@@ -1138,8 +1138,19 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         FX_FLOAT orig_x = col * pPattern->x_step();
         FX_FLOAT orig_y = row * pPattern->y_step();
         mtPattern2Device.Transform(orig_x, orig_y);
-        start_x = FXSYS_round(orig_x + left_offset) - clip_box.left;
-        start_y = FXSYS_round(orig_y + top_offset) - clip_box.top;
+
+        pdfium::base::CheckedNumeric<int> safeStartX =
+            FXSYS_round(orig_x + left_offset);
+        pdfium::base::CheckedNumeric<int> safeStartY =
+            FXSYS_round(orig_y + top_offset);
+
+        safeStartX -= clip_box.left;
+        safeStartY -= clip_box.top;
+        if (!safeStartX.IsValid() || !safeStartY.IsValid())
+          return;
+
+        start_x = safeStartX.ValueOrDefault(0);
+        start_y = safeStartY.ValueOrDefault(0);
       }
       if (width == 1 && height == 1) {
         if (start_x < 0 || start_x >= clip_box.Width() || start_y < 0 ||
