@@ -673,9 +673,20 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
 #else   // PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView =
       static_cast<CPDFSDK_PageView*>(pPage->GetView());
-  if (pPageView && pPageView->IsLocked()) {
-    pPageView->TakeOverPage();
-    return;
+  if (pPageView) {
+    if (pPageView->IsLocked()) {
+      pPageView->TakePageOwnership();
+      return;
+    }
+
+    bool owned = pPageView->OwnsPage();
+    // This will delete the |pPageView| object. We must cleanup the PageView
+    // first because it will attempt to reset the View on the |pPage| during
+    // destruction.
+    pPageView->GetSDKDocument()->RemovePageView(pPage);
+    // If the page was owned then the pageview will have deleted the page.
+    if (owned)
+      return;
   }
   delete pPage;
 #endif  // PDF_ENABLE_XFA

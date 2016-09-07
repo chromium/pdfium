@@ -605,7 +605,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   void SetLock(FX_BOOL bLocked) { m_bLocked = bLocked; }
   FX_BOOL IsLocked() { return m_bLocked; }
 #ifndef PDF_ENABLE_XFA
-  void TakeOverPage() { m_bTakeOverPage = TRUE; }
+  bool OwnsPage() const { return m_bOwnsPage; }
+  void TakePageOwnership() { m_bOwnsPage = true; }
 #endif  // PDF_ENABLE_XFA
 
  private:
@@ -618,7 +619,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CPDFSDK_Document* const m_pSDKDoc;
   CPDFSDK_Annot* m_CaptureWidget;
 #ifndef PDF_ENABLE_XFA
-  FX_BOOL m_bTakeOverPage;
+  bool m_bOwnsPage;
 #endif  // PDF_ENABLE_XFA
   FX_BOOL m_bEnterWidget;
   FX_BOOL m_bExitWidget;
