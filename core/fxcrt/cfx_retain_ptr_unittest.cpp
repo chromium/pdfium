@@ -208,8 +208,8 @@ TEST(fxcrt, RetainPtrBool) {
   PseudoRetainable obj1;
   CFX_RetainPtr<PseudoRetainable> null_ptr;
   CFX_RetainPtr<PseudoRetainable> obj1_ptr(&obj1);
-  bool null_bool = null_ptr;
-  bool obj1_bool = obj1_ptr;
+  bool null_bool = !!null_ptr;
+  bool obj1_bool = !!obj1_ptr;
   EXPECT_FALSE(null_bool);
   EXPECT_TRUE(obj1_bool);
 }

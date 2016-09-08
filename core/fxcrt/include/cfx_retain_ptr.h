@@ -46,7 +46,7 @@ class CFX_RetainPtr {
 
   bool operator!=(const CFX_RetainPtr& that) const { return !(*this == that); }
 
-  operator bool() const { return !!m_pObj; }
+  explicit operator bool() const { return !!m_pObj; }
   T& operator*() const { return *m_pObj.get(); }
   T* operator->() const { return m_pObj.get(); }
 

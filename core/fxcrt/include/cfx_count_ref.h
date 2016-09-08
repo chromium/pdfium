@@ -47,7 +47,7 @@ class CFX_CountRef {
     return m_pObject == that.m_pObject;
   }
   bool operator!=(const CFX_CountRef& that) const { return !(*this == that); }
-  operator bool() const { return m_pObject; }
+  explicit operator bool() const { return !!m_pObject; }
 
  private:
   class CountedObj : public ObjClass {
