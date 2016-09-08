@@ -591,6 +591,8 @@ CFGAS_FontMgrImp::~CFGAS_FontMgrImp() {
     uint32_t dwHash;
     CFX_ArrayTemplate<CFGAS_GEFont*>* pFonts;
     m_Hash2Fonts.GetNextAssoc(pos, dwHash, pFonts);
+    for (int32_t i = 0; i < pFonts->GetSize(); i++)
+      delete pFonts->GetAt(i);
     delete pFonts;
   }
   m_Hash2Fonts.RemoveAll();
@@ -844,11 +846,6 @@ CFGAS_GEFont* CFGAS_FontMgrImp::LoadFont(const CFX_WideString& wsFaceName,
   IFX_FileRead* pFontStream = CreateFontStream(wsFaceName.UTF8Encode());
   if (!pFontStream)
     return nullptr;
-
-  if (!LoadFace(pFontStream, 0)) {
-    pFontStream->Release();
-    return nullptr;
-  }
 
   CFX_Font* pInternalFont = new CFX_Font();
   if (!pInternalFont->LoadFile(pFontStream, iFaceIndex)) {
