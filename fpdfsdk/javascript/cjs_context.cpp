@@ -33,7 +33,7 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   v8::Context::Scope context_scope(context);
 
   if (m_bBusy) {
-    *info = JSGetStringFromID(this, IDS_STRING_JSBUSY);
+    *info = JSGetStringFromID(IDS_STRING_JSBUSY);
     return FALSE;
   }
   m_bBusy = TRUE;
@@ -42,7 +42,7 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   CJS_Runtime::FieldEvent event(m_pEventHandler->TargetName(),
                                 m_pEventHandler->EventType());
   if (!m_pRuntime->AddEventToSet(event)) {
-    *info = JSGetStringFromID(this, IDS_STRING_JSEVENT);
+    *info = JSGetStringFromID(IDS_STRING_JSEVENT);
     return FALSE;
   }
 
@@ -55,7 +55,7 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   if (nRet < 0) {
     *info += sErrorMessage;
   } else {
-    *info = JSGetStringFromID(this, IDS_STRING_RUN);
+    *info = JSGetStringFromID(IDS_STRING_RUN);
   }
 
   m_pRuntime->RemoveEventFromSet(event);

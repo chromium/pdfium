@@ -91,8 +91,7 @@ FX_BOOL Annot::type(IJS_Context* cc,
                     CJS_PropValue& vp,
                     CFX_WideString& sError) {
   if (vp.IsSetting()) {
-    CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
+    sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return FALSE;
   }
 

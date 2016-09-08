@@ -20,7 +20,7 @@ class CJS_Context;
 #define IDS_STRING_JSRANGE1 25619
 #define IDS_STRING_JSRANGE2 25620
 #define IDS_STRING_JSRANGE3 25621
-#define IDS_STRING_NOTSUPPORT 25627
+#define IDS_STRING_JSNOTSUPPORT 25627
 #define IDS_STRING_JSBUSY 25628
 #define IDS_STRING_JSEVENT 25629
 #define IDS_STRING_RUN 25630
@@ -30,8 +30,10 @@ class CJS_Context;
 #define IDS_STRING_JSREADONLY 25636
 #define IDS_STRING_JSTYPEERROR 25637
 #define IDS_STRING_JSVALUEERROR 25638
+#define IDS_STRING_JSNOPERMISSION 25639
+#define IDS_STRING_JSBADOBJECT 25640
 
-CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id);
+CFX_WideString JSGetStringFromID(FX_UINT id);
 CFX_WideString JSFormatErrorString(const char* class_name,
                                    const char* property_name,
                                    const CFX_WideString& details);

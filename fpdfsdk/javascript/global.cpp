@@ -161,13 +161,12 @@ FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
                                          const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
-  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   if (params.size() != 2) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   auto it = m_mapGlobal.find(params[0].ToCFXByteString(pRuntime));
   if (it != m_mapGlobal.end()) {
     JSGlobalData* pData = it->second;
@@ -177,7 +176,7 @@ FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
     }
   }
 
-  sError = JSGetStringFromID(pContext, IDS_STRING_JSNOGLOBAL);
+  sError = JSGetStringFromID(IDS_STRING_JSNOGLOBAL);
   return FALSE;
 }
 

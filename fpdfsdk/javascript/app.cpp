@@ -382,13 +382,12 @@ FX_BOOL app::alert(IJS_Context* cc,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError) {
-  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   std::vector<CJS_Value> newParams = JS_ExpandKeywordParams(
       pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
 
   if (newParams[0].GetType() == CJS_Value::VT_unknown) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
@@ -430,7 +429,7 @@ FX_BOOL app::alert(IJS_Context* cc,
   if (newParams[3].GetType() != CJS_Value::VT_unknown)
     swTitle = newParams[3].ToCFXWideString(pRuntime);
   else
-    swTitle = JSGetStringFromID(pContext, IDS_STRING_JSALERT);
+    swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
 
   pRuntime->BeginBlock();
   if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
@@ -447,14 +446,13 @@ FX_BOOL app::beep(IJS_Context* cc,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
   if (params.size() == 1) {
-    CJS_Context* pContext = (CJS_Context*)cc;
-    CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+    CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
     CPDFDoc_Environment* pEnv = pRuntime->GetReaderApp();
     pEnv->JS_appBeep(params[0].ToInt(pRuntime));
     return TRUE;
   }
 
-  sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPARAMERROR);
+  sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
   return FALSE;
 }
 
@@ -480,18 +478,16 @@ FX_BOOL app::setInterval(IJS_Context* cc,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-
   if (params.size() > 2 || params.size() == 0) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CFX_WideString script =
       params.size() > 0 ? params[0].ToCFXWideString(pRuntime) : L"";
   if (script.IsEmpty()) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
+    sError = JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE);
     return TRUE;
   }
 
@@ -517,17 +513,15 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
-  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-
   if (params.size() > 2 || params.size() == 0) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CFX_WideString script = params[0].ToCFXWideString(pRuntime);
   if (script.IsEmpty()) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
+    sError = JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE);
     return TRUE;
   }
 
@@ -555,13 +549,12 @@ FX_BOOL app::clearTimeOut(IJS_Context* cc,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
   if (params.size() != 1) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
-  app::ClearTimerCommon(pContext->GetJSRuntime(), params[0]);
+  app::ClearTimerCommon(CJS_Runtime::FromContext(cc), params[0]);
   return TRUE;
 }
 
@@ -569,13 +562,12 @@ FX_BOOL app::clearInterval(IJS_Context* cc,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
   if (params.size() != 1) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
-  app::ClearTimerCommon(pContext->GetJSRuntime(), params[0]);
+  app::ClearTimerCommon(CJS_Runtime::FromContext(cc), params[0]);
   return TRUE;
 }
 
@@ -645,14 +637,13 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
-  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   std::vector<CJS_Value> newParams =
       JS_ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc",
                              L"cBcc", L"cSubject", L"cMsg");
 
   if (newParams[0].GetType() == CJS_Value::VT_unknown) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
   bool bUI = newParams[0].ToBool(pRuntime);
@@ -663,7 +654,7 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
   } else {
     if (!bUI) {
       // cTo parameter required when UI not invoked.
-      sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+      sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
       return FALSE;
     }
   }
@@ -685,6 +676,7 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
     cMsg = newParams[5].ToCFXWideString(pRuntime);
 
   pRuntime->BeginBlock();
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   pContext->GetReaderApp()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
                                            cSubject.c_str(), cCc.c_str(),
                                            cBcc.c_str(), cMsg.c_str());
@@ -768,14 +760,13 @@ FX_BOOL app::response(IJS_Context* cc,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
-  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   std::vector<CJS_Value> newParams =
       JS_ExpandKeywordParams(pRuntime, params, 5, L"cQuestion", L"cTitle",
                              L"cDefault", L"bPassword", L"cLabel");
 
   if (newParams[0].GetType() == CJS_Value::VT_unknown) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
   CFX_WideString swQuestion = newParams[0].ToCFXWideString(pRuntime);
@@ -800,12 +791,13 @@ FX_BOOL app::response(IJS_Context* cc,
   std::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
   memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
 
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   int nLengthBytes = pContext->GetReaderApp()->JS_appResponse(
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
       bPassword, pBuff.get(), MAX_INPUT_BYTES);
 
   if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAM_TOOLONG);
     return FALSE;
   }
 

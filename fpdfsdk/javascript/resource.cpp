@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/resource.h"
 
-CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id) {
+CFX_WideString JSGetStringFromID(FX_UINT id) {
   switch (id) {
     case IDS_STRING_JSALERT:
       return L"Alert";
@@ -25,7 +25,7 @@ CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id) {
       return L"The input value must be greater than or equal to %s.";
     case IDS_STRING_JSRANGE3:
       return L"The input value must be less than or equal to %s.";
-    case IDS_STRING_NOTSUPPORT:
+    case IDS_STRING_JSNOTSUPPORT:
       return L"Operation not supported.";
     case IDS_STRING_JSBUSY:
       return L"System is busy.";
@@ -45,6 +45,10 @@ CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id) {
       return L"Incorrect parameter type.";
     case IDS_STRING_JSVALUEERROR:
       return L"Incorrect parameter value.";
+    case IDS_STRING_JSNOPERMISSION:
+      return L"Permission denied.";
+    case IDS_STRING_JSBADOBJECT:
+      return L"Object no longer exists.";
     default:
       return L"";
   }

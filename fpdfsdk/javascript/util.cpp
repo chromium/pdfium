@@ -190,12 +190,12 @@ FX_BOOL util::printd(IJS_Context* cc,
   CJS_Value p2 = params[1];
   CJS_Date jsDate;
   if (!p2.ConvertToDate(pRuntime, jsDate)) {
-    sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT1);
+    sError = JSGetStringFromID(IDS_STRING_JSPRINT1);
     return FALSE;
   }
 
   if (!jsDate.IsValidDate(pRuntime)) {
-    sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT2);
+    sError = JSGetStringFromID(IDS_STRING_JSPRINT2);
     return FALSE;
   }
 
@@ -223,7 +223,7 @@ FX_BOOL util::printd(IJS_Context* cc,
                         jsDate.GetSeconds(pRuntime));
         break;
       default:
-        sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSVALUEERROR);
+        sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
         return FALSE;
     }
 
@@ -233,7 +233,7 @@ FX_BOOL util::printd(IJS_Context* cc,
 
   if (p1.GetType() == CJS_Value::VT_string) {
     if (iSize > 2 && params[2].ToBool(pRuntime)) {
-      sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_NOTSUPPORT);
+      sError = JSGetStringFromID(IDS_STRING_JSNOTSUPPORT);
       return FALSE;  // currently, it doesn't support XFAPicture.
     }
 
@@ -303,7 +303,7 @@ FX_BOOL util::printd(IJS_Context* cc,
     return TRUE;
   }
 
-  sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSTYPEERROR);
+  sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
   return FALSE;
 }
 
@@ -312,13 +312,12 @@ FX_BOOL util::printx(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-
   if (params.size() < 2) {
-    sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   vRet = CJS_Value(pRuntime, printx(params[0].ToCFXWideString(pRuntime),
                                     params[1].ToCFXWideString(pRuntime))
                                  .c_str());
@@ -456,17 +455,15 @@ FX_BOOL util::byteToChar(IJS_Context* cc,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
-  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-
   if (params.size() < 1) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   int arg = params[0].ToInt(pRuntime);
   if (arg < 0 || arg > 255) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
+    sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
     return FALSE;
   }
 
