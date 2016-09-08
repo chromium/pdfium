@@ -470,13 +470,13 @@ class CFX_Edit {
   void OnVK_RIGHT(FX_BOOL bShift, FX_BOOL bCtrl);
   void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl);
   void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl);
-  void SetText(const FX_WCHAR* text);
+  void SetText(const CFX_WideString& sText);
   FX_BOOL InsertWord(uint16_t word, int32_t charset);
   FX_BOOL InsertReturn();
   FX_BOOL Backspace();
   FX_BOOL Delete();
   FX_BOOL Clear();
-  FX_BOOL InsertText(const FX_WCHAR* text, int32_t charset);
+  FX_BOOL InsertText(const CFX_WideString& sText, int32_t charset);
   FX_BOOL Redo();
   FX_BOOL Undo();
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
@@ -525,7 +525,7 @@ class CFX_Edit {
   FX_BOOL Empty();
 
   CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
-                              const FX_WCHAR* text,
+                              const CFX_WideString& sText,
                               int32_t charset);
   int32_t GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset);
 
@@ -563,7 +563,7 @@ class CFX_Edit {
   FX_BOOL Backspace(FX_BOOL bAddUndo, FX_BOOL bPaint);
   FX_BOOL Delete(FX_BOOL bAddUndo, FX_BOOL bPaint);
   FX_BOOL Clear(FX_BOOL bAddUndo, FX_BOOL bPaint);
-  FX_BOOL InsertText(const FX_WCHAR* text,
+  FX_BOOL InsertText(const CFX_WideString& sText,
                      int32_t charset,
                      FX_BOOL bAddUndo,
                      FX_BOOL bPaint);

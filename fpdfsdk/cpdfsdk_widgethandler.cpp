@@ -241,7 +241,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
     FX_BOOL bFormatted = FALSE;
     CFX_WideString sValue = pWidget->OnFormat(bFormatted);
     if (bFormatted && nFieldType == FIELDTYPE_COMBOBOX)
-      pWidget->ResetAppearance(sValue.c_str(), FALSE);
+      pWidget->ResetAppearance(&sValue, FALSE);
   }
 
 #ifdef PDF_ENABLE_XFA

@@ -275,7 +275,7 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument,
             static_cast<CPDFSDK_Widget*>(pAnnot)->OnFormat(bFormatted);
         if (pAnnot) {
           static_cast<CPDFSDK_Widget*>(pAnnot)->ResetAppearance(
-              bFormatted ? sValue.c_str() : nullptr, FALSE);
+              bFormatted ? &sValue : nullptr, FALSE);
         }
       }
     } else {
@@ -319,10 +319,7 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
           nFieldType == FIELDTYPE_TEXTFIELD) {
         FX_BOOL bFormatted = FALSE;
         CFX_WideString sValue = pWidget->OnFormat(bFormatted);
-        if (bFormatted)
-          pWidget->ResetAppearance(sValue.c_str(), FALSE);
-        else
-          pWidget->ResetAppearance(nullptr, FALSE);
+        pWidget->ResetAppearance(bFormatted ? &sValue : nullptr, FALSE);
       } else {
         pWidget->ResetAppearance(nullptr, FALSE);
       }

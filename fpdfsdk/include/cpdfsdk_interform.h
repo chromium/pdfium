@@ -70,7 +70,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   CFX_WideString OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormatted);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,
-                            const FX_WCHAR* sValue,
+                            const CFX_WideString* sValue,
                             FX_BOOL bValueChanged);
   void UpdateField(CPDF_FormField* pFormField);
 

@@ -724,8 +724,7 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
       return;
 
     if (bFormatted) {
-      pInterForm->ResetFieldAppearance(pWidget->GetFormField(), sValue.c_str(),
-                                       TRUE);
+      pInterForm->ResetFieldAppearance(pWidget->GetFormField(), &sValue, TRUE);
       pInterForm->UpdateField(pWidget->GetFormField());
     }
 

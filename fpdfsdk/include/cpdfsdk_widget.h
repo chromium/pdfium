@@ -108,7 +108,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 #ifdef PDF_ENABLE_XFA
   void ResetAppearance(FX_BOOL bValueChanged);
 #endif  // PDF_ENABLE_XFA
-  void ResetAppearance(const FX_WCHAR* sValue, FX_BOOL bValueChanged);
+  void ResetAppearance(const CFX_WideString* sValue, FX_BOOL bValueChanged);
   void ResetFieldAppearance(FX_BOOL bValueChanged);
   void UpdateField();
   CFX_WideString OnFormat(FX_BOOL& bFormatted);
@@ -144,9 +144,9 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void ResetAppearance_PushButton();
   void ResetAppearance_CheckBox();
   void ResetAppearance_RadioButton();
-  void ResetAppearance_ComboBox(const FX_WCHAR* sValue);
+  void ResetAppearance_ComboBox(const CFX_WideString* sValue);
   void ResetAppearance_ListBox();
-  void ResetAppearance_TextField(const FX_WCHAR* sValue);
+  void ResetAppearance_TextField(const CFX_WideString* sValue);
 
   CFX_FloatRect GetClientRect() const;
   CFX_FloatRect GetRotatedRect() const;

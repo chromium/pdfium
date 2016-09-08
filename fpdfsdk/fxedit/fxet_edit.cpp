@@ -706,7 +706,7 @@ void CFXEU_Clear::Undo() {
   if (m_pEdit) {
     m_pEdit->SelectNone();
     m_pEdit->SetCaret(m_wrSel.BeginPos);
-    m_pEdit->InsertText(m_swText.c_str(), DEFAULT_CHARSET, FALSE, TRUE);
+    m_pEdit->InsertText(m_swText, DEFAULT_CHARSET, FALSE, TRUE);
     m_pEdit->SetSel(m_wrSel.BeginPos, m_wrSel.EndPos);
   }
 }
@@ -728,7 +728,7 @@ void CFXEU_InsertText::Redo() {
   if (m_pEdit && IsLast()) {
     m_pEdit->SelectNone();
     m_pEdit->SetCaret(m_wpOld);
-    m_pEdit->InsertText(m_swText.c_str(), m_nCharset, FALSE, TRUE);
+    m_pEdit->InsertText(m_swText, m_nCharset, FALSE, TRUE);
   }
 }
 
@@ -1670,9 +1670,9 @@ CPVT_WordRange CFX_Edit::CombineWordRange(const CPVT_WordRange& wr1,
   return wrRet;
 }
 
-void CFX_Edit::SetText(const FX_WCHAR* text) {
+void CFX_Edit::SetText(const CFX_WideString& sText) {
   Empty();
-  DoInsertText(CPVT_WordPlace(0, 0, -1), text, DEFAULT_CHARSET);
+  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, DEFAULT_CHARSET);
   Paint();
 }
 
@@ -1696,8 +1696,8 @@ FX_BOOL CFX_Edit::Clear() {
   return Clear(TRUE, TRUE);
 }
 
-FX_BOOL CFX_Edit::InsertText(const FX_WCHAR* text, int32_t charset) {
-  return InsertText(text, charset, TRUE, TRUE);
+FX_BOOL CFX_Edit::InsertText(const CFX_WideString& sText, int32_t charset) {
+  return InsertText(sText, charset, TRUE, TRUE);
 }
 
 FX_FLOAT CFX_Edit::GetFontSize() const {
@@ -2685,7 +2685,7 @@ FX_BOOL CFX_Edit::Clear(FX_BOOL bAddUndo, FX_BOOL bPaint) {
   return TRUE;
 }
 
-FX_BOOL CFX_Edit::InsertText(const FX_WCHAR* text,
+FX_BOOL CFX_Edit::InsertText(const CFX_WideString& sText,
                              int32_t charset,
                              FX_BOOL bAddUndo,
                              FX_BOOL bPaint) {
@@ -2693,24 +2693,23 @@ FX_BOOL CFX_Edit::InsertText(const FX_WCHAR* text,
     return FALSE;
 
   m_pVT->UpdateWordPlace(m_wpCaret);
-  SetCaret(DoInsertText(m_wpCaret, text, charset));
+  SetCaret(DoInsertText(m_wpCaret, sText, charset));
   m_SelState.Set(m_wpCaret, m_wpCaret);
+  if (m_wpCaret == m_wpOldCaret)
+    return FALSE;
 
-  if (m_wpCaret != m_wpOldCaret) {
-    if (bAddUndo && m_bEnableUndo) {
-      AddEditUndoItem(
-          new CFXEU_InsertText(this, m_wpOldCaret, m_wpCaret, text, charset));
-    }
-
-    if (bPaint)
-      PaintInsertText(m_wpOldCaret, m_wpCaret);
-
-    if (m_bOprNotify && m_pOprNotify)
-      m_pOprNotify->OnInsertText(m_wpCaret, m_wpOldCaret);
-
-    return TRUE;
+  if (bAddUndo && m_bEnableUndo) {
+    AddEditUndoItem(
+        new CFXEU_InsertText(this, m_wpOldCaret, m_wpCaret, sText, charset));
   }
-  return FALSE;
+
+  if (bPaint)
+    PaintInsertText(m_wpOldCaret, m_wpCaret);
+
+  if (m_bOprNotify && m_pOprNotify)
+    m_pOprNotify->OnInsertText(m_wpCaret, m_wpOldCaret);
+
+  return TRUE;
 }
 
 void CFX_Edit::PaintInsertText(const CPVT_WordPlace& wpOld,
@@ -2883,13 +2882,11 @@ FX_FLOAT CFX_Edit::GetLineBottom(const CPVT_WordPlace& place) const {
 }
 
 CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place,
-                                      const FX_WCHAR* text,
+                                      const CFX_WideString& sText,
                                       int32_t charset) {
   CPVT_WordPlace wp = place;
 
   if (m_pVT->IsValid()) {
-    CFX_WideString sText = text;
-
     for (int32_t i = 0, sz = sText.GetLength(); i < sz; i++) {
       uint16_t word = sText[i];
       switch (word) {

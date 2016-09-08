@@ -739,7 +739,7 @@ void CPDFSDK_Widget::ResetAppearance(FX_BOOL bValueChanged) {
     case FIELDTYPE_COMBOBOX: {
       FX_BOOL bFormatted = FALSE;
       CFX_WideString sValue = OnFormat(bFormatted);
-      ResetAppearance(bFormatted ? sValue.c_str() : nullptr, TRUE);
+      ResetAppearance(bFormatted ? &sValue : nullptr, TRUE);
       break;
     }
     default:
@@ -749,7 +749,7 @@ void CPDFSDK_Widget::ResetAppearance(FX_BOOL bValueChanged) {
 }
 #endif  // PDF_ENABLE_XFA
 
-void CPDFSDK_Widget::ResetAppearance(const FX_WCHAR* sValue,
+void CPDFSDK_Widget::ResetAppearance(const CFX_WideString* sValue,
                                      FX_BOOL bValueChanged) {
   SetAppModified();
 
@@ -1353,7 +1353,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
     SetAppState("Off");
 }
 
-void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
+void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   CPDF_FormControl* pControl = GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   CFX_ByteTextBuf sBody, sLines;
@@ -1387,10 +1387,9 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
   pEdit->Initialize();
 
   if (sValue) {
-    pEdit->SetText(sValue);
+    pEdit->SetText(*sValue);
   } else {
     int32_t nCurSel = pField->GetSelectedIndex(0);
-
     if (nCurSel < 0)
       pEdit->SetText(pField->GetValue().c_str());
     else
@@ -1512,7 +1511,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
 
-void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
+void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
   CPDF_FormControl* pControl = GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   CFX_ByteTextBuf sBody, sLines;
@@ -1554,7 +1553,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   CFX_WideString sValueTmp;
   if (!sValue && GetMixXFAWidget()) {
     sValueTmp = GetValue(TRUE);
-    sValue = sValueTmp.c_str();
+    sValue = &sValueTmp;
   }
 #endif  // PDF_ENABLE_XFA
 
@@ -1568,7 +1567,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
       }
     } else {
       if (sValue)
-        nMaxLen = wcslen((const wchar_t*)sValue);
+        nMaxLen = sValue->GetLength();
       pEdit->SetLimitChar(nMaxLen);
     }
   }
@@ -1581,7 +1580,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   pEdit->Initialize();
 
   if (sValue)
-    pEdit->SetText(sValue);
+    pEdit->SetText(*sValue);
   else
     pEdit->SetText(pField->GetValue().c_str());
 

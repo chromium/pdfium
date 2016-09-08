@@ -323,7 +323,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
 }
 
 void CPDFSDK_InterForm::ResetFieldAppearance(CPDF_FormField* pFormField,
-                                             const FX_WCHAR* sValue,
+                                             const CFX_WideString* sValue,
                                              FX_BOOL bValueChanged) {
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
@@ -634,7 +634,7 @@ void CPDFSDK_InterForm::AfterValueChange(CPDF_FormField* pField) {
     OnCalculate(pField);
     FX_BOOL bFormatted = FALSE;
     CFX_WideString sValue = OnFormat(pField, bFormatted);
-    ResetFieldAppearance(pField, bFormatted ? sValue.c_str() : nullptr, TRUE);
+    ResetFieldAppearance(pField, bFormatted ? &sValue : nullptr, TRUE);
     UpdateField(pField);
   }
 }
