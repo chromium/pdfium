@@ -1149,8 +1149,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         if (!safeStartX.IsValid() || !safeStartY.IsValid())
           return;
 
-        start_x = safeStartX.ValueOrDefault(0);
-        start_y = safeStartY.ValueOrDefault(0);
+        start_x = safeStartX.ValueOrDie();
+        start_y = safeStartY.ValueOrDie();
       }
       if (width == 1 && height == 1) {
         if (start_x < 0 || start_x >= clip_box.Width() || start_y < 0 ||
