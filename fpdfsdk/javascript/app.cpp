@@ -30,7 +30,7 @@ class GlobalTimer : public CJS_Runtime::Observer {
               const CFX_WideString& script,
               uint32_t dwElapse,
               uint32_t dwTimeOut);
-  ~GlobalTimer() override;
+  ~GlobalTimer();
 
   static void Trigger(int nTimerID);
   static void Cancel(int nTimerID);
@@ -38,26 +38,22 @@ class GlobalTimer : public CJS_Runtime::Observer {
   bool IsOneShot() const { return m_nType == 1; }
   uint32_t GetTimeOut() const { return m_dwTimeOut; }
   int GetTimerID() const { return m_nTimerID; }
-  CJS_Runtime* GetRuntime() const { return m_bValid ? m_pRuntime : nullptr; }
+  CJS_Runtime* GetRuntime() const { return m_pRuntime; }
   CFX_WideString GetJScript() const { return m_swJScript; }
 
  private:
   using TimerMap = std::map<FX_UINT, GlobalTimer*>;
   static TimerMap* GetGlobalTimerMap();
 
-  // CJS_Runtime::Observer
-  void OnDestroyed() override;
-
   uint32_t m_nTimerID;
   app* const m_pEmbedObj;
   bool m_bProcessing;
-  bool m_bValid;
 
   // data
   const int m_nType;  // 0:Interval; 1:TimeOut
   const uint32_t m_dwTimeOut;
   const CFX_WideString m_swJScript;
-  CJS_Runtime* const m_pRuntime;
+  CJS_Runtime* m_pRuntime;
   CPDFDoc_Environment* const m_pApp;
 };
 
@@ -71,7 +67,6 @@ GlobalTimer::GlobalTimer(app* pObj,
     : m_nTimerID(0),
       m_pEmbedObj(pObj),
       m_bProcessing(false),
-      m_bValid(true),
       m_nType(nType),
       m_dwTimeOut(dwTimeOut),
       m_swJScript(script),
@@ -80,18 +75,14 @@ GlobalTimer::GlobalTimer(app* pObj,
   CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
   m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
   (*GetGlobalTimerMap())[m_nTimerID] = this;
-  m_pRuntime->AddObserver(this);
+  SetWatchedPtr(&m_pRuntime);
 }
 
 GlobalTimer::~GlobalTimer() {
-  CJS_Runtime* pRuntime = GetRuntime();
-  if (pRuntime)
-    pRuntime->RemoveObserver(this);
-
   if (!m_nTimerID)
     return;
 
-  if (m_bValid)
+  if (GetRuntime())
     m_pApp->GetSysHandler()->KillTimer(m_nTimerID);
 
   GetGlobalTimerMap()->erase(m_nTimerID);
@@ -137,10 +128,6 @@ GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
   // Leak the timer array at shutdown.
   static auto* s_TimerMap = new TimerMap;
   return s_TimerMap;
-}
-
-void GlobalTimer::OnDestroyed() {
-  m_bValid = false;
 }
 
 BEGIN_JS_STATIC_CONST(CJS_TimerObj)

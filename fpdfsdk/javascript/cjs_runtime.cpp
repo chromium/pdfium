@@ -124,9 +124,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
 }
 
 CJS_Runtime::~CJS_Runtime() {
-  for (auto* obs : m_observers)
-    obs->OnDestroyed();
-
+  NotifyObservers();
   ReleaseEngine();
   if (m_isolateManaged) {
     GetIsolate()->Dispose();
@@ -253,16 +251,6 @@ bool CJS_Runtime::AddEventToSet(const FieldEvent& event) {
 
 void CJS_Runtime::RemoveEventFromSet(const FieldEvent& event) {
   m_FieldEventSet.erase(event);
-}
-
-void CJS_Runtime::AddObserver(Observer* observer) {
-  ASSERT(!pdfium::ContainsKey(m_observers, observer));
-  m_observers.insert(observer);
-}
-
-void CJS_Runtime::RemoveObserver(Observer* observer) {
-  ASSERT(pdfium::ContainsKey(m_observers, observer));
-  m_observers.erase(observer);
 }
 
 #ifdef PDF_ENABLE_XFA

@@ -45,10 +45,7 @@ class CFX_Observable {
 
   CFX_Observable() {}
   CFX_Observable(const CFX_Observable& that) = delete;
-  ~CFX_Observable() {
-    for (auto* pObserver : m_Observers)
-      pObserver->OnDestroy();
-  }
+  ~CFX_Observable() { NotifyObservers(); }
   void AddObserver(Observer* pObserver) {
     ASSERT(!pdfium::ContainsKey(m_Observers, pObserver));
     m_Observers.insert(pObserver);
@@ -56,6 +53,11 @@ class CFX_Observable {
   void RemoveObserver(Observer* pObserver) {
     ASSERT(pdfium::ContainsKey(m_Observers, pObserver));
     m_Observers.erase(pObserver);
+  }
+  void NotifyObservers() {
+    for (auto* pObserver : m_Observers)
+      pObserver->OnDestroy();
+    m_Observers.clear();
   }
   CFX_Observable& operator=(const CFX_Observable& that) = delete;
 

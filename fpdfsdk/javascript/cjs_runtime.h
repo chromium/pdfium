@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/include/cfx_observable.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
@@ -20,16 +21,10 @@
 
 class CJS_Context;
 
-class CJS_Runtime : public IJS_Runtime, public CFXJS_Engine {
+class CJS_Runtime : public IJS_Runtime,
+                    public CFXJS_Engine,
+                    public CFX_Observable<CJS_Runtime> {
  public:
-  class Observer {
-   public:
-    virtual void OnDestroyed() = 0;
-
-   protected:
-    virtual ~Observer() {}
-  };
-
   using FieldEvent = std::pair<CFX_WideString, JS_EVENT_T>;
 
   static CJS_Runtime* FromContext(const IJS_Context* cc);
@@ -64,9 +59,6 @@ class CJS_Runtime : public IJS_Runtime, public CFXJS_Engine {
                          CFXJSE_Value* pValue) override;
 #endif  // PDF_ENABLE_XFA
 
-  void AddObserver(Observer* observer);
-  void RemoveObserver(Observer* observer);
-
  private:
   void DefineJSObjects();
 
@@ -76,7 +68,6 @@ class CJS_Runtime : public IJS_Runtime, public CFXJS_Engine {
   bool m_bBlocking;
   bool m_isolateManaged;
   std::set<FieldEvent> m_FieldEventSet;
-  std::set<Observer*> m_observers;
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_RUNTIME_H_
