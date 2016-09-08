@@ -361,11 +361,17 @@ void CPDFSDK_Document::RemovePageView(UnderlyingPageType* pUnderlyingPage) {
   if (pPageView->IsLocked())
     return;
 
+  // This must happen before we remove |pPageView| from the map because
+  // |KillFocusAnnotIfNeeded| can call into the |GetPage| method which will
+  // look for this page view in the map, if it doesn't find it a new one will
+  // be created. We then have two page views pointing to the same page and
+  // bad things happen.
+  pPageView->KillFocusAnnotIfNeeded();
+
   // Remove the page from the map to make sure we don't accidentally attempt
   // to use the |pPageView| while we're cleaning it up.
   m_pageMap.erase(it);
 
-  pPageView->KillFocusAnnotIfNeeded();
   delete pPageView;
 }
 
