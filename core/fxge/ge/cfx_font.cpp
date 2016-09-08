@@ -220,7 +220,7 @@ const uint8_t CFX_Font::s_WeightPow_SHIFTJIS[] = {
 CFX_Font::CFX_Font()
     :
 #ifdef PDF_ENABLE_XFA
-      m_bLogic(FALSE),
+      m_bShallowCopy(false),
       m_pOwnedStream(nullptr),
 #endif  // PDF_ENABLE_XFA
       m_Face(nullptr),
@@ -239,7 +239,7 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   if (!pFont)
     return FALSE;
 
-  m_bLogic = TRUE;
+  m_bShallowCopy = true;
   if (pFont->m_pSubstFont) {
     m_pSubstFont.reset(new CFX_SubstFont);
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
@@ -268,7 +268,7 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
 
 CFX_Font::~CFX_Font() {
 #ifdef PDF_ENABLE_XFA
-  if (m_bLogic) {
+  if (m_bShallowCopy) {
     m_OtfFontData.DetachBuffer();
     return;
   }
@@ -285,7 +285,7 @@ CFX_Font::~CFX_Font() {
       CFX_GEModule::Get()->GetFontMgr()->ReleaseFace(m_Face);
   }
 #ifdef PDF_ENABLE_XFA
-  FX_Free(m_pOwnedStream);
+  delete m_pOwnedStream;
 #endif  // PDF_ENABLE_XFA
   FX_Free(m_pGsubData);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ && !defined _SKIA_SUPPORT_

@@ -151,8 +151,8 @@ class CFX_Font {
 #ifdef PDF_ENABLE_XFA
  protected:
   CFX_BinaryBuf m_OtfFontData;
-  FX_BOOL m_bLogic;
-  void* m_pOwnedStream;
+  bool m_bShallowCopy;
+  FXFT_StreamRec* m_pOwnedStream;
 #endif  // PDF_ENABLE_XFA
 
  private:

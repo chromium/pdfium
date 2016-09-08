@@ -77,26 +77,29 @@ CFGAS_GEFont::CFGAS_GEFont(IFGAS_FontMgr* pFontMgr)
       m_dwLogFontStyle(0),
 #endif
       m_pFont(nullptr),
+      m_pSrcFont(nullptr),
       m_pFontMgr(pFontMgr),
       m_iRefCount(1),
       m_bExtFont(FALSE),
       m_pProvider(nullptr) {
 }
 
-CFGAS_GEFont::CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles)
+CFGAS_GEFont::CFGAS_GEFont(CFGAS_GEFont* src, uint32_t dwFontStyles)
     :
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(FALSE),
       m_dwLogFontStyle(0),
 #endif
       m_pFont(nullptr),
-      m_pFontMgr(src.m_pFontMgr),
+      m_pSrcFont(src),
+      m_pFontMgr(src->m_pFontMgr),
       m_iRefCount(1),
       m_bExtFont(FALSE),
       m_pProvider(nullptr) {
-  ASSERT(src.m_pFont);
+  ASSERT(m_pSrcFont->m_pFont);
+  m_pSrcFont->Retain();
   m_pFont = new CFX_Font;
-  m_pFont->LoadClone(src.m_pFont);
+  m_pFont->LoadClone(m_pSrcFont->m_pFont);
   CFX_SubstFont* pSubst = m_pFont->GetSubstFont();
   if (!pSubst) {
     pSubst = new CFX_SubstFont;
@@ -119,6 +122,11 @@ CFGAS_GEFont::~CFGAS_GEFont() {
 
   if (!m_bExtFont)
     delete m_pFont;
+
+  // If it is a shallow copy of another source font,
+  // decrease the refcount of the source font.
+  if (m_pSrcFont)
+    m_pSrcFont->Release();
 }
 
 void CFGAS_GEFont::Release() {
@@ -239,7 +247,7 @@ FX_BOOL CFGAS_GEFont::InitFont() {
 CFGAS_GEFont* CFGAS_GEFont::Derive(uint32_t dwFontStyles, uint16_t wCodePage) {
   if (GetFontStyles() == dwFontStyles)
     return Retain();
-  return new CFGAS_GEFont(*this, dwFontStyles);
+  return new CFGAS_GEFont(this, dwFontStyles);
 }
 
 void CFGAS_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {

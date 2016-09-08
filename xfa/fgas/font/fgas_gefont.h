@@ -65,7 +65,7 @@ class CFGAS_GEFont {
 
  protected:
   explicit CFGAS_GEFont(IFGAS_FontMgr* pFontMgr);
-  CFGAS_GEFont(const CFGAS_GEFont& src, uint32_t dwFontStyles);
+  CFGAS_GEFont(CFGAS_GEFont* src, uint32_t dwFontStyles);
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   FX_BOOL LoadFontInternal(const FX_WCHAR* pszFontFamily,
@@ -94,6 +94,7 @@ class CFGAS_GEFont {
   uint32_t m_dwLogFontStyle;
 #endif
   CFX_Font* m_pFont;
+  CFGAS_GEFont* const m_pSrcFont;
   IFGAS_FontMgr* const m_pFontMgr;
   int32_t m_iRefCount;
   FX_BOOL m_bExtFont;
