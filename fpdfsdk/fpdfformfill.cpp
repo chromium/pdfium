@@ -114,6 +114,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     options.m_BackColor = 0xffffff;
   }
   options.m_AddFlags = flags >> 8;
+  options.m_bDrawAnnots = flags & FPDF_ANNOT;
 
 #ifdef PDF_ENABLE_XFA
   options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);

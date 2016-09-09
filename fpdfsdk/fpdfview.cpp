@@ -896,7 +896,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
     pContext->m_pAnnots.reset(new CPDF_AnnotList(pPage));
     FX_BOOL bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
     pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
-                                       bPrinting, &matrix, TRUE, nullptr);
+                                       bPrinting, &matrix, FALSE, nullptr);
   }
 
   pContext->m_pRenderer.reset(new CPDF_ProgressiveRenderer(

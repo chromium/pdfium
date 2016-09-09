@@ -66,7 +66,10 @@ typedef struct _IFSDK_PAUSE {
 //                              2 (rotated 180 degrees), 3 (rotated 90 degrees
 //                              counter-clockwise).
 //          flags       -   0 for normal display, or combination of flags
-//          defined above.
+//                          defined in fpdfview.h. With FPDF_ANNOT flag, it
+//                          renders all annotations that does not require
+//                          user-interaction, which are all annotations except
+//                          widget and popup annotations.
 //          pause       -   The IFSDK_PAUSE interface.A callback mechanism
 //          allowing the page rendering process
 // Return value:

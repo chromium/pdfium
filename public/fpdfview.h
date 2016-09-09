@@ -595,7 +595,10 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
 //                            2 (rotated 180 degrees)
 //                            3 (rotated 90 degrees counter-clockwise)
 //          flags       -   0 for normal display, or combination of flags
-//                          defined above.
+//                          defined above. With FPDF_ANNOT flag, it renders all
+//                          annotations that does not require user-interaction,
+//                          which are all annotations except widget and popup
+//                          annotations.
 // Return value:
 //          None.
 DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,

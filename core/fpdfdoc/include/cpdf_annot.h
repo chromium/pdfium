@@ -100,6 +100,7 @@ class CPDF_Annot {
 
  private:
   void GenerateAPIfNeeded();
+  bool ShouldDrawAnnotation();
 
   // For regular annotations, |m_pAnnotDict| is not owned. For
   // our artificially created popup annotations, |m_pAnnotDict|

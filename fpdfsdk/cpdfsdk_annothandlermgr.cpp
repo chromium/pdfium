@@ -93,9 +93,11 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
 void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_PageView* pPageView,
                                            CPDFSDK_Annot* pAnnot,
                                            CFX_RenderDevice* pDevice,
-                                           CFX_Matrix* pUser2Device) {
+                                           CFX_Matrix* pUser2Device,
+                                           bool bDrawAnnots) {
   ASSERT(pAnnot);
-  GetAnnotHandler(pAnnot)->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
+  GetAnnotHandler(pAnnot)->OnDraw(pPageView, pAnnot, pDevice, pUser2Device,
+                                  bDrawAnnots);
 }
 
 FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(

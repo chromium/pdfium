@@ -48,7 +48,8 @@ class CPDFSDK_AnnotHandlerMgr {
   virtual void Annot_OnDraw(CPDFSDK_PageView* pPageView,
                             CPDFSDK_Annot* pAnnot,
                             CFX_RenderDevice* pDevice,
-                            CFX_Matrix* pUser2Device);
+                            CFX_Matrix* pUser2Device,
+                            bool bDrawAnnots);
 
   virtual void Annot_OnMouseEnter(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,

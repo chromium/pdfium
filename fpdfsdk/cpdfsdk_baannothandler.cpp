@@ -62,13 +62,16 @@ void CPDFSDK_BAAnnotHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
 void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     CFX_RenderDevice* pDevice,
-                                    CFX_Matrix* pUser2Device) {
+                                    CFX_Matrix* pUser2Device,
+                                    bool bDrawAnnots) {
 #ifdef PDF_ENABLE_XFA
   if (pAnnot->IsXFAField())
     return;
 #endif  // PDF_ENABLE_XFA
-  static_cast<CPDFSDK_BAAnnot*>(pAnnot)->DrawAppearance(
-      pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
+  if (bDrawAnnots && pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP) {
+    static_cast<CPDFSDK_BAAnnot*>(pAnnot)->DrawAppearance(
+        pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
+  }
 }
 
 void CPDFSDK_BAAnnotHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}

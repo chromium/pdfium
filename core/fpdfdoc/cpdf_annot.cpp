@@ -73,6 +73,16 @@ void CPDF_Annot::GenerateAPIfNeeded() {
     CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
 }
 
+bool CPDF_Annot::ShouldDrawAnnotation() {
+  if (IsAnnotationHidden(m_pAnnotDict))
+    return false;
+
+  if (m_nSubtype == CPDF_Annot::Subtype::POPUP && !m_bOpenState)
+    return false;
+
+  return true;
+}
+
 void CPDF_Annot::ClearCachedAP() {
   m_APMap.clear();
 }
@@ -294,10 +304,7 @@ FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                    const CFX_Matrix* pUser2Device,
                                    AppearanceMode mode,
                                    const CPDF_RenderOptions* pOptions) {
-  if (IsAnnotationHidden(m_pAnnotDict))
-    return FALSE;
-
-  if (m_nSubtype == CPDF_Annot::Subtype::POPUP && !m_bOpenState)
+  if (!ShouldDrawAnnotation())
     return FALSE;
 
   // It might happen that by the time this annotation instance was created,
@@ -322,6 +329,16 @@ FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
                                   CPDF_RenderContext* pContext,
                                   const CFX_Matrix* pUser2Device,
                                   AppearanceMode mode) {
+  if (!ShouldDrawAnnotation())
+    return FALSE;
+
+  // It might happen that by the time this annotation instance was created,
+  // it was flagged as "hidden" (e.g. /F 2), and hence CPVT_GenerateAP decided
+  // to not "generate" its AP.
+  // If for a reason the object is no longer hidden, but still does not have
+  // its "AP" generated, generate it now.
+  GenerateAPIfNeeded();
+
   CFX_Matrix matrix;
   CPDF_Form* pForm =
       FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);

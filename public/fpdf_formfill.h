@@ -1483,7 +1483,8 @@ DLLEXPORT void STDCALL FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle);
 
 /**
 * Function: FPDF_FFLDraw
-*           Render FormFeilds on a page to a device independent bitmap.
+*           Render FormFields and popup window on a page to a device independent
+*bitmap.
 * Parameters:
 *           hHandle     -   Handle to the form fill module. Returned by
 *FPDFDOC_InitFormFillEnvironment.
@@ -1508,13 +1509,15 @@ DLLEXPORT void STDCALL FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle);
 * Return Value:
 *           None.
 * Comments:
-*           This method is designed to only render annotations and FormFields on
-*the page.
-*           Without FPDF_ANNOT specified for flags, Rendering functions such as
-*FPDF_RenderPageBitmap or FPDF_RenderPageBitmap_Start will only render page
-*contents(without annotations) to a bitmap.
-*           In order to implement the FormFill functions,Implementation should
-*call this method after rendering functions finish rendering the page contents.
+*           This function is designed to render annotations that are
+*user-interactive, which are widget annotation (for FormFields) and popup
+*annotation.
+*           With FPDF_ANNOT flag, this function will render popup annotation
+*when users mouse-hover on non-widget annotation. Regardless of FPDF_ANNOT flag,
+*this function will always render widget annotations for FormFields.
+*           In order to implement the FormFill functions, implementation should
+*call this function after rendering functions, such as FPDF_RenderPageBitmap or
+*FPDF_RenderPageBitmap_Start, finish rendering the page contents.
 **/
 DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
                                     FPDF_BITMAP bitmap,

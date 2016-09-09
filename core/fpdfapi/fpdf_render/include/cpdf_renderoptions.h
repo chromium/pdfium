@@ -36,6 +36,7 @@ class CPDF_OCContext;
 class CPDF_RenderOptions {
  public:
   CPDF_RenderOptions();
+  CPDF_RenderOptions(const CPDF_RenderOptions& rhs);
   FX_ARGB TranslateColor(FX_ARGB argb) const;
 
   int m_ColorMode;
@@ -47,6 +48,7 @@ class CPDF_RenderOptions {
   CPDF_OCContext* m_pOCContext;
   uint32_t m_dwLimitCacheSize;
   int m_HalftoneLimit;
+  bool m_bDrawAnnots;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_RENDEROPTIONS_H_
