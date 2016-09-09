@@ -28,11 +28,6 @@
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 
-#define PVTWORD_STYLE_UNDERLINE 0x0002L
-#define PVTWORD_STYLE_CROSSOUT 0x0004L
-#define PVTWORD_STYLE_BOLD 0x0020L
-#define PVTWORD_STYLE_ITALIC 0x0040L
-
 namespace {
 
 const int kEditUndoMaxItems = 10000;
@@ -56,20 +51,6 @@ CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
   CFX_ByteTextBuf sRet;
   sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
   return sRet.MakeString();
-}
-
-CFX_FloatRect GetUnderLineRect(const CPVT_Word& word) {
-  return CFX_FloatRect(word.ptWord.x, word.ptWord.y + word.fDescent * 0.5f,
-                       word.ptWord.x + word.fWidth,
-                       word.ptWord.y + word.fDescent * 0.25f);
-}
-
-CFX_FloatRect GetCrossoutRect(const CPVT_Word& word) {
-  return CFX_FloatRect(word.ptWord.x,
-                       word.ptWord.y + (word.fAscent + word.fDescent) * 0.5f +
-                           word.fDescent * 0.25f,
-                       word.ptWord.x + word.fWidth,
-                       word.ptWord.y + (word.fAscent + word.fDescent) * 0.5f);
 }
 
 void DrawTextString(CFX_RenderDevice* pDevice,
@@ -133,25 +114,6 @@ void DrawTextString(CFX_RenderDevice* pDevice,
   }
 }
 
-void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                          FX_COLORREF crFill,
-                          const CFX_FloatRect& rcFill) {
-  std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
-  pPathObj->m_Path.AppendRect(rcFill.left, rcFill.bottom, rcFill.right,
-                              rcFill.top);
-
-  FX_FLOAT rgb[3];
-  rgb[0] = FXARGB_R(crFill) / 255.0f;
-  rgb[1] = FXARGB_G(crFill) / 255.0f;
-  rgb[2] = FXARGB_B(crFill) / 255.0f;
-  pPathObj->m_ColorState.SetFillColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-
-  pPathObj->m_FillType = FXFILL_ALTERNATE;
-  pPathObj->m_bStroke = FALSE;
-  pObjectHolder->GetPageObjectList()->push_back(std::move(pPathObj));
-}
-
 CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                          FX_COLORREF crText,
                                          CPDF_Font* pFont,
@@ -202,24 +164,8 @@ FX_BOOL CFX_Edit_Iterator::NextWord() {
   return m_pVTIterator->NextWord();
 }
 
-FX_BOOL CFX_Edit_Iterator::NextLine() {
-  return m_pVTIterator->NextLine();
-}
-
-FX_BOOL CFX_Edit_Iterator::NextSection() {
-  return m_pVTIterator->NextSection();
-}
-
 FX_BOOL CFX_Edit_Iterator::PrevWord() {
   return m_pVTIterator->PrevWord();
-}
-
-FX_BOOL CFX_Edit_Iterator::PrevLine() {
-  return m_pVTIterator->PrevLine();
-}
-
-FX_BOOL CFX_Edit_Iterator::PrevSection() {
-  return m_pVTIterator->PrevSection();
 }
 
 FX_BOOL CFX_Edit_Iterator::GetWord(CPVT_Word& word) const {
@@ -262,10 +208,6 @@ void CFX_Edit_Iterator::SetAt(const CPVT_WordPlace& place) {
 
 const CPVT_WordPlace& CFX_Edit_Iterator::GetAt() const {
   return m_pVTIterator->GetAt();
-}
-
-CFX_Edit* CFX_Edit_Iterator::GetEdit() const {
-  return m_pEdit;
 }
 
 CFX_Edit_Provider::CFX_Edit_Provider(IPVT_FontMap* pFontMap)
@@ -414,10 +356,6 @@ void CFX_Edit_Undo::Redo() {
   m_bWorking = FALSE;
 }
 
-FX_BOOL CFX_Edit_Undo::IsWorking() const {
-  return m_bWorking;
-}
-
 void CFX_Edit_Undo::AddItem(IFX_Edit_UndoItem* pItem) {
   ASSERT(!m_bWorking);
   ASSERT(pItem);
@@ -439,13 +377,6 @@ void CFX_Edit_Undo::AddItem(IFX_Edit_UndoItem* pItem) {
 
 FX_BOOL CFX_Edit_Undo::IsModified() const {
   return m_bVirgin ? m_bModified : TRUE;
-}
-
-IFX_Edit_UndoItem* CFX_Edit_Undo::GetItem(int32_t nIndex) {
-  if (nIndex >= 0 && nIndex < m_UndoItemStack.GetSize())
-    return m_UndoItemStack.GetAt(nIndex);
-
-  return nullptr;
 }
 
 void CFX_Edit_Undo::RemoveHeads() {
@@ -480,10 +411,6 @@ CFX_WideString CFX_Edit_UndoItem::GetUndoTitle() {
 
 void CFX_Edit_UndoItem::SetFirst(FX_BOOL bFirst) {
   m_bFirst = bFirst;
-}
-
-FX_BOOL CFX_Edit_UndoItem::IsFirst() {
-  return m_bFirst;
 }
 
 void CFX_Edit_UndoItem::SetLast(FX_BOOL bLast) {
@@ -884,54 +811,6 @@ CFX_ByteString CFX_Edit::GetSelectAppearanceStream(
 }
 
 // static
-void CFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
-                             CFX_Matrix* pUser2Device,
-                             CFX_Edit* pEdit,
-                             FX_COLORREF color,
-                             const CFX_FloatRect& rcClip,
-                             const CFX_FloatPoint& ptOffset,
-                             const CPVT_WordRange* pRange) {
-  pDevice->SaveState();
-
-  if (!rcClip.IsEmpty()) {
-    CFX_FloatRect rcTemp = rcClip;
-    pUser2Device->TransformRect(rcTemp);
-    pDevice->SetClip_Rect(rcTemp.ToFxRect());
-  }
-
-  CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
-  if (pEdit->GetFontMap()) {
-    if (pRange)
-      pIterator->SetAt(pRange->BeginPos);
-    else
-      pIterator->SetAt(0);
-
-    while (pIterator->NextWord()) {
-      CPVT_WordPlace place = pIterator->GetAt();
-      if (pRange && place.WordCmp(pRange->EndPos) > 0)
-        break;
-
-      CPVT_Word word;
-      if (pIterator->GetWord(word)) {
-        CFX_PathData pathUnderline;
-        CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-        rcUnderline.left += ptOffset.x;
-        rcUnderline.right += ptOffset.x;
-        rcUnderline.top += ptOffset.y;
-        rcUnderline.bottom += ptOffset.y;
-        pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
-                                 rcUnderline.right, rcUnderline.top);
-
-        pDevice->DrawPath(&pathUnderline, pUser2Device, nullptr, color, 0,
-                          FXFILL_WINDING);
-      }
-    }
-  }
-
-  pDevice->RestoreState(false);
-}
-
-// static
 void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                         CFX_Matrix* pUser2Device,
                         CFX_Edit* pEdit,
@@ -1057,132 +936,6 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 }
 
 // static
-void CFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
-                            CFX_Matrix* pUser2Device,
-                            CFX_Edit* pEdit,
-                            const CFX_FloatRect& rcClip,
-                            const CFX_FloatPoint& ptOffset,
-                            const CPVT_WordRange* pRange) {
-  CPVT_WordRange wrSelect = pEdit->GetSelectWordRange();
-
-  FX_COLORREF crCurText = ArgbEncode(255, 0, 0, 0);
-  FX_COLORREF crOld = crCurText;
-  FX_BOOL bSelect = FALSE;
-  const FX_COLORREF crWhite = ArgbEncode(255, 255, 255, 255);
-  const FX_COLORREF crSelBK = ArgbEncode(255, 0, 51, 113);
-
-  CFX_ByteTextBuf sTextBuf;
-  CPVT_WordProps wp;
-  CFX_FloatPoint ptBT(0.0f, 0.0f);
-
-  pDevice->SaveState();
-
-  if (!rcClip.IsEmpty()) {
-    CFX_FloatRect rcTemp = rcClip;
-    pUser2Device->TransformRect(rcTemp);
-    pDevice->SetClip_Rect(rcTemp.ToFxRect());
-  }
-
-  CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
-  if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
-    if (pRange)
-      pIterator->SetAt(pRange->BeginPos);
-    else
-      pIterator->SetAt(0);
-
-    CPVT_WordPlace oldplace;
-
-    while (pIterator->NextWord()) {
-      CPVT_WordPlace place = pIterator->GetAt();
-      if (pRange && place.WordCmp(pRange->EndPos) > 0)
-        break;
-
-      CPVT_Word word;
-      if (pIterator->GetWord(word)) {
-        word.WordProps.fFontSize = word.fFontSize;
-
-        crCurText = ArgbEncode(255, word.WordProps.dwWordColor);
-
-        if (wrSelect.IsExist()) {
-          bSelect = place.WordCmp(wrSelect.BeginPos) > 0 &&
-                    place.WordCmp(wrSelect.EndPos) <= 0;
-          if (bSelect) {
-            crCurText = crWhite;
-          }
-        }
-
-        if (bSelect) {
-          CPVT_Line line;
-          pIterator->GetLine(line);
-
-          CFX_PathData pathSelBK;
-          pathSelBK.AppendRect(word.ptWord.x + ptOffset.x,
-                               line.ptLine.y + line.fLineDescent + ptOffset.y,
-                               word.ptWord.x + word.fWidth + ptOffset.x,
-                               line.ptLine.y + line.fLineAscent + ptOffset.y);
-
-          pDevice->DrawPath(&pathSelBK, pUser2Device, nullptr, crSelBK, 0,
-                            FXFILL_WINDING);
-        }
-
-        if (place.LineCmp(oldplace) != 0 || word.WordProps.fCharSpace > 0.0f ||
-            word.WordProps.nHorzScale != 100 ||
-            FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
-            crOld != crCurText) {
-          if (sTextBuf.GetLength() > 0) {
-            DrawTextString(
-                pDevice,
-                CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
-                sTextBuf.MakeString(), crOld, 0, wp.nHorzScale);
-
-            sTextBuf.Clear();
-          }
-          wp = word.WordProps;
-          ptBT = word.ptWord;
-          crOld = crCurText;
-        }
-
-        sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
-                                     word.Word, 0)
-                        .AsStringC();
-
-        if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
-          CFX_PathData pathUnderline;
-          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-          pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
-                                   rcUnderline.right, rcUnderline.top);
-
-          pDevice->DrawPath(&pathUnderline, pUser2Device, nullptr, crCurText, 0,
-                            FXFILL_WINDING);
-        }
-
-        if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
-          CFX_PathData pathCrossout;
-          CFX_FloatRect rcCrossout = GetCrossoutRect(word);
-          pathCrossout.AppendRect(rcCrossout.left, rcCrossout.bottom,
-                                  rcCrossout.right, rcCrossout.top);
-
-          pDevice->DrawPath(&pathCrossout, pUser2Device, nullptr, crCurText, 0,
-                            FXFILL_WINDING);
-        }
-
-        oldplace = place;
-      }
-    }
-
-    if (sTextBuf.GetLength() > 0) {
-      DrawTextString(
-          pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-          pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
-          sTextBuf.MakeString(), crOld, 0, wp.nHorzScale);
-    }
-  }
-
-  pDevice->RestoreState(false);
-}
-
-// static
 void CFX_Edit::GeneratePageObjects(
     CPDF_PageObjectHolder* pObjectHolder,
     CFX_Edit* pEdit,
@@ -1245,132 +998,6 @@ void CFX_Edit::GeneratePageObjects(
   }
 }
 
-// static
-void CFX_Edit::GenerateRichPageObjects(
-    CPDF_PageObjectHolder* pObjectHolder,
-    CFX_Edit* pEdit,
-    const CFX_FloatPoint& ptOffset,
-    const CPVT_WordRange* pRange,
-    CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
-  FX_COLORREF crCurText = ArgbEncode(255, 0, 0, 0);
-  FX_COLORREF crOld = crCurText;
-
-  CFX_ByteTextBuf sTextBuf;
-  CPVT_WordProps wp;
-  CFX_FloatPoint ptBT(0.0f, 0.0f);
-
-  ObjArray.RemoveAll();
-
-  CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
-  if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
-    if (pRange)
-      pIterator->SetAt(pRange->BeginPos);
-    else
-      pIterator->SetAt(0);
-
-    CPVT_WordPlace oldplace;
-
-    while (pIterator->NextWord()) {
-      CPVT_WordPlace place = pIterator->GetAt();
-      if (pRange && place.WordCmp(pRange->EndPos) > 0)
-        break;
-
-      CPVT_Word word;
-      if (pIterator->GetWord(word)) {
-        word.WordProps.fFontSize = word.fFontSize;
-
-        crCurText = ArgbEncode(255, word.WordProps.dwWordColor);
-
-        if (place.LineCmp(oldplace) != 0 || word.WordProps.fCharSpace > 0.0f ||
-            word.WordProps.nHorzScale != 100 ||
-            FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
-            crOld != crCurText) {
-          if (sTextBuf.GetLength() > 0) {
-            ObjArray.Add(AddTextObjToPageObjects(
-                pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
-                wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
-                CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                sTextBuf.MakeString()));
-
-            sTextBuf.Clear();
-          }
-
-          wp = word.WordProps;
-          ptBT = word.ptWord;
-          crOld = crCurText;
-        }
-
-        sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
-                                     word.Word, 0)
-                        .AsStringC();
-
-        if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
-          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-          rcUnderline.left += ptOffset.x;
-          rcUnderline.right += ptOffset.x;
-          rcUnderline.top += ptOffset.y;
-          rcUnderline.bottom += ptOffset.y;
-
-          AddRectToPageObjects(pObjectHolder, crCurText, rcUnderline);
-        }
-
-        if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
-          CFX_FloatRect rcCrossout = GetCrossoutRect(word);
-          rcCrossout.left += ptOffset.x;
-          rcCrossout.right += ptOffset.x;
-          rcCrossout.top += ptOffset.y;
-          rcCrossout.bottom += ptOffset.y;
-
-          AddRectToPageObjects(pObjectHolder, crCurText, rcCrossout);
-        }
-
-        oldplace = place;
-      }
-    }
-
-    if (sTextBuf.GetLength() > 0) {
-      ObjArray.Add(AddTextObjToPageObjects(
-          pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
-          wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
-          CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-          sTextBuf.MakeString()));
-    }
-  }
-}
-
-// static
-void CFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                        CFX_Edit* pEdit,
-                                        const CFX_FloatPoint& ptOffset,
-                                        const CPVT_WordRange* pRange,
-                                        FX_COLORREF color) {
-  CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
-  if (pEdit->GetFontMap()) {
-    if (pRange)
-      pIterator->SetAt(pRange->BeginPos);
-    else
-      pIterator->SetAt(0);
-
-    CPVT_WordPlace oldplace;
-
-    while (pIterator->NextWord()) {
-      CPVT_WordPlace place = pIterator->GetAt();
-      if (pRange && place.WordCmp(pRange->EndPos) > 0)
-        break;
-
-      CPVT_Word word;
-      if (pIterator->GetWord(word)) {
-        CFX_FloatRect rcUnderline = GetUnderLineRect(word);
-        rcUnderline.left += ptOffset.x;
-        rcUnderline.right += ptOffset.x;
-        rcUnderline.top += ptOffset.y;
-        rcUnderline.bottom += ptOffset.y;
-        AddRectToPageObjects(pObjectHolder, color, rcUnderline);
-      }
-    }
-  }
-}
-
 CFX_Edit::CFX_Edit()
     : m_pVT(new CPDF_VariableText),
       m_pNotify(nullptr),
@@ -1419,10 +1046,6 @@ CFX_Edit_Iterator* CFX_Edit::GetIterator() {
   if (!m_pIterator)
     m_pIterator.reset(new CFX_Edit_Iterator(this, m_pVT->GetIterator()));
   return m_pIterator.get();
-}
-
-CPDF_VariableText* CFX_Edit::GetVariableText() {
-  return m_pVT.get();
 }
 
 IPVT_FontMap* CFX_Edit::GetFontMap() {
@@ -1651,25 +1274,6 @@ CPVT_WordRange CFX_Edit::GetSelectWordRange() const {
   return m_SelState.ConvertToWordRange();
 }
 
-CPVT_WordRange CFX_Edit::CombineWordRange(const CPVT_WordRange& wr1,
-                                          const CPVT_WordRange& wr2) {
-  CPVT_WordRange wrRet;
-
-  if (wr1.BeginPos.WordCmp(wr2.BeginPos) < 0) {
-    wrRet.BeginPos = wr1.BeginPos;
-  } else {
-    wrRet.BeginPos = wr2.BeginPos;
-  }
-
-  if (wr1.EndPos.WordCmp(wr2.EndPos) < 0) {
-    wrRet.EndPos = wr2.EndPos;
-  } else {
-    wrRet.EndPos = wr1.EndPos;
-  }
-
-  return wrRet;
-}
-
 void CFX_Edit::SetText(const CFX_WideString& sText) {
   Empty();
   DoInsertText(CPVT_WordPlace(0, 0, -1), sText, DEFAULT_CHARSET);
@@ -1710,10 +1314,6 @@ uint16_t CFX_Edit::GetPasswordChar() const {
 
 int32_t CFX_Edit::GetCharArray() const {
   return m_pVT->GetCharArray();
-}
-
-CFX_FloatRect CFX_Edit::GetPlateRect() const {
-  return m_pVT->GetPlateRect();
 }
 
 CFX_FloatRect CFX_Edit::GetContentRect() const {
@@ -1878,15 +1478,6 @@ CFX_FloatRect CFX_Edit::VTToEdit(const CFX_FloatRect& rect) const {
   CFX_FloatPoint ptLeftBottom =
       VTToEdit(CFX_FloatPoint(rect.left, rect.bottom));
   CFX_FloatPoint ptRightTop = VTToEdit(CFX_FloatPoint(rect.right, rect.top));
-
-  return CFX_FloatRect(ptLeftBottom.x, ptLeftBottom.y, ptRightTop.x,
-                       ptRightTop.y);
-}
-
-CFX_FloatRect CFX_Edit::EditToVT(const CFX_FloatRect& rect) const {
-  CFX_FloatPoint ptLeftBottom =
-      EditToVT(CFX_FloatPoint(rect.left, rect.bottom));
-  CFX_FloatPoint ptRightTop = EditToVT(CFX_FloatPoint(rect.right, rect.top));
 
   return CFX_FloatRect(ptLeftBottom.x, ptLeftBottom.y, ptRightTop.x,
                        ptRightTop.y);
@@ -2082,50 +1673,6 @@ void CFX_Edit::RefreshPushLineRects(const CPVT_WordRange& wr) {
     m_Refresh.Push(CPVT_WordRange(lineinfo.lineplace, lineinfo.lineEnd),
                    VTToEdit(rcLine));
   } while (pIterator->NextLine());
-}
-
-void CFX_Edit::RefreshPushRandomRects(const CPVT_WordRange& wr) {
-  if (!m_pVT->IsValid())
-    return;
-
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-  CPVT_WordRange wrTemp = wr;
-
-  m_pVT->UpdateWordPlace(wrTemp.BeginPos);
-  m_pVT->UpdateWordPlace(wrTemp.EndPos);
-  pIterator->SetAt(wrTemp.BeginPos);
-
-  CPVT_Word wordinfo;
-  CPVT_Line lineinfo;
-  CPVT_WordPlace place;
-
-  while (pIterator->NextWord()) {
-    place = pIterator->GetAt();
-    if (place.WordCmp(wrTemp.EndPos) > 0)
-      break;
-
-    pIterator->GetWord(wordinfo);
-    pIterator->GetLine(lineinfo);
-
-    if (place.LineCmp(wrTemp.BeginPos) == 0 ||
-        place.LineCmp(wrTemp.EndPos) == 0) {
-      CFX_FloatRect rcWord(wordinfo.ptWord.x,
-                           lineinfo.ptLine.y + lineinfo.fLineDescent,
-                           wordinfo.ptWord.x + wordinfo.fWidth,
-                           lineinfo.ptLine.y + lineinfo.fLineAscent);
-
-      m_Refresh.AddRefresh(VTToEdit(rcWord));
-    } else {
-      CFX_FloatRect rcLine(lineinfo.ptLine.x,
-                           lineinfo.ptLine.y + lineinfo.fLineDescent,
-                           lineinfo.ptLine.x + lineinfo.fLineWidth,
-                           lineinfo.ptLine.y + lineinfo.fLineAscent);
-
-      m_Refresh.AddRefresh(VTToEdit(rcLine));
-
-      pIterator->NextLine();
-    }
-  }
 }
 
 void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
@@ -2802,23 +2349,6 @@ FX_BOOL CFX_Edit::IsTextOverflow() const {
   return FALSE;
 }
 
-CPVT_WordPlace CFX_Edit::GetLineBeginPlace(const CPVT_WordPlace& place) const {
-  return m_pVT->GetLineBeginPlace(place);
-}
-
-CPVT_WordPlace CFX_Edit::GetLineEndPlace(const CPVT_WordPlace& place) const {
-  return m_pVT->GetLineEndPlace(place);
-}
-
-CPVT_WordPlace CFX_Edit::GetSectionBeginPlace(
-    const CPVT_WordPlace& place) const {
-  return m_pVT->GetSectionBeginPlace(place);
-}
-
-CPVT_WordPlace CFX_Edit::GetSectionEndPlace(const CPVT_WordPlace& place) const {
-  return m_pVT->GetSectionEndPlace(place);
-}
-
 FX_BOOL CFX_Edit::CanUndo() const {
   if (m_bEnableUndo) {
     return m_Undo.CanUndo();
@@ -2835,14 +2365,6 @@ FX_BOOL CFX_Edit::CanRedo() const {
   return FALSE;
 }
 
-FX_BOOL CFX_Edit::IsModified() const {
-  if (m_bEnableUndo) {
-    return m_Undo.IsModified();
-  }
-
-  return FALSE;
-}
-
 void CFX_Edit::EnableRefresh(FX_BOOL bRefresh) {
   m_bEnableRefresh = bRefresh;
 }
@@ -2853,32 +2375,6 @@ void CFX_Edit::EnableUndo(FX_BOOL bUndo) {
 
 void CFX_Edit::EnableOprNotify(FX_BOOL bNotify) {
   m_bOprNotify = bNotify;
-}
-
-FX_FLOAT CFX_Edit::GetLineTop(const CPVT_WordPlace& place) const {
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-  CPVT_WordPlace wpOld = pIterator->GetAt();
-
-  pIterator->SetAt(place);
-  CPVT_Line line;
-  pIterator->GetLine(line);
-
-  pIterator->SetAt(wpOld);
-
-  return line.ptLine.y + line.fLineAscent;
-}
-
-FX_FLOAT CFX_Edit::GetLineBottom(const CPVT_WordPlace& place) const {
-  CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-  CPVT_WordPlace wpOld = pIterator->GetAt();
-
-  pIterator->SetAt(place);
-  CPVT_Line line;
-  pIterator->GetLine(line);
-
-  pIterator->SetAt(wpOld);
-
-  return line.ptLine.y + line.fLineDescent;
 }
 
 CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place,
@@ -2919,28 +2415,12 @@ int32_t CFX_Edit::GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   return nOldCharset;
 }
 
-void CFX_Edit::BeginGroupUndo(const CFX_WideString& sTitle) {
-  ASSERT(!m_pGroupUndoItem);
-
-  m_pGroupUndoItem = new CFX_Edit_GroupUndoItem(sTitle);
-}
-
-void CFX_Edit::EndGroupUndo() {
-  m_pGroupUndoItem->UpdateItems();
-  m_Undo.AddItem(m_pGroupUndoItem);
-  m_pGroupUndoItem = nullptr;
-}
-
 void CFX_Edit::AddEditUndoItem(CFX_Edit_UndoItem* pEditUndoItem) {
   if (m_pGroupUndoItem) {
     m_pGroupUndoItem->AddUndoItem(pEditUndoItem);
   } else {
     m_Undo.AddItem(pEditUndoItem);
   }
-}
-
-void CFX_Edit::AddUndoItem(IFX_Edit_UndoItem* pUndoItem) {
-  m_Undo.AddItem(pUndoItem);
 }
 
 CFX_Edit_LineRectArray::CFX_Edit_LineRectArray() {}
@@ -3020,10 +2500,6 @@ void CFX_Edit_Select::SetEndPos(const CPVT_WordPlace& end) {
 
 FX_BOOL CFX_Edit_Select::IsExist() const {
   return BeginPos != EndPos;
-}
-
-FX_BOOL CFX_Edit_Select::operator!=(const CPVT_WordRange& wr) const {
-  return wr.BeginPos != BeginPos || wr.EndPos != EndPos;
 }
 
 CFX_Edit_RectArray::CFX_Edit_RectArray() {}

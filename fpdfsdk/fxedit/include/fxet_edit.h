@@ -24,46 +24,9 @@ class CFX_RenderDevice;
 class CFX_SystemHandler;
 class IFX_Edit_UndoItem;
 
-enum EDIT_PROPS_E {
-  EP_LINELEADING,
-  EP_LINEINDENT,
-  EP_ALIGNMENT,
-  EP_FONTINDEX,
-  EP_FONTSIZE,
-  EP_WORDCOLOR,
-  EP_SCRIPTTYPE,
-  EP_UNDERLINE,
-  EP_CROSSOUT,
-  EP_CHARSPACE,
-  EP_HORZSCALE,
-  EP_BOLD,
-  EP_ITALIC
-};
-
 struct CFX_Edit_LineRect {
   CFX_Edit_LineRect(const CPVT_WordRange& wrLine, const CFX_FloatRect& rcLine)
       : m_wrLine(wrLine), m_rcLine(rcLine) {}
-
-  FX_BOOL operator!=(const CFX_Edit_LineRect& linerect) const {
-    return FXSYS_memcmp(this, &linerect, sizeof(CFX_Edit_LineRect)) != 0;
-  }
-
-  FX_BOOL IsSameHeight(const CFX_Edit_LineRect& linerect) const {
-    return IsFloatZero((m_rcLine.top - m_rcLine.bottom) -
-                       (linerect.m_rcLine.top - linerect.m_rcLine.bottom));
-  }
-
-  FX_BOOL IsSameTop(const CFX_Edit_LineRect& linerect) const {
-    return IsFloatZero(m_rcLine.top - linerect.m_rcLine.top);
-  }
-
-  FX_BOOL IsSameLeft(const CFX_Edit_LineRect& linerect) const {
-    return IsFloatZero(m_rcLine.left - linerect.m_rcLine.left);
-  }
-
-  FX_BOOL IsSameRight(const CFX_Edit_LineRect& linerect) const {
-    return IsFloatZero(m_rcLine.right - linerect.m_rcLine.right);
-  }
 
   CPVT_WordRange m_wrLine;
   CFX_FloatRect m_rcLine;
@@ -132,7 +95,6 @@ class CFX_Edit_Select {
 
   CPVT_WordRange ConvertToWordRange() const;
   FX_BOOL IsExist() const;
-  FX_BOOL operator!=(const CPVT_WordRange& wr) const;
 
   CPVT_WordPlace BeginPos, EndPos;
 };
@@ -150,18 +112,10 @@ class CFX_Edit_Undo {
   FX_BOOL CanUndo() const;
   FX_BOOL CanRedo() const;
   FX_BOOL IsModified() const;
-  FX_BOOL IsWorking() const;
 
   void Reset();
 
-  IFX_Edit_UndoItem* GetItem(int32_t nIndex);
-  int32_t GetItemCount() { return m_UndoItemStack.GetSize(); }
-  int32_t GetCurUndoPos() { return m_nCurUndoPos; }
-
  private:
-  void SetBufSize(int32_t nSize) { m_nBufSize = nSize; }
-  int32_t GetBufSize() { return m_nBufSize; }
-
   void RemoveHeads();
   void RemoveTails();
 
@@ -192,7 +146,6 @@ class CFX_Edit_UndoItem : public IFX_Edit_UndoItem {
   CFX_WideString GetUndoTitle() override;
 
   void SetFirst(FX_BOOL bFirst);
-  FX_BOOL IsFirst();
   void SetLast(FX_BOOL bLast);
   FX_BOOL IsLast();
 
@@ -380,19 +333,6 @@ class CFX_Edit {
                        const CPVT_WordRange* pRange,
                        CFX_SystemHandler* pSystemHandler,
                        void* pFFLData);
-  static void DrawUnderline(CFX_RenderDevice* pDevice,
-                            CFX_Matrix* pUser2Device,
-                            CFX_Edit* pEdit,
-                            FX_COLORREF color,
-                            const CFX_FloatRect& rcClip,
-                            const CFX_FloatPoint& ptOffset,
-                            const CPVT_WordRange* pRange);
-  static void DrawRichEdit(CFX_RenderDevice* pDevice,
-                           CFX_Matrix* pUser2Device,
-                           CFX_Edit* pEdit,
-                           const CFX_FloatRect& rcClip,
-                           const CFX_FloatPoint& ptOffset,
-                           const CPVT_WordRange* pRange);
   static void GeneratePageObjects(
       CPDF_PageObjectHolder* pObjectHolder,
       CFX_Edit* pEdit,
@@ -400,17 +340,6 @@ class CFX_Edit {
       const CPVT_WordRange* pRange,
       FX_COLORREF crText,
       CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
-  static void GenerateRichPageObjects(
-      CPDF_PageObjectHolder* pObjectHolder,
-      CFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange,
-      CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
-  static void GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                       CFX_Edit* pEdit,
-                                       const CFX_FloatPoint& ptOffset,
-                                       const CPVT_WordRange* pRange,
-                                       FX_COLORREF color);
 
   CFX_Edit();
   ~CFX_Edit();
@@ -421,7 +350,6 @@ class CFX_Edit {
 
   // Returns an iterator for the contents. Should not be released.
   CFX_Edit_Iterator* GetIterator();
-  CPDF_VariableText* GetVariableText();
   IPVT_FontMap* GetFontMap();
   void Initialize();
 
@@ -447,21 +375,6 @@ class CFX_Edit {
   void SetAutoScroll(FX_BOOL bAuto, FX_BOOL bPaint);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTextOverflow(FX_BOOL bAllowed, FX_BOOL bPaint);
-  FX_BOOL IsRichText() const;
-  void SetRichText(FX_BOOL bRichText = TRUE, FX_BOOL bPaint = TRUE);
-  FX_BOOL SetRichFontSize(FX_FLOAT fFontSize);
-  FX_BOOL SetRichFontIndex(int32_t nFontIndex);
-  FX_BOOL SetRichTextColor(FX_COLORREF dwColor);
-  FX_BOOL SetRichTextScript(CPDF_VariableText::ScriptType nScriptType);
-  FX_BOOL SetRichTextBold(FX_BOOL bBold = TRUE);
-  FX_BOOL SetRichTextItalic(FX_BOOL bItalic = TRUE);
-  FX_BOOL SetRichTextUnderline(FX_BOOL bUnderline = TRUE);
-  FX_BOOL SetRichTextCrossout(FX_BOOL bCrossout = TRUE);
-  FX_BOOL SetRichTextCharSpace(FX_FLOAT fCharSpace);
-  FX_BOOL SetRichTextHorzScale(int32_t nHorzScale = 100);
-  FX_BOOL SetRichTextLineLeading(FX_FLOAT fLineLeading);
-  FX_BOOL SetRichTextLineIndent(FX_FLOAT fLineIndent);
-  FX_BOOL SetRichTextAlignment(int32_t nAlignment);
   void OnMouseDown(const CFX_FloatPoint& point, FX_BOOL bShift, FX_BOOL bCtrl);
   void OnMouseMove(const CFX_FloatPoint& point, FX_BOOL bShift, FX_BOOL bCtrl);
   void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl);
@@ -481,10 +394,6 @@ class CFX_Edit {
   FX_BOOL Undo();
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
-  CPVT_WordPlace GetLineBeginPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace GetLineEndPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace GetSectionBeginPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace GetSectionEndPlace(const CPVT_WordPlace& place) const;
   CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const;
   int32_t GetCaret() const;
   CPVT_WordPlace GetCaretWordPlace() const;
@@ -494,7 +403,6 @@ class CFX_Edit {
   uint16_t GetPasswordChar() const;
   CFX_FloatPoint GetScrollPos() const;
   int32_t GetCharArray() const;
-  CFX_FloatRect GetPlateRect() const;
   CFX_FloatRect GetContentRect() const;
   CFX_WideString GetRangeText(const CPVT_WordRange& range) const;
   int32_t GetHorzScale() const;
@@ -506,7 +414,6 @@ class CFX_Edit {
   void SelectNone();
   FX_BOOL IsSelected() const;
   void Paint();
-  void EnableNotify(FX_BOOL bNotify);
   void EnableRefresh(FX_BOOL bRefresh);
   void RefreshWordRange(const CPVT_WordRange& wr);
   void SetCaret(int32_t nPos);
@@ -518,9 +425,7 @@ class CFX_Edit {
   FX_BOOL IsTextOverflow() const;
   FX_BOOL CanUndo() const;
   FX_BOOL CanRedo() const;
-  FX_BOOL IsModified() const;
   CPVT_WordRange GetVisibleWordRange() const;
-  void AddUndoItem(IFX_Edit_UndoItem* pUndoItem);
 
   FX_BOOL Empty();
 
@@ -573,29 +478,15 @@ class CFX_Edit {
   inline CFX_FloatPoint VTToEdit(const CFX_FloatPoint& point) const;
   inline CFX_FloatPoint EditToVT(const CFX_FloatPoint& point) const;
   inline CFX_FloatRect VTToEdit(const CFX_FloatRect& rect) const;
-  inline CFX_FloatRect EditToVT(const CFX_FloatRect& rect) const;
 
   void Refresh();
   void RefreshPushLineRects(const CPVT_WordRange& wr);
-  void RefreshPushRandomRects(const CPVT_WordRange& wr);
 
   void SetCaret(const CPVT_WordPlace& place);
   void SetCaretInfo();
   void SetCaretOrigin();
 
-  CPVT_WordRange GetLatinWordsRange(const CPVT_WordPlace& place) const;
-  CPVT_WordRange CombineWordRange(const CPVT_WordRange& wr1,
-                                  const CPVT_WordRange& wr2);
-
-  void BeginGroupUndo(const CFX_WideString& sTitle);
-  void EndGroupUndo();
   void AddEditUndoItem(CFX_Edit_UndoItem* pEditUndoItem);
-
-  void SetPageInfo(const CPVT_WordPlace& place);
-  CPVT_WordPlace SearchPageEndPlace(const CPVT_WordPlace& wpPageBegin,
-                                    const CFX_FloatPoint& point) const;
-  FX_FLOAT GetLineTop(const CPVT_WordPlace& place) const;
-  FX_FLOAT GetLineBottom(const CPVT_WordPlace& place) const;
 
  private:
   std::unique_ptr<CPDF_VariableText> m_pVT;
@@ -630,18 +521,13 @@ class CFX_Edit_Iterator {
   ~CFX_Edit_Iterator();
 
   FX_BOOL NextWord();
-  FX_BOOL NextLine();
-  FX_BOOL NextSection();
   FX_BOOL PrevWord();
-  FX_BOOL PrevLine();
-  FX_BOOL PrevSection();
   FX_BOOL GetWord(CPVT_Word& word) const;
   FX_BOOL GetLine(CPVT_Line& line) const;
   FX_BOOL GetSection(CPVT_Section& section) const;
   void SetAt(int32_t nWordIndex);
   void SetAt(const CPVT_WordPlace& place);
   const CPVT_WordPlace& GetAt() const;
-  CFX_Edit* GetEdit() const;
 
  private:
   CFX_Edit* m_pEdit;
