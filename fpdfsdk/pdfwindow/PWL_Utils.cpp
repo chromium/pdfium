@@ -3308,12 +3308,15 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData,
     GetPathDataFromArray(path, PathArray, 23);
 }
 
-void CPWL_Color::ConvertColorType(int32_t other_nColorType) {
-  switch (other_nColorType) {
+void CPWL_Color::ConvertColorType(int32_t nConvertColorType) {
+  if (nColorType == nConvertColorType)
+    return;
+
+  switch (nColorType) {
     case COLORTYPE_TRANSPARENT:
       break;
     case COLORTYPE_GRAY:
-      switch (other_nColorType) {
+      switch (nConvertColorType) {
         case COLORTYPE_RGB:
           CPWL_Utils::ConvertGRAY2RGB(fColor1, fColor1, fColor2, fColor3);
           break;
@@ -3324,7 +3327,7 @@ void CPWL_Color::ConvertColorType(int32_t other_nColorType) {
       }
       break;
     case COLORTYPE_RGB:
-      switch (other_nColorType) {
+      switch (nConvertColorType) {
         case COLORTYPE_GRAY:
           CPWL_Utils::ConvertRGB2GRAY(fColor1, fColor2, fColor3, fColor1);
           break;
@@ -3335,7 +3338,7 @@ void CPWL_Color::ConvertColorType(int32_t other_nColorType) {
       }
       break;
     case COLORTYPE_CMYK:
-      switch (other_nColorType) {
+      switch (nConvertColorType) {
         case COLORTYPE_GRAY:
           CPWL_Utils::ConvertCMYK2GRAY(fColor1, fColor2, fColor3, fColor4,
                                        fColor1);
@@ -3347,5 +3350,5 @@ void CPWL_Color::ConvertColorType(int32_t other_nColorType) {
       }
       break;
   }
-  nColorType = other_nColorType;
+  nColorType = nConvertColorType;
 }
