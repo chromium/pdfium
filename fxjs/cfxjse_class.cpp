@@ -289,9 +289,10 @@ void NamedPropertySetterCallback(
       new CFXJSE_Value(info.GetIsolate()));
   lpThisValue->ForceSetValue(thisObject);
 
-  CFXJSE_Value* lpNewValue = new CFXJSE_Value(info.GetIsolate());
+  std::unique_ptr<CFXJSE_Value> lpNewValue(new CFXJSE_Value(info.GetIsolate()));
   lpNewValue->ForceSetValue(value);
-  DynPropSetterAdapter(lpClass, lpThisValue.get(), szFxPropName, lpNewValue);
+  DynPropSetterAdapter(lpClass, lpThisValue.get(), szFxPropName,
+                       lpNewValue.get());
   info.GetReturnValue().Set(value);
 }
 
