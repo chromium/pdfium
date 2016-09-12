@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "core/fxcrt/include/cfx_observable.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 
@@ -459,7 +461,7 @@ class Field : public CJS_EmbedObj {
 
  public:
   Document* m_pJSDoc;
-  CPDFSDK_Document* m_pDocument;
+  CPDFSDK_Document::ObservedPtr m_pDocument;
   CFX_WideString m_FieldName;
   int m_nFormControlIndex;
   FX_BOOL m_bCanSet;
