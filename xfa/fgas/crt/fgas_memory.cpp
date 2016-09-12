@@ -7,34 +7,13 @@
 #include "xfa/fgas/crt/fgas_memory.h"
 
 #ifndef MEMORY_TOOL_REPLACES_ALLOCATOR
-#define MEMORY_TOOL_REPLACES_ALLOCATOR  // Temporary, for CF testing.
+// Use CFX_DefStore to replace CFX_FixedStore to simplify memory
+// management so that some problems such Use-After-Free can be
+// detected by Asan or ClusterFuzz tools.
+#define MEMORY_TOOL_REPLACES_ALLOCATOR
 #endif
 
 #include <algorithm>
-
-#ifdef MEMORY_TOOL_REPLACES_ALLOCATOR
-
-namespace {
-
-class CFX_DefStore : public IFX_MemoryAllocator, public CFX_Target {
- public:
-  CFX_DefStore() {}
-  ~CFX_DefStore() override {}
-
-  void* Alloc(size_t size) override { return FX_Alloc(uint8_t, size); }
-  void Free(void* pBlock) override { FX_Free(pBlock); }
-};
-
-}  // namespace
-
-std::unique_ptr<IFX_MemoryAllocator> IFX_MemoryAllocator::Create(
-    FX_ALLOCTYPE eType,
-    size_t chunkSize,
-    size_t blockSize) {
-  return std::unique_ptr<IFX_MemoryAllocator>(new CFX_DefStore());
-}
-
-#else  // MEMORY_TOOL_REPLACES_ALLOCATOR
 
 namespace {
 
@@ -61,6 +40,19 @@ class CFX_StaticStore : public IFX_MemoryAllocator, public CFX_Target {
   FX_STATICSTORECHUNK* FindChunk(size_t size);
 };
 
+#ifdef MEMORY_TOOL_REPLACES_ALLOCATOR
+
+class CFX_DefStore : public IFX_MemoryAllocator, public CFX_Target {
+ public:
+  CFX_DefStore() {}
+  ~CFX_DefStore() override {}
+
+  void* Alloc(size_t size) override { return FX_Alloc(uint8_t, size); }
+  void Free(void* pBlock) override { FX_Free(pBlock); }
+};
+
+#else
+
 struct FX_FIXEDSTORECHUNK {
   uint8_t* FirstFlag() { return reinterpret_cast<uint8_t*>(this + 1); }
   uint8_t* FirstBlock() { return FirstFlag() + iChunkSize; }
@@ -85,6 +77,8 @@ class CFX_FixedStore : public IFX_MemoryAllocator, public CFX_Target {
   FX_FIXEDSTORECHUNK* m_pChunk;
 };
 
+#endif  // MEMORY_TOOL_REPLACES_ALLOCATOR
+
 }  // namespace
 
 #define FX_4BYTEALIGN(size) (((size) + 3) & ~3)
@@ -98,7 +92,12 @@ std::unique_ptr<IFX_MemoryAllocator> IFX_MemoryAllocator::Create(
       return std::unique_ptr<IFX_MemoryAllocator>(
           new CFX_StaticStore(chunkSize));
     case FX_ALLOCTYPE_Fixed:
-      return std::unique_ptr<IFX_MemoryAllocator>(new CFX_FixedStore(blockSize, chunkSize);
+#ifdef MEMORY_TOOL_REPLACES_ALLOCATOR
+      return std::unique_ptr<IFX_MemoryAllocator>(new CFX_DefStore());
+#else
+      return std::unique_ptr<IFX_MemoryAllocator>(
+          new CFX_FixedStore(blockSize, chunkSize));
+#endif  // MEMORY_TOOL_REPLACES_ALLOCATOR
     default:
       ASSERT(0);
       return std::unique_ptr<IFX_MemoryAllocator>();
@@ -112,6 +111,7 @@ CFX_StaticStore::CFX_StaticStore(size_t iDefChunkSize)
       m_pLastChunk(nullptr) {
   ASSERT(m_iDefChunkSize != 0);
 }
+
 CFX_StaticStore::~CFX_StaticStore() {
   FX_STATICSTORECHUNK* pChunk = m_pChunk;
   while (pChunk) {
@@ -120,6 +120,7 @@ CFX_StaticStore::~CFX_StaticStore() {
     pChunk = pNext;
   }
 }
+
 FX_STATICSTORECHUNK* CFX_StaticStore::AllocChunk(size_t size) {
   ASSERT(size != 0);
   FX_STATICSTORECHUNK* pChunk = (FX_STATICSTORECHUNK*)FX_Alloc(
@@ -135,6 +136,7 @@ FX_STATICSTORECHUNK* CFX_StaticStore::AllocChunk(size_t size) {
   m_pLastChunk = pChunk;
   return pChunk;
 }
+
 FX_STATICSTORECHUNK* CFX_StaticStore::FindChunk(size_t size) {
   ASSERT(size != 0);
   if (!m_pLastChunk || m_pLastChunk->iFreeSize < size) {
@@ -142,6 +144,7 @@ FX_STATICSTORECHUNK* CFX_StaticStore::FindChunk(size_t size) {
   }
   return m_pLastChunk;
 }
+
 void* CFX_StaticStore::Alloc(size_t size) {
   size = FX_4BYTEALIGN(size);
   ASSERT(size != 0);
@@ -153,18 +156,16 @@ void* CFX_StaticStore::Alloc(size_t size) {
   m_iAllocatedSize += size;
   return p;
 }
-size_t CFX_StaticStore::SetDefChunkSize(size_t size) {
-  ASSERT(size != 0);
-  size_t v = m_iDefChunkSize;
-  m_iDefChunkSize = size;
-  return v;
-}
+
+#ifndef MEMORY_TOOL_REPLACES_ALLOCATOR
+
 CFX_FixedStore::CFX_FixedStore(size_t iBlockSize, size_t iBlockNumsInChunk)
     : m_iBlockSize(FX_4BYTEALIGN(iBlockSize)),
       m_iDefChunkSize(FX_4BYTEALIGN(iBlockNumsInChunk)),
       m_pChunk(nullptr) {
   ASSERT(m_iBlockSize != 0 && m_iDefChunkSize != 0);
 }
+
 CFX_FixedStore::~CFX_FixedStore() {
   FX_FIXEDSTORECHUNK* pChunk = m_pChunk;
   while (pChunk) {
@@ -173,6 +174,7 @@ CFX_FixedStore::~CFX_FixedStore() {
     pChunk = pNext;
   }
 }
+
 FX_FIXEDSTORECHUNK* CFX_FixedStore::AllocChunk() {
   int32_t iTotalSize = sizeof(FX_FIXEDSTORECHUNK) + m_iDefChunkSize +
                        m_iBlockSize * m_iDefChunkSize;
@@ -188,6 +190,7 @@ FX_FIXEDSTORECHUNK* CFX_FixedStore::AllocChunk() {
   m_pChunk = pChunk;
   return pChunk;
 }
+
 void* CFX_FixedStore::Alloc(size_t size) {
   if (size > m_iBlockSize) {
     return nullptr;
@@ -213,6 +216,7 @@ void* CFX_FixedStore::Alloc(size_t size) {
   pChunk->iFreeNum--;
   return pChunk->FirstBlock() + i * m_iBlockSize;
 }
+
 void CFX_FixedStore::Free(void* pBlock) {
   FX_FIXEDSTORECHUNK* pPrior = nullptr;
   FX_FIXEDSTORECHUNK* pChunk = m_pChunk;
@@ -245,12 +249,6 @@ void CFX_FixedStore::Free(void* pBlock) {
     }
     FX_Free(pChunk);
   }
-}
-size_t CFX_FixedStore::SetDefChunkSize(size_t iChunkSize) {
-  ASSERT(iChunkSize != 0);
-  size_t v = m_iDefChunkSize;
-  m_iDefChunkSize = FX_4BYTEALIGN(iChunkSize);
-  return v;
 }
 
 #endif  // MEMORY_TOOL_REPLACES_ALLOCATOR
