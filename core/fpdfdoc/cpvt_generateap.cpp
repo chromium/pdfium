@@ -46,26 +46,15 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
 
   FX_FLOAT fFontSize = FX_atof(syntax.GetWord());
   CPVT_Color crText = CPVT_Color::ParseColor(DA);
-  FX_BOOL bUseFormRes = FALSE;
-  CPDF_Dictionary* pFontDict = nullptr;
-  CPDF_Dictionary* pDRDict = pAnnotDict->GetDictBy("DR");
-  if (!pDRDict) {
-    pDRDict = pFormDict->GetDictBy("DR");
-    bUseFormRes = TRUE;
-  }
-  CPDF_Dictionary* pDRFontDict = pDRDict ? pDRDict->GetDictBy("Font") : nullptr;
-  if (pDRFontDict) {
-    pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
-    if (!pFontDict && !bUseFormRes) {
-      pDRDict = pFormDict->GetDictBy("DR");
-      pDRFontDict = pDRDict->GetDictBy("Font");
-      if (pDRFontDict)
-        pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
-    }
-  }
+  CPDF_Dictionary* pDRDict = pFormDict->GetDictBy("DR");
+  if (!pDRDict)
+    return false;
+
+  CPDF_Dictionary* pDRFontDict = pDRDict->GetDictBy("Font");
   if (!pDRFontDict)
     return false;
 
+  CPDF_Dictionary* pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
   if (!pFontDict) {
     pFontDict = new CPDF_Dictionary;
     pFontDict->SetAtName("Type", "Font");

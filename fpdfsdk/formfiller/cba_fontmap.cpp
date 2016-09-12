@@ -219,36 +219,29 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString& sAlias) {
       sDA = pObj ? pObj->GetString() : CFX_ByteString();
     }
   }
+  if (sDA.IsEmpty())
+    return nullptr;
 
+  CPDF_SimpleParser syntax(sDA.AsStringC());
+  syntax.FindTagParamFromStart("Tf", 2);
+  CFX_ByteString sFontName(syntax.GetWord());
+  sAlias = PDF_NameDecode(sFontName).Mid(1);
   CPDF_Dictionary* pFontDict = nullptr;
 
-  if (!sDA.IsEmpty()) {
-    CPDF_SimpleParser syntax(sDA.AsStringC());
-    syntax.FindTagParamFromStart("Tf", 2);
-    CFX_ByteString sFontName(syntax.GetWord());
-    sAlias = PDF_NameDecode(sFontName).Mid(1);
+  if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictBy("AP")) {
+    if (CPDF_Dictionary* pNormalDict = pAPDict->GetDictBy("N")) {
+      if (CPDF_Dictionary* pNormalResDict =
+              pNormalDict->GetDictBy("Resources")) {
+        if (CPDF_Dictionary* pResFontDict = pNormalResDict->GetDictBy("Font"))
+          pFontDict = pResFontDict->GetDictBy(sAlias);
+      }
+    }
+  }
 
-    if (CPDF_Dictionary* pDRDict = m_pAnnotDict->GetDictBy("DR"))
+  if (bWidget && !pFontDict && pAcroFormDict) {
+    if (CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictBy("DR")) {
       if (CPDF_Dictionary* pDRFontDict = pDRDict->GetDictBy("Font"))
         pFontDict = pDRFontDict->GetDictBy(sAlias);
-
-    if (!pFontDict)
-      if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictBy("AP"))
-        if (CPDF_Dictionary* pNormalDict = pAPDict->GetDictBy("N"))
-          if (CPDF_Dictionary* pNormalResDict =
-                  pNormalDict->GetDictBy("Resources"))
-            if (CPDF_Dictionary* pResFontDict =
-                    pNormalResDict->GetDictBy("Font"))
-              pFontDict = pResFontDict->GetDictBy(sAlias);
-
-    if (bWidget) {
-      if (!pFontDict) {
-        if (pAcroFormDict) {
-          if (CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictBy("DR"))
-            if (CPDF_Dictionary* pDRFontDict = pDRDict->GetDictBy("Font"))
-              pFontDict = pDRFontDict->GetDictBy(sAlias);
-        }
-      }
     }
   }
 
