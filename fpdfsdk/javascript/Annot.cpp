@@ -40,7 +40,7 @@ Annot::~Annot() {}
 FX_BOOL Annot::hidden(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
-  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot);
+  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot.Get());
   if (!baAnnot)
     return FALSE;
 
@@ -72,7 +72,7 @@ FX_BOOL Annot::hidden(IJS_Context* cc,
 FX_BOOL Annot::name(IJS_Context* cc,
                     CJS_PropValue& vp,
                     CFX_WideString& sError) {
-  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot);
+  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot.Get());
   if (!baAnnot)
     return FALSE;
 
@@ -95,7 +95,7 @@ FX_BOOL Annot::type(IJS_Context* cc,
     return FALSE;
   }
 
-  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot);
+  CPDFSDK_BAAnnot* baAnnot = ToBAAnnot(m_pAnnot.Get());
   if (!baAnnot)
     return FALSE;
 
@@ -104,6 +104,5 @@ FX_BOOL Annot::type(IJS_Context* cc,
 }
 
 void Annot::SetSDKAnnot(CPDFSDK_BAAnnot* annot) {
-  m_pAnnot = annot;
-  SetWatchedPtr(&m_pAnnot);
+  m_pAnnot.Reset(annot);
 }

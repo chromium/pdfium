@@ -6,6 +6,7 @@
 #define PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
 
 #include <algorithm>
+#include <memory>
 #include <set>
 
 #include "third_party/base/numerics/safe_conversions.h"

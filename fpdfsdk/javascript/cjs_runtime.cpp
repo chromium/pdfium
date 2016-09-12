@@ -124,7 +124,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
 }
 
 CJS_Runtime::~CJS_Runtime() {
-  NotifyObservers();
+  NotifyObservedPtrs();
   ReleaseEngine();
   if (m_isolateManaged) {
     GetIsolate()->Dispose();

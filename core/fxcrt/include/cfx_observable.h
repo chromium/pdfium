@@ -13,56 +13,66 @@
 template <class T>
 class CFX_Observable {
  public:
-  class Observer {
+  class ObservedPtr {
    public:
-    Observer() : m_pWatchedPtr(nullptr) {}
-    Observer(T** pWatchedPtr) : m_pWatchedPtr(pWatchedPtr) {
-      if (m_pWatchedPtr)
-        (*m_pWatchedPtr)->AddObserver(this);
+    ObservedPtr() : m_pObservedPtr(nullptr) {}
+    explicit ObservedPtr(T* pObservedPtr) : m_pObservedPtr(pObservedPtr) {
+      if (m_pObservedPtr)
+        m_pObservedPtr->AddObservedPtr(this);
     }
-    Observer(const Observer& that) = delete;
-    ~Observer() {
-      if (m_pWatchedPtr)
-        (*m_pWatchedPtr)->RemoveObserver(this);
+    ObservedPtr(const ObservedPtr& that) = delete;
+    ~ObservedPtr() {
+      if (m_pObservedPtr)
+        m_pObservedPtr->RemoveObservedPtr(this);
     }
-    void SetWatchedPtr(T** pWatchedPtr) {
-      if (m_pWatchedPtr)
-        (*m_pWatchedPtr)->RemoveObserver(this);
-      m_pWatchedPtr = pWatchedPtr;
-      if (m_pWatchedPtr)
-        (*m_pWatchedPtr)->AddObserver(this);
+    void Reset(T* pObservedPtr = nullptr) {
+      if (m_pObservedPtr)
+        m_pObservedPtr->RemoveObservedPtr(this);
+      m_pObservedPtr = pObservedPtr;
+      if (m_pObservedPtr)
+        m_pObservedPtr->AddObservedPtr(this);
     }
     void OnDestroy() {
-      ASSERT(m_pWatchedPtr);
-      *m_pWatchedPtr = nullptr;
-      m_pWatchedPtr = nullptr;
+      ASSERT(m_pObservedPtr);
+      m_pObservedPtr = nullptr;
     }
-    Observer& operator=(const Observer& that) = delete;
+    ObservedPtr& operator=(const ObservedPtr& that) = delete;
+    bool operator==(const ObservedPtr& that) const {
+      return m_pObservedPtr == that.m_pObservedPtr;
+    }
+    bool operator!=(const ObservedPtr& that) const { return !(*this == that); }
+    explicit operator bool() const { return !!m_pObservedPtr; }
+    T* Get() const { return m_pObservedPtr; }
+    T& operator*() const { return *m_pObservedPtr; }
+    T* operator->() const { return m_pObservedPtr; }
 
    private:
-    T** m_pWatchedPtr;
+    T* m_pObservedPtr;
   };
 
   CFX_Observable() {}
   CFX_Observable(const CFX_Observable& that) = delete;
-  ~CFX_Observable() { NotifyObservers(); }
-  void AddObserver(Observer* pObserver) {
-    ASSERT(!pdfium::ContainsKey(m_Observers, pObserver));
-    m_Observers.insert(pObserver);
+  ~CFX_Observable() { NotifyObservedPtrs(); }
+  void AddObservedPtr(ObservedPtr* pObservedPtr) {
+    ASSERT(!pdfium::ContainsKey(m_ObservedPtrs, pObservedPtr));
+    m_ObservedPtrs.insert(pObservedPtr);
   }
-  void RemoveObserver(Observer* pObserver) {
-    ASSERT(pdfium::ContainsKey(m_Observers, pObserver));
-    m_Observers.erase(pObserver);
+  void RemoveObservedPtr(ObservedPtr* pObservedPtr) {
+    ASSERT(pdfium::ContainsKey(m_ObservedPtrs, pObservedPtr));
+    m_ObservedPtrs.erase(pObservedPtr);
   }
-  void NotifyObservers() {
-    for (auto* pObserver : m_Observers)
-      pObserver->OnDestroy();
-    m_Observers.clear();
+  void NotifyObservedPtrs() {
+    for (auto* pObservedPtr : m_ObservedPtrs)
+      pObservedPtr->OnDestroy();
+    m_ObservedPtrs.clear();
   }
   CFX_Observable& operator=(const CFX_Observable& that) = delete;
 
+ protected:
+  size_t ActiveObservedPtrsForTesting() const { return m_ObservedPtrs.size(); }
+
  private:
-  std::set<Observer*> m_Observers;
+  std::set<ObservedPtr*> m_ObservedPtrs;
 };
 
 #endif  // CORE_FXCRT_INCLUDE_CFX_OBSERVABLE_H_

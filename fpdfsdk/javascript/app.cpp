@@ -21,7 +21,7 @@
 #include "fpdfsdk/javascript/resource.h"
 #include "third_party/base/stl_util.h"
 
-class GlobalTimer : public CJS_Runtime::Observer {
+class GlobalTimer {
  public:
   GlobalTimer(app* pObj,
               CPDFDoc_Environment* pApp,
@@ -38,7 +38,7 @@ class GlobalTimer : public CJS_Runtime::Observer {
   bool IsOneShot() const { return m_nType == 1; }
   uint32_t GetTimeOut() const { return m_dwTimeOut; }
   int GetTimerID() const { return m_nTimerID; }
-  CJS_Runtime* GetRuntime() const { return m_pRuntime; }
+  CJS_Runtime* GetRuntime() const { return m_pRuntime.Get(); }
   CFX_WideString GetJScript() const { return m_swJScript; }
 
  private:
@@ -53,7 +53,7 @@ class GlobalTimer : public CJS_Runtime::Observer {
   const int m_nType;  // 0:Interval; 1:TimeOut
   const uint32_t m_dwTimeOut;
   const CFX_WideString m_swJScript;
-  CJS_Runtime* m_pRuntime;
+  CJS_Runtime::ObservedPtr m_pRuntime;
   CPDFDoc_Environment* const m_pApp;
 };
 
@@ -75,7 +75,6 @@ GlobalTimer::GlobalTimer(app* pObj,
   CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
   m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
   (*GetGlobalTimerMap())[m_nTimerID] = this;
-  SetWatchedPtr(&m_pRuntime);
 }
 
 GlobalTimer::~GlobalTimer() {
