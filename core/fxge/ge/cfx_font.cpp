@@ -446,30 +446,27 @@ FX_BOOL CFX_Font::GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox) {
   return TRUE;
 }
 
-FX_BOOL CFX_Font::IsItalic() const {
+bool CFX_Font::IsItalic() const {
   if (!m_Face)
-    return FALSE;
+    return false;
 
-  FX_BOOL ret = FXFT_Is_Face_Italic(m_Face) == FXFT_STYLE_FLAG_ITALIC;
-  if (!ret) {
-    CFX_ByteString str(FXFT_Get_Face_Style_Name(m_Face));
-    str.MakeLower();
-    if (str.Find("italic") != -1)
-      ret = TRUE;
-  }
-  return ret;
+  if (FXFT_Is_Face_Italic(m_Face) == FXFT_STYLE_FLAG_ITALIC)
+    return true;
+  CFX_ByteString str(FXFT_Get_Face_Style_Name(m_Face));
+  str.MakeLower();
+  return str.Find("italic") != -1;
 }
 
-FX_BOOL CFX_Font::IsBold() const {
+bool CFX_Font::IsBold() const {
   if (!m_Face)
-    return FALSE;
+    return false;
   return FXFT_Is_Face_Bold(m_Face) == FXFT_STYLE_FLAG_BOLD;
 }
 
-FX_BOOL CFX_Font::IsFixedWidth() const {
+bool CFX_Font::IsFixedWidth() const {
   if (!m_Face)
-    return FALSE;
-  return FXFT_Is_Face_fixedwidth(m_Face);
+    return false;
+  return FXFT_Is_Face_fixedwidth(m_Face) != 0;
 }
 
 CFX_ByteString CFX_Font::GetPsName() const {

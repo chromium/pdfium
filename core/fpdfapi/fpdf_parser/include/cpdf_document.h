@@ -60,8 +60,6 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
 
   CPDF_DocRenderData* GetRenderData() const { return m_pDocRender.get(); }
 
-  FX_BOOL IsFormStream(uint32_t objnum, FX_BOOL& bForm) const;
-
   // |pFontDict| must not be null.
   CPDF_Font* LoadFont(CPDF_Dictionary* pFontDict);
   CPDF_ColorSpace* LoadColorSpace(CPDF_Object* pCSObj,
@@ -128,6 +126,8 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
 
  private:
   void LoadDocInternal();
+  size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
+  CPDF_Dictionary* GetPagesDict() const;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_

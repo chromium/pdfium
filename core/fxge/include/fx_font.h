@@ -117,9 +117,9 @@ class CFX_Font {
   int GetAscent() const;
   int GetDescent() const;
   FX_BOOL GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox);
-  FX_BOOL IsItalic() const;
-  FX_BOOL IsBold() const;
-  FX_BOOL IsFixedWidth() const;
+  bool IsItalic() const;
+  bool IsBold() const;
+  bool IsFixedWidth() const;
   FX_BOOL IsVertical() const { return m_bVertical; }
   CFX_ByteString GetPsName() const;
   CFX_ByteString GetFamilyName() const;
