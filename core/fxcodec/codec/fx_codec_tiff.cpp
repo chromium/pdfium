@@ -257,7 +257,7 @@ bool CCodec_TiffContext::IsSupport(const CFX_DIBitmap* pDIBitmap) const {
   if (TIFFIsTiled(m_tif_ctx))
     return false;
 
-  uint16_t photometric;
+  uint16_t photometric = 0;
   if (!TIFFGetField(m_tif_ctx, TIFFTAG_PHOTOMETRIC, &photometric))
     return false;
 
@@ -276,7 +276,7 @@ bool CCodec_TiffContext::IsSupport(const CFX_DIBitmap* pDIBitmap) const {
     default:
       return false;
   }
-  uint16_t planarconfig;
+  uint16_t planarconfig = 0;
   if (!TIFFGetFieldDefaulted(m_tif_ctx, TIFFTAG_PLANARCONFIG, &planarconfig))
     return false;
 
@@ -284,9 +284,9 @@ bool CCodec_TiffContext::IsSupport(const CFX_DIBitmap* pDIBitmap) const {
 }
 
 void CCodec_TiffContext::SetPalette(CFX_DIBitmap* pDIBitmap, uint16_t bps) {
-  uint16_t* red_orig;
-  uint16_t* green_orig;
-  uint16_t* blue_orig;
+  uint16_t* red_orig = nullptr;
+  uint16_t* green_orig = nullptr;
+  uint16_t* blue_orig = nullptr;
   TIFFGetField(m_tif_ctx, TIFFTAG_COLORMAP, &red_orig, &green_orig, &blue_orig);
   for (int32_t i = (1L << bps) - 1; i >= 0; i--) {
 #define CVT(x) ((uint16_t)((x) >> 8))
@@ -421,8 +421,8 @@ bool CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap) {
       return true;
     }
   }
-  uint16_t spp;
-  uint16_t bps;
+  uint16_t spp = 0;
+  uint16_t bps = 0;
   TIFFGetField(m_tif_ctx, TIFFTAG_SAMPLESPERPIXEL, &spp);
   TIFFGetField(m_tif_ctx, TIFFTAG_BITSPERSAMPLE, &bps);
   uint32_t bpp = bps * spp;
