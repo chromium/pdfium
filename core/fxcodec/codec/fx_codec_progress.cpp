@@ -334,7 +334,7 @@ FX_BOOL CCodec_ProgressiveDecoder::JpegReadMoreData(
   } else {
     uint32_t dwConsume = m_SrcSize - dwAvail;
     if (dwAvail) {
-      FXSYS_memcpy(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
+      FXSYS_memmove(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
     }
     if (dwSize > dwConsume) {
       dwSize = dwConsume;
@@ -607,7 +607,7 @@ FX_BOOL CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
   } else {
     uint32_t dwConsume = m_SrcSize - dwAvail;
     if (dwAvail) {
-      FXSYS_memcpy(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
+      FXSYS_memmove(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
     }
     if (dwSize > dwConsume) {
       dwSize = dwConsume;
@@ -787,7 +787,7 @@ void CCodec_ProgressiveDecoder::GifReadScanlineCallback(void* pModule,
       uint8_t* scan_des =
           (uint8_t*)pDIBitmap->GetScanline(cur_row) + des_ScanOffet;
       uint32_t size = pCodec->m_sizeX * des_Bpp;
-      FXSYS_memcpy(scan_des, scan_src, size);
+      FXSYS_memmove(scan_des, scan_src, size);
     }
   }
   if (bLastPass)
@@ -897,7 +897,7 @@ FX_BOOL CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
   } else {
     uint32_t dwConsume = m_SrcSize - dwAvail;
     if (dwAvail) {
-      FXSYS_memcpy(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
+      FXSYS_memmove(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
     }
     if (dwSize > dwConsume) {
       dwSize = dwConsume;
@@ -972,7 +972,7 @@ void CCodec_ProgressiveDecoder::ResampleVertBT(CFX_DIBitmap* pDeviceBitmap,
       uint8_t* scan_des =
           (uint8_t*)pDeviceBitmap->GetScanline(des_row) + des_ScanOffet;
       uint32_t size = m_sizeX * des_Bpp;
-      FXSYS_memcpy(scan_des, scan_src, size);
+      FXSYS_memmove(scan_des, scan_src, size);
     }
     return;
   }
@@ -1708,7 +1708,7 @@ void CCodec_ProgressiveDecoder::ResampleVert(CFX_DIBitmap* pDeviceBitmap,
           uint8_t* scan_des =
               (uint8_t*)pDeviceBitmap->GetScanline(des_row) + des_ScanOffet;
           uint32_t size = m_sizeX * des_Bpp;
-          FXSYS_memcpy(scan_des, scan_src, size);
+          FXSYS_memmove(scan_des, scan_src, size);
         }
       }
       return;
@@ -1783,7 +1783,7 @@ void CCodec_ProgressiveDecoder::ResampleVert(CFX_DIBitmap* pDeviceBitmap,
         uint8_t* scan_des =
             (uint8_t*)pDeviceBitmap->GetScanline(des_row) + des_ScanOffet;
         uint32_t size = m_sizeX * des_Bpp;
-        FXSYS_memcpy(scan_des, scan_src, size);
+        FXSYS_memmove(scan_des, scan_src, size);
       }
     }
     return;
@@ -1799,7 +1799,7 @@ void CCodec_ProgressiveDecoder::ResampleVert(CFX_DIBitmap* pDeviceBitmap,
       uint8_t* scan_des =
           (uint8_t*)pDeviceBitmap->GetScanline(des_row + i) + des_ScanOffet;
       uint32_t size = m_sizeX * des_Bpp;
-      FXSYS_memcpy(scan_des, scan_src, size);
+      FXSYS_memmove(scan_des, scan_src, size);
     }
   }
 }
