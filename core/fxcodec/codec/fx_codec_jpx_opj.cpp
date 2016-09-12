@@ -231,6 +231,9 @@ static void sycc422_to_rgb(opj_image_t* img) {
     return;
 
   int prec = img->comps[0].prec;
+  if (prec <= 0 || prec >= 32)
+    return;
+
   int offset = 1 << (prec - 1);
   int upb = (1 << prec) - 1;
 
