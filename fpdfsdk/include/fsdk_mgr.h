@@ -14,6 +14,7 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
+#include "core/fxcrt/include/cfx_observable.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
@@ -444,7 +445,7 @@ class CPDFDoc_Environment final {
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
 };
 
-class CPDFSDK_Document {
+class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
  public:
   static CPDFSDK_Document* FromFPDFFormHandle(FPDF_FORMHANDLE hHandle);
 

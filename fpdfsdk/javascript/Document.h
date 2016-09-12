@@ -13,6 +13,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 
 class PrintParamsObj : public CJS_EmbedObj {
@@ -270,7 +271,7 @@ class Document : public CJS_EmbedObj {
   FX_BOOL URL(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
   void AttachDoc(CPDFSDK_Document* pDoc);
-  CPDFSDK_Document* GetReaderDoc();
+  CPDFSDK_Document* GetReaderDoc() const { return m_pDocument.Get(); }
   void AddDelayData(CJS_DelayData* pData);
   void DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex);
   CJS_Document* GetCJSDoc() const;
@@ -285,7 +286,7 @@ class Document : public CJS_EmbedObj {
                               const CFX_ByteString& propName,
                               CFX_WideString& sError);
 
-  CPDFSDK_Document* m_pDocument;
+  CPDFSDK_Document::ObservedPtr m_pDocument;
   CFX_WideString m_cwBaseURL;
   std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
   std::list<std::unique_ptr<IconElement>> m_IconList;
