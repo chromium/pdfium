@@ -20,6 +20,16 @@ struct PWL_SCROLL_INFO {
         fPlateWidth(0.0f),
         fBigStep(0.0f),
         fSmallStep(0.0f) {}
+
+  bool operator==(const PWL_SCROLL_INFO& that) const {
+    return fContentMin == that.fContentMin && fContentMax == that.fContentMax &&
+           fPlateWidth == that.fPlateWidth && fBigStep == that.fBigStep &&
+           fSmallStep == that.fSmallStep;
+  }
+  bool operator!=(const PWL_SCROLL_INFO& that) const {
+    return !(*this == that);
+  }
+
   FX_FLOAT fContentMin;
   FX_FLOAT fContentMax;
   FX_FLOAT fPlateWidth;
@@ -58,17 +68,33 @@ struct PWL_FLOATRANGE {
  public:
   PWL_FLOATRANGE();
   PWL_FLOATRANGE(FX_FLOAT min, FX_FLOAT max);
+
+  bool operator==(const PWL_FLOATRANGE& that) const {
+    return fMin == that.fMin && fMax == that.fMax;
+  }
+  bool operator!=(const PWL_FLOATRANGE& that) const { return !(*this == that); }
+
   void Default();
   void Set(FX_FLOAT min, FX_FLOAT max);
   FX_BOOL In(FX_FLOAT x) const;
   FX_FLOAT GetWidth() const;
 
-  FX_FLOAT fMin, fMax;
+  FX_FLOAT fMin;
+  FX_FLOAT fMax;
 };
 
 struct PWL_SCROLL_PRIVATEDATA {
  public:
   PWL_SCROLL_PRIVATEDATA();
+
+  bool operator==(const PWL_SCROLL_PRIVATEDATA& that) const {
+    return ScrollRange == that.ScrollRange &&
+           fClientWidth == that.fClientWidth && fScrollPos == that.fScrollPos &&
+           fBigStep == that.fBigStep && fSmallStep == that.fSmallStep;
+  }
+  bool operator!=(const PWL_SCROLL_PRIVATEDATA& that) const {
+    return !(*this == that);
+  }
 
   void Default();
   void SetScrollRange(FX_FLOAT min, FX_FLOAT max);

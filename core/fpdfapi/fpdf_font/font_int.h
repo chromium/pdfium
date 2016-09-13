@@ -139,7 +139,7 @@ class CPDF_CMap {
   ~CPDF_CMap();
 
   FX_BOOL LoadPredefined(CPDF_CMapManager* pMgr,
-                         const FX_CHAR* name,
+                         const CFX_ByteString& name,
                          FX_BOOL bPromptCJK);
   FX_BOOL LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
 

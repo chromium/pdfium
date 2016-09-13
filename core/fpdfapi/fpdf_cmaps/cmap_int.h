@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
 #define CORE_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
 
+#include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
 struct FXCMAP_CMap {
@@ -22,7 +23,7 @@ struct FXCMAP_CMap {
   int m_UseOffset;
 };
 
-void FPDFAPI_FindEmbeddedCMap(const char* name,
+void FPDFAPI_FindEmbeddedCMap(const CFX_ByteString& name,
                               int charset,
                               int coding,
                               const FXCMAP_CMap*& pMap);

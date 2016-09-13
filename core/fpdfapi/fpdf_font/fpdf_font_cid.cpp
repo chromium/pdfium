@@ -315,10 +315,9 @@ CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
 }
 
 void CPDF_CMapManager::ReloadAll() {
-  for (const auto& pair : m_CMaps) {
-    CPDF_CMap* pCMap = pair.second;
-    pCMap->LoadPredefined(this, pair.first.c_str(), FALSE);
-  }
+  for (const auto& pair : m_CMaps)
+    pair.second->LoadPredefined(this, pair.first, FALSE);
+
   for (size_t i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
     if (CPDF_CID2UnicodeMap* pMap = m_CID2UnicodeMaps[i]) {
       pMap->Load(this, CIDSetFromSizeT(i), FALSE);
@@ -528,12 +527,12 @@ FX_BOOL CPDF_CMap::IsVertWriting() const {
 }
 
 FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
-                                  const FX_CHAR* pName,
+                                  const CFX_ByteString& bsName,
                                   FX_BOOL bPromptCJK) {
-  m_PredefinedCMap = pName;
+  m_PredefinedCMap = bsName;
   if (m_PredefinedCMap == "Identity-H" || m_PredefinedCMap == "Identity-V") {
     m_Coding = CIDCODING_CID;
-    m_bVertical = pName[9] == 'V';
+    m_bVertical = bsName[9] == 'V';
     m_bLoaded = TRUE;
     return TRUE;
   }
@@ -564,13 +563,14 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
       }
     }
   }
-  FPDFAPI_FindEmbeddedCMap(pName, m_Charset, m_Coding, m_pEmbedMap);
-  if (m_pEmbedMap) {
-    m_bLoaded = TRUE;
-    return TRUE;
-  }
-  return FALSE;
+  FPDFAPI_FindEmbeddedCMap(bsName, m_Charset, m_Coding, m_pEmbedMap);
+  if (!m_pEmbedMap)
+    return FALSE;
+
+  m_bLoaded = TRUE;
+  return TRUE;
 }
+
 FX_BOOL CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
   m_pMapping = FX_Alloc(uint16_t, 65536);
   CPDF_CMapParser parser;

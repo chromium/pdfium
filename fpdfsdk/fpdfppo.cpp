@@ -223,17 +223,12 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
         const CFX_ByteString& key = it->first;
         CPDF_Object* pNextObj = it->second;
         ++it;
-        if (!FXSYS_strcmp(key.c_str(), "Parent") ||
-            !FXSYS_strcmp(key.c_str(), "Prev") ||
-            !FXSYS_strcmp(key.c_str(), "First")) {
+        if (key == "Parent" || key == "Prev" || key == "First")
           continue;
-        }
-        if (pNextObj) {
-          if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))
-            pDict->RemoveAt(key);
-        } else {
+        if (!pNextObj)
           return FALSE;
-        }
+        if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))
+          pDict->RemoveAt(key);
       }
       break;
     }

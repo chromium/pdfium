@@ -818,15 +818,14 @@ void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
       }
       break;
     case PNM_SETSCROLLINFO: {
-      if (PWL_SCROLL_INFO* pInfo = (PWL_SCROLL_INFO*)lParam) {
-        if (FXSYS_memcmp(&m_OriginInfo, pInfo, sizeof(PWL_SCROLL_INFO)) != 0) {
-          m_OriginInfo = *pInfo;
-          FX_FLOAT fMax =
-              pInfo->fContentMax - pInfo->fContentMin - pInfo->fPlateWidth;
-          fMax = fMax > 0.0f ? fMax : 0.0f;
-          SetScrollRange(0, fMax, pInfo->fPlateWidth);
-          SetScrollStep(pInfo->fBigStep, pInfo->fSmallStep);
-        }
+      PWL_SCROLL_INFO* pInfo = reinterpret_cast<PWL_SCROLL_INFO*>(lParam);
+      if (pInfo && *pInfo != m_OriginInfo) {
+        m_OriginInfo = *pInfo;
+        FX_FLOAT fMax =
+            pInfo->fContentMax - pInfo->fContentMin - pInfo->fPlateWidth;
+        fMax = fMax > 0.0f ? fMax : 0.0f;
+        SetScrollRange(0, fMax, pInfo->fPlateWidth);
+        SetScrollStep(pInfo->fBigStep, pInfo->fSmallStep);
       }
     } break;
     case PNM_SETSCROLLPOS: {
@@ -1183,13 +1182,12 @@ void CPWL_ScrollBar::CreateChildWnd(const PWL_CREATEPARAM& cp) {
 
 void CPWL_ScrollBar::TimerProc() {
   PWL_SCROLL_PRIVATEDATA sTemp = m_sData;
-
   if (m_bMinOrMax)
     m_sData.SubSmall();
   else
     m_sData.AddSmall();
 
-  if (FXSYS_memcmp(&m_sData, &sTemp, sizeof(PWL_SCROLL_PRIVATEDATA)) != 0) {
+  if (sTemp != m_sData) {
     MovePosButton(TRUE);
     NotifyScrollWindow();
   }

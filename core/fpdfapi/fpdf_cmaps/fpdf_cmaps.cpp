@@ -53,7 +53,7 @@ static int compareDWordSingle(const void* p1, const void* p2) {
 
 };  // extern "C"
 
-void FPDFAPI_FindEmbeddedCMap(const char* name,
+void FPDFAPI_FindEmbeddedCMap(const CFX_ByteString& bsName,
                               int charset,
                               int coding,
                               const FXCMAP_CMap*& pMap) {
@@ -64,10 +64,10 @@ void FPDFAPI_FindEmbeddedCMap(const char* name,
       pFontGlobals->m_EmbeddedCharsets[charset].m_pMapList;
   for (uint32_t i = 0; i < pFontGlobals->m_EmbeddedCharsets[charset].m_Count;
        i++) {
-    if (FXSYS_strcmp(name, pCMaps[i].m_Name))
-      continue;
-    pMap = &pCMaps[i];
-    break;
+    if (bsName == pCMaps[i].m_Name) {
+      pMap = &pCMaps[i];
+      break;
+    }
   }
 }
 
