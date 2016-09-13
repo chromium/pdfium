@@ -14,19 +14,19 @@ class CPDF_InterForm;
 
 class IPDF_FormNotify {
  public:
-  virtual ~IPDF_FormNotify();
+  virtual ~IPDF_FormNotify() {}
 
   virtual int BeforeValueChange(CPDF_FormField* pField,
-                                const CFX_WideString& csValue);
-  virtual void AfterValueChange(CPDF_FormField* pField);
+                                const CFX_WideString& csValue) = 0;
+  virtual void AfterValueChange(CPDF_FormField* pField) = 0;
   virtual int BeforeSelectionChange(CPDF_FormField* pField,
-                                    const CFX_WideString& csValue);
-  virtual void AfterSelectionChange(CPDF_FormField* pField);
-  virtual void AfterCheckedStatusChange(CPDF_FormField* pField);
-  virtual int BeforeFormReset(CPDF_InterForm* pForm);
-  virtual void AfterFormReset(CPDF_InterForm* pForm);
-  virtual int BeforeFormImportData(CPDF_InterForm* pForm);
-  virtual void AfterFormImportData(CPDF_InterForm* pForm);
+                                    const CFX_WideString& csValue) = 0;
+  virtual void AfterSelectionChange(CPDF_FormField* pField) = 0;
+  virtual void AfterCheckedStatusChange(CPDF_FormField* pField) = 0;
+  virtual int BeforeFormReset(CPDF_InterForm* pForm) = 0;
+  virtual void AfterFormReset(CPDF_InterForm* pForm) = 0;
+  virtual int BeforeFormImportData(CPDF_InterForm* pForm) = 0;
+  virtual void AfterFormImportData(CPDF_InterForm* pForm) = 0;
 };
 
 #endif  // CORE_FPDFDOC_INCLUDE_IPDF_FORMNOTIFY_H_

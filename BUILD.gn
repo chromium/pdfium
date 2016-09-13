@@ -312,7 +312,6 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/include/fpdf_tagged.h",
     "core/fpdfdoc/include/ipdf_formnotify.h",
     "core/fpdfdoc/include/ipvt_fontmap.h",
-    "core/fpdfdoc/ipdf_formnotify.cpp",
     "core/fpdfdoc/tagged_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
