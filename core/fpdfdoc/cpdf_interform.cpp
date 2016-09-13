@@ -634,11 +634,8 @@ CFieldTree::Node* CFieldTree::Lookup(Node* pParent,
 
   for (int i = 0; i < pParent->children.GetSize(); i++) {
     Node* pNode = pParent->children[i];
-    if (pNode->short_name.GetLength() == short_name.GetLength() &&
-        FXSYS_memcmp(pNode->short_name.c_str(), short_name.c_str(),
-                     short_name.GetLength() * sizeof(FX_WCHAR)) == 0) {
+    if (pNode->short_name == short_name)
       return pNode;
-    }
   }
   return nullptr;
 }
