@@ -11,8 +11,9 @@
 
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fxcrt/include/fx_ext.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"

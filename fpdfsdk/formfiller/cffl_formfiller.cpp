@@ -8,10 +8,12 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fxge/include/cfx_renderdevice.h"
-#include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
+#include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_common.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 
 #define GetRed(rgb) ((uint8_t)(rgb))

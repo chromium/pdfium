@@ -15,7 +15,7 @@
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_baannot.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"

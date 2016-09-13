@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/javascript/Annot.h"
 #include "fpdfsdk/javascript/Consts.h"
 #include "fpdfsdk/javascript/Document.h"
@@ -28,6 +28,7 @@
 #include "fpdfsdk/javascript/global.h"
 #include "fpdfsdk/javascript/report.h"
 #include "fpdfsdk/javascript/util.h"
+#include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA

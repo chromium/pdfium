@@ -13,10 +13,12 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"

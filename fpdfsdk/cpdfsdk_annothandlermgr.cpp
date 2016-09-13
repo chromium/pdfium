@@ -8,12 +8,14 @@
 
 #include "core/fpdfdoc/include/cpdf_annot.h"
 #include "fpdfsdk/include/cba_annotiterator.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_baannot.h"
 #include "fpdfsdk/include/cpdfsdk_baannothandler.h"
 #include "fpdfsdk/include/cpdfsdk_datetime.h"
+#include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widgethandler.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/include/cpdfsdk_xfawidgethandler.h"

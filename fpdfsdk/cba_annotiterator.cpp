@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 
 // static
 bool CBA_AnnotIterator::CompareByLeftAscending(const CPDFSDK_Annot* p1,

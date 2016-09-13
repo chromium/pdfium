@@ -7,9 +7,9 @@
 #include "fpdfsdk/formfiller/cffl_textfield.h"
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_common.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 
 CFFL_TextField::CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
     : CFFL_FormFiller(pApp, pAnnot) {}

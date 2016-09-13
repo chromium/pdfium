@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 
 CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
                                              bool bReverse)

@@ -6,7 +6,6 @@
 
 #include "fpdfsdk/javascript/JS_Object.h"
 
-#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/cjs_context.h"
 

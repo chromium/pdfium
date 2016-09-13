@@ -8,11 +8,15 @@
 
 #include <memory>
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 
 namespace {
 

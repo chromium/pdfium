@@ -18,9 +18,11 @@
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 
 #define FFL_MAXLISTBOXHEIGHT 140.0f

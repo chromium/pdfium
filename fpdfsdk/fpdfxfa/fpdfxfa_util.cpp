@@ -8,8 +8,8 @@
 
 #include <vector>
 
+#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 
 std::vector<CFWL_TimerInfo*>* CXFA_FWLAdapterTimerMgr::s_TimerArray = nullptr;
 

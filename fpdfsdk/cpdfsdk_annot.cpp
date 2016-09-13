@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA

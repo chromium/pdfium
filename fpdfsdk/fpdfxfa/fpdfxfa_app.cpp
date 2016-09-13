@@ -7,8 +7,8 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
 
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
+#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/fsdk_mgr.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"

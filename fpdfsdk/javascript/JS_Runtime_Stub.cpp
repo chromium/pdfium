@@ -6,7 +6,6 @@
 
 #include <memory>
 
-#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/ijs_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 
