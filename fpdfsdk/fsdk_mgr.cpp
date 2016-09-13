@@ -299,7 +299,7 @@ CPDFSDK_PageView* CPDFSDK_Document::GetPageView(int nIndex) {
     return nullptr;
 
   auto it = m_pageMap.find(pTempPage);
-  return it->second;
+  return it != m_pageMap.end() ? it->second : nullptr;
 }
 
 void CPDFSDK_Document::ProcJavascriptFun() {
@@ -482,7 +482,7 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
       m_pSDKDoc(pSDKDoc),
       m_CaptureWidget(nullptr),
 #ifndef PDF_ENABLE_XFA
-      m_bTakeOverPage(FALSE),
+      m_bOwnsPage(false),
 #endif  // PDF_ENABLE_XFA
       m_bEnterWidget(FALSE),
       m_bExitWidget(FALSE),
@@ -505,6 +505,13 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
 }
 
 CPDFSDK_PageView::~CPDFSDK_PageView() {
+#ifndef PDF_ENABLE_XFA
+  // The call to |ReleaseAnnot| can cause the page pointed to by |m_page| to
+  // be freed, which will cause issues if we try to cleanup the pageview pointer
+  // in |m_page|. So, reset the pageview pointer before doing anything else.
+  m_page->SetView(nullptr);
+#endif  // PDF_ENABLE_XFA
+
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
   for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray)
@@ -512,11 +519,10 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
 
   m_fxAnnotArray.clear();
   m_pAnnotList.reset();
+
 #ifndef PDF_ENABLE_XFA
-  m_page->SetView(nullptr);
-  if (m_bTakeOverPage) {
+  if (m_bOwnsPage)
     delete m_page;
-  }
 #endif  // PDF_ENABLE_XFA
 }
 

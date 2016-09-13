@@ -260,11 +260,12 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument,
                             FX_BOOL bChangeMark,
                             FX_BOOL bResetAP,
                             FX_BOOL bRefresh) {
-  std::vector<CPDFSDK_Widget*> widgets;
   CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
-  pInterForm->GetWidgets(pFormField, &widgets);
 
   if (bResetAP) {
+    std::vector<CPDFSDK_Widget*> widgets;
+    pInterForm->GetWidgets(pFormField, &widgets);
+
     int nFieldType = pFormField->GetFieldType();
     if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_TEXTFIELD) {
       for (CPDFSDK_Widget* pWidget : widgets) {
@@ -284,6 +285,12 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument,
   }
 
   if (bRefresh) {
+    // Refresh the widget list. The calls in |bResetAP| may have caused widgets
+    // to be removed from the list. We need to call |GetWidgets| again to be
+    // sure none of the widgets have been deleted.
+    std::vector<CPDFSDK_Widget*> widgets;
+    pInterForm->GetWidgets(pFormField, &widgets);
+
     for (CPDFSDK_Widget* pWidget : widgets) {
       CPDFSDK_Document* pDoc = pWidget->GetInterForm()->GetDocument();
       pDoc->UpdateAllViews(nullptr, pWidget);
