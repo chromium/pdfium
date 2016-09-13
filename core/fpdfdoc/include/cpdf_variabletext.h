@@ -108,7 +108,7 @@ class CPDF_VariableText {
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
   void ResetAll();
-  void SetText(const FX_WCHAR* text);
+  void SetText(const CFX_WideString& text);
   CPVT_WordPlace InsertWord(const CPVT_WordPlace& place,
                             uint16_t word,
                             int32_t charset,

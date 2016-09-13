@@ -234,7 +234,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
         vt.SetLimitChar(dwMaxLen);
 
       vt.Initialize();
-      vt.SetText(swValue.c_str());
+      vt.SetText(swValue);
       vt.RearrangeAll();
       CFX_FloatRect rcContent = vt.GetContentRect();
       CFX_FloatPoint ptOffset(0.0f, 0.0f);
@@ -284,7 +284,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
         vt.SetFontSize(fFontSize);
 
       vt.Initialize();
-      vt.SetText(swValue.c_str());
+      vt.SetText(swValue);
       vt.RearrangeAll();
       CFX_FloatRect rcContent = vt.GetContentRect();
       CFX_FloatPoint ptOffset =
@@ -374,7 +374,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
             vt.SetFontSize(IsFloatZero(fFontSize) ? 12.0f : fFontSize);
 
             vt.Initialize();
-            vt.SetText(swItem.c_str());
+            vt.SetText(swItem);
             vt.RearrangeAll();
             FX_FLOAT fItemHeight = vt.GetContentRect().Height();
             if (bSelected) {
@@ -516,7 +516,7 @@ CFX_ByteString GetPopupContentsString(CPDF_Document* pDoc,
   vt.SetMultiLine(TRUE);
 
   vt.Initialize();
-  vt.SetText(swValue.c_str());
+  vt.SetText(swValue);
   vt.RearrangeAll();
   CFX_FloatPoint ptOffset(3.0f, -3.0f);
   CFX_ByteString sContent = CPVT_GenerateAP::GenerateEditAP(

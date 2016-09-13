@@ -65,11 +65,11 @@ CPWL_Wnd* CFFL_ComboBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
     swText = m_pWidget->GetOptionLabel(nCurSel);
 
   for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++) {
-    pWnd->AddString(m_pWidget->GetOptionLabel(i).c_str());
+    pWnd->AddString(m_pWidget->GetOptionLabel(i));
   }
 
   pWnd->SetSelect(nCurSel);
-  pWnd->SetText(swText.c_str());
+  pWnd->SetText(swText);
   return pWnd;
 }
 
@@ -172,7 +172,7 @@ void CFFL_ComboBox::SetActionData(CPDFSDK_PageView* pPageView,
               static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, FALSE))) {
         if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
           pEdit->SetSel(fa.nSelStart, fa.nSelEnd);
-          pEdit->ReplaceSel(fa.sChange.c_str());
+          pEdit->ReplaceSel(fa.sChange);
         }
       }
       break;
@@ -219,7 +219,7 @@ void CFFL_ComboBox::RestoreState(CPDFSDK_PageView* pPageView) {
       pComboBox->SetSelect(m_State.nIndex);
     } else {
       if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
-        pEdit->SetText(m_State.sValue.c_str());
+        pEdit->SetText(m_State.sValue);
         pEdit->SetSel(m_State.nStart, m_State.nEnd);
       }
     }

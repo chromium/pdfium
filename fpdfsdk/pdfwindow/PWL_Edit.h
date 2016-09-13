@@ -85,8 +85,8 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
   void CutText();
 
-  void SetText(const FX_WCHAR* csText);
-  void ReplaceSel(const FX_WCHAR* csText);
+  void SetText(const CFX_WideString& csText);
+  void ReplaceSel(const CFX_WideString& csText);
 
   CFX_ByteString GetTextAppearanceStream(const CFX_FloatPoint& ptOffset) const;
   CFX_ByteString GetCaretAppearanceStream(const CFX_FloatPoint& ptOffset) const;

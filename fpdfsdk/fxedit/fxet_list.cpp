@@ -49,7 +49,7 @@ void CFX_ListItem::SetSelect(FX_BOOL bSelected) {
   m_bSelected = bSelected;
 }
 
-void CFX_ListItem::SetText(const FX_WCHAR* text) {
+void CFX_ListItem::SetText(const CFX_WideString& text) {
   m_pEdit->SetText(text);
 }
 
@@ -396,7 +396,7 @@ int32_t CFX_ListCtrl::GetSelect() const {
   return m_nSelItem;
 }
 
-void CFX_ListCtrl::AddString(const FX_WCHAR* str) {
+void CFX_ListCtrl::AddString(const CFX_WideString& str) {
   AddItem(str);
   ReArrange(GetCount() - 1);
 }
@@ -677,7 +677,7 @@ void CFX_ListCtrl::SetFontSize(FX_FLOAT fFontSize) {
   m_fFontSize = fFontSize;
 }
 
-void CFX_ListCtrl::AddItem(const FX_WCHAR* str) {
+void CFX_ListCtrl::AddItem(const CFX_WideString& str) {
   CFX_ListItem* pListItem = new CFX_ListItem();
   pListItem->SetFontMap(m_pFontMap);
   pListItem->SetFontSize(m_fFontSize);

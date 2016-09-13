@@ -69,9 +69,8 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void SetFillerNotify(IPWL_Filler_Notify* pNotify);
 
   CFX_WideString GetText() const;
-  void SetText(const FX_WCHAR* text);
-
-  void AddString(const FX_WCHAR* str);
+  void SetText(const CFX_WideString& text);
+  void AddString(const CFX_WideString& str);
   int32_t GetSelect() const;
   void SetSelect(int32_t nItemIndex);
 

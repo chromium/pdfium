@@ -464,8 +464,8 @@ FX_FLOAT CPWL_EditCtrl::GetCaretFontSize() const {
   return fFontSize;
 }
 
-void CPWL_EditCtrl::SetText(const FX_WCHAR* csText) {
-  m_pEdit->SetText(csText);
+void CPWL_EditCtrl::SetText(const CFX_WideString& wsText) {
+  m_pEdit->SetText(wsText);
 }
 
 void CPWL_EditCtrl::CopyText() {}
@@ -476,9 +476,9 @@ void CPWL_EditCtrl::CutText() {}
 
 void CPWL_EditCtrl::ShowVScrollBar(FX_BOOL bShow) {}
 
-void CPWL_EditCtrl::InsertText(const FX_WCHAR* csText) {
+void CPWL_EditCtrl::InsertText(const CFX_WideString& wsText) {
   if (!IsReadOnly())
-    m_pEdit->InsertText(csText, DEFAULT_CHARSET);
+    m_pEdit->InsertText(wsText, DEFAULT_CHARSET);
 }
 
 void CPWL_EditCtrl::InsertWord(uint16_t word, int32_t nCharset) {

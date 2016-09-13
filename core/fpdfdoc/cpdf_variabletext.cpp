@@ -394,9 +394,8 @@ CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
   return ClearLeftWord(AdjustLineHeader(place, TRUE));
 }
 
-void CPDF_VariableText::SetText(const FX_WCHAR* text) {
+void CPDF_VariableText::SetText(const CFX_WideString& swText) {
   DeleteWords(CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));
-  CFX_WideString swText = text;
   CPVT_WordPlace wp(0, 0, -1);
   CPVT_SectionInfo secinfo;
   if (CSection* pSection = m_SectionArray.GetAt(0))

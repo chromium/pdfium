@@ -221,12 +221,12 @@ CFX_WideString CPWL_ComboBox::GetText() const {
   return CFX_WideString();
 }
 
-void CPWL_ComboBox::SetText(const FX_WCHAR* text) {
+void CPWL_ComboBox::SetText(const CFX_WideString& text) {
   if (m_pEdit)
     m_pEdit->SetText(text);
 }
 
-void CPWL_ComboBox::AddString(const FX_WCHAR* str) {
+void CPWL_ComboBox::AddString(const CFX_WideString& str) {
   if (m_pList)
     m_pList->AddString(str);
 }
@@ -239,30 +239,26 @@ void CPWL_ComboBox::SetSelect(int32_t nItemIndex) {
   if (m_pList)
     m_pList->Select(nItemIndex);
 
-  m_pEdit->SetText(m_pList->GetText().c_str());
-
+  m_pEdit->SetText(m_pList->GetText());
   m_nSelectItem = nItemIndex;
 }
 
 void CPWL_ComboBox::SetEditSel(int32_t nStartChar, int32_t nEndChar) {
-  if (m_pEdit) {
+  if (m_pEdit)
     m_pEdit->SetSel(nStartChar, nEndChar);
-  }
 }
 
 void CPWL_ComboBox::GetEditSel(int32_t& nStartChar, int32_t& nEndChar) const {
   nStartChar = -1;
   nEndChar = -1;
 
-  if (m_pEdit) {
+  if (m_pEdit)
     m_pEdit->GetSel(nStartChar, nEndChar);
-  }
 }
 
 void CPWL_ComboBox::Clear() {
-  if (m_pEdit) {
+  if (m_pEdit)
     m_pEdit->Clear();
-  }
 }
 
 void CPWL_ComboBox::CreateChildWnd(const PWL_CREATEPARAM& cp) {
@@ -619,11 +615,9 @@ FX_BOOL CPWL_ComboBox::IsPopup() const {
 }
 
 void CPWL_ComboBox::SetSelectText() {
-  CFX_WideString swText = m_pList->GetText();
   m_pEdit->SelectAll();
-  m_pEdit->ReplaceSel(m_pList->GetText().c_str());
+  m_pEdit->ReplaceSel(m_pList->GetText());
   m_pEdit->SelectAll();
-
   m_nSelectItem = m_pList->GetCurSel();
 }
 

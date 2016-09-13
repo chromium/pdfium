@@ -105,7 +105,7 @@ class CFX_ListItem final {
 
   void SetRect(const CLST_Rect& rect);
   void SetSelect(FX_BOOL bSelected);
-  void SetText(const FX_WCHAR* text);
+  void SetText(const CFX_WideString& text);
   void SetFontSize(FX_FLOAT fFontSize);
   CFX_WideString GetText() const;
 
@@ -243,7 +243,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   int32_t GetTopItem() const;
   CFX_FloatRect GetContentRect() const;
   int32_t GetItemIndex(const CFX_FloatPoint& point) const;
-  void AddString(const FX_WCHAR* str);
+  void AddString(const CFX_WideString& str);
   void SetTopItem(int32_t nIndex);
   void Select(int32_t nItemIndex);
   void SetCaret(int32_t nItemIndex);
@@ -281,7 +281,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   FX_BOOL IsItemVisible(int32_t nItemIndex) const;
   void SetScrollInfo();
   void SetScrollPosY(FX_FLOAT fy);
-  void AddItem(const FX_WCHAR* str);
+  void AddItem(const CFX_WideString& str);
   CFX_WideString GetItemText(int32_t nIndex) const;
   void SetItemSelect(int32_t nItemIndex, FX_BOOL bSelected);
   int32_t GetLastSelected() const;

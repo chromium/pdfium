@@ -38,12 +38,10 @@ CFX_ByteString CPWL_Edit::GetClassName() const {
 
 void CPWL_Edit::OnDestroy() {}
 
-void CPWL_Edit::SetText(const FX_WCHAR* csText) {
+void CPWL_Edit::SetText(const CFX_WideString& csText) {
   CFX_WideString swText = csText;
-
   if (HasFlag(PES_RICH)) {
     CFX_ByteString sValue = CFX_ByteString::FromUnicode(swText);
-
     if (CXML_Element* pXML =
             CXML_Element::Parse(sValue.c_str(), sValue.GetLength())) {
       int32_t nCount = pXML->CountChildren();
@@ -74,7 +72,7 @@ void CPWL_Edit::SetText(const FX_WCHAR* csText) {
     }
   }
 
-  m_pEdit->SetText(swText.c_str());
+  m_pEdit->SetText(swText);
 }
 
 void CPWL_Edit::RePosChildWnd() {
@@ -571,9 +569,9 @@ void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
   m_pEdit->SetLimitChar(nLimitChar);
 }
 
-void CPWL_Edit::ReplaceSel(const FX_WCHAR* csText) {
+void CPWL_Edit::ReplaceSel(const CFX_WideString& wsText) {
   m_pEdit->Clear();
-  m_pEdit->InsertText(csText, DEFAULT_CHARSET);
+  m_pEdit->InsertText(wsText, DEFAULT_CHARSET);
 }
 
 CFX_FloatRect CPWL_Edit::GetFocusRect() const {

@@ -52,7 +52,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   pWnd->SetFillerNotify(pIFormFiller);
 
   for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++)
-    pWnd->AddString(m_pWidget->GetOptionLabel(i).c_str());
+    pWnd->AddString(m_pWidget->GetOptionLabel(i));
 
   if (pWnd->HasFlag(PLBS_MULTIPLESEL)) {
     m_OriginSelections.clear();

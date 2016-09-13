@@ -1391,9 +1391,9 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   } else {
     int32_t nCurSel = pField->GetSelectedIndex(0);
     if (nCurSel < 0)
-      pEdit->SetText(pField->GetValue().c_str());
+      pEdit->SetText(pField->GetValue());
     else
-      pEdit->SetText(pField->GetOptionLabel(nCurSel).c_str());
+      pEdit->SetText(pField->GetOptionLabel(nCurSel));
   }
 
   CFX_FloatRect rcContent = pEdit->GetContentRect();
@@ -1462,7 +1462,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
       }
     }
 
-    pEdit->SetText(pField->GetOptionLabel(i).c_str());
+    pEdit->SetText(pField->GetOptionLabel(i));
 
     CFX_FloatRect rcContent = pEdit->GetContentRect();
     FX_FLOAT fItemHeight = rcContent.Height();
@@ -1578,14 +1578,9 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
     pEdit->SetFontSize(fFontSize);
 
   pEdit->Initialize();
-
-  if (sValue)
-    pEdit->SetText(*sValue);
-  else
-    pEdit->SetText(pField->GetValue().c_str());
+  pEdit->SetText(sValue ? *sValue : pField->GetValue());
 
   CFX_FloatRect rcContent = pEdit->GetContentRect();
-
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(
       pEdit.get(), CFX_FloatPoint(0.0f, 0.0f), nullptr, !bCharArray, subWord);
 

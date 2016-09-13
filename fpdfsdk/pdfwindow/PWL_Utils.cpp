@@ -448,7 +448,7 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
     pEdit->SetFontSize(fFontSize);
 
   pEdit->Initialize();
-  pEdit->SetText(sText.c_str());
+  pEdit->SetText(sText);
 
   CFX_ByteString sEdit =
       CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_FloatPoint(0.0f, 0.0f));
@@ -480,7 +480,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
     pEdit->SetFontSize(fFontSize);
 
   pEdit->Initialize();
-  pEdit->SetText(sLabel.c_str());
+  pEdit->SetText(sLabel);
 
   CFX_FloatRect rcLabelContent = pEdit->GetContentRect();
   CPWL_Icon Icon;

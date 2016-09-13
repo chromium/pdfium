@@ -105,8 +105,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void IOnInvalidateRect(CFX_FloatRect* pRect);
 
  protected:
-  void InsertText(const FX_WCHAR* csText);
-  void SetText(const FX_WCHAR* csText);
+  void InsertText(const CFX_WideString& wsText);
+  void SetText(const CFX_WideString& wsText);
   void CopyText();
   void PasteText();
   void CutText();
