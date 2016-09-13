@@ -35,17 +35,6 @@ class CXFA_FFWidgetHandler;
 
 class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
-  class Observer {
-   public:
-    explicit Observer(CPDFSDK_Widget** pWatchedPtr);
-    ~Observer();
-
-    void OnWidgetDestroyed();
-
-   private:
-    CPDFSDK_Widget** m_pWatchedPtr;
-  };
-
 #ifdef PDF_ENABLE_XFA
   CXFA_FFWidget* GetMixXFAWidget() const;
   CXFA_FFWidget* GetGroupMixXFAWidget();
@@ -74,9 +63,6 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
                  CPDFSDK_PageView* pPageView,
                  CPDFSDK_InterForm* pInterForm);
   ~CPDFSDK_Widget() override;
-
-  void AddObserver(Observer* observer);
-  void RemoveObserver(Observer* observer);
 
   CFX_ByteString GetSubType() const override;
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
@@ -180,7 +166,6 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   FX_BOOL m_bAppModified;
   int32_t m_nAppAge;
   int32_t m_nValueAge;
-  std::set<Observer*> m_Observers;
 
 #ifdef PDF_ENABLE_XFA
   mutable CXFA_FFWidget* m_hMixXFAWidget;

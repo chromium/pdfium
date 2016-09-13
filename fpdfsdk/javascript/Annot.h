@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_JAVASCRIPT_ANNOT_H_
 #define FPDFSDK_JAVASCRIPT_ANNOT_H_
 
+#include <memory>
+
 #include "fpdfsdk/include/cpdfsdk_baannot.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 
@@ -22,7 +24,8 @@ class Annot : public CJS_EmbedObj {
   void SetSDKAnnot(CPDFSDK_BAAnnot* annot);
 
  private:
-  CPDFSDK_BAAnnot* m_BAAnnot = nullptr;
+  CPDFSDK_Annot* m_pAnnot = nullptr;
+  std::unique_ptr<CPDFSDK_Annot::Observer> m_pObserver;
 };
 
 class CJS_Annot : public CJS_Object {
