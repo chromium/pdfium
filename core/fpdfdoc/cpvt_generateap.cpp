@@ -237,7 +237,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       vt.SetText(swValue);
       vt.RearrangeAll();
       CFX_FloatRect rcContent = vt.GetContentRect();
-      CFX_FloatPoint ptOffset(0.0f, 0.0f);
+      CFX_FloatPoint ptOffset;
       if (!bMultiLine) {
         ptOffset =
             CFX_FloatPoint(0.0f, (rcContent.Height() - rcBody.Height()) / 2.0f);
@@ -1083,13 +1083,12 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
   CFX_ByteTextBuf sEditStream;
   CFX_ByteTextBuf sLineStream;
   CFX_ByteTextBuf sWords;
-  CFX_FloatPoint ptOld(0.0f, 0.0f);
-  CFX_FloatPoint ptNew(0.0f, 0.0f);
+  CFX_FloatPoint ptOld;
+  CFX_FloatPoint ptNew;
   int32_t nCurFontIndex = -1;
+  CPVT_WordPlace oldplace;
 
   pIterator->SetAt(0);
-
-  CPVT_WordPlace oldplace;
   while (pIterator->NextWord()) {
     CPVT_WordPlace place = pIterator->GetAt();
     if (bContinuous) {
@@ -1110,7 +1109,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
           ptNew = CFX_FloatPoint(line.ptLine.x + ptOffset.x,
                                  line.ptLine.y + ptOffset.y);
         }
-        if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
+        if (ptNew != ptOld) {
           sLineStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
                       << " Td\n";
           ptOld = ptNew;
@@ -1135,7 +1134,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
       if (pIterator->GetWord(word)) {
         ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
                                word.ptWord.y + ptOffset.y);
-        if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
+        if (ptNew != ptOld) {
           sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
                       << " Td\n";
           ptOld = ptNew;

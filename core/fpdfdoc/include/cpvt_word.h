@@ -29,7 +29,6 @@ struct CPVT_Word {
 inline CPVT_Word::CPVT_Word()
     : Word(0),
       nCharset(0),
-      ptWord(0.0f, 0.0f),
       fAscent(0.0f),
       fDescent(0.0f),
       fWidth(0.0f),

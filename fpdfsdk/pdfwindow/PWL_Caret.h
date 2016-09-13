@@ -11,7 +11,7 @@
 
 struct PWL_CARET_INFO {
  public:
-  PWL_CARET_INFO() : bVisible(FALSE), ptHead(0, 0), ptFoot(0, 0) {}
+  PWL_CARET_INFO() : bVisible(FALSE) {}
 
   FX_BOOL bVisible;
   CFX_FloatPoint ptHead;

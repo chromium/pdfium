@@ -179,7 +179,13 @@ struct FX_RECT {
 // LBRT rectangles (y-axis runs upwards).
 class CFX_FloatPoint {
  public:
+  CFX_FloatPoint() : x(0.0f), y(0.0f) {}
   CFX_FloatPoint(FX_FLOAT xx, FX_FLOAT yy) : x(xx), y(yy) {}
+
+  bool operator==(const CFX_FloatPoint& that) const {
+    return x == that.x && y == that.y;
+  }
+  bool operator!=(const CFX_FloatPoint& that) const { return !(*this == that); }
 
   FX_FLOAT x;
   FX_FLOAT y;

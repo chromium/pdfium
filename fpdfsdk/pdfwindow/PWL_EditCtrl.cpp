@@ -328,11 +328,10 @@ CFX_FloatRect CPWL_EditCtrl::GetContentRect() const {
 }
 
 void CPWL_EditCtrl::SetEditCaret(FX_BOOL bVisible) {
-  CFX_FloatPoint ptHead(0, 0), ptFoot(0, 0);
-
-  if (bVisible) {
+  CFX_FloatPoint ptHead;
+  CFX_FloatPoint ptFoot;
+  if (bVisible)
     GetCaretInfo(ptHead, ptFoot);
-  }
 
   CPVT_WordPlace wpTemp = m_pEdit->GetCaretWordPlace();
   IOnSetCaret(bVisible, ptHead, ptFoot, wpTemp);
@@ -358,10 +357,9 @@ void CPWL_EditCtrl::GetCaretInfo(CFX_FloatPoint& ptHead,
 }
 
 void CPWL_EditCtrl::GetCaretPos(int32_t& x, int32_t& y) const {
-  CFX_FloatPoint ptHead(0, 0), ptFoot(0, 0);
-
+  CFX_FloatPoint ptHead;
+  CFX_FloatPoint ptFoot;
   GetCaretInfo(ptHead, ptFoot);
-
   PWLtoWnd(ptHead, x, y);
 }
 

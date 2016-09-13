@@ -76,7 +76,7 @@ T PWL_MAX(const T& i, const T& j) {
 
 class CPWL_Point : public CFX_FloatPoint {
  public:
-  CPWL_Point() : CFX_FloatPoint(0.0f, 0.0f) {}
+  CPWL_Point() {}
   CPWL_Point(FX_FLOAT fx, FX_FLOAT fy) : CFX_FloatPoint(fx, fy) {}
   CPWL_Point(const CPWL_Point& point) : CFX_FloatPoint(point.x, point.y) {}
 };

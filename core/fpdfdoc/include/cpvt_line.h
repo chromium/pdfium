@@ -12,8 +12,7 @@
 #include "core/fxcrt/include/fx_system.h"
 
 struct CPVT_Line {
-  CPVT_Line()
-      : ptLine(0, 0), fLineWidth(0.0f), fLineAscent(0.0f), fLineDescent(0.0f) {}
+  CPVT_Line() : fLineWidth(0.0f), fLineAscent(0.0f), fLineDescent(0.0f) {}
 
   CPVT_WordPlace lineplace;
   CPVT_WordPlace lineEnd;

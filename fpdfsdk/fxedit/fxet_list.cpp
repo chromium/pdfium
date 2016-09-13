@@ -191,7 +191,6 @@ void CPLST_Select::Done() {
 CFX_ListCtrl::CFX_ListCtrl()
     : m_pNotify(nullptr),
       m_bNotifyFlag(FALSE),
-      m_ptScrollPos(0.0f, 0.0f),
       m_nSelItem(-1),
       m_nFootIndex(-1),
       m_bCtrlSel(FALSE),

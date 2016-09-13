@@ -241,16 +241,14 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   sAppStream << sLine;
 
   CFX_ByteTextBuf sText;
-
-  CFX_FloatPoint ptOffset = CFX_FloatPoint(0.0f, 0.0f);
-
+  CFX_FloatPoint ptOffset = CFX_FloatPoint();
   CPVT_WordRange wrWhole = m_pEdit->GetWholeWordRange();
   CPVT_WordRange wrSelect = GetSelectWordRange();
   CPVT_WordRange wrVisible =
-      (HasFlag(PES_TEXTOVERFLOW) ? wrWhole : m_pEdit->GetVisibleWordRange());
+      HasFlag(PES_TEXTOVERFLOW) ? wrWhole : m_pEdit->GetVisibleWordRange();
+
   CPVT_WordRange wrSelBefore(wrWhole.BeginPos, wrSelect.BeginPos);
   CPVT_WordRange wrSelAfter(wrSelect.EndPos, wrWhole.EndPos);
-
   CPVT_WordRange wrTemp =
       CPWL_Utils::OverlapWordRange(GetSelectWordRange(), wrVisible);
   CFX_ByteString sEditSel =
@@ -385,17 +383,17 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CFX_FloatRect rcClip;
   CPVT_WordRange wrRange = m_pEdit->GetVisibleWordRange();
   CPVT_WordRange* pRange = nullptr;
-
   if (!HasFlag(PES_TEXTOVERFLOW)) {
     rcClip = GetClientRect();
     pRange = &wrRange;
   }
+
   CFX_SystemHandler* pSysHandler = GetSystemHandler();
   CFX_Edit::DrawEdit(
       pDevice, pUser2Device, m_pEdit.get(),
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor(), GetTransparency()),
-      rcClip, CFX_FloatPoint(0.0f, 0.0f), pRange, pSysHandler, m_pFormFiller);
+      rcClip, CFX_FloatPoint(), pRange, pSysHandler, m_pFormFiller);
 }
 
 FX_BOOL CPWL_Edit::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
@@ -445,20 +443,17 @@ FX_BOOL CPWL_Edit::OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
 
 void CPWL_Edit::OnSetFocus() {
   SetEditCaret(TRUE);
-
   if (!IsReadOnly()) {
     if (IPWL_FocusHandler* pFocusHandler = GetFocusHandler())
       pFocusHandler->OnSetFocus(this);
   }
-
   m_bFocus = TRUE;
 }
 
 void CPWL_Edit::OnKillFocus() {
   ShowVScrollBar(FALSE);
-
   m_pEdit->SelectNone();
-  SetCaret(FALSE, CFX_FloatPoint(0.0f, 0.0f), CFX_FloatPoint(0.0f, 0.0f));
+  SetCaret(FALSE, CFX_FloatPoint(), CFX_FloatPoint());
   SetCharSet(FXFONT_ANSI_CHARSET);
   m_bFocus = FALSE;
 }
@@ -510,19 +505,17 @@ CFX_ByteString CPWL_Edit::GetCaretAppearanceStream(
 
 CFX_FloatPoint CPWL_Edit::GetWordRightBottomPoint(
     const CPVT_WordPlace& wpWord) {
-  CFX_FloatPoint pt(0.0f, 0.0f);
-
   CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   CPVT_WordPlace wpOld = pIterator->GetAt();
   pIterator->SetAt(wpWord);
+
+  CFX_FloatPoint pt;
   CPVT_Word word;
   if (pIterator->GetWord(word)) {
     pt = CFX_FloatPoint(word.ptWord.x + word.fWidth,
                         word.ptWord.y + word.fDescent);
   }
-
   pIterator->SetAt(wpOld);
-
   return pt;
 }
 

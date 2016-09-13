@@ -14,12 +14,7 @@
 
 #define PWL_CARET_FLASHINTERVAL 500
 
-CPWL_Caret::CPWL_Caret()
-    : m_bFlash(FALSE),
-      m_ptHead(0, 0),
-      m_ptFoot(0, 0),
-      m_fWidth(0.4f),
-      m_nDelay(0) {}
+CPWL_Caret::CPWL_Caret() : m_bFlash(FALSE), m_fWidth(0.4f), m_nDelay(0) {}
 
 CPWL_Caret::~CPWL_Caret() {}
 
@@ -36,15 +31,12 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
   if (IsVisible() && m_bFlash) {
     CFX_FloatRect rcRect = GetCaretRect();
     CFX_FloatRect rcClip = GetClipRect();
-
     CFX_PathData path;
-
     path.SetPointCount(2);
 
     FX_FLOAT fCaretX = rcRect.left + m_fWidth * 0.5f;
     FX_FLOAT fCaretTop = rcRect.top;
     FX_FLOAT fCaretBottom = rcRect.bottom;
-
     if (!rcClip.IsEmpty()) {
       rcRect.Intersect(rcClip);
       if (!rcRect.IsEmpty()) {
@@ -62,7 +54,6 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
     CFX_GraphStateData gsd;
     gsd.m_LineWidth = m_fWidth;
-
     pDevice->DrawPath(&path, pUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
                       FXFILL_ALTERNATE);
   }
@@ -119,30 +110,24 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible,
                           const CFX_FloatPoint& ptFoot) {
   if (bVisible) {
     if (IsVisible()) {
-      if (m_ptHead.x != ptHead.x || m_ptHead.y != ptHead.y ||
-          m_ptFoot.x != ptFoot.x || m_ptFoot.y != ptFoot.y) {
+      if (m_ptHead != ptHead || m_ptFoot != ptFoot) {
         m_ptHead = ptHead;
         m_ptFoot = ptFoot;
-
         m_bFlash = TRUE;
         Move(m_rcInvalid, FALSE, TRUE);
       }
     } else {
       m_ptHead = ptHead;
       m_ptFoot = ptFoot;
-
       EndTimer();
       BeginTimer(PWL_CARET_FLASHINTERVAL);
-
       CPWL_Wnd::SetVisible(TRUE);
       m_bFlash = TRUE;
-
       Move(m_rcInvalid, FALSE, TRUE);
     }
   } else {
-    m_ptHead = CFX_FloatPoint(0, 0);
-    m_ptFoot = CFX_FloatPoint(0, 0);
-
+    m_ptHead = CFX_FloatPoint();
+    m_ptFoot = CFX_FloatPoint();
     m_bFlash = FALSE;
     if (IsVisible()) {
       EndTimer();
@@ -156,7 +141,6 @@ void CPWL_Caret::InvalidateRect(CFX_FloatRect* pRect) {
     CFX_FloatRect rcRefresh = CPWL_Utils::InflateRect(*pRect, 0.5f);
     rcRefresh.top += 1;
     rcRefresh.bottom -= 1;
-
     CPWL_Wnd::InvalidateRect(&rcRefresh);
   } else {
     CPWL_Wnd::InvalidateRect(pRect);
