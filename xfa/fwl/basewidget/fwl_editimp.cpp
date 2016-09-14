@@ -1640,8 +1640,9 @@ FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
   if (!pXFAWidget)
     return FALSE;
 
-  IXFA_DocProvider* pDocProvider = pXFAWidget->GetDoc()->GetDocProvider();
-  if (!pDocProvider)
+  IXFA_DocEnvironment* pDocEnvironment =
+      pXFAWidget->GetDoc()->GetDocEnvironment();
+  if (!pDocEnvironment)
     return FALSE;
 
   if (bVisible) {
@@ -1649,10 +1650,10 @@ FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
     pXFAWidget->GetRotateMatrix(mt);
     CFX_RectF rt(*pRtAnchor);
     mt.TransformRect(rt);
-    pDocProvider->DisplayCaret(pXFAWidget, bVisible, &rt);
+    pDocEnvironment->DisplayCaret(pXFAWidget, bVisible, &rt);
     return TRUE;
   }
-  pDocProvider->DisplayCaret(pXFAWidget, bVisible, pRtAnchor);
+  pDocEnvironment->DisplayCaret(pXFAWidget, bVisible, pRtAnchor);
   return TRUE;
 }
 

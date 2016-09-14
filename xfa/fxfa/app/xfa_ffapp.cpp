@@ -96,20 +96,20 @@ CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
   return m_pDocHandler.get();
 }
 
-CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
+CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                                   IFX_FileRead* pStream,
                                   FX_BOOL bTakeOverFile) {
-  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pProvider));
+  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pDocEnvironment));
   FX_BOOL bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);
   return bSuccess ? pDoc.release() : nullptr;
 }
 
-CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
+CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                                   CPDF_Document* pPDFDoc) {
   if (!pPDFDoc)
     return nullptr;
 
-  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pProvider));
+  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pDocEnvironment));
   FX_BOOL bSuccess = pDoc->OpenDoc(pPDFDoc);
   return bSuccess ? pDoc.release() : nullptr;
 }

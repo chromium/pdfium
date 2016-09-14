@@ -203,8 +203,8 @@ void CXFA_ScriptContext::GlobalPropertySetter(CFXJSE_Value* pObject,
   if (!pNotify) {
     return;
   }
-  pNotify->GetDocProvider()->SetGlobalProperty(pNotify->GetHDOC(), szPropName,
-                                               pValue);
+  pNotify->GetDocEnvironment()->SetGlobalProperty(pNotify->GetHDOC(),
+                                                  szPropName, pValue);
 }
 FX_BOOL CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode,
                                             const CFX_WideStringC& propname,
@@ -279,8 +279,8 @@ void CXFA_ScriptContext::GlobalPropertyGetter(CFXJSE_Value* pObject,
   if (!pNotify) {
     return;
   }
-  pNotify->GetDocProvider()->GetGlobalProperty(pNotify->GetHDOC(), szPropName,
-                                               pValue);
+  pNotify->GetDocEnvironment()->GetGlobalProperty(pNotify->GetHDOC(),
+                                                  szPropName, pValue);
 }
 void CXFA_ScriptContext::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                               const CFX_ByteStringC& szPropName,

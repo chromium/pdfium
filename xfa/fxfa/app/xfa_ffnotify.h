@@ -57,7 +57,7 @@ class CXFA_FFNotify {
                                CXFA_WidgetAcc* pExclude = nullptr);
   void AddCalcValidate(CXFA_Node* pNode);
   CXFA_FFDoc* GetHDOC();
-  IXFA_DocProvider* GetDocProvider();
+  IXFA_DocEnvironment* GetDocEnvironment() const;
   IXFA_AppProvider* GetAppProvider();
   CXFA_FFWidgetHandler* GetWidgetHandler();
   CXFA_FFWidget* GetHWidget(CXFA_LayoutItem* pLayoutItem);

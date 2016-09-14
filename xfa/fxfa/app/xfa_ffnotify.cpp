@@ -238,8 +238,8 @@ void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
 CXFA_FFDoc* CXFA_FFNotify::GetHDOC() {
   return m_pDoc;
 }
-IXFA_DocProvider* CXFA_FFNotify::GetDocProvider() {
-  return m_pDoc->GetDocProvider();
+IXFA_DocEnvironment* CXFA_FFNotify::GetDocEnvironment() const {
+  return m_pDoc->GetDocEnvironment();
 }
 IXFA_AppProvider* CXFA_FFNotify::GetAppProvider() {
   return m_pDoc->GetApp()->GetAppProvider();
@@ -444,7 +444,7 @@ void CXFA_FFNotify::OnChildAdded(CXFA_Node* pSender) {
       !(pDocView->m_bInLayoutStatus) &&
       (pDocView->GetLayoutStatus() == XFA_DOCVIEW_LAYOUTSTATUS_End);
   if (bLayoutReady)
-    m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
+    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc);
 }
 
 void CXFA_FFNotify::OnChildRemoved() {
@@ -456,7 +456,7 @@ void CXFA_FFNotify::OnChildRemoved() {
       !(pDocView->m_bInLayoutStatus) &&
       (pDocView->GetLayoutStatus() == XFA_DOCVIEW_LAYOUTSTATUS_End);
   if (bLayoutReady)
-    m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
+    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc);
 }
 
 void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
@@ -480,7 +480,7 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
       (dwStatus & (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)) ==
           (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)) {
     pWidget->SetPageView(pNewPageView);
-    m_pDoc->GetDocProvider()->WidgetPostAdd(pWidget, pWidget->GetDataAcc());
+    m_pDoc->GetDocEnvironment()->WidgetPostAdd(pWidget, pWidget->GetDataAcc());
   }
   if (pDocView->GetLayoutStatus() != XFA_DOCVIEW_LAYOUTSTATUS_End ||
       !(dwStatus & XFA_WidgetStatus_Visible)) {
@@ -508,6 +508,6 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
     return;
 
   pDocView->DeleteLayoutItem(pWidget);
-  m_pDoc->GetDocProvider()->WidgetPreRemove(pWidget, pWidget->GetDataAcc());
+  m_pDoc->GetDocEnvironment()->WidgetPreRemove(pWidget, pWidget->GetDataAcc());
   pWidget->AddInvalidateRect(nullptr);
 }

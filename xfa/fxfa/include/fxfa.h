@@ -21,7 +21,7 @@ class CXFA_NodeList;
 class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
 class IXFA_AppProvider;
-class IXFA_DocProvider;
+class IXFA_DocEnvironment;
 class IXFA_WidgetAccIterator;
 class IXFA_WidgetIterator;
 
@@ -291,9 +291,9 @@ class IXFA_AppProvider {
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 
-class IXFA_DocProvider {
+class IXFA_DocEnvironment {
  public:
-  virtual ~IXFA_DocProvider() {}
+  virtual ~IXFA_DocEnvironment() {}
 
   virtual void SetChangeMark(CXFA_FFDoc* hDoc) = 0;
   virtual void InvalidateRect(CXFA_FFPageView* pPageView,

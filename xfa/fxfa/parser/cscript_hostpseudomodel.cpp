@@ -65,11 +65,11 @@ void CScript_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocProvider()->SetCalculationsEnabled(hDoc,
-                                                      pValue->ToBoolean());
+    pNotify->GetDocEnvironment()->SetCalculationsEnabled(hDoc,
+                                                         pValue->ToBoolean());
     return;
   }
-  pValue->SetBoolean(pNotify->GetDocProvider()->IsCalculationsEnabled(hDoc));
+  pValue->SetBoolean(pNotify->GetDocEnvironment()->IsCalculationsEnabled(hDoc));
 }
 
 void CScript_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
@@ -81,10 +81,10 @@ void CScript_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocProvider()->SetCurrentPage(hDoc, pValue->ToInteger());
+    pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, pValue->ToInteger());
     return;
   }
-  pValue->SetInteger(pNotify->GetDocProvider()->GetCurrentPage(hDoc));
+  pValue->SetInteger(pNotify->GetDocEnvironment()->GetCurrentPage(hDoc));
 }
 
 void CScript_HostPseudoModel::Language(CFXJSE_Value* pValue,
@@ -115,7 +115,7 @@ void CScript_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
     ThrowException(XFA_IDS_UNABLE_SET_NUMPAGES);
     return;
   }
-  pValue->SetInteger(pNotify->GetDocProvider()->CountPages(hDoc));
+  pValue->SetInteger(pNotify->GetDocEnvironment()->CountPages(hDoc));
 }
 
 void CScript_HostPseudoModel::Platform(CFXJSE_Value* pValue,
@@ -145,11 +145,11 @@ void CScript_HostPseudoModel::Title(CFXJSE_Value* pValue,
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocProvider()->SetTitle(hDoc, pValue->ToWideString());
+    pNotify->GetDocEnvironment()->SetTitle(hDoc, pValue->ToWideString());
     return;
   }
   CFX_WideString wsTitle;
-  pNotify->GetDocProvider()->GetTitle(hDoc, wsTitle);
+  pNotify->GetDocEnvironment()->GetTitle(hDoc, wsTitle);
   pValue->SetString(FX_UTF8Encode(wsTitle).AsStringC());
 }
 
@@ -162,10 +162,11 @@ void CScript_HostPseudoModel::ValidationsEnabled(CFXJSE_Value* pValue,
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocProvider()->SetValidationsEnabled(hDoc, pValue->ToBoolean());
+    pNotify->GetDocEnvironment()->SetValidationsEnabled(hDoc,
+                                                        pValue->ToBoolean());
     return;
   }
-  FX_BOOL bEnabled = pNotify->GetDocProvider()->IsValidationsEnabled(hDoc);
+  FX_BOOL bEnabled = pNotify->GetDocEnvironment()->IsValidationsEnabled(hDoc);
   pValue->SetBoolean(bEnabled);
 }
 void CScript_HostPseudoModel::Variation(CFXJSE_Value* pValue,
@@ -238,7 +239,7 @@ void CScript_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
     CFX_ByteString bsURL = pArguments->GetUTF8String(0);
     wsURL = CFX_WideString::FromUTF8(bsURL.AsStringC());
   }
-  pNotify->GetDocProvider()->GotoURL(hDoc, wsURL, TRUE);
+  pNotify->GetDocEnvironment()->GotoURL(hDoc, wsURL, TRUE);
 }
 void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
@@ -287,7 +288,7 @@ void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
   if (!hWidget) {
     return;
   }
-  pNotify->GetDocProvider()->SetFocusWidget(pNotify->GetHDOC(), hWidget);
+  pNotify->GetDocEnvironment()->SetFocusWidget(pNotify->GetHDOC(), hWidget);
   pNotify->OpenDropDownList(hWidget);
 }
 void CScript_HostPseudoModel::Response(CFXJSE_Arguments* pArguments) {
@@ -626,7 +627,7 @@ void CScript_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
   if (bPrintAnnot) {
     dwOptions |= XFA_PRINTOPT_PrintAnnot;
   }
-  pNotify->GetDocProvider()->Print(hDoc, nStartPage, nEndPage, dwOptions);
+  pNotify->GetDocEnvironment()->Print(hDoc, nStartPage, nEndPage, dwOptions);
 }
 
 void CScript_HostPseudoModel::ImportData(CFXJSE_Arguments* pArguments) {
@@ -658,7 +659,7 @@ void CScript_HostPseudoModel::ExportData(CFXJSE_Arguments* pArguments) {
   if (iLength >= 2) {
     bXDP = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;
   }
-  pNotify->GetDocProvider()->ExportData(hDoc, wsFilePath, bXDP);
+  pNotify->GetDocEnvironment()->ExportData(hDoc, wsFilePath, bXDP);
 }
 
 void CScript_HostPseudoModel::PageUp(CFXJSE_Arguments* pArguments) {
@@ -667,13 +668,13 @@ void CScript_HostPseudoModel::PageUp(CFXJSE_Arguments* pArguments) {
     return;
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  int32_t nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
+  int32_t nCurPage = pNotify->GetDocEnvironment()->GetCurrentPage(hDoc);
   int32_t nNewPage = 0;
   if (nCurPage <= 1) {
     return;
   }
   nNewPage = nCurPage - 1;
-  pNotify->GetDocProvider()->SetCurrentPage(hDoc, nNewPage);
+  pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
 }
 
 void CScript_HostPseudoModel::PageDown(CFXJSE_Arguments* pArguments) {
@@ -682,8 +683,8 @@ void CScript_HostPseudoModel::PageDown(CFXJSE_Arguments* pArguments) {
     return;
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  int32_t nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
-  int32_t nPageCount = pNotify->GetDocProvider()->CountPages(hDoc);
+  int32_t nCurPage = pNotify->GetDocEnvironment()->GetCurrentPage(hDoc);
+  int32_t nPageCount = pNotify->GetDocEnvironment()->CountPages(hDoc);
   if (!nPageCount || nCurPage == nPageCount) {
     return;
   }
@@ -693,7 +694,7 @@ void CScript_HostPseudoModel::PageDown(CFXJSE_Arguments* pArguments) {
   } else {
     nNewPage = nCurPage + 1;
   }
-  pNotify->GetDocProvider()->SetCurrentPage(hDoc, nNewPage);
+  pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
 }
 
 void CScript_HostPseudoModel::CurrentDateTime(CFXJSE_Arguments* pArguments) {

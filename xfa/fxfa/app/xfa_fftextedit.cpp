@@ -146,7 +146,7 @@ FX_BOOL CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags,
   if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
     return FALSE;
 
-  GetDoc()->GetDocProvider()->PopupMenu(this, CFX_PointF(fx, fy));
+  GetDoc()->GetDocEnvironment()->PopupMenu(this, CFX_PointF(fx, fy));
   return TRUE;
 }
 FX_BOOL CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
@@ -772,7 +772,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
   CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)m_pNormalWidget;
   pDateTime->SetEditText(wsDate);
   pDateTime->Update();
-  GetDoc()->GetDocProvider()->SetFocusWidget(GetDoc(), nullptr);
+  GetDoc()->GetDocEnvironment()->SetFocusWidget(GetDoc(), nullptr);
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pDataAcc;

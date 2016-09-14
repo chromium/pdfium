@@ -38,7 +38,7 @@ FX_BOOL CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
   pFFWidget->GetRotateMatrix(mt);
   CFX_RectF rtRotateAnchor(rtAnchor);
   mt.TransformRect(rtRotateAnchor);
-  pFFWidget->GetDoc()->GetDocProvider()->GetPopupPos(
+  pFFWidget->GetDoc()->GetDocEnvironment()->GetPopupPos(
       pFFWidget, fMinHeight, fMaxHeight, rtRotateAnchor, rtPopup);
   return TRUE;
 }

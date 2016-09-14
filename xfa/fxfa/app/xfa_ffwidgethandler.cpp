@@ -46,8 +46,8 @@ FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
   hWidget->Rotate2Normal(fx, fy);
   FX_BOOL bRet = hWidget->OnLButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
-    m_pDocView->GetDoc()->GetDocProvider()->SetFocusWidget(m_pDocView->GetDoc(),
-                                                           hWidget);
+    m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
+        m_pDocView->GetDoc(), hWidget);
   }
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
@@ -105,8 +105,8 @@ FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
   hWidget->Rotate2Normal(fx, fy);
   FX_BOOL bRet = hWidget->OnRButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
-    m_pDocView->GetDoc()->GetDocProvider()->SetFocusWidget(m_pDocView->GetDoc(),
-                                                           hWidget);
+    m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
+        m_pDocView->GetDoc(), hWidget);
   }
   m_pDocView->RunInvalidate();
   return bRet;
@@ -225,7 +225,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
     case XFA_EVENT_Calculate:
       return pWidgetAcc->ProcessCalculate();
     case XFA_EVENT_Validate:
-      if (m_pDocView->GetDoc()->GetDocProvider()->IsValidationsEnabled(
+      if (m_pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
               m_pDocView->GetDoc())) {
         return pWidgetAcc->ProcessValidate();
       }

@@ -7,29 +7,30 @@
 #ifndef FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_DOC_H_
 #define FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_DOC_H_
 
+#include <memory>
+
+#include "fpdfsdk/fpdfxfa/include/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
-#include <memory>
-#include <vector>
-
-#include "public/fpdfview.h"
-#include "xfa/fxfa/include/fxfa.h"
-#include "xfa/fxfa/include/xfa_ffdochandler.h"
-
 class CPDFXFA_App;
-class CPDFXFA_Document;
 class CPDFXFA_Page;
 class CPDFSDK_Document;
 class CPDFDoc_Environment;
-class IJS_Runtime;
-class IJS_Context;
 class CXFA_FFDocHandler;
 
-class CPDFXFA_Document : public IXFA_DocProvider {
+enum LoadStatus {
+  FXFA_LOADSTATUS_PRELOAD = 0,
+  FXFA_LOADSTATUS_LOADING,
+  FXFA_LOADSTATUS_LOADED,
+  FXFA_LOADSTATUS_CLOSING,
+  FXFA_LOADSTATUS_CLOSED
+};
+
+class CPDFXFA_Document {
  public:
   CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
                    CPDFXFA_App* pProvider);
-  ~CPDFXFA_Document() override;
+  ~CPDFXFA_Document();
 
   FX_BOOL LoadXFADoc();
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
@@ -38,6 +39,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   int GetPageCount();
   CPDFXFA_Page* GetPage(int page_index);
+  CPDFXFA_Page* GetPage(CXFA_FFPageView* pPage);
 
   void DeletePage(int page_index);
   void RemovePage(CPDFXFA_Page* page);
@@ -45,89 +47,23 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   CPDFSDK_Document* GetSDKDocument(CPDFDoc_Environment* pFormFillEnv);
 
-  // IXFA_DocProvider
-  void SetChangeMark(CXFA_FFDoc* hDoc) override;
-  // used in dynamic xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
-  void InvalidateRect(CXFA_FFPageView* pPageView,
-                      const CFX_RectF& rt,
-                      uint32_t dwFlags) override;
-  // show or hide caret
-  void DisplayCaret(CXFA_FFWidget* hWidget,
-                    FX_BOOL bVisible,
-                    const CFX_RectF* pRtAnchor) override;
-  // dwPos: (0:bottom 1:top)
-  FX_BOOL GetPopupPos(CXFA_FFWidget* hWidget,
-                      FX_FLOAT fMinPopup,
-                      FX_FLOAT fMaxPopup,
-                      const CFX_RectF& rtAnchor,
-                      CFX_RectF& rtPopup) override;
-  FX_BOOL PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) override;
-
-  // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
-  void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) override;
-  void WidgetPostAdd(CXFA_FFWidget* hWidget,
-                     CXFA_WidgetAcc* pWidgetData) override;
-  void WidgetPreRemove(CXFA_FFWidget* hWidget,
-                       CXFA_WidgetAcc* pWidgetData) override;
-
-  // Host method
-  int32_t CountPages(CXFA_FFDoc* hDoc) override;
-  int32_t GetCurrentPage(CXFA_FFDoc* hDoc) override;
-  void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) override;
-  FX_BOOL IsCalculationsEnabled(CXFA_FFDoc* hDoc) override;
-  void SetCalculationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) override;
-  void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) override;
-  void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle) override;
-  void ExportData(CXFA_FFDoc* hDoc,
-                  const CFX_WideString& wsFilePath,
-                  FX_BOOL bXDP) override;
-  void GotoURL(CXFA_FFDoc* hDoc,
-               const CFX_WideString& bsURL,
-               FX_BOOL bAppend) override;
-  FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) override;
-  void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) override;
-  void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) override;
-  void Print(CXFA_FFDoc* hDoc,
-             int32_t nStartPage,
-             int32_t nEndPage,
-             uint32_t dwOptions) override;
-  FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) override;
-
-  /**
-   *Submit data to email, http, ftp.
-   * @param[in] hDoc The document handler.
-   * @param[in] eFormat Determines the format in which the data will be
-   *submitted. XFA_ATTRIBUTEENUM_Xdp, XFA_ATTRIBUTEENUM_Xml...
-   * @param[in] wsTarget The URL to which the data will be submitted.
-   * @param[in] eEncoding The encoding of text content.
-   * @param[in] pXDPContent Controls what subset of the data is submitted, used
-   *only when the format property is xdp.
-   * @param[in] bEmbedPDF, specifies whether PDF is embedded in the submitted
-   *content or not.
-   */
-  FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) override;
-
-  FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
-                            const CFX_ByteStringC& szPropName,
-                            CFXJSE_Value* pValue) override;
-  FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
-                            const CFX_ByteStringC& szPropName,
-                            CFXJSE_Value* pValue) override;
-
-  IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
-                               const CFX_WideString& wsLink) override;
-
   void ClearChangeMark();
 
- private:
-  enum LoadStatus {
-    FXFA_LOADSTATUS_PRELOAD = 0,
-    FXFA_LOADSTATUS_LOADING,
-    FXFA_LOADSTATUS_LOADED,
-    FXFA_LOADSTATUS_CLOSING,
-    FXFA_LOADSTATUS_CLOSED
-  };
+ protected:
+  friend class CPDFXFA_DocEnvironment;
 
+  CPDFSDK_Document* GetSDKDoc() { return m_pSDKDoc.get(); }
+  int GetOriginalPageCount() const { return m_nPageCount; }
+  void SetOriginalPageCount(int count) {
+    m_nPageCount = count;
+    m_XFAPageList.SetSize(count);
+  }
+
+  LoadStatus GetLoadStatus() const { return m_nLoadStatus; }
+
+  CFX_ArrayTemplate<CPDFXFA_Page*>* GetXFAPageList() { return &m_XFAPageList; }
+
+ private:
   void CloseXFADoc(CXFA_FFDocHandler* pDoc) {
     if (pDoc) {
       m_pXFADoc->CloseDoc();
@@ -136,36 +72,21 @@ class CPDFXFA_Document : public IXFA_DocProvider {
     }
   }
 
-  CPDFXFA_Page* GetPage(CXFA_FFPageView* pPage);
-  FX_BOOL OnBeforeNotifySubmit();
-  void OnAfterNotifySubmit();
-  FX_BOOL NotifySubmit(FX_BOOL bPrevOrPost);
-  FX_BOOL SubmitDataInternal(CXFA_FFDoc* hDoc, CXFA_Submit submit);
-  FX_BOOL MailToInfo(CFX_WideString& csURL,
-                     CFX_WideString& csToAddress,
-                     CFX_WideString& csCCAddress,
-                     CFX_WideString& csBCCAddress,
-                     CFX_WideString& csSubject,
-                     CFX_WideString& csMsg);
-  FX_BOOL ExportSubmitFile(FPDF_FILEHANDLER* ppFileHandler,
-                           int fileType,
-                           FPDF_DWORD encodeType,
-                           FPDF_DWORD flag);
-  void ToXFAContentFlags(CFX_WideString csSrcContent, FPDF_DWORD& flag);
-
   int m_iDocType;
 
-  // |m_pSDKDoc| has to be released before |m_pPDFDoc| since it needs to access
-  // it to kill focused annotations.
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
+  // |m_pSDKDoc| must be destroyed before |m_pPDFDoc| since it needs to access
+  // it to kill focused annotations.
   std::unique_ptr<CPDFSDK_Document> m_pSDKDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   CXFA_FFDocView* m_pXFADocView;  // not owned.
   CPDFXFA_App* const m_pApp;
-  IJS_Context* m_pJSContext;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
   LoadStatus m_nLoadStatus;
   int m_nPageCount;
+
+  // Must be destroy before |m_pSDKDoc|.
+  CPDFXFA_DocEnvironment m_DocEnv;
 };
 
 #endif  // FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_DOC_H_

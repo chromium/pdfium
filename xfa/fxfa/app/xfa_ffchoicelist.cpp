@@ -287,7 +287,7 @@ FX_BOOL CXFA_FFComboBox::OnRButtonUp(uint32_t dwFlags,
   if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
     return FALSE;
 
-  GetDoc()->GetDocProvider()->PopupMenu(this, CFX_PointF(fx, fy));
+  GetDoc()->GetDocEnvironment()->PopupMenu(this, CFX_PointF(fx, fy));
   return TRUE;
 }
 FX_BOOL CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget) {

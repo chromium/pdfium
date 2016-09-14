@@ -27,9 +27,9 @@ struct FX_IMAGEDIB_AND_DPI {
 
 class CXFA_FFDoc {
  public:
-  CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider);
+  CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment);
   ~CXFA_FFDoc();
-  IXFA_DocProvider* GetDocProvider() { return m_pDocProvider; }
+  IXFA_DocEnvironment* GetDocEnvironment() const { return m_pDocEnvironment; }
   uint32_t GetDocType();
   int32_t StartLoad();
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
@@ -54,7 +54,7 @@ class CXFA_FFDoc {
   FX_BOOL ImportData(IFX_FileRead* pStream, FX_BOOL bXDP = TRUE);
 
  protected:
-  IXFA_DocProvider* m_pDocProvider;
+  IXFA_DocEnvironment* const m_pDocEnvironment;
   std::unique_ptr<CXFA_DocumentParser> m_pDocumentParser;
   IFX_FileRead* m_pStream;
   CXFA_FFApp* m_pApp;

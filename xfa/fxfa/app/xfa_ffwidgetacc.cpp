@@ -334,7 +334,7 @@ int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_Event& event,
       break;
     case XFA_Element::Submit: {
       CXFA_Submit submit = event.GetSubmit();
-      return GetDoc()->GetDocProvider()->SubmitData(GetDoc(), submit);
+      return GetDoc()->GetDocEnvironment()->SubmitData(GetDoc(), submit);
     }
     default:
       break;

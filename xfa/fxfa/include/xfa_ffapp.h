@@ -42,10 +42,11 @@ class CXFA_FFApp {
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp();
 
-  CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider,
+  CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                         IFX_FileRead* pStream,
                         FX_BOOL bTakeOverFile);
-  CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);
+  CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
+                        CPDF_Document* pPDFDoc);
   void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
 
   CXFA_FFDocHandler* GetDocHandler();

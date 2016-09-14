@@ -153,11 +153,11 @@ void CXFA_FFWidget::InvalidateWidget(const CFX_RectF* pRect) {
     CFX_RectF rtWidget;
     GetBBox(rtWidget, XFA_WidgetStatus_Focused);
     rtWidget.Inflate(2, 2);
-    GetDoc()->GetDocProvider()->InvalidateRect(m_pPageView, rtWidget,
-                                               XFA_INVALIDATE_CurrentPage);
+    GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, rtWidget,
+                                                  XFA_INVALIDATE_CurrentPage);
   } else {
-    GetDoc()->GetDocProvider()->InvalidateRect(m_pPageView, *pRect,
-                                               XFA_INVALIDATE_CurrentPage);
+    GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, *pRect,
+                                                  XFA_INVALIDATE_CurrentPage);
   }
 }
 void CXFA_FFWidget::AddInvalidateRect(const CFX_RectF* pRect) {
@@ -1083,7 +1083,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
         return pBitmap;
       }
     }
-    pImageFileRead = pDoc->GetDocProvider()->OpenLinkedFile(pDoc, wsURL);
+    pImageFileRead = pDoc->GetDocEnvironment()->OpenLinkedFile(pDoc, wsURL);
   }
   if (!pImageFileRead) {
     FX_Free(pImageBuffer);

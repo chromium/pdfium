@@ -147,8 +147,8 @@ int32_t Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
 
 }  // namespace
 
-CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)
-    : m_pDocProvider(pDocProvider),
+CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment)
+    : m_pDocEnvironment(pDocEnvironment),
       m_pDocumentParser(nullptr),
       m_pStream(nullptr),
       m_pApp(pApp),
