@@ -271,8 +271,8 @@ void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
     int nCharacters = wsText.GetLength();
     CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
     unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
-    m_pApp->FFI_OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
-                                     nCharacters, TRUE);
+    m_pApp->OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
+                                 nCharacters, TRUE);
   }
 }
 

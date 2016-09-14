@@ -35,7 +35,7 @@ int CharSet2CP(int charset) {
 }  // namespace
 
 void CFX_SystemHandler::SetCursor(int32_t nCursorType) {
-  m_pEnv->FFI_SetCursor(nCursorType);
+  m_pEnv->SetCursor(nCursorType);
 }
 
 void CFX_SystemHandler::InvalidateRect(FX_HWND hWnd, FX_RECT rect) {
@@ -56,8 +56,7 @@ void CFX_SystemHandler::InvalidateRect(FX_HWND hWnd, FX_RECT rect) {
   CFX_FloatRect rcPDF(left, bottom, right, top);
   rcPDF.Normalize();
 
-  m_pEnv->FFI_Invalidate(pPage, rcPDF.left, rcPDF.top, rcPDF.right,
-                         rcPDF.bottom);
+  m_pEnv->Invalidate(pPage, rcPDF.left, rcPDF.top, rcPDF.right, rcPDF.bottom);
 }
 
 void CFX_SystemHandler::OutputSelectedRect(void* pFormFiller,
@@ -74,7 +73,7 @@ void CFX_SystemHandler::OutputSelectedRect(void* pFormFiller,
   UnderlyingPageType* pPage = pAnnot->GetUnderlyingPage();
   ASSERT(pPage);
 
-  m_pEnv->FFI_OutputSelectedRect(pPage, ptA.x, ptB.y, ptB.x, ptA.y);
+  m_pEnv->OutputSelectedRect(pPage, ptA.x, ptB.y, ptB.x, ptA.y);
 }
 
 bool CFX_SystemHandler::IsSelectionImplemented() const {
@@ -120,25 +119,25 @@ CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(
 
 int32_t CFX_SystemHandler::SetTimer(int32_t uElapse,
                                     TimerCallback lpTimerFunc) {
-  return m_pEnv->FFI_SetTimer(uElapse, lpTimerFunc);
+  return m_pEnv->SetTimer(uElapse, lpTimerFunc);
 }
 
 void CFX_SystemHandler::KillTimer(int32_t nID) {
-  m_pEnv->FFI_KillTimer(nID);
+  m_pEnv->KillTimer(nID);
 }
 
 FX_SYSTEMTIME CFX_SystemHandler::GetLocalTime() {
-  return m_pEnv->FFI_GetLocalTime();
+  return m_pEnv->GetLocalTime();
 }
 
 bool CFX_SystemHandler::IsSHIFTKeyDown(uint32_t nFlag) const {
-  return !!m_pEnv->FFI_IsSHIFTKeyDown(nFlag);
+  return !!m_pEnv->IsSHIFTKeyDown(nFlag);
 }
 
 bool CFX_SystemHandler::IsCTRLKeyDown(uint32_t nFlag) const {
-  return !!m_pEnv->FFI_IsCTRLKeyDown(nFlag);
+  return !!m_pEnv->IsCTRLKeyDown(nFlag);
 }
 
 bool CFX_SystemHandler::IsALTKeyDown(uint32_t nFlag) const {
-  return !!m_pEnv->FFI_IsALTKeyDown(nFlag);
+  return !!m_pEnv->IsALTKeyDown(nFlag);
 }

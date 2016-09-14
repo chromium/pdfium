@@ -1695,8 +1695,8 @@ FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
 
   pRuntime->BeginBlock();
   CPDFSDK_Environment* pApp = m_pDocument->GetEnv();
-  pApp->FFI_DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
-                         scrollPositionArray.get(), scrollPositionArraySize);
+  pApp->DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
+                     scrollPositionArray.get(), scrollPositionArraySize);
   pRuntime->EndBlock();
 
   return TRUE;

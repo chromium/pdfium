@@ -3204,7 +3204,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
   } else {
     CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
     UnderlyingPageType* pPage = UnderlyingFromFPDFPage(
-        pEnv->FFI_GetCurrentPage(m_pDocument->GetUnderlyingDocument()));
+        pEnv->GetCurrentPage(m_pDocument->GetUnderlyingDocument()));
     if (!pPage)
       return FALSE;
     if (CPDFSDK_PageView* pCurPageView =

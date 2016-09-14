@@ -243,9 +243,6 @@ class IXFA_AppProvider {
                                   const CFX_WideString& wsDefaultAnswer = L"",
                                   FX_BOOL bMask = TRUE) = 0;
 
-  virtual int32_t GetDocumentCountInBatch() = 0;
-  virtual int32_t GetCurDocumentInBatch() = 0;
-
   /**
    * Download something from somewhere.
    * @param[in] wsURL - http, ftp, such as

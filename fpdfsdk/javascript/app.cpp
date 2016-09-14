@@ -325,7 +325,7 @@ FX_BOOL app::platform(IJS_Context* cc,
       static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderApp();
   if (!pEnv)
     return FALSE;
-  CFX_WideString platfrom = pEnv->FFI_GetPlatform();
+  CFX_WideString platfrom = pEnv->GetPlatform();
   if (!platfrom.IsEmpty()) {
     vp << platfrom;
     return TRUE;
@@ -345,7 +345,7 @@ FX_BOOL app::language(IJS_Context* cc,
       static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderApp();
   if (!pEnv)
     return FALSE;
-  CFX_WideString language = pEnv->FFI_GetLanguage();
+  CFX_WideString language = pEnv->GetLanguage();
   if (!language.IsEmpty()) {
     vp << language;
     return TRUE;

@@ -565,7 +565,7 @@ FX_BOOL CFFL_FormFiller::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_FormFiller::SetChangeMark() {
-  m_pApp->FFI_OnChange();
+  m_pApp->OnChange();
 }
 
 void CFFL_FormFiller::GetActionData(CPDFSDK_PageView* pPageView,
@@ -615,7 +615,7 @@ void CFFL_FormFiller::InvalidateRect(double left,
                                      double right,
                                      double bottom) {
   UnderlyingPageType* pPage = m_pWidget->GetUnderlyingPage();
-  m_pApp->FFI_Invalidate(pPage, left, top, right, bottom);
+  m_pApp->Invalidate(pPage, left, top, right, bottom);
 }
 
 CFFL_Button::CFFL_Button(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pWidget)

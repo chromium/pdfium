@@ -99,15 +99,14 @@ void CPDFXFA_App::SetAppType(const CFX_WideStringC& wsAppType) {
 
 void CPDFXFA_App::GetLanguage(CFX_WideString& wsLanguage) {
   CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    wsLanguage = pEnv->FFI_GetLanguage();
-  }
+  if (pEnv)
+    wsLanguage = pEnv->GetLanguage();
 }
 
 void CPDFXFA_App::GetPlatform(CFX_WideString& wsPlatform) {
   CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
-    wsPlatform = pEnv->FFI_GetPlatform();
+    wsPlatform = pEnv->GetPlatform();
   }
 }
 
@@ -204,26 +203,9 @@ CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
   return wsAnswer;
 }
 
-int32_t CPDFXFA_App::GetCurDocumentInBatch() {
-  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    return pEnv->FFI_GetCurDocument();
-  }
-  return 0;
-}
-
-int32_t CPDFXFA_App::GetDocumentCountInBatch() {
-  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    return pEnv->FFI_GetDocumentCount();
-  }
-
-  return 0;
-}
-
 IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideString& wsURL) {
   CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
-  return pEnv ? pEnv->FFI_DownloadFromURL(wsURL.c_str()) : nullptr;
+  return pEnv ? pEnv->DownloadFromURL(wsURL.c_str()) : nullptr;
 }
 
 FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideString& wsURL,
@@ -236,9 +218,9 @@ FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideString& wsURL,
   if (!pEnv)
     return FALSE;
 
-  wsResponse = pEnv->FFI_PostRequestURL(wsURL.c_str(), wsData.c_str(),
-                                        wsContentType.c_str(), wsEncode.c_str(),
-                                        wsHeader.c_str());
+  wsResponse =
+      pEnv->PostRequestURL(wsURL.c_str(), wsData.c_str(), wsContentType.c_str(),
+                           wsEncode.c_str(), wsHeader.c_str());
   return TRUE;
 }
 
@@ -247,8 +229,7 @@ FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideString& wsURL,
                                    const CFX_WideString& wsEncode) {
   CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   return pEnv &&
-         pEnv->FFI_PutRequestURL(wsURL.c_str(), wsData.c_str(),
-                                 wsEncode.c_str());
+         pEnv->PutRequestURL(wsURL.c_str(), wsData.c_str(), wsEncode.c_str());
 }
 
 void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {

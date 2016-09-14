@@ -113,8 +113,8 @@ FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
         ASSERT(pPageView);
         m_bValid = !m_bValid;
         CFX_FloatRect rcAnnot = pAnnot->GetRect();
-        m_pApp->FFI_Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
-                               rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
+        m_pApp->Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
+                           rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
 
         if (m_bValid) {
           if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, TRUE))
@@ -280,7 +280,7 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
     int nCharacters = wsText.GetLength();
     CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
     unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
-    m_pApp->FFI_OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
-                                     nCharacters, TRUE);
+    m_pApp->OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
+                                 nCharacters, TRUE);
   }
 }

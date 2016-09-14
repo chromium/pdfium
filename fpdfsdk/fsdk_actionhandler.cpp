@@ -439,7 +439,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
   }
 
   CPDFSDK_Environment* pApp = pDocument->GetEnv();
-  pApp->FFI_DoGoToAction(nPageIndex, nFitType, pPosAry, sizeOfAry);
+  pApp->DoGoToAction(nPageIndex, nFitType, pPosAry, sizeOfAry);
   delete[] pPosAry;
 }
 
@@ -455,7 +455,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument,
 
   CPDFSDK_Environment* pApp = pDocument->GetEnv();
   CFX_ByteString sURI = action.GetURI(pDocument->GetPDFDocument());
-  pApp->FFI_DoURIAction(sURI.c_str());
+  pApp->DoURIAction(sURI.c_str());
 }
 
 void CPDFSDK_ActionHandler::DoAction_Named(CPDFSDK_Document* pDocument,
@@ -463,7 +463,7 @@ void CPDFSDK_ActionHandler::DoAction_Named(CPDFSDK_Document* pDocument,
   ASSERT(action.GetDict());
 
   CFX_ByteString csName = action.GetNamedAction();
-  pDocument->GetEnv()->FFI_ExecuteNamedAction(csName.c_str());
+  pDocument->GetEnv()->ExecuteNamedAction(csName.c_str());
 }
 
 void CPDFSDK_ActionHandler::DoAction_SetOCGState(CPDFSDK_Document* pDocument,

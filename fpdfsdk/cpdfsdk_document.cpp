@@ -66,13 +66,13 @@ CPDFSDK_PageView* CPDFSDK_Document::GetPageView(
 
 CPDFSDK_PageView* CPDFSDK_Document::GetCurrentView() {
   UnderlyingPageType* pPage =
-      UnderlyingFromFPDFPage(m_pEnv->FFI_GetCurrentPage(m_pDoc));
+      UnderlyingFromFPDFPage(m_pEnv->GetCurrentPage(m_pDoc));
   return pPage ? GetPageView(pPage, true) : nullptr;
 }
 
 CPDFSDK_PageView* CPDFSDK_Document::GetPageView(int nIndex) {
   UnderlyingPageType* pTempPage =
-      UnderlyingFromFPDFPage(m_pEnv->FFI_GetPage(m_pDoc, nIndex));
+      UnderlyingFromFPDFPage(m_pEnv->GetPage(m_pDoc, nIndex));
   if (!pTempPage)
     return nullptr;
 
@@ -154,7 +154,7 @@ void CPDFSDK_Document::RemovePageView(UnderlyingPageType* pUnderlyingPage) {
 }
 
 UnderlyingPageType* CPDFSDK_Document::GetPage(int nIndex) {
-  return UnderlyingFromFPDFPage(m_pEnv->FFI_GetPage(m_pDoc, nIndex));
+  return UnderlyingFromFPDFPage(m_pEnv->GetPage(m_pDoc, nIndex));
 }
 
 CPDFSDK_InterForm* CPDFSDK_Document::GetInterForm() {
@@ -231,7 +231,7 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(FX_UINT nFlag) {
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||
             FIELDTYPE_COMBOBOX == nFieldType) {
-          m_pEnv->FFI_OnSetFieldInputFocus(nullptr, nullptr, 0, FALSE);
+          m_pEnv->OnSetFieldInputFocus(nullptr, nullptr, 0, FALSE);
         }
       }
 

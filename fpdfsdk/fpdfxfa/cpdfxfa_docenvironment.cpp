@@ -70,8 +70,8 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
     return;
 
   CFX_FloatRect rcPage = CFX_FloatRect::FromCFXRectF(rt);
-  pEnv->FFI_Invalidate((FPDF_PAGE)pPage, rcPage.left, rcPage.bottom,
-                       rcPage.right, rcPage.top);
+  pEnv->Invalidate((FPDF_PAGE)pPage, rcPage.left, rcPage.bottom, rcPage.right,
+                   rcPage.top);
 }
 
 void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
@@ -102,8 +102,8 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
     return;
 
   CFX_FloatRect rcCaret = CFX_FloatRect::FromCFXRectF(*pRtAnchor);
-  pEnv->FFI_DisplayCaret((FPDF_PAGE)pPage, bVisible, rcCaret.left, rcCaret.top,
-                         rcCaret.right, rcCaret.bottom);
+  pEnv->DisplayCaret((FPDF_PAGE)pPage, bVisible, rcCaret.left, rcCaret.top,
+                     rcCaret.right, rcCaret.bottom);
 }
 
 FX_BOOL CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
@@ -129,7 +129,7 @@ FX_BOOL CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
     return FALSE;
 
   FS_RECTF pageViewRect = {0.0f, 0.0f, 0.0f, 0.0f};
-  pEnv->FFI_GetPageViewRect(pPage, pageViewRect);
+  pEnv->GetPageViewRect(pPage, pageViewRect);
 
   int t1;
   int t2;
@@ -253,7 +253,7 @@ FX_BOOL CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   if (hWidget->CanSelectAll())
     menuFlag |= FXFA_MENU_SELECTALL;
 
-  return pEnv->FFI_PopupMenu(pPage, hWidget, menuFlag, ptPopup, nullptr);
+  return pEnv->PopupMenu(pPage, hWidget, menuFlag, ptPopup, nullptr);
 }
 
 void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
@@ -290,7 +290,7 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
                  : FXFA_PAGEVIEWEVENT_POSTADDED;
   int count = FXSYS_abs(nNewCount - m_pDocument->GetOriginalPageCount());
   m_pDocument->SetOriginalPageCount(nNewCount);
-  pEnv->FFI_PageEvent(count, flag);
+  pEnv->PageEvent(count, flag);
 }
 
 void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
@@ -344,7 +344,7 @@ int32_t CPDFXFA_DocEnvironment::GetCurrentPage(CXFA_FFDoc* hDoc) {
   if (!pEnv)
     return -1;
 
-  return pEnv->FFI_GetCurrentPageIndex(this);
+  return pEnv->GetCurrentPageIndex(this);
 }
 
 void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
@@ -358,7 +358,7 @@ void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
   CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return;
-  pEnv->FFI_SetCurrentPage(this, iCurPage);
+  pEnv->SetCurrentPage(this, iCurPage);
 }
 
 FX_BOOL CPDFXFA_DocEnvironment::IsCalculationsEnabled(CXFA_FFDoc* hDoc) {
@@ -425,8 +425,8 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
   }
   int len = bs.GetLength();
   FPDF_FILEHANDLER* pFileHandler =
-      pEnv->FFI_OpenFile(bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML,
-                         (FPDF_WIDESTRING)bs.GetBuffer(len), "wb");
+      pEnv->OpenFile(bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML,
+                     (FPDF_WIDESTRING)bs.GetBuffer(len), "wb");
   bs.ReleaseBuffer(len);
   if (!pFileHandler)
     return;
@@ -514,7 +514,7 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
 
   CFX_WideStringC str(bsURL.c_str());
 
-  pEnv->FFI_GotoURL(this, str, bAppend);
+  pEnv->GotoURL(this, str, bAppend);
 }
 
 FX_BOOL CPDFXFA_DocEnvironment::IsValidationsEnabled(CXFA_FFDoc* hDoc) {
@@ -640,8 +640,8 @@ FX_BOOL CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       ws.FromLocal(IDS_XFA_Validate_Input);
       CFX_ByteString bs = ws.UTF16LE_Encode();
       int len = bs.GetLength();
-      pEnv->FFI_Alert((FPDF_WIDESTRING)bs.GetBuffer(len), (FPDF_WIDESTRING)L"",
-                      0, 1);
+      pEnv->Alert((FPDF_WIDESTRING)bs.GetBuffer(len), (FPDF_WIDESTRING)L"", 0,
+                  1);
       bs.ReleaseBuffer(len);
       return FALSE;
     }
@@ -701,7 +701,7 @@ IFX_FileRead* CPDFXFA_DocEnvironment::OpenLinkedFile(
   CFX_ByteString bs = wsLink.UTF16LE_Encode();
   int len = bs.GetLength();
   FPDF_FILEHANDLER* pFileHandler =
-      pEnv->FFI_OpenFile(0, (FPDF_WIDESTRING)bs.GetBuffer(len), "rb");
+      pEnv->OpenFile(0, (FPDF_WIDESTRING)bs.GetBuffer(len), "rb");
   bs.ReleaseBuffer(len);
 
   if (!pFileHandler)
@@ -900,8 +900,7 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
     ws.FromLocal("Submit cancelled.");
     CFX_ByteString bs = ws.UTF16LE_Encode();
     int len = bs.GetLength();
-    pEnv->FFI_Alert((FPDF_WIDESTRING)bs.GetBuffer(len), (FPDF_WIDESTRING)L"", 0,
-                    4);
+    pEnv->Alert((FPDF_WIDESTRING)bs.GetBuffer(len), (FPDF_WIDESTRING)L"", 0, 4);
     bs.ReleaseBuffer(len);
     return FALSE;
   }
@@ -925,20 +924,20 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
         flag |= FXFA_PDF;
 
       ToXFAContentFlags(csContent, flag);
-      pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XDP, nullptr, "wb");
+      pFileHandler = pEnv->OpenFile(FXFA_SAVEAS_XDP, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XDP;
       ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XDP, 0, flag);
       break;
     }
     case XFA_ATTRIBUTEENUM_Xml:
-      pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
+      pFileHandler = pEnv->OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
       ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);
       break;
     case XFA_ATTRIBUTEENUM_Pdf:
       break;
     case XFA_ATTRIBUTEENUM_Urlencoded:
-      pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
+      pFileHandler = pEnv->OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
       ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);
       break;
@@ -969,7 +968,7 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
     FPDF_WIDESTRING pSubject =
         (FPDF_WIDESTRING)bsSubject.GetBuffer(bsSubject.GetLength());
     FPDF_WIDESTRING pMsg = (FPDF_WIDESTRING)bsMsg.GetBuffer(bsMsg.GetLength());
-    pEnv->FFI_EmailTo(pFileHandler, pTo, pSubject, pCC, pBcc, pMsg);
+    pEnv->EmailTo(pFileHandler, pTo, pSubject, pCC, pBcc, pMsg);
     bsTo.ReleaseBuffer();
     bsCC.ReleaseBuffer();
     bsBcc.ReleaseBuffer();
@@ -980,8 +979,7 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
     CFX_WideString ws;
     CFX_ByteString bs = csURL.UTF16LE_Encode();
     int len = bs.GetLength();
-    pEnv->FFI_UploadTo(pFileHandler, fileFlag,
-                       (FPDF_WIDESTRING)bs.GetBuffer(len));
+    pEnv->UploadTo(pFileHandler, fileFlag, (FPDF_WIDESTRING)bs.GetBuffer(len));
     bs.ReleaseBuffer(len);
   }
   return bRet;

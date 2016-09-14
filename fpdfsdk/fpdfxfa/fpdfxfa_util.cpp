@@ -20,7 +20,7 @@ FWL_Error CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
   if (!m_pEnv)
     return FWL_Error::Indefinite;
 
-  int32_t id_event = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
+  int32_t id_event = m_pEnv->SetTimer(dwElapse, TimerProc);
   if (!s_TimerArray)
     s_TimerArray = new std::vector<CFWL_TimerInfo*>;
 
@@ -34,7 +34,7 @@ FWL_Error CXFA_FWLAdapterTimerMgr::Stop(IFWL_TimerInfo* pTimerInfo) {
     return FWL_Error::Indefinite;
 
   CFWL_TimerInfo* pInfo = static_cast<CFWL_TimerInfo*>(pTimerInfo);
-  m_pEnv->FFI_KillTimer(pInfo->idEvent);
+  m_pEnv->KillTimer(pInfo->idEvent);
   if (s_TimerArray) {
     auto it = std::find(s_TimerArray->begin(), s_TimerArray->end(), pInfo);
     if (it != s_TimerArray->end()) {

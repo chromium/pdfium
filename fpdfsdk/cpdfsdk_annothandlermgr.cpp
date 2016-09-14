@@ -193,14 +193,14 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
 FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
                                                  int nKeyCode,
                                                  int nFlag) {
-  if (m_pApp->FFI_IsCTRLKeyDown(nFlag) || m_pApp->FFI_IsALTKeyDown(nFlag))
+  if (m_pApp->IsCTRLKeyDown(nFlag) || m_pApp->IsALTKeyDown(nFlag))
     return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
 
   CPDFSDK_PageView* pPage = pAnnot->GetPageView();
   CPDFSDK_Annot* pFocusAnnot = pPage->GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
     CPDFSDK_Annot* pNext =
-        GetNextAnnot(pFocusAnnot, !m_pApp->FFI_IsSHIFTKeyDown(nFlag));
+        GetNextAnnot(pFocusAnnot, !m_pApp->IsSHIFTKeyDown(nFlag));
 
     if (pNext && pNext != pFocusAnnot) {
       CPDFSDK_Document* pDocument = pPage->GetSDKDocument();

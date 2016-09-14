@@ -53,9 +53,6 @@ class CPDFXFA_App : public IXFA_AppProvider {
                           const CFX_WideString& wsDefaultAnswer,
                           FX_BOOL bMark) override;
 
-  int32_t GetDocumentCountInBatch() override;
-  int32_t GetCurDocumentInBatch() override;
-
   IFX_FileRead* DownloadURL(const CFX_WideString& wsURL) override;
   FX_BOOL PostRequestURL(const CFX_WideString& wsURL,
                          const CFX_WideString& wsData,

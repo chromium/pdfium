@@ -610,6 +610,8 @@ typedef struct _FPDF_FORMFILLINFO {
   * Return value:
   *       The page rotation. Should be 0(0 degree),1(90 degree),2(180
   * degree),3(270 degree), in a clockwise direction.
+  *
+  * Note: Unused.
   * */
   int (*FFI_GetRotation)(struct _FPDF_FORMFILLINFO* pThis, FPDF_PAGE page);
 

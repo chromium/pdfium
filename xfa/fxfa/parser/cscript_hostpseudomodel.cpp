@@ -328,14 +328,8 @@ void CScript_HostPseudoModel::Response(CFXJSE_Arguments* pArguments) {
 }
 
 void CScript_HostPseudoModel::DocumentInBatch(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  int32_t iCur = pNotify->GetAppProvider()->GetCurDocumentInBatch();
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetInteger(iCur);
+  if (CFXJSE_Value* pValue = pArguments->GetReturnValue())
+    pValue->SetInteger(0);
 }
 static int32_t XFA_FilterName(const CFX_WideStringC& wsExpression,
                               int32_t nStart,
@@ -552,14 +546,8 @@ FX_BOOL CScript_HostPseudoModel::ValidateArgsForMsg(
 }
 void CScript_HostPseudoModel::DocumentCountInBatch(
     CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  int32_t iValue = pNotify->GetAppProvider()->GetDocumentCountInBatch();
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetInteger(iValue);
+  if (CFXJSE_Value* pValue = pArguments->GetReturnValue())
+    pValue->SetInteger(0);
 }
 void CScript_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {

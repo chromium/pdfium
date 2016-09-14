@@ -347,8 +347,8 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
       CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, false);
       FX_RECT rcBBox = pIFormFiller->GetViewBBox(pPageView, pWidget);
 
-      pEnv->FFI_Invalidate(pPage, rcBBox.left, rcBBox.top, rcBBox.right,
-                           rcBBox.bottom);
+      pEnv->Invalidate(pPage, rcBBox.left, rcBBox.top, rcBBox.right,
+                       rcBBox.bottom);
     }
   }
 }
@@ -366,8 +366,8 @@ FX_BOOL CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
   CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
   PDFSDK_FieldAction fa;
-  fa.bModifier = pEnv->FFI_IsCTRLKeyDown(0);
-  fa.bShift = pEnv->FFI_IsSHIFTKeyDown(0);
+  fa.bModifier = pEnv->IsCTRLKeyDown(0);
+  fa.bShift = pEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::KeyStroke,
                                            m_pDocument, pFormField, fa);
@@ -387,8 +387,8 @@ FX_BOOL CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
   CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
   CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
   PDFSDK_FieldAction fa;
-  fa.bModifier = pEnv->FFI_IsCTRLKeyDown(0);
-  fa.bShift = pEnv->FFI_IsSHIFTKeyDown(0);
+  fa.bModifier = pEnv->IsCTRLKeyDown(0);
+  fa.bShift = pEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::Validate,
                                            m_pDocument, pFormField, fa);
