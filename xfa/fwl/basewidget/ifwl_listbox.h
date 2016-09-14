@@ -7,10 +7,10 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_LISTBOX_H_
 #define XFA_FWL_BASEWIDGET_IFWL_LISTBOX_H_
 
-#include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_ListBox L"FWL_LISTBOX"
 #define FWL_STYLEEXT_LTB_MultiSelection (1L << 0)

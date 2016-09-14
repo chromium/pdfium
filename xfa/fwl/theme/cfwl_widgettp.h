@@ -13,8 +13,8 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 
 enum class CFWL_WidgetCapacity {
   None = 0,

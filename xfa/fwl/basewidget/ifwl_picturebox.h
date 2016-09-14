@@ -7,11 +7,11 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_PICTUREBOX_H_
 #define XFA_FWL_BASEWIDGET_IFWL_PICTUREBOX_H_
 
+#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
-#include "xfa/fwl/core/fwl_error.h"
 
 #define FWL_CLASS_PictureBox L"FWL_PICTUREBOX"
 #define FWL_STYLEEXT_PTB_Left 0L << 0

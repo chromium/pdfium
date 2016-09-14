@@ -7,10 +7,10 @@
 #ifndef XFA_FWL_CORE_IFWL_FORM_H_
 #define XFA_FWL_CORE_IFWL_FORM_H_
 
-#include "xfa/fwl/core/ifwl_dataprovider.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_Form L"FWL_FORM"
 #define FWL_CLASS_FormProxy L"FWL_FORMPROXY"

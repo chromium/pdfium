@@ -9,8 +9,8 @@
 #include <algorithm>
 
 #include "core/fpdfdoc/cline.h"
-#include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
+#include "core/fpdfdoc/csection.h"
 
 namespace {
 

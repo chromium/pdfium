@@ -4,8 +4,8 @@
 
 #include "xfa/fde/xml/fde_xml_imp.h"
 
-#include "xfa/fgas/crt/fgas_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "xfa/fgas/crt/fgas_stream.h"
 
 TEST(CFDE_XMLSyntaxParser, CData) {
   const FX_WCHAR* input =

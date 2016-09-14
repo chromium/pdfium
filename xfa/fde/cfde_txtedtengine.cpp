@@ -8,14 +8,14 @@
 
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtbufiter.h"
-#include "xfa/fde/ifx_chariter.h"
-#include "xfa/fgas/layout/fgas_textbreak.h"
-#include "xfa/fwl/basewidget/fwl_editimp.h"
 #include "xfa/fde/cfde_txtedtdorecord_deleterange.h"
 #include "xfa/fde/cfde_txtedtdorecord_insert.h"
-#include "xfa/fde/cfde_txtedtparag.h"
 #include "xfa/fde/cfde_txtedtpage.h"
+#include "xfa/fde/cfde_txtedtparag.h"
+#include "xfa/fde/ifx_chariter.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fgas/layout/fgas_textbreak.h"
+#include "xfa/fwl/basewidget/fwl_editimp.h"
 
 namespace {
 

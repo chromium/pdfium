@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFDOC_CPDF_APSETTINGS_H_
 #define CORE_FPDFDOC_CPDF_APSETTINGS_H_
 
+#include "core/fpdfdoc/include/cpdf_iconfit.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
-#include "core/fpdfdoc/include/cpdf_iconfit.h"
 
 class CPDF_Dictionary;
 class CPDF_FormControl;

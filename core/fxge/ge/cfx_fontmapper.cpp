@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fxge/include/cfx_substfont.h"
-#include "core/fxge/include/ifx_systemfontinfo.h"
 #include "core/fxge/include/fx_font.h"
+#include "core/fxge/include/ifx_systemfontinfo.h"
 
 #include "third_party/base/stl_util.h"
 

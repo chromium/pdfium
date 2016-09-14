@@ -11,8 +11,8 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxge/include/cfx_fontmapper.h"
-#include "core/fxge/include/ifx_systemfontinfo.h"
 #include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/include/ifx_systemfontinfo.h"
 #include "third_party/freetype/include/freetype/fttypes.h"
 #include "xfa/fgas/font/fgas_font.h"
 

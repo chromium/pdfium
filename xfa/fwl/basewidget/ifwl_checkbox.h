@@ -7,10 +7,10 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_CHECKBOX_H_
 #define XFA_FWL_BASEWIDGET_IFWL_CHECKBOX_H_
 
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_CheckBox L"FWL_CHECKBOX"
 #define FWL_STYLEEXT_CKB_Left (0L << 0)

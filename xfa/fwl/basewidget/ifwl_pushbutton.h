@@ -7,9 +7,9 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_PUSHBUTTON_H_
 #define XFA_FWL_BASEWIDGET_IFWL_PUSHBUTTON_H_
 
+#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_PushButton L"FWL_PUSHBUTTON"

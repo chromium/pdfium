@@ -7,8 +7,8 @@
 #include "core/fpdfdoc/include/cpdf_variabletext.h"
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
-#include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/cline.h"
+#include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/include/cpvt_section.h"
 #include "core/fpdfdoc/include/cpvt_word.h"

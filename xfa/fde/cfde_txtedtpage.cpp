@@ -12,10 +12,10 @@
 #include "xfa/fde/cfde_txtedtbufiter.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtparag.h"
-#include "xfa/fde/ifde_txtedtengine.h"
-#include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedttextset.h"
 #include "xfa/fde/cfx_wordbreak.h"
+#include "xfa/fde/ifde_txtedtengine.h"
+#include "xfa/fde/ifde_txtedtpage.h"
 
 namespace {
 

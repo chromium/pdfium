@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/lightwidget/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/lightwidget/cfwl_widgetproperties.h"
 
 class CFWL_Event;
 class CFWL_Message;

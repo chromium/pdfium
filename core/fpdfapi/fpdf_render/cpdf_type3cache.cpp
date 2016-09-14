@@ -9,11 +9,11 @@
 #include <map>
 #include <memory>
 
-#include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/fx_font.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
 #include "core/fpdfapi/fpdf_render/cpdf_type3glyphs.h"
+#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/include/fx_font.h"
 
 namespace {
 

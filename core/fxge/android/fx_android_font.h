@@ -12,8 +12,8 @@
 #if _FX_OS_ == _FX_ANDROID_
 
 #include "core/fxge/include/cfx_fontmapper.h"
-#include "core/fxge/include/ifx_systemfontinfo.h"
 #include "core/fxge/include/fx_font.h"
+#include "core/fxge/include/ifx_systemfontinfo.h"
 
 class CFPF_SkiaFontMgr;
 

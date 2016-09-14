@@ -23,12 +23,12 @@
 #include "xfa/fxbarcode/BC_TwoDimWriter.h"
 #include "xfa/fxbarcode/common/BC_CommonByteMatrix.h"
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
+#include "xfa/fxbarcode/qrcode/BC_QRCodeWriter.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoder.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderEncoder.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
-#include "xfa/fxbarcode/qrcode/BC_QRCodeWriter.h"
 
 CBC_QRCodeWriter::CBC_QRCodeWriter() {
   m_bFixedSize = TRUE;

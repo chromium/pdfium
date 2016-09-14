@@ -7,10 +7,10 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_DATETIMEPICKER_H_
 #define XFA_FWL_BASEWIDGET_IFWL_DATETIMEPICKER_H_
 
-#include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_DateTimePicker L"FWL_DATETIMEPICKER"
 #define FWL_STYLEEXT_DTP_AllowEdit (1L << 0)

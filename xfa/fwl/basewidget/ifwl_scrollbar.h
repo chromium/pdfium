@@ -7,12 +7,12 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_SCROLLBAR_H_
 #define XFA_FWL_BASEWIDGET_IFWL_SCROLLBAR_H_
 
-#include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/fwl_widgetimp.h"
+#include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_ScrollBar L"FWL_SCROLLBAR"
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
