@@ -542,9 +542,7 @@ class CFX_Edit_Provider : public CPDF_VariableText::Provider {
   IPVT_FontMap* GetFontMap();
 
   // CPDF_VariableText::Provider:
-  int32_t GetCharWidth(int32_t nFontIndex,
-                       uint16_t word,
-                       int32_t nWordStyle) override;
+  int32_t GetCharWidth(int32_t nFontIndex, uint16_t word) override;
   int32_t GetTypeAscent(int32_t nFontIndex) override;
   int32_t GetTypeDescent(int32_t nFontIndex) override;
   int32_t GetWordFontIndex(uint16_t word,

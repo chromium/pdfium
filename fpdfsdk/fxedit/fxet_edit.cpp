@@ -223,9 +223,7 @@ IPVT_FontMap* CFX_Edit_Provider::GetFontMap() {
   return m_pFontMap;
 }
 
-int32_t CFX_Edit_Provider::GetCharWidth(int32_t nFontIndex,
-                                        uint16_t word,
-                                        int32_t nWordStyle) {
+int32_t CFX_Edit_Provider::GetCharWidth(int32_t nFontIndex, uint16_t word) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
     uint32_t charcode = word;
 

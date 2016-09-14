@@ -66,9 +66,7 @@ class CPDF_VariableText {
     explicit Provider(IPVT_FontMap* pFontMap);
     virtual ~Provider();
 
-    virtual int32_t GetCharWidth(int32_t nFontIndex,
-                                 uint16_t word,
-                                 int32_t nWordStyle);
+    virtual int32_t GetCharWidth(int32_t nFontIndex, uint16_t word);
     virtual int32_t GetTypeAscent(int32_t nFontIndex);
     virtual int32_t GetTypeDescent(int32_t nFontIndex);
     virtual int32_t GetWordFontIndex(uint16_t word,
@@ -166,10 +164,7 @@ class CPDF_VariableText {
   friend class CTypeset;
   friend class CSection;
 
-  int32_t GetCharWidth(int32_t nFontIndex,
-                       uint16_t Word,
-                       uint16_t SubWord,
-                       int32_t nWordStyle);
+  int32_t GetCharWidth(int32_t nFontIndex, uint16_t Word, uint16_t SubWord);
   int32_t GetTypeAscent(int32_t nFontIndex);
   int32_t GetTypeDescent(int32_t nFontIndex);
   int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);
@@ -195,8 +190,7 @@ class CPDF_VariableText {
                         FX_FLOAT fCharSpace,
                         int32_t nHorzScale,
                         FX_FLOAT fFontSize,
-                        FX_FLOAT fWordTail,
-                        int32_t nWordStyle);
+                        FX_FLOAT fWordTail);
   FX_FLOAT GetWordWidth(const CPVT_WordInfo& WordInfo);
   FX_FLOAT GetWordAscent(const CPVT_WordInfo& WordInfo, FX_FLOAT fFontSize);
   FX_FLOAT GetWordDescent(const CPVT_WordInfo& WordInfo, FX_FLOAT fFontSize);

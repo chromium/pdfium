@@ -312,7 +312,7 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
           fWordWidth = m_pVT->GetWordWidth(
               pWord->nFontIndex, pWord->Word, m_pVT->m_wSubWord,
               m_pVT->m_fCharSpace, m_pVT->m_nHorzScale, fFontSize,
-              pWord->fWordTail, 0);
+              pWord->fWordTail);
         }
         if (!bOpened) {
           if (IsOpenStylePunctuation(pWord->Word)) {

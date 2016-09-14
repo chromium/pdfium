@@ -34,8 +34,7 @@ CPDF_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
 CPDF_VariableText::Provider::~Provider() {}
 
 int32_t CPDF_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
-                                                  uint16_t word,
-                                                  int32_t nWordStyle) {
+                                                  uint16_t word) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
     uint32_t charcode = pPDFFont->CharCodeFromUnicode(word);
     if (charcode != CPDF_Font::kInvalidCharCode)
@@ -785,21 +784,17 @@ FX_FLOAT CPDF_VariableText::GetWordWidth(int32_t nFontIndex,
                                          FX_FLOAT fCharSpace,
                                          int32_t nHorzScale,
                                          FX_FLOAT fFontSize,
-                                         FX_FLOAT fWordTail,
-                                         int32_t nWordStyle) {
-  return (GetCharWidth(nFontIndex, Word, SubWord, nWordStyle) * fFontSize *
-              kFontScale +
+                                         FX_FLOAT fWordTail) {
+  return (GetCharWidth(nFontIndex, Word, SubWord) * fFontSize * kFontScale +
           fCharSpace) *
              nHorzScale * kScalePercent +
          fWordTail;
 }
 
 FX_FLOAT CPDF_VariableText::GetWordWidth(const CPVT_WordInfo& WordInfo) {
-  return GetWordWidth(
-      GetWordFontIndex(WordInfo), WordInfo.Word, GetSubWord(),
-      GetCharSpace(WordInfo), GetHorzScale(WordInfo), GetWordFontSize(WordInfo),
-      WordInfo.fWordTail,
-      WordInfo.pWordProps ? WordInfo.pWordProps->nWordStyle : 0);
+  return GetWordWidth(GetWordFontIndex(WordInfo), WordInfo.Word, GetSubWord(),
+                      GetCharSpace(WordInfo), GetHorzScale(WordInfo),
+                      GetWordFontSize(WordInfo), WordInfo.fWordTail);
 }
 
 FX_FLOAT CPDF_VariableText::GetLineAscent(const CPVT_SectionInfo& SecInfo) {
@@ -1066,12 +1061,11 @@ CPVT_FloatRect CPDF_VariableText::RearrangeSections(
 
 int32_t CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
                                         uint16_t Word,
-                                        uint16_t SubWord,
-                                        int32_t nWordStyle) {
+                                        uint16_t SubWord) {
   if (!m_pVTProvider)
     return 0;
   uint16_t word = SubWord ? SubWord : Word;
-  return m_pVTProvider->GetCharWidth(nFontIndex, word, nWordStyle);
+  return m_pVTProvider->GetCharWidth(nFontIndex, word);
 }
 
 int32_t CPDF_VariableText::GetTypeAscent(int32_t nFontIndex) {
