@@ -33,20 +33,17 @@ class CPDFSDK_DateTime {
   CPDFSDK_DateTime ToGMT() const;
   CPDFSDK_DateTime& AddDays(short days);
   CPDFSDK_DateTime& AddSeconds(int seconds);
-
   void ResetDateTime();
 
  private:
-  struct FX_DATETIME {
-    int16_t year;
-    uint8_t month;
-    uint8_t day;
-    uint8_t hour;
-    uint8_t minute;
-    uint8_t second;
-    int8_t tzHour;
-    uint8_t tzMinute;
-  } dt;
+  int16_t m_year;
+  uint8_t m_month;
+  uint8_t m_day;
+  uint8_t m_hour;
+  uint8_t m_minute;
+  uint8_t m_second;
+  int8_t m_tzHour;
+  uint8_t m_tzMinute;
 };
 
 #endif  // FPDFSDK_INCLUDE_CPDFSDK_DATETIME_H_

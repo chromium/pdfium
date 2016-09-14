@@ -65,23 +65,28 @@ CPDFSDK_DateTime::CPDFSDK_DateTime() {
 
 CPDFSDK_DateTime::CPDFSDK_DateTime(const CFX_ByteString& dtStr) {
   ResetDateTime();
-
   FromPDFDateTimeString(dtStr);
 }
 
-CPDFSDK_DateTime::CPDFSDK_DateTime(const CPDFSDK_DateTime& datetime) {
-  FXSYS_memcpy(&dt, &datetime.dt, sizeof(FX_DATETIME));
-}
+CPDFSDK_DateTime::CPDFSDK_DateTime(const CPDFSDK_DateTime& that)
+    : m_year(that.m_year),
+      m_month(that.m_month),
+      m_day(that.m_day),
+      m_hour(that.m_hour),
+      m_minute(that.m_minute),
+      m_second(that.m_second),
+      m_tzHour(that.m_tzHour),
+      m_tzMinute(that.m_tzMinute) {}
 
 CPDFSDK_DateTime::CPDFSDK_DateTime(const FX_SYSTEMTIME& st) {
   tzset();
 
-  dt.year = static_cast<int16_t>(st.wYear);
-  dt.month = static_cast<uint8_t>(st.wMonth);
-  dt.day = static_cast<uint8_t>(st.wDay);
-  dt.hour = static_cast<uint8_t>(st.wHour);
-  dt.minute = static_cast<uint8_t>(st.wMinute);
-  dt.second = static_cast<uint8_t>(st.wSecond);
+  m_year = static_cast<int16_t>(st.wYear);
+  m_month = static_cast<uint8_t>(st.wMonth);
+  m_day = static_cast<uint8_t>(st.wDay);
+  m_hour = static_cast<uint8_t>(st.wHour);
+  m_minute = static_cast<uint8_t>(st.wMinute);
+  m_second = static_cast<uint8_t>(st.wSecond);
 }
 
 void CPDFSDK_DateTime::ResetDateTime() {
@@ -89,18 +94,21 @@ void CPDFSDK_DateTime::ResetDateTime() {
 
   time_t curTime;
   time(&curTime);
-  struct tm* newtime = localtime(&curTime);
 
-  dt.year = newtime->tm_year + 1900;
-  dt.month = newtime->tm_mon + 1;
-  dt.day = newtime->tm_mday;
-  dt.hour = newtime->tm_hour;
-  dt.minute = newtime->tm_min;
-  dt.second = newtime->tm_sec;
+  struct tm* newtime = localtime(&curTime);
+  m_year = newtime->tm_year + 1900;
+  m_month = newtime->tm_mon + 1;
+  m_day = newtime->tm_mday;
+  m_hour = newtime->tm_hour;
+  m_minute = newtime->tm_min;
+  m_second = newtime->tm_sec;
 }
 
-bool CPDFSDK_DateTime::operator==(const CPDFSDK_DateTime& datetime) const {
-  return (FXSYS_memcmp(&dt, &datetime.dt, sizeof(FX_DATETIME)) == 0);
+bool CPDFSDK_DateTime::operator==(const CPDFSDK_DateTime& that) const {
+  return m_year == that.m_year && m_month == that.m_month &&
+         m_day == that.m_day && m_hour == that.m_hour &&
+         m_minute == that.m_minute && m_second == that.m_second &&
+         m_tzHour == that.m_tzHour && m_tzMinute == that.m_tzMinute;
 }
 
 bool CPDFSDK_DateTime::operator!=(const CPDFSDK_DateTime& datetime) const {
@@ -110,12 +118,12 @@ bool CPDFSDK_DateTime::operator!=(const CPDFSDK_DateTime& datetime) const {
 time_t CPDFSDK_DateTime::ToTime_t() const {
   struct tm newtime;
 
-  newtime.tm_year = dt.year - 1900;
-  newtime.tm_mon = dt.month - 1;
-  newtime.tm_mday = dt.day;
-  newtime.tm_hour = dt.hour;
-  newtime.tm_min = dt.minute;
-  newtime.tm_sec = dt.second;
+  newtime.tm_year = m_year - 1900;
+  newtime.tm_mon = m_month - 1;
+  newtime.tm_mday = m_day;
+  newtime.tm_hour = m_hour;
+  newtime.tm_min = m_minute;
+  newtime.tm_sec = m_second;
 
   return mktime(&newtime);
 }
@@ -144,7 +152,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.year = static_cast<int16_t>(k);
+  m_year = static_cast<int16_t>(k);
   if (i >= strLength || j < 4)
     return *this;
 
@@ -158,7 +166,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.month = static_cast<uint8_t>(k);
+  m_month = static_cast<uint8_t>(k);
   if (i >= strLength || j < 2)
     return *this;
 
@@ -172,7 +180,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.day = static_cast<uint8_t>(k);
+  m_day = static_cast<uint8_t>(k);
   if (i >= strLength || j < 2)
     return *this;
 
@@ -186,7 +194,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.hour = static_cast<uint8_t>(k);
+  m_hour = static_cast<uint8_t>(k);
   if (i >= strLength || j < 2)
     return *this;
 
@@ -200,7 +208,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.minute = static_cast<uint8_t>(k);
+  m_minute = static_cast<uint8_t>(k);
   if (i >= strLength || j < 2)
     return *this;
 
@@ -214,7 +222,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.second = static_cast<uint8_t>(k);
+  m_second = static_cast<uint8_t>(k);
   if (i >= strLength || j < 2)
     return *this;
 
@@ -222,9 +230,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   if (ch != '-' && ch != '+')
     return *this;
   if (ch == '-')
-    dt.tzHour = -1;
+    m_tzHour = -1;
   else
-    dt.tzHour = 1;
+    m_tzHour = 1;
   j = 0;
   k = 0;
   while (i < strLength && j < 2) {
@@ -235,7 +243,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.tzHour *= static_cast<int8_t>(k);
+  m_tzHour *= static_cast<int8_t>(k);
   if (i >= strLength || j < 2)
     return *this;
 
@@ -251,20 +259,20 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       break;
     i++;
   }
-  dt.tzMinute = static_cast<uint8_t>(k);
+  m_tzMinute = static_cast<uint8_t>(k);
   return *this;
 }
 
 CFX_ByteString CPDFSDK_DateTime::ToCommonDateTimeString() {
   CFX_ByteString str1;
-  str1.Format("%04d-%02u-%02u %02u:%02u:%02u ", dt.year, dt.month, dt.day,
-              dt.hour, dt.minute, dt.second);
-  if (dt.tzHour < 0)
+  str1.Format("%04d-%02u-%02u %02u:%02u:%02u ", m_year, m_month, m_day, m_hour,
+              m_minute, m_second);
+  if (m_tzHour < 0)
     str1 += "-";
   else
     str1 += "+";
   CFX_ByteString str2;
-  str2.Format("%02d:%02u", std::abs(static_cast<int>(dt.tzHour)), dt.tzMinute);
+  str2.Format("%02d:%02u", std::abs(static_cast<int>(m_tzHour)), m_tzMinute);
   return str1 + str2;
 }
 
@@ -273,15 +281,15 @@ CFX_ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {
   char tempStr[32];
   memset(tempStr, 0, sizeof(tempStr));
   FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "D:%04d%02u%02u%02u%02u%02u",
-                 dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second);
+                 m_year, m_month, m_day, m_hour, m_minute, m_second);
   dtStr = CFX_ByteString(tempStr);
-  if (dt.tzHour < 0)
+  if (m_tzHour < 0)
     dtStr += CFX_ByteString("-");
   else
     dtStr += CFX_ByteString("+");
   memset(tempStr, 0, sizeof(tempStr));
   FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "%02d'%02u'",
-                 std::abs(static_cast<int>(dt.tzHour)), dt.tzMinute);
+                 std::abs(static_cast<int>(m_tzHour)), m_tzMinute);
   dtStr += CFX_ByteString(tempStr);
   return dtStr;
 }
@@ -305,10 +313,9 @@ void CPDFSDK_DateTime::ToSystemTime(FX_SYSTEMTIME& st) {
 
 CPDFSDK_DateTime CPDFSDK_DateTime::ToGMT() const {
   CPDFSDK_DateTime new_dt = *this;
-  new_dt.AddSeconds(
-      -GetTimeZoneInSeconds(new_dt.dt.tzHour, new_dt.dt.tzMinute));
-  new_dt.dt.tzHour = 0;
-  new_dt.dt.tzMinute = 0;
+  new_dt.AddSeconds(-GetTimeZoneInSeconds(new_dt.m_tzHour, new_dt.m_tzMinute));
+  new_dt.m_tzHour = 0;
+  new_dt.m_tzMinute = 0;
   return new_dt;
 }
 
@@ -316,9 +323,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days) {
   if (days == 0)
     return *this;
 
-  int16_t y = dt.year;
-  uint8_t m = dt.month;
-  uint8_t d = dt.day;
+  int16_t y = m_year;
+  uint8_t m = m_month;
+  uint8_t d = m_day;
 
   int ldays = days;
   if (ldays > 0) {
@@ -371,9 +378,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days) {
     d -= ldays;
   }
 
-  dt.year = y;
-  dt.month = m;
-  dt.day = d;
+  m_year = y;
+  m_month = m;
+  m_day = d;
 
   return *this;
 }
@@ -385,7 +392,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddSeconds(int seconds) {
   int n;
   int days;
 
-  n = dt.hour * 3600 + dt.minute * 60 + dt.second + seconds;
+  n = m_hour * 3600 + m_minute * 60 + m_second + seconds;
   if (n < 0) {
     days = (n - 86399) / 86400;
     n -= days * 86400;
@@ -393,11 +400,11 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddSeconds(int seconds) {
     days = n / 86400;
     n %= 86400;
   }
-  dt.hour = static_cast<uint8_t>(n / 3600);
-  dt.hour %= 24;
+  m_hour = static_cast<uint8_t>(n / 3600);
+  m_hour %= 24;
   n %= 3600;
-  dt.minute = static_cast<uint8_t>(n / 60);
-  dt.second = static_cast<uint8_t>(n % 60);
+  m_minute = static_cast<uint8_t>(n / 60);
+  m_second = static_cast<uint8_t>(n % 60);
   if (days != 0)
     AddDays(days);
 
