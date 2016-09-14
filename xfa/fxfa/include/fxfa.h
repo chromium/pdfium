@@ -298,7 +298,7 @@ class IXFA_DocProvider {
   virtual void SetChangeMark(CXFA_FFDoc* hDoc) = 0;
   virtual void InvalidateRect(CXFA_FFPageView* pPageView,
                               const CFX_RectF& rt,
-                              uint32_t dwFlags = 0) = 0;
+                              uint32_t dwFlags) = 0;
   virtual void DisplayCaret(CXFA_FFWidget* hWidget,
                             FX_BOOL bVisible,
                             const CFX_RectF* pRtAnchor) = 0;
@@ -307,9 +307,7 @@ class IXFA_DocProvider {
                               FX_FLOAT fMaxPopup,
                               const CFX_RectF& rtAnchor,
                               CFX_RectF& rtPopup) = 0;
-  virtual FX_BOOL PopupMenu(CXFA_FFWidget* hWidget,
-                            CFX_PointF ptPopup,
-                            const CFX_RectF* pRectExclude = nullptr) = 0;
+  virtual FX_BOOL PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) = 0;
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
   virtual void WidgetPostAdd(CXFA_FFWidget* hWidget,
                              CXFA_WidgetAcc* pWidgetData) = 0;
@@ -325,10 +323,10 @@ class IXFA_DocProvider {
   virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle) = 0;
   virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideString& wsFilePath,
-                          FX_BOOL bXDP = TRUE) = 0;
+                          FX_BOOL bXDP) = 0;
   virtual void GotoURL(CXFA_FFDoc* hDoc,
                        const CFX_WideString& bsURL,
-                       FX_BOOL bAppend = TRUE) = 0;
+                       FX_BOOL bAppend) = 0;
   virtual FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) = 0;
   virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;
   virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
@@ -336,13 +334,9 @@ class IXFA_DocProvider {
                      int32_t nStartPage,
                      int32_t nEndPage,
                      uint32_t dwOptions) = 0;
-  virtual void GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) = 0;
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
   virtual FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) = 0;
-  virtual FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
-                                     const CFX_ByteStringC& utf8Name,
-                                     CFXJSE_Value* pValue) = 0;
   virtual FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
                                     CFXJSE_Value* pValue) = 0;

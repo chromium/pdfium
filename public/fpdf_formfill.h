@@ -356,12 +356,12 @@ typedef struct _FPDF_SYSTEMTIME {
  * @name Macro Definitions for Right Context Menu Features Of XFA Fields
  */
 /*@{*/
-#define FXFA_MEMU_COPY 1
-#define FXFA_MEMU_CUT 2
-#define FXFA_MEMU_SELECTALL 4
-#define FXFA_MEMU_UNDO 8
-#define FXFA_MEMU_REDO 16
-#define FXFA_MEMU_PASTE 32
+#define FXFA_MENU_COPY 1
+#define FXFA_MENU_CUT 2
+#define FXFA_MENU_SELECTALL 4
+#define FXFA_MENU_UNDO 8
+#define FXFA_MENU_REDO 16
+#define FXFA_MENU_PASTE 32
 /*@}*/
 
 // file type
@@ -870,7 +870,7 @@ typedef struct _FPDF_FORMFILLINFO {
   *function.
   *       hWidget         -   Handle to XFA fields.
   *       menuFlag        -   The menu flags. Please refer to macro definition
-  *of FXFA_MEMU_XXX and this can be one or a combination of these macros.
+  *of FXFA_MENU_XXX and this can be one or a combination of these macros.
   *       x               -   X position of the client area in PDF page
   *coordinate.
   *       y               -   Y position of the client area in PDF page

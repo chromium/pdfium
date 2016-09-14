@@ -202,10 +202,6 @@ class CPDFDoc_Environment final {
     }
   }
 
-  void FFI_GetURL(FPDF_DOCUMENT document, CFX_WideString& wsURL) {
-    wsURL = CFX_WideString();
-  }
-
   void FFI_GetPageViewRect(FPDF_PAGE page, FS_RECTF& dstRect) {
     if (m_pInfo && m_pInfo->FFI_GetPageViewRect) {
       double left;

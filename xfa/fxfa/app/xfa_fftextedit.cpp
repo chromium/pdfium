@@ -146,7 +146,7 @@ FX_BOOL CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags,
   if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
     return FALSE;
 
-  GetDoc()->GetDocProvider()->PopupMenu(this, CFX_PointF(fx, fy), nullptr);
+  GetDoc()->GetDocProvider()->PopupMenu(this, CFX_PointF(fx, fy));
   return TRUE;
 }
 FX_BOOL CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {

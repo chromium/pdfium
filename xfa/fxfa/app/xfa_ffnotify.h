@@ -70,7 +70,7 @@ class CXFA_FFNotify {
   CXFA_Node* GetFocusWidgetNode();
   void SetFocusWidgetNode(CXFA_Node* pNode);
 
- protected:
+ private:
   CXFA_FFDoc* const m_pDoc;
 };
 

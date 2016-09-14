@@ -238,7 +238,7 @@ void CScript_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
     CFX_ByteString bsURL = pArguments->GetUTF8String(0);
     wsURL = CFX_WideString::FromUTF8(bsURL.AsStringC());
   }
-  pNotify->GetDocProvider()->GotoURL(hDoc, wsURL);
+  pNotify->GetDocProvider()->GotoURL(hDoc, wsURL, TRUE);
 }
 void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {

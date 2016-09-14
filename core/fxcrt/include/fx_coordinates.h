@@ -191,117 +191,6 @@ class CFX_FloatPoint {
   FX_FLOAT y;
 };
 
-class CFX_FloatRect {
- public:
-  CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
-  CFX_FloatRect(FX_FLOAT l, FX_FLOAT b, FX_FLOAT r, FX_FLOAT t)
-      : left(l), bottom(b), right(r), top(t) {}
-
-  explicit CFX_FloatRect(const FX_FLOAT* pArray)
-      : CFX_FloatRect(pArray[0], pArray[1], pArray[2], pArray[3]) {}
-
-  explicit CFX_FloatRect(const FX_RECT& rect);
-
-  void Normalize();
-
-  void Reset() {
-    left = 0.0f;
-    right = 0.0f;
-    bottom = 0.0f;
-    top = 0.0f;
-  }
-
-  bool IsEmpty() const { return left >= right || bottom >= top; }
-  bool Contains(const CFX_FloatRect& other_rect) const;
-  bool Contains(FX_FLOAT x, FX_FLOAT y) const;
-
-  void Transform(const CFX_Matrix* pMatrix);
-  void Intersect(const CFX_FloatRect& other_rect);
-  void Union(const CFX_FloatRect& other_rect);
-
-  FX_RECT GetInnerRect() const;
-  FX_RECT GetOuterRect() const;
-  FX_RECT GetClosestRect() const;
-
-  int Substract4(CFX_FloatRect& substract_rect, CFX_FloatRect* pRects);
-
-  void InitRect(FX_FLOAT x, FX_FLOAT y) {
-    left = x;
-    right = x;
-    bottom = y;
-    top = y;
-  }
-  void UpdateRect(FX_FLOAT x, FX_FLOAT y);
-
-  FX_FLOAT Width() const { return right - left; }
-  FX_FLOAT Height() const { return top - bottom; }
-
-  void Inflate(FX_FLOAT x, FX_FLOAT y) {
-    Normalize();
-    left -= x;
-    right += x;
-    bottom -= y;
-    top += y;
-  }
-
-  void Inflate(FX_FLOAT other_left,
-               FX_FLOAT other_bottom,
-               FX_FLOAT other_right,
-               FX_FLOAT other_top) {
-    Normalize();
-    left -= other_left;
-    bottom -= other_bottom;
-    right += other_right;
-    top += other_top;
-  }
-
-  void Inflate(const CFX_FloatRect& rt) {
-    Inflate(rt.left, rt.bottom, rt.right, rt.top);
-  }
-
-  void Deflate(FX_FLOAT x, FX_FLOAT y) {
-    Normalize();
-    left += x;
-    right -= x;
-    bottom += y;
-    top -= y;
-  }
-
-  void Deflate(FX_FLOAT other_left,
-               FX_FLOAT other_bottom,
-               FX_FLOAT other_right,
-               FX_FLOAT other_top) {
-    Normalize();
-    left += other_left;
-    bottom += other_bottom;
-    right -= other_right;
-    top -= other_top;
-  }
-
-  void Deflate(const CFX_FloatRect& rt) {
-    Deflate(rt.left, rt.bottom, rt.right, rt.top);
-  }
-
-  void Translate(FX_FLOAT e, FX_FLOAT f) {
-    left += e;
-    right += e;
-    top += f;
-    bottom += f;
-  }
-
-  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
-
-  FX_RECT ToFxRect() const {
-    return FX_RECT(static_cast<int32_t>(left), static_cast<int32_t>(top),
-                   static_cast<int32_t>(right), static_cast<int32_t>(bottom));
-  }
-
-  FX_FLOAT left;
-  FX_FLOAT bottom;
-  FX_FLOAT right;
-  FX_FLOAT top;
-};
-
 // LTWH rectangles (y-axis runs downwards).
 template <class baseType>
 class CFX_RTemplate {
@@ -544,6 +433,121 @@ class CFX_RTemplate {
 typedef CFX_RTemplate<int32_t> CFX_Rect;
 typedef CFX_RTemplate<FX_FLOAT> CFX_RectF;
 typedef CFX_ArrayTemplate<CFX_RectF> CFX_RectFArray;
+
+class CFX_FloatRect {
+ public:
+  CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
+  CFX_FloatRect(FX_FLOAT l, FX_FLOAT b, FX_FLOAT r, FX_FLOAT t)
+      : left(l), bottom(b), right(r), top(t) {}
+
+  explicit CFX_FloatRect(const FX_FLOAT* pArray)
+      : CFX_FloatRect(pArray[0], pArray[1], pArray[2], pArray[3]) {}
+
+  explicit CFX_FloatRect(const FX_RECT& rect);
+
+  void Normalize();
+
+  void Reset() {
+    left = 0.0f;
+    right = 0.0f;
+    bottom = 0.0f;
+    top = 0.0f;
+  }
+
+  bool IsEmpty() const { return left >= right || bottom >= top; }
+  bool Contains(const CFX_FloatRect& other_rect) const;
+  bool Contains(FX_FLOAT x, FX_FLOAT y) const;
+
+  void Transform(const CFX_Matrix* pMatrix);
+  void Intersect(const CFX_FloatRect& other_rect);
+  void Union(const CFX_FloatRect& other_rect);
+
+  FX_RECT GetInnerRect() const;
+  FX_RECT GetOuterRect() const;
+  FX_RECT GetClosestRect() const;
+
+  int Substract4(CFX_FloatRect& substract_rect, CFX_FloatRect* pRects);
+
+  void InitRect(FX_FLOAT x, FX_FLOAT y) {
+    left = x;
+    right = x;
+    bottom = y;
+    top = y;
+  }
+  void UpdateRect(FX_FLOAT x, FX_FLOAT y);
+
+  FX_FLOAT Width() const { return right - left; }
+  FX_FLOAT Height() const { return top - bottom; }
+
+  void Inflate(FX_FLOAT x, FX_FLOAT y) {
+    Normalize();
+    left -= x;
+    right += x;
+    bottom -= y;
+    top += y;
+  }
+
+  void Inflate(FX_FLOAT other_left,
+               FX_FLOAT other_bottom,
+               FX_FLOAT other_right,
+               FX_FLOAT other_top) {
+    Normalize();
+    left -= other_left;
+    bottom -= other_bottom;
+    right += other_right;
+    top += other_top;
+  }
+
+  void Inflate(const CFX_FloatRect& rt) {
+    Inflate(rt.left, rt.bottom, rt.right, rt.top);
+  }
+
+  void Deflate(FX_FLOAT x, FX_FLOAT y) {
+    Normalize();
+    left += x;
+    right -= x;
+    bottom += y;
+    top -= y;
+  }
+
+  void Deflate(FX_FLOAT other_left,
+               FX_FLOAT other_bottom,
+               FX_FLOAT other_right,
+               FX_FLOAT other_top) {
+    Normalize();
+    left += other_left;
+    bottom += other_bottom;
+    right -= other_right;
+    top -= other_top;
+  }
+
+  void Deflate(const CFX_FloatRect& rt) {
+    Deflate(rt.left, rt.bottom, rt.right, rt.top);
+  }
+
+  void Translate(FX_FLOAT e, FX_FLOAT f) {
+    left += e;
+    right += e;
+    top += f;
+    bottom += f;
+  }
+
+  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
+
+  FX_RECT ToFxRect() const {
+    return FX_RECT(static_cast<int32_t>(left), static_cast<int32_t>(top),
+                   static_cast<int32_t>(right), static_cast<int32_t>(bottom));
+  }
+
+  static CFX_FloatRect FromCFXRectF(const CFX_RectF& rect) {
+    return CFX_FloatRect(rect.left, rect.top, rect.right(), rect.bottom());
+  }
+
+  FX_FLOAT left;
+  FX_FLOAT bottom;
+  FX_FLOAT right;
+  FX_FLOAT top;
+};
 
 class CFX_Matrix {
  public:

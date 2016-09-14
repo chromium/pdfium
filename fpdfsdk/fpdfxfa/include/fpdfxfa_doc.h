@@ -32,14 +32,12 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   ~CPDFXFA_Document() override;
 
   FX_BOOL LoadXFADoc();
-  CPDFXFA_App* GetApp() { return m_pApp; }
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
 
   int GetPageCount();
   CPDFXFA_Page* GetPage(int page_index);
-  CPDFXFA_Page* GetPage(CXFA_FFPageView* pPage);
 
   void DeletePage(int page_index);
   void RemovePage(CPDFXFA_Page* page);
@@ -47,14 +45,12 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   CPDFSDK_Document* GetSDKDocument(CPDFDoc_Environment* pFormFillEnv);
 
-  void FXRect2PDFRect(const CFX_RectF& fxRectF, CFX_FloatRect& pdfRect);
-
   // IXFA_DocProvider
   void SetChangeMark(CXFA_FFDoc* hDoc) override;
   // used in dynamic xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
   void InvalidateRect(CXFA_FFPageView* pPageView,
                       const CFX_RectF& rt,
-                      uint32_t dwFlags = 0) override;
+                      uint32_t dwFlags) override;
   // show or hide caret
   void DisplayCaret(CXFA_FFWidget* hWidget,
                     FX_BOOL bVisible,
@@ -65,9 +61,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
                       FX_FLOAT fMaxPopup,
                       const CFX_RectF& rtAnchor,
                       CFX_RectF& rtPopup) override;
-  FX_BOOL PopupMenu(CXFA_FFWidget* hWidget,
-                    CFX_PointF ptPopup,
-                    const CFX_RectF* pRectExclude = nullptr) override;
+  FX_BOOL PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) override;
 
   // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
   void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) override;
@@ -86,10 +80,10 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle) override;
   void ExportData(CXFA_FFDoc* hDoc,
                   const CFX_WideString& wsFilePath,
-                  FX_BOOL bXDP = TRUE) override;
+                  FX_BOOL bXDP) override;
   void GotoURL(CXFA_FFDoc* hDoc,
                const CFX_WideString& bsURL,
-               FX_BOOL bAppend = TRUE) override;
+               FX_BOOL bAppend) override;
   FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) override;
   void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) override;
   void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) override;
@@ -97,8 +91,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
              int32_t nStartPage,
              int32_t nEndPage,
              uint32_t dwOptions) override;
-  // Get document path
-  void GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) override;
   FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) override;
 
   /**
@@ -114,11 +106,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
    *content or not.
    */
   FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) override;
-
-  // Get PDF javascript object, set the object to pValue.
-  FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
-                             const CFX_ByteStringC& utf8Name,
-                             CFXJSE_Value* pValue) override;
 
   FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
                             const CFX_ByteStringC& szPropName,
@@ -149,6 +136,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
     }
   }
 
+  CPDFXFA_Page* GetPage(CXFA_FFPageView* pPage);
   FX_BOOL OnBeforeNotifySubmit();
   void OnAfterNotifySubmit();
   FX_BOOL NotifySubmit(FX_BOOL bPrevOrPost);
