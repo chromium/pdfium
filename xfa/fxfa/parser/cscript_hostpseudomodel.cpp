@@ -628,24 +628,16 @@ void CScript_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
   }
   pNotify->GetDocProvider()->Print(hDoc, nStartPage, nEndPage, dwOptions);
 }
+
 void CScript_HostPseudoModel::ImportData(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 0 || iLength > 1) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"importData");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  CFX_WideString wsFilePath;
-  if (iLength > 0) {
-    CFX_ByteString bsFilePath = pArguments->GetUTF8String(0);
-    wsFilePath = CFX_WideString::FromUTF8(bsFilePath.AsStringC());
-  }
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  pNotify->GetDocProvider()->ImportData(hDoc, wsFilePath);
+  // Not implemented.
 }
+
 void CScript_HostPseudoModel::ExportData(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 0 || iLength > 2) {

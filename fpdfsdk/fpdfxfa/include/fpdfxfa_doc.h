@@ -76,12 +76,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   void WidgetPreRemove(CXFA_FFWidget* hWidget,
                        CXFA_WidgetAcc* pWidgetData) override;
 
-  // return true if render it.
-  FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
-                             CFX_Graphics* pGS,
-                             CFX_Matrix* pMatrix,
-                             const CFX_RectF& rtUI) override;
-
   // Host method
   int32_t CountPages(CXFA_FFDoc* hDoc) override;
   int32_t GetCurrentPage(CXFA_FFDoc* hDoc) override;
@@ -93,7 +87,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   void ExportData(CXFA_FFDoc* hDoc,
                   const CFX_WideString& wsFilePath,
                   FX_BOOL bXDP = TRUE) override;
-  void ImportData(CXFA_FFDoc* hDoc, const CFX_WideString& wsFilePath) override;
   void GotoURL(CXFA_FFDoc* hDoc,
                const CFX_WideString& bsURL,
                FX_BOOL bAppend = TRUE) override;
@@ -104,27 +97,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
              int32_t nStartPage,
              int32_t nEndPage,
              uint32_t dwOptions) override;
-
-  // LayoutPseudo method
-  int32_t AbsPageCountInBatch(CXFA_FFDoc* hDoc) override;
-  int32_t AbsPageInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) override;
-  int32_t SheetCountInBatch(CXFA_FFDoc* hDoc) override;
-  int32_t SheetInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) override;
-
-  int32_t Verify(CXFA_FFDoc* hDoc,
-                 CXFA_Node* pSigNode,
-                 FX_BOOL bUsed = TRUE) override;
-  FX_BOOL Sign(CXFA_FFDoc* hDoc,
-               CXFA_NodeList* pNodeList,
-               const CFX_WideStringC& wsExpression,
-               const CFX_WideStringC& wsXMLIdent,
-               const CFX_WideStringC& wsValue = FX_WSTRC(L"open"),
-               FX_BOOL bUsed = TRUE) override;
-  CXFA_NodeList* Enumerate(CXFA_FFDoc* hDoc) override;
-  FX_BOOL Clear(CXFA_FFDoc* hDoc,
-                CXFA_Node* pSigNode,
-                FX_BOOL bCleared = TRUE) override;
-
   // Get document path
   void GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) override;
   FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) override;
@@ -143,11 +115,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
    */
   FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) override;
 
-  FX_BOOL CheckWord(CXFA_FFDoc* hDoc, const CFX_ByteStringC& sWord) override;
-  FX_BOOL GetSuggestWords(CXFA_FFDoc* hDoc,
-                          const CFX_ByteStringC& sWord,
-                          std::vector<CFX_ByteString>& sSuggest) override;
-
   // Get PDF javascript object, set the object to pValue.
   FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
                              const CFX_ByteStringC& utf8Name,
@@ -159,29 +126,11 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
                             const CFX_ByteStringC& szPropName,
                             CFXJSE_Value* pValue) override;
-  CPDF_Document* OpenPDF(CXFA_FFDoc* hDoc,
-                         IFX_FileRead* pFile,
-                         FX_BOOL bTakeOverFile) override;
 
   IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
                                const CFX_WideString& wsLink) override;
 
-  FX_BOOL _OnBeforeNotifySumbit();
-  void _OnAfterNotifySumbit();
-  FX_BOOL _NotifySubmit(FX_BOOL bPrevOrPost);
-  FX_BOOL _SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit);
-  FX_BOOL _MailToInfo(CFX_WideString& csURL,
-                      CFX_WideString& csToAddress,
-                      CFX_WideString& csCCAddress,
-                      CFX_WideString& csBCCAddress,
-                      CFX_WideString& csSubject,
-                      CFX_WideString& csMsg);
-  FX_BOOL _ExportSubmitFile(FPDF_FILEHANDLER* ppFileHandler,
-                            int fileType,
-                            FPDF_DWORD encodeType,
-                            FPDF_DWORD flag = 0x01111111);
-  void _ToXFAContentFlags(CFX_WideString csSrcContent, FPDF_DWORD& flag);
-  void _ClearChangeMark();
+  void ClearChangeMark();
 
  private:
   enum LoadStatus {
@@ -199,6 +148,22 @@ class CPDFXFA_Document : public IXFA_DocProvider {
       m_pXFADocView = nullptr;
     }
   }
+
+  FX_BOOL OnBeforeNotifySubmit();
+  void OnAfterNotifySubmit();
+  FX_BOOL NotifySubmit(FX_BOOL bPrevOrPost);
+  FX_BOOL SubmitDataInternal(CXFA_FFDoc* hDoc, CXFA_Submit submit);
+  FX_BOOL MailToInfo(CFX_WideString& csURL,
+                     CFX_WideString& csToAddress,
+                     CFX_WideString& csCCAddress,
+                     CFX_WideString& csBCCAddress,
+                     CFX_WideString& csSubject,
+                     CFX_WideString& csMsg);
+  FX_BOOL ExportSubmitFile(FPDF_FILEHANDLER* ppFileHandler,
+                           int fileType,
+                           FPDF_DWORD encodeType,
+                           FPDF_DWORD flag);
+  void ToXFAContentFlags(CFX_WideString csSrcContent, FPDF_DWORD& flag);
 
   int m_iDocType;
 

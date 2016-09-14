@@ -34,11 +34,8 @@ void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS,
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, FALSE);
-  CFX_RectF rtWidget = m_rtUI;
-  IXFA_DocProvider* pDocProvider = m_pDataAcc->GetDoc()->GetDocProvider();
-  ASSERT(pDocProvider);
-  pDocProvider->RenderCustomWidget(this, pGS, &mtRotate, rtWidget);
 }
+
 FX_BOOL CXFA_FFSignature::OnMouseEnter() {
   return FALSE;
 }

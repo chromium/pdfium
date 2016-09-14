@@ -29,19 +29,10 @@ void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"verify");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  CXFA_Node* pNode = nullptr;
-  if (iLength >= 1) {
-    pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-  }
-  int32_t bVerify = pNotify->GetDocProvider()->Verify(hDoc, pNode);
+
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
-    pValue->SetInteger(bVerify);
+    pValue->SetInteger(0);
 }
 
 void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
@@ -50,48 +41,18 @@ void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sign");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  CXFA_NodeList* pNodeList = nullptr;
-  CFX_WideString wsExpression;
-  CFX_WideString wsXMLIdent;
-  if (iLength >= 1) {
-    pNodeList = (CXFA_NodeList*)pArguments->GetObject(0);
-  }
-  if (iLength >= 2) {
-    CFX_ByteString bsExpression = pArguments->GetUTF8String(1);
-    wsExpression = CFX_WideString::FromUTF8(bsExpression.AsStringC());
-  }
-  if (iLength >= 3) {
-    CFX_ByteString bsXMLIdent = pArguments->GetUTF8String(2);
-    wsXMLIdent = CFX_WideString::FromUTF8(bsXMLIdent.AsStringC());
-  }
-  FX_BOOL bSign = pNotify->GetDocProvider()->Sign(
-      hDoc, pNodeList, wsExpression.AsStringC(), wsXMLIdent.AsStringC());
+
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
-    pValue->SetBoolean(bSign);
+    pValue->SetBoolean(FALSE);
 }
 
 void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 0) {
+  if (pArguments->GetLength() != 0) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"enumerate");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  CXFA_NodeList* pList = pNotify->GetDocProvider()->Enumerate(hDoc);
-  if (!pList)
-    return;
-  pArguments->GetReturnValue()->Assign(
-      m_pDocument->GetScriptContext()->GetJSValueFromMap(pList));
+  return;
 }
 
 void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
@@ -100,21 +61,8 @@ void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
     ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clear");
     return;
   }
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
-    return;
-  }
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  CXFA_Node* pNode = nullptr;
-  FX_BOOL bClear = TRUE;
-  if (iLength >= 1) {
-    pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-  }
-  if (iLength >= 2) {
-    bClear = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;
-  }
-  FX_BOOL bFlag = pNotify->GetDocProvider()->Clear(hDoc, pNode, bClear);
+
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
-    pValue->SetBoolean(bFlag);
+    pValue->SetBoolean(FALSE);
 }

@@ -238,7 +238,7 @@ bool SendPostSaveToXFADoc(CPDFXFA_Document* pDocument) {
     pWidgetHander->ProcessEvent(pWidgetAcc, &preParam);
   }
   pXFADocView->UpdateDocView();
-  pDocument->_ClearChangeMark();
+  pDocument->ClearChangeMark();
   return true;
 }
 

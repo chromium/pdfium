@@ -41,6 +41,7 @@
 #define FXFA_XFDF 0x00100000
 #define FXFA_FORM 0x01000000
 #define FXFA_PDF 0x10000000
+#define FXFA_XFA_ALL 0x01111111
 
 #ifndef _WIN32
 extern void SetLastError(int err);
@@ -517,13 +518,6 @@ void CPDFXFA_Document::WidgetPreRemove(CXFA_FFWidget* hWidget,
     pSdkPageView->DeleteAnnot(pAnnot);
 }
 
-FX_BOOL CPDFXFA_Document::RenderCustomWidget(CXFA_FFWidget* hWidget,
-                                             CFX_Graphics* pGS,
-                                             CFX_Matrix* pMatrix,
-                                             const CFX_RectF& rtUI) {
-  return FALSE;
-}
-
 int32_t CPDFXFA_Document::CountPages(CXFA_FFDoc* hDoc) {
   if (hDoc == m_pXFADoc.get() && m_pSDKDoc)
     return GetPageCount();
@@ -554,6 +548,7 @@ void CPDFXFA_Document::SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) {
     return;
   pEnv->FFI_SetCurrentPage(this, iCurPage);
 }
+
 FX_BOOL CPDFXFA_Document::IsCalculationsEnabled(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pXFADoc.get() || !m_pSDKDoc)
     return FALSE;
@@ -562,6 +557,7 @@ FX_BOOL CPDFXFA_Document::IsCalculationsEnabled(CXFA_FFDoc* hDoc) {
 
   return FALSE;
 }
+
 void CPDFXFA_Document::SetCalculationsEnabled(CXFA_FFDoc* hDoc,
                                               FX_BOOL bEnabled) {
   if (hDoc != m_pXFADoc.get() || !m_pSDKDoc)
@@ -682,8 +678,6 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
     // Ignoring flush error.
   }
 }
-void CPDFXFA_Document::ImportData(CXFA_FFDoc* hDoc,
-                                  const CFX_WideString& wsFilePath) {}
 
 void CPDFXFA_Document::GotoURL(CXFA_FFDoc* hDoc,
                                const CFX_WideString& bsURL,
@@ -711,6 +705,7 @@ FX_BOOL CPDFXFA_Document::IsValidationsEnabled(CXFA_FFDoc* hDoc) {
 
   return TRUE;
 }
+
 void CPDFXFA_Document::SetValidationsEnabled(CXFA_FFDoc* hDoc,
                                              FX_BOOL bEnabled) {
   if (hDoc != m_pXFADoc.get() || !m_pSDKDoc)
@@ -718,6 +713,7 @@ void CPDFXFA_Document::SetValidationsEnabled(CXFA_FFDoc* hDoc,
   if (m_pSDKDoc->GetInterForm())
     m_pSDKDoc->GetInterForm()->XfaSetValidationsEnabled(bEnabled);
 }
+
 void CPDFXFA_Document::SetFocusWidget(CXFA_FFDoc* hDoc,
                                       CXFA_FFWidget* hWidget) {
   if (hDoc != m_pXFADoc.get())
@@ -740,6 +736,7 @@ void CPDFXFA_Document::SetFocusWidget(CXFA_FFDoc* hDoc,
     }
   }
 }
+
 void CPDFXFA_Document::Print(CXFA_FFDoc* hDoc,
                              int32_t nStartPage,
                              int32_t nEndPage,
@@ -760,49 +757,6 @@ void CPDFXFA_Document::Print(CXFA_FFDoc* hDoc,
       dwOptions & XFA_PRINTOPT_CanCancel, dwOptions & XFA_PRINTOPT_ShrinkPage,
       dwOptions & XFA_PRINTOPT_AsImage, dwOptions & XFA_PRINTOPT_ReverseOrder,
       dwOptions & XFA_PRINTOPT_PrintAnnot);
-}
-
-int32_t CPDFXFA_Document::AbsPageCountInBatch(CXFA_FFDoc* hDoc) {
-  return 0;
-}
-
-int32_t CPDFXFA_Document::AbsPageInBatch(CXFA_FFDoc* hDoc,
-                                         CXFA_FFWidget* hWidget) {
-  return 0;
-}
-
-int32_t CPDFXFA_Document::SheetCountInBatch(CXFA_FFDoc* hDoc) {
-  return 0;
-}
-
-int32_t CPDFXFA_Document::SheetInBatch(CXFA_FFDoc* hDoc,
-                                       CXFA_FFWidget* hWidget) {
-  return 0;
-}
-
-int32_t CPDFXFA_Document::Verify(CXFA_FFDoc* hDoc,
-                                 CXFA_Node* pSigNode,
-                                 FX_BOOL bUsed) {
-  return 0;
-}
-
-FX_BOOL CPDFXFA_Document::Sign(CXFA_FFDoc* hDoc,
-                               CXFA_NodeList* pNodeList,
-                               const CFX_WideStringC& wsExpression,
-                               const CFX_WideStringC& wsXMLIdent,
-                               const CFX_WideStringC& wsValue,
-                               FX_BOOL bUsed) {
-  return 0;
-}
-
-CXFA_NodeList* CPDFXFA_Document::Enumerate(CXFA_FFDoc* hDoc) {
-  return 0;
-}
-
-FX_BOOL CPDFXFA_Document::Clear(CXFA_FFDoc* hDoc,
-                                CXFA_Node* pSigNode,
-                                FX_BOOL bCleared) {
-  return 0;
 }
 
 void CPDFXFA_Document::GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) {
@@ -830,15 +784,15 @@ FX_ARGB CPDFXFA_Document::GetHighlightColor(CXFA_FFDoc* hDoc) {
   return 0;
 }
 
-FX_BOOL CPDFXFA_Document::_NotifySubmit(FX_BOOL bPrevOrPost) {
+FX_BOOL CPDFXFA_Document::NotifySubmit(FX_BOOL bPrevOrPost) {
   if (bPrevOrPost)
-    return _OnBeforeNotifySumbit();
+    return OnBeforeNotifySubmit();
 
-  _OnAfterNotifySumbit();
+  OnAfterNotifySubmit();
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
+FX_BOOL CPDFXFA_Document::OnBeforeNotifySubmit() {
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return TRUE;
 
@@ -885,7 +839,7 @@ FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
   return TRUE;
 }
 
-void CPDFXFA_Document::_OnAfterNotifySumbit() {
+void CPDFXFA_Document::OnAfterNotifySubmit() {
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return;
 
@@ -912,25 +866,13 @@ void CPDFXFA_Document::_OnAfterNotifySumbit() {
 }
 
 FX_BOOL CPDFXFA_Document::SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
-  if (!_NotifySubmit(TRUE) || !m_pXFADocView)
+  if (!NotifySubmit(TRUE) || !m_pXFADocView)
     return FALSE;
   m_pXFADocView->UpdateDocView();
 
-  FX_BOOL ret = _SubmitData(hDoc, submit);
-  _NotifySubmit(FALSE);
+  FX_BOOL ret = SubmitDataInternal(hDoc, submit);
+  NotifySubmit(FALSE);
   return ret;
-}
-
-FX_BOOL CPDFXFA_Document::CheckWord(CXFA_FFDoc* hDoc,
-                                    const CFX_ByteStringC& sWord) {
-  return FALSE;
-}
-
-FX_BOOL CPDFXFA_Document::GetSuggestWords(
-    CXFA_FFDoc* hDoc,
-    const CFX_ByteStringC& sWord,
-    std::vector<CFX_ByteString>& sSuggest) {
-  return FALSE;
 }
 
 IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(CXFA_FFDoc* hDoc,
@@ -948,10 +890,11 @@ IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(CXFA_FFDoc* hDoc,
     return nullptr;
   return new CFPDF_FileStream(pFileHandler);
 }
-FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
-                                            int fileType,
-                                            FPDF_DWORD encodeType,
-                                            FPDF_DWORD flag) {
+
+FX_BOOL CPDFXFA_Document::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
+                                           int fileType,
+                                           FPDF_DWORD encodeType,
+                                           FPDF_DWORD flag) {
   if (!m_pXFADocView)
     return FALSE;
 
@@ -1032,13 +975,13 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   return TRUE;
 }
 
-void CPDFXFA_Document::_ClearChangeMark() {
+void CPDFXFA_Document::ClearChangeMark() {
   if (m_pSDKDoc)
     m_pSDKDoc->ClearChangeMark();
 }
 
-void CPDFXFA_Document::_ToXFAContentFlags(CFX_WideString csSrcContent,
-                                          FPDF_DWORD& flag) {
+void CPDFXFA_Document::ToXFAContentFlags(CFX_WideString csSrcContent,
+                                         FPDF_DWORD& flag) {
   if (csSrcContent.Find(L" config ", 0) != -1)
     flag |= FXFA_CONFIG;
   if (csSrcContent.Find(L" template ", 0) != -1)
@@ -1057,12 +1000,13 @@ void CPDFXFA_Document::_ToXFAContentFlags(CFX_WideString csSrcContent,
     flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
            FXFA_XMPMETA | FXFA_XFDF | FXFA_FORM;
 }
-FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL,
-                                      CFX_WideString& csToAddress,
-                                      CFX_WideString& csCCAddress,
-                                      CFX_WideString& csBCCAddress,
-                                      CFX_WideString& csSubject,
-                                      CFX_WideString& csMsg) {
+
+FX_BOOL CPDFXFA_Document::MailToInfo(CFX_WideString& csURL,
+                                     CFX_WideString& csToAddress,
+                                     CFX_WideString& csCCAddress,
+                                     CFX_WideString& csBCCAddress,
+                                     CFX_WideString& csSubject,
+                                     CFX_WideString& csMsg) {
   CFX_WideString srcURL = csURL;
   srcURL.TrimLeft();
   if (0 != srcURL.Left(7).CompareNoCase(L"mailto:"))
@@ -1130,7 +1074,8 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL,
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
+FX_BOOL CPDFXFA_Document::SubmitDataInternal(CXFA_FFDoc* hDoc,
+                                             CXFA_Submit submit) {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (!pEnv)
     return FALSE;
@@ -1164,23 +1109,23 @@ FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
       FPDF_DWORD flag = 0;
       if (submit.IsSubmitEmbedPDF())
         flag |= FXFA_PDF;
-      _ToXFAContentFlags(csContent, flag);
+      ToXFAContentFlags(csContent, flag);
       pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XDP, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XDP;
-      _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XDP, 0, flag);
+      ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XDP, 0, flag);
       break;
     }
     case XFA_ATTRIBUTEENUM_Xml:
       pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
-      _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0);
+      ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);
       break;
     case XFA_ATTRIBUTEENUM_Pdf:
       break;
     case XFA_ATTRIBUTEENUM_Urlencoded:
       pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
-      _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0);
+      ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);
       break;
     default:
       return false;
@@ -1193,8 +1138,8 @@ FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
     CFX_WideString csBCCAddress;
     CFX_WideString csSubject;
     CFX_WideString csMsg;
-    bRet = _MailToInfo(csURL, csToAddress, csCCAddress, csBCCAddress, csSubject,
-                       csMsg);
+    bRet = MailToInfo(csURL, csToAddress, csCCAddress, csBCCAddress, csSubject,
+                      csMsg);
     if (!bRet)
       return FALSE;
     CFX_ByteString bsTo = CFX_WideString(csToAddress).UTF16LE_Encode();
@@ -1269,10 +1214,4 @@ FX_BOOL CPDFXFA_Document::GetGlobalProperty(CXFA_FFDoc* hDoc,
 
   return m_pSDKDoc->GetEnv()->GetJSRuntime()->GetValueByName(szPropName,
                                                              pValue);
-}
-
-CPDF_Document* CPDFXFA_Document::OpenPDF(CXFA_FFDoc* hDoc,
-                                         IFX_FileRead* pFile,
-                                         FX_BOOL bTakeOverFile) {
-  return nullptr;
 }

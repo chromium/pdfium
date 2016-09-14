@@ -52,8 +52,6 @@ class CXFA_FFTextEdit : public CXFA_FFField {
                      const CFX_WideString& wsPrevText);
   void OnTextFull(IFWL_Widget* pWidget);
   FX_BOOL CheckWord(const CFX_ByteStringC& sWord);
-  FX_BOOL GetSuggestWords(const CFX_ByteStringC& sWord,
-                          std::vector<CFX_ByteString>& sSuggest);
 
  protected:
   FX_BOOL CommitData() override;

@@ -315,10 +315,6 @@ class IXFA_DocProvider {
                              CXFA_WidgetAcc* pWidgetData) = 0;
   virtual void WidgetPreRemove(CXFA_FFWidget* hWidget,
                                CXFA_WidgetAcc* pWidgetData) = 0;
-  virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
-                                     CFX_Graphics* pGS,
-                                     CFX_Matrix* pMatrix,
-                                     const CFX_RectF& rtUI) = 0;
 
   virtual int32_t CountPages(CXFA_FFDoc* hDoc) = 0;
   virtual int32_t GetCurrentPage(CXFA_FFDoc* hDoc) = 0;
@@ -330,8 +326,6 @@ class IXFA_DocProvider {
   virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideString& wsFilePath,
                           FX_BOOL bXDP = TRUE) = 0;
-  virtual void ImportData(CXFA_FFDoc* hDoc,
-                          const CFX_WideString& wsFilePath) = 0;
   virtual void GotoURL(CXFA_FFDoc* hDoc,
                        const CFX_WideString& bsURL,
                        FX_BOOL bAppend = TRUE) = 0;
@@ -342,31 +336,10 @@ class IXFA_DocProvider {
                      int32_t nStartPage,
                      int32_t nEndPage,
                      uint32_t dwOptions) = 0;
-  virtual int32_t AbsPageCountInBatch(CXFA_FFDoc* hDoc) = 0;
-  virtual int32_t AbsPageInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
-  virtual int32_t SheetCountInBatch(CXFA_FFDoc* hDoc) = 0;
-  virtual int32_t SheetInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
-  virtual int32_t Verify(CXFA_FFDoc* hDoc,
-                         CXFA_Node* pSigNode,
-                         FX_BOOL bUsed = TRUE) = 0;
-  virtual FX_BOOL Sign(CXFA_FFDoc* hDoc,
-                       CXFA_NodeList* pNodeList,
-                       const CFX_WideStringC& wsExpression,
-                       const CFX_WideStringC& wsXMLIdent,
-                       const CFX_WideStringC& wsValue = FX_WSTRC(L"open"),
-                       FX_BOOL bUsed = TRUE) = 0;
-  virtual CXFA_NodeList* Enumerate(CXFA_FFDoc* hDoc) = 0;
-  virtual FX_BOOL Clear(CXFA_FFDoc* hDoc,
-                        CXFA_Node* pSigNode,
-                        FX_BOOL bCleared = TRUE) = 0;
   virtual void GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) = 0;
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
   virtual FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) = 0;
-  virtual FX_BOOL CheckWord(CXFA_FFDoc* hDoc, const CFX_ByteStringC& sWord) = 0;
-  virtual FX_BOOL GetSuggestWords(CXFA_FFDoc* hDoc,
-                                  const CFX_ByteStringC& sWord,
-                                  std::vector<CFX_ByteString>& sSuggest) = 0;
   virtual FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
                                      const CFX_ByteStringC& utf8Name,
                                      CFXJSE_Value* pValue) = 0;
@@ -376,9 +349,6 @@ class IXFA_DocProvider {
   virtual FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
                                     CFXJSE_Value* pValue) = 0;
-  virtual CPDF_Document* OpenPDF(CXFA_FFDoc* hDoc,
-                                 IFX_FileRead* pFile,
-                                 FX_BOOL bTakeOverFile) = 0;
   virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
                                        const CFX_WideString& wsLink) = 0;
 };

@@ -235,60 +235,14 @@ void XFA_XPDPacket_MergeRootNode(CXFA_Node* pOriginRoot, CXFA_Node* pNewRoot) {
     }
   }
 }
+
 int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
   int32_t iStatus = m_pDocumentParser->DoParse(pPause);
-  if (iStatus == XFA_PARSESTATUS_Done && !m_pPDFDoc) {
-    CXFA_Node* pPDFNode = ToNode(
-        m_pDocumentParser->GetDocument()->GetXFAObject(XFA_HASHCODE_Pdf));
-    if (!pPDFNode) {
-      return XFA_PARSESTATUS_SyntaxErr;
-    }
-    CFDE_XMLNode* pPDFXML = pPDFNode->GetXMLMappingNode();
-    if (pPDFXML->GetType() != FDE_XMLNODE_Element) {
-      return XFA_PARSESTATUS_SyntaxErr;
-    }
-    int32_t iBufferSize = 0;
-    uint8_t* pByteBuffer = nullptr;
-    IFX_FileRead* pXFAReader = nullptr;
-    if (XFA_GetPDFContentsFromPDFXML(pPDFXML, pByteBuffer, iBufferSize)) {
-      pXFAReader = FX_CreateMemoryStream(pByteBuffer, iBufferSize, TRUE);
-    } else {
-      CFX_WideString wsHref;
-      static_cast<CFDE_XMLElement*>(pPDFXML)->GetString(L"href", wsHref);
-      if (!wsHref.IsEmpty()) {
-        pXFAReader = GetDocProvider()->OpenLinkedFile(this, wsHref);
-      }
-    }
-    if (!pXFAReader)
-      return XFA_PARSESTATUS_SyntaxErr;
-
-    CPDF_Document* pPDFDocument =
-        GetDocProvider()->OpenPDF(this, pXFAReader, TRUE);
-    ASSERT(!m_pPDFDoc);
-    if (!OpenDoc(pPDFDocument))
-      return XFA_PARSESTATUS_SyntaxErr;
-
-    CXFA_Document* doc = m_pDocumentParser->GetDocument();
-    std::unique_ptr<CXFA_SimpleParser> pParser(
-        new CXFA_SimpleParser(doc, true));
-    if (!pParser)
-      return XFA_PARSESTATUS_SyntaxErr;
-
-    CXFA_Node* pRootNode = nullptr;
-    if (pParser->StartParse(m_pStream, XFA_XDPPACKET_XDP) ==
-            XFA_PARSESTATUS_Ready &&
-        pParser->DoParse(nullptr) == XFA_PARSESTATUS_Done) {
-      pRootNode = pParser->GetRootNode();
-    }
-    if (pRootNode && doc->GetRoot()) {
-      XFA_XPDPacket_MergeRootNode(doc->GetRoot(), pRootNode);
-      iStatus = XFA_PARSESTATUS_Done;
-    } else {
-      iStatus = XFA_PARSESTATUS_StatusErr;
-    }
-  }
+  if (iStatus == XFA_PARSESTATUS_Done && !m_pPDFDoc)
+    return XFA_PARSESTATUS_SyntaxErr;
   return iStatus;
 }
+
 void CXFA_FFDoc::StopLoad() {
   m_pApp->GetXFAFontMgr()->LoadDocFonts(this);
   m_dwDocType = XFA_DOCTYPE_Static;

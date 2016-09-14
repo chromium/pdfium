@@ -387,18 +387,9 @@ void CXFA_FFTextEdit::OnTextFull(IFWL_Widget* pWidget) {
 }
 
 FX_BOOL CXFA_FFTextEdit::CheckWord(const CFX_ByteStringC& sWord) {
-  if (sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_Element::TextEdit) {
+  if (sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_Element::TextEdit)
     return TRUE;
-  }
-  return GetDoc()->GetDocProvider()->CheckWord(GetDoc(), sWord);
-}
-FX_BOOL CXFA_FFTextEdit::GetSuggestWords(
-    const CFX_ByteStringC& sWord,
-    std::vector<CFX_ByteString>& sSuggest) {
-  if (m_pDataAcc->GetUIType() != XFA_Element::TextEdit) {
-    return FALSE;
-  }
-  return GetDoc()->GetDocProvider()->GetSuggestWords(GetDoc(), sWord, sSuggest);
+  return FALSE;
 }
 
 void CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {
@@ -426,8 +417,7 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     }
     case CFWL_EventType::GetSuggestedWords: {
       CFWL_EvtEdtGetSuggestWords* event = (CFWL_EvtEdtGetSuggestWords*)pEvent;
-      event->bSuggestWords = GetSuggestWords(event->bsWord.AsStringC(),
-                                             event->bsArraySuggestWords);
+      event->bSuggestWords = FALSE;
       break;
     }
     default:
