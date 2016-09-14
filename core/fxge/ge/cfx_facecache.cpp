@@ -386,9 +386,6 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
 
   CFX_GlyphBitmap* pGlyphBitmap = RenderGlyph(pFont, glyph_index, bFontStyle,
                                               pMatrix, dest_width, anti_alias);
-  if (!pGlyphBitmap)
-    return nullptr;
-
   pSizeCache->m_GlyphMap[glyph_index] = pGlyphBitmap;
   return pGlyphBitmap;
 }
