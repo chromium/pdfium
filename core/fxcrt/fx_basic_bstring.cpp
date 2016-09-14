@@ -202,6 +202,9 @@ bool CFX_ByteString::operator==(const CFX_ByteStringC& str) const {
 }
 
 bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
+  if (m_pData == other.m_pData)
+    return true;
+
   if (IsEmpty())
     return other.IsEmpty();
 

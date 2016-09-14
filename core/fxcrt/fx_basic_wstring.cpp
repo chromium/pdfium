@@ -180,6 +180,9 @@ bool CFX_WideString::operator==(const CFX_WideStringC& str) const {
 }
 
 bool CFX_WideString::operator==(const CFX_WideString& other) const {
+  if (m_pData == other.m_pData)
+    return true;
+
   if (IsEmpty())
     return other.IsEmpty();
 
