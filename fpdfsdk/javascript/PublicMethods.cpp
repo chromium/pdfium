@@ -11,8 +11,8 @@
 
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fxcrt/include/fx_ext.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/JS_Define.h"
@@ -80,7 +80,7 @@ CFX_WideString StrTrim(const CFX_WideString& pStr) {
 }
 
 void AlertIfPossible(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  CPDFDoc_Environment* pApp = pContext->GetReaderApp();
+  CPDFSDK_Environment* pApp = pContext->GetReaderApp();
   if (pApp)
     pApp->JS_appAlert(swMsg, nullptr, 0, 3);
 }

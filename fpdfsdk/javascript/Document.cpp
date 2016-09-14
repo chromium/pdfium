@@ -15,9 +15,9 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fpdfdoc/include/cpdf_nametree.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
@@ -224,7 +224,7 @@ FX_BOOL Document::pageNum(IJS_Context* cc,
     int iPageNum = 0;
     vp >> iPageNum;
 
-    CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
+    CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
     if (iPageNum >= 0 && iPageNum < iPageCount) {
       pEnv->JS_docgotoPage(iPageNum);
     } else if (iPageNum >= iPageCount) {
@@ -407,7 +407,7 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
     return FALSE;
 
   pRuntime->BeginBlock();
-  CPDFDoc_Environment* pEnv = pContext->GetReaderApp();
+  CPDFSDK_Environment* pEnv = pContext->GetReaderApp();
   pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI,
                        cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(),
                        cMsg.c_str());
@@ -476,7 +476,7 @@ FX_BOOL Document::print(IJS_Context* cc,
       bAnnotations = params[7].ToBool(pRuntime);
   }
 
-  if (CPDFDoc_Environment* pEnv = m_pDocument->GetEnv()) {
+  if (CPDFSDK_Environment* pEnv = m_pDocument->GetEnv()) {
     pEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit, bPrintAsImage,
                       bReverse, bAnnotations);
     return TRUE;
@@ -755,7 +755,7 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFDoc_Environment* pEnv = pRuntime->GetReaderApp();
+  CPDFSDK_Environment* pEnv = pRuntime->GetReaderApp();
   pEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
                        cCc.c_str(), cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
@@ -1694,7 +1694,7 @@ FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFDoc_Environment* pApp = m_pDocument->GetEnv();
+  CPDFSDK_Environment* pApp = m_pDocument->GetEnv();
   pApp->FFI_DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
                          scrollPositionArray.get(), scrollPositionArraySize);
   pRuntime->EndBlock();

@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/include/fxfa.h"
 
-class CPDFDoc_Environment;
+class CPDFSDK_Environment;
 class IFXJS_Runtime;
 
 class CPDFXFA_App : public IXFA_AppProvider {
@@ -23,8 +23,8 @@ class CPDFXFA_App : public IXFA_AppProvider {
   FX_BOOL Initialize(v8::Isolate* pIsolate);
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
-  FX_BOOL AddFormFillEnv(CPDFDoc_Environment* pEnv);
-  FX_BOOL RemoveFormFillEnv(CPDFDoc_Environment* pEnv);
+  FX_BOOL AddFormFillEnv(CPDFSDK_Environment* pEnv);
+  FX_BOOL RemoveFormFillEnv(CPDFSDK_Environment* pEnv);
 
   FX_BOOL IsJavaScriptInitialized() const { return m_bJavaScriptInitialized; }
   void SetJavaScriptInitialized(FX_BOOL bInitialized) {
@@ -70,7 +70,7 @@ class CPDFXFA_App : public IXFA_AppProvider {
   void LoadString(int32_t iStringID, CFX_WideString& wsString) override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
-  CFX_ArrayTemplate<CPDFDoc_Environment*> m_pEnvList;
+  CFX_ArrayTemplate<CPDFSDK_Environment*> m_pEnvList;
 
  protected:
   FX_BOOL m_bJavaScriptInitialized;

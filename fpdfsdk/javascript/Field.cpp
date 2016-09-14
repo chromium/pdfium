@@ -15,8 +15,8 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
@@ -2835,7 +2835,7 @@ FX_BOOL Field::browseForFileToSubmit(IJS_Context* cc,
     return FALSE;
 
   CPDF_FormField* pFormField = FieldArray[0];
-  CPDFDoc_Environment* pApp = m_pDocument->GetEnv();
+  CPDFSDK_Environment* pApp = m_pDocument->GetEnv();
   if ((pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT) &&
       (pFormField->GetFieldType() == FIELDTYPE_TEXTFIELD)) {
     CFX_WideString wsFileName = pApp->JS_fieldBrowse();
@@ -3202,7 +3202,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
   if (nCount == 1) {
     pWidget = pInterForm->GetWidget(pFormField->GetControl(0), false);
   } else {
-    CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
+    CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
     UnderlyingPageType* pPage = UnderlyingFromFPDFPage(
         pEnv->FFI_GetCurrentPage(m_pDocument->GetUnderlyingDocument()));
     if (!pPage)

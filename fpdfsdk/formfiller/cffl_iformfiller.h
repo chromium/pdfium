@@ -14,14 +14,14 @@
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 
 class CFFL_FormFiller;
-class CPDFDoc_Environment;
+class CPDFSDK_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
 class CFFL_IFormFiller : public IPWL_Filler_Notify {
  public:
-  explicit CFFL_IFormFiller(CPDFDoc_Environment* pApp);
+  explicit CFFL_IFormFiller(CPDFSDK_Environment* pApp);
   ~CFFL_IFormFiller() override;
 
   virtual FX_BOOL Annot_HitTest(CPDFSDK_PageView* pPageView,
@@ -171,7 +171,7 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
-  CPDFDoc_Environment* const m_pApp;
+  CPDFSDK_Environment* const m_pApp;
   CFFL_Widget2Filler m_Maps;
   FX_BOOL m_bNotifying;
 };

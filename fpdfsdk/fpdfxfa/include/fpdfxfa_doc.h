@@ -12,11 +12,13 @@
 #include "fpdfsdk/fpdfxfa/include/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
+class CPDFSDK_Document;
+class CPDFSDK_Environment;
 class CPDFXFA_App;
 class CPDFXFA_Page;
-class CPDFSDK_Document;
-class CPDFDoc_Environment;
 class CXFA_FFDocHandler;
+class IJS_Runtime;
+class IJS_Context;
 
 enum LoadStatus {
   FXFA_LOADSTATUS_PRELOAD = 0,
@@ -45,7 +47,7 @@ class CPDFXFA_Document {
   void RemovePage(CPDFXFA_Page* page);
   int GetDocType() { return m_iDocType; }
 
-  CPDFSDK_Document* GetSDKDocument(CPDFDoc_Environment* pFormFillEnv);
+  CPDFSDK_Document* GetSDKDocument(CPDFSDK_Environment* pFormFillEnv);
 
   void ClearChangeMark();
 

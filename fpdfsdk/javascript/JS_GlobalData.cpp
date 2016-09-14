@@ -40,7 +40,7 @@ CJS_GlobalData* g_pInstance = nullptr;
 }  // namespace
 
 // static
-CJS_GlobalData* CJS_GlobalData::GetRetainedInstance(CPDFDoc_Environment* pApp) {
+CJS_GlobalData* CJS_GlobalData::GetRetainedInstance(CPDFSDK_Environment* pApp) {
   if (!g_pInstance) {
     g_pInstance = new CJS_GlobalData();
   }

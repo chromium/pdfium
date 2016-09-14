@@ -27,7 +27,7 @@ struct FFL_TextFieldState {
 
 class CFFL_TextField : public CFFL_FormFiller, public IPWL_FocusHandler {
  public:
-  CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot);
+  CFFL_TextField(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pAnnot);
   ~CFFL_TextField() override;
 
   // CFFL_FormFiller:

@@ -21,7 +21,7 @@ struct FFL_ComboBoxState {
 
 class CFFL_ComboBox : public CFFL_FormFiller, public IPWL_FocusHandler {
  public:
-  CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget);
+  CFFL_ComboBox(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pWidget);
   ~CFFL_ComboBox() override;
 
   // CFFL_FormFiller:

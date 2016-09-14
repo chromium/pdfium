@@ -15,8 +15,8 @@ class CFFL_IFormFiller;
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
-class CPDFDoc_Environment;
 class CPDFSDK_Annot;
+class CPDFSDK_Environment;
 class CPDFSDK_PageView;
 
 #ifdef PDF_ENABLE_XFA
@@ -25,7 +25,7 @@ class CXFA_FFWidget;
 
 class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
  public:
-  explicit CPDFSDK_WidgetHandler(CPDFDoc_Environment* pApp);
+  explicit CPDFSDK_WidgetHandler(CPDFSDK_Environment* pApp);
   ~CPDFSDK_WidgetHandler() override;
 
   FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) override;
@@ -107,7 +107,7 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
   CFFL_IFormFiller* GetFormFiller() { return m_pFormFiller; }
 
  private:
-  CPDFDoc_Environment* m_pApp;
+  CPDFSDK_Environment* m_pApp;
   CFFL_IFormFiller* m_pFormFiller;
 };
 

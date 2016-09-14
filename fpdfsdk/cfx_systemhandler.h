@@ -45,11 +45,11 @@ struct FX_SYSTEMTIME {
 
 class CPDF_Document;
 class CPDF_Font;
-class CPDFDoc_Environment;
+class CPDFSDK_Environment;
 
 class CFX_SystemHandler {
  public:
-  explicit CFX_SystemHandler(CPDFDoc_Environment* pEnv) : m_pEnv(pEnv) {}
+  explicit CFX_SystemHandler(CPDFSDK_Environment* pEnv) : m_pEnv(pEnv) {}
   ~CFX_SystemHandler() {}
 
   void InvalidateRect(FX_HWND hWnd, FX_RECT rect);
@@ -71,7 +71,7 @@ class CFX_SystemHandler {
   FX_SYSTEMTIME GetLocalTime();
 
  private:
-  CPDFDoc_Environment* const m_pEnv;
+  CPDFSDK_Environment* const m_pEnv;
 };
 
 #endif  // FPDFSDK_CFX_SYSTEMHANDLER_H_

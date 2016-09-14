@@ -10,10 +10,10 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfdoc/include/cpdf_annotlist.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
 #include "fpdfsdk/include/cpdfsdk_annotiterator.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -61,7 +61,7 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
   m_page->SetView(nullptr);
 #endif  // PDF_ENABLE_XFA
 
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
   for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray)
     pAnnotHandlerMgr->ReleaseAnnot(pAnnot);
@@ -84,7 +84,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                                        CPDF_RenderOptions* pOptions) {
 #endif  // PDF_ENABLE_XFA
   m_curMatrix = *pUser2Device;
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pPage = GetPDFXFAPage();
@@ -153,7 +153,7 @@ const CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(FX_FLOAT pageX,
                                                    FX_FLOAT pageY) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotIterator annotIterator(this, false);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
@@ -169,7 +169,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(FX_FLOAT pageX,
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
                                                     FX_FLOAT pageY) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotIterator annotIterator(this, false);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
@@ -198,7 +198,7 @@ void CPDFSDK_PageView::KillFocusAnnotIfNeeded() {
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CPDF_Annot* pPDFAnnot) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = pEnv->GetAnnotHandlerMgr();
   CPDFSDK_Annot* pSDKAnnot = pAnnotHandler->NewAnnot(pPDFAnnot, this);
@@ -219,7 +219,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
   if (pSDKAnnot)
     return pSDKAnnot;
 
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = pEnv->GetAnnotHandlerMgr();
   pSDKAnnot = pAnnotHandler->NewAnnot(pPDFAnnot, this);
   if (!pSDKAnnot)
@@ -251,7 +251,7 @@ FX_BOOL CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
 
   if (GetFocusAnnot() == pAnnot)
     KillFocusAnnot();
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = pEnv->GetAnnotHandlerMgr();
   if (pAnnotHandler)
     pAnnotHandler->ReleaseAnnot(pAnnot);
@@ -318,7 +318,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* hWidget) {
 
 FX_BOOL CPDFSDK_PageView::OnLButtonDown(const CFX_FloatPoint& point,
                                         FX_UINT nFlag) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_Annot* pFXAnnot = GetFXWidgetAtPoint(point.x, point.y);
   if (!pFXAnnot) {
@@ -337,7 +337,7 @@ FX_BOOL CPDFSDK_PageView::OnLButtonDown(const CFX_FloatPoint& point,
 #ifdef PDF_ENABLE_XFA
 FX_BOOL CPDFSDK_PageView::OnRButtonDown(const CFX_FloatPoint& point,
                                         FX_UINT nFlag) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
   ASSERT(pAnnotHandlerMgr);
@@ -355,7 +355,7 @@ FX_BOOL CPDFSDK_PageView::OnRButtonDown(const CFX_FloatPoint& point,
 
 FX_BOOL CPDFSDK_PageView::OnRButtonUp(const CFX_FloatPoint& point,
                                       FX_UINT nFlag) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
 
@@ -373,7 +373,7 @@ FX_BOOL CPDFSDK_PageView::OnRButtonUp(const CFX_FloatPoint& point,
 
 FX_BOOL CPDFSDK_PageView::OnLButtonUp(const CFX_FloatPoint& point,
                                       FX_UINT nFlag) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
   CPDFSDK_Annot* pFXAnnot = GetFXWidgetAtPoint(point.x, point.y);
@@ -389,7 +389,7 @@ FX_BOOL CPDFSDK_PageView::OnLButtonUp(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPDFSDK_PageView::OnMouseMove(const CFX_FloatPoint& point, int nFlag) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
   if (CPDFSDK_Annot* pFXAnnot = GetFXAnnotAtPoint(point.x, point.y)) {
     if (m_CaptureWidget && m_CaptureWidget != pFXAnnot) {
@@ -424,7 +424,7 @@ FX_BOOL CPDFSDK_PageView::OnMouseWheel(double deltaX,
                                        const CFX_FloatPoint& point,
                                        int nFlag) {
   if (CPDFSDK_Annot* pAnnot = GetFXWidgetAtPoint(point.x, point.y)) {
-    CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+    CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
     return pAnnotHandlerMgr->Annot_OnMouseWheel(this, pAnnot, nFlag,
                                                 (int)deltaY, point);
@@ -434,7 +434,7 @@ FX_BOOL CPDFSDK_PageView::OnMouseWheel(double deltaX,
 
 FX_BOOL CPDFSDK_PageView::OnChar(int nChar, FX_UINT nFlag) {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+    CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
     return pAnnotHandlerMgr->Annot_OnChar(pAnnot, nChar, nFlag);
   }
@@ -444,7 +444,7 @@ FX_BOOL CPDFSDK_PageView::OnChar(int nChar, FX_UINT nFlag) {
 
 FX_BOOL CPDFSDK_PageView::OnKeyDown(int nKeyCode, int nFlag) {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
-    CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+    CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
     return pAnnotHandlerMgr->Annot_OnKeyDown(pAnnot, nKeyCode, nFlag);
   }
@@ -456,7 +456,7 @@ FX_BOOL CPDFSDK_PageView::OnKeyUp(int nKeyCode, int nFlag) {
 }
 
 void CPDFSDK_PageView::LoadFXAnnots() {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
 
   SetLock(TRUE);
@@ -522,14 +522,14 @@ void CPDFSDK_PageView::ClearFXAnnots() {
 }
 
 void CPDFSDK_PageView::UpdateRects(const std::vector<CFX_FloatRect>& rects) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   for (const auto& rc : rects)
     pEnv->FFI_Invalidate(m_page, rc.left, rc.top, rc.right, rc.bottom);
 }
 
 void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {
   CFX_FloatRect rcWindow = pAnnot->GetRect();
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   pEnv->FFI_Invalidate(m_page, rcWindow.left, rcWindow.top, rcWindow.right,
                        rcWindow.bottom);
 }

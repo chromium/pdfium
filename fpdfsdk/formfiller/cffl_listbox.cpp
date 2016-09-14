@@ -9,14 +9,14 @@
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_iformfiller.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
 
-CFFL_ListBox::CFFL_ListBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget)
+CFFL_ListBox::CFFL_ListBox(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pWidget)
     : CFFL_FormFiller(pApp, pWidget) {}
 
 CFFL_ListBox::~CFFL_ListBox() {}

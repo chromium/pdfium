@@ -13,7 +13,7 @@
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/javascript/JS_KeyValue.h"
 
-class CPDFDoc_Environment;
+class CPDFSDK_Environment;
 
 class CJS_GlobalData_Element {
  public:
@@ -26,7 +26,7 @@ class CJS_GlobalData_Element {
 
 class CJS_GlobalData {
  public:
-  static CJS_GlobalData* GetRetainedInstance(CPDFDoc_Environment* pApp);
+  static CJS_GlobalData* GetRetainedInstance(CPDFSDK_Environment* pApp);
   void Release();
 
   void SetGlobalVariableNumber(const CFX_ByteString& propname, double dData);

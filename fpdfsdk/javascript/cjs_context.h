@@ -15,7 +15,7 @@
 
 class CJS_EventHandler;
 class CJS_Runtime;
-class CPDFDoc_Environment;
+class CPDFSDK_Environment;
 
 class CJS_Context : public IJS_Context {
  public:
@@ -125,7 +125,7 @@ class CJS_Context : public IJS_Context {
   CJS_Runtime* GetJSRuntime() const { return m_pRuntime; }
   CJS_EventHandler* GetEventHandler() const { return m_pEventHandler.get(); }
 
-  CPDFDoc_Environment* GetReaderApp();
+  CPDFSDK_Environment* GetReaderApp();
   CPDFSDK_Document* GetReaderDocument();
 
  private:

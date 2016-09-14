@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 
 #include "fpdfsdk/formfiller/cffl_iformfiller.h"
 #include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
@@ -26,13 +26,13 @@ FPDF_WIDESTRING AsFPDFWideString(CFX_ByteString* bsUTF16LE) {
 
 }  // namespace
 
-CPDFDoc_Environment::CPDFDoc_Environment(UnderlyingDocumentType* pDoc,
+CPDFSDK_Environment::CPDFSDK_Environment(UnderlyingDocumentType* pDoc,
                                          FPDF_FORMFILLINFO* pFFinfo)
     : m_pInfo(pFFinfo), m_pSDKDoc(nullptr), m_pUnderlyingDoc(pDoc) {
   m_pSysHandler.reset(new CFX_SystemHandler(this));
 }
 
-CPDFDoc_Environment::~CPDFDoc_Environment() {
+CPDFSDK_Environment::~CPDFSDK_Environment() {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
   if (pProvider->m_pEnvList.GetSize() == 0)
@@ -42,7 +42,7 @@ CPDFDoc_Environment::~CPDFDoc_Environment() {
     m_pInfo->Release(m_pInfo);
 }
 
-int CPDFDoc_Environment::JS_appAlert(const FX_WCHAR* Msg,
+int CPDFSDK_Environment::JS_appAlert(const FX_WCHAR* Msg,
                                      const FX_WCHAR* Title,
                                      FX_UINT Type,
                                      FX_UINT Icon) {
@@ -57,7 +57,7 @@ int CPDFDoc_Environment::JS_appAlert(const FX_WCHAR* Msg,
       AsFPDFWideString(&bsTitle), Type, Icon);
 }
 
-int CPDFDoc_Environment::JS_appResponse(const FX_WCHAR* Question,
+int CPDFSDK_Environment::JS_appResponse(const FX_WCHAR* Question,
                                         const FX_WCHAR* Title,
                                         const FX_WCHAR* Default,
                                         const FX_WCHAR* cLabel,
@@ -78,7 +78,7 @@ int CPDFDoc_Environment::JS_appResponse(const FX_WCHAR* Question,
       AsFPDFWideString(&bsLabel), bPassword, response, length);
 }
 
-void CPDFDoc_Environment::JS_appBeep(int nType) {
+void CPDFSDK_Environment::JS_appBeep(int nType) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->app_beep) {
     return;
@@ -86,7 +86,7 @@ void CPDFDoc_Environment::JS_appBeep(int nType) {
   m_pInfo->m_pJsPlatform->app_beep(m_pInfo->m_pJsPlatform, nType);
 }
 
-CFX_WideString CPDFDoc_Environment::JS_fieldBrowse() {
+CFX_WideString CPDFSDK_Environment::JS_fieldBrowse() {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Field_browse) {
     return CFX_WideString();
@@ -106,7 +106,7 @@ CFX_WideString CPDFDoc_Environment::JS_fieldBrowse() {
   return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff.get(), nActualLen));
 }
 
-CFX_WideString CPDFDoc_Environment::JS_docGetFilePath() {
+CFX_WideString CPDFSDK_Environment::JS_docGetFilePath() {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Doc_getFilePath) {
     return CFX_WideString();
@@ -126,7 +126,7 @@ CFX_WideString CPDFDoc_Environment::JS_docGetFilePath() {
   return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff.get(), nActualLen));
 }
 
-void CPDFDoc_Environment::JS_docSubmitForm(void* formData,
+void CPDFSDK_Environment::JS_docSubmitForm(void* formData,
                                            int length,
                                            const FX_WCHAR* URL) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
@@ -139,7 +139,7 @@ void CPDFDoc_Environment::JS_docSubmitForm(void* formData,
                                          AsFPDFWideString(&bsDestination));
 }
 
-void CPDFDoc_Environment::JS_docmailForm(void* mailData,
+void CPDFSDK_Environment::JS_docmailForm(void* mailData,
                                          int length,
                                          FPDF_BOOL bUI,
                                          const FX_WCHAR* To,
@@ -162,7 +162,7 @@ void CPDFDoc_Environment::JS_docmailForm(void* mailData,
       AsFPDFWideString(&bsBcc), AsFPDFWideString(&bsMsg));
 }
 
-void CPDFDoc_Environment::JS_docprint(FPDF_BOOL bUI,
+void CPDFSDK_Environment::JS_docprint(FPDF_BOOL bUI,
                                       int nStart,
                                       int nEnd,
                                       FPDF_BOOL bSilent,
@@ -179,7 +179,7 @@ void CPDFDoc_Environment::JS_docprint(FPDF_BOOL bUI,
                                     bReverse, bAnnotations);
 }
 
-void CPDFDoc_Environment::JS_docgotoPage(int nPageNum) {
+void CPDFSDK_Environment::JS_docgotoPage(int nPageNum) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Doc_gotoPage) {
     return;
@@ -187,7 +187,7 @@ void CPDFDoc_Environment::JS_docgotoPage(int nPageNum) {
   m_pInfo->m_pJsPlatform->Doc_gotoPage(m_pInfo->m_pJsPlatform, nPageNum);
 }
 
-IJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
+IJS_Runtime* CPDFSDK_Environment::GetJSRuntime() {
   if (!IsJSInitiated())
     return nullptr;
   if (!m_pJSRuntime)
@@ -195,19 +195,19 @@ IJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
   return m_pJSRuntime.get();
 }
 
-CPDFSDK_AnnotHandlerMgr* CPDFDoc_Environment::GetAnnotHandlerMgr() {
+CPDFSDK_AnnotHandlerMgr* CPDFSDK_Environment::GetAnnotHandlerMgr() {
   if (!m_pAnnotHandlerMgr)
     m_pAnnotHandlerMgr.reset(new CPDFSDK_AnnotHandlerMgr(this));
   return m_pAnnotHandlerMgr.get();
 }
 
-CPDFSDK_ActionHandler* CPDFDoc_Environment::GetActionHander() {
+CPDFSDK_ActionHandler* CPDFSDK_Environment::GetActionHander() {
   if (!m_pActionHandler)
     m_pActionHandler.reset(new CPDFSDK_ActionHandler());
   return m_pActionHandler.get();
 }
 
-CFFL_IFormFiller* CPDFDoc_Environment::GetIFormFiller() {
+CFFL_IFormFiller* CPDFSDK_Environment::GetIFormFiller() {
   if (!m_pIFormFiller)
     m_pIFormFiller.reset(new CFFL_IFormFiller(this));
   return m_pIFormFiller.get();

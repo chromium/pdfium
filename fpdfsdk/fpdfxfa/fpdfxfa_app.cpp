@@ -7,7 +7,7 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
 
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
@@ -61,7 +61,7 @@ FX_BOOL CPDFXFA_App::Initialize(v8::Isolate* pIsolate) {
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_App::AddFormFillEnv(CPDFDoc_Environment* pEnv) {
+FX_BOOL CPDFXFA_App::AddFormFillEnv(CPDFSDK_Environment* pEnv) {
   if (!pEnv)
     return FALSE;
 
@@ -69,7 +69,7 @@ FX_BOOL CPDFXFA_App::AddFormFillEnv(CPDFDoc_Environment* pEnv) {
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_App::RemoveFormFillEnv(CPDFDoc_Environment* pEnv) {
+FX_BOOL CPDFXFA_App::RemoveFormFillEnv(CPDFSDK_Environment* pEnv) {
   if (!pEnv)
     return FALSE;
 
@@ -87,7 +87,7 @@ void CPDFXFA_App::GetAppType(CFX_WideString& wsAppType) {
 }
 
 void CPDFXFA_App::GetAppName(CFX_WideString& wsName) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     wsName = pEnv->FFI_GetAppName();
   }
@@ -98,14 +98,14 @@ void CPDFXFA_App::SetAppType(const CFX_WideStringC& wsAppType) {
 }
 
 void CPDFXFA_App::GetLanguage(CFX_WideString& wsLanguage) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     wsLanguage = pEnv->FFI_GetLanguage();
   }
 }
 
 void CPDFXFA_App::GetPlatform(CFX_WideString& wsPlatform) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     wsPlatform = pEnv->FFI_GetPlatform();
   }
@@ -120,7 +120,7 @@ void CPDFXFA_App::GetVersion(CFX_WideString& wsVersion) {
 }
 
 void CPDFXFA_App::Beep(uint32_t dwType) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     pEnv->JS_appBeep(dwType);
   }
@@ -130,7 +130,7 @@ int32_t CPDFXFA_App::MsgBox(const CFX_WideString& wsMessage,
                             const CFX_WideString& wsTitle,
                             uint32_t dwIconType,
                             uint32_t dwButtonType) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (!pEnv)
     return -1;
 
@@ -184,7 +184,7 @@ CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
                                      const CFX_WideString& wsDefaultAnswer,
                                      FX_BOOL bMark) {
   CFX_WideString wsAnswer;
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     int nLength = 2048;
     char* pBuff = new char[nLength];
@@ -205,7 +205,7 @@ CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
 }
 
 int32_t CPDFXFA_App::GetCurDocumentInBatch() {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     return pEnv->FFI_GetCurDocument();
   }
@@ -213,7 +213,7 @@ int32_t CPDFXFA_App::GetCurDocumentInBatch() {
 }
 
 int32_t CPDFXFA_App::GetDocumentCountInBatch() {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     return pEnv->FFI_GetDocumentCount();
   }
@@ -222,7 +222,7 @@ int32_t CPDFXFA_App::GetDocumentCountInBatch() {
 }
 
 IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideString& wsURL) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   return pEnv ? pEnv->FFI_DownloadFromURL(wsURL.c_str()) : nullptr;
 }
 
@@ -232,7 +232,7 @@ FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideString& wsURL,
                                     const CFX_WideString& wsEncode,
                                     const CFX_WideString& wsHeader,
                                     CFX_WideString& wsResponse) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (!pEnv)
     return FALSE;
 
@@ -245,7 +245,7 @@ FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideString& wsURL,
 FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideString& wsURL,
                                    const CFX_WideString& wsData,
                                    const CFX_WideString& wsEncode) {
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   return pEnv &&
          pEnv->FFI_PutRequestURL(wsURL.c_str(), wsData.c_str(),
                                  wsEncode.c_str());
@@ -350,7 +350,7 @@ void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {
 
 IFWL_AdapterTimerMgr* CPDFXFA_App::GetTimerMgr() {
   CXFA_FWLAdapterTimerMgr* pAdapter = nullptr;
-  CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
+  CPDFSDK_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv)
     pAdapter = new CXFA_FWLAdapterTimerMgr(pEnv);
   return pAdapter;

@@ -11,8 +11,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
@@ -65,7 +65,7 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (!pPage)
     return;
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return;
 
@@ -97,7 +97,7 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
   if (!pPage)
     return;
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return;
 
@@ -124,7 +124,7 @@ FX_BOOL CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
 
   CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc();
   int nRotate = pWidgetAcc->GetRotate();
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return FALSE;
 
@@ -235,7 +235,7 @@ FX_BOOL CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   if (!pPage)
     return FALSE;
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return FALSE;
 
@@ -258,7 +258,7 @@ FX_BOOL CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
 
 void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
                                            uint32_t dwFlags) {
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return;
 
@@ -340,7 +340,7 @@ int32_t CPDFXFA_DocEnvironment::GetCurrentPage(CXFA_FFDoc* hDoc) {
   if (m_pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA)
     return -1;
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return -1;
 
@@ -355,7 +355,7 @@ void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
     return;
   }
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return;
   pEnv->FFI_SetCurrentPage(this, iCurPage);
@@ -410,7 +410,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
       m_pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
     return;
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return;
 
@@ -508,7 +508,7 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
   if (m_pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA)
     return;
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return;
 
@@ -565,7 +565,7 @@ void CPDFXFA_DocEnvironment::Print(CXFA_FFDoc* hDoc,
   if (hDoc != m_pDocument->GetXFADoc())
     return;
 
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv || !pEnv->GetFormFillInfo() ||
       !pEnv->GetFormFillInfo()->m_pJsPlatform ||
       !pEnv->GetFormFillInfo()->m_pJsPlatform->Doc_print) {
@@ -632,7 +632,7 @@ FX_BOOL CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
   while (pWidgetAcc) {
     int fRet = pWidgetAcc->ProcessValidate(-1);
     if (fRet == XFA_EVENTERROR_Error) {
-      CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+      CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
       if (!pEnv)
         return FALSE;
 
@@ -694,7 +694,7 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc,
 IFX_FileRead* CPDFXFA_DocEnvironment::OpenLinkedFile(
     CXFA_FFDoc* hDoc,
     const CFX_WideString& wsLink) {
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return FALSE;
 
@@ -717,7 +717,7 @@ FX_BOOL CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     return FALSE;
 
   CFX_ByteString content;
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return FALSE;
 
@@ -888,7 +888,7 @@ FX_BOOL CPDFXFA_DocEnvironment::MailToInfo(CFX_WideString& csURL,
 
 FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
                                                    CXFA_Submit submit) {
-  CPDFDoc_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
   if (!pEnv)
     return FALSE;
 

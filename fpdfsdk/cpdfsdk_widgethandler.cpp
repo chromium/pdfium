@@ -13,9 +13,9 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
@@ -24,7 +24,7 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
-CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(CPDFDoc_Environment* pApp)
+CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(CPDFSDK_Environment* pApp)
     : m_pApp(pApp), m_pFormFiller(nullptr) {}
 
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() {}

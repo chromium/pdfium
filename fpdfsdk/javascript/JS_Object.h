@@ -16,7 +16,7 @@
 
 class CJS_Context;
 class CJS_Object;
-class CPDFDoc_Environment;
+class CPDFSDK_Environment;
 
 class CJS_EmbedObj {
  public:

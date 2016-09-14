@@ -9,7 +9,7 @@
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/pdfwindow/PWL_SpecialButton.h"
 
-CFFL_PushButton::CFFL_PushButton(CPDFDoc_Environment* pApp,
+CFFL_PushButton::CFFL_PushButton(CPDFSDK_Environment* pApp,
                                  CPDFSDK_Annot* pAnnot)
     : CFFL_Button(pApp, pAnnot) {}
 

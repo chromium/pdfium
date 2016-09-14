@@ -8,12 +8,12 @@
 
 #include "core/fpdfdoc/include/cpdf_annot.h"
 #include "fpdfsdk/include/cba_annotiterator.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_baannot.h"
 #include "fpdfsdk/include/cpdfsdk_baannothandler.h"
 #include "fpdfsdk/include/cpdfsdk_datetime.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widgethandler.h"
 
@@ -24,7 +24,7 @@
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
-CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFDoc_Environment* pApp)
+CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFSDK_Environment* pApp)
     : m_pBAAnnotHandler(new CPDFSDK_BAAnnotHandler()),
       m_pWidgetHandler(new CPDFSDK_WidgetHandler(pApp)),
 #ifdef PDF_ENABLE_XFA

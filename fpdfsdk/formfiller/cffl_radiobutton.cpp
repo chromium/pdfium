@@ -7,12 +7,12 @@
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/pdfwindow/PWL_SpecialButton.h"
 #include "public/fpdf_fwlevent.h"
 
-CFFL_RadioButton::CFFL_RadioButton(CPDFDoc_Environment* pApp,
+CFFL_RadioButton::CFFL_RadioButton(CPDFSDK_Environment* pApp,
                                    CPDFSDK_Annot* pWidget)
     : CFFL_Button(pApp, pWidget) {}
 

@@ -56,7 +56,7 @@ JSGlobalAlternate::~JSGlobalAlternate() {
   m_pGlobalData->Release();
 }
 
-void JSGlobalAlternate::Initial(CPDFDoc_Environment* pApp) {
+void JSGlobalAlternate::Initial(CPDFSDK_Environment* pApp) {
   m_pApp = pApp;
   m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pApp);
   UpdateGlobalPersistentVariables();

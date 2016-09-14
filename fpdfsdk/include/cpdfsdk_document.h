@@ -16,7 +16,7 @@
 #include "public/fpdf_formfill.h"
 
 class CPDF_OCContext;
-class CPDFDoc_Environment;
+class CPDFSDK_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
@@ -26,7 +26,7 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
  public:
   static CPDFSDK_Document* FromFPDFFormHandle(FPDF_FORMHANDLE hHandle);
 
-  CPDFSDK_Document(UnderlyingDocumentType* pDoc, CPDFDoc_Environment* pEnv);
+  CPDFSDK_Document(UnderlyingDocumentType* pDoc, CPDFSDK_Environment* pEnv);
   ~CPDFSDK_Document();
 
   CPDFSDK_InterForm* GetInterForm();
@@ -89,7 +89,7 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   void ClearChangeMark() { m_bChangeMask = FALSE; }
   CFX_WideString GetPath();
   UnderlyingPageType* GetPage(int nIndex);
-  CPDFDoc_Environment* GetEnv() { return m_pEnv; }
+  CPDFSDK_Environment* GetEnv() { return m_pEnv; }
   void ProcJavascriptFun();
   FX_BOOL ProcOpenAction();
   CPDF_OCContext* GetOCContext();
@@ -99,7 +99,7 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   UnderlyingDocumentType* m_pDoc;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot* m_pFocusAnnot;
-  CPDFDoc_Environment* m_pEnv;
+  CPDFSDK_Environment* m_pEnv;
   std::unique_ptr<CPDF_OCContext> m_pOccontent;
   FX_BOOL m_bChangeMask;
   FX_BOOL m_bBeingDestroyed;

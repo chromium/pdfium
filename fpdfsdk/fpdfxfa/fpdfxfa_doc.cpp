@@ -10,8 +10,8 @@
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -192,7 +192,7 @@ void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
 }
 
 CPDFSDK_Document* CPDFXFA_Document::GetSDKDocument(
-    CPDFDoc_Environment* pFormFillEnv) {
+    CPDFSDK_Environment* pFormFillEnv) {
   if (!m_pSDKDoc && pFormFillEnv)
     m_pSDKDoc.reset(new CPDFSDK_Document(this, pFormFillEnv));
   return m_pSDKDoc.get();

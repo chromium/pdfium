@@ -17,8 +17,8 @@
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
@@ -36,6 +36,10 @@
 #endif  // PDF_ENABLE_XFA
 
 namespace {
+
+CPDFSDK_Environment* HandleToCPDFSDKEnvironment(FPDF_FORMHANDLE handle) {
+  return static_cast<CPDFSDK_Environment*>(handle);
+}
 
 CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
@@ -86,7 +90,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   CPDF_Document* pPDFDoc = pDocument->GetPDFDoc();
   if (!pPDFDoc)
     return;
-  CPDFDoc_Environment* pEnv = (CPDFDoc_Environment*)hHandle;
+  CPDFSDK_Environment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
   CPDFSDK_Document* pFXDoc = pEnv->GetSDKDocument();
   if (!pFXDoc)
     return;
@@ -238,7 +242,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   if (!pDocument)
     return nullptr;
 
-  CPDFDoc_Environment* pEnv = new CPDFDoc_Environment(pDocument, formInfo);
+  CPDFSDK_Environment* pEnv = new CPDFSDK_Environment(pDocument, formInfo);
 #ifdef PDF_ENABLE_XFA
   pEnv->SetSDKDocument(pDocument->GetSDKDocument(pEnv));
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
@@ -253,7 +257,7 @@ DLLEXPORT void STDCALL
 FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   if (!hHandle)
     return;
-  CPDFDoc_Environment* pEnv = (CPDFDoc_Environment*)hHandle;
+  CPDFSDK_Environment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
   pApp->RemoveFormFillEnv(pEnv);
@@ -641,7 +645,8 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
   if (!hHandle)
     return;
 
-  CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetSDKDocument();
+  CPDFSDK_Document* pSDKDoc =
+      HandleToCPDFSDKEnvironment(hHandle)->GetSDKDocument();
   if (!pSDKDoc)
     return;
 
@@ -659,13 +664,13 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
 
 DLLEXPORT void STDCALL FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  if (pSDKDoc && ((CPDFDoc_Environment*)hHandle)->IsJSInitiated())
+  if (pSDKDoc && HandleToCPDFSDKEnvironment(hHandle)->IsJSInitiated())
     pSDKDoc->ProcJavascriptFun();
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  if (pSDKDoc && ((CPDFDoc_Environment*)hHandle)->IsJSInitiated())
+  if (pSDKDoc && HandleToCPDFSDKEnvironment(hHandle)->IsJSInitiated())
     pSDKDoc->ProcOpenAction();
 }
 
@@ -684,7 +689,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   if (aa.ActionExist((CPDF_AAction::AActionType)aaType)) {
     CPDF_Action action = aa.GetAction((CPDF_AAction::AActionType)aaType);
     CPDFSDK_ActionHandler* pActionHandler =
-        ((CPDFDoc_Environment*)hHandle)->GetActionHander();
+        HandleToCPDFSDKEnvironment(hHandle)->GetActionHander();
     pActionHandler->DoAction_Document(action, (CPDF_AAction::AActionType)aaType,
                                       pSDKDoc);
   }
@@ -708,7 +713,7 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   if (!pSDKDoc->GetPageView(pPage, false))
     return;
 
-  CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = pSDKDoc->GetEnv();
   CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
   CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
   CPDF_AAction aa(pPageDict->GetDictBy("AA"));

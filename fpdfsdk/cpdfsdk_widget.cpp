@@ -21,8 +21,8 @@
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
@@ -845,7 +845,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
 
   CFX_FloatRect rcDevice;
   ASSERT(m_pInterForm->GetDocument());
-  CPDFDoc_Environment* pEnv = m_pInterForm->GetDocument()->GetEnv();
+  CPDFSDK_Environment* pEnv = m_pInterForm->GetDocument()->GetEnv();
   if (!pEnv)
     return;
   CFX_Matrix page2device;
@@ -992,7 +992,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   CPDF_IconFit iconFit = pControl->GetIconFit();
 
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFDoc_Environment* pEnv = pDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = pDoc->GetEnv();
 
   CBA_FontMap font_map(this, pEnv->GetSysHandler());
   font_map.SetAPType("N");
@@ -1370,7 +1370,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   pEdit->EnableRefresh(FALSE);
 
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFDoc_Environment* pEnv = pDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = pDoc->GetEnv();
   CBA_FontMap font_map(this, pEnv->GetSysHandler());
   pEdit->SetFontMap(&font_map);
 
@@ -1436,7 +1436,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   pEdit->EnableRefresh(FALSE);
 
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFDoc_Environment* pEnv = pDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = pDoc->GetEnv();
 
   CBA_FontMap font_map(this, pEnv->GetSysHandler());
   pEdit->SetFontMap(&font_map);
@@ -1523,7 +1523,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
   pEdit->EnableRefresh(FALSE);
 
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFDoc_Environment* pEnv = pDoc->GetEnv();
+  CPDFSDK_Environment* pEnv = pDoc->GetEnv();
 
   CBA_FontMap font_map(this, pEnv->GetSysHandler());
   pEdit->SetFontMap(&font_map);
@@ -1843,7 +1843,7 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
                                   PDFSDK_FieldAction& data,
                                   CPDFSDK_PageView* pPageView) {
   CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-  CPDFDoc_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Document* pDoc = pDocument->GetXFADocument();

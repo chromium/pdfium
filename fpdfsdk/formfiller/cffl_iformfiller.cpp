@@ -18,8 +18,8 @@
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
-#include "fpdfsdk/include/cpdfdoc_environment.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
@@ -27,7 +27,7 @@
 
 #define FFL_MAXLISTBOXHEIGHT 140.0f
 
-CFFL_IFormFiller::CFFL_IFormFiller(CPDFDoc_Environment* pApp)
+CFFL_IFormFiller::CFFL_IFormFiller(CPDFSDK_Environment* pApp)
     : m_pApp(pApp), m_bNotifying(FALSE) {}
 
 CFFL_IFormFiller::~CFFL_IFormFiller() {}
