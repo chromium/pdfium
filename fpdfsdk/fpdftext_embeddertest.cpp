@@ -388,3 +388,18 @@ TEST_F(FPDFTextEmbeddertest, GetFontSize) {
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbeddertest, ToUnicode) {
+  EXPECT_TRUE(OpenDocument("bug_583.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  EXPECT_TRUE(textpage);
+
+  ASSERT_EQ(1, FPDFText_CountChars(textpage));
+  EXPECT_EQ(static_cast<unsigned int>(0), FPDFText_GetUnicode(textpage, 0));
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}

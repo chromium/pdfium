@@ -1131,12 +1131,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     spacing = 0;
     CFX_WideString wstrItem = pFont->UnicodeFromCharCode(item.m_CharCode);
     bool bNoUnicode = false;
-    FX_WCHAR wChar = wstrItem.GetAt(0);
-    if ((wstrItem.IsEmpty() || wChar == 0) && item.m_CharCode) {
-      if (wstrItem.IsEmpty())
-        wstrItem += (FX_WCHAR)item.m_CharCode;
-      else
-        wstrItem.SetAt(0, (FX_WCHAR)item.m_CharCode);
+    if (wstrItem.IsEmpty() && item.m_CharCode) {
+      wstrItem += static_cast<FX_WCHAR>(item.m_CharCode);
       bNoUnicode = true;
     }
     charinfo.m_Index = -1;
