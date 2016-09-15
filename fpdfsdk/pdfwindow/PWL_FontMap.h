@@ -33,11 +33,9 @@ struct CPWL_FontMap_Native {
 #define DEFAULT_CHARSET 1
 #define SYMBOL_CHARSET 2
 #define SHIFTJIS_CHARSET 128
-#define HANGEUL_CHARSET 129
 #define HANGUL_CHARSET 129
 #define GB2312_CHARSET 134
 #define CHINESEBIG5_CHARSET 136
-#define OEM_CHARSET 255
 #define JOHAB_CHARSET 130
 #define HEBREW_CHARSET 177
 #define ARABIC_CHARSET 178
@@ -65,7 +63,6 @@ class CPWL_FontMap : public IPVT_FontMap {
   int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) override;
   int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) override;
 
-  int32_t GetFontMapCount() const;
   const CPWL_FontMap_Data* GetFontMapData(int32_t nIndex) const;
   static int32_t GetNativeCharset();
   CFX_ByteString GetNativeFontName(int32_t nCharset);
@@ -86,7 +83,6 @@ class CPWL_FontMap : public IPVT_FontMap {
   int32_t GetFontIndex(const CFX_ByteString& sFontName,
                        int32_t nCharset,
                        FX_BOOL bFind);
-  int32_t GetPWLFontIndex(uint16_t word, int32_t nCharset);
   int32_t AddFontData(CPDF_Font* pFont,
                       const CFX_ByteString& sFontAlias,
                       int32_t nCharset = DEFAULT_CHARSET);
@@ -99,7 +95,6 @@ class CPWL_FontMap : public IPVT_FontMap {
   CFX_ArrayTemplate<CPWL_FontMap_Native*> m_aNativeFont;
 
  private:
-  CFX_ByteString GetFontName(int32_t nFontIndex);
   int32_t FindFont(const CFX_ByteString& sFontName,
                    int32_t nCharset = DEFAULT_CHARSET);
 

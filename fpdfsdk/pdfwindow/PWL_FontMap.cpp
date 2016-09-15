@@ -214,29 +214,6 @@ int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName,
   return AddFontData(pFont, sAlias, nCharset);
 }
 
-int32_t CPWL_FontMap::GetPWLFontIndex(uint16_t word, int32_t nCharset) {
-  int32_t nFind = -1;
-
-  for (int32_t i = 0, sz = m_aData.GetSize(); i < sz; i++) {
-    if (CPWL_FontMap_Data* pData = m_aData.GetAt(i)) {
-      if (pData->nCharset == nCharset) {
-        nFind = i;
-        break;
-      }
-    }
-  }
-
-  CPDF_Font* pNewFont = GetPDFFont(nFind);
-
-  if (!pNewFont)
-    return -1;
-
-  CFX_ByteString sAlias = EncodeFontAlias("Arial_Chrome", nCharset);
-  AddedFont(pNewFont, sAlias);
-
-  return AddFontData(pNewFont, sAlias, nCharset);
-}
-
 CPDF_Font* CPWL_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias,
                                              int32_t nCharset) {
   return nullptr;
@@ -257,16 +234,6 @@ int32_t CPWL_FontMap::AddFontData(CPDF_Font* pFont,
 
 void CPWL_FontMap::AddedFont(CPDF_Font* pFont,
                              const CFX_ByteString& sFontAlias) {}
-
-CFX_ByteString CPWL_FontMap::GetFontName(int32_t nFontIndex) {
-  if (nFontIndex >= 0 && nFontIndex < m_aData.GetSize()) {
-    if (CPWL_FontMap_Data* pData = m_aData.GetAt(nFontIndex)) {
-      return pData->sFontName;
-    }
-  }
-
-  return "";
-}
 
 CFX_ByteString CPWL_FontMap::GetNativeFont(int32_t nCharset) {
   if (nCharset == DEFAULT_CHARSET)
@@ -332,10 +299,6 @@ CFX_ByteString CPWL_FontMap::EncodeFontAlias(const CFX_ByteString& sFontName) {
   CFX_ByteString sRet = sFontName;
   sRet.Remove(' ');
   return sRet;
-}
-
-int32_t CPWL_FontMap::GetFontMapCount() const {
-  return m_aData.GetSize();
 }
 
 const CPWL_FontMap_Data* CPWL_FontMap::GetFontMapData(int32_t nIndex) const {
