@@ -13,15 +13,17 @@
 #include "core/fpdfdoc/include/cpvt_wordprops.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 
-class CPDF_PageObjectHolder;
-class CPDF_TextObject;
-class CPWL_Edit;
-class CPWL_EditCtrl;
+class CFFL_FormFiller;
 class CFX_Edit;
 class CFX_Edit_Iterator;
 class CFX_Edit_Provider;
 class CFX_RenderDevice;
 class CFX_SystemHandler;
+class CPDF_PageObjectHolder;
+class CPDF_TextObject;
+class CPWL_Edit;
+class CPWL_EditCtrl;
+
 class IFX_Edit_UndoItem;
 
 struct CFX_Edit_LineRect {
@@ -332,7 +334,7 @@ class CFX_Edit {
                        const CFX_FloatPoint& ptOffset,
                        const CPVT_WordRange* pRange,
                        CFX_SystemHandler* pSystemHandler,
-                       void* pFFLData);
+                       CFFL_FormFiller* pFFLData);
   static void GeneratePageObjects(
       CPDF_PageObjectHolder* pObjectHolder,
       CFX_Edit* pEdit,

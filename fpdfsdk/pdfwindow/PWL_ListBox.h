@@ -99,6 +99,8 @@ class CPWL_ListBox : public CPWL_Wnd {
     m_pFillerNotify = pNotify;
   }
 
+  void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
+
  protected:
   std::unique_ptr<CFX_ListCtrl> m_pList;
   std::unique_ptr<CPWL_List_Notify> m_pListNotify;
@@ -106,11 +108,8 @@ class CPWL_ListBox : public CPWL_Wnd {
   FX_BOOL m_bHoverSel;
   IPWL_Filler_Notify* m_pFillerNotify;
 
- public:
-  void AttachFFLData(void* pData) { m_pFormFiller = pData; }
-
  private:
-  void* m_pFormFiller;
+  CFFL_FormFiller* m_pFormFiller;  // Not owned.
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_

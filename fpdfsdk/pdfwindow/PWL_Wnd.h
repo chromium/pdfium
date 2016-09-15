@@ -14,6 +14,7 @@
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 
+class CPDFSDK_Widget;
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
 class CPWL_Timer;
@@ -197,7 +198,7 @@ struct PWL_CREATEPARAM {
   IPWL_FocusHandler* pFocusHandler;   // optional
   uint32_t dwFlags;                   // optional
   CPWL_Color sBackgroundColor;        // optional
-  FX_HWND hAttachedWnd;               // required for no-reader framework
+  CPDFSDK_Widget* pAttachedWidget;    // required for no-reader framework
   BorderStyle nBorderStyle;           // optional
   int32_t dwBorderWidth;              // optional
   CPWL_Color sBorderColor;            // optional
@@ -389,7 +390,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   void PWLtoWnd(const CFX_FloatPoint& point, int32_t& x, int32_t& y) const;
   FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
-  FX_HWND GetAttachedHWnd() const;
 
   FX_BOOL IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
   FX_BOOL IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;

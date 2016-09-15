@@ -17,6 +17,7 @@
 #include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
+#include "fpdfsdk/include/cpdfsdk_widget.h"
 
 namespace {
 
@@ -34,42 +35,43 @@ int CharSet2CP(int charset) {
 
 }  // namespace
 
-void CFX_SystemHandler::SetCursor(int32_t nCursorType) {
-  m_pEnv->SetCursor(nCursorType);
-}
-
-void CFX_SystemHandler::InvalidateRect(FX_HWND hWnd, FX_RECT rect) {
-  CPDFSDK_Annot* pSDKAnnot = (CPDFSDK_Annot*)hWnd;
-  CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
-  UnderlyingPageType* pPage = pSDKAnnot->GetUnderlyingPage();
+void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect) {
+  CPDFSDK_PageView* pPageView = widget->GetPageView();
+  UnderlyingPageType* pPage = widget->GetUnderlyingPage();
   if (!pPage || !pPageView)
     return;
 
   CFX_Matrix page2device;
   pPageView->GetCurrentMatrix(page2device);
+
   CFX_Matrix device2page;
   device2page.SetReverse(page2device);
-  FX_FLOAT left, top, right, bottom;
-  device2page.Transform((FX_FLOAT)rect.left, (FX_FLOAT)rect.top, left, top);
-  device2page.Transform((FX_FLOAT)rect.right, (FX_FLOAT)rect.bottom, right,
-                        bottom);
+
+  FX_FLOAT left;
+  FX_FLOAT top;
+  FX_FLOAT right;
+  FX_FLOAT bottom;
+  device2page.Transform(static_cast<FX_FLOAT>(rect.left),
+                        static_cast<FX_FLOAT>(rect.top), left, top);
+  device2page.Transform(static_cast<FX_FLOAT>(rect.right),
+                        static_cast<FX_FLOAT>(rect.bottom), right, bottom);
   CFX_FloatRect rcPDF(left, bottom, right, top);
   rcPDF.Normalize();
 
   m_pEnv->Invalidate(pPage, rcPDF.left, rcPDF.top, rcPDF.right, rcPDF.bottom);
 }
 
-void CFX_SystemHandler::OutputSelectedRect(void* pFormFiller,
+void CFX_SystemHandler::OutputSelectedRect(CFFL_FormFiller* pFormFiller,
                                            CFX_FloatRect& rect) {
-  CFFL_FormFiller* pFFL = (CFFL_FormFiller*)pFormFiller;
-  if (!pFFL)
+  if (!pFormFiller)
     return;
 
   CFX_FloatPoint leftbottom = CFX_FloatPoint(rect.left, rect.bottom);
   CFX_FloatPoint righttop = CFX_FloatPoint(rect.right, rect.top);
-  CFX_FloatPoint ptA = pFFL->PWLtoFFL(leftbottom);
-  CFX_FloatPoint ptB = pFFL->PWLtoFFL(righttop);
-  CPDFSDK_Annot* pAnnot = pFFL->GetSDKAnnot();
+  CFX_FloatPoint ptA = pFormFiller->PWLtoFFL(leftbottom);
+  CFX_FloatPoint ptB = pFormFiller->PWLtoFFL(righttop);
+
+  CPDFSDK_Annot* pAnnot = pFormFiller->GetSDKAnnot();
   UnderlyingPageType* pPage = pAnnot->GetUnderlyingPage();
   ASSERT(pPage);
 
@@ -77,12 +79,15 @@ void CFX_SystemHandler::OutputSelectedRect(void* pFormFiller,
 }
 
 bool CFX_SystemHandler::IsSelectionImplemented() const {
-  if (m_pEnv) {
-    FPDF_FORMFILLINFO* pInfo = m_pEnv->GetFormFillInfo();
-    if (pInfo && pInfo->FFI_OutputSelectedRect)
-      return true;
-  }
-  return false;
+  if (!m_pEnv)
+    return false;
+
+  FPDF_FORMFILLINFO* pInfo = m_pEnv->GetFormFillInfo();
+  return pInfo && pInfo->FFI_OutputSelectedRect;
+}
+
+void CFX_SystemHandler::SetCursor(int32_t nCursorType) {
+  m_pEnv->SetCursor(nCursorType);
 }
 
 bool CFX_SystemHandler::FindNativeTrueTypeFont(CFX_ByteString sFontFaceName) {
@@ -101,7 +106,6 @@ bool CFX_SystemHandler::FindNativeTrueTypeFont(CFX_ByteString sFontFaceName) {
     if (font.Compare(sFontFaceName.AsStringC()))
       return true;
   }
-
   return false;
 }
 
@@ -124,10 +128,6 @@ int32_t CFX_SystemHandler::SetTimer(int32_t uElapse,
 
 void CFX_SystemHandler::KillTimer(int32_t nID) {
   m_pEnv->KillTimer(nID);
-}
-
-FX_SYSTEMTIME CFX_SystemHandler::GetLocalTime() {
-  return m_pEnv->GetLocalTime();
 }
 
 bool CFX_SystemHandler::IsSHIFTKeyDown(uint32_t nFlag) const {

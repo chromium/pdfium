@@ -367,7 +367,7 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
     }
   } else {
     PWL_CREATEPARAM cp = GetCreateParam();
-    cp.hAttachedWnd = (FX_HWND)m_pWidget;
+    cp.pAttachedWidget = m_pWidget;
 
     CFFL_PrivateData* pPrivateData = new CFFL_PrivateData;
     pPrivateData->pWidget = m_pWidget;

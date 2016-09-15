@@ -24,7 +24,7 @@ PWL_CREATEPARAM::PWL_CREATEPARAM()
       pFocusHandler(nullptr),
       dwFlags(0),
       sBackgroundColor(),
-      hAttachedWnd(nullptr),
+      pAttachedWidget(nullptr),
       nBorderStyle(BorderStyle::SOLID),
       dwBorderWidth(1),
       sBorderColor(),
@@ -422,9 +422,8 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
     rcWin.bottom += PWL_INVALIDATE_INFLATE;
 
     if (CFX_SystemHandler* pSH = GetSystemHandler()) {
-      if (FX_HWND hWnd = GetAttachedHWnd()) {
-        pSH->InvalidateRect(hWnd, rcWin);
-      }
+      if (CPDFSDK_Widget* widget = m_sPrivateParam.pAttachedWidget)
+        pSH->InvalidateRect(widget, rcWin);
     }
   }
 }
@@ -905,10 +904,6 @@ FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
   mt.TransformRect(rcTemp);
   return FX_RECT((int32_t)(rcTemp.left + 0.5), (int32_t)(rcTemp.bottom + 0.5),
                  (int32_t)(rcTemp.right + 0.5), (int32_t)(rcTemp.top + 0.5));
-}
-
-FX_HWND CPWL_Wnd::GetAttachedHWnd() const {
-  return m_sPrivateParam.hAttachedWnd;
 }
 
 CFX_FloatPoint CPWL_Wnd::ChildToParent(const CFX_FloatPoint& point) const {

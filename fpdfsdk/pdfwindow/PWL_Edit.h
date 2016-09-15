@@ -110,7 +110,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
                            const CFX_FloatPoint& ptOffset);
 
   FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
-  void AttachFFLData(void* pData) { m_pFormFiller = pData; }
+  void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
 
   void OnInsertWord(const CPVT_WordPlace& place,
                     const CPVT_WordPlace& oldplace);
@@ -142,7 +142,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   IPWL_Filler_Notify* m_pFillerNotify;
   FX_BOOL m_bFocus;
   CFX_FloatRect m_rcOldWindow;
-  void* m_pFormFiller;
+  CFFL_FormFiller* m_pFormFiller;  // Not owned.
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_EDIT_H_

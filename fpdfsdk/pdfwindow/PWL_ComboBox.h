@@ -82,7 +82,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
 
   void SetSelectText();
 
-  void AttachFFLData(void* pData) { m_pFormFiller = pData; }
+  void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
 
  private:
   void CreateEdit(const PWL_CREATEPARAM& cp);
@@ -98,8 +98,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   int32_t m_nPopupWhere;
   int32_t m_nSelectItem;
   IPWL_Filler_Notify* m_pFillerNotify;
-
-  void* m_pFormFiller;
+  CFFL_FormFiller* m_pFormFiller;  // Not owned.
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
