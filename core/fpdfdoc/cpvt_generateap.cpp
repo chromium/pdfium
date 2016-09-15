@@ -586,7 +586,8 @@ CPDF_Dictionary* GenerateResourceDict(CPDF_Dictionary* pExtGStateDict,
 void GenerateAndSetAPDict(CPDF_Document* pDoc,
                           CPDF_Dictionary* pAnnotDict,
                           const CFX_ByteTextBuf& sAppStream,
-                          CPDF_Dictionary* pResourceDict) {
+                          CPDF_Dictionary* pResourceDict,
+                          bool bIsTextMarkupAnnotation) {
   CPDF_Dictionary* pAPDict = new CPDF_Dictionary;
   pAnnotDict->SetFor("AP", pAPDict);
 
@@ -602,7 +603,9 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   pStreamDict->SetStringFor("Subtype", "Form");
   pStreamDict->SetMatrixFor("Matrix", CFX_Matrix());
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = bIsTextMarkupAnnotation
+                           ? CPDF_Annot::RectFromQuadPoints(pAnnotDict)
+                           : pAnnotDict->GetRectFor("Rect");
   pStreamDict->SetRectFor("BBox", rect);
 
   pStreamDict->SetFor("Resources", pResourceDict);
@@ -783,7 +786,8 @@ bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       false /*IsTextMarkupAnnotation*/);
   return true;
 }
 
@@ -797,7 +801,7 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
                                           CPVT_Color(CPVT_Color::kRGB, 1, 1, 0),
                                           PaintOperation::FILL);
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
   rect.Normalize();
 
   sAppStream << rect.left << " " << rect.top << " m " << rect.right << " "
@@ -809,7 +813,8 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Multiply");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       true /*IsTextMarkupAnnotation*/);
 
   return true;
 }
@@ -863,7 +868,8 @@ bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       false /*IsTextMarkupAnnotation*/);
   return true;
 }
 
@@ -885,7 +891,8 @@ bool CPVT_GenerateAP::GenerateTextAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       false /*IsTextMarkupAnnotation*/);
   return true;
 }
 
@@ -899,7 +906,7 @@ bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
                                           CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
   rect.Normalize();
 
   FX_FLOAT fLineWidth = 1.0;
@@ -911,7 +918,8 @@ bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       true /*IsTextMarkupAnnotation*/);
   return true;
 }
 
@@ -949,7 +957,8 @@ bool CPVT_GenerateAP::GeneratePopupAP(CPDF_Document* pDoc,
     return false;
 
   sAppStream << GetPopupContentsString(pDoc, *pAnnotDict, pDefFont, sFontName);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       false /*IsTextMarkupAnnotation*/);
   return true;
 }
 
@@ -996,7 +1005,8 @@ bool CPVT_GenerateAP::GenerateSquareAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       false /*IsTextMarkupAnnotation*/);
   return true;
 }
 
@@ -1010,7 +1020,7 @@ bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
                                           CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
   rect.Normalize();
 
   FX_FLOAT fLineWidth = 1.0;
@@ -1044,7 +1054,8 @@ bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       true /*IsTextMarkupAnnotation*/);
   return true;
 }
 
@@ -1058,7 +1069,7 @@ bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
                                           CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
   rect.Normalize();
 
   FX_FLOAT fLineWidth = 1.0;
@@ -1070,7 +1081,8 @@ bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   CPDF_Dictionary* pResourceDict =
       GenerateResourceDict(pExtGStateDict, nullptr);
-  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict);
+  GenerateAndSetAPDict(pDoc, pAnnotDict, sAppStream, pResourceDict,
+                       true /*IsTextMarkupAnnotation*/);
   return true;
 }
 

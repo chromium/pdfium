@@ -20,6 +20,15 @@
 
 namespace {
 
+char kPDFiumKey_HasGeneratedAP[] = "PDFIUM_HasGeneratedAP";
+
+bool IsTextMarkupAnnotation(CPDF_Annot::Subtype type) {
+  return type == CPDF_Annot::Subtype::HIGHLIGHT ||
+         type == CPDF_Annot::Subtype::SQUIGGLY ||
+         type == CPDF_Annot::Subtype::STRIKEOUT ||
+         type == CPDF_Annot::Subtype::UNDERLINE;
+}
+
 bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
   // If AP dictionary exists, we use the appearance defined in the
   // existing AP dictionary.
@@ -40,6 +49,8 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict,
       m_bOpenState(false),
       m_pPopupAnnot(nullptr) {
   m_nSubtype = StringToAnnotSubtype(m_pAnnotDict->GetStringFor("Subtype"));
+  m_bIsTextMarkupAnnotation = IsTextMarkupAnnotation(m_nSubtype);
+  m_bHasGeneratedAP = m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP);
   GenerateAPIfNeeded();
 }
 
@@ -53,24 +64,30 @@ void CPDF_Annot::GenerateAPIfNeeded() {
   if (!ShouldGenerateAPForAnnotation(m_pAnnotDict))
     return;
 
+  bool result = false;
   if (m_nSubtype == CPDF_Annot::Subtype::CIRCLE)
-    CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
-    CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::INK)
-    CPVT_GenerateAP::GenerateInkAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateInkAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::POPUP)
-    CPVT_GenerateAP::GeneratePopupAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GeneratePopupAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::SQUARE)
-    CPVT_GenerateAP::GenerateSquareAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateSquareAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::SQUIGGLY)
-    CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::STRIKEOUT)
-    CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::TEXT)
-    CPVT_GenerateAP::GenerateTextAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateTextAP(m_pDocument, m_pAnnotDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::UNDERLINE)
-    CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
+
+  if (result) {
+    m_pAnnotDict->SetBooleanFor(kPDFiumKey_HasGeneratedAP, result);
+    m_bHasGeneratedAP = result;
+  }
 }
 
 bool CPDF_Annot::ShouldDrawAnnotation() {
@@ -91,11 +108,23 @@ CPDF_Annot::Subtype CPDF_Annot::GetSubtype() const {
   return m_nSubtype;
 }
 
+CFX_FloatRect CPDF_Annot::RectForDrawing() const {
+  if (!m_pAnnotDict)
+    return CFX_FloatRect();
+
+  bool bShouldUseQuadPointsCoords =
+      m_bIsTextMarkupAnnotation && m_bHasGeneratedAP;
+  if (bShouldUseQuadPointsCoords)
+    return RectFromQuadPoints(m_pAnnotDict);
+
+  return m_pAnnotDict->GetRectFor("Rect");
+}
+
 CFX_FloatRect CPDF_Annot::GetRect() const {
   if (!m_pAnnotDict)
     return CFX_FloatRect();
 
-  CFX_FloatRect rect = m_pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = RectForDrawing();
   rect.Normalize();
   return rect;
 }
@@ -173,6 +202,26 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   matrix.MatchRect(pAnnot->GetRect(), form_bbox);
   matrix.Concat(*pUser2Device);
   return pForm;
+}
+
+// Static.
+CFX_FloatRect CPDF_Annot::RectFromQuadPoints(CPDF_Dictionary* pAnnotDict) {
+  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
+  if (!pArray)
+    return CFX_FloatRect();
+
+  // QuadPoints are defined with 4 pairs of numbers
+  // ([ pair0, pair1, pair2, pair3 ]), where
+  // pair0 = top_left
+  // pair1 = top_right
+  // pair2 = bottom_left
+  // pair3 = bottom_right
+  //
+  // On the other hand, /Rect is define as 2 pairs [pair0, pair1] where:
+  // pair0 = bottom_left
+  // pair1 = top_right.
+  return CFX_FloatRect(pArray->GetNumberAt(4), pArray->GetNumberAt(5),
+                       pArray->GetNumberAt(2), pArray->GetNumberAt(3));
 }
 
 // Static.

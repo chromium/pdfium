@@ -71,6 +71,7 @@ class CPDF_Annot {
   static CPDF_Annot::Subtype StringToAnnotSubtype(
       const CFX_ByteString& sSubtype);
   static CFX_ByteString AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype);
+  static CFX_FloatRect RectFromQuadPoints(CPDF_Dictionary* pAnnotDict);
 
   CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument, bool bToOwnDict);
   ~CPDF_Annot();
@@ -102,6 +103,8 @@ class CPDF_Annot {
   void GenerateAPIfNeeded();
   bool ShouldDrawAnnotation();
 
+  CFX_FloatRect RectForDrawing() const;
+
   // For regular annotations, |m_pAnnotDict| is not owned. For
   // our artificially created popup annotations, |m_pAnnotDict|
   // is owned by this class.
@@ -112,6 +115,8 @@ class CPDF_Annot {
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
   // |m_bOpenState| is only set for popup annotations.
   bool m_bOpenState;
+  bool m_bHasGeneratedAP;
+  bool m_bIsTextMarkupAnnotation;
   // Not owned. If there is a valid pointer in |m_pPopupAnnot|,
   // then this annot is never a popup.
   CPDF_Annot* m_pPopupAnnot;
