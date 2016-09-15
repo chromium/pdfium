@@ -8,7 +8,9 @@
 #define CORE_FXCRT_INCLUDE_FX_STRING_H_
 
 #include <stdint.h>  // For intptr_t.
+
 #include <algorithm>
+#include <functional>
 
 #include "core/fxcrt/cfx_string_c_template.h"
 #include "core/fxcrt/cfx_string_data_template.h"
@@ -166,7 +168,9 @@ class CFX_ByteString {
   void Concat(const FX_CHAR* lpszSrcData, FX_STRSIZE nSrcLen);
 
   CFX_RetainPtr<StringData> m_pData;
+
   friend class fxcrt_ByteStringConcat_Test;
+  friend class fxcrt_ByteStringPool_Test;
 };
 
 inline bool operator==(const char* lhs, const CFX_ByteString& rhs) {
@@ -357,7 +361,9 @@ class CFX_WideString {
   void Concat(const FX_WCHAR* lpszSrcData, FX_STRSIZE nSrcLen);
 
   CFX_RetainPtr<StringData> m_pData;
+
   friend class fxcrt_WideStringConcatInPlace_Test;
+  friend class fxcrt_WideStringPool_Test;
 };
 
 inline CFX_WideString operator+(const CFX_WideStringC& str1,
@@ -431,5 +437,29 @@ inline FX_FLOAT FX_atof(const CFX_WideStringC& wsStr) {
 }
 bool FX_atonum(const CFX_ByteStringC& str, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
+
+uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase);
+uint32_t FX_HashCode_GetW(const CFX_WideStringC& str, bool bIgnoreCase);
+
+namespace std {
+
+template <>
+struct hash<CFX_ByteString> {
+  std::size_t operator()(const CFX_ByteString& str) const {
+    return FX_HashCode_GetA(str.AsStringC(), false);
+  }
+};
+
+template <>
+struct hash<CFX_WideString> {
+  std::size_t operator()(const CFX_WideString& str) const {
+    return FX_HashCode_GetW(str.AsStringC(), false);
+  }
+};
+
+}  // namespace std
+
+extern template struct std::hash<CFX_ByteString>;
+extern template struct std::hash<CFX_WideString>;
 
 #endif  // CORE_FXCRT_INCLUDE_FX_STRING_H_

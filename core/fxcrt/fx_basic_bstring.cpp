@@ -9,11 +9,14 @@
 #include <algorithm>
 #include <cctype>
 
+#include "core/fxcrt/include/cfx_string_pool_template.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "third_party/base/numerics/safe_math.h"
 
 template class CFX_StringDataTemplate<FX_CHAR>;
 template class CFX_StringCTemplate<FX_CHAR>;
+template class CFX_StringPoolTemplate<CFX_ByteString>;
+template struct std::hash<CFX_ByteString>;
 
 namespace {
 

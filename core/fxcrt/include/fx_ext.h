@@ -83,19 +83,11 @@ inline int FXSYS_toDecimalDigit(const FX_WCHAR c) {
 FX_FLOAT FXSYS_FractionalScale(size_t scale_factor, int value);
 int FXSYS_FractionalScaleCount();
 
-uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase);
-uint32_t FX_HashCode_GetW(const CFX_WideStringC& Str, bool bIgnoreCase);
-
 void* FX_Random_MT_Start(uint32_t dwSeed);
-
-uint32_t FX_Random_MT_Generate(void* pContext);
-
 void FX_Random_MT_Close(void* pContext);
-
+uint32_t FX_Random_MT_Generate(void* pContext);
 void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount);
-
 void FX_Random_GenerateMT(uint32_t* pBuffer, int32_t iCount);
-
 void FX_Random_GenerateCrypto(uint32_t* pBuffer, int32_t iCount);
 
 #ifdef PDF_ENABLE_XFA
