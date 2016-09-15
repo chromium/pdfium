@@ -216,6 +216,15 @@ bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
                       m_pData->m_nDataLength) == 0;
 }
 
+bool CFX_ByteString::operator<(const CFX_ByteString& str) const {
+  if (m_pData == str.m_pData)
+    return false;
+
+  int result = FXSYS_memcmp(c_str(), str.c_str(),
+                            std::min(GetLength(), str.GetLength()));
+  return result < 0 || (result == 0 && GetLength() < str.GetLength());
+}
+
 bool CFX_ByteString::EqualNoCase(const CFX_ByteStringC& str) const {
   if (!m_pData)
     return str.IsEmpty();

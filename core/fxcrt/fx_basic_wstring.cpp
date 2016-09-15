@@ -194,6 +194,15 @@ bool CFX_WideString::operator==(const CFX_WideString& other) const {
                  m_pData->m_nDataLength) == 0;
 }
 
+bool CFX_WideString::operator<(const CFX_WideString& str) const {
+  if (m_pData == str.m_pData)
+    return false;
+
+  int result =
+      wmemcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
+  return result < 0 || (result == 0 && GetLength() < str.GetLength());
+}
+
 void CFX_WideString::AssignCopy(const FX_WCHAR* pSrcData, FX_STRSIZE nSrcLen) {
   AllocBeforeWrite(nSrcLen);
   m_pData->CopyContents(pSrcData, nSrcLen);

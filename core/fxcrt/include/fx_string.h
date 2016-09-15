@@ -88,11 +88,7 @@ class CFX_ByteString {
     return !(*this == other);
   }
 
-  bool operator<(const CFX_ByteString& str) const {
-    int result = FXSYS_memcmp(c_str(), str.c_str(),
-                              std::min(GetLength(), str.GetLength()));
-    return result < 0 || (result == 0 && GetLength() < str.GetLength());
-  }
+  bool operator<(const CFX_ByteString& str) const;
 
   const CFX_ByteString& operator=(const FX_CHAR* str);
   const CFX_ByteString& operator=(const CFX_ByteStringC& bstrc);
@@ -295,11 +291,7 @@ class CFX_WideString {
     return !(*this == other);
   }
 
-  bool operator<(const CFX_WideString& str) const {
-    int result =
-        wmemcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
-    return result < 0 || (result == 0 && GetLength() < str.GetLength());
-  }
+  bool operator<(const CFX_WideString& str) const;
 
   FX_WCHAR GetAt(FX_STRSIZE nIndex) const {
     return m_pData ? m_pData->m_String[nIndex] : 0;
