@@ -13,7 +13,6 @@
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
@@ -459,7 +458,6 @@ void CFX_AggDeviceDriver::DestroyPlatform() {}
 FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                             const FXTEXT_CHARPOS* pCharPos,
                                             CFX_Font* pFont,
-                                            CFX_FontCache* pCache,
                                             const CFX_Matrix* pObject2Device,
                                             FX_FLOAT font_size,
                                             uint32_t color) {

@@ -25,7 +25,6 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fxge/include/cfx_autofontcache.h"
 #include "core/fxge/include/cfx_facecache.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
@@ -435,9 +434,6 @@ FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                         FX_ARGB stroke_argb,
                                         CFX_PathData* pClippingPath,
                                         int nFlag) {
-  CFX_FontCache* pCache =
-      pFont->m_pDocument ? pFont->m_pDocument->GetRenderData()->GetFontCache()
-                         : nullptr;
   CPDF_CharPosList CharPosList;
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
   if (CharPosList.m_nChars == 0)
@@ -452,10 +448,10 @@ FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
     auto* font = fontPosition == -1
                      ? &pFont->m_Font
                      : pFont->m_FontFallbacks[fontPosition].get();
-    if (!pDevice->DrawTextPath(
-            i - startIndex, CharPosList.m_pCharPos + startIndex, font, pCache,
-            font_size, pText2User, pUser2Device, pGraphState, fill_argb,
-            stroke_argb, pClippingPath, nFlag)) {
+    if (!pDevice->DrawTextPath(i - startIndex,
+                               CharPosList.m_pCharPos + startIndex, font,
+                               font_size, pText2User, pUser2Device, pGraphState,
+                               fill_argb, stroke_argb, pClippingPath, nFlag)) {
       bDraw = false;
     }
     fontPosition = curFontPosition;
@@ -464,7 +460,7 @@ FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
   auto* font = fontPosition == -1 ? &pFont->m_Font
                                   : pFont->m_FontFallbacks[fontPosition].get();
   if (!pDevice->DrawTextPath(CharPosList.m_nChars - startIndex,
-                             CharPosList.m_pCharPos + startIndex, font, pCache,
+                             CharPosList.m_pCharPos + startIndex, font,
                              font_size, pText2User, pUser2Device, pGraphState,
                              fill_argb, stroke_argb, pClippingPath, nFlag)) {
     bDraw = false;
@@ -540,9 +536,6 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                           const CFX_Matrix* pText2Device,
                                           FX_ARGB fill_argb,
                                           const CPDF_RenderOptions* pOptions) {
-  CFX_FontCache* pCache =
-      pFont->m_pDocument ? pFont->m_pDocument->GetRenderData()->GetFontCache()
-                         : nullptr;
   CPDF_CharPosList CharPosList;
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
   if (CharPosList.m_nChars == 0)
@@ -585,7 +578,7 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                      ? &pFont->m_Font
                      : pFont->m_FontFallbacks[fontPosition].get();
     if (!pDevice->DrawNormalText(
-            i - startIndex, CharPosList.m_pCharPos + startIndex, font, pCache,
+            i - startIndex, CharPosList.m_pCharPos + startIndex, font,
             font_size, pText2Device, fill_argb, FXGE_flags)) {
       bDraw = false;
     }
@@ -596,7 +589,7 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                   : pFont->m_FontFallbacks[fontPosition].get();
   if (!pDevice->DrawNormalText(CharPosList.m_nChars - startIndex,
                                CharPosList.m_pCharPos + startIndex, font,
-                               pCache, font_size, pText2Device, fill_argb,
+                               font_size, pText2Device, fill_argb,
                                FXGE_flags)) {
     bDraw = false;
   }
@@ -627,23 +620,9 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     RenderSingleObject(&path, pObj2Device);
     return;
   }
-  CFX_FontCache* pCache;
-  if (pFont->m_pDocument) {
-    pCache = pFont->m_pDocument->GetRenderData()->GetFontCache();
-  } else {
-    pCache = CFX_GEModule::Get()->GetFontCache();
-  }
   CPDF_CharPosList CharPosList;
   CharPosList.Load(textobj->m_nChars, textobj->m_pCharCodes,
                    textobj->m_pCharPos, pFont, font_size);
-  std::vector<CFX_FaceCache*> faceCaches;
-  std::vector<CFX_AutoFontCache> autoFontCaches;
-  faceCaches.push_back(pCache->GetCachedFace(&pFont->m_Font));
-  autoFontCaches.push_back(CFX_AutoFontCache(pCache, &pFont->m_Font));
-  for (const auto& font : pFont->m_FontFallbacks) {
-    faceCaches.push_back(pCache->GetCachedFace(font.get()));
-    autoFontCaches.push_back(CFX_AutoFontCache(pCache, font.get()));
-  }
   for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
     FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
     auto font =
@@ -651,8 +630,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
             ? &pFont->m_Font
             : pFont->m_FontFallbacks[charpos.m_FallbackFontPosition].get();
     const CFX_PathData* pPath =
-        faceCaches[charpos.m_FallbackFontPosition + 1]->LoadGlyphPath(
-            font, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
+        font->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath) {
       continue;
     }

@@ -12,7 +12,6 @@
 class CFX_DIBitmap;
 class CFX_DIBSource;
 class CFX_Font;
-class CFX_FontCache;
 class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_PathData;
@@ -87,7 +86,6 @@ class IFX_RenderDeviceDriver {
   virtual FX_BOOL DrawDeviceText(int nChars,
                                  const FXTEXT_CHARPOS* pCharPos,
                                  CFX_Font* pFont,
-                                 CFX_FontCache* pCache,
                                  const CFX_Matrix* pObject2Device,
                                  FX_FLOAT font_size,
                                  uint32_t color);

@@ -219,9 +219,9 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   if (matrix) {
     affine_matrix.Concat(*matrix);
   }
-  device->DrawNormalText(
-      str.GetLength(), pCharPos, m_pFont, CFX_GEModule::Get()->GetFontCache(),
-      (FX_FLOAT)iFontSize, &affine_matrix, m_fontColor, FXTEXT_CLEARTYPE);
+  device->DrawNormalText(str.GetLength(), pCharPos, m_pFont,
+                         (FX_FLOAT)iFontSize, &affine_matrix, m_fontColor,
+                         FXTEXT_CLEARTYPE);
 }
 
 void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
@@ -238,8 +238,7 @@ void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
   FX_RECT geRect(0, 0, (int)geWidth, iTextHeight);
   ge.FillRect(&geRect, m_backgroundColor);
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
-  ge.DrawNormalText(str.GetLength(), pCharPos, m_pFont,
-                    CFX_GEModule::Get()->GetFontCache(), (FX_FLOAT)iFontSize,
+  ge.DrawNormalText(str.GetLength(), pCharPos, m_pFont, (FX_FLOAT)iFontSize,
                     &affine_matrix, m_fontColor, FXTEXT_CLEARTYPE);
   CFX_FxgeDevice geBitmap;
   geBitmap.Attach(pOutBitmap, false, nullptr, false);

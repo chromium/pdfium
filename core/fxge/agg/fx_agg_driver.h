@@ -16,7 +16,6 @@
 #include "third_party/agg23/agg_rasterizer_scanline_aa.h"
 
 class CFX_ClipRgn;
-class CFX_FontCache;
 class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_PathData;
@@ -93,7 +92,6 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
-                         CFX_FontCache* pCache,
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
                          uint32_t color) override;

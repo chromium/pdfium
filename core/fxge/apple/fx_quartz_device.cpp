@@ -13,7 +13,6 @@
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
@@ -746,7 +745,6 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlyphRun(
     int nChars,
     const FXTEXT_CHARPOS* pCharPos,
     CFX_Font* pFont,
-    CFX_FontCache* pCache,
     const CFX_Matrix* pGlyphMatrix,
     const CFX_Matrix* pObject2Device,
     FX_FLOAT font_size,
@@ -812,7 +810,6 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlyphRun(
 FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
                                                const FXTEXT_CHARPOS* pCharPos,
                                                CFX_Font* pFont,
-                                               CFX_FontCache* pCache,
                                                const CFX_Matrix* pObject2Device,
                                                FX_FLOAT font_size,
                                                uint32_t color) {
@@ -832,8 +829,8 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
   while (i < nChars) {
     if (pCharPos[i].m_bGlyphAdjust || font_size < 0) {
       if (i > 0) {
-        ret = CG_DrawGlyphRun(i, pCharPos, pFont, pCache, nullptr,
-                              pObject2Device, font_size, color);
+        ret = CG_DrawGlyphRun(i, pCharPos, pFont, nullptr, pObject2Device,
+                              font_size, color);
         if (!ret) {
           RestoreState(false);
           return ret;
@@ -849,8 +846,8 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
             char_pos->m_AdjustMatrix[0], char_pos->m_AdjustMatrix[1],
             char_pos->m_AdjustMatrix[2], char_pos->m_AdjustMatrix[3], 0, 0);
       }
-      ret = CG_DrawGlyphRun(1, char_pos, pFont, pCache, &glphy_matrix,
-                            pObject2Device, font_size, color);
+      ret = CG_DrawGlyphRun(1, char_pos, pFont, &glphy_matrix, pObject2Device,
+                            font_size, color);
       if (!ret) {
         RestoreState(false);
         return ret;
@@ -864,7 +861,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
     }
   }
   if (i > 0) {
-    ret = CG_DrawGlyphRun(i, pCharPos, pFont, pCache, nullptr, pObject2Device,
+    ret = CG_DrawGlyphRun(i, pCharPos, pFont, nullptr, pObject2Device,
                           font_size, color);
   }
   RestoreState(false);

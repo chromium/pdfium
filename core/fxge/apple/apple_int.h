@@ -21,8 +21,6 @@
 #include <Carbon/Carbon.h>
 #endif
 
-class CFX_FontCache;
-
 class CQuartz2D {
  public:
   void* createGraphics(CFX_DIBitmap* bitmap);
@@ -110,7 +108,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
-                         CFX_FontCache* pCache,
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
                          uint32_t color) override;
@@ -127,7 +124,6 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL CG_DrawGlyphRun(int nChars,
                           const FXTEXT_CHARPOS* pCharPos,
                           CFX_Font* pFont,
-                          CFX_FontCache* pCache,
                           const CFX_Matrix* pGlyphMatrix,
                           const CFX_Matrix* pObject2Device,
                           FX_FLOAT font_size,

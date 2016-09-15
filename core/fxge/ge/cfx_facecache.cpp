@@ -89,7 +89,7 @@ CFX_FaceCache::~CFX_FaceCache() {
 #endif
 }
 
-CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
+CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(const CFX_Font* pFont,
                                             uint32_t glyph_index,
                                             FX_BOOL bFontStyle,
                                             const CFX_Matrix* pMatrix,
@@ -223,7 +223,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
   return pGlyphBitmap;
 }
 
-const CFX_PathData* CFX_FaceCache::LoadGlyphPath(CFX_Font* pFont,
+const CFX_PathData* CFX_FaceCache::LoadGlyphPath(const CFX_Font* pFont,
                                                  uint32_t glyph_index,
                                                  int dest_width) {
   if (!m_Face || glyph_index == kInvalidGlyphIndex || dest_width < 0)
@@ -247,12 +247,12 @@ const CFX_PathData* CFX_FaceCache::LoadGlyphPath(CFX_Font* pFont,
   if (it != m_PathMap.end())
     return it->second.get();
 
-  CFX_PathData* pGlyphPath = pFont->LoadGlyphPath(glyph_index, dest_width);
+  CFX_PathData* pGlyphPath = pFont->LoadGlyphPathImpl(glyph_index, dest_width);
   m_PathMap[key] = std::unique_ptr<CFX_PathData>(pGlyphPath);
   return pGlyphPath;
 }
 
-const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
+const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
                                                       uint32_t glyph_index,
                                                       FX_BOOL bFontStyle,
                                                       const CFX_Matrix* pMatrix,
@@ -349,7 +349,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
 }
 
 #ifdef _SKIA_SUPPORT_
-CFX_TypeFace* CFX_FaceCache::GetDeviceCache(CFX_Font* pFont) {
+CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
   if (!m_pTypeface) {
     m_pTypeface =
         SkTypeface::MakeFromStream(
@@ -365,7 +365,7 @@ void CFX_FaceCache::InitPlatform() {}
 #endif
 
 CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
-    CFX_Font* pFont,
+    const CFX_Font* pFont,
     const CFX_Matrix* pMatrix,
     const CFX_ByteString& FaceGlyphsKey,
     uint32_t glyph_index,
