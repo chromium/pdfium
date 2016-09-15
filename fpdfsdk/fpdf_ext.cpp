@@ -53,7 +53,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
     const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
     CFX_ByteString cbString;
     if (pAnnotDict->KeyExist("IT"))
-      cbString = pAnnotDict->GetStringBy("IT");
+      cbString = pAnnotDict->GetStringFor("IT");
     if (cbString.Compare("Img") != 0)
       FPDF_UnSupportError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
   } else if (nAnnotSubtype == CPDF_Annot::Subtype::MOVIE) {
@@ -68,7 +68,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
     const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
     CFX_ByteString cbString;
     if (pAnnotDict->KeyExist("FT"))
-      cbString = pAnnotDict->GetStringBy("FT");
+      cbString = pAnnotDict->GetStringFor("FT");
     if (cbString.Compare("Sig") == 0)
       FPDF_UnSupportError(FPDF_UNSP_ANNOT_SIG);
   }
@@ -133,14 +133,14 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
       return;
     }
     if (pRootDict->KeyExist("Names")) {
-      CPDF_Dictionary* pNameDict = pRootDict->GetDictBy("Names");
+      CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
       if (pNameDict && pNameDict->KeyExist("EmbeddedFiles")) {
         FPDF_UnSupportError(FPDF_UNSP_DOC_ATTACHMENT);
         return;
       }
       if (pNameDict && pNameDict->KeyExist("JavaScript")) {
-        CPDF_Dictionary* pJSDict = pNameDict->GetDictBy("JavaScript");
-        CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayBy("Names") : nullptr;
+        CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
+        CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
         if (pArray) {
           for (size_t i = 0; i < pArray->GetCount(); i++) {
             CFX_ByteString cbStr = pArray->GetStringAt(i);
@@ -177,7 +177,7 @@ DLLEXPORT int STDCALL FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   if (!pRoot)
     return PAGEMODE_UNKNOWN;
 
-  CPDF_Object* pName = pRoot->GetObjectBy("PageMode");
+  CPDF_Object* pName = pRoot->GetObjectFor("PageMode");
   if (!pName)
     return PAGEMODE_USENONE;
 

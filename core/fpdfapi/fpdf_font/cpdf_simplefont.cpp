@@ -102,21 +102,21 @@ FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode, int level) {
 }
 
 FX_BOOL CPDF_SimpleFont::LoadCommon() {
-  CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictBy("FontDescriptor");
+  CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc) {
     LoadFontDescriptor(pFontDesc);
   }
-  CPDF_Array* pWidthArray = m_pFontDict->GetArrayBy("Widths");
+  CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
   m_bUseFontWidth = !pWidthArray;
   if (pWidthArray) {
     if (pFontDesc && pFontDesc->KeyExist("MissingWidth")) {
-      int MissingWidth = pFontDesc->GetIntegerBy("MissingWidth");
+      int MissingWidth = pFontDesc->GetIntegerFor("MissingWidth");
       for (int i = 0; i < 256; i++) {
         m_CharWidth[i] = MissingWidth;
       }
     }
-    size_t width_start = m_pFontDict->GetIntegerBy("FirstChar", 0);
-    size_t width_end = m_pFontDict->GetIntegerBy("LastChar", 0);
+    size_t width_start = m_pFontDict->GetIntegerFor("FirstChar", 0);
+    size_t width_end = m_pFontDict->GetIntegerFor("LastChar", 0);
     if (width_start <= 255) {
       if (width_end == 0 || width_end >= width_start + pWidthArray->GetCount())
         width_end = width_start + pWidthArray->GetCount() - 1;
@@ -136,7 +136,7 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
   if (!(m_Flags & PDFFONT_SYMBOLIC)) {
     m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
   }
-  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
+  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, !!m_pFontFile,
                   m_Font.IsTTFont());
   LoadGlyphMap();

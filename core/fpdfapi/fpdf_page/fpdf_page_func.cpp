@@ -471,10 +471,10 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
     return false;
 
   CPDF_Dictionary* pDict = pStream->GetDict();
-  CPDF_Array* pSize = pDict->GetArrayBy("Size");
-  CPDF_Array* pEncode = pDict->GetArrayBy("Encode");
-  CPDF_Array* pDecode = pDict->GetArrayBy("Decode");
-  m_nBitsPerSample = pDict->GetIntegerBy("BitsPerSample");
+  CPDF_Array* pSize = pDict->GetArrayFor("Size");
+  CPDF_Array* pEncode = pDict->GetArrayFor("Encode");
+  CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
+  m_nBitsPerSample = pDict->GetIntegerFor("BitsPerSample");
   if (!IsValidBitsPerSample(m_nBitsPerSample))
     return FALSE;
 
@@ -486,7 +486,7 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   for (uint32_t i = 0; i < m_nInputs; i++) {
     m_EncodeInfo[i].sizes = pSize ? pSize->GetIntegerAt(i) : 0;
     if (!pSize && i == 0)
-      m_EncodeInfo[i].sizes = pDict->GetIntegerBy("Size");
+      m_EncodeInfo[i].sizes = pDict->GetIntegerFor("Size");
     nTotalSampleBits *= m_EncodeInfo[i].sizes;
     if (pEncode) {
       m_EncodeInfo[i].encode_min = pEncode->GetFloatAt(i * 2);
@@ -601,21 +601,21 @@ FX_BOOL CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj) {
   if (!pDict) {
     return FALSE;
   }
-  CPDF_Array* pArray0 = pDict->GetArrayBy("C0");
+  CPDF_Array* pArray0 = pDict->GetArrayFor("C0");
   if (m_nOutputs == 0) {
     m_nOutputs = 1;
     if (pArray0) {
       m_nOutputs = pArray0->GetCount();
     }
   }
-  CPDF_Array* pArray1 = pDict->GetArrayBy("C1");
+  CPDF_Array* pArray1 = pDict->GetArrayFor("C1");
   m_pBeginValues = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
   m_pEndValues = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
   for (uint32_t i = 0; i < m_nOutputs; i++) {
     m_pBeginValues[i] = pArray0 ? pArray0->GetFloatAt(i) : 0.0f;
     m_pEndValues[i] = pArray1 ? pArray1->GetFloatAt(i) : 1.0f;
   }
-  m_Exponent = pDict->GetFloatBy("N");
+  m_Exponent = pDict->GetFloatFor("N");
   m_nOrigOutputs = m_nOutputs;
   if (m_nOutputs && m_nInputs > INT_MAX / m_nOutputs) {
     return FALSE;
@@ -652,7 +652,7 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   if (m_nInputs != kRequiredNumInputs) {
     return FALSE;
   }
-  CPDF_Array* pArray = pDict->GetArrayBy("Functions");
+  CPDF_Array* pArray = pDict->GetArrayFor("Functions");
   if (!pArray) {
     return FALSE;
   }
@@ -682,14 +682,14 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   }
   m_pBounds = FX_Alloc(FX_FLOAT, nSubs + 1);
   m_pBounds[0] = m_pDomains[0];
-  pArray = pDict->GetArrayBy("Bounds");
+  pArray = pDict->GetArrayFor("Bounds");
   if (!pArray)
     return FALSE;
   for (uint32_t i = 0; i < nSubs - 1; i++)
     m_pBounds[i + 1] = pArray->GetFloatAt(i);
   m_pBounds[nSubs] = m_pDomains[1];
   m_pEncode = FX_Alloc2D(FX_FLOAT, nSubs, 2);
-  pArray = pDict->GetArrayBy("Encode");
+  pArray = pDict->GetArrayFor("Encode");
   if (!pArray)
     return FALSE;
 
@@ -720,9 +720,9 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(CPDF_Object* pFuncObj) {
 
   int iType = -1;
   if (CPDF_Stream* pStream = pFuncObj->AsStream())
-    iType = pStream->GetDict()->GetIntegerBy("FunctionType");
+    iType = pStream->GetDict()->GetIntegerFor("FunctionType");
   else if (CPDF_Dictionary* pDict = pFuncObj->AsDictionary())
-    iType = pDict->GetIntegerBy("FunctionType");
+    iType = pDict->GetIntegerFor("FunctionType");
 
   Type type = IntegerToFunctionType(iType);
   if (type == Type::kType0Sampled)
@@ -764,7 +764,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj) {
   CPDF_Stream* pStream = pObj->AsStream();
   CPDF_Dictionary* pDict = pStream ? pStream->GetDict() : pObj->AsDictionary();
 
-  CPDF_Array* pDomains = pDict->GetArrayBy("Domain");
+  CPDF_Array* pDomains = pDict->GetArrayFor("Domain");
   if (!pDomains)
     return FALSE;
 
@@ -776,7 +776,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj) {
   for (uint32_t i = 0; i < m_nInputs * 2; i++) {
     m_pDomains[i] = pDomains->GetFloatAt(i);
   }
-  CPDF_Array* pRanges = pDict->GetArrayBy("Range");
+  CPDF_Array* pRanges = pDict->GetArrayFor("Range");
   m_nOutputs = 0;
   if (pRanges) {
     m_nOutputs = pRanges->GetCount() / 2;

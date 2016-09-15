@@ -70,7 +70,7 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
 
   m_dwSize = size;
   if (m_pDict)
-    m_pDict->SetAtInteger("Length", size);
+    m_pDict->SetIntegerFor("Length", size);
 }
 
 CPDF_Object* CPDF_Stream::Clone() const {
@@ -112,10 +112,10 @@ void CPDF_Stream::SetData(const uint8_t* pData,
   m_dwSize = size;
   if (!m_pDict)
     m_pDict = new CPDF_Dictionary;
-  m_pDict->SetAtInteger("Length", size);
+  m_pDict->SetIntegerFor("Length", size);
   if (!bCompressed) {
-    m_pDict->RemoveAt("Filter");
-    m_pDict->RemoveAt("DecodeParms");
+    m_pDict->RemoveFor("Filter");
+    m_pDict->RemoveFor("DecodeParms");
   }
 }
 
@@ -137,7 +137,7 @@ void CPDF_Stream::InitStreamFromFile(IFX_FileRead* pFile,
   m_pFile = pFile;
   m_dwSize = (uint32_t)pFile->GetSize();
   if (m_pDict)
-    m_pDict->SetAtInteger("Length", m_dwSize);
+    m_pDict->SetIntegerFor("Length", m_dwSize);
 }
 
 CFX_WideString CPDF_Stream::GetUnicodeText() const {

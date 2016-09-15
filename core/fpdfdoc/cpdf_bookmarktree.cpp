@@ -12,14 +12,14 @@ CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {
   CPDF_Dictionary* pParentDict = parent.GetDict();
   if (pParentDict)
-    return CPDF_Bookmark(pParentDict->GetDictBy("First"));
+    return CPDF_Bookmark(pParentDict->GetDictFor("First"));
 
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   if (!pRoot)
     return CPDF_Bookmark();
 
-  CPDF_Dictionary* pOutlines = pRoot->GetDictBy("Outlines");
-  return pOutlines ? CPDF_Bookmark(pOutlines->GetDictBy("First"))
+  CPDF_Dictionary* pOutlines = pRoot->GetDictFor("Outlines");
+  return pOutlines ? CPDF_Bookmark(pOutlines->GetDictFor("First"))
                    : CPDF_Bookmark();
 }
 
@@ -29,6 +29,6 @@ CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(
   if (!pDict)
     return CPDF_Bookmark();
 
-  CPDF_Dictionary* pNext = pDict->GetDictBy("Next");
+  CPDF_Dictionary* pNext = pDict->GetDictFor("Next");
   return pNext == pDict ? CPDF_Bookmark() : CPDF_Bookmark(pNext);
 }

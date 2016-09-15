@@ -26,23 +26,23 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
 
   // TODO(jaepark): We shouldn't strip BOM for some strings and not for others.
   // See pdfium:593.
-  CFX_WideString sContents = pParentDict->GetUnicodeTextBy("Contents");
+  CFX_WideString sContents = pParentDict->GetUnicodeTextFor("Contents");
   if (sContents.IsEmpty())
     return std::unique_ptr<CPDF_Annot>();
 
   CPDF_Dictionary* pAnnotDict = new CPDF_Dictionary;
-  pAnnotDict->SetAtName("Type", "Annot");
-  pAnnotDict->SetAtName("Subtype", "Popup");
-  pAnnotDict->SetAtString("T", pParentDict->GetStringBy("T"));
-  pAnnotDict->SetAtString("Contents", sContents.UTF8Encode());
+  pAnnotDict->SetNameFor("Type", "Annot");
+  pAnnotDict->SetNameFor("Subtype", "Popup");
+  pAnnotDict->SetStringFor("T", pParentDict->GetStringFor("T"));
+  pAnnotDict->SetStringFor("Contents", sContents.UTF8Encode());
 
-  CFX_FloatRect rect = pParentDict->GetRectBy("Rect");
+  CFX_FloatRect rect = pParentDict->GetRectFor("Rect");
   rect.Normalize();
   CFX_FloatRect popupRect(0, 0, 200, 200);
   popupRect.Translate(rect.left, rect.bottom - popupRect.Height());
 
-  pAnnotDict->SetAtRect("Rect", popupRect);
-  pAnnotDict->SetAtInteger("F", 0);
+  pAnnotDict->SetRectFor("Rect", popupRect);
+  pAnnotDict->SetIntegerFor("F", 0);
 
   std::unique_ptr<CPDF_Annot> pPopupAnnot(
       new CPDF_Annot(pAnnotDict, pDocument, true));
@@ -57,14 +57,14 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   if (!pPage->m_pFormDict)
     return;
 
-  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayBy("Annots");
+  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
   if (!pAnnots)
     return;
 
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   FX_BOOL bRegenerateAP =
-      pAcroForm && pAcroForm->GetBooleanBy("NeedAppearances");
+      pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances");
   for (size_t i = 0; i < pAnnots->GetCount(); ++i) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));
     if (!pDict)
@@ -81,12 +81,12 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
 
     // Skip creating Popup annotation in the PDF document since PDFium provides
     // its own Popup annotations.
-    if (pDict->GetStringBy("Subtype") == "Popup")
+    if (pDict->GetStringFor("Subtype") == "Popup")
       continue;
 
     m_AnnotList.push_back(
         std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument, false)));
-    if (bRegenerateAP && pDict->GetStringBy("Subtype") == "Widget" &&
+    if (bRegenerateAP && pDict->GetStringFor("Subtype") == "Widget" &&
         CPDF_InterForm::IsUpdateAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
     }
@@ -130,7 +130,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
       CPDF_OCContext* pOCContext = pOptions->m_pOCContext;
       CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
       if (pOCContext && pAnnotDict &&
-          !pOCContext->CheckOCGVisible(pAnnotDict->GetDictBy("OC"))) {
+          !pOCContext->CheckOCGVisible(pAnnotDict->GetDictFor("OC"))) {
         continue;
       }
     }

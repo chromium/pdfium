@@ -14,7 +14,7 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {
   if (!m_pDict)
     return Always;
 
-  CFX_ByteString csSW = m_pDict->GetStringBy("SW", "A");
+  CFX_ByteString csSW = m_pDict->GetStringFor("SW", "A");
   if (csSW == "B")
     return Bigger;
   if (csSW == "S")
@@ -25,7 +25,7 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {
 }
 
 FX_BOOL CPDF_IconFit::IsProportionalScale() {
-  return m_pDict ? m_pDict->GetStringBy("S", "P") != "A" : TRUE;
+  return m_pDict ? m_pDict->GetStringFor("S", "P") != "A" : TRUE;
 }
 
 void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
@@ -33,7 +33,7 @@ void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
   if (!m_pDict)
     return;
 
-  CPDF_Array* pA = m_pDict->GetArrayBy("A");
+  CPDF_Array* pA = m_pDict->GetArrayFor("A");
   if (pA) {
     uint32_t dwCount = pA->GetCount();
     if (dwCount > 0)
@@ -44,5 +44,5 @@ void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
 }
 
 bool CPDF_IconFit::GetFittingBounds() {
-  return m_pDict ? m_pDict->GetBooleanBy("FB") : false;
+  return m_pDict ? m_pDict->GetBooleanFor("FB") : false;
 }

@@ -32,9 +32,9 @@ class CPDF_SyntaxParser {
                          uint32_t objnum,
                          uint32_t gennum,
                          FX_BOOL bDecrypt);
-  CPDF_Object* GetObjectByStrict(CPDF_IndirectObjectHolder* pObjList,
-                                 uint32_t objnum,
-                                 uint32_t gennum);
+  CPDF_Object* GetObjectForStrict(CPDF_IndirectObjectHolder* pObjList,
+                                  uint32_t objnum,
+                                  uint32_t gennum);
   CFX_ByteString GetKeyword();
 
   void ToNextLine();

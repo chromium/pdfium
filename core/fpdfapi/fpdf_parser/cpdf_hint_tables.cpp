@@ -455,7 +455,7 @@ bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return false;
 
   CPDF_Dictionary* pDict = pHintStream->GetDict();
-  CPDF_Object* pOffset = pDict ? pDict->GetObjectBy("S") : nullptr;
+  CPDF_Object* pOffset = pDict ? pDict->GetObjectFor("S") : nullptr;
   if (!pOffset || !pOffset->IsNumber())
     return false;
 
@@ -487,22 +487,22 @@ bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
 }
 
 int CPDF_HintTables::GetEndOfFirstPageOffset() const {
-  CPDF_Object* pOffsetE = m_pLinearizedDict->GetDirectObjectBy("E");
+  CPDF_Object* pOffsetE = m_pLinearizedDict->GetDirectObjectFor("E");
   return pOffsetE ? pOffsetE->GetInteger() : -1;
 }
 
 int CPDF_HintTables::GetNumberOfPages() const {
-  CPDF_Object* pPageNum = m_pLinearizedDict->GetDirectObjectBy("N");
+  CPDF_Object* pPageNum = m_pLinearizedDict->GetDirectObjectFor("N");
   return pPageNum ? pPageNum->GetInteger() : 0;
 }
 
 int CPDF_HintTables::GetFirstPageObjectNumber() const {
-  CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetDirectObjectBy("O");
+  CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetDirectObjectFor("O");
   return pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
 }
 
 int CPDF_HintTables::GetFirstPageNumber() const {
-  CPDF_Object* pFirstPageNum = m_pLinearizedDict->GetDirectObjectBy("P");
+  CPDF_Object* pFirstPageNum = m_pLinearizedDict->GetDirectObjectFor("P");
   return pFirstPageNum ? pFirstPageNum->GetInteger() : 0;
 }
 
@@ -515,7 +515,7 @@ int CPDF_HintTables::ReadPrimaryHintStreamLength() const {
 }
 
 int CPDF_HintTables::ReadPrimaryHintStream(int index) const {
-  CPDF_Array* pRange = m_pLinearizedDict->GetArrayBy("H");
+  CPDF_Array* pRange = m_pLinearizedDict->GetArrayFor("H");
   if (!pRange)
     return -1;
 

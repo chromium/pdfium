@@ -455,7 +455,7 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
 
 FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
+  CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
   if (!pAP)
     return FALSE;
 
@@ -469,7 +469,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     ap_entry = "N";
 
   // Get the AP stream or subdirectory
-  CPDF_Object* psub = pAP->GetDirectObjectBy(ap_entry);
+  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
   if (!psub)
     return FALSE;
 
@@ -484,7 +484,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     case FIELDTYPE_CHECKBOX:
     case FIELDTYPE_RADIOBUTTON:
       if (CPDF_Dictionary* pSubDict = psub->AsDictionary()) {
-        return !!pSubDict->GetStreamBy(GetAppState());
+        return !!pSubDict->GetStreamFor(GetAppState());
       }
       return FALSE;
   }
@@ -970,22 +970,22 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
 
   if (pNormalIcon) {
     if (CPDF_Dictionary* pImageDict = pNormalIcon->GetDict()) {
-      if (pImageDict->GetStringBy("Name").IsEmpty())
-        pImageDict->SetAtString("Name", "ImgA");
+      if (pImageDict->GetStringFor("Name").IsEmpty())
+        pImageDict->SetStringFor("Name", "ImgA");
     }
   }
 
   if (pRolloverIcon) {
     if (CPDF_Dictionary* pImageDict = pRolloverIcon->GetDict()) {
-      if (pImageDict->GetStringBy("Name").IsEmpty())
-        pImageDict->SetAtString("Name", "ImgB");
+      if (pImageDict->GetStringFor("Name").IsEmpty())
+        pImageDict->SetStringFor("Name", "ImgB");
     }
   }
 
   if (pDownIcon) {
     if (CPDF_Dictionary* pImageDict = pDownIcon->GetDict()) {
-      if (pImageDict->GetStringBy("Name").IsEmpty())
-        pImageDict->SetAtString("Name", "ImgC");
+      if (pImageDict->GetStringFor("Name").IsEmpty())
+        pImageDict->SetStringFor("Name", "ImgC");
     }
   }
 
@@ -1810,33 +1810,33 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
   CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
   ASSERT(pDoc);
 
-  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
-  CPDF_Stream* pStream = pAPDict->GetStreamBy(sAPType);
+  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
+  CPDF_Stream* pStream = pAPDict->GetStreamFor(sAPType);
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   CFX_ByteString sImageAlias = "IMG";
 
   if (CPDF_Dictionary* pImageDict = pImage->GetDict()) {
-    sImageAlias = pImageDict->GetStringBy("Name");
+    sImageAlias = pImageDict->GetStringFor("Name");
     if (sImageAlias.IsEmpty())
       sImageAlias = "IMG";
   }
 
-  CPDF_Dictionary* pStreamResList = pStreamDict->GetDictBy("Resources");
+  CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
   if (!pStreamResList) {
     pStreamResList = new CPDF_Dictionary();
-    pStreamDict->SetAt("Resources", pStreamResList);
+    pStreamDict->SetFor("Resources", pStreamResList);
   }
 
   if (pStreamResList) {
     CPDF_Dictionary* pXObject = new CPDF_Dictionary;
-    pXObject->SetAtReference(sImageAlias, pDoc, pImage);
-    pStreamResList->SetAt("XObject", pXObject);
+    pXObject->SetReferenceFor(sImageAlias, pDoc, pImage);
+    pStreamResList->SetFor("XObject", pXObject);
   }
 }
 
 void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {
-  if (CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP"))
-    pAPDict->RemoveAt(sAPType);
+  if (CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictFor("AP"))
+    pAPDict->RemoveFor(sAPType);
 }
 
 FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,

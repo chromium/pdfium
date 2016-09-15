@@ -26,7 +26,7 @@ CFDF_Document* CFDF_Document::CreateNewDoc() {
   pDoc->m_pRootDict = new CPDF_Dictionary;
   pDoc->AddIndirectObject(pDoc->m_pRootDict);
   CPDF_Dictionary* pFDFDict = new CPDF_Dictionary;
-  pDoc->m_pRootDict->SetAt("FDF", pFDFDict);
+  pDoc->m_pRootDict->SetFor("FDF", pFDFDict);
   return pDoc;
 }
 
@@ -76,7 +76,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
 
       if (CPDF_Dictionary* pMainDict =
               ToDictionary(parser.GetObject(this, 0, 0, true))) {
-        m_pRootDict = pMainDict->GetDictBy("Root");
+        m_pRootDict = pMainDict->GetDictFor("Root");
         pMainDict->Release();
       }
       break;

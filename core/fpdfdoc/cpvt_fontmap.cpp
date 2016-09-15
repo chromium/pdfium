@@ -32,14 +32,14 @@ void CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
     return;
 
   CFX_ByteString sFontAlias;
-  CPDF_Dictionary* pFormDict = pDoc->GetRoot()->GetDictBy("AcroForm");
+  CPDF_Dictionary* pFormDict = pDoc->GetRoot()->GetDictFor("AcroForm");
   CPDF_Font* pPDFFont = AddNativeInterFormFont(pFormDict, pDoc, sSysFontAlias);
   if (!pPDFFont)
     return;
 
-  if (CPDF_Dictionary* pFontList = pResDict->GetDictBy("Font")) {
+  if (CPDF_Dictionary* pFontList = pResDict->GetDictFor("Font")) {
     if (!pFontList->KeyExist(sSysFontAlias))
-      pFontList->SetAtReference(sSysFontAlias, pDoc, pPDFFont->GetFontDict());
+      pFontList->SetReferenceFor(sSysFontAlias, pDoc, pPDFFont->GetFontDict());
   }
   pSysFont = pPDFFont;
 }

@@ -1711,8 +1711,8 @@ CPDF_Object* CPDF_FontEncoding::Realize() {
   }
 
   CPDF_Dictionary* pDict = new CPDF_Dictionary;
-  pDict->SetAtName("BaseEncoding", "WinAnsiEncoding");
-  pDict->SetAt("Differences", pDiff);
+  pDict->SetNameFor("BaseEncoding", "WinAnsiEncoding");
+  pDict->SetFor("Differences", pDiff);
   return pDict;
 }
 

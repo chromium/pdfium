@@ -303,11 +303,11 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (!pRoot)
     return FALSE;
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
     return FALSE;
 
-  CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectBy("XFA");
+  CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectFor("XFA");
   if (!pElementXFA)
     return FALSE;
 
@@ -387,11 +387,11 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   if (!pRoot)
     return nullptr;
 
-  CPDF_Dictionary* pNames = pRoot->GetDictBy("Names");
+  CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
   if (!pNames)
     return nullptr;
 
-  CPDF_Dictionary* pXFAImages = pNames->GetDictBy("XFAImages");
+  CPDF_Dictionary* pXFAImages = pNames->GetDictFor("XFAImages");
   if (!pXFAImages)
     return nullptr;
 

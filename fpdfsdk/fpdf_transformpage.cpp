@@ -31,7 +31,7 @@ void SetBoundingBox(CPDF_Page* page,
   pBoundingBoxArray->Add(new CPDF_Number(bottom));
   pBoundingBoxArray->Add(new CPDF_Number(right));
   pBoundingBoxArray->Add(new CPDF_Number(top));
-  page->m_pFormDict->SetAt(key, pBoundingBoxArray);
+  page->m_pFormDict->SetFor(key, pBoundingBoxArray);
 }
 
 bool GetBoundingBox(CPDF_Page* page,
@@ -40,7 +40,7 @@ bool GetBoundingBox(CPDF_Page* page,
                     float* bottom,
                     float* right,
                     float* top) {
-  CPDF_Array* pArray = page->m_pFormDict->GetArrayBy(key);
+  CPDF_Array* pArray = page->m_pFormDict->GetArrayFor(key);
   if (!pArray)
     return false;
 
@@ -119,9 +119,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
   CPDF_Object* pContentObj =
-      pPageDic ? pPageDic->GetObjectBy("Contents") : nullptr;
+      pPageDic ? pPageDic->GetObjectFor("Contents") : nullptr;
   if (!pContentObj)
-    pContentObj = pPageDic ? pPageDic->GetArrayBy("Contents") : nullptr;
+    pContentObj = pPageDic ? pPageDic->GetArrayFor("Contents") : nullptr;
   if (!pContentObj)
     return FALSE;
 
@@ -159,16 +159,16 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         pContentArray->AddReference(pDoc, pStream->GetObjNum());
         pContentArray->AddReference(pDoc, pDirectObj->GetObjNum());
         pContentArray->AddReference(pDoc, pEndStream);
-        pPageDic->SetAtReference("Contents", pDoc,
-                                 pDoc->AddIndirectObject(pContentArray));
+        pPageDic->SetReferenceFor("Contents", pDoc,
+                                  pDoc->AddIndirectObject(pContentArray));
       }
     }
   }
 
   // Need to transform the patterns as well.
-  CPDF_Dictionary* pRes = pPageDic->GetDictBy("Resources");
+  CPDF_Dictionary* pRes = pPageDic->GetDictFor("Resources");
   if (pRes) {
-    CPDF_Dictionary* pPattenDict = pRes->GetDictBy("Pattern");
+    CPDF_Dictionary* pPattenDict = pRes->GetDictFor("Pattern");
     if (pPattenDict) {
       for (const auto& it : *pPattenDict) {
         CPDF_Object* pObj = it.second;
@@ -183,10 +183,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         else
           continue;
 
-        CFX_Matrix m = pDict->GetMatrixBy("Matrix");
+        CFX_Matrix m = pDict->GetMatrixFor("Matrix");
         CFX_Matrix t = *(CFX_Matrix*)matrix;
         m.Concat(t);
-        pDict->SetAtMatrix("Matrix", m);
+        pDict->SetMatrixFor("Matrix", m);
       }
     }
   }
@@ -277,9 +277,9 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
 
   CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
   CPDF_Object* pContentObj =
-      pPageDic ? pPageDic->GetObjectBy("Contents") : nullptr;
+      pPageDic ? pPageDic->GetObjectFor("Contents") : nullptr;
   if (!pContentObj)
-    pContentObj = pPageDic ? pPageDic->GetArrayBy("Contents") : nullptr;
+    pContentObj = pPageDic ? pPageDic->GetArrayFor("Contents") : nullptr;
   if (!pContentObj)
     return;
 
@@ -326,8 +326,8 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
         pContentArray = new CPDF_Array();
         pContentArray->AddReference(pDoc, pStream->GetObjNum());
         pContentArray->AddReference(pDoc, pDirectObj->GetObjNum());
-        pPageDic->SetAtReference("Contents", pDoc,
-                                 pDoc->AddIndirectObject(pContentArray));
+        pPageDic->SetReferenceFor("Contents", pDoc,
+                                  pDoc->AddIndirectObject(pContentArray));
       }
     }
   }

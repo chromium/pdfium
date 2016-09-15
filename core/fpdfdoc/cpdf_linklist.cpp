@@ -57,13 +57,13 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
 
 void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage,
                                   std::vector<CPDF_Dictionary*>* pList) {
-  CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArrayBy("Annots");
+  CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArrayFor("Annots");
   if (!pAnnotList)
     return;
 
   for (size_t i = 0; i < pAnnotList->GetCount(); ++i) {
     CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(i);
-    bool add_link = (pAnnot && pAnnot->GetStringBy("Subtype") == "Link");
+    bool add_link = (pAnnot && pAnnot->GetStringFor("Subtype") == "Link");
     // Add non-links as nullptrs to preserve z-order.
     pList->push_back(add_link ? pAnnot : nullptr);
   }

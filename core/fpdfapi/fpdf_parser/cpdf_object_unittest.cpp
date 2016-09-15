@@ -67,16 +67,16 @@ class PDFObjectsTest : public testing::Test {
     m_ArrayObj->InsertAt(1, new CPDF_Name("address"));
     // Dictionary object.
     m_DictObj = new CPDF_Dictionary;
-    m_DictObj->SetAt("bool", new CPDF_Boolean(false));
-    m_DictObj->SetAt("num", new CPDF_Number(0.23f));
+    m_DictObj->SetFor("bool", new CPDF_Boolean(false));
+    m_DictObj->SetFor("num", new CPDF_Number(0.23f));
     // Stream object.
     const char content[] = "abcdefghijklmnopqrstuvwxyz";
     size_t buf_len = FX_ArraySize(content);
     uint8_t* buf = reinterpret_cast<uint8_t*>(malloc(buf_len));
     memcpy(buf, content, buf_len);
     m_StreamDictObj = new CPDF_Dictionary;
-    m_StreamDictObj->SetAt("key1", new CPDF_String(L" test dict"));
-    m_StreamDictObj->SetAt("key2", new CPDF_Number(-1));
+    m_StreamDictObj->SetFor("key1", new CPDF_String(L" test dict"));
+    m_StreamDictObj->SetFor("key2", new CPDF_Number(-1));
     CPDF_Stream* stream_obj = new CPDF_Stream(buf, buf_len, m_StreamDictObj);
     // Null Object.
     CPDF_Null* null_obj = new CPDF_Null;
@@ -136,7 +136,7 @@ class PDFObjectsTest : public testing::Test {
           return false;
         for (CPDF_Dictionary::const_iterator it = dict1->begin();
              it != dict1->end(); ++it) {
-          if (!Equal(it->second, dict2->GetObjectBy(it->first)))
+          if (!Equal(it->second, dict2->GetObjectFor(it->first)))
             return false;
         }
         return true;
@@ -559,7 +559,7 @@ TEST(PDFArrayTest, GetTypeAt) {
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        vals[i]->SetAt(key.c_str(), new CPDF_Number(value));
+        vals[i]->SetFor(key.c_str(), new CPDF_Number(value));
       }
       arr->InsertAt(i, vals[i]);
     }
@@ -586,7 +586,7 @@ TEST(PDFArrayTest, GetTypeAt) {
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        vals[i]->SetAt(key.c_str(), new CPDF_Number(value));
+        vals[i]->SetFor(key.c_str(), new CPDF_Number(value));
       }
       uint8_t content[] = "content: this is a stream";
       size_t data_size = FX_ArraySize(content);
@@ -626,12 +626,12 @@ TEST(PDFArrayTest, GetTypeAt) {
     arr_val->AddNumber(2);
     arr->InsertAt(11, arr_val);
     CPDF_Dictionary* dict_val = new CPDF_Dictionary;
-    dict_val->SetAt("key1", new CPDF_String("Linda", false));
-    dict_val->SetAt("key2", new CPDF_String("Zoe", false));
+    dict_val->SetFor("key1", new CPDF_String("Linda", false));
+    dict_val->SetFor("key2", new CPDF_String("Zoe", false));
     arr->InsertAt(12, dict_val);
     CPDF_Dictionary* stream_dict = new CPDF_Dictionary;
-    stream_dict->SetAt("key1", new CPDF_String("John", false));
-    stream_dict->SetAt("key2", new CPDF_String("King", false));
+    stream_dict->SetFor("key1", new CPDF_String("John", false));
+    stream_dict->SetFor("key2", new CPDF_String("King", false));
     uint8_t data[] = "A stream for test";
     // The data buffer will be owned by stream object, so it needs to be
     // dynamically allocated.
@@ -769,9 +769,9 @@ TEST(PDFArrayTest, CloneDirectObject) {
 TEST(PDFDictionaryTest, CloneDirectObject) {
   CPDF_IndirectObjectHolder objects_holder;
   ScopedDict dict(new CPDF_Dictionary);
-  dict->SetAtReference("foo", &objects_holder, 1234);
+  dict->SetReferenceFor("foo", &objects_holder, 1234);
   ASSERT_EQ(1U, dict->GetCount());
-  CPDF_Object* obj = dict->GetObjectBy("foo");
+  CPDF_Object* obj = dict->GetObjectFor("foo");
   ASSERT_TRUE(obj);
   EXPECT_TRUE(obj->IsReference());
 
@@ -781,7 +781,7 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
 
   ScopedDict cloned_dict(cloned_dict_object->AsDictionary());
   ASSERT_EQ(1U, cloned_dict->GetCount());
-  CPDF_Object* cloned_obj = cloned_dict->GetObjectBy("foo");
+  CPDF_Object* cloned_obj = cloned_dict->GetObjectFor("foo");
   EXPECT_FALSE(cloned_obj);
 }
 
@@ -791,7 +791,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     ScopedArray arr_obj(new CPDF_Array);
     // Dictionary object.
     CPDF_Dictionary* dict_obj = new CPDF_Dictionary;
-    dict_obj->SetAt("arr", arr_obj.get());
+    dict_obj->SetFor("arr", arr_obj.get());
     arr_obj->InsertAt(0, dict_obj);
 
     // Clone this object to see whether stack overflow will be triggered.
@@ -803,7 +803,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     ASSERT_TRUE(cloned_dict);
     ASSERT_TRUE(cloned_dict->IsDictionary());
     // Recursively referenced object is not cloned.
-    EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectBy("arr"));
+    EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectFor("arr"));
   }
   {
     CPDF_IndirectObjectHolder objects_holder;
@@ -812,7 +812,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     CPDF_Array* arr_obj = new CPDF_Array;
     objects_holder.AddIndirectObject(dict_obj);
     EXPECT_EQ(1u, dict_obj->GetObjNum());
-    dict_obj->SetAt("arr", arr_obj);
+    dict_obj->SetFor("arr", arr_obj);
     arr_obj->InsertAt(0, dict_obj, &objects_holder);
     CPDF_Object* elem0 = arr_obj->GetObjectAt(0);
     ASSERT_TRUE(elem0);
@@ -824,7 +824,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     ScopedDict cloned_dict(ToDictionary(dict_obj->CloneDirectObject()));
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_dict);
-    CPDF_Object* cloned_arr = cloned_dict->GetObjectBy("arr");
+    CPDF_Object* cloned_arr = cloned_dict->GetObjectFor("arr");
     ASSERT_TRUE(cloned_arr);
     ASSERT_TRUE(cloned_arr->IsArray());
     EXPECT_EQ(1u, cloned_arr->AsArray()->GetCount());

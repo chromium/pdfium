@@ -1838,11 +1838,11 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
     return nullptr;
   }
   CPDF_Dictionary* pFontSetDict =
-      pDoc->GetRoot()->GetDictBy("AcroForm")->GetDictBy("DR");
+      pDoc->GetRoot()->GetDictFor("AcroForm")->GetDictFor("DR");
   if (!pFontSetDict) {
     return nullptr;
   }
-  pFontSetDict = pFontSetDict->GetDictBy("Font");
+  pFontSetDict = pFontSetDict->GetDictFor("Font");
   if (!pFontSetDict) {
     return nullptr;
   }
@@ -1856,7 +1856,7 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
       continue;
     }
     CPDF_Dictionary* pFontDict = ToDictionary(pObj->GetDirect());
-    if (!pFontDict || pFontDict->GetStringBy("Type") != "Font") {
+    if (!pFontDict || pFontDict->GetStringFor("Type") != "Font") {
       return nullptr;
     }
     CPDF_Font* pPDFFont = pDoc->LoadFont(pFontDict);

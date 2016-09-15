@@ -568,16 +568,16 @@ FX_BOOL CPDF_CalGray::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!pDict)
     return FALSE;
 
-  CPDF_Array* pParam = pDict->GetArrayBy("WhitePoint");
+  CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
   int i;
   for (i = 0; i < 3; i++)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayBy("BlackPoint");
+  pParam = pDict->GetArrayFor("BlackPoint");
   for (i = 0; i < 3; i++)
     m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  m_Gamma = pDict->GetNumberBy("Gamma");
+  m_Gamma = pDict->GetNumberFor("Gamma");
   if (m_Gamma == 0)
     m_Gamma = 1.0f;
   return TRUE;
@@ -623,16 +623,16 @@ FX_BOOL CPDF_CalRGB::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!pDict)
     return FALSE;
 
-  CPDF_Array* pParam = pDict->GetArrayBy("WhitePoint");
+  CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
   int i;
   for (i = 0; i < 3; i++)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayBy("BlackPoint");
+  pParam = pDict->GetArrayFor("BlackPoint");
   for (i = 0; i < 3; i++)
     m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayBy("Gamma");
+  pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
     m_bGamma = TRUE;
     for (i = 0; i < 3; i++)
@@ -641,7 +641,7 @@ FX_BOOL CPDF_CalRGB::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
     m_bGamma = FALSE;
   }
 
-  pParam = pDict->GetArrayBy("Matrix");
+  pParam = pDict->GetArrayFor("Matrix");
   if (pParam) {
     m_bMatrix = TRUE;
     for (i = 0; i < 9; i++)
@@ -745,16 +745,16 @@ FX_BOOL CPDF_LabCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!pDict)
     return FALSE;
 
-  CPDF_Array* pParam = pDict->GetArrayBy("WhitePoint");
+  CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
   int i;
   for (i = 0; i < 3; i++)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayBy("BlackPoint");
+  pParam = pDict->GetArrayFor("BlackPoint");
   for (i = 0; i < 3; i++)
     m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayBy("Range");
+  pParam = pDict->GetArrayFor("Range");
   const FX_FLOAT def_ranges[4] = {-100 * 1.0f, 100 * 1.0f, -100 * 1.0f,
                                   100 * 1.0f};
   for (i = 0; i < 4; i++)
@@ -852,7 +852,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   CPDF_Dictionary* pDict = pStream->GetDict();
   if (!m_pProfile->m_pTransform) {  // No valid ICC profile or using sRGB
     CPDF_Object* pAlterCSObj =
-        pDict ? pDict->GetDirectObjectBy("Alternate") : nullptr;
+        pDict ? pDict->GetDirectObjectFor("Alternate") : nullptr;
     if (pAlterCSObj) {
       CPDF_ColorSpace* pAlterCS = CPDF_ColorSpace::Load(pDoc, pAlterCSObj);
       if (pAlterCS) {
@@ -863,7 +863,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
             m_bOwn = TRUE;
           } else {  // No valid alternative colorspace
             pAlterCS->ReleaseCS();
-            int32_t nDictComponents = pDict ? pDict->GetIntegerBy("N") : 0;
+            int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
             if (nDictComponents != 1 && nDictComponents != 3 &&
                 nDictComponents != 4) {
               return FALSE;
@@ -890,7 +890,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
         m_pAlterCS = GetStockCS(PDFCS_DEVICECMYK);
     }
   }
-  CPDF_Array* pRanges = pDict->GetArrayBy("Range");
+  CPDF_Array* pRanges = pDict->GetArrayFor("Range");
   m_pRanges = FX_Alloc2D(FX_FLOAT, m_nComponents, 2);
   for (uint32_t i = 0; i < m_nComponents * 2; i++) {
     if (pRanges)

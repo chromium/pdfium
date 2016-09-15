@@ -784,15 +784,16 @@ FX_BOOL Document::info(IJS_Context* cc,
   if (!pDictionary)
     return FALSE;
 
-  CFX_WideString cwAuthor = pDictionary->GetUnicodeTextBy("Author");
-  CFX_WideString cwTitle = pDictionary->GetUnicodeTextBy("Title");
-  CFX_WideString cwSubject = pDictionary->GetUnicodeTextBy("Subject");
-  CFX_WideString cwKeywords = pDictionary->GetUnicodeTextBy("Keywords");
-  CFX_WideString cwCreator = pDictionary->GetUnicodeTextBy("Creator");
-  CFX_WideString cwProducer = pDictionary->GetUnicodeTextBy("Producer");
-  CFX_WideString cwCreationDate = pDictionary->GetUnicodeTextBy("CreationDate");
-  CFX_WideString cwModDate = pDictionary->GetUnicodeTextBy("ModDate");
-  CFX_WideString cwTrapped = pDictionary->GetUnicodeTextBy("Trapped");
+  CFX_WideString cwAuthor = pDictionary->GetUnicodeTextFor("Author");
+  CFX_WideString cwTitle = pDictionary->GetUnicodeTextFor("Title");
+  CFX_WideString cwSubject = pDictionary->GetUnicodeTextFor("Subject");
+  CFX_WideString cwKeywords = pDictionary->GetUnicodeTextFor("Keywords");
+  CFX_WideString cwCreator = pDictionary->GetUnicodeTextFor("Creator");
+  CFX_WideString cwProducer = pDictionary->GetUnicodeTextFor("Producer");
+  CFX_WideString cwCreationDate =
+      pDictionary->GetUnicodeTextFor("CreationDate");
+  CFX_WideString cwModDate = pDictionary->GetUnicodeTextFor("ModDate");
+  CFX_WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
 
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
@@ -838,7 +839,7 @@ FX_BOOL Document::getPropertyInternal(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeTextBy(propName);
+    vp << pDictionary->GetUnicodeTextFor(propName);
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY)) {
       sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
@@ -846,7 +847,7 @@ FX_BOOL Document::getPropertyInternal(IJS_Context* cc,
     }
     CFX_WideString csProperty;
     vp >> csProperty;
-    pDictionary->SetAtString(propName, PDF_EncodeText(csProperty));
+    pDictionary->SetStringFor(propName, PDF_EncodeText(csProperty));
     m_pDocument->SetChangeMark();
   }
   return TRUE;

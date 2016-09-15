@@ -100,7 +100,7 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl,
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
-  if (CPDF_Dictionary* pPageDict = pControlDict->GetDictBy("P")) {
+  if (CPDF_Dictionary* pPageDict = pControlDict->GetDictFor("P")) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0)
       pPage = m_pDocument->GetPageView(nPageIndex);
@@ -147,7 +147,7 @@ int CPDFSDK_InterForm::GetPageIndexByAnnotDict(
 
   for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {
     if (CPDF_Dictionary* pPageDict = pDocument->GetPage(i)) {
-      if (CPDF_Array* pAnnots = pPageDict->GetArrayBy("Annots")) {
+      if (CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots")) {
         for (int j = 0, jsz = pAnnots->GetCount(); j < jsz; j++) {
           CPDF_Object* pDict = pAnnots->GetDirectObjectAt(j);
           if (pAnnotDict == pDict)
@@ -484,11 +484,11 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
   if (!pFDF)
     return TRUE;
 
-  CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictBy("FDF");
+  CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictFor("FDF");
   if (!pMainDict)
     return FALSE;
 
-  CPDF_Array* pFields = pMainDict->GetArrayBy("Fields");
+  CPDF_Array* pFields = pMainDict->GetArrayFor("Fields");
   if (!pFields)
     return FALSE;
 
@@ -498,9 +498,9 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
     if (!pField)
       continue;
     CFX_WideString name;
-    name = pField->GetUnicodeTextBy("T");
+    name = pField->GetUnicodeTextFor("T");
     CFX_ByteString name_b = CFX_ByteString::FromUnicode(name);
-    CFX_ByteString csBValue = pField->GetStringBy("V");
+    CFX_ByteString csBValue = pField->GetStringFor("V");
     CFX_WideString csWValue = PDF_DecodeText(csBValue);
     CFX_ByteString csValue_b = CFX_ByteString::FromUnicode(csWValue);
 

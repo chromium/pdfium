@@ -82,7 +82,7 @@ int32_t GetHeaderOffset(IFX_FileRead* pFile) {
 }
 
 int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key) {
-  CPDF_Number* pObj = ToNumber(pDict->GetObjectBy(key));
+  CPDF_Number* pObj = ToNumber(pDict->GetObjectFor(key));
   return pObj ? pObj->GetInteger() : 0;
 }
 

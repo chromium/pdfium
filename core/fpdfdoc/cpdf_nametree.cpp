@@ -22,7 +22,7 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   if (nLevel > nMaxRecursion)
     return nullptr;
 
-  CPDF_Array* pLimits = pNode->GetArrayBy("Limits");
+  CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
   if (pLimits) {
     CFX_ByteString csLeft = pLimits->GetStringAt(0);
     CFX_ByteString csRight = pLimits->GetStringAt(1);
@@ -37,7 +37,7 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     }
   }
 
-  CPDF_Array* pNames = pNode->GetArrayBy("Names");
+  CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames) {
     size_t dwCount = pNames->GetCount() / 2;
     for (size_t i = 0; i < dwCount; i++) {
@@ -58,7 +58,7 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     return nullptr;
   }
 
-  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
+  CPDF_Array* pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return nullptr;
 
@@ -84,7 +84,7 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   if (nLevel > nMaxRecursion)
     return nullptr;
 
-  CPDF_Array* pNames = pNode->GetArrayBy("Names");
+  CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames) {
     size_t nCount = pNames->GetCount() / 2;
     if (nIndex >= nCurIndex + nCount) {
@@ -96,7 +96,7 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     csName = pNames->GetStringAt((nIndex - nCurIndex) * 2);
     return pNames->GetDirectObjectAt((nIndex - nCurIndex) * 2 + 1);
   }
-  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
+  CPDF_Array* pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return nullptr;
   for (size_t i = 0; i < pKids->GetCount(); i++) {
@@ -115,11 +115,11 @@ size_t CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
   if (nLevel > nMaxRecursion)
     return 0;
 
-  CPDF_Array* pNames = pNode->GetArrayBy("Names");
+  CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames)
     return pNames->GetCount() / 2;
 
-  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
+  CPDF_Array* pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return 0;
 
@@ -143,11 +143,11 @@ CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc,
   if (!pRoot)
     return;
 
-  CPDF_Dictionary* pNames = pRoot->GetDictBy("Names");
+  CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
   if (!pNames)
     return;
 
-  m_pRoot = pNames->GetDictBy(category);
+  m_pRoot = pNames->GetDictFor(category);
 }
 
 size_t CPDF_NameTree::GetCount() const {
@@ -183,16 +183,16 @@ CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
                                            const CFX_ByteString& sName) {
   CPDF_Object* pValue = LookupValue(sName);
   if (!pValue) {
-    CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictBy("Dests");
+    CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictFor("Dests");
     if (!pDests)
       return nullptr;
-    pValue = pDests->GetDirectObjectBy(sName);
+    pValue = pDests->GetDirectObjectFor(sName);
   }
   if (!pValue)
     return nullptr;
   if (CPDF_Array* pArray = pValue->AsArray())
     return pArray;
   if (CPDF_Dictionary* pDict = pValue->AsDictionary())
-    return pDict->GetArrayBy("D");
+    return pDict->GetArrayFor("D");
   return nullptr;
 }

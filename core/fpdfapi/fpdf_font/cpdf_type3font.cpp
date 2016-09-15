@@ -38,23 +38,23 @@ CPDF_Type3Font* CPDF_Type3Font::AsType3Font() {
 }
 
 FX_BOOL CPDF_Type3Font::Load() {
-  m_pFontResources = m_pFontDict->GetDictBy("Resources");
-  CPDF_Array* pMatrix = m_pFontDict->GetArrayBy("FontMatrix");
+  m_pFontResources = m_pFontDict->GetDictFor("Resources");
+  CPDF_Array* pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
   FX_FLOAT xscale = 1.0f, yscale = 1.0f;
   if (pMatrix) {
     m_FontMatrix = pMatrix->GetMatrix();
     xscale = m_FontMatrix.a;
     yscale = m_FontMatrix.d;
   }
-  CPDF_Array* pBBox = m_pFontDict->GetArrayBy("FontBBox");
+  CPDF_Array* pBBox = m_pFontDict->GetArrayFor("FontBBox");
   if (pBBox) {
     m_FontBBox.left = (int32_t)(pBBox->GetNumberAt(0) * xscale * 1000);
     m_FontBBox.bottom = (int32_t)(pBBox->GetNumberAt(1) * yscale * 1000);
     m_FontBBox.right = (int32_t)(pBBox->GetNumberAt(2) * xscale * 1000);
     m_FontBBox.top = (int32_t)(pBBox->GetNumberAt(3) * yscale * 1000);
   }
-  int StartChar = m_pFontDict->GetIntegerBy("FirstChar");
-  CPDF_Array* pWidthArray = m_pFontDict->GetArrayBy("Widths");
+  int StartChar = m_pFontDict->GetIntegerFor("FirstChar");
+  CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
   if (pWidthArray && (StartChar >= 0 && StartChar < 256)) {
     size_t count = pWidthArray->GetCount();
     if (count > 256)
@@ -66,8 +66,8 @@ FX_BOOL CPDF_Type3Font::Load() {
           FXSYS_round(pWidthArray->GetNumberAt(i) * xscale * 1000);
     }
   }
-  m_pCharProcs = m_pFontDict->GetDictBy("CharProcs");
-  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
+  m_pCharProcs = m_pFontDict->GetDictFor("CharProcs");
+  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (pEncoding) {
     LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, FALSE, FALSE);
     if (!m_CharNames.empty()) {
@@ -100,7 +100,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
     return nullptr;
 
   CPDF_Stream* pStream =
-      ToStream(m_pCharProcs ? m_pCharProcs->GetDirectObjectBy(name) : nullptr);
+      ToStream(m_pCharProcs ? m_pCharProcs->GetDirectObjectFor(name) : nullptr);
   if (!pStream)
     return nullptr;
 

@@ -822,7 +822,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
       continue;
     pDict = item.GetParam();
     CPDF_String* temp =
-        ToString(pDict ? pDict->GetObjectBy("ActualText") : nullptr);
+        ToString(pDict ? pDict->GetObjectFor("ActualText") : nullptr);
     if (temp) {
       bExist = true;
       actText = temp->GetUnicodeText();
@@ -884,7 +884,7 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
       continue;
     pDict = item.GetParam();
     if (pDict)
-      actText = pDict->GetUnicodeTextBy("ActualText");
+      actText = pDict->GetUnicodeTextFor("ActualText");
   }
   FX_STRSIZE nItems = actText.GetLength();
   if (nItems < 1)

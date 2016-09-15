@@ -19,6 +19,6 @@ FX_BOOL CPDF_AAction::ActionExist(AActionType eType) const {
 }
 
 CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
-  return m_pDict ? CPDF_Action(m_pDict->GetDictBy(g_sAATypes[eType]))
+  return m_pDict ? CPDF_Action(m_pDict->GetDictFor(g_sAATypes[eType]))
                  : CPDF_Action();
 }

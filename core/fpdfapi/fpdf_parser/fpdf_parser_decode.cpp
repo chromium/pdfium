@@ -239,12 +239,12 @@ CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
   int Columns = 1728;
   int Rows = 0;
   if (pParams) {
-    K = pParams->GetIntegerBy("K");
-    EndOfLine = pParams->GetIntegerBy("EndOfLine");
-    ByteAlign = pParams->GetIntegerBy("EncodedByteAlign");
-    BlackIs1 = pParams->GetIntegerBy("BlackIs1");
-    Columns = pParams->GetIntegerBy("Columns", 1728);
-    Rows = pParams->GetIntegerBy("Rows");
+    K = pParams->GetIntegerFor("K");
+    EndOfLine = pParams->GetIntegerFor("EndOfLine");
+    ByteAlign = pParams->GetIntegerFor("EncodedByteAlign");
+    BlackIs1 = pParams->GetIntegerFor("BlackIs1");
+    Columns = pParams->GetIntegerFor("Columns", 1728);
+    Rows = pParams->GetIntegerFor("Rows");
     if (Rows > USHRT_MAX) {
       Rows = 0;
     }
@@ -290,10 +290,10 @@ CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
   int predictor = 0;
   int Colors = 0, BitsPerComponent = 0, Columns = 0;
   if (pParams) {
-    predictor = pParams->GetIntegerBy("Predictor");
-    Colors = pParams->GetIntegerBy("Colors", 1);
-    BitsPerComponent = pParams->GetIntegerBy("BitsPerComponent", 8);
-    Columns = pParams->GetIntegerBy("Columns", 1);
+    predictor = pParams->GetIntegerFor("Predictor");
+    Colors = pParams->GetIntegerFor("Colors", 1);
+    BitsPerComponent = pParams->GetIntegerFor("BitsPerComponent", 8);
+    Columns = pParams->GetIntegerFor("Columns", 1);
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns)) {
       return nullptr;
     }
@@ -314,11 +314,11 @@ uint32_t FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
   FX_BOOL bEarlyChange = TRUE;
   int Colors = 0, BitsPerComponent = 0, Columns = 0;
   if (pParams) {
-    predictor = pParams->GetIntegerBy("Predictor");
-    bEarlyChange = pParams->GetIntegerBy("EarlyChange", 1);
-    Colors = pParams->GetIntegerBy("Colors", 1);
-    BitsPerComponent = pParams->GetIntegerBy("BitsPerComponent", 8);
-    Columns = pParams->GetIntegerBy("Columns", 1);
+    predictor = pParams->GetIntegerFor("Predictor");
+    bEarlyChange = pParams->GetIntegerFor("EarlyChange", 1);
+    Colors = pParams->GetIntegerFor("Colors", 1);
+    BitsPerComponent = pParams->GetIntegerFor("BitsPerComponent", 8);
+    Columns = pParams->GetIntegerFor("Columns", 1);
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns)) {
       return (uint32_t)-1;
     }
@@ -337,12 +337,12 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
                        CPDF_Dictionary*& pImageParms,
                        uint32_t last_estimated_size,
                        FX_BOOL bImageAcc) {
-  CPDF_Object* pDecoder = pDict ? pDict->GetDirectObjectBy("Filter") : nullptr;
+  CPDF_Object* pDecoder = pDict ? pDict->GetDirectObjectFor("Filter") : nullptr;
   if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
     return FALSE;
 
   CPDF_Object* pParams =
-      pDict ? pDict->GetDirectObjectBy("DecodeParms") : nullptr;
+      pDict ? pDict->GetDirectObjectFor("DecodeParms") : nullptr;
 
   std::vector<std::pair<CFX_ByteString, CPDF_Object*>> DecoderArray;
   if (CPDF_Array* pDecoders = pDecoder->AsArray()) {

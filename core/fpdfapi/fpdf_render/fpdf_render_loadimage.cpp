@@ -155,8 +155,8 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc,
     return FALSE;
   }
   m_pStream = pStream;
-  m_Width = m_pDict->GetIntegerBy("Width");
-  m_Height = m_pDict->GetIntegerBy("Height");
+  m_Width = m_pDict->GetIntegerFor("Width");
+  m_Height = m_pDict->GetIntegerFor("Height");
   if (m_Width <= 0 || m_Height <= 0 || m_Width > kMaxImageDimension ||
       m_Height > kMaxImageDimension) {
     return FALSE;
@@ -277,8 +277,8 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   m_pStream = pStream;
   m_bStdCS = bStdCS;
   m_bHasMask = bHasMask;
-  m_Width = m_pDict->GetIntegerBy("Width");
-  m_Height = m_pDict->GetIntegerBy("Height");
+  m_Width = m_pDict->GetIntegerFor("Width");
+  m_Height = m_pDict->GetIntegerFor("Height");
   if (m_Width <= 0 || m_Height <= 0 || m_Width > kMaxImageDimension ||
       m_Height > kMaxImageDimension) {
     return 0;
@@ -342,7 +342,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
       m_pJbig2Context.reset(new CCodec_Jbig2Context());
       if (m_pStreamAcc->GetImageParam()) {
         CPDF_Stream* pGlobals =
-            m_pStreamAcc->GetImageParam()->GetStreamBy("JBIG2Globals");
+            m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
         if (pGlobals) {
           m_pGlobalStream.reset(new CPDF_StreamAcc);
           m_pGlobalStream->LoadAllData(pGlobals, FALSE);
@@ -405,13 +405,13 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
 
 bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
                                    const CPDF_Dictionary* pPageResources) {
-  m_bpc_orig = m_pDict->GetIntegerBy("BitsPerComponent");
-  if (m_pDict->GetIntegerBy("ImageMask"))
+  m_bpc_orig = m_pDict->GetIntegerFor("BitsPerComponent");
+  if (m_pDict->GetIntegerFor("ImageMask"))
     m_bImageMask = TRUE;
 
   if (m_bImageMask || !m_pDict->KeyExist("ColorSpace")) {
     if (!m_bImageMask) {
-      CPDF_Object* pFilter = m_pDict->GetDirectObjectBy("Filter");
+      CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
       if (pFilter) {
         CFX_ByteString filter;
         if (pFilter->IsName()) {
@@ -428,12 +428,12 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     }
     m_bImageMask = TRUE;
     m_bpc = m_nComponents = 1;
-    CPDF_Array* pDecode = m_pDict->GetArrayBy("Decode");
+    CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
     m_bDefaultDecode = !pDecode || !pDecode->GetIntegerAt(0);
     return true;
   }
 
-  CPDF_Object* pCSObj = m_pDict->GetDirectObjectBy("ColorSpace");
+  CPDF_Object* pCSObj = m_pDict->GetDirectObjectFor("ColorSpace");
   if (!pCSObj)
     return false;
 
@@ -469,7 +469,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
   }
   DIB_COMP_DATA* pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
   int max_data = (1 << m_bpc) - 1;
-  CPDF_Array* pDecode = m_pDict->GetArrayBy("Decode");
+  CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
   if (pDecode) {
     for (uint32_t i = 0; i < m_nComponents; i++) {
       pCompData[i].m_DecodeMin = pDecode->GetNumberAt(i * 2);
@@ -499,7 +499,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
     }
   }
   if (!m_pDict->KeyExist("SMask")) {
-    CPDF_Object* pMask = m_pDict->GetDirectObjectBy("Mask");
+    CPDF_Object* pMask = m_pDict->GetDirectObjectFor("Mask");
     if (!pMask) {
       return pCompData;
     }
@@ -551,7 +551,7 @@ int CPDF_DIBSource::CreateDecoder() {
   } else if (decoder == "DCTDecode") {
     m_pDecoder.reset(CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
         src_data, src_size, m_Width, m_Height, m_nComponents,
-        pParams ? pParams->GetIntegerBy("ColorTransform", 1) : 1));
+        pParams ? pParams->GetIntegerFor("ColorTransform", 1) : 1));
     if (!m_pDecoder) {
       bool bTransform = false;
       int comps;
@@ -700,9 +700,9 @@ void CPDF_DIBSource::LoadJpxBitmap() {
 
 CPDF_DIBSource* CPDF_DIBSource::LoadMask(uint32_t& MatteColor) {
   MatteColor = 0xFFFFFFFF;
-  CPDF_Stream* pSoftMask = m_pDict->GetStreamBy("SMask");
+  CPDF_Stream* pSoftMask = m_pDict->GetStreamFor("SMask");
   if (pSoftMask) {
-    CPDF_Array* pMatte = pSoftMask->GetDict()->GetArrayBy("Matte");
+    CPDF_Array* pMatte = pSoftMask->GetDict()->GetArrayFor("Matte");
     if (pMatte && m_pColorSpace &&
         m_pColorSpace->CountComponents() <= m_nComponents) {
       std::vector<FX_FLOAT> colors(m_nComponents);
@@ -717,7 +717,7 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMask(uint32_t& MatteColor) {
     return LoadMaskDIB(pSoftMask);
   }
 
-  if (CPDF_Stream* pStream = ToStream(m_pDict->GetDirectObjectBy("Mask")))
+  if (CPDF_Stream* pStream = ToStream(m_pDict->GetDirectObjectFor("Mask")))
     return LoadMaskDIB(pStream);
 
   return nullptr;
@@ -725,9 +725,9 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMask(uint32_t& MatteColor) {
 
 int CPDF_DIBSource::StratLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
-  m_pMaskStream = m_pDict->GetStreamBy("SMask");
+  m_pMaskStream = m_pDict->GetStreamFor("SMask");
   if (m_pMaskStream) {
-    CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayBy("Matte");
+    CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
     if (pMatte && m_pColorSpace &&
         m_pColorSpace->CountComponents() <= m_nComponents) {
       FX_FLOAT R, G, B;
@@ -742,7 +742,7 @@ int CPDF_DIBSource::StratLoadMask() {
     return StartLoadMaskDIB();
   }
 
-  m_pMaskStream = ToStream(m_pDict->GetDirectObjectBy("Mask"));
+  m_pMaskStream = ToStream(m_pDict->GetDirectObjectFor("Mask"));
   return m_pMaskStream ? StartLoadMaskDIB() : 1;
 }
 
@@ -869,7 +869,7 @@ void CPDF_DIBSource::LoadPalette() {
 
 void CPDF_DIBSource::ValidateDictParam() {
   m_bpc = m_bpc_orig;
-  CPDF_Object* pFilter = m_pDict->GetDirectObjectBy("Filter");
+  CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
   if (pFilter) {
     if (pFilter->IsName()) {
       CFX_ByteString filter = pFilter->GetString();

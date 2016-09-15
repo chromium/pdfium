@@ -80,23 +80,23 @@ CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideStringC& filepath) {
 
 bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    *csFileName = pDict->GetUnicodeTextBy("UF");
+    *csFileName = pDict->GetUnicodeTextFor("UF");
     if (csFileName->IsEmpty()) {
       *csFileName =
-          CFX_WideString::FromLocal(pDict->GetStringBy("F").AsStringC());
+          CFX_WideString::FromLocal(pDict->GetStringFor("F").AsStringC());
     }
-    if (pDict->GetStringBy("FS") == "URL")
+    if (pDict->GetStringFor("FS") == "URL")
       return true;
     if (csFileName->IsEmpty()) {
       if (pDict->KeyExist("DOS")) {
         *csFileName =
-            CFX_WideString::FromLocal(pDict->GetStringBy("DOS").AsStringC());
+            CFX_WideString::FromLocal(pDict->GetStringFor("DOS").AsStringC());
       } else if (pDict->KeyExist("Mac")) {
         *csFileName =
-            CFX_WideString::FromLocal(pDict->GetStringBy("Mac").AsStringC());
+            CFX_WideString::FromLocal(pDict->GetStringFor("Mac").AsStringC());
       } else if (pDict->KeyExist("Unix")) {
         *csFileName =
-            CFX_WideString::FromLocal(pDict->GetStringBy("Unix").AsStringC());
+            CFX_WideString::FromLocal(pDict->GetStringFor("Unix").AsStringC());
       } else {
         return false;
       }
@@ -112,7 +112,7 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
 
 CPDF_FileSpec::CPDF_FileSpec() {
   m_pObj = new CPDF_Dictionary;
-  m_pObj->AsDictionary()->SetAtName("Type", "Filespec");
+  m_pObj->AsDictionary()->SetNameFor("Type", "Filespec");
 }
 
 CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
@@ -161,7 +161,7 @@ void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName) {
   if (m_pObj->IsString()) {
     m_pObj->SetString(CFX_ByteString::FromUnicode(wsStr));
   } else if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    pDict->SetAtString("F", CFX_ByteString::FromUnicode(wsStr));
-    pDict->SetAtString("UF", PDF_EncodeText(wsStr));
+    pDict->SetStringFor("F", CFX_ByteString::FromUnicode(wsStr));
+    pDict->SetStringFor("UF", PDF_EncodeText(wsStr));
   }
 }

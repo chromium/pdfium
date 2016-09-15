@@ -38,8 +38,8 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
       m_pCountedCS(nullptr) {
   if (!bShading) {
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-    m_Pattern2Form = pDict->GetMatrixBy("Matrix");
-    m_pShadingObj = pDict->GetDirectObjectBy("Shading");
+    m_Pattern2Form = pDict->GetMatrixFor("Matrix");
+    m_pShadingObj = pDict->GetDirectObjectFor("Shading");
     m_Pattern2Form.Concat(parentMatrix);
   }
 }
@@ -68,7 +68,7 @@ bool CPDF_ShadingPattern::Load() {
     return FALSE;
 
   m_pFunctions.clear();
-  CPDF_Object* pFunc = pShadingDict->GetDirectObjectBy("Function");
+  CPDF_Object* pFunc = pShadingDict->GetDirectObjectFor("Function");
   if (pFunc) {
     if (CPDF_Array* pArray = pFunc->AsArray()) {
       m_pFunctions.resize(std::min<size_t>(pArray->GetCount(), 4));
@@ -78,7 +78,7 @@ bool CPDF_ShadingPattern::Load() {
       m_pFunctions.push_back(CPDF_Function::Load(pFunc));
     }
   }
-  CPDF_Object* pCSObj = pShadingDict->GetDirectObjectBy("ColorSpace");
+  CPDF_Object* pCSObj = pShadingDict->GetDirectObjectFor("ColorSpace");
   if (!pCSObj)
     return FALSE;
 
@@ -87,7 +87,7 @@ bool CPDF_ShadingPattern::Load() {
   if (m_pCS)
     m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
 
-  m_ShadingType = ToShadingType(pShadingDict->GetIntegerBy("ShadingType"));
+  m_ShadingType = ToShadingType(pShadingDict->GetIntegerFor("ShadingType"));
 
   // We expect to have a stream if our shading type is a mesh.
   if (IsMeshShading() && !ToStream(m_pShadingObj))

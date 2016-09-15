@@ -46,7 +46,7 @@ void DrawAxialShading(CFX_DIBitmap* pBitmap,
                       CPDF_ColorSpace* pCS,
                       int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
+  CPDF_Array* pCoords = pDict->GetArrayFor("Coords");
   if (!pCoords) {
     return;
   }
@@ -55,13 +55,13 @@ void DrawAxialShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT end_x = pCoords->GetNumberAt(2);
   FX_FLOAT end_y = pCoords->GetNumberAt(3);
   FX_FLOAT t_min = 0, t_max = 1.0f;
-  CPDF_Array* pArray = pDict->GetArrayBy("Domain");
+  CPDF_Array* pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
   FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
-  pArray = pDict->GetArrayBy("Extend");
+  pArray = pDict->GetArrayFor("Extend");
   if (pArray) {
     bStartExtend = pArray->GetIntegerAt(0);
     bEndExtend = pArray->GetIntegerAt(1);
@@ -127,7 +127,7 @@ void DrawRadialShading(CFX_DIBitmap* pBitmap,
                        CPDF_ColorSpace* pCS,
                        int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
+  CPDF_Array* pCoords = pDict->GetArrayFor("Coords");
   if (!pCoords) {
     return;
   }
@@ -140,13 +140,13 @@ void DrawRadialShading(CFX_DIBitmap* pBitmap,
   CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
   FX_FLOAT t_min = 0, t_max = 1.0f;
-  CPDF_Array* pArray = pDict->GetArrayBy("Domain");
+  CPDF_Array* pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
   FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
-  pArray = pDict->GetArrayBy("Extend");
+  pArray = pDict->GetArrayFor("Extend");
   if (pArray) {
     bStartExtend = pArray->GetIntegerAt(0);
     bEndExtend = pArray->GetIntegerAt(1);
@@ -256,7 +256,7 @@ void DrawFuncShading(CFX_DIBitmap* pBitmap,
                      CPDF_ColorSpace* pCS,
                      int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  CPDF_Array* pDomain = pDict->GetArrayBy("Domain");
+  CPDF_Array* pDomain = pDict->GetArrayFor("Domain");
   FX_FLOAT xmin = 0, ymin = 0, xmax = 1.0f, ymax = 1.0f;
   if (pDomain) {
     xmin = pDomain->GetNumberAt(0);
@@ -264,7 +264,7 @@ void DrawFuncShading(CFX_DIBitmap* pBitmap,
     ymin = pDomain->GetNumberAt(2);
     ymax = pDomain->GetNumberAt(3);
   }
-  CFX_Matrix mtDomain2Target = pDict->GetMatrixBy("Matrix");
+  CFX_Matrix mtDomain2Target = pDict->GetMatrixFor("Matrix");
   CFX_Matrix matrix, reverse_matrix;
   matrix.SetReverse(*pObject2Bitmap);
   reverse_matrix.SetReverse(mtDomain2Target);
@@ -450,7 +450,7 @@ void DrawLatticeGouraudShading(
     int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
-  int row_verts = pShadingStream->GetDict()->GetIntegerBy("VerticesPerRow");
+  int row_verts = pShadingStream->GetDict()->GetIntegerFor("VerticesPerRow");
   if (row_verts < 2)
     return;
 
@@ -855,7 +855,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
 
   FX_ARGB background = 0;
   if (!pPattern->IsShadingObject() && pDict->KeyExist("Background")) {
-    CPDF_Array* pBackColor = pDict->GetArrayBy("Background");
+    CPDF_Array* pBackColor = pDict->GetArrayFor("Background");
     if (pBackColor &&
         pBackColor->GetCount() >= pColorSpace->CountComponents()) {
       CFX_FixedBufGrow<FX_FLOAT, 16> comps(pColorSpace->CountComponents());
@@ -868,7 +868,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
     }
   }
   if (pDict->KeyExist("BBox")) {
-    CFX_FloatRect rect = pDict->GetRectBy("BBox");
+    CFX_FloatRect rect = pDict->GetRectFor("BBox");
     rect.Transform(pMatrix);
     clip_rect.Intersect(rect.GetOuterRect());
   }
@@ -1055,7 +1055,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
 
     CPDF_Dictionary* pFormResource = nullptr;
     if (pPattern->form()->m_pFormDict)
-      pFormResource = pPattern->form()->m_pFormDict->GetDictBy("Resources");
+      pFormResource = pPattern->form()->m_pFormDict->GetDictFor("Resources");
 
     for (int col = min_col; col <= max_col; col++)
       for (int row = min_row; row <= max_row; row++) {

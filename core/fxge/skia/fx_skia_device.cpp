@@ -1231,7 +1231,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   if (nFuncs != 1)  // TODO(caryclark) remove this restriction
     return false;
   CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
-  CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
+  CPDF_Array* pCoords = pDict->GetArrayFor("Coords");
   if (!pCoords)
     return true;
   // TODO(caryclark) Respect Domain[0], Domain[1]. (Don't know what they do
@@ -1261,7 +1261,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       return false;
     }
   }
-  CPDF_Array* pArray = pDict->GetArrayBy("Extend");
+  CPDF_Array* pArray = pDict->GetArrayFor("Extend");
   bool clipStart = !pArray || !pArray->GetIntegerAt(0);
   bool clipEnd = !pArray || !pArray->GetIntegerAt(1);
   SkPaint paint;

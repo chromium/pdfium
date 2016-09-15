@@ -37,7 +37,7 @@ void CPDFSDK_BAAnnot::SetRect(const CFX_FloatRect& rect) {
   ASSERT(rect.right - rect.left >= GetMinWidth());
   ASSERT(rect.top - rect.bottom >= GetMinHeight());
 
-  m_pAnnot->GetAnnotDict()->SetAtRect("Rect", rect);
+  m_pAnnot->GetAnnotDict()->SetRectFor("Rect", rect);
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
@@ -57,11 +57,11 @@ void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
 }
 
 FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid() {
-  return !!m_pAnnot->GetAnnotDict()->GetDictBy("AP");
+  return !!m_pAnnot->GetAnnotDict()->GetDictFor("AP");
 }
 
 FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
+  CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
   if (!pAP)
     return FALSE;
 
@@ -75,7 +75,7 @@ FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
     ap_entry = "N";
 
   // Get the AP stream or subdirectory
-  CPDF_Object* psub = pAP->GetDirectObjectBy(ap_entry);
+  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
   return !!psub;
 }
 
@@ -91,25 +91,25 @@ void CPDFSDK_BAAnnot::ClearCachedAP() {
 
 void CPDFSDK_BAAnnot::SetContents(const CFX_WideString& sContents) {
   if (sContents.IsEmpty())
-    m_pAnnot->GetAnnotDict()->RemoveAt("Contents");
+    m_pAnnot->GetAnnotDict()->RemoveFor("Contents");
   else
-    m_pAnnot->GetAnnotDict()->SetAtString("Contents",
-                                          PDF_EncodeText(sContents));
+    m_pAnnot->GetAnnotDict()->SetStringFor("Contents",
+                                           PDF_EncodeText(sContents));
 }
 
 CFX_WideString CPDFSDK_BAAnnot::GetContents() const {
-  return m_pAnnot->GetAnnotDict()->GetUnicodeTextBy("Contents");
+  return m_pAnnot->GetAnnotDict()->GetUnicodeTextFor("Contents");
 }
 
 void CPDFSDK_BAAnnot::SetAnnotName(const CFX_WideString& sName) {
   if (sName.IsEmpty())
-    m_pAnnot->GetAnnotDict()->RemoveAt("NM");
+    m_pAnnot->GetAnnotDict()->RemoveFor("NM");
   else
-    m_pAnnot->GetAnnotDict()->SetAtString("NM", PDF_EncodeText(sName));
+    m_pAnnot->GetAnnotDict()->SetStringFor("NM", PDF_EncodeText(sName));
 }
 
 CFX_WideString CPDFSDK_BAAnnot::GetAnnotName() const {
-  return m_pAnnot->GetAnnotDict()->GetUnicodeTextBy("NM");
+  return m_pAnnot->GetAnnotDict()->GetUnicodeTextFor("NM");
 }
 
 void CPDFSDK_BAAnnot::SetModifiedDate(const FX_SYSTEMTIME& st) {
@@ -117,14 +117,14 @@ void CPDFSDK_BAAnnot::SetModifiedDate(const FX_SYSTEMTIME& st) {
   CFX_ByteString str = dt.ToPDFDateTimeString();
 
   if (str.IsEmpty())
-    m_pAnnot->GetAnnotDict()->RemoveAt("M");
+    m_pAnnot->GetAnnotDict()->RemoveFor("M");
   else
-    m_pAnnot->GetAnnotDict()->SetAtString("M", str);
+    m_pAnnot->GetAnnotDict()->SetStringFor("M", str);
 }
 
 FX_SYSTEMTIME CPDFSDK_BAAnnot::GetModifiedDate() const {
   FX_SYSTEMTIME systime;
-  CFX_ByteString str = m_pAnnot->GetAnnotDict()->GetStringBy("M");
+  CFX_ByteString str = m_pAnnot->GetAnnotDict()->GetStringFor("M");
 
   CPDFSDK_DateTime dt(str);
   dt.ToSystemTime(systime);
@@ -133,82 +133,82 @@ FX_SYSTEMTIME CPDFSDK_BAAnnot::GetModifiedDate() const {
 }
 
 void CPDFSDK_BAAnnot::SetFlags(uint32_t nFlags) {
-  m_pAnnot->GetAnnotDict()->SetAtInteger("F", nFlags);
+  m_pAnnot->GetAnnotDict()->SetIntegerFor("F", nFlags);
 }
 
 uint32_t CPDFSDK_BAAnnot::GetFlags() const {
-  return m_pAnnot->GetAnnotDict()->GetIntegerBy("F");
+  return m_pAnnot->GetAnnotDict()->GetIntegerFor("F");
 }
 
 void CPDFSDK_BAAnnot::SetAppState(const CFX_ByteString& str) {
   if (str.IsEmpty())
-    m_pAnnot->GetAnnotDict()->RemoveAt("AS");
+    m_pAnnot->GetAnnotDict()->RemoveFor("AS");
   else
-    m_pAnnot->GetAnnotDict()->SetAtString("AS", str);
+    m_pAnnot->GetAnnotDict()->SetStringFor("AS", str);
 }
 
 CFX_ByteString CPDFSDK_BAAnnot::GetAppState() const {
-  return m_pAnnot->GetAnnotDict()->GetStringBy("AS");
+  return m_pAnnot->GetAnnotDict()->GetStringFor("AS");
 }
 
 void CPDFSDK_BAAnnot::SetStructParent(int key) {
-  m_pAnnot->GetAnnotDict()->SetAtInteger("StructParent", key);
+  m_pAnnot->GetAnnotDict()->SetIntegerFor("StructParent", key);
 }
 
 int CPDFSDK_BAAnnot::GetStructParent() const {
-  return m_pAnnot->GetAnnotDict()->GetIntegerBy("StructParent");
+  return m_pAnnot->GetAnnotDict()->GetIntegerFor("StructParent");
 }
 
 // border
 void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
-  CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayBy("Border");
+  CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayFor("Border");
 
   if (pBorder) {
     pBorder->SetAt(2, new CPDF_Number(nWidth));
   } else {
-    CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS");
+    CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS");
 
     if (!pBSDict) {
       pBSDict = new CPDF_Dictionary;
-      m_pAnnot->GetAnnotDict()->SetAt("BS", pBSDict);
+      m_pAnnot->GetAnnotDict()->SetFor("BS", pBSDict);
     }
 
-    pBSDict->SetAtInteger("W", nWidth);
+    pBSDict->SetIntegerFor("W", nWidth);
   }
 }
 
 int CPDFSDK_BAAnnot::GetBorderWidth() const {
-  if (CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayBy("Border")) {
+  if (CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayFor("Border")) {
     return pBorder->GetIntegerAt(2);
   }
-  if (CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS")) {
-    return pBSDict->GetIntegerBy("W", 1);
+  if (CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS")) {
+    return pBSDict->GetIntegerFor("W", 1);
   }
   return 1;
 }
 
 void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
-  CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS");
+  CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS");
   if (!pBSDict) {
     pBSDict = new CPDF_Dictionary;
-    m_pAnnot->GetAnnotDict()->SetAt("BS", pBSDict);
+    m_pAnnot->GetAnnotDict()->SetFor("BS", pBSDict);
   }
 
   switch (nStyle) {
     case BorderStyle::SOLID:
-      pBSDict->SetAtName("S", "S");
+      pBSDict->SetNameFor("S", "S");
       break;
     case BorderStyle::DASH:
-      pBSDict->SetAtName("S", "D");
+      pBSDict->SetNameFor("S", "D");
       break;
     case BorderStyle::BEVELED:
-      pBSDict->SetAtName("S", "B");
+      pBSDict->SetNameFor("S", "B");
       break;
     case BorderStyle::INSET:
-      pBSDict->SetAtName("S", "I");
+      pBSDict->SetNameFor("S", "I");
       break;
     case BorderStyle::UNDERLINE:
-      pBSDict->SetAtName("S", "U");
+      pBSDict->SetNameFor("S", "U");
       break;
     default:
       break;
@@ -216,9 +216,9 @@ void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
 }
 
 BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
-  CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictBy("BS");
+  CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS");
   if (pBSDict) {
-    CFX_ByteString sBorderStyle = pBSDict->GetStringBy("S", "S");
+    CFX_ByteString sBorderStyle = pBSDict->GetStringFor("S", "S");
     if (sBorderStyle == "S")
       return BorderStyle::SOLID;
     if (sBorderStyle == "D")
@@ -231,7 +231,7 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
       return BorderStyle::UNDERLINE;
   }
 
-  CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayBy("Border");
+  CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayFor("Border");
   if (pBorder) {
     if (pBorder->GetCount() >= 4) {
       CPDF_Array* pDP = pBorder->GetArrayAt(3);
@@ -248,15 +248,15 @@ void CPDFSDK_BAAnnot::SetColor(FX_COLORREF color) {
   pArray->AddNumber((FX_FLOAT)FXSYS_GetRValue(color) / 255.0f);
   pArray->AddNumber((FX_FLOAT)FXSYS_GetGValue(color) / 255.0f);
   pArray->AddNumber((FX_FLOAT)FXSYS_GetBValue(color) / 255.0f);
-  m_pAnnot->GetAnnotDict()->SetAt("C", pArray);
+  m_pAnnot->GetAnnotDict()->SetFor("C", pArray);
 }
 
 void CPDFSDK_BAAnnot::RemoveColor() {
-  m_pAnnot->GetAnnotDict()->RemoveAt("C");
+  m_pAnnot->GetAnnotDict()->RemoveFor("C");
 }
 
 FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
-  if (CPDF_Array* pEntry = m_pAnnot->GetAnnotDict()->GetArrayBy("C")) {
+  if (CPDF_Array* pEntry = m_pAnnot->GetAnnotDict()->GetArrayFor("C")) {
     size_t nCount = pEntry->GetCount();
     if (nCount == 1) {
       FX_FLOAT g = pEntry->GetNumberAt(0) * 255;
@@ -296,11 +296,11 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
                                       const CFX_Matrix& matrix,
                                       const CFX_ByteString& sContents,
                                       const CFX_ByteString& sAPState) {
-  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
+  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
 
   if (!pAPDict) {
     pAPDict = new CPDF_Dictionary;
-    m_pAnnot->GetAnnotDict()->SetAt("AP", pAPDict);
+    m_pAnnot->GetAnnotDict()->SetFor("AP", pAPDict);
   }
 
   CPDF_Stream* pStream = nullptr;
@@ -308,36 +308,36 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
 
   if (sAPState.IsEmpty()) {
     pParentDict = pAPDict;
-    pStream = pAPDict->GetStreamBy(sAPType);
+    pStream = pAPDict->GetStreamFor(sAPType);
   } else {
-    CPDF_Dictionary* pAPTypeDict = pAPDict->GetDictBy(sAPType);
+    CPDF_Dictionary* pAPTypeDict = pAPDict->GetDictFor(sAPType);
     if (!pAPTypeDict) {
       pAPTypeDict = new CPDF_Dictionary;
-      pAPDict->SetAt(sAPType, pAPTypeDict);
+      pAPDict->SetFor(sAPType, pAPTypeDict);
     }
     pParentDict = pAPTypeDict;
-    pStream = pAPTypeDict->GetStreamBy(sAPState);
+    pStream = pAPTypeDict->GetStreamFor(sAPState);
   }
 
   if (!pStream) {
     pStream = new CPDF_Stream(nullptr, 0, nullptr);
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
     int32_t objnum = pDoc->AddIndirectObject(pStream);
-    pParentDict->SetAtReference(sAPType, pDoc, objnum);
+    pParentDict->SetReferenceFor(sAPType, pDoc, objnum);
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   if (!pStreamDict) {
     pStreamDict = new CPDF_Dictionary;
-    pStreamDict->SetAtName("Type", "XObject");
-    pStreamDict->SetAtName("Subtype", "Form");
-    pStreamDict->SetAtInteger("FormType", 1);
+    pStreamDict->SetNameFor("Type", "XObject");
+    pStreamDict->SetNameFor("Subtype", "Form");
+    pStreamDict->SetIntegerFor("FormType", 1);
     pStream->InitStream(nullptr, 0, pStreamDict);
   }
 
   if (pStreamDict) {
-    pStreamDict->SetAtMatrix("Matrix", matrix);
-    pStreamDict->SetAtRect("BBox", rcBBox);
+    pStreamDict->SetMatrixFor("Matrix", matrix);
+    pStreamDict->SetRectFor("BBox", rcBBox);
   }
 
   pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength(), FALSE,
@@ -351,36 +351,36 @@ FX_BOOL CPDFSDK_BAAnnot::IsVisible() const {
 }
 
 CPDF_Action CPDFSDK_BAAnnot::GetAction() const {
-  return CPDF_Action(m_pAnnot->GetAnnotDict()->GetDictBy("A"));
+  return CPDF_Action(m_pAnnot->GetAnnotDict()->GetDictFor("A"));
 }
 
 void CPDFSDK_BAAnnot::SetAction(const CPDF_Action& action) {
   ASSERT(action.GetDict());
-  if (action.GetDict() != m_pAnnot->GetAnnotDict()->GetDictBy("A")) {
+  if (action.GetDict() != m_pAnnot->GetAnnotDict()->GetDictFor("A")) {
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
     CPDF_Dictionary* pDict = action.GetDict();
     if (pDict && pDict->GetObjNum() == 0) {
       pDoc->AddIndirectObject(pDict);
     }
-    m_pAnnot->GetAnnotDict()->SetAtReference("A", pDoc, pDict->GetObjNum());
+    m_pAnnot->GetAnnotDict()->SetReferenceFor("A", pDoc, pDict->GetObjNum());
   }
 }
 
 void CPDFSDK_BAAnnot::RemoveAction() {
-  m_pAnnot->GetAnnotDict()->RemoveAt("A");
+  m_pAnnot->GetAnnotDict()->RemoveFor("A");
 }
 
 CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const {
-  return CPDF_AAction(m_pAnnot->GetAnnotDict()->GetDictBy("AA"));
+  return CPDF_AAction(m_pAnnot->GetAnnotDict()->GetDictFor("AA"));
 }
 
 void CPDFSDK_BAAnnot::SetAAction(const CPDF_AAction& aa) {
-  if (aa.GetDict() != m_pAnnot->GetAnnotDict()->GetDictBy("AA"))
-    m_pAnnot->GetAnnotDict()->SetAt("AA", aa.GetDict());
+  if (aa.GetDict() != m_pAnnot->GetAnnotDict()->GetDictFor("AA"))
+    m_pAnnot->GetAnnotDict()->SetFor("AA", aa.GetDict());
 }
 
 void CPDFSDK_BAAnnot::RemoveAAction() {
-  m_pAnnot->GetAnnotDict()->RemoveAt("AA");
+  m_pAnnot->GetAnnotDict()->RemoveFor("AA");
 }
 
 CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {

@@ -39,7 +39,7 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict,
       m_pDocument(pDocument),
       m_bOpenState(false),
       m_pPopupAnnot(nullptr) {
-  m_nSubtype = StringToAnnotSubtype(m_pAnnotDict->GetStringBy("Subtype"));
+  m_nSubtype = StringToAnnotSubtype(m_pAnnotDict->GetStringFor("Subtype"));
   GenerateAPIfNeeded();
 }
 
@@ -95,18 +95,18 @@ CFX_FloatRect CPDF_Annot::GetRect() const {
   if (!m_pAnnotDict)
     return CFX_FloatRect();
 
-  CFX_FloatRect rect = m_pAnnotDict->GetRectBy("Rect");
+  CFX_FloatRect rect = m_pAnnotDict->GetRectFor("Rect");
   rect.Normalize();
   return rect;
 }
 
 uint32_t CPDF_Annot::GetFlags() const {
-  return m_pAnnotDict->GetIntegerBy("F");
+  return m_pAnnotDict->GetIntegerFor("F");
 }
 
 CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = pAnnotDict->GetDictBy("AP");
+  CPDF_Dictionary* pAP = pAnnotDict->GetDictFor("AP");
   if (!pAP) {
     return nullptr;
   }
@@ -118,26 +118,26 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
   if (!pAP->KeyExist(ap_entry))
     ap_entry = "N";
 
-  CPDF_Object* psub = pAP->GetDirectObjectBy(ap_entry);
+  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
   if (!psub)
     return nullptr;
   if (CPDF_Stream* pStream = psub->AsStream())
     return pStream;
 
   if (CPDF_Dictionary* pDict = psub->AsDictionary()) {
-    CFX_ByteString as = pAnnotDict->GetStringBy("AS");
+    CFX_ByteString as = pAnnotDict->GetStringFor("AS");
     if (as.IsEmpty()) {
-      CFX_ByteString value = pAnnotDict->GetStringBy("V");
+      CFX_ByteString value = pAnnotDict->GetStringFor("V");
       if (value.IsEmpty()) {
-        CPDF_Dictionary* pParentDict = pAnnotDict->GetDictBy("Parent");
-        value = pParentDict ? pParentDict->GetStringBy("V") : CFX_ByteString();
+        CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent");
+        value = pParentDict ? pParentDict->GetStringFor("V") : CFX_ByteString();
       }
       if (value.IsEmpty() || !pDict->KeyExist(value))
         as = "Off";
       else
         as = value;
     }
-    return pDict->GetStreamBy(as);
+    return pDict->GetStreamFor(as);
   }
   return nullptr;
 }
@@ -167,8 +167,8 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   if (!pForm) {
     return nullptr;
   }
-  CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectBy("BBox");
-  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixBy("Matrix");
+  CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectFor("BBox");
+  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixFor("Matrix");
   form_matrix.TransformRect(form_bbox);
   matrix.MatchRect(pAnnot->GetRect(), form_bbox);
   matrix.Concat(*pUser2Device);
@@ -177,7 +177,7 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
 
 // Static.
 bool CPDF_Annot::IsAnnotationHidden(CPDF_Dictionary* pAnnotDict) {
-  return !!(pAnnotDict->GetIntegerBy("F") & ANNOTFLAG_HIDDEN);
+  return !!(pAnnotDict->GetIntegerFor("F") & ANNOTFLAG_HIDDEN);
 }
 
 // Static.
@@ -366,12 +366,12 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (!bPrinting && (annot_flags & ANNOTFLAG_NOVIEW)) {
     return;
   }
-  CPDF_Dictionary* pBS = m_pAnnotDict->GetDictBy("BS");
+  CPDF_Dictionary* pBS = m_pAnnotDict->GetDictFor("BS");
   char style_char;
   FX_FLOAT width;
   CPDF_Array* pDashArray = nullptr;
   if (!pBS) {
-    CPDF_Array* pBorderArray = m_pAnnotDict->GetArrayBy("Border");
+    CPDF_Array* pBorderArray = m_pAnnotDict->GetArrayFor("Border");
     style_char = 'S';
     if (pBorderArray) {
       width = pBorderArray->GetNumberAt(2);
@@ -397,15 +397,15 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
       width = 1;
     }
   } else {
-    CFX_ByteString style = pBS->GetStringBy("S");
-    pDashArray = pBS->GetArrayBy("D");
+    CFX_ByteString style = pBS->GetStringFor("S");
+    pDashArray = pBS->GetArrayFor("D");
     style_char = style[1];
-    width = pBS->GetNumberBy("W");
+    width = pBS->GetNumberFor("W");
   }
   if (width <= 0) {
     return;
   }
-  CPDF_Array* pColor = m_pAnnotDict->GetArrayBy("C");
+  CPDF_Array* pColor = m_pAnnotDict->GetArrayFor("C");
   uint32_t argb = 0xff000000;
   if (pColor) {
     int R = (int32_t)(pColor->GetNumberAt(0) * 255);

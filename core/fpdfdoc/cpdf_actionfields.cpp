@@ -18,12 +18,12 @@ size_t CPDF_ActionFields::GetFieldsCount() const {
   if (!pDict)
     return 0;
 
-  CFX_ByteString csType = pDict->GetStringBy("S");
+  CFX_ByteString csType = pDict->GetStringFor("S");
   CPDF_Object* pFields = nullptr;
   if (csType == "Hide")
-    pFields = pDict->GetDirectObjectBy("T");
+    pFields = pDict->GetDirectObjectFor("T");
   else
-    pFields = pDict->GetArrayBy("Fields");
+    pFields = pDict->GetArrayFor("Fields");
 
   if (!pFields)
     return 0;
@@ -45,12 +45,12 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   if (!pDict)
     return fields;
 
-  CFX_ByteString csType = pDict->GetStringBy("S");
+  CFX_ByteString csType = pDict->GetStringFor("S");
   CPDF_Object* pFields;
   if (csType == "Hide")
-    pFields = pDict->GetDirectObjectBy("T");
+    pFields = pDict->GetDirectObjectFor("T");
   else
-    pFields = pDict->GetArrayBy("Fields");
+    pFields = pDict->GetArrayFor("Fields");
 
   if (!pFields)
     return fields;
@@ -75,12 +75,12 @@ CPDF_Object* CPDF_ActionFields::GetField(size_t iIndex) const {
   if (!pDict)
     return nullptr;
 
-  CFX_ByteString csType = pDict->GetStringBy("S");
+  CFX_ByteString csType = pDict->GetStringFor("S");
   CPDF_Object* pFields = nullptr;
   if (csType == "Hide")
-    pFields = pDict->GetDirectObjectBy("T");
+    pFields = pDict->GetDirectObjectFor("T");
   else
-    pFields = pDict->GetArrayBy("Fields");
+    pFields = pDict->GetArrayFor("Fields");
 
   if (!pFields)
     return nullptr;

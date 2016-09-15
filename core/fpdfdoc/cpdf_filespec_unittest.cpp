@@ -109,13 +109,13 @@ TEST(cpdf_filespec, GetFileName) {
     CPDF_FileSpec file_spec(dict_obj.get());
     CFX_WideString file_name;
     for (int i = 0; i < 5; ++i) {
-      dict_obj->SetAt(keywords[i], new CPDF_String(test_data[i].input));
+      dict_obj->SetFor(keywords[i], new CPDF_String(test_data[i].input));
       EXPECT_TRUE(file_spec.GetFileName(&file_name));
       EXPECT_TRUE(file_name == test_data[i].expected);
     }
 
     // With all the former fields and 'FS' field suggests 'URL' type.
-    dict_obj->SetAtString("FS", "URL");
+    dict_obj->SetStringFor("FS", "URL");
     EXPECT_TRUE(file_spec.GetFileName(&file_name));
     // Url string is not decoded.
     EXPECT_TRUE(file_name == test_data[4].input);
@@ -159,9 +159,9 @@ TEST(cpdf_filespec, SetFileName) {
   CPDF_FileSpec file_spec2(dict_obj.get());
   file_spec2.SetFileName(test_data.input);
   // Check internal object value.
-  file_name = dict_obj->GetUnicodeTextBy("F");
+  file_name = dict_obj->GetUnicodeTextFor("F");
   EXPECT_TRUE(file_name == test_data.expected);
-  file_name = dict_obj->GetUnicodeTextBy("UF");
+  file_name = dict_obj->GetUnicodeTextFor("UF");
   EXPECT_TRUE(file_name == test_data.expected);
   // Check we can get the file name back.
   EXPECT_TRUE(file_spec2.GetFileName(&file_name));

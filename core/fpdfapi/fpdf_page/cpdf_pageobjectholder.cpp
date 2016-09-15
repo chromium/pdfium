@@ -60,18 +60,18 @@ void CPDF_PageObjectHolder::LoadTransInfo() {
   if (!m_pFormDict) {
     return;
   }
-  CPDF_Dictionary* pGroup = m_pFormDict->GetDictBy("Group");
+  CPDF_Dictionary* pGroup = m_pFormDict->GetDictFor("Group");
   if (!pGroup) {
     return;
   }
-  if (pGroup->GetStringBy("S") != "Transparency") {
+  if (pGroup->GetStringFor("S") != "Transparency") {
     return;
   }
   m_Transparency |= PDFTRANS_GROUP;
-  if (pGroup->GetIntegerBy("I")) {
+  if (pGroup->GetIntegerFor("I")) {
     m_Transparency |= PDFTRANS_ISOLATED;
   }
-  if (pGroup->GetIntegerBy("K")) {
+  if (pGroup->GetIntegerFor("K")) {
     m_Transparency |= PDFTRANS_KNOCKOUT;
   }
 }

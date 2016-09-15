@@ -5572,8 +5572,8 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
                           resoveNodeRS, TRUE, szName.IsEmpty());
   } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
-             GetObjectByName(pThis, argAccessor.get(),
-                             bsAccessorName.AsStringC())) {
+             GetObjectForName(pThis, argAccessor.get(),
+                              bsAccessorName.AsStringC())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
                           resoveNodeRS, TRUE, szName.IsEmpty());
   }
@@ -5710,8 +5710,8 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
                           resoveNodeRS, FALSE);
   } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
-             GetObjectByName(pThis, argAccessor.get(),
-                             bsAccessorName.AsStringC())) {
+             GetObjectForName(pThis, argAccessor.get(),
+                              bsAccessorName.AsStringC())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
                           resoveNodeRS, FALSE);
   }
@@ -6203,7 +6203,7 @@ void CXFA_FM2JSContext::GenerateSomExpression(const CFX_ByteStringC& szName,
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::GetObjectByName(
+FX_BOOL CXFA_FM2JSContext::GetObjectForName(
     CFXJSE_Value* pThis,
     CFXJSE_Value* accessorValue,
     const CFX_ByteStringC& szAccessorName) {

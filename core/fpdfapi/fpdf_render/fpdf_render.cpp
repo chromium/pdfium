@@ -424,7 +424,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   if (pObj->IsForm()) {
     const CPDF_FormObject* pFormObj = pObj->AsForm();
     if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
+      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
     }
   }
   CPDF_RenderStatus status;
@@ -440,7 +440,7 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDictBy("OC");
+  CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDictFor("OC");
   if (pOC && m_Options.m_pOCContext &&
       !m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
     return TRUE;
@@ -449,7 +449,7 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   matrix.Concat(*pObj2Device);
   CPDF_Dictionary* pResources = nullptr;
   if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-    pResources = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
+    pResources = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
   }
   CPDF_RenderStatus status;
   status.Initialize(m_pContext, m_pDevice, nullptr, m_pStopObj, this, pFormObj,
@@ -707,7 +707,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     Transparency = pFormObj->m_pForm->m_Transparency;
     bGroupTransparent = !!(Transparency & PDFTRANS_ISOLATED);
     if (pFormObj->m_pForm->m_pFormDict) {
-      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
+      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
     }
   }
   bool bTextClip =
@@ -730,7 +730,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                               ->GetImage()
                               ->GetStream()
                               ->GetDict()
-                              ->GetDirectObjectBy("ColorSpace");
+                              ->GetDirectObjectFor("ColorSpace");
     CPDF_ColorSpace* pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
     if (pColorSpace) {

@@ -469,7 +469,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
         continue;
 
       CFX_ByteString keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
-      pDict->SetAt(keyNoSlash, pObj);
+      pDict->SetFor(keyNoSlash, pObj);
     }
 
     // Only when this is a signature dictionary and has contents, we reset the
@@ -477,7 +477,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     if (pDict->IsSignatureDict() && dwSignValuePos) {
       CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
       m_Pos = dwSignValuePos;
-      pDict->SetAt("Contents", GetObject(pObjList, objnum, gennum, false));
+      pDict->SetFor("Contents", GetObject(pObjList, objnum, gennum, false));
     }
 
     FX_FILESIZE SavedPos = m_Pos;
@@ -495,7 +495,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
   return nullptr;
 }
 
-CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
+CPDF_Object* CPDF_SyntaxParser::GetObjectForStrict(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t objnum,
     uint32_t gennum) {
@@ -587,8 +587,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
       }
 
       if (key.GetLength() > 1) {
-        pDict->SetAt(CFX_ByteString(key.c_str() + 1, key.GetLength() - 1),
-                     obj.release());
+        pDict->SetFor(CFX_ByteString(key.c_str() + 1, key.GetLength() - 1),
+                      obj.release());
       }
     }
 
@@ -627,7 +627,7 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
 CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
                                            uint32_t objnum,
                                            uint32_t gennum) {
-  CPDF_Object* pLenObj = pDict->GetObjectBy("Length");
+  CPDF_Object* pLenObj = pDict->GetObjectFor("Length");
   FX_FILESIZE len = -1;
   CPDF_Reference* pLenObjRef = ToReference(pLenObj);
 
@@ -733,7 +733,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
         pDict->Release();
         return nullptr;
       }
-      pDict->SetAtInteger("Length", len);
+      pDict->SetIntegerFor("Length", len);
     }
     m_Pos = streamStartPos;
   }

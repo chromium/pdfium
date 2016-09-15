@@ -426,7 +426,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, FX_BOOL bFlateEncode)
       m_dwSize = destAcc.GetSize();
       m_pData = (uint8_t*)destAcc.DetachData();
       m_pDict = ToDictionary(pStream->GetDict()->Clone());
-      m_pDict->RemoveAt("Filter");
+      m_pDict->RemoveFor("Filter");
       m_bNewData = TRUE;
       m_bCloned = TRUE;
     } else {
@@ -442,9 +442,9 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, FX_BOOL bFlateEncode)
   // TODO(thestig): Move to Init() and check return value.
   ::FlateEncode(m_Acc.GetData(), m_Acc.GetSize(), &m_pData, &m_dwSize);
   m_pDict = ToDictionary(pStream->GetDict()->Clone());
-  m_pDict->SetAtInteger("Length", m_dwSize);
-  m_pDict->SetAtName("Filter", "FlateDecode");
-  m_pDict->RemoveAt("DecodeParms");
+  m_pDict->SetIntegerFor("Length", m_dwSize);
+  m_pDict->SetNameFor("Filter", "FlateDecode");
+  m_pDict->RemoveFor("DecodeParms");
 }
 
 CPDF_FlateEncoder::CPDF_FlateEncoder(const uint8_t* pBuffer,
@@ -923,7 +923,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
 
   CPDF_Dictionary* pDict = pObj->GetDict();
   if (pObj->IsStream()) {
-    if (pDict && pDict->GetStringBy("Type") == "XRef")
+    if (pDict && pDict->GetStringFor("Type") == "XRef")
       return 0;
     return 1;
   }
@@ -933,7 +933,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
       return 1;
     if (pDict->IsSignatureDict())
       return 1;
-    if (pDict->GetStringBy("Type") == "Page")
+    if (pDict->GetStringFor("Type") == "Page")
       return 1;
   }
 
@@ -993,9 +993,10 @@ int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
   CPDF_FlateEncoder encoder(const_cast<CPDF_Stream*>(pStream->AsStream()),
                             pStream != m_pMetadata);
   CPDF_Encryptor encryptor(pCrypto, objnum, encoder.m_pData, encoder.m_dwSize);
-  if ((uint32_t)encoder.m_pDict->GetIntegerBy("Length") != encryptor.m_dwSize) {
+  if ((uint32_t)encoder.m_pDict->GetIntegerFor("Length") !=
+      encryptor.m_dwSize) {
     encoder.CloneDict();
-    encoder.m_pDict->SetAtInteger("Length", encryptor.m_dwSize);
+    encoder.m_pDict->SetIntegerFor("Length", encryptor.m_dwSize);
   }
   if (WriteDirectObj(objnum, encoder.m_pDict) < 0) {
     return -1;
@@ -1105,10 +1106,10 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
                                 TRUE);
       CPDF_Encryptor encryptor(m_pCryptoHandler, objnum, encoder.m_pData,
                                encoder.m_dwSize);
-      if ((uint32_t)encoder.m_pDict->GetIntegerBy("Length") !=
+      if ((uint32_t)encoder.m_pDict->GetIntegerFor("Length") !=
           encryptor.m_dwSize) {
         encoder.CloneDict();
-        encoder.m_pDict->SetAtInteger("Length", encryptor.m_dwSize);
+        encoder.m_pDict->SetIntegerFor("Length", encryptor.m_dwSize);
       }
       if (WriteDirectObj(objnum, encoder.m_pDict) < 0) {
         return -1;
@@ -1446,7 +1447,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
       m_dwFlags &= ~FPDFCREATE_INCREMENTAL;
     }
     CPDF_Dictionary* pDict = m_pDocument->GetRoot();
-    m_pMetadata = pDict ? pDict->GetDirectObjectBy("Metadata") : nullptr;
+    m_pMetadata = pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr;
     if (m_dwFlags & FPDFCREATE_OBJECTSTREAM) {
       m_pXRefStream.reset(new CPDF_XRefStream);
       m_pXRefStream->Start();
@@ -1959,7 +1960,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
   }
   m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
   if (m_pEncryptDict && !pOldIDArray && m_pParser && bNewId) {
-    if (m_pEncryptDict->GetStringBy("Filter") == "Standard") {
+    if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       CFX_ByteString user_pass = m_pParser->GetPassword();
       uint32_t flag = PDF_ENCRYPT_CONTENT;
 

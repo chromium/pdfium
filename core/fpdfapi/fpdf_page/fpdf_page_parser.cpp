@@ -611,22 +611,22 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
-        pDict->SetAtReference(key, m_pDocument, dwObjNum);
+        pDict->SetReferenceFor(key, m_pDocument, dwObjNum);
       else
-        pDict->SetAt(key, pObj.release());
+        pDict->SetFor(key, pObj.release());
     }
   }
   PDF_ReplaceAbbr(pDict);
   CPDF_Object* pCSObj = nullptr;
   if (pDict->KeyExist("ColorSpace")) {
-    pCSObj = pDict->GetDirectObjectBy("ColorSpace");
+    pCSObj = pDict->GetDirectObjectFor("ColorSpace");
     if (pCSObj->IsName()) {
       CFX_ByteString name = pCSObj->GetString();
       if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
         pCSObj = FindResourceObj("ColorSpace", name);
         if (pCSObj && !pCSObj->GetObjNum()) {
           pCSObj = pCSObj->Clone();
-          pDict->SetAt("ColorSpace", pCSObj);
+          pDict->SetFor("ColorSpace", pCSObj);
         }
       }
     }
@@ -646,7 +646,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       break;
     }
   }
-  pDict->SetAtName("Subtype", "Image");
+  pDict->SetNameFor("Subtype", "Image");
   CPDF_ImageObject* pImgObj = AddImage(pStream, nullptr, true);
   if (!pImgObj) {
     if (pStream) {
@@ -737,7 +737,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 
   CFX_ByteString type;
   if (pXObject->GetDict())
-    type = pXObject->GetDict()->GetStringBy("Subtype");
+    type = pXObject->GetDict()->GetStringFor("Subtype");
 
   if (type == "Image") {
     CPDF_ImageObject* pObj = AddImage(pXObject, nullptr, false);
@@ -1134,14 +1134,14 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     const CFX_ByteString& name) {
   if (!m_pResources)
     return nullptr;
-  CPDF_Dictionary* pDict = m_pResources->GetDictBy(type);
+  CPDF_Dictionary* pDict = m_pResources->GetDictFor(type);
   if (pDict)
-    return pDict->GetDirectObjectBy(name);
+    return pDict->GetDirectObjectFor(name);
   if (m_pResources == m_pPageResources || !m_pPageResources)
     return nullptr;
 
-  CPDF_Dictionary* pPageDict = m_pPageResources->GetDictBy(type);
-  return pPageDict ? pPageDict->GetDirectObjectBy(name) : nullptr;
+  CPDF_Dictionary* pPageDict = m_pPageResources->GetDictFor(type);
+  return pPageDict ? pPageDict->GetDirectObjectFor(name) : nullptr;
 }
 
 CPDF_Font* CPDF_StreamContentParser::FindFont(const CFX_ByteString& name) {
@@ -1652,7 +1652,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
         if (op.is_replace_key)
           pDict->ReplaceKey(op.key, CFX_ByteString(op.replacement));
         else
-          pDict->SetAtName(op.key, CFX_ByteString(op.replacement));
+          pDict->SetNameFor(op.key, CFX_ByteString(op.replacement));
       }
       break;
     }

@@ -80,9 +80,9 @@ CPDF_Type1Font* CPDF_Type1Font::AsType1Font() {
 FX_BOOL CPDF_Type1Font::Load() {
   m_Base14Font = PDF_GetStandardFontName(&m_BaseFont);
   if (m_Base14Font >= 0) {
-    CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictBy("FontDescriptor");
+    CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
     if (pFontDesc && pFontDesc->KeyExist("Flags"))
-      m_Flags = pFontDesc->GetIntegerBy("Flags");
+      m_Flags = pFontDesc->GetIntegerFor("Flags");
     else
       m_Flags = m_Base14Font >= 12 ? PDFFONT_SYMBOLIC : PDFFONT_NONSYMBOLIC;
 

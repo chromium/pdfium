@@ -50,7 +50,7 @@ class CPDF_FormControl {
   CPDF_InterForm* GetInterForm() const { return m_pForm; }
   CPDF_FormField* GetField() const { return m_pField; }
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict; }
-  CFX_FloatRect GetRect() const { return m_pWidgetDict->GetRectBy("Rect"); }
+  CFX_FloatRect GetRect() const { return m_pWidgetDict->GetRectFor("Rect"); }
 
   void DrawControl(CFX_RenderDevice* pDevice,
                    CFX_Matrix* pMatrix,

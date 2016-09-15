@@ -412,9 +412,9 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                                     int32_t iIndexValue,
                                     bool bIsStar,
                                     CFX_ByteString& szSomExp);
-  static FX_BOOL GetObjectByName(CFXJSE_Value* pThis,
-                                 CFXJSE_Value* accessorValue,
-                                 const CFX_ByteStringC& szAccessorName);
+  static FX_BOOL GetObjectForName(CFXJSE_Value* pThis,
+                                  CFXJSE_Value* accessorValue,
+                                  const CFX_ByteStringC& szAccessorName);
   static int32_t ResolveObjects(CFXJSE_Value* pThis,
                                 CFXJSE_Value* pParentValue,
                                 const CFX_ByteStringC& bsSomExp,

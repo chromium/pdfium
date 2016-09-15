@@ -104,7 +104,7 @@ int CPDF_ContentMark::MarkData::GetMCID() const {
         type == CPDF_ContentMarkItem::DirectDict) {
       CPDF_Dictionary* pDict = mark.GetParam();
       if (pDict->KeyExist("MCID"))
-        return pDict->GetIntegerBy("MCID");
+        return pDict->GetIntegerFor("MCID");
     }
   }
   return -1;

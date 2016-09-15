@@ -16,8 +16,8 @@ CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        const CFX_Matrix& parentMatrix)
     : CPDF_Pattern(TILING, pDoc, pPatternObj, parentMatrix) {
   CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-  m_Pattern2Form = pDict->GetMatrixBy("Matrix");
-  m_bColored = pDict->GetIntegerBy("PaintType") == 1;
+  m_Pattern2Form = pDict->GetMatrixFor("Matrix");
+  m_bColored = pDict->GetIntegerFor("PaintType") == 1;
   m_Pattern2Form.Concat(parentMatrix);
 }
 
@@ -40,9 +40,9 @@ FX_BOOL CPDF_TilingPattern::Load() {
   if (!pDict)
     return FALSE;
 
-  m_bColored = pDict->GetIntegerBy("PaintType") == 1;
-  m_XStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumberBy("XStep"));
-  m_YStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumberBy("YStep"));
+  m_bColored = pDict->GetIntegerFor("PaintType") == 1;
+  m_XStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumberFor("XStep"));
+  m_YStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumberFor("YStep"));
 
   CPDF_Stream* pStream = m_pPatternObj->AsStream();
   if (!pStream)
@@ -50,6 +50,6 @@ FX_BOOL CPDF_TilingPattern::Load() {
 
   m_pForm.reset(new CPDF_Form(m_pDocument, nullptr, pStream));
   m_pForm->ParseContent(nullptr, &m_ParentMatrix, nullptr);
-  m_BBox = pDict->GetRectBy("BBox");
+  m_BBox = pDict->GetRectFor("BBox");
   return TRUE;
 }

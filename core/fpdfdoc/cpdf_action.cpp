@@ -25,11 +25,11 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (!m_pDict)
     return CPDF_Dest();
 
-  CFX_ByteString type = m_pDict->GetStringBy("S");
+  CFX_ByteString type = m_pDict->GetStringFor("S");
   if (type != "GoTo" && type != "GoToR")
     return CPDF_Dest();
 
-  CPDF_Object* pDest = m_pDict->GetDirectObjectBy("D");
+  CPDF_Object* pDest = m_pDict->GetDirectObjectFor("D");
   if (!pDest)
     return CPDF_Dest();
   if (pDest->IsString() || pDest->IsName()) {
@@ -46,7 +46,7 @@ CPDF_Action::ActionType CPDF_Action::GetType() const {
   if (!m_pDict)
     return Unknown;
 
-  CFX_ByteString csType = m_pDict->GetStringBy("S");
+  CFX_ByteString csType = m_pDict->GetStringFor("S");
   if (csType.IsEmpty())
     return Unknown;
 
@@ -58,20 +58,20 @@ CPDF_Action::ActionType CPDF_Action::GetType() const {
 }
 
 CFX_WideString CPDF_Action::GetFilePath() const {
-  CFX_ByteString type = m_pDict->GetStringBy("S");
+  CFX_ByteString type = m_pDict->GetStringFor("S");
   if (type != "GoToR" && type != "Launch" && type != "SubmitForm" &&
       type != "ImportData") {
     return CFX_WideString();
   }
 
-  CPDF_Object* pFile = m_pDict->GetDirectObjectBy("F");
+  CPDF_Object* pFile = m_pDict->GetDirectObjectFor("F");
   CFX_WideString path;
   if (!pFile) {
     if (type == "Launch") {
-      CPDF_Dictionary* pWinDict = m_pDict->GetDictBy("Win");
+      CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
       if (pWinDict) {
         return CFX_WideString::FromLocal(
-            pWinDict->GetStringBy("F").AsStringC());
+            pWinDict->GetStringFor("F").AsStringC());
       }
     }
     return path;
@@ -86,15 +86,15 @@ CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {
   CFX_ByteString csURI;
   if (!m_pDict)
     return csURI;
-  if (m_pDict->GetStringBy("S") != "URI")
+  if (m_pDict->GetStringFor("S") != "URI")
     return csURI;
 
-  csURI = m_pDict->GetStringBy("URI");
+  csURI = m_pDict->GetStringFor("URI");
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  CPDF_Dictionary* pURI = pRoot->GetDictBy("URI");
+  CPDF_Dictionary* pURI = pRoot->GetDictFor("URI");
   if (pURI) {
     if (csURI.Find(":", 0) < 1)
-      csURI = pURI->GetStringBy("Base") + csURI;
+      csURI = pURI->GetStringFor("Base") + csURI;
   }
   return csURI;
 }
@@ -104,7 +104,7 @@ CFX_WideString CPDF_Action::GetJavaScript() const {
   if (!m_pDict)
     return csJS;
 
-  CPDF_Object* pJS = m_pDict->GetDirectObjectBy("JS");
+  CPDF_Object* pJS = m_pDict->GetDirectObjectFor("JS");
   return pJS ? pJS->GetUnicodeText() : csJS;
 }
 
@@ -112,7 +112,7 @@ size_t CPDF_Action::GetSubActionsCount() const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return 0;
 
-  CPDF_Object* pNext = m_pDict->GetDirectObjectBy("Next");
+  CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
   if (!pNext)
     return 0;
   if (pNext->IsDictionary())
@@ -126,7 +126,7 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return CPDF_Action();
 
-  CPDF_Object* pNext = m_pDict->GetDirectObjectBy("Next");
+  CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
   if (CPDF_Dictionary* pDict = ToDictionary(pNext)) {
     if (iIndex == 0)
       return CPDF_Action(pDict);

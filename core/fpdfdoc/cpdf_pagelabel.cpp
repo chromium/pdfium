@@ -84,7 +84,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
   if (!pPDFRoot)
     return wsLabel;
 
-  CPDF_Dictionary* pLabels = pPDFRoot->GetDictBy("PageLabels");
+  CPDF_Dictionary* pLabels = pPDFRoot->GetDictFor("PageLabels");
   CPDF_NumberTree numberTree(pLabels);
   CPDF_Object* pValue = nullptr;
   int n = nPage;
@@ -99,10 +99,10 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
     pValue = pValue->GetDirect();
     if (CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
       if (pLabel->KeyExist("P"))
-        wsLabel += pLabel->GetUnicodeTextBy("P");
+        wsLabel += pLabel->GetUnicodeTextFor("P");
 
-      CFX_ByteString bsNumberingStyle = pLabel->GetStringBy("S", "");
-      int nLabelNum = nPage - n + pLabel->GetIntegerBy("St", 1);
+      CFX_ByteString bsNumberingStyle = pLabel->GetStringFor("S", "");
+      int nLabelNum = nPage - n + pLabel->GetIntegerFor("St", 1);
       CFX_WideString wsNumPortion =
           GetLabelNumPortion(nLabelNum, bsNumberingStyle);
       wsLabel += wsNumPortion;

@@ -15,30 +15,30 @@ CPDF_ViewerPreferences::~CPDF_ViewerPreferences() {}
 
 FX_BOOL CPDF_ViewerPreferences::IsDirectionR2L() const {
   CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetStringBy("Direction") == "R2L" : FALSE;
+  return pDict ? pDict->GetStringFor("Direction") == "R2L" : FALSE;
 }
 
 FX_BOOL CPDF_ViewerPreferences::PrintScaling() const {
   CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetStringBy("PrintScaling") != "None" : TRUE;
+  return pDict ? pDict->GetStringFor("PrintScaling") != "None" : TRUE;
 }
 
 int32_t CPDF_ViewerPreferences::NumCopies() const {
   CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetIntegerBy("NumCopies") : 1;
+  return pDict ? pDict->GetIntegerFor("NumCopies") : 1;
 }
 
 CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
   CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetArrayBy("PrintPageRange") : nullptr;
+  return pDict ? pDict->GetArrayFor("PrintPageRange") : nullptr;
 }
 
 CFX_ByteString CPDF_ViewerPreferences::Duplex() const {
   CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetStringBy("Duplex") : CFX_ByteString("None");
+  return pDict ? pDict->GetStringFor("Duplex") : CFX_ByteString("None");
 }
 
 CPDF_Dictionary* CPDF_ViewerPreferences::GetViewerPreferences() const {
   CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  return pDict ? pDict->GetDictBy("ViewerPreferences") : nullptr;
+  return pDict ? pDict->GetDictFor("ViewerPreferences") : nullptr;
 }

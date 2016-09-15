@@ -68,7 +68,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       (m_Flags & PDFFONT_NONSYMBOLIC)) {
     if (!FXFT_Has_Glyph_Names(m_Font.GetFace()) &&
         (!m_Font.GetFace()->num_charmaps || !m_Font.GetFace()->charmaps)) {
-      int nStartChar = m_pFontDict->GetIntegerBy("FirstChar");
+      int nStartChar = m_pFontDict->GetIntegerFor("FirstChar");
       if (nStartChar < 0 || nStartChar > 255)
         return;
 

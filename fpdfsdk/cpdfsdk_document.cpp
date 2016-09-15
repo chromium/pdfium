@@ -103,9 +103,9 @@ FX_BOOL CPDFSDK_Document::ProcOpenAction() {
   if (!pRoot)
     return FALSE;
 
-  CPDF_Object* pOpenAction = pRoot->GetDictBy("OpenAction");
+  CPDF_Object* pOpenAction = pRoot->GetDictFor("OpenAction");
   if (!pOpenAction)
-    pOpenAction = pRoot->GetArrayBy("OpenAction");
+    pOpenAction = pRoot->GetArrayFor("OpenAction");
 
   if (!pOpenAction)
     return FALSE;

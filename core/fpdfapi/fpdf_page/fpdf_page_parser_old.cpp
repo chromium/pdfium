@@ -121,7 +121,7 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
     CCodec_ScanlineDecoder* pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
             src_buf, limit, width, height, 0,
-            pParam ? pParam->GetIntegerBy("ColorTransform", 1) : 1);
+            pParam ? pParam->GetIntegerFor("ColorTransform", 1) : 1);
     return DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
   if (decoder == "RunLengthDecode" || decoder == "RL") {
@@ -143,23 +143,23 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
 
   CFX_ByteString Decoder;
   CPDF_Dictionary* pParam = nullptr;
-  CPDF_Object* pFilter = pDict->GetDirectObjectBy("Filter");
+  CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
   if (pFilter) {
     if (CPDF_Array* pArray = pFilter->AsArray()) {
       Decoder = pArray->GetStringAt(0);
-      CPDF_Array* pParams = pDict->GetArrayBy("DecodeParms");
+      CPDF_Array* pParams = pDict->GetArrayFor("DecodeParms");
       if (pParams)
         pParam = pParams->GetDictAt(0);
     } else {
       Decoder = pFilter->GetString();
-      pParam = pDict->GetDictBy("DecodeParms");
+      pParam = pDict->GetDictFor("DecodeParms");
     }
   }
-  uint32_t width = pDict->GetIntegerBy("Width");
-  uint32_t height = pDict->GetIntegerBy("Height");
+  uint32_t width = pDict->GetIntegerFor("Width");
+  uint32_t height = pDict->GetIntegerFor("Height");
   uint32_t OrigSize = 0;
   if (pCSObj) {
-    uint32_t bpc = pDict->GetIntegerBy("BitsPerComponent");
+    uint32_t bpc = pDict->GetIntegerFor("BitsPerComponent");
     uint32_t nComponents = 1;
     CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj);
     if (pCS) {
@@ -236,7 +236,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     FXSYS_memcpy(pData, m_pBuf + m_Pos, dwStreamSize);
     m_Pos += dwStreamSize;
   }
-  pDict->SetAtInteger("Length", (int)dwStreamSize);
+  pDict->SetIntegerFor("Length", (int)dwStreamSize);
   return new CPDF_Stream(pData, dwStreamSize, pDict);
 }
 
@@ -369,7 +369,7 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
       if (key.IsEmpty())
         pObj->Release();
       else
-        pDict->SetAt(key, pObj);
+        pDict->SetFor(key, pObj);
     }
     return pDict;
   }
@@ -651,7 +651,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage) {
   m_InternalStage = STAGE_GETCONTENT;
   m_CurrentOffset = 0;
 
-  CPDF_Object* pContent = pPage->m_pFormDict->GetDirectObjectBy("Contents");
+  CPDF_Object* pContent = pPage->m_pFormDict->GetDirectObjectFor("Contents");
   if (!pContent) {
     m_Status = Done;
     return;
@@ -679,11 +679,11 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   m_pType3Char = pType3Char;
   m_pObjectHolder = pForm;
   m_bForm = TRUE;
-  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixBy("Matrix");
+  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixFor("Matrix");
   if (pGraphicStates) {
     form_matrix.Concat(pGraphicStates->m_CTM);
   }
-  CPDF_Array* pBBox = pForm->m_pFormDict->GetArrayBy("BBox");
+  CPDF_Array* pBBox = pForm->m_pFormDict->GetArrayFor("BBox");
   CFX_FloatRect form_bbox;
   CPDF_Path ClipPath;
   if (pBBox) {
@@ -700,7 +700,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
       form_bbox.Transform(pParentMatrix);
     }
   }
-  CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDictBy("Resources");
+  CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDictFor("Resources");
   m_pParser.reset(new CPDF_StreamContentParser(
       pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources,
       pParentMatrix, pForm, pResources, &form_bbox, pGraphicStates, level));
@@ -759,7 +759,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         m_CurrentOffset = 0;
       } else {
         CPDF_Array* pContent =
-            m_pObjectHolder->m_pFormDict->GetArrayBy("Contents");
+            m_pObjectHolder->m_pFormDict->GetArrayFor("Contents");
         m_StreamArray[m_CurrentOffset].reset(new CPDF_StreamAcc);
         CPDF_Stream* pStreamObj = ToStream(
             pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);

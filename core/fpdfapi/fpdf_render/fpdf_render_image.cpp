@@ -444,7 +444,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   }
   if (m_pRenderStatus->m_pDevice->GetDeviceClass() != FXDC_DISPLAY) {
     CPDF_Object* pFilters =
-        m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectBy(
+        m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
             "Filter");
     if (pFilters) {
       if (pFilters->IsName()) {
@@ -490,7 +490,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
     }
     CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : nullptr;
     CPDF_Object* pCSObj =
-        m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectBy(
+        m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
             "ColorSpace");
     CPDF_ColorSpace* pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
@@ -954,12 +954,12 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   if (!pSMaskDict)
     return nullptr;
 
-  CPDF_Stream* pGroup = pSMaskDict->GetStreamBy("G");
+  CPDF_Stream* pGroup = pSMaskDict->GetStreamFor("G");
   if (!pGroup)
     return nullptr;
 
   std::unique_ptr<CPDF_Function> pFunc;
-  CPDF_Object* pFuncObj = pSMaskDict->GetDirectObjectBy("TR");
+  CPDF_Object* pFuncObj = pSMaskDict->GetDirectObjectFor("TR");
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc = CPDF_Function::Load(pFuncObj);
 
@@ -971,7 +971,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   form.ParseContent(nullptr, nullptr, nullptr);
 
   CFX_FxgeDevice bitmap_device;
-  FX_BOOL bLuminosity = pSMaskDict->GetStringBy("S") != "Alpha";
+  FX_BOOL bLuminosity = pSMaskDict->GetStringFor("S") != "Alpha";
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
   FXDIB_Format format;
@@ -987,12 +987,12 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   CPDF_Object* pCSObj = nullptr;
   CPDF_ColorSpace* pCS = nullptr;
   if (bLuminosity) {
-    CPDF_Array* pBC = pSMaskDict->GetArrayBy("BC");
+    CPDF_Array* pBC = pSMaskDict->GetArrayFor("BC");
     FX_ARGB back_color = 0xff000000;
     if (pBC) {
       CPDF_Dictionary* pDict = pGroup->GetDict();
-      if (pDict && pDict->GetDictBy("Group"))
-        pCSObj = pDict->GetDictBy("Group")->GetDirectObjectBy("CS");
+      if (pDict && pDict->GetDictFor("Group"))
+        pCSObj = pDict->GetDictFor("Group")->GetDirectObjectFor("CS");
       else
         pCSObj = nullptr;
       pCS = m_pContext->GetDocument()->LoadColorSpace(pCSObj);
@@ -1026,7 +1026,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   }
   CPDF_Dictionary* pFormResource = nullptr;
   if (form.m_pFormDict) {
-    pFormResource = form.m_pFormDict->GetDictBy("Resources");
+    pFormResource = form.m_pFormDict->GetDictFor("Resources");
   }
   CPDF_RenderOptions options;
   options.m_ColorMode = bLuminosity ? RENDER_COLOR_NORMAL : RENDER_COLOR_ALPHA;

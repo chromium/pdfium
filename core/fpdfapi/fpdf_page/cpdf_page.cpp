@@ -106,10 +106,10 @@ CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteString& name) const {
   std::set<CPDF_Dictionary*> visited;
   while (1) {
     visited.insert(pPageDict);
-    if (CPDF_Object* pObj = pPageDict->GetDirectObjectBy(name))
+    if (CPDF_Object* pObj = pPageDict->GetDirectObjectFor(name))
       return pObj;
 
-    pPageDict = pPageDict->GetDictBy("Parent");
+    pPageDict = pPageDict->GetDictFor("Parent");
     if (!pPageDict || pdfium::ContainsKey(visited, pPageDict))
       break;
   }

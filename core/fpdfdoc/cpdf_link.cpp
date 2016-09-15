@@ -10,11 +10,11 @@
 #include "core/fpdfdoc/include/cpdf_nametree.h"
 
 CFX_FloatRect CPDF_Link::GetRect() {
-  return m_pDict->GetRectBy("Rect");
+  return m_pDict->GetRectFor("Rect");
 }
 
 CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
-  CPDF_Object* pDest = m_pDict->GetDirectObjectBy("Dest");
+  CPDF_Object* pDest = m_pDict->GetDirectObjectFor("Dest");
   if (!pDest)
     return CPDF_Dest();
 
@@ -28,5 +28,5 @@ CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
 }
 
 CPDF_Action CPDF_Link::GetAction() {
-  return CPDF_Action(m_pDict->GetDictBy("A"));
+  return CPDF_Action(m_pDict->GetDictFor("A"));
 }

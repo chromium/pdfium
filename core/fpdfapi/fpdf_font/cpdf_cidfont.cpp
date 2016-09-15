@@ -323,12 +323,12 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
 }
 
 FX_BOOL CPDF_CIDFont::Load() {
-  if (m_pFontDict->GetStringBy("Subtype") == "TrueType") {
+  if (m_pFontDict->GetStringFor("Subtype") == "TrueType") {
     LoadGB2312();
     return TRUE;
   }
 
-  CPDF_Array* pFonts = m_pFontDict->GetArrayBy("DescendantFonts");
+  CPDF_Array* pFonts = m_pFontDict->GetArrayFor("DescendantFonts");
   if (!pFonts || pFonts->GetCount() != 1)
     return FALSE;
 
@@ -336,7 +336,7 @@ FX_BOOL CPDF_CIDFont::Load() {
   if (!pCIDFontDict)
     return FALSE;
 
-  m_BaseFont = pCIDFontDict->GetStringBy("BaseFont");
+  m_BaseFont = pCIDFontDict->GetStringFor("BaseFont");
   if ((m_BaseFont.Compare("CourierStd") == 0 ||
        m_BaseFont.Compare("CourierStd-Bold") == 0 ||
        m_BaseFont.Compare("CourierStd-BoldOblique") == 0 ||
@@ -344,15 +344,15 @@ FX_BOOL CPDF_CIDFont::Load() {
       !IsEmbedded()) {
     m_bAdobeCourierStd = true;
   }
-  CPDF_Dictionary* pFontDesc = pCIDFontDict->GetDictBy("FontDescriptor");
+  CPDF_Dictionary* pFontDesc = pCIDFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc)
     LoadFontDescriptor(pFontDesc);
 
-  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
+  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding)
     return FALSE;
 
-  CFX_ByteString subtype = pCIDFontDict->GetStringBy("Subtype");
+  CFX_ByteString subtype = pCIDFontDict->GetStringFor("Subtype");
   m_bType1 = (subtype == "CIDFontType0");
 
   CPDF_CMapManager& manager = GetFontGlobals()->m_CMapManager;
@@ -374,10 +374,10 @@ FX_BOOL CPDF_CIDFont::Load() {
 
   m_Charset = m_pCMap->m_Charset;
   if (m_Charset == CIDSET_UNKNOWN) {
-    CPDF_Dictionary* pCIDInfo = pCIDFontDict->GetDictBy("CIDSystemInfo");
+    CPDF_Dictionary* pCIDInfo = pCIDFontDict->GetDictFor("CIDSystemInfo");
     if (pCIDInfo) {
       m_Charset =
-          CharsetFromOrdering(pCIDInfo->GetStringBy("Ordering").AsStringC());
+          CharsetFromOrdering(pCIDInfo->GetStringFor("Ordering").AsStringC());
     }
   }
   if (m_Charset != CIDSET_UNKNOWN) {
@@ -391,15 +391,15 @@ FX_BOOL CPDF_CIDFont::Load() {
     else
       FT_UseCIDCharmap(m_Font.GetFace(), m_pCMap->m_Coding);
   }
-  m_DefaultWidth = pCIDFontDict->GetIntegerBy("DW", 1000);
-  CPDF_Array* pWidthArray = pCIDFontDict->GetArrayBy("W");
+  m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
+  CPDF_Array* pWidthArray = pCIDFontDict->GetArrayFor("W");
   if (pWidthArray)
     LoadMetricsArray(pWidthArray, m_WidthList, 1);
   if (!IsEmbedded())
     LoadSubstFont();
 
   if (m_pFontFile || (GetSubstFont()->m_SubstFlags & FXFONT_SUBST_EXACT)) {
-    CPDF_Object* pmap = pCIDFontDict->GetDirectObjectBy("CIDToGIDMap");
+    CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
     if (pmap) {
       if (CPDF_Stream* pStream = pmap->AsStream()) {
         m_pStreamAcc.reset(new CPDF_StreamAcc);
@@ -418,11 +418,11 @@ FX_BOOL CPDF_CIDFont::Load() {
 
   CheckFontMetrics();
   if (IsVertWriting()) {
-    pWidthArray = pCIDFontDict->GetArrayBy("W2");
+    pWidthArray = pCIDFontDict->GetArrayFor("W2");
     if (pWidthArray) {
       LoadMetricsArray(pWidthArray, m_VertMetrics, 3);
     }
-    CPDF_Array* pDefaultArray = pCIDFontDict->GetArrayBy("DW2");
+    CPDF_Array* pDefaultArray = pCIDFontDict->GetArrayFor("DW2");
     if (pDefaultArray) {
       m_DefaultVY = pDefaultArray->GetIntegerAt(0);
       m_DefaultW1 = pDefaultArray->GetIntegerAt(1);
@@ -832,8 +832,8 @@ FX_FLOAT CPDF_CIDFont::CIDTransformToFloat(uint8_t ch) {
 }
 
 void CPDF_CIDFont::LoadGB2312() {
-  m_BaseFont = m_pFontDict->GetStringBy("BaseFont");
-  CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictBy("FontDescriptor");
+  m_BaseFont = m_pFontDict->GetStringFor("BaseFont");
+  CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc)
     LoadFontDescriptor(pFontDesc);
 

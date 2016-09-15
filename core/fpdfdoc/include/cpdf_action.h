@@ -45,9 +45,9 @@ class CPDF_Action {
   CPDF_Dest GetDest(CPDF_Document* pDoc) const;
   CFX_WideString GetFilePath() const;
   CFX_ByteString GetURI(CPDF_Document* pDoc) const;
-  bool GetHideStatus() const { return m_pDict->GetBooleanBy("H", true); }
-  CFX_ByteString GetNamedAction() const { return m_pDict->GetStringBy("N"); }
-  uint32_t GetFlags() const { return m_pDict->GetIntegerBy("Flags"); }
+  bool GetHideStatus() const { return m_pDict->GetBooleanFor("H", true); }
+  CFX_ByteString GetNamedAction() const { return m_pDict->GetStringFor("N"); }
+  uint32_t GetFlags() const { return m_pDict->GetIntegerFor("Flags"); }
   CFX_WideString GetJavaScript() const;
   size_t GetSubActionsCount() const;
   CPDF_Action GetSubAction(size_t iIndex) const;

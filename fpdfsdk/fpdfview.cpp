@@ -396,15 +396,15 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
   if (!pRoot)
     return FALSE;
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
     return FALSE;
 
-  CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
+  CPDF_Object* pXFA = pAcroForm->GetObjectFor("XFA");
   if (!pXFA)
     return FALSE;
 
-  bool bDynamicXFA = pRoot->GetBooleanBy("NeedsRendering", false);
+  bool bDynamicXFA = pRoot->GetBooleanFor("NeedsRendering", false);
   *docType = bDynamicXFA ? DOCTYPE_DYNAMIC_XFA : DOCTYPE_STATIC_XFA;
   return TRUE;
 }
@@ -519,7 +519,7 @@ DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
     return -1;
 
   CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
-  return pDict ? pDict->GetIntegerBy("R") : -1;
+  return pDict ? pDict->GetIntegerFor("R") : -1;
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
@@ -991,7 +991,7 @@ DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
 
   CPDF_NameTree nameTree(pDoc, "Dests");
   pdfium::base::CheckedNumeric<FPDF_DWORD> count = nameTree.GetCount();
-  CPDF_Dictionary* pDest = pRoot->GetDictBy("Dests");
+  CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
   if (pDest)
     count += pDest->GetCount();
 
@@ -1090,7 +1090,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
   if (index >= count) {
-    CPDF_Dictionary* pDest = pRoot->GetDictBy("Dests");
+    CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
     if (!pDest)
       return nullptr;
 
@@ -1116,7 +1116,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pDestObj)
     return nullptr;
   if (CPDF_Dictionary* pDict = pDestObj->AsDictionary()) {
-    pDestObj = pDict->GetArrayBy("D");
+    pDestObj = pDict->GetArrayFor("D");
     if (!pDestObj)
       return nullptr;
   }

@@ -56,11 +56,11 @@ CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
   if (!pFieldDict)
     return nullptr;
 
-  CPDF_Object* pAttr = pFieldDict->GetDirectObjectBy(name);
+  CPDF_Object* pAttr = pFieldDict->GetDirectObjectFor(name);
   if (pAttr)
     return pAttr;
 
-  CPDF_Dictionary* pParent = pFieldDict->GetDictBy("Parent");
+  CPDF_Dictionary* pParent = pFieldDict->GetDictFor("Parent");
   if (!pParent)
     return nullptr;
   return FPDF_GetFieldAttr(pParent, name, nLevel + 1);
@@ -72,14 +72,14 @@ CFX_WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
   CPDF_Dictionary* pLevel = pFieldDict;
   while (pLevel) {
     visited.insert(pLevel);
-    CFX_WideString short_name = pLevel->GetUnicodeTextBy("T");
+    CFX_WideString short_name = pLevel->GetUnicodeTextFor("T");
     if (!short_name.IsEmpty()) {
       if (full_name.IsEmpty())
         full_name = short_name;
       else
         full_name = short_name + L"." + full_name;
     }
-    pLevel = pLevel->GetDictBy("Parent");
+    pLevel = pLevel->GetDictFor("Parent");
     if (pdfium::ContainsKey(visited, pLevel))
       break;
   }
@@ -223,14 +223,14 @@ FX_BOOL CPDF_FormField::ResetField(FX_BOOL bNotify) {
         if (!pClone)
           return FALSE;
 
-        m_pDict->SetAt("V", pClone);
+        m_pDict->SetFor("V", pClone);
         if (pRV) {
           CPDF_Object* pCloneR = pDV->Clone();
-          m_pDict->SetAt("RV", pCloneR);
+          m_pDict->SetFor("RV", pCloneR);
         }
       } else {
-        m_pDict->RemoveAt("V");
-        m_pDict->RemoveAt("RV");
+        m_pDict->RemoveFor("V");
+        m_pDict->RemoveFor("RV");
       }
       if (bNotify)
         NotifyAfterValueChange();
@@ -364,12 +364,12 @@ FX_BOOL CPDF_FormField::SetValue(const CFX_WideString& value,
       int iIndex = FindOptionValue(csValue);
       if (iIndex < 0) {
         CFX_ByteString bsEncodeText = PDF_EncodeText(csValue);
-        m_pDict->SetAtString(bDefault ? "DV" : "V", bsEncodeText);
+        m_pDict->SetStringFor(bDefault ? "DV" : "V", bsEncodeText);
         if (m_Type == RichText && !bDefault)
-          m_pDict->SetAtString("RV", bsEncodeText);
-        m_pDict->RemoveAt("I");
+          m_pDict->SetStringFor("RV", bsEncodeText);
+        m_pDict->RemoveFor("I");
       } else {
-        m_pDict->SetAtString(bDefault ? "DV" : "V", PDF_EncodeText(csValue));
+        m_pDict->SetStringFor(bDefault ? "DV" : "V", PDF_EncodeText(csValue));
         if (!bDefault) {
           ClearSelection();
           SetItemSelection(iIndex, TRUE);
@@ -419,7 +419,7 @@ int CPDF_FormField::GetMaxLen() const {
 
     CPDF_Dictionary* pWidgetDict = pControl->m_pWidgetDict;
     if (pWidgetDict->KeyExist("MaxLen"))
-      return pWidgetDict->GetIntegerBy("MaxLen");
+      return pWidgetDict->GetIntegerFor("MaxLen");
   }
   return 0;
 }
@@ -486,8 +486,8 @@ FX_BOOL CPDF_FormField::ClearSelection(FX_BOOL bNotify) {
     if (!NotifyListOrComboBoxBeforeChange(csValue))
       return FALSE;
   }
-  m_pDict->RemoveAt("V");
-  m_pDict->RemoveAt("I");
+  m_pDict->RemoveFor("V");
+  m_pDict->RemoveFor("I");
   if (bNotify)
     NotifyListOrComboBoxAfterChange();
   return TRUE;
@@ -551,7 +551,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
     if (GetType() == ListBox) {
       SelectOption(index, TRUE);
       if (!(m_Flags & kFormListMultiSelect)) {
-        m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
+        m_pDict->SetStringFor("V", PDF_EncodeText(opt_value));
       } else {
         CPDF_Array* pArray = new CPDF_Array;
         for (int i = 0; i < CountOptions(); i++) {
@@ -560,13 +560,13 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
             pArray->AddString(PDF_EncodeText(opt_value));
           }
         }
-        m_pDict->SetAt("V", pArray);
+        m_pDict->SetFor("V", pArray);
       }
     } else {
-      m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
+      m_pDict->SetStringFor("V", PDF_EncodeText(opt_value));
       CPDF_Array* pI = new CPDF_Array;
       pI->AddInteger(index);
-      m_pDict->SetAt("I", pI);
+      m_pDict->SetFor("I", pI);
     }
   } else {
     CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "V");
@@ -575,7 +575,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
         SelectOption(index, FALSE);
         if (pValue->IsString()) {
           if (pValue->GetUnicodeText() == opt_value)
-            m_pDict->RemoveAt("V");
+            m_pDict->RemoveFor("V");
         } else if (pValue->IsArray()) {
           CPDF_Array* pArray = new CPDF_Array;
           for (int i = 0; i < CountOptions(); i++) {
@@ -587,11 +587,11 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
           if (pArray->GetCount() < 1)
             pArray->Release();
           else
-            m_pDict->SetAt("V", pArray);
+            m_pDict->SetFor("V", pArray);
         }
       } else {
-        m_pDict->RemoveAt("V");
-        m_pDict->RemoveAt("I");
+        m_pDict->RemoveFor("V");
+        m_pDict->RemoveFor("I");
       }
     }
   }
@@ -683,7 +683,7 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
   CPDF_Array* pOpt = ToArray(pValue);
   if (!pOpt) {
     pOpt = new CPDF_Array;
-    m_pDict->SetAt("Opt", pOpt);
+    m_pDict->SetFor("Opt", pOpt);
   }
 
   int iCount = pdfium::base::checked_cast<int, size_t>(pOpt->GetCount());
@@ -710,11 +710,11 @@ FX_BOOL CPDF_FormField::ClearOptions(FX_BOOL bNotify) {
       return FALSE;
   }
 
-  m_pDict->RemoveAt("Opt");
-  m_pDict->RemoveAt("V");
-  m_pDict->RemoveAt("DV");
-  m_pDict->RemoveAt("I");
-  m_pDict->RemoveAt("TI");
+  m_pDict->RemoveFor("Opt");
+  m_pDict->RemoveFor("V");
+  m_pDict->RemoveFor("DV");
+  m_pDict->RemoveFor("I");
+  m_pDict->RemoveFor("TI");
 
   if (bNotify)
     NotifyListOrComboBoxAfterChange();
@@ -760,19 +760,19 @@ FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
   CPDF_Object* pOpt = FPDF_GetFieldAttr(m_pDict, "Opt");
   if (!ToArray(pOpt)) {
     if (bChecked) {
-      m_pDict->SetAtName("V", csBExport);
+      m_pDict->SetNameFor("V", csBExport);
     } else {
       CFX_ByteString csV;
       CPDF_Object* pV = FPDF_GetFieldAttr(m_pDict, "V");
       if (pV)
         csV = pV->GetString();
       if (csV == csBExport)
-        m_pDict->SetAtName("V", "Off");
+        m_pDict->SetNameFor("V", "Off");
     }
   } else if (bChecked) {
     CFX_ByteString csIndex;
     csIndex.Format("%d", iControlIndex);
-    m_pDict->SetAtName("V", csIndex);
+    m_pDict->SetNameFor("V", csIndex);
   }
   if (bNotify && m_pForm->m_pFormNotify)
     m_pForm->m_pFormNotify->AfterCheckedStatusChange(this);
@@ -850,13 +850,13 @@ FX_BOOL CPDF_FormField::IsOptionSelected(int iOptIndex) const {
 FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
                                      FX_BOOL bSelected,
                                      FX_BOOL bNotify) {
-  CPDF_Array* pArray = m_pDict->GetArrayBy("I");
+  CPDF_Array* pArray = m_pDict->GetArrayFor("I");
   if (!pArray) {
     if (!bSelected)
       return TRUE;
 
     pArray = new CPDF_Array;
-    m_pDict->SetAt("I", pArray);
+    m_pDict->SetFor("I", pArray);
   }
 
   FX_BOOL bReturn = FALSE;
@@ -895,7 +895,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
       pArray->AddInteger(iOptIndex);
 
     if (pArray->IsEmpty())
-      m_pDict->RemoveAt("I");
+      m_pDict->RemoveFor("I");
   }
   if (bNotify)
     NotifyListOrComboBoxAfterChange();
@@ -913,7 +913,7 @@ FX_BOOL CPDF_FormField::ClearSelectedOptions(FX_BOOL bNotify) {
     if (!NotifyListOrComboBoxBeforeChange(csValue))
       return FALSE;
   }
-  m_pDict->RemoveAt("I");
+  m_pDict->RemoveFor("I");
   if (bNotify)
     NotifyListOrComboBoxAfterChange();
 
@@ -930,23 +930,23 @@ void CPDF_FormField::LoadDA() {
     DA = pObj->GetString();
 
   if (DA.IsEmpty())
-    DA = pFormDict->GetStringBy("DA");
+    DA = pFormDict->GetStringFor("DA");
 
   if (DA.IsEmpty())
     return;
 
-  CPDF_Dictionary* pDR = pFormDict->GetDictBy("DR");
+  CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
   if (!pDR)
     return;
 
-  CPDF_Dictionary* pFont = pDR->GetDictBy("Font");
+  CPDF_Dictionary* pFont = pDR->GetDictFor("Font");
   if (!pFont)
     return;
 
   CPDF_SimpleParser syntax(DA.AsStringC());
   syntax.FindTagParamFromStart("Tf", 2);
   CFX_ByteString font_name(syntax.GetWord());
-  CPDF_Dictionary* pFontDict = pFont->GetDictBy(font_name);
+  CPDF_Dictionary* pFontDict = pFont->GetDictFor(font_name);
   if (!pFontDict)
     return;
 

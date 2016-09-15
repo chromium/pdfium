@@ -110,8 +110,8 @@ bool CPDF_MeshStream::Load() {
   m_Stream.LoadAllData(m_pShadingStream);
   m_BitStream.Init(m_Stream.GetData(), m_Stream.GetSize());
   CPDF_Dictionary* pDict = m_pShadingStream->GetDict();
-  m_nCoordBits = pDict->GetIntegerBy("BitsPerCoordinate");
-  m_nComponentBits = pDict->GetIntegerBy("BitsPerComponent");
+  m_nCoordBits = pDict->GetIntegerFor("BitsPerCoordinate");
+  m_nComponentBits = pDict->GetIntegerFor("BitsPerComponent");
   if (ShouldCheckBPC(m_type)) {
     if (!IsValidBitsPerCoordinate(m_nCoordBits))
       return false;
@@ -119,7 +119,7 @@ bool CPDF_MeshStream::Load() {
       return false;
   }
 
-  m_nFlagBits = pDict->GetIntegerBy("BitsPerFlag");
+  m_nFlagBits = pDict->GetIntegerFor("BitsPerFlag");
   if (ShouldCheckBitsPerFlag(m_type) && !IsValidBitsPerFlag(m_nFlagBits))
     return false;
 
@@ -128,7 +128,7 @@ bool CPDF_MeshStream::Load() {
     return false;
 
   m_nComponents = m_funcs.empty() ? nComponents : 1;
-  CPDF_Array* pDecode = pDict->GetArrayBy("Decode");
+  CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
   if (!pDecode || pDecode->GetCount() != 4 + m_nComponents * 2)
     return false;
 

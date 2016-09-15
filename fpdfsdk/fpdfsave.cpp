@@ -100,11 +100,11 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   if (!pRoot)
     return false;
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
     return false;
 
-  CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
+  CPDF_Object* pXFA = pAcroForm->GetObjectFor("XFA");
   if (!pXFA)
     return true;
 
