@@ -83,8 +83,8 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
 }
 
 FX_BOOL CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
-                             FX_UINT nChar,
-                             FX_UINT nFlags) {
+                             uint32_t nChar,
+                             uint32_t nFlags) {
   return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
 }
 

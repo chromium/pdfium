@@ -177,7 +177,7 @@ CPDFSDK_Annot* CPDFSDK_Document::GetFocusAnnot() {
   return m_pFocusAnnot;
 }
 
-FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
+FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   if (m_bBeingDestroyed)
     return FALSE;
 
@@ -214,7 +214,7 @@ FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   return FALSE;
 }
 
-FX_BOOL CPDFSDK_Document::KillFocusAnnot(FX_UINT nFlag) {
+FX_BOOL CPDFSDK_Document::KillFocusAnnot(uint32_t nFlag) {
   if (m_pFocusAnnot) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pEnv->GetAnnotHandlerMgr();
     CPDFSDK_Annot* pFocusAnnot = m_pFocusAnnot;

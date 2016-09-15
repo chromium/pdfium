@@ -28,7 +28,9 @@ class CFFL_ComboBox : public CFFL_FormFiller, public IPWL_FocusHandler {
   PWL_CREATEPARAM GetCreateParam() override;
   CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp,
                          CPDFSDK_PageView* pPageView) override;
-  FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags) override;
+  FX_BOOL OnChar(CPDFSDK_Annot* pAnnot,
+                 uint32_t nChar,
+                 uint32_t nFlags) override;
   FX_BOOL IsDataChanged(CPDFSDK_PageView* pPageView) override;
   void SaveData(CPDFSDK_PageView* pPageView) override;
   void GetActionData(CPDFSDK_PageView* pPageView,

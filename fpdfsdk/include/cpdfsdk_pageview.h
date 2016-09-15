@@ -39,10 +39,10 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   const CPDF_Annot* GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFocusAnnot();
-  void SetFocusAnnot(CPDFSDK_Annot* pSDKAnnot, FX_UINT nFlag = 0) {
+  void SetFocusAnnot(CPDFSDK_Annot* pSDKAnnot, uint32_t nFlag = 0) {
     m_pSDKDoc->SetFocusAnnot(pSDKAnnot, nFlag);
   }
-  FX_BOOL KillFocusAnnot(FX_UINT nFlag = 0) {
+  FX_BOOL KillFocusAnnot(uint32_t nFlag = 0) {
     return m_pSDKDoc->KillFocusAnnot(nFlag);
   }
   void KillFocusAnnotIfNeeded();
@@ -65,13 +65,13 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CPDF_Page* GetPDFPage() const;
   CPDF_Document* GetPDFDocument();
   CPDFSDK_Document* GetSDKDocument() { return m_pSDKDoc; }
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_UINT nFlag);
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_UINT nFlag);
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL OnRButtonDown(const CFX_FloatPoint& point, FX_UINT nFlag);
-  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_UINT nFlag);
+  FX_BOOL OnRButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
 #endif  // PDF_ENABLE_XFA
-  FX_BOOL OnChar(int nChar, FX_UINT nFlag);
+  FX_BOOL OnChar(int nChar, uint32_t nFlag);
   FX_BOOL OnKeyDown(int nKeyCode, int nFlag);
   FX_BOOL OnKeyUp(int nKeyCode, int nFlag);
 

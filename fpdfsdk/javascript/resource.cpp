@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/resource.h"
 
-CFX_WideString JSGetStringFromID(FX_UINT id) {
+CFX_WideString JSGetStringFromID(uint32_t id) {
   switch (id) {
     case IDS_STRING_JSALERT:
       return L"Alert";

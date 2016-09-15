@@ -43,41 +43,43 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 
   virtual FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
-                                FX_UINT nFlags,
+                                uint32_t nFlags,
                                 const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
+                              uint32_t nFlags,
                               const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
-                                  FX_UINT nFlags,
+                                  uint32_t nFlags,
                                   const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
+                              uint32_t nFlags,
                               const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseWheel(CPDFSDK_PageView* pPageView,
                                CPDFSDK_Annot* pAnnot,
-                               FX_UINT nFlags,
+                               uint32_t nFlags,
                                short zDelta,
                                const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
-                                FX_UINT nFlags,
+                                uint32_t nFlags,
                                 const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
+                              uint32_t nFlags,
                               const CFX_FloatPoint& point);
 
   virtual FX_BOOL OnKeyDown(CPDFSDK_Annot* pAnnot,
-                            FX_UINT nKeyCode,
-                            FX_UINT nFlags);
-  virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
+                            uint32_t nKeyCode,
+                            uint32_t nFlags);
+  virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot,
+                         uint32_t nChar,
+                         uint32_t nFlags);
 
-  void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
-  void KillFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
+  void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
+  void KillFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
 
   // CPWL_TimerHandler
   void TimerProc() override;
@@ -119,7 +121,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
                      const CFX_FloatRect& rcWindow);
   CFX_FloatRect GetWindowRect(CPDFSDK_PageView* pPageView);
 
-  FX_BOOL CommitData(CPDFSDK_PageView* pPageView, FX_UINT nFlag);
+  FX_BOOL CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag);
   virtual FX_BOOL IsDataChanged(CPDFSDK_PageView* pPageView);
   virtual void SaveData(CPDFSDK_PageView* pPageView);
 
@@ -180,15 +182,15 @@ class CFFL_Button : public CFFL_FormFiller {
   void OnMouseExit(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot) override;
   FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
                         CPDFSDK_Annot* pAnnot,
-                        FX_UINT nFlags,
+                        uint32_t nFlags,
                         const CFX_FloatPoint& point) override;
   FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
-                      FX_UINT nFlags,
+                      uint32_t nFlags,
                       const CFX_FloatPoint& point) override;
   FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
-                      FX_UINT nFlags,
+                      uint32_t nFlags,
                       const CFX_FloatPoint& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,

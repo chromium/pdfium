@@ -18,12 +18,14 @@ class CFFL_CheckBox : public CFFL_Button {
   CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp,
                          CPDFSDK_PageView* pPageView) override;
   FX_BOOL OnKeyDown(CPDFSDK_Annot* pAnnot,
-                    FX_UINT nKeyCode,
-                    FX_UINT nFlags) override;
-  FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags) override;
+                    uint32_t nKeyCode,
+                    uint32_t nFlags) override;
+  FX_BOOL OnChar(CPDFSDK_Annot* pAnnot,
+                 uint32_t nChar,
+                 uint32_t nFlags) override;
   FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
-                      FX_UINT nFlags,
+                      uint32_t nFlags,
                       const CFX_FloatPoint& point) override;
   FX_BOOL IsDataChanged(CPDFSDK_PageView* pPageView) override;
   void SaveData(CPDFSDK_PageView* pPageView) override;

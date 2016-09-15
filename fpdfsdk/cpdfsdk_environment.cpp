@@ -44,8 +44,8 @@ CPDFSDK_Environment::~CPDFSDK_Environment() {
 
 int CPDFSDK_Environment::JS_appAlert(const FX_WCHAR* Msg,
                                      const FX_WCHAR* Title,
-                                     FX_UINT Type,
-                                     FX_UINT Icon) {
+                                     uint32_t Type,
+                                     uint32_t Icon) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->app_alert) {
     return -1;

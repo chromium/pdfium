@@ -359,8 +359,8 @@ class CPDFSDK_Environment final {
 
   int JS_appAlert(const FX_WCHAR* Msg,
                   const FX_WCHAR* Title,
-                  FX_UINT Type,
-                  FX_UINT Icon);
+                  uint32_t Type,
+                  uint32_t Icon);
   int JS_appResponse(const FX_WCHAR* Question,
                      const FX_WCHAR* Title,
                      const FX_WCHAR* Default,

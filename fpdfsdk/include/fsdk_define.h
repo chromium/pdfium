@@ -20,18 +20,6 @@
 #include <tchar.h>
 #endif
 
-// Convert a #FX_ARGB to a #FX_COLORREF.
-#define FX_ARGBTOCOLORREF(argb)                                            \
-  ((((uint32_t)argb & 0x00FF0000) >> 16) | ((uint32_t)argb & 0x0000FF00) | \
-   (((uint32_t)argb & 0x000000FF) << 16))
-
-// Convert a #FX_COLORREF to a #FX_ARGB.
-#define FX_COLORREFTOARGB(rgb)                                   \
-  ((uint32_t)0xFF000000 | (((uint32_t)rgb & 0x000000FF) << 16) | \
-   ((uint32_t)rgb & 0x0000FF00) | (((uint32_t)rgb & 0x00FF0000) >> 16))
-
-typedef unsigned int FX_UINT;
-
 class CPDF_Annot;
 class CPDF_Page;
 class CPDF_PageRenderContext;

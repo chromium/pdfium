@@ -123,7 +123,7 @@ void CFFL_IFormFiller::OnDelete(CPDFSDK_Annot* pAnnot) {
 
 void CFFL_IFormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
-                                    FX_UINT nFlag) {
+                                    uint32_t nFlag) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (!m_bNotifying) {
@@ -159,7 +159,7 @@ void CFFL_IFormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView,
 
 void CFFL_IFormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
-                                   FX_UINT nFlag) {
+                                   uint32_t nFlag) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (!m_bNotifying) {
@@ -195,7 +195,7 @@ void CFFL_IFormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
 
 FX_BOOL CFFL_IFormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
-                                        FX_UINT nFlags,
+                                        uint32_t nFlags,
                                         const CFX_FloatPoint& point) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
@@ -237,7 +237,7 @@ FX_BOOL CFFL_IFormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView,
 
 FX_BOOL CFFL_IFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
-                                      FX_UINT nFlags,
+                                      uint32_t nFlags,
                                       const CFX_FloatPoint& point) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
@@ -280,7 +280,7 @@ void CFFL_IFormFiller::OnButtonUp(CPDFSDK_Widget* pWidget,
                                   CPDFSDK_PageView* pPageView,
                                   FX_BOOL& bReset,
                                   FX_BOOL& bExit,
-                                  FX_UINT nFlag) {
+                                  uint32_t nFlag) {
   ASSERT(pWidget);
 
   if (!m_bNotifying) {
@@ -317,7 +317,7 @@ void CFFL_IFormFiller::OnButtonUp(CPDFSDK_Widget* pWidget,
 
 FX_BOOL CFFL_IFormFiller::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                           CPDFSDK_Annot* pAnnot,
-                                          FX_UINT nFlags,
+                                          uint32_t nFlags,
                                           const CFX_FloatPoint& point) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
@@ -330,7 +330,7 @@ FX_BOOL CFFL_IFormFiller::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
 
 FX_BOOL CFFL_IFormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
-                                      FX_UINT nFlags,
+                                      uint32_t nFlags,
                                       const CFX_FloatPoint& point) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
@@ -344,7 +344,7 @@ FX_BOOL CFFL_IFormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
 
 FX_BOOL CFFL_IFormFiller::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot,
-                                       FX_UINT nFlags,
+                                       uint32_t nFlags,
                                        short zDelta,
                                        const CFX_FloatPoint& point) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -358,7 +358,7 @@ FX_BOOL CFFL_IFormFiller::OnMouseWheel(CPDFSDK_PageView* pPageView,
 
 FX_BOOL CFFL_IFormFiller::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
-                                        FX_UINT nFlags,
+                                        uint32_t nFlags,
                                         const CFX_FloatPoint& point) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
@@ -371,7 +371,7 @@ FX_BOOL CFFL_IFormFiller::OnRButtonDown(CPDFSDK_PageView* pPageView,
 
 FX_BOOL CFFL_IFormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
-                                      FX_UINT nFlags,
+                                      uint32_t nFlags,
                                       const CFX_FloatPoint& point) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
@@ -383,8 +383,8 @@ FX_BOOL CFFL_IFormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
 }
 
 FX_BOOL CFFL_IFormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                    FX_UINT nKeyCode,
-                                    FX_UINT nFlags) {
+                                    uint32_t nKeyCode,
+                                    uint32_t nFlags) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
@@ -395,8 +395,8 @@ FX_BOOL CFFL_IFormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
 }
 
 FX_BOOL CFFL_IFormFiller::OnChar(CPDFSDK_Annot* pAnnot,
-                                 FX_UINT nChar,
-                                 FX_UINT nFlags) {
+                                 uint32_t nChar,
+                                 uint32_t nFlags) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   if (nChar == FWL_VKEY_Tab)
     return TRUE;
@@ -407,7 +407,7 @@ FX_BOOL CFFL_IFormFiller::OnChar(CPDFSDK_Annot* pAnnot,
   return FALSE;
 }
 
-FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
+FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   if (!pAnnot)
     return FALSE;
 
@@ -451,7 +451,7 @@ FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   return TRUE;
 }
 
-FX_BOOL CFFL_IFormFiller::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
+FX_BOOL CFFL_IFormFiller::OnKillFocus(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   if (!pAnnot)
     return FALSE;
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -739,7 +739,7 @@ void CFFL_IFormFiller::OnClick(CPDFSDK_Widget* pWidget,
                                CPDFSDK_PageView* pPageView,
                                FX_BOOL& bReset,
                                FX_BOOL& bExit,
-                               FX_UINT nFlag) {
+                               uint32_t nFlag) {
   if (!m_bNotifying) {
     if (pWidget->HasXFAAAction(PDFSDK_XFA_Click)) {
       m_bNotifying = TRUE;
@@ -774,7 +774,7 @@ void CFFL_IFormFiller::OnFull(CPDFSDK_Widget* pWidget,
                               CPDFSDK_PageView* pPageView,
                               FX_BOOL& bReset,
                               FX_BOOL& bExit,
-                              FX_UINT nFlag) {
+                              uint32_t nFlag) {
   if (!m_bNotifying) {
     if (pWidget->HasXFAAAction(PDFSDK_XFA_Full)) {
       m_bNotifying = TRUE;
@@ -841,7 +841,7 @@ void CFFL_IFormFiller::OnPreOpen(CPDFSDK_Widget* pWidget,
                                  CPDFSDK_PageView* pPageView,
                                  FX_BOOL& bReset,
                                  FX_BOOL& bExit,
-                                 FX_UINT nFlag) {
+                                 uint32_t nFlag) {
   if (!m_bNotifying) {
     if (pWidget->HasXFAAAction(PDFSDK_XFA_PreOpen)) {
       m_bNotifying = TRUE;
@@ -876,7 +876,7 @@ void CFFL_IFormFiller::OnPostOpen(CPDFSDK_Widget* pWidget,
                                   CPDFSDK_PageView* pPageView,
                                   FX_BOOL& bReset,
                                   FX_BOOL& bExit,
-                                  FX_UINT nFlag) {
+                                  uint32_t nFlag) {
   if (!m_bNotifying) {
     if (pWidget->HasXFAAAction(PDFSDK_XFA_PostOpen)) {
       m_bNotifying = TRUE;

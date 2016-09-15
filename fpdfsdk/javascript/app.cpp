@@ -43,7 +43,7 @@ class GlobalTimer {
   CFX_WideString GetJScript() const { return m_swJScript; }
 
  private:
-  using TimerMap = std::map<FX_UINT, GlobalTimer*>;
+  using TimerMap = std::map<uint32_t, GlobalTimer*>;
   static TimerMap* GetGlobalTimerMap();
 
   uint32_t m_nTimerID;

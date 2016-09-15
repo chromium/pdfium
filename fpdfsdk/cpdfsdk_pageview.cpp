@@ -317,7 +317,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* hWidget) {
 #endif  // PDF_ENABLE_XFA
 
 FX_BOOL CPDFSDK_PageView::OnLButtonDown(const CFX_FloatPoint& point,
-                                        FX_UINT nFlag) {
+                                        uint32_t nFlag) {
   CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_Annot* pFXAnnot = GetFXWidgetAtPoint(point.x, point.y);
@@ -336,7 +336,7 @@ FX_BOOL CPDFSDK_PageView::OnLButtonDown(const CFX_FloatPoint& point,
 
 #ifdef PDF_ENABLE_XFA
 FX_BOOL CPDFSDK_PageView::OnRButtonDown(const CFX_FloatPoint& point,
-                                        FX_UINT nFlag) {
+                                        uint32_t nFlag) {
   CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
@@ -354,7 +354,7 @@ FX_BOOL CPDFSDK_PageView::OnRButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPDFSDK_PageView::OnRButtonUp(const CFX_FloatPoint& point,
-                                      FX_UINT nFlag) {
+                                      uint32_t nFlag) {
   CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
@@ -372,7 +372,7 @@ FX_BOOL CPDFSDK_PageView::OnRButtonUp(const CFX_FloatPoint& point,
 #endif  // PDF_ENABLE_XFA
 
 FX_BOOL CPDFSDK_PageView::OnLButtonUp(const CFX_FloatPoint& point,
-                                      FX_UINT nFlag) {
+                                      uint32_t nFlag) {
   CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
@@ -432,7 +432,7 @@ FX_BOOL CPDFSDK_PageView::OnMouseWheel(double deltaX,
   return FALSE;
 }
 
-FX_BOOL CPDFSDK_PageView::OnChar(int nChar, FX_UINT nFlag) {
+FX_BOOL CPDFSDK_PageView::OnChar(int nChar, uint32_t nFlag) {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
     CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();

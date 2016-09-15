@@ -104,8 +104,8 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp,
 }
 
 FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
-                               FX_UINT nChar,
-                               FX_UINT nFlags) {
+                               uint32_t nChar,
+                               uint32_t nFlags) {
   switch (nChar) {
     case FWL_VKEY_Return:
       if (!(m_pWidget->GetFieldFlags() & FIELDFLAG_MULTILINE)) {

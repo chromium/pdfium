@@ -40,48 +40,50 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
 
   virtual void OnMouseEnter(CPDFSDK_PageView* pPageView,
                             CPDFSDK_Annot* pAnnot,
-                            FX_UINT nFlag);
+                            uint32_t nFlag);
   virtual void OnMouseExit(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot* pAnnot,
-                           FX_UINT nFlag);
+                           uint32_t nFlag);
 
   virtual FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
-                                FX_UINT nFlags,
+                                uint32_t nFlags,
                                 const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
+                              uint32_t nFlags,
                               const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
-                                  FX_UINT nFlags,
+                                  uint32_t nFlags,
                                   const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
+                              uint32_t nFlags,
                               const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseWheel(CPDFSDK_PageView* pPageView,
                                CPDFSDK_Annot* pAnnot,
-                               FX_UINT nFlags,
+                               uint32_t nFlags,
                                short zDelta,
                                const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
-                                FX_UINT nFlags,
+                                uint32_t nFlags,
                                 const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
+                              uint32_t nFlags,
                               const CFX_FloatPoint& point);
 
   virtual FX_BOOL OnKeyDown(CPDFSDK_Annot* pAnnot,
-                            FX_UINT nKeyCode,
-                            FX_UINT nFlags);
-  virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
+                            uint32_t nKeyCode,
+                            uint32_t nFlags);
+  virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot,
+                         uint32_t nChar,
+                         uint32_t nFlags);
 
-  virtual FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
-  virtual FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
+  virtual FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
+  virtual FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
 
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, FX_BOOL bRegister);
   void RemoveFormFiller(CPDFSDK_Annot* pAnnot);
@@ -115,28 +117,28 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                   CPDFSDK_PageView* pPageView,
                   FX_BOOL& bReset,
                   FX_BOOL& bExit,
-                  FX_UINT nFlag);
+                  uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA
   void OnClick(CPDFSDK_Widget* pWidget,
                CPDFSDK_PageView* pPageView,
                FX_BOOL& bReset,
                FX_BOOL& bExit,
-               FX_UINT nFlag);
+               uint32_t nFlag);
   void OnFull(CPDFSDK_Widget* pWidget,
               CPDFSDK_PageView* pPageView,
               FX_BOOL& bReset,
               FX_BOOL& bExit,
-              FX_UINT nFlag);
+              uint32_t nFlag);
   void OnPreOpen(CPDFSDK_Widget* pWidget,
                  CPDFSDK_PageView* pPageView,
                  FX_BOOL& bReset,
                  FX_BOOL& bExit,
-                 FX_UINT nFlag);
+                 uint32_t nFlag);
   void OnPostOpen(CPDFSDK_Widget* pWidget,
                   CPDFSDK_PageView* pPageView,
                   FX_BOOL& bReset,
                   FX_BOOL& bExit,
-                  FX_UINT nFlag);
+                  uint32_t nFlag);
 #endif  // PDF_ENABLE_XFA
 
  private:

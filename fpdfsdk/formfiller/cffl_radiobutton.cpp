@@ -29,8 +29,8 @@ CPWL_Wnd* CFFL_RadioButton::NewPDFWindow(const PWL_CREATEPARAM& cp,
 }
 
 FX_BOOL CFFL_RadioButton::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                                    FX_UINT nKeyCode,
-                                    FX_UINT nFlags) {
+                                    uint32_t nKeyCode,
+                                    uint32_t nFlags) {
   switch (nKeyCode) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space:
@@ -41,8 +41,8 @@ FX_BOOL CFFL_RadioButton::OnKeyDown(CPDFSDK_Annot* pAnnot,
 }
 
 FX_BOOL CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
-                                 FX_UINT nChar,
-                                 FX_UINT nFlags) {
+                                 uint32_t nChar,
+                                 uint32_t nFlags) {
   switch (nChar) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space: {
@@ -75,7 +75,7 @@ FX_BOOL CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
 
 FX_BOOL CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
-                                      FX_UINT nFlags,
+                                      uint32_t nFlags,
                                       const CFX_FloatPoint& point) {
   CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
 

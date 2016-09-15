@@ -7,8 +7,7 @@
 #ifndef FPDFSDK_JAVASCRIPT_RESOURCE_H_
 #define FPDFSDK_JAVASCRIPT_RESOURCE_H_
 
-#include "core/fxcrt/include/fx_string.h"  // For CFX_WideString.
-#include "fpdfsdk/include/fsdk_define.h"   // For FX_UINT.
+#include "core/fxcrt/include/fx_string.h"
 
 class CJS_Context;
 
@@ -33,7 +32,7 @@ class CJS_Context;
 #define IDS_STRING_JSNOPERMISSION 25639
 #define IDS_STRING_JSBADOBJECT 25640
 
-CFX_WideString JSGetStringFromID(FX_UINT id);
+CFX_WideString JSGetStringFromID(uint32_t id);
 CFX_WideString JSFormatErrorString(const char* class_name,
                                    const char* property_name,
                                    const CFX_WideString& details);
