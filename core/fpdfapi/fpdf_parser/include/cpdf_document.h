@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_
 
+#include <functional>
 #include <memory>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
@@ -128,6 +129,12 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   void LoadDocInternal();
   size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
   CPDF_Dictionary* GetPagesDict() const;
+  CPDF_Dictionary* ProcessbCJK(
+      CPDF_Dictionary* pBaseDict,
+      int charset,
+      FX_BOOL bVert,
+      CFX_ByteString basefont,
+      std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_

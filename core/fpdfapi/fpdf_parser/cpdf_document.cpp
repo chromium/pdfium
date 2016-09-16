@@ -182,11 +182,7 @@ const FX_CharsetUnicodes g_FX_CharsetUnicodes[] = {
     {FXFONT_BALTIC_CHARSET, g_FX_CP1257Unicodes},
 };
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
-  int size = end - start + 1;
-  int* widths = FX_Alloc(int, size);
-  GetCharWidth(hDC, start, end, widths);
+void InsertWidthArrayImpl(int* widths, int size, CPDF_Array* pWidthArray) {
   int i;
   for (i = 1; i < size; i++) {
     if (widths[i] != *widths)
@@ -203,6 +199,14 @@ void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
       pWidthArray1->AddInteger(widths[i]);
   }
   FX_Free(widths);
+}
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
+  int size = end - start + 1;
+  int* widths = FX_Alloc(int, size);
+  GetCharWidth(hDC, start, end, widths);
+  InsertWidthArrayImpl(widths, size, pWidthArray);
 }
 
 CFX_ByteString FPDF_GetPSNameFromTT(HDC hDC) {
@@ -230,22 +234,7 @@ void InsertWidthArray1(CFX_Font* pFont,
     int glyph_index = pEncoding->GlyphFromCharCode(start + i);
     widths[i] = pFont->GetGlyphWidth(glyph_index);
   }
-  for (i = 1; i < size; i++) {
-    if (widths[i] != *widths)
-      break;
-  }
-  if (i == size) {
-    int first = pWidthArray->GetIntegerAt(pWidthArray->GetCount() - 1);
-    pWidthArray->AddInteger(first + size - 1);
-    pWidthArray->AddInteger(*widths);
-  } else {
-    CPDF_Array* pWidthArray1 = new CPDF_Array;
-    pWidthArray->Add(pWidthArray1);
-    for (i = 0; i < size; i++) {
-      pWidthArray1->AddInteger(widths[i]);
-    }
-  }
-  FX_Free(widths);
+  InsertWidthArrayImpl(widths, size, pWidthArray);
 }
 
 int InsertDeletePDFPage(CPDF_Document* pDoc,
@@ -392,6 +381,25 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
   pBaseDict->SetNumberFor("FirstChar", 32);
   pBaseDict->SetNumberFor("LastChar", 255);
   pBaseDict->SetFor("Widths", pWidths);
+}
+
+CPDF_Dictionary* CalculateFontDesc(CFX_ByteString basefont,
+                                   int flags,
+                                   int italicangle,
+                                   int ascend,
+                                   int descend,
+                                   CPDF_Array* bbox,
+                                   int32_t stemV) {
+  CPDF_Dictionary* pFontDesc = new CPDF_Dictionary;
+  pFontDesc->SetNameFor("Type", "FontDescriptor");
+  pFontDesc->SetNameFor("FontName", basefont);
+  pFontDesc->SetIntegerFor("Flags", flags);
+  pFontDesc->SetFor("FontBBox", bbox);
+  pFontDesc->SetIntegerFor("ItalicAngle", italicangle);
+  pFontDesc->SetIntegerFor("Ascent", ascend);
+  pFontDesc->SetIntegerFor("Descent", descend);
+  pFontDesc->SetIntegerFor("StemV", stemV);
+  return pFontDesc;
 }
 
 }  // namespace
@@ -743,6 +751,74 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
   return i;
 }
 
+CPDF_Dictionary* CPDF_Document::ProcessbCJK(
+    CPDF_Dictionary* pBaseDict,
+    int charset,
+    FX_BOOL bVert,
+    CFX_ByteString basefont,
+    std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert) {
+  CPDF_Dictionary* pFontDict = new CPDF_Dictionary;
+  CFX_ByteString cmap;
+  CFX_ByteString ordering;
+  int supplement = 0;
+  CPDF_Array* pWidthArray = new CPDF_Array;
+  switch (charset) {
+    case FXFONT_CHINESEBIG5_CHARSET:
+      cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
+      ordering = "CNS1";
+      supplement = 4;
+      pWidthArray->AddInteger(1);
+      Insert(0x20, 0x7e, pWidthArray);
+      break;
+    case FXFONT_GB2312_CHARSET:
+      cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
+      ordering = "GB1";
+      supplement = 2;
+      pWidthArray->AddInteger(7716);
+      Insert(0x20, 0x20, pWidthArray);
+      pWidthArray->AddInteger(814);
+      Insert(0x21, 0x7e, pWidthArray);
+      break;
+    case FXFONT_HANGEUL_CHARSET:
+      cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
+      ordering = "Korea1";
+      supplement = 2;
+      pWidthArray->AddInteger(1);
+      Insert(0x20, 0x7e, pWidthArray);
+      break;
+    case FXFONT_SHIFTJIS_CHARSET:
+      cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
+      ordering = "Japan1";
+      supplement = 5;
+      pWidthArray->AddInteger(231);
+      Insert(0x20, 0x7d, pWidthArray);
+      pWidthArray->AddInteger(326);
+      Insert(0xa0, 0xa0, pWidthArray);
+      pWidthArray->AddInteger(327);
+      Insert(0xa1, 0xdf, pWidthArray);
+      pWidthArray->AddInteger(631);
+      Insert(0x7e, 0x7e, pWidthArray);
+      break;
+  }
+  pBaseDict->SetNameFor("Subtype", "Type0");
+  pBaseDict->SetNameFor("BaseFont", basefont);
+  pBaseDict->SetNameFor("Encoding", cmap);
+  pFontDict->SetFor("W", pWidthArray);
+  pFontDict->SetNameFor("Type", "Font");
+  pFontDict->SetNameFor("Subtype", "CIDFontType2");
+  pFontDict->SetNameFor("BaseFont", basefont);
+  CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary;
+  pCIDSysInfo->SetStringFor("Registry", "Adobe");
+  pCIDSysInfo->SetStringFor("Ordering", ordering);
+  pCIDSysInfo->SetIntegerFor("Supplement", supplement);
+  pFontDict->SetFor("CIDSystemInfo", pCIDSysInfo);
+  CPDF_Array* pArray = new CPDF_Array;
+  pBaseDict->SetFor("DescendantFonts", pArray);
+  AddIndirectObject(pFontDict);
+  pArray->AddReference(this, pFontDict);
+  return pFontDict;
+}
+
 CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   if (!pFont)
     return nullptr;
@@ -791,77 +867,16 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
     ProcessNonbCJK(pBaseDict, pFont->IsBold(), pFont->IsItalic(), basefont,
                    pWidths);
   } else {
-    flags |= PDFFONT_NONSYMBOLIC;
-    pFontDict = new CPDF_Dictionary;
-    CFX_ByteString cmap;
-    CFX_ByteString ordering;
-    int supplement = 0;
-    CPDF_Array* pWidthArray = new CPDF_Array;
-    switch (charset) {
-      case FXFONT_CHINESEBIG5_CHARSET:
-        cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
-        ordering = "CNS1";
-        supplement = 4;
-        pWidthArray->AddInteger(1);
-        InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x7e, pWidthArray);
-        break;
-      case FXFONT_GB2312_CHARSET:
-        cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
-        ordering = "GB1";
-        supplement = 2;
-        pWidthArray->AddInteger(7716);
-        InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x20, pWidthArray);
-        pWidthArray->AddInteger(814);
-        InsertWidthArray1(pFont, pEncoding.get(), 0x21, 0x7e, pWidthArray);
-        break;
-      case FXFONT_HANGEUL_CHARSET:
-        cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
-        ordering = "Korea1";
-        supplement = 2;
-        pWidthArray->AddInteger(1);
-        InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x7e, pWidthArray);
-        break;
-      case FXFONT_SHIFTJIS_CHARSET:
-        cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
-        ordering = "Japan1";
-        supplement = 5;
-        pWidthArray->AddInteger(231);
-        InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x7d, pWidthArray);
-        pWidthArray->AddInteger(326);
-        InsertWidthArray1(pFont, pEncoding.get(), 0xa0, 0xa0, pWidthArray);
-        pWidthArray->AddInteger(327);
-        InsertWidthArray1(pFont, pEncoding.get(), 0xa1, 0xdf, pWidthArray);
-        pWidthArray->AddInteger(631);
-        InsertWidthArray1(pFont, pEncoding.get(), 0x7e, 0x7e, pWidthArray);
-        break;
-    }
-    pBaseDict->SetNameFor("Subtype", "Type0");
-    pBaseDict->SetNameFor("BaseFont", basefont);
-    pBaseDict->SetNameFor("Encoding", cmap);
-    pFontDict->SetFor("W", pWidthArray);
-    pFontDict->SetNameFor("Type", "Font");
-    pFontDict->SetNameFor("Subtype", "CIDFontType2");
-    pFontDict->SetNameFor("BaseFont", basefont);
-    CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary;
-    pCIDSysInfo->SetStringFor("Registry", "Adobe");
-    pCIDSysInfo->SetStringFor("Ordering", ordering);
-    pCIDSysInfo->SetIntegerFor("Supplement", supplement);
-    pFontDict->SetFor("CIDSystemInfo", pCIDSysInfo);
-    CPDF_Array* pArray = new CPDF_Array;
-    pBaseDict->SetFor("DescendantFonts", pArray);
-    AddIndirectObject(pFontDict);
-    pArray->AddReference(this, pFontDict);
+    pFontDict = ProcessbCJK(pBaseDict, charset, bVert, basefont,
+                            [pFont, &pEncoding](FX_WCHAR start, FX_WCHAR end,
+                                                CPDF_Array* widthArr) {
+                              InsertWidthArray1(pFont, pEncoding.get(), start,
+                                                end, widthArr);
+                            });
   }
   AddIndirectObject(pBaseDict);
-  CPDF_Dictionary* pFontDesc = new CPDF_Dictionary;
-  pFontDesc->SetNameFor("Type", "FontDescriptor");
-  pFontDesc->SetNameFor("FontName", basefont);
-  pFontDesc->SetIntegerFor("Flags", flags);
-  pFontDesc->SetIntegerFor(
-      "ItalicAngle",
-      pFont->GetSubstFont() ? pFont->GetSubstFont()->m_ItalicAngle : 0);
-  pFontDesc->SetIntegerFor("Ascent", pFont->GetAscent());
-  pFontDesc->SetIntegerFor("Descent", pFont->GetDescent());
+  int italicangle =
+      pFont->GetSubstFont() ? pFont->GetSubstFont()->m_ItalicAngle : 0;
   FX_RECT bbox;
   pFont->GetBBox(bbox);
   CPDF_Array* pBBox = new CPDF_Array;
@@ -869,7 +884,6 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   pBBox->AddInteger(bbox.bottom);
   pBBox->AddInteger(bbox.right);
   pBBox->AddInteger(bbox.top);
-  pFontDesc->SetFor("FontBBox", pBBox);
   int32_t nStemV = 0;
   if (pFont->GetSubstFont()) {
     nStemV = pFont->GetSubstFont()->m_Weight / 5;
@@ -885,7 +899,9 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
         nStemV = width;
     }
   }
-  pFontDesc->SetIntegerFor("StemV", nStemV);
+  CPDF_Dictionary* pFontDesc =
+      CalculateFontDesc(basefont, flags, italicangle, pFont->GetAscent(),
+                        pFont->GetDescent(), pBBox, nStemV);
   AddIndirectObject(pFontDesc);
   pFontDict->SetReferenceFor("FontDescriptor", this, pFontDesc);
   return LoadFont(pBaseDict);
@@ -968,79 +984,20 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
     ProcessNonbCJK(pBaseDict, pLogFont->lfWeight > FW_MEDIUM,
                    pLogFont->lfItalic != 0, basefont, pWidths);
   } else {
-    pFontDict = new CPDF_Dictionary;
-    CFX_ByteString cmap;
-    CFX_ByteString ordering;
-    int supplement = 0;
-    CPDF_Array* pWidthArray = new CPDF_Array;
-    switch (pLogFont->lfCharSet) {
-      case CHINESEBIG5_CHARSET:
-        cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
-        ordering = "CNS1";
-        supplement = 4;
-        pWidthArray->AddInteger(1);
-        InsertWidthArray(hDC, 0x20, 0x7e, pWidthArray);
-        break;
-      case GB2312_CHARSET:
-        cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
-        ordering = "GB1", supplement = 2;
-        pWidthArray->AddInteger(7716);
-        InsertWidthArray(hDC, 0x20, 0x20, pWidthArray);
-        pWidthArray->AddInteger(814);
-        InsertWidthArray(hDC, 0x21, 0x7e, pWidthArray);
-        break;
-      case HANGEUL_CHARSET:
-        cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
-        ordering = "Korea1";
-        supplement = 2;
-        pWidthArray->AddInteger(1);
-        InsertWidthArray(hDC, 0x20, 0x7e, pWidthArray);
-        break;
-      case SHIFTJIS_CHARSET:
-        cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
-        ordering = "Japan1";
-        supplement = 5;
-        pWidthArray->AddInteger(231);
-        InsertWidthArray(hDC, 0x20, 0x7d, pWidthArray);
-        pWidthArray->AddInteger(326);
-        InsertWidthArray(hDC, 0xa0, 0xa0, pWidthArray);
-        pWidthArray->AddInteger(327);
-        InsertWidthArray(hDC, 0xa1, 0xdf, pWidthArray);
-        pWidthArray->AddInteger(631);
-        InsertWidthArray(hDC, 0x7e, 0x7e, pWidthArray);
-        break;
-    }
-    pBaseDict->SetNameFor("Subtype", "Type0");
-    pBaseDict->SetNameFor("BaseFont", basefont);
-    pBaseDict->SetNameFor("Encoding", cmap);
-    pFontDict->SetFor("W", pWidthArray);
-    pFontDict->SetNameFor("Type", "Font");
-    pFontDict->SetNameFor("Subtype", "CIDFontType2");
-    pFontDict->SetNameFor("BaseFont", basefont);
-    CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary;
-    pCIDSysInfo->SetStringFor("Registry", "Adobe");
-    pCIDSysInfo->SetStringFor("Ordering", ordering);
-    pCIDSysInfo->SetIntegerFor("Supplement", supplement);
-    pFontDict->SetFor("CIDSystemInfo", pCIDSysInfo);
-    CPDF_Array* pArray = new CPDF_Array;
-    pBaseDict->SetFor("DescendantFonts", pArray);
-    AddIndirectObject(pFontDict);
-    pArray->AddReference(this, pFontDict);
+    pFontDict =
+        ProcessbCJK(pBaseDict, pLogFont->lfCharSet, bVert, basefont,
+                    [&hDC](FX_WCHAR start, FX_WCHAR end, CPDF_Array* widthArr) {
+                      InsertWidthArray(hDC, start, end, widthArr);
+                    });
   }
   AddIndirectObject(pBaseDict);
-  CPDF_Dictionary* pFontDesc = new CPDF_Dictionary;
-  pFontDesc->SetNameFor("Type", "FontDescriptor");
-  pFontDesc->SetNameFor("FontName", basefont);
-  pFontDesc->SetIntegerFor("Flags", flags);
   CPDF_Array* pBBox = new CPDF_Array;
   for (int i = 0; i < 4; i++)
     pBBox->AddInteger(bbox[i]);
-  pFontDesc->SetFor("FontBBox", pBBox);
-  pFontDesc->SetIntegerFor("ItalicAngle", italicangle);
-  pFontDesc->SetIntegerFor("Ascent", ascend);
-  pFontDesc->SetIntegerFor("Descent", descend);
+  CPDF_Dictionary* pFontDesc =
+      CalculateFontDesc(basefont, flags, italicangle, ascend, descend, pBBox,
+                        pLogFont->lfWeight / 5);
   pFontDesc->SetIntegerFor("CapHeight", capheight);
-  pFontDesc->SetIntegerFor("StemV", pLogFont->lfWeight / 5);
   AddIndirectObject(pFontDesc);
   pFontDict->SetReferenceFor("FontDescriptor", this, pFontDesc);
   hFont = SelectObject(hDC, hFont);
