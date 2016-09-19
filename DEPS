@@ -162,12 +162,11 @@ hooks = [
     ],
   },
   {
-    # Pull clang if needed or requested via GYP_DEFINES.
+    # Pull clang
     'name': 'clang',
     'pattern': '.',
     'action': ['python',
-               'pdfium/tools/clang/scripts/update.py',
-               '--if-needed'
+               'pdfium/tools/clang/scripts/update.py'
     ],
   },
   {
