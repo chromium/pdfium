@@ -214,10 +214,9 @@ void CPDF_DocPageData::ReleaseFont(const CPDF_Dictionary* pFontDict) {
     return;
 
   pFontData->RemoveRef();
-  if (pFontData->use_count() > 1)
+  if (pFontData->use_count() != 0)
     return;
 
-  // We have font data only in m_FontMap cache. Clean it.
   pFontData->clear();
 }
 
@@ -331,10 +330,9 @@ void CPDF_DocPageData::ReleaseColorSpace(const CPDF_Object* pColorSpace) {
     return;
 
   pCountedColorSpace->RemoveRef();
-  if (pCountedColorSpace->use_count() > 1)
+  if (pCountedColorSpace->use_count() != 0)
     return;
 
-  // We have item only in m_ColorSpaceMap cache. Clean it.
   pCountedColorSpace->get()->ReleaseCS();
   pCountedColorSpace->reset(nullptr);
 }
@@ -393,10 +391,9 @@ void CPDF_DocPageData::ReleasePattern(const CPDF_Object* pPatternObj) {
     return;
 
   pPattern->RemoveRef();
-  if (pPattern->use_count() > 1)
+  if (pPattern->use_count() != 0)
     return;
 
-  // We have item only in m_PatternMap cache. Clean it.
   pPattern->clear();
 }
 
@@ -432,10 +429,9 @@ void CPDF_DocPageData::ReleaseImage(const CPDF_Object* pImageStream) {
     return;
 
   pCountedImage->RemoveRef();
-  if (pCountedImage->use_count() > 1)
+  if (pCountedImage->use_count() != 0)
     return;
 
-  // We have item only in m_ImageMap cache. Clean it.
   delete pCountedImage->get();
   delete pCountedImage;
   m_ImageMap.erase(it);
@@ -458,8 +454,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
   auto hash_it = m_HashProfileMap.find(bsDigest);
   if (hash_it != m_HashProfileMap.end()) {
     auto it_copied_stream = m_IccProfileMap.find(hash_it->second);
-    if (it_copied_stream != m_IccProfileMap.end())
-      return it_copied_stream->second->AddRef();
+    return it_copied_stream->second->AddRef();
   }
   CPDF_IccProfile* pProfile =
       new CPDF_IccProfile(stream.GetData(), stream.GetSize());
@@ -478,8 +473,7 @@ void CPDF_DocPageData::ReleaseIccProfile(const CPDF_IccProfile* pIccProfile) {
       continue;
 
     profile->RemoveRef();
-    if (profile->use_count() == 1) {
-      // We have item only in m_IccProfileMap cache. Clean it.
+    if (profile->use_count() == 0) {
       delete profile->get();
       delete profile;
       m_IccProfileMap.erase(it);
@@ -524,10 +518,9 @@ void CPDF_DocPageData::ReleaseFontFileStreamAcc(
     return;
 
   pCountedStream->RemoveRef();
-  if (pCountedStream->use_count() > 1)
+  if (pCountedStream->use_count() != 0)
     return;
 
-  // We have item only in m_FontFileMap cache. Clean it.
   delete pCountedStream->get();
   delete pCountedStream;
   m_FontFileMap.erase(it);

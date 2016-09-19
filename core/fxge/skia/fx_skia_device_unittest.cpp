@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
@@ -38,6 +39,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   FXTEXT_CHARPOS charPos[] = {{{0, 0, 0, 0}, 0, 1, 1, 4, false, false}};
   CFX_Font font;
   FX_FLOAT fontSize = 1;
+  CFX_FontCache cache;
   CFX_PathData clipPath, clipPath2;
   clipPath.AppendRect(0, 0, 3, 1);
   clipPath2.AppendRect(0, 0, 2, 1);
@@ -57,8 +59,8 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
     driver->DrawPath(&path1, &matrix, &graphState, 0xFF112233, 0,
                      FXFILL_WINDING, 0);
   } else if (state.m_graphic == State::Graphic::kText) {
-    driver->DrawDeviceText(SK_ARRAY_COUNT(charPos), charPos, &font, &matrix,
-                           fontSize, 0xFF445566);
+    driver->DrawDeviceText(SK_ARRAY_COUNT(charPos), charPos, &font, &cache,
+                           &matrix, fontSize, 0xFF445566);
   }
   if (state.m_save == State::Save::kYes)
     driver->RestoreState(true);
@@ -80,8 +82,8 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
     driver->DrawPath(&path2, &matrix2, &graphState, 0xFF112233, 0,
                      FXFILL_WINDING, 0);
   } else if (state.m_graphic == State::Graphic::kText) {
-    driver->DrawDeviceText(SK_ARRAY_COUNT(charPos), charPos, &font, &matrix2,
-                           fontSize, 0xFF445566);
+    driver->DrawDeviceText(SK_ARRAY_COUNT(charPos), charPos, &font, &cache,
+                           &matrix2, fontSize, 0xFF445566);
   }
   if (state.m_save == State::Save::kYes)
     driver->RestoreState(false);

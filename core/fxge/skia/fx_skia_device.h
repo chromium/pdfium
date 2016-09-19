@@ -10,6 +10,7 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 
+class CFX_FontCache;
 class SkCanvas;
 class SkMatrix;
 class SkPaint;
@@ -121,6 +122,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
+                         CFX_FontCache* pCache,
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
                          uint32_t color) override;

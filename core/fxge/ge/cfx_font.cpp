@@ -8,8 +8,6 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/cfx_facecache.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_pathdata.h"
@@ -226,7 +224,6 @@ CFX_Font::CFX_Font()
       m_pOwnedStream(nullptr),
 #endif  // PDF_ENABLE_XFA
       m_Face(nullptr),
-      m_FaceCache(nullptr),
       m_pFontData(nullptr),
       m_pGsubData(nullptr),
       m_dwSize(0),
@@ -265,15 +262,8 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   m_pPlatformFont = pFont->m_pPlatformFont;
 #endif
   m_pOwnedStream = pFont->m_pOwnedStream;
-  m_FaceCache = pFont->GetFaceCache();
   return TRUE;
 }
-
-void CFX_Font::SetFace(FXFT_Face face) {
-  ClearFaceCache();
-  m_Face = face;
-}
-
 #endif  // PDF_ENABLE_XFA
 
 CFX_Font::~CFX_Font() {
@@ -289,7 +279,10 @@ CFX_Font::~CFX_Font() {
       FXFT_Clear_Face_External_Stream(m_Face);
     }
 #endif  // PDF_ENABLE_XFA
-    DeleteFace();
+    if (m_bEmbedded)
+      DeleteFace();
+    else
+      CFX_GEModule::Get()->GetFontMgr()->ReleaseFace(m_Face);
   }
 #ifdef PDF_ENABLE_XFA
   delete m_pOwnedStream;
@@ -301,12 +294,7 @@ CFX_Font::~CFX_Font() {
 }
 
 void CFX_Font::DeleteFace() {
-  ClearFaceCache();
-  if (m_bEmbedded) {
-    FXFT_Done_Face(m_Face);
-  } else {
-    CFX_GEModule::Get()->GetFontMgr()->ReleaseFace(m_Face);
-  }
+  FXFT_Done_Face(m_Face);
   m_Face = nullptr;
 }
 
@@ -549,20 +537,6 @@ int CFX_Font::GetMaxAdvanceWidth() const {
                    FXFT_Get_Face_MaxAdvanceWidth(m_Face));
 }
 
-CFX_FaceCache* CFX_Font::GetFaceCache() const {
-  if (!m_FaceCache) {
-    m_FaceCache = CFX_GEModule::Get()->GetFontCache()->GetCachedFace(this);
-  }
-  return m_FaceCache;
-}
-
-void CFX_Font::ClearFaceCache() {
-  if (!m_FaceCache)
-    return;
-  CFX_GEModule::Get()->GetFontCache()->ReleaseCachedFace(this);
-  m_FaceCache = nullptr;
-}
-
 int CFX_Font::GetULPos() const {
   if (!m_Face)
     return 0;
@@ -579,9 +553,7 @@ int CFX_Font::GetULthickness() const {
                    FXFT_Get_Face_UnderLineThickness(m_Face));
 }
 
-void CFX_Font::AdjustMMParams(int glyph_index,
-                              int dest_width,
-                              int weight) const {
+void CFX_Font::AdjustMMParams(int glyph_index, int dest_width, int weight) {
   FXFT_MM_Var pMasters = nullptr;
   FXFT_Get_MM_Var(m_Face, &pMasters);
   if (!pMasters)
@@ -621,8 +593,7 @@ void CFX_Font::AdjustMMParams(int glyph_index,
   FXFT_Set_MM_Design_Coordinates(m_Face, 2, coords);
 }
 
-CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
-                                          int dest_width) const {
+CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index, int dest_width) {
   if (!m_Face)
     return nullptr;
   FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
@@ -691,24 +662,3 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
     pPath->GetPoints()[params.m_PointCount - 1].m_Flag |= FXPT_CLOSEFIGURE;
   return pPath;
 }
-
-const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(uint32_t glyph_index,
-                                                 FX_BOOL bFontStyle,
-                                                 const CFX_Matrix* pMatrix,
-                                                 int dest_width,
-                                                 int anti_alias,
-                                                 int& text_flags) const {
-  return GetFaceCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle, pMatrix,
-                                         dest_width, anti_alias, text_flags);
-}
-
-const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
-                                            int dest_width) const {
-  return GetFaceCache()->LoadGlyphPath(this, glyph_index, dest_width);
-}
-
-#ifdef _SKIA_SUPPORT_
-CFX_TypeFace* CFX_Font::GetDeviceCache() const {
-  return GetFaceCache()->GetDeviceCache(this);
-}
-#endif

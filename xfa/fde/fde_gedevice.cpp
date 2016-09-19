@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
@@ -112,6 +113,7 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
                                       FX_FLOAT fFontSize,
                                       const CFX_Matrix* pMatrix) {
   ASSERT(pBrush && pFont && pCharPos && iCount > 0);
+  CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
   CFX_Font* pFxFont = pFont->GetDevFont();
   FX_ARGB argb = pBrush->GetColor();
   if ((pFont->GetFontStyles() & FX_FONTSTYLE_Italic) != 0 &&
@@ -152,12 +154,12 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
         pFxFont = pCurFont->GetDevFont();
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
         FxFont.SetFace(pFxFont->GetFace());
-        m_pDevice->DrawNormalText(iCurCount, pCurCP, &FxFont, -fFontSize,
-                                  (const CFX_Matrix*)pMatrix, argb,
+        m_pDevice->DrawNormalText(iCurCount, pCurCP, &FxFont, pCache,
+                                  -fFontSize, (const CFX_Matrix*)pMatrix, argb,
                                   FXTEXT_CLEARTYPE);
 #else
-        m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize,
-                                  (const CFX_Matrix*)pMatrix, argb,
+        m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, pCache,
+                                  -fFontSize, (const CFX_Matrix*)pMatrix, argb,
                                   FXTEXT_CLEARTYPE);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       }
@@ -174,14 +176,14 @@ FX_BOOL CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     FxFont.SetFace(pFxFont->GetFace());
     FX_BOOL bRet = m_pDevice->DrawNormalText(
-        iCurCount, pCurCP, &FxFont, -fFontSize, (const CFX_Matrix*)pMatrix,
-        argb, FXTEXT_CLEARTYPE);
+        iCurCount, pCurCP, &FxFont, pCache, -fFontSize,
+        (const CFX_Matrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
     FxFont.SetFace(nullptr);
     return bRet;
 #else
-    return m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize,
-                                     (const CFX_Matrix*)pMatrix, argb,
-                                     FXTEXT_CLEARTYPE);
+    return m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, pCache,
+                                     -fFontSize, (const CFX_Matrix*)pMatrix,
+                                     argb, FXTEXT_CLEARTYPE);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   }
 

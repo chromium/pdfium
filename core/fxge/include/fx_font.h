@@ -19,7 +19,7 @@ typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
 
 class CFX_FaceCache;
-class CFX_GlyphBitmap;
+class CFX_FontCache;
 class CFX_PathData;
 class CFX_SizeGlyphCache;
 
@@ -115,24 +115,13 @@ class CFX_Font {
                    int* pFaceCount = nullptr);
 
   FX_BOOL LoadClone(const CFX_Font* pFont);
-  void SetFace(FXFT_Face face);
+  void SetFace(FXFT_Face face) { m_Face = face; }
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
     m_pSubstFont = std::move(subst);
   }
 #endif  // PDF_ENABLE_XFA
 
-  const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,
-                                         FX_BOOL bFontStyle,
-                                         const CFX_Matrix* pMatrix,
-                                         int dest_width,
-                                         int anti_alias,
-                                         int& text_flags) const;
-  const CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
-
-#ifdef _SKIA_SUPPORT_
-  CFX_TypeFace* GetDeviceCache() const;
-#endif
-
+  CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width = 0);
   int GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
@@ -159,7 +148,7 @@ class CFX_Font {
 #endif
   uint8_t* GetFontData() const { return m_pFontData; }
   uint32_t GetSize() const { return m_dwSize; }
-  void AdjustMMParams(int glyph_index, int width, int weight) const;
+  void AdjustMMParams(int glyph_index, int width, int weight);
 
   static const size_t kAngleSkewArraySize = 30;
   static const char s_AngleSkew[kAngleSkewArraySize];
@@ -176,20 +165,10 @@ class CFX_Font {
 #endif  // PDF_ENABLE_XFA
 
  private:
-  friend class CFX_FaceCache;
-  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
-                                  int dest_width = 0) const;
-
- private:
-  CFX_FaceCache* GetFaceCache() const;
-
   void ReleasePlatformResource();
   void DeleteFace();
 
-  void ClearFaceCache();
-
   FXFT_Face m_Face;
-  mutable CFX_FaceCache* m_FaceCache;  // not owned.
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;
   std::vector<uint8_t> m_pFontDataAllocation;
   uint8_t* m_pFontData;
@@ -217,6 +196,12 @@ class CFX_FontFaceInfo {
   const uint32_t m_FileSize;
   uint32_t m_Styles;
   uint32_t m_Charsets;
+};
+
+class CFX_CountedFaceCache {
+ public:
+  CFX_FaceCache* m_Obj;
+  uint32_t m_nCount;
 };
 
 class CFX_GlyphBitmap {

@@ -21,6 +21,7 @@
 
 class CCodec_Jbig2Context;
 class CCodec_ScanlineDecoder;
+class CFX_FontCache;
 class CFX_GlyphBitmap;
 class CFX_ImageTransformer;
 class CFX_PathData;
@@ -70,6 +71,7 @@ class CPDF_DocRenderData {
   ~CPDF_DocRenderData();
   CPDF_Type3Cache* GetCachedType3(CPDF_Type3Font* pFont);
   CPDF_TransferFunc* GetTransferFunc(CPDF_Object* pObj);
+  CFX_FontCache* GetFontCache() { return m_pFontCache; }
   void Clear(FX_BOOL bRelease = FALSE);
   void ReleaseCachedType3(CPDF_Type3Font* pFont);
   void ReleaseTransferFunc(CPDF_Object* pObj);
@@ -81,6 +83,7 @@ class CPDF_DocRenderData {
       std::map<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc>*>;
 
   CPDF_Document* m_pPDFDoc;
+  CFX_FontCache* m_pFontCache;
   CPDF_Type3CacheMap m_Type3FaceMap;
   CPDF_TransferFuncMap m_TransferFuncMap;
 };

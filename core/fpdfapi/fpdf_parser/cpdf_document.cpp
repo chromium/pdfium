@@ -21,6 +21,7 @@
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcodec/include/JBig2_DocumentContext.h"
+#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_unicodeencoding.h"
 #include "core/fxge/include/fx_font.h"
 #include "third_party/base/stl_util.h"

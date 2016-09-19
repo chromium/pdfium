@@ -231,7 +231,8 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
     ge.Create(strWidth, iTextHeight, FXDIB_Argb, nullptr);
     FX_RECT rect(0, 0, strWidth, iTextHeight);
     ge.FillRect(&rect, m_backgroundColor);
-    ge.DrawNormalText(iLen, pCharPos + 1, m_pFont, (FX_FLOAT)iFontSize,
+    ge.DrawNormalText(iLen, pCharPos + 1, m_pFont,
+                      CFX_GEModule::Get()->GetFontCache(), (FX_FLOAT)iFontSize,
                       &affine_matrix, m_fontColor, FXTEXT_CLEARTYPE);
     geBitmap.SetDIBits(ge.GetBitmap(), leftPosition, m_Height - iTextHeight);
   } else {
@@ -241,8 +242,9 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
     if (matrix) {
       affine_matrix1.Concat(*matrix);
     }
-    device->DrawNormalText(iLen, pCharPos + 1, m_pFont, (FX_FLOAT)iFontSize,
-                           &affine_matrix1, m_fontColor, FXTEXT_CLEARTYPE);
+    device->DrawNormalText(
+        iLen, pCharPos + 1, m_pFont, CFX_GEModule::Get()->GetFontCache(),
+        (FX_FLOAT)iFontSize, &affine_matrix1, m_fontColor, FXTEXT_CLEARTYPE);
   }
   tempStr = str.Mid(7, 6);
   iLen = tempStr.GetLength();
@@ -251,7 +253,8 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
   if (pOutBitmap) {
     FX_RECT rect1(0, 0, strWidth, iTextHeight);
     ge.FillRect(&rect1, m_backgroundColor);
-    ge.DrawNormalText(iLen, pCharPos + 7, m_pFont, (FX_FLOAT)iFontSize,
+    ge.DrawNormalText(iLen, pCharPos + 7, m_pFont,
+                      CFX_GEModule::Get()->GetFontCache(), (FX_FLOAT)iFontSize,
                       &affine_matrix, m_fontColor, FXTEXT_CLEARTYPE);
     geBitmap.SetDIBits(ge.GetBitmap(), leftPosition + 47 * multiple,
                        m_Height - iTextHeight);
@@ -263,8 +266,9 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
     if (matrix) {
       affine_matrix1.Concat(*matrix);
     }
-    device->DrawNormalText(iLen, pCharPos + 7, m_pFont, (FX_FLOAT)iFontSize,
-                           &affine_matrix1, m_fontColor, FXTEXT_CLEARTYPE);
+    device->DrawNormalText(
+        iLen, pCharPos + 7, m_pFont, CFX_GEModule::Get()->GetFontCache(),
+        (FX_FLOAT)iFontSize, &affine_matrix1, m_fontColor, FXTEXT_CLEARTYPE);
   }
   tempStr = str.Mid(0, 1);
   iLen = tempStr.GetLength();
@@ -278,7 +282,8 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
     delete ge.GetBitmap();
     ge.Create(strWidth, iTextHeight, FXDIB_Argb, nullptr);
     ge.GetBitmap()->Clear(m_backgroundColor);
-    ge.DrawNormalText(iLen, pCharPos, m_pFont, (FX_FLOAT)iFontSize,
+    ge.DrawNormalText(iLen, pCharPos, m_pFont,
+                      CFX_GEModule::Get()->GetFontCache(), (FX_FLOAT)iFontSize,
                       &affine_matrix, m_fontColor, FXTEXT_CLEARTYPE);
     geBitmap.SetDIBits(ge.GetBitmap(), 0, m_Height - iTextHeight);
   } else {
@@ -287,8 +292,9 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
     if (matrix) {
       affine_matrix1.Concat(*matrix);
     }
-    device->DrawNormalText(iLen, pCharPos, m_pFont, (FX_FLOAT)iFontSize,
-                           &affine_matrix1, m_fontColor, FXTEXT_CLEARTYPE);
+    device->DrawNormalText(
+        iLen, pCharPos, m_pFont, CFX_GEModule::Get()->GetFontCache(),
+        (FX_FLOAT)iFontSize, &affine_matrix1, m_fontColor, FXTEXT_CLEARTYPE);
   }
   FX_Free(pCharPos);
 }

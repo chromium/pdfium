@@ -9,6 +9,7 @@
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/cfx_autofontcache.h"
 #include "core/fxge/include/cfx_facecache.h"
+#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
@@ -823,6 +824,7 @@ bool CFX_RenderDevice::SetBitsWithMask(const CFX_DIBSource* pBitmap,
 FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
                                          const FXTEXT_CHARPOS* pCharPos,
                                          CFX_Font* pFont,
+                                         CFX_FontCache* pCache,
                                          FX_FLOAT font_size,
                                          const CFX_Matrix* pText2Device,
                                          uint32_t fill_color,
@@ -831,8 +833,9 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   if (m_DeviceClass != FXDC_DISPLAY) {
     if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
       if (ShouldDrawDeviceText(pFont, text_flags) &&
-          m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pText2Device,
-                                          font_size, fill_color)) {
+          m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
+                                          pText2Device, font_size,
+                                          fill_color)) {
         return TRUE;
       }
     }
@@ -840,8 +843,8 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       return FALSE;
   } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
     if (ShouldDrawDeviceText(pFont, text_flags) &&
-        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pText2Device,
-                                        font_size, fill_color)) {
+        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
+                                        pText2Device, font_size, fill_color)) {
       return TRUE;
     }
   }
@@ -859,8 +862,9 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
         (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
-      return DrawTextPath(nChars, pCharPos, pFont, font_size, pText2Device,
-                          nullptr, nullptr, fill_color, 0, nullptr, nPathFlags);
+      return DrawTextPath(nChars, pCharPos, pFont, pCache, font_size,
+                          pText2Device, nullptr, nullptr, fill_color, 0,
+                          nullptr, nPathFlags);
     }
   }
   int anti_alias = FXFT_RENDER_MODE_MONO;
@@ -891,6 +895,10 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       }
     }
   }
+  if (!pCache)
+    pCache = CFX_GEModule::Get()->GetFontCache();
+  CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
+  CFX_AutoFontCache autoFontCache(pCache, pFont);
   std::vector<FXTEXT_GLYPHPOS> glyphs(nChars);
   CFX_Matrix matrixCTM = GetCTM();
   FX_FLOAT scale_x = FXSYS_fabs(matrixCTM.a);
@@ -914,12 +922,12 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
           charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
           charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
       new_matrix.Concat(deviceCtm);
-      glyph.m_pGlyph = pFont->LoadGlyphBitmap(
-          charpos.m_GlyphIndex, charpos.m_bFontStyle, &new_matrix,
+      glyph.m_pGlyph = pFaceCache->LoadGlyphBitmap(
+          pFont, charpos.m_GlyphIndex, charpos.m_bFontStyle, &new_matrix,
           charpos.m_FontCharWidth, anti_alias, nativetext_flags);
     } else {
-      glyph.m_pGlyph = pFont->LoadGlyphBitmap(
-          charpos.m_GlyphIndex, charpos.m_bFontStyle, &deviceCtm,
+      glyph.m_pGlyph = pFaceCache->LoadGlyphBitmap(
+          pFont, charpos.m_GlyphIndex, charpos.m_bFontStyle, &deviceCtm,
           charpos.m_FontCharWidth, anti_alias, nativetext_flags);
     }
   }
@@ -1040,6 +1048,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
 FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
                                        const FXTEXT_CHARPOS* pCharPos,
                                        CFX_Font* pFont,
+                                       CFX_FontCache* pCache,
                                        FX_FLOAT font_size,
                                        const CFX_Matrix* pText2User,
                                        const CFX_Matrix* pUser2Device,
@@ -1048,6 +1057,10 @@ FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
                                        FX_ARGB stroke_color,
                                        CFX_PathData* pClippingPath,
                                        int nFlag) {
+  if (!pCache)
+    pCache = CFX_GEModule::Get()->GetFontCache();
+  CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
+  CFX_AutoFontCache autoFontCache(pCache, pFont);
   for (int iChar = 0; iChar < nChars; iChar++) {
     const FXTEXT_CHARPOS& charpos = pCharPos[iChar];
     CFX_Matrix matrix;
@@ -1057,8 +1070,8 @@ FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
     }
     matrix.Concat(font_size, 0, 0, font_size, charpos.m_OriginX,
                   charpos.m_OriginY);
-    const CFX_PathData* pPath =
-        pFont->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
+    const CFX_PathData* pPath = pFaceCache->LoadGlyphPath(
+        pFont, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath)
       continue;
     matrix.Concat(*pText2User);

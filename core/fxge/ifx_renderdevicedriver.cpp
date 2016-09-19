@@ -10,6 +10,8 @@
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
+class CFX_FontCache;
+
 IFX_RenderDeviceDriver::~IFX_RenderDeviceDriver() {}
 
 CFX_Matrix IFX_RenderDeviceDriver::GetCTM() const {
@@ -68,6 +70,7 @@ void IFX_RenderDeviceDriver::CancelDIBits(void* handle) {}
 FX_BOOL IFX_RenderDeviceDriver::DrawDeviceText(int nChars,
                                                const FXTEXT_CHARPOS* pCharPos,
                                                CFX_Font* pFont,
+                                               CFX_FontCache* pCache,
                                                const CFX_Matrix* pObject2Device,
                                                FX_FLOAT font_size,
                                                uint32_t color) {

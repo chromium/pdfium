@@ -16,34 +16,34 @@ class CFX_FaceCache {
  public:
   explicit CFX_FaceCache(FXFT_Face face);
   ~CFX_FaceCache();
-  const CFX_GlyphBitmap* LoadGlyphBitmap(const CFX_Font* pFont,
+  const CFX_GlyphBitmap* LoadGlyphBitmap(CFX_Font* pFont,
                                          uint32_t glyph_index,
                                          FX_BOOL bFontStyle,
                                          const CFX_Matrix* pMatrix,
                                          int dest_width,
                                          int anti_alias,
                                          int& text_flags);
-  const CFX_PathData* LoadGlyphPath(const CFX_Font* pFont,
+  const CFX_PathData* LoadGlyphPath(CFX_Font* pFont,
                                     uint32_t glyph_index,
                                     int dest_width);
 
 #ifdef _SKIA_SUPPORT_
-  CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
+  CFX_TypeFace* GetDeviceCache(CFX_Font* pFont);
 #endif
 
  private:
-  CFX_GlyphBitmap* RenderGlyph(const CFX_Font* pFont,
+  CFX_GlyphBitmap* RenderGlyph(CFX_Font* pFont,
                                uint32_t glyph_index,
                                FX_BOOL bFontStyle,
                                const CFX_Matrix* pMatrix,
                                int dest_width,
                                int anti_alias);
-  CFX_GlyphBitmap* RenderGlyph_Nativetext(const CFX_Font* pFont,
+  CFX_GlyphBitmap* RenderGlyph_Nativetext(CFX_Font* pFont,
                                           uint32_t glyph_index,
                                           const CFX_Matrix* pMatrix,
                                           int dest_width,
                                           int anti_alias);
-  CFX_GlyphBitmap* LookUpGlyphBitmap(const CFX_Font* pFont,
+  CFX_GlyphBitmap* LookUpGlyphBitmap(CFX_Font* pFont,
                                      const CFX_Matrix* pMatrix,
                                      const CFX_ByteString& FaceGlyphsKey,
                                      uint32_t glyph_index,
