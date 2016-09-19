@@ -990,19 +990,22 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
     return nullptr;
 
   CFX_DIBitmap& bitmap = *bitmap_device.GetBitmap();
-  CPDF_Object* pCSObj = nullptr;
-  CPDF_ColorSpace* pCS = nullptr;
+  int color_space_family = 0;
   if (bLuminosity) {
     CPDF_Array* pBC = pSMaskDict->GetArrayFor("BC");
     FX_ARGB back_color = 0xff000000;
     if (pBC) {
+      CPDF_Object* pCSObj = nullptr;
       CPDF_Dictionary* pDict = pGroup->GetDict();
-      if (pDict && pDict->GetDictFor("Group"))
+      if (pDict && pDict->GetDictFor("Group")) {
         pCSObj = pDict->GetDictFor("Group")->GetDirectObjectFor("CS");
-      else
-        pCSObj = nullptr;
-      pCS = m_pContext->GetDocument()->LoadColorSpace(pCSObj);
+      }
+      const CPDF_ColorSpace* pCS =
+          m_pContext->GetDocument()->LoadColorSpace(pCSObj);
       if (pCS) {
+        // Store Color Space Family to use in CPDF_RenderStatus::Initialize.
+        color_space_family = pCS->GetFamily();
+
         FX_FLOAT R, G, B;
         uint32_t comps = 8;
         if (pCS->CountComponents() > comps) {
@@ -1039,7 +1042,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   CPDF_RenderStatus status;
   status.Initialize(m_pContext, &bitmap_device, nullptr, nullptr, nullptr,
                     nullptr, &options, 0, m_bDropObjects, pFormResource, TRUE,
-                    nullptr, 0, pCS ? pCS->GetFamily() : 0, bLuminosity);
+                    nullptr, 0, color_space_family, bLuminosity);
   status.RenderObjectList(&form, &matrix);
   std::unique_ptr<CFX_DIBitmap> pMask(new CFX_DIBitmap);
   if (!pMask->Create(width, height, FXDIB_8bppMask))
