@@ -247,6 +247,9 @@ static void sycc422_to_rgb(opj_image_t* img) {
   const int* y = img->comps[0].data;
   const int* cb = img->comps[1].data;
   const int* cr = img->comps[2].data;
+  if (!y || !cb || !cr)
+    return;
+
   int *d0, *d1, *d2, *r, *g, *b;
   d0 = r = FX_Alloc(int, max_size.ValueOrDie());
   d1 = g = FX_Alloc(int, max_size.ValueOrDie());
@@ -324,6 +327,9 @@ void sycc420_to_rgb(opj_image_t* img) {
   const int* y = img->comps[0].data;
   const int* cb = img->comps[1].data;
   const int* cr = img->comps[2].data;
+  if (!y || !cb || !cr)
+    return;
+
   const int* ny = nullptr;
   int* nr = nullptr;
   int* ng = nullptr;
