@@ -41,7 +41,7 @@ void CPDF_Object::Release() {
   if (m_ObjNum)
     return;
 
-  Destroy();
+  delete this;
 }
 
 CFX_ByteString CPDF_Object::GetString() const {

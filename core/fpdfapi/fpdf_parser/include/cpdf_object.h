@@ -95,7 +95,6 @@ class CPDF_Object {
 
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
   virtual ~CPDF_Object();
-  void Destroy() { delete this; }
 
   CPDF_Object* CloneObjectNonCyclic(bool bDirect) const;
 
