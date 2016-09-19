@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_INDIRECT_OBJECT_HOLDER_H_
 
 #include <map>
+#include <memory>
 
 #include "core/fxcrt/include/fx_system.h"
 
@@ -15,8 +16,8 @@ class CPDF_Object;
 
 class CPDF_IndirectObjectHolder {
  public:
-  using iterator = std::map<uint32_t, CPDF_Object*>::iterator;
-  using const_iterator = std::map<uint32_t, CPDF_Object*>::const_iterator;
+  using const_iterator =
+      std::map<uint32_t, std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_IndirectObjectHolder();
   virtual ~CPDF_IndirectObjectHolder();
@@ -33,9 +34,7 @@ class CPDF_IndirectObjectHolder {
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }
 
-  iterator begin() { return m_IndirectObjs.begin(); }
   const_iterator begin() const { return m_IndirectObjs.begin(); }
-  iterator end() { return m_IndirectObjs.end(); }
   const_iterator end() const { return m_IndirectObjs.end(); }
 
  protected:
@@ -43,7 +42,7 @@ class CPDF_IndirectObjectHolder {
 
  private:
   uint32_t m_LastObjNum;
-  std::map<uint32_t, CPDF_Object*> m_IndirectObjs;
+  std::map<uint32_t, std::unique_ptr<CPDF_Object>> m_IndirectObjs;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_INDIRECT_OBJECT_HOLDER_H_
