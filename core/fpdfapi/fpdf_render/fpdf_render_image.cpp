@@ -762,9 +762,15 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
 
 FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
   if (!(m_Flags & RENDER_FORCE_DOWNSAMPLE) && m_pDIBSource->GetBPP() > 1) {
-    int image_size = m_pDIBSource->GetBPP() / 8 * m_pDIBSource->GetWidth() *
-                     m_pDIBSource->GetHeight();
-    if (image_size > FPDF_HUGE_IMAGE_SIZE &&
+    FX_SAFE_SIZE_T image_size = m_pDIBSource->GetBPP();
+    image_size /= 8;
+    image_size *= m_pDIBSource->GetWidth();
+    image_size *= m_pDIBSource->GetHeight();
+    if (!image_size.IsValid()) {
+      return FALSE;
+    }
+
+    if (image_size.ValueOrDie() > FPDF_HUGE_IMAGE_SIZE &&
         !(m_Flags & RENDER_FORCE_HALFTONE)) {
       m_Flags |= RENDER_FORCE_DOWNSAMPLE;
     }
