@@ -1365,7 +1365,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bNoOriginal = (m_dwFlags & FPDFCREATE_NO_ORIGINAL) != 0;
   for (const auto& pair : *m_pDocument) {
     const uint32_t objnum = pair.first;
-    const CPDF_Object* pObj = pair.second.get();
+    const CPDF_Object* pObj = pair.second;
     if (bIncremental || pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)
       continue;
     if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&

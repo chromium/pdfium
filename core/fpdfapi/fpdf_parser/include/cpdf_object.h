@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_OBJECT_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_OBJECT_H_
 
-#include <memory>
 #include <set>
 
 #include "core/fxcrt/include/fx_string.h"
@@ -93,7 +92,6 @@ class CPDF_Object {
   friend class CPDF_Parser;
   friend class CPDF_Reference;
   friend class CPDF_Stream;
-  friend struct std::default_delete<CPDF_Object>;
 
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
   virtual ~CPDF_Object();
