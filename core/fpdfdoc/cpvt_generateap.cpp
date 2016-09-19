@@ -166,7 +166,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
   }
   CPDF_Stream* pNormalStream = pAPDict->GetStreamFor("N");
   if (!pNormalStream) {
-    pNormalStream = new CPDF_Stream(nullptr, 0, nullptr);
+    pNormalStream = new CPDF_Stream;
     int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
     pAnnotDict->GetDictFor("AP")->SetReferenceFor("N", pDoc, objnum);
   }
@@ -418,8 +418,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     } break;
   }
   if (pNormalStream) {
-    pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize(), FALSE,
-                           FALSE);
+    pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize());
     pStreamDict = pNormalStream->GetDict();
     if (pStreamDict) {
       pStreamDict->SetMatrixFor("Matrix", matrix);
@@ -591,12 +590,10 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   CPDF_Dictionary* pAPDict = new CPDF_Dictionary;
   pAnnotDict->SetFor("AP", pAPDict);
 
-  CPDF_Stream* pNormalStream = new CPDF_Stream(nullptr, 0, nullptr);
+  CPDF_Stream* pNormalStream = new CPDF_Stream;
   int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
   pAnnotDict->GetDictFor("AP")->SetReferenceFor("N", pDoc, objnum);
-
-  pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize(), FALSE,
-                         FALSE);
+  pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize());
 
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
   pStreamDict->SetIntegerFor("FormType", 1);
@@ -607,7 +604,6 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
                            ? CPDF_Annot::RectFromQuadPoints(pAnnotDict)
                            : pAnnotDict->GetRectFor("Rect");
   pStreamDict->SetRectFor("BBox", rect);
-
   pStreamDict->SetFor("Resources", pResourceDict);
 }
 

@@ -320,7 +320,7 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
   }
 
   if (!pStream) {
-    pStream = new CPDF_Stream(nullptr, 0, nullptr);
+    pStream = new CPDF_Stream;
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
     int32_t objnum = pDoc->AddIndirectObject(pStream);
     pParentDict->SetReferenceFor(sAPType, pDoc, objnum);
@@ -340,8 +340,7 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
     pStreamDict->SetRectFor("BBox", rcBBox);
   }
 
-  pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength(), FALSE,
-                   FALSE);
+  pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength());
 }
 
 FX_BOOL CPDFSDK_BAAnnot::IsVisible() const {

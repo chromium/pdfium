@@ -7,14 +7,18 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_
 
+#include <memory>
 #include <set>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
-#include "core/fxcrt/include/fx_stream.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Stream : public CPDF_Object {
  public:
+  CPDF_Stream();
+
+  // Takes onwership of |pData| and |pDict|.
   CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
 
   // CPDF_Object.
@@ -27,12 +31,10 @@ class CPDF_Stream : public CPDF_Object {
   const CPDF_Stream* AsStream() const override;
 
   uint32_t GetRawSize() const { return m_dwSize; }
-  uint8_t* GetRawData() const { return m_pDataBuf; }
+  uint8_t* GetRawData() const { return m_pDataBuf.get(); }
 
-  void SetData(const uint8_t* pData,
-               uint32_t size,
-               FX_BOOL bCompressed,
-               FX_BOOL bKeepBuf);
+  // Does not takes onwership of |pData|, copies into internally-owned buffer.
+  void SetData(const uint8_t* pData, uint32_t size);
 
   void InitStream(const uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
   void InitStreamFromFile(IFX_FileRead* pFile, CPDF_Dictionary* pDict);
@@ -41,26 +43,19 @@ class CPDF_Stream : public CPDF_Object {
                       uint8_t* pBuf,
                       uint32_t buf_size) const;
 
-  bool IsMemoryBased() const { return m_GenNum == kMemoryBasedGenNum; }
+  bool IsMemoryBased() const { return m_bMemoryBased; }
 
  protected:
-  static const uint32_t kMemoryBasedGenNum = (uint32_t)-1;
-
   ~CPDF_Stream() override;
   CPDF_Object* CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 
-  void InitStreamInternal(CPDF_Dictionary* pDict);
-
-  CPDF_Dictionary* m_pDict;
-  uint32_t m_dwSize;
-  uint32_t m_GenNum;
-
-  union {
-    uint8_t* m_pDataBuf;
-    IFX_FileRead* m_pFile;
-  };
+  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> m_pDict;
+  bool m_bMemoryBased = true;
+  uint32_t m_dwSize = 0;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pDataBuf;
+  IFX_FileRead* m_pFile = nullptr;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_

@@ -167,7 +167,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
   if (!pStream) {
-    pStream = new CPDF_Stream(nullptr, 0, nullptr);
+    pStream = new CPDF_Stream;
     int32_t objnum = m_pDocument->AddIndirectObject(pStream);
     pAPDict->SetReferenceFor(m_sAPType, m_pDocument, objnum);
   }

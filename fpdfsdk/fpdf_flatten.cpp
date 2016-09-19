@@ -200,8 +200,7 @@ void SetPageContents(CFX_ByteString key,
 
       CFX_ByteString sStream;
       sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-      pNewContents->SetData(sStream.raw_str(), sStream.GetLength(), FALSE,
-                            FALSE);
+      pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
     }
     return;
   }
@@ -219,7 +218,7 @@ void SetPageContents(CFX_ByteString key,
       CFX_ByteString sBody =
           CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
       sStream = sStream + sBody + "\nQ";
-      pContents->SetData(sStream.raw_str(), sStream.GetLength(), FALSE, FALSE);
+      pContents->SetData(sStream.raw_str(), sStream.GetLength());
       pContentsArray->AddReference(pDocument, dwObjNum);
       break;
     }
@@ -246,7 +245,7 @@ void SetPageContents(CFX_ByteString key,
 
     CFX_ByteString sStream;
     sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-    pNewContents->SetData(sStream.raw_str(), sStream.GetLength(), FALSE, FALSE);
+    pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
   }
 }
 
@@ -506,7 +505,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f,
                  sFormName.c_str());
     sStream += sTemp;
-    pNewXObject->SetData(sStream.raw_str(), sStream.GetLength(), FALSE, FALSE);
+    pNewXObject->SetData(sStream.raw_str(), sStream.GetLength());
   }
   pPageDict->RemoveFor("Annots");
 

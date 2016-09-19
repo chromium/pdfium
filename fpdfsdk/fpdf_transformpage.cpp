@@ -127,7 +127,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   CPDF_Dictionary* pDic = new CPDF_Dictionary;
   CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, pDic);
-  pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize(), FALSE, FALSE);
+  pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize());
   CPDF_Document* pDoc = pPage->m_pDocument;
   if (!pDoc)
     return FALSE;
@@ -135,7 +135,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   pDic = new CPDF_Dictionary;
   CPDF_Stream* pEndStream = new CPDF_Stream(nullptr, 0, pDic);
-  pEndStream->SetData((const uint8_t*)" Q", 2, FALSE, FALSE);
+  pEndStream->SetData((const uint8_t*)" Q", 2);
   pDoc->AddIndirectObject(pEndStream);
 
   CPDF_Array* pContentArray = nullptr;
@@ -302,7 +302,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   }
   CPDF_Dictionary* pDic = new CPDF_Dictionary;
   CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, pDic);
-  pStream->SetData(strClip.GetBuffer(), strClip.GetSize(), FALSE, FALSE);
+  pStream->SetData(strClip.GetBuffer(), strClip.GetSize());
   CPDF_Document* pDoc = pPage->m_pDocument;
   if (!pDoc)
     return;

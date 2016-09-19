@@ -53,8 +53,8 @@ void CPDF_PageContentGenerator::GenerateContent() {
   if (pContent) {
     pPageDict->RemoveFor("Contents");
   }
-  CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, nullptr);
-  pStream->SetData(buf.GetBuffer(), buf.GetLength(), FALSE, FALSE);
+  CPDF_Stream* pStream = new CPDF_Stream;
+  pStream->SetData(buf.GetBuffer(), buf.GetLength());
   m_pDocument->AddIndirectObject(pStream);
   pPageDict->SetReferenceFor("Contents", m_pDocument, pStream->GetObjNum());
 }
@@ -109,21 +109,25 @@ void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
                                             const uint8_t* data,
                                             uint32_t size,
                                             CFX_Matrix& matrix) {
-  if (!data || !size) {
+  if (!data || !size)
     return;
-  }
-  CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, nullptr);
+
   CPDF_Dictionary* pFormDict = new CPDF_Dictionary;
   pFormDict->SetNameFor("Type", "XObject");
   pFormDict->SetNameFor("Subtype", "Form");
+
   CFX_FloatRect bbox = m_pPage->GetPageBBox();
   matrix.TransformRect(bbox);
   pFormDict->SetRectFor("BBox", bbox);
+
+  CPDF_Stream* pStream = new CPDF_Stream;
   pStream->InitStream(data, size, pFormDict);
   buf << "q " << matrix << " cm ";
+
   CFX_ByteString name = RealizeResource(pStream, "XObject");
   buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
+
 void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
   CPDF_Dictionary* pDict = m_pPage->m_pFormDict;
   CPDF_Object* pContent =
@@ -164,8 +168,8 @@ void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
     contentStream.LoadAllData(pStream);
     ProcessForm(buf, contentStream.GetData(), contentStream.GetSize(), matrix);
   }
-  CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, nullptr);
-  pStream->SetData(buf.GetBuffer(), buf.GetLength(), FALSE, FALSE);
+  CPDF_Stream* pStream = new CPDF_Stream;
+  pStream->SetData(buf.GetBuffer(), buf.GetLength());
   m_pDocument->AddIndirectObject(pStream);
   m_pPage->m_pFormDict->SetReferenceFor("Contents", m_pDocument,
                                         pStream->GetObjNum());

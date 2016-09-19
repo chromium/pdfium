@@ -183,7 +183,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
         if (pDataSetsStream)
           pDataSetsStream->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
       } else {
-        CPDF_Stream* pData = new CPDF_Stream(nullptr, 0, nullptr);
+        CPDF_Stream* pData = new CPDF_Stream;
         pData->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;
@@ -204,7 +204,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
         if (pFormStream)
           pFormStream->InitStreamFromFile(pfileWrite.get(), pDataDict);
       } else {
-        CPDF_Stream* pData = new CPDF_Stream(nullptr, 0, nullptr);
+        CPDF_Stream* pData = new CPDF_Stream;
         pData->InitStreamFromFile(pfileWrite.get(), pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;

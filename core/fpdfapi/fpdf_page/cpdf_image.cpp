@@ -116,7 +116,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   m_Width = width;
   m_Height = height;
   if (!m_pStream)
-    m_pStream = new CPDF_Stream(nullptr, 0, nullptr);
+    m_pStream = new CPDF_Stream;
   return pDict;
 }
 
@@ -329,9 +329,9 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       dest_offset = 0;
     }
   }
-  if (!m_pStream) {
-    m_pStream = new CPDF_Stream(nullptr, 0, nullptr);
-  }
+  if (!m_pStream)
+    m_pStream = new CPDF_Stream;
+
   m_pStream->InitStream(dest_buf, dest_size, pDict);
   m_bIsMask = pBitmap->IsAlphaMask();
   m_Width = BitmapWidth;
