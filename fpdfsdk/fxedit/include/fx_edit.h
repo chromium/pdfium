@@ -15,10 +15,6 @@ class IPVT_FontMap;
   (u == 0x2D || (u <= 0x005A && u >= 0x0041) || \
    (u <= 0x007A && u >= 0x0061) || (u <= 0x02AF && u >= 0x00C0))
 
-#ifndef DEFAULT_CHARSET
-#define DEFAULT_CHARSET 1
-#endif
-
 CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                 int32_t nFontIndex,
                                 uint16_t Word,

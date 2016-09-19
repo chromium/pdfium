@@ -63,7 +63,7 @@ uint32_t GetCharset(int charset) {
       return CHARSET_FLAG_GB;
     case FXFONT_CHINESEBIG5_CHARSET:
       return CHARSET_FLAG_BIG5;
-    case FXFONT_HANGEUL_CHARSET:
+    case FXFONT_HANGUL_CHARSET:
       return CHARSET_FLAG_KOREAN;
     case FXFONT_SYMBOL_CHARSET:
       return CHARSET_FLAG_SYMBOL;
@@ -239,7 +239,7 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
       pInfo->m_Charsets |= CHARSET_FLAG_BIG5;
     }
     if ((codepages & (1 << 19)) || (codepages & (1 << 21))) {
-      m_pMapper->AddInstalledFont(facename, FXFONT_HANGEUL_CHARSET);
+      m_pMapper->AddInstalledFont(facename, FXFONT_HANGUL_CHARSET);
       pInfo->m_Charsets |= CHARSET_FLAG_KOREAN;
     }
     if (codepages & (1 << 31)) {

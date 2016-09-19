@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
+#include "core/fxge/include/fx_font.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
 
@@ -26,28 +27,6 @@ struct CPWL_FontMap_Native {
   int32_t nCharset;
   CFX_ByteString sFontName;
 };
-
-#ifndef ANSI_CHARSET
-
-#define ANSI_CHARSET 0
-#define DEFAULT_CHARSET 1
-#define SYMBOL_CHARSET 2
-#define SHIFTJIS_CHARSET 128
-#define HANGUL_CHARSET 129
-#define GB2312_CHARSET 134
-#define CHINESEBIG5_CHARSET 136
-#define JOHAB_CHARSET 130
-#define HEBREW_CHARSET 177
-#define ARABIC_CHARSET 178
-#define GREEK_CHARSET 161
-#define TURKISH_CHARSET 162
-#define VIETNAMESE_CHARSET 163
-#define THAI_CHARSET 222
-#define EASTEUROPE_CHARSET 238
-#define RUSSIAN_CHARSET 204
-#define BALTIC_CHARSET 186
-
-#endif
 
 class CPWL_FontMap : public IPVT_FontMap {
  public:
@@ -85,7 +64,7 @@ class CPWL_FontMap : public IPVT_FontMap {
                        FX_BOOL bFind);
   int32_t AddFontData(CPDF_Font* pFont,
                       const CFX_ByteString& sFontAlias,
-                      int32_t nCharset = DEFAULT_CHARSET);
+                      int32_t nCharset = FXFONT_DEFAULT_CHARSET);
 
   CFX_ByteString EncodeFontAlias(const CFX_ByteString& sFontName,
                                  int32_t nCharset);
@@ -96,7 +75,7 @@ class CPWL_FontMap : public IPVT_FontMap {
 
  private:
   int32_t FindFont(const CFX_ByteString& sFontName,
-                   int32_t nCharset = DEFAULT_CHARSET);
+                   int32_t nCharset = FXFONT_DEFAULT_CHARSET);
 
   CFX_ByteString GetNativeFont(int32_t nCharset);
   CPDF_Font* AddFontToDocument(CPDF_Document* pDoc,

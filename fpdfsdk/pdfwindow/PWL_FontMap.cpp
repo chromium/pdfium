@@ -93,7 +93,8 @@ int32_t CPWL_FontMap::GetWordFontIndex(uint16_t word,
       return nFontIndex;
   } else {
     if (const CPWL_FontMap_Data* pData = GetFontMapData(0)) {
-      if (nCharset == DEFAULT_CHARSET || pData->nCharset == SYMBOL_CHARSET ||
+      if (nCharset == FXFONT_DEFAULT_CHARSET ||
+          pData->nCharset == FXFONT_SYMBOL_CHARSET ||
           nCharset == pData->nCharset) {
         if (KnowWord(0, word))
           return 0;
@@ -107,7 +108,8 @@ int32_t CPWL_FontMap::GetWordFontIndex(uint16_t word,
     if (KnowWord(nNewFontIndex, word))
       return nNewFontIndex;
   }
-  nNewFontIndex = GetFontIndex("Arial Unicode MS", DEFAULT_CHARSET, FALSE);
+  nNewFontIndex =
+      GetFontIndex("Arial Unicode MS", FXFONT_DEFAULT_CHARSET, FALSE);
   if (nNewFontIndex >= 0) {
     if (KnowWord(nNewFontIndex, word))
       return nNewFontIndex;
@@ -167,7 +169,7 @@ void CPWL_FontMap::Empty() {
 }
 
 void CPWL_FontMap::Initialize() {
-  GetFontIndex(kDefaultFontName, ANSI_CHARSET, FALSE);
+  GetFontIndex(kDefaultFontName, FXFONT_ANSI_CHARSET, FALSE);
 }
 
 FX_BOOL CPWL_FontMap::IsStandardFont(const CFX_ByteString& sFontName) {
@@ -183,7 +185,7 @@ int32_t CPWL_FontMap::FindFont(const CFX_ByteString& sFontName,
                                int32_t nCharset) {
   for (int32_t i = 0, sz = m_aData.GetSize(); i < sz; i++) {
     if (CPWL_FontMap_Data* pData = m_aData.GetAt(i)) {
-      if (nCharset == DEFAULT_CHARSET || nCharset == pData->nCharset) {
+      if (nCharset == FXFONT_DEFAULT_CHARSET || nCharset == pData->nCharset) {
         if (sFontName.IsEmpty() || pData->sFontName == sFontName)
           return i;
       }
@@ -236,7 +238,7 @@ void CPWL_FontMap::AddedFont(CPDF_Font* pFont,
                              const CFX_ByteString& sFontAlias) {}
 
 CFX_ByteString CPWL_FontMap::GetNativeFont(int32_t nCharset) {
-  if (nCharset == DEFAULT_CHARSET)
+  if (nCharset == FXFONT_DEFAULT_CHARSET)
     nCharset = GetNativeCharset();
 
   CFX_ByteString sFontName = GetDefaultFontByCharset(nCharset);
@@ -281,7 +283,7 @@ CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc,
 
   if (sFontName.IsEmpty())
     sFontName = GetNativeFont(nCharset);
-  if (nCharset == DEFAULT_CHARSET)
+  if (nCharset == FXFONT_DEFAULT_CHARSET)
     nCharset = GetNativeCharset();
 
   return m_pSystemHandler->AddNativeTrueTypeFontToPDF(pDoc, sFontName,
@@ -310,72 +312,76 @@ const CPWL_FontMap_Data* CPWL_FontMap::GetFontMapData(int32_t nIndex) const {
 }
 
 int32_t CPWL_FontMap::GetNativeCharset() {
-  uint8_t nCharset = ANSI_CHARSET;
+  uint8_t nCharset = FXFONT_ANSI_CHARSET;
   int32_t iCodePage = FXSYS_GetACP();
   switch (iCodePage) {
     case 932:  // Japan
-      nCharset = SHIFTJIS_CHARSET;
+      nCharset = FXFONT_SHIFTJIS_CHARSET;
       break;
     case 936:  // Chinese (PRC, Singapore)
-      nCharset = GB2312_CHARSET;
+      nCharset = FXFONT_GB2312_CHARSET;
       break;
     case 950:  // Chinese (Taiwan; Hong Kong SAR, PRC)
-      nCharset = GB2312_CHARSET;
+      nCharset = FXFONT_GB2312_CHARSET;
       break;
     case 1252:  // Windows 3.1 Latin 1 (US, Western Europe)
-      nCharset = ANSI_CHARSET;
+      nCharset = FXFONT_ANSI_CHARSET;
       break;
     case 874:  // Thai
-      nCharset = THAI_CHARSET;
+      nCharset = FXFONT_THAI_CHARSET;
       break;
     case 949:  // Korean
-      nCharset = HANGUL_CHARSET;
+      nCharset = FXFONT_HANGUL_CHARSET;
       break;
     case 1200:  // Unicode (BMP of ISO 10646)
-      nCharset = ANSI_CHARSET;
+      nCharset = FXFONT_ANSI_CHARSET;
       break;
     case 1250:  // Windows 3.1 Eastern European
-      nCharset = EASTEUROPE_CHARSET;
+      nCharset = FXFONT_EASTEUROPE_CHARSET;
       break;
     case 1251:  // Windows 3.1 Cyrillic
-      nCharset = RUSSIAN_CHARSET;
+      nCharset = FXFONT_RUSSIAN_CHARSET;
       break;
     case 1253:  // Windows 3.1 Greek
-      nCharset = GREEK_CHARSET;
+      nCharset = FXFONT_GREEK_CHARSET;
       break;
     case 1254:  // Windows 3.1 Turkish
-      nCharset = TURKISH_CHARSET;
+      nCharset = FXFONT_TURKISH_CHARSET;
       break;
     case 1255:  // Hebrew
-      nCharset = HEBREW_CHARSET;
+      nCharset = FXFONT_HEBREW_CHARSET;
       break;
     case 1256:  // Arabic
-      nCharset = ARABIC_CHARSET;
+      nCharset = FXFONT_ARABIC_CHARSET;
       break;
     case 1257:  // Baltic
-      nCharset = BALTIC_CHARSET;
+      nCharset = FXFONT_BALTIC_CHARSET;
       break;
     case 1258:  // Vietnamese
-      nCharset = VIETNAMESE_CHARSET;
+      nCharset = FXFONT_VIETNAMESE_CHARSET;
       break;
     case 1361:  // Korean(Johab)
-      nCharset = JOHAB_CHARSET;
+      nCharset = FXFONT_JOHAB_CHARSET;
       break;
   }
   return nCharset;
 }
 
 const FPDF_CharsetFontMap CPWL_FontMap::defaultTTFMap[] = {
-    {ANSI_CHARSET, "Helvetica"},      {GB2312_CHARSET, "SimSun"},
-    {CHINESEBIG5_CHARSET, "MingLiU"}, {SHIFTJIS_CHARSET, "MS Gothic"},
-    {HANGUL_CHARSET, "Batang"},       {RUSSIAN_CHARSET, "Arial"},
+    {FXFONT_ANSI_CHARSET, "Helvetica"},
+    {FXFONT_GB2312_CHARSET, "SimSun"},
+    {FXFONT_CHINESEBIG5_CHARSET, "MingLiU"},
+    {FXFONT_SHIFTJIS_CHARSET, "MS Gothic"},
+    {FXFONT_HANGUL_CHARSET, "Batang"},
+    {FXFONT_RUSSIAN_CHARSET, "Arial"},
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-    {EASTEUROPE_CHARSET, "Arial"},
+    {FXFONT_EASTEUROPE_CHARSET, "Arial"},
 #else
-    {EASTEUROPE_CHARSET, "Tahoma"},
+    {FXFONT_EASTEUROPE_CHARSET, "Tahoma"},
 #endif
-    {ARABIC_CHARSET, "Arial"},        {-1, nullptr}};
+    {FXFONT_ARABIC_CHARSET, "Arial"},
+    {-1, nullptr}};
 
 CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(int32_t nCharset) {
   int i = 0;
@@ -390,9 +396,9 @@ CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(int32_t nCharset) {
 int32_t CPWL_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   // to avoid CJK Font to show ASCII
   if (word < 0x7F)
-    return ANSI_CHARSET;
+    return FXFONT_ANSI_CHARSET;
   // follow the old charset
-  if (nOldCharset != DEFAULT_CHARSET)
+  if (nOldCharset != FXFONT_DEFAULT_CHARSET)
     return nOldCharset;
 
   // find new charset
@@ -400,42 +406,42 @@ int32_t CPWL_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
       (word >= 0xE7C7 && word <= 0xE7F3) ||
       (word >= 0x3000 && word <= 0x303F) ||
       (word >= 0x2000 && word <= 0x206F)) {
-    return GB2312_CHARSET;
+    return FXFONT_GB2312_CHARSET;
   }
 
   if (((word >= 0x3040) && (word <= 0x309F)) ||
       ((word >= 0x30A0) && (word <= 0x30FF)) ||
       ((word >= 0x31F0) && (word <= 0x31FF)) ||
       ((word >= 0xFF00) && (word <= 0xFFEF))) {
-    return SHIFTJIS_CHARSET;
+    return FXFONT_SHIFTJIS_CHARSET;
   }
 
   if (((word >= 0xAC00) && (word <= 0xD7AF)) ||
       ((word >= 0x1100) && (word <= 0x11FF)) ||
       ((word >= 0x3130) && (word <= 0x318F))) {
-    return HANGUL_CHARSET;
+    return FXFONT_HANGUL_CHARSET;
   }
 
   if (word >= 0x0E00 && word <= 0x0E7F)
-    return THAI_CHARSET;
+    return FXFONT_THAI_CHARSET;
 
   if ((word >= 0x0370 && word <= 0x03FF) || (word >= 0x1F00 && word <= 0x1FFF))
-    return GREEK_CHARSET;
+    return FXFONT_GREEK_CHARSET;
 
   if ((word >= 0x0600 && word <= 0x06FF) || (word >= 0xFB50 && word <= 0xFEFC))
-    return ARABIC_CHARSET;
+    return FXFONT_ARABIC_CHARSET;
 
   if (word >= 0x0590 && word <= 0x05FF)
-    return HEBREW_CHARSET;
+    return FXFONT_HEBREW_CHARSET;
 
   if (word >= 0x0400 && word <= 0x04FF)
-    return RUSSIAN_CHARSET;
+    return FXFONT_RUSSIAN_CHARSET;
 
   if (word >= 0x0100 && word <= 0x024F)
-    return EASTEUROPE_CHARSET;
+    return FXFONT_EASTEUROPE_CHARSET;
 
   if (word >= 0x1E00 && word <= 0x1EFF)
-    return VIETNAMESE_CHARSET;
+    return FXFONT_VIETNAMESE_CHARSET;
 
-  return ANSI_CHARSET;
+  return FXFONT_ANSI_CHARSET;
 }

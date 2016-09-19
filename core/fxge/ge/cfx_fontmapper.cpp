@@ -578,7 +578,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     Charset = FXFONT_SYMBOL_CHARSET;
   bool bCJK =
       (Charset == FXFONT_SHIFTJIS_CHARSET || Charset == FXFONT_GB2312_CHARSET ||
-       Charset == FXFONT_HANGEUL_CHARSET ||
+       Charset == FXFONT_HANGUL_CHARSET ||
        Charset == FXFONT_CHINESEBIG5_CHARSET);
   if (!m_pFontInfo) {
     pSubstFont->m_SubstFlags |= FXFONT_SUBST_STANDARD;

@@ -15,6 +15,7 @@
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/include/fx_font.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
@@ -564,7 +565,7 @@ void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
 
 void CPWL_Edit::ReplaceSel(const CFX_WideString& wsText) {
   m_pEdit->Clear();
-  m_pEdit->InsertText(wsText, DEFAULT_CHARSET);
+  m_pEdit->InsertText(wsText, FXFONT_DEFAULT_CHARSET);
 }
 
 CFX_FloatRect CPWL_Edit::GetFocusRect() const {
@@ -708,7 +709,8 @@ FX_BOOL CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
 
   if (IPVT_FontMap* pFontMap = GetFontMap()) {
     int32_t nOldCharSet = GetCharSet();
-    int32_t nNewCharSet = pFontMap->CharSetFromUnicode(nChar, DEFAULT_CHARSET);
+    int32_t nNewCharSet =
+        pFontMap->CharSetFromUnicode(nChar, FXFONT_DEFAULT_CHARSET);
     if (nOldCharSet != nNewCharSet) {
       SetCharSet(nNewCharSet);
     }

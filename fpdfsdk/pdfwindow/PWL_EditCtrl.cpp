@@ -8,6 +8,7 @@
 
 #include "core/fpdfdoc/include/cpvt_section.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fxge/include/fx_font.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
@@ -20,7 +21,7 @@ CPWL_EditCtrl::CPWL_EditCtrl()
     : m_pEdit(new CFX_Edit),
       m_pEditCaret(nullptr),
       m_bMouseDown(FALSE),
-      m_nCharSet(DEFAULT_CHARSET),
+      m_nCharSet(FXFONT_DEFAULT_CHARSET),
       m_nCodePage(0) {}
 
 CPWL_EditCtrl::~CPWL_EditCtrl() {}
@@ -476,7 +477,7 @@ void CPWL_EditCtrl::ShowVScrollBar(FX_BOOL bShow) {}
 
 void CPWL_EditCtrl::InsertText(const CFX_WideString& wsText) {
   if (!IsReadOnly())
-    m_pEdit->InsertText(wsText, DEFAULT_CHARSET);
+    m_pEdit->InsertText(wsText, FXFONT_DEFAULT_CHARSET);
 }
 
 void CPWL_EditCtrl::InsertWord(uint16_t word, int32_t nCharset) {
@@ -567,7 +568,7 @@ void CPWL_EditCtrl::IOnInvalidateRect(CFX_FloatRect* pRect) {
 }
 
 int32_t CPWL_EditCtrl::GetCharSet() const {
-  return m_nCharSet < 0 ? DEFAULT_CHARSET : m_nCharSet;
+  return m_nCharSet < 0 ? FXFONT_DEFAULT_CHARSET : m_nCharSet;
 }
 
 void CPWL_EditCtrl::GetTextRange(const CFX_FloatRect& rect,

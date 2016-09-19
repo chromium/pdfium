@@ -26,7 +26,7 @@ int CharSet2CP(int charset) {
     return 932;
   if (charset == FXFONT_GB2312_CHARSET)
     return 936;
-  if (charset == FXFONT_HANGEUL_CHARSET)
+  if (charset == FXFONT_HANGUL_CHARSET)
     return 949;
   if (charset == FXFONT_CHINESEBIG5_CHARSET)
     return 950;

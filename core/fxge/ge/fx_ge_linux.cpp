@@ -123,7 +123,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
       break;
     }
-    case FXFONT_HANGEUL_CHARSET: {
+    case FXFONT_HANGUL_CHARSET: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
         auto it = m_FontList.find(g_LinuxHGFontList[i]);
         if (it != m_FontList.end()) {

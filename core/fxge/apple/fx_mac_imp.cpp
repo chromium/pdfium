@@ -107,7 +107,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
     case FXFONT_GB2312_CHARSET:
       face = "STSong";
       break;
-    case FXFONT_HANGEUL_CHARSET:
+    case FXFONT_HANGUL_CHARSET:
       face = "AppleMyungjo";
       break;
     case FXFONT_CHINESEBIG5_CHARSET:

@@ -779,7 +779,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
       pWidthArray->AddInteger(814);
       Insert(0x21, 0x7e, pWidthArray);
       break;
-    case FXFONT_HANGEUL_CHARSET:
+    case FXFONT_HANGUL_CHARSET:
       cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
       ordering = "Korea1";
       supplement = 2;
@@ -825,7 +825,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
 
   bool bCJK = charset == FXFONT_CHINESEBIG5_CHARSET ||
               charset == FXFONT_GB2312_CHARSET ||
-              charset == FXFONT_HANGEUL_CHARSET ||
+              charset == FXFONT_HANGUL_CHARSET ||
               charset == FXFONT_SHIFTJIS_CHARSET;
   CFX_ByteString basefont = pFont->GetFamilyName();
   basefont.Replace(" ", "");
@@ -944,12 +944,12 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
                              (pLogFont->lfPitchAndFamily & 3) == FIXED_PITCH,
                              (pLogFont->lfPitchAndFamily & 0xf8) == FF_ROMAN,
                              (pLogFont->lfPitchAndFamily & 0xf8) == FF_SCRIPT,
-                             pLogFont->lfCharSet == SYMBOL_CHARSET);
+                             pLogFont->lfCharSet == FXFONT_SYMBOL_CHARSET);
 
-  bool bCJK = pLogFont->lfCharSet == CHINESEBIG5_CHARSET ||
-              pLogFont->lfCharSet == GB2312_CHARSET ||
-              pLogFont->lfCharSet == HANGEUL_CHARSET ||
-              pLogFont->lfCharSet == SHIFTJIS_CHARSET;
+  bool bCJK = pLogFont->lfCharSet == FXFONT_CHINESEBIG5_CHARSET ||
+              pLogFont->lfCharSet == FXFONT_GB2312_CHARSET ||
+              pLogFont->lfCharSet == FXFONT_HANGUL_CHARSET ||
+              pLogFont->lfCharSet == FXFONT_SHIFTJIS_CHARSET;
   CFX_ByteString basefont;
   if (bTranslateName && bCJK)
     basefont = FPDF_GetPSNameFromTT(hDC);
@@ -969,9 +969,9 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   pBaseDict->SetNameFor("Type", "Font");
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
-    if (pLogFont->lfCharSet == ANSI_CHARSET ||
-        pLogFont->lfCharSet == DEFAULT_CHARSET ||
-        pLogFont->lfCharSet == SYMBOL_CHARSET) {
+    if (pLogFont->lfCharSet == FXFONT_ANSI_CHARSET ||
+        pLogFont->lfCharSet == FXFONT_DEFAULT_CHARSET ||
+        pLogFont->lfCharSet == FXFONT_SYMBOL_CHARSET) {
       pBaseDict->SetNameFor("Encoding", "WinAnsiEncoding");
     } else {
       CalculateEncodingDict(pLogFont->lfCharSet, pBaseDict);

@@ -633,7 +633,7 @@ void CFXEU_Clear::Undo() {
   if (m_pEdit) {
     m_pEdit->SelectNone();
     m_pEdit->SetCaret(m_wrSel.BeginPos);
-    m_pEdit->InsertText(m_swText, DEFAULT_CHARSET, FALSE, TRUE);
+    m_pEdit->InsertText(m_swText, FXFONT_DEFAULT_CHARSET, FALSE, TRUE);
     m_pEdit->SetSel(m_wrSel.BeginPos, m_wrSel.EndPos);
   }
 }
@@ -1271,7 +1271,7 @@ CPVT_WordRange CFX_Edit::GetSelectWordRange() const {
 
 void CFX_Edit::SetText(const CFX_WideString& sText) {
   Empty();
-  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, DEFAULT_CHARSET);
+  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FXFONT_DEFAULT_CHARSET);
   Paint();
 }
 

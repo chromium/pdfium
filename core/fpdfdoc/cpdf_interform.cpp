@@ -748,56 +748,56 @@ CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
 // static
 uint8_t CPDF_InterForm::GetNativeCharSet() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  uint8_t charSet = ANSI_CHARSET;
+  uint8_t charSet = FXFONT_ANSI_CHARSET;
   UINT iCodePage = ::GetACP();
   switch (iCodePage) {
     case 932:
-      charSet = SHIFTJIS_CHARSET;
+      charSet = FXFONT_SHIFTJIS_CHARSET;
       break;
     case 936:
-      charSet = GB2312_CHARSET;
+      charSet = FXFONT_GB2312_CHARSET;
       break;
     case 950:
-      charSet = CHINESEBIG5_CHARSET;
+      charSet = FXFONT_CHINESEBIG5_CHARSET;
       break;
     case 1252:
-      charSet = ANSI_CHARSET;
+      charSet = FXFONT_ANSI_CHARSET;
       break;
     case 874:
-      charSet = THAI_CHARSET;
+      charSet = FXFONT_THAI_CHARSET;
       break;
     case 949:
-      charSet = HANGUL_CHARSET;
+      charSet = FXFONT_HANGUL_CHARSET;
       break;
     case 1200:
-      charSet = ANSI_CHARSET;
+      charSet = FXFONT_ANSI_CHARSET;
       break;
     case 1250:
-      charSet = EASTEUROPE_CHARSET;
+      charSet = FXFONT_EASTEUROPE_CHARSET;
       break;
     case 1251:
-      charSet = RUSSIAN_CHARSET;
+      charSet = FXFONT_RUSSIAN_CHARSET;
       break;
     case 1253:
-      charSet = GREEK_CHARSET;
+      charSet = FXFONT_GREEK_CHARSET;
       break;
     case 1254:
-      charSet = TURKISH_CHARSET;
+      charSet = FXFONT_TURKISH_CHARSET;
       break;
     case 1255:
-      charSet = HEBREW_CHARSET;
+      charSet = FXFONT_HEBREW_CHARSET;
       break;
     case 1256:
-      charSet = ARABIC_CHARSET;
+      charSet = FXFONT_ARABIC_CHARSET;
       break;
     case 1257:
-      charSet = BALTIC_CHARSET;
+      charSet = FXFONT_BALTIC_CHARSET;
       break;
     case 1258:
-      charSet = VIETNAMESE_CHARSET;
+      charSet = FXFONT_VIETNAMESE_CHARSET;
       break;
     case 1361:
-      charSet = JOHAB_CHARSET;
+      charSet = FXFONT_JOHAB_CHARSET;
       break;
   }
   return charSet;
@@ -916,18 +916,18 @@ CFX_ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
   CFX_ByteString csFontName;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   LOGFONTA lf = {};
-  if (charSet == ANSI_CHARSET) {
+  if (charSet == FXFONT_ANSI_CHARSET) {
     csFontName = "Helvetica";
     return csFontName;
   }
   FX_BOOL bRet = FALSE;
-  if (charSet == SHIFTJIS_CHARSET) {
+  if (charSet == FXFONT_SHIFTJIS_CHARSET) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
                                 "MS Mincho", lf);
-  } else if (charSet == GB2312_CHARSET) {
+  } else if (charSet == FXFONT_GB2312_CHARSET) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, "SimSun",
                                 lf);
-  } else if (charSet == CHINESEBIG5_CHARSET) {
+  } else if (charSet == FXFONT_CHINESEBIG5_CHARSET) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, "MingLiU",
                                 lf);
   }

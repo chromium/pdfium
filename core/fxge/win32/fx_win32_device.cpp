@@ -459,7 +459,7 @@ FX_BOOL CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   m_pMapper = pMapper;
   LOGFONTA lf;
   FXSYS_memset(&lf, 0, sizeof(LOGFONTA));
-  lf.lfCharSet = DEFAULT_CHARSET;
+  lf.lfCharSet = FXFONT_DEFAULT_CHARSET;
   lf.lfFaceName[0] = 0;
   lf.lfPitchAndFamily = 0;
   EnumFontFamiliesExA(m_hDC, &lf, (FONTENUMPROCA)FontEnumProc, (uintptr_t) this,
@@ -500,7 +500,7 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
     case FXFONT_SHIFTJIS_CHARSET:
     case FXFONT_GB2312_CHARSET:
     case FXFONT_CHINESEBIG5_CHARSET:
-    case FXFONT_HANGEUL_CHARSET:
+    case FXFONT_HANGUL_CHARSET:
     default:
       bCJK = FALSE;
       break;
@@ -592,17 +592,17 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       iExact = TRUE;
       break;
     }
-  if (charset == ANSI_CHARSET || charset == SYMBOL_CHARSET) {
-    charset = DEFAULT_CHARSET;
+  if (charset == FXFONT_ANSI_CHARSET || charset == FXFONT_SYMBOL_CHARSET) {
+    charset = FXFONT_DEFAULT_CHARSET;
   }
   int subst_pitch_family = pitch_family;
   switch (charset) {
-    case SHIFTJIS_CHARSET:
+    case FXFONT_SHIFTJIS_CHARSET:
       subst_pitch_family = FF_ROMAN;
       break;
-    case CHINESEBIG5_CHARSET:
-    case HANGUL_CHARSET:
-    case GB2312_CHARSET:
+    case FXFONT_CHINESEBIG5_CHARSET:
+    case FXFONT_HANGUL_CHARSET:
+    case FXFONT_GB2312_CHARSET:
       subst_pitch_family = 0;
       break;
   }
@@ -629,20 +629,20 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       return hFont;
   }
   ::DeleteObject(hFont);
-  if (charset == DEFAULT_CHARSET)
+  if (charset == FXFONT_DEFAULT_CHARSET)
     return nullptr;
 
   switch (charset) {
-    case SHIFTJIS_CHARSET:
+    case FXFONT_SHIFTJIS_CHARSET:
       GetJapanesePreference(face, weight, pitch_family);
       break;
-    case GB2312_CHARSET:
+    case FXFONT_GB2312_CHARSET:
       GetGBPreference(face, weight, pitch_family);
       break;
-    case HANGUL_CHARSET:
+    case FXFONT_HANGUL_CHARSET:
       face = "Gulim";
       break;
-    case CHINESEBIG5_CHARSET:
+    case FXFONT_CHINESEBIG5_CHARSET:
       if (face.Find("MSung") >= 0) {
         face = "MingLiU";
       } else {

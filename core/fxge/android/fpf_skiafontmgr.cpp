@@ -147,7 +147,7 @@ static uint32_t FPF_SkiaGetCharset(uint8_t uCharset) {
       return FPF_SKIACHARSET_Symbol;
     case FXFONT_SHIFTJIS_CHARSET:
       return FPF_SKIACHARSET_ShiftJIS;
-    case FXFONT_HANGEUL_CHARSET:
+    case FXFONT_HANGUL_CHARSET:
       return FPF_SKIACHARSET_Korean;
     case FXFONT_GB2312_CHARSET:
       return FPF_SKIACHARSET_GB2312;
@@ -204,7 +204,7 @@ static uint32_t FPF_SKIAGetFamilyHash(const CFX_ByteStringC& bsFamily,
 static FX_BOOL FPF_SkiaIsCJK(uint8_t uCharset) {
   return (uCharset == FXFONT_GB2312_CHARSET) ||
          (uCharset == FXFONT_CHINESEBIG5_CHARSET) ||
-         (uCharset == FXFONT_HANGEUL_CHARSET) ||
+         (uCharset == FXFONT_HANGUL_CHARSET) ||
          (uCharset == FXFONT_SHIFTJIS_CHARSET);
 }
 static FX_BOOL FPF_SkiaMaybeSymbol(const CFX_ByteStringC& bsFacename) {
