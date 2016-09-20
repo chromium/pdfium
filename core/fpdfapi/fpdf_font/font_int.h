@@ -173,7 +173,7 @@ class CPDF_CID2UnicodeMap {
   void Load(CPDF_CMapManager* pMgr, CIDSet charset, FX_BOOL bPromptCJK);
   FX_WCHAR UnicodeFromCID(uint16_t CID);
 
- protected:
+ private:
   CIDSet m_Charset;
   const uint16_t* m_pEmbeddedMap;
   uint32_t m_EmbeddedCount;
@@ -189,17 +189,16 @@ class CPDF_ToUnicodeMap {
   CFX_WideString Lookup(uint32_t charcode) const;
   uint32_t ReverseLookup(FX_WCHAR unicode) const;
 
- protected:
-  std::map<uint32_t, uint32_t> m_Map;
-  CPDF_CID2UnicodeMap* m_pBaseMap;
-  CFX_WideTextBuf m_MultiCharBuf;
-
  private:
   friend class fpdf_font_StringToCode_Test;
   friend class fpdf_font_StringToWideString_Test;
 
   static uint32_t StringToCode(const CFX_ByteStringC& str);
   static CFX_WideString StringToWideString(const CFX_ByteStringC& str);
+
+  std::map<uint32_t, uint32_t> m_Map;
+  CPDF_CID2UnicodeMap* m_pBaseMap;
+  CFX_WideTextBuf m_MultiCharBuf;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_FONT_FONT_INT_H_
