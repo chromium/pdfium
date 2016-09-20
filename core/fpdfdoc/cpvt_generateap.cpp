@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpvt_generateap.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
@@ -669,18 +671,23 @@ bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (!pAnnotDict || pAnnotDict->GetStringFor("Subtype") != "Widget")
     return false;
 
-  CFX_ByteString field_type = FPDF_GetFieldAttr(pAnnotDict, "FT")->GetString();
-  uint32_t flags = FPDF_GetFieldAttr(pAnnotDict, "Ff")
-                       ? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger()
-                       : 0;
-  if (field_type == "Tx") {
+  CPDF_Object* pFieldTypeObj = FPDF_GetFieldAttr(pAnnotDict, "FT");
+  if (!pFieldTypeObj)
+    return false;
+
+  CFX_ByteString field_type = pFieldTypeObj->GetString();
+  if (field_type == "Tx")
     return CPVT_GenerateAP::GenerateTextFieldAP(pDoc, pAnnotDict);
-  }
+
+  CPDF_Object* pFieldFlagsObj = FPDF_GetFieldAttr(pAnnotDict, "Ff");
+  uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
+
   if (field_type == "Ch") {
     return (flags & (1 << 17))
                ? CPVT_GenerateAP::GenerateComboBoxAP(pDoc, pAnnotDict)
                : CPVT_GenerateAP::GenerateListBoxAP(pDoc, pAnnotDict);
   }
+
   if (field_type == "Btn") {
     if (!(flags & (1 << 16))) {
       if (!pAnnotDict->KeyExist("AS")) {
@@ -692,6 +699,7 @@ bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
       }
     }
   }
+
   return false;
 }
 
