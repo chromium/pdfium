@@ -97,9 +97,8 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                             FX_BOOL bTranslateName = FALSE);
 #endif
 
- protected:
-  friend class CPDF_Creator;
-  friend class CPDF_Parser;
+ private:
+  friend class CPDF_TestDocument;
 
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount() const;
@@ -113,6 +112,15 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                     int& index,
                     int level = 0);
   CPDF_Object* ParseIndirectObject(uint32_t objnum) override;
+  void LoadDocInternal();
+  size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
+  CPDF_Dictionary* GetPagesDict() const;
+  CPDF_Dictionary* ProcessbCJK(
+      CPDF_Dictionary* pBaseDict,
+      int charset,
+      FX_BOOL bVert,
+      CFX_ByteString basefont,
+      std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
 
   std::unique_ptr<CPDF_Parser> m_pParser;
   CPDF_Dictionary* m_pRootDict;
@@ -125,18 +133,6 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
-
- private:
-  void LoadDocInternal();
-  size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
-  CPDF_Dictionary* GetPagesDict() const;
-  CPDF_Dictionary* ProcessbCJK(
-      CPDF_Dictionary* pBaseDict,
-      int charset,
-      FX_BOOL bVert,
-      CFX_ByteString basefont,
-      std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
-
   CFX_ArrayTemplate<uint32_t> m_PageList;
 };
 

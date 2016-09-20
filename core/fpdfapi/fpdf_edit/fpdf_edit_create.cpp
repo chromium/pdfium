@@ -929,7 +929,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
   }
 
   if (pDict) {
-    if (pDict == m_pDocument->m_pRootDict || pDict == m_pEncryptDict)
+    if (pDict == m_pDocument->GetRoot() || pDict == m_pEncryptDict)
       return 1;
     if (pDict->IsSignatureDict())
       return 1;
@@ -1749,17 +1749,17 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
       if (m_File.AppendString("\r\n/Root ") < 0) {
         return -1;
       }
-      if (m_File.AppendDWord(m_pDocument->m_pRootDict->GetObjNum()) < 0) {
+      if (m_File.AppendDWord(m_pDocument->GetRoot()->GetObjNum()) < 0) {
         return -1;
       }
       if (m_File.AppendString(" 0 R\r\n") < 0) {
         return -1;
       }
-      if (m_pDocument->m_pInfoDict) {
+      if (m_pDocument->GetInfo()) {
         if (m_File.AppendString("/Info ") < 0) {
           return -1;
         }
-        if (m_File.AppendDWord(m_pDocument->m_pInfoDict->GetObjNum()) < 0) {
+        if (m_File.AppendDWord(m_pDocument->GetInfo()->GetObjNum()) < 0) {
           return -1;
         }
         if (m_File.AppendString(" 0 R\r\n") < 0) {
