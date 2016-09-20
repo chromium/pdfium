@@ -90,7 +90,8 @@ FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
 
   buf << "%FDF-1.2\r\n";
   for (const auto& pair : *this)
-    buf << pair.first << " 0 obj\r\n" << pair.second << "\r\nendobj\r\n\r\n";
+    buf << pair.first << " 0 obj\r\n"
+        << pair.second.get() << "\r\nendobj\r\n\r\n";
 
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";
