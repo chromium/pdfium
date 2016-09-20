@@ -26,7 +26,6 @@ TEST(cpdf_formfield, FPDF_GetFullName) {
   EXPECT_STREQ("bar.foo", name.UTF8Encode().c_str());
 
   CPDF_Dictionary* dict2 = new CPDF_Dictionary;
-  obj_holder.AddIndirectObject(dict2);
   dict1->SetFor("Parent", dict2);
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("bar.foo", name.UTF8Encode().c_str());
