@@ -279,7 +279,6 @@ int GetCharSizeImpl(uint32_t charcode,
 }  // namespace
 
 CPDF_CMapManager::CPDF_CMapManager() {
-  m_bPrompted = FALSE;
   FXSYS_memset(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);
 }
 CPDF_CMapManager::~CPDF_CMapManager() {
@@ -314,16 +313,6 @@ CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
   return pCMap;
 }
 
-void CPDF_CMapManager::ReloadAll() {
-  for (const auto& pair : m_CMaps)
-    pair.second->LoadPredefined(this, pair.first, FALSE);
-
-  for (size_t i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
-    if (CPDF_CID2UnicodeMap* pMap = m_CID2UnicodeMaps[i]) {
-      pMap->Load(this, CIDSetFromSizeT(i), FALSE);
-    }
-  }
-}
 CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(CIDSet charset,
                                                          FX_BOOL bPromptCJK) {
   if (!m_CID2UnicodeMaps[charset])

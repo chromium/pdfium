@@ -32,13 +32,11 @@ class CPDF_CMapManager {
   void* GetPackage(FX_BOOL bPrompt);
   CPDF_CMap* GetPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPromptCJK);
   CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, FX_BOOL bPromptCJK);
-  void ReloadAll();
 
  private:
   CPDF_CMap* LoadPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPromptCJK);
   CPDF_CID2UnicodeMap* LoadCID2UnicodeMap(CIDSet charset, FX_BOOL bPromptCJK);
 
-  FX_BOOL m_bPrompted;
   std::map<CFX_ByteString, CPDF_CMap*> m_CMaps;
   CPDF_CID2UnicodeMap* m_CID2UnicodeMaps[6];
 };
@@ -109,9 +107,6 @@ class CPDF_CMapParser {
   int m_CodeSeq;
   uint32_t m_CodePoints[4];
   CFX_ArrayTemplate<CMap_CodeRange> m_CodeRanges;
-  CFX_ByteString m_Registry;
-  CFX_ByteString m_Ordering;
-  CFX_ByteString m_Supplement;
   CFX_ByteString m_LastWord;
 };
 
