@@ -43,15 +43,11 @@ class CPDF_Array : public CPDF_Object {
   CFX_Matrix GetMatrix();
   CFX_FloatRect GetRect();
 
-  void SetAt(size_t index,
-             CPDF_Object* pObj,
-             CPDF_IndirectObjectHolder* pObjs = nullptr);
-  void InsertAt(size_t index,
-                CPDF_Object* pObj,
-                CPDF_IndirectObjectHolder* pObjs = nullptr);
+  void SetAt(size_t index, CPDF_Object* pObj);
+  void InsertAt(size_t index, CPDF_Object* pObj);
   void RemoveAt(size_t index, size_t nCount = 1);
 
-  void Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs = nullptr);
+  void Add(CPDF_Object* pObj);
   void AddNumber(FX_FLOAT f);
   void AddInteger(int i);
   void AddString(const CFX_ByteString& str);

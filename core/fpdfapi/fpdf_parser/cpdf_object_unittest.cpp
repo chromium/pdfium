@@ -813,7 +813,8 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     objects_holder.AddIndirectObject(dict_obj);
     EXPECT_EQ(1u, dict_obj->GetObjNum());
     dict_obj->SetFor("arr", arr_obj);
-    arr_obj->InsertAt(0, dict_obj, &objects_holder);
+    arr_obj->InsertAt(
+        0, new CPDF_Reference(&objects_holder, dict_obj->GetObjNum()));
     CPDF_Object* elem0 = arr_obj->GetObjectAt(0);
     ASSERT_TRUE(elem0);
     ASSERT_TRUE(elem0->IsReference());

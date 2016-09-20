@@ -117,8 +117,7 @@ TEST(cpdf_array, Clone) {
         // Starts object number from 1.
         int obj_num = i * kNumOfRowElems + j + 1;
         obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num, obj);
-        arr_elem->InsertAt(j, new CPDF_Reference(obj_holder.get(), obj_num),
-                           obj_holder.get());
+        arr_elem->InsertAt(j, new CPDF_Reference(obj_holder.get(), obj_num));
       }
       arr->InsertAt(i, arr_elem);
     }

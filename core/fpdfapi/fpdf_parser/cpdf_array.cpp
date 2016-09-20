@@ -13,6 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Array::CPDF_Array() {}
@@ -145,30 +146,22 @@ void CPDF_Array::RemoveAt(size_t i, size_t nCount) {
   m_Objects.erase(m_Objects.begin() + i, m_Objects.begin() + i + nCount);
 }
 
-void CPDF_Array::SetAt(size_t i,
-                       CPDF_Object* pObj,
-                       CPDF_IndirectObjectHolder* pObjs) {
+void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
   ASSERT(IsArray());
+  CHECK(!pObj || pObj->GetObjNum() == 0);
   if (i >= m_Objects.size()) {
     ASSERT(false);
     return;
   }
   if (CPDF_Object* pOld = m_Objects[i])
     pOld->Release();
-  if (pObj->GetObjNum()) {
-    ASSERT(pObjs);
-    pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
-  }
+
   m_Objects[i] = pObj;
 }
 
-void CPDF_Array::InsertAt(size_t index,
-                          CPDF_Object* pObj,
-                          CPDF_IndirectObjectHolder* pObjs) {
-  if (pObj->GetObjNum()) {
-    ASSERT(pObjs);
-    pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
-  }
+void CPDF_Array::InsertAt(size_t index, CPDF_Object* pObj) {
+  ASSERT(IsArray());
+  CHECK(!pObj || pObj->GetObjNum() == 0);
   if (index >= m_Objects.size()) {
     // Allocate space first.
     m_Objects.resize(index + 1, nullptr);
@@ -179,37 +172,29 @@ void CPDF_Array::InsertAt(size_t index,
   }
 }
 
-void CPDF_Array::Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs) {
-  if (pObj->GetObjNum()) {
-    ASSERT(pObjs);
-    pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
-  }
+void CPDF_Array::Add(CPDF_Object* pObj) {
+  ASSERT(IsArray());
+  CHECK(!pObj || pObj->GetObjNum() == 0);
   m_Objects.push_back(pObj);
 }
 
 void CPDF_Array::AddName(const CFX_ByteString& str) {
-  ASSERT(IsArray());
   Add(new CPDF_Name(str));
 }
 
 void CPDF_Array::AddString(const CFX_ByteString& str) {
-  ASSERT(IsArray());
   Add(new CPDF_String(str, FALSE));
 }
 
 void CPDF_Array::AddInteger(int i) {
-  ASSERT(IsArray());
   Add(new CPDF_Number(i));
 }
 
 void CPDF_Array::AddNumber(FX_FLOAT f) {
-  ASSERT(IsArray());
-  CPDF_Number* pNumber = new CPDF_Number(f);
-  Add(pNumber);
+  Add(new CPDF_Number(f));
 }
 
 void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
                               uint32_t objnum) {
-  ASSERT(IsArray());
   Add(new CPDF_Reference(pDoc, objnum));
 }

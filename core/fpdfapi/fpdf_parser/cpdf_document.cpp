@@ -302,7 +302,7 @@ int InsertNewPage(CPDF_Document* pDoc,
       pPagesList = new CPDF_Array;
       pPages->SetFor("Kids", pPagesList);
     }
-    pPagesList->Add(pPageDict, pDoc);
+    pPagesList->Add(new CPDF_Reference(pDoc, pPageDict->GetObjNum()));
     pPages->SetIntegerFor("Count", nPages + 1);
     pPageDict->SetReferenceFor("Parent", pDoc, pPages->GetObjNum());
   } else {

@@ -1940,7 +1940,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       std::vector<uint8_t> buffer =
           PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
       CFX_ByteString bsBuffer(buffer.data(), buffer.size());
-      m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE), m_pDocument);
+      m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE));
     }
   }
   if (!bDefault) {
@@ -1955,7 +1955,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
     std::vector<uint8_t> buffer =
         PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
     CFX_ByteString bsBuffer(buffer.data(), buffer.size());
-    m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE), m_pDocument);
+    m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE));
     return;
   }
   m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
