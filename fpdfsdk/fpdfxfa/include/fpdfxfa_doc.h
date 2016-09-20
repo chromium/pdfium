@@ -38,16 +38,16 @@ class CPDFXFA_Document {
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
-
-  int GetPageCount();
-  CPDFXFA_Page* GetPage(int page_index);
-  CPDFXFA_Page* GetPage(CXFA_FFPageView* pPage);
+  CPDFSDK_Document* GetSDKDocument(CPDFSDK_Environment* pFormFillEnv);
+  int GetDocType() const { return m_iDocType; }
 
   void DeletePage(int page_index);
-  void RemovePage(CPDFXFA_Page* page);
-  int GetDocType() { return m_iDocType; }
+  int GetPageCount() const;
 
-  CPDFSDK_Document* GetSDKDocument(CPDFSDK_Environment* pFormFillEnv);
+  CPDFXFA_Page* GetXFAPage(int page_index);
+  CPDFXFA_Page* GetXFAPage(CXFA_FFPageView* pPage) const;
+
+  void RemovePage(CPDFXFA_Page* page);
 
   void ClearChangeMark();
 

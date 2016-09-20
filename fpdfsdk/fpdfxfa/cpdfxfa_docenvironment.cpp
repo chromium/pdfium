@@ -61,7 +61,7 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (m_pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA)
     return;
 
-  CPDFXFA_Page* pPage = m_pDocument->GetPage(pPageView);
+  CPDFXFA_Page* pPage = m_pDocument->GetXFAPage(pPageView);
   if (!pPage)
     return;
 
@@ -93,7 +93,7 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CPDFXFA_Page* pPage = m_pDocument->GetPage(pPageView);
+  CPDFXFA_Page* pPage = m_pDocument->GetXFAPage(pPageView);
   if (!pPage)
     return;
 
@@ -118,7 +118,7 @@ FX_BOOL CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
   if (!pXFAPageView)
     return FALSE;
 
-  CPDFXFA_Page* pPage = m_pDocument->GetPage(pXFAPageView);
+  CPDFXFA_Page* pPage = m_pDocument->GetXFAPage(pXFAPageView);
   if (!pPage)
     return FALSE;
 
@@ -231,7 +231,7 @@ FX_BOOL CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   if (!pXFAPageView)
     return FALSE;
 
-  CPDFXFA_Page* pPage = m_pDocument->GetPage(pXFAPageView);
+  CPDFXFA_Page* pPage = m_pDocument->GetXFAPage(pXFAPageView);
   if (!pPage)
     return FALSE;
 
@@ -302,7 +302,7 @@ void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CPDFXFA_Page* pXFAPage = m_pDocument->GetPage(pPageView);
+  CPDFXFA_Page* pXFAPage = m_pDocument->GetXFAPage(pPageView);
   if (!pXFAPage)
     return;
 
@@ -318,7 +318,7 @@ void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CPDFXFA_Page* pXFAPage = m_pDocument->GetPage(pPageView);
+  CPDFXFA_Page* pXFAPage = m_pDocument->GetXFAPage(pPageView);
   if (!pXFAPage)
     return;
 

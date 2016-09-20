@@ -108,7 +108,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
   return TRUE;
 }
 
-int CPDFXFA_Document::GetPageCount() {
+int CPDFXFA_Document::GetPageCount() const {
   if (!m_pPDFDoc && !m_pXFADoc)
     return 0;
 
@@ -125,7 +125,7 @@ int CPDFXFA_Document::GetPageCount() {
   }
 }
 
-CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
+CPDFXFA_Page* CPDFXFA_Document::GetXFAPage(int page_index) {
   if (page_index < 0)
     return nullptr;
 
@@ -151,7 +151,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
   return pPage;
 }
 
-CPDFXFA_Page* CPDFXFA_Document::GetPage(CXFA_FFPageView* pPage) {
+CPDFXFA_Page* CPDFXFA_Document::GetXFAPage(CXFA_FFPageView* pPage) const {
   if (!pPage)
     return nullptr;
 

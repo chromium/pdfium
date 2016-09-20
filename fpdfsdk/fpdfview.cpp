@@ -537,7 +537,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
     return nullptr;
 
 #ifdef PDF_ENABLE_XFA
-  return pDoc->GetPage(page_index);
+  return pDoc->GetXFAPage(page_index);
 #else   // PDF_ENABLE_XFA
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
   if (!pDict)
@@ -920,7 +920,7 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   int count = pDoc->GetPageCount();
   if (page_index < 0 || page_index >= count)
     return FALSE;
-  CPDFXFA_Page* pPage = pDoc->GetPage(page_index);
+  CPDFXFA_Page* pPage = pDoc->GetXFAPage(page_index);
   if (!pPage)
     return FALSE;
   *width = pPage->GetPageWidth();

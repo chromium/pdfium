@@ -48,7 +48,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
   CPDF_Dictionary* GetInfo() const { return m_pInfoDict; }
 
+  void DeletePage(int iPage);
   int GetPageCount() const;
+
   CPDF_Dictionary* GetPage(int iPage);
   int GetPageIndex(uint32_t objnum);
   uint32_t GetUserPermissions() const;
@@ -78,10 +80,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   void LoadLinearizedDoc(CPDF_Dictionary* pLinearizationParams);
   void LoadPages();
 
-  // Editing methods.
   void CreateNewDoc();
   CPDF_Dictionary* CreateNewPage(int iPage);
-  void DeletePage(int iPage);
+
   CPDF_Font* AddStandardFont(const FX_CHAR* font, CPDF_FontEncoding* pEncoding);
   CPDF_Font* AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
