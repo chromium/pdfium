@@ -14,7 +14,6 @@
 
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "core/fxge/include/cfx_windowsdevice.h"
 #include "core/fxge/include/fx_freetype.h"
@@ -199,7 +198,6 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
 FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
                                           const FXTEXT_CHARPOS* pCharPos,
                                           CFX_Font* pFont,
-                                          CFX_FontCache* pCache,
                                           const CFX_Matrix* pObject2Device,
                                           FX_FLOAT font_size,
                                           uint32_t color) {

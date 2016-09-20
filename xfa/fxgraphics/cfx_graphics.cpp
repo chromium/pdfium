@@ -1294,9 +1294,8 @@ FWL_Error CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
     m.Concat(*matrix);
   }
   FX_BOOL result = m_renderDevice->DrawNormalText(
-      length, charPos, m_info.font, CFX_GEModule::Get()->GetFontCache(),
-      -m_info.fontSize * m_info.fontHScale, &m, m_info.fillColor->m_info.argb,
-      FXTEXT_CLEARTYPE);
+      length, charPos, m_info.font, -m_info.fontSize * m_info.fontHScale, &m,
+      m_info.fillColor->m_info.argb, FXTEXT_CLEARTYPE);
   if (!result)
     return FWL_Error::Indefinite;
   FX_Free(charPos);

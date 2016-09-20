@@ -11,7 +11,6 @@
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 #include "core/fxge/win32/dwrite_int.h"
 
-class CFX_FontCache;
 struct FXTEXT_CHARPOS;
 struct WINDIB_Open_Args_;
 
@@ -246,7 +245,6 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
   FX_BOOL DrawDeviceText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
-                         CFX_FontCache* pCache,
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
                          uint32_t color) override;

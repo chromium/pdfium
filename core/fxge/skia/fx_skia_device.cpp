@@ -14,7 +14,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
@@ -486,7 +485,6 @@ class SkiaState {
   // mark all cached state as uninitialized
   SkiaState()
       : m_pFont(nullptr),
-        m_pCache(nullptr),
         m_fontSize(0),
         m_fillColor(0),
         m_strokeColor(0),
@@ -580,7 +578,6 @@ class SkiaState {
   bool DrawText(int nChars,
                 const FXTEXT_CHARPOS* pCharPos,
                 CFX_Font* pFont,
-                CFX_FontCache* pCache,
                 const CFX_Matrix* pMatrix,
                 FX_FLOAT font_size,
                 uint32_t color,
@@ -591,13 +588,12 @@ class SkiaState {
       FlushCommands(pDriver);
     if (m_drawPath)
       FlushPath(pDriver);
-    if (m_drawText && FontChanged(pFont, pCache, pMatrix, font_size, color))
+    if (m_drawText && FontChanged(pFont, pMatrix, font_size, color))
       FlushText(pDriver);
     if (!m_drawText) {
       m_positions.setCount(0);
       m_glyphs.setCount(0);
       m_pFont = pFont;
-      m_pCache = pCache;
       m_fontSize = font_size;
       m_fillColor = color;
       m_drawMatrix = *pMatrix;
@@ -626,8 +622,8 @@ class SkiaState {
     SkPaint skPaint;
     skPaint.setAntiAlias(true);
     skPaint.setColor(m_fillColor);
-    if (m_pFont->GetFace() && m_pCache) {  // exclude placeholder test fonts
-      sk_sp<SkTypeface> typeface(SkSafeRef(m_pCache->GetDeviceCache(m_pFont)));
+    if (m_pFont->GetFace()) {  // exclude placeholder test fonts
+      sk_sp<SkTypeface> typeface(SkSafeRef(m_pFont->GetDeviceCache()));
       skPaint.setTypeface(typeface);
     }
     skPaint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
@@ -783,13 +779,11 @@ class SkiaState {
   }
 
   bool FontChanged(CFX_Font* pFont,
-                   CFX_FontCache* pCache,
                    const CFX_Matrix* pMatrix,
                    FX_FLOAT font_size,
                    uint32_t color) {
-    return pFont != m_pFont || pCache != m_pCache ||
-           MatrixChanged(pMatrix, m_drawMatrix) || font_size != m_fontSize ||
-           color != m_fillColor;
+    return pFont != m_pFont || MatrixChanged(pMatrix, m_drawMatrix) ||
+           font_size != m_fontSize || color != m_fillColor;
   }
 
   bool MatrixChanged(const CFX_Matrix* pMatrix, const CFX_Matrix& refMatrix) {
@@ -872,7 +866,6 @@ class SkiaState {
   CFX_GraphStateData m_drawState;
   CFX_Matrix m_clipMatrix;
   CFX_Font* m_pFont;
-  CFX_FontCache* m_pCache;
   FX_FLOAT m_fontSize;
   uint32_t m_fillColor;
   uint32_t m_strokeColor;
@@ -1005,18 +998,14 @@ void CFX_SkiaDeviceDriver::Flush() {
 FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              const FXTEXT_CHARPOS* pCharPos,
                                              CFX_Font* pFont,
-                                             CFX_FontCache* pCache,
                                              const CFX_Matrix* pObject2Device,
                                              FX_FLOAT font_size,
                                              uint32_t color) {
-  if (!pCache)
-    pCache = CFX_GEModule::Get()->GetFontCache();
-  if (m_pCache->DrawText(nChars, pCharPos, pFont, pCache, pObject2Device,
-                         font_size, color, this)) {
+  if (m_pCache->DrawText(nChars, pCharPos, pFont, pObject2Device, font_size,
+                         color, this)) {
     return TRUE;
   }
-  sk_sp<SkTypeface> typeface(
-      SkSafeRef(pCache ? pCache->GetDeviceCache(pFont) : nullptr));
+  sk_sp<SkTypeface> typeface(SkSafeRef(pFont->GetDeviceCache()));
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setColor(color);

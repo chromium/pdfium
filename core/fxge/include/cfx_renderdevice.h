@@ -14,7 +14,6 @@
 #include "core/fxge/include/fx_font.h"
 
 class CFX_Font;
-class CFX_FontCache;
 class CFX_GraphStateData;
 class IFX_RenderDeviceDriver;
 
@@ -208,7 +207,6 @@ class CFX_RenderDevice {
   FX_BOOL DrawNormalText(int nChars,
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
-                         CFX_FontCache* pCache,
                          FX_FLOAT font_size,
                          const CFX_Matrix* pText2Device,
                          uint32_t fill_color,
@@ -216,7 +214,6 @@ class CFX_RenderDevice {
   FX_BOOL DrawTextPath(int nChars,
                                 const FXTEXT_CHARPOS* pCharPos,
                                 CFX_Font* pFont,
-                                CFX_FontCache* pCache,
                                 FX_FLOAT font_size,
                                 const CFX_Matrix* pText2User,
                                 const CFX_Matrix* pUser2Device,

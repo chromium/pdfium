@@ -30,14 +30,13 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
-    : m_pPDFDoc(pPDFDoc), m_pFontCache(new CFX_FontCache) {}
+    : m_pPDFDoc(pPDFDoc) {}
 
 CPDF_DocRenderData::~CPDF_DocRenderData() {
   Clear(TRUE);
@@ -61,15 +60,6 @@ void CPDF_DocRenderData::Clear(FX_BOOL bRelease) {
       delete value->get();
       delete value;
       m_TransferFuncMap.erase(curr_it);
-    }
-  }
-
-  if (m_pFontCache) {
-    if (bRelease) {
-      delete m_pFontCache;
-      m_pFontCache = nullptr;
-    } else {
-      m_pFontCache->FreeCache(FALSE);
     }
   }
 }

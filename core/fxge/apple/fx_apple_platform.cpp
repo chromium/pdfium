@@ -18,7 +18,6 @@
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_facecache.h"
-#include "core/fxge/include/cfx_fontcache.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "core/fxge/include/fx_freetype.h"
@@ -33,7 +32,6 @@ FX_BOOL CGDrawGlyphRun(CGContextRef pContext,
                        int nChars,
                        const FXTEXT_CHARPOS* pCharPos,
                        CFX_Font* pFont,
-                       CFX_FontCache* pCache,
                        const CFX_Matrix* pObject2Device,
                        FX_FLOAT font_size,
                        uint32_t argb) {
@@ -106,7 +104,6 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
 FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                             const FXTEXT_CHARPOS* pCharPos,
                                             CFX_Font* pFont,
-                                            CFX_FontCache* pCache,
                                             const CFX_Matrix* pObject2Device,
                                             FX_FLOAT font_size,
                                             uint32_t argb) {
@@ -155,8 +152,8 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
   else
     CGContextClipToRect(ctx, rect_cg);
 
-  FX_BOOL ret = CGDrawGlyphRun(ctx, nChars, pCharPos, pFont, pCache,
-                               pObject2Device, font_size, argb);
+  FX_BOOL ret = CGDrawGlyphRun(ctx, nChars, pCharPos, pFont, pObject2Device,
+                               font_size, argb);
   if (pImageCG)
     CGImageRelease(pImageCG);
   CGContextRestoreGState(ctx);
@@ -170,7 +167,7 @@ void CFX_FaceCache::InitPlatform() {}
 void CFX_FaceCache::DestroyPlatform() {}
 
 CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph_Nativetext(
-    CFX_Font* pFont,
+    const CFX_Font* pFont,
     uint32_t glyph_index,
     const CFX_Matrix* pMatrix,
     int dest_width,
