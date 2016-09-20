@@ -446,10 +446,6 @@ uint8_t* CFX_AggDeviceDriver::GetBuffer() const {
   return m_pBitmap->GetBuffer();
 }
 
-const CFX_DIBitmap* CFX_AggDeviceDriver::GetBitmap() const {
-  return m_pBitmap;
-}
-
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
 void CFX_AggDeviceDriver::InitPlatform() {}
 
