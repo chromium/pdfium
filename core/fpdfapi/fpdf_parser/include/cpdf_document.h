@@ -100,7 +100,6 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
  protected:
   friend class CPDF_Creator;
   friend class CPDF_Parser;
-  friend class CPDF_OCContext;
 
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount() const;
