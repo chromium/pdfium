@@ -70,10 +70,11 @@ class CPDF_PSProc {
   CPDF_PSProc();
   ~CPDF_PSProc();
 
-  FX_BOOL Parse(CPDF_SimpleParser* parser);
+  FX_BOOL Parse(CPDF_SimpleParser* parser, int depth);
   FX_BOOL Execute(CPDF_PSEngine* pEngine);
 
  private:
+  static const int kMaxDepth = 128;
   std::vector<std::unique_ptr<CPDF_PSOP>> m_Operators;
 };
 

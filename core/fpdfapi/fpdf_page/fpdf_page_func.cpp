@@ -139,9 +139,13 @@ FX_BOOL CPDF_PSEngine::Parse(const FX_CHAR* str, int size) {
   if (word != "{") {
     return FALSE;
   }
-  return m_MainProc.Parse(&parser);
+  return m_MainProc.Parse(&parser, 0);
 }
-FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser* parser) {
+
+FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
+  if (depth > kMaxDepth)
+    return FALSE;
+
   while (1) {
     CFX_ByteStringC word = parser->GetWord();
     if (word.IsEmpty()) {
@@ -154,7 +158,7 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser* parser) {
       std::unique_ptr<CPDF_PSProc> proc(new CPDF_PSProc);
       std::unique_ptr<CPDF_PSOP> op(new CPDF_PSOP(std::move(proc)));
       m_Operators.push_back(std::move(op));
-      if (!m_Operators.back()->GetProc()->Parse(parser)) {
+      if (!m_Operators.back()->GetProc()->Parse(parser, depth + 1)) {
         return FALSE;
       }
     } else {
