@@ -512,6 +512,10 @@ CPDF_Dictionary* CPDF_Document::GetPagesDict() const {
   return pRoot ? pRoot->GetDictFor("Pages") : nullptr;
 }
 
+bool CPDF_Document::IsPageLoaded(int iPage) const {
+  return !!m_PageList.GetAt(iPage);
+}
+
 CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
   if (iPage < 0 || iPage >= m_PageList.GetSize())
     return nullptr;
@@ -539,6 +543,10 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
 
   m_PageList.SetAt(iPage, pPage->GetObjNum());
   return pPage;
+}
+
+void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
+  m_PageList.SetAt(iPage, objNum);
 }
 
 int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,

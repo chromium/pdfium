@@ -1399,7 +1399,7 @@ FX_BOOL CPDF_DataAvail::CheckPageNode(CPDF_DataAvail::PageNode& pageNodes,
       case PDF_PAGENODE_PAGE:
         iCount++;
         if (iPage == iCount && m_pDocument)
-          m_pDocument->m_PageList.SetAt(iPage, pNode->m_dwPageNo);
+          m_pDocument->SetPageObjNum(iPage, pNode->m_dwPageNo);
         break;
       case PDF_PAGENODE_PAGES:
         if (!CheckPageNode(*pNode, iPage, iCount, pHints, level + 1))
@@ -1424,7 +1424,7 @@ FX_BOOL CPDF_DataAvail::LoadDocPage(uint32_t dwPage, DownloadHints* pHints) {
   FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
   int32_t iPage = safePage.ValueOrDie();
   if (m_pDocument->GetPageCount() <= iPage ||
-      m_pDocument->m_PageList.GetAt(iPage)) {
+      m_pDocument->IsPageLoaded(iPage)) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return TRUE;
   }

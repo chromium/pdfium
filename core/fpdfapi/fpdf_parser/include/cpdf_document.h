@@ -51,10 +51,13 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   void DeletePage(int iPage);
   int GetPageCount() const;
 
+  bool IsPageLoaded(int iPage) const;
   CPDF_Dictionary* GetPage(int iPage);
   int GetPageIndex(uint32_t objnum);
   uint32_t GetUserPermissions() const;
   CPDF_DocPageData* GetPageData() const { return m_pDocPage; }
+
+  void SetPageObjNum(int iPage, uint32_t objNum);
 
   std::unique_ptr<JBig2_DocumentContext>* CodecContext() {
     return &m_pCodecContext;
@@ -97,7 +100,6 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
  protected:
   friend class CPDF_Creator;
   friend class CPDF_Parser;
-  friend class CPDF_DataAvail;
   friend class CPDF_OCContext;
 
   // Retrieve page count information by getting count value from the tree nodes
@@ -119,7 +121,6 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   bool m_bLinearized;
   int m_iFirstPageNo;
   uint32_t m_dwFirstPageObjNum;
-  CFX_ArrayTemplate<uint32_t> m_PageList;
   // TODO(thestig): Figure out why this cannot be a std::unique_ptr.
   CPDF_DocPageData* m_pDocPage;
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
@@ -136,6 +137,8 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
       FX_BOOL bVert,
       CFX_ByteString basefont,
       std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
+
+  CFX_ArrayTemplate<uint32_t> m_PageList;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_
