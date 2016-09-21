@@ -7,6 +7,9 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARKITEM_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARKITEM_H_
 
+#include <memory>
+
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -17,23 +20,27 @@ class CPDF_ContentMarkItem {
   enum ParamType { None, PropertiesDict, DirectDict };
 
   CPDF_ContentMarkItem();
-  CPDF_ContentMarkItem(const CPDF_ContentMarkItem& src);
+  CPDF_ContentMarkItem(const CPDF_ContentMarkItem& that);
   ~CPDF_ContentMarkItem();
 
-  const CFX_ByteString& GetName() const { return m_MarkName; }
+  CPDF_ContentMarkItem& operator=(CPDF_ContentMarkItem&& other) = default;
+
+  CFX_ByteString GetName() const { return m_MarkName; }
   ParamType GetParamType() const { return m_ParamType; }
-  CPDF_Dictionary* GetParam() const { return m_pParam; }
+  CPDF_Dictionary* GetParam() const;
   FX_BOOL HasMCID() const;
+
   void SetName(const CFX_ByteString& name) { m_MarkName = name; }
-  void SetParam(ParamType type, CPDF_Dictionary* param) {
-    m_ParamType = type;
-    m_pParam = param;
-  }
+  void SetDirectDict(
+      std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict);
+  void SetPropertiesDict(CPDF_Dictionary* pDict);
 
  private:
   CFX_ByteString m_MarkName;
   ParamType m_ParamType;
-  CPDF_Dictionary* m_pParam;
+  CPDF_Dictionary* m_pPropertiesDict;  // not owned.
+  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>
+      m_pDirectDict;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARKITEM_H_
