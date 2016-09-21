@@ -48,7 +48,6 @@ class CPDF_Parser {
   CFX_ByteString GetPassword() { return m_Password; }
   CPDF_Dictionary* GetTrailer() const { return m_pTrailer; }
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
-  CPDF_Document* GetDocument() const { return m_pDocument; }
 
   uint32_t GetPermissions() const;
   uint32_t GetRootObjNum();
@@ -67,7 +66,6 @@ class CPDF_Parser {
   uint16_t GetObjectGenNum(uint32_t objnum) const;
   bool IsVersionUpdated() const { return m_bVersionUpdated; }
   bool IsObjectFreeOrNull(uint32_t objnum) const;
-  FX_BOOL IsFormStream(uint32_t objnum, FX_BOOL& bForm);
   CPDF_CryptoHandler* GetCryptoHandler();
   IFX_FileRead* GetFileAccess() const;
 

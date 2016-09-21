@@ -1130,36 +1130,6 @@ uint32_t CPDF_Parser::GetInfoObjNum() {
   return pRef ? pRef->GetRefObjNum() : 0;
 }
 
-FX_BOOL CPDF_Parser::IsFormStream(uint32_t objnum, FX_BOOL& bForm) {
-  bForm = FALSE;
-  if (!IsValidObjectNumber(objnum))
-    return TRUE;
-
-  if (GetObjectType(objnum) == 0)
-    return TRUE;
-
-  if (GetObjectType(objnum) == 2)
-    return TRUE;
-
-  FX_FILESIZE pos = m_ObjectInfo[objnum].pos;
-  auto it = m_SortedOffset.find(pos);
-  if (it == m_SortedOffset.end())
-    return TRUE;
-
-  if (++it == m_SortedOffset.end())
-    return FALSE;
-
-  FX_FILESIZE size = *it - pos;
-  FX_FILESIZE SavedPos = m_pSyntax->SavePos();
-  m_pSyntax->RestorePos(pos);
-
-  const char kFormStream[] = "/Form\0stream";
-  const CFX_ByteStringC kFormStreamStr(kFormStream, sizeof(kFormStream) - 1);
-  bForm = m_pSyntax->SearchMultiWord(kFormStreamStr, TRUE, size) == 0;
-  m_pSyntax->RestorePos(SavedPos);
-  return TRUE;
-}
-
 CPDF_Object* CPDF_Parser::ParseIndirectObject(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t objnum) {
