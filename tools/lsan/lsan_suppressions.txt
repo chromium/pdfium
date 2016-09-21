@@ -10,10 +10,3 @@
 # See https://www.chromium.org/developers/testing/leaksanitizer for syntax.
 
 ################################################################################
-# CJS_Object/CJS_EmbedObj wrapped by v8::Object currently leak. See bug 260.
-# Obvious leaks:
-leak:*FXJS_NewFxDynamicObj*
-
-# CJS_Field CFX_WideString::StringData leaks
-leak:*CJS_Document*getField_static*
-leak:*CJS_EventHandler*OnField*
