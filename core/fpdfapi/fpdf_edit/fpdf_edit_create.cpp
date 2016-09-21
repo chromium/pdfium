@@ -814,7 +814,7 @@ FX_BOOL CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator,
   offset += len + 8;
   if (bEOF) {
     if ((len = PDF_CreatorWriteTrailer(pCreator->m_pDocument, pFile,
-                                       pCreator->m_pIDArray)) < 0) {
+                                       pCreator->m_pIDArray.get())) < 0) {
       return FALSE;
     }
     offset += len;
@@ -1810,7 +1810,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
         return -1;
       }
       FX_FILESIZE offset = 0;
-      if (PDF_CreatorAppendObject(m_pIDArray, &m_File, offset) < 0) {
+      if (PDF_CreatorAppendObject(m_pIDArray.get(), &m_File, offset) < 0) {
         return -1;
       }
     }
@@ -1904,10 +1904,7 @@ void CPDF_Creator::Clear() {
   m_pXRefStream.reset();
   m_File.Clear();
   m_NewObjNumArray.RemoveAll();
-  if (m_pIDArray) {
-    m_pIDArray->Release();
-    m_pIDArray = nullptr;
-  }
+  m_pIDArray.reset();
 }
 
 bool CPDF_Creator::Create(IFX_StreamWrite* pFile, uint32_t flags) {
@@ -1931,8 +1928,8 @@ bool CPDF_Creator::Create(uint32_t flags) {
 void CPDF_Creator::InitID(FX_BOOL bDefault) {
   CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
   FX_BOOL bNewId = !m_pIDArray;
-  if (!m_pIDArray) {
-    m_pIDArray = new CPDF_Array;
+  if (bNewId) {
+    m_pIDArray.reset(new CPDF_Array);
     CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
     if (pID1) {
       m_pIDArray->Add(pID1->Clone());
@@ -1965,7 +1962,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       uint32_t flag = PDF_ENCRYPT_CONTENT;
 
       CPDF_SecurityHandler handler;
-      handler.OnCreate(m_pEncryptDict, m_pIDArray, user_pass.raw_str(),
+      handler.OnCreate(m_pEncryptDict, m_pIDArray.get(), user_pass.raw_str(),
                        user_pass.GetLength(), flag);
       if (m_bLocalCryptoHandler)
         delete m_pCryptoHandler;

@@ -577,17 +577,16 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
           if (pValue->GetUnicodeText() == opt_value)
             m_pDict->RemoveFor("V");
         } else if (pValue->IsArray()) {
-          CPDF_Array* pArray = new CPDF_Array;
+          std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
+              new CPDF_Array);
           for (int i = 0; i < CountOptions(); i++) {
             if (i != index && IsItemSelected(i)) {
               opt_value = GetOptionValue(i);
               pArray->AddString(PDF_EncodeText(opt_value));
             }
           }
-          if (pArray->GetCount() < 1)
-            pArray->Release();
-          else
-            m_pDict->SetFor("V", pArray);
+          if (pArray->GetCount() > 0)
+            m_pDict->SetFor("V", pArray.release());  // std::move someday
         }
       } else {
         m_pDict->RemoveFor("V");
