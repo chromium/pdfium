@@ -54,7 +54,7 @@ CPWL_Wnd* CFFL_ComboBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
 
-  CFFL_IFormFiller* pFormFiller = m_pApp->GetIFormFiller();
+  CFFL_IFormFiller* pFormFiller = m_pEnv->GetIFormFiller();
   pWnd->SetFillerNotify(pFormFiller);
 
   int32_t nCurSel = m_pWidget->GetSelectedIndex(0);
@@ -259,7 +259,7 @@ FX_BOOL CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pApp);
+  ASSERT(m_pEnv);
 
   if (pWnd->GetClassName() == PWL_CLASSNAME_EDIT) {
     CPWL_Edit* pEdit = (CPWL_Edit*)pWnd;
@@ -271,7 +271,7 @@ void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
     int nCharacters = wsText.GetLength();
     CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
     unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
-    m_pApp->OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
+    m_pEnv->OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
                                  nCharacters, TRUE);
   }
 }

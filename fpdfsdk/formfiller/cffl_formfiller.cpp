@@ -22,9 +22,9 @@
 
 #define FFL_HINT_ELAPSE 800
 
-CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_Environment* pApp,
+CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_Environment* pEnv,
                                  CPDFSDK_Annot* pAnnot)
-    : m_pApp(pApp), m_pAnnot(pAnnot), m_bValid(FALSE) {
+    : m_pEnv(pEnv), m_pAnnot(pAnnot), m_bValid(FALSE) {
   m_pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
 }
 
@@ -251,7 +251,7 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
 void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
-  CPDFSDK_Document* pDoc = m_pApp->GetSDKDocument();
+  CPDFSDK_Document* pDoc = m_pEnv->GetSDKDocument();
   CPDFSDK_PageView* pPageView = pDoc->GetPageView(pPage, true);
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, TRUE))
     pWnd->SetFocus();
@@ -293,7 +293,7 @@ FX_BOOL CFFL_FormFiller::IsValid() const {
 }
 
 PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
-  ASSERT(m_pApp);
+  ASSERT(m_pEnv);
 
   PWL_CREATEPARAM cp;
   cp.pParentWnd = nullptr;
@@ -345,7 +345,7 @@ PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
     dwCreateFlags |= PWS_AUTOFONTSIZE;
 
   cp.dwFlags = dwCreateFlags;
-  cp.pSystemHandler = m_pApp->GetSysHandler();
+  cp.pSystemHandler = m_pEnv->GetSysHandler();
   return cp;
 }
 
@@ -440,7 +440,7 @@ CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
 }
 
 CFX_WideString CFFL_FormFiller::LoadPopupMenuString(int nIndex) {
-  ASSERT(m_pApp);
+  ASSERT(m_pEnv);
 
   return L"";
 }
@@ -458,7 +458,7 @@ CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
 
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView(bool renew) {
   UnderlyingPageType* pPage = m_pAnnot->GetUnderlyingPage();
-  CPDFSDK_Document* pSDKDoc = m_pApp->GetSDKDocument();
+  CPDFSDK_Document* pSDKDoc = m_pEnv->GetSDKDocument();
   return pSDKDoc ? pSDKDoc->GetPageView(pPage, renew) : nullptr;
 }
 
@@ -525,7 +525,7 @@ FX_BOOL CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView,
   if (IsDataChanged(pPageView)) {
     FX_BOOL bRC = TRUE;
     FX_BOOL bExit = FALSE;
-    CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
+    CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
     pIFormFiller->OnKeyStrokeCommit(m_pWidget, pPageView, bRC, bExit, nFlag);
     if (bExit)
       return TRUE;
@@ -565,7 +565,7 @@ FX_BOOL CFFL_FormFiller::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_FormFiller::SetChangeMark() {
-  m_pApp->OnChange();
+  m_pEnv->OnChange();
 }
 
 void CFFL_FormFiller::GetActionData(CPDFSDK_PageView* pPageView,
@@ -596,7 +596,7 @@ CPWL_Wnd* CFFL_FormFiller::ResetPDFWindow(CPDFSDK_PageView* pPageView,
 void CFFL_FormFiller::TimerProc() {}
 
 CFX_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
-  return m_pApp->GetSysHandler();
+  return m_pEnv->GetSysHandler();
 }
 
 void CFFL_FormFiller::EscapeFiller(CPDFSDK_PageView* pPageView,
@@ -615,7 +615,7 @@ void CFFL_FormFiller::InvalidateRect(double left,
                                      double right,
                                      double bottom) {
   UnderlyingPageType* pPage = m_pWidget->GetUnderlyingPage();
-  m_pApp->Invalidate(pPage, left, top, right, bottom);
+  m_pEnv->Invalidate(pPage, left, top, right, bottom);
 }
 
 CFFL_Button::CFFL_Button(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pWidget)
@@ -675,7 +675,7 @@ FX_BOOL CFFL_Button::OnMouseMove(CPDFSDK_PageView* pPageView,
                                  CPDFSDK_Annot* pAnnot,
                                  uint32_t nFlags,
                                  const CFX_FloatPoint& point) {
-  ASSERT(m_pApp);
+  ASSERT(m_pEnv);
 
   return TRUE;
 }

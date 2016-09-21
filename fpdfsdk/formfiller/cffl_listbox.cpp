@@ -36,7 +36,7 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
     cp.fFontSize = FFL_DEFAULTLISTBOXFONTSIZE;
 
   if (!m_pFontMap)
-    m_pFontMap.reset(new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler()));
+    m_pFontMap.reset(new CBA_FontMap(m_pWidget, m_pEnv->GetSysHandler()));
   cp.pFontMap = m_pFontMap.get();
 
   return cp;
@@ -48,7 +48,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
 
-  CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
+  CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
   pWnd->SetFillerNotify(pIFormFiller);
 
   for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++)

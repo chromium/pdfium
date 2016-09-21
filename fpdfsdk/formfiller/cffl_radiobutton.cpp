@@ -46,7 +46,7 @@ FX_BOOL CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
   switch (nChar) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space: {
-      CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
+      CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
       CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
       ASSERT(pPageView);
 

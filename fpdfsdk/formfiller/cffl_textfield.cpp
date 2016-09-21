@@ -71,7 +71,7 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
   }
 
   if (!m_pFontMap)
-    m_pFontMap.reset(new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler()));
+    m_pFontMap.reset(new CBA_FontMap(m_pWidget, m_pEnv->GetSysHandler()));
   cp.pFontMap = m_pFontMap.get();
   cp.pFocusHandler = this;
 
@@ -84,7 +84,7 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp,
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
 
-  CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
+  CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
   pWnd->SetFillerNotify(pIFormFiller);
 
   int32_t nMaxLen = m_pWidget->GetMaxLen();
@@ -113,7 +113,7 @@ FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
         ASSERT(pPageView);
         m_bValid = !m_bValid;
         CFX_FloatRect rcAnnot = pAnnot->GetRect();
-        m_pApp->Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
+        m_pEnv->Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
                            rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
 
         if (m_bValid) {
@@ -269,7 +269,7 @@ FX_BOOL CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pApp);
+  ASSERT(m_pEnv);
   if (pWnd->GetClassName() == PWL_CLASSNAME_EDIT) {
     CPWL_Edit* pEdit = (CPWL_Edit*)pWnd;
     pEdit->SetCharSet(FXFONT_GB2312_CHARSET);
@@ -280,7 +280,7 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
     int nCharacters = wsText.GetLength();
     CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
     unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
-    m_pApp->OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
+    m_pEnv->OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer,
                                  nCharacters, TRUE);
   }
 }
