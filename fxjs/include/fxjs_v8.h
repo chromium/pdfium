@@ -18,9 +18,15 @@
 #include <v8.h>
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/include/fx_string.h"
+#ifdef PDF_ENABLE_XFA
+// Header for CFXJSE_RuntimeData. FXJS_V8 doesn't interpret this class,
+// it is just passed along to XFA.
+#include "fxjs/cfxjse_runtimedata.h"
+#endif  // PDF_ENABLE_XFA
 
 class CFXJS_Engine;
 class CFXJS_ObjDefinition;
@@ -28,12 +34,6 @@ class CFXJS_ObjDefinition;
 // FXJS_V8 places no restrictions on this class; it merely passes it
 // on to caller-provided methods.
 class IJS_Context;  // A description of the event that caused JS execution.
-
-#ifdef PDF_ENABLE_XFA
-// FXJS_V8 places no interpreation on this calass; it merely passes it
-// along to XFA.
-class CFXJSE_RuntimeData;
-#endif  // PDF_ENABLE_XFA
 
 enum FXJSOBJTYPE {
   FXJSOBJTYPE_DYNAMIC = 0,  // Created by native method and returned to JS.
@@ -111,7 +111,7 @@ class FXJS_PerIsolateData {
 
   std::vector<CFXJS_ObjDefinition*> m_ObjectDefnArray;
 #ifdef PDF_ENABLE_XFA
-  CFXJSE_RuntimeData* m_pFXJSERuntimeData;
+  std::unique_ptr<CFXJSE_RuntimeData> m_pFXJSERuntimeData;
 #endif  // PDF_ENABLE_XFA
   V8TemplateMap* m_pDynamicObjsMap;
 

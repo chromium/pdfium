@@ -7,6 +7,8 @@
 #ifndef FXJS_CFXJSE_RUNTIMEDATA_H_
 #define FXJS_CFXJSE_RUNTIMEDATA_H_
 
+#include <memory>
+
 #include "v8/include/v8.h"
 
 class CFXJSE_RuntimeList;
@@ -24,7 +26,7 @@ class CFXJSE_RuntimeData {
  protected:
   explicit CFXJSE_RuntimeData(v8::Isolate* pIsolate);
 
-  static CFXJSE_RuntimeData* Create(v8::Isolate* pIsolate);
+  static std::unique_ptr<CFXJSE_RuntimeData> Create(v8::Isolate* pIsolate);
 
  private:
   CFXJSE_RuntimeData(const CFXJSE_RuntimeData&) = delete;

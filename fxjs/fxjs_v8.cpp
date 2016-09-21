@@ -215,12 +215,7 @@ FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
       pIsolate->GetData(g_embedderDataSlot));
 }
 
-#ifndef PDF_ENABLE_XFA
 FXJS_PerIsolateData::FXJS_PerIsolateData() : m_pDynamicObjsMap(nullptr) {}
-#else   // PDF_ENABLE_XFA
-FXJS_PerIsolateData::FXJS_PerIsolateData()
-    : m_pFXJSERuntimeData(nullptr), m_pDynamicObjsMap(nullptr) {}
-#endif  // PDF_ENABLE_XFA
 
 CFXJS_Engine::CFXJS_Engine() : m_isolate(nullptr) {}
 
