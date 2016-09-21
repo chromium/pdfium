@@ -28,6 +28,11 @@ TEST(fpdf_font_cid, CMap_GetCode) {
   EXPECT_EQ(12u, CPDF_CMapParser::CMap_GetCode("12"));
   EXPECT_EQ(12u, CPDF_CMapParser::CMap_GetCode("12d"));
   EXPECT_EQ(128u, CPDF_CMapParser::CMap_GetCode("128"));
+
+  EXPECT_EQ(4294967295u, CPDF_CMapParser::CMap_GetCode("<FFFFFFFF"));
+
+  // Overflow a uint32_t.
+  EXPECT_EQ(0u, CPDF_CMapParser::CMap_GetCode("<100000000"));
 }
 
 TEST(fpdf_font_cid, CMap_GetCodeRange) {

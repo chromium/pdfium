@@ -441,16 +441,22 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
 
 // Static.
 uint32_t CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
-  int num = 0;
+  pdfium::base::CheckedNumeric<uint32_t> num = 0;
   if (word.GetAt(0) == '<') {
-    for (int i = 1; i < word.GetLength() && std::isxdigit(word.GetAt(i)); ++i)
+    for (int i = 1; i < word.GetLength() && std::isxdigit(word.GetAt(i)); ++i) {
       num = num * 16 + FXSYS_toHexDigit(word.GetAt(i));
-    return num;
+      if (!num.IsValid())
+        return 0;
+    }
+    return num.ValueOrDie();
   }
 
-  for (int i = 0; i < word.GetLength() && std::isdigit(word.GetAt(i)); ++i)
+  for (int i = 0; i < word.GetLength() && std::isdigit(word.GetAt(i)); ++i) {
     num = num * 10 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(word.GetAt(i)));
-  return num;
+    if (!num.IsValid())
+      return 0;
+  }
+  return num.ValueOrDie();
 }
 
 // Static.
