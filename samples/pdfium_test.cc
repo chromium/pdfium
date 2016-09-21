@@ -54,14 +54,6 @@ enum OutputFormat {
 #endif
 };
 
-// Hold a map of the currently loaded pages in order to avoid them
-// to get loaded twice.
-std::map<int, FPDF_PAGE> g_loadedPages;
-
-// Hold a global pointer of FPDF_FORMHANDLE so that PDFium
-// app hooks can made use of it.
-FPDF_FORMHANDLE g_formHandle;
-
 struct Options {
   Options()
       : show_config(false), send_events(false), output_format(OUTPUT_NONE) {}
@@ -74,6 +66,21 @@ struct Options {
   std::string bin_directory;
   std::string font_directory;
 };
+
+struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
+  // Hold a map of the currently loaded pages in order to avoid them
+  // to get loaded twice.
+  std::map<int, FPDF_PAGE> loadedPages;
+
+  // Hold a pointer of FPDF_FORMHANDLE so that PDFium app hooks can
+  // make use of it.
+  FPDF_FORMHANDLE formHandle;
+};
+
+static FPDF_FORMFILLINFO_PDFiumTest* ToPDFiumTestFormFillInfo(
+    FPDF_FORMFILLINFO* formFillInfo) {
+  return static_cast<FPDF_FORMFILLINFO_PDFiumTest*>(formFillInfo);
+}
 
 static bool CheckDimensions(int stride, int width, int height) {
   if (stride < 0 || width < 0 || height < 0)
@@ -532,28 +539,34 @@ void SendPageEvents(const FPDF_FORMHANDLE& form,
 FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
                           FPDF_DOCUMENT doc,
                           int index) {
-  auto iter = g_loadedPages.find(index);
-  if (iter != g_loadedPages.end())
+  FPDF_FORMFILLINFO_PDFiumTest* formFillInfo = ToPDFiumTestFormFillInfo(param);
+  auto& loadedPages = formFillInfo->loadedPages;
+
+  auto iter = loadedPages.find(index);
+  if (iter != loadedPages.end())
     return iter->second;
 
   FPDF_PAGE page = FPDF_LoadPage(doc, index);
   if (!page)
     return nullptr;
 
-  FORM_OnAfterLoadPage(page, g_formHandle);
-  FORM_DoPageAAction(page, g_formHandle, FPDFPAGE_AACTION_OPEN);
+  FPDF_FORMHANDLE& formHandle = formFillInfo->formHandle;
 
-  g_loadedPages[index] = page;
+  FORM_OnAfterLoadPage(page, formHandle);
+  FORM_DoPageAAction(page, formHandle, FPDFPAGE_AACTION_OPEN);
+
+  loadedPages[index] = page;
   return page;
 }
 
 bool RenderPage(const std::string& name,
                 FPDF_DOCUMENT doc,
                 FPDF_FORMHANDLE& form,
+                FPDF_FORMFILLINFO_PDFiumTest& formFillInfo,
                 const int page_index,
                 const Options& options,
                 const std::string& events) {
-  FPDF_PAGE page = GetPageForIndex(nullptr, doc, page_index);
+  FPDF_PAGE page = GetPageForIndex(&formFillInfo, doc, page_index);
   if (!page)
     return false;
 
@@ -619,7 +632,8 @@ bool RenderPage(const std::string& name,
     fprintf(stderr, "Page was too large to be rendered.\n");
   }
 
-  g_loadedPages.erase(page_index);
+  formFillInfo.loadedPages.erase(page_index);
+
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form);
   FPDFText_ClosePage(text_page);
@@ -640,8 +654,7 @@ void RenderPdf(const std::string& name,
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
   platform_callbacks.Doc_mail = ExampleDocMail;
 
-  FPDF_FORMFILLINFO form_callbacks;
-  memset(&form_callbacks, '\0', sizeof(form_callbacks));
+  FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
 #ifdef PDF_ENABLE_XFA
   form_callbacks.version = 2;
 #else   // PDF_ENABLE_XFA
@@ -731,8 +744,9 @@ void RenderPdf(const std::string& name,
 
   (void)FPDF_GetDocPermissions(doc);
 
-  FPDF_FORMHANDLE form = g_formHandle =
-      FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
+  FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
+  form_callbacks.formHandle = form;
+
 #ifdef PDF_ENABLE_XFA
   int docType = DOCTYPE_PDF;
   if (FPDF_HasXFAField(doc, &docType) && docType != DOCTYPE_PDF &&
@@ -761,7 +775,7 @@ void RenderPdf(const std::string& name,
         return;
       }
     }
-    if (RenderPage(name, doc, form, i, options, events))
+    if (RenderPage(name, doc, form, form_callbacks, i, options, events))
       ++rendered_pages;
     else
       ++bad_pages;
