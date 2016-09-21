@@ -269,10 +269,10 @@ FX_BOOL CXFA_Document::IsInteractive() {
   if (!pPDF)
     return FALSE;
 
-  CXFA_Node* pInteractive = pPDF->GetChild(0, XFA_Element::Interactive);
-  if (pInteractive) {
+  CXFA_Node* pFormFiller = pPDF->GetChild(0, XFA_Element::Interactive);
+  if (pFormFiller) {
     m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
-    if (pInteractive->TryContent(wsInteractive) &&
+    if (pFormFiller->TryContent(wsInteractive) &&
         wsInteractive == FX_WSTRC(L"1")) {
       m_dwDocFlags |= XFA_DOCFLAG_Interactive;
       return TRUE;

@@ -8,7 +8,7 @@
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/formfiller/cffl_iformfiller.h"
+#include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_common.h"
@@ -54,7 +54,7 @@ CPWL_Wnd* CFFL_ComboBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
 
-  CFFL_IFormFiller* pFormFiller = m_pEnv->GetIFormFiller();
+  CFFL_InteractiveFormFiller* pFormFiller = m_pEnv->GetInteractiveFormFiller();
   pWnd->SetFillerNotify(pFormFiller);
 
   int32_t nCurSel = m_pWidget->GetSelectedIndex(0);

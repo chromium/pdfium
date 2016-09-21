@@ -8,7 +8,7 @@
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/formfiller/cffl_iformfiller.h"
+#include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/include/fsdk_common.h"
@@ -47,9 +47,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   CPWL_ListBox* pWnd = new CPWL_ListBox();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
-
-  CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
-  pWnd->SetFillerNotify(pIFormFiller);
+  pWnd->SetFillerNotify(m_pEnv->GetInteractiveFormFiller());
 
   for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++)
     pWnd->AddString(m_pWidget->GetOptionLabel(i));

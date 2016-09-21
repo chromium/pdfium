@@ -11,7 +11,7 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "fpdfsdk/include/ipdfsdk_annothandler.h"
 
-class CFFL_IFormFiller;
+class CFFL_InteractiveFormFiller;
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
@@ -103,12 +103,14 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
                             CPDFSDK_Annot* pNewAnnot) override;
 #endif  // PDF_ENABLE_XFA
 
-  void SetFormFiller(CFFL_IFormFiller* pFiller) { m_pFormFiller = pFiller; }
-  CFFL_IFormFiller* GetFormFiller() { return m_pFormFiller; }
+  void SetFormFiller(CFFL_InteractiveFormFiller* pFiller) {
+    m_pFormFiller = pFiller;
+  }
+  CFFL_InteractiveFormFiller* GetFormFiller() { return m_pFormFiller; }
 
  private:
   CPDFSDK_Environment* m_pApp;
-  CFFL_IFormFiller* m_pFormFiller;
+  CFFL_InteractiveFormFiller* m_pFormFiller;
 };
 
 #endif  // FPDFSDK_INCLUDE_CPDFSDK_WIDGETHANDLER_H_

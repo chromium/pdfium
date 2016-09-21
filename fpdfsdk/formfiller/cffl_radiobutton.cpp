@@ -46,15 +46,13 @@ FX_BOOL CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
   switch (nChar) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space: {
-      CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
       CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
       ASSERT(pPageView);
 
       FX_BOOL bReset = FALSE;
       FX_BOOL bExit = FALSE;
-
-      pIFormFiller->OnButtonUp(m_pWidget, pPageView, bReset, bExit, nFlags);
-
+      m_pEnv->GetInteractiveFormFiller()->OnButtonUp(m_pWidget, pPageView,
+                                                     bReset, bExit, nFlags);
       if (bReset)
         return TRUE;
       if (bExit)

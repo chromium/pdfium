@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 
-#include "fpdfsdk/formfiller/cffl_iformfiller.h"
+#include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
@@ -207,8 +207,8 @@ CPDFSDK_ActionHandler* CPDFSDK_Environment::GetActionHander() {
   return m_pActionHandler.get();
 }
 
-CFFL_IFormFiller* CPDFSDK_Environment::GetIFormFiller() {
-  if (!m_pIFormFiller)
-    m_pIFormFiller.reset(new CFFL_IFormFiller(this));
-  return m_pIFormFiller.get();
+CFFL_InteractiveFormFiller* CPDFSDK_Environment::GetInteractiveFormFiller() {
+  if (!m_pFormFiller)
+    m_pFormFiller.reset(new CFFL_InteractiveFormFiller(this));
+  return m_pFormFiller.get();
 }

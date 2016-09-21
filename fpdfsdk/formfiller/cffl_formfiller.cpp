@@ -94,7 +94,7 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
     pWnd->DrawAppearance(pDevice, &mt);
   } else {
     CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-    if (CFFL_IFormFiller::IsVisible(pWidget))
+    if (CFFL_InteractiveFormFiller::IsVisible(pWidget))
       pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal,
                               nullptr);
   }
@@ -525,8 +525,9 @@ FX_BOOL CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView,
   if (IsDataChanged(pPageView)) {
     FX_BOOL bRC = TRUE;
     FX_BOOL bExit = FALSE;
-    CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
-    pIFormFiller->OnKeyStrokeCommit(m_pWidget, pPageView, bRC, bExit, nFlag);
+    CFFL_InteractiveFormFiller* pFormFiller =
+        m_pEnv->GetInteractiveFormFiller();
+    pFormFiller->OnKeyStrokeCommit(m_pWidget, pPageView, bRC, bExit, nFlag);
     if (bExit)
       return TRUE;
     if (!bRC) {
@@ -534,7 +535,7 @@ FX_BOOL CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView,
       return TRUE;
     }
 
-    pIFormFiller->OnValidate(m_pWidget, pPageView, bRC, bExit, nFlag);
+    pFormFiller->OnValidate(m_pWidget, pPageView, bRC, bExit, nFlag);
     if (bExit)
       return TRUE;
     if (!bRC) {
@@ -543,11 +544,11 @@ FX_BOOL CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView,
     }
 
     SaveData(pPageView);
-    pIFormFiller->OnCalculate(m_pWidget, pPageView, bExit, nFlag);
+    pFormFiller->OnCalculate(m_pWidget, pPageView, bExit, nFlag);
     if (bExit)
       return TRUE;
 
-    pIFormFiller->OnFormat(m_pWidget, pPageView, bExit, nFlag);
+    pFormFiller->OnFormat(m_pWidget, pPageView, bExit, nFlag);
   }
   return TRUE;
 }

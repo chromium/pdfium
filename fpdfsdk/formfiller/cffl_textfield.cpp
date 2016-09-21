@@ -83,9 +83,7 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp,
   CPWL_Edit* pWnd = new CPWL_Edit();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
-
-  CFFL_IFormFiller* pIFormFiller = m_pEnv->GetIFormFiller();
-  pWnd->SetFillerNotify(pIFormFiller);
+  pWnd->SetFillerNotify(m_pEnv->GetInteractiveFormFiller());
 
   int32_t nMaxLen = m_pWidget->GetMaxLen();
   CFX_WideString swValue = m_pWidget->GetValue();

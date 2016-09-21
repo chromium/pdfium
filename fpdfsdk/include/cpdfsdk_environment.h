@@ -18,7 +18,7 @@
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
 
-class CFFL_IFormFiller;
+class CFFL_InteractiveFormFiller;
 class CFX_SystemHandler;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_AnnotHandlerMgr;
@@ -400,7 +400,8 @@ class CPDFSDK_Environment final {
   CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 
-  CFFL_IFormFiller* GetIFormFiller();             // Creates if not present.
+  // Creates if not present.
+  CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
   CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Creates if not present.
   IJS_Runtime* GetJSRuntime();                    // Creates if not present.
   CPDFSDK_ActionHandler* GetActionHander();       // Creates if not present.
@@ -412,7 +413,7 @@ class CPDFSDK_Environment final {
   FPDF_FORMFILLINFO* const m_pInfo;
   CPDFSDK_Document* m_pSDKDoc;
   UnderlyingDocumentType* const m_pUnderlyingDoc;
-  std::unique_ptr<CFFL_IFormFiller> m_pIFormFiller;
+  std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
 };
 

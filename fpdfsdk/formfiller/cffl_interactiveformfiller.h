@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FORMFILLER_CFFL_IFORMFILLER_H_
-#define FPDFSDK_FORMFILLER_CFFL_IFORMFILLER_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_INTERACTIVEFORMFILLER_H_
+#define FPDFSDK_FORMFILLER_CFFL_INTERACTIVEFORMFILLER_H_
 
 #include <map>
 #include <memory>
@@ -19,10 +19,10 @@ class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
-class CFFL_IFormFiller : public IPWL_Filler_Notify {
+class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
  public:
-  explicit CFFL_IFormFiller(CPDFSDK_Environment* pEnv);
-  ~CFFL_IFormFiller() override;
+  explicit CFFL_InteractiveFormFiller(CPDFSDK_Environment* pEnv);
+  ~CFFL_InteractiveFormFiller() override;
 
   virtual FX_BOOL Annot_HitTest(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
@@ -186,4 +186,4 @@ class CFFL_PrivateData {
   int nValueAge;
 };
 
-#endif  // FPDFSDK_FORMFILLER_CFFL_IFORMFILLER_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_INTERACTIVEFORMFILLER_H_

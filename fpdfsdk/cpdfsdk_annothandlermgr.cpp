@@ -31,7 +31,7 @@ CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFSDK_Environment* pApp)
       m_pXFAWidgetHandler(new CPDFSDK_XFAWidgetHandler(pApp)),
 #endif  // PDF_ENABLE_XFA
       m_pApp(pApp) {
-  m_pWidgetHandler->SetFormFiller(m_pApp->GetIFormFiller());
+  m_pWidgetHandler->SetFormFiller(m_pApp->GetInteractiveFormFiller());
 }
 
 CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() {}

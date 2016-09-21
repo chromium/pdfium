@@ -10,7 +10,7 @@
 #include <map>
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
-#include "fpdfsdk/formfiller/cffl_iformfiller.h"
+#include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/include/pdfsdk_fieldaction.h"
 
 class CPDFSDK_Annot;
