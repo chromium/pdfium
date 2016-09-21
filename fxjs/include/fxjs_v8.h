@@ -138,7 +138,7 @@ size_t FXJS_GlobalIsolateRefCount();
 
 class CFXJS_Engine {
  public:
-  CFXJS_Engine();
+  explicit CFXJS_Engine(v8::Isolate* pIsolate);
   ~CFXJS_Engine();
 
   using Constructor = void (*)(CFXJS_Engine* pEngine,
@@ -155,8 +155,6 @@ class CFXJS_Engine {
                               CFXJS_Engine* pEngine);
 #endif  // PDF_ENABLE_XFA
 
-  // TODO(tsepez): to constructor.
-  void SetIsolate(v8::Isolate* pIsolate) { m_isolate = pIsolate; }
   v8::Isolate* GetIsolate() const { return m_isolate; }
 
   // Always returns a valid, newly-created objDefnID.
@@ -257,6 +255,11 @@ class CFXJS_Engine {
 
   v8::Local<v8::String> WSToJSString(const CFX_WideString& wsPropertyName);
   void Error(const CFX_WideString& message);
+
+ protected:
+  CFXJS_Engine();
+
+  void SetIsolate(v8::Isolate* pIsolate) { m_isolate = pIsolate; }
 
  private:
   v8::Isolate* m_isolate;

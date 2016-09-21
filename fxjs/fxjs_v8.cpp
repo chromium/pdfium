@@ -219,6 +219,8 @@ FXJS_PerIsolateData::FXJS_PerIsolateData() : m_pDynamicObjsMap(nullptr) {}
 
 CFXJS_Engine::CFXJS_Engine() : m_isolate(nullptr) {}
 
+CFXJS_Engine::CFXJS_Engine(v8::Isolate* pIsolate) : m_isolate(pIsolate) {}
+
 CFXJS_Engine::~CFXJS_Engine() {
   m_V8PersistentContext.Reset();
 }

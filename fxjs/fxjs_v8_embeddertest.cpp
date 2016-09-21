@@ -45,12 +45,10 @@ TEST_F(FXJSV8EmbedderTest, MultipleEngines) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
 
-  CFXJS_Engine engine1;
-  engine1.SetIsolate(isolate());
+  CFXJS_Engine engine1(isolate());
   engine1.InitializeEngine();
 
-  CFXJS_Engine engine2;
-  engine2.SetIsolate(isolate());
+  CFXJS_Engine engine2(isolate());
   engine2.InitializeEngine();
 
   v8::Context::Scope context_scope(GetV8Context());

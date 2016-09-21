@@ -21,8 +21,7 @@ void JSEmbedderTest::SetUp() {
   v8::Isolate::Scope isolate_scope(m_pIsolate);
   v8::HandleScope handle_scope(m_pIsolate);
   FXJS_PerIsolateData::SetUp(m_pIsolate);
-  m_Engine.reset(new CFXJS_Engine);
-  m_Engine->SetIsolate(m_pIsolate);
+  m_Engine.reset(new CFXJS_Engine(m_pIsolate));
   m_Engine->InitializeEngine();
 }
 
