@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_
 
+#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -100,5 +101,7 @@ class CPDF_ColorSpace {
   CPDF_Array* m_pArray;
   uint32_t m_dwStdConversion;
 };
+
+using CPDF_CountedColorSpace = CFX_WeakPtr<CPDF_ColorSpace>::Handle;
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_
