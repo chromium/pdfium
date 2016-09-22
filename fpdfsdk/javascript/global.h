@@ -47,7 +47,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   FX_BOOL DelProperty(IJS_Context* cc,
                       const FX_WCHAR* propname,
                       CFX_WideString& sError);
-  void Initial(CPDFSDK_Environment* pApp);
+  void Initial(CPDFSDK_Environment* pEnv);
 
  private:
   void UpdateGlobalPersistentVariables();
@@ -68,7 +68,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   std::map<CFX_ByteString, JSGlobalData*> m_mapGlobal;
   CFX_WideString m_sFilePath;
   CJS_GlobalData* m_pGlobalData;
-  CPDFSDK_Environment* m_pApp;
+  CPDFSDK_Environment* m_pEnv;
 };
 
 class CJS_Global : public CJS_Object {

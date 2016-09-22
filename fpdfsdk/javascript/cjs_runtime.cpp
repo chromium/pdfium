@@ -63,14 +63,14 @@ CJS_Runtime* CJS_Runtime::CurrentRuntimeFromIsolate(v8::Isolate* pIsolate) {
       CFXJS_Engine::CurrentEngineFromIsolate(pIsolate));
 }
 
-CJS_Runtime::CJS_Runtime(CPDFSDK_Environment* pApp)
-    : m_pApp(pApp),
+CJS_Runtime::CJS_Runtime(CPDFSDK_Environment* pEnv)
+    : m_pEnv(pEnv),
       m_pDocument(nullptr),
       m_bBlocking(false),
       m_isolateManaged(false) {
   v8::Isolate* pIsolate = nullptr;
 #ifndef PDF_ENABLE_XFA
-  IPDF_JSPLATFORM* pPlatform = m_pApp->GetFormFillInfo()->m_pJsPlatform;
+  IPDF_JSPLATFORM* pPlatform = m_pEnv->GetFormFillInfo()->m_pJsPlatform;
   if (pPlatform->version <= 2) {
     unsigned int embedderDataSlot = 0;
     v8::Isolate* pExternalIsolate = nullptr;
@@ -88,7 +88,7 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_Environment* pApp)
     pIsolate = CPDFXFA_App::GetInstance()->GetJSERuntime();
     SetIsolate(pIsolate);
   } else {
-    IPDF_JSPLATFORM* pPlatform = m_pApp->GetFormFillInfo()->m_pJsPlatform;
+    IPDF_JSPLATFORM* pPlatform = m_pEnv->GetFormFillInfo()->m_pJsPlatform;
     if (pPlatform->version <= 2) {
       unsigned int embedderDataSlot = 0;
       v8::Isolate* pExternalIsolate = nullptr;

@@ -25,7 +25,7 @@
 class GlobalTimer {
  public:
   GlobalTimer(app* pObj,
-              CPDFSDK_Environment* pApp,
+              CPDFSDK_Environment* pEnv,
               CJS_Runtime* pRuntime,
               int nType,
               const CFX_WideString& script,
@@ -55,11 +55,11 @@ class GlobalTimer {
   const uint32_t m_dwTimeOut;
   const CFX_WideString m_swJScript;
   CJS_Runtime::ObservedPtr m_pRuntime;
-  CPDFSDK_Environment* const m_pApp;
+  CPDFSDK_Environment* const m_pEnv;
 };
 
 GlobalTimer::GlobalTimer(app* pObj,
-                         CPDFSDK_Environment* pApp,
+                         CPDFSDK_Environment* pEnv,
                          CJS_Runtime* pRuntime,
                          int nType,
                          const CFX_WideString& script,
@@ -72,8 +72,8 @@ GlobalTimer::GlobalTimer(app* pObj,
       m_dwTimeOut(dwTimeOut),
       m_swJScript(script),
       m_pRuntime(pRuntime),
-      m_pApp(pApp) {
-  CFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
+      m_pEnv(pEnv) {
+  CFX_SystemHandler* pHandler = m_pEnv->GetSysHandler();
   m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
   (*GetGlobalTimerMap())[m_nTimerID] = this;
 }
@@ -83,7 +83,7 @@ GlobalTimer::~GlobalTimer() {
     return;
 
   if (GetRuntime())
-    m_pApp->GetSysHandler()->KillTimer(m_nTimerID);
+    m_pEnv->GetSysHandler()->KillTimer(m_nTimerID);
 
   GetGlobalTimerMap()->erase(m_nTimerID);
 }
@@ -217,11 +217,11 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
     return FALSE;
 
   CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFSDK_Environment* pApp = pContext->GetReaderApp();
+  CPDFSDK_Environment* pEnv = pContext->GetReaderEnv();
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
   CJS_Array aDocs;
-  if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument()) {
+  if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument()) {
     CJS_Document* pJSDocument = nullptr;
     if (pDoc == pCurDoc) {
       v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
@@ -255,8 +255,8 @@ FX_BOOL app::calculate(IJS_Context* cc,
     m_bCalculate = (FX_BOOL)bVP;
 
     CJS_Context* pContext = (CJS_Context*)cc;
-    CPDFSDK_Environment* pApp = pContext->GetReaderApp();
-    if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
+    CPDFSDK_Environment* pEnv = pContext->GetReaderEnv();
+    if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument())
       pDoc->GetInterForm()->EnableCalculate((FX_BOOL)m_bCalculate);
   } else {
     vp << (bool)m_bCalculate;
@@ -322,7 +322,7 @@ FX_BOOL app::platform(IJS_Context* cc,
     return FALSE;
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_Environment* pEnv =
-      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderApp();
+      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderEnv();
   if (!pEnv)
     return FALSE;
   CFX_WideString platfrom = pEnv->GetPlatform();
@@ -342,7 +342,7 @@ FX_BOOL app::language(IJS_Context* cc,
     return FALSE;
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_Environment* pEnv =
-      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderApp();
+      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderEnv();
   if (!pEnv)
     return FALSE;
   CFX_WideString language = pEnv->GetLanguage();
@@ -391,8 +391,8 @@ FX_BOOL app::alert(IJS_Context* cc,
     return FALSE;
   }
 
-  CPDFSDK_Environment* pApp = pRuntime->GetReaderApp();
-  if (!pApp) {
+  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
+  if (!pEnv) {
     vRet = CJS_Value(pRuntime, 0);
     return TRUE;
   }
@@ -432,10 +432,10 @@ FX_BOOL app::alert(IJS_Context* cc,
     swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
 
   pRuntime->BeginBlock();
-  if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
+  if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument())
     pDoc->KillFocusAnnot();
 
-  vRet = CJS_Value(pRuntime, pApp->JS_appAlert(swMsg.c_str(), swTitle.c_str(),
+  vRet = CJS_Value(pRuntime, pEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(),
                                                iType, iIcon));
   pRuntime->EndBlock();
   return TRUE;
@@ -447,7 +447,7 @@ FX_BOOL app::beep(IJS_Context* cc,
                   CFX_WideString& sError) {
   if (params.size() == 1) {
     CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-    CPDFSDK_Environment* pEnv = pRuntime->GetReaderApp();
+    CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
     pEnv->JS_appBeep(params[0].ToInt(pRuntime));
     return TRUE;
   }
@@ -492,10 +492,10 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   }
 
   uint32_t dwInterval = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
-  CPDFSDK_Environment* pApp = pRuntime->GetReaderApp();
+  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
 
   GlobalTimer* timerRef =
-      new GlobalTimer(this, pApp, pRuntime, 0, script, dwInterval, 0);
+      new GlobalTimer(this, pEnv, pRuntime, 0, script, dwInterval, 0);
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
@@ -526,10 +526,10 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   }
 
   uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
-  CPDFSDK_Environment* pApp = pRuntime->GetReaderApp();
+  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
 
   GlobalTimer* timerRef =
-      new GlobalTimer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut);
+      new GlobalTimer(this, pEnv, pRuntime, 1, script, dwTimeOut, dwTimeOut);
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
@@ -677,7 +677,7 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
 
   pRuntime->BeginBlock();
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  pContext->GetReaderApp()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
+  pContext->GetReaderEnv()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
                                            cSubject.c_str(), cCc.c_str(),
                                            cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
@@ -792,7 +792,7 @@ FX_BOOL app::response(IJS_Context* cc,
   memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
 
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  int nLengthBytes = pContext->GetReaderApp()->JS_appResponse(
+  int nLengthBytes = pContext->GetReaderEnv()->JS_appResponse(
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
       bPassword, pBuff.get(), MAX_INPUT_BYTES);
 

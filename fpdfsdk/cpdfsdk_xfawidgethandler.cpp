@@ -22,8 +22,8 @@
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 
-CPDFSDK_XFAWidgetHandler::CPDFSDK_XFAWidgetHandler(CPDFSDK_Environment* pApp)
-    : m_pApp(pApp) {}
+CPDFSDK_XFAWidgetHandler::CPDFSDK_XFAWidgetHandler(CPDFSDK_Environment* pEnv)
+    : m_pEnv(pEnv) {}
 
 CPDFSDK_XFAWidgetHandler::~CPDFSDK_XFAWidgetHandler() {}
 
@@ -38,7 +38,7 @@ CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
 
 CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CXFA_FFWidget* pAnnot,
                                                   CPDFSDK_PageView* pPage) {
-  CPDFSDK_Document* pSDKDoc = m_pApp->GetSDKDocument();
+  CPDFSDK_Document* pSDKDoc = m_pEnv->GetSDKDocument();
   CPDFSDK_InterForm* pInterForm = pSDKDoc->GetInterForm();
   CPDFSDK_XFAWidget* pWidget = new CPDFSDK_XFAWidget(pAnnot, pPage, pInterForm);
   pInterForm->AddXFAMap(pAnnot, pWidget);

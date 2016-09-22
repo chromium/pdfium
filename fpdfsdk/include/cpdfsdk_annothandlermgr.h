@@ -118,7 +118,7 @@ class CPDFSDK_AnnotHandlerMgr {
   std::unique_ptr<CPDFSDK_XFAWidgetHandler> m_pXFAWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 
-  CPDFSDK_Environment* m_pApp;
+  CPDFSDK_Environment* m_pEnv;
 };
 
 #endif  // FPDFSDK_INCLUDE_CPDFSDK_ANNOTHANDLERMGR_H_

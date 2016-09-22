@@ -42,7 +42,7 @@ class CJS_Runtime : public IJS_Runtime,
   int ExecuteScript(const CFX_WideString& script,
                     CFX_WideString* info) override;
 
-  CPDFSDK_Environment* GetReaderApp() const { return m_pApp; }
+  CPDFSDK_Environment* GetReaderEnv() const { return m_pEnv; }
 
   // Returns true if the event isn't already found in the set.
   bool AddEventToSet(const FieldEvent& event);
@@ -63,7 +63,7 @@ class CJS_Runtime : public IJS_Runtime,
   void DefineJSObjects();
 
   std::vector<std::unique_ptr<CJS_Context>> m_ContextArray;
-  CPDFSDK_Environment* const m_pApp;
+  CPDFSDK_Environment* const m_pEnv;
   CPDFSDK_Document* m_pDocument;
   bool m_bBlocking;
   bool m_isolateManaged;

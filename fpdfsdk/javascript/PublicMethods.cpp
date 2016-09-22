@@ -80,9 +80,9 @@ CFX_WideString StrTrim(const CFX_WideString& pStr) {
 }
 
 void AlertIfPossible(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  CPDFSDK_Environment* pApp = pContext->GetReaderApp();
-  if (pApp)
-    pApp->JS_appAlert(swMsg, nullptr, 0, 3);
+  CPDFSDK_Environment* pEnv = pContext->GetReaderEnv();
+  if (pEnv)
+    pEnv->JS_appAlert(swMsg, nullptr, 0, 3);
 }
 
 }  // namespace

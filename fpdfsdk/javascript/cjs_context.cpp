@@ -21,8 +21,8 @@ CPDFSDK_Document* CJS_Context::GetReaderDocument() {
   return m_pRuntime->GetReaderDocument();
 }
 
-CPDFSDK_Environment* CJS_Context::GetReaderApp() {
-  return m_pRuntime->GetReaderApp();
+CPDFSDK_Environment* CJS_Context::GetReaderEnv() {
+  return m_pRuntime->GetReaderEnv();
 }
 
 FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,

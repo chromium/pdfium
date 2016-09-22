@@ -407,7 +407,7 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
     return FALSE;
 
   pRuntime->BeginBlock();
-  CPDFSDK_Environment* pEnv = pContext->GetReaderApp();
+  CPDFSDK_Environment* pEnv = pContext->GetReaderEnv();
   pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI,
                        cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(),
                        cMsg.c_str());
@@ -755,7 +755,7 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFSDK_Environment* pEnv = pRuntime->GetReaderApp();
+  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
   pEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
                        cCc.c_str(), cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();

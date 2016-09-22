@@ -33,7 +33,7 @@ void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
   JSGlobalAlternate* pGlobal =
       static_cast<JSGlobalAlternate*>(GetEmbedObject());
-  pGlobal->Initial(pRuntime->GetReaderApp());
+  pGlobal->Initial(pRuntime->GetReaderEnv());
 }
 
 JSGlobalData::JSGlobalData()
@@ -49,16 +49,16 @@ JSGlobalData::~JSGlobalData() {
 }
 
 JSGlobalAlternate::JSGlobalAlternate(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pApp(nullptr) {}
+    : CJS_EmbedObj(pJSObject), m_pEnv(nullptr) {}
 
 JSGlobalAlternate::~JSGlobalAlternate() {
   DestroyGlobalPersisitentVariables();
   m_pGlobalData->Release();
 }
 
-void JSGlobalAlternate::Initial(CPDFSDK_Environment* pApp) {
-  m_pApp = pApp;
-  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pApp);
+void JSGlobalAlternate::Initial(CPDFSDK_Environment* pEnv) {
+  m_pEnv = pEnv;
+  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pEnv);
   UpdateGlobalPersistentVariables();
 }
 

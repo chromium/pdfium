@@ -109,7 +109,7 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
   CFFL_InteractiveFormFiller* GetFormFiller() { return m_pFormFiller; }
 
  private:
-  CPDFSDK_Environment* m_pApp;
+  CPDFSDK_Environment* m_pEnv;
   CFFL_InteractiveFormFiller* m_pFormFiller;
 };
 

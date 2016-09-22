@@ -24,14 +24,14 @@
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
-CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFSDK_Environment* pApp)
+CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFSDK_Environment* pEnv)
     : m_pBAAnnotHandler(new CPDFSDK_BAAnnotHandler()),
-      m_pWidgetHandler(new CPDFSDK_WidgetHandler(pApp)),
+      m_pWidgetHandler(new CPDFSDK_WidgetHandler(pEnv)),
 #ifdef PDF_ENABLE_XFA
-      m_pXFAWidgetHandler(new CPDFSDK_XFAWidgetHandler(pApp)),
+      m_pXFAWidgetHandler(new CPDFSDK_XFAWidgetHandler(pEnv)),
 #endif  // PDF_ENABLE_XFA
-      m_pApp(pApp) {
-  m_pWidgetHandler->SetFormFiller(m_pApp->GetInteractiveFormFiller());
+      m_pEnv(pEnv) {
+  m_pWidgetHandler->SetFormFiller(m_pEnv->GetInteractiveFormFiller());
 }
 
 CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() {}
@@ -193,14 +193,14 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
 FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
                                                  int nKeyCode,
                                                  int nFlag) {
-  if (m_pApp->IsCTRLKeyDown(nFlag) || m_pApp->IsALTKeyDown(nFlag))
+  if (m_pEnv->IsCTRLKeyDown(nFlag) || m_pEnv->IsALTKeyDown(nFlag))
     return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
 
   CPDFSDK_PageView* pPage = pAnnot->GetPageView();
   CPDFSDK_Annot* pFocusAnnot = pPage->GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
     CPDFSDK_Annot* pNext =
-        GetNextAnnot(pFocusAnnot, !m_pApp->IsSHIFTKeyDown(nFlag));
+        GetNextAnnot(pFocusAnnot, !m_pEnv->IsSHIFTKeyDown(nFlag));
 
     if (pNext && pNext != pFocusAnnot) {
       CPDFSDK_Document* pDocument = pPage->GetSDKDocument();
