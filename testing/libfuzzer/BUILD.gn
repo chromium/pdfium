@@ -169,6 +169,21 @@ source_set("pdf_codec_fax_fuzzer") {
   ]
 }
 
+source_set("pdf_codec_icc_fuzzer") {
+  testonly = true
+  sources = [
+    "pdf_codec_icc_fuzzer.cc",
+  ]
+  deps = [
+    "//third_party/pdfium:pdfium",
+  ]
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":libfuzzer_config",
+  ]
+}
+
 source_set("pdf_jpx_fuzzer") {
   testonly = true
   sources = [
