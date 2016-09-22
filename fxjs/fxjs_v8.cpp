@@ -38,7 +38,7 @@ class CFXJS_ObjDefinition {
 
   static CFXJS_ObjDefinition* ForID(v8::Isolate* pIsolate, int id) {
     // Note: GetAt() halts if out-of-range even in release builds.
-    return FXJS_PerIsolateData::Get(pIsolate)->m_ObjectDefnArray[id];
+    return FXJS_PerIsolateData::Get(pIsolate)->m_ObjectDefnArray[id].get();
   }
 
   CFXJS_ObjDefinition(v8::Isolate* isolate,
@@ -70,7 +70,7 @@ class CFXJS_ObjDefinition {
 
   int AssignID() {
     FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(m_pIsolate);
-    pData->m_ObjectDefnArray.push_back(this);
+    pData->m_ObjectDefnArray.emplace_back(this);
     return pData->m_ObjectDefnArray.size() - 1;
   }
 
@@ -150,7 +150,7 @@ void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
 V8TemplateMapTraits::MapType* V8TemplateMapTraits::MapFromWeakCallbackInfo(
     const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
   V8TemplateMap* pMap =
-      (FXJS_PerIsolateData::Get(data.GetIsolate()))->m_pDynamicObjsMap;
+      (FXJS_PerIsolateData::Get(data.GetIsolate()))->m_pDynamicObjsMap.get();
   return pMap ? &pMap->m_map : nullptr;
 }
 
@@ -206,7 +206,7 @@ FXJS_PerIsolateData::~FXJS_PerIsolateData() {}
 // static
 void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
   if (!pIsolate->GetData(g_embedderDataSlot))
-    pIsolate->SetData(g_embedderDataSlot, new FXJS_PerIsolateData());
+    pIsolate->SetData(g_embedderDataSlot, new FXJS_PerIsolateData(pIsolate));
 }
 
 // static
@@ -215,7 +215,8 @@ FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
       pIsolate->GetData(g_embedderDataSlot));
 }
 
-FXJS_PerIsolateData::FXJS_PerIsolateData() : m_pDynamicObjsMap(nullptr) {}
+FXJS_PerIsolateData::FXJS_PerIsolateData(v8::Isolate* pIsolate)
+    : m_pDynamicObjsMap(new V8TemplateMap(pIsolate)) {}
 
 CFXJS_Engine::CFXJS_Engine() : m_isolate(nullptr) {}
 
@@ -380,10 +381,6 @@ void CFXJS_Engine::InitializeEngine() {
       v8::Context::New(m_isolate, nullptr, GetGlobalObjectTemplate(m_isolate));
   v8::Context::Scope context_scope(v8Context);
 
-  FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(m_isolate);
-  if (!pData)
-    return;
-  pData->CreateDynamicObjsMap(m_isolate);
   v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, this);
 
   int maxID = CFXJS_ObjDefinition::MaxID(m_isolate);
@@ -455,12 +452,8 @@ void CFXJS_Engine::ReleaseEngine() {
   if (m_isolate == g_isolate && --g_isolate_ref_count > 0)
     return;
 
-  pData->ReleaseDynamicObjsMap();
-  for (int i = 0; i < maxID; ++i)
-    delete CFXJS_ObjDefinition::ForID(m_isolate, i);
-
-  m_isolate->SetData(g_embedderDataSlot, nullptr);
   delete pData;
+  m_isolate->SetData(g_embedderDataSlot, nullptr);
 }
 
 int CFXJS_Engine::Execute(const CFX_WideString& script, FXJSErr* pError) {

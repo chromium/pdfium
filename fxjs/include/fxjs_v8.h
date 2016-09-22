@@ -100,23 +100,14 @@ class FXJS_PerIsolateData {
   static void SetUp(v8::Isolate* pIsolate);
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
 
-  void CreateDynamicObjsMap(v8::Isolate* pIsolate) {
-    if (!m_pDynamicObjsMap)
-      m_pDynamicObjsMap = new V8TemplateMap(pIsolate);
-  }
-  void ReleaseDynamicObjsMap() {
-    delete m_pDynamicObjsMap;
-    m_pDynamicObjsMap = nullptr;
-  }
-
-  std::vector<CFXJS_ObjDefinition*> m_ObjectDefnArray;
+  std::vector<std::unique_ptr<CFXJS_ObjDefinition>> m_ObjectDefnArray;
 #ifdef PDF_ENABLE_XFA
   std::unique_ptr<CFXJSE_RuntimeData> m_pFXJSERuntimeData;
 #endif  // PDF_ENABLE_XFA
-  V8TemplateMap* m_pDynamicObjsMap;
+  std::unique_ptr<V8TemplateMap> m_pDynamicObjsMap;
 
  protected:
-  FXJS_PerIsolateData();
+  explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);
 };
 
 class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
