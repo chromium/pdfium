@@ -56,15 +56,22 @@ class CFX_CountRef {
     CountedObj(Args... params) : ObjClass(params...), m_RefCount(0) {}
 
     CountedObj(const CountedObj& src) : ObjClass(src), m_RefCount(0) {}
+    ~CountedObj() { m_RefCount = 0; }
 
     bool HasOneRef() const { return m_RefCount == 1; }
     void Retain() { m_RefCount++; }
     void Release() {
-      if (--m_RefCount <= 0)
+      ASSERT(m_RefCount);
+      if (--m_RefCount == 0)
         delete this;
     }
 
    private:
+    // To ensure ref counts do not overflow, consider the worst possible case:
+    // the entire address space contains nothing but pointers to this object.
+    // Since the count increments with each new pointer, the largest value is
+    // the number of pointers that can fit into the address space. The size of
+    // the address space itself is a good upper bound on it.
     intptr_t m_RefCount;
   };
 

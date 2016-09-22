@@ -85,7 +85,7 @@ class CFX_StringDataTemplate {
   // Since the count increments with each new pointer, the largest value is
   // the number of pointers that can fit into the address space. The size of
   // the address space itself is a good upper bound on it.
-  intptr_t m_nRefs;  // Would prefer ssize_t, but no windows support.
+  intptr_t m_nRefs;
 
   // |FX_STRSIZE| is currently typedef'd as |int|.
   // TODO(palmer): It should be a |size_t|, or at least unsigned.

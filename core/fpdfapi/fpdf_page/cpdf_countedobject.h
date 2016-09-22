@@ -20,8 +20,10 @@ class CPDF_CountedObject {
     m_pObj = ptr;
   }
   void clear() {  // Now you're all weak ptrs ...
-    delete m_pObj;
+    // Guard against accidental re-entry.
+    T* pObj = m_pObj;
     m_pObj = nullptr;
+    delete pObj;
   }
   T* get() const { return m_pObj; }
   T* AddRef() {
