@@ -144,7 +144,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
     pContentArray = pArray;
     CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
     pContentArray->InsertAt(0, pRef);
-    pContentArray->AddReference(pDoc, pEndStream);
+    pContentArray->AddReference(pDoc, pEndStream->GetObjNum());
   } else if (CPDF_Reference* pReference = ToReference(pContentObj)) {
     CPDF_Object* pDirectObj = pReference->GetDirect();
     if (pDirectObj) {
@@ -153,12 +153,12 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         pContentArray = pObjArray;
         CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
         pContentArray->InsertAt(0, pRef);
-        pContentArray->AddReference(pDoc, pEndStream);
+        pContentArray->AddReference(pDoc, pEndStream->GetObjNum());
       } else if (pDirectObj->IsStream()) {
         pContentArray = new CPDF_Array();
         pContentArray->AddReference(pDoc, pStream->GetObjNum());
         pContentArray->AddReference(pDoc, pDirectObj->GetObjNum());
-        pContentArray->AddReference(pDoc, pEndStream);
+        pContentArray->AddReference(pDoc, pEndStream->GetObjNum());
         pPageDic->SetReferenceFor("Contents", pDoc,
                                   pDoc->AddIndirectObject(pContentArray));
       }
@@ -306,6 +306,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   CPDF_Document* pDoc = pPage->m_pDocument;
   if (!pDoc)
     return;
+
   pDoc->AddIndirectObject(pStream);
 
   CPDF_Array* pContentArray = nullptr;

@@ -71,8 +71,8 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
     pNewPages = new CPDF_Dictionary;
-    uint32_t NewPagesON = pDestPDFDoc->AddIndirectObject(pNewPages);
-    pNewRoot->SetFor("Pages", new CPDF_Reference(pDestPDFDoc, NewPagesON));
+    pNewRoot->SetReferenceFor("Pages", pDestPDFDoc,
+                              pDestPDFDoc->AddIndirectObject(pNewPages));
   }
 
   CFX_ByteString cbPageType = pNewPages->GetStringFor("Type", "");
@@ -80,13 +80,10 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
     pNewPages->SetFor("Type", new CPDF_Name("Pages"));
   }
 
-  CPDF_Array* pKeysArray = pNewPages->GetArrayFor("Kids");
-  if (!pKeysArray) {
-    CPDF_Array* pNewKids = new CPDF_Array;
-    uint32_t Kidsobjnum = pDestPDFDoc->AddIndirectObject(pNewKids);
-
-    pNewPages->SetFor("Kids", new CPDF_Reference(pDestPDFDoc, Kidsobjnum));
-    pNewPages->SetFor("Count", new CPDF_Number(0));
+  if (!pNewPages->GetArrayFor("Kids")) {
+    pNewPages->SetIntegerFor("Count", 0);
+    pNewPages->SetReferenceFor("Kids", pDestPDFDoc,
+                               pDestPDFDoc->AddIndirectObject(new CPDF_Array));
   }
 
   return TRUE;

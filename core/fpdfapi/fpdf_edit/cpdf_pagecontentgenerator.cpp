@@ -50,13 +50,13 @@ void CPDF_PageContentGenerator::GenerateContent() {
   }
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetDirectObjectFor("Contents") : nullptr;
-  if (pContent) {
+  if (pContent)
     pPageDict->RemoveFor("Contents");
-  }
+
   CPDF_Stream* pStream = new CPDF_Stream;
   pStream->SetData(buf.GetBuffer(), buf.GetLength());
-  m_pDocument->AddIndirectObject(pStream);
-  pPageDict->SetReferenceFor("Contents", m_pDocument, pStream->GetObjNum());
+  pPageDict->SetReferenceFor("Contents", m_pDocument,
+                             m_pDocument->AddIndirectObject(pStream));
 }
 
 CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
@@ -64,15 +64,15 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     const CFX_ByteString& bsType) {
   if (!m_pPage->m_pResources) {
     m_pPage->m_pResources = new CPDF_Dictionary;
-    int objnum = m_pDocument->AddIndirectObject(m_pPage->m_pResources);
-    m_pPage->m_pFormDict->SetReferenceFor("Resources", m_pDocument, objnum);
+    m_pPage->m_pFormDict->SetReferenceFor(
+        "Resources", m_pDocument,
+        m_pDocument->AddIndirectObject(m_pPage->m_pResources));
   }
   CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictFor(bsType);
   if (!pResList) {
     pResList = new CPDF_Dictionary;
     m_pPage->m_pResources->SetFor(bsType, pResList);
   }
-  m_pDocument->AddIndirectObject(pResourceObj);
   CFX_ByteString name;
   int idnum = 1;
   while (1) {
@@ -82,7 +82,8 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     }
     idnum++;
   }
-  pResList->SetReferenceFor(name, m_pDocument, pResourceObj->GetObjNum());
+  pResList->SetReferenceFor(name, m_pDocument,
+                            m_pDocument->AddIndirectObject(pResourceObj));
   return name;
 }
 
@@ -170,7 +171,6 @@ void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
   }
   CPDF_Stream* pStream = new CPDF_Stream;
   pStream->SetData(buf.GetBuffer(), buf.GetLength());
-  m_pDocument->AddIndirectObject(pStream);
-  m_pPage->m_pFormDict->SetReferenceFor("Contents", m_pDocument,
-                                        pStream->GetObjNum());
+  m_pPage->m_pFormDict->SetReferenceFor(
+      "Contents", m_pDocument, m_pDocument->AddIndirectObject(pStream));
 }

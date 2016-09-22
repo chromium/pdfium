@@ -154,7 +154,6 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
     return;
 
   CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP");
-
   if (!pAPDict) {
     pAPDict = new CPDF_Dictionary;
     m_pAnnotDict->SetFor("AP", pAPDict);
@@ -168,12 +167,11 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
   if (!pStream) {
     pStream = new CPDF_Stream;
-    int32_t objnum = m_pDocument->AddIndirectObject(pStream);
-    pAPDict->SetReferenceFor(m_sAPType, m_pDocument, objnum);
+    pAPDict->SetReferenceFor(m_sAPType, m_pDocument,
+                             m_pDocument->AddIndirectObject(pStream));
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
-
   if (!pStreamDict) {
     pStreamDict = new CPDF_Dictionary;
     pStream->InitStream(nullptr, 0, pStreamDict);
@@ -185,17 +183,16 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
       pStreamResList = new CPDF_Dictionary();
       pStreamDict->SetFor("Resources", pStreamResList);
     }
-
-    if (pStreamResList) {
-      CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
-      if (!pStreamResFontList) {
-        pStreamResFontList = new CPDF_Dictionary;
-        int32_t objnum = m_pDocument->AddIndirectObject(pStreamResFontList);
-        pStreamResList->SetReferenceFor("Font", m_pDocument, objnum);
-      }
-      if (!pStreamResFontList->KeyExist(sAlias))
-        pStreamResFontList->SetReferenceFor(sAlias, m_pDocument,
-                                            pFont->GetFontDict());
+    CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
+    if (!pStreamResFontList) {
+      pStreamResFontList = new CPDF_Dictionary;
+      pStreamResList->SetReferenceFor(
+          "Font", m_pDocument,
+          m_pDocument->AddIndirectObject(pStreamResFontList));
+    }
+    if (!pStreamResFontList->KeyExist(sAlias)) {
+      pStreamResFontList->SetReferenceFor(sAlias, m_pDocument,
+                                          pFont->GetFontDict()->GetObjNum());
     }
   }
 }

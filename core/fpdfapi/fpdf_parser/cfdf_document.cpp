@@ -25,8 +25,7 @@ CFDF_Document* CFDF_Document::CreateNewDoc() {
   CFDF_Document* pDoc = new CFDF_Document;
   pDoc->m_pRootDict = new CPDF_Dictionary;
   pDoc->AddIndirectObject(pDoc->m_pRootDict);
-  CPDF_Dictionary* pFDFDict = new CPDF_Dictionary;
-  pDoc->m_pRootDict->SetFor("FDF", pFDFDict);
+  pDoc->m_pRootDict->SetFor("FDF", new CPDF_Dictionary);
   return pDoc;
 }
 

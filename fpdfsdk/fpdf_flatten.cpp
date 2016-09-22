@@ -195,12 +195,11 @@ void SetPageContents(CFX_ByteString key,
     if (!key.IsEmpty()) {
       CPDF_Stream* pNewContents =
           new CPDF_Stream(nullptr, 0, new CPDF_Dictionary);
-      pPage->SetReferenceFor("Contents", pDocument,
-                             pDocument->AddIndirectObject(pNewContents));
-
       CFX_ByteString sStream;
       sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
       pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
+      pPage->SetReferenceFor("Contents", pDocument,
+                             pDocument->AddIndirectObject(pNewContents));
     }
     return;
   }
@@ -234,18 +233,17 @@ void SetPageContents(CFX_ByteString key,
   if (!pContentsArray)
     return;
 
-  uint32_t dwObjNum = pDocument->AddIndirectObject(pContentsArray);
-  pPage->SetReferenceFor("Contents", pDocument, dwObjNum);
+  pPage->SetReferenceFor("Contents", pDocument,
+                         pDocument->AddIndirectObject(pContentsArray));
 
   if (!key.IsEmpty()) {
     CPDF_Stream* pNewContents =
         new CPDF_Stream(nullptr, 0, new CPDF_Dictionary);
-    dwObjNum = pDocument->AddIndirectObject(pNewContents);
-    pContentsArray->AddReference(pDocument, dwObjNum);
-
     CFX_ByteString sStream;
     sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
     pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
+    pContentsArray->AddReference(pDocument,
+                                 pDocument->AddIndirectObject(pNewContents));
   }
 }
 
@@ -482,15 +480,14 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CFX_ByteString sFormName;
     sFormName.Format("F%d", i);
-    uint32_t dwStreamObjNum = pDocument->AddIndirectObject(pObj);
-    pXObject->SetReferenceFor(sFormName, pDocument, dwStreamObjNum);
+    pXObject->SetReferenceFor(sFormName, pDocument,
+                              pDocument->AddIndirectObject(pObj));
 
     CPDF_StreamAcc acc;
     acc.LoadAllData(pNewXObject);
 
     const uint8_t* pData = acc.GetData();
     CFX_ByteString sStream(pData, acc.GetSize());
-    CFX_ByteString sTemp;
 
     if (matrix.IsIdentity()) {
       matrix.a = 1.0f;
@@ -501,6 +498,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       matrix.f = 0.0f;
     }
 
+    CFX_ByteString sTemp;
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);
     sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f,
                  sFormName.c_str());

@@ -689,13 +689,12 @@ void CPDF_Document::CreateNewDoc() {
   ASSERT(!m_pRootDict && !m_pInfoDict);
   m_pRootDict = new CPDF_Dictionary;
   m_pRootDict->SetNameFor("Type", "Catalog");
-  int objnum = AddIndirectObject(m_pRootDict);
+  AddIndirectObject(m_pRootDict);
   CPDF_Dictionary* pPages = new CPDF_Dictionary;
   pPages->SetNameFor("Type", "Pages");
   pPages->SetNumberFor("Count", 0);
   pPages->SetFor("Kids", new CPDF_Array);
-  objnum = AddIndirectObject(pPages);
-  m_pRootDict->SetReferenceFor("Pages", this, objnum);
+  m_pRootDict->SetReferenceFor("Pages", this, AddIndirectObject(pPages));
   m_pInfoDict = new CPDF_Dictionary;
   AddIndirectObject(m_pInfoDict);
 }
@@ -754,8 +753,9 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
     pArray->AddName(name.IsEmpty() ? ".notdef" : name);
   }
   pEncodingDict->SetFor("Differences", pArray);
-  AddIndirectObject(pEncodingDict);
-  pBaseDict->SetReferenceFor("Encoding", this, pEncodingDict);
+  pBaseDict->SetReferenceFor("Encoding", this,
+                             AddIndirectObject(pEncodingDict));
+
   return i;
 }
 
@@ -822,8 +822,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   pFontDict->SetFor("CIDSystemInfo", pCIDSysInfo);
   CPDF_Array* pArray = new CPDF_Array;
   pBaseDict->SetFor("DescendantFonts", pArray);
-  AddIndirectObject(pFontDict);
-  pArray->AddReference(this, pFontDict);
+  pArray->AddReference(this, AddIndirectObject(pFontDict));
   return pFontDict;
 }
 
@@ -910,8 +909,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   CPDF_Dictionary* pFontDesc =
       CalculateFontDesc(basefont, flags, italicangle, pFont->GetAscent(),
                         pFont->GetDescent(), pBBox, nStemV);
-  AddIndirectObject(pFontDesc);
-  pFontDict->SetReferenceFor("FontDescriptor", this, pFontDesc);
+  pFontDict->SetReferenceFor("FontDescriptor", this,
+                             AddIndirectObject(pFontDesc));
   return LoadFont(pBaseDict);
 }
 
@@ -1006,8 +1005,8 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
       CalculateFontDesc(basefont, flags, italicangle, ascend, descend, pBBox,
                         pLogFont->lfWeight / 5);
   pFontDesc->SetIntegerFor("CapHeight", capheight);
-  AddIndirectObject(pFontDesc);
-  pFontDict->SetReferenceFor("FontDescriptor", this, pFontDesc);
+  pFontDict->SetReferenceFor("FontDescriptor", this,
+                             AddIndirectObject(pFontDesc));
   hFont = SelectObject(hDC, hFont);
   DeleteObject(hFont);
   DeleteDC(hDC);

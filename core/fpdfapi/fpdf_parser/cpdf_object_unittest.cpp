@@ -730,7 +730,7 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
     holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
                                                     indirect_objs[i]);
     arr->AddReference(holder.get(), obj_nums[i]);
-    arr1->AddReference(holder.get(), indirect_objs[i]);
+    arr1->AddReference(holder.get(), indirect_objs[i]->GetObjNum());
   }
   // Check indirect objects.
   for (size_t i = 0; i < FX_ArraySize(obj_nums); ++i)

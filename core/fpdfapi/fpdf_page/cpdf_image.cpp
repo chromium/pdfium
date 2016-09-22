@@ -201,7 +201,6 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     int32_t iPalette = pBitmap->GetPaletteSize();
     if (iPalette > 0) {
       CPDF_Array* pCS = new CPDF_Array;
-      m_pDocument->AddIndirectObject(pCS);
       pCS->AddName("Indexed");
       pCS->AddName("DeviceRGB");
       pCS->AddInteger(iPalette - 1);
@@ -216,9 +215,9 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       }
       CPDF_Stream* pCTS =
           new CPDF_Stream(pColorTable, iPalette * 3, new CPDF_Dictionary);
-      m_pDocument->AddIndirectObject(pCTS);
-      pCS->AddReference(m_pDocument, pCTS);
-      pDict->SetReferenceFor("ColorSpace", m_pDocument, pCS);
+      pCS->AddReference(m_pDocument, m_pDocument->AddIndirectObject(pCTS));
+      pDict->SetReferenceFor("ColorSpace", m_pDocument,
+                             m_pDocument->AddIndirectObject(pCS));
     } else {
       pDict->SetNameFor("ColorSpace", "DeviceGray");
     }
@@ -269,13 +268,11 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       }
     }
     pMaskDict->SetIntegerFor("Length", mask_size);
-
-    CPDF_Stream* pMaskStream = new CPDF_Stream(mask_buf, mask_size, pMaskDict);
-    m_pDocument->AddIndirectObject(pMaskStream);
-    pDict->SetReferenceFor("SMask", m_pDocument, pMaskStream);
-    if (bDeleteMask) {
+    pDict->SetReferenceFor("SMask", m_pDocument,
+                           m_pDocument->AddIndirectObject(new CPDF_Stream(
+                               mask_buf, mask_size, pMaskDict)));
+    if (bDeleteMask)
       delete pMaskBitmap;
-    }
   }
   if (opType == 0) {
     if (iCompress & PDF_IMAGE_LOSSLESS_COMPRESS) {

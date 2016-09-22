@@ -63,8 +63,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     pFontDict->SetNameFor("Subtype", "Type1");
     pFontDict->SetNameFor("BaseFont", "Helvetica");
     pFontDict->SetNameFor("Encoding", "WinAnsiEncoding");
-    pDoc->AddIndirectObject(pFontDict);
-    pDRFontDict->SetReferenceFor(sFontName.Mid(1), pDoc, pFontDict);
+    pDRFontDict->SetReferenceFor(sFontName.Mid(1), pDoc,
+                                 pDoc->AddIndirectObject(pFontDict));
   }
   CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
   if (!pDefFont)
@@ -169,8 +169,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
   CPDF_Stream* pNormalStream = pAPDict->GetStreamFor("N");
   if (!pNormalStream) {
     pNormalStream = new CPDF_Stream;
-    int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
-    pAnnotDict->GetDictFor("AP")->SetReferenceFor("N", pDoc, objnum);
+    pAPDict->SetReferenceFor("N", pDoc, pDoc->AddIndirectObject(pNormalStream));
   }
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
   if (pStreamDict) {
@@ -184,7 +183,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
         pStreamResList->SetFor("Font", pStreamResFontList);
       }
       if (!pStreamResFontList->KeyExist(sFontName))
-        pStreamResFontList->SetReferenceFor(sFontName, pDoc, pFontDict);
+        pStreamResFontList->SetReferenceFor(sFontName, pDoc,
+                                            pFontDict->GetObjNum());
     } else {
       pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
       pStreamResList = pStreamDict->GetDictFor("Resources");
@@ -434,7 +434,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
           pStreamResList->SetFor("Font", pStreamResFontList);
         }
         if (!pStreamResFontList->KeyExist(sFontName))
-          pStreamResFontList->SetReferenceFor(sFontName, pDoc, pFontDict);
+          pStreamResFontList->SetReferenceFor(sFontName, pDoc,
+                                              pFontDict->GetObjNum());
       } else {
         pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
         pStreamResList = pStreamDict->GetDictFor("Resources");
@@ -562,10 +563,10 @@ CPDF_Dictionary* GenerateResourceFontDict(CPDF_Document* pDoc,
   pFontDict->SetNameFor("Subtype", "Type1");
   pFontDict->SetNameFor("BaseFont", "Helvetica");
   pFontDict->SetNameFor("Encoding", "WinAnsiEncoding");
-  pDoc->AddIndirectObject(pFontDict);
 
   CPDF_Dictionary* pResourceFontDict = new CPDF_Dictionary;
-  pResourceFontDict->SetReferenceFor(sFontDictName, pDoc, pFontDict);
+  pResourceFontDict->SetReferenceFor(sFontDictName, pDoc,
+                                     pDoc->AddIndirectObject(pFontDict));
 
   return pResourceFontDict;
 }
@@ -593,9 +594,8 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   pAnnotDict->SetFor("AP", pAPDict);
 
   CPDF_Stream* pNormalStream = new CPDF_Stream;
-  int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
-  pAnnotDict->GetDictFor("AP")->SetReferenceFor("N", pDoc, objnum);
   pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize());
+  pAPDict->SetReferenceFor("N", pDoc, pDoc->AddIndirectObject(pNormalStream));
 
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
   pStreamDict->SetIntegerFor("FormType", 1);

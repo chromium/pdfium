@@ -1835,11 +1835,9 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
     pStreamDict->SetFor("Resources", pStreamResList);
   }
 
-  if (pStreamResList) {
-    CPDF_Dictionary* pXObject = new CPDF_Dictionary;
-    pXObject->SetReferenceFor(sImageAlias, pDoc, pImage);
-    pStreamResList->SetFor("XObject", pXObject);
-  }
+  CPDF_Dictionary* pXObject = new CPDF_Dictionary;
+  pXObject->SetReferenceFor(sImageAlias, pDoc, pImage->GetObjNum());
+  pStreamResList->SetFor("XObject", pXObject);
 }
 
 void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {

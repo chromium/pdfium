@@ -59,9 +59,8 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
 
   if (!pFormDict) {
     pFormDict = new CPDF_Dictionary;
-    uint32_t dwObjNum = pDocument->AddIndirectObject(pFormDict);
-    CPDF_Dictionary* pRoot = pDocument->GetRoot();
-    pRoot->SetReferenceFor("AcroForm", pDocument, dwObjNum);
+    pDocument->GetRoot()->SetReferenceFor(
+        "AcroForm", pDocument, pDocument->AddIndirectObject(pFormDict));
   }
 
   CFX_ByteString csDA;
@@ -406,7 +405,8 @@ void AddFont(CPDF_Dictionary*& pFormDict,
   csNameTag.Remove(' ');
   csNameTag = CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4,
                                                       csNameTag.c_str());
-  pFonts->SetReferenceFor(csNameTag, pDocument, pFont->GetFontDict());
+  pFonts->SetReferenceFor(csNameTag, pDocument,
+                          pFont->GetFontDict()->GetObjNum());
 }
 
 CPDF_Font* AddNativeFont(CPDF_Dictionary*& pFormDict,
