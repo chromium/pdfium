@@ -253,7 +253,7 @@ FX_BOOL CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   if (hWidget->CanSelectAll())
     menuFlag |= FXFA_MENU_SELECTALL;
 
-  return pEnv->PopupMenu(pPage, hWidget, menuFlag, ptPopup, nullptr);
+  return pEnv->PopupMenu(pPage, hWidget, menuFlag, ptPopup);
 }
 
 void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
@@ -500,8 +500,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
 }
 
 void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
-                                     const CFX_WideString& bsURL,
-                                     FX_BOOL bAppend) {
+                                     const CFX_WideString& bsURL) {
   if (hDoc != m_pDocument->GetXFADoc())
     return;
 
@@ -513,8 +512,7 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
     return;
 
   CFX_WideStringC str(bsURL.c_str());
-
-  pEnv->GotoURL(this, str, bAppend);
+  pEnv->GotoURL(this, str);
 }
 
 FX_BOOL CPDFXFA_DocEnvironment::IsValidationsEnabled(CXFA_FFDoc* hDoc) {

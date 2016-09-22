@@ -321,9 +321,7 @@ class IXFA_DocEnvironment {
   virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideString& wsFilePath,
                           FX_BOOL bXDP) = 0;
-  virtual void GotoURL(CXFA_FFDoc* hDoc,
-                       const CFX_WideString& bsURL,
-                       FX_BOOL bAppend) = 0;
+  virtual void GotoURL(CXFA_FFDoc* hDoc, const CFX_WideString& bsURL) = 0;
   virtual FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) = 0;
   virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;
   virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;

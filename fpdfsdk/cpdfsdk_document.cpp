@@ -231,7 +231,7 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(uint32_t nFlag) {
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||
             FIELDTYPE_COMBOBOX == nFieldType) {
-          m_pEnv->OnSetFieldInputFocus(nullptr, nullptr, 0, FALSE);
+          m_pEnv->OnSetFieldInputFocus(nullptr, 0, FALSE);
         }
       }
 

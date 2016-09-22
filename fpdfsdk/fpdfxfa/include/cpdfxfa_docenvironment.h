@@ -54,9 +54,7 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
   void ExportData(CXFA_FFDoc* hDoc,
                   const CFX_WideString& wsFilePath,
                   FX_BOOL bXDP) override;
-  void GotoURL(CXFA_FFDoc* hDoc,
-               const CFX_WideString& bsURL,
-               FX_BOOL bAppend) override;
+  void GotoURL(CXFA_FFDoc* hDoc, const CFX_WideString& bsURL) override;
   FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) override;
   void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) override;
   void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) override;

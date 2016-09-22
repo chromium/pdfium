@@ -212,3 +212,329 @@ CFFL_InteractiveFormFiller* CPDFSDK_Environment::GetInteractiveFormFiller() {
     m_pFormFiller.reset(new CFFL_InteractiveFormFiller(this));
   return m_pFormFiller.get();
 }
+
+void CPDFSDK_Environment::Invalidate(FPDF_PAGE page,
+                                     double left,
+                                     double top,
+                                     double right,
+                                     double bottom) {
+  if (m_pInfo && m_pInfo->FFI_Invalidate)
+    m_pInfo->FFI_Invalidate(m_pInfo, page, left, top, right, bottom);
+}
+
+void CPDFSDK_Environment::OutputSelectedRect(FPDF_PAGE page,
+                                             double left,
+                                             double top,
+                                             double right,
+                                             double bottom) {
+  if (m_pInfo && m_pInfo->FFI_OutputSelectedRect)
+    m_pInfo->FFI_OutputSelectedRect(m_pInfo, page, left, top, right, bottom);
+}
+
+void CPDFSDK_Environment::SetCursor(int nCursorType) {
+  if (m_pInfo && m_pInfo->FFI_SetCursor)
+    m_pInfo->FFI_SetCursor(m_pInfo, nCursorType);
+}
+
+int CPDFSDK_Environment::SetTimer(int uElapse, TimerCallback lpTimerFunc) {
+  if (m_pInfo && m_pInfo->FFI_SetTimer)
+    return m_pInfo->FFI_SetTimer(m_pInfo, uElapse, lpTimerFunc);
+  return -1;
+}
+
+void CPDFSDK_Environment::KillTimer(int nTimerID) {
+  if (m_pInfo && m_pInfo->FFI_KillTimer)
+    m_pInfo->FFI_KillTimer(m_pInfo, nTimerID);
+}
+
+FX_SYSTEMTIME CPDFSDK_Environment::GetLocalTime() const {
+  FX_SYSTEMTIME fxtime;
+  if (!m_pInfo || !m_pInfo->FFI_GetLocalTime)
+    return fxtime;
+
+  FPDF_SYSTEMTIME systime = m_pInfo->FFI_GetLocalTime(m_pInfo);
+  fxtime.wDay = systime.wDay;
+  fxtime.wDayOfWeek = systime.wDayOfWeek;
+  fxtime.wHour = systime.wHour;
+  fxtime.wMilliseconds = systime.wMilliseconds;
+  fxtime.wMinute = systime.wMinute;
+  fxtime.wMonth = systime.wMonth;
+  fxtime.wSecond = systime.wSecond;
+  fxtime.wYear = systime.wYear;
+  return fxtime;
+}
+
+void CPDFSDK_Environment::OnChange() {
+  if (m_pInfo && m_pInfo->FFI_OnChange)
+    m_pInfo->FFI_OnChange(m_pInfo);
+}
+
+FX_BOOL CPDFSDK_Environment::IsSHIFTKeyDown(uint32_t nFlag) const {
+  return (nFlag & FWL_EVENTFLAG_ShiftKey) != 0;
+}
+
+FX_BOOL CPDFSDK_Environment::IsCTRLKeyDown(uint32_t nFlag) const {
+  return (nFlag & FWL_EVENTFLAG_ControlKey) != 0;
+}
+
+FX_BOOL CPDFSDK_Environment::IsALTKeyDown(uint32_t nFlag) const {
+  return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
+}
+
+FPDF_PAGE CPDFSDK_Environment::GetPage(FPDF_DOCUMENT document, int nPageIndex) {
+  if (m_pInfo && m_pInfo->FFI_GetPage)
+    return m_pInfo->FFI_GetPage(m_pInfo, document, nPageIndex);
+  return nullptr;
+}
+
+FPDF_PAGE CPDFSDK_Environment::GetCurrentPage(FPDF_DOCUMENT document) {
+  if (m_pInfo && m_pInfo->FFI_GetCurrentPage)
+    return m_pInfo->FFI_GetCurrentPage(m_pInfo, document);
+  return nullptr;
+}
+
+void CPDFSDK_Environment::ExecuteNamedAction(const FX_CHAR* namedAction) {
+  if (m_pInfo && m_pInfo->FFI_ExecuteNamedAction)
+    m_pInfo->FFI_ExecuteNamedAction(m_pInfo, namedAction);
+}
+
+void CPDFSDK_Environment::OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
+                                               FPDF_DWORD nTextLen,
+                                               FX_BOOL bFocus) {
+  if (m_pInfo && m_pInfo->FFI_SetTextFieldFocus)
+    m_pInfo->FFI_SetTextFieldFocus(m_pInfo, focusText, nTextLen, bFocus);
+}
+
+void CPDFSDK_Environment::DoURIAction(const FX_CHAR* bsURI) {
+  if (m_pInfo && m_pInfo->FFI_DoURIAction)
+    m_pInfo->FFI_DoURIAction(m_pInfo, bsURI);
+}
+
+void CPDFSDK_Environment::DoGoToAction(int nPageIndex,
+                                       int zoomMode,
+                                       float* fPosArray,
+                                       int sizeOfArray) {
+  if (m_pInfo && m_pInfo->FFI_DoGoToAction) {
+    m_pInfo->FFI_DoGoToAction(m_pInfo, nPageIndex, zoomMode, fPosArray,
+                              sizeOfArray);
+  }
+}
+
+#ifdef PDF_ENABLE_XFA
+void CPDFSDK_Environment::DisplayCaret(FPDF_PAGE page,
+                                       FPDF_BOOL bVisible,
+                                       double left,
+                                       double top,
+                                       double right,
+                                       double bottom) {
+  if (m_pInfo && m_pInfo->FFI_DisplayCaret) {
+    m_pInfo->FFI_DisplayCaret(m_pInfo, page, bVisible, left, top, right,
+                              bottom);
+  }
+}
+
+int CPDFSDK_Environment::GetCurrentPageIndex(FPDF_DOCUMENT document) {
+  if (!m_pInfo || !m_pInfo->FFI_GetCurrentPageIndex)
+    return -1;
+  return m_pInfo->FFI_GetCurrentPageIndex(m_pInfo, document);
+}
+
+void CPDFSDK_Environment::SetCurrentPage(FPDF_DOCUMENT document, int iCurPage) {
+  if (m_pInfo && m_pInfo->FFI_SetCurrentPage)
+    m_pInfo->FFI_SetCurrentPage(m_pInfo, document, iCurPage);
+}
+
+CFX_WideString CPDFSDK_Environment::GetPlatform() {
+  if (!m_pInfo || !m_pInfo->FFI_GetPlatform)
+    return L"";
+
+  int nRequiredLen = m_pInfo->FFI_GetPlatform(m_pInfo, nullptr, 0);
+  if (nRequiredLen <= 0)
+    return L"";
+
+  char* pbuff = new char[nRequiredLen];
+  memset(pbuff, 0, nRequiredLen);
+  int nActualLen = m_pInfo->FFI_GetPlatform(m_pInfo, pbuff, nRequiredLen);
+  if (nActualLen <= 0 || nActualLen > nRequiredLen) {
+    delete[] pbuff;
+    return L"";
+  }
+  CFX_ByteString bsRet = CFX_ByteString(pbuff, nActualLen);
+  CFX_WideString wsRet = CFX_WideString::FromUTF16LE(
+      (unsigned short*)bsRet.GetBuffer(bsRet.GetLength()),
+      bsRet.GetLength() / sizeof(unsigned short));
+  delete[] pbuff;
+  return wsRet;
+}
+
+void CPDFSDK_Environment::GotoURL(FPDF_DOCUMENT document,
+                                  const CFX_WideStringC& wsURL) {
+  if (!m_pInfo || !m_pInfo->FFI_GotoURL)
+    return;
+
+  CFX_ByteString bsTo = CFX_WideString(wsURL).UTF16LE_Encode();
+  FPDF_WIDESTRING pTo = (FPDF_WIDESTRING)bsTo.GetBuffer(wsURL.GetLength());
+  m_pInfo->FFI_GotoURL(m_pInfo, document, pTo);
+  bsTo.ReleaseBuffer();
+}
+
+void CPDFSDK_Environment::GetPageViewRect(FPDF_PAGE page, FS_RECTF& dstRect) {
+  if (!m_pInfo || !m_pInfo->FFI_GetPageViewRect)
+    return;
+
+  double left;
+  double top;
+  double right;
+  double bottom;
+  m_pInfo->FFI_GetPageViewRect(m_pInfo, page, &left, &top, &right, &bottom);
+
+  dstRect.left = static_cast<float>(left);
+  dstRect.top = static_cast<float>(top < bottom ? bottom : top);
+  dstRect.bottom = static_cast<float>(top < bottom ? top : bottom);
+  dstRect.right = static_cast<float>(right);
+}
+
+FX_BOOL CPDFSDK_Environment::PopupMenu(FPDF_PAGE page,
+                                       FPDF_WIDGET hWidget,
+                                       int menuFlag,
+                                       CFX_PointF pt) {
+  if (!m_pInfo || !m_pInfo->FFI_PopupMenu)
+    return FALSE;
+  return m_pInfo->FFI_PopupMenu(m_pInfo, page, hWidget, menuFlag, pt.x, pt.y);
+}
+
+void CPDFSDK_Environment::Alert(FPDF_WIDESTRING Msg,
+                                FPDF_WIDESTRING Title,
+                                int Type,
+                                int Icon) {
+  if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->app_alert) {
+    m_pInfo->m_pJsPlatform->app_alert(m_pInfo->m_pJsPlatform, Msg, Title, Type,
+                                      Icon);
+  }
+}
+
+void CPDFSDK_Environment::EmailTo(FPDF_FILEHANDLER* fileHandler,
+                                  FPDF_WIDESTRING pTo,
+                                  FPDF_WIDESTRING pSubject,
+                                  FPDF_WIDESTRING pCC,
+                                  FPDF_WIDESTRING pBcc,
+                                  FPDF_WIDESTRING pMsg) {
+  if (m_pInfo && m_pInfo->FFI_EmailTo)
+    m_pInfo->FFI_EmailTo(m_pInfo, fileHandler, pTo, pSubject, pCC, pBcc, pMsg);
+}
+
+void CPDFSDK_Environment::UploadTo(FPDF_FILEHANDLER* fileHandler,
+                                   int fileFlag,
+                                   FPDF_WIDESTRING uploadTo) {
+  if (m_pInfo && m_pInfo->FFI_UploadTo)
+    m_pInfo->FFI_UploadTo(m_pInfo, fileHandler, fileFlag, uploadTo);
+}
+
+FPDF_FILEHANDLER* CPDFSDK_Environment::OpenFile(int fileType,
+                                                FPDF_WIDESTRING wsURL,
+                                                const char* mode) {
+  if (m_pInfo && m_pInfo->FFI_OpenFile)
+    return m_pInfo->FFI_OpenFile(m_pInfo, fileType, wsURL, mode);
+  return nullptr;
+}
+
+IFX_FileRead* CPDFSDK_Environment::DownloadFromURL(const FX_WCHAR* url) {
+  if (!m_pInfo || !m_pInfo->FFI_DownloadFromURL)
+    return nullptr;
+
+  CFX_ByteString bstrURL = CFX_WideString(url).UTF16LE_Encode();
+  FPDF_WIDESTRING wsURL =
+      (FPDF_WIDESTRING)bstrURL.GetBuffer(bstrURL.GetLength());
+
+  FPDF_LPFILEHANDLER fileHandler = m_pInfo->FFI_DownloadFromURL(m_pInfo, wsURL);
+
+  return new CFPDF_FileStream(fileHandler);
+}
+
+CFX_WideString CPDFSDK_Environment::PostRequestURL(
+    const FX_WCHAR* wsURL,
+    const FX_WCHAR* wsData,
+    const FX_WCHAR* wsContentType,
+    const FX_WCHAR* wsEncode,
+    const FX_WCHAR* wsHeader) {
+  if (!m_pInfo || !m_pInfo->FFI_PostRequestURL)
+    return L"";
+
+  CFX_ByteString bsURL = CFX_WideString(wsURL).UTF16LE_Encode();
+  FPDF_WIDESTRING URL = (FPDF_WIDESTRING)bsURL.GetBuffer(bsURL.GetLength());
+
+  CFX_ByteString bsData = CFX_WideString(wsData).UTF16LE_Encode();
+  FPDF_WIDESTRING data = (FPDF_WIDESTRING)bsData.GetBuffer(bsData.GetLength());
+
+  CFX_ByteString bsContentType = CFX_WideString(wsContentType).UTF16LE_Encode();
+  FPDF_WIDESTRING contentType =
+      (FPDF_WIDESTRING)bsContentType.GetBuffer(bsContentType.GetLength());
+
+  CFX_ByteString bsEncode = CFX_WideString(wsEncode).UTF16LE_Encode();
+  FPDF_WIDESTRING encode =
+      (FPDF_WIDESTRING)bsEncode.GetBuffer(bsEncode.GetLength());
+
+  CFX_ByteString bsHeader = CFX_WideString(wsHeader).UTF16LE_Encode();
+  FPDF_WIDESTRING header =
+      (FPDF_WIDESTRING)bsHeader.GetBuffer(bsHeader.GetLength());
+
+  FPDF_BSTR response;
+  FPDF_BStr_Init(&response);
+  m_pInfo->FFI_PostRequestURL(m_pInfo, URL, data, contentType, encode, header,
+                              &response);
+
+  CFX_WideString wsRet = CFX_WideString::FromUTF16LE(
+      (FPDF_WIDESTRING)response.str, response.len / sizeof(FPDF_WIDESTRING));
+  FPDF_BStr_Clear(&response);
+
+  return wsRet;
+}
+
+FPDF_BOOL CPDFSDK_Environment::PutRequestURL(const FX_WCHAR* wsURL,
+                                             const FX_WCHAR* wsData,
+                                             const FX_WCHAR* wsEncode) {
+  if (!m_pInfo || !m_pInfo->FFI_PutRequestURL)
+    return FALSE;
+
+  CFX_ByteString bsURL = CFX_WideString(wsURL).UTF16LE_Encode();
+  FPDF_WIDESTRING URL = (FPDF_WIDESTRING)bsURL.GetBuffer(bsURL.GetLength());
+
+  CFX_ByteString bsData = CFX_WideString(wsData).UTF16LE_Encode();
+  FPDF_WIDESTRING data = (FPDF_WIDESTRING)bsData.GetBuffer(bsData.GetLength());
+
+  CFX_ByteString bsEncode = CFX_WideString(wsEncode).UTF16LE_Encode();
+  FPDF_WIDESTRING encode =
+      (FPDF_WIDESTRING)bsEncode.GetBuffer(bsEncode.GetLength());
+
+  return m_pInfo->FFI_PutRequestURL(m_pInfo, URL, data, encode);
+}
+
+CFX_WideString CPDFSDK_Environment::GetLanguage() {
+  if (!m_pInfo || !m_pInfo->FFI_GetLanguage)
+    return L"";
+
+  int nRequiredLen = m_pInfo->FFI_GetLanguage(m_pInfo, nullptr, 0);
+  if (nRequiredLen <= 0)
+    return L"";
+
+  char* pbuff = new char[nRequiredLen];
+  memset(pbuff, 0, nRequiredLen);
+  int nActualLen = m_pInfo->FFI_GetLanguage(m_pInfo, pbuff, nRequiredLen);
+  if (nActualLen <= 0 || nActualLen > nRequiredLen) {
+    delete[] pbuff;
+    return L"";
+  }
+  CFX_ByteString bsRet = CFX_ByteString(pbuff, nActualLen);
+  CFX_WideString wsRet = CFX_WideString::FromUTF16LE(
+      (FPDF_WIDESTRING)bsRet.GetBuffer(bsRet.GetLength()),
+      bsRet.GetLength() / sizeof(FPDF_WIDESTRING));
+  delete[] pbuff;
+  return wsRet;
+}
+
+void CPDFSDK_Environment::PageEvent(int iPageCount,
+                                    uint32_t dwEventType) const {
+  if (m_pInfo && m_pInfo->FFI_PageEvent)
+    m_pInfo->FFI_PageEvent(m_pInfo, iPageCount, dwEventType);
+}
+#endif  // PDF_ENABLE_XFA
