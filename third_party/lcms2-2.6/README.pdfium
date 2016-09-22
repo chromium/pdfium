@@ -12,4 +12,5 @@ Local Modifications:
 0000-tag-type-confusion.patch: Fix a type confusion.
 0001-from16-to-8-overflow.patch: Prevent a UBSan warning.
 0002-infinite-loop-GrowNamedColorList.patch: Fix infinite loop when calling GrowNamedColorList.
+0003-uninit.patch: Fix use uninitialized value and stack buffer overflow read.
 TODO(ochang): List other patches.
