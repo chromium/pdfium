@@ -38,8 +38,10 @@ class CPDFXFA_Document {
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
-  CPDFSDK_Document* GetSDKDocument(CPDFSDK_Environment* pFormFillEnv);
   int GetDocType() const { return m_iDocType; }
+
+  CPDFSDK_Document* GetSDKDoc() const { return m_pSDKDoc.get(); }
+  void SetSDKDoc(std::unique_ptr<CPDFSDK_Document> pSDKDoc);
 
   void DeletePage(int page_index);
   int GetPageCount() const;
@@ -54,7 +56,6 @@ class CPDFXFA_Document {
  protected:
   friend class CPDFXFA_DocEnvironment;
 
-  CPDFSDK_Document* GetSDKDoc() { return m_pSDKDoc.get(); }
   int GetOriginalPageCount() const { return m_nPageCount; }
   void SetOriginalPageCount(int count) {
     m_nPageCount = count;

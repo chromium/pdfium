@@ -242,14 +242,22 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   if (!pDocument)
     return nullptr;
 
-  CPDFSDK_Environment* pEnv = new CPDFSDK_Environment(pDocument, formInfo);
 #ifdef PDF_ENABLE_XFA
-  pEnv->SetSDKDocument(pDocument->GetSDKDocument(pEnv));
-  CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
-  pApp->AddFormFillEnv(pEnv);
-#else  // PDF_ENABLE_XFA
-  pEnv->SetSDKDocument(new CPDFSDK_Document(pDocument, pEnv));
+  // If the CPDFXFA_Document has a SDKDocument already then we've done this
+  // and can just return the old Env. Otherwise, we'll end up setting a new
+  // SDKDocument into the XFADocument and, that could get weird.
+  if (pDocument->GetSDKDoc())
+    return pDocument->GetSDKDoc()->GetEnv();
+#endif
+
+  CPDFSDK_Environment* pEnv = new CPDFSDK_Environment(pDocument, formInfo);
+
+#ifdef PDF_ENABLE_XFA
+  // Ownership of the SDKDocument is passed to the CPDFXFA_Document.
+  pDocument->SetSDKDoc(WrapUnique(pEnv->GetSDKDocument()));
+  CPDFXFA_App::GetInstance()->AddFormFillEnv(pEnv);
 #endif  // PDF_ENABLE_XFA
+
   return pEnv;
 }
 
@@ -257,16 +265,18 @@ DLLEXPORT void STDCALL
 FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   if (!hHandle)
     return;
+
   CPDFSDK_Environment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
+
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
-  pApp->RemoveFormFillEnv(pEnv);
+  CPDFXFA_App::GetInstance()->RemoveFormFillEnv(pEnv);
 #else   // PDF_ENABLE_XFA
   if (CPDFSDK_Document* pSDKDoc = pEnv->GetSDKDocument()) {
     pEnv->SetSDKDocument(nullptr);
     delete pSDKDoc;
   }
 #endif  // PDF_ENABLE_XFA
+
   delete pEnv;
 }
 

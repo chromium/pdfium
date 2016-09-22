@@ -8,6 +8,7 @@
 
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
+#include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 
@@ -28,9 +29,10 @@ FPDF_WIDESTRING AsFPDFWideString(CFX_ByteString* bsUTF16LE) {
 
 CPDFSDK_Environment::CPDFSDK_Environment(UnderlyingDocumentType* pDoc,
                                          FPDF_FORMFILLINFO* pFFinfo)
-    : m_pInfo(pFFinfo), m_pSDKDoc(nullptr), m_pUnderlyingDoc(pDoc) {
-  m_pSysHandler.reset(new CFX_SystemHandler(this));
-}
+    : m_pInfo(pFFinfo),
+      m_pSDKDoc(new CPDFSDK_Document(pDoc, this)),
+      m_pUnderlyingDoc(pDoc),
+      m_pSysHandler(new CFX_SystemHandler(this)) {}
 
 CPDFSDK_Environment::~CPDFSDK_Environment() {
 #ifdef PDF_ENABLE_XFA

@@ -191,11 +191,8 @@ void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
   m_XFAPageList.SetAt(page->GetPageIndex(), nullptr);
 }
 
-CPDFSDK_Document* CPDFXFA_Document::GetSDKDocument(
-    CPDFSDK_Environment* pFormFillEnv) {
-  if (!m_pSDKDoc && pFormFillEnv)
-    m_pSDKDoc.reset(new CPDFSDK_Document(this, pFormFillEnv));
-  return m_pSDKDoc.get();
+void CPDFXFA_Document::SetSDKDoc(std::unique_ptr<CPDFSDK_Document> pSDKDoc) {
+  m_pSDKDoc.reset(pSDKDoc.release());
 }
 
 void CPDFXFA_Document::ClearChangeMark() {
