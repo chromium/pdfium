@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_
 
+#include <memory>
+
 #include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -30,10 +32,11 @@ class CPDF_Object;
 class CPDF_ColorSpace {
  public:
   static CPDF_ColorSpace* GetStockCS(int Family);
-  static CPDF_ColorSpace* Load(CPDF_Document* pDoc, CPDF_Object* pCSObj);
   static CPDF_ColorSpace* ColorspaceFromName(const CFX_ByteString& name);
+  static std::unique_ptr<CPDF_ColorSpace> Load(CPDF_Document* pDoc,
+                                               CPDF_Object* pCSObj);
 
-  void ReleaseCS();
+  void Release();
 
   int GetBufSize() const;
   FX_FLOAT* CreateBuf();
@@ -103,5 +106,19 @@ class CPDF_ColorSpace {
 };
 
 using CPDF_CountedColorSpace = CFX_WeakPtr<CPDF_ColorSpace>::Handle;
+
+namespace std {
+
+// Make std::unique_ptr<CPDF_ColorSpace> call Release() rather than
+// simply deleting the object.
+template <>
+struct default_delete<CPDF_ColorSpace> {
+  void operator()(CPDF_ColorSpace* pColorSpace) const {
+    if (pColorSpace)
+      pColorSpace->Release();
+  }
+};
+
+}  // namespace std
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_

@@ -221,7 +221,7 @@ class CPDF_SeparationCS : public CPDF_ColorSpace {
                  FX_FLOAT& B) const override;
   void EnableStdConversion(FX_BOOL bEnabled) override;
 
-  CPDF_ColorSpace* m_pAltCS;
+  std::unique_ptr<CPDF_ColorSpace> m_pAltCS;
   std::unique_ptr<CPDF_Function> m_pFunc;
   enum { None, All, Colorant } m_Type;
 };
@@ -243,7 +243,7 @@ class CPDF_DeviceNCS : public CPDF_ColorSpace {
                  FX_FLOAT& B) const override;
   void EnableStdConversion(FX_BOOL bEnabled) override;
 
-  CPDF_ColorSpace* m_pAltCS;
+  std::unique_ptr<CPDF_ColorSpace> m_pAltCS;
   std::unique_ptr<CPDF_Function> m_pFunc;
 };
 
@@ -313,18 +313,14 @@ void XYZ_to_sRGB_WhitePoint(FX_FLOAT X,
 
 CPDF_ColorSpace* CPDF_ColorSpace::ColorspaceFromName(
     const CFX_ByteString& name) {
-  if (name == "DeviceRGB" || name == "RGB") {
+  if (name == "DeviceRGB" || name == "RGB")
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
-  }
-  if (name == "DeviceGray" || name == "G") {
+  if (name == "DeviceGray" || name == "G")
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
-  }
-  if (name == "DeviceCMYK" || name == "CMYK") {
+  if (name == "DeviceCMYK" || name == "CMYK")
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-  }
-  if (name == "Pattern") {
+  if (name == "Pattern")
     return CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN);
-  }
   return nullptr;
 }
 
@@ -332,81 +328,77 @@ CPDF_ColorSpace* CPDF_ColorSpace::GetStockCS(int family) {
   return CPDF_ModuleMgr::Get()->GetPageModule()->GetStockCS(family);
 }
 
-CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
+std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(CPDF_Document* pDoc,
+                                                       CPDF_Object* pObj) {
   if (!pObj)
-    return nullptr;
-  if (pObj->IsName())
-    return ColorspaceFromName(pObj->GetString());
+    return std::unique_ptr<CPDF_ColorSpace>();
 
+  if (pObj->IsName()) {
+    return std::unique_ptr<CPDF_ColorSpace>(
+        ColorspaceFromName(pObj->GetString()));
+  }
   if (CPDF_Stream* pStream = pObj->AsStream()) {
     CPDF_Dictionary* pDict = pStream->GetDict();
     if (!pDict)
-      return nullptr;
+      return std::unique_ptr<CPDF_ColorSpace>();
 
     for (const auto& it : *pDict) {
-      CPDF_ColorSpace* pRet = nullptr;
+      std::unique_ptr<CPDF_ColorSpace> pRet;
       CPDF_Object* pValue = it.second;
       if (ToName(pValue))
-        pRet = ColorspaceFromName(pValue->GetString());
+        pRet.reset(ColorspaceFromName(pValue->GetString()));
       if (pRet)
         return pRet;
     }
-    return nullptr;
+    return std::unique_ptr<CPDF_ColorSpace>();
   }
 
   CPDF_Array* pArray = pObj->AsArray();
   if (!pArray || pArray->IsEmpty())
-    return nullptr;
+    return std::unique_ptr<CPDF_ColorSpace>();
 
   CPDF_Object* pFamilyObj = pArray->GetDirectObjectAt(0);
   if (!pFamilyObj)
-    return nullptr;
+    return std::unique_ptr<CPDF_ColorSpace>();
 
   CFX_ByteString familyname = pFamilyObj->GetString();
   if (pArray->GetCount() == 1)
-    return ColorspaceFromName(familyname);
+    return std::unique_ptr<CPDF_ColorSpace>(ColorspaceFromName(familyname));
 
-  CPDF_ColorSpace* pCS = nullptr;
+  std::unique_ptr<CPDF_ColorSpace> pCS;
   uint32_t id = familyname.GetID();
   if (id == FXBSTR_ID('C', 'a', 'l', 'G')) {
-    pCS = new CPDF_CalGray(pDoc);
+    pCS.reset(new CPDF_CalGray(pDoc));
   } else if (id == FXBSTR_ID('C', 'a', 'l', 'R')) {
-    pCS = new CPDF_CalRGB(pDoc);
+    pCS.reset(new CPDF_CalRGB(pDoc));
   } else if (id == FXBSTR_ID('L', 'a', 'b', 0)) {
-    pCS = new CPDF_LabCS(pDoc);
+    pCS.reset(new CPDF_LabCS(pDoc));
   } else if (id == FXBSTR_ID('I', 'C', 'C', 'B')) {
-    pCS = new CPDF_ICCBasedCS(pDoc);
+    pCS.reset(new CPDF_ICCBasedCS(pDoc));
   } else if (id == FXBSTR_ID('I', 'n', 'd', 'e') ||
              id == FXBSTR_ID('I', 0, 0, 0)) {
-    pCS = new CPDF_IndexedCS(pDoc);
+    pCS.reset(new CPDF_IndexedCS(pDoc));
   } else if (id == FXBSTR_ID('S', 'e', 'p', 'a')) {
-    pCS = new CPDF_SeparationCS(pDoc);
+    pCS.reset(new CPDF_SeparationCS(pDoc));
   } else if (id == FXBSTR_ID('D', 'e', 'v', 'i')) {
-    pCS = new CPDF_DeviceNCS(pDoc);
+    pCS.reset(new CPDF_DeviceNCS(pDoc));
   } else if (id == FXBSTR_ID('P', 'a', 't', 't')) {
-    pCS = new CPDF_PatternCS(pDoc);
+    pCS.reset(new CPDF_PatternCS(pDoc));
   } else {
-    return nullptr;
+    return std::unique_ptr<CPDF_ColorSpace>();
   }
   pCS->m_pArray = pArray;
-  if (!pCS->v_Load(pDoc, pArray)) {
-    pCS->ReleaseCS();
-    return nullptr;
-  }
+  if (!pCS->v_Load(pDoc, pArray))
+    return std::unique_ptr<CPDF_ColorSpace>();
+
   return pCS;
 }
 
-void CPDF_ColorSpace::ReleaseCS() {
-  if (this == GetStockCS(PDFCS_DEVICERGB)) {
-    return;
-  }
-  if (this == GetStockCS(PDFCS_DEVICEGRAY)) {
-    return;
-  }
-  if (this == GetStockCS(PDFCS_DEVICECMYK)) {
-    return;
-  }
-  if (this == GetStockCS(PDFCS_PATTERN)) {
+void CPDF_ColorSpace::Release() {
+  if (this == GetStockCS(PDFCS_DEVICERGB) ||
+      this == GetStockCS(PDFCS_DEVICEGRAY) ||
+      this == GetStockCS(PDFCS_DEVICECMYK) ||
+      this == GetStockCS(PDFCS_PATTERN)) {
     return;
   }
   delete this;
@@ -832,7 +824,7 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
   FX_Free(m_pCache);
   FX_Free(m_pRanges);
   if (m_pAlterCS && m_bOwn)
-    m_pAlterCS->ReleaseCS();
+    m_pAlterCS->Release();
   if (m_pProfile && m_pDocument)
     m_pDocument->GetPageData()->ReleaseIccProfile(m_pProfile);
 }
@@ -854,15 +846,15 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
     CPDF_Object* pAlterCSObj =
         pDict ? pDict->GetDirectObjectFor("Alternate") : nullptr;
     if (pAlterCSObj) {
-      CPDF_ColorSpace* pAlterCS = CPDF_ColorSpace::Load(pDoc, pAlterCSObj);
+      std::unique_ptr<CPDF_ColorSpace> pAlterCS =
+          CPDF_ColorSpace::Load(pDoc, pAlterCSObj);
       if (pAlterCS) {
         if (m_nComponents == 0) {                 // NO valid ICC profile
           if (pAlterCS->CountComponents() > 0) {  // Use Alternative colorspace
             m_nComponents = pAlterCS->CountComponents();
-            m_pAlterCS = pAlterCS;
+            m_pAlterCS = pAlterCS.release();
             m_bOwn = TRUE;
           } else {  // No valid alternative colorspace
-            pAlterCS->ReleaseCS();
             int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
             if (nDictComponents != 1 && nDictComponents != 3 &&
                 nDictComponents != 4) {
@@ -870,12 +862,9 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
             }
             m_nComponents = nDictComponents;
           }
-
         } else {  // Using sRGB
-          if (pAlterCS->CountComponents() != m_nComponents) {
-            pAlterCS->ReleaseCS();
-          } else {
-            m_pAlterCS = pAlterCS;
+          if (pAlterCS->CountComponents() == m_nComponents) {
+            m_pAlterCS = pAlterCS.release();
             m_bOwn = TRUE;
           }
         }
@@ -1155,12 +1144,9 @@ CPDF_ColorSpace* CPDF_PatternCS::GetBaseCS() const {
 }
 
 CPDF_SeparationCS::CPDF_SeparationCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_SEPARATION, 1), m_pAltCS(nullptr) {}
+    : CPDF_ColorSpace(pDoc, PDFCS_SEPARATION, 1) {}
 
-CPDF_SeparationCS::~CPDF_SeparationCS() {
-  if (m_pAltCS)
-    m_pAltCS->ReleaseCS();
-}
+CPDF_SeparationCS::~CPDF_SeparationCS() {}
 
 void CPDF_SeparationCS::GetDefaultValue(int iComponent,
                                         FX_FLOAT& value,
@@ -1236,12 +1222,9 @@ void CPDF_SeparationCS::EnableStdConversion(FX_BOOL bEnabled) {
 }
 
 CPDF_DeviceNCS::CPDF_DeviceNCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_DEVICEN, 0), m_pAltCS(nullptr) {}
+    : CPDF_ColorSpace(pDoc, PDFCS_DEVICEN, 0) {}
 
-CPDF_DeviceNCS::~CPDF_DeviceNCS() {
-  if (m_pAltCS)
-    m_pAltCS->ReleaseCS();
-}
+CPDF_DeviceNCS::~CPDF_DeviceNCS() {}
 
 void CPDF_DeviceNCS::GetDefaultValue(int iComponent,
                                      FX_FLOAT& value,

@@ -76,7 +76,7 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
       continue;
 
     if (bForceRelease || csData->use_count() < 2) {
-      csData->get()->ReleaseCS();
+      csData->get()->Release();
       csData->reset(nullptr);
     }
   }
@@ -294,15 +294,16 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceImpl(
     }
   }
 
-  CPDF_ColorSpace* pCS = CPDF_ColorSpace::Load(m_pPDFDoc, pArray);
+  std::unique_ptr<CPDF_ColorSpace> pCS =
+      CPDF_ColorSpace::Load(m_pPDFDoc, pArray);
   if (!pCS)
     return nullptr;
 
   if (!csData) {
-    csData = new CPDF_CountedColorSpace(pCS);
+    csData = new CPDF_CountedColorSpace(pCS.release());
     m_ColorSpaceMap[pCSObj] = csData;
   } else {
-    csData->reset(pCS);
+    csData->reset(pCS.release());
   }
   return csData->AddRef();
 }
@@ -335,7 +336,7 @@ void CPDF_DocPageData::ReleaseColorSpace(const CPDF_Object* pColorSpace) {
     return;
 
   // We have item only in m_ColorSpaceMap cache. Clean it.
-  pCountedColorSpace->get()->ReleaseCS();
+  pCountedColorSpace->get()->Release();
   pCountedColorSpace->reset(nullptr);
 }
 
