@@ -145,14 +145,14 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict,
   if (findOnly)
     return nullptr;
 
-  CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pFontDict);
+  std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc, pFontDict);
   if (!pFont)
     return nullptr;
 
   if (pFontData) {
-    pFontData->reset(pFont);
+    pFontData->reset(pFont.release());
   } else {
-    pFontData = new CPDF_CountedFont(pFont);
+    pFontData = new CPDF_CountedFont(pFont.release());
     m_FontMap[pFontDict] = pFontData;
   }
   return pFontData->AddRef();
@@ -192,11 +192,11 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
     pDict->SetFor("Encoding", pEncoding->Realize());
   }
   m_pPDFDoc->AddIndirectObject(pDict);
-  CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pDict);
-  if (!pFont) {
+  std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc, pDict);
+  if (!pFont)
     return nullptr;
-  }
-  CPDF_CountedFont* fontData = new CPDF_CountedFont(pFont);
+
+  CPDF_CountedFont* fontData = new CPDF_CountedFont(pFont.release());
   m_FontMap[pDict] = fontData;
   return fontData->AddRef();
 }

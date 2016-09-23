@@ -46,8 +46,8 @@ class CFX_StockFontArray {
   CFX_StockFontArray();
   ~CFX_StockFontArray();
 
-  // Takes ownership of |pFont|.
-  void SetFont(uint32_t index, CPDF_Font* pFont);
+  // Takes ownership of |pFont|, returns unowned pointer to it.
+  CPDF_Font* SetFont(uint32_t index, std::unique_ptr<CPDF_Font> pFont);
   CPDF_Font* GetFont(uint32_t index) const;
 
  private:
@@ -62,8 +62,10 @@ class CPDF_FontGlobals {
   void Clear(CPDF_Document* pDoc);
   CPDF_Font* Find(CPDF_Document* pDoc, uint32_t index);
 
-  // Takes ownership of |pFont|.
-  void Set(CPDF_Document* key, uint32_t index, CPDF_Font* pFont);
+  // Takes ownership of |pFont|, returns unowned pointer to it.
+  CPDF_Font* Set(CPDF_Document* key,
+                 uint32_t index,
+                 std::unique_ptr<CPDF_Font> pFont);
 
   CPDF_CMapManager m_CMapManager;
   struct {

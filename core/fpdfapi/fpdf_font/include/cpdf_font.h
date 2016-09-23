@@ -38,8 +38,8 @@ class CPDF_ToUnicodeMap;
 
 class CPDF_Font {
  public:
-  static CPDF_Font* CreateFontF(CPDF_Document* pDoc,
-                                CPDF_Dictionary* pFontDict);
+  static std::unique_ptr<CPDF_Font> Create(CPDF_Document* pDoc,
+                                           CPDF_Dictionary* pFontDict);
   static CPDF_Font* GetStockFont(CPDF_Document* pDoc,
                                  const CFX_ByteStringC& fontname);
   static const uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);

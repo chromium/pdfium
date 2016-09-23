@@ -299,27 +299,25 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
                                    const CFX_ByteStringC& name) {
   CFX_ByteString fontname(name);
   int font_id = PDF_GetStandardFontName(&fontname);
-  if (font_id < 0) {
+  if (font_id < 0)
     return nullptr;
-  }
+
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
   CPDF_Font* pFont = pFontGlobals->Find(pDoc, font_id);
-  if (pFont) {
+  if (pFont)
     return pFont;
-  }
+
   CPDF_Dictionary* pDict = new CPDF_Dictionary;
   pDict->SetNameFor("Type", "Font");
   pDict->SetNameFor("Subtype", "Type1");
   pDict->SetNameFor("BaseFont", fontname);
   pDict->SetNameFor("Encoding", "WinAnsiEncoding");
-  pFont = CPDF_Font::CreateFontF(nullptr, pDict);
-  pFontGlobals->Set(pDoc, font_id, pFont);
-  return pFont;
+  return pFontGlobals->Set(pDoc, font_id, CPDF_Font::Create(nullptr, pDict));
 }
 
-CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc,
-                                  CPDF_Dictionary* pFontDict) {
+std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
+                                             CPDF_Dictionary* pFontDict) {
   CFX_ByteString type = pFontDict->GetStringFor("Subtype");
   std::unique_ptr<CPDF_Font> pFont;
   if (type == "TrueType") {
@@ -344,7 +342,7 @@ CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc,
   pFont->m_pFontDict = pFontDict;
   pFont->m_pDocument = pDoc;
   pFont->m_BaseFont = pFontDict->GetStringFor("BaseFont");
-  return pFont->Load() ? pFont.release() : nullptr;
+  return pFont->Load() ? std::move(pFont) : std::unique_ptr<CPDF_Font>();
 }
 
 uint32_t CPDF_Font::GetNextChar(const FX_CHAR* pString,

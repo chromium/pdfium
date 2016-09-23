@@ -60,10 +60,12 @@ CPDF_Font* CFX_StockFontArray::GetFont(uint32_t index) const {
   return m_StockFonts[index].get();
 }
 
-void CFX_StockFontArray::SetFont(uint32_t index, CPDF_Font* font) {
-  if (index >= FX_ArraySize(m_StockFonts))
-    return;
-  m_StockFonts[index].reset(font);
+CPDF_Font* CFX_StockFontArray::SetFont(uint32_t index,
+                                       std::unique_ptr<CPDF_Font> pFont) {
+  CPDF_Font* result = pFont.get();
+  if (index < FX_ArraySize(m_StockFonts))
+    m_StockFonts[index] = std::move(pFont);
+  return result;
 }
 
 CPDF_FontGlobals::CPDF_FontGlobals() {
@@ -80,12 +82,12 @@ CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc, uint32_t index) {
   return it->second ? it->second->GetFont(index) : nullptr;
 }
 
-void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
-                           uint32_t index,
-                           CPDF_Font* pFont) {
+CPDF_Font* CPDF_FontGlobals::Set(CPDF_Document* pDoc,
+                                 uint32_t index,
+                                 std::unique_ptr<CPDF_Font> pFont) {
   if (!pdfium::ContainsKey(m_StockMap, pDoc))
     m_StockMap[pDoc].reset(new CFX_StockFontArray);
-  m_StockMap[pDoc]->SetFont(index, pFont);
+  return m_StockMap[pDoc]->SetFont(index, std::move(pFont));
 }
 
 void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {
