@@ -103,7 +103,7 @@ class CFX_Font {
                  int weight,
                  int italic_angle,
                  int CharsetCP,
-                 FX_BOOL bVertical = FALSE);
+                 bool bVertical);
 
   FX_BOOL LoadEmbedded(const uint8_t* data, uint32_t size);
   FXFT_Face GetFace() const { return m_Face; }
@@ -140,11 +140,11 @@ class CFX_Font {
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
-  FX_BOOL IsVertical() const { return m_bVertical; }
+  bool IsVertical() const { return m_bVertical; }
   CFX_ByteString GetPsName() const;
   CFX_ByteString GetFamilyName() const;
   CFX_ByteString GetFaceName() const;
-  FX_BOOL IsTTFont() const;
+  bool IsTTFont() const;
   FX_BOOL GetBBox(FX_RECT& bbox);
   int GetHeight() const;
   int GetULPos() const;
@@ -198,8 +198,8 @@ class CFX_Font {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   void* m_pPlatformFont;
 #endif
-  FX_BOOL m_bEmbedded;
-  FX_BOOL m_bVertical;
+  bool m_bEmbedded;
+  bool m_bVertical;
 };
 
 class CFX_FontFaceInfo {

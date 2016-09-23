@@ -117,7 +117,7 @@ CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(
     return nullptr;
 
   std::unique_ptr<CFX_Font> pFXFont(new CFX_Font);
-  pFXFont->LoadSubst(sFontFaceName, TRUE, 0, 0, 0, CharSet2CP(nCharset), FALSE);
+  pFXFont->LoadSubst(sFontFaceName, TRUE, 0, 0, 0, CharSet2CP(nCharset), false);
   return pDoc->AddFont(pFXFont.get(), nCharset, FALSE);
 }
 

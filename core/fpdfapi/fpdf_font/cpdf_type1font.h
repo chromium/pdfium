@@ -24,7 +24,7 @@ class CPDF_Type1Font : public CPDF_SimpleFont {
 
  protected:
   // CPDF_Font:
-  FX_BOOL Load() override;
+  bool Load() override;
 
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;

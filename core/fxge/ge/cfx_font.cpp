@@ -233,8 +233,8 @@ CFX_Font::CFX_Font()
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
       m_pPlatformFont(nullptr),
 #endif
-      m_bEmbedded(FALSE),
-      m_bVertical(FALSE) {
+      m_bEmbedded(false),
+      m_bVertical(false) {
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -316,8 +316,8 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                          int weight,
                          int italic_angle,
                          int CharsetCP,
-                         FX_BOOL bVertical) {
-  m_bEmbedded = FALSE;
+                         bool bVertical) {
+  m_bEmbedded = false;
   m_bVertical = bVertical;
   m_pSubstFont.reset(new CFX_SubstFont);
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
@@ -371,14 +371,14 @@ FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, uint32_t size) {
   m_pFontDataAllocation.swap(temp);
   m_Face = FT_LoadFont(m_pFontDataAllocation.data(), size);
   m_pFontData = m_pFontDataAllocation.data();
-  m_bEmbedded = TRUE;
+  m_bEmbedded = true;
   m_dwSize = size;
   return !!m_Face;
 }
 
-FX_BOOL CFX_Font::IsTTFont() const {
+bool CFX_Font::IsTTFont() const {
   if (!m_Face)
-    return FALSE;
+    return false;
   return FXFT_Is_Face_TT_OT(m_Face) == FXFT_FACE_FLAG_SFNT;
 }
 

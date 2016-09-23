@@ -196,7 +196,7 @@ FX_BOOL CFGAS_GEFont::LoadFontInternal(const FX_WCHAR* pszFontFamily,
   } else if (dwFlags & FXFONT_ITALIC) {
     csFontFamily += ",Italic";
   }
-  m_pFont->LoadSubst(csFontFamily, TRUE, dwFlags, iWeight, 0, wCodePage);
+  m_pFont->LoadSubst(csFontFamily, TRUE, dwFlags, iWeight, 0, wCodePage, false);
   if (!m_pFont->GetFace())
     return false;
   return InitFont();

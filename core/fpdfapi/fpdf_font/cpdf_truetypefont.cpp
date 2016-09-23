@@ -30,7 +30,7 @@ CPDF_TrueTypeFont* CPDF_TrueTypeFont::AsTrueTypeFont() {
   return this;
 }
 
-FX_BOOL CPDF_TrueTypeFont::Load() {
+bool CPDF_TrueTypeFont::Load() {
   return LoadCommon();
 }
 

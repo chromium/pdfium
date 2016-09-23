@@ -227,7 +227,7 @@ uint16_t CPDF_CIDFont::CIDFromCharCode(uint32_t charcode) const {
                  : static_cast<uint16_t>(charcode);
 }
 
-FX_BOOL CPDF_CIDFont::IsVertWriting() const {
+bool CPDF_CIDFont::IsVertWriting() const {
   return m_pCMap && m_pCMap->IsVertWriting();
 }
 
@@ -318,19 +318,19 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
   return 0;
 }
 
-FX_BOOL CPDF_CIDFont::Load() {
+bool CPDF_CIDFont::Load() {
   if (m_pFontDict->GetStringFor("Subtype") == "TrueType") {
     LoadGB2312();
-    return TRUE;
+    return true;
   }
 
   CPDF_Array* pFonts = m_pFontDict->GetArrayFor("DescendantFonts");
   if (!pFonts || pFonts->GetCount() != 1)
-    return FALSE;
+    return false;
 
   CPDF_Dictionary* pCIDFontDict = pFonts->GetDictAt(0);
   if (!pCIDFontDict)
-    return FALSE;
+    return false;
 
   m_BaseFont = pCIDFontDict->GetStringFor("BaseFont");
   if ((m_BaseFont.Compare("CourierStd") == 0 ||
@@ -346,7 +346,7 @@ FX_BOOL CPDF_CIDFont::Load() {
 
   CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding)
-    return FALSE;
+    return false;
 
   CFX_ByteString subtype = pCIDFontDict->GetStringFor("Subtype");
   m_bType1 = (subtype == "CIDFontType0");
@@ -357,7 +357,7 @@ FX_BOOL CPDF_CIDFont::Load() {
     bool bPromptCJK = m_pFontFile && m_bType1;
     m_pCMap = manager.GetPredefinedCMap(cmap, bPromptCJK);
     if (!m_pCMap)
-      return FALSE;
+      return false;
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
     m_pCMap = new CPDF_CMap;
     m_pAllocatedCMap.reset(m_pCMap);
@@ -365,7 +365,7 @@ FX_BOOL CPDF_CIDFont::Load() {
     acc.LoadAllData(pStream, FALSE);
     m_pCMap->LoadEmbedded(acc.GetData(), acc.GetSize());
   } else {
-    return FALSE;
+    return false;
   }
 
   m_Charset = m_pCMap->m_Charset;
@@ -425,7 +425,7 @@ FX_BOOL CPDF_CIDFont::Load() {
       m_DefaultW1 = -1000;
     }
   }
-  return TRUE;
+  return true;
 }
 
 FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode, int level) {
@@ -755,9 +755,9 @@ int CPDF_CIDFont::AppendChar(FX_CHAR* str, uint32_t charcode) const {
   return m_pCMap->AppendChar(str, charcode);
 }
 
-FX_BOOL CPDF_CIDFont::IsUnicodeCompatible() const {
+bool CPDF_CIDFont::IsUnicodeCompatible() const {
   if (m_pCID2UnicodeMap && m_pCID2UnicodeMap->IsLoaded() && m_pCMap->IsLoaded())
-    return TRUE;
+    return true;
   return m_pCMap->m_Coding != CIDCODING_UNKNOWN;
 }
 

@@ -37,7 +37,7 @@ CPDF_Type3Font* CPDF_Type3Font::AsType3Font() {
   return this;
 }
 
-FX_BOOL CPDF_Type3Font::Load() {
+bool CPDF_Type3Font::Load() {
   m_pFontResources = m_pFontDict->GetDictFor("Resources");
   CPDF_Array* pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
   FX_FLOAT xscale = 1.0f, yscale = 1.0f;
@@ -69,7 +69,7 @@ FX_BOOL CPDF_Type3Font::Load() {
   m_pCharProcs = m_pFontDict->GetDictFor("CharProcs");
   CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (pEncoding) {
-    LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, FALSE, FALSE);
+    LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, false, false);
     if (!m_CharNames.empty()) {
       for (int i = 0; i < 256; i++) {
         m_Encoding.m_Unicodes[i] =
@@ -80,7 +80,7 @@ FX_BOOL CPDF_Type3Font::Load() {
       }
     }
   }
-  return TRUE;
+  return true;
 }
 
 void CPDF_Type3Font::CheckType3FontMetrics() {

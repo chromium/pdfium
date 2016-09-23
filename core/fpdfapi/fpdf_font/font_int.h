@@ -141,7 +141,7 @@ class CPDF_CMap {
   FX_BOOL LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
 
   FX_BOOL IsLoaded() const;
-  FX_BOOL IsVertWriting() const;
+  bool IsVertWriting() const;
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   int GetCharSize(uint32_t charcode) const;
   uint32_t GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const;
@@ -153,7 +153,7 @@ class CPDF_CMap {
   friend class CPDF_CIDFont;
 
   CFX_ByteString m_PredefinedCMap;
-  FX_BOOL m_bVertical;
+  bool m_bVertical;
   CIDSet m_Charset;
   int m_Coding;
   CodingScheme m_CodingScheme;

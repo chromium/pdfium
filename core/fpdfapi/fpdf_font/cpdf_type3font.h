@@ -42,7 +42,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
 
  private:
   // CPDF_Font:
-  FX_BOOL Load() override;
+  bool Load() override;
 
   // CPDF_SimpleFont:
   void LoadGlyphMap() override {}

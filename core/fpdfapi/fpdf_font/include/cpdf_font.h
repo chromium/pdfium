@@ -59,8 +59,8 @@ class CPDF_Font {
   virtual const CPDF_CIDFont* AsCIDFont() const;
   virtual CPDF_CIDFont* AsCIDFont();
 
-  virtual FX_BOOL IsVertWriting() const;
-  virtual FX_BOOL IsUnicodeCompatible() const;
+  virtual bool IsVertWriting() const;
+  virtual bool IsUnicodeCompatible() const;
   virtual uint32_t GetNextChar(const FX_CHAR* pString,
                                int nStrLen,
                                int& offset) const;
@@ -75,10 +75,10 @@ class CPDF_Font {
   const CFX_ByteString& GetBaseFont() const { return m_BaseFont; }
   CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
   uint32_t GetFlags() const { return m_Flags; }
-  FX_BOOL IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
+  bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   CPDF_StreamAcc* GetFontFile() const { return m_pFontFile; }
   CPDF_Dictionary* GetFontDict() const { return m_pFontDict; }
-  FX_BOOL IsStandardFont() const;
+  bool IsStandardFont() const;
   FXFT_Face GetFace() const { return m_Font.GetFace(); }
   void AppendChar(CFX_ByteString& str, uint32_t charcode) const;
 
@@ -101,15 +101,14 @@ class CPDF_Font {
  protected:
   CPDF_Font();
 
-  virtual FX_BOOL Load() = 0;
+  virtual bool Load() = 0;
 
-  FX_BOOL Initialize();
   void LoadUnicodeMap() const;  // logically const only.
   void LoadPDFEncoding(CPDF_Object* pEncoding,
                        int& iBaseEncoding,
                        std::vector<CFX_ByteString>* pCharNames,
-                       FX_BOOL bEmbedded,
-                       FX_BOOL bTrueType);
+                       bool bEmbedded,
+                       bool bTrueType);
   void LoadFontDescriptor(CPDF_Dictionary* pDict);
   void CheckFontMetrics();
 
@@ -121,7 +120,7 @@ class CPDF_Font {
   CPDF_StreamAcc* m_pFontFile;
   CPDF_Dictionary* m_pFontDict;
   mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
-  mutable FX_BOOL m_bToUnicodeLoaded;
+  mutable bool m_bToUnicodeLoaded;
   int m_Flags;
   FX_RECT m_FontBBox;
   int m_StemV;

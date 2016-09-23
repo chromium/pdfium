@@ -50,7 +50,7 @@ void GetPredefinedEncoding(const CFX_ByteString& value, int* basemap) {
 CPDF_Font::CPDF_Font()
     : m_pFontFile(nullptr),
       m_pFontDict(nullptr),
-      m_bToUnicodeLoaded(FALSE),
+      m_bToUnicodeLoaded(false),
       m_Flags(0),
       m_StemV(0),
       m_Ascent(0),
@@ -112,8 +112,8 @@ CPDF_CIDFont* CPDF_Font::AsCIDFont() {
   return nullptr;
 }
 
-FX_BOOL CPDF_Font::IsUnicodeCompatible() const {
-  return FALSE;
+bool CPDF_Font::IsUnicodeCompatible() const {
+  return false;
 }
 
 int CPDF_Font::CountChar(const FX_CHAR* pString, int size) const {
@@ -128,7 +128,7 @@ int CPDF_Font::GlyphFromCharCodeExt(uint32_t charcode) {
   return GlyphFromCharCode(charcode, nullptr);
 }
 
-FX_BOOL CPDF_Font::IsVertWriting() const {
+bool CPDF_Font::IsVertWriting() const {
   const CPDF_CIDFont* pCIDFont = AsCIDFont();
   return pCIDFont ? pCIDFont->IsVertWriting() : m_Font.IsVertical();
 }
@@ -276,7 +276,7 @@ void CPDF_Font::CheckFontMetrics() {
 }
 
 void CPDF_Font::LoadUnicodeMap() const {
-  m_bToUnicodeLoaded = TRUE;
+  m_bToUnicodeLoaded = true;
   CPDF_Stream* pStream = m_pFontDict->GetStreamFor("ToUnicode");
   if (!pStream) {
     return;
@@ -358,8 +358,8 @@ uint32_t CPDF_Font::GetNextChar(const FX_CHAR* pString,
 void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
                                 int& iBaseEncoding,
                                 std::vector<CFX_ByteString>* pCharNames,
-                                FX_BOOL bEmbedded,
-                                FX_BOOL bTrueType) {
+                                bool bEmbedded,
+                                bool bTrueType) {
   if (!pEncoding) {
     if (m_BaseFont == "Symbol") {
       iBaseEncoding = bTrueType ? PDFFONT_ENCODING_MS_SYMBOL
@@ -424,14 +424,14 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
   }
 }
 
-FX_BOOL CPDF_Font::IsStandardFont() const {
+bool CPDF_Font::IsStandardFont() const {
   if (!IsType1Font())
-    return FALSE;
+    return false;
   if (m_pFontFile)
-    return FALSE;
+    return false;
   if (AsType1Font()->GetBase14Font() < 0)
-    return FALSE;
-  return TRUE;
+    return false;
+  return true;
 }
 
 const FX_CHAR* CPDF_Font::GetAdobeCharName(

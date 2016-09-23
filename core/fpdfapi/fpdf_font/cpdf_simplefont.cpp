@@ -101,7 +101,7 @@ FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode, int level) {
   return m_CharBBox[charcode];
 }
 
-FX_BOOL CPDF_SimpleFont::LoadCommon() {
+bool CPDF_SimpleFont::LoadCommon() {
   CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc) {
     LoadFontDescriptor(pFontDesc);
@@ -142,7 +142,7 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
   LoadGlyphMap();
   m_CharNames.clear();
   if (!m_Font.GetFace())
-    return TRUE;
+    return true;
 
   if (m_Flags & PDFFONT_ALLCAP) {
     unsigned char kLowercases[][2] = {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}};
@@ -162,7 +162,7 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
     }
   }
   CheckFontMetrics();
-  return TRUE;
+  return true;
 }
 
 void CPDF_SimpleFont::LoadSubstFont() {
@@ -188,11 +188,11 @@ void CPDF_SimpleFont::LoadSubstFont() {
   else
     safeStemV = safeStemV * 4 + 140;
   m_Font.LoadSubst(m_BaseFont, IsTrueTypeFont(), m_Flags,
-                   safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle,
-                   0);
+                   safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle, 0,
+                   false);
 }
 
-FX_BOOL CPDF_SimpleFont::IsUnicodeCompatible() const {
+bool CPDF_SimpleFont::IsUnicodeCompatible() const {
   return m_BaseEncoding != PDFFONT_ENCODING_BUILTIN &&
          m_BaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
          m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS;

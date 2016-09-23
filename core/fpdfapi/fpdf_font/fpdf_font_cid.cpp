@@ -405,7 +405,7 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
   } else if (m_Status == 5) {
     m_Status = 0;
   } else if (m_Status == 6) {
-    m_pCMap->m_bVertical = CMap_GetCode(word);
+    m_pCMap->m_bVertical = CMap_GetCode(word) != 0;
     m_Status = 0;
   } else if (m_Status == 7) {
     if (word == "endcodespacerange") {
@@ -499,7 +499,7 @@ CPDF_CMap::CPDF_CMap() {
   m_Charset = CIDSET_UNKNOWN;
   m_Coding = CIDCODING_UNKNOWN;
   m_CodingScheme = TwoBytes;
-  m_bVertical = 0;
+  m_bVertical = false;
   m_bLoaded = FALSE;
   m_pMapping = nullptr;
   m_pLeadingBytes = nullptr;
@@ -517,7 +517,7 @@ FX_BOOL CPDF_CMap::IsLoaded() const {
   return m_bLoaded;
 }
 
-FX_BOOL CPDF_CMap::IsVertWriting() const {
+bool CPDF_CMap::IsVertWriting() const {
   return m_bVertical;
 }
 

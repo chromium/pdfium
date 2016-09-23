@@ -77,7 +77,7 @@ CPDF_Type1Font* CPDF_Type1Font::AsType1Font() {
   return this;
 }
 
-FX_BOOL CPDF_Type1Font::Load() {
+bool CPDF_Type1Font::Load() {
   m_Base14Font = PDF_GetStandardFontName(&m_BaseFont);
   if (m_Base14Font >= 0) {
     CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
