@@ -1112,7 +1112,10 @@ void *Type_Curve_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cm
                NewGamma = cmsBuildTabulatedToneCurve16(self ->ContextID, Count, NULL);
                if (!NewGamma) return NULL;
 
-               if (!_cmsReadUInt16Array(io, Count, NewGamma -> Table16)) return NULL;
+               if (!_cmsReadUInt16Array(io, Count, NewGamma -> Table16)) {
+                 cmsFreeToneCurve(NewGamma);
+                 return NULL;
+               }
 
                *nItems = 1;
                return NewGamma;
@@ -2350,7 +2353,10 @@ cmsStage* ReadCLUT(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsUI
 
         for (i=0; i < Data ->nEntries; i++) {
 
-            if (io ->Read(io, &v, sizeof(cmsUInt8Number), 1) != 1) return NULL;
+            if (io ->Read(io, &v, sizeof(cmsUInt8Number), 1) != 1) {
+              cmsStageFree(CLUT);
+              return NULL;
+            }
             Data ->Tab.T[i] = FROM_8_TO_16(v);
         }
 
@@ -3096,7 +3102,7 @@ void *Type_NamedColor_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* i
 
     if (nDeviceCoords > cmsMAXCHANNELS) {
         cmsSignalError(self->ContextID, cmsERROR_RANGE, "Too many device coordinates '%d'", nDeviceCoords);
-        return 0;
+        goto Error;
     }
     for (i=0; i < count; i++) {
 
@@ -3105,7 +3111,7 @@ void *Type_NamedColor_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* i
         char Root[33];
 
         memset(Colorant, 0, sizeof(Colorant));
-        if (io -> Read(io, Root, 32, 1) != 1) return NULL;
+        if (io -> Read(io, Root, 32, 1) != 1) goto Error;
         Root[32] = 0;
         if (!_cmsReadUInt16Array(io, 3, PCS)) goto Error;
         if (!_cmsReadUInt16Array(io, nDeviceCoords, Colorant)) goto Error;

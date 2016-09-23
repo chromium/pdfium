@@ -13,4 +13,8 @@ Local Modifications:
 0001-from16-to-8-overflow.patch: Prevent a UBSan warning.
 0002-infinite-loop-GrowNamedColorList.patch: Fix infinite loop when calling GrowNamedColorList.
 0003-uninit.patch: Fix use uninitialized value and stack buffer overflow read.
+0004-memory-leak-Type_Curve_Read.patch: Fix memory leak in Type_Curve_Read.
+0005-memory-leak-AllocEmptyTransform.patch: Fix memory leak in AllocEmptyTransform.
+0006-memory-leak-Type_NamedColor_Read.patch: Fix memory leak in Type_NamedColor_Read.
+0007-memory-leak-OptimizeByResampling.patch: Fix memory leak in OptimizeByResampling.
 TODO(ochang): List other patches.
