@@ -248,9 +248,6 @@ CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
     if (Rows > USHRT_MAX) {
       Rows = 0;
     }
-    if (Columns <= 0 || Rows < 0 || Columns > USHRT_MAX || Rows > USHRT_MAX) {
-      return nullptr;
-    }
   }
   return CPDF_ModuleMgr::Get()->GetFaxModule()->CreateDecoder(
       src_buf, src_size, width, height, K, EndOfLine, ByteAlign, BlackIs1,

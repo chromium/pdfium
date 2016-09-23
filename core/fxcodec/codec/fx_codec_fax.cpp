@@ -36,7 +36,11 @@ const uint8_t ZeroLeadPos[256] = {
     4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7, 8,
 };
 
+// Limit of image dimension, an arbitrary large number.
+const int kMaxImageDimension = 0x01FFFF;
+
 int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, int bit) {
+  ASSERT(start_pos >= 0);
   if (start_pos >= max_pos) {
     return max_pos;
   }
@@ -511,7 +515,7 @@ CCodec_FaxDecoder::CCodec_FaxDecoder(const uint8_t* src_buf,
     m_OrigWidth = width;
   if (m_OrigHeight == 0)
     m_OrigHeight = height;
-  // Should not overflow. Checked by FPDFAPI_CreateFaxDecoder.
+  // Should not overflow. Checked by CCodec_FaxDecoder::CreateDecoder.
   m_Pitch = (static_cast<uint32_t>(m_OrigWidth) + 31) / 32 * 4;
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
@@ -624,6 +628,13 @@ CCodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(
     FX_BOOL BlackIs1,
     int Columns,
     int Rows) {
+  // Reject invalid values.
+  if (width <= 0 || height < 0 || Columns < 0 || Rows < 0)
+    return nullptr;
+  // Reject unreasonable large input.
+  if (width > kMaxImageDimension || height > kMaxImageDimension ||
+      Columns > kMaxImageDimension || Rows > kMaxImageDimension)
+    return nullptr;
   return new CCodec_FaxDecoder(src_buf, src_size, width, height, K, EndOfLine,
                                EncodedByteAlign, BlackIs1, Columns, Rows);
 }
