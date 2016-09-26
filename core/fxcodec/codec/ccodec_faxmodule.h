@@ -18,17 +18,11 @@ class CCodec_FaxModule {
                                         int width,
                                         int height,
                                         int K,
-                                        FX_BOOL EndOfLine,
-                                        FX_BOOL EncodedByteAlign,
-                                        FX_BOOL BlackIs1,
+                                        bool EndOfLine,
+                                        bool EncodedByteAlign,
+                                        bool BlackIs1,
                                         int Columns,
                                         int Rows);
-  FX_BOOL Encode(const uint8_t* src_buf,
-                 int width,
-                 int height,
-                 int pitch,
-                 uint8_t*& dest_buf,
-                 uint32_t& dest_size);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_

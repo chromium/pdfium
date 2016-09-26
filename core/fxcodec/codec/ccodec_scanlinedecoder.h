@@ -14,6 +14,13 @@ class IFX_Pause;
 class CCodec_ScanlineDecoder {
  public:
   CCodec_ScanlineDecoder();
+  CCodec_ScanlineDecoder(int nOrigWidth,
+                         int nOrigHeight,
+                         int nOutputWidth,
+                         int nOutputHeight,
+                         int nComps,
+                         int nBpc,
+                         uint32_t nPitch);
   virtual ~CCodec_ScanlineDecoder();
 
   const uint8_t* GetScanline(int line);

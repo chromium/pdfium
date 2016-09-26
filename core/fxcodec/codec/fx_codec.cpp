@@ -34,7 +34,24 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 CCodec_ModuleMgr::~CCodec_ModuleMgr() {}
 
 CCodec_ScanlineDecoder::CCodec_ScanlineDecoder()
-    : m_NextLine(-1), m_pLastScanline(nullptr) {}
+    : CCodec_ScanlineDecoder(0, 0, 0, 0, 0, 0, 0) {}
+
+CCodec_ScanlineDecoder::CCodec_ScanlineDecoder(int nOrigWidth,
+                                               int nOrigHeight,
+                                               int nOutputWidth,
+                                               int nOutputHeight,
+                                               int nComps,
+                                               int nBpc,
+                                               uint32_t nPitch)
+    : m_OrigWidth(nOrigWidth),
+      m_OrigHeight(nOrigHeight),
+      m_OutputWidth(nOutputWidth),
+      m_OutputHeight(nOutputHeight),
+      m_nComps(nComps),
+      m_bpc(nBpc),
+      m_Pitch(nPitch),
+      m_NextLine(-1),
+      m_pLastScanline(nullptr) {}
 
 CCodec_ScanlineDecoder::~CCodec_ScanlineDecoder() {}
 

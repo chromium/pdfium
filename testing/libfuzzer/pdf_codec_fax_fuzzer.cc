@@ -22,17 +22,16 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   int K = GetInteger(data + 8);
   int Columns = GetInteger(data + 12);
   int Rows = GetInteger(data + 16);
-  FX_BOOL EndOfLine = (data[20] & 0x01) == 0;
-  FX_BOOL ByteAlign = (data[20] & 0x02) == 0;
-  FX_BOOL BlackIs1 = (data[20] & 0x04) == 0;
+  bool EndOfLine = !(data[20] & 0x01);
+  bool ByteAlign = !(data[20] & 0x02);
+  bool BlackIs1 = !(data[20] & 0x04);
   data += kParameterSize;
   size -= kParameterSize;
 
   CCodec_FaxModule fax_module;
-  std::unique_ptr<CCodec_ScanlineDecoder> decoder;
-  decoder.reset(fax_module.CreateDecoder(data, size, width, height, K,
-                                         EndOfLine, ByteAlign, BlackIs1,
-                                         Columns, Rows));
+  std::unique_ptr<CCodec_ScanlineDecoder> decoder(
+      fax_module.CreateDecoder(data, size, width, height, K, EndOfLine,
+                               ByteAlign, BlackIs1, Columns, Rows));
 
   if (decoder) {
     int line = 0;

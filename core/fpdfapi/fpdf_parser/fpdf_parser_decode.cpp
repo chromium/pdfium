@@ -7,6 +7,8 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 
 #include <limits.h>
+
+#include <algorithm>
 #include <utility>
 #include <vector>
 
@@ -18,7 +20,26 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "third_party/base/stl_util.h"
 
-#define _STREAM_MAX_SIZE_ 20 * 1024 * 1024
+namespace {
+
+const uint32_t kMaxStreamSize = 20 * 1024 * 1024;
+
+bool CheckFlateDecodeParams(int Colors, int BitsPerComponent, int Columns) {
+  if (Colors < 0 || BitsPerComponent < 0 || Columns < 0)
+    return false;
+
+  int check = Columns;
+  if (check > 0 && Colors > INT_MAX / check)
+    return false;
+
+  check *= Colors;
+  if (check > 0 && BitsPerComponent > INT_MAX / check)
+    return false;
+
+  return check * BitsPerComponent <= INT_MAX - 7;
+}
+
+}  // namespace
 
 const uint16_t PDFDocEncoding[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
@@ -171,31 +192,34 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
                          uint8_t*& dest_buf,
                          uint32_t& dest_size) {
   uint32_t i = 0;
-  uint32_t old;
   dest_size = 0;
   while (i < src_size) {
+    if (src_buf[i] == 128)
+      break;
+
+    uint32_t old = dest_size;
     if (src_buf[i] < 128) {
-      old = dest_size;
       dest_size += src_buf[i] + 1;
       if (dest_size < old)
         return FX_INVALID_OFFSET;
       i += src_buf[i] + 2;
-    } else if (src_buf[i] > 128) {
-      old = dest_size;
+    } else {
       dest_size += 257 - src_buf[i];
       if (dest_size < old)
         return FX_INVALID_OFFSET;
       i += 2;
-    } else {
-      break;
     }
   }
-  if (dest_size >= _STREAM_MAX_SIZE_)
+  if (dest_size >= kMaxStreamSize)
     return FX_INVALID_OFFSET;
+
   dest_buf = FX_Alloc(uint8_t, dest_size);
   i = 0;
   int dest_count = 0;
   while (i < src_size) {
+    if (src_buf[i] == 128)
+      break;
+
     if (src_buf[i] < 128) {
       uint32_t copy_len = src_buf[i] + 1;
       uint32_t buf_left = src_size - i - 1;
@@ -207,7 +231,7 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
       FXSYS_memcpy(dest_buf + dest_count, src_buf + i + 1, copy_len);
       dest_count += src_buf[i] + 1;
       i += src_buf[i] + 2;
-    } else if (src_buf[i] > 128) {
+    } else {
       int fill = 0;
       if (i < src_size - 1) {
         fill = src_buf[i + 1];
@@ -215,15 +239,10 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
       FXSYS_memset(dest_buf + dest_count, fill, 257 - src_buf[i]);
       dest_count += 257 - src_buf[i];
       i += 2;
-    } else {
-      break;
     }
   }
-  uint32_t ret = i + 1;
-  if (ret > src_size) {
-    ret = src_size;
-  }
-  return ret;
+
+  return std::min(i + 1, src_size);
 }
 
 CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
@@ -233,16 +252,16 @@ CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
     int height,
     const CPDF_Dictionary* pParams) {
   int K = 0;
-  FX_BOOL EndOfLine = FALSE;
-  FX_BOOL ByteAlign = FALSE;
-  FX_BOOL BlackIs1 = FALSE;
+  bool EndOfLine = false;
+  bool ByteAlign = false;
+  bool BlackIs1 = false;
   int Columns = 1728;
   int Rows = 0;
   if (pParams) {
     K = pParams->GetIntegerFor("K");
-    EndOfLine = pParams->GetIntegerFor("EndOfLine");
-    ByteAlign = pParams->GetIntegerFor("EncodedByteAlign");
-    BlackIs1 = pParams->GetIntegerFor("BlackIs1");
+    EndOfLine = !!pParams->GetIntegerFor("EndOfLine");
+    ByteAlign = !!pParams->GetIntegerFor("EncodedByteAlign");
+    BlackIs1 = !!pParams->GetIntegerFor("BlackIs1");
     Columns = pParams->GetIntegerFor("Columns", 1728);
     Rows = pParams->GetIntegerFor("Rows");
     if (Rows > USHRT_MAX) {
@@ -252,28 +271,6 @@ CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
   return CPDF_ModuleMgr::Get()->GetFaxModule()->CreateDecoder(
       src_buf, src_size, width, height, K, EndOfLine, ByteAlign, BlackIs1,
       Columns, Rows);
-}
-
-static FX_BOOL CheckFlateDecodeParams(int Colors,
-                                      int BitsPerComponent,
-                                      int Columns) {
-  if (Columns < 0) {
-    return FALSE;
-  }
-  int check = Columns;
-  if (Colors < 0 || (check > 0 && Colors > INT_MAX / check)) {
-    return FALSE;
-  }
-  check *= Colors;
-  if (BitsPerComponent < 0 ||
-      (check > 0 && BitsPerComponent > INT_MAX / check)) {
-    return FALSE;
-  }
-  check *= BitsPerComponent;
-  if (check > INT_MAX - 7) {
-    return FALSE;
-  }
-  return TRUE;
 }
 
 CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
