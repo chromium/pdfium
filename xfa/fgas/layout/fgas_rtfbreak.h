@@ -288,10 +288,10 @@ class CFX_RTFBreak {
   int32_t m_iBoundaryStart;
   int32_t m_iBoundaryEnd;
   uint32_t m_dwLayoutStyles;
-  FX_BOOL m_bPagination;
-  FX_BOOL m_bVertical;
-  FX_BOOL m_bSingleLine;
-  FX_BOOL m_bCharCode;
+  bool m_bPagination;
+  bool m_bVertical;
+  bool m_bSingleLine;
+  bool m_bCharCode;
   CFGAS_GEFont* m_pFont;
   int32_t m_iFontHeight;
   int32_t m_iFontSize;

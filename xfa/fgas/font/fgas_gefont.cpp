@@ -6,6 +6,9 @@
 
 #include "xfa/fgas/font/fgas_gefont.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fxge/include/cfx_substfont.h"
 #include "core/fxge/include/cfx_unicodeencoding.h"
 #include "core/fxge/include/cfx_unicodeencodingex.h"
@@ -19,9 +22,8 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
                                      uint16_t wCodePage,
                                      IFGAS_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  if (pFontMgr) {
+  if (pFontMgr)
     return pFontMgr->GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
-  }
   return nullptr;
 #else
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
@@ -284,69 +286,72 @@ void CFGAS_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {
 uint32_t CFGAS_GEFont::GetFontStyles() const {
   ASSERT(m_pFont);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  if (m_bUseLogFontStyle) {
+  if (m_bUseLogFontStyle)
     return m_dwLogFontStyle;
-  }
 #endif
+
   uint32_t dwStyles = 0;
-  if (!m_pFont->GetSubstFont()) {
-    if (m_pFont->IsBold()) {
+  auto* pSubstFont = m_pFont->GetSubstFont();
+  if (pSubstFont) {
+    if (pSubstFont->m_Weight == FXFONT_FW_BOLD)
       dwStyles |= FX_FONTSTYLE_Bold;
-    }
-    if (m_pFont->IsItalic()) {
+    if (pSubstFont->m_SubstFlags & FXFONT_SUBST_ITALIC)
       dwStyles |= FX_FONTSTYLE_Italic;
-    }
   } else {
-    if (m_pFont->GetSubstFont()->m_Weight == FXFONT_FW_BOLD) {
+    if (m_pFont->IsBold())
       dwStyles |= FX_FONTSTYLE_Bold;
-    }
-    if (m_pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_ITALIC) {
+    if (m_pFont->IsItalic())
       dwStyles |= FX_FONTSTYLE_Italic;
-    }
   }
   return dwStyles;
 }
+
 FX_BOOL CFGAS_GEFont::GetCharWidth(FX_WCHAR wUnicode,
                                    int32_t& iWidth,
-                                   FX_BOOL bCharCode) {
-  return GetCharWidthInternal(wUnicode, iWidth, TRUE, bCharCode);
+                                   bool bCharCode) {
+  return GetCharWidthInternal(wUnicode, iWidth, true, bCharCode);
 }
+
 FX_BOOL CFGAS_GEFont::GetCharWidthInternal(FX_WCHAR wUnicode,
                                            int32_t& iWidth,
-                                           FX_BOOL bRecursive,
-                                           FX_BOOL bCharCode) {
+                                           bool bRecursive,
+                                           bool bCharCode) {
   ASSERT(m_pCharWidthMap);
   iWidth = m_pCharWidthMap->GetAt(wUnicode, 0);
-  if (iWidth < 1) {
-    if (!m_pProvider ||
-        !m_pProvider->GetCharWidth(this, wUnicode, iWidth, bCharCode)) {
-      CFGAS_GEFont* pFont = nullptr;
-      int32_t iGlyph = GetGlyphIndex(wUnicode, TRUE, &pFont, bCharCode);
-      if (iGlyph != 0xFFFF && pFont) {
-        if (pFont == this) {
-          iWidth = m_pFont->GetGlyphWidth(iGlyph);
-          if (iWidth < 0) {
-            iWidth = -1;
-          }
-        } else if (pFont->GetCharWidthInternal(wUnicode, iWidth, FALSE,
-                                               bCharCode)) {
-          return TRUE;
+  if (iWidth == 65535)
+    return FALSE;
+
+  if (iWidth > 0)
+    return TRUE;
+
+  if (!m_pProvider ||
+      !m_pProvider->GetCharWidth(this, wUnicode, bCharCode, &iWidth)) {
+    CFGAS_GEFont* pFont = nullptr;
+    int32_t iGlyph = GetGlyphIndex(wUnicode, TRUE, &pFont, bCharCode);
+    if (iGlyph != 0xFFFF && pFont) {
+      if (pFont == this) {
+        iWidth = m_pFont->GetGlyphWidth(iGlyph);
+        if (iWidth < 0) {
+          iWidth = -1;
         }
-      } else {
-        iWidth = -1;
+      } else if (pFont->GetCharWidthInternal(wUnicode, iWidth, false,
+                                             bCharCode)) {
+        return TRUE;
       }
+    } else {
+      iWidth = -1;
     }
-    m_pCharWidthMap->SetAtGrow(wUnicode, (int16_t)iWidth);
-  } else if (iWidth == 65535) {
-    iWidth = -1;
   }
+  m_pCharWidthMap->SetAtGrow(wUnicode, iWidth);
   return iWidth > 0;
 }
+
 FX_BOOL CFGAS_GEFont::GetCharBBox(FX_WCHAR wUnicode,
                                   CFX_Rect& bbox,
                                   FX_BOOL bCharCode) {
   return GetCharBBoxInternal(wUnicode, bbox, TRUE, bCharCode);
 }
+
 FX_BOOL CFGAS_GEFont::GetCharBBoxInternal(FX_WCHAR wUnicode,
                                           CFX_Rect& bbox,
                                           FX_BOOL bRecursive,

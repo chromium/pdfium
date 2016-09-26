@@ -51,29 +51,30 @@ class CXFA_PDFFontMgr {
   CFGAS_GEFont* GetFont(const CFX_WideStringC& wsFontFamily,
                         uint32_t dwFontStyles,
                         CPDF_Font** pPDFFont,
-                        FX_BOOL bStrictMatch = TRUE);
-  FX_BOOL GetCharWidth(CFGAS_GEFont* pFont,
-                       FX_WCHAR wUnicode,
-                       int32_t& iWidth,
-                       FX_BOOL bCharCode);
-  std::map<CFGAS_GEFont*, CPDF_Font*> m_FDE2PDFFont;
+                        bool bStrictMatch);
+  bool GetCharWidth(const CFGAS_GEFont* pFont,
+                    FX_WCHAR wUnicode,
+                    bool bCharCode,
+                    int32_t* pWidth);
+  void SetFont(const CFGAS_GEFont* pFont, CPDF_Font* pPDFFont);
 
  protected:
-  CFGAS_GEFont* FindFont(CFX_ByteString strFamilyName,
-                         FX_BOOL bBold,
-                         FX_BOOL bItalic,
+  CFGAS_GEFont* FindFont(const CFX_ByteString& strFamilyName,
+                         bool bBold,
+                         bool bItalic,
                          CPDF_Font** pPDFFont,
-                         FX_BOOL bStrictMatch = TRUE);
+                         bool bStrictMatch);
   CFX_ByteString PsNameToFontName(const CFX_ByteString& strPsName,
-                                  FX_BOOL bBold,
-                                  FX_BOOL bItalic);
-  FX_BOOL PsNameMatchDRFontName(const CFX_ByteStringC& bsPsName,
-                                FX_BOOL bBold,
-                                FX_BOOL bItalic,
-                                const CFX_ByteString& bsDRFontName,
-                                FX_BOOL bStrictMatch = TRUE);
+                                  bool bBold,
+                                  bool bItalic);
+  bool PsNameMatchDRFontName(const CFX_ByteStringC& bsPsName,
+                             bool bBold,
+                             bool bItalic,
+                             const CFX_ByteString& bsDRFontName,
+                             bool bStrictMatch);
 
-  CXFA_FFDoc* m_pDoc;
+  CXFA_FFDoc* const m_pDoc;
+  std::map<const CFGAS_GEFont*, CPDF_Font*> m_FDE2PDFFont;
   std::map<CFX_ByteString, CFGAS_GEFont*> m_FontMap;
 };
 

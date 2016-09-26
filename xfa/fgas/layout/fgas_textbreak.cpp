@@ -643,13 +643,15 @@ void CFX_TxtBreak::EndBreak_UpdateArabicShapes() {
     return;
   }
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
-  CFX_Char *pCur, *pNext;
-  pCur = m_pCurLine->GetCharPtr(0);
+  CFX_Char* pCur = m_pCurLine->GetCharPtr(0);
   FX_BOOL bPrevNum = (pCur->m_dwCharStyles & FX_TXTCHARSTYLE_ArabicIndic) != 0;
   pCur = m_pCurLine->GetCharPtr(1);
   FX_WCHAR wch, wForm;
   FX_BOOL bNextNum;
-  int32_t i = 1, iCharWidth, iRotation;
+  int32_t i = 1;
+  int32_t iCharWidth;
+  int32_t iRotation;
+  CFX_Char* pNext;
   do {
     i++;
     if (i < iCount) {
@@ -1669,7 +1671,7 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
     }
     if (bCharBBox && !bRet) {
       int32_t iCharWidth = 1000;
-      pFont->GetCharWidth(wch, iCharWidth);
+      pFont->GetCharWidth(wch, iCharWidth, false);
       FX_FLOAT fRTLeft = 0, fCharWidth = 0;
       if (iCharWidth > 0) {
         fCharWidth = iCharWidth * fScale;

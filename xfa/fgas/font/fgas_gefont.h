@@ -44,9 +44,7 @@ class CFGAS_GEFont {
   CFGAS_GEFont* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   void GetFamilyName(CFX_WideString& wsFamily) const;
   uint32_t GetFontStyles() const;
-  FX_BOOL GetCharWidth(FX_WCHAR wUnicode,
-                       int32_t& iWidth,
-                       FX_BOOL bCharCode = FALSE);
+  FX_BOOL GetCharWidth(FX_WCHAR wUnicode, int32_t& iWidth, bool bCharCode);
   int32_t GetGlyphIndex(FX_WCHAR wUnicode, FX_BOOL bCharCode = FALSE);
   int32_t GetAscent() const;
   int32_t GetDescent() const;
@@ -86,8 +84,8 @@ class CFGAS_GEFont {
                               FX_BOOL bCharCode = FALSE);
   FX_BOOL GetCharWidthInternal(FX_WCHAR wUnicode,
                                int32_t& iWidth,
-                               FX_BOOL bRecursive,
-                               FX_BOOL bCharCode = FALSE);
+                               bool bRecursive,
+                               bool bCharCode);
   int32_t GetGlyphIndex(FX_WCHAR wUnicode,
                         FX_BOOL bRecursive,
                         CFGAS_GEFont** ppFont,
