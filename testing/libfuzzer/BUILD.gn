@@ -154,6 +154,21 @@ if (pdf_enable_xfa) {
   }
 }
 
+source_set("pdf_cmap_fuzzer") {
+  testonly = true
+  sources = [
+    "pdf_cmap_fuzzer.cc",
+  ]
+  deps = [
+    "//third_party/pdfium:pdfium",
+  ]
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":libfuzzer_config",
+  ]
+}
+
 source_set("pdf_codec_fax_fuzzer") {
   testonly = true
   sources = [
