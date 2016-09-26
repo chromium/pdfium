@@ -41,6 +41,10 @@ CWeightTable::~CWeightTable() {
   FX_Free(m_pWeightTables);
 }
 
+size_t CWeightTable::GetPixelWeightSize() const {
+  return m_dwWeightTablesSize / sizeof(int);
+}
+
 bool CWeightTable::Calc(int dest_len,
                         int dest_min,
                         int dest_max,
@@ -235,7 +239,7 @@ bool CWeightTable::Calc(int dest_len,
         break;
       }
       size_t idx = j - start_i;
-      if (idx >= m_dwWeightTablesSize)
+      if (idx >= GetPixelWeightSize())
         return false;
       pixel_weights.m_Weights[idx] = FXSYS_round((FX_FLOAT)(weight * 65536));
     }
@@ -255,7 +259,7 @@ int* CWeightTable::GetValueFromPixelWeight(PixelWeight* pWeight,
     return nullptr;
 
   size_t idx = index - pWeight->m_SrcStart;
-  return idx < m_dwWeightTablesSize ? &pWeight->m_Weights[idx] : nullptr;
+  return idx < GetPixelWeightSize() ? &pWeight->m_Weights[idx] : nullptr;
 }
 
 CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,

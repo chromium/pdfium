@@ -55,6 +55,7 @@ class CWeightTable {
             int flags);
   PixelWeight* GetPixelWeight(int pixel) const;
   int* GetValueFromPixelWeight(PixelWeight* pWeight, int index) const;
+  size_t GetPixelWeightSize() const;
 
  private:
   int m_DestMin;
