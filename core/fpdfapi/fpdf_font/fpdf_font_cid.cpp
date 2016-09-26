@@ -413,6 +413,7 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
       if (nSegs > 1) {
         m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
         m_pCMap->m_nCodeRanges = nSegs;
+        FX_Free(m_pCMap->m_pLeadingBytes);
         m_pCMap->m_pLeadingBytes =
             FX_Alloc2D(uint8_t, nSegs, sizeof(CMap_CodeRange));
         FXSYS_memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(),
