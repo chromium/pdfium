@@ -12,12 +12,12 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fxcrt/include/cfx_observable.h"
+#include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
 class CPDF_OCContext;
 class CPDFSDK_Environment;
-class CPDFSDK_Annot;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class IJS_Runtime;
@@ -68,7 +68,7 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
 
   IJS_Runtime* GetJsRuntime();
 
-  FX_BOOL SetFocusAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag = 0);
+  FX_BOOL SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag = 0);
   FX_BOOL KillFocusAnnot(uint32_t nFlag = 0);
 
   FX_BOOL ExtractPages(const std::vector<uint16_t>& arrExtraPages,
@@ -98,7 +98,7 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   std::map<UnderlyingPageType*, CPDFSDK_PageView*> m_pageMap;
   UnderlyingDocumentType* m_pDoc;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
-  CPDFSDK_Annot* m_pFocusAnnot;
+  CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
   CPDFSDK_Environment* m_pEnv;
   std::unique_ptr<CPDF_OCContext> m_pOccontent;
   FX_BOOL m_bChangeMask;

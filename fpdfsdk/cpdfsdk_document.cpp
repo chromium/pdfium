@@ -31,7 +31,6 @@ CPDFSDK_Document* CPDFSDK_Document::FromFPDFFormHandle(
 CPDFSDK_Document::CPDFSDK_Document(UnderlyingDocumentType* pDoc,
                                    CPDFSDK_Environment* pEnv)
     : m_pDoc(pDoc),
-      m_pFocusAnnot(nullptr),
       m_pEnv(pEnv),
       m_bChangeMask(FALSE),
       m_bBeingDestroyed(FALSE) {}
@@ -174,14 +173,15 @@ void CPDFSDK_Document::UpdateAllViews(CPDFSDK_PageView* pSender,
 }
 
 CPDFSDK_Annot* CPDFSDK_Document::GetFocusAnnot() {
-  return m_pFocusAnnot;
+  return m_pFocusAnnot.Get();
 }
 
-FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
+FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                        uint32_t nFlag) {
   if (m_bBeingDestroyed)
     return FALSE;
 
-  if (m_pFocusAnnot == pAnnot)
+  if (m_pFocusAnnot == *pAnnot)
     return TRUE;
 
   if (m_pFocusAnnot) {
@@ -189,24 +189,24 @@ FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
       return FALSE;
   }
 
-  if (!pAnnot)
+  if (!*pAnnot)
     return FALSE;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Annot* pLastFocusAnnot = m_pFocusAnnot;
+  CPDFSDK_Annot::ObservedPtr pLastFocusAnnot(m_pFocusAnnot.Get());
 #endif  // PDF_ENABLE_XFA
-  CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
+  CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();
   if (pPageView && pPageView->IsValid()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pEnv->GetAnnotHandlerMgr();
     if (!m_pFocusAnnot) {
 #ifdef PDF_ENABLE_XFA
-      if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, pLastFocusAnnot))
+      if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, &pLastFocusAnnot))
         return FALSE;
 #endif  // PDF_ENABLE_XFA
       if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, nFlag))
         return FALSE;
       if (!m_pFocusAnnot) {
-        m_pFocusAnnot = pAnnot;
+        m_pFocusAnnot.Reset(pAnnot->Get());
         return TRUE;
       }
     }
@@ -217,28 +217,29 @@ FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
 FX_BOOL CPDFSDK_Document::KillFocusAnnot(uint32_t nFlag) {
   if (m_pFocusAnnot) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pEnv->GetAnnotHandlerMgr();
-    CPDFSDK_Annot* pFocusAnnot = m_pFocusAnnot;
-    m_pFocusAnnot = nullptr;
+    CPDFSDK_Annot::ObservedPtr pFocusAnnot(m_pFocusAnnot.Get());
+    m_pFocusAnnot.Reset();
 
 #ifdef PDF_ENABLE_XFA
-    if (!pAnnotHandler->Annot_OnChangeFocus(nullptr, pFocusAnnot))
+    CPDFSDK_Annot::ObservedPtr pNull;
+    if (!pAnnotHandler->Annot_OnChangeFocus(&pNull, &pFocusAnnot))
       return FALSE;
 #endif  // PDF_ENABLE_XFA
 
-    if (pAnnotHandler->Annot_OnKillFocus(pFocusAnnot, nFlag)) {
+    if (pAnnotHandler->Annot_OnKillFocus(&pFocusAnnot, nFlag)) {
       if (pFocusAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET) {
-        CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pFocusAnnot;
+        CPDFSDK_Widget* pWidget =
+            static_cast<CPDFSDK_Widget*>(pFocusAnnot.Get());
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||
             FIELDTYPE_COMBOBOX == nFieldType) {
           m_pEnv->OnSetFieldInputFocus(nullptr, 0, FALSE);
         }
       }
-
       if (!m_pFocusAnnot)
         return TRUE;
     } else {
-      m_pFocusAnnot = pFocusAnnot;
+      m_pFocusAnnot.Reset(pFocusAnnot.Get());
     }
   }
   return FALSE;

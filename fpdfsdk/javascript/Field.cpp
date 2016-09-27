@@ -3222,7 +3222,8 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
   }
 
   if (pWidget) {
-    m_pDocument->SetFocusAnnot(pWidget);
+    CPDFSDK_Annot::ObservedPtr pObserved(pWidget);
+    m_pDocument->SetFocusAnnot(&pObserved);
   }
 
   return TRUE;

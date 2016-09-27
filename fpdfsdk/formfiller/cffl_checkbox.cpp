@@ -47,15 +47,17 @@ FX_BOOL CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
 
       FX_BOOL bReset = FALSE;
       FX_BOOL bExit = FALSE;
-      m_pEnv->GetInteractiveFormFiller()->OnButtonUp(m_pWidget, pPageView,
+      CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget);
+      m_pEnv->GetInteractiveFormFiller()->OnButtonUp(&pObserved, pPageView,
                                                      bReset, bExit, nFlags);
-      if (bReset)
+      if (!pObserved) {
+        m_pWidget = nullptr;
         return TRUE;
-      if (bExit)
+      }
+      if (bReset || bExit)
         return TRUE;
 
       CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
-
       if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, TRUE))
         pWnd->SetCheck(!pWnd->IsChecked());
 

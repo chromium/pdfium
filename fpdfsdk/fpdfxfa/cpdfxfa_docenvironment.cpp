@@ -538,7 +538,8 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
     return;
 
   if (!hWidget) {
-    m_pDocument->GetSDKDoc()->SetFocusAnnot(nullptr);
+    CPDFSDK_Annot::ObservedPtr pNull;
+    m_pDocument->GetSDKDoc()->SetFocusAnnot(&pNull);
     return;
   }
 
@@ -548,9 +549,9 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
     if (!pPageView)
       continue;
 
-    CPDFSDK_Annot* pAnnot = pPageView->GetAnnotByXFAWidget(hWidget);
+    CPDFSDK_Annot::ObservedPtr pAnnot(pPageView->GetAnnotByXFAWidget(hWidget));
     if (pAnnot) {
-      m_pDocument->GetSDKDoc()->SetFocusAnnot(pAnnot);
+      m_pDocument->GetSDKDoc()->SetFocusAnnot(&pAnnot);
       break;
     }
   }

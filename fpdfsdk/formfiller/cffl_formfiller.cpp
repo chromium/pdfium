@@ -527,22 +527,21 @@ FX_BOOL CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView,
     FX_BOOL bExit = FALSE;
     CFFL_InteractiveFormFiller* pFormFiller =
         m_pEnv->GetInteractiveFormFiller();
-    pFormFiller->OnKeyStrokeCommit(m_pWidget, pPageView, bRC, bExit, nFlag);
-    if (bExit)
+    CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget);
+    pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, bRC, bExit, nFlag);
+    if (!pObserved || bExit)
       return TRUE;
     if (!bRC) {
       ResetPDFWindow(pPageView, FALSE);
       return TRUE;
     }
-
-    pFormFiller->OnValidate(m_pWidget, pPageView, bRC, bExit, nFlag);
-    if (bExit)
+    pFormFiller->OnValidate(&pObserved, pPageView, bRC, bExit, nFlag);
+    if (!pObserved || bExit)
       return TRUE;
     if (!bRC) {
       ResetPDFWindow(pPageView, FALSE);
       return TRUE;
     }
-
     SaveData(pPageView);
     pFormFiller->OnCalculate(m_pWidget, pPageView, bExit, nFlag);
     if (bExit)

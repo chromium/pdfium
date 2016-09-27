@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
 
 class CFX_RenderDevice;
@@ -39,7 +40,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   const CPDF_Annot* GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFocusAnnot();
-  void SetFocusAnnot(CPDFSDK_Annot* pSDKAnnot, uint32_t nFlag = 0) {
+  void SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pSDKAnnot,
+                     uint32_t nFlag = 0) {
     m_pSDKDoc->SetFocusAnnot(pSDKAnnot, nFlag);
   }
   FX_BOOL KillFocusAnnot(uint32_t nFlag = 0) {
@@ -108,7 +110,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
   CPDFSDK_Document* const m_pSDKDoc;
-  CPDFSDK_Annot* m_CaptureWidget;
+  CPDFSDK_Annot::ObservedPtr m_pCaptureWidget;
 #ifndef PDF_ENABLE_XFA
   bool m_bOwnsPage;
 #endif  // PDF_ENABLE_XFA
