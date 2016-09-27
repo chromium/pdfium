@@ -575,43 +575,37 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
   pPage->SetRenderContext(WrapUnique(pContext));
 
-  CFX_DIBitmap* pBitmap = nullptr;
-  FX_BOOL bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
-  FX_BOOL bHasImageMask = pPage->HasImageMask();
-  if (bBackgroundAlphaNeeded || bHasImageMask) {
-    pBitmap = new CFX_DIBitmap;
+  std::unique_ptr<CFX_DIBitmap> pBitmap;
+  const bool bNewBitmap =
+      pPage->BackgroundAlphaNeeded() || pPage->HasImageMask();
+  if (bNewBitmap) {
+    pBitmap = WrapUnique(new CFX_DIBitmap);
     pBitmap->Create(size_x, size_y, FXDIB_Argb);
     pBitmap->Clear(0x00ffffff);
     CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
-    pContext->m_pDevice.reset(pDevice);
-    pDevice->Attach(pBitmap, false, nullptr, false);
+    pContext->m_pDevice = WrapUnique(pDevice);
+    pDevice->Attach(pBitmap.get(), false, nullptr, false);
   } else {
-    pContext->m_pDevice.reset(new CFX_WindowsDevice(dc));
+    pContext->m_pDevice = WrapUnique(new CFX_WindowsDevice(dc));
   }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, TRUE, nullptr);
 
-  if (bBackgroundAlphaNeeded || bHasImageMask) {
-    if (pBitmap) {
-      CFX_WindowsDevice WinDC(dc);
-
-      if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
-        CFX_DIBitmap* pDst = new CFX_DIBitmap;
-        int pitch = pBitmap->GetPitch();
-        pDst->Create(size_x, size_y, FXDIB_Rgb32);
-        FXSYS_memset(pDst->GetBuffer(), -1, pitch * size_y);
-        pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
-                              FXDIB_BLEND_NORMAL, nullptr, FALSE, nullptr);
-        WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
-        delete pDst;
-      } else {
-        WinDC.SetDIBits(pBitmap, 0, 0);
-      }
+  if (bNewBitmap) {
+    CFX_WindowsDevice WinDC(dc);
+    if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
+      std::unique_ptr<CFX_DIBitmap> pDst = WrapUnique(new CFX_DIBitmap);
+      int pitch = pBitmap->GetPitch();
+      pDst->Create(size_x, size_y, FXDIB_Rgb32);
+      FXSYS_memset(pDst->GetBuffer(), -1, pitch * size_y);
+      pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap.get(), 0, 0,
+                            FXDIB_BLEND_NORMAL, nullptr, FALSE, nullptr);
+      WinDC.StretchDIBits(pDst.get(), 0, 0, size_x, size_y);
+    } else {
+      WinDC.SetDIBits(pBitmap.get(), 0, 0);
     }
   }
-  if (bBackgroundAlphaNeeded || bHasImageMask)
-    delete pBitmap;
 
   pPage->SetRenderContext(std::unique_ptr<CPDF_PageRenderContext>());
 }
