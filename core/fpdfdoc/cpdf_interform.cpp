@@ -537,56 +537,79 @@ FX_BOOL RetrieveSpecificFont(uint8_t charSet,
 
 class CFieldTree {
  public:
-  struct Node {
-    Node* parent;
-    CFX_ArrayTemplate<Node*> children;
-    CFX_WideString short_name;
-    CPDF_FormField* field_ptr;
-    int CountFields(int nLevel = 0) {
-      if (nLevel > nMaxRecursion)
-        return 0;
-      if (field_ptr)
-        return 1;
+  class Node {
+   public:
+    Node() : m_pField(nullptr) {}
+    Node(const CFX_WideString& short_name, CPDF_FormField* pField)
+        : m_ShortName(short_name), m_pField(pField) {}
+    ~Node() {}
 
-      int count = 0;
-      for (int i = 0; i < children.GetSize(); i++)
-        count += children.GetAt(i)->CountFields(nLevel + 1);
-      return count;
+    void AddChildNode(Node* pNode) { m_Children.push_back(pNode); }
+
+    size_t GetChildrenCount() const { return m_Children.size(); }
+
+    Node* GetChildAt(size_t i) { return m_Children[i]; }
+    const Node* GetChildAt(size_t i) const { return m_Children[i]; }
+
+    CPDF_FormField* GetFieldAtIndex(int index) {
+      int nFieldsToGo = index;
+      return GetFieldInternal(&nFieldsToGo);
     }
 
-    CPDF_FormField* GetField(int* fields_to_go) {
-      if (field_ptr) {
-        if (*fields_to_go == 0)
-          return field_ptr;
+    int CountFields() const { return CountFieldsInternal(0); }
 
-        --*fields_to_go;
+    void SetField(CPDF_FormField* pField) { m_pField = pField; }
+
+    CPDF_FormField* GetField() { return m_pField; }
+    const CPDF_FormField* GetField() const { return m_pField; }
+
+    const CFX_WideString& GetShortName() const { return m_ShortName; }
+
+   private:
+    CPDF_FormField* GetFieldInternal(int* pFieldsToGo) {
+      if (m_pField) {
+        if (*pFieldsToGo == 0)
+          return m_pField;
+
+        --*pFieldsToGo;
         return nullptr;
       }
-      for (int i = 0; i < children.GetSize(); i++) {
-        if (CPDF_FormField* pField = children.GetAt(i)->GetField(fields_to_go))
+      for (size_t i = 0; i < GetChildrenCount(); ++i) {
+        CPDF_FormField* pField = GetChildAt(i)->GetFieldInternal(pFieldsToGo);
+        if (pField)
           return pField;
       }
       return nullptr;
     }
 
-    CPDF_FormField* GetField(int index) {
-      int fields_to_go = index;
-      return GetField(&fields_to_go);
+    int CountFieldsInternal(int nLevel) const {
+      if (nLevel > nMaxRecursion)
+        return 0;
+      if (m_pField)
+        return 1;
+
+      int count = 0;
+      for (size_t i = 0; i < GetChildrenCount(); ++i)
+        count += GetChildAt(i)->CountFieldsInternal(nLevel + 1);
+      return count;
     }
+
+    std::vector<Node*> m_Children;
+    CFX_WideString m_ShortName;
+    CPDF_FormField* m_pField;
   };
 
   CFieldTree();
   ~CFieldTree();
 
-  void SetField(const CFX_WideString& full_name, CPDF_FormField* field_ptr);
+  void SetField(const CFX_WideString& full_name, CPDF_FormField* pField);
   CPDF_FormField* GetField(const CFX_WideString& full_name);
-  CPDF_FormField* RemoveField(const CFX_WideString& full_name);
   void RemoveAll();
 
   Node* FindNode(const CFX_WideString& full_name);
   Node* AddChild(Node* pParent,
                  const CFX_WideString& short_name,
-                 CPDF_FormField* field_ptr);
+                 CPDF_FormField* pField);
   void RemoveNode(Node* pNode, int nLevel = 0);
 
   Node* Lookup(Node* pParent, const CFX_WideString& short_name);
@@ -594,10 +617,7 @@ class CFieldTree {
   Node m_Root;
 };
 
-CFieldTree::CFieldTree() {
-  m_Root.parent = nullptr;
-  m_Root.field_ptr = nullptr;
-}
+CFieldTree::CFieldTree() {}
 
 CFieldTree::~CFieldTree() {
   RemoveAll();
@@ -605,24 +625,22 @@ CFieldTree::~CFieldTree() {
 
 CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
                                        const CFX_WideString& short_name,
-                                       CPDF_FormField* field_ptr) {
+                                       CPDF_FormField* pField) {
   if (!pParent)
     return nullptr;
 
-  Node* pNode = new Node;
-  pNode->parent = pParent;
-  pNode->short_name = short_name;
-  pNode->field_ptr = field_ptr;
-  pParent->children.Add(pNode);
+  Node* pNode = new Node(short_name, pField);
+  pParent->AddChildNode(pNode);
   return pNode;
 }
 
 void CFieldTree::RemoveNode(Node* pNode, int nLevel) {
   if (!pNode)
     return;
+
   if (nLevel <= nMaxRecursion) {
-    for (int i = 0; i < pNode->children.GetSize(); i++)
-      RemoveNode(pNode->children[i], nLevel + 1);
+    for (size_t i = 0; i < pNode->GetChildrenCount(); ++i)
+      RemoveNode(pNode->GetChildAt(i), nLevel + 1);
   }
   delete pNode;
 }
@@ -632,22 +650,22 @@ CFieldTree::Node* CFieldTree::Lookup(Node* pParent,
   if (!pParent)
     return nullptr;
 
-  for (int i = 0; i < pParent->children.GetSize(); i++) {
-    Node* pNode = pParent->children[i];
-    if (pNode->short_name == short_name)
+  for (size_t i = 0; i < pParent->GetChildrenCount(); ++i) {
+    Node* pNode = pParent->GetChildAt(i);
+    if (pNode->GetShortName() == short_name)
       return pNode;
   }
   return nullptr;
 }
 
 void CFieldTree::RemoveAll() {
-  for (int i = 0; i < m_Root.children.GetSize(); i++)
-    RemoveNode(m_Root.children[i]);
+  for (size_t i = 0; i < m_Root.GetChildrenCount(); ++i)
+    RemoveNode(m_Root.GetChildAt(i));
 }
 
 void CFieldTree::SetField(const CFX_WideString& full_name,
-                          CPDF_FormField* field_ptr) {
-  if (full_name == L"")
+                          CPDF_FormField* pField) {
+  if (full_name.IsEmpty())
     return;
 
   CFieldNameExtractor name_extractor(full_name);
@@ -666,11 +684,11 @@ void CFieldTree::SetField(const CFX_WideString& full_name,
     name_extractor.GetNext(pName, nLength);
   }
   if (pNode != &m_Root)
-    pNode->field_ptr = field_ptr;
+    pNode->SetField(pField);
 }
 
 CPDF_FormField* CFieldTree::GetField(const CFX_WideString& full_name) {
-  if (full_name == L"")
+  if (full_name.IsEmpty())
     return nullptr;
 
   CFieldNameExtractor name_extractor(full_name);
@@ -685,42 +703,11 @@ CPDF_FormField* CFieldTree::GetField(const CFX_WideString& full_name) {
     pNode = Lookup(pLast, name);
     name_extractor.GetNext(pName, nLength);
   }
-  return pNode ? pNode->field_ptr : nullptr;
-}
-
-CPDF_FormField* CFieldTree::RemoveField(const CFX_WideString& full_name) {
-  if (full_name == L"")
-    return nullptr;
-
-  CFieldNameExtractor name_extractor(full_name);
-  const FX_WCHAR* pName;
-  FX_STRSIZE nLength;
-  name_extractor.GetNext(pName, nLength);
-  Node* pNode = &m_Root;
-  Node* pLast = nullptr;
-  while (nLength > 0 && pNode) {
-    pLast = pNode;
-    CFX_WideString name = CFX_WideString(pName, nLength);
-    pNode = Lookup(pLast, name);
-    name_extractor.GetNext(pName, nLength);
-  }
-
-  if (pNode && pNode != &m_Root) {
-    for (int i = 0; i < pLast->children.GetSize(); i++) {
-      if (pNode == pLast->children[i]) {
-        pLast->children.RemoveAt(i);
-        break;
-      }
-    }
-    CPDF_FormField* pField = pNode->field_ptr;
-    RemoveNode(pNode);
-    return pField;
-  }
-  return nullptr;
+  return pNode ? pNode->GetField() : nullptr;
 }
 
 CFieldTree::Node* CFieldTree::FindNode(const CFX_WideString& full_name) {
-  if (full_name == L"")
+  if (full_name.IsEmpty())
     return nullptr;
 
   CFieldNameExtractor name_extractor(full_name);
@@ -833,7 +820,7 @@ CPDF_InterForm::~CPDF_InterForm() {
 
   int nCount = m_pFieldTree->m_Root.CountFields();
   for (int i = 0; i < nCount; ++i)
-    delete m_pFieldTree->m_Root.GetField(i);
+    delete m_pFieldTree->m_Root.GetFieldAtIndex(i);
 }
 
 FX_BOOL CPDF_InterForm::s_bUpdateAP = TRUE;
@@ -1011,7 +998,7 @@ FX_BOOL CPDF_InterForm::ValidateFieldName(
     }
     uint32_t dwCount = m_pFieldTree->m_Root.CountFields();
     for (uint32_t m = 0; m < dwCount; m++) {
-      CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(m);
+      CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(m);
       if (!pField)
         continue;
       if (pField == pExcludedField) {
@@ -1111,11 +1098,11 @@ uint32_t CPDF_InterForm::CountFields(const CFX_WideString& csFieldName) {
 
 CPDF_FormField* CPDF_InterForm::GetField(uint32_t index,
                                          const CFX_WideString& csFieldName) {
-  if (csFieldName == L"")
-    return m_pFieldTree->m_Root.GetField(index);
+  if (csFieldName.IsEmpty())
+    return m_pFieldTree->m_Root.GetFieldAtIndex(index);
 
   CFieldTree::Node* pNode = m_pFieldTree->FindNode(csFieldName);
-  return pNode ? pNode->GetField(index) : nullptr;
+  return pNode ? pNode->GetFieldAtIndex(index) : nullptr;
 }
 
 CPDF_FormField* CPDF_InterForm::GetFieldByDict(
@@ -1285,7 +1272,7 @@ bool CPDF_InterForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
 
   int nCount = m_pFieldTree->m_Root.CountFields();
   for (int i = 0; i < nCount; ++i) {
-    CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(i);
+    CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
     if (!pField)
       continue;
 
@@ -1303,7 +1290,7 @@ bool CPDF_InterForm::ResetForm(bool bNotify) {
 
   int nCount = m_pFieldTree->m_Root.CountFields();
   for (int i = 0; i < nCount; ++i) {
-    CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(i);
+    CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
     if (!pField)
       continue;
 
@@ -1411,10 +1398,7 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   }
 
   CPDF_Array* pKids = pFieldDict->GetArrayFor("Kids");
-  if (!pKids) {
-    if (pFieldDict->GetStringFor("Subtype") == "Widget")
-      AddControl(pField, pFieldDict);
-  } else {
+  if (pKids) {
     for (size_t i = 0; i < pKids->GetCount(); i++) {
       CPDF_Dictionary* pKid = pKids->GetDictAt(i);
       if (!pKid)
@@ -1424,6 +1408,9 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
 
       AddControl(pField, pKid);
     }
+  } else {
+    if (pFieldDict->GetStringFor("Subtype") == "Widget")
+      AddControl(pField, pFieldDict);
   }
   return pField;
 }
@@ -1445,7 +1432,7 @@ CPDF_FormField* CPDF_InterForm::CheckRequiredFields(
     bool bIncludeOrExclude) const {
   int nCount = m_pFieldTree->m_Root.CountFields();
   for (int i = 0; i < nCount; ++i) {
-    CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(i);
+    CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
     if (!pField)
       continue;
 
@@ -1476,7 +1463,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(const CFX_WideStringC& pdf_path,
   std::vector<CPDF_FormField*> fields;
   int nCount = m_pFieldTree->m_Root.CountFields();
   for (int i = 0; i < nCount; ++i)
-    fields.push_back(m_pFieldTree->m_Root.GetField(i));
+    fields.push_back(m_pFieldTree->m_Root.GetFieldAtIndex(i));
   return ExportToFDF(pdf_path, fields, true, bSimpleFileSpec);
 }
 
@@ -1506,7 +1493,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
   pMainDict->SetFor("Fields", pFields);
   int nCount = m_pFieldTree->m_Root.CountFields();
   for (int i = 0; i < nCount; i++) {
-    CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(i);
+    CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
     if (!pField || pField->GetType() == CPDF_FormField::PushButton)
       continue;
 
