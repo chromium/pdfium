@@ -10,9 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
-#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_system.h"
 
 enum ShadingType {

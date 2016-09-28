@@ -14,14 +14,13 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
-#include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
+#include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
-#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
 class CPDF_AllStates;
+class CPDF_ColorSpace;
 class CPDF_ExpIntFunc;
 class CPDF_Font;
 class CPDF_FontEncoding;
@@ -30,6 +29,7 @@ class CPDF_IccProfile;
 class CPDF_Image;
 class CPDF_ImageObject;
 class CPDF_Page;
+class CPDF_Pattern;
 class CPDF_SampledFunc;
 class CPDF_StitchFunc;
 class CPDF_StreamAcc;
@@ -345,10 +345,10 @@ class CPDF_DocPageData {
   CPDF_CountedPattern* FindPatternPtr(CPDF_Object* pPatternObj) const;
 
  private:
-  using CPDF_CountedFont = CFX_WeakPtr<CPDF_Font>::Handle;
-  using CPDF_CountedIccProfile = CFX_WeakPtr<CPDF_IccProfile>::Handle;
-  using CPDF_CountedImage = CFX_WeakPtr<CPDF_Image>::Handle;
-  using CPDF_CountedStreamAcc = CFX_WeakPtr<CPDF_StreamAcc>::Handle;
+  using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
+  using CPDF_CountedIccProfile = CPDF_CountedObject<CPDF_IccProfile>;
+  using CPDF_CountedImage = CPDF_CountedObject<CPDF_Image>;
+  using CPDF_CountedStreamAcc = CPDF_CountedObject<CPDF_StreamAcc>;
 
   using CPDF_ColorSpaceMap =
       std::map<const CPDF_Object*, CPDF_CountedColorSpace*>;

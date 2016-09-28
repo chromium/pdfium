@@ -45,7 +45,7 @@ CPDF_DocRenderData::~CPDF_DocRenderData() {
 void CPDF_DocRenderData::Clear(FX_BOOL bRelease) {
   for (auto it = m_Type3FaceMap.begin(); it != m_Type3FaceMap.end();) {
     auto curr_it = it++;
-    CFX_WeakPtr<CPDF_Type3Cache>::Handle* cache = curr_it->second;
+    CPDF_CountedObject<CPDF_Type3Cache>* cache = curr_it->second;
     if (bRelease || cache->use_count() < 2) {
       delete cache->get();
       delete cache;
@@ -55,7 +55,7 @@ void CPDF_DocRenderData::Clear(FX_BOOL bRelease) {
 
   for (auto it = m_TransferFuncMap.begin(); it != m_TransferFuncMap.end();) {
     auto curr_it = it++;
-    CFX_WeakPtr<CPDF_TransferFunc>::Handle* value = curr_it->second;
+    CPDF_CountedObject<CPDF_TransferFunc>* value = curr_it->second;
     if (bRelease || value->use_count() < 2) {
       delete value->get();
       delete value;
@@ -65,11 +65,11 @@ void CPDF_DocRenderData::Clear(FX_BOOL bRelease) {
 }
 
 CPDF_Type3Cache* CPDF_DocRenderData::GetCachedType3(CPDF_Type3Font* pFont) {
-  CFX_WeakPtr<CPDF_Type3Cache>::Handle* pCache;
+  CPDF_CountedObject<CPDF_Type3Cache>* pCache;
   auto it = m_Type3FaceMap.find(pFont);
   if (it == m_Type3FaceMap.end()) {
     CPDF_Type3Cache* pType3 = new CPDF_Type3Cache(pFont);
-    pCache = new CFX_WeakPtr<CPDF_Type3Cache>::Handle(pType3);
+    pCache = new CPDF_CountedObject<CPDF_Type3Cache>(pType3);
     m_Type3FaceMap[pFont] = pCache;
   } else {
     pCache = it->second;
@@ -1086,7 +1086,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
 
   auto it = m_TransferFuncMap.find(pObj);
   if (it != m_TransferFuncMap.end()) {
-    CFX_WeakPtr<CPDF_TransferFunc>::Handle* pTransferCounter = it->second;
+    CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter = it->second;
     return pTransferCounter->AddRef();
   }
 
@@ -1109,8 +1109,8 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
       return nullptr;
   }
   CPDF_TransferFunc* pTransfer = new CPDF_TransferFunc(m_pPDFDoc);
-  CFX_WeakPtr<CPDF_TransferFunc>::Handle* pTransferCounter =
-      new CFX_WeakPtr<CPDF_TransferFunc>::Handle(pTransfer);
+  CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter =
+      new CPDF_CountedObject<CPDF_TransferFunc>(pTransfer);
   m_TransferFuncMap[pObj] = pTransferCounter;
   static const int kMaxOutputs = 16;
   FX_FLOAT output[kMaxOutputs];

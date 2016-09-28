@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PATTERN_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_PATTERN_H_
 
-#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -42,7 +41,5 @@ class CPDF_Pattern {
   CFX_Matrix m_Pattern2Form;
   const CFX_Matrix m_ParentMatrix;
 };
-
-using CPDF_CountedPattern = CFX_WeakPtr<CPDF_Pattern>::Handle;
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_PATTERN_H_

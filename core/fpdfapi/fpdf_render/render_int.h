@@ -11,11 +11,11 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_clippath.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
-#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
@@ -76,9 +76,9 @@ class CPDF_DocRenderData {
 
  private:
   using CPDF_Type3CacheMap =
-      std::map<CPDF_Font*, CFX_WeakPtr<CPDF_Type3Cache>::Handle*>;
+      std::map<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache>*>;
   using CPDF_TransferFuncMap =
-      std::map<CPDF_Object*, CFX_WeakPtr<CPDF_TransferFunc>::Handle*>;
+      std::map<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc>*>;
 
   CPDF_Document* m_pPDFDoc;
   CPDF_Type3CacheMap m_Type3FaceMap;

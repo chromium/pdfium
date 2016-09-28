@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -104,8 +103,6 @@ class CPDF_ColorSpace {
   CPDF_Array* m_pArray;
   uint32_t m_dwStdConversion;
 };
-
-using CPDF_CountedColorSpace = CFX_WeakPtr<CPDF_ColorSpace>::Handle;
 
 namespace std {
 
