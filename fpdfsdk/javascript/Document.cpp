@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/javascript/Document.h"
 
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
@@ -174,7 +175,7 @@ FX_BOOL Document::numFields(IJS_Context* cc,
   }
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  vp << (int)pPDFForm->CountFields();
+  vp << static_cast<int>(pPDFForm->CountFields(CFX_WideString()));
   return TRUE;
 }
 
@@ -337,7 +338,7 @@ FX_BOOL Document::getNthFieldName(IJS_Context* cc,
   }
   CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  CPDF_FormField* pField = pPDFForm->GetField(nIndex);
+  CPDF_FormField* pField = pPDFForm->GetField(nIndex, CFX_WideString());
   if (!pField)
     return FALSE;
 
@@ -616,7 +617,6 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
-
   int nSize = params.size();
   if (nSize < 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
@@ -1234,7 +1234,6 @@ FX_BOOL Document::addIcon(IJS_Context* cc,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
-
   if (params.size() != 2) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;

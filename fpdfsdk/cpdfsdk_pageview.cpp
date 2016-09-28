@@ -6,6 +6,9 @@
 
 #include "fpdfsdk/include/cpdfsdk_pageview.h"
 
+#include <memory>
+#include <vector>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfdoc/include/cpdf_annotlist.h"
@@ -488,9 +491,9 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 
   CPDF_Page* pPage = GetPDFPage();
   ASSERT(pPage);
-  FX_BOOL bUpdateAP = CPDF_InterForm::IsUpdateAPEnabled();
+  bool bUpdateAP = CPDF_InterForm::IsUpdateAPEnabled();
   // Disable the default AP construction.
-  CPDF_InterForm::SetUpdateAP(FALSE);
+  CPDF_InterForm::SetUpdateAP(false);
   m_pAnnotList.reset(new CPDF_AnnotList(pPage));
   CPDF_InterForm::SetUpdateAP(bUpdateAP);
 

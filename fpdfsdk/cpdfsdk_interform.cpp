@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
@@ -524,7 +525,7 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
   std::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
-      m_pDocument->GetPath().AsStringC(), fields, bIncludeOrExclude));
+      m_pDocument->GetPath().AsStringC(), fields, bIncludeOrExclude, false));
   return pFDF ? pFDF->WriteBuf(textBuf) : FALSE;
 }
 
@@ -543,7 +544,8 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
   CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
   CFX_WideString wsPDFFilePath = m_pDocument->GetPath();
-  CFDF_Document* pFDFDoc = m_pInterForm->ExportToFDF(wsPDFFilePath.AsStringC());
+  CFDF_Document* pFDFDoc =
+      m_pInterForm->ExportToFDF(wsPDFFilePath.AsStringC(), false);
   if (!pFDFDoc)
     return FALSE;
 
@@ -569,7 +571,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
 FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
   CFDF_Document* pFDF =
-      m_pInterForm->ExportToFDF(m_pDocument->GetPath().AsStringC());
+      m_pInterForm->ExportToFDF(m_pDocument->GetPath().AsStringC(), false);
   if (!pFDF)
     return FALSE;
 
