@@ -428,7 +428,6 @@ class CFieldTree {
           return m_pField;
 
         --*pFieldsToGo;
-        return nullptr;
       }
       for (size_t i = 0; i < GetChildrenCount(); ++i) {
         CPDF_FormField* pField = GetChildAt(i)->GetFieldInternal(pFieldsToGo);
@@ -441,10 +440,11 @@ class CFieldTree {
     size_t CountFieldsInternal(int nLevel) const {
       if (nLevel > nMaxRecursion)
         return 0;
-      if (m_pField)
-        return 1;
 
       size_t count = 0;
+      if (m_pField)
+        ++count;
+
       for (size_t i = 0; i < GetChildrenCount(); ++i)
         count += GetChildAt(i)->CountFieldsInternal(nLevel + 1);
       return count;
