@@ -162,35 +162,33 @@ int CPDFSDK_BAAnnot::GetStructParent() const {
 // border
 void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
   CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayFor("Border");
-
   if (pBorder) {
     pBorder->SetAt(2, new CPDF_Number(nWidth));
   } else {
     CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS");
-
     if (!pBSDict) {
-      pBSDict = new CPDF_Dictionary;
+      pBSDict =
+          new CPDF_Dictionary(m_pAnnot->GetDocument()->GetByteStringPool());
       m_pAnnot->GetAnnotDict()->SetFor("BS", pBSDict);
     }
-
     pBSDict->SetIntegerFor("W", nWidth);
   }
 }
 
 int CPDFSDK_BAAnnot::GetBorderWidth() const {
-  if (CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayFor("Border")) {
+  if (CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayFor("Border"))
     return pBorder->GetIntegerAt(2);
-  }
-  if (CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS")) {
+
+  if (CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS"))
     return pBSDict->GetIntegerFor("W", 1);
-  }
+
   return 1;
 }
 
 void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
   CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS");
   if (!pBSDict) {
-    pBSDict = new CPDF_Dictionary;
+    pBSDict = new CPDF_Dictionary(m_pAnnot->GetDocument()->GetByteStringPool());
     m_pAnnot->GetAnnotDict()->SetFor("BS", pBSDict);
   }
 
@@ -297,22 +295,21 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
                                       const CFX_ByteString& sContents,
                                       const CFX_ByteString& sAPState) {
   CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
-
   if (!pAPDict) {
-    pAPDict = new CPDF_Dictionary;
+    pAPDict = new CPDF_Dictionary(m_pAnnot->GetDocument()->GetByteStringPool());
     m_pAnnot->GetAnnotDict()->SetFor("AP", pAPDict);
   }
 
   CPDF_Stream* pStream = nullptr;
   CPDF_Dictionary* pParentDict = nullptr;
-
   if (sAPState.IsEmpty()) {
     pParentDict = pAPDict;
     pStream = pAPDict->GetStreamFor(sAPType);
   } else {
     CPDF_Dictionary* pAPTypeDict = pAPDict->GetDictFor(sAPType);
     if (!pAPTypeDict) {
-      pAPTypeDict = new CPDF_Dictionary;
+      pAPTypeDict =
+          new CPDF_Dictionary(m_pAnnot->GetDocument()->GetByteStringPool());
       pAPDict->SetFor(sAPType, pAPTypeDict);
     }
     pParentDict = pAPTypeDict;
@@ -328,7 +325,8 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   if (!pStreamDict) {
-    pStreamDict = new CPDF_Dictionary;
+    pStreamDict =
+        new CPDF_Dictionary(m_pAnnot->GetDocument()->GetByteStringPool());
     pStreamDict->SetNameFor("Type", "XObject");
     pStreamDict->SetNameFor("Subtype", "Form");
     pStreamDict->SetIntegerFor("FormType", 1);

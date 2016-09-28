@@ -212,16 +212,16 @@ class CFX_RenderDevice {
                          uint32_t fill_color,
                          uint32_t text_flags);
   FX_BOOL DrawTextPath(int nChars,
-                                const FXTEXT_CHARPOS* pCharPos,
-                                CFX_Font* pFont,
-                                FX_FLOAT font_size,
-                                const CFX_Matrix* pText2User,
-                                const CFX_Matrix* pUser2Device,
-                                const CFX_GraphStateData* pGraphState,
-                                uint32_t fill_color,
-                                uint32_t stroke_color,
-                                CFX_PathData* pClippingPath,
-                                int nFlag);
+                       const FXTEXT_CHARPOS* pCharPos,
+                       CFX_Font* pFont,
+                       FX_FLOAT font_size,
+                       const CFX_Matrix* pText2User,
+                       const CFX_Matrix* pUser2Device,
+                       const CFX_GraphStateData* pGraphState,
+                       uint32_t fill_color,
+                       uint32_t stroke_color,
+                       CFX_PathData* pClippingPath,
+                       int nFlag);
 
 #ifdef _SKIA_SUPPORT_
   virtual void DebugVerifyBitmapIsPreMultiplied() const;

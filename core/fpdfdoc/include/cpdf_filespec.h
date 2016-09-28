@@ -7,13 +7,15 @@
 #ifndef CORE_FPDFDOC_INCLUDE_CPDF_FILESPEC_H_
 #define CORE_FPDFDOC_INCLUDE_CPDF_FILESPEC_H_
 
+#include "core/fxcrt/include/cfx_string_pool_template.h"
+#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_string.h"
 
 class CPDF_Object;
 
 class CPDF_FileSpec {
  public:
-  CPDF_FileSpec();
+  explicit CPDF_FileSpec(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   explicit CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {}
 
   // Convert a platform dependent file name into pdf format.

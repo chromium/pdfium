@@ -14,18 +14,21 @@ CFDF_Document::CFDF_Document()
     : CPDF_IndirectObjectHolder(),
       m_pRootDict(nullptr),
       m_pFile(nullptr),
-      m_bOwnFile(FALSE) {}
+      m_bOwnFile(FALSE),
+      m_pByteStringPool(WrapUnique(new CFX_ByteStringPool)) {}
 
 CFDF_Document::~CFDF_Document() {
   if (m_bOwnFile && m_pFile)
     m_pFile->Release();
+  m_pByteStringPool.Clear();  // Make weak.
 }
 
 CFDF_Document* CFDF_Document::CreateNewDoc() {
   CFDF_Document* pDoc = new CFDF_Document;
-  pDoc->m_pRootDict = new CPDF_Dictionary;
+  pDoc->m_pRootDict = new CPDF_Dictionary(pDoc->GetByteStringPool());
   pDoc->AddIndirectObject(pDoc->m_pRootDict);
-  pDoc->m_pRootDict->SetFor("FDF", new CPDF_Dictionary);
+  pDoc->m_pRootDict->SetFor("FDF",
+                            new CPDF_Dictionary(pDoc->GetByteStringPool()));
   return pDoc;
 }
 

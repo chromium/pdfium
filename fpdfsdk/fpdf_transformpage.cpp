@@ -125,15 +125,16 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pContentObj)
     return FALSE;
 
-  CPDF_Dictionary* pDic = new CPDF_Dictionary;
-  CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, pDic);
-  pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize());
   CPDF_Document* pDoc = pPage->m_pDocument;
   if (!pDoc)
     return FALSE;
-  pDoc->AddIndirectObject(pStream);
 
-  pDic = new CPDF_Dictionary;
+  CPDF_Dictionary* pDic = new CPDF_Dictionary(pDoc->GetByteStringPool());
+  CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, pDic);
+  pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize());
+  pDoc->AddIndirectObject(pStream);
+  pDic = new CPDF_Dictionary(pDoc->GetByteStringPool());
+
   CPDF_Stream* pEndStream = new CPDF_Stream(nullptr, 0, pDic);
   pEndStream->SetData((const uint8_t*)" Q", 2);
   pDoc->AddIndirectObject(pEndStream);
@@ -300,13 +301,13 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
         strClip << "W* n\n";
     }
   }
-  CPDF_Dictionary* pDic = new CPDF_Dictionary;
-  CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, pDic);
-  pStream->SetData(strClip.GetBuffer(), strClip.GetSize());
   CPDF_Document* pDoc = pPage->m_pDocument;
   if (!pDoc)
     return;
 
+  CPDF_Dictionary* pDic = new CPDF_Dictionary(pDoc->GetByteStringPool());
+  CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, pDic);
+  pStream->SetData(strClip.GetBuffer(), strClip.GetSize());
   pDoc->AddIndirectObject(pStream);
 
   CPDF_Array* pContentArray = nullptr;

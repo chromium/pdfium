@@ -155,7 +155,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP");
   if (!pAPDict) {
-    pAPDict = new CPDF_Dictionary;
+    pAPDict = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
     m_pAnnotDict->SetFor("AP", pAPDict);
   }
 
@@ -173,19 +173,20 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   if (!pStreamDict) {
-    pStreamDict = new CPDF_Dictionary;
+    pStreamDict = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
     pStream->InitStream(nullptr, 0, pStreamDict);
   }
 
   if (pStreamDict) {
     CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
     if (!pStreamResList) {
-      pStreamResList = new CPDF_Dictionary();
+      pStreamResList = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
       pStreamDict->SetFor("Resources", pStreamResList);
     }
     CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
     if (!pStreamResFontList) {
-      pStreamResFontList = new CPDF_Dictionary;
+      pStreamResFontList =
+          new CPDF_Dictionary(m_pDocument->GetByteStringPool());
       pStreamResList->SetReferenceFor(
           "Font", m_pDocument,
           m_pDocument->AddIndirectObject(pStreamResFontList));

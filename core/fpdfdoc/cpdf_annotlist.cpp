@@ -30,7 +30,8 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
   if (sContents.IsEmpty())
     return std::unique_ptr<CPDF_Annot>();
 
-  CPDF_Dictionary* pAnnotDict = new CPDF_Dictionary;
+  CPDF_Dictionary* pAnnotDict =
+      new CPDF_Dictionary(pDocument->GetByteStringPool());
   pAnnotDict->SetNameFor("Type", "Annot");
   pAnnotDict->SetNameFor("Subtype", "Popup");
   pAnnotDict->SetStringFor("T", pParentDict->GetStringFor("T"));

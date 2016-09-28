@@ -11,6 +11,8 @@
 #include <set>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fxcrt/include/cfx_string_pool_template.h"
+#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 
@@ -21,7 +23,7 @@ class CPDF_Dictionary : public CPDF_Object {
   using iterator = std::map<CFX_ByteString, CPDF_Object*>::iterator;
   using const_iterator = std::map<CFX_ByteString, CPDF_Object*>::const_iterator;
 
-  CPDF_Dictionary();
+  explicit CPDF_Dictionary(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
 
   // CPDF_Object.
   Type GetType() const override;
@@ -78,13 +80,17 @@ class CPDF_Dictionary : public CPDF_Object {
   const_iterator begin() const { return m_Map.begin(); }
   const_iterator end() const { return m_Map.end(); }
 
+  CFX_WeakPtr<CFX_ByteStringPool> GetByteStringPool() const { return m_pPool; }
+
  protected:
   ~CPDF_Dictionary() override;
 
+  CFX_ByteString MaybeIntern(const CFX_ByteString& str);
   CPDF_Object* CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* visited) const override;
 
+  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
   std::map<CFX_ByteString, CPDF_Object*> m_Map;
 };
 

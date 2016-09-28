@@ -64,7 +64,7 @@ class PDFDocTest : public testing::Test {
     m_pDoc.reset(new CPDF_TestPdfDocument());
     m_pIndirectObjs = m_pDoc->GetHolder();
     // Setup the root directory.
-    m_pRootObj.reset(new CPDF_Dictionary());
+    m_pRootObj.reset(new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
     m_pDoc->SetRoot(m_pRootObj.get());
   }
 
@@ -79,7 +79,8 @@ class PDFDocTest : public testing::Test {
     std::vector<DictObjInfo> info;
     for (int i = 0; i < num; ++i) {
       // Objects created will be released by the document.
-      CPDF_Dictionary* obj = new CPDF_Dictionary;
+      CPDF_Dictionary* obj(
+          new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
       info.push_back({m_pIndirectObjs->AddIndirectObject(obj), obj});
     }
     return info;
@@ -103,7 +104,8 @@ TEST_F(PDFDocTest, FindBookmark) {
   }
   {
     // Empty bookmark tree.
-    m_pRootObj->SetFor("Outlines", new CPDF_Dictionary());
+    m_pRootObj->SetFor("Outlines",
+                       new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =
         GetFPDFWideString(L"");
     EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));

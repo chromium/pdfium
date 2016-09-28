@@ -193,8 +193,8 @@ void SetPageContents(CFX_ByteString key,
   if (!pContentsObj) {
     // Create a new contents dictionary
     if (!key.IsEmpty()) {
-      CPDF_Stream* pNewContents =
-          new CPDF_Stream(nullptr, 0, new CPDF_Dictionary);
+      CPDF_Stream* pNewContents = new CPDF_Stream(
+          nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
       CFX_ByteString sStream;
       sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
       pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
@@ -205,7 +205,6 @@ void SetPageContents(CFX_ByteString key,
   }
 
   CPDF_Array* pContentsArray = nullptr;
-
   switch (pContentsObj->GetType()) {
     case CPDF_Object::STREAM: {
       pContentsArray = new CPDF_Array;
@@ -237,8 +236,8 @@ void SetPageContents(CFX_ByteString key,
                          pDocument->AddIndirectObject(pContentsArray));
 
   if (!key.IsEmpty()) {
-    CPDF_Stream* pNewContents =
-        new CPDF_Stream(nullptr, 0, new CPDF_Dictionary);
+    CPDF_Stream* pNewContents = new CPDF_Stream(
+        nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
     CFX_ByteString sStream;
     sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
     pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
@@ -370,15 +369,17 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   CPDF_Dictionary* pRes = pPageDict->GetDictFor("Resources");
   if (!pRes) {
-    pRes = new CPDF_Dictionary;
+    pRes = new CPDF_Dictionary(pDocument->GetByteStringPool());
     pPageDict->SetFor("Resources", pRes);
   }
 
-  CPDF_Stream* pNewXObject = new CPDF_Stream(nullptr, 0, new CPDF_Dictionary);
+  CPDF_Stream* pNewXObject = new CPDF_Stream(
+      nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
+
   uint32_t dwObjNum = pDocument->AddIndirectObject(pNewXObject);
   CPDF_Dictionary* pPageXObject = pRes->GetDictFor("XObject");
   if (!pPageXObject) {
-    pPageXObject = new CPDF_Dictionary;
+    pPageXObject = new CPDF_Dictionary(pDocument->GetByteStringPool());
     pRes->SetFor("XObject", pPageXObject);
   }
 
@@ -402,7 +403,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   if (!key.IsEmpty()) {
     pPageXObject->SetReferenceFor(key, pDocument, dwObjNum);
     CPDF_Dictionary* pNewOXbjectDic = pNewXObject->GetDict();
-    pNewXORes = new CPDF_Dictionary;
+    pNewXORes = new CPDF_Dictionary(pDocument->GetByteStringPool());
     pNewOXbjectDic->SetFor("Resources", pNewXORes);
     pNewOXbjectDic->SetNameFor("Type", "XObject");
     pNewOXbjectDic->SetNameFor("Subtype", "Form");
@@ -474,7 +475,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CPDF_Dictionary* pXObject = pNewXORes->GetDictFor("XObject");
     if (!pXObject) {
-      pXObject = new CPDF_Dictionary;
+      pXObject = new CPDF_Dictionary(pDocument->GetByteStringPool());
       pNewXORes->SetFor("XObject", pXObject);
     }
 

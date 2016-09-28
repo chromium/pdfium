@@ -37,10 +37,15 @@ struct SearchTagRecord {
 int CPDF_SyntaxParser::s_CurrentRecursionDepth = 0;
 
 CPDF_SyntaxParser::CPDF_SyntaxParser()
+    : CPDF_SyntaxParser(CFX_WeakPtr<CFX_ByteStringPool>()) {}
+
+CPDF_SyntaxParser::CPDF_SyntaxParser(
+    const CFX_WeakPtr<CFX_ByteStringPool>& pPool)
     : m_MetadataObjnum(0),
       m_pFileAccess(nullptr),
       m_pFileBuf(nullptr),
-      m_BufSize(CPDF_ModuleMgr::kFileBufSize) {}
+      m_BufSize(CPDF_ModuleMgr::kFileBufSize),
+      m_pPool(pPool) {}
 
 CPDF_SyntaxParser::~CPDF_SyntaxParser() {
   FX_Free(m_pFileBuf);
@@ -409,15 +414,14 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler && bDecrypt)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return new CPDF_String(str, FALSE);
+    return new CPDF_String(MaybeIntern(str), FALSE);
   }
 
   if (word == "<") {
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler && bDecrypt)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-
-    return new CPDF_String(str, TRUE);
+    return new CPDF_String(MaybeIntern(str), TRUE);
   }
 
   if (word == "[") {
@@ -429,8 +433,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
   }
 
   if (word[0] == '/') {
-    return new CPDF_Name(
-        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
+    return new CPDF_Name(MaybeIntern(
+        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1))));
   }
 
   if (word == "<<") {
@@ -438,7 +442,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     FX_FILESIZE dwSignValuePos = 0;
 
     std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        new CPDF_Dictionary);
+        new CPDF_Dictionary(m_pPool));
     while (1) {
       CFX_ByteString key = GetNextWord(nullptr);
       if (key.IsEmpty())
@@ -531,14 +535,14 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectForStrict(
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return new CPDF_String(str, FALSE);
+    return new CPDF_String(MaybeIntern(str), FALSE);
   }
 
   if (word == "<") {
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return new CPDF_String(str, TRUE);
+    return new CPDF_String(MaybeIntern(str), TRUE);
   }
 
   if (word == "[") {
@@ -551,13 +555,13 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectForStrict(
   }
 
   if (word[0] == '/') {
-    return new CPDF_Name(
-        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
+    return new CPDF_Name(MaybeIntern(
+        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1))));
   }
 
   if (word == "<<") {
     std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        new CPDF_Dictionary);
+        new CPDF_Dictionary(m_pPool));
     while (1) {
       FX_FILESIZE SavedPos = m_Pos;
       CFX_ByteString key = GetNextWord(nullptr);
@@ -986,4 +990,8 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(const CFX_ByteStringC& tag,
 void CPDF_SyntaxParser::SetEncrypt(
     std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler) {
   m_pCryptoHandler = std::move(pCryptoHandler);
+}
+
+CFX_ByteString CPDF_SyntaxParser::MaybeIntern(const CFX_ByteString& str) {
+  return m_pPool ? m_pPool->Intern(str) : str;
 }

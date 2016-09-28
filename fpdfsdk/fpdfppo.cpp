@@ -70,7 +70,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   CPDF_Dictionary* pNewPages =
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
-    pNewPages = new CPDF_Dictionary;
+    pNewPages = new CPDF_Dictionary(pDestPDFDoc->GetByteStringPool());
     pNewRoot->SetReferenceFor("Pages", pDestPDFDoc,
                               pDestPDFDoc->AddIndirectObject(pNewPages));
   }

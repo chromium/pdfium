@@ -115,10 +115,10 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
   pMediaBoxArray->Add(new CPDF_Number(0));
   pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(width)));
   pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(height)));
-
   pPageDict->SetFor("MediaBox", pMediaBoxArray);
   pPageDict->SetFor("Rotate", new CPDF_Number(0));
-  pPageDict->SetFor("Resources", new CPDF_Dictionary);
+  pPageDict->SetFor("Resources",
+                    new CPDF_Dictionary(pDoc->GetByteStringPool()));
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pPage =

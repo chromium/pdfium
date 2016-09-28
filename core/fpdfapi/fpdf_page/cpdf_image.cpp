@@ -85,7 +85,8 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
     return nullptr;
   }
 
-  CPDF_Dictionary* pDict = new CPDF_Dictionary;
+  CPDF_Dictionary* pDict =
+      new CPDF_Dictionary(m_pDocument->GetByteStringPool());
   pDict->SetNameFor("Type", "XObject");
   pDict->SetNameFor("Subtype", "Image");
   pDict->SetIntegerFor("Width", width);
@@ -108,7 +109,8 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   pDict->SetIntegerFor("BitsPerComponent", bits);
   pDict->SetNameFor("Filter", "DCTDecode");
   if (!color_trans) {
-    CPDF_Dictionary* pParms = new CPDF_Dictionary;
+    CPDF_Dictionary* pParms =
+        new CPDF_Dictionary(m_pDocument->GetByteStringPool());
     pDict->SetFor("DecodeParms", pParms);
     pParms->SetIntegerFor("ColorTransform", 0);
   }
@@ -150,7 +152,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
   int32_t src_pitch = pBitmap->GetPitch();
   int32_t bpp = pBitmap->GetBPP();
 
-  CPDF_Dictionary* pDict = new CPDF_Dictionary;
+  CPDF_Dictionary* pDict =
+      new CPDF_Dictionary(m_pDocument->GetByteStringPool());
   pDict->SetNameFor("Type", "XObject");
   pDict->SetNameFor("Subtype", "Image");
   pDict->SetIntegerFor("Width", BitmapWidth);
@@ -213,8 +216,9 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
         ptr[2] = (uint8_t)argb;
         ptr += 3;
       }
-      CPDF_Stream* pCTS =
-          new CPDF_Stream(pColorTable, iPalette * 3, new CPDF_Dictionary);
+      CPDF_Stream* pCTS = new CPDF_Stream(
+          pColorTable, iPalette * 3,
+          new CPDF_Dictionary(m_pDocument->GetByteStringPool()));
       pCS->AddReference(m_pDocument, m_pDocument->AddIndirectObject(pCTS));
       pDict->SetReferenceFor("ColorSpace", m_pDocument,
                              m_pDocument->AddIndirectObject(pCS));
@@ -249,7 +253,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     int32_t maskHeight = pMaskBitmap->GetHeight();
     uint8_t* mask_buf = nullptr;
     FX_STRSIZE mask_size = 0;
-    CPDF_Dictionary* pMaskDict = new CPDF_Dictionary;
+    CPDF_Dictionary* pMaskDict =
+        new CPDF_Dictionary(m_pDocument->GetByteStringPool());
     pMaskDict->SetNameFor("Type", "XObject");
     pMaskDict->SetNameFor("Subtype", "Image");
     pMaskDict->SetIntegerFor("Width", maskWidth);

@@ -19,7 +19,8 @@
 #include "third_party/base/stl_util.h"
 #include "third_party/base/logging.h"
 
-CPDF_Dictionary::CPDF_Dictionary() {}
+CPDF_Dictionary::CPDF_Dictionary(const CFX_WeakPtr<CFX_ByteStringPool>& pPool)
+    : m_pPool(pPool) {}
 
 CPDF_Dictionary::~CPDF_Dictionary() {
   // Mark the object as deleted so that it will not be deleted again
@@ -61,7 +62,7 @@ CPDF_Object* CPDF_Dictionary::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  CPDF_Dictionary* pCopy = new CPDF_Dictionary();
+  CPDF_Dictionary* pCopy = new CPDF_Dictionary(m_pPool);
   for (const auto& it : *this) {
     CPDF_Object* value = it.second;
     if (!pdfium::ContainsKey(*pVisited, value)) {
@@ -174,7 +175,7 @@ void CPDF_Dictionary::SetFor(const CFX_ByteString& key, CPDF_Object* pObj) {
   auto it = m_Map.find(key);
   if (it == m_Map.end()) {
     if (pObj)
-      m_Map.insert(std::make_pair(key, pObj));
+      m_Map.insert(std::make_pair(MaybeIntern(key), pObj));
     return;
   }
 
@@ -211,7 +212,7 @@ void CPDF_Dictionary::ReplaceKey(const CFX_ByteString& oldkey,
     new_it->second->Release();
     new_it->second = old_it->second;
   } else {
-    m_Map.insert(std::make_pair(newkey, old_it->second));
+    m_Map.insert(std::make_pair(MaybeIntern(newkey), old_it->second));
   }
   m_Map.erase(old_it);
 }
@@ -222,12 +223,12 @@ void CPDF_Dictionary::SetIntegerFor(const CFX_ByteString& key, int i) {
 
 void CPDF_Dictionary::SetNameFor(const CFX_ByteString& key,
                                  const CFX_ByteString& name) {
-  SetFor(key, new CPDF_Name(name));
+  SetFor(key, new CPDF_Name(MaybeIntern(name)));
 }
 
 void CPDF_Dictionary::SetStringFor(const CFX_ByteString& key,
                                    const CFX_ByteString& str) {
-  SetFor(key, new CPDF_String(str, FALSE));
+  SetFor(key, new CPDF_String(MaybeIntern(str), FALSE));
 }
 
 void CPDF_Dictionary::SetReferenceFor(const CFX_ByteString& key,
@@ -264,4 +265,8 @@ void CPDF_Dictionary::SetMatrixFor(const CFX_ByteString& key,
   pArray->AddNumber(matrix.e);
   pArray->AddNumber(matrix.f);
   SetFor(key, pArray);
+}
+
+CFX_ByteString CPDF_Dictionary::MaybeIntern(const CFX_ByteString& str) {
+  return m_pPool ? m_pPool->Intern(str) : str;
 }

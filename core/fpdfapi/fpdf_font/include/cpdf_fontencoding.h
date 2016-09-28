@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONTENCODING_H_
 #define CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONTENCODING_H_
 
+#include "core/fxcrt/include/cfx_string_pool_template.h"
+#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_string.h"
 
 #define PDFFONT_ENCODING_BUILTIN 0
@@ -50,7 +52,7 @@ class CPDF_FontEncoding {
     m_Unicodes[charcode] = unicode;
   }
 
-  CPDF_Object* Realize();
+  CPDF_Object* Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool);
 
  public:
   FX_WCHAR m_Unicodes[256];

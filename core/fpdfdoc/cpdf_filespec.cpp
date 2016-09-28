@@ -110,8 +110,8 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   return true;
 }
 
-CPDF_FileSpec::CPDF_FileSpec() {
-  m_pObj = new CPDF_Dictionary;
+CPDF_FileSpec::CPDF_FileSpec(const CFX_WeakPtr<CFX_ByteStringPool>& pPool) {
+  m_pObj = new CPDF_Dictionary(pPool);
   m_pObj->AsDictionary()->SetNameFor("Type", "Filespec");
 }
 

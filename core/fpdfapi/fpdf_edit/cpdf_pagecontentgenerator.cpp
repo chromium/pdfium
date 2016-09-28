@@ -63,14 +63,15 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     CPDF_Object* pResourceObj,
     const CFX_ByteString& bsType) {
   if (!m_pPage->m_pResources) {
-    m_pPage->m_pResources = new CPDF_Dictionary;
+    m_pPage->m_pResources =
+        new CPDF_Dictionary(m_pDocument->GetByteStringPool());
     m_pPage->m_pFormDict->SetReferenceFor(
         "Resources", m_pDocument,
         m_pDocument->AddIndirectObject(m_pPage->m_pResources));
   }
   CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictFor(bsType);
   if (!pResList) {
-    pResList = new CPDF_Dictionary;
+    pResList = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
     m_pPage->m_pResources->SetFor(bsType, pResList);
   }
   CFX_ByteString name;
@@ -113,7 +114,8 @@ void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
   if (!data || !size)
     return;
 
-  CPDF_Dictionary* pFormDict = new CPDF_Dictionary;
+  CPDF_Dictionary* pFormDict =
+      new CPDF_Dictionary(m_pDocument->GetByteStringPool());
   pFormDict->SetNameFor("Type", "XObject");
   pFormDict->SetNameFor("Subtype", "Form");
 

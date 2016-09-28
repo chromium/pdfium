@@ -13,6 +13,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fpdfdoc/include/cpdf_linklist.h"
+#include "core/fxcrt/include/cfx_string_pool_template.h"
+#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CFX_Font;
@@ -47,6 +49,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Parser* GetParser() const { return m_pParser.get(); }
   CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
   CPDF_Dictionary* GetInfo() const { return m_pInfoDict; }
+  CFX_WeakPtr<CFX_ByteStringPool> GetByteStringPool() const {
+    return m_pByteStringPool;
+  }
 
   void DeletePage(int iPage);
   int GetPageCount() const;
@@ -134,6 +139,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
   CFX_ArrayTemplate<uint32_t> m_PageList;
+  CFX_WeakPtr<CFX_ByteStringPool> m_pByteStringPool;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DOCUMENT_H_

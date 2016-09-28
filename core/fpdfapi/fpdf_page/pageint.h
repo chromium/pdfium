@@ -16,6 +16,8 @@
 #include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
 #include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
+#include "core/fxcrt/include/cfx_string_pool_template.h"
+#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
@@ -43,6 +45,9 @@ class CPDF_StreamParser {
   enum SyntaxType { EndOfData, Number, Keyword, Name, Others };
 
   CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize);
+  CPDF_StreamParser(const uint8_t* pData,
+                    uint32_t dwSize,
+                    const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   ~CPDF_StreamParser();
 
   CPDF_Stream* ReadInlineStream(CPDF_Document* pDoc,
@@ -66,17 +71,14 @@ class CPDF_StreamParser {
   void GetNextWord(FX_BOOL& bIsNumber);
   CFX_ByteString ReadString();
   CFX_ByteString ReadHexString();
+
   const uint8_t* m_pBuf;
-
-  // Length in bytes of m_pBuf.
-  uint32_t m_Size;
-
-  // Current byte position within m_pBuf.
-  uint32_t m_Pos;
-
+  uint32_t m_Size;  // Length in bytes of m_pBuf.
+  uint32_t m_Pos;   // Current byte position within m_pBuf.
   uint8_t m_WordBuffer[256];
   uint32_t m_WordSize;
   CPDF_Object* m_pLastObj;
+  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
 
  private:
   bool PositionIsInBounds() const;

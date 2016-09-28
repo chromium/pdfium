@@ -281,7 +281,8 @@ void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
   if (len > 32) {
     param.m_Type = ContentParam::OBJECT;
-    param.m_pObject = new CPDF_Name(PDF_NameDecode(bsName));
+    param.m_pObject = new CPDF_Name(
+        m_pDocument->GetByteStringPool()->Intern(PDF_NameDecode(bsName)));
   } else {
     param.m_Type = ContentParam::NAME;
     if (bsName.Find('#') == -1) {
@@ -343,8 +344,8 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
     return pNumber;
   }
   if (param.m_Type == ContentParam::NAME) {
-    CPDF_Name* pName = new CPDF_Name(
-        CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len));
+    CPDF_Name* pName = new CPDF_Name(m_pDocument->GetByteStringPool()->Intern(
+        CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len)));
     param.m_Type = ContentParam::OBJECT;
     param.m_pObject = pName;
     return pName;
@@ -589,7 +590,8 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = m_pSyntax->GetPos();
-  CPDF_Dictionary* pDict = new CPDF_Dictionary;
+  CPDF_Dictionary* pDict =
+      new CPDF_Dictionary(m_pDocument->GetByteStringPool());
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::Keyword) {
@@ -1499,7 +1501,7 @@ uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
     return dwSize;
   }
   uint32_t InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
-  CPDF_StreamParser syntax(pData, dwSize);
+  CPDF_StreamParser syntax(pData, dwSize, m_pDocument->GetByteStringPool());
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   while (1) {
     uint32_t cost = m_pObjectHolder->GetPageObjectList()->size() - InitObjCount;

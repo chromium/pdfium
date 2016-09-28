@@ -81,6 +81,8 @@ class CPDF_Annot {
   CFX_FloatRect GetRect() const;
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
   CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
+  CPDF_Document* GetDocument() const { return m_pDocument; }
+
   FX_BOOL DrawAppearance(CPDF_Page* pPage,
                          CFX_RenderDevice* pDevice,
                          const CFX_Matrix* pUser2Device,
@@ -90,6 +92,7 @@ class CPDF_Annot {
                         CPDF_RenderContext* pContext,
                         const CFX_Matrix* pUser2Device,
                         AppearanceMode mode);
+
   void ClearCachedAP();
   void DrawBorder(CFX_RenderDevice* pDevice,
                   const CFX_Matrix* pUser2Device,

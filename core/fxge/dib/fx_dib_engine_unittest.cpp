@@ -16,7 +16,7 @@
 TEST(CStretchEngine, OverflowInCtor) {
   FX_RECT clip_rect;
   std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> dict_obj(
-      new CPDF_Dictionary);
+      new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
   dict_obj->SetFor("Width", new CPDF_Number(71000));
   dict_obj->SetFor("Height", new CPDF_Number(12500));
   std::unique_ptr<CPDF_Stream, ReleaseDeleter<CPDF_Stream>> stream(

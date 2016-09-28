@@ -1670,7 +1670,7 @@ FX_BOOL CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
          0;
 }
 
-CPDF_Object* CPDF_FontEncoding::Realize() {
+CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
   int predefined = 0;
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
        cs++) {
@@ -1689,13 +1689,13 @@ CPDF_Object* CPDF_FontEncoding::Realize() {
   }
   if (predefined) {
     if (predefined == PDFFONT_ENCODING_WINANSI) {
-      return new CPDF_Name("WinAnsiEncoding");
+      return new CPDF_Name(pPool->Intern("WinAnsiEncoding"));
     }
     if (predefined == PDFFONT_ENCODING_MACROMAN) {
-      return new CPDF_Name("MacRomanEncoding");
+      return new CPDF_Name(pPool->Intern("MacRomanEncoding"));
     }
     if (predefined == PDFFONT_ENCODING_MACEXPERT) {
-      return new CPDF_Name("MacExpertEncoding");
+      return new CPDF_Name(pPool->Intern("MacExpertEncoding"));
     }
     return nullptr;
   }
@@ -1710,7 +1710,7 @@ CPDF_Object* CPDF_FontEncoding::Realize() {
     pDiff->Add(new CPDF_Name(PDF_AdobeNameFromUnicode(m_Unicodes[i])));
   }
 
-  CPDF_Dictionary* pDict = new CPDF_Dictionary;
+  CPDF_Dictionary* pDict = new CPDF_Dictionary(pPool);
   pDict->SetNameFor("BaseEncoding", "WinAnsiEncoding");
   pDict->SetFor("Differences", pDiff);
   return pDict;

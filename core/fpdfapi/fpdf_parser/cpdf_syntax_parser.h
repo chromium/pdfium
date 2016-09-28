@@ -9,6 +9,8 @@
 
 #include <memory>
 
+#include "core/fxcrt/include/cfx_string_pool_template.h"
+#include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_CryptoHandler;
@@ -21,6 +23,7 @@ class IFX_FileRead;
 class CPDF_SyntaxParser {
  public:
   CPDF_SyntaxParser();
+  explicit CPDF_SyntaxParser(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   ~CPDF_SyntaxParser();
 
   void InitParser(IFX_FileRead* pFileAccess, uint32_t HeaderOffset);
@@ -64,7 +67,6 @@ class CPDF_SyntaxParser {
   static int s_CurrentRecursionDepth;
 
   uint32_t GetDirectNum();
-
   FX_BOOL GetNextChar(uint8_t& ch);
   FX_BOOL GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
   void GetNextWordInternal(bool* bIsNumber);
@@ -80,6 +82,8 @@ class CPDF_SyntaxParser {
                           uint32_t objnum,
                           uint32_t gennum);
 
+  CFX_ByteString MaybeIntern(const CFX_ByteString& str);
+
   FX_FILESIZE m_Pos;
   int m_MetadataObjnum;
   IFX_FileRead* m_pFileAccess;
@@ -91,6 +95,7 @@ class CPDF_SyntaxParser {
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   uint32_t m_WordSize;
+  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_SYNTAX_PARSER_H_

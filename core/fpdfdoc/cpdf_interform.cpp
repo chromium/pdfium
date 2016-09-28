@@ -58,7 +58,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     return;
 
   if (!pFormDict) {
-    pFormDict = new CPDF_Dictionary;
+    pFormDict = new CPDF_Dictionary(pDocument->GetByteStringPool());
     pDocument->GetRoot()->SetReferenceFor(
         "AcroForm", pDocument, pDocument->AddIndirectObject(pFormDict));
   }
@@ -259,12 +259,12 @@ void AddFont(CPDF_Dictionary*& pFormDict,
 
   CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
   if (!pDR) {
-    pDR = new CPDF_Dictionary;
+    pDR = new CPDF_Dictionary(pDocument->GetByteStringPool());
     pFormDict->SetFor("DR", pDR);
   }
   CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
   if (!pFonts) {
-    pFonts = new CPDF_Dictionary;
+    pFonts = new CPDF_Dictionary(pDocument->GetByteStringPool());
     pDR->SetFor("Font", pFonts);
   }
   if (csNameTag.IsEmpty())
@@ -1212,7 +1212,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
       pMainDict->SetStringFor("F", CFX_ByteString::FromUnicode(wsFilePath));
       pMainDict->SetStringFor("UF", PDF_EncodeText(wsFilePath));
     } else {
-      CPDF_FileSpec filespec;
+      CPDF_FileSpec filespec(pDoc->GetByteStringPool());
       filespec.SetFileName(pdf_path);
       pMainDict->SetFor("F", filespec.GetObj());
     }
@@ -1235,7 +1235,8 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
         continue;
 
       CFX_WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
-      CPDF_Dictionary* pFieldDict = new CPDF_Dictionary;
+      CPDF_Dictionary* pFieldDict =
+          new CPDF_Dictionary(pDoc->GetByteStringPool());
       pFieldDict->SetFor("T", new CPDF_String(fullname));
       if (pField->GetType() == CPDF_FormField::CheckBox ||
           pField->GetType() == CPDF_FormField::RadioButton) {

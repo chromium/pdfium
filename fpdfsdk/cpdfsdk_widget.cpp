@@ -1815,9 +1815,6 @@ CPWL_Color CPDFSDK_Widget::GetFillPWLColor() const {
 
 void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
                                           CPDF_Stream* pImage) {
-  CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
-  ASSERT(pDoc);
-
   CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
   CPDF_Stream* pStream = pAPDict->GetStreamFor(sAPType);
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
@@ -1829,13 +1826,14 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
       sImageAlias = "IMG";
   }
 
+  CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
   CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
   if (!pStreamResList) {
-    pStreamResList = new CPDF_Dictionary();
+    pStreamResList = new CPDF_Dictionary(pDoc->GetByteStringPool());
     pStreamDict->SetFor("Resources", pStreamResList);
   }
 
-  CPDF_Dictionary* pXObject = new CPDF_Dictionary;
+  CPDF_Dictionary* pXObject = new CPDF_Dictionary(pDoc->GetByteStringPool());
   pXObject->SetReferenceFor(sImageAlias, pDoc, pImage->GetObjNum());
   pStreamResList->SetFor("XObject", pXObject);
 }

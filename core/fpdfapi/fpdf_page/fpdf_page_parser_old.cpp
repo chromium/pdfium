@@ -41,12 +41,22 @@ const FX_STRSIZE kMaxStringLength = 32767;
 
 }  // namespace
 
-CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize) {
-  m_pBuf = pData;
-  m_Size = dwSize;
-  m_Pos = 0;
-  m_pLastObj = nullptr;
-}
+CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize)
+    : m_pBuf(pData),
+      m_Size(dwSize),
+      m_Pos(0),
+      m_pLastObj(nullptr),
+      m_pPool(nullptr) {}
+
+CPDF_StreamParser::CPDF_StreamParser(
+    const uint8_t* pData,
+    uint32_t dwSize,
+    const CFX_WeakPtr<CFX_ByteStringPool>& pPool)
+    : m_pBuf(pData),
+      m_Size(dwSize),
+      m_Pos(0),
+      m_pLastObj(nullptr),
+      m_pPool(pPool) {}
 
 CPDF_StreamParser::~CPDF_StreamParser() {
   if (m_pLastObj) {
@@ -336,18 +346,21 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
 
   int first_char = m_WordBuffer[0];
   if (first_char == '/') {
-    return new CPDF_Name(
-        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
+    CFX_ByteString name =
+        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
+    return new CPDF_Name(m_pPool ? m_pPool->Intern(name) : name);
   }
 
-  if (first_char == '(')
-    return new CPDF_String(ReadString(), FALSE);
+  if (first_char == '(') {
+    CFX_ByteString str = ReadString();
+    return new CPDF_String(m_pPool ? m_pPool->Intern(str) : str, FALSE);
+  }
 
   if (first_char == '<') {
     if (m_WordSize == 1)
       return new CPDF_String(ReadHexString(), TRUE);
 
-    CPDF_Dictionary* pDict = new CPDF_Dictionary;
+    CPDF_Dictionary* pDict = new CPDF_Dictionary(m_pPool);
     while (1) {
       GetNextWord(bIsNumber);
       if (m_WordSize == 2 && m_WordBuffer[0] == '>')
