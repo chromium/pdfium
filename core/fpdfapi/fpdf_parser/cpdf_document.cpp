@@ -10,7 +10,7 @@
 #include <set>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
+#include "core/fpdfapi/fpdf_font/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONT_H_
-#define CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONT_H_
+#ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_FONT_H_
+#define CORE_FPDFAPI_FPDF_FONT_CPDF_FONT_H_
 
 #include <memory>
 #include <vector>
@@ -129,4 +129,4 @@ class CPDF_Font {
   int m_ItalicAngle;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONT_H_
+#endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_FONT_H_

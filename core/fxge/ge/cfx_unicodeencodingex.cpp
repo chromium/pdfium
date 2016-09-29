@@ -6,7 +6,7 @@
 
 #include "core/fxge/include/cfx_unicodeencodingex.h"
 
-#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
+#include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fxge/include/fx_font.h"
 #include "core/fxge/include/fx_freetype.h"
 

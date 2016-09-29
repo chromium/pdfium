@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
+#include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxcrt/include/fx_xml.h"

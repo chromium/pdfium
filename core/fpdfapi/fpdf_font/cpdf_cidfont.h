@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
+#include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 

@@ -6,7 +6,7 @@
 
 #include "core/fpdfdoc/cpvt_fontmap.h"
 
-#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
+#include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONTENCODING_H_
-#define CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONTENCODING_H_
+#ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_FONTENCODING_H_
+#define CORE_FPDFAPI_FPDF_FONT_CPDF_FONTENCODING_H_
 
 #include "core/fxcrt/include/cfx_string_pool_template.h"
 #include "core/fxcrt/include/cfx_weak_ptr.h"
@@ -58,4 +58,4 @@ class CPDF_FontEncoding {
   FX_WCHAR m_Unicodes[256];
 };
 
-#endif  // CORE_FPDFAPI_FPDF_FONT_INCLUDE_CPDF_FONTENCODING_H_
+#endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_FONTENCODING_H_
