@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/include/xfa_checksum.h"
 
-#include "core/fdrm/crypto/include/fx_crypt.h"
+#include "core/fdrm/crypto/fx_crypt.h"
 
 namespace {
 

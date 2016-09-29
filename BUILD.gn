@@ -222,9 +222,9 @@ visibility = [
 static_library("fdrm") {
   sources = [
     "core/fdrm/crypto/fx_crypt.cpp",
+    "core/fdrm/crypto/fx_crypt.h",
     "core/fdrm/crypto/fx_crypt_aes.cpp",
     "core/fdrm/crypto/fx_crypt_sha.cpp",
-    "core/fdrm/crypto/include/fx_crypt.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [

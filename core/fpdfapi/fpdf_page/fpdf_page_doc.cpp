@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <set>
 
-#include "core/fdrm/crypto/include/fx_crypt.h"
+#include "core/fdrm/crypto/fx_crypt.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"

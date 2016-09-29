@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/JS_GlobalData.h"
 
-#include "core/fdrm/crypto/include/fx_crypt.h"
+#include "core/fdrm/crypto/fx_crypt.h"
 #include "third_party/base/stl_util.h"
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
