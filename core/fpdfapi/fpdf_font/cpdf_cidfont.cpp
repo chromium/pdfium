@@ -829,8 +829,8 @@ void CPDF_CIDFont::LoadGB2312() {
   m_Charset = CIDSET_GB1;
   m_bType1 = false;
   CPDF_CMapManager& manager = GetFontGlobals()->m_CMapManager;
-  m_pCMap = manager.GetPredefinedCMap("GBK-EUC-H", FALSE);
-  m_pCID2UnicodeMap = manager.GetCID2UnicodeMap(m_Charset, FALSE);
+  m_pCMap = manager.GetPredefinedCMap("GBK-EUC-H", false);
+  m_pCID2UnicodeMap = manager.GetCID2UnicodeMap(m_Charset, false);
   if (!IsEmbedded())
     LoadSubstFont();
 

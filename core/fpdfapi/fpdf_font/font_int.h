@@ -29,13 +29,12 @@ class CPDF_CMapManager {
   CPDF_CMapManager();
   ~CPDF_CMapManager();
 
-  void* GetPackage(FX_BOOL bPrompt);
-  CPDF_CMap* GetPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPromptCJK);
-  CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, FX_BOOL bPromptCJK);
+  CPDF_CMap* GetPredefinedCMap(const CFX_ByteString& name, bool bPromptCJK);
+  CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
 
  private:
-  CPDF_CMap* LoadPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPromptCJK);
-  CPDF_CID2UnicodeMap* LoadCID2UnicodeMap(CIDSet charset, FX_BOOL bPromptCJK);
+  CPDF_CMap* LoadPredefinedCMap(const CFX_ByteString& name, bool bPromptCJK);
+  CPDF_CID2UnicodeMap* LoadCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
 
   std::map<CFX_ByteString, CPDF_CMap*> m_CMaps;
   CPDF_CID2UnicodeMap* m_CID2UnicodeMaps[6];
@@ -91,7 +90,7 @@ class CPDF_CMapParser {
  public:
   CPDF_CMapParser();
   ~CPDF_CMapParser();
-  FX_BOOL Initialize(CPDF_CMap* pMap);
+  void Initialize(CPDF_CMap* pMap);
   void ParseWord(const CFX_ByteStringC& str);
   CFX_BinaryBuf m_AddMaps;
 
@@ -135,12 +134,12 @@ class CPDF_CMap {
   CPDF_CMap();
   ~CPDF_CMap();
 
-  FX_BOOL LoadPredefined(CPDF_CMapManager* pMgr,
-                         const CFX_ByteString& name,
-                         FX_BOOL bPromptCJK);
-  FX_BOOL LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
+  void LoadPredefined(CPDF_CMapManager* pMgr,
+                      const CFX_ByteString& name,
+                      bool bPromptCJK);
+  void LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
 
-  FX_BOOL IsLoaded() const;
+  bool IsLoaded() const;
   bool IsVertWriting() const;
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   int GetCharSize(uint32_t charcode) const;
@@ -161,7 +160,7 @@ class CPDF_CMap {
   uint8_t* m_pLeadingBytes;
   uint16_t* m_pMapping;
   uint8_t* m_pAddMapping;
-  FX_BOOL m_bLoaded;
+  bool m_bLoaded;
   const FXCMAP_CMap* m_pEmbedMap;
 };
 
@@ -170,9 +169,8 @@ class CPDF_CID2UnicodeMap {
   CPDF_CID2UnicodeMap();
   ~CPDF_CID2UnicodeMap();
 
-  FX_BOOL Initialize();
-  FX_BOOL IsLoaded();
-  void Load(CPDF_CMapManager* pMgr, CIDSet charset, FX_BOOL bPromptCJK);
+  bool IsLoaded();
+  void Load(CPDF_CMapManager* pMgr, CIDSet charset, bool bPromptCJK);
   FX_WCHAR UnicodeFromCID(uint16_t CID);
 
  private:

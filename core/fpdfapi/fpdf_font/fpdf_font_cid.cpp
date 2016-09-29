@@ -291,7 +291,7 @@ CPDF_CMapManager::~CPDF_CMapManager() {
   }
 }
 CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name,
-                                               FX_BOOL bPromptCJK) {
+                                               bool bPromptCJK) {
   auto it = m_CMaps.find(name);
   if (it != m_CMaps.end()) {
     return it->second;
@@ -303,7 +303,7 @@ CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name,
   return pCMap;
 }
 CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
-                                                FX_BOOL bPromptCJK) {
+                                                bool bPromptCJK) {
   CPDF_CMap* pCMap = new CPDF_CMap;
   const FX_CHAR* pname = name.c_str();
   if (*pname == '/') {
@@ -314,18 +314,14 @@ CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
 }
 
 CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(CIDSet charset,
-                                                         FX_BOOL bPromptCJK) {
+                                                         bool bPromptCJK) {
   if (!m_CID2UnicodeMaps[charset])
     m_CID2UnicodeMaps[charset] = LoadCID2UnicodeMap(charset, bPromptCJK);
   return m_CID2UnicodeMaps[charset];
 }
 CPDF_CID2UnicodeMap* CPDF_CMapManager::LoadCID2UnicodeMap(CIDSet charset,
-                                                          FX_BOOL bPromptCJK) {
+                                                          bool bPromptCJK) {
   CPDF_CID2UnicodeMap* pMap = new CPDF_CID2UnicodeMap();
-  if (!pMap->Initialize()) {
-    delete pMap;
-    return nullptr;
-  }
   pMap->Load(this, charset, bPromptCJK);
   return pMap;
 }
@@ -335,12 +331,11 @@ CPDF_CMapParser::CPDF_CMapParser()
 
 CPDF_CMapParser::~CPDF_CMapParser() {}
 
-FX_BOOL CPDF_CMapParser::Initialize(CPDF_CMap* pCMap) {
+void CPDF_CMapParser::Initialize(CPDF_CMap* pCMap) {
   m_pCMap = pCMap;
   m_Status = 0;
   m_CodeSeq = 0;
   m_AddMaps.EstimateSize(0, 10240);
-  return TRUE;
 }
 
 void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
@@ -501,7 +496,7 @@ CPDF_CMap::CPDF_CMap() {
   m_Coding = CIDCODING_UNKNOWN;
   m_CodingScheme = TwoBytes;
   m_bVertical = false;
-  m_bLoaded = FALSE;
+  m_bLoaded = false;
   m_pMapping = nullptr;
   m_pLeadingBytes = nullptr;
   m_pAddMapping = nullptr;
@@ -514,7 +509,7 @@ CPDF_CMap::~CPDF_CMap() {
   FX_Free(m_pLeadingBytes);
 }
 
-FX_BOOL CPDF_CMap::IsLoaded() const {
+bool CPDF_CMap::IsLoaded() const {
   return m_bLoaded;
 }
 
@@ -522,15 +517,15 @@ bool CPDF_CMap::IsVertWriting() const {
   return m_bVertical;
 }
 
-FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
-                                  const CFX_ByteString& bsName,
-                                  FX_BOOL bPromptCJK) {
+void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
+                               const CFX_ByteString& bsName,
+                               bool bPromptCJK) {
   m_PredefinedCMap = bsName;
   if (m_PredefinedCMap == "Identity-H" || m_PredefinedCMap == "Identity-V") {
     m_Coding = CIDCODING_CID;
     m_bVertical = bsName[9] == 'V';
-    m_bLoaded = TRUE;
-    return TRUE;
+    m_bLoaded = true;
+    return;
   }
   CFX_ByteString cmapid = m_PredefinedCMap;
   m_bVertical = cmapid.Right(1) == "V";
@@ -545,7 +540,7 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
     }
   }
   if (!map)
-    return FALSE;
+    return;
 
   m_Charset = map->m_Charset;
   m_Coding = map->m_Coding;
@@ -561,13 +556,12 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
   }
   FPDFAPI_FindEmbeddedCMap(bsName, m_Charset, m_Coding, m_pEmbedMap);
   if (!m_pEmbedMap)
-    return FALSE;
+    return;
 
-  m_bLoaded = TRUE;
-  return TRUE;
+  m_bLoaded = true;
 }
 
-FX_BOOL CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
+void CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
   m_pMapping = FX_Alloc(uint16_t, 65536);
   CPDF_CMapParser parser;
   parser.Initialize(this);
@@ -587,7 +581,6 @@ FX_BOOL CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
     FXSYS_qsort(m_pAddMapping + 4, parser.m_AddMaps.GetSize() / 8, 8,
                 CompareDWORD);
   }
-  return TRUE;
 }
 
 uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
@@ -750,16 +743,17 @@ int CPDF_CMap::AppendChar(FX_CHAR* str, uint32_t charcode) const {
   }
   return 0;
 }
+
 CPDF_CID2UnicodeMap::CPDF_CID2UnicodeMap() {
   m_EmbeddedCount = 0;
 }
+
 CPDF_CID2UnicodeMap::~CPDF_CID2UnicodeMap() {}
-FX_BOOL CPDF_CID2UnicodeMap::Initialize() {
-  return TRUE;
-}
-FX_BOOL CPDF_CID2UnicodeMap::IsLoaded() {
+
+bool CPDF_CID2UnicodeMap::IsLoaded() {
   return m_EmbeddedCount != 0;
 }
+
 FX_WCHAR CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) {
   if (m_Charset == CIDSET_UNICODE) {
     return CID;
@@ -772,7 +766,7 @@ FX_WCHAR CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) {
 
 void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
                                CIDSet charset,
-                               FX_BOOL bPromptCJK) {
+                               bool bPromptCJK) {
   m_Charset = charset;
 
   CPDF_FontGlobals* pFontGlobals =
