@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_textobject.h"
 
 #include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
 #include "core/fpdfapi/fpdf_font/cpdf_font.h"

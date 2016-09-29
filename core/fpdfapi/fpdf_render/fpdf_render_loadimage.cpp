@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_image.h"
+#include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"

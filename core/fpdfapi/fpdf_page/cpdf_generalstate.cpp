@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_generalstate.h"
+#include "core/fpdfapi/fpdf_page/cpdf_generalstate.h"
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"

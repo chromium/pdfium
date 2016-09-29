@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
+#include "core/fpdfapi/fpdf_page/cpdf_image.h"
 
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
+#include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"

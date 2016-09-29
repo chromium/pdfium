@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_CLIPPATH_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_CLIPPATH_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_CLIPPATH_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_CLIPPATH_H_
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_path.h"
+#include "core/fpdfapi/fpdf_page/cpdf_path.h"
 #include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -60,4 +60,4 @@ class CPDF_ClipPath {
   CFX_CountRef<PathData> m_Ref;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_CLIPPATH_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_CLIPPATH_H_

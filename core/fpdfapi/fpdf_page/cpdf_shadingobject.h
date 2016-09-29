@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_SHADINGOBJECT_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_SHADINGOBJECT_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_SHADINGOBJECT_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_SHADINGOBJECT_H_
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
 class CPDF_ShadingPattern;
@@ -31,4 +31,4 @@ class CPDF_ShadingObject : public CPDF_PageObject {
   CFX_Matrix m_Matrix;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_SHADINGOBJECT_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_SHADINGOBJECT_H_

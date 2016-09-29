@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_COUNTEDOBJECT_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_COUNTEDOBJECT_H_
 
+#include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
 #include "core/fxcrt/include/fx_system.h"
 
 template <class T>

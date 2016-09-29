@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORMOBJECT_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORMOBJECT_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_FORMOBJECT_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_FORMOBJECT_H_
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
 class CPDF_Form;
@@ -34,4 +34,4 @@ class CPDF_FormObject : public CPDF_PageObject {
   CFX_Matrix m_FormMatrix;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORMOBJECT_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_FORMOBJECT_H_

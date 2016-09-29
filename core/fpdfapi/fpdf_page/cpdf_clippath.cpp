@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_clippath.h"
+#include "core/fpdfapi/fpdf_page/cpdf_clippath.h"
 
 #include <utility>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_path.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_path.h"
+#include "core/fpdfapi/fpdf_page/cpdf_textobject.h"
 #include "third_party/base/stl_util.h"
 
 #define FPDF_CLIPPATH_MAX_TEXTS 1024

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATE_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATE_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_GENERALSTATE_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_GENERALSTATE_H_
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -106,4 +106,4 @@ class CPDF_GeneralState {
   CFX_CountRef<StateData> m_Ref;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATE_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_GENERALSTATE_H_

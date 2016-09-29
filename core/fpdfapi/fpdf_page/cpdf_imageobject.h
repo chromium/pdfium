@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGEOBJECT_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGEOBJECT_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_IMAGEOBJECT_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_IMAGEOBJECT_H_
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
 class CPDF_Image;
@@ -41,4 +41,4 @@ class CPDF_ImageObject : public CPDF_PageObject {
   bool m_pImageOwned;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGEOBJECT_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_IMAGEOBJECT_H_

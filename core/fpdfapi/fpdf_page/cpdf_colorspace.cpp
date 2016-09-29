@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
+#include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
 
 #include <memory>
 

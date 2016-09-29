@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 
 CPDF_PageObject::CPDF_PageObject() {}
 

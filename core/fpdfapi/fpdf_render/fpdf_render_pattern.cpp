@@ -8,14 +8,14 @@
 
 #include <algorithm>
 
+#include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
 #include "core/fpdfapi/fpdf_page/cpdf_meshstream.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pathobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_shadingobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/cpdf_tilingpattern.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_pathobject.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_shadingobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"

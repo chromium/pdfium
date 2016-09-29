@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORM_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORM_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_FORM_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_FORM_H_
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobjectholder.h"
 
 class CPDF_Document;
 class CPDF_Dictionary;
@@ -38,4 +38,4 @@ class CPDF_Form : public CPDF_PageObjectHolder {
                   int level = 0);
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORM_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_FORM_H_

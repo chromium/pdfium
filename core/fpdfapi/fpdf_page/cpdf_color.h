@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLOR_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLOR_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_COLOR_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_COLOR_H_
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
+#include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
 #include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Pattern;
@@ -38,4 +38,4 @@ class CPDF_Color {
   FX_FLOAT* m_pBuffer;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLOR_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_COLOR_H_

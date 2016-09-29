@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGE_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGE_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_IMAGE_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_IMAGE_H_
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -87,4 +87,4 @@ class CPDF_Image {
   CPDF_Dictionary* m_pOC;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_IMAGE_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_IMAGE_H_

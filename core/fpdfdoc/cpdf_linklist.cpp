@@ -6,7 +6,7 @@
 
 #include "core/fpdfdoc/include/cpdf_linklist.h"
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
+#include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 
 CPDF_LinkList::CPDF_LinkList() {}

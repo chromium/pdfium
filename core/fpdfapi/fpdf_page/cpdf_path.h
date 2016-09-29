@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PATH_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PATH_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PATH_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_PATH_H_
 
 #include "core/fxcrt/include/cfx_count_ref.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -47,4 +47,4 @@ class CPDF_Path {
   CFX_CountRef<CFX_PathData> m_Ref;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PATH_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_PATH_H_

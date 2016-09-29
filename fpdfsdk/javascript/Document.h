@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_textobject.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 

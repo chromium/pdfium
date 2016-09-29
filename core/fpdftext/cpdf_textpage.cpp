@@ -11,11 +11,11 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_font/cpdf_font.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_form.h"
+#include "core/fpdfapi/fpdf_page/cpdf_formobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_page.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_textobject.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdftext/unicodenormalizationdata.h"

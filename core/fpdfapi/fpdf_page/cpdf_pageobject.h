@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGEOBJECT_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGEOBJECT_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEOBJECT_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEOBJECT_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
@@ -68,4 +68,4 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   void operator=(const CPDF_PageObject& src) = delete;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGEOBJECT_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEOBJECT_H_

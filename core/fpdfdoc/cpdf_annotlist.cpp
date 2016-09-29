@@ -6,7 +6,7 @@
 
 #include "core/fpdfdoc/include/cpdf_annotlist.h"
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
+#include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"

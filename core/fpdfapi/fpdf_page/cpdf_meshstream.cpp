@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_meshstream.h"
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
+#include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 

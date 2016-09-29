@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGEOBJECTHOLDER_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGEOBJECTHOLDER_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEOBJECTHOLDER_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEOBJECTHOLDER_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -65,4 +65,4 @@ class CPDF_PageObjectHolder {
   CPDF_PageObjectList m_PageObjectList;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGEOBJECTHOLDER_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEOBJECTHOLDER_H_

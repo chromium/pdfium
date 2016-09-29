@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
-#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
+#include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"

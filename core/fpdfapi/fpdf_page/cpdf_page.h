@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGE_H_
-#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGE_H_
+#ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGE_H_
+#define CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGE_H_
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -66,4 +66,4 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   std::unique_ptr<CPDF_PageRenderContext> m_pRenderContext;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGE_H_
+#endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGE_H_

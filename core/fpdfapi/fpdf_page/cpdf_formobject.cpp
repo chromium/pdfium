@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
+#include "core/fpdfapi/fpdf_page/cpdf_formobject.h"
 
-#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
+#include "core/fpdfapi/fpdf_page/cpdf_form.h"
 
 CPDF_FormObject::CPDF_FormObject() {}
 
