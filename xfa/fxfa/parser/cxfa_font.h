@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_FONT_H_
 #define XFA_FXFA_PARSER_CXFA_FONT_H_
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;

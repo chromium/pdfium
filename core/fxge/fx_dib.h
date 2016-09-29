@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_FX_DIB_H_
-#define CORE_FXGE_INCLUDE_FX_DIB_H_
+#ifndef CORE_FXGE_FX_DIB_H_
+#define CORE_FXGE_FX_DIB_H_
 
 #include <memory>
 #include <vector>
@@ -677,4 +677,4 @@ class CFX_ImageRenderer {
   int m_BlendType;
 };
 
-#endif  // CORE_FXGE_INCLUDE_FX_DIB_H_
+#endif  // CORE_FXGE_FX_DIB_H_

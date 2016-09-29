@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_fontmapper.h"
+#include "core/fxge/cfx_fontmapper.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "core/fxge/include/cfx_substfont.h"
-#include "core/fxge/include/fx_font.h"
-#include "core/fxge/include/ifx_systemfontinfo.h"
+#include "core/fxge/cfx_substfont.h"
+#include "core/fxge/fx_font.h"
+#include "core/fxge/ifx_systemfontinfo.h"
 
 #include "third_party/base/stl_util.h"
 

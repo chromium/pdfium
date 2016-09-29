@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 class CPDF_Object;
 class CPDF_TransferFunc;

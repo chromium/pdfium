@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_IFDE_TXTEDTENGINE_H_
 #define XFA_FDE_IFDE_TXTEDTENGINE_H_
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fgas/font/fgas_font.h"
 
 class CFDE_TxtEdtEngine;

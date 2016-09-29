@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_FDE_GEDEVICE_H_
 #define XFA_FDE_FDE_GEDEVICE_H_
 
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
 class CFDE_Brush;

@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_IFX_SYSTEMFONTINFO_H_
-#define CORE_FXGE_INCLUDE_IFX_SYSTEMFONTINFO_H_
+#ifndef CORE_FXGE_IFX_SYSTEMFONTINFO_H_
+#define CORE_FXGE_IFX_SYSTEMFONTINFO_H_
 
-#include "core/fxge/include/cfx_fontmapper.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/fx_font.h"
 
 const uint32_t kTableNAME = FXDWORD_GET_MSBFIRST("name");
 const uint32_t kTableTTCF = FXDWORD_GET_MSBFIRST("ttcf");
@@ -46,4 +46,4 @@ class IFX_SystemFontInfo {
   virtual void DeleteFont(void* hFont) = 0;
 };
 
-#endif  // CORE_FXGE_INCLUDE_IFX_SYSTEMFONTINFO_H_
+#endif  // CORE_FXGE_IFX_SYSTEMFONTINFO_H_

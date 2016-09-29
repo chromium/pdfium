@@ -9,9 +9,9 @@
 #include <memory>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fxge/include/cfx_fontmapper.h"
-#include "core/fxge/include/cfx_fontmgr.h"
-#include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/cfx_fontmgr.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"

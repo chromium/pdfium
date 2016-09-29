@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_fontmgr.h"
+#include "core/fxge/cfx_fontmgr.h"
 
+#include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
+#include "core/fxge/fx_font.h"
 #include "core/fxge/ge/cttfontdesc.h"
-#include "core/fxge/include/cfx_fontmapper.h"
-#include "core/fxge/include/cfx_substfont.h"
-#include "core/fxge/include/fx_font.h"
-#include "core/fxge/include/ifx_systemfontinfo.h"
+#include "core/fxge/ifx_systemfontinfo.h"
 
 namespace {
 

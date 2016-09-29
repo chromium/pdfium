@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_SUBSTFONT_H_
-#define CORE_FXGE_INCLUDE_CFX_SUBSTFONT_H_
+#ifndef CORE_FXGE_CFX_SUBSTFONT_H_
+#define CORE_FXGE_CFX_SUBSTFONT_H_
 
 #include "core/fxcrt/fx_string.h"
 
@@ -31,4 +31,4 @@ class CFX_SubstFont {
   bool m_bItalicCJK;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_SUBSTFONT_H_
+#endif  // CORE_FXGE_CFX_SUBSTFONT_H_

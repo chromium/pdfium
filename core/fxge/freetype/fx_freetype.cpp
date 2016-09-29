@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_freetype.h"
 
 #include "third_party/freetype/src/psnames/pstables.h"
 

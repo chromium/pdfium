@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fxge/include/cfx_substfont.h"
+#include "core/fxge/cfx_substfont.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 
 CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,

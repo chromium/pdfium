@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_fontmapper.h"
-#include "core/fxge/include/ifx_systemfontinfo.h"
+#include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/ifx_systemfontinfo.h"
 
 static CFX_ByteString GetStringFromTable(const uint8_t* string_ptr,
                                          uint32_t string_ptr_length,

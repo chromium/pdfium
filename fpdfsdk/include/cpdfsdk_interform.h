@@ -13,7 +13,7 @@
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/ipdf_formnotify.h"
 #include "core/fxcrt/fx_basic.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
 class CPDF_FormControl;

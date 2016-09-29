@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_FONTMAPPER_H_
-#define CORE_FXGE_INCLUDE_CFX_FONTMAPPER_H_
+#ifndef CORE_FXGE_CFX_FONTMAPPER_H_
+#define CORE_FXGE_CFX_FONTMAPPER_H_
 
 #include <memory>
 #include <vector>
 
-#include "core/fxge/include/cfx_fontmgr.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/cfx_fontmgr.h"
+#include "core/fxge/fx_font.h"
 
 class CFX_SubstFont;
 
@@ -81,4 +81,4 @@ class CFX_FontMapper {
   CFX_FontMgr* const m_pFontMgr;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_FONTMAPPER_H_
+#endif  // CORE_FXGE_CFX_FONTMAPPER_H_

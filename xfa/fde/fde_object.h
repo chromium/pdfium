@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
 class CFDE_Brush : public CFX_Target {

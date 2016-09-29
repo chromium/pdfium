@@ -10,7 +10,7 @@
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/dib/dib_int.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CStretchEngine, OverflowInCtor) {

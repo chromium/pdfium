@@ -11,7 +11,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_freetype.h"
 
 namespace {
 

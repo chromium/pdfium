@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fpdfdoc/ipvt_fontmap.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/fx_font.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
 

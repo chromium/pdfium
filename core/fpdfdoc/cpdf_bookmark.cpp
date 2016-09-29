@@ -9,7 +9,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 uint32_t CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict)

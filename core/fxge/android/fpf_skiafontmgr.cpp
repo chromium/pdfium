@@ -16,7 +16,7 @@
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxge/android/fpf_skiafont.h"
 #include "core/fxge/android/fpf_skiafontmgr.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_freetype.h"
 
 #ifdef __cplusplus
 extern "C" {

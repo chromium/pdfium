@@ -11,7 +11,7 @@
 #include "core/fpdfapi/fpdf_page/cpdf_colorstate.h"
 #include "core/fpdfapi/fpdf_page/cpdf_generalstate.h"
 #include "core/fpdfapi/fpdf_page/cpdf_textstate.h"
-#include "core/fxge/include/cfx_graphstate.h"
+#include "core/fxge/cfx_graphstate.h"
 
 class CPDF_GraphicStates {
  public:

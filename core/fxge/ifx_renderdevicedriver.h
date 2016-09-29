@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_IFX_RENDERDEVICEDRIVER_H_
-#define CORE_FXGE_INCLUDE_IFX_RENDERDEVICEDRIVER_H_
+#ifndef CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_
+#define CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_
 
 #include "core/fxcrt/fx_system.h"
 
@@ -105,4 +105,4 @@ class IFX_RenderDeviceDriver {
                                int blend_type);
 };
 
-#endif  // CORE_FXGE_INCLUDE_IFX_RENDERDEVICEDRIVER_H_
+#endif  // CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_

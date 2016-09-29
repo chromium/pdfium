@@ -7,7 +7,7 @@
 #ifndef XFA_FXGRAPHICS_CAGG_GRAPHICS_H_
 #define XFA_FXGRAPHICS_CAGG_GRAPHICS_H_
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 
 class CFX_Graphics;

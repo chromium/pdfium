@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "core/fxge/include/cfx_fxgedevice.h"
-#include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"

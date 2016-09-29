@@ -8,7 +8,7 @@
 
 #include <map>
 
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/fx_font.h"
 
 CPDF_Type3Glyphs::CPDF_Type3Glyphs()
     : m_TopBlueCount(0), m_BottomBlueCount(0) {}

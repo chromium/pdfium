@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_PATHDATA_H_
-#define CORE_FXGE_INCLUDE_CFX_PATHDATA_H_
+#ifndef CORE_FXGE_CFX_PATHDATA_H_
+#define CORE_FXGE_CFX_PATHDATA_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 struct FX_PATHPOINT {
   FX_FLOAT m_PointX;
@@ -53,4 +53,4 @@ class CFX_PathData {
   FX_PATHPOINT* m_pPoints;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_PATHDATA_H_
+#endif  // CORE_FXGE_CFX_PATHDATA_H_

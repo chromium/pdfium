@@ -23,12 +23,12 @@
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/cpdf_textrenderer.h"
 #include "core/fpdfapi/fpdf_render/cpdf_type3cache.h"
-#include "core/fxge/include/cfx_facecache.h"
-#include "core/fxge/include/cfx_fxgedevice.h"
-#include "core/fxge/include/cfx_gemodule.h"
-#include "core/fxge/include/cfx_graphstatedata.h"
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_facecache.h"
+#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_graphstatedata.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 FX_BOOL CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                        const CFX_Matrix* pObj2Device,

@@ -7,8 +7,8 @@
 #ifndef XFA_FDE_CFDE_PATH_H_
 #define XFA_FDE_CFDE_PATH_H_
 
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
 class CFDE_Path : public CFX_Target {

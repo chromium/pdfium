@@ -14,7 +14,7 @@
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 namespace {
 

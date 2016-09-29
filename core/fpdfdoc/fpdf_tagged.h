@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_FPDF_TAGGED_H_
 #define CORE_FPDFDOC_FPDF_TAGGED_H_
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;

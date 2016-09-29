@@ -10,10 +10,10 @@
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/fx_freetype.h"
-#include "core/fxge/include/ifx_renderdevicedriver.h"
+#include "core/fxge/ifx_renderdevicedriver.h"
 
 namespace {
 

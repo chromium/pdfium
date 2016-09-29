@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "third_party/base/numerics/safe_math.h"
 
 #define FXCODEC_BLOCK_SIZE 4096

@@ -18,8 +18,8 @@
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 class CPDF_AllStates;
 class CPDF_ColorSpace;

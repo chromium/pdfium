@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_UNICODEENCODINGEX_H_
-#define CORE_FXGE_INCLUDE_CFX_UNICODEENCODINGEX_H_
+#ifndef CORE_FXGE_CFX_UNICODEENCODINGEX_H_
+#define CORE_FXGE_CFX_UNICODEENCODINGEX_H_
 
 #include <map>
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/cfx_unicodeencoding.h"
-#include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/cfx_unicodeencoding.h"
+#include "core/fxge/fx_dib.h"
+#include "core/fxge/fx_freetype.h"
 
 class CFX_UnicodeEncodingEx : public CFX_UnicodeEncoding {
  public:
@@ -34,4 +34,4 @@ CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(
     CFX_Font* pFont,
     uint32_t nEncodingID = FXFM_ENCODING_NONE);
 
-#endif  // CORE_FXGE_INCLUDE_CFX_UNICODEENCODINGEX_H_
+#endif  // CORE_FXGE_CFX_UNICODEENCODINGEX_H_

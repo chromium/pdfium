@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxbarcode/cbc_onecode.h"
 
 class CBC_Code128 : public CBC_OneCode {

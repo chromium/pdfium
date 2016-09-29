@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_fontcache.h"
+#include "core/fxge/cfx_fontcache.h"
 
-#include "core/fxge/include/cfx_facecache.h"
-#include "core/fxge/include/fx_font.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/cfx_facecache.h"
+#include "core/fxge/fx_font.h"
+#include "core/fxge/fx_freetype.h"
 
 CFX_FontCache::CountedFaceCache::CountedFaceCache() {}
 

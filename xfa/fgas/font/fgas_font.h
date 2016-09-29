@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_FONT_FGAS_FONT_H_
 #define XFA_FGAS_FONT_FGAS_FONT_H_
 
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/fx_font.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

@@ -10,11 +10,11 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/cfx_fxgedevice.h"
-#include "core/fxge/include/cfx_graphstatedata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
-#include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_graphstatedata.h"
+#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/fx_dib.h"
+#include "core/fxge/fx_font.h"
 #include "xfa/fwl/core/fwl_error.h"
 
 class CFX_Color;

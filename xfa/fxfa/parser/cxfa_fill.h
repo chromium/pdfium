@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_FILL_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_unicodeencoding.h"
+#include "core/fxge/cfx_unicodeencoding.h"
 
-#include "core/fxge/include/fx_font.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_font.h"
+#include "core/fxge/fx_freetype.h"
 
 CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) : m_pFont(pFont) {}
 

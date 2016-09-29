@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_FX_FREETYPE_H_
-#define CORE_FXGE_INCLUDE_FX_FREETYPE_H_
+#ifndef CORE_FXGE_FX_FREETYPE_H_
+#define CORE_FXGE_FX_FREETYPE_H_
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -177,4 +177,4 @@ void FXFT_adobe_name_from_unicode(char* name, wchar_t unicode);
 };
 #endif
 
-#endif  // CORE_FXGE_INCLUDE_FX_FREETYPE_H_
+#endif  // CORE_FXGE_FX_FREETYPE_H_

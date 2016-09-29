@@ -8,10 +8,10 @@
 
 #include <algorithm>
 
-#include "core/fxge/include/cfx_gemodule.h"
-#include "core/fxge/include/cfx_graphstatedata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
-#include "core/fxge/include/cfx_substfont.h"
+#include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_graphstatedata.h"
+#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/cfx_substfont.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fgas/font/fgas_font.h"

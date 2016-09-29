@@ -10,7 +10,7 @@
 #include "core/fpdfdoc/cpdf_iconfit.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
 class CPDF_FormControl;

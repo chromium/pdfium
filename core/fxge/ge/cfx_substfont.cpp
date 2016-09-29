@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_substfont.h"
+#include "core/fxge/cfx_substfont.h"
 
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/fx_font.h"
 
 CFX_SubstFont::CFX_SubstFont()
     : m_Charset(FXFONT_ANSI_CHARSET),

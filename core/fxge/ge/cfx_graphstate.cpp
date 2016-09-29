@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_graphstate.h"
+#include "core/fxge/cfx_graphstate.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 

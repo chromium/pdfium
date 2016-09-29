@@ -10,9 +10,9 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxge/include/cfx_fxgedevice.h"
-#include "core/fxge/include/cfx_renderdevice.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/fgas_font.h"

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_UNICODEENCODING_H_
-#define CORE_FXGE_INCLUDE_CFX_UNICODEENCODING_H_
+#ifndef CORE_FXGE_CFX_UNICODEENCODING_H_
+#define CORE_FXGE_CFX_UNICODEENCODING_H_
 
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/fx_font.h"
 
 #define ENCODING_INTERNAL 0
 #define ENCODING_UNICODE 1
@@ -43,4 +43,4 @@ class CFX_UnicodeEncoding {
   CFX_Font* m_pFont;  // Unowned, not nullptr.
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_UNICODEENCODING_H_
+#endif  // CORE_FXGE_CFX_UNICODEENCODING_H_

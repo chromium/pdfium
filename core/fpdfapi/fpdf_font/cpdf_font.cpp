@@ -23,7 +23,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_memory.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_freetype.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

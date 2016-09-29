@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
 #include "core/fpdfapi/fpdf_page/cpdf_tilingpattern.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 CPDF_ColorState::CPDF_ColorState() {}
 

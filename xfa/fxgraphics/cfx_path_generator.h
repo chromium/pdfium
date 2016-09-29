@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxge/include/cfx_pathdata.h"
+#include "core/fxge/cfx_pathdata.h"
 
 class CFX_PathGenerator {
  public:

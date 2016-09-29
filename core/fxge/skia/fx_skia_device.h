@@ -7,8 +7,8 @@
 
 #if defined(_SKIA_SUPPORT_)
 
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/ifx_renderdevicedriver.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/ifx_renderdevicedriver.h"
 
 class SkCanvas;
 class SkMatrix;

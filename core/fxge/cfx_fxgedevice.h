@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_FXGEDEVICE_H_
-#define CORE_FXGE_INCLUDE_CFX_FXGEDEVICE_H_
+#ifndef CORE_FXGE_CFX_FXGEDEVICE_H_
+#define CORE_FXGE_CFX_FXGEDEVICE_H_
 
-#include "core/fxge/include/cfx_renderdevice.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/fx_dib.h"
 
 class SkPictureRecorder;
 
@@ -43,4 +43,4 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
   bool m_bOwnedBitmap;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_FXGEDEVICE_H_
+#endif  // CORE_FXGE_CFX_FXGEDEVICE_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_WINDOWSDEVICE_H_
-#define CORE_FXGE_INCLUDE_CFX_WINDOWSDEVICE_H_
+#ifndef CORE_FXGE_CFX_WINDOWSDEVICE_H_
+#define CORE_FXGE_CFX_WINDOWSDEVICE_H_
 
 #ifdef _WIN32
 #ifndef _WINDOWS_
@@ -36,4 +36,4 @@ class CFX_WindowsDevice : public CFX_RenderDevice {
 
 #endif  // _WIN32
 
-#endif  // CORE_FXGE_INCLUDE_CFX_WINDOWSDEVICE_H_
+#endif  // CORE_FXGE_CFX_WINDOWSDEVICE_H_

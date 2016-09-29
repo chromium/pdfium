@@ -13,8 +13,8 @@
 #include <memory>
 
 #include "core/fxcrt/fx_basic.h"
-#include "core/fxge/include/fx_font.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_font.h"
+#include "core/fxge/fx_freetype.h"
 
 class CFX_GlyphMap {
  public:

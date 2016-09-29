@@ -30,8 +30,8 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/include/cfx_fxgedevice.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 namespace {
 

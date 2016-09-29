@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_GE_CFX_CLIPRGN_H_
 #define CORE_FXGE_GE_CFX_CLIPRGN_H_
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 class CFX_ClipRgn {
  public:

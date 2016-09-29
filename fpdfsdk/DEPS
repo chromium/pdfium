@@ -8,7 +8,7 @@ include_rules = [
   '+core/fpdfdoc',
   '+core/fxcodec',
   '+core/fxcrt',
-  '+core/fxge/include',
+  '+core/fxge',
   '+public',
   '+v8',
   '+xfa/fwl/core/include',

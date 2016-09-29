@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_CFWL_THEMEBACKGROUND_H_
 #define XFA_FWL_CORE_CFWL_THEMEBACKGROUND_H_
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 
 class CFX_DIBitmpa;

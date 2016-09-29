@@ -11,11 +11,11 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
-#include "core/fxge/include/cfx_graphstatedata.h"
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
-#include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/ifx_renderdevicedriver.h"
+#include "core/fxge/cfx_graphstatedata.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/fx_dib.h"
+#include "core/fxge/ifx_renderdevicedriver.h"
 
 #if _FX_OS_ == _FX_MACOSX_
 #include <Carbon/Carbon.h>

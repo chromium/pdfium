@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_GRAPHSTATEDATA_H_
-#define CORE_FXGE_INCLUDE_CFX_GRAPHSTATEDATA_H_
+#ifndef CORE_FXGE_CFX_GRAPHSTATEDATA_H_
+#define CORE_FXGE_CFX_GRAPHSTATEDATA_H_
 
 #include "core/fxcrt/fx_system.h"
 
@@ -35,4 +35,4 @@ class CFX_GraphStateData {
   FX_FLOAT m_LineWidth;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_GRAPHSTATEDATA_H_
+#endif  // CORE_FXGE_CFX_GRAPHSTATEDATA_H_

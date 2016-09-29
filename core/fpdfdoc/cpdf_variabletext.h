@@ -18,7 +18,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/fx_font.h"
 
 class CSection;
 class IPVT_FontMap;

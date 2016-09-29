@@ -6,8 +6,8 @@
 
 #include "xfa/fxgraphics/cfx_path_generator.h"
 
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 CFX_PathGenerator::CFX_PathGenerator() : m_pPathData(new CFX_PathData) {}
 

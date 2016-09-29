@@ -9,7 +9,7 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 class CFX_QuartzDevice : public CFX_RenderDevice {
  public:

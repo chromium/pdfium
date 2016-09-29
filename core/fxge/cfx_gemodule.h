@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_GEMODULE_H_
-#define CORE_FXGE_INCLUDE_CFX_GEMODULE_H_
+#ifndef CORE_FXGE_CFX_GEMODULE_H_
+#define CORE_FXGE_CFX_GEMODULE_H_
 
 #include <memory>
 
-#include "core/fxge/include/cfx_fontmgr.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/cfx_fontmgr.h"
+#include "core/fxge/fx_font.h"
 
 class CCodec_ModuleMgr;
 class CFX_FontCache;
@@ -47,4 +47,4 @@ class CFX_GEModule {
   const char** m_pUserFontPaths;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_GEMODULE_H_
+#endif  // CORE_FXGE_CFX_GEMODULE_H_

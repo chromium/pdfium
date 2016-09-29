@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_FACECACHE_H_
-#define CORE_FXGE_INCLUDE_CFX_FACECACHE_H_
+#ifndef CORE_FXGE_CFX_FACECACHE_H_
+#define CORE_FXGE_CFX_FACECACHE_H_
 
 #include <map>
 
-#include "core/fxge/include/fx_font.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_font.h"
+#include "core/fxge/fx_freetype.h"
 
 class CFX_FaceCache {
  public:
@@ -61,4 +61,4 @@ class CFX_FaceCache {
 #endif
 };
 
-#endif  //  CORE_FXGE_INCLUDE_CFX_FACECACHE_H_
+#endif  //  CORE_FXGE_CFX_FACECACHE_H_

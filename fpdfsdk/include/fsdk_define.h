@@ -8,7 +8,7 @@
 #define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
 #include "core/fpdfapi/fpdf_parser/cpdf_parser.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA

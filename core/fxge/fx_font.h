@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_FX_FONT_H_
-#define CORE_FXGE_INCLUDE_FX_FONT_H_
+#ifndef CORE_FXGE_FX_FONT_H_
+#define CORE_FXGE_FX_FONT_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/cfx_substfont.h"
-#include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/cfx_substfont.h"
+#include "core/fxge/fx_dib.h"
+#include "core/fxge/fx_freetype.h"
 
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
@@ -245,4 +245,4 @@ CFX_ByteString GetNameFromTT(const uint8_t* name_table,
 
 int PDF_GetStandardFontName(CFX_ByteString* name);
 
-#endif  // CORE_FXGE_INCLUDE_FX_FONT_H_
+#endif  // CORE_FXGE_FX_FONT_H_

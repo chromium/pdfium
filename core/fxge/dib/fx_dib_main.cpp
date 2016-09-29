@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 #include <limits.h>
 #include <algorithm>
 
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
-#include "core/fxge/include/cfx_gemodule.h"
 
 void CmykDecode(uint32_t cmyk, int& c, int& m, int& y, int& k) {
   c = FXSYS_GetCValue(cmyk);

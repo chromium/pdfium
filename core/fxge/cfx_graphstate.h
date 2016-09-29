@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_
-#define CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_
+#ifndef CORE_FXGE_CFX_GRAPHSTATE_H_
+#define CORE_FXGE_CFX_GRAPHSTATE_H_
 
 #include "core/fxcrt/cfx_count_ref.h"
-#include "core/fxge/include/cfx_graphstatedata.h"
+#include "core/fxge/cfx_graphstatedata.h"
 
 class CPDF_Array;
 
@@ -41,4 +41,4 @@ class CFX_GraphState {
   CFX_CountRef<CFX_GraphStateData> m_Ref;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_
+#endif  // CORE_FXGE_CFX_GRAPHSTATE_H_

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_pathdata.h"
+#include "core/fxge/cfx_pathdata.h"
 
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"

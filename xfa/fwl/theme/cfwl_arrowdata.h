@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 class CFWL_ArrowData {
  public:

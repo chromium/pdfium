@@ -9,7 +9,7 @@
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <windows.h>
 
-#include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
 

@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/ifx_renderdevicedriver.h"
+#include "core/fxge/ifx_renderdevicedriver.h"
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 IFX_RenderDeviceDriver::~IFX_RenderDeviceDriver() {}
 

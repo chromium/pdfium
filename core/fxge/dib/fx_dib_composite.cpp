@@ -5,9 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
-#include "core/fxge/include/cfx_gemodule.h"
 
 namespace {
 

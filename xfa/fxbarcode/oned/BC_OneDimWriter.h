@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
 

@@ -8,7 +8,7 @@
 #define XFA_FXFA_INCLUDE_FXFA_WIDGET_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_box.h"
 #include "xfa/fxfa/parser/cxfa_event.h"
 #include "xfa/fxfa/parser/cxfa_image.h"

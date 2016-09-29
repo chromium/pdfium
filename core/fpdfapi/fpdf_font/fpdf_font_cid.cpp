@@ -14,7 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
 #include "core/fxcrt/fx_ext.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_freetype.h"
 
 namespace {
 

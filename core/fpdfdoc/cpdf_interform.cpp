@@ -16,8 +16,8 @@
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "core/fxge/include/cfx_substfont.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/cfx_substfont.h"
+#include "core/fxge/fx_font.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

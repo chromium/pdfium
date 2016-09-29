@@ -9,9 +9,9 @@
 
 #include "core/fxcrt/cfx_count_ref.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/cfx_fxgedevice.h"
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_renderdevice.h"
+#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 class CPDF_Path {
  public:

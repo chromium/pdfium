@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_facecache.h"
+#include "core/fxge/cfx_facecache.h"
 
 #include <algorithm>
 
+#include "core/fxge/cfx_fontmgr.h"
+#include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_substfont.h"
+#include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/cfx_fontmgr.h"
-#include "core/fxge/include/cfx_gemodule.h"
-#include "core/fxge/include/cfx_pathdata.h"
-#include "core/fxge/include/cfx_substfont.h"
-#include "core/fxge/include/fx_freetype.h"
 #include "third_party/base/numerics/safe_math.h"
 
 #ifdef _SKIA_SUPPORT_

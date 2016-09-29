@@ -10,7 +10,7 @@
 #include "core/fpdfapi/fpdf_page/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 CPDF_Type3Char::CPDF_Type3Char(CPDF_Form* pForm)
     : m_pForm(pForm), m_bColored(FALSE) {}

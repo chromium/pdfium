@@ -6,7 +6,7 @@
 
 #include "core/fxge/ge/cttfontdesc.h"
 
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_freetype.h"
 
 CTTFontDesc::~CTTFontDesc() {
   if (m_Type == 1) {

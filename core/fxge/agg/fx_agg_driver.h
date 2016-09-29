@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxge/include/ifx_renderdevicedriver.h"
+#include "core/fxge/ifx_renderdevicedriver.h"
 #include "third_party/agg23/agg_clip_liang_barsky.h"
 #include "third_party/agg23/agg_path_storage.h"
 #include "third_party/agg23/agg_rasterizer_scanline_aa.h"

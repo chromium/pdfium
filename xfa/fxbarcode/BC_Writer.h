@@ -8,7 +8,7 @@
 #define XFA_FXBARCODE_BC_WRITER_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxbarcode/utils.h"
 
 class CBC_Writer {

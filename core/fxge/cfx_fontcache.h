@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_FONTCACHE_H_
-#define CORE_FXGE_INCLUDE_CFX_FONTCACHE_H_
+#ifndef CORE_FXGE_CFX_FONTCACHE_H_
+#define CORE_FXGE_CFX_FONTCACHE_H_
 
 #include <map>
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/include/fx_font.h"
-#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/fx_font.h"
+#include "core/fxge/fx_freetype.h"
 
 class CFX_FaceCache;
 
@@ -39,4 +39,4 @@ class CFX_FontCache {
   CFX_FTCacheMap m_ExtFaceMap;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_FONTCACHE_H_
+#endif  // CORE_FXGE_CFX_FONTCACHE_H_

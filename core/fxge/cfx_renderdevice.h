@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_INCLUDE_CFX_RENDERDEVICE_H_
-#define CORE_FXGE_INCLUDE_CFX_RENDERDEVICE_H_
+#ifndef CORE_FXGE_CFX_RENDERDEVICE_H_
+#define CORE_FXGE_CFX_RENDERDEVICE_H_
 
 #include <memory>
 
-#include "core/fxge/include/cfx_gemodule.h"
-#include "core/fxge/include/fx_dib.h"
-#include "core/fxge/include/fx_font.h"
+#include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/fx_dib.h"
+#include "core/fxge/fx_font.h"
 
 class CFX_Font;
 class CFX_GraphStateData;
@@ -137,12 +137,12 @@ class CFX_RenderDevice {
                             uint32_t color,
                             int blend_type);
   FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
-                                               FX_FLOAT y1,
-                                               FX_FLOAT x2,
-                                               FX_FLOAT y2,
-                                               uint32_t color,
-                                               int fill_mode,
-                                               int blend_type);
+                           FX_FLOAT y1,
+                           FX_FLOAT x2,
+                           FX_FLOAT y2,
+                           uint32_t color,
+                           int fill_mode,
+                           int blend_type);
 
   FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top);
   CFX_DIBitmap* GetBackDrop();
@@ -255,4 +255,4 @@ class CFX_RenderDevice {
   std::unique_ptr<IFX_RenderDeviceDriver> m_pDeviceDriver;
 };
 
-#endif  // CORE_FXGE_INCLUDE_CFX_RENDERDEVICE_H_
+#endif  // CORE_FXGE_CFX_RENDERDEVICE_H_

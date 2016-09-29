@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/include/cfx_gemodule.h"
+#include "core/fxge/cfx_gemodule.h"
 
+#include "core/fxge/cfx_fontcache.h"
+#include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/fxge/include/cfx_fontcache.h"
-#include "core/fxge/include/cfx_fontmgr.h"
 
 namespace {
 
