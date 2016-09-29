@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 
-#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 
 CPDF_String::CPDF_String() : m_bHex(FALSE) {}
 

@@ -9,8 +9,8 @@
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 
 CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pPageResources,

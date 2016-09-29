@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DATA_AVAIL_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DATA_AVAIL_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_DATA_AVAIL_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_DATA_AVAIL_H_
 
+#include "core/fpdfapi/fpdf_parser/cpdf_parser.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Dictionary;
@@ -250,4 +250,4 @@ class CPDF_DataAvail final {
   FX_BOOL m_bSupportHintTable;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DATA_AVAIL_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_DATA_AVAIL_H_

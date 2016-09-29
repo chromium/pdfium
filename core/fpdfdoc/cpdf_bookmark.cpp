@@ -6,8 +6,8 @@
 
 #include "core/fpdfdoc/include/cpdf_bookmark.h"
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fpdfdoc/include/cpdf_nametree.h"
 #include "core/fxge/include/fx_dib.h"
 

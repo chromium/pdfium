@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 
 #include <memory>
 #include <set>
@@ -13,11 +13,11 @@
 #include "core/fpdfapi/fpdf_font/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_parser.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcodec/include/JBig2_DocumentContext.h"

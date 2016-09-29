@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_INDIRECT_OBJECT_HOLDER_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_INDIRECT_OBJECT_HOLDER_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_INDIRECT_OBJECT_HOLDER_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_INDIRECT_OBJECT_HOLDER_H_
 
 #include <map>
 #include <memory>
@@ -45,4 +45,4 @@ class CPDF_IndirectObjectHolder {
   std::map<uint32_t, std::unique_ptr<CPDF_Object>> m_IndirectObjs;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_INDIRECT_OBJECT_HOLDER_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_INDIRECT_OBJECT_HOLDER_H_

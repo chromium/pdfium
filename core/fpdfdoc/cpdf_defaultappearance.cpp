@@ -6,8 +6,8 @@
 
 #include "core/fpdfdoc/include/cpdf_defaultappearance.h"
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
-#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
+#include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/include/cpdf_formcontrol.h"
 
 FX_BOOL CPDF_DefaultAppearance::HasFont() {

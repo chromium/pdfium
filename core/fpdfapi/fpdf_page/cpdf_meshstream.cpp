@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 
 namespace {
 

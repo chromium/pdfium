@@ -8,8 +8,8 @@
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfdoc/include/cpdf_annot.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"

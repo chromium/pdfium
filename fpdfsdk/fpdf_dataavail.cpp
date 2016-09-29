@@ -9,8 +9,8 @@
 #include <memory>
 #include <utility>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_data_avail.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 

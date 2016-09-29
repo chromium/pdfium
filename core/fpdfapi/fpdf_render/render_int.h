@@ -14,7 +14,7 @@
 #include "core/fpdfapi/fpdf_page/cpdf_clippath.h"
 #include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_renderdevice.h"

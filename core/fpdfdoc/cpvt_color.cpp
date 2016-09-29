@@ -6,7 +6,7 @@
 
 #include "core/fpdfdoc/cpvt_color.h"
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
 
 // Static.
 CPVT_Color CPVT_Color::ParseColor(const CFX_ByteString& str) {

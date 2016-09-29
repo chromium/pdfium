@@ -9,9 +9,9 @@
 #include <time.h>
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_parser.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_security_handler.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
 
 void CPDF_CryptoHandler::CryptBlock(FX_BOOL bEncrypt,
                                     uint32_t objnum,

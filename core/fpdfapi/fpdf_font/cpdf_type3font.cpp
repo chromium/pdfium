@@ -11,8 +11,8 @@
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "third_party/base/stl_util.h"
 

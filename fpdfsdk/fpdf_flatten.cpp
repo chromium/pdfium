@@ -10,11 +10,11 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/include/cpdf_annot.h"
 #include "fpdfsdk/include/fsdk_define.h"
 

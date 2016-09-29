@@ -11,10 +11,10 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
-#include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cfdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfdoc/include/cpdf_actionfields.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "core/fxge/include/cfx_graphstatedata.h"

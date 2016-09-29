@@ -8,9 +8,9 @@
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfdoc/include/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/include/cpdf_formcontrol.h"
 #include "core/fpdfdoc/include/cpdf_formfield.h"

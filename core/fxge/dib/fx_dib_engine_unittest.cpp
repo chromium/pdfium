@@ -4,9 +4,9 @@
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/dib/dib_int.h"

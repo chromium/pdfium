@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 
 CPDF_ShadingObject::CPDF_ShadingObject() : m_pShading(nullptr) {}
 

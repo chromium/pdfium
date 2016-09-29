@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_NULL_H_
 #define CORE_FPDFAPI_FPDF_PARSER_CPDF_NULL_H_
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_object.h"
 
 class CPDF_Null : public CPDF_Object {
  public:

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_NUMBER_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_NUMBER_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_NUMBER_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_NUMBER_H_
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_object.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -41,4 +41,4 @@ class CPDF_Number : public CPDF_Object {
   };
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_NUMBER_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_NUMBER_H_

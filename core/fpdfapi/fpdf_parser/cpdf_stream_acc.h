@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_ACC_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_ACC_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_STREAM_ACC_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_STREAM_ACC_H_
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -43,4 +43,4 @@ class CPDF_StreamAcc {
   uint8_t* m_pSrcData;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_ACC_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_STREAM_ACC_H_

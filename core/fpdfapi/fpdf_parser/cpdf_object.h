@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_OBJECT_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_OBJECT_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_OBJECT_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_OBJECT_H_
 
 #include <memory>
 #include <set>
@@ -180,4 +180,4 @@ inline const CPDF_Stream* ToStream(const CPDF_Object* obj) {
   return obj ? obj->AsStream() : nullptr;
 }
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_OBJECT_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_OBJECT_H_

@@ -8,7 +8,7 @@
 
 #include <list>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fxcodec/include/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"

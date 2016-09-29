@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPVT_COLOR_H_
 #define CORE_FPDFDOC_CPVT_COLOR_H_
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 

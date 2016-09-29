@@ -6,8 +6,8 @@
 
 #include "core/fpdfdoc/include/cpdf_iconfit.h"
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fxcrt/include/fx_string.h"
 
 CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {

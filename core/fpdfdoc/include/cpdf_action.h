@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_INCLUDE_CPDF_ACTION_H_
 #define CORE_FPDFDOC_INCLUDE_CPDF_ACTION_H_
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/include/cpdf_dest.h"
 #include "core/fxcrt/include/fx_string.h"
 

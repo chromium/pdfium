@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "core/fxcrt/include/cfx_observable.h"
 #include "fpdfsdk/cfx_systemhandler.h"

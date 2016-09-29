@@ -8,7 +8,7 @@
 
 #include <set>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfdoc/include/cpdf_formfield.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"

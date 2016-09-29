@@ -6,8 +6,8 @@
 
 #include "core/fpdfdoc/include/cpdf_actionfields.h"
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/include/cpdf_action.h"
 
 size_t CPDF_ActionFields::GetFieldsCount() const {

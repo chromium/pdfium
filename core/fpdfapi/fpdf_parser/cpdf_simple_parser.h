@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_SIMPLE_PARSER_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_SIMPLE_PARSER_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_SIMPLE_PARSER_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_SIMPLE_PARSER_H_
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -32,4 +32,4 @@ class CPDF_SimpleParser {
   uint32_t m_dwCurPos;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_SIMPLE_PARSER_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_SIMPLE_PARSER_H_

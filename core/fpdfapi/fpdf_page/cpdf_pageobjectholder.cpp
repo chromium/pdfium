@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 
 CPDF_PageObjectHolder::CPDF_PageObjectHolder()
     : m_pFormDict(nullptr),

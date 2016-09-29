@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "xfa/fgas/font/fgas_font.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fxfa/include/fxfa.h"

@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_REFERENCE_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_REFERENCE_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_REFERENCE_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_REFERENCE_H_
 
 #include <set>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_object.h"
 
 class CPDF_IndirectObjectHolder;
 
@@ -52,4 +52,4 @@ class CPDF_Reference : public CPDF_Object {
   uint32_t m_RefObjNum;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_REFERENCE_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_REFERENCE_H_

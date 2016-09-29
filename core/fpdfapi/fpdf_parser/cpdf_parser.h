@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_PARSER_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_PARSER_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_PARSER_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_PARSER_H_
 
 #include <map>
 #include <memory>
@@ -174,4 +174,4 @@ class CPDF_Parser {
   std::set<uint32_t> m_ParsingObjNums;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_PARSER_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_PARSER_H_

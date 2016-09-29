@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 
 CPDF_TextState::CPDF_TextState() {}
 CPDF_TextState::~CPDF_TextState() {}

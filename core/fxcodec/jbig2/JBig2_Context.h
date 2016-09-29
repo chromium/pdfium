@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_object.h"
 #include "core/fxcodec/include/fx_codec_def.h"
 #include "core/fxcodec/jbig2/JBig2_List.h"
 #include "core/fxcodec/jbig2/JBig2_Page.h"

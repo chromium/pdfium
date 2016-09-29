@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_STREAM_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_STREAM_H_
 
 #include <memory>
 #include <set>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_object.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Stream : public CPDF_Object {
@@ -58,4 +58,4 @@ class CPDF_Stream : public CPDF_Object {
   IFX_FileRead* m_pFile = nullptr;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_STREAM_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_STREAM_H_

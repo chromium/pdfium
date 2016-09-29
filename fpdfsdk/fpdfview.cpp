@@ -10,9 +10,9 @@
 #include <utility>
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"

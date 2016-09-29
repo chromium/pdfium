@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DICTIONARY_H_
-#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DICTIONARY_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_DICTIONARY_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_DICTIONARY_H_
 
 #include <map>
 #include <set>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_object.h"
 #include "core/fxcrt/include/cfx_string_pool_template.h"
 #include "core/fxcrt/include/cfx_weak_ptr.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -94,4 +94,4 @@ class CPDF_Dictionary : public CPDF_Object {
   std::map<CFX_ByteString, CPDF_Object*> m_Map;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_DICTIONARY_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_DICTIONARY_H_

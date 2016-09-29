@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/cfx_fontmgr.h"
 #include "core/fxge/include/cfx_gemodule.h"
