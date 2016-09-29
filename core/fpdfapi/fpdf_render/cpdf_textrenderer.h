@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_TEXTRENDERER_H_
-#define CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_TEXTRENDERER_H_
+#ifndef CORE_FPDFAPI_FPDF_RENDER_CPDF_TEXTRENDERER_H_
+#define CORE_FPDFAPI_FPDF_RENDER_CPDF_TEXTRENDERER_H_
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
@@ -57,4 +57,4 @@ class CPDF_TextRenderer {
                                 const CPDF_RenderOptions* pOptions);
 };
 
-#endif  // CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_TEXTRENDERER_H_
+#endif  // CORE_FPDFAPI_FPDF_RENDER_CPDF_TEXTRENDERER_H_

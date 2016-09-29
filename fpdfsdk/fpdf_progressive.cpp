@@ -7,7 +7,7 @@
 #include "public/fpdf_progressive.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
-#include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
+#include "core/fpdfapi/fpdf_render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/include/cpdf_pagerendercontext.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/include/cfx_fxgedevice.h"

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_PROGRESSIVERENDERER_H_
-#define CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_PROGRESSIVERENDERER_H_
+#ifndef CORE_FPDFAPI_FPDF_RENDER_CPDF_PROGRESSIVERENDERER_H_
+#define CORE_FPDFAPI_FPDF_RENDER_CPDF_PROGRESSIVERENDERER_H_
 
 #include <memory>
 
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
-#include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
+#include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -59,4 +59,4 @@ class CPDF_ProgressiveRenderer {
   CPDF_PageObjectList::iterator m_LastObjectRendered;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_PROGRESSIVERENDERER_H_
+#endif  // CORE_FPDFAPI_FPDF_RENDER_CPDF_PROGRESSIVERENDERER_H_

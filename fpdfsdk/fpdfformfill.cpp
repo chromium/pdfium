@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/include/cpdf_formcontrol.h"
 #include "core/fpdfdoc/include/cpdf_formfield.h"
 #include "core/fpdfdoc/include/cpdf_interform.h"

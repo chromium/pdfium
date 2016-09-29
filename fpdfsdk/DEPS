@@ -4,7 +4,7 @@ include_rules = [
   '+core/fpdfapi/fpdf_edit',
   '+core/fpdfapi/fpdf_page',
   '+core/fpdfapi/fpdf_parser',
-  '+core/fpdfapi/fpdf_render/include',
+  '+core/fpdfapi/fpdf_render',
   '+core/fpdfdoc/include',
   '+core/fxcodec/include',
   '+core/fxcrt/include',
