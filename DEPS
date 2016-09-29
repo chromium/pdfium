@@ -6,7 +6,7 @@ vars = {
 
   'android_ndk_revision': '5022f40f12953c02b2614c5f7beb981ec5d0e833',
   'build_revision': 'b73bafdd0ff0efc8835de6e646b47eec0a2a38a4',
-  'buildtools_revision': 'adb8bf4e8fc92aa1717bf151b862d58e6f27c4f2',
+  'buildtools_revision': '5fd66957f08bb752dca714a591c84587c9d70762',
   'catapult_revision': '327256cb1c387e62a2c7e6960e2398867665fb51',
   'clang_revision': '797371be0a75c9892d6acb486d0430915ea538a6',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
@@ -78,6 +78,11 @@ deps_os = {
       Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),
   },
 }
+
+recursedeps = [
+  # buildtools provides clang_format, libc++, and libc++abi
+  'buildtools',
+]
 
 include_rules = [
   # Basic stuff that everyone can use.
