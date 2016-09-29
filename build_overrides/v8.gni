@@ -17,3 +17,5 @@ v8_optimized_debug = true
 
 v8_extra_library_files = []
 v8_experimental_extra_library_files = []
+
+v8_enable_inspector_override = false
