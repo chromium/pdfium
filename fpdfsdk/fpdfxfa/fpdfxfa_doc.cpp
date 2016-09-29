@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"

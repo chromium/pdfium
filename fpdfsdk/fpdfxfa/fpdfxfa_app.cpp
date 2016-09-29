@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
 
 #include <memory>
 
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "xfa/fxbarcode/include/BC_Library.h"

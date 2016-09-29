@@ -20,7 +20,7 @@
 #include "fpdfsdk/include/fsdk_define.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
 FX_BOOL FPDF_UnSupportError(int nError) {

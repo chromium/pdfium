@@ -7,7 +7,7 @@
 #include "fpdfsdk/include/cpdfsdk_xfawidgethandler.h"
 
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"

@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_DOC_H_
-#define FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_DOC_H_
+#ifndef FPDFSDK_FPDFXFA_FPDFXFA_DOC_H_
+#define FPDFSDK_FPDFXFA_FPDFXFA_DOC_H_
 
 #include <memory>
 
-#include "fpdfsdk/fpdfxfa/include/cpdfxfa_docenvironment.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
 
 class CPDFSDK_Document;
@@ -92,4 +92,4 @@ class CPDFXFA_Document {
   CPDFXFA_DocEnvironment m_DocEnv;
 };
 
-#endif  // FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_DOC_H_
+#endif  // FPDFSDK_FPDFXFA_FPDFXFA_DOC_H_

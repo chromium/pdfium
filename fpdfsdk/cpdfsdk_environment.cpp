@@ -15,7 +15,7 @@
 #include "fpdfsdk/javascript/ijs_runtime.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
 #endif  // PDF_ENABLE_XFA
 
 namespace {

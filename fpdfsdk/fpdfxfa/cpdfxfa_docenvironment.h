@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FPDFXFA_INCLUDE_CPDFXFA_DOCENVIRONMENT_H_
-#define FPDFSDK_FPDFXFA_INCLUDE_CPDFXFA_DOCENVIRONMENT_H_
+#ifndef FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
+#define FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
 
 #include "public/fpdfview.h"
 #include "xfa/fxfa/include/fxfa.h"
@@ -109,4 +109,4 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
   IJS_Context* m_pJSContext;
 };
 
-#endif  // FPDFSDK_FPDFXFA_INCLUDE_CPDFXFA_DOCENVIRONMENT_H_
+#endif  // FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_

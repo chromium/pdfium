@@ -21,7 +21,7 @@
 #include "fpdfsdk/include/cpdfsdk_widget.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(CPDFSDK_Environment* pEnv)

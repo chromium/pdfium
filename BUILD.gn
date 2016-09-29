@@ -1050,15 +1050,15 @@ if (pdf_enable_xfa) {
   static_library("fpdfxfa") {
     sources = [
       "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.cpp",
+      "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h",
       "fpdfsdk/fpdfxfa/fpdfxfa_app.cpp",
+      "fpdfsdk/fpdfxfa/fpdfxfa_app.h",
       "fpdfsdk/fpdfxfa/fpdfxfa_doc.cpp",
+      "fpdfsdk/fpdfxfa/fpdfxfa_doc.h",
       "fpdfsdk/fpdfxfa/fpdfxfa_page.cpp",
+      "fpdfsdk/fpdfxfa/fpdfxfa_page.h",
       "fpdfsdk/fpdfxfa/fpdfxfa_util.cpp",
-      "fpdfsdk/fpdfxfa/include/cpdfxfa_docenvironment.h",
-      "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h",
-      "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h",
-      "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h",
-      "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h",
+      "fpdfsdk/fpdfxfa/fpdfxfa_util.h",
     ]
     deps = [
       ":fxcrt",

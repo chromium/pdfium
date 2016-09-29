@@ -31,7 +31,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/fxfa_widget.h"
 #include "xfa/fxfa/include/xfa_ffdocview.h"
