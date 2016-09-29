@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
+#include "core/fpdfapi/fpdf_edit/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_allstates.h"

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
-#define CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
+#ifndef CORE_FPDFAPI_FPDF_EDIT_CPDF_CREATOR_H_
+#define CORE_FPDFAPI_FPDF_EDIT_CPDF_CREATOR_H_
 
 #include <memory>
 
@@ -98,4 +98,4 @@ class CPDF_Creator {
   int32_t m_FileVersion;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
+#endif  // CORE_FPDFAPI_FPDF_EDIT_CPDF_CREATOR_H_
