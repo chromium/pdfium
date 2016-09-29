@@ -244,7 +244,7 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
 
   m_bShallowCopy = true;
   if (pFont->m_pSubstFont) {
-    m_pSubstFont.reset(new CFX_SubstFont);
+    m_pSubstFont = WrapUnique(new CFX_SubstFont);
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
     m_pSubstFont->m_SubstFlags = pFont->m_pSubstFont->m_SubstFlags;
     m_pSubstFont->m_Weight = pFont->m_pSubstFont->m_Weight;
@@ -319,7 +319,7 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                          bool bVertical) {
   m_bEmbedded = false;
   m_bVertical = bVertical;
-  m_pSubstFont.reset(new CFX_SubstFont);
+  m_pSubstFont = WrapUnique(new CFX_SubstFont);
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, CharsetCP,
       m_pSubstFont.get());

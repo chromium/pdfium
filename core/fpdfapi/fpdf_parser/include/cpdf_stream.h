@@ -18,7 +18,7 @@ class CPDF_Stream : public CPDF_Object {
  public:
   CPDF_Stream();
 
-  // Takes onwership of |pData| and |pDict|.
+  // Takes ownership of |pData| and |pDict|.
   CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
 
   // CPDF_Object.

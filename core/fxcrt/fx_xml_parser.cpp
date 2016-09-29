@@ -894,7 +894,7 @@ void CXML_AttrMap::SetAt(const CFX_ByteString& space,
                          const CFX_ByteString& name,
                          const CFX_WideString& value) {
   if (!m_pMap)
-    m_pMap.reset(new std::vector<CXML_AttrItem>);
+    m_pMap = WrapUnique(new std::vector<CXML_AttrItem>);
 
   for (CXML_AttrItem& item : *m_pMap) {
     if (item.Matches(space, name)) {

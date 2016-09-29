@@ -81,7 +81,7 @@ int GetTTCIndex(const uint8_t* pFontData,
 
 CFX_FontMgr::CFX_FontMgr()
     : m_FTLibrary(nullptr), m_FTLibrarySupportsHinting(false) {
-  m_pBuiltinMapper.reset(new CFX_FontMapper(this));
+  m_pBuiltinMapper = WrapUnique(new CFX_FontMapper(this));
 }
 
 CFX_FontMgr::~CFX_FontMgr() {

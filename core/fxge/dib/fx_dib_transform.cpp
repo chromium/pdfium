@@ -363,8 +363,8 @@ FX_BOOL CFX_ImageTransformer::Start() {
     result_clip.Offset(-result_rect.left, -result_rect.top);
     result_clip = FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
                                     m_pMatrix->c > 0, m_pMatrix->b < 0);
-    m_Stretcher.reset(new CFX_ImageStretcher(&m_Storer, m_pSrc, dest_height,
-                                             dest_width, result_clip, m_Flags));
+    m_Stretcher = WrapUnique(new CFX_ImageStretcher(
+        &m_Storer, m_pSrc, dest_height, dest_width, result_clip, m_Flags));
     m_Stretcher->Start();
     m_Status = 1;
     return TRUE;
@@ -376,7 +376,7 @@ FX_BOOL CFX_ImageTransformer::Start() {
     int dest_height = m_pMatrix->d > 0 ? (int)-FXSYS_ceil(m_pMatrix->d)
                                        : (int)-FXSYS_floor(m_pMatrix->d);
     result_clip.Offset(-result_rect.left, -result_rect.top);
-    m_Stretcher.reset(new CFX_ImageStretcher(
+    m_Stretcher = WrapUnique(new CFX_ImageStretcher(
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip, m_Flags));
     m_Stretcher->Start();
     m_Status = 2;
@@ -395,9 +395,9 @@ FX_BOOL CFX_ImageTransformer::Start() {
   clip_rect_f.Transform(&m_dest2stretch);
   m_StretchClip = clip_rect_f.GetOuterRect();
   m_StretchClip.Intersect(0, 0, stretch_width, stretch_height);
-  m_Stretcher.reset(new CFX_ImageStretcher(&m_Storer, m_pSrc, stretch_width,
-                                           stretch_height, m_StretchClip,
-                                           m_Flags));
+  m_Stretcher = WrapUnique(new CFX_ImageStretcher(&m_Storer, m_pSrc,
+                                                  stretch_width, stretch_height,
+                                                  m_StretchClip, m_Flags));
   m_Stretcher->Start();
   m_Status = 3;
   return TRUE;

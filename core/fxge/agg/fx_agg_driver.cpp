@@ -498,7 +498,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
 void CFX_AggDeviceDriver::SaveState() {
   std::unique_ptr<CFX_ClipRgn> pClip;
   if (m_pClipRgn)
-    pClip.reset(new CFX_ClipRgn(*m_pClipRgn));
+    pClip = WrapUnique(new CFX_ClipRgn(*m_pClipRgn));
   m_StateStack.push_back(std::move(pClip));
 }
 
@@ -510,7 +510,7 @@ void CFX_AggDeviceDriver::RestoreState(bool bKeepSaved) {
 
   if (bKeepSaved) {
     if (m_StateStack.back())
-      m_pClipRgn.reset(new CFX_ClipRgn(*m_StateStack.back()));
+      m_pClipRgn = WrapUnique(new CFX_ClipRgn(*m_StateStack.back()));
   } else {
     m_pClipRgn = std::move(m_StateStack.back());
     m_StateStack.pop_back();
@@ -544,8 +544,8 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                                               int fill_mode) {
   m_FillFlags = fill_mode;
   if (!m_pClipRgn) {
-    m_pClipRgn.reset(new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
-                                     GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+    m_pClipRgn = WrapUnique(new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
+                                            GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   }
   if (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) {
     CFX_FloatRect rectf;
@@ -577,8 +577,8 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
   if (!m_pClipRgn) {
-    m_pClipRgn.reset(new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
-                                     GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+    m_pClipRgn = WrapUnique(new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
+                                            GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   }
   CAgg_PathData path_data;
   path_data.BuildPath(pPathData, nullptr);

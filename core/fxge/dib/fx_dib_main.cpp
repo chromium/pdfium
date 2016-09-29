@@ -1461,7 +1461,7 @@ CFX_DIBitmap* CFX_DIBSource::FlipImage(FX_BOOL bXFlip, FX_BOOL bYFlip) const {
 
 CFX_DIBExtractor::CFX_DIBExtractor(const CFX_DIBSource* pSrc) {
   if (pSrc->GetBuffer()) {
-    m_pBitmap.reset(new CFX_DIBitmap);
+    m_pBitmap = WrapUnique(new CFX_DIBitmap);
     if (!m_pBitmap->Create(pSrc->GetWidth(), pSrc->GetHeight(),
                            pSrc->GetFormat(), pSrc->GetBuffer())) {
       m_pBitmap.reset();
@@ -1567,9 +1567,9 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
       m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
                          TRUE, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
                          alpha_flag, pIccTransform, m_BlendType);
-      m_Stretcher.reset(new CFX_ImageStretcher(&m_Composer, pSource,
-                                               dest_height, dest_width,
-                                               bitmap_clip, dib_flags));
+      m_Stretcher = WrapUnique(new CFX_ImageStretcher(&m_Composer, pSource,
+                                                      dest_height, dest_width,
+                                                      bitmap_clip, dib_flags));
       if (!m_Stretcher->Start())
         return FALSE;
 
@@ -1600,7 +1600,7 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
                      FALSE, FALSE, FALSE, m_bRgbByteOrder, alpha_flag,
                      pIccTransform, m_BlendType);
   m_Status = 1;
-  m_Stretcher.reset(new CFX_ImageStretcher(
+  m_Stretcher = WrapUnique(new CFX_ImageStretcher(
       &m_Composer, pSource, dest_width, dest_height, bitmap_clip, dib_flags));
   return m_Stretcher->Start();
 }
@@ -1680,7 +1680,7 @@ FX_BOOL CFX_BitmapStorer::SetInfo(int width,
                                   int height,
                                   FXDIB_Format src_format,
                                   uint32_t* pSrcPalette) {
-  m_pBitmap.reset(new CFX_DIBitmap);
+  m_pBitmap = WrapUnique(new CFX_DIBitmap);
   if (!m_pBitmap->Create(width, height, src_format)) {
     m_pBitmap.reset();
     return FALSE;
