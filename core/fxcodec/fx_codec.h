@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_INCLUDE_FX_CODEC_H_
-#define CORE_FXCODEC_INCLUDE_FX_CODEC_H_
+#ifndef CORE_FXCODEC_FX_CODEC_H_
+#define CORE_FXCODEC_FX_CODEC_H_
 
 #include <map>
 #include <memory>
@@ -19,7 +19,7 @@
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/codec/ccodec_jpxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
-#include "core/fxcodec/include/fx_codec_def.h"
+#include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 
@@ -126,4 +126,4 @@ void FaxG4Decode(const uint8_t* src_buf,
                  int height,
                  int pitch);
 
-#endif  // CORE_FXCODEC_INCLUDE_FX_CODEC_H_
+#endif  // CORE_FXCODEC_FX_CODEC_H_

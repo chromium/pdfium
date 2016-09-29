@@ -13,7 +13,7 @@
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <crtdbg.h>
 
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/include/fx_memory.h"
 
 #ifndef _SKIA_SUPPORT_

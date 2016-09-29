@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_INCLUDE_CCODEC_PROGRESSIVEDECODER_H_
-#define CORE_FXCODEC_CODEC_INCLUDE_CCODEC_PROGRESSIVEDECODER_H_
+#ifndef CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
+#define CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
 
 #include <vector>
 
-#include "core/fxcodec/include/fx_codec_def.h"
+#include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 
@@ -235,4 +235,4 @@ class CCodec_ProgressiveDecoder {
   void ResampleVertBT(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
 };
 
-#endif  // CORE_FXCODEC_CODEC_INCLUDE_CCODEC_PROGRESSIVEDECODER_H_
+#endif  // CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_

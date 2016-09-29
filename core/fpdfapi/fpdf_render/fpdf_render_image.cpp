@@ -24,7 +24,7 @@
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_pathdata.h"

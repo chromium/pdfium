@@ -9,7 +9,7 @@
 #include <limits.h>
 #include <algorithm>
 
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "core/fxge/include/cfx_gemodule.h"

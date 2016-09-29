@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcodec/codec/codec_int.h"
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
 
 const uint32_t N_COMPONENT_LAB = 3;

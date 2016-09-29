@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

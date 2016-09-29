@@ -4,6 +4,6 @@ include_rules = [
   '+core/fpdfapi/fpdf_page',
   '+core/fpdfapi/fpdf_parser',
   '+core/fpdfdoc',
-  '+core/fxcodec/include',
-  '+core/fxcodec/codec/include',
+  '+core/fxcodec',
+  '+core/fxcodec/codec',
 ]

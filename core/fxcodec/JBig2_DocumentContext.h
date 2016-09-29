@@ -4,8 +4,8 @@
 //
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_INCLUDE_JBIG2_DOCUMENTCONTEXT_H_
-#define CORE_FXCODEC_INCLUDE_JBIG2_DOCUMENTCONTEXT_H_
+#ifndef CORE_FXCODEC_JBIG2_DOCUMENTCONTEXT_H_
+#define CORE_FXCODEC_JBIG2_DOCUMENTCONTEXT_H_
 
 #include <list>
 #include <memory>
@@ -31,4 +31,4 @@ class JBig2_DocumentContext {
   std::list<CJBig2_CachePair> m_SymbolDictCache;
 };
 
-#endif  // CORE_FXCODEC_INCLUDE_JBIG2_DOCUMENTCONTEXT_H_
+#endif  // CORE_FXCODEC_JBIG2_DOCUMENTCONTEXT_H_

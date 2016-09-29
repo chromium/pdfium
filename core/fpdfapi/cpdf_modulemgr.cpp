@@ -7,7 +7,7 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 
 namespace {
 

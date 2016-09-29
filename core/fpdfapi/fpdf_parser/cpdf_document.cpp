@@ -20,7 +20,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
-#include "core/fxcodec/include/JBig2_DocumentContext.h"
+#include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxge/include/cfx_unicodeencoding.h"
 #include "core/fxge/include/fx_font.h"
 #include "third_party/base/stl_util.h"

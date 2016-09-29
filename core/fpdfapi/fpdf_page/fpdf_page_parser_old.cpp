@@ -27,7 +27,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/cfx_fxgedevice.h"

@@ -9,7 +9,7 @@
 #include <list>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fxcodec/include/JBig2_DocumentContext.h"
+#include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/include/fx_memory.h"

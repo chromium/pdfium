@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
+#include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 
 #include <algorithm>
 
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/include/fx_dib.h"
 #include "third_party/base/numerics/safe_math.h"
 

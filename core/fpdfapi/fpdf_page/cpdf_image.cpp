@@ -19,7 +19,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/include/fx_dib.h"
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc)

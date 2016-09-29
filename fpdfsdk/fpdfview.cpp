@@ -21,7 +21,7 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/cfx_fxgedevice.h"

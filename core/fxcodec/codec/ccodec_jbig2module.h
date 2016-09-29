@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcodec/include/fx_codec_def.h"
+#include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/include/fx_basic.h"
 
 class CJBig2_Context;
