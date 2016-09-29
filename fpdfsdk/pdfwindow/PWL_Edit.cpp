@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_font/cpdf_font.h"
-#include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "core/fxge/include/cfx_graphstatedata.h"

@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fpdfdoc/include/cpvt_wordprops.h"
+#include "core/fpdfdoc/cpvt_wordprops.h"
 #include "core/fxcrt/include/fx_system.h"
 
 struct CPVT_WordInfo {

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_formcontrol.h"
+#include "core/fpdfdoc/cpdf_formcontrol.h"
 
 #include <algorithm>
 
@@ -14,7 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
-#include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
 namespace {

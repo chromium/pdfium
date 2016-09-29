@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_link.h"
+#include "core/fpdfdoc/cpdf_link.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "core/fpdfdoc/cpdf_nametree.h"
 
 CFX_FloatRect CPDF_Link::GetRect() {
   return m_pDict->GetRectFor("Rect");

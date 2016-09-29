@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_actionfields.h"
+#include "core/fpdfdoc/cpdf_actionfields.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
-#include "core/fpdfdoc/include/cpdf_action.h"
+#include "core/fpdfdoc/cpdf_action.h"
 
 size_t CPDF_ActionFields::GetFieldsCount() const {
   if (!m_pAction)

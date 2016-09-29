@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfdoc/include/fpdf_tagged.h"
+#include "core/fpdfdoc/fpdf_tagged.h"
 #include "core/fxcrt/include/cfx_retain_ptr.h"
 #include "third_party/base/stl_util.h"
 

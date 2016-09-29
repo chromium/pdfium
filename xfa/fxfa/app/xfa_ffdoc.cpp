@@ -11,7 +11,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
-#include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "xfa/fde/xml/fde_xml_imp.h"

@@ -10,8 +10,8 @@
 #include <memory>
 #include <set>
 
-#include "core/fpdfdoc/include/cpdf_aaction.h"
-#include "core/fpdfdoc/include/cpdf_action.h"
+#include "core/fpdfdoc/cpdf_aaction.h"
+#include "core/fpdfdoc/cpdf_action.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "fpdfsdk/include/pdfsdk_fieldaction.h"
 

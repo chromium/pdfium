@@ -7,10 +7,10 @@
 #ifndef FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_
 #define FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_
 
-#include "core/fpdfdoc/include/cpdf_aaction.h"
-#include "core/fpdfdoc/include/cpdf_action.h"
-#include "core/fpdfdoc/include/cpdf_annot.h"
-#include "core/fpdfdoc/include/cpdf_defaultappearance.h"
+#include "core/fpdfdoc/cpdf_aaction.h"
+#include "core/fpdfdoc/cpdf_action.h"
+#include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "fpdfsdk/cfx_systemhandler.h"

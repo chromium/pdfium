@@ -8,7 +8,7 @@
 #define CORE_FPDFDOC_CLINE_H_
 
 #include "core/fpdfdoc/cpvt_lineinfo.h"
-#include "core/fpdfdoc/include/cpvt_wordplace.h"
+#include "core/fpdfdoc/cpvt_wordplace.h"
 
 class CLine final {
  public:

@@ -4,7 +4,7 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_indirect_object_holder.h"
-#include "core/fpdfdoc/include/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(cpdf_formfield, FPDF_GetFullName) {

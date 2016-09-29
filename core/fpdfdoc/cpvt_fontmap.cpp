@@ -9,7 +9,7 @@
 #include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interform.h"
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            CPDF_Dictionary* pResDict,

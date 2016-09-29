@@ -10,8 +10,8 @@
 #include <map>
 #include <vector>
 
-#include "core/fpdfdoc/include/cpdf_action.h"
-#include "core/fpdfdoc/include/ipdf_formnotify.h"
+#include "core/fpdfdoc/cpdf_action.h"
+#include "core/fpdfdoc/ipdf_formnotify.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxge/include/fx_dib.h"
 

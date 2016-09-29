@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_annotlist.h"
+#include "core/fpdfdoc/cpdf_annotlist.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
+#include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
-#include "core/fpdfdoc/include/cpdf_annot.h"
-#include "core/fpdfdoc/include/cpdf_interform.h"
-#include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
 namespace {

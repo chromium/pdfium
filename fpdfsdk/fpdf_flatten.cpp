@@ -15,7 +15,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fpdfdoc/include/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_annot.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;

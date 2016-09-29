@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_viewerpreferences.h"
+#include "core/fpdfdoc/cpdf_viewerpreferences.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 

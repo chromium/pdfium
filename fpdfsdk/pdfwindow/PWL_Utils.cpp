@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"

@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFDOC_CPVT_GENERATEAP_H_
 #define CORE_FPDFDOC_CPVT_GENERATEAP_H_
 
+#include "core/fpdfdoc/cpdf_defaultappearance.h"
+#include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_dash.h"
-#include "core/fpdfdoc/include/cpdf_defaultappearance.h"
-#include "core/fpdfdoc/include/cpdf_variabletext.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"

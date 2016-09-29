@@ -8,7 +8,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
-#include "core/fpdfdoc/include/cpdf_filespec.h"
+#include "core/fpdfdoc/cpdf_filespec.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

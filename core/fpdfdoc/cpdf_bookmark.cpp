@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_bookmark.h"
+#include "core/fpdfdoc/cpdf_bookmark.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
-#include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxge/include/fx_dib.h"
 
 uint32_t CPDF_Bookmark::GetColorRef() const {

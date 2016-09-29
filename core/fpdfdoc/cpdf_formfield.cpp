@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
 
 #include <set>
 
@@ -15,9 +15,9 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
+#include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
-#include "core/fpdfdoc/include/cpdf_formcontrol.h"
-#include "core/fpdfdoc/include/cpdf_interform.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

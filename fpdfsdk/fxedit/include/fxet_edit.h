@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fpdfdoc/include/cpvt_secprops.h"
-#include "core/fpdfdoc/include/cpvt_wordprops.h"
+#include "core/fpdfdoc/cpvt_secprops.h"
+#include "core/fpdfdoc/cpvt_wordprops.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 
 class CFFL_FormFiller;

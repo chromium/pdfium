@@ -12,7 +12,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_numbertree.h"
-#include "core/fpdfdoc/include/fpdf_tagged.h"
+#include "core/fpdfdoc/fpdf_tagged.h"
 #include "core/fpdfdoc/tagged_int.h"
 
 namespace {

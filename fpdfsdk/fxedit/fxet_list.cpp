@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/fxedit/include/fxet_list.h"
 
-#include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/cpvt_word.h"
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 

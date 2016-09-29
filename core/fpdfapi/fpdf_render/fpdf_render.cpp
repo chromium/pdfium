@@ -29,7 +29,7 @@
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/cpdf_textrenderer.h"
 #include "core/fpdfapi/fpdf_render/cpdf_type3cache.h"
-#include "core/fpdfdoc/include/cpdf_occontext.h"
+#include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"

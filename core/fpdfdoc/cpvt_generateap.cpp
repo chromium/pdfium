@@ -14,11 +14,11 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
+#include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
-#include "core/fpdfdoc/include/cpdf_annot.h"
-#include "core/fpdfdoc/include/cpdf_formfield.h"
-#include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/cpvt_word.h"
 
 namespace {
 

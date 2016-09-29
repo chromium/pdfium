@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_variabletext.h"
+#include "core/fpdfdoc/cpdf_variabletext.h"
 
 #include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fpdfdoc/cline.h"
+#include "core/fpdfdoc/cpvt_section.h"
+#include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
-#include "core/fpdfdoc/include/cpvt_section.h"
-#include "core/fpdfdoc/include/cpvt_word.h"
-#include "core/fpdfdoc/include/ipvt_fontmap.h"
+#include "core/fpdfdoc/ipvt_fontmap.h"
 
 namespace {
 

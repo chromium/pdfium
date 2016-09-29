@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "core/fpdfdoc/cpvt_floatrect.h"
-#include "core/fpdfdoc/include/cpvt_secprops.h"
-#include "core/fpdfdoc/include/cpvt_wordprops.h"
+#include "core/fpdfdoc/cpvt_secprops.h"
+#include "core/fpdfdoc/cpvt_wordprops.h"
 
 struct CPVT_SectionInfo {
   CPVT_SectionInfo();

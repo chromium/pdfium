@@ -9,8 +9,8 @@
 #include <set>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfdoc/include/cpdf_formfield.h"
-#include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"

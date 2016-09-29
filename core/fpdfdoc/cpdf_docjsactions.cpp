@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfdoc/include/cpdf_docjsactions.h"
+#include "core/fpdfdoc/cpdf_docjsactions.h"
 
-#include "core/fpdfdoc/include/cpdf_nametree.h"
+#include "core/fpdfdoc/cpdf_nametree.h"
 
 CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 

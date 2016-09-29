@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "core/fpdfdoc/include/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"

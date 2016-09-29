@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfdoc/include/cpdf_formcontrol.h"
+#include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 

@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_UTILS_H_
 #define FPDFSDK_PDFWINDOW_PWL_UTILS_H_
 
-#include "core/fpdfdoc/include/cpvt_wordrange.h"
+#include "core/fpdfdoc/cpvt_wordrange.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CFX_Edit;

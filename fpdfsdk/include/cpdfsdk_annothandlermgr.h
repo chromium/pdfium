@@ -10,7 +10,7 @@
 #include <map>
 #include <memory>
 
-#include "core/fpdfdoc/include/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
