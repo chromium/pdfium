@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/fpdf_font/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_font/cpdf_truetypefont.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
@@ -21,7 +22,6 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "third_party/base/stl_util.h"

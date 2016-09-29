@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/fpdf_page/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
@@ -17,7 +18,6 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 

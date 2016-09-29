@@ -9,14 +9,14 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/fpdfapi/include/cpdf_pagerendercontext.h"
 #include "core/fpdfdoc/include/cpdf_annotlist.h"
 #include "core/fpdfdoc/include/cpdf_nametree.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"

@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"
@@ -28,7 +29,6 @@
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/cpdf_textrenderer.h"
 #include "core/fpdfapi/fpdf_render/cpdf_type3cache.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfdoc/include/cpdf_occontext.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"

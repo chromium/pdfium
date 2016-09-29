@@ -10,6 +10,7 @@
 #include <set>
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
 #include "core/fpdfapi/fpdf_page/cpdf_image.h"
@@ -21,7 +22,6 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "third_party/base/stl_util.h"
 
 void CPDF_ModuleMgr::InitPageModule() {

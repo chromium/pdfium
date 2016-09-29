@@ -6,13 +6,13 @@
 
 #include "core/fpdfapi/fpdf_font/font_int.h"
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/fpdf_cmaps/cmap_int.h"
 #include "core/fpdfapi/fpdf_font/ttgsubtable.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxge/include/fx_freetype.h"
 

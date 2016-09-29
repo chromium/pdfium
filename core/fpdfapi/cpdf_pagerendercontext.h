@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_INCLUDE_CPDF_PAGERENDERCONTEXT_H_
-#define CORE_FPDFAPI_INCLUDE_CPDF_PAGERENDERCONTEXT_H_
+#ifndef CORE_FPDFAPI_CPDF_PAGERENDERCONTEXT_H_
+#define CORE_FPDFAPI_CPDF_PAGERENDERCONTEXT_H_
 
 #include <memory>
 
@@ -28,4 +28,4 @@ class CPDF_PageRenderContext {
   std::unique_ptr<CPDF_RenderOptions> m_pOptions;
 };
 
-#endif  // CORE_FPDFAPI_INCLUDE_CPDF_PAGERENDERCONTEXT_H_
+#endif  // CORE_FPDFAPI_CPDF_PAGERENDERCONTEXT_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_
-#define CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_
+#ifndef CORE_FPDFAPI_CPDF_MODULEMGR_H_
+#define CORE_FPDFAPI_CPDF_MODULEMGR_H_
 
 #include <memory>
 
@@ -73,4 +73,4 @@ class CPDF_ModuleMgr {
   std::unique_ptr<CFSDK_UnsupportInfo_Adapter> m_pUnsupportInfoAdapter;
 };
 
-#endif  // CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_
+#endif  // CORE_FPDFAPI_CPDF_MODULEMGR_H_

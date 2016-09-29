@@ -4,7 +4,7 @@
 
 #include "public/fpdf_edit.h"
 
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class PDFEditTest : public testing::Test {
