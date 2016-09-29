@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fpdftext/include/cpdf_linkextract.h"
+#include "core/fpdftext/cpdf_linkextract.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 

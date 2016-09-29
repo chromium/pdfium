@@ -8,9 +8,9 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
-#include "core/fpdftext/include/cpdf_linkextract.h"
-#include "core/fpdftext/include/cpdf_textpage.h"
-#include "core/fpdftext/include/cpdf_textpagefind.h"
+#include "core/fpdftext/cpdf_linkextract.h"
+#include "core/fpdftext/cpdf_textpage.h"
+#include "core/fpdftext/cpdf_textpagefind.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/stl_util.h"

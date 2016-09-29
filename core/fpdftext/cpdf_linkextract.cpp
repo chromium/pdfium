@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdftext/include/cpdf_linkextract.h"
+#include "core/fpdftext/cpdf_linkextract.h"
 
 #include <vector>
 
-#include "core/fpdftext/include/cpdf_textpage.h"
+#include "core/fpdftext/cpdf_textpage.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"

@@ -553,11 +553,11 @@ static_library("fpdfapi") {
 static_library("fpdftext") {
   sources = [
     "core/fpdftext/cpdf_linkextract.cpp",
+    "core/fpdftext/cpdf_linkextract.h",
     "core/fpdftext/cpdf_textpage.cpp",
+    "core/fpdftext/cpdf_textpage.h",
     "core/fpdftext/cpdf_textpagefind.cpp",
-    "core/fpdftext/include/cpdf_linkextract.h",
-    "core/fpdftext/include/cpdf_textpage.h",
-    "core/fpdftext/include/cpdf_textpagefind.h",
+    "core/fpdftext/cpdf_textpagefind.h",
     "core/fpdftext/unicodenormalizationdata.cpp",
     "core/fpdftext/unicodenormalizationdata.h",
   ]

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFTEXT_INCLUDE_CPDF_TEXTPAGEFIND_H_
-#define CORE_FPDFTEXT_INCLUDE_CPDF_TEXTPAGEFIND_H_
+#ifndef CORE_FPDFTEXT_CPDF_TEXTPAGEFIND_H_
+#define CORE_FPDFTEXT_CPDF_TEXTPAGEFIND_H_
 
 #include <vector>
 
@@ -57,4 +57,4 @@ class CPDF_TextPageFind {
   FX_BOOL m_IsFind;
 };
 
-#endif  // CORE_FPDFTEXT_INCLUDE_CPDF_TEXTPAGEFIND_H_
+#endif  // CORE_FPDFTEXT_CPDF_TEXTPAGEFIND_H_

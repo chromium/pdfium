@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFTEXT_INCLUDE_CPDF_LINKEXTRACT_H_
-#define CORE_FPDFTEXT_INCLUDE_CPDF_LINKEXTRACT_H_
+#ifndef CORE_FPDFTEXT_CPDF_LINKEXTRACT_H_
+#define CORE_FPDFTEXT_CPDF_LINKEXTRACT_H_
 
 #include <vector>
 
@@ -43,4 +43,4 @@ class CPDF_LinkExtract {
   std::vector<Link> m_LinkArray;
 };
 
-#endif  // CORE_FPDFTEXT_INCLUDE_CPDF_LINKEXTRACT_H_
+#endif  // CORE_FPDFTEXT_CPDF_LINKEXTRACT_H_

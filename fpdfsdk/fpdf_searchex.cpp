@@ -6,7 +6,7 @@
 
 #include "public/fpdf_searchex.h"
 
-#include "core/fpdftext/include/cpdf_textpage.h"
+#include "core/fpdftext/cpdf_textpage.h"
 
 DLLEXPORT int STDCALL
 FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex) {

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFTEXT_INCLUDE_CPDF_TEXTPAGE_H_
-#define CORE_FPDFTEXT_INCLUDE_CPDF_TEXTPAGE_H_
+#ifndef CORE_FPDFTEXT_CPDF_TEXTPAGE_H_
+#define CORE_FPDFTEXT_CPDF_TEXTPAGE_H_
 
 #include <deque>
 #include <vector>
@@ -178,4 +178,4 @@ class CPDF_TextPage {
   CFX_FloatRect m_CurlineRect;
 };
 
-#endif  // CORE_FPDFTEXT_INCLUDE_CPDF_TEXTPAGE_H_
+#endif  // CORE_FPDFTEXT_CPDF_TEXTPAGE_H_
