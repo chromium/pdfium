@@ -7,7 +7,6 @@
 #include "core/fxge/include/cfx_renderdevice.h"
 
 #include "core/fxcrt/include/fx_safe_types.h"
-#include "core/fxge/include/cfx_autofontcache.h"
 #include "core/fxge/include/cfx_facecache.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
