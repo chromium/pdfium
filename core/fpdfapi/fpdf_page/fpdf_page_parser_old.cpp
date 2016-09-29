@@ -28,8 +28,8 @@
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/include/fx_ext.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 

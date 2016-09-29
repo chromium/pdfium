@@ -7,8 +7,8 @@
 #ifndef XFA_FXFA_FM2JS_XFA_ERROR_H_
 #define XFA_FXFA_FM2JS_XFA_ERROR_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 extern const FX_WCHAR kFMErrUnsupportedChar[];
 extern const FX_WCHAR kFMErrBadSuffixNumber[];

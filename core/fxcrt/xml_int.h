@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/include/fx_stream.h"
+#include "core/fxcrt/fx_stream.h"
 
 class CFX_UTF8Decoder;
 class CXML_Element;

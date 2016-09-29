@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_FPDF_PARSER_CPDF_STRING_H_
 
 #include "core/fpdfapi/fpdf_parser/cpdf_object.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_String : public CPDF_Object {
  public:

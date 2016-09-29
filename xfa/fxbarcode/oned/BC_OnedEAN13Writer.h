@@ -7,8 +7,8 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 
 class CFX_DIBitmap;

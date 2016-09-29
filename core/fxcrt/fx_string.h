@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_STRING_H_
-#define CORE_FXCRT_INCLUDE_FX_STRING_H_
+#ifndef CORE_FXCRT_FX_STRING_H_
+#define CORE_FXCRT_FX_STRING_H_
 
 #include <stdint.h>  // For intptr_t.
 
 #include <algorithm>
 #include <functional>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_string_c_template.h"
 #include "core/fxcrt/cfx_string_data_template.h"
-#include "core/fxcrt/include/cfx_retain_ptr.h"
-#include "core/fxcrt/include/fx_memory.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
 
 class CFX_ByteString;
 class CFX_WideString;
@@ -311,7 +311,6 @@ class CFX_WideString {
   int Compare(const CFX_WideString& str) const;
   int CompareNoCase(const FX_WCHAR* str) const;
 
-
   CFX_WideString Mid(FX_STRSIZE first) const;
   CFX_WideString Mid(FX_STRSIZE first, FX_STRSIZE count) const;
   CFX_WideString Left(FX_STRSIZE count) const;
@@ -462,4 +461,4 @@ struct hash<CFX_WideString> {
 extern template struct std::hash<CFX_ByteString>;
 extern template struct std::hash<CFX_WideString>;
 
-#endif  // CORE_FXCRT_INCLUDE_FX_STRING_H_
+#endif  // CORE_FXCRT_FX_STRING_H_

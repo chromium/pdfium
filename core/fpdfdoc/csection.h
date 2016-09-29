@@ -10,8 +10,8 @@
 #include "core/fpdfdoc/clines.h"
 #include "core/fpdfdoc/cpvt_sectioninfo.h"
 #include "core/fpdfdoc/ctypeset.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_VariableText;
 

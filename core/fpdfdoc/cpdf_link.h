@@ -9,7 +9,7 @@
 
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_dest.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 class CPDF_Dictionary;
 

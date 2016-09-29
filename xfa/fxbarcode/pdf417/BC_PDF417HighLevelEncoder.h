@@ -7,8 +7,8 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417Compaction.h"
 
 class CBC_PDF417HighLevelEncoder {

@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fpdftext/unicodenormalizationdata.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 const uint16_t g_UnicodeData_Normalization[65536] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,

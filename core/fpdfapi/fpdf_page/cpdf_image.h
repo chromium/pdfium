@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_IMAGE_H_
 
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 #define PDF_IMAGE_NO_COMPRESS 0x0000
 #define PDF_IMAGE_LOSSY_COMPRESS 0x0001

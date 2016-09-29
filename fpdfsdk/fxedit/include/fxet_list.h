@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_
 #define FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 
 class CFX_Edit;

@@ -7,8 +7,8 @@
 #ifndef XFA_FDE_FDE_VISUALSET_H_
 #define XFA_FDE_FDE_VISUALSET_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"

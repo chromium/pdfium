@@ -11,10 +11,10 @@
 #include <set>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_object.h"
-#include "core/fxcrt/include/cfx_string_pool_template.h"
-#include "core/fxcrt/include/cfx_weak_ptr.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/cfx_weak_ptr.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
 
 class CPDF_IndirectObjectHolder;
 

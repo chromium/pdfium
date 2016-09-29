@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 #define XFA_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 // TODO(weili): The usage of this class should be replaced by
 // std::vector<uint8_t>.

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/include/fx_stream.h"
+#include "core/fxcrt/fx_stream.h"
 
 FX_BOOL IFX_FileWrite::WriteBlock(const void* pData, size_t size) {
   return WriteBlock(pData, GetSize(), size);

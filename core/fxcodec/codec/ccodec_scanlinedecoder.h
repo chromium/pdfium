@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_SCANLINEDECODER_H_
 #define CORE_FXCODEC_CODEC_CCODEC_SCANLINEDECODER_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class IFX_Pause;
 

@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_BASEWIDGET_IFWL_SCROLLBAR_H_
 #define XFA_FWL_BASEWIDGET_IFWL_SCROLLBAR_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"

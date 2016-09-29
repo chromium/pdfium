@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 struct FXBMP_Context;
 class CFX_DIBAttribute;

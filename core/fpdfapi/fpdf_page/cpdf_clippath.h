@@ -12,9 +12,9 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_path.h"
-#include "core/fxcrt/include/cfx_count_ref.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 class CPDF_Path;
 class CPDF_TextObject;

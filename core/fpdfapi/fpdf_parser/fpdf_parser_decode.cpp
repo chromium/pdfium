@@ -17,7 +17,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

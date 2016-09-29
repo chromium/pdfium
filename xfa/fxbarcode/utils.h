@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_UTILS_H_
 #define XFA_FXBARCODE_UTILS_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 typedef CFX_MapPtrTemplate<void*, int32_t> CFX_PtrToInt32;
 FX_BOOL BC_FX_ByteString_Replace(CFX_ByteString& dst,

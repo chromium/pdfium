@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/include/fx_ext.h"
-#include "core/fxcrt/include/fx_xml.h"
+#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_xml.h"
 #include "xfa/fgas/localization/fgas_localeimp.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde

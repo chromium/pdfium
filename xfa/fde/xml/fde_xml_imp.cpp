@@ -8,8 +8,8 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/include/fx_ext.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 namespace {

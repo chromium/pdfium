@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_stream.h"
+#include "core/fxcrt/fx_stream.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/include/fxfa_basic.h"

@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <type_traits>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself. These are not necessarily nul-terminated, so that substring

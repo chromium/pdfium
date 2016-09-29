@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 #include "xfa/fxbarcode/utils.h"
 
 class CBC_ReedSolomonGF256Poly;

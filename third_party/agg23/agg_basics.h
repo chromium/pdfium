@@ -41,7 +41,7 @@
 #endif
 #define AGG_INLINE inline
 
-#include "core/fxcrt/include/fx_system.h"  // For FX_FLOAT
+#include "core/fxcrt/fx_system.h"  // For FX_FLOAT
 
 namespace agg
 {

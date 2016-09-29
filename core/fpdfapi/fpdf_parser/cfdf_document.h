@@ -9,9 +9,9 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_object.h"
-#include "core/fxcrt/include/cfx_string_pool_template.h"
-#include "core/fxcrt/include/cfx_weak_ptr.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/cfx_weak_ptr.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CPDF_Dictionary;
 

@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"

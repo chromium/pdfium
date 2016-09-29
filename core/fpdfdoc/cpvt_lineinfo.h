@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPVT_LINEINFO_H_
 #define CORE_FPDFDOC_CPVT_LINEINFO_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 struct CPVT_LineInfo {
   CPVT_LineInfo()

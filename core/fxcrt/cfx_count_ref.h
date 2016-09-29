@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_CFX_COUNT_REF_H_
-#define CORE_FXCRT_INCLUDE_CFX_COUNT_REF_H_
+#ifndef CORE_FXCRT_CFX_COUNT_REF_H_
+#define CORE_FXCRT_CFX_COUNT_REF_H_
 
-#include "core/fxcrt/include/cfx_retain_ptr.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/fx_system.h"
 
 // A shared object with Copy on Write semantics that makes it appear as
 // if each one were independent.
@@ -78,4 +78,4 @@ class CFX_CountRef {
   CFX_RetainPtr<CountedObj> m_pObject;
 };
 
-#endif  // CORE_FXCRT_INCLUDE_CFX_COUNT_REF_H_
+#endif  // CORE_FXCRT_CFX_COUNT_REF_H_

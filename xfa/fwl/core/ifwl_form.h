@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_FORM_H_
 #define XFA_FWL_CORE_IFWL_FORM_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"

@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CCodec_FaxModule;
 class CCodec_FlateModule;

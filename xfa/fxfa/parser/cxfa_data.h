@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DATA_H_
 #define XFA_FXFA_PARSER_CXFA_DATA_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 #include "xfa/fxfa/include/fxfa_basic.h"
 

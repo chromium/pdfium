@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_submit.h"

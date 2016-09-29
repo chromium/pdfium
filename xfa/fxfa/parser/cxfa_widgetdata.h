@@ -7,8 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_WIDGETDATA_H_
 #define XFA_FXFA_PARSER_CXFA_WIDGETDATA_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_assist.h"
 #include "xfa/fxfa/parser/cxfa_bind.h"
 #include "xfa/fxfa/parser/cxfa_border.h"

@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_GENERALSTATE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_GENERALSTATE_H_
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/include/fx_dib.h"
 
 class CPDF_Object;

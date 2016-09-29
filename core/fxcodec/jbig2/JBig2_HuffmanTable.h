@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CJBig2_BitStream;
 struct JBig2TableLine;

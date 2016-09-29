@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 #include "fxjs/include/fxjse.h"
 #include "v8/include/v8.h"
 

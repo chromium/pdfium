@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 
 #ifndef _SKIA_SUPPORT_
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/cfx_gemodule.h"

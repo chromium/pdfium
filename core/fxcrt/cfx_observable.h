@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_INCLUDE_CFX_OBSERVABLE_H_
-#define CORE_FXCRT_INCLUDE_CFX_OBSERVABLE_H_
+#ifndef CORE_FXCRT_CFX_OBSERVABLE_H_
+#define CORE_FXCRT_CFX_OBSERVABLE_H_
 
 #include <set>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/stl_util.h"
 
 template <class T>
@@ -75,4 +75,4 @@ class CFX_Observable {
   std::set<ObservedPtr*> m_ObservedPtrs;
 };
 
-#endif  // CORE_FXCRT_INCLUDE_CFX_OBSERVABLE_H_
+#endif  // CORE_FXCRT_CFX_OBSERVABLE_H_

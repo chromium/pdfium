@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_DATAPROVIDER_H_
 #define XFA_FWL_CORE_IFWL_DATAPROVIDER_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fwl/core/fwl_error.h"
 
 class IFWL_Widget;

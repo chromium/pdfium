@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_IFX_CHARITER_H_
 #define XFA_FDE_IFX_CHARITER_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class IFX_CharIter {
  public:

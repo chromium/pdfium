@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"

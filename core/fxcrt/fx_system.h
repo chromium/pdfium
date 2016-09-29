@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_SYSTEM_H_
-#define CORE_FXCRT_INCLUDE_FX_SYSTEM_H_
+#ifndef CORE_FXCRT_FX_SYSTEM_H_
+#define CORE_FXCRT_FX_SYSTEM_H_
 
 #include <assert.h>
 #include <math.h>
@@ -124,8 +124,8 @@ void FXSYS_snprintf(char* str,
                     ...);
 void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 #else
-#define FXSYS_snprintf (void) snprintf
-#define FXSYS_vsnprintf (void) vsnprintf
+#define FXSYS_snprintf (void)snprintf
+#define FXSYS_vsnprintf (void)vsnprintf
 #endif
 
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
@@ -339,4 +339,4 @@ int FXSYS_round(FX_FLOAT f);
 #define NEVER_INLINE __attribute__((__noinline__))
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-#endif  // CORE_FXCRT_INCLUDE_FX_SYSTEM_H_
+#endif  // CORE_FXCRT_FX_SYSTEM_H_

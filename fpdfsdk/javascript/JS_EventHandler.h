@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
 #define FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class CJS_Context;
 class CPDFSDK_Annot;

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"

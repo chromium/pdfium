@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "core/fxge/include/cfx_fontmapper.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "core/fxge/include/ifx_systemfontinfo.h"

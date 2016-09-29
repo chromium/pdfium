@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {

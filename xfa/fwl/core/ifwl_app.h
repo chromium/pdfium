@@ -17,7 +17,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_error.h"
 

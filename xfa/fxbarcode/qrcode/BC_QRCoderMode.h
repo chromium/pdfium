@@ -11,7 +11,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 class CBC_QRCoderVersion;
 

@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class IFX_CharIter;
 

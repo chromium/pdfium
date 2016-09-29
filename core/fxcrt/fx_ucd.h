@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_UCD_H_
-#define CORE_FXCRT_INCLUDE_FX_UCD_H_
+#ifndef CORE_FXCRT_FX_UCD_H_
+#define CORE_FXCRT_FX_UCD_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 #define FX_BIDICLASSBITS 6
 #define FX_BIDICLASSBITSMASK (31 << FX_BIDICLASSBITS)
@@ -199,4 +199,4 @@ inline CFX_RTFChar::CFX_RTFChar(const CFX_RTFChar& other) = default;
 typedef CFX_ArrayTemplate<CFX_RTFChar> CFX_RTFCharArray;
 #endif  // PDF_ENABLE_XFA
 
-#endif  // CORE_FXCRT_INCLUDE_FX_UCD_H_
+#endif  // CORE_FXCRT_FX_UCD_H_

@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_INCLUDE_CFX_SUBSTFONT_H_
 #define CORE_FXGE_INCLUDE_CFX_SUBSTFONT_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 #define FXFONT_SUBST_MM 0x01
 #define FXFONT_SUBST_GLYPHPATH 0x04

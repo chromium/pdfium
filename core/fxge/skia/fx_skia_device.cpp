@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"

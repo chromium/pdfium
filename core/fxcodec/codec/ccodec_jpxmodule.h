@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CJPX_Decoder;
 class CPDF_ColorSpace;

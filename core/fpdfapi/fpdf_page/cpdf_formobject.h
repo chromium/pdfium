@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 class CPDF_Form;
 

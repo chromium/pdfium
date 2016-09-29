@@ -7,8 +7,8 @@
 #ifndef CORE_FXCRT_CFX_STRING_DATA_TEMPLATE_H_
 #define CORE_FXCRT_CFX_STRING_DATA_TEMPLATE_H_
 
-#include "core/fxcrt/include/fx_memory.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
 
 template <typename CharType>

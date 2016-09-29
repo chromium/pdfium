@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_EDITCTRL_H_
 #define FPDFSDK_PDFWINDOW_PWL_EDITCTRL_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 

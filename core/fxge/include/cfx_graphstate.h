@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_
 #define CORE_FXGE_INCLUDE_CFX_GRAPHSTATE_H_
 
-#include "core/fxcrt/include/cfx_count_ref.h"
+#include "core/fxcrt/cfx_count_ref.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 
 class CPDF_Array;

@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_COLOR_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Pattern;
 

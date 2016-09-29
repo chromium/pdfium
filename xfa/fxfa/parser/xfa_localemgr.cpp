@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/include/fx_xml.h"
+#include "core/fxcrt/fx_xml.h"
 #include "core/fxge/include/cfx_gemodule.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_locale.h"

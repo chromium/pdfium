@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_INCLUDE_CFX_RETAIN_PTR_H_
-#define CORE_FXCRT_INCLUDE_CFX_RETAIN_PTR_H_
+#ifndef CORE_FXCRT_CFX_RETAIN_PTR_H_
+#define CORE_FXCRT_CFX_RETAIN_PTR_H_
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 
 template <class T>
 class CFX_RetainPtr {
@@ -22,8 +22,7 @@ class CFX_RetainPtr {
   CFX_RetainPtr(CFX_RetainPtr&& that) { Swap(that); }
 
   template <class U>
-  CFX_RetainPtr(const CFX_RetainPtr<U>& that)
-      : CFX_RetainPtr(that.Get()) {}
+  CFX_RetainPtr(const CFX_RetainPtr<U>& that) : CFX_RetainPtr(that.Get()) {}
 
   void Reset(T* obj = nullptr) {
     if (obj)
@@ -54,4 +53,4 @@ class CFX_RetainPtr {
   std::unique_ptr<T, ReleaseDeleter<T>> m_pObj;
 };
 
-#endif  // CORE_FXCRT_INCLUDE_CFX_RETAIN_PTR_H_
+#endif  // CORE_FXCRT_CFX_RETAIN_PTR_H_

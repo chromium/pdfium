@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_ALLSTATES_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;

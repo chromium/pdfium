@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_GRRDPROC_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_GRRDPROC_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_Image;

@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "core/fxge/ge/fx_text_int.h"

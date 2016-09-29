@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/include/cfx_observable.h"
+#include "core/fxcrt/cfx_observable.h"
 
 #include <utility>
 

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_EXT_H_
-#define CORE_FXCRT_INCLUDE_FX_EXT_H_
+#ifndef CORE_FXCRT_FX_EXT_H_
+#define CORE_FXCRT_FX_EXT_H_
 
 #include <cctype>
 #include <cwctype>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 #define FX_INVALID_OFFSET static_cast<uint32_t>(-1)
 
@@ -127,4 +127,4 @@ class CFX_SSortTemplate {
   }
 };
 
-#endif  // CORE_FXCRT_INCLUDE_FX_EXT_H_
+#endif  // CORE_FXCRT_FX_EXT_H_

@@ -6,8 +6,8 @@
 
 #include "core/fxge/include/cfx_graphstatedata.h"
 
-#include "core/fxcrt/include/fx_memory.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
 
 CFX_GraphStateData::CFX_GraphStateData()
     : m_LineCap(LineCapButt),

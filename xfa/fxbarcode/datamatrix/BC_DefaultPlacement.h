@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
 #define XFA_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CBC_DefaultPlacement {
  public:

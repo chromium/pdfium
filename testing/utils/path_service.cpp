@@ -15,7 +15,7 @@
 
 #include <string>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 // static
 bool PathService::EndsWithSeparator(const std::string& path) {

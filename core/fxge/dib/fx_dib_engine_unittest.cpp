@@ -8,7 +8,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/include/fx_dib.h"
 #include "testing/gtest/include/gtest/gtest.h"

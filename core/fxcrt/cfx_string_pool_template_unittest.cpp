@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/include/cfx_string_pool_template.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/fx_string.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 

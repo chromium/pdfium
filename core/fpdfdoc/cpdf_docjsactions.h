@@ -8,7 +8,7 @@
 #define CORE_FPDFDOC_CPDF_DOCJSACTIONS_H_
 
 #include "core/fpdfdoc/cpdf_action.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 class CPDF_Document;
 

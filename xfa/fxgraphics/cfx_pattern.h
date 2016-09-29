@@ -7,8 +7,8 @@
 #ifndef XFA_FXGRAPHICS_CFX_PATTERN_H_
 #define XFA_FXGRAPHICS_CFX_PATTERN_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 
 class CFX_DIBitmap;

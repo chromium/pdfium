@@ -7,8 +7,8 @@
 #ifndef CORE_FXGE_INCLUDE_CFX_PATHDATA_H_
 #define CORE_FXGE_INCLUDE_CFX_PATHDATA_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 
 struct FX_PATHPOINT {

@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PATTERN_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_PATTERN_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Document;
 class CPDF_Object;

@@ -7,8 +7,8 @@
 #ifndef XFA_FXBARCODE_CBC_ONECODE_H_
 #define XFA_FXBARCODE_CBC_ONECODE_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fxbarcode/cbc_codebase.h"
 
 class CFX_DIBitmap;

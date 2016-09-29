@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_FPDF_FONT_CPDF_TRUETYPEFONT_H_
 
 #include "core/fpdfapi/fpdf_font/cpdf_simplefont.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_TrueTypeFont : public CPDF_SimpleFont {
  public:

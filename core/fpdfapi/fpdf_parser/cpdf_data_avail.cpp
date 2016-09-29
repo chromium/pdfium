@@ -20,8 +20,8 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
-#include "core/fxcrt/include/fx_ext.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_DataAvail::FileAvail::~FileAvail() {}

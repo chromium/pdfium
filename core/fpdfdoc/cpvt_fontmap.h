@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include "core/fpdfdoc/ipvt_fontmap.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 class CPDF_Document;
 class CPDF_Dictionary;

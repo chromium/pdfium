@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "core/fxge/include/fx_freetype.h"
 
 namespace {

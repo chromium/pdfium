@@ -12,8 +12,8 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_system.h"
 
 struct CPDF_MeshVertex {
   FX_FLOAT x;

@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_CPDFSDK_XFAWIDGETHANDLER_H_
 #define FPDFSDK_INCLUDE_CPDFSDK_XFAWIDGETHANDLER_H_
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/include/ipdfsdk_annothandler.h"
 
 class CFX_Matrix;

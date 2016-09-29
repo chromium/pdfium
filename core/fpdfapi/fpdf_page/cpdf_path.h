@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PATH_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_PATH_H_
 
-#include "core/fxcrt/include/cfx_count_ref.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"

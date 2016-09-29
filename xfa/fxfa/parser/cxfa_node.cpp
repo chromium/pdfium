@@ -9,7 +9,7 @@
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "fxjs/include/cfxjse_value.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"

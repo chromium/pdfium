@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_CALCULATE_H_
 #define XFA_FXFA_PARSER_CXFA_CALCULATE_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 

@@ -9,7 +9,7 @@
 
 #include <unordered_map>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;

@@ -17,7 +17,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "core/fxge/include/fx_freetype.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/stl_util.h"

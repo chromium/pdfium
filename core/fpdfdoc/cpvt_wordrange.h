@@ -8,7 +8,7 @@
 #define CORE_FPDFDOC_CPVT_WORDRANGE_H_
 
 #include "core/fpdfdoc/cpvt_wordplace.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 struct CPVT_WordRange {
   CPVT_WordRange() {}

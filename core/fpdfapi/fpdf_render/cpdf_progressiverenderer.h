@@ -11,8 +11,8 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_RenderOptions;
 class CPDF_RenderStatus;

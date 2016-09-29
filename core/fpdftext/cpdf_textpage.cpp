@@ -20,8 +20,8 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fpdftext/unicodenormalizationdata.h"
 #include "core/fxcrt/fx_bidi.h"
-#include "core/fxcrt/include/fx_ext.h"
-#include "core/fxcrt/include/fx_ucd.h"
+#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_ucd.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 CXFA_WideTextRead::CXFA_WideTextRead(const CFX_WideString& wsBuffer)

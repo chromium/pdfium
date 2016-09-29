@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/include/cpdfsdk_datetime.h"
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 
 namespace {
 

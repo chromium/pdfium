@@ -6,7 +6,7 @@
 
 #include <stdlib.h>  // For abort().
 
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags) {
   return (void*)malloc(byte_size);

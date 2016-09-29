@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CFX_DIBAttribute;
 struct FXPNG_Context;

@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/xml_int.h"
 
-#include "core/fxcrt/include/fx_xml.h"
+#include "core/fxcrt/fx_xml.h"
 
 void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
                                CFX_ByteStringC& bsSpace,

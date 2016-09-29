@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmarkitem.h"
-#include "core/fxcrt/include/cfx_count_ref.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;
 

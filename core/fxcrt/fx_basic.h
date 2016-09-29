@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_BASIC_H_
-#define CORE_FXCRT_INCLUDE_FX_BASIC_H_
+#ifndef CORE_FXCRT_FX_BASIC_H_
+#define CORE_FXCRT_FX_BASIC_H_
 
 #include <algorithm>
 #include <memory>
 
-#include "core/fxcrt/include/fx_memory.h"
-#include "core/fxcrt/include/fx_stream.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class CFX_BinaryBuf {
  public:
@@ -788,7 +788,8 @@ class CFX_ListArrayTemplate {
   T1 m_Data;
 };
 typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_FILESIZE)>,
-                              FX_FILESIZE> CFX_FileSizeListArray;
+                              FX_FILESIZE>
+    CFX_FileSizeListArray;
 
 #ifdef PDF_ENABLE_XFA
 class IFX_Retainable {
@@ -856,4 +857,4 @@ class CFX_Matrix_3by3 {
 
 uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits);
 
-#endif  // CORE_FXCRT_INCLUDE_FX_BASIC_H_
+#endif  // CORE_FXCRT_FX_BASIC_H_

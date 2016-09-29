@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_PAUSEADAPTER_H_
 #define FPDFSDK_INCLUDE_FSDK_PAUSEADAPTER_H_
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_system.h"
 #include "public/fpdf_progressive.h"
 
 class IFSDK_PAUSE_Adapter : public IFX_Pause {

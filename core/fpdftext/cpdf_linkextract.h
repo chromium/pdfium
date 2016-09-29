@@ -9,10 +9,10 @@
 
 #include <vector>
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_TextPage;
 

@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 enum class JS_GlobalDataType { NUMBER = 0, BOOLEAN, STRING, OBJECT, NULLOBJ };
 

@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_JAVASCRIPT_RESOURCE_H_
 #define FPDFSDK_JAVASCRIPT_RESOURCE_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 class CJS_Context;
 

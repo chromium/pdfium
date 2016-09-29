@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_object.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CPDF_Stream : public CPDF_Object {
  public:

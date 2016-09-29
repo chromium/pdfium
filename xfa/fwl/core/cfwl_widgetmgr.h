@@ -10,7 +10,7 @@
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 

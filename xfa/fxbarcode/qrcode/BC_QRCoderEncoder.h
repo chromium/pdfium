@@ -7,8 +7,8 @@
 #ifndef XFA_FXBARCODE_QRCODE_BC_QRCODERENCODER_H_
 #define XFA_FXBARCODE_QRCODE_BC_QRCODERENCODER_H_
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
 
 class CBC_QRCoder;
 class CBC_QRCoderErrorCorrectionLevel;

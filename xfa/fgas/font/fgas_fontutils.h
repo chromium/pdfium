@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_FONT_FGAS_FONTUTILS_H_
 #define XFA_FGAS_FONT_FGAS_FONTUTILS_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 struct FGAS_FONTUSB {
   uint16_t wStartUnicode;

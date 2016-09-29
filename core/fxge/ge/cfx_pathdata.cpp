@@ -6,7 +6,7 @@
 
 #include "core/fxge/include/cfx_pathdata.h"
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
 
 CFX_PathData::CFX_PathData()

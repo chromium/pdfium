@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_APPLE_APPLE_INT_H_
 #define CORE_FXGE_APPLE_APPLE_INT_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 

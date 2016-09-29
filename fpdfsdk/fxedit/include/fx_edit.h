@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_FXEDIT_INCLUDE_FX_EDIT_H_
 #define FPDFSDK_FXEDIT_INCLUDE_FX_EDIT_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class IPVT_FontMap;
 

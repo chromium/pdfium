@@ -10,7 +10,7 @@
 #include "core/fpdfapi/fpdf_cmaps/cmap_int.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 static const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
     {"GB-EUC-H", FXCMAP_CMap::Range, g_FXCMAP_GB_EUC_H_0, 90, FXCMAP_CMap::None,

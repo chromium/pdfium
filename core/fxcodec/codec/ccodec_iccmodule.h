@@ -8,8 +8,8 @@
 #define CORE_FXCODEC_CODEC_CCODEC_ICCMODULE_H_
 
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class CCodec_IccModule {
  public:

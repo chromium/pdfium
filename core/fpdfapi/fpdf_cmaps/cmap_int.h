@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
 #define CORE_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 struct FXCMAP_CMap {
   enum MapType { None, Single, Range, Reverse };

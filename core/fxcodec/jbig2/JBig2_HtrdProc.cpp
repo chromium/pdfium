@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "core/fxcodec/jbig2/JBig2_GsidProc.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext,

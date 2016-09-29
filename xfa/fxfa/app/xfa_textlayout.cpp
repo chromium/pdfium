@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssstyleselector.h"

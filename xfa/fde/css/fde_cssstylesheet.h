@@ -10,7 +10,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
 
 class CFDE_CSSSyntaxParser;

@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_CRT_FGAS_UTILS_H_
 #define XFA_FGAS_CRT_FGAS_UTILS_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
 class FX_BASEARRAYDATA;

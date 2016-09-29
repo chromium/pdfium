@@ -9,8 +9,8 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_TextObject;
 class CPDF_PathObject;

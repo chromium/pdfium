@@ -9,7 +9,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 template <class T>
 class CPDF_CountedObject {

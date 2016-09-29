@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_LOCALIZATION_FGAS_DATETIME_H_
 #define XFA_FGAS_LOCALIZATION_FGAS_DATETIME_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CFX_Unitime;
 class CFX_DateTime;

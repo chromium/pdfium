@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class FX_BASEARRAYDATA : public CFX_Target {
  public:

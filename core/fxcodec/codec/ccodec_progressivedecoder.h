@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 
 class CCodec_BmpModule;

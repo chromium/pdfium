@@ -9,9 +9,9 @@
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 #define FIELDTYPE_UNKNOWN 0
 #define FIELDTYPE_PUSHBUTTON 1

@@ -12,7 +12,7 @@
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 #include "core/fxge/include/fx_font.h"
 #include "core/fxge/include/fx_freetype.h"
 

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_link.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Page;
 class CPDF_Dictionary;

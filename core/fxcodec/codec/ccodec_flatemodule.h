@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CCodec_ScanlineDecoder;
 

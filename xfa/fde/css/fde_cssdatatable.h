@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_CSS_FDE_CSSDATATABLE_H_
 #define XFA_FDE_CSS_FDE_CSSDATATABLE_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 

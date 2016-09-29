@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_
 #define XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 class CXFA_ContainerLayoutItem;

@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_XML_CFX_SAXREADER_H_
 #define XFA_FDE_XML_CFX_SAXREADER_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CXFA_SAXContext;
 

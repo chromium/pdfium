@@ -12,8 +12,8 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_object.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 class CPDF_Array : public CPDF_Object {
  public:

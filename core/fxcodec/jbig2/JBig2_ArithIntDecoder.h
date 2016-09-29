@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CJBig2_ArithIntDecoder {
  public:

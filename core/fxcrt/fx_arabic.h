@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_ARABIC_H_
-#define CORE_FXCRT_INCLUDE_FX_ARABIC_H_
+#ifndef CORE_FXCRT_FX_ARABIC_H_
+#define CORE_FXCRT_FX_ARABIC_H_
 
-#include "core/fxcrt/include/fx_arb.h"
+#include "core/fxcrt/fx_arb.h"
 
 #define FX_BIDIMAXLEVEL 61
 #define FX_BidiDirection(a) (FX_IsOdd(a) ? FX_BIDICLASS_R : FX_BIDICLASS_L)
@@ -185,4 +185,4 @@ void FX_BidiReorder(int32_t iBaseLevel,
                     CFX_WideString& wsText,
                     const CFX_Int32Array& levels);
 
-#endif  // CORE_FXCRT_INCLUDE_FX_ARABIC_H_
+#endif  // CORE_FXCRT_FX_ARABIC_H_

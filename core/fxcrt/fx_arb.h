@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_ARB_H_
-#define CORE_FXCRT_INCLUDE_FX_ARB_H_
+#ifndef CORE_FXCRT_FX_ARB_H_
+#define CORE_FXCRT_FX_ARB_H_
 
-#include "core/fxcrt/include/fx_system.h"
-#include "core/fxcrt/include/fx_ucd.h"
+#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_ucd.h"
 
 struct FX_ARBFORMTABLE {
   uint16_t wIsolated;
@@ -46,4 +46,4 @@ void FX_BidiLine(CFX_RTFCharArray& chars,
                  int32_t iCount,
                  int32_t iBaseLevel = 0);
 
-#endif  // CORE_FXCRT_INCLUDE_FX_ARB_H_
+#endif  // CORE_FXCRT_FX_ARB_H_

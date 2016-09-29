@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFSDK_FIELDACTION_H_
 #define FPDFSDK_INCLUDE_PDFSDK_FIELDACTION_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 #ifdef PDF_ENABLE_XFA
 typedef enum {

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_COORDINATES_H_
-#define CORE_FXCRT_INCLUDE_FX_COORDINATES_H_
+#ifndef CORE_FXCRT_FX_COORDINATES_H_
+#define CORE_FXCRT_FX_COORDINATES_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CFX_Matrix;
 
@@ -668,4 +668,4 @@ class CFX_Matrix {
   FX_FLOAT f;
 };
 
-#endif  // CORE_FXCRT_INCLUDE_FX_COORDINATES_H_
+#endif  // CORE_FXCRT_FX_COORDINATES_H_

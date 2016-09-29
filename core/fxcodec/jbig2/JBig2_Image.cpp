@@ -7,8 +7,8 @@
 #include <limits.h>
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_safe_types.h"
 
 namespace {
 

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_FX_MEMORY_H_
-#define CORE_FXCRT_INCLUDE_FX_MEMORY_H_
+#ifndef CORE_FXCRT_FX_MEMORY_H_
+#define CORE_FXCRT_FX_MEMORY_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,15 +63,15 @@ inline void* FX_ReallocOrDie(void* ptr,
 }
 
 // Never returns nullptr.
-#define FX_Alloc(type, size) (type*) FX_AllocOrDie(size, sizeof(type))
-#define FX_Alloc2D(type, w, h) (type*) FX_AllocOrDie2D(w, h, sizeof(type))
+#define FX_Alloc(type, size) (type*)FX_AllocOrDie(size, sizeof(type))
+#define FX_Alloc2D(type, w, h) (type*)FX_AllocOrDie2D(w, h, sizeof(type))
 #define FX_Realloc(type, ptr, size) \
-  (type*) FX_ReallocOrDie(ptr, size, sizeof(type))
+  (type*)FX_ReallocOrDie(ptr, size, sizeof(type))
 
 // May return nullptr.
-#define FX_TryAlloc(type, size) (type*) calloc(size, sizeof(type))
+#define FX_TryAlloc(type, size) (type*)calloc(size, sizeof(type))
 #define FX_TryRealloc(type, ptr, size) \
-  (type*) FX_SafeRealloc(ptr, size, sizeof(type))
+  (type*)FX_SafeRealloc(ptr, size, sizeof(type))
 
 #define FX_Free(ptr) free(ptr)
 
@@ -88,7 +88,7 @@ inline void* FX_ReallocOrDie(void* ptr,
 // Note that the function doesn't need an implementation, as we only
 // use its type.
 template <typename T, size_t N>
-char(&ArraySizeHelper(T(&array)[N]))[N];
+char (&ArraySizeHelper(T (&array)[N]))[N];
 
 // Used with std::unique_ptr to FX_Free raw memory.
 struct FxFreeDeleter {
@@ -109,4 +109,4 @@ std::unique_ptr<T> WrapUnique(T* ptr) {
 
 #endif  // __cplusplus
 
-#endif  // CORE_FXCRT_INCLUDE_FX_MEMORY_H_
+#endif  // CORE_FXCRT_FX_MEMORY_H_

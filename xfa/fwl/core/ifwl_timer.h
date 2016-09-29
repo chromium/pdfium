@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_TIMER_H_
 #define XFA_FWL_CORE_IFWL_TIMER_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
 
 class IFWL_TimerInfo;

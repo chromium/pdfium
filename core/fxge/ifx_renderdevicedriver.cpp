@@ -6,7 +6,7 @@
 
 #include "core/fxge/include/ifx_renderdevicedriver.h"
 
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 

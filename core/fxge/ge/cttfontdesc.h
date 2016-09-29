@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_GE_CTTFONTDESC_H_
 #define CORE_FXGE_GE_CTTFONTDESC_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/fx_font.h"
 
 #define FX_FONT_FLAG_SERIF 0x01

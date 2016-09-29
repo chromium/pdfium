@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_renderdevice.h"

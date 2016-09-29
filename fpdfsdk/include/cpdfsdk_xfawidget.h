@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_CPDFSDK_XFAWIDGET_H_
 #define FPDFSDK_INCLUDE_CPDFSDK_XFAWIDGET_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 
 class CPDFSDK_InterForm;

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 
 class CPDFSDK_Widget;

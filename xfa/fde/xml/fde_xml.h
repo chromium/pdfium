@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_XML_FDE_XML_H_
 #define XFA_FDE_XML_FDE_XML_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 enum class FDE_XmlSyntaxResult {
   None,

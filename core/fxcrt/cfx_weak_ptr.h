@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_INCLUDE_CFX_WEAK_PTR_H_
-#define CORE_FXCRT_INCLUDE_CFX_WEAK_PTR_H_
+#ifndef CORE_FXCRT_CFX_WEAK_PTR_H_
+#define CORE_FXCRT_CFX_WEAK_PTR_H_
 
 #include <memory>
 
-#include "core/fxcrt/include/cfx_retain_ptr.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/fx_system.h"
 
 template <class T, class D = std::default_delete<T>>
 class CFX_WeakPtr {
@@ -77,4 +77,4 @@ class CFX_WeakPtr {
   CFX_RetainPtr<Handle> m_pHandle;
 };
 
-#endif  // CORE_FXCRT_INCLUDE_CFX_WEAK_PTR_H_
+#endif  // CORE_FXCRT_CFX_WEAK_PTR_H_

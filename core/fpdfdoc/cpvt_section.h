@@ -10,7 +10,7 @@
 #include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordplace.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 struct CPVT_Section {
   CPVT_WordPlace secplace;

@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 class CFX_RenderDevice;
 class CPDF_Annot;

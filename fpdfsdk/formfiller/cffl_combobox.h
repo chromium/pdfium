@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_
 #define FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
 class CBA_FontMap;

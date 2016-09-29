@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CBC_BarcodeRow;
 

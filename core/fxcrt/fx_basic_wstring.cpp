@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <cctype>
 
-#include "core/fxcrt/include/cfx_string_pool_template.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_ext.h"
 #include "third_party/base/numerics/safe_math.h"
 
 template class CFX_StringDataTemplate<FX_WCHAR>;

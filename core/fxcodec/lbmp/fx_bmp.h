@@ -9,7 +9,7 @@
 
 #include <setjmp.h>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 #define BMP_WIDTHBYTES(width, bitCount) ((width * bitCount) + 31) / 32 * 4
 #define BMP_PAL_ENCODE(a, r, g, b) \

@@ -6,7 +6,7 @@
 
 #include "xfa/fgas/layout/fgas_linebreak.h"
 
-#include "core/fxcrt/include/fx_ucd.h"
+#include "core/fxcrt/fx_ucd.h"
 
 const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32] = {
     {FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,

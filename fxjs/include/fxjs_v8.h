@@ -21,7 +21,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #ifdef PDF_ENABLE_XFA
 // Header for CFXJSE_RuntimeData. FXJS_V8 doesn't interpret this class,
 // it is just passed along to XFA.

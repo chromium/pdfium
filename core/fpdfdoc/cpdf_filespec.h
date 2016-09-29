@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFDOC_CPDF_FILESPEC_H_
 #define CORE_FPDFDOC_CPDF_FILESPEC_H_
 
-#include "core/fxcrt/include/cfx_string_pool_template.h"
-#include "core/fxcrt/include/cfx_weak_ptr.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/cfx_weak_ptr.h"
+#include "core/fxcrt/fx_string.h"
 
 class CPDF_Object;
 

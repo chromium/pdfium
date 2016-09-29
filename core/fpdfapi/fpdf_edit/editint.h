@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_stream.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Creator;
 class CPDF_Object;

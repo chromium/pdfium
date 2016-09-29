@@ -13,8 +13,8 @@
 
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class CFieldTree;
 class CFDF_Document;

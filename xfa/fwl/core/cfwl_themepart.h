@@ -7,8 +7,8 @@
 #ifndef XFA_FWL_CORE_CFWL_THEMEPART_H_
 #define XFA_FWL_CORE_CFWL_THEMEPART_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 enum class CFWL_Part {
   None = 0,

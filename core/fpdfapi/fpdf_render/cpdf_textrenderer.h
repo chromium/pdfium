@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFAPI_FPDF_RENDER_CPDF_TEXTRENDERER_H_
 #define CORE_FPDFAPI_FPDF_RENDER_CPDF_TEXTRENDERER_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 
 class CFX_RenderDevice;

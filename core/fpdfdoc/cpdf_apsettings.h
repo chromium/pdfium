@@ -8,8 +8,8 @@
 #define CORE_FPDFDOC_CPDF_APSETTINGS_H_
 
 #include "core/fpdfdoc/cpdf_iconfit.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 
 class CPDF_Dictionary;

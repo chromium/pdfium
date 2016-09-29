@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_TEXTOBJECT_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 struct CPDF_TextObjectItem {
   uint32_t m_CharCode;

@@ -10,9 +10,9 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/cfx_count_ref.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 enum FXDIB_Format {
   FXDIB_Invalid = 0,

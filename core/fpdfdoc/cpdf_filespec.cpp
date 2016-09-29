@@ -9,7 +9,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_object.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 namespace {
 

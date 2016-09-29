@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_CFDE_TXTEDTBUFITER_H_
 #define XFA_FDE_CFDE_TXTEDTBUFITER_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fde/ifx_chariter.h"
 
 class CFDE_TxtEdtBuf;

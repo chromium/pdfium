@@ -9,7 +9,7 @@
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_render/cpdf_progressiverenderer.h"
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/include/cfx_fxgedevice.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "fpdfsdk/include/fsdk_define.h"

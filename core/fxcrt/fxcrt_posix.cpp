@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/fxcrt_posix.h"
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \

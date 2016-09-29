@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_TEXTSTATE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_TEXTSTATE_H_
 
-#include "core/fxcrt/include/cfx_count_ref.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CPDF_Document;
 class CPDF_Font;

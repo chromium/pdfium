@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"

@@ -7,8 +7,8 @@
 #ifndef XFA_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
 #define XFA_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
 class CBC_Dimension;

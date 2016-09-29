@@ -7,8 +7,8 @@
 #ifndef XFA_FWL_CORE_CFWL_THEMETEXT_H_
 #define XFA_FWL_CORE_CFWL_THEMETEXT_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 
 class CFWL_ThemeText : public CFWL_ThemePart {

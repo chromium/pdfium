@@ -8,7 +8,7 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/include/fx_dib.h"
 
 extern "C" {

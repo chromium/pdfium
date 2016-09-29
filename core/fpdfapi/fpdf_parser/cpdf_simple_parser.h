@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_SIMPLE_PARSER_H_
 #define CORE_FPDFAPI_FPDF_PARSER_CPDF_SIMPLE_PARSER_H_
 
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_SimpleParser {
  public:

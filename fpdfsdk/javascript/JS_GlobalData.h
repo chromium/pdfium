@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/javascript/JS_KeyValue.h"
 
 class CPDFSDK_Environment;

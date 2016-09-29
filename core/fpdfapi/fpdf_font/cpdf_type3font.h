@@ -11,8 +11,8 @@
 #include <memory>
 
 #include "core/fpdfapi/fpdf_font/cpdf_simplefont.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;
 class CPDF_Type3Char;

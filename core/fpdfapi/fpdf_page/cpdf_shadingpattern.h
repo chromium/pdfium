@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 enum ShadingType {
   kInvalidShading = 0,

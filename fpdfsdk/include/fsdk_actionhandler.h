@@ -12,7 +12,7 @@
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/include/pdfsdk_fieldaction.h"
 
 class CPDFSDK_Annot;

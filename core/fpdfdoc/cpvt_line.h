@@ -8,8 +8,8 @@
 #define CORE_FPDFDOC_CPVT_LINE_H_
 
 #include "core/fpdfdoc/cpvt_wordplace.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 
 struct CPVT_Line {
   CPVT_Line() : fLineWidth(0.0f), fLineAscent(0.0f), fLineDescent(0.0f) {}

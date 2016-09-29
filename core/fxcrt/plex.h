@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_PLEX_H_
 #define CORE_FXCRT_PLEX_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 struct CFX_Plex {
   CFX_Plex* pNext;

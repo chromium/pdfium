@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_ucd.h"
+#include "core/fxcrt/fx_ucd.h"
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_unicode.h"

@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CBC_CommonByteMatrix {
  public:

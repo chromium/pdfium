@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_INCLUDE_CFX_GRAPHSTATEDATA_H_
 #define CORE_FXGE_INCLUDE_CFX_GRAPHSTATEDATA_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CFX_GraphStateData {
  public:

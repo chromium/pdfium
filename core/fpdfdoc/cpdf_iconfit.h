@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPDF_ICONFIT_H_
 #define CORE_FPDFDOC_CPDF_ICONFIT_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;
 

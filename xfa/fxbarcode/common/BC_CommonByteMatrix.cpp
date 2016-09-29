@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 #include "xfa/fxbarcode/common/BC_CommonByteMatrix.h"
 
 CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height) {

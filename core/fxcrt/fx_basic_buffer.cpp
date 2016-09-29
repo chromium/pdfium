@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <limits>
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 CFX_BinaryBuf::CFX_BinaryBuf()

@@ -15,9 +15,9 @@
 #include "core/fpdfdoc/cpvt_lineinfo.h"
 #include "core/fpdfdoc/cpvt_wordplace.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
-#include "core/fxcrt/include/fx_coordinates.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/include/fx_font.h"
 
 class CSection;

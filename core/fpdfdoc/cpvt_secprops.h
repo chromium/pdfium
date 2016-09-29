@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPVT_SECPROPS_H_
 #define CORE_FPDFDOC_CPVT_SECPROPS_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 struct CPVT_SecProps {
   CPVT_SecProps() : fLineLeading(0.0f), fLineIndent(0.0f), nAlignment(0) {}

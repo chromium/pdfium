@@ -8,8 +8,8 @@
 #include <cwctype>
 #include <limits>
 
-#include "core/fxcrt/include/fx_ext.h"
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_string.h"
 
 template <typename IntType, typename CharType>
 IntType FXSYS_StrToInt(const CharType* str) {

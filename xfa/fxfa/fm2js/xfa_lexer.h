@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/fm2js/xfa_error.h"
 
 enum XFA_FM_TOKEN {

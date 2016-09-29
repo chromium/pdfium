@@ -4,7 +4,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 
 TEST(fxcrt, FXSYS_toHexDigit) {
   EXPECT_EQ(10, FXSYS_toHexDigit('a'));

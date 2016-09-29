@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
 class CPDF_CMap;

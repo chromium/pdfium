@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "xfa/fxbarcode/utils.h"
 

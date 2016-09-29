@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/fx_basic.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417Compaction.h"
 
 class CBC_BarcodeRow;

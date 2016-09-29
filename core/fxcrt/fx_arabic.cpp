@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/include/fx_arabic.h"
-#include "core/fxcrt/include/fx_ucd.h"
+#include "core/fxcrt/fx_arabic.h"
+#include "core/fxcrt/fx_ucd.h"
 
 namespace {
 

@@ -33,7 +33,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
 

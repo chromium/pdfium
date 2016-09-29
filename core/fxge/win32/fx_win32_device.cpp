@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 #include <algorithm>
 #include <memory>
@@ -14,7 +14,7 @@
 #include <crtdbg.h>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_memory.h"
 
 #ifndef _SKIA_SUPPORT_
 #include "core/fxge/agg/fx_agg_driver.h"

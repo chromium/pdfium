@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DATAIMPORTER_H_
 #define XFA_FXFA_PARSER_CXFA_DATAIMPORTER_H_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 class CXFA_Document;
 class IFX_FileRead;

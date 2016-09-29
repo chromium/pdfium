@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFDOC_CPVT_ARRAYTEMPLATE_H_
 #define CORE_FPDFDOC_CPVT_ARRAYTEMPLATE_H_
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_system.h"
 
 template <class TYPE>
 class CPVT_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {

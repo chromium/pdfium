@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Type3Font::CPDF_Type3Font()

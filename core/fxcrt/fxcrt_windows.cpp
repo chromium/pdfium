@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/fxcrt_windows.h"
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 

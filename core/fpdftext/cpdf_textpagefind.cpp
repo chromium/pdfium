@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fpdftext/cpdf_textpage.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

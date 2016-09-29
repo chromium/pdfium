@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_iterator.h"
 #include "xfa/fde/fde_visualset.h"

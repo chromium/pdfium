@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_IPDF_FORMNOTIFY_H_
 #define CORE_FPDFDOC_IPDF_FORMNOTIFY_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 class CPDF_FormField;
 class CPDF_InterForm;

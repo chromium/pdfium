@@ -14,9 +14,9 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_metadata.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_memory.h"
-#include "core/fxcrt/include/fx_xml.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_xml.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 #ifdef PDF_ENABLE_XFA

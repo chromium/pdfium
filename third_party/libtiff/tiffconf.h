@@ -7,7 +7,7 @@
 #ifndef _TIFFCONF_
 #define _TIFFCONF_
 
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_system.h"
 
 //NOTE: The tiff codec requires an ANSI C compiler environment for building and 
 //		presumes an ANSI C environment for use.

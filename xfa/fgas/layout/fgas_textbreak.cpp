@@ -8,9 +8,9 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/include/fx_arabic.h"
-#include "core/fxcrt/include/fx_arb.h"
-#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/fx_arabic.h"
+#include "core/fxcrt/fx_arb.h"
+#include "core/fxcrt/fx_memory.h"
 #include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"

@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_
 #define XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 
 class CXFA_Document;
 class CXFA_Node;

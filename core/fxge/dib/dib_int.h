@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/include/fx_dib.h"
 
 class IFX_ScanlineComposer;

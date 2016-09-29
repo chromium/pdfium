@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_ext.h"
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 #include <dirent.h>

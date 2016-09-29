@@ -19,7 +19,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 
 class CPDF_PSOP {

@@ -9,9 +9,9 @@
 #include <vector>
 
 #include "core/fpdftext/cpdf_textpage.h"
-#include "core/fxcrt/include/fx_ext.h"
-#include "core/fxcrt/include/fx_string.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/fx_system.h"
 
 CPDF_LinkExtract::CPDF_LinkExtract(const CPDF_TextPage* pTextPage)
     : m_pTextPage(pTextPage) {}

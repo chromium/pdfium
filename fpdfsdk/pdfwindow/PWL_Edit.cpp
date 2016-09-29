@@ -10,8 +10,8 @@
 
 #include "core/fpdfapi/fpdf_font/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_word.h"
-#include "core/fxcrt/include/fx_safe_types.h"
-#include "core/fxcrt/include/fx_xml.h"
+#include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_xml.h"
 #include "core/fxge/include/cfx_graphstatedata.h"
 #include "core/fxge/include/cfx_pathdata.h"
 #include "core/fxge/include/cfx_renderdevice.h"

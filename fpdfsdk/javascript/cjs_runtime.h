@@ -13,8 +13,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/include/cfx_observable.h"
-#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/cfx_observable.h"
+#include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "fxjs/include/fxjs_v8.h"

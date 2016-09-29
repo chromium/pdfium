@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFDOC_CPVT_FLOATRECT_H_
 #define CORE_FPDFDOC_CPVT_FLOATRECT_H_
 
-#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 class CPVT_FloatRect : public CFX_FloatRect {
  public:

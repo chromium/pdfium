@@ -7,8 +7,8 @@
 #include <utility>
 
 #include "core/fxcrt/extension.h"
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_ext.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include <wincrypt.h>

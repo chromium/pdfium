@@ -9,7 +9,7 @@
 
 #include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
 #include "core/fxcodec/include/fx_codec.h"
-#include "core/fxcrt/include/fx_stream.h"
+#include "core/fxcrt/fx_stream.h"
 
 class XFACodecFuzzer {
  public:

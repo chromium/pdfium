@@ -6,7 +6,7 @@
 
 #include "xfa/fgas/font/fgas_fontutils.h"
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "xfa/fgas/font/fgas_font.h"
 
 uint32_t FGAS_GetFontHashCode(uint16_t wCodePage, uint32_t dwFontStyles) {

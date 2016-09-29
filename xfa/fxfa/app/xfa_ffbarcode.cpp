@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 
-#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/fx_ext.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/lightwidget/cfwl_barcode.h"
