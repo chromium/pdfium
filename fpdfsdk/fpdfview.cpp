@@ -7,6 +7,7 @@
 #include "public/fpdfview.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
@@ -845,7 +846,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
     return;
 
   if (!pContext->m_pOptions)
-    pContext->m_pOptions.reset(new CPDF_RenderOptions);
+    pContext->m_pOptions = WrapUnique(new CPDF_RenderOptions);
 
   if (flags & FPDF_LCD_TEXT)
     pContext->m_pOptions->m_Flags |= RENDER_CLEARTYPE;
@@ -884,17 +885,17 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
   pContext->m_pDevice->SetClip_Rect(
       FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y));
 
-  pContext->m_pContext.reset(new CPDF_RenderContext(pPage));
+  pContext->m_pContext = WrapUnique(new CPDF_RenderContext(pPage));
   pContext->m_pContext->AppendLayer(pPage, &matrix);
 
   if (flags & FPDF_ANNOT) {
-    pContext->m_pAnnots.reset(new CPDF_AnnotList(pPage));
+    pContext->m_pAnnots = WrapUnique(new CPDF_AnnotList(pPage));
     FX_BOOL bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
     pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
                                        bPrinting, &matrix, FALSE, nullptr);
   }
 
-  pContext->m_pRenderer.reset(new CPDF_ProgressiveRenderer(
+  pContext->m_pRenderer = WrapUnique(new CPDF_ProgressiveRenderer(
       pContext->m_pContext.get(), pContext->m_pDevice.get(),
       pContext->m_pOptions.get()));
   pContext->m_pRenderer->Start(pause);

@@ -124,7 +124,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
 
   IJS_Context* NewContext() override {
     if (!m_pContext)
-      m_pContext.reset(new CJS_ContextStub());
+      m_pContext = WrapUnique(new CJS_ContextStub());
     return GetCurrentContext();
   }
 

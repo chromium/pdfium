@@ -7,6 +7,8 @@
 #include "fpdfsdk/fxedit/include/fxet_edit.h"
 
 #include <algorithm>
+#include <memory>
+#include <utility>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
@@ -24,7 +26,6 @@
 #include "core/fxge/include/cfx_renderdevice.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/fxedit/include/fx_edit.h"
-#include "fpdfsdk/fxedit/include/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 
@@ -1025,7 +1026,7 @@ void CFX_Edit::Initialize() {
 }
 
 void CFX_Edit::SetFontMap(IPVT_FontMap* pFontMap) {
-  m_pVTProvider.reset(new CFX_Edit_Provider(pFontMap));
+  m_pVTProvider = WrapUnique(new CFX_Edit_Provider(pFontMap));
   m_pVT->SetProvider(m_pVTProvider.get());
 }
 
@@ -1039,7 +1040,7 @@ void CFX_Edit::SetOprNotify(CPWL_Edit* pOprNotify) {
 
 CFX_Edit_Iterator* CFX_Edit::GetIterator() {
   if (!m_pIterator)
-    m_pIterator.reset(new CFX_Edit_Iterator(this, m_pVT->GetIterator()));
+    m_pIterator = WrapUnique(new CFX_Edit_Iterator(this, m_pVT->GetIterator()));
   return m_pIterator.get();
 }
 

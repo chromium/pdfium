@@ -6,6 +6,9 @@
 
 #include "public/fpdf_dataavail.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_data_avail.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -112,7 +115,7 @@ DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
   CFPDF_DataAvail* pAvail = new CFPDF_DataAvail;
   pAvail->m_FileAvail.Set(file_avail);
   pAvail->m_FileRead.Set(file);
-  pAvail->m_pDataAvail.reset(
+  pAvail->m_pDataAvail = WrapUnique(
       new CPDF_DataAvail(&pAvail->m_FileAvail, &pAvail->m_FileRead, TRUE));
   return pAvail;
 }

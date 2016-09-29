@@ -61,7 +61,7 @@ class PDFDocTest : public testing::Test {
     CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
     module_mgr->InitPageModule();
 
-    m_pDoc.reset(new CPDF_TestPdfDocument());
+    m_pDoc = WrapUnique(new CPDF_TestPdfDocument());
     m_pIndirectObjs = m_pDoc->GetHolder();
     // Setup the root directory.
     m_pRootObj.reset(new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));

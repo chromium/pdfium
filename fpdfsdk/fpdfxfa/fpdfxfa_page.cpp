@@ -39,7 +39,7 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage() {
     return FALSE;
 
   if (!m_pPDFPage || m_pPDFPage->m_pFormDict != pDict) {
-    m_pPDFPage.reset(new CPDF_Page(pPDFDoc, pDict, true));
+    m_pPDFPage = WrapUnique(new CPDF_Page(pPDFDoc, pDict, true));
     m_pPDFPage->ParseContent();
   }
   return TRUE;
@@ -87,7 +87,8 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
   if (!m_pDocument || m_iPageIndex < 0 || !pageDict)
     return FALSE;
 
-  m_pPDFPage.reset(new CPDF_Page(m_pDocument->GetPDFDoc(), pageDict, true));
+  m_pPDFPage =
+      WrapUnique(new CPDF_Page(m_pDocument->GetPDFDoc(), pageDict, true));
   m_pPDFPage->ParseContent();
   return TRUE;
 }

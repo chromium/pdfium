@@ -158,7 +158,7 @@ UnderlyingPageType* CPDFSDK_Document::GetPage(int nIndex) {
 
 CPDFSDK_InterForm* CPDFSDK_Document::GetInterForm() {
   if (!m_pInterForm)
-    m_pInterForm.reset(new CPDFSDK_InterForm(this));
+    m_pInterForm = WrapUnique(new CPDFSDK_InterForm(this));
   return m_pInterForm.get();
 }
 

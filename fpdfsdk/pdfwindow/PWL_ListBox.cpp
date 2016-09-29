@@ -76,7 +76,7 @@ CFX_ByteString CPWL_ListBox::GetClassName() const {
 
 void CPWL_ListBox::OnCreated() {
   m_pList->SetFontMap(GetFontMap());
-  m_pListNotify.reset(new CPWL_List_Notify(this));
+  m_pListNotify = WrapUnique(new CPWL_List_Notify(this));
   m_pList->SetNotify(m_pListNotify.get());
 
   SetHoverSel(HasFlag(PLBS_HOVERSEL));

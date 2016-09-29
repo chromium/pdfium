@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
 
+#include <memory>
+
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -54,7 +56,7 @@ FX_BOOL CPDFXFA_App::Initialize(v8::Isolate* pIsolate) {
   if (!m_pIsolate)
     return FALSE;
 
-  m_pXFAApp.reset(new CXFA_FFApp(this));
+  m_pXFAApp = WrapUnique(new CXFA_FFApp(this));
   m_pXFAApp->SetDefaultFontMgr(
       std::unique_ptr<CXFA_DefFontMgr>(new CXFA_DefFontMgr));
 

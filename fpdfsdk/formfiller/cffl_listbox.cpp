@@ -35,8 +35,10 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
   if (cp.dwFlags & PWS_AUTOFONTSIZE)
     cp.fFontSize = FFL_DEFAULTLISTBOXFONTSIZE;
 
-  if (!m_pFontMap)
-    m_pFontMap.reset(new CBA_FontMap(m_pWidget, m_pEnv->GetSysHandler()));
+  if (!m_pFontMap) {
+    m_pFontMap =
+        WrapUnique(new CBA_FontMap(m_pWidget, m_pEnv->GetSysHandler()));
+  }
   cp.pFontMap = m_pFontMap.get();
 
   return cp;

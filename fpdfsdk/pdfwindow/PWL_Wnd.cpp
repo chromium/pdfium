@@ -86,7 +86,7 @@ CPWL_TimerHandler::~CPWL_TimerHandler() {}
 
 void CPWL_TimerHandler::BeginTimer(int32_t nElapse) {
   if (!m_pTimer)
-    m_pTimer.reset(new CPWL_Timer(this, GetSystemHandler()));
+    m_pTimer = WrapUnique(new CPWL_Timer(this, GetSystemHandler()));
 
   if (m_pTimer)
     m_pTimer->SetPWLTimer(nElapse);
