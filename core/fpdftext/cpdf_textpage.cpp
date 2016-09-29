@@ -507,6 +507,9 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
 
   const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
   const int32_t nPageHeight = static_cast<int32_t>(m_pPage->GetPageHeight());
+  if (nPageWidth <= 0 || nPageHeight <= 0)
+    return TextOrientation::Unknown;
+
   std::vector<bool> nHorizontalMask(nPageWidth);
   std::vector<bool> nVerticalMask(nPageHeight);
   FX_FLOAT fLineHeight = 0.0f;
