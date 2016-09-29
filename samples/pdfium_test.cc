@@ -77,9 +77,26 @@ struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
   FPDF_FORMHANDLE formHandle;
 };
 
+struct AvailDeleter {
+  inline void operator()(FPDF_AVAIL avail) const { FPDFAvail_Destroy(avail); }
+};
+
 static FPDF_FORMFILLINFO_PDFiumTest* ToPDFiumTestFormFillInfo(
     FPDF_FORMFILLINFO* formFillInfo) {
   return static_cast<FPDF_FORMFILLINFO_PDFiumTest*>(formFillInfo);
+}
+
+static void CloseDocAndForm(FPDF_DOCUMENT doc, FPDF_FORMHANDLE form) {
+#ifdef PDF_ENABLE_XFA
+  // Note: The shut down order here is the reverse of the non-XFA branch order.
+  // Need to work out if this is required, and if it is, the lifetimes of
+  // objects owned by |doc| that |form| reference.
+  FPDF_CloseDocument(doc);
+  FPDFDOC_ExitFormFillEnvironment(form);
+#else   // PDF_ENABLE_XFA
+  FPDFDOC_ExitFormFillEnvironment(form);
+  FPDF_CloseDocument(doc);
+#endif  // PDF_ENABLE_XFA
 }
 
 static bool CheckDimensions(int stride, int width, int height) {
@@ -256,7 +273,7 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 #endif
 
 #ifdef PDF_ENABLE_SKIA
-void WriteSkp(const char* pdf_name, int num, const void* recorder) {
+void WriteSkp(const char* pdf_name, int num, SkPictureRecorder* recorder) {
   char filename[256];
   int chars_formatted =
       snprintf(filename, sizeof(filename), "%s.%d.skp", pdf_name, num);
@@ -267,8 +284,7 @@ void WriteSkp(const char* pdf_name, int num, const void* recorder) {
     return;
   }
 
-  SkPictureRecorder* r = (SkPictureRecorder*)recorder;
-  sk_sp<SkPicture> picture(r->finishRecordingAsPicture());
+  sk_sp<SkPicture> picture(recorder->finishRecordingAsPicture());
   SkFILEWStream wStream(filename);
   picture->serialize(&wStream);
 }
@@ -618,7 +634,8 @@ bool RenderPage(const std::string& name,
 #ifdef PDF_ENABLE_SKIA
       case OUTPUT_SKP: {
         std::unique_ptr<SkPictureRecorder> recorder(
-            (SkPictureRecorder*)FPDF_RenderPageSkp(page, width, height));
+            reinterpret_cast<SkPictureRecorder*>(
+                FPDF_RenderPageSkp(page, width, height)));
         FPDF_FFLRecord(form, recorder.get(), page, 0, 0, width, height, 0, 0);
         WriteSkp(name.c_str(), page_index, recorder.get());
       } break;
@@ -684,6 +701,7 @@ void RenderPdf(const std::string& name,
   int nRet = PDF_DATA_NOTAVAIL;
   bool bIsLinearized = false;
   FPDF_AVAIL pdf_avail = FPDFAvail_Create(&file_avail, &file_access);
+  std::unique_ptr<void, AvailDeleter> scoped_pdf_avail_deleter(pdf_avail);
 
   if (FPDFAvail_IsLinearized(pdf_avail) == PDF_LINEARIZED) {
     doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
@@ -693,6 +711,7 @@ void RenderPdf(const std::string& name,
 
       if (nRet == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if doc was available.\n");
+        FPDF_CloseDocument(doc);
         return;
       }
       nRet = FPDFAvail_IsFormAvail(pdf_avail, &hints);
@@ -700,6 +719,7 @@ void RenderPdf(const std::string& name,
         fprintf(stderr,
                 "Error %d was returned in checking if form was available.\n",
                 nRet);
+        FPDF_CloseDocument(doc);
         return;
       }
       bIsLinearized = true;
@@ -738,7 +758,6 @@ void RenderPdf(const std::string& name,
     }
     fprintf(stderr, ".\n");
 
-    FPDFAvail_Destroy(pdf_avail);
     return;
   }
 
@@ -748,8 +767,8 @@ void RenderPdf(const std::string& name,
   form_callbacks.formHandle = form;
 
 #ifdef PDF_ENABLE_XFA
-  int docType = DOCTYPE_PDF;
-  if (FPDF_HasXFAField(doc, &docType) && docType != DOCTYPE_PDF &&
+  int doc_type = DOCTYPE_PDF;
+  if (FPDF_HasXFAField(doc, &doc_type) && doc_type != DOCTYPE_PDF &&
       !FPDF_LoadXFA(doc)) {
     fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
   }
@@ -772,6 +791,7 @@ void RenderPdf(const std::string& name,
       if (nRet == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if page %d is available.\n",
                 i);
+        CloseDocAndForm(doc, form);
         return;
       }
     }
@@ -783,18 +803,7 @@ void RenderPdf(const std::string& name,
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
 
-#ifdef PDF_ENABLE_XFA
-  // Note: The shut down order here is the reverse of the non-XFA branch order.
-  // Need to work out if this is required, and if it is, the lifetimes of
-  // objects owned by |doc| that |form| reference.
-  FPDF_CloseDocument(doc);
-  FPDFDOC_ExitFormFillEnvironment(form);
-#else  // PDF_ENABLE_XFA
-  FPDFDOC_ExitFormFillEnvironment(form);
-  FPDF_CloseDocument(doc);
-#endif  // PDF_ENABLE_XFA
-
-  FPDFAvail_Destroy(pdf_avail);
+  CloseDocAndForm(doc, form);
 
   fprintf(stderr, "Rendered %d pages.\n", rendered_pages);
   if (bad_pages)
