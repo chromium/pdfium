@@ -25,8 +25,6 @@ class CPDF_Reference : public CPDF_Object {
   FX_FLOAT GetNumber() const override;
   int GetInteger() const override;
   CPDF_Dictionary* GetDict() const override;
-
-  // TODO(weili): check whether GetUnicodeText() and GetArray() are needed.
   bool IsReference() const override;
   CPDF_Reference* AsReference() override;
   const CPDF_Reference* AsReference() const override;
@@ -38,15 +36,12 @@ class CPDF_Reference : public CPDF_Object {
 
  protected:
   ~CPDF_Reference() override;
+
   CPDF_Object* CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
-  CPDF_Object* SafeGetDirect() const {
-    CPDF_Object* obj = GetDirect();
-    if (!obj || obj->IsReference())
-      return nullptr;
-    return obj;
-  }
+
+  CPDF_Object* SafeGetDirect() const;
 
   CPDF_IndirectObjectHolder* m_pObjList;
   uint32_t m_RefObjNum;

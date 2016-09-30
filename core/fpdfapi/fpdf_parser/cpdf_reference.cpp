@@ -67,6 +67,11 @@ CPDF_Object* CPDF_Reference::CloneNonCyclic(
   return new CPDF_Reference(m_pObjList, m_RefObjNum);
 }
 
+CPDF_Object* CPDF_Reference::SafeGetDirect() const {
+  CPDF_Object* obj = GetDirect();
+  return (obj && !obj->IsReference()) ? obj : nullptr;
+}
+
 void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum) {
   m_pObjList = pDoc;
   m_RefObjNum = objnum;
