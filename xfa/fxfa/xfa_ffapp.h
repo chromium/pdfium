@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_XFA_FFAPP_H_
-#define XFA_FXFA_INCLUDE_XFA_FFAPP_H_
+#ifndef XFA_FXFA_XFA_FFAPP_H_
+#define XFA_FXFA_XFA_FFAPP_H_
 
 #include <memory>
 
@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "xfa/fgas/font/fgas_font.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 
 class CFWL_WidgetMgrDelegate;
 class CXFA_DefFontMgr;
@@ -90,4 +90,4 @@ class CXFA_FFApp {
   std::unique_ptr<IFWL_App> m_pFWLApp;
 };
 
-#endif  // XFA_FXFA_INCLUDE_XFA_FFAPP_H_
+#endif  // XFA_FXFA_XFA_FFAPP_H_

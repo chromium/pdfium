@@ -21,7 +21,7 @@
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fxfa/include/xfa_ffapp.h"
+#include "xfa/fxfa/xfa_ffapp.h"
 
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)
 

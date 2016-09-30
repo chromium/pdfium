@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_XFA_BASIC_DATA_H_
 #define XFA_FXFA_PARSER_XFA_BASIC_DATA_H_
 
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 extern const XFA_PACKETINFO g_XFAPacketData[];
 extern const int32_t g_iXFAPacketCount;

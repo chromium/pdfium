@@ -7,7 +7,7 @@
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/include/xfa_ffdoc.h"
+#include "xfa/fxfa/xfa_ffdoc.h"
 
 CXFA_FWLAdapterWidgetMgr::CXFA_FWLAdapterWidgetMgr() {}
 

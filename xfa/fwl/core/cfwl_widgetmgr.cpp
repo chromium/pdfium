@@ -13,7 +13,7 @@
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
-#include "xfa/fxfa/include/xfa_ffapp.h"
+#include "xfa/fxfa/xfa_ffapp.h"
 
 namespace {
 

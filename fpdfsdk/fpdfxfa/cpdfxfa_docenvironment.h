@@ -8,7 +8,7 @@
 #define FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
 
 #include "public/fpdfview.h"
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 
 class CPDFXFA_Document;
 class IJS_Context;

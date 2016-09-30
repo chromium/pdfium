@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/include/xfa_checksum.h"
+#include "xfa/fxfa/xfa_checksum.h"
 
 #include "core/fdrm/crypto/fx_crypt.h"
 

@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_VALUEARRAY_H_
 
 #include "fxjs/cfxjse_value.h"
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 
 class CXFA_ValueArray : public CFX_ArrayTemplate<CFXJSE_Value*> {
  public:

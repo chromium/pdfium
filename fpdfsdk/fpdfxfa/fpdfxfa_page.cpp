@@ -12,8 +12,8 @@
 #include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
-#include "xfa/fxfa/include/xfa_ffdocview.h"
-#include "xfa/fxfa/include/xfa_ffpageview.h"
+#include "xfa/fxfa/xfa_ffdocview.h"
+#include "xfa/fxfa/xfa_ffpageview.h"
 
 CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index)
     : m_pXFAPageView(nullptr),

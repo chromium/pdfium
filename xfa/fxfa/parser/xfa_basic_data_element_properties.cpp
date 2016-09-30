@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 const XFA_ELEMENTHIERARCHY g_XFAElementPropertyIndex[] = {
     {0, 8},    {8, 0},   {8, 14},   {22, 0},   {22, 0},   {22, 6},   {28, 0},

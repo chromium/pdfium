@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/include/cxfa_eventparam.h"
+#include "xfa/fxfa/cxfa_eventparam.h"
 
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 
 CXFA_EventParam::CXFA_EventParam()
     : m_pTarget(nullptr),

@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
-#include "xfa/fxfa/include/xfa_ffdoc.h"
+#include "xfa/fxfa/xfa_ffdoc.h"
 
 class CPDFSDK_Document;
 class CPDFSDK_Environment;

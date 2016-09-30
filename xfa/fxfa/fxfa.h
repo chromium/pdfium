@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_FXFA_H_
-#define XFA_FXFA_INCLUDE_FXFA_H_
+#ifndef XFA_FXFA_FXFA_H_
+#define XFA_FXFA_FXFA_H_
 
 #include <vector>
 
-#include "xfa/fxfa/include/fxfa_basic.h"
-#include "xfa/fxfa/include/fxfa_widget.h"
+#include "xfa/fxfa/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_widget.h"
 
 class CFGAS_GEFont;
 class CFX_Graphics;
@@ -355,4 +355,4 @@ class IXFA_WidgetIterator {
   virtual FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
 };
 
-#endif  // XFA_FXFA_INCLUDE_FXFA_H_
+#endif  // XFA_FXFA_FXFA_H_

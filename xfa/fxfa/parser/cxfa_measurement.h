@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Measurement {
  public:

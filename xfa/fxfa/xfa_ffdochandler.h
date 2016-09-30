@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_XFA_FFDOCHANDLER_H_
-#define XFA_FXFA_INCLUDE_XFA_FFDOCHANDLER_H_
+#ifndef XFA_FXFA_XFA_FFDOCHANDLER_H_
+#define XFA_FXFA_XFA_FFDOCHANDLER_H_
 
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 
 class CXFA_ChecksumContext;
 
@@ -28,4 +28,4 @@ class CXFA_FFDocHandler {
  protected:
 };
 
-#endif  // XFA_FXFA_INCLUDE_XFA_FFDOCHANDLER_H_
+#endif  // XFA_FXFA_XFA_FFDOCHANDLER_H_

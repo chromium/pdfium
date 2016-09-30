@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_XFA_FFWIDGET_H_
-#define XFA_FXFA_INCLUDE_XFA_FFWIDGET_H_
+#ifndef XFA_FXFA_XFA_FFWIDGET_H_
+#define XFA_FXFA_XFA_FFWIDGET_H_
 
 #include <vector>
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 
 class CXFA_FFPageView;
@@ -183,4 +183,4 @@ void XFA_DrawBox(CXFA_Box box,
                  CFX_Matrix* pMatrix,
                  uint32_t dwFlags = 0);
 
-#endif  // XFA_FXFA_INCLUDE_XFA_FFWIDGET_H_
+#endif  // XFA_FXFA_XFA_FFWIDGET_H_

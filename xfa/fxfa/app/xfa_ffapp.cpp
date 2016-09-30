@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/include/xfa_ffapp.h"
+#include "xfa/fxfa/xfa_ffapp.h"
 
 #include <algorithm>
 #include <utility>
@@ -13,10 +13,10 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
-#include "xfa/fxfa/include/xfa_ffdoc.h"
-#include "xfa/fxfa/include/xfa_ffdochandler.h"
-#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
-#include "xfa/fxfa/include/xfa_fontmgr.h"
+#include "xfa/fxfa/xfa_ffdoc.h"
+#include "xfa/fxfa/xfa_ffdochandler.h"
+#include "xfa/fxfa/xfa_ffwidgethandler.h"
+#include "xfa/fxfa/xfa_fontmgr.h"
 
 CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   int32_t iCount = streams.GetSize();

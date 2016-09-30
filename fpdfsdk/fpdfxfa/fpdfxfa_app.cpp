@@ -12,8 +12,8 @@
 #include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "xfa/fxbarcode/BC_Library.h"
-#include "xfa/fxfa/include/xfa_ffapp.h"
-#include "xfa/fxfa/include/xfa_fontmgr.h"
+#include "xfa/fxfa/xfa_ffapp.h"
+#include "xfa/fxfa/xfa_fontmgr.h"
 
 namespace {
 

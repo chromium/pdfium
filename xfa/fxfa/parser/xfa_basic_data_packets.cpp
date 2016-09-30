@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 const XFA_PACKETINFO g_XFAPacketData[] = {
     {0x0, nullptr, XFA_XDPPACKET_USER, nullptr,

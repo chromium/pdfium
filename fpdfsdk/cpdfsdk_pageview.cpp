@@ -21,10 +21,10 @@
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
-#include "xfa/fxfa/include/xfa_ffdocview.h"
-#include "xfa/fxfa/include/xfa_ffpageview.h"
-#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
-#include "xfa/fxfa/include/xfa_rendercontext.h"
+#include "xfa/fxfa/xfa_ffdocview.h"
+#include "xfa/fxfa/xfa_ffpageview.h"
+#include "xfa/fxfa/xfa_ffwidgethandler.h"
+#include "xfa/fxfa/xfa_rendercontext.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 #endif  // PDF_ENABLE_XFA
 

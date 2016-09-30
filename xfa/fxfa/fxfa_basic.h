@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_FXFA_BASIC_H_
-#define XFA_FXFA_INCLUDE_FXFA_BASIC_H_
+#ifndef XFA_FXFA_FXFA_BASIC_H_
+#define XFA_FXFA_FXFA_BASIC_H_
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/fxjse.h"
@@ -1023,4 +1023,4 @@ struct XFA_SCRIPTATTRIBUTEINFO {
   uint16_t eValueType;
 };
 
-#endif  // XFA_FXFA_INCLUDE_FXFA_BASIC_H_
+#endif  // XFA_FXFA_FXFA_BASIC_H_

@@ -23,11 +23,11 @@
 #include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "public/fpdf_formfill.h"
-#include "xfa/fxfa/include/cxfa_eventparam.h"
-#include "xfa/fxfa/include/xfa_checksum.h"
-#include "xfa/fxfa/include/xfa_ffapp.h"
-#include "xfa/fxfa/include/xfa_ffdocview.h"
-#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
+#include "xfa/fxfa/cxfa_eventparam.h"
+#include "xfa/fxfa/xfa_checksum.h"
+#include "xfa/fxfa/xfa_ffapp.h"
+#include "xfa/fxfa/xfa_ffdocview.h"
+#include "xfa/fxfa/xfa_ffwidgethandler.h"
 #endif
 
 #if _FX_OS_ == _FX_ANDROID_

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[] = {
     {0x2a, L"*", XFA_ATTRIBUTEENUM_Asterisk},

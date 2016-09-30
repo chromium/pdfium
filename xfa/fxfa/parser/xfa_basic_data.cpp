@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 const XFA_ELEMENTINFO g_XFAElementData[] = {

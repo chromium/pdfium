@@ -8,7 +8,7 @@
 #define XFA_FXFA_APP_XFA_FFCHOICELIST_H_
 
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/include/xfa_ffpageview.h"
+#include "xfa/fxfa/xfa_ffpageview.h"
 
 class CXFA_FFListBox : public CXFA_FFField {
  public:

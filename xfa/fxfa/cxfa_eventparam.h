@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_CXFA_EVENTPARAM_H_
-#define XFA_FXFA_INCLUDE_CXFA_EVENTPARAM_H_
+#ifndef XFA_FXFA_CXFA_EVENTPARAM_H_
+#define XFA_FXFA_CXFA_EVENTPARAM_H_
 
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_WidgetAcc;
 
@@ -76,4 +76,4 @@ class CXFA_EventParam {
   int32_t m_iValidateActivities;
 };
 
-#endif  // XFA_FXFA_INCLUDE_CXFA_EVENTPARAM_H_
+#endif  // XFA_FXFA_CXFA_EVENTPARAM_H_

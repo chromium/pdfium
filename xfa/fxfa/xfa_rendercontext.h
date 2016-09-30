@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_XFA_RENDERCONTEXT_H_
-#define XFA_FXFA_INCLUDE_XFA_RENDERCONTEXT_H_
+#ifndef XFA_FXFA_XFA_RENDERCONTEXT_H_
+#define XFA_FXFA_XFA_RENDERCONTEXT_H_
 
 #include <memory>
 
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 
 class CXFA_RenderOptions {
  public:
@@ -42,4 +42,4 @@ class CXFA_RenderContext {
   CFX_RectF m_rtClipRect;
 };
 
-#endif  // XFA_FXFA_INCLUDE_XFA_RENDERCONTEXT_H_
+#endif  // XFA_FXFA_XFA_RENDERCONTEXT_H_

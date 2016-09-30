@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "xfa/fxfa/include/xfa_checksum.h"
+#include "xfa/fxfa/xfa_checksum.h"
 
 enum class CFX_SaxMode {
   Text = 0,

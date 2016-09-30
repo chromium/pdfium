@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_
 
 #include "fxjs/cfxjse_value.h"
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_valuearray.h"
 
 #define XFA_RESOLVENODE_Children 0x0001

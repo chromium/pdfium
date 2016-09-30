@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "xfa/fde/xml/fde_xml_imp.h"
-#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Document;
 class CXFA_Node;

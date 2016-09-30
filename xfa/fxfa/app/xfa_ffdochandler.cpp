@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/include/xfa_ffdochandler.h"
+#include "xfa/fxfa/xfa_ffdochandler.h"
 
-#include "xfa/fxfa/include/xfa_checksum.h"
-#include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
+#include "xfa/fxfa/xfa_checksum.h"
+#include "xfa/fxfa/xfa_ffdoc.h"
 
 CXFA_FFDocHandler::CXFA_FFDocHandler() {}
 

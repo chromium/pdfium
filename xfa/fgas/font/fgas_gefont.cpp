@@ -14,7 +14,7 @@
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
-#include "xfa/fxfa/include/xfa_fontmgr.h"
+#include "xfa/fxfa/xfa_fontmgr.h"
 
 // static
 CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,

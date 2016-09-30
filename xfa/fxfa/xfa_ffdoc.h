@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_INCLUDE_XFA_FFDOC_H_
-#define XFA_FXFA_INCLUDE_XFA_FFDOC_H_
+#ifndef XFA_FXFA_XFA_FFDOC_H_
+#define XFA_FXFA_XFA_FFDOC_H_
 
 #include <map>
 #include <memory>
 
-#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 
@@ -66,4 +66,4 @@ class CXFA_FFDoc {
   FX_BOOL m_bOwnStream;
 };
 
-#endif  // XFA_FXFA_INCLUDE_XFA_FFDOC_H_
+#endif  // XFA_FXFA_XFA_FFDOC_H_
