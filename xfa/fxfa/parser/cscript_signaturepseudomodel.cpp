@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 
-#include "fxjs/include/cfxjse_arguments.h"
+#include "fxjs/cfxjse_arguments.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"

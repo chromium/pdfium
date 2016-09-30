@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_INCLUDE_CFXJSE_ARGUMENTS_H_
-#define FXJS_INCLUDE_CFXJSE_ARGUMENTS_H_
+#ifndef FXJS_CFXJSE_ARGUMENTS_H_
+#define FXJS_CFXJSE_ARGUMENTS_H_
 
 #include <memory>
 
-#include "fxjs/include/fxjse.h"
+#include "fxjs/fxjse.h"
 
 class CFXJSE_Class;
 
@@ -35,4 +35,4 @@ class CFXJSE_Arguments {
   CFXJSE_Value* m_pRetValue;
 };
 
-#endif  // FXJS_INCLUDE_CFXJSE_ARGUMENTS_H_
+#endif  // FXJS_CFXJSE_ARGUMENTS_H_

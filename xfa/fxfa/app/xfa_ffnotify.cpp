@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 
-#include "fxjs/include/cfxjse_value.h"
+#include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"

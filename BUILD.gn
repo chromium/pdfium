@@ -1010,7 +1010,7 @@ if (pdf_enable_v8) {
   static_library("fxjs") {
     sources = [
       "fxjs/fxjs_v8.cpp",
-      "fxjs/include/fxjs_v8.h",
+      "fxjs/fxjs_v8.h",
     ]
     configs += [ ":pdfium_core_config" ]
     deps = [
@@ -1029,18 +1029,18 @@ if (pdf_enable_v8) {
     if (pdf_enable_xfa) {
       sources += [
         "fxjs/cfxjse_arguments.cpp",
+        "fxjs/cfxjse_arguments.h",
         "fxjs/cfxjse_class.cpp",
+        "fxjs/cfxjse_class.h",
         "fxjs/cfxjse_context.cpp",
+        "fxjs/cfxjse_context.h",
         "fxjs/cfxjse_isolatetracker.cpp",
         "fxjs/cfxjse_isolatetracker.h",
         "fxjs/cfxjse_runtimedata.cpp",
         "fxjs/cfxjse_runtimedata.h",
         "fxjs/cfxjse_value.cpp",
-        "fxjs/include/cfxjse_arguments.h",
-        "fxjs/include/cfxjse_class.h",
-        "fxjs/include/cfxjse_context.h",
-        "fxjs/include/cfxjse_value.h",
-        "fxjs/include/fxjse.h",
+        "fxjs/cfxjse_value.h",
+        "fxjs/fxjse.h",
       ]
     }
   }

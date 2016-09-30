@@ -11,8 +11,8 @@
 // PDFium code should include this file rather than including V8 headers
 // directly.
 
-#ifndef FXJS_INCLUDE_FXJS_V8_H_
-#define FXJS_INCLUDE_FXJS_V8_H_
+#ifndef FXJS_FXJS_V8_H_
+#define FXJS_FXJS_V8_H_
 
 #include <v8-util.h>
 #include <v8.h>
@@ -259,4 +259,4 @@ class CFXJS_Engine {
   std::map<CFX_WideString, v8::Global<v8::Array>> m_ConstArrays;
 };
 
-#endif  // FXJS_INCLUDE_FXJS_V8_H_
+#endif  // FXJS_FXJS_V8_H_

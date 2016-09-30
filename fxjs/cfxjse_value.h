@@ -4,15 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_INCLUDE_CFXJSE_VALUE_H_
-#define FXJS_INCLUDE_CFXJSE_VALUE_H_
-
-#include "v8/include/v8.h"
+#ifndef FXJS_CFXJSE_VALUE_H_
+#define FXJS_CFXJSE_VALUE_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "fxjs/cfxjse_isolatetracker.h"
 #include "fxjs/cfxjse_runtimedata.h"
+#include "v8/include/v8.h"
 
 class CFXJSE_Class;
 class CFXJSE_HostObject;
@@ -99,4 +98,4 @@ class CFXJSE_Value {
   v8::Global<v8::Value> m_hValue;
 };
 
-#endif  // FXJS_INCLUDE_CFXJSE_VALUE_H_
+#endif  // FXJS_CFXJSE_VALUE_H_

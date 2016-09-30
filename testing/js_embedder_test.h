@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-#include "fxjs/include/fxjs_v8.h"
+#include "fxjs/fxjs_v8.h"
 #include "testing/embedder_test.h"
 
 class JSEmbedderTest : public EmbedderTest {

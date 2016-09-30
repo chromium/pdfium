@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_ext.h"
-#include "fxjs/include/cfxjse_value.h"
+#include "fxjs/cfxjse_value.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"

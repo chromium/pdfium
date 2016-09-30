@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_system.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fxjs/include/fxjse.h"
+#include "fxjs/fxjse.h"
 #endif  // PDF_ENABLE_XFA
 
 class CPDFSDK_Environment;

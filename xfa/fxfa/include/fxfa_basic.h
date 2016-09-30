@@ -7,8 +7,8 @@
 #ifndef XFA_FXFA_INCLUDE_FXFA_BASIC_H_
 #define XFA_FXFA_INCLUDE_FXFA_BASIC_H_
 
-#include "fxjs/include/cfxjse_arguments.h"
-#include "fxjs/include/fxjse.h"
+#include "fxjs/cfxjse_arguments.h"
+#include "fxjs/fxjse.h"
 
 class CXFA_Measurement;
 enum class XFA_ObjectType;

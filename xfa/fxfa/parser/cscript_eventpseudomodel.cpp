@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
 
-#include "fxjs/include/cfxjse_arguments.h"
+#include "fxjs/cfxjse_arguments.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"

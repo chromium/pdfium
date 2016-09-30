@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_INCLUDE_FXJSE_H_
-#define FXJS_INCLUDE_FXJSE_H_
+#ifndef FXJS_FXJSE_H_
+#define FXJS_FXJSE_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -71,4 +71,4 @@ void FXJSE_Runtime_Release(v8::Isolate* pIsolate);
 
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Message);
 
-#endif  // FXJS_INCLUDE_FXJSE_H_
+#endif  // FXJS_FXJSE_H_

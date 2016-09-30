@@ -7,9 +7,9 @@
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
 #include "core/fxcrt/fx_ext.h"
-#include "fxjs/include/cfxjse_arguments.h"
-#include "fxjs/include/cfxjse_class.h"
-#include "fxjs/include/cfxjse_value.h"
+#include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_class.h"
+#include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

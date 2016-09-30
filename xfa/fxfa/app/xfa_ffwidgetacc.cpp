@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <memory>
 
-#include "fxjs/include/cfxjse_value.h"
+#include "fxjs/cfxjse_value.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"

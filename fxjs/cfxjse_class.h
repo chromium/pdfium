@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_INCLUDE_CFXJSE_CLASS_H_
-#define FXJS_INCLUDE_CFXJSE_CLASS_H_
+#ifndef FXJS_CFXJSE_CLASS_H_
+#define FXJS_CFXJSE_CLASS_H_
 
-#include "fxjs/include/cfxjse_arguments.h"
-#include "fxjs/include/fxjse.h"
+#include "fxjs/cfxjse_arguments.h"
+#include "fxjs/fxjse.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_Context;
@@ -42,4 +42,4 @@ class CFXJSE_Class {
   friend class CFXJSE_Value;
 };
 
-#endif  // FXJS_INCLUDE_CFXJSE_CLASS_H_
+#endif  // FXJS_CFXJSE_CLASS_H_

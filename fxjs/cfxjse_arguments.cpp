@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/include/cfxjse_arguments.h"
+#include "fxjs/cfxjse_arguments.h"
 
-#include "fxjs/include/cfxjse_context.h"
-#include "fxjs/include/cfxjse_value.h"
+#include "fxjs/cfxjse_context.h"
+#include "fxjs/cfxjse_value.h"
 
 v8::Isolate* CFXJSE_Arguments::GetRuntime() const {
   return m_pRetValue->GetIsolate();

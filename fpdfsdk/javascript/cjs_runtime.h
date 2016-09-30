@@ -17,7 +17,7 @@
 #include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
-#include "fxjs/include/fxjs_v8.h"
+#include "fxjs/fxjs_v8.h"
 
 class CJS_Context;
 

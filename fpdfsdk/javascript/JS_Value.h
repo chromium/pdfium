@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
-#include "fxjs/include/fxjs_v8.h"
+#include "fxjs/fxjs_v8.h"
 
 class CJS_Array;
 class CJS_Date;

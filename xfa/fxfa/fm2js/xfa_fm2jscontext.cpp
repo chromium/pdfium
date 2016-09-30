@@ -9,9 +9,9 @@
 #include <time.h>
 
 #include "core/fxcrt/fx_ext.h"
-#include "fxjs/include/cfxjse_arguments.h"
-#include "fxjs/include/cfxjse_class.h"
-#include "fxjs/include/cfxjse_value.h"
+#include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_class.h"
+#include "fxjs/cfxjse_value.h"
 #include "xfa/fgas/localization/fgas_locale.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_program.h"

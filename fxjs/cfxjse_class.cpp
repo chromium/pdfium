@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/include/cfxjse_class.h"
+#include "fxjs/cfxjse_class.h"
 
-#include "fxjs/include/cfxjse_context.h"
-#include "fxjs/include/cfxjse_value.h"
+#include "fxjs/cfxjse_context.h"
+#include "fxjs/cfxjse_value.h"
 
 namespace {
 
