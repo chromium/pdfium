@@ -7,6 +7,9 @@
 #ifndef XFA_FDE_XML_CFX_SAXREADER_H_
 #define XFA_FDE_XML_CFX_SAXREADER_H_
 
+#include <memory>
+#include <stack>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CXFA_SAXContext;
@@ -23,20 +26,13 @@ class CFX_SAXItem {
     CharData,
   };
 
-  CFX_SAXItem()
-      : m_pNode(nullptr),
-        m_eNode(Type::Unknown),
-        m_dwID(0),
-        m_bSkip(FALSE),
-        m_pPrev(nullptr),
-        m_pNext(nullptr) {}
+  explicit CFX_SAXItem(uint32_t id)
+      : m_pNode(nullptr), m_eNode(Type::Unknown), m_dwID(id), m_bSkip(FALSE) {}
 
   CXFA_SAXContext* m_pNode;
   Type m_eNode;
-  uint32_t m_dwID;
+  const uint32_t m_dwID;
   FX_BOOL m_bSkip;
-  CFX_SAXItem* m_pPrev;
-  CFX_SAXItem* m_pNext;
 };
 
 class CFX_SAXFile {
@@ -103,6 +99,7 @@ class CFX_SAXReader {
   void Reset();
   void Push();
   void Pop();
+  CFX_SAXItem* GetCurrentItem() const;
   FX_BOOL SkipSpace(uint8_t ch);
   void SkipNode();
   void NotifyData();
@@ -119,8 +116,7 @@ class CFX_SAXReader {
   CFX_SAXFile m_File;
   CXFA_SAXReaderHandler* m_pHandler;
   int32_t m_iState;
-  CFX_SAXItem* m_pRoot;
-  CFX_SAXItem* m_pCurItem;
+  std::stack<std::unique_ptr<CFX_SAXItem>> m_Stack;
   uint32_t m_dwItemID;
   CFX_SaxMode m_eMode;
   CFX_SaxMode m_ePrevMode;

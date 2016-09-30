@@ -7,6 +7,7 @@
 #include "xfa/fde/xml/cfx_saxreader.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "xfa/fxfa/xfa_checksum.h"
 
@@ -94,6 +95,7 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
   m_dwBufIndex = 0;
   return TRUE;
 }
+
 FX_BOOL CFX_SAXFile::ReadNextBlock() {
   ASSERT(m_pFile);
   uint32_t dwSize = m_dwEnd - m_dwCur;
@@ -107,6 +109,7 @@ FX_BOOL CFX_SAXFile::ReadNextBlock() {
   m_dwBufIndex = 0;
   return TRUE;
 }
+
 void CFX_SAXFile::Reset() {
   if (m_pBuf) {
     FX_Free(m_pBuf);
@@ -114,12 +117,11 @@ void CFX_SAXFile::Reset() {
   }
   m_pFile = nullptr;
 }
+
 CFX_SAXReader::CFX_SAXReader()
     : m_File(),
       m_pHandler(nullptr),
       m_iState(-1),
-      m_pRoot(nullptr),
-      m_pCurItem(nullptr),
       m_dwItemID(0),
       m_iDataSize(256),
       m_iNameSize(256),
@@ -139,16 +141,12 @@ CFX_SAXReader::~CFX_SAXReader() {
     m_pszName = nullptr;
   }
 }
+
 void CFX_SAXReader::Reset() {
   m_File.Reset();
-  CFX_SAXItem* pItem = m_pRoot;
-  while (pItem) {
-    CFX_SAXItem* pNext = pItem->m_pNext;
-    delete pItem;
-    pItem = pNext;
-  }
-  m_pRoot = nullptr;
-  m_pCurItem = nullptr;
+  while (!m_Stack.empty())
+    m_Stack.pop();
+
   m_dwItemID = 0;
   m_SkipStack.RemoveAll();
   m_SkipChar = 0;
@@ -156,36 +154,36 @@ void CFX_SAXReader::Reset() {
   m_iEntityStart = -1;
   m_iNameLength = 0;
   m_iDataPos = 0;
-  if (m_pCommentContext) {
-    delete m_pCommentContext;
-    m_pCommentContext = nullptr;
-  }
+  delete m_pCommentContext;
+  m_pCommentContext = nullptr;
 }
-inline void CFX_SAXReader::Push() {
-  CFX_SAXItem* pNew = new CFX_SAXItem;
-  pNew->m_dwID = ++m_dwItemID;
-  pNew->m_bSkip = m_pCurItem->m_bSkip;
-  pNew->m_pPrev = m_pCurItem;
-  m_pCurItem->m_pNext = pNew;
-  m_pCurItem = pNew;
+
+void CFX_SAXReader::Push() {
+  std::unique_ptr<CFX_SAXItem> pNew(WrapUnique(new CFX_SAXItem(++m_dwItemID)));
+  if (!m_Stack.empty())
+    pNew->m_bSkip = m_Stack.top()->m_bSkip;
+  m_Stack.push(std::move(pNew));
 }
-inline void CFX_SAXReader::Pop() {
-  if (!m_pCurItem) {
-    return;
-  }
-  CFX_SAXItem* pPrev = m_pCurItem->m_pPrev;
-  pPrev->m_pNext = nullptr;
-  delete m_pCurItem;
-  m_pCurItem = pPrev;
+
+void CFX_SAXReader::Pop() {
+  if (!m_Stack.empty())
+    m_Stack.pop();
 }
-inline void CFX_SAXReader::AppendData(uint8_t ch) {
+
+CFX_SAXItem* CFX_SAXReader::GetCurrentItem() const {
+  return m_Stack.empty() ? nullptr : m_Stack.top().get();
+}
+
+void CFX_SAXReader::AppendData(uint8_t ch) {
   ReallocDataBuffer();
   m_pszData[m_iDataPos++] = ch;
 }
-inline void CFX_SAXReader::AppendName(uint8_t ch) {
+
+void CFX_SAXReader::AppendName(uint8_t ch) {
   ReallocNameBuffer();
   m_pszName[m_iDataPos++] = ch;
 }
+
 void CFX_SAXReader::ReallocDataBuffer() {
   if (m_iDataPos < m_iDataSize) {
     return;
@@ -197,6 +195,7 @@ void CFX_SAXReader::ReallocDataBuffer() {
   }
   m_pszData = (uint8_t*)FX_Realloc(uint8_t, m_pszData, m_iDataSize);
 }
+
 void CFX_SAXReader::ReallocNameBuffer() {
   if (m_iDataPos < m_iNameSize) {
     return;
@@ -208,9 +207,11 @@ void CFX_SAXReader::ReallocNameBuffer() {
   }
   m_pszName = (uint8_t*)FX_Realloc(uint8_t, m_pszName, m_iNameSize);
 }
-inline FX_BOOL CFX_SAXReader::SkipSpace(uint8_t ch) {
+
+FX_BOOL CFX_SAXReader::SkipSpace(uint8_t ch) {
   return (m_dwParseMode & CFX_SaxParseMode_NotSkipSpace) == 0 && ch < 0x21;
 }
+
 int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
                                   uint32_t dwStart,
                                   uint32_t dwLen,
@@ -225,9 +226,8 @@ int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
   m_ePrevMode = CFX_SaxMode::Text;
   m_bCharData = FALSE;
   m_dwDataOffset = 0;
-  m_pRoot = m_pCurItem = new CFX_SAXItem;
-  m_pCurItem->m_dwID = ++m_dwItemID;
   m_dwParseMode = dwParseMode;
+  m_Stack.emplace(new CFX_SAXItem(++m_dwItemID));
   return 0;
 }
 
@@ -338,6 +338,7 @@ void CFX_SAXReader::ParseChar(uint8_t ch) {
     m_iDataPos++;
   }
 }
+
 void CFX_SAXReader::ParseText() {
   if (m_CurByte == '<') {
     if (m_iDataPos > 0) {
@@ -357,9 +358,10 @@ void CFX_SAXReader::ParseText() {
   }
   ParseChar(m_CurByte);
 }
+
 void CFX_SAXReader::ParseNodeStart() {
   if (m_CurByte == '?') {
-    m_pCurItem->m_eNode = CFX_SAXItem::Type::Instruction;
+    GetCurrentItem()->m_eNode = CFX_SAXItem::Type::Instruction;
     m_eMode = CFX_SaxMode::TagName;
     return;
   }
@@ -378,15 +380,16 @@ void CFX_SAXReader::ParseNodeStart() {
   }
   if (m_CurByte > 0x20) {
     m_dwDataOffset = m_File.m_dwBufIndex;
-    m_pCurItem->m_eNode = CFX_SAXItem::Type::Tag;
+    GetCurrentItem()->m_eNode = CFX_SAXItem::Type::Tag;
     m_eMode = CFX_SaxMode::TagName;
     AppendData(m_CurByte);
   }
 }
+
 void CFX_SAXReader::ParseDeclOrComment() {
   if (m_CurByte == '-') {
     m_eMode = CFX_SaxMode::Comment;
-    m_pCurItem->m_eNode = CFX_SAXItem::Type::Comment;
+    GetCurrentItem()->m_eNode = CFX_SAXItem::Type::Comment;
     if (!m_pCommentContext)
       m_pCommentContext = new CFX_SAXCommentContext;
 
@@ -479,18 +482,21 @@ void CFX_SAXReader::ParseTagAttributeName() {
   }
   AppendName(m_CurByte);
 }
+
 void CFX_SAXReader::ParseTagAttributeEqual() {
   if (m_CurByte == '=') {
     m_SkipChar = 0;
     m_eMode = CFX_SaxMode::TagAttributeValue;
     return;
-  } else if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
+  }
+  if (GetCurrentItem()->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_iDataPos = m_iNameLength;
     AppendName(0x20);
     m_eMode = CFX_SaxMode::TargetData;
     ParseTargetData();
   }
 }
+
 void CFX_SAXReader::ParseTagAttributeValue() {
   if (m_SkipChar) {
     if (m_SkipChar == m_CurByte) {
@@ -517,9 +523,10 @@ void CFX_SAXReader::ParseTagAttributeValue() {
     }
   }
 }
+
 void CFX_SAXReader::ParseMaybeClose() {
   if (m_CurByte == '>') {
-    if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
+    if (GetCurrentItem()->m_eNode == CFX_SAXItem::Type::Instruction) {
       m_iNameLength = m_iDataPos;
       m_iDataPos = 0;
       if (m_pHandler) {
@@ -647,69 +654,79 @@ void CFX_SAXReader::SkipNode() {
 }
 
 void CFX_SAXReader::NotifyData() {
-  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag)
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
+    return;
+
+  if (pItem->m_eNode == CFX_SAXItem::Type::Tag)
     m_pHandler->OnTagData(
-        m_pCurItem->m_pNode,
+        pItem->m_pNode,
         m_bCharData ? CFX_SAXItem::Type::CharData : CFX_SAXItem::Type::Text,
         CFX_ByteStringC(m_pszData, m_iDataLength),
         m_File.m_dwCur + m_dwDataOffset);
 }
 
 void CFX_SAXReader::NotifyEnter() {
-  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag ||
-      m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
-    m_pCurItem->m_pNode =
-        m_pHandler->OnTagEnter(CFX_ByteStringC(m_pszData, m_iDataLength),
-                               m_pCurItem->m_eNode, m_dwNodePos);
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (pItem->m_eNode == CFX_SAXItem::Type::Tag ||
+      pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
+    pItem->m_pNode = m_pHandler->OnTagEnter(
+        CFX_ByteStringC(m_pszData, m_iDataLength), pItem->m_eNode, m_dwNodePos);
   }
 }
 
 void CFX_SAXReader::NotifyAttribute() {
-  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag ||
-      m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
-    m_pHandler->OnTagAttribute(m_pCurItem->m_pNode,
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (pItem->m_eNode == CFX_SAXItem::Type::Tag ||
+      pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
+    m_pHandler->OnTagAttribute(pItem->m_pNode,
                                CFX_ByteStringC(m_pszName, m_iNameLength),
                                CFX_ByteStringC(m_pszData, m_iDataLength));
   }
 }
 
 void CFX_SAXReader::NotifyBreak() {
-  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag)
-    m_pHandler->OnTagBreak(m_pCurItem->m_pNode);
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (pItem->m_eNode == CFX_SAXItem::Type::Tag)
+    m_pHandler->OnTagBreak(pItem->m_pNode);
 }
 
 void CFX_SAXReader::NotifyClose() {
-  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Tag ||
-      m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
-    m_pHandler->OnTagClose(m_pCurItem->m_pNode, m_dwNodePos);
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (pItem->m_eNode == CFX_SAXItem::Type::Tag ||
+      pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
+    m_pHandler->OnTagClose(pItem->m_pNode, m_dwNodePos);
   }
 }
 
 void CFX_SAXReader::NotifyEnd() {
-  if (m_pCurItem->m_eNode != CFX_SAXItem::Type::Tag)
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem || pItem->m_eNode != CFX_SAXItem::Type::Tag)
     return;
 
-  m_pHandler->OnTagEnd(m_pCurItem->m_pNode,
+  m_pHandler->OnTagEnd(pItem->m_pNode,
                        CFX_ByteStringC(m_pszData, m_iDataLength), m_dwNodePos);
 }
 
 void CFX_SAXReader::NotifyTargetData() {
-  if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Instruction) {
-    m_pHandler->OnTargetData(m_pCurItem->m_pNode, m_pCurItem->m_eNode,
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
+    m_pHandler->OnTargetData(pItem->m_pNode, pItem->m_eNode,
                              CFX_ByteStringC(m_pszName, m_iNameLength),
                              m_dwNodePos);
-  } else if (m_pCurItem->m_eNode == CFX_SAXItem::Type::Comment) {
-    m_pHandler->OnTargetData(m_pCurItem->m_pNode, m_pCurItem->m_eNode,
+  } else if (pItem->m_eNode == CFX_SAXItem::Type::Comment) {
+    m_pHandler->OnTargetData(pItem->m_pNode, pItem->m_eNode,
                              CFX_ByteStringC(m_pszData, m_iDataLength),
                              m_dwNodePos);
   }
 }
 
 void CFX_SAXReader::SkipCurrentNode() {
-  if (!m_pCurItem)
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
     return;
 
-  m_pCurItem->m_bSkip = TRUE;
+  pItem->m_bSkip = TRUE;
 }
 
 void CFX_SAXReader::SetHandler(CXFA_SAXReaderHandler* pHandler) {
