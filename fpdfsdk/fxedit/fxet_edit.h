@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FXEDIT_INCLUDE_FXET_EDIT_H_
-#define FPDFSDK_FXEDIT_INCLUDE_FXET_EDIT_H_
+#ifndef FPDFSDK_FXEDIT_FXET_EDIT_H_
+#define FPDFSDK_FXEDIT_FXET_EDIT_H_
 
 #include <memory>
 
 #include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
-#include "fpdfsdk/fxedit/include/fx_edit.h"
+#include "fpdfsdk/fxedit/fx_edit.h"
 
 class CFFL_FormFiller;
 class CFX_Edit;
@@ -557,4 +557,4 @@ class CFX_Edit_Provider : public CPDF_VariableText::Provider {
   IPVT_FontMap* m_pFontMap;
 };
 
-#endif  // FPDFSDK_FXEDIT_INCLUDE_FXET_EDIT_H_
+#endif  // FPDFSDK_FXEDIT_FXET_EDIT_H_

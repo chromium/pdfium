@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fxedit/include/fxet_list.h"
+#include "fpdfsdk/fxedit/fxet_list.h"
 
 #include "core/fpdfdoc/cpvt_word.h"
-#include "fpdfsdk/fxedit/include/fxet_edit.h"
+#include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 
 CFX_ListItem::CFX_ListItem()

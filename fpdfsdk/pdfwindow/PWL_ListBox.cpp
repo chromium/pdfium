@@ -6,8 +6,8 @@
 
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 
-#include "fpdfsdk/fxedit/include/fxet_edit.h"
-#include "fpdfsdk/fxedit/include/fxet_list.h"
+#include "fpdfsdk/fxedit/fxet_edit.h"
+#include "fpdfsdk/fxedit/fxet_list.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"

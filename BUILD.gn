@@ -870,12 +870,12 @@ static_library("fxge") {
 
 static_library("fxedit") {
   sources = [
+    "fpdfsdk/fxedit/fx_edit.h",
     "fpdfsdk/fxedit/fxet_ap.cpp",
     "fpdfsdk/fxedit/fxet_edit.cpp",
+    "fpdfsdk/fxedit/fxet_edit.h",
     "fpdfsdk/fxedit/fxet_list.cpp",
-    "fpdfsdk/fxedit/include/fx_edit.h",
-    "fpdfsdk/fxedit/include/fxet_edit.h",
-    "fpdfsdk/fxedit/include/fxet_list.h",
+    "fpdfsdk/fxedit/fxet_list.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [

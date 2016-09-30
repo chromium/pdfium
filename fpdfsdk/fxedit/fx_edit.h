@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FXEDIT_INCLUDE_FX_EDIT_H_
-#define FPDFSDK_FXEDIT_INCLUDE_FX_EDIT_H_
+#ifndef FPDFSDK_FXEDIT_FX_EDIT_H_
+#define FPDFSDK_FXEDIT_FX_EDIT_H_
 
 #include "core/fxcrt/fx_basic.h"
 
@@ -20,4 +20,4 @@ CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                 uint16_t Word,
                                 uint16_t SubWord);
 
-#endif  // FPDFSDK_FXEDIT_INCLUDE_FX_EDIT_H_
+#endif  // FPDFSDK_FXEDIT_FX_EDIT_H_

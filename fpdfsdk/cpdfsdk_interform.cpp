@@ -21,7 +21,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/fxedit/include/fxet_edit.h"
+#include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/include/cba_annotiterator.h"
 #include "fpdfsdk/include/cpdfsdk_annot.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"

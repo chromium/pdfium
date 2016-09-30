@@ -11,7 +11,7 @@
 
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxge/fx_font.h"
-#include "fpdfsdk/fxedit/include/fx_edit.h"
+#include "fpdfsdk/fxedit/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
 
 class CPDF_Document;

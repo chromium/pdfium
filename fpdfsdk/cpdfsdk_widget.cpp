@@ -20,7 +20,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
-#include "fpdfsdk/fxedit/include/fxet_edit.h"
+#include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/include/cpdfsdk_document.h"
 #include "fpdfsdk/include/cpdfsdk_environment.h"
 #include "fpdfsdk/include/cpdfsdk_interform.h"

@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_
-#define FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_
+#ifndef FPDFSDK_FXEDIT_FXET_LIST_H_
+#define FPDFSDK_FXEDIT_FXET_LIST_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "fpdfsdk/fxedit/include/fx_edit.h"
+#include "fpdfsdk/fxedit/fx_edit.h"
 
 class CFX_Edit;
 class CFX_Edit_Iterator;
@@ -301,4 +301,4 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   FX_BOOL m_bMultiple;
 };
 
-#endif  // FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_
+#endif  // FPDFSDK_FXEDIT_FXET_LIST_H_
