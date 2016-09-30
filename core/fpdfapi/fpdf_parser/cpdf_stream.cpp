@@ -93,7 +93,7 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
     FXSYS_memcpy(m_pDataBuf.get(), pData, size);
   m_dwSize = size;
   if (!m_pDict)
-    m_pDict.reset(new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
+    m_pDict.reset(new CPDF_Dictionary());
   m_pDict->SetIntegerFor("Length", size);
   m_pDict->RemoveFor("Filter");
   m_pDict->RemoveFor("DecodeParms");

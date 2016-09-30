@@ -12,29 +12,25 @@ TEST(cpdf_formfield, FPDF_GetFullName) {
   EXPECT_TRUE(name.IsEmpty());
 
   CPDF_IndirectObjectHolder obj_holder;
-  CPDF_Dictionary* root =
-      new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+  CPDF_Dictionary* root = new CPDF_Dictionary();
   obj_holder.AddIndirectObject(root);
   root->SetNameFor("T", "foo");
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("foo", name.UTF8Encode().c_str());
 
-  CPDF_Dictionary* dict1 =
-      new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+  CPDF_Dictionary* dict1 = new CPDF_Dictionary();
   root->SetReferenceFor("Parent", &obj_holder,
                         obj_holder.AddIndirectObject(dict1));
   dict1->SetNameFor("T", "bar");
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("bar.foo", name.UTF8Encode().c_str());
 
-  CPDF_Dictionary* dict2 =
-      new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+  CPDF_Dictionary* dict2 = new CPDF_Dictionary();
   dict1->SetFor("Parent", dict2);
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("bar.foo", name.UTF8Encode().c_str());
 
-  CPDF_Dictionary* dict3 =
-      new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+  CPDF_Dictionary* dict3 = new CPDF_Dictionary();
   dict2->SetReferenceFor("Parent", &obj_holder,
                          obj_holder.AddIndirectObject(dict3));
   dict3->SetNameFor("T", "qux");

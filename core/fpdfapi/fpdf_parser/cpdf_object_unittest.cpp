@@ -66,7 +66,7 @@ class PDFObjectsTest : public testing::Test {
     m_ArrayObj->InsertAt(0, new CPDF_Number(8902));
     m_ArrayObj->InsertAt(1, new CPDF_Name("address"));
     // Dictionary object.
-    m_DictObj = new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+    m_DictObj = new CPDF_Dictionary();
     m_DictObj->SetFor("bool", new CPDF_Boolean(false));
     m_DictObj->SetFor("num", new CPDF_Number(0.23f));
     // Stream object.
@@ -74,7 +74,7 @@ class PDFObjectsTest : public testing::Test {
     size_t buf_len = FX_ArraySize(content);
     uint8_t* buf = reinterpret_cast<uint8_t*>(malloc(buf_len));
     memcpy(buf, content, buf_len);
-    m_StreamDictObj = new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+    m_StreamDictObj = new CPDF_Dictionary();
     m_StreamDictObj->SetFor("key1", new CPDF_String(L" test dict"));
     m_StreamDictObj->SetFor("key2", new CPDF_Number(-1));
     CPDF_Stream* stream_obj = new CPDF_Stream(buf, buf_len, m_StreamDictObj);
@@ -553,7 +553,7 @@ TEST(PDFArrayTest, GetTypeAt) {
     CPDF_Dictionary* vals[3];
     ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < 3; ++i) {
-      vals[i] = new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+      vals[i] = new CPDF_Dictionary();
       for (size_t j = 0; j < 3; ++j) {
         std::string key("key");
         char buf[33];
@@ -580,7 +580,7 @@ TEST(PDFArrayTest, GetTypeAt) {
     CPDF_Stream* stream_vals[3];
     ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < 3; ++i) {
-      vals[i] = new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+      vals[i] = new CPDF_Dictionary();
       for (size_t j = 0; j < 3; ++j) {
         std::string key("key");
         char buf[33];
@@ -625,13 +625,11 @@ TEST(PDFArrayTest, GetTypeAt) {
     arr_val->AddNumber(1);
     arr_val->AddNumber(2);
     arr->InsertAt(11, arr_val);
-    CPDF_Dictionary* dict_val =
-        new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+    CPDF_Dictionary* dict_val = new CPDF_Dictionary();
     dict_val->SetFor("key1", new CPDF_String("Linda", false));
     dict_val->SetFor("key2", new CPDF_String("Zoe", false));
     arr->InsertAt(12, dict_val);
-    CPDF_Dictionary* stream_dict =
-        new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+    CPDF_Dictionary* stream_dict = new CPDF_Dictionary();
     stream_dict->SetFor("key1", new CPDF_String("John", false));
     stream_dict->SetFor("key2", new CPDF_String("King", false));
     uint8_t data[] = "A stream for test";
@@ -770,7 +768,7 @@ TEST(PDFArrayTest, CloneDirectObject) {
 
 TEST(PDFDictionaryTest, CloneDirectObject) {
   CPDF_IndirectObjectHolder objects_holder;
-  ScopedDict dict(new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
+  ScopedDict dict(new CPDF_Dictionary());
   dict->SetReferenceFor("foo", &objects_holder, 1234);
   ASSERT_EQ(1U, dict->GetCount());
   CPDF_Object* obj = dict->GetObjectFor("foo");
@@ -792,8 +790,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     // Create an object with a reference loop.
     ScopedArray arr_obj(new CPDF_Array);
     // Dictionary object.
-    CPDF_Dictionary* dict_obj =
-        new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+    CPDF_Dictionary* dict_obj = new CPDF_Dictionary();
     dict_obj->SetFor("arr", arr_obj.get());
     arr_obj->InsertAt(0, dict_obj);
 
@@ -811,8 +808,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
   {
     CPDF_IndirectObjectHolder objects_holder;
     // Create an object with a reference loop.
-    CPDF_Dictionary* dict_obj =
-        new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>());
+    CPDF_Dictionary* dict_obj = new CPDF_Dictionary();
     CPDF_Array* arr_obj = new CPDF_Array;
     objects_holder.AddIndirectObject(dict_obj);
     EXPECT_EQ(1u, dict_obj->GetObjNum());

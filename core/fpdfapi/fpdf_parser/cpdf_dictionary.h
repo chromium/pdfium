@@ -23,6 +23,7 @@ class CPDF_Dictionary : public CPDF_Object {
   using iterator = std::map<CFX_ByteString, CPDF_Object*>::iterator;
   using const_iterator = std::map<CFX_ByteString, CPDF_Object*>::const_iterator;
 
+  CPDF_Dictionary();
   explicit CPDF_Dictionary(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
 
   // CPDF_Object.

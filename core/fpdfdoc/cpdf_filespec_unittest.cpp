@@ -105,7 +105,7 @@ TEST(cpdf_filespec, GetFileName) {
     };
     // Keyword fields in reverse order of precedence to retrieve the file name.
     const char* const keywords[5] = {"Unix", "Mac", "DOS", "F", "UF"};
-    ScopedDict dict_obj(new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
+    ScopedDict dict_obj(new CPDF_Dictionary());
     CPDF_FileSpec file_spec(dict_obj.get());
     CFX_WideString file_name;
     for (int i = 0; i < 5; ++i) {
@@ -155,7 +155,7 @@ TEST(cpdf_filespec, SetFileName) {
   EXPECT_TRUE(file_name == test_data.input);
 
   // Dictionary object.
-  ScopedDict dict_obj(new CPDF_Dictionary(CFX_WeakPtr<CFX_ByteStringPool>()));
+  ScopedDict dict_obj(new CPDF_Dictionary());
   CPDF_FileSpec file_spec2(dict_obj.get());
   file_spec2.SetFileName(test_data.input);
   // Check internal object value.
