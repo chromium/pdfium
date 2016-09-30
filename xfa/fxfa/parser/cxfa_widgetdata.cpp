@@ -7,7 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 #include "core/fxcrt/fx_ext.h"
-#include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_event.h"

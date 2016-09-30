@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_INCLUDE_IFWL_ADAPTERTIMERMGR_H_
-#define XFA_FWL_CORE_INCLUDE_IFWL_ADAPTERTIMERMGR_H_
+#ifndef XFA_FWL_CORE_IFWL_ADAPTERTIMERMGR_H_
+#define XFA_FWL_CORE_IFWL_ADAPTERTIMERMGR_H_
 
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_timer.h"
@@ -20,4 +20,4 @@ class IFWL_AdapterTimerMgr {
   virtual FWL_Error Stop(IFWL_TimerInfo* pTimerInfo) = 0;
 };
 
-#endif  // XFA_FWL_CORE_INCLUDE_IFWL_ADAPTERTIMERMGR_H_
+#endif  // XFA_FWL_CORE_IFWL_ADAPTERTIMERMGR_H_

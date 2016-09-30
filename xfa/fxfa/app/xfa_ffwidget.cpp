@@ -24,10 +24,10 @@
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_pattern.h"
 #include "xfa/fxgraphics/cfx_shading.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
 
 CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,
                              CXFA_WidgetAcc* pDataAcc)

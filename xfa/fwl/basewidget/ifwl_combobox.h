@@ -8,7 +8,7 @@
 #define XFA_FWL_BASEWIDGET_IFWL_COMBOBOX_H_
 
 #include "xfa/fwl/basewidget/ifwl_listbox.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFWL_WidgetImpProperties;
 class IFDE_TxtEdtDoRecord;

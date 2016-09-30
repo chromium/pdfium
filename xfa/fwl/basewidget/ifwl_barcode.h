@@ -8,7 +8,7 @@
 #define XFA_FWL_BASEWIDGET_IFWL_BARCODE_H_
 
 #include "xfa/fwl/basewidget/ifwl_edit.h"
-#include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/fxbarcode/BC_Library.h"
 
 class CFWL_WidgetImpProperties;
 

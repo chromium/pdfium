@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXBARCODE_INCLUDE_BC_LIBRARY_H_
-#define XFA_FXBARCODE_INCLUDE_BC_LIBRARY_H_
+#ifndef XFA_FXBARCODE_BC_LIBRARY_H_
+#define XFA_FXBARCODE_BC_LIBRARY_H_
 
 enum BC_TEXT_LOC {
   BC_TEXT_LOC_NONE = 0,
@@ -35,4 +35,4 @@ enum BC_TYPE {
 void BC_Library_Init();
 void BC_Library_Destory();
 
-#endif  // XFA_FXBARCODE_INCLUDE_BC_LIBRARY_H_
+#endif  // XFA_FXBARCODE_BC_LIBRARY_H_

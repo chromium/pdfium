@@ -11,7 +11,7 @@
 #include "fpdfsdk/cpdfsdk_environment.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/fsdk_define.h"
-#include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
 #include "xfa/fxfa/include/xfa_fontmgr.h"
 

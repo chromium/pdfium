@@ -25,7 +25,7 @@
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 #include "xfa/fxfa/include/xfa_rendercontext.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,

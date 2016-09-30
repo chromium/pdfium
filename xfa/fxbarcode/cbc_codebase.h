@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/fxbarcode/BC_Library.h"
 
 class CBC_Writer;
 class CBC_Reader;

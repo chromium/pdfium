@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
-#include "xfa/fwl/core/include/ifwl_adaptertimermgr.h"
+#include "xfa/fwl/core/ifwl_adaptertimermgr.h"
 
 #define JS_STR_VIEWERTYPE_STANDARD L"Exchange"
 #define JS_STR_LANGUANGE L"ENU"

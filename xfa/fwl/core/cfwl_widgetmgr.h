@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 #define FWL_WGTMGR_DisableThread 0x00000001
 #define FWL_WGTMGR_DisableForm 0x00000002

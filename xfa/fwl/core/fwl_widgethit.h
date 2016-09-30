@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_INCLUDE_FWL_WIDGETHIT_H_
-#define XFA_FWL_CORE_INCLUDE_FWL_WIDGETHIT_H_
+#ifndef XFA_FWL_CORE_FWL_WIDGETHIT_H_
+#define XFA_FWL_CORE_FWL_WIDGETHIT_H_
 
 enum class FWL_WidgetHit {
   Unknown = 0,
@@ -32,4 +32,4 @@ enum class FWL_WidgetHit {
   DownButton
 };
 
-#endif  // XFA_FWL_CORE_INCLUDE_FWL_WIDGETHIT_H_
+#endif  // XFA_FWL_CORE_FWL_WIDGETHIT_H_

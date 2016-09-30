@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 namespace {
 

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 #include <memory>
 

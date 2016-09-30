@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFX_PathData;
 class CFX_PathGenerator;

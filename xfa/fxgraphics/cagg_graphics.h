@@ -8,7 +8,7 @@
 #define XFA_FXGRAPHICS_CAGG_GRAPHICS_H_
 
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFX_Graphics;
 

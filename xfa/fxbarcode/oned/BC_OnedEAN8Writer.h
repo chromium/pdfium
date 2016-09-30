@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 
 class CFX_DIBitmap;

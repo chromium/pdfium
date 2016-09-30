@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_
 
-#include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 
 class CBC_OnedCode39Writer : public CBC_OneDimWriter {

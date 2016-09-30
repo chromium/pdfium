@@ -13,8 +13,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/fwl_widgethit.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
-#include "xfa/fwl/core/include/fwl_widgethit.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_AppImp;

@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "core/fxge/cfx_renderdevice.h"
+#include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxbarcode/BC_Writer.h"
-#include "xfa/fxbarcode/include/BC_Library.h"
 
 class CBC_CommonBitMatrix;
 class CFX_Font;

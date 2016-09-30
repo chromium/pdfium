@@ -14,13 +14,13 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_xfawidget.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
-#include "xfa/fwl/core/include/fwl_widgethit.h"
+#include "xfa/fwl/core/fwl_widgethit.h"
 #include "xfa/fxfa/include/fxfa_basic.h"
 #include "xfa/fxfa/include/xfa_ffdocview.h"
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #include "xfa/fxfa/include/xfa_ffwidgethandler.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 CPDFSDK_XFAWidgetHandler::CPDFSDK_XFAWidgetHandler(CPDFSDK_Environment* pEnv)
     : m_pEnv(pEnv) {}

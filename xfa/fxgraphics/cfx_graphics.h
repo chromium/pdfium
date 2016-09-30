@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
-#define XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
+#ifndef XFA_FXGRAPHICS_CFX_GRAPHICS_H_
+#define XFA_FXGRAPHICS_CFX_GRAPHICS_H_
 
 #include <memory>
 
@@ -239,4 +239,4 @@ class CFX_Graphics {
   friend class CAGG_Graphics;
 };
 
-#endif  // XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
+#endif  // XFA_FXGRAPHICS_CFX_GRAPHICS_H_

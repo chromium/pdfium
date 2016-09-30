@@ -14,7 +14,7 @@
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/fxgraphics/cfx_graphics.h"
 
 enum FWL_KeyFlag {
   FWL_KEYFLAG_Ctrl = 1 << 0,
