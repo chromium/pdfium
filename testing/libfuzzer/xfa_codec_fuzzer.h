@@ -7,8 +7,8 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
-#include "core/fxcodec/include/fx_codec.h"
+#include "core/fxcodec/codec/ccodec_progressivedecoder.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_stream.h"
 
 class XFACodecFuzzer {

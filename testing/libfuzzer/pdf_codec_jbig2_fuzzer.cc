@@ -4,12 +4,12 @@
 
 #include <cstdint>
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
+#include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
-#include "core/fxcodec/include/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
-#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/fx_dib.h"
 
 static uint32_t GetInteger(const uint8_t* data) {
   return data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;

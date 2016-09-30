@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fgas/crt/fgas_stream.h"

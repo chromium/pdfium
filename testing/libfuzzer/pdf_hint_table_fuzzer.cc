@@ -4,8 +4,8 @@
 
 #include <cstdint>
 
+#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 
 struct DummyLinearizedDictionary {
   int end_of_first_page_offset;

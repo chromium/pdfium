@@ -7,8 +7,8 @@
 #include <limits>
 #include <memory>
 
-#include "core/fxcrt/include/fx_basic.h"
-#include "core/fxcrt/include/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/parser/cxfa_xml_parser.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
