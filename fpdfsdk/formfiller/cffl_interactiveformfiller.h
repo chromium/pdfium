@@ -10,8 +10,8 @@
 #include <map>
 #include <memory>
 
-#include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 
 class CFFL_FormFiller;

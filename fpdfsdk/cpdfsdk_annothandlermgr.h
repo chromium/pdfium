@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_ANNOTHANDLERMGR_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_ANNOTHANDLERMGR_H_
+#ifndef FPDFSDK_CPDFSDK_ANNOTHANDLERMGR_H_
+#define FPDFSDK_CPDFSDK_ANNOTHANDLERMGR_H_
 
 #include <map>
 #include <memory>
@@ -13,7 +13,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
@@ -115,4 +115,4 @@ class CPDFSDK_AnnotHandlerMgr {
   CPDFSDK_Environment* m_pEnv;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_ANNOTHANDLERMGR_H_
+#endif  // FPDFSDK_CPDFSDK_ANNOTHANDLERMGR_H_

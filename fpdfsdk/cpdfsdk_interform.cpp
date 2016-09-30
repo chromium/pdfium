@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_interform.h"
 
 #include <algorithm>
 #include <memory>
@@ -20,26 +20,26 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "fpdfsdk/cba_annotiterator.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/fsdk_actionhandler.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
-#include "fpdfsdk/include/cba_annotiterator.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/cpdfsdk_document.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_pageview.h"
-#include "fpdfsdk/include/cpdfsdk_widget.h"
-#include "fpdfsdk/include/fsdk_actionhandler.h"
-#include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/ipdfsdk_annothandler.h"
+#include "fpdfsdk/ipdfsdk_annothandler.h"
 #include "fpdfsdk/javascript/ijs_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
+#include "fpdfsdk/cpdfsdk_xfawidget.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
-#include "fpdfsdk/include/cpdfsdk_xfawidget.h"
 #include "xfa/fxfa/include/cxfa_eventparam.h"
 #include "xfa/fxfa/include/xfa_ffdocview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_ENVIRONMENT_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_ENVIRONMENT_H_
+#ifndef FPDFSDK_CPDFSDK_ENVIRONMENT_H_
+#define FPDFSDK_CPDFSDK_ENVIRONMENT_H_
 
 #include <memory>
 
@@ -14,7 +14,7 @@
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcrt/cfx_observable.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
 
@@ -175,4 +175,4 @@ class CPDFSDK_Environment final {
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_ENVIRONMENT_H_
+#endif  // FPDFSDK_CPDFSDK_ENVIRONMENT_H_

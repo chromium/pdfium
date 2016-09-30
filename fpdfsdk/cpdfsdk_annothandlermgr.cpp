@@ -4,22 +4,22 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
+#include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 
 #include "core/fpdfdoc/cpdf_annot.h"
-#include "fpdfsdk/include/cba_annotiterator.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/cpdfsdk_baannot.h"
-#include "fpdfsdk/include/cpdfsdk_baannothandler.h"
-#include "fpdfsdk/include/cpdfsdk_datetime.h"
-#include "fpdfsdk/include/cpdfsdk_document.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_pageview.h"
-#include "fpdfsdk/include/cpdfsdk_widgethandler.h"
+#include "fpdfsdk/cba_annotiterator.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_baannot.h"
+#include "fpdfsdk/cpdfsdk_baannothandler.h"
+#include "fpdfsdk/cpdfsdk_datetime.h"
+#include "fpdfsdk/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_widgethandler.h"
 
 #ifdef PDF_ENABLE_XFA
+#include "fpdfsdk/cpdfsdk_xfawidgethandler.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
-#include "fpdfsdk/include/cpdfsdk_xfawidgethandler.h"
 #include "xfa/fxfa/include/xfa_ffpageview.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA

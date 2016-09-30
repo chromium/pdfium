@@ -6,9 +6,9 @@
 
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_widget.h"
 #include "fpdfsdk/pdfwindow/PWL_SpecialButton.h"
 #include "public/fpdf_fwlevent.h"
 

@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfsdk_xfawidget.h"
+#include "fpdfsdk/cpdfsdk_xfawidget.h"
 
-#include "fpdfsdk/include/ipdfsdk_annothandler.h"
+#include "fpdfsdk/ipdfsdk_annothandler.h"
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 
 CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,

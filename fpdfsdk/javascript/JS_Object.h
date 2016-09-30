@@ -10,7 +10,7 @@
 #include <map>
 #include <memory>
 
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fxjs/include/fxjs_v8.h"
 

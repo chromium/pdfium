@@ -24,7 +24,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_annotlist.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"
 

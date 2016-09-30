@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_ANNOTITERATOR_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_ANNOTITERATOR_H_
+#ifndef FPDFSDK_CPDFSDK_ANNOTITERATOR_H_
+#define FPDFSDK_CPDFSDK_ANNOTITERATOR_H_
 
 #include <vector>
 
@@ -28,4 +28,4 @@ class CPDFSDK_AnnotIterator {
   std::size_t m_pos;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_ANNOTITERATOR_H_
+#endif  // FPDFSDK_CPDFSDK_ANNOTITERATOR_H_

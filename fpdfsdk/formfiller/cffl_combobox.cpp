@@ -6,12 +6,12 @@
 
 #include "fpdfsdk/formfiller/cffl_combobox.h"
 
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_widget.h"
-#include "fpdfsdk/include/fsdk_common.h"
+#include "fpdfsdk/fsdk_common.h"
 #include "fpdfsdk/pdfwindow/PWL_ComboBox.h"
 
 CFFL_ComboBox::CFFL_ComboBox(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pAnnot)

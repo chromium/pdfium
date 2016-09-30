@@ -9,9 +9,9 @@
 #include <memory>
 #include <vector>
 
-#include "fpdfsdk/include/cpdfsdk_document.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"

@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
 
 #include <memory>
 
+#include "fpdfsdk/cpdfsdk_annothandlermgr.h"
+#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
-#include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
-#include "fpdfsdk/include/cpdfsdk_document.h"
-#include "fpdfsdk/include/fsdk_actionhandler.h"
+#include "fpdfsdk/fsdk_actionhandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 
 #ifdef PDF_ENABLE_XFA

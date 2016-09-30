@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_BAANNOTHANDLER_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_BAANNOTHANDLER_H_
+#ifndef FPDFSDK_CPDFSDK_BAANNOTHANDLER_H_
+#define FPDFSDK_CPDFSDK_BAANNOTHANDLER_H_
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "fpdfsdk/include/ipdfsdk_annothandler.h"
+#include "fpdfsdk/ipdfsdk_annothandler.h"
 
 class CFFL_InteractiveFormFiller;
 class CFX_Matrix;
@@ -107,4 +107,4 @@ class CPDFSDK_BAAnnotHandler : public IPDFSDK_AnnotHandler {
 #endif  // PDF_ENABLE_XFA
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_BAANNOTHANDLER_H_
+#endif  // FPDFSDK_CPDFSDK_BAANNOTHANDLER_H_

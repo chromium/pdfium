@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FSDK_DEFINE_H_
-#define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
+#ifndef FPDFSDK_FSDK_DEFINE_H_
+#define FPDFSDK_FSDK_DEFINE_H_
 
 #include "core/fpdfapi/fpdf_parser/cpdf_parser.h"
 #include "core/fxge/fx_dib.h"
@@ -118,4 +118,4 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
 void ProcessParseError(CPDF_Parser::Error err);
 
-#endif  // FPDFSDK_INCLUDE_FSDK_DEFINE_H_
+#endif  // FPDFSDK_FSDK_DEFINE_H_

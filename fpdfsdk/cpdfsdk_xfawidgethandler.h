@@ -4,36 +4,31 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_WIDGETHANDLER_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_WIDGETHANDLER_H_
+#ifndef FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_
+#define FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "fpdfsdk/include/ipdfsdk_annothandler.h"
+#include "fpdfsdk/ipdfsdk_annothandler.h"
 
-class CFFL_InteractiveFormFiller;
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
-class CPDFSDK_Annot;
 class CPDFSDK_Environment;
+class CPDFSDK_Annot;
 class CPDFSDK_PageView;
-
-#ifdef PDF_ENABLE_XFA
 class CXFA_FFWidget;
-#endif  // PDF_ENABLE_XFA
+class CXFA_FFWidgetHandler;
 
-class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
+class CPDFSDK_XFAWidgetHandler : public IPDFSDK_AnnotHandler {
  public:
-  explicit CPDFSDK_WidgetHandler(CPDFSDK_Environment* pApp);
-  ~CPDFSDK_WidgetHandler() override;
+  explicit CPDFSDK_XFAWidgetHandler(CPDFSDK_Environment* pApp);
+  ~CPDFSDK_XFAWidgetHandler() override;
 
   FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) override;
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) override;
-#ifdef PDF_ENABLE_XFA
-  CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* hWidget,
+  CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* pAnnot,
                           CPDFSDK_PageView* pPage) override;
-#endif  // PDF_ENABLE_XFA
   void ReleaseAnnot(CPDFSDK_Annot* pAnnot) override;
   void DeleteAnnot(CPDFSDK_Annot* pAnnot) override;
   CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
@@ -50,7 +45,6 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
   void OnLoad(CPDFSDK_Annot* pAnnot) override;
   void OnDelete(CPDFSDK_Annot* pAnnot) override;
   void OnRelease(CPDFSDK_Annot* pAnnot) override;
-
   void OnMouseEnter(CPDFSDK_PageView* pPageView,
                     CPDFSDK_Annot::ObservedPtr* pAnnot,
                     uint32_t nFlag) override;
@@ -95,25 +89,20 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
                  uint32_t nFlags) override;
   FX_BOOL OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
   FX_BOOL OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
-  void OnDeSelected(CPDFSDK_Annot* pAnnot) override {}
-  void OnSelected(CPDFSDK_Annot* pAnnot) override {}
+  void OnDeSelected(CPDFSDK_Annot* pAnnot) override;
+  void OnSelected(CPDFSDK_Annot* pAnnot) override;
   FX_BOOL OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
                      uint32_t nFlag) override;
   FX_BOOL OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
                       uint32_t nFlag) override;
-#ifdef PDF_ENABLE_XFA
   FX_BOOL OnXFAChangedFocus(CPDFSDK_Annot::ObservedPtr* pOldAnnot,
                             CPDFSDK_Annot::ObservedPtr* pNewAnnot) override;
-#endif  // PDF_ENABLE_XFA
-
-  void SetFormFiller(CFFL_InteractiveFormFiller* pFiller) {
-    m_pFormFiller = pFiller;
-  }
-  CFFL_InteractiveFormFiller* GetFormFiller() { return m_pFormFiller; }
 
  private:
+  CXFA_FFWidgetHandler* GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);
+  uint32_t GetFWLFlags(uint32_t dwFlag);
+
   CPDFSDK_Environment* m_pEnv;
-  CFFL_InteractiveFormFiller* m_pFormFiller;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_WIDGETHANDLER_H_
+#endif  // FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_

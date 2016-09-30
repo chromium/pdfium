@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FSDK_PAUSEADAPTER_H_
-#define FPDFSDK_INCLUDE_FSDK_PAUSEADAPTER_H_
+#ifndef FPDFSDK_FSDK_PAUSEADAPTER_H_
+#define FPDFSDK_FSDK_PAUSEADAPTER_H_
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
@@ -22,4 +22,4 @@ class IFSDK_PAUSE_Adapter : public IFX_Pause {
   IFSDK_PAUSE* const m_IPause;
 };
 
-#endif  // FPDFSDK_INCLUDE_FSDK_PAUSEADAPTER_H_
+#endif  // FPDFSDK_FSDK_PAUSEADAPTER_H_

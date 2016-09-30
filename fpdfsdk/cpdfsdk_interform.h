@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_INTERFORM_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_INTERFORM_H_
+#ifndef FPDFSDK_CPDFSDK_INTERFORM_H_
+#define FPDFSDK_CPDFSDK_INTERFORM_H_
 
 #include <map>
 #include <vector>
@@ -141,4 +141,4 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   FX_BOOL m_bNeedHightlight[kNumFieldTypes];
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_INTERFORM_H_
+#endif  // FPDFSDK_CPDFSDK_INTERFORM_H_

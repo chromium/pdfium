@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_observable.h"
-#include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 

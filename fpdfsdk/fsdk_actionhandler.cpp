@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/fsdk_actionhandler.h"
+#include "fpdfsdk/fsdk_actionhandler.h"
 
 #include <set>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "fpdfsdk/include/cpdfsdk_document.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_interform.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_interform.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/javascript/ijs_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/stl_util.h"

@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_PAGEVIEW_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_PAGEVIEW_H_
+#ifndef FPDFSDK_CPDFSDK_PAGEVIEW_H_
+#define FPDFSDK_CPDFSDK_PAGEVIEW_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fxcrt/fx_system.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_document.h"
 
 class CFX_RenderDevice;
 class CPDF_AnnotList;
@@ -121,4 +121,4 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   FX_BOOL m_bLocked;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_PAGEVIEW_H_
+#endif  // FPDFSDK_CPDFSDK_PAGEVIEW_H_

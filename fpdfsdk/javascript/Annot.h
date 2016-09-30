@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "fpdfsdk/include/cpdfsdk_baannot.h"
+#include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 
 class Annot : public CJS_EmbedObj {

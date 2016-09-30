@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfsdk_widget.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 
 #include <memory>
 
@@ -19,14 +19,14 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "fpdfsdk/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
+#include "fpdfsdk/fsdk_actionhandler.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
-#include "fpdfsdk/include/cpdfsdk_document.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_interform.h"
-#include "fpdfsdk/include/cpdfsdk_pageview.h"
-#include "fpdfsdk/include/fsdk_actionhandler.h"
-#include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 

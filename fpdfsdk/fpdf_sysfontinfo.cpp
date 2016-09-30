@@ -10,7 +10,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 
 class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {

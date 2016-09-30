@@ -7,7 +7,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/skia/fx_skia_device.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "public/fpdfview.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"

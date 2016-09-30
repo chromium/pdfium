@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_
+#ifndef FPDFSDK_CPDFSDK_BAANNOT_H_
+#define FPDFSDK_CPDFSDK_BAANNOT_H_
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
@@ -103,4 +103,4 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   CPDF_Annot* m_pAnnot;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_BAANNOT_H_
+#endif  // FPDFSDK_CPDFSDK_BAANNOT_H_

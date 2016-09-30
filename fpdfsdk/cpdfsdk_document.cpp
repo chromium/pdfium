@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_document.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
@@ -13,13 +13,13 @@
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_docjsactions.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/cpdfsdk_annothandlermgr.h"
-#include "fpdfsdk/include/cpdfsdk_environment.h"
-#include "fpdfsdk/include/cpdfsdk_interform.h"
-#include "fpdfsdk/include/cpdfsdk_pageview.h"
-#include "fpdfsdk/include/cpdfsdk_widget.h"
-#include "fpdfsdk/include/fsdk_actionhandler.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annothandlermgr.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
+#include "fpdfsdk/fsdk_actionhandler.h"
 
 // static
 CPDFSDK_Document* CPDFSDK_Document::FromFPDFFormHandle(

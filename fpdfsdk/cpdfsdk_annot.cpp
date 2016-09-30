@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
 
 #include <algorithm>
 
-#include "fpdfsdk/include/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA

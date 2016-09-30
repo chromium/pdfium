@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
-#define FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
+#ifndef FPDFSDK_FSDK_ACTIONHANDLER_H_
+#define FPDFSDK_FSDK_ACTIONHANDLER_H_
 
 #include <memory>
 #include <set>
@@ -13,7 +13,7 @@
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fxcrt/fx_string.h"
-#include "fpdfsdk/include/pdfsdk_fieldaction.h"
+#include "fpdfsdk/pdfsdk_fieldaction.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_Document;
@@ -115,4 +115,4 @@ class CPDFSDK_ActionHandler {
                               CPDFSDK_Document* pDocument);
 };
 
-#endif  // FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
+#endif  // FPDFSDK_FSDK_ACTIONHANDLER_H_

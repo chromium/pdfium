@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFSDK_FIELDACTION_H_
-#define FPDFSDK_INCLUDE_PDFSDK_FIELDACTION_H_
+#ifndef FPDFSDK_PDFSDK_FIELDACTION_H_
+#define FPDFSDK_PDFSDK_FIELDACTION_H_
 
 #include "core/fxcrt/fx_string.h"
 
@@ -36,4 +36,4 @@ struct PDFSDK_FieldAction {
   FX_BOOL bRC;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFSDK_FIELDACTION_H_
+#endif  // FPDFSDK_PDFSDK_FIELDACTION_H_

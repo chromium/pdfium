@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_DOCUMENT_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_DOCUMENT_H_
+#ifndef FPDFSDK_CPDFSDK_DOCUMENT_H_
+#define FPDFSDK_CPDFSDK_DOCUMENT_H_
 
 #include <map>
 #include <memory>
 
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fxcrt/cfx_observable.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
 class CPDF_OCContext;
@@ -105,4 +105,4 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   FX_BOOL m_bBeingDestroyed;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_DOCUMENT_H_
+#endif  // FPDFSDK_CPDFSDK_DOCUMENT_H_

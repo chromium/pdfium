@@ -15,7 +15,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "core/fxcrt/fx_ext.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_edit.h"
 
 #ifdef PDF_ENABLE_XFA

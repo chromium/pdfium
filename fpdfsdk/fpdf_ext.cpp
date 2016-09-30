@@ -17,7 +17,7 @@
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_xml.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"

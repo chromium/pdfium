@@ -17,7 +17,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/stl_util.h"
 
 class CPDF_PageOrganizer {

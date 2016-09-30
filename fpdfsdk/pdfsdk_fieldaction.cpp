@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfsdk_fieldaction.h"
+#include "fpdfsdk/pdfsdk_fieldaction.h"
 
 PDFSDK_FieldAction::PDFSDK_FieldAction()
     : bModifier(FALSE),

@@ -12,8 +12,8 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/fsdk_pauseadapter.h"
+#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/fsdk_pauseadapter.h"
 #include "public/fpdfview.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.

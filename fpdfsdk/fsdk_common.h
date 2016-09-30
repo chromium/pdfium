@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FSDK_COMMON_H_
-#define FPDFSDK_INCLUDE_FSDK_COMMON_H_
+#ifndef FPDFSDK_FSDK_COMMON_H_
+#define FPDFSDK_FSDK_COMMON_H_
 
 // for all fields
 #define FIELDFLAG_READONLY 1
@@ -31,4 +31,4 @@
 #define FIELDFLAG_MULTISELECT (1 << 21)
 #define FIELDFLAG_COMMITONSELCHANGE (1 << 26)
 
-#endif  // FPDFSDK_INCLUDE_FSDK_COMMON_H_
+#endif  // FPDFSDK_FSDK_COMMON_H_

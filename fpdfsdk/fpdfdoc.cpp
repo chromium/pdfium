@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_bookmarktree.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

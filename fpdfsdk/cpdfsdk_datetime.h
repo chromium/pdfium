@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_DATETIME_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_DATETIME_H_
+#ifndef FPDFSDK_CPDFSDK_DATETIME_H_
+#define FPDFSDK_CPDFSDK_DATETIME_H_
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
@@ -46,4 +46,4 @@ class CPDFSDK_DateTime {
   uint8_t m_tzMinute;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_DATETIME_H_
+#endif  // FPDFSDK_CPDFSDK_DATETIME_H_

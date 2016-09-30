@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_data_avail.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.

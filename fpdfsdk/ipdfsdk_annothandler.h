@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_IPDFSDK_ANNOTHANDLER_H_
-#define FPDFSDK_INCLUDE_IPDFSDK_ANNOTHANDLER_H_
+#ifndef FPDFSDK_IPDFSDK_ANNOTHANDLER_H_
+#define FPDFSDK_IPDFSDK_ANNOTHANDLER_H_
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
@@ -106,4 +106,4 @@ class IPDFSDK_AnnotHandler {
 #endif  // PDF_ENABLE_XFA
 };
 
-#endif  // FPDFSDK_INCLUDE_IPDFSDK_ANNOTHANDLER_H_
+#endif  // FPDFSDK_IPDFSDK_ANNOTHANDLER_H_

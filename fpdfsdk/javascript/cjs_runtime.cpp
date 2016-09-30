@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "fpdfsdk/include/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_environment.h"
 #include "fpdfsdk/javascript/Annot.h"
 #include "fpdfsdk/javascript/Consts.h"
 #include "fpdfsdk/javascript/Document.h"

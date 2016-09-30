@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CBA_ANNOTITERATOR_H_
-#define FPDFSDK_INCLUDE_CBA_ANNOTITERATOR_H_
+#ifndef FPDFSDK_CBA_ANNOTITERATOR_H_
+#define FPDFSDK_CBA_ANNOTITERATOR_H_
 
 #include <vector>
 
@@ -45,4 +45,4 @@ class CBA_AnnotIterator {
   std::vector<CPDFSDK_Annot*> m_Annots;
 };
 
-#endif  // FPDFSDK_INCLUDE_CBA_ANNOTITERATOR_H_
+#endif  // FPDFSDK_CBA_ANNOTITERATOR_H_

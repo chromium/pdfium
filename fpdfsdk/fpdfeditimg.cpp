@@ -10,7 +10,7 @@
 #include "core/fpdfapi/fpdf_page/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_define.h"
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {

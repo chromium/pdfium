@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_XFAWIDGET_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_XFAWIDGET_H_
+#ifndef FPDFSDK_CPDFSDK_XFAWIDGET_H_
+#define FPDFSDK_CPDFSDK_XFAWIDGET_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
 
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
@@ -34,4 +34,4 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
   CXFA_FFWidget* m_hXFAWidget;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_XFAWIDGET_H_
+#endif  // FPDFSDK_CPDFSDK_XFAWIDGET_H_

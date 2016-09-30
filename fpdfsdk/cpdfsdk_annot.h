@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_CPDFSDK_ANNOT_H_
-#define FPDFSDK_INCLUDE_CPDFSDK_ANNOT_H_
+#ifndef FPDFSDK_CPDFSDK_ANNOT_H_
+#define FPDFSDK_CPDFSDK_ANNOT_H_
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_annot.h"
@@ -13,8 +13,8 @@
 #include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/include/fsdk_common.h"
-#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/fsdk_common.h"
+#include "fpdfsdk/fsdk_define.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
@@ -62,4 +62,4 @@ class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
   FX_BOOL m_bSelected;
 };
 
-#endif  // FPDFSDK_INCLUDE_CPDFSDK_ANNOT_H_
+#endif  // FPDFSDK_CPDFSDK_ANNOT_H_

@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/cba_annotiterator.h"
+#include "fpdfsdk/cba_annotiterator.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
-#include "fpdfsdk/include/cpdfsdk_annot.h"
-#include "fpdfsdk/include/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
 
 // static
 bool CBA_AnnotIterator::CompareByLeftAscending(const CPDFSDK_Annot* p1,
