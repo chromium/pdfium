@@ -135,8 +135,12 @@ void CPDFSDK_Document::RemovePageView(UnderlyingPageType* pUnderlyingPage) {
     return;
 
   CPDFSDK_PageView* pPageView = it->second;
-  if (pPageView->IsLocked())
+  if (pPageView->IsLocked() || pPageView->IsBeingDestroyed())
     return;
+
+  // Mark the page view so we do not come into |RemovePageView| a second
+  // time while we're in the process of removing.
+  pPageView->SetBeingDestroyed();
 
   // This must happen before we remove |pPageView| from the map because
   // |KillFocusAnnotIfNeeded| can call into the |GetPage| method which will

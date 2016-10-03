@@ -670,6 +670,10 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
   CPDFSDK_PageView* pPageView =
       static_cast<CPDFSDK_PageView*>(pPage->GetView());
   if (pPageView) {
+    // We're already destroying the pageview, so bail early.
+    if (pPageView->IsBeingDestroyed())
+      return;
+
     if (pPageView->IsLocked()) {
       pPageView->TakePageOwnership();
       return;

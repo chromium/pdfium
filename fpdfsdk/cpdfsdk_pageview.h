@@ -98,6 +98,10 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   void SetLock(FX_BOOL bLocked) { m_bLocked = bLocked; }
   FX_BOOL IsLocked() { return m_bLocked; }
+
+  void SetBeingDestroyed() { m_bBeingDestroyed = true; }
+  bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
+
 #ifndef PDF_ENABLE_XFA
   bool OwnsPage() const { return m_bOwnsPage; }
   void TakePageOwnership() { m_bOwnsPage = true; }
@@ -120,6 +124,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   FX_BOOL m_bOnWidget;
   FX_BOOL m_bValid;
   FX_BOOL m_bLocked;
+  bool m_bBeingDestroyed;
 };
 
 #endif  // FPDFSDK_CPDFSDK_PAGEVIEW_H_

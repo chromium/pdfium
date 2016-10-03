@@ -39,7 +39,8 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
       m_bExitWidget(FALSE),
       m_bOnWidget(FALSE),
       m_bValid(FALSE),
-      m_bLocked(FALSE) {
+      m_bLocked(FALSE),
+      m_bBeingDestroyed(false) {
   CPDFSDK_InterForm* pInterForm = pSDKDoc->GetInterForm();
   if (pInterForm) {
     CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
