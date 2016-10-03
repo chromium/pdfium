@@ -4443,7 +4443,7 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 	static const char module[] = "TIFFFetchDirectory";
 
 	void* origdir;
-	uint16 dircount16;
+	uint16 dircount16 = 0;
 	uint32 dirsize;
 	TIFFDirEntry* dir;
 	uint8* ma;
