@@ -4,24 +4,24 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_system.h"
-
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <windows.h>
+
 #include <algorithm>
 
-namespace Gdiplus {
-using std::min;
-using std::max;
-}  // namespace Gdiplus
-
-#include <gdiplus.h>
-
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
+
+// Has to come before gdiplus.h
+namespace Gdiplus {
+using std::min;
+using std::max;
+}  // namespace Gdiplus
+
+#include <gdiplus.h>  // NOLINT
 
 using namespace Gdiplus;              // NOLINT
 using namespace Gdiplus::DllExports;  // NOLINT
@@ -1524,4 +1524,3 @@ CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   FreeDIBitmap(pInfo);
   return pDIBitmap;
 }
-#endif

@@ -4,14 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_system.h"
-
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
-
 #include <windows.h>
 
 #include <algorithm>
+#include <memory>
+#include <vector>
 
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_windowsdevice.h"
 #include "core/fxge/dib/dib_int.h"
@@ -327,5 +326,3 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
   return FALSE;
 #endif
 }
-
-#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_

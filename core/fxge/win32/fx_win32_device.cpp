@@ -4,22 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_system.h"
+#include <crtdbg.h>
 
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
-#include <crtdbg.h>
-
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
-
-#ifndef _SKIA_SUPPORT_
-#include "core/fxge/agg/fx_agg_driver.h"
-#endif
-
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -35,6 +28,10 @@
 #include "core/fxge/win32/dwrite_int.h"
 #include "core/fxge/win32/win32_int.h"
 #include "third_party/base/stl_util.h"
+
+#ifndef _SKIA_SUPPORT_
+#include "core/fxge/agg/fx_agg_driver.h"
+#endif
 
 namespace {
 
@@ -1392,5 +1389,3 @@ IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC) {
     return new CGdiPrinterDriver(hDC);
   return new CGdiDisplayDriver(hDC);
 }
-
-#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_

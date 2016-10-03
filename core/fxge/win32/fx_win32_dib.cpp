@@ -4,11 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_system.h"
-
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <windows.h>
 
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
@@ -218,4 +216,3 @@ void CFX_WindowsDIB::LoadFromDevice(HDC hDC, int left, int top) {
 void CFX_WindowsDIB::SetToDevice(HDC hDC, int left, int top) {
   ::BitBlt(hDC, left, top, m_Width, m_Height, m_hMemDC, 0, 0, SRCCOPY);
 }
-#endif
