@@ -956,36 +956,34 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
 }
 
 FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
-  CPDF_Object* pObject = ParseIndirectObjectAt(m_pDocument, *pos, 0);
+  std::unique_ptr<CPDF_Object> pObject(
+      ParseIndirectObjectAt(m_pDocument, *pos, 0));
   if (!pObject)
     return FALSE;
 
+  CPDF_Object* pUnownedObject = pObject.get();
+
   if (m_pDocument) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
-    if (pRootDict && pRootDict->GetObjNum() == pObject->m_ObjNum) {
-      // If |pObject| has an objnum assigned then this will leak as Release()
-      // will early exit.
-      if (pObject->IsStream())
-        pObject->Release();
+    if (pRootDict && pRootDict->GetObjNum() == pObject->m_ObjNum)
       return FALSE;
-    }
-    if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(pObject->m_ObjNum,
-                                                              pObject)) {
+    // Takes ownership of object (std::move someday).
+    uint32_t objnum = pObject->m_ObjNum;
+    if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
+            objnum, pObject.release())) {
       return FALSE;
     }
   }
 
-  CPDF_Stream* pStream = pObject->AsStream();
+  CPDF_Stream* pStream = pUnownedObject->AsStream();
   if (!pStream)
     return FALSE;
 
   CPDF_Dictionary* pDict = pStream->GetDict();
   *pos = pDict->GetIntegerFor("Prev");
   int32_t size = pDict->GetIntegerFor("Size");
-  if (size < 0) {
-    pStream->Release();
+  if (size < 0)
     return FALSE;
-  }
 
   CPDF_Dictionary* pNewTrailer = ToDictionary(pDict->Clone());
   if (bMainXRef) {
@@ -1017,10 +1015,8 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
     arrIndex.push_back(std::make_pair(0, size));
 
   pArray = pDict->GetArrayFor("W");
-  if (!pArray) {
-    pStream->Release();
+  if (!pArray)
     return FALSE;
-  }
 
   CFX_ArrayTemplate<uint32_t> WidthArray;
   FX_SAFE_UINT32 dwAccWidth = 0;
@@ -1029,10 +1025,8 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
     dwAccWidth += WidthArray[i];
   }
 
-  if (!dwAccWidth.IsValid() || WidthArray.GetSize() < 3) {
-    pStream->Release();
+  if (!dwAccWidth.IsValid() || WidthArray.GetSize() < 3)
     return FALSE;
-  }
 
   uint32_t totalWidth = dwAccWidth.ValueOrDie();
   CPDF_StreamAcc acc;
@@ -1092,17 +1086,14 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
         if (type == 1) {
           m_SortedOffset.insert(offset);
         } else {
-          if (offset < 0 || !IsValidObjectNumber(offset)) {
-            pStream->Release();
+          if (offset < 0 || !IsValidObjectNumber(offset))
             return FALSE;
-          }
           m_ObjectInfo[offset].type = 255;
         }
       }
     }
     segindex += count;
   }
-  pStream->Release();
   return TRUE;
 }
 

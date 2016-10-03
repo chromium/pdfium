@@ -23,7 +23,7 @@ CPDF_Array::~CPDF_Array() {
   // in case of cyclic references.
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Objects) {
-    if (it)
+    if (it && it->GetObjNum() != kInvalidObjNum)
       it->Release();
   }
 }
