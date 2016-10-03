@@ -423,7 +423,7 @@ CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
 CPDF_Document::~CPDF_Document() {
   delete m_pDocPage;
   CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
-  m_pByteStringPool.Clear();  // Make weak.
+  m_pByteStringPool.DeleteObject();  // Make weak.
 }
 
 CPDF_Object* CPDF_Document::ParseIndirectObject(uint32_t objnum) {

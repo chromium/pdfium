@@ -20,7 +20,7 @@ CFDF_Document::CFDF_Document()
 CFDF_Document::~CFDF_Document() {
   if (m_bOwnFile && m_pFile)
     m_pFile->Release();
-  m_pByteStringPool.Clear();  // Make weak.
+  m_pByteStringPool.DeleteObject();  // Make weak.
 }
 
 CFDF_Document* CFDF_Document::CreateNewDoc() {

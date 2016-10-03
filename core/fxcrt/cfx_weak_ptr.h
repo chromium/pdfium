@@ -35,7 +35,7 @@ class CFX_WeakPtr {
   bool operator!=(const CFX_WeakPtr& that) const { return !(*this == that); }
 
   T* Get() const { return m_pHandle ? m_pHandle->Get() : nullptr; }
-  void Clear() {
+  void DeleteObject() {
     if (m_pHandle) {
       m_pHandle->Clear();
       m_pHandle.Reset();
