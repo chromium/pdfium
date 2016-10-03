@@ -511,20 +511,6 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   SetLock(FALSE);
 }
 
-void CPDFSDK_PageView::ClearFXAnnots() {
-  SetLock(TRUE);
-  if (m_pSDKDoc && GetFocusAnnot()) {
-    CPDFSDK_Annot::ObservedPtr pNull;
-    m_pSDKDoc->SetFocusAnnot(&pNull);
-  }
-  m_pCaptureWidget.Reset();
-  for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray)
-    m_pSDKDoc->GetEnv()->GetAnnotHandlerMgr()->ReleaseAnnot(pAnnot);
-  m_fxAnnotArray.clear();
-  m_pAnnotList.reset();
-  SetLock(FALSE);
-}
-
 void CPDFSDK_PageView::UpdateRects(const std::vector<CFX_FloatRect>& rects) {
   CPDFSDK_Environment* pEnv = m_pSDKDoc->GetEnv();
   for (const auto& rc : rects)
