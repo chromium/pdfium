@@ -15,6 +15,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "third_party/base/ptr_util.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
@@ -244,7 +245,7 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
 
   m_bShallowCopy = true;
   if (pFont->m_pSubstFont) {
-    m_pSubstFont = WrapUnique(new CFX_SubstFont);
+    m_pSubstFont = pdfium::MakeUnique<CFX_SubstFont>();
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
     m_pSubstFont->m_SubstFlags = pFont->m_pSubstFont->m_SubstFlags;
     m_pSubstFont->m_Weight = pFont->m_pSubstFont->m_Weight;
@@ -319,7 +320,7 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                          bool bVertical) {
   m_bEmbedded = false;
   m_bVertical = bVertical;
-  m_pSubstFont = WrapUnique(new CFX_SubstFont);
+  m_pSubstFont = pdfium::MakeUnique<CFX_SubstFont>();
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, CharsetCP,
       m_pSubstFont.get());

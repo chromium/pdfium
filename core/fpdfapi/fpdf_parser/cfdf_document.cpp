@@ -9,13 +9,14 @@
 #include "core/fpdfapi/fpdf_edit/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
+#include "third_party/base/ptr_util.h"
 
 CFDF_Document::CFDF_Document()
     : CPDF_IndirectObjectHolder(),
       m_pRootDict(nullptr),
       m_pFile(nullptr),
       m_bOwnFile(FALSE),
-      m_pByteStringPool(WrapUnique(new CFX_ByteStringPool)) {}
+      m_pByteStringPool(pdfium::MakeUnique<CFX_ByteStringPool>()) {}
 
 CFDF_Document::~CFDF_Document() {
   if (m_bOwnFile && m_pFile)

@@ -15,6 +15,7 @@
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fsdk_pauseadapter.h"
 #include "public/fpdfview.h"
+#include "third_party/base/ptr_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CPDF_ProgressiveRenderer::Ready == FPDF_RENDER_READER,
@@ -44,7 +45,7 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
     return FPDF_RENDER_FAILED;
 
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(WrapUnique(pContext));
+  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
   CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
   pContext->m_pDevice.reset(pDevice);
   CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);

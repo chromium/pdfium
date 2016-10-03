@@ -23,6 +23,7 @@
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -415,7 +416,7 @@ CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
       m_dwFirstPageObjNum(0),
       m_pDocPage(new CPDF_DocPageData(this)),
       m_pDocRender(new CPDF_DocRenderData(this)),
-      m_pByteStringPool(WrapUnique(new CFX_ByteStringPool)) {
+      m_pByteStringPool(pdfium::MakeUnique<CFX_ByteStringPool>()) {
   if (pParser)
     SetLastObjNum(m_pParser->GetLastObjNum());
 }

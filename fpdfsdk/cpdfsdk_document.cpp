@@ -20,6 +20,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/fsdk_actionhandler.h"
+#include "third_party/base/ptr_util.h"
 
 // static
 CPDFSDK_Document* CPDFSDK_Document::FromFPDFFormHandle(
@@ -162,7 +163,7 @@ UnderlyingPageType* CPDFSDK_Document::GetPage(int nIndex) {
 
 CPDFSDK_InterForm* CPDFSDK_Document::GetInterForm() {
   if (!m_pInterForm)
-    m_pInterForm = WrapUnique(new CPDFSDK_InterForm(this));
+    m_pInterForm = pdfium::MakeUnique<CPDFSDK_InterForm>(this);
   return m_pInterForm.get();
 }
 

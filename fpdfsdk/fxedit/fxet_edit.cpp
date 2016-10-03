@@ -28,6 +28,7 @@
 #include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -1026,7 +1027,7 @@ void CFX_Edit::Initialize() {
 }
 
 void CFX_Edit::SetFontMap(IPVT_FontMap* pFontMap) {
-  m_pVTProvider = WrapUnique(new CFX_Edit_Provider(pFontMap));
+  m_pVTProvider = pdfium::MakeUnique<CFX_Edit_Provider>(pFontMap);
   m_pVT->SetProvider(m_pVTProvider.get());
 }
 
@@ -1039,8 +1040,10 @@ void CFX_Edit::SetOprNotify(CPWL_Edit* pOprNotify) {
 }
 
 CFX_Edit_Iterator* CFX_Edit::GetIterator() {
-  if (!m_pIterator)
-    m_pIterator = WrapUnique(new CFX_Edit_Iterator(this, m_pVT->GetIterator()));
+  if (!m_pIterator) {
+    m_pIterator =
+        pdfium::MakeUnique<CFX_Edit_Iterator>(this, m_pVT->GetIterator());
+  }
   return m_pIterator.get();
 }
 

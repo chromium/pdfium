@@ -13,6 +13,7 @@
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/fsdk_common.h"
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
+#include "third_party/base/ptr_util.h"
 
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
 
@@ -37,7 +38,7 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
 
   if (!m_pFontMap) {
     m_pFontMap =
-        WrapUnique(new CBA_FontMap(m_pWidget, m_pEnv->GetSysHandler()));
+        pdfium::MakeUnique<CBA_FontMap>(m_pWidget, m_pEnv->GetSysHandler());
   }
   cp.pFontMap = m_pFontMap.get();
 

@@ -20,7 +20,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/skia/fx_skia_device.h"
-
+#include "third_party/base/ptr_util.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkColorFilter.h"
 #include "third_party/skia/include/core/SkColorPriv.h"
@@ -1586,7 +1586,7 @@ void CFX_FxgeDevice::Clear(uint32_t color) {
 
 SkPictureRecorder* CFX_FxgeDevice::CreateRecorder(int size_x, int size_y) {
   CFX_SkiaDeviceDriver* skDriver = new CFX_SkiaDeviceDriver(size_x, size_y);
-  SetDeviceDriver(WrapUnique(skDriver));
+  SetDeviceDriver(pdfium::WrapUnique(skDriver));
   return skDriver->GetRecorder();
 }
 
@@ -1597,15 +1597,15 @@ bool CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
   if (!pBitmap)
     return false;
   SetBitmap(pBitmap);
-  SetDeviceDriver(WrapUnique(new CFX_SkiaDeviceDriver(
-      pBitmap, bRgbByteOrder, pOriDevice, bGroupKnockout)));
+  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(
+      pBitmap, bRgbByteOrder, pOriDevice, bGroupKnockout));
   return true;
 }
 
 bool CFX_FxgeDevice::AttachRecorder(SkPictureRecorder* recorder) {
   if (!recorder)
     return false;
-  SetDeviceDriver(WrapUnique(new CFX_SkiaDeviceDriver(recorder)));
+  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(recorder));
   return true;
 }
 
@@ -1620,8 +1620,8 @@ bool CFX_FxgeDevice::Create(int width,
     return false;
   }
   SetBitmap(pBitmap);
-  SetDeviceDriver(
-      WrapUnique(new CFX_SkiaDeviceDriver(pBitmap, FALSE, pOriDevice, FALSE)));
+  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(pBitmap, FALSE,
+                                                           pOriDevice, FALSE));
   return true;
 }
 

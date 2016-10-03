@@ -24,6 +24,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -454,7 +455,7 @@ const FX_CHAR* CPDF_Font::GetAdobeCharName(
 
 uint32_t CPDF_Font::FallbackFontFromCharcode(uint32_t charcode) {
   if (m_FontFallbacks.empty()) {
-    m_FontFallbacks.push_back(WrapUnique(new CFX_Font()));
+    m_FontFallbacks.push_back(pdfium::MakeUnique<CFX_Font>());
     m_FontFallbacks[0]->LoadSubst("Arial", IsTrueTypeFont(), m_Flags,
                                   m_StemV * 5, m_ItalicAngle, 0,
                                   IsVertWriting());

@@ -13,6 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_parser.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -47,7 +48,8 @@ CPWL_FontMap::~CPWL_FontMap() {
 CPDF_Document* CPWL_FontMap::GetDocument() {
   if (!m_pPDFDoc) {
     if (CPDF_ModuleMgr::Get()) {
-      m_pPDFDoc = WrapUnique(new CPDF_Document(std::unique_ptr<CPDF_Parser>()));
+      m_pPDFDoc =
+          pdfium::MakeUnique<CPDF_Document>(std::unique_ptr<CPDF_Parser>());
       m_pPDFDoc->CreateNewDoc();
     }
   }

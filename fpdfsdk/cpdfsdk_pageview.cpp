@@ -18,6 +18,7 @@
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_environment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
@@ -495,7 +496,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   bool bUpdateAP = CPDF_InterForm::IsUpdateAPEnabled();
   // Disable the default AP construction.
   CPDF_InterForm::SetUpdateAP(false);
-  m_pAnnotList = WrapUnique(new CPDF_AnnotList(pPage));
+  m_pAnnotList = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
   CPDF_InterForm::SetUpdateAP(bUpdateAP);
 
   const size_t nCount = m_pAnnotList->Count();

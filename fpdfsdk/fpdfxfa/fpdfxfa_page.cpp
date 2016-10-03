@@ -12,6 +12,7 @@
 #include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/xfa_ffdocview.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
 
@@ -39,7 +40,7 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage() {
     return FALSE;
 
   if (!m_pPDFPage || m_pPDFPage->m_pFormDict != pDict) {
-    m_pPDFPage = WrapUnique(new CPDF_Page(pPDFDoc, pDict, true));
+    m_pPDFPage = pdfium::MakeUnique<CPDF_Page>(pPDFDoc, pDict, true);
     m_pPDFPage->ParseContent();
   }
   return TRUE;
@@ -88,7 +89,7 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
     return FALSE;
 
   m_pPDFPage =
-      WrapUnique(new CPDF_Page(m_pDocument->GetPDFDoc(), pageDict, true));
+      pdfium::MakeUnique<CPDF_Page>(m_pDocument->GetPDFDoc(), pageDict, true);
   m_pPDFPage->ParseContent();
   return TRUE;
 }

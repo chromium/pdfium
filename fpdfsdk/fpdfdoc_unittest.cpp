@@ -16,6 +16,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
@@ -34,7 +35,7 @@ class CPDF_TestDocument : public CPDF_Document {
 class CPDF_TestXFADocument : public CPDFXFA_Document {
  public:
   CPDF_TestXFADocument()
-      : CPDFXFA_Document(WrapUnique(new CPDF_TestDocument()),
+      : CPDFXFA_Document(pdfium::MakeUnique<CPDF_TestDocument>(),
                          CPDFXFA_App::GetInstance()) {}
 
   void SetRoot(CPDF_Dictionary* root) {
@@ -61,7 +62,7 @@ class PDFDocTest : public testing::Test {
     CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
     module_mgr->InitPageModule();
 
-    m_pDoc = WrapUnique(new CPDF_TestPdfDocument());
+    m_pDoc = pdfium::MakeUnique<CPDF_TestPdfDocument>();
     m_pIndirectObjs = m_pDoc->GetHolder();
     // Setup the root directory.
     m_pRootObj.reset(new CPDF_Dictionary());

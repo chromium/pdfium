@@ -9,6 +9,7 @@
 #include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "third_party/base/ptr_util.h"
 
 static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
   // Leak the object at shutdown.
@@ -86,10 +87,9 @@ CPWL_TimerHandler::~CPWL_TimerHandler() {}
 
 void CPWL_TimerHandler::BeginTimer(int32_t nElapse) {
   if (!m_pTimer)
-    m_pTimer = WrapUnique(new CPWL_Timer(this, GetSystemHandler()));
+    m_pTimer = pdfium::MakeUnique<CPWL_Timer>(this, GetSystemHandler());
 
-  if (m_pTimer)
-    m_pTimer->SetPWLTimer(nElapse);
+  m_pTimer->SetPWLTimer(nElapse);
 }
 
 void CPWL_TimerHandler::EndTimer() {

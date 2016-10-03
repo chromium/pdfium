@@ -18,6 +18,7 @@
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "third_party/base/ptr_util.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include "core/fxge/apple/apple_int.h"
@@ -1021,7 +1022,7 @@ FX_BOOL CFX_QuartzDevice::Attach(CGContextRef context, int32_t nDeviceClass) {
   m_pContext = context;
   CGContextRetain(m_pContext);
   SetDeviceDriver(
-      WrapUnique(new CFX_QuartzDeviceDriver(m_pContext, nDeviceClass)));
+      pdfium::MakeUnique<CFX_QuartzDeviceDriver>(m_pContext, nDeviceClass));
   return TRUE;
 }
 
@@ -1032,7 +1033,7 @@ FX_BOOL CFX_QuartzDevice::Attach(CFX_DIBitmap* pBitmap) {
     return FALSE;
 
   SetDeviceDriver(
-      WrapUnique(new CFX_QuartzDeviceDriver(m_pContext, FXDC_DISPLAY)));
+      pdfium::MakeUnique<CFX_QuartzDeviceDriver>(m_pContext, FXDC_DISPLAY));
   return TRUE;
 }
 

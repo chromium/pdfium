@@ -10,6 +10,7 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/fsdk_common.h"
+#include "third_party/base/ptr_util.h"
 
 CFFL_TextField::CFFL_TextField(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pAnnot)
     : CFFL_FormFiller(pApp, pAnnot) {}
@@ -72,7 +73,7 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
 
   if (!m_pFontMap) {
     m_pFontMap =
-        WrapUnique(new CBA_FontMap(m_pWidget, m_pEnv->GetSysHandler()));
+        pdfium::MakeUnique<CBA_FontMap>(m_pWidget, m_pEnv->GetSysHandler());
   }
   cp.pFontMap = m_pFontMap.get();
   cp.pFocusHandler = this;

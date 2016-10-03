@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "testing/js_embedder_test.h"
+#include "third_party/base/ptr_util.h"
 
 JSEmbedderTest::JSEmbedderTest()
     : m_pArrayBufferAllocator(new FXJS_ArrayBufferAllocator),
@@ -21,7 +22,7 @@ void JSEmbedderTest::SetUp() {
   v8::Isolate::Scope isolate_scope(m_pIsolate);
   v8::HandleScope handle_scope(m_pIsolate);
   FXJS_PerIsolateData::SetUp(m_pIsolate);
-  m_Engine = WrapUnique(new CFXJS_Engine(m_pIsolate));
+  m_Engine = pdfium::MakeUnique<CFXJS_Engine>(m_pIsolate);
   m_Engine->InitializeEngine();
 }
 

@@ -14,6 +14,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/ptr_util.h"
 
 CPWL_List_Notify::CPWL_List_Notify(CPWL_ListBox* pList) : m_pList(pList) {
   ASSERT(m_pList);
@@ -76,7 +77,7 @@ CFX_ByteString CPWL_ListBox::GetClassName() const {
 
 void CPWL_ListBox::OnCreated() {
   m_pList->SetFontMap(GetFontMap());
-  m_pListNotify = WrapUnique(new CPWL_List_Notify(this));
+  m_pListNotify = pdfium::MakeUnique<CPWL_List_Notify>(this);
   m_pList->SetNotify(m_pListNotify.get());
 
   SetHoverSel(HasFlag(PLBS_HOVERSEL));

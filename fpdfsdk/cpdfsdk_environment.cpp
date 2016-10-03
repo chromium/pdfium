@@ -13,6 +13,7 @@
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/fsdk_actionhandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
@@ -201,19 +202,19 @@ IJS_Runtime* CPDFSDK_Environment::GetJSRuntime() {
 
 CPDFSDK_AnnotHandlerMgr* CPDFSDK_Environment::GetAnnotHandlerMgr() {
   if (!m_pAnnotHandlerMgr)
-    m_pAnnotHandlerMgr = WrapUnique(new CPDFSDK_AnnotHandlerMgr(this));
+    m_pAnnotHandlerMgr = pdfium::MakeUnique<CPDFSDK_AnnotHandlerMgr>(this);
   return m_pAnnotHandlerMgr.get();
 }
 
 CPDFSDK_ActionHandler* CPDFSDK_Environment::GetActionHander() {
   if (!m_pActionHandler)
-    m_pActionHandler = WrapUnique(new CPDFSDK_ActionHandler());
+    m_pActionHandler = pdfium::MakeUnique<CPDFSDK_ActionHandler>();
   return m_pActionHandler.get();
 }
 
 CFFL_InteractiveFormFiller* CPDFSDK_Environment::GetInteractiveFormFiller() {
   if (!m_pFormFiller)
-    m_pFormFiller = WrapUnique(new CFFL_InteractiveFormFiller(this));
+    m_pFormFiller = pdfium::MakeUnique<CFFL_InteractiveFormFiller>(this);
   return m_pFormFiller.get();
 }
 

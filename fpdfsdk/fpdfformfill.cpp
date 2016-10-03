@@ -24,6 +24,7 @@
 #include "fpdfsdk/fsdk_actionhandler.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdfview.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -254,7 +255,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
 
 #ifdef PDF_ENABLE_XFA
   // Ownership of the SDKDocument is passed to the CPDFXFA_Document.
-  pDocument->SetSDKDoc(WrapUnique(pEnv->GetSDKDocument()));
+  pDocument->SetSDKDoc(pdfium::WrapUnique(pEnv->GetSDKDocument()));
   CPDFXFA_App::GetInstance()->AddFormFillEnv(pEnv);
 #endif  // PDF_ENABLE_XFA
 

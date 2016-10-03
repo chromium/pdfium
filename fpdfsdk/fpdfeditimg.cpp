@@ -11,6 +11,7 @@
 #include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 #include "fpdfsdk/fsdk_define.h"
+#include "third_party/base/ptr_util.h"
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
@@ -19,7 +20,7 @@ FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
     return nullptr;
 
   CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
-  pImageObj->SetOwnedImage(WrapUnique(new CPDF_Image(pDoc)));
+  pImageObj->SetOwnedImage(pdfium::MakeUnique<CPDF_Image>(pDoc));
   return pImageObj;
 }
 

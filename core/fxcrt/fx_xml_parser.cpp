@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_xml.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CXML_DataBufAcc::CXML_DataBufAcc(const uint8_t* pBuffer, size_t size)
@@ -894,7 +895,7 @@ void CXML_AttrMap::SetAt(const CFX_ByteString& space,
                          const CFX_ByteString& name,
                          const CFX_WideString& value) {
   if (!m_pMap)
-    m_pMap = WrapUnique(new std::vector<CXML_AttrItem>);
+    m_pMap = pdfium::MakeUnique<std::vector<CXML_AttrItem>>();
 
   for (CXML_AttrItem& item : *m_pMap) {
     if (item.Matches(space, name)) {

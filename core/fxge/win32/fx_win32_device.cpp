@@ -27,6 +27,7 @@
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/dwrite_int.h"
 #include "core/fxge/win32/win32_int.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #ifndef _SKIA_SUPPORT_
@@ -1369,7 +1370,7 @@ FX_BOOL CGdiDisplayDriver::StartDIBits(const CFX_DIBSource* pBitmap,
 }
 
 CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC) {
-  SetDeviceDriver(WrapUnique(CreateDriver(hDC)));
+  SetDeviceDriver(pdfium::WrapUnique(CreateDriver(hDC)));
 }
 
 CFX_WindowsDevice::~CFX_WindowsDevice() {}

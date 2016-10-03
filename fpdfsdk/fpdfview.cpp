@@ -33,6 +33,7 @@
 #include "public/fpdf_ext.h"
 #include "public/fpdf_progressive.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
@@ -69,7 +70,7 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
 #ifdef PDF_ENABLE_XFA
   return doc ? FPDFDocumentFromUnderlying(new CPDFXFA_Document(
-                   WrapUnique(doc), CPDFXFA_App::GetInstance()))
+                   pdfium::WrapUnique(doc), CPDFXFA_App::GetInstance()))
              : nullptr;
 #else   // PDF_ENABLE_XFA
   return FPDFDocumentFromUnderlying(doc);
@@ -574,20 +575,20 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     return;
 
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(WrapUnique(pContext));
+  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
 
   std::unique_ptr<CFX_DIBitmap> pBitmap;
   const bool bNewBitmap =
       pPage->BackgroundAlphaNeeded() || pPage->HasImageMask();
   if (bNewBitmap) {
-    pBitmap = WrapUnique(new CFX_DIBitmap);
+    pBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
     pBitmap->Create(size_x, size_y, FXDIB_Argb);
     pBitmap->Clear(0x00ffffff);
     CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
-    pContext->m_pDevice = WrapUnique(pDevice);
+    pContext->m_pDevice = pdfium::WrapUnique(pDevice);
     pDevice->Attach(pBitmap.get(), false, nullptr, false);
   } else {
-    pContext->m_pDevice = WrapUnique(new CFX_WindowsDevice(dc));
+    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsDevice>(dc);
   }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
@@ -596,7 +597,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   if (bNewBitmap) {
     CFX_WindowsDevice WinDC(dc);
     if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
-      std::unique_ptr<CFX_DIBitmap> pDst = WrapUnique(new CFX_DIBitmap);
+      std::unique_ptr<CFX_DIBitmap> pDst = pdfium::MakeUnique<CFX_DIBitmap>();
       int pitch = pBitmap->GetPitch();
       pDst->Create(size_x, size_y, FXDIB_Rgb32);
       FXSYS_memset(pDst->GetBuffer(), -1, pitch * size_y);
@@ -628,7 +629,7 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
     return;
 
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(WrapUnique(pContext));
+  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
   CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
   pContext->m_pDevice.reset(pDevice);
   CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);
@@ -649,7 +650,7 @@ DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
     return nullptr;
 
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(WrapUnique(pContext));
+  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
   CFX_FxgeDevice* skDevice = new CFX_FxgeDevice;
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice.reset(skDevice);
@@ -850,7 +851,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
     return;
 
   if (!pContext->m_pOptions)
-    pContext->m_pOptions = WrapUnique(new CPDF_RenderOptions);
+    pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
 
   if (flags & FPDF_LCD_TEXT)
     pContext->m_pOptions->m_Flags |= RENDER_CLEARTYPE;
@@ -889,19 +890,19 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
   pContext->m_pDevice->SetClip_Rect(
       FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y));
 
-  pContext->m_pContext = WrapUnique(new CPDF_RenderContext(pPage));
+  pContext->m_pContext = pdfium::MakeUnique<CPDF_RenderContext>(pPage);
   pContext->m_pContext->AppendLayer(pPage, &matrix);
 
   if (flags & FPDF_ANNOT) {
-    pContext->m_pAnnots = WrapUnique(new CPDF_AnnotList(pPage));
+    pContext->m_pAnnots = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
     FX_BOOL bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
     pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
                                        bPrinting, &matrix, FALSE, nullptr);
   }
 
-  pContext->m_pRenderer = WrapUnique(new CPDF_ProgressiveRenderer(
+  pContext->m_pRenderer = pdfium::MakeUnique<CPDF_ProgressiveRenderer>(
       pContext->m_pContext.get(), pContext->m_pDevice.get(),
-      pContext->m_pOptions.get()));
+      pContext->m_pOptions.get());
   pContext->m_pRenderer->Start(pause);
   if (bNeedToRestore)
     pContext->m_pDevice->RestoreState(false);

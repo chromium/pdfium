@@ -12,6 +12,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ge/cttfontdesc.h"
 #include "core/fxge/ifx_systemfontinfo.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -81,7 +82,7 @@ int GetTTCIndex(const uint8_t* pFontData,
 
 CFX_FontMgr::CFX_FontMgr()
     : m_FTLibrary(nullptr), m_FTLibrarySupportsHinting(false) {
-  m_pBuiltinMapper = WrapUnique(new CFX_FontMapper(this));
+  m_pBuiltinMapper = pdfium::MakeUnique<CFX_FontMapper>(this);
 }
 
 CFX_FontMgr::~CFX_FontMgr() {

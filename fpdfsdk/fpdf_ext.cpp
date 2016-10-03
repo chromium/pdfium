@@ -18,6 +18,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_xml.h"
 #include "fpdfsdk/fsdk_define.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
@@ -41,7 +42,7 @@ FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
     return FALSE;
 
   CPDF_ModuleMgr::Get()->SetUnsupportInfoAdapter(
-      WrapUnique(new CFSDK_UnsupportInfo_Adapter(unsp_info)));
+      pdfium::MakeUnique<CFSDK_UnsupportInfo_Adapter>(unsp_info));
   return TRUE;
 }
 

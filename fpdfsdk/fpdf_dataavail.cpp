@@ -13,6 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/ptr_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CPDF_DataAvail::DataError == PDF_DATA_ERROR,
@@ -115,8 +116,8 @@ DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
   CFPDF_DataAvail* pAvail = new CFPDF_DataAvail;
   pAvail->m_FileAvail.Set(file_avail);
   pAvail->m_FileRead.Set(file);
-  pAvail->m_pDataAvail = WrapUnique(
-      new CPDF_DataAvail(&pAvail->m_FileAvail, &pAvail->m_FileRead, TRUE));
+  pAvail->m_pDataAvail = pdfium::MakeUnique<CPDF_DataAvail>(
+      &pAvail->m_FileAvail, &pAvail->m_FileRead, TRUE);
   return pAvail;
 }
 

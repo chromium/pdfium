@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/xfa_checksum.h"
 
 enum class CFX_SaxMode {
@@ -159,7 +160,8 @@ void CFX_SAXReader::Reset() {
 }
 
 void CFX_SAXReader::Push() {
-  std::unique_ptr<CFX_SAXItem> pNew(WrapUnique(new CFX_SAXItem(++m_dwItemID)));
+  std::unique_ptr<CFX_SAXItem> pNew =
+      pdfium::MakeUnique<CFX_SAXItem>(++m_dwItemID);
   if (!m_Stack.empty())
     pNew->m_bSkip = m_Stack.top()->m_bSkip;
   m_Stack.push(std::move(pNew));

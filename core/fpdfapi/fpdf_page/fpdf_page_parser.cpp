@@ -36,6 +36,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -790,7 +791,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
     pImageObj->SetUnownedImage(m_pDocument->LoadImageF(pStream));
   } else {
     pImageObj->SetOwnedImage(
-        WrapUnique(new CPDF_Image(m_pDocument, pStream, bInline)));
+        pdfium::MakeUnique<CPDF_Image>(m_pDocument, pStream, bInline));
   }
   SetGraphicStates(pImageObj.get(), pImageObj->GetImage()->IsMask(), FALSE,
                    FALSE);

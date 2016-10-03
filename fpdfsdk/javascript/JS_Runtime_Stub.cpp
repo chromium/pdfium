@@ -8,6 +8,7 @@
 
 #include "fpdfsdk/javascript/ijs_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
+#include "third_party/base/ptr_util.h"
 
 class CJS_ContextStub final : public IJS_Context {
  public:
@@ -124,7 +125,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
 
   IJS_Context* NewContext() override {
     if (!m_pContext)
-      m_pContext = WrapUnique(new CJS_ContextStub());
+      m_pContext = pdfium::MakeUnique<CJS_ContextStub>();
     return GetCurrentContext();
   }
 
