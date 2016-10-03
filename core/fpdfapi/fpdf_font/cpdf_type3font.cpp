@@ -19,7 +19,8 @@
 CPDF_Type3Font::CPDF_Type3Font()
     : m_pCharProcs(nullptr),
       m_pPageResources(nullptr),
-      m_pFontResources(nullptr) {
+      m_pFontResources(nullptr),
+      m_CharLoadingDepth(0) {
   FXSYS_memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
 
@@ -87,8 +88,8 @@ void CPDF_Type3Font::CheckType3FontMetrics() {
   CheckFontMetrics();
 }
 
-CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
-  if (level >= _FPDF_MAX_TYPE3_FORM_LEVEL_)
+CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
+  if (m_CharLoadingDepth >= _FPDF_MAX_TYPE3_FORM_LEVEL_)
     return nullptr;
 
   auto it = m_CacheMap.find(charcode);
@@ -111,7 +112,9 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   // This can trigger recursion into this method. The content of |m_CacheMap|
   // can change as a result. Thus after it returns, check the cache again for
   // a cache hit.
-  pNewChar->m_pForm->ParseContent(nullptr, nullptr, pNewChar.get(), level + 1);
+  m_CharLoadingDepth++;
+  pNewChar->m_pForm->ParseContent(nullptr, nullptr, pNewChar.get());
+  m_CharLoadingDepth--;
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())
     return it->second.get();
@@ -139,18 +142,18 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   return pCachedChar;
 }
 
-int CPDF_Type3Font::GetCharWidthF(uint32_t charcode, int level) {
+int CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
   if (charcode >= FX_ArraySize(m_CharWidthL))
     charcode = 0;
 
   if (m_CharWidthL[charcode])
     return m_CharWidthL[charcode];
 
-  const CPDF_Type3Char* pChar = LoadChar(charcode, level);
+  const CPDF_Type3Char* pChar = LoadChar(charcode);
   return pChar ? pChar->m_Width : 0;
 }
 
-FX_RECT CPDF_Type3Font::GetCharBBox(uint32_t charcode, int level) {
-  const CPDF_Type3Char* pChar = LoadChar(charcode, level);
+FX_RECT CPDF_Type3Font::GetCharBBox(uint32_t charcode) {
+  const CPDF_Type3Char* pChar = LoadChar(charcode);
   return pChar ? pChar->m_BBox : FX_RECT();
 }

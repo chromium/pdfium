@@ -78,7 +78,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   }
 }
 
-int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode, int level) {
+int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
   if (charcode > 0xff)
     charcode = 0;
 
@@ -91,7 +91,7 @@ int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode, int level) {
   return m_CharWidth[charcode];
 }
 
-FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode, int level) {
+FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
   if (charcode > 0xff)
     charcode = 0;
 

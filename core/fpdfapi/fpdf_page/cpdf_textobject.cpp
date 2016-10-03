@@ -217,7 +217,7 @@ FX_FLOAT CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
     bVertWriting = pCIDFont->IsVertWriting();
   }
   if (!bVertWriting)
-    return pFont->GetCharWidthF(charcode, 0) * fontsize;
+    return pFont->GetCharWidthF(charcode) * fontsize;
 
   uint16_t CID = pCIDFont->CIDFromCharCode(charcode);
   return pCIDFont->GetVertWidth(CID) * fontsize;
@@ -241,8 +241,7 @@ FX_FLOAT CPDF_TextObject::GetFontSize() const {
 
 void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
                                        FX_FLOAT* pTextAdvanceY,
-                                       FX_FLOAT horz_scale,
-                                       int level) {
+                                       FX_FLOAT horz_scale) {
   FX_FLOAT curpos = 0;
   FX_FLOAT min_x = 10000 * 1.0f;
   FX_FLOAT max_x = -10000 * 1.0f;
@@ -265,7 +264,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
       }
       m_pCharPos[i - 1] = curpos;
     }
-    FX_RECT char_rect = pFont->GetCharBBox(charcode, level);
+    FX_RECT char_rect = pFont->GetCharBBox(charcode);
     FX_FLOAT charwidth;
     if (!bVertWriting) {
       if (min_y > char_rect.top) {
@@ -294,7 +293,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
       if (max_x < char_right) {
         max_x = char_right;
       }
-      charwidth = pFont->GetCharWidthF(charcode, level) * fontsize / 1000;
+      charwidth = pFont->GetCharWidthF(charcode) * fontsize / 1000;
     } else {
       uint16_t CID = pCIDFont->CIDFromCharCode(charcode);
       short vx;

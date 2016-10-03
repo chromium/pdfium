@@ -91,8 +91,8 @@ class CPDF_Font {
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
 
-  virtual int GetCharWidthF(uint32_t charcode, int level = 0) = 0;
-  virtual FX_RECT GetCharBBox(uint32_t charcode, int level = 0) = 0;
+  virtual int GetCharWidthF(uint32_t charcode) = 0;
+  virtual FX_RECT GetCharBBox(uint32_t charcode) = 0;
 
   CPDF_Document* m_pDocument;
   CFX_Font m_Font;

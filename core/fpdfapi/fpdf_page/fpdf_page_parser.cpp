@@ -1252,7 +1252,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
     FX_FLOAT x_advance;
     FX_FLOAT y_advance;
     pText->CalcPositionData(&x_advance, &y_advance,
-                            m_pCurStates->m_TextHorzScale, m_Level);
+                            m_pCurStates->m_TextHorzScale);
     m_pCurStates->m_TextX += x_advance;
     m_pCurStates->m_TextY += y_advance;
     if (TextRenderingModeIsClipMode(text_mode)) {

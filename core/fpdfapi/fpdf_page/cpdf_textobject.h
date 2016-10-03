@@ -56,8 +56,7 @@ class CPDF_TextObject : public CPDF_PageObject {
 
   void CalcPositionData(FX_FLOAT* pTextAdvanceX,
                         FX_FLOAT* pTextAdvanceY,
-                        FX_FLOAT horz_scale,
-                        int level = 0);
+                        FX_FLOAT horz_scale);
 
   FX_FLOAT m_PosX;
   FX_FLOAT m_PosY;

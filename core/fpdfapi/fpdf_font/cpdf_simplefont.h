@@ -20,8 +20,8 @@ class CPDF_SimpleFont : public CPDF_Font {
   ~CPDF_SimpleFont() override;
 
   // CPDF_Font
-  int GetCharWidthF(uint32_t charcode, int level = 0) override;
-  FX_RECT GetCharBBox(uint32_t charcode, int level = 0) override;
+  int GetCharWidthF(uint32_t charcode) override;
+  FX_RECT GetCharBBox(uint32_t charcode) override;
   int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
   bool IsUnicodeCompatible() const override;
   CFX_WideString UnicodeFromCharCode(uint32_t charcode) const override;
