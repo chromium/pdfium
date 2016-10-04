@@ -12,7 +12,7 @@
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 #endif  // PDF_ENABLE_XFA
 
 #ifdef _WIN32

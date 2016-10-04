@@ -28,9 +28,9 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
-#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
-#include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "xfa/fxfa/xfa_ffdocview.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"

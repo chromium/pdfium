@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FPDFXFA_FPDFXFA_PAGE_H_
-#define FPDFSDK_FPDFXFA_FPDFXFA_PAGE_H_
+#ifndef FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_
+#define FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_
 
 #include <memory>
 
@@ -82,4 +82,4 @@ class CPDFXFA_Page {
   int m_iRef;
 };
 
-#endif  // FPDFSDK_FPDFXFA_FPDFXFA_PAGE_H_
+#endif  // FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_

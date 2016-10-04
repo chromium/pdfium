@@ -16,7 +16,7 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_app.h"
 #endif  // PDF_ENABLE_XFA
 
 namespace {

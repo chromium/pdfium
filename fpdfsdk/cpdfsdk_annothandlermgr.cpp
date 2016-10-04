@@ -19,7 +19,7 @@
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/cpdfsdk_xfawidgethandler.h"
-#include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA

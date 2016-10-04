@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FPDFXFA_FPDFXFA_APP_H_
-#define FPDFSDK_FPDFXFA_FPDFXFA_APP_H_
+#ifndef FPDFSDK_FPDFXFA_CPDFXFA_APP_H_
+#define FPDFSDK_FPDFXFA_CPDFXFA_APP_H_
 
 #include "xfa/fxfa/fxfa.h"
 
@@ -76,4 +76,4 @@ class CPDFXFA_App : public IXFA_AppProvider {
   CFX_WideString m_csAppType;
 };
 
-#endif  // FPDFSDK_FPDFXFA_FPDFXFA_APP_H_
+#endif  // FPDFSDK_FPDFXFA_CPDFXFA_APP_H_

@@ -13,7 +13,7 @@
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_xfawidget.h"
-#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 #include "xfa/fwl/core/fwl_widgethit.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/xfa_ffdocview.h"

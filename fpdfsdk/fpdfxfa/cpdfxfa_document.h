@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FPDFXFA_FPDFXFA_DOC_H_
-#define FPDFSDK_FPDFXFA_FPDFXFA_DOC_H_
+#ifndef FPDFSDK_FPDFXFA_CPDFXFA_DOCUMENT_H_
+#define FPDFSDK_FPDFXFA_CPDFXFA_DOCUMENT_H_
 
 #include <memory>
 
@@ -92,4 +92,4 @@ class CPDFXFA_Document {
   CPDFXFA_DocEnvironment m_DocEnv;
 };
 
-#endif  // FPDFSDK_FPDFXFA_FPDFXFA_DOC_H_
+#endif  // FPDFSDK_FPDFXFA_CPDFXFA_DOCUMENT_H_

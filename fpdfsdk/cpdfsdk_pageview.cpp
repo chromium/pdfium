@@ -21,7 +21,7 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "xfa/fxfa/xfa_ffdocview.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidgethandler.h"

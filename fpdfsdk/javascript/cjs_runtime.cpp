@@ -32,7 +32,7 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_app.h"
 #include "fxjs/cfxjse_value.h"
 #endif  // PDF_ENABLE_XFA
 

@@ -19,8 +19,8 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/fpdfxfa_app.h"
-#include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 #endif  // PDF_ENABLE_XFA
 
 class CPDF_TestDocument : public CPDF_Document {

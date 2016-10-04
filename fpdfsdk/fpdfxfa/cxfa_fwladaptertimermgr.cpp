@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
+#include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 
 #include <vector>
 
