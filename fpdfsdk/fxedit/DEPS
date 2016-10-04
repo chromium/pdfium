@@ -1,4 +1,0 @@
-include_rules = [
-  '+core/fpdfapi/font',
-  '+core/fpdfdoc',
-]
