@@ -4,8 +4,8 @@
 
 #include <cstdint>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
