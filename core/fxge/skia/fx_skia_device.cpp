@@ -727,7 +727,7 @@ class SkiaState {
       --index;
     while (++index < m_commandIndex) {
       SkASSERT(m_commands[index] == Clip::kPath);
-      pDriver->SkiaCanvas()->clipPath(m_clips[index], SkRegion::kIntersect_Op,
+      pDriver->SkiaCanvas()->clipPath(m_clips[index], SkCanvas::kIntersect_Op,
                                       true);
     }
     m_commands.setCount(m_commandIndex);
@@ -1084,7 +1084,7 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
       SkRect skClipRect =
           SkRect::MakeLTRB(rectf.left, rectf.bottom, rectf.right, rectf.top);
       DebugDrawSkiaClipRect(m_pCanvas, skClipRect);
-      m_pCanvas->clipRect(skClipRect, SkRegion::kIntersect_Op, true);
+      m_pCanvas->clipRect(skClipRect, SkCanvas::kIntersect_Op, true);
       return TRUE;
     }
   }
@@ -1096,7 +1096,7 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
   skClipPath.transform(skMatrix);
   DebugShowSkiaPath(skClipPath);
   DebugDrawSkiaClipPath(m_pCanvas, skClipPath);
-  m_pCanvas->clipPath(skClipPath, SkRegion::kIntersect_Op, true);
+  m_pCanvas->clipPath(skClipPath, SkCanvas::kIntersect_Op, true);
 
   return TRUE;
 }
@@ -1117,7 +1117,7 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathStroke(
   skPaint.getFillPath(skPath, &dst_path);
   dst_path.transform(skMatrix);
   DebugDrawSkiaClipPath(m_pCanvas, dst_path);
-  m_pCanvas->clipPath(dst_path, SkRegion::kIntersect_Op, true);
+  m_pCanvas->clipPath(dst_path, SkCanvas::kIntersect_Op, true);
   return TRUE;
 }
 
@@ -1331,7 +1331,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   }
   m_pCanvas->save();
   if (!skClip.isEmpty())
-    m_pCanvas->clipPath(skClip, SkRegion::kIntersect_Op, true);
+    m_pCanvas->clipPath(skClip, SkCanvas::kIntersect_Op, true);
   m_pCanvas->concat(skMatrix);
   m_pCanvas->drawPath(skPath, paint);
   m_pCanvas->restore();
@@ -1420,7 +1420,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
   m_pCanvas->save();
   SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
                                        pClipRect->right, pClipRect->top);
-  m_pCanvas->clipRect(skClipRect, SkRegion::kIntersect_Op, true);
+  m_pCanvas->clipRect(skClipRect, SkCanvas::kIntersect_Op, true);
   void* dummy;
   FX_BOOL result = StartDIBits(pSource, 0xFF, argb, &m, 0, dummy, blend_type);
   m_pCanvas->restore();

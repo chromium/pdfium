@@ -175,18 +175,17 @@ component("skia") {
   sources += skia_effects_sources
   sources += skia_utils_sources
   sources += [
-    "//third_party/skia/src/ports/SkImageGenerator_none.cpp",
-
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
     "//third_party/skia/src/fonts/SkRemotableFontMgr.cpp",
-    "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
     "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
+    "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
     "//third_party/skia/src/ports/SkFontHost_win.cpp",
     "//third_party/skia/src/ports/SkFontMgr_android.cpp",
     "//third_party/skia/src/ports/SkFontMgr_android_factory.cpp",
     "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
     "//third_party/skia/src/ports/SkGlobalInitialization_default.cpp",
     "//third_party/skia/src/ports/SkImageEncoder_none.cpp",
+    "//third_party/skia/src/ports/SkImageGenerator_none.cpp",
     "//third_party/skia/src/ports/SkOSFile_posix.cpp",
     "//third_party/skia/src/ports/SkOSFile_stdio.cpp",
     "//third_party/skia/src/ports/SkOSFile_win.cpp",
@@ -415,10 +414,16 @@ if (current_cpu == "x86" || current_cpu == "x64") {
       "//build/config/compiler:no_chromium_code",
     ]
   }
-  source_set("skia_opts_avx2") {
-    sources = skia_opts.avx2_sources
+  source_set("skia_opts_hsw") {
+    sources = skia_opts.hsw_sources
     if (!is_win) {
-      cflags = [ "-mavx2" ]
+      cflags = [
+        "-mavx2",
+        "-mbmi",
+        "-mbmi2",
+        "-mf16c",
+        "-mfma",
+      ]
     }
     if (is_win) {
       cflags = [ "/arch:AVX2" ]
@@ -440,7 +445,7 @@ source_set("skia_opts") {
     sources = skia_opts.sse2_sources
     deps = [
       ":skia_opts_avx",
-      ":skia_opts_avx2",
+      ":skia_opts_hsw",
       ":skia_opts_sse3",
       ":skia_opts_sse41",
       ":skia_opts_sse42",
