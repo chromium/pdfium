@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fpdfapi/fpdf_edit/cpdf_pagecontentgenerator.h"
+#include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/cpdf_formobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"

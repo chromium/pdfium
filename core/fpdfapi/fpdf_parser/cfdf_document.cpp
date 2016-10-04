@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/fpdf_parser/cfdf_document.h"
 
-#include "core/fpdfapi/fpdf_edit/cpdf_creator.h"
+#include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "third_party/base/ptr_util.h"

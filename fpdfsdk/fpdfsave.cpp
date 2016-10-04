@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "core/fpdfapi/fpdf_edit/cpdf_creator.h"
+#include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_reference.h"

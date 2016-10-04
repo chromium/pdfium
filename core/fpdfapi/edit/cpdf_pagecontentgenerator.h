@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_EDIT_CPDF_PAGECONTENTGENERATOR_H_
-#define CORE_FPDFAPI_FPDF_EDIT_CPDF_PAGECONTENTGENERATOR_H_
+#ifndef CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_
+#define CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_
 
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fxcrt/fx_basic.h"
@@ -40,4 +40,4 @@ class CPDF_PageContentGenerator {
   CFX_ArrayTemplate<CPDF_PageObject*> m_pageObjects;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_EDIT_CPDF_PAGECONTENTGENERATOR_H_
+#endif  // CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_

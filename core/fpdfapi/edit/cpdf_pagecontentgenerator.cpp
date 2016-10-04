@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_edit/cpdf_pagecontentgenerator.h"
+#include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 
-#include "core/fpdfapi/fpdf_edit/cpdf_creator.h"
+#include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_page/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"

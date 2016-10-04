@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_edit/editint.h"
+#include "core/fpdfapi/edit/editint.h"
 
 #include <vector>
 
-#include "core/fpdfapi/fpdf_edit/cpdf_creator.h"
+#include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
@@ -1935,7 +1935,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       m_pIDArray->Add(pID1->Clone());
     } else {
       std::vector<uint8_t> buffer =
-          PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
+          PDF_GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
       CFX_ByteString bsBuffer(buffer.data(), buffer.size());
       m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE));
     }
@@ -1950,7 +1950,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       return;
     }
     std::vector<uint8_t> buffer =
-        PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
+        PDF_GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
     CFX_ByteString bsBuffer(buffer.data(), buffer.size());
     m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE));
     return;

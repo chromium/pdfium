@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_EDIT_EDITINT_H_
-#define CORE_FPDFAPI_FPDF_EDIT_EDITINT_H_
+#ifndef CORE_FPDFAPI_EDIT_EDITINT_H_
+#define CORE_FPDFAPI_EDIT_EDITINT_H_
 
 #include <vector>
 
@@ -74,4 +74,4 @@ class CPDF_XRefStream {
   CFX_ByteTextBuf m_Buffer;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_EDIT_EDITINT_H_
+#endif  // CORE_FPDFAPI_EDIT_EDITINT_H_
