@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/font_int.h"
-#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
+#include "core/fpdfapi/page/cpdf_pagemodule.h"
 
 extern "C" {
 

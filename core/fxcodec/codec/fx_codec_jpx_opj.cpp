@@ -8,7 +8,7 @@
 #include <limits>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"

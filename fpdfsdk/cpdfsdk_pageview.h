@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_document.h"

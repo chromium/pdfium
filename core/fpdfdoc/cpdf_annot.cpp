@@ -6,12 +6,12 @@
 
 #include "core/fpdfdoc/cpdf_annot.h"
 
-#include "core/fpdfapi/fpdf_page/cpdf_form.h"
-#include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
+#include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/cfx_graphstatedata.h"

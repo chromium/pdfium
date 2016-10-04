@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
-#include "core/fpdfapi/fpdf_page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_environment.h"

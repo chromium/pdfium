@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <memory>
 
-#include "core/fpdfapi/fpdf_page/cpdf_pageobjectholder.h"
+#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_gemodule.h"

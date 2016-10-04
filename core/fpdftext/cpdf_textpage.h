@@ -10,7 +10,7 @@
 #include <deque>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
+#include "core/fpdfapi/page/cpdf_pageobjectlist.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"

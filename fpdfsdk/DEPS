@@ -2,7 +2,7 @@ include_rules = [
   '+core/fpdftext',
   '+core/fpdfapi',
   '+core/fpdfapi/edit',
-  '+core/fpdfapi/fpdf_page',
+  '+core/fpdfapi/page',
   '+core/fpdfapi/fpdf_parser',
   '+core/fpdfapi/fpdf_render',
   '+core/fpdfdoc',

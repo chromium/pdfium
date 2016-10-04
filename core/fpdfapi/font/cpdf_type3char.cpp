@@ -6,10 +6,10 @@
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
 
-#include "core/fpdfapi/fpdf_page/cpdf_form.h"
-#include "core/fpdfapi/fpdf_page/cpdf_image.h"
-#include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
-#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
+#include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/page/cpdf_image.h"
+#include "core/fpdfapi/page/cpdf_imageobject.h"
+#include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxge/fx_dib.h"
 
 CPDF_Type3Char::CPDF_Type3Char(CPDF_Form* pForm)

@@ -8,12 +8,12 @@
 
 #include <algorithm>
 
-#include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
+#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fxge/cfx_renderdevice.h"
 

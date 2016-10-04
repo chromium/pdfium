@@ -7,9 +7,9 @@
 #include "public/fpdf_edit.h"
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_page/cpdf_image.h"
-#include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
-#include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
+#include "core/fpdfapi/page/cpdf_image.h"
+#include "core/fpdfapi/page/cpdf_imageobject.h"
+#include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 

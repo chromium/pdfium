@@ -8,9 +8,9 @@
 
 #include <set>
 
-#include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_bookmarktree.h"
 #include "fpdfsdk/fsdk_define.h"

@@ -11,13 +11,13 @@
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_page/cpdf_image.h"
-#include "core/fpdfapi/fpdf_page/cpdf_imageobject.h"
-#include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/page/cpdf_image.h"
+#include "core/fpdfapi/page/cpdf_imageobject.h"
+#include "core/fpdfapi/page/pageint.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
 

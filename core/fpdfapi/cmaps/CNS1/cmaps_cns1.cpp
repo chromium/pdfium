@@ -9,7 +9,7 @@
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/font_int.h"
-#include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
+#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fxcrt/fx_basic.h"
 
 static const FXCMAP_CMap g_FXCMAP_CNS1_cmaps[] = {
