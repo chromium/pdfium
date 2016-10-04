@@ -6,8 +6,8 @@
 
 #include <vector>
 
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
-#include "core/fpdfapi/fpdf_font/cpdf_fontencoding.h"
+#include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/cfdf_document.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"

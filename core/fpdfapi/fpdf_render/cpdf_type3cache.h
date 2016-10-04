@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
+#include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"

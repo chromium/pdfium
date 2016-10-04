@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
+#include "core/fpdfapi/font/cpdf_type3char.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/cpdf_image.h"
@@ -15,8 +15,7 @@
 CPDF_Type3Char::CPDF_Type3Char(CPDF_Form* pForm)
     : m_pForm(pForm), m_bColored(FALSE) {}
 
-CPDF_Type3Char::~CPDF_Type3Char() {
-}
+CPDF_Type3Char::~CPDF_Type3Char() {}
 
 FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   if (m_pBitmap || !m_pForm)

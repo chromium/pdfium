@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
+#include "core/fpdfapi/font/cpdf_type1font.h"
 
-#include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/font/font_int.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_freetype.h"

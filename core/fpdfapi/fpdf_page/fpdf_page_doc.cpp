@@ -11,8 +11,8 @@
 
 #include "core/fdrm/crypto/fx_crypt.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
-#include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/font/cpdf_type1font.h"
+#include "core/fpdfapi/font/font_int.h"
 #include "core/fpdfapi/fpdf_page/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pattern.h"

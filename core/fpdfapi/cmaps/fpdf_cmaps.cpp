@@ -7,7 +7,7 @@
 #include "core/fpdfapi/cmaps/cmap_int.h"
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/font/font_int.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 
 extern "C" {

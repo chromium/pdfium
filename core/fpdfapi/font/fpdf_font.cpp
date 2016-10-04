@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/font/font_int.h"
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"

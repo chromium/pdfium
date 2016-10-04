@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "xfa/fgas/font/fgas_gefont.h"

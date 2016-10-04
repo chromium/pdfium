@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
+#include "core/fpdfapi/font/cpdf_cidfont.h"
 
 #include <algorithm>
 #include <vector>
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_font/cpdf_fontencoding.h"
-#include "core/fpdfapi/fpdf_font/font_int.h"
-#include "core/fpdfapi/fpdf_font/ttgsubtable.h"
+#include "core/fpdfapi/font/cpdf_fontencoding.h"
+#include "core/fpdfapi/font/font_int.h"
+#include "core/fpdfapi/font/ttgsubtable.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"

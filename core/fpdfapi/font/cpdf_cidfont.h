@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_CIDFONT_H_
-#define CORE_FPDFAPI_FPDF_FONT_CPDF_CIDFONT_H_
+#ifndef CORE_FPDFAPI_FONT_CPDF_CIDFONT_H_
+#define CORE_FPDFAPI_FONT_CPDF_CIDFONT_H_
 
 #include <memory>
 
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -88,4 +88,4 @@ class CPDF_CIDFont : public CPDF_Font {
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_CIDFONT_H_
+#endif  // CORE_FPDFAPI_FONT_CPDF_CIDFONT_H_

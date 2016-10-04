@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
+#include "core/fpdfapi/font/cpdf_type3font.h"
 
 #include <utility>
 
-#include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
+#include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"

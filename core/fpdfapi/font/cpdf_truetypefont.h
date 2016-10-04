@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_TRUETYPEFONT_H_
-#define CORE_FPDFAPI_FPDF_FONT_CPDF_TRUETYPEFONT_H_
+#ifndef CORE_FPDFAPI_FONT_CPDF_TRUETYPEFONT_H_
+#define CORE_FPDFAPI_FONT_CPDF_TRUETYPEFONT_H_
 
-#include "core/fpdfapi/fpdf_font/cpdf_simplefont.h"
+#include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_TrueTypeFont : public CPDF_SimpleFont {
@@ -27,4 +27,4 @@ class CPDF_TrueTypeFont : public CPDF_SimpleFont {
   void LoadGlyphMap() override;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_TRUETYPEFONT_H_
+#endif  // CORE_FPDFAPI_FONT_CPDF_TRUETYPEFONT_H_

@@ -6,7 +6,7 @@
 
 #include "core/fxge/fx_font.h"
 
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_fontmgr.h"

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_FONT_FONT_INT_H_
-#define CORE_FPDFAPI_FPDF_FONT_FONT_INT_H_
+#ifndef CORE_FPDFAPI_FONT_FONT_INT_H_
+#define CORE_FPDFAPI_FONT_FONT_INT_H_
 
 #include <map>
 #include <memory>
 
-#include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
+#include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
@@ -201,4 +201,4 @@ class CPDF_ToUnicodeMap {
   CFX_WideTextBuf m_MultiCharBuf;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_FONT_FONT_INT_H_
+#endif  // CORE_FPDFAPI_FONT_FONT_INT_H_

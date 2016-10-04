@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fpdfapi/edit/cpdf_creator.h"
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
-#include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
+#include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_allstates.h"
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/cpdf_formobject.h"

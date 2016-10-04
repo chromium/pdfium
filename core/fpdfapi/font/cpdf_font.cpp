@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_font/cpdf_fontencoding.h"
-#include "core/fpdfapi/fpdf_font/cpdf_truetypefont.h"
-#include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
-#include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
-#include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/font/cpdf_fontencoding.h"
+#include "core/fpdfapi/font/cpdf_truetypefont.h"
+#include "core/fpdfapi/font/cpdf_type1font.h"
+#include "core/fpdfapi/font/cpdf_type3font.h"
+#include "core/fpdfapi/font/font_int.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"

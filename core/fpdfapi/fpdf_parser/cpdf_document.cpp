@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_font/cpdf_fontencoding.h"
+#include "core/fpdfapi/font/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"

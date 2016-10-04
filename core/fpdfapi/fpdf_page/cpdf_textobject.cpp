@@ -6,8 +6,8 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_textobject.h"
 
-#include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_cidfont.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 
 CPDF_TextObject::CPDF_TextObject()
     : m_PosX(0),

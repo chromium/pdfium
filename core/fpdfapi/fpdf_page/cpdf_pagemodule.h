@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEMODULE_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_PAGEMODULE_H_
 
-#include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/font/font_int.h"
 #include "core/fpdfapi/fpdf_page/cpdf_colorspace.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 

@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"

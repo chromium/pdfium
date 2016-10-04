@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3CHAR_H_
-#define CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3CHAR_H_
+#ifndef CORE_FPDFAPI_FONT_CPDF_TYPE3CHAR_H_
+#define CORE_FPDFAPI_FONT_CPDF_TYPE3CHAR_H_
 
 #include <memory>
 
@@ -32,4 +32,4 @@ class CPDF_Type3Char {
   FX_RECT m_BBox;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3CHAR_H_
+#endif  // CORE_FPDFAPI_FONT_CPDF_TYPE3CHAR_H_

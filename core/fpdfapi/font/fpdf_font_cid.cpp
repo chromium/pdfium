@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/font/font_int.h"
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_font/ttgsubtable.h"
+#include "core/fpdfapi/font/ttgsubtable.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pagemodule.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
@@ -20,7 +20,6 @@ namespace {
 
 const FX_CHAR* const g_CharsetNames[CIDSET_NUM_SETS] = {
     nullptr, "GB1", "CNS1", "Japan1", "Korea1", "UCS"};
-
 
 class CPDF_PredefinedCMap {
  public:

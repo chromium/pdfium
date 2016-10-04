@@ -9,7 +9,7 @@
 #include <limits.h>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
+#include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_page/cpdf_allstates.h"
 #include "core/fpdfapi/fpdf_page/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/cpdf_page.h"

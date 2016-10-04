@@ -1,6 +1,6 @@
 include_rules = [
   '+core/fdrm/crypto',
-  '+core/fpdfapi/fpdf_font',
+  '+core/fpdfapi/font',
   '+core/fpdfapi/fpdf_page',
   '+core/fpdfapi/fpdf_parser',
   '+core/fpdfdoc',

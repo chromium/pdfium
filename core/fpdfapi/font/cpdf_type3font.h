@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3FONT_H_
-#define CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3FONT_H_
+#ifndef CORE_FPDFAPI_FONT_CPDF_TYPE3FONT_H_
+#define CORE_FPDFAPI_FONT_CPDF_TYPE3FONT_H_
 
 #include <map>
 #include <memory>
 
-#include "core/fpdfapi/fpdf_font/cpdf_simplefont.h"
+#include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -56,4 +56,4 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   int m_CharLoadingDepth;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3FONT_H_
+#endif  // CORE_FPDFAPI_FONT_CPDF_TYPE3FONT_H_

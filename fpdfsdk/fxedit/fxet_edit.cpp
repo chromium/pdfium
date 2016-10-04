@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fpdfapi/fpdf_font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/fpdf_page/cpdf_pathobject.h"
