@@ -38,7 +38,9 @@ CPDF_Object* CPDF_Object::CloneNonCyclic(
 }
 
 void CPDF_Object::Release() {
-  CHECK(!m_ObjNum);
+  if (m_ObjNum)
+    return;
+
   delete this;
 }
 
