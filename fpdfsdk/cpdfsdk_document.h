@@ -10,7 +10,7 @@
 #include <map>
 #include <memory>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/cfx_observable.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/fsdk_define.h"

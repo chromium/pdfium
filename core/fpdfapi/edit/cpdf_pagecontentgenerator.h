@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_
 #define CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_
 
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"

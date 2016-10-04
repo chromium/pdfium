@@ -6,10 +6,10 @@
 
 #include "core/fpdfdoc/cpdf_annotlist.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_occontext.h"

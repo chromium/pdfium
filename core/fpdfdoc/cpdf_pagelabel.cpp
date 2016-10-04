@@ -6,9 +6,9 @@
 
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_numbertree.h"
 
 namespace {

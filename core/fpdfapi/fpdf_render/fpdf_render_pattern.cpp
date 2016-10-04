@@ -8,8 +8,6 @@
 
 #include <algorithm>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/page/cpdf_form.h"
@@ -21,6 +19,8 @@
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 #include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"

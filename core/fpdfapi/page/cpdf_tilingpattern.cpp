@@ -6,10 +6,10 @@
 
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_object.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
 #include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        CPDF_Object* pPatternObj,

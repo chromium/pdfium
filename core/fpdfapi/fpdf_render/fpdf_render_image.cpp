@@ -10,9 +10,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
@@ -23,6 +20,9 @@
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 #include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"

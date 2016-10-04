@@ -6,11 +6,11 @@
 
 #include "fpdfsdk/cpdfsdk_baannot.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_number.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
-#include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "fpdfsdk/cpdfsdk_datetime.h"
 #include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"

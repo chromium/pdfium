@@ -6,9 +6,9 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_string.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_environment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"

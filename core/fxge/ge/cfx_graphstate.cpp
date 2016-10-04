@@ -6,7 +6,7 @@
 
 #include "core/fxge/cfx_graphstate.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
 
 CFX_GraphState::CFX_GraphState() {}
 

@@ -6,8 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_dest.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 
 namespace {
 

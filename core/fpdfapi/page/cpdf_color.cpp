@@ -6,9 +6,9 @@
 
 #include "core/fpdfapi/page/cpdf_color.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
 
 CPDF_Color::CPDF_Color() : m_pCS(nullptr), m_pBuffer(nullptr) {}

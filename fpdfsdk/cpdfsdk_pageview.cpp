@@ -9,8 +9,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"

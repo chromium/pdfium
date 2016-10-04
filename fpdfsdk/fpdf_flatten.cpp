@@ -8,13 +8,13 @@
 
 #include <algorithm>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_number.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_stream.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "fpdfsdk/fsdk_define.h"
 

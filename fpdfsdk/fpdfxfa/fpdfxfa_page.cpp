@@ -6,8 +6,8 @@
 
 #include "fpdfsdk/fpdfxfa/fpdfxfa_page.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/fsdk_define.h"

@@ -8,12 +8,12 @@
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_name.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_number.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_parser.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_reference.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_string.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_parser.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"

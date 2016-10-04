@@ -11,11 +11,11 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 

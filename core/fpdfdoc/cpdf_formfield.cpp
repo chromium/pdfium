@@ -8,13 +8,13 @@
 
 #include <set>
 
-#include "core/fpdfapi/fpdf_parser/cfdf_document.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_number.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_simple_parser.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_string.h"
-#include "core/fpdfapi/fpdf_parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/cfdf_document.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_simple_parser.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpvt_generateap.h"

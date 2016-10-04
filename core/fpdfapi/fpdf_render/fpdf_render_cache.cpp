@@ -6,11 +6,11 @@
 
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 
 struct CACHEINFO {
   uint32_t time;

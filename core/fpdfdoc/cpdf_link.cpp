@@ -6,7 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_link.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 
 CFX_FloatRect CPDF_Link::GetRect() {

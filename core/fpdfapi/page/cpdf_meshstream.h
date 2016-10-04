@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
 

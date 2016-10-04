@@ -6,7 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_ViewerPreferences::CPDF_ViewerPreferences(CPDF_Document* pDoc)
     : m_pDoc(pDoc) {}

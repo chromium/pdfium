@@ -7,8 +7,8 @@
 #include "core/fpdfapi/font/cpdf_simplefont.h"
 
 #include "core/fpdfapi/font/font_int.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/numerics/safe_math.h"
 

@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 
 CPDF_ContentMarkItem::CPDF_ContentMarkItem()
     : m_ParamType(None), m_pPropertiesDict(nullptr) {}

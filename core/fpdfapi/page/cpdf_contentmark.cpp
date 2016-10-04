@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_ContentMark::CPDF_ContentMark() {}

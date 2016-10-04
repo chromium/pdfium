@@ -7,7 +7,7 @@
 #include "core/fpdfapi/font/cpdf_truetypefont.h"
 
 #include "core/fpdfapi/font/font_int.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/fx_font.h"
 
 namespace {

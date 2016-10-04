@@ -6,9 +6,9 @@
 
 #include "core/fpdfapi/page/cpdf_allstates.h"
 
-#include "core/fpdfapi/fpdf_parser/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_dictionary.h"
 #include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/cfx_graphstatedata.h"
 
 namespace {
