@@ -199,6 +199,12 @@ CPDF_ToUnicodeMap::CPDF_ToUnicodeMap() : m_pBaseMap(nullptr) {}
 
 CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() {}
 
+uint32_t CPDF_ToUnicodeMap::GetUnicode() {
+  FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
+  uni = uni * 0x10000 + 0xffff;
+  return uni.ValueOrDefault(0);
+}
+
 void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
   CIDSet cid_set = CIDSET_UNKNOWN;
   CPDF_StreamAcc stream;
@@ -225,10 +231,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
         if (len == 1) {
           m_Map[srccode] = destcode.GetAt(0);
         } else {
-          FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
-          uni *= 0x10000;
-          uni += 0xffff;
-          m_Map[srccode] = uni.ValueOrDie();
+          m_Map[srccode] = GetUnicode();
           m_MultiCharBuf.AppendChar(destcode.GetLength());
           m_MultiCharBuf << destcode;
         }
@@ -259,10 +262,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
             if (len == 1) {
               m_Map[code] = destcode.GetAt(0);
             } else {
-              FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
-              uni *= 0x10000;
-              uni += 0xffff;
-              m_Map[code] = uni.ValueOrDie();
+              m_Map[code] = GetUnicode();
               m_MultiCharBuf.AppendChar(destcode.GetLength());
               m_MultiCharBuf << destcode;
             }
@@ -285,10 +285,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
               } else {
                 retcode = StringDataAdd(destcode);
               }
-              FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
-              uni *= 0x10000;
-              uni += 0xffff;
-              m_Map[code] = uni.ValueOrDie();
+              m_Map[code] = GetUnicode();
               m_MultiCharBuf.AppendChar(retcode.GetLength());
               m_MultiCharBuf << retcode;
               destcode = retcode;

@@ -196,6 +196,8 @@ class CPDF_ToUnicodeMap {
   static uint32_t StringToCode(const CFX_ByteStringC& str);
   static CFX_WideString StringToWideString(const CFX_ByteStringC& str);
 
+  uint32_t GetUnicode();
+
   std::map<uint32_t, uint32_t> m_Map;
   CPDF_CID2UnicodeMap* m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
