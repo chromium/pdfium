@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_RENDER_CPDF_TYPE3CACHE_H_
-#define CORE_FPDFAPI_FPDF_RENDER_CPDF_TYPE3CACHE_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_TYPE3CACHE_H_
+#define CORE_FPDFAPI_RENDER_CPDF_TYPE3CACHE_H_
 
 #include <map>
 
@@ -37,4 +37,4 @@ class CPDF_Type3Cache {
   std::map<CFX_ByteString, CPDF_Type3Glyphs*> m_SizeMap;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_RENDER_CPDF_TYPE3CACHE_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_TYPE3CACHE_H_

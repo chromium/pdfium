@@ -4,15 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_render/render_int.h"
+#include "core/fpdfapi/render/render_int.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
-#include "core/fpdfapi/fpdf_render/cpdf_rendercontext.h"
-#include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
@@ -23,6 +20,9 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/render/cpdf_rendercontext.h"
+#include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"

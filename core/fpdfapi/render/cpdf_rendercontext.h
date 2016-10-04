@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_RENDER_CPDF_RENDERCONTEXT_H_
-#define CORE_FPDFAPI_FPDF_RENDER_CPDF_RENDERCONTEXT_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_RENDERCONTEXT_H_
+#define CORE_FPDFAPI_RENDER_CPDF_RENDERCONTEXT_H_
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -64,4 +64,4 @@ class CPDF_RenderContext {
   CFX_ArrayTemplate<Layer> m_Layers;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_RENDER_CPDF_RENDERCONTEXT_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_RENDERCONTEXT_H_

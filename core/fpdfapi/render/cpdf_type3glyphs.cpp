@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_render/cpdf_type3glyphs.h"
+#include "core/fpdfapi/render/cpdf_type3glyphs.h"
 
 #include <map>
 

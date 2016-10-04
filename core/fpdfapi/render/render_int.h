@@ -4,18 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
-#define CORE_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
+#ifndef CORE_FPDFAPI_RENDER_RENDER_INT_H_
+#define CORE_FPDFAPI_RENDER_RENDER_INT_H_
 
 #include <map>
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 
@@ -593,4 +593,4 @@ class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
   const uint8_t* m_RampB;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
+#endif  // CORE_FPDFAPI_RENDER_RENDER_INT_H_

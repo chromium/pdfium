@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_RENDER_CPDF_RENDEROPTIONS_H_
-#define CORE_FPDFAPI_FPDF_RENDER_CPDF_RENDEROPTIONS_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_
+#define CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
@@ -51,4 +51,4 @@ class CPDF_RenderOptions {
   bool m_bDrawAnnots;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_RENDER_CPDF_RENDEROPTIONS_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_

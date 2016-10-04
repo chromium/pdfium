@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_render/render_int.h"
+#include "core/fpdfapi/render/render_int.h"
 
 #include <vector>
 
@@ -12,9 +12,6 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/font/cpdf_type3font.h"
-#include "core/fpdfapi/fpdf_render/cpdf_renderoptions.h"
-#include "core/fpdfapi/fpdf_render/cpdf_textrenderer.h"
-#include "core/fpdfapi/fpdf_render/cpdf_type3cache.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -23,6 +20,9 @@
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/render/cpdf_renderoptions.h"
+#include "core/fpdfapi/render/cpdf_textrenderer.h"
+#include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_gemodule.h"

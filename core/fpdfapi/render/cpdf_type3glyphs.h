@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FPDF_RENDER_CPDF_TYPE3GLYPHS_H_
-#define CORE_FPDFAPI_FPDF_RENDER_CPDF_TYPE3GLYPHS_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_
+#define CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_
 
 #include <map>
 
@@ -32,4 +32,4 @@ class CPDF_Type3Glyphs {
   int m_BottomBlueCount;
 };
 
-#endif  // CORE_FPDFAPI_FPDF_RENDER_CPDF_TYPE3GLYPHS_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_
