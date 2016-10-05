@@ -18,4 +18,5 @@ Local Modifications:
 0006-memory-leak-Type_NamedColor_Read.patch: Fix memory leak in Type_NamedColor_Read.
 0007-memory-leak-OptimizeByResampling.patch: Fix memory leak in OptimizeByResampling.
 0008-memory-leak-Type_MPEmatrix_Read.patch: Fix memory leak in MPEmatrix_Read.
+0009-cols-rows-swap.patch: Fix rows/cols swap in cmsStageAllocMatrix.
 TODO(ochang): List other patches.
