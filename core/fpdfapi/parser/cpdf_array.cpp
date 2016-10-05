@@ -152,7 +152,7 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
     return;
 
   CPDF_Object* pObj = m_Objects[i];
-  if (!pObj || pObj->GetObjNum() != 0)
+  if (!pObj || pObj->IsReference())
     return;
 
   uint32_t dwObjNum = pHolder->AddIndirectObject(pObj);

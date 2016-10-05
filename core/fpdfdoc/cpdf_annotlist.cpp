@@ -68,20 +68,12 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances");
   for (size_t i = 0; i < pAnnots->GetCount(); ++i) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));
-    if (!pDict)
+    if (!pDict || pDict->GetStringFor("Subtype") == "Popup") {
+      // Skip creating Popup annotations in the PDF document since PDFium
+      // provides its own Popup annotations.
       continue;
-
-    uint32_t dwObjNum = pDict->GetObjNum();
-    if (dwObjNum == 0) {
-      pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
-      pDict = pAnnots->GetDictAt(i);
     }
-
-    // Skip creating Popup annotation in the PDF document since PDFium provides
-    // its own Popup annotations.
-    if (pDict->GetStringFor("Subtype") == "Popup")
-      continue;
-
+    pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
     m_AnnotList.push_back(
         std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument, false)));
     if (bRegenerateAP && pDict->GetStringFor("Subtype") == "Widget" &&
