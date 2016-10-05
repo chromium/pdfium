@@ -15,7 +15,7 @@ class CFFL_InteractiveFormFiller;
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
-class CPDFSDK_Environment;
+class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 

@@ -18,7 +18,7 @@
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fsdk_actionhandler.h"
@@ -38,8 +38,9 @@
 
 namespace {
 
-CPDFSDK_Environment* HandleToCPDFSDKEnvironment(FPDF_FORMHANDLE handle) {
-  return static_cast<CPDFSDK_Environment*>(handle);
+CPDFSDK_FormFillEnvironment* HandleToCPDFSDKEnvironment(
+    FPDF_FORMHANDLE handle) {
+  return static_cast<CPDFSDK_FormFillEnvironment*>(handle);
 }
 
 CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
@@ -91,7 +92,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   CPDF_Document* pPDFDoc = pDocument->GetPDFDoc();
   if (!pPDFDoc)
     return;
-  CPDFSDK_Environment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
+  CPDFSDK_FormFillEnvironment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
   CPDFSDK_Document* pFXDoc = pEnv->GetSDKDocument();
   if (!pFXDoc)
     return;
@@ -251,7 +252,8 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     return pDocument->GetSDKDoc()->GetEnv();
 #endif
 
-  CPDFSDK_Environment* pEnv = new CPDFSDK_Environment(pDocument, formInfo);
+  CPDFSDK_FormFillEnvironment* pEnv =
+      new CPDFSDK_FormFillEnvironment(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
   pDocument->SetSDKDoc(pEnv->GetSDKDocument());
@@ -266,7 +268,7 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   if (!hHandle)
     return;
 
-  CPDFSDK_Environment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
+  CPDFSDK_FormFillEnvironment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App::GetInstance()->RemoveFormFillEnv(pEnv);
@@ -725,7 +727,7 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   if (!pSDKDoc->GetPageView(pPage, false))
     return;
 
-  CPDFSDK_Environment* pEnv = pSDKDoc->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pSDKDoc->GetEnv();
   CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
   CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
   CPDF_AAction aa(pPageDict->GetDictFor("AA"));

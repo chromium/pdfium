@@ -44,12 +44,13 @@ struct FX_SYSTEMTIME {
 class CFFL_FormFiller;
 class CPDF_Document;
 class CPDF_Font;
-class CPDFSDK_Environment;
+class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_Widget;
 
 class CFX_SystemHandler {
  public:
-  explicit CFX_SystemHandler(CPDFSDK_Environment* pEnv) : m_pEnv(pEnv) {}
+  explicit CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pEnv)
+      : m_pEnv(pEnv) {}
   ~CFX_SystemHandler() {}
 
   void InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect);
@@ -71,7 +72,7 @@ class CFX_SystemHandler {
   bool IsALTKeyDown(uint32_t nFlag) const;
 
  private:
-  CPDFSDK_Environment* const m_pEnv;
+  CPDFSDK_FormFillEnvironment* const m_pEnv;
 };
 
 #endif  // FPDFSDK_CFX_SYSTEMHANDLER_H_

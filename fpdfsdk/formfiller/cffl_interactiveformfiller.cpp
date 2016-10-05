@@ -12,7 +12,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -28,7 +28,7 @@
 #define FFL_MAXLISTBOXHEIGHT 140.0f
 
 CFFL_InteractiveFormFiller::CFFL_InteractiveFormFiller(
-    CPDFSDK_Environment* pEnv)
+    CPDFSDK_FormFillEnvironment* pEnv)
     : m_pEnv(pEnv), m_bNotifying(FALSE) {}
 
 CFFL_InteractiveFormFiller::~CFFL_InteractiveFormFiller() {}

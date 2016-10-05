@@ -16,7 +16,7 @@
 
 class CJS_Context;
 class CJS_Object;
-class CPDFSDK_Environment;
+class CPDFSDK_FormFillEnvironment;
 
 class CJS_EmbedObj {
  public:

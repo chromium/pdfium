@@ -13,7 +13,7 @@
 #include "xfa/fxfa/xfa_ffdoc.h"
 
 class CPDFSDK_Document;
-class CPDFSDK_Environment;
+class CPDFSDK_FormFillEnvironment;
 class CPDFXFA_App;
 class CPDFXFA_Page;
 class CXFA_FFDocHandler;

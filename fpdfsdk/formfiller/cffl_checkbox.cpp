@@ -6,13 +6,14 @@
 
 #include "fpdfsdk/formfiller/cffl_checkbox.h"
 
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/pdfwindow/PWL_SpecialButton.h"
 #include "public/fpdf_fwlevent.h"
 
-CFFL_CheckBox::CFFL_CheckBox(CPDFSDK_Environment* pApp, CPDFSDK_Widget* pWidget)
+CFFL_CheckBox::CFFL_CheckBox(CPDFSDK_FormFillEnvironment* pApp,
+                             CPDFSDK_Widget* pWidget)
     : CFFL_Button(pApp, pWidget) {}
 
 CFFL_CheckBox::~CFFL_CheckBox() {}

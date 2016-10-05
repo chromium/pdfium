@@ -14,7 +14,7 @@
 #include "fxjs/fxjse.h"
 #endif  // PDF_ENABLE_XFA
 
-class CPDFSDK_Environment;
+class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_Document;
 class IJS_Context;
 
@@ -23,7 +23,7 @@ class IJS_Runtime {
  public:
   static void Initialize(unsigned int slot, void* isolate);
   static void Destroy();
-  static IJS_Runtime* Create(CPDFSDK_Environment* pEnv);
+  static IJS_Runtime* Create(CPDFSDK_FormFillEnvironment* pEnv);
   virtual ~IJS_Runtime() {}
 
   virtual IJS_Context* NewContext() = 0;

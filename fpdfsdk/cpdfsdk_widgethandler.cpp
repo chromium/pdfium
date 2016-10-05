@@ -14,7 +14,7 @@
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -24,7 +24,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 #endif  // PDF_ENABLE_XFA
 
-CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(CPDFSDK_Environment* pEnv)
+CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(CPDFSDK_FormFillEnvironment* pEnv)
     : m_pEnv(pEnv), m_pFormFiller(nullptr) {}
 
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() {}

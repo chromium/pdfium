@@ -9,7 +9,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
@@ -22,7 +22,7 @@
 
 #define FFL_HINT_ELAPSE 800
 
-CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_Environment* pEnv,
+CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pEnv,
                                  CPDFSDK_Annot* pAnnot)
     : m_pEnv(pEnv), m_pAnnot(pAnnot), m_bValid(FALSE) {
   m_pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
@@ -618,7 +618,8 @@ void CFFL_FormFiller::InvalidateRect(double left,
   m_pEnv->Invalidate(pPage, left, top, right, bottom);
 }
 
-CFFL_Button::CFFL_Button(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pWidget)
+CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pApp,
+                         CPDFSDK_Annot* pWidget)
     : CFFL_FormFiller(pApp, pWidget), m_bMouseIn(FALSE), m_bMouseDown(FALSE) {}
 
 CFFL_Button::~CFFL_Button() {}

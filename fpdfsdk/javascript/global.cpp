@@ -56,7 +56,7 @@ JSGlobalAlternate::~JSGlobalAlternate() {
   m_pGlobalData->Release();
 }
 
-void JSGlobalAlternate::Initial(CPDFSDK_Environment* pEnv) {
+void JSGlobalAlternate::Initial(CPDFSDK_FormFillEnvironment* pEnv) {
   m_pEnv = pEnv;
   m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pEnv);
   UpdateGlobalPersistentVariables();

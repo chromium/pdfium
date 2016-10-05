@@ -23,7 +23,7 @@
 #include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
@@ -221,7 +221,7 @@ void CPDFSDK_InterForm::SynchronizeField(CPDF_FormField* pFormField,
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
-  CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
   ASSERT(pEnv);
   if (!pEnv->IsJSInitiated())
     return;
@@ -281,7 +281,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
 CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
                                            FX_BOOL& bFormatted) {
   CFX_WideString sValue = pFormField->GetValue();
-  CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
   ASSERT(pEnv);
   if (!pEnv->IsJSInitiated()) {
     bFormatted = FALSE;
@@ -342,7 +342,7 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
     ASSERT(pFormCtrl);
 
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl, false)) {
-      CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+      CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
       UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
       CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, false);
       FX_RECT rcBBox =
@@ -364,7 +364,7 @@ FX_BOOL CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   if (!action.GetDict())
     return TRUE;
 
-  CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
   CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
   PDFSDK_FieldAction fa;
   fa.bModifier = pEnv->IsCTRLKeyDown(0);
@@ -385,7 +385,7 @@ FX_BOOL CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
   if (!action.GetDict())
     return TRUE;
 
-  CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
   CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
   PDFSDK_FieldAction fa;
   fa.bModifier = pEnv->IsCTRLKeyDown(0);
@@ -459,7 +459,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitFields(
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude,
     bool bUrlEncoded) {
-  CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
 
   CFX_ByteTextBuf textBuf;
   ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude, textBuf);
@@ -542,7 +542,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
   if (!m_pDocument || !m_pInterForm)
     return FALSE;
 
-  CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
   CFX_WideString wsPDFFilePath = m_pDocument->GetPath();
   CFDF_Document* pFDFDoc =
       m_pInterForm->ExportToFDF(wsPDFFilePath.AsStringC(), false);

@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/Annot.h"
 #include "fpdfsdk/javascript/Consts.h"
 #include "fpdfsdk/javascript/Document.h"
@@ -47,7 +47,7 @@ void IJS_Runtime::Destroy() {
 }
 
 // static
-IJS_Runtime* IJS_Runtime::Create(CPDFSDK_Environment* pEnv) {
+IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pEnv) {
   return new CJS_Runtime(pEnv);
 }
 
@@ -63,7 +63,7 @@ CJS_Runtime* CJS_Runtime::CurrentRuntimeFromIsolate(v8::Isolate* pIsolate) {
       CFXJS_Engine::CurrentEngineFromIsolate(pIsolate));
 }
 
-CJS_Runtime::CJS_Runtime(CPDFSDK_Environment* pEnv)
+CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pEnv)
     : m_pEnv(pEnv),
       m_pDocument(nullptr),
       m_bBlocking(false),

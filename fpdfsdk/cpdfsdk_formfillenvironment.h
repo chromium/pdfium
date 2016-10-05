@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_CPDFSDK_ENVIRONMENT_H_
-#define FPDFSDK_CPDFSDK_ENVIRONMENT_H_
+#ifndef FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_
+#define FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_
 
 #include <memory>
 
@@ -25,10 +25,11 @@ class CPDFSDK_AnnotHandlerMgr;
 class CPDFSDK_Document;
 class IJS_Runtime;
 
-class CPDFSDK_Environment final {
+class CPDFSDK_FormFillEnvironment final {
  public:
-  CPDFSDK_Environment(UnderlyingDocumentType* pDoc, FPDF_FORMFILLINFO* pFFinfo);
-  ~CPDFSDK_Environment();
+  CPDFSDK_FormFillEnvironment(UnderlyingDocumentType* pDoc,
+                              FPDF_FORMFILLINFO* pFFinfo);
+  ~CPDFSDK_FormFillEnvironment();
 
   void Invalidate(FPDF_PAGE page,
                   double left,
@@ -171,4 +172,4 @@ class CPDFSDK_Environment final {
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
 };
 
-#endif  // FPDFSDK_CPDFSDK_ENVIRONMENT_H_
+#endif  // FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_

@@ -15,13 +15,13 @@
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 
 class CFFL_FormFiller;
-class CPDFSDK_Environment;
+class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
 class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
  public:
-  explicit CFFL_InteractiveFormFiller(CPDFSDK_Environment* pEnv);
+  explicit CFFL_InteractiveFormFiller(CPDFSDK_FormFillEnvironment* pEnv);
   ~CFFL_InteractiveFormFiller() override;
 
   FX_BOOL Annot_HitTest(CPDFSDK_PageView* pPageView,
@@ -167,7 +167,7 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
-  CPDFSDK_Environment* const m_pEnv;
+  CPDFSDK_FormFillEnvironment* const m_pEnv;
   CFFL_Widget2Filler m_Maps;
   FX_BOOL m_bNotifying;
 };

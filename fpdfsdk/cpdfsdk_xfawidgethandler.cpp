@@ -9,7 +9,7 @@
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_xfawidget.h"
@@ -22,7 +22,8 @@
 #include "xfa/fxfa/xfa_ffwidgethandler.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-CPDFSDK_XFAWidgetHandler::CPDFSDK_XFAWidgetHandler(CPDFSDK_Environment* pEnv)
+CPDFSDK_XFAWidgetHandler::CPDFSDK_XFAWidgetHandler(
+    CPDFSDK_FormFillEnvironment* pEnv)
     : m_pEnv(pEnv) {}
 
 CPDFSDK_XFAWidgetHandler::~CPDFSDK_XFAWidgetHandler() {}

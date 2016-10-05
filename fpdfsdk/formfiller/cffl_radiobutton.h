@@ -11,7 +11,7 @@
 
 class CFFL_RadioButton : public CFFL_Button {
  public:
-  CFFL_RadioButton(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pAnnot);
+  CFFL_RadioButton(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Annot* pAnnot);
   ~CFFL_RadioButton() override;
 
   // CFFL_Button

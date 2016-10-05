@@ -164,6 +164,6 @@ void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {}
 void IJS_Runtime::Destroy() {}
 
 // static
-IJS_Runtime* IJS_Runtime::Create(CPDFSDK_Environment* pEnv) {
+IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pEnv) {
   return new CJS_RuntimeStub;
 }

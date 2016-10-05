@@ -12,7 +12,7 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/javascript/ijs_context.h"
@@ -46,7 +46,7 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     CPDFSDK_Document* pDocument,
     CPDF_FormField* pFormField,
     PDFSDK_FieldAction& data) {
-  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
   ASSERT(pEnv);
   if (pEnv->IsJSInitiated() && JsAction.GetType() == CPDF_Action::JavaScript) {
     CFX_WideString swJS = JsAction.GetJavaScript();
@@ -116,7 +116,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
 
   visited->insert(pDict);
 
-  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
   ASSERT(pEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pEnv->IsJSInitiated()) {
@@ -148,7 +148,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(
 
   visited->insert(pDict);
 
-  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
   ASSERT(pEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pEnv->IsJSInitiated()) {
@@ -193,7 +193,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
 
   visited->insert(pDict);
 
-  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
   ASSERT(pEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pEnv->IsJSInitiated()) {
@@ -240,7 +240,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteFieldAction(
 
   visited->insert(pDict);
 
-  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
   ASSERT(pEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pEnv->IsJSInitiated()) {
@@ -277,7 +277,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
 
   visited->insert(pDict);
 
-  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
   ASSERT(pEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pEnv->IsJSInitiated()) {
@@ -320,7 +320,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(
 
   visited->insert(pDict);
 
-  CPDFSDK_Environment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
   ASSERT(pEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pEnv->IsJSInitiated()) {
@@ -438,7 +438,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
     sizeOfAry = j;
   }
 
-  CPDFSDK_Environment* pApp = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pApp = pDocument->GetEnv();
   pApp->DoGoToAction(nPageIndex, nFitType, pPosAry, sizeOfAry);
   delete[] pPosAry;
 }
@@ -453,7 +453,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument,
                                          const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
-  CPDFSDK_Environment* pApp = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pApp = pDocument->GetEnv();
   CFX_ByteString sURI = action.GetURI(pDocument->GetPDFDocument());
   pApp->DoURIAction(sURI.c_str());
 }

@@ -18,7 +18,7 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -225,7 +225,7 @@ FX_BOOL Document::pageNum(IJS_Context* cc,
     int iPageNum = 0;
     vp >> iPageNum;
 
-    CPDFSDK_Environment* pEnv = m_pDocument->GetEnv();
+    CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
     if (iPageNum >= 0 && iPageNum < iPageCount) {
       pEnv->JS_docgotoPage(iPageNum);
     } else if (iPageNum >= iPageCount) {
@@ -408,7 +408,7 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
     return FALSE;
 
   pRuntime->BeginBlock();
-  CPDFSDK_Environment* pEnv = pContext->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetReaderEnv();
   pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI,
                        cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(),
                        cMsg.c_str());
@@ -477,7 +477,7 @@ FX_BOOL Document::print(IJS_Context* cc,
       bAnnotations = params[7].ToBool(pRuntime);
   }
 
-  if (CPDFSDK_Environment* pEnv = m_pDocument->GetEnv()) {
+  if (CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv()) {
     pEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit, bPrintAsImage,
                       bReverse, bAnnotations);
     return TRUE;
@@ -757,7 +757,7 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
   pEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
                        cCc.c_str(), cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
@@ -1696,7 +1696,7 @@ FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFSDK_Environment* pApp = m_pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pApp = m_pDocument->GetEnv();
   pApp->DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
                      scrollPositionArray.get(), scrollPositionArraySize);
   pRuntime->EndBlock();

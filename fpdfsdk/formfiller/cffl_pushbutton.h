@@ -11,7 +11,7 @@
 
 class CFFL_PushButton : public CFFL_Button {
  public:
-  CFFL_PushButton(CPDFSDK_Environment* pApp, CPDFSDK_Annot* pAnnot);
+  CFFL_PushButton(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Annot* pAnnot);
   ~CFFL_PushButton() override;
 
   // CFFL_Button

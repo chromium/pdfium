@@ -15,7 +15,7 @@
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annothandlermgr.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -25,12 +25,13 @@
 // static
 CPDFSDK_Document* CPDFSDK_Document::FromFPDFFormHandle(
     FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Environment* pEnv = static_cast<CPDFSDK_Environment*>(hHandle);
+  CPDFSDK_FormFillEnvironment* pEnv =
+      static_cast<CPDFSDK_FormFillEnvironment*>(hHandle);
   return pEnv ? pEnv->GetSDKDocument() : nullptr;
 }
 
 CPDFSDK_Document::CPDFSDK_Document(UnderlyingDocumentType* pDoc,
-                                   CPDFSDK_Environment* pEnv)
+                                   CPDFSDK_FormFillEnvironment* pEnv)
     : m_pDoc(pDoc),
       m_pEnv(pEnv),
       m_bChangeMask(FALSE),

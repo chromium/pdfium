@@ -14,7 +14,7 @@
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
-class CPDFSDK_Environment;
+class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 class CXFA_FFWidget;
@@ -22,7 +22,7 @@ class CXFA_FFWidgetHandler;
 
 class CPDFSDK_XFAWidgetHandler : public IPDFSDK_AnnotHandler {
  public:
-  explicit CPDFSDK_XFAWidgetHandler(CPDFSDK_Environment* pApp);
+  explicit CPDFSDK_XFAWidgetHandler(CPDFSDK_FormFillEnvironment* pApp);
   ~CPDFSDK_XFAWidgetHandler() override;
 
   FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) override;
@@ -102,7 +102,7 @@ class CPDFSDK_XFAWidgetHandler : public IPDFSDK_AnnotHandler {
   CXFA_FFWidgetHandler* GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);
   uint32_t GetFWLFlags(uint32_t dwFlag);
 
-  CPDFSDK_Environment* m_pEnv;
+  CPDFSDK_FormFillEnvironment* m_pEnv;
 };
 
 #endif  // FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_

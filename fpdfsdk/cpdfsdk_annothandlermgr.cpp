@@ -13,7 +13,7 @@
 #include "fpdfsdk/cpdfsdk_baannothandler.h"
 #include "fpdfsdk/cpdfsdk_datetime.h"
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widgethandler.h"
 
@@ -24,7 +24,8 @@
 #include "xfa/fxfa/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
-CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFSDK_Environment* pEnv)
+CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
+    CPDFSDK_FormFillEnvironment* pEnv)
     : m_pBAAnnotHandler(new CPDFSDK_BAAnnotHandler()),
       m_pWidgetHandler(new CPDFSDK_WidgetHandler(pEnv)),
 #ifdef PDF_ENABLE_XFA

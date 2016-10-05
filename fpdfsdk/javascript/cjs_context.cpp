@@ -21,7 +21,7 @@ CPDFSDK_Document* CJS_Context::GetReaderDocument() {
   return m_pRuntime->GetReaderDocument();
 }
 
-CPDFSDK_Environment* CJS_Context::GetReaderEnv() {
+CPDFSDK_FormFillEnvironment* CJS_Context::GetReaderEnv() {
   return m_pRuntime->GetReaderEnv();
 }
 

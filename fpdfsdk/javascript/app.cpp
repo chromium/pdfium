@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "fpdfsdk/cpdfsdk_document.h"
-#include "fpdfsdk/cpdfsdk_environment.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/JS_Define.h"
@@ -25,7 +25,7 @@
 class GlobalTimer {
  public:
   GlobalTimer(app* pObj,
-              CPDFSDK_Environment* pEnv,
+              CPDFSDK_FormFillEnvironment* pEnv,
               CJS_Runtime* pRuntime,
               int nType,
               const CFX_WideString& script,
@@ -55,11 +55,11 @@ class GlobalTimer {
   const uint32_t m_dwTimeOut;
   const CFX_WideString m_swJScript;
   CJS_Runtime::ObservedPtr m_pRuntime;
-  CPDFSDK_Environment* const m_pEnv;
+  CPDFSDK_FormFillEnvironment* const m_pEnv;
 };
 
 GlobalTimer::GlobalTimer(app* pObj,
-                         CPDFSDK_Environment* pEnv,
+                         CPDFSDK_FormFillEnvironment* pEnv,
                          CJS_Runtime* pRuntime,
                          int nType,
                          const CFX_WideString& script,
@@ -217,7 +217,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
     return FALSE;
 
   CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFSDK_Environment* pEnv = pContext->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetReaderEnv();
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
   CJS_Array aDocs;
@@ -255,7 +255,7 @@ FX_BOOL app::calculate(IJS_Context* cc,
     m_bCalculate = (FX_BOOL)bVP;
 
     CJS_Context* pContext = (CJS_Context*)cc;
-    CPDFSDK_Environment* pEnv = pContext->GetReaderEnv();
+    CPDFSDK_FormFillEnvironment* pEnv = pContext->GetReaderEnv();
     if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument())
       pDoc->GetInterForm()->EnableCalculate((FX_BOOL)m_bCalculate);
   } else {
@@ -321,7 +321,7 @@ FX_BOOL app::platform(IJS_Context* cc,
   if (!vp.IsGetting())
     return FALSE;
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Environment* pEnv =
+  CPDFSDK_FormFillEnvironment* pEnv =
       static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderEnv();
   if (!pEnv)
     return FALSE;
@@ -341,7 +341,7 @@ FX_BOOL app::language(IJS_Context* cc,
   if (!vp.IsGetting())
     return FALSE;
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Environment* pEnv =
+  CPDFSDK_FormFillEnvironment* pEnv =
       static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderEnv();
   if (!pEnv)
     return FALSE;
@@ -358,7 +358,7 @@ FX_BOOL app::language(IJS_Context* cc,
 // creates a new fdf object that contains no data
 // comment: need reader support
 // note:
-// CFDF_Document * CPDFSDK_Environment::NewFDF();
+// CFDF_Document * CPDFSDK_FormFillEnvironment::NewFDF();
 FX_BOOL app::newFDF(IJS_Context* cc,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
@@ -369,7 +369,8 @@ FX_BOOL app::newFDF(IJS_Context* cc,
 // comment:need reader support
 // note: as defined in js reference, the proto of this function's fourth
 // parmeters, how old an fdf document while do not show it.
-// CFDF_Document * CPDFSDK_Environment::OpenFDF(string strPath,bool bUserConv);
+// CFDF_Document * CPDFSDK_FormFillEnvironment::OpenFDF(string strPath,bool
+// bUserConv);
 
 FX_BOOL app::openFDF(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
@@ -391,7 +392,7 @@ FX_BOOL app::alert(IJS_Context* cc,
     return FALSE;
   }
 
-  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
   if (!pEnv) {
     vRet = CJS_Value(pRuntime, 0);
     return TRUE;
@@ -447,7 +448,7 @@ FX_BOOL app::beep(IJS_Context* cc,
                   CFX_WideString& sError) {
   if (params.size() == 1) {
     CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-    CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
+    CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
     pEnv->JS_appBeep(params[0].ToInt(pRuntime));
     return TRUE;
   }
@@ -492,7 +493,7 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   }
 
   uint32_t dwInterval = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
-  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
 
   GlobalTimer* timerRef =
       new GlobalTimer(this, pEnv, pRuntime, 0, script, dwInterval, 0);
@@ -526,7 +527,7 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   }
 
   uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
-  CPDFSDK_Environment* pEnv = pRuntime->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
 
   GlobalTimer* timerRef =
       new GlobalTimer(this, pEnv, pRuntime, 1, script, dwTimeOut, dwTimeOut);
