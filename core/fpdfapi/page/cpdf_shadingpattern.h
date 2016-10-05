@@ -36,7 +36,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
  public:
   CPDF_ShadingPattern(CPDF_Document* pDoc,
                       CPDF_Object* pPatternObj,
-                      FX_BOOL bShading,
+                      bool bShading,
                       const CFX_Matrix& parentMatrix);
   ~CPDF_ShadingPattern() override;
 
@@ -52,7 +52,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
   bool Load();
 
   ShadingType GetShadingType() const { return m_ShadingType; }
-  FX_BOOL IsShadingObject() const { return m_bShadingObj; }
+  bool IsShadingObject() const { return m_bShadingObj; }
   CPDF_Object* GetShadingObject() const { return m_pShadingObj; }
   CPDF_ColorSpace* GetCS() const { return m_pCS; }
   const std::vector<std::unique_ptr<CPDF_Function>>& GetFuncs() const {
@@ -61,7 +61,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
 
  private:
   ShadingType m_ShadingType;
-  FX_BOOL m_bShadingObj;
+  bool m_bShadingObj;
   CPDF_Object* m_pShadingObj;
 
   // Still keep |m_pCS| as some CPDF_ColorSpace (name object) are not managed

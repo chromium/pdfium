@@ -77,7 +77,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                                   CPDF_Dictionary* pResources = nullptr);
 
   CPDF_Pattern* LoadPattern(CPDF_Object* pObj,
-                            FX_BOOL bShading,
+                            bool bShading,
                             const CFX_Matrix& matrix);
 
   CPDF_Image* LoadImageF(CPDF_Object* pObj);

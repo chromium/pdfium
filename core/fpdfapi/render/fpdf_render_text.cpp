@@ -146,7 +146,7 @@ CPDF_Type3Cache* CPDF_RenderStatus::GetCachedType3(CPDF_Type3Font* pFont) {
   if (!pFont->m_pDocument) {
     return nullptr;
   }
-  pFont->m_pDocument->GetPageData()->GetFont(pFont->GetFontDict(), FALSE);
+  pFont->m_pDocument->GetPageData()->GetFont(pFont->GetFontDict());
   return pFont->m_pDocument->GetRenderData()->GetCachedType3(pFont);
 }
 static void ReleaseCachedType3(CPDF_Type3Font* pFont) {

@@ -659,7 +659,7 @@ uint32_t CPDF_Document::GetUserPermissions() const {
 
 CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict) {
   ASSERT(pFontDict);
-  return m_pDocPage->GetFont(pFontDict, FALSE);
+  return m_pDocPage->GetFont(pFontDict);
 }
 
 CPDF_StreamAcc* CPDF_Document::LoadFontFile(CPDF_Stream* pStream) {
@@ -672,7 +672,7 @@ CPDF_ColorSpace* CPDF_Document::LoadColorSpace(CPDF_Object* pCSObj,
 }
 
 CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj,
-                                         FX_BOOL bShading,
+                                         bool bShading,
                                          const CFX_Matrix& matrix) {
   return m_pDocPage->GetPattern(pPatternObj, bShading, matrix);
 }

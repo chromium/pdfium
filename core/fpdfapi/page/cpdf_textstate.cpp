@@ -116,8 +116,7 @@ CPDF_TextState::TextData::TextData(const TextData& that)
     m_CTM[i] = that.m_CTM[i];
 
   if (m_pDocument && m_pFont) {
-    m_pFont =
-        m_pDocument->GetPageData()->GetFont(m_pFont->GetFontDict(), FALSE);
+    m_pFont = m_pDocument->GetPageData()->GetFont(m_pFont->GetFontDict());
   }
 }
 

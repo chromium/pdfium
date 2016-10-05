@@ -29,11 +29,11 @@ void CPDF_ModuleMgr::InitPageModule() {
 }
 
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
-    : m_pPDFDoc(pPDFDoc), m_bForceClear(FALSE) {}
+    : m_pPDFDoc(pPDFDoc), m_bForceClear(false) {}
 
 CPDF_DocPageData::~CPDF_DocPageData() {
-  Clear(FALSE);
-  Clear(TRUE);
+  Clear(false);
+  Clear(true);
 
   for (auto& it : m_PatternMap)
     delete it.second;
@@ -48,7 +48,7 @@ CPDF_DocPageData::~CPDF_DocPageData() {
   m_ColorSpaceMap.clear();
 }
 
-void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
+void CPDF_DocPageData::Clear(bool bForceRelease) {
   m_bForceClear = bForceRelease;
 
   for (auto& it : m_PatternMap) {
@@ -128,8 +128,7 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
   }
 }
 
-CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict,
-                                     FX_BOOL findOnly) {
+CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {
   if (!pFontDict)
     return nullptr;
 
@@ -141,10 +140,6 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict,
       return pFontData->AddRef();
     }
   }
-
-  if (findOnly)
-    return nullptr;
-
   std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc, pFontDict);
   if (!pFont)
     return nullptr;
@@ -342,7 +337,7 @@ void CPDF_DocPageData::ReleaseColorSpace(const CPDF_Object* pColorSpace) {
 }
 
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
-                                           FX_BOOL bShading,
+                                           bool bShading,
                                            const CFX_Matrix& matrix) {
   if (!pPatternObj)
     return nullptr;
@@ -357,7 +352,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
   }
   CPDF_Pattern* pPattern = nullptr;
   if (bShading) {
-    pPattern = new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, TRUE, matrix);
+    pPattern = new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, true, matrix);
   } else {
     CPDF_Dictionary* pDict = pPatternObj ? pPatternObj->GetDict() : nullptr;
     if (pDict) {
@@ -366,7 +361,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
         pPattern = new CPDF_TilingPattern(m_pPDFDoc, pPatternObj, matrix);
       } else if (type == CPDF_Pattern::SHADING) {
         pPattern =
-            new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, FALSE, matrix);
+            new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, false, matrix);
       }
     }
   }

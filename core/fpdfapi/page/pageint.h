@@ -56,21 +56,18 @@ class CPDF_StreamParser {
   SyntaxType ParseNextElement();
   uint8_t* GetWordBuf() { return m_WordBuffer; }
   uint32_t GetWordSize() const { return m_WordSize; }
-  CPDF_Object* GetObject() {
-    CPDF_Object* pObj = m_pLastObj;
-    m_pLastObj = nullptr;
-    return pObj;
-  }
+  CPDF_Object* GetObject();
   uint32_t GetPos() const { return m_Pos; }
   void SetPos(uint32_t pos) { m_Pos = pos; }
   CPDF_Object* ReadNextObject(bool bAllowNestedArray, uint32_t dwInArrayLevel);
 
- protected:
+ private:
   friend class fpdf_page_parser_old_ReadHexString_Test;
 
-  void GetNextWord(FX_BOOL& bIsNumber);
+  void GetNextWord(bool& bIsNumber);
   CFX_ByteString ReadString();
   CFX_ByteString ReadHexString();
+  bool PositionIsInBounds() const;
 
   const uint8_t* m_pBuf;
   uint32_t m_Size;  // Length in bytes of m_pBuf.
@@ -79,12 +76,10 @@ class CPDF_StreamParser {
   uint32_t m_WordSize;
   CPDF_Object* m_pLastObj;
   CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
-
- private:
-  bool PositionIsInBounds() const;
 };
 
 #define PARAM_BUF_SIZE 16
+
 struct ContentParam {
   enum Type { OBJECT = 0, NUMBER, NAME };
   Type m_Type;
@@ -103,8 +98,10 @@ struct ContentParam {
     } m_Name;
   };
 };
+
 #define _FPDF_MAX_FORM_LEVEL_ 30
 #define _FPDF_MAX_TYPE3_FORM_LEVEL_ 4
+
 class CPDF_StreamContentParser {
  public:
   CPDF_StreamContentParser(CPDF_Document* pDoc,
@@ -133,8 +130,6 @@ class CPDF_StreamContentParser {
   FX_FLOAT GetNumber(uint32_t index);
   int GetInteger(uint32_t index) { return (int32_t)(GetNumber(index)); }
   void OnOperator(const FX_CHAR* op);
-  void BigCaseCaller(int index);
-  uint32_t GetParsePos() { return m_pSyntax->GetPos(); }
   void AddTextObject(CFX_ByteString* pText,
                      FX_FLOAT fInitKerning,
                      FX_FLOAT* pKerning,
@@ -147,25 +142,22 @@ class CPDF_StreamContentParser {
   void ParsePathObject();
   void AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag);
   void AddPathRect(FX_FLOAT x, FX_FLOAT y, FX_FLOAT w, FX_FLOAT h);
-  void AddPathObject(int FillType, FX_BOOL bStroke);
+  void AddPathObject(int FillType, bool bStroke);
   CPDF_ImageObject* AddImage(CPDF_Stream* pStream,
                              CPDF_Image* pImage,
                              bool bInline);
-  void AddDuplicateImage();
   void AddForm(CPDF_Stream* pStream);
   void SetGraphicStates(CPDF_PageObject* pObj,
-                        FX_BOOL bColor,
-                        FX_BOOL bText,
-                        FX_BOOL bGraph);
-  void SaveStates(CPDF_AllStates* pState);
-  void RestoreStates(CPDF_AllStates* pState);
+                        bool bColor,
+                        bool bText,
+                        bool bGraph);
   CPDF_Font* FindFont(const CFX_ByteString& name);
   CPDF_ColorSpace* FindColorSpace(const CFX_ByteString& name);
   CPDF_Pattern* FindPattern(const CFX_ByteString& name, bool bShading);
   CPDF_Object* FindResourceObj(const CFX_ByteString& type,
                                const CFX_ByteString& name);
 
- protected:
+ private:
   using OpCodes =
       std::unordered_map<uint32_t, void (CPDF_StreamContentParser::*)()>;
   static OpCodes InitializeOpCodes();
@@ -270,17 +262,14 @@ class CPDF_StreamContentParser {
   uint8_t m_PathClipType;
   CFX_ByteString m_LastImageName;
   CPDF_Image* m_pLastImage;
-  CFX_BinaryBuf m_LastImageDict;
-  CFX_BinaryBuf m_LastImageData;
   CPDF_Dictionary* m_pLastImageDict;
   CPDF_Dictionary* m_pLastCloneImageDict;
-  FX_BOOL m_bReleaseLastDict;
-  FX_BOOL m_bSameLastDict;
   bool m_bColored;
   FX_FLOAT m_Type3Data[6];
-  FX_BOOL m_bResourceMissing;
+  bool m_bResourceMissing;
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
 };
+
 class CPDF_ContentParser {
  public:
   enum ParseStatus { Ready, ToBeContinued, Done };
@@ -307,7 +296,7 @@ class CPDF_ContentParser {
   ParseStatus m_Status;
   InternalStage m_InternalStage;
   CPDF_PageObjectHolder* m_pObjectHolder;
-  FX_BOOL m_bForm;
+  bool m_bForm;
   CPDF_Type3Char* m_pType3Char;
   uint32_t m_nStreams;
   std::unique_ptr<CPDF_StreamAcc> m_pSingleStream;
@@ -323,8 +312,8 @@ class CPDF_DocPageData {
   explicit CPDF_DocPageData(CPDF_Document* pPDFDoc);
   ~CPDF_DocPageData();
 
-  void Clear(FX_BOOL bRelease = FALSE);
-  CPDF_Font* GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly);
+  void Clear(bool bRelease = FALSE);
+  CPDF_Font* GetFont(CPDF_Dictionary* pFontDict);
   CPDF_Font* GetStandardFont(const CFX_ByteString& fontName,
                              CPDF_FontEncoding* pEncoding);
   void ReleaseFont(const CPDF_Dictionary* pFontDict);
@@ -333,7 +322,7 @@ class CPDF_DocPageData {
   CPDF_ColorSpace* GetCopiedColorSpace(CPDF_Object* pCSObj);
   void ReleaseColorSpace(const CPDF_Object* pColorSpace);
   CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
-                           FX_BOOL bShading,
+                           bool bShading,
                            const CFX_Matrix& matrix);
   void ReleasePattern(const CPDF_Object* pPatternObj);
   CPDF_Image* GetImage(CPDF_Object* pImageStream);
@@ -342,7 +331,7 @@ class CPDF_DocPageData {
   void ReleaseIccProfile(const CPDF_IccProfile* pIccProfile);
   CPDF_StreamAcc* GetFontFileStreamAcc(CPDF_Stream* pFontStream);
   void ReleaseFontFileStreamAcc(const CPDF_Stream* pFontStream);
-  FX_BOOL IsForceClear() const { return m_bForceClear; }
+  bool IsForceClear() const { return m_bForceClear; }
   CPDF_CountedColorSpace* FindColorSpacePtr(CPDF_Object* pCSObj) const;
   CPDF_CountedPattern* FindPatternPtr(CPDF_Object* pPatternObj) const;
 
@@ -366,7 +355,7 @@ class CPDF_DocPageData {
                                      std::set<CPDF_Object*>* pVisited);
 
   CPDF_Document* const m_pPDFDoc;
-  FX_BOOL m_bForceClear;
+  bool m_bForceClear;
   std::map<CFX_ByteString, CPDF_Stream*> m_HashProfileMap;
   CPDF_ColorSpaceMap m_ColorSpaceMap;
   CPDF_FontFileMap m_FontFileMap;
@@ -495,7 +484,7 @@ class CPDF_IccProfile {
   CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize);
   ~CPDF_IccProfile();
   uint32_t GetComponents() const { return m_nSrcComponents; }
-  FX_BOOL m_bsRGB;
+  bool m_bsRGB;
   void* m_pTransform;
 
  private:
@@ -561,6 +550,5 @@ CFX_ByteStringC PDF_FindValueAbbreviationForTesting(
     const CFX_ByteStringC& abbr);
 
 void PDF_ReplaceAbbr(CPDF_Object* pObj);
-bool IsPathOperator(const uint8_t* buf, size_t len);
 
 #endif  // CORE_FPDFAPI_PAGE_PAGEINT_H_

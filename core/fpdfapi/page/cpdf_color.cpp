@@ -127,7 +127,7 @@ void CPDF_Color::Copy(const CPDF_Color* pSrc) {
   CPDF_Pattern* pPattern = pValue->m_pPattern;
   if (pPattern && pPattern->document()) {
     pValue->m_pPattern = pPattern->document()->GetPageData()->GetPattern(
-        pPattern->pattern_obj(), FALSE, pPattern->parent_matrix());
+        pPattern->pattern_obj(), false, pPattern->parent_matrix());
   }
 }
 

@@ -25,7 +25,7 @@ ShadingType ToShadingType(int type) {
 
 CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
                                          CPDF_Object* pPatternObj,
-                                         FX_BOOL bShading,
+                                         bool bShading,
                                          const CFX_Matrix& parentMatrix)
     : CPDF_Pattern(SHADING,
                    pDoc,
