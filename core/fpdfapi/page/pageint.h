@@ -120,7 +120,7 @@ class CPDF_StreamContentParser {
 
   CPDF_PageObjectHolder* GetPageObjectHolder() const { return m_pObjectHolder; }
   CPDF_AllStates* GetCurStates() const { return m_pCurStates.get(); }
-  FX_BOOL IsColored() const { return m_bColored; }
+  bool IsColored() const { return m_bColored; }
   const FX_FLOAT* GetType3Data() const { return m_Type3Data; }
 
   void AddNumberParam(const FX_CHAR* str, int len);
@@ -276,7 +276,7 @@ class CPDF_StreamContentParser {
   CPDF_Dictionary* m_pLastCloneImageDict;
   FX_BOOL m_bReleaseLastDict;
   FX_BOOL m_bSameLastDict;
-  FX_BOOL m_bColored;
+  bool m_bColored;
   FX_FLOAT m_Type3Data[6];
   FX_BOOL m_bResourceMissing;
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;

@@ -43,15 +43,15 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       (baseEncoding == PDFFONT_ENCODING_MACROMAN ||
        baseEncoding == PDFFONT_ENCODING_WINANSI) &&
       (m_Flags & PDFFONT_SYMBOLIC)) {
-    FX_BOOL bSupportWin = FALSE;
-    FX_BOOL bSupportMac = FALSE;
+    bool bSupportWin = false;
+    bool bSupportMac = false;
     for (int i = 0; i < FXFT_Get_Face_CharmapCount(m_Font.GetFace()); i++) {
       int platform_id = FXFT_Get_Charmap_PlatformID(
           FXFT_Get_Face_Charmaps(m_Font.GetFace())[i]);
       if (platform_id == 0 || platform_id == 3) {
-        bSupportWin = TRUE;
+        bSupportWin = true;
       } else if (platform_id == 0 || platform_id == 1) {
-        bSupportMac = TRUE;
+        bSupportMac = true;
       }
     }
     if (baseEncoding == PDFFONT_ENCODING_WINANSI && !bSupportWin) {
@@ -94,7 +94,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
         bMacRoman = !bMSSymbol && FT_UseTTCharmap(m_Font.GetFace(), 1, 0);
       }
     }
-    FX_BOOL bToUnicode = m_pFontDict->KeyExist("ToUnicode");
+    bool bToUnicode = m_pFontDict->KeyExist("ToUnicode");
     for (int charcode = 0; charcode < 256; charcode++) {
       const FX_CHAR* name =
           GetAdobeCharName(baseEncoding, m_CharNames, charcode);

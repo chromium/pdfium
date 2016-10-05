@@ -13,20 +13,20 @@
 #include "core/fxge/fx_dib.h"
 
 CPDF_Type3Char::CPDF_Type3Char(CPDF_Form* pForm)
-    : m_pForm(pForm), m_bColored(FALSE) {}
+    : m_pForm(pForm), m_bColored(false) {}
 
 CPDF_Type3Char::~CPDF_Type3Char() {}
 
-FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
+bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   if (m_pBitmap || !m_pForm)
-    return TRUE;
+    return true;
 
   if (m_pForm->GetPageObjectList()->size() != 1 || m_bColored)
-    return FALSE;
+    return false;
 
   auto& pPageObj = m_pForm->GetPageObjectList()->front();
   if (!pPageObj->IsImage())
-    return FALSE;
+    return false;
 
   m_ImageMatrix = pPageObj->AsImage()->m_Matrix;
   std::unique_ptr<CFX_DIBSource> pSource(
@@ -34,5 +34,5 @@ FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   if (pSource)
     m_pBitmap.reset(pSource->Clone());
   m_pForm.reset();
-  return TRUE;
+  return true;
 }

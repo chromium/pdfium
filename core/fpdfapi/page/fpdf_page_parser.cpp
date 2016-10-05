@@ -223,7 +223,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_pLastImageDict(nullptr),
       m_pLastCloneImageDict(nullptr),
       m_bReleaseLastDict(TRUE),
-      m_bColored(FALSE),
+      m_bColored(false),
       m_bResourceMissing(FALSE) {
   if (pmtContentToUser)
     m_mtContentToUser = *pmtContentToUser;
@@ -714,14 +714,14 @@ void CPDF_StreamContentParser::Handle_SetDash() {
 void CPDF_StreamContentParser::Handle_SetCharWidth() {
   m_Type3Data[0] = GetNumber(1);
   m_Type3Data[1] = GetNumber(0);
-  m_bColored = TRUE;
+  m_bColored = true;
 }
 
 void CPDF_StreamContentParser::Handle_SetCachedDevice() {
   for (int i = 0; i < 6; i++) {
     m_Type3Data[i] = GetNumber(5 - i);
   }
-  m_bColored = FALSE;
+  m_bColored = false;
 }
 
 void CPDF_StreamContentParser::Handle_ExecuteXObject() {

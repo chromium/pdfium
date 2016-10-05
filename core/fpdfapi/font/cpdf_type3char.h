@@ -22,11 +22,11 @@ class CPDF_Type3Char {
   explicit CPDF_Type3Char(CPDF_Form* pForm);
   ~CPDF_Type3Char();
 
-  FX_BOOL LoadBitmap(CPDF_RenderContext* pContext);
+  bool LoadBitmap(CPDF_RenderContext* pContext);
 
   std::unique_ptr<CPDF_Form> m_pForm;
   std::unique_ptr<CFX_DIBitmap> m_pBitmap;
-  FX_BOOL m_bColored;
+  bool m_bColored;
   int m_Width;
   CFX_Matrix m_ImageMatrix;
   FX_RECT m_BBox;

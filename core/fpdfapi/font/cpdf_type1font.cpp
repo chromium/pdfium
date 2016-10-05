@@ -43,14 +43,14 @@ const FX_CHAR* GlyphNameRemap(const FX_CHAR* pStrAdobe) {
 
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
-FX_BOOL FT_UseType1Charmap(FXFT_Face face) {
+bool FT_UseType1Charmap(FXFT_Face face) {
   if (FXFT_Get_Face_CharmapCount(face) == 0) {
-    return FALSE;
+    return false;
   }
   if (FXFT_Get_Face_CharmapCount(face) == 1 &&
       FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[0]) ==
           FXFT_ENCODING_UNICODE) {
-    return FALSE;
+    return false;
   }
   if (FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[0]) ==
       FXFT_ENCODING_UNICODE) {
@@ -58,7 +58,7 @@ FX_BOOL FT_UseType1Charmap(FXFT_Face face) {
   } else {
     FXFT_Set_Charmap(face, FXFT_Get_Face_Charmaps(face)[0]);
   }
-  return TRUE;
+  return true;
 }
 
 }  // namespace
@@ -132,7 +132,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
 #endif
   if (!IsEmbedded() && (m_Base14Font < 12) && m_Font.IsTTFont()) {
     if (FT_UseTTCharmap(m_Font.GetFace(), 3, 0)) {
-      FX_BOOL bGotOne = FALSE;
+      bool bGotOne = false;
       for (int charcode = 0; charcode < 256; charcode++) {
         const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
         for (int j = 0; j < 4; j++) {
@@ -154,7 +154,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           }
 #endif
           if (m_GlyphIndex[charcode]) {
-            bGotOne = TRUE;
+            bGotOne = true;
             break;
           }
         }
@@ -267,9 +267,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
       return;
     }
-    FX_BOOL bUnicode = FALSE;
+    bool bUnicode = false;
     if (0 == FXFT_Select_Charmap(m_Font.GetFace(), FXFT_ENCODING_UNICODE)) {
-      bUnicode = TRUE;
+      bUnicode = true;
     }
     for (int charcode = 0; charcode < 256; charcode++) {
       const FX_CHAR* name =
@@ -367,9 +367,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
 #endif
     return;
   }
-  FX_BOOL bUnicode = FALSE;
+  bool bUnicode = false;
   if (0 == FXFT_Select_Charmap(m_Font.GetFace(), FXFT_ENCODING_UNICODE)) {
-    bUnicode = TRUE;
+    bUnicode = true;
   }
   for (int charcode = 0; charcode < 256; charcode++) {
     const FX_CHAR* name =

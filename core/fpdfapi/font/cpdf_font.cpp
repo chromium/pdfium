@@ -166,33 +166,33 @@ uint32_t CPDF_Font::CharCodeFromUnicode(FX_WCHAR unicode) const {
 void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
   m_Flags = pFontDesc->GetIntegerFor("Flags", PDFFONT_NONSYMBOLIC);
   int ItalicAngle = 0;
-  FX_BOOL bExistItalicAngle = FALSE;
+  bool bExistItalicAngle = false;
   if (pFontDesc->KeyExist("ItalicAngle")) {
     ItalicAngle = pFontDesc->GetIntegerFor("ItalicAngle");
-    bExistItalicAngle = TRUE;
+    bExistItalicAngle = true;
   }
   if (ItalicAngle < 0) {
     m_Flags |= PDFFONT_ITALIC;
     m_ItalicAngle = ItalicAngle;
   }
-  FX_BOOL bExistStemV = FALSE;
+  bool bExistStemV = false;
   if (pFontDesc->KeyExist("StemV")) {
     m_StemV = pFontDesc->GetIntegerFor("StemV");
-    bExistStemV = TRUE;
+    bExistStemV = true;
   }
-  FX_BOOL bExistAscent = FALSE;
+  bool bExistAscent = false;
   if (pFontDesc->KeyExist("Ascent")) {
     m_Ascent = pFontDesc->GetIntegerFor("Ascent");
-    bExistAscent = TRUE;
+    bExistAscent = true;
   }
-  FX_BOOL bExistDescent = FALSE;
+  bool bExistDescent = false;
   if (pFontDesc->KeyExist("Descent")) {
     m_Descent = pFontDesc->GetIntegerFor("Descent");
-    bExistDescent = TRUE;
+    bExistDescent = true;
   }
-  FX_BOOL bExistCapHeight = FALSE;
+  bool bExistCapHeight = false;
   if (pFontDesc->KeyExist("CapHeight")) {
-    bExistCapHeight = TRUE;
+    bExistCapHeight = true;
   }
   if (bExistItalicAngle && bExistAscent && bExistCapHeight && bExistDescent &&
       bExistStemV) {
@@ -242,7 +242,7 @@ void CPDF_Font::CheckFontMetrics() {
       m_Ascent = TT2PDF(FXFT_Get_Face_Ascender(face), face);
       m_Descent = TT2PDF(FXFT_Get_Face_Descender(face), face);
     } else {
-      FX_BOOL bFirst = TRUE;
+      bool bFirst = true;
       for (int i = 0; i < 256; i++) {
         FX_RECT rect = GetCharBBox(i);
         if (rect.left == rect.right) {
@@ -250,7 +250,7 @@ void CPDF_Font::CheckFontMetrics() {
         }
         if (bFirst) {
           m_FontBBox = rect;
-          bFirst = FALSE;
+          bFirst = false;
         } else {
           if (m_FontBBox.top < rect.top) {
             m_FontBBox.top = rect.top;

@@ -22,7 +22,7 @@ class CFX_GlyphMap {
   ~CFX_GlyphMap();
 
   void SetAt(int key, int value);
-  FX_BOOL Lookup(int key, int& value);
+  bool Lookup(int key, int& value);
 
  protected:
   CFX_BinaryBuf m_Buffer;
@@ -290,7 +290,7 @@ class CFX_CTTGSUBTable {
   uint32_t GetUInt32(FT_Bytes& p) const;
 
   std::map<uint32_t, uint32_t> m_featureMap;
-  FX_BOOL m_bFeautureMapLoad;
+  bool m_bFeautureMapLoad;
   bool loaded;
   tt_gsub_header header;
   TScriptList ScriptList;

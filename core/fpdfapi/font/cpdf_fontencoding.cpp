@@ -1665,7 +1665,7 @@ CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding) {
   }
 }
 
-FX_BOOL CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
+bool CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
   return FXSYS_memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) ==
          0;
 }
@@ -1675,10 +1675,10 @@ CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
        cs++) {
     const uint16_t* pSrc = PDF_UnicodesForPredefinedCharSet(cs);
-    FX_BOOL match = TRUE;
+    bool match = true;
     for (int i = 0; i < 256; ++i) {
       if (m_Unicodes[i] != pSrc[i]) {
-        match = FALSE;
+        match = false;
         break;
       }
     }

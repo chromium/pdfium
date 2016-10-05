@@ -47,22 +47,22 @@ void CFX_GlyphMap::SetAt(int key, int value) {
   m_Buffer.InsertBlock(low * sizeof(_IntPair), &pair, sizeof(_IntPair));
 }
 
-FX_BOOL CFX_GlyphMap::Lookup(int key, int& value) {
+bool CFX_GlyphMap::Lookup(int key, int& value) {
   void* pResult = FXSYS_bsearch(&key, m_Buffer.GetBuffer(),
                                 m_Buffer.GetSize() / sizeof(_IntPair),
                                 sizeof(_IntPair), _CompareInt);
   if (!pResult) {
-    return FALSE;
+    return false;
   }
   value = ((uint32_t*)pResult)[1];
-  return TRUE;
+  return true;
 }
 
 CFX_CTTGSUBTable::CFX_CTTGSUBTable()
-    : m_bFeautureMapLoad(FALSE), loaded(false) {}
+    : m_bFeautureMapLoad(false), loaded(false) {}
 
 CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub)
-    : m_bFeautureMapLoad(FALSE), loaded(false) {
+    : m_bFeautureMapLoad(false), loaded(false) {
   LoadGSUBTable(gsub);
 }
 
@@ -115,7 +115,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum,
         }
       }
     }
-    m_bFeautureMapLoad = TRUE;
+    m_bFeautureMapLoad = true;
   }
   for (const auto& pair : m_featureMap) {
     if (GetVerticalGlyphSub(glyphnum, vglyphnum,

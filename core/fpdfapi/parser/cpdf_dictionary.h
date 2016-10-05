@@ -54,7 +54,7 @@ class CPDF_Dictionary : public CPDF_Object {
     return GetNumberFor(key);
   }
 
-  FX_BOOL KeyExist(const CFX_ByteString& key) const;
+  bool KeyExist(const CFX_ByteString& key) const;
   bool IsSignatureDict() const;
 
   // Set* functions invalidate iterators for the element with the key |key|.

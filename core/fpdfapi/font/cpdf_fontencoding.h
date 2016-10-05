@@ -41,7 +41,7 @@ class CPDF_FontEncoding {
 
   void LoadEncoding(CPDF_Object* pEncoding);
 
-  FX_BOOL IsIdentical(CPDF_FontEncoding* pAnother) const;
+  bool IsIdentical(CPDF_FontEncoding* pAnother) const;
 
   FX_WCHAR UnicodeFromCharCode(uint8_t charcode) const {
     return m_Unicodes[charcode];
