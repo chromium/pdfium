@@ -46,6 +46,7 @@ class CPDF_Array : public CPDF_Object {
   void SetAt(size_t index, CPDF_Object* pObj);
   void InsertAt(size_t index, CPDF_Object* pObj);
   void RemoveAt(size_t index, size_t nCount = 1);
+  void ConvertToIndirectObjectAt(size_t index, CPDF_IndirectObjectHolder* pDoc);
 
   void Add(CPDF_Object* pObj);
   void AddNumber(FX_FLOAT f);

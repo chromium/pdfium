@@ -146,6 +146,19 @@ void CPDF_Array::RemoveAt(size_t i, size_t nCount) {
   m_Objects.erase(m_Objects.begin() + i, m_Objects.begin() + i + nCount);
 }
 
+void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
+                                           CPDF_IndirectObjectHolder* pHolder) {
+  if (i >= m_Objects.size())
+    return;
+
+  CPDF_Object* pObj = m_Objects[i];
+  if (!pObj || pObj->GetObjNum() != 0)
+    return;
+
+  uint32_t dwObjNum = pHolder->AddIndirectObject(pObj);
+  m_Objects[i] = new CPDF_Reference(pHolder, dwObjNum);
+}
+
 void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
   ASSERT(IsArray());
   CHECK(!pObj || pObj->GetObjNum() == 0);

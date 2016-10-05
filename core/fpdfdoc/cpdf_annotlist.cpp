@@ -73,10 +73,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
 
     uint32_t dwObjNum = pDict->GetObjNum();
     if (dwObjNum == 0) {
-      dwObjNum = m_pDocument->AddIndirectObject(pDict);
-      CPDF_Reference* pAction = new CPDF_Reference(m_pDocument, dwObjNum);
-      pAnnots->InsertAt(i, pAction);
-      pAnnots->RemoveAt(i + 1);
+      pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
       pDict = pAnnots->GetDictAt(i);
     }
 
