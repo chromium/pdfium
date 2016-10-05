@@ -128,14 +128,6 @@ FX_BOOL CPDFSDK_Document::ProcOpenAction() {
   return FALSE;
 }
 
-CPDF_OCContext* CPDFSDK_Document::GetOCContext() {
-  if (!m_pOccontent) {
-    m_pOccontent.reset(
-        new CPDF_OCContext(GetPDFDocument(), CPDF_OCContext::View));
-  }
-  return m_pOccontent.get();
-}
-
 void CPDFSDK_Document::RemovePageView(UnderlyingPageType* pUnderlyingPage) {
   auto it = m_pageMap.find(pUnderlyingPage);
   if (it == m_pageMap.end())

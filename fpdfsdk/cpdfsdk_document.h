@@ -16,7 +16,6 @@
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
-class CPDF_OCContext;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
@@ -93,7 +92,6 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   CPDFSDK_FormFillEnvironment* GetEnv() { return m_pEnv; }
   void ProcJavascriptFun();
   FX_BOOL ProcOpenAction();
-  CPDF_OCContext* GetOCContext();
 
  private:
   std::map<UnderlyingPageType*, CPDFSDK_PageView*> m_pageMap;
@@ -101,7 +99,6 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
   CPDFSDK_FormFillEnvironment* m_pEnv;
-  std::unique_ptr<CPDF_OCContext> m_pOccontent;
   FX_BOOL m_bChangeMask;
   FX_BOOL m_bBeingDestroyed;
 };
