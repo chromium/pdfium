@@ -531,7 +531,9 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     // and creating a new pageview at this point will cause bad things.
     CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, false);
     if (pPageView) {
+#if PDF_ENABLE_XFA
       pPageView->DeleteAnnot(pWidget);
+#endif  // PDF_ENABLE_XFA
       pPageView->UpdateRects(aRefresh);
     }
   }

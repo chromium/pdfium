@@ -31,13 +31,10 @@ class CBA_AnnotIterator {
 
  private:
   void GenerateResults();
-  static CFX_FloatRect GetAnnotRect(const CPDFSDK_Annot* pAnnot);
-
-  // Function signature compatible with std::sort().
-  static bool CompareByLeftAscending(const CPDFSDK_Annot* p1,
-                                     const CPDFSDK_Annot* p2);
-  static bool CompareByTopDescending(const CPDFSDK_Annot* p1,
-                                     const CPDFSDK_Annot* p2);
+  void CollectAnnots(std::vector<CPDFSDK_Annot*>* pArray);
+  CFX_FloatRect AddToAnnotsList(std::vector<CPDFSDK_Annot*>* sa, size_t idx);
+  void AddSelectedToAnnots(std::vector<CPDFSDK_Annot*>* sa,
+                           std::vector<size_t>* aSelect);
 
   TabOrder m_eTabOrder;
   CPDFSDK_PageView* m_pPageView;

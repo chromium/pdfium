@@ -433,7 +433,7 @@ FX_BOOL app::alert(IJS_Context* cc,
 
   pRuntime->BeginBlock();
   if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument())
-    pDoc->KillFocusAnnot();
+    pDoc->KillFocusAnnot(0);
 
   vRet = CJS_Value(pRuntime, pEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(),
                                                iType, iIcon));

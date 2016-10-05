@@ -35,32 +35,24 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
                        CPDF_RenderOptions* pOptions);
 #endif  // PDF_ENABLE_XFA
 
-  const CPDF_Annot* GetPDFAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
-  const CPDF_Annot* GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
+
+  void LoadFXAnnots();
   CPDFSDK_Annot* GetFocusAnnot();
-  void SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pSDKAnnot,
-                     uint32_t nFlag = 0) {
-    m_pSDKDoc->SetFocusAnnot(pSDKAnnot, nFlag);
-  }
-  FX_BOOL KillFocusAnnot(uint32_t nFlag = 0) {
-    return m_pSDKDoc->KillFocusAnnot(nFlag);
-  }
-  void KillFocusAnnotIfNeeded();
+  bool IsValidAnnot(const CPDF_Annot* p) const;
+  bool IsValidSDKAnnot(const CPDFSDK_Annot* p) const;
 
-  CPDFSDK_Annot* AddAnnot(CPDF_Dictionary* pDict);
-  CPDFSDK_Annot* AddAnnot(const FX_CHAR* lpSubType, CPDF_Dictionary* pDict);
-  CPDFSDK_Annot* AddAnnot(CPDF_Annot* pPDFAnnot);
-
-  FX_BOOL DeleteAnnot(CPDFSDK_Annot* pAnnot);
-  size_t CountAnnots() const;
-  CPDFSDK_Annot* GetAnnot(size_t nIndex);
+  const std::vector<CPDFSDK_Annot*>& GetAnnotList() const {
+    return m_SDKAnnotArray;
+  }
   CPDFSDK_Annot* GetAnnotByDict(CPDF_Dictionary* pDict);
 
 #ifdef PDF_ENABLE_XFA
+  FX_BOOL DeleteAnnot(CPDFSDK_Annot* pAnnot);
   CPDFSDK_Annot* AddAnnot(CXFA_FFWidget* pPDFAnnot);
   CPDFSDK_Annot* GetAnnotByXFAWidget(CXFA_FFWidget* hWidget);
+
   CPDFXFA_Page* GetPDFXFAPage() { return m_page; }
 #endif  // PDF_ENABLE_XFA
 
@@ -82,16 +74,12 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
                        double deltaY,
                        const CFX_FloatPoint& point,
                        int nFlag);
-  bool IsValidAnnot(const CPDF_Annot* p) const;
+
   void GetCurrentMatrix(CFX_Matrix& matrix) { matrix = m_curMatrix; }
   void UpdateRects(const std::vector<CFX_FloatRect>& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);
-  const std::vector<CPDFSDK_Annot*>& GetAnnotList() const {
-    return m_fxAnnotArray;
-  }
 
   int GetPageIndex() const;
-  void LoadFXAnnots();
 
   void SetValid(FX_BOOL bValid) { m_bValid = bValid; }
   FX_BOOL IsValid() { return m_bValid; }
@@ -113,7 +101,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CFX_Matrix m_curMatrix;
   UnderlyingPageType* const m_page;
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
-  std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
+  std::vector<CPDFSDK_Annot*> m_SDKAnnotArray;
   CPDFSDK_Document* const m_pSDKDoc;
   CPDFSDK_Annot::ObservedPtr m_pCaptureWidget;
 #ifndef PDF_ENABLE_XFA

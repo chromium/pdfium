@@ -64,12 +64,11 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   void RemovePageView(UnderlyingPageType* pPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
-  CPDFSDK_Annot* GetFocusAnnot();
-
   IJS_Runtime* GetJsRuntime();
 
-  FX_BOOL SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag = 0);
-  FX_BOOL KillFocusAnnot(uint32_t nFlag = 0);
+  CPDFSDK_Annot* GetFocusAnnot() { return m_pFocusAnnot.Get(); }
+  FX_BOOL SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot);
+  FX_BOOL KillFocusAnnot(uint32_t nFlag);
 
   FX_BOOL ExtractPages(const std::vector<uint16_t>& arrExtraPages,
                        CPDF_Document* pDstDoc);

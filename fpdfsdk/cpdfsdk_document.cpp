@@ -39,8 +39,10 @@ CPDFSDK_Document::CPDFSDK_Document(UnderlyingDocumentType* pDoc,
 CPDFSDK_Document::~CPDFSDK_Document() {
   m_bBeingDestroyed = TRUE;
 
-  for (auto& it : m_pageMap)
-    it.second->KillFocusAnnotIfNeeded();
+  for (auto& it : m_pageMap) {
+    if (it.second->IsValidSDKAnnot(GetFocusAnnot()))
+      KillFocusAnnot(0);
+  }
 
   for (auto& it : m_pageMap)
     delete it.second;
@@ -144,11 +146,12 @@ void CPDFSDK_Document::RemovePageView(UnderlyingPageType* pUnderlyingPage) {
   pPageView->SetBeingDestroyed();
 
   // This must happen before we remove |pPageView| from the map because
-  // |KillFocusAnnotIfNeeded| can call into the |GetPage| method which will
+  // |KillFocusAnnot| can call into the |GetPage| method which will
   // look for this page view in the map, if it doesn't find it a new one will
   // be created. We then have two page views pointing to the same page and
   // bad things happen.
-  pPageView->KillFocusAnnotIfNeeded();
+  if (pPageView->IsValidSDKAnnot(GetFocusAnnot()))
+    KillFocusAnnot(0);
 
   // Remove the page from the map to make sure we don't accidentally attempt
   // to use the |pPageView| while we're cleaning it up.
@@ -171,29 +174,18 @@ void CPDFSDK_Document::UpdateAllViews(CPDFSDK_PageView* pSender,
                                       CPDFSDK_Annot* pAnnot) {
   for (const auto& it : m_pageMap) {
     CPDFSDK_PageView* pPageView = it.second;
-    if (pPageView != pSender) {
+    if (pPageView != pSender)
       pPageView->UpdateView(pAnnot);
-    }
   }
 }
 
-CPDFSDK_Annot* CPDFSDK_Document::GetFocusAnnot() {
-  return m_pFocusAnnot.Get();
-}
-
-FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot,
-                                        uint32_t nFlag) {
+FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot) {
   if (m_bBeingDestroyed)
     return FALSE;
-
   if (m_pFocusAnnot == *pAnnot)
     return TRUE;
-
-  if (m_pFocusAnnot) {
-    if (!KillFocusAnnot(nFlag))
-      return FALSE;
-  }
-
+  if (m_pFocusAnnot && !KillFocusAnnot(0))
+    return FALSE;
   if (!*pAnnot)
     return FALSE;
 
@@ -208,7 +200,7 @@ FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot,
       if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, &pLastFocusAnnot))
         return FALSE;
 #endif  // PDF_ENABLE_XFA
-      if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, nFlag))
+      if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, 0))
         return FALSE;
       if (!m_pFocusAnnot) {
         m_pFocusAnnot.Reset(pAnnot->Get());
@@ -251,7 +243,7 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(uint32_t nFlag) {
 }
 
 void CPDFSDK_Document::OnCloseDocument() {
-  KillFocusAnnot();
+  KillFocusAnnot(0);
 }
 
 FX_BOOL CPDFSDK_Document::GetPermissions(int nFlag) {
