@@ -39,14 +39,17 @@ CPDFSDK_Document::CPDFSDK_Document(UnderlyingDocumentType* pDoc,
 CPDFSDK_Document::~CPDFSDK_Document() {
   m_bBeingDestroyed = TRUE;
 
+  ClearAllFocusedAnnots();
+  for (auto& it : m_pageMap)
+    delete it.second;
+  m_pageMap.clear();
+}
+
+void CPDFSDK_Document::ClearAllFocusedAnnots() {
   for (auto& it : m_pageMap) {
     if (it.second->IsValidSDKAnnot(GetFocusAnnot()))
       KillFocusAnnot(0);
   }
-
-  for (auto& it : m_pageMap)
-    delete it.second;
-  m_pageMap.clear();
 }
 
 CPDFSDK_PageView* CPDFSDK_Document::GetPageView(

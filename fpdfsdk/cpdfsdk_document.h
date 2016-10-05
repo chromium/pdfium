@@ -69,6 +69,7 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
   CPDFSDK_Annot* GetFocusAnnot() { return m_pFocusAnnot.Get(); }
   FX_BOOL SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot);
   FX_BOOL KillFocusAnnot(uint32_t nFlag);
+  void ClearAllFocusedAnnots();
 
   FX_BOOL ExtractPages(const std::vector<uint16_t>& arrExtraPages,
                        CPDF_Document* pDstDoc);

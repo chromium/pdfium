@@ -146,8 +146,7 @@ class CPDFSDK_Environment final {
   void JS_docgotoPage(int nPageNum);
 
   FX_BOOL IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
-  void SetSDKDocument(CPDFSDK_Document* pFXDoc) { m_pSDKDoc = pFXDoc; }
-  CPDFSDK_Document* GetSDKDocument() const { return m_pSDKDoc; }
+  CPDFSDK_Document* GetSDKDocument() const { return m_pSDKDoc.get(); }
   UnderlyingDocumentType* GetUnderlyingDocument() const {
     return m_pUnderlyingDoc;
   }
@@ -166,10 +165,7 @@ class CPDFSDK_Environment final {
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   std::unique_ptr<IJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
-  // Ownership of |m_pSDKDoc| depends on if this is XFA. If we're in XFA then
-  // the object is owned by the CPDFXFA_Document. In non-xfa then we own
-  // the pointer.
-  CPDFSDK_Document* m_pSDKDoc;
+  std::unique_ptr<CPDFSDK_Document> m_pSDKDoc;
   UnderlyingDocumentType* const m_pUnderlyingDoc;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;

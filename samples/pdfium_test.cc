@@ -86,19 +86,6 @@ static FPDF_FORMFILLINFO_PDFiumTest* ToPDFiumTestFormFillInfo(
   return static_cast<FPDF_FORMFILLINFO_PDFiumTest*>(formFillInfo);
 }
 
-static void CloseDocAndForm(FPDF_DOCUMENT doc, FPDF_FORMHANDLE form) {
-#ifdef PDF_ENABLE_XFA
-  // Note: The shut down order here is the reverse of the non-XFA branch order.
-  // Need to work out if this is required, and if it is, the lifetimes of
-  // objects owned by |doc| that |form| reference.
-  FPDF_CloseDocument(doc);
-  FPDFDOC_ExitFormFillEnvironment(form);
-#else   // PDF_ENABLE_XFA
-  FPDFDOC_ExitFormFillEnvironment(form);
-  FPDF_CloseDocument(doc);
-#endif  // PDF_ENABLE_XFA
-}
-
 static bool CheckDimensions(int stride, int width, int height) {
   if (stride < 0 || width < 0 || height < 0)
     return false;
@@ -791,7 +778,8 @@ void RenderPdf(const std::string& name,
       if (nRet == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if page %d is available.\n",
                 i);
-        CloseDocAndForm(doc, form);
+        FPDFDOC_ExitFormFillEnvironment(form);
+        FPDF_CloseDocument(doc);
         return;
       }
     }
@@ -803,7 +791,8 @@ void RenderPdf(const std::string& name,
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
 
-  CloseDocAndForm(doc, form);
+  FPDFDOC_ExitFormFillEnvironment(form);
+  FPDF_CloseDocument(doc);
 
   fprintf(stderr, "Rendered %d pages.\n", rendered_pages);
   if (bad_pages)

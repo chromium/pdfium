@@ -33,6 +33,7 @@ CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
                                    CPDFXFA_App* pProvider)
     : m_iDocType(DOCTYPE_PDF),
       m_pPDFDoc(std::move(pPDFDoc)),
+      m_pSDKDoc(nullptr),
       m_pXFADocView(nullptr),
       m_pApp(pProvider),
       m_nLoadStatus(FXFA_LOADSTATUS_PRELOAD),
@@ -41,6 +42,11 @@ CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
 
 CPDFXFA_Document::~CPDFXFA_Document() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
+
+  if (m_pSDKDoc) {
+    m_pSDKDoc->ClearAllFocusedAnnots();
+    m_pSDKDoc = nullptr;
+  }
 
   if (m_pXFADoc) {
     CXFA_FFApp* pApp = m_pApp->GetXFAApp();
@@ -189,10 +195,6 @@ void CPDFXFA_Document::DeletePage(int page_index) {
 
 void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
   m_XFAPageList.SetAt(page->GetPageIndex(), nullptr);
-}
-
-void CPDFXFA_Document::SetSDKDoc(std::unique_ptr<CPDFSDK_Document> pSDKDoc) {
-  m_pSDKDoc.reset(pSDKDoc.release());
 }
 
 void CPDFXFA_Document::ClearChangeMark() {

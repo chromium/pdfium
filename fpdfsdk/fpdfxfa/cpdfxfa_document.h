@@ -40,8 +40,8 @@ class CPDFXFA_Document {
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
   int GetDocType() const { return m_iDocType; }
 
-  CPDFSDK_Document* GetSDKDoc() const { return m_pSDKDoc.get(); }
-  void SetSDKDoc(std::unique_ptr<CPDFSDK_Document> pSDKDoc);
+  CPDFSDK_Document* GetSDKDoc() const { return m_pSDKDoc; }
+  void SetSDKDoc(CPDFSDK_Document* pSDKDoc) { m_pSDKDoc = pSDKDoc; }
 
   void DeletePage(int page_index);
   int GetPageCount() const;
@@ -78,10 +78,8 @@ class CPDFXFA_Document {
   int m_iDocType;
 
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
-  // |m_pSDKDoc| must be destroyed before |m_pPDFDoc| since it needs to access
-  // it to kill focused annotations.
-  std::unique_ptr<CPDFSDK_Document> m_pSDKDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
+  CPDFSDK_Document* m_pSDKDoc;    // not owned.
   CXFA_FFDocView* m_pXFADocView;  // not owned.
   CPDFXFA_App* const m_pApp;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;

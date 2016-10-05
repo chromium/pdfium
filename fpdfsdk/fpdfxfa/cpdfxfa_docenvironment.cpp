@@ -258,7 +258,11 @@ FX_BOOL CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
 
 void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
                                            uint32_t dwFlags) {
-  CPDFSDK_Environment* pEnv = m_pDocument->GetSDKDoc()->GetEnv();
+  CPDFSDK_Document* pSDKDoc = m_pDocument->GetSDKDoc();
+  if (!pSDKDoc)
+    return;
+
+  CPDFSDK_Environment* pEnv = pSDKDoc->GetEnv();
   if (!pEnv)
     return;
 

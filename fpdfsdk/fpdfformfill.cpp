@@ -254,8 +254,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   CPDFSDK_Environment* pEnv = new CPDFSDK_Environment(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
-  // Ownership of the SDKDocument is passed to the CPDFXFA_Document.
-  pDocument->SetSDKDoc(pdfium::WrapUnique(pEnv->GetSDKDocument()));
+  pDocument->SetSDKDoc(pEnv->GetSDKDocument());
   CPDFXFA_App::GetInstance()->AddFormFillEnv(pEnv);
 #endif  // PDF_ENABLE_XFA
 
@@ -271,10 +270,12 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App::GetInstance()->RemoveFormFillEnv(pEnv);
-#else   // PDF_ENABLE_XFA
+
+  // Reset the focused annotations and remove the SDK document from the
+  // XFA document.
   if (CPDFSDK_Document* pSDKDoc = pEnv->GetSDKDocument()) {
-    pEnv->SetSDKDocument(nullptr);
-    delete pSDKDoc;
+    pSDKDoc->ClearAllFocusedAnnots();
+    pSDKDoc->GetXFADocument()->SetSDKDoc(nullptr);
   }
 #endif  // PDF_ENABLE_XFA
 
