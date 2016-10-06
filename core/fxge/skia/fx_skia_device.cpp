@@ -149,41 +149,41 @@ SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m, SkScalar flip) {
   return skMatrix;
 }
 
-SkXfermode::Mode GetSkiaBlendMode(int blend_type) {
+SkBlendMode GetSkiaBlendMode(int blend_type) {
   switch (blend_type) {
     case FXDIB_BLEND_MULTIPLY:
-      return SkXfermode::kMultiply_Mode;
+      return SkBlendMode::kMultiply;
     case FXDIB_BLEND_SCREEN:
-      return SkXfermode::kScreen_Mode;
+      return SkBlendMode::kScreen;
     case FXDIB_BLEND_OVERLAY:
-      return SkXfermode::kOverlay_Mode;
+      return SkBlendMode::kOverlay;
     case FXDIB_BLEND_DARKEN:
-      return SkXfermode::kDarken_Mode;
+      return SkBlendMode::kDarken;
     case FXDIB_BLEND_LIGHTEN:
-      return SkXfermode::kLighten_Mode;
+      return SkBlendMode::kLighten;
     case FXDIB_BLEND_COLORDODGE:
-      return SkXfermode::kColorDodge_Mode;
+      return SkBlendMode::kColorDodge;
     case FXDIB_BLEND_COLORBURN:
-      return SkXfermode::kColorBurn_Mode;
+      return SkBlendMode::kColorBurn;
     case FXDIB_BLEND_HARDLIGHT:
-      return SkXfermode::kHardLight_Mode;
+      return SkBlendMode::kHardLight;
     case FXDIB_BLEND_SOFTLIGHT:
-      return SkXfermode::kSoftLight_Mode;
+      return SkBlendMode::kSoftLight;
     case FXDIB_BLEND_DIFFERENCE:
-      return SkXfermode::kDifference_Mode;
+      return SkBlendMode::kDifference;
     case FXDIB_BLEND_EXCLUSION:
-      return SkXfermode::kExclusion_Mode;
+      return SkBlendMode::kExclusion;
     case FXDIB_BLEND_HUE:
-      return SkXfermode::kHue_Mode;
+      return SkBlendMode::kHue;
     case FXDIB_BLEND_SATURATION:
-      return SkXfermode::kSaturation_Mode;
+      return SkBlendMode::kSaturation;
     case FXDIB_BLEND_COLOR:
-      return SkXfermode::kColor_Mode;
+      return SkBlendMode::kColor;
     case FXDIB_BLEND_LUMINOSITY:
-      return SkXfermode::kLuminosity_Mode;
+      return SkBlendMode::kLuminosity;
     case FXDIB_BLEND_NORMAL:
     default:
-      return SkXfermode::kSrcOver_Mode;
+      return SkBlendMode::kSrcOver;
   }
 }
 
@@ -390,7 +390,7 @@ void SetBitmapPaint(bool isAlphaMask,
         SkColorFilter::MakeModeFilter(argb, SkXfermode::kSrc_Mode));
   }
   // paint->setFilterQuality(kHigh_SkFilterQuality);
-  paint->setXfermodeMode(GetSkiaBlendMode(blend_type));
+  paint->setBlendMode(GetSkiaBlendMode(blend_type));
   paint->setAlpha(bitmap_alpha);
 }
 
@@ -1196,7 +1196,7 @@ FX_BOOL CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
   SkPaint spaint;
   spaint.setAntiAlias(true);
   spaint.setColor(fill_color);
-  spaint.setXfermodeMode(GetSkiaBlendMode(blend_type));
+  spaint.setBlendMode(GetSkiaBlendMode(blend_type));
 
   m_pCanvas->drawRect(
       SkRect::MakeLTRB(pRect->left, pRect->top, pRect->right, pRect->bottom),
