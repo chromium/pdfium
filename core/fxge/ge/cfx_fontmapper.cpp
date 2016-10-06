@@ -347,10 +347,8 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
     }
 
     CFX_ByteString new_name = GetPSNameFromTT(hFont);
-    if (!new_name.IsEmpty()) {
-      new_name.Insert(0, ' ');
-      m_InstalledTTFonts.push_back(new_name);
-    }
+    if (!new_name.IsEmpty())
+      m_LocalizedTTFonts.push_back(std::make_pair(new_name, name));
     m_pFontInfo->DeleteFont(hFont);
   }
   m_InstalledTTFonts.push_back(name);
@@ -372,14 +370,15 @@ CFX_ByteString CFX_FontMapper::MatchInstalledFonts(
   for (i = pdfium::CollectionSize<int>(m_InstalledTTFonts) - 1; i >= 0; i--) {
     CFX_ByteString norm1 = TT_NormalizeName(m_InstalledTTFonts[i].c_str());
     if (norm1 == norm_name)
-      break;
+      return m_InstalledTTFonts[i];
   }
-  if (i < 0)
-    return CFX_ByteString();
-  CFX_ByteString match = m_InstalledTTFonts[i];
-  if (match[0] == ' ')
-    match = m_InstalledTTFonts[i + 1];
-  return match;
+  for (i = pdfium::CollectionSize<int>(m_LocalizedTTFonts) - 1; i >= 0; i--) {
+    CFX_ByteString norm1 =
+        TT_NormalizeName(m_LocalizedTTFonts[i].first.c_str());
+    if (norm1 == norm_name)
+      return m_LocalizedTTFonts[i].second;
+  }
+  return CFX_ByteString();
 }
 
 FXFT_Face CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,

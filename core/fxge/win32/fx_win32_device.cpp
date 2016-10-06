@@ -471,13 +471,13 @@ CFX_ByteString CFX_Win32FontInfo::FindFont(const CFX_ByteString& name) {
 
   for (size_t i = 0; i < m_pMapper->m_InstalledTTFonts.size(); ++i) {
     CFX_ByteString thisname = m_pMapper->m_InstalledTTFonts[i];
-    if (thisname[0] == ' ') {
-      if (thisname.Mid(1, name.GetLength()) == name) {
-        return m_pMapper->m_InstalledTTFonts[i + 1];
-      }
-    } else if (thisname.Left(name.GetLength()) == name) {
+    if (thisname.Left(name.GetLength()) == name)
       return m_pMapper->m_InstalledTTFonts[i];
-    }
+  }
+  for (size_t i = 0; i < m_pMapper->m_LocalizedTTFonts.size(); ++i) {
+    CFX_ByteString thisname = m_pMapper->m_LocalizedTTFonts[i].first;
+    if (thisname.Left(name.GetLength()) == name)
+      return m_pMapper->m_LocalizedTTFonts[i].second;
   }
   return CFX_ByteString();
 }

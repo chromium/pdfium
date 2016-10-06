@@ -106,6 +106,10 @@ bool CFX_SystemHandler::FindNativeTrueTypeFont(CFX_ByteString sFontFaceName) {
     if (font.Compare(sFontFaceName.AsStringC()))
       return true;
   }
+  for (const auto& fontPair : pFontMapper->m_LocalizedTTFonts) {
+    if (fontPair.first.Compare(sFontFaceName.AsStringC()))
+      return true;
+  }
   return false;
 }
 

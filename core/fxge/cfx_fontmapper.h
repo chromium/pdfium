@@ -45,6 +45,7 @@ class CFX_FontMapper {
   }
 
   std::vector<CFX_ByteString> m_InstalledTTFonts;
+  std::vector<std::pair<CFX_ByteString, CFX_ByteString>> m_LocalizedTTFonts;
 
  private:
   static const size_t MM_FACE_COUNT = 2;
