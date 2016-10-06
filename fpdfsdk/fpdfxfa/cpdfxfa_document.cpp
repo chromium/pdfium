@@ -45,6 +45,9 @@ CPDFXFA_Document::~CPDFXFA_Document() {
 
   if (m_pSDKDoc) {
     m_pSDKDoc->ClearAllFocusedAnnots();
+    // Once we're deleted the SDKDocument will point at a bad underlying
+    // doc so we need to reset it ...
+    m_pSDKDoc->ResetXFADocument();
     m_pSDKDoc = nullptr;
   }
 

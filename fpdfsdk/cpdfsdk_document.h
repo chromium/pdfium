@@ -54,6 +54,7 @@ class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
 #ifdef PDF_ENABLE_XFA
   // Gets the XFA document directly (XFA-only).
   CPDFXFA_Document* GetXFADocument() const { return m_pDoc; }
+  void ResetXFADocument() { m_pDoc = nullptr; }
 
   int GetPageViewCount() const { return m_pageMap.size(); }
 #endif  // PDF_ENABLE_XFA

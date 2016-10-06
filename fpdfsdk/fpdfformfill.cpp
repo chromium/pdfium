@@ -277,7 +277,10 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   // XFA document.
   if (CPDFSDK_Document* pSDKDoc = pEnv->GetSDKDocument()) {
     pSDKDoc->ClearAllFocusedAnnots();
-    pSDKDoc->GetXFADocument()->SetSDKDoc(nullptr);
+    // If the document was closed first, it's possible the XFA document
+    // is now a nullptr.
+    if (pSDKDoc->GetXFADocument())
+      pSDKDoc->GetXFADocument()->SetSDKDoc(nullptr);
   }
 #endif  // PDF_ENABLE_XFA
 
