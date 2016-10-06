@@ -390,6 +390,10 @@ FX_BOOL FaxG4GetRow(const uint8_t* src_buf,
     if (a1 >= columns)
       return TRUE;
 
+    // The position of picture element must be monotonic increasing.
+    if (a0 >= a1)
+      return FALSE;
+
     a0 = a1;
     a0color = !a0color;
   }
