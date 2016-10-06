@@ -64,7 +64,8 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   int cur_low = low;
   do {
     if ((pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) ||
-        (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1)) {
+        (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1) ||
+        (static_cast<size_t>(RANGELEN[NTEMP]) >= 8 * sizeof(cur_low))) {
       return false;
     }
     RANGELOW[NTEMP] = cur_low;
