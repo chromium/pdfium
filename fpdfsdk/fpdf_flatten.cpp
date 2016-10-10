@@ -24,6 +24,8 @@ typedef CFX_ArrayTemplate<CFX_FloatRect> CPDF_RectArray;
 enum FPDF_TYPE { MAX, MIN };
 enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };
 
+namespace {
+
 FX_BOOL IsValiableRect(CFX_FloatRect rect, CFX_FloatRect rcPage) {
   if (rect.left - rect.right > 0.000001f || rect.bottom - rect.top > 0.000001f)
     return FALSE;
@@ -182,67 +184,48 @@ CFX_FloatRect CalculateRect(CPDF_RectArray* pRectArray) {
   return rcRet;
 }
 
-void SetPageContents(CFX_ByteString key,
+uint32_t NewIndirectContentsStream(const CFX_ByteString& key,
+                                   CPDF_Document* pDocument) {
+  CPDF_Stream* pNewContents = new CPDF_Stream(
+      nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
+  CFX_ByteString sStream;
+  sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
+  pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
+  return pDocument->AddIndirectObject(pNewContents);
+}
+
+void SetPageContents(const CFX_ByteString& key,
                      CPDF_Dictionary* pPage,
                      CPDF_Document* pDocument) {
-  CPDF_Object* pContentsObj = pPage->GetStreamFor("Contents");
-  if (!pContentsObj) {
-    pContentsObj = pPage->GetArrayFor("Contents");
-  }
-
-  if (!pContentsObj) {
-    // Create a new contents dictionary
-    if (!key.IsEmpty()) {
-      CPDF_Stream* pNewContents = new CPDF_Stream(
-          nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
-      CFX_ByteString sStream;
-      sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-      pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
-      pPage->SetReferenceFor("Contents", pDocument,
-                             pDocument->AddIndirectObject(pNewContents));
-    }
-    return;
-  }
-
   CPDF_Array* pContentsArray = nullptr;
-  switch (pContentsObj->GetType()) {
-    case CPDF_Object::STREAM: {
-      pContentsArray = new CPDF_Array;
-      CPDF_Stream* pContents = pContentsObj->AsStream();
-      uint32_t dwObjNum = pDocument->AddIndirectObject(pContents);
-      CPDF_StreamAcc acc;
-      acc.LoadAllData(pContents);
-      CFX_ByteString sStream = "q\n";
-      CFX_ByteString sBody =
-          CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
-      sStream = sStream + sBody + "\nQ";
-      pContents->SetData(sStream.raw_str(), sStream.GetLength());
-      pContentsArray->AddReference(pDocument, dwObjNum);
-      break;
+  CPDF_Stream* pContentsStream = pPage->GetStreamFor("Contents");
+  if (!pContentsStream) {
+    pContentsArray = pPage->GetArrayFor("Contents");
+    if (!pContentsArray) {
+      if (!key.IsEmpty()) {
+        pPage->SetReferenceFor("Contents", pDocument,
+                               NewIndirectContentsStream(key, pDocument));
+      }
+      return;
     }
-
-    case CPDF_Object::ARRAY: {
-      pContentsArray = pContentsObj->AsArray();
-      break;
-    }
-    default:
-      break;
   }
-
-  if (!pContentsArray)
-    return;
-
-  pPage->SetReferenceFor("Contents", pDocument,
-                         pDocument->AddIndirectObject(pContentsArray));
-
+  pPage->ConvertToIndirectObjectFor("Contents", pDocument);
+  if (!pContentsArray) {
+    pContentsArray = new CPDF_Array;
+    CPDF_StreamAcc acc;
+    acc.LoadAllData(pContentsStream);
+    CFX_ByteString sStream = "q\n";
+    CFX_ByteString sBody =
+        CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
+    sStream = sStream + sBody + "\nQ";
+    pContentsStream->SetData(sStream.raw_str(), sStream.GetLength());
+    pContentsArray->AddReference(pDocument, pContentsStream->GetObjNum());
+    pPage->SetReferenceFor("Contents", pDocument,
+                           pDocument->AddIndirectObject(pContentsArray));
+  }
   if (!key.IsEmpty()) {
-    CPDF_Stream* pNewContents = new CPDF_Stream(
-        nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
-    CFX_ByteString sStream;
-    sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-    pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
     pContentsArray->AddReference(pDocument,
-                                 pDocument->AddIndirectObject(pNewContents));
+                                 NewIndirectContentsStream(key, pDocument));
   }
 }
 
@@ -263,45 +246,7 @@ CFX_Matrix GetMatrix(CFX_FloatRect rcAnnot,
   return CFX_Matrix(a, 0, 0, d, e, f);
 }
 
-void GetOffset(FX_FLOAT& fa,
-               FX_FLOAT& fd,
-               FX_FLOAT& fe,
-               FX_FLOAT& ff,
-               CFX_FloatRect rcAnnot,
-               CFX_FloatRect rcStream,
-               const CFX_Matrix& matrix) {
-  FX_FLOAT fStreamWidth = 0.0f;
-  FX_FLOAT fStreamHeight = 0.0f;
-
-  if (matrix.a != 0 && matrix.d != 0) {
-    fStreamWidth = rcStream.right - rcStream.left;
-    fStreamHeight = rcStream.top - rcStream.bottom;
-  } else {
-    fStreamWidth = rcStream.top - rcStream.bottom;
-    fStreamHeight = rcStream.right - rcStream.left;
-  }
-
-  FX_FLOAT x1 =
-      matrix.a * rcStream.left + matrix.c * rcStream.bottom + matrix.e;
-  FX_FLOAT y1 =
-      matrix.b * rcStream.left + matrix.d * rcStream.bottom + matrix.f;
-  FX_FLOAT x2 = matrix.a * rcStream.left + matrix.c * rcStream.top + matrix.e;
-  FX_FLOAT y2 = matrix.b * rcStream.left + matrix.d * rcStream.top + matrix.f;
-  FX_FLOAT x3 =
-      matrix.a * rcStream.right + matrix.c * rcStream.bottom + matrix.e;
-  FX_FLOAT y3 =
-      matrix.b * rcStream.right + matrix.d * rcStream.bottom + matrix.f;
-  FX_FLOAT x4 = matrix.a * rcStream.right + matrix.c * rcStream.top + matrix.e;
-  FX_FLOAT y4 = matrix.b * rcStream.right + matrix.d * rcStream.top + matrix.f;
-
-  FX_FLOAT left = std::min(std::min(x1, x2), std::min(x3, x4));
-  FX_FLOAT bottom = std::min(std::min(y1, y2), std::min(y3, y4));
-
-  fa = (rcAnnot.right - rcAnnot.left) / fStreamWidth;
-  fd = (rcAnnot.top - rcAnnot.bottom) / fStreamHeight;
-  fe = rcAnnot.left - left * fa;
-  ff = rcAnnot.bottom - bottom * fd;
-}
+}  // namespace
 
 DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);

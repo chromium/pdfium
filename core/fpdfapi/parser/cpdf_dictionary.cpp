@@ -192,6 +192,17 @@ void CPDF_Dictionary::SetFor(const CFX_ByteString& key, CPDF_Object* pObj) {
     m_Map.erase(it);
 }
 
+void CPDF_Dictionary::ConvertToIndirectObjectFor(
+    const CFX_ByteString& key,
+    CPDF_IndirectObjectHolder* pHolder) {
+  auto it = m_Map.find(key);
+  if (it == m_Map.end() || it->second->IsReference())
+    return;
+
+  uint32_t objnum = pHolder->AddIndirectObject(it->second);
+  it->second = new CPDF_Reference(pHolder, objnum);
+}
+
 void CPDF_Dictionary::RemoveFor(const CFX_ByteString& key) {
   auto it = m_Map.find(key);
   if (it == m_Map.end())

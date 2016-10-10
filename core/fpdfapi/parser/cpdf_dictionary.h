@@ -70,6 +70,9 @@ class CPDF_Dictionary : public CPDF_Object {
   void SetMatrixFor(const CFX_ByteString& key, const CFX_Matrix& matrix);
   void SetBooleanFor(const CFX_ByteString& key, bool bValue);
 
+  void ConvertToIndirectObjectFor(const CFX_ByteString& key,
+                                  CPDF_IndirectObjectHolder* pHolder);
+
   // Invalidates iterators for the element with the key |key|.
   void RemoveFor(const CFX_ByteString& key);
 

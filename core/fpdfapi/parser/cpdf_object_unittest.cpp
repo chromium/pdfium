@@ -766,6 +766,21 @@ TEST(PDFArrayTest, CloneDirectObject) {
   EXPECT_FALSE(cloned_obj);
 }
 
+TEST(PDFArrayTest, ConvertIndirect) {
+  CPDF_IndirectObjectHolder objects_holder;
+  ScopedArray array(new CPDF_Array);
+  CPDF_Object* pObj = new CPDF_Number(42);
+  array->Add(pObj);
+  array->ConvertToIndirectObjectAt(0, &objects_holder);
+  CPDF_Object* pRef = array->GetObjectAt(0);
+  CPDF_Object* pNum = array->GetDirectObjectAt(0);
+  EXPECT_TRUE(pRef->IsReference());
+  EXPECT_TRUE(pNum->IsNumber());
+  EXPECT_NE(pObj, pRef);
+  EXPECT_EQ(pObj, pNum);
+  EXPECT_EQ(42, array->GetIntegerAt(0));
+}
+
 TEST(PDFDictionaryTest, CloneDirectObject) {
   CPDF_IndirectObjectHolder objects_holder;
   ScopedDict dict(new CPDF_Dictionary());
@@ -832,4 +847,19 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     // Recursively referenced object is not cloned.
     EXPECT_EQ(nullptr, cloned_arr->AsArray()->GetObjectAt(0));
   }
+}
+
+TEST(PDFDictionaryTest, ConvertIndirect) {
+  CPDF_IndirectObjectHolder objects_holder;
+  ScopedDict dict(new CPDF_Dictionary);
+  CPDF_Object* pObj = new CPDF_Number(42);
+  dict->SetFor("clams", pObj);
+  dict->ConvertToIndirectObjectFor("clams", &objects_holder);
+  CPDF_Object* pRef = dict->GetObjectFor("clams");
+  CPDF_Object* pNum = dict->GetDirectObjectFor("clams");
+  EXPECT_TRUE(pRef->IsReference());
+  EXPECT_TRUE(pNum->IsNumber());
+  EXPECT_NE(pObj, pRef);
+  EXPECT_EQ(pObj, pNum);
+  EXPECT_EQ(42, dict->GetIntegerFor("clams"));
 }
