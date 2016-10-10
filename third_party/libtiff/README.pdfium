@@ -17,3 +17,4 @@ Local Modifications:
 0005-Leak-TIFFFetchStripThing.patch: Fix a memory leak
 0006-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
 0007-uninitialized-value.patch: Fix potentially uninitialized dircount value
+0008-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
