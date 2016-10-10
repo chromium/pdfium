@@ -30,7 +30,7 @@ CPDF_Dictionary::~CPDF_Dictionary() {
   // in case of cyclic references.
   m_ObjNum = kInvalidObjNum;
   for (const auto& it : m_Map) {
-    if (it.second)
+    if (it.second && it.second->GetObjNum() != kInvalidObjNum)
       it.second->Release();
   }
 }
