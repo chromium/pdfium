@@ -17,11 +17,7 @@ CPDF_Stream::CPDF_Stream() {}
 CPDF_Stream::CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict)
     : m_pDict(pDict), m_dwSize(size), m_pDataBuf(pData) {}
 
-CPDF_Stream::~CPDF_Stream() {
-  m_ObjNum = kInvalidObjNum;
-  if (m_pDict && m_pDict->GetObjNum() == kInvalidObjNum)
-    m_pDict.release();  // lowercase release, release ownership.
-}
+CPDF_Stream::~CPDF_Stream() {}
 
 CPDF_Object::Type CPDF_Stream::GetType() const {
   return STREAM;

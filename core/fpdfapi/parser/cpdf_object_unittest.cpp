@@ -25,7 +25,6 @@ namespace {
 using ScopedArray = std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>>;
 using ScopedDict =
     std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>;
-using ScopedStream = std::unique_ptr<CPDF_Stream, ReleaseDeleter<CPDF_Stream>>;
 
 void TestArrayAccessors(const CPDF_Array* arr,
                         size_t index,
@@ -96,10 +95,8 @@ class PDFObjectsTest : public testing::Test {
 
     // Indirect references to indirect objects.
     m_ObjHolder.reset(new CPDF_IndirectObjectHolder());
-    m_IndirectObjs = {boolean_true_obj->Clone(), number_int_obj->Clone(),
-                      str_spec_obj->Clone(),     name_obj->Clone(),
-                      m_ArrayObj->Clone(),       m_DictObj->Clone(),
-                      stream_obj->Clone()};
+    m_IndirectObjs = {boolean_true_obj, number_int_obj, str_spec_obj, name_obj,
+                      m_ArrayObj,       m_DictObj,      stream_obj};
     for (size_t i = 0; i < m_IndirectObjs.size(); ++i) {
       m_ObjHolder->AddIndirectObject(m_IndirectObjs[i]);
       m_RefObjs.emplace_back(new CPDF_Reference(
@@ -107,7 +104,7 @@ class PDFObjectsTest : public testing::Test {
     }
   }
 
-  bool Equal(const CPDF_Object* obj1, const CPDF_Object* obj2) {
+  bool Equal(CPDF_Object* obj1, CPDF_Object* obj2) {
     if (obj1 == obj2)
       return true;
     if (!obj1 || !obj2 || obj1->GetType() != obj2->GetType())
@@ -256,7 +253,7 @@ TEST_F(PDFObjectsTest, GetDict) {
   const CPDF_Dictionary* const indirect_obj_results[] = {
       nullptr, nullptr, nullptr, nullptr, nullptr, m_DictObj, m_StreamDictObj};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_TRUE(Equal(indirect_obj_results[i], m_RefObjs[i]->GetDict()));
+    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetDict());
 }
 
 TEST_F(PDFObjectsTest, GetArray) {
@@ -790,9 +787,10 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
 
 TEST(PDFObjectTest, CloneCheckLoop) {
   {
-    // Create a dictionary/array pair with a reference loop.
-    CPDF_Dictionary* dict_obj = new CPDF_Dictionary();
+    // Create an object with a reference loop.
     ScopedArray arr_obj(new CPDF_Array);
+    // Dictionary object.
+    CPDF_Dictionary* dict_obj = new CPDF_Dictionary();
     dict_obj->SetFor("arr", arr_obj.get());
     arr_obj->InsertAt(0, dict_obj);
 
@@ -806,22 +804,6 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     ASSERT_TRUE(cloned_dict->IsDictionary());
     // Recursively referenced object is not cloned.
     EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectFor("arr"));
-  }
-  {
-    // Create a dictionary/stream pair with a reference loop.
-    CPDF_Dictionary* dict_obj = new CPDF_Dictionary();
-    ScopedStream stream_obj(new CPDF_Stream(nullptr, 0, dict_obj));
-    dict_obj->SetFor("stream", stream_obj.get());
-
-    // Clone this object to see whether stack overflow will be triggered.
-    ScopedStream cloned_stream(stream_obj->Clone()->AsStream());
-    // Cloned object should be the same as the original.
-    ASSERT_TRUE(cloned_stream);
-    CPDF_Object* cloned_dict = cloned_stream->GetDict();
-    ASSERT_TRUE(cloned_dict);
-    ASSERT_TRUE(cloned_dict->IsDictionary());
-    // Recursively referenced object is not cloned.
-    EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectFor("stream"));
   }
   {
     CPDF_IndirectObjectHolder objects_holder;
