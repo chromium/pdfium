@@ -54,9 +54,6 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   ASSERT(pPageView);
   ASSERT(pAnnot);
 
-  CPDFSDK_Document* pSDKDoc = pPageView->GetSDKDocument();
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-
   CFX_Graphics gs;
   gs.Create(pDevice);
 
@@ -64,10 +61,11 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   mt = *pUser2Device;
 
   FX_BOOL bIsHighlight = FALSE;
-  if (pSDKDoc->GetFocusAnnot() != pAnnot)
+  if (pPageView->GetFormFillEnv()->GetSDKDocument()->GetFocusAnnot() != pAnnot)
     bIsHighlight = TRUE;
 
-  pWidgetHandler->RenderWidget(pAnnot->GetXFAWidget(), &gs, &mt, bIsHighlight);
+  GetXFAWidgetHandler(pAnnot)->RenderWidget(pAnnot->GetXFAWidget(), &gs, &mt,
+                                            bIsHighlight);
 
   // to do highlight and shadow
 }
@@ -117,11 +115,11 @@ FX_BOOL CPDFSDK_XFAWidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  CPDFSDK_Document* pSDKDoc = pPageView->GetSDKDocument();
-  if (!pSDKDoc)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
+  if (!pFormFillEnv->GetSDKDocument())
     return FALSE;
 
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc = pFormFillEnv->GetSDKDocument()->GetXFADocument();
   if (!pDoc)
     return FALSE;
 
@@ -346,11 +344,11 @@ CXFA_FFWidgetHandler* CPDFSDK_XFAWidgetHandler::GetXFAWidgetHandler(
   if (!pPageView)
     return nullptr;
 
-  CPDFSDK_Document* pSDKDoc = pPageView->GetSDKDocument();
-  if (!pSDKDoc)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
+  if (!pFormFillEnv->GetSDKDocument())
     return nullptr;
 
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc = pFormFillEnv->GetSDKDocument()->GetXFADocument();
   if (!pDoc)
     return nullptr;
 

@@ -63,7 +63,7 @@ CPDFSDK_PageView* CPDFSDK_Document::GetPageView(
   if (!ReNew)
     return nullptr;
 
-  CPDFSDK_PageView* pPageView = new CPDFSDK_PageView(this, pUnderlyingPage);
+  CPDFSDK_PageView* pPageView = new CPDFSDK_PageView(GetEnv(), pUnderlyingPage);
   m_pageMap[pUnderlyingPage] = pPageView;
   // Delay to load all the annotations, to avoid endless loop.
   pPageView->LoadFXAnnots();

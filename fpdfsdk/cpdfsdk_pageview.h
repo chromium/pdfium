@@ -21,7 +21,8 @@ class CPDF_RenderOptions;
 
 class CPDFSDK_PageView final : public CPDF_Page::View {
  public:
-  CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc, UnderlyingPageType* page);
+  CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                   UnderlyingPageType* page);
   ~CPDFSDK_PageView();
 
 #ifdef PDF_ENABLE_XFA
@@ -58,7 +59,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   CPDF_Page* GetPDFPage() const;
   CPDF_Document* GetPDFDocument();
-  CPDFSDK_Document* GetSDKDocument() { return m_pSDKDoc; }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
   FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
   FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA
@@ -102,7 +103,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   UnderlyingPageType* const m_page;
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_SDKAnnotArray;
-  CPDFSDK_Document* const m_pSDKDoc;
+  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;  // Not owned.
   CPDFSDK_Annot::ObservedPtr m_pCaptureWidget;
 #ifndef PDF_ENABLE_XFA
   bool m_bOwnsPage;

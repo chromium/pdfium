@@ -208,7 +208,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
     CPDFSDK_Annot::ObservedPtr pNext(
         GetNextAnnot(pFocusAnnot, !m_pEnv->IsSHIFTKeyDown(nFlag)));
     if (pNext && pNext.Get() != pFocusAnnot) {
-      pPage->GetSDKDocument()->SetFocusAnnot(&pNext);
+      pPage->GetFormFillEnv()->GetSDKDocument()->SetFocusAnnot(&pNext);
       return TRUE;
     }
   }
@@ -226,11 +226,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlag) {
   ASSERT(*pAnnot);
-  if (!GetAnnotHandler(pAnnot->Get())->OnSetFocus(pAnnot, nFlag))
-    return FALSE;
-
-  (*pAnnot)->GetPageView()->GetSDKDocument();
-  return TRUE;
+  return GetAnnotHandler(pAnnot->Get())->OnSetFocus(pAnnot, nFlag);
 }
 
 FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnKillFocus(

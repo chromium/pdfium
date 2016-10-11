@@ -691,8 +691,8 @@ void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Widget* pWidget,
                                              uint32_t nFlag) {
   if (!m_bNotifying) {
     ASSERT(pWidget);
-    CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-    CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
+    CPDFSDK_InterForm* pInterForm =
+        pPageView->GetFormFillEnv()->GetSDKDocument()->GetInterForm();
     pInterForm->OnCalculate(pWidget->GetFormField());
     m_bNotifying = FALSE;
   }
@@ -704,8 +704,8 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
                                           uint32_t nFlag) {
   if (!m_bNotifying) {
     ASSERT(pWidget);
-    CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-    CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
+    CPDFSDK_InterForm* pInterForm =
+        pPageView->GetFormFillEnv()->GetSDKDocument()->GetInterForm();
 
     FX_BOOL bFormatted = FALSE;
     CFX_WideString sValue =
@@ -932,7 +932,8 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
       int nAge = pData->pWidget->GetAppearanceAge();
       int nValueAge = pData->pWidget->GetValueAge();
 
-      CPDFSDK_Document* pDocument = pData->pPageView->GetSDKDocument();
+      CPDFSDK_FormFillEnvironment* pFormFillEnv =
+          pData->pPageView->GetFormFillEnv();
 
       PDFSDK_FieldAction fa;
       fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
@@ -973,7 +974,7 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
           bRC = FALSE;
         }
 
-        if (pDocument->GetFocusAnnot() != pData->pWidget) {
+        if (pFormFillEnv->GetSDKDocument()->GetFocusAnnot() != pData->pWidget) {
           pFormFiller->CommitData(pData->pPageView, nFlag);
           bExit = TRUE;
         }

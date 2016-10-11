@@ -69,8 +69,8 @@ CPDFSDK_Widget::~CPDFSDK_Widget() {}
 
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
-  CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      m_pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
   if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
     if (!m_hMixXFAWidget) {
       if (CXFA_FFDocView* pDocView = pDoc->GetXFADocView()) {
@@ -94,8 +94,8 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
 }
 
 CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
-  CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      m_pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
   if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
     if (CXFA_FFDocView* pDocView = pDoc->GetXFADocView()) {
       CFX_WideString sName = GetName();
@@ -108,8 +108,8 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
 }
 
 CXFA_FFWidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
-  CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      m_pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
   if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
     if (!m_pWidgetHandler) {
       if (CXFA_FFDocView* pDocView = pDoc->GetXFADocView())
@@ -223,8 +223,8 @@ FX_BOOL CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
 FX_BOOL CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
                                      PDFSDK_FieldAction& data,
                                      CPDFSDK_PageView* pPageView) {
-  CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      m_pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
 
   CXFA_FFWidget* hWidget = GetMixXFAWidget();
   if (!hWidget)
@@ -327,8 +327,8 @@ void CPDFSDK_Widget::Synchronize(FX_BOOL bSynchronizeElse) {
 }
 
 void CPDFSDK_Widget::SynchronizeXFAValue() {
-  CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      m_pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
   CXFA_FFDocView* pXFADocView = pDoc->GetXFADocView();
   if (!pXFADocView)
     return;
@@ -342,8 +342,8 @@ void CPDFSDK_Widget::SynchronizeXFAValue() {
 }
 
 void CPDFSDK_Widget::SynchronizeXFAItems() {
-  CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      m_pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
   CXFA_FFDocView* pXFADocView = pDoc->GetXFADocView();
   if (!pXFADocView)
     return;
@@ -509,8 +509,8 @@ int CPDFSDK_Widget::GetFieldType() const {
 
 FX_BOOL CPDFSDK_Widget::IsAppearanceValid() {
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      m_pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
   int nDocType = pDoc->GetDocType();
   if (nDocType != DOCTYPE_PDF && nDocType != DOCTYPE_STATIC_XFA)
     return TRUE;
@@ -852,10 +852,6 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   uint8_t alpha = m_pInterForm->GetHighlightAlpha();
 
   CFX_FloatRect rcDevice;
-  CPDFSDK_FormFillEnvironment* pEnv = m_pInterForm->GetFormFillEnv();
-  if (!pEnv)
-    return;
-
   CFX_Matrix page2device;
   pPageView->GetCurrentMatrix(page2device);
   page2device.Transform(((FX_FLOAT)rc.left), ((FX_FLOAT)rc.bottom),
@@ -1835,11 +1831,10 @@ void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {
 FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
                                   PDFSDK_FieldAction& data,
                                   CPDFSDK_PageView* pPageView) {
-  CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Document* pDoc = pDocument->GetXFADocument();
+  CPDFXFA_Document* pDoc = pFormFillEnv->GetSDKDocument()->GetXFADocument();
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     XFA_EVENTTYPE eEventType = GetXFAEventType(type, data.bWillCommit);
 
@@ -1879,9 +1874,9 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 
   CPDF_Action action = GetAAction(type);
   if (action.GetDict() && action.GetType() != CPDF_Action::Unknown) {
-    CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
-    return pActionHandler->DoAction_Field(action, type, pDocument,
-                                          GetFormField(), data);
+    CPDFSDK_ActionHandler* pActionHandler = pFormFillEnv->GetActionHander();
+    return pActionHandler->DoAction_Field(
+        action, type, pFormFillEnv->GetSDKDocument(), GetFormField(), data);
   }
   return FALSE;
 }

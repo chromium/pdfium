@@ -26,6 +26,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fsdk_pauseadapter.h"
@@ -684,7 +685,7 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
     // This will delete the |pPageView| object. We must cleanup the PageView
     // first because it will attempt to reset the View on the |pPage| during
     // destruction.
-    pPageView->GetSDKDocument()->RemovePageView(pPage);
+    pPageView->GetFormFillEnv()->GetSDKDocument()->RemovePageView(pPage);
     // If the page was owned then the pageview will have deleted the page.
     if (owned)
       return;
