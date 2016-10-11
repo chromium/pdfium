@@ -32,6 +32,10 @@ CPDF_ModuleMgr::CPDF_ModuleMgr() : m_pCodecModule(nullptr) {}
 
 CPDF_ModuleMgr::~CPDF_ModuleMgr() {}
 
+void CPDF_ModuleMgr::InitPageModule() {
+  m_pPageModule.reset(new CPDF_PageModule);
+}
+
 CCodec_FaxModule* CPDF_ModuleMgr::GetFaxModule() {
   return m_pCodecModule ? m_pCodecModule->GetFaxModule() : nullptr;
 }

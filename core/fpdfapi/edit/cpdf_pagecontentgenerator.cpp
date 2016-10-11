@@ -7,6 +7,7 @@
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 
 #include "core/fpdfapi/edit/cpdf_creator.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"

@@ -8,8 +8,8 @@
 
 #include <memory>
 
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
-#include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_ImageObject::CPDF_ImageObject()

@@ -6,8 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_shadingobject.h"
 
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
-#include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_ShadingObject::CPDF_ShadingObject() : m_pShading(nullptr) {}

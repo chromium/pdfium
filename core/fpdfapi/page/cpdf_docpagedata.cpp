@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 
 #include <algorithm>
 #include <set>
@@ -23,10 +23,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "third_party/base/stl_util.h"
-
-void CPDF_ModuleMgr::InitPageModule() {
-  m_pPageModule.reset(new CPDF_PageModule);
-}
 
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc), m_bForceClear(false) {}
