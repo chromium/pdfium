@@ -25,7 +25,8 @@ class CPDFSDK_AnnotHandlerMgr;
 class CPDFSDK_Document;
 class IJS_Runtime;
 
-class CPDFSDK_FormFillEnvironment final {
+class CPDFSDK_FormFillEnvironment
+    : public CFX_Observable<CPDFSDK_FormFillEnvironment> {
  public:
   CPDFSDK_FormFillEnvironment(UnderlyingDocumentType* pDoc,
                               FPDF_FORMFILLINFO* pFFinfo);

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_observable.h"
-#include "fpdfsdk/cpdfsdk_document.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 
@@ -277,163 +277,164 @@ class Field : public CJS_EmbedObj {
                             CJS_Value& vRet,
                             CFX_WideString& sError);
 
-  static void SetAlignment(CPDFSDK_Document* pDocument,
+  static void SetAlignment(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
                            const CFX_ByteString& string);
-  static void SetBorderStyle(CPDFSDK_Document* pDocument,
+  static void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                              const CFX_WideString& swFieldName,
                              int nControlIndex,
                              const CFX_ByteString& string);
-  static void SetButtonAlignX(CPDFSDK_Document* pDocument,
+  static void SetButtonAlignX(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                               const CFX_WideString& swFieldName,
                               int nControlIndex,
                               int number);
-  static void SetButtonAlignY(CPDFSDK_Document* pDocument,
+  static void SetButtonAlignY(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                               const CFX_WideString& swFieldName,
                               int nControlIndex,
                               int number);
-  static void SetButtonFitBounds(CPDFSDK_Document* pDocument,
+  static void SetButtonFitBounds(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  const CFX_WideString& swFieldName,
                                  int nControlIndex,
                                  bool b);
-  static void SetButtonPosition(CPDFSDK_Document* pDocument,
+  static void SetButtonPosition(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                 const CFX_WideString& swFieldName,
                                 int nControlIndex,
                                 int number);
-  static void SetButtonScaleHow(CPDFSDK_Document* pDocument,
+  static void SetButtonScaleHow(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                 const CFX_WideString& swFieldName,
                                 int nControlIndex,
                                 int number);
-  static void SetButtonScaleWhen(CPDFSDK_Document* pDocument,
+  static void SetButtonScaleWhen(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  const CFX_WideString& swFieldName,
                                  int nControlIndex,
                                  int number);
-  static void SetCalcOrderIndex(CPDFSDK_Document* pDocument,
+  static void SetCalcOrderIndex(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                 const CFX_WideString& swFieldName,
                                 int nControlIndex,
                                 int number);
-  static void SetCharLimit(CPDFSDK_Document* pDocument,
+  static void SetCharLimit(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
                            int number);
-  static void SetComb(CPDFSDK_Document* pDocument,
+  static void SetComb(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                       const CFX_WideString& swFieldName,
                       int nControlIndex,
                       bool b);
-  static void SetCommitOnSelChange(CPDFSDK_Document* pDocument,
+  static void SetCommitOnSelChange(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                    const CFX_WideString& swFieldName,
                                    int nControlIndex,
                                    bool b);
-  static void SetCurrentValueIndices(CPDFSDK_Document* pDocument,
+  static void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                      const CFX_WideString& swFieldName,
                                      int nControlIndex,
                                      const std::vector<uint32_t>& array);
-  static void SetDefaultStyle(CPDFSDK_Document* pDocument,
+  static void SetDefaultStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                               const CFX_WideString& swFieldName,
                               int nControlIndex);
-  static void SetDefaultValue(CPDFSDK_Document* pDocument,
+  static void SetDefaultValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                               const CFX_WideString& swFieldName,
                               int nControlIndex,
                               const CFX_WideString& string);
-  static void SetDoNotScroll(CPDFSDK_Document* pDocument,
+  static void SetDoNotScroll(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                              const CFX_WideString& swFieldName,
                              int nControlIndex,
                              bool b);
-  static void SetDisplay(CPDFSDK_Document* pDocument,
+  static void SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          const CFX_WideString& swFieldName,
                          int nControlIndex,
                          int number);
-  static void SetFillColor(CPDFSDK_Document* pDocument,
+  static void SetFillColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
                            const CPWL_Color& color);
-  static void SetHidden(CPDFSDK_Document* pDocument,
+  static void SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                         const CFX_WideString& swFieldName,
                         int nControlIndex,
                         bool b);
-  static void SetHighlight(CPDFSDK_Document* pDocument,
+  static void SetHighlight(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
                            const CFX_ByteString& string);
-  static void SetLineWidth(CPDFSDK_Document* pDocument,
+  static void SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
                            int number);
-  static void SetMultiline(CPDFSDK_Document* pDocument,
+  static void SetMultiline(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
                            bool b);
-  static void SetMultipleSelection(CPDFSDK_Document* pDocument,
+  static void SetMultipleSelection(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                    const CFX_WideString& swFieldName,
                                    int nControlIndex,
                                    bool b);
-  static void SetPassword(CPDFSDK_Document* pDocument,
+  static void SetPassword(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,
                           bool b);
-  static void SetRect(CPDFSDK_Document* pDocument,
+  static void SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                       const CFX_WideString& swFieldName,
                       int nControlIndex,
                       const CFX_FloatRect& rect);
-  static void SetRotation(CPDFSDK_Document* pDocument,
+  static void SetRotation(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,
                           int number);
-  static void SetStrokeColor(CPDFSDK_Document* pDocument,
+  static void SetStrokeColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                              const CFX_WideString& swFieldName,
                              int nControlIndex,
                              const CPWL_Color& color);
-  static void SetStyle(CPDFSDK_Document* pDocument,
+  static void SetStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        const CFX_WideString& swFieldName,
                        int nControlIndex,
                        const CFX_ByteString& string);
-  static void SetTextColor(CPDFSDK_Document* pDocument,
+  static void SetTextColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
                            const CPWL_Color& color);
-  static void SetTextFont(CPDFSDK_Document* pDocument,
+  static void SetTextFont(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,
                           const CFX_ByteString& string);
-  static void SetTextSize(CPDFSDK_Document* pDocument,
+  static void SetTextSize(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,
                           int number);
-  static void SetUserName(CPDFSDK_Document* pDocument,
+  static void SetUserName(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,
                           const CFX_WideString& string);
-  static void SetValue(CPDFSDK_Document* pDocument,
+  static void SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        const CFX_WideString& swFieldName,
                        int nControlIndex,
                        const std::vector<CFX_WideString>& strArray);
 
-  static void AddField(CPDFSDK_Document* pDocument,
+  static void AddField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        int nPageIndex,
                        int nFieldType,
                        const CFX_WideString& sName,
                        const CFX_FloatRect& rcCoords);
 
-  static void UpdateFormField(CPDFSDK_Document* pDocument,
+  static void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                               CPDF_FormField* pFormField,
                               FX_BOOL bChangeMark,
                               FX_BOOL bResetAP,
                               FX_BOOL bRefresh);
-  static void UpdateFormControl(CPDFSDK_Document* pDocument,
+  static void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                 CPDF_FormControl* pFormControl,
                                 FX_BOOL bChangeMark,
                                 FX_BOOL bResetAP,
                                 FX_BOOL bRefresh);
 
-  static CPDFSDK_Widget* GetWidget(CPDFSDK_Document* pDocument,
+  static CPDFSDK_Widget* GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                    CPDF_FormControl* pFormControl,
                                    bool createIfNeeded);
   static std::vector<CPDF_FormField*> GetFormFields(
-      CPDFSDK_Document* pDocument,
+      CPDFSDK_FormFillEnvironment* pFormFillEnv,
       const CFX_WideString& csFieldName);
 
-  static void DoDelay(CPDFSDK_Document* pDocument, CJS_DelayData* pData);
+  static void DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                      CJS_DelayData* pData);
 
   FX_BOOL AttachField(Document* pDocument, const CFX_WideString& csFieldName);
   void SetDelay(FX_BOOL bDelay);
@@ -461,7 +462,7 @@ class Field : public CJS_EmbedObj {
 
  public:
   Document* m_pJSDoc;
-  CPDFSDK_Document::ObservedPtr m_pDocument;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   CFX_WideString m_FieldName;
   int m_nFormControlIndex;
   FX_BOOL m_bCanSet;

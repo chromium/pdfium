@@ -887,8 +887,10 @@ FX_BOOL Document::delay(IJS_Context* cc,
     } else {
       std::list<std::unique_ptr<CJS_DelayData>> DelayDataToProcess;
       DelayDataToProcess.swap(m_DelayData);
-      for (const auto& pData : DelayDataToProcess)
-        Field::DoDelay(m_pDocument.Get(), pData.get());
+      for (const auto& pData : DelayDataToProcess) {
+        if (m_pDocument.Get())
+          Field::DoDelay(m_pDocument->GetEnv(), pData.get());
+      }
     }
   }
   return TRUE;
@@ -1721,8 +1723,10 @@ void Document::DoFieldDelay(const CFX_WideString& sFieldName,
     }
   }
 
-  for (const auto& pData : DelayDataForFieldAndControlIndex)
-    Field::DoDelay(m_pDocument.Get(), pData.get());
+  for (const auto& pData : DelayDataForFieldAndControlIndex) {
+    if (m_pDocument.Get())
+      Field::DoDelay(m_pDocument->GetEnv(), pData.get());
+  }
 }
 
 CJS_Document* Document::GetCJSDoc() const {
