@@ -22,17 +22,17 @@ class CJS_ContextStub final : public IJS_Context {
   }
 
   void OnApp_Init() override {}
-  void OnDoc_Open(CPDFSDK_Document* pDoc,
+  void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                   const CFX_WideString& strTargetName) override {}
-  void OnDoc_WillPrint(CPDFSDK_Document* pDoc) override {}
-  void OnDoc_DidPrint(CPDFSDK_Document* pDoc) override {}
-  void OnDoc_WillSave(CPDFSDK_Document* pDoc) override {}
-  void OnDoc_DidSave(CPDFSDK_Document* pDoc) override {}
-  void OnDoc_WillClose(CPDFSDK_Document* pDoc) override {}
-  void OnPage_Open(CPDFSDK_Document* pTarget) override {}
-  void OnPage_Close(CPDFSDK_Document* pTarget) override {}
-  void OnPage_InView(CPDFSDK_Document* pTarget) override {}
-  void OnPage_OutView(CPDFSDK_Document* pTarget) override {}
+  void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnDoc_DidSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnDoc_WillClose(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
   void OnField_MouseDown(FX_BOOL bModifier,
                          FX_BOOL bShift,
                          CPDF_FormField* pTarget) override {}
@@ -111,9 +111,10 @@ class CJS_ContextStub final : public IJS_Context {
                         FX_BOOL bShift,
                         CPDFSDK_Annot* pScreen) override {}
   void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) override {}
-  void OnLink_MouseUp(CPDFSDK_Document* pTarget) override {}
-  void OnMenu_Exec(CPDFSDK_Document* pTarget, const CFX_WideString&) override {}
-  void OnBatchExec(CPDFSDK_Document* pTarget) override {}
+  void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
+  void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                   const CFX_WideString&) override {}
+  void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
   void OnConsole_Exec() override {}
   void OnExternal_Exec() override {}
 };

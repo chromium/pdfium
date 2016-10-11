@@ -13,7 +13,7 @@
 class CPDF_Bookmark;
 class CPDF_FormField;
 class CPDFSDK_Annot;
-class CPDFSDK_Document;
+class CPDFSDK_FormFillEnvironment;
 
 // Records the details of an event and triggers JS execution for it.
 class IJS_Context {
@@ -23,18 +23,18 @@ class IJS_Context {
 
   virtual void OnApp_Init() = 0;
 
-  virtual void OnDoc_Open(CPDFSDK_Document* pDoc,
+  virtual void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           const CFX_WideString& strTargetName) = 0;
-  virtual void OnDoc_WillPrint(CPDFSDK_Document* pDoc) = 0;
-  virtual void OnDoc_DidPrint(CPDFSDK_Document* pDoc) = 0;
-  virtual void OnDoc_WillSave(CPDFSDK_Document* pDoc) = 0;
-  virtual void OnDoc_DidSave(CPDFSDK_Document* pDoc) = 0;
-  virtual void OnDoc_WillClose(CPDFSDK_Document* pDoc) = 0;
+  virtual void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  virtual void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  virtual void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  virtual void OnDoc_DidSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  virtual void OnDoc_WillClose(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
 
-  virtual void OnPage_Open(CPDFSDK_Document* pTarget) = 0;
-  virtual void OnPage_Close(CPDFSDK_Document* pTarget) = 0;
-  virtual void OnPage_InView(CPDFSDK_Document* pTarget) = 0;
-  virtual void OnPage_OutView(CPDFSDK_Document* pTarget) = 0;
+  virtual void OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  virtual void OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  virtual void OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
+  virtual void OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
 
   virtual void OnField_MouseDown(FX_BOOL bModifier,
                                  FX_BOOL bShift,
@@ -117,11 +117,11 @@ class IJS_Context {
                                 CPDFSDK_Annot* pScreen) = 0;
 
   virtual void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) = 0;
-  virtual void OnLink_MouseUp(CPDFSDK_Document* pTarget) = 0;
+  virtual void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
 
-  virtual void OnMenu_Exec(CPDFSDK_Document* pTarget,
+  virtual void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString&) = 0;
-  virtual void OnBatchExec(CPDFSDK_Document* pTarget) = 0;
+  virtual void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
   virtual void OnConsole_Exec() = 0;
   virtual void OnExternal_Exec() = 0;
 

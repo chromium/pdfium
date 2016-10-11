@@ -80,7 +80,7 @@ CFX_WideString StrTrim(const CFX_WideString& pStr) {
 }
 
 void AlertIfPossible(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetFormFillEnv();
   if (pEnv)
     pEnv->JS_appAlert(swMsg, nullptr, 0, 3);
 }
@@ -1659,8 +1659,8 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
 
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CPDFSDK_Document* pReaderDoc = pContext->GetReaderDocument();
-  CPDFSDK_InterForm* pReaderInterForm = pReaderDoc->GetInterForm();
+  CPDFSDK_InterForm* pReaderInterForm =
+      pContext->GetFormFillEnv()->GetSDKDocument()->GetInterForm();
   CPDF_InterForm* pInterForm = pReaderInterForm->GetInterForm();
 
   CFX_WideString sFunction = params[0].ToCFXWideString(pRuntime);

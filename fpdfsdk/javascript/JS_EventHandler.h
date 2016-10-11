@@ -12,7 +12,7 @@
 
 class CJS_Context;
 class CPDFSDK_Annot;
-class CPDFSDK_Document;
+class CPDFSDK_FormFillEnvironment;
 class CPDF_Bookmark;
 class CPDF_FormField;
 class Field;
@@ -65,17 +65,18 @@ class CJS_EventHandler {
 
   void OnApp_Init();
 
-  void OnDoc_Open(CPDFSDK_Document* pDoc, const CFX_WideString& strTargetName);
-  void OnDoc_WillPrint(CPDFSDK_Document* pDoc);
-  void OnDoc_DidPrint(CPDFSDK_Document* pDoc);
-  void OnDoc_WillSave(CPDFSDK_Document* pDoc);
-  void OnDoc_DidSave(CPDFSDK_Document* pDoc);
-  void OnDoc_WillClose(CPDFSDK_Document* pDoc);
+  void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                  const CFX_WideString& strTargetName);
+  void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnDoc_DidSave(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnDoc_WillClose(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
-  void OnPage_Open(CPDFSDK_Document* pDoc);
-  void OnPage_Close(CPDFSDK_Document* pDoc);
-  void OnPage_InView(CPDFSDK_Document* pTarget);
-  void OnPage_OutView(CPDFSDK_Document* pTarget);
+  void OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  void OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   void OnField_Calculate(CPDF_FormField* pSource,
                          CPDF_FormField* pTarget,
@@ -154,11 +155,11 @@ class CJS_EventHandler {
                         CPDFSDK_Annot* pScreen);
 
   void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark);
-  void OnLink_MouseUp(CPDFSDK_Document* pTarget);
+  void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
-  void OnMenu_Exec(CPDFSDK_Document* pTarget,
+  void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                    const CFX_WideString& strTargetName);
-  void OnBatchExec(CPDFSDK_Document* pTarget);
+  void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   void OnConsole_Exec();
   void OnExternal_Exec();
 
@@ -211,9 +212,8 @@ class CJS_EventHandler {
   FX_BOOL* m_pbRc;
   FX_BOOL m_bRcDu;
 
-  CPDFSDK_Document* m_pSourceDoc;
   CPDF_Bookmark* m_pTargetBookMark;
-  CPDFSDK_Document* m_pTargetDoc;
+  CPDFSDK_FormFillEnvironment* m_pTargetFormFillEnv;
   CPDFSDK_Annot* m_pTargetAnnot;
 };
 

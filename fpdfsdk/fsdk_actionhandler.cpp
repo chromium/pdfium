@@ -148,17 +148,17 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(
 
   visited->insert(pDict);
 
-  CPDFSDK_FormFillEnvironment* pEnv = pDocument->GetEnv();
-  ASSERT(pEnv);
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pDocument->GetEnv();
+  ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
-    if (pEnv->IsJSInitiated()) {
+    if (pFormFillEnv->IsJSInitiated()) {
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
-        IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
+        IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
         pRuntime->SetReaderDocument(pDocument);
 
         IJS_Context* pContext = pRuntime->NewContext();
-        pContext->OnLink_MouseUp(pDocument);
+        pContext->OnLink_MouseUp(pFormFillEnv);
 
         CFX_WideString csInfo;
         FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
@@ -534,7 +534,7 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
   IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
   pRuntime->SetReaderDocument(pDocument);
   IJS_Context* pContext = pRuntime->NewContext();
-  pContext->OnDoc_Open(pDocument, sScriptName);
+  pContext->OnDoc_Open(pDocument->GetEnv(), sScriptName);
 
   CFX_WideString csInfo;
   FX_BOOL bRet = pContext->RunScript(script, &csInfo);
@@ -555,31 +555,31 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
   IJS_Context* pContext = pRuntime->NewContext();
   switch (type) {
     case CPDF_AAction::OpenPage:
-      pContext->OnPage_Open(pDocument);
+      pContext->OnPage_Open(pDocument->GetEnv());
       break;
     case CPDF_AAction::ClosePage:
-      pContext->OnPage_Close(pDocument);
+      pContext->OnPage_Close(pDocument->GetEnv());
       break;
     case CPDF_AAction::CloseDocument:
-      pContext->OnDoc_WillClose(pDocument);
+      pContext->OnDoc_WillClose(pDocument->GetEnv());
       break;
     case CPDF_AAction::SaveDocument:
-      pContext->OnDoc_WillSave(pDocument);
+      pContext->OnDoc_WillSave(pDocument->GetEnv());
       break;
     case CPDF_AAction::DocumentSaved:
-      pContext->OnDoc_DidSave(pDocument);
+      pContext->OnDoc_DidSave(pDocument->GetEnv());
       break;
     case CPDF_AAction::PrintDocument:
-      pContext->OnDoc_WillPrint(pDocument);
+      pContext->OnDoc_WillPrint(pDocument->GetEnv());
       break;
     case CPDF_AAction::DocumentPrinted:
-      pContext->OnDoc_DidPrint(pDocument);
+      pContext->OnDoc_DidPrint(pDocument->GetEnv());
       break;
     case CPDF_AAction::PageVisible:
-      pContext->OnPage_InView(pDocument);
+      pContext->OnPage_InView(pDocument->GetEnv());
       break;
     case CPDF_AAction::PageInvisible:
-      pContext->OnPage_OutView(pDocument);
+      pContext->OnPage_OutView(pDocument->GetEnv());
       break;
     default:
       ASSERT(FALSE);

@@ -17,11 +17,7 @@ CJS_Context::CJS_Context(CJS_Runtime* pRuntime)
 
 CJS_Context::~CJS_Context() {}
 
-CPDFSDK_Document* CJS_Context::GetReaderDocument() {
-  return m_pRuntime->GetReaderDocument();
-}
-
-CPDFSDK_FormFillEnvironment* CJS_Context::GetReaderEnv() {
+CPDFSDK_FormFillEnvironment* CJS_Context::GetFormFillEnv() {
   return m_pRuntime->GetReaderEnv();
 }
 
@@ -69,45 +65,45 @@ void CJS_Context::OnApp_Init() {
   m_pEventHandler->OnApp_Init();
 }
 
-void CJS_Context::OnDoc_Open(CPDFSDK_Document* pDoc,
+void CJS_Context::OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                              const CFX_WideString& strTargetName) {
-  m_pEventHandler->OnDoc_Open(pDoc, strTargetName);
+  m_pEventHandler->OnDoc_Open(pFormFillEnv, strTargetName);
 }
 
-void CJS_Context::OnDoc_WillPrint(CPDFSDK_Document* pDoc) {
-  m_pEventHandler->OnDoc_WillPrint(pDoc);
+void CJS_Context::OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnDoc_WillPrint(pFormFillEnv);
 }
 
-void CJS_Context::OnDoc_DidPrint(CPDFSDK_Document* pDoc) {
-  m_pEventHandler->OnDoc_DidPrint(pDoc);
+void CJS_Context::OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnDoc_DidPrint(pFormFillEnv);
 }
 
-void CJS_Context::OnDoc_WillSave(CPDFSDK_Document* pDoc) {
-  m_pEventHandler->OnDoc_WillSave(pDoc);
+void CJS_Context::OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnDoc_WillSave(pFormFillEnv);
 }
 
-void CJS_Context::OnDoc_DidSave(CPDFSDK_Document* pDoc) {
-  m_pEventHandler->OnDoc_DidSave(pDoc);
+void CJS_Context::OnDoc_DidSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnDoc_DidSave(pFormFillEnv);
 }
 
-void CJS_Context::OnDoc_WillClose(CPDFSDK_Document* pDoc) {
-  m_pEventHandler->OnDoc_WillClose(pDoc);
+void CJS_Context::OnDoc_WillClose(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnDoc_WillClose(pFormFillEnv);
 }
 
-void CJS_Context::OnPage_Open(CPDFSDK_Document* pTarget) {
-  m_pEventHandler->OnPage_Open(pTarget);
+void CJS_Context::OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnPage_Open(pFormFillEnv);
 }
 
-void CJS_Context::OnPage_Close(CPDFSDK_Document* pTarget) {
-  m_pEventHandler->OnPage_Close(pTarget);
+void CJS_Context::OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnPage_Close(pFormFillEnv);
 }
 
-void CJS_Context::OnPage_InView(CPDFSDK_Document* pTarget) {
-  m_pEventHandler->OnPage_InView(pTarget);
+void CJS_Context::OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnPage_InView(pFormFillEnv);
 }
 
-void CJS_Context::OnPage_OutView(CPDFSDK_Document* pTarget) {
-  m_pEventHandler->OnPage_OutView(pTarget);
+void CJS_Context::OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnPage_OutView(pFormFillEnv);
 }
 
 void CJS_Context::OnField_MouseDown(FX_BOOL bModifier,
@@ -254,8 +250,8 @@ void CJS_Context::OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) {
   m_pEventHandler->OnBookmark_MouseUp(pBookMark);
 }
 
-void CJS_Context::OnLink_MouseUp(CPDFSDK_Document* pTarget) {
-  m_pEventHandler->OnLink_MouseUp(pTarget);
+void CJS_Context::OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnLink_MouseUp(pFormFillEnv);
 }
 
 void CJS_Context::OnConsole_Exec() {
@@ -266,11 +262,11 @@ void CJS_Context::OnExternal_Exec() {
   m_pEventHandler->OnExternal_Exec();
 }
 
-void CJS_Context::OnBatchExec(CPDFSDK_Document* pTarget) {
-  m_pEventHandler->OnBatchExec(pTarget);
+void CJS_Context::OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pEventHandler->OnBatchExec(pFormFillEnv);
 }
 
-void CJS_Context::OnMenu_Exec(CPDFSDK_Document* pTarget,
+void CJS_Context::OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                               const CFX_WideString& strTargetName) {
-  m_pEventHandler->OnMenu_Exec(pTarget, strTargetName);
+  m_pEventHandler->OnMenu_Exec(pFormFillEnv, strTargetName);
 }

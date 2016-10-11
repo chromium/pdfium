@@ -408,7 +408,7 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
     return FALSE;
 
   pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetFormFillEnv();
   pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI,
                        cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(),
                        cMsg.c_str());

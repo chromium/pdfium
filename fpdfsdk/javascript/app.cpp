@@ -217,11 +217,11 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
     return FALSE;
 
   CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pContext->GetFormFillEnv();
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
+  CPDFSDK_Document* pCurDoc = pContext->GetJSRuntime()->GetReaderDocument();
   CJS_Array aDocs;
-  if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument()) {
+  if (CPDFSDK_Document* pDoc = pFormFillEnv->GetSDKDocument()) {
     CJS_Document* pJSDocument = nullptr;
     if (pDoc == pCurDoc) {
       v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
@@ -255,9 +255,10 @@ FX_BOOL app::calculate(IJS_Context* cc,
     m_bCalculate = (FX_BOOL)bVP;
 
     CJS_Context* pContext = (CJS_Context*)cc;
-    CPDFSDK_FormFillEnvironment* pEnv = pContext->GetReaderEnv();
-    if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument())
-      pDoc->GetInterForm()->EnableCalculate((FX_BOOL)m_bCalculate);
+    pContext->GetFormFillEnv()
+        ->GetSDKDocument()
+        ->GetInterForm()
+        ->EnableCalculate((FX_BOOL)m_bCalculate);
   } else {
     vp << (bool)m_bCalculate;
   }
@@ -304,8 +305,8 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
     return FALSE;
 #ifdef PDF_ENABLE_XFA
   CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
-  CPDFXFA_Document* pDoc = pCurDoc->GetXFADocument();
+  CPDFXFA_Document* pDoc =
+      pContext->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
   if (pDoc->GetDocType() == 1 || pDoc->GetDocType() == 2) {
     vp << JS_NUM_VIEWERVERSION_XFA;
     return TRUE;
@@ -433,8 +434,7 @@ FX_BOOL app::alert(IJS_Context* cc,
     swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
 
   pRuntime->BeginBlock();
-  if (CPDFSDK_Document* pDoc = pEnv->GetSDKDocument())
-    pDoc->KillFocusAnnot(0);
+  pEnv->GetSDKDocument()->KillFocusAnnot(0);
 
   vRet = CJS_Value(pRuntime, pEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(),
                                                iType, iIcon));
@@ -678,9 +678,9 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
 
   pRuntime->BeginBlock();
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  pContext->GetReaderEnv()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
-                                           cSubject.c_str(), cCc.c_str(),
-                                           cBcc.c_str(), cMsg.c_str());
+  pContext->GetFormFillEnv()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
+                                             cSubject.c_str(), cCc.c_str(),
+                                             cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
   return TRUE;
 }
@@ -793,7 +793,7 @@ FX_BOOL app::response(IJS_Context* cc,
   memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
 
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-  int nLengthBytes = pContext->GetReaderEnv()->JS_appResponse(
+  int nLengthBytes = pContext->GetFormFillEnv()->JS_appResponse(
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
       bPassword, pBuff.get(), MAX_INPUT_BYTES);
 
