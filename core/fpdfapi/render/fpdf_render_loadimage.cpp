@@ -163,7 +163,7 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc,
   }
   m_GroupFamily = GroupFamily;
   m_bLoadMask = bLoadMask;
-  if (!LoadColorInfo(m_pStream->GetObjNum() != 0 ? nullptr : pFormResources,
+  if (!LoadColorInfo(m_pStream->IsInline() ? pFormResources : nullptr,
                      pPageResources)) {
     return FALSE;
   }
@@ -285,7 +285,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   }
   m_GroupFamily = GroupFamily;
   m_bLoadMask = bLoadMask;
-  if (!LoadColorInfo(m_pStream->GetObjNum() != 0 ? nullptr : pFormResources,
+  if (!LoadColorInfo(m_pStream->IsInline() ? pFormResources : nullptr,
                      pPageResources)) {
     return 0;
   }

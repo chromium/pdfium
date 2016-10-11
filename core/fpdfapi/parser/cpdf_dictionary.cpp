@@ -174,7 +174,7 @@ bool CPDF_Dictionary::IsSignatureDict() const {
 }
 
 void CPDF_Dictionary::SetFor(const CFX_ByteString& key, CPDF_Object* pObj) {
-  CHECK(!pObj || pObj->GetObjNum() == 0);
+  CHECK(!pObj || pObj->IsInline());
   auto it = m_Map.find(key);
   if (it == m_Map.end()) {
     if (pObj)

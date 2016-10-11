@@ -97,7 +97,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       const CPDF_Array* p = pObj->AsArray();
       for (size_t i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetObjectAt(i);
-        if (pElement->GetObjNum()) {
+        if (!pElement->IsInline()) {
           if (pFile->AppendString(" ") < 0) {
             return -1;
           }
@@ -136,7 +136,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
           return -1;
         }
         offset += len + 1;
-        if (pValue->GetObjNum()) {
+        if (!pValue->IsInline()) {
           if (pFile->AppendString(" ") < 0) {
             return -1;
           }
@@ -213,7 +213,7 @@ int32_t PDF_CreatorWriteTrailer(CPDF_Document* pDocument,
         return -1;
       }
       offset += len + 1;
-      if (pValue->GetObjNum()) {
+      if (!pValue->IsInline()) {
         if (pFile->AppendString(" ") < 0) {
           return -1;
         }
@@ -1157,7 +1157,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       const CPDF_Array* p = pObj->AsArray();
       for (size_t i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetObjectAt(i);
-        if (pElement->GetObjNum()) {
+        if (!pElement->IsInline()) {
           if (m_File.AppendString(" ") < 0) {
             return -1;
           }
@@ -1203,7 +1203,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         if (bSignDict && key == "Contents") {
           bSignValue = TRUE;
         }
-        if (pValue->GetObjNum()) {
+        if (!pValue->IsInline()) {
           if (m_File.AppendString(" ") < 0) {
             return -1;
           }
@@ -1562,7 +1562,7 @@ int32_t CPDF_Creator::WriteDoc_Stage2(IFX_Pause* pPause) {
     m_iStage = 27;
   }
   if (m_iStage == 27) {
-    if (m_pEncryptDict && !m_pEncryptDict->GetObjNum()) {
+    if (m_pEncryptDict && m_pEncryptDict->IsInline()) {
       m_dwLastObjNum += 1;
       FX_FILESIZE saveOffset = m_Offset;
       if (WriteIndirectObj(m_dwLastObjNum, m_pEncryptDict) < 0) {
@@ -1728,7 +1728,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
         if (m_File.AppendString(PDF_NameEncode(key).AsStringC()) < 0) {
           return -1;
         }
-        if (pValue->GetObjNum()) {
+        if (!pValue->IsInline()) {
           if (m_File.AppendString(" ") < 0) {
             return -1;
           }

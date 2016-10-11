@@ -161,7 +161,7 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
 
 void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
   ASSERT(IsArray());
-  CHECK(!pObj || pObj->GetObjNum() == 0);
+  CHECK(!pObj || pObj->IsInline());
   if (i >= m_Objects.size()) {
     ASSERT(false);
     return;
@@ -174,7 +174,7 @@ void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
 
 void CPDF_Array::InsertAt(size_t index, CPDF_Object* pObj) {
   ASSERT(IsArray());
-  CHECK(!pObj || pObj->GetObjNum() == 0);
+  CHECK(!pObj || pObj->IsInline());
   if (index >= m_Objects.size()) {
     // Allocate space first.
     m_Objects.resize(index + 1, nullptr);
@@ -187,7 +187,7 @@ void CPDF_Array::InsertAt(size_t index, CPDF_Object* pObj) {
 
 void CPDF_Array::Add(CPDF_Object* pObj) {
   ASSERT(IsArray());
-  CHECK(!pObj || pObj->GetObjNum() == 0);
+  CHECK(!pObj || pObj->IsInline());
   m_Objects.push_back(pObj);
 }
 

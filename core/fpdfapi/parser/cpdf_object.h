@@ -41,6 +41,7 @@ class CPDF_Object {
   virtual Type GetType() const = 0;
   uint32_t GetObjNum() const { return m_ObjNum; }
   uint32_t GetGenNum() const { return m_GenNum; }
+  bool IsInline() const { return m_ObjNum == 0; }
 
   // Create a deep copy of the object.
   virtual CPDF_Object* Clone() const = 0;

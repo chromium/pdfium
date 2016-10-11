@@ -613,7 +613,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       CFX_ByteString name = pCSObj->GetString();
       if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
         pCSObj = FindResourceObj("ColorSpace", name);
-        if (pCSObj && !pCSObj->GetObjNum()) {
+        if (pCSObj && pCSObj->IsInline()) {
           pCSObj = pCSObj->Clone();
           pDict->SetFor("ColorSpace", pCSObj);
         }
@@ -773,7 +773,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
   if (pImage) {
     pImageObj->SetUnownedImage(
         m_pDocument->GetPageData()->GetImage(pImage->GetStream()));
-  } else if (pStream->GetObjNum()) {
+  } else if (!pStream->IsInline()) {
     pImageObj->SetUnownedImage(m_pDocument->LoadImageF(pStream));
   } else {
     pImageObj->SetOwnedImage(

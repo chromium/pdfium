@@ -63,7 +63,7 @@ CPDF_Image::~CPDF_Image() {
 }
 
 CPDF_Image* CPDF_Image::Clone() {
-  if (m_pStream->GetObjNum())
+  if (!m_pStream->IsInline())
     return m_pDocument->GetPageData()->GetImage(m_pStream);
 
   CPDF_Image* pImage =
