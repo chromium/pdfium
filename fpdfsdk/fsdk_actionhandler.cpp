@@ -155,8 +155,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-        pRuntime->SetReaderDocument(pDocument);
-
         IJS_Context* pContext = pRuntime->NewContext();
         pContext->OnLink_MouseUp(pFormFillEnv);
 
@@ -284,8 +282,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-        pRuntime->SetReaderDocument(pDocument);
-
         IJS_Context* pContext = pRuntime->NewContext();
         CFX_WideString csInfo;
         FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
@@ -327,8 +323,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-        pRuntime->SetReaderDocument(pDocument);
-
         IJS_Context* pContext = pRuntime->NewContext();
         pContext->OnBookmark_MouseUp(pBookmark);
 
@@ -478,8 +472,6 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(CPDFSDK_Document* pDocument,
   ASSERT(type != CPDF_AAction::Format);
 
   IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-  pRuntime->SetReaderDocument(pDocument);
-
   IJS_Context* pContext = pRuntime->NewContext();
   switch (type) {
     case CPDF_AAction::CursorEnter:
@@ -532,7 +524,6 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
     const CFX_WideString& sScriptName,
     const CFX_WideString& script) {
   IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-  pRuntime->SetReaderDocument(pDocument);
   IJS_Context* pContext = pRuntime->NewContext();
   pContext->OnDoc_Open(pDocument->GetEnv(), sScriptName);
 
@@ -550,8 +541,6 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
     CPDF_AAction::AActionType type,
     const CFX_WideString& script) {
   IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-  pRuntime->SetReaderDocument(pDocument);
-
   IJS_Context* pContext = pRuntime->NewContext();
   switch (type) {
     case CPDF_AAction::OpenPage:

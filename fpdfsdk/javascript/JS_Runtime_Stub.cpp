@@ -121,7 +121,8 @@ class CJS_ContextStub final : public IJS_Context {
 
 class CJS_RuntimeStub final : public IJS_Runtime {
  public:
-  CJS_RuntimeStub() : m_pDoc(nullptr) {}
+  CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+      : m_pFormFillEnv(pFormFillEnv) {}
   ~CJS_RuntimeStub() override {}
 
   IJS_Context* NewContext() override {
@@ -133,10 +134,9 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   IJS_Context* GetCurrentContext() override { return m_pContext.get(); }
   void ReleaseContext(IJS_Context* pContext) override {}
 
-  void SetReaderDocument(CPDFSDK_Document* pReaderDoc) override {
-    m_pDoc = pReaderDoc;
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override {
+    return m_pFormFillEnv;
   }
-  CPDFSDK_Document* GetReaderDocument() override { return m_pDoc; }
 
 #ifdef PDF_ENABLE_XFA
   FX_BOOL GetValueByName(const CFX_ByteStringC&, CFXJSE_Value*) override {
@@ -154,7 +154,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   }
 
  protected:
-  CPDFSDK_Document* m_pDoc;
+  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
   std::unique_ptr<CJS_ContextStub> m_pContext;
 };
 
@@ -165,6 +165,6 @@ void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {}
 void IJS_Runtime::Destroy() {}
 
 // static
-IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pEnv) {
-  return new CJS_RuntimeStub;
+IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  return new CJS_RuntimeStub(pFormFillEnv);
 }

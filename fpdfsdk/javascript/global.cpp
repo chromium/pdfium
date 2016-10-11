@@ -33,7 +33,7 @@ void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
   JSGlobalAlternate* pGlobal =
       static_cast<JSGlobalAlternate*>(GetEmbedObject());
-  pGlobal->Initial(pRuntime->GetReaderEnv());
+  pGlobal->Initial(pRuntime->GetFormFillEnv());
 }
 
 JSGlobalData::JSGlobalData()

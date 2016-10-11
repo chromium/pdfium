@@ -602,9 +602,9 @@ Field* CJS_EventHandler::Source() {
   CJS_Document* pJSDocument =
       static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
-  pDocument->AttachDoc(m_pTargetFormFillEnv
-                           ? m_pTargetFormFillEnv->GetSDKDocument()
-                           : m_pJSContext->GetFormFillEnv()->GetSDKDocument());
+  pDocument->SetFormFillEnv(m_pTargetFormFillEnv
+                                ? m_pTargetFormFillEnv
+                                : m_pJSContext->GetFormFillEnv());
 
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
@@ -626,9 +626,9 @@ Field* CJS_EventHandler::Target_Field() {
   CJS_Document* pJSDocument =
       static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
-  pDocument->AttachDoc(m_pTargetFormFillEnv
-                           ? m_pTargetFormFillEnv->GetSDKDocument()
-                           : m_pJSContext->GetFormFillEnv()->GetSDKDocument());
+  pDocument->SetFormFillEnv(m_pTargetFormFillEnv
+                                ? m_pTargetFormFillEnv
+                                : m_pJSContext->GetFormFillEnv());
 
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));

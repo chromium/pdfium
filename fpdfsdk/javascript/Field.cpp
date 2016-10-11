@@ -212,7 +212,7 @@ void Field::ParseFieldName(const std::wstring& strFieldNameParsed,
 FX_BOOL Field::AttachField(Document* pDocument,
                            const CFX_WideString& csFieldName) {
   m_pJSDoc = pDocument;
-  m_pFormFillEnv.Reset(pDocument->GetReaderDoc()->GetEnv());
+  m_pFormFillEnv.Reset(pDocument->GetFormFillEnv());
   m_bCanSet =
       m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_FILL_FORM) ||
       m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_ANNOT_FORM) ||

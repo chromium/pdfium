@@ -236,8 +236,6 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
   }
 
   IJS_Runtime* pRuntime = m_pFormFillEnv->GetJSRuntime();
-  pRuntime->SetReaderDocument(m_pFormFillEnv->GetSDKDocument());
-
   int nSize = m_pInterForm->CountFieldsInCalculationOrder();
   for (int i = 0; i < nSize; i++) {
     CPDF_FormField* pField = m_pInterForm->GetFieldInCalculationOrder(i);
@@ -286,8 +284,6 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
   }
 
   IJS_Runtime* pRuntime = m_pFormFillEnv->GetJSRuntime();
-  pRuntime->SetReaderDocument(m_pFormFillEnv->GetSDKDocument());
-
   if (pFormField->GetFieldType() == FIELDTYPE_COMBOBOX &&
       pFormField->CountSelectedItems() > 0) {
     int index = pFormField->GetSelectedIndex(0);

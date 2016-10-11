@@ -25,7 +25,7 @@
 class GlobalTimer {
  public:
   GlobalTimer(app* pObj,
-              CPDFSDK_FormFillEnvironment* pEnv,
+              CPDFSDK_FormFillEnvironment* pFormFillEnv,
               CJS_Runtime* pRuntime,
               int nType,
               const CFX_WideString& script,
@@ -55,11 +55,11 @@ class GlobalTimer {
   const uint32_t m_dwTimeOut;
   const CFX_WideString m_swJScript;
   CJS_Runtime::ObservedPtr m_pRuntime;
-  CPDFSDK_FormFillEnvironment* const m_pEnv;
+  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;
 };
 
 GlobalTimer::GlobalTimer(app* pObj,
-                         CPDFSDK_FormFillEnvironment* pEnv,
+                         CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          CJS_Runtime* pRuntime,
                          int nType,
                          const CFX_WideString& script,
@@ -72,8 +72,8 @@ GlobalTimer::GlobalTimer(app* pObj,
       m_dwTimeOut(dwTimeOut),
       m_swJScript(script),
       m_pRuntime(pRuntime),
-      m_pEnv(pEnv) {
-  CFX_SystemHandler* pHandler = m_pEnv->GetSysHandler();
+      m_pFormFillEnv(pFormFillEnv) {
+  CFX_SystemHandler* pHandler = m_pFormFillEnv->GetSysHandler();
   m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
   (*GetGlobalTimerMap())[m_nTimerID] = this;
 }
@@ -83,7 +83,7 @@ GlobalTimer::~GlobalTimer() {
     return;
 
   if (GetRuntime())
-    m_pEnv->GetSysHandler()->KillTimer(m_nTimerID);
+    m_pFormFillEnv->GetSysHandler()->KillTimer(m_nTimerID);
 
   GetGlobalTimerMap()->erase(m_nTimerID);
 }
@@ -217,27 +217,16 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
     return FALSE;
 
   CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = pContext->GetFormFillEnv();
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  CPDFSDK_Document* pCurDoc = pContext->GetJSRuntime()->GetReaderDocument();
-  CJS_Array aDocs;
-  if (CPDFSDK_Document* pDoc = pFormFillEnv->GetSDKDocument()) {
-    CJS_Document* pJSDocument = nullptr;
-    if (pDoc == pCurDoc) {
-      v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-      if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID) {
-        pJSDocument =
-            static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
-      }
-    } else {
-      v8::Local<v8::Object> pObj =
-          pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
-      pJSDocument =
-          static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
-      ASSERT(pJSDocument);
-    }
-    aDocs.SetElement(pRuntime, 0, CJS_Value(pRuntime, pJSDocument));
+  CJS_Document* pJSDocument = nullptr;
+  v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
+  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID) {
+    pJSDocument = static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
   }
+
+  CJS_Array aDocs;
+  aDocs.SetElement(pRuntime, 0, CJS_Value(pRuntime, pJSDocument));
+
   if (aDocs.GetLength(pRuntime) > 0)
     vp << aDocs;
   else
@@ -322,11 +311,11 @@ FX_BOOL app::platform(IJS_Context* cc,
   if (!vp.IsGetting())
     return FALSE;
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_FormFillEnvironment* pEnv =
-      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderEnv();
-  if (!pEnv)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetFormFillEnv();
+  if (!pFormFillEnv)
     return FALSE;
-  CFX_WideString platfrom = pEnv->GetPlatform();
+  CFX_WideString platfrom = pFormFillEnv->GetPlatform();
   if (!platfrom.IsEmpty()) {
     vp << platfrom;
     return TRUE;
@@ -342,11 +331,11 @@ FX_BOOL app::language(IJS_Context* cc,
   if (!vp.IsGetting())
     return FALSE;
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_FormFillEnvironment* pEnv =
-      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderEnv();
-  if (!pEnv)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetFormFillEnv();
+  if (!pFormFillEnv)
     return FALSE;
-  CFX_WideString language = pEnv->GetLanguage();
+  CFX_WideString language = pFormFillEnv->GetLanguage();
   if (!language.IsEmpty()) {
     vp << language;
     return TRUE;
@@ -393,8 +382,8 @@ FX_BOOL app::alert(IJS_Context* cc,
     return FALSE;
   }
 
-  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
-  if (!pEnv) {
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
+  if (!pFormFillEnv) {
     vRet = CJS_Value(pRuntime, 0);
     return TRUE;
   }
@@ -434,10 +423,10 @@ FX_BOOL app::alert(IJS_Context* cc,
     swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
 
   pRuntime->BeginBlock();
-  pEnv->GetSDKDocument()->KillFocusAnnot(0);
+  pFormFillEnv->GetSDKDocument()->KillFocusAnnot(0);
 
-  vRet = CJS_Value(pRuntime, pEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(),
-                                               iType, iIcon));
+  vRet = CJS_Value(pRuntime, pFormFillEnv->JS_appAlert(
+                                 swMsg.c_str(), swTitle.c_str(), iType, iIcon));
   pRuntime->EndBlock();
   return TRUE;
 }
@@ -448,8 +437,7 @@ FX_BOOL app::beep(IJS_Context* cc,
                   CFX_WideString& sError) {
   if (params.size() == 1) {
     CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-    CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
-    pEnv->JS_appBeep(params[0].ToInt(pRuntime));
+    pRuntime->GetFormFillEnv()->JS_appBeep(params[0].ToInt(pRuntime));
     return TRUE;
   }
 
@@ -493,10 +481,9 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   }
 
   uint32_t dwInterval = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
-  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
 
-  GlobalTimer* timerRef =
-      new GlobalTimer(this, pEnv, pRuntime, 0, script, dwInterval, 0);
+  GlobalTimer* timerRef = new GlobalTimer(this, pRuntime->GetFormFillEnv(),
+                                          pRuntime, 0, script, dwInterval, 0);
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
@@ -527,10 +514,9 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   }
 
   uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
-  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
-
   GlobalTimer* timerRef =
-      new GlobalTimer(this, pEnv, pRuntime, 1, script, dwTimeOut, dwTimeOut);
+      new GlobalTimer(this, pRuntime->GetFormFillEnv(), pRuntime, 1, script,
+                      dwTimeOut, dwTimeOut);
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =

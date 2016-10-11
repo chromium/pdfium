@@ -149,12 +149,12 @@ IMPLEMENT_JS_CLASS(CJS_Document, Document)
 void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
   Document* pDoc = static_cast<Document*>(GetEmbedObject());
-  pDoc->AttachDoc(pRuntime->GetReaderDocument());
+  pDoc->SetFormFillEnv(pRuntime->GetFormFillEnv());
 }
 
 Document::Document(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject),
-      m_pDocument(nullptr),
+      m_pFormFillEnv(nullptr),
       m_cwBaseURL(L""),
       m_bDelay(FALSE) {}
 
@@ -169,11 +169,12 @@ FX_BOOL Document::numFields(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   vp << static_cast<int>(pPDFForm->CountFields(CFX_WideString()));
   return TRUE;
@@ -182,20 +183,20 @@ FX_BOOL Document::numFields(IJS_Context* cc,
 FX_BOOL Document::dirty(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
   if (vp.IsGetting()) {
-    vp << !!m_pDocument->GetChangeMark();
+    vp << !!m_pFormFillEnv->GetSDKDocument()->GetChangeMark();
   } else {
     bool bChanged = false;
     vp >> bChanged;
 
     if (bChanged)
-      m_pDocument->SetChangeMark();
+      m_pFormFillEnv->GetSDKDocument()->SetChangeMark();
     else
-      m_pDocument->ClearChangeMark();
+      m_pFormFillEnv->GetSDKDocument()->ClearChangeMark();
   }
   return TRUE;
 }
@@ -212,26 +213,26 @@ FX_BOOL Document::ADBE(IJS_Context* cc,
 FX_BOOL Document::pageNum(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
   if (vp.IsGetting()) {
-    if (CPDFSDK_PageView* pPageView = m_pDocument->GetCurrentView()) {
+    if (CPDFSDK_PageView* pPageView =
+            m_pFormFillEnv->GetSDKDocument()->GetCurrentView()) {
       vp << pPageView->GetPageIndex();
     }
   } else {
-    int iPageCount = m_pDocument->GetPageCount();
+    int iPageCount = m_pFormFillEnv->GetSDKDocument()->GetPageCount();
     int iPageNum = 0;
     vp >> iPageNum;
 
-    CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
     if (iPageNum >= 0 && iPageNum < iPageCount) {
-      pEnv->JS_docgotoPage(iPageNum);
+      m_pFormFillEnv->JS_docgotoPage(iPageNum);
     } else if (iPageNum >= iPageCount) {
-      pEnv->JS_docgotoPage(iPageCount - 1);
+      m_pFormFillEnv->JS_docgotoPage(iPageCount - 1);
     } else if (iPageNum < 0) {
-      pEnv->JS_docgotoPage(0);
+      m_pFormFillEnv->JS_docgotoPage(0);
     }
   }
 
@@ -291,14 +292,15 @@ FX_BOOL Document::getField(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CFX_WideString wideName = params[0].ToCFXWideString(pRuntime);
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (pPDFForm->CountFields(wideName) <= 0) {
     vRet.SetNull(pRuntime);
@@ -325,7 +327,7 @@ FX_BOOL Document::getNthFieldName(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
@@ -336,7 +338,8 @@ FX_BOOL Document::getNthFieldName(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
     return FALSE;
   }
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   CPDF_FormField* pField = pPDFForm->GetField(nIndex, CFX_WideString());
   if (!pField)
@@ -381,11 +384,12 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
+  if (!m_pFormFillEnv->GetSDKDocument()->GetPermissions(
+          FPDFPERM_EXTRACT_ACCESS)) {
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return FALSE;
   }
@@ -402,7 +406,8 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
       iLength > 4 ? params[4].ToCFXWideString(pRuntime) : L"";
   CFX_WideString cMsg = iLength > 5 ? params[5].ToCFXWideString(pRuntime) : L"";
 
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   CFX_ByteTextBuf textBuf;
   if (!pInterForm->ExportFormToFDFTextBuf(textBuf))
     return FALSE;
@@ -420,7 +425,7 @@ FX_BOOL Document::print(IJS_Context* cc,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
@@ -477,9 +482,9 @@ FX_BOOL Document::print(IJS_Context* cc,
       bAnnotations = params[7].ToBool(pRuntime);
   }
 
-  if (CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv()) {
-    pEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit, bPrintAsImage,
-                      bReverse, bAnnotations);
+  if (m_pFormFillEnv) {
+    m_pFormFillEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit,
+                                bPrintAsImage, bReverse, bAnnotations);
     return TRUE;
   }
   return FALSE;
@@ -497,19 +502,21 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM))) {
+  if (!(m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_MODIFY) ||
+        m_pFormFillEnv->GetSDKDocument()->GetPermissions(
+            FPDFPERM_ANNOT_FORM))) {
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return FALSE;
   }
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CFX_WideString sFieldName = params[0].ToCFXWideString(pRuntime);
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   std::vector<CPDFSDK_Widget*> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
   if (widgets.empty())
@@ -529,7 +536,8 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     // If there is currently no pageview associated with the page being used
     // do not create one. We may be in the process of tearing down the document
     // and creating a new pageview at this point will cause bad things.
-    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, false);
+    CPDFSDK_PageView* pPageView =
+        m_pFormFillEnv->GetSDKDocument()->GetPageView(pPage, false);
     if (pPageView) {
 #if PDF_ENABLE_XFA
       pPageView->DeleteAnnot(pWidget);
@@ -537,7 +545,7 @@ FX_BOOL Document::removeField(IJS_Context* cc,
       pPageView->UpdateRects(aRefresh);
     }
   }
-  m_pDocument->SetChangeMark();
+  m_pFormFillEnv->GetSDKDocument()->SetChangeMark();
 
   return TRUE;
 }
@@ -550,24 +558,25 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-        m_pDocument->GetPermissions(FPDFPERM_FILL_FORM))) {
+  if (!(m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_MODIFY) ||
+        m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_ANNOT_FORM) ||
+        m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_FILL_FORM))) {
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return FALSE;
   }
 
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   CJS_Array aName;
 
   if (params.empty()) {
     pPDFForm->ResetForm(TRUE);
-    m_pDocument->SetChangeMark();
+    m_pFormFillEnv->GetSDKDocument()->SetChangeMark();
     return TRUE;
   }
 
@@ -594,7 +603,7 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
 
   if (!aFields.empty()) {
     pPDFForm->ResetForm(aFields, TRUE, TRUE);
-    m_pDocument->SetChangeMark();
+    m_pFormFillEnv->GetSDKDocument()->SetChangeMark();
   }
 
   return TRUE;
@@ -624,7 +633,7 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
@@ -659,7 +668,8 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
     aFields.Attach(CJS_Value(pRuntime, pValue).ToV8Array(pRuntime));
   }
 
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
   if (aFields.GetLength(pRuntime) == 0 && bEmpty) {
     if (pPDFInterForm->CheckRequiredFields(nullptr, true)) {
@@ -694,8 +704,8 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   return TRUE;
 }
 
-void Document::AttachDoc(CPDFSDK_Document* pDoc) {
-  m_pDocument.Reset(pDoc);
+void Document::SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pFormFillEnv.Reset(pFormFillEnv);
 }
 
 FX_BOOL Document::bookmarkRoot(IJS_Context* cc,
@@ -757,7 +767,7 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetReaderEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetFormFillEnv();
   pEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
                        cCc.c_str(), cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
@@ -778,11 +788,12 @@ FX_BOOL Document::info(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
+  CPDF_Dictionary* pDictionary =
+      m_pFormFillEnv->GetSDKDocument()->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -832,25 +843,26 @@ FX_BOOL Document::getPropertyInternal(IJS_Context* cc,
                                       CJS_PropValue& vp,
                                       const CFX_ByteString& propName,
                                       CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
+  CPDF_Dictionary* pDictionary =
+      m_pFormFillEnv->GetSDKDocument()->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
   if (vp.IsGetting()) {
     vp << pDictionary->GetUnicodeTextFor(propName);
   } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY)) {
+    if (!m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_MODIFY)) {
       sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
       return FALSE;
     }
     CFX_WideString csProperty;
     vp >> csProperty;
     pDictionary->SetStringFor(propName, PDF_EncodeText(csProperty));
-    m_pDocument->SetChangeMark();
+    m_pFormFillEnv->GetSDKDocument()->SetChangeMark();
   }
   return TRUE;
 }
@@ -870,14 +882,14 @@ FX_BOOL Document::creator(IJS_Context* cc,
 FX_BOOL Document::delay(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
   if (vp.IsGetting()) {
     vp << m_bDelay;
   } else {
-    if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY)) {
+    if (!m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_MODIFY)) {
       sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
       return FALSE;
     }
@@ -887,10 +899,8 @@ FX_BOOL Document::delay(IJS_Context* cc,
     } else {
       std::list<std::unique_ptr<CJS_DelayData>> DelayDataToProcess;
       DelayDataToProcess.swap(m_DelayData);
-      for (const auto& pData : DelayDataToProcess) {
-        if (m_pDocument.Get())
-          Field::DoDelay(m_pDocument->GetEnv(), pData.get());
-      }
+      for (const auto& pData : DelayDataToProcess)
+        Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
     }
   }
   return TRUE;
@@ -923,7 +933,7 @@ FX_BOOL Document::subject(IJS_Context* cc,
 FX_BOOL Document::title(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
-  if (!m_pDocument || !m_pDocument->GetUnderlyingDocument()) {
+  if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument()) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
@@ -937,11 +947,11 @@ FX_BOOL Document::numPages(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  vp << m_pDocument->GetPageCount();
+  vp << m_pFormFillEnv->GetSDKDocument()->GetPageCount();
   return TRUE;
 }
 
@@ -985,11 +995,11 @@ FX_BOOL Document::URL(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  vp << m_pDocument->GetPath();
+  vp << m_pFormFillEnv->GetSDKDocument()->GetPath();
   return TRUE;
 }
 
@@ -1007,11 +1017,12 @@ FX_BOOL Document::baseURL(IJS_Context* cc,
 FX_BOOL Document::calculate(IJS_Context* cc,
                             CJS_PropValue& vp,
                             CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+  CPDFSDK_InterForm* pInterForm =
+      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
   if (vp.IsGetting()) {
     vp << !!pInterForm->IsCalculateEnabled();
   } else {
@@ -1029,11 +1040,11 @@ FX_BOOL Document::documentFileName(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  CFX_WideString wsFilePath = m_pDocument->GetPath();
+  CFX_WideString wsFilePath = m_pFormFillEnv->GetSDKDocument()->GetPath();
   int32_t i = wsFilePath.GetLength() - 1;
   for (; i >= 0; i--) {
     if (wsFilePath.GetAt(i) == L'\\' || wsFilePath.GetAt(i) == L'/')
@@ -1054,11 +1065,11 @@ FX_BOOL Document::path(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  vp << app::SysPathToPDFPath(m_pDocument->GetPath());
+  vp << app::SysPathToPDFPath(m_pFormFillEnv->GetSDKDocument()->GetPath());
   return TRUE;
 }
 
@@ -1103,7 +1114,7 @@ FX_BOOL Document::getAnnot(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
@@ -1111,7 +1122,8 @@ FX_BOOL Document::getAnnot(IJS_Context* cc,
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   int nPageNo = params[0].ToInt(pRuntime);
   CFX_WideString swAnnotName = params[1].ToCFXWideString(pRuntime);
-  CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(nPageNo);
+  CPDFSDK_PageView* pPageView =
+      m_pFormFillEnv->GetSDKDocument()->GetPageView(nPageNo);
   if (!pPageView)
     return FALSE;
 
@@ -1152,7 +1164,7 @@ FX_BOOL Document::getAnnots(IJS_Context* cc,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
@@ -1162,11 +1174,12 @@ FX_BOOL Document::getAnnots(IJS_Context* cc,
   // TODO(tonikitoo): Add support supported parameters as per
   // the PDF spec.
 
-  int nPageNo = m_pDocument->GetPageCount();
+  int nPageNo = m_pFormFillEnv->GetSDKDocument()->GetPageCount();
   CJS_Array annots;
 
   for (int i = 0; i < nPageNo; ++i) {
-    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(i);
+    CPDFSDK_PageView* pPageView =
+        m_pFormFillEnv->GetSDKDocument()->GetPageView(i);
     if (!pPageView)
       return FALSE;
 
@@ -1379,17 +1392,17 @@ FX_BOOL Document::calculateNow(IJS_Context* cc,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-        m_pDocument->GetPermissions(FPDFPERM_FILL_FORM))) {
+  if (!(m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_MODIFY) ||
+        m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_ANNOT_FORM) ||
+        m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_FILL_FORM))) {
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return FALSE;
   }
-  m_pDocument->GetInterForm()->OnCalculate();
+  m_pFormFillEnv->GetSDKDocument()->GetInterForm()->OnCalculate();
   return TRUE;
 }
 
@@ -1403,11 +1416,12 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
+  if (!m_pFormFillEnv->GetSDKDocument()->GetPermissions(
+          FPDFPERM_EXTRACT_ACCESS)) {
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return FALSE;
   }
@@ -1419,7 +1433,7 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
   int nWordNo = params.size() > 1 ? params[1].ToInt(pRuntime) : 0;
   bool bStrip = params.size() > 2 ? params[2].ToBool(pRuntime) : true;
 
-  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
+  CPDF_Document* pDocument = m_pFormFillEnv->GetSDKDocument()->GetPDFDocument();
   if (!pDocument)
     return FALSE;
 
@@ -1462,11 +1476,12 @@ FX_BOOL Document::getPageNthWordQuads(IJS_Context* cc,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
+  if (!m_pFormFillEnv->GetSDKDocument()->GetPermissions(
+          FPDFPERM_EXTRACT_ACCESS)) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
@@ -1477,17 +1492,18 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
-  if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
+  if (!m_pFormFillEnv->GetSDKDocument()->GetPermissions(
+          FPDFPERM_EXTRACT_ACCESS)) {
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return FALSE;
   }
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   int nPageNo = params.size() > 0 ? params[0].ToInt(pRuntime) : 0;
-  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
+  CPDF_Document* pDocument = m_pFormFillEnv->GetSDKDocument()->GetPDFDocument();
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
     sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
     return FALSE;
@@ -1667,14 +1683,14 @@ FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  if (!m_pDocument) {
+  if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return FALSE;
   }
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CFX_WideString wideName = params[0].ToCFXWideString(pRuntime);
   CFX_ByteString utf8Name = wideName.UTF8Encode();
-  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
+  CPDF_Document* pDocument = m_pFormFillEnv->GetSDKDocument()->GetPDFDocument();
   if (!pDocument)
     return FALSE;
 
@@ -1698,9 +1714,9 @@ FX_BOOL Document::gotoNamedDest(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pApp = m_pDocument->GetEnv();
-  pApp->DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
-                     scrollPositionArray.get(), scrollPositionArraySize);
+  m_pFormFillEnv->DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
+                               scrollPositionArray.get(),
+                               scrollPositionArraySize);
   pRuntime->EndBlock();
 
   return TRUE;
@@ -1723,10 +1739,8 @@ void Document::DoFieldDelay(const CFX_WideString& sFieldName,
     }
   }
 
-  for (const auto& pData : DelayDataForFieldAndControlIndex) {
-    if (m_pDocument.Get())
-      Field::DoDelay(m_pDocument->GetEnv(), pData.get());
-  }
+  for (const auto& pData : DelayDataForFieldAndControlIndex)
+    Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
 }
 
 CJS_Document* Document::GetCJSDoc() const {

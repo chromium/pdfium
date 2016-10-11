@@ -1012,13 +1012,10 @@ FX_BOOL CPDFXFA_DocEnvironment::GetGlobalProperty(
       !m_pDocument->GetSDKDoc()->GetEnv()->GetJSRuntime())
     return FALSE;
 
-  if (!m_pJSContext) {
-    m_pDocument->GetSDKDoc()->GetEnv()->GetJSRuntime()->SetReaderDocument(
-        m_pDocument->GetSDKDoc());
-    m_pJSContext =
-        m_pDocument->GetSDKDoc()->GetEnv()->GetJSRuntime()->NewContext();
-  }
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      m_pDocument->GetSDKDoc()->GetEnv();
+  if (!m_pJSContext)
+    m_pJSContext = pFormFillEnv->GetJSRuntime()->NewContext();
 
-  return m_pDocument->GetSDKDoc()->GetEnv()->GetJSRuntime()->GetValueByName(
-      szPropName, pValue);
+  return pFormFillEnv->GetJSRuntime()->GetValueByName(szPropName, pValue);
 }

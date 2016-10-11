@@ -47,8 +47,8 @@ void IJS_Runtime::Destroy() {
 }
 
 // static
-IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pEnv) {
-  return new CJS_Runtime(pEnv);
+IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  return new CJS_Runtime(pFormFillEnv);
 }
 
 // static
@@ -63,14 +63,13 @@ CJS_Runtime* CJS_Runtime::CurrentRuntimeFromIsolate(v8::Isolate* pIsolate) {
       CFXJS_Engine::CurrentEngineFromIsolate(pIsolate));
 }
 
-CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pEnv)
-    : m_pEnv(pEnv),
-      m_pDocument(nullptr),
+CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+    : m_pFormFillEnv(pFormFillEnv),
       m_bBlocking(false),
       m_isolateManaged(false) {
   v8::Isolate* pIsolate = nullptr;
 #ifndef PDF_ENABLE_XFA
-  IPDF_JSPLATFORM* pPlatform = m_pEnv->GetFormFillInfo()->m_pJsPlatform;
+  IPDF_JSPLATFORM* pPlatform = m_pFormFillEnv->GetFormFillInfo()->m_pJsPlatform;
   if (pPlatform->version <= 2) {
     unsigned int embedderDataSlot = 0;
     v8::Isolate* pExternalIsolate = nullptr;
@@ -88,7 +87,8 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pEnv)
     pIsolate = CPDFXFA_App::GetInstance()->GetJSERuntime();
     SetIsolate(pIsolate);
   } else {
-    IPDF_JSPLATFORM* pPlatform = m_pEnv->GetFormFillInfo()->m_pJsPlatform;
+    IPDF_JSPLATFORM* pPlatform =
+        m_pFormFillEnv->GetFormFillInfo()->m_pJsPlatform;
     if (pPlatform->version <= 2) {
       unsigned int embedderDataSlot = 0;
       v8::Isolate* pExternalIsolate = nullptr;
@@ -122,6 +122,8 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pEnv)
   CJS_Context* pContext = (CJS_Context*)NewContext();
   InitializeEngine();
   ReleaseContext(pContext);
+
+  SetFormFillEnvToDocument();
 }
 
 CJS_Runtime::~CJS_Runtime() {
@@ -199,18 +201,11 @@ IJS_Context* CJS_Runtime::GetCurrentContext() {
   return m_ContextArray.empty() ? nullptr : m_ContextArray.back().get();
 }
 
-void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
-  if (m_pDocument == pReaderDoc)
-    return;
-
+void CJS_Runtime::SetFormFillEnvToDocument() {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> context = NewLocalContext();
   v8::Context::Scope context_scope(context);
-
-  m_pDocument = pReaderDoc;
-  if (!pReaderDoc)
-    return;
 
   v8::Local<v8::Object> pThis = GetThisObj();
   if (pThis.IsEmpty())
@@ -228,11 +223,11 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
   if (!pDocument)
     return;
 
-  pDocument->AttachDoc(pReaderDoc);
+  pDocument->SetFormFillEnv(m_pFormFillEnv);
 }
 
-CPDFSDK_Document* CJS_Runtime::GetReaderDocument() {
-  return m_pDocument;
+CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {
+  return m_pFormFillEnv;
 }
 
 int CJS_Runtime::ExecuteScript(const CFX_WideString& script,

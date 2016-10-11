@@ -18,7 +18,7 @@ CJS_Context::CJS_Context(CJS_Runtime* pRuntime)
 CJS_Context::~CJS_Context() {}
 
 CPDFSDK_FormFillEnvironment* CJS_Context::GetFormFillEnv() {
-  return m_pRuntime->GetReaderEnv();
+  return m_pRuntime->GetFormFillEnv();
 }
 
 FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
