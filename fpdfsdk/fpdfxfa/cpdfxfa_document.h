@@ -12,7 +12,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
 
-class CPDFSDK_Document;
 class CPDFSDK_FormFillEnvironment;
 class CPDFXFA_App;
 class CPDFXFA_Page;
@@ -40,8 +39,10 @@ class CPDFXFA_Document {
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
   int GetDocType() const { return m_iDocType; }
 
-  CPDFSDK_Document* GetSDKDoc() const { return m_pSDKDoc; }
-  void SetSDKDoc(CPDFSDK_Document* pSDKDoc) { m_pSDKDoc = pSDKDoc; }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
+  void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+    m_pFormFillEnv = pFormFillEnv;
+  }
 
   void DeletePage(int page_index);
   int GetPageCount() const;
@@ -79,14 +80,14 @@ class CPDFXFA_Document {
 
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
-  CPDFSDK_Document* m_pSDKDoc;    // not owned.
+  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // not owned.
   CXFA_FFDocView* m_pXFADocView;  // not owned.
   CPDFXFA_App* const m_pApp;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
   LoadStatus m_nLoadStatus;
   int m_nPageCount;
 
-  // Must be destroy before |m_pSDKDoc|.
+  // Must be destroyed before |m_pFormFillEnv|.
   CPDFXFA_DocEnvironment m_DocEnv;
 };
 

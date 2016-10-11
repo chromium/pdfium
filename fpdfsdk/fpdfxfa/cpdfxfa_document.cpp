@@ -33,7 +33,7 @@ CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
                                    CPDFXFA_App* pProvider)
     : m_iDocType(DOCTYPE_PDF),
       m_pPDFDoc(std::move(pPDFDoc)),
-      m_pSDKDoc(nullptr),
+      m_pFormFillEnv(nullptr),
       m_pXFADocView(nullptr),
       m_pApp(pProvider),
       m_nLoadStatus(FXFA_LOADSTATUS_PRELOAD),
@@ -43,12 +43,12 @@ CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
 CPDFXFA_Document::~CPDFXFA_Document() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
 
-  if (m_pSDKDoc) {
-    m_pSDKDoc->ClearAllFocusedAnnots();
+  if (m_pFormFillEnv) {
+    m_pFormFillEnv->GetSDKDocument()->ClearAllFocusedAnnots();
     // Once we're deleted the SDKDocument will point at a bad underlying
     // doc so we need to reset it ...
-    m_pSDKDoc->ResetXFADocument();
-    m_pSDKDoc = nullptr;
+    m_pFormFillEnv->GetSDKDocument()->ResetXFADocument();
+    m_pFormFillEnv = nullptr;
   }
 
   if (m_pXFADoc) {
@@ -201,6 +201,6 @@ void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
 }
 
 void CPDFXFA_Document::ClearChangeMark() {
-  if (m_pSDKDoc)
-    m_pSDKDoc->ClearChangeMark();
+  if (m_pFormFillEnv)
+    m_pFormFillEnv->GetSDKDocument()->ClearChangeMark();
 }

@@ -253,15 +253,15 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   // If the CPDFXFA_Document has a SDKDocument already then we've done this
   // and can just return the old Env. Otherwise, we'll end up setting a new
   // SDKDocument into the XFADocument and, that could get weird.
-  if (pDocument->GetSDKDoc())
-    return pDocument->GetSDKDoc()->GetEnv();
+  if (pDocument->GetFormFillEnv())
+    return pDocument->GetFormFillEnv();
 #endif
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       new CPDFSDK_FormFillEnvironment(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
-  pDocument->SetSDKDoc(pFormFillEnv->GetSDKDocument());
+  pDocument->SetFormFillEnv(pFormFillEnv);
   CPDFXFA_App::GetInstance()->AddFormFillEnv(pFormFillEnv);
 #endif  // PDF_ENABLE_XFA
 
@@ -285,7 +285,7 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   // If the document was closed first, it's possible the XFA document
   // is now a nullptr.
   if (pFormFillEnv->GetSDKDocument()->GetXFADocument())
-    pFormFillEnv->GetSDKDocument()->GetXFADocument()->SetSDKDoc(nullptr);
+    pFormFillEnv->GetSDKDocument()->GetXFADocument()->SetFormFillEnv(nullptr);
 #endif  // PDF_ENABLE_XFA
 
   delete pFormFillEnv;
