@@ -391,7 +391,7 @@ cmsStage*  CMSEXPORT cmsStageAllocMatrix(cmsContext ContextID, cmsUInt32Number R
     if (n >= UINT_MAX / Rows) return NULL;
     if (n < Rows || n < Cols) return NULL;
 
-    NewMPE = _cmsStageAllocPlaceholder(ContextID, cmsSigMatrixElemType, Cols, Rows,
+    NewMPE = _cmsStageAllocPlaceholder(ContextID, cmsSigMatrixElemType, Rows, Cols,
                                      EvaluateMatrix, MatrixElemDup, MatrixElemTypeFree, NULL );
     if (NewMPE == NULL) return NULL;
 
