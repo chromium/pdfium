@@ -58,4 +58,12 @@ class CPDF_Stream : public CPDF_Object {
   IFX_FileRead* m_pFile = nullptr;
 };
 
+inline CPDF_Stream* ToStream(CPDF_Object* obj) {
+  return obj ? obj->AsStream() : nullptr;
+}
+
+inline const CPDF_Stream* ToStream(const CPDF_Object* obj) {
+  return obj ? obj->AsStream() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_H_

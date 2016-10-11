@@ -41,4 +41,12 @@ class CPDF_Number : public CPDF_Object {
   };
 };
 
+inline CPDF_Number* ToNumber(CPDF_Object* obj) {
+  return obj ? obj->AsNumber() : nullptr;
+}
+
+inline const CPDF_Number* ToNumber(const CPDF_Object* obj) {
+  return obj ? obj->AsNumber() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_NUMBER_H_

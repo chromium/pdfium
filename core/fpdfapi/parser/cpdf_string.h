@@ -36,4 +36,12 @@ class CPDF_String : public CPDF_Object {
   FX_BOOL m_bHex;
 };
 
+inline CPDF_String* ToString(CPDF_Object* obj) {
+  return obj ? obj->AsString() : nullptr;
+}
+
+inline const CPDF_String* ToString(const CPDF_Object* obj) {
+  return obj ? obj->AsString() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STRING_H_

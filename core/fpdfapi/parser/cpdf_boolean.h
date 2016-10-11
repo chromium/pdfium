@@ -32,4 +32,12 @@ class CPDF_Boolean : public CPDF_Object {
   bool m_bValue;
 };
 
+inline CPDF_Boolean* ToBoolean(CPDF_Object* obj) {
+  return obj ? obj->AsBoolean() : nullptr;
+}
+
+inline const CPDF_Boolean* ToBoolean(const CPDF_Object* obj) {
+  return obj ? obj->AsBoolean() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_BOOLEAN_H_

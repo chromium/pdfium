@@ -29,4 +29,12 @@ class CPDF_Name : public CPDF_Object {
   CFX_ByteString m_Name;
 };
 
+inline CPDF_Name* ToName(CPDF_Object* obj) {
+  return obj ? obj->AsName() : nullptr;
+}
+
+inline const CPDF_Name* ToName(const CPDF_Object* obj) {
+  return obj ? obj->AsName() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_NAME_H_

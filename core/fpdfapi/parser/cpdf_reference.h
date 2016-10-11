@@ -47,4 +47,12 @@ class CPDF_Reference : public CPDF_Object {
   uint32_t m_RefObjNum;
 };
 
+inline CPDF_Reference* ToReference(CPDF_Object* obj) {
+  return obj ? obj->AsReference() : nullptr;
+}
+
+inline const CPDF_Reference* ToReference(const CPDF_Object* obj) {
+  return obj ? obj->AsReference() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_REFERENCE_H_

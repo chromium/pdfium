@@ -70,4 +70,12 @@ class CPDF_Array : public CPDF_Object {
   std::vector<CPDF_Object*> m_Objects;
 };
 
+inline CPDF_Array* ToArray(CPDF_Object* obj) {
+  return obj ? obj->AsArray() : nullptr;
+}
+
+inline const CPDF_Array* ToArray(const CPDF_Object* obj) {
+  return obj ? obj->AsArray() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_

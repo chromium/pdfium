@@ -98,4 +98,12 @@ class CPDF_Dictionary : public CPDF_Object {
   std::map<CFX_ByteString, CPDF_Object*> m_Map;
 };
 
+inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {
+  return obj ? obj->AsDictionary() : nullptr;
+}
+
+inline const CPDF_Dictionary* ToDictionary(const CPDF_Object* obj) {
+  return obj ? obj->AsDictionary() : nullptr;
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_
