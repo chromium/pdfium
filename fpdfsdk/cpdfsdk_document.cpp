@@ -22,14 +22,6 @@
 #include "fpdfsdk/fsdk_actionhandler.h"
 #include "third_party/base/ptr_util.h"
 
-// static
-CPDFSDK_Document* CPDFSDK_Document::FromFPDFFormHandle(
-    FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_FormFillEnvironment* pEnv =
-      static_cast<CPDFSDK_FormFillEnvironment*>(hHandle);
-  return pEnv ? pEnv->GetSDKDocument() : nullptr;
-}
-
 CPDFSDK_Document::CPDFSDK_Document(UnderlyingDocumentType* pDoc,
                                    CPDFSDK_FormFillEnvironment* pEnv)
     : m_pDoc(pDoc),

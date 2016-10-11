@@ -44,8 +44,10 @@ CPDFSDK_FormFillEnvironment* HandleToCPDFSDKEnvironment(
 }
 
 CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  return pSDKDoc ? pSDKDoc->GetInterForm() : nullptr;
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  return pFormFillEnv ? pFormFillEnv->GetSDKDocument()->GetInterForm()
+                      : nullptr;
 }
 
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
@@ -54,8 +56,10 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
   if (!pPage)
     return nullptr;
 
-  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  return pSDKDoc ? pSDKDoc->GetPageView(pPage, true) : nullptr;
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  return pFormFillEnv ? pFormFillEnv->GetSDKDocument()->GetPageView(pPage, true)
+                      : nullptr;
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -92,9 +96,9 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   CPDF_Document* pPDFDoc = pDocument->GetPDFDoc();
   if (!pPDFDoc)
     return;
-  CPDFSDK_FormFillEnvironment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
-  CPDFSDK_Document* pFXDoc = pEnv->GetSDKDocument();
-  if (!pFXDoc)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  if (!pFormFillEnv)
     return;
 #endif  // PDF_ENABLE_XFA
 
@@ -128,7 +132,8 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
 #ifdef PDF_ENABLE_XFA
   options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);
-  if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView(pPage, true))
+  if (CPDFSDK_PageView* pPageView =
+          pFormFillEnv->GetSDKDocument()->GetPageView(pPage, true))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 #else   // PDF_ENABLE_XFA
   options.m_pOCContext =
@@ -252,15 +257,15 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     return pDocument->GetSDKDoc()->GetEnv();
 #endif
 
-  CPDFSDK_FormFillEnvironment* pEnv =
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
       new CPDFSDK_FormFillEnvironment(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
-  pDocument->SetSDKDoc(pEnv->GetSDKDocument());
-  CPDFXFA_App::GetInstance()->AddFormFillEnv(pEnv);
+  pDocument->SetSDKDoc(pFormFillEnv->GetSDKDocument());
+  CPDFXFA_App::GetInstance()->AddFormFillEnv(pFormFillEnv);
 #endif  // PDF_ENABLE_XFA
 
-  return pEnv;
+  return pFormFillEnv;
 }
 
 DLLEXPORT void STDCALL
@@ -268,23 +273,22 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   if (!hHandle)
     return;
 
-  CPDFSDK_FormFillEnvironment* pEnv = HandleToCPDFSDKEnvironment(hHandle);
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_App::GetInstance()->RemoveFormFillEnv(pEnv);
+  CPDFXFA_App::GetInstance()->RemoveFormFillEnv(pFormFillEnv);
 
   // Reset the focused annotations and remove the SDK document from the
   // XFA document.
-  if (CPDFSDK_Document* pSDKDoc = pEnv->GetSDKDocument()) {
-    pSDKDoc->ClearAllFocusedAnnots();
-    // If the document was closed first, it's possible the XFA document
-    // is now a nullptr.
-    if (pSDKDoc->GetXFADocument())
-      pSDKDoc->GetXFADocument()->SetSDKDoc(nullptr);
-  }
+  pFormFillEnv->GetSDKDocument()->ClearAllFocusedAnnots();
+  // If the document was closed first, it's possible the XFA document
+  // is now a nullptr.
+  if (pFormFillEnv->GetSDKDocument()->GetXFADocument())
+    pFormFillEnv->GetSDKDocument()->GetXFADocument()->SetSDKDoc(nullptr);
 #endif  // PDF_ENABLE_XFA
 
-  delete pEnv;
+  delete pFormFillEnv;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
@@ -388,11 +392,11 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnChar(FPDF_FORMHANDLE hHandle,
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  if (!pSDKDoc)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  if (!pFormFillEnv)
     return FALSE;
-
-  return pSDKDoc->KillFocusAnnot(0);
+  return pFormFillEnv->GetSDKDocument()->KillFocusAnnot(0);
 }
 
 DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
@@ -662,42 +666,46 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
   if (!hHandle)
     return;
 
-  CPDFSDK_Document* pSDKDoc =
-      HandleToCPDFSDKEnvironment(hHandle)->GetSDKDocument();
-  if (!pSDKDoc)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  if (!pFormFillEnv)
     return;
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!pPage)
     return;
 
-  CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, false);
+  CPDFSDK_PageView* pPageView =
+      pFormFillEnv->GetSDKDocument()->GetPageView(pPage, false);
   if (pPageView) {
     pPageView->SetValid(FALSE);
     // RemovePageView() takes care of the delete for us.
-    pSDKDoc->RemovePageView(pPage);
+    pFormFillEnv->GetSDKDocument()->RemovePageView(pPage);
   }
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  if (pSDKDoc && HandleToCPDFSDKEnvironment(hHandle)->IsJSInitiated())
-    pSDKDoc->ProcJavascriptFun();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
+    pFormFillEnv->GetSDKDocument()->ProcJavascriptFun();
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  if (pSDKDoc && HandleToCPDFSDKEnvironment(hHandle)->IsJSInitiated())
-    pSDKDoc->ProcOpenAction();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
+    pFormFillEnv->GetSDKDocument()->ProcOpenAction();
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
                                               int aaType) {
-  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  if (!pSDKDoc)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  if (!pFormFillEnv)
     return;
 
-  CPDF_Document* pDoc = pSDKDoc->GetPDFDocument();
+  CPDF_Document* pDoc = pFormFillEnv->GetSDKDocument()->GetPDFDocument();
   CPDF_Dictionary* pDic = pDoc->GetRoot();
   if (!pDic)
     return;
@@ -708,7 +716,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
     CPDFSDK_ActionHandler* pActionHandler =
         HandleToCPDFSDKEnvironment(hHandle)->GetActionHander();
     pActionHandler->DoAction_Document(action, (CPDF_AAction::AActionType)aaType,
-                                      pSDKDoc->GetEnv());
+                                      pFormFillEnv);
   }
 }
 
@@ -718,8 +726,9 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   if (!hHandle)
     return;
 
-  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
-  if (!pSDKDoc)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      HandleToCPDFSDKEnvironment(hHandle);
+  if (!pFormFillEnv)
     return;
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
@@ -727,22 +736,23 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   if (!pPDFPage)
     return;
 
-  if (!pSDKDoc->GetPageView(pPage, false))
+  if (!pFormFillEnv->GetSDKDocument()->GetPageView(pPage, false))
     return;
 
-  CPDFSDK_FormFillEnvironment* pEnv = pSDKDoc->GetEnv();
-  CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
+  CPDFSDK_ActionHandler* pActionHandler = pFormFillEnv->GetActionHander();
   CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
   CPDF_AAction aa(pPageDict->GetDictFor("AA"));
   if (FPDFPAGE_AACTION_OPEN == aaType) {
     if (aa.ActionExist(CPDF_AAction::OpenPage)) {
       CPDF_Action action = aa.GetAction(CPDF_AAction::OpenPage);
-      pActionHandler->DoAction_Page(action, CPDF_AAction::OpenPage, pEnv);
+      pActionHandler->DoAction_Page(action, CPDF_AAction::OpenPage,
+                                    pFormFillEnv);
     }
   } else {
     if (aa.ActionExist(CPDF_AAction::ClosePage)) {
       CPDF_Action action = aa.GetAction(CPDF_AAction::ClosePage);
-      pActionHandler->DoAction_Page(action, CPDF_AAction::ClosePage, pEnv);
+      pActionHandler->DoAction_Page(action, CPDF_AAction::ClosePage,
+                                    pFormFillEnv);
     }
   }
 }

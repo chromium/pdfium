@@ -23,8 +23,6 @@ class IJS_Runtime;
 
 class CPDFSDK_Document : public CFX_Observable<CPDFSDK_Document> {
  public:
-  static CPDFSDK_Document* FromFPDFFormHandle(FPDF_FORMHANDLE hHandle);
-
   CPDFSDK_Document(UnderlyingDocumentType* pDoc,
                    CPDFSDK_FormFillEnvironment* pEnv);
   ~CPDFSDK_Document();
