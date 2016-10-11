@@ -363,8 +363,7 @@ FX_BOOL CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::KeyStroke,
-                                           m_pFormFillEnv->GetSDKDocument(),
-                                           pFormField, fa);
+                                           m_pFormFillEnv, pFormField, fa);
   return fa.bRC;
 }
 
@@ -384,8 +383,7 @@ FX_BOOL CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
   fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::Validate,
-                                           m_pFormFillEnv->GetSDKDocument(),
-                                           pFormField, fa);
+                                           m_pFormFillEnv, pFormField, fa);
   return fa.bRC;
 }
 

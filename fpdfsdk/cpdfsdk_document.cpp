@@ -97,7 +97,7 @@ void CPDFSDK_Document::ProcJavascriptFun() {
     CPDF_Action jsAction = docJS.GetJSAction(i, csJSName);
     if (m_pEnv->GetActionHander())
       m_pEnv->GetActionHander()->DoAction_JavaScript(
-          jsAction, CFX_WideString::FromLocal(csJSName.AsStringC()), this);
+          jsAction, CFX_WideString::FromLocal(csJSName.AsStringC()), GetEnv());
   }
 }
 
@@ -122,7 +122,7 @@ FX_BOOL CPDFSDK_Document::ProcOpenAction() {
   if (CPDF_Dictionary* pDict = pOpenAction->AsDictionary()) {
     CPDF_Action action(pDict);
     if (m_pEnv->GetActionHander())
-      m_pEnv->GetActionHander()->DoAction_DocOpen(action, this);
+      m_pEnv->GetActionHander()->DoAction_DocOpen(action, GetEnv());
     return TRUE;
   }
   return FALSE;
