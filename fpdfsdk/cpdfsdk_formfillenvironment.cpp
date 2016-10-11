@@ -39,6 +39,16 @@ CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
       m_pSysHandler(new CFX_SystemHandler(this)) {}
 
 CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
+  // |m_pAnnotHandlerMgr| will try to access |m_pFormFiller|
+  // when it cleans up. So, we must make sure it is cleaned up before
+  // |m_pFormFiller|.
+  m_pAnnotHandlerMgr.reset();
+
+  // Must destroy the |m_pFormFiller| before the environment (|this|)
+  // because any created form widgets hold a pointer to the environment.
+  // Those widgets may call things like KillTimer() as they are shutdown.
+  m_pFormFiller.reset();
+
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
   if (pProvider->m_pEnvList.GetSize() == 0)
