@@ -852,10 +852,10 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   uint8_t alpha = m_pInterForm->GetHighlightAlpha();
 
   CFX_FloatRect rcDevice;
-  ASSERT(m_pInterForm->GetDocument());
-  CPDFSDK_FormFillEnvironment* pEnv = m_pInterForm->GetDocument()->GetEnv();
+  CPDFSDK_FormFillEnvironment* pEnv = m_pInterForm->GetFormFillEnv();
   if (!pEnv)
     return;
+
   CFX_Matrix page2device;
   pPageView->GetCurrentMatrix(page2device);
   page2device.Transform(((FX_FLOAT)rc.left), ((FX_FLOAT)rc.bottom),
@@ -999,10 +999,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
 
   CPDF_IconFit iconFit = pControl->GetIconFit();
 
-  CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFSDK_FormFillEnvironment* pEnv = pDoc->GetEnv();
-
-  CBA_FontMap font_map(this, pEnv->GetSysHandler());
+  CBA_FontMap font_map(this, m_pInterForm->GetFormFillEnv()->GetSysHandler());
   font_map.SetAPType("N");
 
   CFX_ByteString csAP =
@@ -1377,9 +1374,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->EnableRefresh(FALSE);
 
-  CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFSDK_FormFillEnvironment* pEnv = pDoc->GetEnv();
-  CBA_FontMap font_map(this, pEnv->GetSysHandler());
+  CBA_FontMap font_map(this, m_pInterForm->GetFormFillEnv()->GetSysHandler());
   pEdit->SetFontMap(&font_map);
 
   CFX_FloatRect rcEdit = rcClient;
@@ -1443,10 +1438,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->EnableRefresh(FALSE);
 
-  CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFSDK_FormFillEnvironment* pEnv = pDoc->GetEnv();
-
-  CBA_FontMap font_map(this, pEnv->GetSysHandler());
+  CBA_FontMap font_map(this, m_pInterForm->GetFormFillEnv()->GetSysHandler());
   pEdit->SetFontMap(&font_map);
 
   pEdit->SetPlateRect(CFX_FloatRect(rcClient.left, 0.0f, rcClient.right, 0.0f));
@@ -1530,10 +1522,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
   std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->EnableRefresh(FALSE);
 
-  CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
-  CPDFSDK_FormFillEnvironment* pEnv = pDoc->GetEnv();
-
-  CBA_FontMap font_map(this, pEnv->GetSysHandler());
+  CBA_FontMap font_map(this, m_pInterForm->GetFormFillEnv()->GetSysHandler());
   pEdit->SetFontMap(&font_map);
 
   CFX_FloatRect rcClient = GetClientRect();

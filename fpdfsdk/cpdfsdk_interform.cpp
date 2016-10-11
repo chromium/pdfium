@@ -46,9 +46,10 @@
 #include "xfa/fxfa/xfa_ffwidgethandler.h"
 #endif  // PDF_ENABLE_XFA
 
-CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
-    : m_pDocument(pDocument),
-      m_pInterForm(new CPDF_InterForm(m_pDocument->GetPDFDocument())),
+CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+    : m_pFormFillEnv(pFormFillEnv),
+      m_pInterForm(new CPDF_InterForm(
+          m_pFormFillEnv->GetSDKDocument()->GetPDFDocument())),
 #ifdef PDF_ENABLE_XFA
       m_bXfaCalculate(TRUE),
       m_bXfaValidationsEnabled(TRUE),
@@ -98,19 +99,19 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl,
     return nullptr;
 
   CPDF_Dictionary* pControlDict = pControl->GetWidget();
-  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
+  CPDF_Document* pDocument = m_pFormFillEnv->GetSDKDocument()->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
   if (CPDF_Dictionary* pPageDict = pControlDict->GetDictFor("P")) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0)
-      pPage = m_pDocument->GetPageView(nPageIndex);
+      pPage = m_pFormFillEnv->GetSDKDocument()->GetPageView(nPageIndex);
   }
 
   if (!pPage) {
     int nPageIndex = GetPageIndexByAnnotDict(pDocument, pControlDict);
     if (nPageIndex >= 0)
-      pPage = m_pDocument->GetPageView(nPageIndex);
+      pPage = m_pFormFillEnv->GetSDKDocument()->GetPageView(nPageIndex);
   }
 
   if (!pPage)
@@ -221,9 +222,7 @@ void CPDFSDK_InterForm::SynchronizeField(CPDF_FormField* pFormField,
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
-  ASSERT(pEnv);
-  if (!pEnv->IsJSInitiated())
+  if (!m_pFormFillEnv->IsJSInitiated())
     return;
 
   if (m_bBusy)
@@ -236,8 +235,8 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
     return;
   }
 
-  IJS_Runtime* pRuntime = m_pDocument->GetJsRuntime();
-  pRuntime->SetReaderDocument(m_pDocument);
+  IJS_Runtime* pRuntime = m_pFormFillEnv->GetJSRuntime();
+  pRuntime->SetReaderDocument(m_pFormFillEnv->GetSDKDocument());
 
   int nSize = m_pInterForm->CountFieldsInCalculationOrder();
   for (int i = 0; i < nSize; i++) {
@@ -281,15 +280,13 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
 CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
                                            FX_BOOL& bFormatted) {
   CFX_WideString sValue = pFormField->GetValue();
-  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
-  ASSERT(pEnv);
-  if (!pEnv->IsJSInitiated()) {
+  if (!m_pFormFillEnv->IsJSInitiated()) {
     bFormatted = FALSE;
     return sValue;
   }
 
-  IJS_Runtime* pRuntime = m_pDocument->GetJsRuntime();
-  pRuntime->SetReaderDocument(m_pDocument);
+  IJS_Runtime* pRuntime = m_pFormFillEnv->GetJSRuntime();
+  pRuntime->SetReaderDocument(m_pFormFillEnv->GetSDKDocument());
 
   if (pFormField->GetFieldType() == FIELDTYPE_COMBOBOX &&
       pFormField->CountSelectedItems() > 0) {
@@ -342,14 +339,14 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
     ASSERT(pFormCtrl);
 
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl, false)) {
-      CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
       UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
-      CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, false);
-      FX_RECT rcBBox =
-          pEnv->GetInteractiveFormFiller()->GetViewBBox(pPageView, pWidget);
+      CPDFSDK_PageView* pPageView =
+          m_pFormFillEnv->GetSDKDocument()->GetPageView(pPage, false);
+      FX_RECT rcBBox = m_pFormFillEnv->GetInteractiveFormFiller()->GetViewBBox(
+          pPageView, pWidget);
 
-      pEnv->Invalidate(pPage, rcBBox.left, rcBBox.top, rcBBox.right,
-                       rcBBox.bottom);
+      m_pFormFillEnv->Invalidate(pPage, rcBBox.left, rcBBox.top, rcBBox.right,
+                                 rcBBox.bottom);
     }
   }
 }
@@ -364,14 +361,14 @@ FX_BOOL CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   if (!action.GetDict())
     return TRUE;
 
-  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
-  CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
+  CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHander();
   PDFSDK_FieldAction fa;
-  fa.bModifier = pEnv->IsCTRLKeyDown(0);
-  fa.bShift = pEnv->IsSHIFTKeyDown(0);
+  fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
+  fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::KeyStroke,
-                                           m_pDocument, pFormField, fa);
+                                           m_pFormFillEnv->GetSDKDocument(),
+                                           pFormField, fa);
   return fa.bRC;
 }
 
@@ -385,14 +382,14 @@ FX_BOOL CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
   if (!action.GetDict())
     return TRUE;
 
-  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
-  CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
+  CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHander();
   PDFSDK_FieldAction fa;
-  fa.bModifier = pEnv->IsCTRLKeyDown(0);
-  fa.bShift = pEnv->IsSHIFTKeyDown(0);
+  fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
+  fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::Validate,
-                                           m_pDocument, pFormField, fa);
+                                           m_pFormFillEnv->GetSDKDocument(),
+                                           pFormField, fa);
   return fa.bRC;
 }
 
@@ -459,8 +456,6 @@ FX_BOOL CPDFSDK_InterForm::SubmitFields(
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude,
     bool bUrlEncoded) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
-
   CFX_ByteTextBuf textBuf;
   ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude, textBuf);
 
@@ -470,7 +465,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitFields(
   if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize))
     return FALSE;
 
-  pEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination.c_str());
+  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination.c_str());
   return TRUE;
 }
 
@@ -525,7 +520,8 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
   std::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
-      m_pDocument->GetPath().AsStringC(), fields, bIncludeOrExclude, false));
+      m_pFormFillEnv->GetSDKDocument()->GetPath().AsStringC(), fields,
+      bIncludeOrExclude, false));
   return pFDF ? pFDF->WriteBuf(textBuf) : FALSE;
 }
 
@@ -539,11 +535,10 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
   if (sDestination.IsEmpty())
     return FALSE;
 
-  if (!m_pDocument || !m_pInterForm)
+  if (!m_pFormFillEnv || !m_pFormFillEnv->GetSDKDocument() || !m_pInterForm)
     return FALSE;
 
-  CPDFSDK_FormFillEnvironment* pEnv = m_pDocument->GetEnv();
-  CFX_WideString wsPDFFilePath = m_pDocument->GetPath();
+  CFX_WideString wsPDFFilePath = m_pFormFillEnv->GetSDKDocument()->GetPath();
   CFDF_Document* pFDFDoc =
       m_pInterForm->ExportToFDF(wsPDFFilePath.AsStringC(), false);
   if (!pFDFDoc)
@@ -561,7 +556,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
   if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize))
     return FALSE;
 
-  pEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
+  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
 
   if (bUrlEncoded)
     FX_Free(pBuffer);
@@ -570,8 +565,8 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 }
 
 FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
-  CFDF_Document* pFDF =
-      m_pInterForm->ExportToFDF(m_pDocument->GetPath().AsStringC(), false);
+  CFDF_Document* pFDF = m_pInterForm->ExportToFDF(
+      m_pFormFillEnv->GetSDKDocument()->GetPath().AsStringC(), false);
   if (!pFDF)
     return FALSE;
 

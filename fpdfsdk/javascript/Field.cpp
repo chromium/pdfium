@@ -295,9 +295,14 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument,
     std::vector<CPDFSDK_Widget*> widgets;
     pInterForm->GetWidgets(pFormField, &widgets);
 
+    // TODO(dsinclair): Determine if all widgets share the same
+    // CPDFSDK_InterForm. If that's the case, we can move the code to
+    // |GetSDKDocument| out of the loop.
     for (CPDFSDK_Widget* pWidget : widgets) {
-      CPDFSDK_Document* pDoc = pWidget->GetInterForm()->GetDocument();
-      pDoc->UpdateAllViews(nullptr, pWidget);
+      pWidget->GetInterForm()
+          ->GetFormFillEnv()
+          ->GetSDKDocument()
+          ->UpdateAllViews(nullptr, pWidget);
     }
   }
 
@@ -330,8 +335,8 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
 
     if (bRefresh) {
       CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
-      CPDFSDK_Document* pDoc = pInterForm->GetDocument();
-      pDoc->UpdateAllViews(nullptr, pWidget);
+      pInterForm->GetFormFillEnv()->GetSDKDocument()->UpdateAllViews(nullptr,
+                                                                     pWidget);
     }
   }
 

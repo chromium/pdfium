@@ -162,7 +162,7 @@ UnderlyingPageType* CPDFSDK_Document::GetPage(int nIndex) {
 
 CPDFSDK_InterForm* CPDFSDK_Document::GetInterForm() {
   if (!m_pInterForm)
-    m_pInterForm = pdfium::MakeUnique<CPDFSDK_InterForm>(this);
+    m_pInterForm = pdfium::MakeUnique<CPDFSDK_InterForm>(GetEnv());
   return m_pInterForm.get();
 }
 

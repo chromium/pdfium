@@ -20,7 +20,7 @@ class CPDF_FormControl;
 class CPDF_FormField;
 class CPDF_InterForm;
 class CPDF_Object;
-class CPDFSDK_Document;
+class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_Widget;
 
 #ifdef PDF_ENABLE_XFA
@@ -30,11 +30,11 @@ class CXFA_FFWidget;
 
 class CPDFSDK_InterForm : public IPDF_FormNotify {
  public:
-  explicit CPDFSDK_InterForm(CPDFSDK_Document* pDocument);
+  explicit CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CPDFSDK_InterForm() override;
 
   CPDF_InterForm* GetInterForm() const { return m_pInterForm.get(); }
-  CPDFSDK_Document* GetDocument() const { return m_pDocument; }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
 
   FX_BOOL HighlightWidgets();
 
@@ -122,7 +122,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
 
   using CPDFSDK_WidgetMap = std::map<CPDF_FormControl*, CPDFSDK_Widget*>;
 
-  CPDFSDK_Document* m_pDocument;
+  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // Not owned.
   std::unique_ptr<CPDF_InterForm> m_pInterForm;
   CPDFSDK_WidgetMap m_Map;
 #ifdef PDF_ENABLE_XFA
