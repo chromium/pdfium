@@ -54,8 +54,7 @@ FX_BOOL CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
 
 CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
                                                CPDFSDK_PageView* pPage) {
-  CPDFSDK_Document* pSDKDoc = m_pEnv->GetSDKDocument();
-  CPDFSDK_InterForm* pInterForm = pSDKDoc->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = m_pEnv->GetSDKDocument()->GetInterForm();
   CPDF_FormControl* pCtrl = CPDFSDK_Widget::GetFormControl(
       pInterForm->GetInterForm(), pAnnot->GetAnnotDict());
   if (!pCtrl)

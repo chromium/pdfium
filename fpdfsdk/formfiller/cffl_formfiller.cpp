@@ -251,8 +251,8 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
 void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
-  CPDFSDK_Document* pDoc = m_pEnv->GetSDKDocument();
-  CPDFSDK_PageView* pPageView = pDoc->GetPageView(pPage, true);
+  CPDFSDK_PageView* pPageView =
+      m_pEnv->GetSDKDocument()->GetPageView(pPage, true);
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, TRUE))
     pWnd->SetFocus();
 
@@ -458,8 +458,7 @@ CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
 
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView(bool renew) {
   UnderlyingPageType* pPage = m_pAnnot->GetUnderlyingPage();
-  CPDFSDK_Document* pSDKDoc = m_pEnv->GetSDKDocument();
-  return pSDKDoc ? pSDKDoc->GetPageView(pPage, renew) : nullptr;
+  return m_pEnv ? m_pEnv->GetSDKDocument()->GetPageView(pPage, renew) : nullptr;
 }
 
 CFX_FloatRect CFFL_FormFiller::GetFocusBox(CPDFSDK_PageView* pPageView) {

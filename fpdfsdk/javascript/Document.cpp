@@ -376,10 +376,6 @@ FX_BOOL Document::importTextData(IJS_Context* cc,
 // exports the form data and mails the resulting fdf file as an attachment to
 // all recipients.
 // comment: need reader supports
-// note:
-// int CPDFSDK_Document::mailForm(FX_BOOL bUI,String cto,string ccc,string
-// cbcc,string cSubject,string cms);
-
 FX_BOOL Document::mailForm(IJS_Context* cc,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,

@@ -39,8 +39,7 @@ CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
 
 CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CXFA_FFWidget* pAnnot,
                                                   CPDFSDK_PageView* pPage) {
-  CPDFSDK_Document* pSDKDoc = m_pEnv->GetSDKDocument();
-  CPDFSDK_InterForm* pInterForm = pSDKDoc->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = m_pEnv->GetSDKDocument()->GetInterForm();
   CPDFSDK_XFAWidget* pWidget = new CPDFSDK_XFAWidget(pAnnot, pPage, pInterForm);
   pInterForm->AddXFAMap(pAnnot, pWidget);
   return pWidget;

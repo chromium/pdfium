@@ -67,8 +67,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
       pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
       pAnnot->GetPDFPage();
 
-      CPDFSDK_Document* pDocument = m_pEnv->GetSDKDocument();
-      if (pDocument->GetFocusAnnot() == pAnnot) {
+      if (m_pEnv->GetSDKDocument()->GetFocusAnnot() == pAnnot) {
         CFX_FloatRect rcFocus = pFormFiller->GetFocusBox(pPageView);
         if (!rcFocus.IsEmpty()) {
           CFX_PathData path;
@@ -239,7 +238,6 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonUp(
     const CFX_FloatPoint& point) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
-  CPDFSDK_Document* pDocument = m_pEnv->GetSDKDocument();
 
   switch (pWidget->GetFieldType()) {
     case FIELDTYPE_PUSHBUTTON:
@@ -247,10 +245,10 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonUp(
     case FIELDTYPE_RADIOBUTTON:
       if (GetViewBBox(pPageView, pAnnot->Get())
               .Contains((int)point.x, (int)point.y))
-        pDocument->SetFocusAnnot(pAnnot);
+        m_pEnv->GetSDKDocument()->SetFocusAnnot(pAnnot);
       break;
     default:
-      pDocument->SetFocusAnnot(pAnnot);
+      m_pEnv->GetSDKDocument()->SetFocusAnnot(pAnnot);
       break;
   }
 
@@ -258,7 +256,7 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonUp(
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot->Get(), FALSE))
     bRet = pFormFiller->OnLButtonUp(pPageView, pAnnot->Get(), nFlags, point);
 
-  if (pDocument->GetFocusAnnot() == pAnnot->Get()) {
+  if (m_pEnv->GetSDKDocument()->GetFocusAnnot() == pAnnot->Get()) {
     FX_BOOL bExit = FALSE;
     FX_BOOL bReset = FALSE;
     OnButtonUp(pAnnot, pPageView, bReset, bExit, nFlags);
