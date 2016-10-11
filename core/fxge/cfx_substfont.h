@@ -15,7 +15,6 @@
 #define FXFONT_SUBST_TRANSFORM 0x10
 #define FXFONT_SUBST_NONSYMBOL 0x20
 #define FXFONT_SUBST_EXACT 0x40
-#define FXFONT_SUBST_STANDARD 0x80
 
 class CFX_SubstFont {
  public:
