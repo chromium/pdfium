@@ -10,12 +10,12 @@
 
 CTTFontDesc::~CTTFontDesc() {
   if (m_Type == 1) {
-    if (m_SingleFace.m_pFace)
-      FXFT_Done_Face(m_SingleFace.m_pFace);
+    if (m_SingleFace)
+      FXFT_Done_Face(m_SingleFace);
   } else if (m_Type == 2) {
     for (int i = 0; i < 16; i++) {
-      if (m_TTCFace.m_pFaces[i])
-        FXFT_Done_Face(m_TTCFace.m_pFaces[i]);
+      if (m_TTCFaces[i])
+        FXFT_Done_Face(m_TTCFaces[i]);
     }
   }
   FX_Free(m_pFontData);
@@ -23,12 +23,12 @@ CTTFontDesc::~CTTFontDesc() {
 
 int CTTFontDesc::ReleaseFace(FXFT_Face face) {
   if (m_Type == 1) {
-    if (m_SingleFace.m_pFace != face)
+    if (m_SingleFace != face)
       return -1;
   } else if (m_Type == 2) {
     int i;
     for (i = 0; i < 16; i++) {
-      if (m_TTCFace.m_pFaces[i] == face)
+      if (m_TTCFaces[i] == face)
         break;
     }
     if (i == 16)

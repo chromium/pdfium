@@ -28,15 +28,10 @@ class CTTFontDesc {
   int ReleaseFace(FXFT_Face face);
 
   int m_Type;
+
   union {
-    struct {
-      FX_BOOL m_bItalic;
-      FX_BOOL m_bBold;
-      FXFT_Face m_pFace;
-    } m_SingleFace;
-    struct {
-      FXFT_Face m_pFaces[16];
-    } m_TTCFace;
+    FXFT_Face m_SingleFace;
+    FXFT_Face m_TTCFaces[16];
   };
   uint8_t* m_pFontData;
   int m_RefCount;
