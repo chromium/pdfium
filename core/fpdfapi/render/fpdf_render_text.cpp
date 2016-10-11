@@ -57,20 +57,16 @@ FX_BOOL CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
         break;
       case TextRenderingMode::MODE_STROKE:
       case TextRenderingMode::MODE_STROKE_CLIP:
-        if (pFont->GetFace() ||
-            (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
+        if (pFont->GetFace())
           bStroke = true;
-        } else {
+        else
           bFill = true;
-        }
         break;
       case TextRenderingMode::MODE_FILL_STROKE:
       case TextRenderingMode::MODE_FILL_STROKE_CLIP:
         bFill = true;
-        if (pFont->GetFace() ||
-            (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
+        if (pFont->GetFace())
           bStroke = true;
-        }
         break;
       case TextRenderingMode::MODE_INVISIBLE:
         // Already handled above, but the compiler is not smart enough to

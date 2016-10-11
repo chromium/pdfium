@@ -854,8 +854,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   if (FXSYS_fabs(char2device.a) + FXSYS_fabs(char2device.b) > 50 * 1.0f ||
       ((m_DeviceClass == FXDC_PRINTER) &&
        !(text_flags & FXTEXT_PRINTIMAGETEXT))) {
-    if (pFont->GetFace() ||
-        (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
+    if (pFont->GetFace()) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
       return DrawTextPath(nChars, pCharPos, pFont, font_size, pText2Device,
@@ -882,10 +881,8 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
         anti_alias = FXFT_RENDER_MODE_LCD;
 
         bool bClearType = false;
-        if (pFont->GetFace() ||
-            (pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_CLEARTYPE)) {
+        if (pFont->GetFace())
           bClearType = !!(text_flags & FXTEXT_CLEARTYPE);
-        }
         bNormal = !bClearType;
       }
     }

@@ -10,10 +10,6 @@
 #include "core/fxcrt/fx_string.h"
 
 #define FXFONT_SUBST_MM 0x01
-#define FXFONT_SUBST_GLYPHPATH 0x04
-#define FXFONT_SUBST_CLEARTYPE 0x08
-#define FXFONT_SUBST_TRANSFORM 0x10
-#define FXFONT_SUBST_NONSYMBOL 0x20
 #define FXFONT_SUBST_EXACT 0x40
 
 class CFX_SubstFont {

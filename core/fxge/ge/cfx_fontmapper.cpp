@@ -645,7 +645,6 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
                                   PitchFamily);
         }
 #endif
-        pSubstFont->m_SubstFlags |= FXFONT_SUBST_NONSYMBOL;
         return FindSubstFont(family, bTrueType, flags & ~FXFONT_SYMBOLIC,
                              weight, italic_angle, 0, pSubstFont);
       }
