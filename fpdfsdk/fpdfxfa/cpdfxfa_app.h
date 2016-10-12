@@ -23,8 +23,8 @@ class CPDFXFA_App : public IXFA_AppProvider {
   FX_BOOL Initialize(v8::Isolate* pIsolate);
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
-  FX_BOOL AddFormFillEnv(CPDFSDK_FormFillEnvironment* pEnv);
-  FX_BOOL RemoveFormFillEnv(CPDFSDK_FormFillEnvironment* pEnv);
+  FX_BOOL AddFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  FX_BOOL RemoveFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   FX_BOOL IsJavaScriptInitialized() const { return m_bJavaScriptInitialized; }
   void SetJavaScriptInitialized(FX_BOOL bInitialized) {
@@ -67,7 +67,7 @@ class CPDFXFA_App : public IXFA_AppProvider {
   void LoadString(int32_t iStringID, CFX_WideString& wsString) override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
-  CFX_ArrayTemplate<CPDFSDK_FormFillEnvironment*> m_pEnvList;
+  CFX_ArrayTemplate<CPDFSDK_FormFillEnvironment*> m_pFormFillEnvList;
 
  protected:
   FX_BOOL m_bJavaScriptInitialized;

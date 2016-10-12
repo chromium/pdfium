@@ -79,9 +79,9 @@ CFX_WideString StrTrim(const CFX_WideString& pStr) {
 }
 
 void AlertIfPossible(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetFormFillEnv();
-  if (pEnv)
-    pEnv->JS_appAlert(swMsg, nullptr, 0, 3);
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pContext->GetFormFillEnv();
+  if (pFormFillEnv)
+    pFormFillEnv->JS_appAlert(swMsg, nullptr, 0, 3);
 }
 
 }  // namespace

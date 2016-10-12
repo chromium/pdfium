@@ -21,7 +21,8 @@ class CPDFSDK_Widget;
 
 class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
  public:
-  explicit CFFL_InteractiveFormFiller(CPDFSDK_FormFillEnvironment* pEnv);
+  explicit CFFL_InteractiveFormFiller(
+      CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CFFL_InteractiveFormFiller() override;
 
   FX_BOOL Annot_HitTest(CPDFSDK_PageView* pPageView,
@@ -165,7 +166,7 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
-  CPDFSDK_FormFillEnvironment* const m_pEnv;
+  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;
   CFFL_Widget2Filler m_Maps;
   FX_BOOL m_bNotifying;
 };

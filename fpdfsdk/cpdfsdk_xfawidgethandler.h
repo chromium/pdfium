@@ -96,7 +96,7 @@ class CPDFSDK_XFAWidgetHandler : public IPDFSDK_AnnotHandler {
   CXFA_FFWidgetHandler* GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);
   uint32_t GetFWLFlags(uint32_t dwFlag);
 
-  CPDFSDK_FormFillEnvironment* m_pEnv;
+  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
 };
 
 #endif  // FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_

@@ -38,7 +38,7 @@ CPDFXFA_App::CPDFXFA_App()
     : m_bJavaScriptInitialized(FALSE),
       m_pIsolate(nullptr),
       m_csAppType(JS_STR_VIEWERTYPE_STANDARD) {
-  m_pEnvList.RemoveAll();
+  m_pFormFillEnvList.RemoveAll();
 }
 
 CPDFXFA_App::~CPDFXFA_App() {
@@ -64,21 +64,22 @@ FX_BOOL CPDFXFA_App::Initialize(v8::Isolate* pIsolate) {
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_App::AddFormFillEnv(CPDFSDK_FormFillEnvironment* pEnv) {
-  if (!pEnv)
+FX_BOOL CPDFXFA_App::AddFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  if (!pFormFillEnv)
     return FALSE;
 
-  m_pEnvList.Add(pEnv);
+  m_pFormFillEnvList.Add(pFormFillEnv);
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_App::RemoveFormFillEnv(CPDFSDK_FormFillEnvironment* pEnv) {
-  if (!pEnv)
+FX_BOOL CPDFXFA_App::RemoveFormFillEnv(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  if (!pFormFillEnv)
     return FALSE;
 
-  int nFind = m_pEnvList.Find(pEnv);
+  int nFind = m_pFormFillEnvList.Find(pFormFillEnv);
   if (nFind != -1) {
-    m_pEnvList.RemoveAt(nFind);
+    m_pFormFillEnvList.RemoveAt(nFind);
     return TRUE;
   }
 
@@ -90,10 +91,9 @@ void CPDFXFA_App::GetAppType(CFX_WideString& wsAppType) {
 }
 
 void CPDFXFA_App::GetAppName(CFX_WideString& wsName) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    wsName = pEnv->FFI_GetAppName();
-  }
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (pFormFillEnv)
+    wsName = pFormFillEnv->FFI_GetAppName();
 }
 
 void CPDFXFA_App::SetAppType(const CFX_WideStringC& wsAppType) {
@@ -101,15 +101,15 @@ void CPDFXFA_App::SetAppType(const CFX_WideStringC& wsAppType) {
 }
 
 void CPDFXFA_App::GetLanguage(CFX_WideString& wsLanguage) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv)
-    wsLanguage = pEnv->GetLanguage();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (pFormFillEnv)
+    wsLanguage = pFormFillEnv->GetLanguage();
 }
 
 void CPDFXFA_App::GetPlatform(CFX_WideString& wsPlatform) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    wsPlatform = pEnv->GetPlatform();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (pFormFillEnv) {
+    wsPlatform = pFormFillEnv->GetPlatform();
   }
 }
 
@@ -122,9 +122,9 @@ void CPDFXFA_App::GetVersion(CFX_WideString& wsVersion) {
 }
 
 void CPDFXFA_App::Beep(uint32_t dwType) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
-    pEnv->JS_appBeep(dwType);
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (pFormFillEnv) {
+    pFormFillEnv->JS_appBeep(dwType);
   }
 }
 
@@ -132,8 +132,8 @@ int32_t CPDFXFA_App::MsgBox(const CFX_WideString& wsMessage,
                             const CFX_WideString& wsTitle,
                             uint32_t dwIconType,
                             uint32_t dwButtonType) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (!pEnv)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (!pFormFillEnv)
     return -1;
 
   uint32_t iconType = 0;
@@ -166,8 +166,8 @@ int32_t CPDFXFA_App::MsgBox(const CFX_WideString& wsMessage,
       iButtonType |= 3;
       break;
   }
-  int32_t iRet = pEnv->JS_appAlert(wsMessage.c_str(), wsTitle.c_str(),
-                                   iButtonType, iconType);
+  int32_t iRet = pFormFillEnv->JS_appAlert(wsMessage.c_str(), wsTitle.c_str(),
+                                           iButtonType, iconType);
   switch (iRet) {
     case 1:
       return XFA_IDOK;
@@ -186,13 +186,13 @@ CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
                                      const CFX_WideString& wsDefaultAnswer,
                                      FX_BOOL bMark) {
   CFX_WideString wsAnswer;
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv) {
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (pFormFillEnv) {
     int nLength = 2048;
     char* pBuff = new char[nLength];
-    nLength = pEnv->JS_appResponse(wsQuestion.c_str(), wsTitle.c_str(),
-                                   wsDefaultAnswer.c_str(), nullptr, bMark,
-                                   pBuff, nLength);
+    nLength = pFormFillEnv->JS_appResponse(wsQuestion.c_str(), wsTitle.c_str(),
+                                           wsDefaultAnswer.c_str(), nullptr,
+                                           bMark, pBuff, nLength);
     if (nLength > 0) {
       nLength = nLength > 2046 ? 2046 : nLength;
       pBuff[nLength] = 0;
@@ -207,8 +207,8 @@ CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
 }
 
 IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideString& wsURL) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  return pEnv ? pEnv->DownloadFromURL(wsURL.c_str()) : nullptr;
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  return pFormFillEnv ? pFormFillEnv->DownloadFromURL(wsURL.c_str()) : nullptr;
 }
 
 FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideString& wsURL,
@@ -217,22 +217,23 @@ FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideString& wsURL,
                                     const CFX_WideString& wsEncode,
                                     const CFX_WideString& wsHeader,
                                     CFX_WideString& wsResponse) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (!pEnv)
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (!pFormFillEnv)
     return FALSE;
 
-  wsResponse =
-      pEnv->PostRequestURL(wsURL.c_str(), wsData.c_str(), wsContentType.c_str(),
-                           wsEncode.c_str(), wsHeader.c_str());
+  wsResponse = pFormFillEnv->PostRequestURL(wsURL.c_str(), wsData.c_str(),
+                                            wsContentType.c_str(),
+                                            wsEncode.c_str(), wsHeader.c_str());
   return TRUE;
 }
 
 FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideString& wsURL,
                                    const CFX_WideString& wsData,
                                    const CFX_WideString& wsEncode) {
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  return pEnv &&
-         pEnv->PutRequestURL(wsURL.c_str(), wsData.c_str(), wsEncode.c_str());
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  return pFormFillEnv &&
+         pFormFillEnv->PutRequestURL(wsURL.c_str(), wsData.c_str(),
+                                     wsEncode.c_str());
 }
 
 void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {
@@ -334,8 +335,8 @@ void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString& wsString) {
 
 IFWL_AdapterTimerMgr* CPDFXFA_App::GetTimerMgr() {
   CXFA_FWLAdapterTimerMgr* pAdapter = nullptr;
-  CPDFSDK_FormFillEnvironment* pEnv = m_pEnvList.GetAt(0);
-  if (pEnv)
-    pAdapter = new CXFA_FWLAdapterTimerMgr(pEnv);
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
+  if (pFormFillEnv)
+    pAdapter = new CXFA_FWLAdapterTimerMgr(pFormFillEnv);
   return pAdapter;
 }

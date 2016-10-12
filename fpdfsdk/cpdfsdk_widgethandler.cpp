@@ -23,8 +23,9 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 #endif  // PDF_ENABLE_XFA
 
-CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(CPDFSDK_FormFillEnvironment* pEnv)
-    : m_pEnv(pEnv), m_pFormFiller(nullptr) {}
+CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv)
+    : m_pFormFillEnv(pFormFillEnv), m_pFormFiller(nullptr) {}
 
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() {}
 
@@ -53,7 +54,7 @@ FX_BOOL CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
 
 CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
                                                CPDFSDK_PageView* pPage) {
-  CPDFSDK_InterForm* pInterForm = m_pEnv->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_FormControl* pCtrl = CPDFSDK_Widget::GetFormControl(
       pInterForm->GetInterForm(), pAnnot->GetAnnotDict());
   if (!pCtrl)

@@ -38,8 +38,8 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
     cp.fFontSize = FFL_DEFAULTLISTBOXFONTSIZE;
 
   if (!m_pFontMap) {
-    m_pFontMap =
-        pdfium::MakeUnique<CBA_FontMap>(m_pWidget, m_pEnv->GetSysHandler());
+    m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(
+        m_pWidget, m_pFormFillEnv->GetSysHandler());
   }
   cp.pFontMap = m_pFontMap.get();
 
@@ -51,7 +51,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   CPWL_ListBox* pWnd = new CPWL_ListBox();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
-  pWnd->SetFillerNotify(m_pEnv->GetInteractiveFormFiller());
+  pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 
   for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++)
     pWnd->AddString(m_pWidget->GetOptionLabel(i));

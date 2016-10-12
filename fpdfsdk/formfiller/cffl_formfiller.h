@@ -20,7 +20,8 @@ class CPDFSDK_Widget;
 
 class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
  public:
-  CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pEnv, CPDFSDK_Annot* pAnnot);
+  CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                  CPDFSDK_Annot* pAnnot);
   ~CFFL_FormFiller() override;
 
   virtual FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView,
@@ -157,7 +158,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   // until the PWL_Edit is done with it. pdfium:566
   void DestroyWindows();
 
-  CPDFSDK_FormFillEnvironment* m_pEnv;
+  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
   CPDFSDK_Widget* m_pWidget;
   CPDFSDK_Annot* m_pAnnot;
 
@@ -168,7 +169,8 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 
 class CFFL_Button : public CFFL_FormFiller {
  public:
-  CFFL_Button(CPDFSDK_FormFillEnvironment* pEnv, CPDFSDK_Annot* pWidget);
+  CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+              CPDFSDK_Annot* pWidget);
   ~CFFL_Button() override;
 
   // CFFL_FormFiller

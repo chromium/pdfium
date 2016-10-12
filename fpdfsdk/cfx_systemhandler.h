@@ -49,8 +49,8 @@ class CPDFSDK_Widget;
 
 class CFX_SystemHandler {
  public:
-  explicit CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pEnv)
-      : m_pEnv(pEnv) {}
+  explicit CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+      : m_pFormFillEnv(pFormFillEnv) {}
   ~CFX_SystemHandler() {}
 
   void InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect);
@@ -72,7 +72,7 @@ class CFX_SystemHandler {
   bool IsALTKeyDown(uint32_t nFlag) const;
 
  private:
-  CPDFSDK_FormFillEnvironment* const m_pEnv;
+  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;
 };
 
 #endif  // FPDFSDK_CFX_SYSTEMHANDLER_H_

@@ -49,16 +49,16 @@ JSGlobalData::~JSGlobalData() {
 }
 
 JSGlobalAlternate::JSGlobalAlternate(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pEnv(nullptr) {}
+    : CJS_EmbedObj(pJSObject), m_pFormFillEnv(nullptr) {}
 
 JSGlobalAlternate::~JSGlobalAlternate() {
   DestroyGlobalPersisitentVariables();
   m_pGlobalData->Release();
 }
 
-void JSGlobalAlternate::Initial(CPDFSDK_FormFillEnvironment* pEnv) {
-  m_pEnv = pEnv;
-  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pEnv);
+void JSGlobalAlternate::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pFormFillEnv = pFormFillEnv;
+  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pFormFillEnv);
   UpdateGlobalPersistentVariables();
 }
 

@@ -52,8 +52,8 @@ FX_BOOL CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
       FX_BOOL bReset = FALSE;
       FX_BOOL bExit = FALSE;
       CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget);
-      m_pEnv->GetInteractiveFormFiller()->OnButtonUp(&pObserved, pPageView,
-                                                     bReset, bExit, nFlags);
+      m_pFormFillEnv->GetInteractiveFormFiller()->OnButtonUp(
+          &pObserved, pPageView, bReset, bExit, nFlags);
       if (!pObserved || bReset || bExit)
         return TRUE;
 

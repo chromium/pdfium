@@ -21,7 +21,8 @@ struct CFWL_TimerInfo;
 
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:
-  CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pEnv) : m_pEnv(pEnv) {}
+  CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+      : m_pFormFillEnv(pFormFillEnv) {}
 
   FWL_Error Start(IFWL_Timer* pTimer,
                   uint32_t dwElapse,
@@ -33,7 +34,7 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
   static void TimerProc(int32_t idEvent);
 
   static std::vector<CFWL_TimerInfo*>* s_TimerArray;
-  CPDFSDK_FormFillEnvironment* const m_pEnv;
+  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;
 };
 
 struct CFWL_TimerInfo : public IFWL_TimerInfo {

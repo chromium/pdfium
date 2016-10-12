@@ -246,9 +246,9 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     return nullptr;
 
 #ifdef PDF_ENABLE_XFA
-  // If the CPDFXFA_Document has a SDKDocument already then we've done this
-  // and can just return the old Env. Otherwise, we'll end up setting a new
-  // SDKDocument into the XFADocument and, that could get weird.
+  // If the CPDFXFA_Document has a FormFillEnvironment already then we've done
+  // this and can just return the old Env. Otherwise, we'll end up setting a new
+  // environment into the XFADocument and, that could get weird.
   if (pDocument->GetFormFillEnv())
     return pDocument->GetFormFillEnv();
 #endif

@@ -17,10 +17,10 @@ FWL_Error CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
                                          uint32_t dwElapse,
                                          bool bImmediately,
                                          IFWL_TimerInfo** pTimerInfo) {
-  if (!m_pEnv)
+  if (!m_pFormFillEnv)
     return FWL_Error::Indefinite;
 
-  int32_t id_event = m_pEnv->SetTimer(dwElapse, TimerProc);
+  int32_t id_event = m_pFormFillEnv->SetTimer(dwElapse, TimerProc);
   if (!s_TimerArray)
     s_TimerArray = new std::vector<CFWL_TimerInfo*>;
 
@@ -30,11 +30,11 @@ FWL_Error CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
 }
 
 FWL_Error CXFA_FWLAdapterTimerMgr::Stop(IFWL_TimerInfo* pTimerInfo) {
-  if (!pTimerInfo || !m_pEnv)
+  if (!pTimerInfo || !m_pFormFillEnv)
     return FWL_Error::Indefinite;
 
   CFWL_TimerInfo* pInfo = static_cast<CFWL_TimerInfo*>(pTimerInfo);
-  m_pEnv->KillTimer(pInfo->idEvent);
+  m_pFormFillEnv->KillTimer(pInfo->idEvent);
   if (s_TimerArray) {
     auto it = std::find(s_TimerArray->begin(), s_TimerArray->end(), pInfo);
     if (it != s_TimerArray->end()) {

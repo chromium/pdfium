@@ -63,7 +63,7 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  if (pProvider->m_pEnvList.GetSize() == 0)
+  if (pProvider->m_pFormFillEnvList.GetSize() == 0)
     pProvider->SetJavaScriptInitialized(FALSE);
 #endif  // PDF_ENABLE_XFA
   if (m_pInfo && m_pInfo->Release)

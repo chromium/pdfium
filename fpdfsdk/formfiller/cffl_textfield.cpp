@@ -73,8 +73,8 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
   }
 
   if (!m_pFontMap) {
-    m_pFontMap =
-        pdfium::MakeUnique<CBA_FontMap>(m_pWidget, m_pEnv->GetSysHandler());
+    m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(
+        m_pWidget, m_pFormFillEnv->GetSysHandler());
   }
   cp.pFontMap = m_pFontMap.get();
   cp.pFocusHandler = this;
@@ -87,7 +87,7 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp,
   CPWL_Edit* pWnd = new CPWL_Edit();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
-  pWnd->SetFillerNotify(m_pEnv->GetInteractiveFormFiller());
+  pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 
   int32_t nMaxLen = m_pWidget->GetMaxLen();
   CFX_WideString swValue = m_pWidget->GetValue();
@@ -115,8 +115,8 @@ FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
         ASSERT(pPageView);
         m_bValid = !m_bValid;
         CFX_FloatRect rcAnnot = pAnnot->GetRect();
-        m_pEnv->Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
-                           rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
+        m_pFormFillEnv->Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
+                                   rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
 
         if (m_bValid) {
           if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, TRUE))
@@ -271,7 +271,7 @@ FX_BOOL CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pEnv);
+  ASSERT(m_pFormFillEnv);
   if (pWnd->GetClassName() == PWL_CLASSNAME_EDIT) {
     CPWL_Edit* pEdit = (CPWL_Edit*)pWnd;
     pEdit->SetCharSet(FXFONT_GB2312_CHARSET);
@@ -282,6 +282,6 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
     int nCharacters = wsText.GetLength();
     CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
     unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
-    m_pEnv->OnSetFieldInputFocus(pBuffer, nCharacters, TRUE);
+    m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, TRUE);
   }
 }

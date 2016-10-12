@@ -27,8 +27,8 @@
 #define FFL_MAXLISTBOXHEIGHT 140.0f
 
 CFFL_InteractiveFormFiller::CFFL_InteractiveFormFiller(
-    CPDFSDK_FormFillEnvironment* pEnv)
-    : m_pEnv(pEnv), m_bNotifying(FALSE) {}
+    CPDFSDK_FormFillEnvironment* pFormFillEnv)
+    : m_pFormFillEnv(pFormFillEnv), m_bNotifying(FALSE) {}
 
 CFFL_InteractiveFormFiller::~CFFL_InteractiveFormFiller() {}
 
@@ -66,7 +66,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
       pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
       pAnnot->GetPDFPage();
 
-      if (m_pEnv->GetFocusAnnot() == pAnnot) {
+      if (m_pFormFillEnv->GetFocusAnnot() == pAnnot) {
         CFX_FloatRect rcFocus = pFormFiller->GetFocusBox(pPageView);
         if (!rcFocus.IsEmpty()) {
           CFX_PathData path;
@@ -119,8 +119,8 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
       ASSERT(pPageView);
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
       pWidget->OnAAction(CPDF_AAction::CursorEnter, fa, pPageView);
       m_bNotifying = FALSE;
       if (!(*pAnnot))
@@ -153,8 +153,8 @@ void CFFL_InteractiveFormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
       ASSERT(pPageView);
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
       pWidget->OnAAction(CPDF_AAction::CursorExit, fa, pPageView);
       m_bNotifying = FALSE;
       if (!(*pAnnot))
@@ -190,8 +190,8 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonDown(
       ASSERT(pPageView);
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlags);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlags);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlags);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlags);
       pWidget->OnAAction(CPDF_AAction::ButtonDown, fa, pPageView);
       m_bNotifying = FALSE;
       if (!(*pAnnot))
@@ -228,10 +228,10 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonUp(
     case FIELDTYPE_RADIOBUTTON:
       if (GetViewBBox(pPageView, pAnnot->Get())
               .Contains((int)point.x, (int)point.y))
-        m_pEnv->SetFocusAnnot(pAnnot);
+        m_pFormFillEnv->SetFocusAnnot(pAnnot);
       break;
     default:
-      m_pEnv->SetFocusAnnot(pAnnot);
+      m_pFormFillEnv->SetFocusAnnot(pAnnot);
       break;
   }
 
@@ -239,7 +239,7 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonUp(
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot->Get(), FALSE))
     bRet = pFormFiller->OnLButtonUp(pPageView, pAnnot->Get(), nFlags, point);
 
-  if (m_pEnv->GetFocusAnnot() == pAnnot->Get()) {
+  if (m_pFormFillEnv->GetFocusAnnot() == pAnnot->Get()) {
     FX_BOOL bExit = FALSE;
     FX_BOOL bReset = FALSE;
     OnButtonUp(pAnnot, pPageView, bReset, bExit, nFlags);
@@ -269,8 +269,8 @@ void CFFL_InteractiveFormFiller::OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
       ASSERT(pPageView);
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
       pWidget->OnAAction(CPDF_AAction::ButtonUp, fa, pPageView);
       m_bNotifying = FALSE;
       if (!(*pAnnot) || !IsValidAnnot(pPageView, pWidget)) {
@@ -394,8 +394,8 @@ FX_BOOL CFFL_InteractiveFormFiller::OnSetFocus(
       ASSERT(pPageView);
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
       pFormFiller->GetActionData(pPageView, CPDF_AAction::GetFocus, fa);
       pWidget->OnAAction(CPDF_AAction::GetFocus, fa, pPageView);
       m_bNotifying = FALSE;
@@ -436,8 +436,8 @@ FX_BOOL CFFL_InteractiveFormFiller::OnKillFocus(
         ASSERT(pPageView);
 
         PDFSDK_FieldAction fa;
-        fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-        fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+        fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+        fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
         pFormFiller->GetActionData(pPageView, CPDF_AAction::LoseFocus, fa);
         pWidget->OnAAction(CPDF_AAction::LoseFocus, fa, pPageView);
         m_bNotifying = FALSE;
@@ -485,22 +485,22 @@ CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
   CFFL_FormFiller* pFormFiller;
   switch (nFieldType) {
     case FIELDTYPE_PUSHBUTTON:
-      pFormFiller = new CFFL_PushButton(m_pEnv, pWidget);
+      pFormFiller = new CFFL_PushButton(m_pFormFillEnv, pWidget);
       break;
     case FIELDTYPE_CHECKBOX:
-      pFormFiller = new CFFL_CheckBox(m_pEnv, pWidget);
+      pFormFiller = new CFFL_CheckBox(m_pFormFillEnv, pWidget);
       break;
     case FIELDTYPE_RADIOBUTTON:
-      pFormFiller = new CFFL_RadioButton(m_pEnv, pWidget);
+      pFormFiller = new CFFL_RadioButton(m_pFormFillEnv, pWidget);
       break;
     case FIELDTYPE_TEXTFIELD:
-      pFormFiller = new CFFL_TextField(m_pEnv, pWidget);
+      pFormFiller = new CFFL_TextField(m_pFormFillEnv, pWidget);
       break;
     case FIELDTYPE_LISTBOX:
-      pFormFiller = new CFFL_ListBox(m_pEnv, pWidget);
+      pFormFiller = new CFFL_ListBox(m_pFormFillEnv, pWidget);
       break;
     case FIELDTYPE_COMBOBOX:
-      pFormFiller = new CFFL_ComboBox(m_pEnv, pWidget);
+      pFormFiller = new CFFL_ComboBox(m_pFormFillEnv, pWidget);
       break;
     case FIELDTYPE_UNKNOWN:
     default:
@@ -615,8 +615,8 @@ void CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
       pWidget->ClearAppModified();
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
       fa.bWillCommit = TRUE;
       fa.bKeyDown = TRUE;
       fa.bRC = TRUE;
@@ -647,8 +647,8 @@ void CFFL_InteractiveFormFiller::OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
       pWidget->ClearAppModified();
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
       fa.bKeyDown = TRUE;
       fa.bRC = TRUE;
 
@@ -714,8 +714,8 @@ void CFFL_InteractiveFormFiller::OnClick(CPDFSDK_Widget* pWidget,
       int nValueAge = pWidget->GetValueAge();
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
 
       pWidget->OnXFAAAction(PDFSDK_XFA_Click, fa, pPageView);
       m_bNotifying = FALSE;
@@ -749,8 +749,8 @@ void CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Widget* pWidget,
       int nValueAge = pWidget->GetValueAge();
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
 
       pWidget->OnXFAAAction(PDFSDK_XFA_Full, fa, pPageView);
       m_bNotifying = FALSE;
@@ -812,8 +812,8 @@ void CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Widget* pWidget,
       int nValueAge = pWidget->GetValueAge();
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
 
       pWidget->OnXFAAAction(PDFSDK_XFA_PreOpen, fa, pPageView);
       m_bNotifying = FALSE;
@@ -847,8 +847,8 @@ void CFFL_InteractiveFormFiller::OnPostOpen(CPDFSDK_Widget* pWidget,
       int nValueAge = pWidget->GetValueAge();
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
 
       pWidget->OnXFAAAction(PDFSDK_XFA_PostOpen, fa, pPageView);
       m_bNotifying = FALSE;
@@ -914,8 +914,8 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
           pData->pPageView->GetFormFillEnv();
 
       PDFSDK_FieldAction fa;
-      fa.bModifier = m_pEnv->IsCTRLKeyDown(nFlag);
-      fa.bShift = m_pEnv->IsSHIFTKeyDown(nFlag);
+      fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(nFlag);
+      fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
       fa.sChange = strChange;
       fa.sChangeEx = strChangeEx;
       fa.bKeyDown = bKeyDown;

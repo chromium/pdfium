@@ -402,10 +402,10 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
     return FALSE;
 
   pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pEnv = pContext->GetFormFillEnv();
-  pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI,
-                       cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(),
-                       cMsg.c_str());
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pContext->GetFormFillEnv();
+  pFormFillEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI,
+                               cTo.c_str(), cSubject.c_str(), cCc.c_str(),
+                               cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
   return TRUE;
 }
@@ -751,9 +751,9 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   }
 
   pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pEnv = pRuntime->GetFormFillEnv();
-  pEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
-                       cCc.c_str(), cBcc.c_str(), cMsg.c_str());
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
+  pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
+                               cCc.c_str(), cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
 
   return TRUE;
