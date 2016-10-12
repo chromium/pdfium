@@ -694,13 +694,15 @@ _cmsTRANSFORM* AllocEmptyTransform(cmsContext ContextID, cmsPipeline* lut,
             if (*dwFlags & cmsFLAGS_NOCACHE) {
 
                 if (*dwFlags & cmsFLAGS_GAMUTCHECK)
-                    p ->xform = PrecalculatedXFORMGamutCheck;  // Gamut check, no cach?                else
+                    p ->xform = PrecalculatedXFORMGamutCheck;  // Gamut check, no cach?
+                else
                     p ->xform = PrecalculatedXFORM;  // No cach? no gamut check
             }
             else {
 
                 if (*dwFlags & cmsFLAGS_GAMUTCHECK)
-                    p ->xform = CachedXFORMGamutCheck;    // Gamut check, cach?                else
+                    p ->xform = CachedXFORMGamutCheck;    // Gamut check, cach?
+                else
                     p ->xform = CachedXFORM;  // No gamut check, cach?
             }
         }
