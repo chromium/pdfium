@@ -33,8 +33,6 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
               CFX_RenderDevice* pDevice,
               CFX_Matrix* pUser2Device);
 
-  void OnCreate(CPDFSDK_Annot* pAnnot);
-  void OnLoad(CPDFSDK_Annot* pAnnot);
   void OnDelete(CPDFSDK_Annot* pAnnot);
 
   void OnMouseEnter(CPDFSDK_PageView* pPageView,

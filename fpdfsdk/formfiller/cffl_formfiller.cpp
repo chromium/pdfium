@@ -108,12 +108,6 @@ void CFFL_FormFiller::OnDrawDeactive(CPDFSDK_PageView* pPageView,
   pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
 }
 
-void CFFL_FormFiller::OnCreate(CPDFSDK_Annot* pAnnot) {}
-
-void CFFL_FormFiller::OnLoad(CPDFSDK_Annot* pAnnot) {}
-
-void CFFL_FormFiller::OnDelete(CPDFSDK_Annot* pAnnot) {}
-
 void CFFL_FormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot) {}
 

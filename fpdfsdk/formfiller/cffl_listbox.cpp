@@ -164,10 +164,6 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-void CFFL_ListBox::SetActionData(CPDFSDK_PageView* pPageView,
-                                 CPDF_AAction::AActionType type,
-                                 const PDFSDK_FieldAction& fa) {}
-
 void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
   ASSERT(pPageView);
 

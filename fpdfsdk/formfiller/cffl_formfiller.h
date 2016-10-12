@@ -34,10 +34,6 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
                               CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device);
 
-  virtual void OnCreate(CPDFSDK_Annot* pAnnot);
-  virtual void OnLoad(CPDFSDK_Annot* pAnnot);
-  virtual void OnDelete(CPDFSDK_Annot* pAnnot);
-
   virtual void OnMouseEnter(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
   virtual void OnMouseExit(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
 

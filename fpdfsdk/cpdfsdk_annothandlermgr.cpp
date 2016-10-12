@@ -56,7 +56,6 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CXFA_FFWidget* pAnnot,
 
 void CPDFSDK_AnnotHandlerMgr::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot);
-  pAnnotHandler->OnRelease(pAnnot);
   pAnnotHandler->ReleaseAnnot(pAnnot);
 }
 
@@ -66,8 +65,6 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnCreate(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_DateTime curTime;
   pPDFAnnot->GetAnnotDict()->SetStringFor("M", curTime.ToPDFDateTimeString());
   pPDFAnnot->GetAnnotDict()->SetNumberFor("F", 0);
-
-  GetAnnotHandler(pAnnot)->OnCreate(pAnnot);
 }
 
 void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {

@@ -57,8 +57,6 @@ void CPDFSDK_BAAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   delete pAnnot;
 }
 
-void CPDFSDK_BAAnnotHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
-
 void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     CFX_RenderDevice* pDevice,
@@ -73,10 +71,6 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
         pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
   }
 }
-
-void CPDFSDK_BAAnnotHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}
-
-void CPDFSDK_BAAnnotHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_BAAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                           CPDFSDK_Annot::ObservedPtr* pAnnot,
@@ -172,12 +166,6 @@ FX_BOOL CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
                                         int nFlag) {
   return FALSE;
 }
-
-void CPDFSDK_BAAnnotHandler::OnDeSelected(CPDFSDK_Annot* pAnnot) {}
-
-void CPDFSDK_BAAnnotHandler::OnSelected(CPDFSDK_Annot* pAnnot) {}
-
-void CPDFSDK_BAAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_BAAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
 

@@ -69,13 +69,7 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   // to do highlight and shadow
 }
 
-void CPDFSDK_XFAWidgetHandler::OnCreate(CPDFSDK_Annot* pAnnot) {}
-
 void CPDFSDK_XFAWidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
-
-void CPDFSDK_XFAWidgetHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}
-
-void CPDFSDK_XFAWidgetHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_XFAWidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_XFAWidget* pWidget = reinterpret_cast<CPDFSDK_XFAWidget*>(pAnnot);
@@ -84,8 +78,6 @@ void CPDFSDK_XFAWidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
 
   delete pWidget;
 }
-
-void CPDFSDK_XFAWidgetHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
 
 CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                     CPDFSDK_Annot* pAnnot) {
@@ -291,10 +283,6 @@ FX_BOOL CPDFSDK_XFAWidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
   return pWidgetHandler->OnKeyUp(pAnnot->GetXFAWidget(), nKeyCode,
                                  GetFWLFlags(nFlag));
 }
-
-void CPDFSDK_XFAWidgetHandler::OnDeSelected(CPDFSDK_Annot* pAnnot) {}
-
-void CPDFSDK_XFAWidgetHandler::OnSelected(CPDFSDK_Annot* pAnnot) {}
 
 FX_BOOL CPDFSDK_XFAWidgetHandler::OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                              uint32_t nFlag) {

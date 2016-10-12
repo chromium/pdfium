@@ -31,9 +31,6 @@ class CFFL_ListBox : public CFFL_FormFiller {
   void GetActionData(CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
                      PDFSDK_FieldAction& fa) override;
-  void SetActionData(CPDFSDK_PageView* pPageView,
-                     CPDF_AAction::AActionType type,
-                     const PDFSDK_FieldAction& fa) override;
   void SaveState(CPDFSDK_PageView* pPageView) override;
   void RestoreState(CPDFSDK_PageView* pPageView) override;
   CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,

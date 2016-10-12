@@ -101,23 +101,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
     pWidget->DrawShadow(pDevice, pPageView);
 }
 
-void CFFL_InteractiveFormFiller::OnCreate(CPDFSDK_Annot* pAnnot) {
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    pFormFiller->OnCreate(pAnnot);
-  }
-}
-
-void CFFL_InteractiveFormFiller::OnLoad(CPDFSDK_Annot* pAnnot) {
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    pFormFiller->OnLoad(pAnnot);
-  }
-}
-
 void CFFL_InteractiveFormFiller::OnDelete(CPDFSDK_Annot* pAnnot) {
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    pFormFiller->OnDelete(pAnnot);
-  }
-
   UnRegisterFormFiller(pAnnot);
 }
 
@@ -533,9 +517,8 @@ CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
 }
 
 void CFFL_InteractiveFormFiller::RemoveFormFiller(CPDFSDK_Annot* pAnnot) {
-  if (pAnnot) {
+  if (pAnnot)
     UnRegisterFormFiller(pAnnot);
-  }
 }
 
 void CFFL_InteractiveFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {

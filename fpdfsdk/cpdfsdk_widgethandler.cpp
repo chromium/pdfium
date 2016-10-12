@@ -88,8 +88,6 @@ void CPDFSDK_WidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   pInterForm->RemoveMap(pControl);
 }
 
-void CPDFSDK_WidgetHandler::DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
-
 void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
                                    CFX_RenderDevice* pDevice,
@@ -103,10 +101,6 @@ void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
       m_pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
   }
 }
-
-void CPDFSDK_WidgetHandler::OnDelete(CPDFSDK_Annot* pAnnot) {}
-
-void CPDFSDK_WidgetHandler::OnRelease(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_WidgetHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                          CPDFSDK_Annot::ObservedPtr* pAnnot,
@@ -227,11 +221,6 @@ FX_BOOL CPDFSDK_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
   return FALSE;
 }
 
-void CPDFSDK_WidgetHandler::OnCreate(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
-    m_pFormFiller->OnCreate(pAnnot);
-}
-
 void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
   if (pAnnot->IsSignatureWidget())
     return;
@@ -257,8 +246,6 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
       pWidget->ResetAppearance(FALSE);
   }
 #endif  // PDF_ENABLE_XFA
-  if (m_pFormFiller)
-    m_pFormFiller->OnLoad(pAnnot);
 }
 
 FX_BOOL CPDFSDK_WidgetHandler::OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
