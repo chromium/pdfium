@@ -7,7 +7,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -44,10 +43,10 @@ CPDFXFA_Document::~CPDFXFA_Document() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
 
   if (m_pFormFillEnv) {
-    m_pFormFillEnv->GetSDKDocument()->ClearAllFocusedAnnots();
+    m_pFormFillEnv->ClearAllFocusedAnnots();
     // Once we're deleted the SDKDocument will point at a bad underlying
     // doc so we need to reset it ...
-    m_pFormFillEnv->GetSDKDocument()->ResetXFADocument();
+    m_pFormFillEnv->ResetXFADocument();
     m_pFormFillEnv = nullptr;
   }
 
@@ -202,5 +201,5 @@ void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
 
 void CPDFXFA_Document::ClearChangeMark() {
   if (m_pFormFillEnv)
-    m_pFormFillEnv->GetSDKDocument()->ClearChangeMark();
+    m_pFormFillEnv->ClearChangeMark();
 }

@@ -8,7 +8,6 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -245,8 +244,7 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
 void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
-  CPDFSDK_PageView* pPageView =
-      m_pEnv->GetSDKDocument()->GetPageView(pPage, true);
+  CPDFSDK_PageView* pPageView = m_pEnv->GetPageView(pPage, true);
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, TRUE))
     pWnd->SetFocus();
 
@@ -452,7 +450,7 @@ CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
 
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView(bool renew) {
   UnderlyingPageType* pPage = m_pAnnot->GetUnderlyingPage();
-  return m_pEnv ? m_pEnv->GetSDKDocument()->GetPageView(pPage, renew) : nullptr;
+  return m_pEnv ? m_pEnv->GetPageView(pPage, renew) : nullptr;
 }
 
 CFX_FloatRect CFFL_FormFiller::GetFocusBox(CPDFSDK_PageView* pPageView) {

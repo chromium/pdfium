@@ -17,7 +17,6 @@
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxge/cfx_fxgedevice.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -46,8 +45,7 @@ CPDFSDK_FormFillEnvironment* HandleToCPDFSDKEnvironment(
 CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
-  return pFormFillEnv ? pFormFillEnv->GetSDKDocument()->GetInterForm()
-                      : nullptr;
+  return pFormFillEnv ? pFormFillEnv->GetInterForm() : nullptr;
 }
 
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
@@ -58,8 +56,7 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
-  return pFormFillEnv ? pFormFillEnv->GetSDKDocument()->GetPageView(pPage, true)
-                      : nullptr;
+  return pFormFillEnv ? pFormFillEnv->GetPageView(pPage, true) : nullptr;
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -132,8 +129,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
 #ifdef PDF_ENABLE_XFA
   options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);
-  if (CPDFSDK_PageView* pPageView =
-          pFormFillEnv->GetSDKDocument()->GetPageView(pPage, true))
+  if (CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 #else   // PDF_ENABLE_XFA
   options.m_pOCContext =
@@ -281,11 +277,11 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
 
   // Reset the focused annotations and remove the SDK document from the
   // XFA document.
-  pFormFillEnv->GetSDKDocument()->ClearAllFocusedAnnots();
+  pFormFillEnv->ClearAllFocusedAnnots();
   // If the document was closed first, it's possible the XFA document
   // is now a nullptr.
-  if (pFormFillEnv->GetSDKDocument()->GetXFADocument())
-    pFormFillEnv->GetSDKDocument()->GetXFADocument()->SetFormFillEnv(nullptr);
+  if (pFormFillEnv->GetXFADocument())
+    pFormFillEnv->GetXFADocument()->SetFormFillEnv(nullptr);
 #endif  // PDF_ENABLE_XFA
 
   delete pFormFillEnv;
@@ -396,7 +392,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
       HandleToCPDFSDKEnvironment(hHandle);
   if (!pFormFillEnv)
     return FALSE;
-  return pFormFillEnv->GetSDKDocument()->KillFocusAnnot(0);
+  return pFormFillEnv->KillFocusAnnot(0);
 }
 
 DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
@@ -675,12 +671,11 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  CPDFSDK_PageView* pPageView =
-      pFormFillEnv->GetSDKDocument()->GetPageView(pPage, false);
+  CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, false);
   if (pPageView) {
     pPageView->SetValid(FALSE);
     // RemovePageView() takes care of the delete for us.
-    pFormFillEnv->GetSDKDocument()->RemovePageView(pPage);
+    pFormFillEnv->RemovePageView(pPage);
   }
 }
 
@@ -688,14 +683,14 @@ DLLEXPORT void STDCALL FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
-    pFormFillEnv->GetSDKDocument()->ProcJavascriptFun();
+    pFormFillEnv->ProcJavascriptFun();
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
-    pFormFillEnv->GetSDKDocument()->ProcOpenAction();
+    pFormFillEnv->ProcOpenAction();
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
@@ -705,7 +700,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   if (!pFormFillEnv)
     return;
 
-  CPDF_Document* pDoc = pFormFillEnv->GetSDKDocument()->GetPDFDocument();
+  CPDF_Document* pDoc = pFormFillEnv->GetPDFDocument();
   CPDF_Dictionary* pDic = pDoc->GetRoot();
   if (!pDic)
     return;
@@ -736,7 +731,7 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   if (!pPDFPage)
     return;
 
-  if (!pFormFillEnv->GetSDKDocument()->GetPageView(pPage, false))
+  if (!pFormFillEnv->GetPageView(pPage, false))
     return;
 
   CPDFSDK_ActionHandler* pActionHandler = pFormFillEnv->GetActionHander();

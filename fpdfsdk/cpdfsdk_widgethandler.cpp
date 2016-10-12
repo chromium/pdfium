@@ -13,7 +13,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -54,7 +53,7 @@ FX_BOOL CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
 
 CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
                                                CPDFSDK_PageView* pPage) {
-  CPDFSDK_InterForm* pInterForm = m_pEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = m_pEnv->GetInterForm();
   CPDF_FormControl* pCtrl = CPDFSDK_Widget::GetFormControl(
       pInterForm->GetInterForm(), pAnnot->GetAnnotDict());
   if (!pCtrl)
@@ -239,8 +238,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
 
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
-  CPDFXFA_Document* pDoc =
-      pPageView->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
+  CPDFXFA_Document* pDoc = pPageView->GetFormFillEnv()->GetXFADocument();
   if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
     if (!pWidget->IsAppearanceValid() && !pWidget->GetValue().IsEmpty())
       pWidget->ResetAppearance(FALSE);

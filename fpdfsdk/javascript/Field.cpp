@@ -15,7 +15,6 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -213,13 +212,11 @@ FX_BOOL Field::AttachField(Document* pDocument,
                            const CFX_WideString& csFieldName) {
   m_pJSDoc = pDocument;
   m_pFormFillEnv.Reset(pDocument->GetFormFillEnv());
-  m_bCanSet =
-      m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_FILL_FORM) ||
-      m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-      m_pFormFillEnv->GetSDKDocument()->GetPermissions(FPDFPERM_MODIFY);
+  m_bCanSet = m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM) ||
+              m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
+              m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY);
 
-  CPDFSDK_InterForm* pRDInterForm =
-      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pRDInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pInterForm = pRDInterForm->GetInterForm();
   CFX_WideString swFieldNameTemp = csFieldName;
   swFieldNameTemp.Replace(L"..", L".");
@@ -246,8 +243,7 @@ std::vector<CPDF_FormField*> Field::GetFormFields(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     const CFX_WideString& csFieldName) {
   std::vector<CPDF_FormField*> fields;
-  CPDFSDK_InterForm* pReaderInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pReaderInterForm = pFormFillEnv->GetInterForm();
   CPDF_InterForm* pInterForm = pReaderInterForm->GetInterForm();
   for (int i = 0, sz = pInterForm->CountFields(csFieldName); i < sz; ++i) {
     if (CPDF_FormField* pFormField = pInterForm->GetField(i, csFieldName))
@@ -266,8 +262,7 @@ void Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                             FX_BOOL bChangeMark,
                             FX_BOOL bResetAP,
                             FX_BOOL bRefresh) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
 
   if (bResetAP) {
     std::vector<CPDFSDK_Widget*> widgets;
@@ -301,17 +296,16 @@ void Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
     // TODO(dsinclair): Determine if all widgets share the same
     // CPDFSDK_InterForm. If that's the case, we can move the code to
-    // |GetSDKDocument| out of the loop.
+    // |GetFormFillEnv| out of the loop.
     for (CPDFSDK_Widget* pWidget : widgets) {
       pWidget->GetInterForm()
           ->GetFormFillEnv()
-          ->GetSDKDocument()
           ->UpdateAllViews(nullptr, pWidget);
     }
   }
 
   if (bChangeMark)
-    pFormFillEnv->GetSDKDocument()->SetChangeMark();
+    pFormFillEnv->SetChangeMark();
 }
 
 void Field::UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -321,7 +315,7 @@ void Field::UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                               FX_BOOL bRefresh) {
   ASSERT(pFormControl);
 
-  CPDFSDK_InterForm* pForm = pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pForm = pFormFillEnv->GetInterForm();
   CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl, false);
 
   if (pWidget) {
@@ -339,20 +333,19 @@ void Field::UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
     if (bRefresh) {
       CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
-      pInterForm->GetFormFillEnv()->GetSDKDocument()->UpdateAllViews(nullptr,
-                                                                     pWidget);
+      pInterForm->GetFormFillEnv()->UpdateAllViews(nullptr, pWidget);
     }
   }
 
   if (bChangeMark)
-    pFormFillEnv->GetSDKDocument()->SetChangeMark();
+    pFormFillEnv->SetChangeMark();
 }
 
 CPDFSDK_Widget* Field::GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDF_FormControl* pFormControl,
                                  bool createIfNeeded) {
-  CPDFSDK_InterForm* pInterForm = static_cast<CPDFSDK_InterForm*>(
-      pFormFillEnv->GetSDKDocument()->GetInterForm());
+  CPDFSDK_InterForm* pInterForm =
+      static_cast<CPDFSDK_InterForm*>(pFormFillEnv->GetInterForm());
   return pInterForm ? pInterForm->GetWidget(pFormControl, createIfNeeded)
                     : nullptr;
 }
@@ -865,8 +858,7 @@ FX_BOOL Field::calcOrderIndex(IJS_Context* cc,
       return FALSE;
     }
 
-    CPDFSDK_InterForm* pRDInterForm =
-        m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+    CPDFSDK_InterForm* pRDInterForm = m_pFormFillEnv->GetInterForm();
     CPDF_InterForm* pInterForm = pRDInterForm->GetInterForm();
     vp << (int32_t)pInterForm->FindFieldInCalculationOrder(pFormField);
   }
@@ -1270,8 +1262,7 @@ FX_BOOL Field::display(IJS_Context* cc,
 
     CPDF_FormField* pFormField = FieldArray[0];
     ASSERT(pFormField);
-    CPDFSDK_InterForm* pInterForm =
-        m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
     CPDFSDK_Widget* pWidget =
         pInterForm->GetWidget(GetSmartFieldControl(pFormField), true);
     if (!pWidget)
@@ -1301,8 +1292,7 @@ void Field::SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        const CFX_WideString& swFieldName,
                        int nControlIndex,
                        int number) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   std::vector<CPDF_FormField*> FieldArray =
       GetFormFields(pFormFillEnv, swFieldName);
   for (CPDF_FormField* pFormField : FieldArray) {
@@ -1536,8 +1526,7 @@ FX_BOOL Field::hidden(IJS_Context* cc,
 
     CPDF_FormField* pFormField = FieldArray[0];
     ASSERT(pFormField);
-    CPDFSDK_InterForm* pInterForm =
-        m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
     CPDFSDK_Widget* pWidget =
         pInterForm->GetWidget(GetSmartFieldControl(pFormField), false);
     if (!pWidget)
@@ -1650,8 +1639,7 @@ FX_BOOL Field::lineWidth(IJS_Context* cc,
     if (!pFormControl)
       return FALSE;
 
-    CPDFSDK_InterForm* pInterForm =
-        m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
     if (!pFormField->CountControls())
       return FALSE;
 
@@ -1670,8 +1658,7 @@ void Field::SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          const CFX_WideString& swFieldName,
                          int nControlIndex,
                          int number) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   std::vector<CPDF_FormField*> FieldArray =
       GetFormFields(pFormFillEnv, swFieldName);
   for (CPDF_FormField* pFormField : FieldArray) {
@@ -1844,8 +1831,7 @@ FX_BOOL Field::page(IJS_Context* cc,
     return FALSE;
 
   std::vector<CPDFSDK_Widget*> widgets;
-  m_pFormFillEnv->GetSDKDocument()->GetInterForm()->GetWidgets(pFormField,
-                                                               &widgets);
+  m_pFormFillEnv->GetInterForm()->GetWidgets(pFormField, &widgets);
 
   if (widgets.empty()) {
     vp << (int32_t)-1;
@@ -1913,8 +1899,7 @@ void Field::SetPassword(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 FX_BOOL Field::print(IJS_Context* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
-  CPDFSDK_InterForm* pInterForm =
-      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return FALSE;
@@ -2080,8 +2065,7 @@ FX_BOOL Field::rect(IJS_Context* cc,
       return FALSE;
 
     CPDF_FormField* pFormField = FieldArray[0];
-    CPDFSDK_InterForm* pInterForm =
-        m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
     CPDFSDK_Widget* pWidget =
         pInterForm->GetWidget(GetSmartFieldControl(pFormField), true);
     if (!pWidget)
@@ -2107,8 +2091,7 @@ void Field::SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     const CFX_WideString& swFieldName,
                     int nControlIndex,
                     const CFX_FloatRect& rect) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   std::vector<CPDF_FormField*> FieldArray =
       GetFormFields(pFormFillEnv, swFieldName);
   for (CPDF_FormField* pFormField : FieldArray) {
@@ -3216,8 +3199,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
   if (nCount < 1)
     return FALSE;
 
-  CPDFSDK_InterForm* pInterForm =
-      m_pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDFSDK_Widget* pWidget = nullptr;
   if (nCount == 1) {
     pWidget = pInterForm->GetWidget(pFormField->GetControl(0), false);
@@ -3228,7 +3210,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
     if (!pPage)
       return FALSE;
     if (CPDFSDK_PageView* pCurPageView =
-            m_pFormFillEnv->GetSDKDocument()->GetPageView(pPage, true)) {
+            m_pFormFillEnv->GetPageView(pPage, true)) {
       for (int32_t i = 0; i < nCount; i++) {
         if (CPDFSDK_Widget* pTempWidget =
                 pInterForm->GetWidget(pFormField->GetControl(i), false)) {
@@ -3243,7 +3225,7 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
 
   if (pWidget) {
     CPDFSDK_Annot::ObservedPtr pObserved(pWidget);
-    m_pFormFillEnv->GetSDKDocument()->SetFocusAnnot(&pObserved);
+    m_pFormFillEnv->SetFocusAnnot(&pObserved);
   }
 
   return TRUE;

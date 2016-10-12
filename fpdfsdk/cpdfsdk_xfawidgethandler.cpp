@@ -8,7 +8,6 @@
 
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -39,7 +38,7 @@ CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
 
 CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CXFA_FFWidget* pAnnot,
                                                   CPDFSDK_PageView* pPage) {
-  CPDFSDK_InterForm* pInterForm = m_pEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = m_pEnv->GetInterForm();
   CPDFSDK_XFAWidget* pWidget = new CPDFSDK_XFAWidget(pAnnot, pPage, pInterForm);
   pInterForm->AddXFAMap(pAnnot, pWidget);
   return pWidget;
@@ -60,7 +59,7 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   mt = *pUser2Device;
 
   FX_BOOL bIsHighlight = FALSE;
-  if (pPageView->GetFormFillEnv()->GetSDKDocument()->GetFocusAnnot() != pAnnot)
+  if (pPageView->GetFormFillEnv()->GetFocusAnnot() != pAnnot)
     bIsHighlight = TRUE;
 
   GetXFAWidgetHandler(pAnnot)->RenderWidget(pAnnot->GetXFAWidget(), &gs, &mt,
@@ -107,10 +106,10 @@ FX_BOOL CPDFSDK_XFAWidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
     return FALSE;
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
-  if (!pFormFillEnv->GetSDKDocument())
+  if (!pFormFillEnv)
     return FALSE;
 
-  CPDFXFA_Document* pDoc = pFormFillEnv->GetSDKDocument()->GetXFADocument();
+  CPDFXFA_Document* pDoc = pFormFillEnv->GetXFADocument();
   if (!pDoc)
     return FALSE;
 
@@ -332,10 +331,10 @@ CXFA_FFWidgetHandler* CPDFSDK_XFAWidgetHandler::GetXFAWidgetHandler(
     return nullptr;
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
-  if (!pFormFillEnv->GetSDKDocument())
+  if (!pFormFillEnv)
     return nullptr;
 
-  CPDFXFA_Document* pDoc = pFormFillEnv->GetSDKDocument()->GetXFADocument();
+  CPDFXFA_Document* pDoc = pFormFillEnv->GetXFADocument();
   if (!pDoc)
     return nullptr;
 

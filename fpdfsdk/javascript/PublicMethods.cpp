@@ -11,7 +11,6 @@
 
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fxcrt/fx_ext.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/javascript/Field.h"
@@ -1660,7 +1659,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CPDFSDK_InterForm* pReaderInterForm =
-      pContext->GetFormFillEnv()->GetSDKDocument()->GetInterForm();
+      pContext->GetFormFillEnv()->GetInterForm();
   CPDF_InterForm* pInterForm = pReaderInterForm->GetInterForm();
 
   CFX_WideString sFunction = params[0].ToCFXWideString(pRuntime);

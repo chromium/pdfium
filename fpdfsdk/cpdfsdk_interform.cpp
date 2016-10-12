@@ -22,7 +22,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -48,8 +47,7 @@
 
 CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv),
-      m_pInterForm(new CPDF_InterForm(
-          m_pFormFillEnv->GetSDKDocument()->GetPDFDocument())),
+      m_pInterForm(new CPDF_InterForm(m_pFormFillEnv->GetPDFDocument())),
 #ifdef PDF_ENABLE_XFA
       m_bXfaCalculate(TRUE),
       m_bXfaValidationsEnabled(TRUE),
@@ -99,19 +97,19 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl,
     return nullptr;
 
   CPDF_Dictionary* pControlDict = pControl->GetWidget();
-  CPDF_Document* pDocument = m_pFormFillEnv->GetSDKDocument()->GetPDFDocument();
+  CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
   if (CPDF_Dictionary* pPageDict = pControlDict->GetDictFor("P")) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0)
-      pPage = m_pFormFillEnv->GetSDKDocument()->GetPageView(nPageIndex);
+      pPage = m_pFormFillEnv->GetPageView(nPageIndex);
   }
 
   if (!pPage) {
     int nPageIndex = GetPageIndexByAnnotDict(pDocument, pControlDict);
     if (nPageIndex >= 0)
-      pPage = m_pFormFillEnv->GetSDKDocument()->GetPageView(nPageIndex);
+      pPage = m_pFormFillEnv->GetPageView(nPageIndex);
   }
 
   if (!pPage)
@@ -336,8 +334,7 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
 
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl, false)) {
       UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
-      CPDFSDK_PageView* pPageView =
-          m_pFormFillEnv->GetSDKDocument()->GetPageView(pPage, false);
+      CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage, false);
       FX_RECT rcBBox = m_pFormFillEnv->GetInteractiveFormFiller()->GetViewBBox(
           pPageView, pWidget);
 
@@ -513,9 +510,9 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
-  std::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
-      m_pFormFillEnv->GetSDKDocument()->GetPath().AsStringC(), fields,
-      bIncludeOrExclude, false));
+  std::unique_ptr<CFDF_Document> pFDF(
+      m_pInterForm->ExportToFDF(m_pFormFillEnv->JS_docGetFilePath().AsStringC(),
+                                fields, bIncludeOrExclude, false));
   return pFDF ? pFDF->WriteBuf(textBuf) : FALSE;
 }
 
@@ -529,10 +526,10 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
   if (sDestination.IsEmpty())
     return FALSE;
 
-  if (!m_pFormFillEnv || !m_pFormFillEnv->GetSDKDocument() || !m_pInterForm)
+  if (!m_pFormFillEnv || !m_pInterForm)
     return FALSE;
 
-  CFX_WideString wsPDFFilePath = m_pFormFillEnv->GetSDKDocument()->GetPath();
+  CFX_WideString wsPDFFilePath = m_pFormFillEnv->JS_docGetFilePath();
   CFDF_Document* pFDFDoc =
       m_pInterForm->ExportToFDF(wsPDFFilePath.AsStringC(), false);
   if (!pFDFDoc)
@@ -560,7 +557,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
 FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
   CFDF_Document* pFDF = m_pInterForm->ExportToFDF(
-      m_pFormFillEnv->GetSDKDocument()->GetPath().AsStringC(), false);
+      m_pFormFillEnv->JS_docGetFilePath().AsStringC(), false);
   if (!pFDF)
     return FALSE;
 

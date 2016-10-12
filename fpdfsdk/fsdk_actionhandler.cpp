@@ -11,7 +11,6 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/fsdk_define.h"
@@ -223,8 +222,7 @@ FX_BOOL CPDFSDK_ActionHandler::IsValidField(
     CPDF_Dictionary* pFieldDict) {
   ASSERT(pFieldDict);
 
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
   return !!pPDFInterForm->GetFieldByDict(pFieldDict);
 }
@@ -418,8 +416,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(
     const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
-  CPDF_Document* pPDFDocument =
-      pFormFillEnv->GetSDKDocument()->GetPDFDocument();
+  CPDF_Document* pPDFDocument = pFormFillEnv->GetPDFDocument();
   ASSERT(pPDFDocument);
 
   CPDF_Dest MyDest = action.GetDest(pPDFDocument);
@@ -454,8 +451,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(
     const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
-  CFX_ByteString sURI =
-      action.GetURI(pFormFillEnv->GetSDKDocument()->GetPDFDocument());
+  CFX_ByteString sURI = action.GetURI(pFormFillEnv->GetPDFDocument());
   pFormFillEnv->DoURIAction(sURI.c_str());
 }
 
@@ -597,10 +593,9 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
 FX_BOOL CPDFSDK_ActionHandler::DoAction_Hide(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   if (pInterForm->DoAction_Hide(action)) {
-    pFormFillEnv->GetSDKDocument()->SetChangeMark();
+    pFormFillEnv->SetChangeMark();
     return TRUE;
   }
 
@@ -610,26 +605,23 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_Hide(
 FX_BOOL CPDFSDK_ActionHandler::DoAction_SubmitForm(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   return pInterForm->DoAction_SubmitForm(action);
 }
 
 FX_BOOL CPDFSDK_ActionHandler::DoAction_ResetForm(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   return pInterForm->DoAction_ResetForm(action);
 }
 
 FX_BOOL CPDFSDK_ActionHandler::DoAction_ImportData(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm =
-      pFormFillEnv->GetSDKDocument()->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   if (pInterForm->DoAction_ImportData(action)) {
-    pFormFillEnv->GetSDKDocument()->SetChangeMark();
+    pFormFillEnv->SetChangeMark();
     return TRUE;
   }
 

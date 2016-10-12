@@ -9,7 +9,6 @@
 #include <memory>
 #include <vector>
 
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/javascript/Document.h"
@@ -245,7 +244,6 @@ FX_BOOL app::calculate(IJS_Context* cc,
 
     CJS_Context* pContext = (CJS_Context*)cc;
     pContext->GetFormFillEnv()
-        ->GetSDKDocument()
         ->GetInterForm()
         ->EnableCalculate((FX_BOOL)m_bCalculate);
   } else {
@@ -294,8 +292,7 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
     return FALSE;
 #ifdef PDF_ENABLE_XFA
   CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFXFA_Document* pDoc =
-      pContext->GetFormFillEnv()->GetSDKDocument()->GetXFADocument();
+  CPDFXFA_Document* pDoc = pContext->GetFormFillEnv()->GetXFADocument();
   if (pDoc->GetDocType() == 1 || pDoc->GetDocType() == 2) {
     vp << JS_NUM_VIEWERVERSION_XFA;
     return TRUE;
@@ -423,7 +420,7 @@ FX_BOOL app::alert(IJS_Context* cc,
     swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
 
   pRuntime->BeginBlock();
-  pFormFillEnv->GetSDKDocument()->KillFocusAnnot(0);
+  pFormFillEnv->KillFocusAnnot(0);
 
   vRet = CJS_Value(pRuntime, pFormFillEnv->JS_appAlert(
                                  swMsg.c_str(), swTitle.c_str(), iType, iIcon));

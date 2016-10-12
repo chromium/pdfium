@@ -13,7 +13,6 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 
 class CFX_RenderDevice;
 class CPDF_AnnotList;

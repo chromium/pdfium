@@ -12,7 +12,6 @@
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/cpdfsdk_baannothandler.h"
 #include "fpdfsdk/cpdfsdk_datetime.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widgethandler.h"
@@ -205,7 +204,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
     CPDFSDK_Annot::ObservedPtr pNext(
         GetNextAnnot(pFocusAnnot, !m_pEnv->IsSHIFTKeyDown(nFlag)));
     if (pNext && pNext.Get() != pFocusAnnot) {
-      pPage->GetFormFillEnv()->GetSDKDocument()->SetFocusAnnot(&pNext);
+      pPage->GetFormFillEnv()->SetFocusAnnot(&pNext);
       return TRUE;
     }
   }

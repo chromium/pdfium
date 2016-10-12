@@ -11,7 +11,6 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/cpdfsdk_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -67,7 +66,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
       pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
       pAnnot->GetPDFPage();
 
-      if (m_pEnv->GetSDKDocument()->GetFocusAnnot() == pAnnot) {
+      if (m_pEnv->GetFocusAnnot() == pAnnot) {
         CFX_FloatRect rcFocus = pFormFiller->GetFocusBox(pPageView);
         if (!rcFocus.IsEmpty()) {
           CFX_PathData path;
@@ -229,10 +228,10 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonUp(
     case FIELDTYPE_RADIOBUTTON:
       if (GetViewBBox(pPageView, pAnnot->Get())
               .Contains((int)point.x, (int)point.y))
-        m_pEnv->GetSDKDocument()->SetFocusAnnot(pAnnot);
+        m_pEnv->SetFocusAnnot(pAnnot);
       break;
     default:
-      m_pEnv->GetSDKDocument()->SetFocusAnnot(pAnnot);
+      m_pEnv->SetFocusAnnot(pAnnot);
       break;
   }
 
@@ -240,7 +239,7 @@ FX_BOOL CFFL_InteractiveFormFiller::OnLButtonUp(
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot->Get(), FALSE))
     bRet = pFormFiller->OnLButtonUp(pPageView, pAnnot->Get(), nFlags, point);
 
-  if (m_pEnv->GetSDKDocument()->GetFocusAnnot() == pAnnot->Get()) {
+  if (m_pEnv->GetFocusAnnot() == pAnnot->Get()) {
     FX_BOOL bExit = FALSE;
     FX_BOOL bReset = FALSE;
     OnButtonUp(pAnnot, pPageView, bReset, bExit, nFlags);
@@ -672,8 +671,7 @@ void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Widget* pWidget,
                                              uint32_t nFlag) {
   if (!m_bNotifying) {
     ASSERT(pWidget);
-    CPDFSDK_InterForm* pInterForm =
-        pPageView->GetFormFillEnv()->GetSDKDocument()->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
     pInterForm->OnCalculate(pWidget->GetFormField());
     m_bNotifying = FALSE;
   }
@@ -685,8 +683,7 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
                                           uint32_t nFlag) {
   if (!m_bNotifying) {
     ASSERT(pWidget);
-    CPDFSDK_InterForm* pInterForm =
-        pPageView->GetFormFillEnv()->GetSDKDocument()->GetInterForm();
+    CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
 
     FX_BOOL bFormatted = FALSE;
     CFX_WideString sValue =
@@ -955,7 +952,7 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
           bRC = FALSE;
         }
 
-        if (pFormFillEnv->GetSDKDocument()->GetFocusAnnot() != pData->pWidget) {
+        if (pFormFillEnv->GetFocusAnnot() != pData->pWidget) {
           pFormFiller->CommitData(pData->pPageView, nFlag);
           bExit = TRUE;
         }

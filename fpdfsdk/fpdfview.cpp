@@ -685,7 +685,7 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
     // This will delete the |pPageView| object. We must cleanup the PageView
     // first because it will attempt to reset the View on the |pPage| during
     // destruction.
-    pPageView->GetFormFillEnv()->GetSDKDocument()->RemovePageView(pPage);
+    pPageView->GetFormFillEnv()->RemovePageView(pPage);
     // If the page was owned then the pageview will have deleted the page.
     if (owned)
       return;
