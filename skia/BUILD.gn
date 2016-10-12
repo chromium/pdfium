@@ -80,6 +80,7 @@ config("skia_library_config") {
     "//third_party/skia/src/pdf",
     "//third_party/skia/src/ports",
     "//third_party/skia/src/sfnt",
+    "//third_party/skia/src/sksl",
     "//third_party/skia/src/utils",
     "//third_party/skia/src/lazy",
   ]
@@ -173,6 +174,7 @@ component("skia") {
   # The skia gypi values are relative to the skia_dir, so we need to rebase.
   sources += skia_core_sources
   sources += skia_effects_sources
+  sources += skia_sksl_sources
   sources += skia_utils_sources
   sources += [
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
