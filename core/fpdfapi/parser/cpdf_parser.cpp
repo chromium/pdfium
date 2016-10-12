@@ -72,9 +72,8 @@ CPDF_Parser::~CPDF_Parser() {
     m_pSyntax->m_pFileAccess = nullptr;
   }
 
-  int32_t iLen = m_Trailers.GetSize();
-  for (int32_t i = 0; i < iLen; ++i) {
-    if (CPDF_Dictionary* trailer = m_Trailers.GetAt(i))
+  for (CPDF_Dictionary* trailer : m_Trailers) {
+    if (trailer)
       trailer->Release();
   }
 
@@ -368,7 +367,7 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
     // SLOW ...
     XRefStreamList.insert(XRefStreamList.begin(),
                           pDict->GetIntegerFor("XRefStm"));
-    m_Trailers.Add(pDict.release());
+    m_Trailers.push_back(pDict.release());
   }
 
   for (size_t i = 0; i < CrossRefList.size(); ++i) {
@@ -423,7 +422,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
     // SLOW ...
     XRefStreamList.insert(XRefStreamList.begin(),
                           pDict->GetIntegerFor("XRefStm"));
-    m_Trailers.Add(pDict.release());
+    m_Trailers.push_back(pDict.release());
   }
 
   for (size_t i = 1; i < CrossRefList.size(); ++i) {
@@ -992,7 +991,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
     for (auto& it : m_ObjectInfo)
       it.second.type = 0;
   } else {
-    m_Trailers.Add(pNewTrailer);
+    m_Trailers.push_back(pNewTrailer);
   }
 
   std::vector<std::pair<int32_t, int32_t>> arrIndex;

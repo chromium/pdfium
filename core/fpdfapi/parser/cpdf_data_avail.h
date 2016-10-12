@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 #define CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 
+#include <vector>
+
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/fx_basic.h"
@@ -124,10 +126,10 @@ class CPDF_DataAvail final {
   static const int kMaxPageRecursionDepth = 1024;
 
   uint32_t GetObjectSize(uint32_t objnum, FX_FILESIZE& offset);
-  FX_BOOL IsObjectsAvail(CFX_ArrayTemplate<CPDF_Object*>& obj_array,
-                         FX_BOOL bParsePage,
-                         DownloadHints* pHints,
-                         CFX_ArrayTemplate<CPDF_Object*>& ret_array);
+  FX_BOOL AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
+                              FX_BOOL bParsePage,
+                              DownloadHints* pHints,
+                              std::vector<CPDF_Object*>& ret_array);
   FX_BOOL CheckDocStatus(DownloadHints* pHints);
   FX_BOOL CheckHeader(DownloadHints* pHints);
   FX_BOOL CheckFirstPage(DownloadHints* pHints);
@@ -209,7 +211,7 @@ class CPDF_DataAvail final {
   FX_FILESIZE m_dwFileLen;
   CPDF_Document* m_pDocument;
   std::set<uint32_t> m_ObjectSet;
-  CFX_ArrayTemplate<CPDF_Object*> m_objs_array;
+  std::vector<CPDF_Object*> m_objs_array;
   FX_FILESIZE m_Pos;
   FX_FILESIZE m_bufferOffset;
   uint32_t m_bufferSize;
@@ -232,13 +234,13 @@ class CPDF_DataAvail final {
   uint32_t m_dwAcroFormObjNum;
   FX_BOOL m_bAcroFormLoad;
   CPDF_Object* m_pAcroForm;
-  CFX_ArrayTemplate<CPDF_Object*> m_arrayAcroforms;
+  std::vector<CPDF_Object*> m_arrayAcroforms;
   CPDF_Dictionary* m_pPageDict;
   CPDF_Object* m_pPageResource;
   FX_BOOL m_bNeedDownLoadResource;
   FX_BOOL m_bPageLoadedOK;
   FX_BOOL m_bLinearizedFormParamLoad;
-  CFX_ArrayTemplate<CPDF_Object*> m_PagesArray;
+  std::vector<CPDF_Object*> m_PagesArray;
   uint32_t m_dwEncryptObjNum;
   FX_FILESIZE m_dwPrevXRefOffset;
   FX_BOOL m_bTotalLoadPageTree;

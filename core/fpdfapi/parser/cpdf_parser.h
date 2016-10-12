@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <vector>
 
 #include "core/fxcrt/fx_basic.h"
 
@@ -153,7 +154,7 @@ class CPDF_Parser {
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   CFX_ByteString m_Password;
   std::set<FX_FILESIZE> m_SortedOffset;
-  CFX_ArrayTemplate<CPDF_Dictionary*> m_Trailers;
+  std::vector<CPDF_Dictionary*> m_Trailers;
   bool m_bVersionUpdated;
   CPDF_Object* m_pLinearized;
   uint32_t m_dwFirstPageNo;

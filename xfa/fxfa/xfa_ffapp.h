@@ -8,6 +8,7 @@
 #define XFA_FXFA_XFA_FFAPP_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -25,7 +26,7 @@ class IFWL_AdapterTimerMgr;
 
 class CXFA_FileRead : public IFX_FileRead {
  public:
-  explicit CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams);
+  explicit CXFA_FileRead(const std::vector<CPDF_Stream*>& streams);
   ~CXFA_FileRead() override;
 
   // IFX_FileRead

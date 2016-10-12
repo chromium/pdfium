@@ -17,8 +17,8 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "fpdfsdk/fsdk_define.h"
+#include "third_party/base/stl_util.h"
 
-typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;
 typedef CFX_ArrayTemplate<CFX_FloatRect> CPDF_RectArray;
 
 enum FPDF_TYPE { MAX, MIN };
@@ -65,7 +65,7 @@ void GetContentsRect(CPDF_Document* pDoc,
 void ParserStream(CPDF_Dictionary* pPageDic,
                   CPDF_Dictionary* pStream,
                   CPDF_RectArray* pRectArray,
-                  CPDF_ObjectArray* pObjectArray) {
+                  std::vector<CPDF_Dictionary*>* pObjectArray) {
   if (!pStream)
     return;
   CFX_FloatRect rect;
@@ -77,13 +77,13 @@ void ParserStream(CPDF_Dictionary* pPageDic,
   if (IsValiableRect(rect, pPageDic->GetRectFor("MediaBox")))
     pRectArray->Add(rect);
 
-  pObjectArray->Add(pStream);
+  pObjectArray->push_back(pStream);
 }
 
 int ParserAnnots(CPDF_Document* pSourceDoc,
                  CPDF_Dictionary* pPageDic,
                  CPDF_RectArray* pRectArray,
-                 CPDF_ObjectArray* pObjectArray,
+                 std::vector<CPDF_Dictionary*>* pObjectArray,
                  int nUsage) {
   if (!pSourceDoc || !pPageDic)
     return FLATTEN_FAIL;
@@ -261,7 +261,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     return FLATTEN_FAIL;
   }
 
-  CPDF_ObjectArray ObjectArray;
+  std::vector<CPDF_Dictionary*> ObjectArray;
   CPDF_RectArray RectArray;
 
   int iRet = FLATTEN_FAIL;
@@ -329,7 +329,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   }
 
   CFX_ByteString key = "";
-  int nStreams = ObjectArray.GetSize();
+  int nStreams = pdfium::CollectionSize<int>(ObjectArray);
 
   if (nStreams > 0) {
     for (int iKey = 0; /*iKey < 100*/; iKey++) {
@@ -359,7 +359,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   }
 
   for (int i = 0; i < nStreams; i++) {
-    CPDF_Dictionary* pAnnotDic = ObjectArray.GetAt(i);
+    CPDF_Dictionary* pAnnotDic = ObjectArray[i];
     if (!pAnnotDic)
       continue;
 
@@ -453,8 +453,6 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   }
   pPageDict->RemoveFor("Annots");
 
-  ObjectArray.RemoveAll();
   RectArray.RemoveAll();
-
   return FLATTEN_SUCCESS;
 }

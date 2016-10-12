@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_
 #define CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_
 
+#include <vector>
+
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -22,7 +24,7 @@ class CPDF_PageContentGenerator {
   explicit CPDF_PageContentGenerator(CPDF_Page* pPage);
   ~CPDF_PageContentGenerator();
 
-  FX_BOOL InsertPageObject(CPDF_PageObject* pPageObject);
+  void InsertPageObject(CPDF_PageObject* pPageObject);
   void GenerateContent();
   void TransformContent(CFX_Matrix& matrix);
 
@@ -37,7 +39,7 @@ class CPDF_PageContentGenerator {
 
   CPDF_Page* m_pPage;
   CPDF_Document* m_pDocument;
-  CFX_ArrayTemplate<CPDF_PageObject*> m_pageObjects;
+  std::vector<CPDF_PageObject*> m_pageObjects;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_

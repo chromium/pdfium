@@ -18,11 +18,10 @@
 #include "xfa/fxfa/xfa_ffwidgethandler.h"
 #include "xfa/fxfa/xfa_fontmgr.h"
 
-CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
-  int32_t iCount = streams.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
+CXFA_FileRead::CXFA_FileRead(const std::vector<CPDF_Stream*>& streams) {
+  for (CPDF_Stream* pStream : streams) {
     CPDF_StreamAcc& acc = m_Data.Add();
-    acc.LoadAllData(streams[i]);
+    acc.LoadAllData(pStream);
   }
 }
 

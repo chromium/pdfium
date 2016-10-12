@@ -311,19 +311,19 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (!pElementXFA)
     return FALSE;
 
-  CFX_ArrayTemplate<CPDF_Stream*> xfaStreams;
+  std::vector<CPDF_Stream*> xfaStreams;
   if (pElementXFA->IsArray()) {
     CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
     for (size_t i = 0; i < pXFAArray->GetCount() / 2; i++) {
       if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
-        xfaStreams.Add(pStream);
+        xfaStreams.push_back(pStream);
     }
   } else if (pElementXFA->IsStream()) {
-    xfaStreams.Add((CPDF_Stream*)pElementXFA);
+    xfaStreams.push_back((CPDF_Stream*)pElementXFA);
   }
-  if (xfaStreams.GetSize() < 1) {
+  if (xfaStreams.empty())
     return FALSE;
-  }
+
   IFX_FileRead* pFileRead = new CXFA_FileRead(xfaStreams);
   m_pPDFDoc = pPDFDoc;
   if (m_pStream) {

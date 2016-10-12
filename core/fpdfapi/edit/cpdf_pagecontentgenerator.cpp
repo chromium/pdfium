@@ -34,21 +34,19 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
 
 CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
 
-FX_BOOL CPDF_PageContentGenerator::InsertPageObject(
-    CPDF_PageObject* pPageObject) {
-  return pPageObject && m_pageObjects.Add(pPageObject);
+void CPDF_PageContentGenerator::InsertPageObject(CPDF_PageObject* pPageObject) {
+  if (pPageObject)
+    m_pageObjects.push_back(pPageObject);
 }
 
 void CPDF_PageContentGenerator::GenerateContent() {
   CFX_ByteTextBuf buf;
-  CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;
-  for (int i = 0; i < m_pageObjects.GetSize(); ++i) {
-    CPDF_PageObject* pPageObj = m_pageObjects[i];
-    if (!pPageObj || !pPageObj->IsImage()) {
-      continue;
-    }
-    ProcessImage(buf, pPageObj->AsImage());
+  for (CPDF_PageObject* pPageObj : m_pageObjects) {
+    CPDF_ImageObject* pImageObject = pPageObj->AsImage();
+    if (pImageObject)
+      ProcessImage(buf, pImageObject);
   }
+  CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetDirectObjectFor("Contents") : nullptr;
   if (pContent)
