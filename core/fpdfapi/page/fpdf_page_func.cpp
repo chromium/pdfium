@@ -20,7 +20,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/numerics/safe_conversions_impl.h"
 
 class CPDF_PSOP {
  public:
@@ -180,8 +179,11 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
 }
 
 FX_BOOL CPDF_PSEngine::DoOperator(PDF_PSOP op) {
-  int i1, i2;
-  FX_FLOAT d1, d2;
+  int i1;
+  int i2;
+  FX_FLOAT d1;
+  FX_FLOAT d2;
+  FX_SAFE_INT32 result;
   switch (op) {
     case PSOP_ADD:
       d1 = Pop();
@@ -204,14 +206,26 @@ FX_BOOL CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       Push(d1 / d2);
       break;
     case PSOP_IDIV:
-      i2 = (int)Pop();
-      i1 = (int)Pop();
-      Push(i2 ? i1 / i2 : 0);
+      i2 = static_cast<int>(Pop());
+      i1 = static_cast<int>(Pop());
+      if (i2) {
+        result = i1;
+        result /= i2;
+        Push(result.ValueOrDefault(0));
+      } else {
+        Push(0);
+      }
       break;
     case PSOP_MOD:
-      i2 = (int)Pop();
-      i1 = (int)Pop();
-      Push(i2 ? i1 % i2 : 0);
+      i2 = static_cast<int>(Pop());
+      i1 = static_cast<int>(Pop());
+      if (i2) {
+        result = i1;
+        result %= i2;
+        Push(result.ValueOrDefault(0));
+      } else {
+        Push(0);
+      }
       break;
     case PSOP_NEG:
       d1 = Pop();
