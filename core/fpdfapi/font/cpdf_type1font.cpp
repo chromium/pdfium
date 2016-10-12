@@ -140,18 +140,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           m_GlyphIndex[charcode] =
               FXFT_Get_Char_Index(m_Font.GetFace(), unicode);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-          FX_CHAR name_glyph[256];
-          FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode],
-                              name_glyph, 256);
-          name_glyph[255] = 0;
-          CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-              kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
-              kCFAllocatorNull);
-          m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-          if (name_ct) {
-            CFRelease(name_ct);
-          }
+          CalcExtGID(charcode);
 #endif
           if (m_GlyphIndex[charcode]) {
             bGotOne = true;
@@ -181,35 +170,13 @@ void CPDF_Type1Font::LoadGlyphMap() {
       m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
           m_Font.GetFace(), m_Encoding.m_Unicodes[charcode]);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-      FX_CHAR name_glyph[256];
-      FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode], name_glyph,
-                          256);
-      name_glyph[255] = 0;
-      CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-          kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
-          kCFAllocatorNull);
-      m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-          (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-      if (name_ct) {
-        CFRelease(name_ct);
-      }
+      CalcExtGID(charcode);
 #endif
       if (m_GlyphIndex[charcode] == 0 && FXSYS_strcmp(name, ".notdef") == 0) {
         m_Encoding.m_Unicodes[charcode] = 0x20;
         m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.GetFace(), 0x20);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        FX_CHAR name_glyph[256];
-        FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode],
-                            name_glyph, 256);
-        name_glyph[255] = 0;
-        CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-            kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
-            kCFAllocatorNull);
-        m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-            (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-        if (name_ct) {
-          CFRelease(name_ct);
-        }
+        CalcExtGID(charcode);
 #endif
       }
     }
@@ -230,14 +197,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
           m_GlyphIndex[charcode] =
               FXFT_Get_Name_Index(m_Font.GetFace(), (char*)name);
-          CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-              kCFAllocatorDefault, name, kCFStringEncodingASCII,
-              kCFAllocatorNull);
-          m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-          if (name_ct) {
-            CFRelease(name_ct);
-          }
+          SetExtGID(name, charcode);
         } else {
           m_GlyphIndex[charcode] =
               FXFT_Get_Char_Index(m_Font.GetFace(), charcode);
@@ -255,14 +215,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
             unicode = PDF_UnicodeFromAdobeName(name_glyph);
           }
           m_Encoding.m_Unicodes[charcode] = unicode;
-          CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-              kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
-              kCFAllocatorNull);
-          m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-          if (name_ct) {
-            CFRelease(name_ct);
-          }
+          SetExtGID(name_glyph, charcode);
         }
       }
       return;
@@ -285,47 +238,19 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
       m_GlyphIndex[charcode] =
           FXFT_Get_Name_Index(m_Font.GetFace(), (char*)name);
-      CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-          kCFAllocatorDefault, name, kCFStringEncodingASCII, kCFAllocatorNull);
-      m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-          (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-      if (name_ct) {
-        CFRelease(name_ct);
-      }
+      SetExtGID(name, charcode);
       if (m_GlyphIndex[charcode] == 0) {
         if (FXSYS_strcmp(name, ".notdef") != 0 &&
             FXSYS_strcmp(name, "space") != 0) {
           m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
               m_Font.GetFace(),
               bUnicode ? m_Encoding.m_Unicodes[charcode] : charcode);
-          FX_CHAR name_glyph[256];
-          FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode],
-                              name_glyph, 256);
-          name_glyph[255] = 0;
-          CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-              kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
-              kCFAllocatorNull);
-          m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-          if (name_ct) {
-            CFRelease(name_ct);
-          }
+          CalcExtGID(charcode);
         } else {
           m_Encoding.m_Unicodes[charcode] = 0x20;
           m_GlyphIndex[charcode] =
               bUnicode ? FXFT_Get_Char_Index(m_Font.GetFace(), 0x20) : 0xffff;
-          FX_CHAR name_glyph[256];
-          FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode],
-                              name_glyph, 256);
-          name_glyph[255] = 0;
-          CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
-              kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
-              kCFAllocatorNull);
-          m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
-          if (name_ct) {
-            CFRelease(name_ct);
-          }
+          CalcExtGID(charcode);
         }
       }
     }
@@ -396,3 +321,22 @@ void CPDF_Type1Font::LoadGlyphMap() {
     FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
 #endif
 }
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+void CPDF_Type1Font::SetExtGID(const FX_CHAR* name, int charcode) {
+  CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
+      kCFAllocatorDefault, name, kCFStringEncodingASCII, kCFAllocatorNull);
+  m_ExtGID[charcode] =
+      CGFontGetGlyphWithGlyphName((CGFontRef)m_Font.GetPlatformFont(), name_ct);
+  if (name_ct)
+    CFRelease(name_ct);
+}
+
+void CPDF_Type1Font::CalcExtGID(int charcode) {
+  FX_CHAR name_glyph[256];
+  FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode], name_glyph,
+                      256);
+  name_glyph[255] = 0;
+  SetExtGID(name_glyph, charcode);
+}
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

@@ -22,12 +22,17 @@ class CPDF_Type1Font : public CPDF_SimpleFont {
 
   int GetBase14Font() const { return m_Base14Font; }
 
- protected:
+ private:
   // CPDF_Font:
   bool Load() override;
 
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  void SetExtGID(const FX_CHAR* name, int charcode);
+  void CalcExtGID(int charcode);
+#endif
 
   int m_Base14Font;
 };
