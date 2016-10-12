@@ -40,16 +40,13 @@ CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     : m_pInfo(pFFinfo),
       m_pUnderlyingDoc(pDoc),
       m_pSysHandler(new CFX_SystemHandler(this)),
-      m_bChangeMask(FALSE),
-      m_bBeingDestroyed(FALSE) {}
+      m_bChangeMask(false),
+      m_bBeingDestroyed(false) {}
 
 CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
-  m_bBeingDestroyed = TRUE;
+  m_bBeingDestroyed = true;
 
   ClearAllFocusedAnnots();
-  for (auto& it : m_pageMap)
-    delete it.second;
-  m_pageMap.clear();
 
   // |m_pAnnotHandlerMgr| will try to access |m_pFormFiller|
   // when it cleans up. So, we must make sure it is cleaned up before
@@ -584,16 +581,16 @@ void CPDFSDK_FormFillEnvironment::ClearAllFocusedAnnots() {
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
     UnderlyingPageType* pUnderlyingPage,
-    bool ReNew) {
+    bool renew) {
   auto it = m_pageMap.find(pUnderlyingPage);
   if (it != m_pageMap.end())
-    return it->second;
+    return it->second.get();
 
-  if (!ReNew)
+  if (!renew)
     return nullptr;
 
   CPDFSDK_PageView* pPageView = new CPDFSDK_PageView(this, pUnderlyingPage);
-  m_pageMap[pUnderlyingPage] = pPageView;
+  m_pageMap[pUnderlyingPage].reset(pPageView);
   // Delay to load all the annotations, to avoid endless loop.
   pPageView->LoadFXAnnots();
   return pPageView;
@@ -612,7 +609,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
     return nullptr;
 
   auto it = m_pageMap.find(pTempPage);
-  return it != m_pageMap.end() ? it->second : nullptr;
+  return it != m_pageMap.end() ? it->second.get() : nullptr;
 }
 
 void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
@@ -664,7 +661,7 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(
   if (it == m_pageMap.end())
     return;
 
-  CPDFSDK_PageView* pPageView = it->second;
+  CPDFSDK_PageView* pPageView = it->second.get();
   if (pPageView->IsLocked() || pPageView->IsBeingDestroyed())
     return;
 
@@ -683,8 +680,6 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(
   // Remove the page from the map to make sure we don't accidentally attempt
   // to use the |pPageView| while we're cleaning it up.
   m_pageMap.erase(it);
-
-  delete pPageView;
 }
 
 UnderlyingPageType* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
@@ -700,7 +695,7 @@ CPDFSDK_InterForm* CPDFSDK_FormFillEnvironment::GetInterForm() {
 void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_PageView* pSender,
                                                  CPDFSDK_Annot* pAnnot) {
   for (const auto& it : m_pageMap) {
-    CPDFSDK_PageView* pPageView = it.second;
+    CPDFSDK_PageView* pPageView = it.second.get();
     if (pPageView != pSender)
       pPageView->UpdateView(pAnnot);
   }

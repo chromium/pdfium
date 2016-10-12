@@ -34,37 +34,7 @@ class CPDFSDK_FormFillEnvironment
                               FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFSDK_FormFillEnvironment();
 
-  CPDFSDK_InterForm* GetInterForm();
-
-  // Gets the document object for the next layer down; for master this is
-  // a CPDF_Document, but for XFA it is a CPDFXFA_Document.
-  UnderlyingDocumentType* GetUnderlyingDocument() const {
-#ifdef PDF_ENABLE_XFA
-    return GetXFADocument();
-#else   // PDF_ENABLE_XFA
-    return GetPDFDocument();
-#endif  // PDF_ENABLE_XFA
-  }
-
-  // Gets the CPDF_Document, either directly in master, or from the
-  // CPDFXFA_Document for XFA.
-  CPDF_Document* GetPDFDocument() const {
-#ifdef PDF_ENABLE_XFA
-    return m_pUnderlyingDoc ? m_pUnderlyingDoc->GetPDFDoc() : nullptr;
-#else   // PDF_ENABLE_XFA
-    return m_pUnderlyingDoc;
-#endif  // PDF_ENABLE_XFA
-  }
-
-#ifdef PDF_ENABLE_XFA
-  // Gets the XFA document directly (XFA-only).
-  CPDFXFA_Document* GetXFADocument() const { return m_pUnderlyingDoc; }
-  void ResetXFADocument() { m_pUnderlyingDoc = nullptr; }
-
-  int GetPageViewCount() const { return m_pageMap.size(); }
-#endif  // PDF_ENABLE_XFA
-
-  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage, bool ReNew);
+  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
   CPDFSDK_PageView* GetCurrentView();
   void RemovePageView(UnderlyingPageType* pPage);
@@ -87,9 +57,9 @@ class CPDFSDK_FormFillEnvironment
   int GetPageCount() { return m_pUnderlyingDoc->GetPageCount(); }
   FX_BOOL GetPermissions(int nFlag);
 
-  FX_BOOL GetChangeMark() { return m_bChangeMask; }
-  void SetChangeMark() { m_bChangeMask = TRUE; }
-  void ClearChangeMark() { m_bChangeMask = FALSE; }
+  bool GetChangeMark() const { return m_bChangeMask; }
+  void SetChangeMark() { m_bChangeMask = true; }
+  void ClearChangeMark() { m_bChangeMask = false; }
 
   UnderlyingPageType* GetPage(int nIndex);
 
@@ -130,7 +100,20 @@ class CPDFSDK_FormFillEnvironment
                     float* fPosArray,
                     int sizeOfArray);
 
+  UnderlyingDocumentType* GetUnderlyingDocument() const {
+    return m_pUnderlyingDoc;
+  }
+
 #ifdef PDF_ENABLE_XFA
+  CPDF_Document* GetPDFDocument() const {
+    return m_pUnderlyingDoc ? m_pUnderlyingDoc->GetPDFDoc() : nullptr;
+  }
+
+  CPDFXFA_Document* GetXFADocument() const { return m_pUnderlyingDoc; }
+  void ResetXFADocument() { m_pUnderlyingDoc = nullptr; }
+
+  int GetPageViewCount() const { return m_pageMap.size(); }
+
   void DisplayCaret(FPDF_PAGE page,
                     FPDF_BOOL bVisible,
                     double left,
@@ -176,6 +159,8 @@ class CPDFSDK_FormFillEnvironment
   CFX_WideString GetLanguage();
 
   void PageEvent(int iPageCount, uint32_t dwEventType) const;
+#else   // PDF_ENABLE_XFA
+  CPDF_Document* GetPDFDocument() const { return m_pUnderlyingDoc; }
 #endif  // PDF_ENABLE_XFA
 
   int JS_appAlert(const FX_WCHAR* Msg,
@@ -221,20 +206,21 @@ class CPDFSDK_FormFillEnvironment
   CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Creates if not present.
   IJS_Runtime* GetJSRuntime();                    // Creates if not present.
   CPDFSDK_ActionHandler* GetActionHander();       // Creates if not present.
+  CPDFSDK_InterForm* GetInterForm();              // Creates if not present.
 
  private:
   std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   std::unique_ptr<IJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
-  std::map<UnderlyingPageType*, CPDFSDK_PageView*> m_pageMap;
+  std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_pageMap;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
   UnderlyingDocumentType* m_pUnderlyingDoc;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
-  FX_BOOL m_bChangeMask;
-  FX_BOOL m_bBeingDestroyed;
+  bool m_bChangeMask;
+  bool m_bBeingDestroyed;
 };
 
 #endif  // FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_
