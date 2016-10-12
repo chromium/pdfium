@@ -376,10 +376,12 @@ FX_BOOL CPDF_PSEngine::DoOperator(PDF_PSOP op) {
     case PSOP_ROLL: {
       int j = static_cast<int>(Pop());
       int n = static_cast<int>(Pop());
-      if (m_StackCount == 0)
+      if (j == 0 || n == 0 || m_StackCount == 0)
         break;
       if (n < 0 || n > static_cast<int>(m_StackCount))
         break;
+
+      j %= n;
       if (j < 0) {
         for (int i = 0; i < -j; i++) {
           FX_FLOAT first = m_Stack[m_StackCount - n];
