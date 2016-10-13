@@ -161,12 +161,16 @@ void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS,
   mt.Concat(mtRotate);
   m_pNormalWidget->DrawWidget(pGS, &mt);
 }
+
 void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
   CFX_WideString wsType = GetDataAcc()->GetBarcodeType();
   XFA_LPCBARCODETYPEENUMINFO pBarcodeTypeInfo =
       XFA_GetBarcodeTypeByName(wsType.AsStringC());
+  if (!pBarcodeTypeInfo)
+    return;
+
   pBarCodeWidget->SetType(pBarcodeTypeInfo->eBCType);
   CXFA_WidgetAcc* pAcc = GetDataAcc();
   int32_t intVal;
@@ -216,6 +220,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
     pBarCodeWidget->SetPrintChecksum(TRUE);
   }
 }
+
 FX_BOOL CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags,
                                       FX_FLOAT fx,
                                       FX_FLOAT fy) {
