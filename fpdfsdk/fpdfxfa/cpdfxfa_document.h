@@ -9,11 +9,11 @@
 
 #include <memory>
 
-#include "fpdfsdk/fpdfxfa/cpdfxfa_app.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
 
 class CPDFSDK_FormFillEnvironment;
+class CPDFXFA_App;
 class CPDFXFA_Page;
 class CXFA_FFDocHandler;
 class IJS_Runtime;
@@ -29,7 +29,8 @@ enum LoadStatus {
 
 class CPDFXFA_Document {
  public:
-  CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc);
+  CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
+                   CPDFXFA_App* pProvider);
   ~CPDFXFA_Document();
 
   FX_BOOL LoadXFADoc();
@@ -37,11 +38,9 @@ class CPDFXFA_Document {
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
   int GetDocType() const { return m_iDocType; }
-  CPDFXFA_App* GetApp();  // Creates if needed.
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-    GetApp()->SetFormFillEnv(pFormFillEnv);
     m_pFormFillEnv = pFormFillEnv;
   }
 
@@ -69,7 +68,13 @@ class CPDFXFA_Document {
   CFX_ArrayTemplate<CPDFXFA_Page*>* GetXFAPageList() { return &m_XFAPageList; }
 
  private:
-  void CloseXFADoc(CXFA_FFDocHandler* pDoc);
+  void CloseXFADoc(CXFA_FFDocHandler* pDoc) {
+    if (pDoc) {
+      m_pXFADoc->CloseDoc();
+      m_pXFADoc.reset();
+      m_pXFADocView = nullptr;
+    }
+  }
 
   int m_iDocType;
 
@@ -77,7 +82,7 @@ class CPDFXFA_Document {
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // not owned.
   CXFA_FFDocView* m_pXFADocView;  // not owned.
-  std::unique_ptr<CPDFXFA_App> m_pApp;
+  CPDFXFA_App* const m_pApp;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
   LoadStatus m_nLoadStatus;
   int m_nPageCount;

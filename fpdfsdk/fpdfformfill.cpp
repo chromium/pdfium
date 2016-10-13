@@ -258,6 +258,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
 
 #ifdef PDF_ENABLE_XFA
   pDocument->SetFormFillEnv(pFormFillEnv);
+  CPDFXFA_App::GetInstance()->AddFormFillEnv(pFormFillEnv);
 #endif  // PDF_ENABLE_XFA
 
   return pFormFillEnv;
@@ -272,6 +273,8 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
       HandleToCPDFSDKEnvironment(hHandle);
 
 #ifdef PDF_ENABLE_XFA
+  CPDFXFA_App::GetInstance()->RemoveFormFillEnv(pFormFillEnv);
+
   // Reset the focused annotations and remove the SDK document from the
   // XFA document.
   pFormFillEnv->ClearAllFocusedAnnots();

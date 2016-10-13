@@ -58,6 +58,11 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
   // Those widgets may call things like KillTimer() as they are shutdown.
   m_pFormFiller.reset();
 
+#ifdef PDF_ENABLE_XFA
+  CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
+  if (pProvider->m_pFormFillEnvList.GetSize() == 0)
+    pProvider->SetJavaScriptInitialized(FALSE);
+#endif  // PDF_ENABLE_XFA
   if (m_pInfo && m_pInfo->Release)
     m_pInfo->Release(m_pInfo);
 }
