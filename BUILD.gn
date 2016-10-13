@@ -469,6 +469,8 @@ static_library("fpdfapi") {
     "core/fpdfapi/page/cpdf_shadingobject.h",
     "core/fpdfapi/page/cpdf_shadingpattern.cpp",
     "core/fpdfapi/page/cpdf_shadingpattern.h",
+    "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+    "core/fpdfapi/page/cpdf_streamcontentparser.h",
     "core/fpdfapi/page/cpdf_textobject.cpp",
     "core/fpdfapi/page/cpdf_textobject.h",
     "core/fpdfapi/page/cpdf_textstate.cpp",
