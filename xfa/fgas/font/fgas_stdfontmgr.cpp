@@ -486,15 +486,13 @@ CFX_FontSourceEnum_File::CFX_FontSourceEnum_File() {
 CFX_FontSourceEnum_File::~CFX_FontSourceEnum_File() {}
 
 CFX_ByteString CFX_FontSourceEnum_File::GetNextFile() {
-Restart:
-  void* pCurHandle =
+  FX_FileHandle* pCurHandle =
       m_FolderQueue.GetSize() != 0
           ? m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->pFileHandle
           : nullptr;
   if (!pCurHandle) {
-    if (m_FolderPaths.GetSize() < 1) {
+    if (m_FolderPaths.GetSize() < 1)
       return "";
-    }
     pCurHandle =
         FX_OpenFolder(m_FolderPaths[m_FolderPaths.GetSize() - 1].c_str());
     FX_HandleParentPath hpp;
@@ -503,37 +501,31 @@ Restart:
     m_FolderQueue.Add(hpp);
   }
   CFX_ByteString bsName;
-  FX_BOOL bFolder;
+  bool bFolder;
   CFX_ByteString bsFolderSpearator =
       CFX_ByteString::FromUnicode(CFX_WideString(FX_GetFolderSeparator()));
-  while (TRUE) {
-    if (!FX_GetNextFile(pCurHandle, bsName, bFolder)) {
+  while (true) {
+    if (!FX_GetNextFile(pCurHandle, &bsName, &bFolder)) {
       FX_CloseFolder(pCurHandle);
       m_FolderQueue.RemoveAt(m_FolderQueue.GetSize() - 1);
       if (m_FolderQueue.GetSize() == 0) {
         m_FolderPaths.RemoveAt(m_FolderPaths.GetSize() - 1);
-        if (m_FolderPaths.GetSize() == 0) {
-          return "";
-        } else {
-          goto Restart;
-        }
+        return m_FolderPaths.GetSize() != 0 ? GetNextFile() : "";
       }
       pCurHandle =
           m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->pFileHandle;
       continue;
     }
-    if (bsName == "." || bsName == "..") {
+    if (bsName == "." || bsName == "..")
       continue;
-    }
     if (bFolder) {
       FX_HandleParentPath hpp;
       hpp.bsParentPath =
           m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->bsParentPath +
           bsFolderSpearator + bsName;
       hpp.pFileHandle = FX_OpenFolder(hpp.bsParentPath.c_str());
-      if (!hpp.pFileHandle) {
+      if (!hpp.pFileHandle)
         continue;
-      }
       m_FolderQueue.Add(hpp);
       pCurHandle = hpp.pFileHandle;
       continue;

@@ -122,7 +122,7 @@ struct FX_HandleParentPath {
     pFileHandle = x.pFileHandle;
     bsParentPath = x.bsParentPath;
   }
-  void* pFileHandle;
+  FX_FileHandle* pFileHandle;
   CFX_ByteString bsParentPath;
 };
 

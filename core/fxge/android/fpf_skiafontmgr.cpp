@@ -399,36 +399,35 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const uint8_t* pBuffer,
   FXFT_Set_Pixel_Sizes(face, 0, 64);
   return face;
 }
+
 void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteString& path) {
-  void* handle = FX_OpenFolder(path.c_str());
+  DIR* handle = FX_OpenFolder(path.c_str());
   if (!handle) {
     return;
   }
   CFX_ByteString filename;
-  FX_BOOL bFolder = FALSE;
-  while (FX_GetNextFile(handle, filename, bFolder)) {
+  bool bFolder = false;
+  while (FX_GetNextFile(handle, &filename, &bFolder)) {
     if (bFolder) {
-      if (filename == "." || filename == "..") {
+      if (filename == "." || filename == "..")
         continue;
-      }
     } else {
       CFX_ByteString ext = filename.Right(4);
       ext.MakeLower();
-      if (ext != ".ttf" && ext != ".ttc" && ext != ".otf") {
+      if (ext != ".ttf" && ext != ".ttc" && ext != ".otf")
         continue;
-      }
     }
     CFX_ByteString fullpath(path);
     fullpath += "/";
     fullpath += filename;
-    if (bFolder) {
+    if (bFolder)
       ScanPath(fullpath);
-    } else {
+    else
       ScanFile(fullpath);
-    }
   }
   FX_CloseFolder(handle);
 }
+
 void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteString& file) {
   FXFT_Face face = GetFontFace(file.AsStringC());
   if (face) {
@@ -439,6 +438,7 @@ void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteString& file) {
     FXFT_Done_Face(face);
   }
 }
+
 static const uint32_t g_FPFSkiaFontCharsets[] = {
     FPF_SKIACHARSET_Ansi,
     FPF_SKIACHARSET_EeasternEuropean,
@@ -473,6 +473,7 @@ static const uint32_t g_FPFSkiaFontCharsets[] = {
     FPF_SKIACHARSET_OEM,
     FPF_SKIACHARSET_Symbol,
 };
+
 static uint32_t FPF_SkiaGetFaceCharset(TT_OS2* pOS2) {
   uint32_t dwCharset = 0;
   if (pOS2) {
@@ -485,6 +486,7 @@ static uint32_t FPF_SkiaGetFaceCharset(TT_OS2* pOS2) {
   dwCharset |= FPF_SKIACHARSET_Default;
   return dwCharset;
 }
+
 void CFPF_SkiaFontMgr::ReportFace(FXFT_Face face,
                                   CFPF_SkiaFontDescriptor* pFontDesc) {
   if (!face || !pFontDesc) {
@@ -519,5 +521,6 @@ void CFPF_SkiaFontMgr::ReportFace(FXFT_Face face,
   pFontDesc->m_iFaceIndex = face->face_index;
   pFontDesc->m_iGlyphNum = face->num_glyphs;
 }
+
 void CFPF_SkiaFontMgr::OutputSystemFonts() {}
 #endif

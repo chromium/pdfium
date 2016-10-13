@@ -116,13 +116,13 @@ FX_BOOL CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
 }
 
 void CFX_FolderFontInfo::ScanPath(const CFX_ByteString& path) {
-  void* handle = FX_OpenFolder(path.c_str());
+  FX_FileHandle* handle = FX_OpenFolder(path.c_str());
   if (!handle)
     return;
 
   CFX_ByteString filename;
-  FX_BOOL bFolder;
-  while (FX_GetNextFile(handle, filename, bFolder)) {
+  bool bFolder;
+  while (FX_GetNextFile(handle, &filename, &bFolder)) {
     if (bFolder) {
       if (filename == "." || filename == "..")
         continue;

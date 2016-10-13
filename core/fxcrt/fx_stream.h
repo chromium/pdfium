@@ -10,22 +10,18 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-void* FX_OpenFolder(const FX_CHAR* path);
-void* FX_OpenFolder(const FX_WCHAR* path);
-FX_BOOL FX_GetNextFile(void* handle,
-                       CFX_ByteString& filename,
-                       FX_BOOL& bFolder);
-FX_BOOL FX_GetNextFile(void* handle,
-                       CFX_WideString& filename,
-                       FX_BOOL& bFolder);
-void FX_CloseFolder(void* handle);
-FX_WCHAR FX_GetFolderSeparator();
-
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#include <direct.h>
+
+class CFindFileDataA;
+
+typedef CFindFileDataA FX_FileHandle;
 #define FX_FILESIZE int32_t
 #else
+#include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #ifndef O_BINARY
@@ -36,8 +32,16 @@ FX_WCHAR FX_GetFolderSeparator();
 #define O_LARGEFILE 0
 #endif  // O_LARGEFILE
 
+typedef DIR FX_FileHandle;
 #define FX_FILESIZE off_t
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+
+FX_FileHandle* FX_OpenFolder(const FX_CHAR* path);
+bool FX_GetNextFile(FX_FileHandle* handle,
+                    CFX_ByteString* filename,
+                    bool* bFolder);
+void FX_CloseFolder(FX_FileHandle* handle);
+FX_WCHAR FX_GetFolderSeparator();
 
 #define FX_GETBYTEOFFSET32(a) 0
 #define FX_GETBYTEOFFSET40(a) 0
@@ -158,5 +162,26 @@ class IFX_BufferRead : public IFX_StreamRead {
   virtual size_t GetBlockSize() = 0;
   virtual FX_FILESIZE GetBlockOffset() = 0;
 };
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+class CFindFileData {
+ public:
+  virtual ~CFindFileData() {}
+  HANDLE m_Handle;
+  bool m_bEnd;
+};
+
+class CFindFileDataA : public CFindFileData {
+ public:
+  ~CFindFileDataA() override {}
+  WIN32_FIND_DATAA m_FindData;
+};
+
+class CFindFileDataW : public CFindFileData {
+ public:
+  ~CFindFileDataW() override {}
+  WIN32_FIND_DATAW m_FindData;
+};
+#endif
 
 #endif  // CORE_FXCRT_FX_STREAM_H_
