@@ -69,6 +69,7 @@ class CPDF_Array : public CPDF_Object {
 
   std::vector<CPDF_Object*> m_Objects;
 };
+using UniqueArray = std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Object>>;
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {
   return obj ? obj->AsArray() : nullptr;
@@ -76,6 +77,14 @@ inline CPDF_Array* ToArray(CPDF_Object* obj) {
 
 inline const CPDF_Array* ToArray(const CPDF_Object* obj) {
   return obj ? obj->AsArray() : nullptr;
+}
+
+inline UniqueArray ToArray(UniqueObject obj) {
+  CPDF_Array* pArray = ToArray(obj.get());
+  if (!pArray)
+    return nullptr;
+  obj.release();
+  return UniqueArray(pArray);
 }
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_

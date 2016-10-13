@@ -15,6 +15,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
@@ -22,55 +23,55 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc)
-    : CPDF_Image(pDoc, nullptr, false) {}
+CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc, CPDF_Stream* pStream, bool bInline)
-    : m_pDIBSource(nullptr),
-      m_pMask(nullptr),
-      m_MatteColor(0),
-      m_pStream(pStream),
-      m_bInline(bInline),
-      m_pInlineDict(nullptr),
-      m_Height(0),
-      m_Width(0),
-      m_bIsMask(false),
-      m_bInterpolate(false),
-      m_pDocument(pDoc),
-      m_pOC(nullptr) {
-  if (!pStream)
+CPDF_Image::CPDF_Image(CPDF_Document* pDoc, UniqueStream pStream)
+    : m_pDocument(pDoc),
+      m_pStream(pStream.get()),
+      m_pOwnedStream(std::move(pStream)) {
+  if (!m_pStream)
     return;
 
-  CPDF_Dictionary* pDict = pStream->GetDict();
-  if (m_bInline)
-    m_pInlineDict = ToDictionary(pDict->Clone());
-
-  m_pOC = pDict->GetDictFor("OC");
-  m_bIsMask =
-      !pDict->KeyExist("ColorSpace") || pDict->GetIntegerFor("ImageMask");
-  m_bInterpolate = !!pDict->GetIntegerFor("Interpolate");
-  m_Height = pDict->GetIntegerFor("Height");
-  m_Width = pDict->GetIntegerFor("Width");
+  m_pOwnedDict = ToDictionary(UniqueObject(m_pStream->GetDict()->Clone()));
+  m_pDict = m_pOwnedDict.get();
+  FinishInitialization();
 }
 
-CPDF_Image::~CPDF_Image() {
-  if (m_bInline) {
-    if (m_pStream)
-      m_pStream->Release();
-    if (m_pInlineDict)
-      m_pInlineDict->Release();
-  }
+CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
+    : m_pDocument(pDoc),
+      m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
+  if (!m_pStream)
+    return;
+
+  m_pDict = m_pStream->GetDict();
+  FinishInitialization();
+}
+
+CPDF_Image::~CPDF_Image() {}
+
+void CPDF_Image::FinishInitialization() {
+  m_pOC = m_pDict->GetDictFor("OC");
+  m_bIsMask =
+      !m_pDict->KeyExist("ColorSpace") || m_pDict->GetIntegerFor("ImageMask");
+  m_bInterpolate = !!m_pDict->GetIntegerFor("Interpolate");
+  m_Height = m_pDict->GetIntegerFor("Height");
+  m_Width = m_pDict->GetIntegerFor("Width");
 }
 
 CPDF_Image* CPDF_Image::Clone() {
-  if (!m_pStream->IsInline())
-    return m_pDocument->GetPageData()->GetImage(m_pStream);
-
-  CPDF_Image* pImage =
-      new CPDF_Image(m_pDocument, ToStream(m_pStream->Clone()), m_bInline);
-  if (m_bInline)
-    pImage->SetInlineDict(ToDictionary(m_pInlineDict->CloneDirectObject()));
-
+  CPDF_Image* pImage = new CPDF_Image(m_pDocument);
+  if (m_pOwnedStream) {
+    pImage->m_pOwnedStream = ToStream(UniqueObject(m_pOwnedStream->Clone()));
+    pImage->m_pStream = pImage->m_pOwnedStream.get();
+  } else {
+    pImage->m_pStream = m_pStream;
+  }
+  if (m_pOwnedDict) {
+    pImage->m_pOwnedDict = ToDictionary(UniqueObject(m_pOwnedDict->Clone()));
+    pImage->m_pDict = pImage->m_pOwnedDict.get();
+  } else {
+    pImage->m_pDict = m_pDict;
+  }
   return pImage;
 }
 

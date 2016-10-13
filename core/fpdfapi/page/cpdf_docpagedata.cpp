@@ -397,14 +397,15 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream) {
   if (!pImageStream)
     return nullptr;
 
-  const uint32_t dwImageObjNum = pImageStream->GetObjNum();
-  auto it = m_ImageMap.find(dwImageObjNum);
+  ASSERT(!pImageStream->IsInline());
+  const uint32_t dwObjNum = pImageStream->GetObjNum();
+  auto it = m_ImageMap.find(dwObjNum);
   if (it != m_ImageMap.end())
     return it->second->AddRef();
 
-  CPDF_CountedImage* pCountedImage = new CPDF_CountedImage(
-      new CPDF_Image(m_pPDFDoc, pImageStream->AsStream(), false));
-  m_ImageMap[dwImageObjNum] = pCountedImage;
+  CPDF_CountedImage* pCountedImage =
+      new CPDF_CountedImage(new CPDF_Image(m_pPDFDoc, dwObjNum));
+  m_ImageMap[dwObjNum] = pCountedImage;
   return pCountedImage->AddRef();
 }
 

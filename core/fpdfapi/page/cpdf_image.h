@@ -28,12 +28,13 @@ class IFX_Pause;
 class CPDF_Image {
  public:
   explicit CPDF_Image(CPDF_Document* pDoc);
-  CPDF_Image(CPDF_Document* pDoc, CPDF_Stream* pStream, bool bInline);
+  CPDF_Image(CPDF_Document* pDoc, UniqueStream pStream);
+  CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
   ~CPDF_Image();
 
   CPDF_Image* Clone();
 
-  CPDF_Dictionary* GetInlineDict() const { return m_pInlineDict; }
+  CPDF_Dictionary* GetInlineDict() const { return m_pDict; }
   CPDF_Stream* GetStream() const { return m_pStream; }
   CPDF_Dictionary* GetDict() const {
     return m_pStream ? m_pStream->GetDict() : nullptr;
@@ -44,7 +45,7 @@ class CPDF_Image {
   int32_t GetPixelHeight() const { return m_Height; }
   int32_t GetPixelWidth() const { return m_Width; }
 
-  bool IsInline() const { return m_bInline; }
+  bool IsInline() const { return !!m_pOwnedStream; }
   bool IsMask() const { return m_bIsMask; }
   bool IsInterpol() const { return m_bInterpolate; }
 
@@ -54,7 +55,6 @@ class CPDF_Image {
                                uint32_t GroupFamily = 0,
                                FX_BOOL bLoadMask = FALSE) const;
 
-  void SetInlineDict(CPDF_Dictionary* pDict) { m_pInlineDict = pDict; }
   void SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress);
   void SetJpegImage(IFX_FileRead* pFile);
 
@@ -69,22 +69,24 @@ class CPDF_Image {
   CFX_DIBSource* DetachBitmap();
   CFX_DIBSource* DetachMask();
 
-  CFX_DIBSource* m_pDIBSource;
-  CFX_DIBSource* m_pMask;
-  uint32_t m_MatteColor;
+  CFX_DIBSource* m_pDIBSource = nullptr;
+  CFX_DIBSource* m_pMask = nullptr;
+  uint32_t m_MatteColor = 0;
 
  private:
+  void FinishInitialization();
   CPDF_Dictionary* InitJPEG(uint8_t* pData, uint32_t size);
 
-  CPDF_Stream* m_pStream;
-  const bool m_bInline;
-  CPDF_Dictionary* m_pInlineDict;
-  int32_t m_Height;
-  int32_t m_Width;
-  bool m_bIsMask;
-  bool m_bInterpolate;
+  int32_t m_Height = 0;
+  int32_t m_Width = 0;
+  bool m_bIsMask = false;
+  bool m_bInterpolate = false;
   CPDF_Document* const m_pDocument;
-  CPDF_Dictionary* m_pOC;
+  CPDF_Stream* m_pStream = nullptr;
+  CPDF_Dictionary* m_pDict = nullptr;
+  UniqueStream m_pOwnedStream;
+  UniqueDictionary m_pOwnedDict;
+  CPDF_Dictionary* m_pOC = nullptr;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_

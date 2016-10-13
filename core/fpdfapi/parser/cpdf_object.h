@@ -118,4 +118,6 @@ class CPDF_Object {
   CPDF_Object(const CPDF_Object& src) {}
 };
 
+using UniqueObject = std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>>;
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_OBJECT_H_

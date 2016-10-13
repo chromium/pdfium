@@ -706,8 +706,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(UniqueStream pStream) {
 
   auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
   pImageObj->SetOwnedImage(
-      pdfium::MakeUnique<CPDF_Image>(m_pDocument, pStream.release(), true));
-
+      pdfium::MakeUnique<CPDF_Image>(m_pDocument, std::move(pStream)));
   return AddImageObject(std::move(pImageObj));
 }
 

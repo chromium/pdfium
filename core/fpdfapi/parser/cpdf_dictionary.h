@@ -15,6 +15,7 @@
 #include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "third_party/base/ptr_util.h"
 
 class CPDF_IndirectObjectHolder;
 
@@ -98,12 +99,23 @@ class CPDF_Dictionary : public CPDF_Object {
   std::map<CFX_ByteString, CPDF_Object*> m_Map;
 };
 
+using UniqueDictionary =
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Object>>;
+
 inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {
   return obj ? obj->AsDictionary() : nullptr;
 }
 
 inline const CPDF_Dictionary* ToDictionary(const CPDF_Object* obj) {
   return obj ? obj->AsDictionary() : nullptr;
+}
+
+inline UniqueDictionary ToDictionary(UniqueObject obj) {
+  CPDF_Dictionary* pDict = ToDictionary(obj.get());
+  if (!pDict)
+    return nullptr;
+  obj.release();
+  return UniqueDictionary(pDict);
 }
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_
