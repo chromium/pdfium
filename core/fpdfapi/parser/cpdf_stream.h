@@ -58,6 +58,8 @@ class CPDF_Stream : public CPDF_Object {
   IFX_FileRead* m_pFile = nullptr;
 };
 
+using UniqueStream = std::unique_ptr<CPDF_Stream, ReleaseDeleter<CPDF_Stream>>;
+
 inline CPDF_Stream* ToStream(CPDF_Object* obj) {
   return obj ? obj->AsStream() : nullptr;
 }

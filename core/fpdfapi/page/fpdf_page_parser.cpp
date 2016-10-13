@@ -620,8 +620,9 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       }
     }
   }
-  CPDF_Stream* pStream =
-      m_pSyntax->ReadInlineStream(m_pDocument, pDict, pCSObj);
+  pDict->SetNameFor("Subtype", "Image");
+  UniqueStream pStream(m_pSyntax->ReadInlineStream(m_pDocument, pDict, pCSObj));
+  bool bGaveDictAway = !!pStream;
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::EndOfData) {
@@ -635,15 +636,9 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       break;
     }
   }
-  pDict->SetNameFor("Subtype", "Image");
-  CPDF_ImageObject* pImgObj = AddImage(pStream, nullptr, true);
-  if (!pImgObj) {
-    if (pStream) {
-      pStream->Release();
-    } else {
-      pDict->Release();
-    }
-  }
+  CPDF_ImageObject* pImgObj = AddImage(std::move(pStream));
+  if (!pImgObj && !bGaveDictAway)
+    pDict->Release();
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
@@ -714,7 +709,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   CFX_ByteString name = GetString(0);
   if (name == m_LastImageName && m_pLastImage && m_pLastImage->GetStream() &&
       m_pLastImage->GetStream()->GetObjNum()) {
-    AddImage(nullptr, m_pLastImage, false);
+    AddImage(m_pLastImage);
     return;
   }
 
@@ -729,7 +724,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     type = pXObject->GetDict()->GetStringFor("Subtype");
 
   if (type == "Image") {
-    CPDF_ImageObject* pObj = AddImage(pXObject, nullptr, false);
+    CPDF_ImageObject* pObj = AddImage(pXObject->GetObjNum());
     m_LastImageName = name;
     m_pLastImage = pObj->GetImage();
     if (!m_pObjectHolder->HasImageMask())
@@ -760,29 +755,48 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   m_pObjectHolder->GetPageObjectList()->push_back(std::move(pFormObj));
 }
 
-CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
-                                                     CPDF_Image* pImage,
-                                                     bool bInline) {
-  if (!pStream && !pImage)
+CPDF_ImageObject* CPDF_StreamContentParser::AddImage(UniqueStream pStream) {
+  if (!pStream)
     return nullptr;
+
+  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  pImageObj->SetOwnedImage(
+      pdfium::MakeUnique<CPDF_Image>(m_pDocument, pStream.release(), true));
+
+  return AddImageObject(std::move(pImageObj));
+}
+
+CPDF_ImageObject* CPDF_StreamContentParser::AddImage(uint32_t streamObjNum) {
+  CPDF_Stream* pStream = ToStream(m_pDocument->GetIndirectObject(streamObjNum));
+  if (!pStream)
+    return nullptr;
+
+  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  pImageObj->SetUnownedImage(m_pDocument->LoadImageF(pStream));
+  return AddImageObject(std::move(pImageObj));
+}
+
+CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Image* pImage) {
+  if (!pImage)
+    return nullptr;
+
+  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  pImageObj->SetUnownedImage(
+      m_pDocument->GetPageData()->GetImage(pImage->GetStream()));
+
+  return AddImageObject(std::move(pImageObj));
+}
+
+CPDF_ImageObject* CPDF_StreamContentParser::AddImageObject(
+    std::unique_ptr<CPDF_ImageObject> pImageObj) {
+  SetGraphicStates(pImageObj.get(), pImageObj->GetImage()->IsMask(), false,
+                   false);
 
   CFX_Matrix ImageMatrix = m_pCurStates->m_CTM;
   ImageMatrix.Concat(m_mtContentToUser);
-
-  std::unique_ptr<CPDF_ImageObject> pImageObj(new CPDF_ImageObject);
-  if (pImage) {
-    pImageObj->SetUnownedImage(
-        m_pDocument->GetPageData()->GetImage(pImage->GetStream()));
-  } else if (!pStream->IsInline()) {
-    pImageObj->SetUnownedImage(m_pDocument->LoadImageF(pStream));
-  } else {
-    pImageObj->SetOwnedImage(
-        pdfium::MakeUnique<CPDF_Image>(m_pDocument, pStream, bInline));
-  }
-  SetGraphicStates(pImageObj.get(), pImageObj->GetImage()->IsMask(), false,
-                   false);
   pImageObj->m_Matrix = ImageMatrix;
   pImageObj->CalcBoundingBox();
+
   CPDF_ImageObject* pRet = pImageObj.get();
   m_pObjectHolder->GetPageObjectList()->push_back(std::move(pImageObj));
   return pRet;

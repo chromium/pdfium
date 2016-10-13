@@ -16,6 +16,7 @@
 #include "core/fpdfapi/page/cpdf_contentmark.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -143,9 +144,10 @@ class CPDF_StreamContentParser {
   void AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag);
   void AddPathRect(FX_FLOAT x, FX_FLOAT y, FX_FLOAT w, FX_FLOAT h);
   void AddPathObject(int FillType, bool bStroke);
-  CPDF_ImageObject* AddImage(CPDF_Stream* pStream,
-                             CPDF_Image* pImage,
-                             bool bInline);
+  CPDF_ImageObject* AddImage(UniqueStream pStream);
+  CPDF_ImageObject* AddImage(uint32_t streamObjNum);
+  CPDF_ImageObject* AddImage(CPDF_Image* pImage);
+
   void AddForm(CPDF_Stream* pStream);
   void SetGraphicStates(CPDF_PageObject* pObj,
                         bool bColor,
@@ -161,6 +163,9 @@ class CPDF_StreamContentParser {
   using OpCodes =
       std::unordered_map<uint32_t, void (CPDF_StreamContentParser::*)()>;
   static OpCodes InitializeOpCodes();
+
+  // Takes ownership of |pImageObj|, returns unowned pointer to it.
+  CPDF_ImageObject* AddImageObject(std::unique_ptr<CPDF_ImageObject> pImageObj);
 
   void Handle_CloseFillStrokePath();
   void Handle_FillStrokePath();
