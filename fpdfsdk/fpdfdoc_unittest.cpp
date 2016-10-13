@@ -35,8 +35,7 @@ class CPDF_TestDocument : public CPDF_Document {
 class CPDF_TestXFADocument : public CPDFXFA_Document {
  public:
   CPDF_TestXFADocument()
-      : CPDFXFA_Document(pdfium::MakeUnique<CPDF_TestDocument>(),
-                         CPDFXFA_App::GetInstance()) {}
+      : CPDFXFA_Document(pdfium::MakeUnique<CPDF_TestDocument>()) {}
 
   void SetRoot(CPDF_Dictionary* root) {
     reinterpret_cast<CPDF_TestDocument*>(GetPDFDoc())->SetRoot(root);

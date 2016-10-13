@@ -139,13 +139,6 @@ class CFXJS_Engine {
   static CFXJS_Engine* CurrentEngineFromIsolate(v8::Isolate* pIsolate);
   static int GetObjDefnID(v8::Local<v8::Object> pObj);
 
-#ifdef PDF_ENABLE_XFA
-  // Called as part of FXJS_InitializeEngine, exposed so PDF can make its
-  // own contexts compatible with XFA or vice versa.
-  static void SetForV8Context(v8::Local<v8::Context> v8Context,
-                              CFXJS_Engine* pEngine);
-#endif  // PDF_ENABLE_XFA
-
   v8::Isolate* GetIsolate() const { return m_isolate; }
 
   // Always returns a valid, newly-created objDefnID.
