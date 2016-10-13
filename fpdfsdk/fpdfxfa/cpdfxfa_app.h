@@ -14,13 +14,21 @@ class IFXJS_Runtime;
 
 class CPDFXFA_App : public IXFA_AppProvider {
  public:
+  static CPDFXFA_App* GetInstance();
+  static void ReleaseInstance();
+
   CPDFXFA_App();
   ~CPDFXFA_App() override;
 
+  FX_BOOL Initialize(v8::Isolate* pIsolate);
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
-  void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-    m_pFormFillEnv = pFormFillEnv;
+  FX_BOOL AddFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  FX_BOOL RemoveFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+
+  FX_BOOL IsJavaScriptInitialized() const { return m_bJavaScriptInitialized; }
+  void SetJavaScriptInitialized(FX_BOOL bInitialized) {
+    m_bJavaScriptInitialized = bInitialized;
   }
 
   v8::Isolate* GetJSERuntime() const { return m_pIsolate; }
@@ -54,11 +62,12 @@ class CPDFXFA_App : public IXFA_AppProvider {
   void LoadString(int32_t iStringID, CFX_WideString& wsString) override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
- private:
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // Not owned.
+  CFX_ArrayTemplate<CPDFSDK_FormFillEnvironment*> m_pFormFillEnvList;
+
+ protected:
+  FX_BOOL m_bJavaScriptInitialized;
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   v8::Isolate* m_pIsolate;
-  bool m_bOwnsIsolate;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_APP_H_
