@@ -155,7 +155,7 @@ FX_BOOL CPDF_DataAvail::AreObjectsAvailable(
 
         for (const auto& it : *pDict) {
           const CFX_ByteString& key = it.first;
-          CPDF_Object* value = it.second;
+          CPDF_Object* value = it.second.get();
           if (key != "Parent")
             new_obj_array.push_back(value);
         }
@@ -493,8 +493,8 @@ FX_BOOL CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
 
     CPDF_Array* pArray = ToArray(pObj);
     if (pArray) {
-      for (CPDF_Object* pArrayObj : *pArray) {
-        if (CPDF_Reference* pRef = ToReference(pArrayObj))
+      for (auto& pArrayObj : *pArray) {
+        if (CPDF_Reference* pRef = ToReference(pArrayObj.get()))
           UnavailObjList.Add(pRef->GetRefObjNum());
       }
     }
@@ -742,7 +742,7 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(DownloadHints* pHints) {
     return FALSE;
   }
 
-  for (const CPDF_Object* pArrayObject : *pHintStreamRange) {
+  for (const auto& pArrayObject : *pHintStreamRange) {
     const CPDF_Number* pNumber = ToNumber(pArrayObject->GetDirect());
     if (!pNumber || !pNumber->IsInteger()) {
       m_docStatus = PDF_DATAAVAIL_ERROR;

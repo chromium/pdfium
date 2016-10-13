@@ -138,7 +138,7 @@ CPDF_Font* GetNativeFont(CPDF_Dictionary* pFormDict,
 
   for (const auto& it : *pFonts) {
     const CFX_ByteString& csKey = it.first;
-    CPDF_Object* pObj = it.second;
+    CPDF_Object* pObj = it.second.get();
     if (!pObj)
       continue;
 
@@ -179,7 +179,7 @@ FX_BOOL FindFont(CPDF_Dictionary* pFormDict,
 
   for (const auto& it : *pFonts) {
     const CFX_ByteString& csKey = it.first;
-    CPDF_Object* pObj = it.second;
+    CPDF_Object* pObj = it.second.get();
     if (!pObj)
       continue;
 
@@ -216,7 +216,7 @@ FX_BOOL FindFont(CPDF_Dictionary* pFormDict,
 
   for (const auto& it : *pFonts) {
     const CFX_ByteString& csKey = it.first;
-    CPDF_Object* pObj = it.second;
+    CPDF_Object* pObj = it.second.get();
     if (!pObj)
       continue;
 

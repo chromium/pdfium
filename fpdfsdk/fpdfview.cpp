@@ -1104,7 +1104,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
     int i = 0;
     for (const auto& it : *pDest) {
       bsName = it.first;
-      pDestObj = it.second;
+      pDestObj = it.second.get();
       if (!pDestObj)
         continue;
       if (i == index)

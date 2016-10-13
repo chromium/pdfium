@@ -839,7 +839,7 @@ FX_BOOL CPDF_FormField::IsOptionSelected(int iOptIndex) const {
   if (!pArray)
     return FALSE;
 
-  for (CPDF_Object* pObj : *pArray) {
+  for (const auto& pObj : *pArray) {
     if (pObj->GetInteger() == iOptIndex)
       return TRUE;
   }

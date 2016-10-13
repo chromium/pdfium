@@ -27,11 +27,11 @@ CPDF_Dictionary::CPDF_Dictionary(const CFX_WeakPtr<CFX_ByteStringPool>& pPool)
 
 CPDF_Dictionary::~CPDF_Dictionary() {
   // Mark the object as deleted so that it will not be deleted again
-  // in case of cyclic references.
+  // in case of cyclic references, then break cycles.
   m_ObjNum = kInvalidObjNum;
-  for (const auto& it : m_Map) {
-    if (it.second && it.second->GetObjNum() != kInvalidObjNum)
-      it.second->Release();
+  for (auto& it : m_Map) {
+    if (it.second && it.second->GetObjNum() == kInvalidObjNum)
+      it.second.release();
   }
 }
 
@@ -65,20 +65,19 @@ CPDF_Object* CPDF_Dictionary::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  CPDF_Dictionary* pCopy = new CPDF_Dictionary(m_pPool);
+  UniqueDictionary pCopy = UniqueDictionary(new CPDF_Dictionary(m_pPool));
   for (const auto& it : *this) {
-    CPDF_Object* value = it.second;
-    if (!pdfium::ContainsKey(*pVisited, value)) {
-      pCopy->m_Map.insert(
-          std::make_pair(it.first, value->CloneNonCyclic(bDirect, pVisited)));
+    if (!pdfium::ContainsKey(*pVisited, it.second.get())) {
+      pCopy->m_Map[it.first] =
+          UniqueObject(it.second->CloneNonCyclic(bDirect, pVisited));
     }
   }
-  return pCopy;
+  return pCopy.release();
 }
 
 CPDF_Object* CPDF_Dictionary::GetObjectFor(const CFX_ByteString& key) const {
   auto it = m_Map.find(key);
-  return it != m_Map.end() ? it->second : nullptr;
+  return it != m_Map.end() ? it->second.get() : nullptr;
 }
 
 CPDF_Object* CPDF_Dictionary::GetDirectObjectFor(
@@ -174,22 +173,12 @@ bool CPDF_Dictionary::IsSignatureDict() const {
 }
 
 void CPDF_Dictionary::SetFor(const CFX_ByteString& key, CPDF_Object* pObj) {
-  CHECK(!pObj || pObj->IsInline());
-  auto it = m_Map.find(key);
-  if (it == m_Map.end()) {
-    if (pObj)
-      m_Map.insert(std::make_pair(MaybeIntern(key), pObj));
+  if (!pObj) {
+    m_Map.erase(key);
     return;
   }
-
-  if (it->second == pObj)
-    return;
-  it->second->Release();
-
-  if (pObj)
-    it->second = pObj;
-  else
-    m_Map.erase(it);
+  ASSERT(pObj->IsInline());
+  m_Map[key] = UniqueObject(pObj);
 }
 
 void CPDF_Dictionary::ConvertToIndirectObjectFor(
@@ -199,35 +188,24 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
   if (it == m_Map.end() || it->second->IsReference())
     return;
 
-  uint32_t objnum = pHolder->AddIndirectObject(it->second);
-  it->second = new CPDF_Reference(pHolder, objnum);
+  uint32_t objnum = pHolder->AddIndirectObject(it->second.release());
+  it->second = UniqueReference(new CPDF_Reference(pHolder, objnum));
 }
 
 void CPDF_Dictionary::RemoveFor(const CFX_ByteString& key) {
-  auto it = m_Map.find(key);
-  if (it == m_Map.end())
-    return;
-
-  it->second->Release();
-  m_Map.erase(it);
+  m_Map.erase(key);
 }
 
 void CPDF_Dictionary::ReplaceKey(const CFX_ByteString& oldkey,
                                  const CFX_ByteString& newkey) {
+  if (oldkey == newkey)
+    return;
+
   auto old_it = m_Map.find(oldkey);
   if (old_it == m_Map.end())
     return;
 
-  auto new_it = m_Map.find(newkey);
-  if (new_it == old_it)
-    return;
-
-  if (new_it != m_Map.end()) {
-    new_it->second->Release();
-    new_it->second = old_it->second;
-  } else {
-    m_Map.insert(std::make_pair(MaybeIntern(newkey), old_it->second));
-  }
+  m_Map[newkey] = std::move(old_it->second);
   m_Map.erase(old_it);
 }
 

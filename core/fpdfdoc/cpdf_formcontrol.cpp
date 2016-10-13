@@ -68,7 +68,7 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     return;
 
   for (const auto& it : *pAP) {
-    CPDF_Object* pObj1 = it.second;
+    CPDF_Object* pObj1 = it.second.get();
     if (!pObj1)
       continue;
 
@@ -80,7 +80,7 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     auto subdict_it = pSubDict->begin();
     while (subdict_it != pSubDict->end()) {
       const CFX_ByteString& csKey2 = subdict_it->first;
-      CPDF_Object* pObj2 = subdict_it->second;
+      CPDF_Object* pObj2 = subdict_it->second.get();
       ++subdict_it;
       if (!pObj2)
         continue;

@@ -47,6 +47,9 @@ class CPDF_Reference : public CPDF_Object {
   uint32_t m_RefObjNum;
 };
 
+using UniqueReference =
+    std::unique_ptr<CPDF_Reference, ReleaseDeleter<CPDF_Object>>;
+
 inline CPDF_Reference* ToReference(CPDF_Object* obj) {
   return obj ? obj->AsReference() : nullptr;
 }

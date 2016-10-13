@@ -1839,7 +1839,7 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(const CFX_ByteString& strPsName,
   IFGAS_FontMgr* pFDEFontMgr = m_pDoc->GetApp()->GetFDEFontMgr();
   for (const auto& it : *pFontSetDict) {
     const CFX_ByteString& key = it.first;
-    CPDF_Object* pObj = it.second;
+    CPDF_Object* pObj = it.second.get();
     if (!PsNameMatchDRFontName(name.AsStringC(), bBold, bItalic, key,
                                bStrictMatch)) {
       continue;

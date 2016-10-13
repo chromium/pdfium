@@ -382,7 +382,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       } else {
         auto it = pAPDic->begin();
         if (it != pAPDic->end()) {
-          CPDF_Object* pFirstObj = it->second;
+          CPDF_Object* pFirstObj = it->second.get();
           if (pFirstObj) {
             if (pFirstObj->IsReference())
               pFirstObj = pFirstObj->GetDirect();

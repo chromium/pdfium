@@ -826,7 +826,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                         auto it = pTrailer->begin();
                         while (it != pTrailer->end()) {
                           const CFX_ByteString& key = it->first;
-                          CPDF_Object* pElement = it->second;
+                          CPDF_Object* pElement = it->second.get();
                           ++it;
                           uint32_t dwObjNum =
                               pElement ? pElement->GetObjNum() : 0;

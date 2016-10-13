@@ -193,7 +193,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       buf << "<<";
       for (const auto& it : *p) {
         const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second;
+        CPDF_Object* pValue = it.second.get();
         buf << "/" << PDF_NameEncode(key);
         if (pValue && !pValue->IsInline()) {
           buf << " " << pValue->GetObjNum() << " 0 R ";

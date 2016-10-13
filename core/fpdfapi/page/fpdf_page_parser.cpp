@@ -97,7 +97,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
       std::vector<AbbrReplacementOp> replacements;
       for (const auto& it : *pDict) {
         CFX_ByteString key = it.first;
-        CPDF_Object* value = it.second;
+        CPDF_Object* value = it.second.get();
         CFX_ByteStringC fullname =
             PDF_FindFullName(PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr),
                              key.AsStringC());
