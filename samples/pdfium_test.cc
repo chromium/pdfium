@@ -26,18 +26,26 @@
 #include "samples/image_diff_png.h"
 #include "testing/test_support.h"
 
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+
 #ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#endif
-
 #ifdef PDF_ENABLE_SKIA
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 #include "third_party/skia/include/core/SkStream.h"
+#endif
+
+#ifdef _WIN32
+#define access _access
+#define snprintf _snprintf
+#define R_OK 4
 #endif
 
 enum OutputFormat {
@@ -905,11 +913,15 @@ int main(int argc, const char* argv[]) {
       size_t extension_pos = event_filename.find(".pdf");
       if (extension_pos != std::string::npos) {
         event_filename.replace(extension_pos, 4, ".evt");
-        std::unique_ptr<char, pdfium::FreeDeleter> event_contents =
-            GetFileContents(event_filename.c_str(), &event_length);
-        if (event_contents) {
-          fprintf(stderr, "Sending events from: %s\n", event_filename.c_str());
-          events = std::string(event_contents.get(), event_length);
+        if (access(event_filename.c_str(), R_OK) == 0) {
+          fprintf(stderr, "Using event file %s.\n", event_filename.c_str());
+          std::unique_ptr<char, pdfium::FreeDeleter> event_contents =
+              GetFileContents(event_filename.c_str(), &event_length);
+          if (event_contents) {
+            fprintf(stderr, "Sending events from: %s\n",
+                    event_filename.c_str());
+            events = std::string(event_contents.get(), event_length);
+          }
         }
       }
     }
