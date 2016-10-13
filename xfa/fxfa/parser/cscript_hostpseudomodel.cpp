@@ -44,16 +44,13 @@ void CScript_HostPseudoModel::AppType(CFXJSE_Value* pValue,
                                       FX_BOOL bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
+  if (!pNotify)
     return;
-  }
   if (bSetting) {
     ThrowException(XFA_IDS_INVAlID_PROP_SET);
     return;
   }
-  CFX_WideString wsAppType;
-  pNotify->GetAppProvider()->GetAppType(wsAppType);
-  pValue->SetString(FX_UTF8Encode(wsAppType).AsStringC());
+  pValue->SetString("Exchange");
 }
 
 void CScript_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
@@ -169,23 +166,21 @@ void CScript_HostPseudoModel::ValidationsEnabled(CFXJSE_Value* pValue,
   FX_BOOL bEnabled = pNotify->GetDocEnvironment()->IsValidationsEnabled(hDoc);
   pValue->SetBoolean(bEnabled);
 }
+
 void CScript_HostPseudoModel::Variation(CFXJSE_Value* pValue,
                                         FX_BOOL bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
+  if (!m_pDocument->GetScriptContext()->IsRunAtClient())
     return;
-  }
+
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-  if (!pNotify) {
+  if (!pNotify)
     return;
-  }
   if (bSetting) {
     ThrowException(XFA_IDS_UNABLE_SET_VARIATION);
     return;
   }
-  CFX_WideString wsVariation;
-  pNotify->GetAppProvider()->GetVariation(wsVariation);
-  pValue->SetString(FX_UTF8Encode(wsVariation).AsStringC());
+  pValue->SetString("Full");
 }
 
 void CScript_HostPseudoModel::Version(CFXJSE_Value* pValue,
@@ -199,9 +194,7 @@ void CScript_HostPseudoModel::Version(CFXJSE_Value* pValue,
     ThrowException(XFA_IDS_UNABLE_SET_VERSION);
     return;
   }
-  CFX_WideString wsVersion;
-  pNotify->GetAppProvider()->GetVersion(wsVersion);
-  pValue->SetString(FX_UTF8Encode(wsVersion).AsStringC());
+  pValue->SetString("11");
 }
 
 void CScript_HostPseudoModel::Name(CFXJSE_Value* pValue,

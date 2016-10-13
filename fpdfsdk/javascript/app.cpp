@@ -152,7 +152,7 @@ void TimerObj::SetTimer(GlobalTimer* pTimer) {
 #define JS_STR_VIEWERTYPE L"pdfium"
 #define JS_STR_VIEWERVARIATION L"Full"
 #define JS_STR_PLATFORM L"WIN"
-#define JS_STR_LANGUANGE L"ENU"
+#define JS_STR_LANGUAGE L"ENU"
 #define JS_NUM_VIEWERVERSION 8
 #ifdef PDF_ENABLE_XFA
 #define JS_NUM_VIEWERVERSION_XFA 11
@@ -338,7 +338,7 @@ FX_BOOL app::language(IJS_Context* cc,
     return TRUE;
   }
 #endif
-  vp << JS_STR_LANGUANGE;
+  vp << JS_STR_LANGUAGE;
   return TRUE;
 }
 

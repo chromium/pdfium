@@ -177,13 +177,6 @@ class IXFA_AppProvider {
   virtual ~IXFA_AppProvider() {}
 
   /**
-   * Specifies the name of the client application in which a form currently
-   * exists. Such as Exchange-Pro.
-   */
-  virtual void SetAppType(const CFX_WideStringC& wsAppType) = 0;
-  virtual void GetAppType(CFX_WideString& wsAppType) = 0;
-
-  /**
    * Returns the language of the running host application. Such as zh_CN
    */
   virtual void GetLanguage(CFX_WideString& wsLanguage) = 0;
@@ -192,17 +185,6 @@ class IXFA_AppProvider {
    * Returns the platform of the machine running the script. Such as WIN
    */
   virtual void GetPlatform(CFX_WideString& wsPlatform) = 0;
-
-  /**
-   * Indicates the packaging of the application that is running the script. Such
-   * as Full
-   */
-  virtual void GetVariation(CFX_WideString& wsVariation) = 0;
-
-  /**
-   * Indicates the version number of the current application. Such as 9
-   */
-  virtual void GetVersion(CFX_WideString& wsVersion) = 0;
 
   /**
    * Get application name, such as Phantom.

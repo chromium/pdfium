@@ -34,13 +34,8 @@ class CPDFXFA_App : public IXFA_AppProvider {
   v8::Isolate* GetJSERuntime() const { return m_pIsolate; }
 
   // IFXA_AppProvider:
-  void GetAppType(CFX_WideString& wsAppType) override;
-  void SetAppType(const CFX_WideStringC& wsAppType) override;
-
   void GetLanguage(CFX_WideString& wsLanguage) override;
   void GetPlatform(CFX_WideString& wsPlatform) override;
-  void GetVariation(CFX_WideString& wsVariation) override;
-  void GetVersion(CFX_WideString& wsVersion) override;
   void GetAppName(CFX_WideString& wsName) override;
 
   void Beep(uint32_t dwType) override;
@@ -73,7 +68,6 @@ class CPDFXFA_App : public IXFA_AppProvider {
   FX_BOOL m_bJavaScriptInitialized;
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   v8::Isolate* m_pIsolate;
-  CFX_WideString m_csAppType;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_APP_H_

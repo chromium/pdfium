@@ -12,11 +12,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 #include "xfa/fwl/core/ifwl_adaptertimermgr.h"
 
-#define JS_STR_VIEWERTYPE_STANDARD L"Exchange"
-#define JS_STR_LANGUANGE L"ENU"
-#define JS_STR_VIEWERVARIATION L"Full"
-#define JS_STR_VIEWERVERSION_XFA L"11"
-
 struct CFWL_TimerInfo;
 
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {

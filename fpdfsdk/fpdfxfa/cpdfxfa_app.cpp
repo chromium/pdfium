@@ -35,9 +35,7 @@ void CPDFXFA_App::ReleaseInstance() {
 }
 
 CPDFXFA_App::CPDFXFA_App()
-    : m_bJavaScriptInitialized(FALSE),
-      m_pIsolate(nullptr),
-      m_csAppType(JS_STR_VIEWERTYPE_STANDARD) {
+    : m_bJavaScriptInitialized(FALSE), m_pIsolate(nullptr) {
   m_pFormFillEnvList.RemoveAll();
 }
 
@@ -86,18 +84,10 @@ FX_BOOL CPDFXFA_App::RemoveFormFillEnv(
   return FALSE;
 }
 
-void CPDFXFA_App::GetAppType(CFX_WideString& wsAppType) {
-  wsAppType = m_csAppType;
-}
-
 void CPDFXFA_App::GetAppName(CFX_WideString& wsName) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
   if (pFormFillEnv)
     wsName = pFormFillEnv->FFI_GetAppName();
-}
-
-void CPDFXFA_App::SetAppType(const CFX_WideStringC& wsAppType) {
-  m_csAppType = wsAppType;
 }
 
 void CPDFXFA_App::GetLanguage(CFX_WideString& wsLanguage) {
@@ -113,19 +103,10 @@ void CPDFXFA_App::GetPlatform(CFX_WideString& wsPlatform) {
   }
 }
 
-void CPDFXFA_App::GetVariation(CFX_WideString& wsVariation) {
-  wsVariation = JS_STR_VIEWERVARIATION;
-}
-
-void CPDFXFA_App::GetVersion(CFX_WideString& wsVersion) {
-  wsVersion = JS_STR_VIEWERVERSION_XFA;
-}
-
 void CPDFXFA_App::Beep(uint32_t dwType) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
-  if (pFormFillEnv) {
+  if (pFormFillEnv)
     pFormFillEnv->JS_appBeep(dwType);
-  }
 }
 
 int32_t CPDFXFA_App::MsgBox(const CFX_WideString& wsMessage,
