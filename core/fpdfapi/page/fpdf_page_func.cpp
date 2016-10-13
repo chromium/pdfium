@@ -21,6 +21,98 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
 
+namespace {
+
+struct PDF_PSOpName {
+  const FX_CHAR* name;
+  PDF_PSOP op;
+};
+
+const PDF_PSOpName kPsOpNames[] = {
+    {"add", PSOP_ADD},         {"sub", PSOP_SUB},
+    {"mul", PSOP_MUL},         {"div", PSOP_DIV},
+    {"idiv", PSOP_IDIV},       {"mod", PSOP_MOD},
+    {"neg", PSOP_NEG},         {"abs", PSOP_ABS},
+    {"ceiling", PSOP_CEILING}, {"floor", PSOP_FLOOR},
+    {"round", PSOP_ROUND},     {"truncate", PSOP_TRUNCATE},
+    {"sqrt", PSOP_SQRT},       {"sin", PSOP_SIN},
+    {"cos", PSOP_COS},         {"atan", PSOP_ATAN},
+    {"exp", PSOP_EXP},         {"ln", PSOP_LN},
+    {"log", PSOP_LOG},         {"cvi", PSOP_CVI},
+    {"cvr", PSOP_CVR},         {"eq", PSOP_EQ},
+    {"ne", PSOP_NE},           {"gt", PSOP_GT},
+    {"ge", PSOP_GE},           {"lt", PSOP_LT},
+    {"le", PSOP_LE},           {"and", PSOP_AND},
+    {"or", PSOP_OR},           {"xor", PSOP_XOR},
+    {"not", PSOP_NOT},         {"bitshift", PSOP_BITSHIFT},
+    {"true", PSOP_TRUE},       {"false", PSOP_FALSE},
+    {"if", PSOP_IF},           {"ifelse", PSOP_IFELSE},
+    {"pop", PSOP_POP},         {"exch", PSOP_EXCH},
+    {"dup", PSOP_DUP},         {"copy", PSOP_COPY},
+    {"index", PSOP_INDEX},     {"roll", PSOP_ROLL}};
+
+// See PDF Reference 1.7, page 170, table 3.36.
+bool IsValidBitsPerSample(uint32_t x) {
+  switch (x) {
+    case 1:
+    case 2:
+    case 4:
+    case 8:
+    case 12:
+    case 16:
+    case 24:
+    case 32:
+      return true;
+    default:
+      return false;
+  }
+}
+
+// See PDF Reference 1.7, page 170.
+FX_FLOAT PDF_Interpolate(FX_FLOAT x,
+                         FX_FLOAT xmin,
+                         FX_FLOAT xmax,
+                         FX_FLOAT ymin,
+                         FX_FLOAT ymax) {
+  FX_FLOAT divisor = xmax - xmin;
+  return ymin + (divisor ? (x - xmin) * (ymax - ymin) / divisor : 0);
+}
+
+class CPDF_PSFunc : public CPDF_Function {
+ public:
+  CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
+  ~CPDF_PSFunc() override {}
+
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
+ private:
+  CPDF_PSEngine m_PS;
+};
+
+FX_BOOL CPDF_PSFunc::v_Init(CPDF_Object* pObj) {
+  CPDF_StreamAcc acc;
+  acc.LoadAllData(pObj->AsStream(), FALSE);
+  return m_PS.Parse(reinterpret_cast<const FX_CHAR*>(acc.GetData()),
+                    acc.GetSize());
+}
+
+FX_BOOL CPDF_PSFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
+  CPDF_PSEngine& PS = const_cast<CPDF_PSEngine&>(m_PS);
+  PS.Reset();
+  for (uint32_t i = 0; i < m_nInputs; i++)
+    PS.Push(inputs[i]);
+  PS.Execute();
+  if (PS.GetStackSize() < m_nOutputs)
+    return FALSE;
+  for (uint32_t i = 0; i < m_nOutputs; i++)
+    results[m_nOutputs - i - 1] = PS.Pop();
+  return TRUE;
+}
+
+}  // namespace
+
 class CPDF_PSOP {
  public:
   explicit CPDF_PSOP(PDF_PSOP op) : m_op(op), m_value(0) {
@@ -107,31 +199,6 @@ FX_FLOAT CPDF_PSEngine::Pop() {
   }
   return m_Stack[--m_StackCount];
 }
-const struct PDF_PSOpName {
-  const FX_CHAR* name;
-  PDF_PSOP op;
-} PDF_PSOpNames[] = {{"add", PSOP_ADD},         {"sub", PSOP_SUB},
-                     {"mul", PSOP_MUL},         {"div", PSOP_DIV},
-                     {"idiv", PSOP_IDIV},       {"mod", PSOP_MOD},
-                     {"neg", PSOP_NEG},         {"abs", PSOP_ABS},
-                     {"ceiling", PSOP_CEILING}, {"floor", PSOP_FLOOR},
-                     {"round", PSOP_ROUND},     {"truncate", PSOP_TRUNCATE},
-                     {"sqrt", PSOP_SQRT},       {"sin", PSOP_SIN},
-                     {"cos", PSOP_COS},         {"atan", PSOP_ATAN},
-                     {"exp", PSOP_EXP},         {"ln", PSOP_LN},
-                     {"log", PSOP_LOG},         {"cvi", PSOP_CVI},
-                     {"cvr", PSOP_CVR},         {"eq", PSOP_EQ},
-                     {"ne", PSOP_NE},           {"gt", PSOP_GT},
-                     {"ge", PSOP_GE},           {"lt", PSOP_LT},
-                     {"le", PSOP_LE},           {"and", PSOP_AND},
-                     {"or", PSOP_OR},           {"xor", PSOP_XOR},
-                     {"not", PSOP_NOT},         {"bitshift", PSOP_BITSHIFT},
-                     {"true", PSOP_TRUE},       {"false", PSOP_FALSE},
-                     {"if", PSOP_IF},           {"ifelse", PSOP_IFELSE},
-                     {"pop", PSOP_POP},         {"exch", PSOP_EXCH},
-                     {"dup", PSOP_DUP},         {"copy", PSOP_COPY},
-                     {"index", PSOP_INDEX},     {"roll", PSOP_ROLL}};
-
 FX_BOOL CPDF_PSEngine::Parse(const FX_CHAR* str, int size) {
   CPDF_SimpleParser parser((uint8_t*)str, size);
   CFX_ByteStringC word = parser.GetWord();
@@ -162,7 +229,7 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
       }
     } else {
       bool found = false;
-      for (const PDF_PSOpName& op_name : PDF_PSOpNames) {
+      for (const PDF_PSOpName& op_name : kPsOpNames) {
         if (word == CFX_ByteStringC(op_name.name)) {
           std::unique_ptr<CPDF_PSOP> op(new CPDF_PSOP(op_name.op));
           m_Operators.push_back(std::move(op));
@@ -396,87 +463,17 @@ FX_BOOL CPDF_PSEngine::DoOperator(PDF_PSOP op) {
         break;
 
       j %= n;
-      if (j < 0) {
-        for (int i = 0; i < -j; i++) {
-          FX_FLOAT first = m_Stack[m_StackCount - n];
-          for (int ii = 0; ii < n - 1; ii++)
-            m_Stack[m_StackCount - n + ii] = m_Stack[m_StackCount - n + ii + 1];
-          m_Stack[m_StackCount - 1] = first;
-        }
-      } else {
-        for (int i = 0; i < j; i++) {
-          FX_FLOAT last = m_Stack[m_StackCount - 1];
-          int ii;
-          for (ii = 0; ii < n - 1; ii++)
-            m_Stack[m_StackCount - ii - 1] = m_Stack[m_StackCount - ii - 2];
-          m_Stack[m_StackCount - ii - 1] = last;
-        }
-      }
+      if (j > 0)
+        j -= n;
+      auto begin_it = std::begin(m_Stack) + m_StackCount - n;
+      auto middle_it = begin_it - j;
+      auto end_it = std::begin(m_Stack) + m_StackCount;
+      std::rotate(begin_it, middle_it, end_it);
       break;
     }
     default:
       break;
   }
-  return TRUE;
-}
-
-// See PDF Reference 1.7, page 170, table 3.36.
-bool IsValidBitsPerSample(uint32_t x) {
-  switch (x) {
-    case 1:
-    case 2:
-    case 4:
-    case 8:
-    case 12:
-    case 16:
-    case 24:
-    case 32:
-      return true;
-    default:
-      return false;
-  }
-}
-
-// See PDF Reference 1.7, page 170.
-FX_FLOAT PDF_Interpolate(FX_FLOAT x,
-                         FX_FLOAT xmin,
-                         FX_FLOAT xmax,
-                         FX_FLOAT ymin,
-                         FX_FLOAT ymax) {
-  FX_FLOAT divisor = xmax - xmin;
-  return ymin + (divisor ? (x - xmin) * (ymax - ymin) / divisor : 0);
-}
-
-class CPDF_PSFunc : public CPDF_Function {
- public:
-  CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
-  ~CPDF_PSFunc() override {}
-
-  // CPDF_Function
-  FX_BOOL v_Init(CPDF_Object* pObj) override;
-  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
-
- private:
-  CPDF_PSEngine m_PS;
-};
-
-FX_BOOL CPDF_PSFunc::v_Init(CPDF_Object* pObj) {
-  CPDF_StreamAcc acc;
-  acc.LoadAllData(pObj->AsStream(), FALSE);
-  return m_PS.Parse(reinterpret_cast<const FX_CHAR*>(acc.GetData()),
-                    acc.GetSize());
-}
-
-FX_BOOL CPDF_PSFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
-  CPDF_PSEngine& PS = const_cast<CPDF_PSEngine&>(m_PS);
-  PS.Reset();
-  for (uint32_t i = 0; i < m_nInputs; i++)
-    PS.Push(inputs[i]);
-  PS.Execute();
-  if (PS.GetStackSize() < m_nOutputs)
-    return FALSE;
-  for (uint32_t i = 0; i < m_nOutputs; i++)
-    results[m_nOutputs - i - 1] = PS.Pop();
   return TRUE;
 }
 
