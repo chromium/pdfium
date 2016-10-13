@@ -14,6 +14,7 @@
 #include "fpdfsdk/cpdfsdk_xfawidget.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
 #include "xfa/fwl/core/fwl_widgethit.h"
+#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/xfa_ffdocview.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
@@ -344,13 +345,6 @@ CXFA_FFWidgetHandler* CPDFSDK_XFAWidgetHandler::GetXFAWidgetHandler(
 
   return pDocView->GetWidgetHandler();
 }
-
-const uint32_t FWL_KEYFLAG_Ctrl = (1 << 0);
-const uint32_t FWL_KEYFLAG_Alt = (1 << 1);
-const uint32_t FWL_KEYFLAG_Shift = (1 << 2);
-const uint32_t FWL_KEYFLAG_LButton = (1 << 3);
-const uint32_t FWL_KEYFLAG_RButton = (1 << 4);
-const uint32_t FWL_KEYFLAG_MButton = (1 << 5);
 
 uint32_t CPDFSDK_XFAWidgetHandler::GetFWLFlags(uint32_t dwFlag) {
   uint32_t dwFWLFlag = 0;
