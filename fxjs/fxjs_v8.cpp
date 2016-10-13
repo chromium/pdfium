@@ -233,14 +233,6 @@ CFXJS_Engine* CFXJS_Engine::CurrentEngineFromIsolate(v8::Isolate* pIsolate) {
           kPerContextDataIndex));
 }
 
-#ifdef PDF_ENABLE_XFA
-// static
-void CFXJS_Engine::SetForV8Context(v8::Local<v8::Context> v8Context,
-                                   CFXJS_Engine* pEngine) {
-  v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, pEngine);
-}
-#endif  // PDF_ENABLE_XFA
-
 // static
 int CFXJS_Engine::GetObjDefnID(v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty() || !pObj->InternalFieldCount())

@@ -1061,6 +1061,7 @@ if (pdf_enable_xfa) {
     ]
     deps = [
       ":fxcrt",
+      ":fxjs",
       ":xfa",
     ]
     configs += [ ":pdfium_core_config" ]

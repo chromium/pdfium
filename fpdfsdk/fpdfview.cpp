@@ -42,6 +42,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "public/fpdf_formfill.h"
+#include "xfa/fxbarcode/BC_Library.h"
 #endif  // PDF_ENABLE_XFA
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -70,8 +71,8 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
 
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
 #ifdef PDF_ENABLE_XFA
-  return doc ? FPDFDocumentFromUnderlying(new CPDFXFA_Document(
-                   pdfium::WrapUnique(doc), CPDFXFA_App::GetInstance()))
+  return doc ? FPDFDocumentFromUnderlying(
+                   new CPDFXFA_Document(pdfium::WrapUnique(doc)))
              : nullptr;
 #else   // PDF_ENABLE_XFA
   return FPDFDocumentFromUnderlying(doc);
@@ -285,19 +286,19 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   pModuleMgr->LoadEmbeddedKorea1CMaps();
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_App::GetInstance()->Initialize(
-      (cfg && cfg->version >= 2) ? static_cast<v8::Isolate*>(cfg->m_pIsolate)
-                                 : nullptr);
+  FXJSE_Initialize();
+  BC_Library_Init();
 #endif  // PDF_ENABLE_XFA
-
   if (cfg && cfg->version >= 2)
     IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_App::ReleaseInstance();
+  BC_Library_Destory();
+  FXJSE_Finalize();
 #endif  // PDF_ENABLE_XFA
+
   CPDF_ModuleMgr::Destroy();
   CFX_GEModule::Destroy();
 
@@ -377,11 +378,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
     ProcessParseError(error);
     return nullptr;
   }
-#ifdef PDF_ENABLE_XFA
-  return new CPDFXFA_Document(std::move(pDocument), CPDFXFA_App::GetInstance());
-#else   // PDF_ENABLE_XFA
-  return pDocument.release();
-#endif  // PDF_ENABLE_XFA
+  return FPDFDocumentFromCPDFDocument(pDocument.release());
 }
 
 #ifdef PDF_ENABLE_XFA
