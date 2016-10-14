@@ -26,8 +26,7 @@ CFDF_Document::~CFDF_Document() {
 
 CFDF_Document* CFDF_Document::CreateNewDoc() {
   CFDF_Document* pDoc = new CFDF_Document;
-  pDoc->m_pRootDict = new CPDF_Dictionary(pDoc->GetByteStringPool());
-  pDoc->AddIndirectObject(pDoc->m_pRootDict);
+  pDoc->m_pRootDict = pDoc->AddIndirectDictionary(pDoc->GetByteStringPool());
   pDoc->m_pRootDict->SetFor("FDF",
                             new CPDF_Dictionary(pDoc->GetByteStringPool()));
   return pDoc;
@@ -69,7 +68,8 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
       if (!pObj)
         break;
 
-      ReplaceIndirectObjectIfHigherGeneration(objnum, pObj);
+      // TODO(tsepez): check |pObj| ownership.
+      ReplaceIndirectObjectIfHigherGeneration(objnum, UniqueObject(pObj));
       word = parser.GetNextWord(nullptr);
       if (word != "endobj")
         break;

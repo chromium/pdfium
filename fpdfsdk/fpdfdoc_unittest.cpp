@@ -80,8 +80,8 @@ class PDFDocTest : public testing::Test {
     std::vector<DictObjInfo> info;
     for (int i = 0; i < num; ++i) {
       // Objects created will be released by the document.
-      CPDF_Dictionary* obj = new CPDF_Dictionary();
-      info.push_back({m_pIndirectObjs->AddIndirectObject(obj), obj});
+      CPDF_Dictionary* obj = m_pIndirectObjs->AddIndirectDictionary();
+      info.push_back({obj->GetObjNum(), obj});
     }
     return info;
   }

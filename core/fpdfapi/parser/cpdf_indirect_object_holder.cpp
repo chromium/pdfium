@@ -6,8 +6,11 @@
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 
 CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder() : m_LastObjNum(0) {}
 
@@ -42,35 +45,59 @@ CPDF_Object* CPDF_IndirectObjectHolder::ParseIndirectObject(uint32_t objnum) {
   return nullptr;
 }
 
-uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
+CPDF_Object* CPDF_IndirectObjectHolder::AddIndirectObject(UniqueObject pObj) {
   if (pObj->m_ObjNum)
-    return pObj->m_ObjNum;
+    return pObj.release();  // TODO(tsepez): shouldn't happen, stop this leak.
 
-  m_LastObjNum++;
+  pObj->m_ObjNum = ++m_LastObjNum;
   m_IndirectObjs[m_LastObjNum].release();  // TODO(tsepez): stop this leak.
-  m_IndirectObjs[m_LastObjNum].reset(pObj);
-  pObj->m_ObjNum = m_LastObjNum;
-  return m_LastObjNum;
+  m_IndirectObjs[m_LastObjNum].reset(pObj.release());  // Changes deleters.
+  return m_IndirectObjs[m_LastObjNum].get();
+}
+
+CPDF_Array* CPDF_IndirectObjectHolder::AddIndirectArray() {
+  return ToArray(AddIndirectObject(UniqueObject(new CPDF_Array())));
+}
+
+CPDF_Dictionary* CPDF_IndirectObjectHolder::AddIndirectDictionary() {
+  return ToDictionary(AddIndirectObject(UniqueObject(new CPDF_Dictionary())));
+}
+
+CPDF_Dictionary* CPDF_IndirectObjectHolder::AddIndirectDictionary(
+    const CFX_WeakPtr<CFX_ByteStringPool>& pPool) {
+  return ToDictionary(
+      AddIndirectObject(UniqueObject(new CPDF_Dictionary(pPool))));
+}
+
+CPDF_Stream* CPDF_IndirectObjectHolder::AddIndirectStream() {
+  return ToStream(AddIndirectObject(UniqueObject(new CPDF_Stream())));
+}
+
+CPDF_Stream* CPDF_IndirectObjectHolder::AddIndirectStream(
+    uint8_t* pData,
+    uint32_t size,
+    CPDF_Dictionary* pDict) {
+  return ToStream(
+      AddIndirectObject(UniqueObject(new CPDF_Stream(pData, size, pDict))));
 }
 
 bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     uint32_t objnum,
-    CPDF_Object* pObj) {
+    UniqueObject pObj) {
   if (!objnum || !pObj)
     return false;
 
   CPDF_Object* pOldObj = GetIndirectObject(objnum);
-  if (pOldObj && pObj->GetGenNum() <= pOldObj->GetGenNum()) {
-    delete pObj;
+  if (pOldObj && pObj->GetGenNum() <= pOldObj->GetGenNum())
     return false;
-  }
+
   pObj->m_ObjNum = objnum;
-  m_IndirectObjs[objnum].reset(pObj);
+  m_IndirectObjs[objnum].reset(pObj.release());  // Changes deleters.
   m_LastObjNum = std::max(m_LastObjNum, objnum);
   return true;
 }
 
-void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
+void CPDF_IndirectObjectHolder::DeleteIndirectObject(uint32_t objnum) {
   CPDF_Object* pObj = GetIndirectObject(objnum);
   if (!pObj || pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)
     return;

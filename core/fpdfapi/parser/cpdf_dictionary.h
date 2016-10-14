@@ -67,6 +67,9 @@ class CPDF_Dictionary : public CPDF_Object {
   void SetReferenceFor(const CFX_ByteString& key,
                        CPDF_IndirectObjectHolder* pDoc,
                        uint32_t objnum);
+  void SetReferenceFor(const CFX_ByteString& key,
+                       CPDF_IndirectObjectHolder* pDoc,
+                       const CPDF_Object* objnum);
   void SetRectFor(const CFX_ByteString& key, const CFX_FloatRect& rect);
   void SetMatrixFor(const CFX_ByteString& key, const CFX_Matrix& matrix);
   void SetBooleanFor(const CFX_ByteString& key, bool bValue);
