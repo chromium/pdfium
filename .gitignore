@@ -8,6 +8,7 @@
 /third_party/android_ndk
 /third_party/catapult
 /third_party/icu
+/third_party/instrumented_libraries
 /third_party/llvm
 /third_party/llvm-build
 /third_party/skia

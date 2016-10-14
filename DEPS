@@ -14,6 +14,7 @@ vars = {
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': '2341038bf72869a5683a893a2b319a48ffec7f62',
+  'instrumented_lib_revision': '45f5814b1543e41ea0be54c771e3840ea52cca4a',
   'pdfium_tests_revision': '06411790a46e6497e5293f921ea9aa9fb2615e41',
   'skia_revision': 'b55ebf071dce33794f5518dcdc3a9af006285796',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
@@ -43,6 +44,9 @@ deps = {
 
   "third_party/icu":
     Var('chromium_git') + "/chromium/deps/icu.git@" + Var('icu_revision'),
+
+  "third_party/instrumented_libraries":
+    Var('chromium_git') + "/chromium/src/third_party/instrumented_libraries.git@" + Var('instrumented_lib_revision'),
 
   "third_party/skia":
     Var('chromium_git') + '/skia.git' + '@' +  Var('skia_revision'),
@@ -180,4 +184,12 @@ hooks = [
     'pattern': '.',
     'action': ['python', 'pdfium/build/vs_toolchain.py', 'update'],
   },
+  {
+    # Pull sanitizer-instrumented third-party libraries if requested via
+    # GYP_DEFINES.
+    'name': 'instrumented_libraries',
+    'pattern': '\\.sha1',
+    'action': ['python', 'pdfium/third_party/instrumented_libraries/scripts/download_binaries.py'],
+  },
+
 ]
