@@ -1244,10 +1244,12 @@ int32_t CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
       m_ObjectOffset[objnum] = 0;
       return 0;
     }
-    if (WriteIndirectObj(pObj))
+    if (WriteIndirectObj(pObj)) {
       return -1;
-    if (!bExistInMap)
-      m_pDocument->DeleteIndirectObject(objnum);
+    }
+    if (!bExistInMap) {
+      m_pDocument->ReleaseIndirectObject(objnum);
+    }
   } else {
     uint8_t* pBuffer;
     uint32_t size;

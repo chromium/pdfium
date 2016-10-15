@@ -152,9 +152,8 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
   if (!m_Objects[i] || m_Objects[i]->IsReference())
     return;
 
-  CPDF_Object* pUnowned = pHolder->AddIndirectObject(std::move(m_Objects[i]));
-  m_Objects[i] =
-      UniqueObject(new CPDF_Reference(pHolder, pUnowned->GetObjNum()));
+  uint32_t dwObjNum = pHolder->AddIndirectObject(m_Objects[i].release());
+  m_Objects[i] = UniqueObject(new CPDF_Reference(pHolder, dwObjNum));
 }
 
 void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
@@ -205,9 +204,4 @@ void CPDF_Array::AddNumber(FX_FLOAT f) {
 void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
                               uint32_t objnum) {
   Add(new CPDF_Reference(pDoc, objnum));
-}
-
-void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
-                              const CPDF_Object* pObj) {
-  AddReference(pDoc, pObj->GetObjNum());
 }

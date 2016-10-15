@@ -186,12 +186,12 @@ CFX_FloatRect CalculateRect(CPDF_RectArray* pRectArray) {
 
 uint32_t NewIndirectContentsStream(const CFX_ByteString& key,
                                    CPDF_Document* pDocument) {
-  CPDF_Stream* pNewContents = pDocument->AddIndirectStream(
+  CPDF_Stream* pNewContents = new CPDF_Stream(
       nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
   CFX_ByteString sStream;
   sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
   pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
-  return pNewContents->GetObjNum();
+  return pDocument->AddIndirectObject(pNewContents);
 }
 
 void SetPageContents(const CFX_ByteString& key,
@@ -211,15 +211,17 @@ void SetPageContents(const CFX_ByteString& key,
   }
   pPage->ConvertToIndirectObjectFor("Contents", pDocument);
   if (!pContentsArray) {
-    pContentsArray = pDocument->AddIndirectArray();
+    pContentsArray = new CPDF_Array;
     CPDF_StreamAcc acc;
     acc.LoadAllData(pContentsStream);
     CFX_ByteString sStream = "q\n";
-    CFX_ByteString sBody = CFX_ByteString(acc.GetData(), acc.GetSize());
+    CFX_ByteString sBody =
+        CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
     sStream = sStream + sBody + "\nQ";
     pContentsStream->SetData(sStream.raw_str(), sStream.GetLength());
     pContentsArray->AddReference(pDocument, pContentsStream->GetObjNum());
-    pPage->SetReferenceFor("Contents", pDocument, pContentsArray);
+    pPage->SetReferenceFor("Contents", pDocument,
+                           pDocument->AddIndirectObject(pContentsArray));
   }
   if (!key.IsEmpty()) {
     pContentsArray->AddReference(pDocument,
@@ -316,10 +318,10 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pPageDict->SetFor("Resources", pRes);
   }
 
-  CPDF_Stream* pNewXObject = pDocument->AddIndirectStream(
+  CPDF_Stream* pNewXObject = new CPDF_Stream(
       nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
 
-  uint32_t dwObjNum = pNewXObject->GetObjNum();
+  uint32_t dwObjNum = pDocument->AddIndirectObject(pNewXObject);
   CPDF_Dictionary* pPageXObject = pRes->GetDictFor("XObject");
   if (!pPageXObject) {
     pPageXObject = new CPDF_Dictionary(pDocument->GetByteStringPool());
@@ -424,10 +426,8 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CFX_ByteString sFormName;
     sFormName.Format("F%d", i);
-
-    // TODO(tsepez): check |pObj| ownership.
     pXObject->SetReferenceFor(sFormName, pDocument,
-                              pDocument->AddIndirectObject(UniqueObject(pObj)));
+                              pDocument->AddIndirectObject(pObj));
 
     CPDF_StreamAcc acc;
     acc.LoadAllData(pNewXObject);

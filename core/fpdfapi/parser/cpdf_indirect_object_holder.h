@@ -10,14 +10,9 @@
 #include <map>
 #include <memory>
 
-#include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_string_pool_template.h"
-#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_Array;
-class CPDF_Dictionary;
-class CPDF_Stream;
+class CPDF_Object;
 
 class CPDF_IndirectObjectHolder {
  public:
@@ -29,23 +24,12 @@ class CPDF_IndirectObjectHolder {
 
   CPDF_Object* GetIndirectObject(uint32_t objnum) const;
   CPDF_Object* GetOrParseIndirectObject(uint32_t objnum);
-  void DeleteIndirectObject(uint32_t objnum);
+  void ReleaseIndirectObject(uint32_t objnum);
 
-  // Take ownership of |pObj|, returns unowned pointer to it.
-  CPDF_Object* AddIndirectObject(UniqueObject pObj);
-
-  // Adds and owns a new object, returns unowned pointer to it.
-  CPDF_Array* AddIndirectArray();
-  CPDF_Dictionary* AddIndirectDictionary();
-  CPDF_Dictionary* AddIndirectDictionary(
-      const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
-  CPDF_Stream* AddIndirectStream();
-  CPDF_Stream* AddIndirectStream(uint8_t* pData,
-                                 uint32_t size,
-                                 CPDF_Dictionary* pDict);
-
+  // Take ownership of |pObj|.
+  uint32_t AddIndirectObject(CPDF_Object* pObj);
   bool ReplaceIndirectObjectIfHigherGeneration(uint32_t objnum,
-                                               UniqueObject pObj);
+                                               CPDF_Object* pObj);
 
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }
@@ -58,8 +42,6 @@ class CPDF_IndirectObjectHolder {
 
  private:
   uint32_t m_LastObjNum;
-
-  // Ordinary deleter, not Release().
   std::map<uint32_t, std::unique_ptr<CPDF_Object>> m_IndirectObjs;
 };
 

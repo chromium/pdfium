@@ -113,11 +113,10 @@ TEST(cpdf_array, Clone) {
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = new CPDF_Array;
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
-        UniqueObject obj(new CPDF_Number(elems[i][j]));
-        // Object number starts from 1.
+        CPDF_Number* obj = new CPDF_Number(elems[i][j]);
+        // Starts object number from 1.
         int obj_num = i * kNumOfRowElems + j + 1;
-        obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num,
-                                                            std::move(obj));
+        obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num, obj);
         arr_elem->InsertAt(j, new CPDF_Reference(obj_holder.get(), obj_num));
       }
       arr->InsertAt(i, arr_elem);

@@ -955,18 +955,21 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
 }
 
 FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
-  UniqueObject pObject(ParseIndirectObjectAt(m_pDocument, *pos, 0));
+  std::unique_ptr<CPDF_Object> pObject(
+      ParseIndirectObjectAt(m_pDocument, *pos, 0));
   if (!pObject)
     return FALSE;
 
   CPDF_Object* pUnownedObject = pObject.get();
+
   if (m_pDocument) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
     if (pRootDict && pRootDict->GetObjNum() == pObject->m_ObjNum)
       return FALSE;
+    // Takes ownership of object (std::move someday).
     uint32_t objnum = pObject->m_ObjNum;
     if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
-            objnum, std::move(pObject))) {
+            objnum, pObject.release())) {
       return FALSE;
     }
   }

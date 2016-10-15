@@ -1811,7 +1811,7 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
   }
 
   CPDF_Dictionary* pXObject = new CPDF_Dictionary(pDoc->GetByteStringPool());
-  pXObject->SetReferenceFor(sImageAlias, pDoc, pImage);
+  pXObject->SetReferenceFor(sImageAlias, pDoc, pImage->GetObjNum());
   pStreamResList->SetFor("XObject", pXObject);
 }
 

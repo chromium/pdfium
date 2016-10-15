@@ -1771,9 +1771,8 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
       if (!pPageDict)
         return nullptr;
 
-      // TODO(tsepez): check |pPageDict| ownership.
-      if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
-              dwObjNum, UniqueObject(pPageDict))) {
+      if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(dwObjNum,
+                                                                pPageDict)) {
         return nullptr;
       }
       return pPageDict->GetDict();

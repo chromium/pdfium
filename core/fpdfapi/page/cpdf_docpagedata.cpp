@@ -175,8 +175,7 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
     return fontData->AddRef();
   }
 
-  CPDF_Dictionary* pDict =
-      m_pPDFDoc->AddIndirectDictionary(m_pPDFDoc->GetByteStringPool());
+  CPDF_Dictionary* pDict = new CPDF_Dictionary(m_pPDFDoc->GetByteStringPool());
   pDict->SetNameFor("Type", "Font");
   pDict->SetNameFor("Subtype", "Type1");
   pDict->SetNameFor("BaseFont", fontName);
@@ -184,6 +183,7 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
     pDict->SetFor("Encoding",
                   pEncoding->Realize(m_pPDFDoc->GetByteStringPool()));
   }
+  m_pPDFDoc->AddIndirectObject(pDict);
   std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc, pDict);
   if (!pFont)
     return nullptr;

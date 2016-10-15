@@ -166,8 +166,9 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
   if (!pStream) {
-    pStream = m_pDocument->AddIndirectStream();
-    pAPDict->SetReferenceFor(m_sAPType, m_pDocument, pStream);
+    pStream = new CPDF_Stream;
+    pAPDict->SetReferenceFor(m_sAPType, m_pDocument,
+                             m_pDocument->AddIndirectObject(pStream));
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
@@ -185,12 +186,14 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
     CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
     if (!pStreamResFontList) {
       pStreamResFontList =
-          m_pDocument->AddIndirectDictionary(m_pDocument->GetByteStringPool());
-      pStreamResList->SetReferenceFor("Font", m_pDocument, pStreamResFontList);
+          new CPDF_Dictionary(m_pDocument->GetByteStringPool());
+      pStreamResList->SetReferenceFor(
+          "Font", m_pDocument,
+          m_pDocument->AddIndirectObject(pStreamResFontList));
     }
     if (!pStreamResFontList->KeyExist(sAlias)) {
       pStreamResFontList->SetReferenceFor(sAlias, m_pDocument,
-                                          pFont->GetFontDict());
+                                          pFont->GetFontDict()->GetObjNum());
     }
   }
 }

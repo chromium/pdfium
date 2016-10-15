@@ -101,7 +101,7 @@ class PDFObjectsTest : public testing::Test {
                       m_ArrayObj->Clone(),       m_DictObj->Clone(),
                       stream_obj->Clone()};
     for (size_t i = 0; i < m_IndirectObjs.size(); ++i) {
-      m_ObjHolder->AddIndirectObject(UniqueObject(m_IndirectObjs[i]));
+      m_ObjHolder->AddIndirectObject(m_IndirectObjs[i]);
       m_RefObjs.emplace_back(new CPDF_Reference(
           m_ObjHolder.get(), m_IndirectObjs[i]->GetObjNum()));
     }
@@ -730,8 +730,8 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   // Create two arrays of references by different AddReference() APIs.
   for (size_t i = 0; i < FX_ArraySize(indirect_objs); ++i) {
     // All the indirect objects inserted will be owned by holder.
-    holder->ReplaceIndirectObjectIfHigherGeneration(
-        obj_nums[i], UniqueObject(indirect_objs[i]));
+    holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
+                                                    indirect_objs[i]);
     arr->AddReference(holder.get(), obj_nums[i]);
     arr1->AddReference(holder.get(), indirect_objs[i]->GetObjNum());
   }
@@ -841,8 +841,9 @@ TEST(PDFObjectTest, CloneCheckLoop) {
   {
     CPDF_IndirectObjectHolder objects_holder;
     // Create an object with a reference loop.
-    CPDF_Dictionary* dict_obj = objects_holder.AddIndirectDictionary();
+    CPDF_Dictionary* dict_obj = new CPDF_Dictionary();
     CPDF_Array* arr_obj = new CPDF_Array;
+    objects_holder.AddIndirectObject(dict_obj);
     EXPECT_EQ(1u, dict_obj->GetObjNum());
     dict_obj->SetFor("arr", arr_obj);
     arr_obj->InsertAt(
