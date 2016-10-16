@@ -6,6 +6,9 @@
 
 #include "core/fpdfdoc/cpdf_annotlist.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -64,11 +67,13 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
 
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
-  FX_BOOL bRegenerateAP =
-      pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances");
+  bool bRegenerateAP = pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances");
   for (size_t i = 0; i < pAnnots->GetCount(); ++i) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));
-    if (!pDict || pDict->GetStringFor("Subtype") == "Popup") {
+    if (!pDict)
+      continue;
+    const CFX_ByteString subtype = pDict->GetStringFor("Subtype");
+    if (subtype == "Popup") {
       // Skip creating Popup annotations in the PDF document since PDFium
       // provides its own Popup annotations.
       continue;
@@ -76,7 +81,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
     m_AnnotList.push_back(
         std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument, false)));
-    if (bRegenerateAP && pDict->GetStringFor("Subtype") == "Widget" &&
+    if (bRegenerateAP && subtype == "Widget" &&
         CPDF_InterForm::IsUpdateAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
     }
