@@ -43,7 +43,7 @@ CWeightTable::~CWeightTable() {
 }
 
 size_t CWeightTable::GetPixelWeightSize() const {
-  return m_dwWeightTablesSize / sizeof(int);
+  return m_ItemSize / sizeof(int) - 2;
 }
 
 bool CWeightTable::Calc(int dest_len,
