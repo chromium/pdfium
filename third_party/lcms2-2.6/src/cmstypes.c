@@ -4225,7 +4225,7 @@ void *Type_MPEmatrix_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io
     }
 
 
-    mpe = cmsStageAllocMatrix(self ->ContextID, InputChans, OutputChans, Matrix, Offsets);
+    mpe = cmsStageAllocMatrix(self ->ContextID, OutputChans, InputChans, Matrix, Offsets);
     _cmsFree(self ->ContextID, Matrix);
     _cmsFree(self ->ContextID, Offsets);
 
