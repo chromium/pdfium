@@ -8,9 +8,6 @@
 #define CORE_FXGE_ANDROID_FPF_SKIAFONT_H_
 
 #include "core/fxcrt/fx_system.h"
-
-#if _FX_OS_ == _FX_ANDROID_
-
 #include "core/fxge/fx_font.h"
 
 class CFPF_SkiaFontDescriptor;
@@ -52,7 +49,5 @@ class CFPF_SkiaFont {
   uint8_t m_uCharset;
   uint32_t m_dwRefCount;
 };
-
-#endif  // _FX_OS_ == _FX_ANDROID_
 
 #endif  // CORE_FXGE_ANDROID_FPF_SKIAFONT_H_

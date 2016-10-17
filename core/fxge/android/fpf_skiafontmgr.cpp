@@ -6,8 +6,6 @@
 
 #include "core/fxcrt/fx_system.h"
 
-#if _FX_OS_ == _FX_ANDROID_
-
 #define FPF_SKIAMATCHWEIGHT_NAME1 62
 #define FPF_SKIAMATCHWEIGHT_NAME2 60
 #define FPF_SKIAMATCHWEIGHT_1 16
@@ -523,4 +521,3 @@ void CFPF_SkiaFontMgr::ReportFace(FXFT_Face face,
 }
 
 void CFPF_SkiaFontMgr::OutputSystemFonts() {}
-#endif
