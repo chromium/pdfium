@@ -808,7 +808,7 @@ FX_BOOL Document::info(IJS_Context* cc,
   // It's to be compatible to non-standard info dictionary.
   for (const auto& it : *pDictionary) {
     const CFX_ByteString& bsKey = it.first;
-    CPDF_Object* pValueObj = it.second.get();
+    CPDF_Object* pValueObj = it.second;
     CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsStringC());
     if (pValueObj->IsString() || pValueObj->IsName()) {
       pRuntime->PutObjectString(pObj, wsKey, pValueObj->GetUnicodeText());

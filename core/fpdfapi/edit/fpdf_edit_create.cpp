@@ -128,7 +128,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       const CPDF_Dictionary* p = pObj->AsDictionary();
       for (const auto& it : *p) {
         const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second.get();
+        CPDF_Object* pValue = it.second;
         if (pFile->AppendString("/") < 0) {
           return -1;
         }
@@ -197,7 +197,7 @@ int32_t PDF_CreatorWriteTrailer(CPDF_Document* pDocument,
     CPDF_Dictionary* p = pParser->GetTrailer();
     for (const auto& it : *p) {
       const CFX_ByteString& key = it.first;
-      CPDF_Object* pValue = it.second.get();
+      CPDF_Object* pValue = it.second;
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
           key == "XRefStm" || key == "Type" || key == "ID") {
@@ -1192,7 +1192,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       for (const auto& it : *p) {
         FX_BOOL bSignValue = FALSE;
         const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second.get();
+        CPDF_Object* pValue = it.second;
         if (m_File.AppendString("/") < 0) {
           return -1;
         }
@@ -1714,7 +1714,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
       CPDF_Dictionary* p = m_pParser->GetTrailer();
       for (const auto& it : *p) {
         const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second.get();
+        CPDF_Object* pValue = it.second;
         // TODO(ochang): Consolidate with similar check in
         // PDF_CreatorWriteTrailer.
         if (key == "Encrypt" || key == "Size" || key == "Filter" ||

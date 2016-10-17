@@ -51,7 +51,7 @@ class CPDF_Stream : public CPDF_Object {
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 
-  UniqueDictionary m_pDict;
+  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> m_pDict;
   bool m_bMemoryBased = true;
   uint32_t m_dwSize = 0;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDataBuf;

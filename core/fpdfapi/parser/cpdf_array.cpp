@@ -20,11 +20,11 @@ CPDF_Array::CPDF_Array() {}
 
 CPDF_Array::~CPDF_Array() {
   // Mark the object as deleted so that it will not be deleted again
-  // in case of cyclic references, then break cycles.
+  // in case of cyclic references.
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Objects) {
-    if (it && it->GetObjNum() == kInvalidObjNum)
-      it.release();
+    if (it && it->GetObjNum() != kInvalidObjNum)
+      it->Release();
   }
 }
 
@@ -53,11 +53,10 @@ CPDF_Object* CPDF_Array::CloneNonCyclic(
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
   CPDF_Array* pCopy = new CPDF_Array();
-  for (const auto& pObj : m_Objects) {
-    if (!pdfium::ContainsKey(*pVisited, pObj.get())) {
-      pCopy->m_Objects.push_back(
-          UniqueObject(pObj->CloneNonCyclic(bDirect, pVisited)));
-    }
+  for (size_t i = 0; i < GetCount(); i++) {
+    CPDF_Object* value = m_Objects[i];
+    if (!pdfium::ContainsKey(*pVisited, value))
+      pCopy->m_Objects.push_back(value->CloneNonCyclic(bDirect, pVisited));
   }
   return pCopy;
 }
@@ -87,7 +86,7 @@ CFX_Matrix CPDF_Array::GetMatrix() {
 CPDF_Object* CPDF_Array::GetObjectAt(size_t i) const {
   if (i >= m_Objects.size())
     return nullptr;
-  return m_Objects[i].get();
+  return m_Objects[i];
 }
 
 CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) const {
@@ -140,8 +139,11 @@ void CPDF_Array::RemoveAt(size_t i, size_t nCount) {
   if (nCount <= 0 || nCount > m_Objects.size() - i)
     return;
 
-  auto it = m_Objects.begin() + i;
-  m_Objects.erase(it, it + nCount);
+  for (size_t j = 0; j < nCount; ++j) {
+    if (CPDF_Object* p = m_Objects[i + j])
+      p->Release();
+  }
+  m_Objects.erase(m_Objects.begin() + i, m_Objects.begin() + i + nCount);
 }
 
 void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
@@ -149,11 +151,12 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
   if (i >= m_Objects.size())
     return;
 
-  if (!m_Objects[i] || m_Objects[i]->IsReference())
+  CPDF_Object* pObj = m_Objects[i];
+  if (!pObj || pObj->IsReference())
     return;
 
-  uint32_t dwObjNum = pHolder->AddIndirectObject(m_Objects[i].release());
-  m_Objects[i] = UniqueObject(new CPDF_Reference(pHolder, dwObjNum));
+  uint32_t dwObjNum = pHolder->AddIndirectObject(pObj);
+  m_Objects[i] = new CPDF_Reference(pHolder, dwObjNum);
 }
 
 void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
@@ -163,7 +166,10 @@ void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
     ASSERT(false);
     return;
   }
-  m_Objects[i] = UniqueObject(pObj);
+  if (CPDF_Object* pOld = m_Objects[i])
+    pOld->Release();
+
+  m_Objects[i] = pObj;
 }
 
 void CPDF_Array::InsertAt(size_t index, CPDF_Object* pObj) {
@@ -171,18 +177,18 @@ void CPDF_Array::InsertAt(size_t index, CPDF_Object* pObj) {
   CHECK(!pObj || pObj->IsInline());
   if (index >= m_Objects.size()) {
     // Allocate space first.
-    m_Objects.resize(index + 1);
-    m_Objects[index] = UniqueObject(pObj);
+    m_Objects.resize(index + 1, nullptr);
+    m_Objects[index] = pObj;
   } else {
     // Directly insert.
-    m_Objects.insert(m_Objects.begin() + index, UniqueObject(pObj));
+    m_Objects.insert(m_Objects.begin() + index, pObj);
   }
 }
 
 void CPDF_Array::Add(CPDF_Object* pObj) {
   ASSERT(IsArray());
   CHECK(!pObj || pObj->IsInline());
-  m_Objects.push_back(UniqueObject(pObj));
+  m_Objects.push_back(pObj);
 }
 
 void CPDF_Array::AddName(const CFX_ByteString& str) {

@@ -119,7 +119,7 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
   CPDF_Font* pFind = nullptr;
   for (const auto& it : *pFonts) {
     const CFX_ByteString& csKey = it.first;
-    CPDF_Object* pObj = it.second.get();
+    CPDF_Object* pObj = it.second;
     if (!pObj)
       continue;
 

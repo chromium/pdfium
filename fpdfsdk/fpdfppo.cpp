@@ -105,8 +105,8 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
     // Clone the page dictionary
     for (const auto& it : *pSrcPageDict) {
       const CFX_ByteString& cbSrcKeyStr = it.first;
-      CPDF_Object* pObj = it.second.get();
-      if (cbSrcKeyStr.Compare("Type") && cbSrcKeyStr.Compare("Parent")) {
+      CPDF_Object* pObj = it.second;
+      if (cbSrcKeyStr.Compare(("Type")) && cbSrcKeyStr.Compare(("Parent"))) {
         if (pCurPageDict->KeyExist(cbSrcKeyStr))
           pCurPageDict->RemoveFor(cbSrcKeyStr);
         pCurPageDict->SetFor(cbSrcKeyStr, pObj->Clone());
@@ -219,7 +219,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       auto it = pDict->begin();
       while (it != pDict->end()) {
         const CFX_ByteString& key = it->first;
-        CPDF_Object* pNextObj = it->second.get();
+        CPDF_Object* pNextObj = it->second;
         ++it;
         if (key == "Parent" || key == "Prev" || key == "First")
           continue;

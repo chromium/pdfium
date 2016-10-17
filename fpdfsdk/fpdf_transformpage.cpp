@@ -172,7 +172,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
     CPDF_Dictionary* pPattenDict = pRes->GetDictFor("Pattern");
     if (pPattenDict) {
       for (const auto& it : *pPattenDict) {
-        CPDF_Object* pObj = it.second.get();
+        CPDF_Object* pObj = it.second;
         if (pObj->IsReference())
           pObj = pObj->GetDirect();
 

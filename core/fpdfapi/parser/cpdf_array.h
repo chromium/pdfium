@@ -17,8 +17,8 @@
 
 class CPDF_Array : public CPDF_Object {
  public:
-  using iterator = std::vector<UniqueObject>::iterator;
-  using const_iterator = std::vector<UniqueObject>::const_iterator;
+  using iterator = std::vector<CPDF_Object*>::iterator;
+  using const_iterator = std::vector<CPDF_Object*>::const_iterator;
 
   CPDF_Array();
 
@@ -67,9 +67,8 @@ class CPDF_Array : public CPDF_Object {
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 
-  std::vector<UniqueObject> m_Objects;
+  std::vector<CPDF_Object*> m_Objects;
 };
-
 using UniqueArray = std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Object>>;
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {
