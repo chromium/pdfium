@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_TEXTSTATE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_TEXTSTATE_H_
 
-#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_Document;
@@ -81,7 +81,7 @@ class CPDF_TextState {
     FX_FLOAT m_CTM[4];
   };
 
-  CFX_CountRef<TextData> m_Ref;
+  CFX_SharedCopyOnWrite<TextData> m_Ref;
 };
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode);

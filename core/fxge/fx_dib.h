@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 
@@ -389,7 +389,7 @@ class CFX_DIBExtractor {
   std::unique_ptr<CFX_DIBitmap> m_pBitmap;
 };
 
-typedef CFX_CountRef<CFX_DIBitmap> CFX_DIBitmapRef;
+typedef CFX_SharedCopyOnWrite<CFX_DIBitmap> CFX_DIBitmapRef;
 
 class CFX_FilteredDIB : public CFX_DIBSource {
  public:

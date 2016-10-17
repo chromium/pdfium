@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CFX_COUNT_REF_H_
-#define CORE_FXCRT_CFX_COUNT_REF_H_
+#ifndef CORE_FXCRT_CFX_SHARED_COPY_ON_WRITE_H_
+#define CORE_FXCRT_CFX_SHARED_COPY_ON_WRITE_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
@@ -13,11 +13,12 @@
 // A shared object with Copy on Write semantics that makes it appear as
 // if each one were independent.
 template <class ObjClass>
-class CFX_CountRef {
+class CFX_SharedCopyOnWrite {
  public:
-  CFX_CountRef() {}
-  CFX_CountRef(const CFX_CountRef& other) : m_pObject(other.m_pObject) {}
-  ~CFX_CountRef() {}
+  CFX_SharedCopyOnWrite() {}
+  CFX_SharedCopyOnWrite(const CFX_SharedCopyOnWrite& other)
+      : m_pObject(other.m_pObject) {}
+  ~CFX_SharedCopyOnWrite() {}
 
   template <typename... Args>
   ObjClass* Emplace(Args... params) {
@@ -25,7 +26,7 @@ class CFX_CountRef {
     return m_pObject.Get();
   }
 
-  CFX_CountRef& operator=(const CFX_CountRef& that) {
+  CFX_SharedCopyOnWrite& operator=(const CFX_SharedCopyOnWrite& that) {
     if (*this != that)
       m_pObject = that.m_pObject;
     return *this;
@@ -43,10 +44,12 @@ class CFX_CountRef {
     return m_pObject.Get();
   }
 
-  bool operator==(const CFX_CountRef& that) const {
+  bool operator==(const CFX_SharedCopyOnWrite& that) const {
     return m_pObject == that.m_pObject;
   }
-  bool operator!=(const CFX_CountRef& that) const { return !(*this == that); }
+  bool operator!=(const CFX_SharedCopyOnWrite& that) const {
+    return !(*this == that);
+  }
   explicit operator bool() const { return !!m_pObject; }
 
  private:
@@ -78,4 +81,4 @@ class CFX_CountRef {
   CFX_RetainPtr<CountedObj> m_pObject;
 };
 
-#endif  // CORE_FXCRT_CFX_COUNT_REF_H_
+#endif  // CORE_FXCRT_CFX_SHARED_COPY_ON_WRITE_H_

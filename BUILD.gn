@@ -681,9 +681,9 @@ config("fxge_warnings") {
 
 static_library("fxcrt") {
   sources = [
-    "core/fxcrt/cfx_count_ref.h",
     "core/fxcrt/cfx_observable.h",
     "core/fxcrt/cfx_retain_ptr.h",
+    "core/fxcrt/cfx_shared_copy_on_write.h",
     "core/fxcrt/cfx_string_c_template.h",
     "core/fxcrt/cfx_string_data_template.h",
     "core/fxcrt/cfx_string_pool_template.h",
@@ -1652,9 +1652,9 @@ test("pdfium_unittests") {
     "core/fpdftext/fpdf_text_int_unittest.cpp",
     "core/fxcodec/codec/fx_codec_jpx_unittest.cpp",
     "core/fxcodec/jbig2/JBig2_Image_unittest.cpp",
-    "core/fxcrt/cfx_count_ref_unittest.cpp",
     "core/fxcrt/cfx_observable_unittest.cpp",
     "core/fxcrt/cfx_retain_ptr_unittest.cpp",
+    "core/fxcrt/cfx_shared_copy_on_write_unittest.cpp",
     "core/fxcrt/cfx_string_pool_template_unittest.cpp",
     "core/fxcrt/cfx_weak_ptr_unittest.cpp",
     "core/fxcrt/fx_basic_bstring_unittest.cpp",

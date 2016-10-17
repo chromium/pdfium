@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_PAGE_CPDF_COLORSTATE_H_
 
 #include "core/fpdfapi/page/cpdf_color.h"
-#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -71,7 +71,7 @@ class CPDF_ColorState {
                 FX_FLOAT* pValue,
                 uint32_t nValues);
 
-  CFX_CountRef<ColorData> m_Ref;
+  CFX_SharedCopyOnWrite<ColorData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_COLORSTATE_H_

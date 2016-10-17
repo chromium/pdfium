@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
-#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -58,7 +58,7 @@ class CPDF_ContentMark {
     std::vector<CPDF_ContentMarkItem> m_Marks;
   };
 
-  CFX_CountRef<MarkData> m_Ref;
+  CFX_SharedCopyOnWrite<MarkData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_

@@ -103,7 +103,7 @@ class CPDF_GeneralState {
     FX_FLOAT m_Smoothness;
   };
 
-  CFX_CountRef<StateData> m_Ref;
+  CFX_SharedCopyOnWrite<StateData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_

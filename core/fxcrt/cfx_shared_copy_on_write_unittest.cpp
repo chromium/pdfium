@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/cfx_count_ref.h"
+#include "core/fxcrt/cfx_shared_copy_on_write.h"
 
 #include <map>
 #include <string>
@@ -46,26 +46,26 @@ class Object {
 
 }  // namespace
 
-TEST(fxcrt, CountRefNull) {
+TEST(fxcrt, SharedCopyOnWriteNull) {
   Observer observer;
   {
-    CFX_CountRef<Object> ptr;
+    CFX_SharedCopyOnWrite<Object> ptr;
     EXPECT_EQ(nullptr, ptr.GetObject());
   }
 }
 
-TEST(fxcrt, CountRefCopy) {
+TEST(fxcrt, SharedCopyOnWriteCopy) {
   Observer observer;
   {
-    CFX_CountRef<Object> ptr1;
+    CFX_SharedCopyOnWrite<Object> ptr1;
     ptr1.Emplace(&observer, std::string("one"));
     {
-      CFX_CountRef<Object> ptr2 = ptr1;
+      CFX_SharedCopyOnWrite<Object> ptr2 = ptr1;
       EXPECT_EQ(1, observer.GetConstructionCount("one"));
       EXPECT_EQ(0, observer.GetDestructionCount("one"));
     }
     {
-      CFX_CountRef<Object> ptr3(ptr1);
+      CFX_SharedCopyOnWrite<Object> ptr3(ptr1);
       EXPECT_EQ(1, observer.GetConstructionCount("one"));
       EXPECT_EQ(0, observer.GetDestructionCount("one"));
     }
@@ -75,10 +75,10 @@ TEST(fxcrt, CountRefCopy) {
   EXPECT_EQ(1, observer.GetDestructionCount("one"));
 }
 
-TEST(fxcrt, CountRefAssignOverOld) {
+TEST(fxcrt, SharedCopyOnWriteAssignOverOld) {
   Observer observer;
   {
-    CFX_CountRef<Object> ptr1;
+    CFX_SharedCopyOnWrite<Object> ptr1;
     ptr1.Emplace(&observer, std::string("one"));
     ptr1.Emplace(&observer, std::string("two"));
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
@@ -89,12 +89,12 @@ TEST(fxcrt, CountRefAssignOverOld) {
   EXPECT_EQ(1, observer.GetDestructionCount("two"));
 }
 
-TEST(fxcrt, CountRefAssignOverRetained) {
+TEST(fxcrt, SharedCopyOnWriteAssignOverRetained) {
   Observer observer;
   {
-    CFX_CountRef<Object> ptr1;
+    CFX_SharedCopyOnWrite<Object> ptr1;
     ptr1.Emplace(&observer, std::string("one"));
-    CFX_CountRef<Object> ptr2(ptr1);
+    CFX_SharedCopyOnWrite<Object> ptr2(ptr1);
     ptr1.Emplace(&observer, std::string("two"));
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
     EXPECT_EQ(1, observer.GetConstructionCount("two"));
@@ -105,10 +105,10 @@ TEST(fxcrt, CountRefAssignOverRetained) {
   EXPECT_EQ(1, observer.GetDestructionCount("two"));
 }
 
-TEST(fxcrt, CountRefGetModify) {
+TEST(fxcrt, SharedCopyOnWriteGetModify) {
   Observer observer;
   {
-    CFX_CountRef<Object> ptr;
+    CFX_SharedCopyOnWrite<Object> ptr;
     EXPECT_NE(nullptr, ptr.GetPrivateCopy(&observer, std::string("one")));
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
     EXPECT_EQ(0, observer.GetDestructionCount("one"));
@@ -117,7 +117,7 @@ TEST(fxcrt, CountRefGetModify) {
     EXPECT_EQ(1, observer.GetConstructionCount("one"));
     EXPECT_EQ(0, observer.GetDestructionCount("one"));
     {
-      CFX_CountRef<Object> other(ptr);
+      CFX_SharedCopyOnWrite<Object> other(ptr);
       EXPECT_NE(nullptr, ptr.GetPrivateCopy(&observer, std::string("one")));
       EXPECT_EQ(2, observer.GetConstructionCount("one"));
       EXPECT_EQ(0, observer.GetDestructionCount("one"));
