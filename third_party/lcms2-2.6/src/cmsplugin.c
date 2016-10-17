@@ -179,6 +179,8 @@ cmsBool CMSEXPORT  _cmsReadFloat32Number(cmsIOHANDLER* io, cmsFloat32Number* n)
 
         tmp = _cmsAdjustEndianess32(tmp);
         *n = *(cmsFloat32Number*) &tmp;
+        if (isnan(*n))
+            return FALSE;
     }
     return TRUE;
 }
