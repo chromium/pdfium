@@ -669,7 +669,11 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     type = pXObject->GetDict()->GetStringFor("Subtype");
 
   if (type == "Image") {
-    CPDF_ImageObject* pObj = AddImage(pXObject->GetObjNum());
+    CPDF_ImageObject* pObj =
+        pXObject->IsInline()
+            ? AddImage(UniqueStream(ToStream(pXObject->Clone())))
+            : AddImage(pXObject->GetObjNum());
+
     m_LastImageName = name;
     m_pLastImage = pObj->GetImage();
     if (!m_pObjectHolder->HasImageMask())
