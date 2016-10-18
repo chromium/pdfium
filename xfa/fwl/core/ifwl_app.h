@@ -7,25 +7,14 @@
 #ifndef XFA_FWL_CORE_IFWL_APP_H_
 #define XFA_FWL_CORE_IFWL_APP_H_
 
-// The FWL app code contains three parallel classes, which reference each
-// other via pointers as follows:
-//
-//                    m_pIface               m_pImpl
-//      CXFA_FFApp ------------> IFWL_App -----------> CFWL_AppImp
-//                                        <-----------
-//                                           m_pIface
-
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fwl/core/fwl_appimp.h"
-#include "xfa/fwl/core/fwl_error.h"
 
 class CFWL_NoteDriver;
 class CFWL_WidgetMgr;
 class CXFA_FFApp;
 class CXFA_FWLAdapterWidgetMgr;
-class IFWL_ThemeProvider;
 class IFWL_Widget;
 
 enum FWL_KeyFlag {
@@ -40,32 +29,17 @@ enum FWL_KeyFlag {
 
 class IFWL_App {
  public:
-  static IFWL_App* Create(CXFA_FFApp* pAdapter);
+  explicit IFWL_App(CXFA_FFApp* pAdapter);
+  ~IFWL_App();
 
-  virtual ~IFWL_App();
-
-  FWL_Error Initialize();
-  FWL_Error Finalize();
   CXFA_FFApp* GetAdapterNative();
   CFWL_WidgetMgr* GetWidgetMgr();
-  IFWL_ThemeProvider* GetThemeProvider();
-  void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  void Exit(int32_t iExitCode);
-
-  // These call into polymorphic methods in the impl; no need to override.
-  void Release();
-
-  CFWL_AppImp* GetImpl() const { return m_pImpl.get(); }
-
-  // Takes ownership of |pImpl|.
-  void SetImpl(CFWL_AppImp* pImpl) { m_pImpl.reset(pImpl); }
-
-  CFWL_NoteDriver* GetNoteDriver() const;
+  CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
 
  private:
-  IFWL_App();
-
-  std::unique_ptr<CFWL_AppImp> m_pImpl;
+  CXFA_FFApp* const m_pAdapterNative;
+  std::unique_ptr<CFWL_WidgetMgr> m_pWidgetMgr;
+  std::unique_ptr<CFWL_NoteDriver> m_pNoteDriver;
 };
 
 IFWL_App* FWL_GetApp();

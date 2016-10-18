@@ -7,7 +7,6 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 
 #include "xfa/fwl/core/cfwl_message.h"
-#include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_app.h"

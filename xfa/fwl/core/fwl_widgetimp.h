@@ -72,7 +72,7 @@ class CFWL_WidgetImp {
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   virtual IFWL_App* GetOwnerApp() const;
 
-  FWL_Error SetOwnerApp(CFWL_AppImp* pOwnerApp);
+  FWL_Error SetOwnerApp(IFWL_App* pOwnerApp);
   IFWL_Widget* GetInterface() const;
   void SetInterface(IFWL_Widget* pInterface);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
@@ -157,7 +157,7 @@ class CFWL_WidgetImp {
   FX_BOOL IsParent(IFWL_Widget* pParent);
 
   CFWL_WidgetMgr* const m_pWidgetMgr;
-  CFWL_AppImp* m_pOwnerApp;
+  IFWL_App* m_pOwnerApp;
   std::unique_ptr<CFWL_WidgetImpProperties> m_pProperties;
   IFWL_WidgetDelegate* m_pDelegate;
   IFWL_WidgetDelegate* m_pCurDelegate;

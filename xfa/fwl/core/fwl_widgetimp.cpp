@@ -15,7 +15,6 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
@@ -179,7 +178,7 @@ FWL_Error CFWL_WidgetImp::Initialize() {
   if (!pAdapter)
     return FWL_Error::Indefinite;
 
-  SetOwnerApp(static_cast<CFWL_AppImp*>(FWL_GetApp()->GetImpl()));
+  SetOwnerApp(FWL_GetApp());
 
   IFWL_Widget* pParent = m_pProperties->m_pParent;
   m_pWidgetMgr->InsertWidget(pParent, m_pInterface);
@@ -492,9 +491,9 @@ IFWL_WidgetDelegate* CFWL_WidgetImp::SetDelegate(
   return pOldDelegate;
 }
 IFWL_App* CFWL_WidgetImp::GetOwnerApp() const {
-  return static_cast<IFWL_App*>(m_pOwnerApp->GetInterface());
+  return m_pOwnerApp;
 }
-FWL_Error CFWL_WidgetImp::SetOwnerApp(CFWL_AppImp* pOwnerApp) {
+FWL_Error CFWL_WidgetImp::SetOwnerApp(IFWL_App* pOwnerApp) {
   m_pOwnerApp = pOwnerApp;
   return FWL_Error::Succeeded;
 }
@@ -642,7 +641,7 @@ IFWL_ThemeProvider* CFWL_WidgetImp::GetAvailableTheme() {
         return pRet;
     }
   } while (pUp);
-  return FWL_GetApp()->GetThemeProvider();
+  return nullptr;
 }
 CFWL_WidgetImp* CFWL_WidgetImp::GetRootOuter() {
   IFWL_Widget* pRet = m_pOuter;

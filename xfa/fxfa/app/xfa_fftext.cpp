@@ -7,6 +7,7 @@
 #include "xfa/fxfa/app/xfa_fftext.h"
 
 #include "xfa/fwl/core/fwl_widgetdef.h"
+#include "xfa/fwl/core/fwl_widgethit.h"
 #include "xfa/fxfa/app/xfa_ffdraw.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxfa/xfa_ffapp.h"

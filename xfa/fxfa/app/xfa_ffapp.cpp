@@ -74,18 +74,12 @@ void CXFA_FileRead::Release() {
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
     : m_pProvider(pProvider),
       m_pWidgetMgrDelegate(nullptr),
-      m_pFWLApp(IFWL_App::Create(this)) {
+      m_pFWLApp(pdfium::MakeUnique<IFWL_App>(this)) {
   FWL_SetApp(m_pFWLApp.get());
-  m_pFWLApp->Initialize();
   CXFA_TimeZoneProvider::Create();
 }
 
 CXFA_FFApp::~CXFA_FFApp() {
-  if (m_pFWLApp) {
-    m_pFWLApp->Finalize();
-    m_pFWLApp->Release();
-  }
-
   CXFA_TimeZoneProvider::Destroy();
 }
 
