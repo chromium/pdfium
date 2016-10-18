@@ -1256,8 +1256,7 @@ FX_BOOL Document::addIcon(IJS_Context* cc,
     return FALSE;
   }
 
-  m_IconList.push_back(std::unique_ptr<IconElement>(
-      new IconElement(swIconName, (Icon*)pEmbedObj)));
+  m_Icons.push_back(IconElement(swIconName, static_cast<Icon*>(pEmbedObj)));
   return TRUE;
 }
 
@@ -1270,7 +1269,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  if (m_IconList.empty()) {
+  if (m_Icons.empty()) {
     vp.GetJSValue()->SetNull(pRuntime);
     return TRUE;
   }
@@ -1278,7 +1277,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
   CJS_Array Icons;
 
   int i = 0;
-  for (const auto& pIconElement : m_IconList) {
+  for (const auto& element : m_Icons) {
     v8::Local<v8::Object> pObj =
         pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
     if (pObj.IsEmpty())
@@ -1289,12 +1288,12 @@ FX_BOOL Document::icons(IJS_Context* cc,
     if (!pJS_Icon)
       return FALSE;
 
-    Icon* pIcon = (Icon*)pJS_Icon->GetEmbedObject();
+    Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
     if (!pIcon)
       return FALSE;
 
-    pIcon->SetStream(pIconElement->IconStream->GetStream());
-    pIcon->SetIconName(pIconElement->IconName);
+    pIcon->SetStream(element.IconStream->GetStream());
+    pIcon->SetIconName(element.IconName);
     Icons.SetElement(pRuntime, i++, CJS_Value(pRuntime, pJS_Icon));
   }
 
@@ -1311,35 +1310,34 @@ FX_BOOL Document::getIcon(IJS_Context* cc,
     return FALSE;
   }
 
-  if (m_IconList.empty())
+  if (m_Icons.empty())
     return FALSE;
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CFX_WideString swIconName = params[0].ToCFXWideString(pRuntime);
 
-  for (const auto& pIconElement : m_IconList) {
-    if (pIconElement->IconName == swIconName) {
-      Icon* pRetIcon = pIconElement->IconStream;
+  for (const auto& element : m_Icons) {
+    if (element.IconName != swIconName)
+      continue;
 
-      v8::Local<v8::Object> pObj =
-          pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
-      if (pObj.IsEmpty())
-        return FALSE;
+    v8::Local<v8::Object> pObj =
+        pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
+    if (pObj.IsEmpty())
+      return FALSE;
 
-      CJS_Icon* pJS_Icon =
-          static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-      if (!pJS_Icon)
-        return FALSE;
+    CJS_Icon* pJS_Icon =
+        static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
+    if (!pJS_Icon)
+      return FALSE;
 
-      Icon* pIcon = (Icon*)pJS_Icon->GetEmbedObject();
-      if (!pIcon)
-        return FALSE;
+    Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
+    if (!pIcon)
+      return FALSE;
 
-      pIcon->SetIconName(swIconName);
-      pIcon->SetStream(pRetIcon->GetStream());
-      vRet = CJS_Value(pRuntime, pJS_Icon);
-      return TRUE;
-    }
+    pIcon->SetIconName(swIconName);
+    pIcon->SetStream(element.IconStream->GetStream());
+    vRet = CJS_Value(pRuntime, pJS_Icon);
+    return TRUE;
   }
 
   return FALSE;
