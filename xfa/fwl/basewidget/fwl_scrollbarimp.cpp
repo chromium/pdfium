@@ -318,43 +318,26 @@ void CFWL_ScrollBarImp::CalcButtonLen() {
   }
 }
 void CFWL_ScrollBarImp::CalcMinButtonRect(CFX_RectF& rect) {
-  if (m_bCustomLayout) {
-    IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-    CFWL_ThemePart pPart;
-    pPart.m_rtPart = m_rtMinBtn;
-    pPart.m_pWidget = m_pInterface;
-    pPart.m_iPart = CFWL_Part::ForeArrow;
-    pPart.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                           ? CFWL_PartState_Disabled
-                           : m_iMinButtonState;
-    pTheme->GetPartRect(&pPart, rect);
-  } else {
-    rect.left = m_rtClient.left;
-    rect.top = m_rtClient.top;
-    rect.width = IsVertical() ? m_rtClient.width : m_fButtonLen;
-    rect.height = IsVertical() ? m_fButtonLen : m_rtClient.height;
-  }
+  if (m_bCustomLayout)
+    return;
+
+  rect.left = m_rtClient.left;
+  rect.top = m_rtClient.top;
+  rect.width = IsVertical() ? m_rtClient.width : m_fButtonLen;
+  rect.height = IsVertical() ? m_fButtonLen : m_rtClient.height;
 }
+
 void CFWL_ScrollBarImp::CalcMaxButtonRect(CFX_RectF& rect) {
-  if (m_bCustomLayout) {
-    IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-    CFWL_ThemePart pPart;
-    pPart.m_rtPart = m_rtMaxBtn;
-    pPart.m_pWidget = m_pInterface;
-    pPart.m_iPart = CFWL_Part::BackArrow;
-    pPart.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
-                           ? CFWL_PartState_Disabled
-                           : m_iMaxButtonState;
-    pTheme->GetPartRect(&pPart, rect);
-  } else {
-    rect.left =
-        IsVertical() ? m_rtClient.left : m_rtClient.right() - m_fButtonLen;
-    rect.top =
-        IsVertical() ? m_rtClient.bottom() - m_fButtonLen : m_rtClient.top;
-    rect.width = IsVertical() ? m_rtClient.width : m_fButtonLen;
-    rect.height = IsVertical() ? m_fButtonLen : m_rtClient.height;
-  }
+  if (m_bCustomLayout)
+    return;
+
+  rect.left =
+      IsVertical() ? m_rtClient.left : m_rtClient.right() - m_fButtonLen;
+  rect.top = IsVertical() ? m_rtClient.bottom() - m_fButtonLen : m_rtClient.top;
+  rect.width = IsVertical() ? m_rtClient.width : m_fButtonLen;
+  rect.height = IsVertical() ? m_fButtonLen : m_rtClient.height;
 }
+
 void CFWL_ScrollBarImp::CalcThumbButtonRect(CFX_RectF& rect) {
   if (!IsEnabled()) {
     m_rtThumb.Reset();

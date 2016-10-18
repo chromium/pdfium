@@ -652,12 +652,7 @@ void CFWL_FormImp::ReSetSysBtn() {
   m_iSysBox = 0;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_CloseBox) {
     m_pCloseBox = new CFWL_SysBtn;
-    if (m_bCustomizeLayout) {
-      CFWL_ThemeBackground param;
-      param.m_pWidget = m_pInterface;
-      param.m_iPart = CFWL_Part::CloseBox;
-      pTheme->GetPartRect(&param, m_pCloseBox->m_rtBtn);
-    } else {
+    if (!m_bCustomizeLayout) {
       m_pCloseBox->m_rtBtn.Set(
           m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
           kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
@@ -666,12 +661,7 @@ void CFWL_FormImp::ReSetSysBtn() {
   }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MaximizeBox) {
     m_pMaxBox = new CFWL_SysBtn;
-    if (m_bCustomizeLayout) {
-      CFWL_ThemeBackground param;
-      param.m_pWidget = m_pInterface;
-      param.m_iPart = CFWL_Part::MaximizeBox;
-      pTheme->GetPartRect(&param, m_pMaxBox->m_rtBtn);
-    } else {
+    if (!m_bCustomizeLayout) {
       if (m_pCloseBox) {
         m_pMaxBox->m_rtBtn.Set(
             m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
@@ -686,12 +676,7 @@ void CFWL_FormImp::ReSetSysBtn() {
   }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MinimizeBox) {
     m_pMinBox = new CFWL_SysBtn;
-    if (m_bCustomizeLayout) {
-      CFWL_ThemeBackground param;
-      param.m_pWidget = m_pInterface;
-      param.m_iPart = CFWL_Part::MinimizeBox;
-      pTheme->GetPartRect(&param, m_pMinBox->m_rtBtn);
-    } else {
+    if (!m_bCustomizeLayout) {
       if (m_pMaxBox) {
         m_pMinBox->m_rtBtn.Set(
             m_pMaxBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
@@ -712,25 +697,10 @@ void CFWL_FormImp::ReSetSysBtn() {
       static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Icon &&
       pData->GetIcon(m_pInterface, FALSE)) {
-    if (m_bCustomizeLayout) {
-      CFWL_ThemeBackground param;
-      param.m_pWidget = m_pInterface;
-      param.m_iPart = CFWL_Part::Icon;
-      CFX_WideString wsText;
-      m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsText);
-      param.m_pData = &wsText;
-      pTheme->GetPartRect(&param, m_rtIcon);
-    } else {
+    if (!m_bCustomizeLayout) {
       m_rtIcon.Set(5, (m_rtCaption.height - m_fSmallIconSz) / 2, m_fSmallIconSz,
                    m_fSmallIconSz);
     }
-  }
-  if (m_bCustomizeLayout) {
-    CFWL_ThemeText parma;
-    parma.m_pWidget = m_pInterface;
-    parma.m_iPart = CFWL_Part::HeadText;
-    m_pProperties->m_pDataProvider->GetCaption(m_pInterface, parma.m_wsText);
-    pTheme->GetPartRect(&parma, m_rtCaptionText);
   }
 }
 void CFWL_FormImp::RegisterForm() {

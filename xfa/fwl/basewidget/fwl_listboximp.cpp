@@ -202,10 +202,6 @@ FWL_Error CFWL_ListBoxImp::SetThemeProvider(
     IFWL_ThemeProvider* pThemeProvider) {
   if (!pThemeProvider)
     return FWL_Error::Indefinite;
-  if (!pThemeProvider->IsValidWidget(m_pInterface)) {
-    m_pScrollBarTP = pThemeProvider;
-    return FWL_Error::Succeeded;
-  }
   m_pProperties->m_pThemeProvider = pThemeProvider;
   return FWL_Error::Succeeded;
 }
@@ -733,24 +729,16 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
     int32_t iCount = pData->CountItems(m_pInterface);
     for (int32_t i = 0; i < iCount; i++) {
       IFWL_ListItem* pItem = pData->GetItem(m_pInterface, i);
-      CFWL_ThemePart itemPart;
-      itemPart.m_pWidget = m_pInterface;
-      itemPart.m_iPart = CFWL_Part::ListItem;
-      itemPart.m_pData = m_pProperties->m_pDataProvider;
-      itemPart.m_bMaximize = i > 0;
-      CFX_RectF r;
-      m_pProperties->m_pThemeProvider->GetPartRect(&itemPart, r);
       if (!bAutoSize) {
         CFX_RectF rtItem;
-        rtItem.Set(m_rtClient.left, m_rtClient.top + fs.y, r.width, r.height);
+        rtItem.Set(m_rtClient.left, m_rtClient.top + fs.y, 0, 0);
         IFWL_ListBoxDP* pBox =
             static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
         pBox->SetItemRect(m_pInterface, pItem, rtItem);
       }
-      fs.y += r.height;
-      if (fs.x < r.width) {
-        fs.x = r.width;
-        fWidth = r.width;
+      if (fs.x < 0) {
+        fs.x = 0;
+        fWidth = 0;
       }
     }
   } else {

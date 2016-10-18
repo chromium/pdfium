@@ -36,19 +36,6 @@ const float kCYBorder = 1.0f;
 
 }  // namespace
 
-static void FWL_SetChildThemeID(IFWL_Widget* pParent, uint32_t dwThemeID) {
-  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
-  IFWL_Widget* pChild = pWidgetMgr->GetFirstChildWidget(pParent);
-  while (pChild) {
-    IFWL_ThemeProvider* pTheme = pChild->GetThemeProvider();
-    if (pTheme) {
-      pTheme->SetThemeID(pChild, dwThemeID, FALSE);
-    }
-    FWL_SetChildThemeID(pChild, dwThemeID);
-    pChild = pWidgetMgr->GetNextSiblingWidget(pChild);
-  }
-}
-
 bool CFWL_WidgetTP::IsValidWidget(IFWL_Widget* pWidget) {
   return FALSE;
 }
@@ -57,17 +44,11 @@ uint32_t CFWL_WidgetTP::GetThemeID(IFWL_Widget* pWidget) {
   return m_dwThemeID;
 }
 
-uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget,
-                                   uint32_t dwThemeID,
-                                   FX_BOOL bChildren) {
+uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID) {
   uint32_t dwOld = m_dwThemeID;
   m_dwThemeID = dwThemeID;
-  if (CFWL_ArrowData::HasInstance()) {
+  if (CFWL_ArrowData::HasInstance())
     CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(dwThemeID));
-  }
-  if (bChildren) {
-    FWL_SetChildThemeID(pWidget, dwThemeID);
-  }
   return dwOld;
 }
 
@@ -163,17 +144,6 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
 
 FX_BOOL CFWL_WidgetTP::IsCustomizedLayout(IFWL_Widget* pWidget) {
   return FWL_GetThemeLayout(m_dwThemeID);
-}
-
-FWL_Error CFWL_WidgetTP::GetPartRect(CFWL_ThemePart* pThemePart,
-                                     CFX_RectF& rect) {
-  return FWL_Error::Succeeded;
-}
-
-FX_BOOL CFWL_WidgetTP::IsInPart(CFWL_ThemePart* pThemePart,
-                                FX_FLOAT fx,
-                                FX_FLOAT fy) {
-  return TRUE;
 }
 
 FX_BOOL CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
@@ -755,10 +725,6 @@ CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
     return nullptr;
   m_FontsArray.push_back(std::move(pFontData));
   return m_FontsArray.back()->GetFont();
-}
-
-FX_BOOL FWLTHEME_Init() {
-  return TRUE;
 }
 
 void FWLTHEME_Release() {

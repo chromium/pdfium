@@ -638,7 +638,7 @@ IFWL_ThemeProvider* CFWL_WidgetImp::GetAvailableTheme() {
               : m_pWidgetMgr->GetParentWidget(pUp);
     if (pUp) {
       IFWL_ThemeProvider* pRet = pUp->GetThemeProvider();
-      if (pRet && pRet->IsValidWidget(m_pInterface))
+      if (pRet)
         return pRet;
     }
   } while (pUp);

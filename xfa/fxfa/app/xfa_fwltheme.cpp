@@ -85,7 +85,6 @@ FWL_Error CXFA_FWLTheme::Initialize() {
   }
 
   ASSERT(m_pCalendarFont);
-  FWLTHEME_Init();
   return FWL_Error::Succeeded;
 }
 
@@ -99,33 +98,10 @@ FWL_Error CXFA_FWLTheme::Finalize() {
   return FWL_Error::Succeeded;
 }
 
-bool CXFA_FWLTheme::IsValidWidget(IFWL_Widget* pWidget) {
-  return TRUE;
-}
-
-uint32_t CXFA_FWLTheme::GetThemeID(IFWL_Widget* pWidget) {
-  return 0;
-}
-
-uint32_t CXFA_FWLTheme::SetThemeID(IFWL_Widget* pWidget,
-                                   uint32_t dwThemeID,
-                                   FX_BOOL bChildren) {
-  return 0;
-}
-
-FWL_Error CXFA_FWLTheme::GetThemeMatrix(IFWL_Widget* pWidget,
-                                        CFX_Matrix& matrix) {
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error CXFA_FWLTheme::SetThemeMatrix(IFWL_Widget* pWidget,
-                                        const CFX_Matrix& matrix) {
-  return FWL_Error::Succeeded;
-}
-
 FX_BOOL CXFA_FWLTheme::DrawBackground(CFWL_ThemeBackground* pParams) {
   return GetTheme(pParams->m_pWidget)->DrawBackground(pParams);
 }
+
 FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
   if (pParams->m_wsText.IsEmpty())
     return FALSE;
@@ -193,6 +169,7 @@ FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
                             pParams->m_wsText.GetLength(), pParams->m_rtPart);
   return TRUE;
 }
+
 void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
                                  CFWL_WidgetCapacity dwCapacity) {
   switch (dwCapacity) {
@@ -345,23 +322,11 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
   }
   return GetTheme(pThemePart->m_pWidget)->GetCapacity(pThemePart, dwCapacity);
 }
+
 FX_BOOL CXFA_FWLTheme::IsCustomizedLayout(IFWL_Widget* pWidget) {
   return GetTheme(pWidget)->IsCustomizedLayout(pWidget);
 }
 
-FWL_Error CXFA_FWLTheme::GetPartRect(CFWL_ThemePart* pThemePart,
-                                     CFX_RectF& rtPart) {
-  return FWL_Error::Succeeded;
-}
-FWL_Error CXFA_FWLTheme::GetPartRect(CFWL_ThemePart* pThemePart) {
-  CFX_RectF rect;
-  return GetTheme(pThemePart->m_pWidget)->GetPartRect(pThemePart, rect);
-}
-FX_BOOL CXFA_FWLTheme::IsInPart(CFWL_ThemePart* pThemePart,
-                                FX_FLOAT fx,
-                                FX_FLOAT fy) {
-  return GetTheme(pThemePart->m_pWidget)->IsInPart(pThemePart, fx, fy);
-}
 FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   if (pParams->m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
@@ -396,6 +361,7 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
                             pParams->m_wsText.GetLength(), rect);
   return TRUE;
 }
+
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(IFWL_Widget* pWidget) {
   switch (pWidget->GetClassID()) {
     case FWL_Type::CheckBox:
@@ -424,7 +390,9 @@ CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(IFWL_Widget* pWidget) {
       return nullptr;
   }
 }
+
 CXFA_FWLCheckBoxTP::CXFA_FWLCheckBoxTP() {}
+
 FX_BOOL CXFA_FWLCheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (pParams->m_iPart != CFWL_Part::CheckBox) {
     return TRUE;
@@ -436,6 +404,7 @@ FX_BOOL CXFA_FWLCheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
   return TRUE;
 }
+
 void CXFA_FWLCheckBoxTP::DrawCheckSign(IFWL_Widget* pWidget,
                                        CFX_Graphics* pGraphics,
                                        const CFX_RectF* pRtBox,
@@ -473,8 +442,11 @@ void CXFA_FWLCheckBoxTP::DrawCheckSign(IFWL_Widget* pWidget,
     }
   }
 }
+
 CXFA_FWLEditTP::CXFA_FWLEditTP() {}
+
 CXFA_FWLEditTP::~CXFA_FWLEditTP() {}
+
 FX_BOOL CXFA_FWLEditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (CFWL_Part::CombTextLine == pParams->m_iPart) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);

@@ -37,11 +37,10 @@ void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
 uint32_t CFWL_ScrollBarTP::SetThemeID(IFWL_Widget* pWidget,
-                                      uint32_t dwThemeID,
-                                      FX_BOOL bChildren) {
+                                      uint32_t dwThemeID) {
   if (m_pThemeData)
     SetThemeData(FWL_GetThemeColor(dwThemeID));
-  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
+  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID);
 }
 FX_BOOL CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)

@@ -112,9 +112,7 @@ class CFWL_WidgetTP {
 
   virtual bool IsValidWidget(IFWL_Widget* pWidget);
   virtual uint32_t GetThemeID(IFWL_Widget* pWidget);
-  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
-                              uint32_t dwThemeID,
-                              FX_BOOL bChildren = TRUE);
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID);
   virtual FWL_Error GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix);
   virtual FWL_Error SetThemeMatrix(IFWL_Widget* pWidget,
                                    const CFX_Matrix& matrix);
@@ -123,10 +121,6 @@ class CFWL_WidgetTP {
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
                             CFWL_WidgetCapacity dwCapacity);
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget);
-  virtual FWL_Error GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart);
-  virtual FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,
-                           FX_FLOAT fx,
-                           FX_FLOAT fy);
   virtual FX_BOOL CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
 
   FWL_Error SetFont(IFWL_Widget* pWidget,
@@ -227,7 +221,7 @@ class CFWL_WidgetTP {
   uint32_t m_dwThemeID;
   CFX_Matrix _ctm;
 };
-FX_BOOL FWLTHEME_Init();
+
 void FWLTHEME_Release();
 uint32_t FWL_GetThemeLayout(uint32_t dwThemeID);
 uint32_t FWL_GetThemeColor(uint32_t dwThemeID);

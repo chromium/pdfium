@@ -695,12 +695,10 @@ FWL_Error CFWL_ComboBoxImp::SetThemeProvider(
   if (!pThemeProvider)
     return FWL_Error::Indefinite;
   m_pProperties->m_pThemeProvider = pThemeProvider;
-  if (m_pListBox && pThemeProvider->IsValidWidget(m_pListBox.get())) {
+  if (m_pListBox)
     m_pListBox->SetThemeProvider(pThemeProvider);
-  }
-  if (m_pEdit && pThemeProvider->IsValidWidget(m_pEdit.get())) {
+  if (m_pEdit)
     m_pEdit->SetThemeProvider(pThemeProvider);
-  }
   return FWL_Error::Succeeded;
 }
 int32_t CFWL_ComboBoxImp::GetCurSel() {
@@ -1042,17 +1040,10 @@ void CFWL_ComboBoxImp::ReSetTheme() {
     pTheme = GetAvailableTheme();
     m_pProperties->m_pThemeProvider = pTheme;
   }
-  if (m_pListBox) {
-    if (!m_pListBox->GetThemeProvider() &&
-        pTheme->IsValidWidget(m_pListBox.get())) {
-      m_pListBox->SetThemeProvider(pTheme);
-    }
-  }
-  if (m_pEdit) {
-    if (!m_pEdit->GetThemeProvider() && pTheme->IsValidWidget(m_pEdit.get())) {
-      m_pEdit->SetThemeProvider(pTheme);
-    }
-  }
+  if (m_pListBox && !m_pListBox->GetThemeProvider())
+    m_pListBox->SetThemeProvider(pTheme);
+  if (m_pEdit && !m_pEdit->GetThemeProvider())
+    m_pEdit->SetThemeProvider(pTheme);
 }
 void CFWL_ComboBoxImp::ReSetEditAlignment() {
   if (!m_pEdit)

@@ -60,12 +60,10 @@ bool CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
 }
 
 uint32_t CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
-                                          uint32_t dwThemeID,
-                                          FX_BOOL bChildren) {
+                                          uint32_t dwThemeID) {
   if (m_pThemeData)
     SetThemeData(FWL_GetThemeColor(dwThemeID));
-
-  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
+  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID);
 }
 
 FX_BOOL CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
