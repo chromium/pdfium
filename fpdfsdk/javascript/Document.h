@@ -18,7 +18,7 @@
 
 class PrintParamsObj : public CJS_EmbedObj {
  public:
-  PrintParamsObj(CJS_Object* pJSObject);
+  explicit PrintParamsObj(CJS_Object* pJSObject);
   ~PrintParamsObj() override {}
 
  public:
@@ -34,7 +34,8 @@ class PrintParamsObj : public CJS_EmbedObj {
 
 class CJS_PrintParamsObj : public CJS_Object {
  public:
-  CJS_PrintParamsObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_PrintParamsObj(v8::Local<v8::Object> pObject)
+      : CJS_Object(pObject) {}
   ~CJS_PrintParamsObj() override {}
 
   DECLARE_JS_CLASS();
@@ -47,8 +48,8 @@ struct IconElement {
   IconElement(const CFX_WideString& name, Icon* stream)
       : IconName(name), IconStream(stream) {}
 
-  CFX_WideString IconName;
-  Icon* IconStream;
+  const CFX_WideString IconName;
+  Icon* const IconStream;
 };
 
 struct CJS_DelayData;
@@ -57,7 +58,7 @@ struct CJS_AnnotObj;
 
 class Document : public CJS_EmbedObj {
  public:
-  Document(CJS_Object* pJSObject);
+  explicit Document(CJS_Object* pJSObject);
   ~Document() override;
 
   FX_BOOL ADBE(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -291,7 +292,7 @@ class Document : public CJS_EmbedObj {
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   CFX_WideString m_cwBaseURL;
   std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
-  std::list<std::unique_ptr<IconElement>> m_IconList;
+  std::vector<std::unique_ptr<IconElement>> m_Icons;
   bool m_bDelay;
 };
 
