@@ -16,7 +16,8 @@ class CFWL_WidgetProperties;
 
 class CFWL_Barcode : public CFWL_Edit {
  public:
-  static CFWL_Barcode* Create();
+  CFWL_Barcode();
+  ~CFWL_Barcode() override;
 
   IFWL_Barcode* GetWidget() override;
   const IFWL_Barcode* GetWidget() const override;
@@ -83,9 +84,6 @@ class CFWL_Barcode : public CFWL_Edit {
   }
 
  protected:
-  CFWL_Barcode();
-  ~CFWL_Barcode() override;
-
   class CFWL_BarcodeDP : public IFWL_BarcodeDP {
    public:
     CFWL_BarcodeDP();

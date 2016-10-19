@@ -12,7 +12,8 @@
 
 class CFWL_DateTimePicker : public CFWL_Widget {
  public:
-  static CFWL_DateTimePicker* Create();
+  CFWL_DateTimePicker();
+  ~CFWL_DateTimePicker() override;
 
   IFWL_DateTimePicker* GetWidget() override;
   const IFWL_DateTimePicker* GetWidget() const override;
@@ -62,9 +63,6 @@ class CFWL_DateTimePicker : public CFWL_Widget {
     int32_t m_iDay;
     CFX_WideString m_wsData;
   };
-
-  CFWL_DateTimePicker();
-  ~CFWL_DateTimePicker() override;
 
   CFWL_DateTimePickerDP m_DateTimePickerDP;
 };

@@ -18,10 +18,6 @@ const IFWL_ListBox* CFWL_ListBox::GetWidget() const {
   return static_cast<IFWL_ListBox*>(m_pIface.get());
 }
 
-CFWL_ListBox* CFWL_ListBox::Create() {
-  return new CFWL_ListBox;
-}
-
 FWL_Error CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
     return FWL_Error::Indefinite;

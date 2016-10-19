@@ -18,8 +18,6 @@ class CFWL_CheckBox : public CFWL_Widget {
   IFWL_CheckBox* GetWidget() override;
   const IFWL_CheckBox* GetWidget() const override;
 
-  static CFWL_CheckBox* Create();
-
   FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
   FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
   FWL_Error SetBoxSize(FX_FLOAT fHeight);

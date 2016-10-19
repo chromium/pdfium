@@ -18,10 +18,6 @@ const IFWL_CheckBox* CFWL_CheckBox::GetWidget() const {
   return static_cast<IFWL_CheckBox*>(m_pIface.get());
 }
 
-CFWL_CheckBox* CFWL_CheckBox::Create() {
-  return new CFWL_CheckBox;
-}
-
 FWL_Error CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
     return FWL_Error::Indefinite;

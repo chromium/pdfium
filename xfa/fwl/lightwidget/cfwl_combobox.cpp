@@ -19,10 +19,6 @@ const IFWL_ComboBox* CFWL_ComboBox::GetWidget() const {
   return static_cast<IFWL_ComboBox*>(m_pIface.get());
 }
 
-CFWL_ComboBox* CFWL_ComboBox::Create() {
-  return new CFWL_ComboBox;
-}
-
 FWL_Error CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
     return FWL_Error::Indefinite;

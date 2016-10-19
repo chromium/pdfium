@@ -30,7 +30,7 @@ CXFA_FFListBox::~CXFA_FFListBox() {
   }
 }
 FX_BOOL CXFA_FFListBox::LoadWidget() {
-  CFWL_ListBox* pListBox = CFWL_ListBox::Create();
+  CFWL_ListBox* pListBox = new CFWL_ListBox;
   pListBox->Initialize();
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);
@@ -227,7 +227,7 @@ FX_BOOL CXFA_FFComboBox::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
 FX_BOOL CXFA_FFComboBox::LoadWidget() {
-  CFWL_ComboBox* pComboBox = CFWL_ComboBox::Create();
+  CFWL_ComboBox* pComboBox = new CFWL_ComboBox;
   pComboBox->Initialize();
   m_pNormalWidget = (CFWL_Widget*)pComboBox;
   m_pNormalWidget->SetLayoutItem(this);

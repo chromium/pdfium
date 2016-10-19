@@ -35,7 +35,7 @@ CXFA_FFTextEdit::~CXFA_FFTextEdit() {
   }
 }
 FX_BOOL CXFA_FFTextEdit::LoadWidget() {
-  CFWL_Edit* pFWLEdit = CFWL_Edit::Create();
+  CFWL_Edit* pFWLEdit = new CFWL_Edit;
   pFWLEdit->Initialize();
   m_pNormalWidget = pFWLEdit;
   m_pNormalWidget->SetLayoutItem(this);
@@ -436,7 +436,7 @@ CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_FFPageView* pPageView,
     : CXFA_FFTextEdit(pPageView, pDataAcc) {}
 CXFA_FFNumericEdit::~CXFA_FFNumericEdit() {}
 FX_BOOL CXFA_FFNumericEdit::LoadWidget() {
-  CFWL_Edit* pWidget = CFWL_Edit::Create();
+  CFWL_Edit* pWidget = new CFWL_Edit;
   pWidget->Initialize();
   m_pNormalWidget = pWidget;
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
@@ -510,7 +510,7 @@ CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_FFPageView* pPageView,
     : CXFA_FFTextEdit(pPageView, pDataAcc) {}
 CXFA_FFPasswordEdit::~CXFA_FFPasswordEdit() {}
 FX_BOOL CXFA_FFPasswordEdit::LoadWidget() {
-  CFWL_Edit* pWidget = CFWL_Edit::Create();
+  CFWL_Edit* pWidget = new CFWL_Edit;
   pWidget->Initialize();
   m_pNormalWidget = pWidget;
   m_pNormalWidget->SetLayoutItem(this);
@@ -576,7 +576,7 @@ FX_BOOL CXFA_FFDateTimeEdit::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
 FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
-  CFWL_DateTimePicker* pWidget = CFWL_DateTimePicker::Create();
+  CFWL_DateTimePicker* pWidget = new CFWL_DateTimePicker;
   pWidget->Initialize();
   m_pNormalWidget = pWidget;
   m_pNormalWidget->SetLayoutItem(this);

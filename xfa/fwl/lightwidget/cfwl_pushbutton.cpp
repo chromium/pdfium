@@ -16,10 +16,6 @@ const IFWL_PushButton* CFWL_PushButton::GetWidget() const {
   return static_cast<IFWL_PushButton*>(m_pIface.get());
 }
 
-CFWL_PushButton* CFWL_PushButton::Create() {
-  return new CFWL_PushButton;
-}
-
 FWL_Error CFWL_PushButton::Initialize(
     const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)

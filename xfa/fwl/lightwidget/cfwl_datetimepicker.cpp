@@ -20,10 +20,6 @@ const IFWL_DateTimePicker* CFWL_DateTimePicker::GetWidget() const {
   return static_cast<IFWL_DateTimePicker*>(m_pIface.get());
 }
 
-CFWL_DateTimePicker* CFWL_DateTimePicker::Create() {
-  return new CFWL_DateTimePicker;
-}
-
 FWL_Error CFWL_DateTimePicker::Initialize(
     const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)

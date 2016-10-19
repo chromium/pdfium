@@ -17,10 +17,6 @@ const IFWL_Edit* CFWL_Edit::GetWidget() const {
   return static_cast<IFWL_Edit*>(m_pIface.get());
 }
 
-CFWL_Edit* CFWL_Edit::Create() {
-  return new CFWL_Edit;
-}
-
 FWL_Error CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
     return FWL_Error::Indefinite;

@@ -121,10 +121,9 @@ CXFA_FFBarcode::CXFA_FFBarcode(CXFA_FFPageView* pPageView,
     : CXFA_FFTextEdit(pPageView, pDataAcc) {}
 CXFA_FFBarcode::~CXFA_FFBarcode() {}
 FX_BOOL CXFA_FFBarcode::LoadWidget() {
-  CFWL_Barcode* pFWLBarcode = CFWL_Barcode::Create();
-  if (pFWLBarcode) {
-    pFWLBarcode->Initialize();
-  }
+  CFWL_Barcode* pFWLBarcode = new CFWL_Barcode;
+  pFWLBarcode->Initialize();
+
   m_pNormalWidget = pFWLBarcode;
   m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();

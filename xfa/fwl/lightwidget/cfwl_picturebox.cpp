@@ -16,10 +16,6 @@ const IFWL_PictureBox* CFWL_PictureBox::GetWidget() const {
   return static_cast<IFWL_PictureBox*>(m_pIface.get());
 }
 
-CFWL_PictureBox* CFWL_PictureBox::Create() {
-  return new CFWL_PictureBox;
-}
-
 FWL_Error CFWL_PictureBox::Initialize(
     const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)

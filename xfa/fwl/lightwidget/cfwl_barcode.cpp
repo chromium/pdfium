@@ -16,10 +16,6 @@ const IFWL_Barcode* CFWL_Barcode::GetWidget() const {
   return static_cast<IFWL_Barcode*>(m_pIface.get());
 }
 
-CFWL_Barcode* CFWL_Barcode::Create() {
-  return new CFWL_Barcode;
-}
-
 FWL_Error CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pIface)
     return FWL_Error::Indefinite;

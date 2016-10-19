@@ -25,7 +25,7 @@ CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_FFPageView* pPageView,
 }
 CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
 FX_BOOL CXFA_FFCheckButton::LoadWidget() {
-  CFWL_CheckBox* pCheckBox = CFWL_CheckBox::Create();
+  CFWL_CheckBox* pCheckBox = new CFWL_CheckBox;
   pCheckBox->Initialize();
   m_pNormalWidget = pCheckBox;
   m_pNormalWidget->SetLayoutItem(this);
