@@ -37,19 +37,11 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
     FX_ARGB clrSignNeutralPressed;
   };
 
-  void DrawBoxBk(IFWL_Widget* pWidget,
-                 CFX_Graphics* pGraphics,
-                 const CFX_RectF* pRect,
-                 uint32_t dwStates,
-                 CFX_Matrix* pMatrix);
-  void DrawSign(IFWL_Widget* pWidget,
-                CFX_Graphics* pGraphics,
-                const CFX_RectF* pRtBox,
-                uint32_t dwStates,
-                CFX_Matrix* pMatrix);
-  void DrawSignNeutral(CFX_Graphics* pGraphics,
-                       const CFX_RectF* pRtSign,
-                       CFX_Matrix* pMatrix);
+  void DrawCheckSign(IFWL_Widget* pWidget,
+                     CFX_Graphics* pGraphics,
+                     const CFX_RectF& pRtBox,
+                     int32_t iState,
+                     CFX_Matrix* pMatrix);
   void DrawSignCheck(CFX_Graphics* pGraphics,
                      const CFX_RectF* pRtSign,
                      FX_ARGB argbFill,
@@ -74,11 +66,7 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
                     const CFX_RectF* pRtSign,
                     FX_ARGB argbFill,
                     CFX_Matrix* pMatrix);
-  void DrawSignBorder(IFWL_Widget* pWidget,
-                      CFX_Graphics* pGraphics,
-                      const CFX_RectF* pRtBox,
-                      FX_BOOL bDisable,
-                      CFX_Matrix* pMatrix);
+
   void SetThemeData(uint32_t dwID);
   void InitCheckPath(FX_FLOAT fCheckLen);
 

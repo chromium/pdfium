@@ -44,11 +44,11 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
 }
 
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
-    : m_pCheckBoxTP(new CXFA_FWLCheckBoxTP),
+    : m_pCheckBoxTP(new CFWL_CheckBoxTP),
       m_pListBoxTP(new CFWL_ListBoxTP),
       m_pPictureBoxTP(new CFWL_PictureBoxTP),
       m_pSrollBarTP(new CFWL_ScrollBarTP),
-      m_pEditTP(new CXFA_FWLEditTP),
+      m_pEditTP(new CFWL_EditTP),
       m_pComboBoxTP(new CFWL_ComboBoxTP),
       m_pMonthCalendarTP(new CFWL_MonthCalendarTP),
       m_pDateTimePickerTP(new CFWL_DateTimePickerTP),
@@ -389,81 +389,4 @@ CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(IFWL_Widget* pWidget) {
     default:
       return nullptr;
   }
-}
-
-CXFA_FWLCheckBoxTP::CXFA_FWLCheckBoxTP() {}
-
-FX_BOOL CXFA_FWLCheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  if (pParams->m_iPart != CFWL_Part::CheckBox) {
-    return TRUE;
-  }
-  if ((pParams->m_dwStates & CFWL_PartState_Checked) ||
-      (pParams->m_dwStates & CFWL_PartState_Neutral)) {
-    DrawCheckSign(pParams->m_pWidget, pParams->m_pGraphics, &pParams->m_rtPart,
-                  pParams->m_dwStates, &pParams->m_matrix);
-  }
-  return TRUE;
-}
-
-void CXFA_FWLCheckBoxTP::DrawCheckSign(IFWL_Widget* pWidget,
-                                       CFX_Graphics* pGraphics,
-                                       const CFX_RectF* pRtBox,
-                                       int32_t iState,
-                                       CFX_Matrix* pMatrix) {
-  CFX_RectF rtSign(*pRtBox);
-  uint32_t dwColor = 0xFF000000;
-  if (iState & CFWL_PartState_Neutral)
-    dwColor = 0xFFA9A9A9;
-
-  {
-    uint32_t dwStyle = pWidget->GetStylesEx();
-    rtSign.Deflate(rtSign.width / 4, rtSign.height / 4);
-    switch (dwStyle & FWL_STYLEEXT_CKB_SignShapeMask) {
-      case FWL_STYLEEXT_CKB_SignShapeCheck:
-        DrawSignCheck(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      case FWL_STYLEEXT_CKB_SignShapeCircle:
-        DrawSignCircle(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      case FWL_STYLEEXT_CKB_SignShapeCross:
-        DrawSignCross(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      case FWL_STYLEEXT_CKB_SignShapeDiamond:
-        DrawSignDiamond(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      case FWL_STYLEEXT_CKB_SignShapeSquare:
-        DrawSignSquare(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      case FWL_STYLEEXT_CKB_SignShapeStar:
-        DrawSignStar(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      default:
-        break;
-    }
-  }
-}
-
-CXFA_FWLEditTP::CXFA_FWLEditTP() {}
-
-CXFA_FWLEditTP::~CXFA_FWLEditTP() {}
-
-FX_BOOL CXFA_FWLEditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  if (CFWL_Part::CombTextLine == pParams->m_iPart) {
-    CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
-    FX_ARGB cr = 0xFF000000;
-    FX_FLOAT fWidth = 1.0f;
-    if (CXFA_Border borderUI = pWidget->GetDataAcc()->GetUIBorder()) {
-      CXFA_Edge edge = borderUI.GetEdge(0);
-      if (edge) {
-        cr = edge.GetColor();
-        fWidth = edge.GetThickness();
-      }
-    }
-    CFX_Color crLine(cr);
-    pParams->m_pGraphics->SetStrokeColor(&crLine);
-    pParams->m_pGraphics->SetLineWidth(fWidth);
-    pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);
-    return TRUE;
-  }
-  return CFWL_EditTP::DrawBackground(pParams);
 }

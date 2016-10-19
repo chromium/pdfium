@@ -63,28 +63,6 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   CFX_SizeF m_SizeAboveBelow;
 };
 
-class CXFA_FWLCheckBoxTP : public CFWL_CheckBoxTP {
- public:
-  CXFA_FWLCheckBoxTP();
-
-  // CFWL_CheckBoxTP
-  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
-
- protected:
-  void DrawCheckSign(IFWL_Widget* pWidget,
-                     CFX_Graphics* pGraphics,
-                     const CFX_RectF* pRtBox,
-                     int32_t iState,
-                     CFX_Matrix* pMatrix);
-};
-
-class CXFA_FWLEditTP : public CFWL_EditTP {
- public:
-  CXFA_FWLEditTP();
-  ~CXFA_FWLEditTP() override;
-
-  // CFWL_EditTP
-  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
-};
+CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget);
 
 #endif  // XFA_FXFA_APP_XFA_FWLTHEME_H_

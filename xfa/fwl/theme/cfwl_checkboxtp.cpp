@@ -17,8 +17,6 @@
 
 namespace {
 
-const int kSignMargin = 3;
-const int kSignBorder = 2;
 const int kSignPath = 100;
 
 }  // namespace
@@ -56,46 +54,6 @@ FX_BOOL CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
   return CFWL_WidgetTP::DrawText(pParams);
 }
 
-FX_BOOL CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  if (!pParams)
-    return FALSE;
-  switch (pParams->m_iPart) {
-    case CFWL_Part::Border: {
-      DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
-      break;
-    }
-    case CFWL_Part::Edge: {
-      DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
-               &pParams->m_rtPart, &pParams->m_matrix);
-      break;
-    }
-    case CFWL_Part::Background: {
-      FillBackground(pParams->m_pGraphics, &pParams->m_rtPart,
-                     &pParams->m_matrix);
-      if (pParams->m_dwStates & CFWL_PartState_Focused) {
-        pParams->m_rtPart = *(CFX_RectF*)pParams->m_pData;
-        DrawFocus(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
-      }
-      break;
-    }
-    case CFWL_Part::CheckBox: {
-      DrawBoxBk(pParams->m_pWidget, pParams->m_pGraphics, &pParams->m_rtPart,
-                pParams->m_dwStates, &pParams->m_matrix);
-      if ((pParams->m_dwStates & CFWL_PartState_Checked) |
-          (pParams->m_dwStates & CFWL_PartState_Neutral)) {
-        DrawSign(pParams->m_pWidget, pParams->m_pGraphics, &pParams->m_rtPart,
-                 pParams->m_dwStates, &pParams->m_matrix);
-      }
-      DrawSignBorder(
-          pParams->m_pWidget, pParams->m_pGraphics, &pParams->m_rtPart,
-          pParams->m_dwStates & CFWL_PartState_Disabled, &pParams->m_matrix);
-      break;
-    }
-    default: { return FALSE; }
-  }
-  return TRUE;
-}
-
 FWL_Error CFWL_CheckBoxTP::Initialize() {
   InitTTO();
   return CFWL_WidgetTP::Initialize();
@@ -104,123 +62,6 @@ FWL_Error CFWL_CheckBoxTP::Initialize() {
 FWL_Error CFWL_CheckBoxTP::Finalize() {
   FinalizeTTO();
   return CFWL_WidgetTP::Finalize();
-}
-
-void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget* pWidget,
-                                CFX_Graphics* pGraphics,
-                                const CFX_RectF* pRect,
-                                uint32_t dwStates,
-                                CFX_Matrix* pMatrix) {
-  dwStates &= 0x03;
-  int32_t fillMode = FXFILL_WINDING;
-  uint32_t dwStyleEx = pWidget->GetStylesEx();
-  dwStyleEx &= FWL_STYLEEXT_CKB_ShapeMask;
-  CFX_Path path;
-  path.Create();
-  FX_FLOAT fRight = pRect->right();
-  FX_FLOAT fBottom = pRect->bottom();
-  bool bClipSign = !!(dwStates & CFWL_PartState_Hovered);
-  if ((dwStyleEx == FWL_STYLEEXT_CKB_ShapeSolidSquare) ||
-      (dwStyleEx == FWL_STYLEEXT_CKB_ShapeSunkenSquare)) {
-    path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
-    if (bClipSign) {
-      fillMode = FXFILL_ALTERNATE;
-      path.AddRectangle(pRect->left + kSignMargin, pRect->top + kSignMargin,
-                        pRect->width - kSignMargin * 2,
-                        pRect->height - kSignMargin * 2);
-    }
-  } else {
-    CFX_RectF rect(*pRect);
-    rect.Deflate(0, 0, 1, 1);
-    path.AddEllipse(rect);
-    if (bClipSign) {
-      fillMode = FXFILL_ALTERNATE;
-      CFX_RectF rtClip(rect);
-      rtClip.Deflate(kSignMargin - 1, kSignMargin - 1);
-      path.AddEllipse(rtClip);
-    }
-  }
-  int32_t iTheme = 1;
-  if (dwStates & CFWL_PartState_Hovered) {
-    iTheme = 2;
-  } else if (dwStates & CFWL_PartState_Pressed) {
-    iTheme = 3;
-  } else if (dwStates & CFWL_PartState_Disabled) {
-    iTheme = 4;
-  }
-  if (dwStates & CFWL_PartState_Checked) {
-    iTheme += 4;
-  } else if (dwStates & CFWL_PartState_Neutral) {
-    iTheme += 8;
-  }
-  DrawAxialShading(pGraphics, pRect->left - 1, pRect->top - 1, fRight, fBottom,
-                   m_pThemeData->clrBoxBk[iTheme][0],
-                   m_pThemeData->clrBoxBk[iTheme][1], &path, fillMode, pMatrix);
-}
-
-void CFWL_CheckBoxTP::DrawSign(IFWL_Widget* pWidget,
-                               CFX_Graphics* pGraphics,
-                               const CFX_RectF* pRtBox,
-                               uint32_t dwStates,
-                               CFX_Matrix* pMatrix) {
-  CFX_RectF rtSign(*pRtBox);
-  rtSign.Deflate(kSignMargin, kSignMargin);
-  uint32_t dwColor = m_pThemeData->clrSignCheck;
-  bool bCheck = true;
-  if ((dwStates & CFWL_PartState_Disabled) &&
-      (dwStates & CFWL_PartState_Checked)) {
-    dwColor = m_pThemeData->clrSignBorderDisable;
-  } else if (dwStates & CFWL_PartState_Neutral) {
-    if (dwStates & CFWL_PartState_Hovered) {
-      dwColor = m_pThemeData->clrSignNeutralHover;
-    } else if (dwStates & CFWL_PartState_Pressed) {
-      dwColor = m_pThemeData->clrSignNeutralPressed;
-    } else if (dwStates & CFWL_PartState_Disabled) {
-      dwColor = m_pThemeData->clrSignBorderDisable;
-    } else {
-      dwColor = m_pThemeData->clrSignNeutralNormal;
-    }
-    bCheck = false;
-  }
-  if (bCheck) {
-    uint32_t dwStyle = pWidget->GetStylesEx();
-    switch (dwStyle & FWL_STYLEEXT_CKB_SignShapeMask) {
-      case FWL_STYLEEXT_CKB_SignShapeCheck: {
-        DrawSignCheck(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      }
-      case FWL_STYLEEXT_CKB_SignShapeCircle: {
-        rtSign.Deflate(1, 1);
-        DrawSignCircle(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      }
-      case FWL_STYLEEXT_CKB_SignShapeCross: {
-        DrawSignCross(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      }
-      case FWL_STYLEEXT_CKB_SignShapeDiamond: {
-        DrawSignDiamond(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      }
-      case FWL_STYLEEXT_CKB_SignShapeSquare: {
-        DrawSignSquare(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      }
-      case FWL_STYLEEXT_CKB_SignShapeStar: {
-        DrawSignStar(pGraphics, &rtSign, dwColor, pMatrix);
-        break;
-      }
-    }
-  } else {
-    FillSoildRect(pGraphics, ArgbEncode(255, 33, 161, 33), &rtSign, pMatrix);
-  }
-}
-
-void CFWL_CheckBoxTP::DrawSignNeutral(CFX_Graphics* pGraphics,
-                                      const CFX_RectF* pRtSign,
-                                      CFX_Matrix* pMatrix) {
-  ((CFX_RectF*)pRtSign)->Inflate(-3, -3);
-  FillSoildRect(pGraphics, m_pThemeData->clrSignNeutral, pRtSign, pMatrix);
 }
 
 void CFWL_CheckBoxTP::DrawSignCheck(CFX_Graphics* pGraphics,
@@ -341,39 +182,6 @@ void CFWL_CheckBoxTP::DrawSignStar(CFX_Graphics* pGraphics,
   pGraphics->SetFillColor(&crFill);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   pGraphics->RestoreGraphState();
-}
-
-void CFWL_CheckBoxTP::DrawSignBorder(IFWL_Widget* pWidget,
-                                     CFX_Graphics* pGraphics,
-                                     const CFX_RectF* pRtBox,
-                                     FX_BOOL bDisable,
-                                     CFX_Matrix* pMatrix) {
-  switch (pWidget->GetStylesEx() & FWL_STYLEEXT_CKB_ShapeMask) {
-    case FWL_STYLEEXT_CKB_ShapeSolidSquare: {
-      DrawAnnulusRect(pGraphics, bDisable ? m_pThemeData->clrSignBorderDisable
-                                          : m_pThemeData->clrSignBorderNormal,
-                      pRtBox, 1, pMatrix);
-      break;
-    }
-    case FWL_STYLEEXT_CKB_ShapeSunkenSquare: {
-      Draw3DRect(pGraphics, FWLTHEME_EDGE_Sunken, kSignBorder, pRtBox,
-                 CHECKBOX_COLOR_BOXLT1, CHECKBOX_COLOR_BOXLT2,
-                 CHECKBOX_COLOR_BOXRB1, CHECKBOX_COLOR_BOXRB2, pMatrix);
-      break;
-    }
-    case FWL_STYLEEXT_CKB_ShapeSolidCircle: {
-      DrawAnnulusCircle(pGraphics, bDisable ? m_pThemeData->clrSignBorderDisable
-                                            : m_pThemeData->clrSignBorderNormal,
-                        pRtBox, 1, pMatrix);
-      break;
-    }
-    case FWL_STYLEEXT_CKB_ShapeSunkenCircle: {
-      Draw3DCircle(pGraphics, FWLTHEME_EDGE_Sunken, kSignBorder, pRtBox,
-                   CHECKBOX_COLOR_BOXLT1, CHECKBOX_COLOR_BOXLT2,
-                   CHECKBOX_COLOR_BOXRB1, CHECKBOX_COLOR_BOXRB2, pMatrix);
-      break;
-    }
-  }
 }
 
 void CFWL_CheckBoxTP::SetThemeData(uint32_t dwID) {
@@ -511,5 +319,51 @@ void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
     mt.Scale(fScale, fScale);
     CFX_PathData* pData = m_pCheckPath->GetPathData();
     pData->Transform(&mt);
+  }
+}
+
+FX_BOOL CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
+  if (pParams->m_iPart != CFWL_Part::CheckBox) {
+    return FALSE;
+  }
+  if ((pParams->m_dwStates & CFWL_PartState_Checked) ||
+      (pParams->m_dwStates & CFWL_PartState_Neutral)) {
+    DrawCheckSign(pParams->m_pWidget, pParams->m_pGraphics, pParams->m_rtPart,
+                  pParams->m_dwStates, &pParams->m_matrix);
+  }
+  return FALSE;
+}
+
+void CFWL_CheckBoxTP::DrawCheckSign(IFWL_Widget* pWidget,
+                                    CFX_Graphics* pGraphics,
+                                    const CFX_RectF& pRtBox,
+                                    int32_t iState,
+                                    CFX_Matrix* pMatrix) {
+  CFX_RectF rtSign(pRtBox);
+  uint32_t dwColor = iState & CFWL_PartState_Neutral ? 0xFFA9A9A9 : 0xFF000000;
+
+  uint32_t dwStyle = pWidget->GetStylesEx();
+  rtSign.Deflate(rtSign.width / 4, rtSign.height / 4);
+  switch (dwStyle & FWL_STYLEEXT_CKB_SignShapeMask) {
+    case FWL_STYLEEXT_CKB_SignShapeCheck:
+      DrawSignCheck(pGraphics, &rtSign, dwColor, pMatrix);
+      break;
+    case FWL_STYLEEXT_CKB_SignShapeCircle:
+      DrawSignCircle(pGraphics, &rtSign, dwColor, pMatrix);
+      break;
+    case FWL_STYLEEXT_CKB_SignShapeCross:
+      DrawSignCross(pGraphics, &rtSign, dwColor, pMatrix);
+      break;
+    case FWL_STYLEEXT_CKB_SignShapeDiamond:
+      DrawSignDiamond(pGraphics, &rtSign, dwColor, pMatrix);
+      break;
+    case FWL_STYLEEXT_CKB_SignShapeSquare:
+      DrawSignSquare(pGraphics, &rtSign, dwColor, pMatrix);
+      break;
+    case FWL_STYLEEXT_CKB_SignShapeStar:
+      DrawSignStar(pGraphics, &rtSign, dwColor, pMatrix);
+      break;
+    default:
+      break;
   }
 }

@@ -9,6 +9,8 @@
 #include "xfa/fwl/basewidget/ifwl_edit.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fxfa/app/xfa_fwltheme.h"
+#include "xfa/fxfa/xfa_ffwidget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
@@ -20,6 +22,24 @@ bool CFWL_EditTP::IsValidWidget(IFWL_Widget* pWidget) {
 }
 
 FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
+  if (CFWL_Part::CombTextLine == pParams->m_iPart) {
+    CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
+    FX_ARGB cr = 0xFF000000;
+    FX_FLOAT fWidth = 1.0f;
+    if (CXFA_Border borderUI = pWidget->GetDataAcc()->GetUIBorder()) {
+      CXFA_Edge edge = borderUI.GetEdge(0);
+      if (edge) {
+        cr = edge.GetColor();
+        fWidth = edge.GetThickness();
+      }
+    }
+    CFX_Color crLine(cr);
+    pParams->m_pGraphics->SetStrokeColor(&crLine);
+    pParams->m_pGraphics->SetLineWidth(fWidth);
+    pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);
+    return TRUE;
+  }
+
   switch (pParams->m_iPart) {
     case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
