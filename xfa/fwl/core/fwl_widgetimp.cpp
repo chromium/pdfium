@@ -156,9 +156,6 @@ IFWL_ThemeProvider* IFWL_Widget::GetThemeProvider() {
 FWL_Error IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   return GetImpl()->SetThemeProvider(pThemeProvider);
 }
-FWL_Error IFWL_Widget::SetDataProvider(IFWL_DataProvider* pDataProvider) {
-  return GetImpl()->SetDataProvider(pDataProvider);
-}
 IFWL_WidgetDelegate* IFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
   return GetImpl()->SetDelegate(pDelegate);
 }
@@ -472,10 +469,6 @@ IFWL_ThemeProvider* CFWL_WidgetImp::GetThemeProvider() {
 }
 FWL_Error CFWL_WidgetImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pProperties->m_pThemeProvider = pThemeProvider;
-  return FWL_Error::Succeeded;
-}
-FWL_Error CFWL_WidgetImp::SetDataProvider(IFWL_DataProvider* pDataProvider) {
-  m_pProperties->m_pDataProvider = pDataProvider;
   return FWL_Error::Succeeded;
 }
 IFWL_WidgetDelegate* CFWL_WidgetImp::SetDelegate(

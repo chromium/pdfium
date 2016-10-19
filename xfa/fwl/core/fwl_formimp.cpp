@@ -757,8 +757,7 @@ void CFWL_FormImp::UpdateCaption() {
   CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
   if (!pWidgetMgr)
     return;
-  IFWL_FormDP* pData =
-      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
+  IFWL_DataProvider* pData = m_pProperties->m_pDataProvider;
   if (!pData)
     return;
   CFX_WideString text;

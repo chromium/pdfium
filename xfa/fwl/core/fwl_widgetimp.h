@@ -68,7 +68,6 @@ class CFWL_WidgetImp {
                                const CFX_Matrix* pMatrix = nullptr);
   virtual IFWL_ThemeProvider* GetThemeProvider();
   virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  virtual FWL_Error SetDataProvider(IFWL_DataProvider* pDataProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   virtual IFWL_App* GetOwnerApp() const;
 

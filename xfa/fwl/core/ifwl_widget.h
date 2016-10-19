@@ -96,7 +96,6 @@ class IFWL_Widget {
                        const CFX_Matrix* pMatrix = nullptr);
   IFWL_ThemeProvider* GetThemeProvider();
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  FWL_Error SetDataProvider(IFWL_DataProvider* pDataProvider);
   IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   IFWL_App* GetOwnerApp() const;
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
