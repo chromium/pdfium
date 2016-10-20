@@ -1625,6 +1625,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       nResult = m_pHintTables->CheckPage(dwPage, pHints);
       if (nResult != DataAvailable)
         return nResult;
+      // We should say to the document, which object is the page.
+      m_pDocument->SetPageObjNum(dwPage, GetPage(dwPage)->GetObjNum());
       m_pagesLoadState.insert(dwPage);
       return DataAvailable;
     }
@@ -1763,11 +1765,18 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
       uint32_t dwObjNum = 0;
       bool bPagePosGot = m_pHintTables->GetPagePos(index, &szPageStartPos,
                                                    &szPageLength, &dwObjNum);
+      if (!dwObjNum)
+        return nullptr;
+      // Page object already can be parsed in document.
+      CPDF_Object* pPageDict = m_pDocument->GetIndirectObject(dwObjNum);
+      if (pPageDict)
+        return pPageDict->GetDict();
+
       if (!bPagePosGot)
         return nullptr;
 
       m_syntaxParser.InitParser(m_pFileRead, (uint32_t)szPageStartPos);
-      CPDF_Object* pPageDict = ParseIndirectObjectAt(0, dwObjNum, m_pDocument);
+      pPageDict = ParseIndirectObjectAt(0, dwObjNum, m_pDocument);
       if (!pPageDict)
         return nullptr;
 
