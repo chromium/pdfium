@@ -20,10 +20,10 @@ FWL_Error IFWL_DateTimeEdit::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_DateTimeEdit::Finalize() {
+void IFWL_DateTimeEdit::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Edit::Finalize();
+  IFWL_Edit::Finalize();
 }
 
 CFWL_DateTimeEditImpDelegate::CFWL_DateTimeEditImpDelegate(

@@ -32,11 +32,6 @@ IFWL_ToolTip::IFWL_ToolTip(const CFWL_WidgetImpProperties& properties,
 
 IFWL_ToolTip::~IFWL_ToolTip() {}
 
-FWL_Error IFWL_ToolTip::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_ToolTip;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_ToolTip::GetClassID() const {
   return FWL_Type::ToolTip;
 }
@@ -51,10 +46,10 @@ FWL_Error IFWL_ToolTip::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ToolTip::Finalize() {
+void IFWL_ToolTip::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

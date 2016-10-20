@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/ifwl_monthcalendar.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-#define FWL_CLASS_DateTimePicker L"FWL_DATETIMEPICKER"
 #define FWL_STYLEEXT_DTP_AllowEdit (1L << 0)
 #define FWL_STYLEEXT_DTP_LongDateFormat (0L << 1)
 #define FWL_STYLEEXT_DTP_ShortDateFormat (1L << 1)
@@ -67,10 +66,9 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   ~IFWL_DateTimePicker() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;

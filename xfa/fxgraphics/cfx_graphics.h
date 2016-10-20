@@ -165,10 +165,10 @@ class CFX_Graphics {
   FWL_Error ShowText(const CFX_PointF& point,
                      const CFX_WideString& text,
                      CFX_Matrix* matrix = nullptr);
-  FWL_Error CalcTextRect(CFX_RectF& rect,
-                         const CFX_WideString& text,
-                         FX_BOOL isMultiline = FALSE,
-                         CFX_Matrix* matrix = nullptr);
+  void CalcTextRect(CFX_RectF& rect,
+                    const CFX_WideString& text,
+                    FX_BOOL isMultiline = FALSE,
+                    CFX_Matrix* matrix = nullptr);
   FWL_Error Transfer(CFX_Graphics* graphics, const CFX_Matrix* matrix);
   FWL_Error Transfer(CFX_Graphics* graphics,
                      FX_FLOAT srcLeft,

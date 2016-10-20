@@ -15,10 +15,10 @@ class CFWL_EditTP : public CFWL_WidgetTP {
   ~CFWL_EditTP() override;
 
   // CFWL_WidgeTTP
+  void Initialize() override;
+  void Finalize() override;
   bool IsValidWidget(IFWL_Widget* pWidget) override;
-  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
-  FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void DrawBackground(CFWL_ThemeBackground* pParams) override;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_EDITTP_H_

@@ -23,10 +23,10 @@ FWL_Error IFWL_ComboList::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ComboList::Finalize() {
+void IFWL_ComboList::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_ListBox::Finalize();
+  IFWL_ListBox::Finalize();
 }
 
 int32_t IFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {

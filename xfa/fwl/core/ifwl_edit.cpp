@@ -79,11 +79,6 @@ IFWL_Edit::~IFWL_Edit() {
   ClearRecord();
 }
 
-FWL_Error IFWL_Edit::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_Edit;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_Edit::GetClassID() const {
   return FWL_Type::Edit;
 }
@@ -101,20 +96,19 @@ FWL_Error IFWL_Edit::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_Edit::Finalize() {
-  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
+void IFWL_Edit::Finalize() {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
     ShowCaret(FALSE);
-  }
-  if (m_pHorzScrollBar) {
+  if (m_pHorzScrollBar)
     m_pHorzScrollBar->Finalize();
-  }
-  if (m_pVertScrollBar) {
+  if (m_pVertScrollBar)
     m_pVertScrollBar->Finalize();
-  }
+
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
+
 FWL_Error IFWL_Edit::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
@@ -796,19 +790,23 @@ FX_BOOL IFWL_Edit::On_Validate(CFDE_TxtEdtEngine* pEdit,
   DispatchEvent(&event);
   return event.bValidate;
 }
+
 FWL_Error IFWL_Edit::SetBackgroundColor(uint32_t color) {
   m_backColor = color;
   m_updateBackColor = TRUE;
   return FWL_Error::Succeeded;
 }
+
 FWL_Error IFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
   m_wsFont = wsFont;
   m_fFontSize = fSize;
   return FWL_Error::Succeeded;
 }
+
 void IFWL_Edit::SetScrollOffset(FX_FLOAT fScrollOffset) {
   m_fScrollOffsetY = fScrollOffset;
 }
+
 void IFWL_Edit::DrawTextBk(CFX_Graphics* pGraphics,
                            IFWL_ThemeProvider* pTheme,
                            const CFX_Matrix* pMatrix) {

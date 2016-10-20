@@ -151,11 +151,6 @@ IFWL_MonthCalendar::~IFWL_MonthCalendar() {
   m_arrSelDays.RemoveAll();
 }
 
-FWL_Error IFWL_MonthCalendar::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_MonthCalendar;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_MonthCalendar::GetClassID() const {
   return FWL_Type::MonthCalendar;
 }
@@ -168,10 +163,10 @@ FWL_Error IFWL_MonthCalendar::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_MonthCalendar::Finalize() {
+void IFWL_MonthCalendar::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_MonthCalendar::GetWidgetRect(CFX_RectF& rect,

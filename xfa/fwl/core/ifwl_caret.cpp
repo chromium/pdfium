@@ -24,11 +24,6 @@ IFWL_Caret::IFWL_Caret(const CFWL_WidgetImpProperties& properties,
 
 IFWL_Caret::~IFWL_Caret() {}
 
-FWL_Error IFWL_Caret::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_Caret;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_Caret::GetClassID() const {
   return FWL_Type::Caret;
 }
@@ -41,14 +36,14 @@ FWL_Error IFWL_Caret::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_Caret::Finalize() {
+void IFWL_Caret::Finalize() {
   if (m_pTimerInfo) {
     m_pTimerInfo->StopTimer();
     m_pTimerInfo = nullptr;
   }
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,

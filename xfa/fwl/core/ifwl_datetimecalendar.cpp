@@ -23,10 +23,10 @@ FWL_Error IFWL_DateTimeCalendar::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_DateTimeCalendar::Finalize() {
+void IFWL_DateTimeCalendar::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_MonthCalendar::Finalize();
+  IFWL_MonthCalendar::Finalize();
 }
 
 CFWL_DateTimeCalendarImpDelegate::CFWL_DateTimeCalendarImpDelegate(

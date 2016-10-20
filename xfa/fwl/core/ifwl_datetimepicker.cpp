@@ -36,11 +36,6 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
 
 IFWL_DateTimePicker::~IFWL_DateTimePicker() {}
 
-FWL_Error IFWL_DateTimePicker::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_DateTimePicker;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_DateTimePicker::GetClassID() const {
   return FWL_Type::DateTimePicker;
 }
@@ -75,20 +70,18 @@ FWL_Error IFWL_DateTimePicker::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_DateTimePicker::Finalize() {
-  if (m_pEdit) {
+void IFWL_DateTimePicker::Finalize() {
+  if (m_pEdit)
     m_pEdit->Finalize();
-  }
-  if (m_pMonthCal) {
+  if (m_pMonthCal)
     m_pMonthCal->Finalize();
-  }
-  if (m_pForm) {
+  if (m_pForm)
     m_pForm->Finalize();
-  }
+
   UnregisterEventTarget();
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_DateTimePicker::GetWidgetRect(CFX_RectF& rect,

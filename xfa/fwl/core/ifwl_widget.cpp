@@ -24,6 +24,22 @@
 
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)
 
+IFWL_Widget::IFWL_Widget(const CFWL_WidgetImpProperties& properties,
+                         IFWL_Widget* pOuter)
+    : m_pWidgetMgr(CFWL_WidgetMgr::GetInstance()),
+      m_pProperties(new CFWL_WidgetImpProperties(properties)),
+      m_pDelegate(nullptr),
+      m_pCurDelegate(nullptr),
+      m_pOuter(pOuter),
+      m_pLayoutItem(nullptr),
+      m_pAssociate(nullptr),
+      m_iLock(0),
+      m_nEventKey(0) {
+  ASSERT(m_pWidgetMgr);
+}
+
+IFWL_Widget::~IFWL_Widget() {}
+
 FWL_Error IFWL_Widget::Initialize() {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
@@ -45,15 +61,9 @@ FWL_Error IFWL_Widget::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_Widget::Finalize() {
+void IFWL_Widget::Finalize() {
   NotifyDriver();
   m_pWidgetMgr->RemoveWidget(this);
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error IFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
-  wsClass.clear();
-  return FWL_Error::Succeeded;
 }
 
 FX_BOOL IFWL_Widget::IsInstance(const CFX_WideStringC& wsClass) const {
@@ -389,30 +399,9 @@ void IFWL_Widget::SetLayoutItem(void* pItem) {
   m_pLayoutItem = pItem;
 }
 
-CFWL_Widget* IFWL_Widget::GetAssociateWidget() const {
-  return m_pAssociate;
-}
-
 void IFWL_Widget::SetAssociateWidget(CFWL_Widget* pAssociate) {
   m_pAssociate = pAssociate;
 }
-
-IFWL_Widget::IFWL_Widget(const CFWL_WidgetImpProperties& properties,
-                         IFWL_Widget* pOuter)
-    : m_pWidgetMgr(CFWL_WidgetMgr::GetInstance()),
-      m_pProperties(new CFWL_WidgetImpProperties(properties)),
-      m_pDelegate(nullptr),
-      m_pCurDelegate(nullptr),
-      m_pOuter(pOuter),
-      m_pLayoutItem(nullptr),
-      m_pAssociate(nullptr),
-      m_iLock(0),
-      m_nEventKey(0) {
-  ASSERT(m_pWidgetMgr);
-}
-
-IFWL_Widget::~IFWL_Widget() {}
-
 FX_BOOL IFWL_Widget::IsEnabled() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;
 }

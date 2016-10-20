@@ -12,7 +12,6 @@
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-#define FWL_CLASS_CheckBox L"FWL_CHECKBOX"
 #define FWL_STYLEEXT_CKB_Left (0L << 0)
 #define FWL_STYLEEXT_CKB_Center (1L << 0)
 #define FWL_STYLEEXT_CKB_Right (2L << 0)
@@ -62,10 +61,9 @@ class IFWL_CheckBox : public IFWL_Widget {
   ~IFWL_CheckBox() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,

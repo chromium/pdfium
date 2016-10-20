@@ -17,11 +17,6 @@ IFWL_Barcode::IFWL_Barcode(const CFWL_WidgetImpProperties& properties)
 
 IFWL_Barcode::~IFWL_Barcode() {}
 
-FWL_Error IFWL_Barcode::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_Barcode;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_Barcode::GetClassID() const {
   return FWL_Type::Barcode;
 }
@@ -34,12 +29,14 @@ FWL_Error IFWL_Barcode::Initialize() {
     return FWL_Error::Indefinite;
   return FWL_Error::Succeeded;
 }
-FWL_Error IFWL_Barcode::Finalize() {
+
+void IFWL_Barcode::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   m_pBarcodeEngine.reset();
-  return IFWL_Edit::Finalize();
+  IFWL_Edit::Finalize();
 }
+
 FWL_Error IFWL_Barcode::Update() {
   if (IsLocked()) {
     return FWL_Error::Indefinite;
@@ -48,6 +45,7 @@ FWL_Error IFWL_Barcode::Update() {
   GenerateBarcodeImageCache();
   return ret;
 }
+
 FWL_Error IFWL_Barcode::DrawWidget(CFX_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   if (!pGraphics)

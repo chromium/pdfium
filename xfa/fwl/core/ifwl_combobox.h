@@ -25,7 +25,6 @@ class IFWL_FormProxy;
 class IFWL_ListBox;
 class IFWL_Widget;
 
-#define FWL_CLASS_ComboBox L"FWL_COMBOBOX"
 #define FWL_STYLEEXT_CMB_DropList (0L << 0)
 #define FWL_STYLEEXT_CMB_DropDown (1L << 0)
 #define FWL_STYLEEXT_CMB_Sort (1L << 1)
@@ -89,10 +88,9 @@ class IFWL_ComboBox : public IFWL_Widget {
   ~IFWL_ComboBox() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
                            uint32_t dwStylesExRemoved) override;

@@ -19,11 +19,10 @@ class IFWL_FormProxy : public IFWL_Form {
   ~IFWL_FormProxy() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;

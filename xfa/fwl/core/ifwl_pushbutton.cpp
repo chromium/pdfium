@@ -25,11 +25,6 @@ IFWL_PushButton::IFWL_PushButton(const CFWL_WidgetImpProperties& properties)
 
 IFWL_PushButton::~IFWL_PushButton() {}
 
-FWL_Error IFWL_PushButton::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_PushButton;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_PushButton::GetClassID() const {
   return FWL_Type::PushButton;
 }
@@ -42,10 +37,10 @@ FWL_Error IFWL_PushButton::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_PushButton::Finalize() {
+void IFWL_PushButton::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_PushButton::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -128,9 +123,9 @@ FWL_Error IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
   }
   CFX_RectF rtText;
   rtText.Set(0, 0, 0, 0);
-  if (!wsCaption.IsEmpty()) {
+  if (!wsCaption.IsEmpty())
     CalcTextRect(wsCaption, pTheme, 0, m_iTTOAlign, rtText);
-  }
+
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_PSB_ModeMask) {
     case FWL_STYLEEXT_PSB_TextOnly:
       DrawText(pGraphics, m_pProperties->m_pThemeProvider, &matrix);

@@ -17,7 +17,6 @@ class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class CFWL_CaretImpDelegate;
 
-#define FWL_CLASS_Caret L"FWL_CARET"
 #define FWL_STATE_CAT_HightLight 1
 
 class IFWL_Caret : public IFWL_Widget {
@@ -26,10 +25,9 @@ class IFWL_Caret : public IFWL_Widget {
   ~IFWL_Caret() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
 

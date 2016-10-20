@@ -36,11 +36,6 @@ IFWL_CheckBox::IFWL_CheckBox(const CFWL_WidgetImpProperties& properties)
 
 IFWL_CheckBox::~IFWL_CheckBox() {}
 
-FWL_Error IFWL_CheckBox::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_CheckBox;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_CheckBox::GetClassID() const {
   return FWL_Type::CheckBox;
 }
@@ -53,10 +48,10 @@ FWL_Error IFWL_CheckBox::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_CheckBox::Finalize() {
+void IFWL_CheckBox::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

@@ -29,9 +29,10 @@ bool CFWL_ComboBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::ComboBox;
 }
 
-FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
+void CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
-    return FALSE;
+    return;
+
   switch (pParams->m_iPart) {
     case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
@@ -73,10 +74,11 @@ FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       DrawStrethHandler(pParams, 0, &pParams->m_matrix);
       break;
     }
-    default: { return FALSE; }
+    default:
+      break;
   }
-  return TRUE;
 }
+
 void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
                                         uint32_t dwStates,
                                         CFX_Matrix* pMatrix) {
@@ -88,6 +90,7 @@ void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
   pParams->m_pGraphics->SetFillColor(&cr);
   pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams->m_matrix);
 }
+
 void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart* pThemePart,
                                    CFWL_WidgetCapacity dwCapacity) {
   if (dwCapacity == CFWL_WidgetCapacity::ComboFormHandler) {
@@ -115,10 +118,11 @@ void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
       break;
     }
     case CFWL_PartState_Disabled: {
-      eState = FWLTHEME_STATE_Disabale;
+      eState = FWLTHEME_STATE_Disable;
       break;
     }
-    default: {}
+    default:
+      break;
   }
   DrawArrowBtn(pParams->m_pGraphics, &pParams->m_rtPart,
                FWLTHEME_DIRECTION_Down, eState, &pParams->m_matrix);

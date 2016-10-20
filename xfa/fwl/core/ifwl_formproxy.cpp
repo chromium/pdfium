@@ -14,11 +14,6 @@ IFWL_FormProxy::IFWL_FormProxy(const CFWL_WidgetImpProperties& properties,
 
 IFWL_FormProxy::~IFWL_FormProxy() {}
 
-FWL_Error IFWL_FormProxy::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_FormProxy;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_FormProxy::GetClassID() const {
   return FWL_Type::FormProxy;
 }
@@ -37,10 +32,10 @@ FWL_Error IFWL_FormProxy::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_FormProxy::Finalize() {
+void IFWL_FormProxy::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_FormProxy::Update() {

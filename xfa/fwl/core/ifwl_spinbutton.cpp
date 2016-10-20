@@ -38,11 +38,6 @@ IFWL_SpinButton::IFWL_SpinButton(const CFWL_WidgetImpProperties& properties)
 
 IFWL_SpinButton::~IFWL_SpinButton() {}
 
-FWL_Error IFWL_SpinButton::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_SpinButton;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_SpinButton::GetClassID() const {
   return FWL_Type::SpinButton;
 }
@@ -55,10 +50,10 @@ FWL_Error IFWL_SpinButton::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_SpinButton::Finalize() {
+void IFWL_SpinButton::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

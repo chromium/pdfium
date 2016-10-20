@@ -18,9 +18,9 @@ bool CFWL_PictureBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::PictureBox;
 }
 
-FX_BOOL CFWL_PictureBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
+void CFWL_PictureBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
-    return FALSE;
+    return;
 
   switch (pParams->m_iPart) {
     case CFWL_Part::Border: {
@@ -35,5 +35,4 @@ FX_BOOL CFWL_PictureBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     default:
       break;
   }
-  return TRUE;
 }

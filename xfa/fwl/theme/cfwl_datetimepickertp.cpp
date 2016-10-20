@@ -17,9 +17,10 @@ bool CFWL_DateTimePickerTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::DateTimePicker;
 }
 
-FX_BOOL CFWL_DateTimePickerTP::DrawBackground(CFWL_ThemeBackground* pParams) {
+void CFWL_DateTimePickerTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
-    return FALSE;
+    return;
+
   switch (pParams->m_iPart) {
     case CFWL_Part::Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
@@ -34,9 +35,9 @@ FX_BOOL CFWL_DateTimePickerTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       DrawDropDownButton(pParams, &pParams->m_matrix);
       break;
     }
-    default: {}
+    default:
+      break;
   }
-  return TRUE;
 }
 
 void CFWL_DateTimePickerTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
@@ -58,10 +59,11 @@ void CFWL_DateTimePickerTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
       break;
     }
     case CFWL_PartState_Disabled: {
-      eState = FWLTHEME_STATE_Disabale;
+      eState = FWLTHEME_STATE_Disable;
       break;
     }
-    default: {}
+    default:
+      break;
   }
   DrawArrowBtn(pParams->m_pGraphics, &pParams->m_rtPart,
                FWLTHEME_DIRECTION_Down, eState, pMatrix);

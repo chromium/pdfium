@@ -67,8 +67,7 @@ class IFWL_Widget {
   virtual ~IFWL_Widget();
 
   virtual FWL_Error Initialize();
-  virtual FWL_Error Finalize();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
+  virtual void Finalize();
   virtual FWL_Type GetClassID() const = 0;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
 
@@ -76,31 +75,42 @@ class IFWL_Widget {
   virtual FWL_Error GetGlobalRect(CFX_RectF& rect);
   virtual FWL_Error SetWidgetRect(const CFX_RectF& rect);
   virtual FWL_Error GetClientRect(CFX_RectF& rect);
+
   virtual IFWL_Widget* GetParent();
   virtual FWL_Error SetParent(IFWL_Widget* pParent);
+
   virtual IFWL_Widget* GetOwner();
   virtual FWL_Error SetOwner(IFWL_Widget* pOwner);
+
   virtual IFWL_Widget* GetOuter();
+
   virtual uint32_t GetStyles();
   virtual FWL_Error ModifyStyles(uint32_t dwStylesAdded,
                                  uint32_t dwStylesRemoved);
   virtual uint32_t GetStylesEx();
   virtual FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
                                    uint32_t dwStylesExRemoved);
+
   virtual uint32_t GetStates();
   virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+
   virtual FWL_Error Update();
   virtual FWL_Error LockUpdate();
   virtual FWL_Error UnlockUpdate();
+
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
+
   virtual FWL_Error TransformTo(IFWL_Widget* pWidget,
                                 FX_FLOAT& fx,
                                 FX_FLOAT& fy);
   virtual FWL_Error TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
+
   virtual FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
   virtual FWL_Error SetMatrix(const CFX_Matrix& matrix);
+
   virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix = nullptr);
+
   virtual IFWL_ThemeProvider* GetThemeProvider();
   virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
@@ -115,7 +125,6 @@ class IFWL_Widget {
   void* GetLayoutItem() const;
   void SetLayoutItem(void* pItem);
 
-  CFWL_Widget* GetAssociateWidget() const;
   void SetAssociateWidget(CFWL_Widget* pAssociate);
 
  protected:

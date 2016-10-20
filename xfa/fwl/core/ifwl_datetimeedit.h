@@ -20,7 +20,7 @@ class IFWL_DateTimeEdit : public IFWL_Edit {
 
   // IFWL_Edit
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
 
  protected:
   friend class CFWL_DateTimeEditImpDelegate;

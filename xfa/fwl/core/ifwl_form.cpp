@@ -52,7 +52,7 @@ IFWL_Form::IFWL_Form(const CFWL_WidgetImpProperties& properties,
       m_bLButtonDown(FALSE),
       m_bMaximized(false),
       m_bSetMaximize(FALSE),
-      m_bCustomizeLayout(FALSE),
+      m_bCustomizeLayout(false),
       m_eFormSize(FWL_FORMSIZE_Manual),
       m_bDoModalFlag(FALSE),
       m_pBigIcon(nullptr),
@@ -67,11 +67,6 @@ IFWL_Form::IFWL_Form(const CFWL_WidgetImpProperties& properties,
 
 IFWL_Form::~IFWL_Form() {
   RemoveSysButtons();
-}
-
-FWL_Error IFWL_Form::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_Form;
-  return FWL_Error::Succeeded;
 }
 
 FWL_Type IFWL_Form::GetClassID() const {
@@ -92,13 +87,15 @@ FWL_Error IFWL_Form::Initialize() {
   m_pDelegate = new CFWL_FormImpDelegate(this);
   return FWL_Error::Succeeded;
 }
-FWL_Error IFWL_Form::Finalize() {
+
+void IFWL_Form::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   UnregisterEventTarget();
   UnRegisterForm();
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
+
 FWL_Error IFWL_Form::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Reset();

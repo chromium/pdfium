@@ -16,7 +16,6 @@
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-#define FWL_CLASS_ListBox L"FWL_LISTBOX"
 #define FWL_STYLEEXT_LTB_MultiSelection (1L << 0)
 #define FWL_STYLEEXT_LTB_ShowScrollBarAlaways (1L << 2)
 #define FWL_STYLEEXT_LTB_MultiColumn (1L << 3)
@@ -107,10 +106,9 @@ class IFWL_ListBox : public IFWL_Widget {
   ~IFWL_ListBox() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;

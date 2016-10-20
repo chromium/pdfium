@@ -16,7 +16,7 @@ class IFWL_DateTimeCalendar : public IFWL_MonthCalendar {
 
   // IFWL_MonthCalendar
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
 
  protected:
   friend class CFWL_DateTimeCalendarImpDelegate;

@@ -29,18 +29,15 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   CXFA_FWLTheme(CXFA_FFApp* pApp);
   ~CXFA_FWLTheme() override;
 
-  FWL_Error Initialize();
-  FWL_Error Finalize();
-
   // IFWL_ThemeProvider:
-  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
-  FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
+  void DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void DrawText(CFWL_ThemeText* pParams) override;
   void* GetCapacity(CFWL_ThemePart* pThemePart,
                     CFWL_WidgetCapacity dwCapacity) override;
-  FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget) override;
-  FX_BOOL CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) override;
+  bool IsCustomizedLayout(IFWL_Widget* pWidget) override;
+  void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) override;
 
- protected:
+ private:
   CFWL_WidgetTP* GetTheme(IFWL_Widget* pWidget);
   std::unique_ptr<CFWL_CheckBoxTP> m_pCheckBoxTP;
   std::unique_ptr<CFWL_ListBoxTP> m_pListBoxTP;

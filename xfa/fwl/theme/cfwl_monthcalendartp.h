@@ -17,14 +17,14 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   ~CFWL_MonthCalendarTP() override;
 
   // CFWL_WidgetTP
+  void Initialize() override;
+  void Finalize() override;
   bool IsValidWidget(IFWL_Widget* pWidget) override;
   uint32_t SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID) override;
-  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
-  FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
+  void DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void DrawText(CFWL_ThemeText* pParams) override;
   void* GetCapacity(CFWL_ThemePart* pThemePart,
                     CFWL_WidgetCapacity dwCapacity) override;
-  FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
 
  protected:
   struct MCThemeData {
@@ -37,15 +37,15 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
     FX_ARGB clrBK;
   };
 
-  FX_BOOL DrawTotalBK(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawHeadBk(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawLButton(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawRButton(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawDatesInBK(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawDatesInCircle(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawTodayCircle(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawHSeperator(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FX_BOOL DrawWeekNumSep(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawTotalBK(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawHeadBk(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawLButton(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawRButton(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawDatesInBK(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawDatesInCircle(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawTodayCircle(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawHSeperator(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
+  void DrawWeekNumSep(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
   FWLTHEME_STATE GetState(uint32_t dwFWLStates);
   void SetThemeData(uint32_t dwThemeID);
 

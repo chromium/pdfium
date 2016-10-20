@@ -69,7 +69,6 @@ class CFWL_Event {
   CFWL_Event();
   virtual ~CFWL_Event();
 
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual CFWL_EventType GetClassID() const;
 
   uint32_t Release();
@@ -85,10 +84,6 @@ inline CFWL_Event::CFWL_Event()
     : m_pSrcTarget(nullptr), m_pDstTarget(nullptr), m_dwRefCount(1) {}
 
 inline CFWL_Event::~CFWL_Event() {}
-
-inline FWL_Error CFWL_Event::GetClassName(CFX_WideString& wsClass) const {
-  return FWL_Error::Succeeded;
-}
 
 inline CFWL_EventType CFWL_Event::GetClassID() const {
   return CFWL_EventType::None;
@@ -107,16 +102,11 @@ inline uint32_t CFWL_Event::Release() {
    public:                                                                  \
     classname();                                                            \
     ~classname() override;                                                  \
-    FWL_Error GetClassName(CFX_WideString& wsClass) const override;         \
     CFWL_EventType GetClassID() const override;                             \
     __VA_ARGS__                                                             \
   };                                                                        \
   inline classname::classname() {}                                          \
   inline classname::~classname() {}                                         \
-  inline FWL_Error classname::GetClassName(CFX_WideString& wsClass) const { \
-    wsClass = L## #classname;                                               \
-    return FWL_Error::Succeeded;                                            \
-  }                                                                         \
   inline CFWL_EventType classname::GetClassID() const { return eventType; }
 
 FWL_EVENT_DEF(CFWL_EvtMouse, CFWL_EventType::Mouse, FX_FLOAT m_fx;

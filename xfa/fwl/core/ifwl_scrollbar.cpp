@@ -41,7 +41,7 @@ IFWL_ScrollBar::IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
       m_bRepaintThumb(FALSE),
       m_fButtonLen(0),
       m_bMinSize(FALSE),
-      m_bCustomLayout(FALSE),
+      m_bCustomLayout(false),
       m_fMinThumb(FWL_SCROLLBAR_MinThumb) {
   m_rtClient.Reset();
   m_rtThumb.Reset();
@@ -52,11 +52,6 @@ IFWL_ScrollBar::IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
 }
 
 IFWL_ScrollBar::~IFWL_ScrollBar() {}
-
-FWL_Error IFWL_ScrollBar::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_ScrollBar;
-  return FWL_Error::Succeeded;
-}
 
 FWL_Type IFWL_ScrollBar::GetClassID() const {
   return FWL_Type::ScrollBar;
@@ -70,10 +65,10 @@ FWL_Error IFWL_ScrollBar::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ScrollBar::Finalize() {
+void IFWL_ScrollBar::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

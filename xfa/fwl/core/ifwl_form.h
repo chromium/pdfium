@@ -89,11 +89,10 @@ class IFWL_Form : public IFWL_Widget {
   ~IFWL_Form() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
 
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error GetClientRect(CFX_RectF& rect) override;
@@ -176,7 +175,7 @@ class IFWL_Form : public IFWL_Widget {
   FX_BOOL m_bLButtonDown;
   bool m_bMaximized;
   FX_BOOL m_bSetMaximize;
-  FX_BOOL m_bCustomizeLayout;
+  bool m_bCustomizeLayout;
   FWL_FORMSIZE m_eFormSize;
   FX_BOOL m_bDoModalFlag;
   FX_FLOAT m_fSmallIconSz;

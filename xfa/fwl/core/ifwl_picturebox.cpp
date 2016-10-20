@@ -21,11 +21,6 @@ IFWL_PictureBox::IFWL_PictureBox(const CFWL_WidgetImpProperties& properties)
 
 IFWL_PictureBox::~IFWL_PictureBox() {}
 
-FWL_Error IFWL_PictureBox::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_PictureBox;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_PictureBox::GetClassID() const {
   return FWL_Type::PictureBox;
 }
@@ -38,10 +33,10 @@ FWL_Error IFWL_PictureBox::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_PictureBox::Finalize() {
+void IFWL_PictureBox::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

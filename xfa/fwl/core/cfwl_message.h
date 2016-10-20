@@ -58,7 +58,6 @@ class CFWL_Message {
   virtual ~CFWL_Message();
 
   virtual CFWL_Message* Clone();
-  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
   virtual CFWL_MessageType GetClassID() const;
 
   uint32_t Release();
@@ -84,10 +83,6 @@ inline CFWL_Message* CFWL_Message::Clone() {
   return nullptr;
 }
 
-inline FWL_Error CFWL_Message::GetClassName(CFX_WideString& wsClass) const {
-  return FWL_Error::Succeeded;
-}
-
 inline CFWL_MessageType CFWL_Message::GetClassID() const {
   return CFWL_MessageType::None;
 }
@@ -111,7 +106,6 @@ inline CFWL_Message* CFWL_Message::Retain() {
     classname();                                                    \
     ~classname() override;                                          \
     CFWL_Message* Clone() override;                                 \
-    FWL_Error GetClassName(CFX_WideString& wsClass) const override; \
     CFWL_MessageType GetClassID() const override;                   \
     __VA_ARGS__                                                     \
   };
@@ -120,10 +114,6 @@ inline CFWL_Message* CFWL_Message::Retain() {
   inline classname::classname() {}                                          \
   inline classname::~classname() {}                                         \
   inline CFWL_Message* classname::Clone() { return new classname(*this); }  \
-  inline FWL_Error classname::GetClassName(CFX_WideString& wsClass) const { \
-    wsClass = L## #classname;                                               \
-    return FWL_Error::Succeeded;                                            \
-  }                                                                         \
   inline CFWL_MessageType classname::GetClassID() const { return msgType; } \
   __VA_ARGS__
 

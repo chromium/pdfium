@@ -35,11 +35,6 @@ IFWL_ComboBox::IFWL_ComboBox(const CFWL_WidgetImpProperties& properties)
 
 IFWL_ComboBox::~IFWL_ComboBox() {}
 
-FWL_Error IFWL_ComboBox::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_ComboBox;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_ComboBox::GetClassID() const {
   return FWL_Type::ComboBox;
 }
@@ -74,14 +69,14 @@ FWL_Error IFWL_ComboBox::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ComboBox::Finalize() {
-  if (m_pEdit) {
+void IFWL_ComboBox::Finalize() {
+  if (m_pEdit)
     m_pEdit->Finalize();
-  }
+
   m_pListBox->Finalize();
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_ComboBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

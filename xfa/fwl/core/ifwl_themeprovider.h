@@ -20,12 +20,12 @@ class IFWL_Widget;
 class IFWL_ThemeProvider {
  public:
   virtual ~IFWL_ThemeProvider() {}
-  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) = 0;
-  virtual FX_BOOL DrawText(CFWL_ThemeText* pParams) = 0;
+  virtual void DrawBackground(CFWL_ThemeBackground* pParams) = 0;
+  virtual void DrawText(CFWL_ThemeText* pParams) = 0;
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
                             CFWL_WidgetCapacity dwCapacity) = 0;
-  virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget) = 0;
-  virtual FX_BOOL CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) = 0;
+  virtual bool IsCustomizedLayout(IFWL_Widget* pWidget) = 0;
+  virtual void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) = 0;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_THEMEPROVIDER_H_

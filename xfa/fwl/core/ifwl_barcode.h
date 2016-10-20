@@ -20,7 +20,6 @@ class IFWL_Widget;
 
 #define XFA_BCS_NeedUpdate 0x0001
 #define XFA_BCS_EncodeSuccess 0x0002
-#define FWL_CLASS_Barcode L"FWL_BARCODE"
 
 enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_NONE = 0,
@@ -63,10 +62,9 @@ class IFWL_Barcode : public IFWL_Edit {
   ~IFWL_Barcode() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;

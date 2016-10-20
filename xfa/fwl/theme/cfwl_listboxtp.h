@@ -15,10 +15,10 @@ class CFWL_ListBoxTP : public CFWL_WidgetTP {
   ~CFWL_ListBoxTP() override;
 
   // CFWL_WidgetTP
+  void Initialize() override;
+  void Finalize() override;
   bool IsValidWidget(IFWL_Widget* pWidget) override;
-  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
-  FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
  protected:
   void DrawListBoxItem(CFX_Graphics* pGraphics,

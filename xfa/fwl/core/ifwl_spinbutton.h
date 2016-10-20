@@ -12,7 +12,6 @@
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
-#define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
 
 class CFWL_MsgMouse;
@@ -27,10 +26,9 @@ class IFWL_SpinButton : public IFWL_Widget, public IFWL_Timer {
   ~IFWL_SpinButton() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;

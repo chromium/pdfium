@@ -19,7 +19,6 @@
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-#define FWL_CLASS_Edit L"FWL_EDIT"
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)
 #define FWL_STYLEEXT_EDT_MultiLine (1L << 1)
 #define FWL_STYLEEXT_EDT_WantReturn (1L << 2)
@@ -111,10 +110,9 @@ class IFWL_Edit : public IFWL_Widget {
   ~IFWL_Edit() override;
 
   // IFWL_Widget:
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error SetWidgetRect(const CFX_RectF& rect) override;
   FWL_Error Update() override;

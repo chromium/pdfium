@@ -14,7 +14,6 @@ class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class CFWL_ToolTipImpDelegate;
 
-#define FWL_CLASS_ToolTip L"FWL_TOOLTIP"
 #define FWL_STYLEEXT_TTP_Rectangle (0L << 3)
 #define FWL_STYLEEXT_TTP_RoundCorner (1L << 3)
 #define FWL_STYLEEXT_TTP_Balloon (1L << 4)
@@ -39,10 +38,9 @@ class IFWL_ToolTip : public IFWL_Form {
   ~IFWL_ToolTip() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,

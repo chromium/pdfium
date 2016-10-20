@@ -21,7 +21,7 @@ bool CFWL_EditTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::Edit;
 }
 
-FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
+void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (CFWL_Part::CombTextLine == pParams->m_iPart) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
     FX_ARGB cr = 0xFF000000;
@@ -37,7 +37,7 @@ FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     pParams->m_pGraphics->SetStrokeColor(&crLine);
     pParams->m_pGraphics->SetLineWidth(fWidth);
     pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);
-    return TRUE;
+    return;
   }
 
   switch (pParams->m_iPart) {
@@ -92,15 +92,17 @@ FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);
       break;
     }
-    default: { break; }
+    default:
+      break;
   }
-  return TRUE;
 }
-FWL_Error CFWL_EditTP::Initialize() {
+
+void CFWL_EditTP::Initialize() {
   InitTTO();
-  return CFWL_WidgetTP::Initialize();
+  CFWL_WidgetTP::Initialize();
 }
-FWL_Error CFWL_EditTP::Finalize() {
+
+void CFWL_EditTP::Finalize() {
   FinalizeTTO();
-  return CFWL_WidgetTP::Finalize();
+  CFWL_WidgetTP::Finalize();
 }

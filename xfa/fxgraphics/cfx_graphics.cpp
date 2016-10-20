@@ -954,20 +954,19 @@ FWL_Error CFX_Graphics::ShowText(const CFX_PointF& point,
   return FWL_Error::PropertyInvalid;
 }
 
-FWL_Error CFX_Graphics::CalcTextRect(CFX_RectF& rect,
-                                     const CFX_WideString& text,
-                                     FX_BOOL isMultiline,
-                                     CFX_Matrix* matrix) {
-  if (m_type == FX_CONTEXT_Device && m_renderDevice) {
-    int32_t length = text.GetLength();
-    uint32_t* charCodes = FX_Alloc(uint32_t, length);
-    FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
-    CalcTextInfo(text, charCodes, charPos, rect);
-    FX_Free(charPos);
-    FX_Free(charCodes);
-    return FWL_Error::Succeeded;
-  }
-  return FWL_Error::PropertyInvalid;
+void CFX_Graphics::CalcTextRect(CFX_RectF& rect,
+                                const CFX_WideString& text,
+                                FX_BOOL isMultiline,
+                                CFX_Matrix* matrix) {
+  if (m_type != FX_CONTEXT_Device || !m_renderDevice)
+    return;
+
+  int32_t length = text.GetLength();
+  uint32_t* charCodes = FX_Alloc(uint32_t, length);
+  FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
+  CalcTextInfo(text, charCodes, charPos, rect);
+  FX_Free(charPos);
+  FX_Free(charCodes);
 }
 
 FWL_Error CFX_Graphics::Transfer(CFX_Graphics* graphics,

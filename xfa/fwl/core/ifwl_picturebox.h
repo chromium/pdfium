@@ -12,7 +12,6 @@
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-#define FWL_CLASS_PictureBox L"FWL_PICTUREBOX"
 #define FWL_STYLEEXT_PTB_Left 0L << 0
 #define FWL_STYLEEXT_PTB_Center 1L << 0
 #define FWL_STYLEEXT_PTB_Right 2L << 0
@@ -49,10 +48,9 @@ class IFWL_PictureBox : public IFWL_Widget {
   ~IFWL_PictureBox() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,

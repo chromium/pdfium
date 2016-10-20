@@ -16,7 +16,7 @@ class CFWL_CaretTP : public CFWL_WidgetTP {
 
   // CFWL_WidgetTP
   bool IsValidWidget(IFWL_Widget* pWidget) override;
-  FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
  protected:
   void DrawCaretBK(CFX_Graphics* pGraphics,

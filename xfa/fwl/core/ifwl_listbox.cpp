@@ -36,11 +36,6 @@ IFWL_ListBox::IFWL_ListBox(const CFWL_WidgetImpProperties& properties,
 
 IFWL_ListBox::~IFWL_ListBox() {}
 
-FWL_Error IFWL_ListBox::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = FWL_CLASS_ListBox;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Type IFWL_ListBox::GetClassID() const {
   return FWL_Type::ListBox;
 }
@@ -53,16 +48,15 @@ FWL_Error IFWL_ListBox::Initialize() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ListBox::Finalize() {
-  if (m_pVertScrollBar) {
+void IFWL_ListBox::Finalize() {
+  if (m_pVertScrollBar)
     m_pVertScrollBar->Finalize();
-  }
-  if (m_pHorzScrollBar) {
+  if (m_pHorzScrollBar)
     m_pHorzScrollBar->Finalize();
-  }
+
   delete m_pDelegate;
   m_pDelegate = nullptr;
-  return IFWL_Widget::Finalize();
+  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_ListBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

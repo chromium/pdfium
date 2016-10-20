@@ -18,7 +18,6 @@ class CFWL_ScrollBarImpDelegate;
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 
-#define FWL_CLASS_ScrollBar L"FWL_SCROLLBAR"
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 
@@ -44,10 +43,9 @@ class IFWL_ScrollBar : public IFWL_Widget, public IFWL_Timer {
   ~IFWL_ScrollBar() override;
 
   // IFWL_Widget
-  FWL_Error GetClassName(CFX_WideString& wsClass) const override;
   FWL_Type GetClassID() const override;
   FWL_Error Initialize() override;
-  FWL_Error Finalize() override;
+  void Finalize() override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
@@ -124,7 +122,7 @@ class IFWL_ScrollBar : public IFWL_Widget, public IFWL_Timer {
   CFX_RectF m_rtMaxBtn;
   CFX_RectF m_rtMinTrack;
   CFX_RectF m_rtMaxTrack;
-  FX_BOOL m_bCustomLayout;
+  bool m_bCustomLayout;
   FX_FLOAT m_fMinThumb;
 
  protected:

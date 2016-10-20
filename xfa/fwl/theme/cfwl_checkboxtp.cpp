@@ -45,23 +45,24 @@ uint32_t CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID) {
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID);
 }
 
-FX_BOOL CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
+void CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
   if (!m_pTextOut)
-    return FALSE;
+    return;
+
   m_pTextOut->SetTextColor(pParams->m_dwStates & CFWL_PartState_Disabled
                                ? FWLTHEME_CAPACITY_TextDisColor
                                : FWLTHEME_CAPACITY_TextColor);
-  return CFWL_WidgetTP::DrawText(pParams);
+  CFWL_WidgetTP::DrawText(pParams);
 }
 
-FWL_Error CFWL_CheckBoxTP::Initialize() {
+void CFWL_CheckBoxTP::Initialize() {
   InitTTO();
-  return CFWL_WidgetTP::Initialize();
+  CFWL_WidgetTP::Initialize();
 }
 
-FWL_Error CFWL_CheckBoxTP::Finalize() {
+void CFWL_CheckBoxTP::Finalize() {
   FinalizeTTO();
-  return CFWL_WidgetTP::Finalize();
+  CFWL_WidgetTP::Finalize();
 }
 
 void CFWL_CheckBoxTP::DrawSignCheck(CFX_Graphics* pGraphics,
@@ -322,16 +323,15 @@ void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
   }
 }
 
-FX_BOOL CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  if (pParams->m_iPart != CFWL_Part::CheckBox) {
-    return FALSE;
-  }
+void CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
+  if (pParams->m_iPart != CFWL_Part::CheckBox)
+    return;
+
   if ((pParams->m_dwStates & CFWL_PartState_Checked) ||
       (pParams->m_dwStates & CFWL_PartState_Neutral)) {
     DrawCheckSign(pParams->m_pWidget, pParams->m_pGraphics, pParams->m_rtPart,
                   pParams->m_dwStates, &pParams->m_matrix);
   }
-  return FALSE;
 }
 
 void CFWL_CheckBoxTP::DrawCheckSign(IFWL_Widget* pWidget,
