@@ -6,8 +6,8 @@
 
 #include "xfa/fwl/theme/cfwl_comboboxtp.h"
 
-#include "xfa/fwl/basewidget/ifwl_combobox.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"

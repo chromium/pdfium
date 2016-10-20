@@ -9,22 +9,24 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fwl/core/fwl_widgetimp.h"
+#include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/fwl_widgethit.h"
+#include "xfa/fwl/core/ifwl_widgetdelegate.h"
+#include "xfa/fwl/theme/cfwl_widgettp.h"
 
-// FWL contains three parallel inheritance hierarchies, which reference each
+// FWL contains two parallel inheritance hierarchies, which reference each
 // other via pointers as follows:
 //
-//                              m_pAssociate
-//                  <----------------------------------
-//      CFWL_Widget ----------> IFWL_Widget ----------> CFWL_WidgetImp
-//           |       m_pIface        |       m_pImpl         |
-//           A                       A                       A
-//           |                       |                       |
-//      CFWL_...                IFWL_...                CFWL_...Imp
+//                  m_pAssociate
+//                  <----------
+//      CFWL_Widget ----------> IFWL_Widget
+//           |       m_pIface        |
+//           A                       A
+//           |                       |
+//      CFWL_...                IFWL_...
 //
 // TODO(tsepez): Collapse these into a single hierarchy.
 //
@@ -49,73 +51,165 @@ enum class FWL_Type {
   ToolTip
 };
 
-class CFWL_WidgetImp;
-class CFX_Graphics;
+class CFWL_AppImp;
+class CFWL_MsgKey;
+class CFWL_Widget;
+class CFWL_WidgetImpProperties;
+class CFWL_WidgetMgr;
 class IFWL_App;
 class IFWL_DataProvider;
-class IFWL_Form;
 class IFWL_ThemeProvider;
-class IFWL_WidgetDelegate;
+class IFWL_Widget;
+enum class FWL_Type;
 
 class IFWL_Widget {
  public:
-  IFWL_Widget();
   virtual ~IFWL_Widget();
 
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  FWL_Error GetGlobalRect(CFX_RectF& rect);
-  FWL_Error SetWidgetRect(const CFX_RectF& rect);
-  FWL_Error GetClientRect(CFX_RectF& rect);
-  IFWL_Widget* GetParent();
-  FWL_Error SetParent(IFWL_Widget* pParent);
-  IFWL_Widget* GetOwner();
-  FWL_Error SetOwner(IFWL_Widget* pOwner);
-  IFWL_Widget* GetOuter();
-  uint32_t GetStyles();
-  FWL_Error ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
-  uint32_t GetStylesEx();
-  FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
-                           uint32_t dwStylesExRemoved);
-  uint32_t GetStates();
-  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
-  uint32_t GetEventKey() const;
-  void SetEventKey(uint32_t key);
-  void* GetLayoutItem() const;
-  void SetLayoutItem(void* pItem);
-  void* GetAssociateWidget() const;
-  void SetAssociateWidget(void* pAssociate);
-  FWL_Error Update();
-  FWL_Error LockUpdate();
-  FWL_Error UnlockUpdate();
-  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  FWL_Error TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
-  FWL_Error TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
-  FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
-  FWL_Error SetMatrix(const CFX_Matrix& matrix);
-  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr);
-  IFWL_ThemeProvider* GetThemeProvider();
-  FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
-  IFWL_App* GetOwnerApp() const;
+  virtual FWL_Error Initialize();
+  virtual FWL_Error Finalize();
+  virtual FWL_Error GetClassName(CFX_WideString& wsClass) const;
+  virtual FWL_Type GetClassID() const = 0;
+  virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
+
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error GetGlobalRect(CFX_RectF& rect);
+  virtual FWL_Error SetWidgetRect(const CFX_RectF& rect);
+  virtual FWL_Error GetClientRect(CFX_RectF& rect);
+  virtual IFWL_Widget* GetParent();
+  virtual FWL_Error SetParent(IFWL_Widget* pParent);
+  virtual IFWL_Widget* GetOwner();
+  virtual FWL_Error SetOwner(IFWL_Widget* pOwner);
+  virtual IFWL_Widget* GetOuter();
+  virtual uint32_t GetStyles();
+  virtual FWL_Error ModifyStyles(uint32_t dwStylesAdded,
+                                 uint32_t dwStylesRemoved);
+  virtual uint32_t GetStylesEx();
+  virtual FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
+                                   uint32_t dwStylesExRemoved);
+  virtual uint32_t GetStates();
+  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  virtual FWL_Error Update();
+  virtual FWL_Error LockUpdate();
+  virtual FWL_Error UnlockUpdate();
+  virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_Error TransformTo(IFWL_Widget* pWidget,
+                                FX_FLOAT& fx,
+                                FX_FLOAT& fy);
+  virtual FWL_Error TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
+  virtual FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
+  virtual FWL_Error SetMatrix(const CFX_Matrix& matrix);
+  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix = nullptr);
+  virtual IFWL_ThemeProvider* GetThemeProvider();
+  virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
+  virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
+  virtual IFWL_App* GetOwnerApp() const;
+
+  FWL_Error SetOwnerApp(IFWL_App* pOwnerApp);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 
-  // These call into equivalent polymorphic methods of m_pImpl. There
-  // should be no need to override these in subclasses.
-  FWL_Error GetClassName(CFX_WideString& wsClass) const;
-  FWL_Type GetClassID() const;
-  FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
-  FWL_Error Initialize();
-  FWL_Error Finalize();
+  uint32_t GetEventKey() const;
+  void SetEventKey(uint32_t key);
 
-  CFWL_WidgetImp* GetImpl() const { return m_pImpl.get(); }
+  void* GetLayoutItem() const;
+  void SetLayoutItem(void* pItem);
+
+  CFWL_Widget* GetAssociateWidget() const;
+  void SetAssociateWidget(CFWL_Widget* pAssociate);
 
  protected:
-  // Takes ownership of |pImpl|.
-  void SetImpl(CFWL_WidgetImp* pImpl) { m_pImpl.reset(pImpl); }
+  friend class CFWL_WidgetImpDelegate;
 
- private:
-  std::unique_ptr<CFWL_WidgetImp> m_pImpl;
+  IFWL_Widget(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+
+  FX_BOOL IsEnabled() const;
+  FX_BOOL IsVisible() const;
+  FX_BOOL IsActive() const;
+  FX_BOOL IsOverLapper() const;
+  FX_BOOL IsPopup() const;
+  FX_BOOL IsChild() const;
+  FX_BOOL IsLocked() const;
+  FX_BOOL IsOffscreen() const;
+  FX_BOOL HasBorder() const;
+  FX_BOOL HasEdge() const;
+  void GetEdgeRect(CFX_RectF& rtEdge);
+  FX_FLOAT GetBorderSize(FX_BOOL bCX = TRUE);
+  FX_FLOAT GetEdgeWidth();
+  void GetRelativeRect(CFX_RectF& rect);
+  void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
+  IFWL_ThemeProvider* GetAvailableTheme();
+  IFWL_Widget* GetRootOuter();
+  CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
+                         IFWL_ThemeProvider* pTheme,
+                         FX_BOOL bMultiLine = FALSE,
+                         int32_t iLineWidth = -1);
+  void CalcTextRect(const CFX_WideString& wsText,
+                    IFWL_ThemeProvider* pTheme,
+                    uint32_t dwTTOStyles,
+                    int32_t iTTOAlign,
+                    CFX_RectF& rect);
+  void SetFocus(FX_BOOL bFocus);
+  void SetGrab(FX_BOOL bSet);
+  FX_BOOL GetPopupPos(FX_FLOAT fMinHeight,
+                      FX_FLOAT fMaxHeight,
+                      const CFX_RectF& rtAnchor,
+                      CFX_RectF& rtPopup);
+  FX_BOOL GetPopupPosMenu(FX_FLOAT fMinHeight,
+                          FX_FLOAT fMaxHeight,
+                          const CFX_RectF& rtAnchor,
+                          CFX_RectF& rtPopup);
+  FX_BOOL GetPopupPosComboBox(FX_FLOAT fMinHeight,
+                              FX_FLOAT fMaxHeight,
+                              const CFX_RectF& rtAnchor,
+                              CFX_RectF& rtPopup);
+  FX_BOOL GetPopupPosGeneral(FX_FLOAT fMinHeight,
+                             FX_FLOAT fMaxHeight,
+                             const CFX_RectF& rtAnchor,
+                             CFX_RectF& rtPopup);
+  FX_BOOL GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy);
+  void RegisterEventTarget(IFWL_Widget* pEventSource = nullptr,
+                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  void UnregisterEventTarget();
+  void DispatchKeyEvent(CFWL_MsgKey* pNote);
+  void DispatchEvent(CFWL_Event* pEvent);
+  void Repaint(const CFX_RectF* pRect = nullptr);
+  void DrawBackground(CFX_Graphics* pGraphics,
+                      CFWL_Part iPartBk,
+                      IFWL_ThemeProvider* pTheme,
+                      const CFX_Matrix* pMatrix = nullptr);
+  void DrawBorder(CFX_Graphics* pGraphics,
+                  CFWL_Part iPartBorder,
+                  IFWL_ThemeProvider* pTheme,
+                  const CFX_Matrix* pMatrix = nullptr);
+  void DrawEdge(CFX_Graphics* pGraphics,
+                CFWL_Part iPartEdge,
+                IFWL_ThemeProvider* pTheme,
+                const CFX_Matrix* pMatrix = nullptr);
+  void NotifyDriver();
+
+  FX_BOOL IsParent(IFWL_Widget* pParent);
+
+  CFWL_WidgetMgr* const m_pWidgetMgr;
+  IFWL_App* m_pOwnerApp;
+  std::unique_ptr<CFWL_WidgetImpProperties> m_pProperties;
+  IFWL_WidgetDelegate* m_pDelegate;
+  IFWL_WidgetDelegate* m_pCurDelegate;
+  IFWL_Widget* m_pOuter;
+  void* m_pLayoutItem;
+  CFWL_Widget* m_pAssociate;
+  int32_t m_iLock;
+  uint32_t m_nEventKey;
+};
+
+class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {
+ public:
+  CFWL_WidgetImpDelegate();
+  ~CFWL_WidgetImpDelegate() override {}
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = nullptr) override;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_WIDGET_H_

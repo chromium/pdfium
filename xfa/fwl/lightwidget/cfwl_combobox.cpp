@@ -248,12 +248,13 @@ FWL_Error CFWL_ComboBox::CFWL_ComboBoxDP::GetCaption(
   return FWL_Error::Succeeded;
 }
 
-int32_t CFWL_ComboBox::CFWL_ComboBoxDP::CountItems(IFWL_Widget* pWidget) {
+int32_t CFWL_ComboBox::CFWL_ComboBoxDP::CountItems(const IFWL_Widget* pWidget) {
   return m_ItemArray.size();
 }
 
-IFWL_ListItem* CFWL_ComboBox::CFWL_ComboBoxDP::GetItem(IFWL_Widget* pWidget,
-                                                       int32_t nIndex) {
+IFWL_ListItem* CFWL_ComboBox::CFWL_ComboBoxDP::GetItem(
+    const IFWL_Widget* pWidget,
+    int32_t nIndex) {
   if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
     return nullptr;
 

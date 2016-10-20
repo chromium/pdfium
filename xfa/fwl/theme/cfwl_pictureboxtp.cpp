@@ -6,8 +6,8 @@
 
 #include "xfa/fwl/theme/cfwl_pictureboxtp.h"
 
-#include "xfa/fwl/basewidget/ifwl_picturebox.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_picturebox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}

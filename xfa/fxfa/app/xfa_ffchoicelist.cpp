@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 
-#include "xfa/fwl/basewidget/ifwl_edit.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/lightwidget/cfwl_combobox.h"
 #include "xfa/fwl/lightwidget/cfwl_listbox.h"
 #include "xfa/fxfa/app/xfa_fffield.h"

@@ -11,8 +11,8 @@
 #include "xfa/fgas/font/fgas_font.h"
 
 class CFDE_TxtEdtEngine;
-class CFWL_EditImp;
 class IFDE_TxtEdtPage;
+class IFWL_Edit;
 
 #define FDE_TEXTEDITMODE_MultiLines (1L << 0)
 #define FDE_TEXTEDITMODE_AutoLineWrap (1L << 1)
@@ -102,7 +102,7 @@ struct FDE_TXTEDTPARAMS {
   int32_t nLineEnd;
   int32_t nHorzScale;
   FX_FLOAT fCharSpace;
-  CFWL_EditImp* pEventSink;
+  IFWL_Edit* pEventSink;
 };
 
 enum FDE_TXTEDT_TEXTCHANGE_TYPE {

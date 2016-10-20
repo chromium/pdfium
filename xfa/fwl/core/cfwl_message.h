@@ -7,6 +7,7 @@
 #ifndef XFA_FWL_CORE_CFWL_MESSAGE_H_
 #define XFA_FWL_CORE_CFWL_MESSAGE_H_
 
+#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"

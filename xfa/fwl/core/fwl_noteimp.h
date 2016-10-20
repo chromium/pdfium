@@ -29,24 +29,24 @@ class CFWL_MsgSetFocus;
 class CFWL_MsgSize;
 class CFWL_MsgWindowMove;
 class CFWL_TargetImp;
-class CFWL_ToolTipImp;
-class CFWL_WidgetImp;
+class IFWL_ToolTip;
+class IFWL_Widget;
 
 class CFWL_NoteLoop {
  public:
-  CFWL_NoteLoop(CFWL_WidgetImp* pForm = nullptr);
+  CFWL_NoteLoop(IFWL_Widget* pForm = nullptr);
   ~CFWL_NoteLoop() {}
 
   FWL_Error Idle(int32_t count);
-  CFWL_WidgetImp* GetForm();
+  IFWL_Widget* GetForm();
   FX_BOOL ContinueModal();
   FWL_Error EndModalLoop();
-  FWL_Error SetMainForm(CFWL_WidgetImp* pForm);
+  FWL_Error SetMainForm(IFWL_Widget* pForm);
 
  protected:
   void GenerateCommondEvent(uint32_t dwCommand);
 
-  CFWL_WidgetImp* m_pForm;
+  IFWL_Widget* m_pForm;
   FX_BOOL m_bContinueModal;
 };
 
@@ -73,8 +73,8 @@ class CFWL_NoteDriver {
   void SetHover(IFWL_Widget* pHover);
   void NotifyTargetHide(IFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(IFWL_Widget* pNoteTarget);
-  FWL_Error RegisterForm(CFWL_WidgetImp* pForm);
-  FWL_Error UnRegisterForm(CFWL_WidgetImp* pForm);
+  FWL_Error RegisterForm(IFWL_Widget* pForm);
+  FWL_Error UnRegisterForm(IFWL_Widget* pForm);
   FX_BOOL QueueMessage(CFWL_Message* pMessage);
   FX_BOOL UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* GetTopLoop();
@@ -99,7 +99,7 @@ class CFWL_NoteDriver {
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
   void ClearInvalidEventTargets(FX_BOOL bRemoveAll);
 
-  CFX_ArrayTemplate<CFWL_WidgetImp*> m_forms;
+  CFX_ArrayTemplate<IFWL_Widget*> m_forms;
   CFX_ArrayTemplate<CFWL_Message*> m_noteQueue;
   CFX_ArrayTemplate<CFWL_NoteLoop*> m_noteLoopQueue;
   std::unordered_map<uint32_t, CFWL_EventTarget*> m_eventTargets;
@@ -137,7 +137,7 @@ class CFWL_ToolTipContainer final {
   CFWL_ToolTipContainer();
   ~CFWL_ToolTipContainer();
 
-  CFWL_ToolTipImp* m_pToolTipImp;
+  IFWL_ToolTip* m_pToolTipImp;
   std::unique_ptr<CFWL_CoreToolTipDP> m_pToolTipDp;
 
  private:

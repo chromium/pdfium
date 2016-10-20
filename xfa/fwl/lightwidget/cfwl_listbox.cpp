@@ -217,11 +217,11 @@ FWL_Error CFWL_ListBox::CFWL_ListBoxDP::GetCaption(IFWL_Widget* pWidget,
   return FWL_Error::Succeeded;
 }
 
-int32_t CFWL_ListBox::CFWL_ListBoxDP::CountItems(IFWL_Widget* pWidget) {
+int32_t CFWL_ListBox::CFWL_ListBoxDP::CountItems(const IFWL_Widget* pWidget) {
   return pdfium::CollectionSize<int32_t>(m_ItemArray);
 }
 
-IFWL_ListItem* CFWL_ListBox::CFWL_ListBoxDP::GetItem(IFWL_Widget* pWidget,
+IFWL_ListItem* CFWL_ListBox::CFWL_ListBoxDP::GetItem(const IFWL_Widget* pWidget,
                                                      int32_t nIndex) {
   if (nIndex < 0 || nIndex >= CountItems(pWidget))
     return nullptr;

@@ -7,7 +7,7 @@
 #include "xfa/fde/cfde_txtedtdorecord_insert.h"
 
 #include "xfa/fde/cfde_txtedtengine.h"
-#include "xfa/fwl/basewidget/fwl_editimp.h"
+#include "xfa/fwl/core/ifwl_edit.h"
 
 CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
     CFDE_TxtEdtEngine* pEngine,

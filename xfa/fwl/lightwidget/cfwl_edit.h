@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "xfa/fwl/basewidget/ifwl_edit.h"
+#include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 class CFWL_WidgetProperties;

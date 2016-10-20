@@ -7,8 +7,8 @@
 #ifndef XFA_FWL_LIGHTWIDGET_CFWL_BARCODE_H_
 #define XFA_FWL_LIGHTWIDGET_CFWL_BARCODE_H_
 
-#include "xfa/fwl/basewidget/ifwl_barcode.h"
 #include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_barcode.h"
 #include "xfa/fwl/lightwidget/cfwl_edit.h"
 
 class CFWL_Widget;

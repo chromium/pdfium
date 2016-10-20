@@ -8,15 +8,12 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fwl/basewidget/fwl_tooltipctrlimp.h"
-#include "xfa/fwl/basewidget/ifwl_tooltip.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/fwl_formimp.h"
-#include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_tooltip.h"
 
-CFWL_NoteLoop::CFWL_NoteLoop(CFWL_WidgetImp* pForm)
+CFWL_NoteLoop::CFWL_NoteLoop(IFWL_Widget* pForm)
     : m_pForm(pForm), m_bContinueModal(TRUE) {}
 
 FWL_Error CFWL_NoteLoop::Idle(int32_t count) {
@@ -36,7 +33,7 @@ FWL_Error CFWL_NoteLoop::Idle(int32_t count) {
 #endif
   return FWL_Error::Indefinite;
 }
-CFWL_WidgetImp* CFWL_NoteLoop::GetForm() {
+IFWL_Widget* CFWL_NoteLoop::GetForm() {
   return m_pForm;
 }
 FX_BOOL CFWL_NoteLoop::ContinueModal() {
@@ -47,7 +44,7 @@ FWL_Error CFWL_NoteLoop::EndModalLoop() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFWL_NoteLoop::SetMainForm(CFWL_WidgetImp* pForm) {
+FWL_Error CFWL_NoteLoop::SetMainForm(IFWL_Widget* pForm) {
   m_pForm = pForm;
   return FWL_Error::Succeeded;
 }
@@ -155,13 +152,10 @@ FX_BOOL CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify) {
   if (pFocus) {
     IFWL_Widget* pWidget =
         CFWL_WidgetMgr::GetInstance()->GetSystemFormWidget(pFocus);
-    CFWL_FormImp* pForm =
-        pWidget ? static_cast<CFWL_FormImp*>(pWidget->GetImpl()) : nullptr;
-    if (pForm) {
-      CFWL_WidgetImp* pNewFocus =
-          static_cast<CFWL_WidgetImp*>(pFocus->GetImpl());
-      pForm->SetSubFocus(pNewFocus);
-    }
+    IFWL_Form* pForm = static_cast<IFWL_Form*>(pWidget);
+    if (pForm)
+      pForm->SetSubFocus(pFocus);
+
     CFWL_MsgSetFocus ms;
     ms.m_pDstTarget = pFocus;
     if (bNotify) {
@@ -230,20 +224,20 @@ void CFWL_NoteDriver::NotifyTargetDestroy(IFWL_Widget* pNoteTarget) {
   UnregisterEventTarget(pNoteTarget);
   int32_t count = m_forms.GetSize();
   for (int32_t nIndex = 0; nIndex < count; nIndex++) {
-    CFWL_FormImp* pForm = static_cast<CFWL_FormImp*>(m_forms[nIndex]);
+    IFWL_Form* pForm = static_cast<IFWL_Form*>(m_forms[nIndex]);
     if (!pForm) {
       continue;
     }
-    CFWL_WidgetImp* pSubFocus = pForm->GetSubFocus();
+    IFWL_Widget* pSubFocus = pForm->GetSubFocus();
     if (!pSubFocus)
       return;
-    if (pSubFocus && pSubFocus->GetInterface() == pNoteTarget) {
+    if (pSubFocus == pNoteTarget) {
       pForm->SetSubFocus(nullptr);
     }
   }
 }
 
-FWL_Error CFWL_NoteDriver::RegisterForm(CFWL_WidgetImp* pForm) {
+FWL_Error CFWL_NoteDriver::RegisterForm(IFWL_Widget* pForm) {
   if (!pForm)
     return FWL_Error::Indefinite;
   if (m_forms.Find(pForm) >= 0) {
@@ -259,7 +253,7 @@ FWL_Error CFWL_NoteDriver::RegisterForm(CFWL_WidgetImp* pForm) {
   }
   return FWL_Error::Succeeded;
 }
-FWL_Error CFWL_NoteDriver::UnRegisterForm(CFWL_WidgetImp* pForm) {
+FWL_Error CFWL_NoteDriver::UnRegisterForm(IFWL_Widget* pForm) {
   if (!pForm)
     return FWL_Error::Indefinite;
   int32_t nIndex = m_forms.Find(pForm);
@@ -424,12 +418,11 @@ FX_BOOL CFWL_NoteDriver::DoSetFocus(CFWL_MsgSetFocus* pMsg,
     return TRUE;
   }
   IFWL_Widget* pWidget = pMsg->m_pDstTarget;
-  CFWL_FormImp* pForm =
-      pWidget ? static_cast<CFWL_FormImp*>(pWidget->GetImpl()) : nullptr;
-  if (pForm) {
-    CFWL_WidgetImp* pSubFocus = pForm->GetSubFocus();
+  if (pWidget) {
+    IFWL_Form* pForm = static_cast<IFWL_Form*>(pWidget);
+    IFWL_Widget* pSubFocus = pForm->GetSubFocus();
     if (pSubFocus && ((pSubFocus->GetStates() & FWL_WGTSTATE_Focused) == 0)) {
-      pMsg->m_pDstTarget = pSubFocus->GetInterface();
+      pMsg->m_pDstTarget = pSubFocus;
       if (m_pFocus != pMsg->m_pDstTarget) {
         m_pFocus = pMsg->m_pDstTarget;
         return TRUE;
@@ -447,13 +440,11 @@ FX_BOOL CFWL_NoteDriver::DoKillFocus(CFWL_MsgKillFocus* pMsg,
     }
     return TRUE;
   }
-  IFWL_Widget* pWidget = pMsg->m_pDstTarget;
-  CFWL_FormImp* pForm =
-      pWidget ? static_cast<CFWL_FormImp*>(pWidget->GetImpl()) : nullptr;
+  IFWL_Form* pForm = static_cast<IFWL_Form*>(pMsg->m_pDstTarget);
   if (pForm) {
-    CFWL_WidgetImp* pSubFocus = pForm->GetSubFocus();
+    IFWL_Widget* pSubFocus = pForm->GetSubFocus();
     if (pSubFocus && (pSubFocus->GetStates() & FWL_WGTSTATE_Focused)) {
-      pMsg->m_pDstTarget = pSubFocus->GetInterface();
+      pMsg->m_pDstTarget = pSubFocus;
       if (m_pFocus == pMsg->m_pDstTarget) {
         m_pFocus = nullptr;
         return TRUE;
@@ -606,14 +597,14 @@ FX_BOOL CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
   int32_t iCount = m_noteLoopQueue.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_NoteLoop* pNoteLoop = static_cast<CFWL_NoteLoop*>(m_noteLoopQueue[i]);
-    CFWL_WidgetImp* pForm = pNoteLoop->GetForm();
-    if (pForm && (pForm->GetInterface() == pMessage->m_pDstTarget))
+    IFWL_Widget* pForm = pNoteLoop->GetForm();
+    if (pForm && (pForm == pMessage->m_pDstTarget))
       return TRUE;
   }
   iCount = m_forms.GetSize();
   for (int32_t j = 0; j < iCount; j++) {
-    CFWL_FormImp* pForm = static_cast<CFWL_FormImp*>(m_forms[j]);
-    if (pForm->GetInterface() == pMessage->m_pDstTarget)
+    IFWL_Form* pForm = static_cast<IFWL_Form*>(m_forms[j]);
+    if (pForm == pMessage->m_pDstTarget)
       return TRUE;
   }
   return FALSE;
@@ -627,8 +618,8 @@ IFWL_Widget* CFWL_NoteDriver::GetMessageForm(IFWL_Widget* pDstTarget) {
   if (iTrackLoop > 1) {
     CFWL_NoteLoop* pNootLoop =
         static_cast<CFWL_NoteLoop*>(m_noteLoopQueue[iTrackLoop - 1]);
-    pMessageForm = pNootLoop->GetForm()->GetInterface();
-  } else if (m_forms.Find(pDstTarget->GetImpl()) < 0) {
+    pMessageForm = pNootLoop->GetForm();
+  } else if (m_forms.Find(pDstTarget) < 0) {
     pMessageForm = pDstTarget;
   }
   if (!pMessageForm && pDstTarget) {
@@ -777,8 +768,7 @@ CFWL_ToolTipContainer::CFWL_ToolTipContainer()
 
 CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {
   if (m_pToolTipImp) {
-    IFWL_ToolTip* pToolTip =
-        static_cast<IFWL_ToolTip*>(m_pToolTipImp->GetInterface());
+    IFWL_ToolTip* pToolTip = static_cast<IFWL_ToolTip*>(m_pToolTipImp);
     pToolTip->Finalize();
     delete pToolTip;
   }

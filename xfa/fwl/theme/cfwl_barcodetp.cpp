@@ -6,8 +6,8 @@
 
 #include "xfa/fwl/theme/cfwl_barcodetp.h"
 
-#include "xfa/fwl/basewidget/ifwl_barcode.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_barcode.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 CFWL_BarcodeTP::CFWL_BarcodeTP() {}

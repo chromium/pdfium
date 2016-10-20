@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/fwl/basewidget/ifwl_listbox.h"
 #include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 
@@ -60,8 +60,8 @@ class CFWL_ListBox : public CFWL_Widget {
                          CFX_WideString& wsCaption) override;
 
     // IFWL_ListBoxDP:
-    int32_t CountItems(IFWL_Widget* pWidget) override;
-    IFWL_ListItem* GetItem(IFWL_Widget* pWidget, int32_t nIndex) override;
+    int32_t CountItems(const IFWL_Widget* pWidget) override;
+    IFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) override;
     int32_t GetItemIndex(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
     FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
                          IFWL_ListItem* pItem,

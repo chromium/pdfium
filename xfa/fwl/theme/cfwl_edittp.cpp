@@ -6,8 +6,8 @@
 
 #include "xfa/fwl/theme/cfwl_edittp.h"
 
-#include "xfa/fwl/basewidget/ifwl_edit.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/xfa_ffwidget.h"

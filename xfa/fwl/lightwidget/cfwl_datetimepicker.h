@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_LIGHTWIDGET_CFWL_DATETIMEPICKER_H_
 #define XFA_FWL_LIGHTWIDGET_CFWL_DATETIMEPICKER_H_
 
-#include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
+#include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 class CFWL_DateTimePicker : public CFWL_Widget {

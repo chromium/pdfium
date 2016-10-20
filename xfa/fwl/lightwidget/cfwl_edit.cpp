@@ -180,7 +180,7 @@ FWL_Error CFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
 FWL_Error CFWL_Edit::SetBackColor(uint32_t dwColor) {
   if (!GetWidget())
     return FWL_Error::Indefinite;
-  return GetWidget()->SetBackColor(dwColor);
+  return GetWidget()->SetBackgroundColor(dwColor);
 }
 
 FWL_Error CFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
