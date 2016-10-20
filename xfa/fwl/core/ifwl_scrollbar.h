@@ -39,9 +39,6 @@ class IFWL_ScrollBarDP : public IFWL_DataProvider {};
 
 class IFWL_ScrollBar : public IFWL_Widget, public IFWL_Timer {
  public:
-  static IFWL_ScrollBar* Create(const CFWL_WidgetImpProperties& properties,
-                                IFWL_Widget* pOuter);
-
   IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
   ~IFWL_ScrollBar() override;

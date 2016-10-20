@@ -23,15 +23,8 @@ const int kCaptionMargin = 5;
 
 }  // namespace
 
-// static
-IFWL_CheckBox* IFWL_CheckBox::Create(const CFWL_WidgetImpProperties& properties,
-                                     IFWL_Widget* pOuter) {
-  return new IFWL_CheckBox(properties, pOuter);
-}
-
-IFWL_CheckBox::IFWL_CheckBox(const CFWL_WidgetImpProperties& properties,
-                             IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+IFWL_CheckBox::IFWL_CheckBox(const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(properties, nullptr),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
       m_bBtnDown(FALSE) {

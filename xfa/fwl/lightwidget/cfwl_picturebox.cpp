@@ -23,8 +23,8 @@ FWL_Error CFWL_PictureBox::Initialize(
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  std::unique_ptr<IFWL_PictureBox> pPictureBox(IFWL_PictureBox::Create(
-      m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP), nullptr));
+  std::unique_ptr<IFWL_PictureBox> pPictureBox(new IFWL_PictureBox(
+      m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP)));
   FWL_Error ret = pPictureBox->Initialize();
   if (ret != FWL_Error::Succeeded) {
     return ret;

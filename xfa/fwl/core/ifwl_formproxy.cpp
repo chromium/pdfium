@@ -8,12 +8,6 @@
 
 #include "xfa/fwl/core/fwl_noteimp.h"
 
-// static
-IFWL_FormProxy* IFWL_FormProxy::Create(CFWL_WidgetImpProperties& properties,
-                                       IFWL_Widget* pOuter) {
-  return new IFWL_FormProxy(properties, pOuter);
-}
-
 IFWL_FormProxy::IFWL_FormProxy(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : IFWL_Form(properties, pOuter) {}

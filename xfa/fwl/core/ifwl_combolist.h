@@ -13,9 +13,6 @@
 
 class IFWL_ComboList : public IFWL_ListBox {
  public:
-  static IFWL_ComboList* Create(const CFWL_WidgetImpProperties& properties,
-                                IFWL_Widget* pOuter);
-
   IFWL_ComboList(const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
 

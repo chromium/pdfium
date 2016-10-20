@@ -15,12 +15,6 @@
 #include "xfa/fwl/core/ifwl_tooltip.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-// static
-IFWL_ToolTip* IFWL_ToolTip::Create(const CFWL_WidgetImpProperties& properties,
-                                   IFWL_Widget* pOuter) {
-  return new IFWL_ToolTip(properties, pOuter);
-}
-
 IFWL_ToolTip::IFWL_ToolTip(const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
     : IFWL_Form(properties, pOuter),

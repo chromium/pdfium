@@ -15,9 +15,6 @@ class IFWL_ComboBox;
 
 class IFWL_ComboEdit : public IFWL_Edit {
  public:
-  static IFWL_ComboEdit* Create(const CFWL_WidgetImpProperties& properties,
-                                IFWL_Widget* pOuter);
-
   IFWL_ComboEdit(const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
 

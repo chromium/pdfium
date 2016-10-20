@@ -20,15 +20,8 @@
 #include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-// static
-IFWL_ComboBox* IFWL_ComboBox::Create(
-    const CFWL_WidgetImpProperties& properties) {
-  return new IFWL_ComboBox(properties, nullptr);
-}
-
-IFWL_ComboBox::IFWL_ComboBox(const CFWL_WidgetImpProperties& properties,
-                             IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+IFWL_ComboBox::IFWL_ComboBox(const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(properties, nullptr),
       m_pForm(nullptr),
       m_bLButtonDown(FALSE),
       m_iCurSel(-1),
@@ -66,11 +59,11 @@ FWL_Error IFWL_ComboBox::Initialize() {
     prop.m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
 
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
-  m_pListBox.reset(IFWL_ComboList::Create(prop, this));
+  m_pListBox.reset(new IFWL_ComboList(prop, this));
   m_pListBox->Initialize();
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
     CFWL_WidgetImpProperties prop2;
-    m_pEdit.reset(IFWL_ComboEdit::Create(prop2, this));
+    m_pEdit.reset(new IFWL_ComboEdit(prop2, this));
     m_pEdit->Initialize();
     m_pEdit->SetOuter(this);
   }
@@ -125,7 +118,7 @@ FWL_Error IFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
   bool bRemoveDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   if (bAddDropDown && !m_pEdit) {
     CFWL_WidgetImpProperties prop;
-    m_pEdit.reset(IFWL_ComboEdit::Create(prop, nullptr));
+    m_pEdit.reset(new IFWL_ComboEdit(prop, nullptr));
     m_pEdit->Initialize();
     m_pEdit->SetOuter(this);
     m_pEdit->SetParent(this);
@@ -723,7 +716,8 @@ void IFWL_ComboBox::InitProxyForm() {
   propForm.m_pOwner = this;
   propForm.m_dwStyles = FWL_WGTSTYLE_Popup;
   propForm.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pForm = IFWL_FormProxy::Create(propForm, m_pListBox.get());
+
+  m_pForm = new IFWL_FormProxy(propForm, m_pListBox.get());
   m_pForm->Initialize();
   m_pListBox->SetParent(m_pForm);
   m_pListProxyDelegate = new CFWL_ComboProxyImpDelegate(m_pForm, this);
@@ -750,7 +744,7 @@ void IFWL_ComboBox::DisForm_InitComboList() {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pListBox.reset(IFWL_ComboList::Create(prop, this));
+  m_pListBox.reset(new IFWL_ComboList(prop, this));
   m_pListBox->Initialize();
 }
 
@@ -761,7 +755,7 @@ void IFWL_ComboBox::DisForm_InitComboEdit() {
   CFWL_WidgetImpProperties prop;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pEdit.reset(IFWL_ComboEdit::Create(prop, this));
+  m_pEdit.reset(new IFWL_ComboEdit(prop, this));
   m_pEdit->Initialize();
   m_pEdit->SetOuter(this);
 }

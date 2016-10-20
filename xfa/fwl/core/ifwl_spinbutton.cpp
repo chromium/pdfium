@@ -23,16 +23,8 @@ const int kElapseTime = 200;
 
 }  // namespace
 
-// static
-IFWL_SpinButton* IFWL_SpinButton::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_SpinButton(properties, nullptr);
-}
-
-IFWL_SpinButton::IFWL_SpinButton(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+IFWL_SpinButton::IFWL_SpinButton(const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(properties, nullptr),
       m_dwUpState(CFWL_PartState_Normal),
       m_dwDnState(CFWL_PartState_Normal),
       m_iButtonIndex(0),

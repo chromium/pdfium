@@ -27,10 +27,8 @@ FWL_Error CFWL_DateTimePicker::Initialize(
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  std::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(
-      IFWL_DateTimePicker::Create(
-          m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP),
-          nullptr));
+  std::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(new IFWL_DateTimePicker(
+      m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP)));
   FWL_Error ret = pDateTimePicker->Initialize();
   if (ret != FWL_Error::Succeeded) {
     return ret;

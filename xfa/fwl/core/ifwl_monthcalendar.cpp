@@ -117,13 +117,6 @@ CFX_WideString* GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
 
 }  // namespace
 
-// static
-IFWL_MonthCalendar* IFWL_MonthCalendar::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_MonthCalendar(properties, pOuter);
-}
-
 IFWL_MonthCalendar::IFWL_MonthCalendar(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)

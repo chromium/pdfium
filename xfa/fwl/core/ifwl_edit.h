@@ -107,9 +107,6 @@ class IFWL_EditDP : public IFWL_DataProvider {};
 
 class IFWL_Edit : public IFWL_Widget {
  public:
-  static IFWL_Edit* Create(const CFWL_WidgetImpProperties& properties,
-                           IFWL_Widget* pOuter);
-
   IFWL_Edit(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   ~IFWL_Edit() override;
 

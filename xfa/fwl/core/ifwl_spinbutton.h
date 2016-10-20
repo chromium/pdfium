@@ -23,11 +23,7 @@ FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, FX_BOOL m_bUp;)
 
 class IFWL_SpinButton : public IFWL_Widget, public IFWL_Timer {
  public:
-  static IFWL_SpinButton* Create(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter);
-
-  IFWL_SpinButton(const CFWL_WidgetImpProperties& properties,
-                  IFWL_Widget* pOuter);
+  explicit IFWL_SpinButton(const CFWL_WidgetImpProperties& properties);
   ~IFWL_SpinButton() override;
 
   // IFWL_Widget

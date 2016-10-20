@@ -12,12 +12,6 @@
 #include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-// static
-IFWL_Caret* IFWL_Caret::Create(const CFWL_WidgetImpProperties& properties,
-                               IFWL_Widget* pOuter) {
-  return new IFWL_Caret(properties, pOuter);
-}
-
 IFWL_Caret::IFWL_Caret(const CFWL_WidgetImpProperties& properties,
                        IFWL_Widget* pOuter)
     : IFWL_Widget(properties, pOuter),

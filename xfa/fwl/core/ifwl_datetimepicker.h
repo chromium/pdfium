@@ -63,11 +63,7 @@ class IFWL_DateTimePickerDP : public IFWL_DataProvider {
 
 class IFWL_DateTimePicker : public IFWL_Widget {
  public:
-  static IFWL_DateTimePicker* Create(const CFWL_WidgetImpProperties& properties,
-                                     IFWL_Widget* pOuter);
-
-  IFWL_DateTimePicker(const CFWL_WidgetImpProperties& properties,
-                      IFWL_Widget* pOuter);
+  explicit IFWL_DateTimePicker(const CFWL_WidgetImpProperties& properties);
   ~IFWL_DateTimePicker() override;
 
   // IFWL_Widget

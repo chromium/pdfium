@@ -41,11 +41,7 @@ class IFWL_PushButtonDP : public IFWL_DataProvider {
 
 class IFWL_PushButton : public IFWL_Widget {
  public:
-  static IFWL_PushButton* Create(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter);
-
-  IFWL_PushButton(const CFWL_WidgetImpProperties& properties,
-                  IFWL_Widget* pOuter);
+  IFWL_PushButton(const CFWL_WidgetImpProperties& properties);
   ~IFWL_PushButton() override;
 
   // IFWL_Widget

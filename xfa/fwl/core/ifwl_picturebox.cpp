@@ -9,16 +9,8 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/lightwidget/cfwl_picturebox.h"
 
-// static
-IFWL_PictureBox* IFWL_PictureBox::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_PictureBox(properties, pOuter);
-}
-
-IFWL_PictureBox::IFWL_PictureBox(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+IFWL_PictureBox::IFWL_PictureBox(const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(properties, nullptr),
       m_bTop(FALSE),
       m_bVCenter(FALSE),
       m_bButton(FALSE) {

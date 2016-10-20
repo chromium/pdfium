@@ -9,13 +9,6 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
-// static
-IFWL_DateTimeEdit* IFWL_DateTimeEdit::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_DateTimeEdit(properties, pOuter);
-}
-
 IFWL_DateTimeEdit::IFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : IFWL_Edit(properties, pOuter) {}

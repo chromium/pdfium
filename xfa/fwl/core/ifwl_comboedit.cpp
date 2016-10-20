@@ -9,13 +9,6 @@
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-// static
-IFWL_ComboEdit* IFWL_ComboEdit::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_ComboEdit(properties, pOuter);
-}
-
 IFWL_ComboEdit::IFWL_ComboEdit(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : IFWL_Edit(properties, pOuter) {

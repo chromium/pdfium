@@ -14,16 +14,8 @@
 #include "xfa/fwl/core/ifwl_pushbutton.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-// static
-IFWL_PushButton* IFWL_PushButton::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_PushButton(properties, pOuter);
-}
-
-IFWL_PushButton::IFWL_PushButton(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+IFWL_PushButton::IFWL_PushButton(const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(properties, nullptr),
       m_bBtnDown(FALSE),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center) {

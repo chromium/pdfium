@@ -53,9 +53,6 @@ class IFWL_MonthCalendarDP : public IFWL_DataProvider {
 
 class IFWL_MonthCalendar : public IFWL_Widget {
  public:
-  static IFWL_MonthCalendar* Create(const CFWL_WidgetImpProperties& properties,
-                                    IFWL_Widget* pOuter);
-
   IFWL_MonthCalendar(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   ~IFWL_MonthCalendar() override;

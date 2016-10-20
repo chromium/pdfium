@@ -85,10 +85,7 @@ class IFWL_ComboBoxDP : public IFWL_ListBoxDP {
 
 class IFWL_ComboBox : public IFWL_Widget {
  public:
-  static IFWL_ComboBox* Create(const CFWL_WidgetImpProperties& properties);
-
-  IFWL_ComboBox(const CFWL_WidgetImpProperties& properties,
-                IFWL_Widget* pOuter);
+  explicit IFWL_ComboBox(const CFWL_WidgetImpProperties& properties);
   ~IFWL_ComboBox() override;
 
   // IFWL_Widget

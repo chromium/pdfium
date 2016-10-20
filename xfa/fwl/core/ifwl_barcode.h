@@ -59,9 +59,7 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
 
 class IFWL_Barcode : public IFWL_Edit {
  public:
-  static IFWL_Barcode* Create(const CFWL_WidgetImpProperties& properties);
-
-  IFWL_Barcode(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+  explicit IFWL_Barcode(const CFWL_WidgetImpProperties& properties);
   ~IFWL_Barcode() override;
 
   // IFWL_Widget

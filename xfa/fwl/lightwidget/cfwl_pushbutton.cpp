@@ -23,8 +23,8 @@ FWL_Error CFWL_PushButton::Initialize(
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  std::unique_ptr<IFWL_PushButton> pPushButton(IFWL_PushButton::Create(
-      m_pProperties->MakeWidgetImpProperties(&m_buttonData), nullptr));
+  std::unique_ptr<IFWL_PushButton> pPushButton(new IFWL_PushButton(
+      m_pProperties->MakeWidgetImpProperties(&m_buttonData)));
   FWL_Error ret = pPushButton->Initialize();
   if (ret != FWL_Error::Succeeded) {
     return ret;

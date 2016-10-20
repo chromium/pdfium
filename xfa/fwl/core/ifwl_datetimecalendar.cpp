@@ -10,13 +10,6 @@
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
 
-// static
-IFWL_DateTimeCalendar* IFWL_DateTimeCalendar::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_DateTimeCalendar(properties, pOuter);
-}
-
 IFWL_DateTimeCalendar::IFWL_DateTimeCalendar(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)

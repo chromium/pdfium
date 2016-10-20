@@ -22,9 +22,6 @@ class CFWL_CaretImpDelegate;
 
 class IFWL_Caret : public IFWL_Widget {
  public:
-  static IFWL_Caret* Create(const CFWL_WidgetImpProperties& properties,
-                            IFWL_Widget* pOuter);
-
   IFWL_Caret(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   ~IFWL_Caret() override;
 

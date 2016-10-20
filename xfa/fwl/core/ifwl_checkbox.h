@@ -58,11 +58,7 @@ class IFWL_CheckBoxDP : public IFWL_DataProvider {
 
 class IFWL_CheckBox : public IFWL_Widget {
  public:
-  static IFWL_CheckBox* Create(const CFWL_WidgetImpProperties& properties,
-                               IFWL_Widget* pOuter);
-
-  IFWL_CheckBox(const CFWL_WidgetImpProperties& properties,
-                IFWL_Widget* pOuter);
+  explicit IFWL_CheckBox(const CFWL_WidgetImpProperties& properties);
   ~IFWL_CheckBox() override;
 
   // IFWL_Widget

@@ -22,8 +22,8 @@ FWL_Error CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  std::unique_ptr<IFWL_Barcode> pBarcode(IFWL_Barcode::Create(
-      m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
+  std::unique_ptr<IFWL_Barcode> pBarcode(
+      new IFWL_Barcode(m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
   FWL_Error ret = pBarcode->Initialize();
   if (ret != FWL_Error::Succeeded) {
     return ret;

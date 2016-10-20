@@ -23,8 +23,8 @@ FWL_Error CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  std::unique_ptr<IFWL_Edit> pEdit(IFWL_Edit::Create(
-      m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
+  std::unique_ptr<IFWL_Edit> pEdit(
+      new IFWL_Edit(m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
   FWL_Error ret = pEdit->Initialize();
   if (ret != FWL_Error::Succeeded) {
     return ret;

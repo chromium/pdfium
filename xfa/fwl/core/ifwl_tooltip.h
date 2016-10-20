@@ -35,9 +35,6 @@ class IFWL_ToolTipDP : public IFWL_DataProvider {
 
 class IFWL_ToolTip : public IFWL_Form {
  public:
-  static IFWL_ToolTip* Create(const CFWL_WidgetImpProperties& properties,
-                              IFWL_Widget* pOuter);
-
   IFWL_ToolTip(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   ~IFWL_ToolTip() override;
 

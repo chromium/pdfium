@@ -12,14 +12,8 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-// static
-IFWL_Barcode* IFWL_Barcode::Create(const CFWL_WidgetImpProperties& properties) {
-  return new IFWL_Barcode(properties, nullptr);
-}
-
-IFWL_Barcode::IFWL_Barcode(const CFWL_WidgetImpProperties& properties,
-                           IFWL_Widget* pOuter)
-    : IFWL_Edit(properties, pOuter), m_dwStatus(0), m_type(BC_UNKNOWN) {}
+IFWL_Barcode::IFWL_Barcode(const CFWL_WidgetImpProperties& properties)
+    : IFWL_Edit(properties, nullptr), m_dwStatus(0), m_type(BC_UNKNOWN) {}
 
 IFWL_Barcode::~IFWL_Barcode() {}
 

@@ -14,9 +14,6 @@ class CFWL_FormProxyImpDelegate;
 
 class IFWL_FormProxy : public IFWL_Form {
  public:
-  static IFWL_FormProxy* Create(CFWL_WidgetImpProperties& properties,
-                                IFWL_Widget* pOuter);
-
   IFWL_FormProxy(const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
   ~IFWL_FormProxy() override;

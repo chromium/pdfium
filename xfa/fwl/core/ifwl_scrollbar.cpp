@@ -16,13 +16,6 @@
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5
 
-// static
-IFWL_ScrollBar* IFWL_ScrollBar::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_ScrollBar(properties, pOuter);
-}
-
 IFWL_ScrollBar::IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : IFWL_Widget(properties, pOuter),

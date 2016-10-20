@@ -51,12 +51,6 @@ void AddSquigglyPath(CFX_Path* pPathData,
 
 }  // namespace
 
-// static
-IFWL_Edit* IFWL_Edit::Create(const CFWL_WidgetImpProperties& properties,
-                             IFWL_Widget* pOuter) {
-  return new IFWL_Edit(properties, pOuter);
-}
-
 IFWL_Edit::IFWL_Edit(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter)
     : IFWL_Widget(properties, pOuter),
@@ -1482,7 +1476,7 @@ void IFWL_Edit::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  IFWL_ScrollBar* pScrollBar = IFWL_ScrollBar::Create(prop, this);
+  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(prop, this);
   pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
@@ -1580,7 +1574,7 @@ void IFWL_Edit::InitCaret() {
   if (!m_pCaret) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
       CFWL_WidgetImpProperties prop;
-      m_pCaret.reset(IFWL_Caret::Create(prop, this));
+      m_pCaret.reset(new IFWL_Caret(prop, this));
       m_pCaret->Initialize();
       m_pCaret->SetParent(this);
       m_pCaret->SetStates(m_pProperties->m_dwStates);

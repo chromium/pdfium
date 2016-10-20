@@ -15,9 +15,6 @@
 
 class IFWL_DateTimeEdit : public IFWL_Edit {
  public:
-  static IFWL_DateTimeEdit* Create(const CFWL_WidgetImpProperties& properties,
-                                   IFWL_Widget* pOuter);
-
   IFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
 

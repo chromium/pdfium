@@ -11,10 +11,6 @@
 
 class IFWL_DateTimeCalendar : public IFWL_MonthCalendar {
  public:
-  static IFWL_DateTimeCalendar* Create(
-      const CFWL_WidgetImpProperties& properties,
-      IFWL_Widget* pOuter);
-
   IFWL_DateTimeCalendar(const CFWL_WidgetImpProperties& properties,
                         IFWL_Widget* pOuter);
 

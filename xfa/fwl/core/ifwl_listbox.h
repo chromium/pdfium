@@ -103,9 +103,6 @@ class IFWL_ListBoxCompare {
 
 class IFWL_ListBox : public IFWL_Widget {
  public:
-  static IFWL_ListBox* Create(const CFWL_WidgetImpProperties& properties,
-                              IFWL_Widget* pOuter);
-
   IFWL_ListBox(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   ~IFWL_ListBox() override;
 

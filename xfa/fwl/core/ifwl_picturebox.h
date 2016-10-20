@@ -45,11 +45,7 @@ class IFWL_PictureBoxDP : public IFWL_DataProvider {
 
 class IFWL_PictureBox : public IFWL_Widget {
  public:
-  static IFWL_PictureBox* Create(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter);
-
-  IFWL_PictureBox(const CFWL_WidgetImpProperties& properties,
-                  IFWL_Widget* pOuter);
+  explicit IFWL_PictureBox(const CFWL_WidgetImpProperties& properties);
   ~IFWL_PictureBox() override;
 
   // IFWL_Widget

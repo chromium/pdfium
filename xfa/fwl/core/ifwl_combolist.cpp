@@ -9,13 +9,6 @@
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_comboedit.h"
 
-// static
-IFWL_ComboList* IFWL_ComboList::Create(
-    const CFWL_WidgetImpProperties& properties,
-    IFWL_Widget* pOuter) {
-  return new IFWL_ComboList(properties, pOuter);
-}
-
 IFWL_ComboList::IFWL_ComboList(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : IFWL_ListBox(properties, pOuter), m_bNotifyOwner(TRUE) {

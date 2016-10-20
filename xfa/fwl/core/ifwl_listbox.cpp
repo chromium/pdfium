@@ -20,12 +20,6 @@ const int kItemTextMargin = 2;
 
 }  // namespace
 
-// static
-IFWL_ListBox* IFWL_ListBox::Create(const CFWL_WidgetImpProperties& properties,
-                                   IFWL_Widget* pOuter) {
-  return new IFWL_ListBox(properties, pOuter);
-}
-
 IFWL_ListBox::IFWL_ListBox(const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
     : IFWL_Widget(properties, pOuter),
@@ -912,7 +906,7 @@ void IFWL_ListBox::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pScrollBarTP;
-  IFWL_ScrollBar* pScrollBar = IFWL_ScrollBar::Create(prop, this);
+  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(prop, this);
   pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
