@@ -6,8 +6,8 @@
 
 #include "xfa/fwl/core/ifwl_picturebox.h"
 
+#include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/lightwidget/cfwl_picturebox.h"
 
 IFWL_PictureBox::IFWL_PictureBox(const CFWL_WidgetImpProperties& properties)
     : IFWL_Widget(properties, nullptr),

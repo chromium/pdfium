@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_LIGHTWIDGET_CFWL_EDIT_H_
-#define XFA_FWL_LIGHTWIDGET_CFWL_EDIT_H_
+#ifndef XFA_FWL_CORE_CFWL_EDIT_H_
+#define XFA_FWL_CORE_CFWL_EDIT_H_
 
 #include <vector>
 
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_edit.h"
-#include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 class CFWL_WidgetProperties;
 class IFDE_TxtEdtDoRecord;
@@ -68,4 +68,4 @@ class CFWL_Edit : public CFWL_Widget {
                                 const CFX_ByteStringC& bsReplace);
 };
 
-#endif  // XFA_FWL_LIGHTWIDGET_CFWL_EDIT_H_
+#endif  // XFA_FWL_CORE_CFWL_EDIT_H_

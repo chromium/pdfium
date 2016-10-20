@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_LIGHTWIDGET_CFWL_WIDGET_H_
-#define XFA_FWL_LIGHTWIDGET_CFWL_WIDGET_H_
+#ifndef XFA_FWL_CORE_CFWL_WIDGET_H_
+#define XFA_FWL_CORE_CFWL_WIDGET_H_
 
 #include <memory>
 
 #include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fwl/lightwidget/cfwl_widgetproperties.h"
 
 class CFWL_Event;
 class CFWL_Message;
@@ -62,4 +62,4 @@ class CFWL_Widget {
   std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
 };
 
-#endif  // XFA_FWL_LIGHTWIDGET_CFWL_WIDGET_H_
+#endif  // XFA_FWL_CORE_CFWL_WIDGET_H_

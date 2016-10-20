@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/lightwidget/cfwl_widgetproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 
-#include "xfa/fwl/lightwidget/cfwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 
 CFWL_WidgetProperties::CFWL_WidgetProperties()
     : m_dwStyles(FWL_WGTSTYLE_Child),

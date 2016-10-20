@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_LIGHTWIDGET_CFWL_WIDGETPROPERTIES_H_
-#define XFA_FWL_LIGHTWIDGET_CFWL_WIDGETPROPERTIES_H_
+#ifndef XFA_FWL_CORE_CFWL_WIDGETPROPERTIES_H_
+#define XFA_FWL_CORE_CFWL_WIDGETPROPERTIES_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
@@ -34,4 +34,4 @@ class CFWL_WidgetProperties {
   CFWL_Widget* m_pOwner;
 };
 
-#endif  // XFA_FWL_LIGHTWIDGET_CFWL_WIDGETPROPERTIES_H_
+#endif  // XFA_FWL_CORE_CFWL_WIDGETPROPERTIES_H_

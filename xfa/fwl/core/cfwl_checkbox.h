@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_LIGHTWIDGET_CFWL_CHECKBOX_H_
-#define XFA_FWL_LIGHTWIDGET_CFWL_CHECKBOX_H_
+#ifndef XFA_FWL_CORE_CFWL_CHECKBOX_H_
+#define XFA_FWL_CORE_CFWL_CHECKBOX_H_
 
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_checkbox.h"
-#include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 class CFWL_CheckBox : public CFWL_Widget {
  public:
@@ -43,4 +43,4 @@ class CFWL_CheckBox : public CFWL_Widget {
   CFWL_CheckBoxDP m_checkboxData;
 };
 
-#endif  // XFA_FWL_LIGHTWIDGET_CFWL_CHECKBOX_H_
+#endif  // XFA_FWL_CORE_CFWL_CHECKBOX_H_

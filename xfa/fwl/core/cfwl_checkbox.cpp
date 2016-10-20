@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/lightwidget/cfwl_checkbox.h"
+#include "xfa/fwl/core/cfwl_checkbox.h"
 
 #include <memory>
 

@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/app/xfa_ffpushbutton.h"
 
+#include "xfa/fwl/core/cfwl_pushbutton.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/lightwidget/cfwl_pushbutton.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"

@@ -14,9 +14,9 @@
 #include "xfa/fde/ifde_txtedtdorecord.h"
 #include "xfa/fde/ifde_txtedtengine.h"
 #include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_scrollbar.h"
-#include "xfa/fwl/lightwidget/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)

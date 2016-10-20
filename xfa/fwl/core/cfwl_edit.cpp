@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/lightwidget/cfwl_edit.h"
+#include "xfa/fwl/core/cfwl_edit.h"
 
 #include <memory>
 #include <vector>

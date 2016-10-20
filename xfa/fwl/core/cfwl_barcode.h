@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_LIGHTWIDGET_CFWL_BARCODE_H_
-#define XFA_FWL_LIGHTWIDGET_CFWL_BARCODE_H_
+#ifndef XFA_FWL_CORE_CFWL_BARCODE_H_
+#define XFA_FWL_CORE_CFWL_BARCODE_H_
 
+#include "xfa/fwl/core/cfwl_edit.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_barcode.h"
-#include "xfa/fwl/lightwidget/cfwl_edit.h"
 
 class CFWL_Widget;
 class CFWL_WidgetProperties;
@@ -125,4 +125,4 @@ class CFWL_Barcode : public CFWL_Edit {
   CFWL_BarcodeDP m_barcodeData;
 };
 
-#endif  // XFA_FWL_LIGHTWIDGET_CFWL_BARCODE_H_
+#endif  // XFA_FWL_CORE_CFWL_BARCODE_H_

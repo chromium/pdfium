@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_LIGHTWIDGET_CFWL_COMBOBOX_H_
-#define XFA_FWL_LIGHTWIDGET_CFWL_COMBOBOX_H_
+#ifndef XFA_FWL_CORE_CFWL_COMBOBOX_H_
+#define XFA_FWL_CORE_CFWL_COMBOBOX_H_
 
 #include <memory>
 #include <vector>
 
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
-#include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 class CFWL_WidgetProperties;
 class IFWL_ComboBoxDP;
@@ -145,4 +145,4 @@ class CFWL_ComboBoxItem : public IFWL_ListItem {
   void* m_pData;
 };
 
-#endif  // XFA_FWL_LIGHTWIDGET_CFWL_COMBOBOX_H_
+#endif  // XFA_FWL_CORE_CFWL_COMBOBOX_H_

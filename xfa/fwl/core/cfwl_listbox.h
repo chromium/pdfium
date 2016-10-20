@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_LIGHTWIDGET_CFWL_LISTBOX_H_
-#define XFA_FWL_LIGHTWIDGET_CFWL_LISTBOX_H_
+#ifndef XFA_FWL_CORE_CFWL_LISTBOX_H_
+#define XFA_FWL_CORE_CFWL_LISTBOX_H_
 
 #include <memory>
 #include <vector>
 
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
-#include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 class CFWL_ListItem;
 
@@ -120,4 +120,4 @@ class CFWL_ListItem : public IFWL_ListItem {
   CFX_RectF m_rtCheckBox;
 };
 
-#endif  // XFA_FWL_LIGHTWIDGET_CFWL_LISTBOX_H_
+#endif  // XFA_FWL_CORE_CFWL_LISTBOX_H_
