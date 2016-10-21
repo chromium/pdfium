@@ -5,8 +5,10 @@
 #ifndef PDFIUM_THIRD_PARTY_SAFE_MATH_IMPL_H_
 #define PDFIUM_THIRD_PARTY_SAFE_MATH_IMPL_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
+#include <climits>
 #include <cmath>
 #include <cstdlib>
 #include <limits>
@@ -90,13 +92,13 @@ template <typename Integer>
 struct PositionOfSignBit {
   static const typename std::enable_if<std::numeric_limits<Integer>::is_integer,
                                        size_t>::type value =
-      8 * sizeof(Integer) - 1;
+      CHAR_BIT * sizeof(Integer) - 1;
 };
 
 // Helper templates for integer manipulations.
 
 template <typename T>
-bool HasSignBit(T x) {
+constexpr bool HasSignBit(T x) {
   // Cast to unsigned since right shift on signed is undefined.
   return !!(static_cast<typename UnsignedIntegerForSize<T>::type>(x) >>
             PositionOfSignBit<T>::value);
@@ -104,8 +106,8 @@ bool HasSignBit(T x) {
 
 // This wrapper undoes the standard integer promotions.
 template <typename T>
-T BinaryComplement(T x) {
-  return ~x;
+constexpr T BinaryComplement(T x) {
+  return static_cast<T>(~x);
 }
 
 // Here are the actual portable checked integer math implementations.
@@ -120,15 +122,16 @@ CheckedAdd(T x, T y, RangeConstraint* validity) {
   typedef typename UnsignedIntegerForSize<T>::type UnsignedDst;
   UnsignedDst ux = static_cast<UnsignedDst>(x);
   UnsignedDst uy = static_cast<UnsignedDst>(y);
-  UnsignedDst uresult = ux + uy;
+  UnsignedDst uresult = static_cast<UnsignedDst>(ux + uy);
   // Addition is valid if the sign of (x + y) is equal to either that of x or
   // that of y.
   if (std::numeric_limits<T>::is_signed) {
-    if (HasSignBit(BinaryComplement((uresult ^ ux) & (uresult ^ uy))))
+    if (HasSignBit(BinaryComplement(
+            static_cast<UnsignedDst>((uresult ^ ux) & (uresult ^ uy))))) {
       *validity = RANGE_VALID;
-    else  // Direction of wrap is inverse of result sign.
+    } else {  // Direction of wrap is inverse of result sign.
       *validity = HasSignBit(uresult) ? RANGE_OVERFLOW : RANGE_UNDERFLOW;
-
+    }
   } else {  // Unsigned is either valid or overflow.
     *validity = BinaryComplement(x) >= y ? RANGE_VALID : RANGE_OVERFLOW;
   }
@@ -143,15 +146,16 @@ CheckedSub(T x, T y, RangeConstraint* validity) {
   typedef typename UnsignedIntegerForSize<T>::type UnsignedDst;
   UnsignedDst ux = static_cast<UnsignedDst>(x);
   UnsignedDst uy = static_cast<UnsignedDst>(y);
-  UnsignedDst uresult = ux - uy;
+  UnsignedDst uresult = static_cast<UnsignedDst>(ux - uy);
   // Subtraction is valid if either x and y have same sign, or (x-y) and x have
   // the same sign.
   if (std::numeric_limits<T>::is_signed) {
-    if (HasSignBit(BinaryComplement((uresult ^ ux) & (ux ^ uy))))
+    if (HasSignBit(BinaryComplement(
+            static_cast<UnsignedDst>((uresult ^ ux) & (ux ^ uy))))) {
       *validity = RANGE_VALID;
-    else  // Direction of wrap is inverse of result sign.
+    } else {  // Direction of wrap is inverse of result sign.
       *validity = HasSignBit(uresult) ? RANGE_OVERFLOW : RANGE_UNDERFLOW;
-
+    }
   } else {  // Unsigned is either valid or underflow.
     *validity = x >= y ? RANGE_VALID : RANGE_UNDERFLOW;
   }
@@ -182,26 +186,27 @@ typename std::enable_if<std::numeric_limits<T>::is_integer &&
 CheckedMul(T x, T y, RangeConstraint* validity) {
   // If either side is zero then the result will be zero.
   if (!x || !y) {
-    return RANGE_VALID;
-
-  } else if (x > 0) {
-    if (y > 0)
+    *validity = RANGE_VALID;
+    return static_cast<T>(0);
+  }
+  if (x > 0) {
+    if (y > 0) {
       *validity =
           x <= std::numeric_limits<T>::max() / y ? RANGE_VALID : RANGE_OVERFLOW;
-    else
+    } else {
       *validity = y >= std::numeric_limits<T>::min() / x ? RANGE_VALID
                                                          : RANGE_UNDERFLOW;
-
+    }
   } else {
-    if (y > 0)
+    if (y > 0) {
       *validity = x >= std::numeric_limits<T>::min() / y ? RANGE_VALID
                                                          : RANGE_UNDERFLOW;
-    else
+    } else {
       *validity =
           y >= std::numeric_limits<T>::max() / x ? RANGE_VALID : RANGE_OVERFLOW;
+    }
   }
-
-  return x * y;
+  return static_cast<T>(*validity == RANGE_VALID ? x * y : 0);
 }
 
 template <typename T>
@@ -213,24 +218,28 @@ CheckedMul(T x, T y, RangeConstraint* validity) {
   *validity = (y == 0 || x <= std::numeric_limits<T>::max() / y)
                   ? RANGE_VALID
                   : RANGE_OVERFLOW;
-  return x * y;
+  return static_cast<T>(*validity == RANGE_VALID ? x * y : 0);
 }
 
-// Division just requires a check for an invalid negation on signed min/-1.
+// Division just requires a check for a zero denominator or an invalid negation
+// on signed min/-1.
 template <typename T>
 T CheckedDiv(T x,
              T y,
              RangeConstraint* validity,
              typename std::enable_if<std::numeric_limits<T>::is_integer,
                                      int>::type = 0) {
+  if (y == 0) {
+    *validity = RANGE_INVALID;
+    return static_cast<T>(0);
+  }
   if (std::numeric_limits<T>::is_signed && x == std::numeric_limits<T>::min() &&
       y == static_cast<T>(-1)) {
     *validity = RANGE_OVERFLOW;
     return std::numeric_limits<T>::min();
   }
-
   *validity = RANGE_VALID;
-  return x / y;
+  return static_cast<T>(x / y);
 }
 
 template <typename T>
@@ -239,7 +248,7 @@ typename std::enable_if<std::numeric_limits<T>::is_integer &&
                         T>::type
 CheckedMod(T x, T y, RangeConstraint* validity) {
   *validity = y > 0 ? RANGE_VALID : RANGE_INVALID;
-  return x % y;
+  return static_cast<T>(*validity == RANGE_VALID ? x % y : 0);
 }
 
 template <typename T>
@@ -247,8 +256,8 @@ typename std::enable_if<std::numeric_limits<T>::is_integer &&
                             !std::numeric_limits<T>::is_signed,
                         T>::type
 CheckedMod(T x, T y, RangeConstraint* validity) {
-  *validity = RANGE_VALID;
-  return x % y;
+  *validity = y != 0 ? RANGE_VALID : RANGE_INVALID;
+  return static_cast<T>(*validity == RANGE_VALID ? x % y : 0);
 }
 
 template <typename T>
@@ -300,7 +309,7 @@ CheckedAbs(T value, RangeConstraint* validity) {
   typename std::enable_if<std::numeric_limits<T>::is_iec559, T>::type \
       Checked##NAME(T, T, RangeConstraint*) {                         \
     NOTREACHED();                                                     \
-    return 0;                                                         \
+    return static_cast<T>(0);                                         \
   }
 
 BASE_FLOAT_ARITHMETIC_STUBS(Add)
