@@ -175,44 +175,8 @@ FX_BOOL CFPDF_FileStream::Flush() {
 }
 #endif  // PDF_ENABLE_XFA
 
-CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
-  m_FileAccess = *pFileAccess;
-#ifdef PDF_ENABLE_XFA
-  m_BufferOffset = (uint32_t)-1;
-#endif  // PDF_ENABLE_XFA
-}
-
-#ifdef PDF_ENABLE_XFA
-CFX_ByteString CPDF_CustomAccess::GetFullPath() {
-  return "";
-}
-
-FX_BOOL CPDF_CustomAccess::GetByte(uint32_t pos, uint8_t& ch) {
-  if (pos >= m_FileAccess.m_FileLen)
-    return FALSE;
-  if (m_BufferOffset == (uint32_t)-1 || pos < m_BufferOffset ||
-      pos >= m_BufferOffset + 512) {
-    // Need to read from file access
-    m_BufferOffset = pos;
-    int size = 512;
-    if (pos + 512 > m_FileAccess.m_FileLen)
-      size = m_FileAccess.m_FileLen - pos;
-    if (!m_FileAccess.m_GetBlock(m_FileAccess.m_Param, m_BufferOffset, m_Buffer,
-                                 size))
-      return FALSE;
-  }
-  ch = m_Buffer[pos - m_BufferOffset];
-  return TRUE;
-}
-
-FX_BOOL CPDF_CustomAccess::GetBlock(uint32_t pos,
-                                    uint8_t* pBuf,
-                                    uint32_t size) {
-  if (pos + size > m_FileAccess.m_FileLen)
-    return FALSE;
-  return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, pos, pBuf, size);
-}
-#endif  // PDF_ENABLE_XFA
+CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
+    : m_FileAccess(*pFileAccess) {}
 
 FX_FILESIZE CPDF_CustomAccess::GetSize() {
   return m_FileAccess.m_FileLen;

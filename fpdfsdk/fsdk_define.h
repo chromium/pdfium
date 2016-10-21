@@ -35,18 +35,8 @@ class CPDF_CustomAccess final : public IFX_FileRead {
   void Release() override;
   FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
-#ifdef PDF_ENABLE_XFA
-  virtual CFX_ByteString GetFullPath();
-  virtual FX_BOOL GetByte(uint32_t pos, uint8_t& ch);
-  virtual FX_BOOL GetBlock(uint32_t pos, uint8_t* pBuf, uint32_t size);
-#endif  // PDF_ENABLE_XFA
-
  private:
   FPDF_FILEACCESS m_FileAccess;
-#ifdef PDF_ENABLE_XFA
-  uint8_t m_Buffer[512];
-  uint32_t m_BufferOffset;
-#endif  // PDF_ENABLE_XFA
 };
 
 #ifdef PDF_ENABLE_XFA
