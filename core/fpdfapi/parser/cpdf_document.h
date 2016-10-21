@@ -102,9 +102,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                             FX_BOOL bTranslateName = FALSE);
 #endif
 
- private:
-  friend class CPDF_TestDocument;
-
+ protected:
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount() const;
   CPDF_Dictionary* FindPDFPage(CPDF_Dictionary* pPages,
