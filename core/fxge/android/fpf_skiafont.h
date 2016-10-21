@@ -41,7 +41,7 @@ class CFPF_SkiaFont {
                    uint32_t dwStyle,
                    uint8_t uCharset);
 
- protected:
+ private:
   CFPF_SkiaFontMgr* m_pFontMgr;
   CFPF_SkiaFontDescriptor* m_pFontDes;
   FXFT_Face m_Face;

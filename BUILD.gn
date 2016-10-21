@@ -746,9 +746,9 @@ static_library("fxcrt") {
 
 static_library("fxge") {
   sources = [
+    "core/fxge/android/cfpf_skiafontmgr.cpp",
     "core/fxge/android/fpf_skiafont.cpp",
     "core/fxge/android/fpf_skiafont.h",
-    "core/fxge/android/fpf_skiafontmgr.cpp",
     "core/fxge/android/fpf_skiafontmgr.h",
     "core/fxge/android/fpf_skiamodule.cpp",
     "core/fxge/android/fpf_skiamodule.h",
