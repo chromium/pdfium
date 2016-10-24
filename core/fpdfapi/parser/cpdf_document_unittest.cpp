@@ -10,6 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -68,11 +69,16 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
     allPages->AddReference(this, branch4->GetObjNum());
     CPDF_Dictionary* pagesDict = CreatePageTreeNode(allPages, this, 7);
 
-    CPDF_Dictionary* root = new CPDF_Dictionary();
-    root->SetReferenceFor("Pages", this, AddIndirectObject(pagesDict));
-    m_pRootDict = root;
+    m_pOwnedRootDict.reset(new CPDF_Dictionary());
+    m_pOwnedRootDict->SetReferenceFor("Pages", this,
+                                      AddIndirectObject(pagesDict));
+    m_pRootDict = m_pOwnedRootDict.get();
     m_PageList.SetSize(7);
   }
+
+ private:
+  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>
+      m_pOwnedRootDict;
 };
 
 TEST(cpdf_document, GetPages) {
