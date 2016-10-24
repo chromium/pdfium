@@ -37,7 +37,7 @@ class CXML_DataBufAcc : public IFX_BufferRead {
 
 class CXML_DataStmAcc : public IFX_BufferRead {
  public:
-  explicit CXML_DataStmAcc(IFX_FileRead* pFileRead);
+  explicit CXML_DataStmAcc(IFX_SeekableReadStream* pFileRead);
   ~CXML_DataStmAcc() override;
 
   // IFX_BufferRead
@@ -51,7 +51,7 @@ class CXML_DataStmAcc : public IFX_BufferRead {
   FX_FILESIZE GetBlockOffset() override;
 
  protected:
-  IFX_FileRead* m_pFileRead;
+  IFX_SeekableReadStream* m_pFileRead;
   uint8_t* m_pBuffer;
   FX_FILESIZE m_nStart;
   size_t m_dwSize;
@@ -63,7 +63,7 @@ class CXML_Parser {
   ~CXML_Parser();
 
   FX_BOOL Init(uint8_t* pBuffer, size_t size);
-  FX_BOOL Init(IFX_FileRead* pFileRead);
+  FX_BOOL Init(IFX_SeekableReadStream* pFileRead);
   FX_BOOL Init(IFX_BufferRead* pBuffer);
   FX_BOOL Init(FX_BOOL bOwndedStream);
   FX_BOOL ReadNextBlock();

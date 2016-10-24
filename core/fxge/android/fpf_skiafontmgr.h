@@ -75,7 +75,7 @@ class CFPF_SkiaFileFont : public CFPF_SkiaFontDescriptor {
 
   // CFPF_SkiaFontDescriptor
   int32_t GetType() const override { return FPF_SKIAFONTTYPE_File; }
-  IFX_FileRead* m_pFile;
+  IFX_SeekableReadStream* m_pFile;
 };
 
 class CFPF_SkiaBufferFont : public CFPF_SkiaFontDescriptor {
@@ -101,7 +101,8 @@ class CFPF_SkiaFontMgr {
                             uint32_t dwMatch = 0);
 
   bool InitFTLibrary();
-  FXFT_Face GetFontFace(IFX_FileRead* pFileRead, int32_t iFaceIndex = 0);
+  FXFT_Face GetFontFace(IFX_SeekableReadStream* pFileRead,
+                        int32_t iFaceIndex = 0);
   FXFT_Face GetFontFace(const CFX_ByteStringC& bsFile, int32_t iFaceIndex = 0);
   FXFT_Face GetFontFace(const uint8_t* pBuffer,
                         size_t szBuffer,

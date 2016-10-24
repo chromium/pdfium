@@ -782,7 +782,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   return pStream;
 }
 
-void CPDF_SyntaxParser::InitParser(IFX_FileRead* pFileAccess,
+void CPDF_SyntaxParser::InitParser(IFX_SeekableReadStream* pFileAccess,
                                    uint32_t HeaderOffset) {
   FX_Free(m_pFileBuf);
 

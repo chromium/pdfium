@@ -591,7 +591,7 @@ CFGAS_FontMgrImp::~CFGAS_FontMgrImp() {
   pos = m_IFXFont2FileRead.GetStartPosition();
   while (pos) {
     CFGAS_GEFont* pFont;
-    IFX_FileRead* pFileRead;
+    IFX_SeekableReadStream* pFileRead;
     m_IFXFont2FileRead.GetNextAssoc(pos, pFont, pFileRead);
     pFileRead->Release();
   }
@@ -609,7 +609,7 @@ FX_BOOL CFGAS_FontMgrImp::EnumFontsFromFontMapper() {
 
   pSystemFontInfo->EnumFontList(pFontMapper);
   for (int32_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
-    IFX_FileRead* pFontStream =
+    IFX_SeekableReadStream* pFontStream =
         CreateFontStream(pFontMapper, pSystemFontInfo, i);
     if (!pFontStream)
       continue;
@@ -629,7 +629,7 @@ FX_BOOL CFGAS_FontMgrImp::EnumFontsFromFiles() {
   CFX_GEModule::Get()->GetFontMgr()->InitFTLibrary();
   FX_POSITION pos = m_pFontSource->GetStartPosition();
   IFX_FileAccess* pFontSource = nullptr;
-  IFX_FileRead* pFontStream = nullptr;
+  IFX_SeekableReadStream* pFontStream = nullptr;
   while (pos) {
     pFontSource = m_pFontSource->GetNext(pos);
     pFontStream = pFontSource->CreateFileStream(FX_FILEMODE_ReadOnly);
@@ -783,7 +783,8 @@ CFGAS_GEFont* CFGAS_FontMgrImp::GetFontByUnicode(
 
 FX_BOOL CFGAS_FontMgrImp::VerifyUnicode(CFX_FontDescriptor* pDesc,
                                         FX_WCHAR wcUnicode) {
-  IFX_FileRead* pFileRead = CreateFontStream(pDesc->m_wsFaceName.UTF8Encode());
+  IFX_SeekableReadStream* pFileRead =
+      CreateFontStream(pDesc->m_wsFaceName.UTF8Encode());
   if (!pFileRead)
     return FALSE;
   FXFT_Face pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
@@ -835,7 +836,8 @@ CFGAS_GEFont* CFGAS_FontMgrImp::LoadFont(const CFX_WideString& wsFaceName,
   if (!pSystemFontInfo)
     return nullptr;
 
-  IFX_FileRead* pFontStream = CreateFontStream(wsFaceName.UTF8Encode());
+  IFX_SeekableReadStream* pFontStream =
+      CreateFontStream(wsFaceName.UTF8Encode());
   if (!pFontStream)
     return nullptr;
 
@@ -867,7 +869,8 @@ unsigned long _ftStreamRead(FXFT_Stream stream,
   if (count == 0)
     return 0;
 
-  IFX_FileRead* pFile = (IFX_FileRead*)stream->descriptor.pointer;
+  IFX_SeekableReadStream* pFile =
+      (IFX_SeekableReadStream*)stream->descriptor.pointer;
   int res = pFile->ReadBlock(buffer, offset, count);
   if (res)
     return count;
@@ -878,7 +881,7 @@ void _ftStreamClose(FXFT_Stream stream) {}
 
 };  // extern "C"
 
-FXFT_Face CFGAS_FontMgrImp::LoadFace(IFX_FileRead* pFontStream,
+FXFT_Face CFGAS_FontMgrImp::LoadFace(IFX_SeekableReadStream* pFontStream,
                                      int32_t iFaceIndex) {
   if (!pFontStream)
     return nullptr;
@@ -913,7 +916,7 @@ FXFT_Face CFGAS_FontMgrImp::LoadFace(IFX_FileRead* pFontStream,
   return pFace;
 }
 
-IFX_FileRead* CFGAS_FontMgrImp::CreateFontStream(
+IFX_SeekableReadStream* CFGAS_FontMgrImp::CreateFontStream(
     CFX_FontMapper* pFontMapper,
     IFX_SystemFontInfo* pSystemFontInfo,
     uint32_t index) {
@@ -934,7 +937,7 @@ IFX_FileRead* CFGAS_FontMgrImp::CreateFontStream(
   return FX_CreateMemoryStream(pBuffer, dwFileSize, TRUE);
 }
 
-IFX_FileRead* CFGAS_FontMgrImp::CreateFontStream(
+IFX_SeekableReadStream* CFGAS_FontMgrImp::CreateFontStream(
     const CFX_ByteString& bsFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
@@ -1111,7 +1114,7 @@ void CFGAS_FontMgrImp::ClearFontCache() {
   pos = m_IFXFont2FileRead.GetStartPosition();
   while (pos) {
     CFGAS_GEFont* pFont;
-    IFX_FileRead* pFileRead;
+    IFX_SeekableReadStream* pFileRead;
     m_IFXFont2FileRead.GetNextAssoc(pos, pFont, pFileRead);
     pFileRead->Release();
   }
@@ -1121,7 +1124,7 @@ void CFGAS_FontMgrImp::RemoveFont(CFGAS_GEFont* pEFont) {
   if (!pEFont) {
     return;
   }
-  IFX_FileRead* pFileRead;
+  IFX_SeekableReadStream* pFileRead;
   if (m_IFXFont2FileRead.Lookup(pEFont, pFileRead)) {
     pFileRead->Release();
     m_IFXFont2FileRead.RemoveKey(pEFont);
@@ -1179,7 +1182,7 @@ void CFGAS_FontMgrImp::RegisterFace(FXFT_Face pFace,
   m_InstalledFonts.Add(pFont.release());
 }
 
-void CFGAS_FontMgrImp::RegisterFaces(IFX_FileRead* pFontStream,
+void CFGAS_FontMgrImp::RegisterFaces(IFX_SeekableReadStream* pFontStream,
                                      const CFX_WideString* pFaceName) {
   int32_t index = 0;
   int32_t num_faces = 0;

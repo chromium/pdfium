@@ -110,7 +110,7 @@ class CFX_Font {
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
 
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL LoadFile(IFX_FileRead* pFile,
+  FX_BOOL LoadFile(IFX_SeekableReadStream* pFile,
                    int nFaceIndex = 0,
                    int* pFaceCount = nullptr);
 

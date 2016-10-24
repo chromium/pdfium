@@ -21,7 +21,7 @@ class CCodec_ModuleMgr;
 class CCodec_PngContext;
 class CCodec_TiffContext;
 class CFX_DIBAttribute;
-class IFX_FileRead;
+class IFX_SeekableReadStream;
 class IFX_Pause;
 struct FXBMP_Context;
 struct FXGIF_Context;
@@ -45,7 +45,7 @@ class CCodec_ProgressiveDecoder {
   explicit CCodec_ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr);
   ~CCodec_ProgressiveDecoder();
 
-  FXCODEC_STATUS LoadImageInfo(IFX_FileRead* pFile,
+  FXCODEC_STATUS LoadImageInfo(IFX_SeekableReadStream* pFile,
                                FXCODEC_IMAGE_TYPE imageType,
                                CFX_DIBAttribute* pAttribute,
                                bool bSkipImageTypeCheck);
@@ -125,7 +125,7 @@ class CCodec_ProgressiveDecoder {
     std::vector<uint8_t> m_pWeightTables;
   };
 
-  IFX_FileRead* m_pFile;
+  IFX_SeekableReadStream* m_pFile;
   CCodec_ModuleMgr* m_pCodecMgr;
   FXJPEG_Context* m_pJpegContext;
   FXPNG_Context* m_pPngContext;

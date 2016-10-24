@@ -119,7 +119,7 @@ CPDF_CryptoHandler* CPDF_Parser::GetCryptoHandler() {
   return m_pSyntax->m_pCryptoHandler.get();
 }
 
-IFX_FileRead* CPDF_Parser::GetFileAccess() const {
+IFX_SeekableReadStream* CPDF_Parser::GetFileAccess() const {
   return m_pSyntax->m_pFileAccess;
 }
 
@@ -139,7 +139,7 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
     m_ObjectInfo[objnum - 1].pos = 0;
 }
 
-CPDF_Parser::Error CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
+CPDF_Parser::Error CPDF_Parser::StartParse(IFX_SeekableReadStream* pFileAccess,
                                            CPDF_Document* pDocument) {
   ASSERT(!m_bHasParsed);
   m_bHasParsed = true;
@@ -1438,7 +1438,7 @@ uint32_t CPDF_Parser::GetPermissions() const {
   return dwPermission;
 }
 
-FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
+FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_SeekableReadStream* pFileAccess,
                                       uint32_t offset) {
   m_pSyntax->InitParser(pFileAccess, offset);
   m_pSyntax->RestorePos(m_pSyntax->m_HeaderOffset + 9);
@@ -1491,8 +1491,9 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
   return FALSE;
 }
 
-CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(IFX_FileRead* pFileAccess,
-                                                     CPDF_Document* pDocument) {
+CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
+    IFX_SeekableReadStream* pFileAccess,
+    CPDF_Document* pDocument) {
   ASSERT(!m_bHasParsed);
 
   m_bXRefStream = FALSE;

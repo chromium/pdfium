@@ -230,7 +230,7 @@ class IXFA_AppProvider {
    * @param[in] wsURL - http, ftp, such as
    * "http://www.w3.org/TR/REC-xml-names/".
    */
-  virtual IFX_FileRead* DownloadURL(const CFX_WideString& wsURL) = 0;
+  virtual IFX_SeekableReadStream* DownloadURL(const CFX_WideString& wsURL) = 0;
 
   /**
    * POST data to the given url.
@@ -320,8 +320,9 @@ class IXFA_DocEnvironment {
   virtual FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
                                     CFXJSE_Value* pValue) = 0;
-  virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
-                                       const CFX_WideString& wsLink) = 0;
+  virtual IFX_SeekableReadStream* OpenLinkedFile(
+      CXFA_FFDoc* hDoc,
+      const CFX_WideString& wsLink) = 0;
 };
 
 class IXFA_WidgetIterator {

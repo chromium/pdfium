@@ -41,7 +41,7 @@ class XFACodecFuzzer {
   }
 
  private:
-  class Reader : public IFX_FileRead {
+  class Reader : public IFX_SeekableReadStream {
    public:
     Reader(const uint8_t* data, size_t size) : m_data(data), m_size(size) {}
     ~Reader() {}

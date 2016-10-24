@@ -58,7 +58,7 @@ class CXML_Element {
                              size_t size,
                              FX_BOOL bSaveSpaceChars = FALSE,
                              FX_FILESIZE* pParsedSize = nullptr);
-  static CXML_Element* Parse(IFX_FileRead* pFile,
+  static CXML_Element* Parse(IFX_SeekableReadStream* pFile,
                              FX_BOOL bSaveSpaceChars = FALSE,
                              FX_FILESIZE* pParsedSize = nullptr);
   static CXML_Element* Parse(IFX_BufferRead* pBuffer,

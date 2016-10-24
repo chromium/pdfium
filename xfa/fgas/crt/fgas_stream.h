@@ -12,8 +12,8 @@
 
 class IFX_Stream;
 
-IFX_FileRead* FX_CreateFileRead(IFX_Stream* pBaseStream,
-                                FX_BOOL bReleaseStream);
+IFX_SeekableReadStream* FX_CreateFileRead(IFX_Stream* pBaseStream,
+                                          FX_BOOL bReleaseStream);
 
 enum FX_STREAMACCESS {
   FX_STREAMACCESS_Binary = 0x00,
@@ -33,8 +33,10 @@ enum FX_STREAMSEEK {
 
 class IFX_Stream {
  public:
-  static IFX_Stream* CreateStream(IFX_FileRead* pFileRead, uint32_t dwAccess);
-  static IFX_Stream* CreateStream(IFX_FileWrite* pFileWrite, uint32_t dwAccess);
+  static IFX_Stream* CreateStream(IFX_SeekableReadStream* pFileRead,
+                                  uint32_t dwAccess);
+  static IFX_Stream* CreateStream(IFX_SeekableWriteStream* pFileWrite,
+                                  uint32_t dwAccess);
   static IFX_Stream* CreateStream(uint8_t* pData,
                                   int32_t length,
                                   uint32_t dwAccess);

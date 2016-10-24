@@ -15,7 +15,7 @@ CXFA_DocumentParser::CXFA_DocumentParser(CXFA_FFNotify* pNotify)
 CXFA_DocumentParser::~CXFA_DocumentParser() {
 }
 
-int32_t CXFA_DocumentParser::StartParse(IFX_FileRead* pStream,
+int32_t CXFA_DocumentParser::StartParse(IFX_SeekableReadStream* pStream,
                                         XFA_XDPPACKET ePacketID) {
   m_pDocument.reset();
   m_nodeParser.CloseParser();

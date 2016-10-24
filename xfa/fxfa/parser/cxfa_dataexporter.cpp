@@ -199,9 +199,9 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
         IFX_MemoryStream* pMemStream = FX_CreateMemoryStream(TRUE);
         IFX_Stream* pTempStream = IFX_Stream::CreateStream(
-            (IFX_FileWrite*)pMemStream, FX_STREAMACCESS_Text |
-                                            FX_STREAMACCESS_Write |
-                                            FX_STREAMACCESS_Append);
+            (IFX_SeekableWriteStream*)pMemStream, FX_STREAMACCESS_Text |
+                                                      FX_STREAMACCESS_Write |
+                                                      FX_STREAMACCESS_Append);
         pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
         pRichTextXML->SaveXMLNode(pTempStream);
         wsChildren += CFX_WideString::FromUTF8(
@@ -444,11 +444,11 @@ CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
   ASSERT(m_pDocument);
 }
 
-FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite) {
+FX_BOOL CXFA_DataExporter::Export(IFX_SeekableWriteStream* pWrite) {
   return Export(pWrite, m_pDocument->GetRoot(), 0, nullptr);
 }
 
-FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite,
+FX_BOOL CXFA_DataExporter::Export(IFX_SeekableWriteStream* pWrite,
                                   CXFA_Node* pNode,
                                   uint32_t dwFlag,
                                   const FX_CHAR* pChecksum) {

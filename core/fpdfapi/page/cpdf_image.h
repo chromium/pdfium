@@ -16,14 +16,14 @@
 #define PDF_IMAGE_MASK_LOSSY_COMPRESS 0x0004
 #define PDF_IMAGE_MASK_LOSSLESS_COMPRESS 0x0008
 
-class CFX_DIBitmap;
 class CFX_DIBSource;
+class CFX_DIBitmap;
 class CPDF_Dictionay;
 class CPDF_Document;
 class CPDF_Page;
-class IFX_FileRead;
-class IFX_FileWrite;
 class IFX_Pause;
+class IFX_SeekableReadStream;
+class IFX_SeekableWriteStream;
 
 class CPDF_Image {
  public:
@@ -56,7 +56,7 @@ class CPDF_Image {
                                FX_BOOL bLoadMask = FALSE) const;
 
   void SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress);
-  void SetJpegImage(IFX_FileRead* pFile);
+  void SetJpegImage(IFX_SeekableReadStream* pFile);
 
   void ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);
 

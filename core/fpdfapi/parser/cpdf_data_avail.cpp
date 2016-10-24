@@ -32,7 +32,7 @@ CPDF_DataAvail::DownloadHints::~DownloadHints() {}
 int CPDF_DataAvail::s_CurrentDataAvailRecursionDepth = 0;
 
 CPDF_DataAvail::CPDF_DataAvail(FileAvail* pFileAvail,
-                               IFX_FileRead* pFileRead,
+                               IFX_SeekableReadStream* pFileRead,
                                FX_BOOL bSupportHintTable)
     : m_pFileAvail(pFileAvail), m_pFileRead(pFileRead) {
   m_Pos = 0;

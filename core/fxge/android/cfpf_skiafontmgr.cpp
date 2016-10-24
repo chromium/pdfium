@@ -26,7 +26,8 @@ static unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
                                          unsigned long offset,
                                          unsigned char* buffer,
                                          unsigned long count) {
-  IFX_FileRead* pFileRead = (IFX_FileRead*)stream->descriptor.pointer;
+  IFX_SeekableReadStream* pFileRead =
+      (IFX_SeekableReadStream*)stream->descriptor.pointer;
   if (!pFileRead)
     return 0;
   if (count > 0) {
@@ -355,7 +356,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
   return nullptr;
 }
 
-FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_FileRead* pFileRead,
+FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_SeekableReadStream* pFileRead,
                                         int32_t iFaceIndex) {
   if (!pFileRead)
     return nullptr;

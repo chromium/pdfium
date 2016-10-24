@@ -187,7 +187,7 @@ CFX_WideString CPDFXFA_App::Response(const CFX_WideString& wsQuestion,
   return wsAnswer;
 }
 
-IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideString& wsURL) {
+IFX_SeekableReadStream* CPDFXFA_App::DownloadURL(const CFX_WideString& wsURL) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pFormFillEnvList.GetAt(0);
   return pFormFillEnv ? pFormFillEnv->DownloadFromURL(wsURL.c_str()) : nullptr;
 }

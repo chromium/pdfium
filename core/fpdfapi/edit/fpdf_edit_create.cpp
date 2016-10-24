@@ -1482,7 +1482,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
       InitOldObjNumOffsets();
       m_iStage = 20;
     } else {
-      IFX_FileRead* pSrcFile = m_pParser->GetFileAccess();
+      IFX_SeekableReadStream* pSrcFile = m_pParser->GetFileAccess();
       m_Offset = pSrcFile->GetSize();
       m_Pos = (void*)(uintptr_t)m_Offset;
       m_iStage = 15;
@@ -1490,7 +1490,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
   }
   if (m_iStage == 15) {
     if ((m_dwFlags & FPDFCREATE_NO_ORIGINAL) == 0 && m_Pos) {
-      IFX_FileRead* pSrcFile = m_pParser->GetFileAccess();
+      IFX_SeekableReadStream* pSrcFile = m_pParser->GetFileAccess();
       uint8_t buffer[4096];
       uint32_t src_size = (uint32_t)(uintptr_t)m_Pos;
       while (src_size) {
@@ -1907,7 +1907,7 @@ void CPDF_Creator::Clear() {
   m_pIDArray.reset();
 }
 
-bool CPDF_Creator::Create(IFX_StreamWrite* pFile, uint32_t flags) {
+bool CPDF_Creator::Create(IFX_WriteStream* pFile, uint32_t flags) {
   m_File.AttachFile(pFile);
   return Create(flags);
 }

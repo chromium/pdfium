@@ -164,7 +164,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
                                 FX_BOOL& bNameImage,
                                 int32_t& iImageXDpi,
                                 int32_t& iImageYDpi);
-CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
+CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_SeekableReadStream* pImageFileRead,
                                       FXCODEC_IMAGE_TYPE type,
                                       int32_t& iImageXDpi,
                                       int32_t& iImageYDpi);

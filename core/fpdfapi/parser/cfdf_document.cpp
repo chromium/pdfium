@@ -33,7 +33,8 @@ CFDF_Document* CFDF_Document::CreateNewDoc() {
   return pDoc;
 }
 
-CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
+CFDF_Document* CFDF_Document::ParseFile(IFX_SeekableReadStream* pFile,
+                                        FX_BOOL bOwnFile) {
   if (!pFile)
     return nullptr;
 
@@ -47,7 +48,8 @@ CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, uint32_t size) {
                                   TRUE);
 }
 
-void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
+void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile,
+                                FX_BOOL bOwnFile) {
   m_pFile = pFile;
   m_bOwnFile = bOwnFile;
   CPDF_SyntaxParser parser;

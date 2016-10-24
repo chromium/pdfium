@@ -10,13 +10,13 @@
 #include "core/fxcrt/fx_system.h"
 
 class CXFA_Document;
-class IFX_FileRead;
+class IFX_SeekableReadStream;
 
 class CXFA_DataImporter {
  public:
   explicit CXFA_DataImporter(CXFA_Document* pDocument);
 
-  FX_BOOL ImportData(IFX_FileRead* pDataDocument);
+  FX_BOOL ImportData(IFX_SeekableReadStream* pDataDocument);
 
  protected:
   CXFA_Document* const m_pDocument;

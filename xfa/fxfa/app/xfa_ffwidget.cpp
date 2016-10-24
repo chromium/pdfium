@@ -1056,7 +1056,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
   CFX_ByteString bsContent;
   uint8_t* pImageBuffer = nullptr;
-  IFX_FileRead* pImageFileRead = nullptr;
+  IFX_SeekableReadStream* pImageFileRead = nullptr;
   if (wsImage.GetLength() > 0) {
     XFA_ATTRIBUTEENUM iEncoding =
         (XFA_ATTRIBUTEENUM)pImage->GetTransferEncoding();
@@ -1117,7 +1117,7 @@ static FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
   }
   return dibFormat;
 }
-CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
+CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_SeekableReadStream* pImageFileRead,
                                       FXCODEC_IMAGE_TYPE type,
                                       int32_t& iImageXDpi,
                                       int32_t& iImageYDpi) {

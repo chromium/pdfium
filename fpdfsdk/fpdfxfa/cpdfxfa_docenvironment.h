@@ -85,8 +85,8 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
                             const CFX_ByteStringC& szPropName,
                             CFXJSE_Value* pValue) override;
 
-  IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
-                               const CFX_WideString& wsLink) override;
+  IFX_SeekableReadStream* OpenLinkedFile(CXFA_FFDoc* hDoc,
+                                         const CFX_WideString& wsLink) override;
 
  private:
   FX_BOOL OnBeforeNotifySubmit();

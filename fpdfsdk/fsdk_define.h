@@ -25,12 +25,12 @@ class CPDF_Page;
 class CPDF_PageRenderContext;
 class IFSDK_PAUSE_Adapter;
 
-class CPDF_CustomAccess final : public IFX_FileRead {
+class CPDF_CustomAccess final : public IFX_SeekableReadStream {
  public:
   explicit CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
   ~CPDF_CustomAccess() override {}
 
-  // IFX_FileRead
+  // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
   void Release() override;
   FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
@@ -40,13 +40,13 @@ class CPDF_CustomAccess final : public IFX_FileRead {
 };
 
 #ifdef PDF_ENABLE_XFA
-class CFPDF_FileStream : public IFX_FileStream {
+class CFPDF_FileStream : public IFX_SeekableStream {
  public:
   explicit CFPDF_FileStream(FPDF_FILEHANDLER* pFS);
   ~CFPDF_FileStream() override {}
 
-  // IFX_FileStream:
-  IFX_FileStream* Retain() override;
+  // IFX_SeekableStream:
+  IFX_SeekableStream* Retain() override;
   void Release() override;
   FX_FILESIZE GetSize() override;
   FX_BOOL IsEOF() override;

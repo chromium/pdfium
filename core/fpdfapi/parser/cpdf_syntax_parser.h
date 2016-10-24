@@ -18,7 +18,7 @@ class CPDF_Dictionary;
 class CPDF_IndirectObjectHolder;
 class CPDF_Object;
 class CPDF_Stream;
-class IFX_FileRead;
+class IFX_SeekableReadStream;
 
 class CPDF_SyntaxParser {
  public:
@@ -26,7 +26,7 @@ class CPDF_SyntaxParser {
   explicit CPDF_SyntaxParser(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   ~CPDF_SyntaxParser();
 
-  void InitParser(IFX_FileRead* pFileAccess, uint32_t HeaderOffset);
+  void InitParser(IFX_SeekableReadStream* pFileAccess, uint32_t HeaderOffset);
 
   FX_FILESIZE SavePos() const { return m_Pos; }
   void RestorePos(FX_FILESIZE pos) { m_Pos = pos; }
@@ -86,7 +86,7 @@ class CPDF_SyntaxParser {
 
   FX_FILESIZE m_Pos;
   int m_MetadataObjnum;
-  IFX_FileRead* m_pFileAccess;
+  IFX_SeekableReadStream* m_pFileAccess;
   FX_FILESIZE m_HeaderOffset;
   FX_FILESIZE m_FileLen;
   uint8_t* m_pFileBuf;

@@ -57,7 +57,7 @@ FX_FILESIZE CXML_DataBufAcc::GetBlockOffset() {
   return 0;
 }
 
-CXML_DataStmAcc::CXML_DataStmAcc(IFX_FileRead* pFileRead)
+CXML_DataStmAcc::CXML_DataStmAcc(IFX_SeekableReadStream* pFileRead)
     : m_pFileRead(pFileRead), m_pBuffer(nullptr), m_nStart(0), m_dwSize(0) {
   ASSERT(m_pFileRead);
 }
@@ -132,7 +132,7 @@ FX_BOOL CXML_Parser::Init(uint8_t* pBuffer, size_t size) {
   m_pDataAcc = new CXML_DataBufAcc(pBuffer, size);
   return Init(TRUE);
 }
-FX_BOOL CXML_Parser::Init(IFX_FileRead* pFileRead) {
+FX_BOOL CXML_Parser::Init(IFX_SeekableReadStream* pFileRead) {
   m_pDataAcc = new CXML_DataStmAcc(pFileRead);
   return Init(TRUE);
 }
@@ -651,7 +651,7 @@ CXML_Element* CXML_Element::Parse(const void* pBuffer,
   }
   return XML_ContinueParse(parser, bSaveSpaceChars, pParsedSize);
 }
-CXML_Element* CXML_Element::Parse(IFX_FileRead* pFile,
+CXML_Element* CXML_Element::Parse(IFX_SeekableReadStream* pFile,
                                   FX_BOOL bSaveSpaceChars,
                                   FX_FILESIZE* pParsedSize) {
   CXML_Parser parser;

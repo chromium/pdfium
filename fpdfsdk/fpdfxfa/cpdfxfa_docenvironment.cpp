@@ -704,7 +704,7 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc,
   return ret;
 }
 
-IFX_FileRead* CPDFXFA_DocEnvironment::OpenLinkedFile(
+IFX_SeekableReadStream* CPDFXFA_DocEnvironment::OpenLinkedFile(
     CXFA_FFDoc* hDoc,
     const CFX_WideString& wsLink) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pDocument->GetFormFillEnv();

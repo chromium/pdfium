@@ -277,7 +277,7 @@ void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
   m_pFactory = pFactory;
 }
 
-int32_t CXFA_SimpleParser::StartParse(IFX_FileRead* pStream,
+int32_t CXFA_SimpleParser::StartParse(IFX_SeekableReadStream* pStream,
                                       XFA_XDPPACKET ePacketID) {
   CloseParser();
   m_pFileRead = pStream;

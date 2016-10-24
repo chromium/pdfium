@@ -57,7 +57,7 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
     m_pDict->SetIntegerFor("Length", m_dwSize);
 }
 
-void CPDF_Stream::InitStreamFromFile(IFX_FileRead* pFile,
+void CPDF_Stream::InitStreamFromFile(IFX_SeekableReadStream* pFile,
                                      CPDF_Dictionary* pDict) {
   m_pDict.reset(pDict);
   m_bMemoryBased = false;

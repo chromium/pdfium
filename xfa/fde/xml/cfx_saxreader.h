@@ -38,10 +38,12 @@ class CFX_SAXItem {
 class CFX_SAXFile {
  public:
   CFX_SAXFile();
-  FX_BOOL StartFile(IFX_FileRead* pFile, uint32_t dwStart, uint32_t dwLen);
+  FX_BOOL StartFile(IFX_SeekableReadStream* pFile,
+                    uint32_t dwStart,
+                    uint32_t dwLen);
   FX_BOOL ReadNextBlock();
   void Reset();
-  IFX_FileRead* m_pFile;
+  IFX_SeekableReadStream* m_pFile;
   uint32_t m_dwStart;
   uint32_t m_dwEnd;
   uint32_t m_dwCur;
@@ -70,7 +72,7 @@ class CFX_SAXReader {
   CFX_SAXReader();
   ~CFX_SAXReader();
 
-  int32_t StartParse(IFX_FileRead* pFile,
+  int32_t StartParse(IFX_SeekableReadStream* pFile,
                      uint32_t dwStart = 0,
                      uint32_t dwLen = -1,
                      uint32_t dwParseMode = 0);

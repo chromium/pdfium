@@ -70,7 +70,7 @@ CFX_SAXFile::CFX_SAXFile()
       m_pBuf(nullptr),
       m_dwBufSize(0),
       m_dwBufIndex(0) {}
-FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
+FX_BOOL CFX_SAXFile::StartFile(IFX_SeekableReadStream* pFile,
                                uint32_t dwStart,
                                uint32_t dwLen) {
   ASSERT(!m_pFile && pFile);
@@ -214,7 +214,7 @@ FX_BOOL CFX_SAXReader::SkipSpace(uint8_t ch) {
   return (m_dwParseMode & CFX_SaxParseMode_NotSkipSpace) == 0 && ch < 0x21;
 }
 
-int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
+int32_t CFX_SAXReader::StartParse(IFX_SeekableReadStream* pFile,
                                   uint32_t dwStart,
                                   uint32_t dwLen,
                                   uint32_t dwParseMode) {

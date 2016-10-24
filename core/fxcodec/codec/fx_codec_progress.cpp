@@ -1296,7 +1296,7 @@ FX_BOOL CCodec_ProgressiveDecoder::DetectImageType(
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
-    IFX_FileRead* pFile,
+    IFX_SeekableReadStream* pFile,
     FXCODEC_IMAGE_TYPE imageType,
     CFX_DIBAttribute* pAttribute,
     bool bSkipImageTypeCheck) {

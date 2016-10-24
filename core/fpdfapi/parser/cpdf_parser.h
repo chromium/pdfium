@@ -23,7 +23,7 @@ class CPDF_Object;
 class CPDF_SecurityHandler;
 class CPDF_StreamAcc;
 class CPDF_SyntaxParser;
-class IFX_FileRead;
+class IFX_SeekableReadStream;
 
 class CPDF_Parser {
  public:
@@ -42,8 +42,9 @@ class CPDF_Parser {
   CPDF_Parser();
   ~CPDF_Parser();
 
-  Error StartParse(IFX_FileRead* pFile, CPDF_Document* pDocument);
-  Error StartLinearizedParse(IFX_FileRead* pFile, CPDF_Document* pDocument);
+  Error StartParse(IFX_SeekableReadStream* pFile, CPDF_Document* pDocument);
+  Error StartLinearizedParse(IFX_SeekableReadStream* pFile,
+                             CPDF_Document* pDocument);
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }
@@ -68,7 +69,7 @@ class CPDF_Parser {
   bool IsVersionUpdated() const { return m_bVersionUpdated; }
   bool IsObjectFreeOrNull(uint32_t objnum) const;
   CPDF_CryptoHandler* GetCryptoHandler();
-  IFX_FileRead* GetFileAccess() const;
+  IFX_SeekableReadStream* GetFileAccess() const;
 
   FX_FILESIZE GetObjectOffset(uint32_t objnum) const;
   FX_FILESIZE GetObjectSize(uint32_t objnum) const;
@@ -136,7 +137,8 @@ class CPDF_Parser {
   FX_BOOL LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
   Error LoadLinearizedMainXRefTable();
   CPDF_StreamAcc* GetObjectStream(uint32_t number);
-  FX_BOOL IsLinearizedFile(IFX_FileRead* pFileAccess, uint32_t offset);
+  FX_BOOL IsLinearizedFile(IFX_SeekableReadStream* pFileAccess,
+                           uint32_t offset);
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
   void ShrinkObjectMap(uint32_t size);
   // A simple check whether the cross reference table matches with

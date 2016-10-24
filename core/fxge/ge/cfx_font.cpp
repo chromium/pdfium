@@ -39,7 +39,8 @@ unsigned long FTStreamRead(FXFT_Stream stream,
   if (count == 0)
     return 0;
 
-  IFX_FileRead* pFile = static_cast<IFX_FileRead*>(stream->descriptor.pointer);
+  IFX_SeekableReadStream* pFile =
+      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
   return pFile->ReadBlock(buffer, offset, count) ? count : 0;
 }
 
@@ -47,7 +48,7 @@ void FTStreamClose(FXFT_Stream stream) {}
 
 FX_BOOL LoadFileImp(FXFT_Library library,
                     FXFT_Face* Face,
-                    IFX_FileRead* pFile,
+                    IFX_SeekableReadStream* pFile,
                     int32_t faceIndex,
                     std::unique_ptr<FXFT_StreamRec>* stream) {
   std::unique_ptr<FXFT_StreamRec> stream1(new FXFT_StreamRec());
@@ -331,7 +332,7 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
 }
 
 #ifdef PDF_ENABLE_XFA
-FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile,
+FX_BOOL CFX_Font::LoadFile(IFX_SeekableReadStream* pFile,
                            int nFaceIndex,
                            int* pFaceCount) {
   m_bEmbedded = FALSE;

@@ -44,7 +44,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
   void Release() override;
   IFX_FileAccess* Retain() override;
   void GetPath(CFX_WideString& wsPath) override;
-  IFX_FileStream* CreateFileStream(uint32_t dwModes) override;
+  IFX_SeekableStream* CreateFileStream(uint32_t dwModes) override;
 
   FX_BOOL Init(const CFX_WideStringC& wsPath);
 
@@ -54,13 +54,13 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
 };
 #endif  // PDF_ENABLE_XFA
 
-class CFX_CRTFileStream final : public IFX_FileStream {
+class CFX_CRTFileStream final : public IFX_SeekableStream {
  public:
   explicit CFX_CRTFileStream(std::unique_ptr<IFXCRT_FileAccess> pFA);
   ~CFX_CRTFileStream() override;
 
-  // IFX_FileStream:
-  IFX_FileStream* Retain() override;
+  // IFX_SeekableStream:
+  IFX_SeekableStream* Retain() override;
   void Release() override;
   FX_FILESIZE GetSize() override;
   FX_BOOL IsEOF() override;
@@ -87,7 +87,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   ~CFX_MemoryStream() override;
 
   // IFX_MemoryStream
-  IFX_FileStream* Retain() override;
+  IFX_SeekableStream* Retain() override;
   void Release() override;
   FX_FILESIZE GetSize() override;
   FX_BOOL IsEOF() override;

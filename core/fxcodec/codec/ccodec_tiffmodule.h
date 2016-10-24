@@ -12,13 +12,13 @@
 class CCodec_TiffContext;
 class CFX_DIBAttribute;
 class CFX_DIBitmap;
-class IFX_FileRead;
+class IFX_SeekableReadStream;
 
 class CCodec_TiffModule {
  public:
   ~CCodec_TiffModule() {}
 
-  CCodec_TiffContext* CreateDecoder(IFX_FileRead* file_ptr);
+  CCodec_TiffContext* CreateDecoder(IFX_SeekableReadStream* file_ptr);
 
   bool LoadFrameInfo(CCodec_TiffContext* ctx,
                      int32_t frame,

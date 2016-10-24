@@ -123,7 +123,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   return pDict;
 }
 
-void CPDF_Image::SetJpegImage(IFX_FileRead* pFile) {
+void CPDF_Image::SetJpegImage(IFX_SeekableReadStream* pFile) {
   uint32_t size = (uint32_t)pFile->GetSize();
   if (!size)
     return;

@@ -121,14 +121,14 @@ class CFX_FileBufferArchive {
   int32_t AppendString(const CFX_ByteStringC& lpsz);
 
   // |pFile| must outlive the CFX_FileBufferArchive.
-  void AttachFile(IFX_StreamWrite* pFile);
+  void AttachFile(IFX_WriteStream* pFile);
 
  private:
   static const size_t kBufSize = 32768;
 
   size_t m_Length;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
-  IFX_StreamWrite* m_pFile;
+  IFX_WriteStream* m_pFile;
 };
 
 class CFX_CharMap {

@@ -90,7 +90,7 @@ CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
 }
 
 CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
-                                  IFX_FileRead* pStream,
+                                  IFX_SeekableReadStream* pStream,
                                   FX_BOOL bTakeOverFile) {
   std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pDocEnvironment));
   FX_BOOL bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);

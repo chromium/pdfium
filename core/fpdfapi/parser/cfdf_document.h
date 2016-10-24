@@ -18,7 +18,7 @@ class CPDF_Dictionary;
 class CFDF_Document : public CPDF_IndirectObjectHolder {
  public:
   static CFDF_Document* CreateNewDoc();
-  static CFDF_Document* ParseFile(IFX_FileRead* pFile,
+  static CFDF_Document* ParseFile(IFX_SeekableReadStream* pFile,
                                   FX_BOOL bOwnFile = FALSE);
   static CFDF_Document* ParseMemory(const uint8_t* pData, uint32_t size);
   ~CFDF_Document() override;
@@ -31,10 +31,10 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
 
  protected:
   CFDF_Document();
-  void ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile);
+  void ParseStream(IFX_SeekableReadStream* pFile, FX_BOOL bOwnFile);
 
   CPDF_Dictionary* m_pRootDict;
-  IFX_FileRead* m_pFile;
+  IFX_SeekableReadStream* m_pFile;
   FX_BOOL m_bOwnFile;
   CFX_WeakPtr<CFX_ByteStringPool> m_pByteStringPool;
 };

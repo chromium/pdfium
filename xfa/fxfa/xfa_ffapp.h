@@ -24,12 +24,12 @@ class CXFA_FFDocHandler;
 class CXFA_FontMgr;
 class IFWL_AdapterTimerMgr;
 
-class CXFA_FileRead : public IFX_FileRead {
+class CXFA_FileRead : public IFX_SeekableReadStream {
  public:
   explicit CXFA_FileRead(const std::vector<CPDF_Stream*>& streams);
   ~CXFA_FileRead() override;
 
-  // IFX_FileRead
+  // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
   FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
   void Release() override;
@@ -44,7 +44,7 @@ class CXFA_FFApp {
   ~CXFA_FFApp();
 
   CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
-                        IFX_FileRead* pStream,
+                        IFX_SeekableReadStream* pStream,
                         FX_BOOL bTakeOverFile);
   CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                         CPDF_Document* pPDFDoc);

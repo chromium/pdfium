@@ -225,7 +225,7 @@ void CXFA_ChecksumContext::StartChecksum() {
   m_pSAXReader = new CFX_SAXReader;
 }
 
-FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_FileRead* pSrcFile,
+FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_SeekableReadStream* pSrcFile,
                                              FX_FILESIZE offset,
                                              size_t size) {
   if (!m_pSAXReader || !pSrcFile)

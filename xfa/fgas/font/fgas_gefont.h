@@ -101,7 +101,9 @@ class CFGAS_GEFont {
   int32_t m_iRefCount;
   bool m_bExternalFont;
   std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> m_pStream;
-  std::unique_ptr<IFX_FileRead, ReleaseDeleter<IFX_FileRead>> m_pFileRead;
+  std::unique_ptr<IFX_SeekableReadStream,
+                  ReleaseDeleter<IFX_SeekableReadStream>>
+      m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::unique_ptr<CFX_DiscreteArrayTemplate<uint16_t>> m_pCharWidthMap;
   std::unique_ptr<CFX_MassArrayTemplate<CFX_Rect>> m_pRectArray;

@@ -285,7 +285,7 @@ int32_t CFX_FileBufferArchive::AppendString(const CFX_ByteStringC& lpsz) {
   return AppendBlock(lpsz.raw_str(), lpsz.GetLength());
 }
 
-void CFX_FileBufferArchive::AttachFile(IFX_StreamWrite* pFile) {
+void CFX_FileBufferArchive::AttachFile(IFX_WriteStream* pFile) {
   ASSERT(pFile);
   m_pFile = pFile;
 }

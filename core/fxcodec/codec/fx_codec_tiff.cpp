@@ -17,7 +17,7 @@ class CCodec_TiffContext {
   CCodec_TiffContext();
   ~CCodec_TiffContext();
 
-  bool InitDecoder(IFX_FileRead* file_ptr);
+  bool InitDecoder(IFX_SeekableReadStream* file_ptr);
   bool LoadFrameInfo(int32_t frame,
                      int32_t* width,
                      int32_t* height,
@@ -26,7 +26,7 @@ class CCodec_TiffContext {
                      CFX_DIBAttribute* pAttribute);
   bool Decode(CFX_DIBitmap* pDIBitmap);
 
-  IFX_FileRead* io_in() const { return m_io_in; }
+  IFX_SeekableReadStream* io_in() const { return m_io_in; }
   uint32_t offset() const { return m_offset; }
   void set_offset(uint32_t offset) { m_offset = offset; }
   void increment_offset(uint32_t offset) { m_offset += offset; }
@@ -50,7 +50,7 @@ class CCodec_TiffContext {
                       uint16_t bps,
                       uint16_t spp);
 
-  IFX_FileRead* m_io_in;
+  IFX_SeekableReadStream* m_io_in;
   uint32_t m_offset;
   TIFF* m_tif_ctx;
 };
@@ -193,7 +193,7 @@ CCodec_TiffContext::~CCodec_TiffContext() {
     TIFFClose(m_tif_ctx);
 }
 
-bool CCodec_TiffContext::InitDecoder(IFX_FileRead* file_ptr) {
+bool CCodec_TiffContext::InitDecoder(IFX_SeekableReadStream* file_ptr) {
   m_io_in = file_ptr;
   m_tif_ctx = tiff_open(this, "r");
   return !!m_tif_ctx;
@@ -435,7 +435,8 @@ bool CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap) {
   return false;
 }
 
-CCodec_TiffContext* CCodec_TiffModule::CreateDecoder(IFX_FileRead* file_ptr) {
+CCodec_TiffContext* CCodec_TiffModule::CreateDecoder(
+    IFX_SeekableReadStream* file_ptr) {
   CCodec_TiffContext* pDecoder = new CCodec_TiffContext;
   if (!pDecoder->InitDecoder(file_ptr)) {
     delete pDecoder;

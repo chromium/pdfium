@@ -290,7 +290,8 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
   return it != m_TypeToDocViewMap.end() ? it->second.get() : nullptr;
 }
 
-FX_BOOL CXFA_FFDoc::OpenDoc(IFX_FileRead* pStream, FX_BOOL bTakeOverFile) {
+FX_BOOL CXFA_FFDoc::OpenDoc(IFX_SeekableReadStream* pStream,
+                            FX_BOOL bTakeOverFile) {
   m_bOwnStream = bTakeOverFile;
   m_pStream = pStream;
   return TRUE;
@@ -324,7 +325,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (xfaStreams.empty())
     return FALSE;
 
-  IFX_FileRead* pFileRead = new CXFA_FileRead(xfaStreams);
+  IFX_SeekableReadStream* pFileRead = new CXFA_FileRead(xfaStreams);
   m_pPDFDoc = pPDFDoc;
   if (m_pStream) {
     m_pStream->Release();
@@ -416,7 +417,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   CPDF_StreamAcc streamAcc;
   streamAcc.LoadAllData(pStream);
 
-  IFX_FileRead* pImageFileRead =
+  IFX_SeekableReadStream* pImageFileRead =
       FX_CreateMemoryStream((uint8_t*)streamAcc.GetData(), streamAcc.GetSize());
 
   CFX_DIBitmap* pDibSource = XFA_LoadImageFromBuffer(
@@ -427,7 +428,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
 }
 
 bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
-                             IFX_FileWrite* pFile,
+                             IFX_SeekableWriteStream* pFile,
                              CXFA_ChecksumContext* pCSContext) {
   CXFA_Document* doc = m_pDocumentParser->GetDocument();
 
@@ -445,7 +446,7 @@ bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
       pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
 }
 
-FX_BOOL CXFA_FFDoc::ImportData(IFX_FileRead* pStream, FX_BOOL bXDP) {
+FX_BOOL CXFA_FFDoc::ImportData(IFX_SeekableReadStream* pStream, FX_BOOL bXDP) {
   std::unique_ptr<CXFA_DataImporter> importer(
       new CXFA_DataImporter(m_pDocumentParser->GetDocument()));
   return importer->ImportData(pStream);

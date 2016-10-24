@@ -21,7 +21,7 @@ CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
   ASSERT(m_pDocument);
 }
 
-FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
+FX_BOOL CXFA_DataImporter::ImportData(IFX_SeekableReadStream* pDataDocument) {
   std::unique_ptr<CXFA_SimpleParser> pDataDocumentParser(
       new CXFA_SimpleParser(m_pDocument, false));
   if (pDataDocumentParser->StartParse(pDataDocument, XFA_XDPPACKET_Datasets) !=

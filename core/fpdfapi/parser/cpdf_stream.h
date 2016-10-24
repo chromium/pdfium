@@ -37,7 +37,8 @@ class CPDF_Stream : public CPDF_Object {
   void SetData(const uint8_t* pData, uint32_t size);
 
   void InitStream(const uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
-  void InitStreamFromFile(IFX_FileRead* pFile, CPDF_Dictionary* pDict);
+  void InitStreamFromFile(IFX_SeekableReadStream* pFile,
+                          CPDF_Dictionary* pDict);
 
   FX_BOOL ReadRawData(FX_FILESIZE start_pos,
                       uint8_t* pBuf,
@@ -55,7 +56,7 @@ class CPDF_Stream : public CPDF_Object {
   bool m_bMemoryBased = true;
   uint32_t m_dwSize = 0;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDataBuf;
-  IFX_FileRead* m_pFile = nullptr;
+  IFX_SeekableReadStream* m_pFile = nullptr;
 };
 
 using UniqueStream = std::unique_ptr<CPDF_Stream, ReleaseDeleter<CPDF_Object>>;

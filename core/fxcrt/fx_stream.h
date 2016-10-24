@@ -55,16 +55,26 @@ FX_WCHAR FX_GetFolderSeparator();
 #define FX_FILEMODE_ReadOnly 1
 #define FX_FILEMODE_Truncate 2
 
-class IFX_StreamWrite {
+class IFX_WriteStream {
  public:
-  virtual ~IFX_StreamWrite() {}
+  virtual ~IFX_WriteStream() {}
   virtual void Release() = 0;
   virtual FX_BOOL WriteBlock(const void* pData, size_t size) = 0;
 };
 
-class IFX_FileWrite : public IFX_StreamWrite {
+class IFX_ReadStream {
  public:
-  // IFX_StreamWrite:
+  virtual ~IFX_ReadStream() {}
+
+  virtual void Release() = 0;
+  virtual FX_BOOL IsEOF() = 0;
+  virtual FX_FILESIZE GetPosition() = 0;
+  virtual size_t ReadBlock(void* buffer, size_t size) = 0;
+};
+
+class IFX_SeekableWriteStream : public IFX_WriteStream {
+ public:
+  // IFX_WriteStream:
   FX_BOOL WriteBlock(const void* pData, size_t size) override;
   virtual FX_FILESIZE GetSize() = 0;
   virtual FX_BOOL Flush() = 0;
@@ -73,19 +83,9 @@ class IFX_FileWrite : public IFX_StreamWrite {
                              size_t size) = 0;
 };
 
-class IFX_StreamRead {
+class IFX_SeekableReadStream : public IFX_ReadStream {
  public:
-  virtual ~IFX_StreamRead() {}
-
-  virtual void Release() = 0;
-  virtual FX_BOOL IsEOF() = 0;
-  virtual FX_FILESIZE GetPosition() = 0;
-  virtual size_t ReadBlock(void* buffer, size_t size) = 0;
-};
-
-class IFX_FileRead : public IFX_StreamRead {
- public:
-  // IFX_StreamRead:
+  // IFX_ReadStream:
   void Release() override = 0;
   FX_BOOL IsEOF() override;
   FX_FILESIZE GetPosition() override;
@@ -95,14 +95,15 @@ class IFX_FileRead : public IFX_StreamRead {
   virtual FX_FILESIZE GetSize() = 0;
 };
 
-IFX_FileRead* FX_CreateFileRead(const FX_CHAR* filename);
-IFX_FileRead* FX_CreateFileRead(const FX_WCHAR* filename);
+IFX_SeekableReadStream* FX_CreateFileRead(const FX_CHAR* filename);
+IFX_SeekableReadStream* FX_CreateFileRead(const FX_WCHAR* filename);
 
-class IFX_FileStream : public IFX_FileRead, public IFX_FileWrite {
+class IFX_SeekableStream : public IFX_SeekableReadStream,
+                           public IFX_SeekableWriteStream {
  public:
-  virtual IFX_FileStream* Retain() = 0;
+  virtual IFX_SeekableStream* Retain() = 0;
 
-  // IFX_FileRead:
+  // IFX_SeekableReadStream:
   void Release() override = 0;
   FX_BOOL IsEOF() override = 0;
   FX_FILESIZE GetPosition() override = 0;
@@ -110,7 +111,7 @@ class IFX_FileStream : public IFX_FileRead, public IFX_FileWrite {
   FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override = 0;
   FX_FILESIZE GetSize() override = 0;
 
-  // IFX_FileWrite:
+  // IFX_SeekableWriteStream:
   FX_BOOL WriteBlock(const void* buffer,
                      FX_FILESIZE offset,
                      size_t size) override = 0;
@@ -118,8 +119,10 @@ class IFX_FileStream : public IFX_FileRead, public IFX_FileWrite {
   FX_BOOL Flush() override = 0;
 };
 
-IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, uint32_t dwModes);
-IFX_FileStream* FX_CreateFileStream(const FX_WCHAR* filename, uint32_t dwModes);
+IFX_SeekableStream* FX_CreateFileStream(const FX_CHAR* filename,
+                                        uint32_t dwModes);
+IFX_SeekableStream* FX_CreateFileStream(const FX_WCHAR* filename,
+                                        uint32_t dwModes);
 
 #ifdef PDF_ENABLE_XFA
 class IFX_FileAccess {
@@ -128,12 +131,12 @@ class IFX_FileAccess {
   virtual void Release() = 0;
   virtual IFX_FileAccess* Retain() = 0;
   virtual void GetPath(CFX_WideString& wsPath) = 0;
-  virtual IFX_FileStream* CreateFileStream(uint32_t dwModes) = 0;
+  virtual IFX_SeekableStream* CreateFileStream(uint32_t dwModes) = 0;
 };
 IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
 #endif  // PDF_ENABLE_XFA
 
-class IFX_MemoryStream : public IFX_FileStream {
+class IFX_MemoryStream : public IFX_SeekableStream {
  public:
   virtual FX_BOOL IsConsecutive() const = 0;
   virtual void EstimateSize(size_t nInitSize, size_t nGrowSize) = 0;
@@ -149,9 +152,9 @@ IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
                                         FX_BOOL bTakeOver = FALSE);
 IFX_MemoryStream* FX_CreateMemoryStream(FX_BOOL bConsecutive = FALSE);
 
-class IFX_BufferRead : public IFX_StreamRead {
+class IFX_BufferRead : public IFX_ReadStream {
  public:
-  // IFX_StreamRead:
+  // IFX_ReadStream:
   void Release() override = 0;
   FX_BOOL IsEOF() override = 0;
   FX_FILESIZE GetPosition() override = 0;

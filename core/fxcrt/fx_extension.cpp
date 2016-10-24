@@ -36,7 +36,7 @@ void CFX_CRTFileAccess::GetPath(CFX_WideString& wsPath) {
   wsPath = m_path;
 }
 
-IFX_FileStream* CFX_CRTFileAccess::CreateFileStream(uint32_t dwModes) {
+IFX_SeekableStream* CFX_CRTFileAccess::CreateFileStream(uint32_t dwModes) {
   return FX_CreateFileStream(m_path.c_str(), dwModes);
 }
 
@@ -85,7 +85,7 @@ CFX_MemoryStream::~CFX_MemoryStream() {
   m_Blocks.RemoveAll();
 }
 
-IFX_FileStream* CFX_MemoryStream::Retain() {
+IFX_SeekableStream* CFX_MemoryStream::Retain() {
   m_dwCount++;
   return this;
 }
@@ -281,7 +281,7 @@ FX_BOOL CFX_MemoryStream::ExpandBlocks(size_t size) {
   return TRUE;
 }
 
-IFX_FileStream* CFX_CRTFileStream::Retain() {
+IFX_SeekableStream* CFX_CRTFileStream::Retain() {
   m_dwCount++;
   return this;
 }
@@ -336,24 +336,25 @@ IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath) {
 }
 #endif  // PDF_ENABLE_XFA
 
-IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, uint32_t dwModes) {
+IFX_SeekableStream* FX_CreateFileStream(const FX_CHAR* filename,
+                                        uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return new CFX_CRTFileStream(std::move(pFA));
 }
 
-IFX_FileStream* FX_CreateFileStream(const FX_WCHAR* filename,
-                                    uint32_t dwModes) {
+IFX_SeekableStream* FX_CreateFileStream(const FX_WCHAR* filename,
+                                        uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return new CFX_CRTFileStream(std::move(pFA));
 }
-IFX_FileRead* FX_CreateFileRead(const FX_CHAR* filename) {
+IFX_SeekableReadStream* FX_CreateFileRead(const FX_CHAR* filename) {
   return FX_CreateFileStream(filename, FX_FILEMODE_ReadOnly);
 }
-IFX_FileRead* FX_CreateFileRead(const FX_WCHAR* filename) {
+IFX_SeekableReadStream* FX_CreateFileRead(const FX_WCHAR* filename) {
   return FX_CreateFileStream(filename, FX_FILEMODE_ReadOnly);
 }
 IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,

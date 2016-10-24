@@ -147,7 +147,7 @@ class CPDFSDK_FormFillEnvironment
   FPDF_FILEHANDLER* OpenFile(int fileType,
                              FPDF_WIDESTRING wsURL,
                              const char* mode);
-  IFX_FileRead* DownloadFromURL(const FX_WCHAR* url);
+  IFX_SeekableReadStream* DownloadFromURL(const FX_WCHAR* url);
   CFX_WideString PostRequestURL(const FX_WCHAR* wsURL,
                                 const FX_WCHAR* wsData,
                                 const FX_WCHAR* wsContentType,

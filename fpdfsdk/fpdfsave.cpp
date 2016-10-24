@@ -36,7 +36,7 @@
 #include <ctime>
 #endif
 
-class CFX_IFileWrite final : public IFX_StreamWrite {
+class CFX_IFileWrite final : public IFX_WriteStream {
  public:
   CFX_IFileWrite();
   FX_BOOL Init(FPDF_FILEWRITE* pFileWriteStruct);

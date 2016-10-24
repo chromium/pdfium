@@ -16,8 +16,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!stream)
     return 0;
 
-  std::unique_ptr<IFX_FileRead, ReleaseDeleter<IFX_FileRead>> fileRead(
-      FX_CreateFileRead(stream.get(), false));
+  std::unique_ptr<IFX_SeekableReadStream,
+                  ReleaseDeleter<IFX_SeekableReadStream>>
+      fileRead(FX_CreateFileRead(stream.get(), false));
   if (!fileRead)
     return 0;
 

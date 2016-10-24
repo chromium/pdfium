@@ -68,7 +68,7 @@ const char PDF_CharType[256] = {
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'W'};
 
-int32_t GetHeaderOffset(IFX_FileRead* pFile) {
+int32_t GetHeaderOffset(IFX_SeekableReadStream* pFile) {
   const size_t kBufSize = 4;
   uint8_t buf[kBufSize];
   for (int32_t offset = 0; offset <= 1024; ++offset) {

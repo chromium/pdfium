@@ -96,7 +96,7 @@ CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
   m_nCurPos = 0;
 }
 
-IFX_FileStream* CFPDF_FileStream::Retain() {
+IFX_SeekableStream* CFPDF_FileStream::Retain() {
   return this;
 }
 
@@ -325,7 +325,8 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password) {
   // NOTE: the creation of the file needs to be by the embedder on the
   // other side of this API.
-  IFX_FileRead* pFileAccess = FX_CreateFileRead((const FX_CHAR*)file_path);
+  IFX_SeekableReadStream* pFileAccess =
+      FX_CreateFileRead((const FX_CHAR*)file_path);
   if (!pFileAccess) {
     return nullptr;
   }
@@ -381,7 +382,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document) {
 }
 #endif  // PDF_ENABLE_XFA
 
-class CMemFile final : public IFX_FileRead {
+class CMemFile final : public IFX_SeekableReadStream {
  public:
   CMemFile(uint8_t* pBuf, FX_FILESIZE size) : m_pBuf(pBuf), m_size(size) {}
 
