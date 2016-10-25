@@ -1,15 +1,12 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_system.h"
+#include "core/fxge/android/cfpf_skiadevicemodule.h"
 
-#if _FX_OS_ == _FX_ANDROID_
-
-#include "core/fxge/android/fpf_skiafontmgr.h"
-#include "core/fxge/android/fpf_skiamodule.h"
+#include "core/fxge/android/cfpf_skiafontmgr.h"
 
 namespace {
 
@@ -42,5 +39,3 @@ CFPF_SkiaFontMgr* CFPF_SkiaDeviceModule::GetFontMgr() {
   }
   return m_pFontMgr;
 }
-
-#endif  // _FX_OS_ == _FX_ANDROID_

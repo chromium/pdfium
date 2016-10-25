@@ -1,15 +1,19 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/android/fpf_skiafont.h"
+#include "core/fxge/android/cfpf_skiafont.h"
 
 #include <algorithm>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/android/fpf_skiafontmgr.h"
+#include "core/fxge/android/cfpf_skiabufferfont.h"
+#include "core/fxge/android/cfpf_skiafilefont.h"
+#include "core/fxge/android/cfpf_skiafontdescriptor.h"
+#include "core/fxge/android/cfpf_skiafontmgr.h"
+#include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_freetype.h"
 
 #define FPF_EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)

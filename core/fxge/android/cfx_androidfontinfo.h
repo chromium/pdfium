@@ -1,16 +1,13 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_ANDROID_FX_ANDROID_FONT_H_
-#define CORE_FXGE_ANDROID_FX_ANDROID_FONT_H_
+#ifndef CORE_FXGE_ANDROID_CFX_ANDROIDFONTINFO_H_
+#define CORE_FXGE_ANDROID_CFX_ANDROIDFONTINFO_H_
 
 #include "core/fxcrt/fx_system.h"
-
-#if _FX_OS_ == _FX_ANDROID_
-
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
@@ -45,6 +42,4 @@ class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
   CFPF_SkiaFontMgr* m_pFontMgr;
 };
 
-#endif  // _FX_OS_ == _FX_ANDROID_
-
-#endif  // CORE_FXGE_ANDROID_FX_ANDROID_FONT_H_
+#endif  // CORE_FXGE_ANDROID_CFX_ANDROIDFONTINFO_H_

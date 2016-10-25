@@ -1,11 +1,11 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_ANDROID_FPF_SKIAFONT_H_
-#define CORE_FXGE_ANDROID_FPF_SKIAFONT_H_
+#ifndef CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
+#define CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
@@ -50,4 +50,4 @@ class CFPF_SkiaFont {
   uint32_t m_dwRefCount;
 };
 
-#endif  // CORE_FXGE_ANDROID_FPF_SKIAFONT_H_
+#endif  // CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
