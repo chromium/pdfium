@@ -52,7 +52,7 @@ CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {
   CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (!pChildNode) {
     if (iType == XFA_Element::Unknown)
-      return FALSE;
+      return nullptr;
     pChildNode = pValueNode->GetProperty(0, iType);
   }
   return pChildNode;

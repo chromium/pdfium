@@ -709,16 +709,16 @@ IFX_SeekableReadStream* CPDFXFA_DocEnvironment::OpenLinkedFile(
     const CFX_WideString& wsLink) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pDocument->GetFormFillEnv();
   if (!pFormFillEnv)
-    return FALSE;
+    return nullptr;
 
   CFX_ByteString bs = wsLink.UTF16LE_Encode();
   int len = bs.GetLength();
   FPDF_FILEHANDLER* pFileHandler =
       pFormFillEnv->OpenFile(0, (FPDF_WIDESTRING)bs.GetBuffer(len), "rb");
   bs.ReleaseBuffer(len);
-
   if (!pFileHandler)
     return nullptr;
+
   return new CFPDF_FileStream(pFileHandler);
 }
 

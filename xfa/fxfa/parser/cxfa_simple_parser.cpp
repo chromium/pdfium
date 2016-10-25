@@ -37,7 +37,7 @@ CFDE_XMLNode* GetDocumentNode(CFDE_XMLDoc* pXMLDoc,
          pNextNode;
          pNextNode = pNextNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
       if (pNextNode->GetType() == FDE_XMLNODE_Element)
-        return FALSE;
+        return nullptr;
     }
     return pXMLNode;
   }
