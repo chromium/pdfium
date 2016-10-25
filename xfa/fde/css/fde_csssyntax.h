@@ -22,11 +22,11 @@ class CFDE_CSSTextBuf : public CFX_Target {
                          int32_t iStreamOffset,
                          int32_t iMaxChars,
                          FX_BOOL& bEOS);
-  FX_BOOL AppendChar(FX_WCHAR wch) {
-    if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2)) {
-      return FALSE;
-    }
-    return (m_pBuffer[m_iDatLen++] = wch), TRUE;
+  bool AppendChar(FX_WCHAR wch) {
+    if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2))
+      return false;
+    m_pBuffer[m_iDatLen++] = wch;
+    return true;
   }
   void Clear() { m_iDatPos = m_iDatLen = 0; }
   void Reset();
