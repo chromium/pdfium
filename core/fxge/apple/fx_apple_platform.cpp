@@ -63,7 +63,8 @@ FX_BOOL CGDrawGlyphRun(CGContextRef pContext,
   CFX_FixedBufGrow<uint16_t, 32> glyph_indices(nChars);
   CFX_FixedBufGrow<CGPoint, 32> glyph_positions(nChars);
   for (int i = 0; i < nChars; i++) {
-    glyph_indices[i] = pCharPos[i].m_ExtGID;
+    glyph_indices[i] =
+        pCharPos[i].m_ExtGID ? pCharPos[i].m_ExtGID : pCharPos[i].m_GlyphIndex;
     if (bNegSize)
       glyph_positions[i].x = -pCharPos[i].m_OriginX;
     else
