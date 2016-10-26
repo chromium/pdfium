@@ -125,9 +125,10 @@ void FaxFillBits(uint8_t* dest_buf, int columns, int startpos, int endpos) {
     FXSYS_memset(dest_buf + first_byte + 1, 0, last_byte - first_byte - 1);
 }
 
-#define NEXTBIT()                                  \
-  src_buf[*bitpos / 8] & (1 << (7 - *bitpos % 8)); \
-  ++(*bitpos);
+inline bool NextBit(const uint8_t* src_buf, int* bitpos) {
+  int pos = (*bitpos)++;
+  return !!(src_buf[pos / 8] & (1 << (7 - pos % 8)));
+}
 
 const uint8_t FaxBlackRunIns[] = {
     0,          2,          0x02,       3,          0,          0x03,
@@ -289,17 +290,17 @@ FX_BOOL FaxG4GetRow(const uint8_t* src_buf,
     int b1;
     int b2;
     FaxG4FindB1B2(ref_buf, columns, a0, a0color, &b1, &b2);
-    FX_BOOL bit = NEXTBIT();
+
     int v_delta = 0;
-    if (!bit) {
+    if (!NextBit(src_buf, bitpos)) {
       if (*bitpos >= bitsize)
         return FALSE;
 
-      FX_BOOL bit1 = NEXTBIT();
+      FX_BOOL bit1 = NextBit(src_buf, bitpos);
       if (*bitpos >= bitsize)
         return FALSE;
 
-      FX_BOOL bit2 = NEXTBIT();
+      FX_BOOL bit2 = NextBit(src_buf, bitpos);
       if (bit1) {
         v_delta = bit2 ? 1 : -1;
       } else if (bit2) {
@@ -341,8 +342,7 @@ FX_BOOL FaxG4GetRow(const uint8_t* src_buf,
         if (*bitpos >= bitsize)
           return FALSE;
 
-        bit = NEXTBIT();
-        if (bit) {
+        if (NextBit(src_buf, bitpos)) {
           if (!a0color)
             FaxFillBits(dest_buf, columns, a0, b2);
 
@@ -356,25 +356,23 @@ FX_BOOL FaxG4GetRow(const uint8_t* src_buf,
         if (*bitpos >= bitsize)
           return FALSE;
 
-        FX_BOOL next_bit1 = NEXTBIT();
+        FX_BOOL next_bit1 = NextBit(src_buf, bitpos);
         if (*bitpos >= bitsize)
           return FALSE;
 
-        FX_BOOL next_bit2 = NEXTBIT();
+        FX_BOOL next_bit2 = NextBit(src_buf, bitpos);
         if (next_bit1) {
           v_delta = next_bit2 ? 2 : -2;
         } else if (next_bit2) {
           if (*bitpos >= bitsize)
             return FALSE;
 
-          bit = NEXTBIT();
-          v_delta = bit ? 3 : -3;
+          v_delta = NextBit(src_buf, bitpos) ? 3 : -3;
         } else {
           if (*bitpos >= bitsize)
             return FALSE;
 
-          bit = NEXTBIT();
-          if (bit) {
+          if (NextBit(src_buf, bitpos)) {
             *bitpos += 3;
             continue;
           }
@@ -402,10 +400,8 @@ FX_BOOL FaxG4GetRow(const uint8_t* src_buf,
 FX_BOOL FaxSkipEOL(const uint8_t* src_buf, int bitsize, int* bitpos) {
   int startbit = *bitpos;
   while (*bitpos < bitsize) {
-    int bit = NEXTBIT();
-    if (!bit)
+    if (!NextBit(src_buf, bitpos))
       continue;
-
     if (*bitpos - startbit <= 11)
       *bitpos = startbit;
     return TRUE;
@@ -430,10 +426,8 @@ FX_BOOL FaxGet1DLine(const uint8_t* src_buf,
                           bitpos, bitsize);
       if (run < 0) {
         while (*bitpos < bitsize) {
-          int bit = NEXTBIT();
-          if (bit) {
+          if (NextBit(src_buf, bitpos))
             return TRUE;
-          }
         }
         return FALSE;
       }
