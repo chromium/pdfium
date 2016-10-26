@@ -575,7 +575,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     }
   }
 
-  pPage->SetRenderContext(std::unique_ptr<CPDF_PageRenderContext>());
+  pPage->SetRenderContext(nullptr);
 }
 #endif  // defined(_WIN32)
 
@@ -604,7 +604,7 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, TRUE, nullptr);
 
-  pPage->SetRenderContext(std::unique_ptr<CPDF_PageRenderContext>());
+  pPage->SetRenderContext(nullptr);
 }
 
 #ifdef _SKIA_SUPPORT_
@@ -622,7 +622,7 @@ DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
   pContext->m_pDevice.reset(skDevice);
   FPDF_RenderPage_Retail(pContext, page, 0, 0, size_x, size_y, 0, 0, TRUE,
                          nullptr);
-  pPage->SetRenderContext(std::unique_ptr<CPDF_PageRenderContext>());
+  pPage->SetRenderContext(nullptr);
   return recorder;
 }
 #endif

@@ -25,7 +25,7 @@
 
 class CPDF_TestDocument : public CPDF_Document {
  public:
-  CPDF_TestDocument() : CPDF_Document(std::unique_ptr<CPDF_Parser>()) {}
+  CPDF_TestDocument() : CPDF_Document(nullptr) {}
 
   void SetRoot(CPDF_Dictionary* root) { m_pRootDict = root; }
   CPDF_IndirectObjectHolder* GetHolder() { return this; }

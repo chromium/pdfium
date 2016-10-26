@@ -343,7 +343,7 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   pFont->m_pFontDict = pFontDict;
   pFont->m_pDocument = pDoc;
   pFont->m_BaseFont = pFontDict->GetStringFor("BaseFont");
-  return pFont->Load() ? std::move(pFont) : std::unique_ptr<CPDF_Font>();
+  return pFont->Load() ? std::move(pFont) : nullptr;
 }
 
 uint32_t CPDF_Font::GetNextChar(const FX_CHAR* pString,

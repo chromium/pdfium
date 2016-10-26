@@ -100,7 +100,7 @@ std::unique_ptr<IFX_MemoryAllocator> IFX_MemoryAllocator::Create(
 #endif  // MEMORY_TOOL_REPLACES_ALLOCATOR
     default:
       ASSERT(0);
-      return std::unique_ptr<IFX_MemoryAllocator>();
+      return nullptr;
   }
 }
 

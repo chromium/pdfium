@@ -751,7 +751,8 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(CPDF_Object* pFuncObj) {
     pFunc.reset(new CPDF_PSFunc());
 
   if (!pFunc || !pFunc->Init(pFuncObj))
-    return std::unique_ptr<CPDF_Function>();
+    return nullptr;
+
   return pFunc;
 }
 

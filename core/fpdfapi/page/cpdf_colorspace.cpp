@@ -332,7 +332,7 @@ CPDF_ColorSpace* CPDF_ColorSpace::GetStockCS(int family) {
 std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(CPDF_Document* pDoc,
                                                        CPDF_Object* pObj) {
   if (!pObj)
-    return std::unique_ptr<CPDF_ColorSpace>();
+    return nullptr;
 
   if (pObj->IsName()) {
     return std::unique_ptr<CPDF_ColorSpace>(
@@ -341,7 +341,7 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(CPDF_Document* pDoc,
   if (CPDF_Stream* pStream = pObj->AsStream()) {
     CPDF_Dictionary* pDict = pStream->GetDict();
     if (!pDict)
-      return std::unique_ptr<CPDF_ColorSpace>();
+      return nullptr;
 
     for (const auto& it : *pDict) {
       std::unique_ptr<CPDF_ColorSpace> pRet;
@@ -351,16 +351,16 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(CPDF_Document* pDoc,
       if (pRet)
         return pRet;
     }
-    return std::unique_ptr<CPDF_ColorSpace>();
+    return nullptr;
   }
 
   CPDF_Array* pArray = pObj->AsArray();
   if (!pArray || pArray->IsEmpty())
-    return std::unique_ptr<CPDF_ColorSpace>();
+    return nullptr;
 
   CPDF_Object* pFamilyObj = pArray->GetDirectObjectAt(0);
   if (!pFamilyObj)
-    return std::unique_ptr<CPDF_ColorSpace>();
+    return nullptr;
 
   CFX_ByteString familyname = pFamilyObj->GetString();
   if (pArray->GetCount() == 1)
@@ -386,11 +386,11 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(CPDF_Document* pDoc,
   } else if (id == FXBSTR_ID('P', 'a', 't', 't')) {
     pCS.reset(new CPDF_PatternCS(pDoc));
   } else {
-    return std::unique_ptr<CPDF_ColorSpace>();
+    return nullptr;
   }
   pCS->m_pArray = pArray;
   if (!pCS->v_Load(pDoc, pArray))
-    return std::unique_ptr<CPDF_ColorSpace>();
+    return nullptr;
 
   return pCS;
 }

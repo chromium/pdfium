@@ -819,7 +819,7 @@ std::unique_ptr<CFX_DIBitmap> DrawPatternBitmap(
   std::unique_ptr<CFX_DIBitmap> pBitmap(new CFX_DIBitmap);
   if (!pBitmap->Create(width, height,
                        pPattern->colored() ? FXDIB_Argb : FXDIB_8bppMask)) {
-    return std::unique_ptr<CFX_DIBitmap>();
+    return nullptr;
   }
   CFX_FxgeDevice bitmap_device;
   bitmap_device.Attach(pBitmap.get(), false, nullptr, false);

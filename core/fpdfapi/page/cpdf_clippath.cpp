@@ -100,7 +100,7 @@ void CPDF_ClipPath::AppendTexts(
   if (pData->m_TextList.size() + pTexts->size() <= FPDF_CLIPPATH_MAX_TEXTS) {
     for (size_t i = 0; i < pTexts->size(); i++)
       pData->m_TextList.push_back(std::move((*pTexts)[i]));
-    pData->m_TextList.push_back(std::unique_ptr<CPDF_TextObject>());
+    pData->m_TextList.push_back(nullptr);
   }
   pTexts->clear();
 }
