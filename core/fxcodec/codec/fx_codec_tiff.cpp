@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits>
+
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_dib.h"
 
 extern "C" {
@@ -29,7 +32,6 @@ class CCodec_TiffContext {
   IFX_SeekableReadStream* io_in() const { return m_io_in; }
   uint32_t offset() const { return m_offset; }
   void set_offset(uint32_t offset) { m_offset = offset; }
-  void increment_offset(uint32_t offset) { m_offset += offset; }
 
  private:
   bool IsSupport(const CFX_DIBitmap* pDIBitmap) const;
@@ -89,11 +91,17 @@ TIFFErrorHandler _TIFFerrorHandler = nullptr;
 namespace {
 
 tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
-  CCodec_TiffContext* pTiffContext = (CCodec_TiffContext*)context;
+  CCodec_TiffContext* pTiffContext =
+      reinterpret_cast<CCodec_TiffContext*>(context);
+  FX_SAFE_UINT32 increment = pTiffContext->offset();
+  increment += length;
+  if (!increment.IsValid())
+    return 0;
+
   if (!pTiffContext->io_in()->ReadBlock(buf, pTiffContext->offset(), length))
     return 0;
 
-  pTiffContext->increment_offset(length);
+  pTiffContext->set_offset(increment.ValueOrDie());
   return length;
 }
 
@@ -103,24 +111,37 @@ tsize_t tiff_write(thandle_t context, tdata_t buf, tsize_t length) {
 }
 
 toff_t tiff_seek(thandle_t context, toff_t offset, int whence) {
-  CCodec_TiffContext* pTiffContext = (CCodec_TiffContext*)context;
+  CCodec_TiffContext* pTiffContext =
+      reinterpret_cast<CCodec_TiffContext*>(context);
+  FX_SAFE_FILESIZE safe_offset = offset;
+  if (!safe_offset.IsValid())
+    return static_cast<toff_t>(-1);
+  FX_FILESIZE file_offset = safe_offset.ValueOrDie();
+
   switch (whence) {
-    case 0:
-      pTiffContext->set_offset(offset);
-      break;
-    case 1:
-      pTiffContext->increment_offset(offset);
-      break;
-    case 2:
-      if (pTiffContext->io_in()->GetSize() < (FX_FILESIZE)offset)
+    case 0: {
+      if (file_offset > pTiffContext->io_in()->GetSize())
         return static_cast<toff_t>(-1);
-      pTiffContext->set_offset(pTiffContext->io_in()->GetSize() - offset);
-      break;
+      pTiffContext->set_offset(file_offset);
+      return pTiffContext->offset();
+    }
+    case 1: {
+      FX_SAFE_UINT32 new_increment = pTiffContext->offset();
+      new_increment += file_offset;
+      if (!new_increment.IsValid())
+        return static_cast<toff_t>(-1);
+      pTiffContext->set_offset(new_increment.ValueOrDie());
+      return pTiffContext->offset();
+    }
+    case 2: {
+      if (pTiffContext->io_in()->GetSize() < file_offset)
+        return static_cast<toff_t>(-1);
+      pTiffContext->set_offset(pTiffContext->io_in()->GetSize() - file_offset);
+      return pTiffContext->offset();
+    }
     default:
       return static_cast<toff_t>(-1);
   }
-  ASSERT(pTiffContext->offset() <= (uint32_t)pTiffContext->io_in()->GetSize());
-  return pTiffContext->offset();
 }
 
 int tiff_close(thandle_t context) {
@@ -128,8 +149,9 @@ int tiff_close(thandle_t context) {
 }
 
 toff_t tiff_get_size(thandle_t context) {
-  CCodec_TiffContext* pTiffContext = (CCodec_TiffContext*)context;
-  return (toff_t)pTiffContext->io_in()->GetSize();
+  CCodec_TiffContext* pTiffContext =
+      reinterpret_cast<CCodec_TiffContext*>(context);
+  return static_cast<toff_t>(pTiffContext->io_in()->GetSize());
 }
 
 int tiff_map(thandle_t context, tdata_t*, toff_t*) {
