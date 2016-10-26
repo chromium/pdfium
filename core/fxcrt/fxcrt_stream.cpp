@@ -6,11 +6,11 @@
 
 #include "core/fxcrt/fx_stream.h"
 
-FX_BOOL IFX_SeekableWriteStream::WriteBlock(const void* pData, size_t size) {
+bool IFX_SeekableWriteStream::WriteBlock(const void* pData, size_t size) {
   return WriteBlock(pData, GetSize(), size);
 }
 
-FX_BOOL IFX_SeekableReadStream::IsEOF() {
+bool IFX_SeekableReadStream::IsEOF() {
   return FALSE;
 }
 
@@ -22,6 +22,6 @@ size_t IFX_SeekableReadStream::ReadBlock(void* buffer, size_t size) {
   return 0;
 }
 
-FX_BOOL IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
+bool IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
   return WriteBlock(buffer, GetSize(), size);
 }

@@ -67,9 +67,9 @@ class CFPDF_FileAccessWrap : public IFX_SeekableReadStream {
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override { return m_pFileAccess->m_FileLen; }
 
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-    return m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset,
-                                     (uint8_t*)buffer, size);
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
+    return !!m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset,
+                                       (uint8_t*)buffer, size);
   }
 
   void Release() override {}

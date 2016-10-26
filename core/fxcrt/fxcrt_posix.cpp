@@ -36,20 +36,24 @@ CFXCRT_FileAccess_Posix::CFXCRT_FileAccess_Posix() : m_nFD(-1) {}
 CFXCRT_FileAccess_Posix::~CFXCRT_FileAccess_Posix() {
   Close();
 }
-FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
-                                      uint32_t dwMode) {
-  if (m_nFD > -1) {
-    return FALSE;
-  }
-  int32_t nFlags, nMasks;
+
+bool CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
+                                   uint32_t dwMode) {
+  if (m_nFD > -1)
+    return false;
+
+  int32_t nFlags;
+  int32_t nMasks;
   FXCRT_Posix_GetFileMode(dwMode, nFlags, nMasks);
   m_nFD = open(fileName.c_str(), nFlags, nMasks);
   return m_nFD > -1;
 }
-FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName,
-                                      uint32_t dwMode) {
+
+bool CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName,
+                                   uint32_t dwMode) {
   return Open(FX_UTF8Encode(fileName).AsStringC(), dwMode);
 }
+
 void CFXCRT_FileAccess_Posix::Close() {
   if (m_nFD < 0) {
     return;
@@ -115,16 +119,18 @@ size_t CFXCRT_FileAccess_Posix::WritePos(const void* pBuffer,
   }
   return Write(pBuffer, szBuffer);
 }
-FX_BOOL CFXCRT_FileAccess_Posix::Flush() {
-  if (m_nFD < 0) {
-    return FALSE;
-  }
+
+bool CFXCRT_FileAccess_Posix::Flush() {
+  if (m_nFD < 0)
+    return false;
+
   return fsync(m_nFD) > -1;
 }
-FX_BOOL CFXCRT_FileAccess_Posix::Truncate(FX_FILESIZE szFile) {
-  if (m_nFD < 0) {
-    return FALSE;
-  }
+
+bool CFXCRT_FileAccess_Posix::Truncate(FX_FILESIZE szFile) {
+  if (m_nFD < 0)
+    return false;
+
   return !ftruncate(m_nFD, szFile);
 }
 

@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcrt/extension.h"
+
 #include <utility>
 
-#include "core/fxcrt/extension.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ext.h"
 
@@ -102,7 +103,7 @@ FX_FILESIZE CFX_MemoryStream::GetSize() {
   return (FX_FILESIZE)m_nCurSize;
 }
 
-FX_BOOL CFX_MemoryStream::IsEOF() {
+bool CFX_MemoryStream::IsEOF() {
   return m_nCurPos >= (size_t)GetSize();
 }
 
@@ -110,24 +111,23 @@ FX_FILESIZE CFX_MemoryStream::GetPosition() {
   return (FX_FILESIZE)m_nCurPos;
 }
 
-FX_BOOL CFX_MemoryStream::ReadBlock(void* buffer,
-                                    FX_FILESIZE offset,
-                                    size_t size) {
-  if (!buffer || !size) {
-    return FALSE;
-  }
+bool CFX_MemoryStream::ReadBlock(void* buffer,
+                                 FX_FILESIZE offset,
+                                 size_t size) {
+  if (!buffer || !size)
+    return false;
 
   FX_SAFE_SIZE_T newPos = size;
   newPos += offset;
   if (!newPos.IsValid() || newPos.ValueOrDefault(0) == 0 ||
       newPos.ValueOrDie() > m_nCurSize) {
-    return FALSE;
+    return false;
   }
 
   m_nCurPos = newPos.ValueOrDie();
   if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
     FXSYS_memcpy(buffer, m_Blocks[0] + (size_t)offset, size);
-    return TRUE;
+    return true;
   }
   size_t nStartBlock = (size_t)offset / m_nGrowSize;
   offset -= (FX_FILESIZE)(nStartBlock * m_nGrowSize);
@@ -142,7 +142,7 @@ FX_BOOL CFX_MemoryStream::ReadBlock(void* buffer,
     nStartBlock++;
     offset = 0;
   }
-  return TRUE;
+  return true;
 }
 
 size_t CFX_MemoryStream::ReadBlock(void* buffer, size_t size) {
@@ -156,17 +156,17 @@ size_t CFX_MemoryStream::ReadBlock(void* buffer, size_t size) {
   return nRead;
 }
 
-FX_BOOL CFX_MemoryStream::WriteBlock(const void* buffer,
-                                     FX_FILESIZE offset,
-                                     size_t size) {
-  if (!buffer || !size) {
-    return FALSE;
-  }
+bool CFX_MemoryStream::WriteBlock(const void* buffer,
+                                  FX_FILESIZE offset,
+                                  size_t size) {
+  if (!buffer || !size)
+    return false;
+
   if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
     FX_SAFE_SIZE_T newPos = size;
     newPos += offset;
     if (!newPos.IsValid())
-      return FALSE;
+      return false;
 
     m_nCurPos = newPos.ValueOrDie();
     if (m_nCurPos > m_nTotalSize) {
@@ -179,14 +179,14 @@ FX_BOOL CFX_MemoryStream::WriteBlock(const void* buffer,
       }
       if (!m_Blocks[0]) {
         m_Blocks.RemoveAll();
-        return FALSE;
+        return false;
       }
     }
     FXSYS_memcpy(m_Blocks[0] + (size_t)offset, buffer, size);
     if (m_nCurSize < m_nCurPos) {
       m_nCurSize = m_nCurPos;
     }
-    return TRUE;
+    return true;
   }
 
   FX_SAFE_SIZE_T newPos = size;
@@ -215,11 +215,11 @@ FX_BOOL CFX_MemoryStream::WriteBlock(const void* buffer,
   return TRUE;
 }
 
-FX_BOOL CFX_MemoryStream::Flush() {
-  return TRUE;
+bool CFX_MemoryStream::Flush() {
+  return true;
 }
 
-FX_BOOL CFX_MemoryStream::IsConsecutive() const {
+bool CFX_MemoryStream::IsConsecutive() const {
   return !!(m_dwFlags & FX_MEMSTREAM_Consecutive);
 }
 
@@ -242,10 +242,10 @@ uint8_t* CFX_MemoryStream::GetBuffer() const {
 
 void CFX_MemoryStream::AttachBuffer(uint8_t* pBuffer,
                                     size_t nSize,
-                                    FX_BOOL bTakeOver) {
-  if (!(m_dwFlags & FX_MEMSTREAM_Consecutive)) {
+                                    bool bTakeOver) {
+  if (!(m_dwFlags & FX_MEMSTREAM_Consecutive))
     return;
-  }
+
   m_Blocks.RemoveAll();
   m_Blocks.Add(pBuffer);
   m_nTotalSize = m_nCurSize = nSize;
@@ -297,7 +297,7 @@ FX_FILESIZE CFX_CRTFileStream::GetSize() {
   return m_pFile->GetSize();
 }
 
-FX_BOOL CFX_CRTFileStream::IsEOF() {
+bool CFX_CRTFileStream::IsEOF() {
   return GetPosition() >= GetSize();
 }
 
@@ -305,23 +305,23 @@ FX_FILESIZE CFX_CRTFileStream::GetPosition() {
   return m_pFile->GetPosition();
 }
 
-FX_BOOL CFX_CRTFileStream::ReadBlock(void* buffer,
-                                     FX_FILESIZE offset,
-                                     size_t size) {
-  return (FX_BOOL)m_pFile->ReadPos(buffer, size, offset);
+bool CFX_CRTFileStream::ReadBlock(void* buffer,
+                                  FX_FILESIZE offset,
+                                  size_t size) {
+  return m_pFile->ReadPos(buffer, size, offset) > 0;
 }
 
 size_t CFX_CRTFileStream::ReadBlock(void* buffer, size_t size) {
   return m_pFile->Read(buffer, size);
 }
 
-FX_BOOL CFX_CRTFileStream::WriteBlock(const void* buffer,
-                                      FX_FILESIZE offset,
-                                      size_t size) {
-  return (FX_BOOL)m_pFile->WritePos(buffer, size, offset);
+bool CFX_CRTFileStream::WriteBlock(const void* buffer,
+                                   FX_FILESIZE offset,
+                                   size_t size) {
+  return !!m_pFile->WritePos(buffer, size, offset);
 }
 
-FX_BOOL CFX_CRTFileStream::Flush() {
+bool CFX_CRTFileStream::Flush() {
   return m_pFile->Flush();
 }
 
@@ -359,10 +359,10 @@ IFX_SeekableReadStream* FX_CreateFileRead(const FX_WCHAR* filename) {
 }
 IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
                                         size_t dwSize,
-                                        FX_BOOL bTakeOver) {
+                                        bool bTakeOver) {
   return new CFX_MemoryStream(pBuffer, dwSize, bTakeOver);
 }
-IFX_MemoryStream* FX_CreateMemoryStream(FX_BOOL bConsecutive) {
+IFX_MemoryStream* FX_CreateMemoryStream(bool bConsecutive) {
   return new CFX_MemoryStream(bConsecutive);
 }
 

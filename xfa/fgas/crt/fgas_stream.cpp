@@ -291,16 +291,16 @@ class CFX_TextStream : public IFX_Stream {
 
 class CFGAS_FileRead : public IFX_SeekableReadStream {
  public:
-  CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream);
+  CFGAS_FileRead(IFX_Stream* pStream, bool bReleaseStream);
   ~CFGAS_FileRead() override;
 
   // IFX_SeekableReadStream
   void Release() override;
   FX_FILESIZE GetSize() override;
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  protected:
-  FX_BOOL m_bReleaseStream;
+  bool m_bReleaseStream;
   IFX_Stream* m_pStream;
 };
 
@@ -1469,12 +1469,14 @@ IFX_Stream* CFX_Stream::CreateSharedStream(uint32_t dwAccess,
   }
   return pShared;
 }
+
 IFX_SeekableReadStream* FX_CreateFileRead(IFX_Stream* pBaseStream,
-                                          FX_BOOL bReleaseStream) {
+                                          bool bReleaseStream) {
   ASSERT(pBaseStream);
   return new CFGAS_FileRead(pBaseStream, bReleaseStream);
 }
-CFGAS_FileRead::CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream)
+
+CFGAS_FileRead::CFGAS_FileRead(IFX_Stream* pStream, bool bReleaseStream)
     : m_bReleaseStream(bReleaseStream), m_pStream(pStream) {
   ASSERT(m_pStream);
 }
@@ -1486,9 +1488,8 @@ CFGAS_FileRead::~CFGAS_FileRead() {
 FX_FILESIZE CFGAS_FileRead::GetSize() {
   return (FX_FILESIZE)m_pStream->GetLength();
 }
-FX_BOOL CFGAS_FileRead::ReadBlock(void* buffer,
-                                  FX_FILESIZE offset,
-                                  size_t size) {
+
+bool CFGAS_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
   m_pStream->Seek(FX_STREAMSEEK_Begin, (int32_t)offset);
   int32_t iLen = m_pStream->ReadData((uint8_t*)buffer, (int32_t)size);
   return iLen == (int32_t)size;

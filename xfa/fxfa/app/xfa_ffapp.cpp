@@ -37,9 +37,7 @@ FX_FILESIZE CXFA_FileRead::GetSize() {
   return dwSize;
 }
 
-FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
-                                 FX_FILESIZE offset,
-                                 size_t size) {
+bool CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
   int32_t iCount = m_Data.GetSize();
   int32_t index = 0;
   while (index < iCount) {
@@ -58,13 +56,13 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
     FXSYS_memcpy(buffer, acc.GetData() + offset, dwRead);
     size -= dwRead;
     if (size == 0) {
-      return TRUE;
+      return true;
     }
     buffer = (uint8_t*)buffer + dwRead;
     offset = 0;
     index++;
   }
-  return FALSE;
+  return false;
 }
 
 void CXFA_FileRead::Release() {

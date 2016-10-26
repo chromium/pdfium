@@ -39,8 +39,8 @@
 class CFX_IFileWrite final : public IFX_WriteStream {
  public:
   CFX_IFileWrite();
-  FX_BOOL Init(FPDF_FILEWRITE* pFileWriteStruct);
-  FX_BOOL WriteBlock(const void* pData, size_t size) override;
+  bool Init(FPDF_FILEWRITE* pFileWriteStruct);
+  bool WriteBlock(const void* pData, size_t size) override;
   void Release() override;
 
  protected:
@@ -53,20 +53,20 @@ CFX_IFileWrite::CFX_IFileWrite() {
   m_pFileWriteStruct = nullptr;
 }
 
-FX_BOOL CFX_IFileWrite::Init(FPDF_FILEWRITE* pFileWriteStruct) {
+bool CFX_IFileWrite::Init(FPDF_FILEWRITE* pFileWriteStruct) {
   if (!pFileWriteStruct)
-    return FALSE;
+    return false;
 
   m_pFileWriteStruct = pFileWriteStruct;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_IFileWrite::WriteBlock(const void* pData, size_t size) {
+bool CFX_IFileWrite::WriteBlock(const void* pData, size_t size) {
   if (!m_pFileWriteStruct)
-    return FALSE;
+    return false;
 
   m_pFileWriteStruct->WriteBlock(m_pFileWriteStruct, pData, size);
-  return TRUE;
+  return true;
 }
 
 void CFX_IFileWrite::Release() {

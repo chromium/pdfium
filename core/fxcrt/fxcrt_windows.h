@@ -16,8 +16,8 @@ class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess {
   ~CFXCRT_FileAccess_Win64() override;
 
   // IFXCRT_FileAccess
-  FX_BOOL Open(const CFX_ByteStringC& fileName, uint32_t dwMode) override;
-  FX_BOOL Open(const CFX_WideStringC& fileName, uint32_t dwMode) override;
+  bool Open(const CFX_ByteStringC& fileName, uint32_t dwMode) override;
+  bool Open(const CFX_WideStringC& fileName, uint32_t dwMode) override;
   void Close() override;
   FX_FILESIZE GetSize() const override;
   FX_FILESIZE GetPosition() const override;
@@ -28,8 +28,8 @@ class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess {
   size_t WritePos(const void* pBuffer,
                   size_t szBuffer,
                   FX_FILESIZE pos) override;
-  FX_BOOL Flush() override;
-  FX_BOOL Truncate(FX_FILESIZE szFile) override;
+  bool Flush() override;
+  bool Truncate(FX_FILESIZE szFile) override;
 
  protected:
   void* m_hFile;

@@ -18,8 +18,8 @@ class IFXCRT_FileAccess {
   static IFXCRT_FileAccess* Create();
   virtual ~IFXCRT_FileAccess() {}
 
-  virtual FX_BOOL Open(const CFX_ByteStringC& fileName, uint32_t dwMode) = 0;
-  virtual FX_BOOL Open(const CFX_WideStringC& fileName, uint32_t dwMode) = 0;
+  virtual bool Open(const CFX_ByteStringC& fileName, uint32_t dwMode) = 0;
+  virtual bool Open(const CFX_WideStringC& fileName, uint32_t dwMode) = 0;
   virtual void Close() = 0;
   virtual FX_FILESIZE GetSize() const = 0;
   virtual FX_FILESIZE GetPosition() const = 0;
@@ -30,8 +30,8 @@ class IFXCRT_FileAccess {
   virtual size_t WritePos(const void* pBuffer,
                           size_t szBuffer,
                           FX_FILESIZE pos) = 0;
-  virtual FX_BOOL Flush() = 0;
-  virtual FX_BOOL Truncate(FX_FILESIZE szFile) = 0;
+  virtual bool Flush() = 0;
+  virtual bool Truncate(FX_FILESIZE szFile) = 0;
 };
 
 #ifdef PDF_ENABLE_XFA
@@ -63,14 +63,12 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
   IFX_SeekableStream* Retain() override;
   void Release() override;
   FX_FILESIZE GetSize() override;
-  FX_BOOL IsEOF() override;
+  bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
   size_t ReadBlock(void* buffer, size_t size) override;
-  FX_BOOL WriteBlock(const void* buffer,
-                     FX_FILESIZE offset,
-                     size_t size) override;
-  FX_BOOL Flush() override;
+  bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool Flush() override;
 
  protected:
   std::unique_ptr<IFXCRT_FileAccess> m_pFile;
@@ -80,6 +78,7 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 #define FX_MEMSTREAM_BlockSize (64 * 1024)
 #define FX_MEMSTREAM_Consecutive 0x01
 #define FX_MEMSTREAM_TakeOver 0x02
+
 class CFX_MemoryStream final : public IFX_MemoryStream {
  public:
   explicit CFX_MemoryStream(FX_BOOL bConsecutive);
@@ -90,20 +89,18 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   IFX_SeekableStream* Retain() override;
   void Release() override;
   FX_FILESIZE GetSize() override;
-  FX_BOOL IsEOF() override;
+  bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
   size_t ReadBlock(void* buffer, size_t size) override;
-  FX_BOOL WriteBlock(const void* buffer,
-                     FX_FILESIZE offset,
-                     size_t size) override;
-  FX_BOOL Flush() override;
-  FX_BOOL IsConsecutive() const override;
+  bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool Flush() override;
+  bool IsConsecutive() const override;
   void EstimateSize(size_t nInitSize, size_t nGrowSize) override;
   uint8_t* GetBuffer() const override;
   void AttachBuffer(uint8_t* pBuffer,
                     size_t nSize,
-                    FX_BOOL bTakeOver = FALSE) override;
+                    bool bTakeOver = FALSE) override;
   void DetachBuffer() override;
 
  protected:

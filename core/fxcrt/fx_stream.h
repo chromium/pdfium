@@ -59,7 +59,7 @@ class IFX_WriteStream {
  public:
   virtual ~IFX_WriteStream() {}
   virtual void Release() = 0;
-  virtual FX_BOOL WriteBlock(const void* pData, size_t size) = 0;
+  virtual bool WriteBlock(const void* pData, size_t size) = 0;
 };
 
 class IFX_ReadStream {
@@ -67,7 +67,7 @@ class IFX_ReadStream {
   virtual ~IFX_ReadStream() {}
 
   virtual void Release() = 0;
-  virtual FX_BOOL IsEOF() = 0;
+  virtual bool IsEOF() = 0;
   virtual FX_FILESIZE GetPosition() = 0;
   virtual size_t ReadBlock(void* buffer, size_t size) = 0;
 };
@@ -75,23 +75,23 @@ class IFX_ReadStream {
 class IFX_SeekableWriteStream : public IFX_WriteStream {
  public:
   // IFX_WriteStream:
-  FX_BOOL WriteBlock(const void* pData, size_t size) override;
+  bool WriteBlock(const void* pData, size_t size) override;
   virtual FX_FILESIZE GetSize() = 0;
-  virtual FX_BOOL Flush() = 0;
-  virtual FX_BOOL WriteBlock(const void* pData,
-                             FX_FILESIZE offset,
-                             size_t size) = 0;
+  virtual bool Flush() = 0;
+  virtual bool WriteBlock(const void* pData,
+                          FX_FILESIZE offset,
+                          size_t size) = 0;
 };
 
 class IFX_SeekableReadStream : public IFX_ReadStream {
  public:
   // IFX_ReadStream:
   void Release() override = 0;
-  FX_BOOL IsEOF() override;
+  bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
   size_t ReadBlock(void* buffer, size_t size) override;
 
-  virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
+  virtual bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
   virtual FX_FILESIZE GetSize() = 0;
 };
 
@@ -105,18 +105,18 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
 
   // IFX_SeekableReadStream:
   void Release() override = 0;
-  FX_BOOL IsEOF() override = 0;
+  bool IsEOF() override = 0;
   FX_FILESIZE GetPosition() override = 0;
   size_t ReadBlock(void* buffer, size_t size) override = 0;
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override = 0;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override = 0;
   FX_FILESIZE GetSize() override = 0;
 
   // IFX_SeekableWriteStream:
-  FX_BOOL WriteBlock(const void* buffer,
-                     FX_FILESIZE offset,
-                     size_t size) override = 0;
-  FX_BOOL WriteBlock(const void* buffer, size_t size) override;
-  FX_BOOL Flush() override = 0;
+  bool WriteBlock(const void* buffer,
+                  FX_FILESIZE offset,
+                  size_t size) override = 0;
+  bool WriteBlock(const void* buffer, size_t size) override;
+  bool Flush() override = 0;
 };
 
 IFX_SeekableStream* FX_CreateFileStream(const FX_CHAR* filename,
@@ -138,29 +138,29 @@ IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
 
 class IFX_MemoryStream : public IFX_SeekableStream {
  public:
-  virtual FX_BOOL IsConsecutive() const = 0;
+  virtual bool IsConsecutive() const = 0;
   virtual void EstimateSize(size_t nInitSize, size_t nGrowSize) = 0;
   virtual uint8_t* GetBuffer() const = 0;
   virtual void AttachBuffer(uint8_t* pBuffer,
                             size_t nSize,
-                            FX_BOOL bTakeOver = FALSE) = 0;
+                            bool bTakeOver = FALSE) = 0;
   virtual void DetachBuffer() = 0;
 };
 
 IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
                                         size_t nSize,
-                                        FX_BOOL bTakeOver = FALSE);
-IFX_MemoryStream* FX_CreateMemoryStream(FX_BOOL bConsecutive = FALSE);
+                                        bool bTakeOver = FALSE);
+IFX_MemoryStream* FX_CreateMemoryStream(bool bConsecutive = FALSE);
 
 class IFX_BufferRead : public IFX_ReadStream {
  public:
   // IFX_ReadStream:
   void Release() override = 0;
-  FX_BOOL IsEOF() override = 0;
+  bool IsEOF() override = 0;
   FX_FILESIZE GetPosition() override = 0;
   size_t ReadBlock(void* buffer, size_t size) override = 0;
 
-  virtual FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) = 0;
+  virtual bool ReadNextBlock(bool bRestart = FALSE) = 0;
   virtual const uint8_t* GetBlockBuffer() = 0;
   virtual size_t GetBlockSize() = 0;
   virtual FX_FILESIZE GetBlockOffset() = 0;

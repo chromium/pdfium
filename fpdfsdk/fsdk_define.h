@@ -33,7 +33,7 @@ class CPDF_CustomAccess final : public IFX_SeekableReadStream {
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
   void Release() override;
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  private:
   FPDF_FILEACCESS m_FileAccess;
@@ -49,14 +49,12 @@ class CFPDF_FileStream : public IFX_SeekableStream {
   IFX_SeekableStream* Retain() override;
   void Release() override;
   FX_FILESIZE GetSize() override;
-  FX_BOOL IsEOF() override;
+  bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
   size_t ReadBlock(void* buffer, size_t size) override;
-  FX_BOOL WriteBlock(const void* buffer,
-                     FX_FILESIZE offset,
-                     size_t size) override;
-  FX_BOOL Flush() override;
+  bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool Flush() override;
 
   void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
 

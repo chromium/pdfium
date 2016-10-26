@@ -10,11 +10,6 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 
-class IFX_Stream;
-
-IFX_SeekableReadStream* FX_CreateFileRead(IFX_Stream* pBaseStream,
-                                          FX_BOOL bReleaseStream);
-
 enum FX_STREAMACCESS {
   FX_STREAMACCESS_Binary = 0x00,
   FX_STREAMACCESS_Text = 0x01,
@@ -67,5 +62,8 @@ class IFX_Stream {
   virtual uint16_t GetCodePage() const = 0;
   virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
 };
+
+IFX_SeekableReadStream* FX_CreateFileRead(IFX_Stream* pBaseStream,
+                                          bool bReleaseStream);
 
 #endif  // XFA_FGAS_CRT_FGAS_STREAM_H_

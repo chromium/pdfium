@@ -112,7 +112,7 @@ FX_FILESIZE CFPDF_FileStream::GetSize() {
   return 0;
 }
 
-FX_BOOL CFPDF_FileStream::IsEOF() {
+bool CFPDF_FileStream::IsEOF() {
   return m_nCurPos >= GetSize();
 }
 
@@ -120,18 +120,18 @@ FX_FILESIZE CFPDF_FileStream::GetPosition() {
   return m_nCurPos;
 }
 
-FX_BOOL CFPDF_FileStream::ReadBlock(void* buffer,
-                                    FX_FILESIZE offset,
-                                    size_t size) {
+bool CFPDF_FileStream::ReadBlock(void* buffer,
+                                 FX_FILESIZE offset,
+                                 size_t size) {
   if (!buffer || !size || !m_pFS->ReadBlock)
-    return FALSE;
+    return false;
 
   if (m_pFS->ReadBlock(m_pFS->clientData, (FPDF_DWORD)offset, buffer,
                        (FPDF_DWORD)size) == 0) {
     m_nCurPos = offset + size;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 size_t CFPDF_FileStream::ReadBlock(void* buffer, size_t size) {
@@ -153,23 +153,23 @@ size_t CFPDF_FileStream::ReadBlock(void* buffer, size_t size) {
   return 0;
 }
 
-FX_BOOL CFPDF_FileStream::WriteBlock(const void* buffer,
-                                     FX_FILESIZE offset,
-                                     size_t size) {
+bool CFPDF_FileStream::WriteBlock(const void* buffer,
+                                  FX_FILESIZE offset,
+                                  size_t size) {
   if (!m_pFS || !m_pFS->WriteBlock)
-    return FALSE;
+    return false;
 
   if (m_pFS->WriteBlock(m_pFS->clientData, (FPDF_DWORD)offset, buffer,
                         (FPDF_DWORD)size) == 0) {
     m_nCurPos = offset + size;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CFPDF_FileStream::Flush() {
+bool CFPDF_FileStream::Flush() {
   if (!m_pFS || !m_pFS->Flush)
-    return TRUE;
+    return true;
 
   return m_pFS->Flush(m_pFS->clientData) == 0;
 }
@@ -186,21 +186,21 @@ void CPDF_CustomAccess::Release() {
   delete this;
 }
 
-FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer,
-                                     FX_FILESIZE offset,
-                                     size_t size) {
-  if (offset < 0) {
-    return FALSE;
-  }
+bool CPDF_CustomAccess::ReadBlock(void* buffer,
+                                  FX_FILESIZE offset,
+                                  size_t size) {
+  if (offset < 0)
+    return false;
+
   FX_SAFE_FILESIZE newPos =
       pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
   newPos += offset;
   if (!newPos.IsValid() ||
       newPos.ValueOrDie() > static_cast<FX_FILESIZE>(m_FileAccess.m_FileLen)) {
-    return FALSE;
+    return false;
   }
-  return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset, (uint8_t*)buffer,
-                                 size);
+  return !!m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,
+                                   reinterpret_cast<uint8_t*>(buffer), size);
 }
 
 // 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
@@ -388,18 +388,18 @@ class CMemFile final : public IFX_SeekableReadStream {
 
   void Release() override { delete this; }
   FX_FILESIZE GetSize() override { return m_size; }
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
     if (offset < 0) {
-      return FALSE;
+      return false;
     }
     FX_SAFE_FILESIZE newPos =
         pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
     newPos += offset;
     if (!newPos.IsValid() || newPos.ValueOrDie() > m_size) {
-      return FALSE;
+      return false;
     }
     FXSYS_memcpy(buffer, m_pBuf + offset, size);
-    return TRUE;
+    return true;
   }
 
  private:

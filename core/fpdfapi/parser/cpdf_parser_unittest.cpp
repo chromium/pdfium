@@ -22,14 +22,14 @@ class CFX_TestBufferRead : public IFX_SeekableReadStream {
   void Release() override { delete this; }
 
   // IFX_SeekableReadStream
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-    if (offset < 0 || offset + size > total_size_) {
-      return FALSE;
-    }
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
+    if (offset < 0 || offset + size > total_size_)
+      return false;
 
     memcpy(buffer, buffer_ + offset, size);
-    return TRUE;
+    return true;
   }
+
   FX_FILESIZE GetSize() override { return (FX_FILESIZE)total_size_; };
 
  protected:

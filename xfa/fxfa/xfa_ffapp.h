@@ -31,7 +31,7 @@ class CXFA_FileRead : public IFX_SeekableReadStream {
 
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
   void Release() override;
 
  protected:
