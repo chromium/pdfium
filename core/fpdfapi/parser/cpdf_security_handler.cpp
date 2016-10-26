@@ -387,21 +387,21 @@ FX_BOOL CPDF_SecurityHandler::AES256_CheckPassword(const uint8_t* password,
   return TRUE;
 }
 
-int CPDF_SecurityHandler::CheckPassword(const uint8_t* password,
-                                        uint32_t size,
-                                        FX_BOOL bOwner,
-                                        uint8_t* key,
-                                        int32_t key_len) {
-  if (m_Revision >= 5) {
+FX_BOOL CPDF_SecurityHandler::CheckPassword(const uint8_t* password,
+                                            uint32_t size,
+                                            FX_BOOL bOwner,
+                                            uint8_t* key,
+                                            int32_t key_len) {
+  if (m_Revision >= 5)
     return AES256_CheckPassword(password, size, bOwner, key);
-  }
+
   uint8_t keybuf[32];
-  if (!key) {
+  if (!key)
     key = keybuf;
-  }
-  if (bOwner) {
+
+  if (bOwner)
     return CheckOwnerPassword(password, size, key, key_len);
-  }
+
   return CheckUserPassword(password, size, FALSE, key, key_len) ||
          CheckUserPassword(password, size, TRUE, key, key_len);
 }

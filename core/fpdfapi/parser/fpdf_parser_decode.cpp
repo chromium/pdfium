@@ -305,17 +305,18 @@ uint32_t FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
                                   uint8_t*& dest_buf,
                                   uint32_t& dest_size) {
   int predictor = 0;
+  int Colors = 0;
+  int BitsPerComponent = 0;
+  int Columns = 0;
   FX_BOOL bEarlyChange = TRUE;
-  int Colors = 0, BitsPerComponent = 0, Columns = 0;
   if (pParams) {
     predictor = pParams->GetIntegerFor("Predictor");
-    bEarlyChange = pParams->GetIntegerFor("EarlyChange", 1);
+    bEarlyChange = !!pParams->GetIntegerFor("EarlyChange", 1);
     Colors = pParams->GetIntegerFor("Colors", 1);
     BitsPerComponent = pParams->GetIntegerFor("BitsPerComponent", 8);
     Columns = pParams->GetIntegerFor("Columns", 1);
-    if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns)) {
+    if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns))
       return (uint32_t)-1;
-    }
   }
   return CPDF_ModuleMgr::Get()->GetFlateModule()->FlateOrLZWDecode(
       bLZW, src_buf, src_size, bEarlyChange, predictor, Colors,

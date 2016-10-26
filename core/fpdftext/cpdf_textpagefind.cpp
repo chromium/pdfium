@@ -101,7 +101,7 @@ FX_BOOL CPDF_TextPageFind::FindFirst(const CFX_WideString& findwhat,
     findwhatStr.MakeLower();
     m_strText.MakeLower();
   }
-  m_bMatchWholeWord = flags & FPDFTEXT_MATCHWHOLEWORD;
+  m_bMatchWholeWord = !!(flags & FPDFTEXT_MATCHWHOLEWORD);
   m_findNextStart = startPos;
   if (startPos == -1)
     m_findPreStart = m_strText.GetLength() - 1;

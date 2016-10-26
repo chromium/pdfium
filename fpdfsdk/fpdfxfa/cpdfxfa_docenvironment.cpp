@@ -919,7 +919,6 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
     return FALSE;
   }
 
-  FPDF_BOOL bRet = TRUE;
   FPDF_FILEHANDLER* pFileHandler = nullptr;
   int fileFlag = -1;
   switch (submit.GetSubmitFormat()) {
@@ -966,11 +965,10 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
     CFX_WideString csBCCAddress;
     CFX_WideString csSubject;
     CFX_WideString csMsg;
-    bRet = MailToInfo(csURL, csToAddress, csCCAddress, csBCCAddress, csSubject,
-                      csMsg);
-    if (!bRet)
+    if (!MailToInfo(csURL, csToAddress, csCCAddress, csBCCAddress, csSubject,
+                    csMsg)) {
       return FALSE;
-
+    }
     CFX_ByteString bsTo = CFX_WideString(csToAddress).UTF16LE_Encode();
     CFX_ByteString bsCC = CFX_WideString(csCCAddress).UTF16LE_Encode();
     CFX_ByteString bsBcc = CFX_WideString(csBCCAddress).UTF16LE_Encode();
@@ -997,7 +995,7 @@ FX_BOOL CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
                            (FPDF_WIDESTRING)bs.GetBuffer(len));
     bs.ReleaseBuffer(len);
   }
-  return bRet;
+  return TRUE;
 }
 
 FX_BOOL CPDFXFA_DocEnvironment::SetGlobalProperty(

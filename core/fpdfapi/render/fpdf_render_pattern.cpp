@@ -54,17 +54,19 @@ void DrawAxialShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT start_y = pCoords->GetNumberAt(1);
   FX_FLOAT end_x = pCoords->GetNumberAt(2);
   FX_FLOAT end_y = pCoords->GetNumberAt(3);
-  FX_FLOAT t_min = 0, t_max = 1.0f;
+  FX_FLOAT t_min = 0;
+  FX_FLOAT t_max = 1.0f;
   CPDF_Array* pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
-  FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
+  FX_BOOL bStartExtend = FALSE;
+  FX_BOOL bEndExtend = FALSE;
   pArray = pDict->GetArrayFor("Extend");
   if (pArray) {
-    bStartExtend = pArray->GetIntegerAt(0);
-    bEndExtend = pArray->GetIntegerAt(1);
+    bStartExtend = !!pArray->GetIntegerAt(0);
+    bEndExtend = !!pArray->GetIntegerAt(1);
   }
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
@@ -139,17 +141,19 @@ void DrawRadialShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT end_r = pCoords->GetNumberAt(5);
   CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
-  FX_FLOAT t_min = 0, t_max = 1.0f;
+  FX_FLOAT t_min = 0;
+  FX_FLOAT t_max = 1.0f;
   CPDF_Array* pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
-  FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
+  FX_BOOL bStartExtend = FALSE;
+  FX_BOOL bEndExtend = FALSE;
   pArray = pDict->GetArrayFor("Extend");
   if (pArray) {
-    bStartExtend = pArray->GetIntegerAt(0);
-    bEndExtend = pArray->GetIntegerAt(1);
+    bStartExtend = !!pArray->GetIntegerAt(0);
+    bEndExtend = !!pArray->GetIntegerAt(1);
   }
   uint32_t total_results =
       std::max(CountOutputs(funcs), pCS->CountComponents());

@@ -50,11 +50,11 @@ class CPDF_SecurityHandler {
   CFX_ByteString GetUserPassword(const uint8_t* owner_pass,
                                  uint32_t pass_size,
                                  int32_t key_len);
-  int CheckPassword(const uint8_t* password,
-                    uint32_t pass_size,
-                    FX_BOOL bOwner,
-                    uint8_t* key,
-                    int key_len);
+  FX_BOOL CheckPassword(const uint8_t* password,
+                        uint32_t pass_size,
+                        FX_BOOL bOwner,
+                        uint8_t* key,
+                        int key_len);
 
  private:
   FX_BOOL LoadDict(CPDF_Dictionary* pEncryptDict);

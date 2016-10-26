@@ -107,7 +107,7 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
     CCodec_ScanlineDecoder* pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
             src_buf, limit, width, height, 0,
-            pParam ? pParam->GetIntegerFor("ColorTransform", 1) : 1);
+            !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
   if (decoder == "RunLengthDecode" || decoder == "RL") {

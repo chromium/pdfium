@@ -551,7 +551,7 @@ int CPDF_DIBSource::CreateDecoder() {
   } else if (decoder == "DCTDecode") {
     m_pDecoder.reset(CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
         src_data, src_size, m_Width, m_Height, m_nComponents,
-        pParams ? pParams->GetIntegerFor("ColorTransform", 1) : 1));
+        !pParams || pParams->GetIntegerFor("ColorTransform", 1)));
     if (!m_pDecoder) {
       bool bTransform = false;
       int comps;
