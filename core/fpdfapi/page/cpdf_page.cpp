@@ -126,12 +126,12 @@ void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
     return;
   }
   CFX_Matrix display_matrix;
-  int x0 = 0;
-  int y0 = 0;
-  int x1 = 0;
-  int y1 = 0;
-  int x2 = 0;
-  int y2 = 0;
+  float x0 = 0;
+  float y0 = 0;
+  float x1 = 0;
+  float y1 = 0;
+  float x2 = 0;
+  float y2 = 0;
   iRotate %= 4;
   switch (iRotate) {
     case 0:
@@ -167,10 +167,9 @@ void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
       y2 = yPos;
       break;
   }
-  display_matrix.Set(
-      ((FX_FLOAT)(x2 - x0)) / m_PageWidth, ((FX_FLOAT)(y2 - y0)) / m_PageWidth,
-      ((FX_FLOAT)(x1 - x0)) / m_PageHeight,
-      ((FX_FLOAT)(y1 - y0)) / m_PageHeight, (FX_FLOAT)x0, (FX_FLOAT)y0);
+  display_matrix.Set((x2 - x0) / m_PageWidth, (y2 - y0) / m_PageWidth,
+                     (x1 - x0) / m_PageHeight, (y1 - y0) / m_PageHeight, x0,
+                     y0);
   matrix = m_PageMatrix;
   matrix.Concat(display_matrix);
 }
