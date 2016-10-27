@@ -235,7 +235,7 @@ FX_BOOL GetAttributeDefaultValue_Boolean(XFA_Element eElement,
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
                                    XFA_ATTRIBUTETYPE_Boolean, dwPacket)) {
-    return (FX_BOOL)(uintptr_t)pValue;
+    return !!pValue;
   }
   return FALSE;
 }

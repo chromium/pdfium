@@ -122,10 +122,10 @@ CFX_WideString CXFA_XMLLocale::GetCalendarSymbol(const CFX_ByteStringC& symbol,
       CXML_Element* pSymbolNames =
           pChild->GetElement("", pstrSymbolNames.AsStringC());
       if (pSymbolNames) {
-        if (pSymbolNames->GetAttrInteger("abbr") != bAbbr) {
+        if ((!!pSymbolNames->GetAttrInteger("abbr")) != bAbbr) {
           pSymbolNames = pChild->GetElement("", pstrSymbolNames.AsStringC(), 1);
         }
-        if (pSymbolNames && pSymbolNames->GetAttrInteger("abbr") == bAbbr) {
+        if (pSymbolNames && (!!pSymbolNames->GetAttrInteger("abbr")) == bAbbr) {
           CXML_Element* pSymbolName =
               pSymbolNames->GetElement("", symbol, index);
           if (pSymbolName) {
