@@ -522,9 +522,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
   } else if (m_Encoding == 0) {
     FaxGet1DLine(m_pSrcBuf, bitsize, &m_bitpos, &m_ScanlineBuf, m_OrigWidth);
   } else {
-    FX_BOOL bNext1D = m_pSrcBuf[m_bitpos / 8] & (1 << (7 - m_bitpos % 8));
-    ++m_bitpos;
-    if (bNext1D) {
+    if (NextBit(m_pSrcBuf, &m_bitpos)) {
       FaxGet1DLine(m_pSrcBuf, bitsize, &m_bitpos, &m_ScanlineBuf, m_OrigWidth);
     } else {
       FaxG4GetRow(m_pSrcBuf, bitsize, &m_bitpos, m_ScanlineBuf.data(), m_RefBuf,

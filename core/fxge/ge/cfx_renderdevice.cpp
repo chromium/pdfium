@@ -532,7 +532,7 @@ FX_BOOL CFX_RenderDevice::DrawPathWithBlend(
     CFX_PathData newPath;
     FX_BOOL bThin = FALSE;
     if (pPathData->GetZeroAreaPath(newPath, (CFX_Matrix*)pObject2Device, bThin,
-                                   m_pDeviceDriver->GetDriverType())) {
+                                   !!m_pDeviceDriver->GetDriverType())) {
       CFX_GraphStateData graphState;
       graphState.m_LineWidth = 0.0f;
       uint32_t strokecolor = fill_color;

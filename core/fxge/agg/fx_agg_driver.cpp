@@ -240,7 +240,7 @@ FX_BOOL DibSetPixel(CFX_DIBitmap* pDevice,
                     uint32_t color,
                     int alpha_flag,
                     void* pIccTransform) {
-  FX_BOOL bObjCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
+  FX_BOOL bObjCMYK = !!FXGETFLAG_COLORTYPE(alpha_flag);
   int alpha = bObjCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
   if (pIccTransform) {
     CCodec_IccModule* pIccModule =
@@ -1315,7 +1315,7 @@ class CFX_Renderer {
       m_pClipMask = m_pClipRgn->GetMask().GetObject();
     }
     m_bFullCover = bFullCover;
-    FX_BOOL bObjectCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
+    FX_BOOL bObjectCMYK = !!FXGETFLAG_COLORTYPE(alpha_flag);
     FX_BOOL bDeviceCMYK = pDevice->IsCmykImage();
     m_Alpha = bObjectCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
     CCodec_IccModule* pIccModule = nullptr;
@@ -1468,8 +1468,9 @@ FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     rasterizer.filling_rule((fill_mode & 3) == FXFILL_WINDING
                                 ? agg::fill_non_zero
                                 : agg::fill_even_odd);
-    if (!RenderRasterizer(rasterizer, fill_color, fill_mode & FXFILL_FULLCOVER,
-                          FALSE, 0, nullptr)) {
+    if (!RenderRasterizer(rasterizer, fill_color,
+                          !!(fill_mode & FXFILL_FULLCOVER), FALSE, 0,
+                          nullptr)) {
       return FALSE;
     }
   }
@@ -1484,13 +1485,10 @@ FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                         (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     RasterizeStroke(rasterizer, path_data.m_PathData, nullptr, pGraphState, 1,
-                    FALSE, fill_mode & FX_STROKE_TEXT_MODE);
-    if (!RenderRasterizer(rasterizer, stroke_color,
-                          fill_mode & FXFILL_FULLCOVER, m_bGroupKnockout, 0,
-                          nullptr)) {
-      return FALSE;
-    }
-    return TRUE;
+                    FALSE, !!(fill_mode & FX_STROKE_TEXT_MODE));
+    return RenderRasterizer(rasterizer, stroke_color,
+                            !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout,
+                            0, nullptr);
   }
   CFX_Matrix matrix1;
   CFX_Matrix matrix2;
@@ -1512,12 +1510,10 @@ FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   RasterizeStroke(rasterizer, path_data.m_PathData, &matrix2, pGraphState,
-                  matrix1.a, FALSE, fill_mode & FX_STROKE_TEXT_MODE);
-  if (!RenderRasterizer(rasterizer, stroke_color, fill_mode & FXFILL_FULLCOVER,
-                        m_bGroupKnockout, 0, nullptr)) {
-    return FALSE;
-  }
-  return TRUE;
+                  matrix1.a, FALSE, !!(fill_mode & FX_STROKE_TEXT_MODE));
+  return RenderRasterizer(rasterizer, stroke_color,
+                          !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout, 0,
+                          nullptr);
 }
 
 FX_BOOL CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
@@ -1752,8 +1748,8 @@ bool CFX_FxgeDevice::Create(int width,
     return false;
   }
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(pBitmap, FALSE,
-                                                          pOriDevice, FALSE));
+  SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(pBitmap, false,
+                                                          pOriDevice, false));
   return true;
 }
 
