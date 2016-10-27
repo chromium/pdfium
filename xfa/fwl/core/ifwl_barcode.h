@@ -40,20 +40,20 @@ enum FWL_BCDAttribute {
 
 class IFWL_BarcodeDP : public IFWL_EditDP {
  public:
-  virtual BC_CHAR_ENCODING GetCharEncoding() = 0;
-  virtual int32_t GetModuleHeight() = 0;
-  virtual int32_t GetModuleWidth() = 0;
-  virtual int32_t GetDataLength() = 0;
-  virtual int32_t GetCalChecksum() = 0;
-  virtual FX_BOOL GetPrintChecksum() = 0;
-  virtual BC_TEXT_LOC GetTextLocation() = 0;
-  virtual int32_t GetWideNarrowRatio() = 0;
-  virtual FX_CHAR GetStartChar() = 0;
-  virtual FX_CHAR GetEndChar() = 0;
-  virtual int32_t GetVersion() = 0;
-  virtual int32_t GetErrorCorrectionLevel() = 0;
-  virtual FX_BOOL GetTruncated() = 0;
-  virtual uint32_t GetBarcodeAttributeMask() = 0;
+  virtual BC_CHAR_ENCODING GetCharEncoding() const = 0;
+  virtual int32_t GetModuleHeight() const = 0;
+  virtual int32_t GetModuleWidth() const = 0;
+  virtual int32_t GetDataLength() const = 0;
+  virtual FX_BOOL GetCalChecksum() const = 0;
+  virtual FX_BOOL GetPrintChecksum() const = 0;
+  virtual BC_TEXT_LOC GetTextLocation() const = 0;
+  virtual int32_t GetWideNarrowRatio() const = 0;
+  virtual FX_CHAR GetStartChar() const = 0;
+  virtual FX_CHAR GetEndChar() const = 0;
+  virtual int32_t GetVersion() const = 0;
+  virtual int32_t GetErrorCorrectionLevel() const = 0;
+  virtual FX_BOOL GetTruncated() const = 0;
+  virtual uint32_t GetBarcodeAttributeMask() const = 0;
 };
 
 class IFWL_Barcode : public IFWL_Edit {

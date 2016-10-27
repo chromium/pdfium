@@ -54,58 +54,58 @@ FWL_Error CFWL_Barcode::CFWL_BarcodeDP::GetCaption(IFWL_Widget* pWidget,
   return FWL_Error::Succeeded;
 }
 
-BC_CHAR_ENCODING CFWL_Barcode::CFWL_BarcodeDP::GetCharEncoding() {
+BC_CHAR_ENCODING CFWL_Barcode::CFWL_BarcodeDP::GetCharEncoding() const {
   return m_eCharEncoding;
 }
 
-int32_t CFWL_Barcode::CFWL_BarcodeDP::GetModuleHeight() {
+int32_t CFWL_Barcode::CFWL_BarcodeDP::GetModuleHeight() const {
   return m_nModuleHeight;
 }
 
-int32_t CFWL_Barcode::CFWL_BarcodeDP::GetModuleWidth() {
+int32_t CFWL_Barcode::CFWL_BarcodeDP::GetModuleWidth() const {
   return m_nModuleWidth;
 }
 
-int32_t CFWL_Barcode::CFWL_BarcodeDP::GetDataLength() {
+int32_t CFWL_Barcode::CFWL_BarcodeDP::GetDataLength() const {
   return m_nDataLength;
 }
 
-int32_t CFWL_Barcode::CFWL_BarcodeDP::GetCalChecksum() {
-  return m_nCalChecksum;
+FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetCalChecksum() const {
+  return m_bCalChecksum;
 }
 
-FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetPrintChecksum() {
+FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetPrintChecksum() const {
   return m_bPrintChecksum;
 }
 
-BC_TEXT_LOC CFWL_Barcode::CFWL_BarcodeDP::GetTextLocation() {
+BC_TEXT_LOC CFWL_Barcode::CFWL_BarcodeDP::GetTextLocation() const {
   return m_eTextLocation;
 }
 
-int32_t CFWL_Barcode::CFWL_BarcodeDP::GetWideNarrowRatio() {
+int32_t CFWL_Barcode::CFWL_BarcodeDP::GetWideNarrowRatio() const {
   return m_nWideNarrowRatio;
 }
 
-FX_CHAR CFWL_Barcode::CFWL_BarcodeDP::GetStartChar() {
+FX_CHAR CFWL_Barcode::CFWL_BarcodeDP::GetStartChar() const {
   return m_cStartChar;
 }
 
-FX_CHAR CFWL_Barcode::CFWL_BarcodeDP::GetEndChar() {
+FX_CHAR CFWL_Barcode::CFWL_BarcodeDP::GetEndChar() const {
   return m_cEndChar;
 }
 
-int32_t CFWL_Barcode::CFWL_BarcodeDP::GetVersion() {
+int32_t CFWL_Barcode::CFWL_BarcodeDP::GetVersion() const {
   return m_nVersion;
 }
 
-int32_t CFWL_Barcode::CFWL_BarcodeDP::GetErrorCorrectionLevel() {
+int32_t CFWL_Barcode::CFWL_BarcodeDP::GetErrorCorrectionLevel() const {
   return m_nECLevel;
 }
 
-FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetTruncated() {
+FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetTruncated() const {
   return m_bTruncated;
 }
 
-uint32_t CFWL_Barcode::CFWL_BarcodeDP::GetBarcodeAttributeMask() {
+uint32_t CFWL_Barcode::CFWL_BarcodeDP::GetBarcodeAttributeMask() const {
   return m_dwAttributeMask;
 }

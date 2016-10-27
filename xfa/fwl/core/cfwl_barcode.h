@@ -43,9 +43,9 @@ class CFWL_Barcode : public CFWL_Edit {
     m_barcodeData.m_nDataLength = dataLength;
     GetWidget()->SetLimit(dataLength);
   }
-  void SetCalChecksum(int32_t calChecksum) {
+  void SetCalChecksum(FX_BOOL calChecksum) {
     m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;
-    m_barcodeData.m_nCalChecksum = calChecksum;
+    m_barcodeData.m_bCalChecksum = calChecksum;
   }
   void SetPrintChecksum(FX_BOOL printChecksum) {
     m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_PRINTCHECKSUM;
@@ -93,29 +93,31 @@ class CFWL_Barcode : public CFWL_Edit {
                          CFX_WideString& wsCaption) override;
 
     // IFWL_BarcodeDP
-    BC_CHAR_ENCODING GetCharEncoding() override;
-    int32_t GetModuleHeight() override;
-    int32_t GetModuleWidth() override;
-    int32_t GetDataLength() override;
-    int32_t GetCalChecksum() override;
-    FX_BOOL GetPrintChecksum() override;
-    BC_TEXT_LOC GetTextLocation() override;
-    int32_t GetWideNarrowRatio() override;
-    FX_CHAR GetStartChar() override;
-    FX_CHAR GetEndChar() override;
-    int32_t GetVersion() override;
-    int32_t GetErrorCorrectionLevel() override;
-    FX_BOOL GetTruncated() override;
-    uint32_t GetBarcodeAttributeMask() override;
+    BC_CHAR_ENCODING GetCharEncoding() const override;
+    int32_t GetModuleHeight() const override;
+    int32_t GetModuleWidth() const override;
+    int32_t GetDataLength() const override;
+    FX_BOOL GetCalChecksum() const override;
+    FX_BOOL GetPrintChecksum() const override;
+    BC_TEXT_LOC GetTextLocation() const override;
+    int32_t GetWideNarrowRatio() const override;
+    FX_CHAR GetStartChar() const override;
+    FX_CHAR GetEndChar() const override;
+    int32_t GetVersion() const override;
+    int32_t GetErrorCorrectionLevel() const override;
+    FX_BOOL GetTruncated() const override;
+    uint32_t GetBarcodeAttributeMask() const override;
 
     BC_CHAR_ENCODING m_eCharEncoding;
-    int32_t m_nModuleHeight, m_nModuleWidth;
+    int32_t m_nModuleHeight;
+    int32_t m_nModuleWidth;
     int32_t m_nDataLength;
-    int32_t m_nCalChecksum;
+    FX_BOOL m_bCalChecksum;
     FX_BOOL m_bPrintChecksum;
     BC_TEXT_LOC m_eTextLocation;
     int32_t m_nWideNarrowRatio;
-    FX_CHAR m_cStartChar, m_cEndChar;
+    FX_CHAR m_cStartChar;
+    FX_CHAR m_cEndChar;
     int32_t m_nVersion;
     int32_t m_nECLevel;
     FX_BOOL m_bTruncated;

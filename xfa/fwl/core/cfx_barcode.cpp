@@ -132,7 +132,7 @@ FX_BOOL CFX_Barcode::SetDataLength(int32_t length) {
       return FALSE;
   }
 }
-FX_BOOL CFX_Barcode::SetCalChecksum(int32_t state) {
+FX_BOOL CFX_Barcode::SetCalChecksum(FX_BOOL state) {
   switch (GetType()) {
     case BC_CODE39:
     case BC_CODABAR:

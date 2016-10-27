@@ -1260,16 +1260,16 @@ FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t& val) {
   return FALSE;
 }
 
-FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_Checksum(int32_t& val) {
+FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_Checksum(FX_BOOL& val) {
   CXFA_Node* pUIChild = GetUIChild();
   XFA_ATTRIBUTEENUM eChecksum;
   if (pUIChild->TryEnum(XFA_ATTRIBUTE_Checksum, eChecksum)) {
     switch (eChecksum) {
       case XFA_ATTRIBUTEENUM_None:
-        val = 0;
+        val = false;
         return TRUE;
       case XFA_ATTRIBUTEENUM_Auto:
-        val = 1;
+        val = true;
         return TRUE;
       case XFA_ATTRIBUTEENUM_1mod10:
         break;

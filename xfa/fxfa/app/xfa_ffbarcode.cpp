@@ -179,8 +179,8 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   if (pAcc->GetBarcodeAttribute_CharEncoding(intVal)) {
     pBarCodeWidget->SetCharEncoding((BC_CHAR_ENCODING)intVal);
   }
-  if (pAcc->GetBarcodeAttribute_Checksum(intVal)) {
-    pBarCodeWidget->SetCalChecksum(intVal);
+  if (pAcc->GetBarcodeAttribute_Checksum(boolVal)) {
+    pBarCodeWidget->SetCalChecksum(boolVal);
   }
   if (pAcc->GetBarcodeAttribute_DataLength(intVal)) {
     pBarCodeWidget->SetDataLength(intVal);

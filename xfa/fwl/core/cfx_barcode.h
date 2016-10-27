@@ -40,7 +40,7 @@ class CFX_Barcode {
   FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
   FX_BOOL SetPrintChecksum(FX_BOOL checksum);
   FX_BOOL SetDataLength(int32_t length);
-  FX_BOOL SetCalChecksum(int32_t state);
+  FX_BOOL SetCalChecksum(FX_BOOL state);
   FX_BOOL SetFont(CFX_Font* pFont);
   FX_BOOL SetFontSize(FX_FLOAT size);
   FX_BOOL SetFontStyle(int32_t style);

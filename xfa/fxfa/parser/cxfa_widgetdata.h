@@ -138,7 +138,7 @@ class CXFA_WidgetData : public CXFA_Data {
   void NormalizeNumStr(const CFX_WideString& wsValue, CFX_WideString& wsOutput);
   CFX_WideString GetBarcodeType();
   FX_BOOL GetBarcodeAttribute_CharEncoding(int32_t& val);
-  FX_BOOL GetBarcodeAttribute_Checksum(int32_t& val);
+  FX_BOOL GetBarcodeAttribute_Checksum(FX_BOOL& val);
   FX_BOOL GetBarcodeAttribute_DataLength(int32_t& val);
   FX_BOOL GetBarcodeAttribute_StartChar(FX_CHAR& val);
   FX_BOOL GetBarcodeAttribute_EndChar(FX_CHAR& val);

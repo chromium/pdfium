@@ -54,7 +54,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual CFX_WideString RenderTextContents(const CFX_WideStringC& contents);
   virtual void SetPrintChecksum(FX_BOOL checksum);
   virtual void SetDataLength(int32_t length);
-  virtual void SetCalcChecksum(int32_t state);
+  virtual void SetCalcChecksum(FX_BOOL state);
   virtual void SetFontSize(FX_FLOAT size);
   virtual void SetFontStyle(int32_t style);
   virtual void SetFontColor(FX_ARGB color);

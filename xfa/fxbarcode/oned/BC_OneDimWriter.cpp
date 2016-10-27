@@ -58,7 +58,7 @@ void CBC_OneDimWriter::SetDataLength(int32_t length) {
   m_iDataLenth = length;
 }
 
-void CBC_OneDimWriter::SetCalcChecksum(int32_t state) {
+void CBC_OneDimWriter::SetCalcChecksum(FX_BOOL state) {
   m_bCalcChecksum = state;
 }
 
