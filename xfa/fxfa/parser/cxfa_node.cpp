@@ -3811,7 +3811,7 @@ FX_BOOL CXFA_Node::TryBoolean(XFA_ATTRIBUTE eAttr,
   void* pValue = nullptr;
   if (!GetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, bUseDefault, pValue))
     return FALSE;
-  bValue = (FX_BOOL)(uintptr_t)pValue;
+  bValue = !!pValue;
   return TRUE;
 }
 

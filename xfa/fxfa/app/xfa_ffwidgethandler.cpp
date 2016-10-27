@@ -211,7 +211,7 @@ FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
   }
   CXFA_NodeArray eventArray;
   return pWidgetAcc->GetEventByActivity(gs_EventActivity[eEventType],
-                                        eventArray);
+                                        eventArray) > 0;
 }
 
 int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,

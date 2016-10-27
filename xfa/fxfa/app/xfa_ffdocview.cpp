@@ -536,7 +536,7 @@ void CXFA_FFDocView::UnlockUpdate() {
   m_iLock--;
 }
 FX_BOOL CXFA_FFDocView::IsUpdateLocked() {
-  return m_iLock;
+  return m_iLock > 0;
 }
 void CXFA_FFDocView::ClearInvalidateList() {
   m_mapPageInvalidate.clear();

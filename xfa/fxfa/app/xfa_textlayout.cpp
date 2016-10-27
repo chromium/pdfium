@@ -1276,7 +1276,7 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   }
   pDevice->RestoreState();
   FX_Free(pCharPos);
-  return iPieceLines;
+  return iPieceLines > 0;
 }
 void CXFA_TextLayout::UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom) {
   fHeight -= fBottom;

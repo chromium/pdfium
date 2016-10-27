@@ -325,7 +325,7 @@ FX_BOOL CXFA_FFTextEdit::Paste(const CFX_WideString& wsPaste) {
 }
 FX_BOOL CXFA_FFTextEdit::SelectAll() {
   int32_t nCount = ((CFWL_Edit*)m_pNormalWidget)->GetTextLength();
-  return ((CFWL_Edit*)m_pNormalWidget)->AddSelRange(0, nCount);
+  return ((CFWL_Edit*)m_pNormalWidget)->AddSelRange(0, nCount) >= 0;
 }
 FX_BOOL CXFA_FFTextEdit::Delete() {
   return ((CFWL_Edit*)m_pNormalWidget)->Delete();
