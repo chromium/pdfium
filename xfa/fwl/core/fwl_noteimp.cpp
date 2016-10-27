@@ -377,8 +377,9 @@ FX_BOOL CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
 FX_BOOL CFWL_NoteDriver::DoActivate(CFWL_MsgActivate* pMsg,
                                     IFWL_Widget* pMessageForm) {
   pMsg->m_pDstTarget = pMessageForm;
-  return (pMsg->m_pDstTarget)->GetStates() & FWL_WGTSTATE_Deactivated;
+  return !!(pMsg->m_pDstTarget->GetStates() & FWL_WGTSTATE_Deactivated);
 }
+
 FX_BOOL CFWL_NoteDriver::DoDeactivate(CFWL_MsgDeactivate* pMsg,
                                       IFWL_Widget* pMessageForm) {
   int32_t iTrackLoop = m_noteLoopQueue.GetSize();

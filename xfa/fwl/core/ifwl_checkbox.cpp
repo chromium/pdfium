@@ -68,7 +68,7 @@ FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     if (wsCaption.GetLength() > 0) {
       CFX_SizeF sz = CalcTextSize(
           wsCaption, m_pProperties->m_pThemeProvider,
-          m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine);
+          !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine));
       rect.Set(0, 0, sz.x, sz.y);
     }
     rect.Inflate(kCaptionMargin, kCaptionMargin);

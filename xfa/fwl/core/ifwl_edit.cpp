@@ -119,7 +119,7 @@ FWL_Error IFWL_Edit::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
         m_pEdtEngine->GetText(wsText, 0);
         CFX_SizeF sz = CalcTextSize(
             wsText, m_pProperties->m_pThemeProvider,
-            m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine);
+            !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine));
         rect.Set(0, 0, sz.x, sz.y);
       }
     }
@@ -690,11 +690,11 @@ void IFWL_Edit::On_TextChanged(CFDE_TxtEdtEngine* pEdit,
   FX_FLOAT fContentHeight = page->GetContentsBox().height;
   CFX_RectF rtTemp;
   GetClientRect(rtTemp);
-  FX_BOOL bHSelfAdaption =
-      m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HSelfAdaption;
-  FX_BOOL bVSelfAdaption =
-      m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VSelfAdaption;
-  FX_BOOL bNeedUpdate = FALSE;
+  bool bHSelfAdaption =
+      !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HSelfAdaption);
+  bool bVSelfAdaption =
+      !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VSelfAdaption);
+  bool bNeedUpdate = false;
   if (bHSelfAdaption || bVSelfAdaption) {
     CFWL_EvtEdtPreSelfAdaption evt;
     evt.m_pSrcTarget = this;
@@ -1761,7 +1761,7 @@ void CFWL_EditImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
     m_pOwner->m_pEdtEngine->ClearSelection();
     bRepaint = TRUE;
   }
-  FX_BOOL bShift = pMsg->m_dwFlags & FWL_KEYFLAG_Shift;
+  bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
   if (bShift && m_pOwner->m_nSelStart != nIndex) {
     int32_t iStart = std::min(m_pOwner->m_nSelStart, nIndex);
     int32_t iEnd = std::max(m_pOwner->m_nSelStart, nIndex);
@@ -1828,8 +1828,8 @@ void CFWL_EditImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
   if (!m_pOwner->m_pEdtEngine)
     return;
   FDE_TXTEDTMOVECARET MoveCaret = MC_MoveNone;
-  FX_BOOL bShift = pMsg->m_dwFlags & FWL_KEYFLAG_Shift;
-  FX_BOOL bCtrl = pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl;
+  bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
+  bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
   uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   switch (dwKeyCode) {
     case FWL_VKEY_Left: {

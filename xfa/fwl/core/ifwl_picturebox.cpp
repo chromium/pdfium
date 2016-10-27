@@ -114,22 +114,19 @@ void IFWL_PictureBox::DrawBkground(CFX_Graphics* pGraphics,
                        &matrix);
 }
 
-FX_BOOL IFWL_PictureBox::VStyle(FX_BOOL dwStyle) {
+bool IFWL_PictureBox::VStyle(uint32_t dwStyle) {
   switch (dwStyle & FWL_STYLEEXT_PTB_VAlignMask) {
-    case FWL_STYLEEXT_PTB_Top: {
-      return m_bTop = TRUE;
-      break;
-    }
-    case FWL_STYLEEXT_PTB_Vcenter: {
-      return m_bVCenter = TRUE;
-      break;
-    }
-    case FWL_STYLEEXT_PTB_Bottom: {
-      return m_bButton = TRUE;
-      break;
-    }
+    case FWL_STYLEEXT_PTB_Top:
+      m_bTop = TRUE;
+      return true;
+    case FWL_STYLEEXT_PTB_Vcenter:
+      m_bVCenter = TRUE;
+      return true;
+    case FWL_STYLEEXT_PTB_Bottom:
+      m_bButton = TRUE;
+      return true;
   }
-  return FALSE;
+  return false;
 }
 
 CFWL_PictureBoxImpDelegate::CFWL_PictureBoxImpDelegate(IFWL_PictureBox* pOwner)

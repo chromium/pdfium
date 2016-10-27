@@ -60,7 +60,7 @@ void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
 
   CFX_Graphics* pGraphics = pParams->m_pGraphics;
   CFX_RectF* pRect = &pParams->m_rtPart;
-  FX_BOOL bVert = pWidget->GetStylesEx();
+  bool bVert = !!pWidget->GetStylesEx();
   switch (pParams->m_iPart) {
     case CFWL_Part::ForeArrow: {
       DrawMaxMinBtn(pGraphics, pRect,

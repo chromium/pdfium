@@ -2232,8 +2232,9 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
   CFX_Unitime ut;
   ut.Set(year, month, day);
   datetime = datetime + ut;
-  return cc;
+  return !!cc;
 }
+
 static void FX_ResolveZone(uint8_t& wHour,
                            uint8_t& wMinute,
                            FX_TIMEZONE tzDiff,
@@ -2448,8 +2449,9 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
   CFX_Unitime ut;
   ut.Set(0, 0, 0, hour, minute, second, millisecond);
   datetime = datetime + ut;
-  return cc;
+  return !!cc;
 }
+
 FX_BOOL CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
                                         const CFX_WideString& wsPattern,
                                         FX_DATETIMETYPE eDateTimeType,

@@ -30,7 +30,7 @@ FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
 #if (_FX_OS_ == _FX_MACOSX_)
   return FALSE;
 #else
-  return pWidget->GetStyles() & FWL_WGTSTYLE_Offscreen;
+  return !!(pWidget->GetStyles() & FWL_WGTSTYLE_Offscreen);
 #endif
 }
 

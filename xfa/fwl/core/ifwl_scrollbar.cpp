@@ -513,7 +513,7 @@ FX_FLOAT IFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {
 }
 
 void IFWL_ScrollBar::GetTrackRect(CFX_RectF& rect, FX_BOOL bLower) {
-  FX_BOOL bDisabled = m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled;
+  bool bDisabled = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled);
   if (bDisabled || m_bCustomLayout) {
     rect = bLower ? m_rtMinTrack : m_rtMaxTrack;
   } else {

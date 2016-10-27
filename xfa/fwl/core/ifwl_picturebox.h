@@ -62,8 +62,8 @@ class IFWL_PictureBox : public IFWL_Widget {
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix = nullptr);
+  bool VStyle(uint32_t dwStyle);
 
-  FX_BOOL VStyle(FX_BOOL dwStyle);
   CFX_RectF m_rtClient;
   CFX_RectF m_rtImage;
   CFX_Matrix m_matrix;
