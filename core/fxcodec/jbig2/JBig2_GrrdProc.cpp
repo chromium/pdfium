@@ -34,7 +34,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
 CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
-  FX_BOOL LTP = FALSE;
+  int LTP = 0;
   std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
   for (uint32_t h = 0; h < GRH; h++) {
@@ -69,7 +69,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
         CONTEXT |= line2 << 9;
         CONTEXT |= line1 << 10;
         CONTEXT |= GRREG->getPixel(w + GRAT[0], h + GRAT[1]) << 12;
-        FX_BOOL bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
+        int bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
         GRREG->setPixel(w, h, bVal);
         line1 = ((line1 << 1) | GRREG->getPixel(w + 2, h - 1)) & 0x03;
         line2 = ((line2 << 1) | bVal) & 0x01;
@@ -106,7 +106,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
       line5 |= GRREFERENCE->getPixel(-GRREFERENCEDX - 1, h - GRREFERENCEDY + 1)
                << 2;
       for (uint32_t w = 0; w < GRW; w++) {
-        FX_BOOL bVal = GRREFERENCE->getPixel(w, h);
+        int bVal = GRREFERENCE->getPixel(w, h);
         if (!(TPGRON && (bVal == GRREFERENCE->getPixel(w - 1, h - 1)) &&
               (bVal == GRREFERENCE->getPixel(w, h - 1)) &&
               (bVal == GRREFERENCE->getPixel(w + 1, h - 1)) &&
@@ -159,7 +159,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
   if (!GRREG->m_pData)
     return nullptr;
 
-  FX_BOOL LTP = FALSE;
+  int LTP = 0;
   uint8_t* pLine = GRREG->m_pData;
   uint8_t* pLineR = GRREFERENCE->m_pData;
   intptr_t nStride = GRREG->stride();
@@ -174,9 +174,9 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
       LTP = LTP ^ pArithDecoder->DECODE(&grContext[0x0010]);
     uint32_t line1 = (h > 0) ? pLine[-nStride] << 4 : 0;
     int32_t reference_h = h - GRREFERENCEDY;
-    FX_BOOL line1_r_ok = (reference_h > 0 && reference_h < GRHR + 1);
-    FX_BOOL line2_r_ok = (reference_h > -1 && reference_h < GRHR);
-    FX_BOOL line3_r_ok = (reference_h > -2 && reference_h < GRHR - 1);
+    bool line1_r_ok = (reference_h > 0 && reference_h < GRHR + 1);
+    bool line2_r_ok = (reference_h > -1 && reference_h < GRHR);
+    bool line3_r_ok = (reference_h > -2 && reference_h < GRHR - 1);
     uint32_t line1_r = line1_r_ok ? pLineR[nOffset - nStrideR] : 0;
     uint32_t line2_r = line2_r_ok ? pLineR[nOffset] : 0;
     uint32_t line3_r = line3_r_ok ? pLineR[nOffset + nStrideR] : 0;
@@ -213,7 +213,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
         }
         uint8_t cVal = 0;
         for (int32_t k = 0; k < nBits; k++) {
-          FX_BOOL bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
+          int bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
           cVal |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x0cdb) << 1) | (bVal << 9) |
                     ((line1 >> (7 - k)) & 0x0400) |
@@ -250,7 +250,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
         }
         uint8_t cVal = 0;
         for (int32_t k = 0; k < nBits; k++) {
-          FX_BOOL bVal = GRREFERENCE->getPixel(w + k, h);
+          int bVal = GRREFERENCE->getPixel(w + k, h);
           if (!(TPGRON && (bVal == GRREFERENCE->getPixel(w + k - 1, h - 1)) &&
                 (bVal == GRREFERENCE->getPixel(w + k, h - 1)) &&
                 (bVal == GRREFERENCE->getPixel(w + k + 1, h - 1)) &&
@@ -282,7 +282,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
 CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
-  FX_BOOL LTP = FALSE;
+  int LTP = 0;
   std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
   for (uint32_t h = 0; h < GRH; h++) {
@@ -310,7 +310,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
         CONTEXT |= line3 << 5;
         CONTEXT |= line2 << 6;
         CONTEXT |= line1 << 7;
-        FX_BOOL bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
+        int bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
         GRREG->setPixel(w, h, bVal);
         line1 = ((line1 << 1) | GRREG->getPixel(w + 2, h - 1)) & 0x07;
         line2 = ((line2 << 1) | bVal) & 0x01;
@@ -344,7 +344,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
       line5 |= GRREFERENCE->getPixel(-GRREFERENCEDX, h - GRREFERENCEDY + 1)
                << 1;
       for (uint32_t w = 0; w < GRW; w++) {
-        FX_BOOL bVal = GRREFERENCE->getPixel(w, h);
+        int bVal = GRREFERENCE->getPixel(w, h);
         if (!(TPGRON && (bVal == GRREFERENCE->getPixel(w - 1, h - 1)) &&
               (bVal == GRREFERENCE->getPixel(w, h - 1)) &&
               (bVal == GRREFERENCE->getPixel(w + 1, h - 1)) &&
@@ -393,7 +393,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
   if (!GRREG->m_pData)
     return nullptr;
 
-  FX_BOOL LTP = FALSE;
+  int LTP = 0;
   uint8_t* pLine = GRREG->m_pData;
   uint8_t* pLineR = GRREFERENCE->m_pData;
   intptr_t nStride = GRREG->stride();
@@ -409,9 +409,9 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
       LTP = LTP ^ pArithDecoder->DECODE(&grContext[0x0008]);
     uint32_t line1 = (h > 0) ? pLine[-nStride] << 1 : 0;
     int32_t reference_h = h - GRREFERENCEDY;
-    FX_BOOL line1_r_ok = (reference_h > 0 && reference_h < GRHR + 1);
-    FX_BOOL line2_r_ok = (reference_h > -1 && reference_h < GRHR);
-    FX_BOOL line3_r_ok = (reference_h > -2 && reference_h < GRHR - 1);
+    bool line1_r_ok = (reference_h > 0 && reference_h < GRHR + 1);
+    bool line2_r_ok = (reference_h > -1 && reference_h < GRHR);
+    bool line3_r_ok = (reference_h > -2 && reference_h < GRHR - 1);
     uint32_t line1_r = line1_r_ok ? pLineR[nOffset - nStrideR] : 0;
     uint32_t line2_r = line2_r_ok ? pLineR[nOffset] : 0;
     uint32_t line3_r = line3_r_ok ? pLineR[nOffset + nStrideR] : 0;
@@ -439,7 +439,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
         }
         uint8_t cVal = 0;
         for (int32_t k = 0; k < nBits; k++) {
-          FX_BOOL bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
+          int bVal = pArithDecoder->DECODE(&grContext[CONTEXT]);
           cVal |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x018d) << 1) | (bVal << 6) |
                     ((line1 >> (7 - k)) & 0x0080) |
@@ -473,7 +473,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
         }
         uint8_t cVal = 0;
         for (int32_t k = 0; k < nBits; k++) {
-          FX_BOOL bVal = GRREFERENCE->getPixel(w + k, h);
+          int bVal = GRREFERENCE->getPixel(w + k, h);
           if (!(TPGRON && (bVal == GRREFERENCE->getPixel(w + k - 1, h - 1)) &&
                 (bVal == GRREFERENCE->getPixel(w + k, h - 1)) &&
                 (bVal == GRREFERENCE->getPixel(w + k + 1, h - 1)) &&
