@@ -1233,7 +1233,7 @@ FX_BOOL CGdiplusExt::DrawPath(HDC hDC,
   }
   if (pGraphState && stroke_argb) {
     GpPen* pPen = _GdipCreatePen(pGraphState, pObject2Device, stroke_argb,
-                                 fill_mode & FX_STROKE_TEXT_MODE);
+                                 !!(fill_mode & FX_STROKE_TEXT_MODE));
     if (nSubPathes == 1) {
       CallFunc(GdipDrawPath)(pGraphics, pPen, pGpPath);
     } else {

@@ -933,7 +933,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(CFX_DIBitmap* pBitmap1,
 }
 
 FX_BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect) {
-  return ::GetClipBox(m_hDC, (RECT*)pRect);
+  return !!(::GetClipBox(m_hDC, (RECT*)pRect));
 }
 
 void* CGdiDeviceDriver::GetPlatformSurface() const {
@@ -1137,7 +1137,7 @@ FX_BOOL CGdiDeviceDriver::SetClip_PathStroke(
   SetPathToDC(m_hDC, pPathData, pMatrix);
   WidenPath(m_hDC);
   SetPolyFillMode(m_hDC, WINDING);
-  FX_BOOL ret = SelectClipPath(m_hDC, RGN_AND);
+  FX_BOOL ret = !!SelectClipPath(m_hDC, RGN_AND);
   hPen = (HPEN)SelectObject(m_hDC, hPen);
   DeleteObject(hPen);
   return ret;

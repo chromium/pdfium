@@ -53,7 +53,7 @@ class CCodec_JpegModule {
                  CFX_DIBAttribute* pAttribute);
 #endif  // PDF_ENABLE_XFA
 
-  int StartScanline(FXJPEG_Context* pContext, int down_scale);
+  FX_BOOL StartScanline(FXJPEG_Context* pContext, int down_scale);
   FX_BOOL ReadScanline(FXJPEG_Context* pContext, uint8_t* dest_buf);
   uint32_t GetAvailInput(FXJPEG_Context* pContext, uint8_t** avail_buf_ptr);
 };

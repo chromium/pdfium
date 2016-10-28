@@ -449,12 +449,12 @@ int CCodec_JpegModule::ReadHeader(FXJPEG_Context* ctx,
   return 0;
 }
 
-int CCodec_JpegModule::StartScanline(FXJPEG_Context* ctx, int down_scale) {
+FX_BOOL CCodec_JpegModule::StartScanline(FXJPEG_Context* ctx, int down_scale) {
   if (setjmp(ctx->m_JumpMark) == -1)
-    return 0;
+    return FALSE;
 
   ctx->m_Info.scale_denom = down_scale;
-  return jpeg_start_decompress(&ctx->m_Info);
+  return !!jpeg_start_decompress(&ctx->m_Info);
 }
 
 FX_BOOL CCodec_JpegModule::ReadScanline(FXJPEG_Context* ctx,

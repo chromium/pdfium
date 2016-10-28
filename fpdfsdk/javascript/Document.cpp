@@ -733,7 +733,7 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
     v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
 
     v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"bUI");
-    bUI = CJS_Value(pRuntime, pValue).ToInt(pRuntime);
+    bUI = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cTo");
     cTo = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
