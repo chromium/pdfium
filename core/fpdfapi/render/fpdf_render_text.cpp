@@ -29,6 +29,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/numerics/safe_math.h"
 
 FX_BOOL CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                        const CFX_Matrix* pObj2Device,
@@ -314,13 +315,25 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     if (!glyph.m_pGlyph)
       continue;
 
-    bitmap.TransferBitmap(
-        static_cast<int>(
-            (glyph.m_OriginX + glyph.m_pGlyph->m_Left - rect.left) * sa),
-        static_cast<int>((glyph.m_OriginY - glyph.m_pGlyph->m_Top - rect.top) *
-                         sd),
-        glyph.m_pGlyph->m_Bitmap.GetWidth(),
-        glyph.m_pGlyph->m_Bitmap.GetHeight(), &glyph.m_pGlyph->m_Bitmap, 0, 0);
+    pdfium::base::CheckedNumeric<int> left = glyph.m_OriginX;
+    left += glyph.m_pGlyph->m_Left;
+    left -= rect.left;
+    left *= sa;
+    if (!left.IsValid())
+      continue;
+
+    pdfium::base::CheckedNumeric<int> top = glyph.m_OriginY;
+    top -= glyph.m_pGlyph->m_Top;
+    top -= rect.top;
+    top *= sd;
+    if (!top.IsValid())
+      continue;
+
+    bitmap.CompositeMask(left.ValueOrDie(), top.ValueOrDie(),
+                         glyph.m_pGlyph->m_Bitmap.GetWidth(),
+                         glyph.m_pGlyph->m_Bitmap.GetHeight(),
+                         &glyph.m_pGlyph->m_Bitmap, fill_argb, 0, 0,
+                         FXDIB_BLEND_NORMAL, nullptr, FALSE, 0, nullptr);
   }
   m_pDevice->SetBitMask(&bitmap, rect.left, rect.top, fill_argb);
   return TRUE;
