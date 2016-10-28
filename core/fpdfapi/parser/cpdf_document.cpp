@@ -8,7 +8,6 @@
 
 #include <memory>
 #include <set>
-#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -241,6 +240,83 @@ void InsertWidthArray1(CFX_Font* pFont,
   InsertWidthArrayImpl(widths, size, pWidthArray);
 }
 
+int InsertDeletePDFPage(CPDF_Document* pDoc,
+                        CPDF_Dictionary* pPages,
+                        int nPagesToGo,
+                        CPDF_Dictionary* pPage,
+                        FX_BOOL bInsert,
+                        std::set<CPDF_Dictionary*>* pVisited) {
+  CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
+  if (!pKidList)
+    return -1;
+
+  for (size_t i = 0; i < pKidList->GetCount(); i++) {
+    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    if (pKid->GetStringFor("Type") == "Page") {
+      if (nPagesToGo == 0) {
+        if (bInsert) {
+          pKidList->InsertAt(i, new CPDF_Reference(pDoc, pPage->GetObjNum()));
+          pPage->SetReferenceFor("Parent", pDoc, pPages->GetObjNum());
+        } else {
+          pKidList->RemoveAt(i);
+        }
+        pPages->SetIntegerFor(
+            "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
+        return 1;
+      }
+      nPagesToGo--;
+    } else {
+      int nPages = pKid->GetIntegerFor("Count");
+      if (nPagesToGo < nPages) {
+        if (pdfium::ContainsKey(*pVisited, pKid))
+          return -1;
+
+        pdfium::ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
+        if (InsertDeletePDFPage(pDoc, pKid, nPagesToGo, pPage, bInsert,
+                                pVisited) < 0) {
+          return -1;
+        }
+        pPages->SetIntegerFor(
+            "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
+        return 1;
+      }
+      nPagesToGo -= nPages;
+    }
+  }
+  return 0;
+}
+
+int InsertNewPage(CPDF_Document* pDoc,
+                  int iPage,
+                  CPDF_Dictionary* pPageDict,
+                  CFX_ArrayTemplate<uint32_t>& pageList) {
+  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  CPDF_Dictionary* pPages = pRoot ? pRoot->GetDictFor("Pages") : nullptr;
+  if (!pPages)
+    return -1;
+
+  int nPages = pDoc->GetPageCount();
+  if (iPage < 0 || iPage > nPages)
+    return -1;
+
+  if (iPage == nPages) {
+    CPDF_Array* pPagesList = pPages->GetArrayFor("Kids");
+    if (!pPagesList) {
+      pPagesList = new CPDF_Array;
+      pPages->SetFor("Kids", pPagesList);
+    }
+    pPagesList->Add(new CPDF_Reference(pDoc, pPageDict->GetObjNum()));
+    pPages->SetIntegerFor("Count", nPages + 1);
+    pPageDict->SetReferenceFor("Parent", pDoc, pPages->GetObjNum());
+  } else {
+    std::set<CPDF_Dictionary*> stack = {pPages};
+    if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, TRUE, &stack) < 0)
+      return -1;
+  }
+  pageList.InsertAt(iPage, pPageDict->GetObjNum());
+  return iPage;
+}
+
 int CountPages(CPDF_Dictionary* pPages,
                std::set<CPDF_Dictionary*>* visited_pages) {
   int count = pPages->GetIntegerFor("Count");
@@ -337,7 +413,6 @@ CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
       m_pParser(std::move(pParser)),
       m_pRootDict(nullptr),
       m_pInfoDict(nullptr),
-      m_iLastPageTraversed(-1),
       m_bLinearized(false),
       m_iFirstPageNo(0),
       m_dwFirstPageObjNum(0),
@@ -402,71 +477,40 @@ void CPDF_Document::LoadPages() {
   m_PageList.SetSize(RetrievePageCount());
 }
 
-void CPDF_Document::PopAndPropagate() {
-  m_pTreeTraversal.pop();
-  if (m_pTreeTraversal.empty())
-    return;
-  std::pair<CPDF_Dictionary*, int>* top = &m_pTreeTraversal.top();
-  top->second++;
-  if (top->second ==
-      static_cast<int>(top->first->GetArrayFor("Kids")->GetCount() - 1)) {
-    PopAndPropagate();
-  }
-}
-
-CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage, int nPagesToGo) {
-  std::pair<CPDF_Dictionary*, int>* lastProc = &m_pTreeTraversal.top();
-  CPDF_Dictionary* pPages = lastProc->first;
+CPDF_Dictionary* CPDF_Document::FindPDFPage(CPDF_Dictionary* pPages,
+                                            int iPage,
+                                            int nPagesToGo,
+                                            int level) {
   CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
-  if (!pKidList) {
-    PopAndPropagate();
-    if (nPagesToGo != 1)
-      return nullptr;
-    m_PageList.SetAt(iPage, pPages->GetObjNum());
-    return pPages;
-  }
+  if (!pKidList)
+    return nPagesToGo == 0 ? pPages : nullptr;
 
-  if (m_pTreeTraversal.size() >= FX_MAX_PAGE_LEVEL) {
-    PopAndPropagate();
+  if (level >= FX_MAX_PAGE_LEVEL)
     return nullptr;
-  }
 
-  CPDF_Dictionary* page = nullptr;
-  for (size_t i = lastProc->second + 1; i < pKidList->GetCount(); i++) {
+  for (size_t i = 0; i < pKidList->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid) {
       nPagesToGo--;
-      lastProc->second++;
       continue;
     }
-    if (pKid == pPages) {
-      lastProc->second++;
+    if (pKid == pPages)
       continue;
-    }
     if (!pKid->KeyExist("Kids")) {
-      m_PageList.SetAt(iPage - nPagesToGo + 1, pKid->GetObjNum());
+      if (nPagesToGo == 0)
+        return pKid;
+
+      m_PageList.SetAt(iPage - nPagesToGo, pKid->GetObjNum());
       nPagesToGo--;
-      lastProc->second++;
-      if (nPagesToGo == 0) {
-        page = pKid;
-        break;
-      }
     } else {
       int nPages = pKid->GetIntegerFor("Count");
-      m_pTreeTraversal.push(std::make_pair(pKid, -1));
-      CPDF_Dictionary* pageKid = TraversePDFPages(iPage, nPagesToGo);
-      if (nPagesToGo <= nPages) {
-        page = pageKid;
-        break;
-      }
+      if (nPagesToGo < nPages)
+        return FindPDFPage(pKid, iPage, nPagesToGo, level + 1);
+
       nPagesToGo -= nPages;
     }
   }
-  if (!m_pTreeTraversal.empty() && lastProc == &m_pTreeTraversal.top() &&
-      lastProc->second == static_cast<int>(pKidList->GetCount() - 1)) {
-    PopAndPropagate();
-  }
-  return page;
+  return nullptr;
 }
 
 CPDF_Dictionary* CPDF_Document::GetPagesDict() const {
@@ -490,20 +534,21 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
   }
 
   int objnum = m_PageList.GetAt(iPage);
-  if (!objnum) {
-    CPDF_Dictionary* pPages = GetPagesDict();
-    if (!pPages)
-      return nullptr;
-    if (m_pTreeTraversal.empty())
-      m_pTreeTraversal.push(std::make_pair(pPages, -1));
-    CPDF_Dictionary* page =
-        TraversePDFPages(iPage, iPage - m_iLastPageTraversed);
-    m_iLastPageTraversed = iPage;
-    return page;
+  if (objnum) {
+    if (CPDF_Dictionary* pDict = ToDictionary(GetOrParseIndirectObject(objnum)))
+      return pDict;
   }
-  if (CPDF_Dictionary* pDict = ToDictionary(GetOrParseIndirectObject(objnum)))
-    return pDict;
-  return nullptr;
+
+  CPDF_Dictionary* pPages = GetPagesDict();
+  if (!pPages)
+    return nullptr;
+
+  CPDF_Dictionary* pPage = FindPDFPage(pPages, iPage, iPage, 0);
+  if (!pPage)
+    return nullptr;
+
+  m_PageList.SetAt(iPage, pPage->GetObjNum());
+  return pPage;
 }
 
 void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
@@ -665,92 +710,11 @@ CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
   CPDF_Dictionary* pDict = new CPDF_Dictionary(m_pByteStringPool);
   pDict->SetNameFor("Type", "Page");
   uint32_t dwObjNum = AddIndirectObject(pDict);
-  if (InsertNewPage(iPage, pDict, m_PageList) < 0) {
+  if (InsertNewPage(this, iPage, pDict, m_PageList) < 0) {
     ReleaseIndirectObject(dwObjNum);
     return nullptr;
   }
   return pDict;
-}
-
-int CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
-                                       int nPagesToGo,
-                                       CPDF_Dictionary* pPage,
-                                       FX_BOOL bInsert,
-                                       std::set<CPDF_Dictionary*>* pVisited) {
-  CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
-  if (!pKidList)
-    return -1;
-
-  for (size_t i = 0; i < pKidList->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
-    if (pKid->GetStringFor("Type") == "Page") {
-      if (nPagesToGo == 0) {
-        if (bInsert) {
-          pKidList->InsertAt(i, new CPDF_Reference(this, pPage->GetObjNum()));
-          pPage->SetReferenceFor("Parent", this, pPages->GetObjNum());
-        } else {
-          pKidList->RemoveAt(i);
-        }
-        pPages->SetIntegerFor(
-            "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
-        // Tree will change, so reset tree transversal variables
-        m_iLastPageTraversed = -1;
-        m_pTreeTraversal = std::stack<std::pair<CPDF_Dictionary*, int>>();
-        return 1;
-      }
-      nPagesToGo--;
-    } else {
-      int nPages = pKid->GetIntegerFor("Count");
-      if (nPagesToGo < nPages) {
-        if (pdfium::ContainsKey(*pVisited, pKid))
-          return -1;
-
-        pdfium::ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
-        if (InsertDeletePDFPage(pKid, nPagesToGo, pPage, bInsert, pVisited) <
-            0) {
-          return -1;
-        }
-        pPages->SetIntegerFor(
-            "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
-        return 1;
-      }
-      nPagesToGo -= nPages;
-    }
-  }
-  return 0;
-}
-
-int CPDF_Document::InsertNewPage(int iPage,
-                                 CPDF_Dictionary* pPageDict,
-                                 CFX_ArrayTemplate<uint32_t>& pageList) {
-  CPDF_Dictionary* pRoot = GetRoot();
-  CPDF_Dictionary* pPages = pRoot ? pRoot->GetDictFor("Pages") : nullptr;
-  if (!pPages)
-    return -1;
-
-  int nPages = GetPageCount();
-  if (iPage < 0 || iPage > nPages)
-    return -1;
-
-  if (iPage == nPages) {
-    CPDF_Array* pPagesList = pPages->GetArrayFor("Kids");
-    if (!pPagesList) {
-      pPagesList = new CPDF_Array;
-      pPages->SetFor("Kids", pPagesList);
-    }
-    pPagesList->Add(new CPDF_Reference(this, pPageDict->GetObjNum()));
-    pPages->SetIntegerFor("Count", nPages + 1);
-    pPageDict->SetReferenceFor("Parent", this, pPages->GetObjNum());
-    // Reset tree transversal variables
-    m_iLastPageTraversed = -1;
-    m_pTreeTraversal = std::stack<std::pair<CPDF_Dictionary*, int>>();
-  } else {
-    std::set<CPDF_Dictionary*> stack = {pPages};
-    if (InsertDeletePDFPage(pPages, iPage, pPageDict, TRUE, &stack) < 0)
-      return -1;
-  }
-  pageList.InsertAt(iPage, pPageDict->GetObjNum());
-  return iPage;
 }
 
 void CPDF_Document::DeletePage(int iPage) {
@@ -763,7 +727,7 @@ void CPDF_Document::DeletePage(int iPage) {
     return;
 
   std::set<CPDF_Dictionary*> stack = {pPages};
-  if (InsertDeletePDFPage(pPages, iPage, nullptr, FALSE, &stack) < 0)
+  if (InsertDeletePDFPage(this, pPages, iPage, nullptr, FALSE, &stack) < 0)
     return;
 
   m_PageList.RemoveAt(iPage);

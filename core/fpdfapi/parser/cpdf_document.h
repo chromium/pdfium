@@ -9,7 +9,6 @@
 
 #include <functional>
 #include <memory>
-#include <stack>
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
@@ -106,7 +105,10 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
  protected:
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount() const;
-  CPDF_Dictionary* TraversePDFPages(int iPage, int nPagesToGo);
+  CPDF_Dictionary* FindPDFPage(CPDF_Dictionary* pPages,
+                               int iPage,
+                               int nPagesToGo,
+                               int level);
   int FindPageIndex(CPDF_Dictionary* pNode,
                     uint32_t& skip_count,
                     uint32_t objnum,
@@ -122,23 +124,10 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
       FX_BOOL bVert,
       CFX_ByteString basefont,
       std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
-  int InsertDeletePDFPage(CPDF_Dictionary* pPages,
-                          int nPagesToGo,
-                          CPDF_Dictionary* pPage,
-                          FX_BOOL bInsert,
-                          std::set<CPDF_Dictionary*>* pVisited);
-  int InsertNewPage(int iPage,
-                    CPDF_Dictionary* pPageDict,
-                    CFX_ArrayTemplate<uint32_t>& pageList);
-  void PopAndPropagate();
+
   std::unique_ptr<CPDF_Parser> m_pParser;
   CPDF_Dictionary* m_pRootDict;
   CPDF_Dictionary* m_pInfoDict;
-  // Stack of page nodes to know current position in page tree. Int is the index
-  // of last processed child.
-  std::stack<std::pair<CPDF_Dictionary*, int>> m_pTreeTraversal;
-  // Index of last page (leaf) processed from page tree.
-  int m_iLastPageTraversed;
   bool m_bLinearized;
   int m_iFirstPageNo;
   uint32_t m_dwFirstPageObjNum;
