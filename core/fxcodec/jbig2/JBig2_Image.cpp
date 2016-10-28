@@ -72,42 +72,42 @@ CJBig2_Image::~CJBig2_Image() {
     FX_Free(m_pData);
   }
 }
-FX_BOOL CJBig2_Image::getPixel(int32_t x, int32_t y) {
-  if (!m_pData) {
+
+int CJBig2_Image::getPixel(int32_t x, int32_t y) {
+  if (!m_pData)
     return 0;
-  }
-  int32_t m, n;
-  if (x < 0 || x >= m_nWidth) {
+
+  if (x < 0 || x >= m_nWidth)
     return 0;
-  }
-  if (y < 0 || y >= m_nHeight) {
+
+  if (y < 0 || y >= m_nHeight)
     return 0;
-  }
-  m = y * m_nStride + (x >> 3);
-  n = x & 7;
+
+  int32_t m = y * m_nStride + (x >> 3);
+  int32_t n = x & 7;
   return ((m_pData[m] >> (7 - n)) & 1);
 }
 
-int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, FX_BOOL v) {
-  if (!m_pData) {
+int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, int v) {
+  if (!m_pData)
     return 0;
-  }
-  int32_t m, n;
-  if (x < 0 || x >= m_nWidth) {
+
+  if (x < 0 || x >= m_nWidth)
     return 0;
-  }
-  if (y < 0 || y >= m_nHeight) {
+
+  if (y < 0 || y >= m_nHeight)
     return 0;
-  }
-  m = y * m_nStride + (x >> 3);
-  n = x & 7;
-  if (v) {
+
+  int32_t m = y * m_nStride + (x >> 3);
+  int32_t n = x & 7;
+  if (v)
     m_pData[m] |= 1 << (7 - n);
-  } else {
+  else
     m_pData[m] &= ~(1 << (7 - n));
-  }
+
   return 1;
 }
+
 void CJBig2_Image::copyLine(int32_t hTo, int32_t hFrom) {
   if (!m_pData) {
     return;

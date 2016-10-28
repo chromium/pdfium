@@ -32,7 +32,7 @@ class CJBig2_GRRDProc {
 
   uint32_t GRW;
   uint32_t GRH;
-  FX_BOOL GRTEMPLATE;
+  int GRTEMPLATE;
   CJBig2_Image* GRREFERENCE;
   int32_t GRREFERENCEDX;
   int32_t GRREFERENCEDY;
