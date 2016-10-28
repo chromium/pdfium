@@ -7,12 +7,20 @@
 #ifndef CORE_FXGE_WIN32_WIN32_INT_H_
 #define CORE_FXGE_WIN32_WIN32_INT_H_
 
+#include <windows.h>
+
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 #include "core/fxge/win32/dwrite_int.h"
 
 struct FXTEXT_CHARPOS;
 struct WINDIB_Open_Args_;
+
+typedef HANDLE(__stdcall* FuncType_GdiAddFontMemResourceEx)(PVOID pbFont,
+                                                            DWORD cbFont,
+                                                            PVOID pdv,
+                                                            DWORD* pcFonts);
+typedef BOOL(__stdcall* FuncType_GdiRemoveFontMemResourceEx)(HANDLE handle);
 
 class CGdiplusExt {
  public:
@@ -92,15 +100,17 @@ class CGdiplusExt {
                                 void* pdv,
                                 uint32_t* num_face);
   FX_BOOL GdiRemoveFontMemResourceEx(void* handle);
-  void* m_Functions[100];
-  void* m_pGdiAddFontMemResourceEx;
-  void* m_pGdiRemoveFontMemResourseEx;
   CFX_DIBitmap* LoadDIBitmap(WINDIB_Open_Args_ args);
+
+  FARPROC m_Functions[100];
+  FuncType_GdiAddFontMemResourceEx m_pGdiAddFontMemResourceEx;
+  FuncType_GdiRemoveFontMemResourceEx m_pGdiRemoveFontMemResourseEx;
 
  protected:
   HMODULE m_hModule;
   HMODULE m_GdiModule;
 };
+
 class CWin32Platform {
  public:
   FX_BOOL m_bHalfTone;

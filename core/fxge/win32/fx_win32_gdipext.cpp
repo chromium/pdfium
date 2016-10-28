@@ -434,28 +434,23 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenTransform)(GpPen* pen,
                                                            GpMatrix* matrix);
 #define CallFunc(funcname) \
   ((FuncType_##funcname)GdiplusExt.m_Functions[FuncId_##funcname])
-typedef HANDLE(__stdcall* FuncType_GdiAddFontMemResourceEx)(PVOID pbFont,
-                                                            DWORD cbFont,
-                                                            PVOID pdv,
-                                                            DWORD* pcFonts);
-typedef BOOL(__stdcall* FuncType_GdiRemoveFontMemResourceEx)(HANDLE handle);
+
 void* CGdiplusExt::GdiAddFontMemResourceEx(void* pFontdata,
                                            uint32_t size,
                                            void* pdv,
                                            uint32_t* num_face) {
-  if (m_pGdiAddFontMemResourceEx) {
-    return ((FuncType_GdiAddFontMemResourceEx)m_pGdiAddFontMemResourceEx)(
-        (PVOID)pFontdata, (DWORD)size, (PVOID)pdv, (DWORD*)num_face);
-  }
-  return nullptr;
+  if (!m_pGdiAddFontMemResourceEx)
+    return nullptr;
+
+  return m_pGdiAddFontMemResourceEx((PVOID)pFontdata, (DWORD)size, (PVOID)pdv,
+                                    (DWORD*)num_face);
 }
+
 FX_BOOL CGdiplusExt::GdiRemoveFontMemResourceEx(void* handle) {
-  if (m_pGdiRemoveFontMemResourseEx) {
-    return ((FuncType_GdiRemoveFontMemResourceEx)m_pGdiRemoveFontMemResourseEx)(
-        (HANDLE)handle);
-  }
-  return FALSE;
+  return m_pGdiRemoveFontMemResourseEx &&
+         m_pGdiRemoveFontMemResourseEx((HANDLE)handle);
 }
+
 static GpBrush* _GdipCreateBrush(DWORD argb) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
@@ -709,9 +704,11 @@ void CGdiplusExt::Load() {
     return;
   }
   m_pGdiAddFontMemResourceEx =
-      GetProcAddress(m_GdiModule, "AddFontMemResourceEx");
+      reinterpret_cast<FuncType_GdiAddFontMemResourceEx>(
+          GetProcAddress(m_GdiModule, "AddFontMemResourceEx"));
   m_pGdiRemoveFontMemResourseEx =
-      GetProcAddress(m_GdiModule, "RemoveFontMemResourceEx");
+      reinterpret_cast<FuncType_GdiRemoveFontMemResourceEx>(
+          GetProcAddress(m_GdiModule, "RemoveFontMemResourceEx"));
 }
 CGdiplusExt::~CGdiplusExt() {}
 LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
