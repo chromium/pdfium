@@ -30,7 +30,7 @@ size_t GetHuffContextSize(uint8_t val) {
   return val == 0 ? 65536 : val == 1 ? 8192 : 1024;
 }
 
-size_t GetRefAggContextSize(FX_BOOL val) {
+size_t GetRefAggContextSize(bool val) {
   return val ? 1024 : 8192;
 }
 
@@ -428,7 +428,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   pSymbolDictDecoder->SDHUFF = wFlags & 0x0001;
   pSymbolDictDecoder->SDREFAGG = (wFlags >> 1) & 0x0001;
   pSymbolDictDecoder->SDTEMPLATE = (wFlags >> 10) & 0x0003;
-  pSymbolDictDecoder->SDRTEMPLATE = (wFlags >> 12) & 0x0003;
+  pSymbolDictDecoder->SDRTEMPLATE = !!((wFlags >> 12) & 0x0003);
   uint8_t cSDHUFFDH = (wFlags >> 2) & 0x0003;
   uint8_t cSDHUFFDW = (wFlags >> 4) & 0x0003;
   uint8_t cSDHUFFBMSIZE = (wFlags >> 6) & 0x0001;
@@ -440,8 +440,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
         return JBIG2_ERROR_TOO_SHORT;
     }
   }
-  if (pSymbolDictDecoder->SDREFAGG == 1 &&
-      pSymbolDictDecoder->SDRTEMPLATE == 0) {
+  if (pSymbolDictDecoder->SDREFAGG == 1 && !pSymbolDictDecoder->SDRTEMPLATE) {
     for (int32_t i = 0; i < 4; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pSymbolDictDecoder->SDRAT[i]) != 0)
         return JBIG2_ERROR_TOO_SHORT;
@@ -660,7 +659,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   if (pTRD->SBDSOFFSET >= 0x0010) {
     pTRD->SBDSOFFSET = pTRD->SBDSOFFSET - 0x0020;
   }
-  pTRD->SBRTEMPLATE = (wFlags >> 15) & 0x0001;
+  pTRD->SBRTEMPLATE = !!((wFlags >> 15) & 0x0001);
 
   uint8_t cSBHUFFFS = 0;
   uint8_t cSBHUFFDS = 0;
@@ -683,7 +682,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     cSBHUFFRDY = (wFlags >> 12) & 0x0003;
     cSBHUFFRSIZE = (wFlags >> 14) & 0x0001;
   }
-  if (pTRD->SBREFINE == 1 && pTRD->SBRTEMPLATE == 0) {
+  if (pTRD->SBREFINE == 1 && !pTRD->SBRTEMPLATE) {
     for (int32_t i = 0; i < 4; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pTRD->SBRAT[i]) != 0)
         return JBIG2_ERROR_TOO_SHORT;
@@ -1168,9 +1167,9 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc);
   pGRRD->GRW = ri.width;
   pGRRD->GRH = ri.height;
-  pGRRD->GRTEMPLATE = cFlags & 0x01;
+  pGRRD->GRTEMPLATE = !!(cFlags & 0x01);
   pGRRD->TPGRON = (cFlags >> 1) & 0x01;
-  if (pGRRD->GRTEMPLATE == 0) {
+  if (!pGRRD->GRTEMPLATE) {
     for (int32_t i = 0; i < 4; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pGRRD->GRAT[i]) != 0)
         return JBIG2_ERROR_TOO_SHORT;

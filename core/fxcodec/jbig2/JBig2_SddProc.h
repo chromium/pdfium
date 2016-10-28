@@ -42,7 +42,7 @@ class CJBig2_SDDProc {
   CJBig2_HuffmanTable* SDHUFFAGGINST;
   uint8_t SDTEMPLATE;
   int8_t SDAT[8];
-  int SDRTEMPLATE;
+  bool SDRTEMPLATE;
   int8_t SDRAT[4];
 };
 

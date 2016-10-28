@@ -17,7 +17,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
   if (GRW == 0 || GRH == 0)
     return new CJBig2_Image(GRW, GRH);
 
-  if (GRTEMPLATE == 0) {
+  if (!GRTEMPLATE) {
     if ((GRAT[0] == -1) && (GRAT[1] == -1) && (GRAT[2] == -1) &&
         (GRAT[3] == -1) && (GRREFERENCEDX == 0) &&
         (GRW == (uint32_t)GRREFERENCE->width())) {

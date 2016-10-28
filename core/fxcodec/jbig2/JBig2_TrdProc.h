@@ -74,7 +74,7 @@ class CJBig2_TRDProc {
   CJBig2_HuffmanTable* SBHUFFRDX;
   CJBig2_HuffmanTable* SBHUFFRDY;
   CJBig2_HuffmanTable* SBHUFFRSIZE;
-  int SBRTEMPLATE;
+  bool SBRTEMPLATE;
   int8_t SBRAT[4];
 };
 
