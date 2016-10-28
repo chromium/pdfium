@@ -129,8 +129,8 @@ static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,
                             const char* family,
                             int* bExact) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  return pDefault->m_pFontInfo->MapFont(weight, bItalic, charset, pitch_family,
-                                        family, *bExact);
+  return pDefault->m_pFontInfo->MapFont(weight, !!bItalic, charset,
+                                        pitch_family, family, *bExact);
 }
 
 void* DefaultGetFont(struct _FPDF_SYSFONTINFO* pThis, const char* family) {

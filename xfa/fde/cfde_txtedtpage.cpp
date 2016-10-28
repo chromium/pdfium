@@ -295,7 +295,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   nPageEnd += (nTemp - 1);
   FX_BOOL bVertial = pParams->dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical;
   FX_BOOL bLineReserve =
-      pParams->dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve;
+      !!(pParams->dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve);
   FX_FLOAT fLineStart =
       bVertial
           ? (bLineReserve ? (pParams->fPlateWidth - pParams->fLineSpace) : 0.0f)

@@ -14,7 +14,7 @@
 class FDE_CSSPropertyHolder : public CFX_Target {
  public:
   int16_t eProperty;
-  int16_t bImportant;
+  FX_BOOL bImportant;
   IFDE_CSSValue* pValue;
   FDE_CSSPropertyHolder* pNext;
 };

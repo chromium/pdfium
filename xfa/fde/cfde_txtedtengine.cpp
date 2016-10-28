@@ -1339,7 +1339,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
     ptCaret.x = m_rtCaret.left + m_rtCaret.width / 2 - m_Param.fLineSpace;
     ptCaret.y = m_fCaretPosReserve;
     FX_BOOL bLineReserve =
-        m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve;
+        !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve);
     if (ptCaret.x < rtContent.left) {
       if (bLineReserve) {
         if (m_nCaretPage == CountPages() - 1) {
@@ -1383,7 +1383,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
     ptCaret.y = m_fCaretPosReserve;
     if (ptCaret.x >= rtContent.right()) {
       FX_BOOL bLineReserve =
-          m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve;
+          !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve);
       if (bLineReserve) {
         if (m_nCaretPage == 0) {
           return FALSE;
@@ -1566,7 +1566,7 @@ void CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret,
                                      FX_BOOL bBefore) {
   IFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
   m_Param.pEventSink->On_PageLoad(this, m_nCaretPage, 0);
-  FX_BOOL bCombText = m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText;
+  FX_BOOL bCombText = !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText);
   int32_t nIndexInpage = nCaret - pPage->GetCharStart();
   if (bBefore && bCombText && nIndexInpage > 0) {
     nIndexInpage--;

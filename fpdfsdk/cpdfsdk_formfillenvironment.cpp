@@ -766,5 +766,5 @@ FX_BOOL CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
 }
 
 FX_BOOL CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) {
-  return GetPDFDocument()->GetUserPermissions() & nFlag;
+  return !!(GetPDFDocument()->GetUserPermissions() & nFlag);
 }
