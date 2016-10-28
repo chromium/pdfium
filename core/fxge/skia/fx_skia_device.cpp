@@ -1619,8 +1619,8 @@ bool CFX_FxgeDevice::Create(int width,
     return false;
   }
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(pBitmap, FALSE,
-                                                           pOriDevice, FALSE));
+  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(pBitmap, false,
+                                                           pOriDevice, false));
   return true;
 }
 
