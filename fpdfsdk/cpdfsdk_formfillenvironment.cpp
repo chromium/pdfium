@@ -430,9 +430,8 @@ FX_BOOL CPDFSDK_FormFillEnvironment::PopupMenu(FPDF_PAGE page,
                                                FPDF_WIDGET hWidget,
                                                int menuFlag,
                                                CFX_PointF pt) {
-  if (!m_pInfo || !m_pInfo->FFI_PopupMenu)
-    return FALSE;
-  return m_pInfo->FFI_PopupMenu(m_pInfo, page, hWidget, menuFlag, pt.x, pt.y);
+  return m_pInfo && m_pInfo->FFI_PopupMenu &&
+         m_pInfo->FFI_PopupMenu(m_pInfo, page, hWidget, menuFlag, pt.x, pt.y);
 }
 
 void CPDFSDK_FormFillEnvironment::Alert(FPDF_WIDESTRING Msg,
